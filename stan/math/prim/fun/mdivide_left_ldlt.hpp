@@ -23,21 +23,21 @@ namespace math {
  * @return x = A^-1 b, solution of the linear system.
  * @throws std::domain_error if rows of b don't match the size of A.
  */
-template <int R, int C, typename T, typename EigMat,
+template <typename T, bool alloc_in_arena, typename EigMat,
           require_eigen_t<EigMat>* = nullptr,
           require_all_not_st_var<T, EigMat>* = nullptr,
-          require_any_not_t<std::is_arithmetic<T>,
+          require_any_not_t<std::is_arithmetic<value_type_t<T>>,
                             is_fvar<value_type_t<EigMat>>>* = nullptr>
-inline Eigen::Matrix<return_type_t<T, EigMat>, R, EigMat::ColsAtCompileTime>
-mdivide_left_ldlt(const LDLT_factor<T, R, C>& A, const EigMat& b) {
-  check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
-  if (A.cols() == 0) {
+inline Eigen::Matrix<return_type_t<T, EigMat>, Eigen::Dynamic, EigMat::ColsAtCompileTime>
+mdivide_left_ldlt(LDLT_factor2<T, alloc_in_arena>& A, const EigMat& b) {
+  check_multiplicable("mdivide_left_ldlt", "A", A.matrix(), "b", b);
+  if (A.matrix().cols() == 0) {
     return {0, b.cols()};
   }
 
-  return A.solve(
+  return A.ldlt().solve(
       Eigen::Matrix<return_type_t<T, EigMat>, EigMat::RowsAtCompileTime,
-                    EigMat::ColsAtCompileTime>(b));
+      EigMat::ColsAtCompileTime>(b));
 }
 
 }  // namespace math

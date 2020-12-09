@@ -117,7 +117,9 @@ class LDLT_factor {
 
   inline vector_t vectorD() const { return ldltP_->vectorD(); }
 
-  inline ldlt_t matrixLDLT() const { return ldltP_->matrixLDLT(); }
+  // This could return an ldlt_t, but that would just do another ldlt on a matrix
+  // constructed from an ldlt
+  inline matrix_t matrixLDLT() const { return ldltP_->matrixLDLT(); }
 
   inline size_t rows() const { return N_; }
   inline size_t cols() const { return N_; }
@@ -126,13 +128,51 @@ class LDLT_factor {
   std::shared_ptr<ldlt_t> ldltP_;
 };
 
-template <typename T,
-	  // require_not_vt_var<T>* = nullptr, <-- using this instead of next line doesn't work, why?
-	  require_not_eigen_vt<is_var, T>* = nullptr,
-	  require_eigen_t<T>* = nullptr>
+template <typename T, bool alloc_in_arena>
+class LDLT_factor2;
+
+template <typename T>
+class LDLT_factor2<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, false> {
+private:
+  using ldlt_type = Eigen::LDLT<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>;
+  std::shared_ptr<ldlt_type> ldlt_ptr_;
+public:
+  template <typename S,
+	    require_eigen_t<S>* = nullptr>
+  LDLT_factor2(const S& matrix) :
+    ldlt_ptr_(new ldlt_type(matrix)) {}
+
+  template <typename Rhs>
+  inline const Eigen::Solve<ldlt_type, Rhs> solve(
+      const Eigen::MatrixBase<Rhs>& b) const {
+    return ldlt_ptr_->solve(b);
+  }
+
+  auto& matrix() {
+    return ldlt_ptr_->matrixLDLT();
+  }
+
+  auto& ldlt() {
+    return *ldlt_ptr_;
+  }
+};
+
+  /*template <typename T,
+	    // require_not_vt_var<T>* = nullptr, <-- using this instead of next line doesn't work, why?
+	    //require_not_eigen_vt<is_var, T>* = nullptr,
+	  require_not_rev_matrix_t<T>* = nullptr>
 inline auto make_ldlt_factor(const T& A) {
   return LDLT_factor<value_type_t<T>, T::RowsAtCompileTime, T::ColsAtCompileTime>(A);
+  }*/
+
+template <typename T, typename... Args,
+	  require_matrix_t<T>* = nullptr>
+inline auto make_ldlt_factor(const T& A) {
+  return LDLT_factor2<plain_type_t<T>, disjunction<is_var<scalar_type_t<return_type_t<T, Args...>>>,
+						   std::is_same<fvar<var>, return_type_t<Args...>>,
+						   std::is_same<fvar<fvar<var>>, return_type_t<Args...>>>::value>(A);
 }
+
   
 }  // namespace math
 }  // namespace stan

@@ -16,13 +16,14 @@ namespace math {
  * @param A LDLT_factor
  * @return the log(abs(det(A))
  */
-template <int R, int C, typename T>
-inline T log_determinant_ldlt(const LDLT_factor<T, R, C> &A) {
-  if (A.rows() == 0) {
+template <typename T, bool alloc_in_arena,
+	  require_not_rev_matrix_t<T>* = nullptr>
+inline value_type_t<T> log_determinant_ldlt(LDLT_factor2<T, alloc_in_arena> &A) {
+  if (A.matrix().size() == 0) {
     return 0;
   }
 
-  return A.log_abs_det();
+  return sum(log(A.ldlt().vectorD().array()));
 }
 
 }  // namespace math

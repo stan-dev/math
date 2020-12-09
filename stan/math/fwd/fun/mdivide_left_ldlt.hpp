@@ -22,14 +22,14 @@ namespace math {
  * @return x = b A^-1, solution of the linear system.
  * @throws std::domain_error if rows of b don't match the size of A.
  */
-template <int R1, int C1, typename EigMat,
+template <bool alloc_on_stack, typename EigMat,
           require_eigen_vt<is_fvar, EigMat>* = nullptr>
-inline Eigen::Matrix<value_type_t<EigMat>, R1, EigMat::ColsAtCompileTime>
-mdivide_left_ldlt(const LDLT_factor<double, R1, C1>& A, const EigMat& b) {
+inline Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, EigMat::ColsAtCompileTime>
+mdivide_left_ldlt(LDLT_factor2<Eigen::MatrixXd, alloc_on_stack>& A, const EigMat& b) {
   using T = typename value_type_t<EigMat>::Scalar;
   constexpr int R2 = EigMat::RowsAtCompileTime;
   constexpr int C2 = EigMat::ColsAtCompileTime;
-  check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
+  check_multiplicable("mdivide_left_ldlt", "A", A.matrix(), "b", b);
 
   const Eigen::Ref<const plain_type_t<EigMat>>& b_ref = b;
   Eigen::Matrix<T, R2, C2> b_val(b.rows(), b.cols());
