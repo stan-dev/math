@@ -63,10 +63,8 @@ template <typename Mat1, typename Mat2,
           require_any_var_matrix_t<Mat1, Mat2>* = nullptr>
 inline auto columns_dot_product(const Mat1& v1, const Mat2& v2) {
   check_matching_sizes("columns_dot_product", "v1", v1, "v2", v2);
-
-  using return_t = return_var_matrix_t<
-      decltype((v1.val().array() * v2.val().array()).colwise().sum().matrix()),
-      Mat1, Mat2>;
+  using inner_return_t = decltype((value_of(v1).array() * value_of(v2).array()).colwise().sum().matrix());
+  using return_t = return_var_matrix_t<inner_return_t, Mat1, Mat2>;
 
   if (!is_constant<Mat1>::value && !is_constant<Mat2>::value) {
     arena_t<promote_scalar_t<var, Mat1>> arena_v1 = v1;
