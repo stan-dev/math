@@ -31,7 +31,7 @@ inline auto add_diag(T_m&& mat, T_a&& to_add) {  // NOLINT
     check_consistent_sizes("add_diag (OpenCL)", "number of elements of to_add",
                            to_add, "diagonal", length_diag);
   }
-  matrix_cl<typename std::decay_t<T_m>::Scalar> mat_eval = mat.eval();
+  matrix_cl<value_type_t<T_m>> mat_eval = mat;
   diagonal(mat_eval) = diagonal(mat_eval) + to_add;
   return mat_eval;
 }
