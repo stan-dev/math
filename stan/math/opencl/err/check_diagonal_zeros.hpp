@@ -9,6 +9,7 @@
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/check_diagonal_zeros.hpp>
+#include <stan/math/opencl/kernel_generator/constant.hpp>
 #include <vector>
 
 namespace stan {
