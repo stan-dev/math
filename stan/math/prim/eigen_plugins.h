@@ -9,7 +9,7 @@ template <typename> struct has_member { typedef int type; };
  *
  * TODO(Andrew): Replace with std::void_t after move to C++17
  */
-template <class T, typename has_member<decltype(T::d_)>::type = 0>
+template <typename T, typename has_member<decltype(T::d_)>::type = 0>
 struct is_fvar : std::true_type
 { };
 
@@ -18,7 +18,7 @@ struct is_fvar : std::true_type
  *
  * TODO(Andrew): Replace with std::void_t after move to C++17
  */
-template <class T, typename has_member<decltype(T::vi_)>::type = 0>
+template <typename T, typename has_member<decltype(T::vi_)>::type = 0>
 struct is_var : std::true_type
 { };
 
@@ -27,7 +27,7 @@ struct is_var : std::true_type
  *
  * TODO(Andrew): Replace with std::void_t after move to C++17
  */
-template <class T, typename has_member<decltype(std::remove_pointer_t<T>::adj_)>::type = 0>
+template <typename T, typename has_member<decltype(std::remove_pointer_t<T>::adj_)>::type = 0>
 struct is_vari : std::true_type
 { };
 
@@ -69,25 +69,25 @@ struct val_Op{
   EIGEN_EMPTY_STRUCT_CTOR(val_Op);
 
   //Returns value from a vari*
-  template<typename T = Scalar,
+  template <typename T = Scalar,
            std::enable_if_t<is_vari<T>::value>* = nullptr>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    const double& operator()(T &v) const { return v->val_; }
+    const double& operator()(T& v) const { return v->val_; }
 
   //Returns value from a var
-  template<typename T = Scalar,
+  template <typename T = Scalar,
            std::enable_if_t<is_var<T>::value>* = nullptr>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    const double& operator()(T &v) const { return v.vi_->val_; }
+    const double& operator()(T& v) const { return v.vi_->val_; }
 
   //Returns value from an fvar
-  template<typename T = Scalar,
+  template <typename T = Scalar,
            std::enable_if_t<is_fvar<T>::value>* = nullptr>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    forward_return_t<T> operator()(T &v) const { return v.val_; }
+    forward_return_t<T> operator()(T& v) const { return v.val_; }
 
   //Returns double unchanged from input (by value)
-  template<typename T = Scalar,
+  template <typename T = Scalar,
            std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
     double_return_t<T> operator()(T v) const { return v; }
@@ -135,9 +135,9 @@ struct d_Op {
   EIGEN_EMPTY_STRUCT_CTOR(d_Op);
 
   //Returns tangent from an fvar
-  template<typename T = Scalar>
+  template <typename T = Scalar>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    forward_return_t<T> operator()(T &v) const { return v.d_; }
+    forward_return_t<T> operator()(T& v) const { return v.d_; }
 };
 
 /**
@@ -171,16 +171,16 @@ struct adj_Op {
   EIGEN_EMPTY_STRUCT_CTOR(adj_Op);
 
   //Returns adjoint from a vari*
-  template<typename T = Scalar,
+  template <typename T = Scalar,
            std::enable_if_t<is_vari<T>::value>* = nullptr>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    reverse_return_t<T> operator()(T &v) const { return v->adj_; }
+    reverse_return_t<T> operator()(T& v) const { return v->adj_; }
 
   //Returns adjoint from a var
-  template<typename T = Scalar,
+  template <typename T = Scalar,
            std::enable_if_t<is_var<T>::value>* = nullptr>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    reverse_return_t<T> operator()(T &v) const { return v.vi_->adj_; }
+    reverse_return_t<T> operator()(T& v) const { return v.vi_->adj_; }
 };
 
 /**
@@ -215,9 +215,9 @@ struct vi_Op {
   EIGEN_EMPTY_STRUCT_CTOR(vi_Op);
 
   //Returns vari* from a var
-  template<typename T = Scalar>
+  template <typename T = Scalar>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    vari_return_t<T> operator()(T &v) const { return v.vi_; }
+    vari_return_t<T> operator()(T& v) const { return v.vi_; }
 };
 
 /**
