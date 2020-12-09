@@ -81,7 +81,8 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
   matrix_cl<T> temp(A_rows_padded, A_rows_padded);
   matrix_cl<T> inv_padded = constant(0.0, A_rows_padded, A_rows_padded);
   matrix_cl<T> inv_mat(A);
-  matrix_cl<T> zero_mat = constant(0.0, A_rows_padded - A.rows(), A_rows_padded);
+  matrix_cl<T> zero_mat
+      = constant(0.0, A_rows_padded - A.rows(), A_rows_padded);
   if (tri_view == matrix_cl_view::Upper) {
     inv_mat = transpose(inv_mat).eval();
   }
