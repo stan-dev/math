@@ -72,7 +72,7 @@ class LDLT_factor {
 
   LDLT_factor() : N_(0), ldltP_(new ldlt_t()) {}
 
-  explicit LDLT_factor(const matrix_t& A) : N_(0), ldltP_(new ldlt_t()) {
+  LDLT_factor(const matrix_t& A) : N_(0), ldltP_(new ldlt_t()) {
     compute(A);
   }
 
@@ -126,6 +126,14 @@ class LDLT_factor {
   std::shared_ptr<ldlt_t> ldltP_;
 };
 
+template <typename T,
+	  // require_not_vt_var<T>* = nullptr, <-- using this instead of next line doesn't work, why?
+	  require_not_eigen_vt<is_var, T>* = nullptr,
+	  require_eigen_t<T>* = nullptr>
+inline auto make_ldlt_factor(const T& A) {
+  return LDLT_factor<value_type_t<T>, T::RowsAtCompileTime, T::ColsAtCompileTime>(A);
+}
+  
 }  // namespace math
 }  // namespace stan
 

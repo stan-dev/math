@@ -25,7 +25,7 @@ namespace math {
  */
 template <typename T, int R, int C>
 inline void check_ldlt_factor(const char* function, const char* name,
-                              LDLT_factor<T, R, C>& A) {
+                              const LDLT_factor<T, R, C>& A) {
   if (!A.success()) {
     std::ostringstream msg;
     msg << "is not positive definite.  last conditional variance is ";
