@@ -1,8 +1,7 @@
-
 #include <stan/math/rev.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathFunctionsPromoteVarMatrix, VarMatrix) {
+TEST(MathFunctions, PromoteVarMatrix) {
   using stan::promote_var_matrix_t;
   using stan::math::var;
   using stan::math::var_value;

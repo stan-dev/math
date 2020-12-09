@@ -2,7 +2,7 @@
 #include <stan/math/rev.hpp>
 #include <gtest/gtest.h>
 
-TEST(MathFunctionsReturnVarMatrix, VarMatrix) {
+TEST(MathFunctions, ReturnVarMatrix) {
   using stan::return_var_matrix_t;
   using stan::math::var;
   using stan::math::var_value;
