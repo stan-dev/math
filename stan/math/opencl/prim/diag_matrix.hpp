@@ -22,7 +22,7 @@ namespace math {
 template <typename T_x,
           require_all_kernel_expressions_and_none_scalar_t<T_x>* = nullptr>
 inline auto diag_matrix(T_x&& x) {  // NOLINT
-  return add_diag(constant(0, x.size(), x.size()).eval(), x);
+  return add_diag(constant(value_type_t<T_x>(0), x.size(), x.size()).eval(), x);
 }
 }  // namespace math
 }  // namespace stan
