@@ -1,3 +1,6 @@
+// Workaround for SFINAE regression with GCC 8.3
+template <typename> struct has_member { typedef int type; };
+
 /**
  * Reimplements is_fvar without requiring external math headers
  *
@@ -6,11 +9,8 @@
  *
  * TODO(Andrew): Replace with std::void_t after move to C++17
  */
-template <class, class = void>
-struct is_fvar : std::false_type
-{ };
-template <class T>
-struct is_fvar<T, decltype((void)(T::d_))> : std::true_type
+template <class T, typename has_member<decltype(T::d_)>::type = 0>
+struct is_fvar : std::true_type
 { };
 
 /**
@@ -18,11 +18,8 @@ struct is_fvar<T, decltype((void)(T::d_))> : std::true_type
  *
  * TODO(Andrew): Replace with std::void_t after move to C++17
  */
-template <class, class = void>
-struct is_var : std::false_type
-{ };
-template <class T>
-struct is_var<T, decltype((void)(T::vi_))> : std::true_type
+template <class T, typename has_member<decltype(T::vi_)>::type = 0>
+struct is_var : std::true_type
 { };
 
 /**
@@ -30,12 +27,10 @@ struct is_var<T, decltype((void)(T::vi_))> : std::true_type
  *
  * TODO(Andrew): Replace with std::void_t after move to C++17
  */
-template <class, class = void>
-struct is_vari : std::false_type
+template <class T, typename has_member<decltype(std::remove_pointer_t<T>::adj_)>::type = 0>
+struct is_vari : std::true_type
 { };
-template <class T>
-struct is_vari<T, decltype((void)(std::remove_pointer_t<T>::adj_))> : std::true_type
-{ };
+
 
 //TODO(Andrew): Replace std::is_const<>::value with std::is_const_v<> after move to C++17
 template <typename T>
