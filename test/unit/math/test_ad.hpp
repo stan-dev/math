@@ -1577,8 +1577,8 @@ template <typename ResultMatVar, typename ResultVarMat, typename MatVar,
 inline void test_matvar_gradient(const ad_tolerances& tols,
                                  ResultMatVar& A_mv_f, ResultVarMat& A_vm_f,
                                  const MatVar& A_mv, const VarMat& A_vm) {
- for (Eigen::Index j = 0; j < A_mv_f.cols(); ++j) {
-  for (Eigen::Index i = 0; i < A_vm_f.rows(); ++i) {
+  for (Eigen::Index j = 0; j < A_mv_f.cols(); ++j) {
+    for (Eigen::Index i = 0; i < A_vm_f.rows(); ++i) {
       A_vm_f.adj()(i, j) = 1;
       A_mv_f.adj()(i, j) = 1;
       stan::math::grad();
