@@ -1579,8 +1579,8 @@ inline void test_matvar_gradient(const ad_tolerances& tols,
                                  const MatVar& A_mv, const VarMat& A_vm) {
   for (Eigen::Index i = 0; i < A_vm_f.size(); ++i) {
     for (Eigen::Index j = 0; j < A_mv_f.size(); ++j) {
-      A_vm_f.adj()(i) = 1;
-      A_mv_f.adj()(i) = 1;
+      A_vm_f.adj()(i, j) = 1;
+      A_mv_f.adj()(i, j) = 1;
       stan::math::grad();
       expect_near_rel_var("var<Matrix> vs Matrix<var> input", A_vm, A_mv, tols);
       stan::math::set_zero_all_adjoints();
