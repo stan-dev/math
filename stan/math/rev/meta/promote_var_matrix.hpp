@@ -9,6 +9,9 @@ namespace stan {
 /**
  * Given an Eigen type and several inputs, determine if a matrix should be
  * `var<Matrix>` or `Matrix<var>`.
+ *
+ * `Matrix` will not necessarily be a plain type
+ *
  * @tparam ReturnType An Eigen matrix used for composing the `var<Matrix>` or
  *  `Matrix<var>` type.
  * @tparam Types Parameter pack holding any mix of types. If any of `Types`
