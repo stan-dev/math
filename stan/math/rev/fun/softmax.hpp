@@ -29,7 +29,7 @@ inline auto softmax(const Mat& alpha) {
   using mat_plain = plain_type_t<Mat>;
   using ret_type = return_var_matrix_t<Mat>;
   if (alpha.size() == 0) {
-    return alpha;
+    return ret_type(alpha);
   }
   arena_t<mat_plain> alpha_arena = alpha;
   arena_t<Eigen::VectorXd> res_val = softmax(value_of(alpha_arena));
