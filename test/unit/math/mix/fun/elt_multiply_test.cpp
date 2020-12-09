@@ -5,7 +5,7 @@ TEST(MathMixMatFun, elt_multiply_transpose_test) {
     return stan::math::elt_multiply(x, x.transpose());
   };
 
-  Eigen::MatrixXd x(2, 2);
+  Eigen::MatrixXd x = Eigen::MatrixXd::Random(2, 2);
 
   stan::test::expect_ad_matvar(f, x);
 }
