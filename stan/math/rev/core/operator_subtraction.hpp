@@ -232,9 +232,9 @@ template <typename EigMat, typename Var,
           require_var_vt<std::is_arithmetic, Var>* = nullptr>
 inline auto subtract(const EigMat& a, const Var& b) {
   using ret_type = return_var_matrix_t<EigMat>;
-  arena_t<plain_type_t<ret_type>> ret(a.array() - b.val());
+  arena_t<ret_type> ret(a.array() - b.val());
   reverse_pass_callback([ret, b]() mutable { b.adj() -= ret.adj().sum(); });
-  return plain_type_t<ret_type>(ret);
+  return ret_type(ret);
 }
 
 /**
