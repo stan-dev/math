@@ -8,10 +8,9 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <string>
 #include <type_traits>
-#include <set>
+#include <map>
 #include <utility>
 
 namespace stan {
@@ -53,7 +52,8 @@ class calc_if_
 
   /**
    * Generates kernel code for assigning this expression into result expression.
-   * @param[in,out] generated set of (pointer to) already generated operations
+   * @param[in,out] generated map from (pointer to) already generated operations
+   * to variable names
    * @param ng name generator for this kernel
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
@@ -64,7 +64,7 @@ class calc_if_
    */
   template <typename T_result>
   kernel_parts get_whole_kernel_parts(
-      std::set<const operation_cl_base*>& generated, name_generator& ng,
+      std::map<const void*, const char*>& generated, name_generator& ng,
       const std::string& row_index_name, const std::string& col_index_name,
       const T_result& result) const {
     if (Do_Calculate) {
@@ -77,13 +77,13 @@ class calc_if_
 
   /**
    * Sets kernel arguments for nested expressions.
-   * @param[in,out] generated set of expressions that already set their kernel
+   * @param[in,out] generated map of expressions that already set their kernel
    * arguments
    * @param kernel kernel to set arguments on
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::set<const operation_cl_base*>& generated,
+  inline void set_args(std::map<const void*, const char*>& generated,
                        cl::Kernel& kernel, int& arg_num) const {
     if (Do_Calculate) {
       this->template get_arg<0>().set_args(generated, kernel, arg_num);

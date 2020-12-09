@@ -22,10 +22,9 @@ namespace math {
  * @throw std::domain_error if m is not a symmetric matrix or
  *   if m is not positive definite (if m has more than 0 elements)
  */
-template <typename T, typename = require_floating_point_t<T>>
-inline matrix_cl<T> cholesky_decompose(matrix_cl<T>& A) {
+inline matrix_cl<double> cholesky_decompose(const matrix_cl<double>& A) {
   check_symmetric("cholesky_decompose", "A", A);
-  matrix_cl<T> res = copy_cl(A);
+  matrix_cl<double> res = copy_cl(A);
   if (res.rows() == 0) {
     return res;
   }

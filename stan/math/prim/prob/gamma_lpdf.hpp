@@ -42,7 +42,9 @@ namespace math {
  * @throw std::domain_error if beta is not greater than 0.
  * @throw std::domain_error if y is not greater than or equal to 0.
  */
-template <bool propto, typename T_y, typename T_shape, typename T_inv_scale>
+template <bool propto, typename T_y, typename T_shape, typename T_inv_scale,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_shape, T_inv_scale>* = nullptr>
 return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
                                                     const T_shape& alpha,
                                                     const T_inv_scale& beta) {

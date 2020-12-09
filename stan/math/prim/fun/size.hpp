@@ -29,6 +29,11 @@ inline size_t size(const T& m) {
   return m.size();
 }
 
+template <typename T, require_var_matrix_t<T>* = nullptr>
+inline size_t size(const T& m) {
+  return m.size();
+}
+
 }  // namespace math
 }  // namespace stan
 #endif

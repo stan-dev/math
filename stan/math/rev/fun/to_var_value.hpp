@@ -4,7 +4,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/core/arena_matrix.hpp>
-#include <stan/math/rev/functor/reverse_pass_callback.hpp>
+#include <stan/math/rev/core/reverse_pass_callback.hpp>
 
 namespace stan {
 namespace math {
@@ -25,6 +25,17 @@ to_var_value(const T& a) {
   reverse_pass_callback(
       [res, a_arena]() mutable { a_arena.adj() += res.adj(); });
   return res;
+}
+
+/**
+ * Forward var_values on.
+ *
+ * @tparam T type of the input
+ * @param a matrix to convert
+ */
+template <typename T, require_var_t<T>* = nullptr>
+auto to_var_value(T&& a) {
+  return std::forward<T>(a);
 }
 
 }  // namespace math

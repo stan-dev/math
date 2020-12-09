@@ -2,7 +2,7 @@
 #define STAN_TEST_OPENCL_UTIL_HPP
 
 #include <stan/math.hpp>
-#include <stan/math/opencl/rev/opencl.hpp>
+#include <stan/math/opencl/rev.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
 #include <test/unit/pretty_print_types.hpp>
 #include <gtest/gtest.h>
@@ -121,25 +121,22 @@ template <typename Functor, typename Arg0, typename... Args>
 void prim_rev_argument_combinations(const Functor& f, const Arg0& arg0,
                                     const Args&... args) {
   prim_rev_argument_combinations(
-      [&f, &arg0](auto args_for_cpu, auto args_for_opencl) {
+      [&f, &arg0](const auto& args1, const auto& args2) {
         constexpr size_t Size
-            = std::tuple_size<std::decay_t<decltype(args_for_cpu)>>::value;
+            = std::tuple_size<std::decay_t<decltype(args1)>>::value;
         return index_apply<Size>([&](auto... Is) {
-          return f(
-              std::forward_as_tuple(arg0, std::get<Is>(args_for_cpu)...),
-              std::forward_as_tuple(arg0, std::get<Is>(args_for_opencl)...));
+          return f(std::make_tuple(arg0, std::get<Is>(args1)...),
+                   std::make_tuple(arg0, std::get<Is>(args2)...));
         });
       },
       args...);
   prim_rev_argument_combinations(
-      [&](const auto& args_for_cpu, const auto& args_for_opencl) {
+      [&](const auto& args1, const auto& args2) {
         constexpr size_t Size
-            = std::tuple_size<std::decay_t<decltype(args_for_cpu)>>::value;
+            = std::tuple_size<std::decay_t<decltype(args1)>>::value;
         return index_apply<Size>([&](auto... Is) {
-          return f(std::make_tuple(var_argument(arg0),
-                                   std::get<Is>(args_for_cpu)...),
-                   std::make_tuple(var_argument(arg0),
-                                   std::get<Is>(args_for_opencl)...));
+          return f(std::make_tuple(var_argument(arg0), std::get<Is>(args1)...),
+                   std::make_tuple(var_argument(arg0), std::get<Is>(args2)...));
         });
       },
       args...);
@@ -150,7 +147,7 @@ void compare_cpu_opencl_prim_rev_impl(const Functor& functor,
                                       std::index_sequence<Is...>,
                                       const Args&... args) {
   prim_rev_argument_combinations(
-      [&functor](auto args_for_cpu, auto args_for_opencl) {
+      [&functor](const auto& args_for_cpu, const auto& args_for_opencl) {
         auto res_cpu = functor(std::get<Is>(args_for_cpu)...);
         auto res_opencl
             = functor(opencl_argument(std::get<Is>(args_for_opencl))...);
@@ -173,11 +170,70 @@ void compare_cpu_opencl_prim_rev_impl(const Functor& functor,
       },
       args...);
 }
+
+template <bool Condition, typename T, std::enable_if_t<Condition>* = nullptr>
+auto to_vector_if(const T& x, std::size_t N) {
+  return Eigen::Matrix<T, Eigen::Dynamic, 1>::Constant(N, x);
+}
+template <bool Condition, typename T, std::enable_if_t<!Condition>* = nullptr>
+T to_vector_if(const T& x, std::size_t N) {
+  return x;
+}
+
+using stan::math::rows;
+template <typename T, require_not_container_t<T>* = nullptr>
+int rows(const T&) {
+  return 1;
+}
+template <typename T, require_std_vector_t<T>* = nullptr>
+int rows(const T& x) {
+  return x.size();
+}
+
+template <std::size_t I, typename Functor, std::size_t... Is, typename... Args>
+void test_opencl_broadcasting_prim_rev_impl(const Functor& functor,
+                                            std::index_sequence<Is...>,
+                                            const Args&... args) {
+  prim_rev_argument_combinations(
+      [&functor, N = std::max({rows(args)...})](const auto& args_broadcast,
+                                                const auto& args_vector) {
+        auto res_scalar
+            = functor(opencl_argument(std::get<Is>(args_broadcast))...);
+        auto res_vec = functor(opencl_argument(
+            to_vector_if<Is == I>(std::get<Is>(args_vector), N))...);
+        std::string signature = type_name<decltype(args_broadcast)>().data();
+        expect_eq(res_vec, res_scalar,
+                  ("return values of broadcast and vector arguments do not "
+                   "match for signature "
+                   + signature + "!")
+                      .c_str());
+        var(recursive_sum(res_scalar) + recursive_sum(res_vec)).grad();
+
+        static_cast<void>(std::initializer_list<int>{
+            (expect_adj_near(
+                 std::get<Is>(args_vector), std::get<Is>(args_broadcast),
+                 ("adjoints of broadcast and vector arguments do not match for "
+                  "argument "
+                  + std::to_string(Is) + " for signature " + signature + "!")
+                     .c_str()),
+             0)...});
+
+        set_zero_all_adjoints();
+      },
+      args...);
+}
+
 }  // namespace internal
 
 /**
  * Tests that given functor calculates same values and adjoints when given
  * arguments on CPU and OpenCL device.
+ *
+ * The functor must accept all possible combinations of converted `args`.
+ * All std/row/col vectors and matrices are converted to `matrix_cl`. `double`
+ * scalars can be converted to `var`s or left as `double`s. When converting
+ * scalars to `double` in containers, `var_value<matrix_cl<double>>` is used
+ * instead.
  *
  * @tparam Functor type of the functor
  * @tparam Args types of the arguments
@@ -189,6 +245,37 @@ template <typename Functor, typename... Args>
 void compare_cpu_opencl_prim_rev(const Functor& functor, const Args&... args) {
   internal::compare_cpu_opencl_prim_rev_impl(
       functor, std::make_index_sequence<sizeof...(args)>{}, args...);
+  recover_memory();
+}
+
+/**
+ * Tests that given functor can broadcast the `I`-th argument by comparing a
+ * call with scalar and a call with column vector for that argument.
+ *
+ * The functor must accept all possible combinations of converted `args`.
+ * All std/col vectors and matrices are converted to `matrix_cl`.
+ * `double` scalars can be converted to `var`s or left as `double`s. When
+ * converting scalars to `double` in containers, `var_value<matrix_cl<double>>`
+ * is used instead.
+ *
+ * Warning: The scalar is broadcast to size equal to number of rows (or size in
+ * case of `std::vector`) of the argument with the most rows
+ *
+ * @tparam Functor type of the functor
+ * @tparam Args types of the arguments; `I`-th argument must be a scalar
+ * @param fucntor functor to test
+ * @param args arguments to test the functor with. These should be just values
+ * in CPU memory (no vars, no arguments on the OpenCL device).
+ */
+template <std::size_t I, typename Functor, typename... Args,
+          std::enable_if_t<(I < sizeof...(Args))>* = nullptr,
+          require_stan_scalar_t<
+              std::tuple_element_t<I, std::tuple<Args...>>>* = nullptr>
+void test_opencl_broadcasting_prim_rev(const Functor& functor,
+                                       const Args&... args) {
+  internal::test_opencl_broadcasting_prim_rev_impl<I>(
+      functor, std::make_index_sequence<sizeof...(args)>{}, args...);
+  recover_memory();
 }
 
 }  // namespace test

@@ -1,6 +1,6 @@
 #ifdef STAN_OPENCL
 #include <stan/math.hpp>
-#include <stan/math/opencl/opencl.hpp>
+#include <stan/math/opencl/prim.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
@@ -124,49 +124,20 @@ TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_small_simple) {
 TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_broadcast_y) {
   int N = 3;
   int M = 2;
-  int C = 5;
+  int C = 3;
 
-  int y = 1;
+  int y_scal = 1;
   Matrix<double, Dynamic, Dynamic> x(N, M);
   x << -12, 46, -42, 24, 25, 27;
   Matrix<double, Dynamic, 1> beta(M, 1);
   beta << 0.3, 2;
   Matrix<double, Dynamic, 1> cuts(C - 1, 1);
-  cuts << -0.4, 0.1, 0.3, 4.5;
+  cuts << -0.4, 0.1;
 
-  matrix_cl<double> x_cl(x);
-  matrix_cl<double> beta_cl(beta);
-  matrix_cl<double> cuts_cl(cuts);
-
-  EXPECT_NEAR_REL(
-      stan::math::ordered_logistic_glm_lpmf(y, x_cl, beta_cl, cuts_cl),
-      stan::math::ordered_logistic_glm_lpmf(y, x, beta, cuts));
-  EXPECT_NEAR_REL(
-      stan::math::ordered_logistic_glm_lpmf<true>(y, x_cl, beta_cl, cuts_cl),
-      stan::math::ordered_logistic_glm_lpmf<true>(y, x, beta, cuts));
-
-  Matrix<var, Dynamic, Dynamic> x_var1 = x;
-  Matrix<var, Dynamic, Dynamic> x_var2 = x;
-  Matrix<var, Dynamic, 1> beta_var1 = beta;
-  Matrix<var, Dynamic, 1> beta_var2 = beta;
-  Matrix<var, Dynamic, 1> cuts_var1 = cuts;
-  Matrix<var, Dynamic, 1> cuts_var2 = cuts;
-  auto x_var1_cl = stan::math::to_matrix_cl(x_var1);
-  auto beta_var1_cl = stan::math::to_matrix_cl(beta_var1);
-  auto cuts_var1_cl = stan::math::to_matrix_cl(cuts_var1);
-
-  var res1 = stan::math::ordered_logistic_glm_lpmf(y, x_var1_cl, beta_var1_cl,
-                                                   cuts_var1_cl);
-  var res2
-      = stan::math::ordered_logistic_glm_lpmf(y, x_var2, beta_var2, cuts_var2);
-
-  (res1 + res2).grad();
-
-  EXPECT_NEAR_REL(res1.val(), res2.val());
-
-  EXPECT_NEAR_REL(x_var1.adj().eval(), x_var2.adj().eval());
-  EXPECT_NEAR_REL(beta_var1.adj().eval(), beta_var2.adj().eval());
-  EXPECT_NEAR_REL(cuts_var1.adj().eval(), cuts_var2.adj().eval());
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
+      ordered_logistic_glm_lpmf_functor, y_scal, x, beta, cuts);
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
+      ordered_logistic_glm_lpmf_functor_propto, y_scal, x, beta, cuts);
 }
 
 TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_zero_instances) {
