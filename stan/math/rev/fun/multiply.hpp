@@ -4,7 +4,7 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/core/typedefs.hpp>
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/fun.hpp>
 #include <type_traits>
 
 namespace stan {
