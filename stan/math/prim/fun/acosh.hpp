@@ -83,7 +83,7 @@ struct acosh_fun {
  * @param x container
  * @return Elementwise acosh of members of container.
  */
-template <typename T>
+template <typename T, require_not_var_matrix_t<T>* = nullptr>
 inline auto acosh(const T& x) {
   return apply_scalar_unary<acosh_fun, T>::apply(x);
 }

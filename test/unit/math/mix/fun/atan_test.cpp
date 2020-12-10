@@ -16,3 +16,14 @@ TEST(mathMixMatFun, atan) {
     }
   }
 }
+
+TEST(mathMixMatFun, atan_varmat) {
+  using stan::test::expect_ad_matvar;
+  auto f = [](const auto& x1) {
+    using stan::math::atan;
+    return atan(x1);
+  };
+  Eigen::VectorXd A(8);
+  A << -2.6, -2, -0.2, 0.5, 1, 1.3, 1.5, 3;
+  expect_ad_matvar(f, A);
+}

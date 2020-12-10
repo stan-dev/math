@@ -23,16 +23,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class asinh_vari : public op_v_vari {
- public:
-  asinh_vari(double val, vari* avi) : op_v_vari(val, avi) {}
-  void chain() {
-    avi_->adj_ += adj_ / std::sqrt(avi_->val_ * avi_->val_ + 1.0);
-  }
-};
-}  // namespace internal
-
 /**
  * The inverse hyperbolic sine function for variables (C99).
  *
@@ -66,9 +56,22 @@ class asinh_vari : public op_v_vari {
  * @param a The variable.
  * @return Inverse hyperbolic sine of the variable.
  */
-inline var asinh(const var& a) {
-  return var(new internal::asinh_vari(asinh(a.val()), a.vi_));
-}
+ inline var asinh(const var& x) {
+   return make_callback_var(asinh(x.val()), [x](const auto& vi) mutable {
+     x.adj() += vi.adj_ / std::sqrt(x.val() * x.val() + 1.0);
+   });
+ }
+
+ template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
+ inline auto asinh(const VarMat& x) {
+   return make_callback_var(x.val().unaryExpr([](const auto x) {
+      return asinh(x);
+    }),
+    [x](const auto& vi) mutable {
+     x.adj().array() += vi.adj_.array() / (x.val().array() * x.val().array() + 1.0).sqrt();
+   });
+ }
+
 
 /**
  * Return the hyperbolic arcsine of the complex argument.

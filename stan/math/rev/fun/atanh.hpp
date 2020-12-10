@@ -16,14 +16,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class atanh_vari : public op_v_vari {
- public:
-  atanh_vari(double val, vari* avi) : op_v_vari(val, avi) {}
-  void chain() { avi_->adj_ += adj_ / (1.0 - avi_->val_ * avi_->val_); }
-};
-}  // namespace internal
-
 /**
  * The inverse hyperbolic tangent function for variables (C99).
  *
@@ -63,9 +55,22 @@ class atanh_vari : public op_v_vari {
    * @return Inverse hyperbolic tangent of the variable.
    * @throw std::domain_error if a < -1 or a > 1
    */
-inline var atanh(const var& a) {
-  return var(new internal::atanh_vari(atanh(a.val()), a.vi_));
-}
+   inline var atanh(const var& x) {
+     return make_callback_var(atanh(x.val()), [x](const auto& vi) mutable {
+       x.adj() += vi.adj_ / (1.0 - x.val() * x.val());
+     });
+   }
+
+   template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
+   inline auto atanh(const VarMat& x) {
+     return make_callback_var(x.val().unaryExpr([](const auto x) {
+        return atanh(x);
+      }),
+      [x](const auto& vi) mutable {
+       x.adj().array() += vi.adj_.array() / (1.0 - x.val().array() * x.val().array());
+     });
+   }
+
 
 /**
  * Return the hyperbolic arc tangent of the complex argument.

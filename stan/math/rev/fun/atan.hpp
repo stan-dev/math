@@ -21,14 +21,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class atan_vari : public op_v_vari {
- public:
-  explicit atan_vari(vari* avi) : op_v_vari(std::atan(avi->val_), avi) {}
-  void chain() { avi_->adj_ += adj_ / (1.0 + (avi_->val_ * avi_->val_)); }
-};
-}  // namespace internal
-
 /**
  * Return the principal value of the arc tangent, in radians, of the
  * specified variable (cmath).
@@ -59,8 +51,18 @@ class atan_vari : public op_v_vari {
  * @param a Variable in range [-1, 1].
  * @return Arc tangent of variable, in radians.
  */
-inline var atan(const var& a) { return var(new internal::atan_vari(a.vi_)); }
+ inline var atan(const var& x) {
+   return make_callback_var(std::atan(x.val()), [x](const auto& vi) mutable {
+     x.adj() += vi.adj_ / (1.0 + (x.val() * x.val()));
+   });
+ }
 
+ template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
+ inline auto atan(const VarMat& x) {
+   return make_callback_var(x.val().array().atan().matrix(), [x](const auto& vi) mutable {
+     x.adj().array() += vi.adj_.array() / (1.0 + (x.val().array() * x.val().array()));
+   });
+ }
 /**
  * Return the arc tangent of the complex argument.
  *

@@ -14,3 +14,23 @@ TEST(mathMixMatFun, atanh) {
     }
   }
 }
+
+TEST(mathMixMatFun, atanh_varmat) {
+  auto f = [](const auto& x1) {
+    using stan::math::atanh;
+    return atanh(x1);
+  };
+  auto com_args = stan::test::internal::common_args();
+  std::vector<double> extra_args{-0.9, 0.5};
+  Eigen::VectorXd A(com_args.size() + extra_args.size());
+  int i = 0;
+  for (double x : com_args) {
+    A(i) = x;
+    ++i;
+  }
+  for (double x : extra_args) {
+    A(i) = x;
+    ++i;
+  }
+  stan::test::expect_ad_matvar(f, A);
+}

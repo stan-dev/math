@@ -43,7 +43,7 @@ struct asinh_fun {
  * @param x container
  * @return Inverse hyperbolic sine of each value in the container.
  */
-template <typename T>
+template <typename T, require_not_var_matrix_t<T>* = nullptr>
 inline auto asinh(const T& x) {
   return apply_scalar_unary<asinh_fun, T>::apply(x);
 }
