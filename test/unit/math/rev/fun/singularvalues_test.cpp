@@ -15,7 +15,7 @@ a << 1.8904, 0.7204, -0.1599, 1.2028, 0.7204, 7.3394, 2.0895, -0.6151,
 stan::math::matrix_d a_inv = stan::math::inverse(a);
 
 stan::math::matrix_v a_v(a);
-auto w = singular_values(a_v);
+auto w = stan::math::singular_values(a_v);
 auto logdet = stan::math::sum(stan::math::log(w));
 
 stan::math::set_zero_all_adjoints();
