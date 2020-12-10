@@ -24,7 +24,7 @@ inline auto tail(const T& v, size_t n) {
   if (n != 0) {
     check_vector_index("tail", "n", v, n);
   }
-  return v.tail(n).eval();
+  return v.tail(n);
 }
 
 /**

@@ -1,6 +1,6 @@
 #ifdef STAN_OPENCL
 #include <stan/math.hpp>
-#include <stan/math/opencl/opencl.hpp>
+#include <stan/math/opencl/prim.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
