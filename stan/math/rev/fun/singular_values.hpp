@@ -20,7 +20,7 @@ namespace math {
 /**
  * Return the singular values of the specified matrix.
  *
- * Equation (4) from Differentiable Programming Tensor Networks
+ * Equation (4) from Differentiable Programming Tensor Networks(H. Liao, J. Liu, et al., arXiv:1903.09650)
  * is used for MxN input matrix's adjoint calculation.
  *
  * @tparam EigMat type of input matrix
@@ -40,15 +40,14 @@ inline auto singular_values(const EigMat& m) {
   Eigen::MatrixXd m_val = value_of(arena_m);
   Eigen::JacobiSVD<Eigen::MatrixXd> svd(m_val, Eigen::ComputeFullU | Eigen::ComputeFullV);
 
-  vector_v singular_values(to_arena(svd.singularValues())); // switch to vector_v to enable adjoint 
+  arena_t<ret_type> singular_values = svd.singularValues();
 
-  //auto singular_values = to_arena(svd.singularValues());
   auto U = to_arena(svd.matrixU());
   auto V = to_arena(svd.matrixV());
 
   reverse_pass_callback(
       [arena_m, U, singular_values, V]() mutable {
-          arena_m.adj() += U * singular_values.adj().asDiagonal() * V.transpose(); // adjD contributions U.adj() and V.adj() is zero.
+          arena_m.adj() += U * singular_values.adj().asDiagonal() * V.transpose();
       });
   return ret_type(singular_values);
 }
