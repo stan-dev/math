@@ -8,9 +8,11 @@
 #include <stan/math/opencl/rev/arena_type.hpp>
 #include <stan/math/opencl/rev/cholesky_decompose.hpp>
 #include <stan/math/opencl/rev/copy.hpp>
+#include <stan/math/opencl/rev/crossprod.hpp>
 #include <stan/math/opencl/rev/multiply.hpp>
 #include <stan/math/opencl/rev/operands_and_partials.hpp>
 #include <stan/math/opencl/rev/sum.hpp>
+#include <stan/math/opencl/rev/tcrossprod.hpp>
 #include <stan/math/opencl/rev/to_arena.hpp>
 #include <stan/math/rev.hpp>
 
