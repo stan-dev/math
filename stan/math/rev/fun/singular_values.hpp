@@ -45,29 +45,10 @@ inline auto singular_values(const EigMat& m) {
   //auto singular_values = to_arena(svd.singularValues());
   auto U = to_arena(svd.matrixU());
   auto V = to_arena(svd.matrixV());
-  Eigen::MatrixXd Fp(M,M);
-  Eigen::MatrixXd Fm(M,M);
-  for(int i = 0; i < M; i++) {
-    for(int j = 0; j < M; j++) {
-      if(j == i) {
-        Fp(i, j) = 0.0;
-        Fm(i, j) = 0.0;
-      } else {
-        Fp(i, j)  = 1.0 / (singular_values[j].val() - singular_values[i].val()) + 1.0 / (singular_values[i].val() + singular_values[j].val());
-        Fm(i, j) = 1.0 / (singular_values[j].val() - singular_values[i].val()) - 1.0 / (singular_values[j].val() + singular_values[i].val());
-      }
-    }
-  }
-  auto arena_Fp = to_arena(Fp);
-  auto arena_Fm = to_arena(Fm);
 
   reverse_pass_callback(
       [arena_m, U, singular_values, V]() mutable {
-          arena_m.adj() //+= 0.5 * U * (arena_Fp * (U.transpose() * U.adj() - U.adj().transpose() * U)) * V.transpose() // adjU contributions
-                   //+(Eigen::MatrixXd::Identity(M, M) - U * U.transpose()) * U.adj() * singular_values.asDiagonal().inverse() * V.transpose();
-                   += U * singular_values.adj().asDiagonal() * V.transpose(); // adjD contributions
-                   //+ 0.5 * U * (arena_Fm * (V.transpose() * V.adj() - V.adj().transpose() * V)) * V.transpose() // adjV contributions
-                   //+ U * singular_values.asDiagonal().inverse() * V.adj().transpose() * (Eigen::MatrixXd::Identity(M, M) - V * V.transpose());
+          arena_m.adj() += U * singular_values.adj().asDiagonal() * V.transpose(); // adjD contributions U.adj() and V.adj() is zero.
       });
   return ret_type(singular_values);
 }
