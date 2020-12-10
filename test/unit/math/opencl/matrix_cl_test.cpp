@@ -61,7 +61,8 @@ TEST(MathMatrixCL, assignment) {
     matrix_cl<double> mat1_local_cl(mat_local_1);
     matrix_cl<double> mat2_local_cl(mat_local_1);
     mat2_cl = mat1_local_cl;
-    mat1_local_cl.template zeros_strict_tri<stan::math::matrix_cl_view::Lower>();
+    mat1_local_cl
+        .template zeros_strict_tri<stan::math::matrix_cl_view::Lower>();
   }
   Eigen::Matrix<double, 2, 2> mat_2_fromcl
       = stan::math::from_matrix_cl(mat2_cl);
