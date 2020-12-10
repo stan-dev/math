@@ -34,10 +34,10 @@ class eigen_expressions_ {
   explicit eigen_expressions_(T_expressions&&... exprs)
       : exprs_(std::forward<T_expressions>(exprs)...) {
     index_apply<sizeof...(T_expressions) - 1>([&](auto... Is) {
-      constexpr auto first_flags = Eigen::internal::traits<std::decay_t<
+      constexpr auto first_flags = Eigen::internal::evaluator<std::decay_t<
           std::tuple_element_t<0, std::tuple<T_expressions...>>>>::Flags;
       static_cast<void>(std::initializer_list<int>{
-          ((((Eigen::internal::traits<std::decay_t<std::tuple_element_t<
+          ((((Eigen::internal::evaluator<std::decay_t<std::tuple_element_t<
                   Is + 1, std::tuple<T_expressions...>>>>::Flags
               ^ first_flags)
              & Eigen::RowMajorBit)
@@ -107,7 +107,7 @@ class eigen_results_ {
             std::enable_if_t<!Linear>* = nullptr>
   void assign(const eigen_expressions_<T_expressions...>& expressions) {
     constexpr bool is_first_row_major
-        = Eigen::internal::traits<std::decay_t<
+        = Eigen::internal::evaluator<std::decay_t<
               std::tuple_element_t<0, std::tuple<T_expressions...>>>>::Flags
           & Eigen::RowMajorBit;
     size_t outer_dimension = is_first_row_major
@@ -120,13 +120,13 @@ class eigen_results_ {
       for (size_t j = 0; j < inner_dimension; j++) {
         index_apply<sizeof...(T_results)>([&](auto... Is) {
           static_cast<void>(std::initializer_list<int>{
-              ((Eigen::internal::traits<std::decay_t<std::tuple_element_t<
+              ((Eigen::internal::evaluator<std::decay_t<std::tuple_element_t<
                             Is, std::tuple<T_expressions...>>>>::Flags
                         & Eigen::RowMajorBit
-                    ? std::get<Is>(results_).coeffRef(j, i)
-                      = std::get<Is>(expressions.exprs_).coeff(j, i)
-                    : std::get<Is>(results_).coeffRef(i, j)
-                      = std::get<Is>(expressions.exprs_).coeff(i, j)),
+                    ? std::get<Is>(results_).coeffRef(i, j)
+                      = std::get<Is>(expressions.exprs_).coeff(i, j)
+                    : std::get<Is>(results_).coeffRef(j, i)
+                      = std::get<Is>(expressions.exprs_).coeff(j, i)),
                0)...});
         });
       }
@@ -153,17 +153,17 @@ class eigen_results_ {
   void operator=(const eigen_expressions_<T_expressions...>& expressions) {
     constexpr bool all_linear = std::min(
         {static_cast<bool>(
-             Eigen::internal::traits<std::decay_t<T_expressions>>::Flags
-             & (Eigen::LinearAccessBit | Eigen::DirectAccessBit))...,
+             Eigen::internal::evaluator<std::decay_t<T_expressions>>::Flags
+             & Eigen::LinearAccessBit)...,
          static_cast<bool>(
-             Eigen::internal::traits<std::decay_t<T_results>>::Flags
-             & (Eigen::LinearAccessBit | Eigen::DirectAccessBit))...});
+             Eigen::internal::evaluator<std::decay_t<T_results>>::Flags
+             & Eigen::LinearAccessBit)...});
     constexpr int N_row_major = internal::static_sum(
         static_cast<bool>(
-            Eigen::internal::traits<std::decay_t<T_expressions>>::Flags
+            Eigen::internal::evaluator<std::decay_t<T_expressions>>::Flags
             & Eigen::RowMajorBit)...,
         static_cast<bool>(
-            Eigen::internal::traits<std::decay_t<T_results>>::Flags
+            Eigen::internal::evaluator<std::decay_t<T_results>>::Flags
             & Eigen::RowMajorBit)...);
     constexpr int N_col_major
         = sizeof...(T_results) + sizeof...(T_expressions) - N_row_major;
