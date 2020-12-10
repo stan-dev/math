@@ -145,7 +145,7 @@ class binary_function : public operation_cl<Derived, T_res, T_a, T_b> {
       res.includes += incl;
     }
     res.body = type_str<Scalar>() + " " + var_name_ + " = " + op_ + "("
-               + var_name_a + ", "+ var_name_b + ");\n";
+               + var_name_a + ", " + var_name_b + ");\n";
     return res;
   }
 };
@@ -251,72 +251,64 @@ class binary_function : public operation_cl<Derived, T_res, T_a, T_b> {
             as_operation_cl(std::forward<T_b>(b))};                           \
   }
 
-  /**
-  Defines a new binary function in kernel generator.
-  @param class_name The name of the class this macro will define to represent
-  this operation
-  @param function_name The name of the function this macro will define that will
-  be used to create this operation.
-  @param scalar_type_expr The type of the scalar in the result of this
-  function. Can be a C++ expression that uses \c T_a and \c T_b as types of the
-  scalars in the arguments to this operation.
-  @param function String containing the function that is used to implement in
-   the kernel. Should be a valid function in OpenCL C.
-  */
-#define ADD_BINARY_FUNCTION(class_name, function_name, scalar_type_expr,      \
-                             function, ...)                                        \
-  template <typename T_a, typename T_b>                                       \
-  class class_name : public binary_function<class_name<T_a, T_b>,             \
-                                             scalar_type_expr, T_a, T_b> {    \
-    using base                                                                \
-        = binary_function<class_name<T_a, T_b>, scalar_type_expr, T_a, T_b>;  \
-    using base::arguments_;                                                   \
-                                                                              \
-   public:                                                                    \
-    using base::rows;                                                         \
-    using base::cols;                                                         \
-    static const std::vector<const char*> includes;                           \
-    class_name(T_a&& a, T_b&& b) /* NOLINT */                                 \
-        : base(std::forward<T_a>(a), std::forward<T_b>(b), function) {}       \
-    inline auto deep_copy() const {                                           \
-      auto&& a_copy = this->template get_arg<0>().deep_copy();                \
-      auto&& b_copy = this->template get_arg<1>().deep_copy();                \
-      return class_name<std::remove_reference_t<decltype(a_copy)>,            \
-                        std::remove_reference_t<decltype(b_copy)>>(           \
-          std::move(a_copy), std::move(b_copy));                              \
-    }                                                                         \
-  };                                                                          \
-                                                                              \
-  template <typename T_a, typename T_b,                                       \
-            require_all_kernel_expressions_t<T_a, T_b>* = nullptr,            \
-            require_any_not_arithmetic_t<T_a, T_b>* = nullptr>                \
-  inline class_name<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>>           \
-  function_name(T_a&& a, T_b&& b) { /* NOLINT */                              \
-    return {as_operation_cl(std::forward<T_a>(a)),                            \
-            as_operation_cl(std::forward<T_b>(b))};                           \
-  }                                                                         \
-  template <typename T1, typename T2>                                       \
+/**
+Defines a new binary function in kernel generator.
+@param class_name The name of the class this macro will define to represent
+this operation
+@param function_name The name of the function this macro will define that will
+be used to create this operation.
+@param scalar_type_expr The type of the scalar in the result of this
+function. Can be a C++ expression that uses \c T_a and \c T_b as types of the
+scalars in the arguments to this operation.
+@param function String containing the function that is used to implement in
+ the kernel. Should be a valid function in OpenCL C.
+*/
+#define ADD_BINARY_FUNCTION(class_name, function_name, scalar_type_expr,     \
+                            function, ...)                                   \
+  template <typename T_a, typename T_b>                                      \
+  class class_name : public binary_function<class_name<T_a, T_b>,            \
+                                            scalar_type_expr, T_a, T_b> {    \
+    using base                                                               \
+        = binary_function<class_name<T_a, T_b>, scalar_type_expr, T_a, T_b>; \
+    using base::arguments_;                                                  \
+                                                                             \
+   public:                                                                   \
+    using base::rows;                                                        \
+    using base::cols;                                                        \
+    static const std::vector<const char*> includes;                          \
+    class_name(T_a&& a, T_b&& b) /* NOLINT */                                \
+        : base(std::forward<T_a>(a), std::forward<T_b>(b), function) {}      \
+    inline auto deep_copy() const {                                          \
+      auto&& a_copy = this->template get_arg<0>().deep_copy();               \
+      auto&& b_copy = this->template get_arg<1>().deep_copy();               \
+      return class_name<std::remove_reference_t<decltype(a_copy)>,           \
+                        std::remove_reference_t<decltype(b_copy)>>(          \
+          std::move(a_copy), std::move(b_copy));                             \
+    }                                                                        \
+  };                                                                         \
+                                                                             \
+  template <typename T_a, typename T_b,                                      \
+            require_all_kernel_expressions_t<T_a, T_b>* = nullptr,           \
+            require_any_not_arithmetic_t<T_a, T_b>* = nullptr>               \
+  inline class_name<as_operation_cl_t<T_a>, as_operation_cl_t<T_b>>          \
+  function_name(T_a&& a, T_b&& b) { /* NOLINT */                             \
+    return {as_operation_cl(std::forward<T_a>(a)),                           \
+            as_operation_cl(std::forward<T_b>(b))};                          \
+  }                                                                          \
+  template <typename T1, typename T2>                                        \
   const std::vector<const char*> class_name<T1, T2>::includes{__VA_ARGS__};
-
 
 ADD_BINARY_OPERATION(addition_, operator+, common_scalar_t<T_a COMMA T_b>, "+");
 ADD_BINARY_OPERATION(subtraction_, operator-, common_scalar_t<T_a COMMA T_b>,
                      "-");
 
-ADD_BINARY_FUNCTION(hypot_, hypot,
-                     common_scalar_t<T_a COMMA T_b>, "hypot");
-ADD_BINARY_FUNCTION(fdim_, fdim,
-                     common_scalar_t<T_a COMMA T_b>, "fdim");
-ADD_BINARY_FUNCTION(fmax_, fmax,
-                     common_scalar_t<T_a COMMA T_b>, "fmax");
-ADD_BINARY_FUNCTION(fmin_, fmin,
-                     common_scalar_t<T_a COMMA T_b>, "fmin");
-ADD_BINARY_FUNCTION(fmod_, fmod,
-                     common_scalar_t<T_a COMMA T_b>, "fmod");
-ADD_BINARY_FUNCTION(ldexp_, ldexp,
-                     common_scalar_t<T_a COMMA T_b>, "ldexp");
-ADD_BINARY_FUNCTION(pow_, pow, 
-                     common_scalar_t<T_a COMMA T_b>, "pow");
+ADD_BINARY_FUNCTION(hypot_, hypot, common_scalar_t<T_a COMMA T_b>, "hypot");
+ADD_BINARY_FUNCTION(fdim_, fdim, common_scalar_t<T_a COMMA T_b>, "fdim");
+ADD_BINARY_FUNCTION(fmax_, fmax, common_scalar_t<T_a COMMA T_b>, "fmax");
+ADD_BINARY_FUNCTION(fmin_, fmin, common_scalar_t<T_a COMMA T_b>, "fmin");
+ADD_BINARY_FUNCTION(fmod_, fmod, common_scalar_t<T_a COMMA T_b>, "fmod");
+ADD_BINARY_FUNCTION(ldexp_, ldexp, common_scalar_t<T_a COMMA T_b>, "ldexp");
+ADD_BINARY_FUNCTION(pow_, pow, common_scalar_t<T_a COMMA T_b>, "pow");
 ADD_BINARY_FUNCTION(
     lbeta_, lbeta, double, "lbeta",
     stan::math::opencl_kernels::lgamma_stirling_device_function,
@@ -324,13 +316,13 @@ ADD_BINARY_FUNCTION(
     stan::math::opencl_kernels::lbeta_device_function);
 ADD_BINARY_FUNCTION(
     binomial_coefficient_log_, binomial_coefficient_log, double,
-    "binomial_coefficient_log", stan::math::opencl_kernels::lgamma_stirling_device_function,
+    "binomial_coefficient_log",
+    stan::math::opencl_kernels::lgamma_stirling_device_function,
     stan::math::opencl_kernels::lgamma_stirling_diff_device_function,
     stan::math::opencl_kernels::lbeta_device_function,
     stan::math::opencl_kernels::binomial_coefficient_log_device_function);
-ADD_BINARY_FUNCTION(
-    multiply_log_, multiply_log, double, "multiply_log",
-    stan::math::opencl_kernels::multiply_log_device_function);
+ADD_BINARY_FUNCTION(multiply_log_, multiply_log, double, "multiply_log",
+                    stan::math::opencl_kernels::multiply_log_device_function);
 
 ADD_BINARY_OPERATION_WITH_CUSTOM_CODE(
     elt_multiply_, elt_multiply, double, "*",

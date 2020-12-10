@@ -278,7 +278,7 @@ TEST(KernelGenerator, reuse_expression_complicated) {
   EXPECT_MATRIX_NEAR(tmp3_eig, res, 1e-9);
 }
 
-#define TEST_BINARY_FUNCTION_NO_INT(fun)                  \
+#define TEST_BINARY_FUNCTION_NO_INT(fun)                       \
   TEST(KernelGenerator, fun##_test) {                          \
     MatrixXd m1(3, 3);                                         \
     m1 << 10.1, 11.2, 12.3, 13.4, 9.5, 24.6, 214.7, 12.8, 3.9; \
