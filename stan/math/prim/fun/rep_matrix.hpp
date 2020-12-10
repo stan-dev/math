@@ -9,8 +9,7 @@ namespace stan {
 namespace math {
 
 template <typename T, require_stan_scalar_t<T>* = nullptr>
-inline Eigen::Matrix<return_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
-rep_matrix(const T& x, int m, int n) {
+inline auto rep_matrix(const T& x, int m, int n) {
   check_nonnegative("rep_matrix", "rows", m);
   check_nonnegative("rep_matrix", "cols", n);
   return Eigen::Matrix<return_type_t<T>, Eigen::Dynamic,
@@ -18,15 +17,13 @@ rep_matrix(const T& x, int m, int n) {
 }
 
 template <typename ColVec, require_eigen_col_vector_t<ColVec>* = nullptr>
-inline Eigen::Matrix<value_type_t<ColVec>, Eigen::Dynamic, Eigen::Dynamic>
-rep_matrix(const ColVec& v, int n) {
+inline auto rep_matrix(const ColVec& v, int n) {
   check_nonnegative("rep_matrix", "rows", n);
   return v.replicate(1, n);
 }
 
 template <typename RowVec, require_eigen_row_vector_t<RowVec>* = nullptr>
-inline Eigen::Matrix<value_type_t<RowVec>, Eigen::Dynamic, Eigen::Dynamic>
-rep_matrix(const RowVec& rv, int m) {
+inline auto rep_matrix(const RowVec& rv, int m) {
   check_nonnegative("rep_matrix", "cols", m);
   return rv.replicate(m, 1);
 }
