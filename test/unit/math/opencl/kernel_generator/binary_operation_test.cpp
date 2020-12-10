@@ -6,6 +6,7 @@
 #include <stan/math/opencl/multiply.hpp>
 #include <test/unit/math/opencl/kernel_generator/reference_kernel.hpp>
 #include <test/unit/util.hpp>
+#include <test/unit/math/expect_near_rel.hpp>
 #include <Eigen/Dense>
 #include <gtest/gtest.h>
 #include <algorithm>
@@ -276,5 +277,109 @@ TEST(KernelGenerator, reuse_expression_complicated) {
 
   EXPECT_MATRIX_NEAR(tmp3_eig, res, 1e-9);
 }
+
+#define TEST_BINARY_FUNCTION_NO_INT(fun)                  \
+  TEST(KernelGenerator, fun##_test) {                          \
+    MatrixXd m1(3, 3);                                         \
+    m1 << 10.1, 11.2, 12.3, 13.4, 9.5, 24.6, 214.7, 12.8, 3.9; \
+    MatrixXd m2(3, 3);                                         \
+    m2 << 1.1, 2.2, 1.3, 3.4, 4.5, 2.6, 117.2, 11.8, 2.1;      \
+    MatrixXi m3(3, 3);                                         \
+    m3 << 2, 1, 3, 1, 2, 3, 4, 5, 3;                           \
+    MatrixXd m4(5, 5);                                         \
+                                                               \
+    matrix_cl<double> m1_cl(m1);                               \
+    matrix_cl<double> m2_cl(m2);                               \
+    matrix_cl<int> m3_cl(m3);                                  \
+    matrix_cl<double> m4_cl(m4);                               \
+                                                               \
+    matrix_cl<double> res1_cl = fun(m1_cl, m2_cl);             \
+                                                               \
+    MatrixXd res1 = stan::math::from_matrix_cl(res1_cl);       \
+    MatrixXd correct1 = stan::math::fun(m1, m2);               \
+    EXPECT_NEAR_REL(correct1, res1);                           \
+                                                               \
+    matrix_cl<double> res2_cl = fun(m1_cl, m3_cl);             \
+                                                               \
+    MatrixXd res2 = stan::math::from_matrix_cl(res2_cl);       \
+    MatrixXd correct2 = stan::math::fun(m1, m3);               \
+    EXPECT_NEAR_REL(correct2, res2);                           \
+                                                               \
+    matrix_cl<double> res3_cl = fun(m1_cl, 2.2);               \
+                                                               \
+    MatrixXd res3 = stan::math::from_matrix_cl(res3_cl);       \
+    MatrixXd correct3 = stan::math::fun(m1, 2.2);              \
+    EXPECT_NEAR_REL(correct3, res3);                           \
+                                                               \
+    matrix_cl<double> res4_cl = fun(1000.1, m2_cl);            \
+                                                               \
+    MatrixXd res4 = stan::math::from_matrix_cl(res4_cl);       \
+    MatrixXd correct4 = stan::math::fun(1000.1, m2);           \
+    EXPECT_NEAR_REL(correct4, res4);                           \
+                                                               \
+    EXPECT_THROW(fun(m3_cl, m4_cl), std::invalid_argument);    \
+  }
+
+#define TEST_BINARY_FUNCTION(fun)                              \
+  TEST(KernelGenerator, fun##_test) {                          \
+    MatrixXd m1(3, 3);                                         \
+    m1 << 10.1, 11.2, 12.3, 13.4, 9.5, 24.6, 214.7, 12.8, 3.9; \
+    MatrixXd m2(3, 3);                                         \
+    m2 << 1.1, 2.2, 1.3, 3.4, 4.5, 2.6, 117.2, 11.8, 2.1;      \
+    MatrixXi m3(3, 3);                                         \
+    m3 << 2, 1, 3, 1, 2, 3, 4, 5, 3;                           \
+    MatrixXi m4(3, 3);                                         \
+    m4 << 4, 2, 5, 8, 3, 4, 12, 17, 5;                         \
+    MatrixXd m5(5, 5);                                         \
+                                                               \
+    matrix_cl<double> m1_cl(m1);                               \
+    matrix_cl<double> m2_cl(m2);                               \
+    matrix_cl<int> m3_cl(m3);                                  \
+    matrix_cl<int> m4_cl(m4);                                  \
+    matrix_cl<double> m5_cl(m5);                               \
+                                                               \
+    matrix_cl<double> res1_cl = fun(m1_cl, m2_cl);             \
+                                                               \
+    MatrixXd res1 = stan::math::from_matrix_cl(res1_cl);       \
+    MatrixXd correct1 = stan::math::fun(m1, m2);               \
+    EXPECT_NEAR_REL(correct1, res1);                           \
+                                                               \
+    matrix_cl<double> res2_cl = fun(m1_cl, m3_cl);             \
+                                                               \
+    MatrixXd res2 = stan::math::from_matrix_cl(res2_cl);       \
+    MatrixXd correct2 = stan::math::fun(m1, m3);               \
+    EXPECT_NEAR_REL(correct2, res2);                           \
+                                                               \
+    matrix_cl<double> res3_cl = fun(m1_cl, 2.2);               \
+                                                               \
+    MatrixXd res3 = stan::math::from_matrix_cl(res3_cl);       \
+    MatrixXd correct3 = stan::math::fun(m1, 2.2);              \
+    EXPECT_NEAR_REL(correct3, res3);                           \
+                                                               \
+    matrix_cl<double> res4_cl = fun(1000.1, m2_cl);            \
+                                                               \
+    MatrixXd res4 = stan::math::from_matrix_cl(res4_cl);       \
+    MatrixXd correct4 = stan::math::fun(1000.1, m2);           \
+    EXPECT_NEAR_REL(correct4, res4);                           \
+                                                               \
+    matrix_cl<double> res5_cl = fun(m4_cl, m3_cl);             \
+                                                               \
+    MatrixXd res5 = stan::math::from_matrix_cl(res5_cl);       \
+    MatrixXd correct5 = stan::math::fun(m4, m3);               \
+    EXPECT_NEAR_REL(correct5, res5);                           \
+                                                               \
+    EXPECT_THROW(fun(m1_cl, m5_cl), std::invalid_argument);    \
+  }
+
+TEST_BINARY_FUNCTION_NO_INT(fdim);
+TEST_BINARY_FUNCTION_NO_INT(fmax);
+TEST_BINARY_FUNCTION_NO_INT(fmin);
+TEST_BINARY_FUNCTION_NO_INT(fmod);
+TEST_BINARY_FUNCTION_NO_INT(hypot);
+TEST_BINARY_FUNCTION_NO_INT(ldexp);
+TEST_BINARY_FUNCTION_NO_INT(pow);
+TEST_BINARY_FUNCTION(lbeta);
+TEST_BINARY_FUNCTION(binomial_coefficient_log);
+TEST_BINARY_FUNCTION(multiply_log);
 
 #endif

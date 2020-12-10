@@ -3,16 +3,11 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/opencl/kernels/device_functions/binomial_coefficient_log.hpp>
 #include <stan/math/opencl/kernels/device_functions/digamma.hpp>
-#include <stan/math/opencl/kernels/device_functions/lbeta.hpp>
-#include <stan/math/opencl/kernels/device_functions/lgamma_stirling.hpp>
-#include <stan/math/opencl/kernels/device_functions/lgamma_stirling_diff.hpp>
 #include <stan/math/opencl/kernels/device_functions/log1m_exp.hpp>
 #include <stan/math/opencl/kernels/device_functions/log1m_inv_logit.hpp>
 #include <stan/math/opencl/kernels/device_functions/log1p_exp.hpp>
 #include <stan/math/opencl/kernels/device_functions/logit.hpp>
-#include <stan/math/opencl/kernels/device_functions/multiply_log.hpp>
 #include <stan/math/opencl/kernels/device_functions/inv_logit.hpp>
 #include <stan/math/opencl/kernels/device_functions/inv_square.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
@@ -84,48 +79,6 @@ class elt_function_cl : public operation_cl<Derived, Scal, T...> {
  protected:
   std::string fun_;
 };
-
-/**
- * Generates a class and function for a general binary function that is defined
- * by OpenCL or in the included code.
- * @param fun function
- * @param ... function sources to include into kernel
- */
-#define ADD_BINARY_FUNCTION_WITH_INCLUDES(fun, ...)                         \
-  template <typename T1, typename T2>                                       \
-  class fun##_ : public elt_function_cl<fun##_<T1, T2>, double, T1, T2> {   \
-    using base = elt_function_cl<fun##_<T1, T2>, double, T1, T2>;           \
-    using base::arguments_;                                                 \
-                                                                            \
-   public:                                                                  \
-    using base::rows;                                                       \
-    using base::cols;                                                       \
-    static const std::vector<const char*> includes;                         \
-    explicit fun##_(T1&& a, T2&& b)                                         \
-        : base(#fun, std::forward<T1>(a), std::forward<T2>(b)) {}           \
-    inline auto deep_copy() const {                                         \
-      auto&& arg1_copy = this->template get_arg<0>().deep_copy();           \
-      auto&& arg2_copy = this->template get_arg<1>().deep_copy();           \
-      return fun##_<std::remove_reference_t<decltype(arg1_copy)>,           \
-                    std::remove_reference_t<decltype(arg2_copy)>>{          \
-          std::move(arg1_copy), std::move(arg2_copy)};                      \
-    }                                                                       \
-    inline std::pair<int, int> extreme_diagonals() const {                  \
-      return {-rows() + 1, cols() - 1};                                     \
-    }                                                                       \
-  };                                                                        \
-                                                                            \
-  template <typename T1, typename T2,                                       \
-            require_all_kernel_expressions_t<T1, T2>* = nullptr,            \
-            require_any_not_stan_scalar_t<T1, T2>* = nullptr>               \
-  inline fun##_<as_operation_cl_t<T1>, as_operation_cl_t<T2>> fun(T1&& a,   \
-                                                                  T2&& b) { \
-    return fun##_<as_operation_cl_t<T1>, as_operation_cl_t<T2>>(            \
-        as_operation_cl(std::forward<T1>(a)),                               \
-        as_operation_cl(std::forward<T2>(b)));                              \
-  }                                                                         \
-  template <typename T1, typename T2>                                       \
-  const std::vector<const char*> fun##_<T1, T2>::includes{__VA_ARGS__};
 
 /**
  * Generates a class and function for a general unary function that is defined
@@ -300,21 +253,6 @@ ADD_CLASSIFICATION_FUNCTION(isinf,
 ADD_CLASSIFICATION_FUNCTION(isnan,
                             this->template get_arg<0>().extreme_diagonals())
 
-ADD_BINARY_FUNCTION_WITH_INCLUDES(pow)
-ADD_BINARY_FUNCTION_WITH_INCLUDES(
-    lbeta, stan::math::opencl_kernels::lgamma_stirling_device_function,
-    stan::math::opencl_kernels::lgamma_stirling_diff_device_function,
-    stan::math::opencl_kernels::lbeta_device_function)
-ADD_BINARY_FUNCTION_WITH_INCLUDES(
-    binomial_coefficient_log,
-    stan::math::opencl_kernels::lgamma_stirling_device_function,
-    stan::math::opencl_kernels::lgamma_stirling_diff_device_function,
-    stan::math::opencl_kernels::lbeta_device_function,
-    stan::math::opencl_kernels::binomial_coefficient_log_device_function)
-ADD_BINARY_FUNCTION_WITH_INCLUDES(
-    multiply_log, stan::math::opencl_kernels::multiply_log_device_function)
-
-#undef ADD_BINARY_FUNCTION_WITH_INCLUDES
 #undef ADD_UNARY_FUNCTION_WITH_INCLUDES
 #undef ADD_UNARY_FUNCTION
 #undef ADD_UNARY_FUNCTION_PASS_ZERO
