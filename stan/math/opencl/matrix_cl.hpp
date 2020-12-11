@@ -54,8 +54,6 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
   using type = T;    // Underlying type of the matrix
   // Forward declare the methods that work in place on the matrix
   template <matrix_cl_view matrix_view = matrix_cl_view::Entire>
-  inline void zeros();
-  template <matrix_cl_view matrix_view = matrix_cl_view::Entire>
   inline void zeros_strict_tri();
   template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
   inline void triangular_transpose();
