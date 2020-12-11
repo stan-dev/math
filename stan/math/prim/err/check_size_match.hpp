@@ -58,9 +58,11 @@ inline void check_size_match(const char* function, const char* expr_i,
       updated_name << expr_i << name_i;
       std::string updated_name_str(updated_name.str());
       std::ostringstream msg;
-      msg << ") and " << expr_j << name_j << " (" << j << ") must match in size";
+      msg << ") and " << expr_j << name_j << " (" << j
+          << ") must match in size";
       std::string msg_str(msg.str());
-      invalid_argument(function, updated_name_str.c_str(), i, "(", msg_str.c_str());
+      invalid_argument(function, updated_name_str.c_str(), i, "(",
+                       msg_str.c_str());
     }();
   }
 }

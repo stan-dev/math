@@ -21,7 +21,6 @@
 #define STAN_HOT_PATH
 #endif
 
-
 #ifdef STAN_REMOVE_RANGE_AND_SIZE_CHECKS
 #define STAN_NO_RANGE_AND_SIZE_CHECK return;
 #else

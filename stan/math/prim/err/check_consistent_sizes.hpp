@@ -61,7 +61,8 @@ inline void check_consistent_sizes(const char* function, const char* name1,
       msg << ", but " << name2 << " has size " << size_x2
           << "; and they must be the same size.";
       std::string msg_str(msg.str());
-      invalid_argument(function, name1, size_x1, "has size = ", msg_str.c_str());
+      invalid_argument(function, name1, size_x1,
+                       "has size = ", msg_str.c_str());
     }();
   }
 }

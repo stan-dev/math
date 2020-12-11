@@ -160,14 +160,14 @@ inline void elementwise_check(const F& is_good, const char* function,
           internal::elementwise_throw_domain_error(
               function, ": ", name, indexings..., "[",
               i / x.cols() + error_index::value, ", ",
-              i % x.cols() + error_index::value, "] is ", scal, ", but must be ",
-              must_be, "!");
+              i % x.cols() + error_index::value, "] is ", scal,
+              ", but must be ", must_be, "!");
         } else {
           internal::elementwise_throw_domain_error(
               function, ": ", name, indexings..., "[",
               i % x.rows() + error_index::value, ", ",
-              i / x.rows() + error_index::value, "] is ", scal, ", but must be ",
-              must_be, "!");
+              i / x.rows() + error_index::value, "] is ", scal,
+              ", but must be ", must_be, "!");
         }
       }();
     }

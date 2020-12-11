@@ -49,7 +49,7 @@ inline void check_matching_dims(const char* function, const char* name1,
     msg << ") must match in size";
     std::string msg_str(msg.str());
     invalid_argument(function, name1, y1s.str(), "(", msg_str.c_str());
-      };
+  };
   if (y1_d.size() != y2_d.size()) {
     error_throw();
   } else {
@@ -139,13 +139,13 @@ inline void check_matching_dims(const char* function, const char* name1,
               != static_cast<int>(Mat2::RowsAtCompileTime)
           || static_cast<int>(Mat1::ColsAtCompileTime)
                  != static_cast<int>(Mat2::ColsAtCompileTime))) {
-   [&]() STAN_COLD_PATH {
-     std::ostringstream msg;
-     msg << "Static rows and cols of " << name1 << " and " << name2
-         << " must match in size.";
-     std::string msg_str(msg.str());
-     invalid_argument(function, msg_str.c_str(), "", "");
-   }();
+    [&]() STAN_COLD_PATH {
+      std::ostringstream msg;
+      msg << "Static rows and cols of " << name1 << " and " << name2
+          << " must match in size.";
+      std::string msg_str(msg.str());
+      invalid_argument(function, msg_str.c_str(), "", "");
+    }();
   }
   check_matching_dims(function, name1, y1, name2, y2);
 }
