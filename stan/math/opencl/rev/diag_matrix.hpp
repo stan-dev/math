@@ -20,9 +20,8 @@ inline var_value<matrix_cl<double>> diag_matrix(
     const var_value<matrix_cl<double>>& M) {
   var_value<matrix_cl<double>> res = diag_matrix(M.val());
 
-  reverse_pass_callback([M, res]() mutable {
-    M.adj() = M.adj() + diagonal(res.adj());
-  });
+  reverse_pass_callback(
+      [M, res]() mutable { M.adj() = M.adj() + diagonal(res.adj()); });
 
   return res;
 }

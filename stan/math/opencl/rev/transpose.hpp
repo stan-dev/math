@@ -18,9 +18,8 @@ inline var_value<matrix_cl<double>> transpose(
     const var_value<matrix_cl<double>>& M) {
   var_value<matrix_cl<double>> res = transpose(M.val());
 
-  reverse_pass_callback([M, res]() mutable {
-    M.adj() = M.adj() + transpose(res.adj());
-  });
+  reverse_pass_callback(
+      [M, res]() mutable { M.adj() = M.adj() + transpose(res.adj()); });
 
   return res;
 }
