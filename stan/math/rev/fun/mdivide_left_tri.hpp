@@ -444,16 +444,14 @@ inline auto mdivide_left_tri(const T1 &A, const T2 &B) {
   } else if (!is_constant<T1>::value) {
     arena_t<promote_scalar_t<var, T1>> arena_A = A;
     auto arena_A_val = to_arena(arena_A.val());
-    
+
     arena_t<ret_type> res
         = arena_A_val.template triangularView<TriView>().solve(value_of(B));
 
     reverse_pass_callback([arena_A, arena_A_val, res]() mutable {
       promote_scalar_t<double, T2> adjB
-          = arena_A_val
-                .template triangularView<TriView>()
-                .transpose()
-                .solve(res.adj());
+          = arena_A_val.template triangularView<TriView>().transpose().solve(
+              res.adj());
 
       arena_A.adj() -= (adjB * res.val().transpose().eval())
                            .template triangularView<TriView>();
