@@ -119,7 +119,8 @@ inline matrix_cl<return_type_t<T_a, T_b>> operator*(const T_a& a, const T_b& b) 
  */
 template <typename T_a, typename T_b,
           require_stan_scalar_t<T_a>* = nullptr,
-          require_all_kernel_expressions_and_none_scalar_t<T_b>* = nullptr>
+          require_all_kernel_expressions_and_none_scalar_t<T_b>* = nullptr,
+          require_all_not_var_t<T_a, T_b>>
 inline matrix_cl<return_type_t<T_a, T_b>> multiply(const T_a& a, const T_b& b) {
   return a * b;
 }
