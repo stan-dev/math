@@ -104,9 +104,39 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const T1& A, const T2& B) {
  */
 template <typename T_a, typename T_b,
           typename = require_all_kernel_expressions_and_none_scalar_t<T_a, T_b>>
-inline matrix_cl<double> operator*(const T_a& a, const T_b& b) {
+inline matrix_cl<return_type_t<T_a, T_b>> operator*(const T_a& a, const T_b& b) {
   // no need for perfect forwarding as operations are evaluated
   return multiply(as_operation_cl(a).eval(), as_operation_cl(b).eval());
+}
+
+/**
+ * Matrix multiplication of a scalar and a  kernel generator expressions.
+ * @tparam T_a type of scalar
+ * @tparam T_b type of the kernel generator expression
+ * @param a scalar
+ * @param b expression
+ * @return Matrix product of given arguments
+ */
+template <typename T_a, typename T_b,
+          require_stan_scalar_t<T_a>* = nullptr,
+          require_all_kernel_expressions_and_none_scalar_t<T_b>* = nullptr>
+inline matrix_cl<return_type_t<T_a, T_b>> multiply(const T_a& a, const T_b& b) {
+  return a * b;
+}
+
+/**
+ * Matrix multiplication of a scalar and a  kernel generator expressions.
+ * @tparam T_a type of the kernel generator expression
+ * @tparam T_b type of scalar
+ * @param a expression
+ * @param b scalar
+ * @return Matrix product of given arguments
+ */
+template <typename T_a, typename T_b,
+          require_stan_scalar_t<T_b>* = nullptr,
+          require_all_kernel_expressions_and_none_scalar_t<T_a>* = nullptr>
+inline matrix_cl<return_type_t<T_a, T_b>> multiply(const T_a& a, const T_b& b) {
+  return a * b;
 }
 
 }  // namespace math

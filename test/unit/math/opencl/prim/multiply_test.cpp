@@ -1,53 +1,55 @@
 #ifdef STAN_OPENCL
 #include <stan/math/prim.hpp>
-#include <stan/math/opencl/prim.hpp>
+#include <test/unit/math/opencl/util.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 
-TEST(MathMatrixOpenCLPrim, vector_row_vector) {
-  stan::math::vector_d v(3);
-  stan::math::row_vector_d rv(3);
-  stan::math::matrix_cl<double> v_cl(v);
-  stan::math::matrix_cl<double> rv_cl(rv);
-  stan::math::matrix_cl<double> m_cl(1, 1);
-  EXPECT_NO_THROW(m_cl = rv_cl * v_cl);
-}
+auto multiply_scalar_matrix_functor
+    = [](const auto& a) { return stan::math::multiply(2.0, a); };
+auto multiply_scalar_matrix_operator_functor
+    = [](const auto& a) { return 2.0 * a; };
+auto multiply_matrix_scalar_functor
+    = [](const auto& a) { return stan::math::multiply(a, 2.0); };
+auto multiply_matrix_scalar_operator_functor
+    = [](const auto& a) { return a * 2.0; };
+auto multiply_matrix_matrix_functor
+    = [](const auto& a, const auto& b) { return stan::math::multiply(a, b); };
+auto multiply_matrix_matrix_operator_functor
+    = [](const auto& a, const auto& b) { return a * b; };
 
 TEST(MathMatrixOpenCLPrim, one_dim_zero_matrix) {
   stan::math::matrix_d m0(5, 0);
   stan::math::matrix_d m1(0, 3);
 
-  stan::math::matrix_cl<double> m0_cl(m0);
-  stan::math::matrix_cl<double> m1_cl(m1);
-  EXPECT_NO_THROW(m0_cl * m1_cl);
-
-  EXPECT_NO_THROW(m0_cl * 2.0);
-  EXPECT_NO_THROW(2.0 * m0_cl);
-
-  EXPECT_NO_THROW(m1_cl * 2.0);
-  EXPECT_NO_THROW(2.0 * m1_cl);
+  stan::math::test::compare_cpu_opencl_prim(multiply_scalar_matrix_functor, m0);
+  stan::math::test::compare_cpu_opencl_prim(multiply_scalar_matrix_operator_functor, m0);
+  stan::math::test::compare_cpu_opencl_prim(multiply_matrix_scalar_functor, m0);
+  stan::math::test::compare_cpu_opencl_prim(multiply_matrix_scalar_operator_functor, m0);
+  stan::math::test::compare_cpu_opencl_prim(multiply_scalar_matrix_functor, m1);
+  stan::math::test::compare_cpu_opencl_prim(multiply_scalar_matrix_operator_functor, m1);
+  stan::math::test::compare_cpu_opencl_prim(multiply_matrix_scalar_functor, m1);
+  stan::math::test::compare_cpu_opencl_prim(multiply_matrix_scalar_operator_functor, m1);
+  stan::math::test::compare_cpu_opencl_prim(multiply_matrix_matrix_functor, m0, m1);
+  stan::math::test::compare_cpu_opencl_prim(multiply_matrix_matrix_operator_functor, m0, m1);
 }
 
 TEST(MathMatrixOpenCLPrim, zero_result_matrix) {
   stan::math::matrix_d m0(0, 5);
   stan::math::matrix_d m1(5, 0);
-
-  stan::math::matrix_cl<double> m0_cl(m0);
-  stan::math::matrix_cl<double> m1_cl(m1);
-  EXPECT_NO_THROW(m0_cl * m1_cl);
+  stan::math::test::compare_cpu_opencl_prim(multiply_matrix_matrix_functor, m0, m1);
+  stan::math::test::compare_cpu_opencl_prim(multiply_matrix_matrix_operator_functor, m0, m1);
 }
 
 TEST(MathMatrixOpenCLPrim, zero_size_input_matrix) {
   stan::math::matrix_d m0(0, 0);
   stan::math::matrix_d m1(0, 0);
-
-  stan::math::matrix_cl<double> m0_cl(m0);
-  stan::math::matrix_cl<double> m1_cl(m1);
-  EXPECT_NO_THROW(m0_cl * m1_cl);
-
-  EXPECT_NO_THROW(m0_cl * 2.0);
-  EXPECT_NO_THROW(2.0 * m0_cl);
+  stan::math::test::compare_cpu_opencl_prim(multiply_scalar_matrix_functor, m0);
+  stan::math::test::compare_cpu_opencl_prim(multiply_scalar_matrix_operator_functor, m0);
+  stan::math::test::compare_cpu_opencl_prim(multiply_matrix_scalar_functor, m0);
+  stan::math::test::compare_cpu_opencl_prim(multiply_matrix_scalar_operator_functor, m0);
+  stan::math::test::compare_cpu_opencl_prim(multiply_matrix_matrix_functor, m0, m1);
+  stan::math::test::compare_cpu_opencl_prim(multiply_matrix_matrix_operator_functor, m0, m1);
 }
 
 TEST(MathMatrixOpenCLPrim, non_matching_dim_excpetion) {
@@ -57,132 +59,59 @@ TEST(MathMatrixOpenCLPrim, non_matching_dim_excpetion) {
   stan::math::matrix_cl<double> m0_cl(m0);
   stan::math::matrix_cl<double> m1_cl(m1);
   EXPECT_THROW(m0_cl * m1_cl, std::invalid_argument);
+  EXPECT_THROW(stan::math::multiply(m0_cl, m1_cl), std::invalid_argument);
 }
 
 TEST(MathMatrixOpenCLPrim, multiply_scalar) {
   auto v = stan::math::vector_d::Random(25).eval();
-  stan::math::vector_d v_cl_res(25);
   auto rv = stan::math::row_vector_d::Random(25).eval();
-  stan::math::row_vector_d rv_cl_res(25);
   auto m = stan::math::matrix_d::Random(5, 5).eval();
-  stan::math::matrix_d m_cl_res(5, 5);
 
-  stan::math::matrix_cl<double> v_cl(v);
-  v_cl = v_cl * 2.0;
-  v_cl_res = stan::math::from_matrix_cl(v_cl);
-
-  stan::math::matrix_cl<double> rv_cl(rv);
-  rv_cl = rv_cl * 2.0;
-  rv_cl_res = stan::math::from_matrix_cl(rv_cl);
-
-  stan::math::matrix_cl<double> m_cl(m);
-  m_cl = m_cl * 2.0;
-  m_cl_res = stan::math::from_matrix_cl(m_cl);
-
-  v = v * 2.0;
-  rv = rv * 2.0;
-  m = m * 2.0;
-
-  EXPECT_MATRIX_NEAR(v, v_cl_res, 1e-10);
-  EXPECT_MATRIX_NEAR(rv, rv_cl_res, 1e-10);
-  EXPECT_MATRIX_NEAR(m, m_cl_res, 1e-10);
+  stan::math::test::compare_cpu_opencl_prim(multiply_scalar_matrix_functor, v);
+  stan::math::test::compare_cpu_opencl_prim(multiply_scalar_matrix_operator_functor, v);
+  stan::math::test::compare_cpu_opencl_prim(multiply_matrix_scalar_functor, v);
+  stan::math::test::compare_cpu_opencl_prim(multiply_matrix_scalar_operator_functor, v);
+  stan::math::test::compare_cpu_opencl_prim(multiply_scalar_matrix_functor, rv);
+  stan::math::test::compare_cpu_opencl_prim(multiply_scalar_matrix_operator_functor, rv);
+  stan::math::test::compare_cpu_opencl_prim(multiply_matrix_scalar_functor, rv);
+  stan::math::test::compare_cpu_opencl_prim(multiply_matrix_scalar_operator_functor, rv);
+  stan::math::test::compare_cpu_opencl_prim(multiply_scalar_matrix_functor, m);
+  stan::math::test::compare_cpu_opencl_prim(multiply_scalar_matrix_operator_functor, m);
+  stan::math::test::compare_cpu_opencl_prim(multiply_matrix_scalar_functor, m);
+  stan::math::test::compare_cpu_opencl_prim(multiply_matrix_scalar_operator_functor, m);
+  
 }
 
 TEST(MathMatrixOpenCLPrim, row_vector_vector) {
-  auto v = stan::math::vector_d::Random(5).eval();
-  auto rv = stan::math::row_vector_d::Random(5).eval();
-  stan::math::matrix_d m0(1, 1);
-  stan::math::matrix_d m0_cl_res(1, 1);
-  stan::math::matrix_d m1(5, 5);
-  stan::math::matrix_d m1_cl_res(5, 5);
-
-  m0 = rv * v;
-  m1 = v * rv;
-
-  stan::math::matrix_cl<double> v_cl(v);
-  stan::math::matrix_cl<double> rv_cl(rv);
-  stan::math::matrix_cl<double> m0_cl(1, 1);
-  stan::math::matrix_cl<double> m1_cl(5, 5);
-
-  m0_cl = rv_cl * v_cl;
-  m1_cl = v_cl * rv_cl;
-  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
-  m1_cl_res = stan::math::from_matrix_cl(m1_cl);
-
-  EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
-  EXPECT_MATRIX_NEAR(m1, m1_cl_res, 1e-10);
+  stan::math::matrix_d v = stan::math::matrix_d::Random(5,1);
+  stan::math::matrix_d rv = stan::math::matrix_d::Random(1,5);
+  stan::math::test::compare_cpu_opencl_prim(multiply_matrix_matrix_functor, rv, v);
+  stan::math::test::compare_cpu_opencl_prim(multiply_matrix_matrix_operator_functor, rv, v);
+  stan::math::test::compare_cpu_opencl_prim(multiply_matrix_matrix_functor, v, rv);
+  stan::math::test::compare_cpu_opencl_prim(multiply_matrix_matrix_operator_functor, v, rv);
 }
 
-TEST(MathMatrixOpenCLPrim, matrix_vector_small) {
+TEST(MathMatrixOpenCLPrim, matrix_vector) {
   auto m = stan::math::matrix_d::Random(4, 5).eval();
   auto v = stan::math::vector_d::Random(5).eval();
-  stan::math::matrix_d m0(4, 1);
-  stan::math::matrix_d m0_cl_res(4, 1);
-
-  m0 = m * v;
-
-  stan::math::matrix_cl<double> v_cl(v);
-  stan::math::matrix_cl<double> m_cl(m);
-  stan::math::matrix_cl<double> m0_cl(4, 1);
-
-  m0_cl = m_cl * v_cl;
-  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
-
-  EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
-}
-
-TEST(MathMatrixOpenCLPrim, matrix_vector_big) {
-  auto m = stan::math::matrix_d::Random(400, 600).eval();
-  auto v = stan::math::vector_d::Random(600).eval();
-  stan::math::matrix_d m0(400, 1);
-  stan::math::matrix_d m0_cl_res(400, 1);
-
-  m0 = m * v;
-
-  stan::math::matrix_cl<double> v_cl(v);
-  stan::math::matrix_cl<double> m_cl(m);
-  stan::math::matrix_cl<double> m0_cl(400, 1);
-
-  m0_cl = m_cl * v_cl;
-  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
-
-  EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
+  stan::math::test::compare_cpu_opencl_prim(multiply_matrix_matrix_functor, m, v);
+  stan::math::test::compare_cpu_opencl_prim(multiply_matrix_matrix_operator_functor, m, v);
+  
+  auto m1 = stan::math::matrix_d::Random(400, 600).eval();
+  auto v1 = stan::math::vector_d::Random(600).eval();
+  stan::math::test::compare_cpu_opencl_prim(multiply_matrix_matrix_functor, m1, v1);
+  stan::math::test::compare_cpu_opencl_prim(multiply_matrix_matrix_operator_functor, m1, v1);
 }
 
 TEST(MathMatrixOpenCLPrim, row_vector_matrix_small) {
   auto m = stan::math::matrix_d::Random(5, 4).eval();
   auto rv = stan::math::row_vector_d::Random(5).eval();
-  stan::math::matrix_d m0(1, 4);
-  stan::math::matrix_d m0_cl_res(1, 4);
-
-  m0 = rv * m;
-
-  stan::math::matrix_cl<double> m_cl(m);
-  stan::math::matrix_cl<double> rv_cl(rv);
-  stan::math::matrix_cl<double> m0_cl(1, 4);
-
-  m0_cl = rv_cl * m_cl;
-  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
-
-  EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
-}
-
-TEST(MathMatrixOpenCLPrim, row_vector_matrix_big) {
-  auto m = stan::math::matrix_d::Random(600, 400).eval();
-  auto rv = stan::math::row_vector_d::Random(600).eval();
-  stan::math::matrix_d m0(1, 400);
-  stan::math::matrix_d m0_cl_res(1, 400);
-
-  m0 = rv * m;
-
-  stan::math::matrix_cl<double> m_cl(m);
-  stan::math::matrix_cl<double> rv_cl(rv);
-  stan::math::matrix_cl<double> m0_cl(1, 400);
-
-  m0_cl = rv_cl * m_cl;
-  m0_cl_res = stan::math::from_matrix_cl(m0_cl);
-
-  EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
+  stan::math::test::compare_cpu_opencl_prim(multiply_matrix_matrix_functor, rv, m);
+  stan::math::test::compare_cpu_opencl_prim(multiply_matrix_matrix_operator_functor, rv, m);
+  auto m1 = stan::math::matrix_d::Random(600, 400).eval();
+  auto rv1 = stan::math::row_vector_d::Random(600).eval();
+  stan::math::test::compare_cpu_opencl_prim(multiply_matrix_matrix_functor, rv1, m1);
+  stan::math::test::compare_cpu_opencl_prim(multiply_matrix_matrix_operator_functor, rv1, m1);
 }
 
 TEST(MathMatrixOpenCLPrim, matrix_vector_tri_small) {
