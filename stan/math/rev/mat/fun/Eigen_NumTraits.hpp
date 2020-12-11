@@ -193,11 +193,19 @@ struct general_matrix_vector_product<Index, stan::math::var, LhsMapper,
   }
 };
 
+#if EIGEN_VERSION_AT_LEAST(3, 3, 8)
+template <typename Index, int LhsStorageOrder, bool ConjugateLhs,
+          int RhsStorageOrder, bool ConjugateRhs, int ResInnerStride>
+struct general_matrix_matrix_product<
+    Index, stan::math::var, LhsStorageOrder, ConjugateLhs, stan::math::var,
+    RhsStorageOrder, ConjugateRhs, ColMajor, ResInnerStride> {
+#else
 template <typename Index, int LhsStorageOrder, bool ConjugateLhs,
           int RhsStorageOrder, bool ConjugateRhs>
 struct general_matrix_matrix_product<Index, stan::math::var, LhsStorageOrder,
                                      ConjugateLhs, stan::math::var,
                                      RhsStorageOrder, ConjugateRhs, ColMajor> {
+#endif
   using LhsScalar = stan::math::var;
   using RhsScalar = stan::math::var;
   using ResScalar = stan::math::var;
@@ -210,11 +218,21 @@ struct general_matrix_matrix_product<Index, stan::math::var, LhsStorageOrder,
       = const_blas_data_mapper<stan::math::var, Index, RhsStorageOrder>;
 
   EIGEN_DONT_INLINE
+  #if EIGEN_VERSION_AT_LEAST(3, 3, 8)
+   static void run(Index rows, Index cols, Index depth, const LhsScalar* lhs,
+                   Index lhsStride, const RhsScalar* rhs, Index rhsStride,
+                   ResScalar* res, Index resIncr, Index resStride,
+                   const ResScalar& alpha,
+                   level3_blocking<LhsScalar, RhsScalar>& /* blocking */,
+                   GemmParallelInfo<Index>* /* info = 0 */)
+  #else
   static void run(Index rows, Index cols, Index depth, const LhsScalar* lhs,
                   Index lhsStride, const RhsScalar* rhs, Index rhsStride,
                   ResScalar* res, Index resStride, const ResScalar& alpha,
                   level3_blocking<LhsScalar, RhsScalar>& /* blocking */,
-                  GemmParallelInfo<Index>* /* info = 0 */) {
+                  GemmParallelInfo<Index>* /* info = 0 */)
+  #endif
+  {
     for (Index i = 0; i < cols; i++) {
       general_matrix_vector_product<
           Index, LhsScalar, LhsMapper, LhsStorageOrder, ConjugateLhs, RhsScalar,
