@@ -44,6 +44,25 @@ inline var square(const var& x) {
   return var(new internal::square_vari(x.vi_));
 }
 
+/**
+ * Return the elementwise square of x
+ *
+ * @tparam T type of x
+ * @param x argument
+ * @return elementwise square of x
+ */
+template <typename T,
+	  require_var_matrix_t<T>* = nullptr>
+inline auto square(const T& x) {
+  T res = (x.val().array() * x.val().array()).matrix();
+  
+  reverse_pass_callback([x, res]() mutable {
+    x.adj().noalias() += (2.0 * x.val().array() * res.adj().array()).matrix();
+  });
+
+  return res;
+}
+
 }  // namespace math
 }  // namespace stan
 #endif

@@ -34,9 +34,9 @@ namespace math {
  * canonical partial correlations.
  */
 template <typename T, require_eigen_vector_t<T>* = nullptr>
-Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
-    const T& CPCs,  // on (-1, 1)
-    size_t K) {
+Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(const T& CPCs,  // on (-1, 1)
+									   size_t K) {
+
   using T_scalar = value_type_t<T>;
   if (K == 0) {
     return {};

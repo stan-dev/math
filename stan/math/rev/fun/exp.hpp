@@ -57,6 +57,25 @@ inline std::complex<var> exp(const std::complex<var>& z) {
   return internal::complex_exp(z);
 }
 
+/**
+ * Return the exponentiation of the elements of x
+ *
+ * @tparam T type of x
+ * @param x argument
+ * @return elementwise exponentiation of x
+ */
+template <typename T,
+	  require_var_matrix_t<T>* = nullptr>
+inline auto exp(const T& x) {
+  T res = x.val().array().exp().matrix();
+  
+  reverse_pass_callback([x, res]() mutable {
+    x.adj().noalias() += (res.val().array() * res.adj().array()).matrix();
+  });
+
+  return res;
+}
+
 }  // namespace math
 }  // namespace stan
 #endif

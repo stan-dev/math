@@ -28,6 +28,25 @@ class log1m_vari : public op_v_vari {
  */
 inline var log1m(const var& a) { return var(new internal::log1m_vari(a.vi_)); }
 
+/**
+ * Return the elementwise log of 1 - x
+ *
+ * @tparam T type of x
+ * @param x argument
+ * @return elementwise log of 1 - x
+ */
+template <typename T,
+	  require_var_matrix_t<T>* = nullptr>
+inline auto log1m(const T& x) {
+  T res = stan::math::log1m(x.val());
+  
+  reverse_pass_callback([x, res]() mutable {
+    x.adj().noalias() += (res.adj().array() / (x.val().array() - 1.0)).matrix();
+  });
+
+  return res;
+}
+
 }  // namespace math
 }  // namespace stan
 #endif

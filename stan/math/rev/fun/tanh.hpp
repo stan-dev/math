@@ -2,9 +2,9 @@
 #define STAN_MATH_REV_FUN_TANH_HPP
 
 #include <stan/math/prim/fun/tanh.hpp>
+#include <stan/math/prim/fun/cosh.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/exp.hpp>
 #include <cmath>
 #include <complex>
 
@@ -59,6 +59,26 @@ inline var tanh(const var& a) { return var(new internal::tanh_vari(a.vi_)); }
  */
 inline std::complex<var> tanh(const std::complex<var>& z) {
   return stan::math::internal::complex_tanh(z);
+}
+
+/**
+ * Return the hyperbolic tangent of of x
+ *
+ * @tparam T type of x
+ * @param x argument
+ * @return elementwise hyperbolic tangent of x
+ */
+template <typename T,
+	  require_var_matrix_t<T>* = nullptr>
+inline auto tanh(const T& x) {
+  T res = stan::math::tanh(x.val());
+  
+  reverse_pass_callback([x, res]() mutable {
+    auto cosh = stan::math::cosh(x.val());
+    x.adj().noalias() += (res.adj().array() / (cosh.array() * cosh.array())).matrix();
+  });
+
+  return res;
 }
 
 }  // namespace math
