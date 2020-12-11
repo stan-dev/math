@@ -60,6 +60,7 @@
 #include <stan/math/rev/fun/gamma_p.hpp>
 #include <stan/math/rev/fun/gamma_q.hpp>
 #include <stan/math/rev/fun/gp_periodic_cov.hpp>
+#include <stan/math/rev/fun/generalized_inverse.hpp>
 #include <stan/math/rev/fun/grad.hpp>
 #include <stan/math/rev/fun/grad_inc_beta.hpp>
 #include <stan/math/rev/fun/hypot.hpp>

@@ -28,9 +28,9 @@ namespace math {
 template <typename EigMat, require_rev_matrix_t<EigMat>* = nullptr>
 inline auto generalized_inverse(const EigMat& G) {
   using value_t = value_type_t<EigMat>;
-
+  using ret_type = promote_var_matrix_t<EigMat, EigMat>;
   if (G.size() == 0)
-    return G;
+    return ret_type(G);
 
   const auto n = G.rows();
   const auto m = G.cols();
@@ -38,30 +38,33 @@ inline auto generalized_inverse(const EigMat& G) {
   if (G.rows() == G.cols())
     return inverse(G);
 
-  if (n < m) {
-    arena_t<plain_type_t<EigMat>> G_arena(G);
-    auto A_spd = tcrossprod(G_arena.val());
-    arena_t<EigMat> inv_G(transpose(mdivide_left_spd(A_spd, G_arena.val())));
-    auto aP = (1 - G_arena.val() * inv_G.transpose());
-    auto Pa = (1 - inv_G * G_arena.val());
-    reverse_pass_callback([G_arena, inv_G, aP, Pa]() mutable {
-      G_arena.adj() += -inv_G * G_arena.adj() * inv_G;
-      G_arena.adj() += tcrossprod(inv_G) * G_arena.adj().transpose() * aP;
-      G_arena.adj() += Pa * G_arena.adj().transpose() * crossprod(inv_G());
+  if (G.rows() < G.cols()) {
+    arena_t<EigMat> G_arena(G);
+    arena_t<EigMat> inv_G((G_arena.val_op() * G_arena.val_op().transpose()).llt().solve(G_arena.val_op()));
+    reverse_pass_callback([G_arena, inv_G]() mutable {
+//      (2, 3) += [(3, 2) * (2, 3) * (3, 2)](3, 2)
+      G_arena.adj() += (-inv_G.val_op() * G_arena.adj_op() * inv_G.val_op());
+//      (2, 3) += [(3, 2) * (2, 3) * (3, 2) * (2, 2)](3, 2)
+      G_arena.adj() += (inv_G.val_op() * inv_G.val_op().transpose() * G_arena.adj_op().transpose() * (1 - (G_arena.val_op() * inv_G.val_op()).array()).matrix());
+//      (2, 3) += [(3, 3) * (3, 2) * (2, 3) * (3, 2)
+      G_arena.adj() += ((1 - (inv_G.val_op() * G_arena.val_op()).array()).matrix() * G_arena.adj_op().transpose() * inv_G.val_op().transpose() * inv_G.val_op());
     });
-    return inv_G;
+    return ret_type(inv_G);
   } else {
     arena_t<plain_type_t<EigMat>> G_arena(G);
-    auto A_spd = crossprod(G_arena.val());
-    arena_t<EigMat> inv_G(transpose(mdivide_right_spd(G_arena.val(), A_spd)));
-    auto aP = (1 - G_arena.val() * inv_G.transpose());
-    auto Pa = (1 - inv_G * G_arena.val());
+    auto A_spd = crossprod(G_arena.val_op());
+    arena_t<EigMat> inv_G(mdivide_right_spd(G_arena.val_op(), A_spd).transpose());
+    auto aP = to_arena((1 - (G_arena.val_op() * inv_G.val_op()).array()).matrix());
+    auto Pa = to_arena((1 - (inv_G.val_op() * G_arena.val_op()).array()).matrix());
     reverse_pass_callback([G_arena, inv_G, aP, Pa]() mutable {
-      G_arena.adj() += -inv_G * G_arena.adj() * inv_G;
-      G_arena.adj() += tcrossprod(inv_G) * G_arena.adj().transpose() * aP;
-      G_arena.adj() += Pa * G_arena.adj().transpose() * crossprod(inv_G());
+      //      (2, 3) += [(3, 2) * (2, 3) * (3, 2)](3, 2)
+            G_arena.adj() += (-inv_G.val_op() * G_arena.adj_op() * inv_G.val_op()).transpose();
+      //      (2, 3) += [(3, 2) * (2, 3) * (3, 2) * (2, 2)](3, 2)
+            G_arena.adj() += (inv_G.val_op() * inv_G.val_op().transpose() * G_arena.adj_op().transpose() * aP).transpose();
+      //      (2, 3) += [(3, 3) * (3, 2) * (2, 3) * (3, 2)
+            G_arena.adj() += (Pa * G_arena.adj_op().transpose() * inv_G.val_op().transpose() * inv_G.val_op()).transpose();
     });
-    return inv_G;
+    return ret_type(inv_G);
   }
 }
 
@@ -77,9 +80,10 @@ inline auto generalized_inverse(const EigMat& G) {
 template <typename EigMat, require_rev_matrix_t<EigMat>* = nullptr>
 inline auto generalized_inverse(const EigMat& G, const double a) {
   using value_t = value_type_t<EigMat>;
+  using ret_type = promote_var_matrix_t<EigMat, EigMat>;
 
   if (G.size() == 0)
-    return G;
+    return ret_type(G);
 
   const auto n = G.rows();
   const auto m = G.cols();
@@ -89,32 +93,38 @@ inline auto generalized_inverse(const EigMat& G, const double a) {
 
   if (n < m) {
     arena_t<plain_type_t<EigMat>> G_arena(G);
-    auto A_spd = tcrossprod(G_arena.val());
+    auto A_spd = tcrossprod(G_arena.val_op());
     A_spd.diagonal().array() += a;
 
-    arena_t<EigMat> inv_G(transpose(mdivide_left_spd(A_spd, G_arena.val())));
-    auto aP = (1 - G_arena.val() * inv_G.transpose());
-    auto Pa = (1 - inv_G * G_arena.val());
+    arena_t<EigMat> inv_G(mdivide_left_spd(A_spd, G_arena.val_op()).transpose());
+    auto aP = to_arena((1 - (G_arena.val_op() * inv_G.val_op()).array()).matrix());
+    auto Pa = to_arena((1 - (inv_G.val_op() * G_arena.val_op()).array()).matrix());
     reverse_pass_callback([G_arena, inv_G, aP, Pa]() mutable {
-      G_arena.adj() += -inv_G * G_arena.adj() * inv_G;
-      G_arena.adj() += tcrossprod(inv_G) * G_arena.adj().transpose() * aP;
-      G_arena.adj() += Pa * G_arena.adj().transpose() * crossprod(inv_G);
+      //      (2, 3) += [(3, 2) * (2, 3) * (3, 2)](3, 2)
+            G_arena.adj() += (-inv_G.val_op() * G_arena.adj_op() * inv_G.val_op()).transpose();
+      //      (2, 3) += [(3, 2) * (2, 3) * (3, 2) * (2, 2)](3, 2)
+            G_arena.adj() += (inv_G.val_op() * inv_G.val_op().transpose() * G_arena.adj_op().transpose() * aP).transpose();
+      //      (2, 3) += [(3, 3) * (3, 2) * (2, 3) * (3, 2)
+            G_arena.adj() += (Pa * G_arena.adj_op().transpose() * inv_G.val_op().transpose() * inv_G.val_op()).transpose();
     });
-    return inv_G;
+    return ret_type(inv_G);
   } else {
     arena_t<plain_type_t<EigMat>> G_arena(G);
-    auto A_spd = crossprod(G_arena.val());
+    auto A_spd = crossprod(G_arena.val_op());
     A_spd.diagonal().array() += a;
 
-    arena_t<EigMat> inv_G(transpose(mdivide_right_spd(G_arena.val(), A_spd)));
-    auto aP = (1 - G * inv_G.transpose());
-    auto Pa = (1 - inv_G * G_arena.val());
+    arena_t<EigMat> inv_G(mdivide_right_spd(G_arena.val_op(), A_spd).transpose());
+    auto aP = to_arena((1 - (G_arena.val_op() * inv_G.val_op()).array()).matrix());
+    auto Pa = to_arena((1 - (inv_G.val_op() * G_arena.val_op()).array()).matrix());
     reverse_pass_callback([G_arena, inv_G, aP, Pa]() mutable {
-      G_arena.adj() += -inv_G * G_arena.adj() * inv_G;
-      G_arena.adj() += tcrossprod(inv_G) * G_arena.adj().transpose() * aP;
-      G_arena.adj() += Pa * G_arena.adj().transpose() * crossprod(inv_G());
+      //      (2, 3) += [(3, 2) * (2, 3) * (3, 2)](3, 2)
+            G_arena.adj() += (-inv_G.val_op() * G_arena.adj_op() * inv_G.val_op()).transpose();
+      //      (2, 3) += [(3, 2) * (2, 3) * (3, 2) * (2, 2)](3, 2)
+            G_arena.adj() += (inv_G.val_op() * inv_G.val_op().transpose() * G_arena.adj_op().transpose() * aP).transpose();
+      //      (2, 3) += [(3, 3) * (3, 2) * (2, 3) * (3, 2)
+            G_arena.adj() += (Pa * G_arena.adj_op().transpose() * inv_G.val_op().transpose() * inv_G.val_op()).transpose();
     });
-    return inv_G;
+    return ret_type(inv_G);
   }
 }
 
