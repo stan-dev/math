@@ -13,7 +13,7 @@ namespace math {
  * Return a square diagonal matrix with the specified vector of
  * coefficients as the diagonal values.
  *
- * @param[in]  Specified vector.
+ * @param[in] v Specified vector.
  * @return Diagonal matrix with vector as diagonal values.
  */
 inline var_value<matrix_cl<double>> diag_matrix(
@@ -21,7 +21,7 @@ inline var_value<matrix_cl<double>> diag_matrix(
   var_value<matrix_cl<double>> res = diag_matrix(v.val());
 
   reverse_pass_callback(
-      [M, res]() mutable { M.adj() = M.adj() + diagonal(res.adj()); });
+      [v, res]() mutable { v.adj() = v.adj() + diagonal(res.adj()); });
 
   return res;
 }
