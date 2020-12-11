@@ -4,8 +4,8 @@
 #include <vector>
 
 TEST(MathMatrixCL, cols_prim) {
-  using stan::math::matrix_cl;
   using stan::math::cols;
+  using stan::math::matrix_cl;
   matrix_cl<double> m0;
   EXPECT_EQ(0, cols(m0));
 

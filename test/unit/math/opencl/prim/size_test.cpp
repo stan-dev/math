@@ -20,6 +20,6 @@ TEST(MathMatrixCL, size_prim) {
 
   matrix_cl<double> m4(3, 2);
   EXPECT_EQ(6, size(m4));
-}  
+}
 
 #endif
