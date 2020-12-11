@@ -68,14 +68,14 @@ inline std::complex<var> tanh(const std::complex<var>& z) {
  * @param x argument
  * @return elementwise hyperbolic tangent of x
  */
-template <typename T,
-	  require_var_matrix_t<T>* = nullptr>
+template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto tanh(const T& x) {
   T res = stan::math::tanh(x.val());
-  
+
   reverse_pass_callback([x, res]() mutable {
     auto cosh = stan::math::cosh(x.val());
-    x.adj().noalias() += (res.adj().array() / (cosh.array() * cosh.array())).matrix();
+    x.adj().noalias()
+        += (res.adj().array() / (cosh.array() * cosh.array())).matrix();
   });
 
   return res;

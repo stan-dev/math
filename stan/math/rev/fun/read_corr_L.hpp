@@ -33,7 +33,7 @@ namespace math {
  * canonical partial correlations.
  */
 template <typename T, require_var_vector_t<T>* = nullptr>
-auto read_corr_L(const T& CPCs, size_t K) { // on (-1, 1)
+auto read_corr_L(const T& CPCs, size_t K) {  // on (-1, 1)
   using ret_type = var_value<Eigen::MatrixXd>;
 
   if (K == 0) {
@@ -69,13 +69,14 @@ auto read_corr_L(const T& CPCs, size_t K) { // on (-1, 1)
 
   ret_type L_res = L;
   auto arena_acc = to_arena(acc);
-  
+
   reverse_pass_callback([CPCs, arena_acc, K, L_res]() mutable {
     Eigen::ArrayXd acc_val = arena_acc;
     Eigen::ArrayXd acc_adj = Eigen::ArrayXd::Zero(K - 1);
 
-    acc_adj(K - 2) += 0.5 * L_res.adj()(K - 1, K - 1) / L_res.val()(K - 1, K - 1);
-    
+    acc_adj(K - 2)
+        += 0.5 * L_res.adj()(K - 1, K - 1) / L_res.val()(K - 1, K - 1);
+
     int position = CPCs.size() - 1;
     for (size_t i = K - 2; i > 0; --i) {
       int pull = K - 1 - i;
@@ -83,17 +84,22 @@ auto read_corr_L(const T& CPCs, size_t K) { // on (-1, 1)
       const auto& cpc_seg_val = CPCs.val().array().segment(position, pull);
       auto cpc_seg_adj = CPCs.adj().array().segment(position, pull);
       acc_val.tail(pull) /= 1.0 - cpc_seg_val.square();
-      cpc_seg_adj -= 2.0 * acc_adj.tail(pull) * acc_val.tail(pull) * cpc_seg_val;
-      acc_adj.tail(pull) = (acc_adj.tail(pull).array() * (1.0 - cpc_seg_val.square())).eval();
-      cpc_seg_adj += L_res.adj().array().col(i).tail(pull) * acc_val.tail(pull).sqrt();
-      acc_adj.tail(pull) += 0.5 * L_res.adj().array().col(i).tail(pull) * cpc_seg_val / acc_val.tail(pull).sqrt();
+      cpc_seg_adj
+          -= 2.0 * acc_adj.tail(pull) * acc_val.tail(pull) * cpc_seg_val;
+      acc_adj.tail(pull)
+          = (acc_adj.tail(pull).array() * (1.0 - cpc_seg_val.square())).eval();
+      cpc_seg_adj
+          += L_res.adj().array().col(i).tail(pull) * acc_val.tail(pull).sqrt();
+      acc_adj.tail(pull) += 0.5 * L_res.adj().array().col(i).tail(pull)
+                            * cpc_seg_val / acc_val.tail(pull).sqrt();
       acc_adj(i - 1) += 0.5 * L_res.adj()(i, i) / L_res.val()(i, i);
-      
+
       position -= pull + 1;
     }
 
     int pull = K - 1;
-    CPCs.adj().array().head(pull) -= 2.0 * acc_adj.tail(pull) * CPCs.val().array().head(pull);
+    CPCs.adj().array().head(pull)
+        -= 2.0 * acc_adj.tail(pull) * CPCs.val().array().head(pull);
     CPCs.adj().head(pull) += L_res.adj().col(0).tail(pull);
   });
 
@@ -125,9 +131,8 @@ auto read_corr_L(const T& CPCs, size_t K) { // on (-1, 1)
  * @return Cholesky factor of correlation matrix for specified
  * partial correlations.
  */
-template <typename T1, typename T2,
-	  require_var_vector_t<T1>* = nullptr,
-	  require_stan_scalar_t<T2>* = nullptr>
+template <typename T1, typename T2, require_var_vector_t<T1>* = nullptr,
+          require_stan_scalar_t<T2>* = nullptr>
 auto read_corr_L(const T1& CPCs, size_t K, T2& log_prob) {
   using ret_val_type = Eigen::MatrixXd;
   using ret_type = var_value<Eigen::MatrixXd>;
@@ -158,13 +163,14 @@ auto read_corr_L(const T1& CPCs, size_t K, T2& log_prob) {
 
     size_t pos = CPCs.size() - 2;
     for (size_t k = K - 2; k >= 1; --k) {
-      for(size_t i = K; i >= k + 1; --i) {
-	CPCs.adj()(pos) -= 2.0 * acc_adj * (K - k - 1) * CPCs.val()(pos) / (1.0 - square(CPCs.val()(pos)));
-	pos--;
+      for (size_t i = K; i >= k + 1; --i) {
+        CPCs.adj()(pos) -= 2.0 * acc_adj * (K - k - 1) * CPCs.val()(pos)
+                           / (1.0 - square(CPCs.val()(pos)));
+        pos--;
       }
     }
   });
-  
+
   return read_corr_L(CPCs, K);
 }
 

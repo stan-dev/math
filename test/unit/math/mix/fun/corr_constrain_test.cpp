@@ -1,11 +1,9 @@
 #include <test/unit/math/test_ad.hpp>
 
 TEST(mathMixMatFun, corr_constrain) {
-  auto f = [](const auto& x1) {
-    return stan::math::corr_constrain(x1);
-  };
+  auto f = [](const auto& x1) { return stan::math::corr_constrain(x1); };
 
-  std::vector<double> x0 = { -1.0, 2.0, 3.0 };
+  std::vector<double> x0 = {-1.0, 2.0, 3.0};
   Eigen::VectorXd x1(3);
   x1 << -1.0, -2.0, 0.3;
   Eigen::RowVectorXd x2(3);
@@ -40,7 +38,7 @@ TEST(mathMixMatFun, corr_constrain_lp) {
     return lp;
   };
 
-  std::vector<double> x0 = { -1.0, 2.0, 3.0 };
+  std::vector<double> x0 = {-1.0, 2.0, 3.0};
   Eigen::VectorXd x1(3);
   x1 << -1.0, -2.0, 0.3;
   Eigen::RowVectorXd x2(3);

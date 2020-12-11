@@ -51,11 +51,10 @@ inline var square(const var& x) {
  * @param x argument
  * @return elementwise square of x
  */
-template <typename T,
-	  require_var_matrix_t<T>* = nullptr>
+template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto square(const T& x) {
   T res = (x.val().array() * x.val().array()).matrix();
-  
+
   reverse_pass_callback([x, res]() mutable {
     x.adj().noalias() += (2.0 * x.val().array() * res.adj().array()).matrix();
   });

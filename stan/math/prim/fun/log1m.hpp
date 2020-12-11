@@ -67,8 +67,7 @@ struct log1m_fun {
  * @param x container
  * @return Natural log of 1 minus each value in x.
  */
-template <typename T,
-	  require_not_var_matrix_t<T>* = nullptr>
+template <typename T, require_not_var_matrix_t<T>* = nullptr>
 inline auto log1m(const T& x) {
   return apply_scalar_unary<log1m_fun, T>::apply(x);
 }
