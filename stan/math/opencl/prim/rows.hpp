@@ -17,7 +17,7 @@ namespace math {
  */
 
 template <typename T_x,
-          typename = require_all_prim_or_rev_kernel_expression_t<T_x>>
+          require_t<is_nonscalar_prim_or_rev_kernel_expression<T_x>>* = nullptr>
 inline int rows(const T_x& x) {
   return x.rows();
 }
