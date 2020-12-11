@@ -11,7 +11,7 @@ namespace math {
 
 /**
  * Transposes a matrix.
- * @param m input matrix
+ * @param M input matrix
  * @return transposed matrix
  */
 inline var_value<matrix_cl<double>> transpose(
