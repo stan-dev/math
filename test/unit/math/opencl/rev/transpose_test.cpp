@@ -1,8 +1,7 @@
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/rev.hpp>
 #include <stan/math.hpp>
-#include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
+#include <gtest/gtest.h>
 
 auto transpose_functor
     = [](const auto& a) { return stan::math::transpose(a).eval(); };

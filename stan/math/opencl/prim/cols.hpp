@@ -16,7 +16,7 @@ namespace math {
  * @return number of columns in x
  */
 template <typename T_x,
-          typename = require_all_kernel_expressions_and_none_scalar_t<T_x>>
+          typename = require_all_prim_or_rev_kernel_expression_t<T_x>>
 inline int cols(const T_x& x) {
   return x.cols();
 }
