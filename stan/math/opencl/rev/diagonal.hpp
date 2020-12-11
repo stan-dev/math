@@ -21,7 +21,7 @@ inline var_value<matrix_cl<double>> diagonal(
   var_value<matrix_cl<double>> res = diagonal(M.val());
 
   reverse_pass_callback(
-      [M, res]() mutable { M.adj() = M.adj() + diag_matrix(res.adj()); });
+      [M, res]() mutable { diagonal(M.adj()) = diagonal(M.adj()) + res.adj(); });
 
   return res;
 }
