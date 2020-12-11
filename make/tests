@@ -5,9 +5,14 @@ N_TESTS ?= 100
 ##
 # Any targets in test/benchmark (.d, .o, executable) needs the Google benchmark flags
 ##
-test/benchmark/% : CXXFLAGS += -I $(BENCHMARK)/include
-test/benchmark/% : LDFLAGS += -L $(BENCHMARK)/src
-test/benchmark/% : LDLIBS += -lbenchmark
+benchmarks/%$(EXE) : CXXFLAGS += -I $(BENCHMARK)/include $(CXXFLAGS_GTEST)
+benchmarks/%$(EXE) : LDFLAGS += -L $(BENCHMARK)/build/src
+benchmarks/%$(EXE) : LDLIBS += -lbenchmark
+benchmarks/%$(EXE) : CPPFLAGS += $(CPPFLAGS_GTEST)
+benchmarks/%$(EXE) : INC += $(INC_GTEST)
+
+benchmarks/%$(EXE) : $(GTEST)/src/gtest_main.cc $(GTEST)/src/gtest-all.o $(MPI_TARGETS) $(TBB_TARGETS)
+	$(LINK.cpp) $^ $(LDLIBS) $(OUTPUT_OPTION)
 
 ##
 # Any targets in test/ (.d, .o, executable) needs the GTEST flags
