@@ -47,6 +47,7 @@ inline void check_consistent_sizes_mvt(const char* function, const char* name1,
                                        const T1& x1, const char* name2,
                                        const T2& x2,
                                        const Ts&... names_and_xs) {
+  STAN_NO_RANGE_AND_SIZE_CHECK;
   if (!is_std_vector<T1>::value && is_std_vector<T2>::value) {
     check_consistent_sizes_mvt(function, name2, x2, name1, x1, names_and_xs...);
   } else if (!is_std_vector<T2>::value) {
@@ -54,13 +55,15 @@ inline void check_consistent_sizes_mvt(const char* function, const char* name1,
   } else if (stan::math::size(x1) == stan::math::size(x2)) {
     check_consistent_sizes_mvt(function, name1, x1, names_and_xs...);
   } else {
-    size_t size_x1 = stan::math::size(x1);
-    size_t size_x2 = stan::math::size(x2);
-    std::stringstream msg;
-    msg << ", but " << name2 << " has size " << size_x2
-        << "; and they must be the same size.";
-    std::string msg_str(msg.str());
-    invalid_argument(function, name1, size_x1, "has size = ", msg_str.c_str());
+    [&]() STAN_COLD_PATH {
+      size_t size_x1 = stan::math::size(x1);
+      size_t size_x2 = stan::math::size(x2);
+      std::stringstream msg;
+      msg << ", but " << name2 << " has size " << size_x2
+          << "; and they must be the same size.";
+      std::string msg_str(msg.str());
+      invalid_argument(function, name1, size_x1, "has size = ", msg_str.c_str());
+    }();
   }
 }
 
