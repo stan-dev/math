@@ -34,7 +34,8 @@ inline Eigen::Matrix<var, 1, Mat::ColsAtCompileTime> columns_dot_self(
  */
 template <typename Mat, require_var_matrix_t<Mat>* = nullptr>
 inline auto columns_dot_self(const Mat& x) {
-  using ret_type = return_var_matrix_t<decltype(x.val().colwise().squaredNorm()), Mat>;
+  using ret_type
+      = return_var_matrix_t<decltype(x.val().colwise().squaredNorm()), Mat>;
   arena_t<ret_type> res = x.val().colwise().squaredNorm();
   if (x.size() >= 0) {
     reverse_pass_callback([res, x]() mutable {
