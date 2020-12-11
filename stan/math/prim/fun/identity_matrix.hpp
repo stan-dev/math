@@ -14,7 +14,7 @@ namespace math {
  * @return An identity matrix of size K.
  * @throw std::domain_error if K is negative.
  */
-inline Eigen::MatrixXd identity_matrix(int K) {
+inline auto identity_matrix(int K) {
   check_nonnegative("identity_matrix", "size", K);
   return Eigen::MatrixXd::Identity(K, K);
 }

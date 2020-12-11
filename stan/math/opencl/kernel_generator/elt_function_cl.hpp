@@ -12,6 +12,7 @@
 #include <stan/math/opencl/kernels/device_functions/log1m_inv_logit.hpp>
 #include <stan/math/opencl/kernels/device_functions/log1p_exp.hpp>
 #include <stan/math/opencl/kernels/device_functions/logit.hpp>
+#include <stan/math/opencl/kernels/device_functions/multiply_log.hpp>
 #include <stan/math/opencl/kernels/device_functions/inv_logit.hpp>
 #include <stan/math/opencl/kernels/device_functions/inv_square.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
@@ -75,7 +76,7 @@ class elt_function_cl : public operation_cl<Derived, Scal, T...> {
         = {(var_names_arg + ", ")...};
     std::string var_names_list = std::accumulate(
         var_names_arg_arr.begin(), var_names_arg_arr.end(), std::string());
-    res.body = type_str<Scalar>() + " " + var_name_ + " = " + fun_ + "("
+    res.body = type_str<Scalar>() + " " + var_name_ + " = " + fun_ + "((double)"
                + var_names_list.substr(0, var_names_list.size() - 2) + ");\n";
     return res;
   }
@@ -92,10 +93,8 @@ class elt_function_cl : public operation_cl<Derived, Scal, T...> {
  */
 #define ADD_BINARY_FUNCTION_WITH_INCLUDES(fun, ...)                         \
   template <typename T1, typename T2>                                       \
-  class fun##_ : public elt_function_cl<fun##_<T1, T2>,                     \
-                                        common_scalar_t<T1, T2>, T1, T2> {  \
-    using base                                                              \
-        = elt_function_cl<fun##_<T1, T2>, common_scalar_t<T1, T2>, T1, T2>; \
+  class fun##_ : public elt_function_cl<fun##_<T1, T2>, double, T1, T2> {   \
+    using base = elt_function_cl<fun##_<T1, T2>, double, T1, T2>;           \
     using base::arguments_;                                                 \
                                                                             \
    public:                                                                  \
@@ -136,18 +135,9 @@ class elt_function_cl : public operation_cl<Derived, Scal, T...> {
  */
 #define ADD_UNARY_FUNCTION_WITH_INCLUDES(fun, ...)                             \
   template <typename T>                                                        \
-  class fun##_                                                                 \
-      : public elt_function_cl<                                                \
-            fun##_<T>, typename std::remove_reference_t<T>::Scalar, T> {       \
-    using base                                                                 \
-        = elt_function_cl<fun##_<T>,                                           \
-                          typename std::remove_reference_t<T>::Scalar, T>;     \
+  class fun##_ : public elt_function_cl<fun##_<T>, double, T> {                \
+    using base = elt_function_cl<fun##_<T>, double, T>;                        \
     using base::arguments_;                                                    \
-    static_assert(std::is_floating_point<                                      \
-                      typename std::remove_reference_t<T>::Scalar>::value,     \
-                  #fun                                                         \
-                  ": all arguments must be expression with floating point "    \
-                  "return type!");                                             \
                                                                                \
    public:                                                                     \
     using base::rows;                                                          \
@@ -187,18 +177,9 @@ class elt_function_cl : public operation_cl<Derived, Scal, T...> {
  */
 #define ADD_UNARY_FUNCTION_PASS_ZERO(fun)                                      \
   template <typename T>                                                        \
-  class fun##_                                                                 \
-      : public elt_function_cl<                                                \
-            fun##_<T>, typename std::remove_reference_t<T>::Scalar, T> {       \
-    using base                                                                 \
-        = elt_function_cl<fun##_<T>,                                           \
-                          typename std::remove_reference_t<T>::Scalar, T>;     \
+  class fun##_ : public elt_function_cl<fun##_<T>, double, T> {                \
+    using base = elt_function_cl<fun##_<T>, double, T>;                        \
     using base::arguments_;                                                    \
-    static_assert(std::is_floating_point<                                      \
-                      typename std::remove_reference_t<T>::Scalar>::value,     \
-                  #fun                                                         \
-                  ": all arguments must be expression with floating point "    \
-                  "return type!");                                             \
                                                                                \
    public:                                                                     \
     using base::rows;                                                          \
@@ -330,6 +311,8 @@ ADD_BINARY_FUNCTION_WITH_INCLUDES(
     stan::math::opencl_kernels::lgamma_stirling_diff_device_function,
     stan::math::opencl_kernels::lbeta_device_function,
     stan::math::opencl_kernels::binomial_coefficient_log_device_function)
+ADD_BINARY_FUNCTION_WITH_INCLUDES(
+    multiply_log, stan::math::opencl_kernels::multiply_log_device_function)
 
 #undef ADD_BINARY_FUNCTION_WITH_INCLUDES
 #undef ADD_UNARY_FUNCTION_WITH_INCLUDES
