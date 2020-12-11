@@ -389,6 +389,25 @@ mdivide_left_tri(const T1 &A, const T2 &b) {
   return res;
 }
 
+/**
+ * Returns the solution of the system Ax=b when A is triangular.
+ *
+ * This overload handles arguments where one of T1 or T2 are
+ * `var_value<T>` where `T` is an Eigen type. The other type can
+ * also be a `var_value` or it can be a matrix type that inherits
+ * from EigenBase
+ *
+ * @tparam TriView Specifies whether A is upper (Eigen::Upper)
+ * or lower triangular (Eigen::Lower).
+ * @tparam T1 type of the triangular matrix
+ * @tparam T2 type of the right-hand side matrix or vector
+ *
+ * @param A Triangular matrix.
+ * @param b Right hand side matrix or vector.
+ * @return x = A^-1 b, solution of the linear system.
+ * @throws std::domain_error if A is not square or the rows of b don't
+ * match the size of A.
+ */
 template <Eigen::UpLoType TriView, typename T1, typename T2,
           require_all_matrix_t<T1, T2> * = nullptr,
           require_any_var_matrix_t<T1, T2> * = nullptr>
@@ -404,15 +423,16 @@ inline auto mdivide_left_tri(const T1 &A, const T2 &B) {
   check_multiplicable("mdivide_left_tri", "A", A, "B", B);
 
   if (!is_constant<T1>::value && !is_constant<T2>::value) {
-    auto arena_A = to_var_value(forward_as<promote_scalar_t<var, T1>>(A));
+    arena_t<promote_scalar_t<var, T1>> arena_A = A;
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
+    auto arena_A_val = to_arena(arena_A.val());
 
     arena_t<ret_type> res
-        = arena_A.val().template triangularView<TriView>().solve(arena_B.val());
+        = arena_A_val.template triangularView<TriView>().solve(arena_B.val());
 
-    reverse_pass_callback([arena_A, arena_B, res]() mutable {
+    reverse_pass_callback([arena_A, arena_B, arena_A_val, res]() mutable {
       promote_scalar_t<double, T2> adjB
-          = arena_A.val().template triangularView<TriView>().transpose().solve(
+          = arena_A_val.template triangularView<TriView>().transpose().solve(
               res.adj());
 
       arena_B.adj() += adjB;
@@ -422,14 +442,15 @@ inline auto mdivide_left_tri(const T1 &A, const T2 &B) {
 
     return ret_type(res);
   } else if (!is_constant<T1>::value) {
-    auto arena_A = to_var_value(forward_as<promote_scalar_t<var, T1>>(A));
-
+    arena_t<promote_scalar_t<var, T1>> arena_A = A;
+    auto arena_A_val = to_arena(arena_A.val());
+    
     arena_t<ret_type> res
-        = arena_A.val().template triangularView<TriView>().solve(value_of(B));
+        = arena_A_val.template triangularView<TriView>().solve(value_of(B));
 
-    reverse_pass_callback([arena_A, res]() mutable {
+    reverse_pass_callback([arena_A, arena_A_val, res]() mutable {
       promote_scalar_t<double, T2> adjB
-          = arena_A.val_op()
+          = arena_A_val
                 .template triangularView<TriView>()
                 .transpose()
                 .solve(res.adj());

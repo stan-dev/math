@@ -238,6 +238,24 @@ mdivide_left_spd(const EigMat1 &A, const EigMat2 &b) {
   return res;
 }
 
+/**
+ * Returns the solution of the system Ax=b where A is symmetric positive
+ * definite.
+ *
+ * This overload handles arguments where one of T1 or T2 are
+ * `var_value<T>` where `T` is an Eigen type. The other type can
+ * also be a `var_value` or it can be a matrix type that inherits
+ * from EigenBase
+ *
+ * @tparam T1 type of the first matrix
+ * @tparam T2 type of the right-hand side matrix or vector
+ *
+ * @param A Matrix.
+ * @param b Right hand side matrix or vector.
+ * @return x = A^-1 b, solution of the linear system.
+ * @throws std::domain_error if A is not square or the rows of b don't
+ * match the size of A.
+ */
 template <typename T1, typename T2, require_all_matrix_t<T1, T2> * = nullptr,
           require_any_var_matrix_t<T1, T2> * = nullptr>
 inline auto mdivide_left_spd(const T1 &A, const T2 &B) {
