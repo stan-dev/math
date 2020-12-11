@@ -10,12 +10,11 @@ namespace stan {
 namespace math {
 
 /**
- * Returns the result of pre-multiplying a matrix by its
- * own transpose.
+ * Return a square diagonal matrix with the specified vector of
+ * coefficients as the diagonal values.
  *
- * @tparam T Type of the matrix
- * @param M Matrix to multiply.
- * @return M times its transpose.
+ * @param[in] v Specified vector.
+ * @return Diagonal matrix with vector as diagonal values.
  */
 inline var_value<matrix_cl<double>> diag_matrix(
     const var_value<matrix_cl<double>>& M) {

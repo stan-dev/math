@@ -10,12 +10,9 @@ namespace stan {
 namespace math {
 
 /**
- * Returns the result of pre-multiplying a matrix by its
- * own transpose.
- *
- * @tparam T Type of the matrix
- * @param M Matrix to multiply.
- * @return M times its transpose.
+ * Transposes a matrix.
+ * @param m input matrix
+ * @return transposed matrix
  */
 inline var_value<matrix_cl<double>> transpose(
     const var_value<matrix_cl<double>>& M) {
