@@ -51,18 +51,20 @@ namespace math {
  * @param a Variable in range [-1, 1].
  * @return Arc tangent of variable, in radians.
  */
- inline var atan(const var& x) {
-   return make_callback_var(std::atan(x.val()), [x](const auto& vi) mutable {
-     x.adj() += vi.adj_ / (1.0 + (x.val() * x.val()));
-   });
- }
+inline var atan(const var& x) {
+  return make_callback_var(std::atan(x.val()), [x](const auto& vi) mutable {
+    x.adj() += vi.adj_ / (1.0 + (x.val() * x.val()));
+  });
+}
 
- template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
- inline auto atan(const VarMat& x) {
-   return make_callback_var(x.val().array().atan().matrix(), [x](const auto& vi) mutable {
-     x.adj().array() += vi.adj_.array() / (1.0 + (x.val().array() * x.val().array()));
-   });
- }
+template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
+inline auto atan(const VarMat& x) {
+  return make_callback_var(
+      x.val().array().atan().matrix(), [x](const auto& vi) mutable {
+        x.adj().array()
+            += vi.adj_.array() / (1.0 + (x.val().array() * x.val().array()));
+      });
+}
 /**
  * Return the arc tangent of the complex argument.
  *

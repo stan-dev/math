@@ -61,21 +61,21 @@ namespace math {
  * @return Inverse hyperbolic cosine of the variable.
  */
 
- inline var acosh(const var& x) {
-   return make_callback_var(acosh(x.val()), [x](const auto& vi) mutable {
-     x.adj() += vi.adj_ / std::sqrt(x.val() * x.val() - 1.0);
-   });
- }
+inline var acosh(const var& x) {
+  return make_callback_var(acosh(x.val()), [x](const auto& vi) mutable {
+    x.adj() += vi.adj_ / std::sqrt(x.val() * x.val() - 1.0);
+  });
+}
 
- template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
- inline auto acosh(const VarMat& x) {
-   return make_callback_var(x.val().unaryExpr([](const auto x) {
-      return acosh(x);
-    }),
-    [x](const auto& vi) mutable {
-     x.adj().array() += vi.adj_.array() / (x.val().array() * x.val().array() - 1.0).sqrt();
-   });
- }
+template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
+inline auto acosh(const VarMat& x) {
+  return make_callback_var(
+      x.val().unaryExpr([](const auto x) { return acosh(x); }),
+      [x](const auto& vi) mutable {
+        x.adj().array() += vi.adj_.array()
+                           / (x.val().array() * x.val().array() - 1.0).sqrt();
+      });
+}
 
 /**
  * Return the hyperbolic arc cosine of the complex argument.

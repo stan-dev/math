@@ -67,18 +67,20 @@ inline auto fabs(const VarMat& a) {
     } else {
       return std::abs(x);
     }
-  }), [a](const auto& vi) mutable {
-    for (Eigen::Index j = 0; j < vi.cols(); ++j) {
-      for (Eigen::Index i = 0; i < vi.rows(); ++i) {
-        const auto x = a.val().coeffRef(i, j);
-        if (unlikely(is_nan(x))) {
-          a.adj().coeffRef(i, j) = NOT_A_NUMBER;
-        } else {
-          a.adj().coeffRef(i, j) -= vi.adj_.coeff(i, j);
-        }
-      }
-    }
-  });
+  }),
+                           [a](const auto& vi) mutable {
+                             for (Eigen::Index j = 0; j < vi.cols(); ++j) {
+                               for (Eigen::Index i = 0; i < vi.rows(); ++i) {
+                                 const auto x = a.val().coeffRef(i, j);
+                                 if (unlikely(is_nan(x))) {
+                                   a.adj().coeffRef(i, j) = NOT_A_NUMBER;
+                                 } else {
+                                   a.adj().coeffRef(i, j)
+                                       -= vi.adj_.coeff(i, j);
+                                 }
+                               }
+                             }
+                           });
 }
 
 }  // namespace math

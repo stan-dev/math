@@ -11,7 +11,6 @@ TEST(mathMixMatFun, cosh) {
   stan::test::expect_complex_common(f);
 }
 
-
 TEST(mathMixMatFun, cosh_varmat) {
   auto f = [](const auto& x1) {
     using stan::math::cosh;

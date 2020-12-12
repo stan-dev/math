@@ -41,21 +41,19 @@ TEST(mixFun, absReturnType) {
 }
 
 namespace stan {
-  namespace test {
-    namespace internal {
-      template <typename T, require_not_eigen_t<T>* = nullptr>
-      auto test_abs(const T& x) {
-        return stan::math::abs(x);
-      }
-      template <typename T, require_eigen_t<T>* = nullptr>
-      auto test_abs(const T& x) {
-        return x.unaryExpr([](const auto x) {
-          return stan::math::abs(x);
-        });
-      }
-    }
-  }
+namespace test {
+namespace internal {
+template <typename T, require_not_eigen_t<T>* = nullptr>
+auto test_abs(const T& x) {
+  return stan::math::abs(x);
 }
+template <typename T, require_eigen_t<T>* = nullptr>
+auto test_abs(const T& x) {
+  return x.unaryExpr([](const auto x) { return stan::math::abs(x); });
+}
+}  // namespace internal
+}  // namespace test
+}  // namespace stan
 TEST(mathMixMatFun, abs_varmat) {
   auto f = [](const auto& x1) {
     using stan::test::internal::test_abs;

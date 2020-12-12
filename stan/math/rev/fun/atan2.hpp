@@ -25,12 +25,12 @@ namespace math {
  * @return The arc tangent of the fraction, in radians.
  */
 inline var atan2(const var& a, const var& b) {
-  return make_callback_var(std::atan2(a.val(), b.val()), [a, b](const auto& vi) mutable {
-    double a_sq_plus_b_sq
-        = (a.val() * a.val()) + (b.val() * b.val());
-    a.adj() += vi.adj_ * b.val() / a_sq_plus_b_sq;
-    b.adj() -= vi.adj_ * a.val() / a_sq_plus_b_sq;
-  });
+  return make_callback_var(
+      std::atan2(a.val(), b.val()), [a, b](const auto& vi) mutable {
+        double a_sq_plus_b_sq = (a.val() * a.val()) + (b.val() * b.val());
+        a.adj() += vi.adj_ * b.val() / a_sq_plus_b_sq;
+        b.adj() -= vi.adj_ * a.val() / a_sq_plus_b_sq;
+      });
 }
 
 /**
@@ -46,11 +46,11 @@ inline var atan2(const var& a, const var& b) {
  * @return The arc tangent of the fraction, in radians.
  */
 inline var atan2(const var& a, double b) {
-  return make_callback_var(std::atan2(a.val(), b), [a, b](const auto& vi) mutable {
-    double a_sq_plus_b_sq
-        = (a.val() * a.val()) + (b * b);
-    a.adj() += vi.adj_ * b / a_sq_plus_b_sq;
-  });
+  return make_callback_var(
+      std::atan2(a.val(), b), [a, b](const auto& vi) mutable {
+        double a_sq_plus_b_sq = (a.val() * a.val()) + (b * b);
+        a.adj() += vi.adj_ * b / a_sq_plus_b_sq;
+      });
 }
 
 /**
@@ -90,13 +90,12 @@ inline var atan2(const var& a, double b) {
  * @return The arc tangent of the fraction, in radians.
  */
 inline var atan2(double a, const var& b) {
-  return make_callback_var(std::atan2(a, b.val()), [a, b](const auto& vi) mutable {
-    double a_sq_plus_b_sq
-        = (a * a) + (b.val() * b.val());
-    b.adj() -= vi.adj_ * a / a_sq_plus_b_sq;
-  });
+  return make_callback_var(
+      std::atan2(a, b.val()), [a, b](const auto& vi) mutable {
+        double a_sq_plus_b_sq = (a * a) + (b.val() * b.val());
+        b.adj() -= vi.adj_ * a / a_sq_plus_b_sq;
+      });
 }
-
 
 }  // namespace math
 }  // namespace stan

@@ -50,18 +50,20 @@ namespace math {
  * @param a Variable in range [-1, 1].
  * @return Arc sine of variable, in radians.
  */
- inline var asin(const var& x) {
-   return make_callback_var(std::asin(x.val()), [x](const auto& vi) mutable {
-     x.adj() += vi.adj_ / std::sqrt(1.0 - (x.val() * x.val()));
-   });
- }
+inline var asin(const var& x) {
+  return make_callback_var(std::asin(x.val()), [x](const auto& vi) mutable {
+    x.adj() += vi.adj_ / std::sqrt(1.0 - (x.val() * x.val()));
+  });
+}
 
- template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
- inline auto asin(const VarMat& x) {
-   return make_callback_var(x.val().array().asin().matrix(), [x](const auto& vi) mutable {
-     x.adj().array() += vi.adj_.array() / (1.0 - (x.val().array() * x.val().array())).sqrt();
-   });
- }
+template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
+inline auto asin(const VarMat& x) {
+  return make_callback_var(
+      x.val().array().asin().matrix(), [x](const auto& vi) mutable {
+        x.adj().array() += vi.adj_.array()
+                           / (1.0 - (x.val().array() * x.val().array())).sqrt();
+      });
+}
 
 /**
  * Return the arc sine of the complex argument.

@@ -29,6 +29,7 @@ TEST(mathMixMatFun, acos_varmat) {
     return acos(x1);
   };
   Eigen::MatrixXd A(2, 4);
-  A << -2.2, -0.8, 0.5, 1 + std::numeric_limits<double>::epsilon(), 1.5, 3, 3.4, 4;
+  A << -2.2, -0.8, 0.5, 1 + std::numeric_limits<double>::epsilon(), 1.5, 3, 3.4,
+      4;
   expect_ad_matvar(f, A);
 }

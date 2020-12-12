@@ -41,28 +41,29 @@ namespace math {
  * @param a Variable.
  * @return Hyperbolic cosine of variable.
  */
- inline var cosh(const var& a) {
-   return make_callback_var(std::cosh(a.val()), [a](const auto& vi) mutable {
-     a.adj() += vi.adj_ * std::sinh(a.val());
-   });
- }
+inline var cosh(const var& a) {
+  return make_callback_var(std::cosh(a.val()), [a](const auto& vi) mutable {
+    a.adj() += vi.adj_ * std::sinh(a.val());
+  });
+}
 
- template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
- inline auto cosh(const VarMat& a) {
-   return make_callback_var(a.val().array().cosh().matrix(), [a](const auto& vi) mutable {
-     a.adj().array() += vi.adj_.array() * a.val().array().sinh();
-   });
- }
+template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
+inline auto cosh(const VarMat& a) {
+  return make_callback_var(
+      a.val().array().cosh().matrix(), [a](const auto& vi) mutable {
+        a.adj().array() += vi.adj_.array() * a.val().array().sinh();
+      });
+}
 
- /**
-  * Return the hyperbolic cosine of the complex argument.
-  *
-  * @param[in] z argument
-  * @return hyperbolic cosine of the argument
-  */
- inline std::complex<var> cosh(const std::complex<var>& z) {
-   return stan::math::internal::complex_cosh(z);
- }
+/**
+ * Return the hyperbolic cosine of the complex argument.
+ *
+ * @param[in] z argument
+ * @return hyperbolic cosine of the argument
+ */
+inline std::complex<var> cosh(const std::complex<var>& z) {
+  return stan::math::internal::complex_cosh(z);
+}
 
 }  // namespace math
 }  // namespace stan

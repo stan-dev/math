@@ -36,20 +36,18 @@ namespace math {
  */
 inline var cbrt(const var& a) {
   return make_callback_var(cbrt(a.val()), [a](const auto& vi) mutable {
-     a.adj() += vi.adj_ / (3.0 * vi.val_ * vi.val_);
+    a.adj() += vi.adj_ / (3.0 * vi.val_ * vi.val_);
   });
 }
 
 template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
 inline auto cbrt(const VarMat& a) {
-  return make_callback_var(a.val().unaryExpr([](const auto x) {
-     return cbrt(x);
-   }),
-   [a](const auto& vi) mutable {
-     a.adj().array() += vi.adj_.array() / (3.0 * vi.val_.array().square());
-  });
+  return make_callback_var(
+      a.val().unaryExpr([](const auto x) { return cbrt(x); }),
+      [a](const auto& vi) mutable {
+        a.adj().array() += vi.adj_.array() / (3.0 * vi.val_.array().square());
+      });
 }
-
 
 }  // namespace math
 }  // namespace stan
