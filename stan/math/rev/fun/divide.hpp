@@ -191,7 +191,7 @@ template <typename Mat, typename Scal, require_var_matrix_t<Mat>* = nullptr,
 inline auto divide(const Mat& m, const Scal& c) {
   double invc = 1.0 / value_of(c);
 
-  Mat res = invc * m.val();
+  plain_type_t<Mat> res = invc * m.val();
 
   reverse_pass_callback([m, c, res, invc]() mutable {
     m.adj() += invc * res.adj();
