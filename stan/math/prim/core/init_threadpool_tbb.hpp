@@ -87,7 +87,8 @@ inline int get_num_threads() {
 inline tbb::global_control& init_threadpool_tbb() {
   int tbb_max_threads = internal::get_num_threads();
 
-  static tbb::global_control tbb_scheduler(tbb::global_control::max_allowed_parallelism, tbb_max_threads);
+  static tbb::global_control tbb_scheduler(
+      tbb::global_control::max_allowed_parallelism, tbb_max_threads);
 
   return tbb_scheduler;
 }
@@ -122,7 +123,6 @@ inline tbb::task_scheduler_init& init_threadpool_tbb(
   return tbb_scheduler;
 }
 #endif
-
 
 }  // namespace math
 }  // namespace stan
