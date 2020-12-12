@@ -9,7 +9,7 @@
 #include <tbb/global_control.h>
 #include <tbb/task_arena.h>
 
-TEST(intel_tbb_init, check_status) {
+TEST(intel_tbb_new_init, check_status) {
   set_n_threads(-1);
   tbb::global_control& tbb_init = stan::math::init_threadpool_tbb();
   EXPECT_TRUE(tbb_init.is_active());

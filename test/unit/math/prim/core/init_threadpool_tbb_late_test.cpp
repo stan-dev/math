@@ -9,7 +9,7 @@
 #include <tbb/global_control.h>
 #include <tbb/task_arena.h>
 
-TEST(intel_tbb_late_init, check_status) {
+TEST(intel_tbb_new_late_init, check_status) {
   const int num_threads = tbb::global_control::default_num_threads();
   tbb::global_control tbb_scheduler;
 
