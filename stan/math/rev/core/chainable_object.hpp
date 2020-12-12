@@ -43,7 +43,8 @@ class chainable_object : public chainable_alloc {
    *
    * @return reference to underlying object
    */
-  inline T& get() noexcept { return obj_; }
+  inline auto& get() noexcept { return obj_; }
+  inline const auto& get() const noexcept { return obj_; }
 };
 
 /**
