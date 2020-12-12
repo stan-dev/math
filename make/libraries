@@ -89,8 +89,7 @@ clean-sundials:
 	$(RM) $(wildcard $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_NVECSERIAL) $(LIBSUNDIALS)))
 
 
-# Remove when the internal TBB source code is updated.
-ifndef TBB_INTERFACE_NEW
+ifndef TBB_USE_SYSTEM_LIB
 
 ############################################################
 # TBB build rules
