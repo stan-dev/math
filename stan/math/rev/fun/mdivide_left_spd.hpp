@@ -239,7 +239,7 @@ mdivide_left_spd(const EigMat1 &A, const EigMat2 &b) {
 }
 
 /**
- * Returns the solution of the system Ax=b where A is symmetric positive
+ * Returns the solution of the system Ax=B where A is symmetric positive
  * definite.
  *
  * This overload handles arguments where one of T1 or T2 are
@@ -251,10 +251,10 @@ mdivide_left_spd(const EigMat1 &A, const EigMat2 &b) {
  * @tparam T2 type of the right-hand side matrix or vector
  *
  * @param A Matrix.
- * @param b Right hand side matrix or vector.
- * @return x = A^-1 b, solution of the linear system.
- * @throws std::domain_error if A is not square or the rows of b don't
- * match the size of A.
+ * @param B Right hand side matrix or vector.
+ * @return x = A^-1 B, solution of the linear system.
+ * @throws std::domain_error if A is not square or B does not have
+ * as many rows as A has columns.
  */
 template <typename T1, typename T2, require_all_matrix_t<T1, T2> * = nullptr,
           require_any_var_matrix_t<T1, T2> * = nullptr>

@@ -390,7 +390,7 @@ mdivide_left_tri(const T1 &A, const T2 &b) {
 }
 
 /**
- * Returns the solution of the system Ax=b when A is triangular.
+ * Returns the solution of the system Ax=B when A is triangular.
  *
  * This overload handles arguments where one of T1 or T2 are
  * `var_value<T>` where `T` is an Eigen type. The other type can
@@ -403,10 +403,10 @@ mdivide_left_tri(const T1 &A, const T2 &b) {
  * @tparam T2 type of the right-hand side matrix or vector
  *
  * @param A Triangular matrix.
- * @param b Right hand side matrix or vector.
- * @return x = A^-1 b, solution of the linear system.
- * @throws std::domain_error if A is not square or the rows of b don't
- * match the size of A.
+ * @param B Right hand side matrix or vector.
+ * @return x = A^-1 B, solution of the linear system.
+ * @throws std::domain_error if A is not square or B does not have
+ * as many rows as A has columns.
  */
 template <Eigen::UpLoType TriView, typename T1, typename T2,
           require_all_matrix_t<T1, T2> * = nullptr,
