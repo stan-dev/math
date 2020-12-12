@@ -23,13 +23,13 @@ template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto inverse(const T& m) {
   check_square("inverse", "m", m);
 
-  if (m.size() == 0) {
-    return m;
+  using ret_type = return_var_matrix_t<T>;
+  if (unlikely(m.size() == 0)) {
+    return ret_type(m);
   }
 
   arena_t<T> arena_m = m;
   arena_t<promote_scalar_t<double, T>> res_val = arena_m.val().inverse();
-  using ret_type = return_var_matrix_t<T>;
   arena_t<ret_type> res = res_val;
 
   reverse_pass_callback([res, res_val, arena_m]() mutable {
