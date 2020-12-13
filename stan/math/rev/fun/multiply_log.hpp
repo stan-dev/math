@@ -107,16 +107,14 @@ inline var multiply_log(double a, const var& b) {
   return var(new internal::multiply_log_dv_vari(a, b.vi_));
 }
 
-template<typename T1, typename T2,
-	 require_all_matrix_t<T1, T2>* = nullptr,
-	 require_any_var_matrix_t<T1, T2>* = nullptr>
+template <typename T1, typename T2, require_all_matrix_t<T1, T2>* = nullptr,
+          require_any_var_matrix_t<T1, T2>* = nullptr>
 inline auto multiply_log(const T1& a, const T2& b) {
   return elt_multiply(a, log(b));
 }
 
-template<typename T1, typename T2,
-	 require_any_var_matrix_t<T1, T2>* = nullptr,
-	 require_any_stan_scalar_t<T1, T2>* = nullptr>
+template <typename T1, typename T2, require_any_var_matrix_t<T1, T2>* = nullptr,
+          require_any_stan_scalar_t<T1, T2>* = nullptr>
 inline auto multiply_log(const T1& a, const T2& b) {
   return multiply(a, log(b));
 }

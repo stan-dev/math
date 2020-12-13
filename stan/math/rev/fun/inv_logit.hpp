@@ -45,7 +45,9 @@ inline auto inv_logit(const T& x) {
   plain_type_t<T> res = inv_logit(x.val());
 
   reverse_pass_callback([x, res]() mutable {
-    x.adj().noalias() += (res.adj().array() * res.val().array() * (1.0 - res.val().array())).matrix();
+    x.adj().noalias()
+        += (res.adj().array() * res.val().array() * (1.0 - res.val().array()))
+               .matrix();
   });
 
   return res;
