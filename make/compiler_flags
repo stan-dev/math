@@ -239,6 +239,19 @@ else
   TBB_LIBRARIES ?= tbb
 endif
 
+ifdef TBB_LIB
+
+ifdef TBB_INC
+CXXFLAGS_TBB ?= -I $(TBB_INC)
+else
+CXXFLAGS_TBB ?= -I $(TBB)/include
+endif
+
+LDFLAGS_TBB ?= -Wl,-L,"$(TBB_LIB)" -Wl,-rpath,"$(TBB_LIB) -ltbb"
+LDLIBS_TBB ?=
+
+else
+
 ifeq ($(OS),Windows_NT)
   TBB_TARGETS ?= $(addprefix $(TBB_BIN)/,$(addsuffix $(LIBRARY_SUFFIX),$(TBB_LIBRARIES)))
 endif
@@ -246,13 +259,16 @@ ifeq ($(OS),Darwin)
   TBB_TARGETS ?= $(addprefix $(TBB_BIN)/lib,$(addsuffix $(LIBRARY_SUFFIX), $(TBB_LIBRARIES)))
 endif
 ifeq ($(OS),Linux)
+  # Update the suffix with the internal TBB source code!
+  # The new version of TBB library is 12+ (e.g., libtbb.so.12.1 not libtbb.so.2)
   TBB_TARGETS ?= $(addprefix $(TBB_BIN)/lib,$(addsuffix $(LIBRARY_SUFFIX).2,$(TBB_LIBRARIES)))
 endif
-
 
 CXXFLAGS_TBB ?= -I $(TBB)/include
 LDFLAGS_TBB ?= -Wl,-L,"$(TBB_BIN_ABSOLUTE_PATH)" -Wl,-rpath,"$(TBB_BIN_ABSOLUTE_PATH)" $(LDFLAGS_FLTO_FLTO) $(LDFLAGS_OPTIM_TBB)
 LDLIBS_TBB ?=
+
+endif
 
 ifdef TBB_INTERFACE_NEW
 CPPFLAGS_TBB ?= -DTBB_INTERFACE_NEW

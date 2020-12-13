@@ -89,8 +89,6 @@ clean-sundials:
 	$(RM) $(wildcard $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_NVECSERIAL) $(LIBSUNDIALS)))
 
 
-ifndef TBB_USE_SYSTEM_LIB
-
 ############################################################
 # TBB build rules
 #
@@ -108,6 +106,8 @@ ifndef TBB_USE_SYSTEM_LIB
 # On windows the mingw32-make (part of RTools, for example) is required to build
 # the TBB as this make has proper POSIX extensions needed by the used downstream
 # TBB makefiles.
+
+ifndef TBB_LIB
 
 ifeq ($(CXX_TYPE),mingw32-gcc)
   TBB_CXX_TYPE ?= gcc
