@@ -14,8 +14,7 @@ namespace stan {
 namespace math {
 
 template <typename T, require_var_vector_t<T>* = nullptr>
-var_value<Eigen::MatrixXd>
-cholesky_corr_constrain(const T& y, int K) {
+var_value<Eigen::MatrixXd> cholesky_corr_constrain(const T& y, int K) {
   using std::sqrt;
   int k_choose_2 = (K * (K - 1)) / 2;
   check_size_match("cholesky_corr_constrain", "y.size()", y.size(),
@@ -48,26 +47,25 @@ cholesky_corr_constrain(const T& y, int K) {
     for (int i = K - 1; i > 0; --i) {
       double sum_sqs_val = 1.0 - square(x.val().coeffRef(i, i));
       double sum_sqs_adj = -0.5 * x.adj().coeff(i, i) / x.val().coeff(i, i);
-      for(int j = i - 1; j > 0; --j) {
-	x.adj().coeffRef(i, j) += 2 * sum_sqs_adj * x.val().coeff(i, j);
-	sum_sqs_val -= square(x.val().coeff(i, j));
-	sum_sqs_adj += -0.5 * x.adj().coeffRef(i, j) *
-	  z.val().coeff(--k) / sqrt(1.0 - sum_sqs_val);
-	z.adj().coeffRef(k) += x.adj().coeffRef(i, j) * sqrt(1.0 - sum_sqs_val);
+      for (int j = i - 1; j > 0; --j) {
+        x.adj().coeffRef(i, j) += 2 * sum_sqs_adj * x.val().coeff(i, j);
+        sum_sqs_val -= square(x.val().coeff(i, j));
+        sum_sqs_adj += -0.5 * x.adj().coeffRef(i, j) * z.val().coeff(--k)
+                       / sqrt(1.0 - sum_sqs_val);
+        z.adj().coeffRef(k) += x.adj().coeffRef(i, j) * sqrt(1.0 - sum_sqs_val);
       }
       x.adj().coeffRef(i, 0) += 2 * sum_sqs_adj * x.val().coeff(i, 0);
       z.adj().coeffRef(--k) += x.adj().coeffRef(i, 0);
     }
   });
-  
+
   return x;
 }
 
 // FIXME to match above after debugged
-template <typename T,
-	  require_var_vector_t<T>* = nullptr>
-var_value<Eigen::MatrixXd>
-cholesky_corr_constrain(const T& y, int K, scalar_type_t<T>& lp) {
+template <typename T, require_var_vector_t<T>* = nullptr>
+var_value<Eigen::MatrixXd> cholesky_corr_constrain(const T& y, int K,
+                                                   scalar_type_t<T>& lp) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::sqrt;
@@ -105,14 +103,14 @@ cholesky_corr_constrain(const T& y, int K, scalar_type_t<T>& lp) {
     for (int i = K - 1; i > 0; --i) {
       double sum_sqs_val = 1.0 - square(x.val().coeffRef(i, i));
       double sum_sqs_adj = -0.5 * x.adj().coeff(i, i) / x.val().coeff(i, i);
-      for(int j = i - 1; j > 0; --j) {
-	x.adj().coeffRef(i, j) += 2 * sum_sqs_adj * x.val().coeff(i, j);
-	sum_sqs_val -= square(x.val().coeff(i, j));
+      for (int j = i - 1; j > 0; --j) {
+        x.adj().coeffRef(i, j) += 2 * sum_sqs_adj * x.val().coeff(i, j);
+        sum_sqs_val -= square(x.val().coeff(i, j));
 
-	sum_sqs_adj += -0.5 * x.adj().coeffRef(i, j) *
-	  z.val().coeff(--k) / sqrt(1.0 - sum_sqs_val);
-	z.adj().coeffRef(k) += x.adj().coeffRef(i, j) * sqrt(1.0 - sum_sqs_val);
-	sum_sqs_adj -= 0.5 * lp.adj() / (1 - sum_sqs_val);
+        sum_sqs_adj += -0.5 * x.adj().coeffRef(i, j) * z.val().coeff(--k)
+                       / sqrt(1.0 - sum_sqs_val);
+        z.adj().coeffRef(k) += x.adj().coeffRef(i, j) * sqrt(1.0 - sum_sqs_val);
+        sum_sqs_adj -= 0.5 * lp.adj() / (1 - sum_sqs_val);
       }
       x.adj().coeffRef(i, 0) += 2 * sum_sqs_adj * x.val().coeff(i, 0);
       z.adj().coeffRef(--k) += x.adj().coeffRef(i, 0);
