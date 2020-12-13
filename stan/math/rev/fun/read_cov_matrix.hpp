@@ -25,9 +25,8 @@ namespace math {
  */
 template <typename T_CPCs, typename T_sds,
           require_all_var_vector_t<T_CPCs, T_sds>* = nullptr>
-var_value<Eigen::MatrixXd>
-read_cov_matrix(const T_CPCs& CPCs, const T_sds& sds,
-                scalar_type_t<T_CPCs>& log_prob) {
+var_value<Eigen::MatrixXd> read_cov_matrix(const T_CPCs& CPCs, const T_sds& sds,
+                                           scalar_type_t<T_CPCs>& log_prob) {
   return multiply_lower_tri_self_transpose(read_cov_L(CPCs, sds, log_prob));
 }
 
@@ -43,12 +42,13 @@ read_cov_matrix(const T_CPCs& CPCs, const T_sds& sds,
  */
 template <typename T_CPCs, typename T_sds,
           require_all_var_vector_t<T_CPCs, T_sds>* = nullptr>
-inline var_value<Eigen::MatrixXd>
-read_cov_matrix(const T_CPCs& CPCs, const T_sds& sds) {
+inline var_value<Eigen::MatrixXd> read_cov_matrix(const T_CPCs& CPCs,
+                                                  const T_sds& sds) {
   size_t K = sds.rows();
 
   var_value<Eigen::MatrixXd> corr_L = read_corr_L(CPCs, K);
-  var_value<Eigen::MatrixXd> prod = sds.val().matrix().asDiagonal() * corr_L.val();
+  var_value<Eigen::MatrixXd> prod
+      = sds.val().matrix().asDiagonal() * corr_L.val();
 
   reverse_pass_callback([sds, corr_L, prod]() mutable {
     corr_L.adj() += sds.val().matrix().asDiagonal() * prod.adj();

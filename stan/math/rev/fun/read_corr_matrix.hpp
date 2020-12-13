@@ -23,8 +23,8 @@ namespace math {
  * canonical partial correlations.
  */
 template <typename T_CPCs, require_var_vector_t<T_CPCs>* = nullptr>
-inline var_value<Eigen::MatrixXd>
-read_corr_matrix(const T_CPCs& CPCs, size_t K) {
+inline var_value<Eigen::MatrixXd> read_corr_matrix(const T_CPCs& CPCs,
+                                                   size_t K) {
   if (K == 0) {
     return Eigen::MatrixXd();
   }
@@ -52,8 +52,8 @@ read_corr_matrix(const T_CPCs& CPCs, size_t K) {
  * @return Correlation matrix for specified partial correlations.
  */
 template <typename T_CPCs, require_var_vector_t<T_CPCs>* = nullptr>
-inline var_value<Eigen::MatrixXd>
-read_corr_matrix(const T_CPCs& CPCs, size_t K, scalar_type_t<T_CPCs>& log_prob) {
+inline var_value<Eigen::MatrixXd> read_corr_matrix(
+    const T_CPCs& CPCs, size_t K, scalar_type_t<T_CPCs>& log_prob) {
   if (K == 0) {
     return Eigen::MatrixXd();
   }
