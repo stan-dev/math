@@ -70,7 +70,7 @@ inline std::complex<var> tanh(const std::complex<var>& z) {
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto tanh(const T& x) {
-  T res = stan::math::tanh(x.val());
+  plain_type_t<T> res = stan::math::tanh(x.val());
 
   reverse_pass_callback([x, res]() mutable {
     auto cosh = stan::math::cosh(x.val());

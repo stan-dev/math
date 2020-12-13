@@ -66,7 +66,7 @@ inline std::complex<var> exp(const std::complex<var>& z) {
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto exp(const T& x) {
-  T res = x.val().array().exp().matrix();
+  plain_type_t<T> res = x.val().array().exp().matrix();
 
   reverse_pass_callback([x, res]() mutable {
     x.adj().noalias() += (res.val().array() * res.adj().array()).matrix();
