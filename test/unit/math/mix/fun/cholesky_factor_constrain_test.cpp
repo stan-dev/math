@@ -8,7 +8,8 @@ TEST(mathMixMatFun, cholesky_factor_constrain) {
   };
 
   Eigen::VectorXd x1(14);
-  x1 << -0.9, 0.2, 0.99, 0.1, 0.2, 0.3, -0.1, -0.2, -0.3, -0.4, -0.4, -0.5, -0.6, -0.7;
+  x1 << -0.9, 0.2, 0.99, 0.1, 0.2, 0.3, -0.1, -0.2, -0.3, -0.4, -0.4, -0.5,
+      -0.6, -0.7;
   Eigen::VectorXd x2(12);
   x2 << -0.3, 0.2, -0.99, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, -0.9;
   stan::test::expect_ad(f(5, 4), x1);
@@ -34,7 +35,8 @@ TEST(mathMixMatFun, cholesky_factor_constrain_lp) {
   };
 
   Eigen::VectorXd x1(14);
-  x1 << -0.9, 0.2, 0.99, 0.1, 0.2, 0.3, -0.1, -0.2, -0.3, -0.4, -0.4, -0.5, -0.6, -0.7;
+  x1 << -0.9, 0.2, 0.99, 0.1, 0.2, 0.3, -0.1, -0.2, -0.3, -0.4, -0.4, -0.5,
+      -0.6, -0.7;
   Eigen::VectorXd x2(12);
   x2 << -0.3, 0.2, -0.99, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, -0.9;
   stan::test::expect_ad(f1(5, 4), x1);
@@ -49,4 +51,3 @@ TEST(mathMixMatFun, cholesky_factor_constrain_lp) {
   stan::test::expect_ad_matvar(f2(5, 4), x1);
   stan::test::expect_ad_matvar(f2(5, 3), x2);
 }
-
