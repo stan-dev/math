@@ -107,7 +107,7 @@ inline auto generalized_inverse(const EigMat& G, const double a) {
     A_spd.diagonal().array() += a;
 
     arena_t<EigMat> inv_G(transpose(mdivide_right_spd(G_arena.val(), A_spd)));
-    auto aP = (1 - G * inv_G.transpose());
+    auto aP = (1 - G_arena * inv_G.transpose());
     auto Pa = (1 - inv_G * G_arena.val());
     reverse_pass_callback([G_arena, inv_G, aP, Pa]() mutable {
       G_arena.adj() += -inv_G * G_arena.adj() * inv_G;
