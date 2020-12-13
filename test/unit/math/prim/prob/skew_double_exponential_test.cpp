@@ -22,9 +22,9 @@ inline typename boost::math::tools::promote_args<T1, T2, T3, T4>::type blub(
 TEST(ProbDistributionsSkewedDoubleExponential, test) {
   using stan::math::skew_double_exponential_lpdf;
 
-  stan::math::var y = 40.2;
+  stan::math::var y = 10.2;
   stan::math::var mu = 2.0;
-  stan::math::var sigma = 2.0;
+  stan::math::var sigma = 2.1;
   stan::math::var tau = 0.23;
 
   stan::math::var lp = blub(y, mu, sigma, tau);
@@ -46,9 +46,9 @@ TEST(ProbDistributionsSkewedDoubleExponential, test) {
 TEST(ProbDistributionsSkewedDoubleExponential, test2) {
 using stan::math::skew_double_exponential_lpdf;
 
-  stan::math::var y2 = 40.2;
+  stan::math::var y2 = 10.2;
   stan::math::var mu2 = 2.0;
-  stan::math::var sigma2 = 2.0;
+  stan::math::var sigma2 = 2.1;
   stan::math::var tau2 = 0.23;
 
   stan::math::var lp2 = skew_double_exponential_lpdf(y2, mu2, sigma2, tau2);
