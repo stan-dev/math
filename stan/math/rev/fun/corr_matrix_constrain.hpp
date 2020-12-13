@@ -1,6 +1,7 @@
-#ifndef STAN_MATH_PRIM_FUN_CORR_MATRIX_CONSTRAIN_HPP
-#define STAN_MATH_PRIM_FUN_CORR_MATRIX_CONSTRAIN_HPP
+#ifndef STAN_MATH_REV_FUN_CORR_MATRIX_CONSTRAIN_HPP
+#define STAN_MATH_REV_FUN_CORR_MATRIX_CONSTRAIN_HPP
 
+#include <stan/math/rev/core.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
@@ -36,8 +37,8 @@ namespace math {
  * @throw std::invalid_argument if x is not a valid correlation
  * matrix.
  */
-template <typename T, require_eigen_col_vector_t<T>* = nullptr>
-Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
+template <typename T, require_var_vector_t<T>* = nullptr>
+var_value<Eigen::MatrixXd>
 corr_matrix_constrain(const T& x, Eigen::Index k) {
   Eigen::Index k_choose_2 = (k * (k - 1)) / 2;
   check_size_match("cov_matrix_constrain", "x.size()", x.size(), "k_choose_2",
@@ -66,9 +67,9 @@ corr_matrix_constrain(const T& x, Eigen::Index k) {
  * @param lp Log probability reference to increment.
  */
 template <typename T,
-	  require_eigen_col_vector_t<T>* = nullptr>
-Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
-corr_matrix_constrain(const T& x, Eigen::Index k, value_type_t<T>& lp) {
+	  require_var_vector_t<T>* = nullptr>
+var_value<Eigen::MatrixXd>
+corr_matrix_constrain(const T& x, Eigen::Index k, scalar_type_t<T>& lp) {
   Eigen::Index k_choose_2 = (k * (k - 1)) / 2;
   check_size_match("cov_matrix_constrain", "x.size()", x.size(), "k_choose_2",
                    k_choose_2);

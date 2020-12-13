@@ -1,6 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 
-TEST(mathMixMatFun, read_corr_L) {
+TEST(mathMixMatFun, cov_matrix_constrain_lkj) {
   auto f = [](int K) {
     return [K](const auto& x1) { return stan::math::cov_matrix_constrain_lkj(x1, K); };
   };
