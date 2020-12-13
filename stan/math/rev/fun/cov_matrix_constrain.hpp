@@ -91,11 +91,13 @@ cov_matrix_constrain(const T& x, Eigen::Index K, scalar_type_t<T>& lp) {
   }
 
   // Jacobian for complete transform, including exp() above
-  lp += (K * LOG_TWO);  // needless constant; want propto
+  double lp_val = (K * LOG_TWO);  // needless constant; want propto
   for (Eigen::Index k = 0; k < K; ++k) {
     // only +1 because index from 0
-    lp += (K - k + 1) * log(L_val.coeff(k, k));
+    lp_val += (K - k + 1) * log(L_val.coeff(k, k));
   }
+
+  lp += lp_val;
 
   var_value<Eigen::MatrixXd> L = L_val;
 

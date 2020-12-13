@@ -29,6 +29,7 @@
 #include <stan/math/rev/fun/cbrt.hpp>
 #include <stan/math/rev/fun/ceil.hpp>
 #include <stan/math/rev/fun/cholesky_decompose.hpp>
+#include <stan/math/rev/fun/cholesky_factor_constrain.hpp>
 #include <stan/math/rev/fun/columns_dot_product.hpp>
 #include <stan/math/rev/fun/columns_dot_self.hpp>
 #include <stan/math/rev/fun/conj.hpp>
