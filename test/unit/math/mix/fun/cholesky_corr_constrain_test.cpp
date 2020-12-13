@@ -68,7 +68,9 @@ TEST(MathMixMatFun, cholesky_corrTransform) {
 
 TEST(mathMixMatFun, cholesky_corr_constrain) {
   auto f = [](int K) {
-    return [K](const auto& x1) { return stan::math::cholesky_corr_constrain(x1, K); };
+    return [K](const auto& x1) {
+      return stan::math::cholesky_corr_constrain(x1, K);
+    };
   };
 
   Eigen::VectorXd x1(6);
