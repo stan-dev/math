@@ -29,13 +29,15 @@ namespace math {
 template <typename T_CPCs, typename T_sds,
           require_any_var_vector_t<T_CPCs, T_sds>* = nullptr,
           require_vt_same<T_CPCs, T_sds>* = nullptr>
-inline auto read_cov_L(const T_CPCs& CPCs, const T_sds& sds, scalar_type_t<T_CPCs>& log_prob) {
+inline auto read_cov_L(const T_CPCs& CPCs, const T_sds& sds,
+                       scalar_type_t<T_CPCs>& log_prob) {
   size_t K = sds.rows();
   // adjust due to transformation from correlations to covariances
   log_prob += (sum(log(sds.val())) + LOG_TWO) * K;
 
   auto corr_L = read_corr_L(CPCs, K, log_prob);
-  var_value<Eigen::MatrixXd> res = sds.val().matrix().asDiagonal() * corr_L.val();
+  var_value<Eigen::MatrixXd> res
+      = sds.val().matrix().asDiagonal() * corr_L.val();
 
   reverse_pass_callback([CPCs, sds, corr_L, log_prob, res]() mutable {
     size_t K = sds.size();
@@ -45,7 +47,7 @@ inline auto read_cov_L(const T_CPCs& CPCs, const T_sds& sds, scalar_type_t<T_CPC
 
     sds.adj() += (K * log_prob.adj() / sds.val().array()).matrix();
   });
-  
+
   return res;
 }
 

@@ -2,9 +2,7 @@
 
 TEST(mathMixMatFun, read_corr_L) {
   auto f = [](int K) {
-    return [K](const auto& x1) {
-      return stan::math::read_corr_L(x1, K);
-    };
+    return [K](const auto& x1) { return stan::math::read_corr_L(x1, K); };
   };
 
   Eigen::VectorXd x1(6);
