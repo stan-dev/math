@@ -29,8 +29,7 @@ namespace math {
  * @throws std::invalid_argument if (x.size() != K + (K choose 2)).
  */
 template <typename T, require_var_vector_t<T>* = nullptr>
-var_value<Eigen::MatrixXd>
-cov_matrix_constrain(const T& x, Eigen::Index K) {
+var_value<Eigen::MatrixXd> cov_matrix_constrain(const T& x, Eigen::Index K) {
   using std::exp;
 
   arena_t<Eigen::MatrixXd> L_val(K, K);
@@ -49,13 +48,13 @@ cov_matrix_constrain(const T& x, Eigen::Index K) {
   reverse_pass_callback([x, L]() mutable {
     Eigen::Index K = L.rows();
     int i = x.size();
-    for(int m = K - 1; m >= 0; --m) {
+    for (int m = K - 1; m >= 0; --m) {
       x.adj()(--i) += L.adj().coeff(m, m) * L.val().coeff(m, m);
       i -= m;
       x.adj().segment(i, m) += L.adj().row(m).head(m);
     }
   });
-  
+
   return multiply_lower_tri_self_transpose(L);
 }
 
@@ -74,8 +73,8 @@ cov_matrix_constrain(const T& x, Eigen::Index K) {
  * @throws std::domain_error if (x.size() != K + (K choose 2)).
  */
 template <typename T, require_var_vector_t<T>* = nullptr>
-var_value<Eigen::MatrixXd>
-cov_matrix_constrain(const T& x, Eigen::Index K, scalar_type_t<T>& lp) {
+var_value<Eigen::MatrixXd> cov_matrix_constrain(const T& x, Eigen::Index K,
+                                                scalar_type_t<T>& lp) {
   using std::exp;
   using std::log;
 
@@ -107,7 +106,7 @@ cov_matrix_constrain(const T& x, Eigen::Index K, scalar_type_t<T>& lp) {
       L.adj().coeffRef(k, k) += (K - k + 1) * lp.adj() / L.val().coeff(k, k);
     }
     int i = x.size();
-    for(int m = K - 1; m >= 0; --m) {
+    for (int m = K - 1; m >= 0; --m) {
       x.adj()(--i) += L.adj().coeff(m, m) * L.val().coeff(m, m);
       i -= m;
       x.adj().segment(i, m) += L.adj().row(m).head(m);
