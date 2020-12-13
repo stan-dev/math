@@ -21,7 +21,7 @@ namespace math {
  * Returns the Moore-Penrose generalized inverse of the specified matrix.
  *
  * The method is based on the Cholesky computation of the transform as specified
- in
+ *  in
  *
  * <ul><li> Courrieu, Pierre. 2008.  Fast Computation of Moore-Penrose Inverse
  Matrices.
