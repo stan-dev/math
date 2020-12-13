@@ -77,7 +77,8 @@ TEST(MathMixMatFun, cov_matrixTransform) {
 
 TEST(mathMixMatFun, cov_matrix_constrain) {
   auto f = [](int K) {
-    return [K](const auto& x1) { return stan::math::cov_matrix_constrain(x1, K); };
+    return
+        [K](const auto& x1) { return stan::math::cov_matrix_constrain(x1, K); };
   };
 
   Eigen::VectorXd x1(10);
@@ -122,4 +123,3 @@ TEST(mathMixMatFun, cov_matrix_constrain_lp) {
   stan::test::expect_ad_matvar(f2(4), x1);
   stan::test::expect_ad_matvar(f2(3), x2);
 }
-
