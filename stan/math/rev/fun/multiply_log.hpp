@@ -4,6 +4,8 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/log.hpp>
+#include <stan/math/rev/fun/elt_multiply.hpp>
+#include <stan/math/rev/fun/multiply.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
 #include <stan/math/prim/fun/is_any_nan.hpp>
@@ -103,6 +105,20 @@ inline var multiply_log(double a, const var& b) {
     return log(b);
   }
   return var(new internal::multiply_log_dv_vari(a, b.vi_));
+}
+
+template<typename T1, typename T2,
+	 require_all_matrix_t<T1, T2>* = nullptr,
+	 require_any_var_matrix_t<T1, T2>* = nullptr>
+inline auto multiply_log(const T1& a, const T2& b) {
+  return elt_multiply(a, log(b));
+}
+
+template<typename T1, typename T2,
+	 require_any_var_matrix_t<T1, T2>* = nullptr,
+	 require_any_stan_scalar_t<T1, T2>* = nullptr>
+inline auto multiply_log(const T1& a, const T2& b) {
+  return multiply(a, log(b));
 }
 
 }  // namespace math
