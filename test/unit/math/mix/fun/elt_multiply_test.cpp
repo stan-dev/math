@@ -1,5 +1,25 @@
 #include <test/unit/math/test_ad.hpp>
 
+TEST(MathMixMatFun, elt_multiply_transpose_test) {
+  auto f = [](const auto& x) {
+    return stan::math::elt_multiply(x, x.transpose());
+  };
+
+  Eigen::MatrixXd x = Eigen::MatrixXd::Random(2, 2);
+
+  stan::test::expect_ad_matvar(f, x);
+}
+
+TEST(MathMixMatFun, elt_multiply_block_test) {
+  auto f = [](const auto& y, const auto& x) {
+    return stan::math::elt_multiply(y.block(1, 1, 2, 2), x.block(0, 0, 2, 2));
+  };
+
+  Eigen::MatrixXd x(3, 3);
+
+  stan::test::expect_ad_matvar(f, x, x);
+}
+
 TEST(MathMixMatFun, eltMultiply) {
   auto f = [](const auto& x, const auto& y) {
     return stan::math::elt_multiply(x, y);
