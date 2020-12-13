@@ -2,7 +2,9 @@
 
 TEST(mathMixMatFun, cov_matrix_constrain_lkj) {
   auto f = [](int K) {
-    return [K](const auto& x1) { return stan::math::cov_matrix_constrain_lkj(x1, K); };
+    return [K](const auto& x1) {
+      return stan::math::cov_matrix_constrain_lkj(x1, K);
+    };
   };
 
   Eigen::VectorXd x1(6);

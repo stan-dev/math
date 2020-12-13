@@ -68,7 +68,9 @@ TEST(MathMixMatFun, corr_matrixTransform) {
 
 TEST(mathMixMatFun, corr_matrix_constrain) {
   auto f = [](int K) {
-    return [K](const auto& x1) { return stan::math::corr_matrix_constrain(x1, K); };
+    return [K](const auto& x1) {
+      return stan::math::corr_matrix_constrain(x1, K);
+    };
   };
 
   Eigen::VectorXd x1(6);
