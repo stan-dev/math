@@ -15,7 +15,13 @@ TEST(OpenCLPrim, subtract_v_small_zero) {
   stan::math::test::compare_cpu_opencl_prim(subtract_functor, d1, d2);
 
   stan::math::vector_d d0(0);
-  stan::math::test::compare_cpu_opencl_prim(subtract_functor, d1, d2);
+  stan::math::test::compare_cpu_opencl_prim(subtract_functor, d0, d0);
+
+  double d3 = 3.0;
+  stan::math::test::compare_cpu_opencl_prim(subtract_functor, d1, d3);
+  stan::math::test::compare_cpu_opencl_prim(subtract_functor, d3, d1);
+  stan::math::test::compare_cpu_opencl_prim(subtract_functor, d3, d0);
+  stan::math::test::compare_cpu_opencl_prim(subtract_functor, d0, d3);
 }
 
 TEST(OpenCLPrim, subtract_rv_small_zero) {
@@ -25,7 +31,13 @@ TEST(OpenCLPrim, subtract_rv_small_zero) {
   stan::math::test::compare_cpu_opencl_prim(subtract_functor, d1, d2);
 
   stan::math::vector_d d0(0);
-  stan::math::test::compare_cpu_opencl_prim(subtract_functor, d1, d2);
+  stan::math::test::compare_cpu_opencl_prim(subtract_functor, d0, d0);
+
+  double d3 = 3.0;
+  stan::math::test::compare_cpu_opencl_prim(subtract_functor, d1, d3);
+  stan::math::test::compare_cpu_opencl_prim(subtract_functor, d3, d1);
+  stan::math::test::compare_cpu_opencl_prim(subtract_functor, d3, d0);
+  stan::math::test::compare_cpu_opencl_prim(subtract_functor, d0, d3);
 }
 
 TEST(OpenCLPrim, subtract_m_small_zero) {
@@ -35,7 +47,13 @@ TEST(OpenCLPrim, subtract_m_small_zero) {
   stan::math::test::compare_cpu_opencl_prim(subtract_functor, d1, d2);
 
   stan::math::matrix_d d0(0, 0);
-  stan::math::test::compare_cpu_opencl_prim(subtract_functor, d1, d2);
+  stan::math::test::compare_cpu_opencl_prim(subtract_functor, d0, d0);
+
+  double d3 = 3.0;
+  stan::math::test::compare_cpu_opencl_prim(subtract_functor, d1, d3);
+  stan::math::test::compare_cpu_opencl_prim(subtract_functor, d3, d1);
+  stan::math::test::compare_cpu_opencl_prim(subtract_functor, d3, d0);
+  stan::math::test::compare_cpu_opencl_prim(subtract_functor, d0, d3);
 }
 
 TEST(OpenCLPrim, subtract_exceptions) {
