@@ -27,7 +27,7 @@ namespace math {
  Matrices.
  * <i>arXiv</i> <b>0804.4809</b> </li></ul>
  *
- * @tparam EigMat type of the matrix (must be derived from \c Eigen::MatrixBase)
+ * @tparam EigMat type of the matrix (must be derived from `Eigen::MatrixBase`)
  *
  * @param G specified matrix
  * @return Generalized inverse of the matrix (an empty matrix if the specified
@@ -75,7 +75,7 @@ generalized_inverse(const EigMat& G) {
  Matrices.
  * <i>arXiv</i> <b>0804.4809</b> </li></ul>
  *
- * @tparam EigMat type of the matrix (must be derived from \c Eigen::MatrixBase)
+ * @tparam EigMat type of the matrix (must be derived from `Eigen::MatrixBase`)
  *
  * @param G specified matrix
  * @param a real constant
