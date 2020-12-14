@@ -16,7 +16,7 @@
 namespace stan {
 namespace math {
 
-/**
+/*
  * Reverse mode differentiation algorithm reference:
  *
  * The Differentiation of Pseudo-Inverses and Nonlinear Least Squares Problems
@@ -24,8 +24,17 @@ namespace math {
  * Journal on Numerical Analysis, Vol. 10, No. 2 (Apr., 1973), pp. 413-432
  *
  * Equation 4.12 in the paper
+ *
+ *  See also
+ *  http://mathoverflow.net/questions/25778/analytical-formula-for-numerical-derivative-of-the-matrix-pseudo-inverse
+ *
+ *  Implementation is based on
+ *   Title: Uncertainties Python Package
+ *    Author: Eric O. LEBIGOT
+ *    Date: 2020
+ *    Availability: https://github.com/lebigot/uncertainties/blob/master/uncertainties/unumpy/core.py
  */
-template <typename EigMat, require_rev_matrix_t<EigMat>* = nullptr>
+template <typename VarMat, require_rev_matrix_t<VarMat>* = nullptr>
 inline auto generalized_inverse(const EigMat& G) {
   using value_t = value_type_t<EigMat>;
 
@@ -39,33 +48,43 @@ inline auto generalized_inverse(const EigMat& G) {
     return inverse(G);
 
   if (n < m) {
-    arena_t<plain_type_t<EigMat>> G_arena(G);
+    arena_t<EigMat> G_arena(G);
     auto A_spd = tcrossprod(G_arena.val());
     arena_t<EigMat> inv_G(transpose(mdivide_left_spd(A_spd, G_arena.val())));
-    auto aP = (1 - G_arena.val() * inv_G.transpose());
-    auto Pa = (1 - inv_G * G_arena.val());
-    reverse_pass_callback([G_arena, inv_G, aP, Pa]() mutable {
+    
+    auto PG = to_arena( -G_arena * inv_G );
+    PG.diagonal().array() += 1.0;
+
+    auto GP = to_arena( -inv_G * G_arena );
+    GP.diagonal().array() += 1.0;
+
+    reverse_pass_callback([G_arena, inv_G, GP, PG]() mutable {
       G_arena.adj() += -inv_G * G_arena.adj() * inv_G;
-      G_arena.adj() += tcrossprod(inv_G) * G_arena.adj().transpose() * aP;
-      G_arena.adj() += Pa * G_arena.adj().transpose() * crossprod(inv_G());
+      G_arena.adj() += tcrossprod(inv_G) * G_arena.adj().transpose() * PG;
+      G_arena.adj() += GP * G_arena.adj().transpose() * crossprod(inv_G);
     });
     return inv_G;
   } else {
-    arena_t<plain_type_t<EigMat>> G_arena(G);
+    arena_t<EigMat> G_arena(G);
     auto A_spd = crossprod(G_arena.val());
     arena_t<EigMat> inv_G(transpose(mdivide_right_spd(G_arena.val(), A_spd)));
-    auto aP = (1 - G_arena.val() * inv_G.transpose());
-    auto Pa = (1 - inv_G * G_arena.val());
-    reverse_pass_callback([G_arena, inv_G, aP, Pa]() mutable {
+    
+    auto PG = to_arena( -G_arena * inv_G );
+    PG.diagonal().array() += 1.0;
+
+    auto GP = to_arena( -inv_G * G_arena );
+    GP.diagonal().array() += 1.0;
+
+    reverse_pass_callback([G_arena, inv_G, GP, PG]() mutable {
       G_arena.adj() += -inv_G * G_arena.adj() * inv_G;
-      G_arena.adj() += tcrossprod(inv_G) * G_arena.adj().transpose() * aP;
-      G_arena.adj() += Pa * G_arena.adj().transpose() * crossprod(inv_G());
+      G_arena.adj() += tcrossprod(inv_G) * G_arena.adj().transpose() * PG;
+      G_arena.adj() += GP * G_arena.adj().transpose() * crossprod(inv_G);
     });
     return inv_G;
   }
 }
 
-/**
+/*
  * Reverse mode differentiation algorithm reference:
  *
  * The Differentiation of Pseudo-Inverses and Nonlinear Least Squares Problems
@@ -73,8 +92,16 @@ inline auto generalized_inverse(const EigMat& G) {
  * Journal on Numerical Analysis, Vol. 10, No. 2 (Apr., 1973), pp. 413-432
  *
  * Equation 4.12 in the paper
+ *  See also
+ *  http://mathoverflow.net/questions/25778/analytical-formula-for-numerical-derivative-of-the-matrix-pseudo-inverse
+ *
+ *  Implementation is based on
+ *   Title: Uncertainties Python Package
+ *    Author: Eric O. LEBIGOT
+ *    Date: 2020
+ *    Availability: https://github.com/lebigot/uncertainties/blob/master/uncertainties/unumpy/core.py
  */
-template <typename EigMat, require_rev_matrix_t<EigMat>* = nullptr>
+template <typename VarMat, require_rev_matrix_t<VarMat>* = nullptr>
 inline auto generalized_inverse(const EigMat& G, const double a) {
   using value_t = value_type_t<EigMat>;
 
@@ -88,31 +115,39 @@ inline auto generalized_inverse(const EigMat& G, const double a) {
     return inverse(G);
 
   if (n < m) {
-    arena_t<plain_type_t<EigMat>> G_arena(G);
+    arena_t<EigMat> G_arena(G);
     auto A_spd = tcrossprod(G_arena.val());
     A_spd.diagonal().array() += a;
-
     arena_t<EigMat> inv_G(transpose(mdivide_left_spd(A_spd, G_arena.val())));
-    auto aP = (1 - G_arena.val() * inv_G.transpose());
-    auto Pa = (1 - inv_G * G_arena.val());
-    reverse_pass_callback([G_arena, inv_G, aP, Pa]() mutable {
+
+    auto PG = to_arena( -G_arena * inv_G );
+    PG.diagonal().array() += 1.0;
+
+    auto GP = to_arena( -inv_G * G_arena );
+    GP.diagonal().array() += 1.0;
+
+    reverse_pass_callback([G_arena, inv_G, PG, GP]() mutable {
       G_arena.adj() += -inv_G * G_arena.adj() * inv_G;
-      G_arena.adj() += tcrossprod(inv_G) * G_arena.adj().transpose() * aP;
-      G_arena.adj() += Pa * G_arena.adj().transpose() * crossprod(inv_G);
+      G_arena.adj() += tcrossprod(inv_G) * G_arena.adj().transpose() * PG;
+      G_arena.adj() += GP * G_arena.adj().transpose() * crossprod(inv_G);
     });
     return inv_G;
   } else {
-    arena_t<plain_type_t<EigMat>> G_arena(G);
+    arena_t<EigMat> G_arena(G);
     auto A_spd = crossprod(G_arena.val());
     A_spd.diagonal().array() += a;
-
     arena_t<EigMat> inv_G(transpose(mdivide_right_spd(G_arena.val(), A_spd)));
-    auto aP = (1 - G_arena * inv_G.transpose());
-    auto Pa = (1 - inv_G * G_arena.val());
-    reverse_pass_callback([G_arena, inv_G, aP, Pa]() mutable {
+  
+    auto PG = to_arena( -G_arena * inv_G );
+    PG.diagonal().array() += 1.0;
+
+    auto GP = to_arena( -inv_G * G_arena );
+    GP.diagonal().array() += 1.0;
+
+    reverse_pass_callback([G_arena, inv_G, PG, GP]() mutable {
       G_arena.adj() += -inv_G * G_arena.adj() * inv_G;
-      G_arena.adj() += tcrossprod(inv_G) * G_arena.adj().transpose() * aP;
-      G_arena.adj() += Pa * G_arena.adj().transpose() * crossprod(inv_G());
+      G_arena.adj() += tcrossprod(inv_G) * G_arena.adj().transpose() * PG;
+      G_arena.adj() += GP * G_arena.adj().transpose() * crossprod(inv_G);
     });
     return inv_G;
   }
