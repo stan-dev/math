@@ -10,8 +10,11 @@ benchmarks/%$(EXE) : LDFLAGS += -L $(BENCHMARK)/build/src
 benchmarks/%$(EXE) : LDLIBS += -lbenchmark
 benchmarks/%$(EXE) : CPPFLAGS += $(CPPFLAGS_GTEST)
 benchmarks/%$(EXE) : INC += $(INC_GTEST)
+ifeq ($(OS),Windows_NT)
+  benchmarks/%$(EXE) : LDLIBS += -lshlwapi
+endif
 
-benchmarks/%$(EXE) : $(GTEST)/src/gtest_main.cc $(GTEST)/src/gtest-all.o $(MPI_TARGETS) $(TBB_TARGETS)
+benchmarks/%$(EXE) : benchmarks/%.cpp $(GTEST)/src/gtest-all.o $(MPI_TARGETS) $(TBB_TARGETS)
 	$(LINK.cpp) $^ $(LDLIBS) $(OUTPUT_OPTION)
 
 ##

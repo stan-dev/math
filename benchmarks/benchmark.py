@@ -3,12 +3,13 @@ from __future__ import print_function
 from argparse import ArgumentParser, RawTextHelpFormatter
 import sys
 import subprocess
+import os
 
 sys.path.append("test")
 from sig_utils import *
 import itertools
 
-build_folder = "./test/benchmark/"
+build_folder = "./benchmarks/"
 
 benchmark_template = """
 void {benchmark_name}(benchmark::State& state) {{
@@ -54,6 +55,8 @@ def build(exe_filepath):
     Builds a file using make.
     :param exe_filepath: File to build
     """
+    # if os.name == "nt":
+    #     exe_filepath = exe_filepath.replace("/", "\\")
     command = make + " " + exe_filepath
     run_command(command)
 
