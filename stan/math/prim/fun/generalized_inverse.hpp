@@ -51,15 +51,12 @@ generalized_inverse(const EigMat& G) {
   if (G.size() == 0)
     return {};
 
-  const auto n = G.rows();
-  const auto m = G.cols();
-
   if (G.rows() == G.cols())
     return inverse(G);
 
   const auto& G_ref = to_ref(G);
 
-  if (n < m) {
+  if (G.rows() < G.cols()) {
     return transpose(mdivide_left_spd(tcrossprod(G_ref), G_ref));
   } else {
     return transpose(mdivide_right_spd(G_ref, crossprod(G_ref)));
@@ -100,15 +97,12 @@ generalized_inverse(const EigMat& G, const double a) {
   if (G.size() == 0)
     return {};
 
-  const auto n = G.rows();
-  const auto m = G.cols();
-
   if (G.rows() == G.cols())
     return inverse(G);
 
   const auto& G_ref = to_ref(G);
 
-  if (n < m) {
+  if (G.rows() < G.cols()) {
     Eigen::Matrix<value_t, Eigen::Dynamic, Eigen::Dynamic> A
         = tcrossprod(G_ref);
     A.diagonal().array() += a;
