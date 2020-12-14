@@ -32,7 +32,8 @@ namespace math {
  *   Title: Uncertainties Python Package
  *    Author: Eric O. LEBIGOT
  *    Date: 2020
- *    Availability: https://github.com/lebigot/uncertainties/blob/master/uncertainties/unumpy/core.py
+ *    Availability:
+ * https://github.com/lebigot/uncertainties/blob/master/uncertainties/unumpy/core.py
  */
 template <typename VarMat, require_rev_matrix_t<VarMat>* = nullptr>
 inline auto generalized_inverse(const EigMat& G) {
@@ -51,11 +52,11 @@ inline auto generalized_inverse(const EigMat& G) {
     arena_t<EigMat> G_arena(G);
     auto A_spd = tcrossprod(G_arena.val());
     arena_t<EigMat> inv_G(transpose(mdivide_left_spd(A_spd, G_arena.val())));
-    
-    auto PG = to_arena( -G_arena * inv_G );
+
+    auto PG = to_arena(-G_arena * inv_G);
     PG.diagonal().array() += 1.0;
 
-    auto GP = to_arena( -inv_G * G_arena );
+    auto GP = to_arena(-inv_G * G_arena);
     GP.diagonal().array() += 1.0;
 
     reverse_pass_callback([G_arena, inv_G, GP, PG]() mutable {
@@ -68,11 +69,11 @@ inline auto generalized_inverse(const EigMat& G) {
     arena_t<EigMat> G_arena(G);
     auto A_spd = crossprod(G_arena.val());
     arena_t<EigMat> inv_G(transpose(mdivide_right_spd(G_arena.val(), A_spd)));
-    
-    auto PG = to_arena( -G_arena * inv_G );
+
+    auto PG = to_arena(-G_arena * inv_G);
     PG.diagonal().array() += 1.0;
 
-    auto GP = to_arena( -inv_G * G_arena );
+    auto GP = to_arena(-inv_G * G_arena);
     GP.diagonal().array() += 1.0;
 
     reverse_pass_callback([G_arena, inv_G, GP, PG]() mutable {
@@ -99,7 +100,8 @@ inline auto generalized_inverse(const EigMat& G) {
  *   Title: Uncertainties Python Package
  *    Author: Eric O. LEBIGOT
  *    Date: 2020
- *    Availability: https://github.com/lebigot/uncertainties/blob/master/uncertainties/unumpy/core.py
+ *    Availability:
+ * https://github.com/lebigot/uncertainties/blob/master/uncertainties/unumpy/core.py
  */
 template <typename VarMat, require_rev_matrix_t<VarMat>* = nullptr>
 inline auto generalized_inverse(const EigMat& G, const double a) {
@@ -120,10 +122,10 @@ inline auto generalized_inverse(const EigMat& G, const double a) {
     A_spd.diagonal().array() += a;
     arena_t<EigMat> inv_G(transpose(mdivide_left_spd(A_spd, G_arena.val())));
 
-    auto PG = to_arena( -G_arena * inv_G );
+    auto PG = to_arena(-G_arena * inv_G);
     PG.diagonal().array() += 1.0;
 
-    auto GP = to_arena( -inv_G * G_arena );
+    auto GP = to_arena(-inv_G * G_arena);
     GP.diagonal().array() += 1.0;
 
     reverse_pass_callback([G_arena, inv_G, PG, GP]() mutable {
@@ -137,11 +139,11 @@ inline auto generalized_inverse(const EigMat& G, const double a) {
     auto A_spd = crossprod(G_arena.val());
     A_spd.diagonal().array() += a;
     arena_t<EigMat> inv_G(transpose(mdivide_right_spd(G_arena.val(), A_spd)));
-  
-    auto PG = to_arena( -G_arena * inv_G );
+
+    auto PG = to_arena(-G_arena * inv_G);
     PG.diagonal().array() += 1.0;
 
-    auto GP = to_arena( -inv_G * G_arena );
+    auto GP = to_arena(-inv_G * G_arena);
     GP.diagonal().array() += 1.0;
 
     reverse_pass_callback([G_arena, inv_G, PG, GP]() mutable {
