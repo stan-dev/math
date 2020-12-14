@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_OPENCL_MULTIPLY_HPP
-#define STAN_MATH_OPENCL_MULTIPLY_HPP
+#ifndef STAN_MATH_OPENCL_PRIM_MULTIPLY_HPP
+#define STAN_MATH_OPENCL_PRIM_MULTIPLY_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/matrix_cl.hpp>
@@ -120,7 +120,7 @@ inline matrix_cl<return_type_t<T_a, T_b>> operator*(const T_a& a, const T_b& b) 
 template <typename T_a, typename T_b,
           require_stan_scalar_t<T_a>* = nullptr,
           require_all_kernel_expressions_and_none_scalar_t<T_b>* = nullptr,
-          require_all_not_var_t<T_a, T_b>>
+          require_all_not_var_t<T_a, T_b>* = nullptr>
 inline matrix_cl<return_type_t<T_a, T_b>> multiply(const T_a& a, const T_b& b) {
   return a * b;
 }
@@ -135,7 +135,8 @@ inline matrix_cl<return_type_t<T_a, T_b>> multiply(const T_a& a, const T_b& b) {
  */
 template <typename T_a, typename T_b,
           require_stan_scalar_t<T_b>* = nullptr,
-          require_all_kernel_expressions_and_none_scalar_t<T_a>* = nullptr>
+          require_all_kernel_expressions_and_none_scalar_t<T_a>* = nullptr,
+          require_all_not_var_t<T_a, T_b>* = nullptr>
 inline matrix_cl<return_type_t<T_a, T_b>> multiply(const T_a& a, const T_b& b) {
   return a * b;
 }
