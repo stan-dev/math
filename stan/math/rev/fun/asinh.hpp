@@ -53,7 +53,7 @@ namespace math {
    \frac{\partial \, \sinh^{-1}(x)}{\partial x} = \frac{1}{\sqrt{x^2+1}}
    \f]
  *
- * @param a The variable.
+ * @param x The variable.
  * @return Inverse hyperbolic sine of the variable.
  */
 inline var asinh(const var& x) {
@@ -62,6 +62,13 @@ inline var asinh(const var& x) {
   });
 }
 
+/**
+ * The inverse hyperbolic sine function for variables (C99).
+ *
+ * @tparam Varmat a `var_value` with inner Eigen type
+ * @param x The variable.
+ * @return Inverse hyperbolic sine of the variable.
+ */
 template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
 inline auto asinh(const VarMat& x) {
   return make_callback_var(

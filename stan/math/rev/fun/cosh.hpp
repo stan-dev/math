@@ -47,6 +47,13 @@ inline var cosh(const var& a) {
   });
 }
 
+/**
+ * Return the hyperbolic cosine of the specified variable (cmath).
+ *
+ * @tparam Varmat a `var_value` with inner Eigen type
+ * @param a Variable.
+ * @return Hyperbolic cosine of variable.
+ */
 template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
 inline auto cosh(const VarMat& a) {
   return make_callback_var(

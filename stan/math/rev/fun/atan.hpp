@@ -48,7 +48,7 @@ namespace math {
    \frac{\partial \, \arctan(x)}{\partial x} = \frac{1}{x^2+1}
    \f]
  *
- * @param a Variable in range [-1, 1].
+ * @param x Variable in range [-1, 1].
  * @return Arc tangent of variable, in radians.
  */
 inline var atan(const var& x) {
@@ -57,6 +57,15 @@ inline var atan(const var& x) {
   });
 }
 
+/**
+ * Return the principal value of the arc tangent, in radians, of the
+ * specified variable (cmath).
+ *
+ *
+ * @tparam Varmat a `var_value` with inner Eigen type
+ * @param x Variable in range [-1, 1].
+ * @return Arc tangent of variable, in radians.
+ */
 template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
 inline auto atan(const VarMat& x) {
   return make_callback_var(

@@ -40,6 +40,12 @@ inline var cbrt(const var& a) {
   });
 }
 
+/**
+ * Returns the cube root of the specified variable (C99).
+ * @tparam Varmat a `var_value` with inner Eigen type
+ * @param a Specified variable.
+ * @return Cube root of the variable.
+ */
 template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
 inline auto cbrt(const VarMat& a) {
   return make_callback_var(

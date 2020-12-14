@@ -57,16 +57,23 @@ namespace math {
    \frac{\partial \, \cosh^{-1}(x)}{\partial x} = \frac{1}{\sqrt{x^2-1}}
    \f]
  *
- * @param a The variable.
+ * @param x The variable.
  * @return Inverse hyperbolic cosine of the variable.
  */
-
 inline var acosh(const var& x) {
   return make_callback_var(acosh(x.val()), [x](const auto& vi) mutable {
     x.adj() += vi.adj_ / std::sqrt(x.val() * x.val() - 1.0);
   });
 }
-
+/**
+ * The inverse hyperbolic cosine function for variables (C99).
+ *
+ * For non-variable function, see ::acosh().
+ *
+ * @tparam Varmat a `var_value` with inner Eigen type
+ * @param x The variable
+ * @return Inverse hyperbolic cosine of the variable.
+ */
 template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
 inline auto acosh(const VarMat& x) {
   return make_callback_var(

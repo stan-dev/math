@@ -33,6 +33,7 @@ namespace math {
    \end{cases}
    \f]
  *
+ * @tparam T A floating point type or an Eigen type with floating point scalar.
  * @param a Variable input.
  * @return Absolute value of variable.
  */

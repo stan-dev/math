@@ -51,7 +51,7 @@ namespace math {
    \frac{\partial \, \tanh^{-1}(x)}{\partial x} = \frac{1}{1-x^2}
    \f]
    *
-   * @param a The variable.
+   * @param x The variable.
    * @return Inverse hyperbolic tangent of the variable.
    * @throw std::domain_error if a < -1 or a > 1
    */
@@ -61,6 +61,14 @@ inline var atanh(const var& x) {
   });
 }
 
+/**
+ * The inverse hyperbolic tangent function for variables (C99).
+ *
+ * @tparam Varmat a `var_value` with inner Eigen type
+ * @param x The variable.
+ * @return Inverse hyperbolic tangent of the variable.
+ * @throw std::domain_error if a < -1 or a > 1
+ */
 template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
 inline auto atanh(const VarMat& x) {
   return make_callback_var(

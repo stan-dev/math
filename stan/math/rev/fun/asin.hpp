@@ -47,7 +47,7 @@ namespace math {
    \frac{\partial \, \arcsin(x)}{\partial x} = \frac{1}{\sqrt{1-x^2}}
    \f]
  *
- * @param a Variable in range [-1, 1].
+ * @param x Variable in range [-1, 1].
  * @return Arc sine of variable, in radians.
  */
 inline var asin(const var& x) {
@@ -56,6 +56,14 @@ inline var asin(const var& x) {
   });
 }
 
+/**
+ * Return the principal value of the arc sine, in radians, of the
+ * specified variable (cmath).
+ *
+ * @tparam Varmat a `var_value` with inner Eigen type
+ * @param x Variable with cells in range [-1, 1].
+ * @return Arc sine of variable, in radians.
+ */
 template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
 inline auto asin(const VarMat& x) {
   return make_callback_var(

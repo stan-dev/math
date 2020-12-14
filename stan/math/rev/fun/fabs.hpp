@@ -59,6 +59,13 @@ inline var fabs(const var& a) {
   }
 }
 
+/**
+ * Return the absolute value of the variable (cmath).
+ *
+ * @tparam Varmat a `var_value` with inner Eigen type
+ * @param a Input variable.
+ * @return Absolute value of variable.
+ */
 template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
 inline auto fabs(const VarMat& a) {
   return make_callback_var(a.val().unaryExpr([](const auto x) {
@@ -67,20 +74,19 @@ inline auto fabs(const VarMat& a) {
     } else {
       return std::abs(x);
     }
-  }),
-                           [a](const auto& vi) mutable {
-                             for (Eigen::Index j = 0; j < vi.cols(); ++j) {
-                               for (Eigen::Index i = 0; i < vi.rows(); ++i) {
-                                 const auto x = a.val().coeffRef(i, j);
-                                 if (unlikely(is_nan(x))) {
-                                   a.adj().coeffRef(i, j) = NOT_A_NUMBER;
-                                 } else {
-                                   a.adj().coeffRef(i, j)
-                                       -= vi.adj_.coeff(i, j);
-                                 }
-                               }
-                             }
-                           });
+  }), [a](const auto& vi) mutable {
+   for (Eigen::Index j = 0; j < vi.cols(); ++j) {
+     for (Eigen::Index i = 0; i < vi.rows(); ++i) {
+       const auto x = a.val().coeffRef(i, j);
+       if (unlikely(is_nan(x))) {
+         a.adj().coeffRef(i, j) = NOT_A_NUMBER;
+       } else {
+         a.adj().coeffRef(i, j)
+             -= vi.adj_.coeff(i, j);
+       }
+     }
+   }
+ });
 }
 
 }  // namespace math
