@@ -15,7 +15,7 @@ namespace math {
  * so that their sum is equal to 1.
  * @throw std::domain_error if K is not positive.
  */
-inline Eigen::VectorXd uniform_simplex(int K) {
+inline auto uniform_simplex(int K) {
   check_positive("uniform_simplex", "size", K);
   return Eigen::VectorXd::Constant(K, 1.0 / K);
 }

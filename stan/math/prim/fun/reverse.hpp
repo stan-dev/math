@@ -33,7 +33,7 @@ inline std::vector<T> reverse(const std::vector<T>& x) {
  */
 template <typename T, typename = require_eigen_vector_t<T>>
 inline auto reverse(const T& x) {
-  return x.reverse().eval();
+  return x.reverse();
 }
 
 }  // namespace math

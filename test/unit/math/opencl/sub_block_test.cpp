@@ -1,8 +1,5 @@
 #ifdef STAN_OPENCL
 #include <stan/math/prim.hpp>
-#include <stan/math/opencl/copy.hpp>
-#include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/zeros.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 

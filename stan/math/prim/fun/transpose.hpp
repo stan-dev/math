@@ -14,8 +14,7 @@ namespace math {
  * @return transposed matrix
  */
 template <typename T, typename = require_eigen_t<T>>
-Eigen::Matrix<value_type_t<T>, T::ColsAtCompileTime,
-              T::RowsAtCompileTime> inline transpose(const T& m) {
+auto inline transpose(const T& m) {
   return m.transpose();
 }
 
