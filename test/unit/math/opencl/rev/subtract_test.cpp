@@ -57,7 +57,7 @@ TEST(OpenCLPrim, subtract_m_small_zero) {
   stan::math::test::compare_cpu_opencl_prim_rev(subtract_functor, d0, d3);
 }
 
-TEST(OpenCLPrim, add_exceptions) {
+TEST(OpenCLPrim, subtract_rev_exceptions) {
   using stan::math::matrix_cl;
   stan::math::vector_d vd1(2), vd2(3);
   stan::math::var_value<matrix_cl<double>> vd11 = stan::math::to_matrix_cl(vd1);

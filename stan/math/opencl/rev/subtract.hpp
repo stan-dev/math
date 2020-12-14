@@ -104,8 +104,8 @@ inline auto subtract(const T1& a, const T2& b) {
  * @tparam T1 type of the matrix or expression
  * @tparam T2 type of the scalar
  *
- * @param A matrix
- * @param B scalar
+ * @param a matrix
+ * @param b scalar
  * @return The subtraction of the the second argument from the first
  */
 template <typename T1, typename T2, require_stan_scalar_t<T2>* = nullptr,
