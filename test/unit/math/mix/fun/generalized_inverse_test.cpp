@@ -12,11 +12,11 @@ TEST(mathMixMatFun, ad_tests) {
   auto fjit2
       = [](const auto& G) { return stan::math::generalized_inverse(G, 1e-4); };
 
-/*
-  Eigen::MatrixXd t(0, 0);
-  expect_ad(f, t);
-  expect_ad(fjit, t);
-  expect_ad_matvar(f, t);
+  /*
+    Eigen::MatrixXd t(0, 0);
+    expect_ad(f, t);
+    expect_ad(fjit, t);
+    expect_ad_matvar(f, t);
 
   Eigen::MatrixXd u(1, 1);
   u << 2;
