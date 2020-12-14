@@ -4,6 +4,7 @@
 
 TEST(mathMixMatFun, ad_tests) {
   using stan::test::expect_ad;
+  using stan::test::expect_ad_matvar;
 
   auto f = [](const auto& G) { return stan::math::generalized_inverse(G); };
   auto fjit

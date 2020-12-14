@@ -104,6 +104,7 @@ inline auto generalized_inverse(const VarMat& G) {
 template <typename VarMat, require_rev_matrix_t<VarMat>* = nullptr>
 inline auto generalized_inverse(const VarMat& G, const double a) {
   using value_t = value_type_t<VarMat>;
+  using ret_type = promote_var_matrix_t<VarMat, VarMat>;
 
   if (G.size() == 0)
     return G;
