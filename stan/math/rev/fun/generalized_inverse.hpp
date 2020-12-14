@@ -44,7 +44,7 @@ inline auto generalized_inverse(const VarMat& G) {
     return ret_type(G);
 
   if (G.rows() == G.cols())
-    return inverse(G);
+    return ret_type(inverse(G));
 
   if (G.rows() < G.cols()) {
     arena_t<VarMat> G_arena(G);
@@ -116,7 +116,7 @@ inline auto generalized_inverse(const VarMat& G, const double a) {
     return ret_type(G);
 
   if (G.rows() == G.cols())
-    return inverse(G);
+    return ret_type(inverse(G));
 
   if (G.rows() < G.cols()) {
     arena_t<VarMat> G_arena(G);
