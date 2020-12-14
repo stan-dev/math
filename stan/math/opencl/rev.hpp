@@ -12,7 +12,6 @@
 #include <stan/math/opencl/rev/diagonal.hpp>
 #include <stan/math/opencl/rev/multiply.hpp>
 #include <stan/math/opencl/rev/operands_and_partials.hpp>
-#include <stan/math/opencl/rev/size.hpp>
 #include <stan/math/opencl/rev/sum.hpp>
 #include <stan/math/opencl/rev/tcrossprod.hpp>
 #include <stan/math/opencl/rev/transpose.hpp>

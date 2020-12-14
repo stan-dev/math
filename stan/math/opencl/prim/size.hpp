@@ -13,7 +13,7 @@ namespace math {
  * @return number of elements in a
  */
 template <typename T,
-          require_t<is_nonscalar_prim_or_rev_kernel_expression<T>>* = nullptr>
+          require_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
 size_t size(const T& m) {
   return m.rows() * m.cols();
 }
