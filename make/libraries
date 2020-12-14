@@ -107,6 +107,8 @@ clean-sundials:
 # the TBB as this make has proper POSIX extensions needed by the used downstream
 # TBB makefiles.
 
+ifndef TBB_LIB
+
 ifeq ($(CXX_TYPE),mingw32-gcc)
   TBB_CXX_TYPE ?= gcc
 endif
@@ -185,6 +187,8 @@ $(TBB_BIN)/tbbmalloc_proxy.dll: $(TBB_BIN)/tbbmalloc.def
 clean-tbb:
 	@echo '  cleaning Intel TBB targets'
 	$(RM) -rf $(TBB_BIN)
+
+endif
 
 ############################################################
 # MPI build rules
