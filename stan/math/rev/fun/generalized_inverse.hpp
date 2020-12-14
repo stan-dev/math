@@ -48,7 +48,7 @@ inline auto generalized_inverse(const VarMat& G) {
 
   if (G.rows() < G.cols()) {
     arena_t<VarMat> G_arena(G);
-    auto A_spd = tcrossprod(G_arena.val());
+    auto A_spd = tcrossprod(G_arena.val_op());
     arena_t<VarMat> inv_G(
         transpose(mdivide_left_spd(A_spd.val_op(), G_arena.val_op())));
 
@@ -120,9 +120,9 @@ inline auto generalized_inverse(const VarMat& G, const double a) {
 
   if (G.rows() < G.cols()) {
     arena_t<VarMat> G_arena(G);
-    auto A_spd = tcrossprod(G_arena.val());
+    auto A_spd = tcrossprod(G_arena.val_op());
     A_spd.diagonal().array() += a;
-    arena_t<VarMat> inv_G(transpose(mdivide_left_spd(A_spd, G_arena.val())));
+    arena_t<VarMat> inv_G(transpose(mdivide_left_spd(A_spd, G_arena.val_op())));
 
     auto PG = to_arena(-G_arena.val_op() * inv_G.val_op());
     PG.diagonal().array() += 1.0;
@@ -140,9 +140,9 @@ inline auto generalized_inverse(const VarMat& G, const double a) {
     return ret_type(inv_G);
   } else {
     arena_t<VarMat> G_arena(G);
-    auto A_spd = crossprod(G_arena.val());
+    auto A_spd = crossprod(G_arena.val_op());
     A_spd.diagonal().array() += a;
-    arena_t<VarMat> inv_G(transpose(mdivide_right_spd(G_arena.val(), A_spd)));
+    arena_t<VarMat> inv_G(transpose(mdivide_right_spd(G_arena.val_op(), A_spd)));
 
     auto PG = to_arena(-G_arena.val_op() * inv_G.val_op());
     PG.diagonal().array() += 1.0;
