@@ -56,7 +56,8 @@ inline var cos(const var& a) {
  * @tparam Varmat a `var_value` with inner Eigen type
  * @param a Variable for radians of angle.
  * @return Cosine of variable.
- */template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
+ */
+template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
 inline auto cos(const VarMat& a) {
   return make_callback_var(
       a.val().array().cos().matrix(), [a](const auto& vi) mutable {
