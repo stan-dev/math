@@ -23,11 +23,11 @@ TEST(mathMixMatFun, ad_tests) {
   expect_ad(f, u);
   expect_ad(fjit, u);
   expect_ad_matvar(f, u);
-*/
+
   Eigen::MatrixXd v(2, 3);
   v << 1, 3, 5, 2, 4, 6;
   expect_ad(f, v);
-
+*/
   v << 1.9, 1.3, 2.5, 0.4, 1.7, 0.1;
   expect_ad(f, v);
   expect_ad(fjit, v);
