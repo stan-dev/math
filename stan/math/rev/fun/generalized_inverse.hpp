@@ -132,7 +132,8 @@ inline auto generalized_inverse(const VarMat& G, const double a) {
     arena_t<VarMat> G_arena(G);
     auto A_spd = tcrossprod(G_arena.val_op());
     A_spd.diagonal().array() += a;
-    arena_t<VarMat> inv_G(mdivide_left_spd(A_spd.val_op(), G_arena.val_op()).transpose());
+    arena_t<VarMat> inv_G(
+        mdivide_left_spd(A_spd.val_op(), G_arena.val_op()).transpose());
 
     auto PG = to_arena(-G_arena.val_op() * inv_G.val_op());
     PG.diagonal().array() += 1.0;
