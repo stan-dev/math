@@ -62,7 +62,7 @@ inline auto generalized_inverse(const VarMat& G) {
       G_arena.adj() += -inv_G.val_op() * G_arena.adj_op() * inv_G.val_op();
       G_arena.adj() += tcrossprod(inv_G.val_op()) * G_arena.adj_op().transpose()
                        * PG.val_op();
-      G_arena.adj() += GP.val_op() * G_arena.adj().transpose()
+      G_arena.adj() += GP.val_op() * G_arena.adj_op().transpose()
                        * crossprod(inv_G.val_op());
     });
     return ret_type(inv_G);
@@ -82,7 +82,7 @@ inline auto generalized_inverse(const VarMat& G) {
       G_arena.adj() += -inv_G.val_op() * G_arena.adj_op() * inv_G.val_op();
       G_arena.adj() += tcrossprod(inv_G.val_op()) * G_arena.adj_op().transpose()
                        * PG.val_op();
-      G_arena.adj() += GP.val_op() * G_arena.adj().transpose()
+      G_arena.adj() += GP.val_op() * G_arena.adj_op().transpose()
                        * crossprod(inv_G.val_op());
     });
     return ret_type(inv_G);
@@ -134,7 +134,7 @@ inline auto generalized_inverse(const VarMat& G, const double a) {
       G_arena.adj() += -inv_G.val_op() * G_arena.adj_op() * inv_G.val_op();
       G_arena.adj() += tcrossprod(inv_G.val_op()) * G_arena.adj_op().transpose()
                        * PG.val_op();
-      G_arena.adj() += GP.val_op() * G_arena.adj().transpose()
+      G_arena.adj() += GP.val_op() * G_arena.adj_op().transpose()
                        * crossprod(inv_G.val_op());
     });
     return ret_type(inv_G);
@@ -155,7 +155,7 @@ inline auto generalized_inverse(const VarMat& G, const double a) {
       G_arena.adj() += -inv_G.val_op() * G_arena.adj_op() * inv_G.val_op();
       G_arena.adj() += tcrossprod(inv_G.val_op()) * G_arena.adj_op().transpose()
                        * PG.val_op();
-      G_arena.adj() += GP.val_op() * G_arena.adj().transpose()
+      G_arena.adj() += GP.val_op() * G_arena.adj_op().transpose()
                        * crossprod(inv_G.val_op());
     });
     return ret_type(inv_G);
