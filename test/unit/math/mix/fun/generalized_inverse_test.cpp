@@ -14,20 +14,22 @@ TEST(mathMixMatFun, ad_tests) {
   Eigen::MatrixXd t(0, 0);
   expect_ad(f, t);
   expect_ad(fjit, t);
+  expect_ad_matvar(f, t);
 
   Eigen::MatrixXd u(1, 1);
   u << 2;
   expect_ad(f, u);
   expect_ad(fjit, u);
+  expect_ad_matvar(f, u);
 
   Eigen::MatrixXd v(2, 3);
   v << 1, 3, 5, 2, 4, 6;
   expect_ad(f, v);
-  expect_ad(fjit, v);
 
   v << 1.9, 1.3, 2.5, 0.4, 1.7, 0.1;
   expect_ad(f, v);
   expect_ad(fjit, v);
+  expect_ad_matvar(f, v);
 
   // issues around zero require looser tolerances for hessians
   stan::test::ad_tolerances tols;
@@ -38,6 +40,7 @@ TEST(mathMixMatFun, ad_tests) {
   w << 2, 3, 5, 7, 11, 13, 17, 19, 23, 25, 27, 29;
   expect_ad(tols, f, w);
   expect_ad(tols, fjit, w);
+  expect_ad_matvar(f, w);
 
   Eigen::MatrixXd z(2, 2);
   z << 1, 2, 5, std::numeric_limits<double>::quiet_NaN();
@@ -50,6 +53,7 @@ TEST(mathMixMatFun, ad_tests) {
   a << 1.9, 0.3, 0.3, std::numeric_limits<double>::infinity();
   expect_ad(f, a);
   expect_ad(fjit, a);
+  expect_ad_matvar(f, a);
 
   // singular matrix, should use the
   // alias to input small amount of jitter on the diagonal
