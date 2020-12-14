@@ -53,6 +53,22 @@ inline var_value<matrix_cl<value_type_t<T>>> to_matrix_cl(
                                                                  a.vi_->adj_);
 }
 
+/** \ingroup opencl
+ * Copies the source std::vector of vars to a destination var that has
+ * data stored on the OpenCL device.
+ *
+ * @tparam T type of the std::vector
+ * @param a source Eigen matrix
+ * @return var with a copy of the data on the OpenCL device
+ */
+template <typename T, require_stan_scalar_t<T>* = nullptr>
+inline var_value<matrix_cl<value_type_t<T>>> to_matrix_cl(
+    std::vector<var_value<T>>& a) {
+  return to_matrix_cl(
+      Eigen::Map<Eigen::Matrix<var_value<T>, Eigen::Dynamic, 1>>(a.data(),
+                                                                 a.size()));
+}
+
 namespace internal {
 template <typename T, int Rows, int Cols,
           require_all_kernel_expressions_t<T>* = nullptr>

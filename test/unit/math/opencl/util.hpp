@@ -2,7 +2,7 @@
 #define STAN_TEST_OPENCL_UTIL_HPP
 
 #include <stan/math.hpp>
-#include <stan/math/opencl/rev/opencl.hpp>
+#include <stan/math/opencl/rev.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
 #include <test/unit/pretty_print_types.hpp>
 #include <gtest/gtest.h>
@@ -224,6 +224,30 @@ void test_opencl_broadcasting_prim_rev_impl(const Functor& functor,
 }
 
 }  // namespace internal
+
+/**
+ * Tests that given functor calculates same values and adjoints when given
+ * arguments on CPU and OpenCL device.
+ *
+ * The functor must accept all possible combinations of converted `args`.
+ * All std/row/col vectors and matrices are converted to `matrix_cl`. `double`
+ * scalars can be converted to `var`s or left as `double`s. When converting
+ * scalars to `double` in containers, `var_value<matrix_cl<double>>` is used
+ * instead.
+ *
+ * @tparam Functor type of the functor
+ * @tparam Args types of the arguments
+ * @param fucntor functor to test
+ * @param args arguments to test the functor with. These should be just values
+ * in CPU memory (no vars, no arguments on the OpenCL device).
+ */
+template <typename Functor, typename... Args>
+void compare_cpu_opencl_prim(const Functor& functor, const Args&... args) {
+  auto res_cpu = functor(args...);
+  auto res_opencl = from_matrix_cl(functor(internal::opencl_argument(args)...));
+  stan::test::expect_near_rel("CPU and OpenCL return values do not match!",
+                              res_cpu, res_opencl);
+}
 
 /**
  * Tests that given functor calculates same values and adjoints when given

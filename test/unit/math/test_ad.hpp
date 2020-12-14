@@ -1577,12 +1577,14 @@ template <typename ResultMatVar, typename ResultVarMat, typename MatVar,
 inline void test_matvar_gradient(const ad_tolerances& tols,
                                  ResultMatVar& A_mv_f, ResultVarMat& A_vm_f,
                                  const MatVar& A_mv, const VarMat& A_vm) {
-  for (Eigen::Index i = 0; i < A_vm_f.size(); ++i) {
-    A_vm_f.adj()(i) = 1;
-    A_mv_f.adj()(i) = 1;
-    stan::math::grad();
-    expect_near_rel_var("var<Matrix> vs Matrix<var> input", A_vm, A_mv, tols);
-    stan::math::set_zero_all_adjoints();
+  for (Eigen::Index j = 0; j < A_mv_f.cols(); ++j) {
+    for (Eigen::Index i = 0; i < A_vm_f.rows(); ++i) {
+      A_vm_f.adj()(i, j) = 1;
+      A_mv_f.adj()(i, j) = 1;
+      stan::math::grad();
+      expect_near_rel_var("var<Matrix> vs Matrix<var> input", A_vm, A_mv, tols);
+      stan::math::set_zero_all_adjoints();
+    }
   }
 }
 
@@ -1672,17 +1674,19 @@ inline void test_matvar_gradient(const ad_tolerances& tols,
                                  ResultMatVar& A_mv_f, ResultVarMat& A_vm_f,
                                  const MatVar1& A_mv1, const MatVar2& A_mv2,
                                  const VarMat1& A_vm1, const VarMat2& A_vm2) {
-  for (Eigen::Index i = 0; i < A_mv_f.size(); ++i) {
-    A_vm_f.adj()(i) = 1;
-    A_mv_f.adj()(i) = 1;
-    stan::math::grad();
-    expect_near_rel_var("first argument var<Matrix> vs Matrix<var> result",
-                        A_vm1, A_mv1, tols);
-    expect_near_rel_var("second argument var<Matrix> vs Matrix<var> result",
-                        A_vm2, A_mv2, tols);
-    expect_near_rel("var<Matrix> vs Matrix<var> result value", A_vm_f.val(),
-                    A_mv_f.val(), tols.gradient_val_);
-    stan::math::set_zero_all_adjoints();
+  for (Eigen::Index i = 0; i < A_mv_f.rows(); ++i) {
+    for (Eigen::Index j = 0; j < A_mv_f.cols(); ++j) {
+      A_vm_f.adj()(i, j) = 1;
+      A_mv_f.adj()(i, j) = 1;
+      stan::math::grad();
+      expect_near_rel_var("first argument var<Matrix> vs Matrix<var> result",
+                          A_vm1, A_mv1, tols);
+      expect_near_rel_var("second argument var<Matrix> vs Matrix<var> result",
+                          A_vm2, A_mv2, tols);
+      expect_near_rel("var<Matrix> vs Matrix<var> result value", A_vm_f.val(),
+                      A_mv_f.val(), tols.gradient_val_);
+      stan::math::set_zero_all_adjoints();
+    }
   }
 }
 
@@ -1707,11 +1711,18 @@ void check_return_type(const ReturnType& ret, const Type& x) {
            || std::is_same<ReturnType, var_value<double>>::value)) {
     FAIL() << type_name<Type>() << " returns a " << type_name<ReturnType>()
            << " but should return either an Matrix<var> or a var_value<double>";
-  } else if (is_var_matrix<Type>::value
-             && !(is_var_matrix<ReturnType>::value
-                  || std::is_same<ReturnType, var_value<double>>::value)) {
-    FAIL() << type_name<Type>() << " returns a " << type_name<ReturnType>()
-           << " but should return either an var<Matrix> or a var_value<double>";
+  } else if (is_var_matrix<Type>::value) {
+    if (!(is_var_matrix<ReturnType>::value
+          || std::is_same<ReturnType, var_value<double>>::value)) {
+      FAIL()
+          << type_name<Type>() << " returns a " << type_name<ReturnType>()
+          << " but should return either an var<Matrix> or a var_value<double>";
+    }
+    if (!std::is_same<ReturnType, return_var_matrix_t<ReturnType>>::value) {
+      FAIL() << type_name<Type>() << " returns a " << type_name<ReturnType>()
+             << " but should return "
+             << type_name<return_var_matrix_t<ReturnType>>();
+    }
   }
 }
 

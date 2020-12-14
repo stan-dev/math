@@ -9,7 +9,7 @@
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/opencl.hpp>
+#include <stan/math/opencl/prim.hpp>
 #endif
 
 #include <cmath>
