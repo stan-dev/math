@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/prim.hpp>
+#include <stan/math/opencl/rev/add.hpp>
 #include <stan/math/opencl/rev/arena_matrix_cl.hpp>
 #include <stan/math/opencl/rev/arena_type.hpp>
 #include <stan/math/opencl/rev/cholesky_decompose.hpp>
