@@ -42,7 +42,7 @@ namespace math {
  * matrix.
  */
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
-     require_not_vt_var<EigMat>* = nullptr>
+          require_not_vt_var<EigMat>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
                      EigMat::ColsAtCompileTime>
 generalized_inverse(const EigMat& G) {
