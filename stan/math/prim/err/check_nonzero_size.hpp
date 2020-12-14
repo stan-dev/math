@@ -21,7 +21,7 @@ namespace math {
 template <typename T_y>
 inline void check_nonzero_size(const char* function, const char* name,
                                const T_y& y) {
-  STAN_NO_RANGE_AND_SIZE_CHECK
+  STAN_RETURN_IF_NO_CHECKS
   if (y.size() == 0) {
     [&]() STAN_COLD_PATH {
       invalid_argument(function, name, 0, "has size ",

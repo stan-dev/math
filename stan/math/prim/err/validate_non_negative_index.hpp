@@ -11,7 +11,7 @@ namespace math {
 
 inline void validate_non_negative_index(const char* var_name, const char* expr,
                                         int val) {
-  STAN_NO_RANGE_AND_SIZE_CHECK
+  STAN_RETURN_IF_NO_CHECKS
   if (val < 0) {
     [&]() STAN_COLD_PATH {
       std::stringstream msg;

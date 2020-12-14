@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_META_MACROS_HPP
-#define STAN_MATH_PRIM_META_MACROS_HPP
+#ifndef STAN_MATH_PRIM_META_COMPILER_ATTRIBUTES_HPP
+#define STAN_MATH_PRIM_META_COMPILER_ATTRIBUTES_HPP
 
 #ifdef __GNUC__
 #define likely(x) __builtin_expect(!!(x), 1)
@@ -21,10 +21,10 @@
 #define STAN_HOT_PATH
 #endif
 
-#ifdef STAN_REMOVE_RANGE_AND_SIZE_CHECKS
-#define STAN_NO_RANGE_AND_SIZE_CHECK return;
+#ifdef NDEBUG
+#define STAN_RETURN_IF_NO_CHECKS return;
 #else
-#define STAN_NO_RANGE_AND_SIZE_CHECK
+#define STAN_RETURN_IF_NO_CHECKS
 #endif
 
 #endif

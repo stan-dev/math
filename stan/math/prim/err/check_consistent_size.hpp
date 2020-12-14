@@ -24,7 +24,7 @@ namespace math {
 template <typename T>
 inline void check_consistent_size(const char* function, const char* name,
                                   const T& x, size_t expected_size) {
-  STAN_NO_RANGE_AND_SIZE_CHECK
+  STAN_RETURN_IF_NO_CHECKS
   if (!(!is_vector<T>::value
         || (is_vector<T>::value && expected_size == stan::math::size(x)))) {
     [&]() STAN_COLD_PATH {
