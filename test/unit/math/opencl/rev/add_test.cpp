@@ -50,7 +50,7 @@ TEST(OpenCLPrim, add_m_small_zero) {
   stan::math::test::compare_cpu_opencl_prim_rev(add_functor, d0, d0);
 
   double d3 = 3.0;
-  auto a = stan::math::add(d1,d3);
+  auto a = stan::math::add(d1, d3);
   stan::math::test::compare_cpu_opencl_prim_rev(add_functor, d1, d3);
   stan::math::test::compare_cpu_opencl_prim_rev(add_functor, d3, d1);
   stan::math::test::compare_cpu_opencl_prim_rev(add_functor, d3, d0);
@@ -65,8 +65,10 @@ TEST(OpenCLPrim, add_exceptions) {
   EXPECT_THROW(stan::math::add(vd11, vd22), std::invalid_argument);
 
   stan::math::row_vector_d rvd1(2), rvd2(3);
-  stan::math::var_value<matrix_cl<double>> rvd11 = stan::math::to_matrix_cl(rvd1);
-  stan::math::var_value<matrix_cl<double>> rvd22 = stan::math::to_matrix_cl(rvd2);
+  stan::math::var_value<matrix_cl<double>> rvd11
+      = stan::math::to_matrix_cl(rvd1);
+  stan::math::var_value<matrix_cl<double>> rvd22
+      = stan::math::to_matrix_cl(rvd2);
   EXPECT_THROW(stan::math::add(rvd11, rvd22), std::invalid_argument);
 
   stan::math::matrix_d md1(2, 2), md2(3, 3);

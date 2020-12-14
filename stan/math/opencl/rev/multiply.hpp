@@ -74,8 +74,7 @@ inline auto operator*(const T_a& a, const T_b& b) {
  * @param B matrix
  * @return product of matrix and scalar
  */
-template <typename T1, typename T2,
-          require_stan_scalar_t<T1>* = nullptr,
+template <typename T1, typename T2, require_stan_scalar_t<T1>* = nullptr,
           require_all_nonscalar_prim_or_rev_kernel_expression_t<T2>* = nullptr,
           require_any_var_t<T1, T2>* = nullptr>
 inline auto multiply(const T1& a, const T2& b) {
@@ -107,8 +106,7 @@ inline auto multiply(const T1& a, const T2& b) {
  * @param B scalar
  * @return product of matrix and scalar
  */
-template <typename T1, typename T2,
-          require_stan_scalar_t<T2>* = nullptr,
+template <typename T1, typename T2, require_stan_scalar_t<T2>* = nullptr,
           require_all_nonscalar_prim_or_rev_kernel_expression_t<T1>* = nullptr,
           require_any_var_t<T1, T2>* = nullptr>
 inline auto multiply(const T1& A, const T2& B) {

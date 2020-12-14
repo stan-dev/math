@@ -76,8 +76,7 @@ inline auto operator-(const T_a& a, const T_b& b) {
  * @param B matrix
  * @return The subtraction of the the second argument from the first
  */
-template <typename T1, typename T2,
-          require_stan_scalar_t<T1>* = nullptr,
+template <typename T1, typename T2, require_stan_scalar_t<T1>* = nullptr,
           require_all_nonscalar_prim_or_rev_kernel_expression_t<T2>* = nullptr,
           require_any_var_t<T1, T2>* = nullptr>
 inline auto subtract(const T1& a, const T2& b) {
@@ -109,8 +108,7 @@ inline auto subtract(const T1& a, const T2& b) {
  * @param B scalar
  * @return The subtraction of the the second argument from the first
  */
-template <typename T1, typename T2,
-          require_stan_scalar_t<T2>* = nullptr,
+template <typename T1, typename T2, require_stan_scalar_t<T2>* = nullptr,
           require_all_nonscalar_prim_or_rev_kernel_expression_t<T1>* = nullptr,
           require_any_var_t<T1, T2>* = nullptr>
 inline auto subtract(const T1& a, const T2& b) {

@@ -5,8 +5,9 @@
 #include <gtest/gtest.h>
 #include <algorithm>
 
-auto subtract_functor
-    = [](const auto& a, const auto& b) { return stan::math::subtract(a, b).eval(); };
+auto subtract_functor = [](const auto& a, const auto& b) {
+  return stan::math::subtract(a, b).eval();
+};
 
 TEST(OpenCLPrim, subtract_v_small_zero) {
   stan::math::vector_d d1(3), d2(3);
@@ -64,8 +65,10 @@ TEST(OpenCLPrim, add_exceptions) {
   EXPECT_THROW(stan::math::subtract(vd11, vd22), std::invalid_argument);
 
   stan::math::row_vector_d rvd1(2), rvd2(3);
-  stan::math::var_value<matrix_cl<double>> rvd11 = stan::math::to_matrix_cl(rvd1);
-  stan::math::var_value<matrix_cl<double>> rvd22 = stan::math::to_matrix_cl(rvd2);
+  stan::math::var_value<matrix_cl<double>> rvd11
+      = stan::math::to_matrix_cl(rvd1);
+  stan::math::var_value<matrix_cl<double>> rvd22
+      = stan::math::to_matrix_cl(rvd2);
   EXPECT_THROW(stan::math::subtract(rvd11, rvd22), std::invalid_argument);
 
   stan::math::matrix_d md1(2, 2), md2(3, 3);
