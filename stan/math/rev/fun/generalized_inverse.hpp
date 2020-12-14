@@ -113,7 +113,7 @@ inline auto generalized_inverse(const VarMat& G, const double a) {
   using ret_type = promote_var_matrix_t<VarMat, VarMat>;
 
   if (G.size() == 0)
-    return G;
+    return ret_type(G);
 
   if (G.rows() == G.cols())
     return inverse(G);
