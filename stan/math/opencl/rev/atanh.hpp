@@ -21,7 +21,8 @@ inline var_value<matrix_cl<double>> atanh(
   var_value<matrix_cl<double>> res = atanh(A.val());
 
   reverse_pass_callback([A, res]() mutable {
-    A.adj() = A.adj() + elt_divide(res.adj(), (1.0 - elt_multiply(A.val(), A.val())));
+    A.adj() = A.adj()
+              + elt_divide(res.adj(), (1.0 - elt_multiply(A.val(), A.val())));
   });
 
   return res;

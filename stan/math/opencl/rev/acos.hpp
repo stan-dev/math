@@ -21,8 +21,9 @@ inline var_value<matrix_cl<double>> acos(
   var_value<matrix_cl<double>> res = acos(A.val());
 
   reverse_pass_callback([A, res]() mutable {
-
-    A.adj() = A.adj() - elt_divide(res.adj(), sqrt(1.0 - elt_multiply(A.val(), A.val())));
+    A.adj()
+        = A.adj()
+          - elt_divide(res.adj(), sqrt(1.0 - elt_multiply(A.val(), A.val())));
   });
 
   return res;

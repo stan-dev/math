@@ -21,7 +21,9 @@ inline var_value<matrix_cl<double>> asinh(
   var_value<matrix_cl<double>> res = asinh(A.val());
 
   reverse_pass_callback([A, res]() mutable {
-    A.adj() = A.adj() + elt_divide(res.adj(), sqrt(elt_multiply(A.val(), A.val()) + 1.0));
+    A.adj()
+        = A.adj()
+          + elt_divide(res.adj(), sqrt(elt_multiply(A.val(), A.val()) + 1.0));
   });
 
   return res;

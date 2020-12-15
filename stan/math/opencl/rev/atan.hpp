@@ -20,7 +20,8 @@ inline var_value<matrix_cl<double>> atan(
     const var_value<matrix_cl<double>>& A) {
   var_value<matrix_cl<double>> res = atan(A.val());
   reverse_pass_callback([A, res]() mutable {
-    A.adj() = A.adj() + elt_divide(res.adj(), (1.0 + elt_multiply(A.val(), A.val())));
+    A.adj() = A.adj()
+              + elt_divide(res.adj(), (1.0 + elt_multiply(A.val(), A.val())));
   });
 
   return res;

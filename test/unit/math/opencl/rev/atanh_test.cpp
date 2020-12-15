@@ -4,12 +4,12 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
 
-auto atanh_functor
-    = [](const auto& a) { return stan::math::atanh(a).eval(); };
+auto atanh_functor = [](const auto& a) { return stan::math::atanh(a).eval(); };
 
 TEST(OpenCLAtanh, prim_rev_values_small) {
   Eigen::VectorXd a(8);
-  a << -0.98, -0.8, 0.5, 0.6 + std::numeric_limits<double>::epsilon(), 0.5, -0.03, -0.34, 0.44;
+  a << -0.98, -0.8, 0.5, 0.6 + std::numeric_limits<double>::epsilon(), 0.5,
+      -0.03, -0.34, 0.44;
   stan::math::test::compare_cpu_opencl_prim_rev(atanh_functor, a);
 }
 

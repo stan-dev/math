@@ -21,7 +21,9 @@ inline var_value<matrix_cl<double>> tanh(
   var_value<matrix_cl<double>> res = tanh(A.val());
 
   reverse_pass_callback([A, res]() mutable {
-    A.adj() = A.adj() + elt_divide(res.adj(), elt_multiply(cosh(A.val()), cosh(A.val())));
+    A.adj()
+        = A.adj()
+          + elt_divide(res.adj(), elt_multiply(cosh(A.val()), cosh(A.val())));
   });
 
   return res;
