@@ -39,11 +39,9 @@ inline auto add(const T_a& a, const T_b& b) {
     if (!is_constant<T_a>::value && !is_constant<T_b>::value) {
       auto& a_adj = forward_as<var_value<matrix_cl<double>>>(a_arena).adj();
       auto& b_adj = forward_as<var_value<matrix_cl<double>>>(b_arena).adj();
-      results(a_adj, b_adj) = expressions(
-        (a_adj + res.adj()),
-        (b_adj + res.adj())
-      );
-    }else if (!is_constant<T_a>::value) {
+      results(a_adj, b_adj)
+          = expressions((a_adj + res.adj()), (b_adj + res.adj()));
+    } else if (!is_constant<T_a>::value) {
       auto& a_adj = forward_as<var_value<matrix_cl<double>>>(a_arena).adj();
       a_adj = a_adj + res.adj();
     } else {
