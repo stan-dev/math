@@ -9,7 +9,7 @@ sys.path.append("test")
 from sig_utils import *
 import itertools
 
-build_folder = "./benchmarks/"
+working_folder = "./benchmarks/"
 
 benchmark_template = """
 void {benchmark_name}(benchmark::State& state) {{
@@ -55,8 +55,6 @@ def build(exe_filepath):
     Builds a file using make.
     :param exe_filepath: File to build
     """
-    # if os.name == "nt":
-    #     exe_filepath = exe_filepath.replace("/", "\\")
     command = make + " " + exe_filepath
     run_command(command)
 
@@ -76,46 +74,117 @@ def run_benchmark(exe_filepath, n_repeats=1, csv_out_file=None):
     run_command(command)
 
 
-def plot_results(csv_file, out_file=""):
+def plot_results(csv_filename, out_file="", plot_log_y=False):
     """
     Plots benchmark results.
-    :param csv_file: path to csv file containing results to plot
-    :param out_file: path to image file to store figure into. If empty string opens it in an interactive window.
+    :param csv_filename: path to csv file containing results to plot
+    :param out_file: path to image file to store figure into. If it equals to "window"opens it in an interactive window.
     """
     import pandas, numpy, matplotlib
-    if out_file:
+    if out_file != "window":
         matplotlib.use('Agg')
     from matplotlib import pyplot as plt
+    from matplotlib import colors
+    csv_file = open(csv_filename)
+    if os.name == "nt":  # google benchmark on win writes some non-csv data at beginning
+        for i in range(8):
+            csv_file.readline()
     data = pandas.read_csv(csv_file)
-    data["sig"] = [i.split("/")[0] for i in data["name"]]
-    data["size"] = [int(i.split("/")[1]) for i in data["name"]]
 
-    signatures = data["sig"]
-    sizes = data["size"]
-    times = data["real_time"]
+    signatures = numpy.array([i.split("/")[0] for i in data["name"]])
+    sizes = numpy.array([int(i.split("/")[1]) for i in data["name"]])
+    times = numpy.array(data["real_time"])
 
+    plt.figure(figsize=(10, 10))
     plt.tight_layout()
     plt.semilogx()
+    if plot_log_y:
+        plt.semilogy()
     plt.xlabel("size")
     plt.ylabel("time[us]")
 
-    for signature in numpy.unique(signatures):
+    tableau_colors = list(colors.TABLEAU_COLORS.keys())
+    for n, signature in enumerate(numpy.unique(signatures)):
         selector = signatures == signature
         sig_sizes = sizes[selector]
         sig_times = times[selector]
-        plt.plot(sig_sizes, sig_times, label=signature)
+        plt.plot(sig_sizes, sig_times, "x", color=tableau_colors[n])
+
+        unique_sizes = sorted(numpy.unique(sizes))
+        avg_sig_times = numpy.array([numpy.mean(sig_times[sig_sizes==i]) for i in unique_sizes])
+        plt.plot(unique_sizes, avg_sig_times, label=signature, color=tableau_colors[n])
 
     plt.legend()
-    if out_file:
-        plt.savefig(out_file)
-    else:
+    if out_file == "window":
         plt.show()
+    else:
+        plt.savefig(out_file)
 
 
-def main(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim", "Rev"), multiplier_param=None,
-         max_size_param=None, max_dim=3, n_repeats=1, csv_out_file=None, plot=False):
+def plot_compare(csv_filename, reference_csv_filename, out_file="", plot_log_y=False):
     """
-    Generates benchmark code, compiles it and runs the benchmark. Optionally plots the results.
+    Plots benchmark speedup compared to reference results.
+    :param csv_filename: path to csv file containing results to plot
+    :param reference_csv_filename: path to csv file containing reference results to plot
+    :param out_file: path to image file to store figure into. If it equals to "window" opens it in an interactive window.
+    """
+    import pandas, numpy, matplotlib
+    if out_file != "window":
+        matplotlib.use('Agg')
+    from matplotlib import pyplot as plt
+    from matplotlib import colors
+    csv_file = open(csv_filename)
+    reference_csv_file = open(reference_csv_filename)
+    if os.name == "nt":  # google benchmark on win writes some non-csv data at beginning
+        for i in range(8):
+            csv_file.readline()
+            reference_csv_file.readline()
+    data = pandas.read_csv(csv_file)
+    reference_data = pandas.read_csv(reference_csv_file)
+
+    signatures = numpy.array([i.split("/")[0] for i in data["name"]])
+    sizes = numpy.array([int(i.split("/")[1]) for i in data["name"]])
+    times = numpy.array(data["real_time"])
+    reference_signatures = numpy.array([i.split("/")[0] for i in reference_data["name"]])
+    reference_sizes = numpy.array([int(i.split("/")[1]) for i in reference_data["name"]])
+    reference_times = numpy.array(reference_data["real_time"])
+
+    assert numpy.all(reference_signatures == signatures)
+    assert numpy.all(reference_sizes == sizes)
+
+    plt.figure(figsize=(10, 10))
+    plt.tight_layout()
+    plt.semilogx()
+    if plot_log_y:
+        plt.semilogy()
+    plt.xlabel("size")
+    plt.ylabel("speedup")
+
+    tableau_colors = list(colors.TABLEAU_COLORS.keys())
+    for n, signature in enumerate(numpy.unique(signatures)):
+        selector = signatures == signature
+        sig_sizes = sizes[selector]
+        sig_times = times[selector]
+        reference_sig_times = reference_times[selector]
+        plt.plot(sig_sizes, reference_sig_times / sig_times, "x", color=tableau_colors[n])
+
+        unique_sizes = sorted(numpy.unique(sizes))
+        avg_sig_times = numpy.array([numpy.mean(sig_times[sig_sizes==i]) for i in unique_sizes])
+        avg_reference_sig_times = numpy.array([numpy.mean(reference_sig_times[sig_sizes==i]) for i in unique_sizes])
+        plt.plot(unique_sizes, avg_reference_sig_times / avg_sig_times, label=signature, color=tableau_colors[n])
+    plt.plot([1, max(sizes)], [1, 1], "--", color="gray")
+
+    plt.legend()
+    if out_file == "window":
+        plt.show()
+    else:
+        plt.savefig(out_file)
+
+
+def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim", "Rev"), multiplier_param=None,
+              max_size_param=None, max_dim=3, n_repeats=1, csv_out_file=None, opencl=False):
+    """
+    Generates benchmark code, compiles it and runs the benchmark.
     :param functions_or_sigs: List of function names and/or signatures to benchmark
     :param cpp_filename: filename of cpp file to use
     :param overloads: Which overloads to benchmark
@@ -125,7 +194,6 @@ def main(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim", "Re
              larger number of dimensions are skipped."
     :param n_repeats: Number of times to repeat each benchmark.
     :param csv_out_file: Filename of the csv file to store benchmark results in.
-    :param plot: Filename of bmp or csv fle to store plot into. If  filename is empty, opens a window with graph.
     """
     all_signatures = get_signatures()
     functions, signatures = handle_function_list(functions_or_sigs)
@@ -138,9 +206,12 @@ def main(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim", "Re
         if signature in signatures or function_name in functions:
             parsed_signatures.append([return_type, function_name, stan_args])
             remaining_functions.discard(function_name)
+    for signature in signatures:
+        return_type, function_name, stan_args = parse_signature(signature)
+        parsed_signatures.append([return_type, function_name, stan_args])
+        remaining_functions.discard(function_name)
     if remaining_functions:
         raise NameError("Functions not found: " + ", ".join(remaining_functions))
-
     result = ""
     for return_type, function_name, stan_args in parsed_signatures:
         dimm = 0
@@ -187,7 +258,6 @@ def main(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim", "Re
             code = "    auto res = stan::math::{}(".format(function_name)
             for n, (arg_overload, cpp_arg_template, stan_arg), in enumerate(
                     zip(arg_overloads, cpp_arg_templates, stan_args)):
-
                 if stan_arg.endswith("]"):
                     stan_arg2, vec = stan_arg.split("[")
                     benchmark_name += "_" + arg_overload + stan_arg2 + str(len(vec))
@@ -207,6 +277,9 @@ def main(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim", "Re
                         arg_type,
                         value,
                     )
+                    if opencl == "base":
+                        setup += "  auto {} = stan::math::to_matrix_cl({});\n".format(var_name + "_cl", var_name)
+                        var_name += "_cl"
                 else:
                     var_conversions += "    {} {} = stan::test::make_arg<{}>({}, state.range(0));\n".format(
                         arg_type,
@@ -214,14 +287,23 @@ def main(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim", "Re
                         arg_type,
                         value,
                     )
-                code += var_name + ", "
+                    if opencl == "base":
+                        var_conversions += "    auto {} = stan::math::to_matrix_cl({});\n".format(var_name + "_cl",
+                                                                                                  var_name)
+                        var_name += "_cl"
+                if opencl == "copy" and stan_arg not in ("int", "real"):
+                    code += "stan::math::to_matrix_cl({}), ".format(var_name)
+                else:
+                    code += var_name + ", "
+            if opencl == "base":
+                var_conversions += "  stan::math::opencl_context.queue().finish();\n"
             code = code[:-2] + ");\n"
             if "Rev" in arg_overloads:
                 code += "    stan::test::recursive_sum(res).grad();\n"
             result += benchmark_template.format(benchmark_name=benchmark_name, setup=setup,
                                                 var_conversions=var_conversions, code=code, multi=multiplier,
                                                 max_size=max_size)
-    cpp_filepath = build_folder + cpp_filename
+    cpp_filepath = working_folder + cpp_filename
     with open(cpp_filepath, "w") as o:
         o.write("#include <benchmark/benchmark.h>\n")
         o.write("#include <test/expressions/expression_test_helpers.hpp>\n\n")
@@ -229,11 +311,46 @@ def main(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim", "Re
         o.write("BENCHMARK_MAIN();")
     exe_filepath = cpp_filepath.replace(".cpp", exe_extension)
     build(exe_filepath)
+    run_benchmark(exe_filepath, n_repeats, csv_out_file)
+
+
+def main(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim", "Rev"), multiplier_param=None,
+         max_size_param=None, max_dim=3, n_repeats=1, csv_out_file=None, opencl=False, plot=False, plot_log_y=False,
+         plot_cl_speedup=False, plot_reference=None):
+    """
+    Generates benchmark code, compiles it and runs the benchmark. Optionally plots the results.
+    :param functions_or_sigs: List of function names and/or signatures to benchmark
+    :param cpp_filename: filename of cpp file to use
+    :param overloads: Which overloads to benchmark
+    :param multiplier_param: Multiplyer, by which to increase argument size.
+    :param max_size_param: Maximum argument size.
+    :param max_dim: Maximum number of argument dimensions to benchmark. Signatures with any argument with
+             larger number of dimensions are skipped."
+    :param n_repeats: Number of times to repeat each benchmark.
+    :param csv_out_file: Filename of the csv file to store benchmark results in.
+    :param plot: Filename of bmp or csv fle to store plot into. If  filename is empty, opens a window with graph.
+    :param plot_log_y: Use logarithmic y axis for plotting
+    :param plot_cl_speedup: plot speedup of OpenCL overloads compared to CPU ones
+    """
     if plot and csv_out_file is None:
         csv_out_file = ".benchmark.csv"
-    run_benchmark(exe_filepath, n_repeats, csv_out_file)
-    if plot:
-        plot_results(csv_out_file)
+    if plot_cl_speedup:
+        opencl_csv_out_file = csv_out_file + "_cl"
+        if "." in csv_out_file:
+            base, ext = csv_out_file.rsplit(".", 1)
+            opencl_csv_out_file = base + "_cl." + ext
+        benchmark(functions_or_sigs, cpp_filename, overloads, multiplier_param, max_size_param, max_dim,
+                  n_repeats, csv_out_file, False)
+        benchmark(functions_or_sigs, cpp_filename, overloads, multiplier_param, max_size_param, max_dim,
+                  n_repeats, opencl_csv_out_file, opencl)
+        plot_compare(opencl_csv_out_file, csv_out_file, plot)
+    else:
+        benchmark(functions_or_sigs, cpp_filename, overloads, multiplier_param, max_size_param, max_dim,
+                  n_repeats, csv_out_file, opencl)
+        if plot_reference:
+            plot_compare(csv_out_file, plot_reference, plot, plot_log_y)
+        elif plot:
+            plot_results(csv_out_file, plot, plot_log_y)
 
 
 def processCLIArgs():
@@ -305,15 +422,47 @@ def processCLIArgs():
         metavar="filename",
         type=str,
         default=False,
-        help="Filename store plotted graph into. If filename is empty, opens a window with the graph."
+        help="Filename store plotted graph into. If filename equals to 'window', opens a window with the graph."
              " Plotting requires matplotlib and pandas libraries. Default: no plotting.",
     )
+    parser.add_argument(
+        "--plot_log_y",
+        default=False,
+        action='store_true',
+        help="Use logarithmic y axis when plotting.",
+    )
+    parser.add_argument(
+        "--opencl",
+        metavar="setting",
+        type=str,
+        default=False,
+        help="Benchmark OpenCL overloads. Possible values: "
+             "base - benchmark just the execution time, "
+             "copy - include argument copying time",
+    )
+    parser.add_argument(
+        "--plot_cl_speedup",
+        default=False,
+        action='store_true',
+        help="Plots speedup of OpenCL overloads compared to CPU ones. Can only be specified together with both "
+             "--opencl and --plot. Cannot be specified together with --plot_reference.",
+    )
+    parser.add_argument(
+        "--plot_reference",
+        metavar="filename",
+        type=str,
+        default=None,
+        help="Specify filename of reference run csv output. Plots speedup of this run compared to the reference. "
+             "Reference run must have all parameters the same as this one, except possibly --opencl, output files and "
+             "plotting parameters. Can only be specified together with --plot. Cannot be specified together with "
+             "--plot_cl_speedup.",
+    )
     args = parser.parse_args()
-    return dict(functions_or_sigs=args.functions, cpp_filename=args.cpp, overloads=args.overloads,
-                multiplier_param=args.multiplier, max_size_param=args.max_size, max_dim=args.max_dim,
-                csv_out_file=args.csv, n_repeats=args.repeats, plot=args.plot)
+    main(functions_or_sigs=args.functions, cpp_filename=args.cpp, overloads=args.overloads,
+         multiplier_param=args.multiplier, max_size_param=args.max_size, max_dim=args.max_dim,
+         csv_out_file=args.csv, n_repeats=args.repeats, plot=args.plot, plot_log_y=args.plot_log_y,
+         opencl=args.opencl, plot_cl_speedup=args.plot_cl_speedup, plot_reference=args.plot_reference)
 
 
 if __name__ == "__main__":
-    args = processCLIArgs()
-    main(**args)
+    processCLIArgs()
