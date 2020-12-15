@@ -36,7 +36,8 @@ struct sin_fun {
  * @return Sine of each value in x.
  */
 template <typename T,
-          require_not_container_st<std::is_arithmetic, T>* = nullptr>
+          require_not_container_st<std::is_arithmetic, T>* = nullptr,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
 inline auto sin(const T& x) {
   return apply_scalar_unary<sin_fun, T>::apply(x);
 }

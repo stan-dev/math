@@ -20,6 +20,8 @@
 #include <stan/math/opencl/rev/diagonal.hpp>
 #include <stan/math/opencl/rev/multiply.hpp>
 #include <stan/math/opencl/rev/operands_and_partials.hpp>
+#include <stan/math/opencl/rev/sin.hpp>
+#include <stan/math/opencl/rev/sinh.hpp>
 #include <stan/math/opencl/rev/sum.hpp>
 #include <stan/math/opencl/rev/tan.hpp>
 #include <stan/math/opencl/rev/tanh.hpp>
