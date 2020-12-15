@@ -109,8 +109,8 @@ inline auto multiply(const T1& a, const T2& b) {
 template <typename T1, typename T2, require_stan_scalar_t<T2>* = nullptr,
           require_all_nonscalar_prim_or_rev_kernel_expression_t<T1>* = nullptr,
           require_any_var_t<T1, T2>* = nullptr>
-inline auto multiply(const T1& A, const T2& B) {
-  return multiply(B, A);
+inline auto multiply(const T1& a, const T2& b) {
+  return multiply(b, a);
 }
 
 }  // namespace math
