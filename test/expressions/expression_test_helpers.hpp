@@ -52,12 +52,14 @@ template <typename T, require_fvar_t<T>* = nullptr>
 T make_arg(double value = 0.4, int size = 1) {
   return {value, 0.5};
 }
-template <typename T, typename T_scalar = double, require_eigen_matrix_dynamic_t<T>* = nullptr>
+template <typename T, typename T_scalar = double,
+          require_eigen_matrix_dynamic_t<T>* = nullptr>
 T make_arg(T_scalar value = 0.4, int size = 1) {
   T res = T::Constant(size, size, make_arg<value_type_t<T>>(value));
   return res;
 }
-template <typename T, typename T_scalar = double, require_eigen_vector_t<T>* = nullptr>
+template <typename T, typename T_scalar = double,
+          require_eigen_vector_t<T>* = nullptr>
 T make_arg(T_scalar value = 0.4, int size = 1) {
   T res = T::Constant(size, make_arg<value_type_t<T>>(value));
   return res;
@@ -67,7 +69,7 @@ template <typename T, typename T_scalar = double,
 T make_arg(T_scalar value = 0.4, int size = 1) {
   using V = value_type_t<T>;
   T res;
-  for(int i=0;i<size;i++){
+  for (int i = 0; i < size; i++) {
     res.push_back(make_arg<V>(value, size));
   }
   return res;
