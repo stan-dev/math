@@ -46,8 +46,8 @@ inline void check_positive(const char* function, const char* name,
       std::stringstream msg;
       msg << "; dimension size expression = " << expr;
       std::string msg_str(msg.str());
-      invalid_argument(function, name, size, "must have a positive size, but is ",
-                       msg_str.c_str());
+      invalid_argument(function, name, size,
+                       "must have a positive size, but is ", msg_str.c_str());
     }();
   }
 }

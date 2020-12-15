@@ -118,9 +118,9 @@ inline void elementwise_check(const F& is_good, const char* function,
                               const Indexings&... indexings) {
   if (unlikely(!is_good(value_of_rec(x)))) {
     [&]() STAN_COLD_PATH {
-      internal::elementwise_throw_domain_error(function, ": ", name, indexings...,
-                                               " is ", x, ", but must be ",
-                                               must_be, "!");
+      internal::elementwise_throw_domain_error(function, ": ", name,
+                                               indexings..., " is ", x,
+                                               ", but must be ", must_be, "!");
     }();
   }
 }
