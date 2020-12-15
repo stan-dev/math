@@ -5,6 +5,7 @@
 #include <stan/math/prim/meta/is_kernel_expression.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
+#include <stan/math/opencl/prim/sum.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
@@ -70,8 +71,8 @@ inline auto operator+(const T_a& a, const T_b& b) {
  * @tparam T1 type of the scalar
  * @tparam T2 type of the matrix or expression
  *
- * @param A scalar
- * @param B matrix
+ * @param a scalar
+ * @param b matrix
  * @return sum of a matrix and scalar
  */
 template <typename T1, typename T2, require_stan_scalar_t<T1>* = nullptr,
@@ -102,15 +103,15 @@ inline auto add(const T1& a, const T2& b) {
  * @tparam T1 type of the matrix or expression
  * @tparam T2 type of the scalar
  *
- * @param A matrix
- * @param B scalar
+ * @param a matrix
+ * @param b scalar
  * @return sum of matrix and scalar
  */
 template <typename T1, typename T2, require_stan_scalar_t<T2>* = nullptr,
           require_all_nonscalar_prim_or_rev_kernel_expression_t<T1>* = nullptr,
           require_any_var_t<T1, T2>* = nullptr>
-inline auto add(const T1& A, const T2& B) {
-  return add(B, A);
+inline auto add(const T1& a, const T2& b) {
+  return add(b, a);
 }
 
 }  // namespace math

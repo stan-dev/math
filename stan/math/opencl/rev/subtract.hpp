@@ -5,6 +5,7 @@
 #include <stan/math/prim/meta/is_kernel_expression.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
+#include <stan/math/opencl/prim/sum.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
@@ -72,8 +73,8 @@ inline auto operator-(const T_a& a, const T_b& b) {
  * @tparam T1 type of the scalar
  * @tparam T2 type of the matrix or expression
  *
- * @param A scalar
- * @param B matrix
+ * @param a scalar
+ * @param b matrix
  * @return The subtraction of the the second argument from the first
  */
 template <typename T1, typename T2, require_stan_scalar_t<T1>* = nullptr,
