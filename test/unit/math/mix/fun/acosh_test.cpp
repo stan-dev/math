@@ -35,4 +35,10 @@ TEST(mathMixMatFun, acosh_varmat) {
     ++i;
   }
   stan::test::expect_ad_matvar(f, A);
+  std::vector<Eigen::MatrixXd> A_vec;
+  A_vec.push_back(A);
+  A_vec.push_back(A);
+  A_vec.push_back(A);
+  stan::test::expect_ad_matvar(f, A_vec);
+
 }

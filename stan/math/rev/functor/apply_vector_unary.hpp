@@ -61,6 +61,8 @@ struct apply_vector_unary<T, require_var_matrix_t<T>> {
   }
 };
 
+
+
 }  // namespace math
 }  // namespace stan
 #endif

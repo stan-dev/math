@@ -26,4 +26,10 @@ TEST(mathMixMatFun, asin_varmat) {
   Eigen::VectorXd A(7);
   A << -2.6, -2, -0.2, 0.7, 1.3, 3.4, 5;
   expect_ad_matvar(f, A);
+  std::vector<Eigen::VectorXd> A_vec;
+  A_vec.push_back(A);
+  A_vec.push_back(A);
+  A_vec.push_back(A);
+  stan::test::expect_ad_matvar(f, A_vec);
+
 }

@@ -62,7 +62,7 @@ inline var acos(const var& x) {
  * Return the principal value of the arc cosine of a variable,
  * in radians (cmath).
  *
- * @param x argument
+ * @param x a `var_value` with inner Eigen type
  * @return Arc cosine of variable, in radians.
  */
 template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>

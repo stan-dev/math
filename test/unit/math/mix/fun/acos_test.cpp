@@ -32,4 +32,9 @@ TEST(mathMixMatFun, acos_varmat) {
   A << -2.2, -0.8, 0.5, 1 + std::numeric_limits<double>::epsilon(), 1.5, 3, 3.4,
       4;
   expect_ad_matvar(f, A);
+  std::vector<Eigen::MatrixXd> A_vec;
+  A_vec.push_back(A);
+  A_vec.push_back(A);
+  A_vec.push_back(A);
+  stan::test::expect_ad_matvar(f, A_vec);
 }
