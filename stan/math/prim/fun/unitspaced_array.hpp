@@ -24,10 +24,11 @@ inline std::vector<int> unitspaced_array(int low, int high) {
   static const char* function = "unitspaced_array";
   check_greater_or_equal(function, "high", high, low);
 
-  int K = fabs(high - low + 1);
-
-  Eigen::VectorXi v = Eigen::VectorXi::LinSpaced(K, low, high);
-  return {&v[0], &v[0] + K};
+  int K = std::abs(high - low + 1);
+  std::vector<int> result(K);
+  Eigen::Map<Eigen::VectorXi>(result.data(), K)
+      = Eigen::VectorXi::LinSpaced(K, low, high);
+  return result;
 }
 
 }  // namespace math

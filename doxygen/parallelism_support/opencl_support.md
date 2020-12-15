@@ -117,7 +117,7 @@ var C_sum = sum(C_cl);
 - gp_exp_quad_cov
 - mdivide_right_tri, mdivide_right_tri_low
 - mdivide_left_tri, mdivide_left_tri_low
-- multiplication
+- multiply
 - sum
 
 #### Supported distributions
@@ -127,6 +127,7 @@ var C_sum = sum(C_cl);
 - bernoulli_logit_glm_lpmf
 - beta_lpdf
 - beta_proportion_lpdf
+- binomial_lpmf
 - categorical_logit_glm_lpmf
 - cauchy_lpdf
 - chi_square_lpdf
@@ -140,6 +141,9 @@ var C_sum = sum(C_cl);
 - inv_gamma_lpdf
 - logistic_lpdf
 - lognormal_lpdf
+- neg_binomial_lpmf
+- neg_binomial_2_lpmf
+- neg_binomial_2_log_lpmf
 - neg_binomial_2_log_glm_lpmf
 - normal_lpdf
 - normal_id_glm_lpdf
@@ -155,6 +159,7 @@ var C_sum = sum(C_cl);
 - std_normal_lpdf
 - student_t_lpdf
 - uniform_lpdf
+- weibull_lpdf
 
 ### Primitive functions
 
@@ -172,7 +177,8 @@ matrix_cl<double> C_cl = A_cl * transpose(lgamma(B_cl));
 Eigen::Matrix<double, -1, -1> C = from_matrix_cl(C_cl);
 ```
 
-A list of OpenCL supported primitive functions:
+In addition to the functions listed in the reverse mode list, 
+the following functions can be used with `matrix_cl<T>` arguments:
 
 - acos, acosh
 - add
@@ -182,7 +188,6 @@ A list of OpenCL supported primitive functions:
 - block
 - cbrt
 - ceil
-- cholesky_decompose
 - col
 - cols
 - cos, cosh
@@ -196,16 +201,12 @@ A list of OpenCL supported primitive functions:
 - exp, exp2, expm1
 - fabs
 - floor
-- gp_exp_quad_cov
 - inv, inv_logit, inv_sqrt, inv_square
 - lbeta
 - lgamma
 - log, log10, log1m_exp, log1m_inv_logit
 - log1p, log1p_exp, log2, logit
-- mdivide_left_tri_low
-- mdivide_right_tri_low
 - minus
-- multiply
 - operator-, operator+, operator*
 - plus
 - pow
@@ -216,7 +217,6 @@ A list of OpenCL supported primitive functions:
 - sin, sinh
 - size
 - sqrt
-- sum
 - tan, tanh
 - tcrossprod
 - tgamma

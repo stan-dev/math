@@ -2,7 +2,6 @@
 
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/zeros.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <test/unit/util.hpp>
 #include <Eigen/Dense>
@@ -59,8 +58,7 @@ TEST(KernelGenerator, kernel_caching) {
 
 TEST(MathMatrixCL, events_write_after_write) {
   using stan::math::matrix_cl;
-  matrix_cl<double> zero_cl(3, 3);
-  zero_cl.zeros();
+  matrix_cl<double> zero_cl = stan::math::constant(0, 3, 3);
   zero_cl.wait_for_read_write_events();
 
   for (int j = 0; j < 3000; j++) {
@@ -81,9 +79,8 @@ TEST(MathMatrixCL, events_read_after_write_and_write_after_read) {
   using stan::math::matrix_cl;
   int iters = 3000;
 
-  matrix_cl<double> m1_cl(3, 3);
+  matrix_cl<double> m1_cl = stan::math::constant(0, 3, 3);
   matrix_cl<double> m2_cl(3, 3);
-  m1_cl.zeros();
 
   for (int j = 0; j < iters; j++) {
     m2_cl = m1_cl + 1;

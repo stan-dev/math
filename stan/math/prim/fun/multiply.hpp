@@ -27,7 +27,7 @@ template <typename Mat, typename Scal, require_stan_scalar_t<Scal>* = nullptr,
           require_eigen_t<Mat>* = nullptr,
           require_all_not_st_var<Scal, Mat>* = nullptr>
 inline auto multiply(const Mat& m, Scal c) {
-  return (c * m).eval();
+  return c * m;
 }
 
 /**
@@ -44,7 +44,7 @@ template <typename Scal, typename Mat, require_stan_scalar_t<Scal>* = nullptr,
           require_eigen_t<Mat>* = nullptr,
           require_all_not_st_var<Scal, Mat>* = nullptr>
 inline auto multiply(Scal c, const Mat& m) {
-  return (c * m).eval();
+  return c * m;
 }
 
 /**
@@ -69,7 +69,7 @@ template <typename Mat1, typename Mat2,
 inline auto multiply(const Mat1& m1, const Mat2& m2) {
   check_size_match("multiply", "Columns of m1", m1.cols(), "Rows of m2",
                    m2.rows());
-  return (m1 * m2).eval();
+  return m1 * m2;
 }
 
 /**

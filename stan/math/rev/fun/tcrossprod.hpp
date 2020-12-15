@@ -22,7 +22,7 @@ namespace math {
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto tcrossprod(const T& M) {
-  using ret_type = promote_var_matrix_t<
+  using ret_type = return_var_matrix_t<
       Eigen::Matrix<double, T::RowsAtCompileTime, T::RowsAtCompileTime>, T>;
   arena_t<T> arena_M = M;
   arena_t<ret_type> res = arena_M.val_op() * arena_M.val_op().transpose();

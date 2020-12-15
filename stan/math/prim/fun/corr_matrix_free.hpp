@@ -40,16 +40,16 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> corr_matrix_free(const T& y) {
 
   Eigen::Index k = y.rows();
   Eigen::Index k_choose_2 = (k * (k - 1)) / 2;
-  Array<value_type_t<T>, Dynamic, 1> x(k_choose_2);
+  Eigen::Matrix<value_type_t<T>, Dynamic, 1> x(k_choose_2);
   Array<value_type_t<T>, Dynamic, 1> sds(k);
-  bool successful = factor_cov_matrix(y, x, sds);
+  bool successful = factor_cov_matrix(y, x.array(), sds);
   if (!successful) {
     throw_domain_error("corr_matrix_free", "factor_cov_matrix failed on y", y,
                        "");
   }
   check_bounded("corr_matrix_free", "log(sd)", sds, -CONSTRAINT_TOLERANCE,
                 CONSTRAINT_TOLERANCE);
-  return x.matrix();
+  return x;
 }
 
 }  // namespace math

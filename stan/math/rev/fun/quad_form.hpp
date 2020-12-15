@@ -119,9 +119,9 @@ inline auto quad_form_impl(const Mat1& A, const Mat2& B, bool symmetric) {
   check_multiplicable("quad_form", "A", A, "B", B);
 
   using return_t
-      = promote_var_matrix_t<decltype(value_of(B).transpose().eval()
-                                      * value_of(A) * value_of(B).eval()),
-                             Mat1, Mat2>;
+      = return_var_matrix_t<decltype(value_of(B).transpose().eval()
+                                     * value_of(A) * value_of(B).eval()),
+                            Mat1, Mat2>;
 
   if (!is_constant<Mat1>::value && !is_constant<Mat2>::value) {
     arena_t<promote_scalar_t<var, Mat1>> arena_A = A;
