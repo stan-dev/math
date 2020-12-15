@@ -24,7 +24,6 @@ namespace math {
 template <typename T, typename = require_eigen_vector_t<T>>
 inline void check_vector_index(const char* function, const char* name,
                                const T& y, size_t i) {
-  STAN_RETURN_IF_NO_CHECKS
   if (!(i >= stan::error_index::value
         && i < static_cast<size_t>(y.size()) + stan::error_index::value)) {
     [&]() STAN_COLD_PATH {

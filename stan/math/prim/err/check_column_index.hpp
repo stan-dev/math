@@ -27,7 +27,6 @@ namespace math {
 template <typename T_y, typename = require_eigen_t<T_y>>
 inline void check_column_index(const char* function, const char* name,
                                const T_y& y, size_t i) {
-  STAN_RETURN_IF_NO_CHECKS
   if (!(i >= stan::error_index::value
         && i < static_cast<size_t>(y.cols()) + stan::error_index::value)) {
     [&]() STAN_COLD_PATH {

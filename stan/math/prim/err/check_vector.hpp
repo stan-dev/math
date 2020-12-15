@@ -24,7 +24,6 @@ namespace math {
  */
 template <typename Mat, require_matrix_t<Mat>* = nullptr>
 inline void check_vector(const char* function, const char* name, const Mat& x) {
-  STAN_RETURN_IF_NO_CHECKS
   if (!(x.rows() == 1 || x.cols() == 1)) {
     [&]() STAN_COLD_PATH {
       std::ostringstream msg;

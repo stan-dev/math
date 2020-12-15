@@ -21,10 +21,4 @@
 #define STAN_HOT_PATH
 #endif
 
-#ifdef NDEBUG
-#define STAN_RETURN_IF_NO_CHECKS return;
-#else
-#define STAN_RETURN_IF_NO_CHECKS
-#endif
-
 #endif
