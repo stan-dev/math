@@ -29,5 +29,4 @@ TEST(mathMixMatFun, fabs_varmat) {
   A_vec.push_back(A);
   A_vec.push_back(A);
   stan::test::expect_ad_matvar(f, A_vec);
-
 }
