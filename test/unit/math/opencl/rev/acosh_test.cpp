@@ -9,7 +9,7 @@ auto acoshh_functor
 
 TEST(OpenCLacoshh, prim_rev_values_small) {
   Eigen::VectorXd a(8);
-  a << -2.2, -0.8, 0.5, 1 + std::numeric_limits<double>::epsilon(), 1.5, 3, 3.4, 4;
+  a << 2.2, 1.8, 1, 1 + std::numeric_limits<double>::epsilon(), 1.2, 1.3, 1.34, 1.4;
   stan::math::test::compare_cpu_opencl_prim_rev(acoshh_functor, a);
 }
 
@@ -23,7 +23,7 @@ TEST(OpenCLacoshh, prim_rev_size_0) {
 TEST(OpenCLacoshh, prim_rev_values_large) {
   int N = 71;
 
-  Eigen::MatrixXd a = Eigen::MatrixXd::Random(N, N);
+  Eigen::MatrixXd a = Eigen::MatrixXd::Constant(N, N, 2.0) + Eigen::MatrixXd::Random(N, N);
   stan::math::test::compare_cpu_opencl_prim_rev(acoshh_functor, a);
 }
 

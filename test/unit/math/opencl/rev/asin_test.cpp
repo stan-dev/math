@@ -5,7 +5,7 @@
 #include <test/unit/math/opencl/util.hpp>
 
 auto asin_functor
-    = [](const auto& a) { return stan::math::acos(a).eval(); };
+    = [](const auto& a) { return stan::math::asin(a).eval(); };
 
 TEST(OpenCLAsin, prim_rev_values_small) {
   Eigen::VectorXd a(8);

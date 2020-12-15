@@ -9,7 +9,7 @@ auto atanh_functor
 
 TEST(OpenCLAtanh, prim_rev_values_small) {
   Eigen::VectorXd a(8);
-  a << -2.2, -0.8, 0.5, 1 + std::numeric_limits<double>::epsilon(), 1.5, 3, 3.4, 4;
+  a << -0.98, -0.8, 0.5, 0.6 + std::numeric_limits<double>::epsilon(), 0.5, -0.03, -0.34, 0.44;
   stan::math::test::compare_cpu_opencl_prim_rev(atanh_functor, a);
 }
 
