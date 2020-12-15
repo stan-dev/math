@@ -52,19 +52,19 @@ inline auto generalized_inverse(const VarMat& G) {
     arena_t<VarMat> inv_G(
         mdivide_left_spd(A_spd.val_op(), G_arena.val_op()).transpose());
 
+    arena_t<VarMat> res = inv_G;
+    
     auto PG = to_arena(-G_arena.val_op() * inv_G.val_op());
     PG.diagonal().array() += 1.0;
 
     auto GP = to_arena(-inv_G.val_op() * G_arena.val_op());
     GP.diagonal().array() += 1.0;
 
-    reverse_pass_callback([G_arena, inv_G, GP, PG]() mutable {
-      G_arena.adj() += -inv_G.val_op() * G_arena.adj_op() * inv_G.val_op();
-      G_arena.adj() += tcrossprod(inv_G.val_op()) * G_arena.adj_op().transpose()
-                       * PG.val_op();
-      G_arena.adj() += GP.val_op() * G_arena.adj_op().transpose()
-                       * crossprod(inv_G.val_op());
-    });
+    reverse_pass_callback([G_arena, res, inv_G, GP, PG]() mutable {
+      G_arena.adj() -= inv_G.val_op().transpose() * res.adj_op() * inv_G.val_op().transpose();
+      G_arena.adj() +=  PG.val_op() * res.adj_op().transpose() * tcrossprod(inv_G.val_op());
+      G_arena.adj() += crossprod(inv_G.val_op()) * res.adj_op().transpose() * GP.val_op();
+	});
     return ret_type(inv_G);
   } else {
     arena_t<VarMat> G_arena(G);
@@ -72,18 +72,18 @@ inline auto generalized_inverse(const VarMat& G) {
     arena_t<VarMat> inv_G(
         mdivide_right_spd(G_arena.val_op(), A_spd.val_op()).transpose());
 
+    arena_t<ret_type> res = inv_G;
+
     auto PG = to_arena(-G_arena.val_op() * inv_G.val_op());
     PG.diagonal().array() += 1.0;
 
     auto GP = to_arena(-inv_G.val_op() * G_arena.val_op());
     GP.diagonal().array() += 1.0;
 
-    reverse_pass_callback([G_arena, inv_G, GP, PG]() mutable {
-      G_arena.adj() += -inv_G.val_op() * G_arena.adj_op() * inv_G.val_op();
-      G_arena.adj() += tcrossprod(inv_G.val_op()) * G_arena.adj_op().transpose()
-                       * PG.val_op();
-      G_arena.adj() += GP.val_op() * G_arena.adj_op().transpose()
-                       * crossprod(inv_G.val_op());
+    reverse_pass_callback([G_arena, res, inv_G, GP, PG]() mutable {
+      G_arena.adj() -= inv_G.val_op().transpose() * res.adj_op() * inv_G.val_op().transpose();
+      G_arena.adj() +=  PG.val_op() * res.adj_op().transpose() * tcrossprod(inv_G.val_op());
+      G_arena.adj() += crossprod(inv_G.val_op()) * res.adj_op().transpose() * GP.val_op();
     });
     return ret_type(inv_G);
   }
@@ -125,18 +125,18 @@ inline auto generalized_inverse(const VarMat& G, const double a) {
     arena_t<VarMat> inv_G(
         mdivide_left_spd(A_spd.val_op(), G_arena.val_op()).transpose());
 
+    arena_t<VarMat> res = inv_G;
+
     auto PG = to_arena(-G_arena.val_op() * inv_G.val_op());
     PG.diagonal().array() += 1.0;
 
     auto GP = to_arena(-inv_G.val_op() * G_arena.val_op());
     GP.diagonal().array() += 1.0;
 
-    reverse_pass_callback([G_arena, inv_G, GP, PG]() mutable {
-      G_arena.adj() += -inv_G.val_op() * G_arena.adj_op() * inv_G.val_op();
-      G_arena.adj() += tcrossprod(inv_G.val_op()) * G_arena.adj_op().transpose()
-                       * PG.val_op();
-      G_arena.adj() += GP.val_op() * G_arena.adj_op().transpose()
-                       * crossprod(inv_G.val_op());
+    reverse_pass_callback([G_arena, res, inv_G, GP, PG]() mutable {
+      G_arena.adj() -= inv_G.val_op().transpose() * res.adj_op() * inv_G.val_op().transpose();
+      G_arena.adj() +=  PG.val_op() * res.adj_op().transpose() * tcrossprod(inv_G.val_op());
+      G_arena.adj() += crossprod(inv_G.val_op()) * res.adj_op().transpose() * GP.val_op();
     });
     return ret_type(inv_G);
   } else {
@@ -145,6 +145,8 @@ inline auto generalized_inverse(const VarMat& G, const double a) {
     A_spd.diagonal().array() += a;
     arena_t<VarMat> inv_G(
         mdivide_right_spd(G_arena.val_op(), A_spd.val_op()).transpose());
+ 
+    arena_t<VarMat> res = inv_G;
 
     auto PG = to_arena(-G_arena.val_op() * inv_G.val_op());
     PG.diagonal().array() += 1.0;
@@ -152,12 +154,10 @@ inline auto generalized_inverse(const VarMat& G, const double a) {
     auto GP = to_arena(-inv_G.val_op() * G_arena.val_op());
     GP.diagonal().array() += 1.0;
 
-    reverse_pass_callback([G_arena, inv_G, GP, PG]() mutable {
-      G_arena.adj() += -inv_G.val_op() * G_arena.adj_op() * inv_G.val_op();
-      G_arena.adj() += tcrossprod(inv_G.val_op()) * G_arena.adj_op().transpose()
-                       * PG.val_op();
-      G_arena.adj() += GP.val_op() * G_arena.adj_op().transpose()
-                       * crossprod(inv_G.val_op());
+    reverse_pass_callback([G_arena, res, inv_G, GP, PG]() mutable {
+      G_arena.adj() -= inv_G.val_op().transpose() * res.adj_op() * inv_G.val_op().transpose();
+      G_arena.adj() +=  PG.val_op() * res.adj_op().transpose() * tcrossprod(inv_G.val_op());
+      G_arena.adj() += crossprod(inv_G.val_op()) * res.adj_op().transpose() * GP.val_op();
     });
     return ret_type(inv_G);
   }
