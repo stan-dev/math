@@ -257,3 +257,14 @@ def handle_function_list(functions_input):
         else:
             function_names.append(f)
     return function_names, function_signatures
+
+def reference_vector_argument(arg):
+    """
+    Determines a reference argument, so as not to duplicate arrays of reals, vectors and row vectors,
+    which usually have the same implementation.
+    :param arg: argument
+    :return: reference argument
+    """
+    if arg in ("real[]", "row_vector"):
+        return "vector"
+    return arg

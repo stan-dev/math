@@ -45,7 +45,7 @@ def run_command(command):
     """
     print()
     print(command)
-    p1 = subprocess.Popen(command, shell=True)
+    p1 = subprocess.Popen(command, shell=os.name != "nt")
     if p1.wait() != 0:
         raise RuntimeError("command failed: " + command)
 
@@ -112,8 +112,8 @@ def plot_results(csv_filename, out_file="", plot_log_y=False):
         sig_times = times[selector]
         plt.plot(sig_sizes, sig_times, "x", color=tableau_colors[n])
 
-        unique_sizes = sorted(numpy.unique(sizes))
-        avg_sig_times = numpy.array([numpy.mean(sig_times[sig_sizes==i]) for i in unique_sizes])
+        unique_sizes = sorted(numpy.unique(sig_sizes))
+        avg_sig_times = numpy.array([numpy.mean(sig_times[sig_sizes == i]) for i in unique_sizes])
         plt.plot(unique_sizes, avg_sig_times, label=signature, color=tableau_colors[n])
 
     plt.legend()
@@ -172,9 +172,9 @@ def plot_compare(csv_filename, reference_csv_filename, out_file="", plot_log_y=F
         reference_sig_times = reference_times[selector]
         plt.plot(sig_sizes, reference_sig_times / sig_times, "x", color=tableau_colors[n])
 
-        unique_sizes = sorted(numpy.unique(sizes))
-        avg_sig_times = numpy.array([numpy.mean(sig_times[sig_sizes==i]) for i in unique_sizes])
-        avg_reference_sig_times = numpy.array([numpy.mean(reference_sig_times[sig_sizes==i]) for i in unique_sizes])
+        unique_sizes = sorted(numpy.unique(sig_sizes))
+        avg_sig_times = numpy.array([numpy.mean(sig_times[sig_sizes == i]) for i in unique_sizes])
+        avg_reference_sig_times = numpy.array([numpy.mean(reference_sig_times[sig_sizes == i]) for i in unique_sizes])
         plt.plot(unique_sizes, avg_reference_sig_times / avg_sig_times, label=signature, color=tableau_colors[n])
     plt.plot([1, max(sizes)], [1, 1], "--", color="gray")
 
@@ -186,7 +186,8 @@ def plot_compare(csv_filename, reference_csv_filename, out_file="", plot_log_y=F
 
 
 def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim", "Rev"), multiplier_param=None,
-              max_size_param=None, max_dim=3, n_repeats=1, csv_out_file=None, opencl=False):
+              max_size_param=None, max_dim=3, n_repeats=1, skip_similar_signatures=False, csv_out_file=None,
+              opencl=False):
     """
     Generates benchmark code, compiles it and runs the benchmark.
     :param functions_or_sigs: List of function names and/or signatures to benchmark
@@ -197,6 +198,8 @@ def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim"
     :param max_dim: Maximum number of argument dimensions to benchmark. Signatures with any argument with
              larger number of dimensions are skipped."
     :param n_repeats: Number of times to repeat each benchmark.
+    :param skip_similar_signatures: Whether to skip similar signatures. Two signatures are similar if they
+             difffer only in similar vector types, which are vector, row_vector and real[].
     :param csv_out_file: Filename of the csv file to store benchmark results in.
     """
     all_signatures = get_signatures()
@@ -205,13 +208,22 @@ def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim"
     signatures = set(signatures)
     remaining_functions = set(functions)
     parsed_signatures = []
+    ref_signatures = set()
     for signature in all_signatures:
         return_type, function_name, stan_args = parse_signature(signature)
+        reference_args = tuple(reference_vector_argument(i) for i in stan_args)
+        if (function_name, reference_args) in ref_signatures:
+            continue
         if signature in signatures or function_name in functions:
             parsed_signatures.append([return_type, function_name, stan_args])
             remaining_functions.discard(function_name)
+            ref_signatures.add((function_name, reference_args))
     for signature in signatures:
         return_type, function_name, stan_args = parse_signature(signature)
+        reference_args = tuple(reference_vector_argument(i) for i in stan_args)
+        if (function_name, reference_args) in ref_signatures:
+            continue
+        ref_signatures.add((function_name, reference_args))
         parsed_signatures.append([return_type, function_name, stan_args])
         remaining_functions.discard(function_name)
     if remaining_functions:
@@ -319,7 +331,8 @@ def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim"
 
 
 def main(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim", "Rev"), multiplier_param=None,
-         max_size_param=None, max_dim=3, n_repeats=1, csv_out_file=None, opencl=False, plot=False, plot_log_y=False,
+         max_size_param=None, max_dim=3, n_repeats=1, skip_similar_signatures=False, csv_out_file=None, opencl=False,
+         plot=False, plot_log_y=False,
          plot_cl_speedup=False, plot_reference=None):
     """
     Generates benchmark code, compiles it and runs the benchmark. Optionally plots the results.
@@ -331,6 +344,8 @@ def main(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim", "Re
     :param max_dim: Maximum number of argument dimensions to benchmark. Signatures with any argument with
              larger number of dimensions are skipped."
     :param n_repeats: Number of times to repeat each benchmark.
+    :param skip_similar_signatures: Whether to skip similar signatures. Two signatures are similar if they
+             difffer only in similar vector types, which are vector, row_vector and real[].
     :param csv_out_file: Filename of the csv file to store benchmark results in.
     :param plot: Filename of bmp or csv fle to store plot into. If  filename is empty, opens a window with graph.
     :param plot_log_y: Use logarithmic y axis for plotting
@@ -344,13 +359,13 @@ def main(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim", "Re
             base, ext = csv_out_file.rsplit(".", 1)
             opencl_csv_out_file = base + "_cl." + ext
         benchmark(functions_or_sigs, cpp_filename, overloads, multiplier_param, max_size_param, max_dim,
-                  n_repeats, csv_out_file, False)
+                  n_repeats, skip_similar_signatures, csv_out_file, False)
         benchmark(functions_or_sigs, cpp_filename, overloads, multiplier_param, max_size_param, max_dim,
-                  n_repeats, opencl_csv_out_file, opencl)
+                  n_repeats, skip_similar_signatures, opencl_csv_out_file, opencl)
         plot_compare(opencl_csv_out_file, csv_out_file, plot)
     else:
         benchmark(functions_or_sigs, cpp_filename, overloads, multiplier_param, max_size_param, max_dim,
-                  n_repeats, csv_out_file, opencl)
+                  n_repeats, skip_similar_signatures, csv_out_file, opencl)
         if plot_reference:
             plot_compare(csv_out_file, plot_reference, plot, plot_log_y)
         elif plot:
@@ -461,11 +476,19 @@ def processCLIArgs():
              "plotting parameters. Can only be specified together with --plot. Cannot be specified together with "
              "--plot_cl_speedup.",
     )
+    parser.add_argument(
+        "--skip_similar_signatures",
+        default=False,
+        action='store_true',
+        help="Skip similar signatures. Two signatures are similar if they"
+             "difffer only in similar vector types, which are vector, row_vector and real[].",
+    )
     args = parser.parse_args()
     main(functions_or_sigs=args.functions, cpp_filename=args.cpp, overloads=args.overloads,
          multiplier_param=args.multiplier, max_size_param=args.max_size, max_dim=args.max_dim,
-         csv_out_file=args.csv, n_repeats=args.repeats, plot=args.plot, plot_log_y=args.plot_log_y,
-         opencl=args.opencl, plot_cl_speedup=args.plot_cl_speedup, plot_reference=args.plot_reference)
+         csv_out_file=args.csv, n_repeats=args.repeats, skip_similar_signatures=args.skip_similar_signatures,
+         plot=args.plot, plot_log_y=args.plot_log_y, opencl=args.opencl, plot_cl_speedup=args.plot_cl_speedup,
+         plot_reference=args.plot_reference)
 
 
 if __name__ == "__main__":
