@@ -17,16 +17,19 @@ namespace stan {
 namespace math {
 
 /*
- * Reverse mode specialization of calculating the generalized inverse of a matrix.
+ * Reverse mode specialization of calculating the generalized inverse of a
+ * matrix.
  *
  * @param G specified matrix
- * @return Generalized inverse of the matrix (an empty matrix if the specified matrix has
- * size zero).
+ * @return Generalized inverse of the matrix (an empty matrix if the specified
+ * matrix has size zero).
  *
  * @note Reverse mode differentiation algorithm reference:
  *
- * <ul><li> Golub, G.H. and Pereyra, V. The Differentiation of Pseudo-Inverses and Nonlinear Least Squares Problems
- * Whose Variables Separate. <i>SIAM Journal on Numerical Analysis</i>, Vol. 10, No. 2 (Apr., 1973), pp. 413-432</li></ul>
+ * <ul><li> Golub, G.H. and Pereyra, V. The Differentiation of Pseudo-Inverses
+ * and Nonlinear Least Squares Problems Whose Variables Separate. <i>SIAM
+ * Journal on Numerical Analysis</i>, Vol. 10, No. 2 (Apr., 1973), pp.
+ * 413-432</li></ul>
  *
  * Equation 4.12 in the paper
  *
@@ -101,16 +104,19 @@ inline auto generalized_inverse(const VarMat& G) {
 }
 
 /*
- * Reverse mode specialization of calculating the generalized inverse of a matrix.
+ * Reverse mode specialization of calculating the generalized inverse of a
+ * matrix.
  *
  * @param G specified matrix
- * @return Generalized inverse of the matrix (an empty matrix if the specified matrix has
- * size zero).
+ * @return Generalized inverse of the matrix (an empty matrix if the specified
+ * matrix has size zero).
  *
  * @note Reverse mode differentiation algorithm reference:
  *
- * <ul><li> Golub, G.H. and Pereyra, V. The Differentiation of Pseudo-Inverses and Nonlinear Least Squares Problems
- * Whose Variables Separate. <i>SIAM Journal on Numerical Analysis</i>, Vol. 10, No. 2 (Apr., 1973), pp. 413-432</li></ul>
+ * <ul><li> Golub, G.H. and Pereyra, V. The Differentiation of Pseudo-Inverses
+ * and Nonlinear Least Squares Problems Whose Variables Separate. <i>SIAM
+ * Journal on Numerical Analysis</i>, Vol. 10, No. 2 (Apr., 1973), pp.
+ * 413-432</li></ul>
  *
  * Equation 4.12 in the paper
  *
