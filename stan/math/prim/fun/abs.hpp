@@ -8,16 +8,50 @@
 namespace stan {
 namespace math {
 
-/**
- * Return floating-point absolute value.
- *
- * Delegates to <code>fabs(double)</code> rather than
- * <code>std::abs(int)</code>.
- *
- * @param x scalar
- * @return absolute value of scalar
- */
-inline double abs(double x) { return std::fabs(x); }
+ /**
+  * Structure to wrap `abs()` so it can be vectorized.
+  *
+  * @tparam T type of variable
+  * @param x argument
+  * @return Arc cosine of variable in radians.
+  */
+ struct abs_fun {
+   template <typename T>
+   static inline T fun(const T& x) {
+     using std::fabs;
+     return fabs(x);
+   }
+ };
+
+ /**
+  * Returns the elementwise `abs()` of the input,
+  * which may be a scalar or any Stan container of numeric scalars.
+  *
+  * @tparam Container type of container
+  * @param x argument
+  * @return Arc cosine of each variable in the container, in radians.
+  */
+ template <typename Container,
+           require_not_container_st<std::is_arithmetic, Container>* = nullptr,
+           require_not_var_matrix_t<Container>* = nullptr>
+ inline auto abs(const Container& x) {
+   return apply_scalar_unary<abs_fun, Container>::apply(x);
+ }
+
+ /**
+  * Version of `abs()` that accepts std::vectors, Eigen Matrix/Array objects
+  *  or expressions, and containers of these.
+  *
+  * @tparam Container Type of x
+  * @param x argument
+  * @return Arc cosine of each variable in the container, in radians.
+  */
+ template <typename Container,
+           require_container_st<std::is_arithmetic, Container>* = nullptr>
+ inline auto abs(const Container& x) {
+   return apply_vector_unary<Container>::apply(
+       x, [](const auto& v) { return v.array().abs(); });
+ }
 
 namespace internal {
 /**
