@@ -14,7 +14,7 @@ namespace math {
  * @return A row vector of size K with all elements initialised to 0.
  * @throw std::domain_error if K is negative.
  */
-inline Eigen::RowVectorXd zeros_row_vector(int K) {
+inline auto zeros_row_vector(int K) {
   check_nonnegative("zeros_row_vector", "size", K);
   return Eigen::RowVectorXd::Zero(K);
 }
