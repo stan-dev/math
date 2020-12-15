@@ -16,7 +16,8 @@ namespace math {
  * @param A argument
  * @return Elementwise `cos()` of the input, in radians.
  */
-inline var_value<matrix_cl<double>> sinh(const var_value<matrix_cl<double>>& A) {
+inline var_value<matrix_cl<double>> sinh(
+    const var_value<matrix_cl<double>>& A) {
   var_value<matrix_cl<double>> res = sinh(A.val());
   reverse_pass_callback([A, res]() mutable {
     A.adj() = A.adj() + elt_multiply(res.adj(), cosh(A.val()));
