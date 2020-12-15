@@ -10,12 +10,12 @@
 #include <tbb/task_arena.h>
 
 TEST(intel_tbb_new_late_init, check_status) {
-  const int num_threads = tbb::global_control::default_num_threads();
-  tbb::global_control tbb_scheduler;
+  const int num_threads = tbb::global_control::max_allowed_parallelism;
+  tbb::task_arena tbb_arena;
 
   if (num_threads > 1) {
     set_n_threads(num_threads - 1);
-    tbb::global_control& tbb_init = stan::math::init_threadpool_tbb();
+    tbb::task_arena& tbb_init = stan::math::init_threadpool_tbb();
     EXPECT_TRUE(tbb_init.is_active());
 
     // STAN_NUM_THREADS is not being honored if we have first
