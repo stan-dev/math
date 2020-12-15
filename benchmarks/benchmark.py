@@ -110,11 +110,11 @@ def plot_results(csv_filename, out_file="", plot_log_y=False):
         selector = signatures == signature
         sig_sizes = sizes[selector]
         sig_times = times[selector]
-        plt.plot(sig_sizes, sig_times, "x", color=tableau_colors[n])
+        plt.plot(sig_sizes, sig_times, "x", color=tableau_colors[n % len(tableau_colors)])
 
         unique_sizes = sorted(numpy.unique(sig_sizes))
         avg_sig_times = numpy.array([numpy.mean(sig_times[sig_sizes == i]) for i in unique_sizes])
-        plt.plot(unique_sizes, avg_sig_times, label=signature, color=tableau_colors[n])
+        plt.plot(unique_sizes, avg_sig_times, label=signature, color=tableau_colors[n % len(tableau_colors)])
 
     plt.legend()
     if out_file == "window":
@@ -170,12 +170,13 @@ def plot_compare(csv_filename, reference_csv_filename, out_file="", plot_log_y=F
         sig_sizes = sizes[selector]
         sig_times = times[selector]
         reference_sig_times = reference_times[selector]
-        plt.plot(sig_sizes, reference_sig_times / sig_times, "x", color=tableau_colors[n])
+        plt.plot(sig_sizes, reference_sig_times / sig_times, "x", color=tableau_colors[n % len(tableau_colors)])
 
         unique_sizes = sorted(numpy.unique(sig_sizes))
         avg_sig_times = numpy.array([numpy.mean(sig_times[sig_sizes == i]) for i in unique_sizes])
         avg_reference_sig_times = numpy.array([numpy.mean(reference_sig_times[sig_sizes == i]) for i in unique_sizes])
-        plt.plot(unique_sizes, avg_reference_sig_times / avg_sig_times, label=signature, color=tableau_colors[n])
+        plt.plot(unique_sizes, avg_reference_sig_times / avg_sig_times, label=signature,
+                 color=tableau_colors[n % len(tableau_colors)])
     plt.plot([1, max(sizes)], [1, 1], "--", color="gray")
 
     plt.legend()
