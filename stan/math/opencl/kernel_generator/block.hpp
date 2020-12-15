@@ -305,7 +305,7 @@ template <typename T,
 inline auto block(T&& a, int start_row, int start_col, int rows, int cols) {
   auto&& a_operation = as_operation_cl(std::forward<T>(a)).deep_copy();
   return block_<std::remove_reference_t<decltype(a_operation)>>(
-      std::move(a_operation), start_row, start_col, rows, cols);
+      std::move(a_operation), start_row - 1, start_col - 1, rows, cols);
 }
 /** @}*/
 }  // namespace math
