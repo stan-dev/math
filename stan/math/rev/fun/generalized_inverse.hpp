@@ -27,7 +27,7 @@ namespace math {
  * @note Reverse mode differentiation algorithm reference:
  *
  * <ul><li> Golub, G.H. and Pereyra, V. The Differentiation of Pseudo-Inverses
- * and Nonlinear Least Squares Problems Whose Variables Separate. <i>SIAM
+ * and Nonlinear Least Squainv_G Problems Whose Variables Separate. <i>SIAM
  * Journal on Numerical Analysis</i>, Vol. 10, No. 2 (Apr., 1973), pp.
  * 413-432</li></ul>
  *
@@ -56,34 +56,31 @@ inline auto generalized_inverse(const VarMat& G) {
 
   if (G.rows() < G.cols()) {
     arena_t<VarMat> G_arena(G);
-    auto A_spd = tcrossprod(G_arena.val_op());
-    arena_t<VarMat> inv_G(
-        mdivide_left_spd(A_spd.val_op(), G_arena.val_op()).transpose());
+    arena_t<ret_type> inv_G((G_arena.val_op() * G_arena.val_op().transpose())
+                                .llt()
+                                .solve(G_arena.val_op())
+                                .transpose());
 
-    arena_t<VarMat> res = inv_G;
-
-    auto PG = to_arena(-G_arena.val_op() * inv_G.val_op());
-    PG.diagonal().array() += 1.0;
-
-    auto GP = to_arena(-inv_G.val_op() * G_arena.val_op());
-    GP.diagonal().array() += 1.0;
-
-    reverse_pass_callback([G_arena, res, inv_G, GP, PG]() mutable {
-      G_arena.adj() -= inv_G.val_op().transpose() * res.adj_op()
-                       * inv_G.val_op().transpose();
-      G_arena.adj() += PG.val_op() * res.adj_op().transpose()
-                       * tcrossprod(inv_G.val_op());
+    reverse_pass_callback([G_arena, inv_G]() mutable {
       G_arena.adj()
-          += crossprod(inv_G.val_op()) * res.adj_op().transpose() * GP.val_op();
+          += -(inv_G.val_op().transpose() * inv_G.adj_op()
+               * inv_G.val_op().transpose())
+             + (-G_arena.val_op() * inv_G.val_op()
+                + Eigen::MatrixXd::Identity(G_arena.rows(), inv_G.cols()))
+                   * inv_G.adj_op().transpose() * inv_G.val_op()
+                   * inv_G.val_op().transpose()
+             + inv_G.val_op().transpose() * inv_G.val_op()
+                   * inv_G.adj_op().transpose()
+                   * (-inv_G.val_op() * G_arena.val_op()
+                      + Eigen::MatrixXd::Identity(inv_G.rows(),
+                                                  G_arena.cols()));
     });
     return ret_type(inv_G);
   } else {
     arena_t<VarMat> G_arena(G);
     auto A_spd = crossprod(G_arena.val_op());
-    arena_t<VarMat> inv_G(
-        mdivide_right_spd(G_arena.val_op(), A_spd.val_op()).transpose());
-
-    arena_t<ret_type> res = inv_G;
+    arena_t<ret_type> inv_G(
+        mdivide_right_spd(G_arena.val_op(), A_spd).transpose());
 
     auto PG = to_arena(-G_arena.val_op() * inv_G.val_op());
     PG.diagonal().array() += 1.0;
@@ -91,13 +88,13 @@ inline auto generalized_inverse(const VarMat& G) {
     auto GP = to_arena(-inv_G.val_op() * G_arena.val_op());
     GP.diagonal().array() += 1.0;
 
-    reverse_pass_callback([G_arena, res, inv_G, GP, PG]() mutable {
-      G_arena.adj() -= inv_G.val_op().transpose() * res.adj_op()
+    reverse_pass_callback([G_arena, inv_G, GP, PG]() mutable {
+      G_arena.adj() -= inv_G.val_op().transpose() * inv_G.adj_op()
                        * inv_G.val_op().transpose();
-      G_arena.adj() += PG.val_op() * res.adj_op().transpose()
-                       * tcrossprod(inv_G.val_op());
       G_arena.adj()
-          += crossprod(inv_G.val_op()) * res.adj_op().transpose() * GP.val_op();
+          += PG * inv_G.adj_op().transpose() * tcrossprod(inv_G.val_op());
+      G_arena.adj()
+          += crossprod(inv_G.val_op()) * inv_G.adj_op().transpose() * GP;
     });
     return ret_type(inv_G);
   }
@@ -114,7 +111,7 @@ inline auto generalized_inverse(const VarMat& G) {
  * @note Reverse mode differentiation algorithm reference:
  *
  * <ul><li> Golub, G.H. and Pereyra, V. The Differentiation of Pseudo-Inverses
- * and Nonlinear Least Squares Problems Whose Variables Separate. <i>SIAM
+ * and Nonlinear Least Squainv_G Problems Whose Variables Separate. <i>SIAM
  * Journal on Numerical Analysis</i>, Vol. 10, No. 2 (Apr., 1973), pp.
  * 413-432</li></ul>
  *
@@ -148,21 +145,19 @@ inline auto generalized_inverse(const VarMat& G, const double a) {
     arena_t<VarMat> inv_G(
         mdivide_left_spd(A_spd.val_op(), G_arena.val_op()).transpose());
 
-    arena_t<VarMat> res = inv_G;
-
     auto PG = to_arena(-G_arena.val_op() * inv_G.val_op());
     PG.diagonal().array() += 1.0;
 
     auto GP = to_arena(-inv_G.val_op() * G_arena.val_op());
     GP.diagonal().array() += 1.0;
 
-    reverse_pass_callback([G_arena, res, inv_G, GP, PG]() mutable {
-      G_arena.adj() -= inv_G.val_op().transpose() * res.adj_op()
+    reverse_pass_callback([G_arena, inv_G, GP, PG]() mutable {
+      G_arena.adj() -= inv_G.val_op().transpose() * inv_G.adj_op()
                        * inv_G.val_op().transpose();
-      G_arena.adj() += PG.val_op() * res.adj_op().transpose()
-                       * tcrossprod(inv_G.val_op());
       G_arena.adj()
-          += crossprod(inv_G.val_op()) * res.adj_op().transpose() * GP.val_op();
+          += PG * inv_G.adj_op().transpose() * tcrossprod(inv_G.val_op());
+      G_arena.adj()
+          += crossprod(inv_G.val_op()) * inv_G.adj_op().transpose() * GP;
     });
     return ret_type(inv_G);
   } else {
@@ -172,21 +167,19 @@ inline auto generalized_inverse(const VarMat& G, const double a) {
     arena_t<VarMat> inv_G(
         mdivide_right_spd(G_arena.val_op(), A_spd.val_op()).transpose());
 
-    arena_t<VarMat> res = inv_G;
-
     auto PG = to_arena(-G_arena.val_op() * inv_G.val_op());
     PG.diagonal().array() += 1.0;
 
     auto GP = to_arena(-inv_G.val_op() * G_arena.val_op());
     GP.diagonal().array() += 1.0;
 
-    reverse_pass_callback([G_arena, res, inv_G, GP, PG]() mutable {
-      G_arena.adj() -= inv_G.val_op().transpose() * res.adj_op()
+    reverse_pass_callback([G_arena, inv_G, GP, PG]() mutable {
+      G_arena.adj() -= inv_G.val_op().transpose() * inv_G.adj_op()
                        * inv_G.val_op().transpose();
-      G_arena.adj() += PG.val_op() * res.adj_op().transpose()
+      G_arena.adj() += PG.val_op() * inv_G.adj_op().transpose()
                        * tcrossprod(inv_G.val_op());
-      G_arena.adj()
-          += crossprod(inv_G.val_op()) * res.adj_op().transpose() * GP.val_op();
+      G_arena.adj() += crossprod(inv_G.val_op()) * inv_G.adj_op().transpose()
+                       * GP.val_op();
     });
     return ret_type(inv_G);
   }
