@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
 
-auto asinh_functor = [](const auto& a) { return stan::math::asinh(a).eval(); };
+auto asinh_functor = [](const auto& a) { return stan::math::asinh(a); };
 
 TEST(OpenCLAsinh, prim_rev_values_small) {
   Eigen::VectorXd a(8);

@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
 
-auto tan_functor = [](const auto& a) { return stan::math::tan(a).eval(); };
+auto tan_functor = [](const auto& a) { return stan::math::tan(a); };
 
 TEST(OpenCLTan, prim_rev_values_small) {
   Eigen::VectorXd a(8);

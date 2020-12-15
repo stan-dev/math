@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
 
-auto cosh_functor = [](const auto& a) { return stan::math::cosh(a).eval(); };
+auto cosh_functor = [](const auto& a) { return stan::math::cosh(a); };
 
 TEST(OpenCLCosh, prim_rev_values_small) {
   Eigen::VectorXd a(8);

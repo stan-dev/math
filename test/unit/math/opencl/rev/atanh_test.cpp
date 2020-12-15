@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
 
-auto atanh_functor = [](const auto& a) { return stan::math::atanh(a).eval(); };
+auto atanh_functor = [](const auto& a) { return stan::math::atanh(a); };
 
 TEST(OpenCLAtanh, prim_rev_values_small) {
   Eigen::VectorXd a(8);

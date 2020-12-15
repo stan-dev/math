@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
 
-auto sinh_functor = [](const auto& a) { return stan::math::sinh(a).eval(); };
+auto sinh_functor = [](const auto& a) { return stan::math::sinh(a); };
 
 TEST(OpenCLSinh, prim_rev_values_small) {
   Eigen::VectorXd a(8);

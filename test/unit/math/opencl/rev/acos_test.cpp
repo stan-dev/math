@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
 
-auto acos_functor = [](const auto& a) { return stan::math::acos(a).eval(); };
+auto acos_functor = [](const auto& a) { return stan::math::acos(a); };
 
 TEST(OpenCLAcos, prim_rev_values_small) {
   Eigen::VectorXd a(8);

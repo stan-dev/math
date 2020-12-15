@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
 
-auto acoshh_functor = [](const auto& a) { return stan::math::acosh(a).eval(); };
+auto acoshh_functor = [](const auto& a) { return stan::math::acosh(a); };
 
 TEST(OpenCLacoshh, prim_rev_values_small) {
   Eigen::VectorXd a(8);

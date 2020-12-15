@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
 
-auto cos_functor = [](const auto& a) { return stan::math::cos(a).eval(); };
+auto cos_functor = [](const auto& a) { return stan::math::cos(a); };
 
 TEST(OpenCLCos, prim_rev_values_small) {
   Eigen::VectorXd a(8);
