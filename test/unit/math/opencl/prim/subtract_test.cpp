@@ -5,39 +5,6 @@
 #include <gtest/gtest.h>
 #include <algorithm>
 
-auto subtract_functor
-    = [](const auto& a, const auto& b) { return stan::math::subtract(a, b); };
-
-TEST(OpenCLPrim, subtract_v_small_zero) {
-  stan::math::vector_d d1(3), d2(3);
-  d1 << 1, 2, 3;
-  d2 << 3, 2, 1;
-  stan::math::test::compare_cpu_opencl_prim(subtract_functor, d1, d2);
-
-  stan::math::vector_d d0(0);
-  stan::math::test::compare_cpu_opencl_prim(subtract_functor, d1, d2);
-}
-
-TEST(OpenCLPrim, subtract_rv_small_zero) {
-  stan::math::row_vector_d d1(3), d2(3);
-  d1 << 1, 2, 3;
-  d2 << 3, 2, 1;
-  stan::math::test::compare_cpu_opencl_prim(subtract_functor, d1, d2);
-
-  stan::math::vector_d d0(0);
-  stan::math::test::compare_cpu_opencl_prim(subtract_functor, d1, d2);
-}
-
-TEST(OpenCLPrim, subtract_m_small_zero) {
-  stan::math::matrix_d d1(3, 3), d2(3, 3);
-  d1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
-  d2 << 10, 100, 1000, 0, -10, -12, 2, 4, 8;
-  stan::math::test::compare_cpu_opencl_prim(subtract_functor, d1, d2);
-
-  stan::math::matrix_d d0(0, 0);
-  stan::math::test::compare_cpu_opencl_prim(subtract_functor, d1, d2);
-}
-
 TEST(OpenCLPrim, subtract_exceptions) {
   stan::math::vector_d vd1(2), vd2(3);
   stan::math::matrix_cl<double> vd11(vd1);
