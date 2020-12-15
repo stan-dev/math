@@ -45,7 +45,7 @@ def run_command(command):
     """
     print()
     print(command)
-    p1 = subprocess.Popen(command)
+    p1 = subprocess.Popen(command, shell=True)
     if p1.wait() != 0:
         raise RuntimeError("command failed: " + command)
 
@@ -86,9 +86,11 @@ def plot_results(csv_filename, out_file="", plot_log_y=False):
     from matplotlib import pyplot as plt
     from matplotlib import colors
     csv_file = open(csv_filename)
-    if os.name == "nt":  # google benchmark on win writes some non-csv data at beginning
-        for i in range(8):
-            csv_file.readline()
+    data = csv_file.read()
+    start = data.find("name,iterations")
+    csv_file = open(csv_filename)
+    # google benchmark writes some non-csv data at beginning
+    csv_file.read(start)
     data = pandas.read_csv(csv_file)
 
     signatures = numpy.array([i.split("/")[0] for i in data["name"]])
@@ -135,10 +137,12 @@ def plot_compare(csv_filename, reference_csv_filename, out_file="", plot_log_y=F
     from matplotlib import colors
     csv_file = open(csv_filename)
     reference_csv_file = open(reference_csv_filename)
-    if os.name == "nt":  # google benchmark on win writes some non-csv data at beginning
-        for i in range(8):
-            csv_file.readline()
-            reference_csv_file.readline()
+    data = csv_file.read()
+    start = data.find("name,interations")
+    csv_file = open(csv_filename)
+    # google benchmark writes some non-csv data at beginning
+    csv_file.read(start)
+    reference_csv_file.read(start)
     data = pandas.read_csv(csv_file)
     reference_data = pandas.read_csv(reference_csv_file)
 
