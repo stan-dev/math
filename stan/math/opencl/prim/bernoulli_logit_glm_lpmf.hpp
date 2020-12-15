@@ -2,10 +2,10 @@
 #define STAN_MATH_OPENCL_PRIM_BERNOULLI_LOGIT_GLM_LPMF_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/opencl/rev/size.hpp>
+#include <stan/math/opencl/prim/size.hpp>
 #include <stan/math/opencl/rev/operands_and_partials.hpp>
 #include <stan/math/opencl/copy.hpp>
-#include <stan/math/opencl/multiply.hpp>
+#include <stan/math/opencl/prim/multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
