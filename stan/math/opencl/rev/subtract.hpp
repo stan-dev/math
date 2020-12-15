@@ -38,11 +38,17 @@ inline auto subtract(const T_a& a, const T_b& b) {
   var_value<matrix_cl<double>> res = value_of(a_arena) - value_of(b_arena);
 
   reverse_pass_callback([a_arena, b_arena, res]() mutable {
-    if (!is_constant<T_a>::value) {
+    if (!is_constant<T_a>::value && !is_constant<T_b>::value) {
+      auto& a_adj = forward_as<var_value<matrix_cl<double>>>(a_arena).adj();
+      auto& b_adj = forward_as<var_value<matrix_cl<double>>>(b_arena).adj();
+      results(a_adj, b_adj) = expressions(
+        (a_adj + res.adj()),
+        (b_adj - res.adj())
+      );
+    } else if (!is_constant<T_a>::value) {
       auto& a_adj = forward_as<var_value<matrix_cl<double>>>(a_arena).adj();
       a_adj = a_adj + res.adj();
-    }
-    if (!is_constant<T_b>::value) {
+    } else {
       auto& b_adj = forward_as<var_value<matrix_cl<double>>>(b_arena).adj();
       b_adj = b_adj - res.adj();
     }
