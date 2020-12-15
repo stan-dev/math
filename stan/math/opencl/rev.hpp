@@ -7,6 +7,7 @@
 #include <stan/math/opencl/rev/arena_matrix_cl.hpp>
 #include <stan/math/opencl/rev/arena_type.hpp>
 #include <stan/math/opencl/rev/cholesky_decompose.hpp>
+#include <stan/math/opencl/rev/col.hpp>
 #include <stan/math/opencl/rev/copy.hpp>
 #include <stan/math/opencl/rev/crossprod.hpp>
 #include <stan/math/opencl/rev/diag_matrix.hpp>

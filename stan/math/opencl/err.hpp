@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_OPENCL_ERR_HPP
 #define STAN_MATH_OPENCL_ERR_HPP
 
+#include <stan/math/opencl/err/check_column_index.hpp>
 #include <stan/math/opencl/err/check_diagonal_zeros.hpp>
 #include <stan/math/opencl/err/check_invalid_matrix_view.hpp>
 #include <stan/math/opencl/err/check_mat_size_one.hpp>

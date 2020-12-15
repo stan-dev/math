@@ -21,6 +21,7 @@ namespace math {
 template <typename T_x,
           typename = require_all_kernel_expressions_and_none_scalar_t<T_x>>
 inline auto col(T_x&& x, size_t j) {  // NOLINT
+  check_column_index("col", "j", x, j);
   return block(std::forward<T_x>(x), 0, j - 1, x.rows(), 1);
 }
 }  // namespace math
