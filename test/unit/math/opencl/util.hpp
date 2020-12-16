@@ -148,9 +148,9 @@ void compare_cpu_opencl_prim_rev_impl(const Functor& functor,
                                       const Args&... args) {
   prim_rev_argument_combinations(
       [&functor](const auto& args_for_cpu, const auto& args_for_opencl) {
-        auto res_cpu = functor(std::get<Is>(args_for_cpu)...);
+        auto res_cpu = eval(functor(std::get<Is>(args_for_cpu)...));
         auto res_opencl
-            = functor(opencl_argument(std::get<Is>(args_for_opencl))...);
+            = eval(functor(opencl_argument(std::get<Is>(args_for_opencl))...));
         std::string signature = type_name<decltype(args_for_cpu)>().data();
         expect_eq(res_opencl, res_cpu,
                   ("CPU and OpenCL return values do not match for signature "
@@ -198,9 +198,9 @@ void test_opencl_broadcasting_prim_rev_impl(const Functor& functor,
       [&functor, N = std::max({rows(args)...})](const auto& args_broadcast,
                                                 const auto& args_vector) {
         auto res_scalar
-            = functor(opencl_argument(std::get<Is>(args_broadcast))...);
-        auto res_vec = functor(opencl_argument(
-            to_vector_if<Is == I>(std::get<Is>(args_vector), N))...);
+            = eval(functor(opencl_argument(std::get<Is>(args_broadcast))...));
+        auto res_vec = eval(functor(opencl_argument(
+            to_vector_if<Is == I>(std::get<Is>(args_vector), N))...));
         std::string signature = type_name<decltype(args_broadcast)>().data();
         expect_eq(res_vec, res_scalar,
                   ("return values of broadcast and vector arguments do not "
