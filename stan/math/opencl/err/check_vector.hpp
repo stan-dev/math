@@ -23,9 +23,10 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if x is not a row or column
  *   vector.
  */
-template <typename T>
+template <typename T_x,
+          typename = require_nonscalar_prim_or_rev_kernel_expression_t<T_x>>
 inline void check_vector(const char* function, const char* name,
-                         const matrix_cl<T>& x) {
+                         const T_x& x) {
   if (x.rows() == 1) {
     return;
   }
@@ -38,7 +39,7 @@ inline void check_vector(const char* function, const char* name,
       << " columns but it should be a vector so it should "
       << "either have 1 row or 1 column";
   std::string msg_str(msg.str());
-  invalid_argument(function, name, typename scalar_type<T>::type(), "(",
+  invalid_argument(function, name, typename scalar_type<T_x>::type(), "(",
                    msg_str.c_str());
 }
 

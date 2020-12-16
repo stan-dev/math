@@ -125,6 +125,7 @@
 #include <stan/math/opencl/prim/gamma_lpdf.hpp>
 #include <stan/math/opencl/prim/gp_exp_quad_cov.hpp>
 #include <stan/math/opencl/prim/gumbel_lpdf.hpp>
+#include <stan/math/opencl/prim/head.hpp>
 #include <stan/math/opencl/prim/inv.hpp>
 #include <stan/math/opencl/prim/inv_chi_square_lpdf.hpp>
 #include <stan/math/opencl/prim/inv_cloglog.hpp>
@@ -160,6 +161,7 @@
 #include <stan/math/opencl/prim/student_t_lpdf.hpp>
 #include <stan/math/opencl/prim/skew_normal_lpdf.hpp>
 #include <stan/math/opencl/prim/sum.hpp>
+#include <stan/math/opencl/prim/tail.hpp>
 #include <stan/math/opencl/prim/tcrossprod.hpp>
 #include <stan/math/opencl/prim/uniform_lpdf.hpp>
 #include <stan/math/opencl/prim/weibull_lpdf.hpp>
