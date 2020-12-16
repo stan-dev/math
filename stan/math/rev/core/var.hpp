@@ -1030,7 +1030,8 @@ using var = var_value<double>;
  */
 template <typename T>
 struct scalar_type<T, std::enable_if_t<is_var<T>::value>> {
-  using type = math::var_value<scalar_type_t<typename std::decay_t<T>::value_type>>;
+  using type
+      = math::var_value<scalar_type_t<typename std::decay_t<T>::value_type>>;
 };
 
 }  // namespace stan
