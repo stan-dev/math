@@ -242,6 +242,30 @@ void test_opencl_broadcasting_prim_rev_impl(const Functor& functor,
  * in CPU memory (no vars, no arguments on the OpenCL device).
  */
 template <typename Functor, typename... Args>
+void compare_cpu_opencl_prim(const Functor& functor, const Args&... args) {
+  auto res_cpu = functor(args...);
+  auto res_opencl = from_matrix_cl(functor(internal::opencl_argument(args)...));
+  stan::test::expect_near_rel("CPU and OpenCL return values do not match!",
+                              res_cpu, res_opencl);
+}
+
+/**
+ * Tests that given functor calculates same values and adjoints when given
+ * arguments on CPU and OpenCL device.
+ *
+ * The functor must accept all possible combinations of converted `args`.
+ * All std/row/col vectors and matrices are converted to `matrix_cl`. `double`
+ * scalars can be converted to `var`s or left as `double`s. When converting
+ * scalars to `double` in containers, `var_value<matrix_cl<double>>` is used
+ * instead.
+ *
+ * @tparam Functor type of the functor
+ * @tparam Args types of the arguments
+ * @param fucntor functor to test
+ * @param args arguments to test the functor with. These should be just values
+ * in CPU memory (no vars, no arguments on the OpenCL device).
+ */
+template <typename Functor, typename... Args>
 void compare_cpu_opencl_prim_rev(const Functor& functor, const Args&... args) {
   internal::compare_cpu_opencl_prim_rev_impl(
       functor, std::make_index_sequence<sizeof...(args)>{}, args...);
