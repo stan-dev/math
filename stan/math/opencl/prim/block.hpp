@@ -12,7 +12,7 @@ namespace math {
  * Return a nrows x ncols submatrix starting at (i-1, j-1).
  *
  * @tparam T type of elements in the matrix
- * @param m Matrix.
+ * @param x Matrix.
  * @param i Starting row.
  * @param j Starting column.
  * @param nrows Number of rows in block.
