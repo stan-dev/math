@@ -87,7 +87,7 @@ class eigen_results_ {
    */
   template <bool Linear, typename... T_expressions,
             std::enable_if_t<Linear>* = nullptr>
-  void assign(const eigen_expressions_<T_expressions...>& expressions) {
+  inline void assign(const eigen_expressions_<T_expressions...>& expressions) {
     for (size_t i = 0; i < std::get<0>(expressions.exprs_).size(); i++) {
       index_apply<sizeof...(T_results)>([&](auto... Is) {
         static_cast<void>(std::initializer_list<int>{
@@ -105,7 +105,7 @@ class eigen_results_ {
    */
   template <bool Linear, typename... T_expressions,
             std::enable_if_t<!Linear>* = nullptr>
-  void assign(const eigen_expressions_<T_expressions...>& expressions) {
+  inline void assign(const eigen_expressions_<T_expressions...>& expressions) {
     constexpr bool is_first_row_major
         = Eigen::internal::evaluator<std::decay_t<
               std::tuple_element_t<0, std::tuple<T_expressions...>>>>::Flags
@@ -133,6 +133,35 @@ class eigen_results_ {
     }
   }
 
+  /**
+   * Selects and calls appropriate `assign`.
+   * @tparam T_expressions types of expressions
+   * @param expressions expressions
+   */
+  template <typename... T_expressions,
+            std::enable_if_t<sizeof...(T_results)
+                             == sizeof...(T_expressions)>* = nullptr>
+  void assign_select(const eigen_expressions_<T_expressions...>& expressions) {
+    constexpr bool all_linear = std::min(
+        {static_cast<bool>(
+             Eigen::internal::evaluator<std::decay_t<T_expressions>>::Flags
+             & Eigen::LinearAccessBit)...,
+         static_cast<bool>(
+             Eigen::internal::evaluator<std::decay_t<T_results>>::Flags
+             & Eigen::LinearAccessBit)...});
+    constexpr int N_row_major = internal::static_sum(
+        static_cast<bool>(
+            Eigen::internal::evaluator<std::decay_t<T_expressions>>::Flags
+            & Eigen::RowMajorBit)...,
+        static_cast<bool>(
+            Eigen::internal::evaluator<std::decay_t<T_results>>::Flags
+            & Eigen::RowMajorBit)...);
+    constexpr int N_col_major
+        = sizeof...(T_results) + sizeof...(T_expressions) - N_row_major;
+
+    assign<all_linear && (N_col_major == 0 || N_row_major == 0)>(expressions);
+  }
+
  public:
   /**
    * Constructor.
@@ -151,23 +180,6 @@ class eigen_results_ {
             std::enable_if_t<sizeof...(T_results)
                              == sizeof...(T_expressions)>* = nullptr>
   void operator=(const eigen_expressions_<T_expressions...>& expressions) {
-    constexpr bool all_linear = std::min(
-        {static_cast<bool>(
-             Eigen::internal::evaluator<std::decay_t<T_expressions>>::Flags
-             & Eigen::LinearAccessBit)...,
-         static_cast<bool>(
-             Eigen::internal::evaluator<std::decay_t<T_results>>::Flags
-             & Eigen::LinearAccessBit)...});
-    constexpr int N_row_major = internal::static_sum(
-        static_cast<bool>(
-            Eigen::internal::evaluator<std::decay_t<T_expressions>>::Flags
-            & Eigen::RowMajorBit)...,
-        static_cast<bool>(
-            Eigen::internal::evaluator<std::decay_t<T_results>>::Flags
-            & Eigen::RowMajorBit)...);
-    constexpr int N_col_major
-        = sizeof...(T_results) + sizeof...(T_expressions) - N_row_major;
-
     index_apply<sizeof...(T_results)>([&](auto... Is) {
       static_cast<void>(std::initializer_list<int>{
           (Eigen::internal::resize_if_allowed(
@@ -177,7 +189,22 @@ class eigen_results_ {
            0)...});
     });
 
-    assign<all_linear && (N_col_major == 0 || N_row_major == 0)>(expressions);
+    assign_select(expressions);
+  }
+
+  /**
+   * Add \c eigen_results_ to \c expressions_cl in place.
+   * @tparam T_expressions types of expressions
+   * @param expressions expressions
+   */
+  template <typename... T_expressions,
+            std::enable_if_t<sizeof...(T_results)
+                             == sizeof...(T_expressions)>* = nullptr>
+  void operator+=(const eigen_expressions_<T_expressions...>& expressions) {
+    index_apply<sizeof...(T_results)>([&](auto... Is) {
+      assign_select(eigen_expressions(
+          (std::get<Is>(results_) + std::get<Is>(expressions.exprs_))...));
+    });
   }
 };
 

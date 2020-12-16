@@ -194,3 +194,22 @@ TEST(MathFunctions, multi_expression_many_expressions2) {
   EXPECT_MATRIX_EQ(f, f_res);
   EXPECT_MATRIX_EQ(g, g_res);
 }
+
+TEST(MathFunctions, multi_expression_compound_addition_assignment) {
+  Eigen::MatrixXd a(2, 3);
+  a << 1, 2, 3, 4, 5, 6;
+  Eigen::MatrixXd b(2, 3);
+  b << 1, 2, 3, 5, 6, 2;
+  Eigen::MatrixXd c(2, 3);
+  a << 1, 2, -3, 4, -5, 6;
+  Eigen::MatrixXd d(2, 3);
+  b << 1, -2, 3, -5, 6, -2;
+  Eigen::MatrixXd c_res = c;
+  Eigen::MatrixXd d_res = d;
+  stan::math::eigen_results(c, d) += stan::math::eigen_expressions(a * 2, b + a);
+
+  c_res += a * 2;
+  d_res += b + a;
+  EXPECT_MATRIX_EQ(c, c_res);
+  EXPECT_MATRIX_EQ(d, d_res);
+}
