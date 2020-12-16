@@ -152,7 +152,8 @@ TEST(KernelGenerator, two_blocks_of_same_expression) {
   matrix_cl<double> m_cl(m);
 
   auto tmp = m_cl + 1;
-  auto tmp2 = block_zero_based(tmp, 0, 0, 2, 2) + block_zero_based(tmp, 0, 1, 2, 2);
+  auto tmp2
+      = block_zero_based(tmp, 0, 0, 2, 2) + block_zero_based(tmp, 0, 1, 2, 2);
 
   matrix_cl<double> res_cl = tmp2;
 

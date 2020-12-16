@@ -283,16 +283,18 @@ class block_
 };
 
 /**
- * Block of a kernel generator expression. This version of zero-based in contrast
- * to the 1-based block(), which is exposed to the Stan language.
+ * Block of a kernel generator expression. This version of zero-based in
+ * contrast to the 1-based block(), which is exposed to the Stan language.
  *
  * Block operation modifies how its argument is indexed. If a matrix is both an
- * argument and result of such an operation (such as in <code> block_zero_based(a, row1,
- * col1, rows, cols) = block_zero_based(a, row2, col2, rows, cols);
+ * argument and result of such an operation (such as in <code>
+ * block_zero_based(a, row1, col1, rows, cols) = block_zero_based(a, row2, col2,
+ * rows, cols);
  * </code>), the result can be wrong due to aliasing. In such case the
- * expression should be evaluating in a temporary by doing <code> block_zero_based(a, row1,
- * col1, rows, cols) = block_zero_based(a, row2, col2, rows, cols).eval();</code>. This is
- * not necessary if the blocks do not overlap or if they are the same block.
+ * expression should be evaluating in a temporary by doing <code>
+ * block_zero_based(a, row1, col1, rows, cols) = block_zero_based(a, row2, col2,
+ * rows, cols).eval();</code>. This is not necessary if the blocks do not
+ * overlap or if they are the same block.
  * @tparam T type of argument
  * @param a input argument
  * @param start_row first row of block
@@ -303,7 +305,8 @@ class block_
  */
 template <typename T,
           typename = require_all_kernel_expressions_and_none_scalar_t<T>>
-inline auto block_zero_based(T&& a, int start_row, int start_col, int rows, int cols) {
+inline auto block_zero_based(T&& a, int start_row, int start_col, int rows,
+                             int cols) {
   auto&& a_operation = as_operation_cl(std::forward<T>(a)).deep_copy();
   return block_<std::remove_reference_t<decltype(a_operation)>>(
       std::move(a_operation), start_row, start_col, rows, cols);

@@ -21,7 +21,9 @@ namespace math {
  * @param i row index to check
  * @throw <code>std::out_of_range</code> if the index is out of range.
  */
-template <typename T, typename = require_any_t<is_eigen_vector<T>, is_prim_or_rev_kernel_expression<T>>>
+template <typename T,
+          typename = require_any_t<is_eigen_vector<T>,
+                                   is_prim_or_rev_kernel_expression<T>>>
 inline void check_vector_index(const char* function, const char* name,
                                const T& y, size_t i) {
   if (i >= stan::error_index::value

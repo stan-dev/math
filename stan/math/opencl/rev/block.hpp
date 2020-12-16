@@ -9,7 +9,6 @@
 namespace stan {
 namespace math {
 
-
 /**
  * Return a nrows x ncols submatrix starting at (i-1, j-1).
  *
@@ -21,14 +20,14 @@ namespace math {
  * @param ncols Number of columns in block.
  * @throw std::out_of_range if either index is out of range.
  */
-template <
-    typename T,
-    require_all_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
-    require_any_var_t<T>* = nullptr>
+template <typename T,
+          require_all_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
+          require_any_var_t<T>* = nullptr>
 inline auto block(const T& m, size_t i, size_t j, size_t nrows, size_t ncols) {
   var_value<matrix_cl<double>> res = block(m.val(), i, j, nrows, ncols);
   reverse_pass_callback([m, res, i, j, nrows, ncols]() mutable {
-    block(m.adj(),i, j, nrows, ncols) = block(m.adj(), i, j, nrows, ncols) + res.adj();
+    block(m.adj(), i, j, nrows, ncols)
+        = block(m.adj(), i, j, nrows, ncols) + res.adj();
   });
 
   return res;

@@ -5,8 +5,8 @@
 #include <vector>
 
 TEST(MathMatrixTailCL, tail_size) {
-  using stan::math::tail;
   using stan::math::matrix_cl;
+  using stan::math::tail;
   using stan::math::var_value;
   matrix_cl<double> v(3, 1);
   EXPECT_EQ(0, tail(v, 0).eval().size());
@@ -29,8 +29,7 @@ TEST(MathMatrixTailCL, tail_size) {
   EXPECT_THROW(tail(rv_var, 4), std::out_of_range);
 }
 
-auto tail_functor
-    = [](const auto& a) { return stan::math::tail(a, 5); };
+auto tail_functor = [](const auto& a) { return stan::math::tail(a, 5); };
 
 TEST(MathMatrixTailCL, tail_value_check_vector) {
   stan::math::vector_d m1(9);
@@ -40,13 +39,16 @@ TEST(MathMatrixTailCL, tail_value_check_vector) {
 
   stan::math::vector_v m2 = m1;
   stan::math::vector_v m3 = m1;
-  stan::math::var_value<stan::math::matrix_cl<double>> m3_cl = stan::math::to_matrix_cl(m3);
+  stan::math::var_value<stan::math::matrix_cl<double>> m3_cl
+      = stan::math::to_matrix_cl(m3);
   stan::math::matrix_v m2_res = stan::math::tail(m2, 5);
-  stan::math::var_value<stan::math::matrix_cl<double>> m3_res_cl = stan::math::tail(m3_cl, 5);
+  stan::math::var_value<stan::math::matrix_cl<double>> m3_res_cl
+      = stan::math::tail(m3_cl, 5);
   stan::math::var s = sum(m2_res) + sum(m3_res_cl);
   s.grad();
 
-  EXPECT_MATRIX_NEAR(m2_res.val(), stan::math::from_matrix_cl(m3_res_cl.val()), 1E-8);
+  EXPECT_MATRIX_NEAR(m2_res.val(), stan::math::from_matrix_cl(m3_res_cl.val()),
+                     1E-8);
   EXPECT_MATRIX_NEAR(m2.adj(), m3.adj(), 1E-8);
 }
 
@@ -58,12 +60,15 @@ TEST(MathMatrixTailCL, tail_value_check_row_vector) {
 
   stan::math::row_vector_v m2 = m1;
   stan::math::row_vector_v m3 = m1;
-  stan::math::var_value<stan::math::matrix_cl<double>> m3_cl = stan::math::to_matrix_cl(m3);
+  stan::math::var_value<stan::math::matrix_cl<double>> m3_cl
+      = stan::math::to_matrix_cl(m3);
   stan::math::matrix_v m2_res = stan::math::tail(m2, 5);
-  stan::math::var_value<stan::math::matrix_cl<double>> m3_res_cl = stan::math::tail(m3_cl, 5);
+  stan::math::var_value<stan::math::matrix_cl<double>> m3_res_cl
+      = stan::math::tail(m3_cl, 5);
   stan::math::var s = sum(m2_res) + sum(m3_res_cl);
   s.grad();
 
-  EXPECT_MATRIX_NEAR(m2_res.val(), stan::math::from_matrix_cl(m3_res_cl.val()), 1E-8);
+  EXPECT_MATRIX_NEAR(m2_res.val(), stan::math::from_matrix_cl(m3_res_cl.val()),
+                     1E-8);
   EXPECT_MATRIX_NEAR(m2.adj(), m3.adj(), 1E-8);
 }

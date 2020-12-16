@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 
 /**
- * Returns the size (number of the elements) of a `matrix_cl` or 
+ * Returns the size (number of the elements) of a `matrix_cl` or
  * `var_value<matrix_cl<T>>`.
  * @param m input to determine size of
  * @return number of elements in m

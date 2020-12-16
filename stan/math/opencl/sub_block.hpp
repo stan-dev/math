@@ -31,7 +31,8 @@ template <typename T>
 inline void matrix_cl<T, require_arithmetic_t<T>>::sub_block(
     const matrix_cl<T, require_arithmetic_t<T>>& A, size_t A_i, size_t A_j,
     size_t this_i, size_t this_j, size_t nrows, size_t ncols) {
-  block_zero_based(*this, this_i, this_j, nrows, ncols) = block_zero_based(A, A_i, A_j, nrows, ncols);
+  block_zero_based(*this, this_i, this_j, nrows, ncols)
+      = block_zero_based(A, A_i, A_j, nrows, ncols);
 }
 
 }  // namespace math

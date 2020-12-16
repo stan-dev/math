@@ -42,7 +42,8 @@ inline var_value<matrix_cl<double>> cholesky_decompose(
 
       auto&& R_val = block_zero_based(L_A.val(), j, 0, k_j_ind, j);
       auto&& R_adj = block_zero_based(A_adj, j, 0, k_j_ind, j);
-      matrix_cl<double> D_val = block_zero_based(L_A.val(), j, j, k_j_ind, k_j_ind);
+      matrix_cl<double> D_val
+          = block_zero_based(L_A.val(), j, j, k_j_ind, k_j_ind);
       matrix_cl<double> D_adj = block_zero_based(A_adj, j, j, k_j_ind, k_j_ind);
       auto&& B_val = block_zero_based(L_A.val(), k, 0, m_k_ind, j);
       auto&& B_adj = block_zero_based(A_adj, k, 0, m_k_ind, j);

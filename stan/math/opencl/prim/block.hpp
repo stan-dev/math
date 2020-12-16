@@ -21,7 +21,8 @@ namespace math {
  */
 template <typename T_x,
           typename = require_all_kernel_expressions_and_none_scalar_t<T_x>>
-inline auto block(T_x&& x, size_t i, size_t j, size_t nrows, size_t ncols) {  // NOLINT
+inline auto block(T_x&& x, size_t i, size_t j, size_t nrows,
+                  size_t ncols) {  // NOLINT
   return block_zero_based(std::forward<T_x>(x), i - 1, j - 1, nrows, ncols);
 }
 }  // namespace math
