@@ -206,7 +206,8 @@ TEST(MathFunctions, multi_expression_compound_addition_assignment) {
   b << 1, -2, 3, -5, 6, -2;
   Eigen::MatrixXd c_res = c;
   Eigen::MatrixXd d_res = d;
-  stan::math::eigen_results(c, d) += stan::math::eigen_expressions(a * 2, b + a);
+  stan::math::eigen_results(c, d)
+      += stan::math::eigen_expressions(a * 2, b + a);
 
   c_res += a * 2;
   d_res += b + a;
