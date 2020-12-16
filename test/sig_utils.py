@@ -250,8 +250,9 @@ def handle_function_list(functions_input):
     function_names = []
     function_signatures = []
     for f in functions_input:
-        if "." in f or "/" in f or "\\" in f:
-            functions_input.extend(parse_signature_file(open(f)))
+        if ("." in f) or ("/" in f) or ("\\" in f):
+            with open(f) as fh:
+                functions_input.extend(parse_signature_file(fh))
         elif " " in f:
             function_signatures.append(f)
         else:

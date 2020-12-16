@@ -9,10 +9,10 @@ sys.path.append("test")
 from sig_utils import *
 import itertools
 
-working_folder = "./benchmarks/"
+WORKING_FOLDER = "./benchmarks/"
 
-benchmark_template = """
-void {benchmark_name}(benchmark::State& state) {{
+BENCHMARK_TEMPLATE = """
+static void {benchmark_name}(benchmark::State& state) {{
 {setup}
   for (auto _ : state) {{
 {var_conversions}
@@ -24,10 +24,22 @@ void {benchmark_name}(benchmark::State& state) {{
       std::chrono::duration_cast<std::chrono::duration<double>>(end - start);
     state.SetIterationTime(elapsed_seconds.count());
     stan::math::recover_memory();
+    benchmark::ClobberMemory();
   }}
 }}
 BENCHMARK({benchmark_name})->RangeMultiplier({multi})->Range(1, {max_size})->UseManualTime();
 
+"""
+
+CUSTOM_MAIN = """
+int main(int argc, char** argv)
+{{
+  stan::math::ChainableStack::instance_->memalloc_.alloc({});
+  stan::math::recover_memory();
+  
+  ::benchmark::Initialize(&argc, argv);
+  ::benchmark::RunSpecifiedBenchmarks();
+}}
 """
 
 overload_scalar = {
@@ -78,20 +90,22 @@ def plot_results(csv_filename, out_file="", plot_log_y=False):
     """
     Plots benchmark results.
     :param csv_filename: path to csv file containing results to plot
-    :param out_file: path to image file to store figure into. If it equals to "window"opens it in an interactive window.
+    :param out_file: path to image file to store figure into. If it equals to "window" opens it in an interactive window.
     """
-    import pandas, numpy, matplotlib
+    import pandas
+    import numpy
+    import matplotlib
     if out_file != "window":
         matplotlib.use('Agg')
-    from matplotlib import pyplot as plt
+    import matplotlib.pyplot as plt
     from matplotlib import colors
-    csv_file = open(csv_filename)
-    data = csv_file.read()
-    start = data.find("name,iterations")
-    csv_file = open(csv_filename)
-    # google benchmark writes some non-csv data at beginning
-    csv_file.read(start)
-    data = pandas.read_csv(csv_file)
+    with open(csv_filename) as f:
+        # google benchmark writes some non-csv data at beginning
+        for line in iter(f.readline, ''):
+            if line.startswith("name,iterations"):
+                f.seek(f.tell() - len(line) - 1, os.SEEK_SET)
+                break
+        data = pandas.read_csv(f)
 
     signatures = numpy.array([i.split("/")[0] for i in data["name"]])
     sizes = numpy.array([int(i.split("/")[1]) for i in data["name"]])
@@ -135,16 +149,21 @@ def plot_compare(csv_filename, reference_csv_filename, out_file="", plot_log_y=F
         matplotlib.use('Agg')
     from matplotlib import pyplot as plt
     from matplotlib import colors
-    csv_file = open(csv_filename)
-    reference_csv_file = open(reference_csv_filename)
-    data = csv_file.read()
-    start = data.find("name,interations")
-    csv_file = open(csv_filename)
-    # google benchmark writes some non-csv data at beginning
-    csv_file.read(start)
-    reference_csv_file.read(start)
-    data = pandas.read_csv(csv_file)
-    reference_data = pandas.read_csv(reference_csv_file)
+
+    with open(csv_filename) as f:
+        # google benchmark writes some non-csv data at beginning
+        for line in iter(f.readline, ''):
+            if line.startswith("name,iterations"):
+                f.seek(f.tell() - len(line) - 1, os.SEEK_SET)
+                break
+        data = pandas.read_csv(f)
+    with open(reference_csv_filename) as f:
+        # google benchmark writes some non-csv data at beginning
+        for line in iter(f.readline, ''):
+            if line.startswith("name,iterations"):
+                f.seek(f.tell() - len(line) - 1, os.SEEK_SET)
+                break
+        reference_data = pandas.read_csv(f)
 
     signatures = numpy.array([i.split("/")[0] for i in data["name"]])
     sizes = numpy.array([int(i.split("/")[1]) for i in data["name"]])
@@ -152,6 +171,11 @@ def plot_compare(csv_filename, reference_csv_filename, out_file="", plot_log_y=F
     reference_signatures = numpy.array([i.split("/")[0] for i in reference_data["name"]])
     reference_sizes = numpy.array([int(i.split("/")[1]) for i in reference_data["name"]])
     reference_times = numpy.array(reference_data["real_time"])
+
+    same_in_last_selector = [i in signatures for i in reference_signatures]
+    reference_signatures = reference_signatures[same_in_last_selector]
+    reference_sizes = reference_sizes[same_in_last_selector]
+    reference_times = reference_times[same_in_last_selector]
 
     assert numpy.all(reference_signatures == signatures)
     assert numpy.all(reference_sizes == sizes)
@@ -215,7 +239,7 @@ def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim"
         reference_args = tuple(reference_vector_argument(i) for i in stan_args)
         if (function_name, reference_args) in ref_signatures:
             continue
-        if signature in signatures or function_name in functions:
+        if (signature in signatures) or (function_name in functions):
             parsed_signatures.append([return_type, function_name, stan_args])
             remaining_functions.discard(function_name)
             ref_signatures.add((function_name, reference_args))
@@ -228,10 +252,14 @@ def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim"
         parsed_signatures.append([return_type, function_name, stan_args])
         remaining_functions.discard(function_name)
     if remaining_functions:
-        raise NameError("Functions not found: " + ", ".join(remaining_functions))
+        raise NameError("Functions not found: " + ", ".join(sorted(remaining_functions)))
     result = ""
+    max_args_with_max_dimm = 0
+    default_max_size = 1024 * 1024 * 16
+
     for return_type, function_name, stan_args in parsed_signatures:
         dimm = 0
+        args_with_max_dimm = 0
         for arg in stan_args:
             arg_dimm = 0
             if "vector" in arg:
@@ -240,14 +268,19 @@ def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim"
                 arg_dimm = 2
             if "[" in arg:
                 arg_dimm += len(arg.split("[")[1])
-            dimm = max(dimm, arg_dimm)
+            if arg_dimm == dimm:
+                args_with_max_dimm += 1
+            elif arg_dimm > dimm:
+                dimm = arg_dimm
+                args_with_max_dimm = 1
         if dimm > max_dim:
             continue
+        max_args_with_max_dimm = max(max_args_with_max_dimm, args_with_max_dimm)
         if max_size_param is None:
             if dimm == 0:  # signature with only scalar arguments
                 max_size = 1
             else:
-                max_size = 1024 * 1024 * 16
+                max_size = default_max_size
                 max_size = int(max_size ** (1. / dimm))
         else:
             max_size = max_size_param
@@ -277,7 +310,7 @@ def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim"
                     zip(arg_overloads, cpp_arg_templates, stan_args)):
                 if stan_arg.endswith("]"):
                     stan_arg2, vec = stan_arg.split("[")
-                    benchmark_name += "_" + arg_overload + stan_arg2 + str(len(vec))
+                    benchmark_name += "_" + arg_overload + "_" + stan_arg2 + str(len(vec))
                 else:
                     benchmark_name += "_" + arg_overload + stan_arg
                 scalar = overload_scalar[arg_overload]
@@ -317,15 +350,23 @@ def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim"
             code = code[:-2] + ");\n"
             if "Rev" in arg_overloads:
                 code += "    stan::test::recursive_sum(res).grad();\n"
-            result += benchmark_template.format(benchmark_name=benchmark_name, setup=setup,
+            result += BENCHMARK_TEMPLATE.format(benchmark_name=benchmark_name, setup=setup,
                                                 var_conversions=var_conversions, code=code, multi=multiplier,
                                                 max_size=max_size)
-    cpp_filepath = working_folder + cpp_filename
-    with open(cpp_filepath, "w") as o:
-        o.write("#include <benchmark/benchmark.h>\n")
-        o.write("#include <test/expressions/expression_test_helpers.hpp>\n\n")
-        o.write(result)
-        o.write("BENCHMARK_MAIN();")
+    cpp_filepath = WORKING_FOLDER + cpp_filename
+    with open(cpp_filepath, "w") as f:
+        f.write("#include <benchmark/benchmark.h>\n")
+        f.write("#include <test/expressions/expression_test_helpers.hpp>\n\n")
+        f.write(result)
+        if "Rev" in overloads:
+            # estimate the amount of arena memory the benchmarks will need
+            DOUBLE_SIZE = 8
+            N_ARRAYS = 4  # vals, adjoints, pointers + 1 for anything else
+            f.write(CUSTOM_MAIN.format(5))
+                #(max_size_param or default_max_size) * DOUBLE_SIZE * N_ARRAYS * (max_args_with_max_dimm + 1)))
+        else:
+            f.write("BENCHMARK_MAIN();")
+
     exe_filepath = cpp_filepath.replace(".cpp", exe_extension)
     build(exe_filepath)
     run_benchmark(exe_filepath, n_repeats, csv_out_file)
@@ -373,11 +414,21 @@ def main(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim", "Re
             plot_results(csv_out_file, plot, plot_log_y)
 
 
+class FullErrorMsgParser(ArgumentParser):
+    """
+    Modified ArgumentParser that prints full error message on any error.
+    """
+    def error(self, message):
+        sys.stderr.write('error: %s\n' % message)
+        self.print_help()
+        sys.exit(2)
+
+
 def processCLIArgs():
     """
     Define and process the command line interface to the benchmark.py script.
     """
-    parser = ArgumentParser(
+    parser = FullErrorMsgParser(
         description="Generate and run_command benchmarks.",
         formatter_class=RawTextHelpFormatter,
     )
