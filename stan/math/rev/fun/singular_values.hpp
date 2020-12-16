@@ -1,17 +1,13 @@
-#ifndef MATH_SINGULAR_VALUES_H
-#define MATH_SINGULAR_VALUES_H
+#ifndef STAN_MATH_REV_FUN_SINGULAR_VALUES_HPP
+#define STAN_MATH_REV_FUN_SINGULAR_VALUES_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/functor/reverse_pass_callback.hpp>
-#include <stan/math/rev/core/arena_matrix.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/fun/typedefs.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/err/check_symmetric.hpp>
 #include <stan/math/prim/err/check_nonzero_size.hpp>
-#include <stan/math/prim/fun/typedefs.hpp>
-#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <Eigen/SVD>
 
 namespace stan {
@@ -28,7 +24,7 @@ namespace math {
  * @return Singular values of matrix
  */
 template <typename EigMat,
-    require_eigen_matrix_dynamic_t<EigMat>* = nullptr,
+	  require_eigen_matrix_dynamic_t<EigMat>* = nullptr,
 	  require_vt_var<EigMat>* = nullptr>
 inline auto singular_values(const EigMat& m) {
   using ret_type = promote_scalar_t<var, Eigen::VectorXd>;
@@ -37,8 +33,8 @@ inline auto singular_values(const EigMat& m) {
   const int M = to_arena(m.rows());
   auto arena_m = to_arena(m);
   
-  Eigen::MatrixXd m_val = value_of(arena_m);
-  Eigen::JacobiSVD<Eigen::MatrixXd> svd(m_val, Eigen::ComputeFullU | Eigen::ComputeFullV);
+  Eigen::JacobiSVD<Eigen::MatrixXd> svd(arena_m.val(),
+					Eigen::ComputeFullU | Eigen::ComputeFullV);
 
   arena_t<ret_type> singular_values = svd.singularValues();
 
@@ -47,10 +43,14 @@ inline auto singular_values(const EigMat& m) {
 
   reverse_pass_callback(
       [arena_m, U, singular_values, V]() mutable {
-          arena_m.adj() += U * singular_values.adj().asDiagonal() * V.transpose();
+	arena_m.adj() += U.block(0, 0, U.rows(), singular_values.size()) *
+	  singular_values.adj().asDiagonal() *
+	  V.block(0, 0, V.rows(), singular_values.size()).transpose();
       });
+
   return ret_type(singular_values);
 }
+
 }  // namespace math
 }  // namespace stan
 
