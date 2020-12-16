@@ -21,7 +21,7 @@ namespace math {
 template <typename T_x,
           typename = require_nonscalar_prim_or_rev_kernel_expression_t<T_x>>
 inline auto col(T_x&& x, size_t j) {  // NOLINT
-  return block(std::forward<T_x>(x), 0, j - 1, x.rows(), 1);
+  return block(std::forward<T_x>(x), 1, j, x.rows(), 1);
 }
 }  // namespace math
 }  // namespace stan

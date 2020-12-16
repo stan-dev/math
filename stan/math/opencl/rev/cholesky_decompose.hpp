@@ -40,14 +40,14 @@ inline var_value<matrix_cl<double>> cholesky_decompose(
       const int k_j_ind = k - j;
       const int m_k_ind = M_ - k;
 
-      auto&& R_val = block(L_A.val(), j, 0, k_j_ind, j);
-      auto&& R_adj = block(A_adj, j, 0, k_j_ind, j);
-      matrix_cl<double> D_val = block(L_A.val(), j, j, k_j_ind, k_j_ind);
-      matrix_cl<double> D_adj = block(A_adj, j, j, k_j_ind, k_j_ind);
-      auto&& B_val = block(L_A.val(), k, 0, m_k_ind, j);
-      auto&& B_adj = block(A_adj, k, 0, m_k_ind, j);
-      auto&& C_val = block(L_A.val(), k, j, m_k_ind, k_j_ind);
-      auto&& C_adj = block(A_adj, k, j, m_k_ind, k_j_ind);
+      auto&& R_val = block_zero_based(L_A.val(), j, 0, k_j_ind, j);
+      auto&& R_adj = block_zero_based(A_adj, j, 0, k_j_ind, j);
+      matrix_cl<double> D_val = block_zero_based(L_A.val(), j, j, k_j_ind, k_j_ind);
+      matrix_cl<double> D_adj = block_zero_based(A_adj, j, j, k_j_ind, k_j_ind);
+      auto&& B_val = block_zero_based(L_A.val(), k, 0, m_k_ind, j);
+      auto&& B_adj = block_zero_based(A_adj, k, 0, m_k_ind, j);
+      auto&& C_val = block_zero_based(L_A.val(), k, j, m_k_ind, k_j_ind);
+      auto&& C_adj = block_zero_based(A_adj, k, j, m_k_ind, k_j_ind);
 
       C_adj = C_adj * tri_inverse(D_val);
       B_adj = B_adj - C_adj * R_val;
@@ -62,7 +62,7 @@ inline var_value<matrix_cl<double>> cholesky_decompose(
       R_adj = R_adj - transpose(C_adj) * B_val - D_adj * R_val;
       D_adj = diagonal_multiply(D_adj, 0.5);
 
-      block(A_adj, j, j, k_j_ind, k_j_ind) = D_adj;
+      block_zero_based(A_adj, j, j, k_j_ind, k_j_ind) = D_adj;
     }
     A_adj.view(matrix_cl_view::Lower);
     A.adj() = A.adj() + A_adj;
