@@ -213,7 +213,7 @@ def plot_compare(csv_filename, reference_csv_filename, out_file="", plot_log_y=F
 
 def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim", "Rev"), multiplier_param=None,
               max_size_param=None, max_dim=3, n_repeats=1, skip_similar_signatures=False, csv_out_file=None,
-              opencl=False):
+              opencl=False, varmat=False):
     """
     Generates benchmark code, compiles it and runs the benchmark.
     :param functions_or_sigs: List of function names and/or signatures to benchmark
@@ -331,6 +331,9 @@ def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim"
                     if opencl == "base":
                         setup += "  auto {} = stan::math::to_matrix_cl({});\n".format(var_name + "_cl", var_name)
                         var_name += "_cl"
+                    elif varmat == "base" and arg_overload == "Rev":
+                        setup += "  auto {} = stan::math::to_var_value({});\n".format(var_name + "_varmat", var_name)
+                        var_name += "_varmat"
                 else:
                     var_conversions += "    {} {} = stan::test::make_arg<{}>({}, state.range(0));\n".format(
                         arg_type,
@@ -342,8 +345,15 @@ def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim"
                         var_conversions += "    auto {} = stan::math::to_matrix_cl({});\n".format(var_name + "_cl",
                                                                                                   var_name)
                         var_name += "_cl"
+                    elif varmat == "base" and arg_overload == "Rev":
+                        var_conversions += "    auto {} = stan::math::to_var_value({});\n".format(var_name + "_varmat",
+                                                                                                  var_name)
+                        var_name += "_varmat"
+
                 if opencl == "copy" and stan_arg not in ("int", "real"):
                     code += "stan::math::to_matrix_cl({}), ".format(var_name)
+                elif varmat == "copy" and stan_arg not in ("int", "real") and arg_overload == "Rev":
+                    code += "stan::math::to_var_value({}), ".format(var_name)
                 else:
                     code += var_name + ", "
             if opencl == "base":
@@ -364,7 +374,7 @@ def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim"
             DOUBLE_SIZE = 8
             N_ARRAYS = 4  # vals, adjoints, pointers + 1 for anything else
             f.write(CUSTOM_MAIN.format(5))
-                #(max_size_param or default_max_size) * DOUBLE_SIZE * N_ARRAYS * (max_args_with_max_dimm + 1)))
+            # (max_size_param or default_max_size) * DOUBLE_SIZE * N_ARRAYS * (max_args_with_max_dimm + 1)))
         else:
             f.write("BENCHMARK_MAIN();")
 
@@ -375,8 +385,7 @@ def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim"
 
 def main(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim", "Rev"), multiplier_param=None,
          max_size_param=None, max_dim=3, n_repeats=1, skip_similar_signatures=False, csv_out_file=None, opencl=False,
-         plot=False, plot_log_y=False,
-         plot_cl_speedup=False, plot_reference=None):
+         varmat=False, plot=False, plot_log_y=False, plot_speedup=False, plot_reference=None):
     """
     Generates benchmark code, compiles it and runs the benchmark. Optionally plots the results.
     :param functions_or_sigs: List of function names and/or signatures to benchmark
@@ -392,23 +401,27 @@ def main(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim", "Re
     :param csv_out_file: Filename of the csv file to store benchmark results in.
     :param plot: Filename of bmp or csv fle to store plot into. If  filename is empty, opens a window with graph.
     :param plot_log_y: Use logarithmic y axis for plotting
-    :param plot_cl_speedup: plot speedup of OpenCL overloads compared to CPU ones
+    :param plot_speedup: plot speedup of OpenCL or varmat overloads compared to CPU ones
     """
     if plot and csv_out_file is None:
         csv_out_file = ".benchmark.csv"
-    if plot_cl_speedup:
-        opencl_csv_out_file = csv_out_file + "_cl"
+    if plot_speedup and (opencl or varmat):
+        if opencl:
+            special = "_cl"
+        else:
+            special = "_varmat"
+        opencl_csv_out_file = csv_out_file + special
         if "." in csv_out_file:
             base, ext = csv_out_file.rsplit(".", 1)
-            opencl_csv_out_file = base + "_cl." + ext
+            opencl_csv_out_file = base + special + "." + ext
         benchmark(functions_or_sigs, cpp_filename, overloads, multiplier_param, max_size_param, max_dim,
-                  n_repeats, skip_similar_signatures, csv_out_file, False)
+                  n_repeats, skip_similar_signatures, csv_out_file, False, False)
         benchmark(functions_or_sigs, cpp_filename, overloads, multiplier_param, max_size_param, max_dim,
-                  n_repeats, skip_similar_signatures, opencl_csv_out_file, opencl)
+                  n_repeats, skip_similar_signatures, opencl_csv_out_file, opencl, varmat)
         plot_compare(opencl_csv_out_file, csv_out_file, plot)
     else:
         benchmark(functions_or_sigs, cpp_filename, overloads, multiplier_param, max_size_param, max_dim,
-                  n_repeats, skip_similar_signatures, csv_out_file, opencl)
+                  n_repeats, skip_similar_signatures, csv_out_file, opencl, varmat)
         if plot_reference:
             plot_compare(csv_out_file, plot_reference, plot, plot_log_y)
         elif plot:
@@ -419,6 +432,7 @@ class FullErrorMsgParser(ArgumentParser):
     """
     Modified ArgumentParser that prints full error message on any error.
     """
+
     def error(self, message):
         sys.stderr.write('error: %s\n' % message)
         self.print_help()
@@ -513,11 +527,20 @@ def processCLIArgs():
              "copy - include argument copying time",
     )
     parser.add_argument(
-        "--plot_cl_speedup",
+        "--varmat",
+        metavar="setting",
+        type=str,
+        default=False,
+        help="Benchmark varmat overloads. Possible values: "
+             "base - benchmark just the execution time, "
+             "copy - include argument copying time",
+    )
+    parser.add_argument(
+        "--plot_speedup",
         default=False,
         action='store_true',
-        help="Plots speedup of OpenCL overloads compared to CPU ones. Can only be specified together with both "
-             "--opencl and --plot. Cannot be specified together with --plot_reference.",
+        help="Plots speedup of OpenCL or varmat overloads compared to Eigen matvar ones. Can only be specified together "
+             "with both --plot and either --opencl or --varmat. Cannot be specified together with --plot_reference.",
     )
     parser.add_argument(
         "--plot_reference",
@@ -537,11 +560,15 @@ def processCLIArgs():
              "difffer only in similar vector types, which are vector, row_vector and real[].",
     )
     args = parser.parse_args()
+    assert not (args.opencl and args.varmat), ValueError("--opencl and --varmat cannot be specified at the same time!")
+    if args.plot_reference or args.plot_speedup or args.plot_log_y:
+        assert args.plot, ValueError(
+            "--plot is required if you specify any of --plot_reference, --plot_speedup, --plot_log_y!")
     main(functions_or_sigs=args.functions, cpp_filename=args.cpp, overloads=args.overloads,
          multiplier_param=args.multiplier, max_size_param=args.max_size, max_dim=args.max_dim,
          csv_out_file=args.csv, n_repeats=args.repeats, skip_similar_signatures=args.skip_similar_signatures,
-         plot=args.plot, plot_log_y=args.plot_log_y, opencl=args.opencl, plot_cl_speedup=args.plot_cl_speedup,
-         plot_reference=args.plot_reference)
+         plot=args.plot, plot_log_y=args.plot_log_y, opencl=args.opencl, plot_speedup=args.plot_speedup,
+         plot_reference=args.plot_reference, varmat=args.varmat)
 
 
 if __name__ == "__main__":
