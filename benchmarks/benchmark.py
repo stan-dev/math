@@ -56,9 +56,9 @@ def run_command(command):
     :param command: command to execute
     """
     print()
-    print(command)
-    p1 = subprocess.Popen(command, shell=os.name != "nt")
-    if p1.wait() != 0:
+    print(" ".join(command))
+    p1 = subprocess.run(command)
+    if p1.returncode != 0:
         raise RuntimeError("command failed: " + command)
 
 
@@ -67,8 +67,7 @@ def build(exe_filepath):
     Builds a file using make.
     :param exe_filepath: File to build
     """
-    command = make + " " + exe_filepath
-    run_command(command)
+    run_command([make, exe_filepath])
 
 
 def run_benchmark(exe_filepath, n_repeats=1, csv_out_file=None):
@@ -78,11 +77,13 @@ def run_benchmark(exe_filepath, n_repeats=1, csv_out_file=None):
     :param n_repeats: how many times to repeat each benchmark
     :param csv_out_file: path to csv fle to store benchmark results into
     """
-    command = exe_filepath
+    command = [exe_filepath]
     if n_repeats > 1:
-        command += " --benchmark_repetitions={} --benchmark_report_aggregates_only=true".format(n_repeats)
+        command.append("--benchmark_repetitions={}".format(n_repeats))
+        command.append("--benchmark_report_aggregates_only=true")
     if csv_out_file is not None:
-        command += " --benchmark_out={} --benchmark_out_format=csv".format(csv_out_file)
+        command.append("--benchmark_out={}".format(csv_out_file))
+        command.append("--benchmark_out_format=csv")
     run_command(command)
 
 
