@@ -3,9 +3,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-
-
-TEST(MathMatrixCL, dimsZero) {
+TEST(MathMatrixRevCL, dimsZero) {
   using stan::math::dims;
   using stan::math::matrix_cl;
   using stan::math::var_value;
@@ -28,7 +26,7 @@ TEST(MathMatrixCL, dimsZero) {
   EXPECT_EQ(0, dims10[1]);
 }
 
-TEST(MathMatrixCL, dimsNonZero) {
+TEST(MathMatrixRevCL, dimsNonZero) {
   using stan::math::dims;
   using stan::math::matrix_cl;
   using stan::math::var_value;

@@ -22,7 +22,7 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if x is not a row or column
  *   vector.
  */
-template <typename Mat, require_matrix_t<Mat>* = nullptr>
+template <typename Mat, typename = require_any_t<is_matrix<Mat>, is_prim_or_rev_kernel_expression<Mat>>>
 inline void check_vector(const char* function, const char* name, const Mat& x) {
   if (x.rows() == 1 || x.cols() == 1) {
     return;

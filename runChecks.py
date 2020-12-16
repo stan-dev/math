@@ -83,6 +83,7 @@ def grep_patterns(type, folder, patterns_and_messages, exclude_filters=[]):
     files = files_in_folder(folder + os.sep + "**")
     files = [x for x in files if x not in exclude_files]
     for filepath in files:
+        print(filepath)
         if os.path.isfile(filepath):
             line_num = 0
             multi_line_comment = False

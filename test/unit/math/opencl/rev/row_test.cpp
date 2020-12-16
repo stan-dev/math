@@ -6,7 +6,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMatrixCL, row_exception) {
+TEST(MathMatrixRevCL, row_exception) {
    stan::math::matrix_cl<double> m1_cl(3, 3);
   EXPECT_THROW(row(m1_cl, 0), std::invalid_argument);
   EXPECT_THROW(row(m1_cl, 4), std::invalid_argument);
@@ -19,7 +19,7 @@ TEST(MathMatrixCL, row_exception) {
 auto row_functor
     = [](const auto& a) { return stan::math::row(a, 2); };
 
-TEST(MathMatrixCL, row_value_check) {
+TEST(MathMatrixRevCL, row_value_check) {
   stan::math::matrix_d m1(3, 3);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
 

@@ -76,7 +76,7 @@ $(ALGEBRA_SOLVER_TESTS) : $(LIBSUNDIALS)
 # Target to verify header files within Stan has
 # enough include calls
 ##
-HEADER_TESTS := $(addsuffix -test,$(call findfiles,stan,*.hpp))
+HEADER_TESTS := $(addsuffix -test,$(call findfiles,stan/math/opencl,*.hpp))
 
 ifeq ($(OS),Windows_NT)
   DEV_NULL = nul
