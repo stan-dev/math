@@ -1029,8 +1029,8 @@ using var = var_value<double>;
  * @ingroup type_trait
  */
 template <typename T>
-struct scalar_type<math::var_value<T>> {
-  using type = math::var_value<scalar_type_t<T>>;
+struct scalar_type<T, std::enable_if_t<is_var<T>::value>> {
+  using type = math::var_value<scalar_type_t<typename std::decay_t<T>::value_type>>;
 };
 
 }  // namespace stan
