@@ -1,3 +1,4 @@
+#ifdef STAN_OPENCL
 #include <stan/math/rev.hpp>
 #include <test/unit/math/opencl/util.hpp>
 #include <test/unit/util.hpp>
@@ -72,3 +73,4 @@ TEST(MathMatrixTailCL, tail_value_check_row_vector) {
                      1E-8);
   EXPECT_MATRIX_NEAR(m2.adj(), m3.adj(), 1E-8);
 }
+#endif
