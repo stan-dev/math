@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_PROB_VON_MISES_CDF_HPP
 
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/prob.hpp>
 #include <stan/math/prim/fun/modified_bessel_first_kind.hpp>
 #include <cmath>
 
