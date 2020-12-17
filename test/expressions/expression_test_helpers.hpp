@@ -83,6 +83,19 @@ T make_arg(double value = 0.4, int size = 1) {
   return nullptr;
 }
 
+template <typename T>
+T make_simplex(double value = 0.4, int size = 1){
+  return make_arg<T>(1.0 / size, size);
+}
+
+template <typename T>
+T make_pos_definite_matrix(double value = 0.4, int size = 1){
+  T m1 = make_arg<T>(value, size);
+  T m2 = m1 * stan::math::transpose(m1);
+  m2.diagonal().array() += value;
+  return m2;
+}
+
 template <typename T, require_arithmetic_t<T>* = nullptr>
 void expect_eq(T a, T b, const char* msg) {
   EXPECT_EQ(a, b) << msg;

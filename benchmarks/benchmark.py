@@ -1,5 +1,7 @@
 #!/usr/bin/python
 from __future__ import print_function
+
+import numbers
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 import sys
 import subprocess
@@ -320,14 +322,18 @@ def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim"
                 scalar = overload_scalar[arg_overload]
                 arg_type = cpp_arg_template.replace("SCALAR", scalar)
                 var_name = "arg" + str(n)
-                if function_name in special_arg_values and special_arg_values[function_name][n] is not None:
-                    value = special_arg_values[function_name][n]
-                else:
-                    value = "0.4"
+                make_arg_function = "make_arg"
+                value = 0.4
+                if function_name in special_arg_values:
+                    if isinstance(special_arg_values[function_name][n], str):
+                        make_arg_function = special_arg_values[function_name][n]
+                    elif isinstance(special_arg_values[function_name][n], numbers.Number):
+                        value = special_arg_values[function_name][n]
                 if scalar == "double":
-                    setup += "  {} {} = stan::test::make_arg<{}>({}, state.range(0));\n".format(
+                    setup += "  {} {} = stan::test::{}<{}>({}, state.range(0));\n".format(
                         arg_type,
                         var_name,
+                        make_arg_function,
                         arg_type,
                         value,
                     )
@@ -338,9 +344,10 @@ def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim"
                         setup += "  auto {} = stan::math::to_var_value({});\n".format(var_name + "_varmat", var_name)
                         var_name += "_varmat"
                 else:
-                    var_conversions += "    {} {} = stan::test::make_arg<{}>({}, state.range(0));\n".format(
+                    var_conversions += "    {} {} = stan::test::{}<{}>({}, state.range(0));\n".format(
                         arg_type,
                         var_name,
+                        make_arg_function,
                         arg_type,
                         value,
                     )

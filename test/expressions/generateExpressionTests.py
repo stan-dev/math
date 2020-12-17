@@ -1,4 +1,5 @@
 from sig_utils import *
+import numbers
 
 src_folder = "./test/expressions/"
 build_folder = "./test/expressions/"
@@ -43,17 +44,22 @@ def make_arg_code(arg, scalar, var_name, var_number, function_name):
         return_type = arg_types[arg.split(" => ")[1]].replace("SCALAR", scalar)
         return "  stan::test::test_functor " + var_name
     arg_type = arg_types[arg].replace("SCALAR", scalar)
-    if (
-        function_name in special_arg_values
-        and special_arg_values[function_name][var_number] is not None
-    ):
-        return "  %s %s = stan::test::make_arg<%s>(%f)" % (
-            arg_type,
-            var_name,
-            arg_type,
-            special_arg_values[function_name][var_number],
-        )
-    elif function_name in ("csr_to_dense_matrix", "csr_matrix_times_vector") and var_number == 4:
+    if function_name in special_arg_values:
+        if isinstance(special_arg_values[function_name][var_number], numbers.Number):
+            return "  {} {} = stan::test::make_arg<{}>({})".format(
+                arg_type,
+                var_name,
+                arg_type,
+                special_arg_values[function_name][var_number],
+            )
+        elif isinstance(special_arg_values[function_name][var_number], str):
+            return "  {} {} = stan::test::{}<{}>()".format(
+                arg_type,
+                var_name,
+                special_arg_values[function_name][var_number],
+                arg_type
+            )
+    if function_name in ("csr_to_dense_matrix", "csr_matrix_times_vector") and var_number == 4:
         return "  {} {}{{1, 2}}".format(arg_type, var_name,)
     else:
         return "  %s %s = stan::test::make_arg<%s>()" % (arg_type, var_name, arg_type,)
