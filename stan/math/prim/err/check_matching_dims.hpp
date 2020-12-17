@@ -24,7 +24,8 @@ namespace math {
  *    containers do not match
  */
 template <typename T1, typename T2, require_all_not_matrix_t<T1, T2>* = nullptr,
-                                  require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T1, T2>* = nullptr>
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T1, T2>* = nullptr>
 inline void check_matching_dims(const char* function, const char* name1,
                                 const T1& y1, const char* name2, const T2& y2) {
   std::vector<int> y1_d = dims(y1);
