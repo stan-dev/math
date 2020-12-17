@@ -1,12 +1,11 @@
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/prim/rows.hpp>
+#include <stan/math.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
-using stan::math::matrix_cl;
-using stan::math::rows;
-
-TEST(MathMatrixCL, rows) {
+TEST(MathMatrixCL, rows_prim) {
+  using stan::math::matrix_cl;
+  using stan::math::rows;
   matrix_cl<double> m0;
   EXPECT_EQ(0, rows(m0));
 

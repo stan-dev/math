@@ -1,54 +1,9 @@
 #ifdef STAN_OPENCL
 #include <stan/math/prim.hpp>
-#include <stan/math/opencl/prim.hpp>
+#include <test/unit/math/opencl/util.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
-
-TEST(MathMatrixOpenCLPrim, vector_row_vector) {
-  stan::math::vector_d v(3);
-  stan::math::row_vector_d rv(3);
-  stan::math::matrix_cl<double> v_cl(v);
-  stan::math::matrix_cl<double> rv_cl(rv);
-  stan::math::matrix_cl<double> m_cl(1, 1);
-  EXPECT_NO_THROW(m_cl = rv_cl * v_cl);
-}
-
-TEST(MathMatrixOpenCLPrim, one_dim_zero_matrix) {
-  stan::math::matrix_d m0(5, 0);
-  stan::math::matrix_d m1(0, 3);
-
-  stan::math::matrix_cl<double> m0_cl(m0);
-  stan::math::matrix_cl<double> m1_cl(m1);
-  EXPECT_NO_THROW(m0_cl * m1_cl);
-
-  EXPECT_NO_THROW(m0_cl * 2.0);
-  EXPECT_NO_THROW(2.0 * m0_cl);
-
-  EXPECT_NO_THROW(m1_cl * 2.0);
-  EXPECT_NO_THROW(2.0 * m1_cl);
-}
-
-TEST(MathMatrixOpenCLPrim, zero_result_matrix) {
-  stan::math::matrix_d m0(0, 5);
-  stan::math::matrix_d m1(5, 0);
-
-  stan::math::matrix_cl<double> m0_cl(m0);
-  stan::math::matrix_cl<double> m1_cl(m1);
-  EXPECT_NO_THROW(m0_cl * m1_cl);
-}
-
-TEST(MathMatrixOpenCLPrim, zero_size_input_matrix) {
-  stan::math::matrix_d m0(0, 0);
-  stan::math::matrix_d m1(0, 0);
-
-  stan::math::matrix_cl<double> m0_cl(m0);
-  stan::math::matrix_cl<double> m1_cl(m1);
-  EXPECT_NO_THROW(m0_cl * m1_cl);
-
-  EXPECT_NO_THROW(m0_cl * 2.0);
-  EXPECT_NO_THROW(2.0 * m0_cl);
-}
 
 TEST(MathMatrixOpenCLPrim, non_matching_dim_excpetion) {
   stan::math::matrix_d m0(5, 3);
@@ -183,6 +138,9 @@ TEST(MathMatrixOpenCLPrim, row_vector_matrix_big) {
   m0_cl_res = stan::math::from_matrix_cl(m0_cl);
 
   EXPECT_MATRIX_NEAR(m0, m0_cl_res, 1e-10);
+=======
+  EXPECT_THROW(stan::math::multiply(m0_cl, m1_cl), std::invalid_argument);
+>>>>>>> develop
 }
 
 TEST(MathMatrixOpenCLPrim, matrix_vector_tri_small) {
