@@ -113,34 +113,36 @@ def plot_results(csv_filename, out_file="", plot_log_y=False):
                 break
         data = pandas.read_csv(f)
 
-    signatures = numpy.array([i.split("/")[0] for i in data["name"]])
-    sizes = numpy.array([int(i.split("/")[1]) for i in data["name"]])
-    times = numpy.array(data["real_time"])
+    timing_data = pandas.concat([data["name"].str.split("/", expand=True).iloc[:, :2], data["real_time"]], axis=1)
+    timing_data.columns = ["signatures", "sizes", "times"]
+    timing_data.loc[:, "sizes"] = timing_data["sizes"].astype(int)
+    timing_data.loc[:, "times"] /= 1000  # convert to microseconds
 
-    plt.figure(figsize=(10, 10))
-    plt.tight_layout()
-    plt.semilogx()
+    fig, ax = plt.subplots(figsize=(10, 10))
+    fig.set_tight_layout(True)
+    ax.set_xscale("log")
     if plot_log_y:
-        plt.semilogy()
-    plt.xlabel("size")
-    plt.ylabel("time[us]")
+        ax.set_yscale("log")
 
+    ax.set_xlabel("size")
+    ax.set_ylabel("time[us]")
     tableau_colors = list(colors.TABLEAU_COLORS.keys())
-    for n, signature in enumerate(numpy.unique(signatures)):
-        selector = signatures == signature
-        sig_sizes = sizes[selector]
-        sig_times = times[selector]
-        plt.plot(sig_sizes, sig_times, "x", color=tableau_colors[n % len(tableau_colors)])
+    for n, (signature, sub_data) in enumerate(timing_data.groupby("signatures")):
+        # conversions to numpy arrays allow us to hide duplicated labels
+        ax.plot(numpy.array(sub_data["sizes"]), numpy.array(sub_data["times"]), "x",
+                color=tableau_colors[n % len(tableau_colors)])
+        avg_sig_times = sub_data.groupby(by="sizes")["times"].mean().reset_index().sort_values(by="sizes")
+        ax.plot(avg_sig_times["sizes"], avg_sig_times["times"], label=signature,
+                color=tableau_colors[n % len(tableau_colors)])
 
-        unique_sizes = sorted(numpy.unique(sig_sizes))
-        avg_sig_times = numpy.array([numpy.mean(sig_times[sig_sizes == i]) for i in unique_sizes])
-        plt.plot(unique_sizes, avg_sig_times, label=signature, color=tableau_colors[n % len(tableau_colors)])
-
-    plt.legend()
+    [spine.set_visible(False) for loc, spine in ax.spines.items() if loc in ["top", "right", "left", "bottom"]]
+    ax.minorticks_off()
+    ax.grid()
+    ax.legend()
     if out_file == "window":
         plt.show()
     else:
-        plt.savefig(out_file)
+        fig.savefig(out_file, bbox_inches="tight")
 
 
 def plot_compare(csv_filename, reference_csv_filename, out_file="", plot_log_y=False):
@@ -171,49 +173,46 @@ def plot_compare(csv_filename, reference_csv_filename, out_file="", plot_log_y=F
                 break
         reference_data = pandas.read_csv(f)
 
-    signatures = numpy.array([i.split("/")[0] for i in data["name"]])
-    sizes = numpy.array([int(i.split("/")[1]) for i in data["name"]])
-    times = numpy.array(data["real_time"])
-    reference_signatures = numpy.array([i.split("/")[0] for i in reference_data["name"]])
-    reference_sizes = numpy.array([int(i.split("/")[1]) for i in reference_data["name"]])
-    reference_times = numpy.array(reference_data["real_time"])
+    timing_data = pandas.concat([data["name"].str.split("/", expand=True).iloc[:, :2], data["real_time"]], axis=1)
+    reference_timing_data = pandas.concat(
+        [reference_data["name"].str.split("/", expand=True).iloc[:, :2], reference_data["real_time"]], axis=1)
+    timing_data.columns = reference_timing_data.columns = ["signatures", "sizes", "times"]
 
-    same_in_last_selector = [i in signatures for i in reference_signatures]
-    reference_signatures = reference_signatures[same_in_last_selector]
-    reference_sizes = reference_sizes[same_in_last_selector]
-    reference_times = reference_times[same_in_last_selector]
+    same_in_last_selector = reference_timing_data["signatures"].isin(timing_data["signatures"])
+    reference_timing_data = reference_timing_data.loc[same_in_last_selector, :]
+    assert numpy.all(reference_timing_data["signatures"] == timing_data["signatures"])
+    assert numpy.all(reference_timing_data["sizes"] == timing_data["sizes"])
 
-    assert numpy.all(reference_signatures == signatures)
-    assert numpy.all(reference_sizes == sizes)
+    timing_data["speedup"] = reference_timing_data["times"] / timing_data["times"]
+    timing_data["sizes"] = timing_data["sizes"].astype(int)
 
-    plt.figure(figsize=(10, 10))
-    plt.tight_layout()
-    plt.semilogx()
+    fig, ax = plt.subplots(figsize=(10, 10))
+    fig.set_tight_layout(True)
+    ax.set_xscale("log")
     if plot_log_y:
-        plt.semilogy()
-    plt.xlabel("size")
-    plt.ylabel("speedup")
+        ax.set_yscale("log")
+
+    ax.set_xlabel("size")
+    ax.set_ylabel("speedup")
 
     tableau_colors = list(colors.TABLEAU_COLORS.keys())
-    for n, signature in enumerate(numpy.unique(signatures)):
-        selector = signatures == signature
-        sig_sizes = sizes[selector]
-        sig_times = times[selector]
-        reference_sig_times = reference_times[selector]
-        plt.plot(sig_sizes, reference_sig_times / sig_times, "x", color=tableau_colors[n % len(tableau_colors)])
+    for n, (signature, sub_data) in enumerate(timing_data.groupby("signatures")):
+        # conversions to numpy arrays allow us to hide duplicated labels
+        ax.plot(numpy.array(sub_data["sizes"]), numpy.array(sub_data["speedup"]), "x",
+                color=tableau_colors[n % len(tableau_colors)])
+        avg_sig_speedups = sub_data.groupby(by="sizes")["speedup"].mean().reset_index().sort_values(by="sizes")
+        ax.plot(avg_sig_speedups["sizes"], avg_sig_speedups["speedup"], label=signature,
+                color=tableau_colors[n % len(tableau_colors)])
+    plt.plot([1, max(timing_data["sizes"])], [1, 1], "--", color="gray")
 
-        unique_sizes = sorted(numpy.unique(sig_sizes))
-        avg_sig_times = numpy.array([numpy.mean(sig_times[sig_sizes == i]) for i in unique_sizes])
-        avg_reference_sig_times = numpy.array([numpy.mean(reference_sig_times[sig_sizes == i]) for i in unique_sizes])
-        plt.plot(unique_sizes, avg_reference_sig_times / avg_sig_times, label=signature,
-                 color=tableau_colors[n % len(tableau_colors)])
-    plt.plot([1, max(sizes)], [1, 1], "--", color="gray")
-
-    plt.legend()
+    [spine.set_visible(False) for loc, spine in ax.spines.items() if loc in ["top", "right", "left", "bottom"]]
+    ax.minorticks_off()
+    ax.grid()
+    ax.legend()
     if out_file == "window":
         plt.show()
     else:
-        plt.savefig(out_file)
+        fig.savefig(out_file, bbox_inches="tight")
 
 
 def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim", "Rev"), multiplier_param=None,
