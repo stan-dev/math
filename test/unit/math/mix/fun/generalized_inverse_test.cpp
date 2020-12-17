@@ -27,7 +27,7 @@ TEST(mathMixMatFun, ad_tests) {
   expect_ad_matvar(f, v);
 
   Eigen::MatrixXd s(2, 4);
-  s << 3.4, 2, 5, 1.2,  2, 1, 3.2, 3.1;
+  s << 3.4, 2, 5, 1.2, 2, 1, 3.2, 3.1;
   expect_ad(f, s);
   expect_ad_matvar(f, s);
 
@@ -52,13 +52,13 @@ TEST(mathMixMatFun, ad_tests) {
   expect_ad(f, a);
   expect_ad_matvar(f, a);
 
- /*
- finite diffs blows up but the ad grad is good
- is there a test for this?
- Eigen::MatrixXd m(2, 3);
- m << 1, 2, 1, 2, 4, 2;
-  expect_ad(f, m);
-  expect_ad_matvar(f, m); 
-  EXPECT_NO_THROW(stan::math::generalized_inverse(m));
-  */
+  /*
+  finite diffs blows up but the ad grad is good
+  is there a test for this?
+  Eigen::MatrixXd m(2, 3);
+  m << 1, 2, 1, 2, 4, 2;
+   expect_ad(f, m);
+   expect_ad_matvar(f, m);
+   EXPECT_NO_THROW(stan::math::generalized_inverse(m));
+   */
 }
