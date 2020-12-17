@@ -62,4 +62,3 @@ TEST(mathMixMatFun, ad_tests) {
    EXPECT_NO_THROW(stan::math::generalized_inverse(m));
    */
 }
-
