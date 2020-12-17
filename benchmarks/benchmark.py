@@ -1,11 +1,14 @@
 #!/usr/bin/python
 from __future__ import print_function
-from argparse import ArgumentParser, RawTextHelpFormatter
+from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 import sys
 import subprocess
 import os
 
-sys.path.append("test")
+HERE = os.path.dirname(os.path.realpath(__file__))
+TEST_FOLDER = os.path.abspath(os.path.join(HERE, "..", "test"))
+sys.path.append(TEST_FOLDER)
+
 from sig_utils import *
 import itertools
 
@@ -57,9 +60,9 @@ def run_command(command):
     """
     print()
     print(" ".join(command))
-    p1 = subprocess.run(command)
-    if p1.returncode != 0:
-        raise RuntimeError("command failed: " + command)
+    p1 = subprocess.Popen(command)
+    if p1.wait() != 0:
+        raise RuntimeError("command failed: " + " ".join(command))
 
 
 def build(exe_filepath):
@@ -313,7 +316,7 @@ def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim"
                     stan_arg2, vec = stan_arg.split("[")
                     benchmark_name += "_" + arg_overload + "_" + stan_arg2 + str(len(vec))
                 else:
-                    benchmark_name += "_" + arg_overload + stan_arg
+                    benchmark_name += "_" + arg_overload + "_" + stan_arg
                 scalar = overload_scalar[arg_overload]
                 arg_type = cpp_arg_template.replace("SCALAR", scalar)
                 var_name = "arg" + str(n)
@@ -445,7 +448,7 @@ def processCLIArgs():
     """
     parser = FullErrorMsgParser(
         description="Generate and run_command benchmarks.",
-        formatter_class=RawTextHelpFormatter,
+        formatter_class=ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(
         "functions",
