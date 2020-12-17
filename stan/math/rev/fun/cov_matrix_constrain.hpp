@@ -21,8 +21,8 @@ namespace math {
  *
  * <p>See <code>cov_matrix_free()</code> for the inverse transform.
  *
- * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
- * have one compile-time dimension equal to 1)
+ * @tparam T type of input vector (must be a `var_value<S>` where `S`
+ *  inherits from EigenBase)
  * @param x The vector to convert to a covariance matrix.
  * @param K The number of rows and columns of the resulting
  * covariance matrix.
@@ -32,15 +32,14 @@ template <typename T, require_var_vector_t<T>* = nullptr>
 var_value<Eigen::MatrixXd> cov_matrix_constrain(const T& x, Eigen::Index K) {
   using std::exp;
 
-  arena_t<Eigen::MatrixXd> L_val(K, K);
   check_size_match("cov_matrix_constrain", "x.size()", x.size(),
                    "K + (K choose 2)", (K * (K + 1)) / 2);
+  arena_t<Eigen::MatrixXd> L_val = Eigen::MatrixXd::Zero(K, K);
   int i = 0;
   for (Eigen::Index m = 0; m < K; ++m) {
     L_val.row(m).head(m) = x.val().segment(i, m);
     i += m;
     L_val.coeffRef(m, m) = exp(x.val().coeff(i++));
-    L_val.row(m).tail(K - m - 1).setZero();
   }
 
   var_value<Eigen::MatrixXd> L = L_val;
@@ -49,7 +48,7 @@ var_value<Eigen::MatrixXd> cov_matrix_constrain(const T& x, Eigen::Index K) {
     Eigen::Index K = L.rows();
     int i = x.size();
     for (int m = K - 1; m >= 0; --m) {
-      x.adj()(--i) += L.adj().coeff(m, m) * L.val().coeff(m, m);
+      x.adj().coeffRef(--i) += L.adj().coeff(m, m) * L.val().coeff(m, m);
       i -= m;
       x.adj().segment(i, m) += L.adj().row(m).head(m);
     }
@@ -65,8 +64,8 @@ var_value<Eigen::MatrixXd> cov_matrix_constrain(const T& x, Eigen::Index K) {
  *
  * <p>See <code>cov_matrix_free()</code> for the inverse transform.
  *
- * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
- * have one compile-time dimension equal to 1)
+ * @tparam T type of input vector (must be a `var_value<S>` where `S`
+ *  inherits from EigenBase)
  * @param x The vector to convert to a covariance matrix.
  * @param K The dimensions of the resulting covariance matrix.
  * @param lp Reference
@@ -78,15 +77,14 @@ var_value<Eigen::MatrixXd> cov_matrix_constrain(const T& x, Eigen::Index K,
   using std::exp;
   using std::log;
 
-  arena_t<Eigen::MatrixXd> L_val(K, K);
   check_size_match("cov_matrix_constrain", "x.size()", x.size(),
                    "K + (K choose 2)", (K * (K + 1)) / 2);
+  arena_t<Eigen::MatrixXd> L_val = Eigen::MatrixXd::Zero(K, K);
   int i = 0;
   for (Eigen::Index m = 0; m < K; ++m) {
     L_val.row(m).head(m) = x.val().segment(i, m);
     i += m;
     L_val.coeffRef(m, m) = exp(x.val().coeff(i++));
-    L_val.row(m).tail(K - m - 1).setZero();
   }
 
   // Jacobian for complete transform, including exp() above
@@ -107,7 +105,7 @@ var_value<Eigen::MatrixXd> cov_matrix_constrain(const T& x, Eigen::Index K,
     }
     int i = x.size();
     for (int m = K - 1; m >= 0; --m) {
-      x.adj()(--i) += L.adj().coeff(m, m) * L.val().coeff(m, m);
+      x.adj().coeffRef(--i) += L.adj().coeff(m, m) * L.val().coeff(m, m);
       i -= m;
       x.adj().segment(i, m) += L.adj().row(m).head(m);
     }

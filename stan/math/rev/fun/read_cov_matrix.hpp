@@ -14,10 +14,10 @@ namespace math {
  * A generally worse alternative to call prior to evaluating the
  * density of an elliptical distribution
  *
- * @tparam T_CPCs type of \c T_CPCs vector (must be derived from \c
- * Eigen::ArrayBase and have one compile-time dimension equal to 1)
- * @tparam T_sds type of \c sds vector (must be derived from \c Eigen::ArrayBase
- * and have one compile-time dimension equal to 1)
+ * @tparam T_CPCs type of CPCs vector (must be a `var_value<T>` where `T`
+ *  inherits from EigenBase)
+ * @tparam T_sds type of sds vector (must be a `var_value<T>` where `T`
+ *  inherits from EigenBase)
  * @param CPCs on (-1, 1)
  * @param sds on (0, inf)
  * @param log_prob the log probability value to increment with the Jacobian
@@ -33,10 +33,10 @@ var_value<Eigen::MatrixXd> read_cov_matrix(const T_CPCs& CPCs, const T_sds& sds,
 /**
  * Builds a covariance matrix from CPCs and standard deviations
  *
- * @tparam T_CPCs type of \c T_CPCs vector (must be derived from \c
- * Eigen::ArrayBase and have one compile-time dimension equal to 1)
- * @tparam T_sds type of \c sds vector (must be derived from \c Eigen::ArrayBase
- * and have one compile-time dimension equal to 1)
+ * @tparam T_CPCs type of CPCs vector (must be a `var_value<T>` where `T`
+ *  inherits from EigenBase)
+ * @tparam T_sds type of sds vector (must be a `var_value<T>` where `T`
+ *  inherits from EigenBase)
  * @param CPCs in (-1, 1)
  * @param sds in (0, inf)
  */

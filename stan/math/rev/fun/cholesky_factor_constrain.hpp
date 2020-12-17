@@ -19,8 +19,8 @@ namespace math {
  * specified vector.  A total of (N choose 2) + N + (M - N) * N
  * elements are required to read an M by N Cholesky factor.
  *
- * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
- * have one compile-time dimension equal to 1)
+ * @tparam T type of input vector (must be a `var_value<S>` where `S`
+ *  inherits from EigenBase)
  * @param x Vector of unconstrained values
  * @param M number of rows
  * @param N number of columns
@@ -36,14 +36,13 @@ var_value<Eigen::MatrixXd> cholesky_factor_constrain(const T& x, int M, int N) {
   check_size_match("cholesky_factor_constrain", "x.size()", x.size(),
                    "((N * (N + 1)) / 2 + (M - N) * N)",
                    ((N * (N + 1)) / 2 + (M - N) * N));
-  arena_t<Eigen::MatrixXd> y_val(M, N);
+  arena_t<Eigen::MatrixXd> y_val = Eigen::MatrixXd::Zero(M, N);
 
   int pos = 0;
   for (int m = 0; m < N; ++m) {
     y_val.row(m).head(m) = x.val().segment(pos, m);
     pos += m;
     y_val.coeffRef(m, m) = exp(x.val().coeff(pos++));
-    y_val.row(m).tail(N - m - 1).setZero();
   }
 
   for (int m = N; m < M; ++m) {
@@ -77,12 +76,12 @@ var_value<Eigen::MatrixXd> cholesky_factor_constrain(const T& x, int M, int N) {
  * of (N choose 2) + N + N * (M - N) free parameters are required to read
  * an M by N Cholesky factor.
  *
- * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
- * have one compile-time dimension equal to 1)
+ * @tparam T type of input vector (must be a `var_value<S>` where `S`
+ *  inherits from EigenBase)
  * @param x Vector of unconstrained values
  * @param M number of rows
  * @param N number of columns
- * @param lp Log probability that is incremented with the log Jacobian
+ * @param[out] lp Log density that is incremented with the log Jacobian
  * @return Cholesky factor
  */
 template <typename T, require_var_vector_t<T>* = nullptr>

@@ -23,8 +23,8 @@ namespace math {
  * in <code>corr_matrix_constrain(Matrix, size_t)</code>
  * with the constrained deviations.
  *
- * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
- * have one compile-time dimension equal to 1)
+ * @tparam T type of input vector (must be a `var_value<S>` where `S`
+ *  inherits from EigenBase)
  * @param x Input vector of unconstrained partial correlations and
  * standard deviations.
  * @param k Dimensionality of returned covariance matrix.
@@ -54,8 +54,8 @@ var_value<Eigen::MatrixXd> cov_matrix_constrain_lkj(const T& x, size_t k) {
  * the Jacobian of the transform of the correlation matrix
  * into a covariance matrix by scaling by standard deviations.
  *
- * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
- * have one compile-time dimension equal to 1)
+ * @tparam T type of input vector (must be a `var_value<S>` where `S`
+ *  inherits from EigenBase)
  * @param x Input vector of unconstrained partial correlations and
  * standard deviations.
  * @param k Dimensionality of returned covariance matrix.

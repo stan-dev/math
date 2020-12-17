@@ -13,6 +13,17 @@
 namespace stan {
 namespace math {
 
+/**
+ * Return the Cholesky factor of the correlation matrix of the sepcified
+ * size read from the unconstrained vector `y`. A total of K choose 2
+ * elements are required to build a K by K Cholesky factor.
+ *
+ * @tparam T type of input vector (must be a `var_value<S>` where `S`
+ *  inherits from EigenBase)
+ * @param y Vector of unconstrained values
+ * @param K number of rows
+ * @return Cholesky factor of correlation matrix
+ */
 template <typename T, require_var_vector_t<T>* = nullptr>
 var_value<Eigen::MatrixXd> cholesky_corr_constrain(const T& y, int K) {
   using std::sqrt;
@@ -25,9 +36,8 @@ var_value<Eigen::MatrixXd> cholesky_corr_constrain(const T& y, int K) {
   }
 
   var_value<Eigen::VectorXd> z = corr_constrain(y);
-  arena_t<Eigen::MatrixXd> x_val(K, K);
+  arena_t<Eigen::MatrixXd> x_val = Eigen::MatrixXd::Zero(K, K);
 
-  x_val.setZero();
   x_val.coeffRef(0, 0) = 1;
   int k = 0;
   for (int i = 1; i < K; ++i) {
@@ -62,7 +72,18 @@ var_value<Eigen::MatrixXd> cholesky_corr_constrain(const T& y, int K) {
   return x;
 }
 
-// FIXME to match above after debugged
+/**
+ * Return the Cholesky factor of the correlation matrix of the sepcified
+ * size read from the unconstrained vector `y`. A total of K choose 2
+ * elements are required to build a K by K Cholesky factor.
+ *
+ * @tparam T type of input vector (must be a `var_value<S>` where `S`
+ *  inherits from EigenBase)
+ * @param y Vector of unconstrained values
+ * @param K number of rows
+ * @param[out] lp Log density that is incremented with the log Jacobian 
+ * @return Cholesky factor of correlation matrix
+ */
 template <typename T, require_var_vector_t<T>* = nullptr>
 var_value<Eigen::MatrixXd> cholesky_corr_constrain(const T& y, int K,
                                                    scalar_type_t<T>& lp) {
@@ -78,9 +99,8 @@ var_value<Eigen::MatrixXd> cholesky_corr_constrain(const T& y, int K,
   }
 
   var_value<Eigen::VectorXd> z = corr_constrain(y, lp);
-  arena_t<Eigen::MatrixXd> x_val(K, K);
+  arena_t<Eigen::MatrixXd> x_val = Eigen::MatrixXd::Zero(K, K);
 
-  x_val.setZero();
   x_val.coeffRef(0, 0) = 1;
   int k = 0;
   double lp_val = 0.0;

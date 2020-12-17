@@ -15,8 +15,8 @@ namespace math {
  * <p>See <code>read_corr_matrix(Array, size_t, T)</code>
  * for more information.
  *
- * @tparam T_CPCs type of the array (must be derived from \c Eigen::ArrayBase
- * and have one compile-time dimension equal to 1)
+ * @tparam T_CPCs type of input vector (must be a `var_value<T>` where `T`
+ *  inherits from EigenBase)
  * @param CPCs The (K choose 2) canonical partial correlations in (-1, 1).
  * @param K Dimensionality of correlation matrix.
  * @return Cholesky factor of correlation matrix for specified
@@ -42,8 +42,8 @@ inline var_value<Eigen::MatrixXd> read_corr_matrix(const T_CPCs& CPCs,
  * the Cholesky factor of the correlation matrix rather than the
  * correlation matrix itself in statistical calculations.
  *
- * @tparam T_CPCs type of the array (must be derived from \c Eigen::ArrayBase
- * and have one compile-time dimension equal to 1)
+ * @tparam T_CPCs type of input vector (must be a `var_value<T>` where `T`
+ *  inherits from EigenBase)
  * @param CPCs The (K choose 2) canonical partial correlations in
  * (-1, 1).
  * @param K Dimensionality of correlation matrix.

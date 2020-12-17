@@ -24,7 +24,7 @@ namespace math {
  * <p>See <code>read_corr_matrix(Array, size_t, T)</code>
  * for more information.
  *
- * @tparam T type of input (must be a `var_value<T>` where `T`
+ * @tparam T type of input vector (must be a `var_value<S>` where `S`
  *  inherits from EigenBase)
  * @param CPCs The (K choose 2) canonical partial correlations in
  * (-1, 1).
@@ -44,38 +44,36 @@ auto read_corr_L(const T& CPCs, size_t K) {  // on (-1, 1)
   }
 
   using std::sqrt;
-  Eigen::ArrayXd acc(K - 1);
-  acc.setOnes();
+  arena_t<Eigen::ArrayXd> arena_acc = Eigen::ArrayXd::Ones(K - 1);
   // Cholesky factor of correlation matrix
-  Eigen::MatrixXd L = Eigen::MatrixXd::Zero(K, K);
+  arena_t<Eigen::MatrixXd> L = Eigen::MatrixXd::Zero(K, K);
 
   size_t position = 0;
   size_t pull = K - 1;
 
   L(0, 0) = 1.0;
   L.col(0).tail(pull) = CPCs.val().head(pull);
-  acc.tail(pull) = 1.0 - CPCs.val().head(pull).array().square();
+  arena_acc.tail(pull) = 1.0 - CPCs.val().head(pull).array().square();
   for (size_t i = 1; i < (K - 1); i++) {
     position += pull;
     pull = K - 1 - i;
 
     const auto& cpc_seg = CPCs.val().array().segment(position, pull);
-    L(i, i) = sqrt(acc(i - 1));
-    L.col(i).tail(pull) = cpc_seg * acc.tail(pull).sqrt();
-    acc.tail(pull) = acc.tail(pull) * (1.0 - cpc_seg.square());
+    L.coeffRef(i, i) = sqrt(arena_acc.coeff(i - 1));
+    L.col(i).tail(pull) = cpc_seg * arena_acc.tail(pull).sqrt();
+    arena_acc.tail(pull) = arena_acc.tail(pull) * (1.0 - cpc_seg.square());
   }
 
-  L(K - 1, K - 1) = sqrt(acc(K - 2));
+  L.coeffRef(K - 1, K - 1) = sqrt(arena_acc.coeff(K - 2));
 
-  ret_type L_res = L;
-  auto arena_acc = to_arena(acc);
+  arena_t<ret_type> L_res = L;
 
   reverse_pass_callback([CPCs, arena_acc, K, L_res]() mutable {
     Eigen::ArrayXd acc_val = arena_acc;
     Eigen::ArrayXd acc_adj = Eigen::ArrayXd::Zero(K - 1);
 
-    acc_adj(K - 2)
-        += 0.5 * L_res.adj()(K - 1, K - 1) / L_res.val()(K - 1, K - 1);
+    acc_adj.coeffRef(K - 2)
+        += 0.5 * L_res.adj().coeff(K - 1, K - 1) / L_res.val().coeff(K - 1, K - 1);
 
     int position = CPCs.size() - 1;
     for (size_t i = K - 2; i > 0; --i) {
@@ -92,7 +90,7 @@ auto read_corr_L(const T& CPCs, size_t K) {  // on (-1, 1)
           += L_res.adj().array().col(i).tail(pull) * acc_val.tail(pull).sqrt();
       acc_adj.tail(pull) += 0.5 * L_res.adj().array().col(i).tail(pull)
                             * cpc_seg_val / acc_val.tail(pull).sqrt();
-      acc_adj(i - 1) += 0.5 * L_res.adj()(i, i) / L_res.val()(i, i);
+      acc_adj.coeffRef(i - 1) += 0.5 * L_res.adj().coeff(i, i) / L_res.val().coeff(i, i);
 
       position -= pull + 1;
     }
@@ -103,7 +101,7 @@ auto read_corr_L(const T& CPCs, size_t K) {  // on (-1, 1)
     CPCs.adj().head(pull) += L_res.adj().col(0).tail(pull);
   });
 
-  return L_res;
+  return ret_type(L_res);
 }
 
 /**
@@ -121,7 +119,7 @@ auto read_corr_L(const T& CPCs, size_t K) {  // on (-1, 1)
  * extended onion method Journal of Multivariate Analysis 100
  * (2009) 1989–2001 </li></ul>
  *
- * @tparam T type of input (must be a `var_value<T>` where `T`
+ * @tparam T type of input vector (must be a `var_value<S>` where `S`
  *  inherits from EigenBase)
  * @param CPCs The (K choose 2) canonical partial correlations in
  * (-1, 1).
@@ -151,7 +149,7 @@ auto read_corr_L(const T1& CPCs, size_t K, T2& log_prob) {
   // see inverse of Jacobian in equation 11 of LKJ paper
   for (size_t k = 1; k <= (K - 2); k++) {
     for (size_t i = k + 1; i <= K; i++) {
-      acc_val += (K - k - 1) * log1m(square(CPCs.val()(pos)));
+      acc_val += (K - k - 1) * log1m(square(CPCs.val().coeff(pos)));
       pos++;
     }
   }
@@ -164,8 +162,8 @@ auto read_corr_L(const T1& CPCs, size_t K, T2& log_prob) {
     size_t pos = CPCs.size() - 2;
     for (size_t k = K - 2; k >= 1; --k) {
       for (size_t i = K; i >= k + 1; --i) {
-        CPCs.adj()(pos) -= 2.0 * acc_adj * (K - k - 1) * CPCs.val()(pos)
-                           / (1.0 - square(CPCs.val()(pos)));
+        CPCs.adj().coeffRef(pos) -= 2.0 * acc_adj * (K - k - 1) *
+	  CPCs.val().coeff(pos) / (1.0 - square(CPCs.val().coeff(pos)));
         pos--;
       }
     }

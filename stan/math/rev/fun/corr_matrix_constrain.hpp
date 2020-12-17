@@ -30,8 +30,8 @@ namespace math {
  * <p>The free vector entries are first constrained to be
  * valid correlation values using <code>corr_constrain(T)</code>.
  *
- * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
- * have one compile-time dimension equal to 1)
+ * @tparam T type of input vector (must be a `var_value<S>` where `S`
+ *  inherits from EigenBase)
  * @param x Vector of unconstrained partial correlations.
  * @param k Dimensionality of returned correlation matrix.
  * @throw std::invalid_argument if x is not a valid correlation
@@ -59,8 +59,8 @@ var_value<Eigen::MatrixXd> corr_matrix_constrain(const T& x, Eigen::Index k) {
  * defined in <code>corr_constrain(T, double)</code> for
  * this function.
  *
- * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
- * have one compile-time dimension equal to 1)
+ * @tparam T type of input vector (must be a `var_value<S>` where `S`
+ *  inherits from EigenBase)
  * @param x Vector of unconstrained partial correlations.
  * @param k Dimensionality of returned correlation matrix.
  * @param lp Log probability reference to increment.
