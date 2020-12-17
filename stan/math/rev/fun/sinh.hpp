@@ -67,7 +67,8 @@ template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
 inline auto sinh(const VarMat& a) {
   return make_callback_var(
       a.val().array().sinh().matrix(), [a](const auto& vi) mutable {
-        a.adj().noalias() += vi.adj_.cwiseProduct(a.val().array().cosh().matrix());
+        a.adj().noalias()
+            += vi.adj_.cwiseProduct(a.val().array().cosh().matrix());
       });
 }
 
