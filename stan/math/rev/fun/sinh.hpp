@@ -49,7 +49,27 @@ class sinh_vari : public op_v_vari {
  * @param a Variable.
  * @return Hyperbolic sine of variable.
  */
-inline var sinh(const var& a) { return var(new internal::sinh_vari(a.vi_)); }
+inline var sinh(const var& a) {
+  return make_callback_var(std::sinh(a.val()), [a](const auto& vi) mutable {
+    a.adj() += vi.adj_ * std::cosh(a.val());
+  });
+}
+
+/**
+ * Return the hyperbolic of a radian-scaled variable (cmath).
+ *
+ *
+ * @tparam Varmat a `var_value` with inner Eigen type
+ * @param a Variable for radians of angle.
+ * @return Hyperbolid Sine of variable.
+ */
+template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
+inline auto sinh(const VarMat& a) {
+  return make_callback_var(
+      a.val().array().sinh().matrix(), [a](const auto& vi) mutable {
+        a.adj().array() += vi.adj_.array() * a.val().array().cosh();
+      });
+}
 
 /**
  * Return the hyperbolic sine of the complex argument.
