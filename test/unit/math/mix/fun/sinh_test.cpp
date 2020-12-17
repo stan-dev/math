@@ -11,7 +11,6 @@ TEST(mathMixMatFun, sinh) {
   stan::test::expect_complex_common(f);
 }
 
-
 TEST(mathMixMatFun, sinh_varmat) {
   using stan::test::expect_ad_matvar;
   auto f = [](const auto& x1) {
