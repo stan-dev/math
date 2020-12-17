@@ -79,8 +79,7 @@ inline auto acosh(const VarMat& x) {
   return make_callback_var(
       x.val().unaryExpr([](const auto x) { return acosh(x); }),
       [x](const auto& vi) mutable {
-        x.adj().array() += vi.adj_.array()
-                           / (x.val().array() * x.val().array() - 1.0).sqrt();
+        x.adj().array() += vi.adj_.array() / (x.val().array().square() - 1.0).sqrt();
       });
 }
 

@@ -71,7 +71,7 @@ inline auto atan(const VarMat& x) {
   return make_callback_var(
       x.val().array().atan().matrix(), [x](const auto& vi) mutable {
         x.adj().array()
-            += vi.adj_.array() / (1.0 + (x.val().array() * x.val().array()));
+            += vi.adj_.array() / (1.0 + (x.val().array().square()));
       });
 }
 /**

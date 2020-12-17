@@ -69,7 +69,7 @@ template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
 inline auto sin(const VarMat& a) {
   return make_callback_var(
       a.val().array().sin().matrix(), [a](const auto& vi) mutable {
-        a.adj().array() += vi.adj_.array() * a.val().array().cos();
+        a.adj().noalias() += vi.adj_.cwiseProduct(a.val().array().cos().matrix());
       });
 }
 

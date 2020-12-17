@@ -69,7 +69,7 @@ inline auto asin(const VarMat& x) {
   return make_callback_var(
       x.val().array().asin().matrix(), [x](const auto& vi) mutable {
         x.adj().array() += vi.adj_.array()
-                           / (1.0 - (x.val().array() * x.val().array())).sqrt();
+                           / (1.0 - (x.val().array().square())).sqrt();
       });
 }
 
