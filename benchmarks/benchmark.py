@@ -306,7 +306,7 @@ def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim"
             benchmark_name = function_name
             setup = ""
             var_conversions = ""
-            code = "    auto res = stan::math::{}(".format(function_name)
+            code = "    auto res = stan::math::eval(stan::math::{}(".format(function_name)
             for n, (arg_overload, cpp_arg_template, stan_arg), in enumerate(
                     zip(arg_overloads, cpp_arg_templates, stan_args)):
                 if stan_arg.endswith("]"):
@@ -358,9 +358,9 @@ def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim"
                     code += var_name + ", "
             if opencl == "base":
                 var_conversions += "  stan::math::opencl_context.queue().finish();\n"
-            code = code[:-2] + ");\n"
+            code = code[:-2] + "));\n"
             if "Rev" in arg_overloads:
-                code += "    stan::test::recursive_sum(res).grad();\n"
+                code += "    stan::math::grad();\n"
             result += BENCHMARK_TEMPLATE.format(benchmark_name=benchmark_name, setup=setup,
                                                 var_conversions=var_conversions, code=code, multi=multiplier,
                                                 max_size=max_size)
