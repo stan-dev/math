@@ -81,7 +81,7 @@ var_value<Eigen::MatrixXd> cholesky_corr_constrain(const T& y, int K) {
  *  inherits from EigenBase)
  * @param y Vector of unconstrained values
  * @param K number of rows
- * @param[out] lp Log density that is incremented with the log Jacobian 
+ * @param[out] lp Log density that is incremented with the log Jacobian
  * @return Cholesky factor of correlation matrix
  */
 template <typename T, require_var_vector_t<T>* = nullptr>

@@ -72,8 +72,8 @@ auto read_corr_L(const T& CPCs, size_t K) {  // on (-1, 1)
     Eigen::ArrayXd acc_val = arena_acc;
     Eigen::ArrayXd acc_adj = Eigen::ArrayXd::Zero(K - 1);
 
-    acc_adj.coeffRef(K - 2)
-        += 0.5 * L_res.adj().coeff(K - 1, K - 1) / L_res.val().coeff(K - 1, K - 1);
+    acc_adj.coeffRef(K - 2) += 0.5 * L_res.adj().coeff(K - 1, K - 1)
+                               / L_res.val().coeff(K - 1, K - 1);
 
     int position = CPCs.size() - 1;
     for (size_t i = K - 2; i > 0; --i) {
@@ -90,7 +90,8 @@ auto read_corr_L(const T& CPCs, size_t K) {  // on (-1, 1)
           += L_res.adj().array().col(i).tail(pull) * acc_val.tail(pull).sqrt();
       acc_adj.tail(pull) += 0.5 * L_res.adj().array().col(i).tail(pull)
                             * cpc_seg_val / acc_val.tail(pull).sqrt();
-      acc_adj.coeffRef(i - 1) += 0.5 * L_res.adj().coeff(i, i) / L_res.val().coeff(i, i);
+      acc_adj.coeffRef(i - 1)
+          += 0.5 * L_res.adj().coeff(i, i) / L_res.val().coeff(i, i);
 
       position -= pull + 1;
     }
@@ -162,8 +163,9 @@ auto read_corr_L(const T1& CPCs, size_t K, T2& log_prob) {
     size_t pos = CPCs.size() - 2;
     for (size_t k = K - 2; k >= 1; --k) {
       for (size_t i = K; i >= k + 1; --i) {
-        CPCs.adj().coeffRef(pos) -= 2.0 * acc_adj * (K - k - 1) *
-	  CPCs.val().coeff(pos) / (1.0 - square(CPCs.val().coeff(pos)));
+        CPCs.adj().coeffRef(pos) -= 2.0 * acc_adj * (K - k - 1)
+                                    * CPCs.val().coeff(pos)
+                                    / (1.0 - square(CPCs.val().coeff(pos)));
         pos--;
       }
     }

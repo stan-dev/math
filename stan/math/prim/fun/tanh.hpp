@@ -38,9 +38,8 @@ struct tanh_fun {
 template <typename Container,
           require_not_container_st<std::is_arithmetic, Container>* = nullptr,
           require_not_var_matrix_t<Container>* = nullptr>
-          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
-              Container>* = nullptr>
-inline auto tanh(const Container& x) {
+require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+    Container>* = nullptr > inline auto tanh(const Container& x) {
   return apply_scalar_unary<tanh_fun, Container>::apply(x);
 }
 

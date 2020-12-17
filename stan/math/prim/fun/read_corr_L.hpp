@@ -33,8 +33,7 @@ namespace math {
  * @return Cholesky factor of correlation matrix for specified
  * canonical partial correlations.
  */
-template <typename T,
-	  require_eigen_vector_t<T>* = nullptr>
+template <typename T, require_eigen_vector_t<T>* = nullptr>
 Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
     const T& CPCs,  // on (-1, 1)
     size_t K) {
