@@ -5,6 +5,11 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/Eigen_NumTraits.hpp>
+#include <chrono>
+#include <string>
+#include <thread>
+#include <map>
+#include <utility>
 
 namespace stan {
 namespace math {

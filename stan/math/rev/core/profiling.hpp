@@ -18,65 +18,64 @@ namespace internal {
 
 inline auto profile_start(std::string name, profile_map& profiles) {
   profile_key key = { name, std::this_thread::get_id() };
-  profile_map::iterator it = profiles.find(key);
-  if (it == profiles.end()) {
-    profiles[key] = {};
+  profile_map::iterator p = profiles.find(key);
+  if (p == profiles.end()) {
+    std::pair<profile_map::iterator, bool> new_profile = profiles.emplace(std::make_pair(key, profile_info({})));
+    p = new_profile.first;
   }
-  if (profiles[key].meta.fwd_pass_active) {
+  if (p->second.meta.fwd_pass_active) {
     std::ostringstream msg;
     msg << "Profile '" << name << "' ";
     msg << "already started!";
     throw std::runtime_error(std::string(msg.str()));
   }
-  if (profiles[key].meta.rev_pass_active) {
+  if (p->second.meta.rev_pass_active) {
     std::ostringstream msg;
     msg << "Forward and reverse pass active for profile '" << name << "'.";
     msg << "Please file a bug report!";
     throw std::runtime_error(std::string(msg.str()));
   }
-  profiles[key].meta.fwd_pass_start = std::chrono::steady_clock::now();
-  profiles[key].meta.fwd_pass_active = true;
-  reverse_pass_callback([name, &profiles]() mutable {
+  p->second.meta.fwd_pass_start = std::chrono::steady_clock::now();
+  p->second.meta.fwd_pass_active = true;
+  reverse_pass_callback([name, p]() mutable {
     profile_key key = { name, std::this_thread::get_id() };
-    profiles[key].rev_pass
+    p->second.rev_pass
         += std::chrono::duration<double>(std::chrono::steady_clock::now()
-                                         - profiles[key].meta.rev_pass_start)
-               .count();
-    profiles[key].meta.rev_pass_active = false;
+                                         - p->second.meta.rev_pass_start).count();
+    p->second.meta.rev_pass_active = false;
   });
 }
 
 inline auto profile_stop(std::string name, profile_map& profiles) {
   profile_key key = { name, std::this_thread::get_id() };
-  profile_map::iterator it = profiles.find(key);
-  if (it == profiles.end()) {
+  profile_map::iterator p = profiles.find(key);
+  if (p == profiles.end()) {
     std::ostringstream msg;
     msg << "Stopping a non-registered profile '" 
     << name << "'. Please file a bug report!";
     throw std::runtime_error("Stopping ");
   }
-  if (!profiles[key].meta.fwd_pass_active) {
+  if (!p->second.meta.fwd_pass_active) {
     std::ostringstream msg;
     msg << "Stopping forward pass profile '" 
     << name << "' that was not started.";
     throw std::runtime_error(std::string(msg.str()));
   }
-  if (profiles[key].meta.rev_pass_active) {
+  if (p->second.meta.rev_pass_active) {
     std::ostringstream msg;
     msg << "Forward and reverse pass active for profile '" << name << "'.";
     msg << "Please file a bug report!";
     throw std::runtime_error(std::string(msg.str()));
   }
-  profiles[key].fwd_pass
+  p->second.fwd_pass
       += std::chrono::duration<double>(std::chrono::steady_clock::now()
-                                       - profiles[key].meta.fwd_pass_start)
+                                       - p->second.meta.fwd_pass_start)
              .count();
-  profiles[key].meta.fwd_pass_active = false;
+  p->second.meta.fwd_pass_active = false;
 
-  reverse_pass_callback([name, &profiles]() mutable {
-    profile_key key = { name, std::this_thread::get_id() };
-    profiles[key].meta.rev_pass_start = std::chrono::steady_clock::now();
-    profiles[key].meta.rev_pass_active = true;
+  reverse_pass_callback([name, p]() mutable {
+    p->second.meta.rev_pass_start = std::chrono::steady_clock::now();
+    p->second.meta.rev_pass_active = true;
   });
 }
 }  // namespace internal
