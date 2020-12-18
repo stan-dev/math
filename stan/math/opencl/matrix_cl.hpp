@@ -461,11 +461,17 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
   matrix_cl<T>& operator=(const Expr& expression);
 
   /**
-    Evaluates `this`. This is a no-op.
-    @return `*this`
-    */
+   * Evaluates `this`. This is a no-op.
+   * @return `*this`
+   */
   const matrix_cl<T>& eval() const& { return *this; }
   matrix_cl<T> eval() && { return std::move(*this); }
+
+  /**
+   * Destructor waits for write events to prevent any kernels from writing
+   * memory that has already been reused.
+   */
+  ~matrix_cl() { wait_for_write_events(); }
 
  private:
   /**
