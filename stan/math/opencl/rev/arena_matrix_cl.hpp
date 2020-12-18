@@ -91,10 +91,6 @@ class arena_matrix_cl {
   // Wrapers to functions with explicit template parameters are implemented
   // without macros.
   template <matrix_cl_view matrix_view = matrix_cl_view::Entire>
-  inline void zeros() {
-    impl_->template zeros<matrix_view>();
-  }
-  template <matrix_cl_view matrix_view = matrix_cl_view::Entire>
   inline void zeros_strict_tri() {
     impl_->template zeros_strict_tri<matrix_view>();
   }

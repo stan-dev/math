@@ -8,8 +8,7 @@ namespace stan {
 namespace math {
 
 template <typename T>
-inline Eigen::Matrix<return_type_t<T>, Eigen::Dynamic, 1> rep_vector(const T& x,
-                                                                     int n) {
+inline auto rep_vector(const T& x, int n) {
   check_nonnegative("rep_vector", "n", n);
   return Eigen::Matrix<return_type_t<T>, Eigen::Dynamic, 1>::Constant(n, x);
 }

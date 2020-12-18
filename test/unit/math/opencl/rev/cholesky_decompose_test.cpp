@@ -1,5 +1,5 @@
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/rev/opencl.hpp>
+#include <stan/math/opencl/rev.hpp>
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
@@ -37,6 +37,20 @@ TEST(OpenCLCholeskyDecompose, prim_rev_values_large) {
   a = a + a.transpose().eval();
   a.diagonal().array() += 2 * N;
   stan::math::test::compare_cpu_opencl_prim_rev(cholesky_decompose_functor, a);
+
+  N = 1251;
+
+  Eigen::MatrixXd b = Eigen::MatrixXd::Random(N, N);
+  b = b + b.transpose().eval();
+  b.diagonal().array() += 2 * N;
+  stan::math::test::compare_cpu_opencl_prim_rev(cholesky_decompose_functor, b);
+
+  N = 1704;
+
+  Eigen::MatrixXd c = Eigen::MatrixXd::Random(N, N);
+  c = c + c.transpose().eval();
+  c.diagonal().array() += 2 * N;
+  stan::math::test::compare_cpu_opencl_prim_rev(cholesky_decompose_functor, c);
 }
 
 #endif

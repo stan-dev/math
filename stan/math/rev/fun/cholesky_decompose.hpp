@@ -14,7 +14,7 @@
 #include <stan/math/prim/err/check_symmetric.hpp>
 
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/opencl.hpp>
+#include <stan/math/opencl/prim.hpp>
 #endif
 
 #include <algorithm>
@@ -271,7 +271,7 @@ inline auto cholesky_decompose(const EigMat& A) {
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto cholesky_decompose(const T& A) {
   check_symmetric("cholesky_decompose", "A", A.val());
-  T L = cholesky_decompose(A.val());
+  plain_type_t<T> L = cholesky_decompose(A.val());
   if (A.rows() <= 35) {
     reverse_pass_callback(internal::unblocked_cholesky_lambda(L.val(), L, A));
   } else {
