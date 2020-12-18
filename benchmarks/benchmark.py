@@ -92,6 +92,14 @@ def run_benchmark(exe_filepath, n_repeats=1, csv_out_file=None):
     run_command(command)
 
 
+def pick_color(n):
+    str_bit_reversed_n = '{:015b}'.format(n + 1)[::-1]
+    r = 0.9 * ((int(str_bit_reversed_n[0::3], 2) / 2. ** 5 + 0.3) % 1)
+    g = 0.9 * ((int(str_bit_reversed_n[1::3], 2) / 2. ** 5 + 0.3) % 1)
+    b = 0.9 * ((int(str_bit_reversed_n[2::3], 2) / 2. ** 5 + 0.3) % 1)
+    return r, g, b
+
+
 def plot_results(csv_filename, out_file="", plot_log_y=False):
     """
     Plots benchmark results.
@@ -104,7 +112,6 @@ def plot_results(csv_filename, out_file="", plot_log_y=False):
     if out_file != "window":
         matplotlib.use('Agg')
     import matplotlib.pyplot as plt
-    from matplotlib import colors
     with open(csv_filename) as f:
         # google benchmark writes some non-csv data at beginning
         for line in iter(f.readline, ''):
@@ -126,14 +133,13 @@ def plot_results(csv_filename, out_file="", plot_log_y=False):
 
     ax.set_xlabel("size")
     ax.set_ylabel("time[us]")
-    tableau_colors = list(colors.TABLEAU_COLORS.keys())
     for n, (signature, sub_data) in enumerate(timing_data.groupby("signatures")):
         # conversions to numpy arrays allow us to hide duplicated labels
         ax.plot(numpy.array(sub_data["sizes"]), numpy.array(sub_data["times"]), "x",
-                color=tableau_colors[n % len(tableau_colors)])
+                color=pick_color(n))
         avg_sig_times = sub_data.groupby(by="sizes")["times"].mean().reset_index().sort_values(by="sizes")
         ax.plot(avg_sig_times["sizes"], avg_sig_times["times"], label=signature,
-                color=tableau_colors[n % len(tableau_colors)])
+                color=pick_color(n))
 
     [spine.set_visible(False) for loc, spine in ax.spines.items() if loc in ["top", "right", "left", "bottom"]]
     ax.minorticks_off()
@@ -156,7 +162,6 @@ def plot_compare(csv_filename, reference_csv_filename, out_file="", plot_log_y=F
     if out_file != "window":
         matplotlib.use('Agg')
     from matplotlib import pyplot as plt
-    from matplotlib import colors
 
     with open(csv_filename) as f:
         # google benchmark writes some non-csv data at beginning
@@ -195,14 +200,13 @@ def plot_compare(csv_filename, reference_csv_filename, out_file="", plot_log_y=F
     ax.set_xlabel("size")
     ax.set_ylabel("speedup")
 
-    tableau_colors = list(colors.TABLEAU_COLORS.keys())
     for n, (signature, sub_data) in enumerate(timing_data.groupby("signatures")):
         # conversions to numpy arrays allow us to hide duplicated labels
         ax.plot(numpy.array(sub_data["sizes"]), numpy.array(sub_data["speedup"]), "x",
-                color=tableau_colors[n % len(tableau_colors)])
+                color=pick_color(n))
         avg_sig_speedups = sub_data.groupby(by="sizes")["speedup"].mean().reset_index().sort_values(by="sizes")
         ax.plot(avg_sig_speedups["sizes"], avg_sig_speedups["speedup"], label=signature,
-                color=tableau_colors[n % len(tableau_colors)])
+                color=pick_color(n))
     plt.plot([1, max(timing_data["sizes"])], [1, 1], "--", color="gray")
 
     [spine.set_visible(False) for loc, spine in ax.spines.items() if loc in ["top", "right", "left", "bottom"]]
