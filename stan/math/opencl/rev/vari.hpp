@@ -23,6 +23,7 @@ template <typename T>
 class vari_value<T, require_kernel_expression_lhs_t<T>>
     : public vari_base, public chainable_alloc {
  public:
+  using value_type = T;
   /**
    * The adjoint of this variable, which is the partial derivative
    * of this variable with respect to the root variable.
@@ -116,6 +117,26 @@ class vari_value<T, require_kernel_expression_lhs_t<T>>
   }
 
   /**
+   * Return a constant reference to the value of this vari.
+   *
+   * @return The value of this vari.
+   */
+  inline const auto& val() const { return val_; }
+  inline auto& val_op() { return val_; }
+
+  /**
+   * Return a reference to the derivative of the root expression with
+   * respect to this expression.  This method only works
+   * after one of the `grad()` methods has been
+   * called.
+   *
+   * @return Adjoint for this vari.
+   */
+  inline auto& adj() { return adj_; }
+  inline auto& adj() const { return adj_; }
+  inline auto& adj_op() { return adj_; }
+
+  /**
    * Returns a view into a block of matrix.
    * @param row starting row of the block
    * @param col starting column of the block
@@ -174,7 +195,7 @@ class vari_value<T, require_kernel_expression_lhs_t<T>>
         val_(std::forward<T>(val)) {}
 
  private:
-  template <typename>
+  template <typename, typename>
   friend class var_value;
 };
 

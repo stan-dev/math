@@ -8,9 +8,8 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl_lhs.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <algorithm>
-#include <set>
+#include <map>
 #include <string>
 #include <tuple>
 #include <type_traits>
@@ -57,7 +56,8 @@ class diagonal_
 
   /**
    * Generates kernel code for this and nested expressions.
-   * @param[in,out] generated set of (pointer to) already generated operations
+   * @param[in,out] generated map from (pointer to) already generated operations
+   * to variable names
    * @param name_gen name generator for this kernel
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
@@ -65,14 +65,15 @@ class diagonal_
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts get_kernel_parts(
-      std::set<const operation_cl_base*>& generated, name_generator& name_gen,
+      std::map<const void*, const char*>& generated, name_generator& name_gen,
       const std::string& row_index_name, const std::string& col_index_name,
       bool view_handled) const {
     kernel_parts res{};
     if (generated.count(this) == 0) {
-      generated.insert(this);
+      generated[this] = "";
+      std::map<const void*, const char*> generated2;
       res = this->template get_arg<0>().get_kernel_parts(
-          generated, name_gen, row_index_name, row_index_name, true);
+          generated2, name_gen, row_index_name, row_index_name, true);
       var_name_ = this->template get_arg<0>().var_name_;
     }
     return res;
