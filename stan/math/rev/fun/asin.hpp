@@ -52,7 +52,7 @@ namespace math {
  */
 inline var asin(const var& x) {
   return make_callback_var(std::asin(x.val()), [x](const auto& vi) mutable {
-    x.adj() += vi.adj_ / std::sqrt(1.0 - (x.val() * x.val()));
+    x.adj() += vi.adj() / std::sqrt(1.0 - (x.val() * x.val()));
   });
 }
 
@@ -69,7 +69,7 @@ inline auto asin(const VarMat& x) {
   return make_callback_var(
       x.val().array().asin().matrix(), [x](const auto& vi) mutable {
         x.adj().array()
-            += vi.adj_.array() / (1.0 - (x.val().array().square())).sqrt();
+            += vi.adj().array() / (1.0 - (x.val().array().square())).sqrt();
       });
 }
 

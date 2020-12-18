@@ -45,7 +45,7 @@ namespace math {
  */
 inline var cos(const var& a) {
   return make_callback_var(std::cos(a.val()), [a](const auto& vi) mutable {
-    a.adj() -= vi.adj_ * std::sin(a.val());
+    a.adj() -= vi.adj() * std::sin(a.val());
   });
 }
 
@@ -62,7 +62,7 @@ inline auto cos(const VarMat& a) {
   return make_callback_var(
       a.val().array().cos().matrix(), [a](const auto& vi) mutable {
         a.adj().noalias()
-            -= vi.adj_.cwiseProduct(a.val().array().sin().matrix());
+            -= vi.adj().cwiseProduct(a.val().array().sin().matrix());
       });
 }
 /**

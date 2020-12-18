@@ -14,14 +14,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class tan_vari : public op_v_vari {
- public:
-  explicit tan_vari(vari* avi) : op_v_vari(std::tan(avi->val_), avi) {}
-  void chain() { avi_->adj_ += adj_ * (1.0 + val_ * val_); }
-};
-}  // namespace internal
-
 /**
  * Return the tangent of a radian-scaled variable (cmath).
  *
@@ -65,11 +57,11 @@ inline var tan(const var& a) {
  */
 template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
 inline auto tan(const VarMat& a) {
-  return make_callback_var(a.val().array().tan().matrix(),
-                           [a](const auto& vi) mutable {
-                             a.adj().noalias() += vi.adj().cwiseProduct(
-                                 (1.0 + vi.val().array().square()).matrix());
-                           });
+  return make_callback_var(
+    a.val().array().tan().matrix(), [a](const auto& vi) mutable {
+       a.adj().noalias() += vi.adj().cwiseProduct(
+           (1.0 + vi.val().array().square()).matrix());
+     });
 }
 
 /**

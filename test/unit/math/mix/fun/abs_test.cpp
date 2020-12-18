@@ -71,10 +71,5 @@ TEST(mathMixMatFun, abs_varmat) {
     A(i) = x;
     ++i;
   }
-  stan::test::expect_ad_matvar(f, A);
-  std::vector<Eigen::VectorXd> A_vec;
-  A_vec.push_back(A);
-  A_vec.push_back(A);
-  A_vec.push_back(A);
-  stan::test::expect_ad_matvar(f, A_vec);
+  stan::test::expect_ad_vector_matvar(f, A);
 }

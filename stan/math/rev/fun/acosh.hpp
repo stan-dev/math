@@ -62,7 +62,7 @@ namespace math {
  */
 inline var acosh(const var& x) {
   return make_callback_var(acosh(x.val()), [x](const auto& vi) mutable {
-    x.adj() += vi.adj_ / std::sqrt(x.val() * x.val() - 1.0);
+    x.adj() += vi.adj() / std::sqrt(x.val() * x.val() - 1.0);
   });
 }
 /**
@@ -80,7 +80,7 @@ inline auto acosh(const VarMat& x) {
       x.val().unaryExpr([](const auto x) { return acosh(x); }),
       [x](const auto& vi) mutable {
         x.adj().array()
-            += vi.adj_.array() / (x.val().array().square() - 1.0).sqrt();
+            += vi.adj().array() / (x.val().array().square() - 1.0).sqrt();
       });
 }
 

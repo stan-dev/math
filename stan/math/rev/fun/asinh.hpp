@@ -57,8 +57,8 @@ namespace math {
  * @return Inverse hyperbolic sine of the variable.
  */
 inline var asinh(const var& x) {
-  return make_callback_var(asinh(x.val()), [x](const auto& vi) mutable {
-    x.adj() += vi.adj_ / std::sqrt(x.val() * x.val() + 1.0);
+  return make_callback_var(std::asinh(x.val()), [x](const auto& vi) mutable {
+    x.adj() += vi.adj() / std::sqrt(x.val() * x.val() + 1.0);
   });
 }
 
@@ -75,7 +75,7 @@ inline auto asinh(const VarMat& x) {
       x.val().unaryExpr([](const auto x) { return asinh(x); }),
       [x](const auto& vi) mutable {
         x.adj().array()
-            += vi.adj_.array() / (x.val().array().square() + 1.0).sqrt();
+            += vi.adj().array() / (x.val().array().square() + 1.0).sqrt();
       });
 }
 

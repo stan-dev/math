@@ -43,7 +43,7 @@ namespace math {
  */
 inline var cosh(const var& a) {
   return make_callback_var(std::cosh(a.val()), [a](const auto& vi) mutable {
-    a.adj() += vi.adj_ * std::sinh(a.val());
+    a.adj() += vi.adj() * std::sinh(a.val());
   });
 }
 
@@ -59,7 +59,7 @@ inline auto cosh(const VarMat& a) {
   return make_callback_var(
       a.val().array().cosh().matrix(), [a](const auto& vi) mutable {
         a.adj().noalias()
-            += vi.adj_.cwiseProduct(a.val().array().sinh().matrix());
+            += vi.adj().cwiseProduct(a.val().array().sinh().matrix());
       });
 }
 

@@ -14,14 +14,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class sinh_vari : public op_v_vari {
- public:
-  explicit sinh_vari(vari* avi) : op_v_vari(std::sinh(avi->val_), avi) {}
-  void chain() { avi_->adj_ += adj_ * std::cosh(avi_->val_); }
-};
-}  // namespace internal
-
 /**
  * Return the hyperbolic sine of the specified variable (cmath).
  *
@@ -51,7 +43,7 @@ class sinh_vari : public op_v_vari {
  */
 inline var sinh(const var& a) {
   return make_callback_var(std::sinh(a.val()), [a](const auto& vi) mutable {
-    a.adj() += vi.adj_ * std::cosh(a.val());
+    a.adj() += vi.adj() * std::cosh(a.val());
   });
 }
 
@@ -68,7 +60,7 @@ inline auto sinh(const VarMat& a) {
   return make_callback_var(
       a.val().array().sinh().matrix(), [a](const auto& vi) mutable {
         a.adj().noalias()
-            += vi.adj_.cwiseProduct(a.val().array().cosh().matrix());
+            += vi.adj().cwiseProduct(a.val().array().cosh().matrix());
       });
 }
 

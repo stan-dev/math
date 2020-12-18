@@ -36,7 +36,7 @@ namespace math {
  */
 inline var cbrt(const var& a) {
   return make_callback_var(cbrt(a.val()), [a](const auto& vi) mutable {
-    a.adj() += vi.adj_ / (3.0 * vi.val_ * vi.val_);
+    a.adj() += vi.adj() / (3.0 * vi.val() * vi.val());
   });
 }
 
@@ -51,7 +51,7 @@ inline auto cbrt(const VarMat& a) {
   return make_callback_var(
       a.val().unaryExpr([](const auto x) { return cbrt(x); }),
       [a](const auto& vi) mutable {
-        a.adj().array() += vi.adj_.array() / (3.0 * vi.val_.array().square());
+        a.adj().array() += vi.adj().array() / (3.0 * vi.val().array().square());
       });
 }
 

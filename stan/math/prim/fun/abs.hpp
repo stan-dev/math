@@ -15,7 +15,7 @@ namespace math {
  *
  * @tparam T type of variable
  * @param x argument
- * @return Arc cosine of variable in radians.
+ * @return Absoulte value of variable.
  */
 struct abs_fun {
   template <typename T>
@@ -31,7 +31,7 @@ struct abs_fun {
  *
  * @tparam Container type of container
  * @param x argument
- * @return Arc cosine of each variable in the container, in radians.
+ * @return Absolute value of each variable in the container.
  */
 template <typename Container,
           require_not_container_st<std::is_arithmetic, Container>* = nullptr,
@@ -46,7 +46,7 @@ inline auto abs(const Container& x) {
  *
  * @tparam Container Type of x
  * @param x argument
- * @return Arc cosine of each variable in the container, in radians.
+ * @return Absolute value of each variable in the container.
  */
 template <typename Container,
           require_container_st<std::is_arithmetic, Container>* = nullptr>

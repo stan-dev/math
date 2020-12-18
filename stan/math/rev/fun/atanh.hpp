@@ -57,7 +57,7 @@ namespace math {
    */
 inline var atanh(const var& x) {
   return make_callback_var(atanh(x.val()), [x](const auto& vi) mutable {
-    x.adj() += vi.adj_ / (1.0 - x.val() * x.val());
+    x.adj() += vi.adj() / (1.0 - x.val() * x.val());
   });
 }
 
@@ -74,7 +74,7 @@ inline auto atanh(const VarMat& x) {
   return make_callback_var(
       x.val().unaryExpr([](const auto x) { return atanh(x); }),
       [x](const auto& vi) mutable {
-        x.adj().array() += vi.adj_.array() / (1.0 - x.val().array().square());
+        x.adj().array() += vi.adj().array() / (1.0 - x.val().array().square());
       });
 }
 

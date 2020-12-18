@@ -16,14 +16,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class sin_vari : public op_v_vari {
- public:
-  explicit sin_vari(vari* avi) : op_v_vari(std::sin(avi->val_), avi) {}
-  void chain() { avi_->adj_ += adj_ * std::cos(avi_->val_); }
-};
-}  // namespace internal
-
 /**
  * Return the sine of a radian-scaled variable (cmath).
  *
@@ -53,7 +45,7 @@ class sin_vari : public op_v_vari {
  */
 inline var sin(const var& a) {
   return make_callback_var(std::sin(a.val()), [a](const auto& vi) mutable {
-    a.adj() += vi.adj_ * std::cos(a.val());
+    a.adj() += vi.adj() * std::cos(a.val());
   });
 }
 
@@ -70,7 +62,7 @@ inline auto sin(const VarMat& a) {
   return make_callback_var(
       a.val().array().sin().matrix(), [a](const auto& vi) mutable {
         a.adj().noalias()
-            += vi.adj_.cwiseProduct(a.val().array().cos().matrix());
+            += vi.adj().cwiseProduct(a.val().array().cos().matrix());
       });
 }
 

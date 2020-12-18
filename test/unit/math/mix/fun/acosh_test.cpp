@@ -18,26 +18,19 @@ TEST(mathMixMatFun, acosh) {
 }
 
 TEST(mathMixMatFun, acosh_varmat) {
+  using stan::test::expect_ad_vector_matvar;
+  using stan::test::internal::common_args;
+  using stan::math::vec_concat;
   auto f = [](const auto& x1) {
     using stan::math::acosh;
     return acosh(x1);
   };
-  auto com_args = stan::test::internal::common_args();
-  std::vector<double> extra_args{1.5, 3.2, 5, 10, 12.9};
-  Eigen::VectorXd A(com_args.size() + extra_args.size());
-  int i = 0;
-  for (double x : com_args) {
-    A(i) = x;
-    ++i;
+  std::vector<double> com_args = common_args();
+  std::vector<double> args{1.5, 3.2, 5, 10, 12.9};
+  auto all_args = vec_concat(com_args, args);
+  Eigen::VectorXd A(all_args.size());
+  for (int i = 0; i < all_args.size(); ++i) {
+    A(i) = all_args[i];
   }
-  for (double x : extra_args) {
-    A(i) = x;
-    ++i;
-  }
-  stan::test::expect_ad_matvar(f, A);
-  std::vector<Eigen::MatrixXd> A_vec;
-  A_vec.push_back(A);
-  A_vec.push_back(A);
-  A_vec.push_back(A);
-  stan::test::expect_ad_matvar(f, A_vec);
+  expect_ad_vector_matvar(f, A);
 }

@@ -16,26 +16,19 @@ TEST(mathMixMatFun, atanh) {
 }
 
 TEST(mathMixMatFun, atanh_varmat) {
+  using stan::test::expect_ad_vector_matvar;
+  using stan::test::internal::common_args;
+  using stan::math::vec_concat;
   auto f = [](const auto& x1) {
     using stan::math::atanh;
     return atanh(x1);
   };
-  auto com_args = stan::test::internal::common_args();
-  std::vector<double> extra_args{-0.9, 0.5};
-  Eigen::VectorXd A(com_args.size() + extra_args.size());
-  int i = 0;
-  for (double x : com_args) {
-    A(i) = x;
-    ++i;
+  std::vector<double> com_args = common_args();
+  std::vector<double> args{-0.9, 0.5};
+  auto all_args = vec_concat(com_args, args);
+  Eigen::VectorXd A(all_args.size());
+  for (int i = 0; i < all_args.size(); ++i) {
+    A(i) = all_args[i];
   }
-  for (double x : extra_args) {
-    A(i) = x;
-    ++i;
-  }
-  stan::test::expect_ad_matvar(f, A);
-  std::vector<Eigen::VectorXd> A_vec;
-  A_vec.push_back(A);
-  A_vec.push_back(A);
-  A_vec.push_back(A);
-  stan::test::expect_ad_matvar(f, A_vec);
+  expect_ad_vector_matvar(f, A);
 }
