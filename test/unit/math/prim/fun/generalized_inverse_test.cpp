@@ -9,6 +9,16 @@ TEST(MathMatrixPrim, Zero) {
   EXPECT_EQ(0, ginv.cols());
 }
 
+TEST(MathMatrixPrim, Singular) {
+  using stan::math::generalized_inverse;
+
+  stan::math::matrix_d m1(2, 3);
+  m1 << 1, 2, 1, 2, 4, 2;
+
+  stan::math::matrix_d m2 = m1 * generalized_inverse(m1) * m1;
+  EXPECT_MATRIX_NEAR(m1, m2, 1e-9);
+}
+
 TEST(MathMatrixPrim, Equal1) {
   using stan::math::generalized_inverse;
 
