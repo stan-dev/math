@@ -148,9 +148,9 @@ void compare_cpu_opencl_prim_rev_impl(const Functor& functor,
                                       const Args&... args) {
   prim_rev_argument_combinations(
       [&functor](const auto& args_for_cpu, const auto& args_for_opencl) {
-        auto res_cpu = functor(std::get<Is>(args_for_cpu)...);
+        auto res_cpu = eval(functor(std::get<Is>(args_for_cpu)...));
         auto res_opencl
-            = functor(opencl_argument(std::get<Is>(args_for_opencl))...);
+            = eval(functor(opencl_argument(std::get<Is>(args_for_opencl))...));
         std::string signature = type_name<decltype(args_for_cpu)>().data();
         expect_eq(res_opencl, res_cpu,
                   ("CPU and OpenCL return values do not match for signature "
@@ -198,9 +198,9 @@ void test_opencl_broadcasting_prim_rev_impl(const Functor& functor,
       [&functor, N = std::max({rows(args)...})](const auto& args_broadcast,
                                                 const auto& args_vector) {
         auto res_scalar
-            = functor(opencl_argument(std::get<Is>(args_broadcast))...);
-        auto res_vec = functor(opencl_argument(
-            to_vector_if<Is == I>(std::get<Is>(args_vector), N))...);
+            = eval(functor(opencl_argument(std::get<Is>(args_broadcast))...));
+        auto res_vec = eval(functor(opencl_argument(
+            to_vector_if<Is == I>(std::get<Is>(args_vector), N))...));
         std::string signature = type_name<decltype(args_broadcast)>().data();
         expect_eq(res_vec, res_scalar,
                   ("return values of broadcast and vector arguments do not "
@@ -224,6 +224,30 @@ void test_opencl_broadcasting_prim_rev_impl(const Functor& functor,
 }
 
 }  // namespace internal
+
+/**
+ * Tests that given functor calculates same values and adjoints when given
+ * arguments on CPU and OpenCL device.
+ *
+ * The functor must accept all possible combinations of converted `args`.
+ * All std/row/col vectors and matrices are converted to `matrix_cl`. `double`
+ * scalars can be converted to `var`s or left as `double`s. When converting
+ * scalars to `double` in containers, `var_value<matrix_cl<double>>` is used
+ * instead.
+ *
+ * @tparam Functor type of the functor
+ * @tparam Args types of the arguments
+ * @param fucntor functor to test
+ * @param args arguments to test the functor with. These should be just values
+ * in CPU memory (no vars, no arguments on the OpenCL device).
+ */
+template <typename Functor, typename... Args>
+void compare_cpu_opencl_prim(const Functor& functor, const Args&... args) {
+  auto res_cpu = functor(args...);
+  auto res_opencl = from_matrix_cl(functor(internal::opencl_argument(args)...));
+  stan::test::expect_near_rel("CPU and OpenCL return values do not match!",
+                              res_cpu, res_opencl);
+}
 
 /**
  * Tests that given functor calculates same values and adjoints when given

@@ -2,11 +2,11 @@
 #define STAN_MATH_OPENCL_PRIM_CATEGORICAL_LOGIT_GLM_LPMF_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/opencl/rev/size.hpp>
+#include <stan/math/opencl/prim/size.hpp>
 #include <stan/math/opencl/rev/operands_and_partials.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/copy.hpp>
-#include <stan/math/opencl/multiply.hpp>
+#include <stan/math/opencl/prim/multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/kernels/categorical_logit_glm_lpmf.hpp>
 

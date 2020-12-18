@@ -3,7 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta/is_kernel_expression.hpp>
-#include <stan/math/opencl/multiply.hpp>
+#include <stan/math/opencl/prim/multiply.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
@@ -62,6 +62,55 @@ template <
     require_any_var_t<T_a, T_b>* = nullptr>
 inline auto operator*(const T_a& a, const T_b& b) {
   return multiply(a, b);
+}
+
+/**
+ * Return matrix multiplied by a scalar.
+ *
+ * @tparam T1 type of the scalar
+ * @tparam T2 type of the matrix or expression
+ *
+ * @param a scalar
+ * @param b matrix
+ * @return product of matrix and scalar
+ */
+template <typename T1, typename T2, require_stan_scalar_t<T1>* = nullptr,
+          require_all_nonscalar_prim_or_rev_kernel_expression_t<T2>* = nullptr,
+          require_any_var_t<T1, T2>* = nullptr>
+inline auto multiply(const T1& a, const T2& b) {
+  const arena_t<T1>& a_arena = a;
+  const arena_t<T2>& b_arena = b;
+
+  var_value<matrix_cl<double>> res = value_of(a_arena) * value_of(b_arena);
+
+  reverse_pass_callback([a_arena, b_arena, res]() mutable {
+    if (!is_constant<T1>::value) {
+      auto& a_adj = forward_as<var_value<double>>(a_arena).adj();
+      a_adj = a_adj + sum(elt_multiply(res.adj(), value_of(b_arena)));
+    }
+    if (!is_constant<T2>::value) {
+      auto& b_adj = forward_as<var_value<matrix_cl<double>>>(b_arena).adj();
+      b_adj = b_adj + value_of(a_arena) * res.adj();
+    }
+  });
+  return res;
+}
+
+/**
+ * Return matrix multiplied by a scalar.
+ *
+ * @tparam T1 type of the matrix or expression
+ * @tparam T2 type of the scalar
+ *
+ * @param a matrix
+ * @param b scalar
+ * @return product of matrix and scalar
+ */
+template <typename T1, typename T2, require_stan_scalar_t<T2>* = nullptr,
+          require_all_nonscalar_prim_or_rev_kernel_expression_t<T1>* = nullptr,
+          require_any_var_t<T1, T2>* = nullptr>
+inline auto multiply(const T1& a, const T2& b) {
+  return multiply(b, a);
 }
 
 }  // namespace math

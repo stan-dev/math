@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_OPENCL_MULTIPLY_HPP
-#define STAN_MATH_OPENCL_MULTIPLY_HPP
+#ifndef STAN_MATH_OPENCL_PRIM_MULTIPLY_HPP
+#define STAN_MATH_OPENCL_PRIM_MULTIPLY_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/matrix_cl.hpp>
@@ -9,7 +9,6 @@
 #include <stan/math/opencl/kernels/add.hpp>
 #include <stan/math/opencl/scalar_type.hpp>
 #include <stan/math/opencl/sub_block.hpp>
-#include <stan/math/opencl/zeros.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <algorithm>
@@ -40,12 +39,11 @@ template <typename T1, typename T2,
 inline matrix_cl<return_type_t<T1, T2>> multiply(const T1& A, const T2& B) {
   check_size_match("multiply ((OpenCL))", "A.cols()", A.cols(), "B.rows()",
                    B.rows());
+  if (A.size() == 0 || B.size() == 0) {
+    return constant(0.0, A.rows(), B.cols());
+  }
   matrix_cl<return_type_t<T1, T2>> temp(A.rows(), B.cols(),
                                         either(A.view(), B.view()));
-  if (A.size() == 0 || B.size() == 0) {
-    temp.zeros();
-    return temp;
-  }
   if (A.rows() == 1) {
     const int local_size
         = opencl_kernels::row_vector_matrix_multiply.get_option("LOCAL_SIZE_");
@@ -106,9 +104,40 @@ inline matrix_cl<return_type_t<T1, T2>> multiply(const T1& A, const T2& B) {
  */
 template <typename T_a, typename T_b,
           typename = require_all_kernel_expressions_and_none_scalar_t<T_a, T_b>>
-inline matrix_cl<double> operator*(const T_a& a, const T_b& b) {
+inline matrix_cl<return_type_t<T_a, T_b>> operator*(const T_a& a,
+                                                    const T_b& b) {
   // no need for perfect forwarding as operations are evaluated
   return multiply(as_operation_cl(a).eval(), as_operation_cl(b).eval());
+}
+
+/**
+ * Matrix multiplication of a scalar and a  kernel generator expressions.
+ * @tparam T_a type of scalar
+ * @tparam T_b type of the kernel generator expression
+ * @param a scalar
+ * @param b expression
+ * @return Matrix product of given arguments
+ */
+template <typename T_a, typename T_b, require_stan_scalar_t<T_a>* = nullptr,
+          require_all_kernel_expressions_and_none_scalar_t<T_b>* = nullptr,
+          require_all_not_var_t<T_a, T_b>* = nullptr>
+inline matrix_cl<return_type_t<T_a, T_b>> multiply(const T_a& a, const T_b& b) {
+  return a * b;
+}
+
+/**
+ * Matrix multiplication of a scalar and a  kernel generator expressions.
+ * @tparam T_a type of the kernel generator expression
+ * @tparam T_b type of scalar
+ * @param a expression
+ * @param b scalar
+ * @return Matrix product of given arguments
+ */
+template <typename T_a, typename T_b, require_stan_scalar_t<T_b>* = nullptr,
+          require_all_kernel_expressions_and_none_scalar_t<T_a>* = nullptr,
+          require_all_not_var_t<T_a, T_b>* = nullptr>
+inline matrix_cl<return_type_t<T_a, T_b>> multiply(const T_a& a, const T_b& b) {
+  return a * b;
 }
 
 }  // namespace math

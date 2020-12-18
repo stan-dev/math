@@ -17,12 +17,14 @@ TEST(mathMixCore, operatorSubtractionMatrixSmall) {
   tols.hessian_fvar_hessian_ = 1e-1;
 
   double scalar_a = 10;
-  Eigen::VectorXd vector_v1(1);
-  vector_v1 << 3;
-  Eigen::RowVectorXd row_vector_rv1(1);
-  row_vector_rv1 << -2;
-  Eigen::MatrixXd matrix_m11(1, 1);
-  matrix_m11 << 1.5;
+  Eigen::VectorXd vector_v1(3);
+  vector_v1 << 3, 2, 1;
+  Eigen::RowVectorXd row_vector_rv1(3);
+  row_vector_rv1 << -2, -1, 0;
+  Eigen::MatrixXd matrix_m11(3, 3);
+  for (Eigen::Index i = 0; i < matrix_m11.size(); ++i) {
+    matrix_m11(i) = i;
+  }
   stan::test::expect_ad(tols, f, scalar_a, scalar_a);
   stan::test::expect_ad(tols, f, scalar_a, vector_v1);
   stan::test::expect_ad(tols, f, vector_v1, scalar_a);
@@ -140,4 +142,21 @@ TEST(mathMixCore, operatorSubtractionMatrixFailures) {
   stan::test::expect_ad_matvar(tols, f, u_tr, u);
   stan::test::expect_ad_matvar(tols, f, u, vv);
   stan::test::expect_ad_matvar(tols, f, rvv, u);
+}
+
+TEST(mathMixCore, operatorSubtractionMatrixLinearAccess) {
+  Eigen::MatrixXd matrix_m11(3, 3);
+  for (Eigen::Index i = 0; i < matrix_m11.size(); ++i) {
+    matrix_m11(i) = i;
+  }
+  stan::math::var_value<Eigen::MatrixXd> A(matrix_m11);
+  stan::math::var_value<Eigen::MatrixXd> B
+      = stan::math::subtract(A, A.transpose());
+  B.adj()(2, 0) = 1;
+  stan::math::grad();
+  Eigen::MatrixXd expected_adj = Eigen::MatrixXd::Zero(3, 3);
+  expected_adj(2, 0) = 1;
+  expected_adj(0, 2) = -1;
+  EXPECT_MATRIX_FLOAT_EQ(A.adj(), expected_adj);
+  stan::math::recover_memory();
 }
