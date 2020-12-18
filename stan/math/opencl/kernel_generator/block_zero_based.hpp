@@ -283,7 +283,7 @@ class block_
 };
 
 /**
- * Block of a kernel generator expression. This version of zero-based in
+ * Block of a kernel generator expression. This version uses zero-based  indices in
  * contrast to the 1-based block(), which is exposed to the Stan language.
  *
  * Block operation modifies how its argument is indexed. If a matrix is both an

@@ -23,8 +23,8 @@ namespace math {
  *   vector.
  */
 template <typename Mat,
-          typename = require_any_t<is_matrix<Mat>,
-                                   is_prim_or_rev_kernel_expression<Mat>>>
+          require_any_t<is_matrix<Mat>,
+                                   is_prim_or_rev_kernel_expression<Mat>>* = nullptr>
 inline void check_vector(const char* function, const char* name, const Mat& x) {
   if (x.rows() == 1 || x.cols() == 1) {
     return;

@@ -18,8 +18,8 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if the matrix is not square
  */
 template <typename T_y,
-          typename = require_any_t<is_matrix<T_y>,
-                                   is_prim_or_rev_kernel_expression<T_y>>>
+          require_any_t<is_matrix<T_y>,
+                                   is_prim_or_rev_kernel_expression<T_y>>* = nullptr>
 inline void check_square(const char* function, const char* name, const T_y& y) {
   check_size_match(function, "Expecting a square matrix; rows of ", name,
                    y.rows(), "columns of ", name, y.cols());

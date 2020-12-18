@@ -20,7 +20,7 @@ namespace math {
  * @throw std::out_of_range if n is out of range.
  */
 template <typename T_x,
-          typename = require_nonscalar_prim_or_rev_kernel_expression_t<T_x>>
+          require_nonscalar_prim_or_rev_kernel_expression_t<T_x>* = nullptr>
 inline auto tail(T_x&& x, size_t n) {  // NOLINT
   check_vector("head (OpenCL)", "x", x);
   if (n != 0) {
