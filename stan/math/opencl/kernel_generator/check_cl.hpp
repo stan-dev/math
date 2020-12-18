@@ -7,6 +7,7 @@
 #include <stan/math/opencl/value_type.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl_lhs.hpp>
+#include <stan/math/opencl/kernel_generator/constant.hpp>
 #include <stan/math/opencl/kernel_generator/scalar.hpp>
 #include <map>
 
@@ -52,13 +53,12 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
    */
   check_cl_(const char* function, const char* err_variable, T&& y,
             const char* must_be)
-      : buffer_(3, 1),
+      : buffer_(constant(0, 3, 1)),
         value_(1, 1),
         arg_(std::forward<T>(y)),
         function_(function),
         err_variable_(err_variable),
         must_be_(must_be) {
-    buffer_.zeros();
     buffer_.view(matrix_cl_view::Entire);
   }
 
@@ -120,12 +120,16 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
    * of the argument.
    */
   inline void check_assign_dimensions(int rows, int cols) const {
-    check_size_match("check_cl_.check_assign_dimensions", "Rows of ",
-                     err_variable_, arg_.rows(), "rows of ",
-                     "assigned expression", rows);
-    check_size_match("check_cl_.check_assign_dimensions", "Columns of ",
-                     err_variable_, arg_.cols(), "columns of ",
-                     "assigned expression", cols);
+    if (arg_.rows() != base::dynamic) {
+      check_size_match("check_cl_.check_assign_dimensions", "Rows of ",
+                       err_variable_, arg_.rows(), "rows of ",
+                       "assigned expression", rows);
+    }
+    if (arg_.cols() != base::dynamic) {
+      check_size_match("check_cl_.check_assign_dimensions", "Columns of ",
+                       err_variable_, arg_.cols(), "columns of ",
+                       "assigned expression", cols);
+    }
   }
 
   /**

@@ -8,7 +8,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/opencl.hpp>
+#include <stan/math/opencl/prim.hpp>
 #endif
 
 namespace stan {
@@ -285,11 +285,11 @@ class mdivide_left_tri_vd_vari : public vari {
     } else {
 #endif
       adjA.noalias()
-          = -Map<Matrix<double, R1, C1> >(A_, M_, M_)
+          = -Map<Matrix<double, R1, C1>>(A_, M_, M_)
                  .template triangularView<TriView>()
                  .transpose()
                  .solve(adjC
-                        * Map<Matrix<double, R1, C2> >(C_, M_, N_).transpose());
+                        * Map<Matrix<double, R1, C2>>(C_, M_, N_).transpose());
 #ifdef STAN_OPENCL
     }
 #endif
@@ -387,6 +387,94 @@ mdivide_left_tri(const T1 &A, const T2 &b) {
       = Eigen::Map<matrix_vi>(&(baseVari->variRefC_[0]), b.rows(), b.cols());
 
   return res;
+}
+
+/**
+ * Returns the solution of the system Ax=B when A is triangular.
+ *
+ * This overload handles arguments where one of T1 or T2 are
+ * `var_value<T>` where `T` is an Eigen type. The other type can
+ * also be a `var_value` or it can be a matrix type that inherits
+ * from EigenBase
+ *
+ * @tparam TriView Specifies whether A is upper (Eigen::Upper)
+ * or lower triangular (Eigen::Lower).
+ * @tparam T1 type of the triangular matrix
+ * @tparam T2 type of the right-hand side matrix or vector
+ *
+ * @param A Triangular matrix.
+ * @param B Right hand side matrix or vector.
+ * @return x = A^-1 B, solution of the linear system.
+ * @throws std::domain_error if A is not square or B does not have
+ * as many rows as A has columns.
+ */
+template <Eigen::UpLoType TriView, typename T1, typename T2,
+          require_all_matrix_t<T1, T2> * = nullptr,
+          require_any_var_matrix_t<T1, T2> * = nullptr>
+inline auto mdivide_left_tri(const T1 &A, const T2 &B) {
+  using ret_val_type = plain_type_t<decltype(value_of(A) * value_of(B))>;
+  using ret_type = var_value<ret_val_type>;
+
+  if (A.size() == 0) {
+    return ret_type(ret_val_type(0, B.cols()));
+  }
+
+  check_square("mdivide_left_tri", "A", A);
+  check_multiplicable("mdivide_left_tri", "A", A, "B", B);
+
+  if (!is_constant<T1>::value && !is_constant<T2>::value) {
+    arena_t<promote_scalar_t<var, T1>> arena_A = A;
+    arena_t<promote_scalar_t<var, T2>> arena_B = B;
+    auto arena_A_val = to_arena(arena_A.val());
+
+    arena_t<ret_type> res
+        = arena_A_val.template triangularView<TriView>().solve(arena_B.val());
+
+    reverse_pass_callback([arena_A, arena_B, arena_A_val, res]() mutable {
+      promote_scalar_t<double, T2> adjB
+          = arena_A_val.template triangularView<TriView>().transpose().solve(
+              res.adj());
+
+      arena_B.adj() += adjB;
+      arena_A.adj() -= (adjB * res.val().transpose().eval())
+                           .template triangularView<TriView>();
+    });
+
+    return ret_type(res);
+  } else if (!is_constant<T1>::value) {
+    arena_t<promote_scalar_t<var, T1>> arena_A = A;
+    auto arena_A_val = to_arena(arena_A.val());
+
+    arena_t<ret_type> res
+        = arena_A_val.template triangularView<TriView>().solve(value_of(B));
+
+    reverse_pass_callback([arena_A, arena_A_val, res]() mutable {
+      promote_scalar_t<double, T2> adjB
+          = arena_A_val.template triangularView<TriView>().transpose().solve(
+              res.adj());
+
+      arena_A.adj() -= (adjB * res.val().transpose().eval())
+                           .template triangularView<TriView>();
+    });
+
+    return ret_type(res);
+  } else {
+    arena_t<promote_scalar_t<double, T1>> arena_A = value_of(A);
+    arena_t<promote_scalar_t<var, T2>> arena_B = B;
+
+    arena_t<ret_type> res
+        = arena_A.template triangularView<TriView>().solve(arena_B.val());
+
+    reverse_pass_callback([arena_A, arena_B, res]() mutable {
+      promote_scalar_t<double, T2> adjB
+          = arena_A.template triangularView<TriView>().transpose().solve(
+              res.adj());
+
+      arena_B.adj() += adjB;
+    });
+
+    return ret_type(res);
+  }
 }
 
 }  // namespace math

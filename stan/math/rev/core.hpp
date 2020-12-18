@@ -7,6 +7,7 @@
 #include <stan/math/rev/core/autodiffstackstorage.hpp>
 #include <stan/math/rev/core/build_vari_array.hpp>
 #include <stan/math/rev/core/chainable_alloc.hpp>
+#include <stan/math/rev/core/chainable_object.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
 #include <stan/math/rev/core/count_vars.hpp>
 #include <stan/math/rev/core/callback_vari.hpp>
@@ -53,6 +54,7 @@
 #include <stan/math/rev/core/read_var.hpp>
 #include <stan/math/rev/core/recover_memory.hpp>
 #include <stan/math/rev/core/recover_memory_nested.hpp>
+#include <stan/math/rev/core/scoped_chainablestack.hpp>
 #include <stan/math/rev/core/set_zero_all_adjoints.hpp>
 #include <stan/math/rev/core/set_zero_all_adjoints_nested.hpp>
 #include <stan/math/rev/core/start_nested.hpp>
