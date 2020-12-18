@@ -11,9 +11,9 @@ TEST(mathMixMatFun, tanh) {
 }
 
 TEST(mathMixMatFun, tanh_varmat) {
+  using stan::math::vec_concat;
   using stan::test::expect_ad_vector_matvar;
   using stan::test::internal::common_nonzero_args;
-  using stan::math::vec_concat;
   auto f = [](const auto& x1) {
     using stan::math::tanh;
     return tanh(x1);

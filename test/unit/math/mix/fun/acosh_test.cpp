@@ -18,9 +18,9 @@ TEST(mathMixMatFun, acosh) {
 }
 
 TEST(mathMixMatFun, acosh_varmat) {
+  using stan::math::vec_concat;
   using stan::test::expect_ad_vector_matvar;
   using stan::test::internal::common_args;
-  using stan::math::vec_concat;
   auto f = [](const auto& x1) {
     using stan::math::acosh;
     return acosh(x1);

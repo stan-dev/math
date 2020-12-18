@@ -57,11 +57,11 @@ inline var tan(const var& a) {
  */
 template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
 inline auto tan(const VarMat& a) {
-  return make_callback_var(
-    a.val().array().tan().matrix(), [a](const auto& vi) mutable {
-       a.adj().noalias() += vi.adj().cwiseProduct(
-           (1.0 + vi.val().array().square()).matrix());
-     });
+  return make_callback_var(a.val().array().tan().matrix(),
+                           [a](const auto& vi) mutable {
+                             a.adj().noalias() += vi.adj().cwiseProduct(
+                                 (1.0 + vi.val().array().square()).matrix());
+                           });
 }
 
 /**

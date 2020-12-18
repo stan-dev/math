@@ -23,16 +23,17 @@ TEST(mathMixMatFun, acos) {
 }
 
 TEST(mathMixMatFun, acos_varmat) {
+  using stan::math::vec_concat;
   using stan::test::expect_ad_vector_matvar;
   using stan::test::internal::common_nonzero_args;
-  using stan::math::vec_concat;
   auto f = [](const auto& x1) {
     using stan::math::acos;
     return acos(x1);
   };
   std::vector<double> com_args = common_nonzero_args();
-  std::vector<double> args{-2.2, -0.8, 0.5, 1 + std::numeric_limits<double>::epsilon(), 1.5, 3, 3.4,
-      4};
+  std::vector<double> args{
+      -2.2, -0.8, 0.5, 1 + std::numeric_limits<double>::epsilon(),
+      1.5,  3,    3.4, 4};
   auto all_args = vec_concat(com_args, args);
   Eigen::VectorXd A(all_args.size());
   for (int i = 0; i < all_args.size(); ++i) {
