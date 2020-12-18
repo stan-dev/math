@@ -44,7 +44,9 @@ inline auto generalized_inverse_lambda(T1& G_arena, T2& inv_G) {
  * @return Generalized inverse of the matrix (an empty matrix if the specified
  * matrix has size zero).
  *
- * @note Reverse mode differentiation algorithm reference:
+ * @note For the derivatives of this function to exist the matrix must be
+ * of constant rank. 
+ * Reverse mode differentiation algorithm reference:
  *
  * <ul><li> Golub, G.H. and Pereyra, V. The Differentiation of Pseudo-Inverses
  * and Nonlinear Least Squares Problems Whose Variables Separate. <i>SIAM
