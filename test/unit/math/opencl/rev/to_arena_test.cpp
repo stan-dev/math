@@ -1,5 +1,5 @@
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/rev/opencl.hpp>
+#include <stan/math/opencl/rev.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
@@ -18,6 +18,7 @@ TEST(AgradRev, to_arena_matrix_cl_test) {
   EXPECT_EQ(b.rows(), c.rows());
   EXPECT_EQ(b.cols(), c.cols());
   EXPECT_EQ(b.buffer()(), c.buffer()());
+  stan::math::recover_memory();
 }
 
 TEST(AgradRev, to_arena_kg_expression_test) {
@@ -35,6 +36,7 @@ TEST(AgradRev, to_arena_kg_expression_test) {
   EXPECT_EQ(b.cols(), c.cols());
   EXPECT_EQ(b.buffer()(), c.buffer()());
   EXPECT_TRUE((std::is_same<decltype(b), decltype(c)>::value));
+  stan::math::recover_memory();
 }
 
 TEST(AgradRev, to_arena_var_value_matrix_cl_test) {
@@ -60,6 +62,7 @@ TEST(AgradRev, to_arena_var_value_matrix_cl_test) {
   EXPECT_EQ(b.val().buffer()(), c.val().buffer()());
   EXPECT_EQ(b.adj().buffer()(), c.adj().buffer()());
   EXPECT_TRUE((std::is_same<decltype(b), decltype(c)>::value));
+  stan::math::recover_memory();
 }
 
 #endif

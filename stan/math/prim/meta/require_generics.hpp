@@ -11,6 +11,8 @@ STAN_ADD_REQUIRE_BINARY_INNER(same, std::is_same, require_std);
 
 STAN_ADD_REQUIRE_BINARY(convertible, std::is_convertible, require_std);
 STAN_ADD_REQUIRE_BINARY_INNER(convertible, std::is_convertible, require_std);
+STAN_ADD_REQUIRE_BINARY(assignable, std::is_assignable, require_std);
+STAN_ADD_REQUIRE_BINARY_INNER(assignable, std::is_assignable, require_std);
 
 STAN_ADD_REQUIRE_UNARY(arithmetic, std::is_arithmetic,
                        require_stan_scalar_real);

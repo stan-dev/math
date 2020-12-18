@@ -2,9 +2,11 @@
 #define STAN_MATH_REV_FUN_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/rev/fun/Eigen_NumTraits.hpp>
 
-#include <stan/math/prim.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun.hpp>
+#include <stan/math/prim/functor.hpp>
+#include <stan/math/prim/meta.hpp>
 
 #include <stan/math/rev/fun/LDLT_alloc.hpp>
 #include <stan/math/rev/fun/LDLT_factor.hpp>
@@ -41,6 +43,7 @@
 #include <stan/math/rev/fun/dot_self.hpp>
 #include <stan/math/rev/fun/eigenvalues_sym.hpp>
 #include <stan/math/rev/fun/eigenvectors_sym.hpp>
+#include <stan/math/rev/fun/elt_divide.hpp>
 #include <stan/math/rev/fun/elt_multiply.hpp>
 #include <stan/math/rev/fun/erf.hpp>
 #include <stan/math/rev/fun/erfc.hpp>
@@ -50,6 +53,7 @@
 #include <stan/math/rev/fun/fabs.hpp>
 #include <stan/math/rev/fun/falling_factorial.hpp>
 #include <stan/math/rev/fun/fdim.hpp>
+#include <stan/math/rev/fun/fill.hpp>
 #include <stan/math/rev/fun/floor.hpp>
 #include <stan/math/rev/fun/fma.hpp>
 #include <stan/math/rev/fun/fmax.hpp>
@@ -64,6 +68,7 @@
 #include <stan/math/rev/fun/hypot.hpp>
 #include <stan/math/rev/fun/if_else.hpp>
 #include <stan/math/rev/fun/inc_beta.hpp>
+#include <stan/math/rev/fun/initialize_fill.hpp>
 #include <stan/math/rev/fun/initialize_variable.hpp>
 #include <stan/math/rev/fun/inv.hpp>
 #include <stan/math/rev/fun/inv_Phi.hpp>
@@ -121,7 +126,6 @@
 #include <stan/math/rev/fun/proj.hpp>
 #include <stan/math/rev/fun/quad_form.hpp>
 #include <stan/math/rev/fun/quad_form_sym.hpp>
-#include <stan/math/rev/fun/read_var.hpp>
 #include <stan/math/rev/fun/rising_factorial.hpp>
 #include <stan/math/rev/fun/round.hpp>
 #include <stan/math/rev/fun/rows_dot_product.hpp>
@@ -149,7 +153,7 @@
 #include <stan/math/rev/fun/trace_quad_form.hpp>
 #include <stan/math/rev/fun/trigamma.hpp>
 #include <stan/math/rev/fun/trunc.hpp>
-#include <stan/math/rev/fun/typedefs.hpp>
+#include <stan/math/rev/fun/unit_vector_constrain.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/fun/value_of_rec.hpp>
 #include <stan/math/rev/fun/variance.hpp>

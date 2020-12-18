@@ -9,8 +9,7 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl_lhs.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
-#include <set>
+#include <map>
 #include <string>
 #include <tuple>
 #include <type_traits>
@@ -41,6 +40,7 @@ class block_
 
  protected:
   int start_row_, start_col_, rows_, cols_;
+  mutable std::map<const void*, const char*> generated_;
 
  public:
   /**
@@ -90,6 +90,39 @@ class block_
   }
 
   /**
+   * Generates kernel code for this and nested expressions.
+   * @param[in,out] generated map from (pointer to) already generated operations
+   * to variable names
+   * @param name_gen name generator for this kernel
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
+   * @param view_handled whether caller already handled matrix view
+   * @return part of kernel with code for this and nested expressions
+   */
+  inline kernel_parts get_kernel_parts(
+      std::map<const void*, const char*>& generated, name_generator& name_gen,
+      const std::string& row_index_name, const std::string& col_index_name,
+      bool view_handled) const {
+    kernel_parts res{};
+    if (generated.count(this) == 0) {
+      this->var_name_ = name_gen.generate();
+      generated[this] = "";
+      generated_.clear();
+      std::string row_index_name_arg = row_index_name;
+      std::string col_index_name_arg = col_index_name;
+      modify_argument_indices(row_index_name_arg, col_index_name_arg);
+      res = this->template get_arg<0>().get_kernel_parts(
+          generated_, name_gen, row_index_name_arg, col_index_name_arg,
+          view_handled);
+      res += this->generate(row_index_name, col_index_name, view_handled,
+                            this->template get_arg<0>().var_name_);
+      res.body = res.body_prefix + res.body;
+      res.body_prefix = "";
+    }
+    return res;
+  }
+
+  /**
    * Generates kernel code for this expression.
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
@@ -121,6 +154,39 @@ class block_
   }
 
   /**
+   * Generates kernel code for this expression if it appears on the left hand
+   * side of an assignment.
+   * @param[in,out] generated map from (pointer to) already generated operations
+   * to variable names
+   * @param name_gen name generator for this kernel
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
+   * @return part of kernel with code for this expressions
+   */
+  inline kernel_parts get_kernel_parts_lhs(
+      std::map<const void*, const char*>& generated, name_generator& name_gen,
+      const std::string& row_index_name,
+      const std::string& col_index_name) const {
+    if (generated.count(this) == 0) {
+      this->var_name_ = name_gen.generate();
+      generated_.clear();
+    }
+    std::string row_index_name_arg = row_index_name;
+    std::string col_index_name_arg = col_index_name;
+    modify_argument_indices(row_index_name_arg, col_index_name_arg);
+    kernel_parts res = this->template get_arg<0>().get_kernel_parts_lhs(
+        generated_, name_gen, row_index_name_arg, col_index_name_arg);
+    res += this->derived().generate_lhs(row_index_name, col_index_name,
+                                        this->template get_arg<0>().var_name_);
+    if (generated.count(this) == 0) {
+      generated[this] = "";
+    } else {
+      res.args = "";
+    }
+    return res;
+  }
+
+  /**
    * Generates kernel code for this and nested expressions if this expression
    * appears on the left hand side of an assignment.
    * @param i row index variable name
@@ -138,17 +204,18 @@ class block_
 
   /**
    * Sets kernel arguments for this and nested expressions.
-   * @param[in,out] generated set of expressions that already set their kernel
+   * @param[in,out] generated map of expressions that already set their kernel
    * arguments
    * @param kernel kernel to set arguments on
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::set<const operation_cl_base*>& generated,
+  inline void set_args(std::map<const void*, const char*>& generated,
                        cl::Kernel& kernel, int& arg_num) const {
     if (generated.count(this) == 0) {
-      generated.insert(this);
-      this->template get_arg<0>().set_args(generated, kernel, arg_num);
+      generated[this] = "";
+      std::map<const void*, const char*> generated2;
+      this->template get_arg<0>().set_args(generated2, kernel, arg_num);
       kernel.setArg(arg_num++, start_row_);
       kernel.setArg(arg_num++, start_col_);
     }

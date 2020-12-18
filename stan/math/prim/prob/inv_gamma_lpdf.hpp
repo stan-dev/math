@@ -35,7 +35,9 @@ namespace math {
  * @tparam T_shape Type of shape.
  * @tparam T_scale Type of scale.
  */
-template <bool propto, typename T_y, typename T_shape, typename T_scale>
+template <bool propto, typename T_y, typename T_shape, typename T_scale,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_shape, T_scale>* = nullptr>
 return_type_t<T_y, T_shape, T_scale> inv_gamma_lpdf(const T_y& y,
                                                     const T_shape& alpha,
                                                     const T_scale& beta) {

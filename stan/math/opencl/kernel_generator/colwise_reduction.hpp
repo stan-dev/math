@@ -9,9 +9,8 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <stan/math/opencl/kernel_generator/rowwise_reduction.hpp>
-#include <set>
+#include <map>
 #include <string>
 #include <type_traits>
 #include <utility>
@@ -61,7 +60,8 @@ class colwise_reduction
 
   /**
    * Generates kernel code for assigning this expression into result expression.
-   * @param[in,out] generated set of (pointer to) already generated operations
+   * @param[in,out] generated map from (pointer to) already generated operations
+   * to variable names
    * @param ng name generator for this kernel
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
@@ -70,7 +70,7 @@ class colwise_reduction
    */
   template <typename T_result>
   kernel_parts get_whole_kernel_parts(
-      std::set<const operation_cl_base*>& generated, name_generator& ng,
+      std::map<const void*, const char*>& generated, name_generator& ng,
       const std::string& row_index_name, const std::string& col_index_name,
       const T_result& result) const {
     kernel_parts parts = derived().get_kernel_parts(
@@ -185,11 +185,11 @@ class colwise_sum_ : public colwise_reduction<colwise_sum_<T>, T, sum_op> {
  * @param a expression to reduce
  * @return sum
  */
-template <typename T, typename = require_all_kernel_expressions_t<T>>
+template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
 inline auto colwise_sum(T&& a) {
   auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
-  return colwise_sum_<std::remove_reference_t<decltype(arg_copy)>>(
-      std::move(arg_copy));
+  return colwise_sum_<as_operation_cl_t<T>>(
+      as_operation_cl(std::forward<T>(a)));
 }
 
 /**
@@ -232,11 +232,11 @@ class colwise_max_ : public colwise_reduction<
  * @param a expression to reduce
  * @return max
  */
-template <typename T, typename = require_all_kernel_expressions_t<T>>
+template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
 inline auto colwise_max(T&& a) {
   auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
-  return colwise_max_<std::remove_reference_t<decltype(arg_copy)>>(
-      std::move(arg_copy));
+  return colwise_max_<as_operation_cl_t<T>>(
+      as_operation_cl(std::forward<T>(a)));
 }
 
 /**
@@ -279,11 +279,10 @@ class colwise_min_ : public colwise_reduction<
  * @param a expression to reduce
  * @return min
  */
-template <typename T, typename = require_all_kernel_expressions_t<T>>
+template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
 inline auto colwise_min(T&& a) {
-  auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
-  return colwise_min_<std::remove_reference_t<decltype(arg_copy)>>(
-      std::move(arg_copy));
+  return colwise_min_<as_operation_cl_t<T>>(
+      as_operation_cl(std::forward<T>(a)));
 }
 /** @}*/
 }  // namespace math

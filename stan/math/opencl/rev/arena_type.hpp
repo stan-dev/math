@@ -4,7 +4,7 @@
 
 #include <stan/math/rev/meta/arena_type.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
-#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
+#include <stan/math/prim/meta/is_kernel_expression.hpp>
 #include <stan/math/opencl/rev/arena_matrix_cl.hpp>
 
 namespace stan {
@@ -16,9 +16,10 @@ struct arena_type_impl<stan::math::matrix_cl<T>> {
 };
 
 template <typename T>
-struct arena_type_impl<T,
-                       require_all_t<is_kernel_expression_and_not_scalar<T>,
-                                     bool_constant<!is_matrix_cl<T>::value>>> {
+struct arena_type_impl<
+    T, require_all_t<is_kernel_expression_and_not_scalar<T>,
+                     bool_constant<!is_matrix_cl<T>::value>,
+                     bool_constant<!is_arena_matrix_cl<T>::value>>> {
   using type =
       typename arena_type_impl<stan::math::matrix_cl<value_type_t<T>>>::type;
 };

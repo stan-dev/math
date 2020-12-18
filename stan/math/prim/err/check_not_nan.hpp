@@ -1,8 +1,12 @@
 #ifndef STAN_MATH_PRIM_ERR_CHECK_NOT_NAN_HPP
 #define STAN_MATH_PRIM_ERR_CHECK_NOT_NAN_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/elementwise_check.hpp>
-#include <stan/math/prim/err/check_not_nan_screen.hpp>
+#include <stan/math/prim/fun/get.hpp>
+#include <stan/math/prim/fun/is_nan.hpp>
+#include <stan/math/prim/fun/size.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 
 namespace stan {
 namespace math {
@@ -21,10 +25,8 @@ namespace math {
 template <typename T_y>
 inline void check_not_nan(const char* function, const char* name,
                           const T_y& y) {
-  if (check_not_nan_screen(y)) {
-    auto is_good = [](const auto& y) { return !std::isnan(y); };
-    elementwise_check(is_good, function, name, y, ", but must not be nan!");
-  }
+  elementwise_check([](double x) { return !std::isnan(x); }, function, name, y,
+                    "not nan");
 }
 
 }  // namespace math
