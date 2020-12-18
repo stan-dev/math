@@ -58,8 +58,7 @@ template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
 inline auto cosh(const VarMat& a) {
   return make_callback_var(
       a.val().array().cosh().matrix(), [a](const auto& vi) mutable {
-        a.adj().noalias()
-            += vi.adj().cwiseProduct(a.val().array().sinh().matrix());
+        a.adj() += vi.adj().cwiseProduct(a.val().array().sinh().matrix());
       });
 }
 
