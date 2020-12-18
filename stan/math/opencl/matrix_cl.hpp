@@ -471,7 +471,7 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
    * Destructor waits for write events to prevent any kernels from writing
    * memory that has already been reused.
    */
-  ~matrix_cl() { wait_for_write_events(); }
+  ~matrix_cl() { wait_for_read_write_events(); }
 
  private:
   /**
