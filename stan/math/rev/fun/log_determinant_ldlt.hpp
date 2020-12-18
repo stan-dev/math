@@ -56,23 +56,21 @@ var log_determinant_ldlt(const LDLT_factor<var, R, C> &A) {
  * @param A an LDLT_factor2
  * @return ln(det(A))
  */
-template <typename T, bool alloc_in_arena,
-	  require_rev_matrix_t<T>* = nullptr>
+template <typename T, bool alloc_in_arena, require_rev_matrix_t<T> * = nullptr>
 var log_determinant_ldlt(LDLT_factor2<T, alloc_in_arena> &A) {
   if (A.matrix().size() == 0) {
     return 0;
   }
-  
+
   var log_det = sum(log(A.ldlt().vectorD().array()));
 
-  arena_t<Eigen::MatrixXd> arena_A_inv(A.matrix().rows(),
-				       A.matrix().cols());
+  arena_t<Eigen::MatrixXd> arena_A_inv(A.matrix().rows(), A.matrix().cols());
 
   arena_A_inv.setIdentity();
   A.ldlt().solveInPlace(arena_A_inv);
 
   reverse_pass_callback([A, log_det, arena_A_inv]() mutable {
-    if(is_var_matrix<T>::value) {
+    if (is_var_matrix<T>::value) {
       A.matrix().adj().noalias() += log_det.adj() * arena_A_inv;
     } else {
       A.matrix().adj() += log_det.adj() * arena_A_inv;
@@ -81,7 +79,7 @@ var log_determinant_ldlt(LDLT_factor2<T, alloc_in_arena> &A) {
 
   return log_det;
 }
-  
+
 }  // namespace math
 }  // namespace stan
 #endif

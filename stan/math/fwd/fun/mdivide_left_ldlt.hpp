@@ -24,8 +24,10 @@ namespace math {
  */
 template <bool alloc_on_stack, typename EigMat,
           require_eigen_vt<is_fvar, EigMat>* = nullptr>
-inline Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, EigMat::ColsAtCompileTime>
-mdivide_left_ldlt(LDLT_factor2<Eigen::MatrixXd, alloc_on_stack>& A, const EigMat& b) {
+inline Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic,
+                     EigMat::ColsAtCompileTime>
+mdivide_left_ldlt(LDLT_factor2<Eigen::MatrixXd, alloc_on_stack>& A,
+                  const EigMat& b) {
   using T = typename value_type_t<EigMat>::Scalar;
   constexpr int R2 = EigMat::RowsAtCompileTime;
   constexpr int C2 = EigMat::ColsAtCompileTime;

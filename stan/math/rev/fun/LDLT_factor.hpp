@@ -55,7 +55,7 @@ class LDLT_factor<var, R, C> {
    */
   LDLT_factor() : alloc_(new LDLT_alloc<R, C>()) {}
 
-  explicit LDLT_factor(const Eigen::Matrix<var, R, C> &A)
+  explicit LDLT_factor(const Eigen::Matrix<var, R, C>& A)
       : alloc_(new LDLT_alloc<R, C>()) {
     compute(A);
   }
@@ -68,7 +68,7 @@ class LDLT_factor<var, R, C> {
    *
    * @param A A symmetric positive definite matrix to factorize
    */
-  inline void compute(const Eigen::Matrix<var, R, C> &A) {
+  inline void compute(const Eigen::Matrix<var, R, C>& A) {
     check_square("comute", "A", A);
     alloc_->compute(A);
   }
@@ -86,15 +86,15 @@ class LDLT_factor<var, R, C> {
  */
 #if EIGEN_VERSION_AT_LEAST(3, 3, 0)
   template <typename Rhs>
-  inline const Eigen::Solve<Eigen::LDLT<Eigen::Matrix<double, R, C> >, Rhs>
-  solve(const Eigen::MatrixBase<Rhs> &b) const {
+  inline const Eigen::Solve<Eigen::LDLT<Eigen::Matrix<double, R, C>>, Rhs>
+  solve(const Eigen::MatrixBase<Rhs>& b) const {
     return alloc_->ldlt_.solve(b);
   }
 #else
   template <typename Rhs>
   inline const Eigen::internal::solve_retval<
-      Eigen::LDLT<Eigen::Matrix<double, R, C> >, Rhs>
-  solve(const Eigen::MatrixBase<Rhs> &b) const {
+      Eigen::LDLT<Eigen::Matrix<double, R, C>>, Rhs>
+  solve(const Eigen::MatrixBase<Rhs>& b) const {
     return alloc_->ldlt_.solve(b);
   }
 #endif
@@ -136,83 +136,69 @@ class LDLT_factor<var, R, C> {
    * factorization is required during the chain() calls which happen
    * after an LDLT_factor object will most likely have been destroyed.
    */
-  LDLT_alloc<R, C> *alloc_;
+  LDLT_alloc<R, C>* alloc_;
 };
 
 template <typename T>
 class LDLT_factor2<T, true> {
-private:
+ private:
   using ldlt_type = Eigen::LDLT<T>;
   ldlt_type* ldlt_ptr_;
-public:
-  template <typename S,
-	    require_eigen_t<S>* = nullptr>
-  LDLT_factor2(const S& matrix) :
-    ldlt_ptr_(make_chainable_ptr(matrix.ldlt())) {}
 
-  const auto& matrix() const {
-    return ldlt_ptr_->matrixLDLT();
-  }
+ public:
+  template <typename S, require_eigen_t<S>* = nullptr>
+  LDLT_factor2(const S& matrix)
+      : ldlt_ptr_(make_chainable_ptr(matrix.ldlt())) {}
 
-  const auto& ldlt() const {
-    return *ldlt_ptr_;
-  }
+  const auto& matrix() const { return ldlt_ptr_->matrixLDLT(); }
+
+  const auto& ldlt() const { return *ldlt_ptr_; }
 };
-  
+
 template <>
 class LDLT_factor2<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>, true> {
-private:
+ private:
   arena_t<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> matrix_;
   Eigen::LDLT<Eigen::MatrixXd>* ldlt_ptr_;
-public:
-  template <typename S,
-	    require_eigen_vt<is_var, S>* = nullptr>
-  LDLT_factor2(const S& matrix) :
-    matrix_(matrix),
-    ldlt_ptr_(make_chainable_ptr(matrix.val().ldlt())) {}
 
-  auto& matrix() {
-    return matrix_;
-  }
+ public:
+  template <typename S, require_eigen_vt<is_var, S>* = nullptr>
+  LDLT_factor2(const S& matrix)
+      : matrix_(matrix), ldlt_ptr_(make_chainable_ptr(matrix.val().ldlt())) {}
 
-  auto& ldlt() {
-    return *ldlt_ptr_;
-  }
+  auto& matrix() { return matrix_; }
+
+  auto& ldlt() { return *ldlt_ptr_; }
 };
 
 template <>
 class LDLT_factor2<var_value<Eigen::MatrixXd>, true> {
-private:
+ private:
   var_value<Eigen::MatrixXd> matrix_;
   Eigen::LDLT<Eigen::MatrixXd>* ldlt_ptr_;
-public:
-  template <typename S,
-	    require_var_matrix_t<S>* = nullptr>
-  LDLT_factor2(const S& matrix) :
-    matrix_(matrix), ldlt_ptr_(make_chainable_ptr(matrix.val().ldlt())) {}
 
-  auto& matrix() {
-    return matrix_;
-  }
+ public:
+  template <typename S, require_var_matrix_t<S>* = nullptr>
+  LDLT_factor2(const S& matrix)
+      : matrix_(matrix), ldlt_ptr_(make_chainable_ptr(matrix.val().ldlt())) {}
 
-  auto& ldlt() {
-    return *ldlt_ptr_;
-  }
+  auto& matrix() { return matrix_; }
+
+  auto& ldlt() { return *ldlt_ptr_; }
 };
 
-  /*template <typename T,
-	  // require_eigen_vt<is_var, t>* = nullptr <-- this line instead of the next two doesn't work
-	  require_vt_var<T>* = nullptr,
-	  require_eigen_t<T>* = nullptr>
-inline auto make_ldlt_factor(const T& A) {
-  return LDLT_factor<value_type_t<T>, T::RowsAtCompileTime, T::ColsAtCompileTime>(A);
-  }*/
+/*template <typename T,
+        // require_eigen_vt<is_var, t>* = nullptr <-- this line instead of the
+next two doesn't work require_vt_var<T>* = nullptr, require_eigen_t<T>* =
+nullptr> inline auto make_ldlt_factor(const T& A) { return
+LDLT_factor<value_type_t<T>, T::RowsAtCompileTime, T::ColsAtCompileTime>(A);
+}*/
 
-  /*template <typename T,
-	  require_rev_matrix_t<T>* = nullptr>
+/*template <typename T,
+        require_rev_matrix_t<T>* = nullptr>
 inline auto make_ldlt_factor(const T& A) {
-  return LDLT_factor2<T, void>(A);
-  }*/
+return LDLT_factor2<T, void>(A);
+}*/
 
 }  // namespace math
 }  // namespace stan

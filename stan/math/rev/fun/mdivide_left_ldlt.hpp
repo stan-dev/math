@@ -25,7 +25,7 @@ class mdivide_left_ldlt_alloc : public chainable_alloc {
    * for mdivide_left_ldlt(ldltA, b) when ldltA is a LDLT_factor<double>.
    * The pointer is shared with the LDLT_factor<double> class.
    **/
-  std::shared_ptr<Eigen::LDLT<Eigen::Matrix<double, R1, C1> > > ldltP_;
+  std::shared_ptr<Eigen::LDLT<Eigen::Matrix<double, R1, C1>>> ldltP_;
   Eigen::Matrix<double, R2, C2> C_;
 };
 
@@ -294,15 +294,17 @@ inline Eigen::Matrix<var, R1, EigMat::ColsAtCompileTime> mdivide_left_ldlt(
  * @throws std::domain_error if rows of B don't match the size of A.
  */
 template <typename T1, bool alloc_in_arena, typename T2,
-	  require_all_matrix_t<T1, T2>* = nullptr,
-          require_any_st_var<T1, T2>* = nullptr>
-inline auto mdivide_left_ldlt(LDLT_factor2<T1, alloc_in_arena>& A, const T2& B) {
-  using ret_val_type = Eigen::Matrix<double, Eigen::Dynamic, T2::ColsAtCompileTime>;
-  using ret_type = promote_var_matrix_t<ret_val_type, T1,  T2>;
+          require_all_matrix_t<T1, T2> * = nullptr,
+          require_any_st_var<T1, T2> * = nullptr>
+inline auto mdivide_left_ldlt(LDLT_factor2<T1, alloc_in_arena> &A,
+                              const T2 &B) {
+  using ret_val_type
+      = Eigen::Matrix<double, Eigen::Dynamic, T2::ColsAtCompileTime>;
+  using ret_type = promote_var_matrix_t<ret_val_type, T1, T2>;
 
   check_multiplicable("mdivide_left_ldlt", "A", A.matrix().val(), "B", B);
 
-  const auto& B_ref = to_ref(B);
+  const auto &B_ref = to_ref(B);
 
   if (A.matrix().size() == 0) {
     return ret_type(ret_val_type(0, B.cols()));
@@ -315,7 +317,8 @@ inline auto mdivide_left_ldlt(LDLT_factor2<T1, alloc_in_arena>& A, const T2& B) 
     reverse_pass_callback([A, arena_B, res]() mutable {
       promote_scalar_t<double, T2> adjB = A.ldlt().solve(res.adj());
 
-      forward_as<promote_scalar_t<var, T1>>(A.matrix()).adj() -= adjB * res.val().transpose().eval();
+      forward_as<promote_scalar_t<var, T1>>(A.matrix()).adj()
+          -= adjB * res.val().transpose().eval();
       arena_B.adj() += adjB;
     });
 
@@ -326,7 +329,8 @@ inline auto mdivide_left_ldlt(LDLT_factor2<T1, alloc_in_arena>& A, const T2& B) 
     reverse_pass_callback([A, res]() mutable {
       promote_scalar_t<double, T2> adjB = A.ldlt().solve(res.adj());
 
-      forward_as<promote_scalar_t<var, T1>>(A.matrix()).adj() -= adjB * res.val().transpose().eval();
+      forward_as<promote_scalar_t<var, T1>>(A.matrix()).adj()
+          -= adjB * res.val().transpose().eval();
     });
 
     return ret_type(res);

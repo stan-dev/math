@@ -2,7 +2,8 @@
 
 TEST(MathMixMatFun, mdivideLeftLdlt) {
   auto f = [](const auto& x, const auto& y) {
-    auto ldlt = stan::math::make_ldlt_factor<decltype(x), decltype(y)>(stan::math::multiply(0.5, x + x.transpose()));
+    auto ldlt = stan::math::make_ldlt_factor<decltype(x), decltype(y)>(
+        stan::math::multiply(0.5, x + x.transpose()));
     return stan::math::mdivide_left_ldlt(ldlt, y);
   };
 
