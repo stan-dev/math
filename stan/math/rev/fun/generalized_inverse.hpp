@@ -45,7 +45,7 @@ inline auto generalized_inverse_lambda(T1& G_arena, T2& inv_G) {
  * matrix has size zero).
  *
  * @note For the derivatives of this function to exist the matrix must be
- * of constant rank. 
+ * of constant rank.
  * Reverse mode differentiation algorithm reference:
  *
  * <ul><li> Golub, G.H. and Pereyra, V. The Differentiation of Pseudo-Inverses
