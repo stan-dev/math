@@ -54,7 +54,8 @@ inline auto singular_values_U(const EigMat& m) {
   }
 
   auto arena_Fp = to_arena(Fp);
-  auto arena_U = to_arena(svd.matrixU());
+  //auto arena_U = to_arena(svd.matrixU());
+  arena_t<ret_type> arena_U = (svd.matrixU());
   auto arena_V = to_arena(svd.matrixV());
 
 
