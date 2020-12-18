@@ -4,11 +4,10 @@
 
 #include <stan/math/opencl/prim/size.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
+#include <stan/math/prim/err/check_size_match.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
-#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/vec_concat.hpp>
 #include <CL/cl2.hpp>
@@ -53,8 +52,6 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
   using Scalar = T;  // Underlying type of the matrix
   using type = T;    // Underlying type of the matrix
   // Forward declare the methods that work in place on the matrix
-  template <matrix_cl_view matrix_view = matrix_cl_view::Entire>
-  inline void zeros();
   template <matrix_cl_view matrix_view = matrix_cl_view::Entire>
   inline void zeros_strict_tri();
   template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
@@ -468,6 +465,13 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
   template <typename Expr,
             require_all_kernel_expressions_and_none_scalar_t<Expr>* = nullptr>
   matrix_cl<T>& operator=(const Expr& expression);
+
+  /**
+    Evaluates `this`. This is a no-op.
+    @return `*this`
+    */
+  const matrix_cl<T>& eval() const& { return *this; }
+  matrix_cl<T> eval() && { return std::move(*this); }
 
  private:
   /**

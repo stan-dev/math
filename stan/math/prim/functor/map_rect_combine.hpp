@@ -34,10 +34,11 @@ namespace internal {
  * @tparam T_shared_param type of shared parameters
  * @tparam T_job_param type of job specific parameters
  */
-template <typename F, typename T_shared_param, typename T_job_param>
+template <typename F, typename T_shared_param, typename T_job_param,
+          require_eigen_col_vector_t<T_shared_param>* = nullptr>
 class map_rect_combine {
   using ops_partials_t
-      = operands_and_partials<Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>,
+      = operands_and_partials<T_shared_param,
                               Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>;
   std::vector<ops_partials_t> ops_partials_;
 
@@ -51,7 +52,7 @@ class map_rect_combine {
   map_rect_combine()
       : ops_partials_(), num_shared_operands_(0), num_job_operands_(0) {}
   map_rect_combine(
-      const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
+      const T_shared_param& shared_params,
       const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>&
           job_params)
       : ops_partials_(),

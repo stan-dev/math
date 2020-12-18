@@ -24,36 +24,50 @@ TEST_F(agrad_distributions_multi_normal, Propto) {
   expect_propto_multi_normal_log(to_var(y), to_var(mu), to_var(Sigma),
                                  to_var(y2), to_var(mu2), to_var(Sigma2),
                                  "All vars: y, mu, sigma");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal, ProptoY) {
   using stan::math::to_var;
   expect_propto_multi_normal_log(to_var(y), mu, Sigma, to_var(y2), mu, Sigma,
                                  "var: y");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal, ProptoYMu) {
   using stan::math::to_var;
   expect_propto_multi_normal_log(to_var(y), to_var(mu), Sigma, to_var(y2),
                                  to_var(mu2), Sigma, "var: y and mu");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal, ProptoYSigma) {
   using stan::math::to_var;
   expect_propto_multi_normal_log(to_var(y), mu, to_var(Sigma), to_var(y2), mu,
                                  to_var(Sigma2), "var: y and sigma");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal, ProptoMu) {
   using stan::math::to_var;
   expect_propto_multi_normal_log(y, to_var(mu), Sigma, y, to_var(mu2), Sigma,
                                  "var: mu");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal, ProptoMuSigma) {
   using stan::math::to_var;
   expect_propto_multi_normal_log(y, to_var(mu), to_var(Sigma), y, to_var(mu2),
                                  to_var(Sigma2), "var: mu and sigma");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal, ProptoSigma) {
   using stan::math::to_var;
   expect_propto_multi_normal_log(y, mu, to_var(Sigma), y, mu, to_var(Sigma2),
                                  "var: sigma");
+
+  stan::math::recover_memory();
 }
 
 TEST_F(agrad_distributions_multi_normal_multi_row, Propto) {
@@ -61,36 +75,50 @@ TEST_F(agrad_distributions_multi_normal_multi_row, Propto) {
   expect_propto_multi_normal_log(to_var(y), to_var(mu), to_var(Sigma),
                                  to_var(y2), to_var(mu2), to_var(Sigma2),
                                  "All vars: y, mu, sigma");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal_multi_row, ProptoY) {
   using stan::math::to_var;
   expect_propto_multi_normal_log(to_var(y), mu, Sigma, to_var(y2), mu, Sigma,
                                  "var: y");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal_multi_row, ProptoYMu) {
   using stan::math::to_var;
   expect_propto_multi_normal_log(to_var(y), to_var(mu), Sigma, to_var(y2),
                                  to_var(mu2), Sigma, "var: y and mu");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal_multi_row, ProptoYSigma) {
   using stan::math::to_var;
   expect_propto_multi_normal_log(to_var(y), mu, to_var(Sigma), to_var(y2), mu,
                                  to_var(Sigma2), "var: y and sigma");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal_multi_row, ProptoMu) {
   using stan::math::to_var;
   expect_propto_multi_normal_log(y, to_var(mu), Sigma, y, to_var(mu2), Sigma,
                                  "var: mu");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal_multi_row, ProptoMuSigma) {
   using stan::math::to_var;
   expect_propto_multi_normal_log(y, to_var(mu), to_var(Sigma), y, to_var(mu2),
                                  to_var(Sigma2), "var: mu and sigma");
+
+  stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_normal_multi_row, ProptoSigma) {
   using stan::math::to_var;
   expect_propto_multi_normal_log(y, mu, to_var(Sigma), y, mu, to_var(Sigma2),
                                  "var: sigma");
+
+  stan::math::recover_memory();
 }
 
 TEST(ProbDistributionsMultiNormal, MultiNormalVar) {
@@ -104,6 +132,8 @@ TEST(ProbDistributionsMultiNormal, MultiNormalVar) {
   Matrix<var, Dynamic, Dynamic> Sigma(3, 3);
   Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
   EXPECT_FLOAT_EQ(-11.73908, stan::math::multi_normal_log(y, mu, Sigma).val());
+
+  stan::math::recover_memory();
 }
 TEST(ProbDistributionsMultiNormal, MultiNormalGradientUnivariate) {
   using Eigen::Dynamic;
@@ -170,6 +200,8 @@ TEST(ProbDistributionsMultiNormal, MultiNormalGradientUnivariate) {
       = (multi_normal_log(y, mu, Sigma_p) - multi_normal_log(y, mu, Sigma_m))
         / (2 * epsilon);
   EXPECT_FLOAT_EQ(grad_diff, grad[2]);
+
+  stan::math::recover_memory();
 }
 
 struct multi_normal_fun {
@@ -226,6 +258,8 @@ TEST(ProbDistributionsMultiNormal, TestGradFunctional) {
   u[2] = 0.48;
 
   test_grad(multi_normal_fun(1), u);
+
+  stan::math::recover_memory();
 }
 
 template <int is_row_vec_y, int is_row_vec_mu>
@@ -440,4 +474,6 @@ TEST(ProbDistributionsMultiNormal, TestGradFunctionalVectorized) {
   test_all_multi_normal2<1, -1>();
   test_all_multi_normal2<-1, 1>();
   test_all_multi_normal2<-1, -1>();
+
+  stan::math::recover_memory();
 }

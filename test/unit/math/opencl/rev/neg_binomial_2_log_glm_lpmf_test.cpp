@@ -1,5 +1,5 @@
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/rev/opencl.hpp>
+#include <stan/math/opencl/rev.hpp>
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
@@ -149,8 +149,7 @@ TEST(ProbDistributionsNegBinomial2LogGLM, opencl_broadcast_y) {
   int N = 3;
   int M = 2;
 
-  int y = 1;
-  vector<int> y_vec{y, y, y};
+  int y_scal = 1;
   Matrix<double, Dynamic, Dynamic> x(N, M);
   x << -12, 46, -42, 24, 25, 27;
   Matrix<double, Dynamic, 1> beta(M, 1);
@@ -158,52 +157,10 @@ TEST(ProbDistributionsNegBinomial2LogGLM, opencl_broadcast_y) {
   double alpha = 0.3;
   double phi = 13.2;
 
-  matrix_cl<double> x_cl(x);
-  matrix_cl<int> y_vec_cl(y_vec);
-  matrix_cl<double> beta_cl(beta);
-
-  expect_near_rel(
-      "neg_binomial_2_log_glm_lpmf (OpenCL)",
-      stan::math::neg_binomial_2_log_glm_lpmf(y, x_cl, alpha, beta_cl, phi),
-      stan::math::neg_binomial_2_log_glm_lpmf(y_vec_cl, x_cl, alpha, beta_cl,
-                                              phi));
-  expect_near_rel("neg_binomial_2_log_glm_lpmf (OpenCL)",
-                  stan::math::neg_binomial_2_log_glm_lpmf<true>(y, x_cl, alpha,
-                                                                beta_cl, phi),
-                  stan::math::neg_binomial_2_log_glm_lpmf<true>(
-                      y_vec_cl, x_cl, alpha, beta_cl, phi));
-
-  Matrix<var, Dynamic, Dynamic> x_var1 = x;
-  Matrix<var, Dynamic, Dynamic> x_var2 = x;
-  Matrix<var, Dynamic, 1> beta_var1 = beta;
-  Matrix<var, Dynamic, 1> beta_var2 = beta;
-  auto x_var1_cl = to_matrix_cl(x_var1);
-  auto x_var2_cl = to_matrix_cl(x_var2);
-  auto beta_var1_cl = to_matrix_cl(beta_var1);
-  auto beta_var2_cl = to_matrix_cl(beta_var2);
-  var alpha_var1 = alpha;
-  var alpha_var2 = alpha;
-  var phi_var1 = phi;
-  var phi_var2 = phi;
-
-  var res1 = stan::math::neg_binomial_2_log_glm_lpmf(y, x_var1_cl, alpha_var1,
-                                                     beta_var1_cl, phi_var1);
-  var res2 = stan::math::neg_binomial_2_log_glm_lpmf(
-      y_vec_cl, x_var2_cl, alpha_var2, beta_var2_cl, phi_var2);
-
-  (res1 + res2).grad();
-
-  expect_near_rel("neg_binomial_2_log_glm_lpmf (OpenCL)", res1.val(),
-                  res2.val());
-
-  expect_near_rel("neg_binomial_2_log_glm_lpmf (OpenCL)", x_var1.adj().eval(),
-                  x_var2.adj().eval());
-  expect_near_rel("neg_binomial_2_log_glm_lpmf (OpenCL)", alpha_var1.adj(),
-                  alpha_var2.adj());
-  expect_near_rel("neg_binomial_2_log_glm_lpmf (OpenCL)",
-                  beta_var1.adj().eval(), beta_var2.adj().eval());
-  expect_near_rel("neg_binomial_2_log_glm_lpmf (OpenCL)", phi_var1.adj(),
-                  phi_var2.adj());
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
+      neg_binomial_2_log_glm_lpmf_functor, y_scal, x, alpha, beta, phi);
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
+      neg_binomial_2_log_glm_lpmf_functor_propto, y_scal, x, alpha, beta, phi);
 }
 
 TEST(ProbDistributionsNegBinomial2LogGLM, opencl_matches_cpu_zero_instances) {

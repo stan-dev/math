@@ -20,7 +20,9 @@ namespace stan {
 namespace math {
 
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
-          typename T_inv_scale>
+          typename T_inv_scale,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_loc, T_scale, T_inv_scale>* = nullptr>
 return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma,
     const T_inv_scale& lambda) {
@@ -111,7 +113,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_
           = sigma_val * square(lambda_val)
-            + deriv_logerfc * (-mu_minus_y / sigma_sq + lambda_val);
+            + deriv_logerfc * (lambda_val - mu_minus_y / sigma_sq);
     }
     if (!is_constant_all<T_inv_scale>::value) {
       ops_partials.edge4_.partials_ = inv(lambda_val) + lambda_sigma_sq

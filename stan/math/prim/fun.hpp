@@ -127,6 +127,7 @@
 #include <stan/math/prim/fun/imag.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
 #include <stan/math/prim/fun/initialize.hpp>
+#include <stan/math/prim/fun/initialize_fill.hpp>
 #include <stan/math/prim/fun/int_step.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/inv_Phi.hpp>
@@ -304,6 +305,7 @@
 #include <stan/math/prim/fun/sub_row.hpp>
 #include <stan/math/prim/fun/subtract.hpp>
 #include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/symmetrize_from_lower_tri.hpp>
 #include <stan/math/prim/fun/tail.hpp>
 #include <stan/math/prim/fun/tan.hpp>
 #include <stan/math/prim/fun/tanh.hpp>
@@ -332,6 +334,7 @@
 #include <stan/math/prim/fun/unit_vector_free.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
+#include <stan/math/prim/fun/vec_concat.hpp>
 #include <stan/math/prim/fun/variance.hpp>
 #include <stan/math/prim/fun/welford_covar_estimator.hpp>
 #include <stan/math/prim/fun/welford_var_estimator.hpp>

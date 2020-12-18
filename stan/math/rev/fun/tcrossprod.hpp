@@ -3,8 +3,7 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/Eigen_NumTraits.hpp>
-#include <stan/math/rev/fun/typedefs.hpp>
+#include <stan/math/rev/core/typedefs.hpp>
 #include <stan/math/rev/fun/dot_product.hpp>
 #include <stan/math/rev/fun/dot_self.hpp>
 #include <stan/math/prim/meta.hpp>
@@ -17,45 +16,25 @@ namespace math {
  * Returns the result of post-multiplying a matrix by its
  * own transpose.
  *
- * @tparam T Type of the matrix (must be derived from \c Eigen::MatrixBase)
+ * @tparam T Type of the matrix
  * @param M Matrix to multiply.
  * @return M times its transpose.
  */
-template <typename T, require_eigen_vt<is_var, T>* = nullptr>
-inline Eigen::Matrix<var, T::RowsAtCompileTime, T::RowsAtCompileTime>
-tcrossprod(const T& M) {
-  if (M.rows() == 0) {
-    return {};
-  }
-  // if (M.rows() == 1)
-  //   return M * M.transpose();
+template <typename T, require_rev_matrix_t<T>* = nullptr>
+inline auto tcrossprod(const T& M) {
+  using ret_type = return_var_matrix_t<
+      Eigen::Matrix<double, T::RowsAtCompileTime, T::RowsAtCompileTime>, T>;
+  arena_t<T> arena_M = M;
+  arena_t<ret_type> res = arena_M.val_op() * arena_M.val_op().transpose();
 
-  // WAS JUST THIS
-  // matrix_v result(M.rows(), M.rows());
-  // return result.setZero().selfadjointView<Eigen::Upper>().rankUpdate(M);
+  if (likely(M.size() > 0)) {
+    reverse_pass_callback([res, arena_M]() mutable {
+      arena_M.adj()
+          += (res.adj_op() + res.adj_op().transpose()) * arena_M.val_op();
+    });
+  }
 
-  Eigen::Matrix<var, T::RowsAtCompileTime, T::RowsAtCompileTime> MMt(M.rows(),
-                                                                     M.rows());
-
-  vari** vs
-      = reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
-          (M.rows() * M.cols()) * sizeof(vari*)));
-  int pos = 0;
-  for (int m = 0; m < M.rows(); ++m) {
-    for (int n = 0; n < M.cols(); ++n) {
-      vs[pos++] = M(m, n).vi_;
-    }
-  }
-  for (int m = 0; m < M.rows(); ++m) {
-    MMt.coeffRef(m, m)
-        = var(new internal::dot_self_vari(vs + m * M.cols(), M.cols()));
-  }
-  for (int m = 0; m < M.rows(); ++m) {
-    for (int n = 0; n < m; ++n) {
-      MMt.coeffRef(n, m) = MMt.coeffRef(m, n) = dot_product(M.row(m), M.row(n));
-    }
-  }
-  return MMt;
+  return ret_type(res);
 }
 
 }  // namespace math
