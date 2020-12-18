@@ -3,10 +3,7 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/functor/reverse_pass_callback.hpp>
-#include <stan/math/rev/core/arena_matrix.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
-#include <stan/math/rev/fun/typedefs.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/err/check_symmetric.hpp>
 #include <stan/math/prim/err/check_nonzero_size.hpp>
@@ -54,16 +51,17 @@ inline auto singular_values_U(const EigMat& m) {
   }
 
   auto arena_Fp = to_arena(Fp);
-  //auto arena_U = to_arena(svd.matrixU());
-  arena_t<ret_type> arena_U = (svd.matrixU());
+  arena_t<ret_type> arena_U = svd.matrixU();
   auto arena_V = to_arena(svd.matrixV());
 
 
   reverse_pass_callback(
       [arena_m, arena_U, arena_D, arena_V, arena_Fp, M]() mutable {
-        arena_m.adj() += 0.5 * arena_U.val() * (arena_Fp.array() * (arena_U.val().transpose() * arena_U.adj() - arena_U.adj().transpose() * arena_U.val()).array()).matrix()
-         * arena_V.transpose() + (Eigen::MatrixXd::Identity(M, M) - arena_U.val() * arena_U.val().transpose())
-          * arena_U.adj() * arena_D.inverse() * arena_V.transpose();
+	Eigen::MatrixXd UUadjT = arena_U.val_op().transpose() * arena_U.adj_op();
+	arena_m.adj() += 0.5 * arena_U.val_op() *
+	  (arena_Fp.array() * (UUadjT - UUadjT.transpose()).array()).matrix()
+	  * arena_V.transpose() +
+	  (Eigen::MatrixXd::Identity(M, M) - arena_U.val_op() * arena_U.val_op().transpose()) * arena_U.adj_op() * arena_D.inverse() * arena_V.transpose();
       });
 
   return ret_type(arena_U);
