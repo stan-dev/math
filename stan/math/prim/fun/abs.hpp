@@ -15,7 +15,7 @@ namespace math {
  *
  * @tparam T type of variable
  * @param x argument
- * @return Absoulte value of variable.
+ * @return Absolute value of variable.
  */
 struct abs_fun {
   template <typename T>

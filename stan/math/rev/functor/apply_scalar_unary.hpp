@@ -34,7 +34,7 @@ struct apply_scalar_unary<F, var> {
 template <typename F, typename T>
 struct apply_scalar_unary<F, T, require_var_matrix_t<T>> {
   /**
-   * Function return type, which is `var_value<plain_type_t<T>>`.
+   * Function return type, which is a `var_value` with plain value type.
    */
   using return_t = plain_type_t<T>;
 

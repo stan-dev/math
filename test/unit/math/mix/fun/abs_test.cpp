@@ -40,36 +40,20 @@ TEST(mixFun, absReturnType) {
   SUCCEED();
 }
 
-namespace stan {
-namespace test {
-namespace internal {
-template <typename T, require_not_eigen_t<T>* = nullptr>
-auto test_abs(const T& x) {
-  return stan::math::abs(x);
-}
-template <typename T, require_eigen_t<T>* = nullptr>
-auto test_abs(const T& x) {
-  return x.unaryExpr([](const auto x) { return stan::math::abs(x); });
-}
-}  // namespace internal
-}  // namespace test
-}  // namespace stan
 TEST(mathMixMatFun, abs_varmat) {
+  using stan::math::vec_concat;
+  using stan::test::expect_ad_vector_matvar;
+  using stan::test::internal::common_nonzero_args;
   auto f = [](const auto& x1) {
-    using stan::test::internal::test_abs;
-    return test_abs(x1);
+    using stan::math::abs;
+    return abs(x1);
   };
-  auto com_args = stan::test::internal::common_nonzero_args();
-  std::vector<double> extra_args{0, -3, -2, 2, -17.3, -0.68, 2, 4};
-  Eigen::VectorXd A(com_args.size() + extra_args.size());
-  int i = 0;
-  for (double x : com_args) {
-    A(i) = x;
-    ++i;
+  std::vector<double> com_args = common_nonzero_args();
+  std::vector<double> args{0, -3, -2, 2, -17.3, -0.68, 2, 4};
+  auto all_args = vec_concat(com_args, args);
+  Eigen::VectorXd A(all_args.size());
+  for (int i = 0; i < all_args.size(); ++i) {
+    A(i) = all_args[i];
   }
-  for (double x : extra_args) {
-    A(i) = x;
-    ++i;
-  }
-  stan::test::expect_ad_vector_matvar(f, A);
+  expect_ad_vector_matvar(f, A);
 }
