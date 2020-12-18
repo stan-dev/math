@@ -134,9 +134,7 @@ def plot_results(csv_filename, out_file="", plot_log_y=False):
     ax.set_xlabel("size")
     ax.set_ylabel("time[us]")
     for n, (signature, sub_data) in enumerate(timing_data.groupby("signatures")):
-        # conversions to numpy arrays allow us to hide duplicated labels
-        ax.plot(numpy.array(sub_data["sizes"]), numpy.array(sub_data["times"]), "x",
-                color=pick_color(n))
+        ax.plot(sub_data["sizes"], sub_data["times"], "x", color=pick_color(n), label='__nolegend__')
         avg_sig_times = sub_data.groupby(by="sizes")["times"].median().reset_index().sort_values(by="sizes")
         ax.plot(avg_sig_times["sizes"], avg_sig_times["times"], label=signature,
                 color=pick_color(n))
@@ -201,9 +199,7 @@ def plot_compare(csv_filename, reference_csv_filename, out_file="", plot_log_y=F
     ax.set_ylabel("speedup")
 
     for n, (signature, sub_data) in enumerate(timing_data.groupby("signatures")):
-        # conversions to numpy arrays allow us to hide duplicated labels
-        ax.plot(numpy.array(sub_data["sizes"]), numpy.array(sub_data["speedup"]), "x",
-                color=pick_color(n))
+        ax.plot(sub_data["sizes"], sub_data["speedup"], "x", color=pick_color(n), label='__nolegend__')
         avg_sig_speedups = sub_data.groupby(by="sizes")["speedup"].median().reset_index().sort_values(by="sizes")
         ax.plot(avg_sig_speedups["sizes"], avg_sig_speedups["speedup"], label=signature,
                 color=pick_color(n))
