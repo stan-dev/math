@@ -137,7 +137,7 @@ def plot_results(csv_filename, out_file="", plot_log_y=False):
         # conversions to numpy arrays allow us to hide duplicated labels
         ax.plot(numpy.array(sub_data["sizes"]), numpy.array(sub_data["times"]), "x",
                 color=pick_color(n))
-        avg_sig_times = sub_data.groupby(by="sizes")["times"].mean().reset_index().sort_values(by="sizes")
+        avg_sig_times = sub_data.groupby(by="sizes")["times"].median().reset_index().sort_values(by="sizes")
         ax.plot(avg_sig_times["sizes"], avg_sig_times["times"], label=signature,
                 color=pick_color(n))
 
@@ -204,7 +204,7 @@ def plot_compare(csv_filename, reference_csv_filename, out_file="", plot_log_y=F
         # conversions to numpy arrays allow us to hide duplicated labels
         ax.plot(numpy.array(sub_data["sizes"]), numpy.array(sub_data["speedup"]), "x",
                 color=pick_color(n))
-        avg_sig_speedups = sub_data.groupby(by="sizes")["speedup"].mean().reset_index().sort_values(by="sizes")
+        avg_sig_speedups = sub_data.groupby(by="sizes")["speedup"].median().reset_index().sort_values(by="sizes")
         ax.plot(avg_sig_speedups["sizes"], avg_sig_speedups["speedup"], label=signature,
                 color=pick_color(n))
     plt.plot([1, max(timing_data["sizes"])], [1, 1], "--", color="gray")
@@ -246,7 +246,7 @@ def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim"
     for signature in all_signatures:
         return_type, function_name, stan_args = parse_signature(signature)
         reference_args = tuple(reference_vector_argument(i) for i in stan_args)
-        if (function_name, reference_args) in ref_signatures:
+        if skip_similar_signatures and (function_name, reference_args) in ref_signatures:
             continue
         if (signature in signatures) or (function_name in functions):
             parsed_signatures.append([return_type, function_name, stan_args])
@@ -255,7 +255,7 @@ def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim"
     for signature in signatures:
         return_type, function_name, stan_args = parse_signature(signature)
         reference_args = tuple(reference_vector_argument(i) for i in stan_args)
-        if (function_name, reference_args) in ref_signatures:
+        if skip_similar_signatures and (function_name, reference_args) in ref_signatures:
             continue
         ref_signatures.add((function_name, reference_args))
         parsed_signatures.append([return_type, function_name, stan_args])
@@ -386,8 +386,8 @@ def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim"
             # estimate the amount of arena memory the benchmarks will need
             DOUBLE_SIZE = 8
             N_ARRAYS = 4  # vals, adjoints, pointers + 1 for anything else
-            f.write(CUSTOM_MAIN.format(5))
-            # (max_size_param or default_max_size) * DOUBLE_SIZE * N_ARRAYS * (max_args_with_max_dimm + 1)))
+            f.write(CUSTOM_MAIN.format(
+                (max_size_param or default_max_size) * DOUBLE_SIZE * N_ARRAYS * (max_args_with_max_dimm + 1)))
         else:
             f.write("BENCHMARK_MAIN();")
 
