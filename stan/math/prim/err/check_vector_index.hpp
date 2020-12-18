@@ -23,7 +23,7 @@ namespace math {
  */
 template <typename T,
           require_any_t<is_eigen_vector<T>,
-                                   is_prim_or_rev_kernel_expression<T>>* = nullptr>
+                        is_prim_or_rev_kernel_expression<T>>* = nullptr>
 inline void check_vector_index(const char* function, const char* name,
                                const T& y, size_t i) {
   if (i >= stan::error_index::value
