@@ -10,97 +10,96 @@ namespace stan {
 namespace math {
 
 /**
- * A template specialization of src/stan/math/matrix/LDLT_factor.hpp for
- * var which can be used with all the *_ldlt functions.
+ * An LDLT_factor with `alloc_in_arena = True` is a structure that
+ * holds a matrix of type T and the LDLT of its values, where all
+ * member variable allocations are done in the arena.
  *
- * The usage pattern is:
- *
- * ~~~
- * Eigen::Matrix<T, R, C> A1, A2;
- *
- * LDLT_factor<T, R, C> ldlt_A1(A1);
- * LDLT_factor<T, R, C> ldlt_A2;
- * ldlt_A2.compute(A2);
- * ~~~
- *
- * Now, the caller should check that ldlt_A1.success() and ldlt_A2.success()
- * are true or abort accordingly.  Alternatively, call check_ldlt_factor().
- * The behaviour of using an LDLT_factor without success() returning true is
- * undefined.
- *
- * Note that ldlt_A1 and ldlt_A2 are completely equivalent.  They simply
- * demonstrate two different ways to construct the factorization.
- *
- * Now, the caller can use the LDLT_factor objects as needed.  For instance
- *
- * ~~~
- * x1 = mdivide_left_ldlt(ldlt_A1, b1);
- * x2 = mdivide_right_ldlt(b2, ldlt_A2);
- *
- * d1 = log_determinant_ldlt(ldlt_A1);
- * d2 = log_determinant_ldlt(ldlt_A2);
- * ~~~
- *
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
+ * @tparam T type of elements in the matrix
  */
-
 template <typename T>
-class LDLT_factor2<T, true> {
+class LDLT_factor<T, true> {
 private:
   using ldlt_type = Eigen::LDLT<T>;
   ldlt_type* ldlt_ptr_;
 public:
   template <typename S,
 	    require_eigen_t<S>* = nullptr>
-  LDLT_factor2(const S& matrix) :
+  LDLT_factor(const S& matrix) :
     ldlt_ptr_(make_chainable_ptr(matrix.ldlt())) {}
 
+  /**
+   * Return a const reference to the underlying matrix
+   */
   const auto& matrix() const {
     return ldlt_ptr_->matrixLDLT();
   }
 
+  /**
+   * Return a const reference to the LDLT factor of the matrix
+   */
   const auto& ldlt() const {
     return *ldlt_ptr_;
   }
 };
   
+/**
+ * An LDLT_factor of an `Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>`
+ * with `alloc_in_arena = True` holds a copy of the input matrix and the LDLT
+ * of its values, with all member variable allocations are done in the arena.
+ */
 template <>
-class LDLT_factor2<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>, true> {
+class LDLT_factor<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>, true> {
 private:
   arena_t<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> matrix_;
   Eigen::LDLT<Eigen::MatrixXd>* ldlt_ptr_;
 public:
   template <typename S,
 	    require_eigen_vt<is_var, S>* = nullptr>
-  LDLT_factor2(const S& matrix) :
+  LDLT_factor(const S& matrix) :
     matrix_(matrix),
     ldlt_ptr_(make_chainable_ptr(matrix.val().ldlt())) {}
 
+  /**
+   * Return the underlying matrix
+   */
   auto matrix() const {
     return matrix_;
   }
 
+  /**
+   * Return a const reference to the LDLT factor of the matrix
+   */
   const auto& ldlt() const {
     return *ldlt_ptr_;
   }
 };
 
+/**
+ * An LDLT_factor of a `var_value<Eigen::MatrixXd>` with `alloc_in_arena = True`
+ * holds a copy of the input `var_value` and the LDLT of its values,
+ * with all member variable allocations are done in the arena.
+ */
 template <>
-class LDLT_factor2<var_value<Eigen::MatrixXd>, true> {
+class LDLT_factor<var_value<Eigen::MatrixXd>, true> {
 private:
   var_value<Eigen::MatrixXd> matrix_;
   Eigen::LDLT<Eigen::MatrixXd>* ldlt_ptr_;
 public:
   template <typename S,
 	    require_var_matrix_t<S>* = nullptr>
-  LDLT_factor2(const S& matrix) :
+  LDLT_factor(const S& matrix) :
     matrix_(matrix), ldlt_ptr_(make_chainable_ptr(matrix.val().ldlt())) {}
 
-  auto matrix() const {
+  /**
+   * Return the underlying matrix
+   */
+  const auto& matrix() const {
     return matrix_;
   }
 
+  /**
+   * Return a const reference to the LDLT factor of the matrix
+   */
   const auto& ldlt() const {
     return *ldlt_ptr_;
   }

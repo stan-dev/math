@@ -32,7 +32,7 @@ template <typename Td, typename Ta, typename Tb, bool alloc_in_arena,
           require_all_eigen_t<Td, Tb>* = nullptr,
           require_any_st_var<Td, Ta, Tb>* = nullptr>
 inline var trace_gen_inv_quad_form_ldlt(const Td& D,
-                                        const LDLT_factor2<Ta, alloc_in_arena>& A,
+                                        const LDLT_factor<Ta, alloc_in_arena>& A,
                                         const Tb& B) {
   check_square("trace_gen_inv_quad_form_ldlt", "D", D);
   check_multiplicable("trace_gen_inv_quad_form_ldlt", "A", A.matrix(), "B", B);

@@ -18,7 +18,7 @@ namespace math {
  */
 template <typename T, bool alloc_in_arena,
 	  require_not_rev_matrix_t<T>* = nullptr>
-inline value_type_t<T> log_determinant_ldlt(const LDLT_factor2<T, alloc_in_arena> &A) {
+inline value_type_t<T> log_determinant_ldlt(const LDLT_factor<T, alloc_in_arena> &A) {
   if (A.matrix().size() == 0) {
     return 0;
   }

@@ -17,7 +17,7 @@ namespace math {
  * Returns the solution of the system Ax=b given an LDLT_factor of A
  *
  * @tparam T type of B
- * @param A LDLT_factor2
+ * @param A LDLT_factor
  * @param B Right hand side matrix or vector.
  * @return x = A^-1 B, solution of the linear system.
  * @throws std::domain_error if rows of B don't match the size of A.
@@ -25,7 +25,7 @@ namespace math {
 template <typename T1, bool alloc_in_arena, typename T2,
 	  require_all_matrix_t<T1, T2>* = nullptr,
           require_any_st_var<T1, T2>* = nullptr>
-inline auto mdivide_left_ldlt(const LDLT_factor2<T1, alloc_in_arena>& A, const T2& B) {
+inline auto mdivide_left_ldlt(const LDLT_factor<T1, alloc_in_arena>& A, const T2& B) {
   using ret_val_type = Eigen::Matrix<double, Eigen::Dynamic, T2::ColsAtCompileTime>;
   using ret_type = promote_var_matrix_t<ret_val_type, T1,  T2>;
 

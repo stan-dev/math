@@ -25,7 +25,7 @@ namespace math {
  */
 template <typename T, bool alloc_in_arena>
 inline void check_ldlt_factor(const char* function, const char* name,
-                              const LDLT_factor2<T, alloc_in_arena>& A) {
+                              const LDLT_factor<T, alloc_in_arena>& A) {
   if (!(A.ldlt().info() == Eigen::Success &&
 	A.ldlt().isPositive() &&
 	(A.ldlt().vectorD().array() > 0).all())) {

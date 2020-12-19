@@ -20,7 +20,7 @@ namespace math {
  * @return <code>true</code> if the LDLT factor is valid
  */
 template <typename T, bool alloc_in_arena>
-inline bool is_ldlt_factor(LDLT_factor2<T, alloc_in_arena>& A) {
+inline bool is_ldlt_factor(const LDLT_factor<T, alloc_in_arena>& A) {
   return A.ldlt().info() == Eigen::Success &&
     A.ldlt().isPositive() &&
     (A.ldlt().vectorD().array() > 0).all();
