@@ -14,10 +14,11 @@ namespace math {
 namespace internal {
 template <typename T, require_all_not_var_t<T>* = nullptr>
 inline void profile_start(std::string name, profile_map& profiles) {
-  profile_key key = { name, std::this_thread::get_id() };
+  profile_key key = {name, std::this_thread::get_id()};
   profile_map::iterator p = profiles.find(key);
   if (p == profiles.end()) {
-    std::pair<profile_map::iterator, bool> new_profile = profiles.emplace(std::make_pair(key, profile_info({})));
+    std::pair<profile_map::iterator, bool> new_profile
+        = profiles.emplace(std::make_pair(key, profile_info({})));
     p = new_profile.first;
   }
   if (p->second.meta.fwd_pass_active) {
@@ -29,7 +30,8 @@ inline void profile_start(std::string name, profile_map& profiles) {
   if (p->second.meta.rev_pass_active) {
     std::ostringstream msg;
     msg << "Reverse pass active for a non-autodiff profile '";
-    msg << name << "'." << "Please file a bug report!";
+    msg << name << "'."
+        << "Please file a bug report!";
     throw std::runtime_error(std::string(msg.str()));
   }
   p->second.meta.fwd_pass_start = std::chrono::steady_clock::now();
@@ -38,18 +40,18 @@ inline void profile_start(std::string name, profile_map& profiles) {
 
 template <typename T, require_all_not_var_t<T>* = nullptr>
 inline void profile_stop(std::string name, profile_map& profiles) {
-  profile_key key = { name, std::this_thread::get_id() };
+  profile_key key = {name, std::this_thread::get_id()};
   profile_map::iterator p = profiles.find(key);
   if (p == profiles.end()) {
     std::ostringstream msg;
-    msg << "Stopping a non-registered profile '" 
-    << name << "'. Please file a bug report!";
+    msg << "Stopping a non-registered profile '" << name
+        << "'. Please file a bug report!";
     throw std::runtime_error("Stopping ");
   }
   if (!p->second.meta.fwd_pass_active) {
     std::ostringstream msg;
-    msg << "Stopping forward pass profile '" 
-    << name << "' that was not started. Please file a bug report!";
+    msg << "Stopping forward pass profile '" << name
+        << "' that was not started. Please file a bug report!";
     throw std::runtime_error(std::string(msg.str()));
   }
   p->second.fwd_pass

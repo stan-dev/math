@@ -38,10 +38,10 @@ struct profile_meta {
   std::chrono::time_point<std::chrono::steady_clock> rev_pass_start;
 };
 
-struct profile_info {    
-    double fwd_pass;
-    double rev_pass;
-    profile_meta meta;
+struct profile_info {
+  double fwd_pass;
+  double rev_pass;
+  profile_meta meta;
 };
 
 using profile_key = std::pair<std::string, std::thread::id>;
