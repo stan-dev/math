@@ -2,7 +2,8 @@
 #define STAN_MATH_REV_CORE_PROFILING_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/rev/core/typedefs.hpp>
+#include <stan/math/prim/fun/typedefs.hpp>
+#include <stan/math/prim/core/profiling.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
@@ -15,7 +16,7 @@ namespace stan {
 namespace math {
 
 namespace internal {
-
+template <typename T, require_all_var_t<T>* = nullptr>
 inline auto profile_start(std::string name, profile_map& profiles) {
   profile_key key = {name, std::this_thread::get_id()};
   profile_map::iterator p = profiles.find(key);
@@ -48,6 +49,7 @@ inline auto profile_start(std::string name, profile_map& profiles) {
   });
 }
 
+template <typename T, require_all_var_t<T>* = nullptr>
 inline auto profile_stop(std::string name, profile_map& profiles) {
   profile_key key = {name, std::this_thread::get_id()};
   profile_map::iterator p = profiles.find(key);
@@ -63,12 +65,6 @@ inline auto profile_stop(std::string name, profile_map& profiles) {
         << "' that was not started.";
     throw std::runtime_error(std::string(msg.str()));
   }
-  if (p->second.meta.rev_pass_active) {
-    std::ostringstream msg;
-    msg << "Forward and reverse pass active for profile '" << name << "'.";
-    msg << "Please file a bug report!";
-    throw std::runtime_error(std::string(msg.str()));
-  }
   p->second.fwd_pass
       += std::chrono::duration<double>(std::chrono::steady_clock::now()
                                        - p->second.meta.fwd_pass_start)
@@ -82,6 +78,7 @@ inline auto profile_stop(std::string name, profile_map& profiles) {
 }
 }  // namespace internal
 
+template <typename T>
 class profile {
   std::string name_;
   profile_map* profiles_;
@@ -89,9 +86,9 @@ class profile {
  public:
   profile(std::string name, profile_map& profiles)
       : name_(name), profiles_(&profiles) {
-    internal::profile_start(name_, *profiles_);
+    internal::profile_start<T>(name_, *profiles_);
   }
-  ~profile() { internal::profile_stop(name_, *profiles_); }
+  ~profile() { internal::profile_stop<T>(name_, *profiles_); }
 };
 
 }  // namespace math

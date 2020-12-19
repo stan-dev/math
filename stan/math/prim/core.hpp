@@ -10,5 +10,6 @@
 #include <stan/math/prim/core/operator_not_equal.hpp>
 #include <stan/math/prim/core/operator_plus.hpp>
 #include <stan/math/prim/core/operator_subtraction.hpp>
+#include <stan/math/prim/core/profiling.hpp>
 
 #endif
