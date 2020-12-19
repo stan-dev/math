@@ -91,7 +91,7 @@ public:
     matrix_(matrix), ldlt_ptr_(make_chainable_ptr(matrix.val().ldlt())) {}
 
   /**
-   * Return the underlying matrix
+   * Return a const reference the underlying `var_value`
    */
   const auto& matrix() const {
     return matrix_;
