@@ -42,7 +42,8 @@ inline auto mdivide_left_ldlt(const LDLT_factor<T1, alloc_in_arena>& A, const T2
     reverse_pass_callback([A, arena_B, res]() mutable {
       promote_scalar_t<double, T2> adjB = A.ldlt().solve(res.adj());
 
-      forward_as<promote_scalar_t<var, T1>>(A.matrix()).adj() -= adjB * res.val().transpose().eval();
+      forward_as<promote_scalar_t<var, T1>>(A.matrix()).adj()
+          -= adjB * res.val().transpose().eval();
       arena_B.adj() += adjB;
     });
 
@@ -53,7 +54,8 @@ inline auto mdivide_left_ldlt(const LDLT_factor<T1, alloc_in_arena>& A, const T2
     reverse_pass_callback([A, res]() mutable {
       promote_scalar_t<double, T2> adjB = A.ldlt().solve(res.adj());
 
-      forward_as<promote_scalar_t<var, T1>>(A.matrix()).adj() -= adjB * res.val().transpose().eval();
+      forward_as<promote_scalar_t<var, T1>>(A.matrix()).adj()
+          -= adjB * res.val().transpose().eval();
     });
 
     return ret_type(res);
@@ -70,38 +72,6 @@ inline auto mdivide_left_ldlt(const LDLT_factor<T1, alloc_in_arena>& A, const T2
     return ret_type(res);
   }
 }
-
-/**
- * Returns the solution of the system Ax=b given an LDLT_factor of A
- *
- * @tparam T type of B
- * @tparam R rowtype of A
- * @tparam C coltype of A
- * @param A LDLT_factor
- * @param B Right hand side matrix or vector.
- * @return x = A^-1 B, solution of the linear system.
- * @throws std::domain_error if rows of B don't match the size of A.
- */
-/*template <typename T, int R, int C,
-          require_var_matrix_t<T>* = nullptr>
-inline auto mdivide_left_ldlt(const LDLT_factor<double, R, C>& A, const T& B) {
-  using ret_val_type = Eigen::Matrix<double, R, T::ColsAtCompileTime>;
-  using ret_type = var_value<ret_val_type>;
-
-  check_multiplicable("mdivide_left_ldlt", "A", A, "B", B.val());
-
-  if (A.rows() == 0) {
-    return ret_type(ret_val_type(0, B.cols()));
-  }
-
-  arena_t<ret_type> res = A.solve(B.val());
-
-  reverse_pass_callback([A, B, res]() mutable {
-    B.adj() += A.solve(res.adj());
-  });
-
-  return ret_type(res);
-  }*/
 
 }  // namespace math
 }  // namespace stan

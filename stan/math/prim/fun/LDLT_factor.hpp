@@ -78,7 +78,6 @@ inline auto make_ldlt_factor(const T& A) {
 				 is_var<partials_type_t<partials_type_t<return_type_t<Args...>>>>>::value>(A);
 }
 
-  
 }  // namespace math
 }  // namespace stan
 

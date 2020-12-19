@@ -22,11 +22,10 @@ var log_determinant_ldlt(const LDLT_factor<T, alloc_in_arena> &A) {
   if (A.matrix().size() == 0) {
     return 0;
   }
-  
+
   var log_det = sum(log(A.ldlt().vectorD().array()));
 
-  arena_t<Eigen::MatrixXd> arena_A_inv(A.matrix().rows(),
-				       A.matrix().cols());
+  arena_t<Eigen::MatrixXd> arena_A_inv(A.matrix().rows(), A.matrix().cols());
 
   arena_A_inv.setIdentity();
   A.ldlt().solveInPlace(arena_A_inv);
@@ -37,7 +36,7 @@ var log_determinant_ldlt(const LDLT_factor<T, alloc_in_arena> &A) {
 
   return log_det;
 }
-  
+
 }  // namespace math
 }  // namespace stan
 #endif
