@@ -21,9 +21,8 @@ namespace math {
  */
 template <typename T, bool alloc_in_arena>
 inline bool is_ldlt_factor(const LDLT_factor<T, alloc_in_arena>& A) {
-  return A.ldlt().info() == Eigen::Success &&
-    A.ldlt().isPositive() &&
-    (A.ldlt().vectorD().array() > 0).all();
+  return A.ldlt().info() == Eigen::Success && A.ldlt().isPositive()
+         && (A.ldlt().vectorD().array() > 0).all();
 }
 
 }  // namespace math

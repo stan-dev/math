@@ -35,28 +35,24 @@ class LDLT_factor;
  */
 template <typename T>
 class LDLT_factor<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, false> {
-private:
-  using ldlt_type = Eigen::LDLT<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>;
+ private:
+  using ldlt_type
+      = Eigen::LDLT<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>;
   std::shared_ptr<ldlt_type> ldlt_ptr_;
-public:
-  template <typename S,
-	    require_eigen_t<S>* = nullptr>
-  LDLT_factor(const S& matrix) :
-    ldlt_ptr_(new ldlt_type(matrix)) {}
+
+ public:
+  template <typename S, require_eigen_t<S>* = nullptr>
+  LDLT_factor(const S& matrix) : ldlt_ptr_(new ldlt_type(matrix)) {}
 
   /**
    * Return a const reference to the underlying matrix
    */
-  const auto& matrix() const {
-    return ldlt_ptr_->matrixLDLT();
-  }
+  const auto& matrix() const { return ldlt_ptr_->matrixLDLT(); }
 
   /**
    * Return a const reference to the LDLT factor of the matrix
    */
-  const auto& ldlt() const {
-    return *ldlt_ptr_;
-  }
+  const auto& ldlt() const { return *ldlt_ptr_; }
 };
 
 /**
@@ -69,13 +65,14 @@ public:
  * @param A Matrix to take the LDLT of
  * @return LDLT_factor of A
  */
-template <typename T, typename... Args,
-	  require_matrix_t<T>* = nullptr>
+template <typename T, typename... Args, require_matrix_t<T>* = nullptr>
 inline auto make_ldlt_factor(const T& A) {
-  return LDLT_factor<plain_type_t<T>,
-		     disjunction<is_var<scalar_type_t<return_type_t<T, Args...>>>,
-				 is_var<partials_type_t<return_type_t<Args...>>>,
-				 is_var<partials_type_t<partials_type_t<return_type_t<Args...>>>>>::value>(A);
+  return LDLT_factor<
+      plain_type_t<T>,
+      disjunction<is_var<scalar_type_t<return_type_t<T, Args...>>>,
+                  is_var<partials_type_t<return_type_t<Args...>>>,
+                  is_var<partials_type_t<
+                      partials_type_t<return_type_t<Args...>>>>>::value>(A);
 }
 
 }  // namespace math

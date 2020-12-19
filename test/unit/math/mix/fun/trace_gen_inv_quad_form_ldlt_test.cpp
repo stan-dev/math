@@ -2,7 +2,9 @@
 
 TEST(mathMixMatFun, traceGenInvQuadForm) {
   auto f = [](const auto& c, const auto& a, const auto& b) {
-    auto ldlt_a = stan::math::make_ldlt_factor<decltype(a), decltype(c), decltype(b)>(stan::math::multiply(0.5, a + a.transpose()));
+    auto ldlt_a
+        = stan::math::make_ldlt_factor<decltype(a), decltype(c), decltype(b)>(
+            stan::math::multiply(0.5, a + a.transpose()));
     return stan::math::trace_gen_inv_quad_form_ldlt(c, ldlt_a, b);
   };
 
@@ -53,8 +55,8 @@ TEST(mathMixMatFun, traceGenInvQuadForm) {
 
   // exception tests
   // non-square second arg
-  //Eigen::MatrixXd a34(3, 4);
-  //stan::test::expect_ad(f, c, a34, b);
+  // Eigen::MatrixXd a34(3, 4);
+  // stan::test::expect_ad(f, c, a34, b);
 
   // non-square first arg
   Eigen::MatrixXd c23(2, 3);

@@ -26,9 +26,8 @@ namespace math {
 template <typename T, bool alloc_in_arena>
 inline void check_ldlt_factor(const char* function, const char* name,
                               const LDLT_factor<T, alloc_in_arena>& A) {
-  if (!(A.ldlt().info() == Eigen::Success &&
-	A.ldlt().isPositive() &&
-	(A.ldlt().vectorD().array() > 0).all())) {
+  if (!(A.ldlt().info() == Eigen::Success && A.ldlt().isPositive()
+        && (A.ldlt().vectorD().array() > 0).all())) {
     std::ostringstream msg;
     msg << "is not positive definite.  last conditional variance is ";
     std::string msg_str(msg.str());

@@ -18,30 +18,25 @@ namespace math {
  */
 template <typename T>
 class LDLT_factor<T, true> {
-private:
+ private:
   using ldlt_type = Eigen::LDLT<T>;
   ldlt_type* ldlt_ptr_;
-public:
-  template <typename S,
-	    require_eigen_t<S>* = nullptr>
-  LDLT_factor(const S& matrix) :
-    ldlt_ptr_(make_chainable_ptr(matrix.ldlt())) {}
+
+ public:
+  template <typename S, require_eigen_t<S>* = nullptr>
+  LDLT_factor(const S& matrix) : ldlt_ptr_(make_chainable_ptr(matrix.ldlt())) {}
 
   /**
    * Return a const reference to the underlying matrix
    */
-  const auto& matrix() const {
-    return ldlt_ptr_->matrixLDLT();
-  }
+  const auto& matrix() const { return ldlt_ptr_->matrixLDLT(); }
 
   /**
    * Return a const reference to the LDLT factor of the matrix
    */
-  const auto& ldlt() const {
-    return *ldlt_ptr_;
-  }
+  const auto& ldlt() const { return *ldlt_ptr_; }
 };
-  
+
 /**
  * An LDLT_factor of an `Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>`
  * with `alloc_in_arena = True` holds a copy of the input matrix and the LDLT
@@ -49,29 +44,24 @@ public:
  */
 template <>
 class LDLT_factor<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>, true> {
-private:
+ private:
   arena_t<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> matrix_;
   Eigen::LDLT<Eigen::MatrixXd>* ldlt_ptr_;
-public:
-  template <typename S,
-	    require_eigen_vt<is_var, S>* = nullptr>
-  LDLT_factor(const S& matrix) :
-    matrix_(matrix),
-    ldlt_ptr_(make_chainable_ptr(matrix.val().ldlt())) {}
+
+ public:
+  template <typename S, require_eigen_vt<is_var, S>* = nullptr>
+  LDLT_factor(const S& matrix)
+      : matrix_(matrix), ldlt_ptr_(make_chainable_ptr(matrix.val().ldlt())) {}
 
   /**
    * Return the underlying matrix
    */
-  auto matrix() const {
-    return matrix_;
-  }
+  auto matrix() const { return matrix_; }
 
   /**
    * Return a const reference to the LDLT factor of the matrix
    */
-  const auto& ldlt() const {
-    return *ldlt_ptr_;
-  }
+  const auto& ldlt() const { return *ldlt_ptr_; }
 };
 
 /**
@@ -81,28 +71,24 @@ public:
  */
 template <>
 class LDLT_factor<var_value<Eigen::MatrixXd>, true> {
-private:
+ private:
   var_value<Eigen::MatrixXd> matrix_;
   Eigen::LDLT<Eigen::MatrixXd>* ldlt_ptr_;
-public:
-  template <typename S,
-	    require_var_matrix_t<S>* = nullptr>
-  LDLT_factor(const S& matrix) :
-    matrix_(matrix), ldlt_ptr_(make_chainable_ptr(matrix.val().ldlt())) {}
+
+ public:
+  template <typename S, require_var_matrix_t<S>* = nullptr>
+  LDLT_factor(const S& matrix)
+      : matrix_(matrix), ldlt_ptr_(make_chainable_ptr(matrix.val().ldlt())) {}
 
   /**
    * Return a const reference the underlying `var_value`
    */
-  const auto& matrix() const {
-    return matrix_;
-  }
+  const auto& matrix() const { return matrix_; }
 
   /**
    * Return a const reference to the LDLT factor of the matrix
    */
-  const auto& ldlt() const {
-    return *ldlt_ptr_;
-  }
+  const auto& ldlt() const { return *ldlt_ptr_; }
 };
 
 }  // namespace math

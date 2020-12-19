@@ -26,7 +26,8 @@ namespace math {
 template <typename EigMat, typename T, bool alloc_in_arena,
           require_eigen_t<EigMat>* = nullptr,
           require_any_not_arithmetic_t<value_type_t<EigMat>, T>* = nullptr>
-inline auto mdivide_right_ldlt(const EigMat& b, const LDLT_factor<T, alloc_in_arena>& A) {
+inline auto mdivide_right_ldlt(const EigMat& b,
+                               const LDLT_factor<T, alloc_in_arena>& A) {
   check_multiplicable("mdivide_right_ldlt", "b", b, "A", A.matrix());
 
   return transpose(mdivide_left_ldlt(A, transpose(b))).eval();
@@ -35,8 +36,8 @@ inline auto mdivide_right_ldlt(const EigMat& b, const LDLT_factor<T, alloc_in_ar
 template <typename EigMat, typename T, bool alloc_in_arena,
           require_eigen_t<EigMat>* = nullptr,
           require_all_arithmetic_t<value_type_t<EigMat>, T>* = nullptr>
-inline Eigen::Matrix<T, EigMat::RowsAtCompileTime, T::ColsAtCompileTime> mdivide_right_ldlt(
-    const EigMat& b, const LDLT_factor<T, alloc_in_arena>& A) {
+inline Eigen::Matrix<T, EigMat::RowsAtCompileTime, T::ColsAtCompileTime>
+mdivide_right_ldlt(const EigMat& b, const LDLT_factor<T, alloc_in_arena>& A) {
   check_multiplicable("mdivide_right_ldlt", "b", b, "A", A.matrix());
 
   if (A.rows() == 0) {

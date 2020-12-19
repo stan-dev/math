@@ -28,7 +28,8 @@ template <typename T, bool alloc_in_arena, typename EigMat,
           require_all_not_st_var<T, EigMat>* = nullptr,
           require_any_not_t<std::is_arithmetic<value_type_t<T>>,
                             is_fvar<value_type_t<EigMat>>>* = nullptr>
-inline Eigen::Matrix<return_type_t<T, EigMat>, Eigen::Dynamic, EigMat::ColsAtCompileTime>
+inline Eigen::Matrix<return_type_t<T, EigMat>, Eigen::Dynamic,
+                     EigMat::ColsAtCompileTime>
 mdivide_left_ldlt(const LDLT_factor<T, alloc_in_arena>& A, const EigMat& b) {
   check_multiplicable("mdivide_left_ldlt", "A", A.matrix(), "b", b);
   if (A.matrix().cols() == 0) {

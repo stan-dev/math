@@ -23,11 +23,13 @@ namespace math {
  * @throws std::domain_error if rows of B don't match the size of A.
  */
 template <typename T1, bool alloc_in_arena, typename T2,
-	  require_all_matrix_t<T1, T2>* = nullptr,
+          require_all_matrix_t<T1, T2>* = nullptr,
           require_any_st_var<T1, T2>* = nullptr>
-inline auto mdivide_left_ldlt(const LDLT_factor<T1, alloc_in_arena>& A, const T2& B) {
-  using ret_val_type = Eigen::Matrix<double, Eigen::Dynamic, T2::ColsAtCompileTime>;
-  using ret_type = promote_var_matrix_t<ret_val_type, T1,  T2>;
+inline auto mdivide_left_ldlt(const LDLT_factor<T1, alloc_in_arena>& A,
+                              const T2& B) {
+  using ret_val_type
+      = Eigen::Matrix<double, Eigen::Dynamic, T2::ColsAtCompileTime>;
+  using ret_type = promote_var_matrix_t<ret_val_type, T1, T2>;
 
   check_multiplicable("mdivide_left_ldlt", "A", A.matrix().val(), "B", B);
 

@@ -30,7 +30,7 @@ namespace math {
  * @return The trace of the inverse quadratic form.
  */
 template <typename T1, bool alloc_in_arena, typename T2,
-	  require_all_matrix_t<T1, T2>* = nullptr,
+          require_all_matrix_t<T1, T2>* = nullptr,
           require_any_st_var<T1, T2>* = nullptr>
 inline var trace_inv_quad_form_ldlt(const LDLT_factor<T1, alloc_in_arena>& A,
                                     const T2& B) {
@@ -39,7 +39,7 @@ inline var trace_inv_quad_form_ldlt(const LDLT_factor<T1, alloc_in_arena>& A,
   if (A.matrix().size() == 0)
     return 0.0;
 
-  if(!is_constant<T1>::value && !is_constant<T2>::value) {
+  if (!is_constant<T1>::value && !is_constant<T2>::value) {
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
     auto AsolveB = to_arena(A.ldlt().solve(arena_B.val()));
 
@@ -47,7 +47,7 @@ inline var trace_inv_quad_form_ldlt(const LDLT_factor<T1, alloc_in_arena>& A,
 
     reverse_pass_callback([A, AsolveB, arena_B, res]() mutable {
       forward_as<promote_scalar_t<var, T1>>(A.matrix()).adj()
-	+= -res.adj() * AsolveB * AsolveB.transpose();
+          += -res.adj() * AsolveB * AsolveB.transpose();
 
       arena_B.adj() += 2 * res.adj() * AsolveB;
     });
@@ -62,7 +62,7 @@ inline var trace_inv_quad_form_ldlt(const LDLT_factor<T1, alloc_in_arena>& A,
 
     reverse_pass_callback([A, AsolveB, res]() mutable {
       forward_as<promote_scalar_t<var, T1>>(A.matrix()).adj()
-	+= -res.adj() * AsolveB * AsolveB.transpose();
+          += -res.adj() * AsolveB * AsolveB.transpose();
     });
 
     return res;

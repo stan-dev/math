@@ -16,9 +16,8 @@ namespace math {
  * @param A an LDLT_factor
  * @return ln(det(A))
  */
-template <typename T, bool alloc_in_arena,
-	  require_rev_matrix_t<T>* = nullptr>
-var log_determinant_ldlt(const LDLT_factor<T, alloc_in_arena> &A) {
+template <typename T, bool alloc_in_arena, require_rev_matrix_t<T>* = nullptr>
+var log_determinant_ldlt(const LDLT_factor<T, alloc_in_arena>& A) {
   if (A.matrix().size() == 0) {
     return 0;
   }
