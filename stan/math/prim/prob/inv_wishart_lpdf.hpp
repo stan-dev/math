@@ -60,9 +60,9 @@ return_type_t<T_y, T_dof, T_scale> inv_wishart_lpdf(const T_y& W,
   T_S_ref S_ref = S;
   check_greater(function, "Degrees of freedom parameter", nu_ref, k - 1);
 
-  const auto& ldlt_W = make_ldlt_factor(W);
+  const auto& ldlt_W = make_ldlt_factor<T_y, T_dof, T_scale>(W);
   check_ldlt_factor(function, "LDLT_Factor of random variable", ldlt_W);
-  const auto& ldlt_S = make_ldlt_factor(S_ref);
+  const auto& ldlt_S = make_ldlt_factor<T_scale, T_y, T_dof>(S_ref);
   check_ldlt_factor(function, "LDLT_Factor of scale parameter", ldlt_S);
 
   return_type_t<T_y, T_dof, T_scale> lp(0.0);

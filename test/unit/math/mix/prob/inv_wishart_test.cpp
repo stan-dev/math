@@ -33,6 +33,8 @@ TEST(ProbDistributionsInvWishart, fvar_var) {
               0.01);
   EXPECT_NEAR(-1.4893348387330674,
               stan::math::inv_wishart_log(Y, dof, Sigma).d_.val(), 0.01);
+
+  stan::math::recover_memory();
 }
 
 TEST(ProbDistributionsInvWishart, fvar_fvar_var) {
@@ -63,4 +65,6 @@ TEST(ProbDistributionsInvWishart, fvar_fvar_var) {
               0.01);
   EXPECT_NEAR(-1.4893348387330674,
               stan::math::inv_wishart_log(Y, dof, Sigma).d_.val_.val(), 0.01);
+
+  stan::math::recover_memory();
 }

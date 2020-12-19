@@ -61,73 +61,6 @@ namespace math {
  * @tparam R number of rows, can be Eigen::Dynamic
  * @tparam C number of columns, can be Eigen::Dynamic
  */
-template <typename T, int R, int C>
-class LDLT_factor {
- public:
-  using vector_t = Eigen::Matrix<T, Eigen::Dynamic, 1>;
-  using matrix_t = Eigen::Matrix<T, R, C>;
-  using ldlt_t = Eigen::LDLT<matrix_t>;
-  using size_type = size_t;
-  using value_type = double;
-
-  LDLT_factor() : N_(0), ldltP_(new ldlt_t()) {}
-
-  LDLT_factor(const matrix_t& A) : N_(0), ldltP_(new ldlt_t()) {
-    compute(A);
-  }
-
-  inline void compute(const matrix_t& A) {
-    check_square("LDLT_factor", "A", A);
-    N_ = A.rows();
-    ldltP_->compute(A);
-  }
-
-  inline bool success() const {
-    if (ldltP_->info() != Eigen::Success) {
-      return false;
-    }
-    if (!(ldltP_->isPositive())) {
-      return false;
-    }
-    vector_t ldltP_diag(ldltP_->vectorD());
-    for (int i = 0; i < ldltP_diag.size(); ++i) {
-      if (ldltP_diag(i) <= 0 || is_nan(ldltP_diag(i))) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  inline T log_abs_det() const { return sum(log(ldltP_->vectorD())); }
-
-  inline void inverse(matrix_t& invA) const {
-    invA.setIdentity(N_);
-    ldltP_->solveInPlace(invA);
-  }
-
-  template <typename Rhs>
-  inline const Eigen::Solve<ldlt_t, Rhs> solve(
-      const Eigen::MatrixBase<Rhs>& b) const {
-    return ldltP_->solve(b);
-  }
-
-  inline matrix_t solveRight(const matrix_t& B) const {
-    return ldltP_->solve(B.transpose()).transpose();
-  }
-
-  inline vector_t vectorD() const { return ldltP_->vectorD(); }
-
-  // This could return an ldlt_t, but that would just do another ldlt on a matrix
-  // constructed from an ldlt
-  inline matrix_t matrixLDLT() const { return ldltP_->matrixLDLT(); }
-
-  inline size_t rows() const { return N_; }
-  inline size_t cols() const { return N_; }
-
-  size_t N_;
-  std::shared_ptr<ldlt_t> ldltP_;
-};
-
 template <typename T, bool alloc_in_arena>
 class LDLT_factor2;
 
@@ -148,29 +81,25 @@ public:
     return ldlt_ptr_->solve(b);
   }
 
-  auto& matrix() {
+  auto& matrix() const {
     return ldlt_ptr_->matrixLDLT();
   }
 
-  auto& ldlt() {
+  auto& ldlt() const {
     return *ldlt_ptr_;
   }
 };
 
-  /*template <typename T,
-	    // require_not_vt_var<T>* = nullptr, <-- using this instead of next line doesn't work, why?
-	    //require_not_eigen_vt<is_var, T>* = nullptr,
-	  require_not_rev_matrix_t<T>* = nullptr>
-inline auto make_ldlt_factor(const T& A) {
-  return LDLT_factor<value_type_t<T>, T::RowsAtCompileTime, T::ColsAtCompileTime>(A);
-  }*/
-
 template <typename T, typename... Args,
 	  require_matrix_t<T>* = nullptr>
 inline auto make_ldlt_factor(const T& A) {
-  return LDLT_factor2<plain_type_t<T>, disjunction<is_var<scalar_type_t<return_type_t<T, Args...>>>,
-						   std::is_same<fvar<var>, return_type_t<Args...>>,
-						   std::is_same<fvar<fvar<var>>, return_type_t<Args...>>>::value>(A);
+  return LDLT_factor2<plain_type_t<T>,
+		      disjunction<is_var<scalar_type_t<return_type_t<T, Args...>>>,
+				  conjunction<is_fvar<return_type_t<Args...>>,
+					      is_var<partials_type_t<return_type_t<Args...>>>>,
+				  conjunction<is_fvar<return_type_t<Args...>>,
+					      is_fvar<partials_type_t<return_type_t<Args...>>>,
+					      is_var<partials_type_t<partials_type_t<return_type_t<Args...>>>>>>::value>(A);
 }
 
   

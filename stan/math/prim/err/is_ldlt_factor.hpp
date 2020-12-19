@@ -19,9 +19,11 @@ namespace math {
  * @param A The LDLT factor to check for validity
  * @return <code>true</code> if the LDLT factor is valid
  */
-template <typename T, int R, int C>
-inline bool is_ldlt_factor(LDLT_factor<T, R, C>& A) {
-  return A.success();
+template <typename T, bool alloc_in_arena>
+inline bool is_ldlt_factor(LDLT_factor2<T, alloc_in_arena>& A) {
+  return A.ldlt().info() == Eigen::Success &&
+    A.ldlt().isPositive() &&
+    (A.ldlt().vectorD().array() > 0).all();
 }
 
 }  // namespace math

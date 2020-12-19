@@ -23,14 +23,16 @@ namespace math {
  * @param[in] A the LDLT factor to check for validity
  * @throws <code>std::domain_error</code> if the LDLT factor is invalid
  */
-template <typename T, int R, int C>
+template <typename T, bool alloc_in_arena>
 inline void check_ldlt_factor(const char* function, const char* name,
-                              const LDLT_factor<T, R, C>& A) {
-  if (!A.success()) {
+                              const LDLT_factor2<T, alloc_in_arena>& A) {
+  if (!(A.ldlt().info() == Eigen::Success &&
+	A.ldlt().isPositive() &&
+	(A.ldlt().vectorD().array() > 0).all())) {
     std::ostringstream msg;
     msg << "is not positive definite.  last conditional variance is ";
     std::string msg_str(msg.str());
-    T too_small = A.vectorD().tail(1)(0);
+    auto too_small = A.ldlt().vectorD().tail(1)(0);
     throw_domain_error(function, name, too_small, msg_str.c_str(), ".");
   }
 }
