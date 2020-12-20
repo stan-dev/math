@@ -33,12 +33,12 @@ inline auto svd_V(const EigMat& m) {
   using ret_type = promote_scalar_t<var, Eigen::MatrixXd>;
   check_nonzero_size("svd_V", "m", m);
 
-  const int M = to_arena(m.rows());
-  auto arena_m = to_arena(m);
+  const int M = to_arena(std::min(m.rows(), m.cols()));
+  auto arena_m = to_arena(m); // N by P
   
   Eigen::JacobiSVD<Eigen::MatrixXd> svd(arena_m.val(), Eigen::ComputeFullU | Eigen::ComputeFullV);
 
-  auto arena_D = to_arena((Eigen::MatrixXd) svd.singularValues().asDiagonal());
+  auto arena_D = to_arena(svd.singularValues()); // size min(N, P) = M
 
   Eigen::MatrixXd Fm(M, M);
 
@@ -47,23 +47,25 @@ inline auto svd_V(const EigMat& m) {
       if(j == i) {
         Fm(i, j) = 0.0;
       } else {
-        Fm(i, j)  = 1.0 / (arena_D(j, j) - arena_D(i, i)) - 1.0 / (arena_D(i, i) + arena_D(j, j));
+        Fm(i, j)  = 1.0 / (arena_D[j] - arena_D[i]) - 1.0 / (arena_D[i] + arena_D[j]);
       }
     }
   }
 
   auto arena_Fm = to_arena(Fm);
-  auto arena_U = to_arena(svd.matrixU());
-  arena_t<ret_type> arena_V = svd.matrixV();
+  auto arena_U = to_arena(svd.matrixU()); // N by N
+  arena_t<ret_type> arena_V = svd.matrixV(); // P by P
 
 
   reverse_pass_callback(
       [arena_m, arena_U, arena_D, arena_V, arena_Fm, M]() mutable {
-	Eigen::MatrixXd VTVadj = arena_V.val_op().transpose() * arena_V.adj_op();
-	arena_m.adj() += 0.5 * arena_U.val_op() *
-	  (arena_Fm.array() * (VTVadj - VTVadj.transpose()).array()).matrix() * 
-      arena_V.val_op().transpose() + arena_U.val_op() * arena_D.val_op().inverse() * arena_V.adj_op().transpose() * 
-      (Eigen::MatrixXd::Identity(M, M) - arena_V.val_op() * arena_V.val_op().transpose());
+        auto U_block = arena_U.block(0, 0, arena_m.rows(), M); // N by M
+        auto V_block = arena_V.block(0, 0, arena_m.cols(), M); // P by M
+        Eigen::MatrixXd VTVadj = V_block.val_op().transpose() * V_block.adj_op(); // M by M
+        arena_m.adj() += 0.5 * U_block * 
+          (arena_Fm.array() * (VTVadj - VTVadj.transpose()).array()).matrix() * 
+            V_block.val_op().transpose() + U_block * arena_D.asDiagonal().inverse() * V_block.adj_op().transpose() * 
+            (Eigen::MatrixXd::Identity(arena_m.cols(), arena_m.cols()) - V_block.val_op() * V_block.val_op().transpose());
       });
 
   return ret_type(arena_V);
