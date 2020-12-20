@@ -5,6 +5,7 @@
 #include <stan/math/prim/fun/cosh.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/exp.hpp>
 #include <cmath>
 #include <complex>
 
@@ -46,11 +47,11 @@ inline var tanh(const var& a) {
 }
 
 /**
- * Return the hyperbolic tangent of of x
+ * Return the hyperbolic tangent of elements of a
  *
- * @tparam T type of x
- * @param x argument
- * @return elementwise hyperbolic tangent of x
+ * @tparam T type of a
+ * @param a argument
+ * @return elementwise hyperbolic tangent of a
  */
 template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
 inline auto tanh(const VarMat& a) {
