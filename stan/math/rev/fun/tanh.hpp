@@ -11,17 +11,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class tanh_vari : public op_v_vari {
- public:
-  explicit tanh_vari(vari* avi) : op_v_vari(std::tanh(avi->val_), avi) {}
-  void chain() {
-    double cosh = std::cosh(avi_->val_);
-    avi_->adj_ += adj_ / (cosh * cosh);
-  }
-};
-}  // namespace internal
-
 /**
  * Return the hyperbolic tangent of the specified variable (cmath).
  *
@@ -49,16 +38,11 @@ class tanh_vari : public op_v_vari {
  * @param a Variable.
  * @return Hyperbolic tangent of variable.
  */
-inline var tanh(const var& a) { return var(new internal::tanh_vari(a.vi_)); }
-
-/**
- * Return the hyperbolic tangent of the complex argument.
- *
- * @param[in] z argument
- * @return hyperbolic tangent of the argument
- */
-inline std::complex<var> tanh(const std::complex<var>& z) {
-  return stan::math::internal::complex_tanh(z);
+inline var tanh(const var& a) {
+  return make_callback_var(std::tanh(a.val()), [a](const auto& vi) mutable {
+    const auto a_cosh = std::cosh(a.val());
+    a.adj() += vi.adj_ / (a_cosh * a_cosh);
+  });
 }
 
 /**
@@ -68,17 +52,22 @@ inline std::complex<var> tanh(const std::complex<var>& z) {
  * @param x argument
  * @return elementwise hyperbolic tangent of x
  */
-template <typename T, require_var_matrix_t<T>* = nullptr>
-inline auto tanh(const T& x) {
-  plain_type_t<T> res = stan::math::tanh(x.val());
+template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
+inline auto tanh(const VarMat& a) {
+  return make_callback_var(
+      a.val().array().tanh().matrix(), [a](const auto& vi) mutable {
+        a.adj().array() += vi.adj_.array() / (a.val().array().cosh().square());
+      });
+}
 
-  reverse_pass_callback([x, res]() mutable {
-    auto cosh = stan::math::cosh(x.val());
-    x.adj().noalias()
-        += (res.adj().array() / (cosh.array() * cosh.array())).matrix();
-  });
-
-  return res;
+/**
+ * Return the hyperbolic tangent of the complex argument.
+ *
+ * @param[in] z argument
+ * @return hyperbolic tangent of the argument
+ */
+inline std::complex<var> tanh(const std::complex<var>& z) {
+  return stan::math::internal::complex_tanh(z);
 }
 
 }  // namespace math

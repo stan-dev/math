@@ -25,21 +25,9 @@ TEST(mathMixMatFun, log) {
   stan::test::expect_ad(f, std::complex<double>{2.1, -0.0});
   // (negative real and zero imaginary illegal)
 
-  Eigen::VectorXd x1(3);
-  x1 << 0.1, 2.0, 3.0;
-  Eigen::RowVectorXd x2(3);
-  x2 << 0.1, 2.0, 3.0;
-  Eigen::MatrixXd x3(2, 3);
-  x3 << 0.1, 2.0, 3.0, 4.0, 5.0, 6.0;
-  stan::test::expect_ad_matvar(f, x1);
-  stan::test::expect_ad_matvar(f, x2);
-  stan::test::expect_ad_matvar(f, x3);
+  std::vector<double> com_args = stan::test::internal::common_nonzero_args();
+  std::vector<double> args{0.1, 2.5, 5.5};
 
-  Eigen::VectorXd x4(0);
-  Eigen::RowVectorXd x5(0);
-  Eigen::MatrixXd x6(0, 0);
-
-  stan::test::expect_ad_matvar(f, x4);
-  stan::test::expect_ad_matvar(f, x5);
-  stan::test::expect_ad_matvar(f, x6);
+  stan::test::expect_ad_vector_matvar(f, stan::math::to_vector(com_args));
+  stan::test::expect_ad_vector_matvar(f, stan::math::to_vector(args));
 }

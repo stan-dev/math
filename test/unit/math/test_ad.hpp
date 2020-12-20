@@ -2099,6 +2099,46 @@ void expect_ad_matvar(const ad_tolerances& tols, const F& f,
 }
 
 /**
+ * For an unary function check that an Eigen matrix, vector and row vector of
+ * vars and an `var_value` with inner eigen matrix, vector, and row vector type
+ * return the same values and adjoints.
+ *
+ * @tparam F A lambda or functor type that calls the unary function.
+ * @tparam EigVec An Eigen vector type
+ * @param f a lambda
+ * @param x An Eigen vector.
+ */
+template <typename F, typename EigVec,
+          require_eigen_vector_t<EigVec>* = nullptr>
+void expect_ad_vector_matvar(const F& f, const EigVec& x) {
+  ad_tolerances tols;
+  expect_ad_vector_matvar(tols, f, x);
+}
+
+template <typename F, typename EigVec,
+          require_eigen_vector_t<EigVec>* = nullptr>
+void expect_ad_vector_matvar(const ad_tolerances& tols, const F& f,
+                             const EigVec& x) {
+  Eigen::VectorXd v = x;
+  Eigen::RowVectorXd r = x.transpose();
+  Eigen::MatrixXd m(x.size(), 2);
+  m.col(0) = x;
+  m.col(1) = x.reverse();  // reverse just to mix stuff up
+
+  expect_ad_matvar(f, v);
+  expect_ad_matvar(f, r);
+  expect_ad_matvar(f, m);
+
+  std::vector<Eigen::VectorXd> vv = {v, v};
+  std::vector<Eigen::RowVectorXd> rv = {r, r};
+  std::vector<Eigen::MatrixXd> mv = {m, m};
+
+  expect_ad_matvar(f, vv);
+  expect_ad_matvar(f, rv);
+  expect_ad_matvar(f, mv);
+}
+
+/**
  * For binary function check that an Eigen matrix of vars and a var with an
  * inner eigen type return the same values and adjoints. This is done by
  * calling the function on both types, summing the results, then taking the

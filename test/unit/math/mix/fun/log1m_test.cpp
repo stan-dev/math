@@ -5,21 +5,9 @@ TEST(mathMixMatFun, log1m) {
   stan::test::expect_common_unary_vectorized(f);
   stan::test::expect_unary_vectorized(f, -21.5, -21, -1, 0.9, 3);
 
-  Eigen::VectorXd x1(3);
-  x1 << -1.0, -2.0, 0.3;
-  Eigen::RowVectorXd x2(3);
-  x2 << -1.0, -2.0, 0.3;
-  Eigen::MatrixXd x3(2, 3);
-  x3 << -1.0, -2.0, 0.3, 0.4, -5.0, -6.0;
-  stan::test::expect_ad_matvar(f, x1);
-  stan::test::expect_ad_matvar(f, x2);
-  stan::test::expect_ad_matvar(f, x3);
+  std::vector<double> com_args = stan::test::internal::common_nonzero_args();
+  std::vector<double> args{-2.6, -0.5, 0.5, 1.5};
 
-  Eigen::VectorXd x4(0);
-  Eigen::RowVectorXd x5(0);
-  Eigen::MatrixXd x6(0, 0);
-
-  stan::test::expect_ad_matvar(f, x4);
-  stan::test::expect_ad_matvar(f, x5);
-  stan::test::expect_ad_matvar(f, x6);
+  stan::test::expect_ad_vector_matvar(f, stan::math::to_vector(com_args));
+  stan::test::expect_ad_vector_matvar(f, stan::math::to_vector(args));
 }
