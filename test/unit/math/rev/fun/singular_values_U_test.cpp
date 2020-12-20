@@ -5,7 +5,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 #include <typeinfo>
-TEST(AgradRev, singularvalues_U_gradient) {
+TEST(AgradRev, svd_U_gradient) {
     using namespace stan::math;
     Eigen::MatrixXd A(4, 4);
     // Random symmetric matrix
@@ -34,14 +34,14 @@ TEST(AgradRev, singularvalues_U_gradient) {
 
     Eigen::MatrixXd adj_U_fd = Eigen::MatrixXd::Ones(4, 4);
 
-    adj_A_fd += 0.5 * U * (Fp.cwiseProduct(U.transpose() * adj_U_fd - adj_U_fd.transpose() * U)).matrix() * V.transpose()
+    adj_A_fd += 0.5 * U * 
+        (Fp.array() * (U.transpose() * adj_A_fd - adj_A_fd.transpose() * U).array()).matrix()
         + (Eigen::MatrixXd::Identity(4, 4) - U * U.transpose()) * adj_U_fd * D.inverse() * V.transpose();
 
 
+    stan::math::set_zero_all_adjoints();
     matrix_v arena_a(A);
-    auto stan_u = singular_values_U(arena_a);
-
+    auto stan_u = svd_U(arena_a);
     EXPECT_MATRIX_FLOAT_EQ(U, stan_u.val());
-    
-    EXPECT_MATRIX_FLOAT_EQ(adj_A_fd, arena_a.adj())
+    EXPECT_MATRIX_FLOAT_EQ(adj_A_fd, arena_a.adj_op());
 }

@@ -17,6 +17,8 @@ namespace math {
 /**
  * Given input matrix m, return matrix U where \mathbf{m} = \mathbf{UDV^{T}}
  *
+ * This function internally calls Eigen::JacobiSVD to compute decomposition.
+ *
  * Equation (4) from Differentiable Programming Tensor Networks(H. Liao, J. Liu, et al., arXiv:1903.09650)
  * is used for MxN input matrix's adjoint calculation.
  *
@@ -27,7 +29,7 @@ namespace math {
 template <typename EigMat,
     require_eigen_matrix_dynamic_t<EigMat>* = nullptr,
 	  require_vt_var<EigMat>* = nullptr>
-inline auto singular_values_U(const EigMat& m) {
+inline auto svd_U(const EigMat& m) {
   using ret_type = promote_scalar_t<var, Eigen::MatrixXd>;
   check_nonzero_size("singular_values", "m", m);
 
