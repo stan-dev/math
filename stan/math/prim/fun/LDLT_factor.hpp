@@ -42,7 +42,7 @@ class LDLT_factor<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, false> {
 
  public:
   template <typename S, require_eigen_t<S>* = nullptr>
-  LDLT_factor(const S& matrix) : ldlt_ptr_(new ldlt_type(matrix)) {}
+  explicit LDLT_factor(const S& matrix) : ldlt_ptr_(new ldlt_type(matrix)) {}
 
   /**
    * Return a const reference to the underlying matrix

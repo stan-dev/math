@@ -24,7 +24,7 @@ class LDLT_factor<T, true> {
 
  public:
   template <typename S, require_eigen_t<S>* = nullptr>
-  LDLT_factor(const S& matrix) : ldlt_ptr_(make_chainable_ptr(matrix.ldlt())) {}
+  explicit LDLT_factor(const S& matrix) : ldlt_ptr_(make_chainable_ptr(matrix.ldlt())) {}
 
   /**
    * Return a const reference to the underlying matrix
@@ -50,7 +50,7 @@ class LDLT_factor<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>, true> {
 
  public:
   template <typename S, require_eigen_vt<is_var, S>* = nullptr>
-  LDLT_factor(const S& matrix)
+  explicit LDLT_factor(const S& matrix)
       : matrix_(matrix), ldlt_ptr_(make_chainable_ptr(matrix.val().ldlt())) {}
 
   /**
@@ -77,7 +77,7 @@ class LDLT_factor<var_value<Eigen::MatrixXd>, true> {
 
  public:
   template <typename S, require_var_matrix_t<S>* = nullptr>
-  LDLT_factor(const S& matrix)
+  explicit LDLT_factor(const S& matrix)
       : matrix_(matrix), ldlt_ptr_(make_chainable_ptr(matrix.val().ldlt())) {}
 
   /**
