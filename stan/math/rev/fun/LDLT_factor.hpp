@@ -24,7 +24,8 @@ class LDLT_factor<T, true> {
 
  public:
   template <typename S, require_eigen_t<S>* = nullptr>
-  explicit LDLT_factor(const S& matrix) : ldlt_ptr_(make_chainable_ptr(matrix.ldlt())) {}
+  explicit LDLT_factor(const S& matrix)
+      : ldlt_ptr_(make_chainable_ptr(matrix.ldlt())) {}
 
   /**
    * Return a const reference to the underlying matrix
