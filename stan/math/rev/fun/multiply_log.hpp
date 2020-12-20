@@ -47,9 +47,7 @@ class multiply_log_dv_vari : public op_dv_vari {
  public:
   multiply_log_dv_vari(double a, vari* bvi)
       : op_dv_vari(multiply_log(a, bvi->val_), a, bvi) {}
-  void chain() {
-    bvi_->adj_ += adj_ * ad_ / bvi_->val_;
-  }
+  void chain() { bvi_->adj_ += adj_ * ad_ / bvi_->val_; }
 };
 }  // namespace internal
 
@@ -102,95 +100,110 @@ inline var multiply_log(double a, const var& b) {
 template <typename T1, typename T2, require_all_matrix_t<T1, T2>* = nullptr,
           require_any_var_matrix_t<T1, T2>* = nullptr>
 inline auto multiply_log(const T1& a, const T2& b) {
-  if(!is_constant<T1>::value && !is_constant<T2>::value) {
+  if (!is_constant<T1>::value && !is_constant<T2>::value) {
     arena_t<promote_scalar_t<var, T1>> arena_a = a;
     arena_t<promote_scalar_t<var, T2>> arena_b = b;
 
-    return make_callback_var((arena_a.val().array() * arena_b.val().array().log()).matrix(),
-			     [arena_a, arena_b](const auto& res) mutable {
-			       arena_a.adj().array() += res.adj().array() * arena_b.val().array().log();
-			       arena_b.adj().array() += res.adj().array() * arena_a.val().array() / arena_b.val().array();
-			     });
-  } else if(!is_constant<T1>::value) {
+    return make_callback_var(
+        (arena_a.val().array() * arena_b.val().array().log()).matrix(),
+        [arena_a, arena_b](const auto& res) mutable {
+          arena_a.adj().array()
+              += res.adj().array() * arena_b.val().array().log();
+          arena_b.adj().array() += res.adj().array() * arena_a.val().array()
+                                   / arena_b.val().array();
+        });
+  } else if (!is_constant<T1>::value) {
     arena_t<promote_scalar_t<var, T1>> arena_a = a;
     auto arena_b_log = to_arena(value_of(b).array().log());
 
     return make_callback_var((arena_a.val().array() * arena_b_log).matrix(),
-			      [arena_a, arena_b_log](const auto& res) mutable {
-			       arena_a.adj().array() += res.adj().array() * arena_b_log;
-			     });
+                             [arena_a, arena_b_log](const auto& res) mutable {
+                               arena_a.adj().array()
+                                   += res.adj().array() * arena_b_log;
+                             });
   } else {
     auto arena_a = to_arena(value_of(a));
     arena_t<promote_scalar_t<var, T2>> arena_b = b;
 
-    return make_callback_var((arena_a.array() * arena_b.val().array().log()).matrix(),
-			     [arena_a, arena_b](const auto& res) mutable {
-			       arena_b.adj().array() += res.adj().array() * arena_a.array() / arena_b.val().array();
-			     });
+    return make_callback_var(
+        (arena_a.array() * arena_b.val().array().log()).matrix(),
+        [arena_a, arena_b](const auto& res) mutable {
+          arena_b.adj().array()
+              += res.adj().array() * arena_a.array() / arena_b.val().array();
+        });
   }
 }
 
-template <typename T1, typename T2,
-	  require_var_matrix_t<T1>* = nullptr,
+template <typename T1, typename T2, require_var_matrix_t<T1>* = nullptr,
           require_stan_scalar_t<T2>* = nullptr>
 inline auto multiply_log(const T1& a, const T2& b) {
   using std::log;
-  
-  if(!is_constant<T1>::value && !is_constant<T2>::value) {
+
+  if (!is_constant<T1>::value && !is_constant<T2>::value) {
     arena_t<promote_scalar_t<var, T1>> arena_a = a;
     var arena_b = b;
 
-    return make_callback_var(arena_a.val() * log(arena_b.val()),
-			     [arena_a, arena_b](const auto& res) mutable {
-			       arena_a.adj() += res.adj() * log(arena_b.val());
-			       arena_b.adj() += (res.adj().array() * arena_a.val().array() / arena_b.val()).sum();
-			     });
-  } else if(!is_constant<T1>::value) {
+    return make_callback_var(
+        arena_a.val() * log(arena_b.val()),
+        [arena_a, arena_b](const auto& res) mutable {
+          arena_a.adj() += res.adj() * log(arena_b.val());
+          arena_b.adj()
+              += (res.adj().array() * arena_a.val().array() / arena_b.val())
+                     .sum();
+        });
+  } else if (!is_constant<T1>::value) {
     arena_t<promote_scalar_t<var, T1>> arena_a = a;
 
     return make_callback_var(arena_a.val() * log(value_of(b)),
-			     [arena_a, b](const auto& res) mutable {
-			       arena_a.adj() += res.adj() * log(value_of(b));
-			     });
+                             [arena_a, b](const auto& res) mutable {
+                               arena_a.adj() += res.adj() * log(value_of(b));
+                             });
   } else {
     arena_t<promote_scalar_t<double, T1>> arena_a = value_of(a);
     var arena_b = b;
 
-    return make_callback_var(arena_a * log(arena_b.val()),
-			     [arena_a, arena_b](const auto& res) mutable {
-			       arena_b.adj() += (res.adj().array() * arena_a.array() / arena_b.val()).sum();
-			     });
+    return make_callback_var(
+        arena_a * log(arena_b.val()),
+        [arena_a, arena_b](const auto& res) mutable {
+          arena_b.adj()
+              += (res.adj().array() * arena_a.array() / arena_b.val()).sum();
+        });
   }
 }
 
-template <typename T1, typename T2,
-          require_stan_scalar_t<T1>* = nullptr,
-	  require_var_matrix_t<T2>* = nullptr>
+template <typename T1, typename T2, require_stan_scalar_t<T1>* = nullptr,
+          require_var_matrix_t<T2>* = nullptr>
 inline auto multiply_log(const T1& a, const T2& b) {
-  if(!is_constant<T1>::value && !is_constant<T2>::value) {
+  if (!is_constant<T1>::value && !is_constant<T2>::value) {
     var arena_a = a;
     arena_t<promote_scalar_t<var, T2>> arena_b = b;
 
-    return make_callback_var((arena_a.val() * arena_b.val().array().log()).matrix(),
-			     [arena_a, arena_b](const auto& res) mutable {
-			       arena_a.adj() += (res.adj().array() * arena_b.val().array().log()).sum();
-			       arena_b.adj().array() += res.adj().array() * arena_a.val() / arena_b.val().array();
-			     });
-  } else if(!is_constant<T1>::value) {
+    return make_callback_var(
+        (arena_a.val() * arena_b.val().array().log()).matrix(),
+        [arena_a, arena_b](const auto& res) mutable {
+          arena_a.adj()
+              += (res.adj().array() * arena_b.val().array().log()).sum();
+          arena_b.adj().array()
+              += res.adj().array() * arena_a.val() / arena_b.val().array();
+        });
+  } else if (!is_constant<T1>::value) {
     var arena_a = a;
     auto arena_b_log = to_arena(value_of(b).array().log());
 
     return make_callback_var((arena_a.val() * arena_b_log).matrix(),
-			      [arena_a, arena_b_log](const auto& res) mutable {
-			       arena_a.adj() += (res.adj().array() * arena_b_log).sum();
-			     });
+                             [arena_a, arena_b_log](const auto& res) mutable {
+                               arena_a.adj()
+                                   += (res.adj().array() * arena_b_log).sum();
+                             });
   } else {
     arena_t<promote_scalar_t<var, T2>> arena_b = b;
 
-    return make_callback_var((value_of(a) * arena_b.val().array().log()).matrix(),
-			     [a, arena_b](const auto& res) mutable {
-			       arena_b.adj().array() += res.adj().array() * value_of(a) / arena_b.val().array();
-			     });
+    return make_callback_var(
+        (value_of(a) * arena_b.val().array().log()).matrix(),
+        [a, arena_b](const auto& res) mutable {
+          arena_b.adj().array()
+              += res.adj().array() * value_of(a) / arena_b.val().array();
+        });
   }
 }
 
