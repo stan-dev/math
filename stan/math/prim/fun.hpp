@@ -306,6 +306,7 @@
 #include <stan/math/prim/fun/subtract.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/svd_U.hpp>
+#include <stan/math/prim/fun/svd_V.hpp>
 #include <stan/math/prim/fun/symmetrize_from_lower_tri.hpp>
 #include <stan/math/prim/fun/tail.hpp>
 #include <stan/math/prim/fun/tan.hpp>
