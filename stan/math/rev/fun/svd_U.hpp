@@ -1,5 +1,5 @@
-#ifndef MATH_SINGULAR_VALUES_H
-#define MATH_SINGULAR_VALUES_H
+#ifndef STAN_MATH_REV_FUN_SVD_U_HPP
+#define STAN_MATH_REV_FUN_SVD_U_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
@@ -27,7 +27,7 @@ namespace math {
  * @return Orthogonal matrix U
  */
 template <typename EigMat,
-    require_eigen_matrix_dynamic_t<EigMat>* = nullptr,
+	  require_eigen_matrix_dynamic_t<EigMat>* = nullptr,
 	  require_vt_var<EigMat>* = nullptr>
 inline auto svd_U(const EigMat& m) {
   using ret_type = promote_scalar_t<var, Eigen::MatrixXd>;
