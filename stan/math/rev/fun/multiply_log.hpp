@@ -56,8 +56,7 @@ class multiply_log_dv_vari : public op_dv_vari {
  *
  * When both a and b are 0, the value returned is 0.
  * The partial derivative with respect to a is log(b).
- * The partial derivative with respect to b is a/b. When
- * a and b are both 0, this is set to Inf.
+ * The partial derivative with respect to b is a/b.
  *
  * @param a First variable.
  * @param b Second variable.
@@ -83,8 +82,7 @@ inline var multiply_log(const var& a, double b) {
  * Return the value of a*log(b).
  *
  * When both a and b are 0, the value returned is 0.
- * The partial derivative with respect to b is a/b. When
- * a and b are both 0, this is set to Inf.
+ * The partial derivative with respect to b is a/b.
  *
  * @param a First scalar.
  * @param b Second variable.
@@ -97,6 +95,18 @@ inline var multiply_log(double a, const var& b) {
   return var(new internal::multiply_log_dv_vari(a, b.vi_));
 }
 
+/**
+ * Return the elementwise product `a * log(b)`.
+ *
+ * Both `T1` and `T2` are matrices, and one of `T1` or `T2` must be a
+ * `var_value`
+ *
+ * @tparam T1 Type of first argument
+ * @tparam T2 Type of second argument
+ * @param a First argument
+ * @param b Second argument
+ * @return elementwise product of `a` and `log(b)`
+ */
 template <typename T1, typename T2, require_all_matrix_t<T1, T2>* = nullptr,
           require_any_var_matrix_t<T1, T2>* = nullptr>
 inline auto multiply_log(const T1& a, const T2& b) {
@@ -134,6 +144,15 @@ inline auto multiply_log(const T1& a, const T2& b) {
   }
 }
 
+/**
+ * Return the product `a * log(b)`.
+ *
+ * @tparam T1 Type of matrix argument
+ * @tparam T2 Type of scalar argument
+ * @param a Matrix argument
+ * @param b Scalar argument
+ * @return Product of `a` and `log(b)`
+ */
 template <typename T1, typename T2, require_var_matrix_t<T1>* = nullptr,
           require_stan_scalar_t<T2>* = nullptr>
 inline auto multiply_log(const T1& a, const T2& b) {
@@ -171,6 +190,15 @@ inline auto multiply_log(const T1& a, const T2& b) {
   }
 }
 
+/**
+ * Return the product `a * log(b)`.
+ *
+ * @tparam T1 Type of scalar argument
+ * @tparam T2 Type of matrix argument
+ * @param a Scalar argument
+ * @param b Matrix argument
+ * @return Product of `a` and `log(b)`
+ */
 template <typename T1, typename T2, require_stan_scalar_t<T1>* = nullptr,
           require_var_matrix_t<T2>* = nullptr>
 inline auto multiply_log(const T1& a, const T2& b) {
