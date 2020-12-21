@@ -1,18 +1,18 @@
 #!/usr/bin/python
 from __future__ import print_function
 
+import itertools
 import numbers
-from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
-import sys
-import subprocess
 import os
+import subprocess
+import sys
+from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
 HERE = os.path.dirname(os.path.realpath(__file__))
 TEST_FOLDER = os.path.abspath(os.path.join(HERE, "..", "test"))
 sys.path.append(TEST_FOLDER)
 
 from sig_utils import *
-import itertools
 
 WORKING_FOLDER = "./benchmarks/"
 

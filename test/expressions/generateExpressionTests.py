@@ -1,5 +1,6 @@
-from sig_utils import *
 import numbers
+
+from sig_utils import *
 
 src_folder = "./test/expressions/"
 build_folder = "./test/expressions/"

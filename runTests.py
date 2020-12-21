@@ -7,15 +7,16 @@ Call script with '-h' as an option to see a helpful message.
 """
 
 from __future__ import print_function
-from argparse import ArgumentParser, RawTextHelpFormatter
+
+import glob
 import os
 import os.path
 import platform
+import re
 import subprocess
 import sys
 import time
-import glob
-import re
+from argparse import ArgumentParser, RawTextHelpFormatter
 
 winsfx = ".exe"
 testsfx = "_test.cpp"
