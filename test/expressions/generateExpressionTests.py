@@ -44,7 +44,7 @@ def make_arg_code(arg, scalar, var_name, var_number, function_name):
         return_type = arg_types[arg.split(" => ")[1]].replace("SCALAR", scalar)
         return "  stan::test::test_functor " + var_name
     arg_type = arg_types[arg].replace("SCALAR", scalar)
-    if function_name in special_arg_values and arg != "rng":
+    if (function_name in special_arg_values) and (arg != "rng"):
         if isinstance(special_arg_values[function_name][var_number], numbers.Number):
             return "  {} {} = stan::test::make_arg<{}>({})".format(
                 arg_type,

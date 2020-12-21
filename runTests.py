@@ -290,8 +290,9 @@ def handleExpressionTests(tests, only_functions, n_test_files):
             del tests[n]
             expression_tests = True
     if expression_tests:
-        sys.path.append("test")
-        sys.path.append("test/expressions")
+        HERE = os.path.dirname(os.path.realpath(__file__))
+        sys.path.append(os.path.join(HERE, "test"))
+        sys.path.append(os.path.join(HERE, "test/expressions"))
         import generateExpressionTests
 
         generateExpressionTests.main(only_functions, n_test_files)
