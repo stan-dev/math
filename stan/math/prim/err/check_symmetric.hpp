@@ -43,17 +43,19 @@ inline void check_symmetric(const char* function, const char* name,
     for (Eigen::Index n = m + 1; n < k; ++n) {
       if (!(fabs(value_of(y_ref(m, n)) - value_of(y_ref(n, m)))
             <= CONSTRAINT_TOLERANCE)) {
-        std::ostringstream msg1;
-        msg1 << "is not symmetric. " << name << "["
-             << stan::error_index::value + m << ","
-             << stan::error_index::value + n << "] = ";
-        std::string msg1_str(msg1.str());
-        std::ostringstream msg2;
-        msg2 << ", but " << name << "[" << stan::error_index::value + n << ","
-             << stan::error_index::value + m << "] = " << y_ref(n, m);
-        std::string msg2_str(msg2.str());
-        throw_domain_error(function, name, y_ref(m, n), msg1_str.c_str(),
-                           msg2_str.c_str());
+        [&]() STAN_COLD_PATH {
+          std::ostringstream msg1;
+          msg1 << "is not symmetric. " << name << "["
+               << stan::error_index::value + m << ","
+               << stan::error_index::value + n << "] = ";
+          std::string msg1_str(msg1.str());
+          std::ostringstream msg2;
+          msg2 << ", but " << name << "[" << stan::error_index::value + n << ","
+               << stan::error_index::value + m << "] = " << y_ref(n, m);
+          std::string msg2_str(msg2.str());
+          throw_domain_error(function, name, y_ref(m, n), msg1_str.c_str(),
+                             msg2_str.c_str());
+        }();
       }
     }
   }

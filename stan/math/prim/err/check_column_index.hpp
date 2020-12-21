@@ -29,15 +29,15 @@ template <typename T_y,
                         is_prim_or_rev_kernel_expression<T_y>>* = nullptr>
 inline void check_column_index(const char* function, const char* name,
                                const T_y& y, size_t i) {
-  if (i >= stan::error_index::value
-      && i < static_cast<size_t>(y.cols()) + stan::error_index::value) {
-    return;
+  if (!(i >= stan::error_index::value
+        && i < static_cast<size_t>(y.cols()) + stan::error_index::value)) {
+    [&]() STAN_COLD_PATH {
+      std::stringstream msg;
+      msg << " for columns of " << name;
+      std::string msg_str(msg.str());
+      out_of_range(function, y.cols(), i, msg_str.c_str());
+    }();
   }
-
-  std::stringstream msg;
-  msg << " for columns of " << name;
-  std::string msg_str(msg.str());
-  out_of_range(function, y.cols(), i, msg_str.c_str());
 }
 
 }  // namespace math
