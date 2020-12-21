@@ -11,11 +11,10 @@ namespace math {
 /**
  * Return <code>true</code> if the specified LDLT factor is invalid.
  * An <code>LDLT_factor</code> is invalid if it was constructed from
- * a matrix that is not positive definite.  The check is that the
- * <code>.success()</code> method returns <code>true</code>.
- * @tparam T Type of scalar, requires class access to <code>.success()</code>
- * @tparam R number of rows or Eigen::Dynamic
- * @tparam C number of columns or Eigen::Dynamic
+ * a matrix that is not positive definite.
+ *
+ * @tparam T Type matrix of LDLT
+ * @tparam alloc_in_arena Whether LDLT is allocated in arena or not
  * @param A The LDLT factor to check for validity
  * @return <code>true</code> if the LDLT factor is valid
  */
