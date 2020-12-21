@@ -46,7 +46,7 @@ TEST(mathMixMatFun, traceGenInvQuadForm) {
   stan::test::expect_ad(tols, f, d, a, b);
 
   Eigen::MatrixXd A(2, 2);
-  A << 2, 3, 3, 7;
+  A << 3, 1, 1, 4;
   Eigen::MatrixXd B(2, 2);
   B << 5, 6, 7, 8;
   Eigen::MatrixXd D(2, 2);
@@ -54,10 +54,6 @@ TEST(mathMixMatFun, traceGenInvQuadForm) {
   stan::test::expect_ad(tols, f, D, A, B);
 
   // exception tests
-  // non-square second arg
-  // Eigen::MatrixXd a34(3, 4);
-  // stan::test::expect_ad(f, c, a34, b);
-
   // non-square first arg
   Eigen::MatrixXd c23(2, 3);
   stan::test::expect_ad(f, c23, a, b);

@@ -31,9 +31,9 @@ TEST(MathMixMatFun, traceInvQuadFormLdlt) {
   tols.hessian_hessian_ = 1e0;
 
   Eigen::MatrixXd a22(2, 2);
-  a22 << 2, 3, 3, 7;
+  a22 << 2, 1, 1, 5;
   Eigen::MatrixXd b22(2, 2);
-  b22 << 2, 3, 5, 7;
+  b22 << 2, 0.5, 0.5, 3;
   Eigen::VectorXd a2(2);
   a2 << 2, 3;
   stan::test::expect_ad(tols, f, a22, a22);
