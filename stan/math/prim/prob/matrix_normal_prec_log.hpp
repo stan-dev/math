@@ -28,28 +28,22 @@ namespace math {
  * @tparam T_Sigma Type of Sigma.
  * @tparam T_D Type of D.
  */
-template <bool propto,
-	  typename T_y, typename T_Mu, typename T_Sigma, typename T_D,
-	  require_all_matrix_t<T_y, T_Mu, T_Sigma, T_D>* = nullptr>
+template <bool propto, typename T_y, typename T_Mu, typename T_Sigma,
+          typename T_D,
+          require_all_matrix_t<T_y, T_Mu, T_Sigma, T_D>* = nullptr>
 return_type_t<T_y, T_Mu, T_Sigma, T_D> matrix_normal_prec_log(
-    const T_y& y,
-    const T_Mu& Mu,
-    const T_Sigma& Sigma,
-    const T_D& D) {
+    const T_y& y, const T_Mu& Mu, const T_Sigma& Sigma, const T_D& D) {
   return matrix_normal_prec_lpdf<propto, T_y, T_Mu, T_Sigma, T_D>(y, Mu, Sigma,
-                                                                D);
+                                                                  D);
 }
 
 /** \ingroup multivar_dists
  * @deprecated use <code>matrix_normal_prec_lpdf</code>
  */
 template <typename T_y, typename T_Mu, typename T_Sigma, typename T_D,
-	  require_all_matrix_t<T_y, T_Mu, T_Sigma, T_D>* = nullptr>
+          require_all_matrix_t<T_y, T_Mu, T_Sigma, T_D>* = nullptr>
 return_type_t<T_y, T_Mu, T_Sigma, T_D> matrix_normal_prec_log(
-    const T_y& y,
-    const T_Mu& Mu,
-    const T_Sigma& Sigma,
-    const T_D& D) {
+    const T_y& y, const T_Mu& Mu, const T_Sigma& Sigma, const T_D& D) {
   return matrix_normal_prec_lpdf<T_y, T_Mu, T_Sigma, T_D>(y, Mu, Sigma, D);
 }
 
