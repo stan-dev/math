@@ -3,7 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/kernel_generator.hpp>
+#include <stan/math/opencl/prim/block.hpp>
 
 namespace stan {
 namespace math {
