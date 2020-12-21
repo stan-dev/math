@@ -59,7 +59,7 @@ TEST(AgradRevMatrix, matrix) {
   A_double << 2, 1, 1, 2;
   auto ldlt_double = stan::math::make_ldlt_factor(A_double);
 
-  //EXPECT_MATRIX_EQ(A_double, ldlt_double.matrix());
+  // EXPECT_MATRIX_EQ(A_double, ldlt_double.matrix());
   EXPECT_MATRIX_EQ(A.val(), ldlt_A.matrix().val());
 
   stan::math::recover_memory();

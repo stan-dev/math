@@ -11,7 +11,7 @@ TEST(MathMatrixPrimMat, log_determinant_ldlt) {
     x << 2, 1, 1, 3;
     auto ldlt_x = stan::math::make_ldlt_factor(x);
     EXPECT_FLOAT_EQ(log(fabs(determinant(x))),
-		    stan::math::log_determinant_ldlt(ldlt_x));
+                    stan::math::log_determinant_ldlt(ldlt_x));
   }
 
   {
