@@ -22,7 +22,7 @@ static void {benchmark_name}(benchmark::State& state) {{
   for (auto _ : state) {{
 {var_conversions}
     auto start = std::chrono::high_resolution_clock::now();
-    
+
 {code}
     auto end = std::chrono::high_resolution_clock::now();
     auto elapsed_seconds =
@@ -41,7 +41,7 @@ int main(int argc, char** argv)
 {{
   stan::math::ChainableStack::instance_->memalloc_.alloc({});
   stan::math::recover_memory();
-  
+
   ::benchmark::Initialize(&argc, argv);
   ::benchmark::RunSpecifiedBenchmarks();
 }}
@@ -93,10 +93,10 @@ def run_benchmark(exe_filepath, n_repeats=1, csv_out_file=None):
 
 
 def pick_color(n):
-    str_bit_reversed_n = '{:015b}'.format(n + 1)[::-1]
-    r = 0.9 * ((int(str_bit_reversed_n[0::3], 2) / 2. ** 5 + 0.3) % 1)
-    g = 0.9 * ((int(str_bit_reversed_n[1::3], 2) / 2. ** 5 + 0.3) % 1)
-    b = 0.9 * ((int(str_bit_reversed_n[2::3], 2) / 2. ** 5 + 0.3) % 1)
+    str_bit_reversed_n = "{:015b}".format(n + 1)[::-1]
+    r = 0.9 * ((int(str_bit_reversed_n[0::3], 2) / 2.0 ** 5 + 0.3) % 1)
+    g = 0.9 * ((int(str_bit_reversed_n[1::3], 2) / 2.0 ** 5 + 0.3) % 1)
+    b = 0.9 * ((int(str_bit_reversed_n[2::3], 2) / 2.0 ** 5 + 0.3) % 1)
     return r, g, b
 
 
@@ -109,18 +109,22 @@ def plot_results(csv_filename, out_file="", plot_log_y=False):
     import pandas
     import numpy
     import matplotlib
+
     if out_file != "window":
-        matplotlib.use('Agg')
+        matplotlib.use("Agg")
     import matplotlib.pyplot as plt
+
     with open(csv_filename) as f:
         # google benchmark writes some non-csv data at beginning
-        for line in iter(f.readline, ''):
+        for line in iter(f.readline, ""):
             if line.startswith("name,iterations"):
                 f.seek(f.tell() - len(line) - 1, os.SEEK_SET)
                 break
         data = pandas.read_csv(f)
-
-    timing_data = pandas.concat([data["name"].str.split("/", expand=True).iloc[:, :2], data["real_time"]], axis=1)
+    timing_data = pandas.concat(
+        [data["name"].str.split("/", expand=True).iloc[:, :2], data["real_time"]],
+        axis=1,
+    )
     timing_data.columns = ["signatures", "sizes", "times"]
     timing_data.loc[:, "sizes"] = timing_data["sizes"].astype(int)
     timing_data.loc[:, "times"] /= 1000  # convert to microseconds
@@ -130,16 +134,33 @@ def plot_results(csv_filename, out_file="", plot_log_y=False):
     ax.set_xscale("log")
     if plot_log_y:
         ax.set_yscale("log")
-
     ax.set_xlabel("size")
     ax.set_ylabel("time[us]")
     for n, (signature, sub_data) in enumerate(timing_data.groupby("signatures")):
-        ax.plot(sub_data["sizes"], sub_data["times"], "x", color=pick_color(n), label='_nolegend_')
-        avg_sig_times = sub_data.groupby(by="sizes")["times"].median().reset_index().sort_values(by="sizes")
-        ax.plot(avg_sig_times["sizes"], avg_sig_times["times"], label=signature,
-                color=pick_color(n))
-
-    [spine.set_visible(False) for loc, spine in ax.spines.items() if loc in ["top", "right", "left", "bottom"]]
+        ax.plot(
+            sub_data["sizes"],
+            sub_data["times"],
+            "x",
+            color=pick_color(n),
+            label="_nolegend_",
+        )
+        avg_sig_times = (
+            sub_data.groupby(by="sizes")["times"]
+                .median()
+                .reset_index()
+                .sort_values(by="sizes")
+        )
+        ax.plot(
+            avg_sig_times["sizes"],
+            avg_sig_times["times"],
+            label=signature,
+            color=pick_color(n),
+        )
+    [
+        spine.set_visible(False)
+        for loc, spine in ax.spines.items()
+        if loc in ["top", "right", "left", "bottom"]
+    ]
     ax.minorticks_off()
     ax.grid()
     ax.legend()
@@ -157,31 +178,45 @@ def plot_compare(csv_filename, reference_csv_filename, out_file="", plot_log_y=F
     :param out_file: path to image file to store figure into. If it equals to "window" opens it in an interactive window.
     """
     import pandas, numpy, matplotlib
+
     if out_file != "window":
-        matplotlib.use('Agg')
+        matplotlib.use("Agg")
     from matplotlib import pyplot as plt
 
     with open(csv_filename) as f:
         # google benchmark writes some non-csv data at beginning
-        for line in iter(f.readline, ''):
+        for line in iter(f.readline, ""):
             if line.startswith("name,iterations"):
                 f.seek(f.tell() - len(line) - 1, os.SEEK_SET)
                 break
         data = pandas.read_csv(f)
     with open(reference_csv_filename) as f:
         # google benchmark writes some non-csv data at beginning
-        for line in iter(f.readline, ''):
+        for line in iter(f.readline, ""):
             if line.startswith("name,iterations"):
                 f.seek(f.tell() - len(line) - 1, os.SEEK_SET)
                 break
         reference_data = pandas.read_csv(f)
-
-    timing_data = pandas.concat([data["name"].str.split("/", expand=True).iloc[:, :2], data["real_time"]], axis=1)
+    timing_data = pandas.concat(
+        [data["name"].str.split("/", expand=True).iloc[:, :2], data["real_time"]],
+        axis=1,
+    )
     reference_timing_data = pandas.concat(
-        [reference_data["name"].str.split("/", expand=True).iloc[:, :2], reference_data["real_time"]], axis=1)
-    timing_data.columns = reference_timing_data.columns = ["signatures", "sizes", "times"]
+        [
+            reference_data["name"].str.split("/", expand=True).iloc[:, :2],
+            reference_data["real_time"],
+        ],
+        axis=1,
+    )
+    timing_data.columns = reference_timing_data.columns = [
+        "signatures",
+        "sizes",
+        "times",
+    ]
 
-    same_in_last_selector = reference_timing_data["signatures"].isin(timing_data["signatures"])
+    same_in_last_selector = reference_timing_data["signatures"].isin(
+        timing_data["signatures"]
+    )
     reference_timing_data = reference_timing_data.loc[same_in_last_selector, :]
     assert (reference_timing_data["signatures"] == timing_data["signatures"]).all()
     assert (reference_timing_data["sizes"] == timing_data["sizes"]).all()
@@ -194,18 +229,36 @@ def plot_compare(csv_filename, reference_csv_filename, out_file="", plot_log_y=F
     ax.set_xscale("log")
     if plot_log_y:
         ax.set_yscale("log")
-
     ax.set_xlabel("size")
     ax.set_ylabel("speedup")
 
     for n, (signature, sub_data) in enumerate(timing_data.groupby("signatures")):
-        ax.plot(sub_data["sizes"], sub_data["speedup"], "x", color=pick_color(n), label='_nolegend_')
-        avg_sig_speedups = sub_data.groupby(by="sizes")["speedup"].median().reset_index().sort_values(by="sizes")
-        ax.plot(avg_sig_speedups["sizes"], avg_sig_speedups["speedup"], label=signature,
-                color=pick_color(n))
+        ax.plot(
+            sub_data["sizes"],
+            sub_data["speedup"],
+            "x",
+            color=pick_color(n),
+            label="_nolegend_",
+        )
+        avg_sig_speedups = (
+            sub_data.groupby(by="sizes")["speedup"]
+                .median()
+                .reset_index()
+                .sort_values(by="sizes")
+        )
+        ax.plot(
+            avg_sig_speedups["sizes"],
+            avg_sig_speedups["speedup"],
+            label=signature,
+            color=pick_color(n),
+        )
     plt.plot([1, max(timing_data["sizes"])], [1, 1], "--", color="gray")
 
-    [spine.set_visible(False) for loc, spine in ax.spines.items() if loc in ["top", "right", "left", "bottom"]]
+    [
+        spine.set_visible(False)
+        for loc, spine in ax.spines.items()
+        if loc in ["top", "right", "left", "bottom"]
+    ]
     ax.minorticks_off()
     ax.grid()
     ax.legend()
@@ -215,9 +268,19 @@ def plot_compare(csv_filename, reference_csv_filename, out_file="", plot_log_y=F
         fig.savefig(out_file, bbox_inches="tight", dpi=300)
 
 
-def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim", "Rev"), multiplier_param=None,
-              max_size_param=None, max_dim=3, n_repeats=1, skip_similar_signatures=False, csv_out_file=None,
-              opencl=False, varmat=False):
+def benchmark(
+        functions_or_sigs,
+        cpp_filename="benchmark.cpp",
+        overloads=("Prim", "Rev"),
+        multiplier_param=None,
+        max_size_param=None,
+        max_dim=3,
+        n_repeats=1,
+        skip_similar_signatures=False,
+        csv_out_file=None,
+        opencl=False,
+        varmat=False,
+):
     """
     Generates benchmark code, compiles it and runs the benchmark.
     :param functions_or_sigs: List of function names and/or signatures to benchmark
@@ -242,7 +305,10 @@ def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim"
     for signature in all_signatures:
         return_type, function_name, stan_args = parse_signature(signature)
         reference_args = tuple(reference_vector_argument(i) for i in stan_args)
-        if skip_similar_signatures and (function_name, reference_args) in ref_signatures:
+        if (
+                skip_similar_signatures
+                and (function_name, reference_args) in ref_signatures
+        ):
             continue
         if (signature in signatures) or (function_name in functions):
             parsed_signatures.append([return_type, function_name, stan_args])
@@ -251,13 +317,18 @@ def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim"
     for signature in signatures:
         return_type, function_name, stan_args = parse_signature(signature)
         reference_args = tuple(reference_vector_argument(i) for i in stan_args)
-        if skip_similar_signatures and (function_name, reference_args) in ref_signatures:
+        if (
+                skip_similar_signatures
+                and (function_name, reference_args) in ref_signatures
+        ):
             continue
         ref_signatures.add((function_name, reference_args))
         parsed_signatures.append([return_type, function_name, stan_args])
         remaining_functions.discard(function_name)
     if remaining_functions:
-        raise NameError("Functions not found: " + ", ".join(sorted(remaining_functions)))
+        raise NameError(
+            "Functions not found: " + ", ".join(sorted(remaining_functions))
+        )
     result = ""
     max_args_with_max_dimm = 0
     default_max_size = 1024 * 1024 * 16
@@ -286,7 +357,7 @@ def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim"
                 max_size = 1
             else:
                 max_size = default_max_size
-                max_size = int(max_size ** (1. / dimm))
+                max_size = int(max_size ** (1.0 / dimm))
         else:
             max_size = max_size_param
         if multiplier_param is None:
@@ -300,8 +371,10 @@ def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim"
         for n, stan_arg in enumerate(stan_args):
             cpp_arg_template = get_cpp_type(stan_arg)
             arg_overload_opts = ["Prim"]
-            if "SCALAR" in cpp_arg_template and not (function_name in non_differentiable_args and
-                                                     n in non_differentiable_args[function_name]):
+            if "SCALAR" in cpp_arg_template and not (
+                    function_name in non_differentiable_args
+                    and n in non_differentiable_args[function_name]
+            ):
                 arg_overload_opts = overloads
             cpp_arg_templates.append(cpp_arg_template)
             overload_opts.append(arg_overload_opts)
@@ -310,12 +383,18 @@ def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim"
             benchmark_name = function_name
             setup = ""
             var_conversions = ""
-            code = "    auto res = stan::math::eval(stan::math::{}(".format(function_name)
-            for n, (arg_overload, cpp_arg_template, stan_arg), in enumerate(
-                    zip(arg_overloads, cpp_arg_templates, stan_args)):
+            code = "    auto res = stan::math::eval(stan::math::{}(".format(
+                function_name
+            )
+            for (
+                    n,
+                    (arg_overload, cpp_arg_template, stan_arg),
+            ) in enumerate(zip(arg_overloads, cpp_arg_templates, stan_args)):
                 if stan_arg.endswith("]"):
                     stan_arg2, vec = stan_arg.split("[")
-                    benchmark_name += "_" + arg_overload + "_" + stan_arg2 + str(len(vec))
+                    benchmark_name += (
+                            "_" + arg_overload + "_" + stan_arg2 + str(len(vec))
+                    )
                 else:
                     benchmark_name += "_" + arg_overload + "_" + stan_arg
                 scalar = overload_scalar[arg_overload]
@@ -326,42 +405,61 @@ def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim"
                 if function_name in special_arg_values:
                     if isinstance(special_arg_values[function_name][n], str):
                         make_arg_function = special_arg_values[function_name][n]
-                    elif isinstance(special_arg_values[function_name][n], numbers.Number):
+                    elif isinstance(
+                            special_arg_values[function_name][n], numbers.Number
+                    ):
                         value = special_arg_values[function_name][n]
                 if scalar == "double":
-                    setup += "  {} {} = stan::test::{}<{}>({}, state.range(0));\n".format(
-                        arg_type,
-                        var_name,
-                        make_arg_function,
-                        arg_type,
-                        value,
+                    setup += (
+                        "  {} {} = stan::test::{}<{}>({}, state.range(0));\n".format(
+                            arg_type,
+                            var_name,
+                            make_arg_function,
+                            arg_type,
+                            value,
+                        )
                     )
                     if opencl == "base":
-                        setup += "  auto {} = stan::math::to_matrix_cl({});\n".format(var_name + "_cl", var_name)
+                        setup += "  auto {} = stan::math::to_matrix_cl({});\n".format(
+                            var_name + "_cl", var_name
+                        )
                         var_name += "_cl"
                     elif varmat == "base" and arg_overload == "Rev":
-                        setup += "  auto {} = stan::math::to_var_value({});\n".format(var_name + "_varmat", var_name)
+                        setup += "  auto {} = stan::math::to_var_value({});\n".format(
+                            var_name + "_varmat", var_name
+                        )
                         var_name += "_varmat"
                 else:
-                    var_conversions += "    {} {} = stan::test::{}<{}>({}, state.range(0));\n".format(
-                        arg_type,
-                        var_name,
-                        make_arg_function,
-                        arg_type,
-                        value,
+                    var_conversions += (
+                        "    {} {} = stan::test::{}<{}>({}, state.range(0));\n".format(
+                            arg_type,
+                            var_name,
+                            make_arg_function,
+                            arg_type,
+                            value,
+                        )
                     )
                     if opencl == "base":
-                        var_conversions += "    auto {} = stan::math::to_matrix_cl({});\n".format(var_name + "_cl",
-                                                                                                  var_name)
+                        var_conversions += (
+                            "    auto {} = stan::math::to_matrix_cl({});\n".format(
+                                var_name + "_cl", var_name
+                            )
+                        )
                         var_name += "_cl"
                     elif varmat == "base" and arg_overload == "Rev":
-                        var_conversions += "    auto {} = stan::math::to_var_value({});\n".format(var_name + "_varmat",
-                                                                                                  var_name)
+                        var_conversions += (
+                            "    auto {} = stan::math::to_var_value({});\n".format(
+                                var_name + "_varmat", var_name
+                            )
+                        )
                         var_name += "_varmat"
-
                 if opencl == "copy" and stan_arg not in ("int", "real"):
                     code += "stan::math::to_matrix_cl({}), ".format(var_name)
-                elif varmat == "copy" and stan_arg not in ("int", "real") and arg_overload == "Rev":
+                elif (
+                        varmat == "copy"
+                        and stan_arg not in ("int", "real")
+                        and arg_overload == "Rev"
+                ):
                     code += "stan::math::to_var_value({}), ".format(var_name)
                 else:
                     code += var_name + ", "
@@ -370,9 +468,14 @@ def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim"
             code = code[:-2] + "));\n"
             if "Rev" in arg_overloads:
                 code += "    stan::math::grad();\n"
-            result += BENCHMARK_TEMPLATE.format(benchmark_name=benchmark_name, setup=setup,
-                                                var_conversions=var_conversions, code=code, multi=multiplier,
-                                                max_size=max_size)
+            result += BENCHMARK_TEMPLATE.format(
+                benchmark_name=benchmark_name,
+                setup=setup,
+                var_conversions=var_conversions,
+                code=code,
+                multi=multiplier,
+                max_size=max_size,
+            )
     cpp_filepath = WORKING_FOLDER + cpp_filename
     with open(cpp_filepath, "w") as f:
         f.write("#include <benchmark/benchmark.h>\n")
@@ -382,19 +485,38 @@ def benchmark(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim"
             # estimate the amount of arena memory the benchmarks will need
             DOUBLE_SIZE = 8
             N_ARRAYS = 4  # vals, adjoints, pointers + 1 for anything else
-            f.write(CUSTOM_MAIN.format(
-                (max_size_param or default_max_size) * DOUBLE_SIZE * N_ARRAYS * (max_args_with_max_dimm + 1)))
+            f.write(
+                CUSTOM_MAIN.format(
+                    (max_size_param or default_max_size)
+                    * DOUBLE_SIZE
+                    * N_ARRAYS
+                    * (max_args_with_max_dimm + 1)
+                )
+            )
         else:
             f.write("BENCHMARK_MAIN();")
-
     exe_filepath = cpp_filepath.replace(".cpp", exe_extension)
     build(exe_filepath)
     run_benchmark(exe_filepath, n_repeats, csv_out_file)
 
 
-def main(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim", "Rev"), multiplier_param=None,
-         max_size_param=None, max_dim=3, n_repeats=1, skip_similar_signatures=False, csv_out_file=None, opencl=False,
-         varmat=False, plot=False, plot_log_y=False, plot_speedup=False, plot_reference=None):
+def main(
+        functions_or_sigs,
+        cpp_filename="benchmark.cpp",
+        overloads=("Prim", "Rev"),
+        multiplier_param=None,
+        max_size_param=None,
+        max_dim=3,
+        n_repeats=1,
+        skip_similar_signatures=False,
+        csv_out_file=None,
+        opencl=False,
+        varmat=False,
+        plot=False,
+        plot_log_y=False,
+        plot_speedup=False,
+        plot_reference=None,
+):
     """
     Generates benchmark code, compiles it and runs the benchmark. Optionally plots the results.
     :param functions_or_sigs: List of function names and/or signatures to benchmark
@@ -423,14 +545,47 @@ def main(functions_or_sigs, cpp_filename="benchmark.cpp", overloads=("Prim", "Re
         if "." in csv_out_file:
             base, ext = csv_out_file.rsplit(".", 1)
             opencl_csv_out_file = base + special + "." + ext
-        benchmark(functions_or_sigs, cpp_filename, overloads, multiplier_param, max_size_param, max_dim,
-                  n_repeats, skip_similar_signatures, csv_out_file, False, False)
-        benchmark(functions_or_sigs, cpp_filename, overloads, multiplier_param, max_size_param, max_dim,
-                  n_repeats, skip_similar_signatures, opencl_csv_out_file, opencl, varmat)
+        benchmark(
+            functions_or_sigs,
+            cpp_filename,
+            overloads,
+            multiplier_param,
+            max_size_param,
+            max_dim,
+            n_repeats,
+            skip_similar_signatures,
+            csv_out_file,
+            False,
+            False,
+        )
+        benchmark(
+            functions_or_sigs,
+            cpp_filename,
+            overloads,
+            multiplier_param,
+            max_size_param,
+            max_dim,
+            n_repeats,
+            skip_similar_signatures,
+            opencl_csv_out_file,
+            opencl,
+            varmat,
+        )
         plot_compare(opencl_csv_out_file, csv_out_file, plot)
     else:
-        benchmark(functions_or_sigs, cpp_filename, overloads, multiplier_param, max_size_param, max_dim,
-                  n_repeats, skip_similar_signatures, csv_out_file, opencl, varmat)
+        benchmark(
+            functions_or_sigs,
+            cpp_filename,
+            overloads,
+            multiplier_param,
+            max_size_param,
+            max_dim,
+            n_repeats,
+            skip_similar_signatures,
+            csv_out_file,
+            opencl,
+            varmat,
+        )
         if plot_reference:
             plot_compare(csv_out_file, plot_reference, plot, plot_log_y)
         elif plot:
@@ -443,7 +598,7 @@ class FullErrorMsgParser(ArgumentParser):
     """
 
     def error(self, message):
-        sys.stderr.write('error: %s\n' % message)
+        sys.stderr.write("error: %s\n" % message)
         self.print_help()
         sys.exit(2)
 
@@ -482,14 +637,14 @@ def processCLIArgs():
         type=int,
         default=None,
         help="Maximum argument size. Defaults to (16000000)**(1/dimm), where dimm is the largest "
-             "number of dimensions of arguments."
+             "number of dimensions of arguments.",
     )
     parser.add_argument(
         "--max_dim",
         type=int,
         default=3,
         help="Maximum number of argument dimensions to benchmark. Signatures with any argument with "
-             "larger number of dimensions are skipped."
+             "larger number of dimensions are skipped.",
     )
     parser.add_argument(
         "--cpp",
@@ -523,7 +678,7 @@ def processCLIArgs():
     parser.add_argument(
         "--plot_log_y",
         default=False,
-        action='store_true',
+        action="store_true",
         help="Use logarithmic y axis when plotting.",
     )
     parser.add_argument(
@@ -547,7 +702,7 @@ def processCLIArgs():
     parser.add_argument(
         "--plot_speedup",
         default=False,
-        action='store_true',
+        action="store_true",
         help="Plots speedup of OpenCL or varmat overloads compared to Eigen matvar ones. Can only be specified together "
              "with both --plot and either --opencl or --varmat. Cannot be specified together with --plot_reference.",
     )
@@ -564,20 +719,35 @@ def processCLIArgs():
     parser.add_argument(
         "--skip_similar_signatures",
         default=False,
-        action='store_true',
+        action="store_true",
         help="Skip similar signatures. Two signatures are similar if they"
              "difffer only in similar vector types, which are vector, row_vector and real[].",
     )
     args = parser.parse_args()
-    assert not (args.opencl and args.varmat), ValueError("--opencl and --varmat cannot be specified at the same time!")
+    assert not (args.opencl and args.varmat), ValueError(
+        "--opencl and --varmat cannot be specified at the same time!"
+    )
     if args.plot_reference or args.plot_speedup or args.plot_log_y:
         assert args.plot, ValueError(
-            "--plot is required if you specify any of --plot_reference, --plot_speedup, --plot_log_y!")
-    main(functions_or_sigs=args.functions, cpp_filename=args.cpp, overloads=args.overloads,
-         multiplier_param=args.multiplier, max_size_param=args.max_size, max_dim=args.max_dim,
-         csv_out_file=args.csv, n_repeats=args.repeats, skip_similar_signatures=args.skip_similar_signatures,
-         plot=args.plot, plot_log_y=args.plot_log_y, opencl=args.opencl, plot_speedup=args.plot_speedup,
-         plot_reference=args.plot_reference, varmat=args.varmat)
+            "--plot is required if you specify any of --plot_reference, --plot_speedup, --plot_log_y!"
+        )
+    main(
+        functions_or_sigs=args.functions,
+        cpp_filename=args.cpp,
+        overloads=args.overloads,
+        multiplier_param=args.multiplier,
+        max_size_param=args.max_size,
+        max_dim=args.max_dim,
+        csv_out_file=args.csv,
+        n_repeats=args.repeats,
+        skip_similar_signatures=args.skip_similar_signatures,
+        plot=args.plot,
+        plot_log_y=args.plot_log_y,
+        opencl=args.opencl,
+        plot_speedup=args.plot_speedup,
+        plot_reference=args.plot_reference,
+        varmat=args.varmat,
+    )
 
 
 if __name__ == "__main__":

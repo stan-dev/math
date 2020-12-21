@@ -21,6 +21,7 @@ TEST(ExpressionTest{overload}, {function_name}{signature_number}) {{
 }}
 """
 
+
 def make_arg_code(arg, scalar, var_name, var_number, function_name):
     """
     Makes code for declaration and initialization of an argument to function.
@@ -36,12 +37,14 @@ def make_arg_code(arg, scalar, var_name, var_number, function_name):
     :param function_name: name of the function that will be tested using this argument
     :return: code for declaration and initialization of an argument
     """
-    if function_name in non_differentiable_args and \
-            var_number in non_differentiable_args[function_name]:
+    if (
+        function_name in non_differentiable_args
+        and var_number in non_differentiable_args[function_name]
+    ):
         scalar = "double"
     if arg == "(vector, vector, data real[], data int[]) => vector":
         return "  stan::test::simple_eq_functor " + var_name
-    elif "=>" in arg: #functors
+    elif "=>" in arg:  # functors
         return_type = arg_types[arg.split(" => ")[1]].replace("SCALAR", scalar)
         return "  stan::test::test_functor " + var_name
     arg_type = arg_types[arg].replace("SCALAR", scalar)
@@ -58,12 +61,22 @@ def make_arg_code(arg, scalar, var_name, var_number, function_name):
                 arg_type,
                 var_name,
                 special_arg_values[function_name][var_number],
-                arg_type
+                arg_type,
             )
-    if function_name in ("csr_to_dense_matrix", "csr_matrix_times_vector") and var_number == 4:
-        return "  {} {}{{1, 2}}".format(arg_type, var_name,)
+    if (
+        function_name in ("csr_to_dense_matrix", "csr_matrix_times_vector")
+        and var_number == 4
+    ):
+        return "  {} {}{{1, 2}}".format(
+            arg_type,
+            var_name,
+        )
     else:
-        return "  %s %s = stan::test::make_arg<%s>()" % (arg_type, var_name, arg_type,)
+        return "  %s %s = stan::test::make_arg<%s>()" % (
+            arg_type,
+            var_name,
+            arg_type,
+        )
 
 
 def save_tests_in_files(N_files, tests):
@@ -107,7 +120,11 @@ def main(functions=(), j=1):
     for signature in signatures:
         return_type, function_name, function_args = parse_signature(signature)
         # skip ignored signatures
-        if function_name in ignored and not functions and signature not in extra_signatures:
+        if (
+            function_name in ignored
+            and not functions
+            and signature not in extra_signatures
+        ):
             continue
         # skip default if we have list of function names/signatures to test
         if (
@@ -122,7 +139,6 @@ def main(functions=(), j=1):
                 break
         else:
             continue
-
         if function_name in remaining_functions:
             remaining_functions.remove(function_name)
         func_test_n = test_n.get(function_name, 0)
@@ -130,7 +146,6 @@ def main(functions=(), j=1):
 
         if function_name.endswith("_rng"):
             function_args.append("rng")
-
         for overload, scalar in (
             ("Prim", "double"),
             ("Rev", "stan::math::var"),
@@ -142,14 +157,12 @@ def main(functions=(), j=1):
                 continue
             if function_name in no_rev_overload and overload == "Rev":
                 continue
-
             mat_declarations = ""
             for n, arg in enumerate(function_args):
                 mat_declarations += (
                     make_arg_code(arg, scalar, "arg_mat%d" % n, n, function_name)
                     + ";\n"
                 )
-
             mat_arg_list = ", ".join("arg_mat%d" % n for n in range(len(function_args)))
 
             expression_declarations = ""
@@ -164,36 +177,46 @@ def main(functions=(), j=1):
                         "  stan::test::counterOp<%s> counter_op%d(&counter%d);\n"
                         % (scalar, n, n)
                     )
-
             expression_arg_list = ""
             for n, arg in enumerate(function_args[:-1]):
                 if arg in eigen_types:
                     if arg == "matrix":
-                        expression_arg_list += "arg_expr%d.block(0,0,1,1).unaryExpr(counter_op%d), " % (
-                            n,
-                            n,
+                        expression_arg_list += (
+                            "arg_expr%d.block(0,0,1,1).unaryExpr(counter_op%d), "
+                            % (
+                                n,
+                                n,
+                            )
                         )
                     else:
-                      expression_arg_list += "arg_expr%d.segment(0,1).unaryExpr(counter_op%d), " % (
-                          n,
-                          n,
-                      )
+                        expression_arg_list += (
+                            "arg_expr%d.segment(0,1).unaryExpr(counter_op%d), "
+                            % (
+                                n,
+                                n,
+                            )
+                        )
                 else:
                     expression_arg_list += "arg_expr%d, " % n
             if function_args[-1] in eigen_types:
                 if function_args[-1] == "matrix":
-                    expression_arg_list += "arg_expr%d.block(0,0,1,1).unaryExpr(counter_op%d)" % (
-                        len(function_args) - 1,
-                        len(function_args) - 1,
+                    expression_arg_list += (
+                        "arg_expr%d.block(0,0,1,1).unaryExpr(counter_op%d)"
+                        % (
+                            len(function_args) - 1,
+                            len(function_args) - 1,
+                        )
                     )
                 else:
-                  expression_arg_list += "arg_expr%d.segment(0,1).unaryExpr(counter_op%d)" % (
-                      len(function_args) - 1,
-                      len(function_args) - 1,
+                    expression_arg_list += (
+                        "arg_expr%d.segment(0,1).unaryExpr(counter_op%d)"
+                        % (
+                            len(function_args) - 1,
+                            len(function_args) - 1,
+                        )
                     )
             else:
                 expression_arg_list += "arg_expr%d" % (len(function_args) - 1)
-
             checks = ""
             for n, arg in enumerate(function_args):
                 if arg in eigen_types:
@@ -214,7 +237,10 @@ def main(functions=(), j=1):
                     # functors don't have adjoints to check
                     if "=>" in arg:
                         continue
-                    checks += "  EXPECT_STAN_ADJ_EQ(arg_expr%d,arg_mat%d);\n" % (n, n,)
+                    checks += "  EXPECT_STAN_ADJ_EQ(arg_expr%d,arg_mat%d);\n" % (
+                        n,
+                        n,
+                    )
             tests.append(
                 test_code_template.format(
                     overload=overload,

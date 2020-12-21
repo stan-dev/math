@@ -40,19 +40,19 @@ jumbo_folders = [
     # "test/unit/math/rev/core",
     "test/unit/math/rev/err",
     "test/unit/math/rev/fun",
-    #"test/unit/math/rev/functor",
+    # "test/unit/math/rev/functor",
     "test/unit/math/rev/meta",
     "test/unit/math/rev/prob",
     # "test/unit/math/fwd/core",
     "test/unit/math/fwd/fun",
-    #"test/unit/math/fwd/functor",
+    # "test/unit/math/fwd/functor",
     "test/unit/math/fwd/meta",
     "test/unit/math/fwd/prob",
     # "test/unit/math/mix/core",
     "test/unit/math/mix/fun",
-    #"test/unit/math/mix/functor",
+    # "test/unit/math/mix/functor",
     "test/unit/math/mix/meta",
-    "test/unit/math/mix/prob"
+    "test/unit/math/mix/prob",
 ]
 
 
@@ -75,7 +75,11 @@ def processCLIArgs():
     )
 
     parser.add_argument(
-        "-e", metavar="M", type=int, default=-1, help="number of files to split expressions tests in"
+        "-e",
+        metavar="M",
+        type=int,
+        default=-1,
+        help="number of files to split expressions tests in",
     )
     tests_help_msg = "The path(s) to the test case(s) to run.\n"
     tests_help_msg += "Example: 'test/unit', 'test/prob', and/or\n"
@@ -145,7 +149,6 @@ def mungeName(name):
         if isWin():
             name += winsfx
             name = name.replace("\\", "/")
-
     return name
 
 
@@ -238,6 +241,7 @@ def runTest(name, run_all=False, mpi=False, j=1):
         command = "mpirun -np {} {}".format(j, command)
     doCommand(command, not run_all)
 
+
 def test_files_in_folder(folder):
     """Returns a list of test files (*_test.cpp) in the folder and all
     its subfolders recursively. The folder can be written with
@@ -252,11 +256,12 @@ def test_files_in_folder(folder):
                 files.append(f)
     return files
 
+
 def findTests(base_path, filter_names, do_jumbo=False):
     tests = []
     for path in base_path:
         if (not os.path.isdir(path)) and path.endswith("_test"):
-            tests.append(path+".cpp")
+            tests.append(path + ".cpp")
         else:
             tests.extend(test_files_in_folder(path))
     tests = map(mungeName, tests)
@@ -331,7 +336,6 @@ def main():
             stan_mpi = "STAN_MPI" in f.read()
     except IOError:
         stan_mpi = False
-
     # pass 0: generate all auto-generated tests
     if any(["test/prob" in arg for arg in inputs.tests]):
         generateTests(inputs.j)
@@ -340,7 +344,6 @@ def main():
     jumboFiles = []
     if inputs.do_jumbo:
         jumboFiles = generateJumboTests(tests)
-
     if inputs.e == -1:
         if inputs.j == 1:
             num_expr_test_files = 1
@@ -356,20 +359,17 @@ def main():
         stopErr("No matching tests found.", -1)
     if inputs.debug:
         print("Collected the following tests:\n", tests)
-
     # pass 1: make test executables
     for batch in batched(tests):
         if inputs.debug:
             print("Test batch: ", batch)
         makeTest(" ".join(batch), inputs.j)
-
     if not inputs.make_only:
         # pass 2: run test targets
         for t in tests:
             if inputs.debug:
                 print("run single test: %s" % testname)
             runTest(t, inputs.run_all, mpi=stan_mpi, j=inputs.j)
-
     cleanupJumboTests(jumboFiles)
 
 
