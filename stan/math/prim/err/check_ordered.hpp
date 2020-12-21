@@ -27,16 +27,18 @@ void check_ordered(const char* function, const char* name, const T_y& y) {
   const auto& y_ref = to_ref(y);
   for (Eigen::Index n = 1; n < y_ref.size(); n++) {
     if (!(y_ref[n] > y_ref[n - 1])) {
-      std::ostringstream msg1;
-      msg1 << "is not a valid ordered vector."
-           << " The element at " << stan::error_index::value + n << " is ";
-      std::string msg1_str(msg1.str());
-      std::ostringstream msg2;
-      msg2 << ", but should be greater than the previous element, "
-           << y_ref[n - 1];
-      std::string msg2_str(msg2.str());
-      throw_domain_error(function, name, y_ref[n], msg1_str.c_str(),
-                         msg2_str.c_str());
+      [&]() STAN_COLD_PATH {
+        std::ostringstream msg1;
+        msg1 << "is not a valid ordered vector."
+             << " The element at " << stan::error_index::value + n << " is ";
+        std::string msg1_str(msg1.str());
+        std::ostringstream msg2;
+        msg2 << ", but should be greater than the previous element, "
+             << y_ref[n - 1];
+        std::string msg2_str(msg2.str());
+        throw_domain_error(function, name, y_ref[n], msg1_str.c_str(),
+                           msg2_str.c_str());
+      }();
     }
   }
 }
@@ -56,15 +58,18 @@ void check_ordered(const char* function, const char* name,
                    const std::vector<T_y>& y) {
   for (size_t n = 1; n < y.size(); n++) {
     if (!(y[n] > y[n - 1])) {
-      std::ostringstream msg1;
-      msg1 << "is not a valid ordered vector."
-           << " The element at " << stan::error_index::value + n << " is ";
-      std::string msg1_str(msg1.str());
-      std::ostringstream msg2;
-      msg2 << ", but should be greater than the previous element, " << y[n - 1];
-      std::string msg2_str(msg2.str());
-      throw_domain_error(function, name, y[n], msg1_str.c_str(),
-                         msg2_str.c_str());
+      [&]() STAN_COLD_PATH {
+        std::ostringstream msg1;
+        msg1 << "is not a valid ordered vector."
+             << " The element at " << stan::error_index::value + n << " is ";
+        std::string msg1_str(msg1.str());
+        std::ostringstream msg2;
+        msg2 << ", but should be greater than the previous element, "
+             << y[n - 1];
+        std::string msg2_str(msg2.str());
+        throw_domain_error(function, name, y[n], msg1_str.c_str(),
+                           msg2_str.c_str());
+      }();
     }
   }
 }
