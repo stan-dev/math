@@ -8,8 +8,8 @@ TEST(ProbDistributionsInvWishart, Symmetry) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
-  using stan::math::wishart_log;
   using Eigen::MatrixXd;
+  using stan::math::wishart_log;
 
   MatrixXd Sigma(4, 4);
   MatrixXd Sigma_non_sym(4, 4);
@@ -95,9 +95,9 @@ TEST(ProbDistributionsWishart, 4x4Propto) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   Matrix<double, Dynamic, Dynamic> Y(4, 4);
-  Y << 7.988168, -9.555605, -14.47483, 4.395895, -9.555605, 44.750570, 49.215769,
-      -18.454186, -14.474830, 49.215769, 60.08987, -21.48108, 4.395895,
-      -18.454186, -21.48108, 7.885833;
+  Y << 7.988168, -9.555605, -14.47483, 4.395895, -9.555605, 44.750570,
+      49.215769, -18.454186, -14.474830, 49.215769, 60.08987, -21.48108,
+      4.395895, -18.454186, -21.48108, 7.885833;
 
   Matrix<double, Dynamic, Dynamic> Sigma(4, 4);
   Sigma << 2.9983662, 0.2898776, -2.650523, 0.1055911, 0.2898776, 11.4803610,
