@@ -112,11 +112,15 @@
 #include <stan/math/opencl/prim/cholesky_decompose.hpp>
 #include <stan/math/opencl/prim/col.hpp>
 #include <stan/math/opencl/prim/cols.hpp>
+#include <stan/math/opencl/prim/columns_dot_product.hpp>
+#include <stan/math/opencl/prim/columns_dot_self.hpp>
 #include <stan/math/opencl/prim/crossprod.hpp>
 #include <stan/math/opencl/prim/diag_matrix.hpp>
 #include <stan/math/opencl/prim/dims.hpp>
 #include <stan/math/opencl/prim/divide.hpp>
 #include <stan/math/opencl/prim/divide_columns.hpp>
+#include <stan/math/opencl/prim/dot_product.hpp>
+#include <stan/math/opencl/prim/dot_self.hpp>
 #include <stan/math/opencl/prim/double_exponential_lpdf.hpp>
 #include <stan/math/opencl/prim/exp_mod_normal_lpdf.hpp>
 #include <stan/math/opencl/prim/exponential_lpdf.hpp>
@@ -151,6 +155,8 @@
 #include <stan/math/opencl/prim/rep_vector.hpp>
 #include <stan/math/opencl/prim/row.hpp>
 #include <stan/math/opencl/prim/rows.hpp>
+#include <stan/math/opencl/prim/rows_dot_product.hpp>
+#include <stan/math/opencl/prim/rows_dot_self.hpp>
 #include <stan/math/opencl/prim/scaled_inv_chi_square_lpdf.hpp>
 #include <stan/math/opencl/prim/sign.hpp>
 #include <stan/math/opencl/prim/size.hpp>

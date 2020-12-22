@@ -293,6 +293,7 @@ ADD_UNARY_FUNCTION_WITH_INCLUDES(inv_logit,
 ADD_UNARY_FUNCTION_WITH_INCLUDES(logit, opencl_kernels::logit_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(
     log1m_inv_logit, opencl_kernels::log1m_inv_logit_device_function)
+ADD_UNARY_FUNCTION_WITH_INCLUDES(square, "double square(double x){return x*x;}")
 
 ADD_CLASSIFICATION_FUNCTION(isfinite, {-rows() + 1, cols() - 1})
 ADD_CLASSIFICATION_FUNCTION(isinf,

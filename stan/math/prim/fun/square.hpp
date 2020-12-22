@@ -48,7 +48,8 @@ struct square_fun {
  * @return Each value in x squared.
  */
 template <typename Container,
-          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr,
+          require_not_nonscalar_prim_or_rev_kernel_expression_t<Container>* = nullptr>
 inline auto square(const Container& x) {
   return apply_scalar_unary<square_fun, Container>::apply(x);
 }
