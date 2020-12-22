@@ -31,6 +31,22 @@ struct apply_scalar_unary<F, var> {
   static inline return_t apply(const var& x) { return F::fun(x); }
 };
 
+template <typename F, typename T>
+struct apply_scalar_unary<F, T, require_var_matrix_t<T>> {
+  /**
+   * Function return type, which is a `var_value` with plain value type.
+   */
+  using return_t = plain_type_t<T>;
+
+  /**
+   * Apply the function specified by F to the specified argument.
+   *
+   * @param x Argument variable.
+   * @return Function applied to the variable.
+   */
+  static inline return_t apply(const T& x) { return F::fun(x); }
+};
+
 }  // namespace math
 }  // namespace stan
 #endif
