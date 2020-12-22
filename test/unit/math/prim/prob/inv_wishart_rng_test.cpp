@@ -14,10 +14,12 @@ TEST(ProbDistributionsInvWishartRng, rng) {
   EXPECT_THROW(inv_wishart_rng(3.0, omega, rng), std::invalid_argument);
 
   MatrixXd sigma(3, 3);
-  sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 2.0, 1.0, 3.0;
+  sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 1.0, 0.0, 1.0, 3.0;
   EXPECT_NO_THROW(inv_wishart_rng(3.0, sigma, rng));
   EXPECT_THROW(inv_wishart_rng(2, sigma, rng), std::domain_error);
   EXPECT_THROW(inv_wishart_rng(-1, sigma, rng), std::domain_error);
+  sigma(2, 1) = 100.0;
+  EXPECT_THROW(inv_wishart_rng(3.0, sigma, rng), std::domain_error);
 }
 TEST(probdistributionsInvWishartRng, symmetry) {
   using Eigen::MatrixXd;
