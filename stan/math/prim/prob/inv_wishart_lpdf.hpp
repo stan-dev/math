@@ -58,9 +58,12 @@ return_type_t<T_y, T_dof, T_scale> inv_wishart_lpdf(const T_y& W,
   Eigen::Index k = S.rows();
   T_nu_ref nu_ref = nu;
   T_S_ref S_ref = S;
+  T_W_ref W_ref = W;
   check_greater(function, "Degrees of freedom parameter", nu_ref, k - 1);
+  check_symmetric(function, "random variable", W_ref);
+  check_symmetric(function, "scale parameter", S_ref);
 
-  const auto& ldlt_W = make_ldlt_factor<T_y, T_dof, T_scale>(W);
+  const auto& ldlt_W = make_ldlt_factor<T_y, T_dof, T_scale>(W_ref);
   check_ldlt_factor(function, "LDLT_Factor of random variable", ldlt_W);
   const auto& ldlt_S = make_ldlt_factor<T_scale, T_y, T_dof>(S_ref);
   check_ldlt_factor(function, "LDLT_Factor of scale parameter", ldlt_S);

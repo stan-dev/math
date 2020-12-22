@@ -4,7 +4,7 @@
 #include <boost/math/distributions.hpp>
 #include <boost/math/special_functions/digamma.hpp>
 
-TEST(ProbDistributionsInvWishart, LowerTriangular) {
+TEST(ProbDistributionsInvWishart, Symmetry) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
@@ -15,44 +15,44 @@ TEST(ProbDistributionsInvWishart, LowerTriangular) {
   using stan::math::inv_wishart_log;
 
   MatrixXd Sigma(4, 4);
-  MatrixXd Sigma_sym(4, 4);
+  MatrixXd Sigma_non_sym(4, 4);
   MatrixXd Y(4, 4);
-  MatrixXd Y_sym(4, 4);
+  MatrixXd Y_non_sym(4, 4);
 
-  Y << 7.988168, -10.955605, -14.47483, 4.395895, -9.555605, 44.750570,
+  Y << 7.988168, -9.555605, -14.47483, 4.395895, -9.555605, 44.750570,
+      49.215769, -15.454186, -14.474830, 49.215769, 60.08987, -20.48108,
+      4.395895, -15.454186, -20.48108, 7.885833;
+
+  Sigma << 2.9983662, 0.2898776, -2.650523, 0.1055911, 0.2898776, 11.4803610,
+      7.1579931, -3.1129955, -2.650523, 7.1579931, 11.676181, -3.586685,
+      0.1055911, -3.1129955, -3.586685, 1.4482736;
+
+  Y_non_sym << 7.988168, 100.0, -14.47483, 4.395895, -9.555605, 44.750570,
       49.21577, -15.454186, -14.474830, 49.215769, 60.08987, -20.481079,
       4.395895, -18.454186, -21.48108, 7.885833;
 
-  Y_sym << 7.988168, -9.555605, -14.474830, 4.395895, -9.555605, 44.750570,
-      49.215769, -18.454186, -14.474830, 49.215769, 60.08987, -21.48108,
-      4.395895, -18.454186, -21.48108, 7.885833;
-
-  Sigma << 2.9983662, 0.2898776, -2.650523, 0.1055911, 0.2898776, 11.4803610,
-      7.157993, -3.1129955, -2.6505229, 7.1579931, 11.676181, -3.5866852,
+  Sigma_non_sym << 2.9983662, 100.0, -2.650523, 0.1055911, 0.2898776, 11.4803610,
+      7.1579931, -3.1129955, -2.650523, 7.1579931, 11.676181, -3.586685,
       0.1055911, -3.1129955, -3.586685, 1.4482736;
-
-  Sigma_sym << 2.9983662, 0.2898776, -2.6505229, 0.1055911, 0.2898776,
-      11.4803610, 7.1579931, -3.1129955, -2.6505229, 7.1579931, 11.676181,
-      -3.586685, 0.1055911, -3.1129955, -3.586685, 1.4482736;
 
   unsigned int dof = 5;
 
-  EXPECT_EQ(inv_wishart_log(Y, dof, Sigma), inv_wishart_log(Y_sym, dof, Sigma));
-  EXPECT_EQ(inv_wishart_log(Y, dof, Sigma), inv_wishart_log(Y, dof, Sigma_sym));
-  EXPECT_EQ(inv_wishart_log(Y, dof, Sigma),
-            inv_wishart_log(Y_sym, dof, Sigma_sym));
+  EXPECT_NO_THROW(inv_wishart_log(Y, dof, Sigma));
+  EXPECT_THROW(inv_wishart_log(Y_non_sym, dof, Sigma), std::domain_error);
+  EXPECT_THROW(inv_wishart_log(Y, dof, Sigma_non_sym), std::domain_error);
 }
+
 TEST(ProbDistributionsInvWishart, InvWishart) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
   using stan::math::inv_wishart_log;
   Matrix<double, Dynamic, Dynamic> Y(3, 3);
-  Y << 12.147233, -11.9036079, 1.0910458, -11.903608, 16.7585782, 0.8530256,
-      1.091046, 0.8530256, 2.5786609;
+  Y << 12.147233, -11.903608, 1.0910458, -11.903608, 16.7585782, 0.8530256,
+      1.0910458, 0.8530256, 2.5786609;
 
   Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
-  Sigma << 7.785215, 3.0597878, 1.1071663, 3.059788, 10.3515035, -0.1232598,
+  Sigma << 7.785215, 3.059788, 1.107166, 3.059788, 10.3515035, -0.1232598,
       1.107166, -0.1232598, 7.7623386;
 
   double dof = 4.0;
@@ -66,11 +66,11 @@ TEST(ProbDistributionsInvWishart, Propto) {
 
   using stan::math::inv_wishart_log;
   Matrix<double, Dynamic, Dynamic> Y(3, 3);
-  Y << 12.147233, -11.9036079, 1.0910458, -11.903608, 16.7585782, 0.8530256,
+  Y << 12.147233, -11.903608, 1.091046, -11.903608, 16.7585782, 0.8530256,
       1.091046, 0.8530256, 2.5786609;
 
   Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
-  Sigma << 7.785215, 3.0597878, 1.1071663, 3.059788, 10.3515035, -0.1232598,
+  Sigma << 7.785215, 3.059788, 1.107166, 3.059788, 10.3515035, -0.1232598,
       1.107166, -0.1232598, 7.7623386;
 
   double dof = 4.0;
