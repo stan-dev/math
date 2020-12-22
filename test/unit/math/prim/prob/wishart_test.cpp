@@ -4,7 +4,7 @@
 #include <boost/math/special_functions/digamma.hpp>
 #include <boost/math/distributions.hpp>
 
-TEST(ProbDistributionsInvWishart, Symmetry) {
+TEST(ProbDistributionsWishart, wishart_symmetry) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
