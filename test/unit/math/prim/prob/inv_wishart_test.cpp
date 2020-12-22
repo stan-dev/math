@@ -8,8 +8,8 @@ TEST(ProbDistributionsInvWishart, Symmetry) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
-  using stan::math::inv_wishart_log;
   using Eigen::MatrixXd;
+  using stan::math::inv_wishart_log;
 
   MatrixXd Sigma(4, 4);
   MatrixXd Sigma_non_sym(4, 4);
