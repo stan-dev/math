@@ -1,4 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/test_ad_matvar.hpp>
 #include <vector>
 
 TEST(MathMixMatFun, mdivideLeft) {
