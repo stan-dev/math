@@ -9,10 +9,7 @@ TEST(ProbDistributionsInvWishart, Symmetry) {
   using Eigen::Matrix;
 
   using stan::math::inv_wishart_log;
-  // Tests if only of the lower triangular portion of
-  // outcome and scale matrices are taken
   using Eigen::MatrixXd;
-  using stan::math::inv_wishart_log;
 
   MatrixXd Sigma(4, 4);
   MatrixXd Sigma_non_sym(4, 4);

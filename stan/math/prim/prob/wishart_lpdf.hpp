@@ -64,6 +64,8 @@ return_type_t<T_y, T_dof, T_scale> wishart_lpdf(const T_y& W, const T_dof& nu,
   check_greater(function, "Degrees of freedom parameter", nu_ref, k - 1);
   check_square(function, "random variable", W_ref);
   check_square(function, "scale parameter", S_ref);
+  check_symmetric(function, "random variable", W_ref);
+  check_symmetric(function, "scale parameter", S_ref);
 
   const auto& ldlt_W = make_ldlt_factor<T_y, T_dof, T_scale>(W_ref);
   check_ldlt_factor(function, "LDLT_Factor of random variable", ldlt_W);
