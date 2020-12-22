@@ -9,7 +9,7 @@ TEST(MathMatrixCL, zeros_strict_m_value_check) {
   stan::math::matrix_d m0(2, 2);
   stan::math::matrix_d m0_dst(2, 2);
   m0 << 2, 2, 2, 2;
-  stan::math::matrix_d m1=m0, m2=m0;
+  stan::math::matrix_d m1 = m0, m2 = m0;
   stan::math::matrix_cl<double> m(m0);
   stan::math::matrix_cl<double> m_upper(m1);
   stan::math::matrix_cl<double> m_lower(m2);
