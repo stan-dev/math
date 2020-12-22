@@ -342,7 +342,8 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
   explicit matrix_cl(Scal&& A,
                      matrix_cl_view partial_view = matrix_cl_view::Diagonal)
       : rows_(1), cols_(1), view_(partial_view) {
-    initialize_buffer<std::is_rvalue_reference<Scal&&>::value>(&A);
+    initialize_buffer<std::is_rvalue_reference<Scal&&>::value>(
+        const_cast<const std::decay_t<Scal>*>(&A));
   }
 
   /**
