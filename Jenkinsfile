@@ -232,6 +232,7 @@ pipeline {
                             if (isUnix()) {
                                 deleteDir()
                                 unstash 'MathSetup'
+                                sh "clinfo"
                                 sh "echo CXX=${env.CXX} -Werror > make/local"
                                 sh "echo STAN_OPENCL=true>> make/local"
                                 sh "echo OPENCL_PLATFORM_ID=1>> make/local"
@@ -247,7 +248,6 @@ pipeline {
                             } else {
                                 deleteDirWin()
                                 unstash 'MathSetup'
-                                bat "clinfo"
                                 bat "echo CXX=${env.CXX} -Werror > make/local"
                                 bat "echo STAN_OPENCL=true >> make/local"
                                 bat "echo OPENCL_PLATFORM_ID=1 >> make/local"
