@@ -21,8 +21,11 @@
 #include <stan/math/opencl/rev/crossprod.hpp>
 #include <stan/math/opencl/rev/diag_matrix.hpp>
 #include <stan/math/opencl/rev/diagonal.hpp>
+#include <stan/math/opencl/rev/mean.hpp>
+#include <stan/math/opencl/rev/minus.hpp>
 #include <stan/math/opencl/rev/multiply.hpp>
 #include <stan/math/opencl/rev/operands_and_partials.hpp>
+#include <stan/math/opencl/rev/plus.hpp>
 #include <stan/math/opencl/rev/sin.hpp>
 #include <stan/math/opencl/rev/sinh.hpp>
 #include <stan/math/opencl/rev/subtract.hpp>
