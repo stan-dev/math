@@ -54,8 +54,10 @@ TEST(KernelGenerator, addition_test) {
     matrix_cl<double> m1_cl(m1);                                       \
     matrix_cl<int> m2_cl(m2);                                          \
     matrix_cl<double> m_size_cl(m_size);                               \
+    matrix_cl<res_type> unused_res;                                    \
                                                                        \
-    EXPECT_THROW(m1_cl operation m_size_cl, std::invalid_argument);    \
+    EXPECT_THROW(unused_res = m1_cl operation m_size_cl,               \
+                 std::invalid_argument);                               \
                                                                        \
     auto tmp = m1_cl operation m2_cl;                                  \
     matrix_cl<res_type> res_cl = tmp;                                  \
