@@ -71,7 +71,8 @@ TEST(KernelGenerator, diagonal_of_a_block_test) {
 
   matrix_cl<double> m_cl(m);
 
-  diagonal(block(m_cl, 0, 1, 3, 3)) = diagonal(block(m_cl, 1, 0, 3, 3));
+  diagonal(block_zero_based(m_cl, 0, 1, 3, 3))
+      = diagonal(block_zero_based(m_cl, 1, 0, 3, 3));
   MatrixXd res = stan::math::from_matrix_cl(m_cl);
 
   MatrixXd correct = m;

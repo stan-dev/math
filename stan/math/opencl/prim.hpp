@@ -106,6 +106,7 @@
 #include <stan/math/opencl/prim/beta_lpdf.hpp>
 #include <stan/math/opencl/prim/beta_proportion_lpdf.hpp>
 #include <stan/math/opencl/prim/binomial_lpmf.hpp>
+#include <stan/math/opencl/prim/block.hpp>
 #include <stan/math/opencl/prim/categorical_logit_glm_lpmf.hpp>
 #include <stan/math/opencl/prim/cauchy_lpdf.hpp>
 #include <stan/math/opencl/prim/chi_square_lpdf.hpp>
@@ -128,6 +129,7 @@
 #include <stan/math/opencl/prim/gamma_lpdf.hpp>
 #include <stan/math/opencl/prim/gp_exp_quad_cov.hpp>
 #include <stan/math/opencl/prim/gumbel_lpdf.hpp>
+#include <stan/math/opencl/prim/head.hpp>
 #include <stan/math/opencl/prim/inv.hpp>
 #include <stan/math/opencl/prim/inv_chi_square_lpdf.hpp>
 #include <stan/math/opencl/prim/inv_cloglog.hpp>
@@ -143,6 +145,7 @@
 #include <stan/math/opencl/prim/neg_binomial_2_log_glm_lpmf.hpp>
 #include <stan/math/opencl/prim/normal_id_glm_lpdf.hpp>
 #include <stan/math/opencl/prim/normal_lpdf.hpp>
+#include <stan/math/opencl/prim/num_elements.hpp>
 #include <stan/math/opencl/prim/ordered_logistic_glm_lpmf.hpp>
 #include <stan/math/opencl/prim/pareto_lpdf.hpp>
 #include <stan/math/opencl/prim/pareto_type_2_lpdf.hpp>
@@ -164,6 +167,7 @@
 #include <stan/math/opencl/prim/student_t_lpdf.hpp>
 #include <stan/math/opencl/prim/skew_normal_lpdf.hpp>
 #include <stan/math/opencl/prim/sum.hpp>
+#include <stan/math/opencl/prim/tail.hpp>
 #include <stan/math/opencl/prim/tcrossprod.hpp>
 #include <stan/math/opencl/prim/uniform_lpdf.hpp>
 #include <stan/math/opencl/prim/weibull_lpdf.hpp>
