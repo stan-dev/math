@@ -91,7 +91,6 @@
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/plain_type.hpp>
 #include <stan/math/opencl/scalar_type.hpp>
-#include <stan/math/opencl/sub_block.hpp>
 #include <stan/math/opencl/triangular_transpose.hpp>
 #include <stan/math/opencl/value_type.hpp>
 #include <stan/math/opencl/zeros_strict_tri.hpp>
