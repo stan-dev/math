@@ -9,7 +9,7 @@
 #include <stan/math/opencl/kernels/inv_lower_tri_multiply.hpp>
 #include <stan/math/opencl/kernels/neg_rect_lower_tri_multiply.hpp>
 #include <stan/math/opencl/err.hpp>
-#include <stan/math/opencl/identity.hpp>
+#include <stan/math/opencl/kernels/batch_identity.hpp>
 #include <stan/math/opencl/sub_block.hpp>
 #include <stan/math/opencl/zeros_strict_tri.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
