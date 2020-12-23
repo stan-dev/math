@@ -235,7 +235,7 @@ pipeline {
                                 sh "clinfo"
                                 sh "echo CXX=${env.CXX} -Werror > make/local"
                                 sh "echo STAN_OPENCL=true>> make/local"
-                                sh "echo OPENCL_PLATFORM_ID=1>> make/local"
+                                sh "echo OPENCL_PLATFORM_ID=0>> make/local"
                                 sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
                                 runTests("test/unit/math/opencl")
                                 runTests("test/unit/multiple_translation_units_test.cpp")
@@ -292,7 +292,7 @@ pipeline {
                                 unstash 'MathSetup'
                                 bat "echo CXX=${env.CXX} -Werror > make/local"
                                 bat "echo STAN_OPENCL=true >> make/local"
-                                bat "echo OPENCL_PLATFORM_ID=0 >> make/local"
+                                bat "echo OPENCL_PLATFORM_ID=1 >> make/local"
                                 bat "echo OPENCL_DEVICE_ID=0 >> make/local"
                                 bat 'echo LDFLAGS_OPENCL= -L"C:\\Program Files (x86)\\IntelSWTools\\system_studio_2020\\OpenCL\\sdk\\lib\\x64" -lOpenCL >> make/local'
                                 bat "mingw32-make.exe -f make/standalone math-libs"
