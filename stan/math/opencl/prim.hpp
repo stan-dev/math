@@ -84,7 +84,6 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 
 #include <stan/math/opencl/copy.hpp>
-#include <stan/math/opencl/copy_triangular.hpp>
 #include <stan/math/opencl/cholesky_decompose.hpp>
 #include <stan/math/opencl/diagonal_multiply.hpp>
 #include <stan/math/opencl/identity.hpp>
