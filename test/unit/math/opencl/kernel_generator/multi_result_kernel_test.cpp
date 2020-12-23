@@ -27,7 +27,7 @@ TEST(KernelGenerator, multi_result_kernel_errors) {
                = stan::math::expressions(m1_cl - m2_cl, m3_cl - m4_cl),
                std::invalid_argument);
   // mismatch in size between an expression and a result that can not be resized
-  auto block1 = stan::math::block(m1_cl, 0, 0, 3, 3);
+  auto block1 = stan::math::block_zero_based(m1_cl, 0, 0, 3, 3);
   EXPECT_THROW(stan::math::results(res1_cl, block1)
                = stan::math::expressions(m3_cl + m4_cl, m3_cl - m4_cl),
                std::invalid_argument);
