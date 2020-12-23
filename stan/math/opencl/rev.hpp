@@ -6,6 +6,7 @@
 #include <stan/math/opencl/rev/acos.hpp>
 #include <stan/math/opencl/rev/acosh.hpp>
 #include <stan/math/opencl/rev/add.hpp>
+#include <stan/math/opencl/rev/add_diag.hpp>
 #include <stan/math/opencl/rev/arena_matrix_cl.hpp>
 #include <stan/math/opencl/rev/arena_type.hpp>
 #include <stan/math/opencl/rev/asin.hpp>
