@@ -263,6 +263,7 @@ pipeline {
                                 runTestsWin("test/unit/math/rev/fun/mdivide_left_tri_test.cpp", false, false)
                                 runTestsWin("test/unit/math/rev/fun/multiply_test.cpp", false, false)
                             }
+                        }
                     }
                 }
                 
