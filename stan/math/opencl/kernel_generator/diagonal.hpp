@@ -91,21 +91,6 @@ class diagonal_
   }
 
   /**
-   * Generates kernel code for this and nested expressions if this expression
-   * appears on the left hand side of an assignment.
-   * @param row_index_name row index variable name
-   * @param col_index_name column index variable name
-   * @param var_name_arg name of the variable in kernel that holds argument to
-   * this expression
-   * @return part of kernel with code for this expression
-   */
-  inline kernel_parts generate_lhs(const std::string& row_index_name,
-                                   const std::string& col_index_name,
-                                   const std::string& var_name_arg) const {
-    return {};
-  }
-
-  /**
    * Number of rows of a matrix that would be the result of evaluating this
    * expression.
    * @return number of rows

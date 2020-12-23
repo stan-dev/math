@@ -9,6 +9,18 @@
 #include <gtest/gtest.h>
 #include <string>
 
+TEST(KernelGenerator, transpose_errors) {
+  using stan::math::transpose;
+  stan::math::matrix_cl<double> m(7, 9);
+  stan::math::matrix_cl<double> n(7, 9);
+
+  EXPECT_THROW(block(n, 0, 0, 7, 9) = transpose(m), std::invalid_argument);
+  EXPECT_THROW(transpose(block(n, 0, 0, 7, 9)) = m, std::invalid_argument);
+  EXPECT_NO_THROW(n = transpose(m));
+  EXPECT_NO_THROW(transpose(m) = n);
+  EXPECT_NO_THROW(transpose(m) = transpose(m));
+}
+
 TEST(KernelGenerator, transpose_rvalue_test) {
   using Eigen::MatrixXd;
   using stan::math::matrix_cl;
@@ -183,6 +195,46 @@ TEST(KernelGenerator, a_plus_a_transpose_test) {
   EXPECT_EQ(correct.cols(), res.cols());
   EXPECT_EQ(stan::math::matrix_cl_view::Entire, res_cl.view());
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
+}
+
+TEST(KernelGenerator, lhs_transpose_test) {
+  using Eigen::MatrixXd;
+  using stan::math::matrix_cl;
+  using stan::math::transpose;
+  MatrixXd m1(2, 3);
+  m1 << 1, 2, 3, 4, 5, 6;
+  MatrixXd m2 = MatrixXd::Constant(5, 3, 2);
+  MatrixXd correct = m2;
+
+  matrix_cl<double> m1_cl(m1);
+  matrix_cl<double> m2_cl(m2);
+
+  transpose(m2_cl) = m1_cl;
+
+  MatrixXd res = stan::math::from_matrix_cl(m2_cl);
+
+  correct.transpose() = m1;
+  EXPECT_MATRIX_NEAR(res, correct, 1e-9);
+}
+
+TEST(KernelGenerator, transpose_to_lhs_transpose_test) {
+  using Eigen::MatrixXd;
+  using stan::math::matrix_cl;
+  using stan::math::transpose;
+  MatrixXd m1(2, 3);
+  m1 << 1, 2, 3, 4, 5, 6;
+  MatrixXd m2 = MatrixXd::Constant(5, 3, 2);
+  MatrixXd correct = m2;
+
+  matrix_cl<double> m1_cl(m1);
+  matrix_cl<double> m2_cl(m2);
+
+  transpose(m2_cl) = transpose(m1_cl);
+
+  MatrixXd res = stan::math::from_matrix_cl(m2_cl);
+
+  correct.transpose() = m1.transpose();
+  EXPECT_MATRIX_NEAR(res, correct, 1e-9);
 }
 
 #endif
