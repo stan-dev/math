@@ -177,7 +177,7 @@ inline auto opencl_cholesky_lambda(AMat& arena_A, LVari& vari_L) {
       D_adj.triangular_transpose<TriangularMapCL::LowerToUpper>();
 
       R_adj = R_adj - transpose(C_adj) * B_val - D_adj * R_val;
-      D_adj = diagonal_multiply(D_adj, 0.5);
+      diagonal(D_adj) = diagonal(D_adj) + 0.5;
 
       block_zero_based(L_adj, j, j, k_j_ind, k_j_ind) = D_adj;
     }
