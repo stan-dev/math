@@ -2,7 +2,6 @@
 #define TEST_UNIT_MATH_TEST_AD_MATVAR_HPP
 
 #include <stan/math/mix.hpp>
-#include <test/unit/math/test_ad.hpp>
 #include <test/unit/pretty_print_types.hpp>
 #include <test/unit/math/ad_tolerances.hpp>
 #include <test/unit/math/is_finite.hpp>
@@ -79,7 +78,10 @@ void expect_near_rel_matvar(const std::string& message,
 			    const std::tuple<T2...>& y,
 			    const ad_tolerances& tols,
 			    std::index_sequence<I...> i) {
-  std::vector<int> A({ (expect_near_rel_matvar(message, std::get<I>(x), std::get<I>(y), tols), 0) ...});
+  std::vector<int> A({ (expect_near_rel_matvar(message +
+					       std::string(", argument ") +
+					       std::to_string(I),
+					       std::get<I>(x), std::get<I>(y), tols), 0) ...});
 }
 
 template <typename... T1, typename... T2>
@@ -204,23 +206,6 @@ inline void test_matvar_gradient(const ad_tolerances& tols,
     }
   }
 }
-
-  /*template <typename ResultMatVar, typename ResultVarMat,
-	  typename... MatVarArgs,
-          typename... VarMatArgs,
-          require_eigen_vector_t<ResultMatVar>* = nullptr>
-inline void test_matvar_gradient(const ad_tolerances& tols,
-                                 ResultMatVar& A_mv_f, ResultVarMat& A_vm_f,
-                                 const std::tuple<MatVarArgs...>& A_mv_tuple,
-                                 const std::tuple<VarMatArgs...>& A_vm_tuple) {
-  for (Eigen::Index i = 0; i < A_mv_f.size(); ++i) {
-    A_vm_f.adj()(i) = 1;
-    A_mv_f.adj()(i) = 1;
-    stan::math::grad();
-    expect_near_rel_matvar("var<Matrix> vs Matrix<var>", A_vm_tuple, A_mv_tuple, tols);
-    stan::math::set_zero_all_adjoints();
-  }
-  }*/
 
 /**
  * Test that the jacobian for matrices of vars is equal for the
@@ -552,6 +537,44 @@ void expect_ad_matvar(const ad_tolerances& tols, const F& f, const EigMat1& x,
   stan::math::recover_memory();
 }
 
+template <typename F, typename EigMat1, typename EigMat2, typename EigMat3>
+void expect_ad_matvar(const ad_tolerances& tols, const F& f,
+		      const EigMat1& x,
+                      const EigMat2& y,
+		      const EigMat3& z) {
+  using stan::math::var;
+  using varmat = stan::math::var_value<Eigen::MatrixXd>;
+
+  expect_ad_matvar_impl<double, double, var>(tols, f, x, y, z);
+  expect_ad_matvar_impl<double, double, varmat>(tols, f, x, y, z);
+  expect_ad_matvar_impl<double, var, double>(tols, f, x, y, z);
+  expect_ad_matvar_impl<double, var, var>(tols, f, x, y, z);
+  expect_ad_matvar_impl<double, var, varmat>(tols, f, x, y, z);
+  expect_ad_matvar_impl<double, varmat, double>(tols, f, x, y, z);
+  expect_ad_matvar_impl<double, varmat, var>(tols, f, x, y, z);
+  expect_ad_matvar_impl<double, varmat, varmat>(tols, f, x, y, z);
+  expect_ad_matvar_impl<var, double, double>(tols, f, x, y, z);
+  expect_ad_matvar_impl<var, double, var>(tols, f, x, y, z);
+  expect_ad_matvar_impl<var, double, varmat>(tols, f, x, y, z);
+  expect_ad_matvar_impl<var, var, double>(tols, f, x, y, z);
+  expect_ad_matvar_impl<var, var, var>(tols, f, x, y, z);
+  expect_ad_matvar_impl<var, var, varmat>(tols, f, x, y, z);
+  expect_ad_matvar_impl<var, varmat, double>(tols, f, x, y, z);
+  expect_ad_matvar_impl<var, varmat, var>(tols, f, x, y, z);
+  expect_ad_matvar_impl<var, varmat, varmat>(tols, f, x, y, z);
+  expect_ad_matvar_impl<varmat, double, double>(tols, f, x, y, z);
+  expect_ad_matvar_impl<varmat, double, var>(tols, f, x, y, z);
+  expect_ad_matvar_impl<varmat, double, varmat>(tols, f, x, y, z);
+  expect_ad_matvar_impl<varmat, var, double>(tols, f, x, y, z);
+  expect_ad_matvar_impl<varmat, var, var>(tols, f, x, y, z);
+  expect_ad_matvar_impl<varmat, var, varmat>(tols, f, x, y, z);
+  expect_ad_matvar_impl<varmat, varmat, double>(tols, f, x, y, z);
+  expect_ad_matvar_impl<varmat, varmat, var>(tols, f, x, y, z);
+  expect_ad_matvar_impl<varmat, varmat, varmat>(tols, f, x, y, z);
+
+  stan::math::recover_memory();
+}
+
 /**
  * For binary function check that an Eigen matrix of vars and a var with an
  * inner eigen type return the same values and adjoints. This is done by
@@ -569,6 +592,13 @@ template <typename F, typename EigMat1, typename EigMat2>
 void expect_ad_matvar(const F& f, const EigMat1& x, const EigMat2& y) {
   ad_tolerances tols;
   expect_ad_matvar(tols, f, x, y);
+}
+
+template <typename F, typename EigMat1, typename EigMat2, typename EigMat3>
+void expect_ad_matvar(const F& f, const EigMat1& x, const EigMat2& y,
+		      const EigMat3& z) {
+  ad_tolerances tols;
+  expect_ad_matvar(tols, f, x, y, z);
 }
 
 }  // namespace test

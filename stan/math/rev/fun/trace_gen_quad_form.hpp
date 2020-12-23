@@ -114,6 +114,67 @@ inline var trace_gen_quad_form(const Td& D, const Ta& A, const Tb& B) {
                                              Tb_scal, Rb, Cb>(baseVari));
 }
 
+template <typename Td, typename Ta, typename Tb,
+          require_any_var_matrix_t<Td, Ta, Tb>* = nullptr,
+          require_all_matrix_t<Td, Ta, Tb>* = nullptr>
+inline var trace_gen_quad_form(const Td& D, const Ta& A, const Tb& B) {
+  check_square("trace_gen_quad_form", "A", A);
+  check_square("trace_gen_quad_form", "D", D);
+  check_multiplicable("trace_gen_quad_form", "A", A, "B", B);
+  check_multiplicable("trace_gen_quad_form", "B", B, "D", D);
+
+  if(!is_constant<Ta>::value && !is_constant<Tb>::value && !is_constant<Td>::value) {
+    arena_t<promote_scalar_t<var, Td>> arena_D = D;
+    arena_t<promote_scalar_t<var, Ta>> arena_A = A;
+    arena_t<promote_scalar_t<var, Tb>> arena_B = B;
+
+    var res = (arena_D.val_op() * arena_B.val_op().transpose() *
+	       arena_A.val_op() * arena_B.val_op()).trace();
+
+    reverse_pass_callback([arena_A, arena_B, arena_D, res]() mutable {
+      double C_adj = res.adj();
+      
+      auto BDT = (arena_B.val_op() * arena_D.val_op().transpose()).eval();
+      auto AB = (arena_A.val_op() * arena_B.val_op()).eval();
+
+      arena_A.adj() += C_adj * BDT * arena_B.val_op().transpose();
+
+      arena_B.adj()
+	+= C_adj * (AB * arena_D.val_op() + arena_A.val_op().transpose() * BDT);
+      
+      arena_D.adj() += C_adj * (AB.transpose() * arena_B.val_op());
+    });
+
+    return res;
+  } else if(!is_constant<Ta>::value && !is_constant<Tb>::value && is_constant<Td>::value) {
+    arena_t<promote_scalar_t<var, Td>> arena_D = D;
+    arena_t<promote_scalar_t<var, Ta>> arena_A = A;
+    arena_t<promote_scalar_t<var, Tb>> arena_B = B;
+
+    var res = (arena_D.val_op() * arena_B.val_op().transpose() *
+	       arena_A.val_op() * arena_B.val_op()).trace();
+
+    reverse_pass_callback([arena_A, arena_B, arena_D, res]() mutable {
+      double C_adj = res.adj();
+      
+      auto BDT = (arena_B.val_op() * arena_D.val_op().transpose()).eval();
+
+      arena_A.adj() += C_adj * BDT * arena_B.val_op().transpose();
+
+      arena_B.adj()
+	+= C_adj * (arena_A.val_op() * arena_B.val_op() * arena_D.val_op() +
+		    arena_A.val_op().transpose() * BDT);
+    });
+
+    return res;
+  } else if(!is_constant<Ta>::value && is_constant<Tb>::value && !is_constant<Td>::value) {
+  } else if(!is_constant<Ta>::value && is_constant<Tb>::value && is_constant<Td>::value) {
+  } else if(is_constant<Ta>::value && !is_constant<Tb>::value && !is_constant<Td>::value) {
+  } else if(is_constant<Ta>::value && !is_constant<Tb>::value && is_constant<Td>::value) {
+  } else if(is_constant<Ta>::value && is_constant<Tb>::value && !is_constant<Td>::value) {
+  }
+}
+
 }  // namespace math
 }  // namespace stan
 #endif
