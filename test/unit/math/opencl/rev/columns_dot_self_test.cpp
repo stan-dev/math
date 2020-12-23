@@ -4,19 +4,17 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
 
-auto columns_dot_self_functor = [](const auto& a) {
-  return stan::math::columns_dot_self(a);
-};
-
+auto columns_dot_self_functor
+    = [](const auto& a) { return stan::math::columns_dot_self(a); };
 
 TEST(OpenCLColumnsDotSelf, prim_rev_small_vector) {
-  Eigen::MatrixXd a(2,4);
+  Eigen::MatrixXd a(2, 4);
   a << -2.2, -0.8, 0.5, 1, 1.5, 3, 3.4, 4;
   stan::math::test::compare_cpu_opencl_prim_rev(columns_dot_self_functor, a);
 }
 
 TEST(OpenCLColumnsDotSelf, prim_rev_size_0) {
-  Eigen::MatrixXd a(0,0);
+  Eigen::MatrixXd a(0, 0);
   stan::math::test::compare_cpu_opencl_prim_rev(columns_dot_self_functor, a);
 }
 

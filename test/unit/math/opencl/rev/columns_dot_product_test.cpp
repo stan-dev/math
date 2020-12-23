@@ -20,16 +20,16 @@ TEST(OpenCLColumnsDotProduct, errors) {
 }
 
 TEST(OpenCLColumnsDotProduct, prim_rev_small_vector) {
-  Eigen::MatrixXd a(2,4);
+  Eigen::MatrixXd a(2, 4);
   a << -2.2, -0.8, 0.5, 1, 1.5, 3, 3.4, 4;
-  Eigen::MatrixXd b(2,4);
+  Eigen::MatrixXd b(2, 4);
   b << 1, 2, 3, 4, 5, 6, 7, 8;
   stan::math::test::compare_cpu_opencl_prim_rev(columns_dot_product_functor, a,
                                                 b);
 }
 
 TEST(OpenCLColumnsDotProduct, prim_rev_size_0) {
-  Eigen::MatrixXd a(0,0);
+  Eigen::MatrixXd a(0, 0);
   stan::math::test::compare_cpu_opencl_prim_rev(columns_dot_product_functor, a,
                                                 a);
 }

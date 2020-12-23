@@ -25,7 +25,7 @@ inline auto dot_product(const T_a& a, const T_b& b) {
   const char* function = "dot_product(OpenCL)";
   check_vector(function, "a", a);
   check_vector(function, "b", b);
-  return sum(elt_multiply(a,b));
+  return sum(elt_multiply(a, b));
 }
 
 }  // namespace math

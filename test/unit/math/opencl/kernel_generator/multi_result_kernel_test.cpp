@@ -76,9 +76,9 @@ TEST(KernelGenerator, multi_result_kernel_add_assign) {
   MatrixXd m3(3, 3);
   m3 << 10, 3, 1000, 2, 6, -142, 7, 6, 8;
   MatrixXd m4(3, 3);
-  m4 << 6,7,8,9,1,2,3,4,5;
+  m4 << 6, 7, 8, 9, 1, 2, 3, 4, 5;
 
-  MatrixXd m5=m1,m6=m2,m7=m3,m8=m4;
+  MatrixXd m5 = m1, m6 = m2, m7 = m3, m8 = m4;
 
   matrix_cl<double> m1_cl(m5);
   matrix_cl<double> m2_cl(m6);

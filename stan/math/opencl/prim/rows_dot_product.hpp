@@ -26,8 +26,7 @@ template <typename T_a, typename T_b,
           require_all_kernel_expressions_and_none_scalar_t<T_a, T_b>* = nullptr>
 inline auto rows_dot_product(T_a&& a, T_b&& b) {
   check_matching_sizes("rows_dot_product", "a", a, "b", b);
-  return rowwise_sum(
-      elt_multiply(std::forward<T_a>(a), std::forward<T_b>(b)));
+  return rowwise_sum(elt_multiply(std::forward<T_a>(a), std::forward<T_b>(b)));
 }
 
 }  // namespace math

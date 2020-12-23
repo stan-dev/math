@@ -4,9 +4,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
 
-auto dot_self_functor = [](const auto& a) {
-  return stan::math::dot_self(a);
-};
+auto dot_self_functor = [](const auto& a) { return stan::math::dot_self(a); };
 
 TEST(OpenCLDotSelf, prim_rev_small_vector) {
   Eigen::VectorXd a(8);
