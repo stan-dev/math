@@ -13,11 +13,11 @@ namespace math {
 /**
  * Returns the dot product of rows of the specified matrices.
  *
- * @tparam Mat1 type of the first matrix
- * @tparam Mat2 type of the second matrix
+ * @tparam T_a type of the first matrix
+ * @tparam T_b type of the second matrix
  *
- * @param v1 Matrix of first vectors.
- * @param v2 Matrix of second vectors.
+ * @param a Matrix of first vectors.
+ * @param b Matrix of second vectors.
  * @return Dot product of the vectors.
  * @throw std::domain_error If the matrices are not the same
  * size

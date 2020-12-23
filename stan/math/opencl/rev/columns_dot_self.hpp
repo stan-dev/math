@@ -15,7 +15,7 @@ namespace math {
  * Returns the dot product of each column of a matrix with itself.
  *
  * @tparam T type of the matrix
- * @param x Matrix.
+ * @param v Matrix.
  */
 template <typename T, require_var_vt<is_matrix_cl, T>* = nullptr>
 inline var_value<matrix_cl<double>> columns_dot_self(T&& v) {

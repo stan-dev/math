@@ -13,8 +13,10 @@ namespace math {
 /**
  * Returns the dot product of the specified vectors.
  *
- * @param v1 First vector.
- * @param v2 Second vector.
+ * @tparam T_a type of the first vector
+ * @tparam T_b type of the second vector
+ * @param a First vector.
+ * @param b Second vector.
  * @return Dot product of the vectors.
  * @throw std::invalid_argument If the vectors are not the same
  * size or if they are both not vector dimensioned.

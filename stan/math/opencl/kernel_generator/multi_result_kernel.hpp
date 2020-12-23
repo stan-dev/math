@@ -316,7 +316,7 @@ class results_cl {
    * Generates kernel source for evaluating given expressions into results held
    * by \c this.
    * @tparam T_expressions types of expressions
-   * @param expressions expressions to generate kernel source for
+   * @param exprs expressions to generate kernel source for
    * @return kernel source
    */
   template <typename... T_expressions,
