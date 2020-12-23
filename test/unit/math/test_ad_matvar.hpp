@@ -386,7 +386,9 @@ void expect_ad_matvar_impl(const ad_tolerances& tols, const F& f,
   auto A_mv_tuple =
     std::make_tuple(promote_scalar_t<scalar_type_t<Types>, EigMats>(x)...);
   auto A_vm_tuple =
-    std::make_tuple(return_var_matrix_t<EigMats, Types>(x)...);
+    std::make_tuple(std::conditional_t<is_var<Types>::value,
+		    return_var_matrix_t<EigMats, Types>,
+		    EigMats>(x)...);
 
   decltype(stan::math::apply(f, A_mv_tuple)) A_mv_f;
   decltype(stan::math::apply(f, A_vm_tuple)) A_vm_f;
@@ -425,7 +427,7 @@ void expect_ad_matvar_impl(const ad_tolerances& tols, const F& f,
   //if (!stan::math::is_scal_finite(x)) {
   //  return;
   //}
-  
+
   test_matvar_gradient(tols, A_mv_f, A_vm_f, A_mv_tuple, A_vm_tuple);
 
   stan::math::recover_memory();
@@ -525,10 +527,11 @@ void expect_ad_matvar(const ad_tolerances& tols, const F& f, const EigMat1& x,
   const auto& x_eval = x.eval();
   const auto& y_eval = y.eval();
 
-  expect_ad_matvar_impl<double, var>(tols, f, x_eval, y_eval);
+  //expect_ad_matvar_impl<double, double>(tols, f, x_eval, y_eval);
+  //expect_ad_matvar_impl<double, var>(tols, f, x_eval, y_eval);
   expect_ad_matvar_impl<double, varmat>(tols, f, x_eval, y_eval);
-  expect_ad_matvar_impl<var, double>(tols, f, x_eval, y_eval);
-  expect_ad_matvar_impl<var, var>(tols, f, x_eval, y_eval);
+  //expect_ad_matvar_impl<var, double>(tols, f, x_eval, y_eval);
+  //expect_ad_matvar_impl<var, var>(tols, f, x_eval, y_eval);
   expect_ad_matvar_impl<var, varmat>(tols, f, x_eval, y_eval);
   expect_ad_matvar_impl<varmat, double>(tols, f, x_eval, y_eval);
   expect_ad_matvar_impl<varmat, var>(tols, f, x_eval, y_eval);
@@ -545,19 +548,20 @@ void expect_ad_matvar(const ad_tolerances& tols, const F& f,
   using stan::math::var;
   using varmat = stan::math::var_value<Eigen::MatrixXd>;
 
-  expect_ad_matvar_impl<double, double, var>(tols, f, x, y, z);
+  //expect_ad_matvar_impl<double, double, var>(tols, f, x, y, z);
+  //expect_ad_matvar_impl<double, double, var>(tols, f, x, y, z);
   expect_ad_matvar_impl<double, double, varmat>(tols, f, x, y, z);
-  expect_ad_matvar_impl<double, var, double>(tols, f, x, y, z);
-  expect_ad_matvar_impl<double, var, var>(tols, f, x, y, z);
+  //expect_ad_matvar_impl<double, var, double>(tols, f, x, y, z);
+  //expect_ad_matvar_impl<double, var, var>(tols, f, x, y, z);
   expect_ad_matvar_impl<double, var, varmat>(tols, f, x, y, z);
   expect_ad_matvar_impl<double, varmat, double>(tols, f, x, y, z);
   expect_ad_matvar_impl<double, varmat, var>(tols, f, x, y, z);
   expect_ad_matvar_impl<double, varmat, varmat>(tols, f, x, y, z);
-  expect_ad_matvar_impl<var, double, double>(tols, f, x, y, z);
-  expect_ad_matvar_impl<var, double, var>(tols, f, x, y, z);
+  //expect_ad_matvar_impl<var, double, double>(tols, f, x, y, z);*/
+  //expect_ad_matvar_impl<var, double, var>(tols, f, x, y, z);
   expect_ad_matvar_impl<var, double, varmat>(tols, f, x, y, z);
-  expect_ad_matvar_impl<var, var, double>(tols, f, x, y, z);
-  expect_ad_matvar_impl<var, var, var>(tols, f, x, y, z);
+  //expect_ad_matvar_impl<var, var, double>(tols, f, x, y, z);
+  //expect_ad_matvar_impl<var, var, var>(tols, f, x, y, z);
   expect_ad_matvar_impl<var, var, varmat>(tols, f, x, y, z);
   expect_ad_matvar_impl<var, varmat, double>(tols, f, x, y, z);
   expect_ad_matvar_impl<var, varmat, var>(tols, f, x, y, z);
