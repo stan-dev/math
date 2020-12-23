@@ -3,6 +3,21 @@ N_TESTS ?= 100
 # to group the probability tests into
 
 ##
+# Any targets in test/benchmark (.d, .o, executable) needs the Google benchmark flags
+##
+benchmarks/%$(EXE) : CXXFLAGS += -I $(BENCHMARK)/include $(CXXFLAGS_GTEST)
+benchmarks/%$(EXE) : LDFLAGS += -L $(BENCHMARK)/build/src
+benchmarks/%$(EXE) : LDLIBS += -lbenchmark
+benchmarks/%$(EXE) : CPPFLAGS += $(CPPFLAGS_GTEST)
+benchmarks/%$(EXE) : INC += $(INC_GTEST)
+ifeq ($(OS),Windows_NT)
+  benchmarks/%$(EXE) : LDLIBS += -lshlwapi
+endif
+
+benchmarks/%$(EXE) : benchmarks/%.cpp $(GTEST)/src/gtest-all.o $(MPI_TARGETS) $(TBB_TARGETS)
+	$(LINK.cpp) $^ $(LDLIBS) $(OUTPUT_OPTION)
+
+##
 # Any targets in test/ (.d, .o, executable) needs the GTEST flags
 ##
 test/% : CXXFLAGS += $(CXXFLAGS_GTEST)
