@@ -181,7 +181,7 @@ def plot_compare(csv_filename, reference_csv_filename, out_file="", plot_log_y=F
 
     if out_file != "window":
         matplotlib.use("Agg")
-    from matplotlib import pyplot as plt
+    import matplotlib.pyplot as plt
 
     with open(csv_filename) as f:
         # google benchmark writes some non-csv data at beginning
@@ -476,7 +476,7 @@ def benchmark(
                 multi=multiplier,
                 max_size=max_size,
             )
-    cpp_filepath = WORKING_FOLDER + cpp_filename
+    cpp_filepath = os.path.join(WORKING_FOLDER, cpp_filename)
     with open(cpp_filepath, "w") as f:
         f.write("#include <benchmark/benchmark.h>\n")
         f.write("#include <test/expressions/expression_test_helpers.hpp>\n\n")
