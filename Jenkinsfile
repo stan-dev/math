@@ -231,7 +231,6 @@ pipeline {
                             if (isUnix()) {
                                 deleteDir()
                                 unstash 'MathSetup'
-                                sh "clinfo"
                                 sh "echo CXX=${env.CXX} -Werror > make/local"
                                 sh "echo STAN_OPENCL=true>> make/local"
                                 sh "echo OPENCL_PLATFORM_ID=0>> make/local"
@@ -253,12 +252,12 @@ pipeline {
                                 bat "echo OPENCL_DEVICE_ID=0 >> make/local"
                                 bat 'echo LDFLAGS_OPENCL= -L"C:\\Program Files (x86)\\IntelSWTools\\system_studio_2020\\OpenCL\\sdk\\lib\\x64" -lOpenCL >> make/local'
                                 bat "mingw32-make.exe -f make/standalone math-libs"
-                                runTestsWin("test/unit/math/prim/fun/multiply_test.cpp", false, false)
                                 runTestsWin("test/unit/math/opencl", false, false)
                                 runTestsWin("test/unit/multiple_translation_units_test.cpp", false, false)
                                 runTestsWin("test/unit/math/prim/fun/gp_exp_quad_cov_test.cpp", false, false)
                                 runTestsWin("test/unit/math/prim/fun/mdivide_left_tri_test.cpp", false, false)
-                                runTestsWin("test/unit/math/prim/fun/mdivide_right_tri_test.cpp", false, false)                        
+                                runTestsWin("test/unit/math/prim/fun/mdivide_right_tri_test.cpp", false, false)
+                                runTestsWin("test/unit/math/prim/fun/multiply_test.cpp", false, false)                      
                                 runTestsWin("test/unit/math/rev/fun/mdivide_left_tri_test.cpp", false, false)
                                 runTestsWin("test/unit/math/rev/fun/multiply_test.cpp", false, false)
                             }
@@ -293,12 +292,12 @@ pipeline {
                                 bat "echo OPENCL_DEVICE_ID=0 >> make/local"
                                 bat 'echo LDFLAGS_OPENCL= -L"C:\\Program Files (x86)\\IntelSWTools\\system_studio_2020\\OpenCL\\sdk\\lib\\x64" -lOpenCL >> make/local'
                                 bat "mingw32-make.exe -f make/standalone math-libs"
-                                runTestsWin("test/unit/math/prim/fun/multiply_test.cpp", false, false)
                                 runTestsWin("test/unit/math/opencl", false, false)
                                 runTestsWin("test/unit/multiple_translation_units_test.cpp", false, false)
                                 runTestsWin("test/unit/math/prim/fun/gp_exp_quad_cov_test.cpp", false, false)
                                 runTestsWin("test/unit/math/prim/fun/mdivide_left_tri_test.cpp", false, false)
-                                runTestsWin("test/unit/math/prim/fun/mdivide_right_tri_test.cpp", false, false)                        
+                                runTestsWin("test/unit/math/prim/fun/mdivide_right_tri_test.cpp", false, false)
+                                runTestsWin("test/unit/math/prim/fun/multiply_test.cpp", false, false)                      
                                 runTestsWin("test/unit/math/rev/fun/mdivide_left_tri_test.cpp", false, false)
                                 runTestsWin("test/unit/math/rev/fun/multiply_test.cpp", false, false)
                             }
