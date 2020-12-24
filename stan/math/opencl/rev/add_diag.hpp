@@ -1,11 +1,12 @@
 #ifndef STAN_MATH_OPENCL_REV_ADD_DIAG_HPP
 #define STAN_MATH_OPENCL_REV_ADD_DIAG_HPP
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/prim/size.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/prim/add_diag.hpp>
+#include <stan/math/opencl/prim/sum.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/rev/core.hpp>
 
 namespace stan {
 namespace math {

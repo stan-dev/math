@@ -30,7 +30,9 @@ TEST(MathMatrixCL, segment_exception) {
   EXPECT_THROW(segment(m3_cl, 1, 5), std::invalid_argument);
 }
 
-auto segment_functor = [](const auto& a, size_t i, size_t n) { return stan::math::segment(a, i, n); };
+auto segment_functor = [](const auto& a, size_t i, size_t n) {
+  return stan::math::segment(a, i, n);
+};
 
 TEST(MathMatrixCL, segment_value_check) {
   stan::math::vector_d m1(16);

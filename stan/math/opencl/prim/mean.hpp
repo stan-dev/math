@@ -10,7 +10,7 @@ namespace math {
 /**
  * Returns the unary plus of the input.
  *
- * @param M input kernel expression
+ * @param m input kernel expression
  * @return result of unary plus of the input.
  */
 template <typename T,

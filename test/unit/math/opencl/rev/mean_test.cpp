@@ -13,7 +13,7 @@ TEST(OpenCLMean, prim_rev_values_small) {
   a << 1, 2, 3, 4, 5, 6;
   stan::math::test::compare_cpu_opencl_prim_rev(mean_functor, a);
 
-  Eigen::MatrixXd b(1,1);
+  Eigen::MatrixXd b(1, 1);
   b << 2.5;
   stan::math::test::compare_cpu_opencl_prim_rev(mean_functor, b);
 }
@@ -24,7 +24,7 @@ TEST(OpenCLMean, exceptions) {
   Eigen::Matrix<double, -1, -1> m0(0, 0);
   matrix_cl<double> m0_cl = stan::math::to_matrix_cl(m0);
   var_value<matrix_cl<double>> m0_var_cl = m0_cl;
-  
+
   EXPECT_THROW(stan::math::mean(m0_cl), std::invalid_argument);
   EXPECT_THROW(stan::math::mean(m0_var_cl), std::invalid_argument);
 }

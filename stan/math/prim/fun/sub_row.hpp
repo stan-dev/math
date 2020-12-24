@@ -17,7 +17,7 @@ namespace math {
  * @param ncols Number of columns in block.
  * @throw std::out_of_range if either index is out of range.
  */
-template <typename T, 
+template <typename T,
           require_eigen_t<T>* = nullptr,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
 inline auto sub_row(const T& m, size_t i, size_t j, size_t ncols) {

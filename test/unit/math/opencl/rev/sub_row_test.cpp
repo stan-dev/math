@@ -22,7 +22,9 @@ TEST(MathMatrixCL, sub_row_exception) {
   EXPECT_THROW(sub_row(m2_cl, 1, 1, 5), std::invalid_argument);
 }
 
-auto sub_row_functor = [](const auto& a, size_t i, size_t j, size_t ncols) { return stan::math::sub_row(a, i, j, ncols); };
+auto sub_row_functor = [](const auto& a, size_t i, size_t j, size_t ncols) {
+  return stan::math::sub_row(a, i, j, ncols);
+};
 
 TEST(MathMatrixCL, sub_row_value_check) {
   stan::math::matrix_d m1(4, 4);
