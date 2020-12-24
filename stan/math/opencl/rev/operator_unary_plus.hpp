@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_OPENCL_REV_PLUS_HPP
-#define STAN_MATH_OPENCL_REV_PLUS_HPP
+#ifndef STAN_MATH_OPENCL_REV_OPERATOR_UNARY_PLUS_HPP
+#define STAN_MATH_OPENCL_REV_OPERATOR_UNARY_PLUS_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_generator.hpp>
@@ -14,7 +14,7 @@ namespace math {
  * @param M input kernel expression
  * @return result of unary plus of the input.
  */
-inline var_value<matrix_cl<double>> plus(
+inline var_value<matrix_cl<double>> operator+(
     const var_value<matrix_cl<double>>& M) {
   return M;
 }
