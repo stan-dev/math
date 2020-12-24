@@ -154,6 +154,8 @@
 #include <stan/math/opencl/prim/scaled_inv_chi_square_lpdf.hpp>
 #include <stan/math/opencl/prim/sign.hpp>
 #include <stan/math/opencl/prim/size.hpp>
+#include <stan/math/opencl/prim/sub_col.hpp>
+#include <stan/math/opencl/prim/sub_row.hpp>
 #include <stan/math/opencl/prim/std_normal_lpdf.hpp>
 #include <stan/math/opencl/prim/student_t_lpdf.hpp>
 #include <stan/math/opencl/prim/skew_normal_lpdf.hpp>
