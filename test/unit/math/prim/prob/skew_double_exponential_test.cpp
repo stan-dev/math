@@ -16,7 +16,6 @@ inline typename boost::math::tools::promote_args<T1, T2, T3, T4>::type
     skew_de_test(
     const T1& y, const T2& mu, const T3& sigma, const T4& tau) {
   using std::log;
-  using std::pow;
 
   return log(2) + log(tau) + log(1 - tau) - log(sigma)
              - 2 * ((y < mu) ? (1 - tau) * (mu - y) : tau * (y - mu)) / sigma;

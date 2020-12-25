@@ -79,10 +79,10 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
   ref_type_t<decltype(value_of(sigma_arr))> sigma_val = value_of(sigma_arr);
   ref_type_t<decltype(value_of(tau_arr))> tau_val = value_of(tau_arr);
 
-  check_finite(function, "Random variable", y_val);
-  check_finite(function, "Location parameter", mu_val);
-  check_positive_finite(function, "Scale parameter", sigma_val);
-  check_positive_finite(function, "Skewness parameter", tau_val);
+  check_finite(function, "Random variable", y_ref);
+  check_finite(function, "Location parameter", mu_ref);
+  check_positive_finite(function, "Scale parameter", sigma_ref);
+  check_bounded(function, "Skewness parameter", tau_ref, 0.0, 1.0);
 
   const auto& inv_sigma
       = to_ref_if<!is_constant_all<T_scale>::value>(inv(sigma_val));
@@ -90,7 +90,7 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
       = to_ref_if<!is_constant_all<T_y, T_loc>::value>(y_val - mu_val);
   const auto& diff_sign = sign(y_m_mu);
 
-  // TODO how to solvce
+  // TODO how to solve
   const auto& diff_sign_smaller_0 = diff_sign < 0;
   const auto& abs_diff_y_mu = fabs(y_m_mu);
   const auto& abs_diff_y_mu_over_sigma = abs_diff_y_mu * inv_sigma;

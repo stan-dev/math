@@ -4,16 +4,11 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/erf.hpp>
-#include <stan/math/prim/fun/erfc.hpp>
 #include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/inv.hpp>
+#include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
-#include <stan/math/prim/fun/owens_t.hpp>
-#include <stan/math/prim/fun/promote_scalar.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
-#include <stan/math/prim/fun/square.hpp>
-#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <cmath>
@@ -21,9 +16,25 @@
 namespace stan {
 namespace math {
 
+/** \ingroup prob_dists
+ * Returns the double exponential log cumulative density function. Given
+ * containers of matching sizes, returns the log sum of probabilities.
+ *
+ * @tparam T_y type of real parameter.
+ * @tparam T_loc type of location parameter.
+ * @tparam T_scale type of scale parameter.
+ * @param y real parameter
+ * @param mu location parameter
+ * @param sigma scale parameter
+ * @return log probability or log sum of probabilities
+ * @throw std::domain_error if y is nan, mu is infinite, or sigma is nonpositive
+ * @throw std::invalid_argument if container sizes mismatch
+ */
 template <typename T_y, typename T_loc, typename T_scale, typename T_skewness>
 return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lcdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma, const T_skewness& tau) {
+  using std::exp;
+  using std::log;
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_skewness>;
   using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
   using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
@@ -31,86 +42,87 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lcdf(
   using T_tau_ref = ref_type_if_t<!is_constant<T_skewness>::value, T_skewness>;
   static const char* function = "skew_double_exponential_lcdf";
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
-                         mu, "Scale parameter", sigma,
-                         "Skewness parameter", tau);
+                         mu, "Shape parameter", sigma, "Skewness parameter",
+                         tau);
   T_y_ref y_ref = y;
   T_mu_ref mu_ref = mu;
   T_sigma_ref sigma_ref = sigma;
   T_tau_ref tau_ref = tau;
 
+  check_finite(function, "Random variable", y_ref);
+  check_finite(function, "Location parameter", mu_ref);
+  check_positive_finite(function, "Scale parameter", sigma_ref);
+  check_bounded(function, "Skewness parameter", tau_ref, 0.0, 1.0);
+
   if (size_zero(y, mu, sigma, tau)) {
     return 0.0;
   }
 
-  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref, T_tau_ref>
-      ops_partials(y_ref, mu_ref, sigma_ref, tau_ref);
+  T_partials_return cdf_log(0.0);
+  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref, T_tau_ref> ops_partials(
+      y_ref, mu_ref, sigma_ref, tau_ref);
 
-  const auto& y_col = as_column_vector_or_scalar(y_ref);
-  const auto& mu_col = as_column_vector_or_scalar(mu_ref);
-  const auto& sigma_col = as_column_vector_or_scalar(sigma_ref);
-  const auto& tau_col = as_column_vector_or_scalar(tau_ref);
+  scalar_seq_view<T_y_ref> y_vec(y_ref);
+  scalar_seq_view<T_mu_ref> mu_vec(mu_ref);
+  scalar_seq_view<T_sigma_ref> sigma_vec(sigma_ref);
+  scalar_seq_view<T_tau_ref> tau_vec(tau_ref);
 
-  const auto& y_arr = as_array_or_scalar(y_col);
-  const auto& mu_arr = as_array_or_scalar(mu_col);
-  const auto& sigma_arr = as_array_or_scalar(sigma_col);
-  const auto& tau_arr = as_array_or_scalar(tau_col);
+  int size_sigma = stan::math::size(sigma);
+  int N = max_size(y, mu, sigma, tau);
 
-  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
-  ref_type_t<decltype(value_of(mu_arr))> mu_val = value_of(mu_arr);
-  ref_type_t<decltype(value_of(sigma_arr))> sigma_val = value_of(sigma_arr);
-  ref_type_t<decltype(value_of(tau_arr))> tau_val = value_of(tau_arr);
+  VectorBuilder<true, T_partials_return, T_scale> inv_sigma(size_sigma);
+  for (int i = 0; i < size_sigma; ++i) {
+    inv_sigma[i] = inv(value_of(sigma_vec[i]));
+  }
 
-  check_not_nan(function, "Random variable", y_val);
-  check_finite(function, "Location parameter", mu_val);
-  check_positive_finite(function, "Scale parameter", sigma_val);
-  check_positive_finite(function, "Skewness parameter", tau_val);
-  check_bounded(function, "Skewness parameter", tau_val, 0.0, 1.0);
+  for (int i = 0; i < N; ++i) {
+    const T_partials_return y_dbl = value_of(y_vec[i]);
+    const T_partials_return mu_dbl = value_of(mu_vec[i]);
+    const T_partials_return sigma_dbl = value_of(sigma_vec[i]);
+    const T_partials_return tau_dbl = value_of(tau_vec[i]);
 
-  const auto& diff = to_ref((y_val - mu_val) / sigma_val);
-  const auto& scaled_diff
-      = to_ref_if<!is_constant_all<T_y, T_loc, T_scale>::value>(diff
-                                                                / SQRT_TWO);
-  const auto& erfc_m_scaled_diff = erfc(-scaled_diff);
-  const auto& owens_t_diff_alpha = owens_t(diff, alpha_val);
-  const auto& cdf_log_
-      = to_ref_if<!is_constant_all<T_y, T_loc, T_scale, T_shape>::value>(
-          0.5 * erfc_m_scaled_diff - 2 * owens_t_diff_alpha);
+    const T_partials_return y_m_mu = y_dbl - mu_dbl;
+    const T_partials_return diff_sign = sign(y_m_mu);
+    const T_partials_return diff_sign_smaller_0 = diff_sign < 0;
+    const T_partials_return abs_diff_y_mu = fabs(y_m_mu);
+    const T_partials_return abs_diff_y_mu_over_sigma = abs_diff_y_mu * inv_sigma[i];
+    const T_partials_return expo =
+        (diff_sign_smaller_0 + diff_sign * tau_dbl) * abs_diff_y_mu_over_sigma;
+    const T_partials_return inv_exp_2_expo_tau = inv(exp(2.0 * expo) + tau_dbl - 1);
 
-  T_partials_return cdf_log = sum(log(cdf_log_));
+    const T_partials_return rep_deriv
+        = y_dbl < mu_dbl ? 2.0 * inv_sigma[i] * (1 - tau_dbl)
+                         : -2.0 * (tau_dbl - 1) * tau_dbl * inv_sigma[i] *
+                               inv_exp_2_expo_tau;
+    const T_partials_return sig_deriv
+        = y_dbl < mu_dbl ? 2.0 * inv_sigma[i] * expo
+                         : -rep_deriv * expo / tau_dbl;
+    const T_partials_return skew_deriv
+        = y_dbl < mu_dbl ? 1.0 / tau_dbl + 2.0 * inv_sigma[i] * y_m_mu * diff_sign
+                         : (sigma_dbl - 2.0 * (tau_dbl - 1.0) * y_m_mu) * inv_sigma[i] *
+                                           inv_exp_2_expo_tau;
 
-  if (!is_constant_all<T_y, T_loc, T_scale, T_shape>::value) {
-    const auto& diff_square
-        = to_ref_if < !is_constant_all<T_y, T_loc, T_scale>::value
-          && !is_constant_all<T_shape>::value > (square(diff));
-    if (!is_constant_all<T_y, T_loc, T_scale>::value) {
-      const auto& erf_alpha_scaled_diff = erf(alpha_val * scaled_diff);
-      const auto& exp_m_scaled_diff_square = exp(-0.5 * diff_square);
-      const auto& rep_deriv = to_ref_if<!is_constant_all<T_y>::value
-                                            + !is_constant_all<T_loc>::value
-                                            + !is_constant_all<T_scale>::value
-                                        >= 2>(
-          (erf_alpha_scaled_diff + 1) * INV_SQRT_TWO_PI
-          * exp_m_scaled_diff_square / (sigma_val * cdf_log_));
-      if (!is_constant_all<T_loc>::value) {
-        ops_partials.edge2_.partials_ = -rep_deriv;
-      }
-      if (!is_constant_all<T_scale>::value) {
-        ops_partials.edge3_.partials_ = -rep_deriv * diff;
-      }
-      if (!is_constant_all<T_y>::value) {
-        ops_partials.edge1_.partials_ = std::move(rep_deriv);
-      }
+    if (y_dbl <= mu_dbl) {
+      cdf_log += log(tau_dbl) - 2.0 * expo;
+    } else {
+      cdf_log += log1m((1 - tau_dbl) * exp(- 2.0  * expo));
     }
-    if (!is_constant_all<T_shape>::value) {
-      const auto& alpha_square = square(alpha_val);
-      ops_partials.edge4_.partials_
-          = -exp(-0.5 * diff_square * (1.0 + alpha_square))
-            / ((1 + alpha_square) * pi()) / cdf_log_;
+
+    if (!is_constant_all<T_y>::value) {
+      ops_partials.edge1_.partials_[i] += rep_deriv;
+    }
+    if (!is_constant_all<T_loc>::value) {
+      ops_partials.edge2_.partials_[i] -= rep_deriv;
+    }
+    if (!is_constant_all<T_scale>::value) {
+      ops_partials.edge3_.partials_[i] += sig_deriv;
+    }
+    if (!is_constant_all<T_skewness>::value) {
+      ops_partials.edge4_.partials_[i] += skew_deriv;
     }
   }
   return ops_partials.build(cdf_log);
 }
-
 }  // namespace math
 }  // namespace stan
 #endif
