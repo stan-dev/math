@@ -30,6 +30,7 @@
 #include <stan/math/opencl/rev/inv_logit.hpp>
 #include <stan/math/opencl/rev/inv_sqrt.hpp>
 #include <stan/math/opencl/rev/inv_square.hpp>
+#include <stan/math/opencl/rev/lgamma.hpp>
 #include <stan/math/opencl/rev/multiply.hpp>
 #include <stan/math/opencl/rev/operands_and_partials.hpp>
 #include <stan/math/opencl/rev/sin.hpp>
