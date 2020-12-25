@@ -22,6 +22,9 @@
 #include <stan/math/opencl/rev/diagonal.hpp>
 #include <stan/math/opencl/rev/erf.hpp>
 #include <stan/math/opencl/rev/erfc.hpp>
+#include <stan/math/opencl/rev/exp.hpp>
+#include <stan/math/opencl/rev/exp2.hpp>
+#include <stan/math/opencl/rev/expm1.hpp>
 #include <stan/math/opencl/rev/multiply.hpp>
 #include <stan/math/opencl/rev/operands_and_partials.hpp>
 #include <stan/math/opencl/rev/sin.hpp>
