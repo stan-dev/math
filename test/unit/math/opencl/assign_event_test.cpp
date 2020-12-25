@@ -26,5 +26,7 @@ TEST(assign_event, correct_vectors) {
   assign_events<in_out_buffer>(e, m);
   EXPECT_EQ(m.read_events().size(), 2);
   EXPECT_EQ(m.write_events().size(), 2);
+
+  m.clear_read_write_events();
 }
 #endif
