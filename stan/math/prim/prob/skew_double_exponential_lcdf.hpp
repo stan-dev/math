@@ -88,7 +88,7 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lcdf(
 
     const T_partials_return y_m_mu = y_dbl - mu_dbl;
     const T_partials_return diff_sign = sign(y_m_mu);
-    const T_partials_return diff_sign_smaller_0 = diff_sign < 0;
+    const T_partials_return diff_sign_smaller_0 = step(-diff_sign);
     const T_partials_return abs_diff_y_mu = fabs(y_m_mu);
     const T_partials_return abs_diff_y_mu_over_sigma
         = abs_diff_y_mu * inv_sigma[i];

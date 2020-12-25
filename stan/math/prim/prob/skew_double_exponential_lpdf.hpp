@@ -93,7 +93,7 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
   const auto& diff_sign = sign(y_m_mu);
 
   // TODO how to solve
-  const auto& diff_sign_smaller_0 = diff_sign < 0;
+  const auto& diff_sign_smaller_0 = step(-diff_sign);
   const auto& abs_diff_y_mu = fabs(y_m_mu);
   const auto& abs_diff_y_mu_over_sigma = abs_diff_y_mu * inv_sigma;
   const auto& expo = to_ref_if<!is_constant_all<T_skewness>::value>(

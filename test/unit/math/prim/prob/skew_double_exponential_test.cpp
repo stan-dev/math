@@ -67,7 +67,7 @@ TEST(ProbDistributionsSkewedDoubleExponential,
   }
 }
 
-TEST(ProbDistributionsPoissonBinomial, lpdf_works_on_scalar_arguments) {
+TEST(ProbDistributionsSkewedDoubleExponential, lpdf_works_on_scalar_arguments) {
   using stan::math::skew_double_exponential_lpdf;
 
   for (double ys : {0.2, 0.9, 1.1, 3.2}) {
@@ -87,22 +87,23 @@ TEST(ProbDistributionsPoissonBinomial, lpdf_works_on_scalar_arguments) {
  * We test the skew double exponential rng by setting tau=0.5 which recovers
  * a conventional double exponential distribution from Boost
  */
-TEST(ProbDistributionsDoubleExponential, chiSquareGoodnessFitTest) {
+TEST(ProbDistributionsSkewedDoubleExponential, chiSquareGoodnessFitTest) {
   boost::random::mt19937 rng;
   int N = 10000;
   int K = stan::math::round(2 * std::pow(N, 0.4));
 
   std::vector<double> samples;
   for (int i = 0; i < N; ++i) {
-    samples.push_back(stan::math::skew_double_exponential_rng(2.0, 1.0, 0.5, rng));
+    samples.push_back(
+        stan::math::skew_double_exponential_rng(2.0, 1.0, 0.5, rng));
   }
 
   // Generate quantiles from boost's double exponential distribution
   boost::math::laplace_distribution<> dist(2.0, 1.0);
   std::vector<double> quantiles;
   for (int i = 1; i < K; ++i) {
-  double frac = static_cast<double>(i) / K;
-  quantiles.push_back(quantile(dist, frac));
+    double frac = static_cast<double>(i) / K;
+    quantiles.push_back(quantile(dist, frac));
   }
   quantiles.push_back(std::numeric_limits<double>::max());
 
