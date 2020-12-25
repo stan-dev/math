@@ -17,7 +17,9 @@ namespace math {
  * @return `1 / square(x)` of each value in x.
  */
 template <typename Container,
-          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              Container>* = nullptr>
 inline auto inv_square(const Container& x) {
   return inv(square(x));
 }
@@ -31,7 +33,9 @@ inline auto inv_square(const Container& x) {
  * @return 1 / the square of each value in x.
  */
 template <typename Container,
-          require_container_st<std::is_arithmetic, Container>* = nullptr>
+          require_container_st<std::is_arithmetic, Container>* = nullptr,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              Container>* = nullptr>
 inline auto inv_square(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().square().inverse(); });

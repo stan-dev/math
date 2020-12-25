@@ -25,6 +25,11 @@
 #include <stan/math/opencl/rev/exp.hpp>
 #include <stan/math/opencl/rev/exp2.hpp>
 #include <stan/math/opencl/rev/expm1.hpp>
+#include <stan/math/opencl/rev/inv.hpp>
+#include <stan/math/opencl/rev/inv_cloglog.hpp>
+#include <stan/math/opencl/rev/inv_logit.hpp>
+#include <stan/math/opencl/rev/inv_sqrt.hpp>
+#include <stan/math/opencl/rev/inv_square.hpp>
 #include <stan/math/opencl/rev/multiply.hpp>
 #include <stan/math/opencl/rev/operands_and_partials.hpp>
 #include <stan/math/opencl/rev/sin.hpp>
