@@ -15,6 +15,7 @@
 #include <stan/math/opencl/rev/beta.hpp>
 #include <stan/math/opencl/rev/block.hpp>
 #include <stan/math/opencl/rev/cbrt.hpp>
+#include <stan/math/opencl/rev/ceil.hpp>
 #include <stan/math/opencl/rev/cholesky_decompose.hpp>
 #include <stan/math/opencl/rev/copy.hpp>
 #include <stan/math/opencl/rev/cos.hpp>
