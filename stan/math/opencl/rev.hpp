@@ -36,6 +36,7 @@
 #include <stan/math/opencl/rev/tcrossprod.hpp>
 #include <stan/math/opencl/rev/transpose.hpp>
 #include <stan/math/opencl/rev/to_arena.hpp>
+#include <stan/math/opencl/rev/trunc.hpp>
 #include <stan/math/rev.hpp>
 
 #endif
