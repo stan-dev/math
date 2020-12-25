@@ -20,6 +20,8 @@
 #include <stan/math/opencl/rev/crossprod.hpp>
 #include <stan/math/opencl/rev/diag_matrix.hpp>
 #include <stan/math/opencl/rev/diagonal.hpp>
+#include <stan/math/opencl/rev/erf.hpp>
+#include <stan/math/opencl/rev/erfc.hpp>
 #include <stan/math/opencl/rev/multiply.hpp>
 #include <stan/math/opencl/rev/operands_and_partials.hpp>
 #include <stan/math/opencl/rev/sin.hpp>
