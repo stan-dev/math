@@ -23,8 +23,10 @@
 #include <stan/math/opencl/rev/crossprod.hpp>
 #include <stan/math/opencl/rev/diag_matrix.hpp>
 #include <stan/math/opencl/rev/diagonal.hpp>
+#include <stan/math/opencl/rev/floor.hpp>
 #include <stan/math/opencl/rev/multiply.hpp>
 #include <stan/math/opencl/rev/operands_and_partials.hpp>
+#include <stan/math/opencl/rev/round.hpp>
 #include <stan/math/opencl/rev/sin.hpp>
 #include <stan/math/opencl/rev/sinh.hpp>
 #include <stan/math/opencl/rev/subtract.hpp>
