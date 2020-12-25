@@ -17,22 +17,27 @@ namespace stan {
 namespace math {
 
 /** \ingroup prob_dists
- * Returns the double exponential log cumulative density function. Given
- * containers of matching sizes, returns the log sum of probabilities.
+ * Returns the skew double exponential log cumulative density
+ * function. Given containers of matching sizes, returns the log sum of
+ * probabilities.
  *
  * @tparam T_y type of real parameter.
  * @tparam T_loc type of location parameter.
  * @tparam T_scale type of scale parameter.
+ * @tparam T_skewness type of skewness parameter.
  * @param y real parameter
  * @param mu location parameter
  * @param sigma scale parameter
+ * @param tau skewness parameter
  * @return log probability or log sum of probabilities
- * @throw std::domain_error if y is nan, mu is infinite, or sigma is nonpositive
+ * @throw std::domain_error if mu is infinite or sigma is nonpositive or tau is
+ *  not bound between 0.0 and 1.0
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_loc, typename T_scale, typename T_skewness>
 return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lcdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma, const T_skewness& tau) {
+    const T_y& y, const T_loc& mu, const T_scale& sigma,
+    const T_skewness& tau) {
   using std::exp;
   using std::log;
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_skewness>;
@@ -85,27 +90,30 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lcdf(
     const T_partials_return diff_sign = sign(y_m_mu);
     const T_partials_return diff_sign_smaller_0 = diff_sign < 0;
     const T_partials_return abs_diff_y_mu = fabs(y_m_mu);
-    const T_partials_return abs_diff_y_mu_over_sigma = abs_diff_y_mu * inv_sigma[i];
-    const T_partials_return expo =
-        (diff_sign_smaller_0 + diff_sign * tau_dbl) * abs_diff_y_mu_over_sigma;
-    const T_partials_return inv_exp_2_expo_tau = inv(exp(2.0 * expo) + tau_dbl - 1);
+    const T_partials_return abs_diff_y_mu_over_sigma
+        = abs_diff_y_mu * inv_sigma[i];
+    const T_partials_return expo = (diff_sign_smaller_0 + diff_sign * tau_dbl)
+                                   * abs_diff_y_mu_over_sigma;
+    const T_partials_return inv_exp_2_expo_tau
+        = inv(exp(2.0 * expo) + tau_dbl - 1);
 
     const T_partials_return rep_deriv
         = y_dbl < mu_dbl ? 2.0 * inv_sigma[i] * (1 - tau_dbl)
-                         : -2.0 * (tau_dbl - 1) * tau_dbl * inv_sigma[i] *
-                               inv_exp_2_expo_tau;
-    const T_partials_return sig_deriv
-        = y_dbl < mu_dbl ? 2.0 * inv_sigma[i] * expo
-                         : -rep_deriv * expo / tau_dbl;
+                         : -2.0 * (tau_dbl - 1) * tau_dbl * inv_sigma[i]
+                               * inv_exp_2_expo_tau;
+    const T_partials_return sig_deriv = y_dbl < mu_dbl
+                                            ? 2.0 * inv_sigma[i] * expo
+                                            : -rep_deriv * expo / tau_dbl;
     const T_partials_return skew_deriv
-        = y_dbl < mu_dbl ? 1.0 / tau_dbl + 2.0 * inv_sigma[i] * y_m_mu * diff_sign
-                         : (sigma_dbl - 2.0 * (tau_dbl - 1.0) * y_m_mu) * inv_sigma[i] *
-                                           inv_exp_2_expo_tau;
+        = y_dbl < mu_dbl
+              ? 1.0 / tau_dbl + 2.0 * inv_sigma[i] * y_m_mu * diff_sign
+              : (sigma_dbl - 2.0 * (tau_dbl - 1.0) * y_m_mu) * inv_sigma[i]
+                    * inv_exp_2_expo_tau;
 
     if (y_dbl <= mu_dbl) {
       cdf_log += log(tau_dbl) - 2.0 * expo;
     } else {
-      cdf_log += log1m((1 - tau_dbl) * exp(- 2.0  * expo));
+      cdf_log += log1m((1 - tau_dbl) * exp(-2.0 * expo));
     }
 
     if (!is_constant_all<T_y>::value) {

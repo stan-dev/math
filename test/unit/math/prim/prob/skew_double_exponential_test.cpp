@@ -6,9 +6,12 @@
 #include <boost/math/distributions.hpp>
 #include <boost/math/tools/promotion.hpp>
 
+#include <stan/math/prim.hpp>
 #include <stan/math/rev.hpp>
 #include <stan/math/prim/fun/sign.hpp>
 #include <stan/math/prim/fun/fabs.hpp>
+#include <test/unit/math/prim/prob/vector_rng_test_helper.hpp>
+#include <test/unit/math/prim/prob/util.hpp>
 
 template <typename T1, typename T2, typename T3, typename T4>
 inline typename boost::math::tools::promote_args<T1, T2, T3, T4>::type
@@ -80,20 +83,29 @@ TEST(ProbDistributionsPoissonBinomial, lpdf_works_on_scalar_arguments) {
   }
 }
 
-TEST(ProbDistributionsPoissonBinomial, lpdf_works_on_vectorial_y) {
-  using stan::math::skew_double_exponential_lpdf;
-  using stan::math::skew_normal_lpdf;
+/*
+ * We test the skew double exponential rng by setting tau=0.5 which recovers
+ * a conventional double exponential distribution from Boost
+ */
+TEST(ProbDistributionsDoubleExponential, chiSquareGoodnessFitTest) {
+  boost::random::mt19937 rng;
+  int N = 10000;
+  int K = stan::math::round(2 * std::pow(N, 0.4));
 
-  std::vector<double> ys{0.2, 0.9, 1.1, 3.2};
-  for (double mus : {0.1, 1.3, 3.0}) {
-    for (double sigmas : {0.1, 1.1, 3.2}) {
-      for (double taus : {0.01, 0.1, 0.5, 0.9, 0.99}) {
-        double x = 0.0;
-        for (double y in ys)
-          x += skew_de_test(y, mus, sigmas, taus);
-        EXPECT_NEAR(skew_normal_lpdf(ys, mus, sigmas, taus),
-                    skew_double_exponential_lpdf(ys, mus, sigmas, taus), 0.001);
-      }
-    }
+  std::vector<double> samples;
+  for (int i = 0; i < N; ++i) {
+    samples.push_back(stan::math::skew_double_exponential_rng(2.0, 1.0, 0.5, rng));
   }
+
+  // Generate quantiles from boost's double exponential distribution
+  boost::math::laplace_distribution<> dist(2.0, 1.0);
+  std::vector<double> quantiles;
+  for (int i = 1; i < K; ++i) {
+  double frac = static_cast<double>(i) / K;
+  quantiles.push_back(quantile(dist, frac));
+  }
+  quantiles.push_back(std::numeric_limits<double>::max());
+
+  // Assert that they match
+  assert_matches_quantiles(samples, quantiles, 1e-6);
 }

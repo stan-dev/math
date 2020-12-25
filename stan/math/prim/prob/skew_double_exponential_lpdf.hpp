@@ -25,12 +25,14 @@ namespace math {
  * @tparam T_y type of real parameter.
  * @tparam T_loc type of location parameter.
  * @tparam T_scale type of scale parameter.
+ * @tparam T_skewness type of skewness parameter.
  * @param y real parameter
  * @param mu location parameter
  * @param sigma scale parameter
  * @param tau skewness parameter
- * @return log probability density or log sum of probability densities
- * @throw std::domain_error if y is nan, mu is infinite, or sigma is nonpositive
+ * @return log probability or log sum of probabilities
+ * @throw std::domain_error if mu is infinite or sigma is nonpositive or tau is
+ *  not bound between 0.0 and 1.0
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
@@ -98,7 +100,7 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
       (diff_sign_smaller_0 + diff_sign * tau_val) * abs_diff_y_mu_over_sigma);
 
   size_t N = max_size(y, mu, sigma);
-  T_partials_return logp = - 2 * sum(expo);
+  T_partials_return logp = -2 * sum(expo);
 
   if (include_summand<propto>::value) {
     logp += N * LOG_TWO;
@@ -111,30 +113,26 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
   }
 
   if (!is_constant_all<T_y, T_loc>::value) {
-    const auto& deriv
-        = to_ref_if<(!is_constant_all<T_y>::value && !is_constant_all<T_loc>::value)>(
-            2 * (diff_sign_smaller_0 + diff_sign * tau_val) * diff_sign * inv_sigma
-            );
+    const auto& deriv = to_ref_if<(!is_constant_all<T_y>::value
+                                   && !is_constant_all<T_loc>::value)>(
+        2 * (diff_sign_smaller_0 + diff_sign * tau_val) * diff_sign
+        * inv_sigma);
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_ =  -deriv;
+      ops_partials.edge1_.partials_ = -deriv;
     }
     if (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_ = deriv;
     }
   }
   if (!is_constant_all<T_scale>::value) {
-    ops_partials.edge3_.partials_ = - inv_sigma + 2 * expo * inv_sigma;
+    ops_partials.edge3_.partials_ = -inv_sigma + 2 * expo * inv_sigma;
   }
   if (!is_constant_all<T_skewness>::value) {
-      ops_partials.edge4_.partials_= inv(tau_val) - inv(1 - tau_val) +
-        (-1 * diff_sign) * 2 * abs_diff_y_mu_over_sigma;
+    ops_partials.edge4_.partials_
+        = inv(tau_val) - inv(1 - tau_val)
+          + (-1 * diff_sign) * 2 * abs_diff_y_mu_over_sigma;
   }
-//    return log(2) + log(tau) + log(1 - tau) - log(sigma)
-//               - 2 * ((y < mu) ? (1 - tau) * (mu - y) : tau * (y - mu)) /
-//               sigma;
 
-//    return log(2) + log(tau) + log(1 - tau) - log(sigma)
-//               - 2 * (I(y - mu < 0) + sign(y - mu) * tau) * abs(y - mu) /  sigma;
   return ops_partials.build(logp);
 }
 

@@ -17,22 +17,27 @@ namespace stan {
 namespace math {
 
 /** \ingroup prob_dists
- * Returns the double exponential log cumulative density function. Given
- * containers of matching sizes, returns the log sum of probabilities.
+ * Returns the skew double exponential log complementary cumulative density
+ * function. Given containers of matching sizes, returns the log sum of
+ * probabilities.
  *
  * @tparam T_y type of real parameter.
  * @tparam T_loc type of location parameter.
  * @tparam T_scale type of scale parameter.
+ * @tparam T_skewness type of skewness parameter.
  * @param y real parameter
  * @param mu location parameter
  * @param sigma scale parameter
+ * @param tau skewness parameter
  * @return log probability or log sum of probabilities
- * @throw std::domain_error if y is nan, mu is infinite, or sigma is nonpositive
+ * @throw std::domain_error if mu is infinite or sigma is nonpositive or tau is
+ *  not bound between 0.0 and 1.0
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <typename T_y, typename T_loc, typename T_scale, typename T_skewness>
 return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lccdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma, const T_skewness& tau) {
+    const T_y& y, const T_loc& mu, const T_scale& sigma,
+    const T_skewness& tau) {
   return log1m_exp(skew_double_exponential_lcdf(y, mu, sigma, tau));
 }
 }  // namespace math
