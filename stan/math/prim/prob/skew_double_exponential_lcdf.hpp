@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_PROB_SKEW_NORMAL_LCDF_HPP
-#define STAN_MATH_PRIM_PROB_SKEW_NORMAL_LCDF_HPP
+#ifndef STAN_MATH_PRIM_PROB_SKEW_DOUBLE_EXPONENTIAL_LCDF_HPP
+#define STAN_MATH_PRIM_PROB_SKEW_DOUBLE_EXPONENTIAL_LCDF_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
@@ -21,48 +21,50 @@
 namespace stan {
 namespace math {
 
-template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
-return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lcdf(
-    const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha) {
-  using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_shape>;
+template <typename T_y, typename T_loc, typename T_scale, typename T_skewness>
+return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lcdf(
+    const T_y& y, const T_loc& mu, const T_scale& sigma, const T_skewness& tau) {
+  using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_skewness>;
   using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
   using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
   using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
-  using T_alpha_ref = ref_type_if_t<!is_constant<T_shape>::value, T_shape>;
-  static const char* function = "skew_normal_lcdf";
+  using T_tau_ref = ref_type_if_t<!is_constant<T_skewness>::value, T_skewness>;
+  static const char* function = "skew_double_exponential_lcdf";
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
-                         mu, "Scale parameter", sigma, "Shape parameter", alpha);
+                         mu, "Scale parameter", sigma,
+                         "Skewness parameter", tau);
   T_y_ref y_ref = y;
   T_mu_ref mu_ref = mu;
   T_sigma_ref sigma_ref = sigma;
-  T_alpha_ref alpha_ref = alpha;
+  T_tau_ref tau_ref = tau;
+
+  if (size_zero(y, mu, sigma, tau)) {
+    return 0.0;
+  }
+
+  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref, T_tau_ref>
+      ops_partials(y_ref, mu_ref, sigma_ref, tau_ref);
 
   const auto& y_col = as_column_vector_or_scalar(y_ref);
   const auto& mu_col = as_column_vector_or_scalar(mu_ref);
   const auto& sigma_col = as_column_vector_or_scalar(sigma_ref);
-  const auto& alpha_col = as_column_vector_or_scalar(alpha_ref);
+  const auto& tau_col = as_column_vector_or_scalar(tau_ref);
 
   const auto& y_arr = as_array_or_scalar(y_col);
   const auto& mu_arr = as_array_or_scalar(mu_col);
   const auto& sigma_arr = as_array_or_scalar(sigma_col);
-  const auto& alpha_arr = as_array_or_scalar(alpha_col);
+  const auto& tau_arr = as_array_or_scalar(tau_col);
 
   ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
   ref_type_t<decltype(value_of(mu_arr))> mu_val = value_of(mu_arr);
   ref_type_t<decltype(value_of(sigma_arr))> sigma_val = value_of(sigma_arr);
-  ref_type_t<decltype(value_of(alpha_arr))> alpha_val = value_of(alpha_arr);
+  ref_type_t<decltype(value_of(tau_arr))> tau_val = value_of(tau_arr);
 
   check_not_nan(function, "Random variable", y_val);
   check_finite(function, "Location parameter", mu_val);
-  check_positive(function, "Scale parameter", sigma_val);
-  check_finite(function, "Shape parameter", alpha_val);
-
-  if (size_zero(y, mu, sigma, alpha)) {
-    return 0;
-  }
-
-  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref, T_alpha_ref>
-      ops_partials(y_ref, mu_ref, sigma_ref, alpha_ref);
+  check_positive_finite(function, "Scale parameter", sigma_val);
+  check_positive_finite(function, "Skewness parameter", tau_val);
+  check_bounded(function, "Skewness parameter", tau_val, 0.0, 1.0);
 
   const auto& diff = to_ref((y_val - mu_val) / sigma_val);
   const auto& scaled_diff

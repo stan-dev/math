@@ -15,20 +15,6 @@
 #include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <cmath>
 
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/fabs.hpp>
-#include <stan/math/prim/fun/inv.hpp>
-#include <stan/math/prim/fun/max_size.hpp>
-#include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/fun/sign.hpp>
-#include <stan/math/prim/fun/size.hpp>
-#include <stan/math/prim/fun/size_zero.hpp>
-#include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
-#include <cmath>
-
 namespace stan {
 namespace math {
 
@@ -91,18 +77,20 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
   ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
   ref_type_t<decltype(value_of(mu_arr))> mu_val = value_of(mu_arr);
   ref_type_t<decltype(value_of(sigma_arr))> sigma_val = value_of(sigma_arr);
-  ref_type_t<decltype(value_of(sigma_arr))> tau_val = value_of(tau_arr);
+  ref_type_t<decltype(value_of(tau_arr))> tau_val = value_of(tau_arr);
 
-  check_finite(function, "Random variable", y);
-  check_finite(function, "Location parameter", mu);
-  check_positive_finite(function, "Scale parameter", sigma);
-  check_positive_finite(function, "Skewness parameter", tau);
+  check_finite(function, "Random variable", y_val);
+  check_finite(function, "Location parameter", mu_val);
+  check_positive_finite(function, "Scale parameter", sigma_val);
+  check_positive_finite(function, "Skewness parameter", tau_val);
 
   const auto& inv_sigma
       = to_ref_if<!is_constant_all<T_scale>::value>(inv(sigma_val));
   const auto& y_m_mu
       = to_ref_if<!is_constant_all<T_y, T_loc>::value>(y_val - mu_val);
   const auto& diff_sign = sign(y_m_mu);
+
+  // TODO how to solvce
   const auto& diff_sign_smaller_0 = diff_sign < 0;
   const auto& abs_diff_y_mu = fabs(y_m_mu);
   const auto& abs_diff_y_mu_over_sigma = abs_diff_y_mu * inv_sigma;
@@ -111,6 +99,7 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
 
   size_t N = max_size(y, mu, sigma);
   T_partials_return logp = - 2 * sum(expo);
+
   if (include_summand<propto>::value) {
     logp += N * LOG_TWO;
   }
@@ -140,9 +129,12 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
       ops_partials.edge4_.partials_= inv(tau_val) - inv(1 - tau_val) +
         (-1 * diff_sign) * 2 * abs_diff_y_mu_over_sigma;
   }
-  //  return log(2) + log(tau) + log(1 - tau) - log(sigma)
-  //             - 2 * ((y < mu) ? (1 - tau) * (mu - y) : tau * (y - mu)) /
-  //             sigma;
+//    return log(2) + log(tau) + log(1 - tau) - log(sigma)
+//               - 2 * ((y < mu) ? (1 - tau) * (mu - y) : tau * (y - mu)) /
+//               sigma;
+
+//    return log(2) + log(tau) + log(1 - tau) - log(sigma)
+//               - 2 * (I(y - mu < 0) + sign(y - mu) * tau) * abs(y - mu) /  sigma;
   return ops_partials.build(logp);
 }
 
