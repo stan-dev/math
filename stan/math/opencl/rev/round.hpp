@@ -11,10 +11,11 @@ namespace math {
 
 /**
  * Returns the elementwise `round()` of the input
- * `var_value<matrix_cl<double>>`..
+ * `var_value<matrix_cl<double>>`.
  *
- * @param A input `var_value<matrix_cl<double>>`.
+ * @param A input `var_value<matrix_cl<double>>`
  * @return Elementwise `round()` of the input argument.
+ * 
  */
 inline var_value<matrix_cl<double>> round(
     const var_value<matrix_cl<double>>& A) {
