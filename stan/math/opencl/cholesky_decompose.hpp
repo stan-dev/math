@@ -80,7 +80,8 @@ inline void cholesky_decompose(matrix_cl<T>& A) {
   matrix_cl<T> L_21 = A_21 * transpose(tri_inverse(A_11));
   block_zero_based(A, block, 0, block_subset, block)
       = block_zero_based(L_21, 0, 0, block_subset, block);
-  matrix_cl<T> A_22 = block_zero_based(A, block, block, block_subset, block_subset);
+  matrix_cl<T> A_22
+      = block_zero_based(A, block, block, block_subset, block_subset);
   // computes A_22 - L_21*(L_21^T)
   matrix_cl<T> L_22 = A_22 - multiply_transpose(L_21);
   // copy L_22 into A's lower left hand corner
