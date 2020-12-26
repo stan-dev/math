@@ -83,6 +83,27 @@ TEST(ProbDistributionsSkewedDoubleExponential, lpdf_works_on_scalar_arguments) {
   }
 }
 
+TEST(ProbDistributionsSkewedDoubleExponential, lpdf_works_on_vector_arguments) {
+using stan::math::skew_double_exponential_lpdf;
+
+
+std::vector<double> ys{0.2, 0.9, 1.1, 3.2};
+
+for (double mus : {0.1, 1.3, 3.0}) {
+for (double sigmas : {0.1, 1.1, 3.2}) {
+for (double taus : {0.01, 0.1, 0.5, 0.9, 0.99}) {
+  double x = 0.0;
+  for (double y: ys) x += skew_de_test(y, mus, sigmas, taus);
+
+EXPECT_NEAR(x,
+    skew_double_exponential_lpdf(ys, mus, sigmas, taus),
+0.001);
+}
+}
+}
+
+}
+
 /*
  * We test the skew double exponential rng by setting tau=0.5 which recovers
  * a conventional double exponential distribution from Boost
