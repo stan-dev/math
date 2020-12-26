@@ -15,11 +15,13 @@ namespace math {
  * @param A argument
  * @return Elementwise `round()` of the input argument.
  */
-inline var_value<matrix_cl<double>> round(const var_value<matrix_cl<double>>& A) {
+inline var_value<matrix_cl<double>> round(
+    const var_value<matrix_cl<double>>& A) {
   var_value<matrix_cl<double>> res = round(A.val());
 
   reverse_pass_callback([A, res]() mutable {
-    A.adj() = select(isnan(A.val()), constant(NOT_A_NUMBER, A.rows(), A.cols()), A.adj());
+    A.adj() = select(isnan(A.val()), constant(NOT_A_NUMBER, A.rows(), A.cols()),
+                     A.adj());
   });
 
   return res;

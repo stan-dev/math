@@ -8,12 +8,13 @@
 namespace stan {
 namespace math {
 
-template <typename T1, typename T2,
-          require_all_nonscalar_prim_or_rev_kernel_expression_t<T1, T2>* = nullptr>
+template <
+    typename T1, typename T2,
+    require_all_nonscalar_prim_or_rev_kernel_expression_t<T1, T2>* = nullptr>
 auto diag_pre_multiply(const T1& m1, const T2& m2) {
   check_vector("diag_pre_multiply (OpenCL)", "m1", m1);
-  check_size_match("diag_pre_multiply (OpenCL)", "m1.size()", m1.size(), "m2.rows()",
-                   m2.rows());
+  check_size_match("diag_pre_multiply (OpenCL)", "m1.size()", m1.size(),
+                   "m2.rows()", m2.rows());
   return diag_matrix(m1) * m2;
 }
 

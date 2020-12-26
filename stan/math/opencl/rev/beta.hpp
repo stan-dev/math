@@ -16,7 +16,7 @@ namespace math {
 /**
  * Return the elementwise beta function on two input kernel
  * generator expression
- * 
+ *
  * @tparam T_a type of first expression
  * @tparam T_b type of second expression
  * @param a first expression
@@ -37,18 +37,25 @@ inline auto beta(const T_a& a, const T_b& b) {
     auto adj_val = elt_multiply(res.adj(), res.val());
     auto digamma_ab = digamma(value_of(a_arena) + value_of(b_arena));
     if (!is_constant<T_a>::value && !is_constant<T_b>::value) {
-       auto& a_adj = forward_as<var_value<matrix_cl<double>>>(a_arena).adj();
-       auto& b_adj = forward_as<var_value<matrix_cl<double>>>(b_arena).adj();
-       results(a_adj, b_adj)
-          = expressions(
-            a_adj + elt_multiply(adj_val, (digamma(value_of(a_arena)) - digamma_ab)),
-            b_adj + elt_multiply(adj_val, (digamma(value_of(b_arena)) - digamma_ab)));
+      auto& a_adj = forward_as<var_value<matrix_cl<double>>>(a_arena).adj();
+      auto& b_adj = forward_as<var_value<matrix_cl<double>>>(b_arena).adj();
+      results(a_adj, b_adj) = expressions(
+          a_adj
+              + elt_multiply(adj_val,
+                             (digamma(value_of(a_arena)) - digamma_ab)),
+          b_adj
+              + elt_multiply(adj_val,
+                             (digamma(value_of(b_arena)) - digamma_ab)));
     } else if (!is_constant<T_a>::value) {
       auto& a_adj = forward_as<var_value<matrix_cl<double>>>(a_arena).adj();
-      a_adj = a_adj + elt_multiply(adj_val, (digamma(value_of(a_arena)) - digamma_ab));
+      a_adj
+          = a_adj
+            + elt_multiply(adj_val, (digamma(value_of(a_arena)) - digamma_ab));
     } else {
       auto& b_adj = forward_as<var_value<matrix_cl<double>>>(b_arena).adj();
-      b_adj = b_adj + elt_multiply(adj_val, (digamma(value_of(b_arena)) - digamma_ab));
+      b_adj
+          = b_adj
+            + elt_multiply(adj_val, (digamma(value_of(b_arena)) - digamma_ab));
     }
   });
   return res;

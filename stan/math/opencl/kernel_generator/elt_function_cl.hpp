@@ -311,7 +311,8 @@ ADD_CLASSIFICATION_FUNCTION(isnan,
                             this->template get_arg<0>().extreme_diagonals())
 
 ADD_BINARY_FUNCTION_WITH_INCLUDES(pow)
-ADD_BINARY_FUNCTION_WITH_INCLUDES(beta, stan::math::opencl_kernels::beta_device_function)
+ADD_BINARY_FUNCTION_WITH_INCLUDES(
+    beta, stan::math::opencl_kernels::beta_device_function)
 ADD_BINARY_FUNCTION_WITH_INCLUDES(
     lbeta, stan::math::opencl_kernels::lgamma_stirling_device_function,
     stan::math::opencl_kernels::lgamma_stirling_diff_device_function,

@@ -12,7 +12,8 @@ TEST(OpenCL_trunc, prim_rev_values_small) {
   stan::math::test::compare_cpu_opencl_prim_rev(trunc_functor, a);
 
   Eigen::VectorXd b_nan(3);
-  b_nan << stan::math::NOT_A_NUMBER, stan::math::NOT_A_NUMBER, stan::math::NOT_A_NUMBER;
+  b_nan << stan::math::NOT_A_NUMBER, stan::math::NOT_A_NUMBER,
+      stan::math::NOT_A_NUMBER;
   stan::math::test::compare_cpu_opencl_prim_rev(trunc_functor, b_nan);
 }
 

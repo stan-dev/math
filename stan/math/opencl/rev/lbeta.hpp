@@ -16,7 +16,7 @@ namespace math {
 /**
  * Return the elementwise `lbeta()` on two input kernel
  * generator expression
- * 
+ *
  * @tparam T_a type of first expression
  * @tparam T_b type of second expression
  * @param a first expression
@@ -31,22 +31,30 @@ inline auto lbeta(const T_a& a, const T_b& b) {
   const arena_t<T_a>& a_arena = a;
   const arena_t<T_b>& b_arena = b;
 
-  var_value<matrix_cl<double>> res = lbeta(value_of(a_arena), value_of(b_arena));
+  var_value<matrix_cl<double>> res
+      = lbeta(value_of(a_arena), value_of(b_arena));
   reverse_pass_callback([a_arena, b_arena, res]() mutable {
     auto digamma_ab = digamma(value_of(a_arena) + value_of(b_arena));
     if (!is_constant<T_a>::value && !is_constant<T_b>::value) {
-       auto& a_adj = forward_as<var_value<matrix_cl<double>>>(a_arena).adj();
-       auto& b_adj = forward_as<var_value<matrix_cl<double>>>(b_arena).adj();
-       results(a_adj, b_adj)
-          = expressions(
-            a_adj + elt_multiply(res.adj(), (digamma(value_of(a_arena)) - digamma_ab)),
-            b_adj + elt_multiply(res.adj(), (digamma(value_of(b_arena)) - digamma_ab)));
+      auto& a_adj = forward_as<var_value<matrix_cl<double>>>(a_arena).adj();
+      auto& b_adj = forward_as<var_value<matrix_cl<double>>>(b_arena).adj();
+      results(a_adj, b_adj) = expressions(
+          a_adj
+              + elt_multiply(res.adj(),
+                             (digamma(value_of(a_arena)) - digamma_ab)),
+          b_adj
+              + elt_multiply(res.adj(),
+                             (digamma(value_of(b_arena)) - digamma_ab)));
     } else if (!is_constant<T_a>::value) {
       auto& a_adj = forward_as<var_value<matrix_cl<double>>>(a_arena).adj();
-      a_adj = a_adj + elt_multiply(res.adj(), (digamma(value_of(a_arena)) - digamma_ab));
+      a_adj = a_adj
+              + elt_multiply(res.adj(),
+                             (digamma(value_of(a_arena)) - digamma_ab));
     } else {
       auto& b_adj = forward_as<var_value<matrix_cl<double>>>(b_arena).adj();
-      b_adj = b_adj + elt_multiply(res.adj(), (digamma(value_of(b_arena)) - digamma_ab));
+      b_adj = b_adj
+              + elt_multiply(res.adj(),
+                             (digamma(value_of(b_arena)) - digamma_ab));
     }
   });
   return res;

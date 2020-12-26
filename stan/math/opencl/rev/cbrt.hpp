@@ -15,11 +15,15 @@ namespace math {
  * @param A argument
  * @return Elementwise `cbrt()` of the input argument.
  */
-inline var_value<matrix_cl<double>> cbrt(const var_value<matrix_cl<double>>& A) {
+inline var_value<matrix_cl<double>> cbrt(
+    const var_value<matrix_cl<double>>& A) {
   var_value<matrix_cl<double>> res = cbrt(A.val());
 
   reverse_pass_callback([A, res]() mutable {
-    A.adj() = A.adj() + elt_divide(res.adj(), elt_multiply(3.0, elt_multiply(res.val(), res.val())));
+    A.adj()
+        = A.adj()
+          + elt_divide(res.adj(),
+                       elt_multiply(3.0, elt_multiply(res.val(), res.val())));
   });
 
   return res;
