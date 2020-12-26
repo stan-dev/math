@@ -11,8 +11,8 @@ namespace math {
  * Return the product of the diagonal matrix formed from the vector
  * or row_vector and a matrix.
  *
- * @tparam T1 type of the vector/row_vector 
- * @tparam T2 type of the matrix 
+ * @tparam T1 type of the vector/row_vector
+ * @tparam T2 type of the matrix
  * @param m1 input vector/row_vector
  * @param m2 input matrix
  *

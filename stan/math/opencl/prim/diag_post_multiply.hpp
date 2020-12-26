@@ -27,8 +27,8 @@ template <
     require_all_nonscalar_prim_or_rev_kernel_expression_t<T1, T2>* = nullptr>
 auto diag_post_multiply(const T1& m1, const T2& m2) {
   check_vector("diag_post_multiply (OpenCL)", "m2", m2);
-  check_size_match("diag_post_multiply (OpenCL)", "m2.size()", m2.size(), "m1.cols()",
-                   m1.cols());
+  check_size_match("diag_post_multiply (OpenCL)", "m2.size()", m2.size(),
+                   "m1.cols()", m1.cols());
   return m1 * diag_matrix(m2);
 }
 
