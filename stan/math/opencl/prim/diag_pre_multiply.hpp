@@ -8,6 +8,20 @@
 namespace stan {
 namespace math {
 
+/**
+ * Return the product of the diagonal matrix formed from the
+ * vector or row_vector and a matrix.
+ *
+ * @tparam T1 type of input kernel generator expression for the
+ * vector/row_vector
+ * @tparam T2 type of input kernel generator expression for the
+ * matrix
+ * @param m1 input kernel generator expression for the vector/row_vector
+ * @param m2 input kernel generator expression for the matrix
+ *
+ * @return product of the diagonal matrix formed from the vector or row_vector
+ * and a matrix.
+ */
 template <
     typename T1, typename T2,
     require_all_nonscalar_prim_or_rev_kernel_expression_t<T1, T2>* = nullptr>
