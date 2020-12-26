@@ -8,7 +8,7 @@ auto diag_post_multiply_functor = [](const auto& a, const auto& b) {
   return stan::math::diag_post_multiply(a, b);
 };
 
-TEST(OpenCLMatrixMultiply, prim_rev_values_small) {
+TEST(OpenCL_diag_post_multiply, prim_rev_values_small) {
   int N = 2;
   int M = 3;
 
@@ -20,7 +20,7 @@ TEST(OpenCLMatrixMultiply, prim_rev_values_small) {
                                                 b);
 }
 
-TEST(OpenCLMatrixMultiply, prim_rev_values_N_0) {
+TEST(OpenCL_diag_post_multiply, prim_rev_values_N_0) {
   int N = 0;
   int M = 3;
 
@@ -31,7 +31,7 @@ TEST(OpenCLMatrixMultiply, prim_rev_values_N_0) {
                                                 b);
 }
 
-TEST(OpenCLMatrixMultiply, prim_rev_values_M_0) {
+TEST(OpenCL_diag_post_multiply, prim_rev_values_M_0) {
   int N = 2;
   int M = 0;
 
@@ -41,7 +41,7 @@ TEST(OpenCLMatrixMultiply, prim_rev_values_M_0) {
                                                 b);
 }
 
-TEST(OpenCLMatrixMultiply, prim_rev_values_large) {
+TEST(OpenCL_diag_post_multiply, prim_rev_values_large) {
   int N = 71;
   int M = 83;
 
