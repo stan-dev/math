@@ -21,7 +21,7 @@ namespace math {
  * @tparam T_b type of second expression
  * @param a first expression
  * @param b second expression
- * @return elementwise lbeta
+ * @return elementwise `lbeta()`
  */
 template <
     typename T_a, typename T_b,

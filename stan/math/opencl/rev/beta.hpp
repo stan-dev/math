@@ -14,14 +14,14 @@ namespace stan {
 namespace math {
 
 /**
- * Return the elementwise beta function on two input kernel
+ * Return the elementwise `beta()` on two input kernel
  * generator expression
  *
  * @tparam T_a type of first expression
  * @tparam T_b type of second expression
  * @param a first expression
  * @param b second expression
- * @return elementwise beta
+ * @return elementwise `beta()`
  */
 template <
     typename T_a, typename T_b,

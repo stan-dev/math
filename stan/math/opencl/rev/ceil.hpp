@@ -12,7 +12,7 @@ namespace math {
 /**
  * Returns the elementwise `ceil()` of the specified variable.
  *
- * @param A argument
+ * @param A input `var_value<matrix_cl<double>>`.
  * @return Elementwise `ceil()` of the input argument.
  */
 inline var_value<matrix_cl<double>> ceil(

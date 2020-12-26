@@ -10,9 +10,10 @@ namespace stan {
 namespace math {
 
 /**
- * Returns the elementwise `trunc()` of the specified variable.
+ * Returns the elementwise `trunc()` of the 
+ * input `var_value<matrix_cl<double>>`.
  *
- * @param A argument
+ * @param A input `var_value<matrix_cl<double>>`.
  * @return Elementwise `trunc()` of the input argument.
  */
 inline var_value<matrix_cl<double>> trunc(

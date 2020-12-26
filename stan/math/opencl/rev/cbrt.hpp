@@ -10,9 +10,10 @@ namespace stan {
 namespace math {
 
 /**
- * Returns the cube root of the specified variable (C99).
+ * Returns the elementwise `cbrt()` of the input 
+ * `var_value<matrix_cl<double>>`.
  *
- * @param A argument
+ * @param A input `var_value<matrix_cl<double>>`.
  * @return Elementwise `cbrt()` of the input argument.
  */
 inline var_value<matrix_cl<double>> cbrt(
