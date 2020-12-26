@@ -26,7 +26,7 @@ inline auto segment(T_x&& x, size_t i, size_t n) {
     return block(std::forward<T_x>(x), 1, i, 1, n);
   } else {
     return block(std::forward<T_x>(x), i, 1, n, 1);
-  }  
+  }
 }
 }  // namespace math
 }  // namespace stan

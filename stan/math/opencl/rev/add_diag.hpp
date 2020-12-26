@@ -23,11 +23,10 @@ namespace math {
  * the diagonal
  * @return a kernel generator expressio with to_add added along main diagonal
  */
-template <
-    typename T_m, typename T_a,
-    require_all_nonscalar_prim_or_rev_kernel_expression_t<T_m>* = nullptr,
-    require_all_prim_or_rev_kernel_expression_t<T_a>* = nullptr,
-    require_any_var_t<T_m, T_a>* = nullptr>
+template <typename T_m, typename T_a,
+          require_all_nonscalar_prim_or_rev_kernel_expression_t<T_m>* = nullptr,
+          require_all_prim_or_rev_kernel_expression_t<T_a>* = nullptr,
+          require_any_var_t<T_m, T_a>* = nullptr>
 inline auto add_diag(const T_m& mat, const T_a& to_add) {
   const arena_t<T_m>& mat_arena = mat;
   const arena_t<T_a>& to_add_arena = to_add;
@@ -38,16 +37,17 @@ inline auto add_diag(const T_m& mat, const T_a& to_add) {
     if (!is_constant<T_m>::value) {
       auto& mat_adj = forward_as<var_value<matrix_cl<double>>>(mat_arena).adj();
       mat_adj = mat_adj + res.adj();
-    } 
+    }
     if (!is_constant<T_a>::value) {
       if (!is_stan_scalar<T_a>::value) {
-        auto& to_add_adj = forward_as<var_value<matrix_cl<double>>>(to_add_arena).adj();
+        auto& to_add_adj
+            = forward_as<var_value<matrix_cl<double>>>(to_add_arena).adj();
         to_add_adj = to_add_adj + diagonal(res.adj());
       } else {
         auto& to_add_adj = forward_as<var_value<double>>(to_add_arena).adj();
         to_add_adj = to_add_adj + sum(diagonal(res.adj()));
       }
-    }    
+    }
   });
   return res;
 }

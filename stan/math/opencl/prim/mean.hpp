@@ -17,7 +17,7 @@ template <typename T,
           require_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
 scalar_type_t<T> mean(const T& m) {
   check_nonzero_size("mean", "m", m);
-  return sum(m)/m.size();
+  return sum(m) / m.size();
 }
 
 }  // namespace math

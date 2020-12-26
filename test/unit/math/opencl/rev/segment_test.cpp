@@ -42,4 +42,3 @@ TEST(MathMatrixCL, segment_value_check) {
 }
 
 #endif
-

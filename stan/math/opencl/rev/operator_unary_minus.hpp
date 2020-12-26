@@ -18,10 +18,8 @@ namespace math {
 inline var_value<matrix_cl<double>> operator-(
     const var_value<matrix_cl<double>>& M) {
   var_value<matrix_cl<double>> res = -M.val();
-  
-  reverse_pass_callback([M, res]() mutable {
-    M.adj() = M.adj() - res.adj();
-  });
+
+  reverse_pass_callback([M, res]() mutable { M.adj() = M.adj() - res.adj(); });
 
   return res;
 }

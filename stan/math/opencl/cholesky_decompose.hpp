@@ -65,13 +65,15 @@ inline void cholesky_decompose(matrix_cl<T>& A) {
       = std::floor(A.rows() / opencl_context.tuning_opts().cholesky_partition);
   // Subset the top left block of the input A into A_11
   matrix_cl<T> A_11(block, block);
-  block_zero_based(A_11, 0, 0, block, block) = block_zero_based(A, 0, 0, block, block);
+  block_zero_based(A_11, 0, 0, block, block)
+      = block_zero_based(A, 0, 0, block, block);
   // The following function either calls the
   // blocked cholesky recursively for the submatrix A_11
   // or calls the kernel  directly if the size of the block is small enough
   opencl::cholesky_decompose(A_11);
   // Copies L_11 back to the input matrix
-  block_zero_based(A, 0, 0, block, block) = block_zero_based(A_11, 0, 0, block, block);
+  block_zero_based(A, 0, 0, block, block)
+      = block_zero_based(A_11, 0, 0, block, block);
 
   const int block_subset = A.rows() - block;
   matrix_cl<T> A_21(block_subset, block);
@@ -79,14 +81,17 @@ inline void cholesky_decompose(matrix_cl<T>& A) {
   // computes A_21*((L_11^-1)^T)
   // and copies the resulting submatrix to the lower left hand corner of A
   matrix_cl<T> L_21 = A_21 * transpose(tri_inverse(A_11));
-  block_zero_based(A, block, 0, block_subset, block) = block_zero_based(L_21, 0, 0, block_subset, block);
+  block_zero_based(A, block, 0, block_subset, block)
+      = block_zero_based(L_21, 0, 0, block_subset, block);
   matrix_cl<T> A_22(block_subset, block_subset);
-  block_zero_based(A_22, 0, 0, block_subset, block_subset) = block_zero_based(A, block, block, block_subset, block_subset);
+  block_zero_based(A_22, 0, 0, block_subset, block_subset)
+      = block_zero_based(A, block, block, block_subset, block_subset);
   // computes A_22 - L_21*(L_21^T)
   matrix_cl<T> L_22 = A_22 - multiply_transpose(L_21);
   // copy L_22 into A's lower left hand corner
   opencl::cholesky_decompose(L_22);
-  block_zero_based(A, block, block, block_subset, block_subset) = block_zero_based(L_22, 0, 0, block_subset, block_subset);
+  block_zero_based(A, block, block, block_subset, block_subset)
+      = block_zero_based(L_22, 0, 0, block_subset, block_subset);
   A.view(matrix_cl_view::Lower);
 }
 }  // namespace opencl

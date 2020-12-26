@@ -30,4 +30,3 @@ TEST(OpenCLMean, exceptions) {
 }
 
 #endif
-
