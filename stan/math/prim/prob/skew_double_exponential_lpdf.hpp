@@ -74,7 +74,7 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
   const auto& y_arr = as_array_or_scalar(y_col);
   const auto& mu_arr = as_array_or_scalar(mu_col);
   const auto& sigma_arr = as_array_or_scalar(sigma_col);
-  const auto& tau_arr = as_column_vector_or_scalar(tau_col);
+  const auto& tau_arr = as_array_or_scalar(tau_col);
 
   ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
   ref_type_t<decltype(value_of(mu_arr))> mu_val = value_of(mu_arr);
@@ -92,15 +92,14 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
       = to_ref_if<!is_constant_all<T_y, T_loc>::value>(y_val - mu_val);
   const auto& diff_sign = sign(y_m_mu);
 
-  // TODO how to solve
   const auto& diff_sign_smaller_0 = step(-diff_sign);
   const auto& abs_diff_y_mu = fabs(y_m_mu);
   const auto& abs_diff_y_mu_over_sigma = abs_diff_y_mu * inv_sigma;
   const auto& expo = to_ref_if<!is_constant_all<T_skewness>::value>(
       (diff_sign_smaller_0 + diff_sign * tau_val) * abs_diff_y_mu_over_sigma);
 
-  size_t N = max_size(y, mu, sigma);
-  T_partials_return logp = -2 * sum(expo);
+  size_t N = max_size(y, mu, sigma, tau);
+  T_partials_return logp = -2.0 * sum(expo);
 
   if (include_summand<propto>::value) {
     logp += N * LOG_TWO;
@@ -115,7 +114,7 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
   if (!is_constant_all<T_y, T_loc>::value) {
     const auto& deriv = to_ref_if<(!is_constant_all<T_y>::value
                                    && !is_constant_all<T_loc>::value)>(
-        2 * (diff_sign_smaller_0 + diff_sign * tau_val) * diff_sign
+        2.0 * (diff_sign_smaller_0 + diff_sign * tau_val) * diff_sign
         * inv_sigma);
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_ = -deriv;
@@ -125,12 +124,12 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
     }
   }
   if (!is_constant_all<T_scale>::value) {
-    ops_partials.edge3_.partials_ = -inv_sigma + 2 * expo * inv_sigma;
+    ops_partials.edge3_.partials_ = -inv_sigma + 2.0 * expo * inv_sigma;
   }
   if (!is_constant_all<T_skewness>::value) {
     ops_partials.edge4_.partials_
-        = inv(tau_val) - inv(1 - tau_val)
-          + (-1 * diff_sign) * 2 * abs_diff_y_mu_over_sigma;
+        = inv(tau_val) - inv(1.0 - tau_val)
+          + (-1.0 * diff_sign) * 2.0 * abs_diff_y_mu_over_sigma;
   }
 
   return ops_partials.build(logp);

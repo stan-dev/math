@@ -98,8 +98,8 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lcdf(
         = inv(exp(2.0 * expo) + tau_dbl - 1);
 
     const T_partials_return rep_deriv
-        = y_dbl < mu_dbl ? 2.0 * inv_sigma[i] * (1 - tau_dbl)
-                         : -2.0 * (tau_dbl - 1) * tau_dbl * inv_sigma[i]
+        = y_dbl < mu_dbl ? 2.0 * inv_sigma[i] * (1.0 - tau_dbl)
+                         : -2.0 * (tau_dbl - 1.0) * tau_dbl * inv_sigma[i]
                                * inv_exp_2_expo_tau;
     const T_partials_return sig_deriv = y_dbl < mu_dbl
                                             ? 2.0 * inv_sigma[i] * expo

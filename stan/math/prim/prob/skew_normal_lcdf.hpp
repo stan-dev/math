@@ -31,7 +31,8 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lcdf(
   using T_alpha_ref = ref_type_if_t<!is_constant<T_shape>::value, T_shape>;
   static const char* function = "skew_normal_lcdf";
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
-                         mu, "Scale parameter", sigma, "Shape parameter", alpha);
+                         mu, "Scale parameter", sigma,
+                         "Shape parameter", alpha);
   T_y_ref y_ref = y;
   T_mu_ref mu_ref = mu;
   T_sigma_ref sigma_ref = sigma;
