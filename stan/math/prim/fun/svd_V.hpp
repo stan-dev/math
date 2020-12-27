@@ -22,7 +22,7 @@ svd_V(const EigMat& m) {
   check_nonzero_size("svd_V", "m", m);
 
   return Eigen::JacobiSVD<Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic,
-					Eigen::Dynamic> >(m, Eigen::ComputeFullV)
+					Eigen::Dynamic> >(m, Eigen::ComputeThinV)
     .matrixV();
 }
 

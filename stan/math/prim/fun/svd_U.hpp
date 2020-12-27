@@ -22,7 +22,7 @@ svd_U(const EigMat& m) {
   check_nonzero_size("svd_U", "m", m);
 
   return Eigen::JacobiSVD<Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic,
-					Eigen::Dynamic> >(m, Eigen::ComputeFullU)
+					Eigen::Dynamic> >(m, Eigen::ComputeThinU)
     .matrixU();
 }
 
