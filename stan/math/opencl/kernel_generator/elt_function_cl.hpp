@@ -102,7 +102,16 @@ class elt_function_cl : public operation_cl<Derived, Scal, T...> {
     using base::cols;                                                       \
     static const std::vector<const char*> includes;                         \
     explicit fun##_(T1&& a, T2&& b)                                         \
-        : base(#fun, std::forward<T1>(a), std::forward<T2>(b)) {}           \
+        : base(#fun, std::forward<T1>(a), std::forward<T2>(b)) {            \
+      if (a.rows() != base::dynamic && b.rows() != base::dynamic) {         \
+        check_size_match(#fun, "Rows of ", "a", a.rows(), "rows of ", "b",  \
+                         b.rows());                                         \
+      }                                                                     \
+      if (a.cols() != base::dynamic && b.cols() != base::dynamic) {         \
+        check_size_match(#fun, "Columns of ", "a", a.cols(), "columns of ", \
+                         "b", b.cols());                                    \
+      }                                                                     \
+    }                                                                       \
     inline auto deep_copy() const {                                         \
       auto&& arg1_copy = this->template get_arg<0>().deep_copy();           \
       auto&& arg2_copy = this->template get_arg<1>().deep_copy();           \
