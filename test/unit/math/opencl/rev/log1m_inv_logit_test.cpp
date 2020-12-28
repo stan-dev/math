@@ -4,7 +4,8 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
 
-auto log1m_inv_logit_functor = [](const auto& a) { return stan::math::log1m_inv_logit(a); };
+auto log1m_inv_logit_functor
+    = [](const auto& a) { return stan::math::log1m_inv_logit(a); };
 
 TEST(OpenCL_log1m_inv_logit, prim_rev_values_small) {
   Eigen::VectorXd a(8);

@@ -15,13 +15,14 @@ namespace math {
  * @param A argument
  * @return Elementwise `log1p_exp()` of the input.
  */
-inline var_value<matrix_cl<double>> log1p_exp(const var_value<matrix_cl<double>>& A) {
+inline var_value<matrix_cl<double>> log1p_exp(
+    const var_value<matrix_cl<double>>& A) {
   var_value<matrix_cl<double>> res = log1p_exp(A.val());
 
   reverse_pass_callback([A, res]() mutable {
     A.adj() = A.adj() + elt_multiply(res.adj(), inv_logit(A.val()));
   });
-  
+
   return res;
 }
 

@@ -15,7 +15,8 @@ namespace math {
  * @param A argument
  * @return Elementwise `log1m_exp()` of the input.
  */
-inline var_value<matrix_cl<double>> log1m_exp(const var_value<matrix_cl<double>>& A) {
+inline var_value<matrix_cl<double>> log1m_exp(
+    const var_value<matrix_cl<double>>& A) {
   var_value<matrix_cl<double>> res = log1m_exp(A.val());
 
   reverse_pass_callback([A, res]() mutable {

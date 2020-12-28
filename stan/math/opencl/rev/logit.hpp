@@ -15,7 +15,8 @@ namespace math {
  * @param A argument
  * @return Elementwise `logit()` of the input.
  */
-inline var_value<matrix_cl<double>> logit(const var_value<matrix_cl<double>>& A) {
+inline var_value<matrix_cl<double>> logit(
+    const var_value<matrix_cl<double>>& A) {
   var_value<matrix_cl<double>> res = logit(A.val());
 
   reverse_pass_callback([A, res]() mutable {

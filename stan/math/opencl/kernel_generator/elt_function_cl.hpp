@@ -293,8 +293,7 @@ ADD_UNARY_FUNCTION_PASS_ZERO(trunc)
 
 ADD_UNARY_FUNCTION_WITH_INCLUDES(digamma,
                                  opencl_kernels::digamma_device_function)
-ADD_UNARY_FUNCTION_WITH_INCLUDES(log1m,
-                                 opencl_kernels::log1m_device_function)
+ADD_UNARY_FUNCTION_WITH_INCLUDES(log1m, opencl_kernels::log1m_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(log_inv_logit,
                                  opencl_kernels::log_inv_logit_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(log1m_exp,

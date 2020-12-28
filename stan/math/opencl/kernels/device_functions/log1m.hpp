@@ -25,9 +25,7 @@ static const char* log1m_device_function
            * @return natural logarithm of one minus the argument.
            *
            */
-          double log1m(double a) {
-              return log1p(-a);
-          }
+          double log1m(double a) { return log1p(-a); }
           // \cond
           ) "\n#endif\n";  // NOLINT
 // \endcond
