@@ -82,51 +82,53 @@ class eigen_results_ {
   /**
    * Assign expressions to results using linear indexing.
    * @tparam Linear whether to use linear indexing
-   * @tparam T_expressions types of expressions
-   * @param expressions expressions to assign
+   * @tparam T_res_evals types of result evaluators
+   * @tparam T_expr_evals types of expression evaluators
+   * @param res_evals evaluators for results to assign to
+   * @param expr_evals evaluators for expressions to assign
    */
-  template <bool Linear, typename... T_expressions,
+  template <bool Linear, typename... T_res_evals, typename... T_expr_evals,
             std::enable_if_t<Linear>* = nullptr>
-  inline void assign(const eigen_expressions_<T_expressions...>& expressions) {
-    for (size_t i = 0; i < std::get<0>(expressions.exprs_).size(); i++) {
+  inline void assign(std::tuple<T_res_evals...>& res_evals,
+                     const std::tuple<T_expr_evals...>& expr_evals,
+                     Eigen::Index rows, Eigen::Index cols) {
+    for (size_t i = 0; i < rows * cols; i++) {
       index_apply<sizeof...(T_results)>([&](auto... Is) {
-        static_cast<void>(std::initializer_list<int>{
-            (std::get<Is>(results_).coeffRef(i)
-             = std::get<Is>(expressions.exprs_).coeff(i),
-             0)...});
+        static_cast<void>(
+            std::initializer_list<int>{(std::get<Is>(res_evals).coeffRef(i)
+                                        = std::get<Is>(expr_evals).coeff(i),
+                                        0)...});
       });
     }
   }
   /**
    * Assign expressions to results using 2d indexing.
    * @tparam Linear whether to use linear indexing
-   * @tparam T_expressions types of expressions
-   * @param expressions expressions to assign
+   * @tparam T_res_evals types of result evaluators
+   * @tparam T_expr_evals types of expression evaluators
+   * @param res_evals evaluators for results to assign to
+   * @param expr_evals evaluators for expressions to assign
    */
-  template <bool Linear, typename... T_expressions,
+  template <bool Linear, typename... T_res_evals, typename... T_expr_evals,
             std::enable_if_t<!Linear>* = nullptr>
-  inline void assign(const eigen_expressions_<T_expressions...>& expressions) {
+  inline void assign(std::tuple<T_res_evals...>& res_evals,
+                     const std::tuple<T_expr_evals...>& expr_evals,
+                     Eigen::Index rows, Eigen::Index cols) {
     constexpr bool is_first_row_major
-        = Eigen::internal::evaluator<std::decay_t<
-              std::tuple_element_t<0, std::tuple<T_expressions...>>>>::Flags
+        = std::decay_t<decltype(std::get<0>(expr_evals))>::Flags
           & Eigen::RowMajorBit;
-    const Eigen::Index outer_dimension = is_first_row_major
-                                 ? std::get<0>(expressions.exprs_).rows()
-                                 : std::get<0>(expressions.exprs_).cols();
-    const Eigen::Index inner_dimension = is_first_row_major
-                                 ? std::get<0>(expressions.exprs_).cols()
-                                 : std::get<0>(expressions.exprs_).rows();
+    const Eigen::Index outer_dimension = is_first_row_major ? rows : cols;
+    const Eigen::Index inner_dimension = is_first_row_major ? cols : rows;
     for (size_t i = 0; i < outer_dimension; i++) {
       for (size_t j = 0; j < inner_dimension; j++) {
         index_apply<sizeof...(T_results)>([&](auto... Is) {
           static_cast<void>(std::initializer_list<int>{
-              ((Eigen::internal::evaluator<std::decay_t<std::tuple_element_t<
-                            Is, std::tuple<T_expressions...>>>>::Flags
+              ((std::decay_t<decltype(std::get<0>(expr_evals))>::Flags
                         & Eigen::RowMajorBit
-                    ? std::get<Is>(results_).coeffRef(i, j)
-                      = std::get<Is>(expressions.exprs_).coeff(i, j)
-                    : std::get<Is>(results_).coeffRef(j, i)
-                      = std::get<Is>(expressions.exprs_).coeff(j, i)),
+                    ? std::get<Is>(res_evals).coeffRef(i, j)
+                      = std::get<Is>(expr_evals).coeff(i, j)
+                    : std::get<Is>(res_evals).coeffRef(j, i)
+                      = std::get<Is>(expr_evals).coeff(j, i)),
                0)...});
         });
       }
@@ -159,7 +161,19 @@ class eigen_results_ {
     constexpr int N_col_major
         = sizeof...(T_results) + sizeof...(T_expressions) - N_row_major;
 
-    assign<all_linear && (N_col_major == 0 || N_row_major == 0)>(expressions);
+    index_apply<sizeof...(T_results)>([&](auto... Is) {
+      std::tuple<Eigen::internal::evaluator<
+          std::decay_t<decltype(std::get<Is>(results_))>>...>
+      result_evaluators(std::get<Is>(results_)...);
+      std::tuple<Eigen::internal::evaluator<
+          std::decay_t<decltype(std::get<Is>(expressions.exprs_))>>...>
+      expression_evaluators(std::get<Is>(expressions.exprs_)...);
+
+      assign<all_linear && (N_col_major == 0 || N_row_major == 0)>(
+          result_evaluators, expression_evaluators,
+          std::get<0>(expressions.exprs_).rows(),
+          std::get<0>(expressions.exprs_).cols());
+    });
   }
 
  public:
