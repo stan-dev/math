@@ -4,7 +4,6 @@
 
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/cholesky_decompose.hpp>
-#include <stan/math/opencl/copy_triangular.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <CL/cl2.hpp>
 #include <algorithm>

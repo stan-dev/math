@@ -9,8 +9,7 @@
 #include <stan/math/opencl/kernels/inv_lower_tri_multiply.hpp>
 #include <stan/math/opencl/kernels/neg_rect_lower_tri_multiply.hpp>
 #include <stan/math/opencl/err.hpp>
-#include <stan/math/opencl/identity.hpp>
-#include <stan/math/opencl/sub_block.hpp>
+#include <stan/math/opencl/kernels/batch_identity.hpp>
 #include <stan/math/opencl/zeros_strict_tri.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/prim/meta.hpp>
@@ -91,7 +90,7 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
   // the number of blocks in the first step
   // each block is inverted with using the regular forward substitution
   int parts = inv_padded.rows() / thread_block_size_1D;
-  inv_padded.sub_block(inv_mat, 0, 0, 0, 0, inv_mat.rows(), inv_mat.rows());
+  block_zero_based(inv_padded, 0, 0, inv_mat.rows(), inv_mat.rows()) = inv_mat;
   try {
     // create a batch of identity matrices to be used in the first step
     opencl_kernels::batch_identity(
@@ -105,11 +104,13 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
     check_opencl_error("inverse step1", e);
   }
   // set the padded part of the matrix and the upper triangular to zeros
-  inv_padded.sub_block(zero_mat, 0, 0, inv_mat.rows(), 0, zero_mat.rows(),
-                       zero_mat.cols());
+  block_zero_based(inv_padded, inv_mat.rows(), 0, zero_mat.rows(),
+                   zero_mat.cols())
+      = zero_mat;
   inv_padded.template zeros_strict_tri<stan::math::matrix_cl_view::Upper>();
   if (parts == 1) {
-    inv_mat.sub_block(inv_padded, 0, 0, 0, 0, inv_mat.rows(), inv_mat.rows());
+    inv_mat
+        = block_zero_based(inv_padded, 0, 0, inv_mat.rows(), inv_mat.rows());
     if (tri_view == matrix_cl_view::Upper) {
       inv_mat = transpose(inv_mat).eval();
     }
@@ -146,12 +147,13 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
     }
     result_matrix_dim *= 2;
     // set the padded part and upper diagonal to zeros
-    inv_padded.sub_block(zero_mat, 0, 0, inv_mat.rows(), 0, zero_mat.rows(),
-                         zero_mat.cols());
+    block_zero_based(inv_padded, inv_mat.rows(), 0, zero_mat.rows(),
+                     zero_mat.cols())
+        = zero_mat;
     inv_padded.template zeros_strict_tri<stan::math::matrix_cl_view::Upper>();
   }
   // un-pad and return
-  inv_mat.sub_block(inv_padded, 0, 0, 0, 0, inv_mat.rows(), inv_mat.rows());
+  inv_mat = block_zero_based(inv_padded, 0, 0, inv_mat.rows(), inv_mat.rows());
   if (tri_view == matrix_cl_view::Upper) {
     inv_mat = transpose(inv_mat).eval();
   }
