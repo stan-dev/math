@@ -494,7 +494,8 @@ class results_cl {
    * @param expression expression
    * @return a tuple of pair of result and expression
    */
-  template <typename T_result, typename T_expression>
+  template <typename T_result, typename T_expression,
+            require_all_not_same_t<scalar_<char>, T_expression>* = nullptr>
   static auto make_assignment_pair(T_result&& result,
                                    T_expression&& expression) {
     return std::make_tuple(
@@ -528,9 +529,9 @@ class results_cl {
    * @return an empty tuple
    */
   template <typename Scal>
-  static std::tuple<> make_assignment_pair(check_cl_<scalar_<Scal>>& result,
-                                           bool pass) {
-    if (!pass) {
+  static std::tuple<> make_assignment_pair(
+      const check_cl_<scalar_<Scal>>& result, const stan::math::scalar_<char>& pass) {
+    if (!pass.a_) {
       std::stringstream s;
       s << result.function_ << ": " << result.err_variable_ << " = "
         << result.arg_.a_ << ", but it must be " << result.must_be_ << "!";
