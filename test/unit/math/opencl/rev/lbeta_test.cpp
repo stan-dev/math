@@ -25,8 +25,8 @@ TEST(OpenCL_lbeta, zero) {
 TEST(OpenCL_lbeta, prim_rev_values_large) {
   int N = 71;
 
-  Eigen::VectorXd a = Eigen::VectorXd::Random(N);
-  Eigen::VectorXd b = Eigen::VectorXd::Random(N);
+  Eigen::VectorXd a = Eigen::VectorXd::Constant(N, 1.0) + Eigen::VectorXd::Random(N);
+  Eigen::VectorXd b = Eigen::VectorXd::Constant(N, 1.0) + Eigen::VectorXd::Random(N);
   stan::math::test::compare_cpu_opencl_prim_rev(lbeta_functor, a, b);
 }
 
