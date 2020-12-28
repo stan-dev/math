@@ -90,8 +90,7 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
   // the number of blocks in the first step
   // each block is inverted with using the regular forward substitution
   int parts = inv_padded.rows() / thread_block_size_1D;
-  block_zero_based(inv_padded, 0, 0, inv_mat.rows(), inv_mat.rows())
-      = inv_mat;
+  block_zero_based(inv_padded, 0, 0, inv_mat.rows(), inv_mat.rows()) = inv_mat;
   try {
     // create a batch of identity matrices to be used in the first step
     opencl_kernels::batch_identity(
@@ -154,8 +153,7 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
     inv_padded.template zeros_strict_tri<stan::math::matrix_cl_view::Upper>();
   }
   // un-pad and return
-  inv_mat
-      = block_zero_based(inv_padded, 0, 0, inv_mat.rows(), inv_mat.rows());
+  inv_mat = block_zero_based(inv_padded, 0, 0, inv_mat.rows(), inv_mat.rows());
   if (tri_view == matrix_cl_view::Upper) {
     inv_mat = transpose(inv_mat).eval();
   }
