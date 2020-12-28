@@ -237,7 +237,7 @@ class expressions_cl {
    */
   explicit expressions_cl(T_expressions&&... expressions)
       : expressions_(
-            T_expressions(std::forward<T_expressions>(expressions))...) {}
+          T_expressions(std::forward<T_expressions>(expressions))...) {}
 
  private:
   std::tuple<T_expressions...> expressions_;
@@ -497,9 +497,10 @@ class results_cl {
   template <typename T_result, typename T_expression>
   static auto make_assignment_pair(T_result&& result,
                                    T_expression&& expression) {
-    return std::make_tuple(std::make_pair(
-        as_operation_cl(std::forward<T_result>(result)),
-        as_operation_cl(std::forward<T_expression>(expression))));
+    return std::make_tuple(
+        std::pair<as_operation_cl_t<T_result>, as_operation_cl_t<T_expression>>(
+            as_operation_cl(std::forward<T_result>(result)),
+            as_operation_cl(std::forward<T_expression>(expression))));
   }
 
   /**
