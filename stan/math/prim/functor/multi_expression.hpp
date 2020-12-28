@@ -86,6 +86,8 @@ class eigen_results_ {
    * @tparam T_expr_evals types of expression evaluators
    * @param res_evals evaluators for results to assign to
    * @param expr_evals evaluators for expressions to assign
+   * @param rows number of rows
+   * @param cols number of cols
    */
   template <bool Linear, typename... T_res_evals, typename... T_expr_evals,
             std::enable_if_t<Linear>* = nullptr>
@@ -108,6 +110,8 @@ class eigen_results_ {
    * @tparam T_expr_evals types of expression evaluators
    * @param res_evals evaluators for results to assign to
    * @param expr_evals evaluators for expressions to assign
+   * @param rows number of rows
+   * @param cols number of cols
    */
   template <bool Linear, typename... T_res_evals, typename... T_expr_evals,
             std::enable_if_t<!Linear>* = nullptr>
