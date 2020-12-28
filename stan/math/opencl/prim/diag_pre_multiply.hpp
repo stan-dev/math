@@ -29,7 +29,7 @@ auto diag_pre_multiply(const T1& m1, const T2& m2) {
   check_vector("diag_pre_multiply (OpenCL)", "m1", m1);
   check_size_match("diag_pre_multiply (OpenCL)", "m1.size()", m1.size(),
                    "m2.rows()", m2.rows());
-  return diag_matrix(m1) * m2;
+  return elt_mutliply(rowwise_broadcast(m1), m2);
 }
 
 }  // namespace math
