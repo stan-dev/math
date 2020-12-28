@@ -9,11 +9,11 @@ namespace stan {
 namespace math {
 
 namespace internal {
-constexpr int static_sum() { return 0; }
+constexpr int constexpr_sum() { return 0; }
 
 template <typename Arg0, typename... Args>
-constexpr int static_sum(Arg0 arg0, Args... args) {
-  return arg0 + static_sum(args...);
+constexpr int constexpr_sum(Arg0 arg0, Args... args) {
+  return arg0 + constexpr_sum(args...);
 }
 
 }  // namespace internal
@@ -110,10 +110,10 @@ class eigen_results_ {
         = Eigen::internal::evaluator<std::decay_t<
               std::tuple_element_t<0, std::tuple<T_expressions...>>>>::Flags
           & Eigen::RowMajorBit;
-    size_t outer_dimension = is_first_row_major
+    const Eigen::Index outer_dimension = is_first_row_major
                                  ? std::get<0>(expressions.exprs_).rows()
                                  : std::get<0>(expressions.exprs_).cols();
-    size_t inner_dimension = is_first_row_major
+    const Eigen::Index inner_dimension = is_first_row_major
                                  ? std::get<0>(expressions.exprs_).cols()
                                  : std::get<0>(expressions.exprs_).rows();
     for (size_t i = 0; i < outer_dimension; i++) {
@@ -149,7 +149,7 @@ class eigen_results_ {
          static_cast<bool>(
              Eigen::internal::evaluator<std::decay_t<T_results>>::Flags
              & Eigen::LinearAccessBit)...});
-    constexpr int N_row_major = internal::static_sum(
+    constexpr int N_row_major = internal::constexpr_sum(
         static_cast<bool>(
             Eigen::internal::evaluator<std::decay_t<T_expressions>>::Flags
             & Eigen::RowMajorBit)...,
