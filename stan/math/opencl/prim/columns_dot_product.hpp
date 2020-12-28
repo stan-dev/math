@@ -11,7 +11,7 @@ namespace stan {
 namespace math {
 
 /**
- * Returns the dot product of colomns of the specified matrices.
+ * Returns the dot product of columns of the specified matrices.
  *
  * @tparam T_a type of the first matrix
  * @tparam T_b type of the second matrix
