@@ -104,8 +104,7 @@ inline auto logit(const Container& x) {
  */
 template <
     typename Container,
-    require_container_st<std::is_arithmetic, Container>* = nullptr,
-    require_not_nonscalar_prim_or_rev_kernel_expression_t<Container>* = nullptr>
+    require_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto logit(const Container& x) {
   return make_holder(
       [](const auto& v_ref) {
