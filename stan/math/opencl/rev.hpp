@@ -6,13 +6,17 @@
 #include <stan/math/opencl/rev/acos.hpp>
 #include <stan/math/opencl/rev/acosh.hpp>
 #include <stan/math/opencl/rev/add.hpp>
+#include <stan/math/opencl/rev/add_diag.hpp>
 #include <stan/math/opencl/rev/arena_matrix_cl.hpp>
 #include <stan/math/opencl/rev/arena_type.hpp>
 #include <stan/math/opencl/rev/asin.hpp>
 #include <stan/math/opencl/rev/asinh.hpp>
 #include <stan/math/opencl/rev/atan.hpp>
 #include <stan/math/opencl/rev/atanh.hpp>
+#include <stan/math/opencl/rev/beta.hpp>
 #include <stan/math/opencl/rev/block.hpp>
+#include <stan/math/opencl/rev/cbrt.hpp>
+#include <stan/math/opencl/rev/ceil.hpp>
 #include <stan/math/opencl/rev/cholesky_decompose.hpp>
 #include <stan/math/opencl/rev/copy.hpp>
 #include <stan/math/opencl/rev/cos.hpp>
@@ -25,14 +29,19 @@
 #include <stan/math/opencl/rev/exp.hpp>
 #include <stan/math/opencl/rev/exp2.hpp>
 #include <stan/math/opencl/rev/expm1.hpp>
+#include <stan/math/opencl/rev/floor.hpp>
 #include <stan/math/opencl/rev/inv.hpp>
 #include <stan/math/opencl/rev/inv_cloglog.hpp>
 #include <stan/math/opencl/rev/inv_logit.hpp>
 #include <stan/math/opencl/rev/inv_sqrt.hpp>
 #include <stan/math/opencl/rev/inv_square.hpp>
+#include <stan/math/opencl/rev/lbeta.hpp>
 #include <stan/math/opencl/rev/lgamma.hpp>
 #include <stan/math/opencl/rev/multiply.hpp>
 #include <stan/math/opencl/rev/operands_and_partials.hpp>
+#include <stan/math/opencl/rev/operator_unary_minus.hpp>
+#include <stan/math/opencl/rev/operator_unary_plus.hpp>
+#include <stan/math/opencl/rev/round.hpp>
 #include <stan/math/opencl/rev/sin.hpp>
 #include <stan/math/opencl/rev/sinh.hpp>
 #include <stan/math/opencl/rev/subtract.hpp>
@@ -42,6 +51,7 @@
 #include <stan/math/opencl/rev/tcrossprod.hpp>
 #include <stan/math/opencl/rev/transpose.hpp>
 #include <stan/math/opencl/rev/to_arena.hpp>
+#include <stan/math/opencl/rev/trunc.hpp>
 #include <stan/math/rev.hpp>
 
 #endif
