@@ -10,35 +10,6 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const std::string identity_kernel_code = STRINGIFY(
-    // \endcond
-    /** \ingroup opencl_kernels
-     * Makes an identity matrix on the OpenCL device
-     *
-     * @param[in,out] A The identity matrix output.
-     * @param rows The number of rows for A.
-     * @param cols The number of cols for A.
-     * @note Code is a <code>const char*</code> held in
-     * <code>identity_kernel_code.</code>
-     *  Used in math/opencl/identity_opencl.hpp.
-     *  This kernel uses the helper macros available in helpers.cl.
-     */
-    __kernel void identity(__global double* A, unsigned int rows,
-                           unsigned int cols) {
-      int i = get_global_id(0);
-      int j = get_global_id(1);
-      if (i < rows && j < cols) {
-        if (i == j) {
-          A(i, j) = 1.0;
-        } else {
-          A(i, j) = 0.0;
-        }
-      }
-    }
-    // \cond
-);
-// \endcond
-// \cond
 static const std::string batch_identity_kernel_code = STRINGIFY(
     // \endcond
 
@@ -89,14 +60,7 @@ static const std::string batch_identity_kernel_code = STRINGIFY(
 // \endcond
 
 /** \ingroup opencl_kernels
- * See the docs for \link kernels/identity.hpp identity() \endlink
- */
-const kernel_cl<out_buffer, int, int> identity("identity",
-                                               {indexing_helpers,
-                                                identity_kernel_code});
-
-/** \ingroup opencl_kernels
- * See the docs for \link kernels/identity.hpp batch_identity() \endlink
+ * See the docs for \link kernels/batch_identity.hpp batch_identity() \endlink
  */
 const kernel_cl<out_buffer, int, int> batch_identity(
     "batch_identity", {indexing_helpers, batch_identity_kernel_code});
