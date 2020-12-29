@@ -84,17 +84,16 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 
 #include <stan/math/opencl/copy.hpp>
-#include <stan/math/opencl/copy_triangular.hpp>
 #include <stan/math/opencl/cholesky_decompose.hpp>
-#include <stan/math/opencl/diagonal_multiply.hpp>
-#include <stan/math/opencl/identity.hpp>
 #include <stan/math/opencl/is_constant.hpp>
 #include <stan/math/opencl/tri_inverse.hpp>
 #include <stan/math/opencl/multiply_transpose.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
+#include <stan/math/opencl/pinned_matrix.hpp>
 #include <stan/math/opencl/plain_type.hpp>
+#include <stan/math/opencl/ref_type_for_opencl.hpp>
 #include <stan/math/opencl/scalar_type.hpp>
-#include <stan/math/opencl/sub_block.hpp>
+#include <stan/math/opencl/to_ref_for_opencl.hpp>
 #include <stan/math/opencl/triangular_transpose.hpp>
 #include <stan/math/opencl/value_type.hpp>
 #include <stan/math/opencl/zeros_strict_tri.hpp>
@@ -135,6 +134,7 @@
 #include <stan/math/opencl/prim/lognormal_lpdf.hpp>
 #include <stan/math/opencl/prim/mdivide_left_tri_low.hpp>
 #include <stan/math/opencl/prim/mdivide_right_tri_low.hpp>
+#include <stan/math/opencl/prim/mean.hpp>
 #include <stan/math/opencl/prim/neg_binomial_lpmf.hpp>
 #include <stan/math/opencl/prim/neg_binomial_2_lpmf.hpp>
 #include <stan/math/opencl/prim/neg_binomial_2_log_lpmf.hpp>
@@ -155,8 +155,11 @@
 #include <stan/math/opencl/prim/row.hpp>
 #include <stan/math/opencl/prim/rows.hpp>
 #include <stan/math/opencl/prim/scaled_inv_chi_square_lpdf.hpp>
+#include <stan/math/opencl/prim/segment.hpp>
 #include <stan/math/opencl/prim/sign.hpp>
 #include <stan/math/opencl/prim/size.hpp>
+#include <stan/math/opencl/prim/sub_col.hpp>
+#include <stan/math/opencl/prim/sub_row.hpp>
 #include <stan/math/opencl/prim/std_normal_lpdf.hpp>
 #include <stan/math/opencl/prim/student_t_lpdf.hpp>
 #include <stan/math/opencl/prim/skew_normal_lpdf.hpp>
