@@ -8,7 +8,7 @@ auto lgamma_functor = [](const auto& a) { return stan::math::lgamma(a); };
 
 TEST(OpenCL_lgamma, prim_rev_values_small) {
   Eigen::VectorXd a(9);
-  a << -15.2, -10, -0.5, 0.5, 1, 1.0, 1.3, 5, 10;
+  a << -15.2, -10.2, -0.5, 0.5, 1, 1.0, 1.3, 5, 10;
   stan::math::test::compare_cpu_opencl_prim_rev(lgamma_functor, a);
 }
 
