@@ -20,7 +20,7 @@ inline var_value<matrix_cl<double>> log1p(
   var_value<matrix_cl<double>> res = log1p(A.val());
 
   reverse_pass_callback([A, res]() mutable {
-    A.adj() = A.adj() + elt_divide(res.adj(), 1 + A.val());
+    A.adj() = A.adj() + elt_divide(res.adj(), 1.0 + A.val());
   });
 
   return res;
