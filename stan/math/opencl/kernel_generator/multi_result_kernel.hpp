@@ -530,7 +530,8 @@ class results_cl {
    */
   template <typename Scal>
   static std::tuple<> make_assignment_pair(
-      const check_cl_<scalar_<Scal>>& result, const stan::math::scalar_<char>& pass) {
+      const check_cl_<scalar_<Scal>>& result,
+      const stan::math::scalar_<char>& pass) {
     if (!pass.a_) {
       std::stringstream s;
       s << result.function_ << ": " << result.err_variable_ << " = "
