@@ -13,7 +13,10 @@
 #include <stan/math/opencl/rev/asinh.hpp>
 #include <stan/math/opencl/rev/atan.hpp>
 #include <stan/math/opencl/rev/atanh.hpp>
+#include <stan/math/opencl/rev/beta.hpp>
 #include <stan/math/opencl/rev/block.hpp>
+#include <stan/math/opencl/rev/cbrt.hpp>
+#include <stan/math/opencl/rev/ceil.hpp>
 #include <stan/math/opencl/rev/cholesky_decompose.hpp>
 #include <stan/math/opencl/rev/copy.hpp>
 #include <stan/math/opencl/rev/cos.hpp>
@@ -21,6 +24,8 @@
 #include <stan/math/opencl/rev/crossprod.hpp>
 #include <stan/math/opencl/rev/diag_matrix.hpp>
 #include <stan/math/opencl/rev/diagonal.hpp>
+#include <stan/math/opencl/rev/floor.hpp>
+#include <stan/math/opencl/rev/lbeta.hpp>
 #include <stan/math/opencl/rev/log.hpp>
 #include <stan/math/opencl/rev/log10.hpp>
 #include <stan/math/opencl/rev/log1m.hpp>
@@ -35,6 +40,7 @@
 #include <stan/math/opencl/rev/operands_and_partials.hpp>
 #include <stan/math/opencl/rev/operator_unary_minus.hpp>
 #include <stan/math/opencl/rev/operator_unary_plus.hpp>
+#include <stan/math/opencl/rev/round.hpp>
 #include <stan/math/opencl/rev/sin.hpp>
 #include <stan/math/opencl/rev/sinh.hpp>
 #include <stan/math/opencl/rev/subtract.hpp>
@@ -44,6 +50,7 @@
 #include <stan/math/opencl/rev/tcrossprod.hpp>
 #include <stan/math/opencl/rev/transpose.hpp>
 #include <stan/math/opencl/rev/to_arena.hpp>
+#include <stan/math/opencl/rev/trunc.hpp>
 #include <stan/math/rev.hpp>
 
 #endif
