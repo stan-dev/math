@@ -26,6 +26,16 @@
 #include <stan/math/opencl/rev/diagonal.hpp>
 #include <stan/math/opencl/rev/floor.hpp>
 #include <stan/math/opencl/rev/lbeta.hpp>
+#include <stan/math/opencl/rev/log.hpp>
+#include <stan/math/opencl/rev/log10.hpp>
+#include <stan/math/opencl/rev/log1m.hpp>
+#include <stan/math/opencl/rev/log1p.hpp>
+#include <stan/math/opencl/rev/log2.hpp>
+#include <stan/math/opencl/rev/logit.hpp>
+#include <stan/math/opencl/rev/log1m_exp.hpp>
+#include <stan/math/opencl/rev/log1p_exp.hpp>
+#include <stan/math/opencl/rev/log_inv_logit.hpp>
+#include <stan/math/opencl/rev/log1m_inv_logit.hpp>
 #include <stan/math/opencl/rev/multiply.hpp>
 #include <stan/math/opencl/rev/operands_and_partials.hpp>
 #include <stan/math/opencl/rev/operator_unary_minus.hpp>
