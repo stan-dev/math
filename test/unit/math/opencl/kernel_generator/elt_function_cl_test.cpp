@@ -229,6 +229,7 @@ TEST(KernelGenerator, multiple_operations_with_includes_test) {
   }
 
 TEST_BINARY_FUNCTION(pow)
+TEST_BINARY_FUNCTION(beta)
 TEST_BINARY_FUNCTION(lbeta)
 TEST_BINARY_FUNCTION(binomial_coefficient_log)
 TEST_BINARY_FUNCTION(multiply_log)
