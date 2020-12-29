@@ -6,6 +6,7 @@
 #include <stan/math/opencl/rev/acos.hpp>
 #include <stan/math/opencl/rev/acosh.hpp>
 #include <stan/math/opencl/rev/add.hpp>
+#include <stan/math/opencl/rev/add_diag.hpp>
 #include <stan/math/opencl/rev/arena_matrix_cl.hpp>
 #include <stan/math/opencl/rev/arena_type.hpp>
 #include <stan/math/opencl/rev/asin.hpp>
@@ -32,6 +33,8 @@
 #include <stan/math/opencl/rev/log1m_inv_logit.hpp>
 #include <stan/math/opencl/rev/multiply.hpp>
 #include <stan/math/opencl/rev/operands_and_partials.hpp>
+#include <stan/math/opencl/rev/operator_unary_minus.hpp>
+#include <stan/math/opencl/rev/operator_unary_plus.hpp>
 #include <stan/math/opencl/rev/sin.hpp>
 #include <stan/math/opencl/rev/sinh.hpp>
 #include <stan/math/opencl/rev/subtract.hpp>

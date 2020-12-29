@@ -25,9 +25,8 @@ template <typename T_m, typename T_a,
           require_all_kernel_expressions_and_none_scalar_t<T_m>* = nullptr,
           require_all_kernel_expressions_t<T_a>* = nullptr>
 inline auto add_diag(T_m&& mat, T_a&& to_add) {  // NOLINT
-  if (is_vector<T_a>::value) {
+  if (!is_stan_scalar<T_a>::value) {
     const size_t length_diag = std::min(mat.rows(), mat.cols());
-    // int a = stan::math::size(mat);
     check_consistent_sizes("add_diag (OpenCL)", "number of elements of to_add",
                            to_add, "diagonal", length_diag);
   }
