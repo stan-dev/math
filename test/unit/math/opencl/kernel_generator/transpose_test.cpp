@@ -237,4 +237,21 @@ TEST(KernelGenerator, transpose_to_lhs_transpose_test) {
   EXPECT_MATRIX_NEAR(res, correct, 1e-9);
 }
 
+TEST(KernelGenerator, lhs_transpose_plus_eq_test) {
+  using Eigen::MatrixXd;
+  using stan::math::matrix_cl;
+  using stan::math::transpose;
+  MatrixXd m1(2, 3);
+  m1 << 1, 2, 3, 4, 5, 6;
+  MatrixXd correct = m1.array() + 1;
+
+  matrix_cl<double> m1_cl(m1);
+
+  transpose(m1_cl) += 1;
+
+  MatrixXd res = stan::math::from_matrix_cl(m1_cl);
+
+  EXPECT_MATRIX_NEAR(res, correct, 1e-9);
+}
+
 #endif

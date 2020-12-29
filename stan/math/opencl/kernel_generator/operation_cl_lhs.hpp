@@ -93,6 +93,7 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...>,
   inline kernel_parts generate_lhs(const std::string& row_index_name,
                                    const std::string& col_index_name,
                                    const std::string& var_name_arg) const {
+//    this->var_name_ = var_name_arg;
     return {};
   }
 

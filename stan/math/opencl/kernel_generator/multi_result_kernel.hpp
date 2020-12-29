@@ -461,6 +461,7 @@ class results_cl {
     try {
       if (impl::kernel_cache_[uids]() == NULL) {
         std::string src = get_kernel_source_impl(assignment_pairs);
+        std::cout << src << std::endl;
         auto opts = opencl_context.base_opts();
         impl::kernel_cache_[uids] = opencl_kernels::compile_kernel(
             "calculate", {view_kernel_helpers, src}, opts);
