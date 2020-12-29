@@ -15,8 +15,7 @@ namespace math {
  * @param A argument
  * @return Elementwise `inv()` of the input.
  */
-inline var_value<matrix_cl<double>> inv(
-    const var_value<matrix_cl<double>>& A) {
+inline var_value<matrix_cl<double>> inv(const var_value<matrix_cl<double>>& A) {
   var_value<matrix_cl<double>> res = inv(A.val());
 
   reverse_pass_callback([A, res]() mutable {

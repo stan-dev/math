@@ -20,7 +20,8 @@ inline var_value<matrix_cl<double>> exp2(
   var_value<matrix_cl<double>> res = exp2(A.val());
 
   reverse_pass_callback([A, res]() mutable {
-    A.adj() = A.adj() + elt_multiply(elt_multiply(res.adj(), res.val()), LOG_TWO);
+    A.adj()
+        = A.adj() + elt_multiply(elt_multiply(res.adj(), res.val()), LOG_TWO);
   });
 
   return res;

@@ -21,10 +21,10 @@ inline var_value<matrix_cl<double>> erfc(
 
   reverse_pass_callback([A, res]() mutable {
     A.adj()
-        = A.adj() - elt_multiply(
-            res.adj(), 
-            elt_multiply(TWO_OVER_SQRT_PI, exp(-elt_multiply(A.val(), A.val())))
-            );
+        = A.adj()
+          - elt_multiply(res.adj(),
+                         elt_multiply(TWO_OVER_SQRT_PI,
+                                      exp(-elt_multiply(A.val(), A.val()))));
   });
 
   return res;

@@ -4,7 +4,8 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
 
-auto inv_cloglog_functor = [](const auto& a) { return stan::math::inv_cloglog(a); };
+auto inv_cloglog_functor
+    = [](const auto& a) { return stan::math::inv_cloglog(a); };
 
 TEST(OpenCLinv_cloglog, prim_rev_values_small) {
   Eigen::VectorXd a(14);
@@ -22,7 +23,8 @@ TEST(OpenCLinv_cloglog, prim_rev_size_0) {
 TEST(OpenCLinv_cloglog, prim_rev_values_large) {
   int N = 71;
 
-  Eigen::MatrixXd a = Eigen::MatrixXd::Constant(N, N, 1.0) + Eigen::MatrixXd::Random(N, N);
+  Eigen::MatrixXd a
+      = Eigen::MatrixXd::Constant(N, N, 1.0) + Eigen::MatrixXd::Random(N, N);
   stan::math::test::compare_cpu_opencl_prim_rev(inv_cloglog_functor, a);
 }
 

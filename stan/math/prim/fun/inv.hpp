@@ -31,10 +31,9 @@ struct inv_fun {
  * @param x container
  * @return 1 divided by each value in x.
  */
-template <typename T,
-          require_not_container_st<std::is_arithmetic, T>* = nullptr,
-          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
-              T>* = nullptr>
+template <
+    typename T, require_not_container_st<std::is_arithmetic, T>* = nullptr,
+    require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
 inline auto inv(const T& x) {
   return apply_scalar_unary<inv_fun, T>::apply(x);
 }

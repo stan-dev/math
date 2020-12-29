@@ -4,7 +4,8 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
 
-auto inv_square_functor = [](const auto& a) { return stan::math::inv_square(a); };
+auto inv_square_functor
+    = [](const auto& a) { return stan::math::inv_square(a); };
 
 TEST(OpenCLinv_square, prim_rev_values_small) {
   Eigen::VectorXd a(14);

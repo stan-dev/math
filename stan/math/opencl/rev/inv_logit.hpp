@@ -20,7 +20,9 @@ inline var_value<matrix_cl<double>> inv_logit(
   var_value<matrix_cl<double>> res = inv_logit(A.val());
 
   reverse_pass_callback([A, res]() mutable {
-    A.adj() = A.adj() + elt_multiply(res.adj(), elt_multiply(res.val(), 1.0 - res.val()));
+    A.adj()
+        = A.adj()
+          + elt_multiply(res.adj(), elt_multiply(res.val(), 1.0 - res.val()));
   });
   return res;
 }

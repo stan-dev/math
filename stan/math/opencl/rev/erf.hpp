@@ -15,16 +15,15 @@ namespace math {
  * @param A argument
  * @return Elementwise `erf()` of the input.
  */
-inline var_value<matrix_cl<double>> erf(
-    const var_value<matrix_cl<double>>& A) {
+inline var_value<matrix_cl<double>> erf(const var_value<matrix_cl<double>>& A) {
   var_value<matrix_cl<double>> res = erf(A.val());
 
   reverse_pass_callback([A, res]() mutable {
     A.adj()
-        = A.adj() + elt_multiply(
-            res.adj(), 
-            elt_multiply(TWO_OVER_SQRT_PI, exp(-elt_multiply(A.val(), A.val())))
-            );
+        = A.adj()
+          + elt_multiply(res.adj(),
+                         elt_multiply(TWO_OVER_SQRT_PI,
+                                      exp(-elt_multiply(A.val(), A.val()))));
   });
 
   return res;

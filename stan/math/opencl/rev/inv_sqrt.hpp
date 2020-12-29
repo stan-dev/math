@@ -20,7 +20,9 @@ inline var_value<matrix_cl<double>> inv_sqrt(
   var_value<matrix_cl<double>> res = inv_sqrt(A.val());
 
   reverse_pass_callback([A, res]() mutable {
-    A.adj() = A.adj() - 0.5 * elt_divide(res.adj(), elt_multiply(sqrt(A.val()), A.val()));
+    A.adj()
+        = A.adj()
+          - 0.5 * elt_divide(res.adj(), elt_multiply(sqrt(A.val()), A.val()));
   });
 
   return res;
