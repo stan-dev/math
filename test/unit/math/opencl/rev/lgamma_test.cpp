@@ -22,7 +22,8 @@ TEST(OpenCL_lgamma, prim_rev_size_0) {
 TEST(OpenCL_lgamma, prim_rev_values_large) {
   int N = 71;
 
-  Eigen::MatrixXd a = Eigen::MatrixXd::Constant(N, N, 1.1) + Eigen::MatrixXd::Random(N, N);
+  Eigen::MatrixXd a
+      = Eigen::MatrixXd::Constant(N, N, 1.1) + Eigen::MatrixXd::Random(N, N);
   stan::math::test::compare_cpu_opencl_prim_rev(lgamma_functor, a);
 }
 
