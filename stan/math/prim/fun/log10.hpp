@@ -50,9 +50,8 @@ inline auto log10(const Container& x) {
  * @param x Container
  * @return Log base-10 of each variable in the container.
  */
-template <
-    typename Container,
-    require_container_st<std::is_arithmetic, Container>* = nullptr>
+template <typename Container,
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto log10(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().log10(); });

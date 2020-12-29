@@ -102,9 +102,8 @@ inline auto logit(const Container& x) {
  * Note: The return must be evaluated otherwise the Ref object falls out
  * of scope
  */
-template <
-    typename Container,
-    require_container_st<std::is_arithmetic, Container>* = nullptr>
+template <typename Container,
+          require_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto logit(const Container& x) {
   return make_holder(
       [](const auto& v_ref) {
