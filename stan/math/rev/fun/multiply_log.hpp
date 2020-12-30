@@ -21,17 +21,8 @@ class multiply_log_vv_vari : public op_vv_vari {
       : op_vv_vari(multiply_log(avi->val_, bvi->val_), avi, bvi) {}
   void chain() {
     using std::log;
-    if (unlikely(is_any_nan(avi_->val_, bvi_->val_))) {
-      avi_->adj_ = NOT_A_NUMBER;
-      bvi_->adj_ = NOT_A_NUMBER;
-    } else {
-      avi_->adj_ += adj_ * log(bvi_->val_);
-      if (bvi_->val_ == 0.0 && avi_->val_ == 0) {
-        bvi_->adj_ += adj_ * INFTY;
-      } else {
-        bvi_->adj_ += adj_ * avi_->val_ / bvi_->val_;
-      }
-    }
+    avi_->adj_ += adj_ * log(bvi_->val_);
+    bvi_->adj_ += adj_ * avi_->val_ / bvi_->val_;
   }
 };
 class multiply_log_vd_vari : public op_vd_vari {
@@ -40,11 +31,7 @@ class multiply_log_vd_vari : public op_vd_vari {
       : op_vd_vari(multiply_log(avi->val_, b), avi, b) {}
   void chain() {
     using std::log;
-    if (unlikely(is_any_nan(avi_->val_, bd_))) {
-      avi_->adj_ = NOT_A_NUMBER;
-    } else {
-      avi_->adj_ += adj_ * log(bd_);
-    }
+    avi_->adj_ += adj_ * log(bd_);
   }
 };
 class multiply_log_dv_vari : public op_dv_vari {
@@ -52,11 +39,7 @@ class multiply_log_dv_vari : public op_dv_vari {
   multiply_log_dv_vari(double a, vari* bvi)
       : op_dv_vari(multiply_log(a, bvi->val_), a, bvi) {}
   void chain() {
-    if (bvi_->val_ == 0.0 && ad_ == 0.0) {
-      bvi_->adj_ += adj_ * INFTY;
-    } else {
-      bvi_->adj_ += adj_ * ad_ / bvi_->val_;
-    }
+    bvi_->adj_ += adj_ * ad_ / bvi_->val_;
   }
 };
 }  // namespace internal
@@ -128,70 +111,30 @@ inline auto multiply_log(const T1& a, const T2& b) {
     return make_callback_var(
         multiply_log(arena_a.val(), arena_b.val()),
         [arena_a, arena_b](const auto& res) mutable {
-          for (Eigen::Index j = 0; j < res.adj().cols(); ++j) {
-            for (Eigen::Index i = 0; i < res.adj().rows(); ++i) {
-              if (unlikely(is_any_nan(arena_a.val().coeff(i, j),
-                                      arena_b.val().coeff(i, j)))) {
-                arena_a.adj().coeffRef(i, j) = NOT_A_NUMBER;
-                arena_b.adj().coeffRef(i, j) = NOT_A_NUMBER;
-              } else {
-                arena_a.adj().coeffRef(i, j)
-                    += res.adj().coeff(i, j) * log(arena_b.val().coeff(i, j));
-                if (arena_b.val().coeff(i, j) == 0.0
-                    && arena_a.val().coeff(i, j) == 0) {
-                  arena_b.adj().coeffRef(i, j) += res.adj().coeff(i, j) * INFTY;
-                } else {
-                  arena_b.adj().coeffRef(i, j) += res.adj().coeff(i, j)
-                                                  * arena_a.val().coeff(i, j)
-                                                  / arena_b.val().coeff(i, j);
-                }
-              }
-            }
-          }
+	  arena_a.adj().array() += res.adj().array() * arena_b.val().array().log();
+	  arena_b.adj().array() += res.adj().array()
+	    * arena_a.val().array()
+	    / arena_b.val().array();
         });
   } else if (!is_constant<T1>::value) {
     arena_t<promote_scalar_t<var, T1>> arena_a = a;
-    auto arena_b = to_arena(value_of(b));
+    arena_t<promote_scalar_t<double, T2>> arena_b = value_of(b);
 
     return make_callback_var(
         multiply_log(arena_a.val(), arena_b),
         [arena_a, arena_b](const auto& res) mutable {
-          for (Eigen::Index j = 0; j < res.adj().cols(); ++j) {
-            for (Eigen::Index i = 0; i < res.adj().rows(); ++i) {
-              if (unlikely(is_any_nan(arena_a.val().coeff(i, j),
-                                      arena_b.coeff(i, j)))) {
-                arena_a.adj().coeffRef(i, j) = NOT_A_NUMBER;
-              } else {
-                arena_a.adj().coeffRef(i, j)
-                    += res.adj().coeff(i, j) * log(arena_b.coeff(i, j));
-              }
-            }
-          }
+	  arena_a.adj().array() += res.adj().array() * arena_b.val().array().log();
         });
   } else {
-    auto arena_a = to_arena(value_of(a));
+    arena_t<promote_scalar_t<double, T1>> arena_a = value_of(a);
     arena_t<promote_scalar_t<var, T2>> arena_b = b;
 
     return make_callback_var(
         multiply_log(arena_a, arena_b.val()),
         [arena_a, arena_b](const auto& res) mutable {
-          for (Eigen::Index j = 0; j < res.adj().cols(); ++j) {
-            for (Eigen::Index i = 0; i < res.adj().rows(); ++i) {
-              if (unlikely(is_any_nan(arena_a.val().coeff(i, j),
-                                      arena_b.val().coeff(i, j)))) {
-                arena_b.adj().coeffRef(i, j) = NOT_A_NUMBER;
-              } else {
-                if (arena_b.val().coeff(i, j) == 0.0
-                    && arena_a.val().coeff(i, j) == 0) {
-                  arena_b.adj().coeffRef(i, j) += res.adj().coeff(i, j) * INFTY;
-                } else {
-                  arena_b.adj().coeffRef(i, j) += res.adj().coeff(i, j)
-                                                  * arena_a.coeff(i, j)
-                                                  / arena_b.val().coeff(i, j);
-                }
-              }
-            }
-          }
+	  arena_b.adj().array() += res.adj().array()
+	    * arena_a.val().array()
+	    / arena_b.val().array();
         });
   }
 }
@@ -217,24 +160,10 @@ inline auto multiply_log(const T1& a, const T2& b) {
     return make_callback_var(
         multiply_log(arena_a.val(), arena_b.val()),
         [arena_a, arena_b](const auto& res) mutable {
-          for (Eigen::Index j = 0; j < res.adj().cols(); ++j) {
-            for (Eigen::Index i = 0; i < res.adj().rows(); ++i) {
-              if (unlikely(
-                      is_any_nan(arena_a.val().coeff(i, j), arena_b.val()))) {
-                arena_a.adj().coeffRef(i, j) = NOT_A_NUMBER;
-                arena_b.adj() = NOT_A_NUMBER;
-              } else {
-                arena_a.adj().coeffRef(i, j)
-                    += res.adj().coeff(i, j) * log(arena_b.val());
-                if (arena_b.val() == 0.0 && arena_a.val().coeff(i, j) == 0) {
-                  arena_b.adj() += res.adj().coeff(i, j) * INFTY;
-                } else {
-                  arena_b.adj() += res.adj().coeff(i, j)
-                                   * arena_a.val().coeff(i, j) / arena_b.val();
-                }
-              }
-            }
-          }
+	  arena_a.adj().array()
+	    += res.adj().array() * log(arena_b.val());
+	  arena_b.adj() += (res.adj().array()
+			    * arena_a.val().array()).sum() / arena_b.val();
         });
   } else if (!is_constant<T1>::value) {
     arena_t<promote_scalar_t<var, T1>> arena_a = a;
@@ -242,17 +171,8 @@ inline auto multiply_log(const T1& a, const T2& b) {
     return make_callback_var(
         multiply_log(arena_a.val(), value_of(b)),
         [arena_a, b](const auto& res) mutable {
-          for (Eigen::Index j = 0; j < res.adj().cols(); ++j) {
-            for (Eigen::Index i = 0; i < res.adj().rows(); ++i) {
-              if (unlikely(
-                      is_any_nan(arena_a.val().coeff(i, j), value_of(b)))) {
-                arena_a.adj().coeffRef(i, j) = NOT_A_NUMBER;
-              } else {
-                arena_a.adj().coeffRef(i, j)
-                    += res.adj().coeff(i, j) * log(value_of(b));
-              }
-            }
-          }
+	  arena_a.adj().array()
+	    += res.adj().array() * log(value_of(b));
         });
   } else {
     arena_t<promote_scalar_t<double, T1>> arena_a = value_of(a);
@@ -261,21 +181,8 @@ inline auto multiply_log(const T1& a, const T2& b) {
     return make_callback_var(
         multiply_log(arena_a, arena_b.val()),
         [arena_a, arena_b](const auto& res) mutable {
-          for (Eigen::Index j = 0; j < res.adj().cols(); ++j) {
-            for (Eigen::Index i = 0; i < res.adj().rows(); ++i) {
-              if (unlikely(
-                      is_any_nan(arena_a.val().coeff(i, j), arena_b.val()))) {
-                arena_b.adj() = NOT_A_NUMBER;
-              } else {
-                if (arena_b.val() == 0.0 && arena_a.val().coeff(i, j) == 0) {
-                  arena_b.adj() += res.adj().coeff(i, j) * INFTY;
-                } else {
-                  arena_b.adj() += res.adj().coeff(i, j)
-                                   * arena_a.val().coeff(i, j) / arena_b.val();
-                }
-              }
-            }
-          }
+	  arena_b.adj() += (res.adj().array()
+			    * arena_a.array()).sum() / arena_b.val();
         });
   }
 }
@@ -299,44 +206,21 @@ inline auto multiply_log(const T1& a, const T2& b) {
     return make_callback_var(
         multiply_log(arena_a.val(), arena_b.val()),
         [arena_a, arena_b](const auto& res) mutable {
-          for (Eigen::Index j = 0; j < res.adj().cols(); ++j) {
-            for (Eigen::Index i = 0; i < res.adj().rows(); ++i) {
-              if (unlikely(
-                      is_any_nan(arena_a.val(), arena_b.val().coeff(i, j)))) {
-                arena_a.adj() = NOT_A_NUMBER;
-                arena_b.adj().coeffRef(i, j) = NOT_A_NUMBER;
-              } else {
-                arena_a.adj()
-                    += res.adj().coeff(i, j) * log(arena_b.val().coeff(i, j));
-                if (arena_b.val().coeff(i, j) == 0.0 && arena_a.val() == 0) {
-                  arena_b.adj().coeffRef(i, j) += res.adj().coeff(i, j) * INFTY;
-                } else {
-                  arena_b.adj().coeffRef(i, j) += res.adj().coeff(i, j)
-                                                  * arena_a.val()
-                                                  / arena_b.val().coeff(i, j);
-                }
-              }
-            }
-          }
+	  arena_a.adj()
+	    += (res.adj().array() * arena_b.val().array().log()).sum();
+	  arena_b.adj().array() += arena_a.val()
+	    * res.adj().array()
+	    / arena_b.val().array();
         });
   } else if (!is_constant<T1>::value) {
     var arena_a = a;
-    auto arena_b = to_arena(value_of(b));
+    arena_t<promote_scalar_t<double, T2>> arena_b = value_of(b);
 
     return make_callback_var(
         multiply_log(arena_a.val(), arena_b),
         [arena_a, arena_b](const auto& res) mutable {
-          for (Eigen::Index j = 0; j < res.adj().cols(); ++j) {
-            for (Eigen::Index i = 0; i < res.adj().rows(); ++i) {
-              if (unlikely(
-                      is_any_nan(arena_a.val(), arena_b.val().coeff(i, j)))) {
-                arena_a.adj() = NOT_A_NUMBER;
-              } else {
-                arena_a.adj()
-                    += res.adj().coeff(i, j) * log(arena_b.val().coeff(i, j));
-              }
-            }
-          }
+	  arena_a.adj()
+	    += (res.adj().array() * arena_b.val().array().log()).sum();
         });
   } else {
     arena_t<promote_scalar_t<var, T2>> arena_b = b;
@@ -344,22 +228,9 @@ inline auto multiply_log(const T1& a, const T2& b) {
     return make_callback_var(
         multiply_log(value_of(a), arena_b.val()),
         [a, arena_b](const auto& res) mutable {
-          for (Eigen::Index j = 0; j < res.adj().cols(); ++j) {
-            for (Eigen::Index i = 0; i < res.adj().rows(); ++i) {
-              if (unlikely(
-                      is_any_nan(value_of(a), arena_b.val().coeff(i, j)))) {
-                arena_b.adj().coeffRef(i, j) = NOT_A_NUMBER;
-              } else {
-                if (arena_b.val().coeff(i, j) == 0.0 && value_of(a) == 0) {
-                  arena_b.adj().coeffRef(i, j) += res.adj().coeff(i, j) * INFTY;
-                } else {
-                  arena_b.adj().coeffRef(i, j) += res.adj().coeff(i, j)
-                                                  * value_of(a)
-                                                  / arena_b.val().coeff(i, j);
-                }
-              }
-            }
-          }
+	  arena_b.adj().array() += value_of(a)
+	    * res.adj().array()
+	    / arena_b.val().array();
         });
   }
 }
