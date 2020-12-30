@@ -37,13 +37,10 @@ inline var log1m(const var& a) { return var(new internal::log1m_vari(a.vi_)); }
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto log1m(const T& x) {
-  T res = stan::math::log1m(x.val());
-
-  reverse_pass_callback([x, res]() mutable {
-    x.adj().noalias() += (res.adj().array() / (x.val().array() - 1.0)).matrix();
-  });
-
-  return res;
+  return make_callback_var(stan::math::log1m(x.val()),
+			   [x](const auto& vi) mutable {
+			     x.adj() += (vi.adj().array() / (x.val().array() - 1.0)).matrix();
+			   });
 }
 
 }  // namespace math

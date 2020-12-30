@@ -42,15 +42,12 @@ inline var inv_logit(const var& a) {
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto inv_logit(const T& x) {
-  plain_type_t<T> res = inv_logit(x.val());
-
-  reverse_pass_callback([x, res]() mutable {
-    x.adj().noalias()
-        += (res.adj().array() * res.val().array() * (1.0 - res.val().array()))
-               .matrix();
-  });
-
-  return res;
+  return make_callback_var(inv_logit(x.val()),
+			   [x](const auto& vi) mutable {
+			     x.adj()
+			       += (vi.adj().array() * vi.val().array() * (1.0 - vi.val().array()))
+			       .matrix();
+			   });
 }
 
 }  // namespace math

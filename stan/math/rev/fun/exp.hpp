@@ -66,13 +66,10 @@ inline std::complex<var> exp(const std::complex<var>& z) {
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto exp(const T& x) {
-  plain_type_t<T> res = x.val().array().exp().matrix();
-
-  reverse_pass_callback([x, res]() mutable {
-    x.adj().noalias() += (res.val().array() * res.adj().array()).matrix();
+  return make_callback_var(x.val().array().exp().matrix(),
+			   [x](const auto& vi) mutable {
+    x.adj() += (vi.val().array() * vi.adj().array()).matrix();
   });
-
-  return res;
 }
 
 }  // namespace math
