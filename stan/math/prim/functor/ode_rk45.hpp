@@ -102,12 +102,7 @@ ode_rk45_tol_impl(const char* function_name, const F& f, const T_y0& y0_arg,
 
   using return_t = return_type_t<T_y0, T_t0, T_ts, Args...>;
   // creates basic or coupled system by template specializations
-  auto&& coupled_system = apply(
-      [&](const auto&... args_ref) {
-        return coupled_ode_system<F, T_y0_t0, ref_type_t<Args>...>(f, y0, msgs,
-                                                                   args_ref...);
-      },
-      args_ref_tuple);
+  coupled_ode_system<F, T_y0_t0, ref_type_t<Args>...> coupled_system(f, y0, msgs, args...);
 
   // first time in the vector must be time of initial state
   std::vector<double> ts_vec(ts.size() + 1);

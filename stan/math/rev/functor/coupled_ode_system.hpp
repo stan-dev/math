@@ -9,6 +9,9 @@
 #include <stan/math/prim/err.hpp>
 #include <stdexcept>
 #include <ostream>
+#include <memory>
+#include <tuple>
+#include <utility>
 #include <vector>
 
 namespace stan {
@@ -65,10 +68,32 @@ namespace math {
  */
 template <typename F, typename T_y0, typename... Args>
 struct coupled_ode_system_impl<false, F, T_y0, Args...> {
+
+  struct scoped_args_tuple {
+        using args_tuple_t
+        = std::tuple<decltype(deep_copy_vars(std::declval<const Args&>()))...>;
+    ScopedChainableStack stack_;
+    std::unique_ptr<args_tuple_t> args_tuple_holder_;
+
+    template <typename... ArgsT>
+    scoped_args_tuple(ArgsT&&... args) : stack_(), args_tuple_holder_(nullptr) {
+      stack_.execute(*this, std::forward<ArgsT>(args)...);
+    }
+
+    template <typename... ArgsT>
+    void operator()(ArgsT&&... args) {
+      args_tuple_holder_ = std::make_unique<
+              typename scoped_args_tuple::args_tuple_t>(
+                  deep_copy_vars(std::forward<ArgsT>(args))...);
+      
+    }
+  };
+
+  
   const F& f_;
   const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0_;
-  std::tuple<decltype(deep_copy_vars(std::declval<const Args&>()))...>
-      local_args_tuple_;
+  scoped_args_tuple local_args_tuple_scope_;
+  typename scoped_args_tuple::args_tuple_t& local_args_tuple_;
   const size_t num_y0_vars_;
   const size_t num_args_vars;
   const size_t N_;
@@ -88,10 +113,12 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
    */
   coupled_ode_system_impl(const F& f,
                           const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0,
-                          std::ostream* msgs, const Args&... args)
+                          std::ostream* msgs,
+                          const Args&... args)
       : f_(f),
         y0_(y0),
-        local_args_tuple_(deep_copy_vars(args)...),
+        local_args_tuple_scope_(args...),
+        local_args_tuple_(*(local_args_tuple_scope_.args_tuple_holder_)),
         num_y0_vars_(count_vars(y0_)),
         num_args_vars(count_vars(args...)),
         N_(y0.size()),
