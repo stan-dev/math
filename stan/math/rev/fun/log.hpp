@@ -73,10 +73,10 @@ inline std::complex<var> log(const std::complex<var>& z) {
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto log(const T& x) {
-  return make_callback_var(x.val().array().log().matrix(),
-			   [x](const auto& vi) mutable {
-			     x.adj() += (vi.adj().array() / x.val().array()).matrix();
-			   });
+  return make_callback_var(
+      x.val().array().log().matrix(), [x](const auto& vi) mutable {
+        x.adj() += (vi.adj().array() / x.val().array()).matrix();
+      });
 }
 
 }  // namespace math
