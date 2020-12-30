@@ -52,21 +52,19 @@ TEST(ProbDistributionsCategorical, fvar_var_vector) {
   }
 
   EXPECT_FLOAT_EQ(log(theta_arr[0][0]).val_.val()
-                    + log(theta_arr[1][2]).val_.val()
-                    + log(theta_arr[2][0]).val_.val(),
+                      + log(theta_arr[1][2]).val_.val()
+                      + log(theta_arr[2][0]).val_.val(),
                   stan::math::categorical_log(xs, theta_arr).val_.val());
-  EXPECT_FLOAT_EQ(log(theta_arr[0][0]).d_.val()
-                    + log(theta_arr[1][2]).d_.val()
-                    + log(theta_arr[2][0]).d_.val(),
+  EXPECT_FLOAT_EQ(log(theta_arr[0][0]).d_.val() + log(theta_arr[1][2]).d_.val()
+                      + log(theta_arr[2][0]).d_.val(),
                   stan::math::categorical_log(xs, theta_arr).d_.val());
 
   EXPECT_FLOAT_EQ(log(theta_arr[0][0]).val_.val()
-                    + log(theta_arr[1][0]).val_.val()
-                    + log(theta_arr[2][0]).val_.val(),
+                      + log(theta_arr[1][0]).val_.val()
+                      + log(theta_arr[2][0]).val_.val(),
                   stan::math::categorical_log(1, theta_arr).val_.val());
-  EXPECT_FLOAT_EQ(log(theta_arr[0][0]).d_.val()
-                    + log(theta_arr[1][0]).d_.val()
-                    + log(theta_arr[2][0]).d_.val(),
+  EXPECT_FLOAT_EQ(log(theta_arr[0][0]).d_.val() + log(theta_arr[1][0]).d_.val()
+                      + log(theta_arr[2][0]).d_.val(),
                   stan::math::categorical_log(1, theta_arr).d_.val());
 }
 
@@ -121,20 +119,20 @@ TEST(ProbDistributionsCategorical, fvar_fvar_var_vector) {
   }
 
   EXPECT_FLOAT_EQ(log(theta_arr[0][0]).val_.val_.val()
-                    + log(theta_arr[1][2]).val_.val_.val()
-                    + log(theta_arr[2][0]).val_.val_.val(),
+                      + log(theta_arr[1][2]).val_.val_.val()
+                      + log(theta_arr[2][0]).val_.val_.val(),
                   stan::math::categorical_log(xs, theta_arr).val_.val_.val());
   EXPECT_FLOAT_EQ(log(theta_arr[0][0]).d_.val_.val()
-                    + log(theta_arr[1][2]).d_.val_.val()
-                    + log(theta_arr[2][0]).d_.val_.val(),
+                      + log(theta_arr[1][2]).d_.val_.val()
+                      + log(theta_arr[2][0]).d_.val_.val(),
                   stan::math::categorical_log(xs, theta_arr).d_.val_.val());
 
   EXPECT_FLOAT_EQ(log(theta_arr[0][0]).val_.val_.val()
-                    + log(theta_arr[1][0]).val_.val_.val()
-                    + log(theta_arr[2][0]).val_.val_.val(),
+                      + log(theta_arr[1][0]).val_.val_.val()
+                      + log(theta_arr[2][0]).val_.val_.val(),
                   stan::math::categorical_log(1, theta_arr).val_.val_.val());
   EXPECT_FLOAT_EQ(log(theta_arr[0][0]).d_.val_.val()
-                    + log(theta_arr[1][0]).d_.val_.val()
-                    + log(theta_arr[2][0]).d_.val_.val(),
+                      + log(theta_arr[1][0]).d_.val_.val()
+                      + log(theta_arr[2][0]).d_.val_.val(),
                   stan::math::categorical_log(1, theta_arr).d_.val_.val());
 }

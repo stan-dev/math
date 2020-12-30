@@ -15,8 +15,7 @@ namespace math {
 
 // CategoricalLog(n|theta)  [0 < n <= N, theta unconstrained], no checking
 template <bool propto, typename T_n, typename T_prob>
-return_type_t<T_prob> categorical_logit_lpmf(const T_n& n,
-                                             const T_prob& beta) {
+return_type_t<T_prob> categorical_logit_lpmf(const T_n& n, const T_prob& beta) {
   static const char* function = "categorical_logit_lpmf";
 
   scalar_seq_view<T_n> n_vec(n);
