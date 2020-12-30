@@ -43,7 +43,7 @@ inline auto read_cov_L(const T_CPCs& CPCs, const T_sds& sds,
     size_t K = sds.size();
 
     corr_L.adj() += sds.val().matrix().asDiagonal() * res.adj();
-    sds.adj() += rows_dot_product(res.adj(), corr_L.val());
+    sds.adj() += (res.adj().cwiseProduct(corr_L.val())).rowwise().sum();
 
     sds.adj() += (K * log_prob.adj() / sds.val().array()).matrix();
   });

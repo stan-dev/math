@@ -53,7 +53,7 @@ inline var_value<Eigen::MatrixXd> read_cov_matrix(const T_CPCs& CPCs,
 
   reverse_pass_callback([sds, corr_L, prod]() mutable {
     corr_L.adj() += sds.val().matrix().asDiagonal() * prod.adj();
-    sds.adj() += rows_dot_product(prod.adj(), corr_L.val());
+    sds.adj() += (prod.adj().cwiseProduct(corr_L.val())).rowwise().sum();
   });
 
   return multiply_lower_tri_self_transpose(prod);

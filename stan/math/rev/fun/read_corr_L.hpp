@@ -48,17 +48,17 @@ auto read_corr_L(const T& CPCs, size_t K) {  // on (-1, 1)
   // Cholesky factor of correlation matrix
   arena_t<Eigen::MatrixXd> L = Eigen::MatrixXd::Zero(K, K);
 
-  size_t position = 0;
+  size_t pos = 0;
   size_t pull = K - 1;
 
   L(0, 0) = 1.0;
   L.col(0).tail(pull) = CPCs.val().head(pull);
   arena_acc.tail(pull) = 1.0 - CPCs.val().head(pull).array().square();
   for (size_t i = 1; i < (K - 1); i++) {
-    position += pull;
+    pos += pull;
     pull = K - 1 - i;
 
-    const auto& cpc_seg = CPCs.val().array().segment(position, pull);
+    const auto& cpc_seg = CPCs.val().array().segment(pos, pull);
     L.coeffRef(i, i) = sqrt(arena_acc.coeff(i - 1));
     L.col(i).tail(pull) = cpc_seg * arena_acc.tail(pull).sqrt();
     arena_acc.tail(pull) = arena_acc.tail(pull) * (1.0 - cpc_seg.square());
@@ -75,12 +75,12 @@ auto read_corr_L(const T& CPCs, size_t K) {  // on (-1, 1)
     acc_adj.coeffRef(K - 2) += 0.5 * L_res.adj().coeff(K - 1, K - 1)
                                / L_res.val().coeff(K - 1, K - 1);
 
-    int position = CPCs.size() - 1;
+    int pos = CPCs.size() - 1;
     for (size_t i = K - 2; i > 0; --i) {
       int pull = K - 1 - i;
 
-      const auto& cpc_seg_val = CPCs.val().array().segment(position, pull);
-      auto cpc_seg_adj = CPCs.adj().array().segment(position, pull);
+      const auto& cpc_seg_val = CPCs.val().array().segment(pos, pull);
+      auto cpc_seg_adj = CPCs.adj().array().segment(pos, pull);
       acc_val.tail(pull) /= 1.0 - cpc_seg_val.square();
       cpc_seg_adj
           -= 2.0 * acc_adj.tail(pull) * acc_val.tail(pull) * cpc_seg_val;
@@ -93,7 +93,7 @@ auto read_corr_L(const T& CPCs, size_t K) {  // on (-1, 1)
       acc_adj.coeffRef(i - 1)
           += 0.5 * L_res.adj().coeff(i, i) / L_res.val().coeff(i, i);
 
-      position -= pull + 1;
+      pos -= pull + 1;
     }
 
     int pull = K - 1;

@@ -39,7 +39,8 @@ var_value<Eigen::MatrixXd> cov_matrix_constrain(const T& x, Eigen::Index K) {
   for (Eigen::Index m = 0; m < K; ++m) {
     L_val.row(m).head(m) = x.val().segment(i, m);
     i += m;
-    L_val.coeffRef(m, m) = exp(x.val().coeff(i++));
+    L_val.coeffRef(m, m) = exp(x.val().coeff(i));
+    i++;
   }
 
   var_value<Eigen::MatrixXd> L = L_val;
@@ -48,7 +49,8 @@ var_value<Eigen::MatrixXd> cov_matrix_constrain(const T& x, Eigen::Index K) {
     Eigen::Index K = L.rows();
     int i = x.size();
     for (int m = K - 1; m >= 0; --m) {
-      x.adj().coeffRef(--i) += L.adj().coeff(m, m) * L.val().coeff(m, m);
+      i--;
+      x.adj().coeffRef(i) += L.adj().coeff(m, m) * L.val().coeff(m, m);
       i -= m;
       x.adj().segment(i, m) += L.adj().row(m).head(m);
     }
@@ -80,15 +82,16 @@ var_value<Eigen::MatrixXd> cov_matrix_constrain(const T& x, Eigen::Index K,
   check_size_match("cov_matrix_constrain", "x.size()", x.size(),
                    "K + (K choose 2)", (K * (K + 1)) / 2);
   arena_t<Eigen::MatrixXd> L_val = Eigen::MatrixXd::Zero(K, K);
-  int i = 0;
+  int pos = 0;
   for (Eigen::Index m = 0; m < K; ++m) {
-    L_val.row(m).head(m) = x.val().segment(i, m);
-    i += m;
-    L_val.coeffRef(m, m) = exp(x.val().coeff(i++));
+    L_val.row(m).head(m) = x.val().segment(pos, m);
+    pos += m;
+    L_val.coeffRef(m, m) = exp(x.val().coeff(pos));
+    pos++;
   }
 
   // Jacobian for complete transform, including exp() above
-  double lp_val = (K * LOG_TWO);  // needless constant; want propto
+  double lp_val = (K * LOG_TWO);
   for (Eigen::Index k = 0; k < K; ++k) {
     // only +1 because index from 0
     lp_val += (K - k + 1) * log(L_val.coeff(k, k));
@@ -103,11 +106,12 @@ var_value<Eigen::MatrixXd> cov_matrix_constrain(const T& x, Eigen::Index K,
     for (Eigen::Index k = 0; k < K; ++k) {
       L.adj().coeffRef(k, k) += (K - k + 1) * lp.adj() / L.val().coeff(k, k);
     }
-    int i = x.size();
+    int pos = x.size();
     for (int m = K - 1; m >= 0; --m) {
-      x.adj().coeffRef(--i) += L.adj().coeff(m, m) * L.val().coeff(m, m);
-      i -= m;
-      x.adj().segment(i, m) += L.adj().row(m).head(m);
+      pos--;
+      x.adj().coeffRef(pos) += L.adj().coeff(m, m) * L.val().coeff(m, m);
+      pos -= m;
+      x.adj().segment(pos, m) += L.adj().row(m).head(m);
     }
   });
 
