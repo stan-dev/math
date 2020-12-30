@@ -383,9 +383,14 @@ def benchmark(
             benchmark_name = function_name
             setup = ""
             var_conversions = ""
-            code = "    auto res = stan::math::eval(stan::math::{}(".format(
-                function_name
-            )
+            if opencl in ("copy", "copy_rev") and return_type not in scalar_stan_types:
+                code = "    auto res = stan::math::from_matrix_cl(stan::math::{}(".format(
+                    function_name
+                )
+            else:
+                code = "    auto res = stan::math::eval(stan::math::{}(".format(
+                    function_name
+                )
             for (
                     n,
                     (arg_overload, cpp_arg_template, stan_arg),
@@ -402,7 +407,7 @@ def benchmark(
                 var_name = "arg" + str(n)
                 make_arg_function = "make_arg"
                 is_argument_autodiff = "var" in arg_type
-                is_argument_scalar = stan_arg in ("int", "real", "rng", "ostream_ptr")
+                is_argument_scalar = stan_arg in scalar_stan_types
                 value = 0.4
                 if function_name in special_arg_values:
                     if isinstance(special_arg_values[function_name][n], str):
