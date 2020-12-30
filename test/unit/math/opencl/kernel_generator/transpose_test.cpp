@@ -19,6 +19,9 @@ TEST(KernelGenerator, transpose_errors) {
   EXPECT_NO_THROW(n = transpose(m));
   EXPECT_NO_THROW(transpose(m) = n);
   EXPECT_NO_THROW(transpose(m) = transpose(m));
+  auto a = transpose(m);
+  EXPECT_NO_THROW(a = a);
+  EXPECT_NO_THROW(a = a + 1);
 }
 
 TEST(KernelGenerator, transpose_rvalue_test) {

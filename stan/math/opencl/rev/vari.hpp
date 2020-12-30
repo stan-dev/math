@@ -76,11 +76,7 @@ class vari_cl_base : public vari_base {
 
   /**
    * Returns a transposed view into the matrix.
-   * @param row starting row of the block
-   * @param col starting column of the block
-   * @param rows number of rows in the block
-   * @param cols number of columns in the block
-   * @return block
+   * @return transpose
    */
   auto transpose() {
     auto&& val_t = stan::math::transpose(val_);

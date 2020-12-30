@@ -57,8 +57,10 @@ class load_
 
   /**
    * Generates kernel code for this expression.
-   * @param[in,out] generated map from (pointer to) already generated operations
-   * to variable names
+   * @param[in,out] generated map from (pointer to) already generated local
+   * operations to variable names
+   * @param[in,out] generated_all map from (pointer to) already generated all
+   * operations to variable names
    * @param name_gen name generator for this kernel
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
@@ -66,14 +68,26 @@ class load_
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts get_kernel_parts(
-      std::map<const void*, const char*>& generated, name_generator& name_gen,
-      const std::string& row_index_name, const std::string& col_index_name,
-      bool view_handled) const {
+      std::map<const void*, const char*>& generated,
+      std::map<const void*, const char*>& generated_all,
+      name_generator& name_gen, const std::string& row_index_name,
+      const std::string& col_index_name, bool view_handled) const {
     kernel_parts res{};
     if (generated.count(&a_) == 0) {
-      this->var_name_ = name_gen.generate();
-      generated[&a_] = this->var_name_.c_str();
-      res = generate(row_index_name, col_index_name, view_handled);
+      if (generated_all.count(&a_) == 0) {
+        this->var_name_ = name_gen.generate();
+        generated_all[&a_] = generated[&a_] = this->var_name_.c_str();
+        res.body = generate_body(row_index_name, col_index_name, view_handled,
+                                 this->var_name_.c_str());
+        res.args = "__global " + type_str<Scalar>() + "* " + var_name_ + "_global, int "
+                   + var_name_ + "_rows, int " + var_name_ + "_view, ";
+      } else {
+        const char* arg_var_name = generated_all[&a_];
+        this->var_name_ = name_gen.generate();
+        generated[&a_] = this->var_name_.c_str();
+        res.body = generate_body(row_index_name, col_index_name, view_handled,
+                                 arg_var_name);
+      }
     } else {
       this->var_name_ = generated[&a_];
     }
@@ -81,58 +95,60 @@ class load_
   }
 
   /**
-   * Generates kernel code for this expression.
+   * Generates kernel code for main body of this expression.
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
    * @param view_handled whether whether caller already handled matrix view
+   * @param arg_var_name variable name used for kernel arguments this is using
    * @return part of kernel with code for this expression
    */
-  inline kernel_parts generate(const std::string& row_index_name,
-                               const std::string& col_index_name,
-                               const bool view_handled) const {
-    kernel_parts res{};
+  inline std::string generate_body(const std::string& row_index_name,
+                                   const std::string& col_index_name,
+                                   const bool view_handled,
+                                   const char* arg_var_name) const {
     std::string type = type_str<Scalar>();
     if (view_handled) {
-      res.body = type + " " + var_name_ + " = " + var_name_ + "_global["
-                 + row_index_name + " + " + var_name_ + "_rows * "
-                 + col_index_name + "];\n";
+      return type + " " + var_name_ + " = " + arg_var_name + "_global["
+             + row_index_name + " + " + arg_var_name + "_rows * "
+             + col_index_name + "];\n";
     } else {
-      res.body = type + " " + var_name_ + " = 0;"
-                 " if (!((!contains_nonzero(" + var_name_ + "_view, LOWER) && "
+      return type + " " + var_name_ + " = 0;"
+                 " if (!((!contains_nonzero(" + arg_var_name + "_view, LOWER) && "
                  + col_index_name + " < " + row_index_name
-                 + ") || (!contains_nonzero(" + var_name_ + "_view, UPPER) && "
+                 + ") || (!contains_nonzero(" + arg_var_name + "_view, UPPER) && "
                  + col_index_name + " > " + row_index_name + "))) {" + var_name_
-                 + " = " + var_name_ + "_global[" + row_index_name + " + " +
-                 var_name_ + "_rows * " + col_index_name + "];}\n";
+                 + " = " + arg_var_name + "_global[" + row_index_name + " + " +
+                 arg_var_name + "_rows * " + col_index_name + "];}\n";
     }
-    res.args = "__global " + type + "* " + var_name_ + "_global, int "
-               + var_name_ + "_rows, int " + var_name_ + "_view, ";
-    return res;
   }
 
   /**
    * Generates kernel code for this expression if it appears on the left hand
    * side of an assignment.
-   * @param[in,out] generated map from (pointer to) already generated operations
-   * to variable names
+   * @param[in,out] generated map from (pointer to) already generated local
+   * operations to variable names
+   * @param[in,out] generated_all map from (pointer to) already generated all
+   * operations to variable names
    * @param name_gen name generator for this kernel
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
    * @return part of kernel with code for this expressions
    */
   inline kernel_parts get_kernel_parts_lhs(
-      std::map<const void*, const char*>& generated, name_generator& name_gen,
+      std::map<const void*, const char*>& generated,
+      std::map<const void*, const char*>& generated_all,
+      name_generator& name_gen,
       const std::string& row_index_name,
       const std::string& col_index_name) const {
-    if (generated.count(&a_) == 0) {
+    if (generated_all.count(&a_) == 0) {
       this->var_name_ = name_gen.generate();
     } else {
-      this->var_name_ = generated[&a_];
+      this->var_name_ = generated_all[&a_];
     }
     kernel_parts res = generate_lhs(row_index_name, col_index_name);
 
-    if (generated.count(&a_) == 0) {
-      generated[&a_] = this->var_name_.c_str();
+    if (generated_all.count(&a_) == 0) {
+      generated_all[&a_] = this->var_name_.c_str();
     } else {
       res.args = "";
     }
@@ -159,16 +175,19 @@ class load_
 
   /**
    * Sets kernel arguments for this expression.
-   * @param[in,out] generated map of expressions that already set their kernel
-   * arguments
+   * @param[in,out] generated map from (pointer to) already generated local
+   * operations to variable names
+   * @param[in,out] generated_all map from (pointer to) already generated all
+   * operations to variable names
    * @param kernel kernel to set arguments on
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
   inline void set_args(std::map<const void*, const char*>& generated,
+                       std::map<const void*, const char*>& generated_all,
                        cl::Kernel& kernel, int& arg_num) const {
-    if (generated.count(&a_) == 0) {
-      generated[&a_] = "";
+    if (generated_all.count(&a_) == 0) {
+      generated_all[&a_] = "";
       kernel.setArg(arg_num++, a_.buffer());
       kernel.setArg(arg_num++, a_.rows());
       kernel.setArg(arg_num++, a_.view());

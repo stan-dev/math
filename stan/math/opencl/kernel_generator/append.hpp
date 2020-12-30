@@ -77,8 +77,10 @@ class append_row_ : public operation_cl<append_row_<T_a, T_b>,
 
   /**
    * Generates kernel code for this and nested expressions.
-   * @param[in,out] generated map from (pointer to) already generated operations
-   * to variable names
+   * @param[in,out] generated map from (pointer to) already generated local
+   * operations to variable names
+   * @param[in,out] generated_all map from (pointer to) already generated all
+   * operations to variable names
    * @param name_gen name generator for this kernel
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
@@ -86,7 +88,9 @@ class append_row_ : public operation_cl<append_row_<T_a, T_b>,
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts get_kernel_parts(
-      std::map<const void*, const char*>& generated, name_generator& name_gen,
+      std::map<const void*, const char*>& generated,
+      std::map<const void*, const char*>& generated_all,
+      name_generator& name_gen,
       const std::string& row_index_name, const std::string& col_index_name,
       bool view_handled) const {
     kernel_parts res{};
@@ -94,12 +98,12 @@ class append_row_ : public operation_cl<append_row_<T_a, T_b>,
       var_name_ = name_gen.generate();
       generated[this] = "";
       kernel_parts parts_a = this->template get_arg<0>().get_kernel_parts(
-          generated, name_gen, row_index_name, col_index_name, true);
+          generated, generated_all, name_gen, row_index_name, col_index_name, true);
       std::string row_index_name_b
           = "(" + row_index_name + " - " + var_name_ + "_first_rows)";
       std::map<const void*, const char*> generated_b;
       kernel_parts parts_b = this->template get_arg<1>().get_kernel_parts(
-          generated_b, name_gen, row_index_name_b, col_index_name, true);
+          generated_b, generated_all, name_gen, row_index_name_b, col_index_name, true);
       res = parts_a + parts_b;
       res.body = type_str<Scalar>() + " " + var_name_ + ";\n"
           "if("+ row_index_name +" < " + var_name_ + "_first_rows){\n"
@@ -116,19 +120,22 @@ class append_row_ : public operation_cl<append_row_<T_a, T_b>,
 
   /**
    * Sets kernel arguments for this and nested expressions.
-   * @param[in,out] generated map of expressions that already set their kernel
-   * arguments
+   * @param[in,out] generated map from (pointer to) already generated local
+   * operations to variable names
+   * @param[in,out] generated_all map from (pointer to) already generated all
+   * operations to variable names
    * @param kernel kernel to set arguments on
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
   inline void set_args(std::map<const void*, const char*>& generated,
+                       std::map<const void*, const char*>& generated_all,
                        cl::Kernel& kernel, int& arg_num) const {
     if (generated.count(this) == 0) {
       generated[this] = "";
-      this->template get_arg<0>().set_args(generated, kernel, arg_num);
+      this->template get_arg<0>().set_args(generated, generated_all, kernel, arg_num);
       std::map<const void*, const char*> generated_b;
-      this->template get_arg<1>().set_args(generated_b, kernel, arg_num);
+      this->template get_arg<1>().set_args(generated_b, generated_all, kernel, arg_num);
       kernel.setArg(arg_num++, this->template get_arg<0>().rows());
     }
   }
@@ -229,8 +236,10 @@ class append_col_ : public operation_cl<append_col_<T_a, T_b>,
 
   /**
    * Generates kernel code for this and nested expressions.
-   * @param[in,out] generated map from (pointer to) already generated operations
-   * to variable names
+   * @param[in,out] generated map from (pointer to) already generated local
+   * operations to variable names
+   * @param[in,out] generated_all map from (pointer to) already generated all
+   * operations to variable names
    * @param name_gen name generator for this kernel
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
@@ -238,7 +247,9 @@ class append_col_ : public operation_cl<append_col_<T_a, T_b>,
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts get_kernel_parts(
-      std::map<const void*, const char*>& generated, name_generator& name_gen,
+      std::map<const void*, const char*>& generated,
+      std::map<const void*, const char*>& generated_all,
+      name_generator& name_gen,
       const std::string& row_index_name, const std::string& col_index_name,
       bool view_handled) const {
     kernel_parts res{};
@@ -246,12 +257,12 @@ class append_col_ : public operation_cl<append_col_<T_a, T_b>,
       var_name_ = name_gen.generate();
       generated[this] = "";
       kernel_parts parts_a = this->template get_arg<0>().get_kernel_parts(
-          generated, name_gen, row_index_name, col_index_name, true);
+          generated, generated_all, name_gen, row_index_name, col_index_name, true);
       std::string col_index_name_b
           = "(" + col_index_name + " - " + var_name_ + "_first_cols)";
       std::map<const void*, const char*> generated_b;
       kernel_parts parts_b = this->template get_arg<1>().get_kernel_parts(
-          generated_b, name_gen, row_index_name, col_index_name_b, true);
+          generated_b, generated_all, name_gen, row_index_name, col_index_name_b, true);
       res = parts_a + parts_b;
       res.body = type_str<Scalar>() + " " + var_name_ + ";\n"
           "if("+ col_index_name +" < " + var_name_ + "_first_cols){\n"
@@ -268,19 +279,22 @@ class append_col_ : public operation_cl<append_col_<T_a, T_b>,
 
   /**
    * Sets kernel arguments for this and nested expressions.
-   * @param[in,out] generated map of expressions that already set their kernel
-   * arguments
+   * @param[in,out] generated map from (pointer to) already generated local
+   * operations to variable names
+   * @param[in,out] generated_all map from (pointer to) already generated all
+   * operations to variable names
    * @param kernel kernel to set arguments on
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
   inline void set_args(std::map<const void*, const char*>& generated,
+                       std::map<const void*, const char*>& generated_all,
                        cl::Kernel& kernel, int& arg_num) const {
     if (generated.count(this) == 0) {
       generated[this] = "";
-      this->template get_arg<0>().set_args(generated, kernel, arg_num);
+      this->template get_arg<0>().set_args(generated, generated_all, kernel, arg_num);
       std::map<const void*, const char*> generated_b;
-      this->template get_arg<1>().set_args(generated_b, kernel, arg_num);
+      this->template get_arg<1>().set_args(generated_b, generated_all, kernel, arg_num);
       kernel.setArg(arg_num++, this->template get_arg<0>().cols());
     }
   }

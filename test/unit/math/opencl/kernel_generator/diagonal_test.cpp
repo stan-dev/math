@@ -80,4 +80,18 @@ TEST(KernelGenerator, diagonal_of_a_block_test) {
   EXPECT_MATRIX_NEAR(res, correct, 1e-9);
 }
 
+TEST(KernelGenerator, diagonal_lhs_add_assign_test) {
+  MatrixXd m = MatrixXd::Random(3, 4);
+  MatrixXd correct = m;
+  correct.diagonal().array() += 1;
+
+  matrix_cl<double> m_cl(m);
+
+  diagonal(m_cl) += 1;
+  MatrixXd res = stan::math::from_matrix_cl(m_cl);
+
+  EXPECT_MATRIX_NEAR(res, correct, 1e-9);
+}
+
+
 #endif

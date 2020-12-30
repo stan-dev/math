@@ -37,33 +37,32 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...>,
   /**
    * Generates kernel code for this expression if it appears on the left hand
    * side of an assignment.
-   * @param[in,out] generated map from (pointer to) already generated operations
-   * to variable names
+   * @param[in,out] generated map from (pointer to) already generated local
+   * operations to variable names
+   * @param[in,out] generated_all map from (pointer to) already generated all
+   * operations to variable names
    * @param name_gen name generator for this kernel
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
    * @return part of kernel with code for this expressions
    */
   inline kernel_parts get_kernel_parts_lhs(
-      std::map<const void*, const char*>& generated, name_generator& name_gen,
-      const std::string& row_index_name,
+      std::map<const void*, const char*>& generated,
+      std::map<const void*, const char*>& generated_all,
+      name_generator& name_gen, const std::string& row_index_name,
       const std::string& col_index_name) const {
     if (generated.count(this) == 0) {
+      generated[this] = "";
       this->var_name_ = name_gen.generate();
     }
     std::string row_index_name_arg = row_index_name;
     std::string col_index_name_arg = col_index_name;
     derived().modify_argument_indices(row_index_name_arg, col_index_name_arg);
     std::array<kernel_parts, N> args_parts = index_apply<N>([&](auto... Is) {
-      std::map<const void*, const char*> generated2;
       return std::array<kernel_parts, N>{
           this->template get_arg<Is>().get_kernel_parts_lhs(
-              &Derived::modify_argument_indices
-                      == &operation_cl<Derived, Scalar,
-                                       Args...>::modify_argument_indices
-                  ? generated
-                  : generated2,
-              name_gen, row_index_name_arg, col_index_name_arg)...};
+              generated, generated_all, name_gen, row_index_name_arg,
+              col_index_name_arg)...};
     });
     kernel_parts res
         = std::accumulate(args_parts.begin(), args_parts.end(), kernel_parts{});
@@ -73,8 +72,8 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...>,
           this->template get_arg<Is>().var_name_...);
     });
     res += my_part;
-    if (generated.count(this) == 0) {
-      generated[this] = "";
+    if (generated_all.count(this) == 0) {
+      generated_all[this] = "";
     } else {
       res.args = "";
     }
@@ -93,7 +92,6 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...>,
   inline kernel_parts generate_lhs(const std::string& row_index_name,
                                    const std::string& col_index_name,
                                    const std::string& var_name_arg) const {
-//    this->var_name_ = var_name_arg;
     return {};
   }
 
