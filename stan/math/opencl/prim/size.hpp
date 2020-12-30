@@ -8,9 +8,10 @@ namespace stan {
 namespace math {
 
 /**
- * Returns the size (number of the elements) of a `matrix_cl`.
- * @param m `matrix_cl` to determine size of
- * @return number of elements in a
+ * Returns the size (number of the elements) of a `matrix_cl` or
+ * `var_value<matrix_cl<T>>`.
+ * @param m input to determine size of
+ * @return number of elements in m
  */
 template <typename T,
           require_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>

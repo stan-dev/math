@@ -74,8 +74,8 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
 
   const auto& cuts_val = eval(value_of(cuts));
   if (N_classes >= 2) {
-    auto cuts_head = block(cuts_val, 0, 0, size(cuts) - 1, 1);
-    auto cuts_tail = block(cuts_val, 1, 0, size(cuts) - 1, 1);
+    auto cuts_head = block_zero_based(cuts_val, 0, 0, size(cuts) - 1, 1);
+    auto cuts_tail = block_zero_based(cuts_val, 1, 0, size(cuts) - 1, 1);
     check_cl(function, "Cuts", cuts_head, "ordered and finite")
         = cuts_head < cuts_tail && isfinite(cuts_head) && isfinite(cuts_tail);
   } else {
