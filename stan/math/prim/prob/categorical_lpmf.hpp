@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/size_mvt.hpp>
 #include <cmath>
 #include <vector>
 
@@ -12,53 +13,38 @@ namespace stan {
 namespace math {
 
 // Categorical(n|theta)  [0 < n <= N;   0 <= theta[n] <= 1;  SUM theta = 1]
-template <bool propto, typename T_prob,
-          require_eigen_col_vector_t<T_prob>* = nullptr>
-return_type_t<T_prob> categorical_lpmf(int n, const T_prob& theta) {
+template <bool propto, typename T_n, typename T_prob>
+return_type_t<T_prob> categorical_lpmf(const T_n& n, const T_prob& theta) {
   static const char* function = "categorical_lpmf";
-  using std::log;
 
-  check_bounded(function, "Number of categories", n, 1, theta.size());
-  ref_type_t<T_prob> theta_ref = theta;
-  check_simplex(function, "Probabilities parameter", theta_ref);
+  scalar_seq_view<T_n> n_vec(n);
+  vector_seq_view<T_prob> theta_vec(theta);
 
-  if (include_summand<propto, T_prob>::value) {
-    return log(theta_ref.coeff(n - 1));
+  size_t vec_size = std::max(stan::math::size(n), stan::math::size_mvt(theta));
+
+  for (size_t i = 0; i < vec_size; ++i) {
+    check_bounded(function, "Number of categories", n, 1, theta_vec[i].size());
+    check_simplex(function, "Probabilities parameter", theta_vec[i]);
   }
-  return 0.0;
-}
 
-template <bool propto, typename T_prob,
-          require_eigen_col_vector_t<T_prob>* = nullptr>
-return_type_t<T_prob> categorical_lpmf(const std::vector<int>& ns,
-                                       const T_prob& theta) {
-  static const char* function = "categorical_lpmf";
-
-  check_bounded(function, "element of outcome array", ns, 1, theta.size());
-  ref_type_t<T_prob> theta_ref = theta;
-  check_simplex(function, "Probabilities parameter", theta_ref);
-
-  if (!include_summand<propto, T_prob>::value) {
+  if (!include_summand<propto, T_prob>::value || stan::math::size(n) == 0) {
     return 0.0;
   }
 
-  if (ns.size() == 0) {
-    return 0.0;
+  using T_plain = plain_type_t<decltype(theta)>;
+
+  T_plain log_theta = log(theta);
+  vector_seq_view<T_plain> log_theta_vec(log_theta);
+
+  return_type_t<T_prob> lp(0);
+  for (size_t i = 0; i < vec_size; ++i) {
+    lp += log_theta_vec[i].coeffRef(n_vec[i] - 1);
   }
 
-  Eigen::Matrix<value_type_t<T_prob>, Eigen::Dynamic, 1> log_theta
-      = log(theta_ref);
-  Eigen::Matrix<return_type_t<T_prob>, Eigen::Dynamic, 1> log_theta_ns(
-      ns.size());
-  for (size_t i = 0; i < ns.size(); ++i) {
-    log_theta_ns(i) = log_theta(ns[i] - 1);
-  }
-
-  return sum(log_theta_ns);
+  return lp;
 }
 
-template <typename T_n, typename T_prob, require_st_integral<T_n>* = nullptr,
-          require_eigen_col_vector_t<T_prob>* = nullptr>
+template <typename T_n, typename T_prob>
 inline return_type_t<T_prob> categorical_lpmf(const T_n& ns,
                                               const T_prob& theta) {
   return categorical_lpmf<false>(ns, theta);

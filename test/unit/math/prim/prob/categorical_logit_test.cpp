@@ -22,6 +22,7 @@ TEST(ProbDistributionsCategoricalLogit, Categorical) {
 TEST(ProbDistributionsCategoricalLogit, CategoricalVectorized) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using Eigen::VectorXd;
   using stan::math::log_softmax;
   Matrix<double, Dynamic, 1> theta(3);
   theta << -1, 2, -10;
@@ -38,6 +39,17 @@ TEST(ProbDistributionsCategoricalLogit, CategoricalVectorized) {
   EXPECT_FLOAT_EQ(
       theta_log_softmax[0] + theta_log_softmax[1] + theta_log_softmax[0],
       stan::math::categorical_logit_log(ms, theta));
+
+  std::vector<VectorXd> arr_theta(3);
+  arr_theta[0] = log_softmax((VectorXd(3) << 1.5, -3, 8.2).finished());
+  arr_theta[1] = log_softmax((VectorXd(3) << 5.1, 3.2, 5.2).finished());
+  arr_theta[2] = log_softmax((VectorXd(3) << -3.1, -9.8, -2.1).finished());
+
+  EXPECT_FLOAT_EQ(arr_theta[0][0] + arr_theta[1][1] + arr_theta[2][0],
+                  stan::math::categorical_logit_log(ms, arr_theta));
+
+  EXPECT_FLOAT_EQ(arr_theta[0][2] + arr_theta[1][2] + arr_theta[2][2],
+                  stan::math::categorical_logit_log(3, arr_theta));
 }
 
 TEST(ProbDistributionsCategoricalLogit, Propto) {

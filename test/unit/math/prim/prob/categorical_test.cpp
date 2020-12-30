@@ -37,6 +37,17 @@ TEST(ProbDistributionsCategorical, VectorInt) {
 
   EXPECT_FLOAT_EQ(log(0.3) + log(0.2) + log(0.3),
                   stan::math::categorical_log(xs, theta));
+
+  std::vector<VectorXd> arr_theta(3);
+  arr_theta[0] = (VectorXd(3) << 0.1, 0.6, 0.3).finished();
+  arr_theta[1] = (VectorXd(3) << 0.4, 0.2, 0.4).finished();
+  arr_theta[2] = (VectorXd(3) << 0.5, 0.2, 0.3).finished();
+
+  EXPECT_FLOAT_EQ(log(0.1) + log(0.4) + log(0.5),
+                  stan::math::categorical_log(xs, arr_theta));
+
+  EXPECT_FLOAT_EQ(log(0.6) + log(0.2) + log(0.2),
+                  stan::math::categorical_log(2, arr_theta));
 }
 
 TEST(ProbDistributionsCategorical, error) {
