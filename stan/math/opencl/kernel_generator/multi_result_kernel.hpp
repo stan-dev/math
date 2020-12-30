@@ -237,7 +237,7 @@ class expressions_cl {
    */
   explicit expressions_cl(T_expressions&&... expressions)
       : expressions_(
-            T_expressions(std::forward<T_expressions>(expressions))...) {}
+          T_expressions(std::forward<T_expressions>(expressions))...) {}
 
  private:
   std::tuple<T_expressions...> expressions_;
@@ -285,7 +285,8 @@ class results_cl {
   void operator=(const expressions_cl<T_expressions...>& exprs) {
     index_apply<sizeof...(T_expressions)>([this, &exprs](auto... Is) {
       assignment_impl(std::tuple_cat(make_assignment_pair(
-          std::get<Is>(results_), std::get<Is>(exprs.expressions_))...));
+          as_operation_cl(std::get<Is>(results_)),
+          as_operation_cl(std::get<Is>(exprs.expressions_)))...));
     });
   }
 
@@ -302,7 +303,8 @@ class results_cl {
   void operator+=(const expressions_cl<T_expressions...>& exprs) {
     index_apply<sizeof...(T_expressions)>([this, &exprs](auto... Is) {
       auto tmp = std::tuple_cat(make_assignment_pair(
-          std::get<Is>(results_), std::get<Is>(exprs.expressions_))...);
+          as_operation_cl(std::get<Is>(results_)),
+          as_operation_cl(std::get<Is>(exprs.expressions_)))...);
       index_apply<std::tuple_size<decltype(tmp)>::value>(
           [this, &tmp](auto... Is2) {
             assignment_impl(std::make_tuple(std::make_pair(
@@ -498,10 +500,9 @@ class results_cl {
             require_all_not_same_t<scalar_<char>, T_expression>* = nullptr>
   static auto make_assignment_pair(T_result&& result,
                                    T_expression&& expression) {
-    return std::make_tuple(
-        std::pair<as_operation_cl_t<T_result>, as_operation_cl_t<T_expression>>(
-            as_operation_cl(std::forward<T_result>(result)),
-            as_operation_cl(std::forward<T_expression>(expression))));
+    return std::make_tuple(std::pair<T_result, T_expression>(
+        std::forward<T_result>(result),
+        std::forward<T_expression>(expression)));
   }
 
   /**
