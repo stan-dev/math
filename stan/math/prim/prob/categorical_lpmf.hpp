@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/size_mvt.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <cmath>
 #include <vector>
 
@@ -17,10 +18,11 @@ template <bool propto, typename T_n, typename T_prob>
 return_type_t<T_prob> categorical_lpmf(const T_n& n, const T_prob& theta) {
   static const char* function = "categorical_lpmf";
 
+  decltype(auto) theta_ref = to_ref(theta);
   scalar_seq_view<T_n> n_vec(n);
-  vector_seq_view<T_prob> theta_vec(theta);
+  vector_seq_view<T_prob> theta_vec(theta_ref);
 
-  size_t vec_size = std::max(stan::math::size(n), stan::math::size_mvt(theta));
+  size_t vec_size = std::max(stan::math::size(n), stan::math::size_mvt(theta_ref));
 
   for (size_t i = 0; i < vec_size; ++i) {
     check_bounded(function, "Number of categories", n, 1, theta_vec[i].size());
@@ -31,9 +33,9 @@ return_type_t<T_prob> categorical_lpmf(const T_n& n, const T_prob& theta) {
     return 0.0;
   }
 
-  using T_plain = plain_type_t<decltype(theta)>;
+  using T_plain = plain_type_t<decltype(theta_ref)>;
 
-  T_plain log_theta = log(theta);
+  T_plain log_theta = log(theta_ref);
   vector_seq_view<T_plain> log_theta_vec(log_theta);
 
   return_type_t<T_prob> lp(0);

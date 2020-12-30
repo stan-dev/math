@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/size_mvt.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <vector>
 
 namespace stan {
@@ -18,10 +19,11 @@ template <bool propto, typename T_n, typename T_prob>
 return_type_t<T_prob> categorical_logit_lpmf(const T_n& n, const T_prob& beta) {
   static const char* function = "categorical_logit_lpmf";
 
+  decltype(auto) beta_ref = to_ref(beta);
   scalar_seq_view<T_n> n_vec(n);
-  vector_seq_view<T_prob> beta_vec(beta);
+  vector_seq_view<T_prob> beta_vec(beta_ref);
 
-  size_t vec_size = std::max(stan::math::size(n), stan::math::size_mvt(beta));
+  size_t vec_size = std::max(stan::math::size(n), stan::math::size_mvt(beta_ref));
 
   for (size_t i = 0; i < vec_size; ++i) {
     check_bounded(function, "categorical outcome out of support", n, 1,
@@ -33,9 +35,9 @@ return_type_t<T_prob> categorical_logit_lpmf(const T_n& n, const T_prob& beta) {
     return 0.0;
   }
 
-  using T_plain = plain_type_t<decltype(beta)>;
+  using T_plain = plain_type_t<decltype(beta_ref)>;
 
-  T_plain log_softmax_beta = log_softmax(beta);
+  T_plain log_softmax_beta = log_softmax(beta_ref);
   vector_seq_view<T_plain> log_softmax_beta_vec(log_softmax_beta);
 
   return_type_t<T_prob> lp(0);
