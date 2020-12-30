@@ -285,8 +285,7 @@ class results_cl {
   void operator=(const expressions_cl<T_expressions...>& exprs) {
     index_apply<sizeof...(T_expressions)>([this, &exprs](auto... Is) {
       assignment_impl(std::tuple_cat(make_assignment_pair(
-          as_operation_cl(std::get<Is>(results_)),
-          as_operation_cl(std::get<Is>(exprs.expressions_)))...));
+          std::get<Is>(results_), std::get<Is>(exprs.expressions_))...));
     });
   }
 
@@ -303,8 +302,7 @@ class results_cl {
   void operator+=(const expressions_cl<T_expressions...>& exprs) {
     index_apply<sizeof...(T_expressions)>([this, &exprs](auto... Is) {
       auto tmp = std::tuple_cat(make_assignment_pair(
-          as_operation_cl(std::get<Is>(results_)),
-          as_operation_cl(std::get<Is>(exprs.expressions_)))...);
+          std::get<Is>(results_), std::get<Is>(exprs.expressions_))...);
       index_apply<std::tuple_size<decltype(tmp)>::value>(
           [this, &tmp](auto... Is2) {
             assignment_impl(std::make_tuple(std::make_pair(
@@ -328,8 +326,7 @@ class results_cl {
       const expressions_cl<T_expressions...>& exprs) {
     return index_apply<sizeof...(T_expressions)>([this, &exprs](auto... Is) {
       return get_kernel_source_impl(std::tuple_cat(make_assignment_pair(
-          as_operation_cl(std::get<Is>(results_)),
-          as_operation_cl(std::get<Is>(exprs.expressions_)))...));
+          std::get<Is>(results_), std::get<Is>(exprs.expressions_))...));
     });
   }
 
@@ -497,12 +494,14 @@ class results_cl {
    * @return a tuple of pair of result and expression
    */
   template <typename T_result, typename T_expression,
-            require_all_not_same_t<scalar_<char>, T_expression>* = nullptr>
+            require_all_not_t<is_without_output<T_expression>,
+                              internal::is_scalar_check<T_result>>* = nullptr>
   static auto make_assignment_pair(T_result&& result,
                                    T_expression&& expression) {
-    return std::make_tuple(std::pair<T_result, T_expression>(
-        std::forward<T_result>(result),
-        std::forward<T_expression>(expression)));
+    return std::make_tuple(
+        std::pair<as_operation_cl_t<T_result>, as_operation_cl_t<T_expression>>(
+            as_operation_cl(std::forward<T_result>(result)),
+            as_operation_cl(std::forward<T_expression>(expression))));
   }
 
   /**
@@ -511,14 +510,10 @@ class results_cl {
    * @param expression expression
    * @return a tuple of pair of result and expression
    */
-  template <typename T_result, typename T_expression>
+  template <typename T_result, typename T_expression,
+            require_t<is_without_output<T_expression>>* = nullptr>
   static auto make_assignment_pair(T_result&& result,
-                                   calc_if_<false, T_expression>&& expression) {
-    return std::make_tuple();
-  }
-  template <typename T_result, typename T_expression>
-  static auto make_assignment_pair(
-      T_result&& result, const calc_if_<false, T_expression>& expression) {
+                                   T_expression&& expression) {
     return std::make_tuple();
   }
 
@@ -529,11 +524,10 @@ class results_cl {
    * @param pass bool scalar
    * @return an empty tuple
    */
-  template <typename Scal>
-  static std::tuple<> make_assignment_pair(
-      const check_cl_<scalar_<Scal>>& result,
-      const stan::math::scalar_<char>& pass) {
-    if (!pass.a_) {
+  template <typename T_check, typename T_pass,
+            require_t<internal::is_scalar_check<T_check>>* = nullptr>
+  static std::tuple<> make_assignment_pair(T_check&& result, T_pass&& pass) {
+    if (!pass) {
       std::stringstream s;
       s << result.function_ << ": " << result.err_variable_ << " = "
         << result.arg_.a_ << ", but it must be " << result.must_be_ << "!";
