@@ -117,9 +117,11 @@ inline void elementwise_check(const F& is_good, const char* function,
                               const char* name, const T& x, const char* must_be,
                               const Indexings&... indexings) {
   if (unlikely(!is_good(value_of_rec(x)))) {
-    internal::elementwise_throw_domain_error(function, ": ", name, indexings...,
-                                             " is ", x, ", but must be ",
-                                             must_be, "!");
+    [&]() STAN_COLD_PATH {
+      internal::elementwise_throw_domain_error(function, ": ", name,
+                                               indexings..., " is ", x,
+                                               ", but must be ", must_be, "!");
+    }();
   }
 }
 /**
@@ -151,23 +153,25 @@ inline void elementwise_check(const F& is_good, const char* function,
   for (size_t i = 0; i < x.size(); i++) {
     auto scal = value_of_rec(x.coeff(i));
     if (unlikely(!is_good(scal))) {
-      if (is_eigen_vector<T>::value) {
-        internal::elementwise_throw_domain_error(
-            function, ": ", name, indexings..., "[", i + error_index::value,
-            "] is ", scal, ", but must be ", must_be, "!");
-      } else if (Eigen::internal::traits<T>::Flags & Eigen::RowMajorBit) {
-        internal::elementwise_throw_domain_error(
-            function, ": ", name, indexings..., "[",
-            i / x.cols() + error_index::value, ", ",
-            i % x.cols() + error_index::value, "] is ", scal, ", but must be ",
-            must_be, "!");
-      } else {
-        internal::elementwise_throw_domain_error(
-            function, ": ", name, indexings..., "[",
-            i % x.rows() + error_index::value, ", ",
-            i / x.rows() + error_index::value, "] is ", scal, ", but must be ",
-            must_be, "!");
-      }
+      [&]() STAN_COLD_PATH {
+        if (is_eigen_vector<T>::value) {
+          internal::elementwise_throw_domain_error(
+              function, ": ", name, indexings..., "[", i + error_index::value,
+              "] is ", scal, ", but must be ", must_be, "!");
+        } else if (Eigen::internal::traits<T>::Flags & Eigen::RowMajorBit) {
+          internal::elementwise_throw_domain_error(
+              function, ": ", name, indexings..., "[",
+              i / x.cols() + error_index::value, ", ",
+              i % x.cols() + error_index::value, "] is ", scal,
+              ", but must be ", must_be, "!");
+        } else {
+          internal::elementwise_throw_domain_error(
+              function, ": ", name, indexings..., "[",
+              i % x.rows() + error_index::value, ", ",
+              i / x.rows() + error_index::value, "] is ", scal,
+              ", but must be ", must_be, "!");
+        }
+      }();
     }
   }
 }
@@ -204,10 +208,12 @@ inline void elementwise_check(const F& is_good, const char* function,
     for (size_t j = 0; j < x.cols(); j++) {
       auto scal = value_of_rec(x.coeff(i, j));
       if (unlikely(!is_good(scal))) {
-        internal::elementwise_throw_domain_error(
-            function, ": ", name, indexings..., "[", i + error_index::value,
-            ", ", j + error_index::value, "] is ", scal, ", but must be ",
-            must_be, "!");
+        [&]() STAN_COLD_PATH {
+          internal::elementwise_throw_domain_error(
+              function, ": ", name, indexings..., "[", i + error_index::value,
+              ", ", j + error_index::value, "] is ", scal, ", but must be ",
+              must_be, "!");
+        }();
       }
     }
   }
@@ -245,10 +251,12 @@ inline void elementwise_check(const F& is_good, const char* function,
     for (size_t i = 0; i < x.rows(); i++) {
       auto scal = value_of_rec(x.coeff(i, j));
       if (unlikely(!is_good(scal))) {
-        internal::elementwise_throw_domain_error(
-            function, ": ", name, indexings..., "[", i + error_index::value,
-            ", ", j + error_index::value, "] is ", scal, ", but must be ",
-            must_be, "!");
+        [&]() STAN_COLD_PATH {
+          internal::elementwise_throw_domain_error(
+              function, ": ", name, indexings..., "[", i + error_index::value,
+              ", ", j + error_index::value, "] is ", scal, ", but must be ",
+              must_be, "!");
+        }();
       }
     }
   }

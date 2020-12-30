@@ -91,10 +91,6 @@ class arena_matrix_cl {
   // Wrapers to functions with explicit template parameters are implemented
   // without macros.
   template <matrix_cl_view matrix_view = matrix_cl_view::Entire>
-  inline void zeros() {
-    impl_->template zeros<matrix_view>();
-  }
-  template <matrix_cl_view matrix_view = matrix_cl_view::Entire>
   inline void zeros_strict_tri() {
     impl_->template zeros_strict_tri<matrix_view>();
   }
@@ -141,7 +137,6 @@ class arena_matrix_cl {
   ARENA_MATRIX_CL_CONST_FUNCTION_WRAPPER(wait_for_read_write_events)
   ARENA_MATRIX_CL_CONST_FUNCTION_WRAPPER(buffer)
   ARENA_MATRIX_CL_FUNCTION_WRAPPER(buffer)
-  ARENA_MATRIX_CL_FUNCTION_WRAPPER(sub_block)
   ARENA_MATRIX_CL_FUNCTION_WRAPPER(operator=)
 
 #undef ARENA_MATRIX_CL_FUNCTION_WRAPPER

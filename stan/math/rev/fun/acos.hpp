@@ -16,16 +16,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class acos_vari : public op_v_vari {
- public:
-  explicit acos_vari(vari* avi) : op_v_vari(std::acos(avi->val_), avi) {}
-  void chain() {
-    avi_->adj_ -= adj_ / std::sqrt(1.0 - (avi_->val_ * avi_->val_));
-  }
-};
-}  // namespace internal
-
 /**
  * Return the principal value of the arc cosine of a variable,
  * in radians (cmath).
@@ -62,7 +52,27 @@ class acos_vari : public op_v_vari {
  * @param x argument
  * @return Arc cosine of variable, in radians.
  */
-inline var acos(const var& x) { return var(new internal::acos_vari(x.vi_)); }
+inline var acos(const var& x) {
+  return make_callback_var(std::acos(x.val()), [x](const auto& vi) mutable {
+    x.adj() -= vi.adj() / std::sqrt(1.0 - (x.val() * x.val()));
+  });
+}
+
+/**
+ * Return the principal value of the arc cosine of a variable,
+ * in radians (cmath).
+ *
+ * @param x a `var_value` with inner Eigen type
+ * @return Arc cosine of variable, in radians.
+ */
+template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
+inline auto acos(const VarMat& x) {
+  return make_callback_var(
+      x.val().array().acos().matrix(), [x](const auto& vi) mutable {
+        x.adj().array()
+            -= vi.adj().array() / (1.0 - (x.val().array().square())).sqrt();
+      });
+}
 
 /**
  * Return the arc cosine of the complex argument.
