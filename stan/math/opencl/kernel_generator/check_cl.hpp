@@ -14,7 +14,7 @@
 namespace stan {
 namespace math {
 
-//forward declarations
+// forward declarations
 template <typename... T_expressions>
 class expressions_cl;
 template <typename... T_expressions>
