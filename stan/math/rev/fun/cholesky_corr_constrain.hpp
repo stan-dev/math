@@ -62,7 +62,7 @@ var_value<Eigen::MatrixXd> cholesky_corr_constrain(const T& y, int K) {
       for (int j = i - 1; j > 0; --j) {
         x.adj().coeffRef(i, j) += 2 * sum_sqs_adj * x.val().coeff(i, j);
         sum_sqs_val -= square(x.val().coeff(i, j));
-	k--;
+        k--;
         sum_sqs_adj += -0.5 * x.adj().coeffRef(i, j) * z.val().coeff(k)
                        / sqrt(1.0 - sum_sqs_val);
         z.adj().coeffRef(k) += x.adj().coeffRef(i, j) * sqrt(1.0 - sum_sqs_val);
@@ -133,7 +133,7 @@ var_value<Eigen::MatrixXd> cholesky_corr_constrain(const T& y, int K,
         x.adj().coeffRef(i, j) += 2 * sum_sqs_adj * x.val().coeff(i, j);
         sum_sqs_val -= square(x.val().coeff(i, j));
 
-	k--;
+        k--;
         sum_sqs_adj += -0.5 * x.adj().coeffRef(i, j) * z.val().coeff(k)
                        / sqrt(1.0 - sum_sqs_val);
         z.adj().coeffRef(k) += x.adj().coeffRef(i, j) * sqrt(1.0 - sum_sqs_val);
