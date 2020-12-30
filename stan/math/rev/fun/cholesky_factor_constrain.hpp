@@ -42,7 +42,8 @@ var_value<Eigen::MatrixXd> cholesky_factor_constrain(const T& x, int M, int N) {
   for (int m = 0; m < N; ++m) {
     y_val.row(m).head(m) = x.val().segment(pos, m);
     pos += m;
-    y_val.coeffRef(m, m) = exp(x.val().coeff(pos++));
+    y_val.coeffRef(m, m) = exp(x.val().coeff(pos));
+    pos++;
   }
 
   for (int m = N; m < M; ++m) {
@@ -60,7 +61,8 @@ var_value<Eigen::MatrixXd> cholesky_factor_constrain(const T& x, int M, int N) {
     }
 
     for (int m = N - 1; m >= 0; --m) {
-      x.adj().coeffRef(--pos) += y.adj().coeff(m, m) * y.val().coeff(m, m);
+      pos--;
+      x.adj().coeffRef(pos) += y.adj().coeff(m, m) * y.val().coeff(m, m);
       pos -= m;
       x.adj().segment(pos, m) += y.adj().row(m).head(m);
     }
@@ -94,7 +96,8 @@ var_value<Eigen::MatrixXd> cholesky_factor_constrain(const T& x, int M, int N,
   double lp_val = 0.0;
   for (int n = 0; n < N; ++n) {
     pos += n;
-    lp_val += x.val().coeff(pos++);
+    lp_val += x.val().coeff(pos);
+    pos++;
   }
   lp += lp_val;
 
@@ -102,7 +105,8 @@ var_value<Eigen::MatrixXd> cholesky_factor_constrain(const T& x, int M, int N,
     int pos = 0;
     for (int n = 0; n < N; ++n) {
       pos += n;
-      x.adj().coeffRef(pos++) += lp.adj();
+      x.adj().coeffRef(pos) += lp.adj();
+      pos++;
     }
   });
 
