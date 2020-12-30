@@ -2,12 +2,12 @@
 #define STAN_MATH_OPENCL_PRIM_ORDERED_LOGISTIC_GLM_LPMF_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/opencl/rev/size.hpp>
+#include <stan/math/opencl/prim/size.hpp>
 #include <stan/math/opencl/rev/operands_and_partials.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/multiply.hpp>
+#include <stan/math/opencl/prim/multiply.hpp>
 #include <stan/math/opencl/kernels/ordered_logistic_glm_lpmf.hpp>
 
 #include <stan/math/prim/meta.hpp>
@@ -74,8 +74,8 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
 
   const auto& cuts_val = eval(value_of(cuts));
   if (N_classes >= 2) {
-    auto cuts_head = block(cuts_val, 0, 0, size(cuts) - 1, 1);
-    auto cuts_tail = block(cuts_val, 1, 0, size(cuts) - 1, 1);
+    auto cuts_head = block_zero_based(cuts_val, 0, 0, size(cuts) - 1, 1);
+    auto cuts_tail = block_zero_based(cuts_val, 1, 0, size(cuts) - 1, 1);
     check_cl(function, "Cuts", cuts_head, "ordered and finite")
         = cuts_head < cuts_tail && isfinite(cuts_head) && isfinite(cuts_tail);
   } else {

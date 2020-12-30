@@ -118,7 +118,7 @@
 #include <stan/math/opencl/kernel_generator/binary_operation.hpp>
 #include <stan/math/opencl/kernel_generator/elt_function_cl.hpp>
 #include <stan/math/opencl/kernel_generator/unary_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/block.hpp>
+#include <stan/math/opencl/kernel_generator/block_zero_based.hpp>
 #include <stan/math/opencl/kernel_generator/select.hpp>
 #include <stan/math/opencl/kernel_generator/rowwise_reduction.hpp>
 #include <stan/math/opencl/kernel_generator/colwise_reduction.hpp>

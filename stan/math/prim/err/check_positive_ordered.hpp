@@ -33,12 +33,14 @@ void check_positive_ordered(const char* function, const char* name,
 
   const auto& y_ref = to_ref(y);
   if (y_ref[0] < 0) {
-    std::ostringstream msg;
-    msg << "is not a valid positive_ordered vector."
-        << " The element at " << stan::error_index::value << " is ";
-    std::string msg_str(msg.str());
-    throw_domain_error(function, name, y_ref[0], msg_str.c_str(),
-                       ", but should be postive.");
+    [&]() STAN_COLD_PATH {
+      std::ostringstream msg;
+      msg << "is not a valid positive_ordered vector."
+          << " The element at " << stan::error_index::value << " is ";
+      std::string msg_str(msg.str());
+      throw_domain_error(function, name, y_ref[0], msg_str.c_str(),
+                         ", but should be postive.");
+    }();
   }
   check_ordered(function, name, y_ref);
 }
