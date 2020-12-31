@@ -4,17 +4,20 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/opencl/kernels/device_functions/binomial_coefficient_log.hpp>
+#include <stan/math/opencl/kernels/device_functions/beta.hpp>
 #include <stan/math/opencl/kernels/device_functions/digamma.hpp>
+#include <stan/math/opencl/kernels/device_functions/inv_logit.hpp>
+#include <stan/math/opencl/kernels/device_functions/inv_square.hpp>
 #include <stan/math/opencl/kernels/device_functions/lbeta.hpp>
 #include <stan/math/opencl/kernels/device_functions/lgamma_stirling.hpp>
 #include <stan/math/opencl/kernels/device_functions/lgamma_stirling_diff.hpp>
+#include <stan/math/opencl/kernels/device_functions/log_inv_logit.hpp>
+#include <stan/math/opencl/kernels/device_functions/log1m.hpp>
 #include <stan/math/opencl/kernels/device_functions/log1m_exp.hpp>
 #include <stan/math/opencl/kernels/device_functions/log1m_inv_logit.hpp>
 #include <stan/math/opencl/kernels/device_functions/log1p_exp.hpp>
 #include <stan/math/opencl/kernels/device_functions/logit.hpp>
 #include <stan/math/opencl/kernels/device_functions/multiply_log.hpp>
-#include <stan/math/opencl/kernels/device_functions/inv_logit.hpp>
-#include <stan/math/opencl/kernels/device_functions/inv_square.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/kernel_generator/common_return_scalar.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
@@ -291,6 +294,9 @@ ADD_UNARY_FUNCTION_PASS_ZERO(trunc)
 
 ADD_UNARY_FUNCTION_WITH_INCLUDES(digamma,
                                  opencl_kernels::digamma_device_function)
+ADD_UNARY_FUNCTION_WITH_INCLUDES(log1m, opencl_kernels::log1m_device_function)
+ADD_UNARY_FUNCTION_WITH_INCLUDES(log_inv_logit,
+                                 opencl_kernels::log_inv_logit_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(log1m_exp,
                                  opencl_kernels::log1m_exp_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(log1p_exp,
@@ -310,6 +316,8 @@ ADD_CLASSIFICATION_FUNCTION(isnan,
                             this->template get_arg<0>().extreme_diagonals())
 
 ADD_BINARY_FUNCTION_WITH_INCLUDES(pow)
+ADD_BINARY_FUNCTION_WITH_INCLUDES(
+    beta, stan::math::opencl_kernels::beta_device_function)
 ADD_BINARY_FUNCTION_WITH_INCLUDES(
     lbeta, stan::math::opencl_kernels::lgamma_stirling_device_function,
     stan::math::opencl_kernels::lgamma_stirling_diff_device_function,

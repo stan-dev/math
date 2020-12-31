@@ -50,6 +50,8 @@ TEST_UNARY_FUNCTION(log)
 TEST_UNARY_FUNCTION(log2)
 TEST_UNARY_FUNCTION(log10)
 TEST_UNARY_FUNCTION(log1p)
+TEST_UNARY_FUNCTION(log1m)
+TEST_UNARY_FUNCTION(log_inv_logit)
 
 TEST_UNARY_FUNCTION(sin)
 TEST_UNARY_FUNCTION(sinh)
@@ -229,6 +231,7 @@ TEST(KernelGenerator, multiple_operations_with_includes_test) {
   }
 
 TEST_BINARY_FUNCTION(pow)
+TEST_BINARY_FUNCTION(beta)
 TEST_BINARY_FUNCTION(lbeta)
 TEST_BINARY_FUNCTION(binomial_coefficient_log)
 TEST_BINARY_FUNCTION(multiply_log)

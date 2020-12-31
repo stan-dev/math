@@ -6,7 +6,6 @@
 #include <stan/math/opencl/err/check_nan.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
-#include <stan/math/opencl/diagonal_multiply.hpp>
 #include <stan/math/opencl/triangular_transpose.hpp>
 
 namespace stan {
@@ -61,7 +60,7 @@ inline var_value<matrix_cl<double>> cholesky_decompose(
       D_adj.triangular_transpose<TriangularMapCL::LowerToUpper>();
 
       R_adj = R_adj - transpose(C_adj) * B_val - D_adj * R_val;
-      D_adj = diagonal_multiply(D_adj, 0.5);
+      diagonal(D_adj) = diagonal(D_adj) * 0.5;
 
       block_zero_based(A_adj, j, j, k_j_ind, k_j_ind) = D_adj;
     }
