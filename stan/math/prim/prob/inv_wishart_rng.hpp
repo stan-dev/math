@@ -20,7 +20,9 @@ inline Eigen::MatrixXd inv_wishart_rng(double nu, const Eigen::MatrixXd& S,
   check_symmetric(function, "scale parameter", S);
 
   MatrixXd S_inv = MatrixXd::Identity(k, k);
-  S_inv = S.ldlt().solve(S_inv);
+  Eigen::LDLT<Eigen::MatrixXd> ldlt_of_S = S.ldlt();
+  check_pos_definite("inv_wishart_rng", "scale parameter", ldlt_of_S);
+  S_inv = ldlt_of_S.solve(S_inv);
   MatrixXd asym = inverse_spd(wishart_rng(nu, S_inv, rng));
   return 0.5 * (asym.transpose() + asym);  // ensure symmetry
 }

@@ -6,7 +6,7 @@
 #include <stdexcept>
 #include <vector>
 
-TEST(ProbDistributionsWishartRng, rng) {
+TEST(ProbDistributionsWishart, rng) {
   using Eigen::MatrixXd;
   using stan::math::wishart_rng;
 
@@ -24,7 +24,25 @@ TEST(ProbDistributionsWishartRng, rng) {
   EXPECT_THROW(wishart_rng(3.0, sigma, rng), std::domain_error);
 }
 
-TEST(probdistributionsWishartRng, symmetry) {
+TEST(ProbDistributionsWishart, rng_pos_def) {
+  using Eigen::MatrixXd;
+  using stan::math::wishart_rng;
+
+  boost::random::mt19937 rng;
+
+  MatrixXd Sigma(2, 2);
+  MatrixXd Sigma_non_pos_def(2, 2);
+
+  Sigma << 1, 0, 0, 1;
+  Sigma_non_pos_def << -1, 0, 0, 1;
+
+  unsigned int dof = 5;
+
+  EXPECT_NO_THROW(wishart_rng(dof, Sigma, rng));
+  EXPECT_THROW(wishart_rng(dof, Sigma_non_pos_def, rng), std::domain_error);
+}
+
+TEST(ProbDistributionsWishart, rng_symmetry) {
   using Eigen::MatrixXd;
   using stan::math::wishart_rng;
   using stan::test::unit::expect_symmetric;

@@ -39,6 +39,30 @@ TEST(ProbDistributionsWishart, wishart_symmetry) {
   EXPECT_THROW(wishart_log(Y, dof, Sigma_non_sym), std::domain_error);
 }
 
+TEST(ProbDistributionsWishart, wishart_pos_def) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+
+  using Eigen::MatrixXd;
+  using stan::math::wishart_log;
+
+  MatrixXd Sigma(2, 2);
+  MatrixXd Sigma_non_pos_def(2, 2);
+  MatrixXd Y(2, 2);
+  MatrixXd Y_non_pos_def(2, 2);
+
+  Sigma << 1, 0, 0, 1;
+  Sigma_non_pos_def << -1, 0, 0, 1;
+  Y << 1, 0, 0, 1;
+  Y_non_pos_def << -1, 0, 0, 1;
+
+  unsigned int dof = 5;
+
+  EXPECT_NO_THROW(wishart_log(Y, dof, Sigma));
+  EXPECT_THROW(wishart_log(Y_non_pos_def, dof, Sigma), std::domain_error);
+  EXPECT_THROW(wishart_log(Y, dof, Sigma_non_pos_def), std::domain_error);
+}
+
 TEST(ProbDistributionsWishart, 2x2) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
