@@ -425,8 +425,8 @@ void expect_ad_matvar_impl(const ad_tolerances& tols, const F& f,
       std::conditional_t<is_var<Types>::value,
                          return_var_matrix_t<EigMats, Types>, EigMats>(x)...);
 
-  decltype(stan::math::apply(f, A_mv_tuple)) A_mv_f;
-  decltype(stan::math::apply(f, A_vm_tuple)) A_vm_f;
+  plain_type_t<decltype(stan::math::apply(f, A_mv_tuple))> A_mv_f;
+  plain_type_t<decltype(stan::math::apply(f, A_vm_tuple))> A_vm_f;
 
   stan::math::apply([&](auto&&... args) { check_return_type(A_mv_f, args...); },
                     A_mv_tuple);
@@ -662,12 +662,16 @@ void expect_ad_matvar(const F& f, const EigMat1& x, const EigMat2& y,
 }
 ///@}
 
-/**
+/** @name expect_ad_vector_matvar
  * For a vectorized unary function, check
  * that calculations with Eigen matrices of vars and vars with
  * inner Eigen type return the same values and adjoints on
  * matrices, vectors, row vectors and `std::vector` s of those
  * types.
+ */
+///@{
+/**
+ * Overload with manually specified tolerances
  *
  * @tparam F Type of function to test
  * @tparam EigVec Test input type
@@ -697,6 +701,23 @@ void expect_ad_vector_matvar(const ad_tolerances& tols, const F& f,
   expect_ad_matvar(f, rv);
   expect_ad_matvar(f, mv);
 }
+
+/**
+ * Overload with default tolerances
+ *
+ * @tparam F Type of function to test
+ * @tparam EigVec Test input type
+ * @param tols Test tolerances
+ * @param f Function to test
+ * @param x Test input
+ */
+template <typename F, typename EigVec,
+          require_eigen_vector_t<EigVec>* = nullptr>
+void expect_ad_vector_matvar(const F& f, const EigVec& x) {
+  ad_tolerances tols;
+  expect_ad_vector_matvar(tols, f, x);
+}
+///@}
 
 }  // namespace test
 }  // namespace stan

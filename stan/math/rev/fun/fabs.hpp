@@ -81,10 +81,13 @@ inline auto fabs(const VarMat& a) {
                                  const auto x = a.val().coeffRef(i, j);
                                  if (unlikely(is_nan(x))) {
                                    a.adj().coeffRef(i, j) = NOT_A_NUMBER;
+                                 } else if(x < 0.0) {
+                                   a.adj().coeffRef(i, j)
+				     -= vi.adj_.coeff(i, j);
                                  } else {
                                    a.adj().coeffRef(i, j)
-                                       -= vi.adj_.coeff(i, j);
-                                 }
+				     += vi.adj_.coeff(i, j);
+				 }
                                }
                              }
                            });
