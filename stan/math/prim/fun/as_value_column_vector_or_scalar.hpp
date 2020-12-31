@@ -64,8 +64,9 @@ inline auto as_value_column_vector_or_scalar(T&& a) {
       = std::conditional_t<std::is_const<std::remove_reference_t<T>>::value,
                            const plain_vector, plain_vector>;
   using T_map = Eigen::Map<optionally_const_vector>;
-  return make_holder([](auto&& x) { return value_of(T_map(x.data(), x.size())); },
-                     std::forward<T>(a));
+  return make_holder(
+      [](auto&& x) { return value_of(T_map(x.data(), x.size())); },
+      std::forward<T>(a));
 }
 
 }  // namespace math

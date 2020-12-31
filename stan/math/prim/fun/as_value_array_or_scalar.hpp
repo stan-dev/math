@@ -30,11 +30,11 @@ inline auto as_value_array_or_scalar(T&& v) {
  * @return Matrix converted to an array.
  */
 template <typename T, require_matrix_t<T>* = nullptr,
- require_not_st_arithmetic<T>* = nullptr>
+          require_not_st_arithmetic<T>* = nullptr>
 inline auto as_value_array_or_scalar(T&& v) {
-  return make_holder([](auto&& x) {
-    return value_of(std::forward<decltype(x)>(x));
-  }, std::forward<T>(v));
+  return make_holder(
+      [](auto&& x) { return value_of(std::forward<decltype(x)>(x)); },
+      std::forward<T>(v));
 }
 
 /**
@@ -45,7 +45,7 @@ inline auto as_value_array_or_scalar(T&& v) {
  * @return Matrix converted to an array.
  */
 template <typename T, require_matrix_t<T>* = nullptr,
- require_st_arithmetic<T>* = nullptr>
+          require_st_arithmetic<T>* = nullptr>
 inline auto as_value_array_or_scalar(T&& v) {
   return as_array_or_scalar(std::forward<T>(v));
 }
@@ -61,9 +61,9 @@ template <typename T, require_std_vector_t<T>* = nullptr>
 inline auto as_value_array_or_scalar(T&& v) {
   using T_map
       = Eigen::Map<const Eigen::Array<value_type_t<T>, Eigen::Dynamic, 1>>;
-  return make_holder([](auto&& x) { return value_of(T_map(x.data(), x.size())); },
-                     std::forward<T>(v));
-
+  return make_holder(
+      [](auto&& x) { return value_of(T_map(x.data(), x.size())); },
+      std::forward<T>(v));
 }
 
 }  // namespace math

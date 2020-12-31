@@ -30,7 +30,7 @@ inline auto as_value_column_array_or_scalar(const T& a) {
  * @return Same vector.
  */
 template <typename T, require_col_vector_t<T>* = nullptr,
- require_not_st_arithmetic<T>* = nullptr>
+          require_not_st_arithmetic<T>* = nullptr>
 inline auto as_value_column_array_or_scalar(T&& a) {
   return value_of(std::forward<T>(a)).array();
 }
@@ -44,7 +44,7 @@ inline auto as_value_column_array_or_scalar(T&& a) {
  * @return Same vector.
  */
 template <typename T, require_col_vector_t<T>* = nullptr,
- require_st_arithmetic<T>* = nullptr>
+          require_st_arithmetic<T>* = nullptr>
 inline auto as_value_column_array_or_scalar(T&& a) {
   return std::forward<T>(a).array();
 }
@@ -94,8 +94,9 @@ inline auto as_value_column_array_or_scalar(T&& a) {
       = std::conditional_t<std::is_const<std::remove_reference_t<T>>::value,
                            const plain_vector, plain_vector>;
   using T_map = Eigen::Map<optionally_const_vector>;
-  return make_holder([](auto&& x) { return value_of(T_map(x.data(), x.size())); },
-                     std::forward<T>(a));
+  return make_holder(
+      [](auto&& x) { return value_of(T_map(x.data(), x.size())); },
+      std::forward<T>(a));
 }
 
 }  // namespace math
