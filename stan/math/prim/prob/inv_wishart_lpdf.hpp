@@ -80,8 +80,8 @@ return_type_t<T_y, T_dof, T_scale> inv_wishart_lpdf(const T_y& W,
     lp -= 0.5 * (nu_ref + k + 1.0) * log_determinant_ldlt(ldlt_W);
   }
   if (include_summand<propto, T_y, T_scale>::value) {
-    Matrix<return_type_t<T_y, T_scale>, Dynamic, Dynamic>
-        Winv_S(mdivide_left_ldlt(ldlt_W, S_ref));
+    Matrix<return_type_t<T_y, T_scale>, Dynamic, Dynamic> Winv_S(
+        mdivide_left_ldlt(ldlt_W, S_ref));
     lp -= 0.5 * trace(Winv_S);
   }
   if (include_summand<propto, T_dof, T_scale>::value) {
