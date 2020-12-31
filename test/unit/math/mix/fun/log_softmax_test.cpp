@@ -1,5 +1,4 @@
 #include <test/unit/math/test_ad.hpp>
-#include <test/unit/pretty_print_types.hpp>
 #include <vector>
 
 TEST(MathMixMatFun, logSoftmax) {

@@ -12,7 +12,9 @@ template <typename T, typename F>
 struct callback_vari : public vari_value<T> {
   F rev_functor_;
 
-  explicit callback_vari(T&& value, F&& rev_functor)
+  template <typename S,
+            require_same_t<plain_type_t<T>, plain_type_t<S>>* = nullptr>
+  explicit callback_vari(S&& value, F&& rev_functor)
       : vari_value<T>(std::move(value)),
         rev_functor_(std::forward<F>(rev_functor)) {}
 
@@ -38,8 +40,7 @@ struct callback_vari : public vari_value<T> {
 template <typename T, typename F>
 internal::callback_vari<plain_type_t<T>, F>* make_callback_vari(T&& value,
                                                                 F&& functor) {
-  return new internal::callback_vari<plain_type_t<T>, F>(
-      std::move(value), std::forward<F>(functor));
+  return new internal::callback_vari<plain_type_t<T>, F>(std::move(value), std::forward<F>(functor));
 }
 
 /**
