@@ -142,127 +142,142 @@ inline var trace_gen_quad_form(const Td& D, const Ta& A, const Tb& B) {
   check_multiplicable("trace_gen_quad_form", "A", A, "B", B);
   check_multiplicable("trace_gen_quad_form", "B", B, "D", D);
 
-  if(!is_constant<Ta>::value && !is_constant<Tb>::value && !is_constant<Td>::value) {
+  if (!is_constant<Ta>::value && !is_constant<Tb>::value
+      && !is_constant<Td>::value) {
     arena_t<promote_scalar_t<var, Td>> arena_D = D;
     arena_t<promote_scalar_t<var, Ta>> arena_A = A;
     arena_t<promote_scalar_t<var, Tb>> arena_B = B;
 
-    var res = (arena_D.val_op() * arena_B.val_op().transpose() *
-	       arena_A.val_op() * arena_B.val_op()).trace();
+    var res = (arena_D.val_op() * arena_B.val_op().transpose()
+               * arena_A.val_op() * arena_B.val_op())
+                  .trace();
 
     reverse_pass_callback([arena_A, arena_B, arena_D, res]() mutable {
       double C_adj = res.adj();
-      
+
       auto BDT = (arena_B.val_op() * arena_D.val_op().transpose()).eval();
       auto AB = (arena_A.val_op() * arena_B.val_op()).eval();
 
       arena_A.adj() += C_adj * BDT * arena_B.val_op().transpose();
 
       arena_B.adj()
-	+= C_adj * (AB * arena_D.val_op() + arena_A.val_op().transpose() * BDT);
-      
+          += C_adj
+             * (AB * arena_D.val_op() + arena_A.val_op().transpose() * BDT);
+
       arena_D.adj() += C_adj * (AB.transpose() * arena_B.val_op());
     });
 
     return res;
-  } else if(!is_constant<Ta>::value && !is_constant<Tb>::value && is_constant<Td>::value) {
+  } else if (!is_constant<Ta>::value && !is_constant<Tb>::value
+             && is_constant<Td>::value) {
     arena_t<promote_scalar_t<double, Td>> arena_D = value_of(D);
     arena_t<promote_scalar_t<var, Ta>> arena_A = A;
     arena_t<promote_scalar_t<var, Tb>> arena_B = B;
 
-    var res = (arena_D * arena_B.val_op().transpose() *
-	       arena_A.val_op() * arena_B.val_op()).trace();
+    var res = (arena_D * arena_B.val_op().transpose() * arena_A.val_op()
+               * arena_B.val_op())
+                  .trace();
 
     reverse_pass_callback([arena_A, arena_B, arena_D, res]() mutable {
       double C_adj = res.adj();
-      
+
       auto BDT = (arena_B.val_op() * arena_D.transpose()).eval();
 
       arena_A.adj() += C_adj * BDT * arena_B.val_op().transpose();
 
-      arena_B.adj()
-	+= C_adj * (arena_A.val_op() * arena_B.val_op() * arena_D +
-		    arena_A.val_op().transpose() * BDT);
+      arena_B.adj() += C_adj
+                       * (arena_A.val_op() * arena_B.val_op() * arena_D
+                          + arena_A.val_op().transpose() * BDT);
     });
 
     return res;
-  } else if(!is_constant<Ta>::value && is_constant<Tb>::value && !is_constant<Td>::value) {
+  } else if (!is_constant<Ta>::value && is_constant<Tb>::value
+             && !is_constant<Td>::value) {
     arena_t<promote_scalar_t<var, Td>> arena_D = D;
     arena_t<promote_scalar_t<var, Ta>> arena_A = A;
     arena_t<promote_scalar_t<double, Tb>> arena_B = value_of(B);
 
-    var res = (arena_D.val_op() * arena_B.transpose() *
-	       arena_A.val_op() * arena_B).trace();
+    var res
+        = (arena_D.val_op() * arena_B.transpose() * arena_A.val_op() * arena_B)
+              .trace();
 
     reverse_pass_callback([arena_A, arena_B, arena_D, res]() mutable {
       double C_adj = res.adj();
-      
-      arena_A.adj() += C_adj *
-	(arena_B * arena_D.val_op().transpose()) * arena_B.transpose();
-      
-      arena_D.adj() += C_adj *
-	((arena_A.val_op() * arena_B).transpose() * arena_B);
+
+      arena_A.adj() += C_adj * (arena_B * arena_D.val_op().transpose())
+                       * arena_B.transpose();
+
+      arena_D.adj()
+          += C_adj * ((arena_A.val_op() * arena_B).transpose() * arena_B);
     });
 
     return res;
-  } else if(!is_constant<Ta>::value && is_constant<Tb>::value && is_constant<Td>::value) {
+  } else if (!is_constant<Ta>::value && is_constant<Tb>::value
+             && is_constant<Td>::value) {
     arena_t<promote_scalar_t<double, Td>> arena_D = value_of(D);
     arena_t<promote_scalar_t<var, Ta>> arena_A = A;
     arena_t<promote_scalar_t<double, Tb>> arena_B = value_of(B);
 
-    var res = (arena_D * arena_B.transpose() *
-	       arena_A.val_op() * arena_B).trace();
+    var res
+        = (arena_D * arena_B.transpose() * arena_A.val_op() * arena_B).trace();
 
     reverse_pass_callback([arena_A, arena_B, arena_D, res]() mutable {
-      arena_A.adj() += res.adj() * arena_B.val_op() *
-	arena_D.val_op().transpose() *
-	arena_B.val_op().transpose();
+      arena_A.adj() += res.adj() * arena_B.val_op()
+                       * arena_D.val_op().transpose()
+                       * arena_B.val_op().transpose();
     });
 
     return res;
-  } else if(is_constant<Ta>::value && !is_constant<Tb>::value && !is_constant<Td>::value) {
+  } else if (is_constant<Ta>::value && !is_constant<Tb>::value
+             && !is_constant<Td>::value) {
     arena_t<promote_scalar_t<var, Td>> arena_D = D;
     arena_t<promote_scalar_t<double, Ta>> arena_A = value_of(A);
     arena_t<promote_scalar_t<var, Tb>> arena_B = B;
 
-    var res = (arena_D.val_op() * arena_B.val_op().transpose() *
-	       arena_A * arena_B.val_op()).trace();
+    var res = (arena_D.val_op() * arena_B.val_op().transpose() * arena_A
+               * arena_B.val_op())
+                  .trace();
 
     reverse_pass_callback([arena_A, arena_B, arena_D, res]() mutable {
       double C_adj = res.adj();
-      
+
       auto AB = (arena_A * arena_B.val_op()).eval();
 
-      arena_B.adj() += C_adj *
-	(AB * arena_D.val_op() +
-	 arena_A.transpose() * arena_B.val_op() * arena_D.val_op().transpose());
-      
+      arena_B.adj() += C_adj
+                       * (AB * arena_D.val_op()
+                          + arena_A.transpose() * arena_B.val_op()
+                                * arena_D.val_op().transpose());
+
       arena_D.adj() += C_adj * (AB.transpose() * arena_B.val_op());
     });
 
     return res;
-  } else if(is_constant<Ta>::value && !is_constant<Tb>::value && is_constant<Td>::value) {
+  } else if (is_constant<Ta>::value && !is_constant<Tb>::value
+             && is_constant<Td>::value) {
     arena_t<promote_scalar_t<double, Td>> arena_D = value_of(D);
     arena_t<promote_scalar_t<double, Ta>> arena_A = value_of(A);
     arena_t<promote_scalar_t<var, Tb>> arena_B = B;
 
-    var res = (arena_D * arena_B.val_op().transpose() *
-	       arena_A * arena_B.val_op()).trace();
+    var res
+        = (arena_D * arena_B.val_op().transpose() * arena_A * arena_B.val_op())
+              .trace();
 
     reverse_pass_callback([arena_A, arena_B, arena_D, res]() mutable {
-      arena_B.adj() += res.adj() *
-	(arena_A.val_op() * arena_B.val_op() * arena_D.val_op() +
-	 arena_A.val_op().transpose() * arena_B.val_op() * arena_D.val_op().transpose());
+      arena_B.adj() += res.adj()
+                       * (arena_A.val_op() * arena_B.val_op() * arena_D.val_op()
+                          + arena_A.val_op().transpose() * arena_B.val_op()
+                                * arena_D.val_op().transpose());
     });
 
     return res;
-  } else if(is_constant<Ta>::value && is_constant<Tb>::value && !is_constant<Td>::value) {
+  } else if (is_constant<Ta>::value && is_constant<Tb>::value
+             && !is_constant<Td>::value) {
     arena_t<promote_scalar_t<var, Td>> arena_D = D;
     arena_t<promote_scalar_t<double, Ta>> arena_A = value_of(A);
     arena_t<promote_scalar_t<double, Tb>> arena_B = value_of(B);
 
-    var res = (arena_D.val_op() * arena_B.transpose() *
-	       arena_A * arena_B).trace();
+    var res
+        = (arena_D.val_op() * arena_B.transpose() * arena_A * arena_B).trace();
 
     reverse_pass_callback([arena_A, arena_B, arena_D, res]() mutable {
       arena_D.adj() += res.adj() * ((arena_A * arena_B).transpose() * arena_B);
