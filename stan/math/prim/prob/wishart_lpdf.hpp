@@ -64,12 +64,13 @@ return_type_t<T_y, T_dof, T_scale> wishart_lpdf(const T_y& W, const T_dof& nu,
   check_greater(function, "Degrees of freedom parameter", nu_ref, k - 1);
   check_square(function, "random variable", W_ref);
   check_square(function, "scale parameter", S_ref);
+  check_symmetric(function, "random variable", W_ref);
+  check_symmetric(function, "scale parameter", S_ref);
 
-  LDLT_factor<value_type_t<T_y>, Eigen::Dynamic, Eigen::Dynamic> ldlt_W(W_ref);
+  const auto& ldlt_W = make_ldlt_factor<T_y, T_dof, T_scale>(W_ref);
   check_ldlt_factor(function, "LDLT_Factor of random variable", ldlt_W);
 
-  LDLT_factor<value_type_t<T_scale>, Eigen::Dynamic, Eigen::Dynamic> ldlt_S(
-      S_ref);
+  const auto& ldlt_S = make_ldlt_factor<T_scale, T_y, T_dof>(S_ref);
   check_ldlt_factor(function, "LDLT_Factor of scale parameter", ldlt_S);
 
   return_type_t<T_y, T_dof, T_scale> lp(0.0);
