@@ -47,7 +47,6 @@ inline auto as_value_array_or_scalar(T&& v) {
   return value_of(T_map(std::forward<T>(v).data(), v.size()));
 }
 
-
 }  // namespace math
 }  // namespace stan
 

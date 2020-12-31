@@ -10,8 +10,8 @@ namespace stan {
 namespace math {
 
 /**
- * Extract values from input argument and transform to a column vector or a scalar.
- * For arithmetic types this is an identity function.
+ * Extract values from input argument and transform to a column vector or a
+ * scalar. For arithmetic types this is an identity function.
  *
  * @tparam T Type of scalar element.
  * @param a Specified scalar.
@@ -23,8 +23,8 @@ inline auto as_value_column_vector_or_scalar(const T& a) {
 }
 
 /**
- * Extract values from input argument and transform to a column vector or a scalar.
- * For arithmetic column vector inputs this is an identity function.
+ * Extract values from input argument and transform to a column vector or a
+ * scalar. For arithmetic column vector inputs this is an identity function.
  *
  * @tparam T Type of scalar element.
  * @param a Specified vector.
@@ -36,8 +36,8 @@ inline auto as_value_column_vector_or_scalar(T&& a) {
 }
 
 /**
- * Extract values from input argument and transform to a column vector or a scalar.
- * For arithmetic row vector inputs this is transpose.
+ * Extract values from input argument and transform to a column vector or a
+ * scalar. For arithmetic row vector inputs this is transpose.
  *
  * @tparam T Type of scalar element.
  * @param a Specified vector.
@@ -50,8 +50,8 @@ inline auto as_value_column_vector_or_scalar(T&& a) {
 }
 
 /**
- * Extract values from input argument and transform to a column vector or a scalar.
- * For `std::vector<double>` this will be converted to a column vector.
+ * Extract values from input argument and transform to a column vector or a
+ * scalar. For `std::vector<double>` this will be converted to a column vector.
  *
  * @tparam T Type of scalar element.
  * @param a Specified vector.

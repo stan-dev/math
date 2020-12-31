@@ -9,8 +9,8 @@ namespace stan {
 namespace math {
 
 /**
- * Extract values from var types and containers and return a column vector or a scalar.
- * For arithmetic scalar inputs that is an identity function.
+ * Extract values from var types and containers and return a column vector or a
+ * scalar. For arithmetic scalar inputs that is an identity function.
  *
  * @tparam T Type of scalar element.
  * @param a Specified scalar.
@@ -22,8 +22,8 @@ inline auto as_value_column_array_or_scalar(const T& a) {
 }
 
 /**
- * Extract values from var types and containers and return a column vector or a scalar.
- *  For arithmetic column vector inputs this is an identity function.
+ * Extract values from var types and containers and return a column vector or a
+ * scalar. For arithmetic column vector inputs this is an identity function.
  *
  * @tparam T Type of scalar element.
  * @param a Specified vector.
@@ -35,8 +35,8 @@ inline auto as_value_column_array_or_scalar(T&& a) {
 }
 
 /**
- * Extract values from var types and containers and return a column vector or a scalar.
- * For arithmetic row vector input this is transpose.
+ * Extract values from var types and containers and return a column vector or a
+ * scalar. For arithmetic row vector input this is transpose.
  *
  * @tparam T Type of scalar element.
  * @param a Specified vector.
@@ -49,8 +49,8 @@ inline auto as_value_column_array_or_scalar(T&& a) {
 }
 
 /**
- * Extract values from var types and containers and return a column vector or a scalar.
- *  `std::vector<Arithmetic>` will be converted to a column vector.
+ * Extract values from var types and containers and return a column vector or a
+ * scalar. `std::vector<Arithmetic>` will be converted to a column vector.
  *
  * @tparam T Type of scalar element.
  * @param a Specified vector.

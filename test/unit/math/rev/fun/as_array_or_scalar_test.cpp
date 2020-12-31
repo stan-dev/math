@@ -19,7 +19,6 @@ TEST(MathFunRev, as_array_or_scalar_var_value_vector) {
   EXPECT_MATRIX_EQ(tmp.val(), a_val);
 }
 
-
 TEST(MathFunRev, as_array_or_scalar_var_value_rowvector) {
   int n = 100;
   const Eigen::RowVectorXd a_val = Eigen::RowVectorXd::Random(n);
