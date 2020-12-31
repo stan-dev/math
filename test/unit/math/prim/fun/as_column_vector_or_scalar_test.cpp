@@ -1,5 +1,5 @@
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
