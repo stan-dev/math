@@ -46,7 +46,7 @@ inline auto as_value_column_vector_or_scalar(T&& a) {
 template <typename T, require_row_vector_t<T>* = nullptr,
           require_not_col_vector_t<T>* = nullptr>
 inline auto as_value_column_vector_or_scalar(T&& a) {
-  return value_of(a.transpose());
+  return value_of(std::forward<T>(a).transpose());
 }
 
 /**
@@ -64,7 +64,8 @@ inline auto as_value_column_vector_or_scalar(T&& a) {
       = std::conditional_t<std::is_const<std::remove_reference_t<T>>::value,
                            const plain_vector, plain_vector>;
   using T_map = Eigen::Map<optionally_const_vector>;
-  return value_of(T_map(a.data(), a.size()));
+  return make_holder([](auto&& x) { return value_of(T_map(x.data(), x.size())); },
+                     std::forward<T>(a));
 }
 
 }  // namespace math

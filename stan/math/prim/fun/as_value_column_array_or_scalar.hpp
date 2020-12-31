@@ -29,9 +29,24 @@ inline auto as_value_column_array_or_scalar(const T& a) {
  * @param a Specified vector.
  * @return Same vector.
  */
-template <typename T, require_col_vector_t<T>* = nullptr>
+template <typename T, require_col_vector_t<T>* = nullptr,
+ require_not_st_arithmetic<T>* = nullptr>
 inline auto as_value_column_array_or_scalar(T&& a) {
   return value_of(std::forward<T>(a)).array();
+}
+
+/**
+ * Extract values from var types and containers and return a column vector or a
+ * scalar. For arithmetic column vector inputs this is an identity function.
+ *
+ * @tparam T Type of scalar element.
+ * @param a Specified vector.
+ * @return Same vector.
+ */
+template <typename T, require_col_vector_t<T>* = nullptr,
+ require_st_arithmetic<T>* = nullptr>
+inline auto as_value_column_array_or_scalar(T&& a) {
+  return std::forward<T>(a).array();
 }
 
 /**
@@ -43,9 +58,25 @@ inline auto as_value_column_array_or_scalar(T&& a) {
  * @return Transposed vector.
  */
 template <typename T, require_row_vector_t<T>* = nullptr,
-          require_not_col_vector_t<T>* = nullptr>
+          require_not_col_vector_t<T>* = nullptr,
+          require_not_st_arithmetic<T>* = nullptr>
 inline auto as_value_column_array_or_scalar(T&& a) {
   return value_of(a.transpose()).array();
+}
+
+/**
+ * Extract values from var types and containers and return a column vector or a
+ * scalar. For arithmetic row vector input this is transpose.
+ *
+ * @tparam T Type of scalar element.
+ * @param a Specified vector.
+ * @return Transposed vector.
+ */
+template <typename T, require_row_vector_t<T>* = nullptr,
+          require_not_col_vector_t<T>* = nullptr,
+          require_st_arithmetic<T>* = nullptr>
+inline auto as_value_column_array_or_scalar(T&& a) {
+  return a.transpose().array();
 }
 
 /**
@@ -63,7 +94,8 @@ inline auto as_value_column_array_or_scalar(T&& a) {
       = std::conditional_t<std::is_const<std::remove_reference_t<T>>::value,
                            const plain_vector, plain_vector>;
   using T_map = Eigen::Map<optionally_const_vector>;
-  return value_of(T_map(a.data(), a.size()));
+  return make_holder([](auto&& x) { return value_of(T_map(x.data(), x.size())); },
+                     std::forward<T>(a));
 }
 
 }  // namespace math
