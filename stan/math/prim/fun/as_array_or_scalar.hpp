@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_FUN_AS_ARRAY_OR_SCALAR_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/meta/holder.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <vector>
 
 namespace stan {

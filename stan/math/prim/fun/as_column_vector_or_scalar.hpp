@@ -8,7 +8,7 @@
 namespace stan {
 namespace math {
 
-/** \ingroup type_trait
+/**
  * Converts input argument to a column vector or a scalar. For scalar inputs
  * that is an identity function.
  *
@@ -21,7 +21,7 @@ inline T as_column_vector_or_scalar(const T& a) {
   return a;
 }
 
-/** \ingroup type_trait
+/**
  * Converts input argument to a column vector or a scalar. For column vector
  * inputs this is an identity function.
  *
@@ -34,7 +34,7 @@ inline T&& as_column_vector_or_scalar(T&& a) {
   return std::forward<T>(a);
 }
 
-/** \ingroup type_trait
+/**
  * Converts input argument to a column vector or a scalar. For a row vector
  * input this is transpose.
  *
@@ -48,7 +48,7 @@ inline auto as_column_vector_or_scalar(T&& a) {
   return make_holder([](auto& x) { return x.transpose(); }, std::forward<T>(a));
 }
 
-/** \ingroup type_trait
+/**
  * Converts input argument to a column vector or a scalar. std::vector will be
  * converted to a column vector.
  *
@@ -67,7 +67,7 @@ inline auto as_column_vector_or_scalar(T&& a) {
                      std::forward<T>(a));
 }
 
-/** \ingroup type_trait
+/**
  * Converts input argument to a `var_value<>` with column vector or a scalar.
  * For column vector inputs this is an identity function.
  *
@@ -80,7 +80,7 @@ inline T&& as_column_vector_or_scalar(T&& a) {
   return std::forward<T>(a);
 }
 
-/** \ingroup type_trait
+/**
  * Converts input argument to a `var_value<>` with column vector or a scalar.
  * For column vector inputs this is an identity function.
  *
