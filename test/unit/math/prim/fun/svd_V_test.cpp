@@ -34,6 +34,6 @@ TEST(MathMatrixPrimMat, svd_V) {
     matrix_d m32(3, 2);
     m32 << 1, 3, -5, 7, 9, -11;
     matrix_d m32_V(2, 2);
-    m32_V << -0.60622380392317887, 0.79529409626685355, -0.79529409626685355, -0.60622380392317887;
-    EXPECT_MATRIX_FLOAT_EQ(m32_V, svd_V(m32)); // // need to solve sign ambiguity
+    m32_V << -0.60622380392317887, 0.79529409626685355, 0.79529409626685355, 0.60622380392317887;
+    EXPECT_MATRIX_FLOAT_EQ(m32_V, svd_V(m32)); // R's SVD returns different signs than Eigen.
 }
