@@ -19,9 +19,9 @@ template <bool propto, typename T_n, typename T_prob>
 return_type_t<T_prob> categorical_logit_lpmf(const T_n& n, const T_prob& beta) {
   static const char* function = "categorical_logit_lpmf";
 
-  decltype(auto) beta_ref = to_ref(beta);
+  ref_type_t<T_prob> beta_ref = beta;
   scalar_seq_view<T_n> n_vec(n);
-  vector_seq_view<T_prob> beta_vec(beta_ref);
+  vector_seq_view<ref_type_t<T_prob>> beta_vec(beta_ref);
 
   size_t vec_size
       = std::max(stan::math::size(n), stan::math::size_mvt(beta_ref));

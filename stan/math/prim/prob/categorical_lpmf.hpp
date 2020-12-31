@@ -18,9 +18,9 @@ template <bool propto, typename T_n, typename T_prob>
 return_type_t<T_prob> categorical_lpmf(const T_n& n, const T_prob& theta) {
   static const char* function = "categorical_lpmf";
 
-  decltype(auto) theta_ref = to_ref(theta);
+  ref_type_t<T_prob> theta_ref = theta;
   scalar_seq_view<T_n> n_vec(n);
-  vector_seq_view<T_prob> theta_vec(theta_ref);
+  vector_seq_view<ref_type_t<T_prob>> theta_vec(theta_ref);
 
   size_t vec_size
       = std::max(stan::math::size(n), stan::math::size_mvt(theta_ref));
