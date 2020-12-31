@@ -21,6 +21,9 @@ inline Eigen::MatrixXd wishart_rng(double nu, const Eigen::MatrixXd& S,
   check_symmetric(function, "scale parameter", S);
   check_greater(function, "degrees of freedom > dims - 1", nu, k - 1);
 
+  Eigen::LLT<Eigen::MatrixXd> llt_of_S = S.llt();
+  check_pos_definite("wishart_rng", "scale parameter", llt_of_S);
+
   MatrixXd B = MatrixXd::Zero(k, k);
   for (int j = 0; j < k; ++j) {
     for (int i = 0; i < j; ++i) {
@@ -28,7 +31,7 @@ inline Eigen::MatrixXd wishart_rng(double nu, const Eigen::MatrixXd& S,
     }
     B(j, j) = std::sqrt(chi_square_rng(nu - j, rng));
   }
-  return crossprod(B * S.llt().matrixU());
+  return crossprod(B * llt_of_S.matrixU());
 }
 
 }  // namespace math

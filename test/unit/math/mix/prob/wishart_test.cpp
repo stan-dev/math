@@ -13,7 +13,7 @@ TEST(ProbDistributionsWishart, fvar_var) {
   Sigma << 1.848220, 1.899623, 1.899623, 12.751941;
 
   Matrix<fvar<var>, Dynamic, Dynamic> Y(2, 2);
-  Y << 2.011108, -11.20661, -11.206611, 112.94139;
+  Y << 2.011108, -11.20661, -11.20661, 112.94139;
 
   for (int i = 0; i < 4; i++) {
     Sigma(i).d_ = 1.0;
@@ -27,6 +27,8 @@ TEST(ProbDistributionsWishart, fvar_var) {
   EXPECT_NEAR(lp, stan::math::wishart_log(Y, dof, Sigma).val_.val(), 0.01);
   EXPECT_NEAR(-0.76893887, stan::math::wishart_log(Y, dof, Sigma).d_.val(),
               0.01);
+
+  stan::math::recover_memory();
 }
 
 TEST(ProbDistributionsWishart, fvar_fvar_var) {
@@ -38,7 +40,7 @@ TEST(ProbDistributionsWishart, fvar_fvar_var) {
   Sigma << 1.848220, 1.899623, 1.899623, 12.751941;
 
   Matrix<fvar<fvar<var> >, Dynamic, Dynamic> Y(2, 2);
-  Y << 2.011108, -11.20661, -11.206611, 112.94139;
+  Y << 2.011108, -11.206611, -11.206611, 112.94139;
 
   for (int i = 0; i < 4; i++) {
     Sigma(i).d_.val_ = 1.0;
@@ -52,4 +54,6 @@ TEST(ProbDistributionsWishart, fvar_fvar_var) {
   EXPECT_NEAR(lp, stan::math::wishart_log(Y, dof, Sigma).val_.val_.val(), 0.01);
   EXPECT_NEAR(-0.76893887, stan::math::wishart_log(Y, dof, Sigma).d_.val_.val(),
               0.01);
+
+  stan::math::recover_memory();
 }
