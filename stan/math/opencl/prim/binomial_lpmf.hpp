@@ -6,6 +6,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/fun/binomial_coefficient_log.hpp>
 
 namespace stan {
 namespace math {
@@ -29,8 +30,8 @@ namespace math {
  */
 template <
     bool propto, typename T_n_cl, typename T_N_cl, typename T_prob_cl,
-    require_all_prim_or_rev_kernel_expression_t<T_n_cl, T_prob_cl>* = nullptr,
-    require_any_not_stan_scalar_t<T_n_cl, T_prob_cl>* = nullptr>
+    require_all_prim_or_rev_kernel_expression_t<T_n_cl, T_N_cl, T_prob_cl>* = nullptr,
+    require_any_nonscalar_prim_or_rev_kernel_expression_t<T_n_cl, T_N_cl, T_prob_cl>* = nullptr>
 return_type_t<T_prob_cl> binomial_lpmf(const T_n_cl& n, const T_N_cl N,
                                        const T_prob_cl& theta) {
   static const char* function = "binomial_lpmf(OpenCL)";
