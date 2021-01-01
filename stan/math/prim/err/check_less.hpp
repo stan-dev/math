@@ -67,12 +67,58 @@ struct less<T_y, T_high, true> {
  * @throw <code>domain_error</code> if y is not less than low
  *   or if any element of y or high is NaN.
  */
-template <typename T_y, typename T_high>
+template <typename T_y, typename T_high, require_not_container_t<T_y>* = nullptr>
 inline void check_less(const char* function, const char* name, const T_y& y,
                        const T_high& high) {
   internal::less<T_y, T_high, is_vector_like<T_y>::value>::check(function, name,
                                                                  y, high);
 }
+
+template <typename T_y, typename T_high, require_container_t<T_y>* = nullptr,
+ require_container_t<T_high>* = nullptr>
+inline void check_less(const char* function, const char* name, const T_y& y,
+                       const T_high& high) {
+  const auto& high_ref = as_array_or_scalar(to_ref(high));
+  const auto& y_ref = as_array_or_scalar(to_ref(y));
+  Eigen::Index n = 0;
+  for (Eigen::Index j = 0; j < y_ref.cols(); ++j) {
+    for (Eigen::Index i = 0; i < y_ref.rows(); ++i) {
+      if (!(y_ref.coeff(i, j) < high_ref.coeff(i, j))) {
+       [&]() STAN_COLD_PATH {
+         std::stringstream msg;
+         msg << ", but must be less than ";
+         msg << high_ref.coeff(i, j);
+         std::string msg_str(msg.str());
+         throw_domain_error_vec(function, name, y_ref.coeff(i, j), i + j, "is ",
+                                msg_str.c_str());
+       }();
+      }
+   }
+  }
+}
+
+template <typename T_y, typename T_high, require_container_t<T_y>* = nullptr,
+ require_stan_scalar_t<T_high>* = nullptr>
+inline void check_less(const char* function, const char* name, const T_y& y,
+                       const T_high& high) {
+  const auto& y_ref = as_array_or_scalar(to_ref(y));
+  Eigen::Index n = 0;
+  for (Eigen::Index j = 0; j < y_ref.cols(); ++j) {
+    for (Eigen::Index i = 0; i < y_ref.rows(); ++i) {
+      if (!(y_ref.coeff(i, j) < high)) {
+       [&]() STAN_COLD_PATH {
+         std::stringstream msg;
+         msg << ", but must be less than ";
+         msg << high;
+         std::string msg_str(msg.str());
+         throw_domain_error_vec(function, name, y_ref.coeff(i, j), i + j, "is ",
+                                msg_str.c_str());
+       }();
+      }
+   }
+  }
+}
+
 }  // namespace math
 }  // namespace stan
 #endif

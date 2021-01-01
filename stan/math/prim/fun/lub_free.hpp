@@ -3,9 +3,12 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/divide.hpp>
+#include <stan/math/prim/fun/eval.hpp>
 #include <stan/math/prim/fun/logit.hpp>
 #include <stan/math/prim/fun/lb_free.hpp>
 #include <stan/math/prim/fun/ub_free.hpp>
+#include <stan/math/prim/fun/subtract.hpp>
 
 namespace stan {
 namespace math {
@@ -43,15 +46,15 @@ namespace math {
  *   greater than the upper bound
  */
 template <typename T, typename L, typename U>
-inline return_type_t<T, L, U> lub_free(const T& y, const L& lb, const U& ub) {
+inline auto lub_free(T&& y, const L& lb, const U& ub) {
   check_bounded<T, L, U>("lub_free", "Bounded variable", y, lb, ub);
-  if (lb == NEGATIVE_INFTY) {
-    return ub_free(y, ub);
+  if (unlikely(is_negative_infinity(lb))) {
+    return ub_free(std::forward<T>(y), ub);
   }
-  if (ub == INFTY) {
-    return lb_free(y, lb);
+  if (unlikely(is_infinity(ub))) {
+    return lb_free(std::forward<T>(y), lb);
   }
-  return logit((y - lb) / (ub - lb));
+  return eval(logit(divide(subtract(y, lb), subtract(ub, lb))));
 }
 
 }  // namespace math

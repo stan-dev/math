@@ -32,3 +32,61 @@ TEST(mathMixScalFun, ub_constrain) {
   ub_constrain_test::expect_ub_constrain(-1, 2);
   ub_constrain_test::expect_ub_constrain(2, 4);
 }
+
+TEST(mathMixMatFun, ub_mat_constrain) {
+  using stan::math::promote_scalar_t;
+  using stan::scalar_type_t;
+  using stan::math::ub_constrain;
+  auto tester = [](const auto& x) {
+    return ub_constrain(x, 3.0);
+  };
+
+  auto promote_tester = [](const auto& x) {
+    using x_scalar = scalar_type_t<decltype(x)>;
+    x_scalar ub = 3.0;
+    return ub_constrain(x, ub);
+  };
+
+  auto multi_promote_tester = [](const auto& x) {
+    using x_scalar = scalar_type_t<decltype(x)>;
+    using ub_mat_t = Eigen::Matrix<x_scalar, -1, -1>;
+    x_scalar ub = 3.0;
+    ub_mat_t ub_mat = ub_mat_t::Constant(x.rows(), x.cols(), ub);
+    return ub_constrain(x, ub_mat);
+  };
+
+  Eigen::MatrixXd A(Eigen::MatrixXd::Random(2, 2));
+  stan::test::expect_ad(tester, A);
+  stan::test::expect_ad_matvar(tester, A);
+  stan::test::expect_ad(promote_tester, A);
+  stan::test::expect_ad_matvar(promote_tester, A);
+  stan::test::expect_ad_matvar(multi_promote_tester, A);
+}
+
+TEST(mathMixMatFun, ub_lp_mat_constrain) {
+  using stan::math::promote_scalar_t;
+  using stan::scalar_type_t;
+  using stan::math::ub_constrain;
+  auto ub_lp_promote_tester = [](const auto& x) {
+    using scalar_x = scalar_type_t<decltype(x)>;
+    scalar_x ub = 3.0;
+    scalar_x lp = 0;
+    stan::math::ub_constrain(x, ub, lp);
+    return lp;
+  };
+  auto multi_ub_lp_promote_tester = [](const auto& x) {
+    using x_scalar = scalar_type_t<decltype(x)>;
+    using ub_mat_t = Eigen::Matrix<x_scalar, -1, -1>;
+    x_scalar ub = 3.0;
+    ub_mat_t ub_mat = ub_mat_t::Constant(x.rows(), x.cols(), ub);
+    x_scalar lp = 0;
+    return ub_constrain(x, ub_mat, lp);
+  };
+
+  Eigen::MatrixXd A(Eigen::MatrixXd::Random(2, 2));
+  stan::test::expect_ad(ub_lp_promote_tester, A);
+  stan::test::expect_ad_matvar(ub_lp_promote_tester, A);
+
+  stan::test::expect_ad(multi_ub_lp_promote_tester, A);
+  stan::test::expect_ad_matvar(multi_ub_lp_promote_tester, A);
+}

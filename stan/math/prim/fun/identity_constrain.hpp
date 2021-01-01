@@ -18,8 +18,8 @@ namespace math {
  * @return transformed input
  */
 template <typename T>
-inline T identity_constrain(const T& x) {
-  return x;
+inline auto identity_constrain(T&& x) {
+  return std::forward<T>(x);
 }
 
 /**
@@ -37,8 +37,8 @@ inline T identity_constrain(const T& x) {
  * @return transformed input
  */
 template <typename T, typename S>
-inline T identity_constrain(const T& x, S& lp) {
-  return x;
+inline auto identity_constrain(T&& x, S& lp) {
+  return std::forward<T>(x);
 }
 
 }  // namespace math

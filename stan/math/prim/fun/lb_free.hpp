@@ -6,6 +6,8 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/identity_free.hpp>
 #include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/subtract.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <cmath>
 
 namespace stan {
@@ -27,13 +29,12 @@ namespace math {
  * @throw std::domain_error if y is lower than the lower bound
  */
 template <typename T, typename L>
-inline return_type_t<T, L> lb_free(const T& y, const L& lb) {
-  using std::log;
-  if (lb == NEGATIVE_INFTY) {
-    return identity_free(y);
+inline auto lb_free(T&& y, const L& lb) {
+  if (unlikely(is_negative_infinity(lb))) {
+    return identity_free(std::forward<T>(y));
   }
-  check_greater_or_equal("lb_free", "Lower bounded variable", y, lb);
-  return log(y - lb);
+  check_greater_or_equal("lb_free", "Lower bounded variable", value_of(y), value_of(lb));
+  return log(subtract(y, lb));
 }
 
 }  // namespace math
