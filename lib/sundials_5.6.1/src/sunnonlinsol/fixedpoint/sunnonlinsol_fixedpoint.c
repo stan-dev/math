@@ -214,7 +214,7 @@ int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS, N_Vector y0,
       /* print current iteration number and the nonlinear residual */
       if (FP_CONTENT(NLS)->print_level && FP_CONTENT(NLS)->info_file)
       {
-        fprintf(FP_CONTENT(NLS)->info_file,
+        STAN_SUNDIALS_FPRINTF(FP_CONTENT(NLS)->info_file,
                 "SUNNONLINSOL_FIXEDPOINT (nni=%ld):\n",
                 (long int) FP_CONTENT(NLS)->niters);
       }
@@ -256,7 +256,7 @@ int SUNNonlinSolSolve_FixedPoint(SUNNonlinearSolver NLS, N_Vector y0,
       /* print current iteration number and the nonlinear residual */
       if (FP_CONTENT(NLS)->print_level && FP_CONTENT(NLS)->info_file)
       {
-        fprintf(FP_CONTENT(NLS)->info_file,
+        STAN_SUNDIALS_FPRINTF(FP_CONTENT(NLS)->info_file,
                 SUN_NLS_MSG_RESIDUAL,
                 (long int) FP_CONTENT(NLS)->curiter,
                 N_VWrmsNorm(delta, w));

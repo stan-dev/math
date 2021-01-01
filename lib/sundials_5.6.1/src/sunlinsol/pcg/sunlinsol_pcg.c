@@ -337,7 +337,7 @@ int SUNLinSolSolve_PCG(SUNLinearSolver S, SUNMatrix nul, N_Vector x,
 
 #ifdef SUNDIALS_BUILD_WITH_MONITORING
   if (PCG_CONTENT(S)->print_level && PCG_CONTENT(S)->info_file)
-    fprintf(PCG_CONTENT(S)->info_file, "SUNLINSOL_PCG:\n");
+    STAN_SUNDIALS_FPRINTF(PCG_CONTENT(S)->info_file, "SUNLINSOL_PCG:\n");
 #endif
 
   /* Check if Atimes function has been set */
@@ -373,7 +373,7 @@ int SUNLinSolSolve_PCG(SUNLinearSolver S, SUNMatrix nul, N_Vector x,
     /* print initial residual */
     if (PCG_CONTENT(S)->print_level && PCG_CONTENT(S)->info_file)
     {
-      fprintf(PCG_CONTENT(S)->info_file,
+      STAN_SUNDIALS_FPRINTF(PCG_CONTENT(S)->info_file,
               SUNLS_MSG_RESIDUAL,
               (long int) 0, *res_norm);
     }
@@ -433,7 +433,7 @@ int SUNLinSolSolve_PCG(SUNLinearSolver S, SUNMatrix nul, N_Vector x,
       /* print current iteration number and the residual */
       if (PCG_CONTENT(S)->print_level && PCG_CONTENT(S)->info_file)
       {
-        fprintf(PCG_CONTENT(S)->info_file,
+        STAN_SUNDIALS_FPRINTF(PCG_CONTENT(S)->info_file,
                 SUNLS_MSG_RESIDUAL,
                 (long int) *nli, *res_norm);
       }

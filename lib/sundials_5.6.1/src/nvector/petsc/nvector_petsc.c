@@ -127,7 +127,7 @@ N_Vector N_VNewEmpty_Petsc(MPI_Comm comm,
   ierr = MPI_Allreduce(&n, &Nsum, 1, MPI_SUNINDEXTYPE, MPI_SUM, comm);
   CHKERRABORT(comm,ierr);
   if (Nsum != global_length) {
-    fprintf(stderr, BAD_N);
+    STAN_SUNDIALS_FPRINTF(stderr, BAD_N);
     return(NULL);
   }
 
