@@ -7,6 +7,18 @@
 namespace stan {
 namespace math {
 
+/**
+ * Return the product of the diagonal matrix formed from the vector
+ * or row_vector and a matrix.
+ *
+ * @tparam T1 type of the vector/row_vector
+ * @tparam T2 type of the matrix
+ * @param m1 input vector/row_vector
+ * @param m2 input matrix
+ *
+ * @return product of the diagonal matrix formed from the
+ * vector or row_vector and a matrix.
+ */
 template <typename T1, typename T2, require_eigen_vector_t<T1>* = nullptr,
           require_eigen_t<T2>* = nullptr>
 auto diag_pre_multiply(const T1& m1, const T2& m2) {

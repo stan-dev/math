@@ -33,6 +33,21 @@ inline var inv_logit(const var& a) {
   return var(new internal::inv_logit_vari(a.vi_));
 }
 
+/**
+ * Return the inverse logit of the elements of x
+ *
+ * @tparam T type of x
+ * @param x argument
+ * @return elementwise inverse logit of x
+ */
+template <typename T, require_var_matrix_t<T>* = nullptr>
+inline auto inv_logit(const T& x) {
+  return make_callback_var(inv_logit(x.val()), [x](const auto& vi) mutable {
+    x.adj() += (vi.adj().array() * vi.val().array() * (1.0 - vi.val().array()))
+                   .matrix();
+  });
+}
+
 }  // namespace math
 }  // namespace stan
 #endif

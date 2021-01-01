@@ -145,8 +145,8 @@ class vari_value<T, require_kernel_expression_lhs_t<T>>
    * @return block
    */
   auto block(int row, int col, int rows, int cols) {
-    auto&& val_block = stan::math::block(val_, row, col, rows, cols);
-    auto&& adj_block = stan::math::block(adj_, row, col, rows, cols);
+    auto&& val_block = stan::math::block_zero_based(val_, row, col, rows, cols);
+    auto&& adj_block = stan::math::block_zero_based(adj_, row, col, rows, cols);
     return vari_value<std::decay_t<decltype(val_block)>>(std::move(val_block),
                                                          std::move(adj_block));
   }

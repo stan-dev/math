@@ -7,6 +7,7 @@
 #include <stan/math/rev/fun/dot_product.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/rows_dot_product.hpp>
 #include <type_traits>
 
 namespace stan {

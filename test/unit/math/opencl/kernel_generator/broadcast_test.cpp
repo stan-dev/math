@@ -153,21 +153,22 @@ TEST(MathMatrixCL, broadcast_view_test) {
   matrix_cl<double> v_cl(2, 1);
   matrix_cl<double> m_cl(2, 2, stan::math::matrix_cl_view::Diagonal);
   matrix_cl<double> dst_block_cl(3, 3, stan::math::matrix_cl_view::Diagonal);
-  matrix_cl<double> dst_cl
-      = stan::math::broadcast<false, false>(block(dst_block_cl, 0, 0, 2, 2));
+  matrix_cl<double> dst_cl = stan::math::broadcast<false, false>(
+      block_zero_based(dst_block_cl, 0, 0, 2, 2));
   EXPECT_EQ(dst_cl.view(), stan::math::matrix_cl_view::Diagonal);
   dst_cl = stan::math::broadcast<false, true>(v_cl) + m_cl;
   EXPECT_EQ(dst_cl.view(), stan::math::matrix_cl_view::Entire);
-  block(dst_block_cl, 0, 0, 2, 2)
-      = stan::math::broadcast<false, false>(block(dst_block_cl, 0, 0, 2, 2));
+  block_zero_based(dst_block_cl, 0, 0, 2, 2)
+      = stan::math::broadcast<false, false>(
+          block_zero_based(dst_block_cl, 0, 0, 2, 2));
   EXPECT_EQ(dst_block_cl.view(), stan::math::matrix_cl_view::Diagonal);
-  block(dst_block_cl, 0, 1, 2, 2)
+  block_zero_based(dst_block_cl, 0, 1, 2, 2)
       = stan::math::broadcast<false, true>(v_cl) + m_cl;
   EXPECT_EQ(dst_block_cl.view(), stan::math::matrix_cl_view::Upper);
-  block(dst_block_cl, 0, 1, 2, 2)
+  block_zero_based(dst_block_cl, 0, 1, 2, 2)
       = stan::math::broadcast<true, false>(stan::math::transpose(v_cl)) + m_cl;
   EXPECT_EQ(dst_block_cl.view(), stan::math::matrix_cl_view::Upper);
-  block(dst_block_cl, 0, 0, 2, 2)
+  block_zero_based(dst_block_cl, 0, 0, 2, 2)
       = stan::math::broadcast<false, true>(v_cl) + m_cl;
   EXPECT_EQ(dst_block_cl.view(), stan::math::matrix_cl_view::Entire);
 }
