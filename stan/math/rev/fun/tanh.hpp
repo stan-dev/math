@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_FUN_TANH_HPP
 
 #include <stan/math/prim/fun/tanh.hpp>
+#include <stan/math/prim/fun/cosh.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/exp.hpp>
@@ -46,12 +47,11 @@ inline var tanh(const var& a) {
 }
 
 /**
- * Return the tanhgent of a radian-scaled variable (cmath).
+ * Return the hyperbolic tangent of elements of a
  *
- *
- * @tparam Varmat a `var_value` with inner Eigen type
- * @param a Variable for radians of angle.
- * @return Tangent of variable.
+ * @tparam T type of a
+ * @param a argument
+ * @return elementwise hyperbolic tangent of a
  */
 template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
 inline auto tanh(const VarMat& a) {
