@@ -1,0 +1,6 @@
+List of Trilinos IDA examples
+
+  idaHeat2D_kry_tpetra    : 2D heat equation with SPGMR, diagonal preconditioner, single node and Tpetra vector
+  idaHeat2D_kry_p_tpetra  : 2D heat equation with SPGMR, diagonal preconditioner, 4 MPI ranks and Tpetra vector
+
+

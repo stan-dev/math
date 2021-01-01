@@ -1,0 +1,33 @@
+
+idaHeat2D_kry_petsc: Heat equation, parallel example problem for IDA
+                     Discretized heat equation on 2D unit square.
+                     Zero boundary conditions, polynomial initial conditions.
+                     Mesh dimensions: 10 x 10	Total system size: 100
+                     Subgrid dimensions: 5 x 5	Processor array: 2 x 2
+                     Tolerance parameters:  rtol = 0   atol = 0.0001
+
+Constraints set to force all solution components >= 0.
+SUPPRESSALG = SUNTRUE to suppress local error testing on all boundary components. 
+Linear solver: SUNLinSol_SPGMR  Preconditioner: diagonal elements only.
+This example uses the PETSc N_Vector.
+
+   Output Summary (umax = max-norm of solution) 
+
+  time     umax       k  nst  nni  nli  njve   nre   nreLS    h      npe nps
+----------------------------------------------------------------------------
+  0.00   9.75461e-01  0    0    0     0    0     0     0   0.00e+00    0   0
+  0.01   8.24072e-01  3   15   19    12   12    19    12   2.38e-03    8  31
+  0.02   6.88096e-01  3   19   23    18   18    23    18   2.38e-03    8  41
+  0.04   4.70958e-01  4   24   30    24   24    30    24   4.75e-03    9  54
+  0.08   2.16330e-01  4   30   38    36   36    38    36   8.55e-03   10  74
+  0.16   4.52095e-02  4   37   47    54   54    47    54   1.50e-02   11 101
+  0.32   1.96868e-03  5   48   59    82   82    59    82   1.50e-02   11 141
+  0.64   1.28916e-05  1   57   73   108  108    73   108   1.20e-01   14 181
+  1.28   3.08858e-22  1   59   75   109  109    75   109   4.78e-01   16 184
+  2.56   7.78864e-22  1   61   77   109  109    77   109   1.91e+00   18 186
+  5.12   1.50286e-21  1   62   78   109  109    78   109   3.83e+00   19 187
+ 10.24   2.92929e-21  1   63   79   109  109    79   109   7.66e+00   20 188
+
+Error test failures            = 0
+Nonlinear convergence failures = 0
+Linear convergence failures    = 0

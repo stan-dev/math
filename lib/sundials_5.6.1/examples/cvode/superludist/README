@@ -1,0 +1,50 @@
+List of parallel CVODE examples
+
+  cvAdvDiff_sludist: advection-diffusion example using the SuperLU_DIST linear solver
+
+The following CMake command was used to configure SUNDIALS:
+
+cmake \
+    -DSUNDIALS_INDEX_SIZE=64 \
+    \
+    -DCMAKE_INSTALL_PREFIX="${INST_DIR}" \
+    -DEXAMPLES_INSTALL_PATH="${INST_DIR}/examples" \
+    \
+    -DENABLE_MPI=ON \
+    -DMPI_C_COMPILER="${MPIDIR}/bin/mpicc" \
+    -DMPI_CXX_COMPILER="${MPIDIR}/bin/mpicxx" \
+    -DMPIEXEC_EXECUTABLE="${MPIDIR}/bin/mpirun" \
+    \
+    -DENABLE_OPENMP=ON \
+    \
+    -DBUILD_SHARED_LIBS=OFF \
+    -DBUILD_STATIC_LIBS=ON \
+    -DBUILD_CVODE=ON \
+    -DBUILD_CVODES=OFF \
+    -DBUILD_IDA=OFF \
+    -DBUILD_IDAS=OFF \
+    -DBUILD_ARKODE=ON \
+    -DBUILD_KINSOL=OFF \
+    -DBUILD_TESTING=ON \
+    -DEXAMPLES_ENABLE_CXX=ON \
+    \
+    -DBLAS_ENABLE=OFF \
+    -DBLAS_LIBRARIES="${BLAS_LIBRARIES}" \
+    \
+    -DENABLE_LAPACK=OFF \
+    -DLAPACK_LIBRARIES="${LAPACK_LIBRARIES}" \
+    \
+    -DENABLE_SUPERLUDIST=ON \
+    -DSUPERLUDIST_LIBRARY_DIR="${SUPERLUDIST_DIR}/lib64" \
+    -DSUPERLUDIST_INCLUDE_DIR="${SUPERLUDIST_DIR}/include" \
+    -DSUPERLUDIST_LIBRARIES="${LAPACK_LIBRARIES};${PARMETIS_LIBRARIES}" \
+    -DSUPERLUDIST_OpenMP=ON \
+    \
+    ../
+
+
+  System Architecture: x86_64
+  Processor Type: Intel(R) Xeon(R) W-2133 CPU @ 3.60GHz
+  Operating System: Red Hat 7.3
+  C/Fortran Compilers: gcc/gfortran v4.9.4
+  MPI: Open MPI v3.1.2

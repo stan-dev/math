@@ -1,0 +1,31 @@
+Diagonal test problem:
+
+ NEQ =   4
+ parameter alpha =    2.500
+ ydot_i = -alpha*i * y_i (i = 1,...,NEQ)
+ RTOL, ATOL =    0.1E-04   0.1E-09
+ Method is ADAMS/FIXEDPOINT
+ Number of processors =   2
+
+
+ t =   0.10D+00     no. steps =    15   no. f-s =    32
+ t =   0.20D+00     no. steps =    22   no. f-s =    39
+ t =   0.30D+00     no. steps =    30   no. f-s =    47
+ t =   0.40D+00     no. steps =    38   no. f-s =    55
+ t =   0.50D+00     no. steps =    46   no. f-s =    63
+ t =   0.60D+00     no. steps =    54   no. f-s =    71
+ t =   0.70D+00     no. steps =    61   no. f-s =    78
+ t =   0.80D+00     no. steps =    69   no. f-s =    86
+ t =   0.90D+00     no. steps =    77   no. f-s =    94
+ t =   0.10D+01     no. steps =    85   no. f-s =   102
+
+Max. absolute error is   0.33E-07
+
+
+Final statistics:
+
+ number of steps =    85
+ number of f evals. =   102
+ number of nonlinear iters. =    99
+ number of nonlinear conv. failures =   0
+ number of error test failures =   3

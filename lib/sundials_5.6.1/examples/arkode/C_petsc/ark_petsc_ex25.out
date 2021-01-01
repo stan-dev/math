@@ -1,0 +1,15 @@
+ARKode example based on PETSc TS ex25.c.
+Time-dependent Brusselator reaction-diffusion PDE in 1d. Demonstrates IMEX methods.
+
+0 TS dt 2.000000e-01 time 0.000000
+12 TS dt 6.183840e-02 time 1.000000
+18 TS dt 1.542138e-01 time 2.000000
+21 TS dt 3.049816e-01 time 3.000000
+23 TS dt 4.537252e-01 time 4.000000
+25 TS dt 4.683409e-01 time 5.000000
+30 TS dt 1.379925e-01 time 6.000000
+40 TS dt 3.953920e-02 time 7.000000
+47 TS dt 1.382022e-01 time 8.000000
+51 TS dt 2.211368e-01 time 9.000000
+55 TS dt 4.212273e-01 time 10.000000
+Converged at time 10 after 55 steps.
