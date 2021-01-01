@@ -51,7 +51,7 @@ struct apply_scalar_unary<F, T, require_eigen_t<T>> {
   /**
    * Type of underlying scalar for the matrix type T.
    */
-  using scalar_t = typename Eigen::internal::traits<T>::Scalar;
+  using scalar_t = value_type_t<T>;
 
   /**
    * Return the result of applying the function defined by the

@@ -2110,7 +2110,7 @@ void expect_ad_matvar(const ad_tolerances& tols, const F& f,
  */
 template <typename F, typename EigVec,
           require_eigen_vector_t<EigVec>* = nullptr>
-void expect_ad_vector_matvar(const F& f, EigVec& x) {
+void expect_ad_vector_matvar(const F& f, const EigVec& x) {
   ad_tolerances tols;
   expect_ad_vector_matvar(tols, f, x);
 }
