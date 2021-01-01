@@ -29,8 +29,8 @@ namespace math {
 template <typename Td, typename Ta, typename Tb,
           require_all_eigen_t<Td, Tb>* = nullptr,
           require_any_st_var<Td, Ta, Tb>* = nullptr>
-inline var trace_gen_inv_quad_form_ldlt(
-    const Td& D, const LDLT_factor<Ta>& A, const Tb& B) {
+inline var trace_gen_inv_quad_form_ldlt(const Td& D, const LDLT_factor<Ta>& A,
+                                        const Tb& B) {
   check_square("trace_gen_inv_quad_form_ldlt", "D", D);
   check_multiplicable("trace_gen_inv_quad_form_ldlt", "A", A.matrix(), "B", B);
   check_multiplicable("trace_gen_inv_quad_form_ldlt", "B", B, "D", D);
@@ -54,9 +54,9 @@ inline var trace_gen_inv_quad_form_ldlt(
           double C_adj = res.adj();
 
           arena_A.adj() -= C_adj * AsolveB * arena_D.val_op().transpose()
-	    * AsolveB.transpose();
+                           * AsolveB.transpose();
           arena_B.adj() += C_adj * AsolveB
-	    * (arena_D.val_op() + arena_D.val_op().transpose());
+                           * (arena_D.val_op() + arena_D.val_op().transpose());
           arena_D.adj() += C_adj * BTAsolveB;
         });
 
@@ -73,7 +73,8 @@ inline var trace_gen_inv_quad_form_ldlt(
     reverse_pass_callback([arena_A, AsolveB, arena_B, arena_D, res]() mutable {
       double C_adj = res.adj();
 
-      arena_A.adj() -= C_adj * AsolveB * arena_D.transpose() * AsolveB.transpose();
+      arena_A.adj()
+          -= C_adj * AsolveB * arena_D.transpose() * AsolveB.transpose();
       arena_B.adj() += C_adj * AsolveB * (arena_D + arena_D.transpose());
     });
 
@@ -88,13 +89,14 @@ inline var trace_gen_inv_quad_form_ldlt(
 
     var res = (arena_D.val() * BTAsolveB).trace();
 
-    reverse_pass_callback([arena_A, BTAsolveB, AsolveB, arena_D, res]() mutable {
-      double C_adj = res.adj();
+    reverse_pass_callback(
+        [arena_A, BTAsolveB, AsolveB, arena_D, res]() mutable {
+          double C_adj = res.adj();
 
-      arena_A.adj() -= C_adj * AsolveB * arena_D.val_op().transpose()
-	* AsolveB.transpose();
-      arena_D.adj() += C_adj * BTAsolveB;
-    });
+          arena_A.adj() -= C_adj * AsolveB * arena_D.val_op().transpose()
+                           * AsolveB.transpose();
+          arena_D.adj() += C_adj * BTAsolveB;
+        });
 
     return res;
   } else if (!is_constant<Ta>::value && is_constant<Tb>::value
@@ -110,7 +112,7 @@ inline var trace_gen_inv_quad_form_ldlt(
       double C_adj = res.adj();
 
       arena_A.adj() -= C_adj * AsolveB * arena_D.val_op().transpose()
-	* AsolveB.transpose();
+                       * AsolveB.transpose();
     });
 
     return res;

@@ -27,11 +27,9 @@ namespace math {
  * @param B a matrix
  * @return The trace of the inverse quadratic form.
  */
-template <typename T1, typename T2,
-          require_all_matrix_t<T1, T2>* = nullptr,
+template <typename T1, typename T2, require_all_matrix_t<T1, T2>* = nullptr,
           require_any_st_var<T1, T2>* = nullptr>
-inline var trace_inv_quad_form_ldlt(const LDLT_factor<T1>& A,
-                                    const T2& B) {
+inline var trace_inv_quad_form_ldlt(const LDLT_factor<T1>& A, const T2& B) {
   check_multiplicable("trace_quad_form", "A", A.matrix(), "B", B);
 
   if (A.matrix().size() == 0)

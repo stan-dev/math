@@ -8,6 +8,7 @@
 #include <stan/math/rev/core/typedefs.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/fun/multiply_lower_tri_self_transpose.hpp>
 
 namespace stan {
 namespace math {

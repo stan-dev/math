@@ -21,11 +21,9 @@ namespace math {
  * @return x = b A^-1, solution of the linear system.
  * @throws std::domain_error if rows of b don't match the size of A.
  */
-template <typename EigMat, typename T,
-          require_eigen_t<EigMat>* = nullptr,
+template <typename EigMat, typename T, require_eigen_t<EigMat>* = nullptr,
           require_any_not_arithmetic_t<value_type_t<EigMat>, T>* = nullptr>
-inline auto mdivide_right_ldlt(const EigMat& b,
-                               const LDLT_factor<T>& A) {
+inline auto mdivide_right_ldlt(const EigMat& b, const LDLT_factor<T>& A) {
   check_multiplicable("mdivide_right_ldlt", "b", b, "A", A.matrix());
 
   return transpose(mdivide_left_ldlt(A, transpose(b))).eval();
@@ -44,8 +42,7 @@ inline auto mdivide_right_ldlt(const EigMat& b,
  * @return x = b A^-1, solution of the linear system.
  * @throws std::domain_error if rows of b don't match the size of A.
  */
-template <typename EigMat, typename T,
-          require_eigen_t<EigMat>* = nullptr,
+template <typename EigMat, typename T, require_eigen_t<EigMat>* = nullptr,
           require_all_arithmetic_t<value_type_t<EigMat>, T>* = nullptr>
 inline Eigen::Matrix<T, EigMat::RowsAtCompileTime, T::ColsAtCompileTime>
 mdivide_right_ldlt(const EigMat& b, const LDLT_factor<T>& A) {
