@@ -67,9 +67,9 @@ return_type_t<T_y, T_dof, T_scale> wishart_lpdf(const T_y& W, const T_dof& nu,
   check_symmetric(function, "random variable", W_ref);
   check_symmetric(function, "scale parameter", S_ref);
 
-  const auto& ldlt_W = make_ldlt_factor<T_y, T_dof, T_scale>(W_ref);
+  const auto& ldlt_W = make_ldlt_factor(W_ref);
   check_ldlt_factor(function, "LDLT_Factor of random variable", ldlt_W);
-  const auto& ldlt_S = make_ldlt_factor<T_scale, T_y, T_dof>(S_ref);
+  const auto& ldlt_S = make_ldlt_factor(S_ref);
   check_ldlt_factor(function, "LDLT_Factor of scale parameter", ldlt_S);
 
   return_type_t<T_y, T_dof, T_scale> lp(0.0);

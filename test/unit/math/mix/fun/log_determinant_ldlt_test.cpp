@@ -3,8 +3,8 @@
 
 TEST(MathMixMatFun, logDeterminantLdlt) {
   auto f = [](const auto& x) {
-    auto y = stan::math::make_ldlt_factor(
-        stan::math::multiply(0.5, x + x.transpose()));
+    auto x_sym = stan::math::multiply(0.5, x + x.transpose());
+    auto y = stan::math::make_ldlt_factor(x_sym);
     return stan::math::log_determinant_ldlt(y);
   };
 

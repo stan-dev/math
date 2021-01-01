@@ -2,9 +2,8 @@
 
 TEST(mathMixMatFun, traceGenInvQuadForm) {
   auto f = [](const auto& c, const auto& a, const auto& b) {
-    auto ldlt_a
-        = stan::math::make_ldlt_factor<decltype(a), decltype(c), decltype(b)>(
-            stan::math::multiply(0.5, a + a.transpose()));
+    auto x_sym = stan::math::multiply(0.5, a + a.transpose());
+    auto ldlt_a = stan::math::make_ldlt_factor(x_sym);
     return stan::math::trace_gen_inv_quad_form_ldlt(c, ldlt_a, b);
   };
 

@@ -14,12 +14,11 @@ namespace math {
  * a matrix that is not positive definite.
  *
  * @tparam T Type matrix of LDLT
- * @tparam alloc_in_arena Whether LDLT is allocated in arena or not
  * @param A The LDLT factor to check for validity
  * @return <code>true</code> if the LDLT factor is valid
  */
-template <typename T, bool alloc_in_arena>
-inline bool is_ldlt_factor(const LDLT_factor<T, alloc_in_arena>& A) {
+template <typename T>
+inline bool is_ldlt_factor(const LDLT_factor<T>& A) {
   return A.ldlt().info() == Eigen::Success && A.ldlt().isPositive()
          && (A.ldlt().vectorD().array() > 0).all();
 }

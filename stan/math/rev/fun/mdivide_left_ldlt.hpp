@@ -22,10 +22,10 @@ namespace math {
  * @return x = A^-1 B, solution of the linear system.
  * @throws std::domain_error if rows of B don't match the size of A.
  */
-template <typename T1, bool alloc_in_arena, typename T2,
+template <typename T1, typename T2,
           require_all_matrix_t<T1, T2>* = nullptr,
           require_any_st_var<T1, T2>* = nullptr>
-inline auto mdivide_left_ldlt(const LDLT_factor<T1, alloc_in_arena>& A,
+inline auto mdivide_left_ldlt(const LDLT_factor<T1>& A,
                               const T2& B) {
   using ret_val_type
       = Eigen::Matrix<double, Eigen::Dynamic, T2::ColsAtCompileTime>;
@@ -39,36 +39,35 @@ inline auto mdivide_left_ldlt(const LDLT_factor<T1, alloc_in_arena>& A,
 
   if (!is_constant<T1>::value && !is_constant<T2>::value) {
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
+    arena_t<promote_scalar_t<var, T1>> arena_A = A.matrix();
     arena_t<ret_type> res = A.ldlt().solve(arena_B.val());
+    auto ldlt_ptr = make_chainable_ptr(A.ldlt());
 
-    reverse_pass_callback([A, arena_B, res]() mutable {
-      promote_scalar_t<double, T2> adjB = A.ldlt().solve(res.adj());
+    reverse_pass_callback([arena_A, arena_B, ldlt_ptr, res]() mutable {
+      promote_scalar_t<double, T2> adjB = ldlt_ptr->solve(res.adj());
 
-      forward_as<promote_scalar_t<var, T1>>(A.matrix()).adj()
-          -= adjB * res.val().transpose().eval();
+      arena_A.adj() -= adjB * res.val_op().transpose();
       arena_B.adj() += adjB;
     });
 
     return ret_type(res);
   } else if (!is_constant<T1>::value) {
+    arena_t<promote_scalar_t<var, T1>> arena_A = A.matrix();
     arena_t<ret_type> res = A.ldlt().solve(value_of(B));
+    auto ldlt_ptr = make_chainable_ptr(A.ldlt());
 
-    reverse_pass_callback([A, res]() mutable {
-      promote_scalar_t<double, T2> adjB = A.ldlt().solve(res.adj());
-
-      forward_as<promote_scalar_t<var, T1>>(A.matrix()).adj()
-          -= adjB * res.val().transpose().eval();
+    reverse_pass_callback([arena_A, ldlt_ptr, res]() mutable {
+      arena_A.adj() -= ldlt_ptr->solve(res.adj()) * res.val_op().transpose();
     });
 
     return ret_type(res);
   } else {
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
     arena_t<ret_type> res = A.ldlt().solve(arena_B.val());
+    auto ldlt_ptr = make_chainable_ptr(A.ldlt());
 
-    reverse_pass_callback([A, arena_B, res]() mutable {
-      promote_scalar_t<double, T2> adjB = A.ldlt().solve(res.adj());
-
-      arena_B.adj() += adjB;
+    reverse_pass_callback([arena_B, ldlt_ptr, res]() mutable {
+      arena_B.adj() += ldlt_ptr->solve(res.adj());
     });
 
     return ret_type(res);

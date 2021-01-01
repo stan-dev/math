@@ -13,24 +13,26 @@ namespace math {
 /**
  * Returns the log det of the matrix whose LDLT factorization is given
  *
+ * @tparam T Type of matrix for LDLT factor
  * @param A an LDLT_factor
  * @return ln(det(A))
  */
-template <typename T, bool alloc_in_arena, require_rev_matrix_t<T>* = nullptr>
-var log_determinant_ldlt(const LDLT_factor<T, alloc_in_arena>& A) {
+template <typename T, require_rev_matrix_t<T>* = nullptr>
+var log_determinant_ldlt(const LDLT_factor<T>& A) {
   if (A.matrix().size() == 0) {
     return 0;
   }
 
   var log_det = sum(log(A.ldlt().vectorD().array()));
 
-  arena_t<Eigen::MatrixXd> arena_A_inv(A.matrix().rows(), A.matrix().cols());
+  arena_t<T> arena_A = A.matrix();
+  arena_t<Eigen::MatrixXd> arena_A_inv =
+    Eigen::MatrixXd::Identity(A.matrix().rows(), A.matrix().cols());
 
-  arena_A_inv.setIdentity();
   A.ldlt().solveInPlace(arena_A_inv);
 
-  reverse_pass_callback([A, log_det, arena_A_inv]() mutable {
-    A.matrix().adj() += log_det.adj() * arena_A_inv;
+  reverse_pass_callback([arena_A, log_det, arena_A_inv]() mutable {
+    arena_A.adj() += log_det.adj() * arena_A_inv;
   });
 
   return log_det;

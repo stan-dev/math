@@ -16,15 +16,14 @@ namespace math {
  * a matrix that is not positive definite.
  *
  * @tparam T Type matrix of LDLT
- * @tparam alloc_in_arena Whether LDLT is allocated in arena or not
  * @param[in] function name of function for error messages
  * @param[in] name variable name for error messages
  * @param[in] A the LDLT factor to check for validity
  * @throws <code>std::domain_error</code> if the LDLT factor is invalid
  */
-template <typename T, bool alloc_in_arena>
+template <typename T>
 inline void check_ldlt_factor(const char* function, const char* name,
-                              const LDLT_factor<T, alloc_in_arena>& A) {
+                              const LDLT_factor<T>& A) {
   if (!(A.ldlt().info() == Eigen::Success && A.ldlt().isPositive()
         && (A.ldlt().vectorD().array() > 0).all())) {
     std::ostringstream msg;

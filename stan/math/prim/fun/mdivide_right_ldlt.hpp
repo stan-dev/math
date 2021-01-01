@@ -13,31 +13,42 @@ namespace math {
 /**
  * Returns the solution of the system xA=b given an LDLT_factor of A
  *
- * @tparam EigMat type of the matrix or vector
- * @tparam T type of elements in the LDLT_factor
- * @tparam R number of rows in the LDLT_factor, can be Eigen::Dynamic
- * @tparam C number of columns in the LDLT_factor, can be Eigen::Dynamic
+ * @tparam EigMat type of the right hand side
+ * @tparam T type of matrix in the LDLT_factor
  *
  * @param A LDLT_factor
  * @param b Right hand side matrix or vector.
  * @return x = b A^-1, solution of the linear system.
  * @throws std::domain_error if rows of b don't match the size of A.
  */
-template <typename EigMat, typename T, bool alloc_in_arena,
+template <typename EigMat, typename T,
           require_eigen_t<EigMat>* = nullptr,
           require_any_not_arithmetic_t<value_type_t<EigMat>, T>* = nullptr>
 inline auto mdivide_right_ldlt(const EigMat& b,
-                               const LDLT_factor<T, alloc_in_arena>& A) {
+                               const LDLT_factor<T>& A) {
   check_multiplicable("mdivide_right_ldlt", "b", b, "A", A.matrix());
 
   return transpose(mdivide_left_ldlt(A, transpose(b))).eval();
 }
 
-template <typename EigMat, typename T, bool alloc_in_arena,
+/**
+ * Returns the solution of the system xA=b given an LDLT_factor of A
+ *
+ * Overload for arithmetic types
+ *
+ * @tparam EigMat type of the right hand side
+ * @tparam T type of matrix in the LDLT_factor
+ *
+ * @param A LDLT_factor
+ * @param b Right hand side matrix or vector.
+ * @return x = b A^-1, solution of the linear system.
+ * @throws std::domain_error if rows of b don't match the size of A.
+ */
+template <typename EigMat, typename T,
           require_eigen_t<EigMat>* = nullptr,
           require_all_arithmetic_t<value_type_t<EigMat>, T>* = nullptr>
 inline Eigen::Matrix<T, EigMat::RowsAtCompileTime, T::ColsAtCompileTime>
-mdivide_right_ldlt(const EigMat& b, const LDLT_factor<T, alloc_in_arena>& A) {
+mdivide_right_ldlt(const EigMat& b, const LDLT_factor<T>& A) {
   check_multiplicable("mdivide_right_ldlt", "b", b, "A", A.matrix());
 
   if (A.rows() == 0) {

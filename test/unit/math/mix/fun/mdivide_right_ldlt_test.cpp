@@ -4,8 +4,8 @@
 TEST(MathMixMatFun, mdivideRightLdlt) {
   using stan::test::relative_tolerance;
   auto f = [](const auto& x, const auto& y) {
-    auto ldlt = stan::math::make_ldlt_factor<decltype(y), decltype(x)>(
-        stan::math::multiply(0.5, y + y.transpose()));
+    auto x_sym = stan::math::multiply(0.5, y + y.transpose());
+    auto ldlt = stan::math::make_ldlt_factor(x_sym);
     return stan::math::mdivide_right_ldlt(x, ldlt);
   };
 
