@@ -56,7 +56,7 @@ class LDLT_factor<T, std::enable_if_t<bool_constant<is_eigen_matrix_dynamic<T>::
  */
 template <typename T, require_matrix_t<T>* = nullptr>
 inline auto make_ldlt_factor(const T& A) {
-  return LDLT_factor<T>(A);
+  return LDLT_factor<plain_type_t<T>>(A);
 }
 
 }  // namespace math
