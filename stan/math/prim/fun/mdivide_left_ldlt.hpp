@@ -21,8 +21,7 @@ namespace math {
  * @return x = A^-1 b, solution of the linear system.
  * @throws std::domain_error if rows of b don't match the size of A.
  */
-template <typename T, typename EigMat,
-          require_eigen_t<EigMat>* = nullptr,
+template <typename T, typename EigMat, require_eigen_t<EigMat>* = nullptr,
           require_all_not_st_var<T, EigMat>* = nullptr,
           require_any_not_t<std::is_arithmetic<value_type_t<T>>,
                             is_fvar<value_type_t<EigMat>>>* = nullptr>

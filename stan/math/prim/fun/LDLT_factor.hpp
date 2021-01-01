@@ -27,13 +27,15 @@ class LDLT_factor;
  * @tparam T type of elements in the matrix
  */
 template <typename T>
-class LDLT_factor<T, std::enable_if_t<bool_constant<is_eigen_matrix_dynamic<T>::value &&
-						 !is_var<scalar_type_t<T>>::value>::value>> {
+class LDLT_factor<T, std::enable_if_t<bool_constant<
+                         is_eigen_matrix_dynamic<T>::value
+                         && !is_var<scalar_type_t<T>>::value>::value>> {
  private:
   Eigen::LDLT<plain_type_t<T>> ldlt_;
 
  public:
-  template <typename S, require_same_t<plain_type_t<T>, plain_type_t<S>>* = nullptr>
+  template <typename S,
+            require_same_t<plain_type_t<T>, plain_type_t<S>>* = nullptr>
   explicit LDLT_factor(const S& matrix) : ldlt_(matrix.ldlt()) {}
 
   /**

@@ -15,15 +15,16 @@ namespace math {
  * of its values, with all member variable allocations are done in the arena.
  */
 template <typename T>
-class LDLT_factor<T,
-		  std::enable_if_t<bool_constant<is_eigen_matrix_dynamic<T>::value &&
-						 is_var<scalar_type_t<T>>::value>::value>> {
+class LDLT_factor<T, std::enable_if_t<bool_constant<
+                         is_eigen_matrix_dynamic<T>::value
+                         && is_var<scalar_type_t<T>>::value>::value>> {
  private:
   const plain_type_t<T>& matrix_;
   Eigen::LDLT<Eigen::MatrixXd> ldlt_;
 
  public:
-  template <typename S, require_same_t<plain_type_t<T>, plain_type_t<S>>* = nullptr>
+  template <typename S,
+            require_same_t<plain_type_t<T>, plain_type_t<S>>* = nullptr>
   explicit LDLT_factor(const S& matrix)
       : matrix_(matrix), ldlt_(matrix.val().ldlt()) {}
 
@@ -43,14 +44,14 @@ class LDLT_factor<T,
  * holds a copy of the input `var_value` and the LDLT of its values.
  */
 template <typename T>
-class LDLT_factor<T,
-		  std::enable_if_t<is_var_matrix<T>::value>> {
+class LDLT_factor<T, std::enable_if_t<is_var_matrix<T>::value>> {
  private:
   plain_type_t<T> matrix_;
   Eigen::LDLT<Eigen::MatrixXd> ldlt_;
 
  public:
-  template <typename S, require_same_t<plain_type_t<T>, plain_type_t<S>>* = nullptr>
+  template <typename S,
+            require_same_t<plain_type_t<T>, plain_type_t<S>>* = nullptr>
   explicit LDLT_factor(const S& matrix)
       : matrix_(matrix), ldlt_(matrix.val().ldlt()) {}
 

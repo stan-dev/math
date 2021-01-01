@@ -26,8 +26,8 @@ var log_determinant_ldlt(const LDLT_factor<T>& A) {
   var log_det = sum(log(A.ldlt().vectorD().array()));
 
   arena_t<T> arena_A = A.matrix();
-  arena_t<Eigen::MatrixXd> arena_A_inv =
-    Eigen::MatrixXd::Identity(A.matrix().rows(), A.matrix().cols());
+  arena_t<Eigen::MatrixXd> arena_A_inv
+      = Eigen::MatrixXd::Identity(A.matrix().rows(), A.matrix().cols());
 
   A.ldlt().solveInPlace(arena_A_inv);
 
