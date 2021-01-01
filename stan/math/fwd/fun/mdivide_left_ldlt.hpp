@@ -31,7 +31,7 @@ mdivide_left_ldlt(const LDLT_factor<T>& A, const EigMat& b) {
   constexpr int C2 = EigMat::ColsAtCompileTime;
   check_multiplicable("mdivide_left_ldlt", "A", A.matrix(), "b", b);
 
-  const Eigen::Ref<const plain_type_t<EigMat>>& b_ref = b;
+  const auto& b_ref = to_ref(b);
   Eigen::Matrix<EigMatValueScalar, R2, C2> b_val(b.rows(), b.cols());
   Eigen::Matrix<EigMatValueScalar, R2, C2> b_der(b.rows(), b.cols());
   for (int j = 0; j < b.cols(); j++) {

@@ -24,7 +24,7 @@ namespace math {
 template <typename T, typename EigMat, require_eigen_t<EigMat>* = nullptr,
           require_all_not_st_var<T, EigMat>* = nullptr,
           require_any_not_t<std::is_arithmetic<value_type_t<T>>,
-                            is_fvar<value_type_t<EigMat>>>* = nullptr>
+                           is_fvar<value_type_t<EigMat>>>* = nullptr>
 inline Eigen::Matrix<return_type_t<T, EigMat>, Eigen::Dynamic,
                      EigMat::ColsAtCompileTime>
 mdivide_left_ldlt(const LDLT_factor<T>& A, const EigMat& b) {

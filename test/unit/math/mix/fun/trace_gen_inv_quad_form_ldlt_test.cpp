@@ -11,9 +11,11 @@ TEST(mathMixMatFun, traceGenInvQuadForm) {
   Eigen::MatrixXd b00(0, 0);
   Eigen::MatrixXd c00(0, 0);
   stan::test::expect_ad(f, c00, a00, b00);
+  stan::test::expect_ad_matvar(f, c00, a00, b00);
 
   Eigen::MatrixXd b02(0, 2);
   stan::test::expect_ad(f, c00, a00, b02);
+  stan::test::expect_ad_matvar(f, c00, a00, b02);
 
   Eigen::MatrixXd a11(1, 1);
   a11 << 1;
@@ -22,6 +24,7 @@ TEST(mathMixMatFun, traceGenInvQuadForm) {
   Eigen::MatrixXd c11(1, 1);
   c11 << -3;
   stan::test::expect_ad(f, c11, a11, b11);
+  stan::test::expect_ad_matvar(f, c11, a11, b11);
 
   // tolerance very low for gradients with var; tolerance OK for fvar
   // which uses templated prim implementation using templated prim
@@ -39,10 +42,12 @@ TEST(mathMixMatFun, traceGenInvQuadForm) {
   Eigen::MatrixXd c(2, 2);
   c.setIdentity(2, 2);
   stan::test::expect_ad(tols, f, c, a, b);
+  stan::test::expect_ad_matvar(tols, f, c, a, b);
 
   Eigen::MatrixXd d(2, 2);
   d << 1, 2, 3, 4;
   stan::test::expect_ad(tols, f, d, a, b);
+  stan::test::expect_ad_matvar(tols, f, d, a, b);
 
   Eigen::MatrixXd A(2, 2);
   A << 3, 1, 1, 4;
@@ -51,19 +56,23 @@ TEST(mathMixMatFun, traceGenInvQuadForm) {
   Eigen::MatrixXd D(2, 2);
   D << 9, 10, 11, 12;
   stan::test::expect_ad(tols, f, D, A, B);
+  stan::test::expect_ad_matvar(tols, f, D, A, B);
 
   // exception tests
   // non-square first arg
   Eigen::MatrixXd c23(2, 3);
   stan::test::expect_ad(f, c23, a, b);
+  stan::test::expect_ad_matvar(f, c23, a, b);
 
   // a, b not multiplicable
   Eigen::MatrixXd b32(3, 2);
   stan::test::expect_ad(f, c, a, b32);
+  stan::test::expect_ad_matvar(f, c, a, b32);
 
   // b, c not multiplicable
   Eigen::MatrixXd b43(4, 3);
   stan::test::expect_ad(f, c, a, b43);
+  stan::test::expect_ad_matvar(f, c, a, b43);
 
   stan::math::recover_memory();
 }

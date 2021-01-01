@@ -27,7 +27,7 @@ namespace math {
  * @return The trace of the inverse quadratic form.
  */
 template <typename Td, typename Ta, typename Tb,
-          require_all_eigen_t<Td, Tb>* = nullptr,
+          require_all_matrix_t<Td, Ta, Tb>* = nullptr,
           require_any_st_var<Td, Ta, Tb>* = nullptr>
 inline var trace_gen_inv_quad_form_ldlt(const Td& D, const LDLT_factor<Ta>& A,
                                         const Tb& B) {
