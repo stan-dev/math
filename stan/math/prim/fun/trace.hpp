@@ -18,7 +18,7 @@ namespace math {
  * @return Trace of the matrix.
  */
 template <typename T, require_eigen_t<T>* = nullptr,
-	  require_not_st_var<T>* = nullptr>
+          require_not_st_var<T>* = nullptr>
 inline value_type_t<T> trace(const T& m) {
   return m.trace();
 }

@@ -140,7 +140,7 @@ struct deserializer {
     Eigen::Matrix<T, R, C> y(x.rows(), x.cols());
     for (int j = 0; j < x.cols(); ++j) {
       for (int i = 0; i < x.rows(); ++i) {
-	y(i + j * x.rows()) = read(x(i, j));
+        y(i + j * x.rows()) = read(x(i, j));
       }
     }
     return y;
@@ -164,7 +164,7 @@ struct deserializer {
     Eigen::Matrix<std::complex<T>, R, C> y(x.rows(), x.cols());
     for (int j = 0; j < x.cols(); ++j) {
       for (int i = 0; i < x.rows(); ++i) {
-	y(i + j * x.rows()) = read(x(i, j));
+        y(i + j * x.rows()) = read(x(i, j));
       }
     }
     return y;
@@ -241,7 +241,7 @@ struct serializer {
   void write(const U& x) {
     for (int j = 0; j < x.cols(); ++j) {
       for (int i = 0; i < x.rows(); ++i) {
-	write(x.coeff(i, j));
+        write(x.coeff(i, j));
       }
     }
   }

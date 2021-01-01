@@ -70,9 +70,9 @@ TEST(MathMixMatFun, mdivideRightLdlt) {
   stan::test::expect_ad_matvar(tols, f, u, v);
 
   // ill-formed inputs
-  stan::test::expect_ad(f, m33, m44);  // wrong size
-  stan::test::expect_ad(f, rv3, m44);  // wrong size
-  stan::test::expect_ad(f, v3, m33);   // wrong type
+  stan::test::expect_ad(f, m33, m44);         // wrong size
+  stan::test::expect_ad(f, rv3, m44);         // wrong size
+  stan::test::expect_ad(f, v3, m33);          // wrong type
   stan::test::expect_ad_matvar(f, m33, m44);  // wrong size
   stan::test::expect_ad_matvar(f, rv3, m44);  // wrong size
   stan::test::expect_ad_matvar(f, v3, m33);   // wrong type
