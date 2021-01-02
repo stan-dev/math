@@ -15,7 +15,7 @@ namespace stan {
 namespace math {
 
 /**
- * Given input matrix m, return matrix U where \mathbf{m} = \mathbf{UDV^{T}}
+ * Given input matrix m, return matrix U where `m = UDV^{T}`
  *
  * This function internally calls Eigen::JacobiSVD to compute decomposition.
  *

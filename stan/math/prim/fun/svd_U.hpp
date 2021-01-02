@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 
 /**
- * Given input matrix m, return matrix U where \mathbf{m} = \mathbf{UDV^{T}}
+ * Given input matrix m, return matrix U where `m = UDV^{T}`
  *
  * @tparam EigMat type of the matrix
  * @param m MxN input matrix
