@@ -74,8 +74,20 @@ inline void check_less(const char* function, const char* name, const T_y& y,
                                                                  y, high);
 }
 
-template <typename T_y, typename T_high, require_container_t<T_y>* = nullptr,
- require_container_t<T_high>* = nullptr>
+/**
+ * Check if <code>y</code> is strictly less than <code>high</code>.
+ * This function is vectorized and will check each element of
+ * <code>y</code> against each element of <code>high</code>.
+ * @tparam T_y A container type
+ * @tparam T_high A container type
+ * @param function Function name (for error messages)
+ * @param name Variable name (for error messages)
+ * @param y Variable to check
+ * @param high Upper bound
+ * @throw <code>domain_error</code> if y is not less than low
+ *   or if any element of y or high is NaN.
+ */
+template <typename T_y, typename T_high, require_all_container_t<T_y, T_high>* = nullptr>
 inline void check_less(const char* function, const char* name, const T_y& y,
                        const T_high& high) {
   const auto& high_ref = as_array_or_scalar(to_ref(high));
@@ -97,6 +109,19 @@ inline void check_less(const char* function, const char* name, const T_y& y,
   }
 }
 
+/**
+ * Check if <code>y</code> is strictly less than <code>high</code>.
+ * This function is vectorized and will check each element of
+ * <code>y</code> against each element of <code>high</code>.
+ * @tparam T_y A container type
+ * @tparam T_high A scalar type
+ * @param function Function name (for error messages)
+ * @param name Variable name (for error messages)
+ * @param y Variable to check
+ * @param high Upper bound
+ * @throw <code>domain_error</code> if y is not less than low
+ *   or if any element of y or high is NaN.
+ */
 template <typename T_y, typename T_high, require_container_t<T_y>* = nullptr,
  require_stan_scalar_t<T_high>* = nullptr>
 inline void check_less(const char* function, const char* name, const T_y& y,

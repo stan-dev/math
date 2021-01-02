@@ -20,9 +20,9 @@ namespace math {
  * If the lower bound is negative infinity, it is ignored and
  * the function reduces to <code>identity_free(y)</code>.
  *
- * @tparam T type of scalar
+ * @tparam T type of bounded object
  * @tparam L type of lower bound
- * @param[in] y input scalar
+ * @param[in] y input object
  * @param[in] lb lower bound
  * @return unconstrained value that produces the input when
  * constrained

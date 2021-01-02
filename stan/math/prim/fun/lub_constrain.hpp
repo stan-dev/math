@@ -62,8 +62,8 @@ inline return_type_t<T, L, U> lub_constrain(const T& x, const L& lb,
 }
 
 /**
- * Return the lower- and upper-bounded scalar derived by
- * transforming the specified free scalar given the specified
+ * Return the lower- and upper-bounded matrix derived by
+ * transforming the specified free matrix given the specified
  * lower and upper bounds.
  *
  * <p>The transform is the transformed and scaled inverse logit,
@@ -78,14 +78,14 @@ inline return_type_t<T, L, U> lub_constrain(const T& x, const L& lb,
  * positive infinity and the lower bound negative infinity,
  * this function reduces to <code>identity_constrain(x)</code>.
  *
- * @tparam T Type of scalar.
+ * @tparam T Type of Matrix.
  * @tparam L Type of lower bound.
  * @tparam U Type of upper bound.
- * @param[in] x Free scalar to transform.
+ * @param[in] x Free Matrix to transform.
  * @param[in] lb Lower bound.
  * @param[in] ub Upper bound.
- * @return Lower- and upper-bounded scalar derived from transforming
- *   the free scalar.
+ * @return Lower- and upper-bounded matrix derived from transforming
+ *   the free matrix.
  * @throw std::domain_error if ub <= lb
  */
 template <typename T, typename L, typename U, require_matrix_t<T>* = nullptr>
@@ -161,6 +161,47 @@ inline return_type_t<T, L, U> lub_constrain(const T& x, const L& lb,
   return fma(ub - lb, inv_logit(x), lb);
 }
 
+/**
+ * Return the lower- and upper-bounded matrix derived by
+ * transforming the specified free matrix given the specified
+ * lower and upper bounds and increment the specified log
+ * density with the log absolute Jacobian determinant.
+ *
+ * <p>The transform is as defined in
+ * <code>lub_constrain(T, double, double)</code>.  The log absolute
+ * Jacobian determinant is given by
+ *
+ * <p>\f$\log \left| \frac{d}{dx} \left(
+ *                L + (U-L) \mbox{logit}^{-1}(x) \right)
+ *            \right|\f$
+ *
+ * <p>\f$ {} = \log |
+ *         (U-L)
+ *         \, (\mbox{logit}^{-1}(x))
+ *         \, (1 - \mbox{logit}^{-1}(x)) |\f$
+ *
+ * <p>\f$ {} = \log (U - L) + \log (\mbox{logit}^{-1}(x))
+ *                          + \log (1 - \mbox{logit}^{-1}(x))\f$
+ *
+ * <p>If the lower bound is negative infinity and upper bound finite,
+ * this function reduces to <code>ub_constrain(x, ub, lp)</code>.  If
+ * the upper bound is positive infinity and the lower bound
+ * finite, this function reduces to
+ * <code>lb_constrain(x, lb, lp)</code>.  If the upper bound is
+ * positive infinity and the lower bound negative infinity,
+ * this function reduces to <code>identity_constrain(x, lp)</code>.
+ *
+ * @tparam T Type of Matrix.
+ * @tparam L Type of lower bound.
+ * @tparam U Type of upper bound.
+ * @param[in] x Free Matrix to transform.
+ * @param[in] lb Lower bound.
+ * @param[in] ub Upper bound.
+ * @param[in,out] lp Log probability scalar reference.
+ * @return Lower- and upper-bounded matrix derived from transforming
+ *   the free Matrix.
+ * @throw std::domain_error if ub <= lb
+ */
 template <typename T, typename L, typename U, typename S, require_matrix_t<T>* = nullptr>
 inline auto lub_constrain(const T& x, const L& lb,
                                             const U& ub, S& lp) {

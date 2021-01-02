@@ -44,7 +44,7 @@ inline return_type_t<T, U> ub_free(const T& y, const U& ub) {
 }
 
 /**
- * Return the free scalar that corresponds to the specified
+ * Return the free scalar or matrix that corresponds to the specified
  * upper-bounded value with respect to the specified upper bound.
  *
  * <p>The transform is the reverse of the
@@ -57,12 +57,12 @@ inline return_type_t<T, U> ub_free(const T& y, const U& ub) {
  * If the upper bound is positive infinity, this function
  * reduces to <code>identity_free(y)</code>.
  *
- * @tparam T type of scalar
+ * @tparam T type of object
  * @tparam U type of upper bound
- * @param y constrained scalar with specified upper bound
+ * @param y constrained object with specified upper bound
  * @param ub upper bound
- * @return unconstrained scalar with respect to upper bound
- * @throw std::invalid_argument if constrained scalar is greater
+ * @return unconstrained object with respect to upper bound
+ * @throw std::invalid_argument if constrained object is greater
  *   than the upper bound.
  */
 template <typename T, typename U, require_matrix_t<T>* = nullptr>

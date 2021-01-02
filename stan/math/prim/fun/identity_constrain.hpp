@@ -13,8 +13,8 @@ namespace math {
  * <p>This method is effectively a no-op and is mainly useful as a
  * placeholder in auto-generated code.
  *
- * @tparam T Type of scalar.
- * @param[in] x free scalar
+ * @tparam T Any type.
+ * @param[in] x object
  * @return transformed input
  */
 template <typename T>
@@ -30,9 +30,9 @@ inline auto identity_constrain(T&& x) {
  * <p>This method is effectively a no-op and mainly useful as a
  * placeholder in auto-generated code.
  *
- * @tparam T type of scalar
+ * @tparam T Any type
  * @tparam S type of log probability
- * @param[in] x scalar
+ * @param[in] x object
  * @param[in] lp log density reference
  * @return transformed input
  */

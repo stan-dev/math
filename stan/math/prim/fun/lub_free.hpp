@@ -33,13 +33,13 @@ namespace math {
  * positive infinity and the lower bound negative infinity,
  * this function reduces to <code>identity_free(y)</code>.
  *
- * @tparam T type of scalar
+ * @tparam T type of bounded object
  * @tparam L type of lower bound
  * @tparam U type of upper bound
  * @param y constrained value
  * @param lb lower bound
  * @param ub upper bound
- * @return the free scalar that transforms to the input scalar
+ * @return the free object that transforms to the input scalar
  *   given the bounds
  * @throw std::invalid_argument if the lower bound is greater than
  *   the upper bound, y is less than the lower bound, or y is

@@ -44,7 +44,7 @@ inline return_type_t<T, U> ub_constrain(const T& x, const U& ub) {
 
 /**
  * Return the upper-bounded value for the specified unconstrained
- * scalar and upper bound.
+ * matrix and upper bound.
  *
  * <p>The transform is
  *
@@ -55,11 +55,11 @@ inline return_type_t<T, U> ub_constrain(const T& x, const U& ub) {
  * If the upper bound is positive infinity, this function
  * reduces to <code>identity_constrain(x)</code>.
  *
- * @tparam T type of scalar
+ * @tparam T type of Matrix
  * @tparam U type of upper bound
- * @param[in] x free scalar.
+ * @param[in] x free Matrix.
  * @param[in] ub upper bound
- * @return scalar constrained to have upper bound
+ * @return matrix constrained to have upper bound
  */
 template <typename T, typename U, require_matrix_t<T>* = nullptr>
 inline auto ub_constrain(T&& x, const U& ub) {
@@ -105,7 +105,7 @@ inline return_type_t<T, U> ub_constrain(const T& x, const U& ub, S& lp) {
 
 /**
  * Return the upper-bounded value for the specified unconstrained
- * scalar and upper bound and increment the specified log
+ * matrix and upper bound and increment the specified log
  * probability reference with the log absolute Jacobian
  * determinant of the transform.
  *
@@ -119,13 +119,13 @@ inline return_type_t<T, U> ub_constrain(const T& x, const U& ub, S& lp) {
  * If the upper bound is positive infinity, this function
  * reduces to <code>identity_constrain(x, lp)</code>.
  *
- * @tparam T type of scalar
+ * @tparam T type of Matrix
  * @tparam U type of upper bound
  * @tparam S type of log probability
- * @param[in] x free scalar
+ * @param[in] x free Matrix
  * @param[in] ub upper bound
  * @param[in,out] lp log density
- * @return scalar constrained to have upper bound
+ * @return matrix constrained to have upper bound
  */
 template <typename T, typename U, typename S, require_matrix_t<T>* = nullptr>
 inline auto ub_constrain(T&& x, const U& ub, S& lp) {

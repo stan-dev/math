@@ -54,9 +54,9 @@ inline return_type_t<T, L> lb_constrain(const T& x, const L& lb) {
  * <p>If the lower bound is negative infinity, this function
  * reduces to <code>identity_constrain(x)</code>.
  *
- * @tparam T type of scalar
+ * @tparam T type of Matrix
  * @tparam L type of lower bound
- * @param[in] x Unconstrained scalar input
+ * @param[in] x Unconstrained Matrix input
  * @param[in] lb lower bound on constrained output
  * @return lower bound constrained value corresponding to inputs
  */
@@ -104,10 +104,10 @@ inline return_type_t<T, L> lb_constrain(const T& x, const L& lb, S& lp) {
  * If the lower bound is negative infinity, this function
  * reduces to <code>identity_constraint(x, lp)</code>.
  *
- * @tparam T type of scalar
+ * @tparam T Type of Matrix
  * @tparam L type of lower bound
  * @tparam S type of log probability
- * @param[in] x unconstrained scalar input
+ * @param[in] x unconstrained Matrix input
  * @param[in] lb lower bound on output
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs

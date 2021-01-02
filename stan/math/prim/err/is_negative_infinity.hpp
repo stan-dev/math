@@ -11,12 +11,11 @@ namespace stan {
 namespace math {
 
 /**
- * Return <code>true</code> if <code>y</code> is finite.
+ * Return <code>true</code> if <code>y</code> is negative infinity.
  * This function is vectorized and will check each element of
  * <code>y</code>.
  * @tparam T_y Type of y
  * @param y Variable to check
- * @throw <code>true</code> if y is not infinity, -infinity, or NaN
  */
 template <typename T_y, require_matrix_t<T_y>* = nullptr>
 inline bool is_negative_infinity(const T_y& y) {
@@ -24,12 +23,11 @@ inline bool is_negative_infinity(const T_y& y) {
 }
 
 /**
- * Return <code>true</code> if <code>y</code> is finite.
+ * Return <code>true</code> if <code>y</code> is negative infinity.
  * This function is vectorized and will check each element of
  * <code>y</code>.
  * @tparam T_y Type of y
  * @param y Variable to check
- * @throw <code>true</code> if y is not infinity, -infinity, or NaN
  */
 template <typename T_y, require_std_vector_t<T_y>* = nullptr>
 inline bool is_negative_infinity(const T_y& y) {
@@ -37,12 +35,11 @@ inline bool is_negative_infinity(const T_y& y) {
 }
 
 /**
- * Return <code>true</code> if <code>y</code> is finite.
+ * Return <code>true</code> if <code>y</code> is negative infinity.
  * This function is vectorized and will check each element of
  * <code>y</code>.
  * @tparam T_y Type of y
  * @param y Variable to check
- * @throw <code>true</code> if y is not infinity, -infinity, or NaN
  */
 template <typename T_y, require_stan_scalar_t<T_y>* = nullptr>
 inline bool is_negative_infinity(const T_y& y) {
