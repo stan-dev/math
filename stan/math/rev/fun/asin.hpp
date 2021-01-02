@@ -14,16 +14,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class asin_vari : public op_v_vari {
- public:
-  explicit asin_vari(vari* avi) : op_v_vari(std::asin(avi->val_), avi) {}
-  void chain() {
-    avi_->adj_ += adj_ / std::sqrt(1.0 - (avi_->val_ * avi_->val_));
-  }
-};
-}  // namespace internal
-
 /**
  * Return the principal value of the arc sine, in radians, of the
  * specified variable (cmath).
@@ -57,10 +47,31 @@ class asin_vari : public op_v_vari {
    \frac{\partial \, \arcsin(x)}{\partial x} = \frac{1}{\sqrt{1-x^2}}
    \f]
  *
- * @param a Variable in range [-1, 1].
+ * @param x Variable in range [-1, 1].
  * @return Arc sine of variable, in radians.
  */
-inline var asin(const var& a) { return var(new internal::asin_vari(a.vi_)); }
+inline var asin(const var& x) {
+  return make_callback_var(std::asin(x.val()), [x](const auto& vi) mutable {
+    x.adj() += vi.adj() / std::sqrt(1.0 - (x.val() * x.val()));
+  });
+}
+
+/**
+ * Return the principal value of the arc sine, in radians, of the
+ * specified variable (cmath).
+ *
+ * @tparam Varmat a `var_value` with inner Eigen type
+ * @param x Variable with cells in range [-1, 1].
+ * @return Arc sine of variable, in radians.
+ */
+template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
+inline auto asin(const VarMat& x) {
+  return make_callback_var(
+      x.val().array().asin().matrix(), [x](const auto& vi) mutable {
+        x.adj().array()
+            += vi.adj().array() / (1.0 - (x.val().array().square())).sqrt();
+      });
+}
 
 /**
  * Return the arc sine of the complex argument.
