@@ -7,6 +7,7 @@
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/inv_logit.hpp>
+#include <stan/math/prim/fun/log1p_exp.hpp>
 #include <cmath>
 #include <tuple>
 #include <vector>
