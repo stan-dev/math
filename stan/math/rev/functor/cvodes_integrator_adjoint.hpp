@@ -451,7 +451,7 @@ class cvodes_integrator_adjoint_vari : public vari {
 
     check_nonzero_size(fun, "times", ts);
     check_nonzero_size(fun, "initial state", y0);
-    check_ordered(fun, "times", ts);
+    check_sorted(fun, "times", ts);
     check_less(fun, "initial time", t0, ts[0]);
     check_positive_finite(fun, "relative_tolerance", relative_tolerance_);
     check_positive_finite(fun, "absolute_tolerance", absolute_tolerance_);
