@@ -4,19 +4,12 @@
 #include <cmath>
 #include <vector>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-using Eigen::MatrixXd;
-using Eigen::RowVectorXd;
-using Eigen::VectorXd;
-using stan::math::categorical_logit_glm_lpmf;
-using stan::math::var;
-using std::vector;
-
 template <bool propto, typename T_x, typename T_alpha, typename T_beta>
 stan::return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_simple_lpmf(
-    const vector<int>& y, const Matrix<T_x, Dynamic, Dynamic>& x,
-    const T_alpha& alpha, const Matrix<T_beta, Dynamic, Dynamic>& beta) {
+    const std::vector<int>& y,
+    const Eigen::Matrix<T_x, Eigen::Dynamic, Eigen::Dynamic>& x,
+    const T_alpha& alpha,
+    const Eigen::Matrix<T_beta, Eigen::Dynamic, Eigen::Dynamic>& beta) {
   using T_x_beta = stan::return_type_t<T_x, T_beta>;
   using T_return = stan::return_type_t<T_x, T_beta, T_alpha>;
 
@@ -25,7 +18,7 @@ stan::return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_simple_lpmf(
   const auto& alpha_row
       = stan::math::as_column_vector_or_scalar(alpha).transpose();
 
-  Eigen::Matrix<T_return, Dynamic, Dynamic> tmp
+  Eigen::Matrix<T_return, Eigen::Dynamic, Eigen::Dynamic> tmp
       = (x.template cast<T_x_beta>() * beta.template cast<T_x_beta>())
             .array()
             .rowwise()
@@ -42,6 +35,14 @@ stan::return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_simple_lpmf(
 
 TEST(ProbDistributionsCategoricalLogitGLM,
      glm_matches_categorical_logit_doubles) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
+  using stan::math::categorical_logit_glm_lpmf;
+  using stan::math::var;
+  using std::vector;
   double eps = 1e-13;
   const size_t N_instances = 5;
   const size_t N_attributes = 2;
@@ -61,6 +62,14 @@ TEST(ProbDistributionsCategoricalLogitGLM,
 }
 
 TEST(ProbDistributionsCategoricalLogitGLM, glm_matches_categorical_logit_vars) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
+  using stan::math::categorical_logit_glm_lpmf;
+  using stan::math::var;
+  using std::vector;
   double eps = 1e-13;
   const size_t N_instances = 5;
   const size_t N_attributes = 2;
@@ -114,6 +123,14 @@ TEST(ProbDistributionsCategoricalLogitGLM, glm_matches_categorical_logit_vars) {
 }
 
 TEST(ProbDistributionsCategoricalLogitGLM, single_instance) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
+  using stan::math::categorical_logit_glm_lpmf;
+  using stan::math::var;
+  using std::vector;
   double eps = 1e-13;
   const size_t N_instances = 1;
   const size_t N_attributes = 2;
@@ -167,6 +184,14 @@ TEST(ProbDistributionsCategoricalLogitGLM, single_instance) {
 }
 
 TEST(ProbDistributionsCategoricalLogitGLM, zero_instances) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
+  using stan::math::categorical_logit_glm_lpmf;
+  using stan::math::var;
+  using std::vector;
   double eps = 1e-13;
   const size_t N_instances = 0;
   const size_t N_attributes = 2;
@@ -212,6 +237,14 @@ TEST(ProbDistributionsCategoricalLogitGLM, zero_instances) {
 }
 
 TEST(ProbDistributionsCategoricalLogitGLM, single_class) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
+  using stan::math::categorical_logit_glm_lpmf;
+  using stan::math::var;
+  using std::vector;
   double eps = 1e-13;
   const size_t N_instances = 5;
   const size_t N_attributes = 2;
@@ -265,6 +298,14 @@ TEST(ProbDistributionsCategoricalLogitGLM, single_class) {
 }
 
 TEST(ProbDistributionsCategoricalLogitGLM, zero_attributes) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
+  using stan::math::categorical_logit_glm_lpmf;
+  using stan::math::var;
+  using std::vector;
   double eps = 1e-13;
   const size_t N_instances = 5;
   const size_t N_attributes = 0;
@@ -296,6 +337,14 @@ TEST(ProbDistributionsCategoricalLogitGLM, zero_attributes) {
 }
 
 TEST(ProbDistributionsCategoricalLogitGLM, x_broadcasting) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
+  using stan::math::categorical_logit_glm_lpmf;
+  using stan::math::var;
+  using std::vector;
   double eps = 1e-13;
   const size_t N_instances = 5;
   const size_t N_attributes = 2;
@@ -353,6 +402,14 @@ TEST(ProbDistributionsCategoricalLogitGLM, x_broadcasting) {
 }
 
 TEST(ProbDistributionsCategoricalLogitGLM, y_broadcasting) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
+  using stan::math::categorical_logit_glm_lpmf;
+  using stan::math::var;
+  using std::vector;
   double eps = 1e-13;
   const size_t N_instances = 5;
   const size_t N_attributes = 2;
@@ -409,6 +466,14 @@ TEST(ProbDistributionsCategoricalLogitGLM, y_broadcasting) {
 
 TEST(ProbDistributionsCategoricalLogitGLM,
      glm_matches_categorical_logit_vars_big) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
+  using stan::math::categorical_logit_glm_lpmf;
+  using stan::math::var;
+  using std::vector;
   double eps = 1e-11;
   const size_t N_instances = 89;
   const size_t N_attributes = 23;
@@ -460,6 +525,14 @@ TEST(ProbDistributionsCategoricalLogitGLM,
 }
 
 TEST(ProbDistributionsCategoricalLogitGLM, glm_interfaces) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
+  using stan::math::categorical_logit_glm_lpmf;
+  using stan::math::var;
+  using std::vector;
   const size_t N_instances = 5;
   const size_t N_attributes = 2;
   const size_t N_classes = 3;
@@ -544,6 +617,14 @@ TEST(ProbDistributionsCategoricalLogitGLM, glm_interfaces) {
 }
 
 TEST(ProbDistributionsCategoricalLogitGLM, glm_errors) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
+  using stan::math::categorical_logit_glm_lpmf;
+  using stan::math::var;
+  using std::vector;
   const size_t N_instances = 5;
   const size_t N_attributes = 2;
   const size_t N_classes = 3;

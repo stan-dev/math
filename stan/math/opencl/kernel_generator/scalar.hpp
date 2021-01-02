@@ -8,7 +8,7 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <limits>
-#include <set>
+#include <map>
 #include <string>
 #include <tuple>
 #include <type_traits>
@@ -27,15 +27,13 @@ namespace math {
  */
 template <typename T>
 class scalar_ : public operation_cl<scalar_<T>, T> {
- private:
-  T a_;
-
  public:
   static_assert(std::is_arithmetic<T>::value,
                 "class scalar_<T>: std::is_arithmetic<T> must be true!");
   using Scalar = T;
   using base = operation_cl<scalar_<T>, T>;
-  using base::var_name;
+  using base::var_name_;
+  T a_;
 
   /**
    * Constructor for an arithmetic type
@@ -50,30 +48,34 @@ class scalar_ : public operation_cl<scalar_<T>, T> {
   inline scalar_<T> deep_copy() const { return scalar_<T>(a_); }
 
   /**
-   * generates kernel code for this expression.
-   * @param i row index variable name
-   * @param j column index variable name
+   * Generates kernel code for this expression.
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
    * @param view_handled whether whether caller already handled matrix view
    * @return part of kernel with code for this expression
    */
-  inline kernel_parts generate(const std::string& i, const std::string& j,
+  inline kernel_parts generate(const std::string& row_index_name,
+                               const std::string& col_index_name,
                                const bool view_handled) const {
     kernel_parts res{};
-    res.args = type_str<Scalar>() + " " + var_name + ", ";
+    res.args = type_str<Scalar>() + " " + var_name_ + ", ";
     return res;
   }
 
   /**
    * Sets kernel arguments for this and nested expressions.
-   * @param[in,out] generated set of expressions that already set their kernel
-   * arguments
+   * @param[in,out] generated map from (pointer to) already generated operations
+   * to variable names
    * @param kernel kernel to set arguments on
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::set<const operation_cl_base*>& generated,
+  inline void set_args(std::map<const void*, const char*>& generated,
                        cl::Kernel& kernel, int& arg_num) const {
-    kernel.setArg(arg_num++, a_);
+    if (generated.count(this) == 0) {
+      generated[this] = "";
+      kernel.setArg(arg_num++, a_);
+    }
   }
 
   /**

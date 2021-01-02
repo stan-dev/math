@@ -25,11 +25,11 @@ inverse_spd(const EigMat& m) {
   using Eigen::LDLT;
   using Eigen::Matrix;
   using Scalar = value_type_t<EigMat>;
-  check_symmetric("inverse_spd", "m", m);
   if (m.size() == 0) {
     return {};
   }
   const Eigen::Ref<const plain_type_t<EigMat>>& m_ref = m;
+  check_symmetric("inverse_spd", "m", m_ref);
   plain_type_t<EigMat> mmt = 0.5 * (m_ref + m_ref.transpose());
   LDLT<plain_type_t<EigMat>> ldlt(mmt);
   if (ldlt.info() != Eigen::Success) {

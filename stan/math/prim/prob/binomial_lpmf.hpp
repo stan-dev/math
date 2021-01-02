@@ -10,6 +10,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/functor/operands_and_partials.hpp>
 
 namespace stan {
 namespace math {
@@ -21,7 +22,7 @@ namespace math {
  *
  * @tparam T_n type of successes parameter
  * @tparam T_N type of population size parameter
- * @tparam theta type of chance of success parameter
+ * @tparam T_prob type of chance of success parameter
  * @param n successes parameter
  * @param N population size parameter
  * @param theta chance of success parameter
@@ -31,18 +32,27 @@ namespace math {
  * @throw std::domain_error if theta is not a valid probability
  * @throw std::invalid_argument if container sizes mismatch
  */
-template <bool propto, typename T_n, typename T_N, typename T_prob>
+template <bool propto, typename T_n, typename T_N, typename T_prob,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_n, T_N, T_prob>* = nullptr>
 return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
                                     const T_prob& theta) {
   using T_partials_return = partials_return_t<T_n, T_N, T_prob>;
+  using T_n_ref = ref_type_t<T_n>;
+  using T_N_ref = ref_type_t<T_N>;
+  using T_theta_ref = ref_type_t<T_prob>;
   static const char* function = "binomial_lpmf";
-  check_bounded(function, "Successes variable", n, 0, N);
-  check_nonnegative(function, "Population size parameter", N);
-  check_finite(function, "Probability parameter", theta);
-  check_bounded(function, "Probability parameter", theta, 0.0, 1.0);
   check_consistent_sizes(function, "Successes variable", n,
                          "Population size parameter", N,
                          "Probability parameter", theta);
+
+  T_n_ref n_ref = n;
+  T_N_ref N_ref = N;
+  T_theta_ref theta_ref = theta;
+
+  check_bounded(function, "Successes variable", n_ref, 0, N_ref);
+  check_nonnegative(function, "Population size parameter", N_ref);
+  check_bounded(function, "Probability parameter", theta_ref, 0.0, 1.0);
 
   if (size_zero(n, N, theta)) {
     return 0.0;
@@ -52,13 +62,18 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
   }
 
   T_partials_return logp = 0;
-  operands_and_partials<T_prob> ops_partials(theta);
+  operands_and_partials<T_theta_ref> ops_partials(theta_ref);
 
-  scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_N> N_vec(N);
-  scalar_seq_view<T_prob> theta_vec(theta);
+  scalar_seq_view<T_n_ref> n_vec(n_ref);
+  scalar_seq_view<T_N_ref> N_vec(N_ref);
+  scalar_seq_view<T_theta_ref> theta_vec(theta_ref);
   size_t size_theta = stan::math::size(theta);
   size_t max_size_seq_view = max_size(n, N, theta);
+
+  VectorBuilder<true, T_partials_return, T_prob> log1m_theta(size_theta);
+  for (size_t i = 0; i < size_theta; ++i) {
+    log1m_theta[i] = log1m(value_of(theta_vec[i]));
+  }
 
   if (include_summand<propto>::value) {
     for (size_t i = 0; i < max_size_seq_view; ++i) {
@@ -66,14 +81,17 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
     }
   }
 
-  VectorBuilder<true, T_partials_return, T_prob> log1m_theta(size_theta);
-  for (size_t i = 0; i < size_theta; ++i) {
-    log1m_theta[i] = log1m(value_of(theta_vec[i]));
-  }
-
   for (size_t i = 0; i < max_size_seq_view; ++i) {
-    logp += multiply_log(n_vec[i], value_of(theta_vec[i]))
-            + (N_vec[i] - n_vec[i]) * log1m_theta[i];
+    if (N_vec[i] != 0) {
+      if (n_vec[i] == 0) {
+        logp += N_vec[i] * log1m_theta[i];
+      } else if (n_vec[i] == N_vec[i]) {
+        logp += n_vec[i] * log(value_of(theta_vec[i]));
+      } else {
+        logp += n_vec[i] * log(value_of(theta_vec[i]))
+                + (N_vec[i] - n_vec[i]) * log1m_theta[i];
+      }
+    }
   }
 
   if (!is_constant_all<T_prob>::value) {
@@ -85,13 +103,30 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
         sum_N += N_vec[i];
       }
       const T_partials_return theta_dbl = value_of(theta_vec[0]);
-      ops_partials.edge1_.partials_[0]
-          += sum_n / theta_dbl - (sum_N - sum_n) / (1.0 - theta_dbl);
+      if (sum_N != 0) {
+        if (sum_n == 0) {
+          ops_partials.edge1_.partials_[0] -= sum_N / (1.0 - theta_dbl);
+        } else if (sum_n == sum_N) {
+          ops_partials.edge1_.partials_[0] += sum_n / theta_dbl;
+        } else {
+          ops_partials.edge1_.partials_[0]
+              += sum_n / theta_dbl - (sum_N - sum_n) / (1.0 - theta_dbl);
+        }
+      }
     } else {
       for (size_t i = 0; i < max_size_seq_view; ++i) {
         const T_partials_return theta_dbl = value_of(theta_vec[i]);
-        ops_partials.edge1_.partials_[i]
-            += n_vec[i] / theta_dbl - (N_vec[i] - n_vec[i]) / (1.0 - theta_dbl);
+        if (N_vec[i] != 0) {
+          if (n_vec[i] == 0) {
+            ops_partials.edge1_.partials_[i] -= N_vec[i] / (1.0 - theta_dbl);
+          } else if (n_vec[i] == N_vec[i]) {
+            ops_partials.edge1_.partials_[i] += n_vec[i] / theta_dbl;
+          } else {
+            ops_partials.edge1_.partials_[i]
+                += n_vec[i] / theta_dbl
+                   - (N_vec[i] - n_vec[i]) / (1.0 - theta_dbl);
+          }
+        }
       }
     }
   }

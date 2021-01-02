@@ -2,20 +2,30 @@
 @Library('StanUtils')
 import org.stan.Utils
 
-def runTests(String testPath) {
-    sh "./runTests.py -j${env.PARALLEL} ${testPath} --make-only"
-    try { sh "./runTests.py -j${env.PARALLEL} ${testPath}" }
-    finally { junit 'test/**/*.xml' }
+def runTests(String testPath, boolean jumbo = false) {
+    try {
+        if (jumbo) {
+            sh "./runTests.py -j${env.PARALLEL} ${testPath} --jumbo"
+        } else {
+            sh "./runTests.py -j${env.PARALLEL} ${testPath}"
+        }
+    }
+    finally { junit 'test/**/*.xml' }    
 }
 
-def runTestsWin(String testPath, boolean buildLibs = true) {
+def runTestsWin(String testPath, boolean buildLibs = true, boolean jumbo = false) {
     withEnv(['PATH+TBB=./lib/tbb']) {
        bat "echo $PATH"
        if (buildLibs){
            bat "mingw32-make.exe -f make/standalone math-libs"
        }
-       bat "runTests.py -j${env.PARALLEL} ${testPath} --make-only"
-       try { bat "runTests.py -j${env.PARALLEL} ${testPath}" }
+       try { 
+           if (jumbo) {
+               bat "runTests.py -j${env.PARALLEL} ${testPath} --jumbo" 
+            } else {
+               bat "runTests.py -j${env.PARALLEL} ${testPath}" 
+            }
+       }
        finally { junit 'test/**/*.xml' }
     }
 }
@@ -45,13 +55,10 @@ String stan_pr() { params.stan_pr ?: ( env.CHANGE_TARGET == "master" ? "downstre
 pipeline {
     agent none
     parameters {
-        string(defaultValue: '', name: 'cmdstan_pr',
-          description: 'PR to test CmdStan upstream against e.g. PR-630')
-        string(defaultValue: '', name: 'stan_pr',
-          description: 'PR to test Stan upstream against e.g. PR-630')
-        booleanParam(defaultValue: false, description:
-        'Run additional distribution tests on RowVectors (takes 5x as long)',
-        name: 'withRowVector')
+        string(defaultValue: '', name: 'cmdstan_pr', description: 'PR to test CmdStan upstream against e.g. PR-630')
+        string(defaultValue: '', name: 'stan_pr', description: 'PR to test Stan upstream against e.g. PR-630')
+        booleanParam(defaultValue: false, name: 'withRowVector', description: 'Run additional distribution tests on RowVectors (takes 5x as long)')
+        booleanParam(defaultValue: false, name: 'run_win_tests', description: 'Run full unit tests on Windows.')
     }
     options {
         skipDefaultCheckout()
@@ -183,19 +190,14 @@ pipeline {
                 }
             }
             steps {
+                deleteDir()
+                unstash 'MathSetup'
+	            sh "echo CXXFLAGS += -fsanitize=address > make/local"
                 script {
                     if (isUnix()) {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        runTests("test/unit/math/prim")
-                        runTests("test/unit/math/rev")
-                        runTests("test/unit")
+                        runTests("test/unit", true)
                     } else {
-                        deleteDirWin()
-                        unstash 'MathSetup'
-                        runTestsWin("test/unit/math/prim")
-                        runTestsWin("test/unit/math/rev")
-                        runTestsWin("test/unit")
+                        runTestsWin("test/unit", true)
                     }
                 }
             }
@@ -207,6 +209,7 @@ pipeline {
                     !skipRemainingStages
                 }
             }
+            failFast true
             parallel {
                 stage('MPI tests') {
                     agent { label 'linux && mpi' }
@@ -221,25 +224,86 @@ pipeline {
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
-                stage('OpenCL tests') {
-                    agent { label "gpu" }
+                stage('OpenCL CPU tests') {
+                    agent { label "gelman-group-win2 || gg-linux" }
                     steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh "echo CXX=${env.CXX} -Werror > make/local"
-                        sh "echo STAN_OPENCL=true>> make/local"
-                        sh "echo OPENCL_PLATFORM_ID=0>> make/local"
-                        sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
-                        sh "make -j${env.PARALLEL} test-headers"
-                        runTests("test/unit/math/opencl")
-                        runTests("test/unit/math/prim/fun/gp_exp_quad_cov_test")
-                        runTests("test/unit/math/prim/fun/mdivide_left_tri_test")
-                        runTests("test/unit/math/prim/fun/mdivide_right_tri_test")
-                        runTests("test/unit/math/prim/fun/multiply_test")
-                        runTests("test/unit/math/rev/fun/mdivide_left_tri_test")
-                        runTests("test/unit/math/rev/fun/multiply_test")
+                        script {
+                            if (isUnix()) {
+                                deleteDir()
+                                unstash 'MathSetup'
+                                sh "echo CXX=${env.CXX} -Werror > make/local"
+                                sh "echo STAN_OPENCL=true>> make/local"
+                                sh "echo OPENCL_PLATFORM_ID=0>> make/local"
+                                sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
+                                runTests("test/unit/math/opencl")
+                                runTests("test/unit/multiple_translation_units_test.cpp")
+                                runTests("test/unit/math/prim/fun/gp_exp_quad_cov_test.cpp")
+                                runTests("test/unit/math/prim/fun/mdivide_left_tri_test.cpp")
+                                runTests("test/unit/math/prim/fun/mdivide_right_tri_test.cpp")
+                                runTests("test/unit/math/prim/fun/multiply_test.cpp")
+                                runTests("test/unit/math/rev/fun/mdivide_left_tri_test.cpp")
+                                runTests("test/unit/math/rev/fun/multiply_test.cpp")
+                            } else {
+                                deleteDirWin()
+                                unstash 'MathSetup'
+                                bat "echo CXX=${env.CXX} -Werror > make/local"
+                                bat "echo STAN_OPENCL=true >> make/local"
+                                bat "echo OPENCL_PLATFORM_ID=1 >> make/local"
+                                bat "echo OPENCL_DEVICE_ID=0 >> make/local"
+                                bat 'echo LDFLAGS_OPENCL= -L"C:\\Program Files (x86)\\IntelSWTools\\system_studio_2020\\OpenCL\\sdk\\lib\\x64" -lOpenCL >> make/local'
+                                bat "mingw32-make.exe -f make/standalone math-libs"
+                                runTestsWin("test/unit/math/opencl", false, false)
+                                runTestsWin("test/unit/multiple_translation_units_test.cpp", false, false)
+                                runTestsWin("test/unit/math/prim/fun/gp_exp_quad_cov_test.cpp", false, false)
+                                runTestsWin("test/unit/math/prim/fun/mdivide_left_tri_test.cpp", false, false)
+                                runTestsWin("test/unit/math/prim/fun/mdivide_right_tri_test.cpp", false, false)
+                                runTestsWin("test/unit/math/prim/fun/multiply_test.cpp", false, false)                      
+                                runTestsWin("test/unit/math/rev/fun/mdivide_left_tri_test.cpp", false, false)
+                                runTestsWin("test/unit/math/rev/fun/multiply_test.cpp", false, false)
+                            }
+                        }
                     }
-                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('OpenCL GPU tests') {
+                    agent { label "gelman-group-win2 || gg-linux" }
+                    steps {
+                        script {
+                            if (isUnix()) {
+                                deleteDir()
+                                unstash 'MathSetup'
+                                sh "echo CXX=${env.CXX} -Werror > make/local"
+                                sh "echo STAN_OPENCL=true>> make/local"
+                                sh "echo OPENCL_PLATFORM_ID=1>> make/local"
+                                sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
+                                runTests("test/unit/math/opencl")
+                                runTests("test/unit/multiple_translation_units_test.cpp")
+                                runTests("test/unit/math/prim/fun/gp_exp_quad_cov_test.cpp")
+                                runTests("test/unit/math/prim/fun/mdivide_left_tri_test.cpp")
+                                runTests("test/unit/math/prim/fun/mdivide_right_tri_test.cpp")
+                                runTests("test/unit/math/prim/fun/multiply_test.cpp")
+                                runTests("test/unit/math/rev/fun/mdivide_left_tri_test.cpp")
+                                runTests("test/unit/math/rev/fun/multiply_test.cpp")
+                            } else {
+                                deleteDirWin()
+                                unstash 'MathSetup'
+                                bat "echo CXX=${env.CXX} -Werror > make/local"
+                                bat "echo STAN_OPENCL=true >> make/local"
+                                bat "echo OPENCL_PLATFORM_ID=0 >> make/local"
+                                bat "echo OPENCL_DEVICE_ID=0 >> make/local"
+                                bat 'echo LDFLAGS_OPENCL= -L"C:\\Program Files (x86)\\IntelSWTools\\system_studio_2020\\OpenCL\\sdk\\lib\\x64" -lOpenCL >> make/local'
+                                bat "mingw32-make.exe -f make/standalone math-libs"
+                                runTestsWin("test/unit/math/opencl", false, false)
+                                runTestsWin("test/unit/multiple_translation_units_test.cpp", false, false)
+                                runTestsWin("test/unit/math/prim/fun/gp_exp_quad_cov_test.cpp", false, false)
+                                runTestsWin("test/unit/math/prim/fun/mdivide_left_tri_test.cpp", false, false)
+                                runTestsWin("test/unit/math/prim/fun/mdivide_right_tri_test.cpp", false, false)
+                                runTestsWin("test/unit/math/prim/fun/multiply_test.cpp", false, false)                      
+                                runTestsWin("test/unit/math/rev/fun/mdivide_left_tri_test.cpp", false, false)
+                                runTestsWin("test/unit/math/rev/fun/multiply_test.cpp", false, false)
+                            }
+                            
+                        }
+                    }
                 }
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
@@ -272,76 +336,45 @@ pipeline {
                     agent any
                     steps {
                         script {
-                            if (isUnix()) {
-                                deleteDir()
-                                unstash 'MathSetup'
-                                sh "echo CXX=${env.CXX} -Werror > make/local"
-                                sh "echo CPPFLAGS+=-DSTAN_THREADS >> make/local"
-                                sh "export STAN_NUM_THREADS=4"
+                            deleteDir()
+                            unstash 'MathSetup'
+                            sh "echo CXX=${env.CXX} -Werror > make/local"
+                            sh "echo STAN_THREADS=true >> make/local"
+                            sh "export STAN_NUM_THREADS=4"
+                            if (isBranch('develop') || isBranch('master')) {
+                                runTests("test/unit")
+                                sh "find . -name *_test.xml | xargs rm"
+                            } else {
                                 runTests("test/unit -f thread")
                                 sh "find . -name *_test.xml | xargs rm"
                                 runTests("test/unit -f map_rect")
                                 sh "find . -name *_test.xml | xargs rm"
-                                runTests("test/unit -f reduce_sum")                            
-                            } else {
-                                deleteDirWin()
-                                unstash 'MathSetup'
-                                bat "echo CXX=${env.CXX} -Werror > make/local"
-                                bat "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
-                                runTestsWin("test/unit -f thread", false)
-                                runTestsWin("test/unit -f map_rect", false)
-                                runTestsWin("test/unit -f reduce_sum", false)
+                                runTests("test/unit -f reduce_sum")
                             }
                         }                      
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
                 stage('Windows Headers & Unit') {
+                    when {
+                        allOf {
+                            anyOf {
+                                branch 'develop'
+                                branch 'master'
+                                expression { params.run_win_tests }
+                            }
+                            expression {
+                                !skipRemainingStages
+                            }
+                        }
+                    }
                     agent { label 'windows' }
                     steps {
                         deleteDirWin()
                         unstash 'MathSetup'
                         bat "mingw32-make.exe -f make/standalone math-libs"
-                        bat "mingw32-make -j${env.PARALLEL} test-headers"
-                        runTestsWin("test/unit", false)
+                        runTestsWin("test/unit", false, true)
                     }
-                }
-            }
-        }
-        stage('Additional merge tests') {
-            when {
-                allOf {
-                    anyOf {
-                        branch 'develop'
-                        branch 'master'
-                    }
-                    expression {
-                        !skipRemainingStages
-                    }
-                }
-            }
-            parallel {
-                stage('Linux Unit with Threading') {
-                    agent { label 'linux' }
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh "echo CXX=${GCC} >> make/local"
-                        sh "echo CXXFLAGS=-DSTAN_THREADS >> make/local"
-                        runTests("test/unit")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('Mac Unit with Threading') {
-                    agent  { label 'osx' }
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh "echo CC=${env.CXX} -Werror > make/local"
-                        sh "echo CXXFLAGS+=-DSTAN_THREADS >> make/local"
-                        runTests("test/unit")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
                 }
             }
         }

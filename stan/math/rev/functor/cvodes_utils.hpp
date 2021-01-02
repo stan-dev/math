@@ -10,23 +10,22 @@
 namespace stan {
 namespace math {
 
-// no-op error handler to silence CVodes error output;  errors handled
-// directly by Stan
-extern "C" inline void cvodes_silent_err_handler(int error_code,
-                                                 const char* module,
-                                                 const char* function,
-                                                 char* msg, void* eh_data) {
-  // I found it handy to make this non-silent to debug CVODES while I set up
-  // the adjoint sensitivity. I'm keeping this here for now
-  std::cout << "Error " << msg << " (" << error_code << ") in " << module
-            << ", " << function << std::endl;
+extern "C" inline void cvodes_err_handler(int error_code, const char* module,
+                                          const char* function, char* msg,
+                                          void* eh_data) {
+  if (error_code != CV_TOO_MUCH_WORK) {
+    std::ostringstream msg1;
+    msg1 << msg << " Error code: ";
+
+    throw_domain_error(module, function, error_code, msg1.str().c_str());
+  }
 }
 
 inline void cvodes_set_options(void* cvodes_mem, double rel_tol, double abs_tol,
                                // NOLINTNEXTLINE(runtime/int)
                                long int max_num_steps) {
   // forward CVode errors to noop error handler
-  CVodeSetErrHandlerFn(cvodes_mem, cvodes_silent_err_handler, nullptr);
+  CVodeSetErrHandlerFn(cvodes_mem, cvodes_err_handler, nullptr);
 
   // Initialize solver parameters
   check_flag_sundials(CVodeSStolerances(cvodes_mem, rel_tol, abs_tol),

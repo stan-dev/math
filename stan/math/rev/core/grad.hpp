@@ -7,10 +7,29 @@
 #include <stan/math/rev/core/nested_size.hpp>
 #include <stan/math/rev/core/vari.hpp>
 #include <vector>
-#include <iostream>
 
 namespace stan {
 namespace math {
+
+/**
+ * Compute the gradient for all variables starting from the end of the AD tape.
+ * This function does not recover memory.  The chain
+ * rule is applied working down the stack from the last vari created on the
+ * AD tape and then calling each vari's `chain()` method in turn.
+ *
+ * <p>This function computes a nested gradient only going back as far
+ * as the last nesting.
+ *
+ * <p>This function does not recover any memory from the computation.
+ *
+ */
+static void grad() {
+  size_t end = ChainableStack::instance_->var_stack_.size();
+  size_t beginning = empty_nested() ? 0 : end - nested_size();
+  for (size_t i = end; i-- > beginning;) {
+    ChainableStack::instance_->var_stack_[i]->chain();
+  }
+}
 
 /**
  * Compute the gradient for all variables starting from the
@@ -28,15 +47,10 @@ namespace math {
  * @param vi Variable implementation for root of partial
  * derivative propagation.
  */
-static void grad(vari* vi = NULL) {
-  if (vi != NULL)
-    vi->init_dependent();
-  std::vector<vari*>& var_stack = ChainableStack::instance_->var_stack_;
-  size_t end = var_stack.size();
-  size_t beginning = empty_nested() ? 0 : end - nested_size();
-  for (size_t i = end; i-- > beginning;) {
-    var_stack[i]->chain();
-  }
+template <typename Vari>
+static void grad(Vari* vi) {
+  vi->init_dependent();
+  grad();
 }
 
 }  // namespace math

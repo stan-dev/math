@@ -2,10 +2,9 @@
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-
 TEST(prob_transform, ordered) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   Matrix<double, Dynamic, 1> x(3);
   x << -15.0, -2.0, -5.0;
   Matrix<double, Dynamic, 1> y = stan::math::ordered_constrain(x);
@@ -15,6 +14,8 @@ TEST(prob_transform, ordered) {
   EXPECT_EQ(-15.0 + exp(-2.0) + exp(-5.0), y[2]);
 }
 TEST(prob_transform, ordered_j) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   Matrix<double, Dynamic, 1> x(3);
   x << 1.0, -2.0, -5.0;
   double lp = -152.1;
@@ -26,6 +27,8 @@ TEST(prob_transform, ordered_j) {
   EXPECT_EQ(-152.1 - 2.0 - 5.0, lp);
 }
 TEST(prob_transform, ordered_f) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   Matrix<double, Dynamic, 1> y(3);
   y << -12.0, 1.1, 172.1;
   Matrix<double, Dynamic, 1> x = stan::math::ordered_free(y);
@@ -35,6 +38,8 @@ TEST(prob_transform, ordered_f) {
   EXPECT_FLOAT_EQ(log(172.1 - 1.1), x[2]);
 }
 TEST(prob_transform, ordered_f_exception) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   Matrix<double, Dynamic, 1> y(3);
   y << -0.1, 0.0, 1.0;
   EXPECT_NO_THROW(stan::math::ordered_free(y));
@@ -44,6 +49,8 @@ TEST(prob_transform, ordered_f_exception) {
   EXPECT_THROW(stan::math::ordered_free(y), std::domain_error);
 }
 TEST(prob_transform, ordered_rt) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   Matrix<double, Dynamic, 1> x(3);
   x << -1.0, 8.0, -3.9;
   Matrix<double, Dynamic, 1> y = stan::math::ordered_constrain(x);

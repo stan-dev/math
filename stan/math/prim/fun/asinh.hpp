@@ -13,6 +13,7 @@
 #include <stan/math/prim/fun/polar.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <cmath>
 #include <complex>
 
@@ -42,7 +43,9 @@ struct asinh_fun {
  * @param x container
  * @return Inverse hyperbolic sine of each value in the container.
  */
-template <typename T>
+template <
+    typename T, require_not_var_matrix_t<T>* = nullptr,
+    require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
 inline auto asinh(const T& x) {
   return apply_scalar_unary<asinh_fun, T>::apply(x);
 }

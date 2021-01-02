@@ -10,6 +10,8 @@
 #include <stan/math/prim/fun/isfinite.hpp>
 #include <stan/math/prim/fun/isnan.hpp>
 #include <stan/math/prim/fun/polar.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
+#include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>
 #include <complex>
 
@@ -20,7 +22,7 @@ namespace math {
  * Structure to wrap `acos()` so it can be vectorized.
  *
  * @tparam T type of variable
- * @param x variable
+ * @param x argument
  * @return Arc cosine of variable in radians.
  */
 struct acos_fun {
@@ -36,11 +38,14 @@ struct acos_fun {
  * which may be a scalar or any Stan container of numeric scalars.
  *
  * @tparam Container type of container
- * @param x container
+ * @param x argument
  * @return Arc cosine of each variable in the container, in radians.
  */
 template <typename Container,
-          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr,
+          require_not_var_matrix_t<Container>* = nullptr,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              Container>* = nullptr>
 inline auto acos(const Container& x) {
   return apply_scalar_unary<acos_fun, Container>::apply(x);
 }
@@ -50,7 +55,7 @@ inline auto acos(const Container& x) {
  *  or expressions, and containers of these.
  *
  * @tparam Container Type of x
- * @param x Container
+ * @param x argument
  * @return Arc cosine of each variable in the container, in radians.
  */
 template <typename Container,
@@ -65,12 +70,12 @@ namespace internal {
  * Return the arc cosine of the complex argument.
  *
  * @tparam V value type of argument
- * @param[in] z argument
+ * @param[in] x argument
  * @return arc cosine of the argument
  */
 template <typename V>
-inline std::complex<V> complex_acos(const std::complex<V>& z) {
-  return 0.5 * pi() - asin(z);
+inline std::complex<V> complex_acos(const std::complex<V>& x) {
+  return 0.5 * pi() - asin(x);
 }
 }  // namespace internal
 

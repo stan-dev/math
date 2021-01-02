@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/is_nan.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <cmath>
 #include <complex>
 
@@ -82,7 +83,9 @@ struct acosh_fun {
  * @param x container
  * @return Elementwise acosh of members of container.
  */
-template <typename T>
+template <
+    typename T, require_not_var_matrix_t<T>* = nullptr,
+    require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
 inline auto acosh(const T& x) {
   return apply_scalar_unary<acosh_fun, T>::apply(x);
 }

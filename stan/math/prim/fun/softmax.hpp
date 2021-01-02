@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <cmath>
 
 namespace stan {
@@ -45,9 +46,13 @@ template <typename ColVec,
           require_eigen_col_vector_vt<std::is_arithmetic, ColVec>* = nullptr>
 inline plain_type_t<ColVec> softmax(const ColVec& v) {
   using std::exp;
-  check_nonzero_size("softmax", "v", v);
-  plain_type_t<ColVec> theta = (v.array() - v.maxCoeff()).exp();
-  return theta.array() / theta.sum();
+  if (v.size() == 0) {
+    return v;
+  }
+  const auto& v_ref = to_ref(v);
+  return make_holder(
+      [](const auto& theta) { return theta.array() / theta.sum(); },
+      (v_ref.array() - v_ref.maxCoeff()).exp().eval());
 }
 
 }  // namespace math

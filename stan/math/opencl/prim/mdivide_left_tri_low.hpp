@@ -4,7 +4,7 @@
 
 #include <stan/math/prim/err.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/multiply.hpp>
+#include <stan/math/opencl/prim/multiply.hpp>
 #include <stan/math/opencl/tri_inverse.hpp>
 
 namespace stan {

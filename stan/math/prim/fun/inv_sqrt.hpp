@@ -5,6 +5,8 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
+#include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -34,7 +36,9 @@ struct inv_sqrt_fun {
  * @return inverse square root of each value in x.
  */
 template <typename Container,
-          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              Container>* = nullptr>
 inline auto inv_sqrt(const Container& x) {
   return apply_scalar_unary<inv_sqrt_fun, Container>::apply(x);
 }

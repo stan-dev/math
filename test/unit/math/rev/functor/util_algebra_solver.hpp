@@ -251,18 +251,18 @@ void inline unsolvable_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
   int max_num_steps = 1e+3;
 
   std::stringstream err_msg;
-  err_msg << "algebra_solver: the norm of the algebraic function is: "
+  err_msg << "algebra_solver: the norm of the algebraic function is "
           << 1.41421  // sqrt(2)
           << " but should be lower than the function tolerance: "
           << function_tolerance
           << ". Consider decreasing the relative tolerance and increasing"
-          << " the max_num_steps.";
+          << " max_num_steps.";
   std::string msg = err_msg.str();
   EXPECT_THROW_MSG(
       general_algebra_solver(is_newton, unsolvable_eq_functor(), x, y, dat,
                              dat_int, 0, relative_tolerance, scaling_step_size,
                              function_tolerance, max_num_steps),
-      std::runtime_error, msg);
+      std::domain_error, msg);
 }
 
 template <typename T>
@@ -293,12 +293,12 @@ inline void max_num_steps_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
   int max_num_steps = 2;  // very low for test
 
   std::stringstream err_msg;
-  err_msg << "algebra_solver: max number of iterations: " << max_num_steps
-          << " exceeded.";
+  err_msg << "algebra_solver: maximum number of iterations (" << max_num_steps
+          << ") was exceeded in the solve.";
   std::string msg = err_msg.str();
   EXPECT_THROW_MSG(
       general_algebra_solver(is_newton, non_linear_eq_functor(), x, y, dat,
                              dat_int, 0, scaling_step, relative_tolerance,
                              function_tolerance, max_num_steps),
-      std::runtime_error, msg);
+      std::domain_error, msg);
 }

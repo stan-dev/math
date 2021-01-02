@@ -4,8 +4,9 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/opencl.hpp>
+#include <stan/math/opencl/prim.hpp>
 #endif
 
 namespace stan {
@@ -104,7 +105,7 @@ mdivide_left_tri(const T1 &A, const T2 &b) {
     return from_matrix_cl(C_cl);
   } else {
 #endif
-    return A.template triangularView<TriView>().solve(b);
+    return to_ref(A).template triangularView<TriView>().solve(b);
 #ifdef STAN_OPENCL
   }
 #endif

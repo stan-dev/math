@@ -1,5 +1,5 @@
 #include <stan/math/prim.hpp>
-#include <test/unit/math/prim/fun/expect_matrix_eq.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
 TEST(MathFunctions, one_hot_row_vector) {
@@ -7,7 +7,7 @@ TEST(MathFunctions, one_hot_row_vector) {
     for (int k = 1; k <= K; k++) {
       Eigen::RowVectorXd y = Eigen::RowVectorXd::Zero(K);
       y[k - 1] = 1;
-      expect_matrix_eq(y, stan::math::one_hot_row_vector(K, k));
+      EXPECT_MATRIX_FLOAT_EQ(y, stan::math::one_hot_row_vector(K, k));
     }
   }
 }

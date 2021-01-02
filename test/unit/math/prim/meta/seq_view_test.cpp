@@ -2,24 +2,20 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-using stan::math::matrix_d;
-using stan::math::row_vector_d;
-using stan::math::vector_d;
-
-using stan::math::seq_view;
-using std::vector;
-
 TEST(matrixTest, seq_view_double_stdvector) {
+  using stan::math::seq_view;
   std::vector<double> x(2);
   x[0] = 1.0;
   x[1] = 2.0;
-  seq_view<double, vector<double> > view_x(x);
+  seq_view<double, std::vector<double> > view_x(x);
   EXPECT_EQ(2, view_x.size());
   EXPECT_FLOAT_EQ(1.0, view_x[0]);
   EXPECT_FLOAT_EQ(2.0, view_x[1]);
 }
 
 TEST(matrixTest, seq_view_double_vector) {
+  using stan::math::seq_view;
+  using stan::math::vector_d;
   vector_d y(2);
   y[0] = 1.0;
   y[1] = 2.0;
@@ -30,6 +26,8 @@ TEST(matrixTest, seq_view_double_vector) {
 }
 
 TEST(matrixTest, seq_view_double_row_vector) {
+  using stan::math::row_vector_d;
+  using stan::math::seq_view;
   row_vector_d y(2);
   y[0] = 1.0;
   y[1] = 2.0;
@@ -40,6 +38,7 @@ TEST(matrixTest, seq_view_double_row_vector) {
 }
 
 TEST(matrixTest, seq_view_double_double) {
+  using stan::math::seq_view;
   double x = 2.0;
   seq_view<double, double> view_x(x);
   EXPECT_EQ(1, view_x.size());
@@ -48,6 +47,7 @@ TEST(matrixTest, seq_view_double_double) {
 }
 
 TEST(matrixTest, seq_view_double_matrix) {
+  using stan::math::seq_view;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m(2, 3);
   m << 1, 2, 3, 4, 5, 6;
   seq_view<double, Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> >
@@ -58,6 +58,7 @@ TEST(matrixTest, seq_view_double_matrix) {
 }
 
 TEST(matrixTest, seq_view_vec_vec_double) {
+  using stan::math::seq_view;
   std::vector<std::vector<double> > x(2);
   for (size_t m = 0; m < 2; ++m)
     x[m] = std::vector<double>(3);
@@ -72,6 +73,7 @@ TEST(matrixTest, seq_view_vec_vec_double) {
 }
 
 TEST(matrixTest, seq_view_double_int) {
+  using stan::math::seq_view;
   std::vector<int> x(3);
   x[0] = 0;
   x[1] = 1;

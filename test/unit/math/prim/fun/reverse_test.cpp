@@ -1,5 +1,5 @@
 #include <stan/math/prim.hpp>
-#include <test/unit/math/prim/fun/expect_matrix_eq.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
@@ -37,19 +37,19 @@ TEST(MathFunctions, reverse_vector) {
   EXPECT_EQ(0, reverse(x0).size());
 
   Eigen::VectorXd x1 = Eigen::VectorXd::Constant(1, 5);
-  expect_matrix_eq(x1, reverse(x1));
+  EXPECT_MATRIX_FLOAT_EQ(x1, reverse(x1));
 
   Eigen::VectorXd x(4);
   x << 7, -1.2, 4, -3;
   Eigen::VectorXd rev(4);
   rev << -3, 4, -1.2, 7;
-  expect_matrix_eq(rev, reverse(x));
+  EXPECT_MATRIX_FLOAT_EQ(rev, reverse(x));
 
   std::vector<Eigen::VectorXd> cont_x{x0, x1, x};
   std::vector<Eigen::VectorXd> cont_rev{x, x1, x0};
   std::vector<Eigen::VectorXd> cont_y = stan::math::reverse(cont_x);
   for (int i = 0; i < cont_x.size(); i++) {
-    expect_matrix_eq(cont_y[i], cont_rev[i]);
+    EXPECT_MATRIX_FLOAT_EQ(cont_y[i], cont_rev[i]);
   }
 }
 
@@ -60,18 +60,18 @@ TEST(MathFunctions, reverse_row_vector) {
   EXPECT_EQ(0, reverse(x0).size());
 
   Eigen::RowVectorXd x1 = Eigen::RowVectorXd::Constant(1, 5);
-  expect_matrix_eq(x1, reverse(x1));
+  EXPECT_MATRIX_FLOAT_EQ(x1, reverse(x1));
 
   Eigen::RowVectorXd x(4);
   x << 7, -1.2, 4, -3;
   Eigen::RowVectorXd rev(4);
   rev << -3, 4, -1.2, 7;
-  expect_matrix_eq(rev, reverse(x));
+  EXPECT_MATRIX_FLOAT_EQ(rev, reverse(x));
 
   std::vector<Eigen::RowVectorXd> cont_x{x0, x1, x};
   std::vector<Eigen::RowVectorXd> cont_rev{x, x1, x0};
   std::vector<Eigen::RowVectorXd> cont_y = stan::math::reverse(cont_x);
   for (int i = 0; i < cont_x.size(); i++) {
-    expect_matrix_eq(cont_y[i], cont_rev[i]);
+    EXPECT_MATRIX_FLOAT_EQ(cont_y[i], cont_rev[i]);
   }
 }

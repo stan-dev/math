@@ -53,14 +53,14 @@ struct val_Op{
   //Returns value from a vari*
   template<typename T = Scalar>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-    std::enable_if_t<std::is_pointer<T>::value, reverse_return_t<T>>
+    std::enable_if_t<std::is_pointer<T>::value, const double&>
       operator()(T &v) const { return v->val_; }
 
   //Returns value from a var
   template<typename T = Scalar>
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
     std::enable_if_t<(!std::is_pointer<T>::value && !is_fvar<T>::value
-                      && !std::is_arithmetic<T>::value), reverse_return_t<T>>
+                      && !std::is_arithmetic<T>::value), const double&>
       operator()(T &v) const { return v.vi_->val_; }
 
   //Returns value from an fvar
@@ -91,6 +91,15 @@ struct val_Op{
  */
 inline const CwiseUnaryOp<val_Op, const Derived>
 val() const { return CwiseUnaryOp<val_Op, const Derived>(derived());
+}
+
+/**
+ * Coefficient-wise function applying val_Op struct to a matrix of var
+ * or vari* and returning a view to the matrix of doubles containing
+ * the values
+ */
+inline CwiseUnaryOp<val_Op, Derived>
+val_op() { return CwiseUnaryOp<val_Op, Derived>(derived());
 }
 
 /**
@@ -149,6 +158,7 @@ struct adj_Op {
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
     std::enable_if_t<!std::is_pointer<T>::value, reverse_return_t<T>>
       operator()(T &v) const { return v.vi_->adj_; }
+
 };
 
 /**
@@ -157,6 +167,15 @@ struct adj_Op {
  */
 inline const CwiseUnaryOp<adj_Op, const Derived>
 adj() const { return CwiseUnaryOp<adj_Op, const Derived>(derived());
+}
+
+/**
+ * Coefficient-wise function applying adj_Op struct to a matrix of var
+ * and returning a view to a matrix of doubles of the adjoints that can
+ * be modified. This is meant to be used on the rhs of expressions.
+ */
+inline CwiseUnaryOp<adj_Op, Derived> adj_op() {
+  return CwiseUnaryOp<adj_Op, Derived>(derived());
 }
 
 /**

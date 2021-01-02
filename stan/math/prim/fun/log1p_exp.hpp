@@ -5,6 +5,7 @@
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -71,7 +72,8 @@ struct log1p_exp_fun {
  * @param x container
  * @return Natural log of (1 + exp()) applied to each value in x.
  */
-template <typename T>
+template <typename T,
+          require_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
 inline auto log1p_exp(const T& x) {
   return apply_scalar_unary<log1p_exp_fun, T>::apply(x);
 }

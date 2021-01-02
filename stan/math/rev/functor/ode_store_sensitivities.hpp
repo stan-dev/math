@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/functor/ode_store_sensitivities.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/meta.hpp>
 #include <ostream>
 #include <vector>
 
@@ -13,11 +14,9 @@ namespace math {
  * Build output vars for a state of the ODE solve, storing the sensitivities
  * precomputed using the forward sensitivity problem in precomputed varis.
  *
- * Any combination of y0, t0, ts, and any of the args arguments can have the
- * var scalar type.
- *
  * @tparam F Type of ODE right hand side
- * @tparam T_0 Type of initial time
+ * @tparam T_y0_t0 Type of initial state
+ * @tparam T_t0 Type of initial time
  * @tparam T_ts Type of output times
  * @tparam T_Args Types of pass-through parameters
  *
@@ -25,80 +24,81 @@ namespace math {
  * @param coupled_state Current state of the coupled_ode_system
  * @param y0 Initial state
  * @param t0 Initial time
- * @param ts Times at which to solve the ODE at
+ * @param t Times at which to solve the ODE at
  * @param[in, out] msgs the print stream for warning messages
  * @param args Extra arguments passed unmodified through to ODE right hand side
  * @return ODE state with scalar type var
  */
 template <typename F, typename T_y0_t0, typename T_t0, typename T_t,
-          typename... Args>
+          typename... Args,
+          require_any_autodiff_t<T_y0_t0, T_t0, T_t,
+                                 scalar_type_t<Args>...>* = nullptr>
 Eigen::Matrix<var, Eigen::Dynamic, 1> ode_store_sensitivities(
-    const F& f, const Eigen::VectorXd& coupled_state,
+    const F& f, const std::vector<double>& coupled_state,
     const Eigen::Matrix<T_y0_t0, Eigen::Dynamic, 1>& y0, const T_t0& t0,
     const T_t& t, std::ostream* msgs, const Args&... args) {
   const size_t N = y0.size();
-  const size_t y0_vars = count_vars(y0);
-  const size_t args_vars = count_vars(args...);
-  const size_t t0_vars = count_vars(t0);
-  const size_t t_vars = count_vars(t);
+  const size_t num_y0_vars = count_vars(y0);
+  const size_t num_args_vars = count_vars(args...);
+  const size_t num_t0_vars = count_vars(t0);
+  const size_t num_t_vars = count_vars(t);
   Eigen::Matrix<var, Eigen::Dynamic, 1> yt(N);
 
-  Eigen::VectorXd y = coupled_state.head(N);
+  Eigen::VectorXd y(N);
+  for (size_t n = 0; n < N; ++n) {
+    y.coeffRef(n) = coupled_state[n];
+  }
 
   Eigen::VectorXd f_y_t;
   if (is_var<T_t>::value)
-    f_y_t = f(value_of(t), y, msgs, value_of(args)...);
+    f_y_t = f(value_of(t), y, msgs, eval(value_of(args))...);
 
   Eigen::VectorXd f_y0_t0;
   if (is_var<T_t0>::value)
-    f_y0_t0 = f(value_of(t0), value_of(y0), msgs, value_of(args)...);
+    f_y0_t0
+        = f(value_of(t0), eval(value_of(y0)), msgs, eval(value_of(args))...);
 
-  for (size_t j = 0; j < N; j++) {
-    const size_t total_vars = y0_vars + args_vars + t0_vars + t_vars;
+  const size_t total_vars
+      = num_y0_vars + num_args_vars + num_t0_vars + num_t_vars;
 
-    vari** varis
-        = ChainableStack::instance_->memalloc_.alloc_array<vari*>(total_vars);
-    double* partials
-        = ChainableStack::instance_->memalloc_.alloc_array<double>(total_vars);
+  vari** varis
+      = ChainableStack::instance_->memalloc_.alloc_array<vari*>(total_vars);
 
-    vari** varis_ptr = varis;
-    double* partials_ptr = partials;
+  save_varis(varis, y0, args..., t0, t);
 
-    // iterate over parameters for each equation
-    varis_ptr = save_varis(varis_ptr, y0);
-    for (std::size_t k = 0; k < y0_vars; ++k) {
-      //*varis_ptr = y0[k].vi_;
-      *partials_ptr = coupled_state(N + y0_vars * k + j);
-      partials_ptr++;
+  // memory for a column major jacobian
+  double* jacobian_mem
+      = ChainableStack::instance_->memalloc_.alloc_array<double>(N
+                                                                 * total_vars);
+
+  Eigen::Map<Eigen::MatrixXd> jacobian(jacobian_mem, total_vars, N);
+
+  for (size_t j = 0; j < N; ++j) {
+    for (size_t k = 0; k < num_y0_vars; ++k) {
+      jacobian.coeffRef(k, j) = coupled_state[N + num_y0_vars * k + j];
     }
 
-    varis_ptr = save_varis(varis_ptr, args...);
-    for (std::size_t k = 0; k < args_vars; ++k) {
-      // dy[j]_dtheta[k]
-      // theta[k].vi_
-      *partials_ptr = coupled_state(N + N * y0_vars + N * k + j);
-      partials_ptr++;
+    for (size_t k = 0; k < num_args_vars; ++k) {
+      jacobian.coeffRef(num_y0_vars + k, j)
+          = coupled_state[N + N * num_y0_vars + N * k + j];
     }
 
-    varis_ptr = save_varis(varis_ptr, t0);
-    if (t0_vars > 0) {
+    if (is_var<T_t0>::value) {
       double dyt_dt0 = 0.0;
-      for (std::size_t k = 0; k < y0_vars; ++k) {
-        // dy[j]_dtheta[k]
-        // theta[k].vi_
-        dyt_dt0 += -f_y0_t0[k] * coupled_state(N + y0_vars * k + j);
+      for (size_t k = 0; k < num_y0_vars; ++k) {
+        dyt_dt0 -= f_y0_t0.coeffRef(k) * coupled_state[N + num_y0_vars * k + j];
       }
-      *partials_ptr = dyt_dt0;
-      partials_ptr++;
+      jacobian.coeffRef(num_y0_vars + num_args_vars, j) = dyt_dt0;
     }
 
-    varis_ptr = save_varis(varis_ptr, t);
-    if (t_vars > 0) {
-      *partials_ptr = f_y_t[j];
-      partials_ptr++;
+    if (is_var<T_t>::value) {
+      jacobian.coeffRef(num_y0_vars + num_args_vars + num_t0_vars, j)
+          = f_y_t.coeffRef(j);
     }
 
-    yt(j) = new precomputed_gradients_vari(y(j), total_vars, varis, partials);
+    // jacobian_mem + j * total_vars points to the jth column of jacobian
+    yt(j) = new precomputed_gradients_vari(y(j), total_vars, varis,
+                                           jacobian_mem + j * total_vars);
   }
 
   return yt;

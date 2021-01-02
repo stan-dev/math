@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -77,7 +78,8 @@ struct log_inv_logit_fun {
  * @param x container
  * @return elementwise log_inv_logit of members of container
  */
-template <typename T>
+template <typename T,
+          require_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
 inline auto log_inv_logit(const T& x) {
   return apply_scalar_unary<log_inv_logit_fun, T>::apply(x);
 }

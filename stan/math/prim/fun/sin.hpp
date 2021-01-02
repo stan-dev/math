@@ -5,6 +5,8 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/i_times.hpp>
 #include <stan/math/prim/fun/sinh.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
+#include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>
 #include <complex>
 
@@ -33,8 +35,10 @@ struct sin_fun {
  * @param x angles in radians
  * @return Sine of each value in x.
  */
-template <typename T,
-          require_not_container_st<std::is_arithmetic, T>* = nullptr>
+template <
+    typename T, require_not_container_st<std::is_arithmetic, T>* = nullptr,
+    require_not_var_matrix_t<T>* = nullptr,
+    require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
 inline auto sin(const T& x) {
   return apply_scalar_unary<sin_fun, T>::apply(x);
 }

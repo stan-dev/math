@@ -3,6 +3,7 @@
 
 #include <stan/math/mix.hpp>
 #include <test/prob/utility.hpp>
+#include <test/unit/math/expect_near_rel.hpp>
 #include <type_traits>
 #include <stdexcept>
 
@@ -13,6 +14,7 @@ using stan::is_vector;
 using stan::scalar_type;
 using stan::math::fvar;
 using stan::math::value_of;
+using stan::math::value_of_rec;
 using stan::math::var;
 using std::vector;
 
@@ -251,8 +253,8 @@ class AgradDistributionTestFixture : public ::testing::Test {
                                         Scalar3, Scalar4, Scalar5>(p0, p1, p2,
                                                                    p3, p4, p5);
 
-      EXPECT_TRUE(reference_logprob_false - logprob_false
-                  == reference_logprob_true - logprob_true)
+      EXPECT_NEAR(value_of_rec(reference_logprob_false - logprob_false),
+                  value_of_rec(reference_logprob_true - logprob_true), 1e-12)
           << "Proportional test failed at index: " << n << std::endl
           << "  reference params: " << parameters[0] << std::endl
           << "  current params:   " << parameters[n] << std::endl
@@ -318,8 +320,8 @@ class AgradDistributionTestFixture : public ::testing::Test {
   // works for <var>
   double calculate_gradients_1storder(vector<double>& grad, var& logprob,
                                       vector<var>& x) {
+    stan::math::set_zero_all_adjoints();
     logprob.grad(x, grad);
-    stan::math::recover_memory();
     return logprob.val();
   }
   double calculate_gradients_2ndorder(vector<double>& grad, var& logprob,
@@ -334,7 +336,7 @@ class AgradDistributionTestFixture : public ::testing::Test {
   // works for fvar<double>
   double calculate_gradients_1storder(vector<double>& grad,
                                       fvar<double>& logprob, vector<var>& x) {
-    x.push_back(logprob.d_);
+    grad.push_back(logprob.d_);
     return logprob.val();
   }
   double calculate_gradients_2ndorder(vector<double>& grad,
@@ -350,12 +352,13 @@ class AgradDistributionTestFixture : public ::testing::Test {
   double calculate_gradients_1storder(vector<double>& grad,
                                       fvar<fvar<double>>& logprob,
                                       vector<var>& x) {
-    x.push_back(logprob.d_.val_);
+    grad.push_back(logprob.d_.val_);
     return logprob.val().val();
   }
   double calculate_gradients_2ndorder(vector<double>& grad,
                                       fvar<fvar<double>>& logprob,
                                       vector<var>& x) {
+    grad.push_back(logprob.d_.d_);
     return logprob.val().val();
   }
   double calculate_gradients_3rdorder(vector<double>& grad,
@@ -367,14 +370,14 @@ class AgradDistributionTestFixture : public ::testing::Test {
   // works for fvar<var>
   double calculate_gradients_1storder(vector<double>& grad, fvar<var>& logprob,
                                       vector<var>& x) {
+    stan::math::set_zero_all_adjoints();
     logprob.val_.grad(x, grad);
-    stan::math::recover_memory();
     return logprob.val_.val();
   }
   double calculate_gradients_2ndorder(vector<double>& grad, fvar<var>& logprob,
                                       vector<var>& x) {
+    stan::math::set_zero_all_adjoints();
     logprob.d_.grad(x, grad);
-    stan::math::recover_memory();
     return logprob.val_.val();
   }
   double calculate_gradients_3rdorder(vector<double>& grad, fvar<var>& logprob,
@@ -386,22 +389,22 @@ class AgradDistributionTestFixture : public ::testing::Test {
   double calculate_gradients_1storder(vector<double>& grad,
                                       fvar<fvar<var>>& logprob,
                                       vector<var>& x) {
+    stan::math::set_zero_all_adjoints();
     logprob.val_.val_.grad(x, grad);
-    stan::math::recover_memory();
     return logprob.val_.val_.val();
   }
   double calculate_gradients_2ndorder(vector<double>& grad,
                                       fvar<fvar<var>>& logprob,
                                       vector<var>& x) {
+    stan::math::set_zero_all_adjoints();
     logprob.d_.val_.grad(x, grad);
-    stan::math::recover_memory();
     return logprob.val_.val_.val();
   }
   double calculate_gradients_3rdorder(vector<double>& grad,
                                       fvar<fvar<var>>& logprob,
                                       vector<var>& x) {
+    stan::math::set_zero_all_adjoints();
     logprob.d_.d_.grad(x, grad);
-    stan::math::recover_memory();
     return logprob.val_.val_.val();
   }
 
@@ -471,6 +474,8 @@ class AgradDistributionTestFixture : public ::testing::Test {
         test_finite_diffs_equal(parameters[n], finite_diffs, gradients);
       }
     }
+
+    stan::math::recover_memory();
   }
 
   void test_gradients_equal(const vector<double>& expected_gradients,
@@ -479,7 +484,7 @@ class AgradDistributionTestFixture : public ::testing::Test {
         << "Number of expected gradients and calculated gradients must match "
            "-- error in test fixture";
     for (size_t i = 0; i < expected_gradients.size(); i++) {
-      EXPECT_FLOAT_EQ(expected_gradients[i], gradients[i])
+      EXPECT_NEAR(expected_gradients[i], gradients[i], 1e-7)
           << "Comparison of expected gradient to calculated gradient failed";
     }
   }
@@ -546,34 +551,21 @@ class AgradDistributionTestFixture : public ::testing::Test {
       test_gradients_equal(expected_gradients1, gradients1);
       test_gradients_equal(expected_gradients2, gradients2);
       test_gradients_equal(expected_gradients3, gradients3);
+
+      stan::math::recover_memory();
     }
   }
 
-  void test_multiple_gradient_values(const bool is_vec,
-                                     const vector<double>& single_gradients,
-                                     size_t& pos_single,
-                                     const vector<double>& multiple_gradients,
-                                     size_t& pos_multiple,
-                                     const size_t N_REPEAT) {
-    if (is_vec) {
-      for (size_t i = 0; i < N_REPEAT; i++) {
-        EXPECT_FLOAT_EQ(single_gradients[pos_single],
-                        multiple_gradients[pos_multiple])
-            << "Comparison of single_gradient value to vectorized gradient "
-               "failed";
-        pos_multiple++;
-      }
-      pos_single++;
-    } else {
-      EXPECT_FLOAT_EQ(single_gradients[pos_single] * double(N_REPEAT),
-                      multiple_gradients[pos_multiple])
-          << "Comparison of single_gradient value to vectorized gradient "
-             "failed";
-      pos_single++;
-      pos_multiple++;
-    }
-  }
-
+  /**
+   * Test that the vectorized functions work as expected when the elements
+   * of the vector are the same
+   *
+   * For lpdfs this means
+   *   lpdf([a, a, a]) == lpdf(a) + lpdf(a) + lpdf(a)
+   *
+   * Similarly for lpmfs this means
+   *   lpmf([a, a, a]) == lpmf(a) + lpmf(a) + lpmf(a)
+   */
   void test_repeat_as_vector() {
     if (all_constant<T0, T1, T2, T3, T4, T5>::value) {
       SUCCEED() << "No test for all double arguments";
@@ -602,14 +594,18 @@ class AgradDistributionTestFixture : public ::testing::Test {
       vector<var> s1;
       vector<var> s2;
       vector<var> s3;
-      add_vars(s1, p0_, p1_, p2_, p3_, p4_, p5_);
-      add_vars(s2, p0_, p1_, p2_, p3_, p4_, p5_);
-      add_vars(s3, p0_, p1_, p2_, p3_, p4_, p5_);
+      std::vector<Scalar0> p0s_((is_vector<T0>::value) ? N_REPEAT : 1, p0_);
+      std::vector<Scalar1> p1s_((is_vector<T1>::value) ? N_REPEAT : 1, p1_);
+      std::vector<Scalar2> p2s_((is_vector<T2>::value) ? N_REPEAT : 1, p2_);
+      std::vector<Scalar3> p3s_((is_vector<T3>::value) ? N_REPEAT : 1, p3_);
+      std::vector<Scalar4> p4s_((is_vector<T4>::value) ? N_REPEAT : 1, p4_);
+      std::vector<Scalar5> p5s_((is_vector<T5>::value) ? N_REPEAT : 1, p5_);
+      add_vars(s1, p0s_, p1s_, p2s_, p3s_, p4s_, p5s_);
+      add_vars(s2, p0s_, p1s_, p2s_, p3s_, p4s_, p5s_);
+      add_vars(s3, p0s_, p1s_, p2s_, p3s_, p4s_, p5s_);
 
       T_return_type logprob
-          = TestClass.template log_prob<false, Scalar0, Scalar1, Scalar2,
-                                        Scalar3, Scalar4, Scalar5>(
-              p0_, p1_, p2_, p3_, p4_, p5_);
+          = N_REPEAT * TestClass.log_prob(p0_, p1_, p2_, p3_, p4_, p5_);
 
       double single_lp
           = calculate_gradients_1storder(single_gradients1, logprob, s1);
@@ -623,9 +619,7 @@ class AgradDistributionTestFixture : public ::testing::Test {
       T4 p4 = get_repeated_params<T4>(parameters[n], 4, N_REPEAT);
       T5 p5 = get_repeated_params<T5>(parameters[n], 5, N_REPEAT);
 
-      T_return_type multiple_lp
-          = TestClass.template log_prob<T0, T1, T2, T3, T4, T5>(p0, p1, p2, p3,
-                                                                p4, p5);
+      T_return_type multiple_lp = TestClass.log_prob(p0, p1, p2, p3, p4, p5);
       vector<double> multiple_gradients1;
       vector<double> multiple_gradients2;
       vector<double> multiple_gradients3;
@@ -637,124 +631,158 @@ class AgradDistributionTestFixture : public ::testing::Test {
       add_vars(x3, p0, p1, p2, p3, p4, p5);
 
       calculate_gradients_1storder(multiple_gradients1, multiple_lp, x1);
-      calculate_gradients_1storder(multiple_gradients2, multiple_lp, x1);
-      calculate_gradients_1storder(multiple_gradients3, multiple_lp, x1);
+      calculate_gradients_2ndorder(multiple_gradients2, multiple_lp, x2);
+      calculate_gradients_3rdorder(multiple_gradients3, multiple_lp, x3);
 
-      EXPECT_TRUE(N_REPEAT * single_lp - multiple_lp < 1e-8)
-          << "log prob with repeated vector input should match "
-          << "a multiple of log prob of single input";
+      stan::math::recover_memory();
 
-      size_t pos_single = 0;
-      size_t pos_multiple = 0;
-      if (!is_constant_all<T0>::value && !is_empty<T0>::value
-          && !std::is_same<Scalar0, fvar<double>>::value
-          && !std::is_same<Scalar0, fvar<fvar<double>>>::value)
-        test_multiple_gradient_values(is_vector<T0>::value, single_gradients1,
-                                      pos_single, multiple_gradients1,
-                                      pos_multiple, N_REPEAT);
-      if (!is_constant_all<T1>::value && !is_empty<T1>::value
-          && !std::is_same<Scalar1, fvar<double>>::value
-          && !std::is_same<Scalar1, fvar<fvar<double>>>::value)
-        test_multiple_gradient_values(is_vector<T1>::value, single_gradients1,
-                                      pos_single, multiple_gradients1,
-                                      pos_multiple, N_REPEAT);
-      if (!is_constant_all<T2>::value && !is_empty<T2>::value
-          && !std::is_same<Scalar2, fvar<double>>::value
-          && !std::is_same<Scalar2, fvar<fvar<double>>>::value)
-        test_multiple_gradient_values(is_vector<T2>::value, single_gradients1,
-                                      pos_single, multiple_gradients1,
-                                      pos_multiple, N_REPEAT);
-      if (!is_constant_all<T3>::value && !is_empty<T3>::value
-          && !std::is_same<Scalar3, fvar<double>>::value
-          && !std::is_same<Scalar3, fvar<fvar<double>>>::value)
-        test_multiple_gradient_values(is_vector<T3>::value, single_gradients1,
-                                      pos_single, multiple_gradients1,
-                                      pos_multiple, N_REPEAT);
-      if (!is_constant_all<T4>::value && !is_empty<T4>::value
-          && !std::is_same<Scalar4, fvar<double>>::value
-          && !std::is_same<Scalar4, fvar<fvar<double>>>::value)
-        test_multiple_gradient_values(is_vector<T4>::value, single_gradients1,
-                                      pos_single, multiple_gradients1,
-                                      pos_multiple, N_REPEAT);
-      if (!is_constant_all<T5>::value && !is_empty<T5>::value
-          && !std::is_same<Scalar5, fvar<double>>::value
-          && !std::is_same<Scalar5, fvar<fvar<double>>>::value)
-        test_multiple_gradient_values(is_vector<T5>::value, single_gradients1,
-                                      pos_single, multiple_gradients1,
-                                      pos_multiple, N_REPEAT);
+      stan::test::expect_near_rel(
+          "log prob with repeated vector input should match a multiple of log "
+          "prob of single input",
+          stan::math::value_of_rec(single_lp),
+          stan::math::value_of_rec(multiple_lp));
 
-      pos_single = 0;
-      pos_multiple = 0;
-      if (!is_constant_all<T0>::value && !is_empty<T0>::value
-          && (std::is_same<Scalar0, fvar<var>>::value
-              || std::is_same<Scalar0, fvar<fvar<var>>>::value))
-        test_multiple_gradient_values(is_vector<T0>::value, single_gradients2,
-                                      pos_single, multiple_gradients2,
-                                      pos_multiple, N_REPEAT);
-      if (!is_constant_all<T1>::value && !is_empty<T1>::value
-          && (std::is_same<Scalar1, fvar<var>>::value
-              || std::is_same<Scalar1, fvar<fvar<var>>>::value))
-        test_multiple_gradient_values(is_vector<T1>::value, single_gradients2,
-                                      pos_single, multiple_gradients2,
-                                      pos_multiple, N_REPEAT);
-      if (!is_constant_all<T2>::value && !is_empty<T2>::value
-          && (std::is_same<Scalar2, fvar<var>>::value
-              || std::is_same<Scalar2, fvar<fvar<var>>>::value))
-        test_multiple_gradient_values(is_vector<T2>::value, single_gradients2,
-                                      pos_single, multiple_gradients2,
-                                      pos_multiple, N_REPEAT);
-      if (!is_constant_all<T3>::value && !is_empty<T3>::value
-          && (std::is_same<Scalar3, fvar<var>>::value
-              || std::is_same<Scalar3, fvar<fvar<var>>>::value))
-        test_multiple_gradient_values(is_vector<T3>::value, single_gradients2,
-                                      pos_single, multiple_gradients2,
-                                      pos_multiple, N_REPEAT);
-      if (!is_constant_all<T4>::value && !is_empty<T4>::value
-          && (std::is_same<Scalar4, fvar<var>>::value
-              || std::is_same<Scalar4, fvar<fvar<var>>>::value))
-        test_multiple_gradient_values(is_vector<T4>::value, single_gradients2,
-                                      pos_single, multiple_gradients2,
-                                      pos_multiple, N_REPEAT);
-      if (!is_constant_all<T5>::value && !is_empty<T5>::value
-          && (std::is_same<Scalar5, fvar<var>>::value
-              || std::is_same<Scalar5, fvar<fvar<var>>>::value))
-        test_multiple_gradient_values(is_vector<T5>::value, single_gradients2,
-                                      pos_single, multiple_gradients2,
-                                      pos_multiple, N_REPEAT);
-
-      pos_single = 0;
-      pos_multiple = 0;
-      if (!is_constant_all<T0>::value && !is_empty<T0>::value
-          && std::is_same<Scalar0, fvar<fvar<var>>>::value)
-        test_multiple_gradient_values(is_vector<T0>::value, single_gradients3,
-                                      pos_single, multiple_gradients3,
-                                      pos_multiple, N_REPEAT);
-      if (!is_constant_all<T1>::value && !is_empty<T1>::value
-          && std::is_same<Scalar1, fvar<fvar<var>>>::value)
-        test_multiple_gradient_values(is_vector<T1>::value, single_gradients3,
-                                      pos_single, multiple_gradients3,
-                                      pos_multiple, N_REPEAT);
-      if (!is_constant_all<T2>::value && !is_empty<T2>::value
-          && std::is_same<Scalar2, fvar<fvar<var>>>::value)
-        test_multiple_gradient_values(is_vector<T2>::value, single_gradients3,
-                                      pos_single, multiple_gradients3,
-                                      pos_multiple, N_REPEAT);
-      if (!is_constant_all<T3>::value && !is_empty<T3>::value
-          && std::is_same<Scalar3, fvar<fvar<var>>>::value)
-        test_multiple_gradient_values(is_vector<T3>::value, single_gradients3,
-                                      pos_single, multiple_gradients3,
-                                      pos_multiple, N_REPEAT);
-      if (!is_constant_all<T4>::value && !is_empty<T4>::value
-          && std::is_same<Scalar4, fvar<fvar<var>>>::value)
-        test_multiple_gradient_values(is_vector<T4>::value, single_gradients3,
-                                      pos_single, multiple_gradients3,
-                                      pos_multiple, N_REPEAT);
-      if (!is_constant_all<T5>::value && !is_empty<T5>::value
-          && std::is_same<Scalar5, fvar<fvar<var>>>::value)
-        test_multiple_gradient_values(is_vector<T5>::value, single_gradients3,
-                                      pos_single, multiple_gradients3,
-                                      pos_multiple, N_REPEAT);
+      stan::test::expect_near_rel(
+          "scalar and vectorized results should have the same first order "
+          "gradients",
+          single_gradients1, multiple_gradients1);
+      stan::test::expect_near_rel(
+          "scalar and vectorized results should have the same second order "
+          "gradients",
+          single_gradients2, multiple_gradients2);
+      stan::test::expect_near_rel(
+          "scalar and vectorized results should have the same third order "
+          "gradients",
+          single_gradients3, multiple_gradients3);
     }
+  }
+
+  /**
+   * Test that the vectorized functions work as expected when the elements
+   * of the vector are different
+   *
+   * For lpdfs this means
+   *   lpdf([a, b, c]) == lpdf(a) + lpdf(b) + lpdf(c)
+   *
+   * Similarly for lpmfs this means
+   *   lpmf([a, b, c]) == lpmf(a) + lpmf(b) + lpmf(c)
+   */
+  void test_as_scalars_vs_as_vector() {
+    if (all_constant<T0, T1, T2, T3, T4, T5>::value) {
+      SUCCEED() << "No test for all double arguments";
+      return;
+    }
+    if (!any_vector<T0, T1, T2, T3, T4, T5>::value) {
+      SUCCEED() << "No test for non-vector arguments";
+      return;
+    }
+    vector<double> log_prob;
+    vector<vector<double>> parameters;
+    TestClass.valid_values(parameters, log_prob);
+
+    vector<double> single_gradients1;
+    vector<double> single_gradients2;
+    vector<double> single_gradients3;
+    vector<var> scalar_vars;
+
+    vector<double> multiple_gradients1;
+    vector<double> multiple_gradients2;
+    vector<double> multiple_gradients3;
+    vector<var> vector_vars;
+
+    T0 p0 = get_params<T0>(parameters, 0);
+    T1 p1 = get_params<T1>(parameters, 1);
+    T2 p2 = get_params<T2>(parameters, 2);
+    T3 p3 = get_params<T3>(parameters, 3);
+    T4 p4 = get_params<T4>(parameters, 4);
+    T5 p5 = get_params<T5>(parameters, 5);
+
+    vector<Scalar0> p0s = {get_param<Scalar0>(parameters[0], 0)};
+    vector<Scalar1> p1s = {get_param<Scalar1>(parameters[0], 1)};
+    vector<Scalar2> p2s = {get_param<Scalar2>(parameters[0], 2)};
+    vector<Scalar3> p3s = {get_param<Scalar3>(parameters[0], 3)};
+    vector<Scalar4> p4s = {get_param<Scalar4>(parameters[0], 4)};
+    vector<Scalar5> p5s = {get_param<Scalar5>(parameters[0], 5)};
+
+    T_return_type single_lp = TestClass.template log_prob(
+        p0s.back(), p1s.back(), p2s.back(), p3s.back(), p4s.back(), p5s.back());
+
+    for (size_t n = 1; n < parameters.size(); n++) {
+      if (is_vector<T0>::value)
+        p0s.push_back(get_param<Scalar0>(parameters[n], 0));
+
+      if (is_vector<T1>::value)
+        p1s.push_back(get_param<Scalar1>(parameters[n], 1));
+
+      if (is_vector<T2>::value)
+        p2s.push_back(get_param<Scalar2>(parameters[n], 2));
+
+      if (is_vector<T3>::value)
+        p3s.push_back(get_param<Scalar3>(parameters[n], 3));
+
+      if (is_vector<T4>::value)
+        p4s.push_back(get_param<Scalar4>(parameters[n], 4));
+
+      if (is_vector<T5>::value)
+        p5s.push_back(get_param<Scalar5>(parameters[n], 5));
+
+      single_lp += TestClass.log_prob(p0s.back(), p1s.back(), p2s.back(),
+                                      p3s.back(), p4s.back(), p5s.back());
+    }
+
+    add_var(vector_vars, p0);
+    add_var(scalar_vars, p0s);
+
+    add_var(vector_vars, p1);
+    add_var(scalar_vars, p1s);
+
+    add_var(vector_vars, p2);
+    add_var(scalar_vars, p2s);
+
+    add_var(vector_vars, p3);
+    add_var(scalar_vars, p3s);
+
+    add_var(vector_vars, p4);
+    add_var(scalar_vars, p4s);
+
+    add_var(vector_vars, p5);
+    add_var(scalar_vars, p5s);
+
+    calculate_gradients_1storder(single_gradients1, single_lp, scalar_vars);
+    calculate_gradients_2ndorder(single_gradients2, single_lp, scalar_vars);
+    calculate_gradients_3rdorder(single_gradients3, single_lp, scalar_vars);
+
+    T_return_type multiple_lp = TestClass.log_prob(p0, p1, p2, p3, p4, p5);
+
+    calculate_gradients_1storder(multiple_gradients1, multiple_lp, vector_vars);
+    calculate_gradients_2ndorder(multiple_gradients2, multiple_lp, vector_vars);
+    calculate_gradients_3rdorder(multiple_gradients3, multiple_lp, vector_vars);
+
+    stan::math::recover_memory();
+
+    if (stan::math::is_inf(stan::math::value_of_rec(single_lp))
+        && stan::math::value_of_rec(single_lp)
+               == stan::math::value_of_rec(multiple_lp)) {
+      return;
+    }
+
+    stan::test::expect_near_rel(
+        "sum of scalar log probs should match vectorized result",
+        stan::math::value_of_rec(single_lp),
+        stan::math::value_of_rec(multiple_lp));
+
+    stan::test::expect_near_rel(
+        "scalar and vectorized results should have the same first order "
+        "gradients",
+        single_gradients1, multiple_gradients1);
+    stan::test::expect_near_rel(
+        "scalar and vectorized results should have the same second order "
+        "gradients",
+        single_gradients2, multiple_gradients2);
+    stan::test::expect_near_rel(
+        "scalar and vectorized results should have the same third order "
+        "gradients",
+        single_gradients3, multiple_gradients3);
   }
 
   void test_length_0_vector() {
@@ -788,7 +816,7 @@ class AgradDistributionTestFixture : public ::testing::Test {
     return params[0];
   }
 };
-TYPED_TEST_CASE_P(AgradDistributionTestFixture);
+TYPED_TEST_SUITE_P(AgradDistributionTestFixture);
 
 TYPED_TEST_P(AgradDistributionTestFixture, CallAllVersions) {
   this->call_all_versions();
@@ -814,12 +842,19 @@ TYPED_TEST_P(AgradDistributionTestFixture, RepeatAsVector) {
   this->test_repeat_as_vector();
 }
 
+TYPED_TEST_P(AgradDistributionTestFixture, AsScalarsVsAsVector) {
+  this->test_as_scalars_vs_as_vector();
+}
+
 TYPED_TEST_P(AgradDistributionTestFixture, Length0Vector) {
   this->test_length_0_vector();
 }
 
-REGISTER_TYPED_TEST_CASE_P(AgradDistributionTestFixture, CallAllVersions,
-                           ValidValues, InvalidValues, Propto, FiniteDiff,
-                           Function, RepeatAsVector, Length0Vector);
+REGISTER_TYPED_TEST_SUITE_P(AgradDistributionTestFixture, CallAllVersions,
+                            ValidValues, InvalidValues, Propto, FiniteDiff,
+                            Function, RepeatAsVector, AsScalarsVsAsVector,
+                            Length0Vector);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(AgradDistributionTestFixture);
 
 #endif

@@ -6,10 +6,13 @@
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/gamma_q.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/promote_scalar.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/tgamma.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <cmath>
 #include <limits>
 
@@ -20,73 +23,45 @@ namespace math {
 template <typename T_n, typename T_rate>
 return_type_t<T_rate> poisson_cdf(const T_n& n, const T_rate& lambda) {
   using T_partials_return = partials_return_t<T_n, T_rate>;
-  using std::exp;
+  using T_n_ref = ref_type_if_t<!is_constant<T_n>::value, T_n>;
+  using T_lambda_ref = ref_type_if_t<!is_constant<T_rate>::value, T_rate>;
   using std::pow;
   static const char* function = "poisson_cdf";
-  check_not_nan(function, "Rate parameter", lambda);
-  check_nonnegative(function, "Rate parameter", lambda);
   check_consistent_sizes(function, "Random variable", n, "Rate parameter",
                          lambda);
+
+  T_n_ref n_ref = n;
+  T_lambda_ref lambda_ref = lambda;
+
+  const auto& n_col = as_column_vector_or_scalar(n_ref);
+  const auto& lambda_col = as_column_vector_or_scalar(lambda_ref);
+
+  const auto& n_arr = as_array_or_scalar(n_col);
+  const auto& lambda_arr = as_array_or_scalar(lambda_col);
+
+  ref_type_t<decltype(value_of(n_arr))> n_val = value_of(n_arr);
+  ref_type_t<decltype(value_of(lambda_arr))> lambda_val = value_of(lambda_arr);
+
+  check_nonnegative(function, "Rate parameter", lambda_val);
 
   if (size_zero(n, lambda)) {
     return 1.0;
   }
 
-  T_partials_return P(1.0);
-  operands_and_partials<T_rate> ops_partials(lambda);
+  operands_and_partials<T_lambda_ref> ops_partials(lambda_ref);
 
-  scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_rate> lambda_vec(lambda);
-  size_t size_n = stan::math::size(n);
-  size_t size_lambda = stan::math::size(lambda);
-  size_t max_size_seq_view = max_size(n, lambda);
-
-  // Explicit return for extreme values
-  // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < size_n; i++) {
-    if (value_of(n_vec[i]) < 0) {
-      return ops_partials.build(0.0);
-    }
+  if (sum(promote_scalar<int>(n_val < 0))) {
+    return ops_partials.build(0.0);
   }
 
-  VectorBuilder<!is_constant_all<T_rate>::value, T_partials_return, T_n>
-      tgamma_n_plus_one(size_n);
-  VectorBuilder<!is_constant_all<T_rate>::value, T_partials_return, T_rate>
-      exp_minus_lambda(size_lambda);
+  const auto& Pi = to_ref_if<!is_constant_all<T_rate>::value>(
+      gamma_q(n_val + 1.0, lambda_val));
+
+  T_partials_return P = prod(Pi);
 
   if (!is_constant_all<T_rate>::value) {
-    for (size_t i = 0; i < size_n; i++) {
-      tgamma_n_plus_one[i] = tgamma(n_vec[i] + 1.0);
-    }
-    for (size_t i = 0; i < size_lambda; i++) {
-      exp_minus_lambda[i] = exp(-value_of(lambda_vec[i]));
-    }
-  }
-
-  for (size_t i = 0; i < max_size_seq_view; i++) {
-    // Explicit results for extreme values
-    // The gradients are technically ill-defined, but treated as zero
-    if (value_of(n_vec[i]) == std::numeric_limits<int>::max()) {
-      continue;
-    }
-
-    const T_partials_return n_dbl = value_of(n_vec[i]);
-    const T_partials_return lambda_dbl = value_of(lambda_vec[i]);
-    const T_partials_return Pi = gamma_q(n_dbl + 1, lambda_dbl);
-
-    P *= Pi;
-
-    if (!is_constant_all<T_rate>::value) {
-      ops_partials.edge1_.partials_[i] -= exp_minus_lambda[i]
-                                          * pow(lambda_dbl, n_dbl)
-                                          / (tgamma_n_plus_one[i] * Pi);
-    }
-  }
-
-  if (!is_constant_all<T_rate>::value) {
-    for (size_t i = 0; i < size_lambda; ++i) {
-      ops_partials.edge1_.partials_[i] *= P;
-    }
+    ops_partials.edge1_.partials_ = -exp(-lambda_val) * pow(lambda_val, n_val)
+                                    / (tgamma(n_val + 1.0) * Pi) * P;
   }
 
   return ops_partials.build(P);

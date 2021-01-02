@@ -5,12 +5,9 @@
 #include <stan/math/opencl/copy.hpp>
 #include <test/unit/math/opencl/kernel_generator/reference_kernel.hpp>
 #include <stan/math.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <string>
-
-#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
-  for (int i = 0; i < A.size(); i++)    \
-    EXPECT_NEAR(A(i), B(i), DELTA);
 
 TEST(KernelGenerator, transpose_rvalue_test) {
   using Eigen::MatrixXd;
@@ -128,7 +125,7 @@ TEST(KernelGenerator, transpose_block_test) {
       21, 22, 23, 24, 25;
 
   matrix_cl<double> m_cl(m);
-  auto tmp2 = stan::math::block(m_cl, 2, 1, 2, 3);
+  auto tmp2 = stan::math::block_zero_based(m_cl, 2, 1, 2, 3);
   auto tmp = stan::math::transpose(tmp2);
   matrix_cl<double> res_cl = tmp;
 
@@ -149,7 +146,7 @@ TEST(KernelGenerator, block_of_transpose_test) {
 
   matrix_cl<double> m_cl(m);
   auto tmp = stan::math::transpose(m_cl);
-  auto tmp2 = stan::math::block(tmp, 2, 1, 2, 3);
+  auto tmp2 = stan::math::block_zero_based(tmp, 2, 1, 2, 3);
   matrix_cl<double> res_cl = tmp2;
 
   MatrixXd res = stan::math::from_matrix_cl(res_cl);
