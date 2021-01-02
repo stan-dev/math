@@ -17,7 +17,7 @@ TEST(MathMixMatFun, svd_U) {
   Eigen::MatrixXd m22(2, 2);
   m22 << 3, -5, 7, 11;
   stan::test::expect_ad(tols, f, m22);
-  
+
   Eigen::MatrixXd m23(2, 3);
   m23 << 3, 5, -7, -11, 13, -17;
   stan::test::expect_ad(tols, f, m23);

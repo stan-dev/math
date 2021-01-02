@@ -14,16 +14,16 @@ namespace math {
  * @param m MxN input matrix
  * @return Orthogonal matrix V
  */
-template <typename EigMat,
-	  require_eigen_matrix_dynamic_t<EigMat>* = nullptr,
-	  require_not_vt_var<EigMat>* = nullptr>
-Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>
-svd_V(const EigMat& m) {
+template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr,
+          require_not_vt_var<EigMat>* = nullptr>
+Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic> svd_V(
+    const EigMat& m) {
   check_nonzero_size("svd_V", "m", m);
 
   return Eigen::JacobiSVD<Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic,
-					Eigen::Dynamic> >(m, Eigen::ComputeThinV)
-    .matrixV();
+                                        Eigen::Dynamic> >(m,
+                                                          Eigen::ComputeThinV)
+      .matrixV();
 }
 
 }  // namespace math
