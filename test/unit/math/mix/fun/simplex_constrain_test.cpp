@@ -25,7 +25,9 @@ void expect_simplex_transform(const T& x) {
   stan::test::expect_ad(f1, x);
   stan::test::expect_ad_matvar(f1, x);
   stan::test::expect_ad(f2, x);
+  stan::test::expect_ad_matvar(f2, x);
   stan::test::expect_ad(f3, x);
+  stan::test::expect_ad_matvar(f3, x);
 }
 }  // namespace simplex_constrain_test
 
