@@ -20,8 +20,10 @@ TEST(MathMixMatFun, svd_V) {
 
   Eigen::MatrixXd m23(2, 3);
   m23 << 3, 5, -7, -11, 13, -17;
-  Eigen::MatrixXd m32 = m23.transpose();
   stan::test::expect_ad(tols, f, m23);
+
+  Eigen::MatrixXd m32(3, 2);
+  m32 << 1, 3, -5, 7, 9, -11;
   stan::test::expect_ad(tols, f, m32);
 
   Eigen::MatrixXd a22(2, 2);
