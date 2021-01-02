@@ -53,6 +53,7 @@ ode_adams_tol_impl(const char* function_name, const F& f, const T_y0& y0,
                    double relative_tolerance, double absolute_tolerance,
                    long int max_num_steps,  // NOLINT(runtime/int)
                    std::ostream* msgs, const T_Args&... args) {
+  /*
   const auto& args_ref_tuple = std::make_tuple(to_ref(args)...);
   return apply(
       [&](const auto&... args_refs) {
@@ -63,6 +64,9 @@ ode_adams_tol_impl(const char* function_name, const F& f, const T_y0& y0,
         return integrator();
       },
       args_ref_tuple);
+  */
+  return ode_bdf_adjoint_tol(f, y0, t0, ts, relative_tolerance, absolute_tolerance,
+                             max_num_steps, msgs, args...);
 }
 
 /**
