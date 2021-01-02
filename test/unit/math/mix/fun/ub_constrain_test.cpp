@@ -34,12 +34,10 @@ TEST(mathMixScalFun, ub_constrain) {
 }
 
 TEST(mathMixMatFun, ub_mat_constrain) {
-  using stan::math::promote_scalar_t;
   using stan::scalar_type_t;
+  using stan::math::promote_scalar_t;
   using stan::math::ub_constrain;
-  auto tester = [](const auto& x) {
-    return ub_constrain(x, 3.0);
-  };
+  auto tester = [](const auto& x) { return ub_constrain(x, 3.0); };
 
   auto promote_tester = [](const auto& x) {
     using x_scalar = scalar_type_t<decltype(x)>;
@@ -64,8 +62,8 @@ TEST(mathMixMatFun, ub_mat_constrain) {
 }
 
 TEST(mathMixMatFun, ub_lp_mat_constrain) {
-  using stan::math::promote_scalar_t;
   using stan::scalar_type_t;
+  using stan::math::promote_scalar_t;
   using stan::math::ub_constrain;
   auto ub_lp_promote_tester = [](const auto& x) {
     using scalar_x = scalar_type_t<decltype(x)>;

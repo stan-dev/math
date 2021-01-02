@@ -1,13 +1,10 @@
 #include <test/unit/math/test_ad.hpp>
 
-
 TEST(mathMixMatFun, lub_mat_constrain) {
-  using stan::math::promote_scalar_t;
   using stan::scalar_type_t;
   using stan::math::lub_constrain;
-  auto tester = [](const auto& x) {
-    return lub_constrain(x, -3.0, 3.0);
-  };
+  using stan::math::promote_scalar_t;
+  auto tester = [](const auto& x) { return lub_constrain(x, -3.0, 3.0); };
 
   auto promote_tester = [](const auto& x) {
     using x_scalar = scalar_type_t<decltype(x)>;
@@ -35,9 +32,9 @@ TEST(mathMixMatFun, lub_mat_constrain) {
 }
 
 TEST(mathMixMatFun, lub_lp_mat_constrain) {
-  using stan::math::promote_scalar_t;
   using stan::scalar_type_t;
   using stan::math::lub_constrain;
+  using stan::math::promote_scalar_t;
   auto tester = [](const auto& x) {
     using x_scalar = scalar_type_t<decltype(x)>;
     x_scalar lp = 0;

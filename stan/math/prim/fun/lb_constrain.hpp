@@ -85,7 +85,8 @@ inline auto lb_constrain(T&& x, const L& lb) {
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename L, typename S, require_stan_scalar_t<T>* = nullptr>
+template <typename T, typename L, typename S,
+          require_stan_scalar_t<T>* = nullptr>
 inline return_type_t<T, L> lb_constrain(const T& x, const L& lb, S& lp) {
   using std::exp;
   if (unlikely(is_negative_infinity(value_of(lb)))) {

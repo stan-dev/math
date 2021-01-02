@@ -80,8 +80,6 @@ inline auto elt_multiply(const T1& A, const T2& B) {
   return (A.array() * B).matrix();
 }
 
-
-
 }  // namespace math
 }  // namespace stan
 

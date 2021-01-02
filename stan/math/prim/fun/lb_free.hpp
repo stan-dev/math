@@ -33,7 +33,8 @@ inline auto lb_free(T&& y, const L& lb) {
   if (unlikely(is_negative_infinity(lb))) {
     return identity_free(std::forward<T>(y));
   }
-  check_greater_or_equal("lb_free", "Lower bounded variable", value_of(y), value_of(lb));
+  check_greater_or_equal("lb_free", "Lower bounded variable", value_of(y),
+                         value_of(lb));
   return log(subtract(y, lb));
 }
 

@@ -48,7 +48,8 @@ namespace math {
  *   the free scalar.
  * @throw std::domain_error if ub <= lb
  */
-template <typename T, typename L, typename U, require_stan_scalar_t<T>* = nullptr>
+template <typename T, typename L, typename U,
+          require_stan_scalar_t<T>* = nullptr>
 inline return_type_t<T, L, U> lub_constrain(const T& x, const L& lb,
                                             const U& ub) {
   check_less("lub_constrain", "lb", lb, ub);
@@ -141,7 +142,8 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
  *   the free scalar.
  * @throw std::domain_error if ub <= lb
  */
-template <typename T, typename L, typename U, typename S, require_stan_scalar_t<T>* = nullptr>
+template <typename T, typename L, typename U, typename S,
+          require_stan_scalar_t<T>* = nullptr>
 inline return_type_t<T, L, U> lub_constrain(const T& x, const L& lb,
                                             const U& ub, S& lp) {
   using std::exp;
@@ -202,9 +204,9 @@ inline return_type_t<T, L, U> lub_constrain(const T& x, const L& lb,
  *   the free Matrix.
  * @throw std::domain_error if ub <= lb
  */
-template <typename T, typename L, typename U, typename S, require_matrix_t<T>* = nullptr>
-inline auto lub_constrain(const T& x, const L& lb,
-                                            const U& ub, S& lp) {
+template <typename T, typename L, typename U, typename S,
+          require_matrix_t<T>* = nullptr>
+inline auto lub_constrain(const T& x, const L& lb, const U& ub, S& lp) {
   check_less("lub_constrain", "lb", lb, ub);
   if (unlikely(is_negative_infinity(lb))) {
     return ub_constrain(x, ub, lp);
@@ -213,7 +215,8 @@ inline auto lub_constrain(const T& x, const L& lb,
     return lb_constrain(x, lb, lp);
   }
   auto x_neg_abs = -abs(x);
-  lp += sum(subtract(add(log(subtract(ub, lb)), x), multiply(2, log1p(exp(x)))));
+  lp += sum(
+      subtract(add(log(subtract(ub, lb)), x), multiply(2, log1p(exp(x)))));
   return add(subtract(ub, lb), elt_multiply(inv_logit(x), lb)).eval();
 }
 

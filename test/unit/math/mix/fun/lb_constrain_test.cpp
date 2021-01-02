@@ -40,14 +40,11 @@ TEST(mathMixScalFun, lbConstrain) {
   expect_lb_constrain(2, 4);
 }
 
-
 TEST(mathMixMatFun, lb_mat_constrain) {
-  using stan::math::promote_scalar_t;
   using stan::scalar_type_t;
   using stan::math::lb_constrain;
-  auto tester = [](const auto& x) {
-    return lb_constrain(x, 3.0);
-  };
+  using stan::math::promote_scalar_t;
+  auto tester = [](const auto& x) { return lb_constrain(x, 3.0); };
 
   auto promote_tester = [](const auto& x) {
     using x_scalar = scalar_type_t<decltype(x)>;
@@ -72,9 +69,9 @@ TEST(mathMixMatFun, lb_mat_constrain) {
 }
 
 TEST(mathMixMatFun, lb_lp_mat_constrain) {
-  using stan::math::promote_scalar_t;
   using stan::scalar_type_t;
   using stan::math::lb_constrain;
+  using stan::math::promote_scalar_t;
   auto lb_lp_promote_tester = [](const auto& x) {
     using scalar_x = scalar_type_t<decltype(x)>;
     scalar_x lb = 3.0;

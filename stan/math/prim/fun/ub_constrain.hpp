@@ -93,7 +93,8 @@ inline auto ub_constrain(T&& x, const U& ub) {
  * @param[in,out] lp log density
  * @return scalar constrained to have upper bound
  */
-template <typename T, typename U, typename S, require_stan_scalar_t<T>* = nullptr>
+template <typename T, typename U, typename S,
+          require_stan_scalar_t<T>* = nullptr>
 inline return_type_t<T, U> ub_constrain(const T& x, const U& ub, S& lp) {
   using std::exp;
   if (unlikely(is_infinity(value_of(ub)))) {
