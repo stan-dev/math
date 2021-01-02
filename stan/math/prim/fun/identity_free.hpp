@@ -18,7 +18,7 @@ namespace math {
  * @return value
  */
 template <typename T>
-inline auto identity_free(const T& y) {
+inline auto identity_free(T&& y) {
   return std::forward<T>(y);
 }
 
