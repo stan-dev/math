@@ -100,7 +100,7 @@ value_of_args_tuple_;
         t0_(t0),
         ts_(ts),
         args_tuple_(std::make_tuple(args...)),
-        value_of_args_tuple_(std::make_tuple(value_of(args)...)),
+        value_of_args_tuple_(value_of(args)...),
         y_(ts_.size()),
         cvodes_mem_(nullptr),
         state(value_of(y0)) {
