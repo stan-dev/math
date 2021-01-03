@@ -81,7 +81,7 @@ class cvodes_integrator_adjoint_memory : public chainable_alloc {
   const std::vector<T_ts> ts_;
   std::tuple<T_Args...> args_tuple_;
   std::tuple<plain_type_t<decltype(value_of(std::declval<const T_Args&>()))>...>
-value_of_args_tuple_;
+      value_of_args_tuple_;
   std::vector<Eigen::VectorXd> y_;
   void* cvodes_mem_;
   Eigen::VectorXd state;
@@ -90,10 +90,9 @@ value_of_args_tuple_;
   SUNLinearSolver LS_;
 
   template <require_eigen_col_vector_t<T_y0>* = nullptr>
-  cvodes_integrator_adjoint_memory(const F& f,
-                           const T_y0& y0,
-                           const T_t0& t0, const std::vector<T_ts>& ts,
-                           const T_Args&... args)
+  cvodes_integrator_adjoint_memory(const F& f, const T_y0& y0, const T_t0& t0,
+                                   const std::vector<T_ts>& ts,
+                                   const T_Args&... args)
       : N_(y0.size()),
         f_(f),
         y0_(y0),
@@ -129,7 +128,8 @@ value_of_args_tuple_;
     }
   }
 
-  friend class cvodes_integrator_adjoint_vari<Lmm, F, T_y0, T_t0, T_ts, T_Args...>;
+  friend class cvodes_integrator_adjoint_vari<Lmm, F, T_y0, T_t0, T_ts,
+                                              T_Args...>;
 };
 
 /**
@@ -408,13 +408,14 @@ class cvodes_integrator_adjoint_vari : public vari {
    * @return a vector of states, each state being a vector of the
    * same size as the state variable, corresponding to a time in ts.
    */
-  template<require_eigen_col_vector_t<T_y0>* = nullptr>
+  template <require_eigen_col_vector_t<T_y0>* = nullptr>
   cvodes_integrator_adjoint_vari(const char* function_name, const F& f,
-                                 const T_y0& y0,
-                         const T_t0& t0, const std::vector<T_ts>& ts,
-                         double relative_tolerance, double absolute_tolerance,
-                         long int max_num_steps, std::ostream* msgs,
-                         const T_Args&... args)
+                                 const T_y0& y0, const T_t0& t0,
+                                 const std::vector<T_ts>& ts,
+                                 double relative_tolerance,
+                                 double absolute_tolerance,
+                                 long int max_num_steps, std::ostream* msgs,
+                                 const T_Args&... args)
       : function_name_(function_name),
         vari(NOT_A_NUMBER),
         N_(y0.size()),
@@ -438,8 +439,9 @@ class cvodes_integrator_adjoint_vari : public vari {
             args_vars_)) {
     const char* fun = "cvodes_integrator::integrate";
 
-    memory = new cvodes_integrator_adjoint_memory<Lmm, F, T_y0, T_t0, T_ts, T_Args...>(
-        f, y0, t0, ts, args...);
+    memory = new cvodes_integrator_adjoint_memory<Lmm, F, T_y0, T_t0, T_ts,
+                                                  T_Args...>(f, y0, t0, ts,
+                                                             args...);
 
     save_varis(t0_varis_, t0);
     save_varis(ts_varis_, ts);
@@ -483,8 +485,8 @@ class cvodes_integrator_adjoint_vari : public vari {
     const std::vector<double> ts_dbl = value_of(memory->ts_);
 
     check_flag_sundials(
-        CVodeInit(memory->cvodes_mem_, &cvodes_integrator_adjoint_vari::cv_rhs, t0_dbl,
-                  memory->nv_state_),
+        CVodeInit(memory->cvodes_mem_, &cvodes_integrator_adjoint_vari::cv_rhs,
+                  t0_dbl, memory->nv_state_),
         "CVodeInit");
 
     // Assign pointer to this as user data
@@ -608,7 +610,8 @@ class cvodes_integrator_adjoint_vari : public vari {
       if (args_vars_ > 0) {
         check_flag_sundials(
             CVodeQuadInitB(memory->cvodes_mem_, indexB,
-                           &cvodes_integrator_adjoint_vari::cv_quad_rhs_adj, nv_quad),
+                           &cvodes_integrator_adjoint_vari::cv_quad_rhs_adj,
+                           nv_quad),
             "CVodeQuadInitB");
 
         check_flag_sundials(
