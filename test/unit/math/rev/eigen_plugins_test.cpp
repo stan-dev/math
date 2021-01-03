@@ -29,7 +29,7 @@ TEST(AgradRevMatrixAddons, var_matrix) {
   EXPECT_EQ(mat_in.adj().rows(), derivs.rows());
   EXPECT_EQ(mat_in.adj().cols(), derivs.cols());
 
-  MatrixXd out_mat = mat_in.val_op() * mat_in.adj_op();
+  MatrixXd out_mat = mat_in.val() * mat_in.adj();
 
   const matrix_v const_mat_in = matrix_v::Random(100, 100);
 
@@ -76,7 +76,7 @@ TEST(AgradRevMatrixAddons, var_vector) {
   EXPECT_EQ(vec_in.adj().rows(), derivs.rows());
   EXPECT_EQ(vec_in.adj().cols(), derivs.cols());
 
-  VectorXd out_vec = vec_in.val_op().cwiseProduct(vec_in.adj_op());
+  VectorXd out_vec = vec_in.val().cwiseProduct(vec_in.adj());
 
   vector_vi vec_vi = vec_in.vi();
 
@@ -119,7 +119,7 @@ TEST(AgradRevMatrixAddons, var_row_vector) {
   EXPECT_EQ(row_vec_in.adj().cols(), derivs.cols());
 
   RowVectorXd out_row_vec
-      = row_vec_in.val_op().cwiseProduct(row_vec_in.adj_op());
+      = row_vec_in.val().cwiseProduct(row_vec_in.adj());
 
   row_vector_vi row_vec_vi = row_vec_in.vi();
 

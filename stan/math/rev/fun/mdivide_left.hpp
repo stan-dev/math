@@ -51,7 +51,7 @@ inline auto mdivide_left(const T1& A, const T2& B) {
                   .template triangularView<Eigen::Upper>()
                   .transpose()
                   .solve(res.adj());
-      arena_A.adj() -= adjB * res.val_op().transpose();
+      arena_A.adj() -= adjB * res.val().transpose();
       arena_B.adj() += adjB;
     });
 
@@ -80,7 +80,7 @@ inline auto mdivide_left(const T1& A, const T2& B) {
                              .template triangularView<Eigen::Upper>()
                              .transpose()
                              .solve(res.adj())
-                       * res.val_op().transpose();
+                       * res.val().transpose();
     });
     return ret_type(res);
   }

@@ -49,8 +49,7 @@ inline std::vector<fvar<T>> to_fvar(const std::vector<T>& v,
 template <typename T, require_eigen_t<T>* = nullptr,
           require_not_eigen_vt<is_fvar, T>* = nullptr>
 inline promote_scalar_t<fvar<value_type_t<T>>, T> to_fvar(const T& m) {
-  promote_scalar_t<fvar<value_type_t<T>>, T> m_fd(m.rows(), m.cols());
-  m_fd.val() = m;
+  promote_scalar_t<fvar<value_type_t<T>>, T> m_fd(m);
   m_fd.d() = plain_type_t<T>::Constant(m.rows(), m.cols(), 0);
   return m_fd;
 }
@@ -60,8 +59,7 @@ template <typename T1, typename T2, require_all_eigen_t<T1, T2>* = nullptr,
 inline promote_scalar_t<fvar<value_type_t<T1>>, T1> to_fvar(const T1& val,
                                                             const T2& deriv) {
   check_matching_dims("to_fvar", "value", val, "deriv", deriv);
-  promote_scalar_t<fvar<value_type_t<T1>>, T1> ret(val.rows(), val.cols());
-  ret.val() = val;
+  promote_scalar_t<fvar<value_type_t<T1>>, T1> ret(val);
   ret.d() = deriv;
   return ret;
 }

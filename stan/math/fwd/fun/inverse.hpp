@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/multiply.hpp>
 #include <stan/math/prim/fun/inverse.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/fun/multiply.hpp>
 #include <stan/math/fwd/fun/to_fvar.hpp>
@@ -24,33 +25,22 @@ namespace math {
  * @throw std::invalid_argument if the matrix is not square.
  */
 template <typename EigMat, require_eigen_vt<is_fvar, EigMat>* = nullptr>
-inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
-                     EigMat::ColsAtCompileTime>
-inverse(const EigMat& m) {
-  using T = typename value_type_t<EigMat>::Scalar;
+inline auto inverse(const EigMat& m) {
   constexpr int R = EigMat::RowsAtCompileTime;
   constexpr int C = EigMat::ColsAtCompileTime;
 
   check_square("inverse", "m", m);
   if (m.size() == 0) {
-    return {};
+    return Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
+                         EigMat::ColsAtCompileTime>();
   }
-
-  Eigen::Matrix<T, R, C> m_deriv(m.rows(), m.cols());
-  Eigen::Matrix<T, R, C> m_inv(m.rows(), m.cols());
-
-  const Eigen::Ref<const plain_type_t<EigMat>>& m_ref = m;
-  for (size_type j = 0; j < m.cols(); j++) {
-    for (size_type i = 0; i < m.rows(); i++) {
-      m_inv.coeffRef(i, j) = m_ref.coeff(i, j).val_;
-      m_deriv.coeffRef(i, j) = m_ref.coeff(i, j).d_;
-    }
-  }
-
-  m_inv = inverse(m_inv);
-  m_deriv = -multiply(multiply(m_inv, m_deriv), m_inv);
-
-  return to_fvar(m_inv, m_deriv);
+  const auto& m_ref = to_ref(m);
+  auto m_inv = inverse(m_ref.val()).eval();
+  auto m_deriv = (-multiply(multiply(m_inv, m_ref.d().eval()), m_inv)).eval();
+  Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
+                       EigMat::ColsAtCompileTime> ret(m_inv);
+  ret.d() = m_deriv;
+  return ret;
 }
 
 }  // namespace math

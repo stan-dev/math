@@ -30,7 +30,7 @@ TEST(AgradFwdMatrixAddons, fvar_double_matrix) {
   EXPECT_EQ(mat_in.d().rows(), derivs.rows());
   EXPECT_EQ(mat_in.d().cols(), derivs.cols());
 
-  MatrixXd mat_out = mat_in.val_op() * mat_in.d_op();
+  MatrixXd mat_out = mat_in.val() * mat_in.d();
 }
 
 TEST(AgradFwdMatrixAddons, fvarfvar_double_matrix) {
@@ -62,7 +62,7 @@ TEST(AgradFwdMatrixAddons, fvarfvar_double_matrix) {
   EXPECT_EQ(mat_in.d().rows(), derivs.rows());
   EXPECT_EQ(mat_in.d().cols(), derivs.cols());
 
-  matrix_fd mat_out = mat_in.val_op() * mat_in.d_op();
+  matrix_fd mat_out = mat_in.val() * mat_in.d();
 }
 
 TEST(AgradFwdMatrixAddons, fvar_double_vector) {
@@ -91,7 +91,7 @@ TEST(AgradFwdMatrixAddons, fvar_double_vector) {
   EXPECT_EQ(vec_in.d().rows(), derivs.rows());
   EXPECT_EQ(vec_in.d().cols(), derivs.cols());
 
-  VectorXd vec_out = vec_in.val_op().cwiseProduct(vec_in.d_op());
+  VectorXd vec_out = vec_in.val().cwiseProduct(vec_in.d());
 }
 
 TEST(AgradFwdMatrixAddons, fvarfvar_double_vector) {
@@ -121,7 +121,7 @@ TEST(AgradFwdMatrixAddons, fvarfvar_double_vector) {
   EXPECT_EQ(vec_in.d().rows(), derivs.rows());
   EXPECT_EQ(vec_in.d().cols(), derivs.cols());
 
-  vector_fd vec_out = vec_in.val_op().cwiseProduct(vec_in.d_op());
+  vector_fd vec_out = vec_in.val().cwiseProduct(vec_in.d());
 }
 
 TEST(AgradFwdMatrixAddons, fvar_double_rowvector) {
@@ -150,7 +150,7 @@ TEST(AgradFwdMatrixAddons, fvar_double_rowvector) {
   EXPECT_EQ(row_vec_in.d().rows(), derivs.rows());
   EXPECT_EQ(row_vec_in.d().cols(), derivs.cols());
 
-  RowVectorXd row_vec_out = row_vec_in.val_op().cwiseProduct(row_vec_in.d_op());
+  RowVectorXd row_vec_out = row_vec_in.val().cwiseProduct(row_vec_in.d());
 }
 
 TEST(AgradFwdMatrixAddons, fvarfvar_double_rowvector) {
@@ -183,5 +183,5 @@ TEST(AgradFwdMatrixAddons, fvarfvar_double_rowvector) {
   EXPECT_EQ(row_vec_in.d().cols(), derivs.cols());
 
   row_vector_fd row_vec_out
-      = row_vec_in.val_op().cwiseProduct(row_vec_in.d_op());
+      = row_vec_in.val().cwiseProduct(row_vec_in.d());
 }

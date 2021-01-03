@@ -195,7 +195,7 @@ inline auto subtract(const Arith& a, const VarMat& b) {
   arena_t<VarMat> arena_b = b;
   arena_t<ret_type> ret(as_array_or_scalar(a) - arena_b.val().array());
   reverse_pass_callback(
-      [ret, arena_b]() mutable { arena_b.adj() -= ret.adj_op(); });
+      [ret, arena_b]() mutable { arena_b.adj() -= ret.adj(); });
   return ret_type(ret);
 }
 

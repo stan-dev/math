@@ -22,15 +22,15 @@ template <typename T1, typename T2>
 inline auto generalized_inverse_lambda(T1& G_arena, T2& inv_G) {
   return [G_arena, inv_G]() mutable {
     G_arena.adj()
-        += -(inv_G.val_op().transpose() * inv_G.adj_op()
-             * inv_G.val_op().transpose())
-           + (-G_arena.val_op() * inv_G.val_op()
+        += -(inv_G.val().transpose() * inv_G.adj()
+             * inv_G.val().transpose())
+           + (-G_arena.val() * inv_G.val()
               + Eigen::MatrixXd::Identity(G_arena.rows(), inv_G.cols()))
-                 * inv_G.adj_op().transpose() * inv_G.val_op()
-                 * inv_G.val_op().transpose()
-           + inv_G.val_op().transpose() * inv_G.val_op()
-                 * inv_G.adj_op().transpose()
-                 * (-inv_G.val_op() * G_arena.val_op()
+                 * inv_G.adj().transpose() * inv_G.val()
+                 * inv_G.val().transpose()
+           + inv_G.val().transpose() * inv_G.val()
+                 * inv_G.adj().transpose()
+                 * (-inv_G.val() * G_arena.val()
                     + Eigen::MatrixXd::Identity(inv_G.rows(), G_arena.cols()));
   };
 }
@@ -72,17 +72,17 @@ inline auto generalized_inverse(const VarMat& G) {
 
   if (G.rows() < G.cols()) {
     arena_t<VarMat> G_arena(G);
-    arena_t<ret_type> inv_G((G_arena.val_op() * G_arena.val_op().transpose())
+    arena_t<ret_type> inv_G((G_arena.val() * G_arena.val().transpose())
                                 .ldlt()
-                                .solve(G_arena.val_op())
+                                .solve(G_arena.val())
                                 .transpose());
     reverse_pass_callback(internal::generalized_inverse_lambda(G_arena, inv_G));
     return ret_type(inv_G);
   } else {
     arena_t<VarMat> G_arena(G);
-    arena_t<ret_type> inv_G((G_arena.val_op().transpose() * G_arena.val_op())
+    arena_t<ret_type> inv_G((G_arena.val().transpose() * G_arena.val())
                                 .ldlt()
-                                .solve(G_arena.val_op().transpose()));
+                                .solve(G_arena.val().transpose()));
     reverse_pass_callback(internal::generalized_inverse_lambda(G_arena, inv_G));
     return ret_type(inv_G);
   }

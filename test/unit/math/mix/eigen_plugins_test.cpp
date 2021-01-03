@@ -30,7 +30,7 @@ TEST(AgradMixMatrixAddons, matrix_fv) {
   EXPECT_EQ(mat_in.d().val().rows(), derivs.rows());
   EXPECT_EQ(mat_in.d().val().cols(), derivs.cols());
 
-  matrix_v mat_in2 = mat_in.val_op() * mat_in.d_op();
+  matrix_v mat_in2 = mat_in.val() * mat_in.d();
 }
 
 TEST(AgradMixMatrixAddons, matrix_ffv) {
@@ -63,7 +63,7 @@ TEST(AgradMixMatrixAddons, matrix_ffv) {
   EXPECT_EQ(mat_in.d().val().val().rows(), derivs.rows());
   EXPECT_EQ(mat_in.d().val().val().cols(), derivs.cols());
 
-  matrix_fv mat_in2 = mat_in.val_op() * mat_in.d_op();
+  matrix_fv mat_in2 = mat_in.val() * mat_in.d();
 }
 
 TEST(AgradMixMatrixAddons, vector_fv) {
@@ -92,7 +92,7 @@ TEST(AgradMixMatrixAddons, vector_fv) {
   EXPECT_EQ(vec_in.d().val().rows(), derivs.rows());
   EXPECT_EQ(vec_in.d().val().cols(), derivs.cols());
 
-  vector_v vec_in2 = vec_in.val_op().cwiseProduct(vec_in.d_op());
+  vector_v vec_in2 = vec_in.val().cwiseProduct(vec_in.d());
 }
 
 TEST(AgradMixMatrixAddons, vector_ffv) {
@@ -123,7 +123,7 @@ TEST(AgradMixMatrixAddons, vector_ffv) {
   EXPECT_EQ(vec_in.d().val().val().rows(), derivs.rows());
   EXPECT_EQ(vec_in.d().val().val().cols(), derivs.cols());
 
-  vector_fv vec_in2 = vec_in.val_op().cwiseProduct(vec_in.d_op());
+  vector_fv vec_in2 = vec_in.val().cwiseProduct(vec_in.d());
 }
 
 TEST(AgradMixMatrixAddons, row_vector_fv) {
@@ -155,7 +155,7 @@ TEST(AgradMixMatrixAddons, row_vector_fv) {
   EXPECT_EQ(row_vec_in.d().val().cols(), derivs.cols());
 
   row_vector_v row_vec_in2
-      = row_vec_in.val_op().cwiseProduct(row_vec_in.d_op());
+      = row_vec_in.val().cwiseProduct(row_vec_in.d());
 }
 
 TEST(AgradMixMatrixAddons, row_vector_ffv) {
@@ -187,5 +187,5 @@ TEST(AgradMixMatrixAddons, row_vector_ffv) {
   EXPECT_EQ(row_vec_in.d().val().val().cols(), derivs.cols());
 
   row_vector_fv row_vec_in2
-      = row_vec_in.val_op().cwiseProduct(row_vec_in.d_op());
+      = row_vec_in.val().cwiseProduct(row_vec_in.d());
 }

@@ -157,7 +157,7 @@ inline auto add(const VarMat& a, const Arith& b) {
   arena_t<VarMat> arena_a(a);
   arena_t<ret_type> ret(arena_a.val().array() + as_array_or_scalar(b));
   reverse_pass_callback(
-      [ret, arena_a]() mutable { arena_a.adj() += ret.adj_op(); });
+      [ret, arena_a]() mutable { arena_a.adj() += ret.adj(); });
   return ret_type(ret);
 }
 
