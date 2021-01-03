@@ -244,7 +244,7 @@ TEST(StanMathOde_ode_bdf_adjoint, matrix_arg) {
   EXPECT_NEAR(output.val(), 0.66457668563, 1e-5);
   EXPECT_NEAR(a(0, 0).adj(), -0.50107310888, 1e-5);
 }
-
+*/
 TEST(StanMathOde_ode_bdf_adjoint, scalar_std_vector_args) {
   using stan::math::var;
 
@@ -264,7 +264,7 @@ TEST(StanMathOde_ode_bdf_adjoint, scalar_std_vector_args) {
   EXPECT_NEAR(a0.adj(), -0.50107310888, 1e-5);
   EXPECT_NEAR(a1[0].adj(), -0.50107310888, 1e-5);
 }
-
+/*
 TEST(StanMathOde_ode_bdf_adjoint, std_vector_std_vector_args) {
   using stan::math::var;
 
