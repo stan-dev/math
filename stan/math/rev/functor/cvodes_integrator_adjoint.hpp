@@ -71,9 +71,12 @@ class cvodes_integrator_adjoint_vari;
 template <int Lmm, typename F, typename T_y0, typename T_t0, typename T_ts,
           typename... T_Args>
 class cvodes_integrator_adjoint_memory : public chainable_alloc {
+  using T_Return = return_type_t<T_y0, T_t0, T_ts, T_Args...>;
+  using T_y0_t0 = return_type_t<T_y0, T_t0>;
+
   const size_t N_;
   const F f_;
-  const Eigen::Matrix<T_y0, Eigen::Dynamic, 1> y0_;
+  const Eigen::Matrix<T_y0_t0, Eigen::Dynamic, 1> y0_;
   const T_t0 t0_;
   const std::vector<T_ts> ts_;
   std::tuple<T_Args...> args_tuple_;
@@ -86,8 +89,9 @@ value_of_args_tuple_;
   SUNMatrix A_;
   SUNLinearSolver LS_;
 
+  template <require_eigen_col_vector_t<T_y0>* = nullptr>
   cvodes_integrator_adjoint_memory(const F& f,
-                           const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0,
+                           const T_y0& y0,
                            const T_t0& t0, const std::vector<T_ts>& ts,
                            const T_Args&... args)
       : N_(y0.size()),
@@ -143,6 +147,8 @@ template <int Lmm, typename F, typename T_y0, typename T_t0, typename T_ts,
           typename... T_Args>
 class cvodes_integrator_adjoint_vari : public vari {
   using T_Return = return_type_t<T_y0, T_t0, T_ts, T_Args...>;
+
+  const char* function_name_;
 
   const size_t N_;
   bool returned_;
@@ -384,6 +390,8 @@ class cvodes_integrator_adjoint_vari : public vari {
   /**
    * Construct cvodes_integrator object
    *
+   * @param function_name Calling function name (for printing debugging
+   * messages)
    * @param f Right hand side of the ODE
    * @param y0 Initial state
    * @param t0 Initial time
@@ -400,13 +408,15 @@ class cvodes_integrator_adjoint_vari : public vari {
    * @return a vector of states, each state being a vector of the
    * same size as the state variable, corresponding to a time in ts.
    */
-  cvodes_integrator_adjoint_vari(const F& f,
-                         const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0,
+  template<require_eigen_col_vector_t<T_y0>* = nullptr>
+  cvodes_integrator_adjoint_vari(const char* function_name, const F& f,
+                                 const T_y0& y0,
                          const T_t0& t0, const std::vector<T_ts>& ts,
                          double relative_tolerance, double absolute_tolerance,
                          long int max_num_steps, std::ostream* msgs,
                          const T_Args&... args)
-      : vari(NOT_A_NUMBER),
+      : function_name_(function_name),
+        vari(NOT_A_NUMBER),
         N_(y0.size()),
         returned_(false),
         memory(NULL),
