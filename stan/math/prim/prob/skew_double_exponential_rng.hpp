@@ -67,7 +67,8 @@ skew_double_exponential_rng(const T_loc& mu, const T_scale& sigma,
                   + mu_vec[n];
     } else {
       output[n] = log((1 - z) / (1 - tau_vec[n])) * (-sigma_vec[n])
-                      / (2.0 * tau_vec[n]) + mu_vec[n];
+                      / (2.0 * tau_vec[n])
+                  + mu_vec[n];
     }
   }
 

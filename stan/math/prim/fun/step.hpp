@@ -32,7 +32,6 @@ inline double step(const T& y) {
   return y < 0.0 ? 0 : 1;
 }
 
-
 /**
  * Structure to wrap `step()` so it can be vectorized.
  */
