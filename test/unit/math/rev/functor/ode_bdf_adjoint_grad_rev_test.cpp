@@ -33,16 +33,15 @@ double dy2_dchi(double t, double omega, double chi) {
 }
 
 struct sho_functor {
-  template<typename T0, typename T1, typename T2>
+  template <typename T0, typename T1, typename T2>
   inline Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1>
   operator()(const T0& t, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
              std::ostream* msgs, const T2& omega) const {
     Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1> out(2);
-    out << y.coeff(1), - omega * omega * y.coeff(0);
+    out << y.coeff(1), -omega * omega * y.coeff(0);
     return out;
   }
 };
-
 
 template <int state>
 class test_functor_double_var {
@@ -65,13 +64,12 @@ class test_functor_double_var {
 
     std::vector<Eigen::Matrix<T, Eigen::Dynamic, 1>> ys
         = (lmm_ == TEST_CVODES_ADAMS)
-        ? stan::math::ode_adams(sho, y0, t0, ts, nullptr, omega)
-        : stan::math::ode_bdf(sho, y0, t0, ts, nullptr, omega);
+              ? stan::math::ode_adams(sho, y0, t0, ts, nullptr, omega)
+              : stan::math::ode_bdf(sho, y0, t0, ts, nullptr, omega);
 
     return ys[0](state);
   }
 };
-
 
 TEST(StanMathOdeIntegrateODEGradMat, double_var) {
   double omega = 0.5;
@@ -134,13 +132,12 @@ class test_functor_var_double {
 
     std::vector<Eigen::Matrix<T, Eigen::Dynamic, 1>> ys
         = (lmm_ == TEST_CVODES_ADAMS)
-        ? stan::math::ode_adams(sho, y0, t0, ts, nullptr, omega)
-        : stan::math::ode_bdf(sho, y0, t0, ts, nullptr, omega);
+              ? stan::math::ode_adams(sho, y0, t0, ts, nullptr, omega)
+              : stan::math::ode_bdf(sho, y0, t0, ts, nullptr, omega);
 
     return ys[0](state);
   }
 };
-
 
 TEST(StanMathOdeIntegrateODEGradMat, var_double) {
   double omega = 0.5;
@@ -203,8 +200,8 @@ class test_functor_var_var {
 
     std::vector<Eigen::Matrix<T, Eigen::Dynamic, 1>> ys
         = (lmm_ == TEST_CVODES_ADAMS)
-        ? stan::math::ode_adams(sho, y0, t0, ts, nullptr, omega)
-        : stan::math::ode_bdf(sho, y0, t0, ts, nullptr, omega);
+              ? stan::math::ode_adams(sho, y0, t0, ts, nullptr, omega)
+              : stan::math::ode_bdf(sho, y0, t0, ts, nullptr, omega);
 
     return ys[0](state);
   }
@@ -254,4 +251,3 @@ TEST(StanMathOdeIntegrateODEGradMat, var_var) {
     EXPECT_NEAR(dy2_dchi(t, omega, chi), grad(1), 1e-7);
   }
 }
-
