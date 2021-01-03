@@ -44,7 +44,7 @@ namespace math {
  * @return Solution to ODE at times \p ts
  */
 template <typename F, typename T_y0, typename T_t0, typename T_ts,
-          typename... T_Args>
+          typename... T_Args, require_eigen_col_vector_t<T_y0>* = nullptr>
 std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, T_Args...>,
                           Eigen::Dynamic, 1>>
 ode_bdf_adjoint_tol_impl(const char* function_name,
@@ -52,12 +52,23 @@ ode_bdf_adjoint_tol_impl(const char* function_name,
             const T_t0& t0, const std::vector<T_ts>& ts,
             double relative_tolerance, double absolute_tolerance,
             long int max_num_steps, std::ostream* msgs, const T_Args&... args) {
-  auto integrator
-      = new stan::math::cvodes_integrator_adjoint_vari<CV_BDF, F, T_y0, T_t0, T_ts,
+  /*
+  const auto& args_ref_tuple = std::make_tuple(to_ref(args)...);
+  return apply(
+      [&](const auto&... args_refs) {
+        auto integrator
+            = new stan::math::cvodes_integrator_adjoint_vari<CV_BDF, F, T_y0, T_t0, T_ts,
                                                T_Args...>(
                                                    function_name, f, y0, t0, ts, relative_tolerance, absolute_tolerance, max_num_steps,
-          msgs, args...);
-
+                                                   msgs, args_refs...);
+        return (*integrator)();
+      }, args_ref_tuple);
+  */
+  auto integrator
+      = new stan::math::cvodes_integrator_adjoint_vari<CV_BDF, F, T_y0, T_t0, T_ts,
+                                                       T_Args...>(
+                                                           function_name, f, y0, t0, ts, relative_tolerance, absolute_tolerance, max_num_steps,
+                                                           msgs, args...);
   return (*integrator)();
 }
 
@@ -95,7 +106,7 @@ ode_bdf_adjoint_tol_impl(const char* function_name,
  * @return Solution to ODE at times \p ts
  */
 template <typename F, typename T_y0, typename T_t0, typename T_ts,
-          typename... T_Args>
+          typename... T_Args, require_eigen_col_vector_t<T_y0>* = nullptr>
 std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, T_Args...>,
                           Eigen::Dynamic, 1>>
 ode_bdf_adjoint_tol(const F& f, const T_y0& y0,
@@ -141,7 +152,7 @@ ode_bdf_adjoint_tol(const F& f, const T_y0& y0,
  * @return Solution to ODE at times \p ts
  */
 template <typename F, typename T_y0, typename T_t0, typename T_ts,
-          typename... T_Args>
+          typename... T_Args, require_eigen_col_vector_t<T_y0>* = nullptr>
 std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, T_Args...>,
                           Eigen::Dynamic, 1>>
 ode_bdf_adjoint(const F& f, const T_y0& y0,
