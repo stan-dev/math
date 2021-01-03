@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_EXPM1_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -31,7 +32,8 @@ struct expm1_fun {
  * @param x container
  * @return Natural exponential of each value in x minus one.
  */
-template <typename T>
+template <typename T, require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+                          T>* = nullptr>
 inline auto expm1(const T& x) {
   return apply_scalar_unary<expm1_fun, T>::apply(x);
 }

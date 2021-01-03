@@ -13,9 +13,9 @@ struct forced_harm_osc_ode_fun {
   // parameters
   // double data
   // integer data
-  operator()(const T0& t_in, const std::vector<T1>& y_in, std::ostream* msgs,
+  operator()(const T0& t_in, const std::vector<T1>& y_in,
              const std::vector<T2>& theta, const std::vector<double>& x,
-             const std::vector<int>& x_int) const {
+             const std::vector<int>& x_int, std::ostream* msgs) const {
     if (y_in.size() != 2)
       throw std::domain_error(
           "this function was called with inconsistent state");

@@ -23,9 +23,9 @@ inline std::string type_str() {
   }
 ADD_TYPE_TO_TYPE_STR(double)
 ADD_TYPE_TO_TYPE_STR(int)
+ADD_TYPE_TO_TYPE_STR(char)
 ADD_TYPE_TO_TYPE_STR(bool)
 #undef ADD_TYPE_TO_TYPE_STR
-/** @}*/
 }  // namespace math
 }  // namespace stan
 #endif

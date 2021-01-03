@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
+#include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -32,7 +34,8 @@ struct fabs_fun {
  * @return Absolute value of each value in x.
  */
 template <typename Container,
-          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr,
+          require_not_var_matrix_t<Container>* = nullptr>
 inline auto fabs(const Container& x) {
   return apply_scalar_unary<fabs_fun, Container>::apply(x);
 }

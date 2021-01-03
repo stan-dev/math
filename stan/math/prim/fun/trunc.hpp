@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_TRUNC_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -36,7 +37,8 @@ struct trunc_fun {
  * @param x container
  * @return elementwise trunc of container elements
  */
-template <typename T>
+template <typename T, require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+                          T>* = nullptr>
 inline auto trunc(const T& x) {
   return apply_scalar_unary<trunc_fun, T>::apply(x);
 }

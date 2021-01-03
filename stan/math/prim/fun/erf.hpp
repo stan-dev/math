@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_ERF_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -30,7 +31,8 @@ struct erf_fun {
  * @param x container
  * @return Error function applied to each value in x.
  */
-template <typename T>
+template <typename T, require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+                          T>* = nullptr>
 inline auto erf(const T& x) {
   return apply_scalar_unary<erf_fun, T>::apply(x);
 }

@@ -9,10 +9,13 @@
 #include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/pow.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <boost/random/weibull_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
+#include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <cmath>
 
 namespace stan {
@@ -23,25 +26,30 @@ return_type_t<T_y, T_shape, T_scale> frechet_lccdf(const T_y& y,
                                                    const T_shape& alpha,
                                                    const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_shape, T_scale>;
-  using std::exp;
-  using std::log;
-  using std::pow;
+  using T_y_ref = ref_type_t<T_y>;
+  using T_alpha_ref = ref_type_t<T_shape>;
+  using T_sigma_ref = ref_type_t<T_scale>;
   static const char* function = "frechet_lccdf";
-  check_positive(function, "Random variable", y);
-  check_positive_finite(function, "Shape parameter", alpha);
-  check_positive_finite(function, "Scale parameter", sigma);
+  T_y_ref y_ref = y;
+  T_alpha_ref alpha_ref = alpha;
+  T_sigma_ref sigma_ref = sigma;
+  using std::pow;
+  check_positive(function, "Random variable", y_ref);
+  check_positive_finite(function, "Shape parameter", alpha_ref);
+  check_positive_finite(function, "Scale parameter", sigma_ref);
 
-  if (size_zero(y, alpha, sigma)) {
+  if (size_zero(y_ref, alpha_ref, sigma_ref)) {
     return 0;
   }
 
   T_partials_return ccdf_log(0.0);
-  operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, sigma);
+  operands_and_partials<T_y_ref, T_alpha_ref, T_sigma_ref> ops_partials(
+      y_ref, alpha_ref, sigma_ref);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_scale> sigma_vec(sigma);
-  scalar_seq_view<T_shape> alpha_vec(alpha);
-  size_t N = max_size(y, sigma, alpha);
+  scalar_seq_view<T_y> y_vec(y_ref);
+  scalar_seq_view<T_scale> sigma_vec(sigma_ref);
+  scalar_seq_view<T_shape> alpha_vec(alpha_ref);
+  size_t N = max_size(y_ref, sigma_ref, alpha_ref);
 
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = value_of(y_vec[n]);

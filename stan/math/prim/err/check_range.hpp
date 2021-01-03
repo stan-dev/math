@@ -23,16 +23,15 @@ namespace math {
  */
 inline void check_range(const char* function, const char* name, int max,
                         int index, int nested_level, const char* error_msg) {
-  if ((index >= stan::error_index::value)
-      && (index < max + stan::error_index::value)) {
-    return;
+  if (!((index >= stan::error_index::value)
+        && (index < max + stan::error_index::value))) {
+    [&]() STAN_COLD_PATH {
+      std::stringstream msg;
+      msg << "; index position = " << nested_level;
+      std::string msg_str(msg.str());
+      out_of_range(function, max, index, msg_str.c_str(), error_msg);
+    }();
   }
-
-  std::stringstream msg;
-  msg << "; index position = " << nested_level;
-  std::string msg_str(msg.str());
-
-  out_of_range(function, max, index, msg_str.c_str(), error_msg);
 }
 
 /**
@@ -48,12 +47,10 @@ inline void check_range(const char* function, const char* name, int max,
  */
 inline void check_range(const char* function, const char* name, int max,
                         int index, const char* error_msg) {
-  if ((index >= stan::error_index::value)
-      && (index < max + stan::error_index::value)) {
-    return;
+  if (!((index >= stan::error_index::value)
+        && (index < max + stan::error_index::value))) {
+    [&]() STAN_COLD_PATH { out_of_range(function, max, index, error_msg); }();
   }
-
-  out_of_range(function, max, index, error_msg);
 }
 
 /**
@@ -68,12 +65,10 @@ inline void check_range(const char* function, const char* name, int max,
  */
 inline void check_range(const char* function, const char* name, int max,
                         int index) {
-  if ((index >= stan::error_index::value)
-      && (index < max + stan::error_index::value)) {
-    return;
+  if (!((index >= stan::error_index::value)
+        && (index < max + stan::error_index::value))) {
+    [&]() STAN_COLD_PATH { out_of_range(function, max, index); }();
   }
-
-  out_of_range(function, max, index);
 }
 
 }  // namespace math

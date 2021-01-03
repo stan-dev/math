@@ -8,7 +8,6 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <stan/math/opencl/kernel_generator/common_return_scalar.hpp>
 #include <algorithm>
 #include <set>
@@ -40,7 +39,7 @@ class select_ : public operation_cl<select_<T_condition, T_then, T_else>,
   using Scalar = common_scalar_t<T_then, T_else>;
   using base = operation_cl<select_<T_condition, T_then, T_else>, Scalar,
                             T_condition, T_then, T_else>;
-  using base::var_name;
+  using base::var_name_;
 
   /**
    * Constructor
@@ -85,22 +84,23 @@ class select_ : public operation_cl<select_<T_condition, T_then, T_else>,
   }
 
   /**
-   * generates kernel code for this (select) operation.
-   * @param i row index variable name
-   * @param j column index variable name
+   * Generates kernel code for this (select) operation.
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
    * @param view_handled whether whether caller already handled matrix view
    * @param var_name_condition variable name of the condition expression
    * @param var_name_else variable name of the then expression
    * @param var_name_then variable name of the else expression
    * @return part of kernel with code for this expression
    */
-  inline kernel_parts generate(const std::string& i, const std::string& j,
+  inline kernel_parts generate(const std::string& row_index_name,
+                               const std::string& col_index_name,
                                const bool view_handled,
                                const std::string& var_name_condition,
                                const std::string& var_name_then,
                                const std::string& var_name_else) const {
     kernel_parts res{};
-    res.body = type_str<Scalar>() + " " + var_name + " = " + var_name_condition
+    res.body = type_str<Scalar>() + " " + var_name_ + " = " + var_name_condition
                + " ? " + var_name_then + " : " + var_name_else + ";\n";
     return res;
   }
@@ -138,9 +138,10 @@ class select_ : public operation_cl<select_<T_condition, T_then, T_else>,
  * @param els else expression
  * @return selection operation expression
  */
-template <typename T_condition, typename T_then, typename T_else,
-          typename
-          = require_all_kernel_expressions_t<T_condition, T_then, T_else>>
+template <
+    typename T_condition, typename T_then, typename T_else,
+    require_all_kernel_expressions_t<T_condition, T_then, T_else>* = nullptr,
+    require_any_not_arithmetic_t<T_condition, T_then, T_else>* = nullptr>
 inline select_<as_operation_cl_t<T_condition>, as_operation_cl_t<T_then>,
                as_operation_cl_t<T_else>>
 select(T_condition&& condition, T_then&& then, T_else&& els) {  // NOLINT
@@ -148,6 +149,23 @@ select(T_condition&& condition, T_then&& then, T_else&& els) {  // NOLINT
           as_operation_cl(std::forward<T_then>(then)),
           as_operation_cl(std::forward<T_else>(els))};
 }
+
+/**
+ * Scalar overload of the selection operation.
+ * @tparam T_then type of then scalar
+ * @tparam T_else type of else scalar
+ * @param condition condition
+ * @param then then result
+ * @param els else result
+ * @return `condition ? then : els`
+ */
+template <typename T_then, typename T_else,
+          require_all_arithmetic_t<T_then, T_else>* = nullptr>
+inline std::common_type_t<T_then, T_else> select(bool condition, T_then then,
+                                                 T_else els) {
+  return condition ? then : els;
+}
+
 /** @}*/
 }  // namespace math
 }  // namespace stan

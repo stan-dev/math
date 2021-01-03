@@ -8,7 +8,7 @@ namespace stan {
 namespace math {
 
 // use for single precomputed partials
-class precomp_v_vari : public op_v_vari {
+class precomp_v_vari final : public op_v_vari {
  protected:
   double da_;
 

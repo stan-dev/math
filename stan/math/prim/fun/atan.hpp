@@ -6,6 +6,8 @@
 #include <stan/math/prim/fun/atanh.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/i_times.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
+#include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>
 #include <complex>
 
@@ -36,7 +38,10 @@ struct atan_fun {
  * @return Arctan of each value in x, in radians.
  */
 template <typename Container,
-          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr,
+          require_not_var_matrix_t<Container>* = nullptr,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              Container>* = nullptr>
 inline auto atan(const Container& x) {
   return apply_scalar_unary<atan_fun, Container>::apply(x);
 }

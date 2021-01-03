@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_CBRT_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -30,7 +31,9 @@ struct cbrt_fun {
  * @param x container
  * @return Cube root of each value in x.
  */
-template <typename T>
+template <
+    typename T, require_not_var_matrix_t<T>* = nullptr,
+    require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
 inline auto cbrt(const T& x) {
   return apply_scalar_unary<cbrt_fun, T>::apply(x);
 }

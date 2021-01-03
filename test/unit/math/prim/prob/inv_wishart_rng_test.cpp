@@ -5,7 +5,7 @@
 #include <gtest/gtest.h>
 #include <stdexcept>
 
-TEST(ProbDistributionsInvWishartRng, rng) {
+TEST(ProbDistributionsInvWishart, rng) {
   using Eigen::MatrixXd;
   using stan::math::inv_wishart_rng;
   boost::random::mt19937 rng;
@@ -14,12 +14,33 @@ TEST(ProbDistributionsInvWishartRng, rng) {
   EXPECT_THROW(inv_wishart_rng(3.0, omega, rng), std::invalid_argument);
 
   MatrixXd sigma(3, 3);
-  sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 2.0, 1.0, 3.0;
+  sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 1.0, 0.0, 1.0, 3.0;
   EXPECT_NO_THROW(inv_wishart_rng(3.0, sigma, rng));
   EXPECT_THROW(inv_wishart_rng(2, sigma, rng), std::domain_error);
   EXPECT_THROW(inv_wishart_rng(-1, sigma, rng), std::domain_error);
+  sigma(2, 1) = 100.0;
+  EXPECT_THROW(inv_wishart_rng(3.0, sigma, rng), std::domain_error);
 }
-TEST(probdistributionsInvWishartRng, symmetry) {
+
+TEST(ProbDistributionsInvWishart, rng_pos_def) {
+  using Eigen::MatrixXd;
+  using stan::math::inv_wishart_rng;
+
+  boost::random::mt19937 rng;
+
+  MatrixXd Sigma(2, 2);
+  MatrixXd Sigma_non_pos_def(2, 2);
+
+  Sigma << 1, 0, 0, 1;
+  Sigma_non_pos_def << -1, 0, 0, 1;
+
+  unsigned int dof = 5;
+
+  EXPECT_NO_THROW(inv_wishart_rng(dof, Sigma, rng));
+  EXPECT_THROW(inv_wishart_rng(dof, Sigma_non_pos_def, rng), std::domain_error);
+}
+
+TEST(ProbDistributionsInvWishart, rng_symmetry) {
   using Eigen::MatrixXd;
   using stan::math::inv_wishart_rng;
   using stan::test::unit::expect_symmetric;

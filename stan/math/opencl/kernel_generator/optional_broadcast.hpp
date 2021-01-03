@@ -8,11 +8,10 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <limits>
 #include <string>
 #include <type_traits>
-#include <set>
+#include <map>
 #include <utility>
 
 namespace stan {
@@ -33,7 +32,7 @@ class optional_broadcast_
   using Scalar = typename std::remove_reference_t<T>::Scalar;
   using base
       = operation_cl<optional_broadcast_<T, Colwise, Rowwise>, Scalar, T>;
-  using base::var_name;
+  using base::var_name_;
 
   /**
    * Constructor
@@ -52,7 +51,7 @@ class optional_broadcast_
   }
 
   /**
-   * generates kernel code for this and nested expressions.
+   * Generates kernel code for this and nested expressions.
    * @param row_idx_name  row index variable name
    * @param col_idx_name  column index variable name
    * @param view_handled whether whether caller already handled matrix view
@@ -66,12 +65,12 @@ class optional_broadcast_
                                const std::string& var_name_arg) const {
     kernel_parts res;
     res.body
-        += type_str<Scalar>() + " " + var_name + " = " + var_name_arg + ";\n";
+        += type_str<Scalar>() + " " + var_name_ + " = " + var_name_arg + ";\n";
     if (Colwise) {
-      res.args += "int " + var_name + "is_multirow, ";
+      res.args += "int " + var_name_ + "is_multirow, ";
     }
     if (Rowwise) {
-      res.args += "int " + var_name + "is_multicol, ";
+      res.args += "int " + var_name_ + "is_multicol, ";
     }
     return res;
   }
@@ -84,26 +83,27 @@ class optional_broadcast_
   inline void modify_argument_indices(std::string& row_idx_name,
                                       std::string& col_idx_name) const {
     if (Colwise) {
-      row_idx_name = "(" + row_idx_name + " * " + var_name + "is_multirow)";
+      row_idx_name = "(" + row_idx_name + " * " + var_name_ + "is_multirow)";
     }
     if (Rowwise) {
-      col_idx_name = "(" + col_idx_name + " * " + var_name + "is_multicol)";
+      col_idx_name = "(" + col_idx_name + " * " + var_name_ + "is_multicol)";
     }
   }
 
   /**
    * Sets kernel arguments for this and nested expressions.
-   * @param[in,out] generated set of expressions that already set their kernel
-   * arguments
+   * @param[in,out] generated map from (pointer to) already generated operations
+   * to variable names
    * @param kernel kernel to set arguments on
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::set<const operation_cl_base*>& generated,
+  inline void set_args(std::map<const void*, const char*>& generated,
                        cl::Kernel& kernel, int& arg_num) const {
     if (generated.count(this) == 0) {
-      generated.insert(this);
-      this->template get_arg<0>().set_args(generated, kernel, arg_num);
+      generated[this] = "";
+      std::map<const void*, const char*> generated2;
+      this->template get_arg<0>().set_args(generated2, kernel, arg_num);
       if (Colwise) {
         kernel.setArg(arg_num++, static_cast<int>(
                                      this->template get_arg<0>().rows() != 1));

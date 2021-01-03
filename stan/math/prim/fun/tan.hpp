@@ -5,6 +5,8 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/i_times.hpp>
 #include <stan/math/prim/fun/tanh.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
+#include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>
 #include <complex>
 
@@ -34,7 +36,10 @@ struct tan_fun {
  * @return Tangent of each value in x.
  */
 template <typename Container,
-          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr,
+          require_not_var_matrix_t<Container>* = nullptr,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              Container>* = nullptr>
 inline auto tan(const Container& x) {
   return apply_scalar_unary<tan_fun, Container>::apply(x);
 }

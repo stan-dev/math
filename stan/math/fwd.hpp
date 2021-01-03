@@ -5,9 +5,9 @@
 
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/meta.hpp>
-#include <stan/math/prim.hpp>
-
 #include <stan/math/fwd/fun.hpp>
 #include <stan/math/fwd/functor.hpp>
+
+#include <stan/math/prim.hpp>
 
 #endif

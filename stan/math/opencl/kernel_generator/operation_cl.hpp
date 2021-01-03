@@ -3,11 +3,9 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/opencl/kernel_generator/wrapper.hpp>
+#include <stan/math/prim/err/check_nonnegative.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
-#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernel_cl.hpp>
@@ -16,7 +14,7 @@
 #include <string>
 #include <utility>
 #include <tuple>
-#include <set>
+#include <map>
 #include <array>
 #include <numeric>
 #include <vector>
@@ -33,27 +31,37 @@ namespace math {
 struct kernel_parts {
   std::string includes;  // any function definitions - as if they were includet
                          // at the start of kernel source
+  std::string declarations;    // declarations of any local variables
   std::string initialization;  // the code for initializations done by all
                                // threads, even if they have no work
   std::string body_prefix;     // the code that should be placed at the start of
-                               // the kernel body
-  std::string body;       // the body of the kernel - code executing operations
-  std::string reduction;  // the code for reductions within work group by all
-                          // threads, even if they have no work
-  std::string args;       // kernel arguments
+                            // the kernel body (before the code for arguments of
+                            // an operation)
+  std::string body;  // the body of the kernel - code executing operations
+  std::string body_suffix;  // the code that should be placed at the end of
+                            // the kernel body
+  std::string reduction;    // the code for reductions within work group by all
+                            // threads, even if they have no work
+  std::string args;         // kernel arguments
 
   kernel_parts operator+(const kernel_parts& other) {
-    return {
-        includes + other.includes,       initialization + other.initialization,
-        body_prefix + other.body_prefix, body + other.body,
-        reduction + other.reduction,     args + other.args};
+    return {includes + other.includes,
+            declarations += other.declarations,
+            initialization + other.initialization,
+            body_prefix + other.body_prefix,
+            body + other.body,
+            body_suffix + other.body_suffix,
+            reduction + other.reduction,
+            args + other.args};
   }
 
   kernel_parts operator+=(const kernel_parts& other) {
     includes += other.includes;
+    declarations += other.declarations;
     initialization += other.initialization;
     body_prefix += other.body_prefix;
     body += other.body;
+    body_suffix += other.body_suffix;
     reduction += other.reduction;
     args += other.args;
     return *this;
@@ -74,9 +82,9 @@ class operation_cl : public operation_cl_base {
       "operation_cl: all arguments to operation must be operations!");
 
  protected:
-  std::tuple<internal::wrapper<Args>...> arguments_;
-  mutable std::string var_name;  // name of the variable that holds result of
-                                 // this operation in the kernel
+  std::tuple<Args...> arguments_;
+  mutable std::string var_name_;  // name of the variable that holds result of
+                                  // this operation in the kernel
 
  public:
   /**
@@ -108,7 +116,7 @@ class operation_cl : public operation_cl_base {
     */
   template <size_t N>
   const auto& get_arg() const {
-    return std::get<N>(arguments_).x;
+    return std::get<N>(arguments_);
   }
 
   /**
@@ -117,7 +125,7 @@ class operation_cl : public operation_cl_base {
    * expressions
    */
   explicit operation_cl(Args&&... arguments)
-      : arguments_(internal::wrapper<Args>(std::forward<Args>(arguments))...) {}
+      : arguments_(std::forward<Args>(arguments)...) {}
 
   /**
    * Evaluates the expression.
@@ -126,8 +134,17 @@ class operation_cl : public operation_cl_base {
   matrix_cl<Scalar> eval() const {
     int rows = derived().rows();
     int cols = derived().cols();
-    check_nonnegative("operation_cl.eval", "this->rows()", rows);
-    check_nonnegative("operation_cl.eval", "this->cols()", cols);
+    const char* function = "operation_cl.eval()";
+    if (rows < 0) {
+      invalid_argument(function, "Number of rows of expression", rows,
+                       " must be nonnegative, but is ",
+                       " (broadcasted expressions can not be evaluated)");
+    }
+    if (cols < 0) {
+      invalid_argument(function, "Number of columns of expression", cols,
+                       " must be nonnegative, but is ",
+                       " (broadcasted expressions can not be evaluated)");
+    }
     matrix_cl<Scalar> res(rows, cols, derived().view());
     if (res.size() > 0) {
       this->evaluate_into(res);
@@ -156,58 +173,59 @@ class operation_cl : public operation_cl_base {
   inline std::string get_kernel_source_for_evaluating_into(
       const T_lhs& lhs) const;
 
-  template <typename T_lhs>
-  struct cache {
-    static std::string source;  // kernel source - not used anywhere. Only
-                                // intended for debugging.
-    static cl::Kernel kernel;   // cached kernel - different for every
-                                // combination of template instantiation of \c
-                                // operation and every \c T_lhs
-  };
-
   /**
    * Generates kernel code for assigning this expression into result expression.
-   * @param[in,out] generated set of (pointer to) already generated operations
+   * @param[in,out] generated map from (pointer to) already generated operations
+   * to variable names
    * @param ng name generator for this kernel
-   * @param i row index variable name
-   * @param j column index variable name
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
    * @param result expression into which result is to be assigned
    * @return part of kernel with code for this and nested expressions
    */
   template <typename T_result>
   kernel_parts get_whole_kernel_parts(
-      std::set<const operation_cl_base*>& generated, name_generator& ng,
-      const std::string& i, const std::string& j,
+      std::map<const void*, const char*>& generated, name_generator& ng,
+      const std::string& row_index_name, const std::string& col_index_name,
       const T_result& result) const {
-    kernel_parts parts = derived().get_kernel_parts(generated, ng, i, j, false);
-    kernel_parts out_parts = result.get_kernel_parts_lhs(generated, ng, i, j);
-    out_parts.body += " = " + derived().var_name + ";\n";
+    kernel_parts parts = derived().get_kernel_parts(
+        generated, ng, row_index_name, col_index_name, false);
+    kernel_parts out_parts = result.get_kernel_parts_lhs(
+        generated, ng, row_index_name, col_index_name);
+    out_parts.body += " = " + derived().var_name_ + ";\n";
     parts += out_parts;
     return parts;
   }
 
   /**
-   * generates kernel code for this and nested expressions.
-   * @param[in,out] generated set of (pointer to) already generated operations
+   * Generates kernel code for this and nested expressions.
+   * @param[in,out] generated map from (pointer to) already generated operations
+   * to variable names
    * @param name_gen name generator for this kernel
-   * @param i row index variable name
-   * @param j column index variable name
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
    * @param view_handled whether caller already handled matrix view
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts get_kernel_parts(
-      std::set<const operation_cl_base*>& generated, name_generator& name_gen,
-      const std::string& i, const std::string& j, bool view_handled) const {
+      std::map<const void*, const char*>& generated, name_generator& name_gen,
+      const std::string& row_index_name, const std::string& col_index_name,
+      bool view_handled) const {
     kernel_parts res{};
     if (generated.count(this) == 0) {
-      this->var_name = name_gen.generate();
-      generated.insert(this);
-      std::string i_arg = i;
-      std::string j_arg = j;
-      derived().modify_argument_indices(i_arg, j_arg);
+      this->var_name_ = name_gen.generate();
+      generated[this] = "";
+      std::string row_index_name_arg = row_index_name;
+      std::string col_index_name_arg = col_index_name;
+      derived().modify_argument_indices(row_index_name_arg, col_index_name_arg);
       std::array<kernel_parts, N> args_parts = index_apply<N>([&](auto... Is) {
+        std::map<const void*, const char*> generated2;
         return std::array<kernel_parts, N>{this->get_arg<Is>().get_kernel_parts(
-            generated, name_gen, i_arg, j_arg,
+            &Derived::modify_argument_indices
+                    == &operation_cl::modify_argument_indices
+                ? generated
+                : generated2,
+            name_gen, row_index_name_arg, col_index_name_arg,
             view_handled
                 && std::tuple_element_t<
                        Is, typename Deriv::view_transitivity>::value)...};
@@ -215,8 +233,9 @@ class operation_cl : public operation_cl_base {
       res = std::accumulate(args_parts.begin(), args_parts.end(),
                             kernel_parts{});
       kernel_parts my_part = index_apply<N>([&](auto... Is) {
-        return this->derived().generate(i, j, view_handled,
-                                        this->get_arg<Is>().var_name...);
+        return this->derived().generate(row_index_name, col_index_name,
+                                        view_handled,
+                                        this->get_arg<Is>().var_name_...);
       });
       res += my_part;
       res.body = res.body_prefix + res.body;
@@ -226,35 +245,59 @@ class operation_cl : public operation_cl_base {
   }
 
   /**
-   * Does nothing. Derived classes can override this to modify how indices are
-   * passed to its argument expressions. On input arguments \c i and \c j are
-   * expressions for indices of this operation. On output they are expressions
-   * for indices of argument operations.
-   * @param[in, out] i row index
-   * @param[in, out] j column index
+   * Generates kernel code for this expression.
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
+   * @param view_handled whether caller already handled matrix view
+   * @param var_name_arg variable name of the nested expression
+   * @return part of kernel with code for this expression
    */
-  inline void modify_argument_indices(std::string& i, std::string& j) const {}
+  inline kernel_parts generate(const std::string& row_index_name,
+                               const std::string& col_index_name,
+                               const bool view_handled,
+                               const std::string& var_name_arg) const {
+    var_name_ = var_name_arg;
+    return {};
+  }
+
+  /**
+   * Does nothing. Derived classes can override this to modify how indices are
+   * passed to its argument expressions. On input arguments \c row_index_name
+   * and \c col_index_name are expressions for indices of this operation. On
+   * output they are expressions for indices of argument operations.
+   * @param[in, out] row_index_name row index
+   * @param[in, out] col_index_name column index
+   */
+  inline void modify_argument_indices(std::string& row_index_name,
+                                      std::string& col_index_name) const {}
 
   /**
    * Sets kernel arguments for nested expressions.
-   * @param[in,out] generated set of expressions that already set their kernel
+   * @param[in,out] generated map of expressions that already set their kernel
    * arguments
    * @param kernel kernel to set arguments on
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::set<const operation_cl_base*>& generated,
+  inline void set_args(std::map<const void*, const char*>& generated,
                        cl::Kernel& kernel, int& arg_num) const {
     if (generated.count(this) == 0) {
-      generated.insert(this);
+      generated[this] = "";
       // parameter pack expansion returns a comma-separated list of values,
       // which can not be used as an expression. We work around that by using
       // comma operator to get a list of ints, which we use to construct an
       // initializer_list from. Cast to voids avoids warnings about unused
       // expression.
       index_apply<N>([&](auto... Is) {
+        std::map<const void*, const char*> generated2;
         static_cast<void>(std::initializer_list<int>{
-            (this->get_arg<Is>().set_args(generated, kernel, arg_num), 0)...});
+            (this->get_arg<Is>().set_args(
+                 &Derived::modify_argument_indices
+                         == &operation_cl::modify_argument_indices
+                     ? generated
+                     : generated2,
+                 kernel, arg_num),
+             0)...});
       });
     }
   }
@@ -271,14 +314,13 @@ class operation_cl : public operation_cl_base {
   }
 
   /**
-   * Adds all write events on any matrices used by nested expressions to a list
-   * and clears them from those matrices.
+   * Adds all write events on any matrices used by nested expressions to a list.
    * @param[out] events List of all events.
    */
-  inline void get_clear_write_events(std::vector<cl::Event>& events) const {
+  inline void get_write_events(std::vector<cl::Event>& events) const {
     index_apply<N>([&](auto... Is) {
       static_cast<void>(std::initializer_list<int>{
-          (this->template get_arg<Is>().get_clear_write_events(events), 0)...});
+          (this->template get_arg<Is>().get_write_events(events), 0)...});
     });
   }
 
@@ -288,6 +330,8 @@ class operation_cl : public operation_cl_base {
    * @return number of rows
    */
   inline int rows() const {
+    static_assert(
+        N > 0, "default rows does not work on expressions with no arguments!");
     return index_apply<N>([&](auto... Is) {
       // assuming all non-dynamic sizes match
       return std::max({this->get_arg<Is>().rows()...});
@@ -300,6 +344,8 @@ class operation_cl : public operation_cl_base {
    * @return number of columns
    */
   inline int cols() const {
+    static_assert(
+        N > 0, "default cols does not work on expressions with no arguments!");
     return index_apply<N>([&](auto... Is) {
       // assuming all non-dynamic sizes match
       return std::max({this->get_arg<Is>().cols()...});
@@ -326,6 +372,9 @@ class operation_cl : public operation_cl_base {
    * @return pair of indices - bottom and top diagonal
    */
   inline std::pair<int, int> extreme_diagonals() const {
+    static_assert(N > 0,
+                  "default extreme_diagonals does not work on expressions with "
+                  "no arguments!");
     return index_apply<N>([&](auto... Is) {
       auto arg_diags
           = std::make_tuple(this->get_arg<Is>().extreme_diagonals()...);
@@ -354,15 +403,24 @@ class operation_cl : public operation_cl_base {
     }
     return view;
   }
+
+  /**
+   * Collects data that is needed beside types to uniqly identify a kernel
+   * generator expression.
+   * @param[out] uids ids of unique matrix accesses
+   * @param[in,out] id_map map from memory addresses to unique ids
+   * @param[in,out] next_id neqt unique id to use
+   */
+  inline void get_unique_matrix_accesses(std::vector<int>& uids,
+                                         std::map<const void*, int>& id_map,
+                                         int& next_id) const {
+    index_apply<N>([&](auto... Is) {
+      static_cast<void>(std::initializer_list<int>{(
+          this->get_arg<Is>().get_unique_matrix_accesses(uids, id_map, next_id),
+          0)...});
+    });
+  }
 };
-
-template <typename Derived, typename Scalar, typename... Args>
-template <typename T_lhs>
-cl::Kernel operation_cl<Derived, Scalar, Args...>::cache<T_lhs>::kernel;
-
-template <typename Derived, typename Scalar, typename... Args>
-template <typename T_lhs>
-std::string operation_cl<Derived, Scalar, Args...>::cache<T_lhs>::source;
 
 template <typename Derived, typename Scalar, typename... Args>
 const bool operation_cl<Derived, Scalar, Args...>::require_specific_local_size

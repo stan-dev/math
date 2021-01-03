@@ -274,7 +274,7 @@ void test_ode_error_conditions(F& f, const double& t0,
   ts_bad.push_back(1);
   EXPECT_THROW_MSG(integrate_ode_adams(f, y0, t0, ts_bad, theta, x, x_int,
                                        &msgs, 1e-8, 1e-10, 1e6),
-                   std::domain_error, "times is not a valid ordered vector");
+                   std::domain_error, "times is not a valid sorted vector");
   EXPECT_EQ("", msgs.str());
 
   msgs.clear();

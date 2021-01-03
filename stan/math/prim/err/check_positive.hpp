@@ -2,8 +2,7 @@
 #define STAN_MATH_PRIM_ERR_CHECK_POSITIVE_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/err/throw_domain_error.hpp>
-#include <stan/math/prim/err/throw_domain_error_vec.hpp>
+#include <stan/math/prim/err/elementwise_check.hpp>
 #include <stan/math/prim/err/invalid_argument.hpp>
 #include <stan/math/prim/fun/get.hpp>
 #include <stan/math/prim/fun/size.hpp>
@@ -12,34 +11,6 @@
 
 namespace stan {
 namespace math {
-
-namespace {
-
-template <typename T_y, bool is_vec>
-struct positive {
-  static void check(const char* function, const char* name, const T_y& y) {
-    // have to use not is_unsigned. is_signed will be false
-    // floating point types that have no unsigned versions.
-    if (!std::is_unsigned<T_y>::value && !(y > 0)) {
-      throw_domain_error(function, name, y, "is ", ", but must be > 0!");
-    }
-  }
-};
-
-template <typename T_y>
-struct positive<T_y, true> {
-  static void check(const char* function, const char* name, const T_y& y) {
-    for (size_t n = 0; n < stan::math::size(y); n++) {
-      if (!std::is_unsigned<typename value_type<T_y>::type>::value
-          && !(stan::get(y, n) > 0)) {
-        throw_domain_error_vec(function, name, y, n, "is ",
-                               ", but must be > 0!");
-      }
-    }
-  }
-};
-
-}  // namespace
 
 /**
  * Check if <code>y</code> is positive.
@@ -55,7 +26,8 @@ struct positive<T_y, true> {
 template <typename T_y>
 inline void check_positive(const char* function, const char* name,
                            const T_y& y) {
-  positive<T_y, is_vector_like<T_y>::value>::check(function, name, y);
+  elementwise_check([](double x) { return x > 0; }, function, name, y,
+                    "positive");
 }
 
 /**
@@ -70,11 +42,13 @@ inline void check_positive(const char* function, const char* name,
 inline void check_positive(const char* function, const char* name,
                            const char* expr, int size) {
   if (size <= 0) {
-    std::stringstream msg;
-    msg << "; dimension size expression = " << expr;
-    std::string msg_str(msg.str());
-    invalid_argument(function, name, size, "must have a positive size, but is ",
-                     msg_str.c_str());
+    [&]() STAN_COLD_PATH {
+      std::stringstream msg;
+      msg << "; dimension size expression = " << expr;
+      std::string msg_str(msg.str());
+      invalid_argument(function, name, size,
+                       "must have a positive size, but is ", msg_str.c_str());
+    }();
   }
 }
 

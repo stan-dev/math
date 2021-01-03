@@ -5,16 +5,13 @@
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <test/unit/math/opencl/kernel_generator/reference_kernel.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <string>
 
 using Eigen::MatrixXd;
 using Eigen::MatrixXi;
 using stan::math::matrix_cl;
-
-#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
-  for (int i = 0; i < A.size(); i++)    \
-    EXPECT_NEAR(A(i), B(i), DELTA);
 
 TEST(KernelGenerator, multi_result_kernel_errors) {
   matrix_cl<double> m1_cl(3, 3);
@@ -30,7 +27,7 @@ TEST(KernelGenerator, multi_result_kernel_errors) {
                = stan::math::expressions(m1_cl - m2_cl, m3_cl - m4_cl),
                std::invalid_argument);
   // mismatch in size between an expression and a result that can not be resized
-  auto block1 = stan::math::block(m1_cl, 0, 0, 3, 3);
+  auto block1 = stan::math::block_zero_based(m1_cl, 0, 0, 3, 3);
   EXPECT_THROW(stan::math::results(res1_cl, block1)
                = stan::math::expressions(m3_cl + m4_cl, m3_cl - m4_cl),
                std::invalid_argument);

@@ -46,4 +46,5 @@ TEST(MathMixMatFun, traceInvQuadFormLdlt) {
 
   // type mismatches fail to compile at some level of AD, which
   // is arguably the right behavior
+  stan::math::recover_memory();
 }

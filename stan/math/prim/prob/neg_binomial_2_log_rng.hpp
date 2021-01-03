@@ -37,14 +37,18 @@ neg_binomial_2_log_rng(const T_loc& eta, const T_inv& phi, RNG& rng) {
   using boost::gamma_distribution;
   using boost::variate_generator;
   using boost::random::poisson_distribution;
+  using T_eta_ref = ref_type_t<T_loc>;
+  using T_phi_ref = ref_type_t<T_inv>;
   static const char* function = "neg_binomial_2_log_rng";
-  check_finite(function, "Log-location parameter", eta);
-  check_positive_finite(function, "Inverse dispersion parameter", phi);
   check_consistent_sizes(function, "Log-location parameter", eta,
                          "Inverse dispersion parameter", phi);
+  T_eta_ref eta_ref = eta;
+  T_phi_ref phi_ref = phi;
+  check_finite(function, "Log-location parameter", eta_ref);
+  check_positive_finite(function, "Inverse dispersion parameter", phi_ref);
 
-  scalar_seq_view<T_loc> eta_vec(eta);
-  scalar_seq_view<T_inv> phi_vec(phi);
+  scalar_seq_view<T_eta_ref> eta_vec(eta_ref);
+  scalar_seq_view<T_phi_ref> phi_vec(phi_ref);
   size_t N = max_size(eta, phi);
   VectorBuilder<true, int, T_loc, T_inv> output(N);
 

@@ -23,7 +23,6 @@ namespace math {
  * @throw std::out_of_range if i is out of range.
  */
 inline int csr_u_to_z(const std::vector<int>& u, int i) {
-  check_positive("csr_u_to_z", "u.size()", u.size());
   check_range("csr_u_to_z", "i", u.size(), i + 1, "index out of range");
   return u[i + 1] - u[i];
 }

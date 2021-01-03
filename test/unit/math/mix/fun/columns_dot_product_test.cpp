@@ -9,26 +9,31 @@ TEST(MathMixMatFun, columnsDotProduct) {
   Eigen::VectorXd v3(3);
   v3 << 4, -2, -1;
   stan::test::expect_ad(f, u3, v3);
+  stan::test::expect_ad_matvar(f, u3, v3);
 
   Eigen::RowVectorXd ru3 = u3;
   Eigen::RowVectorXd rv3 = v3;
   stan::test::expect_ad(f, ru3, rv3);
+  stan::test::expect_ad_matvar(f, ru3, rv3);
 
   Eigen::MatrixXd a33(3, 3);
   a33 << 1, 1, 1, 3, 3, 3, -5, -5, -5;
   Eigen::MatrixXd b33(3, 3);
   b33 << 4, 4, 4, -2, -2, -2, -1, -1, -1;
   stan::test::expect_ad(f, a33, b33);
+  stan::test::expect_ad_matvar(f, a33, b33);
 
   Eigen::MatrixXd c32(3, 2);
   c32 << 1, 2, 3, 4, 5, 6;
   Eigen::MatrixXd d32(3, 2);
   d32 << -1, -2, -3, -4, -5, -6;
   stan::test::expect_ad(f, c32, d32);
+  stan::test::expect_ad_matvar(f, c32, d32);
 
   Eigen::MatrixXd c23 = c32.transpose();
   Eigen::MatrixXd d23 = d32.transpose();
   stan::test::expect_ad(f, c23, d23);
+  stan::test::expect_ad_matvar(f, c23, d23);
 
   // size zero boundary
   Eigen::VectorXd v0(0);
@@ -37,6 +42,9 @@ TEST(MathMixMatFun, columnsDotProduct) {
   stan::test::expect_ad(f, v0, v0);
   stan::test::expect_ad(f, rv0, rv0);
   stan::test::expect_ad(f, a00, a00);
+  stan::test::expect_ad_matvar(f, v0, v0);
+  stan::test::expect_ad_matvar(f, rv0, rv0);
+  stan::test::expect_ad_matvar(f, a00, a00);
 
   // exceptions---sizes
   Eigen::MatrixXd em33 = Eigen::MatrixXd::Zero(3, 3);
@@ -53,4 +61,8 @@ TEST(MathMixMatFun, columnsDotProduct) {
   stan::test::expect_ad(f, erv2, erv3);
   stan::test::expect_ad(f, em33, em23);
   stan::test::expect_ad(f, em23, em33);
+  stan::test::expect_ad_matvar(f, ev2, ev3);
+  stan::test::expect_ad_matvar(f, erv2, erv3);
+  stan::test::expect_ad_matvar(f, em33, em23);
+  stan::test::expect_ad_matvar(f, em23, em33);
 }

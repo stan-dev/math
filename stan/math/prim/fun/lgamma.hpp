@@ -29,6 +29,7 @@
 #include <limits>
 #endif
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
 
 namespace stan {
 namespace math {
@@ -66,7 +67,7 @@ inline double lgamma(double x) {
 #else
   if (unlikely(x == 0.0))
     return std::numeric_limits<double>::infinity();
-  return boost::math::lgamma(x, boost_policy_t());
+  return boost::math::lgamma(x, boost_policy_t<>());
 #endif
 }
 
@@ -85,7 +86,7 @@ inline double lgamma(int x) {
 #else
   if (unlikely(x == 0.0))
     return std::numeric_limits<double>::infinity();
-  return boost::math::lgamma(x, boost_policy_t());
+  return boost::math::lgamma(x, boost_policy_t<>());
 #endif
 }
 
@@ -113,7 +114,8 @@ struct lgamma_fun {
  *         applied to each value in x.
  * @throw std::domain_error if any value is a negative integer or 0.
  */
-template <typename T>
+template <typename T,
+          require_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
 inline auto lgamma(const T& x) {
   return apply_scalar_unary<lgamma_fun, T>::apply(x);
 }

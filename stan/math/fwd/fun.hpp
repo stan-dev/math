@@ -51,6 +51,7 @@
 #include <stan/math/fwd/fun/inverse.hpp>
 #include <stan/math/fwd/fun/is_inf.hpp>
 #include <stan/math/fwd/fun/is_nan.hpp>
+#include <stan/math/fwd/fun/lambert_w.hpp>
 #include <stan/math/fwd/fun/lbeta.hpp>
 #include <stan/math/fwd/fun/ldexp.hpp>
 #include <stan/math/fwd/fun/lgamma.hpp>

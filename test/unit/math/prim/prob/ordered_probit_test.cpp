@@ -4,21 +4,33 @@
 #include <boost/math/distributions.hpp>
 #include <limits>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-
-typedef Eigen::Matrix<double, Eigen::Dynamic, 1> vector_d;
-
-vector_d get_simplex(double lambda, const vector_d& c) {
+stan::math::vector_d get_simplex_Phi(double lambda,
+                                     const stan::math::vector_d& c) {
   using stan::math::Phi;
   int K = c.size() + 1;
-  vector_d theta(K);
+  stan::math::vector_d theta(K);
   theta(0) = 1.0 - Phi(lambda - c(0));
   for (int k = 1; k < (K - 1); ++k)
     theta(k) = Phi(lambda - c(k - 1)) - Phi(lambda - c(k));
   // - 0.0
   theta(K - 1) = Phi(lambda - c(K - 2));
   return theta;
+}
+
+TEST(ProbDistributions, ordered_probit_stability) {
+  using stan::math::is_inf;
+  using stan::math::ordered_probit_log;
+
+  Eigen::VectorXd c(3);
+  c << -0.3, 0.1, 1.2;
+
+  EXPECT_FALSE(is_inf(ordered_probit_log(1, 10, c)));
+  EXPECT_FALSE(is_inf(ordered_probit_log(2, 10, c)));
+  EXPECT_NE(ordered_probit_log(4, 10, c), 0);
+
+  EXPECT_NE(ordered_probit_log(1, -38, c), 0);
+  EXPECT_FALSE(is_inf(ordered_probit_log(2, -38, c)));
+  EXPECT_FALSE(is_inf(ordered_probit_log(4, -38, c)));
 }
 
 TEST(ProbDistributions, ordered_probit_vals) {
@@ -33,7 +45,7 @@ TEST(ProbDistributions, ordered_probit_vals) {
   c << -1.7, -0.3, 1.2, 2.6;
   double lambda = 1.1;
 
-  vector_d theta = get_simplex(lambda, c);
+  stan::math::vector_d theta = get_simplex_Phi(lambda, c);
 
   double sum = 0.0;
   for (int k = 0; k < theta.size(); ++k)
@@ -59,7 +71,7 @@ TEST(ProbDistributions, ordered_probit_vals_2) {
   c << -0.2, 4;
   double lambda = -0.9;
 
-  vector_d theta = get_simplex(lambda, c);
+  stan::math::vector_d theta = get_simplex_Phi(lambda, c);
 
   double sum = 0.0;
   for (int k = 0; k < theta.size(); ++k)
@@ -88,7 +100,7 @@ TEST(ProbDistributions, ordered_probit) {
   // init size zero
   Eigen::Matrix<double, Eigen::Dynamic, 1> c_zero;
   EXPECT_EQ(0, c_zero.size());
-  EXPECT_THROW(ordered_probit_log(1, lambda, c_zero), std::domain_error);
+  EXPECT_THROW(ordered_probit_log(1, lambda, c_zero), std::invalid_argument);
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> c_neg(1);
   c_neg << -13.7;
@@ -126,8 +138,6 @@ TEST(ProbDistributions, ordered_probit) {
   cbad3[1] = nan;
   EXPECT_THROW(ordered_probit_log(1, 1.0, cbad3), std::domain_error);
 }
-
-void expect_nan(double x) { EXPECT_TRUE(std::isnan(x)); }
 
 TEST(ProbDistributionOrderedProbit, error_check) {
   boost::random::mt19937 rng;

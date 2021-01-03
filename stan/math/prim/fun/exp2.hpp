@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_EXP2_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -34,7 +35,8 @@ struct exp2_fun {
  * @param x container
  * @return Elementwise exp2 of members of container.
  */
-template <typename T>
+template <typename T, require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+                          T>* = nullptr>
 inline auto exp2(const T& x) {
   return apply_scalar_unary<exp2_fun, T>::apply(x);
 }

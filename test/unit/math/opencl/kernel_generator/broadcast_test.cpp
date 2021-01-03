@@ -3,12 +3,9 @@
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/copy.hpp>
+#include <test/unit/util.hpp>
 #include <Eigen/Dense>
 #include <gtest/gtest.h>
-
-#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
-  for (int i = 0; i < A.size(); i++)    \
-    EXPECT_NEAR(A(i), B(i), DELTA);
 
 TEST(MathMatrixCL, broadcast_errors) {
   using Eigen::MatrixXd;
@@ -66,11 +63,11 @@ TEST(MathMatrixCL, broadcast_errors) {
 
   EXPECT_NO_THROW((stan::math::broadcast<false, false>(scal_cl).eval()));
   EXPECT_THROW((stan::math::broadcast<true, false>(scal_cl).eval()),
-               std::domain_error);
+               std::invalid_argument);
   EXPECT_THROW((stan::math::broadcast<false, true>(scal_cl).eval()),
-               std::domain_error);
+               std::invalid_argument);
   EXPECT_THROW((stan::math::broadcast<true, true>(scal_cl).eval()),
-               std::domain_error);
+               std::invalid_argument);
 }
 
 TEST(MathMatrixCL, broadcast_rows_test) {
@@ -156,21 +153,22 @@ TEST(MathMatrixCL, broadcast_view_test) {
   matrix_cl<double> v_cl(2, 1);
   matrix_cl<double> m_cl(2, 2, stan::math::matrix_cl_view::Diagonal);
   matrix_cl<double> dst_block_cl(3, 3, stan::math::matrix_cl_view::Diagonal);
-  matrix_cl<double> dst_cl
-      = stan::math::broadcast<false, false>(block(dst_block_cl, 0, 0, 2, 2));
+  matrix_cl<double> dst_cl = stan::math::broadcast<false, false>(
+      block_zero_based(dst_block_cl, 0, 0, 2, 2));
   EXPECT_EQ(dst_cl.view(), stan::math::matrix_cl_view::Diagonal);
   dst_cl = stan::math::broadcast<false, true>(v_cl) + m_cl;
   EXPECT_EQ(dst_cl.view(), stan::math::matrix_cl_view::Entire);
-  block(dst_block_cl, 0, 0, 2, 2)
-      = stan::math::broadcast<false, false>(block(dst_block_cl, 0, 0, 2, 2));
+  block_zero_based(dst_block_cl, 0, 0, 2, 2)
+      = stan::math::broadcast<false, false>(
+          block_zero_based(dst_block_cl, 0, 0, 2, 2));
   EXPECT_EQ(dst_block_cl.view(), stan::math::matrix_cl_view::Diagonal);
-  block(dst_block_cl, 0, 1, 2, 2)
+  block_zero_based(dst_block_cl, 0, 1, 2, 2)
       = stan::math::broadcast<false, true>(v_cl) + m_cl;
   EXPECT_EQ(dst_block_cl.view(), stan::math::matrix_cl_view::Upper);
-  block(dst_block_cl, 0, 1, 2, 2)
+  block_zero_based(dst_block_cl, 0, 1, 2, 2)
       = stan::math::broadcast<true, false>(stan::math::transpose(v_cl)) + m_cl;
   EXPECT_EQ(dst_block_cl.view(), stan::math::matrix_cl_view::Upper);
-  block(dst_block_cl, 0, 0, 2, 2)
+  block_zero_based(dst_block_cl, 0, 0, 2, 2)
       = stan::math::broadcast<false, true>(v_cl) + m_cl;
   EXPECT_EQ(dst_block_cl.view(), stan::math::matrix_cl_view::Entire);
 }

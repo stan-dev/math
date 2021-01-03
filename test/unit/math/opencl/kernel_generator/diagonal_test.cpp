@@ -4,6 +4,7 @@
 #include <test/unit/math/opencl/kernel_generator/reference_kernel.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/copy.hpp>
+#include <test/unit/util.hpp>
 #include <Eigen/Dense>
 #include <gtest/gtest.h>
 #include <string>
@@ -12,12 +13,6 @@ using Eigen::MatrixXd;
 using Eigen::VectorXd;
 using stan::math::diagonal;
 using stan::math::matrix_cl;
-
-#define EXPECT_MATRIX_NEAR(A, B, DELTA) \
-  EXPECT_EQ(A.rows(), B.rows());        \
-  EXPECT_EQ(A.cols(), B.cols());        \
-  for (int i = 0; i < A.size(); i++)    \
-    EXPECT_NEAR(A(i), B(i), DELTA);
 
 TEST(KernelGenerator, diagonal_test) {
   MatrixXd m = MatrixXd::Random(3, 4);
@@ -76,7 +71,8 @@ TEST(KernelGenerator, diagonal_of_a_block_test) {
 
   matrix_cl<double> m_cl(m);
 
-  diagonal(block(m_cl, 0, 1, 3, 3)) = diagonal(block(m_cl, 1, 0, 3, 3));
+  diagonal(block_zero_based(m_cl, 0, 1, 3, 3))
+      = diagonal(block_zero_based(m_cl, 1, 0, 3, 3));
   MatrixXd res = stan::math::from_matrix_cl(m_cl);
 
   MatrixXd correct = m;

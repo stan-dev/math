@@ -6,7 +6,6 @@
 #include <stan/math/opencl/kernel_generator/load.hpp>
 #include <stan/math/opencl/kernel_generator/scalar.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/is_matrix_cl.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <type_traits>
 
@@ -38,10 +37,20 @@ inline T_operation&& as_operation_cl(T_operation&& a) {
  * @param a scalar
  * @return \c scalar_ wrapping the input
  */
-template <typename T_scalar, typename = require_arithmetic_t<T_scalar>>
+template <typename T_scalar, typename = require_arithmetic_t<T_scalar>,
+          require_not_same_t<T_scalar, bool>* = nullptr>
 inline scalar_<T_scalar> as_operation_cl(const T_scalar a) {
   return scalar_<T_scalar>(a);
 }
+
+/**
+ * Converts any valid kernel generator expression into an operation. This is an
+ * overload for bool scalars. It wraps them into \c scalar_<char> as \c bool can
+ * not be used as a type of a kernel argument.
+ * @param a scalar
+ * @return \c scalar_<char> wrapping the input
+ */
+inline scalar_<char> as_operation_cl(const bool a) { return scalar_<char>(a); }
 
 /**
  * Converts any valid kernel generator expression into an operation. This is an
@@ -50,7 +59,9 @@ inline scalar_<T_scalar> as_operation_cl(const T_scalar a) {
  * @param a \c matrix_cl
  * @return \c load_ wrapping the input
  */
-template <typename T_matrix_cl, typename = require_matrix_cl_t<T_matrix_cl>>
+template <typename T_matrix_cl,
+          typename = require_any_t<is_matrix_cl<T_matrix_cl>,
+                                   is_arena_matrix_cl<T_matrix_cl>>>
 inline load_<T_matrix_cl> as_operation_cl(T_matrix_cl&& a) {
   return load_<T_matrix_cl>(std::forward<T_matrix_cl>(a));
 }

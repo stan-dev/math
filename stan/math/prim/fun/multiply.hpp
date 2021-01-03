@@ -6,7 +6,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/dot_product.hpp>
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/opencl.hpp>
+#include <stan/math/opencl/prim.hpp>
 #endif
 #include <type_traits>
 
@@ -23,10 +23,11 @@ namespace math {
  * @param c scalar
  * @return product of matrix and scalar
  */
-template <typename Mat, typename Scal, require_eigen_t<Mat>* = nullptr,
-          require_stan_scalar_t<Scal>* = nullptr>
+template <typename Mat, typename Scal, require_stan_scalar_t<Scal>* = nullptr,
+          require_eigen_t<Mat>* = nullptr,
+          require_all_not_st_var<Scal, Mat>* = nullptr>
 inline auto multiply(const Mat& m, Scal c) {
-  return (c * m).eval();
+  return c * m;
 }
 
 /**
@@ -40,9 +41,10 @@ inline auto multiply(const Mat& m, Scal c) {
  * @return product of scalar and matrix
  */
 template <typename Scal, typename Mat, require_stan_scalar_t<Scal>* = nullptr,
-          require_eigen_t<Mat>* = nullptr>
+          require_eigen_t<Mat>* = nullptr,
+          require_all_not_st_var<Scal, Mat>* = nullptr>
 inline auto multiply(Scal c, const Mat& m) {
-  return (c * m).eval();
+  return c * m;
 }
 
 /**
@@ -67,7 +69,7 @@ template <typename Mat1, typename Mat2,
 inline auto multiply(const Mat1& m1, const Mat2& m2) {
   check_size_match("multiply", "Columns of m1", m1.cols(), "Rows of m2",
                    m2.rows());
-  return (m1 * m2).eval();
+  return m1 * m2;
 }
 
 /**
@@ -124,8 +126,7 @@ inline auto multiply(const Mat1& m1, const Mat2& m2)
  * @throw <code>std::invalid_argument</code> if rv and v are not the same size
  */
 template <typename RowVec, typename ColVec,
-          require_all_not_var_t<scalar_type_t<RowVec>,
-                                scalar_type_t<ColVec>>* = nullptr,
+          require_all_not_st_var<RowVec, ColVec>* = nullptr,
           require_eigen_row_and_col_t<RowVec, ColVec>* = nullptr>
 inline auto multiply(const RowVec& rv, const ColVec& v) {
   check_multiplicable("multiply", "rv", rv, "v", v);

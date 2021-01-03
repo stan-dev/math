@@ -2,7 +2,7 @@
 #define STAN_MATH_REV_FUNCTOR_IDAS_RESIDUAL_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/fun/typedefs.hpp>
+#include <stan/math/rev/core/typedefs.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/dot_self.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
@@ -151,27 +151,36 @@ class idas_system {
         id_(N_VNew_Serial(N_)),
         mem_(IDACreate()),
         msgs_(msgs) {
-    if (nv_yy_ == NULL || nv_yp_ == NULL) {
-      throw std::runtime_error("N_VMake_Serial failed to allocate memory");
-    }
+    try {
+      if (nv_yy_ == NULL || nv_yp_ == NULL) {
+        throw std::runtime_error("N_VMake_Serial failed to allocate memory");
+      }
 
-    if (mem_ == NULL) {
-      throw std::runtime_error("IDACreate failed to allocate memory");
-    }
+      if (mem_ == NULL) {
+        throw std::runtime_error("IDACreate failed to allocate memory");
+      }
 
-    static const char* caller = "idas_system";
-    check_finite(caller, "initial state", yy0);
-    check_finite(caller, "derivative initial state", yp0);
-    check_finite(caller, "parameter vector", theta);
-    check_finite(caller, "continuous data", x_r);
-    check_nonzero_size(caller, "initial state", yy0);
-    check_nonzero_size(caller, "derivative initial state", yp0);
-    check_consistent_sizes(caller, "initial state", yy0,
-                           "derivative initial state", yp0);
-    check_consistent_sizes(caller, "initial state", yy0,
-                           "derivative-algebra id", eq_id);
-    check_greater_or_equal(caller, "derivative-algebra id", eq_id, 0);
-    check_less_or_equal(caller, "derivative-algebra id", eq_id, 1);
+      static const char* caller = "idas_system";
+      check_finite(caller, "initial state", yy0);
+      check_finite(caller, "derivative initial state", yp0);
+      check_finite(caller, "parameter vector", theta);
+      check_finite(caller, "continuous data", x_r);
+      check_nonzero_size(caller, "initial state", yy0);
+      check_nonzero_size(caller, "derivative initial state", yp0);
+      check_consistent_sizes(caller, "initial state", yy0,
+                             "derivative initial state", yp0);
+      check_consistent_sizes(caller, "initial state", yy0,
+                             "derivative-algebra id", eq_id);
+      check_greater_or_equal(caller, "derivative-algebra id", eq_id, 0);
+      check_less_or_equal(caller, "derivative-algebra id", eq_id, 1);
+    } catch (const std::exception& e) {
+      N_VDestroy_Serial(nv_yy_);
+      N_VDestroy_Serial(nv_yp_);
+      N_VDestroy_Serial(nv_rr_);
+      N_VDestroy_Serial(id_);
+      IDAFree(&mem_);
+      throw;
+    }
 
     for (size_t i = 0; i < N_; ++i) {
       NV_Ith_S(id_, i) = eq_id[i];
