@@ -79,9 +79,9 @@ class cvodes_integrator_adjoint_memory : public chainable_alloc {
   const Eigen::Matrix<T_y0_t0, Eigen::Dynamic, 1> y0_;
   const T_t0 t0_;
   const std::vector<T_ts> ts_;
-  //std::tuple<T_Args...> args_tuple_;
+  // std::tuple<T_Args...> args_tuple_;
   std::tuple<decltype(deep_copy_vars(std::declval<const T_Args&>()))...>
-  local_args_tuple_;
+      local_args_tuple_;
   std::tuple<plain_type_t<decltype(value_of(std::declval<const T_Args&>()))>...>
       value_of_args_tuple_;
   std::vector<Eigen::VectorXd> y_;
@@ -100,7 +100,7 @@ class cvodes_integrator_adjoint_memory : public chainable_alloc {
         y0_(y0),
         t0_(t0),
         ts_(ts),
-        //args_tuple_(std::make_tuple(args...)),
+        // args_tuple_(std::make_tuple(args...)),
         local_args_tuple_(deep_copy_vars(args)...),
         value_of_args_tuple_(value_of(args)...),
         y_(ts_.size()),
@@ -324,7 +324,8 @@ class cvodes_integrator_adjoint_vari : public vari {
 
     // The vars here do not live on the nested stack so must be zero'd
     // separately
-    apply([&](auto&&... args) { zero_adjoints(args...); }, memory->local_args_tuple_);
+    apply([&](auto&&... args) { zero_adjoints(args...); },
+          memory->local_args_tuple_);
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars = apply(
         [&](auto&&... args) { return memory->f_(t, y_vec, msgs_, args...); },
