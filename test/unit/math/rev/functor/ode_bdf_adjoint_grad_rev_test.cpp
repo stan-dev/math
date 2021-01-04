@@ -64,7 +64,7 @@ class test_functor_double_var {
 
     std::vector<Eigen::Matrix<T, Eigen::Dynamic, 1>> ys
         = (lmm_ == TEST_CVODES_ADAMS)
-              ? stan::math::ode_adams(sho, y0, t0, ts, nullptr, omega)
+              ? stan::math::ode_bdf_adjoint(sho, y0, t0, ts, nullptr, omega)
               : stan::math::ode_bdf(sho, y0, t0, ts, nullptr, omega);
 
     return ys[0](state);
@@ -132,7 +132,7 @@ class test_functor_var_double {
 
     std::vector<Eigen::Matrix<T, Eigen::Dynamic, 1>> ys
         = (lmm_ == TEST_CVODES_ADAMS)
-              ? stan::math::ode_adams(sho, y0, t0, ts, nullptr, omega)
+              ? stan::math::ode_bdf_adjoint(sho, y0, t0, ts, nullptr, omega)
               : stan::math::ode_bdf(sho, y0, t0, ts, nullptr, omega);
 
     return ys[0](state);
@@ -200,7 +200,7 @@ class test_functor_var_var {
 
     std::vector<Eigen::Matrix<T, Eigen::Dynamic, 1>> ys
         = (lmm_ == TEST_CVODES_ADAMS)
-              ? stan::math::ode_adams(sho, y0, t0, ts, nullptr, omega)
+              ? stan::math::ode_bdf_adjoint(sho, y0, t0, ts, nullptr, omega)
               : stan::math::ode_bdf(sho, y0, t0, ts, nullptr, omega);
 
     return ys[0](state);

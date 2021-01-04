@@ -469,7 +469,7 @@ class cvodes_integrator_adjoint_vari : public vari {
           std::vector<int> unused_temp{
               0, (check_finite(fun, "ode parameters and data", args), 0)...};
         },
-        memory->args_tuple_);
+        memory->local_args_tuple_);
 
     check_nonzero_size(fun, "times", ts);
     check_nonzero_size(fun, "initial state", y0);
