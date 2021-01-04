@@ -80,7 +80,7 @@ class cvodes_integrator_adjoint_memory : public chainable_alloc {
   const T_t0 t0_;
   const std::vector<T_ts> ts_;
   // std::tuple<T_Args...> args_tuple_;
-  std::tuple<decltype(deep_copy_vars(std::declval<const T_Args&>()))...>
+  std::tuple<plain_type_t<decltype(deep_copy_vars(std::declval<const T_Args&>()))>...>
       local_args_tuple_;
   std::tuple<plain_type_t<decltype(value_of(std::declval<const T_Args&>()))>...>
       value_of_args_tuple_;
