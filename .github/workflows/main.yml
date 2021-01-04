@@ -18,6 +18,11 @@ jobs:
     runs-on: windows-latest
 
     steps:
+    - uses: n1hility/cancel-previous-runs@v2
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+      if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/master' && github.ref != 'refs/heads/develop'"
+  
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
       with:
