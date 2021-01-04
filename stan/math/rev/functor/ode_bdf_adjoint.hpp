@@ -112,9 +112,9 @@ ode_bdf_adjoint_tol(const F& f, const T_y0& y0, const T_t0& t0,
                     const std::vector<T_ts>& ts, double relative_tolerance,
                     double absolute_tolerance, long int max_num_steps,
                     std::ostream* msgs, const T_Args&... args) {
-  return ode_bdf_tol_impl("ode_bdf_adjoint_tol", f, y0, t0, ts,
-                          relative_tolerance, absolute_tolerance, max_num_steps,
-                          msgs, args...);
+  return ode_bdf_adjoint_tol_impl("ode_bdf_adjoint_tol", f, y0, t0, ts,
+                                  relative_tolerance, absolute_tolerance, max_num_steps,
+                                  msgs, args...);
 }
 
 /**
