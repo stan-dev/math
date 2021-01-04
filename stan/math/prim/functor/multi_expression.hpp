@@ -198,7 +198,7 @@ class eigen_results_ {
             std::enable_if_t<sizeof...(T_results)
                              == sizeof...(T_expressions)>* = nullptr>
   void operator=(const eigen_expressions_<T_expressions...>& expressions) {
-    index_apply<sizeof...(T_results)>([&](auto... Is) {
+    index_apply<sizeof...(T_results)>([this, &](auto... Is) {
       static_cast<void>(std::initializer_list<int>{
           (Eigen::internal::resize_if_allowed(
                std::get<Is>(results_), std::get<Is>(expressions.exprs_),
@@ -219,9 +219,9 @@ class eigen_results_ {
             std::enable_if_t<sizeof...(T_results)
                              == sizeof...(T_expressions)>* = nullptr>
   void operator+=(const eigen_expressions_<T_expressions...>& expressions) {
-    index_apply<sizeof...(T_results)>([&](auto... Is) {
-      assign_select(eigen_expressions(
-          (std::get<Is>(results_) + std::get<Is>(expressions.exprs_))...));
+    index_apply<sizeof...(T_results)>([this, &](auto... Is) {
+      this->assign_select(eigen_expressions(
+          (std::get<Is>(this->results_) + std::get<Is>(expressions.exprs_))...));
     });
   }
 };
