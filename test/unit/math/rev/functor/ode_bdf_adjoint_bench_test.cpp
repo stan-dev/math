@@ -21,11 +21,13 @@ struct pkpd_rhs {
              const T8& ea50) const {
     Eigen::Matrix<stan::return_type_t<T1, T2, T3, T4, T5, T6, T7, T8>,
                   Eigen::Dynamic, 1>
-        dydt(4);
+        dydt(5);
 
-    dydt << -ka * y(0), +ka * y(0) - ke * y(1) - k12 * y(1) + k21 * y(2),
+    dydt << -ka * y(0),
+        +ka * y(0) - ke * y(1) - k12 * y(1) + k21 * y(2),
         +k12 * y(1) - k21 * y(2),
-        +kin - kout * (1.0 - y(1) / (y(1) + ea50)) * y(3);
+        +kin - kout * (1.0 - y(1) / (y(1) + ea50)) * y(3),
+        +kin - kout * (1.0 - y(2) / (y(2) + ea50)) * y(4); // pseudo pd
 
     return dydt;
   }
@@ -55,19 +57,19 @@ TEST(StanMathOdeBench, bdf) {
     var Q = lognormal_rng(true_Q, 4.0, base_rng);
     var V1 = lognormal_rng(true_V1, 2.0, base_rng);
     var V2 = lognormal_rng(true_V2, 2.0, base_rng);
-    var ka = true_ka;
-    var pd0 = true_pd0;
-    var kin = true_kin;
+    var ka = lognormal_rng(true_ka, 4.0, base_rng);
+    var pd0 = lognormal_rng(true_pd0, 2.0, base_rng);
+    var kin = lognormal_rng(true_kin, 4.0, base_rng);
     var kout = kin / pd0;
-    var ec50 = true_ec50;
+    var ec50 = lognormal_rng(true_ec50, 2.0, base_rng);
     var ea50 = ec50 * V1;
 
     var ke = CL / V1;
     var k12 = Q / V2;
     var k21 = k12 * V1 / V2;
 
-    Eigen::Matrix<var, Eigen::Dynamic, 1> y0(4);
-    y0 << 4.0, 0.0, 0.0, pd0;
+    Eigen::Matrix<var, Eigen::Dynamic, 1> y0(5);
+    y0 << 4.0, 0.0, 0.0, pd0, pd0 * 2.0;
 
     double t0 = 0.0;
 
@@ -77,7 +79,10 @@ TEST(StanMathOdeBench, bdf) {
 
     stan::math::grad();
   }
+
+  stan::math::recover_memory();
 }
+
 
 TEST(StanMathOdeBench, bdf_adjoint) {
   double true_CL = 8.0;
@@ -103,26 +108,28 @@ TEST(StanMathOdeBench, bdf_adjoint) {
     var Q = lognormal_rng(true_Q, 4.0, base_rng);
     var V1 = lognormal_rng(true_V1, 2.0, base_rng);
     var V2 = lognormal_rng(true_V2, 2.0, base_rng);
-    var ka = true_ka;
-    var pd0 = true_pd0;
-    var kin = true_kin;
+    var ka = lognormal_rng(true_ka, 4.0, base_rng);
+    var pd0 = lognormal_rng(true_pd0, 2.0, base_rng);
+    var kin = lognormal_rng(true_kin, 4.0, base_rng);
     var kout = kin / pd0;
-    var ec50 = true_ec50;
+    var ec50 = lognormal_rng(true_ec50, 2.0, base_rng);
     var ea50 = ec50 * V1;
 
     var ke = CL / V1;
     var k12 = Q / V2;
     var k21 = k12 * V1 / V2;
 
-    Eigen::Matrix<var, Eigen::Dynamic, 1> y0(4);
-    y0 << 4.0, 0.0, 0.0, pd0;
+    Eigen::Matrix<var, Eigen::Dynamic, 1> y0(5);
+    y0 << 4.0, 0.0, 0.0, pd0, pd0 * 2.0;
 
     double t0 = 0.0;
 
     std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> y
-        = ode_bdf_adjoint_tol(ode, y0, t0, ts, 1E-8, 1E-8, 10000, nullptr, ka,
-                              ke, k12, k21, kin, kout, ea50);
+        = ode_bdf_adjoint_tol(ode, y0, t0, ts, 1E-8, 1E-8, 10000, nullptr, ka, ke, k12,
+                      k21, kin, kout, ea50);
 
     stan::math::grad();
   }
+  stan::math::recover_memory();
 }
+

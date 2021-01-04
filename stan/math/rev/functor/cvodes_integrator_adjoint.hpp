@@ -555,7 +555,7 @@ class cvodes_integrator_adjoint_vari : public vari {
   }
 
   virtual void chain() {
-    // std::cout << "chain" << std::endl; <-- Good way to verify it's only
+    //std::cout << "chain" << std::endl; //<-- Good way to verify it's only
     //  being called once
     if (memory == NULL)
       return;
