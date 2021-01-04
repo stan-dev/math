@@ -141,13 +141,13 @@ void expect_near_rel_matvar(const std::string& message,
  * check that the values of the outputs are equal and that gradients with
  * respect to each output are the same
  *
- * @tparam ResultMatVar Output type of matvar calculation
- * @tparam ResultVarMat Output type of varmat calculation
+ * @tparam ResultMV Output type of matvar calculation
+ * @tparam ResultVM Output type of varmat calculation
  * @tparam MatVarArgs Argument types for matvar calculation
  * @tparam VarMatArgs Argument types for varmat calculation
  * @param tols Test tolerances
- * @param A_mv_f Output for matvar calculation
- * @param A_vm_f Output for varmat calculation
+ * @param A_mv_ret Output for matvar calculation
+ * @param A_vm_ret Output for varmat calculation
  * @param A_mv_tuple Input arguments to matvar calculation as tuple
  * @param A_vm_tuple Input arguments to varmat calculation as tuple
  */
@@ -155,18 +155,18 @@ void expect_near_rel_matvar(const std::string& message,
 /**
  * Overload for scalar outputs
  */
-template <typename ResultMatVar, typename ResultVarMat, typename... MatVarArgs,
+template <typename ResultMV, typename ResultVM, typename... MatVarArgs,
           typename... VarMatArgs,
-          require_all_var_vt<std::is_arithmetic, ResultMatVar,
-                             ResultVarMat>* = nullptr>
+          require_all_var_vt<std::is_arithmetic, ResultMV,
+                             ResultVM>* = nullptr>
 inline void test_matvar_gradient(const ad_tolerances& tols,
-                                 ResultMatVar& A_mv_f, ResultVarMat& A_vm_f,
+                                 ResultMV& A_mv_ret, ResultVM& A_vm_ret,
                                  const std::tuple<MatVarArgs...>& A_mv_tuple,
                                  const std::tuple<VarMatArgs...>& A_vm_tuple) {
-  expect_near_rel("var<Matrix> vs Matrix<var> values", value_of(A_vm_f),
-                  value_of(A_mv_f), tols.gradient_val_);
-  A_vm_f.adj() = 1;
-  A_mv_f.adj() = 1;
+  expect_near_rel("var<Matrix> vs Matrix<var> values", value_of(A_vm_ret),
+                  value_of(A_mv_ret), tols.gradient_val_);
+  A_vm_ret.adj() = 1;
+  A_mv_ret.adj() = 1;
   stan::math::grad();
   expect_near_rel_matvar("var<Matrix> vs Matrix<var>", A_vm_tuple, A_mv_tuple,
                          tols);
@@ -176,21 +176,21 @@ inline void test_matvar_gradient(const ad_tolerances& tols,
 /**
  * Overload for `std::vector` outputs
  */
-template <typename ResultMatVar, typename ResultVarMat, typename... MatVarArgs,
+template <typename ResultMV, typename ResultVM, typename... MatVarArgs,
           typename... VarMatArgs,
-          require_std_vector_vt<is_var, ResultMatVar>* = nullptr,
-          require_std_vector_vt<is_var, ResultVarMat>* = nullptr>
+          require_std_vector_vt<is_var, ResultMV>* = nullptr,
+          require_std_vector_vt<is_var, ResultVM>* = nullptr>
 inline void test_matvar_gradient(const ad_tolerances& tols,
-                                 ResultMatVar& A_mv_f, ResultVarMat& A_vm_f,
+                                 ResultMV& A_mv_ret, ResultVM& A_vm_ret,
                                  const std::tuple<MatVarArgs...>& A_mv_tuple,
                                  const std::tuple<VarMatArgs...>& A_vm_tuple) {
-  expect_near_rel("var<Matrix> vs Matrix<var> values", value_of(A_vm_f),
-                  value_of(A_mv_f), tols.gradient_val_);
-  for (size_t i = 0; i < A_vm_f.size(); ++i) {
-    A_vm_f[i].adj() = 1;
-    A_mv_f[i].adj() = 1;
+  expect_near_rel("var<Matrix> vs Matrix<var> values", value_of(A_vm_ret),
+                  value_of(A_mv_ret), tols.gradient_val_);
+  for (size_t i = 0; i < A_vm_ret.size(); ++i) {
+    A_vm_ret[i].adj() = 1;
+    A_mv_ret[i].adj() = 1;
     stan::math::grad();
-    expect_near_rel_matvar("var<Matrix> vs Matrix<var>", A_vm_f[i], A_mv_f[i],
+    expect_near_rel_matvar("var<Matrix> vs Matrix<var>", A_vm_ret[i], A_mv_ret[i],
                            tols);
     expect_near_rel_matvar("var<Matrix> vs Matrix<var>", A_vm_tuple, A_mv_tuple,
                            tols);
@@ -201,19 +201,19 @@ inline void test_matvar_gradient(const ad_tolerances& tols,
 /**
  * Overload for matrix outputs
  */
-template <typename ResultMatVar, typename ResultVarMat, typename... MatVarArgs,
+template <typename ResultMV, typename ResultVM, typename... MatVarArgs,
           typename... VarMatArgs,  // matrix_dynamic
-          require_eigen_st<is_var, ResultMatVar>* = nullptr>
+          require_eigen_st<is_var, ResultMV>* = nullptr>
 inline void test_matvar_gradient(const ad_tolerances& tols,
-                                 ResultMatVar& A_mv_f, ResultVarMat& A_vm_f,
+                                 ResultMV& A_mv_ret, ResultVM& A_vm_ret,
                                  const std::tuple<MatVarArgs...>& A_mv_tuple,
                                  const std::tuple<VarMatArgs...>& A_vm_tuple) {
-  expect_near_rel("var<Matrix> vs Matrix<var> values", value_of(A_vm_f),
-                  value_of(A_mv_f), tols.gradient_val_);
-  for (Eigen::Index i = 0; i < A_mv_f.rows(); ++i) {
-    for (Eigen::Index j = 0; j < A_mv_f.cols(); ++j) {
-      A_vm_f.adj()(i, j) = 1;
-      A_mv_f.adj()(i, j) = 1;
+  expect_near_rel("var<Matrix> vs Matrix<var> values", value_of(A_vm_ret),
+                  value_of(A_mv_ret), tols.gradient_val_);
+  for (Eigen::Index j = 0; j < A_mv_ret.cols(); ++j) {
+    for (Eigen::Index i = 0; i < A_mv_ret.rows(); ++i) {
+      A_vm_ret.adj()(i, j) = 1;
+      A_mv_ret.adj()(i, j) = 1;
       stan::math::grad();
       expect_near_rel_matvar("var<Matrix> vs Matrix<var>", A_vm_tuple,
                              A_mv_tuple, tols);
@@ -225,15 +225,18 @@ inline void test_matvar_gradient(const ad_tolerances& tols,
 /**
  * Overload for arithmetic outputs -- this is an error if this gets called
  */
-template <typename ResultMatVar, typename ResultVarMat, typename... MatVarArgs,
+template <typename ResultMV, typename ResultVM, typename... MatVarArgs,
           typename... VarMatArgs,  // matrix_dynamic
-          require_st_arithmetic<ResultMatVar>* = nullptr>
+          require_any_st_arithmetic<ResultMV, ResultVM>* = nullptr,
+	  require_any_st_var<MatVarArgs..., VarMatArgs...>* = nullptr>
 inline void test_matvar_gradient(const ad_tolerances& tols,
-                                 ResultMatVar& A_mv_f, ResultVarMat& A_vm_f,
+                                 ResultMV& A_mv_ret, ResultVM& A_vm_ret,
                                  const std::tuple<MatVarArgs...>& A_mv_tuple,
                                  const std::tuple<VarMatArgs...>& A_vm_tuple) {
-  FAIL() << "test_matvar_gradient should only be used when the return is a "
-            "reverse mode autodiff type";
+  throw std::logic_error("test_matvar_gradient should only be used when the return is a "
+			 "reverse mode autodiff type. That this got called it means that a "
+			 "function took an autodiff variable as input yet returned "
+			 "a non-autodiff type");
 }
 ///@}
 
@@ -245,24 +248,24 @@ inline void test_matvar_gradient(const ad_tolerances& tols,
  *
  * This overload works when the outputs are `std::vector` types.
  *
- * @tparam ResultMatVar Output type of matvar calculation
- * @tparam ResultVarMat Output type of varmat calculation
+ * @tparam ResultMV Output type of matvar calculation
+ * @tparam ResultVM Output type of varmat calculation
  * @tparam MatVar Argument type for matvar calculation
  * @tparam VarMat Argument type for varmat calculation
  * @param tols Test tolerances
- * @param A_mv_f Output for matvar calculation
- * @param A_vm_f Output for varmat calculation
+ * @param A_mv_ret Output for matvar calculation
+ * @param A_vm_ret Output for varmat calculation
  * @param A_mv Input argument to matvar calculation
  * @param A_vm Input argument to varmat calculation
  */
-template <typename ResultMatVar, typename ResultVarMat, typename MatVar,
+template <typename ResultMV, typename ResultVM, typename MatVar,
           typename VarMat,
-          require_all_std_vector_t<ResultMatVar, ResultVarMat>* = nullptr>
+          require_all_std_vector_t<ResultMV, ResultVM>* = nullptr>
 inline void test_matvar_gradient(const ad_tolerances& tols,
-                                 ResultMatVar& A_mv_f, ResultVarMat& A_vm_f,
+                                 ResultMV& A_mv_ret, ResultVM& A_vm_ret,
                                  const MatVar& A_mv, const VarMat& A_vm) {
-  for (size_t i = 0; i < A_vm_f.size(); ++i) {
-    test_matvar_gradient(tols, A_mv_f[i], A_vm_f[i], A_mv, A_vm);
+  for (size_t i = 0; i < A_vm_ret.size(); ++i) {
+    test_matvar_gradient(tols, A_mv_ret[i], A_vm_ret[i], A_mv, A_vm);
   }
 }
 
@@ -345,25 +348,25 @@ void expect_ad_matvar_v(const ad_tolerances& tols, const F& f,
   using stan::math::test::type_name;
   using vec_mat_var = std::vector<promote_scalar_t<var, EigMat>>;
   using vec_var_mat = std::vector<var_value<plain_type_t<EigMat>>>;
-  vec_mat_var A_mv;
+  vec_mat_var A_vec_mv;
   for (auto xi : x) {
-    A_mv.push_back(xi);
+    A_vec_mv.push_back(xi);
   }
-  plain_type_t<decltype(f(A_mv))> A_mv_f;
-  vec_var_mat A_vm;
+  plain_type_t<decltype(f(A_vec_mv))> A_mv_ret;
+  vec_var_mat A_vec_vm;
   for (auto xi : x) {
-    A_vm.push_back(xi);
+    A_vec_vm.push_back(xi);
   }
-  plain_type_t<decltype(f(A_vm))> A_vm_f;
+  plain_type_t<decltype(f(A_vec_vm))> A_vm_ret;
   // Check return type is correct
-  check_return_type(A_mv_f, A_mv);
-  check_return_type(A_vm_f, A_vm);
+  check_return_type(A_mv_ret, A_vec_mv);
+  check_return_type(A_vm_ret, A_vec_vm);
   // If one throws, the other should throw as well
   try {
-    A_mv_f = f(A_mv);
+    A_mv_ret = f(A_vec_mv);
   } catch (...) {
     try {
-      f(A_vm);
+      f(A_vec_vm);
       FAIL() << type_name<vec_mat_var>() << " throws, expected "
              << type_name<vec_var_mat>() << " version to throw";
     } catch (...) {
@@ -372,10 +375,10 @@ void expect_ad_matvar_v(const ad_tolerances& tols, const F& f,
     }
   }
   try {
-    A_vm_f = f(A_vm);
+    A_vm_ret = f(A_vec_vm);
   } catch (...) {
     try {
-      f(A_mv);
+      f(A_vec_mv);
       FAIL() << type_name<vec_var_mat>() << " throws, expected "
              << type_name<vec_mat_var>() << " version to throw";
     } catch (...) {
@@ -384,8 +387,8 @@ void expect_ad_matvar_v(const ad_tolerances& tols, const F& f,
     }
   }
 
-  test_matvar_gradient(tols, A_mv_f, A_vm_f, std::make_tuple(A_mv),
-                       std::make_tuple(A_vm));
+  test_matvar_gradient(tols, A_mv_ret, A_vm_ret, std::make_tuple(A_vec_mv),
+                       std::make_tuple(A_vec_vm));
 
   stan::math::recover_memory();
 }
@@ -425,17 +428,17 @@ void expect_ad_matvar_impl(const ad_tolerances& tols, const F& f,
       std::conditional_t<is_var<Types>::value,
                          return_var_matrix_t<EigMats, Types>, EigMats>(x)...);
 
-  plain_type_t<decltype(stan::math::apply(f, A_mv_tuple))> A_mv_f;
-  plain_type_t<decltype(stan::math::apply(f, A_vm_tuple))> A_vm_f;
+  plain_type_t<decltype(stan::math::apply(f, A_mv_tuple))> A_mv_ret;
+  plain_type_t<decltype(stan::math::apply(f, A_vm_tuple))> A_vm_ret;
 
-  stan::math::apply([&](auto&&... args) { check_return_type(A_mv_f, args...); },
+  stan::math::apply([&](auto&&... args) { check_return_type(A_mv_ret, args...); },
                     A_mv_tuple);
-  stan::math::apply([&](auto&&... args) { check_return_type(A_vm_f, args...); },
+  stan::math::apply([&](auto&&... args) { check_return_type(A_vm_ret, args...); },
                     A_vm_tuple);
 
   // If one throws, the other should throw as well
   try {
-    A_mv_f = stan::math::apply(f, A_mv_tuple);
+    A_mv_ret = stan::math::apply(f, A_mv_tuple);
   } catch (...) {
     try {
       stan::math::apply(f, A_vm_tuple);
@@ -447,7 +450,7 @@ void expect_ad_matvar_impl(const ad_tolerances& tols, const F& f,
     }
   }
   try {
-    A_vm_f = stan::math::apply(f, A_vm_tuple);
+    A_vm_ret = stan::math::apply(f, A_vm_tuple);
   } catch (...) {
     try {
       stan::math::apply(f, A_mv_tuple);
@@ -459,7 +462,7 @@ void expect_ad_matvar_impl(const ad_tolerances& tols, const F& f,
     }
   }
 
-  test_matvar_gradient(tols, A_mv_f, A_vm_f, A_mv_tuple, A_vm_tuple);
+  test_matvar_gradient(tols, A_mv_ret, A_vm_ret, A_mv_tuple, A_vm_tuple);
 
   stan::math::recover_memory();
 }
@@ -567,11 +570,7 @@ void expect_ad_matvar(const ad_tolerances& tols, const F& f, const EigMat1& x,
   using stan::math::var;
   using varmat = stan::math::var_value<Eigen::MatrixXd>;
 
-  // expect_ad_matvar_impl<double, double>(tols, f, x, y);
-  // expect_ad_matvar_impl<double, var>(tols, f, x, y);
   expect_ad_matvar_impl<double, varmat>(tols, f, x, y);
-  // expect_ad_matvar_impl<var, double>(tols, f, x, y);
-  // expect_ad_matvar_impl<var, var>(tols, f, x, y);
   expect_ad_matvar_impl<var, varmat>(tols, f, x, y);
   expect_ad_matvar_impl<varmat, double>(tols, f, x, y);
   expect_ad_matvar_impl<varmat, var>(tols, f, x, y);
@@ -613,20 +612,12 @@ void expect_ad_matvar(const ad_tolerances& tols, const F& f, const EigMat1& x,
   using stan::math::var;
   using varmat = stan::math::var_value<Eigen::MatrixXd>;
 
-  // expect_ad_matvar_impl<double, double, var>(tols, f, x, y, z);
-  // expect_ad_matvar_impl<double, double, var>(tols, f, x, y, z);
   expect_ad_matvar_impl<double, double, varmat>(tols, f, x, y, z);
-  // expect_ad_matvar_impl<double, var, double>(tols, f, x, y, z);
-  // expect_ad_matvar_impl<double, var, var>(tols, f, x, y, z);
   expect_ad_matvar_impl<double, var, varmat>(tols, f, x, y, z);
   expect_ad_matvar_impl<double, varmat, double>(tols, f, x, y, z);
   expect_ad_matvar_impl<double, varmat, var>(tols, f, x, y, z);
   expect_ad_matvar_impl<double, varmat, varmat>(tols, f, x, y, z);
-  // expect_ad_matvar_impl<var, double, double>(tols, f, x, y, z);*/
-  // expect_ad_matvar_impl<var, double, var>(tols, f, x, y, z);
   expect_ad_matvar_impl<var, double, varmat>(tols, f, x, y, z);
-  // expect_ad_matvar_impl<var, var, double>(tols, f, x, y, z);
-  // expect_ad_matvar_impl<var, var, var>(tols, f, x, y, z);
   expect_ad_matvar_impl<var, var, varmat>(tols, f, x, y, z);
   expect_ad_matvar_impl<var, varmat, double>(tols, f, x, y, z);
   expect_ad_matvar_impl<var, varmat, var>(tols, f, x, y, z);
