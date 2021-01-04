@@ -32,8 +32,8 @@ template <typename T_x, typename T_mu, typename T_k>
 inline return_type_t<T_x, T_mu, T_k> von_mises_lcdf(const T_x& x,
                                                     const T_mu& mu,
                                                     const T_k& k) {
-  using std::log;
   using internal::von_mises_cdf_centered;
+  using std::log;
   const double pi = stan::math::pi();
 
   using T_return = return_type_t<T_x, T_mu, T_k>;
@@ -68,9 +68,9 @@ inline return_type_t<T_x, T_mu, T_k> von_mises_lcdf(const T_x& x,
     auto mu_n = mu_vec[n];
     auto k_n = k_vec[n];
 
-    if(x_n == -pi) {
+    if (x_n == -pi) {
       res += NEGATIVE_INFTY;
-    } else if(x_n == pi) {
+    } else if (x_n == pi) {
       res += 0.0;
     } else {
       // shift x so that mean is 0
@@ -91,24 +91,24 @@ inline return_type_t<T_x, T_mu, T_k> von_mises_lcdf(const T_x& x,
       // find cut
       T_return cut, bound_val;
       if (mu2 < 0) {
-	cut = mu2 + pi;
-	bound_val = -pi - mu2;
+        cut = mu2 + pi;
+        bound_val = -pi - mu2;
       }
       if (mu2 >= 0) {
-	cut = mu2 - pi;
-	bound_val = pi - mu2;
+        cut = mu2 - pi;
+        bound_val = pi - mu2;
       }
 
       T_return f_bound_val = von_mises_cdf_centered(bound_val, k_n);
       T_return cdf_n;
       if (x_n <= cut) {
-	cdf_n = von_mises_cdf_centered(x2, k_n) - f_bound_val;
+        cdf_n = von_mises_cdf_centered(x2, k_n) - f_bound_val;
       } else {
-	cdf_n = von_mises_cdf_centered(x2, k_n) + 1 - f_bound_val;
+        cdf_n = von_mises_cdf_centered(x2, k_n) + 1 - f_bound_val;
       }
 
-      if(cdf_n < 0.0)
-	cdf_n = 0.0;
+      if (cdf_n < 0.0)
+        cdf_n = 0.0;
 
       res += log(cdf_n);
     }
