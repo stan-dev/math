@@ -1,6 +1,8 @@
 name: Windows RTools 3.5
 
 on:
+  pull_request:
+    branches: [ develop, master ]
   push:
     branches: [ develop ]
     paths-ignore:
