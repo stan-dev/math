@@ -87,30 +87,6 @@ void expect_near_rel_matvar(const std::string& message, T1&& x, T2&& y,
 }
 
 /**
- * This is the implementation of the overload for tuples of arguments
- *
- * @tparam T1 Tuple type of first argument
- * @tparam T2 Tuple Type of second argument
- * @param message Debug message to print on fail
- * @param x First argument to compare
- * @param y Second argument to compare
- * @param tols Tolerances for comparison
- * @param i Index sequence for accessing tuple
- */
-template <typename... T1, typename... T2, std::size_t... I>
-void expect_near_rel_matvar(const std::string& message,
-                            const std::tuple<T1...>& x,
-                            const std::tuple<T2...>& y,
-                            const ad_tolerances& tols,
-                            std::index_sequence<I...> i) {
-  std::vector<int> A(
-      {(expect_near_rel_matvar(
-            message + std::string(", argument ") + std::to_string(I + 1),
-            std::get<I>(x), std::get<I>(y), tols),
-        0)...});
-}
-
-/**
  * Overload for tuples of arguments. This recursively calls
  * `expect_near_rel_matvar` on each input pair
  *
@@ -130,8 +106,10 @@ void expect_near_rel_matvar(const std::string& message,
     FAIL() << "The number of arguments in each tuple must match";
   }
 
-  expect_near_rel_matvar(message, x, y, tols,
-                         std::make_index_sequence<sizeof...(T1)>());
+  stan::math::for_each([&message, &tols](const auto& x, const auto& y, const auto& i) {
+      expect_near_rel_matvar(message + std::string(", argument ") +
+			     std::to_string(i + stan::error_index::value), x, y, tols);
+    }, x, y);
 }
 ///@}
 
