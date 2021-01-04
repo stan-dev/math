@@ -21,13 +21,12 @@ struct pkpd_rhs {
              const T8& ea50) const {
     Eigen::Matrix<stan::return_type_t<T1, T2, T3, T4, T5, T6, T7, T8>,
                   Eigen::Dynamic, 1>
-        dydt(5);
+        dydt(4);
 
     dydt << -ka * y(0),
         +ka * y(0) - ke * y(1) - k12 * y(1) + k21 * y(2),
         +k12 * y(1) - k21 * y(2),
-        +kin - kout * (1.0 - y(1) / (y(1) + ea50)) * y(3),
-        +kin - kout * (1.0 - y(2) / (y(2) + ea50)) * y(4); // pseudo pd
+        +kin - kout * (1.0 - y(1) / (y(1) + ea50)) * y(3);
 
     return dydt;
   }
@@ -68,8 +67,8 @@ TEST(StanMathOdeBench, bdf) {
     var k12 = Q / V2;
     var k21 = k12 * V1 / V2;
 
-    Eigen::Matrix<var, Eigen::Dynamic, 1> y0(5);
-    y0 << 4.0, 0.0, 0.0, pd0, pd0 * 2.0;
+    Eigen::Matrix<var, Eigen::Dynamic, 1> y0(4);
+    y0 << 4.0, 0.0, 0.0, pd0;
 
     double t0 = 0.0;
 
@@ -119,8 +118,8 @@ TEST(StanMathOdeBench, bdf_adjoint) {
     var k12 = Q / V2;
     var k21 = k12 * V1 / V2;
 
-    Eigen::Matrix<var, Eigen::Dynamic, 1> y0(5);
-    y0 << 4.0, 0.0, 0.0, pd0, pd0 * 2.0;
+    Eigen::Matrix<var, Eigen::Dynamic, 1> y0(4);
+    y0 << 4.0, 0.0, 0.0, pd0;
 
     double t0 = 0.0;
 
