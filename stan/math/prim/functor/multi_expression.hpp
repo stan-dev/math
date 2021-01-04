@@ -220,8 +220,8 @@ class eigen_results_ {
                              == sizeof...(T_expressions)>* = nullptr>
   void operator+=(const eigen_expressions_<T_expressions...>& expressions) {
     index_apply<sizeof...(T_results)>([&, this](auto... Is) {
-      this->assign_select(eigen_expressions(
-          (std::get<Is>(this->results_) + std::get<Is>(expressions.exprs_))...));
+      this->assign_select(eigen_expressions((
+          std::get<Is>(this->results_) + std::get<Is>(expressions.exprs_))...));
     });
   }
 };
