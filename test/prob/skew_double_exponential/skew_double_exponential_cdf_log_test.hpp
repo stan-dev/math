@@ -16,49 +16,49 @@ class AgradCdfLogSkewDoubleExponential : public AgradCdfLogTest {
     param[2] = 1.0;  // sigma
     param[3] = 0.5;  // skewness
     parameters.push_back(param);
-    cdf_log.push_back(-0.6931472);  // expected log_cdf
+    cdf_log.push_back(-0.6931471805599452862268);  // expected log_cdf
 
     param[0] = 1.0;  // y
     param[1] = 0.0;  // mu
     param[2] = 1.0;  // sigma
     param[3] = 0.5;  // skewness
     parameters.push_back(param);
-    cdf_log.push_back(-0.2032671);  // expected log_cdf
+    cdf_log.push_back(-0.203267054915195338749);  // expected log_cdf
 
     param[0] = -2.0;  // y
     param[1] = 0.0;   // mu
     param[2] = 1.0;   // sigma
     param[3] = 0.5;   // skewness
     parameters.push_back(param);
-    cdf_log.push_back(-2.693147);  // expected log_cdf
+    cdf_log.push_back(-2.693147180559945397249);  // expected log_cdf
 
     param[0] = -3.5;  // y
     param[1] = 1.9;   // mu
     param[2] = 7.2;   // sigma
     param[3] = 0.9;   // skewness
     parameters.push_back(param);
-    cdf_log.push_back(-0.2553605);  // expected log_cdf
+    cdf_log.push_back(-0.2553605156578262480593);  // expected log_cdf
 
     param[0] = -3.5;  // y
     param[1] = 1.9;   // mu
     param[2] = 7.2;   // sigma
     param[3] = 0.1;   // skewness
     parameters.push_back(param);
-    cdf_log.push_back(-3.652585);  // expected log_cdf
+    cdf_log.push_back(-3.652585092994045545822);  // expected log_cdf
 
     param[0] = 3.5;  // y
     param[1] = 1.9;   // mu
     param[2] = 7.2;   // sigma
     param[3] = 0.9;   // skewness
     parameters.push_back(param);
-    cdf_log.push_back(-0.06938438);  // expected log_cdf
+    cdf_log.push_back(-0.06938438162086163485398);  // expected log_cdf
 
     param[0] = 3.5;  // y
     param[1] = 1.9;   // mu
     param[2] = 7.2;   // sigma
     param[3] = 0.1;   // skewness
     parameters.push_back(param);
-    cdf_log.push_back(-1.972389);  // expected log_cdf
+    cdf_log.push_back(-1.972388688221408559187);  // expected log_cdf
   }
 
   void invalid_values(vector<size_t>& index, vector<double>& value) {
@@ -80,10 +80,10 @@ class AgradCdfLogSkewDoubleExponential : public AgradCdfLogTest {
 
     // skewness
     index.push_back(3U);
-    value.push_back(-0.001);
+    value.push_back(0.0);
 
     index.push_back(3U);
-    value.push_back(1.001);
+    value.push_back(1.0);
   }
 
   bool has_lower_bound() { return false; }

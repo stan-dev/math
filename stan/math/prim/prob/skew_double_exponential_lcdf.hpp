@@ -12,6 +12,7 @@
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <cmath>
+#include <limits>
 
 namespace stan {
 namespace math {
@@ -57,7 +58,9 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lcdf(
   check_finite(function, "Random variable", y_ref);
   check_finite(function, "Location parameter", mu_ref);
   check_positive_finite(function, "Scale parameter", sigma_ref);
-  check_bounded(function, "Skewness parameter", tau_ref, 0.0, 1.0);
+  check_bounded(function, "Skewness parameter", tau_ref,
+                0.001,
+                1.0 - 0.001);
 
   if (size_zero(y, mu, sigma, tau)) {
     return 0.0;
@@ -95,7 +98,7 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lcdf(
     const T_partials_return expo = (diff_sign_smaller_0 + diff_sign * tau_dbl)
                                    * abs_diff_y_mu_over_sigma;
     const T_partials_return inv_exp_2_expo_tau
-        = inv(exp(2.0 * expo) + tau_dbl - 1);
+        = inv(exp(2.0 * expo) + tau_dbl - 1.0);
 
     const T_partials_return rep_deriv
         = y_dbl < mu_dbl ? 2.0 * inv_sigma[i] * (1.0 - tau_dbl)
@@ -113,7 +116,7 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lcdf(
     if (y_dbl <= mu_dbl) {
       cdf_log += log(tau_dbl) - 2.0 * expo;
     } else {
-      cdf_log += log1m((1 - tau_dbl) * exp(-2.0 * expo));
+      cdf_log += log1m_exp(log(1 - tau_dbl) - 2.0 * expo);
     }
 
     if (!is_constant_all<T_y>::value) {

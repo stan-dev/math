@@ -16,49 +16,49 @@ class AgradDistributionSkewDoubleExponential : public AgradDistributionTest {
     param[2] = 1.0;  // sigma
     param[3] = 0.5;  // skewness
     parameters.push_back(param);
-    log_prob.push_back(-0.6931472);  // expected log_prob
+    log_prob.push_back(-0.6931471805599452862268);  // expected log_prob
 
     param[0] = 1.0;  // y
     param[1] = 0.0;  // mu
     param[2] = 1.0;  // sigma
     param[3] = 0.5;  // skewness
     parameters.push_back(param);
-    log_prob.push_back(-1.693147);  // expected log_prob
+    log_prob.push_back(-1.693147180559945397249);  // expected log_prob
 
     param[0] = -2.0;  // y
     param[1] = 0.0;   // mu
     param[2] = 1.0;   // sigma
     param[3] = 0.5;   // skewness
     parameters.push_back(param);
-    log_prob.push_back(-2.693147);  // expected log_prob
+    log_prob.push_back(-2.693147180559945397249);  // expected log_prob
 
     param[0] = -3.5;  // y
     param[1] = 1.9;   // mu
     param[2] = 7.2;   // sigma
     param[3] = 0.9;   // skewness
     parameters.push_back(param);
-    log_prob.push_back(-3.838879);  // expected log_prob
+    log_prob.push_back(-3.838879454113936606774);  // expected log_prob
 
     param[0] = -3.5;  // y
     param[1] = 1.9;   // mu
     param[2] = 7.2;   // sigma
     param[3] = 0.1;   // skewness
     parameters.push_back(param);
-    log_prob.push_back(-5.038879);  // expected log_prob
+    log_prob.push_back(-5.038879454113935452142);  // expected log_prob
 
     param[0] = 3.5;  // y
     param[1] = 1.9;   // mu
     param[2] = 7.2;   // sigma
     param[3] = 0.9;   // skewness
     parameters.push_back(param);
-    log_prob.push_back(-4.088879);  // expected log_prob
+    log_prob.push_back(-4.088879454113937050863);  // expected log_prob
 
     param[0] = 3.5;  // y
     param[1] = 1.9;   // mu
     param[2] = 7.2;   // sigma
     param[3] = 0.1;   // skewness
     parameters.push_back(param);
-    log_prob.push_back(-3.733324);  // expected log_prob
+    log_prob.push_back(-3.733323898558380093959);  // expected log_prob
   }
 
   void invalid_values(vector<size_t>& index, vector<double>& value) {
