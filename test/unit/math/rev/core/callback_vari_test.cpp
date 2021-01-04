@@ -25,10 +25,8 @@ TEST(AgradRev, callback_vari_const_scalar_compile_test) {
 
   const double& a_val = a.val();
 
-  stan::math::var b = stan::math::make_callback_vari(a_val,
-						     [a](const auto& vi) mutable {
-						       a.adj() += vi.adj();
-						     });
+  stan::math::var b = stan::math::make_callback_vari(
+      a_val, [a](const auto& vi) mutable { a.adj() += vi.adj(); });
 }
 
 TEST(AgradRev, callback_vari_eigen_test) {
