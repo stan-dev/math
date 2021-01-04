@@ -7,10 +7,8 @@
 TEST(MathFunctions, for_each_basic_unary) {
   int count = 0;
 
-  auto f = [&count](const auto& x, const auto& i) {
-    count++;
-  };
-  
+  auto f = [&count](const auto& x, const auto& i) { count++; };
+
   std::tuple<> x1;
   stan::math::for_each(f, x1);
 
@@ -26,9 +24,7 @@ TEST(MathFunctions, for_each_basic_unary_index) {
   std::vector<int> v = {-5, 2};
   auto x = std::make_tuple(v[0], v[1]);
 
-  auto f = [&v](const auto& y, const auto& i) {
-    EXPECT_EQ(y, v[i]);
-  };
+  auto f = [&v](const auto& y, const auto& i) { EXPECT_EQ(y, v[i]); };
 
   stan::math::for_each(f, x);
 }
@@ -36,10 +32,8 @@ TEST(MathFunctions, for_each_basic_unary_index) {
 TEST(MathFunctions, for_each_basic_binary) {
   int count = 0;
 
-  auto f = [&count](const auto& x, const auto& y, const auto& i) {
-    count++;
-  };
-  
+  auto f = [&count](const auto& x, const auto& y, const auto& i) { count++; };
+
   std::tuple<> x1;
   std::tuple<> y1;
   stan::math::for_each(f, x1, y1);
@@ -54,7 +48,6 @@ TEST(MathFunctions, for_each_basic_binary) {
 
   EXPECT_THROW(stan::math::for_each(f, x1, x2), std::invalid_argument);
 }
-
 
 TEST(MathFunctions, for_each_basic_binary_index) {
   std::vector<int> v1 = {-5, 2};
