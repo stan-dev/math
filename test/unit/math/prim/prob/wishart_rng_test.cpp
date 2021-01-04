@@ -6,7 +6,7 @@
 #include <stdexcept>
 #include <vector>
 
-TEST(ProbDistributionsWishartRng, rng) {
+TEST(ProbDistributionsWishart, rng) {
   using Eigen::MatrixXd;
   using stan::math::wishart_rng;
 
@@ -16,13 +16,33 @@ TEST(ProbDistributionsWishartRng, rng) {
   EXPECT_THROW(wishart_rng(3.0, omega, rng), std::invalid_argument);
 
   MatrixXd sigma(3, 3);
-  sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 2.0, 1.0, 3.0;
+  sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 1.0, 0.0, 1.0, 3.0;
   EXPECT_NO_THROW(wishart_rng(3.0, sigma, rng));
   EXPECT_THROW(wishart_rng(2, sigma, rng), std::domain_error);
   EXPECT_THROW(wishart_rng(-1, sigma, rng), std::domain_error);
+  sigma(2, 1) = 100.0;
+  EXPECT_THROW(wishart_rng(3.0, sigma, rng), std::domain_error);
 }
 
-TEST(probdistributionsWishartRng, symmetry) {
+TEST(ProbDistributionsWishart, rng_pos_def) {
+  using Eigen::MatrixXd;
+  using stan::math::wishart_rng;
+
+  boost::random::mt19937 rng;
+
+  MatrixXd Sigma(2, 2);
+  MatrixXd Sigma_non_pos_def(2, 2);
+
+  Sigma << 1, 0, 0, 1;
+  Sigma_non_pos_def << -1, 0, 0, 1;
+
+  unsigned int dof = 5;
+
+  EXPECT_NO_THROW(wishart_rng(dof, Sigma, rng));
+  EXPECT_THROW(wishart_rng(dof, Sigma_non_pos_def, rng), std::domain_error);
+}
+
+TEST(ProbDistributionsWishart, rng_symmetry) {
   using Eigen::MatrixXd;
   using stan::math::wishart_rng;
   using stan::test::unit::expect_symmetric;
@@ -77,12 +97,8 @@ TEST(ProbDistributionsWishart, SpecialRNGTest) {
   boost::random::mt19937 rng(1234);
 
   MatrixXd sigma(3, 3);
-  MatrixXd sigma_sym(3, 3);
 
-  // wishart_rng should take only the lower part
-  sigma << 9.0, -3.0, 1.0, 2.0, 4.0, -1.0, 2.0, 1.0, 3.0;
-
-  sigma_sym << 9.0, 2.0, 2.0, 2.0, 4.0, 1.0, 2.0, 1.0, 3.0;
+  sigma << 9.0, 2.0, 2.0, 2.0, 4.0, 1.0, 2.0, 1.0, 3.0;
 
   VectorXd C(3);
   C << 2, 1, 3;
@@ -95,7 +111,7 @@ TEST(ProbDistributionsWishart, SpecialRNGTest) {
   acum.reserve(N);
   for (size_t i = 0; i < N; i++)
     acum.push_back((C.transpose() * wishart_rng(k, sigma, rng) * C)(0)
-                   / (C.transpose() * sigma_sym * C)(0));
+                   / (C.transpose() * sigma * C)(0));
 
   EXPECT_NEAR(1, stan::math::mean(acum) / k, tol * tol);
   EXPECT_NEAR(1, stan::math::variance(acum) / (2 * k), tol);
