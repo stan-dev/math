@@ -31,7 +31,8 @@ struct pkpd_rhs {
   }
 };
 
-TEST(StanMathOdeBench, bdf) {
+
+void run_benchmark(int adjoint_integrator) {
   double true_CL = 8.0;
   double true_Q = 18.0;
   double true_V1 = 10.0;
@@ -48,18 +49,26 @@ TEST(StanMathOdeBench, bdf) {
 
   boost::ecuyer1988 base_rng(563646);
 
+  double log_sigma = 10.0;
+  double abs_tol = 1e-8;
+  double abs_tol_B = abs_tol * 100.0;
+  double abs_tol_QB = abs_tol_B * 10.0;
+  double rel_tol = 1e-6;
+  int steps_checkpoint = 100;
+  int max_num_steps = 100000;
+
   for (std::size_t i = 0; i != 200; i++) {
     stan::math::nested_rev_autodiff nested;
 
-    var CL = lognormal_rng(true_CL, 4.0, base_rng);
-    var Q = lognormal_rng(true_Q, 4.0, base_rng);
-    var V1 = lognormal_rng(true_V1, 2.0, base_rng);
-    var V2 = lognormal_rng(true_V2, 2.0, base_rng);
-    var ka = lognormal_rng(true_ka, 4.0, base_rng);
-    var pd0 = lognormal_rng(true_pd0, 2.0, base_rng);
-    var kin = lognormal_rng(true_kin, 4.0, base_rng);
+    var CL = lognormal_rng(true_CL, log_sigma, base_rng);
+    var Q = lognormal_rng(true_Q, log_sigma, base_rng);
+    var V1 = lognormal_rng(true_V1, log_sigma, base_rng);
+    var V2 = lognormal_rng(true_V2, log_sigma, base_rng);
+    var ka = lognormal_rng(true_ka, log_sigma, base_rng);
+    var pd0 = lognormal_rng(true_pd0, log_sigma, base_rng);
+    var kin = lognormal_rng(true_kin, log_sigma, base_rng);
     var kout = kin / pd0;
-    var ec50 = lognormal_rng(true_ec50, 2.0, base_rng);
+    var ec50 = lognormal_rng(true_ec50, log_sigma, base_rng);
     var ea50 = ec50 * V1;
 
     var ke = CL / V1;
@@ -71,61 +80,35 @@ TEST(StanMathOdeBench, bdf) {
 
     double t0 = 0.0;
 
-    std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> y
-        = ode_bdf_tol(ode, y0, t0, ts, 1E-8, 1E-8, 10000, nullptr, ka, ke, k12,
-                      k21, kin, kout, ea50);
+    try {
+      if(adjoint_integrator) {
+        std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> y
+            = ode_bdf_adjoint_tol(ode, y0, t0, ts, rel_tol, abs_tol, max_num_steps, nullptr,
+                                  abs_tol_B, abs_tol_QB, steps_checkpoint,
+                                  ka, ke, k12, k21, kin, kout, ea50);
 
-    stan::math::grad();
+        stan::math::grad();
+      } else {
+        std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> y
+            = ode_bdf_tol(ode, y0, t0, ts, rel_tol, abs_tol, max_num_steps, nullptr, ka,
+                        ke, k12, k21, kin, kout, ea50);
+        
+        stan::math::grad();
+      }
+    } catch(std::exception& exc) {
+      std::cout << "oops, keep going please!" << std::endl;
+      std::cerr << exc.what() << std::endl;
+    }
   }
-
   stan::math::recover_memory();
 }
 
+
+TEST(StanMathOdeBench, bdf) {
+  run_benchmark(0);
+}
+
+
 TEST(StanMathOdeBench, bdf_adjoint) {
-  double true_CL = 8.0;
-  double true_Q = 18.0;
-  double true_V1 = 10.0;
-  double true_V2 = 14.0;
-  double true_ka = log(2.0) / 2.0;
-  double true_pd0 = 1.0;
-  double true_kin = 4.0;
-  double true_kout = true_kin / true_pd0;
-  double true_ec50 = 0.01;
-  std::vector<double> ts{1., 2.0, 4.0, 8.0, 16.0, 32.0, 64.0};
-  std::size_t ts_size = ts.size();
-
-  pkpd_rhs ode;
-
-  boost::ecuyer1988 base_rng(563646);
-
-  for (std::size_t i = 0; i != 200; i++) {
-    stan::math::nested_rev_autodiff nested;
-
-    var CL = lognormal_rng(true_CL, 4.0, base_rng);
-    var Q = lognormal_rng(true_Q, 4.0, base_rng);
-    var V1 = lognormal_rng(true_V1, 2.0, base_rng);
-    var V2 = lognormal_rng(true_V2, 2.0, base_rng);
-    var ka = lognormal_rng(true_ka, 4.0, base_rng);
-    var pd0 = lognormal_rng(true_pd0, 2.0, base_rng);
-    var kin = lognormal_rng(true_kin, 4.0, base_rng);
-    var kout = kin / pd0;
-    var ec50 = lognormal_rng(true_ec50, 2.0, base_rng);
-    var ea50 = ec50 * V1;
-
-    var ke = CL / V1;
-    var k12 = Q / V2;
-    var k21 = k12 * V1 / V2;
-
-    Eigen::Matrix<var, Eigen::Dynamic, 1> y0(4);
-    y0 << 4.0, 0.0, 0.0, pd0;
-
-    double t0 = 0.0;
-
-    std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> y
-        = ode_bdf_adjoint_tol(ode, y0, t0, ts, 1E-12, 1E-12, 10000, nullptr, ka,
-                              ke, k12, k21, kin, kout, ea50);
-
-    stan::math::grad();
-  }
-  stan::math::recover_memory();
+  run_benchmark(1);
 }

@@ -159,6 +159,9 @@ class cvodes_integrator_adjoint_vari : public vari {
   std::ostream* msgs_;
   double relative_tolerance_;
   double absolute_tolerance_;
+  double absolute_tolerance_B_;
+  double absolute_tolerance_QB_;
+  long int steps_checkpoint_;
   long int max_num_steps_;
 
   const size_t t0_vars_;
@@ -425,6 +428,9 @@ class cvodes_integrator_adjoint_vari : public vari {
                                  const std::vector<T_ts>& ts,
                                  double relative_tolerance,
                                  double absolute_tolerance,
+                                 double absolute_tolerance_B,
+                                 double absolute_tolerance_QB,
+                                 long int steps_checkpoint,
                                  long int max_num_steps, std::ostream* msgs,
                                  const T_Args&... args)
       : function_name_(function_name),
@@ -435,6 +441,9 @@ class cvodes_integrator_adjoint_vari : public vari {
         msgs_(msgs),
         relative_tolerance_(relative_tolerance),
         absolute_tolerance_(absolute_tolerance),
+        absolute_tolerance_B_(absolute_tolerance_B),
+        absolute_tolerance_QB_(absolute_tolerance_QB),
+        steps_checkpoint_(steps_checkpoint),
         max_num_steps_(max_num_steps),
         t0_vars_(count_vars(t0)),
         ts_vars_(count_vars(ts)),
@@ -478,7 +487,19 @@ class cvodes_integrator_adjoint_vari : public vari {
     check_less(fun, "initial time", t0, ts[0]);
     check_positive_finite(fun, "relative_tolerance", relative_tolerance_);
     check_positive_finite(fun, "absolute_tolerance", absolute_tolerance_);
+    check_positive_finite(fun, "absolute_tolerance_B", absolute_tolerance_B_);
+    check_positive_finite(fun, "absolute_tolerance_QB", absolute_tolerance_QB_);
     check_positive(fun, "max_num_steps", max_num_steps_);
+    check_positive(fun, "steps_checkpoint", steps_checkpoint_);
+
+    /*
+    std::cout << "relative_tolerance = " << relative_tolerance << std::endl;
+    std::cout << "absolute_tolerance = " << absolute_tolerance << std::endl;
+    std::cout << "absolute_tolerance_B = " << absolute_tolerance_B << std::endl;
+    std::cout << "absolute_tolerance_QB = " << absolute_tolerance_QB << std::endl;
+    std::cout << "max_num_steps = " << max_num_steps << std::endl;
+    std::cout << "steps_checkpoint = " << steps_checkpoint << std::endl;
+    */
   }
 
   ~cvodes_integrator_adjoint_vari() {}
@@ -523,7 +544,7 @@ class cvodes_integrator_adjoint_vari : public vari {
 
     // initialize forward sensitivity system of CVODES as needed
     if (t0_vars_ + ts_vars_ + y0_vars_ + args_vars_ > 0) {
-      check_flag_sundials(CVodeAdjInit(memory->cvodes_mem_, 25, CV_HERMITE),
+      check_flag_sundials(CVodeAdjInit(memory->cvodes_mem_, steps_checkpoint_, CV_HERMITE),
                           "CVodeAdjInit");
     }
 
@@ -622,7 +643,7 @@ class cvodes_integrator_adjoint_vari : public vari {
 
       check_flag_sundials(
           CVodeSStolerancesB(memory->cvodes_mem_, indexB, relative_tolerance_,
-                             absolute_tolerance_),
+                             absolute_tolerance_B_),
           "CVodeSStolerancesB");
 
       check_flag_sundials(
@@ -646,12 +667,13 @@ class cvodes_integrator_adjoint_vari : public vari {
 
         check_flag_sundials(
             CVodeQuadSStolerancesB(memory->cvodes_mem_, indexB,
-                                   relative_tolerance_, absolute_tolerance_),
+                                   relative_tolerance_, absolute_tolerance_QB_),
             "CVodeQuadSStolerancesB");
 
         check_flag_sundials(
             CVodeSetQuadErrConB(memory->cvodes_mem_, indexB, SUNTRUE),
             "CVodeSetQuadErrConB");
+
       }
 
       // At every time step, collect the adjoints from the output
