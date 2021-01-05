@@ -9,8 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Converts input argument to a column vector or a scalar. For scalar inputs
- * that is an identity function.
+ * no-op that passes the scalar
  *
  * @tparam T Type of scalar element.
  * @param a Specified scalar.
@@ -22,38 +21,38 @@ inline T as_column_vector_or_scalar(const T& a) {
 }
 
 /**
- * Converts input argument to a column vector or a scalar. For column vector
- * inputs this is an identity function.
+ * no-op that returns a column vector.
  *
- * @tparam T Type of scalar element.
+ * @tparam T Type inheriting from `EigenBase` with dynamic compile time rows
+ *  and fixed column of 1.
  * @param a Specified vector.
  * @return Same vector.
  */
 template <typename T, require_eigen_col_vector_t<T>* = nullptr>
-inline auto&& as_column_vector_or_scalar(T&& a) {
+inline T&& as_column_vector_or_scalar(T&& a) {
   return std::forward<T>(a);
 }
 
 /**
- * Converts input argument to a column vector or a scalar. For a row vector
- * input this is transpose.
+ * Converts a row vector to an eigen column vector. For row vectors this returns
+ *  a `Transpose<Eigen::Matrix<T, 1, -1>>`.
  *
- * @tparam T Type of scalar element.
+ * @tparam T Type inheriting from `EigenBase` with dynamic compile time columns
+ * and fixed row of 1.
  * @param a Specified vector.
  * @return Transposed vector.
  */
 template <typename T, require_eigen_row_vector_t<T>* = nullptr,
           require_not_eigen_col_vector_t<T>* = nullptr>
 inline auto as_column_vector_or_scalar(T&& a) {
-  return make_holder([](auto&& x) { return x.transpose(); },
+  return make_holder([](auto& x) { return x.transpose(); },
                      std::forward<T>(a));
 }
 
 /**
- * Converts input argument to a column vector or a scalar. std::vector will be
- * converted to a column vector.
+ * Converts `std::vector` to a column vector.
  *
- * @tparam T Type of scalar element.
+ * @tparam T `std::vector` type.
  * @param a Specified vector.
  * @return input converted to a column vector.
  */
@@ -64,35 +63,8 @@ inline auto as_column_vector_or_scalar(T&& a) {
       = std::conditional_t<std::is_const<std::remove_reference_t<T>>::value,
                            const plain_vector, plain_vector>;
   using T_map = Eigen::Map<optionally_const_vector>;
-  return make_holder([](auto&& x) { return T_map(x.data(), x.size()); },
+  return make_holder([](auto& x) { return T_map(x.data(), x.size()); },
                      std::forward<T>(a));
-}
-
-/**
- * Converts input argument to a `var_value<>` with column vector or a scalar.
- * For column vector inputs this is an identity function.
- *
- * @tparam T Type of `var_value`.
- * @param a Specified vector.
- * @return Same vector.
- */
-template <typename T, require_var_col_vector_t<T>* = nullptr>
-inline T&& as_column_vector_or_scalar(T&& a) {
-  return std::forward<T>(a);
-}
-
-/**
- * Converts input argument to a `var_value<>` with column vector or a scalar.
- * For column vector inputs this is an identity function.
- *
- * @tparam T Type of scalar element.
- * @param a Specified vector.
- * @return Transposed vector.
- */
-template <typename T, require_var_row_vector_t<T>* = nullptr,
-          require_not_var_col_vector_t<T>* = nullptr>
-inline auto as_column_vector_or_scalar(T&& a) {
-  return a.transpose();
 }
 
 }  // namespace math

@@ -11,59 +11,15 @@ namespace stan {
 namespace math {
 
 /**
- * Extract value from scalar types.
- *
- * @tparam T Type of element.
+ * Extract the value from an object. For eigen types and `std::vectors`
+ * convert to an eigen array and for scalars return a scalar.
+ * @tparam T A stan scalar, eigen vector, or `std::vector`.
  * @param v Specified value.
  * @return Same value.
  */
-template <typename T, require_stan_scalar_t<T>* = nullptr>
+template <typename T>
 inline auto as_value_array_or_scalar(T&& v) {
-  return value_of(std::forward<T>(v));
-}
-
-/**
- * Extract the values from a Matrix and convert to an array.
- *
- * @tparam T Type of \c Eigen \c Matrix or expression
- * @param v Specified \c Eigen \c Matrix or expression.
- * @return Matrix converted to an array.
- */
-template <typename T, require_matrix_t<T>* = nullptr,
-          require_not_st_arithmetic<T>* = nullptr>
-inline auto as_value_array_or_scalar(T&& v) {
-  return make_holder(
-      [](auto&& x) { return value_of(std::forward<decltype(x)>(x)); },
-      std::forward<T>(v));
-}
-
-/**
- * Extract the values from a Matrix and convert to an array.
- *
- * @tparam T Type of \c Eigen \c Matrix or expression
- * @param v Specified \c Eigen \c Matrix or expression.
- * @return Matrix converted to an array.
- */
-template <typename T, require_matrix_t<T>* = nullptr,
-          require_st_arithmetic<T>* = nullptr>
-inline auto as_value_array_or_scalar(T&& v) {
-  return as_array_or_scalar(std::forward<T>(v));
-}
-
-/**
- * Converts a std::vector type to an array.
- *
- * @tparam T Type of scalar element.
- * @param v Specified vector.
- * @return Matrix converted to an array.
- */
-template <typename T, require_std_vector_t<T>* = nullptr>
-inline auto as_value_array_or_scalar(T&& v) {
-  using T_map
-      = Eigen::Map<const Eigen::Array<value_type_t<T>, Eigen::Dynamic, 1>>;
-  return make_holder(
-      [](auto&& x) { return value_of(T_map(x.data(), x.size())); },
-      std::forward<T>(v));
+  return value_of(as_array_or_scalar(std::forward<T>(v)));
 }
 
 }  // namespace math

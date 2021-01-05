@@ -23,8 +23,6 @@
 /test/**/*.so
 /test/expressions/*.cpp
 
-# bench
-/benchmarks/**
 # other binary
 *.o
 *.o-*

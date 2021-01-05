@@ -47,19 +47,6 @@ inline auto as_array_or_scalar(T&& v) {
                      std::forward<T>(v));
 }
 
-/**
- * Converts a `var_value<T>` with inner Eigen matrix type to an `var_value<T>`
- *  with an inner array.
- *
- * @tparam T Type of `var_value<T>` with inner `Eigen::Matrix` or expression
- * @param v Specified `var_value<T>` with inner `Eigen::Matrix` or expression.
- * @return `var_value<>` with Matrix converted to an array.
- */
-template <typename T, require_var_matrix_t<T>* = nullptr>
-inline auto as_array_or_scalar(T&& v) {
-  return v.array();
-}
-
 }  // namespace math
 }  // namespace stan
 

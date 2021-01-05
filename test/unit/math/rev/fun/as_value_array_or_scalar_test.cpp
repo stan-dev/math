@@ -19,6 +19,7 @@ TEST(MathFunRev, as_value_array_or_scalar_std_vector_lvalue) {
   std::vector<stan::math::var> b(b_val.begin(), b_val.end());
   const auto& tmp = stan::math::as_value_array_or_scalar(b);
   Eigen::ArrayXd res = tmp;
+  EXPECT_TRUE((stan::is_eigen_array<decltype(tmp)>::value));
   EXPECT_MATRIX_EQ(res, a_val);
 }
 
@@ -31,6 +32,7 @@ TEST(MathFunRev, as_value_array_or_scalar_std_vector_rvalue) {
   }
   std::vector<stan::math::var> b(b_val.begin(), b_val.end());
   const auto& tmp = stan::math::as_value_array_or_scalar(std::move(b));
+  EXPECT_TRUE((stan::is_eigen_array<decltype(tmp)>::value));
   Eigen::ArrayXd res = tmp;
   EXPECT_MATRIX_EQ(res, a_val);
 }
@@ -40,6 +42,7 @@ TEST(MathFunRev, as_value_array_or_scalar_matrix_lvalue) {
   Eigen::MatrixXd a_val = Eigen::MatrixXd::Random(n, n);
   Eigen::Matrix<stan::math::var, -1, -1> a(a_val);
   auto&& tmp = stan::math::as_value_array_or_scalar(a);
+  EXPECT_TRUE((stan::is_eigen_array<decltype(tmp)>::value));
   Eigen::ArrayXXd res = tmp;
   EXPECT_MATRIX_EQ(res, a_val);
 }
@@ -49,6 +52,7 @@ TEST(MathFunRev, as_value_array_or_scalar_const_matrix_lvalue) {
   const Eigen::MatrixXd a_val = Eigen::MatrixXd::Random(n, n);
   Eigen::Matrix<stan::math::var, -1, -1> a(a_val);
   auto&& tmp = stan::math::as_value_array_or_scalar(a);
+  EXPECT_TRUE((stan::is_eigen_array<decltype(tmp)>::value));
   Eigen::ArrayXXd res = tmp;
   EXPECT_MATRIX_EQ(res, a_val);
 }
@@ -59,6 +63,7 @@ TEST(MathFunRev, as_value_array_or_scalar_matrix_rvalue) {
   Eigen::Matrix<stan::math::var, -1, -1> a(a_val);
   auto b = a;
   const auto& tmp = stan::math::as_value_array_or_scalar(std::move(b));
+  EXPECT_TRUE((stan::is_eigen_array<decltype(tmp)>::value));
   Eigen::ArrayXXd res = tmp;
   EXPECT_MATRIX_EQ(res, a_val);
 }
@@ -68,6 +73,7 @@ TEST(MathFunRev, as_value_array_or_scalar_var_value) {
   const Eigen::MatrixXd a_val = Eigen::MatrixXd::Random(n, n);
   stan::math::var_value<Eigen::Matrix<double, -1, -1>> a(a_val);
   auto&& tmp = stan::math::as_value_array_or_scalar(a);
+  EXPECT_TRUE((stan::is_eigen_array<decltype(tmp)>::value));
   Eigen::ArrayXXd res = tmp;
   EXPECT_MATRIX_EQ(res, a_val);
 }

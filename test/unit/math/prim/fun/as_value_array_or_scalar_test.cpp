@@ -18,6 +18,7 @@ TEST(MathMetaPrim, as_value_array_or_scalar_std_vector_lvalue) {
     b[i] = a.coeff(i);
   }
   const auto& tmp = stan::math::as_value_array_or_scalar(b);
+  EXPECT_TRUE((stan::is_eigen_array<decltype(tmp)>::value));
   Eigen::ArrayXd res = tmp;
   EXPECT_MATRIX_EQ(res, a);
 }
@@ -30,6 +31,7 @@ TEST(MathMetaPrim, as_value_array_or_scalar_std_vector_rvalue) {
     b[i] = a.coeff(i);
   }
   const auto& tmp = stan::math::as_value_array_or_scalar(std::move(b));
+  EXPECT_TRUE((stan::is_eigen_array<decltype(tmp)>::value));
   b.assign(n, 0);  // overwrite the memory if b was not moved
   Eigen::ArrayXd res = tmp;
   EXPECT_MATRIX_EQ(res, a);
@@ -39,6 +41,7 @@ TEST(MathMetaPrim, as_value_array_or_scalar_matrix_lvalue) {
   int n = 100;
   Eigen::MatrixXd a = Eigen::MatrixXd::Random(n, n);
   auto&& tmp = stan::math::as_value_array_or_scalar(a);
+  EXPECT_TRUE((stan::is_eigen_array<decltype(tmp)>::value));
   tmp(0, 0) = 1234;
   Eigen::ArrayXXd res = tmp;
   EXPECT_MATRIX_EQ(res, a);
@@ -48,6 +51,7 @@ TEST(MathMetaPrim, as_value_array_or_scalar_const_matrix_lvalue) {
   int n = 100;
   const Eigen::MatrixXd a = Eigen::MatrixXd::Random(n, n);
   const auto& tmp = stan::math::as_value_array_or_scalar(a);
+  EXPECT_TRUE((stan::is_eigen_array<decltype(tmp)>::value));
   Eigen::ArrayXXd res = tmp;
   EXPECT_MATRIX_EQ(res, a);
 }
@@ -57,6 +61,7 @@ TEST(MathMetaPrim, as_value_array_or_scalar_matrix_rvalue) {
   Eigen::MatrixXd a = Eigen::MatrixXd::Random(n, n);
   Eigen::MatrixXd b = a;
   const auto& tmp = stan::math::as_value_array_or_scalar(std::move(b));
+  EXPECT_TRUE((stan::is_eigen_array<decltype(tmp)>::value));
   b.setZero();  // overwrite the memory if b was not moved
   Eigen::ArrayXXd res = tmp;
   EXPECT_MATRIX_EQ(res, a);
