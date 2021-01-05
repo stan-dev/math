@@ -4,7 +4,7 @@
 #include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/hmm_check.hpp>
-#include <Eigen/Core>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <boost/random.hpp>
 #include <vector>
 
@@ -70,18 +70,22 @@ inline std::vector<int> hmm_latent_rng(const T_omega& log_omegas,
   Eigen::Map<Eigen::VectorXd> probs_vec(probs.data(), n_states);
   probs_vec = alphas.col(n_transitions) / alphas.col(n_transitions).sum();
   boost::random::discrete_distribution<> cat_hidden(probs);
-  hidden_states[n_transitions] = cat_hidden(rng);
+  hidden_states[n_transitions] = cat_hidden(rng) + stan::error_index::value;
 
   for (int n = n_transitions; n-- > 0;) {
-    // sample the nth hidden state conditional on (n + 1)st hidden state
-    int last_hs = hidden_states[n + 1];
+    // Sample the nth hidden state conditional on (n + 1)st hidden state.
+    // Subtract error_index in order to use C++ index.
+    int last_hs = hidden_states[n + 1] - stan::error_index::value;
 
     probs_vec = alphas.col(n).cwiseProduct(Gamma_dbl.col(last_hs))
                 * beta(last_hs) * omegas(last_hs, n + 1);
 
     probs_vec /= probs_vec.sum();
+
+    // discrete_distribution produces samples in [0, K), so
+    // we need to add 1 to generate over [1, K).
     boost::random::discrete_distribution<> cat_hidden(probs);
-    hidden_states[n] = cat_hidden(rng);
+    hidden_states[n] = cat_hidden(rng) + stan::error_index::value;
 
     // update backwards state
     beta = Gamma_dbl * (omegas.col(n + 1).cwiseProduct(beta));

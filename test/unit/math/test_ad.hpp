@@ -1,11 +1,14 @@
 #ifndef TEST_UNIT_MATH_TEST_AD_HPP
 #define TEST_UNIT_MATH_TEST_AD_HPP
 
+#include <stan/math/mix.hpp>
+#include <test/unit/pretty_print_types.hpp>
 #include <test/unit/math/ad_tolerances.hpp>
 #include <test/unit/math/is_finite.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
 #include <test/unit/math/serializer.hpp>
-#include <stan/math/mix.hpp>
+#include <test/unit/math/test_ad_matvar.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
 #include <string>

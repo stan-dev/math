@@ -11,6 +11,7 @@
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <cmath>
@@ -19,19 +20,43 @@ namespace stan {
 namespace math {
 
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
-          typename T_shape>
+          typename T_shape,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_loc, T_scale, T_shape>* = nullptr>
 return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_shape>;
-  using std::exp;
-  using std::log;
+  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
+  using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
+  using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
+  using T_alpha_ref = ref_type_if_t<!is_constant<T_shape>::value, T_shape>;
   static const char* function = "skew_normal_lpdf";
-  check_not_nan(function, "Random variable", y);
-  check_finite(function, "Location parameter", mu);
-  check_finite(function, "Shape parameter", alpha);
-  check_positive(function, "Scale parameter", sigma);
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma, "Shape paramter", alpha);
+  T_y_ref y_ref = y;
+  T_mu_ref mu_ref = mu;
+  T_sigma_ref sigma_ref = sigma;
+  T_alpha_ref alpha_ref = alpha;
+
+  const auto& y_col = as_column_vector_or_scalar(y_ref);
+  const auto& mu_col = as_column_vector_or_scalar(mu_ref);
+  const auto& sigma_col = as_column_vector_or_scalar(sigma_ref);
+  const auto& alpha_col = as_column_vector_or_scalar(alpha_ref);
+
+  const auto& y_arr = as_array_or_scalar(y_col);
+  const auto& mu_arr = as_array_or_scalar(mu_col);
+  const auto& sigma_arr = as_array_or_scalar(sigma_col);
+  const auto& alpha_arr = as_array_or_scalar(alpha_col);
+
+  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
+  ref_type_t<decltype(value_of(mu_arr))> mu_val = value_of(mu_arr);
+  ref_type_t<decltype(value_of(sigma_arr))> sigma_val = value_of(sigma_arr);
+  ref_type_t<decltype(value_of(alpha_arr))> alpha_val = value_of(alpha_arr);
+
+  check_not_nan(function, "Random variable", y_val);
+  check_finite(function, "Location parameter", mu_val);
+  check_finite(function, "Shape parameter", alpha_val);
+  check_positive(function, "Scale parameter", sigma_val);
 
   if (size_zero(y, mu, sigma, alpha)) {
     return 0.0;
@@ -40,71 +65,58 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
     return 0.0;
   }
 
-  T_partials_return logp(0.0);
-  operands_and_partials<T_y, T_loc, T_scale, T_shape> ops_partials(y, mu, sigma,
-                                                                   alpha);
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_scale> sigma_vec(sigma);
-  scalar_seq_view<T_shape> alpha_vec(alpha);
-  size_t N = max_size(y, mu, sigma, alpha);
+  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref, T_alpha_ref>
+      ops_partials(y_ref, mu_ref, sigma_ref, alpha_ref);
 
-  VectorBuilder<true, T_partials_return, T_scale> inv_sigma(size(sigma));
-  VectorBuilder<include_summand<propto, T_scale>::value, T_partials_return,
-                T_scale>
-      log_sigma(size(sigma));
-  for (size_t i = 0; i < stan::math::size(sigma); i++) {
-    inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
-    if (include_summand<propto, T_scale>::value) {
-      log_sigma[i] = log(value_of(sigma_vec[i]));
-    }
+  const auto& inv_sigma
+      = to_ref_if<!is_constant_all<T_y, T_loc, T_scale>::value>(inv(sigma_val));
+  const auto& y_minus_mu_over_sigma
+      = to_ref_if<include_summand<propto, T_y, T_loc, T_scale, T_shape>::value>(
+          (y_val - mu_val) * inv_sigma);
+  const auto& log_erfc_alpha_z
+      = to_ref_if<!is_constant_all<T_y, T_loc, T_scale, T_shape>::value>(
+          log(erfc(-alpha_val * y_minus_mu_over_sigma * INV_SQRT_TWO)));
+
+  size_t N = max_size(y, mu, sigma, alpha);
+  T_partials_return logp = sum(log_erfc_alpha_z);
+  if (include_summand<propto>::value) {
+    logp -= HALF_LOG_TWO_PI * N;
+  }
+  if (include_summand<propto, T_scale>::value) {
+    logp -= sum(log(sigma_val)) * N / size(sigma);
+  }
+  if (include_summand<propto, T_y, T_loc, T_scale>::value) {
+    logp -= sum(square(y_minus_mu_over_sigma)) * 0.5 * N
+            / max_size(y, mu, sigma);
   }
 
-  for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return mu_dbl = value_of(mu_vec[n]);
-    const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
-    const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
-
-    const T_partials_return y_minus_mu_over_sigma
-        = (y_dbl - mu_dbl) * inv_sigma[n];
-
-    if (include_summand<propto>::value) {
-      logp -= HALF_LOG_TWO_PI;
-    }
-    if (include_summand<propto, T_scale>::value) {
-      logp -= log(sigma_dbl);
-    }
-    if (include_summand<propto, T_y, T_loc, T_scale>::value) {
-      logp -= y_minus_mu_over_sigma * y_minus_mu_over_sigma / 2.0;
-    }
-    logp += log(erfc(-alpha_dbl * y_minus_mu_over_sigma / SQRT_TWO));
-
-    T_partials_return deriv_logerf
-        = TWO_OVER_SQRT_PI
-          * exp(-alpha_dbl * y_minus_mu_over_sigma / SQRT_TWO * alpha_dbl
-                * y_minus_mu_over_sigma / SQRT_TWO)
-          / (1 + erf(alpha_dbl * y_minus_mu_over_sigma / SQRT_TWO));
-    if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n]
-          += -y_minus_mu_over_sigma / sigma_dbl
-             + deriv_logerf * alpha_dbl / (sigma_dbl * SQRT_TWO);
-    }
-    if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_[n]
-          += y_minus_mu_over_sigma / sigma_dbl
-             + deriv_logerf * -alpha_dbl / (sigma_dbl * SQRT_TWO);
+  if (!is_constant_all<T_y, T_loc, T_scale, T_shape>::value) {
+    const auto& sq = square(alpha_val * y_minus_mu_over_sigma * INV_SQRT_TWO);
+    const auto& ex = exp(-sq - log_erfc_alpha_z);
+    const auto& deriv_logerf = to_ref_if<!is_constant_all<T_y, T_loc>::value
+                                             + !is_constant_all<T_scale>::value
+                                             + !is_constant_all<T_shape>::value
+                                         >= 2>(SQRT_TWO_OVER_SQRT_PI * ex);
+    if (!is_constant_all<T_y, T_loc>::value) {
+      const auto& deriv_y_loc = to_ref_if<(!is_constant_all<T_y>::value
+                                           && !is_constant_all<T_loc>::value)>(
+          (y_minus_mu_over_sigma - deriv_logerf * alpha_val) * inv_sigma);
+      if (!is_constant_all<T_y>::value) {
+        ops_partials.edge1_.partials_ = -deriv_y_loc;
+      }
+      if (!is_constant_all<T_loc>::value) {
+        ops_partials.edge2_.partials_ = std::move(deriv_y_loc);
+      }
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n]
-          += -1.0 / sigma_dbl
-             + y_minus_mu_over_sigma * y_minus_mu_over_sigma / sigma_dbl
-             - deriv_logerf * y_minus_mu_over_sigma * alpha_dbl
-                   / (sigma_dbl * SQRT_TWO);
+      ops_partials.edge3_.partials_
+          = ((y_minus_mu_over_sigma - deriv_logerf * alpha_val)
+                 * y_minus_mu_over_sigma
+             - 1)
+            * inv_sigma;
     }
     if (!is_constant_all<T_shape>::value) {
-      ops_partials.edge4_.partials_[n]
-          += deriv_logerf * y_minus_mu_over_sigma / SQRT_TWO;
+      ops_partials.edge4_.partials_ = deriv_logerf * y_minus_mu_over_sigma;
     }
   }
   return ops_partials.build(logp);

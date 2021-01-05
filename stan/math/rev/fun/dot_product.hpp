@@ -5,8 +5,8 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/fun/to_arena.hpp>
-#include <stan/math/rev/functor/arena_matrix.hpp>
-#include <stan/math/rev/functor/reverse_pass_callback.hpp>
+#include <stan/math/rev/core/arena_matrix.hpp>
+#include <stan/math/rev/core/reverse_pass_callback.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
@@ -31,45 +31,41 @@ namespace math {
  * @throw std::domain_error if sizes of v1 and v2 do not match.
  */
 template <typename T1, typename T2, require_all_container_t<T1, T2>* = nullptr,
-          require_any_vt_var<T1, T2>* = nullptr,
-          require_not_complex_t<return_type_t<T1, T2>>* = nullptr>
-inline return_type_t<T1, T2> dot_product(const T1& v1, const T2& v2) {
+          require_not_complex_t<return_type_t<T1, T2>>* = nullptr,
+          require_any_vt_var<T1, T2>* = nullptr>
+inline var dot_product(const T1& v1, const T2& v2) {
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);
-
-  const auto& v1_col = as_column_vector_or_scalar(v1);
-  const auto& v2_col = as_column_vector_or_scalar(v2);
-
-  arena_t<Eigen::VectorXd> v1_val_arena
-      = to_arena_if<!is_constant<T2>::value>(value_of(v1_col));
-  arena_t<Eigen::VectorXd> v2_val_arena
-      = to_arena_if<!is_constant<T1>::value>(value_of(v2_col));
-
-  double res_val;
-  if (is_constant<T1>::value) {
-    res_val = dot_product(v1_val_arena, value_of(v2_col));
-  } else if (is_constant<T2>::value) {
-    res_val = dot_product(value_of(v1_col), v2_val_arena);
+  if (!is_constant<T1>::value && !is_constant<T2>::value) {
+    arena_t<vector_v> v1_arena = as_column_vector_or_scalar(v1);
+    arena_t<vector_v> v2_arena = as_column_vector_or_scalar(v2);
+    var res(v1_arena.val().dot(v2_arena.val()));
+    reverse_pass_callback([v1_arena, v2_arena, res]() mutable {
+      for (Eigen::Index i = 0; i < v1_arena.size(); ++i) {
+        const auto res_adj = res.adj();
+        v1_arena.coeffRef(i).adj() += res_adj * v2_arena.coeffRef(i).val();
+        v2_arena.coeffRef(i).adj() += res_adj * v1_arena.coeffRef(i).val();
+      }
+    });
+    return res;
+  } else if (!is_constant<T2>::value) {
+    arena_t<vector_v> v2_arena = as_column_vector_or_scalar(v2);
+    arena_t<Eigen::VectorXd> v1_val_arena
+        = value_of(as_column_vector_or_scalar(v1));
+    var res(v1_val_arena.dot(v2_arena.val()));
+    reverse_pass_callback([v1_val_arena, v2_arena, res]() mutable {
+      v2_arena.adj() += res.adj() * v1_val_arena;
+    });
+    return res;
   } else {
-    res_val = dot_product(v1_val_arena, v2_val_arena);
+    arena_t<vector_v> v1_arena = as_column_vector_or_scalar(v1);
+    arena_t<Eigen::VectorXd> v2_val_arena
+        = value_of(as_column_vector_or_scalar(v2));
+    var res(v1_arena.val().dot(v2_val_arena));
+    reverse_pass_callback([v1_arena, v2_val_arena, res]() mutable {
+      v1_arena.adj() += res.adj() * v2_val_arena;
+    });
+    return res;
   }
-  var res(res_val);
-
-  arena_t<Eigen::Matrix<value_type_t<T1>, Eigen::Dynamic, 1>> v1_arena
-      = to_arena_if<!is_constant<T1>::value>(v1_col);
-  arena_t<Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, 1>> v2_arena
-      = to_arena_if<!is_constant<T2>::value>(v2_col);
-
-  reverse_pass_callback(
-      [v1_arena, v2_arena, res, v1_val_arena, v2_val_arena]() mutable {
-        if (!is_constant<T1>::value) {
-          forward_as<vector_v>(v1_arena).adj() += res.adj() * v2_val_arena;
-        }
-        if (!is_constant<T2>::value) {
-          forward_as<vector_v>(v2_arena).adj() += res.adj() * v1_val_arena;
-        }
-      });
-
-  return res;
 }
 
 }  // namespace math

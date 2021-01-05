@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_ERR_HMM_CHECK_HPP
 
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 
 namespace stan {
 namespace math {
@@ -37,8 +38,9 @@ inline void hmm_check(const T_omega& log_omegas, const T_Gamma& Gamma,
   check_multiplicable(function, "Gamma", Gamma, "log_omegas", log_omegas);
 
   check_simplex(function, "rho", rho);
+  const auto& Gamma_ref = to_ref(Gamma);
   for (int i = 0; i < Gamma.rows(); ++i) {
-    check_simplex(function, "Gamma[i, ]", Gamma.row(i));
+    check_simplex(function, "Gamma[i, ]", Gamma_ref.row(i));
   }
 }
 

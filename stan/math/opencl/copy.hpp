@@ -3,7 +3,6 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/vec_concat.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
@@ -28,10 +27,11 @@ namespace stan {
 namespace math {
 
 /** \ingroup opencl
- * Copies the source Eigen matrix to the destination matrix that is stored on
- * the OpenCL device. If a lvalue matrix is passed to this function the caller
- * must make sure that the matrix does not go out of scope before copying is
- * complete.
+ * Copies the source Eigen matrix, `std::vector` or scalar to the destination
+ * matrix that is stored on the OpenCL device. The function also accepts
+ * `matrix_cl`s in which case it just returns the argument. If a lvalue matrix
+ * is passed to this function the caller must make sure that the matrix does not
+ * go out of scope before copying is complete.
  *
  * That means `.wait()` must be called on the event associated on copying or
  * any other event that requires completion of this event. This can be done by
@@ -41,29 +41,9 @@ namespace math {
  * @param src source Eigen matrix
  * @return matrix_cl with a copy of the data in the source matrix
  */
-template <typename Mat, typename Mat_scalar = scalar_type_t<Mat>,
-          require_eigen_vt<std::is_arithmetic, Mat>* = nullptr>
-inline matrix_cl<Mat_scalar> to_matrix_cl(Mat&& src) {
-  return matrix_cl<Mat_scalar>(std::forward<Mat>(src));
-}
-
-/** \ingroup opencl
- * Copies the source `std::vector` to the destination matrix that is stored on
- * the OpenCL device. If a lvalue is passed to this constructor the caller must
- * make sure that it does not go out of scope before copying is complete.
- *
- * That means `.wait()` must be called on the event associated on copying or
- * any other event that requires completion of this event. This can be done by
- * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
- * returned matrix or any matrix that is calculated from that one.
- *
- * @param src source std::vector
- * @return matrix_cl with a copy of the data in the source matrix
- */
-template <typename Vec, typename Vec_scalar = scalar_type_t<Vec>,
-          require_std_vector_vt<std::is_arithmetic, Vec>* = nullptr>
-inline matrix_cl<Vec_scalar> to_matrix_cl(Vec&& src) {
-  return matrix_cl<Vec_scalar>(std::forward<Vec>(src));
+template <typename T, require_vt_arithmetic<T>* = nullptr>
+inline matrix_cl<value_type_t<T>> to_matrix_cl(T&& src) {
+  return matrix_cl<value_type_t<T>>(std::forward<T>(src));
 }
 
 /** \ingroup opencl
@@ -80,24 +60,53 @@ inline Eigen::Matrix<T, R, C> from_matrix_cl(const matrix_cl<T>& src) {
   if (src.size() == 0) {
     return dst;
   }
-  try {
-    /** \ingroup opencl
-     * Reads the contents of the OpenCL buffer
-     * starting at the offset 0 to the Eigen
-     * matrix
-     * CL_TRUE denotes that the call is blocking
-     * We do not want to pass data back to the CPU until all of the jobs
-     * called on the source matrix are finished.
-     */
-    cl::Event copy_event;
-    const cl::CommandQueue queue = opencl_context.queue();
-    queue.enqueueReadBuffer(src.buffer(), opencl_context.in_order(), 0,
-                            sizeof(T) * dst.size(), dst.data(),
-                            &src.write_events(), &copy_event);
-    copy_event.wait();
-    src.clear_write_events();
-  } catch (const cl::Error& e) {
-    check_opencl_error("copy (OpenCL)->Eigen", e);
+  if ((src.view() == matrix_cl_view::Lower
+       || src.view() == matrix_cl_view::Upper)
+      && src.rows() == src.cols()) {
+    using T_not_bool
+        = std::conditional_t<std::is_same<T, bool>::value, char, T>;
+    std::vector<T_not_bool> packed = packed_copy(src);
+
+    size_t pos = 0;
+    if (src.view() == matrix_cl_view::Lower) {
+      for (int j = 0; j < src.cols(); ++j) {
+        for (int k = 0; k < j; ++k) {
+          dst.coeffRef(k, j) = 0;
+        }
+        for (int i = j; i < src.cols(); ++i) {
+          dst.coeffRef(i, j) = packed[pos++];
+        }
+      }
+    } else {
+      for (int j = 0; j < src.cols(); ++j) {
+        for (int i = 0; i <= j; ++i) {
+          dst.coeffRef(i, j) = packed[pos++];
+        }
+        for (int k = j + 1; k < src.cols(); ++k) {
+          dst.coeffRef(k, j) = 0;
+        }
+      }
+    }
+  } else {
+    try {
+      cl::Event copy_event;
+      const cl::CommandQueue queue = opencl_context.queue();
+      queue.enqueueReadBuffer(src.buffer(), opencl_context.in_order(), 0,
+                              sizeof(T) * dst.size(), dst.data(),
+                              &src.write_events(), &copy_event);
+      copy_event.wait();
+      src.clear_write_events();
+    } catch (const cl::Error& e) {
+      check_opencl_error("copy (OpenCL)->Eigen", e);
+    }
+    if (!contains_nonzero(src.view(), matrix_cl_view::Lower)) {
+      dst.template triangularView<Eigen::StrictlyLower>()
+          = Eigen::Matrix<T, R, C>::Zero(dst.rows(), dst.cols());
+    }
+    if (!contains_nonzero(src.view(), matrix_cl_view::Upper)) {
+      dst.template triangularView<Eigen::StrictlyUpper>()
+          = Eigen::Matrix<T, R, C>::Zero(dst.rows(), dst.cols());
+    }
   }
   return dst;
 }
@@ -120,7 +129,7 @@ inline Eigen::Matrix<value_type_t<T>, R, C> from_matrix_cl(const T& src) {
 }
 
 /** \ingroup opencl
- * Packs the flat triangular matrix on the OpenCL device and
+ * Packs the square flat triangular matrix on the OpenCL device and
  * copies it to the std::vector.
  *
  * @param src the flat triangular source matrix on the OpenCL device
@@ -128,10 +137,12 @@ inline Eigen::Matrix<value_type_t<T>, R, C> from_matrix_cl(const T& src) {
  * @throw <code>std::invalid_argument</code> if the matrix is not triangular
  */
 template <typename T, typename = require_arithmetic_t<T>>
-inline std::vector<T> packed_copy(const matrix_cl<T>& src) {
+inline std::vector<std::conditional_t<std::is_same<T, bool>::value, char, T>>
+packed_copy(const matrix_cl<T>& src) {
   check_triangular("packed_copy", "src", src);
   const int packed_size = src.rows() * (src.rows() + 1) / 2;
-  std::vector<T> dst(packed_size);
+  using T_not_bool = std::conditional_t<std::is_same<T, bool>::value, char, T>;
+  std::vector<T_not_bool> dst(packed_size);
   if (dst.size() == 0) {
     return dst;
   }
@@ -243,25 +254,6 @@ inline T from_matrix_cl_error_code(const matrix_cl<T>& src) {
     check_opencl_error("copy_error_code (OpenCL)->(OpenCL)", e);
   }
   return dst;
-}
-
-/** \ingroup opencl
- * Copy an arithmetic type to the device. If a lvalue is passed to this
- * constructor the caller must make sure that it does not go out of scope before
- * copying is complete.
- *
- * That means `.wait()` must be called on the event associated on copying or
- * any other event that requires completion of this event. This can be done by
- * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
- * returned matrix or any matrix that is calculated from that one.
- *
- * @tparam T An arithmetic type to pass the value from the OpenCL matrix to.
- * @param src Arithmetic to receive the matrix_cl value.
- * @return A 1x1 matrix on the device.
- */
-template <typename T, typename = require_arithmetic_t<std::decay_t<T>>>
-inline matrix_cl<std::decay_t<T>> to_matrix_cl(T&& src) {
-  return matrix_cl<std::decay_t<T>>(std::forward<T>(src));
 }
 
 }  // namespace math

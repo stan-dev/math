@@ -3,6 +3,7 @@
 
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
+#include <stan/math/rev/core/arena_matrix.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <ostream>
 #include <type_traits>
@@ -15,7 +16,7 @@ template <typename T, typename = void>
 class vari_value;
 
 // forward declaration of var
-template <typename T>
+template <typename T, typename = void>
 class var_value;
 
 /**
@@ -78,11 +79,9 @@ class vari_base {
  *
  */
 template <typename T>
-class vari_value<T, require_floating_point_t<T>> : public vari_base {
+class vari_value<T, require_t<std::is_floating_point<T>>> : public vari_base {
  public:
   using value_type = std::decay_t<T>;
-  static constexpr int RowsAtCompileTime{1};
-  static constexpr int ColsAtCompileTime{1};
   /**
    * The value of this variable.
    */
@@ -91,7 +90,7 @@ class vari_value<T, require_floating_point_t<T>> : public vari_base {
    * The adjoint of this variable, which is the partial derivative
    * of this variable with respect to the root variable.
    */
-  value_type adj_;
+  value_type adj_{0.0};
 
   /**
    * Construct a variable implementation from a value.  The
@@ -107,7 +106,7 @@ class vari_value<T, require_floating_point_t<T>> : public vari_base {
    * @param x Value of the constructed variable.
    */
   template <typename S, require_convertible_t<S&, T>* = nullptr>
-  vari_value(S x) noexcept : val_(x), adj_(0.0) {  // NOLINT
+  vari_value(S x) noexcept : val_(x) {  // NOLINT
     ChainableStack::instance_->var_stack_.push_back(this);
   }
 
@@ -127,13 +126,40 @@ class vari_value<T, require_floating_point_t<T>> : public vari_base {
    * that its `chain()` method is not called.
    */
   template <typename S, require_convertible_t<S&, T>* = nullptr>
-  vari_value(S x, bool stacked) noexcept : val_(x), adj_(0.0) {
+  vari_value(S x, bool stacked) noexcept : val_(x) {
     if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);
     } else {
       ChainableStack::instance_->var_nochain_stack_.push_back(this);
     }
   }
+
+  /**
+   * Return a constant reference to the value of this vari.
+   *
+   * @return The value of this vari.
+   */
+  inline const auto& val() const { return val_; }
+
+  /**
+   * Return a reference of the derivative of the root expression with
+   * respect to this expression.  This method only works
+   * after one of the `grad()` methods has been
+   * called.
+   *
+   * @return Adjoint for this vari.
+   */
+  inline auto& adj() const { return adj_; }
+
+  /**
+   * Return a reference to the derivative of the root expression with
+   * respect to this expression.  This method only works
+   * after one of the `grad()` methods has been
+   * called.
+   *
+   * @return Adjoint for this vari.
+   */
+  inline auto& adj() { return adj_; }
 
   inline void chain() {}
 
@@ -166,7 +192,7 @@ class vari_value<T, require_floating_point_t<T>> : public vari_base {
   }
 
  private:
-  template <typename>
+  template <typename, typename>
   friend class var_value;
 };
 
@@ -182,10 +208,344 @@ using vari = vari_value<double>;
 template <typename T, typename = void>
 class vari_view;
 
+/**
+ * This struct is follows the CRTP for methods common to `vari_view<>` and
+ * `vari_value<Matrix>`.
+ * @tparam Derived A `var_value<>` or `vari_view` with an inner type that has
+ *  defined methods for subslices of the value and adjoint.
+ */
+template <typename Derived>
+class vari_view_eigen {
+ private:
+  /**
+   * Making the base constructor private while making the derived class a friend
+   * help's catch if derived types inherit from another derived types
+   * base class. See the fluentcpp article on CRTP for more information.
+   */
+  vari_view_eigen() = default;
+  friend Derived;
+
+  /**
+   * Helper function to return a reference to the derived type
+   */
+  inline Derived& derived() { return static_cast<Derived&>(*this); }
+  /**
+   * Helper function to return a constant reference to the derived type
+   */
+  inline const Derived& derived() const {
+    return static_cast<const Derived&>(*this);
+  }
+
+ public:
+  /**
+   * A block view of the underlying Eigen matrices.
+   * @param start_row Starting row of block.
+   * @param start_col Starting columns of block.
+   * @param num_rows Number of rows to return.
+   * @param num_cols Number of columns to return.
+   */
+  inline auto block(Eigen::Index start_row, Eigen::Index start_col,
+                    Eigen::Index num_rows, Eigen::Index num_cols) const {
+    using inner_type = decltype(
+        derived().val_.block(start_row, start_col, num_rows, num_cols));
+    return vari_view<inner_type>(
+        derived().val_.block(start_row, start_col, num_rows, num_cols),
+        derived().adj_.block(start_row, start_col, num_rows, num_cols));
+  }
+  inline auto block(Eigen::Index start_row, Eigen::Index start_col,
+                    Eigen::Index num_rows, Eigen::Index num_cols) {
+    using inner_type = decltype(
+        derived().val_.block(start_row, start_col, num_rows, num_cols));
+    return vari_view<inner_type>(
+        derived().val_.block(start_row, start_col, num_rows, num_cols),
+        derived().adj_.block(start_row, start_col, num_rows, num_cols));
+  }
+
+  /**
+   * View of the head of Eigen vector types.
+   * @param n Number of elements to return from top of vector.
+   */
+  inline auto head(Eigen::Index n) const {
+    using inner_type = decltype(derived().val_.head(n));
+    return vari_view<inner_type>(derived().val_.head(n),
+                                 derived().adj_.head(n));
+  }
+  inline auto head(Eigen::Index n) {
+    using inner_type = decltype(derived().val_.head(n));
+    return vari_view<inner_type>(derived().val_.head(n),
+                                 derived().adj_.head(n));
+  }
+
+  /**
+   * View of the tail of the Eigen vector types.
+   * @param n Number of elements to return from bottom of vector.
+   */
+  inline auto tail(Eigen::Index n) const {
+    using inner_type = decltype(derived().val_.tail(n));
+    return vari_view<inner_type>(derived().val_.tail(n),
+                                 derived().adj_.tail(n));
+  }
+  inline auto tail(Eigen::Index n) {
+    using inner_type = decltype(derived().val_.tail(n));
+    return vari_view<inner_type>(derived().val_.tail(n),
+                                 derived().adj_.tail(n));
+  }
+
+  /**
+   * View block of N elements starting at position `i`
+   * @param i Starting position of block.
+   * @param n Number of elements in block
+   */
+  inline auto segment(Eigen::Index i, Eigen::Index n) const {
+    using inner_type = decltype(derived().val_.segment(i, n));
+    return vari_view<inner_type>(derived().val_.segment(i, n),
+                                 derived().adj_.segment(i, n));
+  }
+  inline auto segment(Eigen::Index i, Eigen::Index n) {
+    using inner_type = decltype(derived().val_.segment(i, n));
+    return vari_view<inner_type>(derived().val_.segment(i, n),
+                                 derived().adj_.segment(i, n));
+  }
+
+  /**
+   * View transpose of eigen matrix.
+   */
+  inline auto transpose() const {
+    using inner_type = decltype(derived().val_.transpose());
+    return vari_view<inner_type>(derived().val_.transpose(),
+                                 derived().adj_.transpose());
+  }
+  inline auto transpose() {
+    using inner_type = decltype(derived().val_.transpose());
+    return vari_view<inner_type>(derived().val_.transpose(),
+                                 derived().adj_.transpose());
+  }
+
+  /**
+   * View row of eigen matrices.
+   * @param i Row index to slice.
+   */
+  inline auto row(Eigen::Index i) const {
+    using inner_type = decltype(derived().val_.row(i));
+    return vari_view<inner_type>(derived().val_.row(i), derived().adj_.row(i));
+  }
+  inline auto row(Eigen::Index i) {
+    using inner_type = decltype(derived().val_.row(i));
+    return vari_view<inner_type>(derived().val_.row(i), derived().adj_.row(i));
+  }
+
+  /**
+   * View column of eigen matrices
+   * @param i Column index to slice
+   */
+  inline auto col(Eigen::Index i) const {
+    using inner_type = decltype(derived().val_.col(i));
+    return vari_view<inner_type>(derived().val_.col(i), derived().adj_.col(i));
+  }
+  inline auto col(Eigen::Index i) {
+    using inner_type = decltype(derived().val_.col(i));
+    return vari_view<inner_type>(derived().val_.col(i), derived().adj_.col(i));
+  }
+
+  /**
+   * Get coefficient of eigen matrices
+   * @param i Row index
+   * @param j Column index
+   */
+  inline auto coeff(Eigen::Index i, Eigen::Index j) const {
+    return vari_value<double>(derived().val_.coeffRef(i, j),
+                              derived().adj_.coeffRef(i, j));
+  }
+  inline auto coeff(Eigen::Index i, Eigen::Index j) {
+    return vari_value<double>(derived().val_.coeffRef(i, j),
+                              derived().adj_.coeffRef(i, j));
+  }
+
+  /**
+   * Get coefficient of eigen matrices
+   * @param i Column index to slice
+   */
+  inline auto coeff(Eigen::Index i) const {
+    return vari_value<double>(derived().val_.coeffRef(i),
+                              derived().adj_.coeffRef(i));
+  }
+  inline auto coeff(Eigen::Index i) {
+    return vari_value<double>(derived().val_.coeffRef(i),
+                              derived().adj_.coeffRef(i));
+  }
+
+  /**
+   * Get coefficient of eigen matrices
+   * @param i Column index to slice
+   */
+  inline auto operator()(Eigen::Index i) const { return this->coeff(i); }
+  inline auto operator()(Eigen::Index i) { return this->coeff(i); }
+
+  /**
+   * Get coefficient of eigen matrices
+   * @param i Row index
+   * @param j Column index
+   */
+  inline auto operator()(Eigen::Index i, Eigen::Index j) const {
+    return this->coeff(i, j);
+  }
+  inline auto operator()(Eigen::Index i, Eigen::Index j) {
+    return this->coeff(i, j);
+  }
+
+  /**
+   * Return an expression that operates on the rows of the matrix `vari`
+   */
+  inline auto rowwise_reverse() const {
+    using inner_type = decltype(derived().val_.rowwise().reverse());
+    return vari_view<inner_type>(derived().val_.rowwise().reverse(),
+                                 derived().adj_.rowwise().reverse());
+  }
+  inline auto rowwise_reverse() {
+    using inner_type = decltype(derived().val_.rowwise().reverse());
+    return vari_view<inner_type>(derived().val_.rowwise().reverse(),
+                                 derived().adj_.rowwise().reverse());
+  }
+
+  /**
+   * Return an expression that operates on the columns of the matrix `vari`
+   */
+  inline auto colwise_reverse() const {
+    using inner_type = decltype(derived().val_.colwise().reverse());
+    return vari_view<inner_type>(derived().val_.colwise().reverse(),
+                                 derived().adj_.colwise().reverse());
+  }
+  inline auto colwise_reverse() {
+    using inner_type = decltype(derived().val_.colwise().reverse());
+    return vari_view<inner_type>(derived().val_.colwise().reverse(),
+                                 derived().adj_.colwise().reverse());
+  }
+
+  /**
+   * Return an expression to reverse the order of the coefficients
+   * inside of a `vari` matrix
+   */
+  inline auto reverse() const {
+    using inner_type = decltype(derived().val_.reverse());
+    return vari_view<inner_type>(derived().val_.reverse(),
+                                 derived().adj_.reverse());
+  }
+  inline auto reverse() {
+    using inner_type = decltype(derived().val_.reverse());
+    return vari_view<inner_type>(derived().val_.reverse(),
+                                 derived().adj_.reverse());
+  }
+
+  /**
+   * Return a block consisting of the top rows
+   * @param n Number of rows
+   */
+  inline auto topRows(Eigen::Index n) const {
+    using inner_type = decltype(derived().val_.topRows(n));
+    return vari_view<inner_type>(derived().val_.topRows(n),
+                                 derived().adj_.topRows(n));
+  }
+  inline auto topRows(Eigen::Index n) {
+    using inner_type = decltype(derived().val_.topRows(n));
+    return vari_view<inner_type>(derived().val_.topRows(n),
+                                 derived().adj_.topRows(n));
+  }
+
+  /**
+   * Return a block consisting of the bottom rows
+   * @param n Number of rows
+   */
+  inline auto bottomRows(Eigen::Index n) const {
+    using inner_type = decltype(derived().val_.bottomRows(n));
+    return vari_view<inner_type>(derived().val_.bottomRows(n),
+                                 derived().adj_.bottomRows(n));
+  }
+  inline auto bottomRows(Eigen::Index n) {
+    using inner_type = decltype(derived().val_.bottomRows(n));
+    return vari_view<inner_type>(derived().val_.bottomRows(n),
+                                 derived().adj_.bottomRows(n));
+  }
+
+  /**
+   * Return a block consisting of rows in the middle.
+   * @param start_row Starting row index
+   * @param n Number of rows
+   */
+  inline auto middleRows(Eigen::Index start_row, Eigen::Index n) const {
+    using inner_type = decltype(derived().val_.middleRows(start_row, n));
+    return vari_view<inner_type>(derived().val_.middleRows(start_row, n),
+                                 derived().adj_.middleRows(start_row, n));
+  }
+  inline auto middleRows(Eigen::Index start_row, Eigen::Index n) {
+    using inner_type = decltype(derived().val_.middleRows(start_row, n));
+    return vari_view<inner_type>(derived().val_.middleRows(start_row, n),
+                                 derived().adj_.middleRows(start_row, n));
+  }
+
+  /**
+   * Return a block consisting of the left-most columns
+   * @param n Number of columns
+   */
+  inline auto leftCols(Eigen::Index n) const {
+    using inner_type = decltype(derived().val_.leftCols(n));
+    return vari_view<inner_type>(derived().val_.leftCols(n),
+                                 derived().adj_.leftCols(n));
+  }
+  inline auto leftCols(Eigen::Index n) {
+    using inner_type = decltype(derived().val_.leftCols(n));
+    return vari_view<inner_type>(derived().val_.leftCols(n),
+                                 derived().adj_.leftCols(n));
+  }
+
+  /**
+   * Return a block consisting of the right-most columns
+   * @param n Number of columns
+   */
+  inline auto rightCols(Eigen::Index n) const {
+    using inner_type = decltype(derived().val_.rightCols(n));
+    return vari_view<inner_type>(derived().val_.rightCols(n),
+                                 derived().adj_.rightCols(n));
+  }
+  inline auto rightCols(Eigen::Index n) {
+    using inner_type = decltype(derived().val_.rightCols(n));
+    return vari_view<inner_type>(derived().val_.rightCols(n),
+                                 derived().adj_.rightCols(n));
+  }
+
+  /**
+   * Return a block consisting of columns in the middle.
+   * @param start_col Starting column index
+   * @param n Number of columns
+   */
+  inline auto middleCols(Eigen::Index start_col, Eigen::Index n) const {
+    using inner_type = decltype(derived().val_.middleCols(start_col, n));
+    return vari_view<inner_type>(derived().val_.middleCols(start_col, n),
+                                 derived().adj_.middleCols(start_col, n));
+  }
+  inline auto middleCols(Eigen::Index start_col, Eigen::Index n) {
+    using inner_type = decltype(derived().val_.middleCols(start_col, n));
+    return vari_view<inner_type>(derived().val_.middleCols(start_col, n),
+                                 derived().adj_.middleCols(start_col, n));
+  }
+
+  /**
+   * Return the number of rows for this class's `val_` member
+   */
+  inline Eigen::Index rows() const { return derived().val_.rows(); }
+  /**
+   * Return the number of columns for this class's `val_` member
+   */
+  inline Eigen::Index cols() const { return derived().val_.cols(); }
+  /**
+   * Return the size of this class's `val_` member
+   */
+  inline Eigen::Index size() const { return derived().val_.size(); }
+};
+
 template <typename T>
-class vari_view<T, require_all_t<bool_constant<!is_plain_type<T>::value>,
-                                 is_eigen_dense_base<T>>>
-    final : public vari_base {
+class vari_view<T, require_not_plain_type_t<T>> final
+    : public vari_base,
+      public vari_view_eigen<vari_view<T, require_not_plain_type_t<T>>> {
  public:
   using PlainObject = plain_type_t<T>;
   using value_type = std::decay_t<T>;  // The underlying type for this class
@@ -198,12 +558,33 @@ class vari_view<T, require_all_t<bool_constant<!is_plain_type<T>::value>,
    */
   static constexpr int ColsAtCompileTime = PlainObject::ColsAtCompileTime;
 
-  const T val_;
-  const T adj_;
+  T val_;
+  T adj_;
   template <typename S, typename K,
-            require_convertible_t<S&, value_type>* = nullptr,
-            require_convertible_t<K&, value_type>* = nullptr>
-  vari_view(const S& val, const K& adj) : val_(val), adj_(adj) {}
+            require_assignable_t<value_type, S>* = nullptr,
+            require_assignable_t<value_type, K>* = nullptr>
+  vari_view(const S& val, const K& adj) noexcept : val_(val), adj_(adj) {}
+
+  /**
+   * Return a constant reference to the value of this vari.
+   *
+   * @return The value of this vari.
+   */
+  inline const auto& val() const { return val_; }
+  inline auto& val_op() { return val_; }
+
+  /**
+   * Return a reference to the derivative of the root expression with
+   * respect to this expression.  This method only works
+   * after one of the `grad()` methods has been
+   * called.
+   *
+   * @return Adjoint for this vari.
+   */
+  inline auto& adj() { return adj_; }
+  inline auto& adj() const { return adj_; }
+  inline auto& adj_op() { return adj_; }
+
   void set_zero_adjoint() {}
   void chain() {}
 };
@@ -221,7 +602,9 @@ class vari_view<T, require_all_t<bool_constant<!is_plain_type<T>::value>,
  */
 template <typename T>
 class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
-    : public vari_base {
+    : public vari_base,
+      public vari_view_eigen<vari_value<
+          T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>> {
  public:
   /**
    * `PlainObject` represents a user constructible type such as Matrix or Array
@@ -229,8 +612,6 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
   using PlainObject = plain_type_t<T>;
   using value_type = PlainObject;  // The underlying type for this class
   using eigen_scalar = value_type_t<PlainObject>;  // A floating point type
-  using eigen_map = Eigen::Map<PlainObject, Eigen::Aligned8,
-                               Eigen::Stride<0, 0>>;  // Maps for adj_ and val_
   using vari_type = vari_value<T>;
   /**
    * Number of rows known at compile time
@@ -240,22 +621,17 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * Number of columns known at compile time
    */
   static constexpr int ColsAtCompileTime = PlainObject::ColsAtCompileTime;
-  /**
-   * Maps for adj_ and val_
-   */
-  eigen_scalar* val_mem_;  // Pointer to memory allocated on the stack for val_
-  eigen_scalar* adj_mem_;  // Pointer to memory allocated on the stack for adj_
 
   /**
    * The value of this variable.
    */
-  const eigen_map val_;
+  arena_matrix<PlainObject> val_;
 
   /**
    * The adjoint of this variable, which is the partial derivative
    * of this variable with respect to the root variable.
    */
-  eigen_map adj_;
+  arena_matrix<PlainObject> adj_;
 
   /**
    * Construct a dense Eigen variable implementation from a value. The
@@ -270,14 +646,9 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * @tparam S A dense Eigen type that is convertible to `value_type`
    * @param x Value of the constructed variable.
    */
-  template <typename S, require_convertible_t<S&, T>* = nullptr>
-  explicit vari_value(const S& x)
-      : val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
-            x.size())),
-        adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
-            x.size())),
-        val_(eigen_map(val_mem_, x.rows(), x.cols()) = x),
-        adj_(eigen_map(adj_mem_, x.rows(), x.cols()).setZero()) {
+  template <typename S, require_assignable_t<T, S>* = nullptr>
+  explicit vari_value(const S& x) : val_(x), adj_(x.rows(), x.cols()) {
+    adj_.setZero();
     ChainableStack::instance_->var_stack_.push_back(this);
   }
 
@@ -296,14 +667,9 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * @param stacked If false will put this this vari on the nochain stack so
    * that its `chain()` method is not called.
    */
-  template <typename S, require_convertible_t<S&, T>* = nullptr>
-  vari_value(const S& x, bool stacked)
-      : val_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
-            x.size())),
-        adj_mem_(ChainableStack::instance_->memalloc_.alloc_array<eigen_scalar>(
-            x.size())),
-        val_(eigen_map(val_mem_, x.rows(), x.cols()) = x),
-        adj_(eigen_map(adj_mem_, x.rows(), x.cols()).setZero()) {
+  template <typename S, require_assignable_t<T, S>* = nullptr>
+  vari_value(const S& x, bool stacked) : val_(x), adj_(x.rows(), x.cols()) {
+    adj_.setZero();
     if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);
     } else {
@@ -312,17 +678,24 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
   }
 
   /**
-   * Return the number of rows for this class's `val_` member
+   * Return a constant reference to the value of this vari.
+   *
+   * @return The value of this vari.
    */
-  const Eigen::Index rows() const { return val_.rows(); }
+  inline const auto& val() const { return val_; }
+  inline auto& val_op() { return val_; }
+
   /**
-   * Return the number of columns for this class's `val_` member
+   * Return a reference to the derivative of the root expression with
+   * respect to this expression.  This method only works
+   * after one of the `grad()` methods has been
+   * called.
+   *
+   * @return Adjoint for this vari.
    */
-  const Eigen::Index cols() const { return val_.rows(); }
-  /**
-   * Return the size of this class's `val_` member
-   */
-  const Eigen::Index size() const { return val_.size(); }
+  inline auto& adj() { return adj_; }
+  inline auto& adj() const { return adj_; }
+  inline auto& adj_op() { return adj_; }
 
   virtual void chain() {}
   /**
@@ -341,96 +714,6 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
   inline void set_zero_adjoint() final { adj_.setZero(); }
 
   /**
-   * A block view of the underlying Eigen matrices.
-   * @param start_row Starting row of block.
-   * @param start_col Starting columns of block.
-   * @param num_rows Number of rows to return.
-   * @param num_cols Number of columns to return.
-   */
-  inline auto block(Eigen::Index start_row, Eigen::Index start_col,
-                    Eigen::Index num_rows, Eigen::Index num_cols) const {
-    using inner_type
-        = decltype(val_.block(start_row, start_col, num_rows, num_cols));
-    return vari_view<inner_type>(
-        val_.block(start_row, start_col, num_rows, num_cols),
-        adj_.block(start_row, start_col, num_rows, num_cols));
-  }
-
-  /**
-   * View of the head of Eigen vector types.
-   * @param n Number of elements to return from top of vector.
-   */
-  inline auto head(Eigen::Index n) const {
-    return vari_view<decltype(val_.head(n))>(val_.head(n), adj_.head(n));
-  }
-
-  /**
-   * View of the tail of the Eigen vector types.
-   * @param n Number of elements to return from bottom of vector.
-   */
-  inline auto tail(Eigen::Index n) const {
-    return vari_view<decltype(val_.tail(n))>(val_.tail(n), adj_.tail(n));
-  }
-
-  /**
-   * View block of N elements starting at position `i`
-   * @param i Starting position of block.
-   * @param n Number of elements in block
-   */
-  inline auto segment(Eigen::Index i, Eigen::Index n) const {
-    return vari_view<decltype(val_.segment(i, n))>(val_.segment(i, n),
-                                                   adj_.segment(i, n));
-  }
-
-  /**
-   * View row of eigen matrices.
-   * @param i Row index to slice.
-   */
-  inline auto row(Eigen::Index i) const {
-    return vari_view<decltype(val_.row(i))>(val_.row(i), adj_.row(i));
-  }
-
-  /**
-   * View column of eigen matrices
-   * @param i Column index to slice
-   */
-  inline auto col(Eigen::Index i) const {
-    return vari_view<decltype(val_.col(i))>(val_.col(i), adj_.col(i));
-  }
-
-  /**
-   * Get coefficient of eigen matrices
-   * @param i Row index
-   * @param j Column index
-   */
-  inline auto coeff(Eigen::Index i, Eigen::Index j) const {
-    return vari_value<double>(val_.coeffRef(i, j), adj_.coeffRef(i, j));
-  }
-
-  /**
-   * Get coefficient of eigen matrices
-   * @param i Column index to slice
-   */
-  inline auto coeff(Eigen::Index i) const {
-    return vari_value<double>(val_.coeffRef(i), adj_.coeffRef(i));
-  }
-
-  /**
-   * Get coefficient of eigen matrices
-   * @param i Column index to slice
-   */
-  inline auto operator()(Eigen::Index i) const { return this->coeff(i); }
-
-  /**
-   * Get coefficient of eigen matrices
-   * @param i Row index
-   * @param j Column index
-   */
-  inline const auto operator()(Eigen::Index i, Eigen::Index j) const {
-    return this->coeff(i, j);
-  }
-
-  /**
    * Insertion operator for vari. Prints the current value and
    * the adjoint value.
    *
@@ -444,7 +727,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
   }
 
  private:
-  template <typename>
+  template <typename, typename>
   friend class var_value;
 };
 
@@ -536,15 +819,35 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
   /**
    * Return the number of rows for this class's `val_` member
    */
-  const Eigen::Index rows() const { return val_.rows(); }
+  Eigen::Index rows() const { return val_.rows(); }
   /**
    * Return the number of columns for this class's `val_` member
    */
-  const Eigen::Index cols() const { return val_.cols(); }
+  Eigen::Index cols() const { return val_.cols(); }
   /**
    * Return the size of this class's `val_` member
    */
-  const Eigen::Index size() const { return val_.size(); }
+  Eigen::Index size() const { return val_.size(); }
+
+  /**
+   * Return a constant reference to the value of this vari.
+   *
+   * @return The value of this vari.
+   */
+  inline const auto& val() const { return val_; }
+  inline auto& val_op() { return val_; }
+
+  /**
+   * Return a reference to the derivative of the root expression with
+   * respect to this expression.  This method only works
+   * after one of the `grad()` methods has been
+   * called.
+   *
+   * @return Adjoint for this vari.
+   */
+  inline auto& adj() { return adj_; }
+  inline auto& adj() const { return adj_; }
+  inline auto& adj_op() { return adj_; }
 
   void chain() {}
   /**
@@ -588,12 +891,9 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
   }
 
  private:
-  template <typename>
+  template <typename, typename>
   friend class var_value;
 };
-
-// For backwards compatability the default is double
-using vari = vari_value<double>;
 
 }  // namespace math
 }  // namespace stan

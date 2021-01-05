@@ -1,6 +1,9 @@
 #include <stan/math/prim/meta.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
+#ifdef STAN_OPENCL
+#include <stan/math/opencl/pinned_matrix.hpp>
+#endif
 
 TEST(MathMetaPrim, ref_type_non_eigen) {
   using stan::ref_type_t;
@@ -98,6 +101,8 @@ TEST(MathMetaPrim, ref_type_eigen_expression) {
   EXPECT_TRUE((std::is_same<plain_type_t<decltype(a)>,
                             ref_type_t<decltype(a)&&>>::value));
 }
+
+#ifdef STAN_OPENCL
 
 TEST(MathMetaPrim, ref_type_for_opencl_for_opencl_non_eigen) {
   using stan::ref_type_for_opencl_t;
@@ -214,11 +219,11 @@ TEST(MathMetaPrim, ref_type_for_opencl_eigen_non_contiguous) {
   EXPECT_MATRIX_EQ(c_ref1, c);
   EXPECT_MATRIX_EQ(c_ref2, c);
   EXPECT_MATRIX_EQ(c_ref3, c);
-  EXPECT_TRUE((std::is_same<Eigen::MatrixXd,
+  EXPECT_TRUE((std::is_same<stan::math::pinned_matrix<Eigen::MatrixXd>,
                             ref_type_for_opencl_t<decltype(a)&&>>::value));
-  EXPECT_TRUE((std::is_same<Eigen::MatrixXd,
+  EXPECT_TRUE((std::is_same<stan::math::pinned_matrix<Eigen::MatrixXd>,
                             ref_type_for_opencl_t<decltype(b)&&>>::value));
-  EXPECT_TRUE((std::is_same<Eigen::MatrixXd,
+  EXPECT_TRUE((std::is_same<stan::math::pinned_matrix<Eigen::MatrixXd>,
                             ref_type_for_opencl_t<decltype(c)&&>>::value));
 }
 
@@ -237,13 +242,18 @@ TEST(MathMetaPrim, ref_type_for_opencl_eigen_expression) {
   EXPECT_MATRIX_EQ(a_ref2, a_eval);
   EXPECT_MATRIX_EQ(a_ref3, a_eval);
 
-  EXPECT_TRUE((std::is_same<plain_type_t<decltype(a)>,
-                            ref_type_for_opencl_t<decltype(a)>>::value));
-  EXPECT_TRUE((std::is_same<plain_type_t<decltype(a)>,
-                            ref_type_for_opencl_t<decltype(a)&>>::value));
-  EXPECT_TRUE((std::is_same<plain_type_t<decltype(a)>,
-                            ref_type_for_opencl_t<decltype(a)&&>>::value));
+  EXPECT_TRUE(
+      (std::is_same<stan::math::pinned_matrix<plain_type_t<decltype(a)>>,
+                    ref_type_for_opencl_t<decltype(a)>>::value));
+  EXPECT_TRUE(
+      (std::is_same<stan::math::pinned_matrix<plain_type_t<decltype(a)>>,
+                    ref_type_for_opencl_t<decltype(a)&>>::value));
+  EXPECT_TRUE(
+      (std::is_same<stan::math::pinned_matrix<plain_type_t<decltype(a)>>,
+                    ref_type_for_opencl_t<decltype(a)&&>>::value));
 }
+
+#endif
 
 TEST(MathMetaPrim, ref_type_if_test) {
   using stan::plain_type_t;

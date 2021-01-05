@@ -18,17 +18,27 @@ namespace stan {
 namespace math {
 
 // NegBinomial(n|mu, phi)  [mu >= 0; phi > 0;  n >= 0]
-template <bool propto, typename T_n, typename T_location, typename T_precision>
+template <bool propto, typename T_n, typename T_location, typename T_precision,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_n, T_location, T_precision>* = nullptr>
 return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
     const T_n& n, const T_location& mu, const T_precision& phi) {
   using T_partials_return = partials_return_t<T_n, T_location, T_precision>;
   using std::log;
+  using T_n_ref = ref_type_t<T_n>;
+  using T_mu_ref = ref_type_t<T_location>;
+  using T_phi_ref = ref_type_t<T_precision>;
   static const char* function = "neg_binomial_2_lpmf";
-  check_nonnegative(function, "Failures variable", n);
-  check_positive_finite(function, "Location parameter", mu);
-  check_positive_finite(function, "Precision parameter", phi);
   check_consistent_sizes(function, "Failures variable", n, "Location parameter",
                          mu, "Precision parameter", phi);
+
+  T_n_ref n_ref = n;
+  T_mu_ref mu_ref = mu;
+  T_phi_ref phi_ref = phi;
+
+  check_nonnegative(function, "Failures variable", n_ref);
+  check_positive_finite(function, "Location parameter", mu_ref);
+  check_positive_finite(function, "Precision parameter", phi_ref);
 
   if (size_zero(n, mu, phi)) {
     return 0.0;
@@ -38,11 +48,11 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
   }
 
   T_partials_return logp(0.0);
-  operands_and_partials<T_location, T_precision> ops_partials(mu, phi);
+  operands_and_partials<T_mu_ref, T_phi_ref> ops_partials(mu_ref, phi_ref);
 
-  scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_location> mu_vec(mu);
-  scalar_seq_view<T_precision> phi_vec(phi);
+  scalar_seq_view<T_n_ref> n_vec(n_ref);
+  scalar_seq_view<T_mu_ref> mu_vec(mu_ref);
+  scalar_seq_view<T_phi_ref> phi_vec(phi_ref);
   size_t size_mu = stan::math::size(mu);
   size_t size_phi = stan::math::size(phi);
   size_t size_mu_phi = max_size(mu, phi);
@@ -88,18 +98,18 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
 
     if (!is_constant_all<T_location>::value) {
       ops_partials.edge1_.partials_[i]
-          += n_vec[i] / mu_val[i] - (n_vec[i] + phi_val[i]) / (mu_plus_phi[i]);
+          += n_vec[i] / mu_val[i] - (n_vec[i] + phi_val[i]) / mu_plus_phi[i];
     }
     if (!is_constant_all<T_precision>::value) {
       T_partials_return log_term;
       if (mu_val[i] < phi_val[i]) {
-        log_term = log1p(-mu_val[i] / (mu_plus_phi[i]));
+        log_term = log1p(-mu_val[i] / mu_plus_phi[i]);
       } else {
         log_term = log_phi[i] - log_mu_plus_phi[i];
       }
       ops_partials.edge2_.partials_[i]
-          += (mu_val[i] - n_vec[i]) / (mu_plus_phi[i]) + log_term
-             - (digamma(phi_val[i]) - digamma(n_plus_phi[i]));
+          += (mu_val[i] - n_vec[i]) / mu_plus_phi[i] + log_term
+             - digamma(phi_val[i]) + digamma(n_plus_phi[i]);
     }
   }
   return ops_partials.build(logp);

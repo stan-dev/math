@@ -3,8 +3,8 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
-#include <stan/math/rev/functor/reverse_pass_callback.hpp>
-#include <stan/math/rev/functor/arena_matrix.hpp>
+#include <stan/math/rev/core/reverse_pass_callback.hpp>
+#include <stan/math/rev/core/arena_matrix.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
 #include <stan/math/prim/fun/softmax.hpp>
@@ -24,22 +24,24 @@ namespace math {
  * @return Softmax of the input.
  * @throw std::domain_error If the input vector is size 0.
  */
+template <typename Mat, require_rev_matrix_t<Mat>* = nullptr>
+inline auto softmax(const Mat& alpha) {
+  using mat_plain = plain_type_t<Mat>;
+  using ret_type = return_var_matrix_t<Mat>;
+  if (alpha.size() == 0) {
+    return ret_type(alpha);
+  }
+  arena_t<mat_plain> alpha_arena = alpha;
+  arena_t<Eigen::VectorXd> res_val = softmax(value_of(alpha_arena));
+  arena_t<ret_type> res = res_val;
 
-inline Eigen::Matrix<var, Eigen::Dynamic, 1> softmax(
-    const Eigen::Matrix<var, Eigen::Dynamic, 1>& alpha) {
-  check_nonzero_size("softmax", "alpha", alpha);
-
-  arena_matrix<Eigen::VectorXd> res_val = softmax(value_of(alpha));
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> res = res_val;
-  arena_matrix<Eigen::Matrix<var, Eigen::Dynamic, 1>> alpha_arena = alpha;
-
-  reverse_pass_callback([=]() mutable {
+  reverse_pass_callback([res_val, res, alpha_arena]() mutable {
     const auto& res_adj = to_ref(res.adj());
     alpha_arena.adj()
-        = -res_val * res_adj.dot(res_val) + res_val.cwiseProduct(res_adj);
+        += -res_val * res_adj.dot(res_val) + res_val.cwiseProduct(res_adj);
   });
 
-  return res;
+  return ret_type(res);
 }
 
 }  // namespace math

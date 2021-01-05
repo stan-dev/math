@@ -9,10 +9,10 @@ endef
 
 MATH ?=
 BOOST ?= $(MATH)lib/boost_1.72.0
-EIGEN ?= $(MATH)lib/eigen_3.3.7
+EIGEN ?= $(MATH)lib/eigen_3.3.9
 OPENCL ?= $(MATH)lib/opencl_2.2.0
 TBB ?= $(MATH)lib/tbb_2019_U8
-SUNDIALS ?= $(MATH)lib/sundials_5.2.0
+SUNDIALS ?= $(MATH)lib/sundials_5.6.1
 BENCHMARK ?= $(MATH)lib/benchmark_1.5.1
 GTEST ?= $(BENCHMARK)/googletest/googletest
 CPPLINT ?= $(MATH)lib/cpplint_1.4.5
@@ -107,6 +107,8 @@ clean-sundials:
 # the TBB as this make has proper POSIX extensions needed by the used downstream
 # TBB makefiles.
 
+ifndef TBB_LIB
+
 ifeq ($(CXX_TYPE),mingw32-gcc)
   TBB_CXX_TYPE ?= gcc
 endif
@@ -185,6 +187,8 @@ $(TBB_BIN)/tbbmalloc_proxy.dll: $(TBB_BIN)/tbbmalloc.def
 clean-tbb:
 	@echo '  cleaning Intel TBB targets'
 	$(RM) -rf $(TBB_BIN)
+
+endif
 
 ############################################################
 # MPI build rules

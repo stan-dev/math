@@ -42,7 +42,9 @@ namespace math {
  * @param kappa (Sequence of) precision parameter(s)
  * @return The log of the product of densities.
  */
-template <bool propto, typename T_y, typename T_loc, typename T_prec>
+template <bool propto, typename T_y, typename T_loc, typename T_prec,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_loc, T_prec>* = nullptr>
 return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
                                                        const T_loc& mu,
                                                        const T_prec& kappa) {
@@ -106,42 +108,25 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
   operands_and_partials<T_y_ref, T_mu_ref, T_kappa_ref> ops_partials(
       y_ref, mu_ref, kappa_ref);
   if (!is_constant_all<T_y>::value) {
-    if (is_vector<T_y>::value) {
-      ops_partials.edge1_.partials_ = forward_as<T_partials_array>(
-          (mukappa - 1) / y_val + (kappa_val - mukappa - 1) / (y_val - 1));
-    } else {
-      ops_partials.edge1_.partials_[0] = sum(
-          (mukappa - 1) / y_val + (kappa_val - mukappa - 1) / (y_val - 1));
-    }
+    ops_partials.edge1_.partials_
+        = (mukappa - 1) / y_val + (kappa_val - mukappa - 1) / (y_val - 1);
   }
   if (!is_constant_all<T_loc, T_prec>::value) {
     auto digamma_mukappa
-        = to_ref_if < !is_constant_all<T_loc>::value
-          && !is_constant_all<T_prec>::value > (digamma(mukappa));
-    auto digamma_kappa_mukappa
-        = to_ref_if < !is_constant_all<T_loc>::value
-          && !is_constant_all<T_prec>::value > (digamma(kappa_val - mukappa));
+        = to_ref_if<(!is_constant_all<T_loc>::value
+                     && !is_constant_all<T_prec>::value)>(digamma(mukappa));
+    auto digamma_kappa_mukappa = to_ref_if<(
+        !is_constant_all<T_loc>::value && !is_constant_all<T_prec>::value)>(
+        digamma(kappa_val - mukappa));
     if (!is_constant_all<T_loc>::value) {
-      if (is_vector<T_loc>::value) {
-        ops_partials.edge2_.partials_ = forward_as<T_partials_array>(
-            kappa_val
-            * (digamma_kappa_mukappa - digamma_mukappa + log_y - log1m_y));
-      } else {
-        ops_partials.edge2_.partials_[0] = sum(
-            kappa_val
-            * (digamma_kappa_mukappa - digamma_mukappa + log_y - log1m_y));
-      }
+      ops_partials.edge2_.partials_
+          = kappa_val
+            * (digamma_kappa_mukappa - digamma_mukappa + log_y - log1m_y);
     }
     if (!is_constant_all<T_prec>::value) {
-      if (is_vector<T_prec>::value) {
-        ops_partials.edge3_.partials_ = forward_as<T_partials_array>(
-            digamma(kappa_val) + mu_val * (log_y - digamma_mukappa)
-            + (1 - mu_val) * (log1m_y - digamma_kappa_mukappa));
-      } else {
-        ops_partials.edge3_.partials_[0]
-            = sum(digamma(kappa_val) + mu_val * (log_y - digamma_mukappa)
-                  + (1 - mu_val) * (log1m_y - digamma_kappa_mukappa));
-      }
+      ops_partials.edge3_.partials_
+          = digamma(kappa_val) + mu_val * (log_y - digamma_mukappa)
+            + (1 - mu_val) * (log1m_y - digamma_kappa_mukappa);
     }
   }
   return ops_partials.build(logp);

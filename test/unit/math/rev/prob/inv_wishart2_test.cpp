@@ -17,7 +17,7 @@ class AgradDistributionsInvWishart : public ::testing::Test {
  protected:
   virtual void SetUp() {
     Y1.resize(2, 2);
-    Y1 << 2.011108, -11.20661, -11.206611, 112.94139;
+    Y1 << 2.011108, -11.20661, -11.20661, 112.94139;
     Y2.resize(2, 2);
     Y2 << 13.4, 12.2, 12.2, 11.5;
 
@@ -29,6 +29,8 @@ class AgradDistributionsInvWishart : public ::testing::Test {
     S2.resize(2, 2);
     S2 << 3.0, 1.4, 1.4, 7.0;
   }
+
+  virtual void TearDown() { stan::math::recover_memory(); }
 
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Y1;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Y2;
@@ -78,7 +80,7 @@ TEST_F(AgradDistributionsInvWishart, ProptoSigma) {
 TEST(InvWishart, check_varis_on_stack) {
   using stan::math::to_var;
   Eigen::MatrixXd W(2, 2);
-  W << 2.011108, -11.20661, -11.206611, 112.94139;
+  W << 2.011108, -11.20661, -11.20661, 112.94139;
 
   double nu = 3;
 
@@ -114,4 +116,6 @@ TEST(InvWishart, check_varis_on_stack) {
       stan::math::inv_wishart_log<true>(W, to_var(nu), S));
   test::check_varis_on_stack(
       stan::math::inv_wishart_log<true>(W, nu, to_var(S)));
+
+  stan::math::recover_memory();
 }

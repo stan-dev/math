@@ -64,6 +64,21 @@ inline std::complex<var> log(const std::complex<var>& z) {
   return internal::complex_log(z);
 }
 
+/**
+ * Return the natural log of the elements of x
+ *
+ * @tparam T type of x
+ * @param x argument
+ * @return elementwise natural log of x
+ */
+template <typename T, require_var_matrix_t<T>* = nullptr>
+inline auto log(const T& x) {
+  return make_callback_var(
+      x.val().array().log().matrix(), [x](const auto& vi) mutable {
+        x.adj() += (vi.adj().array() / x.val().array()).matrix();
+      });
+}
+
 }  // namespace math
 }  // namespace stan
 #endif
