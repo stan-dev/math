@@ -64,12 +64,12 @@ return_type_t<T_y, T_dof, T_scale> wishart_lpdf(const T_y& W, const T_dof& nu,
   check_greater(function, "Degrees of freedom parameter", nu_ref, k - 1);
   check_square(function, "random variable", W_ref);
   check_square(function, "scale parameter", S_ref);
+  check_symmetric(function, "random variable", W_ref);
+  check_symmetric(function, "scale parameter", S_ref);
 
-  LDLT_factor<value_type_t<T_y>, Eigen::Dynamic, Eigen::Dynamic> ldlt_W(W_ref);
+  LDLT_factor<scalar_type_t<T_y>, Dynamic, Dynamic> ldlt_W(W_ref);
   check_ldlt_factor(function, "LDLT_Factor of random variable", ldlt_W);
-
-  LDLT_factor<value_type_t<T_scale>, Eigen::Dynamic, Eigen::Dynamic> ldlt_S(
-      S_ref);
+  LDLT_factor<scalar_type_t<T_scale>, Dynamic, Dynamic> ldlt_S(S_ref);
   check_ldlt_factor(function, "LDLT_Factor of scale parameter", ldlt_S);
 
   return_type_t<T_y, T_dof, T_scale> lp(0.0);
@@ -88,9 +88,7 @@ return_type_t<T_y, T_dof, T_scale> wishart_lpdf(const T_y& W, const T_dof& nu,
 
   if (include_summand<propto, T_scale, T_y>::value) {
     Matrix<return_type_t<T_y, T_scale>, Dynamic, Dynamic> Sinv_W(
-        mdivide_left_ldlt(ldlt_S,
-                          static_cast<plain_type_t<T_y>>(
-                              W_ref.template selfadjointView<Lower>())));
+        mdivide_left_ldlt(ldlt_S, W_ref));
     lp -= 0.5 * trace(Sinv_W);
   }
 
