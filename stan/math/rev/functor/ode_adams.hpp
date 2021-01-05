@@ -53,9 +53,8 @@ ode_adams_tol_impl(const char* function_name, const F& f, const T_y0& y0,
                    const T_t0& t0, const std::vector<T_ts>& ts,
                    double relative_tolerance, double absolute_tolerance,
                    long int max_num_steps,  // NOLINT(runtime/int)
-                   std::ostream* msgs,
-                   double absolute_tolerance_B, double absolute_tolerance_QB,
-                   long int steps_checkpoint,
+                   std::ostream* msgs, double absolute_tolerance_B,
+                   double absolute_tolerance_QB, long int steps_checkpoint,
                    const T_Args&... args) {
   /*
   const auto& args_ref_tuple = std::make_tuple(to_ref(args)...);
@@ -70,7 +69,9 @@ ode_adams_tol_impl(const char* function_name, const F& f, const T_y0& y0,
       args_ref_tuple);
   */
   return ode_bdf_adjoint_tol(f, y0, t0, ts, relative_tolerance,
-                             absolute_tolerance, max_num_steps, msgs, absolute_tolerance_B, absolute_tolerance_QB, steps_checkpoint, args...);
+                             absolute_tolerance, max_num_steps, msgs,
+                             absolute_tolerance_B, absolute_tolerance_QB,
+                             steps_checkpoint, args...);
 }
 
 /**
@@ -120,7 +121,9 @@ ode_adams_tol(const F& f, const T_y0& y0, const T_t0& t0,
   long int steps_checkpoint = 100;
 
   return ode_adams_tol_impl("ode_adams_tol", f, y0, t0, ts, relative_tolerance,
-                            absolute_tolerance, max_num_steps, msgs, absolute_tolerance_B, absolute_tolerance_QB, steps_checkpoint, args...);
+                            absolute_tolerance, max_num_steps, msgs,
+                            absolute_tolerance_B, absolute_tolerance_QB,
+                            steps_checkpoint, args...);
 }
 
 /**
@@ -168,7 +171,9 @@ ode_adams(const F& f, const T_y0& y0, const T_t0& t0,
   long int steps_checkpoint = 100;
 
   return ode_adams_tol_impl("ode_adams", f, y0, t0, ts, relative_tolerance,
-                            absolute_tolerance, max_num_steps, msgs, absolute_tolerance_B, absolute_tolerance_QB, steps_checkpoint, args...);
+                            absolute_tolerance, max_num_steps, msgs,
+                            absolute_tolerance_B, absolute_tolerance_QB,
+                            steps_checkpoint, args...);
 }
 
 }  // namespace math

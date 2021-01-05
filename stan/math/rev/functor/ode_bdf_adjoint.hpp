@@ -51,9 +51,9 @@ ode_bdf_adjoint_tol_impl(const char* function_name, const F& f, const T_y0& y0,
                          const T_t0& t0, const std::vector<T_ts>& ts,
                          double relative_tolerance, double absolute_tolerance,
                          long int max_num_steps, std::ostream* msgs,
-                         double absolute_tolerance_B, double absolute_tolerance_QB,
-                         long int steps_checkpoint,
-                         const T_Args&... args) {
+                         double absolute_tolerance_B,
+                         double absolute_tolerance_QB,
+                         long int steps_checkpoint, const T_Args&... args) {
   /*
   const auto& args_ref_tuple = std::make_tuple(to_ref(args)...);
   return apply(
@@ -68,9 +68,9 @@ ode_bdf_adjoint_tol_impl(const char* function_name, const F& f, const T_y0& y0,
   auto integrator
       = new stan::math::cvodes_integrator_adjoint_vari<CV_BDF, F, T_y0, T_t0,
                                                        T_ts, T_Args...>(
-          function_name, f, y0, t0, ts,
-          relative_tolerance, absolute_tolerance, absolute_tolerance_B, absolute_tolerance_QB,
-          steps_checkpoint, max_num_steps, msgs, args...);
+          function_name, f, y0, t0, ts, relative_tolerance, absolute_tolerance,
+          absolute_tolerance_B, absolute_tolerance_QB, steps_checkpoint,
+          max_num_steps, msgs, args...);
   return (*integrator)();
 }
 
@@ -114,16 +114,13 @@ std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, T_Args...>,
 ode_bdf_adjoint_tol(const F& f, const T_y0& y0, const T_t0& t0,
                     const std::vector<T_ts>& ts, double relative_tolerance,
                     double absolute_tolerance, long int max_num_steps,
-                    std::ostream* msgs,
-                    double absolute_tolerance_B, double absolute_tolerance_QB,
-                    long int steps_checkpoint,
+                    std::ostream* msgs, double absolute_tolerance_B,
+                    double absolute_tolerance_QB, long int steps_checkpoint,
                     const T_Args&... args) {
-  return ode_bdf_adjoint_tol_impl("ode_bdf_adjoint_tol", f, y0, t0, ts,
-                                  relative_tolerance, absolute_tolerance,
-                                  max_num_steps, msgs,
-                                  absolute_tolerance_B, absolute_tolerance_QB,
-                                  steps_checkpoint,
-                                  args...);
+  return ode_bdf_adjoint_tol_impl(
+      "ode_bdf_adjoint_tol", f, y0, t0, ts, relative_tolerance,
+      absolute_tolerance, max_num_steps, msgs, absolute_tolerance_B,
+      absolute_tolerance_QB, steps_checkpoint, args...);
 }
 
 /**
@@ -174,12 +171,10 @@ ode_bdf_adjoint(const F& f, const T_y0& y0, const T_t0& t0,
   long int steps_checkpoint = 150;
   long int max_num_steps = 1e8;
 
-  return ode_bdf_adjoint_tol_impl("ode_bdf_adjoint", f, y0, t0, ts,
-                                  relative_tolerance, absolute_tolerance,
-                                  max_num_steps, msgs,
-                                  absolute_tolerance_B, absolute_tolerance_QB,
-                                  steps_checkpoint,
-                                  args...);
+  return ode_bdf_adjoint_tol_impl(
+      "ode_bdf_adjoint", f, y0, t0, ts, relative_tolerance, absolute_tolerance,
+      max_num_steps, msgs, absolute_tolerance_B, absolute_tolerance_QB,
+      steps_checkpoint, args...);
 }
 
 }  // namespace math
