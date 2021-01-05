@@ -32,27 +32,26 @@ namespace math {
  * @param[in] lb lower bound on constrained output
  * @return lower bound constrained value corresponding to inputs
  */
-template <typename T, typename L,
-	  require_stan_scalar_t<L>* = nullptr>
-inline promote_scalar_t<return_type_t<T, L>, T>
-lb_constrain(const T& x, const L& lb) {
+template <typename T, typename L, require_stan_scalar_t<L>* = nullptr>
+inline promote_scalar_t<return_type_t<T, L>, T> lb_constrain(const T& x,
+                                                             const L& lb) {
   if (unlikely(value_of_rec(lb) == -INFTY)) {
     return x;
   }
   return add(exp(x), lb);
 }
 
-template <typename T, typename L,
-	  require_all_matrix_t<T, L>* = nullptr,
-	  require_all_not_st_var<T, L>* = nullptr>
+template <typename T, typename L, require_all_matrix_t<T, L>* = nullptr,
+          require_all_not_st_var<T, L>* = nullptr>
 inline auto lb_constrain(const T& x, const L& lb) {
-  promote_scalar_t<return_type_t<T, L>, plain_type_t<T>> ret(x.rows(), x.cols());
-  for(size_t j = 0; j < x.cols(); ++j) {
-    for(size_t i = 0; i < x.rows(); ++i) {
+  promote_scalar_t<return_type_t<T, L>, plain_type_t<T>> ret(x.rows(),
+                                                             x.cols());
+  for (size_t j = 0; j < x.cols(); ++j) {
+    for (size_t i = 0; i < x.rows(); ++i) {
       if (unlikely(lb.coeff(i, j) == -INFTY)) {
-	ret.coeffRef(i, j) = x.coeff(i, j);
+        ret.coeffRef(i, j) = x.coeff(i, j);
       } else {
-	ret.coeffRef(i, j) = exp(x.coeff(i, j)) + lb.coeff(i, j);
+        ret.coeffRef(i, j) = exp(x.coeff(i, j)) + lb.coeff(i, j);
       }
     }
   }
@@ -76,10 +75,9 @@ inline auto lb_constrain(const T& x, const L& lb) {
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename L,
-	  require_stan_scalar_t<L>* = nullptr>
-inline promote_scalar_t<return_type_t<T, L>, T>
-lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
+template <typename T, typename L, require_stan_scalar_t<L>* = nullptr>
+inline promote_scalar_t<return_type_t<T, L>, T> lb_constrain(
+    const T& x, const L& lb, return_type_t<T, L>& lp) {
   if (unlikely(value_of_rec(lb) == -INFTY)) {
     return x;
   }
@@ -87,18 +85,18 @@ lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
   return add(exp(x), lb);
 }
 
-template <typename T, typename L,
-	  require_all_matrix_t<T, L>* = nullptr,
-	  require_all_not_st_var<T, L>* = nullptr>
+template <typename T, typename L, require_all_matrix_t<T, L>* = nullptr,
+          require_all_not_st_var<T, L>* = nullptr>
 inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
-  promote_scalar_t<return_type_t<T, L>, plain_type_t<T>> ret(x.rows(), x.cols());
-  for(size_t j = 0; j < x.cols(); ++j) {
-    for(size_t i = 0; i < x.rows(); ++i) {
+  promote_scalar_t<return_type_t<T, L>, plain_type_t<T>> ret(x.rows(),
+                                                             x.cols());
+  for (size_t j = 0; j < x.cols(); ++j) {
+    for (size_t i = 0; i < x.rows(); ++i) {
       if (unlikely(lb.coeff(i, j) == -INFTY)) {
-	ret.coeffRef(i, j) = x.coeff(i, j);
+        ret.coeffRef(i, j) = x.coeff(i, j);
       } else {
-	ret.coeffRef(i, j) = exp(x.coeff(i, j)) + lb.coeff(i, j);
-	lp += x.coeff(i, j);
+        ret.coeffRef(i, j) = exp(x.coeff(i, j)) + lb.coeff(i, j);
+        lp += x.coeff(i, j);
       }
     }
   }

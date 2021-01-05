@@ -33,27 +33,26 @@ namespace math {
  * @param[in] ub upper bound
  * @return matrix constrained to have upper bound
  */
-template <typename T, typename L,
-	  require_stan_scalar_t<L>* = nullptr>
-inline promote_scalar_t<return_type_t<T, L>, T>
-ub_constrain(const T& x, const L& ub) {
+template <typename T, typename L, require_stan_scalar_t<L>* = nullptr>
+inline promote_scalar_t<return_type_t<T, L>, T> ub_constrain(const T& x,
+                                                             const L& ub) {
   if (unlikely(value_of_rec(ub) == INFTY)) {
     return x;
   }
   return subtract(ub, exp(x));
 }
 
-template <typename T, typename L,
-	  require_all_matrix_t<T, L>* = nullptr,
-	  require_all_not_st_var<T, L>* = nullptr>
+template <typename T, typename L, require_all_matrix_t<T, L>* = nullptr,
+          require_all_not_st_var<T, L>* = nullptr>
 inline auto ub_constrain(const T& x, const L& ub) {
-  promote_scalar_t<return_type_t<T, L>, plain_type_t<T>> ret(x.rows(), x.cols());
-  for(size_t j = 0; j < x.cols(); ++j) {
-    for(size_t i = 0; i < x.rows(); ++i) {
+  promote_scalar_t<return_type_t<T, L>, plain_type_t<T>> ret(x.rows(),
+                                                             x.cols());
+  for (size_t j = 0; j < x.cols(); ++j) {
+    for (size_t i = 0; i < x.rows(); ++i) {
       if (unlikely(value_of_rec(ub.coeff(i, j)) == INFTY)) {
-	ret.coeffRef(i, j) = x.coeff(i, j);
+        ret.coeffRef(i, j) = x.coeff(i, j);
       } else {
-	ret.coeffRef(i, j) = ub.coeff(i, j) - exp(x.coeff(i, j));
+        ret.coeffRef(i, j) = ub.coeff(i, j) - exp(x.coeff(i, j));
       }
     }
   }
@@ -84,10 +83,9 @@ inline auto ub_constrain(const T& x, const L& ub) {
  * @param[in,out] lp log density
  * @return scalar constrained to have upper bound
  */
-template <typename T, typename L,
-	  require_stan_scalar_t<L>* = nullptr>
-inline promote_scalar_t<return_type_t<T, L>, T>
-ub_constrain(const T& x, const L& ub, return_type_t<T, L>& lp) {
+template <typename T, typename L, require_stan_scalar_t<L>* = nullptr>
+inline promote_scalar_t<return_type_t<T, L>, T> ub_constrain(
+    const T& x, const L& ub, return_type_t<T, L>& lp) {
   if (unlikely(value_of_rec(ub) == INFTY)) {
     return x;
   }
@@ -95,18 +93,18 @@ ub_constrain(const T& x, const L& ub, return_type_t<T, L>& lp) {
   return subtract(ub, exp(x));
 }
 
-template <typename T, typename L,
-	  require_all_matrix_t<T, L>* = nullptr,
-	  require_all_not_st_var<T, L>* = nullptr>
+template <typename T, typename L, require_all_matrix_t<T, L>* = nullptr,
+          require_all_not_st_var<T, L>* = nullptr>
 inline auto ub_constrain(const T& x, const L& ub, return_type_t<T, L>& lp) {
-  promote_scalar_t<return_type_t<T, L>, plain_type_t<T>> ret(x.rows(), x.cols());
-  for(size_t j = 0; j < x.cols(); ++j) {
-    for(size_t i = 0; i < x.rows(); ++i) {
+  promote_scalar_t<return_type_t<T, L>, plain_type_t<T>> ret(x.rows(),
+                                                             x.cols());
+  for (size_t j = 0; j < x.cols(); ++j) {
+    for (size_t i = 0; i < x.rows(); ++i) {
       if (unlikely(value_of_rec(ub.coeff(i, j)) == INFTY)) {
-	ret.coeffRef(i, j) = x.coeff(i, j);
+        ret.coeffRef(i, j) = x.coeff(i, j);
       } else {
-	ret.coeffRef(i, j) = ub.coeff(i, j) - exp(x.coeff(i, j));
-	lp += x.coeff(i, j);
+        ret.coeffRef(i, j) = ub.coeff(i, j) - exp(x.coeff(i, j));
+        lp += x.coeff(i, j);
       }
     }
   }

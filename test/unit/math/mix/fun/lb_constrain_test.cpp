@@ -56,7 +56,6 @@ TEST(mathMixMatFun, lb_mat_constrain) {
   auto f3 = [](const auto& x, const auto& lb) {
     return lb_constrain_test::g3(x, lb);
   };
-  
 
   Eigen::MatrixXd A(Eigen::MatrixXd::Random(2, 2));
   Eigen::MatrixXd lbm(Eigen::MatrixXd::Random(2, 2));

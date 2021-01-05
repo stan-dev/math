@@ -35,8 +35,8 @@ TEST(mathMixScalFun, ub_constrain) {
 
 TEST(mathMixMatFun, ub_mat_constrain) {
   using stan::scalar_type_t;
-  using stan::math::ub_constrain;
   using stan::math::promote_scalar_t;
+  using stan::math::ub_constrain;
 
   auto f1 = [](const auto& x, const auto& ub) {
     return ub_constrain_test::g1(x, ub);
@@ -49,7 +49,6 @@ TEST(mathMixMatFun, ub_mat_constrain) {
   auto f3 = [](const auto& x, const auto& ub) {
     return ub_constrain_test::g3(x, ub);
   };
-  
 
   Eigen::MatrixXd A(Eigen::MatrixXd::Random(2, 2));
   Eigen::MatrixXd ubm(Eigen::MatrixXd::Random(2, 2));
