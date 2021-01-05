@@ -25,7 +25,7 @@ namespace math {
 template <
     typename T_a, typename T_b,
     require_all_nonscalar_prim_or_rev_kernel_expression_t<T_a, T_b>* = nullptr,
-    require_any_var_t<T_a, T_b>* = nullptr>
+    require_return_type_t<is_var, T_a, T_b>* = nullptr>
 inline auto multiply(const T_a& a, const T_b& b) {
   check_size_match("multiply ((OpenCL))", "A.cols()", a.cols(), "B.rows()",
                    b.rows());
@@ -76,7 +76,7 @@ inline auto operator*(const T_a& a, const T_b& b) {
  */
 template <typename T1, typename T2, require_stan_scalar_t<T1>* = nullptr,
           require_all_nonscalar_prim_or_rev_kernel_expression_t<T2>* = nullptr,
-          require_any_var_t<T1, T2>* = nullptr>
+          require_return_type_t<is_var, T1, T2>* = nullptr>
 inline auto multiply(const T1& a, const T2& b) {
   const arena_t<T1>& a_arena = a;
   const arena_t<T2>& b_arena = b;
@@ -108,7 +108,7 @@ inline auto multiply(const T1& a, const T2& b) {
  */
 template <typename T1, typename T2, require_stan_scalar_t<T2>* = nullptr,
           require_all_nonscalar_prim_or_rev_kernel_expression_t<T1>* = nullptr,
-          require_any_var_t<T1, T2>* = nullptr>
+          require_return_type_t<is_var, T1, T2>* = nullptr>
 inline auto multiply(const T1& a, const T2& b) {
   return multiply(b, a);
 }
