@@ -183,9 +183,8 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
    * @param condition whether the state is ok.
    * @throws std::domain_error condition is false (chack failed).
    */
-  void operator=(bool condition); //implemented in multi_result_kernel.hpp
+  void operator=(bool condition);  // implemented in multi_result_kernel.hpp
 };
-
 
 namespace internal {
 template <typename T>
