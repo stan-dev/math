@@ -555,7 +555,7 @@ class cvodes_integrator_adjoint_vari : public vari {
       if (t_final != t_init) {
         if (t0_vars_ + ts_vars_ + y0_vars_ + args_vars_ > 0) {
           int ncheck;
-          
+
           int error_code
               = CVodeF(memory->cvodes_mem_, t_final, memory->nv_state_, &t_init,
                        CV_NORMAL, &ncheck);
@@ -567,12 +567,10 @@ class cvodes_integrator_adjoint_vari : public vari {
           } else {
             check_flag_sundials(error_code, "CVodeF");
           }
-          
-        } else {
 
-          int error_code
-              = CVode(memory->cvodes_mem_, t_final, memory->nv_state_, &t_init,
-                       CV_NORMAL);
+        } else {
+          int error_code = CVode(memory->cvodes_mem_, t_final,
+                                 memory->nv_state_, &t_init, CV_NORMAL);
 
           if (error_code == CV_TOO_MUCH_WORK) {
             throw_domain_error(function_name_, "", t_final,
@@ -581,7 +579,6 @@ class cvodes_integrator_adjoint_vari : public vari {
           } else {
             check_flag_sundials(error_code, "CVode");
           }
-          
         }
       }
 
@@ -712,8 +709,7 @@ class cvodes_integrator_adjoint_vari : public vari {
                 "CVodeQuadReInitB");
           }
 
-          int error_code
-              = CVodeB(memory->cvodes_mem_, t_final, CV_NORMAL);
+          int error_code = CVodeB(memory->cvodes_mem_, t_final, CV_NORMAL);
 
           if (error_code == CV_TOO_MUCH_WORK) {
             throw_domain_error(function_name_, "", t_final,
@@ -723,7 +719,8 @@ class cvodes_integrator_adjoint_vari : public vari {
             check_flag_sundials(error_code, "CVodeB");
           }
 
-          //check_flag_sundials(CVodeB(memory->cvodes_mem_, t_final, CV_NORMAL),
+          // check_flag_sundials(CVodeB(memory->cvodes_mem_, t_final,
+          // CV_NORMAL),
           //                    "CVodeB");
 
           check_flag_sundials(
