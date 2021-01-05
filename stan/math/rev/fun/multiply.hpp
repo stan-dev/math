@@ -18,6 +18,7 @@ namespace math {
  * @tparam T1 type of first matrix
  * @tparam T2 type of second matrix
  *
+ *
  * @param[in] A first matrix
  * @param[in] B second matrix
  * @return A * B
