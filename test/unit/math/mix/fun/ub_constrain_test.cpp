@@ -3,17 +3,17 @@
 
 namespace ub_constrain_test {
 template <typename T, typename U>
-stan::return_type_t<T, U> g1(const T& x, const U& ub) {
+auto g1(const T& x, const U& ub) {
   return stan::math::ub_constrain(x, ub);
 }
 template <typename T, typename U>
-stan::return_type_t<T, U> g2(const T& x, const U& ub) {
-  T lp = 0;
+auto g2(const T& x, const U& ub) {
+  stan::return_type_t<T, U> lp = 0;
   return stan::math::ub_constrain(x, ub, lp);
 }
 template <typename T, typename U>
-stan::return_type_t<T, U> g3(const T& x, const U& ub) {
-  T lp = 0;
+auto g3(const T& x, const U& ub) {
+  stan::return_type_t<T, U> lp = 0;
   stan::math::ub_constrain(x, ub, lp);
   return lp;
 }
@@ -35,56 +35,45 @@ TEST(mathMixScalFun, ub_constrain) {
 
 TEST(mathMixMatFun, ub_mat_constrain) {
   using stan::scalar_type_t;
-  using stan::math::promote_scalar_t;
   using stan::math::ub_constrain;
-  auto tester = [](const auto& x) { return ub_constrain(x, 3.0); };
+  using stan::math::promote_scalar_t;
 
-  auto promote_tester = [](const auto& x) {
-    using x_scalar = scalar_type_t<decltype(x)>;
-    x_scalar ub = 3.0;
-    return ub_constrain(x, ub);
+  auto f1 = [](const auto& x, const auto& ub) {
+    return ub_constrain_test::g1(x, ub);
   };
 
-  auto multi_promote_tester = [](const auto& x) {
-    using x_scalar = scalar_type_t<decltype(x)>;
-    using ub_mat_t = Eigen::Matrix<x_scalar, -1, -1>;
-    x_scalar ub = 3.0;
-    ub_mat_t ub_mat = ub_mat_t::Constant(x.rows(), x.cols(), ub);
-    return ub_constrain(x, ub_mat);
+  auto f2 = [](const auto& x, const auto& ub) {
+    return ub_constrain_test::g2(x, ub);
   };
+
+  auto f3 = [](const auto& x, const auto& ub) {
+    return ub_constrain_test::g3(x, ub);
+  };
+  
 
   Eigen::MatrixXd A(Eigen::MatrixXd::Random(2, 2));
-  stan::test::expect_ad(tester, A);
-  stan::test::expect_ad_matvar(tester, A);
-  stan::test::expect_ad(promote_tester, A);
-  stan::test::expect_ad_matvar(promote_tester, A);
-  stan::test::expect_ad_matvar(multi_promote_tester, A);
-}
+  Eigen::MatrixXd ubm(Eigen::MatrixXd::Random(2, 2));
+  ubm << 1.0, -5.0, stan::math::INFTY, 100.0;
 
-TEST(mathMixMatFun, ub_lp_mat_constrain) {
-  using stan::scalar_type_t;
-  using stan::math::promote_scalar_t;
-  using stan::math::ub_constrain;
-  auto ub_lp_promote_tester = [](const auto& x) {
-    using scalar_x = scalar_type_t<decltype(x)>;
-    scalar_x ub = 3.0;
-    scalar_x lp = 0;
-    stan::math::ub_constrain(x, ub, lp);
-    return lp;
-  };
-  auto multi_ub_lp_promote_tester = [](const auto& x) {
-    using x_scalar = scalar_type_t<decltype(x)>;
-    using ub_mat_t = Eigen::Matrix<x_scalar, -1, -1>;
-    x_scalar ub = 3.0;
-    ub_mat_t ub_mat = ub_mat_t::Constant(x.rows(), x.cols(), ub);
-    x_scalar lp = 0;
-    return ub_constrain(x, ub_mat, lp);
-  };
+  double ubd1 = -5.0;
+  double ubd2 = stan::math::INFTY;
 
-  Eigen::MatrixXd A(Eigen::MatrixXd::Random(2, 2));
-  stan::test::expect_ad(ub_lp_promote_tester, A);
-  stan::test::expect_ad_matvar(ub_lp_promote_tester, A);
-
-  stan::test::expect_ad(multi_ub_lp_promote_tester, A);
-  stan::test::expect_ad_matvar(multi_ub_lp_promote_tester, A);
+  stan::test::expect_ad(f1, A, ubm);
+  stan::test::expect_ad(f1, A, ubd1);
+  stan::test::expect_ad(f1, A, ubd2);
+  stan::test::expect_ad_matvar(f1, A, ubm);
+  stan::test::expect_ad_matvar(f1, A, ubd1);
+  stan::test::expect_ad_matvar(f1, A, ubd2);
+  stan::test::expect_ad(f2, A, ubm);
+  stan::test::expect_ad(f2, A, ubd1);
+  stan::test::expect_ad(f2, A, ubd2);
+  stan::test::expect_ad_matvar(f2, A, ubm);
+  stan::test::expect_ad_matvar(f2, A, ubd1);
+  stan::test::expect_ad_matvar(f2, A, ubd2);
+  stan::test::expect_ad(f3, A, ubm);
+  stan::test::expect_ad(f3, A, ubd1);
+  stan::test::expect_ad(f3, A, ubd2);
+  stan::test::expect_ad_matvar(f3, A, ubm);
+  stan::test::expect_ad_matvar(f3, A, ubd1);
+  stan::test::expect_ad_matvar(f3, A, ubd2);
 }
