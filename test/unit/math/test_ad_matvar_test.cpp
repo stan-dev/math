@@ -51,13 +51,26 @@ TEST(test_unit_math_test_ad_matvar, one_arg_bad_grads) {
 
 template <typename T1, typename T2>
 auto two_arg_bad_vals(const T1& x1, const T2& x2) {
-  return x2;
+  return stan::math::add(x1, x2);
 }
 
-template <typename T1, typename T2>
+template <typename T1, typename T2, stan::require_st_arithmetic<T1>* = nullptr>
 auto two_arg_bad_vals(const T1& x1, const stan::math::var_value<T2>& x2) {
-  return stan::math::make_callback_var(
-      x2.val() * 0, [x2](const auto& vi) mutable { x2.adj() += vi.adj(); });
+  auto ret_val = stan::math::add(x1, x2.val());
+  using ret_type = stan::return_var_matrix_t<decltype(ret_val), T1,
+                                             stan::math::var_value<T2>>;
+  stan::arena_t<ret_type> ret = stan::math::add(x1, x2.val());
+
+  stan::math::reverse_pass_callback([x2, ret]() mutable {
+    if (stan::is_stan_scalar<T2>::value) {
+      stan::math::forward_as<stan::math::var>(x2).adj()
+          += stan::math::sum(ret.adj());
+    } else {
+      stan::math::forward_as<Eigen::VectorXd>(x2.adj()) += ret.adj();
+    }
+  });
+
+  return ret_type(ret);
 }
 
 TEST(test_unit_math_test_ad_matvar, two_arg_bad_vals) {
@@ -77,13 +90,26 @@ TEST(test_unit_math_test_ad_matvar, two_arg_bad_vals) {
 
 template <typename T1, typename T2>
 auto two_arg_bad_grads(const T1& x1, const T2& x2) {
-  return x2;
+  return stan::math::add(x1, x2);
 }
 
-template <typename T1, typename T2>
+template <typename T1, typename T2, stan::require_st_arithmetic<T1>* = nullptr>
 auto two_arg_bad_grads(const T1& x1, const stan::math::var_value<T2>& x2) {
-  return stan::math::make_callback_var(
-      x2.val(), [x2](const auto& vi) mutable { x2.adj() -= vi.adj(); });
+  auto ret_val = stan::math::add(x1, x2.val());
+  using ret_type = stan::return_var_matrix_t<decltype(ret_val), T1,
+                                             stan::math::var_value<T2>>;
+  stan::arena_t<ret_type> ret = stan::math::add(x1, x2.val());
+
+  stan::math::reverse_pass_callback([x2, ret]() mutable {
+    if (stan::is_stan_scalar<T2>::value) {
+      stan::math::forward_as<stan::math::var>(x2).adj()
+          -= stan::math::sum(ret.adj());
+    } else {
+      stan::math::forward_as<Eigen::VectorXd>(x2.adj()) -= ret.adj();
+    }
+  });
+
+  return ret_type(ret);
 }
 
 TEST(test_unit_math_test_ad_matvar, two_arg_bad_grads) {
@@ -104,14 +130,28 @@ TEST(test_unit_math_test_ad_matvar, two_arg_bad_grads) {
 
 template <typename T1, typename T2, typename T3>
 auto three_arg_bad_vals(const T1& x1, const T2& x2, const T3& x3) {
-  return x3;
+  return stan::math::add(x1, stan::math::add(x2, x3));
 }
 
-template <typename T1, typename T2, typename T3>
+template <typename T1, typename T2, typename T3,
+          stan::require_all_st_arithmetic<T1, T2>* = nullptr>
 auto three_arg_bad_vals(const T1& x1, const T2& x2,
                         const stan::math::var_value<T3>& x3) {
-  return stan::math::make_callback_var(
-      x3.val() * 0, [x3](const auto& vi) mutable { x3.adj() += vi.adj(); });
+  auto ret_val = stan::math::add(x1, stan::math::add(x2, 0.0 * x3.val()));
+  using ret_type = stan::return_var_matrix_t<decltype(ret_val), T1, T2,
+                                             stan::math::var_value<T3>>;
+  stan::arena_t<ret_type> ret = ret_val;
+
+  stan::math::reverse_pass_callback([x3, ret]() mutable {
+    if (stan::is_stan_scalar<T3>::value) {
+      stan::math::forward_as<stan::math::var>(x3).adj()
+          += stan::math::sum(ret.adj());
+    } else {
+      stan::math::forward_as<Eigen::VectorXd>(x3.adj()) += ret.adj();
+    }
+  });
+
+  return ret_type(ret);
 }
 
 TEST(test_unit_math_test_ad_matvar, three_arg_bad_vals) {
@@ -147,14 +187,28 @@ TEST(test_unit_math_test_ad_matvar, three_arg_bad_vals) {
 
 template <typename T1, typename T2, typename T3>
 auto three_arg_bad_grads(const T1& x1, const T2& x2, const T3& x3) {
-  return x3;
+  return stan::math::add(x1, stan::math::add(x2, x3));
 }
 
-template <typename T1, typename T2, typename T3>
+template <typename T1, typename T2, typename T3,
+          stan::require_all_st_arithmetic<T1, T2>* = nullptr>
 auto three_arg_bad_grads(const T1& x1, const T2& x2,
                          const stan::math::var_value<T3>& x3) {
-  return stan::math::make_callback_var(
-      x3.val(), [x3](const auto& vi) mutable { x3.adj() -= vi.adj(); });
+  auto ret_val = stan::math::add(x1, stan::math::add(x2, x3.val()));
+  using ret_type = stan::return_var_matrix_t<decltype(ret_val), T1, T2,
+                                             stan::math::var_value<T3>>;
+  stan::arena_t<ret_type> ret = ret_val;
+
+  stan::math::reverse_pass_callback([x3, ret]() mutable {
+    if (stan::is_stan_scalar<T3>::value) {
+      stan::math::forward_as<stan::math::var>(x3).adj()
+          -= stan::math::sum(ret.adj());
+    } else {
+      stan::math::forward_as<Eigen::VectorXd>(x3.adj()) -= ret.adj();
+    }
+  });
+
+  return ret_type(ret);
 }
 
 TEST(test_unit_math_test_ad_matvar, three_arg_bad_grads) {
