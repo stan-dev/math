@@ -18,7 +18,8 @@ TEST(MathFunRev, as_value_column_array_or_scalar_std_vector_lvalue) {
   }
   std::vector<stan::math::var> b(b_val.begin(), b_val.end());
   const auto& tmp = stan::math::as_value_column_array_or_scalar(b);
-  EXPECT_TRUE((stan::is_col_vector<decltype(tmp)>::value && stan::is_eigen_array<decltype(tmp)>::value));
+  EXPECT_TRUE((stan::is_col_vector<decltype(tmp)>::value
+               && stan::is_eigen_array<decltype(tmp)>::value));
   Eigen::ArrayXd res = tmp;
   EXPECT_MATRIX_EQ(res, a_val);
 }
@@ -32,7 +33,8 @@ TEST(MathFunRev, as_value_column_array_or_scalar_std_vector_rvalue) {
   }
   std::vector<stan::math::var> b(b_val.begin(), b_val.end());
   const auto& tmp = stan::math::as_value_column_array_or_scalar(std::move(b));
-  EXPECT_TRUE((stan::is_col_vector<decltype(tmp)>::value && stan::is_eigen_array<decltype(tmp)>::value));
+  EXPECT_TRUE((stan::is_col_vector<decltype(tmp)>::value
+               && stan::is_eigen_array<decltype(tmp)>::value));
   Eigen::ArrayXd res = tmp;
   EXPECT_MATRIX_EQ(res, a_val);
 }
@@ -42,7 +44,8 @@ TEST(MathFunRev, as_value_column_array_or_scalar_vector_lvalue) {
   Eigen::VectorXd a_val = Eigen::VectorXd::Random(n);
   Eigen::Matrix<stan::math::var, -1, 1> a(a_val);
   auto&& tmp = stan::math::as_value_column_array_or_scalar(a);
-  EXPECT_TRUE((stan::is_col_vector<decltype(tmp)>::value && stan::is_eigen_array<decltype(tmp)>::value));
+  EXPECT_TRUE((stan::is_col_vector<decltype(tmp)>::value
+               && stan::is_eigen_array<decltype(tmp)>::value));
   Eigen::ArrayXXd res = tmp;
   EXPECT_MATRIX_EQ(res, a_val);
 }
@@ -52,7 +55,8 @@ TEST(MathFunRev, as_value_column_array_or_scalar_const_rowvector_lvalue) {
   const Eigen::RowVectorXd a_val = Eigen::RowVectorXd::Random(n);
   Eigen::Matrix<stan::math::var, 1, -1> a(a_val);
   auto&& tmp = stan::math::as_value_column_array_or_scalar(a);
-  EXPECT_TRUE((stan::is_col_vector<decltype(tmp)>::value && stan::is_eigen_array<decltype(tmp)>::value));
+  EXPECT_TRUE((stan::is_col_vector<decltype(tmp)>::value
+               && stan::is_eigen_array<decltype(tmp)>::value));
   Eigen::ArrayXXd res = tmp;
   EXPECT_MATRIX_EQ(res, a_val.transpose());
 }
@@ -63,7 +67,8 @@ TEST(MathFunRev, as_value_column_array_or_scalar_rowvector_rvalue) {
   Eigen::Matrix<stan::math::var, 1, -1> a(a_val);
   auto b = a;
   const auto& tmp = stan::math::as_value_column_array_or_scalar(std::move(b));
-  EXPECT_TRUE((stan::is_col_vector<decltype(tmp)>::value && stan::is_eigen_array<decltype(tmp)>::value));
+  EXPECT_TRUE((stan::is_col_vector<decltype(tmp)>::value
+               && stan::is_eigen_array<decltype(tmp)>::value));
   Eigen::ArrayXXd res = tmp;
   EXPECT_MATRIX_EQ(res, a_val.transpose());
 }
@@ -73,7 +78,8 @@ TEST(MathFunRev, as_value_column_array_or_scalar_var_value_vector) {
   const Eigen::VectorXd a_val = Eigen::VectorXd::Random(n);
   stan::math::var_value<Eigen::VectorXd> a(a_val);
   auto&& tmp = stan::math::as_value_column_array_or_scalar(a);
-  EXPECT_TRUE((stan::is_col_vector<decltype(tmp)>::value && stan::is_eigen_array<decltype(tmp)>::value));
+  EXPECT_TRUE((stan::is_col_vector<decltype(tmp)>::value
+               && stan::is_eigen_array<decltype(tmp)>::value));
   Eigen::ArrayXXd res = tmp;
   EXPECT_MATRIX_EQ(res, a_val);
 }
@@ -83,7 +89,8 @@ TEST(MathFunRev, as_value_column_array_or_scalar_var_value_row_vector) {
   const Eigen::RowVectorXd a_val = Eigen::VectorXd::Random(n);
   stan::math::var_value<Eigen::RowVectorXd> a(a_val);
   auto&& tmp = stan::math::as_value_column_array_or_scalar(a);
-  EXPECT_TRUE((stan::is_col_vector<decltype(tmp)>::value && stan::is_eigen_array<decltype(tmp)>::value));
+  EXPECT_TRUE((stan::is_col_vector<decltype(tmp)>::value
+               && stan::is_eigen_array<decltype(tmp)>::value));
   Eigen::ArrayXXd res = tmp;
   EXPECT_MATRIX_EQ(res, a_val.transpose());
 }

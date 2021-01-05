@@ -33,7 +33,7 @@ inline auto as_column_vector_or_scalar(T&& a) {
   return a.transpose();
 }
 
-}
-}
+}  // namespace math
+}  // namespace stan
 
 #endif

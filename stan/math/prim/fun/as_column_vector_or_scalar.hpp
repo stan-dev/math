@@ -45,8 +45,7 @@ inline T&& as_column_vector_or_scalar(T&& a) {
 template <typename T, require_eigen_row_vector_t<T>* = nullptr,
           require_not_eigen_col_vector_t<T>* = nullptr>
 inline auto as_column_vector_or_scalar(T&& a) {
-  return make_holder([](auto& x) { return x.transpose(); },
-                     std::forward<T>(a));
+  return make_holder([](auto& x) { return x.transpose(); }, std::forward<T>(a));
 }
 
 /**

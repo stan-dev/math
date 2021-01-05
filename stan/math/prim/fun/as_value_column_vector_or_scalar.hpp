@@ -12,7 +12,8 @@ namespace math {
 
 /**
  * Extract values from input argument and transform to a column vector. For
- * scalar this returns a scalar. For arithmetic types this is an identity function.
+ * scalar this returns a scalar. For arithmetic types this is an identity
+ * function.
  *
  * @tparam T Type of scalar element.
  * @param a Specified scalar.
@@ -22,7 +23,6 @@ template <typename T>
 inline auto as_value_column_vector_or_scalar(T&& a) {
   return value_of(as_column_vector_or_scalar(std::forward<T>(a)));
 }
-
 
 }  // namespace math
 }  // namespace stan

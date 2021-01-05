@@ -20,7 +20,8 @@ namespace math {
  */
 template <typename T>
 inline auto as_value_column_array_or_scalar(T&& a) {
-  return value_of(as_array_or_scalar(as_column_vector_or_scalar(std::forward<T>(a))));
+  return value_of(
+      as_array_or_scalar(as_column_vector_or_scalar(std::forward<T>(a))));
 }
 
 }  // namespace math

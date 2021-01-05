@@ -8,7 +8,6 @@
 namespace stan {
 namespace math {
 
-
 /**
  * Converts a `var_value<T>` with inner Eigen matrix type to an `var_value<T>`
  *  with an inner array.
@@ -21,7 +20,6 @@ template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto as_array_or_scalar(T&& v) {
   return v.array();
 }
-
 
 }  // namespace math
 }  // namespace stan
