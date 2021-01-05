@@ -156,11 +156,11 @@ class eigen_results_ {
   void assign_select(const eigen_expressions_<T_expressions...>& expressions) {
     constexpr bool all_linear = internal::constexpr_all(
         static_cast<bool>(
-             Eigen::internal::evaluator<std::decay_t<T_expressions>>::Flags
-             & Eigen::LinearAccessBit)...,
-         static_cast<bool>(
-             Eigen::internal::evaluator<std::decay_t<T_results>>::Flags
-             & Eigen::LinearAccessBit)...);
+            Eigen::internal::evaluator<std::decay_t<T_expressions>>::Flags
+            & Eigen::LinearAccessBit)...,
+        static_cast<bool>(
+            Eigen::internal::evaluator<std::decay_t<T_results>>::Flags
+            & Eigen::LinearAccessBit)...);
     constexpr int N_row_major = internal::constexpr_sum(
         static_cast<bool>(
             Eigen::internal::evaluator<std::decay_t<T_expressions>>::Flags
