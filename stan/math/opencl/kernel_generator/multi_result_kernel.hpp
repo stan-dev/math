@@ -546,6 +546,11 @@ template <typename... T_results>
 results_cl<T_results...> results(T_results&&... results) {
   return results_cl<T_results...>(std::forward<T_results>(results)...);
 }
+
+// an implementation that needs results and expressions defined (not just declared)
+template <typename T>
+void check_cl_<T>::operator=(bool condition) { results(*this) = expressions(condition); }
+
 /** @}*/
 }  // namespace math
 }  // namespace stan

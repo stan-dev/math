@@ -14,12 +14,6 @@
 namespace stan {
 namespace math {
 
-// forward declarations
-template <typename... T_expressions>
-class expressions_cl;
-template <typename... T_expressions>
-expressions_cl<T_expressions...> expressions(T_expressions&&... expressions);
-
 /** \addtogroup opencl_kernel_generator
  *  @{
  */
@@ -189,8 +183,9 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
    * @param condition whether the state is ok.
    * @throws std::domain_error condition is false (chack failed).
    */
-  void operator=(bool condition) { results(*this) = expressions(condition); }
+  void operator=(bool condition); //implemented in multi_result_kernel.hpp
 };
+
 
 namespace internal {
 template <typename T>
