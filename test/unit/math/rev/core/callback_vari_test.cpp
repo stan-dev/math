@@ -20,6 +20,15 @@ TEST(AgradRev, callback_vari_scalar_test) {
   EXPECT_EQ(b.adj(), 2);
 }
 
+TEST(AgradRev, callback_vari_const_scalar_compile_test) {
+  stan::math::var a = 1;
+
+  const double& a_val = a.val();
+
+  stan::math::var b = stan::math::make_callback_vari(
+      a_val, [a](const auto& vi) mutable { a.adj() += vi.adj(); });
+}
+
 TEST(AgradRev, callback_vari_eigen_test) {
   Eigen::MatrixXd val(2, 3);
   val << 1, 2, 3, 4, 5, 6;
