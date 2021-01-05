@@ -35,7 +35,7 @@ inline auto svd_U(const EigMat& m) {
 
   auto arena_D = to_arena(svd.singularValues());  // size min(N, P) = M
 
- arena_t<Eigen::MatrixXd> arena_Fp(M, M);
+  arena_t<Eigen::MatrixXd> arena_Fp(M, M);
 
   for (int i = 0; i < M; i++) {
     for (int j = 0; j < M; j++) {

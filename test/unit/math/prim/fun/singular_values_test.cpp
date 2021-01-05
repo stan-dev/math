@@ -3,8 +3,8 @@
 #include <test/unit/util.hpp>
 
 TEST(MathMatrixPrimMat, singular_values) {
-  using stan::math::singular_values;
   using stan::math::matrix_d;
+  using stan::math::singular_values;
   using stan::math::vector_d;
 
   matrix_d m0(0, 0);
