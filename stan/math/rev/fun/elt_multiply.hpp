@@ -38,14 +38,10 @@ auto elt_multiply(const Mat1& m1, const Mat2& m2) {
         arena_m1.adj() += arena_m2.val().cwiseProduct(ret.adj());
         arena_m2.adj() += arena_m1.val().cwiseProduct(ret.adj());
       } else {
-        for (Eigen::Index j = 0; j < arena_m2.cols(); ++j) {
-          for (Eigen::Index i = 0; i < arena_m2.rows(); ++i) {
-            auto ret_adj = ret.adj().array();
-            eigen_results(arena_m1.adj().array(), arena_m2.adj().array())
-                += eigen_expressions(arena_m2.val().array() * ret_adj,
-                                     arena_m1.val().array() * ret_adj);
-          }
-        }
+        auto ret_adj = ret.adj().array();
+        eigen_results(arena_m1.adj().array(), arena_m2.adj().array())
+            += eigen_expressions(arena_m2.val().array() * ret_adj,
+                                 arena_m1.val().array() * ret_adj);
       }
     });
     return ret_type(ret);
