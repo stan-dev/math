@@ -23,8 +23,7 @@ struct pkpd_rhs {
                   Eigen::Dynamic, 1>
         dydt(4);
 
-    dydt << -ka * y(0),
-        +ka * y(0) - ke * y(1) - k12 * y(1) + k21 * y(2),
+    dydt << -ka * y(0), +ka * y(0) - ke * y(1) - k12 * y(1) + k21 * y(2),
         +k12 * y(1) - k21 * y(2),
         +kin - kout * (1.0 - y(1) / (y(1) + ea50)) * y(3);
 
@@ -82,7 +81,6 @@ TEST(StanMathOdeBench, bdf) {
   stan::math::recover_memory();
 }
 
-
 TEST(StanMathOdeBench, bdf_adjoint) {
   double true_CL = 8.0;
   double true_Q = 18.0;
@@ -124,11 +122,10 @@ TEST(StanMathOdeBench, bdf_adjoint) {
     double t0 = 0.0;
 
     std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> y
-        = ode_bdf_adjoint_tol(ode, y0, t0, ts, 1E-8, 1E-8, 10000, nullptr, ka, ke, k12,
-                      k21, kin, kout, ea50);
+        = ode_bdf_adjoint_tol(ode, y0, t0, ts, 1E-8, 1E-8, 10000, nullptr, ka,
+                              ke, k12, k21, kin, kout, ea50);
 
     stan::math::grad();
   }
   stan::math::recover_memory();
 }
-
