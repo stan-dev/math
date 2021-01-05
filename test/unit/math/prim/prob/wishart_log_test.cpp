@@ -6,7 +6,7 @@ TEST(ProbWishart, log_matches_lpmf) {
   Sigma << 1.848220, 1.899623, 1.899623, 12.751941;
 
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Y(2, 2);
-  Y << 2.011108, -11.20661, -11.206611, 112.94139;
+  Y << 2.011108, -11.206611, -11.206611, 112.94139;
 
   unsigned int dof = 3;
 
