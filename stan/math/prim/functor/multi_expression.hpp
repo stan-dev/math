@@ -16,13 +16,10 @@ constexpr int constexpr_sum(Arg0 arg0, Args... args) {
   return arg0 + constexpr_sum(args...);
 }
 
-// in rtools 3.5 g++ std::min is not constexpr
-// TODO(Tadej): delete this once we stop supporting rtools 3.5
-constexpr int constexpr_min(int i) { return i; }
+constexpr bool constexpr_all() { return true; }
 template <typename Arg0, typename... Args>
-constexpr int constexpr_min(Arg0 arg0, Args... args) {
-  int min_last = constexpr_min(args...);
-  return arg0 < min_last : arg0 : min_last;
+constexpr bool constexpr_all(Arg0 arg0, Args... args) {
+  return arg0 && constexpr_all(args...);
 }
 
 }  // namespace internal
@@ -157,13 +154,13 @@ class eigen_results_ {
             std::enable_if_t<sizeof...(T_results)
                              == sizeof...(T_expressions)>* = nullptr>
   void assign_select(const eigen_expressions_<T_expressions...>& expressions) {
-    constexpr bool all_linear = internal::constexpr_min(
-        {static_cast<bool>(
+    constexpr bool all_linear = internal::constexpr_all(
+        static_cast<bool>(
              Eigen::internal::evaluator<std::decay_t<T_expressions>>::Flags
              & Eigen::LinearAccessBit)...,
          static_cast<bool>(
              Eigen::internal::evaluator<std::decay_t<T_results>>::Flags
-             & Eigen::LinearAccessBit)...});
+             & Eigen::LinearAccessBit)...);
     constexpr int N_row_major = internal::constexpr_sum(
         static_cast<bool>(
             Eigen::internal::evaluator<std::decay_t<T_expressions>>::Flags
