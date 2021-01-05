@@ -122,7 +122,7 @@ TEST(StanMathOdeBench, bdf_adjoint) {
     double t0 = 0.0;
 
     std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> y
-        = ode_bdf_adjoint_tol(ode, y0, t0, ts, 1E-8, 1E-8, 10000, nullptr, ka,
+        = ode_bdf_adjoint_tol(ode, y0, t0, ts, 1E-12, 1E-12, 10000, nullptr, ka,
                               ke, k12, k21, kin, kout, ea50);
 
     stan::math::grad();
