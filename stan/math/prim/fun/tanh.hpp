@@ -70,7 +70,6 @@ namespace internal {
 template <typename V>
 inline std::complex<V> complex_tanh(const std::complex<V>& z) {
   using std::exp;
-  using stan::math::operator/;
   auto exp_z = exp(z);
   auto exp_neg_z = exp(-z);
   return stan::math::internal::complex_divide(exp_z - exp_neg_z,
