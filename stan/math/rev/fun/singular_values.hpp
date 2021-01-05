@@ -13,8 +13,8 @@ namespace math {
 /**
  * Return the singular values of the specified matrix.
  *
- * Equation (4) from Differentiable Programming Tensor Networks(H. Liao, J. Liu,
- * et al., arXiv:1903.09650) is used for MxN input matrix's adjoint calculation.
+ * Adjoint update equation comes from Equation (4) in Differentiable Programming
+ * Tensor Networks(H. Liao, J. Liu, et al., arXiv:1903.09650).
  *
  * @tparam EigMat type of input matrix
  * @param m MxN input matrix
@@ -26,22 +26,19 @@ inline auto singular_values(const EigMat& m) {
   using ret_type = promote_scalar_t<var, Eigen::VectorXd>;
   check_nonzero_size("singular_values", "m", m);
 
-  const int M = to_arena(m.rows());
   auto arena_m = to_arena(m);
 
   Eigen::JacobiSVD<Eigen::MatrixXd> svd(
-      arena_m.val(), Eigen::ComputeFullU | Eigen::ComputeFullV);
+      arena_m.val(), Eigen::ComputeThinU | Eigen::ComputeThinV);
 
   arena_t<ret_type> singular_values = svd.singularValues();
 
-  auto U = to_arena(svd.matrixU());
-  auto V = to_arena(svd.matrixV());
+  auto arena_U = to_arena(svd.matrixU());
+  auto arena_V = to_arena(svd.matrixV());
 
-  reverse_pass_callback([arena_m, U, singular_values, V]() mutable {
+  reverse_pass_callback([arena_m, arena_U, singular_values, arena_V]() mutable {
     arena_m.adj()
-        += U.block(0, 0, U.rows(), singular_values.size())
-           * singular_values.adj().asDiagonal()
-           * V.block(0, 0, V.rows(), singular_values.size()).transpose();
+        += arena_U * singular_values.adj().asDiagonal() * arena_V.transpose();
   });
 
   return ret_type(singular_values);

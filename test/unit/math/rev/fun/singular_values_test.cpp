@@ -20,6 +20,5 @@ TEST(AgradRev, singularvalues_gradient) {
 
   stan::math::set_zero_all_adjoints();
   logdet.grad();
-  std::cout << "a_inv.val()" << a_inv.val() << "a_v.adj()" << a_v.adj();
   ASSERT_TRUE(a_inv.val().isApprox(a_v.adj()));
 }
