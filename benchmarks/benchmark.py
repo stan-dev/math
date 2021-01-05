@@ -85,7 +85,7 @@ def run_benchmark(exe_filepath, n_repeats=1, csv_out_file=None):
     command = [exe_filepath]
     if n_repeats > 1:
         command.append("--benchmark_repetitions={}".format(n_repeats))
-        command.append("--benchmark_report_aggregates_only=true")
+        command.append("--benchmark_display_aggregates_only=true")
     if csv_out_file is not None:
         command.append("--benchmark_out={}".format(csv_out_file))
         command.append("--benchmark_out_format=csv")
@@ -121,10 +121,11 @@ def plot_results(csv_filename, out_file="", plot_log_y=False):
                 f.seek(f.tell() - len(line) - 1, os.SEEK_SET)
                 break
         data = pandas.read_csv(f)
+    name_split = data["name"].str.split("/", expand=True)
     timing_data = pandas.concat(
-        [data["name"].str.split("/", expand=True).iloc[:, :2], data["real_time"]],
+        [name_split.iloc[:, :2], data["real_time"]],
         axis=1,
-    )
+    ).loc[name_split.iloc[:, 2]=="manual_time", :]
     timing_data.columns = ["signatures", "sizes", "times"]
     timing_data.loc[:, "sizes"] = timing_data["sizes"].astype(int)
     timing_data.loc[:, "times"] /= 1000  # convert to microseconds
@@ -136,14 +137,8 @@ def plot_results(csv_filename, out_file="", plot_log_y=False):
         ax.set_yscale("log")
     ax.set_xlabel("size")
     ax.set_ylabel("time[us]")
+	
     for n, (signature, sub_data) in enumerate(timing_data.groupby("signatures")):
-        ax.plot(
-            sub_data["sizes"],
-            sub_data["times"],
-            "x",
-            color=pick_color(n),
-            label="_nolegend_",
-        )
         avg_sig_times = (
             sub_data.groupby(by="sizes")["times"]
                 .median()
@@ -155,6 +150,15 @@ def plot_results(csv_filename, out_file="", plot_log_y=False):
             avg_sig_times["times"],
             label=signature,
             color=pick_color(n),
+        )
+    for n, (signature, sub_data) in enumerate(timing_data.groupby("signatures")):
+        ax.plot(
+            sub_data["sizes"],
+            sub_data["times"],
+            "x",
+            color=pick_color(n),
+            label="_nolegend_",
+			scaley=False,
         )
     [
         spine.set_visible(False)
@@ -197,17 +201,19 @@ def plot_compare(csv_filename, reference_csv_filename, out_file="", plot_log_y=F
                 f.seek(f.tell() - len(line) - 1, os.SEEK_SET)
                 break
         reference_data = pandas.read_csv(f)
+    name_split = data["name"].str.split("/", expand=True)
     timing_data = pandas.concat(
-        [data["name"].str.split("/", expand=True).iloc[:, :2], data["real_time"]],
+        [name_split.iloc[:, :2], data["real_time"]],
         axis=1,
-    )
+    ).loc[name_split.iloc[:, 2]=="manual_time", :]
+    reference_name_split = reference_data["name"].str.split("/", expand=True)
     reference_timing_data = pandas.concat(
         [
-            reference_data["name"].str.split("/", expand=True).iloc[:, :2],
+            reference_name_split.iloc[:, :2],
             reference_data["real_time"],
         ],
         axis=1,
-    )
+    ).loc[reference_name_split.iloc[:, 2]=="manual_time", :]
     timing_data.columns = reference_timing_data.columns = [
         "signatures",
         "sizes",
@@ -233,13 +239,6 @@ def plot_compare(csv_filename, reference_csv_filename, out_file="", plot_log_y=F
     ax.set_ylabel("speedup")
 
     for n, (signature, sub_data) in enumerate(timing_data.groupby("signatures")):
-        ax.plot(
-            sub_data["sizes"],
-            sub_data["speedup"],
-            "x",
-            color=pick_color(n),
-            label="_nolegend_",
-        )
         avg_sig_speedups = (
             sub_data.groupby(by="sizes")["speedup"]
                 .median()
@@ -253,6 +252,15 @@ def plot_compare(csv_filename, reference_csv_filename, out_file="", plot_log_y=F
             color=pick_color(n),
         )
     plt.plot([1, max(timing_data["sizes"])], [1, 1], "--", color="gray")
+    for n, (signature, sub_data) in enumerate(timing_data.groupby("signatures")):
+        ax.plot(
+            sub_data["sizes"],
+            sub_data["speedup"],
+            "x",
+            color=pick_color(n),
+            label="_nolegend_",
+			scaley=False,
+        )
 
     [
         spine.set_visible(False)
