@@ -36,7 +36,7 @@ template <typename T, typename L,
 	  require_stan_scalar_t<L>* = nullptr>
 inline promote_scalar_t<return_type_t<T, L>, T>
 lb_constrain(const T& x, const L& lb) {
-  if (unlikely(value_of_rec(lb) == -INFTY)) {
+  if (unlikely(value_of_rec(lb) == NEGATIVE_INFTY)) {
     return x;
   }
   return add(exp(x), lb);
@@ -49,7 +49,7 @@ inline auto lb_constrain(const T& x, const L& lb) {
   promote_scalar_t<return_type_t<T, L>, plain_type_t<T>> ret(x.rows(), x.cols());
   for(size_t j = 0; j < x.cols(); ++j) {
     for(size_t i = 0; i < x.rows(); ++i) {
-      if (unlikely(lb.coeff(i, j) == -INFTY)) {
+      if (unlikely(value_of_rec(lb.coeff(i, j)) == NEGATIVE_INFTY)) {
 	ret.coeffRef(i, j) = x.coeff(i, j);
       } else {
 	ret.coeffRef(i, j) = exp(x.coeff(i, j)) + lb.coeff(i, j);
@@ -80,7 +80,7 @@ template <typename T, typename L,
 	  require_stan_scalar_t<L>* = nullptr>
 inline promote_scalar_t<return_type_t<T, L>, T>
 lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
-  if (unlikely(value_of_rec(lb) == -INFTY)) {
+  if (unlikely(value_of_rec(lb) == NEGATIVE_INFTY)) {
     return x;
   }
   lp += sum(x);
@@ -94,7 +94,7 @@ inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
   promote_scalar_t<return_type_t<T, L>, plain_type_t<T>> ret(x.rows(), x.cols());
   for(size_t j = 0; j < x.cols(); ++j) {
     for(size_t i = 0; i < x.rows(); ++i) {
-      if (unlikely(lb.coeff(i, j) == -INFTY)) {
+      if (unlikely(value_of_rec(lb.coeff(i, j)) == NEGATIVE_INFTY)) {
 	ret.coeffRef(i, j) = x.coeff(i, j);
       } else {
 	ret.coeffRef(i, j) = exp(x.coeff(i, j)) + lb.coeff(i, j);

@@ -49,56 +49,20 @@ namespace math {
  * @throw std::domain_error if ub <= lb
  */
 template <typename T, typename L, typename U,
-          require_stan_scalar_t<T>* = nullptr>
-inline return_type_t<T, L, U> lub_constrain(const T& x, const L& lb,
-                                            const U& ub) {
+          require_all_stan_scalar_t<L, U>* = nullptr>
+inline promote_scalar_t<return_type_t<T, L, U>, T>
+lub_constrain(const T& x, const L& lb, const U& ub) {
   check_less("lub_constrain", "lb", lb, ub);
-  if (lb == NEGATIVE_INFTY) {
-    return ub_constrain(x, ub);
-  }
-  if (ub == INFTY) {
-    return lb_constrain(x, lb);
-  }
-  return fma(ub - lb, inv_logit(x), lb);
-}
 
-/**
- * Return the lower- and upper-bounded matrix derived by
- * transforming the specified free matrix given the specified
- * lower and upper bounds.
- *
- * <p>The transform is the transformed and scaled inverse logit,
- *
- * <p>\f$f(x) = L + (U - L) \mbox{logit}^{-1}(x)\f$
- *
- * If the lower bound is negative infinity and upper bound finite,
- * this function reduces to <code>ub_constrain(x, ub)</code>.  If
- * the upper bound is positive infinity and the lower bound
- * finite, this function reduces to
- * <code>lb_constrain(x, lb)</code>.  If the upper bound is
- * positive infinity and the lower bound negative infinity,
- * this function reduces to <code>identity_constrain(x)</code>.
- *
- * @tparam T Type of Matrix.
- * @tparam L Type of lower bound.
- * @tparam U Type of upper bound.
- * @param[in] x Free Matrix to transform.
- * @param[in] lb Lower bound.
- * @param[in] ub Upper bound.
- * @return Lower- and upper-bounded matrix derived from transforming
- *   the free matrix.
- * @throw std::domain_error if ub <= lb
- */
-template <typename T, typename L, typename U, require_matrix_t<T>* = nullptr>
-inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
-  check_less("lub_constrain", "lb", lb, ub);
-  if (unlikely(is_negative_infinity(lb))) {
+  if (value_of_rec(lb) == NEGATIVE_INFTY && value_of_rec(ub) == INFTY) {
+    return x;
+  } else if (value_of_rec(lb) == NEGATIVE_INFTY) {
     return ub_constrain(x, ub);
-  }
-  if (unlikely(is_infinity(ub))) {
+  } else if (value_of_rec(ub) == INFTY) {
     return lb_constrain(x, lb);
   }
-  return add(subtract(ub, lb), elt_multiply(inv_logit(x), lb)).eval();
+
+  return add(elt_multiply(ub - lb, inv_logit(x)), lb);
 }
 
 /**
@@ -142,82 +106,35 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
  *   the free scalar.
  * @throw std::domain_error if ub <= lb
  */
-template <typename T, typename L, typename U, typename S,
-          require_stan_scalar_t<T>* = nullptr>
-inline return_type_t<T, L, U> lub_constrain(const T& x, const L& lb,
-                                            const U& ub, S& lp) {
+template <typename T, typename L, typename U,
+          require_all_stan_scalar_t<L, U>* = nullptr>
+inline promote_scalar_t<return_type_t<T, L, U>, T>
+lub_constrain(const T& x, const L& lb, const U& ub, return_type_t<T, L, U>& lp) {
   using std::exp;
   using std::log;
   check_less("lub_constrain", "lb", lb, ub);
-  if (lb == NEGATIVE_INFTY) {
-    return ub_constrain(x, ub, lp);
-  }
-  if (ub == INFTY) {
-    return lb_constrain(x, lb, lp);
-  }
-  if (x > 0) {
-    lp += log(ub - lb) - x - 2 * log1p(exp(-x));
-  } else {
-    lp += log(ub - lb) + x - 2 * log1p(exp(x));
-  }
-  return fma(ub - lb, inv_logit(x), lb);
-}
 
-/**
- * Return the lower- and upper-bounded matrix derived by
- * transforming the specified free matrix given the specified
- * lower and upper bounds and increment the specified log
- * density with the log absolute Jacobian determinant.
- *
- * <p>The transform is as defined in
- * <code>lub_constrain(T, double, double)</code>.  The log absolute
- * Jacobian determinant is given by
- *
- * <p>\f$\log \left| \frac{d}{dx} \left(
- *                L + (U-L) \mbox{logit}^{-1}(x) \right)
- *            \right|\f$
- *
- * <p>\f$ {} = \log |
- *         (U-L)
- *         \, (\mbox{logit}^{-1}(x))
- *         \, (1 - \mbox{logit}^{-1}(x)) |\f$
- *
- * <p>\f$ {} = \log (U - L) + \log (\mbox{logit}^{-1}(x))
- *                          + \log (1 - \mbox{logit}^{-1}(x))\f$
- *
- * <p>If the lower bound is negative infinity and upper bound finite,
- * this function reduces to <code>ub_constrain(x, ub, lp)</code>.  If
- * the upper bound is positive infinity and the lower bound
- * finite, this function reduces to
- * <code>lb_constrain(x, lb, lp)</code>.  If the upper bound is
- * positive infinity and the lower bound negative infinity,
- * this function reduces to <code>identity_constrain(x, lp)</code>.
- *
- * @tparam T Type of Matrix.
- * @tparam L Type of lower bound.
- * @tparam U Type of upper bound.
- * @param[in] x Free Matrix to transform.
- * @param[in] lb Lower bound.
- * @param[in] ub Upper bound.
- * @param[in,out] lp Log probability scalar reference.
- * @return Lower- and upper-bounded matrix derived from transforming
- *   the free Matrix.
- * @throw std::domain_error if ub <= lb
- */
-template <typename T, typename L, typename U, typename S,
-          require_matrix_t<T>* = nullptr>
-inline auto lub_constrain(const T& x, const L& lb, const U& ub, S& lp) {
-  check_less("lub_constrain", "lb", lb, ub);
-  if (unlikely(is_negative_infinity(lb))) {
-    return ub_constrain(x, ub, lp);
+  if (value_of_rec(lb) == NEGATIVE_INFTY && value_of_rec(ub) == INFTY) {
+    return x;
+  } else if (value_of_rec(lb) == NEGATIVE_INFTY) {
+    return_type_t<T, U> ub_lp = 0.0;
+    auto constrained = ub_constrain(x, ub, ub_lp);
+    lp += ub_lp;
+    return constrained;
+  } else if (value_of_rec(ub) == INFTY) {
+    return_type_t<T, L> lb_lp = 0.0;
+    auto constrained = lb_constrain(x, lb, lb_lp);
+    lp += lb_lp;
+    return constrained;
   }
-  if (unlikely(is_infinity(ub))) {
-    return lb_constrain(x, lb, lp);
+
+  if (x > 0) {
+    lp += log(ub - lb) - sum(subtract(x, multiply(2, log1p(exp(-x)))));
+  } else {
+    lp += log(ub - lb) + sum(subtract(x, multiply(2, log1p(exp(x)))));
   }
-  auto x_neg_abs = -abs(x);
-  lp += sum(
-      subtract(add(log(subtract(ub, lb)), x), multiply(2, log1p(exp(x)))));
-  return add(subtract(ub, lb), elt_multiply(inv_logit(x), lb)).eval();
+
+  return add(elt_multiply(ub - lb, inv_logit(x)), lb);
 }
 
 }  // namespace math

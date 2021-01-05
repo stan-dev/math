@@ -59,7 +59,7 @@ TEST(mathMixMatFun, lb_mat_constrain) {
   
 
   Eigen::MatrixXd A(Eigen::MatrixXd::Random(2, 2));
-  Eigen::MatrixXd lbm(Eigen::MatrixXd::Random(2, 2));
+  Eigen::MatrixXd lbm(2, 2);
   lbm << 1.0, -5.0, -stan::math::INFTY, 100.0;
 
   double lbd1 = -5.0;

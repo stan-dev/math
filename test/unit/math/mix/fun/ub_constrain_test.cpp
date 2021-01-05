@@ -50,9 +50,8 @@ TEST(mathMixMatFun, ub_mat_constrain) {
     return ub_constrain_test::g3(x, ub);
   };
   
-
   Eigen::MatrixXd A(Eigen::MatrixXd::Random(2, 2));
-  Eigen::MatrixXd ubm(Eigen::MatrixXd::Random(2, 2));
+  Eigen::MatrixXd ubm(2, 2);
   ubm << 1.0, -5.0, stan::math::INFTY, 100.0;
 
   double ubd1 = -5.0;
