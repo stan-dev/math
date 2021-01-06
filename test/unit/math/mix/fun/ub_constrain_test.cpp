@@ -1,17 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 #include <limits>
 
-namespace ub_constrain_test {
-template <typename T, typename U>
-auto g1(const T& x, const U& ub) {
-}
-template <typename T, typename U>
-auto g2(const T& x, const U& ub) {
-}
-template <typename T, typename U>
-auto g3(const T& x, const U& ub) {
-}
-
 void expect_ub_constrain(double x, double ub) {
   auto f1 = [](const auto& x, const auto& ub) {
     return stan::math::ub_constrain(x, ub);
@@ -38,8 +27,8 @@ TEST(mathMixScalFun, ub_constrain) {
 
 TEST(mathMixMatFun, ub_mat_constrain) {
   using stan::scalar_type_t;
-  using stan::math::ub_constrain;
   using stan::math::promote_scalar_t;
+  using stan::math::ub_constrain;
 
   auto f1 = [](const auto& x, const auto& ub) {
     return stan::math::ub_constrain(x, ub);
