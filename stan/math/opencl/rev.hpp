@@ -37,6 +37,7 @@
 #include <stan/math/opencl/rev/inv.hpp>
 #include <stan/math/opencl/rev/inv_cloglog.hpp>
 #include <stan/math/opencl/rev/inv_logit.hpp>
+#include <stan/math/opencl/rev/inv_Phi.hpp>
 #include <stan/math/opencl/rev/inv_sqrt.hpp>
 #include <stan/math/opencl/rev/inv_square.hpp>
 #include <stan/math/opencl/rev/lbeta.hpp>
