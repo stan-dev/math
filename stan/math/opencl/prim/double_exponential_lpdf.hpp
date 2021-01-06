@@ -9,6 +9,7 @@
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/prim/sign.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/fun/sign.hpp>
 
 namespace stan {
 namespace math {

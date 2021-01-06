@@ -225,11 +225,6 @@ class elt_function_cl : public operation_cl<Derived, Scal, T...> {
   class fun##_ : public elt_function_cl<fun##_<T>, bool, T> {                  \
     using base = elt_function_cl<fun##_<T>, bool, T>;                          \
     using base::arguments_;                                                    \
-    static_assert(std::is_floating_point<                                      \
-                      typename std::remove_reference_t<T>::Scalar>::value,     \
-                  #fun                                                         \
-                  ": all arguments must be expression with floating point "    \
-                  "return type!");                                             \
                                                                                \
    public:                                                                     \
     using base::rows;                                                          \
