@@ -31,19 +31,21 @@ inline auto multiply(const T1& A, const T2& B) {
   if (!is_constant<T2>::value && !is_constant<T1>::value) {
     arena_t<promote_scalar_t<var, T1>> arena_A = A;
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
+    auto arena_A_val = to_arena(arena_A.val());
+    auto arena_B_val = to_arena(arena_B.val());
     using return_t
-        = return_var_matrix_t<decltype(arena_A.val_op() * arena_B.val_op()), T1,
+        = return_var_matrix_t<decltype(arena_A_val * arena_B_val), T1,
                               T2>;
-    arena_t<return_t> res = arena_A.val_op() * arena_B.val_op();
+    arena_t<return_t> res = arena_A_val * arena_B_val;
 
-    reverse_pass_callback([arena_A, arena_B, res]() mutable {
+    reverse_pass_callback([arena_A, arena_B,  arena_A_val,  arena_B_val, res]() mutable {
       if (is_var_matrix<T1>::value || is_var_matrix<T2>::value) {
-        arena_A.adj() += res.adj_op() * arena_B.val_op().transpose();
-        arena_B.adj() += arena_A.val_op().transpose() * res.adj_op();
+        arena_A.adj() += res.adj_op() * arena_B_val.transpose();
+        arena_B.adj() += arena_A_val.transpose() * res.adj_op();
       } else {
         auto res_adj = res.adj().eval();
-        arena_A.adj() += res_adj * arena_B.val_op().transpose();
-        arena_B.adj() += arena_A.val_op().transpose() * res_adj;
+        arena_A.adj() += res_adj * arena_B_val.transpose();
+        arena_B.adj() += arena_A_val.transpose() * res_adj;
       }
     });
     return return_t(res);
