@@ -237,7 +237,7 @@ class expressions_cl {
    */
   explicit expressions_cl(T_expressions&&... expressions)
       : expressions_(
-            T_expressions(std::forward<T_expressions>(expressions))...) {}
+          T_expressions(std::forward<T_expressions>(expressions))...) {}
 
  private:
   std::tuple<T_expressions...> expressions_;
@@ -495,7 +495,9 @@ class results_cl {
    */
   template <typename T_result, typename T_expression,
             require_all_not_t<is_without_output<T_expression>,
-                              internal::is_scalar_check<T_result>>* = nullptr>
+                              conjunction<internal::is_scalar_check<T_result>,
+                                          std::is_arithmetic<std::decay_t<
+                                              T_expression>>>>* = nullptr>
   static auto make_assignment_pair(T_result&& result,
                                    T_expression&& expression) {
     return std::make_tuple(
@@ -525,7 +527,8 @@ class results_cl {
    * @return an empty tuple
    */
   template <typename T_check, typename T_pass,
-            require_t<internal::is_scalar_check<T_check>>* = nullptr>
+            require_t<internal::is_scalar_check<T_check>>* = nullptr,
+            require_integral_t<T_pass>* = nullptr>
   static std::tuple<> make_assignment_pair(T_check&& result, T_pass&& pass) {
     if (!pass) {
       std::stringstream s;
