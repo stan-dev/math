@@ -9,6 +9,30 @@ TEST(prob_transform, lb) {
       stan::math::lb_constrain(7.9, -std::numeric_limits<double>::infinity()),
       std::domain_error);
 }
+
+TEST(prob_transform, lb_vec) {
+  Eigen::VectorXd input(2);
+  input << -1.0, 1.1;
+  Eigen::VectorXd lbv(2);
+  lbv << 2.0, 3.0;
+  double lb = 2.0;
+
+  Eigen::VectorXd resv(2);
+  resv << exp(-1.0) + 2.0, exp(1.1) + 3.0;
+  Eigen::VectorXd res(2);
+  res << exp(-1.0) + 2.0, exp(1.1) + 2.0;
+  
+  EXPECT_MATRIX_EQ(resv, stan::math::lb_constrain(input, lbv));
+  EXPECT_MATRIX_EQ(res, stan::math::lb_constrain(input, lb));
+
+  double lp = 0.0;
+  EXPECT_MATRIX_EQ(resv, stan::math::lb_constrain(input, lbv, lp));
+  EXPECT_EQ(input.sum(), lp);
+  lp = 0.0;
+  EXPECT_MATRIX_EQ(res, stan::math::lb_constrain(input, lb, lp));
+  EXPECT_EQ(input.sum(), lp);
+}
+
 TEST(prob_transform, lb_j) {
   double lp = 15.0;
   EXPECT_FLOAT_EQ(exp(-1.0) + 2.0, stan::math::lb_constrain(-1.0, 2.0, lp));

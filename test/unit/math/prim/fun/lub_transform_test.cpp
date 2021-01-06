@@ -18,6 +18,57 @@ TEST(prob_transform, lub) {
                    1.9, -std::numeric_limits<double>::infinity(), -12.5),
                std::domain_error);
 }
+
+TEST(prob_transform, lub_vec) {
+  Eigen::VectorXd input(2);
+  input << -1.0, 1.1;
+  Eigen::VectorXd lbv(2);
+  lbv << -1.0, 0.5;
+  Eigen::VectorXd ubv(2);
+  ubv << 2.0, 3.0;
+  double lb = 1.0;
+  double ub = 2.0;
+
+  Eigen::VectorXd resvv(2);
+  resvv << (2.0 + 1.0) * stan::math::inv_logit(-1.0) - 1.0,
+    (3.0 - 0.5) * stan::math::inv_logit(1.1) + 0.5;
+  Eigen::VectorXd ressv(2);
+  ressv << (2.0 - 1.0) * stan::math::inv_logit(-1.0) + 1.0,
+    (3.0 - 1.0) * stan::math::inv_logit(1.1) + 1.0;
+  Eigen::VectorXd resvs(2);
+  resvs << (2.0 + 1.0) * stan::math::inv_logit(-1.0) - 1.0,
+    (2.0 - 0.5) * stan::math::inv_logit(1.1) + 0.5;
+  Eigen::VectorXd res(2);
+  res << (2.0 - 1.0) * stan::math::inv_logit(-1.0) + 1.0,
+    (2.0 - 1.0) * stan::math::inv_logit(1.1) + 1.0;
+
+  EXPECT_MATRIX_EQ(resvv, stan::math::lub_constrain(input, lbv, ubv));
+  EXPECT_MATRIX_EQ(ressv, stan::math::lub_constrain(input, lb, ubv));
+  EXPECT_MATRIX_EQ(resvs, stan::math::lub_constrain(input, lbv, ub));
+  EXPECT_MATRIX_EQ(res, stan::math::lub_constrain(input, lb, ub));
+
+  double lp = 0.0;
+  EXPECT_MATRIX_EQ(resvv, stan::math::lub_constrain(input, lbv, ubv, lp));
+  EXPECT_FLOAT_EQ(((ubv - lbv).array().log() +
+    input.array() -
+	2 * input.array().exp().log1p().array()).sum(), lp);
+  lp = 0.0;
+  EXPECT_MATRIX_EQ(ressv, stan::math::lub_constrain(input, lb, ubv, lp));
+  EXPECT_FLOAT_EQ(((ubv.array() - lb).log() +
+    input.array() -
+	2 * input.array().exp().log1p().array()).sum(), lp);
+  lp = 0.0;
+  EXPECT_MATRIX_EQ(resvs, stan::math::lub_constrain(input, lbv, ub, lp));
+  EXPECT_FLOAT_EQ(((ub - lbv.array()).log() +
+    input.array() -
+	2 * input.array().exp().log1p().array()).sum(), lp);
+  lp = 0.0;
+  EXPECT_MATRIX_EQ(res, stan::math::lub_constrain(input, lb, ub, lp));
+  EXPECT_FLOAT_EQ((std::log(ub - lb) +
+	     input.array() -
+	     2 * input.array().exp().log1p().array()).sum(), lp);
+}
+
 TEST(prob_transform, lub_j) {
   double lp = -17.0;
   double L = 2.0;
