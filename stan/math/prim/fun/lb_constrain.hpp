@@ -31,6 +31,8 @@ namespace math {
  */
 template <typename T, typename L>
 inline auto lb_constrain(const T& x, const L& lb) {
+  const auto& lb_ref = to_ref(lb);
+  check_finite("lb_constrain", "lb", lb_ref);
   return eval(add(exp(x), lb));
 }
 
@@ -51,6 +53,8 @@ inline auto lb_constrain(const T& x, const L& lb) {
 template <typename T, typename L>
 inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
   const auto& x_ref = to_ref(x);
+  const auto& lb_ref = to_ref(lb);
+  check_finite("lb_constrain", "lb", lb_ref);
   lp += sum(x_ref);
   return eval(add(exp(x_ref), lb));
 }
