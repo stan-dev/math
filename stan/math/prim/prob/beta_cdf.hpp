@@ -67,7 +67,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::math::size(y); i++) {
-    if (value_of(y_vec[i]) <= 0) {
+    if (y_vec.val(i) <= 0) {
       return ops_partials.build(0.0);
     }
   }
@@ -77,7 +77,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
       digamma_alpha(size_alpha);
   if (!is_constant_all<T_scale_succ>::value) {
     for (size_t n = 0; n < size_alpha; n++) {
-      digamma_alpha[n] = digamma(value_of(alpha_vec[n]));
+      digamma_alpha[n] = digamma(alpha_vec.val(n));
     }
   }
 
@@ -86,7 +86,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
       digamma_beta(size_beta);
   if (!is_constant_all<T_scale_fail>::value) {
     for (size_t n = 0; n < size_beta; n++) {
-      digamma_beta[n] = digamma(value_of(beta_vec[n]));
+      digamma_beta[n] = digamma(alpha_vec.val(n));
     }
   }
 
@@ -95,12 +95,12 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
       digamma_sum(size_alpha_beta);
   if (!is_constant_all<T_scale_succ, T_scale_fail>::value) {
     for (size_t n = 0; n < size_alpha_beta; n++) {
-      digamma_sum[n] = digamma(value_of(alpha_vec[n]) + value_of(beta_vec[n]));
+      digamma_sum[n] = digamma(alpha_vec.val(n) + beta_vec.val(n));
     }
   }
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
+    const T_partials_return y_dbl = alpha_vec.val(n);
 
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
@@ -108,8 +108,8 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
       continue;
     }
 
-    const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
-    const T_partials_return beta_dbl = value_of(beta_vec[n]);
+    const T_partials_return alpha_dbl = alpha_vec.val(n);
+    const T_partials_return beta_dbl = alpha_vec.val(n);
     const T_partials_return Pn = inc_beta(alpha_dbl, beta_dbl, y_dbl);
     const T_partials_return inv_Pn
         = is_constant_all<T_y, T_scale_succ, T_scale_fail>::value ? 0 : inv(Pn);

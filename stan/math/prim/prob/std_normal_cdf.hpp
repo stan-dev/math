@@ -46,7 +46,7 @@ inline return_type_t<T_y> std_normal_cdf(const T_y& y) {
   size_t N = stan::math::size(y);
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
+    const T_partials_return y_dbl = y_vec.val(n);
     const T_partials_return scaled_y = y_dbl * INV_SQRT_TWO;
     T_partials_return cdf_n;
     if (y_dbl < -37.5) {

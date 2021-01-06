@@ -5,6 +5,9 @@
 #include <stan/math/prim/meta/require_generics.hpp>
 #include <stan/math/prim/meta/scalar_type.hpp>
 #include <stan/math/prim/meta/ref_type.hpp>
+#include <stan/math/prim/meta/is_autodiff.hpp>
+#include <stan/math/prim/meta/is_stan_scalar.hpp>
+#include <stan/math/prim/meta/is_var_matrix.hpp>
 #include <stan/math/prim/meta/is_vector_like.hpp>
 #include <type_traits>
 #include <utility>
@@ -21,8 +24,7 @@ template <typename C, typename = void>
 class scalar_seq_view;
 
 template <typename C>
-class scalar_seq_view<
-    C, std::enable_if_t<is_vector_like<std::decay_t<C>>::value>> {
+class scalar_seq_view<C, require_eigen_vector_t<C>> {
  public:
   template <typename T,
             typename = require_same_t<plain_type_t<T>, plain_type_t<C>>>
@@ -33,13 +35,81 @@ class scalar_seq_view<
    * @param i index
    * @return the element at the specified position in the container
    */
-  decltype(auto) operator[](int i) const { return c_[i]; }
-  decltype(auto) operator[](int i) { return c_[i]; }
+  inline auto operator[](size_t i) const { return c_.coeffRef(i); }
 
-  int size() const { return c_.size(); }
+  inline auto size() const noexcept { return c_.size(); }
+
+  template <typename T = C, require_st_arithmetic<T>* = nullptr>
+  inline auto val(size_t i) const {
+    return c_.coeffRef(i);
+  }
+
+  template <typename T = C, require_st_autodiff<T>* = nullptr>
+  inline auto val(size_t i) const {
+    return c_.coeffRef(i).val();
+  }
 
  private:
   ref_type_t<C> c_;
+};
+
+template <typename C>
+class scalar_seq_view<C, require_var_matrix_t<C>> {
+ public:
+  template <typename T,
+            typename = require_same_t<plain_type_t<T>, plain_type_t<C>>>
+  explicit scalar_seq_view(T&& c) : c_(std::forward<T>(c)) {}
+
+  /** \ingroup type_trait
+   * Segfaults if out of bounds.
+   * @param i index
+   * @return the element at the specified position in the container
+   */
+  inline auto operator[](size_t i) const { return c_.val().coeffRef(i); }
+
+  inline auto size() const noexcept { return c_.size(); }
+
+  template <typename T = C, require_st_arithmetic<T>* = nullptr>
+  inline auto val(size_t i) const {
+    return c_.val().coeffRef(i);
+  }
+
+  template <typename T = C, require_st_autodiff<T>* = nullptr>
+  inline auto val(size_t i) const {
+    return c_.val().coeffRef(i);
+  }
+
+ private:
+  std::decay_t<C> c_;
+};
+
+template <typename C>
+class scalar_seq_view<C, require_std_vector_t<C>> {
+ public:
+  template <typename T,
+            typename = require_same_t<plain_type_t<T>, plain_type_t<C>>>
+  explicit scalar_seq_view(T&& c) : c_(std::forward<T>(c)) {}
+
+  /** \ingroup type_trait
+   * Segfaults if out of bounds.
+   * @param i index
+   * @return the element at the specified position in the container
+   */
+  inline auto operator[](size_t i) const { return c_.coeffRef(i); }
+  inline auto size() const noexcept { return c_.size(); }
+
+  template <typename T = C, require_st_arithmetic<T>* = nullptr>
+  inline auto val(size_t i) const {
+    return c_.coeffRef(i);
+  }
+
+  template <typename T = C, require_st_autodiff<T>* = nullptr>
+  inline auto val(size_t i) const {
+    return c_.coeffRef(i).val();
+  }
+
+ private:
+  const C& c_;
 };
 
 /** \ingroup type_trait
@@ -48,18 +118,26 @@ class scalar_seq_view<
  * @tparam T the scalar type
  */
 template <typename C>
-class scalar_seq_view<
-    C, std::enable_if_t<!is_vector_like<std::decay_t<C>>::value>> {
+class scalar_seq_view<C, require_stan_scalar_t<C>> {
  public:
-  explicit scalar_seq_view(const C& t) : t_(t) {}
+  explicit scalar_seq_view(const C& t) noexcept : t_(t) {}
 
-  auto& operator[](int /* i */) const { return t_; }
-  auto& operator[](int /* i */) { return t_; }
+  inline auto operator[](int /* i */) const noexcept { return t_; }
 
-  int size() const { return 1; }
+  template <typename T = C, require_st_arithmetic<T>* = nullptr>
+  inline auto val(int /* i */) const noexcept {
+    return t_;
+  }
+
+  template <typename T = C, require_st_autodiff<T>* = nullptr>
+  inline auto val(int /* i */) const noexcept  {
+    return t_.val();
+  }
+
+  static constexpr auto size() { return 1; }
 
  private:
-  C t_;
+  std::decay_t<C> t_;
 };
 }  // namespace stan
 #endif

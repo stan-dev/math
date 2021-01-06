@@ -64,9 +64,9 @@ inline return_type_t<T_y, T_loc, T_scale> normal_cdf(const T_y& y,
   size_t N = max_size(y, mu, sigma);
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return mu_dbl = value_of(mu_vec[n]);
-    const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
+    const T_partials_return y_dbl = y_vec.val(n);
+    const T_partials_return mu_dbl = mu_vec.val(n);
+    const T_partials_return sigma_dbl = sigma_vec.val(n);
     const T_partials_return scaled_diff
         = (y_dbl - mu_dbl) / (sigma_dbl * SQRT_TWO);
     T_partials_return cdf_n;

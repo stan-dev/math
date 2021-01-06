@@ -7,6 +7,16 @@
 
 namespace stan {
 
+template <typename T, require_st_arithmetic<T>* = nullptr>
+inline T value_of(T&& x);
+
+template <typename T, require_not_st_arithmetic<T>* = nullptr>
+inline auto value_of(const std::vector<T>& x);
+
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
+          require_not_st_arithmetic<EigMat>* = nullptr>
+inline auto value_of(EigMat&& M);
+
 /** \ingroup type_trait
  * This class provides a low-cost wrapper for situations where you either need
  * an Eigen Vector or RowVector or a std::vector of them and you want to be
@@ -33,11 +43,21 @@ class vector_seq_view {};
  * @tparam T the type of the underlying Vector
  */
 template <typename T>
-class vector_seq_view<T, require_eigen_t<T>> {
+class vector_seq_view<T, require_matrix_t<T>> {
  public:
   explicit vector_seq_view(const T& m) : m_(m) {}
-  int size() const { return 1; }
-  const ref_type_t<T>& operator[](int /* i */) const { return m_; }
+  static constexpr auto size() { return 1; }
+  inline const auto& operator[](size_t /* i */) const noexcept { return m_; }
+
+  template <typename C = T, require_st_arithmetic<C>* = nullptr>
+  inline const auto& val(size_t /* i */) const noexcept {
+    return m_;
+  }
+
+  template <typename C = T, require_st_autodiff<C>* = nullptr>
+  inline const auto& val(size_t /* i */) const noexcept {
+    return m_.val();
+  }
 
  private:
   const ref_type_t<T> m_;
@@ -57,9 +77,20 @@ class vector_seq_view<T, require_eigen_t<T>> {
 template <typename T>
 class vector_seq_view<T, require_std_vector_vt<is_container, T>> {
  public:
-  explicit vector_seq_view(const T& v) : v_(v) {}
-  int size() const { return v_.size(); }
-  const value_type_t<T>& operator[](int i) const { return v_[i]; }
+  explicit vector_seq_view(const T& v) noexcept : v_(v) {}
+  inline auto size() const noexcept { return v_.size(); }
+
+  inline const auto& operator[](size_t i) const { return v_[i]; }
+
+  template <typename C = T, require_st_arithmetic<C>* = nullptr>
+  inline const auto& val(size_t i) const {
+    return v_[i];
+  }
+
+  template <typename C = T, require_st_autodiff<C>* = nullptr>
+  inline const auto& val(size_t i) const {
+    return value_of(v_[i]);
+  }
 
  private:
   const T& v_;

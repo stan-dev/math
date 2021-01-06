@@ -62,7 +62,7 @@ return_type_t<T_y, T_loc, T_scale> cauchy_cdf(const T_y& y, const T_loc& mu,
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::math::size(y); i++) {
-    if (value_of(y_vec[i]) == NEGATIVE_INFTY) {
+    if (y_vec.val(i) == NEGATIVE_INFTY) {
       return ops_partials.build(0.0);
     }
   }
@@ -70,13 +70,13 @@ return_type_t<T_y, T_loc, T_scale> cauchy_cdf(const T_y& y, const T_loc& mu,
   for (size_t n = 0; n < N; n++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
-    if (value_of(y_vec[n]) == INFTY) {
+    if (y_vec.val(n) == INFTY) {
       continue;
     }
 
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return mu_dbl = value_of(mu_vec[n]);
-    const T_partials_return sigma_inv_dbl = 1.0 / value_of(sigma_vec[n]);
+    const T_partials_return y_dbl = y_vec.val(n);
+    const T_partials_return mu_dbl = mu_vec.val(n);
+    const T_partials_return sigma_inv_dbl = 1.0 / sigma_vec.val(n);
 
     const T_partials_return z = (y_dbl - mu_dbl) * sigma_inv_dbl;
 
