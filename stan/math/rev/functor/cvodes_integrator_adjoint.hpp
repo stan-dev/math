@@ -615,7 +615,7 @@ class cvodes_integrator_adjoint_vari : public vari {
     SUNMatrix AB_ = SUNDenseMatrix(N_, N_);
     SUNLinearSolver LSB_ = SUNDenseLinearSolver(nv_state_sens, AB_);
 
-    /* check these if needed 
+    /* check these if needed
       flag = CVodeSetUserDataB(cvode_mem, which, user_dataB);
       flag = CVodeSetMaxOrdB(cvode_mem, which, maxordB);
       flag = CVodeSetMaxNumStepsB(cvode_mem, which, mxstepsB);  ** WE
@@ -711,11 +711,10 @@ class cvodes_integrator_adjoint_vari : public vari {
 
         double t_final = value_of((i > 0) ? memory->ts_[i - 1] : memory->t0_);
         if (t_final != t_init) {
-
           if (i != memory->ts_.size() - 1) {
-            check_flag_sundials(
-                CVodeReInitB(memory->cvodes_mem_, indexB, t_init, nv_state_sens),
-                "CVodeReInitB");
+            check_flag_sundials(CVodeReInitB(memory->cvodes_mem_, indexB,
+                                             t_init, nv_state_sens),
+                                "CVodeReInitB");
 
             if (args_vars_ > 0) {
               check_flag_sundials(
