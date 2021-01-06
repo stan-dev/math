@@ -91,19 +91,17 @@ TEST(KernelGenerator, calc_if_colwise_min_test) {
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
 }
 
-
 TEST(KernelGenerator, calc_if_double) {
   MatrixXd m(3, 2);
   m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;
 
   matrix_cl<double> m1_cl(m);
   matrix_cl<double> m2_cl = m1_cl + stan::math::calc_if<true>(4.0);
-  
+
   EXPECT_EQ(m2_cl.rows(), m.rows());
   EXPECT_EQ(m2_cl.cols(), m.cols());
-  EXPECT_MATRIX_NEAR((m + MatrixXd::Constant(3, 2, 4.0)).eval(), stan::math::from_matrix_cl(m2_cl), 1e-9);
+  EXPECT_MATRIX_NEAR((m + MatrixXd::Constant(3, 2, 4.0)).eval(),
+                     stan::math::from_matrix_cl(m2_cl), 1e-9);
 }
 
-
 #endif
-

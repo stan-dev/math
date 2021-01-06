@@ -155,10 +155,10 @@ TEST(ProbDistributionsBeta, opencl_y_alpha_scalar) {
   Eigen::VectorXd beta(N);
   beta << 0.3, 0.8, 1.0;
 
-  stan::math::test::compare_cpu_opencl_prim_rev(beta_lpdf_functor, y,
-                                                         alpha, beta);
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      beta_lpdf_functor_propto, y, alpha, beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(beta_lpdf_functor, y, alpha,
+                                                beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(beta_lpdf_functor_propto, y,
+                                                alpha, beta);
 }
 
 TEST(ProbDistributionsBeta, opencl_y_beta_scalar) {
@@ -169,10 +169,10 @@ TEST(ProbDistributionsBeta, opencl_y_beta_scalar) {
   Eigen::VectorXd alpha(N);
   alpha << 0.3, 0.8, 1.0;
 
-  stan::math::test::compare_cpu_opencl_prim_rev(beta_lpdf_functor, y,
-                                                         alpha, beta);
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      beta_lpdf_functor_propto, y, alpha, beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(beta_lpdf_functor, y, alpha,
+                                                beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(beta_lpdf_functor_propto, y,
+                                                alpha, beta);
 }
 
 TEST(ProbDistributionsBeta, opencl_matches_cpu_big) {

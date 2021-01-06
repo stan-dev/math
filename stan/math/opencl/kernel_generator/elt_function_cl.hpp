@@ -225,6 +225,7 @@ class elt_function_cl : public operation_cl<Derived, Scal, T...> {
   class fun##_ : public elt_function_cl<fun##_<T>, bool, T> {                  \
     using base = elt_function_cl<fun##_<T>, bool, T>;                          \
     using base::arguments_;                                                    \
+                                                                               \
    public:                                                                     \
     using base::rows;                                                          \
     using base::cols;                                                          \
