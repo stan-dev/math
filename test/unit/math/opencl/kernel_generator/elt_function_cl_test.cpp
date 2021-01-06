@@ -120,6 +120,7 @@ TEST_UNARY_FUNCTION(logit)
 TEST_UNARY_FUNCTION(log1m_inv_logit)
 TEST_UNARY_FUNCTION(square)
 TEST_UNARY_FUNCTION(Phi)
+TEST_UNARY_FUNCTION(Phi_approx)
 
 #define TEST_CLASSIFICATION_FUNCTION(fun)                                  \
   TEST(KernelGenerator, fun##_test) {                                      \

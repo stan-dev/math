@@ -56,6 +56,7 @@
 #include <stan/math/opencl/rev/operator_unary_minus.hpp>
 #include <stan/math/opencl/rev/operator_unary_plus.hpp>
 #include <stan/math/opencl/rev/Phi.hpp>
+#include <stan/math/opencl/rev/Phi_approx.hpp>
 #include <stan/math/opencl/rev/round.hpp>
 #include <stan/math/opencl/rev/rows_dot_product.hpp>
 #include <stan/math/opencl/rev/rows_dot_self.hpp>

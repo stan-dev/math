@@ -19,6 +19,7 @@
 #include <stan/math/opencl/kernels/device_functions/logit.hpp>
 #include <stan/math/opencl/kernels/device_functions/multiply_log.hpp>
 #include <stan/math/opencl/kernels/device_functions/Phi.hpp>
+#include <stan/math/opencl/kernels/device_functions/Phi_approx.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/kernel_generator/common_return_scalar.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
@@ -303,6 +304,7 @@ ADD_UNARY_FUNCTION_WITH_INCLUDES(inv_logit,
                                  opencl_kernels::inv_logit_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(logit, opencl_kernels::logit_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(Phi, opencl_kernels::phi_device_function)
+ADD_UNARY_FUNCTION_WITH_INCLUDES(Phi_approx, opencl_kernels::inv_logit_device_function, opencl_kernels::phi_approx_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(
     log1m_inv_logit, opencl_kernels::log1m_inv_logit_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(square, "double square(double x){return x*x;}")
