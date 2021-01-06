@@ -138,4 +138,17 @@ TEST(ProbDistributionsDoubleExponential, opencl_matches_cpu_big) {
       double_exponential_lpdf_functor_propto, y, mu, sigma);
 }
 
+TEST(ProbDistributionsDoubleExponential, opencl_y_mu_scalar) {
+  int N = 3;
+
+  double y = -0.3;
+  double mu = 0.8;
+  Eigen::VectorXd sigma(N);
+  sigma << 0.3, 0.8, 4.2;
+  stan::math::test::compare_cpu_opencl_prim_rev(double_exponential_lpdf_functor,
+                                                y, mu, sigma);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      double_exponential_lpdf_functor_propto, y, mu, sigma);
+}
+
 #endif
