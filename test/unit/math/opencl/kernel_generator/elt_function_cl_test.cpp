@@ -132,6 +132,16 @@ TEST_UNARY_FUNCTION(log1m_inv_logit)
     Eigen::Matrix<bool, -1, -1> res = stan::math::from_matrix_cl(res_cl); \
     Eigen::Matrix<bool, -1, -1> correct = fun(m1.array());                \
     EXPECT_TYPED_MATRIX_EQ(correct, res, bool);                           \
+                                                                          \
+    MatrixXi m1i(3, 3);                                                    \
+    m1i << 1, 2, 3, 4, 5, 6, 7, 8, 9;                                      \
+    matrix_cl<int> m1i_cl(m1i);                                             \
+    auto tmpi = fun(m1_cl);                                                \
+    matrix_cl<bool> resi_cl = tmp;                                         \
+                                                                          \
+    Eigen::Matrix<bool, -1, -1> resi = stan::math::from_matrix_cl(res_cl); \
+    Eigen::Matrix<bool, -1, -1> correcti = fun(m1.array());                \
+    EXPECT_TYPED_MATRIX_EQ(correcti, resi, bool);                           \
   }
 
 TEST_CLASSIFICATION_FUNCTION(isfinite)
