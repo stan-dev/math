@@ -31,18 +31,18 @@ struct NumTraits<stan::math::var> : GenericNumTraits<stan::math::var> {
    *
    * @return precision
    */
-  static inline stan::math::var dummy_precision() {
+  static inline Real dummy_precision() {
     return NumTraits<double>::dummy_precision();
   }
 
-  static inline stan::math::var epsilon() {
+  static inline Real epsilon() {
     return NumTraits<double>::epsilon();
   }
 
-  static inline stan::math::var highest() {
+  static inline Real highest() {
     return NumTraits<double>::highest();
   }
-  static inline stan::math::var lowest() { return NumTraits<double>::lowest(); }
+  static inline Real lowest() { return NumTraits<double>::lowest(); }
 
   enum {
     /**
