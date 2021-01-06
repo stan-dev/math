@@ -71,9 +71,6 @@ struct multi_result_kernel_internal {
       const auto& result = std::get<N>(assignment_pairs).first;
       const char* function = "results.operator=";
 
-      if (is_without_output<T_current_expression>::value) {
-        return;
-      }
       int expressin_rows = expression.rows();
       int expressin_cols = expression.cols();
       if (expression.thread_rows() != -1) {
@@ -116,9 +113,7 @@ struct multi_result_kernel_internal {
             assignment_pairs) {
       kernel_parts parts = next::generate(generated, ng, row_index_name,
                                           col_index_name, assignment_pairs);
-      if (is_without_output<T_current_expression>::value) {
-        return parts;
-      }
+
       kernel_parts parts0
           = std::get<N>(assignment_pairs)
                 .second.get_whole_kernel_parts(
@@ -143,9 +138,6 @@ struct multi_result_kernel_internal {
             assignment_pairs) {
       next::set_args(generated, kernel, arg_num, assignment_pairs);
 
-      if (is_without_output<T_current_expression>::value) {
-        return;
-      }
       std::get<N>(assignment_pairs).second.set_args(generated, kernel, arg_num);
       std::get<N>(assignment_pairs).first.set_args(generated, kernel, arg_num);
     }
@@ -159,9 +151,6 @@ struct multi_result_kernel_internal {
         cl::Event e, const std::tuple<std::pair<T_results, T_expressions>...>&
                          assignment_pairs) {
       next::add_event(e, assignment_pairs);
-      if (is_without_output<T_current_expression>::value) {
-        return;
-      }
       std::get<N>(assignment_pairs).second.add_read_event(e);
       std::get<N>(assignment_pairs).first.add_write_event(e);
     }
@@ -178,9 +167,6 @@ struct multi_result_kernel_internal {
         int& next_id,
         const std::tuple<std::pair<T_results, T_expressions>...>&
             assignment_pairs) {
-      if (is_without_output<T_current_expression>::value) {
-        return;
-      }
       std::get<N>(assignment_pairs)
           .second.get_unique_matrix_accesses(uids, id_map, next_id);
       std::get<N>(assignment_pairs)
@@ -291,48 +277,60 @@ class results_cl {
    * executes the kernel that evaluates expressions and stores them into result
    * expressions this object contains.
    * @tparam T_expressions types of expressions
-   * @param expressions expressions
+   * @param exprs expressions
    */
   template <typename... T_expressions,
             typename = std::enable_if_t<sizeof...(T_results)
                                         == sizeof...(T_expressions)>>
-  void operator=(const expressions_cl<T_expressions...>& expressions) {
-    assignment(expressions,
-               std::make_index_sequence<sizeof...(T_expressions)>{});
+  void operator=(const expressions_cl<T_expressions...>& exprs) {
+    index_apply<sizeof...(T_expressions)>([this, &exprs](auto... Is) {
+      assignment_impl(std::tuple_cat(make_assignment_pair(
+          std::get<Is>(results_), std::get<Is>(exprs.expressions_))...));
+    });
+  }
+
+  /**
+   * Incrementing \c results_ object by \c expressions_cl object
+   * executes the kernel that evaluates expressions and increments results by
+   * those expressions.
+   * @tparam T_expressions types of expressions
+   * @param exprs expressions
+   */
+  template <typename... T_expressions,
+            typename = std::enable_if_t<sizeof...(T_results)
+                                        == sizeof...(T_expressions)>>
+  void operator+=(const expressions_cl<T_expressions...>& exprs) {
+    index_apply<sizeof...(T_expressions)>([this, &exprs](auto... Is) {
+      auto tmp = std::tuple_cat(make_assignment_pair(
+          std::get<Is>(results_), std::get<Is>(exprs.expressions_))...);
+      index_apply<std::tuple_size<decltype(tmp)>::value>(
+          [this, &tmp](auto... Is2) {
+            assignment_impl(std::make_tuple(std::make_pair(
+                std::get<Is2>(tmp).first,
+                std::get<Is2>(tmp).first + std::get<Is2>(tmp).second)...));
+          });
+    });
   }
 
   /**
    * Generates kernel source for evaluating given expressions into results held
    * by \c this.
    * @tparam T_expressions types of expressions
-   * @param expressions expressions to generate kernel source for
+   * @param exprs expressions to generate kernel source for
    * @return kernel source
    */
   template <typename... T_expressions,
             typename = std::enable_if_t<sizeof...(T_results)
                                         == sizeof...(T_expressions)>>
   std::string get_kernel_source_for_evaluating(
-      const expressions_cl<T_expressions...>& expressions) {
-    return get_kernel_source_for_evaluating_impl(
-        expressions, std::make_index_sequence<sizeof...(T_expressions)>{});
+      const expressions_cl<T_expressions...>& exprs) {
+    return index_apply<sizeof...(T_expressions)>([this, &exprs](auto... Is) {
+      return get_kernel_source_impl(std::tuple_cat(make_assignment_pair(
+          std::get<Is>(results_), std::get<Is>(exprs.expressions_))...));
+    });
   }
 
  private:
-  /**
-   * Implementation of kernel source generation.
-   * @tparam T_expressions types of expressions
-   * @tparam Is indices
-   * @param exprs expressions
-   */
-  template <typename... T_expressions, size_t... Is>
-  std::string get_kernel_source_for_evaluating_impl(
-      const expressions_cl<T_expressions...>& exprs,
-      std::index_sequence<Is...>) {
-    return get_kernel_source_impl(std::tuple_cat(make_assignment_pair(
-        as_operation_cl(std::get<Is>(results_)),
-        as_operation_cl(std::get<Is>(exprs.expressions_)))...));
-  }
-
   /**
    * Implementation of kernel source generation.
    * @tparam T_res types of results
@@ -396,19 +394,6 @@ class results_cl {
           "}\n";
     }
     return src;
-  }
-
-  /**
-   * Assignment of expressions to results.
-   * @tparam T_expressions types of expressions
-   * @param exprs expressions
-   */
-  template <typename... T_expressions, size_t... Is>
-  void assignment(const expressions_cl<T_expressions...>& exprs,
-                  std::index_sequence<Is...>) {
-    assignment_impl(std::tuple_cat(make_assignment_pair(
-        as_operation_cl(std::get<Is>(results_)),
-        as_operation_cl(std::get<Is>(exprs.expressions_)))...));
   }
 
   /**
@@ -508,25 +493,44 @@ class results_cl {
    * @param expression expression
    * @return a tuple of pair of result and expression
    */
-  template <typename T_result, typename T_expression>
+  template <typename T_result, typename T_expression,
+            require_all_not_t<is_without_output<T_expression>,
+                              conjunction<internal::is_scalar_check<T_result>,
+                                          std::is_arithmetic<std::decay_t<
+                                              T_expression>>>>* = nullptr>
   static auto make_assignment_pair(T_result&& result,
                                    T_expression&& expression) {
-    return std::make_tuple(std::pair<T_result&&, T_expression&&>(
-        std::forward<T_result>(result),
-        std::forward<T_expression>(expression)));
+    return std::make_tuple(
+        std::pair<as_operation_cl_t<T_result>, as_operation_cl_t<T_expression>>(
+            as_operation_cl(std::forward<T_result>(result)),
+            as_operation_cl(std::forward<T_expression>(expression))));
+  }
+
+  /**
+   * If an expression does not need to be calculated this returns an empty tuple
+   * @param result result
+   * @param expression expression
+   * @return a tuple of pair of result and expression
+   */
+  template <typename T_result, typename T_expression,
+            require_t<is_without_output<T_expression>>* = nullptr>
+  static auto make_assignment_pair(T_result&& result,
+                                   T_expression&& expression) {
+    return std::make_tuple();
   }
 
   /**
    * Checks on scalars are done separately in this overload instead of in
    * kernel.
    * @param result result - check
-   * @param expression expression - bool scalar
+   * @param pass bool scalar
    * @return an empty tuple
    */
-  template <typename Scal>
-  static std::tuple<> make_assignment_pair(check_cl_<scalar_<Scal>>& result,
-                                           scalar_<char> expression) {
-    if (!expression.a_) {
+  template <typename T_check, typename T_pass,
+            require_t<internal::is_scalar_check<T_check>>* = nullptr,
+            require_integral_t<T_pass>* = nullptr>
+  static std::tuple<> make_assignment_pair(T_check&& result, T_pass&& pass) {
+    if (!pass) {
       std::stringstream s;
       s << result.function_ << ": " << result.err_variable_ << " = "
         << result.arg_.a_ << ", but it must be " << result.must_be_ << "!";
@@ -545,6 +549,14 @@ template <typename... T_results>
 results_cl<T_results...> results(T_results&&... results) {
   return results_cl<T_results...>(std::forward<T_results>(results)...);
 }
+
+// an implementation that needs results and expressions defined (not just
+// declared)
+template <typename T>
+void check_cl_<T>::operator=(bool condition) {
+  results(*this) = expressions(condition);
+}
+
 /** @}*/
 }  // namespace math
 }  // namespace stan
