@@ -35,7 +35,8 @@ inline return_type_t<T, U> ub_free(const T& y, const U& ub) {
   const auto& y_ref = to_ref(y);
   const auto& ub_ref = to_ref(ub);
   check_finite("ub_constrain", "ub", value_of(ub_ref));
-  check_less_or_equal("ub_free", "Upper bounded variable", value_of(y_ref), value_of(ub_ref));
+  check_less_or_equal("ub_free", "Upper bounded variable", value_of(y_ref),
+                      value_of(ub_ref));
   return log(subtract(ub_ref, y_ref));
 }
 

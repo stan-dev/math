@@ -44,7 +44,8 @@ inline auto lub_free(T&& y, const L& lb, const U& ub) {
   const auto& ub_ref = to_ref(ub);
   check_finite("lub_free", "lb", value_of(lb_ref));
   check_finite("lub_free", "ub", value_of(ub_ref));
-  check_bounded("lub_free", "Bounded variable", value_of(y_ref), value_of(lb_ref), value_of(ub_ref));
+  check_bounded("lub_free", "Bounded variable", value_of(y_ref),
+                value_of(lb_ref), value_of(ub_ref));
   return eval(logit(divide(subtract(y_ref, lb_ref), subtract(ub_ref, lb_ref))));
 }
 
