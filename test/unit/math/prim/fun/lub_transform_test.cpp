@@ -31,16 +31,16 @@ TEST(prob_transform, lub_vec) {
 
   Eigen::VectorXd resvv(2);
   resvv << (2.0 + 1.0) * stan::math::inv_logit(-1.0) - 1.0,
-    (3.0 - 0.5) * stan::math::inv_logit(1.1) + 0.5;
+      (3.0 - 0.5) * stan::math::inv_logit(1.1) + 0.5;
   Eigen::VectorXd ressv(2);
   ressv << (2.0 - 1.0) * stan::math::inv_logit(-1.0) + 1.0,
-    (3.0 - 1.0) * stan::math::inv_logit(1.1) + 1.0;
+      (3.0 - 1.0) * stan::math::inv_logit(1.1) + 1.0;
   Eigen::VectorXd resvs(2);
   resvs << (2.0 + 1.0) * stan::math::inv_logit(-1.0) - 1.0,
-    (2.0 - 0.5) * stan::math::inv_logit(1.1) + 0.5;
+      (2.0 - 0.5) * stan::math::inv_logit(1.1) + 0.5;
   Eigen::VectorXd res(2);
   res << (2.0 - 1.0) * stan::math::inv_logit(-1.0) + 1.0,
-    (2.0 - 1.0) * stan::math::inv_logit(1.1) + 1.0;
+      (2.0 - 1.0) * stan::math::inv_logit(1.1) + 1.0;
 
   EXPECT_MATRIX_EQ(resvv, stan::math::lub_constrain(input, lbv, ubv));
   EXPECT_MATRIX_EQ(ressv, stan::math::lub_constrain(input, lb, ubv));
@@ -49,24 +49,28 @@ TEST(prob_transform, lub_vec) {
 
   double lp = 0.0;
   EXPECT_MATRIX_EQ(resvv, stan::math::lub_constrain(input, lbv, ubv, lp));
-  EXPECT_FLOAT_EQ(((ubv - lbv).array().log() +
-    input.array() -
-	2 * input.array().exp().log1p().array()).sum(), lp);
+  EXPECT_FLOAT_EQ(((ubv - lbv).array().log() + input.array()
+                   - 2 * input.array().exp().log1p().array())
+                      .sum(),
+                  lp);
   lp = 0.0;
   EXPECT_MATRIX_EQ(ressv, stan::math::lub_constrain(input, lb, ubv, lp));
-  EXPECT_FLOAT_EQ(((ubv.array() - lb).log() +
-    input.array() -
-	2 * input.array().exp().log1p().array()).sum(), lp);
+  EXPECT_FLOAT_EQ(((ubv.array() - lb).log() + input.array()
+                   - 2 * input.array().exp().log1p().array())
+                      .sum(),
+                  lp);
   lp = 0.0;
   EXPECT_MATRIX_EQ(resvs, stan::math::lub_constrain(input, lbv, ub, lp));
-  EXPECT_FLOAT_EQ(((ub - lbv.array()).log() +
-    input.array() -
-	2 * input.array().exp().log1p().array()).sum(), lp);
+  EXPECT_FLOAT_EQ(((ub - lbv.array()).log() + input.array()
+                   - 2 * input.array().exp().log1p().array())
+                      .sum(),
+                  lp);
   lp = 0.0;
   EXPECT_MATRIX_EQ(res, stan::math::lub_constrain(input, lb, ub, lp));
-  EXPECT_FLOAT_EQ((std::log(ub - lb) +
-	     input.array() -
-	     2 * input.array().exp().log1p().array()).sum(), lp);
+  EXPECT_FLOAT_EQ((std::log(ub - lb) + input.array()
+                   - 2 * input.array().exp().log1p().array())
+                      .sum(),
+                  lp);
 }
 
 TEST(prob_transform, lub_j) {

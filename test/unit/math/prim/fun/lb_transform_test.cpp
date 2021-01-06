@@ -21,7 +21,7 @@ TEST(prob_transform, lb_vec) {
   resv << exp(-1.0) + 2.0, exp(1.1) + 3.0;
   Eigen::VectorXd res(2);
   res << exp(-1.0) + 2.0, exp(1.1) + 2.0;
-  
+
   EXPECT_MATRIX_EQ(resv, stan::math::lb_constrain(input, lbv));
   EXPECT_MATRIX_EQ(res, stan::math::lb_constrain(input, lb));
 
