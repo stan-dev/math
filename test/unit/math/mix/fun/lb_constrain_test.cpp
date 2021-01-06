@@ -41,7 +41,7 @@ TEST(mathMixMatFun, lb_mat_constrain) {
     stan::return_type_t<decltype(x), decltype(lb)> lp = 0;
     stan::math::lb_constrain(x, lb, lp);
     return lp;
-  };  
+  };
 
   Eigen::MatrixXd A(2, 2);
   A << -5.0, 2.0, 4.0, -2.0;

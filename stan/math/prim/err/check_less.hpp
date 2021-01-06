@@ -138,8 +138,7 @@ inline void check_less(const char* function, const char* name, const T_y& y,
           msg << ", but must be less than ";
           msg << high_ref(i, j);
           std::string msg_str(msg.str());
-          throw_domain_error(function, name, y,
-                                 "is ", msg_str.c_str());
+          throw_domain_error(function, name, y, "is ", msg_str.c_str());
         }();
       }
     }

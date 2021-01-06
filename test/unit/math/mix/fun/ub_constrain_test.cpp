@@ -44,7 +44,7 @@ TEST(mathMixMatFun, ub_mat_constrain) {
     stan::math::ub_constrain(x, ub, lp);
     return lp;
   };
-  
+
   Eigen::MatrixXd A(2, 2);
   A << -1.1, 0.0, 1.0, 2.0;
   Eigen::MatrixXd ubm(2, 2);

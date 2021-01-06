@@ -35,8 +35,8 @@ inline var log1p_exp(const var& a) {
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto log1p_exp(const T& a) {
   return make_callback_var(log1p_exp(a.val()), [a](const auto& vi) {
-      a.adj().array() += vi.adj().array() * inv_logit(a.val().array());
-    });
+    a.adj().array() += vi.adj().array() * inv_logit(a.val().array());
+  });
 }
 
 }  // namespace math
