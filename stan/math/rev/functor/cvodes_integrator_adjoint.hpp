@@ -423,16 +423,12 @@ class cvodes_integrator_adjoint_vari : public vari {
    * same size as the state variable, corresponding to a time in ts.
    */
   template <require_eigen_col_vector_t<T_y0>* = nullptr>
-  cvodes_integrator_adjoint_vari(const char* function_name, const F& f,
-                                 const T_y0& y0, const T_t0& t0,
-                                 const std::vector<T_ts>& ts,
-                                 double relative_tolerance,
-                                 double absolute_tolerance,
-                                 double absolute_tolerance_B,
-                                 double absolute_tolerance_QB,
-                                 long int steps_checkpoint,
-                                 long int max_num_steps, std::ostream* msgs,
-                                 const T_Args&... args)
+  cvodes_integrator_adjoint_vari(
+      const char* function_name, const F& f, const T_y0& y0, const T_t0& t0,
+      const std::vector<T_ts>& ts, double relative_tolerance,
+      double absolute_tolerance, double absolute_tolerance_B,
+      double absolute_tolerance_QB, long int steps_checkpoint,
+      long int max_num_steps, std::ostream* msgs, const T_Args&... args)
       : function_name_(function_name),
         vari(NOT_A_NUMBER),
         N_(y0.size()),
@@ -496,8 +492,8 @@ class cvodes_integrator_adjoint_vari : public vari {
     std::cout << "relative_tolerance = " << relative_tolerance << std::endl;
     std::cout << "absolute_tolerance = " << absolute_tolerance << std::endl;
     std::cout << "absolute_tolerance_B = " << absolute_tolerance_B << std::endl;
-    std::cout << "absolute_tolerance_QB = " << absolute_tolerance_QB << std::endl;
-    std::cout << "max_num_steps = " << max_num_steps << std::endl;
+    std::cout << "absolute_tolerance_QB = " << absolute_tolerance_QB <<
+    std::endl; std::cout << "max_num_steps = " << max_num_steps << std::endl;
     std::cout << "steps_checkpoint = " << steps_checkpoint << std::endl;
     */
   }
@@ -544,8 +540,9 @@ class cvodes_integrator_adjoint_vari : public vari {
 
     // initialize forward sensitivity system of CVODES as needed
     if (t0_vars_ + ts_vars_ + y0_vars_ + args_vars_ > 0) {
-      check_flag_sundials(CVodeAdjInit(memory->cvodes_mem_, steps_checkpoint_, CV_HERMITE),
-                          "CVodeAdjInit");
+      check_flag_sundials(
+          CVodeAdjInit(memory->cvodes_mem_, steps_checkpoint_, CV_HERMITE),
+          "CVodeAdjInit");
     }
 
     double t_init = t0_dbl;
@@ -686,7 +683,6 @@ class cvodes_integrator_adjoint_vari : public vari {
         check_flag_sundials(
             CVodeSetQuadErrConB(memory->cvodes_mem_, indexB, SUNTRUE),
             "CVodeSetQuadErrConB");
-
       }
 
       // At every time step, collect the adjoints from the output

@@ -31,7 +31,6 @@ struct pkpd_rhs {
   }
 };
 
-
 void run_benchmark(int adjoint_integrator) {
   double true_CL = 8.0;
   double true_Q = 18.0;
@@ -81,21 +80,22 @@ void run_benchmark(int adjoint_integrator) {
     double t0 = 0.0;
 
     try {
-      if(adjoint_integrator) {
+      if (adjoint_integrator) {
         std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> y
-            = ode_bdf_adjoint_tol(ode, y0, t0, ts, rel_tol, abs_tol, max_num_steps, nullptr,
-                                  abs_tol_B, abs_tol_QB, steps_checkpoint,
-                                  ka, ke, k12, k21, kin, kout, ea50);
+            = ode_bdf_adjoint_tol(ode, y0, t0, ts, rel_tol, abs_tol,
+                                  max_num_steps, nullptr, abs_tol_B, abs_tol_QB,
+                                  steps_checkpoint, ka, ke, k12, k21, kin, kout,
+                                  ea50);
 
         stan::math::grad();
       } else {
         std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> y
-            = ode_bdf_tol(ode, y0, t0, ts, rel_tol, abs_tol, max_num_steps, nullptr, ka,
-                        ke, k12, k21, kin, kout, ea50);
-        
+            = ode_bdf_tol(ode, y0, t0, ts, rel_tol, abs_tol, max_num_steps,
+                          nullptr, ka, ke, k12, k21, kin, kout, ea50);
+
         stan::math::grad();
       }
-    } catch(std::exception& exc) {
+    } catch (std::exception& exc) {
       std::cout << "oops, keep going please!" << std::endl;
       std::cerr << exc.what() << std::endl;
     }
@@ -103,12 +103,6 @@ void run_benchmark(int adjoint_integrator) {
   stan::math::recover_memory();
 }
 
+TEST(StanMathOdeBench, bdf) { run_benchmark(0); }
 
-TEST(StanMathOdeBench, bdf) {
-  run_benchmark(0);
-}
-
-
-TEST(StanMathOdeBench, bdf_adjoint) {
-  run_benchmark(1);
-}
+TEST(StanMathOdeBench, bdf_adjoint) { run_benchmark(1); }

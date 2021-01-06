@@ -80,7 +80,7 @@ auto log_softmax(const T& x) {
       = ChainableStack::instance_->memalloc_.alloc_array<double>(a_size);
   Eigen::Map<vector_d>(softmax_x_d_array, a_size) = softmax_x_d.array() / sum;
 
-  vector_v log_softmax_x(a_size);
+  plain_type_t<T> log_softmax_x(a_size);
   for (int k = 0; k < a_size; ++k) {
     log_softmax_x(k) = var(new internal::log_softmax_elt_vari(
         log_softmax_x_d[k], x_vi_array, softmax_x_d_array, a_size, k));
