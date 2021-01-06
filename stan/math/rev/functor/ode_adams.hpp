@@ -115,7 +115,7 @@ ode_adams_tol(const F& f, const T_y0& y0, const T_t0& t0,
               double absolute_tolerance,
               long int max_num_steps,  // NOLINT(runtime/int)
               std::ostream* msgs, const T_Args&... args) {
-  double absolute_tolerance_B = absolute_tolerance * 100.0;
+  double absolute_tolerance_B = absolute_tolerance * 10.0;
   double absolute_tolerance_QB = absolute_tolerance_B * 10.0;
   long int steps_checkpoint = 100;
 
@@ -163,7 +163,7 @@ ode_adams(const F& f, const T_y0& y0, const T_t0& t0,
   double relative_tolerance = 1e-10;
   double absolute_tolerance = 1e-10;
   long int max_num_steps = 1e8;  // NOLINT(runtime/int)
-  double absolute_tolerance_B = absolute_tolerance * 100.0;
+  double absolute_tolerance_B = absolute_tolerance * 10.0;
   double absolute_tolerance_QB = absolute_tolerance_B * 10.0;
   long int steps_checkpoint = 100;
 

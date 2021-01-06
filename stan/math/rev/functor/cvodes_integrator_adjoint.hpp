@@ -618,6 +618,18 @@ class cvodes_integrator_adjoint_vari : public vari {
     SUNMatrix AB_ = SUNDenseMatrix(N_, N_);
     SUNLinearSolver LSB_ = SUNDenseLinearSolver(nv_state_sens, AB_);
 
+    /* check these if needed 
+      flag = CVodeSetUserDataB(cvode_mem, which, user_dataB);
+      flag = CVodeSetMaxOrdB(cvode_mem, which, maxordB);
+      flag = CVodeSetMaxNumStepsB(cvode_mem, which, mxstepsB);  ** WE
+      NEED THIS **
+      flag = CVodeSetInitStepB(cvode_mem, which, hinB);
+      flag = CVodeSetMinStepB(cvode_mem, which, hminB);
+      flag = CVodeSetMaxStepB(cvode_mem, which, hmaxB);
+      flag = CVodeSetStabLimDetB(cvode_mem, which, stldetB); ** MAYBE? **
+      flag = CVodeSetConstraintsB(cvode_mem, which, constraintsB);
+     */
+
     try {
       int indexB;
 
@@ -642,6 +654,10 @@ class cvodes_integrator_adjoint_vari : public vari {
           CVodeSStolerancesB(memory->cvodes_mem_, indexB, relative_tolerance_,
                              absolute_tolerance_B_),
           "CVodeSStolerancesB");
+
+      check_flag_sundials(
+          CVodeSetMaxNumStepsB(memory->cvodes_mem_, indexB, max_num_steps_),
+          "CVodeSetMaxNumStepsB");
 
       check_flag_sundials(
           CVodeSetLinearSolverB(memory->cvodes_mem_, indexB, LSB_, AB_),
@@ -699,14 +715,17 @@ class cvodes_integrator_adjoint_vari : public vari {
 
         double t_final = value_of((i > 0) ? memory->ts_[i - 1] : memory->t0_);
         if (t_final != t_init) {
-          check_flag_sundials(
-              CVodeReInitB(memory->cvodes_mem_, indexB, t_init, nv_state_sens),
-              "CVodeReInitB");
 
-          if (args_vars_ > 0) {
+          if (i != memory->ts_.size() - 1) {
             check_flag_sundials(
-                CVodeQuadReInitB(memory->cvodes_mem_, indexB, nv_quad),
-                "CVodeQuadReInitB");
+                CVodeReInitB(memory->cvodes_mem_, indexB, t_init, nv_state_sens),
+                "CVodeReInitB");
+
+            if (args_vars_ > 0) {
+              check_flag_sundials(
+                  CVodeQuadReInitB(memory->cvodes_mem_, indexB, nv_quad),
+                  "CVodeQuadReInitB");
+            }
           }
 
           int error_code = CVodeB(memory->cvodes_mem_, t_final, CV_NORMAL);
