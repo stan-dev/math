@@ -144,7 +144,7 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
 
   if (is_vector<T_y>::value) {
     Eigen::Map<const Eigen::Matrix<value_type_t<T_y>, Eigen::Dynamic, 1>> y_vec(
-        &y_seq[0], y_seq.size());
+        y_seq.data(), y_seq.size());
     auto log1m_exp_cuts_diff = log1m_exp(cut1 - cut2);
     logp = y_vec.cwiseEqual(1)
                .select(m_log_1p_exp_cut1,

@@ -33,8 +33,11 @@ class scalar_seq_view<C, require_eigen_vector_t<C>> {
 
   inline auto size() const noexcept { return c_.size(); }
 
+  inline const auto& data() const noexcept { return c_.data(); }
+  inline auto& data() noexcept { return c_.data(); }
+
   template <typename T = C, require_st_arithmetic<T>* = nullptr>
-  inline auto val(size_t i) const {
+  inline const auto val(size_t i) const {
     return c_.coeffRef(i);
   }
 
@@ -91,6 +94,8 @@ class scalar_seq_view<C, require_std_vector_t<C>> {
    */
   inline auto operator[](size_t i) const { return c_[i]; }
   inline auto size() const noexcept { return c_.size(); }
+  inline const auto& data() const noexcept { return c_.data(); }
+  inline auto& data() noexcept { return c_.data(); }
 
   template <typename T = C, require_st_arithmetic<T>* = nullptr>
   inline auto val(size_t i) const {
@@ -129,6 +134,8 @@ class scalar_seq_view<C, require_stan_scalar_t<C>> {
   }
 
   static constexpr auto size() { return 1; }
+  inline const auto& data() const noexcept { return &c_; }
+  inline auto& data() noexcept { return &c_; }
 
  private:
   std::decay_t<C> t_;
