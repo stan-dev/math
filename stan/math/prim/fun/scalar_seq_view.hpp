@@ -134,8 +134,8 @@ class scalar_seq_view<C, require_stan_scalar_t<C>> {
   }
 
   static constexpr auto size() { return 1; }
-  inline const auto& data() const noexcept { return &c_; }
-  inline auto& data() noexcept { return &c_; }
+  inline const auto& data() const noexcept { return &t_; }
+  inline auto& data() noexcept { return &t_; }
 
  private:
   std::decay_t<C> t_;
