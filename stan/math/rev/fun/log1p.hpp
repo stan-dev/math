@@ -36,10 +36,11 @@ inline var log1p(const var& a) { return var(new internal::log1p_vari(a.vi_)); }
  * @return Elementwise log(1 + x)
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
-inline auto log1p(const T& a) {
+inline auto log1p(const T& x) {
+  check_greater_or_equal("log1p", "x", x.val(), -1.0);
   return make_callback_var(
-      a.val().array().log1p().matrix(), [a](const auto& vi) {
-        a.adj().array() += vi.adj().array() / (1 + a.val().array());
+      x.val().array().log1p().matrix(), [x](const auto& vi) {
+        x.adj().array() += vi.adj().array() / (1 + x.val().array());
       });
 }
 

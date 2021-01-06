@@ -134,7 +134,7 @@ TEST(ErrorHandlingMat, CheckLess_Matrix_one_indexed_message) {
   }
 
   EXPECT_EQ(std::string::npos, message.find("["))
-      << "no index provided" << std::endl
+      << "index provided when x has none" << std::endl
       << message;
 }
 
