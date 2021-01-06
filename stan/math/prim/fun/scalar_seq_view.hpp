@@ -33,8 +33,8 @@ class scalar_seq_view<C, require_eigen_vector_t<C>> {
 
   inline auto size() const noexcept { return c_.size(); }
 
-  inline const auto& data() const noexcept { return c_.data(); }
-  inline auto& data() noexcept { return c_.data(); }
+  inline const value_type_t<C>* data() const noexcept { return c_.data(); }
+  inline value_type_t<C>* data() noexcept { return c_.data(); }
 
   template <typename T = C, require_st_arithmetic<T>* = nullptr>
   inline const auto val(size_t i) const {
@@ -63,6 +63,8 @@ class scalar_seq_view<C, require_var_matrix_t<C>> {
    * @return the element at the specified position in the container
    */
   inline auto operator[](size_t i) const { return c_.val().coeffRef(i); }
+  inline const auto* data() const noexcept { return c_.vi_; }
+  inline auto* data() noexcept { return c_.vi_; }
 
   inline auto size() const noexcept { return c_.size(); }
 
@@ -94,8 +96,7 @@ class scalar_seq_view<C, require_std_vector_t<C>> {
    */
   inline auto operator[](size_t i) const { return c_[i]; }
   inline auto size() const noexcept { return c_.size(); }
-  inline const auto& data() const noexcept { return c_.data(); }
-  inline auto& data() noexcept { return c_.data(); }
+  inline const auto* data() const noexcept { return c_.data(); }
 
   template <typename T = C, require_st_arithmetic<T>* = nullptr>
   inline auto val(size_t i) const {
@@ -124,21 +125,21 @@ class scalar_seq_view<C, require_stan_scalar_t<C>> {
   inline auto operator[](int /* i */) const noexcept { return t_; }
 
   template <typename T = C, require_st_arithmetic<T>* = nullptr>
-  inline auto val(int /* i */) const noexcept {
+  inline const auto& val(int /* i */) const noexcept {
     return t_;
   }
 
   template <typename T = C, require_st_autodiff<T>* = nullptr>
-  inline auto val(int /* i */) const noexcept {
+  inline auto& val(int /* i */) const noexcept {
     return t_.val();
   }
 
   static constexpr auto size() { return 1; }
-  inline const auto& data() const noexcept { return &t_; }
-  inline auto& data() noexcept { return &t_; }
+  inline const auto* data() const noexcept { return &t_; }
+  inline auto* data() noexcept { return &t_; }
 
  private:
-  std::decay_t<C> t_;
+   std::decay_t<C> t_;
 };
 }  // namespace stan
 #endif
