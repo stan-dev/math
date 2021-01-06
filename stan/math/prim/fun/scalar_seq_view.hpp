@@ -124,7 +124,7 @@ class scalar_seq_view<C, require_stan_scalar_t<C>> {
   }
 
   template <typename T = C, require_st_autodiff<T>* = nullptr>
-  inline auto val(int /* i */) const noexcept  {
+  inline auto val(int /* i */) const noexcept {
     return t_.val();
   }
 

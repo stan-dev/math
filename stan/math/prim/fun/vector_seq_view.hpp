@@ -54,8 +54,9 @@ class vector_seq_view<T, require_matrix_t<T>> {
 };
 
 namespace internal {
-  template <typename T>
-  using is_matrix_or_std_vector = math::disjunction<is_matrix<T>, is_std_vector<T>>;
+template <typename T>
+using is_matrix_or_std_vector
+    = math::disjunction<is_matrix<T>, is_std_vector<T>>;
 }
 
 /** \ingroup type_trait
@@ -70,7 +71,8 @@ namespace internal {
  * @tparam S the type inside of the std::vector
  */
 template <typename T>
-class vector_seq_view<T, require_std_vector_vt<internal::is_matrix_or_std_vector, T>> {
+class vector_seq_view<
+    T, require_std_vector_vt<internal::is_matrix_or_std_vector, T>> {
  public:
   explicit vector_seq_view(const T& v) noexcept : v_(v) {}
   inline auto size() const noexcept { return v_.size(); }

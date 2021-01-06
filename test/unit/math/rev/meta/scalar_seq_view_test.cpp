@@ -25,22 +25,22 @@ TEST(MathMetaRev, ScalarSeqViewvar) {
 
 TEST(MathMetaRev, ScalarSeqViewArrayVarVal) {
   using stan::scalar_seq_view;
-  using std::vector;
   using stan::math::var;
+  using std::vector;
   vector<var> v;
   v.push_back(2.2);
   v.push_back(0.0001);
-  scalar_seq_view<vector<var> > sv(v);
+  scalar_seq_view<vector<var>> sv(v);
   EXPECT_FLOAT_EQ(v[0].val(), sv.val(0));
   EXPECT_FLOAT_EQ(v[1].val(), sv.val(1));
 
   const vector<var> v_const{2.2, 0.001};
-  scalar_seq_view<const vector<var> > sv_const(v_const);
+  scalar_seq_view<const vector<var>> sv_const(v_const);
   EXPECT_FLOAT_EQ(v_const[0].val(), sv_const.val(0));
   EXPECT_FLOAT_EQ(v_const[1].val(), sv_const.val(1));
 
   const vector<var>& v_const_ref{2.2, 0.001};
-  scalar_seq_view<const vector<var> > sv_const_ref(v_const_ref);
+  scalar_seq_view<const vector<var>> sv_const_ref(v_const_ref);
   EXPECT_FLOAT_EQ(v_const_ref[0].val(), sv_const_ref.val(0));
   EXPECT_FLOAT_EQ(v_const_ref[1].val(), sv_const_ref.val(1));
 
