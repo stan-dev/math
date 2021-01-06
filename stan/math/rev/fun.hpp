@@ -88,7 +88,6 @@
 #include <stan/math/rev/fun/is_uninitialized.hpp>
 #include <stan/math/rev/fun/lambert_w.hpp>
 #include <stan/math/rev/fun/lbeta.hpp>
-#include <stan/math/rev/fun/lb_constrain.hpp>
 #include <stan/math/rev/fun/ldexp.hpp>
 #include <stan/math/rev/fun/lgamma.hpp>
 #include <stan/math/rev/fun/lmgamma.hpp>
@@ -164,7 +163,6 @@
 #include <stan/math/rev/fun/trace_quad_form.hpp>
 #include <stan/math/rev/fun/trigamma.hpp>
 #include <stan/math/rev/fun/trunc.hpp>
-#include <stan/math/rev/fun/ub_constrain.hpp>
 #include <stan/math/rev/fun/unit_vector_constrain.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/fun/value_of_rec.hpp>

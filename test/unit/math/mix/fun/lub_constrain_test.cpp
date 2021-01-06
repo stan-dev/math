@@ -1,115 +1,154 @@
 #include <test/unit/math/test_ad.hpp>
 
-namespace lub_constrain_test {
-template <typename T, typename L, typename U>
-auto g1(const T& x, const L& lb, const U& ub) {
-  return stan::math::lub_constrain(x, lb, ub);
-}
-
-template <typename T, typename L, typename U>
-auto g2(const T& x, const L& lb, const U& ub) {
-  stan::return_type_t<T, L, U> lp = 0;
-  return stan::math::lub_constrain(x, lb, ub, lp);
-}
-
-template <typename T, typename L, typename U>
-auto g3(const T& x, const L& lb, const U& ub) {
-  stan::return_type_t<T, L, U> lp = 0;
-  stan::math::lub_constrain(x, lb, ub, lp);
-  return lp;
-}
-}  // namespace lub_constrain_test
-
 TEST(mathMixMatFun, lub_constrain_scalar) {
   auto f1 = [](const auto& x, const auto& lb, const auto& ub) {
-    return lub_constrain_test::g1(x, lb, ub);
+    return stan::math::lub_constrain(x, lb, ub);
   };
   auto f2 = [](const auto& x, const auto& lb, const auto& ub) {
-    return lub_constrain_test::g2(x, lb, ub);
+    stan::return_type_t<decltype(x), decltype(lb), decltype(ub)> lp = 0;
+    return stan::math::lub_constrain(x, lb, ub, lp);
   };
   auto f3 = [](const auto& x, const auto& lb, const auto& ub) {
-    return lub_constrain_test::g3(x, lb, ub);
+    stan::return_type_t<decltype(x), decltype(lb), decltype(ub)> lp = 0;
+    stan::math::lub_constrain(x, lb, ub, lp);
+    return lp;
   };
 
   double x1 = 0.7;
   double x2 = -1.1;
   double lb = -2.0;
-  double lbi = -stan::math::INFTY;
   double ub = 1.9;
-  double ubi = stan::math::INFTY;
 
   stan::test::expect_ad(f1, x1, lb, ub);
-  stan::test::expect_ad(f1, x1, lb, ubi);
-  stan::test::expect_ad(f1, x1, lbi, ub);
-  stan::test::expect_ad(f1, x1, lbi, ubi);
   stan::test::expect_ad(f1, x2, lb, ub);
-  stan::test::expect_ad(f1, x2, lb, ubi);
-  stan::test::expect_ad(f1, x2, lbi, ub);
-  stan::test::expect_ad(f1, x2, lbi, ubi);
 
   stan::test::expect_ad(f2, x1, lb, ub);
-  stan::test::expect_ad(f2, x1, lb, ubi);
-  stan::test::expect_ad(f2, x1, lbi, ub);
-  stan::test::expect_ad(f2, x1, lbi, ubi);
   stan::test::expect_ad(f2, x2, lb, ub);
-  stan::test::expect_ad(f2, x2, lb, ubi);
-  stan::test::expect_ad(f2, x2, lbi, ub);
-  stan::test::expect_ad(f2, x2, lbi, ubi);
 
   stan::test::expect_ad(f3, x1, lb, ub);
-  stan::test::expect_ad(f3, x1, lb, ubi);
-  stan::test::expect_ad(f3, x1, lbi, ub);
-  stan::test::expect_ad(f3, x1, lbi, ubi);
   stan::test::expect_ad(f3, x2, lb, ub);
-  stan::test::expect_ad(f3, x2, lb, ubi);
-  stan::test::expect_ad(f3, x2, lbi, ub);
-  stan::test::expect_ad(f3, x2, lbi, ubi);
+
+  // Error cases
+  stan::test::expect_ad(f1, x1, lb, lb);
+  stan::test::expect_ad(f1, x2, lb, lb);
+
+  stan::test::expect_ad(f2, x1, lb, lb);
+  stan::test::expect_ad(f2, x2, lb, lb);
+
+  stan::test::expect_ad(f3, x1, lb, lb);
+  stan::test::expect_ad(f3, x2, lb, lb);
 }
 
 TEST(mathMixMatFun, lub_mat_constrain) {
   auto f1 = [](const auto& x, const auto& lb, const auto& ub) {
-    return lub_constrain_test::g1(x, lb, ub);
+    return stan::math::lub_constrain(x, lb, ub);
   };
   auto f2 = [](const auto& x, const auto& lb, const auto& ub) {
-    return lub_constrain_test::g2(x, lb, ub);
+    stan::return_type_t<decltype(x), decltype(lb), decltype(ub)> lp = 0;
+    return stan::math::lub_constrain(x, lb, ub, lp);
   };
   auto f3 = [](const auto& x, const auto& lb, const auto& ub) {
-    return lub_constrain_test::g3(x, lb, ub);
+    stan::return_type_t<decltype(x), decltype(lb), decltype(ub)> lp = 0;
+    stan::math::lub_constrain(x, lb, ub, lp);
+    return lp;
   };
 
   Eigen::MatrixXd x1(2, 2);
-  x1 << 0.7, -1.0, 5.7, -3.8;
+  x1 << 0.7, -1.0, 1.1, -3.8;
   Eigen::MatrixXd x2(2, 2);
   x2 << 1.1, 2.0, -0.3, 1.1;
-  double lb = 2.7;
-  double lbi = -stan::math::INFTY;
-  double ub = -1.3;
-  double ubi = stan::math::INFTY;
+  Eigen::MatrixXd lb(2, 2);
+  lb << 2.7, -1.0, -3.0, 1.1;
+  double lbs = 0.1;
+  Eigen::MatrixXd ub(2, 2);
+  ub << 2.3, -0.5, 1.4, 1.2;
+  double ubs = 3.0;
 
   stan::test::expect_ad(f1, x1, lb, ub);
-  stan::test::expect_ad(f1, x1, lb, ubi);
-  stan::test::expect_ad(f1, x1, lbi, ub);
-  stan::test::expect_ad(f1, x1, lbi, ubi);
-  /*stan::test::expect_ad(f1, x2, lb, ub);
-  stan::test::expect_ad(f1, x2, lb, ubi);
-  stan::test::expect_ad(f1, x2, lbi, ub);
-  stan::test::expect_ad(f1, x2, lbi, ubi);*/
+  stan::test::expect_ad(f1, x1, lb, ubs);
+  stan::test::expect_ad(f1, x1, lbs, ub);
+  stan::test::expect_ad(f1, x2, lb, ub);
+  stan::test::expect_ad(f1, x2, lb, ubs);
+  stan::test::expect_ad(f1, x2, lbs, ub);
 
-  /*stan::test::expect_ad(f2, x1, lb, ub);
-  stan::test::expect_ad(f2, x1, lb, ubi);
-  stan::test::expect_ad(f2, x1, lbi, ub);
-  stan::test::expect_ad(f2, x1, lbi, ubi);
+  stan::test::expect_ad(f2, x1, lb, ub);
+  stan::test::expect_ad(f2, x1, lb, ubs);
+  stan::test::expect_ad(f2, x1, lbs, ub);
   stan::test::expect_ad(f2, x2, lb, ub);
-  stan::test::expect_ad(f2, x2, lb, ubi);
-  stan::test::expect_ad(f2, x2, lbi, ub);
-  stan::test::expect_ad(f2, x2, lbi, ubi);
+  stan::test::expect_ad(f2, x2, lb, ubs);
+  stan::test::expect_ad(f2, x2, lbs, ub);
 
   stan::test::expect_ad(f3, x1, lb, ub);
-  stan::test::expect_ad(f3, x1, lb, ubi);
-  stan::test::expect_ad(f3, x1, lbi, ub);
-  stan::test::expect_ad(f3, x1, lbi, ubi);
+  stan::test::expect_ad(f3, x1, lb, ubs);
+  stan::test::expect_ad(f3, x1, lbs, ub);
   stan::test::expect_ad(f3, x2, lb, ub);
-  stan::test::expect_ad(f3, x2, lb, ubi);
-  stan::test::expect_ad(f3, x2, lbi, ub);
-  stan::test::expect_ad(f3, x2, lbi, ubi);*/
+  stan::test::expect_ad(f3, x2, lb, ubs);
+  stan::test::expect_ad(f3, x2, lbs, ub);
+
+  stan::test::expect_ad_matvar(f1, x1, lb, ub);
+  stan::test::expect_ad_matvar(f1, x1, lb, ubs);
+  stan::test::expect_ad_matvar(f1, x1, lbs, ub);
+  stan::test::expect_ad_matvar(f1, x2, lb, ub);
+  stan::test::expect_ad_matvar(f1, x2, lb, ubs);
+  stan::test::expect_ad_matvar(f1, x2, lbs, ub);
+
+  stan::test::expect_ad_matvar(f2, x1, lb, ub);
+  stan::test::expect_ad_matvar(f2, x1, lb, ubs);
+  stan::test::expect_ad_matvar(f2, x1, lbs, ub);
+  stan::test::expect_ad_matvar(f2, x2, lb, ub);
+  stan::test::expect_ad_matvar(f2, x2, lb, ubs);
+  stan::test::expect_ad_matvar(f2, x2, lbs, ub);
+
+  stan::test::expect_ad_matvar(f3, x1, lb, ub);
+  stan::test::expect_ad_matvar(f3, x1, lb, ubs);
+  stan::test::expect_ad_matvar(f3, x1, lbs, ub);
+  stan::test::expect_ad_matvar(f3, x2, lb, ub);
+  stan::test::expect_ad_matvar(f3, x2, lb, ubs);
+  stan::test::expect_ad_matvar(f3, x2, lbs, ub);
+
+  // Error cases
+  double lbsb = 100.0;
+  double ubsb = -100.0;
+
+  stan::test::expect_ad(f1, x1, lb, lb);
+  stan::test::expect_ad(f1, x1, lb, ubsb);
+  stan::test::expect_ad(f1, x1, lbsb, ub);
+  stan::test::expect_ad(f1, x2, lb, lb);
+  stan::test::expect_ad(f1, x2, lb, ubsb);
+  stan::test::expect_ad(f1, x2, lbsb, ub);
+
+  stan::test::expect_ad(f2, x1, lb, lb);
+  stan::test::expect_ad(f2, x1, lb, ubsb);
+  stan::test::expect_ad(f2, x1, lbsb, ub);
+  stan::test::expect_ad(f2, x2, lb, lb);
+  stan::test::expect_ad(f2, x2, lb, ubsb);
+  stan::test::expect_ad(f2, x2, lbsb, ub);
+
+  stan::test::expect_ad(f3, x1, lb, lb);
+  stan::test::expect_ad(f3, x1, lb, ubsb);
+  stan::test::expect_ad(f3, x1, lbsb, ub);
+  stan::test::expect_ad(f3, x2, lb, lb);
+  stan::test::expect_ad(f3, x2, lb, ubsb);
+  stan::test::expect_ad(f3, x2, lbsb, ub);
+
+  stan::test::expect_ad_matvar(f1, x1, lb, lb);
+  stan::test::expect_ad_matvar(f1, x1, lb, ubsb);
+  stan::test::expect_ad_matvar(f1, x1, lbsb, ub);
+  stan::test::expect_ad_matvar(f1, x2, lb, lb);
+  stan::test::expect_ad_matvar(f1, x2, lb, ubsb);
+  stan::test::expect_ad_matvar(f1, x2, lbsb, ub);
+
+  stan::test::expect_ad_matvar(f2, x1, lb, lb);
+  stan::test::expect_ad_matvar(f2, x1, lb, ubsb);
+  stan::test::expect_ad_matvar(f2, x1, lbsb, ub);
+  stan::test::expect_ad_matvar(f2, x2, lb, lb);
+  stan::test::expect_ad_matvar(f2, x2, lb, ubsb);
+  stan::test::expect_ad_matvar(f2, x2, lbsb, ub);
+
+  stan::test::expect_ad_matvar(f3, x1, lb, lb);
+  stan::test::expect_ad_matvar(f3, x1, lb, ubsb);
+  stan::test::expect_ad_matvar(f3, x1, lbsb, ub);
+  stan::test::expect_ad_matvar(f3, x2, lb, lb);
+  stan::test::expect_ad_matvar(f3, x2, lb, ubsb);
+  stan::test::expect_ad_matvar(f3, x2, lbsb, ub);
 }

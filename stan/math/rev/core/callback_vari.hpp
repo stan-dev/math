@@ -2,7 +2,6 @@
 #define STAN_MATH_REV_CORE_CALLBACK_VARI_HPP
 
 #include <stan/math/rev/core/vari.hpp>
-#include <stan/math/rev/core/callback_vari.hpp>
 #include <utility>
 
 namespace stan {

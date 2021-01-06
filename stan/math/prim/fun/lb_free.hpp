@@ -17,9 +17,6 @@ namespace math {
  * Return the unconstrained value that produces the specified
  * lower-bound constrained value.
  *
- * If the lower bound is negative infinity, it is ignored and
- * the function reduces to <code>identity_free(y)</code>.
- *
  * @tparam T type of bounded object
  * @tparam L type of lower bound
  * @param[in] y input object
@@ -30,9 +27,6 @@ namespace math {
  */
 template <typename T, typename L>
 inline auto lb_free(T&& y, const L& lb) {
-  if (unlikely(is_negative_infinity(lb))) {
-    return identity_free(std::forward<T>(y));
-  }
   check_greater_or_equal("lb_free", "Lower bounded variable", value_of(y),
                          value_of(lb));
   return log(subtract(y, lb));

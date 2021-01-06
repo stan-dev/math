@@ -2,13 +2,9 @@
 #define STAN_MATH_PRIM_FUN_UB_CONSTRAIN_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/fun/identity_constrain.hpp>
 #include <stan/math/prim/fun/subtract.hpp>
 #include <stan/math/prim/fun/sum.hpp>
-#include <stan/math/prim/fun/value_of.hpp>
 #include <cmath>
 
 namespace stan {
@@ -24,40 +20,15 @@ namespace math {
  *
  * <p>where \f$U\f$ is the upper bound.
  *
- * If the upper bound is positive infinity, this function
- * reduces to <code>identity_constrain(x)</code>.
- *
  * @tparam T type of Matrix
  * @tparam U type of upper bound
  * @param[in] x free Matrix.
  * @param[in] ub upper bound
  * @return matrix constrained to have upper bound
  */
-template <typename T, typename L,
-	  require_stan_scalar_t<L>* = nullptr>
-inline promote_scalar_t<return_type_t<T, L>, T>
-ub_constrain(const T& x, const L& ub) {
-  if (unlikely(value_of_rec(ub) == INFTY)) {
-    return x;
-  }
-  return subtract(ub, exp(x));
-}
-
-template <typename T, typename L,
-	  require_all_matrix_t<T, L>* = nullptr,
-	  require_all_not_st_var<T, L>* = nullptr>
+template <typename T, typename L>
 inline auto ub_constrain(const T& x, const L& ub) {
-  promote_scalar_t<return_type_t<T, L>, plain_type_t<T>> ret(x.rows(), x.cols());
-  for(size_t j = 0; j < x.cols(); ++j) {
-    for(size_t i = 0; i < x.rows(); ++i) {
-      if (unlikely(value_of_rec(ub.coeff(i, j)) == INFTY)) {
-	ret.coeffRef(i, j) = x.coeff(i, j);
-      } else {
-	ret.coeffRef(i, j) = ub.coeff(i, j) - exp(x.coeff(i, j));
-      }
-    }
-  }
-  return ret;
+  return eval(subtract(ub, exp(x)));
 }
 
 /**
@@ -73,9 +44,6 @@ inline auto ub_constrain(const T& x, const L& ub) {
  * <p>\f$ \log | \frac{d}{dx} -\mbox{exp}(x) + U |
  *     = \log | -\mbox{exp}(x) + 0 | = x\f$.
  *
- * If the upper bound is positive infinity, this function
- * reduces to <code>identity_constrain(x, lp)</code>.
- *
  * @tparam T type of scalar
  * @tparam U type of upper bound
  * @tparam S type of log probability
@@ -84,33 +52,11 @@ inline auto ub_constrain(const T& x, const L& ub) {
  * @param[in,out] lp log density
  * @return scalar constrained to have upper bound
  */
-template <typename T, typename L,
-	  require_stan_scalar_t<L>* = nullptr>
-inline promote_scalar_t<return_type_t<T, L>, T>
-ub_constrain(const T& x, const L& ub, return_type_t<T, L>& lp) {
-  if (unlikely(value_of_rec(ub) == INFTY)) {
-    return x;
-  }
-  lp += sum(x);
-  return subtract(ub, exp(x));
-}
-
-template <typename T, typename L,
-	  require_all_matrix_t<T, L>* = nullptr,
-	  require_all_not_st_var<T, L>* = nullptr>
+template <typename T, typename L>
 inline auto ub_constrain(const T& x, const L& ub, return_type_t<T, L>& lp) {
-  promote_scalar_t<return_type_t<T, L>, plain_type_t<T>> ret(x.rows(), x.cols());
-  for(size_t j = 0; j < x.cols(); ++j) {
-    for(size_t i = 0; i < x.rows(); ++i) {
-      if (unlikely(value_of_rec(ub.coeff(i, j)) == INFTY)) {
-	ret.coeffRef(i, j) = x.coeff(i, j);
-      } else {
-	ret.coeffRef(i, j) = ub.coeff(i, j) - exp(x.coeff(i, j));
-	lp += x.coeff(i, j);
-      }
-    }
-  }
-  return ret;
+  const auto& x_ref = to_ref(x);
+  lp += sum(x_ref);
+  return eval(subtract(ub, exp(x_ref)));
 }
 
 }  // namespace math

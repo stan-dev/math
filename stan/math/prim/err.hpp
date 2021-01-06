@@ -54,7 +54,6 @@
 #include <stan/math/prim/err/is_cholesky_factor_corr.hpp>
 #include <stan/math/prim/err/is_column_index.hpp>
 #include <stan/math/prim/err/is_corr_matrix.hpp>
-#include <stan/math/prim/err/is_infinity.hpp>
 #include <stan/math/prim/err/is_ldlt_factor.hpp>
 #include <stan/math/prim/err/is_less_or_equal.hpp>
 #include <stan/math/prim/err/is_lower_triangular.hpp>
@@ -62,7 +61,6 @@
 #include <stan/math/prim/err/is_matching_dims.hpp>
 #include <stan/math/prim/err/is_matching_size.hpp>
 #include <stan/math/prim/err/is_nonzero_size.hpp>
-#include <stan/math/prim/err/is_negative_infinity.hpp>
 #include <stan/math/prim/err/is_not_nan.hpp>
 #include <stan/math/prim/err/is_ordered.hpp>
 #include <stan/math/prim/err/is_pos_definite.hpp>

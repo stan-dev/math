@@ -25,14 +25,6 @@ namespace math {
  *
  * where \f$U\f$ and \f$L\f$ are the lower and upper bounds.
  *
- * <p>If the lower bound is negative infinity and upper bound finite,
- * this function reduces to <code>ub_free(y, ub)</code>.  If
- * the upper bound is positive infinity and the lower bound
- * finite, this function reduces to
- * <code>lb_free(x, lb)</code>.  If the upper bound is
- * positive infinity and the lower bound negative infinity,
- * this function reduces to <code>identity_free(y)</code>.
- *
  * @tparam T type of bounded object
  * @tparam L type of lower bound
  * @tparam U type of upper bound
@@ -48,12 +40,6 @@ namespace math {
 template <typename T, typename L, typename U>
 inline auto lub_free(T&& y, const L& lb, const U& ub) {
   check_bounded<T, L, U>("lub_free", "Bounded variable", y, lb, ub);
-  if (unlikely(is_negative_infinity(lb))) {
-    return ub_free(std::forward<T>(y), ub);
-  }
-  if (unlikely(is_infinity(ub))) {
-    return lb_free(std::forward<T>(y), lb);
-  }
   return eval(logit(divide(subtract(y, lb), subtract(ub, lb))));
 }
 

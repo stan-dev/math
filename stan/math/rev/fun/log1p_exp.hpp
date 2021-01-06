@@ -25,6 +25,20 @@ inline var log1p_exp(const var& a) {
   return var(new internal::log1p_exp_v_vari(a.vi_));
 }
 
+/**
+ * Return the elementwise log(1 + exp(x))
+ *
+ * @tparam T type of input
+ * @param input
+ * @return Elementwise log(1 + exp(x))
+ */
+template <typename T, require_var_matrix_t<T>* = nullptr>
+inline auto log1p_exp(const T& a) {
+  return make_callback_var(log1p_exp(a.val()), [a](const auto& vi) {
+      a.adj().array() += vi.adj().array() * inv_logit(a.val().array());
+    });
+}
+
 }  // namespace math
 }  // namespace stan
 #endif
