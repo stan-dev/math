@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_META_VECTOR_SEQ_VIEW_HPP
-#define STAN_MATH_PRIM_META_VECTOR_SEQ_VIEW_HPP
+#ifndef STAN_MATH_PRIM_FUN_VECTOR_SEQ_VIEW_HPP
+#define STAN_MATH_PRIM_FUN_VECTOR_SEQ_VIEW_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
@@ -7,7 +7,7 @@
 
 namespace stan {
 
-/** \ingroup type_trait
+/**
  * This class provides a low-cost wrapper for situations where you either need
  * an Eigen Vector or RowVector or a std::vector of them and you want to be
  * agnostic between those two options. This is similar to scalar_seq_view but
@@ -21,7 +21,7 @@ namespace stan {
 template <typename T, typename = void>
 class vector_seq_view;
 
-/** \ingroup type_trait
+/**
  * This class provides a low-cost wrapper for situations where you either need
  * an Eigen Vector or RowVector or a std::vector of them and you want to be
  * agnostic between those two options. This is similar to scalar_seq_view but
@@ -59,7 +59,7 @@ using is_matrix_or_std_vector
     = math::disjunction<is_matrix<T>, is_std_vector<T>>;
 }
 
-/** \ingroup type_trait
+/**
  * This class provides a low-cost wrapper for situations where you either need
  * an Eigen Vector or RowVector or a std::vector of them and you want to be
  * agnostic between those two options. This is similar to scalar_seq_view but

@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_META_SCALAR_SEQ_VIEW_HPP
-#define STAN_MATH_PRIM_META_SCALAR_SEQ_VIEW_HPP
+#ifndef STAN_MATH_PRIM_FUN_SCALAR_SEQ_VIEW_HPP
+#define STAN_MATH_PRIM_FUN_SCALAR_SEQ_VIEW_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -7,7 +7,7 @@
 #include <utility>
 
 namespace stan {
-/** \ingroup type_trait
+/**
  * scalar_seq_view provides a uniform sequence-like wrapper around either a
  * scalar or a sequence of scalars.
  *
@@ -24,7 +24,7 @@ class scalar_seq_view<C, require_eigen_vector_t<C>> {
             typename = require_same_t<plain_type_t<T>, plain_type_t<C>>>
   explicit scalar_seq_view(T&& c) : c_(std::forward<T>(c)) {}
 
-  /** \ingroup type_trait
+  /**
    * Segfaults if out of bounds.
    * @param i index
    * @return the element at the specified position in the container
@@ -54,7 +54,7 @@ class scalar_seq_view<C, require_var_matrix_t<C>> {
             typename = require_same_t<plain_type_t<T>, plain_type_t<C>>>
   explicit scalar_seq_view(T&& c) : c_(std::forward<T>(c)) {}
 
-  /** \ingroup type_trait
+  /**
    * Segfaults if out of bounds.
    * @param i index
    * @return the element at the specified position in the container
@@ -84,7 +84,7 @@ class scalar_seq_view<C, require_std_vector_t<C>> {
             typename = require_same_t<plain_type_t<T>, plain_type_t<C>>>
   explicit scalar_seq_view(T&& c) : c_(std::forward<T>(c)) {}
 
-  /** \ingroup type_trait
+  /**
    * Segfaults if out of bounds.
    * @param i index
    * @return the element at the specified position in the container
@@ -106,7 +106,7 @@ class scalar_seq_view<C, require_std_vector_t<C>> {
   const C& c_;
 };
 
-/** \ingroup type_trait
+/**
  * This specialization handles wrapping a scalar as if it were a sequence.
  *
  * @tparam T the scalar type
