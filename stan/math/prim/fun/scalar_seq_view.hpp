@@ -139,7 +139,7 @@ class scalar_seq_view<C, require_stan_scalar_t<C>> {
   inline auto* data() noexcept { return &t_; }
 
  private:
-   std::decay_t<C> t_;
+  std::decay_t<C> t_;
 };
 }  // namespace stan
 #endif
