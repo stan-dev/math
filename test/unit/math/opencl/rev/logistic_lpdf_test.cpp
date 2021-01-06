@@ -155,7 +155,7 @@ TEST(ProbDistributionsLogistic, opencl_matches_cpu_big) {
                                                 mu, sigma);
 }
 
-TEST(ProbDistributionsLogistic, opencl_scalar) {
+TEST(ProbDistributionsLogistic, opencl_sigma_mu_scalar) {
   int N = 3;
   int M = 2;
 

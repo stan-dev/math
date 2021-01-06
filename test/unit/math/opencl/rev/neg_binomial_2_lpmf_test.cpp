@@ -149,7 +149,7 @@ TEST(muProbDistributionsNegBinomial2, opencl_matches_cpu_big) {
       neg_binomial_2_lpmf_functor_propto, n, mu, phi);
 }
 
-TEST(muProbDistributionsNegBinomial2, opencl_scalar_n_mu) {
+TEST(ProbDistributionsNegBinomial2, opencl_scalar_n_mu) {
   int N = 3;
   int M = 2;
 

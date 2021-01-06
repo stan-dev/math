@@ -144,7 +144,7 @@ TEST(ProbDistributionsNegBinomial2Log, opencl_matches_cpu_big) {
       neg_binomial_2_log_lpmf_functor_propto, n, eta, phi);
 }
 
-TEST(ProbDistributionsNegBinomial2Log, opencl_matches_eta_phi_scalar) {
+TEST(ProbDistributionsNegBinomial2Log, opencl_matches_cpu_eta_phi_scalar) {
   int N = 3;
   int M = 2;
 
