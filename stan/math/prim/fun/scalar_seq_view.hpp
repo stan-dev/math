@@ -37,12 +37,12 @@ class scalar_seq_view<C, require_eigen_vector_t<C>> {
   inline value_type_t<C>* data() noexcept { return c_.data(); }
 
   template <typename T = C, require_st_arithmetic<T>* = nullptr>
-  inline const auto val(size_t i) const {
+  inline decltype(auto) val(size_t i) const {
     return c_.coeffRef(i);
   }
 
   template <typename T = C, require_st_autodiff<T>* = nullptr>
-  inline auto val(size_t i) const {
+  inline decltype(auto) val(size_t i) const {
     return c_.coeffRef(i).val();
   }
 
@@ -68,13 +68,13 @@ class scalar_seq_view<C, require_var_matrix_t<C>> {
 
   inline auto size() const noexcept { return c_.size(); }
 
-  template <typename T = C, require_st_arithmetic<T>* = nullptr>
+  template <typename T = C, require_st_autodiff<T>* = nullptr>
   inline auto val(size_t i) const {
     return c_.val().coeffRef(i);
   }
 
   template <typename T = C, require_st_autodiff<T>* = nullptr>
-  inline auto val(size_t i) const {
+  inline auto& val(size_t i) {
     return c_.val().coeffRef(i);
   }
 
@@ -99,12 +99,12 @@ class scalar_seq_view<C, require_std_vector_t<C>> {
   inline const auto* data() const noexcept { return c_.data(); }
 
   template <typename T = C, require_st_arithmetic<T>* = nullptr>
-  inline auto val(size_t i) const {
+  inline decltype(auto) val(size_t i) const {
     return c_[i];
   }
 
   template <typename T = C, require_st_autodiff<T>* = nullptr>
-  inline auto val(size_t i) const {
+  inline decltype(auto) val(size_t i) const {
     return c_[i].val();
   }
 
@@ -122,15 +122,15 @@ class scalar_seq_view<C, require_stan_scalar_t<C>> {
  public:
   explicit scalar_seq_view(const C& t) noexcept : t_(t) {}
 
-  inline auto operator[](int /* i */) const noexcept { return t_; }
+  inline decltype(auto) operator[](int /* i */) const noexcept { return t_; }
 
   template <typename T = C, require_st_arithmetic<T>* = nullptr>
-  inline const auto& val(int /* i */) const noexcept {
+  inline decltype(auto) val(int /* i */) const noexcept {
     return t_;
   }
 
   template <typename T = C, require_st_autodiff<T>* = nullptr>
-  inline auto& val(int /* i */) const noexcept {
+  inline decltype(auto) val(int /* i */) const noexcept {
     return t_.val();
   }
 
@@ -139,7 +139,7 @@ class scalar_seq_view<C, require_stan_scalar_t<C>> {
   inline auto* data() noexcept { return &t_; }
 
  private:
-  std::decay_t<C> t_;
+   std::decay_t<C> t_;
 };
 }  // namespace stan
 #endif

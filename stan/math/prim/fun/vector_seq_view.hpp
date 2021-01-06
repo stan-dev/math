@@ -77,10 +77,10 @@ class vector_seq_view<
   explicit vector_seq_view(const T& v) noexcept : v_(v) {}
   inline auto size() const noexcept { return v_.size(); }
 
-  inline const auto& operator[](size_t i) const { return v_[i]; }
+  inline decltype(auto) operator[](size_t i) const { return v_[i]; }
 
   template <typename C = T, require_st_arithmetic<C>* = nullptr>
-  inline const auto& val(size_t i) const {
+  inline decltype(auto) val(size_t i) const {
     return v_[i];
   }
 
