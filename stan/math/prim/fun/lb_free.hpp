@@ -27,9 +27,12 @@ namespace math {
  */
 template <typename T, typename L>
 inline auto lb_free(T&& y, const L& lb) {
-  check_greater_or_equal("lb_free", "Lower bounded variable", value_of(y),
-                         value_of(lb));
-  return log(subtract(y, lb));
+  const auto& y_ref = to_ref(y);
+  const auto& lb_ref = to_ref(lb);
+  check_finite("lb_constrain", "lb", value_of(lb_ref));
+  check_greater_or_equal("lb_free", "Lower bounded variable", value_of(y_ref),
+                         value_of(lb_ref));
+  return log(subtract(y_ref, lb_ref));
 }
 
 }  // namespace math

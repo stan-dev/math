@@ -29,8 +29,8 @@ namespace math {
 template <typename T, typename L>
 inline auto ub_constrain(const T& x, const L& ub) {
   const auto& ub_ref = to_ref(ub);
-  check_finite("ub_constrain", "ub", ub_ref);
-  return eval(subtract(ub, exp(x_ref)));
+  check_finite("ub_constrain", "ub", value_of(ub_ref));
+  return eval(subtract(ub_ref, exp(x)));
 }
 
 /**
@@ -58,9 +58,9 @@ template <typename T, typename L>
 inline auto ub_constrain(const T& x, const L& ub, return_type_t<T, L>& lp) {
   const auto& ub_ref = to_ref(ub);
   const auto& x_ref = to_ref(x);
-  check_finite("ub_constrain", "ub", ub_ref);
+  check_finite("ub_constrain", "ub", value_of(ub_ref));
   lp += sum(x_ref);
-  return eval(subtract(ub, exp(x_ref)));
+  return eval(subtract(ub_ref, exp(x_ref)));
 }
 
 }  // namespace math

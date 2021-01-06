@@ -29,13 +29,13 @@ inline var log1p_exp(const var& a) {
  * Return the elementwise log(1 + exp(x))
  *
  * @tparam T type of input
- * @param input
+ * @param x input
  * @return Elementwise log(1 + exp(x))
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
-inline auto log1p_exp(const T& a) {
-  return make_callback_var(log1p_exp(a.val()), [a](const auto& vi) {
-    a.adj().array() += vi.adj().array() * inv_logit(a.val().array());
+inline auto log1p_exp(const T& x) {
+  return make_callback_var(log1p_exp(x.val()), [x](const auto& vi) {
+    x.adj().array() += vi.adj().array() * inv_logit(x.val().array());
   });
 }
 

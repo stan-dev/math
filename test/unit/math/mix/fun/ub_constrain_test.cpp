@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 #include <limits>
 
+namespace ub_constrain_test {
 void expect_ub_constrain(double x, double ub) {
   auto f1 = [](const auto& x, const auto& ub) {
     return stan::math::ub_constrain(x, ub);

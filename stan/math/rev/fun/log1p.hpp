@@ -32,7 +32,7 @@ inline var log1p(const var& a) { return var(new internal::log1p_vari(a.vi_)); }
  * Return the elementwise log of (1 + x)
  *
  * @tparam T type of input
- * @param input
+ * @param x input
  * @return Elementwise log(1 + x)
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
