@@ -86,14 +86,17 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
  * @throw std::domain_error if ub <= lb
  */
 template <typename T, typename L, typename U>
-inline auto lub_constrain(const T& x, const L& lb, const U& ub, return_type_t<T, L, U>& lp) {
+inline auto lub_constrain(const T& x, const L& lb, const U& ub,
+                          return_type_t<T, L, U>& lp) {
   const auto& x_ref = to_ref(x);
   const auto& lb_ref = to_ref(lb);
   const auto& ub_ref = to_ref(ub);
 
   check_less("lub_constrain", "lb", value_of(lb_ref), value_of(ub_ref));
-  lp += sum(add(log(subtract(ub_ref, lb_ref)), subtract(x_ref, multiply(2, log1p_exp(x_ref)))));
-  return eval(add(elt_multiply(subtract(ub_ref, lb_ref), inv_logit(x_ref)), lb_ref));
+  lp += sum(add(log(subtract(ub_ref, lb_ref)),
+                subtract(x_ref, multiply(2, log1p_exp(x_ref)))));
+  return eval(
+      add(elt_multiply(subtract(ub_ref, lb_ref), inv_logit(x_ref)), lb_ref));
 }
 
 }  // namespace math
