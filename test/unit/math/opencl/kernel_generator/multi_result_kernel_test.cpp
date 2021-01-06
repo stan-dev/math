@@ -68,6 +68,39 @@ TEST(KernelGenerator, multi_result_kernel) {
   EXPECT_MATRIX_NEAR(res_diff, correct_diff, 1e-9);
 }
 
+TEST(KernelGenerator, multi_result_kernel_add_assign) {
+  MatrixXd m1(3, 3);
+  m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
+  MatrixXd m2(3, 3);
+  m2 << 10, 100, 1000, 0, -10, -12, 2, 4, 8;
+  MatrixXd m3(3, 3);
+  m3 << 10, 3, 1000, 2, 6, -142, 7, 6, 8;
+  MatrixXd m4(3, 3);
+  m4 << 6, 7, 8, 9, 1, 2, 3, 4, 5;
+
+  MatrixXd m5 = m1, m6 = m2, m7 = m3, m8 = m4;
+
+  matrix_cl<double> m1_cl(m5);
+  matrix_cl<double> m2_cl(m6);
+  matrix_cl<double> sum_cl(m7);
+  matrix_cl<double> diff_cl(m8);
+
+  auto sum = m1_cl + m2_cl;
+  auto res = stan::math::results(sum_cl, diff_cl);
+  auto exprs = stan::math::expressions(sum, m1_cl - m2_cl);
+
+  res += exprs;
+
+  MatrixXd res_sum = stan::math::from_matrix_cl(sum_cl);
+  MatrixXd res_diff = stan::math::from_matrix_cl(diff_cl);
+
+  m3 += m1 + m2;
+  m4 += m1 - m2;
+
+  EXPECT_MATRIX_NEAR(res_sum, m3, 1e-9);
+  EXPECT_MATRIX_NEAR(res_diff, m4, 1e-9);
+}
+
 TEST(KernelGenerator, multi_result_kernel_reuse_kernel) {
   MatrixXd m1(3, 3);
   m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;

@@ -18,12 +18,16 @@
 #include <stan/math/opencl/rev/cbrt.hpp>
 #include <stan/math/opencl/rev/ceil.hpp>
 #include <stan/math/opencl/rev/cholesky_decompose.hpp>
+#include <stan/math/opencl/rev/columns_dot_product.hpp>
+#include <stan/math/opencl/rev/columns_dot_self.hpp>
 #include <stan/math/opencl/rev/copy.hpp>
 #include <stan/math/opencl/rev/cos.hpp>
 #include <stan/math/opencl/rev/cosh.hpp>
 #include <stan/math/opencl/rev/crossprod.hpp>
 #include <stan/math/opencl/rev/diag_matrix.hpp>
 #include <stan/math/opencl/rev/diagonal.hpp>
+#include <stan/math/opencl/rev/dot_product.hpp>
+#include <stan/math/opencl/rev/dot_self.hpp>
 #include <stan/math/opencl/rev/erf.hpp>
 #include <stan/math/opencl/rev/erfc.hpp>
 #include <stan/math/opencl/rev/exp.hpp>
@@ -52,6 +56,8 @@
 #include <stan/math/opencl/rev/operator_unary_minus.hpp>
 #include <stan/math/opencl/rev/operator_unary_plus.hpp>
 #include <stan/math/opencl/rev/round.hpp>
+#include <stan/math/opencl/rev/rows_dot_product.hpp>
+#include <stan/math/opencl/rev/rows_dot_self.hpp>
 #include <stan/math/opencl/rev/sin.hpp>
 #include <stan/math/opencl/rev/sinh.hpp>
 #include <stan/math/opencl/rev/subtract.hpp>
