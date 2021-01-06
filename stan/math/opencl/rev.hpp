@@ -60,6 +60,8 @@
 #include <stan/math/opencl/rev/rows_dot_self.hpp>
 #include <stan/math/opencl/rev/sin.hpp>
 #include <stan/math/opencl/rev/sinh.hpp>
+#include <stan/math/opencl/rev/sqrt.hpp>
+#include <stan/math/opencl/rev/square.hpp>
 #include <stan/math/opencl/rev/subtract.hpp>
 #include <stan/math/opencl/rev/sum.hpp>
 #include <stan/math/opencl/rev/tan.hpp>
