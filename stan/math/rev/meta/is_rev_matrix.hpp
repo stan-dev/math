@@ -18,8 +18,7 @@ namespace stan {
  */
 template <typename T>
 struct is_rev_matrix<
-    T, require_all_t<is_var<scalar_type_t<T>>,
-                     math::disjunction<is_eigen<T>, is_eigen<value_type_t<T>>>>>
+    T, require_all_t<is_var<scalar_type_t<T>>, math::disjunction<math::conjunction<is_var<T>, is_eigen<value_type_t<T>>>, is_eigen<T>>>>
     : std::true_type {};
 
 /** \ingroup type_trait

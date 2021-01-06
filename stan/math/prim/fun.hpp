@@ -278,6 +278,7 @@
 #include <stan/math/prim/fun/rows_dot_self.hpp>
 #include <stan/math/prim/fun/scalbn.hpp>
 #include <stan/math/prim/fun/scale_matrix_exp_multiply.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/scaled_add.hpp>
 #include <stan/math/prim/fun/sd.hpp>
 #include <stan/math/prim/fun/segment.hpp>
@@ -336,6 +337,7 @@
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/prim/fun/vec_concat.hpp>
+#include <stan/math/prim/fun/vector_seq_view.hpp>
 #include <stan/math/prim/fun/variance.hpp>
 #include <stan/math/prim/fun/welford_covar_estimator.hpp>
 #include <stan/math/prim/fun/welford_var_estimator.hpp>

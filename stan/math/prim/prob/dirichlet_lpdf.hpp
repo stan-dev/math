@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/max_size_mvt.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun/vector_seq_view.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
 
 namespace stan {

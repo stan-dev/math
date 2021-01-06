@@ -1,14 +1,8 @@
 #ifndef STAN_MATH_PRIM_META_SCALAR_SEQ_VIEW_HPP
 #define STAN_MATH_PRIM_META_SCALAR_SEQ_VIEW_HPP
 
-#include <stan/math/prim/meta/plain_type.hpp>
-#include <stan/math/prim/meta/require_generics.hpp>
-#include <stan/math/prim/meta/scalar_type.hpp>
-#include <stan/math/prim/meta/ref_type.hpp>
-#include <stan/math/prim/meta/is_autodiff.hpp>
-#include <stan/math/prim/meta/is_stan_scalar.hpp>
-#include <stan/math/prim/meta/is_var_matrix.hpp>
-#include <stan/math/prim/meta/is_vector_like.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <type_traits>
 #include <utility>
 
@@ -95,17 +89,17 @@ class scalar_seq_view<C, require_std_vector_t<C>> {
    * @param i index
    * @return the element at the specified position in the container
    */
-  inline auto operator[](size_t i) const { return c_.coeffRef(i); }
+  inline auto operator[](size_t i) const { return c_[i]; }
   inline auto size() const noexcept { return c_.size(); }
 
   template <typename T = C, require_st_arithmetic<T>* = nullptr>
   inline auto val(size_t i) const {
-    return c_.coeffRef(i);
+    return c_[i];
   }
 
   template <typename T = C, require_st_autodiff<T>* = nullptr>
   inline auto val(size_t i) const {
-    return c_.coeffRef(i).val();
+    return c_[i].val();
   }
 
  private:

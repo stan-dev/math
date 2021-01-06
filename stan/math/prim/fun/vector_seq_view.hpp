@@ -1,21 +1,11 @@
-#ifndef STAN_MATH_PRIM_META_vector_SEQ_VIEW_HPP
-#define STAN_MATH_PRIM_META_vector_SEQ_VIEW_HPP
+#ifndef STAN_MATH_PRIM_META_VECTOR_SEQ_VIEW_HPP
+#define STAN_MATH_PRIM_META_VECTOR_SEQ_VIEW_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <vector>
 
 namespace stan {
-
-template <typename T, require_st_arithmetic<T>* = nullptr>
-inline T value_of(T&& x);
-
-template <typename T, require_not_st_arithmetic<T>* = nullptr>
-inline auto value_of(const std::vector<T>& x);
-
-template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
-          require_not_st_arithmetic<EigMat>* = nullptr>
-inline auto value_of(EigMat&& M);
 
 /** \ingroup type_trait
  * This class provides a low-cost wrapper for situations where you either need
@@ -29,7 +19,7 @@ inline auto value_of(EigMat&& M);
  * @tparam T the wrapped type, either a Vector or std::vector of them.
  */
 template <typename T, typename = void>
-class vector_seq_view {};
+class vector_seq_view;
 
 /** \ingroup type_trait
  * This class provides a low-cost wrapper for situations where you either need
@@ -55,13 +45,18 @@ class vector_seq_view<T, require_matrix_t<T>> {
   }
 
   template <typename C = T, require_st_autodiff<C>* = nullptr>
-  inline const auto& val(size_t /* i */) const noexcept {
+  inline auto val(size_t /* i */) const noexcept {
     return m_.val();
   }
 
  private:
   const ref_type_t<T> m_;
 };
+
+namespace internal {
+  template <typename T>
+  using is_matrix_or_std_vector = math::disjunction<is_matrix<T>, is_std_vector<T>>;
+}
 
 /** \ingroup type_trait
  * This class provides a low-cost wrapper for situations where you either need
@@ -75,7 +70,7 @@ class vector_seq_view<T, require_matrix_t<T>> {
  * @tparam S the type inside of the std::vector
  */
 template <typename T>
-class vector_seq_view<T, require_std_vector_vt<is_container, T>> {
+class vector_seq_view<T, require_std_vector_vt<internal::is_matrix_or_std_vector, T>> {
  public:
   explicit vector_seq_view(const T& v) noexcept : v_(v) {}
   inline auto size() const noexcept { return v_.size(); }
@@ -88,7 +83,7 @@ class vector_seq_view<T, require_std_vector_vt<is_container, T>> {
   }
 
   template <typename C = T, require_st_autodiff<C>* = nullptr>
-  inline const auto& val(size_t i) const {
+  inline auto val(size_t i) const {
     return value_of(v_[i]);
   }
 

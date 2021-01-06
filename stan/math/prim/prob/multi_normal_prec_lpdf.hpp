@@ -10,6 +10,7 @@
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/trace_quad_form.hpp>
+#include <stan/math/prim/fun/vector_seq_view.hpp>
 
 namespace stan {
 namespace math {
