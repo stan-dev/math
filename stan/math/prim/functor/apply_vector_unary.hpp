@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_FUNCTOR_APPLY_VECTOR_UNARY_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/meta/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/meta/is_stan_scalar.hpp>
 #include <stan/math/prim/meta/is_container.hpp>
 #include <stan/math/prim/meta/is_eigen_matrix_base.hpp>

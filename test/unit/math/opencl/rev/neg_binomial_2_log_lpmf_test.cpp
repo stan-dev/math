@@ -144,4 +144,18 @@ TEST(ProbDistributionsNegBinomial2Log, opencl_matches_cpu_big) {
       neg_binomial_2_log_lpmf_functor_propto, n, eta, phi);
 }
 
+TEST(ProbDistributionsNegBinomial2Log, opencl_matches_cpu_eta_phi_scalar) {
+  int N = 3;
+  int M = 2;
+
+  std::vector<int> n{1, 0, 12};
+  double eta = 0.3;
+  double phi = 0.8;
+
+  stan::math::test::compare_cpu_opencl_prim_rev(neg_binomial_2_log_lpmf_functor,
+                                                n, eta, phi);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      neg_binomial_2_log_lpmf_functor_propto, n, eta, phi);
+}
+
 #endif
