@@ -10,7 +10,7 @@ namespace stan {
 namespace math {
 
 /**
- * Returns the elementwise `ldexp()` of the input 
+ * Returns the elementwise `ldexp()` of the input
  * `var_value<matrix_cl<double>>` and kernel generator expression.
  *
  * @param a input `var_value<matrix_cl<double>>` representing
@@ -20,10 +20,9 @@ namespace math {
  * @return Elementwise `ldexp()` of the input argument.
  */
 template <typename T_b,
-    require_all_kernel_expressions_and_none_scalar_t<T_b>* = nullptr>
-inline var_value<matrix_cl<double>> ldexp(
-    const var_value<matrix_cl<double>>& a, const T_b& b) {
-
+          require_all_kernel_expressions_and_none_scalar_t<T_b>* = nullptr>
+inline var_value<matrix_cl<double>> ldexp(const var_value<matrix_cl<double>>& a,
+                                          const T_b& b) {
   const arena_t<T_b>& b_arena = b;
 
   var_value<matrix_cl<double>> res = ldexp(a.val(), b);

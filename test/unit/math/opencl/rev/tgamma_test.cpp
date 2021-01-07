@@ -4,8 +4,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
 
-auto tgamma_functor
-    = [](const auto& a) { return stan::math::tgamma(a); };
+auto tgamma_functor = [](const auto& a) { return stan::math::tgamma(a); };
 
 TEST(OpenCL_tgamma, prim_rev_values_small) {
   Eigen::VectorXd a(14);

@@ -5,9 +5,8 @@
 #include <gtest/gtest.h>
 #include <algorithm>
 
-auto ldexp_functor = [](const auto& a, const auto& b) {
-  return stan::math::ldexp(a, b);
-};
+auto ldexp_functor
+    = [](const auto& a, const auto& b) { return stan::math::ldexp(a, b); };
 
 TEST(OpenCLPrim, ldexp_small_zero) {
   stan::math::matrix_d d1(3, 3);
@@ -24,8 +23,9 @@ TEST(OpenCLPrim, ldexp_small_zero) {
 TEST(OpenCLPrim, ldexp_rev_exceptions) {
   stan::math::matrix_d md1(2, 2);
   Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> md2(3, 3);
-  
-  stan::math::var_value<stan::math::matrix_cl<double>> md11 = stan::math::to_matrix_cl(md1);
+
+  stan::math::var_value<stan::math::matrix_cl<double>> md11
+      = stan::math::to_matrix_cl(md1);
   stan::math::matrix_cl<int> md22 = stan::math::to_matrix_cl(md2);
   EXPECT_THROW(stan::math::ldexp(md11, md22), std::invalid_argument);
 }

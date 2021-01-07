@@ -21,9 +21,9 @@ inline var_value<matrix_cl<double>> fabs(
   var_value<matrix_cl<double>> res = fabs(A.val());
 
   reverse_pass_callback([A, res]() mutable {
-    A.adj() = select(isnan(A.val()), constant(NOT_A_NUMBER, A.rows(), A.cols()),
-                     select(A.val() < 0.0, A.adj() - res.adj(), 
-                     A.adj() + res.adj()));
+    A.adj() = select(
+        isnan(A.val()), constant(NOT_A_NUMBER, A.rows(), A.cols()),
+        select(A.val() < 0.0, A.adj() - res.adj(), A.adj() + res.adj()));
   });
 
   return res;

@@ -15,13 +15,16 @@ namespace math {
  * @param A argument
  * @return Elementwise `inv_Phi()` of the input.
  */
-inline var_value<matrix_cl<double>> inv_Phi(const var_value<matrix_cl<double>>& A) {
+inline var_value<matrix_cl<double>> inv_Phi(
+    const var_value<matrix_cl<double>>& A) {
   var_value<matrix_cl<double>> res = inv_Phi(A.val());
 
   reverse_pass_callback([A, res]() mutable {
-    A.adj() = A.adj() + elt_multiply(res.adj(),
-        elt_divide(SQRT_TWO_PI, 
-                     exp(-0.5 * elt_multiply(res.val(), res.val()))));
+    A.adj() = A.adj()
+              + elt_multiply(
+                    res.adj(),
+                    elt_divide(SQRT_TWO_PI,
+                               exp(-0.5 * elt_multiply(res.val(), res.val()))));
   });
 
   return res;

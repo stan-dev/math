@@ -305,8 +305,12 @@ ADD_UNARY_FUNCTION_WITH_INCLUDES(inv_logit,
                                  opencl_kernels::inv_logit_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(logit, opencl_kernels::logit_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(Phi, opencl_kernels::phi_device_function)
-ADD_UNARY_FUNCTION_WITH_INCLUDES(Phi_approx, opencl_kernels::inv_logit_device_function, opencl_kernels::phi_approx_device_function)
-ADD_UNARY_FUNCTION_WITH_INCLUDES(inv_Phi, opencl_kernels::log1m_device_function, opencl_kernels::phi_device_function, opencl_kernels::inv_phi_device_function)
+ADD_UNARY_FUNCTION_WITH_INCLUDES(Phi_approx,
+                                 opencl_kernels::inv_logit_device_function,
+                                 opencl_kernels::phi_approx_device_function)
+ADD_UNARY_FUNCTION_WITH_INCLUDES(inv_Phi, opencl_kernels::log1m_device_function,
+                                 opencl_kernels::phi_device_function,
+                                 opencl_kernels::inv_phi_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(
     log1m_inv_logit, opencl_kernels::log1m_inv_logit_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(square, "double square(double x){return x*x;}")

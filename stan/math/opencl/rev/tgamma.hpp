@@ -15,11 +15,14 @@ namespace math {
  * @param A argument
  * @return Elementwise `tgamma()` of the input.
  */
-inline var_value<matrix_cl<double>> tgamma(const var_value<matrix_cl<double>>& A) {
+inline var_value<matrix_cl<double>> tgamma(
+    const var_value<matrix_cl<double>>& A) {
   var_value<matrix_cl<double>> res = tgamma(A.val());
 
   reverse_pass_callback([A, res]() mutable {
-    A.adj() = A.adj() + elt_multiply(res.adj(), elt_multiply(res.val(), digamma(A.val())));
+    A.adj()
+        = A.adj()
+          + elt_multiply(res.adj(), elt_multiply(res.val(), digamma(A.val())));
   });
 
   return res;

@@ -4,7 +4,8 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
 
-auto Phi_approx_functor = [](const auto& a) { return stan::math::Phi_approx(a); };
+auto Phi_approx_functor
+    = [](const auto& a) { return stan::math::Phi_approx(a); };
 
 TEST(OpenCL_Phi_approx, prim_rev_values_small) {
   Eigen::VectorXd a(8);

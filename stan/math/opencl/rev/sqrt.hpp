@@ -15,7 +15,8 @@ namespace math {
  * @param A argument
  * @return Elementwise `sqrt()` of the input.
  */
-inline var_value<matrix_cl<double>> sqrt(const var_value<matrix_cl<double>>& A) {
+inline var_value<matrix_cl<double>> sqrt(
+    const var_value<matrix_cl<double>>& A) {
   var_value<matrix_cl<double>> res = sqrt(A.val());
 
   reverse_pass_callback([A, res]() mutable {

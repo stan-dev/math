@@ -4,8 +4,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
 
-auto square_functor
-    = [](const auto& a) { return stan::math::square(a); };
+auto square_functor = [](const auto& a) { return stan::math::square(a); };
 
 TEST(OpenCL_square, prim_rev_values_small) {
   Eigen::VectorXd a(14);

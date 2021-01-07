@@ -12,7 +12,8 @@ namespace opencl_kernels {
 static const char* phi_approx_device_function
     = "\n"
       "#ifndef STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_PHI_APPROX\n"
-      "#define STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_PHI_APPROX\n" STRINGIFY(
+      "#define "
+      "STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_PHI_APPROX\n" STRINGIFY(
           // \endcond
           /** \ingroup opencl_kernels
            * Return the Phi_approx function applied to the specified

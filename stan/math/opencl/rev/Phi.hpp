@@ -19,10 +19,13 @@ inline var_value<matrix_cl<double>> Phi(const var_value<matrix_cl<double>>& A) {
   var_value<matrix_cl<double>> res = Phi(A.val());
 
   reverse_pass_callback([A, res]() mutable {
-    A.adj() = A.adj() + elt_multiply(res.adj(),
-        elt_multiply(INV_SQRT_TWO_PI, 
-                     exp(
-                       elt_multiply(-0.5, elt_multiply(A.val(), A.val())))));
+    A.adj()
+        = A.adj()
+          + elt_multiply(
+                res.adj(),
+                elt_multiply(
+                    INV_SQRT_TWO_PI,
+                    exp(elt_multiply(-0.5, elt_multiply(A.val(), A.val())))));
   });
 
   return res;
