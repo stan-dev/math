@@ -22,8 +22,8 @@ TEST(OpenCL_inv_Phi, prim_rev_size_0) {
 TEST(OpenCL_inv_Phi, prim_rev_values_large) {
   int N = 71;
 
-  Eigen::MatrixXd a = Eigen::MatrixXd::Constant(N, N, 1.0) +
-  Eigen::MatrixXd::Random(N, N);
+  Eigen::MatrixXd a
+      = Eigen::MatrixXd::Constant(N, N, 1.0) + Eigen::MatrixXd::Random(N, N);
   stan::math::test::compare_cpu_opencl_prim_rev(inv_Phi_functor, a);
 }
 
