@@ -7,6 +7,7 @@
 #include <stan/math/prim/fun/get.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <string>
 
 namespace stan {
