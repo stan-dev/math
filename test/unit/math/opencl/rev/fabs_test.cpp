@@ -7,7 +7,7 @@
 auto fabs_functor = [](const auto& a) { return stan::math::fabs(a); };
 
 TEST(OpenCL_fabs, prim_rev_values_small) {
-  Eigen::VectorXd a(9);
+  Eigen::VectorXd a(8);
   a << -8, 2.7, 8, -2.6, -2, 1, 1.3, 3;
   stan::math::test::compare_cpu_opencl_prim_rev(fabs_functor, a);
 
