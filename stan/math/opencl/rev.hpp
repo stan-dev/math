@@ -37,6 +37,7 @@
 #include <stan/math/opencl/rev/exp2.hpp>
 #include <stan/math/opencl/rev/expm1.hpp>
 #include <stan/math/opencl/rev/floor.hpp>
+#include <stan/math/opencl/rev/hypot.hpp>
 #include <stan/math/opencl/rev/inv.hpp>
 #include <stan/math/opencl/rev/inv_cloglog.hpp>
 #include <stan/math/opencl/rev/inv_logit.hpp>
