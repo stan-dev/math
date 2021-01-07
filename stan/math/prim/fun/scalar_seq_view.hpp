@@ -144,7 +144,6 @@ class scalar_seq_view<C, require_t<std::is_pointer<C>>> {
   const C& c_;
 };
 
-
 /**
  * This specialization handles wrapping a scalar as if it were a sequence.
  *
@@ -172,7 +171,7 @@ class scalar_seq_view<C, require_stan_scalar_t<C>> {
   inline auto* data() noexcept { return &t_; }
 
  private:
-   std::decay_t<C> t_;
+  std::decay_t<C> t_;
 };
 }  // namespace stan
 #endif
