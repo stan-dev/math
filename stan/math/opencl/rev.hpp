@@ -56,6 +56,7 @@
 #include <stan/math/opencl/rev/log_inv_logit.hpp>
 #include <stan/math/opencl/rev/log1m_inv_logit.hpp>
 #include <stan/math/opencl/rev/multiply.hpp>
+#include <stan/math/opencl/rev/multiply_log.hpp>
 #include <stan/math/opencl/rev/operands_and_partials.hpp>
 #include <stan/math/opencl/rev/operator_unary_minus.hpp>
 #include <stan/math/opencl/rev/operator_unary_plus.hpp>
