@@ -87,7 +87,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
       digamma_beta(size_beta);
   if (!is_constant_all<T_scale_fail>::value) {
     for (size_t n = 0; n < size_beta; n++) {
-      digamma_beta[n] = digamma(alpha_vec.val(n));
+      digamma_beta[n] = digamma(beta_vec.val(n));
     }
   }
 
@@ -101,7 +101,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
   }
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = alpha_vec.val(n);
+    const T_partials_return y_dbl = y_vec.val(n);
 
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
@@ -110,7 +110,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
     }
 
     const T_partials_return alpha_dbl = alpha_vec.val(n);
-    const T_partials_return beta_dbl = alpha_vec.val(n);
+    const T_partials_return beta_dbl = beta_vec.val(n);
     const T_partials_return Pn = inc_beta(alpha_dbl, beta_dbl, y_dbl);
     const T_partials_return inv_Pn
         = is_constant_all<T_y, T_scale_succ, T_scale_fail>::value ? 0 : inv(Pn);

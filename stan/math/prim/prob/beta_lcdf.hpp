@@ -88,7 +88,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lcdf(
       digamma_alpha[i] = digamma(alpha_vec.val(i));
     }
     for (size_t i = 0; i < size_beta; i++) {
-      digamma_beta[i] = digamma(alpha_vec.val(i));
+      digamma_beta[i] = digamma(beta_vec.val(i));
     }
     for (size_t i = 0; i < size_alpha_beta; i++) {
       digamma_sum[i] = digamma(alpha_vec.val(i) + beta_vec.val(i));
@@ -97,8 +97,8 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lcdf(
 
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = y_vec.val(n);
-    const T_partials_return alpha_dbl = y_vec.val(n);
-    const T_partials_return beta_dbl = y_vec.val(n);
+    const T_partials_return alpha_dbl = alpha_vec.val(n);
+    const T_partials_return beta_dbl = beta_vec.val(n);
     const T_partials_return betafunc_dbl = beta(alpha_dbl, beta_dbl);
     const T_partials_return Pn = inc_beta(alpha_dbl, beta_dbl, y_dbl);
     const T_partials_return inv_Pn

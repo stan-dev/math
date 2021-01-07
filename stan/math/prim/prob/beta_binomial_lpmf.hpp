@@ -104,7 +104,7 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
       max_size_seq_view);
   for (size_t i = 0; i < max_size_seq_view; i++) {
     lbeta_diff[i] = lbeta(n_vec[i] + alpha_vec.val(i),
-                          N_vec[i] - n_vec[i] + alpha_vec.val(i))
+                          N_vec[i] - n_vec[i] + beta_vec.val(i))
                     - lbeta_denominator[i];
   }
 
@@ -113,7 +113,7 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
       digamma_n_plus_alpha(max_size(n, alpha));
   if (!is_constant_all<T_size1>::value) {
     for (size_t i = 0; i < max_size(n, alpha); i++) {
-      digamma_n_plus_alpha[i] = digamma(n_vec[i] + alpha_vec.val(i));
+      digamma_n_plus_alpha[i] = digamma(n_vec.val(i) + alpha_vec.val(i));
     }
   }
 
@@ -133,7 +133,7 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
     for (size_t i = 0; i < max_size(N, alpha, beta); i++) {
       digamma_diff[i]
           = digamma_alpha_plus_beta[i]
-            - digamma(N_vec[i] + alpha_vec.val(i) + alpha_vec.val(i));
+            - digamma(N_vec.val(i) + alpha_vec.val(i) + beta_vec.val(i));
     }
   }
 
@@ -147,7 +147,7 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
       digamma_beta(size_beta);
   for (size_t i = 0; i < size_beta; i++)
     if (!is_constant_all<T_size2>::value)
-      digamma_beta[i] = digamma(alpha_vec.val(i));
+      digamma_beta[i] = digamma(beta_vec.val(i));
 
   for (size_t i = 0; i < max_size_seq_view; i++) {
     if (include_summand<propto>::value)

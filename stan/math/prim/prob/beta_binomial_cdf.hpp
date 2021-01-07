@@ -92,9 +92,9 @@ return_type_t<T_size1, T_size2> beta_binomial_cdf(const T_n& n, const T_N& N,
     }
 
     const T_partials_return n_dbl = n_vec.val(i);
-    const T_partials_return N_dbl = n_vec.val(i);
-    const T_partials_return alpha_dbl = n_vec.val(i);
-    const T_partials_return beta_dbl = n_vec.val(i);
+    const T_partials_return N_dbl = N_vec.val(i);
+    const T_partials_return alpha_dbl = alpha_vec.val(i);
+    const T_partials_return beta_dbl = beta_vec.val(i);
     const T_partials_return N_minus_n = N_dbl - n_dbl;
     const T_partials_return mu = alpha_dbl + n_dbl + 1;
     const T_partials_return nu = beta_dbl + N_minus_n - 1;
