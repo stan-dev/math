@@ -89,9 +89,9 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lccdf(
       return ops_partials.build(negative_infinity());
     }
 
-    const T_partials_return sigma_inv = 1.0 / y_vec.val(n);
+    const T_partials_return sigma_inv = 1.0 / sigma_vec.val(n);
     const T_partials_return t = (y_vec.val(n) - mu_vec.val(n)) * sigma_inv;
-    const T_partials_return nu_dbl = y_vec.val(n);
+    const T_partials_return nu_dbl = nu_vec.val(n);
     const T_partials_return q = nu_dbl / (t * t);
     const T_partials_return r = 1.0 / (1.0 + q);
     const T_partials_return J = 2 * r * r * q / t;

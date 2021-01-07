@@ -67,8 +67,8 @@ return_type_t<T_y, T_scale, T_shape> pareto_cdf(const T_y& y,
     }
 
     const T_partials_return log_dbl = log(y_min_vec.val(n) / y_vec.val(n));
-    const T_partials_return y_min_inv_dbl = 1.0 / y_vec.val(n);
-    const T_partials_return alpha_dbl = y_vec.val(n);
+    const T_partials_return y_min_inv_dbl = 1.0 / y_min_vec.val(n);
+    const T_partials_return alpha_dbl = alpha_vec.val(n);
 
     const T_partials_return Pn = 1.0 - exp(alpha_dbl * log_dbl);
 
