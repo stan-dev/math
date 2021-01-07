@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUNCTOR_APPLY_SCALAR_BINARY_HPP
 #define STAN_MATH_PRIM_FUNCTOR_APPLY_SCALAR_BINARY_HPP
 
-#include <stan/math/prim/meta/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/meta/is_stan_scalar.hpp>
 #include <stan/math/prim/meta/is_container.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
