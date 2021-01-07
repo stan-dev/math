@@ -406,9 +406,8 @@ void expect_ad_matvar_impl(const ad_tolerances& tols, const F& f,
 
   auto A_mv_tuple
       = std::make_tuple(promote_scalar_t<scalar_type_t<Types>, EigMats>(x)...);
-  auto A_vm_tuple = std::make_tuple(
-      std::conditional_t<is_var<Types>::value,
-                         return_var_matrix_t<EigMats, Types>, EigMats>(x)...);
+  auto A_vm_tuple = std::make_tuple(std::conditional_t<is_var<Types>::value,
+				    return_var_matrix_t<EigMats, Types>, EigMats>(x)...);
 
   plain_type_t<decltype(stan::math::apply(f, A_mv_tuple))> A_mv_ret;
   plain_type_t<decltype(stan::math::apply(f, A_vm_tuple))> A_vm_ret;
@@ -634,6 +633,141 @@ void expect_ad_matvar(const F& f, const EigMat1& x, const EigMat2& y,
                       const EigMat3& z) {
   ad_tolerances tols;
   expect_ad_matvar(tols, f, x, y, z);
+}
+
+/**
+ * Overload for quarternary functions with specified tolerances
+ *
+ * @tparam F Type of function to test
+ * @tparam EigMat1 Type of first argument to test
+ * @tparam EigMat2 Type of second argument to test
+ * @tparam EigMat3 Type of third argument to test
+ * @tparam EigMat4 Type of fourth argument to test
+ * @param tols Test tolerances
+ * @param f Function to test
+ * @param x Value of first argument
+ * @param y Value of second argument
+ * @param z Value of third argument
+ * @param q Value of fourth argument
+ */
+template <typename F, typename EigMat1, typename EigMat2, typename EigMat3,
+	  typename EigMat4>
+void expect_ad_matvar(const ad_tolerances& tols, const F& f, const EigMat1& x,
+                      const EigMat2& y, const EigMat3& z, const EigMat4& q) {
+  using stan::math::var;
+  using varmat = stan::math::var_value<Eigen::MatrixXd>;
+
+  //expect_ad_matvar_impl<double, double, double, double>(tols, f, x, y, z, q);
+  //expect_ad_matvar_impl<double, double, double, var>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<double, double, double, varmat>(tols, f, x, y, z, q);
+  //expect_ad_matvar_impl<double, double, var, double>(tols, f, x, y, z, q);
+  //expect_ad_matvar_impl<double, double, var, var>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<double, double, var, varmat>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<double, double, varmat, double>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<double, double, varmat, var>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<double, double, varmat, varmat>(tols, f, x, y, z, q);
+
+  //expect_ad_matvar_impl<double, var, double, double>(tols, f, x, y, z, q);
+  //expect_ad_matvar_impl<double, var, double, var>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<double, var, double, varmat>(tols, f, x, y, z, q);
+  //expect_ad_matvar_impl<double, var, var, double>(tols, f, x, y, z, q);
+  //expect_ad_matvar_impl<double, var, var, var>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<double, var, var, varmat>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<double, var, varmat, double>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<double, var, varmat, var>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<double, var, varmat, varmat>(tols, f, x, y, z, q);
+
+  expect_ad_matvar_impl<double, varmat, double, double>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<double, varmat, double, var>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<double, varmat, double, varmat>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<double, varmat, var, double>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<double, varmat, var, var>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<double, varmat, var, varmat>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<double, varmat, varmat, double>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<double, varmat, varmat, var>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<double, varmat, varmat, varmat>(tols, f, x, y, z, q);
+
+  //expect_ad_matvar_impl<var, double, double, double>(tols, f, x, y, z, q);
+  //expect_ad_matvar_impl<var, double, double, var>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<var, double, double, varmat>(tols, f, x, y, z, q);
+  //expect_ad_matvar_impl<var, double, var, double>(tols, f, x, y, z, q);
+  //expect_ad_matvar_impl<var, double, var, var>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<var, double, var, varmat>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<var, double, varmat, double>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<var, double, varmat, var>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<var, double, varmat, varmat>(tols, f, x, y, z, q);
+
+  //expect_ad_matvar_impl<var, var, double, double>(tols, f, x, y, z, q);
+  //expect_ad_matvar_impl<var, var, double, var>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<var, var, double, varmat>(tols, f, x, y, z, q);
+  //expect_ad_matvar_impl<var, var, var, double>(tols, f, x, y, z, q);
+  //expect_ad_matvar_impl<var, var, var, var>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<var, var, var, varmat>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<var, var, varmat, double>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<var, var, varmat, var>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<var, var, varmat, varmat>(tols, f, x, y, z, q);
+
+  expect_ad_matvar_impl<var, varmat, double, double>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<var, varmat, double, var>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<var, varmat, double, varmat>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<var, varmat, var, double>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<var, varmat, var, var>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<var, varmat, var, varmat>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<var, varmat, varmat, double>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<var, varmat, varmat, var>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<var, varmat, varmat, varmat>(tols, f, x, y, z, q);
+
+  expect_ad_matvar_impl<varmat, double, double, double>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<varmat, double, double, var>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<varmat, double, double, varmat>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<varmat, double, var, double>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<varmat, double, var, var>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<varmat, double, var, varmat>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<varmat, double, varmat, double>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<varmat, double, varmat, var>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<varmat, double, varmat, varmat>(tols, f, x, y, z, q);
+
+  expect_ad_matvar_impl<varmat, var, double, double>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<varmat, var, double, var>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<varmat, var, double, varmat>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<varmat, var, var, double>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<varmat, var, var, var>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<varmat, var, var, varmat>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<varmat, var, varmat, double>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<varmat, var, varmat, var>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<varmat, var, varmat, varmat>(tols, f, x, y, z, q);
+
+  expect_ad_matvar_impl<varmat, varmat, double, double>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<varmat, varmat, double, var>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<varmat, varmat, double, varmat>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<varmat, varmat, var, double>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<varmat, varmat, var, var>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<varmat, varmat, var, varmat>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<varmat, varmat, varmat, double>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<varmat, varmat, varmat, var>(tols, f, x, y, z, q);
+  expect_ad_matvar_impl<varmat, varmat, varmat, varmat>(tols, f, x, y, z, q);
+}
+
+/**
+ * Overload for quarternary functions with default tolerances
+ *
+ * @tparam F Type of function to test
+ * @tparam EigMat1 Type of first argument to test
+ * @tparam EigMat2 Type of second argument to test
+ * @tparam EigMat3 Type of third argument to test
+ * @tparam EigMat4 Type of fourth argument to test
+ * @param f Function to test
+ * @param x Value of first argument
+ * @param y Value of second argument
+ * @param z Value of third argument
+ * @param q Value of fourth argument
+ */
+template <typename F, typename EigMat1, typename EigMat2, typename EigMat3,
+	  typename EigMat4>
+void expect_ad_matvar(const F& f, const EigMat1& x, const EigMat2& y,
+                      const EigMat3& z, const EigMat4& q) {
+  ad_tolerances tols;
+  expect_ad_matvar(tols, f, x, y, z, q);
 }
 ///@}
 

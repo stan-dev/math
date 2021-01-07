@@ -1,6 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 
-TEST(ProbDistributionsInvWishart, matvar) {
+TEST(ProbDistributionsMultiNormal, matvar) {
   auto f = [](const auto& y, const auto& mu, const auto& sigma) {
     auto sigma_sym = stan::math::multiply(0.5, sigma + sigma.transpose());
     return stan::math::multi_normal_lpdf(y, mu, sigma_sym);
@@ -15,23 +15,26 @@ TEST(ProbDistributionsInvWishart, matvar) {
   stan::test::expect_ad(f, y1, mu1, Sigma11);
   stan::test::expect_ad_matvar(f, y1, mu1, Sigma11);
 
-  /*Eigen::MatrixXd y00(0, 0);
+  Eigen::VectorXd y0(0);
+  Eigen::VectorXd mu0(0);
   Eigen::MatrixXd Sigma00(0, 0);
-  stan::test::expect_ad(f, y00, dof, Sigma00);
-  stan::test::expect_ad_matvar(f, y00, dof, Sigma00);
+  stan::test::expect_ad(f, y0, mu0, Sigma00);
+  stan::test::expect_ad_matvar(f, y0, mu0, Sigma00);
 
-  Eigen::MatrixXd y22(2, 2);
-  y22 << 1.0, 0.1, 0.1, 2.0;
+  Eigen::VectorXd y2(2);
+  y2 << 1.0, 0.1;
+  Eigen::VectorXd mu2(2);
+  mu2 << 0.1, 2.0;
   Eigen::MatrixXd Sigma22(2, 2);
   Sigma22 << 2.0, 0.5, 0.5, 1.1;
-  stan::test::expect_ad(f, y22, dof, Sigma22);
-  stan::test::expect_ad_matvar(f, y22, dof, Sigma22);
+  stan::test::expect_ad(f, y2, mu2, Sigma22);
+  stan::test::expect_ad_matvar(f, y2, mu2, Sigma22);
 
   // Error sizes
-  stan::test::expect_ad(f, y00, dof, Sigma11);
-  stan::test::expect_ad(f, y11, dof, Sigma00);
-  stan::test::expect_ad_matvar(f, y00, dof, Sigma11);
-  stan::test::expect_ad_matvar(f, y11, dof, Sigma00);*/
+  stan::test::expect_ad(f, y0, mu0, Sigma11);
+  stan::test::expect_ad(f, y1, mu1, Sigma00);
+  stan::test::expect_ad_matvar(f, y0, mu0, Sigma11);
+  stan::test::expect_ad_matvar(f, y1, mu1, Sigma00);
 }
 
 TEST(ProbDistributionsMultiNormal, fvar_var) {
