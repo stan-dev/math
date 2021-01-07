@@ -30,9 +30,9 @@ TEST(KernelGenerator, kernel_caching) {
   auto tmp = m1_cl + 0.1234 * m2_cl;
 
   using cache = stan::math::internal::multi_result_kernel_internal<
-      0, stan::math::load_<matrix_cl<double>&>&&>::inner<const decltype(tmp)&>;
+      0, stan::math::load_<matrix_cl<double>&>>::inner<const decltype(tmp)&>;
   using unused_cache = stan::math::internal::multi_result_kernel_internal<
-      0, stan::math::load_<matrix_cl<int>&>&&>::inner<const decltype(tmp)&>;
+      0, stan::math::load_<matrix_cl<int>&>>::inner<const decltype(tmp)&>;
   size_t cache_size = cache::kernel_cache_.size();
   size_t unused_cache_size = unused_cache::kernel_cache_.size();
   std::vector<int> uid = {0, 1, 2};
