@@ -112,6 +112,39 @@ class scalar_seq_view<C, require_std_vector_t<C>> {
   const C& c_;
 };
 
+template <typename C>
+class scalar_seq_view<C, require_t<std::is_pointer<C>>> {
+ public:
+  template <typename T,
+            typename = require_same_t<plain_type_t<T>, plain_type_t<C>>>
+  explicit scalar_seq_view(const T& c) : c_(c) {}
+
+  /**
+   * Segfaults if out of bounds.
+   * @param i index
+   * @return the element at the specified position in the container
+   */
+  inline auto operator[](size_t i) const { return c_[i]; }
+  inline auto size() const noexcept {
+    static_assert(1, "Cannot Return Size of scalar_seq_view with pointer type");
+  }
+  inline const auto* data() const noexcept { return &c_[0]; }
+
+  template <typename T = C, require_st_arithmetic<T>* = nullptr>
+  inline decltype(auto) val(size_t i) const {
+    return c_[i];
+  }
+
+  template <typename T = C, require_st_autodiff<T>* = nullptr>
+  inline decltype(auto) val(size_t i) const {
+    return c_[i].val();
+  }
+
+ private:
+  const C& c_;
+};
+
+
 /**
  * This specialization handles wrapping a scalar as if it were a sequence.
  *
@@ -139,7 +172,7 @@ class scalar_seq_view<C, require_stan_scalar_t<C>> {
   inline auto* data() noexcept { return &t_; }
 
  private:
-  std::decay_t<C> t_;
+   std::decay_t<C> t_;
 };
 }  // namespace stan
 #endif
