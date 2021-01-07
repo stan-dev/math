@@ -38,7 +38,7 @@ struct less<T_y, T_high, true> {
                     const T_high& high) {
     scalar_seq_view<T_high> high_vec(high);
     const auto& y_ref = to_ref(y);
-    for (size_t n = 0; n < stan::math::size(y_ref); n++) {
+    for (size_t n = 0; n < stan::math::size(high_vec); n++) {
       if (!(stan::get(y_ref, n) < high_vec[n])) {
         [&]() STAN_COLD_PATH {
           std::stringstream msg;
