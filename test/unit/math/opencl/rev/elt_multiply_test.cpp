@@ -18,26 +18,26 @@ TEST(OpenCLMatrix_elt_multiply, prim_rev_values_small) {
   stan::math::test::compare_cpu_opencl_prim_rev(elt_multiply_functor, a, b);
 }
 
-// TEST(OpenCLMatrixelt_multiply, prim_rev_values_M_0) {
-//   int N = 2;
-//   int M = 0;
+TEST(OpenCLMatrixelt_multiply, prim_rev_values_M_0) {
+  int N = 2;
+  int M = 0;
 
-//   Eigen::MatrixXd a(N, M);
-//   Eigen::MatrixXd b(N, M);
-//   stan::math::test::compare_cpu_opencl_prim_rev(elt_multiply_functor, a, b);
+  Eigen::MatrixXd a(N, M);
+  Eigen::MatrixXd b(N, M);
+  stan::math::test::compare_cpu_opencl_prim_rev(elt_multiply_functor, a, b);
 
-//   Eigen::MatrixXd c(M, N);
-//   Eigen::MatrixXd d(M, N);
-//   stan::math::test::compare_cpu_opencl_prim_rev(elt_multiply_functor, c, d);
-// }
+  Eigen::MatrixXd c(M, N);
+  Eigen::MatrixXd d(M, N);
+  stan::math::test::compare_cpu_opencl_prim_rev(elt_multiply_functor, c, d);
+}
 
-// TEST(OpenCLMatrixelt_multiply, prim_rev_values_large) {
-//   int N = 71;
-//   int M = 83;
+TEST(OpenCLMatrixelt_multiply, prim_rev_values_large) {
+  int N = 71;
+  int M = 83;
 
-//   Eigen::MatrixXd a = Eigen::MatrixXd::Random(N, M);
-//   Eigen::MatrixXd b = Eigen::MatrixXd::Random(N, M);
-//   stan::math::test::compare_cpu_opencl_prim_rev(elt_multiply_functor, a, b);
-// }
+  Eigen::MatrixXd a = Eigen::MatrixXd::Random(N, M);
+  Eigen::MatrixXd b = Eigen::MatrixXd::Random(N, M);
+  stan::math::test::compare_cpu_opencl_prim_rev(elt_multiply_functor, a, b);
+}
 
 #endif
