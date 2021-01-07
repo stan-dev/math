@@ -225,11 +225,6 @@ class elt_function_cl : public operation_cl<Derived, Scal, T...> {
   class fun##_ : public elt_function_cl<fun##_<T>, bool, T> {                  \
     using base = elt_function_cl<fun##_<T>, bool, T>;                          \
     using base::arguments_;                                                    \
-    static_assert(std::is_floating_point<                                      \
-                      typename std::remove_reference_t<T>::Scalar>::value,     \
-                  #fun                                                         \
-                  ": all arguments must be expression with floating point "    \
-                  "return type!");                                             \
                                                                                \
    public:                                                                     \
     using base::rows;                                                          \
@@ -308,6 +303,7 @@ ADD_UNARY_FUNCTION_WITH_INCLUDES(inv_logit,
 ADD_UNARY_FUNCTION_WITH_INCLUDES(logit, opencl_kernels::logit_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(
     log1m_inv_logit, opencl_kernels::log1m_inv_logit_device_function)
+ADD_UNARY_FUNCTION_WITH_INCLUDES(square, "double square(double x){return x*x;}")
 
 ADD_CLASSIFICATION_FUNCTION(isfinite, {-rows() + 1, cols() - 1})
 ADD_CLASSIFICATION_FUNCTION(isinf,
