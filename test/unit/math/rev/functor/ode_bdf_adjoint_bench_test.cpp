@@ -90,7 +90,7 @@ void run_benchmark(int adjoint_integrator) {
         stan::math::grad();
       } else {
         std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> y
-            = ode_bdf_tol(ode, y0, t0, ts, rel_tol, abs_tol, max_num_steps,
+            = ode_bdf_tol(ode, y0, t0, ts, rel_tol, abs_tol_QB, max_num_steps,
                           nullptr, ka, ke, k12, k21, kin, kout, ea50);
 
         stan::math::grad();
