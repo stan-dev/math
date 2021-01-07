@@ -17,7 +17,6 @@ TEST(ProbDistributionsMultiGP, matvar) {
   stan::test::expect_ad(f, y11, Sigma11, w1);
   stan::test::expect_ad_matvar(f, y11, Sigma11, w1);
 
-  
   Eigen::MatrixXd y00(0, 0);
   Eigen::VectorXd w0(0);
   Eigen::MatrixXd Sigma00(0, 0);

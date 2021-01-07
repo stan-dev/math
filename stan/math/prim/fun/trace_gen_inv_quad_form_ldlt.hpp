@@ -31,7 +31,7 @@ namespace math {
  * be multiplied by D.
  */
 template <typename EigMat1, typename T2, typename EigMat3,
-	  require_not_col_vector_t<EigMat1>* = nullptr,
+          require_not_col_vector_t<EigMat1>* = nullptr,
           require_all_not_st_var<EigMat1, T2, EigMat3>* = nullptr>
 inline return_type_t<EigMat1, T2, EigMat3> trace_gen_inv_quad_form_ldlt(
     const EigMat1& D, const LDLT_factor<T2>& A, const EigMat3& B) {
@@ -64,14 +64,15 @@ inline return_type_t<EigMat1, T2, EigMat3> trace_gen_inv_quad_form_ldlt(
  * be multiplied by diag(D).
  */
 template <typename EigVec, typename T, typename EigMat,
-	  require_col_vector_t<EigVec>* = nullptr,
+          require_col_vector_t<EigVec>* = nullptr,
           require_all_not_st_var<EigVec, T, EigMat>* = nullptr>
 inline return_type_t<EigVec, T, EigMat> trace_gen_inv_quad_form_ldlt(
     const EigVec& D, const LDLT_factor<T>& A, const EigMat& B) {
-  Eigen::Matrix<scalar_type_t<EigVec>, Eigen::Dynamic, Eigen::Dynamic> D_mat = D.asDiagonal();
+  Eigen::Matrix<scalar_type_t<EigVec>, Eigen::Dynamic, Eigen::Dynamic> D_mat
+      = D.asDiagonal();
   return trace_gen_inv_quad_form_ldlt(D_mat, A, B);
-  /*check_multiplicable("trace_gen_inv_quad_form_ldlt", "A", A.matrix(), "B", B);
-  check_multiplicable("trace_gen_inv_quad_form_ldlt", "B", B, "D", D);
+  /*check_multiplicable("trace_gen_inv_quad_form_ldlt", "A", A.matrix(), "B",
+  B); check_multiplicable("trace_gen_inv_quad_form_ldlt", "B", B, "D", D);
 
   if (D.size() == 0 || A.matrix().size() == 0) {
     return 0;

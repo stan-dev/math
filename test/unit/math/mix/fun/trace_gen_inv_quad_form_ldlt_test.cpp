@@ -82,9 +82,7 @@ TEST(mathMixMatFun, traceGenInvQuadForm_vec) {
   };
 
   auto f1 = [&](const auto& c) {
-    return [&](const auto&a, const auto& b) {
-      return f(c, a, b);
-    };
+    return [&](const auto& a, const auto& b) { return f(c, a, b); };
   };
 
   Eigen::MatrixXd a00(0, 0);
@@ -148,4 +146,3 @@ TEST(mathMixMatFun, traceGenInvQuadForm_vec) {
 
   stan::math::recover_memory();
 }
-
