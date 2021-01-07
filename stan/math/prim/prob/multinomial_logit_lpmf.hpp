@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <vector>
 
 namespace stan {
