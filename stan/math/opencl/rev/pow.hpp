@@ -55,16 +55,6 @@ inline var_value<matrix_cl<double>> pow(T_a&& a, T_b&& b) {
             += expressions(calc_if<is_var<T_a>::value>(a_deriv),
                            calc_if<is_var<T_b>::value>(b_deriv));
     });
-    // if (unlikely(is_any_nan(avi_->val_, bvi_->val_))) {
-    //   avi_->adj_ = NOT_A_NUMBER;
-    //   bvi_->adj_ = NOT_A_NUMBER;
-    // } else {
-    //   if (avi_->val_ == 0.0) {
-    //     return;  // partials zero, avoids 0 & log(0)
-    //   }
-    //   avi_->adj_ += adj_ * bvi_->val_ * val_ / avi_->val_;
-    //   bvi_->adj_ += adj_ * std::log(avi_->val_) * val_;
-    // }
 }
 
 }  // namespace math

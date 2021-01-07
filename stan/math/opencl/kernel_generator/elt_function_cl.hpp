@@ -12,6 +12,7 @@
 #include <stan/math/opencl/kernels/device_functions/lgamma_stirling.hpp>
 #include <stan/math/opencl/kernels/device_functions/lgamma_stirling_diff.hpp>
 #include <stan/math/opencl/kernels/device_functions/log_inv_logit.hpp>
+#include <stan/math/opencl/kernels/device_functions/log_inv_logit_diff.hpp>
 #include <stan/math/opencl/kernels/device_functions/log1m.hpp>
 #include <stan/math/opencl/kernels/device_functions/log1m_exp.hpp>
 #include <stan/math/opencl/kernels/device_functions/log1m_inv_logit.hpp>
@@ -327,6 +328,10 @@ ADD_BINARY_FUNCTION_WITH_INCLUDES(
     stan::math::opencl_kernels::binomial_coefficient_log_device_function)
 ADD_BINARY_FUNCTION_WITH_INCLUDES(
     multiply_log, stan::math::opencl_kernels::multiply_log_device_function)
+ADD_BINARY_FUNCTION_WITH_INCLUDES(log_inv_logit_diff,
+                                 opencl_kernels::log1p_exp_device_function,
+                                 opencl_kernels::log1m_exp_device_function,
+                                 opencl_kernels::log_inv_logit_diff_device_function)
 
 #undef ADD_BINARY_FUNCTION_WITH_INCLUDES
 #undef ADD_UNARY_FUNCTION_WITH_INCLUDES
