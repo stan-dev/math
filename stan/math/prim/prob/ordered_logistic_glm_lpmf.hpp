@@ -131,7 +131,7 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
 
   T_partials_return logp(0);
   if (is_vector<T_y>::value) {
-    Eigen::Map<const Eigen::Matrix<int, Eigen::Dynamic, 1>> y_vec(&y_seq[0],
+    Eigen::Map<const Eigen::Matrix<int, Eigen::Dynamic, 1>> y_vec(y_seq.data(),
                                                                   y_seq.size());
     logp = y_vec.cwiseEqual(1)
                .select(m_log_1p_exp_cut1,
