@@ -5,6 +5,8 @@
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/prim/err/check_matching_dims.hpp>
 #include <stan/math/rev/core/callback_vari.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 
 namespace stan {

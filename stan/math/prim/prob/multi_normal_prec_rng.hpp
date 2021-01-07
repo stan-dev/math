@@ -1,9 +1,10 @@
 #ifndef STAN_MATH_PRIM_PROB_MULTI_NORMAL_PREC_RNG_HPP
 #define STAN_MATH_PRIM_PROB_MULTI_NORMAL_PREC_RNG_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
