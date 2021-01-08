@@ -43,7 +43,6 @@ inline var_value<matrix_cl<double>> log_diff_exp(T_x&& x, T_y&& y) {
               res.adj(), expm1(value_of(y_arena) - value_of(x_arena)));
           auto y_deriv = -elt_divide(
               res.adj(), expm1(value_of(x_arena) - value_of(y_arena)));
-          ;
 
           results(adjoint_of(x_arena), adjoint_of(y_arena))
               += expressions(calc_if<is_var<T_x>::value>(x_deriv),
