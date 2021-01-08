@@ -1,9 +1,10 @@
 #ifndef STAN_MATH_PRIM_FUN_ELT_MULTIPLY_HPP
 #define STAN_MATH_PRIM_FUN_ELT_MULTIPLY_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/multiply.hpp>
 
 namespace stan {
 namespace math {

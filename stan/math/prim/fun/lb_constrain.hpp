@@ -4,10 +4,9 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/add.hpp>
-#include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/fun/identity_constrain.hpp>
 #include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <cmath>
 
 namespace stan {
@@ -33,7 +32,8 @@ template <typename T, typename L>
 inline auto lb_constrain(const T& x, const L& lb) {
   const auto& lb_ref = to_ref(lb);
   check_finite("lb_constrain", "lb", value_of(lb_ref));
-  return eval(add(exp(x), lb));
+
+  return eval(add(exp(x), lb_ref));
 }
 
 /**
@@ -56,7 +56,8 @@ inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
   const auto& lb_ref = to_ref(lb);
   check_finite("lb_constrain", "lb", value_of(lb_ref));
   lp += sum(x_ref);
-  return eval(add(exp(x_ref), lb));
+
+  return eval(add(exp(x_ref), lb_ref));
 }
 
 }  // namespace math

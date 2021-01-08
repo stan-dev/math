@@ -105,7 +105,7 @@ TEST(prob_transform, lub_j) {
                std::domain_error);
   EXPECT_FLOAT_EQ(lp3_expected, lp3);
 }
-TEST(ProbTransform, lubException) {
+TEST(prob_transform, lubException) {
   using stan::math::lub_constrain;
   EXPECT_THROW(lub_constrain(5.0, 1.0, 1.0), std::domain_error);
   EXPECT_NO_THROW(lub_constrain(5.0, 1.0, 1.01));
