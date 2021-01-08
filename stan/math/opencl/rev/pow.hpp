@@ -37,20 +37,24 @@ inline var_value<matrix_cl<double>> pow(T_a&& a, T_b&& b) {
   return make_callback_var(
       res_val,
       [a_arena, b_arena](const vari_value<matrix_cl<double>>& res) mutable {
+        auto isnan_res = isnan(res.val());
+        auto constant_nan = constant(NOT_A_NUMBER, res.rows(), res.cols());
+        auto zero_a_arena = value_of(a_arena) == 0.0;
+        auto zeros = constant(0, res.rows(), res.cols());
         auto a_deriv = select(
-            isnan(value_of(res)),
-            constant(NOT_A_NUMBER, res.rows(), res.cols()),
+            isnan_res,
+            constant_nan,
             select(
-                value_of(a_arena) == 0.0, constant(0, res.rows(), res.cols()),
+                zero_a_arena, zeros,
                 elt_multiply(
                     res.adj(),
                     elt_multiply(value_of(b_arena),
                                  elt_divide(res.val(), value_of(a_arena))))));
         auto b_deriv = select(
-            isnan(value_of(res)),
-            constant(NOT_A_NUMBER, res.rows(), res.cols()),
+            isnan_res,
+            constant_nan,
             select(
-                value_of(a_arena) == 0.0, constant(0, res.rows(), res.cols()),
+                zero_a_arena, zeros,
                 elt_multiply(res.adj(),
                              elt_multiply(log(value_of(a_arena)), res.val()))));
 
