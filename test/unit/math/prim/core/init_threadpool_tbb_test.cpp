@@ -4,10 +4,9 @@
 #include <test/unit/util.hpp>
 #include <test/unit/math/prim/functor/utils_threads.hpp>
 
-#ifdef TBB_INTERFACE_NEW
+#include <tbb/tbb.h>
 
-#include <tbb/global_control.h>
-#include <tbb/task_arena.h>
+#ifndef __TBB_tbb_stddef_H
 
 TEST(intel_tbb_new_init, check_status) {
   set_n_threads(-1);
@@ -24,9 +23,6 @@ TEST(intel_tbb_new_init, check_status) {
 }
 
 #else
-
-#include <tbb/task_scheduler_init.h>
-#include <tbb/task_arena.h>
 
 TEST(intel_tbb_init, check_status) {
   set_n_threads(-1);

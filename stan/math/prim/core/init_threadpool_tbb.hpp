@@ -5,12 +5,7 @@
 
 #include <boost/lexical_cast.hpp>
 
-#ifdef TBB_INTERFACE_NEW
-#include <tbb/global_control.h>
-#include <tbb/task_arena.h>
-#else
-#include <tbb/task_scheduler_init.h>
-#endif
+#include <tbb/tbb.h>
 
 #include <cstdlib>
 #include <thread>
@@ -64,7 +59,7 @@ inline int get_num_threads() {
 
 }  // namespace internal
 
-#ifdef TBB_INTERFACE_NEW
+#ifndef __TBB_tbb_stddef_H
 /**
  * Initialize the Intel TBB threadpool and global scheduler through
  * the tbb::task_arena object. In case an instance of the
