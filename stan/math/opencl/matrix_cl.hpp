@@ -6,6 +6,7 @@
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/prim/err/check_size_match.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
+#include <stan/math/opencl/ref_type_for_opencl.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
@@ -57,9 +58,6 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
   template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
   inline void triangular_transpose();
 
-  inline void sub_block(const matrix_cl<T, require_arithmetic_t<T>>& A,
-                        size_t A_i, size_t A_j, size_t this_i, size_t this_j,
-                        size_t nrows, size_t ncols);
   int rows() const { return rows_; }
 
   int cols() const { return cols_; }
@@ -279,8 +277,11 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
     }
     cl::Context& ctx = opencl_context.context();
     try {
-      buffer_cl_
-          = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * rows_ * cols_);
+      int flags = CL_MEM_READ_WRITE;
+      if (opencl_context.device()[0].getInfo<CL_DEVICE_HOST_UNIFIED_MEMORY>()) {
+        flags |= CL_MEM_ALLOC_HOST_PTR;
+      }
+      buffer_cl_ = cl::Buffer(ctx, flags, sizeof(T) * rows_ * cols_);
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);
     }
@@ -289,14 +290,12 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
   /**
    * Constructor for the matrix_cl that creates a copy of the Eigen matrix or
    * Eigen expression on the OpenCL device. Regardless of `partial_view`, whole
-   * matrix is stored. If a lvalue matrix is passed to this constructor the
-   * caller must make sure that the matrix does not go out of scope before
-   * copying is complete.
+   * matrix is stored.
    *
-   * That means `.wait()` must be called on the event associated on copying or
-   * any other event that requires completion of this event. This can be done by
-   * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
-   * this matrix or any matrix that is calculated from this one.
+   * If a lvalue matrix or a map is passed to this constructor, it might be
+   * directly used by the device. The caller must make sure that the matrix (map
+   * data) does not go out of scope as long as this `matrix_cl` is in use
+   * (`std::move`-ing it or using raw `buffer()` also counts as in use).
    *
    * @tparam Mat type of \c Eigen \c Matrix or expression
    * @param A the \c Eigen \c Matrix or expression
@@ -322,14 +321,12 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
 
   /**
    * Constructor for the matrix_cl that creates a copy of a scalar on the OpenCL
-   * device. Regardless of `partial_view`, whole matrix is stored. If a lvalue
-   * is passed to this constructor the caller must make sure that it does not go
-   * out of scope before copying is complete.
+   * device. Regardless of `partial_view`, whole matrix is stored.
    *
-   * That means `.wait()` must be called on the event associated on copying or
-   * any other event that requires completion of this event. This can be done by
-   * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
-   * this matrix or any matrix that is calculated from this one.
+   * If a lvalue is passed to this constructor, it might be directly used by the
+   * device. The caller must make sure that it does not go out of scope as long
+   * as this `matrix_cl` is in use
+   * (`std::move`-ing it or using raw `buffer()` also counts as in use).
    *
    * @param A the scalar
    * @param partial_view which part of the matrix is used
@@ -342,18 +339,17 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
   explicit matrix_cl(Scal&& A,
                      matrix_cl_view partial_view = matrix_cl_view::Diagonal)
       : rows_(1), cols_(1), view_(partial_view) {
-    initialize_buffer<std::is_rvalue_reference<Scal&&>::value>(&A);
+    initialize_buffer<std::is_rvalue_reference<Scal&&>::value>(
+        const_cast<const std::decay_t<Scal>*>(&A));
   }
 
   /**
-   * Construct a matrix_cl of size Nx1 from \c std::vector. If a lvalue is
-   * passed to this constructor the caller must make sure that it does not go
-   * out of scope before copying is complete.
+   * Construct a matrix_cl of size Nx1 from \c std::vector.
    *
-   * That means `.wait()` must be called on the event associated on copying or
-   * any other event that requires completion of this event. This can be done by
-   * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
-   * this matrix or any matrix that is calculated from this one.
+   * If a lvalue is passed to this constructor, it might be directly used by the
+   * device. The caller must make sure that it does not go out of scope as long
+   * as this `matrix_cl` is in use
+   * (`std::move`-ing it or using raw `buffer()` also counts as in use).
    *
    * @param A Standard vector
    * @param partial_view which part of the matrix is used
@@ -368,14 +364,12 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
       : matrix_cl(std::forward<Vec>(A), A.size(), 1) {}
 
   /**
-   * Construct from \c std::vector with given rows and columns. If a lvalue
-   * is passed to this constructor the caller must make sure that it does not
-   * go out of scope before copying is complete.
+   * Construct from \c std::vector with given rows and columns.
    *
-   * That means `.wait()` must be called on the event associated on copying or
-   * any other event that requires completion of this event. This can be done by
-   * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
-   * this matrix or any matrix that is calculated from this one.
+   * If a lvalue is passed to this constructor, it might be directly used by the
+   * device. The caller must make sure that it does not go out of scope as long
+   * as this `matrix_cl` is in use `std::move`-ing it or using raw `buffer()`
+   * also counts as in use).
    *
    * @param A Standard vector
    * @param R Number of rows the matrix should have.
@@ -394,13 +388,11 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
   }
 
   /**
-   * Construct from \c array with given rows and columns. The caller
-   * must make sure that data is not deleted before copying is complete.
+   * Construct from \c array with given rows and columns.
    *
-   * That means `.wait()` must be called on the event associated on copying or
-   * any other event that requires completion of this event. This can be done by
-   * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
-   * this matrix or any matrix that is calculated from this one.
+   * The memory might be directly used by the device. The caller must make sure
+   * that it does not go out of scope as long as this `matrix_cl` is in use
+   * (`std::move`-ing it or using raw `buffer()` also counts as in use).
    *
    * @param A array of doubles
    * @param R Number of rows the matrix should have.
@@ -467,25 +459,30 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
   matrix_cl<T>& operator=(const Expr& expression);
 
   /**
-    Evaluates `this`. This is a no-op.
-    @return `*this`
-    */
+   * Evaluates `this`. This is a no-op.
+   * @return `*this`
+   */
   const matrix_cl<T>& eval() const& { return *this; }
   matrix_cl<T> eval() && { return std::move(*this); }
+
+  /**
+   * Destructor waits for write events to prevent any kernels from writing
+   * memory that has already been reused.
+   */
+  ~matrix_cl() { wait_for_read_write_events(); }
 
  private:
   /**
    * Initializes the OpenCL buffer of this matrix by copying the data from given
    * buffer. Assumes that size of \c this is already set and matches the
-   * buffer size. If \c in_order is false the caller must make sure that data
-   * is not deleted before copying is complete.
+   * buffer size.
    *
-   * That means `.wait()` must be called on the event associated on copying or
-   * any other event that requires completion of this event. This can be done by
-   * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
-   * this matrix or any matrix that is calculated from this one.
+   * The caller must make sure that data is not deleted as long as
+   * this `matrix_cl` is in use (`std::move`-ing it or using raw `buffer()` also
+   * counts as in use).
    *
    * @tparam in_order whether copying must be done in order
+   * efficiently use it directly
    * @param A pointer to buffer
    * @return event for the copy
    */
@@ -509,18 +506,40 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
     return transfer_event;
   }
 
+  template <bool in_order = false>
+  cl::Event initialize_buffer(T* A) {
+    cl::Event transfer_event;
+    if (size() == 0) {
+      return transfer_event;
+    }
+    cl::Context& ctx = opencl_context.context();
+    cl::CommandQueue& queue = opencl_context.queue();
+    try {
+      if (opencl_context.device()[0].getInfo<CL_DEVICE_HOST_UNIFIED_MEMORY>()) {
+        buffer_cl_
+            = cl::Buffer(ctx, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR,
+                         sizeof(T) * size(), A);  // this is always synchronous
+      } else {
+        buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * size());
+        queue.enqueueWriteBuffer(
+            buffer_cl_, opencl_context.in_order() || in_order, 0,
+            sizeof(T) * size(), A, nullptr, &transfer_event);
+        this->add_write_event(transfer_event);
+      }
+    } catch (const cl::Error& e) {
+      check_opencl_error("initialize_buffer", e);
+    }
+    return transfer_event;
+  }
+
   /**
    * Initializes the OpenCL buffer of this matrix by copying the data from given
    * object. Assumes that size of \c this is already set and matches the
    * buffer size. If No_heap is false the object is first moved to heap
    * and callback is set to delete it after copying to OpenCL device is
-   * complete. Otherwise the caller must make sure that input object does not go
-   * out of scope before copying is complete.
-   *
-   * That means `.wait()` must be called on the event associated on copying or
-   * any other event that requires completion of this event. This can be done by
-   * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
-   * this matrix or any matrix that is calculated from this one.
+   * complete. Otherwise the caller must make sure that input object is not
+   * deleted as long as this `matrix_cl` is in use (`std::move`-ing it or using
+   * raw `buffer()` also counts).
    *
    * @tparam No_heap whether to move the object to heap first
    * @tparam U type of object
@@ -545,7 +564,12 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
     auto* obj_heap = new U_val(std::move(obj));
     try {
       cl::Event e = initialize_buffer(obj_heap->data());
-      e.setCallback(CL_COMPLETE, &delete_it<U_val>, obj_heap);
+      if (opencl_context.device()[0].getInfo<CL_DEVICE_HOST_UNIFIED_MEMORY>()) {
+        buffer_cl_.setDestructorCallback(&delete_it_destructor<U_val>,
+                                         obj_heap);
+      } else {
+        e.setCallback(CL_COMPLETE, &delete_it_event<U_val>, obj_heap);
+      }
     } catch (...) {
       delete obj_heap;
       throw;
@@ -582,7 +606,18 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
    * @param container container to delete
    */
   template <typename U>
-  static void delete_it(cl_event e, cl_int status, void* container) {
+  static void delete_it_event(cl_event e, cl_int status, void* container) {
+    delete static_cast<U*>(container);
+  }
+
+  /**
+   * Deletes the container. Used as a callback for destruction of `cl::Buffer`.
+   * @tparam U type of container
+   * @param buff buffer that is being destructed
+   * @param container container to delete
+   */
+  template <typename U>
+  static void delete_it_destructor(cl_mem buff, void* container) {
     delete static_cast<U*>(container);
   }
 };

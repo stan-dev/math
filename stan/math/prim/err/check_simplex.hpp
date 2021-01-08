@@ -41,23 +41,27 @@ void check_simplex(const char* function, const char* name, const T& theta) {
   check_nonzero_size(function, name, theta);
   ref_type_t<T> theta_ref = theta;
   if (!(fabs(1.0 - theta_ref.sum()) <= CONSTRAINT_TOLERANCE)) {
-    std::stringstream msg;
-    value_type_t<T> sum = theta_ref.sum();
-    msg << "is not a valid simplex.";
-    msg.precision(10);
-    msg << " sum(" << name << ") = " << sum << ", but should be ";
-    std::string msg_str(msg.str());
-    throw_domain_error(function, name, 1.0, msg_str.c_str());
+    [&]() STAN_COLD_PATH {
+      std::stringstream msg;
+      value_type_t<T> sum = theta_ref.sum();
+      msg << "is not a valid simplex.";
+      msg.precision(10);
+      msg << " sum(" << name << ") = " << sum << ", but should be ";
+      std::string msg_str(msg.str());
+      throw_domain_error(function, name, 1.0, msg_str.c_str());
+    }();
   }
   for (Eigen::Index n = 0; n < theta_ref.size(); n++) {
     if (!(theta_ref.coeff(n) >= 0)) {
-      std::ostringstream msg;
-      msg << "is not a valid simplex. " << name << "["
-          << n + stan::error_index::value << "]"
-          << " = ";
-      std::string msg_str(msg.str());
-      throw_domain_error(function, name, theta_ref.coeff(n), msg_str.c_str(),
-                         ", but should be greater than or equal to 0");
+      [&]() STAN_COLD_PATH {
+        std::ostringstream msg;
+        msg << "is not a valid simplex. " << name << "["
+            << n + stan::error_index::value << "]"
+            << " = ";
+        std::string msg_str(msg.str());
+        throw_domain_error(function, name, theta_ref.coeff(n), msg_str.c_str(),
+                           ", but should be greater than or equal to 0");
+      }();
     }
   }
 }

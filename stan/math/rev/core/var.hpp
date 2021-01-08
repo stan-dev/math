@@ -903,6 +903,20 @@ class var_value<
   }
 
   /**
+   * Return an Array.
+   */
+  inline auto array() const {
+    using vari_sub = decltype(vi_->array());
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->array()));
+  }
+  inline auto array() {
+    using vari_sub = decltype(vi_->array());
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->array()));
+  }
+
+  /**
    * Write the value of this autodiff variable and its adjoint to
    * the specified output stream.
    *
@@ -1029,8 +1043,9 @@ using var = var_value<double>;
  * @ingroup type_trait
  */
 template <typename T>
-struct scalar_type<math::var_value<T>> {
-  using type = math::var_value<scalar_type_t<T>>;
+struct scalar_type<T, std::enable_if_t<is_var<T>::value>> {
+  using type
+      = math::var_value<scalar_type_t<typename std::decay_t<T>::value_type>>;
 };
 
 }  // namespace stan

@@ -44,6 +44,8 @@ TEST(ProbDistributionsMultiGPCholesky, fvar_var) {
                   stan::math::multi_gp_cholesky_log(y, L, w).val_.val());
   EXPECT_FLOAT_EQ(-74.572952,
                   stan::math::multi_gp_cholesky_log(y, L, w).d_.val());
+
+  stan::math::recover_memory();
 }
 
 TEST(ProbDistributionsMultiGPCholesky, fvar_fvar_var) {
@@ -89,4 +91,6 @@ TEST(ProbDistributionsMultiGPCholesky, fvar_fvar_var) {
                   stan::math::multi_gp_cholesky_log(y, L, w).val_.val_.val());
   EXPECT_FLOAT_EQ(-74.572952,
                   stan::math::multi_gp_cholesky_log(y, L, w).d_.val_.val());
+
+  stan::math::recover_memory();
 }
