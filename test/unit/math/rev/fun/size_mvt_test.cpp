@@ -2,14 +2,14 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathPrimFun, size_mvt_scalar) {
+TEST(AgradRev, size_mvt_scalar) {
   using stan::math::size_mvt;
 
   stan::math::var x1;
   EXPECT_THROW(size_mvt(x1), std::invalid_argument);
 }
 
-TEST(MathPrimFun, size_mvt_matrices_vectors) {
+TEST(AgradRev, size_mvt_matrices_vectors) {
   using stan::math::size_mvt;
 
   stan::math::var_value<Eigen::MatrixXd> x1 = Eigen::MatrixXd(2, 3);
