@@ -21,9 +21,10 @@ static const char* log_inv_logit_diff_device_function
            * Returns the natural logarithm of the difference of the
            * inverse logits of the specified arguments.
            *
-           * @param x argument
-           * @return the natural logarithm of the inverse logit of the
-           *  specified argument
+           * @param x first argument
+           * @param y second argument
+           * @return the natural logarithm of the difference of the
+           * inverse logits of the specified argument.
            */
           double log_inv_logit_diff(double x, double y) {
             return x - log1p_exp(x) + log1m_exp(y - x) - log1p_exp(y);

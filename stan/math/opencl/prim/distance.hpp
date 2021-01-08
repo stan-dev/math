@@ -18,19 +18,6 @@ namespace math {
 /**
  * Returns the distance between the specified vectors.
  *
- * @tparam T1 type of the first vector (must be derived from \c
- * Eigen::MatrixBase and have one compile time dimension equal to 1)
- * @tparam T2 type of the second vector (must be derived from \c
- * Eigen::MatrixBase and have one compile time dimension equal to 1)
- * @param x1 First vector.
- * @param x2 Second vector.
- * @return Distance between the vectors.
- * @throw std::domain_error If the vectors are not the same
- * size.
- */
-/**
- * Returns the distance between the specified vectors.
- *
  * @tparam T_a type of the first kernel generator expression
  * @tparam T_b type of the second kernel generator expression
  *
