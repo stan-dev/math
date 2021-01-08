@@ -5,6 +5,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/eval.hpp>
+#include <stan/math/prim/functor/multi_expression.hpp>
 #include <stan/math/rev/core.hpp>
 
 namespace stan {
@@ -33,13 +34,10 @@ auto elt_multiply(const Mat1& m1, const Mat2& m2) {
     arena_t<promote_scalar_t<var, Mat2>> arena_m2 = m2;
     arena_t<ret_type> ret(arena_m1.val().cwiseProduct(arena_m2.val()));
     reverse_pass_callback([ret, arena_m1, arena_m2]() mutable {
-      for (Eigen::Index j = 0; j < arena_m2.cols(); ++j) {
-        for (Eigen::Index i = 0; i < arena_m2.rows(); ++i) {
-          const auto ret_adj = ret.adj().coeffRef(i, j);
-          arena_m1.adj().coeffRef(i, j) += arena_m2.val().coeff(i, j) * ret_adj;
-          arena_m2.adj().coeffRef(i, j) += arena_m1.val().coeff(i, j) * ret_adj;
-        }
-      }
+      auto ret_adj = ret.adj().array();
+      eigen_results(arena_m1.adj().array(), arena_m2.adj().array())
+          += eigen_expressions(arena_m2.val().array() * ret_adj,
+                               arena_m1.val().array() * ret_adj);
     });
     return ret_type(ret);
   } else if (!is_constant<Mat1>::value) {
@@ -59,7 +57,7 @@ auto elt_multiply(const Mat1& m1, const Mat2& m2) {
     });
     return ret_type(ret);
   }
-}
+}  // namespace math
 }  // namespace math
 }  // namespace stan
 

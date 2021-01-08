@@ -149,4 +149,19 @@ TEST(muProbDistributionsNegBinomial2, opencl_matches_cpu_big) {
       neg_binomial_2_lpmf_functor_propto, n, mu, phi);
 }
 
+TEST(ProbDistributionsNegBinomial2, opencl_scalar_n_mu) {
+  int N = 3;
+  int M = 2;
+
+  int n = 1;
+  double mu = 0.3;
+  Eigen::VectorXd phi(N);
+  phi << 0.3, 0.8, 1.3;
+
+  stan::math::test::compare_cpu_opencl_prim_rev(neg_binomial_2_lpmf_functor, n,
+                                                mu, phi);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      neg_binomial_2_lpmf_functor_propto, n, mu, phi);
+}
+
 #endif
