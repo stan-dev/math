@@ -111,26 +111,18 @@ auto simplex_constrain(const T& y, scalar_type_t<T>& lp) {
 
   reverse_pass_callback([arena_y, arena_x, arena_z, lp]() mutable {
     int N = arena_y.size();
-    // x_val.coeffRef(N) = stick_len;
     double stick_len_val = arena_x.val().coeff(N);
     double stick_len_adj = arena_x.adj().coeff(N);
     for (Eigen::Index k = N; k-- > 0;) {
-      // stick_len -= x_val(k);
       arena_x.adj().coeffRef(k) -= stick_len_adj;
       stick_len_val += arena_x.val().coeff(k);
-      // lp -= log1p_exp(adj_y_k);
       double log_N_minus_k = std::log(N - k);
       double adj_y_k = arena_y.val().coeff(k) - log_N_minus_k;
       arena_y.adj().coeffRef(k) -= lp.adj() * inv_logit(adj_y_k);
-      // lp -= log1p_exp(-adj_y_k);
       arena_y.adj().coeffRef(k) += lp.adj() * inv_logit(-adj_y_k);
-      // lp += log(stick_len);
       stick_len_adj += lp.adj() / stick_len_val;
-      // x_val.coeffRef(k) = stick_len * arena_z.coeff(k);
       stick_len_adj += arena_x.adj().coeff(k) * arena_z.coeff(k);
       double arena_z_adj = arena_x.adj().coeff(k) * stick_len_val;
-      // arena_z.coeffRef(k) = inv_logit(arena_y.val().coeff(k) -
-      // log_N_minus_k);
       arena_y.adj().coeffRef(k)
           += arena_z_adj * arena_z.coeff(k) * (1.0 - arena_z.coeff(k));
     }

@@ -6,7 +6,6 @@
 #include <stan/math/prim/err/throw_domain_error_vec.hpp>
 #include <stan/math/prim/fun/get.hpp>
 #include <stan/math/prim/fun/size.hpp>
-#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <string>
 
@@ -58,8 +57,8 @@ template <typename T_y, typename T_high,
           require_all_container_t<T_y, T_high>* = nullptr>
 inline void check_less(const char* function, const char* name, const T_y& y,
                        const T_high& high) {
-  const auto& high_ref = as_array_or_scalar(to_ref(high));
-  const auto& y_ref = as_array_or_scalar(to_ref(y));
+  const auto& high_ref = as_array_or_scalar(high);
+  const auto& y_ref = as_array_or_scalar(y);
   Eigen::Index n = 0;
   for (Eigen::Index j = 0; j < y_ref.cols(); ++j) {
     for (Eigen::Index i = 0; i < y_ref.rows(); ++i) {
@@ -94,7 +93,7 @@ template <typename T_y, typename T_high, require_container_t<T_y>* = nullptr,
           require_stan_scalar_t<T_high>* = nullptr>
 inline void check_less(const char* function, const char* name, const T_y& y,
                        const T_high& high) {
-  const auto& y_ref = as_array_or_scalar(to_ref(y));
+  const auto& y_ref = as_array_or_scalar(y);
   Eigen::Index n = 0;
   for (Eigen::Index j = 0; j < y_ref.cols(); ++j) {
     for (Eigen::Index i = 0; i < y_ref.rows(); ++i) {
@@ -129,7 +128,7 @@ template <typename T_y, typename T_high, require_container_t<T_high>* = nullptr,
           require_stan_scalar_t<T_y>* = nullptr>
 inline void check_less(const char* function, const char* name, const T_y& y,
                        const T_high& high) {
-  const auto& high_ref = as_array_or_scalar(to_ref(high));
+  const auto& high_ref = as_array_or_scalar(high);
   Eigen::Index n = 0;
   for (Eigen::Index j = 0; j < high_ref.cols(); ++j) {
     for (Eigen::Index i = 0; i < high_ref.rows(); ++i) {

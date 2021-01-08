@@ -47,37 +47,20 @@ auto elt_multiply(const Scalar1& a, const Scalar2& b) {
 /**
  * Return specified matrix multiplied by specified scalar.
  *
- * @tparam T1 type of the scalar
- * @tparam T2 type of the matrix or expression
+ * One argument is a matrix and one is a scalar.
  *
- * @param A scalar
- * @param B matrix
+ * @tparam T1 type of the first argument
+ * @tparam T2 type of the second argument
+ *
+ * @param A first argument
+ * @param B second argument
  * @return product of matrix and scalar
  */
-template <typename T1, typename T2, require_not_matrix_t<T1>* = nullptr,
-          require_matrix_t<T2>* = nullptr,
-          require_all_not_st_var<T1, T2>* = nullptr,
-          require_not_row_and_col_vector_t<T1, T2>* = nullptr>
+template <typename T1, typename T2,
+	  require_any_matrix_t<T1, T2>* = nullptr,
+          require_any_stan_scalar_t<T1, T2>* = nullptr>
 inline auto elt_multiply(const T1& A, const T2& B) {
-  return (A * B.array()).matrix();
-}
-
-/**
- * Return specified matrix multiplied by specified scalar.
- *
- * @tparam T1 type of the matrix or expression
- * @tparam T2 type of the scalar
- *
- * @param A matrix
- * @param B scalar
- * @return product of matrix and scalar
- */
-template <typename T1, typename T2, require_matrix_t<T1>* = nullptr,
-          require_not_matrix_t<T2>* = nullptr,
-          require_all_not_st_var<T1, T2>* = nullptr,
-          require_not_row_and_col_vector_t<T1, T2>* = nullptr>
-inline auto elt_multiply(const T1& A, const T2& B) {
-  return (A.array() * B).matrix();
+  return multiply(A, B);
 }
 
 }  // namespace math
