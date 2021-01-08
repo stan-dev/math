@@ -42,21 +42,17 @@ inline var_value<matrix_cl<double>> pow(T_a&& a, T_b&& b) {
         auto zero_a_arena = value_of(a_arena) == 0.0;
         auto zeros = constant(0, res.rows(), res.cols());
         auto a_deriv = select(
-            isnan_res,
-            constant_nan,
-            select(
-                zero_a_arena, zeros,
-                elt_multiply(
-                    res.adj(),
-                    elt_multiply(value_of(b_arena),
-                                 elt_divide(res.val(), value_of(a_arena))))));
+            isnan_res, constant_nan,
+            select(zero_a_arena, zeros,
+                   elt_multiply(res.adj(),
+                                elt_multiply(value_of(b_arena),
+                                             elt_divide(res.val(),
+                                                        value_of(a_arena))))));
         auto b_deriv = select(
-            isnan_res,
-            constant_nan,
-            select(
-                zero_a_arena, zeros,
-                elt_multiply(res.adj(),
-                             elt_multiply(log(value_of(a_arena)), res.val()))));
+            isnan_res, constant_nan,
+            select(zero_a_arena, zeros,
+                   elt_multiply(res.adj(), elt_multiply(log(value_of(a_arena)),
+                                                        res.val()))));
 
         results(adjoint_of(a_arena), adjoint_of(b_arena))
             += expressions(calc_if<is_var<T_a>::value>(a_deriv),
