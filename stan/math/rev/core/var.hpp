@@ -320,8 +320,9 @@ class var_value<
 
  public:
   using value_type = T;  // type in vari_value.
-  using vari_type = std::conditional_t<is_plain_type<value_type>::value,
-                                       vari_value<value_type>, vari_view<T>>;
+  using vari_type = std::conditional_t<
+      conjunction<is_plain_type<value_type>, is_matrix_cl<value_type>>::value,
+      vari_value<value_type>, vari_view<T>>;
 
   static constexpr int RowsAtCompileTime{vari_type::RowsAtCompileTime};
   static constexpr int ColsAtCompileTime{vari_type::ColsAtCompileTime};
