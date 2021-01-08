@@ -79,8 +79,9 @@ class load_
         generated_all[&a_] = generated[&a_] = this->var_name_.c_str();
         res.body = generate_body(row_index_name, col_index_name, view_handled,
                                  this->var_name_.c_str());
-        res.args = "__global " + type_str<Scalar>() + "* " + var_name_ + "_global, int "
-                   + var_name_ + "_rows, int " + var_name_ + "_view, ";
+        res.args = "__global " + type_str<Scalar>() + "* " + var_name_
+                   + "_global, int " + var_name_ + "_rows, int " + var_name_
+                   + "_view, ";
       } else {
         const char* arg_var_name = generated_all[&a_];
         this->var_name_ = name_gen.generate();
@@ -137,8 +138,7 @@ class load_
   inline kernel_parts get_kernel_parts_lhs(
       std::map<const void*, const char*>& generated,
       std::map<const void*, const char*>& generated_all,
-      name_generator& name_gen,
-      const std::string& row_index_name,
+      name_generator& name_gen, const std::string& row_index_name,
       const std::string& col_index_name) const {
     if (generated_all.count(&a_) == 0) {
       this->var_name_ = name_gen.generate();

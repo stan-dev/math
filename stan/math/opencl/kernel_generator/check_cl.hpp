@@ -79,14 +79,13 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
   inline kernel_parts get_kernel_parts_lhs(
       std::map<const void*, const char*>& generated,
       std::map<const void*, const char*>& generated_all,
-      name_generator& name_gen,
-      const std::string& row_index_name,
+      name_generator& name_gen, const std::string& row_index_name,
       const std::string& col_index_name) const {
     kernel_parts res;
     this->var_name_ = name_gen.generate();
     generated[this] = "";
-    res = arg_.get_kernel_parts(generated, generated_all, name_gen, row_index_name,
-                                col_index_name, false);
+    res = arg_.get_kernel_parts(generated, generated_all, name_gen,
+                                row_index_name, col_index_name, false);
 
     res.args += "__global int* " + var_name_ + "_buffer, __global "
                 + type_str<value_type_t<T>>() + "* " + var_name_ + "_value, ";

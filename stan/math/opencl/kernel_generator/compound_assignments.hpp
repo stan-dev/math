@@ -11,12 +11,12 @@ namespace math {
  * @param independent independent (non-compound) operator
  * @param compound compound operator
  */
-#define ADD_KG_COMPOUND_ASSIGMENT_OPERATOR(independent, compound)   \
-  template <typename T1, typename T2,                               \
-            require_kernel_expression_lhs_t<T1>* = nullptr,         \
-            require_all_kernel_expressions_t<T2>* = nullptr>        \
-  T1 operator compound(T1&& a, T2&& b) {                            \
-    return a = a independent b; \
+#define ADD_KG_COMPOUND_ASSIGMENT_OPERATOR(independent, compound) \
+  template <typename T1, typename T2,                             \
+            require_kernel_expression_lhs_t<T1>* = nullptr,       \
+            require_all_kernel_expressions_t<T2>* = nullptr>      \
+  T1 operator compound(T1&& a, T2&& b) {                          \
+    return a = a independent b;                                   \
   }
 
 ADD_KG_COMPOUND_ASSIGMENT_OPERATOR(+, +=)

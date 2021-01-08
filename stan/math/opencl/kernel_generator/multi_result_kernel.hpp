@@ -121,8 +121,8 @@ struct multi_result_kernel_internal {
       kernel_parts parts0
           = std::get<N>(assignment_pairs)
                 .second.get_whole_kernel_parts(
-                    generated, generated_all, ng, row_index_name, col_index_name,
-                    std::get<N>(assignment_pairs).first);
+                    generated, generated_all, ng, row_index_name,
+                    col_index_name, std::get<N>(assignment_pairs).first);
       parts += parts0;
       return parts;
     }
@@ -249,7 +249,7 @@ class expressions_cl {
    */
   explicit expressions_cl(T_expressions&&... expressions)
       : expressions_(
-          T_expressions(std::forward<T_expressions>(expressions))...) {}
+            T_expressions(std::forward<T_expressions>(expressions))...) {}
 
  private:
   std::tuple<T_expressions...> expressions_;
@@ -337,7 +337,7 @@ class results_cl {
   std::string get_kernel_source_for_evaluating(
       const expressions_cl<T_expressions...>& exprs) {
     return index_apply<sizeof...(T_expressions)>([this, &exprs](auto... Is) {
-    return get_kernel_source_impl(std::tuple_cat(make_assignment_pair(
+      return get_kernel_source_impl(std::tuple_cat(make_assignment_pair(
           std::get<Is>(results_), std::get<Is>(exprs.expressions_))...));
     });
   }

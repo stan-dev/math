@@ -81,10 +81,10 @@ class indexing_
 
   /**
    * Generates kernel code for this and nested expressions.
-   * @param[in,out] generated map from (pointer to) already generated local operations
-   * to variable names
-   * @param[in,out] generated_all map from (pointer to) already generated all operations
-   * to variable names
+   * @param[in,out] generated map from (pointer to) already generated local
+   * operations to variable names
+   * @param[in,out] generated_all map from (pointer to) already generated all
+   * operations to variable names
    * @param name_gen name generator for this kernel
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
@@ -92,9 +92,10 @@ class indexing_
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts get_kernel_parts(
-      std::map<const void*, const char*>& generated, std::map<const void*, const char*>& generated_all, name_generator& name_gen,
-      const std::string& row_index_name, const std::string& col_index_name,
-      bool view_handled) const {
+      std::map<const void*, const char*>& generated,
+      std::map<const void*, const char*>& generated_all,
+      name_generator& name_gen, const std::string& row_index_name,
+      const std::string& col_index_name, bool view_handled) const {
     kernel_parts res{};
     if (generated.count(this) == 0) {
       generated[this] = "";
@@ -104,13 +105,15 @@ class indexing_
       const auto& col_index = this->template get_arg<2>();
 
       kernel_parts parts_row_idx = row_index.get_kernel_parts(
-          generated, generated_all, name_gen, row_index_name, col_index_name, view_handled);
+          generated, generated_all, name_gen, row_index_name, col_index_name,
+          view_handled);
       kernel_parts parts_col_idx = col_index.get_kernel_parts(
-          generated, generated_all, name_gen, row_index_name, col_index_name, view_handled);
+          generated, generated_all, name_gen, row_index_name, col_index_name,
+          view_handled);
       std::map<const void*, const char*> generated2;
-      kernel_parts parts_mat
-          = mat.get_kernel_parts(generated2, generated_all, name_gen, row_index.var_name_,
-                                 col_index.var_name_, false);
+      kernel_parts parts_mat = mat.get_kernel_parts(
+          generated2, generated_all, name_gen, row_index.var_name_,
+          col_index.var_name_, false);
 
       res = parts_row_idx + parts_col_idx + parts_mat;
       var_name_ = mat.var_name_;
@@ -133,8 +136,7 @@ class indexing_
   inline kernel_parts get_kernel_parts_lhs(
       std::map<const void*, const char*>& generated,
       std::map<const void*, const char*>& generated_all,
-      name_generator& name_gen,
-      const std::string& row_index_name,
+      name_generator& name_gen, const std::string& row_index_name,
       const std::string& col_index_name) const {
     if (generated.count(this) == 0) {
       generated[this] = "";
@@ -143,13 +145,16 @@ class indexing_
     const auto& row_index = this->template get_arg<1>();
     const auto& col_index = this->template get_arg<2>();
 
-    kernel_parts parts_row_idx = row_index.get_kernel_parts(
-        generated, generated_all, name_gen, row_index_name, col_index_name, false);
-    kernel_parts parts_col_idx = col_index.get_kernel_parts(
-        generated, generated_all, name_gen, row_index_name, col_index_name, false);
+    kernel_parts parts_row_idx
+        = row_index.get_kernel_parts(generated, generated_all, name_gen,
+                                     row_index_name, col_index_name, false);
+    kernel_parts parts_col_idx
+        = col_index.get_kernel_parts(generated, generated_all, name_gen,
+                                     row_index_name, col_index_name, false);
     std::map<const void*, const char*> generated2;
-    kernel_parts parts_mat = mat.get_kernel_parts_lhs(
-        generated2, generated_all, name_gen, row_index.var_name_, col_index.var_name_);
+    kernel_parts parts_mat
+        = mat.get_kernel_parts_lhs(generated2, generated_all, name_gen,
+                                   row_index.var_name_, col_index.var_name_);
 
     kernel_parts res = parts_row_idx + parts_col_idx + parts_mat;
     var_name_ = mat.var_name_;
@@ -171,10 +176,13 @@ class indexing_
                        cl::Kernel& kernel, int& arg_num) const {
     if (generated.count(this) == 0) {
       generated[this] = "";
-      this->template get_arg<1>().set_args(generated, generated_all, kernel, arg_num);
-      this->template get_arg<2>().set_args(generated, generated_all, kernel, arg_num);
+      this->template get_arg<1>().set_args(generated, generated_all, kernel,
+                                           arg_num);
+      this->template get_arg<2>().set_args(generated, generated_all, kernel,
+                                           arg_num);
       std::map<const void*, const char*> generated2;
-      this->template get_arg<0>().set_args(generated2, generated_all, kernel, arg_num);
+      this->template get_arg<0>().set_args(generated2, generated_all, kernel,
+                                           arg_num);
     }
   }
 

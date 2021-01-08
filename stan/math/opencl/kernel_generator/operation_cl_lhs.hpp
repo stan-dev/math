@@ -66,8 +66,9 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...>,
                       == &operation_cl<Derived, Scalar,
                                        Args...>::modify_argument_indices
                   ? generated
-                  : generated2, generated_all,
-              name_gen, row_index_name_arg, col_index_name_arg)...};
+                  : generated2,
+              generated_all, name_gen, row_index_name_arg,
+              col_index_name_arg)...};
     });
     kernel_parts res
         = std::accumulate(args_parts.begin(), args_parts.end(), kernel_parts{});

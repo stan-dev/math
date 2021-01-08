@@ -67,8 +67,7 @@ class calc_if_
   template <typename T_result>
   kernel_parts get_whole_kernel_parts(
       std::map<const void*, const char*>& generated,
-      std::map<const void*, const char*>& generated_all,
-      name_generator& ng,
+      std::map<const void*, const char*>& generated_all, name_generator& ng,
       const std::string& row_index_name, const std::string& col_index_name,
       const T_result& result) const {
     if (Do_Calculate) {
@@ -93,7 +92,8 @@ class calc_if_
                        std::map<const void*, const char*>& generated_all,
                        cl::Kernel& kernel, int& arg_num) const {
     if (Do_Calculate) {
-      this->template get_arg<0>().set_args(generated, generated_all, kernel, arg_num);
+      this->template get_arg<0>().set_args(generated, generated_all, kernel,
+                                           arg_num);
     }
   }
 

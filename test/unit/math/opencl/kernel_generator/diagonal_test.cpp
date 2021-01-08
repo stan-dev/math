@@ -93,5 +93,4 @@ TEST(KernelGenerator, diagonal_lhs_add_assign_test) {
   EXPECT_MATRIX_NEAR(res, correct, 1e-9);
 }
 
-
 #endif

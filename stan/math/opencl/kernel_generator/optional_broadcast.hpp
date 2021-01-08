@@ -106,7 +106,8 @@ class optional_broadcast_
     if (generated.count(this) == 0) {
       generated[this] = "";
       std::map<const void*, const char*> generated2;
-      this->template get_arg<0>().set_args(generated2, generated_all, kernel, arg_num);
+      this->template get_arg<0>().set_args(generated2, generated_all, kernel,
+                                           arg_num);
       if (Colwise) {
         kernel.setArg(arg_num++, static_cast<int>(
                                      this->template get_arg<0>().rows() != 1));

@@ -82,8 +82,8 @@ struct matvec_mul_opt<elt_multiply_<Mat, broadcast_<VecT, true, false>>> {
 
       const auto& matrix = mul.template get_arg<0>();
       const auto& broadcast = mul.template get_arg<1>();
-      res = matrix.get_kernel_parts(generated, generated_all, name_gen, row_index_name,
-                                    col_index_name, true);
+      res = matrix.get_kernel_parts(generated, generated_all, name_gen,
+                                    row_index_name, col_index_name, true);
       if (generated.count(&broadcast) == 0) {
         broadcast.var_name_ = name_gen.generate();
         generated[&broadcast] = "";
@@ -92,8 +92,8 @@ struct matvec_mul_opt<elt_multiply_<Mat, broadcast_<VecT, true, false>>> {
         std::string row_index_name_bc = row_index_name;
         std::string col_index_name_bc = col_index_name;
         broadcast.modify_argument_indices(row_index_name_bc, col_index_name_bc);
-        res += vec.get_kernel_parts(generated, generated_all, name_gen, row_index_name_bc,
-                                    col_index_name_bc, true);
+        res += vec.get_kernel_parts(generated, generated_all, name_gen,
+                                    row_index_name_bc, col_index_name_bc, true);
         res += broadcast.generate(row_index_name, col_index_name, true,
                                   vec.var_name_);
       }
@@ -156,9 +156,8 @@ class rowwise_reduction
   inline kernel_parts get_kernel_parts(
       std::map<const void*, const char*>& generated,
       std::map<const void*, const char*>& generated_all,
-      name_generator& name_gen,
-      const std::string& row_index_name, const std::string& col_index_name,
-      bool view_handled) const {
+      name_generator& name_gen, const std::string& row_index_name,
+      const std::string& col_index_name, bool view_handled) const {
     kernel_parts res{};
     if (generated.count(this) == 0) {
       this->var_name_ = name_gen.generate();
@@ -167,12 +166,12 @@ class rowwise_reduction
       std::map<const void*, const char*> generated2;
       if (PassZero && internal::matvec_mul_opt<T_no_ref>::is_possible) {
         res = internal::matvec_mul_opt<T_no_ref>::get_kernel_parts(
-            this->template get_arg<0>(), generated2, generated_all, name_gen, row_index_name,
-            var_name_ + "_j");
+            this->template get_arg<0>(), generated2, generated_all, name_gen,
+            row_index_name, var_name_ + "_j");
       } else {
         res = this->template get_arg<0>().get_kernel_parts(
-            generated2, generated_all, name_gen, row_index_name, var_name_ + "_j",
-            view_handled || PassZero);
+            generated2, generated_all, name_gen, row_index_name,
+            var_name_ + "_j", view_handled || PassZero);
       }
       kernel_parts my_part
           = generate(row_index_name, col_index_name, view_handled,
@@ -252,7 +251,8 @@ class rowwise_reduction
     if (generated.count(this) == 0) {
       generated[this] = "";
       std::map<const void*, const char*> generated2;
-      this->template get_arg<0>().set_args(generated2, generated_all, kernel, arg_num);
+      this->template get_arg<0>().set_args(generated2, generated_all, kernel,
+                                           arg_num);
       kernel.setArg(arg_num++, this->template get_arg<0>().view());
       kernel.setArg(arg_num++, this->template get_arg<0>().cols());
       if (PassZero && internal::matvec_mul_opt<T>::is_possible) {
