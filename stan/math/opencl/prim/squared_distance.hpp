@@ -27,7 +27,7 @@ namespace math {
  */
 template <typename T_a, typename T_b,
           require_all_kernel_expressions_and_none_scalar_t<T_a, T_b>* = nullptr>
-inline auto squared_distance(T_a&& a, T_b&& b) {
+inline auto squared_distance(const T_a& a, const T_b& b) {
   const char* function = "squared_distance (OpenCL)";
   check_vector(function, "a", a);
   check_vector(function, "b", b);
