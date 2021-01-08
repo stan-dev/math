@@ -114,12 +114,13 @@ class load_
              + col_index_name + "];\n";
     } else {
       return type + " " + var_name_ + " = 0;"
-                 " if (!((!contains_nonzero(" + arg_var_name + "_view, LOWER) && "
-                 + col_index_name + " < " + row_index_name
-                 + ") || (!contains_nonzero(" + arg_var_name + "_view, UPPER) && "
-                 + col_index_name + " > " + row_index_name + "))) {" + var_name_
-                 + " = " + arg_var_name + "_global[" + row_index_name + " + " +
-                 arg_var_name + "_rows * " + col_index_name + "];}\n";
+                 " if (!((!contains_nonzero(" + arg_var_name
+                 + "_view, LOWER) && " + col_index_name + " < " + row_index_name
+                 + ") || (!contains_nonzero(" + arg_var_name
+                 + "_view, UPPER) && " + col_index_name + " > " + row_index_name
+                 + "))) {" + var_name_ + " = " + arg_var_name + "_global["
+                 + row_index_name + " + " + arg_var_name + "_rows * "
+                 + col_index_name + "];}\n";
     }
   }
 
