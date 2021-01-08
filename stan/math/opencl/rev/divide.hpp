@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_OPENCL_REV_ELT_DIVIDE_HPP
-#define STAN_MATH_OPENCL_REV_ELT_DIVIDE_HPP
+#ifndef STAN_MATH_OPENCL_REV_DIVIDE_HPP
+#define STAN_MATH_OPENCL_REV_DIVIDE_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta/is_kernel_expression.hpp>
