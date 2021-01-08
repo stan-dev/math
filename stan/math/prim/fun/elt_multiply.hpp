@@ -56,8 +56,7 @@ auto elt_multiply(const Scalar1& a, const Scalar2& b) {
  * @param B second argument
  * @return product of matrix and scalar
  */
-template <typename T1, typename T2,
-	  require_any_matrix_t<T1, T2>* = nullptr,
+template <typename T1, typename T2, require_any_matrix_t<T1, T2>* = nullptr,
           require_any_stan_scalar_t<T1, T2>* = nullptr>
 inline auto elt_multiply(const T1& A, const T2& B) {
   return multiply(A, B);
