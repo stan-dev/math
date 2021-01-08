@@ -59,10 +59,15 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...>,
     std::string col_index_name_arg = col_index_name;
     derived().modify_argument_indices(row_index_name_arg, col_index_name_arg);
     std::array<kernel_parts, N> args_parts = index_apply<N>([&](auto... Is) {
+      std::map<const void*, const char*> generated2;
       return std::array<kernel_parts, N>{
           this->template get_arg<Is>().get_kernel_parts_lhs(
-              generated, generated_all, name_gen, row_index_name_arg,
-              col_index_name_arg)...};
+              &Derived::modify_argument_indices
+                      == &operation_cl<Derived, Scalar,
+                                       Args...>::modify_argument_indices
+                  ? generated
+                  : generated2, generated_all,
+              name_gen, row_index_name_arg, col_index_name_arg)...};
     });
     kernel_parts res
         = std::accumulate(args_parts.begin(), args_parts.end(), kernel_parts{});

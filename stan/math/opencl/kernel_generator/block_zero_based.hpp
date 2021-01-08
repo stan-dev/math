@@ -186,8 +186,9 @@ class block_
     std::string row_index_name_arg = row_index_name;
     std::string col_index_name_arg = col_index_name;
     modify_argument_indices(row_index_name_arg, col_index_name_arg);
+    std::map<const void*, const char*> generated2;
     kernel_parts res = this->template get_arg<0>().get_kernel_parts_lhs(
-        generated, generated_all, name_gen, row_index_name_arg, col_index_name_arg);
+        generated2, generated_all, name_gen, row_index_name_arg, col_index_name_arg);
     res += this->derived().generate_lhs(row_index_name, col_index_name,
                                         this->template get_arg<0>().var_name_);
     if (generated_all.count(this) == 0) {
