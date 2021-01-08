@@ -4,8 +4,9 @@
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-auto squared_distance_functor
-    = [](const auto& a, const auto& b) { return stan::math::squared_distance(a, b); };
+auto squared_distance_functor = [](const auto& a, const auto& b) {
+  return stan::math::squared_distance(a, b);
+};
 
 TEST(OpenCLMatrix_squared_distance, prim_rev_values_small) {
   int N = 6;

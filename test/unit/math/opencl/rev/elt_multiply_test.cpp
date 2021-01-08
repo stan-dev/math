@@ -4,8 +4,9 @@
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-auto elt_multiply_functor
-    = [](const auto& a, const auto& b) { return stan::math::elt_multiply(a, b); };
+auto elt_multiply_functor = [](const auto& a, const auto& b) {
+  return stan::math::elt_multiply(a, b);
+};
 
 TEST(OpenCLMatrix_elt_multiply, prim_rev_values_small) {
   int N = 2;

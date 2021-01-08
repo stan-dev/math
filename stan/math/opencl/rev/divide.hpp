@@ -29,23 +29,23 @@ template <typename T_a, typename T_b, require_stan_scalar_t<T_b>* = nullptr,
           require_all_nonscalar_prim_or_rev_kernel_expression_t<T_a>* = nullptr,
           require_any_var_t<T_a, T_b>* = nullptr>
 inline var_value<matrix_cl<double>> divide(T_a&& a, T_b&& b) {
-    arena_t<T_a> a_arena = std::forward<T_a>(a);
-    arena_t<T_b> b_arena = std::forward<T_b>(b);
+  arena_t<T_a> a_arena = std::forward<T_a>(a);
+  arena_t<T_b> b_arena = std::forward<T_b>(b);
 
-    matrix_cl<double> res_val = elt_divide(value_of(a_arena), value_of(b_arena));
+  matrix_cl<double> res_val = elt_divide(value_of(a_arena), value_of(b_arena));
 
-    return make_callback_var(
-        res_val,
-        [a_arena, b_arena](const vari_value<matrix_cl<double>>& res) mutable {
+  return make_callback_var(
+      res_val,
+      [a_arena, b_arena](const vari_value<matrix_cl<double>>& res) mutable {
         if (!is_constant<T_a>::value) {
-            auto& a_adj = forward_as<var_value<matrix_cl<double>>>(a_arena).adj();
-            a_adj = a_adj + elt_divide(res.adj(), value_of(b_arena));
+          auto& a_adj = forward_as<var_value<matrix_cl<double>>>(a_arena).adj();
+          a_adj = a_adj + elt_divide(res.adj(), value_of(b_arena));
         }
         if (!is_constant<T_b>::value) {
-            auto& b_adj = forward_as<var_value<double>>(b_arena).adj();
-            b_adj = b_adj - sum(elt_divide(res.val(), value_of(b_arena)));
+          auto& b_adj = forward_as<var_value<double>>(b_arena).adj();
+          b_adj = b_adj - sum(elt_divide(res.val(), value_of(b_arena)));
         }
-    });
+      });
 }
 
 }  // namespace math

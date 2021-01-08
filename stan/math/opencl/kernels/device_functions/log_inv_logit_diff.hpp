@@ -14,7 +14,8 @@ static const char* log_inv_logit_diff_device_function
     = "\n"
       "#ifndef STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_LOG_INV_LOGIT_DIFF\n"
       "#define "
-      "STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_LOG_INV_LOGIT_DIFF\n" STRINGIFY(
+      "STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_LOG_INV_LOGIT_"
+      "DIFF\n" STRINGIFY(
           // \endcond
           /** \ingroup opencl_kernels
            *

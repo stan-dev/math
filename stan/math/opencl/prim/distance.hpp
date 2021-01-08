@@ -27,15 +27,15 @@ namespace math {
  * @throw std::domain_error If the matrices are not the same
  * size
  */
-template <typename T_a, typename T_b,
-          require_all_nonscalar_prim_or_rev_kernel_expression_t<T_a, T_b>* = nullptr>
+template <
+    typename T_a, typename T_b,
+    require_all_nonscalar_prim_or_rev_kernel_expression_t<T_a, T_b>* = nullptr>
 inline auto distance(const T_a& a, const T_b& b) {
   const char* function = "distance (OpenCL)";
   check_vector(function, "a", a);
   check_vector(function, "b", b);
   return sqrt(squared_distance(a, b));
 }
-
 
 }  // namespace math
 }  // namespace stan

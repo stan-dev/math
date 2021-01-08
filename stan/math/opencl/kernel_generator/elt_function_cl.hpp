@@ -339,13 +339,13 @@ ADD_BINARY_FUNCTION_WITH_INCLUDES(
     lbeta, stan::math::opencl_kernels::lgamma_stirling_device_function,
     stan::math::opencl_kernels::lgamma_stirling_diff_device_function,
     stan::math::opencl_kernels::lbeta_device_function)
-ADD_BINARY_FUNCTION_WITH_INCLUDES(log_inv_logit_diff,
-                                 opencl_kernels::log1p_exp_device_function,
-                                 opencl_kernels::log1m_exp_device_function,
-                                 opencl_kernels::log_inv_logit_diff_device_function)
+ADD_BINARY_FUNCTION_WITH_INCLUDES(
+    log_inv_logit_diff, opencl_kernels::log1p_exp_device_function,
+    opencl_kernels::log1m_exp_device_function,
+    opencl_kernels::log_inv_logit_diff_device_function)
 ADD_BINARY_FUNCTION_WITH_INCLUDES(log_diff_exp,
-                                 opencl_kernels::log1m_exp_device_function,
-                                 opencl_kernels::log_diff_exp_device_function)
+                                  opencl_kernels::log1m_exp_device_function,
+                                  opencl_kernels::log_diff_exp_device_function)
 ADD_BINARY_FUNCTION_WITH_INCLUDES(
     multiply_log, stan::math::opencl_kernels::multiply_log_device_function)
 

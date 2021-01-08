@@ -18,12 +18,12 @@ static const char* log_diff_exp_device_function
           // \endcond
           /** \ingroup opencl_kernels
            *
-           * The natural logarithm of the difference of the natural exponentiation
-           * of x and the natural exponentiation of y.
+           * The natural logarithm of the difference of the natural
+           * exponentiation of x and the natural exponentiation of y.
            *
            * @param x first argument
            * @param y second argument
-           * @return the natural logarithm of the difference of the natural 
+           * @return the natural logarithm of the difference of the natural
            * exponentiation of x and the natural exponentiation of y.
            */
           double log_diff_exp(double x, double y) {

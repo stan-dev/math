@@ -4,8 +4,9 @@
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-auto multiply_log_functor
-    = [](const auto& a, const auto& b) { return stan::math::multiply_log(a, b); };
+auto multiply_log_functor = [](const auto& a, const auto& b) {
+  return stan::math::multiply_log(a, b);
+};
 
 TEST(OpenCLMatrix_multiply_log, prim_rev_values_small) {
   int N = 2;

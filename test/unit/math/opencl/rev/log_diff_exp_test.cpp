@@ -4,8 +4,9 @@
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-auto log_diff_exp_functor
-    = [](const auto& a, const auto& b) { return stan::math::log_diff_exp(a, b); };
+auto log_diff_exp_functor = [](const auto& a, const auto& b) {
+  return stan::math::log_diff_exp(a, b);
+};
 
 TEST(OpenCLMatrix_log_diff_exp, prim_rev_values_small) {
   int N = 2;
