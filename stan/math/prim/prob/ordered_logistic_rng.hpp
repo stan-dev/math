@@ -23,8 +23,7 @@ namespace math {
  * @return (Sequence of) Ordered-logistic random variate(s)
  */
 template <typename T_eta, typename T_c, class RNG>
-inline auto ordered_logistic_rng(const T_eta& eta, const T_c& c,
-                                             RNG& rng) {
+inline auto ordered_logistic_rng(const T_eta& eta, const T_c& c, RNG& rng) {
   static const char* function = "ordered_logistic";
   check_greater(function, "Size of eta parameter", stan::math::size(eta), 0);
   check_greater(function, "Size of cut points parameter", stan::math::size(c),
@@ -33,8 +32,8 @@ inline auto ordered_logistic_rng(const T_eta& eta, const T_c& c,
   vector_seq_view<T_c> cut_vec(c);
 
   for (int c_i = 0; c_i < size_mvt(c); ++c_i) {
-    check_greater(function, "Size of cut points parameter",
-                  cut_vec[c_i].size(), 0);
+    check_greater(function, "Size of cut points parameter", cut_vec[c_i].size(),
+                  0);
     check_ordered(function, "Cut points parameter", cut_vec[c_i]);
     check_finite(function, "Cut points parameter",
                  cut_vec[c_i][cut_vec[c_i].size() - 1]);
@@ -47,10 +46,9 @@ inline auto ordered_logistic_rng(const T_eta& eta, const T_c& c,
 
   int ret_size = std::max(stan::math::size(eta), size_mvt(c));
 
-  using return_t
-    = std::conditional_t<disjunction<is_vector<T_eta>,
-                                     is_std_vector<T_c>>::value,
-                         std::vector<int>, int>;
+  using return_t = std::conditional_t<
+      disjunction<is_vector<T_eta>, is_std_vector<T_c>>::value,
+      std::vector<int>, int>;
 
   VectorBuilder<true, int, return_t> output(ret_size);
   for (int i = 0; i < ret_size; ++i) {
@@ -58,10 +56,10 @@ inline auto ordered_logistic_rng(const T_eta& eta, const T_c& c,
     cut[0] = 1 - inv_logit(eta_vec[i] - cut_vec[i][0]);
     for (int j = 1; j < cut_vec[i].rows(); j++) {
       cut[j] = inv_logit(eta_vec[i] - cut_vec[i][j - 1])
-                 - inv_logit(eta_vec[i] - cut_vec[i][j]);
+               - inv_logit(eta_vec[i] - cut_vec[i][j]);
     }
-    cut[cut_vec[i].rows()] = inv_logit(eta_vec[i]
-                                         - cut_vec[i][cut_vec[i].rows() - 1]);
+    cut[cut_vec[i].rows()]
+        = inv_logit(eta_vec[i] - cut_vec[i][cut_vec[i].rows() - 1]);
 
     output[i] = categorical_rng(cut, rng);
   }

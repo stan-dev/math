@@ -6,7 +6,7 @@ TEST(ProbDistributionsCategorical, ValsTest) {
   auto f = [](const auto& x1) {
     return [=](const auto& x2) {
       auto x2_softmax = stan::math::apply_vector_unary<decltype(x2)>::apply(
-        x2, [&](const auto& v){ return stan::math::softmax(v); });
+          x2, [&](const auto& v) { return stan::math::softmax(v); });
       return stan::math::categorical_log(x1, x2_softmax);
     };
   };
@@ -31,7 +31,7 @@ TEST(ProbDistributionsCategorical, ErrsTest) {
   auto f = [](const auto& x1) {
     return [=](const auto& x2) {
       auto x2_softmax = stan::math::apply_vector_unary<decltype(x2)>::apply(
-        x2, [&](const auto& v){ return stan::math::softmax(v); });
+          x2, [&](const auto& v) { return stan::math::softmax(v); });
       return stan::math::categorical_log(x1, x2_softmax);
     };
   };
