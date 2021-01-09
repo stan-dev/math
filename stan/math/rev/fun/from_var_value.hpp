@@ -16,13 +16,52 @@ namespace math {
  * @tparam T type of the input
  * @param a matrix to convert
  */
-template <typename T, require_var_vt<is_eigen, T>* = nullptr>
+template <typename T, require_var_matrix_t<T>* = nullptr>
 Eigen::Matrix<var, T::RowsAtCompileTime, T::ColsAtCompileTime> from_var_value(
     const T& a) {
   arena_matrix<Eigen::Matrix<var, T::RowsAtCompileTime, T::ColsAtCompileTime>>
       res(a.val());
   reverse_pass_callback([res, a]() mutable { a.vi_->adj_ += res.adj(); });
   return res;
+}
+
+/**
+ * Forward Eigen containers of vars.
+ *
+ * @tparam T type of the input
+ * @param a matrix to convert
+ */
+template <typename T, require_eigen_vt<is_var, T>* = nullptr>
+auto from_var_value(T&& a) {
+  return std::forward<T>(a);
+}
+
+/**
+ * Forward scalar vars on.
+ *
+ * @tparam T type of the input
+ * @param a matrix to convert
+ */
+template <typename T, require_var_vt<std::is_arithmetic, T>* = nullptr>
+auto from_var_value(T&& a) {
+  return std::forward<T>(a);
+}
+
+/**
+ * Convert the elements of the `std::vector` input to `var_value` types
+ * if possible
+ *
+ * @tparam T type of elemnts of the input vector
+ * @param a std::vector of elements to convert
+ */
+template <typename T>
+auto from_var_value(const std::vector<T>& a) {
+  std::vector<decltype(from_var_value(std::declval<T>()))> out;
+  out.reserve(a.size());
+  for(size_t i = 0; i < a.size(); ++i) {
+    out.emplace_back(from_var_value(a[i]));
+  }
+  return out;
 }
 
 }  // namespace math
