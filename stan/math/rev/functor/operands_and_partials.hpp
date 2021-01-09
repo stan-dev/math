@@ -25,24 +25,23 @@ namespace internal {
 /** \ingroup type_trait
  * \callergraph
  */
-template <>
-class ops_partials_edge<double, var> {
+template <typename ViewElt, typename Op>
+class ops_partials_edge<ViewElt, Op, require_var_t<Op>> {
  public:
   double partial_;
-  broadcast_array<double> partials_;
-  explicit ops_partials_edge(const var& op)
-      : partial_(0), partials_(partial_), operand_(op) {}
+  explicit ops_partials_edge(const var& op) noexcept
+      : partial_(0), operand_(op) {}
 
  private:
-  template <typename, typename, typename, typename, typename, typename>
-  friend class stan::math::operands_and_partials;
+  template <typename, typename, typename...>
+  friend class stan::math::operands_and_partials_impl;
   const var& operand_;
 
-  void dump_partials(double* partials) { *partials = this->partial_; }
-  void dump_operands(vari** varis) { *varis = this->operand_.vi_; }
-  int size() const { return 1; }
-  std::tuple<> container_operands() { return std::tuple<>(); }
-  std::tuple<> container_partials() { return std::tuple<>(); }
+  void dump_partials(double* partials) const noexcept { *partials = this->partial_; }
+  void dump_operands(vari** varis) const noexcept { *varis = this->operand_.vi_; }
+  static constexpr int size() const { return 1; }
+  static constexpr std::tuple<> container_operands() { return std::tuple<>(); }
+  static constexpr std::tuple<> container_partials() { return std::tuple<>(); }
 };
 }  // namespace internal
 
@@ -80,26 +79,17 @@ class ops_partials_edge<double, var> {
  * @tparam Op4 type of the fourth operand
  * @tparam Op5 type of the fifth operand
  */
-template <typename Op1, typename Op2, typename Op3, typename Op4, typename Op5>
-class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
+ template <typename ReturnType, typename... Ops>
+ class operands_and_partials_impl<ReturnType, require_var_t<ReturnType>, Ops...> {
  public:
-  internal::ops_partials_edge<double, std::decay_t<Op1>> edge1_;
-  internal::ops_partials_edge<double, std::decay_t<Op2>> edge2_;
-  internal::ops_partials_edge<double, std::decay_t<Op3>> edge3_;
-  internal::ops_partials_edge<double, std::decay_t<Op4>> edge4_;
-  internal::ops_partials_edge<double, std::decay_t<Op5>> edge5_;
+  std::tuple<internal::ops_partials_edge<double, std::decay_t<Ops>>...> edges_;
+  template <typename Args...>
+  explicit operands_and_partials_impl(Args&&... args) : edges_(std::forward_as_tuple(std::forward<Args>(args)...)) {}
 
-  explicit operands_and_partials(const Op1& o1) : edge1_(o1) {}
-  operands_and_partials(const Op1& o1, const Op2& o2)
-      : edge1_(o1), edge2_(o2) {}
-  operands_and_partials(const Op1& o1, const Op2& o2, const Op3& o3)
-      : edge1_(o1), edge2_(o2), edge3_(o3) {}
-  operands_and_partials(const Op1& o1, const Op2& o2, const Op3& o3,
-                        const Op4& o4)
-      : edge1_(o1), edge2_(o2), edge3_(o3), edge4_(o4) {}
-  operands_and_partials(const Op1& o1, const Op2& o2, const Op3& o3,
-                        const Op4& o4, const Op5& o5)
-      : edge1_(o1), edge2_(o2), edge3_(o3), edge4_(o4), edge5_(o5) {}
+  template <int Idx>
+  inline decltype(auto) edge() noexcept {
+    return std::get<Idx>(edges_);
+  }
 
   /** \ingroup type_trait
    * Build the node to be stored on the autodiff graph.
@@ -115,59 +105,43 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
    * @return the node to be stored in the expression graph for autodiff
    */
   var build(double value) {
-    size_t edges_size = edge1_.size() + edge2_.size() + edge3_.size()
-                        + edge4_.size() + edge5_.size();
-    vari** varis
-        = ChainableStack::instance_->memalloc_.alloc_array<vari*>(edges_size);
-    double* partials
-        = ChainableStack::instance_->memalloc_.alloc_array<double>(edges_size);
-    int idx = 0;
-    edge1_.dump_operands(&varis[idx]);
-    edge1_.dump_partials(&partials[idx]);
-    edge2_.dump_operands(&varis[idx += edge1_.size()]);
-    edge2_.dump_partials(&partials[idx]);
-    edge3_.dump_operands(&varis[idx += edge2_.size()]);
-    edge3_.dump_partials(&partials[idx]);
-    edge4_.dump_operands(&varis[idx += edge3_.size()]);
-    edge4_.dump_partials(&partials[idx]);
-    edge5_.dump_operands(&varis[idx += edge4_.size()]);
-    edge5_.dump_partials(&partials[idx]);
-
-    auto container_operands = std::tuple_cat(
-        edge1_.container_operands(), edge2_.container_operands(),
-        edge3_.container_operands(), edge4_.container_operands(),
-        edge5_.container_operands());
-    auto container_partials = std::tuple_cat(
-        edge1_.container_partials(), edge2_.container_partials(),
-        edge3_.container_partials(), edge4_.container_partials(),
-        edge5_.container_partials());
-
-    return var(return_vari(value, edges_size, varis, partials,
-                           container_operands, container_partials));
-  }
-
- private:
-  /**
-   * Deduces types and constructs the vari to return from `build()`.
-   * @param value the value
-   * @param edges_size number of elements in all non-var_value of container
-   * edges
-   * @param varis pointer to varis from non-var_value of container edges
-   * @param partials pointer to values for partials from non-var_value of
-   * container edges
-   * @param container_operands operands from var_value of container edges
-   * @param container_partials partial derivatives from var_value of container
-   * edges
-   */
-  template <typename... Ops, typename... Partials>
-  auto* return_vari(double value, size_t edges_size, vari** varis,
-                    double* partials,
-                    const std::tuple<Ops...>& container_operands,
-                    const std::tuple<Partials...>& container_partials) {
-    return new precomputed_gradients_vari_template<
-        std::tuple<arena_t<Ops>...>, std::tuple<arena_t<Partials>...>>(
-        value, edges_size, varis, partials, container_operands,
-        container_partials);
+    auto edge_sizes = apply([](auto&&...args) {
+      return std::array<int, std::tuple_size<decltype(edges_)>::value>{args.size()...};
+    }, edges_);
+    for (int i = 1; i < edge_sizes.size(); ++i) {
+      total_var_size += edge_sizes[i];
+      edge_sizes[i] += edge_sizes[i - 1];
+    }
+    const auto total_var_size = edge_sizes[edge_sizes.size() - 1];
+    auto var_operands = apply([](auto&... args) {
+      return std::make_tuple(args.get_vari_ops()...);
+    });
+    auto var_partials = apply([](auto&... args) {
+      return std::make_tuple(args.get_partials()...);
+    });
+    auto container_operands = apply([](auto&&... edges) {
+      return get_operands_tuple(to_arena(edges.container_operands()...));
+    }, edges_);
+    auto container_partials = apply([](auto&&... edges) {
+      return get_partials_tuple(to_arena(edges.container_partials()...));
+    }, edges_);
+    return make_callback_var(value,
+      [ret, var_operands, var_partials, total_var_size, container_operands, container_partials]() mutable {
+        // Does the equivalent of
+        /*
+         *        for (size_t i = 0; i < size_; ++i) {
+         *          varis[i]->adj_ += ret.adj_ * gradients_[i];
+         *       }
+         *
+         */
+         // For each operant / partial
+        for_each([](auto& operand, auto& partial) mutable {
+          accumulate_adjoint(ret, operand, partial)
+        }, container_operands, container_partials);
+        for_each([](auto& operand, auto& partial) mutable {
+          accumulate_adjoint(ret, operand, partial)
+        }, container_operands, container_partials);
+      });
   }
 };
 
@@ -179,15 +153,13 @@ class ops_partials_edge<double, std::vector<var>> {
   using Op = std::vector<var>;
   using partials_t = Eigen::VectorXd;
   partials_t partials_;                       // For univariate use-cases
-  broadcast_array<partials_t> partials_vec_;  // For multivariate
   explicit ops_partials_edge(const Op& op)
       : partials_(partials_t::Zero(op.size())),
-        partials_vec_(partials_),
         operands_(op) {}
 
  private:
-  template <typename, typename, typename, typename, typename, typename>
-  friend class stan::math::operands_and_partials;
+  template <typename, typename, typename...>
+  friend class stan::math::operands_and_partials_impl;
   const Op& operands_;
 
   void dump_partials(double* partials) {
@@ -210,15 +182,13 @@ class ops_partials_edge<double, Op, require_eigen_st<is_var, Op>> {
  public:
   using partials_t = promote_scalar_t<double, Op>;
   partials_t partials_;                       // For univariate use-cases
-  broadcast_array<partials_t> partials_vec_;  // For multivariate
   explicit ops_partials_edge(const Op& ops)
       : partials_(partials_t::Zero(ops.rows(), ops.cols())),
-        partials_vec_(partials_),
         operands_(ops) {}
 
  private:
-  template <typename, typename, typename, typename, typename, typename>
-  friend class stan::math::operands_and_partials;
+  template <typename, typename, typename...>
+  friend class stan::math::operands_and_partials_impl;
   const Op& operands_;
 
   void dump_operands(vari** varis) {
@@ -241,26 +211,24 @@ class ops_partials_edge<double, var_value<Op>, require_eigen_t<Op>> {
  public:
   using partials_t = arena_t<Op>;
   partials_t partials_;                       // For univariate use-cases
-  broadcast_array<partials_t> partials_vec_;  // For multivariate
   explicit ops_partials_edge(const var_value<Op>& ops)
       : partials_(
             plain_type_t<partials_t>::Zero(ops.vi_->rows(), ops.vi_->cols())),
-        partials_vec_(partials_),
         operands_(ops) {}
 
  private:
-  template <typename, typename, typename, typename, typename, typename>
-  friend class stan::math::operands_and_partials;
-  const var_value<Op>& operands_;
+  template <typename, typename, typename...>
+  friend class stan::math::operands_and_partials_impl;
+  var_value<Op> operands_;
 
   void dump_operands(vari** varis) {}
   void dump_partials(double* partials) {}
   int size() { return 0; }
-  std::tuple<const var_value<Op>&> container_operands() {
-    return std::forward_as_tuple(operands_);
+  var_value<Op> container_operands() {
+    return operands_;
   }
-  std::tuple<partials_t&> container_partials() {
-    return std::forward_as_tuple(partials_);
+  partials_t& container_partials() {
+    return partials_;
   }
 };
 
@@ -269,8 +237,8 @@ class ops_partials_edge<double, var_value<Op>, require_eigen_t<Op>> {
 template <int R, int C>
 class ops_partials_edge<double, std::vector<Eigen::Matrix<var, R, C>>> {
  public:
-  using Op = std::vector<Eigen::Matrix<var, R, C>>;
-  using partial_t = Eigen::Matrix<double, R, C>;
+  using Op = arena_t<std::vector<arena_t<Eigen::Matrix<var, R, C>>>>;
+  using partial_t = arena_t<Eigen::Matrix<double, R, C>>;
   std::vector<partial_t> partials_vec_;
   explicit ops_partials_edge(const Op& ops)
       : partials_vec_(ops.size()), operands_(ops) {
@@ -280,8 +248,8 @@ class ops_partials_edge<double, std::vector<Eigen::Matrix<var, R, C>>> {
   }
 
  private:
-  template <typename, typename, typename, typename, typename, typename>
-  friend class stan::math::operands_and_partials;
+  template <typename, typename, typename...>
+  friend class stan::math::operands_and_partials_impl;
   const Op& operands_;
 
   void dump_partials(double* partials) {
@@ -313,8 +281,8 @@ class ops_partials_edge<double, std::vector<Eigen::Matrix<var, R, C>>> {
 template <>
 class ops_partials_edge<double, std::vector<std::vector<var>>> {
  public:
-  using Op = std::vector<std::vector<var>>;
-  using partial_t = std::vector<double>;
+  using Op = arena_t<std::vector<arena_t<std::vector<var>>>>;
+  using partial_t = arena_t<std::vector<double>>;
   std::vector<partial_t> partials_vec_;
   explicit ops_partials_edge(const Op& ops)
       : partials_vec_(stan::math::size(ops)), operands_(ops) {
@@ -324,8 +292,8 @@ class ops_partials_edge<double, std::vector<std::vector<var>>> {
   }
 
  private:
-  template <typename, typename, typename, typename, typename, typename>
-  friend class stan::math::operands_and_partials;
+  template <typename, typename, typename...>
+  friend class stan::math::operands_and_partials_impl;
   const Op& operands_;
 
   void dump_partials(double* partials) {
@@ -369,8 +337,8 @@ class ops_partials_edge<double, std::vector<var_value<Op>>,
   }
 
  private:
-  template <typename, typename, typename, typename, typename, typename>
-  friend class stan::math::operands_and_partials;
+  template <typename, typename, typename...>
+  friend class stan::math::operands_and_partials_impl;
   const std::vector<var_value<Op>>& operands_;
 
   void dump_operands(vari** varis) {}

@@ -18,9 +18,9 @@ class broadcast_array {
   T& prim_;
 
  public:
-  explicit broadcast_array(T& prim) : prim_(prim) {}
+  explicit broadcast_array(T& prim) noexcept : prim_(prim) {}
 
-  T& operator[](int /*i*/) { return prim_; }
+  inline T& operator[](int /*i*/) noexcept { return prim_; }
 
   /** \ingroup type_trait
    * Broadcast array can be assigned a scalar or a vector. If assigned a scalar,
@@ -28,8 +28,8 @@ class broadcast_array {
    * first.
    */
   template <typename Y>
-  void operator=(const Y& m) {
-    prim_ = sum(m);
+  void operator=(Y&& m) {
+    prim_ = sum(std::forward<Y>(m));
   }
 };
 
