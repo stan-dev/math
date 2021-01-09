@@ -13,7 +13,17 @@
 namespace stan {
 namespace math {
 
-// Categorical(n|theta)  [0 < n <= N;   0 <= theta[n] <= 1;  SUM theta = 1]
+/** \ingroup prob_dists
+ * Returns the log PMF of the categorical distribution. If containers of
+ * integers and/or probabilities are supplied, returns the log sum of the
+ * PMF.
+ *
+ * @tparam T_n type of integer parameters
+ * @tparam T_prob type probability vector(s)
+ * @param n integer parameter(s)
+ * @param theta probability vector(s)
+ * @return log probability
+ */
 template <bool propto, typename T_n, typename T_prob>
 return_type_t<T_prob> categorical_lpmf(const T_n& n, const T_prob& theta) {
   static const char* function = "categorical_lpmf";
@@ -24,6 +34,8 @@ return_type_t<T_prob> categorical_lpmf(const T_n& n, const T_prob& theta) {
 
   size_t vec_size
       = std::max(stan::math::size(n), stan::math::size_mvt(theta_ref));
+
+  check_consistent_sizes(function, "Integers", n, "Probabilities", theta);
 
   for (size_t i = 0; i < vec_size; ++i) {
     check_bounded(function, "Number of categories", n, 1, theta_vec[i].size());

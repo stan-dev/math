@@ -27,8 +27,7 @@ namespace math {
  * @return Categorical random variate
  */
 template <typename T_beta, class RNG>
-inline typename VectorBuilder<true, int, value_type_t<T_beta>>::type
-categorical_logit_rng(const T_beta& beta, RNG& rng) {
+inline auto categorical_logit_rng(const T_beta& beta, RNG& rng) {
   using boost::uniform_01;
   using boost::variate_generator;
 

@@ -11,9 +11,18 @@
 namespace stan {
 namespace math {
 
+/** \ingroup prob_dists
+ * Return a categorical random variate with specified probability vector(s)
+ * using the specified random number generator.
+ *
+ * @tparam T_t type of probability vector(s)
+ * @tparam RNG type of random number generator
+ * @param t (Sequence of) probability parameters
+ * @param rng random number generator
+ * @return (Sequence of) categorical random variate(s)
+ */
 template <typename T_t, class RNG>
-inline typename VectorBuilder<true, int, value_type_t<T_t>>::type
-categorical_rng(const T_t& t, RNG& rng) {
+inline auto categorical_rng(const T_t& t, RNG& rng) {
   using boost::uniform_01;
   using boost::variate_generator;
 

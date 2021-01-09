@@ -14,7 +14,17 @@
 namespace stan {
 namespace math {
 
-// CategoricalLog(n|theta)  [0 < n <= N, theta unconstrained], no checking
+/** \ingroup prob_dists
+ * Returns the log PMF of the categorical distribution with a softmax
+ * inverse link function. If containers of integers and/or probabilities
+ * are supplied, returns the log sum of the PMF.
+ *
+ * @tparam T_n type of integer parameters
+ * @tparam T_prob type probability vector(s)
+ * @param n integer parameter(s)
+ * @param beta probability vector(s)
+ * @return log probability
+ */
 template <bool propto, typename T_n, typename T_prob>
 return_type_t<T_prob> categorical_logit_lpmf(const T_n& n, const T_prob& beta) {
   static const char* function = "categorical_logit_lpmf";
@@ -25,6 +35,8 @@ return_type_t<T_prob> categorical_logit_lpmf(const T_n& n, const T_prob& beta) {
 
   size_t vec_size
       = std::max(stan::math::size(n), stan::math::size_mvt(beta_ref));
+
+  check_consistent_sizes(function, "Integers", n, "Probabilities", beta);
 
   for (size_t i = 0; i < vec_size; ++i) {
     check_bounded(function, "categorical outcome out of support", n, 1,

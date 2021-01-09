@@ -10,31 +10,20 @@
 namespace stan {
 namespace math {
 
-template <class RNG>
-inline int ordered_logistic_rng(
-    double eta, const Eigen::Matrix<double, Eigen::Dynamic, 1>& c, RNG& rng) {
-  using boost::variate_generator;
-  static const char* function = "ordered_logistic";
-  check_finite(function, "Location parameter", eta);
-  check_greater(function, "Size of cut points parameter", c.size(), 0);
-  check_ordered(function, "Cut points parameter", c);
-  check_finite(function, "Cut points parameter", c(c.size() - 1));
-  check_finite(function, "Cut points parameter", c(0));
-
-  Eigen::VectorXd cut(c.rows() + 1);
-  cut(0) = 1 - inv_logit(eta - c(0));
-  for (int j = 1; j < c.rows(); j++) {
-    cut(j) = inv_logit(eta - c(j - 1)) - inv_logit(eta - c(j));
-  }
-  cut(c.rows()) = inv_logit(eta - c(c.rows() - 1));
-
-  return categorical_rng(cut, rng);
-}
-
-template <
-    typename T_eta, typename T_c, class RNG,
-    require_t<disjunction<is_vector<T_eta>, is_std_vector<T_c>>>* = nullptr>
-inline std::vector<int> ordered_logistic_rng(const T_eta& eta, const T_c& c,
+/** \ingroup prob_dists
+ * Return an ordered-logistic random variate with specified location(s)
+ * and cutpoint vector(s) using the specified random number generator.
+ *
+ * @tparam T_eta type of location parameter
+ * @tparam T_c type of cutpoint parameter
+ * @tparam RNG type of random number generator
+ * @param eta (Sequence of) location parameters
+ * @param c (Sequence of) cutpoint vectors
+ * @param rng random number generator
+ * @return (Sequence of) Ordered-logistic random variate(s)
+ */
+template <typename T_eta, typename T_c, class RNG>
+inline auto ordered_logistic_rng(const T_eta& eta, const T_c& c,
                                              RNG& rng) {
   static const char* function = "ordered_logistic";
   check_greater(function, "Size of eta parameter", stan::math::size(eta), 0);
@@ -43,14 +32,41 @@ inline std::vector<int> ordered_logistic_rng(const T_eta& eta, const T_c& c,
   scalar_seq_view<T_eta> eta_vec(eta);
   vector_seq_view<T_c> cut_vec(c);
 
-  int ret_size = std::max(stan::math::size(eta), size_mvt(c));
-
-  std::vector<int> rng_return(ret_size);
-  for (int i = 0; i < ret_size; ++i) {
-    rng_return[i] = ordered_logistic_rng(eta_vec[i], cut_vec[i], rng);
+  for (int c_i = 0; c_i < size_mvt(c); ++c_i) {
+    check_greater(function, "Size of cut points parameter",
+                  cut_vec[c_i].size(), 0);
+    check_ordered(function, "Cut points parameter", cut_vec[c_i]);
+    check_finite(function, "Cut points parameter",
+                 cut_vec[c_i][cut_vec[c_i].size() - 1]);
+    check_finite(function, "Cut points parameter", cut_vec[c_i][0]);
   }
 
-  return rng_return;
+  for (int e_i = 0; e_i < stan::math::size(eta); ++e_i) {
+    check_finite(function, "Location parameter", eta_vec[e_i]);
+  }
+
+  int ret_size = std::max(stan::math::size(eta), size_mvt(c));
+
+  using return_t
+    = std::conditional_t<disjunction<is_vector<T_eta>,
+                                     is_std_vector<T_c>>::value,
+                         std::vector<int>, int>;
+
+  VectorBuilder<true, int, return_t> output(ret_size);
+  for (int i = 0; i < ret_size; ++i) {
+    Eigen::VectorXd cut(cut_vec[i].rows() + 1);
+    cut[0] = 1 - inv_logit(eta_vec[i] - cut_vec[i][0]);
+    for (int j = 1; j < cut_vec[i].rows(); j++) {
+      cut[j] = inv_logit(eta_vec[i] - cut_vec[i][j - 1])
+                 - inv_logit(eta_vec[i] - cut_vec[i][j]);
+    }
+    cut[cut_vec[i].rows()] = inv_logit(eta_vec[i]
+                                         - cut_vec[i][cut_vec[i].rows() - 1]);
+
+    output[i] = categorical_rng(cut, rng);
+  }
+
+  return output.data();
 }
 
 }  // namespace math
