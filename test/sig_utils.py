@@ -26,6 +26,8 @@ arg_types = {
     "ostream_ptr": "std::ostream*",
 }
 
+scalar_stan_types = ("int", "real", "rng", "ostream_ptr")
+
 def get_cpp_type(stan_type):
     n_vec = 0
     if stan_type.endswith("]"):
