@@ -155,4 +155,19 @@ TEST(ProbDistributionsLogistic, opencl_matches_cpu_big) {
                                                 mu, sigma);
 }
 
+TEST(ProbDistributionsLogistic, opencl_sigma_mu_scalar) {
+  int N = 3;
+  int M = 2;
+
+  double sigma = 0.3;
+  double mu = 0.5;
+  Eigen::VectorXd y(N);
+  y << 0.3, 0.8, 1.1;
+
+  stan::math::test::compare_cpu_opencl_prim_rev(logistic_lpdf_functor, y, mu,
+                                                sigma);
+  stan::math::test::compare_cpu_opencl_prim_rev(logistic_lpdf_functor_propto, y,
+                                                mu, sigma);
+}
+
 #endif

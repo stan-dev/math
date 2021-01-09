@@ -13,7 +13,7 @@ namespace math {
  * @tparam T type of the matrix (must be derived from \c Eigen::MatrixBase)
  *
  * @param x Matrix.
- * @return Vector containing the dot product of each column of the matrix
+ * @return Row vector containing the dot product of each column of the matrix
  * with itself.
  */
 template <typename T, require_eigen_t<T>* = nullptr,
