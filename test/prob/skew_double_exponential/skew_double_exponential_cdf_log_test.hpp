@@ -12,11 +12,11 @@ class AgradCdfLogSkewDoubleExponential : public AgradCdfLogTest {
     vector<double> param(4);
 
     param[0] = 0.0;  // y
-    param[1] = 0.0;  // mu
+    param[1] = 0.1;  // mu
     param[2] = 1.0;  // sigma
     param[3] = 0.5;  // skewness
     parameters.push_back(param);
-    cdf_log.push_back(-0.6931471805599452862268);  // expected log_cdf
+    cdf_log.push_back(-0.7931471805599452640223);  // expected log_cdf
 
     param[0] = 1.0;  // y
     param[1] = 0.0;  // mu
@@ -80,10 +80,10 @@ class AgradCdfLogSkewDoubleExponential : public AgradCdfLogTest {
 
     // skewness
     index.push_back(3U);
-    value.push_back(0.0);
+    value.push_back(-0.001);
 
     index.push_back(3U);
-    value.push_back(1.0);
+    value.push_back(1.001);
   }
 
   bool has_lower_bound() { return false; }

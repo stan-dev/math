@@ -12,53 +12,53 @@ class AgradCcdfLogSkewDoubleExponential : public AgradCcdfLogTest {
     vector<double> param(4);
 
     param[0] = 0.0;  // y
-    param[1] = 0.0;  // mu
+    param[1] = 0.1;  // mu
     param[2] = 1.0;  // sigma
     param[3] = 0.5;  // skewness
     parameters.push_back(param);
-    ccdf_log.push_back(-0.6931472);  // expected log_ccdf
+    ccdf_log.push_back(-0.6022443516335636015668);  // expected log_ccdf
 
     param[0] = 1.0;  // y
     param[1] = 0.0;  // mu
     param[2] = 1.0;  // sigma
     param[3] = 0.5;  // skewness
     parameters.push_back(param);
-    ccdf_log.push_back(-1.693147);  // expected log_ccdf
+    ccdf_log.push_back(-1.693147180559945175204);  // expected log_ccdf
 
     param[0] = -2.0;  // y
     param[1] = 0.0;   // mu
     param[2] = 1.0;   // sigma
     param[3] = 0.5;   // skewness
     parameters.push_back(param);
-    ccdf_log.push_back(-0.07006592);  // expected log_ccdf
+    ccdf_log.push_back(-0.07006592016028136138406);  // expected log_ccdf
 
     param[0] = -3.5;  // y
     param[1] = 1.9;   // mu
     param[2] = 7.2;   // sigma
     param[3] = 0.9;   // skewness
     parameters.push_back(param);
-    ccdf_log.push_back(-1.490044);  // expected log_ccdf
+    ccdf_log.push_back(-1.490043636778108249175);  // expected log_ccdf
 
     param[0] = -3.5;  // y
     param[1] = 1.9;   // mu
     param[2] = 7.2;   // sigma
     param[3] = 0.1;   // skewness
     parameters.push_back(param);
-    ccdf_log.push_back(-0.02626598);  // expected log_ccdf
+    ccdf_log.push_back(-0.02626597639452391344528);  // expected log_ccdf
 
     param[0] = 3.5;  // y
     param[1] = 1.9;   // mu
     param[2] = 7.2;   // sigma
     param[3] = 0.9;   // skewness
     parameters.push_back(param);
-    ccdf_log.push_back(-2.702585);  // expected log_ccdf
+    ccdf_log.push_back(-2.702585092994045368187);  // expected log_ccdf
 
     param[0] = 3.5;  // y
     param[1] = 1.9;   // mu
     param[2] = 7.2;   // sigma
     param[3] = 0.1;   // skewness
     parameters.push_back(param);
-    ccdf_log.push_back(-0.149805);  // expected log_ccdf
+    ccdf_log.push_back(-0.1498049601022706511788);  // expected log_ccdf
   }
 
   void invalid_values(vector<size_t>& index, vector<double>& value) {

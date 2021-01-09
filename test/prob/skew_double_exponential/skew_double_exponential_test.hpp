@@ -12,11 +12,11 @@ class AgradDistributionSkewDoubleExponential : public AgradDistributionTest {
     vector<double> param(4);
 
     param[0] = 0.0;  // y
-    param[1] = 0.0;  // mu
+    param[1] = 0.1;  // mu
     param[2] = 1.0;  // sigma
     param[3] = 0.5;  // skewness
     parameters.push_back(param);
-    log_prob.push_back(-0.6931471805599452862268);  // expected log_prob
+    log_prob.push_back(-0.7931471805599452640223);  // expected log_prob
 
     param[0] = 1.0;  // y
     param[1] = 0.0;  // mu
@@ -107,7 +107,8 @@ class AgradDistributionSkewDoubleExponential : public AgradDistributionTest {
   stan::return_type_t<T_y, T_loc, T_scale, T_skewness> log_prob_function(
       const T_y& y, const T_loc& mu, const T_scale& sigma, const T_skewness& tau,
       const T4&, const T5&) {
-    return log(2) + log(tau) + log(1 - tau) - log(sigma)
-      - 2 * ((y < mu) ? (1 - tau) * (mu - y) : tau * (y - mu)) / sigma;
+    using stan::math::log1m;
+    return log(2.0) + log(tau) + log1m(tau) - log(sigma)
+      - 2.0 * ((y < mu) ? (1.0 - tau) * (mu - y) : tau * (y - mu)) / sigma;
   }
 };

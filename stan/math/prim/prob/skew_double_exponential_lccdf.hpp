@@ -54,7 +54,7 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lccdf(
   T_sigma_ref sigma_ref = sigma;
   T_tau_ref tau_ref = tau;
 
-  check_finite(function, "Random variable", y_ref);
+  check_not_nan(function, "Random variable", y_ref);
   check_finite(function, "Location parameter", mu_ref);
   check_positive_finite(function, "Scale parameter", sigma_ref);
   check_bounded(function, "Skewness parameter", tau_ref, 0.0, 1.0);

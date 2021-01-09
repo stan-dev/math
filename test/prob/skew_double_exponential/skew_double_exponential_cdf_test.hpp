@@ -11,53 +11,53 @@ class AgradCdfSkewDoubleExponential : public AgradCdfTest {
     vector<double> param(4);
 
     param[0] = 0.0;  // y
-    param[1] = 0.0;  // mu
+    param[1] = 0.1;  // mu
     param[2] = 1.0;  // sigma
     param[3] = 0.5;  // skewness
     parameters.push_back(param);
-    cdf.push_back(0.5);  // expected cdf
+    cdf.push_back(0.4524187090179798143019);  // expected cdf
 
     param[0] = 1.0;  // y
     param[1] = 0.0;  // mu
     param[2] = 1.0;  // sigma
     param[3] = 0.5;  // skewness
     parameters.push_back(param);
-    cdf.push_back(0.8160603);  // expected cdf
+    cdf.push_back(0.8160602794142788329879);  // expected cdf
 
     param[0] = -2.0;  // y
     param[1] = 0.0;   // mu
     param[2] = 1.0;   // sigma
     param[3] = 0.5;   // skewness
     parameters.push_back(param);
-    cdf.push_back(0.06766764);  // expected cdf
+    cdf.push_back(0.06766764161830633728112);  // expected cdf
 
     param[0] = -3.5;  // y
     param[1] = 1.9;   // mu
     param[2] = 7.2;   // sigma
     param[3] = 0.9;   // skewness
     parameters.push_back(param);
-    cdf.push_back(0.7746372);  // expected cdf
+    cdf.push_back(0.7746371787825521160187);  // expected cdf
 
     param[0] = -3.5;  // y
     param[1] = 1.9;   // mu
     param[2] = 7.2;   // sigma
     param[3] = 0.1;   // skewness
     parameters.push_back(param);
-    cdf.push_back(0.02592403);  // expected cdf
+    cdf.push_back(0.0259240260645891527902);  // expected cdf
 
     param[0] = 3.5;  // y
     param[1] = 1.9;   // mu
     param[2] = 7.2;   // sigma
     param[3] = 0.9;   // skewness
     parameters.push_back(param);
-    cdf.push_back(0.932968);  // expected cdf
+    cdf.push_back(0.9329679953964360450414);  // expected cdf
 
     param[0] = 3.5;  // y
     param[1] = 1.9;   // mu
     param[2] = 7.2;   // sigma
     param[3] = 0.1;   // skewness
     parameters.push_back(param);
-    cdf.push_back(0.1391241);  // expected cdf
+    cdf.push_back(0.1391241348072735917185);  // expected cdf
   }
 
   void invalid_values(vector<size_t>& index, vector<double>& value) {
