@@ -38,6 +38,23 @@ auto to_var_value(T&& a) {
   return std::forward<T>(a);
 }
 
+/**
+ * Convert the elements of the `std::vector` input to `var_value` types
+ * if possible
+ *
+ * @tparam T type of elemnts of the input vector
+ * @param a std::vector of elements to convert
+ */
+template <typename T>
+auto to_var_value(const std::vector<T>& a) {
+  std::vector<decltype(to_var_value(std::declval<T>()))> out;
+  out.reserve(a.size());
+  for(size_t i = 0; i < a.size(); ++i) {
+    out.emplace_back(to_var_value(a[i]));
+  }
+  return out;
+}
+
 }  // namespace math
 }  // namespace stan
 
