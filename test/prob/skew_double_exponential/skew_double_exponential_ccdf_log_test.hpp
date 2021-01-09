@@ -47,16 +47,16 @@ class AgradCcdfLogSkewDoubleExponential : public AgradCcdfLogTest {
     ccdf_log.push_back(-0.02626597639452391344528);  // expected log_ccdf
 
     param[0] = 3.5;  // y
-    param[1] = 1.9;   // mu
-    param[2] = 7.2;   // sigma
-    param[3] = 0.9;   // skewness
+    param[1] = 1.9;  // mu
+    param[2] = 7.2;  // sigma
+    param[3] = 0.9;  // skewness
     parameters.push_back(param);
     ccdf_log.push_back(-2.702585092994045368187);  // expected log_ccdf
 
     param[0] = 3.5;  // y
-    param[1] = 1.9;   // mu
-    param[2] = 7.2;   // sigma
-    param[3] = 0.1;   // skewness
+    param[1] = 1.9;  // mu
+    param[2] = 7.2;  // sigma
+    param[3] = 0.1;  // skewness
     parameters.push_back(param);
     ccdf_log.push_back(-0.1498049601022706511788);  // expected log_ccdf
   }
@@ -93,16 +93,16 @@ class AgradCcdfLogSkewDoubleExponential : public AgradCcdfLogTest {
   template <typename T_y, typename T_loc, typename T_scale, typename T_skewness,
             typename T4, typename T5>
   stan::return_type_t<T_y, T_loc, T_scale, T_skewness> ccdf_log(
-      const T_y& y, const T_loc& mu, const T_scale& sigma, const T_skewness& tau,
-      const T4&, const T5&) {
+      const T_y& y, const T_loc& mu, const T_scale& sigma,
+      const T_skewness& tau, const T4&, const T5&) {
     return stan::math::skew_double_exponential_lccdf(y, mu, sigma, tau);
   }
 
   template <typename T_y, typename T_loc, typename T_scale, typename T_skewness,
             typename T4, typename T5>
   stan::return_type_t<T_y, T_loc, T_scale, T_skewness> ccdf_log_function(
-      const T_y& y, const T_loc& mu, const T_scale& sigma, const T_skewness& tau,
-      const T4&, const T5&) {
+      const T_y& y, const T_loc& mu, const T_scale& sigma,
+      const T_skewness& tau, const T4&, const T5&) {
     using stan::math::log1m;
     using stan::math::log1m_exp;
     using std::exp;

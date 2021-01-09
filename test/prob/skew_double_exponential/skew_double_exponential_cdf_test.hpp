@@ -46,16 +46,16 @@ class AgradCdfSkewDoubleExponential : public AgradCdfTest {
     cdf.push_back(0.0259240260645891527902);  // expected cdf
 
     param[0] = 3.5;  // y
-    param[1] = 1.9;   // mu
-    param[2] = 7.2;   // sigma
-    param[3] = 0.9;   // skewness
+    param[1] = 1.9;  // mu
+    param[2] = 7.2;  // sigma
+    param[3] = 0.9;  // skewness
     parameters.push_back(param);
     cdf.push_back(0.9329679953964360450414);  // expected cdf
 
     param[0] = 3.5;  // y
-    param[1] = 1.9;   // mu
-    param[2] = 7.2;   // sigma
-    param[3] = 0.1;   // skewness
+    param[1] = 1.9;  // mu
+    param[2] = 7.2;  // sigma
+    param[3] = 0.1;  // skewness
     parameters.push_back(param);
     cdf.push_back(0.1391241348072735917185);  // expected cdf
   }
@@ -91,11 +91,9 @@ class AgradCdfSkewDoubleExponential : public AgradCdfTest {
 
   template <typename T_y, typename T_loc, typename T_scale, typename T_skewness,
             typename T4, typename T5>
-  stan::return_type_t<T_y, T_loc, T_scale, T_skewness> cdf(const T_y& y,
-                                                        const T_loc& mu,
-                                                        const T_scale& sigma,
-                                                        const T_skewness& tau,
-                                                        const T4&, const T5&) {
+  stan::return_type_t<T_y, T_loc, T_scale, T_skewness> cdf(
+      const T_y& y, const T_loc& mu, const T_scale& sigma,
+      const T_skewness& tau, const T4&, const T5&) {
     using std::exp;
     return exp(stan::math::skew_double_exponential_lcdf(y, mu, sigma, tau));
   }
@@ -103,11 +101,11 @@ class AgradCdfSkewDoubleExponential : public AgradCdfTest {
   template <typename T_y, typename T_loc, typename T_scale, typename T_skewness,
             typename T4, typename T5>
   stan::return_type_t<T_y, T_loc, T_scale, T_skewness> cdf_function(
-      const T_y& y, const T_loc& mu, const T_scale& sigma, const T_skewness& tau,
-      const T4&, const T5&) {
+      const T_y& y, const T_loc& mu, const T_scale& sigma,
+      const T_skewness& tau, const T4&, const T5&) {
     using std::exp;
     if (y < mu) {
-      return tau * exp(- 2 / sigma * (1 - tau) * (mu - y));
+      return tau * exp(-2 / sigma * (1 - tau) * (mu - y));
     } else {
       return 1 - (1 - tau) * exp(-2 / sigma * tau * (y - mu));
     }
