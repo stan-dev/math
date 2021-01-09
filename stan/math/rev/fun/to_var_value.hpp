@@ -49,7 +49,7 @@ template <typename T>
 auto to_var_value(const std::vector<T>& a) {
   std::vector<decltype(to_var_value(std::declval<T>()))> out;
   out.reserve(a.size());
-  for(size_t i = 0; i < a.size(); ++i) {
+  for (size_t i = 0; i < a.size(); ++i) {
     out.emplace_back(to_var_value(a[i]));
   }
   return out;

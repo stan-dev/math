@@ -51,7 +51,8 @@ TEST(AgradRevMatrix, from_var_value_vec_types) {
   using stan::math::var;
   using stan::math::var_value;
 
-  using mat_var_svec = std::vector<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>>;
+  using mat_var_svec
+      = std::vector<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>>;
   using vec_var_svec = std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>>;
   using row_vec_var_svec = std::vector<Eigen::Matrix<var, 1, Eigen::Dynamic>>;
 
@@ -60,7 +61,7 @@ TEST(AgradRevMatrix, from_var_value_vec_types) {
   using var_row_vec_svec = std::vector<var_value<Eigen::RowVectorXd>>;
 
   using var_svec = std::vector<var>;
-  
+
   var_svec a(1, 2.0);
   mat_var_svec b(1, Eigen::MatrixXd(2, 2));
   vec_var_svec c(1, Eigen::VectorXd(2));
@@ -134,15 +135,16 @@ TEST(AgradRevMatrix, from_var_value_row_vector_test) {
 }
 
 TEST(AgradRevMatrix, from_var_value_matrix_svec_test) {
-  std::vector<stan::math::promote_scalar_t<stan::math::var, Eigen::MatrixXd>> varmats;
+  std::vector<stan::math::promote_scalar_t<stan::math::var, Eigen::MatrixXd>>
+      varmats;
 
-  for(size_t i = 0; i < 2; ++i) {
+  for (size_t i = 0; i < 2; ++i) {
     varmats.push_back(Eigen::MatrixXd::Random(2, 2));
   }
 
   auto matvars = stan::math::from_var_value(varmats);
 
-  for(size_t i = 0; i < 2; ++i) {
+  for (size_t i = 0; i < 2; ++i) {
     EXPECT_MATRIX_EQ(varmats[i].val(), matvars[i].val());
     stan::math::set_zero_all_adjoints();
     matvars[i].adj() = Eigen::MatrixXd::Random(2, 2);
@@ -152,15 +154,16 @@ TEST(AgradRevMatrix, from_var_value_matrix_svec_test) {
 }
 
 TEST(AgradRevMatrix, from_var_value_vector_svec_test) {
-  std::vector<stan::math::promote_scalar_t<stan::math::var, Eigen::VectorXd>> varmats;
+  std::vector<stan::math::promote_scalar_t<stan::math::var, Eigen::VectorXd>>
+      varmats;
 
-  for(size_t i = 0; i < 2; ++i) {
+  for (size_t i = 0; i < 2; ++i) {
     varmats.push_back(Eigen::VectorXd::Random(2));
   }
 
   auto matvars = stan::math::from_var_value(varmats);
 
-  for(size_t i = 0; i < 2; ++i) {
+  for (size_t i = 0; i < 2; ++i) {
     EXPECT_MATRIX_EQ(varmats[i].val(), matvars[i].val());
     stan::math::set_zero_all_adjoints();
     matvars[i].adj() = Eigen::VectorXd::Random(2);
@@ -170,15 +173,16 @@ TEST(AgradRevMatrix, from_var_value_vector_svec_test) {
 }
 
 TEST(AgradRevMatrix, from_var_value_row_vector_svec_test) {
-  std::vector<stan::math::promote_scalar_t<stan::math::var, Eigen::RowVectorXd>> varmats;
+  std::vector<stan::math::promote_scalar_t<stan::math::var, Eigen::RowVectorXd>>
+      varmats;
 
-  for(size_t i = 0; i < 2; ++i) {
+  for (size_t i = 0; i < 2; ++i) {
     varmats.push_back(Eigen::RowVectorXd::Random(2));
   }
 
   auto matvars = stan::math::from_var_value(varmats);
 
-  for(size_t i = 0; i < 2; ++i) {
+  for (size_t i = 0; i < 2; ++i) {
     EXPECT_MATRIX_EQ(varmats[i].val(), matvars[i].val());
     stan::math::set_zero_all_adjoints();
     matvars[i].adj() = Eigen::RowVectorXd::Random(2);

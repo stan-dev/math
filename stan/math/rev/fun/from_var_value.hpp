@@ -58,7 +58,7 @@ template <typename T>
 auto from_var_value(const std::vector<T>& a) {
   std::vector<decltype(from_var_value(std::declval<T>()))> out;
   out.reserve(a.size());
-  for(size_t i = 0; i < a.size(); ++i) {
+  for (size_t i = 0; i < a.size(); ++i) {
     out.emplace_back(from_var_value(a[i]));
   }
   return out;
