@@ -49,7 +49,7 @@ TEST(mathMixMatFun, abs_varmat) {
     return abs(x1);
   };
   std::vector<double> com_args = common_nonzero_args();
-  std::vector<double> args{0, -3, -2, 2, -17.3, -0.68, 2, 4};
+  std::vector<double> args{-3, 2, -0.68, 1};
   auto all_args = vec_concat(com_args, args);
   Eigen::VectorXd A(all_args.size());
   for (int i = 0; i < all_args.size(); ++i) {

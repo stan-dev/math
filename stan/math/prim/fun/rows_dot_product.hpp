@@ -18,8 +18,8 @@ namespace math {
  * @param v1 Matrix of first vectors.
  * @param v2 Matrix of second vectors.
  * @return Dot product of the vectors.
- * @throw std::domain_error If the vectors are not the same
- * size or if they are both not vector dimensioned.
+ * @throw std::domain_error If the matrices are not the same
+ * size
  */
 template <typename Mat1, typename Mat2,
           require_all_eigen_t<Mat1, Mat2>* = nullptr,
