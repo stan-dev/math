@@ -7,6 +7,7 @@
 #include <stan/math/opencl/kernels/device_functions/beta.hpp>
 #include <stan/math/opencl/kernels/device_functions/digamma.hpp>
 #include <stan/math/opencl/kernels/device_functions/inv_logit.hpp>
+#include <stan/math/opencl/kernels/device_functions/inv_Phi.hpp>
 #include <stan/math/opencl/kernels/device_functions/inv_square.hpp>
 #include <stan/math/opencl/kernels/device_functions/lbeta.hpp>
 #include <stan/math/opencl/kernels/device_functions/lgamma_stirling.hpp>
@@ -18,6 +19,8 @@
 #include <stan/math/opencl/kernels/device_functions/log1p_exp.hpp>
 #include <stan/math/opencl/kernels/device_functions/logit.hpp>
 #include <stan/math/opencl/kernels/device_functions/multiply_log.hpp>
+#include <stan/math/opencl/kernels/device_functions/Phi.hpp>
+#include <stan/math/opencl/kernels/device_functions/Phi_approx.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/kernel_generator/common_return_scalar.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
@@ -225,11 +228,6 @@ class elt_function_cl : public operation_cl<Derived, Scal, T...> {
   class fun##_ : public elt_function_cl<fun##_<T>, bool, T> {                  \
     using base = elt_function_cl<fun##_<T>, bool, T>;                          \
     using base::arguments_;                                                    \
-    static_assert(std::is_floating_point<                                      \
-                      typename std::remove_reference_t<T>::Scalar>::value,     \
-                  #fun                                                         \
-                  ": all arguments must be expression with floating point "    \
-                  "return type!");                                             \
                                                                                \
    public:                                                                     \
     using base::rows;                                                          \
@@ -306,8 +304,16 @@ ADD_UNARY_FUNCTION_WITH_INCLUDES(inv_square,
 ADD_UNARY_FUNCTION_WITH_INCLUDES(inv_logit,
                                  opencl_kernels::inv_logit_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(logit, opencl_kernels::logit_device_function)
+ADD_UNARY_FUNCTION_WITH_INCLUDES(Phi, opencl_kernels::phi_device_function)
+ADD_UNARY_FUNCTION_WITH_INCLUDES(Phi_approx,
+                                 opencl_kernels::inv_logit_device_function,
+                                 opencl_kernels::phi_approx_device_function)
+ADD_UNARY_FUNCTION_WITH_INCLUDES(inv_Phi, opencl_kernels::log1m_device_function,
+                                 opencl_kernels::phi_device_function,
+                                 opencl_kernels::inv_phi_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(
     log1m_inv_logit, opencl_kernels::log1m_inv_logit_device_function)
+ADD_UNARY_FUNCTION_WITH_INCLUDES(square, "double square(double x){return x*x;}")
 
 ADD_CLASSIFICATION_FUNCTION(isfinite, {-rows() + 1, cols() - 1})
 ADD_CLASSIFICATION_FUNCTION(isinf,
@@ -316,6 +322,7 @@ ADD_CLASSIFICATION_FUNCTION(isnan,
                             this->template get_arg<0>().extreme_diagonals())
 
 ADD_BINARY_FUNCTION_WITH_INCLUDES(pow)
+ADD_BINARY_FUNCTION_WITH_INCLUDES(ldexp)
 ADD_BINARY_FUNCTION_WITH_INCLUDES(
     beta, stan::math::opencl_kernels::beta_device_function)
 ADD_BINARY_FUNCTION_WITH_INCLUDES(

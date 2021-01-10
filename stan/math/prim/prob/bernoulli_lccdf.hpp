@@ -7,6 +7,7 @@
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -53,7 +54,7 @@ return_type_t<T_prob> bernoulli_lccdf(const T_n& n, const T_prob& theta) {
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::math::size(n); i++) {
-    const double n_dbl = value_of(n_vec[i]);
+    const double n_dbl = n_vec.val(i);
     if (n_dbl < 0) {
       return ops_partials.build(0.0);
     }
@@ -63,7 +64,7 @@ return_type_t<T_prob> bernoulli_lccdf(const T_n& n, const T_prob& theta) {
   }
 
   for (size_t i = 0; i < max_size_seq_view; i++) {
-    const T_partials_return Pi = value_of(theta_vec[i]);
+    const T_partials_return Pi = theta_vec.val(i);
 
     P += log(Pi);
 

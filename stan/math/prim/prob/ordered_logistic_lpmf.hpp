@@ -3,14 +3,17 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/inv_logit.hpp>
 #include <stan/math/prim/fun/is_integer.hpp>
 #include <stan/math/prim/fun/log1p_exp.hpp>
 #include <stan/math/prim/fun/log_inv_logit_diff.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_mvt.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun/vector_seq_view.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <vector>
 
@@ -142,7 +145,7 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
 
   if (is_vector<T_y>::value) {
     Eigen::Map<const Eigen::Matrix<value_type_t<T_y>, Eigen::Dynamic, 1>> y_vec(
-        &y_seq[0], y_seq.size());
+        y_seq.data(), y_seq.size());
     auto log1m_exp_cuts_diff = log1m_exp(cut1 - cut2);
     logp = y_vec.cwiseEqual(1)
                .select(m_log_1p_exp_cut1,
