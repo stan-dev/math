@@ -28,7 +28,7 @@ namespace math {
  * @return zero if the value is less than zero, and one otherwise
  */
 template <typename T, require_stan_scalar_t<T>* = nullptr>
-inline double step(const T& y) {
+inline T step(const T& y) {
   return y < 0.0 ? 0 : 1;
 }
 
@@ -44,7 +44,7 @@ struct step_fun {
    * @return zero if the value is less than zero, and one otherwise
    */
   template <typename T>
-  static inline double fun(const T& y) {
+  static inline T fun(const T& y) {
     return step(y);
   }
 };
