@@ -46,8 +46,8 @@ return_type_t<T_prob> categorical_logit_lpmf(const T_n& n, const T_prob& beta) {
   }
 
   for (size_t i = 0; i < vec_size; ++i) {
-    check_consistent_sizes(function, "Integers", n_vec[i],
-                           "Probabilities", beta_vec[i]);
+    check_consistent_sizes(function, "Integers", n_vec[i], "Probabilities",
+                           beta_vec[i]);
   }
 
   using T_plain = plain_type_t<decltype(beta_ref)>;

@@ -45,8 +45,8 @@ return_type_t<T_prob> categorical_lpmf(const T_n& n, const T_prob& theta) {
   }
 
   for (size_t i = 0; i < vec_size; ++i) {
-    check_consistent_sizes(function, "Integers", n_vec[i],
-                           "Probabilities", theta_vec[i]);
+    check_consistent_sizes(function, "Integers", n_vec[i], "Probabilities",
+                           theta_vec[i]);
   }
 
   using T_plain = plain_type_t<decltype(theta_ref)>;
