@@ -190,21 +190,23 @@ TEST(ProbDistributionsCategorical, categorical_vecRNG_throw) {
 TEST(ProbDistributionsCategorical, error_vec) {
   Eigen::VectorXd beta1 = stan::math::softmax(Eigen::VectorXd::Random(3));
   Eigen::VectorXd beta2 = stan::math::softmax(Eigen::VectorXd::Random(3));
-  std::vector<Eigen::VectorXd> betas = { beta1, beta2 };
+  std::vector<Eigen::VectorXd> betas = {beta1, beta2};
 
   double inf = std::numeric_limits<double>::infinity();
 
   // Check consistent sizes
   {
-    std::vector<int> ns = { 1 };
-    EXPECT_THROW(stan::math::categorical_lpmf(ns, betas), std::invalid_argument);
-    ns = { 1, 2, 3 };
-    EXPECT_THROW(stan::math::categorical_lpmf(ns, betas), std::invalid_argument);
+    std::vector<int> ns = {1};
+    EXPECT_THROW(stan::math::categorical_lpmf(ns, betas),
+                 std::invalid_argument);
+    ns = {1, 2, 3};
+    EXPECT_THROW(stan::math::categorical_lpmf(ns, betas),
+                 std::invalid_argument);
   }
-    
+
   // Check bounded
   {
-    std::vector<int> ns = { 1, 10000 };
+    std::vector<int> ns = {1, 10000};
     EXPECT_THROW(stan::math::categorical_lpmf(ns, betas), std::domain_error);
   }
 
@@ -214,6 +216,7 @@ TEST(ProbDistributionsCategorical, error_vec) {
     betas_not_simplex[1](0) = 2.0;
     betas_not_simplex[1](1) = 0.0;
     betas_not_simplex[1](2) = 0.0;
-    EXPECT_THROW(stan::math::categorical_lpmf(1, betas_not_simplex), std::domain_error);
+    EXPECT_THROW(stan::math::categorical_lpmf(1, betas_not_simplex),
+                 std::domain_error);
   }
 }

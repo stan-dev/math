@@ -42,9 +42,10 @@ return_type_t<T_prob> categorical_lpmf(const T_n& n, const T_prob& theta) {
   }
 
   check_consistent_sizes(function, "Integers", n, "Probabilities", theta_ref);
-  
+
   for (size_t i = 0; i < vec_size; ++i) {
-    check_bounded(function, "Number of categories", n_vec[i], 1, theta_vec[i].size());
+    check_bounded(function, "Number of categories", n_vec[i], 1,
+                  theta_vec[i].size());
     check_simplex(function, "Probabilities parameter", theta_vec[i]);
   }
 

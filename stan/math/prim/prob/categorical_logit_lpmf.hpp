@@ -42,8 +42,7 @@ return_type_t<T_prob> categorical_logit_lpmf(const T_n& n, const T_prob& beta) {
     return 0.0;
   }
 
-  check_consistent_sizes(function, "Integers", n, "Probabilities",
-			 beta_ref);
+  check_consistent_sizes(function, "Integers", n, "Probabilities", beta_ref);
 
   for (size_t i = 0; i < vec_size; ++i) {
     check_bounded(function, "categorical outcome out of support", n_vec[i], 1,

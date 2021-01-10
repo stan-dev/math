@@ -32,8 +32,8 @@ inline auto ordered_logistic_rng(const T_eta& eta, const T_c& c, RNG& rng) {
                 0);
   scalar_seq_view<T_eta> eta_vec(eta);
   vector_seq_view<T_c> cut_vec(c);
-  
-  if(stan::math::size_mvt(c) > 1) {
+
+  if (stan::math::size_mvt(c) > 1) {
     check_consistent_sizes(function, "Locations", eta, "Cut points vector", c);
   }
 
