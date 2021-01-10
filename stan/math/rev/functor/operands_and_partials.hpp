@@ -30,19 +30,23 @@ class ops_partials_edge<double, var> {
  public:
   double partial_;
   broadcast_array<double> partials_;
-  explicit ops_partials_edge(const var& op)
-      : partial_(0), partials_(partial_), operand_(op) {}
+  explicit ops_partials_edge(const var& op) noexcept
+       : partial_(0), partials_(partial_), operand_(op) {}
 
  private:
   template <typename, typename, typename, typename, typename, typename>
   friend class stan::math::operands_and_partials;
   const var& operand_;
 
-  void dump_partials(double* partials) { *partials = this->partial_; }
-  void dump_operands(vari** varis) { *varis = this->operand_.vi_; }
-  int size() const { return 1; }
-  std::tuple<> container_operands() { return std::tuple<>(); }
-  std::tuple<> container_partials() { return std::tuple<>(); }
+  inline void dump_partials(double* partials) const noexcept {
+     *partials = this->partial_;
+  }
+  inline void dump_operands(vari** varis) const noexcept {
+    *varis = this->operand_.vi_;
+  }
+  static constexpr int size() { return 1; }
+  static constexpr std::tuple<> container_operands() { return std::tuple<>(); }
+  static constexpr std::tuple<> container_partials() { return std::tuple<>(); }
 };
 }  // namespace internal
 
@@ -114,7 +118,7 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
    * @param value the return value of the function we are compressing
    * @return the node to be stored in the expression graph for autodiff
    */
-  var build(double value) {
+  inline var build(double value) {
     size_t edges_size = edge1_.size() + edge2_.size() + edge3_.size()
                         + edge4_.size() + edge5_.size();
     vari** varis
@@ -160,7 +164,7 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
    * edges
    */
   template <typename... Ops, typename... Partials>
-  auto* return_vari(double value, size_t edges_size, vari** varis,
+  inline auto* return_vari(double value, size_t edges_size, vari** varis,
                     double* partials,
                     const std::tuple<Ops...>& container_operands,
                     const std::tuple<Partials...>& container_partials) {
@@ -190,19 +194,19 @@ class ops_partials_edge<double, std::vector<var>> {
   friend class stan::math::operands_and_partials;
   const Op& operands_;
 
-  void dump_partials(double* partials) {
+  inline void dump_partials(double* partials) {
     for (int i = 0; i < this->partials_.size(); ++i) {
       partials[i] = this->partials_[i];
     }
   }
-  void dump_operands(vari** varis) {
+  inline void dump_operands(vari** varis) {
     for (size_t i = 0; i < this->operands_.size(); ++i) {
       varis[i] = this->operands_[i].vi_;
     }
   }
-  int size() { return this->operands_.size(); }
-  std::tuple<> container_operands() { return std::tuple<>(); }
-  std::tuple<> container_partials() { return std::tuple<>(); }
+  inline int size() const noexcept { return this->operands_.size(); }
+  static constexpr std::tuple<> container_operands() { return std::tuple<>(); }
+  static constexpr std::tuple<> container_partials() { return std::tuple<>(); }
 };
 
 template <typename Op>
@@ -221,19 +225,19 @@ class ops_partials_edge<double, Op, require_eigen_st<is_var, Op>> {
   friend class stan::math::operands_and_partials;
   const Op& operands_;
 
-  void dump_operands(vari** varis) {
+  inline void dump_operands(vari** varis) const {
     Eigen::Map<promote_scalar_t<vari*, Op>>(varis, this->operands_.rows(),
                                             this->operands_.cols())
         = this->operands_.vi();
   }
-  void dump_partials(double* partials) {
+  inline void dump_partials(double* partials) const {
     Eigen::Map<partials_t>(partials, this->partials_.rows(),
                            this->partials_.cols())
         = this->partials_;
   }
-  int size() { return this->operands_.size(); }
-  std::tuple<> container_operands() { return std::tuple<>(); }
-  std::tuple<> container_partials() { return std::tuple<>(); }
+  inline int size() const noexcept { return this->operands_.size(); }
+  static constexpr std::tuple<> container_operands() { return std::tuple<>(); }
+  static constexpr std::tuple<> container_partials() { return std::tuple<>(); }
 };
 
 template <typename Op>
@@ -253,13 +257,13 @@ class ops_partials_edge<double, var_value<Op>, require_eigen_t<Op>> {
   friend class stan::math::operands_and_partials;
   const var_value<Op>& operands_;
 
-  void dump_operands(vari** varis) {}
-  void dump_partials(double* partials) {}
-  int size() { return 0; }
-  std::tuple<const var_value<Op>&> container_operands() {
+  inline void dump_operands(vari** varis) const noexcept {}
+  inline void dump_partials(double* partials) const noexcept {}
+  static constexpr int size() { return 0; }
+  inline std::tuple<const var_value<Op>&> container_operands() noexcept {
     return std::forward_as_tuple(operands_);
   }
-  std::tuple<partials_t&> container_partials() {
+  inline std::tuple<partials_t&> container_partials() noexcept {
     return std::forward_as_tuple(partials_);
   }
 };
@@ -284,30 +288,30 @@ class ops_partials_edge<double, std::vector<Eigen::Matrix<var, R, C>>> {
   friend class stan::math::operands_and_partials;
   const Op& operands_;
 
-  void dump_partials(double* partials) {
+  inline void dump_partials(double* partials) const {
     int p_i = 0;
     for (size_t i = 0; i < this->partials_vec_.size(); ++i) {
       for (int j = 0; j < this->partials_vec_[i].size(); ++j, ++p_i) {
-        partials[p_i] = this->partials_vec_[i](j);
+        partials[p_i] = this->partials_vec_[i].coeff(j);
       }
     }
   }
-  void dump_operands(vari** varis) {
+  inline void dump_operands(vari** varis) const {
     int p_i = 0;
     for (size_t i = 0; i < this->operands_.size(); ++i) {
       for (int j = 0; j < this->operands_[i].size(); ++j, ++p_i) {
-        varis[p_i] = this->operands_[i](j).vi_;
+        varis[p_i] = this->operands_[i].coeff(j).vi_;
       }
     }
   }
-  int size() {
+  inline int size() const noexcept {
     if (unlikely(this->operands_.size() == 0)) {
       return 0;
     }
     return this->operands_.size() * this->operands_[0].size();
   }
-  std::tuple<> container_operands() { return std::tuple<>(); }
-  std::tuple<> container_partials() { return std::tuple<>(); }
+  static constexpr std::tuple<> container_operands() { return std::tuple<>(); }
+  static constexpr std::tuple<> container_partials() { return std::tuple<>(); }
 };
 
 template <>
@@ -328,7 +332,7 @@ class ops_partials_edge<double, std::vector<std::vector<var>>> {
   friend class stan::math::operands_and_partials;
   const Op& operands_;
 
-  void dump_partials(double* partials) {
+  inline void dump_partials(double* partials) const {
     int p_i = 0;
     for (size_t i = 0; i < this->partials_vec_.size(); ++i) {
       for (size_t j = 0; j < this->partials_vec_[i].size(); ++j, ++p_i) {
@@ -336,7 +340,7 @@ class ops_partials_edge<double, std::vector<std::vector<var>>> {
       }
     }
   }
-  void dump_operands(vari** varis) {
+  inline void dump_operands(vari** varis) const {
     int p_i = 0;
     for (size_t i = 0; i < this->operands_.size(); ++i) {
       for (size_t j = 0; j < this->operands_[i].size(); ++j, ++p_i) {
@@ -344,14 +348,14 @@ class ops_partials_edge<double, std::vector<std::vector<var>>> {
       }
     }
   }
-  int size() {
+  inline int size() const noexcept {
     if (unlikely(this->operands_.size() == 0)) {
       return 0;
     }
     return this->operands_.size() * this->operands_[0].size();
   }
-  std::tuple<> container_operands() { return std::tuple<>(); }
-  std::tuple<> container_partials() { return std::tuple<>(); }
+  static constexpr std::tuple<> container_operands() { return std::tuple<>(); }
+  static constexpr std::tuple<> container_partials() { return std::tuple<>(); }
 };
 
 template <typename Op>
@@ -373,13 +377,13 @@ class ops_partials_edge<double, std::vector<var_value<Op>>,
   friend class stan::math::operands_and_partials;
   const std::vector<var_value<Op>>& operands_;
 
-  void dump_operands(vari** varis) {}
-  void dump_partials(double* partials) {}
-  int size() { return 0; }
-  std::tuple<const std::vector<var_value<Op>>&> container_operands() {
+  inline void dump_operands(vari** varis) const noexcept {}
+  inline void dump_partials(double* partials) const noexcept {}
+  static constexpr int size() { return 0; }
+  inline std::tuple<const std::vector<var_value<Op>>&> container_operands() noexcept {
     return std::forward_as_tuple(operands_);
   }
-  std::tuple<partials_t&> container_partials() {
+  inline std::tuple<partials_t&> container_partials() noexcept {
     return std::forward_as_tuple(partials_vec_);
   }
 };

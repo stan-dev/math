@@ -20,7 +20,7 @@ class broadcast_array {
  public:
   explicit broadcast_array(T& prim) : prim_(prim) {}
 
-  T& operator[](int /*i*/) { return prim_; }
+  inline T& operator[](int /*i*/) noexcept { return prim_; }
 
   /** \ingroup type_trait
    * Broadcast array can be assigned a scalar or a vector. If assigned a scalar,
@@ -28,7 +28,7 @@ class broadcast_array {
    * first.
    */
   template <typename Y>
-  void operator=(const Y& m) {
+  inline void operator=(const Y& m) {
     prim_ = sum(m);
   }
 };
@@ -36,7 +36,7 @@ class broadcast_array {
 template <typename T, typename S, typename Enable = void>
 class empty_broadcast_array {
  public:
-  empty_broadcast_array() {}
+  empty_broadcast_array() noexcept {}
   /** \ingroup type_trait
    * Not implemented so cannot be called.
    */
@@ -55,7 +55,7 @@ class empty_broadcast_array<ViewElt, T, require_eigen_t<T>> {
   using T_arg = promote_scalar_t<ViewElt, T>;
 
  public:
-  empty_broadcast_array() {}
+  empty_broadcast_array() noexcept {}
   /** \ingroup type_trait
    * Not implemented so cannot be called.
    */
