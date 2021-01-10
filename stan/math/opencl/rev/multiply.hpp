@@ -18,19 +18,19 @@ namespace math {
  * expressions.
  * @tparam T_a type of first expression
  * @tparam T_b type of second expression
- * @param a first expression
- * @param b second expression
+ * @param A first expression
+ * @param B second expression
  * @return Matrix product of given arguments
  */
 template <
     typename T_a, typename T_b,
     require_all_nonscalar_prim_or_rev_kernel_expression_t<T_a, T_b>* = nullptr,
     require_any_var_t<T_a, T_b>* = nullptr>
-inline auto multiply(const T_a& a, const T_b& b) {
-  check_size_match("multiply ((OpenCL))", "A.cols()", a.cols(), "B.rows()",
-                   b.rows());
-  const arena_t<T_a>& a_arena = a;
-  const arena_t<T_b>& b_arena = b;
+inline auto multiply(const T_a& A, const T_b& B) {
+  check_size_match("multiply ((OpenCL))", "A.cols()", A.cols(), "B.rows()",
+                   B.rows());
+  const arena_t<T_a>& a_arena = A;
+  const arena_t<T_b>& b_arena = B;
 
   var_value<matrix_cl<double>> res = value_of(a_arena) * value_of(b_arena);
 
@@ -52,16 +52,16 @@ inline auto multiply(const T_a& a, const T_b& b) {
  * expressions.
  * @tparam T_a type of first expression
  * @tparam T_b type of second expression
- * @param a first expression
- * @param b second expression
+ * @param A first expression
+ * @param B second expression
  * @return Matrix product of given arguments
  */
 template <
     typename T_a, typename T_b,
     require_all_nonscalar_prim_or_rev_kernel_expression_t<T_a, T_b>* = nullptr,
     require_any_var_t<T_a, T_b>* = nullptr>
-inline auto operator*(const T_a& a, const T_b& b) {
-  return multiply(a, b);
+inline auto operator*(const T_a& A, const T_b& B) {
+  return multiply(A, B);
 }
 
 /**
@@ -70,16 +70,16 @@ inline auto operator*(const T_a& a, const T_b& b) {
  * @tparam T1 type of the scalar
  * @tparam T2 type of the matrix or expression
  *
- * @param a scalar
- * @param b matrix
+ * @param A scalar
+ * @param B matrix
  * @return product of matrix and scalar
  */
 template <typename T1, typename T2, require_stan_scalar_t<T1>* = nullptr,
           require_all_nonscalar_prim_or_rev_kernel_expression_t<T2>* = nullptr,
           require_any_var_t<T1, T2>* = nullptr>
-inline auto multiply(const T1& a, const T2& b) {
-  const arena_t<T1>& a_arena = a;
-  const arena_t<T2>& b_arena = b;
+inline auto multiply(const T1& A, const T2& B) {
+  const arena_t<T1>& a_arena = A;
+  const arena_t<T2>& b_arena = B;
 
   var_value<matrix_cl<double>> res = value_of(a_arena) * value_of(b_arena);
 
@@ -102,15 +102,15 @@ inline auto multiply(const T1& a, const T2& b) {
  * @tparam T1 type of the matrix or expression
  * @tparam T2 type of the scalar
  *
- * @param a matrix
- * @param b scalar
+ * @param A matrix
+ * @param B scalar
  * @return product of matrix and scalar
  */
 template <typename T1, typename T2, require_stan_scalar_t<T2>* = nullptr,
           require_all_nonscalar_prim_or_rev_kernel_expression_t<T1>* = nullptr,
           require_any_var_t<T1, T2>* = nullptr>
-inline auto multiply(const T1& a, const T2& b) {
-  return multiply(b, a);
+inline auto multiply(const T1& A, const T2& B) {
+  return multiply(B, A);
 }
 
 }  // namespace math
