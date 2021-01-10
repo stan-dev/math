@@ -21,10 +21,9 @@ namespace math {
  * @param m MxN input matrix
  * @return Orthogonal matrix U
  */
-template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr,
-          require_vt_var<EigMat>* = nullptr>
+template <typename EigMat, require_rev_matrix_t<EigMat>* = nullptr>
 inline auto svd_U(const EigMat& m) {
-  using ret_type = promote_scalar_t<var, Eigen::MatrixXd>;
+  using ret_type = return_var_matrix_t<Eigen::MatrixXd, EigMat>;
   check_nonzero_size("svd_U", "m", m);
 
   const int M = std::min(m.rows(), m.cols());

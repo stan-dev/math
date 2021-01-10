@@ -1,6 +1,7 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
+#include <stdexcept>
 
 TEST(MathMatrixPrimMat, singular_values) {
   using stan::math::matrix_d;
@@ -8,7 +9,7 @@ TEST(MathMatrixPrimMat, singular_values) {
   using stan::math::vector_d;
 
   matrix_d m0(0, 0);
-  EXPECT_NO_THROW(singular_values(m0));
+  EXPECT_THROW(singular_values(m0), std::invalid_argument);
 
   matrix_d m1(1, 1);
   m1 << 1.0;

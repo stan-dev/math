@@ -20,10 +20,9 @@ namespace math {
  * @param m MxN input matrix
  * @return Singular values of matrix
  */
-template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr,
-          require_vt_var<EigMat>* = nullptr>
+template <typename EigMat, require_rev_matrix_t<EigMat>* = nullptr>
 inline auto singular_values(const EigMat& m) {
-  using ret_type = promote_scalar_t<var, Eigen::VectorXd>;
+  using ret_type = return_var_matrix_t<Eigen::VectorXd, EigMat>;
   check_nonzero_size("singular_values", "m", m);
 
   auto arena_m = to_arena(m);

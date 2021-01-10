@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/err/check_nonzero_size.hpp>
 
 namespace stan {
 namespace math {
@@ -18,12 +19,10 @@ namespace math {
  * @return Singular values of the matrix.
  */
 template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr,
-          require_not_vt_var<EigMat>* = nullptr>
+          require_not_st_var<EigMat>* = nullptr>
 Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, 1> singular_values(
     const EigMat& m) {
-  if (m.size() == 0) {
-    return {};
-  }
+  check_nonzero_size("singular_values", "m", m);
 
   return Eigen::JacobiSVD<Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic,
                                         Eigen::Dynamic> >(m)
