@@ -5,7 +5,7 @@ import sys
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 import sig_utils
 
-def main(results_file, functions, print_incompatible, print_names):
+def main(results_file, functions, print_which, print_names):
     """
     Generates benchmark code, compiles it and runs the benchmark. Optionally plots the results.
     :param functions_or_sigs: List of function names and/or signatures to benchmark
@@ -13,10 +13,12 @@ def main(results_file, functions, print_incompatible, print_names):
     with open(results_file, "r") as f:
         results = json.load(f)
 
-    if print_incompatible:
+    if print_which == "compatible":
+        signatures = results["compatible_signatures"]
+    elif print_which == "incompatible":
         signatures = results["incompatible_signatures"]
     else:
-        signatures = results["compatible_signatures"]
+        signatures = results["impossible_signatures"]
 
     requested_functions = set(functions)
 
@@ -69,16 +71,10 @@ def processCLIArgs():
         help="Function names to summarize. By default summarize everything.",
     )
     parser.add_argument(
-        "--print_incompatible",
-        default=False,
-        help="Print incompatible signatures (by default prints compatible signatures).",
-        action="store_true",
-    )
-    parser.add_argument(
-        "--print_incompatible",
-        default=False,
-        help="Print incompatible signatures (by default prints compatible signatures).",
-        action="store_true",
+        "--which",
+        default = "compatible",
+        choices = ["compatible", "incompatible", "impossible"],
+        help = "Print which signatures."
     )
     parser.add_argument(
         "--print_names",
@@ -88,7 +84,7 @@ def processCLIArgs():
     )
     args = parser.parse_args()
 
-    main(args.results_file, args.functions, args.print_incompatible, args.print_names)
+    main(args.results_file, args.functions, args.which, args.print_names)
 
 
 if __name__ == "__main__":
