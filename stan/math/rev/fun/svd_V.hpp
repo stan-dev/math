@@ -52,8 +52,7 @@ inline auto svd_V(const EigMat& m) {
 
   reverse_pass_callback([arena_m, arena_U, arena_D, arena_V, arena_Fm,
                          M]() mutable {
-    Eigen::MatrixXd VTVadj
-        = arena_V.val_op().transpose() * arena_V.adj_op();
+    Eigen::MatrixXd VTVadj = arena_V.val_op().transpose() * arena_V.adj_op();
     arena_m.adj()
         += 0.5 * arena_U
                * (arena_Fm.array() * (VTVadj - VTVadj.transpose()).array())
