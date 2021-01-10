@@ -35,9 +35,6 @@ return_type_t<T_prob> categorical_logit_lpmf(const T_n& n, const T_prob& beta) {
 
   size_t vec_size
       = std::max(stan::math::size(n), stan::math::size_mvt(beta_ref));
-
-  check_consistent_sizes(function, "Integers", n, "Probabilities", beta);
-
   for (size_t i = 0; i < vec_size; ++i) {
     check_bounded(function, "categorical outcome out of support", n, 1,
                   beta_vec[i].size());
@@ -46,6 +43,11 @@ return_type_t<T_prob> categorical_logit_lpmf(const T_n& n, const T_prob& beta) {
 
   if (!include_summand<propto, T_prob>::value || stan::math::size(n) == 0) {
     return 0.0;
+  }
+
+  for (size_t i = 0; i < vec_size; ++i) {
+    check_consistent_sizes(function, "Integers", n_vec[i],
+                           "Probabilities", beta_vec[i]);
   }
 
   using T_plain = plain_type_t<decltype(beta_ref)>;

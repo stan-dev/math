@@ -35,8 +35,6 @@ return_type_t<T_prob> categorical_lpmf(const T_n& n, const T_prob& theta) {
   size_t vec_size
       = std::max(stan::math::size(n), stan::math::size_mvt(theta_ref));
 
-  check_consistent_sizes(function, "Integers", n, "Probabilities", theta);
-
   for (size_t i = 0; i < vec_size; ++i) {
     check_bounded(function, "Number of categories", n, 1, theta_vec[i].size());
     check_simplex(function, "Probabilities parameter", theta_vec[i]);
@@ -44,6 +42,11 @@ return_type_t<T_prob> categorical_lpmf(const T_n& n, const T_prob& theta) {
 
   if (!include_summand<propto, T_prob>::value || stan::math::size(n) == 0) {
     return 0.0;
+  }
+
+  for (size_t i = 0; i < vec_size; ++i) {
+    check_consistent_sizes(function, "Integers", n_vec[i],
+                           "Probabilities", theta_vec[i]);
   }
 
   using T_plain = plain_type_t<decltype(theta_ref)>;
