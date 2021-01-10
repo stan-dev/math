@@ -38,4 +38,23 @@ TEST(OpenCLPrim, ldexp_big) {
   stan::math::matrix_d a = Eigen::MatrixXd::Random(N, N);
   stan::math::test::compare_cpu_opencl_prim_rev(ldexp_functor, a, b);
 }
+
+TEST(OpenCLPrim, ldexp_scalar_exponent_big) {
+  int N = 71;
+  stan::math::matrix_d m = 10 * Eigen::MatrixXd::Random(N, N);
+  int b = 2;
+
+  stan::math::matrix_d a = Eigen::MatrixXd::Random(N, N);
+  stan::math::test::compare_cpu_opencl_prim_rev(ldexp_functor, a, b);
+}
+
+TEST(OpenCLPrim, ldexp_scalar_significand_big) {
+  int N = 71;
+  stan::math::matrix_d m = 10 * Eigen::MatrixXd::Random(N, N);
+  Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic> b = m.cast<int>();
+
+  double a = 1.1;
+  stan::math::test::compare_cpu_opencl_prim_rev(ldexp_functor, a, b);
+}
 #endif
+

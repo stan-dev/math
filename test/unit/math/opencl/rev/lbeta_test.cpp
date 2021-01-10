@@ -32,4 +32,14 @@ TEST(OpenCL_lbeta, prim_rev_values_large) {
   stan::math::test::compare_cpu_opencl_prim_rev(lbeta_functor, a, b);
 }
 
+TEST(OpenCL_lbeta, prim_rev_scalar_values_large) {
+  int N = 71;
+  int M = 83;
+
+  Eigen::MatrixXd a = Eigen::MatrixXd::Constant(N, M, 1.0) + Eigen::MatrixXd::Random(N, M);
+  double b = 0.3;
+  stan::math::test::compare_cpu_opencl_prim_rev(lbeta_functor, a, b);
+  stan::math::test::compare_cpu_opencl_prim_rev(lbeta_functor, b, a);
+}
+
 #endif
