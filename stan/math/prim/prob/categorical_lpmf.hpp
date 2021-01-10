@@ -40,7 +40,7 @@ return_type_t<T_prob> categorical_lpmf(const T_n& n, const T_prob& theta) {
     return 0.0;
   }
 
-  if(size_mvt(theta_ref) > 1) {
+  if (size_mvt(theta_ref) > 1) {
     check_consistent_sizes(function, "Integers", n, "Probabilities", theta_ref);
   }
 

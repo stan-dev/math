@@ -305,7 +305,7 @@ TEST(ProbDistributionsOrderedLogistic, vecRNG_throw) {
     etas << 1.0, 2.0;
     Eigen::VectorXd cuts(4);
     cuts << 1.0, 2.0, 3.0, 4.0;
-    std::vector<Eigen::VectorXd> svec_cuts = { cuts, cuts };
+    std::vector<Eigen::VectorXd> svec_cuts = {cuts, cuts};
     EXPECT_NO_THROW(ordered_logistic_rng(etas, cuts, rng));
     EXPECT_NO_THROW(ordered_logistic_rng(etas, svec_cuts, rng));
     svec_cuts = {cuts, cuts, cuts};
