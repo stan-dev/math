@@ -9,6 +9,7 @@
 #include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
@@ -54,9 +55,9 @@ return_type_t<T_y, T_shape, T_scale> frechet_cdf(const T_y& y,
   size_t N = max_size(y_ref, sigma_ref, alpha_ref);
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
-    const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
+    const T_partials_return y_dbl = y_vec.val(n);
+    const T_partials_return sigma_dbl = sigma_vec.val(n);
+    const T_partials_return alpha_dbl = alpha_vec.val(n);
     const T_partials_return pow_n = pow(sigma_dbl / y_dbl, alpha_dbl);
     const T_partials_return cdf_n = exp(-pow_n);
 
