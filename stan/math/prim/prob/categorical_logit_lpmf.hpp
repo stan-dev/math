@@ -35,15 +35,16 @@ return_type_t<T_prob> categorical_logit_lpmf(const T_n& n, const T_prob& beta) {
   scalar_seq_view<T_n> n_vec(n);
   vector_seq_view<ref_type_t<T_prob>> beta_vec(beta_ref);
 
-  size_t vec_size
-      = std::max(stan::math::size(n), stan::math::size_mvt(beta_ref));
+  size_t vec_size = std::max(size(n), size_mvt(beta_ref));
 
-  if (!include_summand<propto, T_prob>::value || stan::math::size(n) == 0) {
+  if (!include_summand<propto, T_prob>::value || size(n) == 0) {
     return 0.0;
   }
 
-  check_consistent_sizes(function, "Integers", n, "Probabilities",
-			 beta_ref);
+  if(size_mvt(beta_ref) > 1) {
+    check_consistent_sizes(function, "Integers", n, "Probabilities",
+			   beta_ref);
+  }
 
   for (size_t i = 0; i < vec_size; ++i) {
     check_bounded(function, "categorical outcome out of support", n_vec[i], 1,

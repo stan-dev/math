@@ -188,8 +188,8 @@ TEST(ProbDistributionsCategorical, categorical_vecRNG_throw) {
 }
 
 TEST(ProbDistributionsCategorical, error_vec) {
-  Eigen::VectorXd beta1 = stan::math::softmax(Eigen::VectorXd::Random(3));
-  Eigen::VectorXd beta2 = stan::math::softmax(Eigen::VectorXd::Random(3));
+  Eigen::VectorXd beta1 = stan::math::softmax(Eigen::VectorXd::Random(4));
+  Eigen::VectorXd beta2 = stan::math::softmax(Eigen::VectorXd::Random(4));
   std::vector<Eigen::VectorXd> betas = { beta1, beta2 };
 
   double inf = std::numeric_limits<double>::infinity();
@@ -200,6 +200,7 @@ TEST(ProbDistributionsCategorical, error_vec) {
     EXPECT_THROW(stan::math::categorical_lpmf(ns, betas), std::invalid_argument);
     ns = { 1, 2, 3 };
     EXPECT_THROW(stan::math::categorical_lpmf(ns, betas), std::invalid_argument);
+    EXPECT_NO_THROW(stan::math::categorical_lpmf(ns, beta1));
   }
     
   // Check bounded

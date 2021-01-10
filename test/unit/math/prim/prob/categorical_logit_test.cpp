@@ -86,8 +86,6 @@ TEST(ProbDistributionsCategoricalLogit, error) {
   std::vector<int> ns(2);
   ns[0] = 1;
   ns[1] = 2;
-  EXPECT_THROW(categorical_logit_log(ns, theta), std::invalid_argument);
-
   Eigen::VectorXd theta2(2);
   theta2 << 0.3, 0.5;
   EXPECT_NO_THROW(categorical_logit_log(ns, theta2));
@@ -101,8 +99,8 @@ TEST(ProbDistributionsCategoricalLogit, error) {
 }
 
 TEST(ProbDistributionsCategoricalLogit, error_vec) {
-  Eigen::VectorXd beta1 = Eigen::VectorXd::Random(3);
-  Eigen::VectorXd beta2 = Eigen::VectorXd::Random(3);
+  Eigen::VectorXd beta1 = Eigen::VectorXd::Random(4);
+  Eigen::VectorXd beta2 = Eigen::VectorXd::Random(4);
   std::vector<Eigen::VectorXd> betas = { beta1, beta2 };
 
   double inf = std::numeric_limits<double>::infinity();
@@ -113,6 +111,7 @@ TEST(ProbDistributionsCategoricalLogit, error_vec) {
     EXPECT_THROW(stan::math::categorical_logit_lpmf(ns, betas), std::invalid_argument);
     ns = { 1, 2, 3 };
     EXPECT_THROW(stan::math::categorical_logit_lpmf(ns, betas), std::invalid_argument);
+    EXPECT_NO_THROW(stan::math::categorical_logit_lpmf(ns, beta1));
   }
     
   // Check bounded

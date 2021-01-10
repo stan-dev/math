@@ -34,15 +34,16 @@ return_type_t<T_prob> categorical_lpmf(const T_n& n, const T_prob& theta) {
   scalar_seq_view<T_n> n_vec(n);
   vector_seq_view<ref_type_t<T_prob>> theta_vec(theta_ref);
 
-  size_t vec_size
-      = std::max(stan::math::size(n), stan::math::size_mvt(theta_ref));
+  size_t vec_size = std::max(size(n), size_mvt(theta_ref));
 
-  if (!include_summand<propto, T_prob>::value || stan::math::size(n) == 0) {
+  if (!include_summand<propto, T_prob>::value || size(n) == 0) {
     return 0.0;
   }
 
-  check_consistent_sizes(function, "Integers", n, "Probabilities", theta_ref);
-  
+  if(size_mvt(theta_ref) > 1) {
+    check_consistent_sizes(function, "Integers", n, "Probabilities", theta_ref);
+  }
+
   for (size_t i = 0; i < vec_size; ++i) {
     check_bounded(function, "Number of categories", n_vec[i], 1, theta_vec[i].size());
     check_simplex(function, "Probabilities parameter", theta_vec[i]);

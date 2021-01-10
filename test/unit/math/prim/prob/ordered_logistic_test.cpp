@@ -238,7 +238,7 @@ TEST(ProbDistributionOrderedLogistic, chiSquareGoodnessFitTest) {
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
 }
 
-TEST(ProbDistributions, ordered_logistic_vecRNG) {
+TEST(ProbDistributionsOrderedLogistic, vecRNG) {
   using stan::math::ordered_logistic_rng;
   boost::random::mt19937 rng;
   Eigen::VectorXd eta_vec(3);
@@ -273,7 +273,7 @@ TEST(ProbDistributions, ordered_logistic_vecRNG) {
   }
 }
 
-TEST(ProbDistributions, ordered_logistic_vecRNG_throw) {
+TEST(ProbDistributionsOrderedLogistic, vecRNG_throw) {
   using stan::math::ordered_logistic_rng;
   boost::random::mt19937 rng;
 
@@ -305,6 +305,7 @@ TEST(ProbDistributions, ordered_logistic_vecRNG_throw) {
     Eigen::VectorXd cuts(4);
     cuts << 1.0, 2.0, 3.0, 4.0;
     std::vector<Eigen::VectorXd> svec_cuts = { cuts, cuts };
+    EXPECT_NO_THROW(ordered_logistic_rng(etas, cuts, rng));
     EXPECT_NO_THROW(ordered_logistic_rng(etas, svec_cuts, rng));
     svec_cuts = { cuts, cuts, cuts };
     EXPECT_THROW(ordered_logistic_rng(etas, svec_cuts, rng), std::invalid_argument);
