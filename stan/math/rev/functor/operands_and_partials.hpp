@@ -31,7 +31,7 @@ class ops_partials_edge<double, var> {
   double partial_;
   broadcast_array<double> partials_;
   explicit ops_partials_edge(const var& op) noexcept
-       : partial_(0), partials_(partial_), operand_(op) {}
+      : partial_(0), partials_(partial_), operand_(op) {}
 
  private:
   template <typename, typename, typename, typename, typename, typename>
@@ -39,7 +39,7 @@ class ops_partials_edge<double, var> {
   const var& operand_;
 
   inline void dump_partials(double* partials) const noexcept {
-     *partials = this->partial_;
+    *partials = this->partial_;
   }
   inline void dump_operands(vari** varis) const noexcept {
     *varis = this->operand_.vi_;
@@ -165,9 +165,9 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
    */
   template <typename... Ops, typename... Partials>
   inline auto* return_vari(double value, size_t edges_size, vari** varis,
-                    double* partials,
-                    const std::tuple<Ops...>& container_operands,
-                    const std::tuple<Partials...>& container_partials) {
+                           double* partials,
+                           const std::tuple<Ops...>& container_operands,
+                           const std::tuple<Partials...>& container_partials) {
     return new precomputed_gradients_vari_template<
         std::tuple<arena_t<Ops>...>, std::tuple<arena_t<Partials>...>>(
         value, edges_size, varis, partials, container_operands,
@@ -380,7 +380,8 @@ class ops_partials_edge<double, std::vector<var_value<Op>>,
   inline void dump_operands(vari** varis) const noexcept {}
   inline void dump_partials(double* partials) const noexcept {}
   static constexpr int size() { return 0; }
-  inline std::tuple<const std::vector<var_value<Op>>&> container_operands() noexcept {
+  inline std::tuple<const std::vector<var_value<Op>>&>
+  container_operands() noexcept {
     return std::forward_as_tuple(operands_);
   }
   inline std::tuple<partials_t&> container_partials() noexcept {

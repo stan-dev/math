@@ -49,10 +49,12 @@ class ops_partials_edge {
   template <typename, typename, typename, typename, typename, typename>
   friend class stan::math::operands_and_partials;
 
-  inline void dump_partials(ViewElt* /* partials */) const noexcept {}  // reverse mode
-  inline void dump_operands(void* /* operands */) const noexcept {}     // reverse mode
-  static constexpr ViewElt dx() { return 0; }                      // used for fvars
-  static constexpr int size() { return 0; }                        // reverse mode
+  inline void dump_partials(ViewElt* /* partials */) const noexcept {
+  }  // reverse mode
+  inline void dump_operands(void* /* operands */) const noexcept {
+  }                                            // reverse mode
+  static constexpr ViewElt dx() { return 0; }  // used for fvars
+  static constexpr int size() { return 0; }    // reverse mode
   static constexpr std::tuple<> container_operands() { return std::tuple<>(); }
   static constexpr std::tuple<> container_partials() { return std::tuple<>(); }
 };
@@ -150,9 +152,11 @@ class ops_partials_edge<ViewElt, Op, require_eigen_st<std::is_arithmetic, Op>> {
   template <typename, typename, typename, typename, typename, typename>
   friend class stan::math::operands_and_partials;
 
-  inline void dump_partials(double* /* partials */) const noexcept {}  // reverse mode
-  inline void dump_operands(void* /* operands */) const noexcept {}    // reverse mode
-  static constexpr double dx() { return 0; }                      // used for fvars
+  inline void dump_partials(double* /* partials */) const noexcept {
+  }  // reverse mode
+  inline void dump_operands(void* /* operands */) const noexcept {
+  }                                           // reverse mode
+  static constexpr double dx() { return 0; }  // used for fvars
   static constexpr int size() { return 0; }
   static constexpr std::tuple<> container_operands() { return std::tuple<>(); }
   static constexpr std::tuple<> container_partials() { return std::tuple<>(); }
@@ -174,9 +178,11 @@ class ops_partials_edge<ViewElt, std::vector<Eigen::Matrix<Op, R, C>>> {
   template <typename, typename, typename, typename, typename, typename>
   friend class stan::math::operands_and_partials;
 
-  inline void dump_partials(double* /* partials */) const noexcept {}  // reverse mode
-  inline void dump_operands(void* /* operands */) const noexcept {}    // reverse mode
-  static constexpr double dx() { return 0; }              // used for fvars
+  inline void dump_partials(double* /* partials */) const noexcept {
+  }  // reverse mode
+  inline void dump_operands(void* /* operands */) const noexcept {
+  }                                           // reverse mode
+  static constexpr double dx() { return 0; }  // used for fvars
   static constexpr int size() { return 0; }
   static constexpr std::tuple<> container_operands() { return std::tuple<>(); }
   static constexpr std::tuple<> container_partials() { return std::tuple<>(); }
@@ -193,15 +199,18 @@ class ops_partials_edge<ViewElt, std::vector<std::vector<Op>>> {
   partials_t partials_;
   empty_broadcast_array<partials_t, std::vector<std::vector<Op>>> partials_vec_;
   ops_partials_edge() noexcept {}
-  explicit ops_partials_edge(const std::vector<std::vector<Op>>& /* ops */) noexcept {}
+  explicit ops_partials_edge(
+      const std::vector<std::vector<Op>>& /* ops */) noexcept {}
 
  private:
   template <typename, typename, typename, typename, typename, typename>
   friend class stan::math::operands_and_partials;
 
-  inline void dump_partials(double* /* partials */) const noexcept {}  // reverse mode
-  inline void dump_operands(void* /* operands */) const noexcept {}    // reverse mode
-  static constexpr double dx() { return 0; }                    // used for fvar
+  inline void dump_partials(double* /* partials */) const noexcept {
+  }  // reverse mode
+  inline void dump_operands(void* /* operands */) const noexcept {
+  }                                           // reverse mode
+  static constexpr double dx() { return 0; }  // used for fvar
   static constexpr int size() { return 0; }
   static constexpr std::tuple<> container_operands() { return std::tuple<>(); }
   static constexpr std::tuple<> container_partials() { return std::tuple<>(); }
