@@ -113,17 +113,19 @@ TEST(ProbDistributionsCategoricalLogit, error_vec) {
     EXPECT_THROW(stan::math::categorical_logit_lpmf(ns, betas), std::invalid_argument);
     EXPECT_NO_THROW(stan::math::categorical_logit_lpmf(ns, beta1));
   }
-    
+
   // Check bounded
   {
-    std::vector<int> ns = { 1, 10000 };
-    EXPECT_THROW(stan::math::categorical_logit_lpmf(ns, betas), std::domain_error);
+    std::vector<int> ns = {1, 10000};
+    EXPECT_THROW(stan::math::categorical_logit_lpmf(ns, betas),
+                 std::domain_error);
   }
 
   // Check finite
   {
     std::vector<Eigen::VectorXd> betas_inf = betas;
     betas_inf[1](0) = inf;
-    EXPECT_THROW(stan::math::categorical_logit_lpmf(1, betas_inf), std::domain_error);
+    EXPECT_THROW(stan::math::categorical_logit_lpmf(1, betas_inf),
+                 std::domain_error);
   }
 }

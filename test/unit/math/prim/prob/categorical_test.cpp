@@ -202,10 +202,10 @@ TEST(ProbDistributionsCategorical, error_vec) {
     EXPECT_THROW(stan::math::categorical_lpmf(ns, betas), std::invalid_argument);
     EXPECT_NO_THROW(stan::math::categorical_lpmf(ns, beta1));
   }
-    
+
   // Check bounded
   {
-    std::vector<int> ns = { 1, 10000 };
+    std::vector<int> ns = {1, 10000};
     EXPECT_THROW(stan::math::categorical_lpmf(ns, betas), std::domain_error);
   }
 
@@ -215,6 +215,7 @@ TEST(ProbDistributionsCategorical, error_vec) {
     betas_not_simplex[1](0) = 2.0;
     betas_not_simplex[1](1) = 0.0;
     betas_not_simplex[1](2) = 0.0;
-    EXPECT_THROW(stan::math::categorical_lpmf(1, betas_not_simplex), std::domain_error);
+    EXPECT_THROW(stan::math::categorical_lpmf(1, betas_not_simplex),
+                 std::domain_error);
   }
 }

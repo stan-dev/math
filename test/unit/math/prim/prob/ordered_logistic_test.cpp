@@ -293,8 +293,9 @@ TEST(ProbDistributionsOrderedLogistic, vecRNG_throw) {
                std::domain_error);
 
   // Cut points must be larger than size zero
-  EXPECT_THROW(ordered_logistic_rng(eta_vec, std_vec_zero, rng), std::domain_error);
-  
+  EXPECT_THROW(ordered_logistic_rng(eta_vec, std_vec_zero, rng),
+               std::domain_error);
+
   EXPECT_THROW(ordered_logistic_rng(eig_vec_zero, std_vec_zero, rng),
                std::domain_error);
 
@@ -307,13 +308,14 @@ TEST(ProbDistributionsOrderedLogistic, vecRNG_throw) {
     std::vector<Eigen::VectorXd> svec_cuts = { cuts, cuts };
     EXPECT_NO_THROW(ordered_logistic_rng(etas, cuts, rng));
     EXPECT_NO_THROW(ordered_logistic_rng(etas, svec_cuts, rng));
-    svec_cuts = { cuts, cuts, cuts };
-    EXPECT_THROW(ordered_logistic_rng(etas, svec_cuts, rng), std::invalid_argument);
+    svec_cuts = {cuts, cuts, cuts};
+    EXPECT_THROW(ordered_logistic_rng(etas, svec_cuts, rng),
+                 std::invalid_argument);
   }
 
   // Size of cutpoints in vector
   {
-    std::vector<Eigen::VectorXd> svec_zero = { eig_vec_zero };
+    std::vector<Eigen::VectorXd> svec_zero = {eig_vec_zero};
     EXPECT_THROW(ordered_logistic_rng(1.0, svec_zero, rng), std::domain_error);
   }
 
@@ -321,7 +323,7 @@ TEST(ProbDistributionsOrderedLogistic, vecRNG_throw) {
   {
     Eigen::VectorXd cuts(4);
     cuts << 1.0, 0.0, 2.0, 3.0;
-    std::vector<Eigen::VectorXd> svec_cuts = { cuts };
+    std::vector<Eigen::VectorXd> svec_cuts = {cuts};
     EXPECT_THROW(ordered_logistic_rng(1.0, svec_cuts, rng), std::domain_error);
   }
 
@@ -331,7 +333,7 @@ TEST(ProbDistributionsOrderedLogistic, vecRNG_throw) {
   {
     Eigen::VectorXd cuts(4);
     cuts << 1.0, 2.0, 3.0, inf;
-    std::vector<Eigen::VectorXd> svec_cuts = { cuts };
+    std::vector<Eigen::VectorXd> svec_cuts = {cuts};
     EXPECT_THROW(ordered_logistic_rng(1.0, svec_cuts, rng), std::domain_error);
   }
 
@@ -339,7 +341,7 @@ TEST(ProbDistributionsOrderedLogistic, vecRNG_throw) {
   {
     Eigen::VectorXd cuts(4);
     cuts << -inf, 1.0, 2.0, 3.0;
-    std::vector<Eigen::VectorXd> svec_cuts = { cuts };
+    std::vector<Eigen::VectorXd> svec_cuts = {cuts};
     EXPECT_THROW(ordered_logistic_rng(1.0, svec_cuts, rng), std::domain_error);
   }
 
@@ -349,7 +351,7 @@ TEST(ProbDistributionsOrderedLogistic, vecRNG_throw) {
     etas << inf, inf;
     Eigen::VectorXd cuts(4);
     cuts << 1.0, 2.0, 3.0, 4.0;
-    std::vector<Eigen::VectorXd> svec_cuts = { cuts, cuts };
+    std::vector<Eigen::VectorXd> svec_cuts = {cuts, cuts};
     EXPECT_THROW(ordered_logistic_rng(etas, svec_cuts, rng), std::domain_error);
   }
 }
