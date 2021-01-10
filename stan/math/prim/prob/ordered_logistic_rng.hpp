@@ -5,6 +5,8 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/inv_logit.hpp>
 #include <stan/math/prim/prob/categorical_rng.hpp>
+#include <stan/math/prim/fun/vector_seq_view.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <boost/random/variate_generator.hpp>
 
 namespace stan {

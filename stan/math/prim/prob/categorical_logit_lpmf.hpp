@@ -9,6 +9,8 @@
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/size_mvt.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/fun/vector_seq_view.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <vector>
 
 namespace stan {

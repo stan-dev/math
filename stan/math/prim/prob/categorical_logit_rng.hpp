@@ -7,6 +7,8 @@
 #include <stan/math/prim/fun/softmax.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/size_mvt.hpp>
+#include <stan/math/prim/fun/vector_seq_view.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
 
