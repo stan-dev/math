@@ -20,7 +20,7 @@ class broadcast_array {
  public:
   explicit broadcast_array(T& prim) : prim_(prim) {}
 
-  inline T& operator[](int /*i*/) noexcept { return prim_; }
+  inline T& operator[](size_t /*i*/) noexcept { return prim_; }
 
   /** \ingroup type_trait
    * Broadcast array can be assigned a scalar or a vector. If assigned a scalar,
