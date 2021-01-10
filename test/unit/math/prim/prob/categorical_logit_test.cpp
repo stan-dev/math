@@ -86,15 +86,45 @@ TEST(ProbDistributionsCategoricalLogit, error) {
   std::vector<int> ns(2);
   ns[0] = 1;
   ns[1] = 2;
-  EXPECT_THROW(categorical_logit_log(ns, theta), std::domain_error);
+  EXPECT_THROW(categorical_logit_log(ns, theta), std::invalid_argument);
 
-  theta << 0.3, 0.5, 0.2;
-  EXPECT_NO_THROW(categorical_logit_log(ns, theta));
+  Eigen::VectorXd theta2(2);
+  theta2 << 0.3, 0.5;
+  EXPECT_NO_THROW(categorical_logit_log(ns, theta2));
 
   ns[0] = -1;
-  EXPECT_THROW(categorical_logit_log(ns, theta), std::domain_error);
+  EXPECT_THROW(categorical_logit_log(ns, theta2), std::domain_error);
 
   ns[0] = 1;
   ns[1] = 12;
-  EXPECT_THROW(categorical_logit_log(ns, theta), std::domain_error);
+  EXPECT_THROW(categorical_logit_log(ns, theta2), std::domain_error);
+}
+
+TEST(ProbDistributionsCategoricalLogit, error_vec) {
+  Eigen::VectorXd beta1 = Eigen::VectorXd::Random(3);
+  Eigen::VectorXd beta2 = Eigen::VectorXd::Random(3);
+  std::vector<Eigen::VectorXd> betas = { beta1, beta2 };
+
+  double inf = std::numeric_limits<double>::infinity();
+
+  // Check consistent sizes
+  {
+    std::vector<int> ns = { 1 };
+    EXPECT_THROW(stan::math::categorical_logit_lpmf(ns, betas), std::invalid_argument);
+    ns = { 1, 2, 3 };
+    EXPECT_THROW(stan::math::categorical_logit_lpmf(ns, betas), std::invalid_argument);
+  }
+    
+  // Check bounded
+  {
+    std::vector<int> ns = { 1, 10000 };
+    EXPECT_THROW(stan::math::categorical_logit_lpmf(ns, betas), std::domain_error);
+  }
+
+  // Check finite
+  {
+    std::vector<Eigen::VectorXd> betas_inf = betas;
+    betas_inf[1](0) = inf;
+    EXPECT_THROW(stan::math::categorical_logit_lpmf(1, betas_inf), std::domain_error);
+  }
 }

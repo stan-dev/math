@@ -288,10 +288,67 @@ TEST(ProbDistributions, ordered_logistic_vecRNG_throw) {
   Eigen::VectorXd eig_vec_zero(0);
   std::vector<Eigen::VectorXd> std_vec_zero(0);
 
-  EXPECT_THROW(ordered_logistic_rng(eta_vec, std_vec_zero, rng),
-               std::domain_error);
+  // Eta must have more than zero elements
   EXPECT_THROW(ordered_logistic_rng(eig_vec_zero, cuts, rng),
                std::domain_error);
+
+  // Cut points must be larger than size zero
+  EXPECT_THROW(ordered_logistic_rng(eta_vec, std_vec_zero, rng), std::domain_error);
+  
   EXPECT_THROW(ordered_logistic_rng(eig_vec_zero, std_vec_zero, rng),
                std::domain_error);
+
+  // Consistent sizes
+  {
+    Eigen::VectorXd etas(2);
+    etas << 1.0, 2.0;
+    Eigen::VectorXd cuts(4);
+    cuts << 1.0, 2.0, 3.0, 4.0;
+    std::vector<Eigen::VectorXd> svec_cuts = { cuts, cuts };
+    EXPECT_NO_THROW(ordered_logistic_rng(etas, svec_cuts, rng));
+    svec_cuts = { cuts, cuts, cuts };
+    EXPECT_THROW(ordered_logistic_rng(etas, svec_cuts, rng), std::invalid_argument);
+  }
+
+  // Size of cutpoints in vector
+  {
+    std::vector<Eigen::VectorXd> svec_zero = { eig_vec_zero };
+    EXPECT_THROW(ordered_logistic_rng(1.0, svec_zero, rng), std::domain_error);
+  }
+
+  // Cutpoints ordered in vector
+  {
+    Eigen::VectorXd cuts(4);
+    cuts << 1.0, 0.0, 2.0, 3.0;
+    std::vector<Eigen::VectorXd> svec_cuts = { cuts };
+    EXPECT_THROW(ordered_logistic_rng(1.0, svec_cuts, rng), std::domain_error);
+  }
+
+  double inf = std::numeric_limits<double>::infinity();
+
+  // Cutpoints right end finite
+  {
+    Eigen::VectorXd cuts(4);
+    cuts << 1.0, 2.0, 3.0, inf;
+    std::vector<Eigen::VectorXd> svec_cuts = { cuts };
+    EXPECT_THROW(ordered_logistic_rng(1.0, svec_cuts, rng), std::domain_error);
+  }
+
+  // Cutpoints left end finite
+  {
+    Eigen::VectorXd cuts(4);
+    cuts << -inf, 1.0, 2.0, 3.0;
+    std::vector<Eigen::VectorXd> svec_cuts = { cuts };
+    EXPECT_THROW(ordered_logistic_rng(1.0, svec_cuts, rng), std::domain_error);
+  }
+
+  // Locations finite
+  {
+    Eigen::VectorXd etas(2);
+    etas << inf, inf;
+    Eigen::VectorXd cuts(4);
+    cuts << 1.0, 2.0, 3.0, 4.0;
+    std::vector<Eigen::VectorXd> svec_cuts = { cuts, cuts };
+    EXPECT_THROW(ordered_logistic_rng(etas, svec_cuts, rng), std::domain_error);
+  }
 }
