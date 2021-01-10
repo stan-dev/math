@@ -44,6 +44,72 @@ inline var_value<matrix_cl<double>> elt_divide(T_a&& a, T_b&& b) {
       });
 }
 
+/**
+ * Elementwise division of a reverse mode matrices and a scalar.
+ * @tparam T_a type of kernel generator expression
+ * @tparam T_b type of scalar
+ * @param a kernel generator expression
+ * @param b scalar
+ * @return Elementwise division of the input arguments
+ */
+template <
+    typename T_a, typename T_b,
+    require_nonscalar_prim_or_rev_kernel_expression_t<T_a>* = nullptr,
+    require_stan_scalar_t<T_b>* = nullptr,
+    require_any_var_t<T_a, T_b>* = nullptr>
+inline var_value<matrix_cl<double>> elt_divide(T_a&& a, T_b&& b) {
+  arena_t<T_a> a_arena = std::forward<T_a>(a);
+  arena_t<T_b> b_arena = std::forward<T_b>(b);
+
+  matrix_cl<double> res_val = elt_divide(value_of(a_arena), value_of(b_arena));
+
+  return make_callback_var(
+      res_val,
+      [a_arena, b_arena](const vari_value<matrix_cl<double>>& res) mutable {
+        if (!is_constant<T_a>::value) {
+          auto& a_adj = forward_as<var_value<matrix_cl<double>>>(a_arena).adj();
+          a_adj = a_adj + elt_divide(res.adj(), value_of(b_arena));
+        }
+        if (!is_constant<T_b>::value) {
+          auto& b_adj = forward_as<var_value<double>>(b_arena).adj();
+          b_adj = b_adj - sum(elt_divide(res.val(), value_of(b_arena)));
+        }
+      });
+}
+
+/**
+ * Elementwise division of a scalar and a reverse mode matrix.
+ * @tparam T_a type of scalar
+ * @tparam T_b type of kernel generator expression
+ * @param a scalar
+ * @param b kernel generator expression
+ * @return Elementwise division of the input arguments
+ */
+template <
+    typename T_a, typename T_b,
+    require_nonscalar_prim_or_rev_kernel_expression_t<T_b>* = nullptr,
+    require_stan_scalar_t<T_a>* = nullptr,
+    require_any_var_t<T_a, T_b>* = nullptr>
+inline var_value<matrix_cl<double>> elt_divide(T_a&& a, T_b&& b) {
+  arena_t<T_a> a_arena = std::forward<T_a>(a);
+  arena_t<T_b> b_arena = std::forward<T_b>(b);
+
+  matrix_cl<double> res_val = elt_divide(value_of(a_arena), value_of(b_arena));
+
+  return make_callback_var(
+      res_val,
+      [a_arena, b_arena](const vari_value<matrix_cl<double>>& res) mutable {
+        if (!is_constant<T_a>::value) {
+          auto& a_adj = forward_as<var_value<double>>(a_arena).adj();
+          a_adj = a_adj + sum(elt_divide(res.adj(), value_of(b_arena)));
+        }
+        if (!is_constant<T_b>::value) {
+          auto& b_adj = forward_as<var_value<matrix_cl<double>>>(b_arena).adj();
+          b_adj = b_adj - elt_divide(res.val(), value_of(b_arena));
+        }
+      });
+}
+
 }  // namespace math
 }  // namespace stan
 
