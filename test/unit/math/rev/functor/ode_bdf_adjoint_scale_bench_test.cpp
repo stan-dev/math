@@ -37,7 +37,7 @@ struct scaling_rhs {
       dydt(a) = +k12[i] * y(m) - k21[i] * y(a);
 
       if (i != 0) {
-        dydt(m) += ksat[i-1] * y(2 * (i - 1));
+        dydt(m) += ksat[i - 1] * y(2 * (i - 1));
       }
     }
     return dydt;
