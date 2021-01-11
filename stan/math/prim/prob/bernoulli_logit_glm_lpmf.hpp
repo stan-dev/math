@@ -80,7 +80,7 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   }
 
   const auto& y_ref = to_ref(y);
-  check_bounded(function, "Vector of dependent variables", y_ref, 0, 1);
+  check_bounded(function, "Vector of dependent variables", value_of(y_ref), 0, 1);
 
   if (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
     return 0;

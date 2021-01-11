@@ -60,7 +60,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lccdf(
   T_beta_ref beta_ref = beta_param;
   check_positive_finite(function, "First shape parameter", alpha_ref);
   check_positive_finite(function, "Second shape parameter", beta_ref);
-  check_bounded(function, "Random variable", y_ref, 0, 1);
+  check_bounded(function, "Random variable", value_of(y_ref), 0, 1);
 
   T_partials_return ccdf_log(0.0);
   operands_and_partials<T_y_ref, T_alpha_ref, T_beta_ref> ops_partials(
