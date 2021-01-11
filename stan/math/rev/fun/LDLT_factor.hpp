@@ -24,8 +24,7 @@ class LDLT_factor<T, require_eigen_matrix_dynamic_vt<is_var, T>> {
   template <typename S,
             require_same_t<plain_type_t<T>, plain_type_t<S>>* = nullptr>
   explicit LDLT_factor(const S& matrix)
-      : matrix_(matrix),
-        ldlt_(matrix.val().ldlt()) {}
+      : matrix_(matrix), ldlt_(matrix.val().ldlt()) {}
 
   /**
    * Return a const reference to the underlying matrix
@@ -35,7 +34,7 @@ class LDLT_factor<T, require_eigen_matrix_dynamic_vt<is_var, T>> {
   /**
    * Return a const reference to the LDLT factor of the matrix values
    */
-   const auto& ldlt() const noexcept { return ldlt_; }
+  const auto& ldlt() const noexcept { return ldlt_; }
 };
 
 /**
@@ -52,8 +51,7 @@ class LDLT_factor<T, require_var_matrix_t<T>> {
   template <typename S,
             require_same_t<plain_type_t<T>, plain_type_t<S>>* = nullptr>
   explicit LDLT_factor(const S& matrix)
-      : matrix_(matrix),
-       ldlt_(matrix.val().ldlt()) {}
+      : matrix_(matrix), ldlt_(matrix.val().ldlt()) {}
 
   /**
    * Return a const reference the underlying `var_value`
@@ -63,7 +61,7 @@ class LDLT_factor<T, require_var_matrix_t<T>> {
   /**
    * Return a const reference to the LDLT factor of the matrix values
    */
-   const auto& ldlt() const noexcept { return ldlt_; }
+  const auto& ldlt() const noexcept { return ldlt_; }
 };
 
 }  // namespace math
