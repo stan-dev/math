@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -61,13 +62,13 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
 
   VectorBuilder<true, T_partials_return, T_location> mu_val(size_mu);
   for (size_t i = 0; i < size_mu; ++i) {
-    mu_val[i] = value_of(mu_vec[i]);
+    mu_val[i] = mu_vec.val(i);
   }
 
   VectorBuilder<true, T_partials_return, T_precision> phi_val(size_phi);
   VectorBuilder<true, T_partials_return, T_precision> log_phi(size_phi);
   for (size_t i = 0; i < size_phi; ++i) {
-    phi_val[i] = value_of(phi_vec[i]);
+    phi_val[i] = phi_vec.val(i);
     log_phi[i] = log(phi_val[i]);
   }
 
