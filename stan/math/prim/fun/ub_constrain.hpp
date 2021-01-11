@@ -32,7 +32,10 @@ template <typename T, typename L>
 inline auto ub_constrain(const T& x, const L& ub) {
   const auto& ub_ref = to_ref(ub);
   check_finite("ub_constrain", "ub", value_of(ub_ref));
-  return eval(subtract(ub_ref, exp(x)));
+
+  return make_holder([&x](const auto& ub_ref) {
+      return subtract(ub_ref, exp(x));
+    }, std::move(ub_ref));
 }
 
 /**
@@ -62,7 +65,10 @@ inline auto ub_constrain(const T& x, const L& ub, return_type_t<T, L>& lp) {
   const auto& x_ref = to_ref(x);
   check_finite("ub_constrain", "ub", value_of(ub_ref));
   lp += sum(x_ref);
-  return eval(subtract(ub_ref, exp(x_ref)));
+
+  return make_holder([](const auto& x_ref, const auto& ub_ref) {
+      return subtract(ub_ref, exp(x_ref));
+    }, std::move(x_ref), std::move(ub_ref));
 }
 
 }  // namespace math
