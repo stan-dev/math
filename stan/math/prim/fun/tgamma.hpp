@@ -46,7 +46,8 @@ struct tgamma_fun {
  * @return Gamma function applied to each value in x.
  * @throw std::domain_error if any value is 0 or a negative integer
  */
-template <typename T>
+template <typename T, require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+                          T>* = nullptr>
 inline auto tgamma(const T& x) {
   return apply_scalar_unary<tgamma_fun, T>::apply(x);
 }

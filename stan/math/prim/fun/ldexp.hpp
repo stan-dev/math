@@ -33,7 +33,9 @@ inline double ldexp(T1 a, int b) {
  * @param b Second input
  * @return ldexp function applied to the two inputs.
  */
-template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
+template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T1, T2>* = nullptr>
 inline auto ldexp(const T1& a, const T2& b) {
   return apply_scalar_binary(
       a, b, [&](const auto& c, const auto& d) { return ldexp(c, d); });

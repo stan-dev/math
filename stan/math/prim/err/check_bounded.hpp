@@ -6,6 +6,7 @@
 #include <stan/math/prim/err/throw_domain_error_vec.hpp>
 #include <stan/math/prim/fun/get.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <string>
