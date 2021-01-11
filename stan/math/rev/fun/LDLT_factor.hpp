@@ -42,7 +42,7 @@ class LDLT_factor<T, require_eigen_matrix_dynamic_vt<is_var, T>> {
  * holds a copy of the input `var_value` and the LDLT of its values.
  */
 template <typename T>
-class LDLT_factor<T, require_var_matrix_t<T>> {  
+class LDLT_factor<T, require_var_matrix_t<T>> {
  private:
   std::decay_t<T> matrix_;
   Eigen::LDLT<Eigen::MatrixXd> ldlt_;
