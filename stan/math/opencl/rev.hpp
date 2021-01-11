@@ -26,8 +26,11 @@
 #include <stan/math/opencl/rev/crossprod.hpp>
 #include <stan/math/opencl/rev/diag_matrix.hpp>
 #include <stan/math/opencl/rev/diagonal.hpp>
+#include <stan/math/opencl/rev/divide.hpp>
 #include <stan/math/opencl/rev/dot_product.hpp>
 #include <stan/math/opencl/rev/dot_self.hpp>
+#include <stan/math/opencl/rev/elt_divide.hpp>
+#include <stan/math/opencl/rev/elt_multiply.hpp>
 #include <stan/math/opencl/rev/erf.hpp>
 #include <stan/math/opencl/rev/erfc.hpp>
 #include <stan/math/opencl/rev/exp.hpp>
@@ -35,6 +38,7 @@
 #include <stan/math/opencl/rev/expm1.hpp>
 #include <stan/math/opencl/rev/fabs.hpp>
 #include <stan/math/opencl/rev/floor.hpp>
+#include <stan/math/opencl/rev/hypot.hpp>
 #include <stan/math/opencl/rev/inv.hpp>
 #include <stan/math/opencl/rev/inv_cloglog.hpp>
 #include <stan/math/opencl/rev/inv_logit.hpp>
@@ -54,12 +58,16 @@
 #include <stan/math/opencl/rev/log1p_exp.hpp>
 #include <stan/math/opencl/rev/log_inv_logit.hpp>
 #include <stan/math/opencl/rev/log1m_inv_logit.hpp>
+#include <stan/math/opencl/rev/log_inv_logit_diff.hpp>
+#include <stan/math/opencl/rev/log_diff_exp.hpp>
 #include <stan/math/opencl/rev/multiply.hpp>
+#include <stan/math/opencl/rev/multiply_log.hpp>
 #include <stan/math/opencl/rev/operands_and_partials.hpp>
 #include <stan/math/opencl/rev/operator_unary_minus.hpp>
 #include <stan/math/opencl/rev/operator_unary_plus.hpp>
 #include <stan/math/opencl/rev/Phi.hpp>
 #include <stan/math/opencl/rev/Phi_approx.hpp>
+#include <stan/math/opencl/rev/pow.hpp>
 #include <stan/math/opencl/rev/round.hpp>
 #include <stan/math/opencl/rev/rows_dot_product.hpp>
 #include <stan/math/opencl/rev/rows_dot_self.hpp>
@@ -67,6 +75,7 @@
 #include <stan/math/opencl/rev/sinh.hpp>
 #include <stan/math/opencl/rev/sqrt.hpp>
 #include <stan/math/opencl/rev/square.hpp>
+#include <stan/math/opencl/rev/squared_distance.hpp>
 #include <stan/math/opencl/rev/subtract.hpp>
 #include <stan/math/opencl/rev/sum.hpp>
 #include <stan/math/opencl/rev/tan.hpp>
