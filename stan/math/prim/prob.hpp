@@ -297,6 +297,7 @@
 #include <stan/math/prim/prob/scaled_inv_chi_square_log.hpp>
 #include <stan/math/prim/prob/scaled_inv_chi_square_lpdf.hpp>
 #include <stan/math/prim/prob/scaled_inv_chi_square_rng.hpp>
+#include <stan/math/prim/prob/skew_double_exponential_cdf.hpp>
 #include <stan/math/prim/prob/skew_double_exponential_lpdf.hpp>
 #include <stan/math/prim/prob/skew_double_exponential_lcdf.hpp>
 #include <stan/math/prim/prob/skew_double_exponential_lccdf.hpp>

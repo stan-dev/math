@@ -94,8 +94,7 @@ class AgradCdfSkewDoubleExponential : public AgradCdfTest {
   stan::return_type_t<T_y, T_loc, T_scale, T_skewness> cdf(
       const T_y& y, const T_loc& mu, const T_scale& sigma,
       const T_skewness& tau, const T4&, const T5&) {
-    using std::exp;
-    return exp(stan::math::skew_double_exponential_lcdf(y, mu, sigma, tau));
+    return stan::math::skew_double_exponential_cdf(y, mu, sigma, tau);
   }
 
   template <typename T_y, typename T_loc, typename T_scale, typename T_skewness,

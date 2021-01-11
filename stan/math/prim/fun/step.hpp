@@ -64,5 +64,4 @@ inline auto step(const T& x) {
 
 }  // namespace math
 }  // namespace stan
-
 #endif
