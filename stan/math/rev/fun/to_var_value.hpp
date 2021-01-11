@@ -28,13 +28,13 @@ to_var_value(const T& a) {
 }
 
 /**
- * Forward var_values on.
+ * This is a no-op for var_values.
  *
  * @tparam T type of the input
  * @param a matrix to convert
  */
 template <typename T, require_var_t<T>* = nullptr>
-auto to_var_value(T&& a) {
+T to_var_value(T&& a) {
   return std::forward<T>(a);
 }
 
