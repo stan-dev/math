@@ -33,9 +33,8 @@ inline auto lb_constrain(const T& x, const L& lb) {
   const auto& lb_ref = to_ref(lb);
   check_finite("lb_constrain", "lb", value_of(lb_ref));
 
-  return make_holder([&x](const auto& lb_ref) {
-      return add(exp(x), lb_ref);
-    }, std::move(lb_ref));
+  return make_holder([&x](const auto& lb_ref) { return add(exp(x), lb_ref); },
+                     std::move(lb_ref));
 }
 
 /**
@@ -59,9 +58,9 @@ inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
   check_finite("lb_constrain", "lb", value_of(lb_ref));
   lp += sum(x_ref);
 
-  return make_holder([](const auto& x_ref, const auto& lb_ref) {
-      return add(exp(x_ref), lb_ref);
-    }, std::move(x_ref), std::move(lb_ref));
+  return make_holder([](const auto& x_ref,
+                        const auto& lb_ref) { return add(exp(x_ref), lb_ref); },
+                     std::move(x_ref), std::move(lb_ref));
 }
 
 }  // namespace math
