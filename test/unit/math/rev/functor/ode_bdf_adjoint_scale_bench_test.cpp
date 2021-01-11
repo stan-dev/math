@@ -26,19 +26,18 @@ struct scaling_rhs {
     using return_t = stan::return_type_t<T1, T2, T3, T4, T5>;
 
     Eigen::Matrix<return_t, Eigen::Dynamic, 1> dydt(num_states);
+    std::vector<return_t> ksat(num_main_states);
 
     for (std::size_t i = 0; i != num_main_states; ++i) {
       std::size_t m = 2 * i;  // main state
       std::size_t a = m + 1;  // auxilary state
-      return_t ksat = kt[i] * y(m) / (y(m) + e50[i]);
+      ksat[i] = kt[i] * y(m) / (y(m) + e50[i]);
 
-      dydt(m) = -kt[i] * y(m) - k12[i] * y(m) + k21[i] * y(a);
+      dydt(m) = -ksat[i] * y(m) - k12[i] * y(m) + k21[i] * y(a);
       dydt(a) = +k12[i] * y(m) - k21[i] * y(a);
 
       if (i != 0) {
-        return_t ksat_prev
-            = kt[i - 1] * y(2 * (i - 1)) / (y(2 * (i - 1)) + e50[i - i]);
-        dydt(m) += ksat_prev * y(2 * (i - 1));
+        dydt(m) += ksat[i-1] * y(2 * (i - 1));
       }
     }
     return dydt;
@@ -55,7 +54,7 @@ void run_benchmark(std::size_t system_size, int adjoint_integrator) {
 
   double log_sigma = 10.0;
   double abs_tol = 1e-8;
-  double abs_tol_B = abs_tol * 100.0;
+  double abs_tol_B = abs_tol * 10.0;
   double abs_tol_QB = abs_tol_B * 10.0;
   double rel_tol = 1e-6;
   int steps_checkpoint = 100;
@@ -92,7 +91,7 @@ void run_benchmark(std::size_t system_size, int adjoint_integrator) {
         stan::math::grad();
       } else {
         std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> y
-            = ode_bdf_tol(ode, y0, t0, ts, rel_tol, abs_tol, max_num_steps,
+            = ode_bdf_tol(ode, y0, t0, ts, rel_tol, abs_tol_QB, max_num_steps,
                           nullptr, kt, e50, k12, k21);
 
         stan::math::grad();
