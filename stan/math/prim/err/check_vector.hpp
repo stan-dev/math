@@ -22,17 +22,19 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if x is not a row or column
  *   vector.
  */
-template <typename Mat, require_matrix_t<Mat>* = nullptr>
+template <typename Mat,
+          require_any_t<is_matrix<Mat>,
+                        is_prim_or_rev_kernel_expression<Mat>>* = nullptr>
 inline void check_vector(const char* function, const char* name, const Mat& x) {
-  if (x.rows() == 1 || x.cols() == 1) {
-    return;
-  } else {
-    std::ostringstream msg;
-    msg << ") has " << x.rows() << " rows and " << x.cols()
-        << " columns but it should be a vector so it should "
-        << "either have 1 row or 1 column";
-    std::string msg_str(msg.str());
-    invalid_argument(function, name, 0.0, "(", msg_str.c_str());
+  if (!(x.rows() == 1 || x.cols() == 1)) {
+    [&]() STAN_COLD_PATH {
+      std::ostringstream msg;
+      msg << ") has " << x.rows() << " rows and " << x.cols()
+          << " columns but it should be a vector so it should "
+          << "either have 1 row or 1 column";
+      std::string msg_str(msg.str());
+      invalid_argument(function, name, 0.0, "(", msg_str.c_str());
+    }();
   }
 }
 

@@ -23,6 +23,12 @@
 /test/**/*.so
 /test/expressions/*.cpp
 
+# benchmarks
+/benchmarks/*
+!/benchmarks/*.*
+benchmarks/*.cpp
+benchmarks/*.csv
+
 # other binary
 *.o
 *.o-*
@@ -95,4 +101,3 @@ lib/tbb/**
 
 # gdb debug history
 .gdb_history
-

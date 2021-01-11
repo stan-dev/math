@@ -4,17 +4,25 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/opencl/kernels/device_functions/binomial_coefficient_log.hpp>
+#include <stan/math/opencl/kernels/device_functions/beta.hpp>
 #include <stan/math/opencl/kernels/device_functions/digamma.hpp>
+#include <stan/math/opencl/kernels/device_functions/inv_logit.hpp>
+#include <stan/math/opencl/kernels/device_functions/inv_Phi.hpp>
+#include <stan/math/opencl/kernels/device_functions/inv_square.hpp>
 #include <stan/math/opencl/kernels/device_functions/lbeta.hpp>
 #include <stan/math/opencl/kernels/device_functions/lgamma_stirling.hpp>
 #include <stan/math/opencl/kernels/device_functions/lgamma_stirling_diff.hpp>
+#include <stan/math/opencl/kernels/device_functions/log_inv_logit.hpp>
+#include <stan/math/opencl/kernels/device_functions/log_inv_logit_diff.hpp>
+#include <stan/math/opencl/kernels/device_functions/log_diff_exp.hpp>
+#include <stan/math/opencl/kernels/device_functions/log1m.hpp>
 #include <stan/math/opencl/kernels/device_functions/log1m_exp.hpp>
 #include <stan/math/opencl/kernels/device_functions/log1m_inv_logit.hpp>
 #include <stan/math/opencl/kernels/device_functions/log1p_exp.hpp>
 #include <stan/math/opencl/kernels/device_functions/logit.hpp>
 #include <stan/math/opencl/kernels/device_functions/multiply_log.hpp>
-#include <stan/math/opencl/kernels/device_functions/inv_logit.hpp>
-#include <stan/math/opencl/kernels/device_functions/inv_square.hpp>
+#include <stan/math/opencl/kernels/device_functions/Phi.hpp>
+#include <stan/math/opencl/kernels/device_functions/Phi_approx.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/kernel_generator/common_return_scalar.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
@@ -102,7 +110,16 @@ class elt_function_cl : public operation_cl<Derived, Scal, T...> {
     using base::cols;                                                       \
     static const std::vector<const char*> includes;                         \
     explicit fun##_(T1&& a, T2&& b)                                         \
-        : base(#fun, std::forward<T1>(a), std::forward<T2>(b)) {}           \
+        : base(#fun, std::forward<T1>(a), std::forward<T2>(b)) {            \
+      if (a.rows() != base::dynamic && b.rows() != base::dynamic) {         \
+        check_size_match(#fun, "Rows of ", "a", a.rows(), "rows of ", "b",  \
+                         b.rows());                                         \
+      }                                                                     \
+      if (a.cols() != base::dynamic && b.cols() != base::dynamic) {         \
+        check_size_match(#fun, "Columns of ", "a", a.cols(), "columns of ", \
+                         "b", b.cols());                                    \
+      }                                                                     \
+    }                                                                       \
     inline auto deep_copy() const {                                         \
       auto&& arg1_copy = this->template get_arg<0>().deep_copy();           \
       auto&& arg2_copy = this->template get_arg<1>().deep_copy();           \
@@ -213,11 +230,6 @@ class elt_function_cl : public operation_cl<Derived, Scal, T...> {
   class fun##_ : public elt_function_cl<fun##_<T>, bool, T> {                  \
     using base = elt_function_cl<fun##_<T>, bool, T>;                          \
     using base::arguments_;                                                    \
-    static_assert(std::is_floating_point<                                      \
-                      typename std::remove_reference_t<T>::Scalar>::value,     \
-                  #fun                                                         \
-                  ": all arguments must be expression with floating point "    \
-                  "return type!");                                             \
                                                                                \
    public:                                                                     \
     using base::rows;                                                          \
@@ -282,6 +294,9 @@ ADD_UNARY_FUNCTION_PASS_ZERO(trunc)
 
 ADD_UNARY_FUNCTION_WITH_INCLUDES(digamma,
                                  opencl_kernels::digamma_device_function)
+ADD_UNARY_FUNCTION_WITH_INCLUDES(log1m, opencl_kernels::log1m_device_function)
+ADD_UNARY_FUNCTION_WITH_INCLUDES(log_inv_logit,
+                                 opencl_kernels::log_inv_logit_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(log1m_exp,
                                  opencl_kernels::log1m_exp_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(log1p_exp,
@@ -291,8 +306,16 @@ ADD_UNARY_FUNCTION_WITH_INCLUDES(inv_square,
 ADD_UNARY_FUNCTION_WITH_INCLUDES(inv_logit,
                                  opencl_kernels::inv_logit_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(logit, opencl_kernels::logit_device_function)
+ADD_UNARY_FUNCTION_WITH_INCLUDES(Phi, opencl_kernels::phi_device_function)
+ADD_UNARY_FUNCTION_WITH_INCLUDES(Phi_approx,
+                                 opencl_kernels::inv_logit_device_function,
+                                 opencl_kernels::phi_approx_device_function)
+ADD_UNARY_FUNCTION_WITH_INCLUDES(inv_Phi, opencl_kernels::log1m_device_function,
+                                 opencl_kernels::phi_device_function,
+                                 opencl_kernels::inv_phi_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(
     log1m_inv_logit, opencl_kernels::log1m_inv_logit_device_function)
+ADD_UNARY_FUNCTION_WITH_INCLUDES(square, "double square(double x){return x*x;}")
 
 ADD_CLASSIFICATION_FUNCTION(isfinite, {-rows() + 1, cols() - 1})
 ADD_CLASSIFICATION_FUNCTION(isinf,
@@ -300,17 +323,29 @@ ADD_CLASSIFICATION_FUNCTION(isinf,
 ADD_CLASSIFICATION_FUNCTION(isnan,
                             this->template get_arg<0>().extreme_diagonals())
 
+ADD_BINARY_FUNCTION_WITH_INCLUDES(hypot)
+ADD_BINARY_FUNCTION_WITH_INCLUDES(ldexp)
 ADD_BINARY_FUNCTION_WITH_INCLUDES(pow)
+
 ADD_BINARY_FUNCTION_WITH_INCLUDES(
-    lbeta, stan::math::opencl_kernels::lgamma_stirling_device_function,
-    stan::math::opencl_kernels::lgamma_stirling_diff_device_function,
-    stan::math::opencl_kernels::lbeta_device_function)
+    beta, stan::math::opencl_kernels::beta_device_function)
 ADD_BINARY_FUNCTION_WITH_INCLUDES(
     binomial_coefficient_log,
     stan::math::opencl_kernels::lgamma_stirling_device_function,
     stan::math::opencl_kernels::lgamma_stirling_diff_device_function,
     stan::math::opencl_kernels::lbeta_device_function,
     stan::math::opencl_kernels::binomial_coefficient_log_device_function)
+ADD_BINARY_FUNCTION_WITH_INCLUDES(
+    lbeta, stan::math::opencl_kernels::lgamma_stirling_device_function,
+    stan::math::opencl_kernels::lgamma_stirling_diff_device_function,
+    stan::math::opencl_kernels::lbeta_device_function)
+ADD_BINARY_FUNCTION_WITH_INCLUDES(
+    log_inv_logit_diff, opencl_kernels::log1p_exp_device_function,
+    opencl_kernels::log1m_exp_device_function,
+    opencl_kernels::log_inv_logit_diff_device_function)
+ADD_BINARY_FUNCTION_WITH_INCLUDES(log_diff_exp,
+                                  opencl_kernels::log1m_exp_device_function,
+                                  opencl_kernels::log_diff_exp_device_function)
 ADD_BINARY_FUNCTION_WITH_INCLUDES(
     multiply_log, stan::math::opencl_kernels::multiply_log_device_function)
 

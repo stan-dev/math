@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_FUNCTOR_APPLY_VECTOR_UNARY_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/meta/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/meta/is_stan_scalar.hpp>
 #include <stan/math/prim/meta/is_container.hpp>
 #include <stan/math/prim/meta/is_eigen_matrix_base.hpp>
@@ -159,6 +159,12 @@ struct apply_vector_unary<T, require_std_vector_vt<is_stan_scalar, T>> {
   }
 };
 
+namespace internal {
+template <typename T>
+using is_container_or_var_matrix
+    = disjunction<is_container<T>, is_var_matrix<T>>;
+}
+
 /**
  * Specialisation for use with nested containers (std::vectors).
  * For each of the member functions, an std::vector with the appropriate
@@ -170,7 +176,8 @@ struct apply_vector_unary<T, require_std_vector_vt<is_stan_scalar, T>> {
  *
  */
 template <typename T>
-struct apply_vector_unary<T, require_std_vector_vt<is_container, T>> {
+struct apply_vector_unary<
+    T, require_std_vector_vt<internal::is_container_or_var_matrix, T>> {
   using T_vt = value_type_t<T>;
 
   /**

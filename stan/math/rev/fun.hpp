@@ -16,6 +16,8 @@
 #include <stan/math/rev/fun/acos.hpp>
 #include <stan/math/rev/fun/acosh.hpp>
 #include <stan/math/rev/fun/as_bool.hpp>
+#include <stan/math/rev/fun/as_array_or_scalar.hpp>
+#include <stan/math/rev/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/rev/fun/arg.hpp>
 #include <stan/math/rev/fun/asin.hpp>
 #include <stan/math/rev/fun/asinh.hpp>
@@ -29,12 +31,17 @@
 #include <stan/math/rev/fun/cbrt.hpp>
 #include <stan/math/rev/fun/ceil.hpp>
 #include <stan/math/rev/fun/cholesky_decompose.hpp>
+#include <stan/math/rev/fun/cholesky_corr_constrain.hpp>
+#include <stan/math/rev/fun/cholesky_factor_constrain.hpp>
 #include <stan/math/rev/fun/columns_dot_product.hpp>
 #include <stan/math/rev/fun/columns_dot_self.hpp>
 #include <stan/math/rev/fun/conj.hpp>
 #include <stan/math/rev/fun/cos.hpp>
 #include <stan/math/rev/fun/cosh.hpp>
+#include <stan/math/rev/fun/corr_matrix_constrain.hpp>
+#include <stan/math/rev/fun/cov_matrix_constrain.hpp>
 #include <stan/math/rev/fun/cov_exp_quad.hpp>
+#include <stan/math/rev/fun/cov_matrix_constrain_lkj.hpp>
 #include <stan/math/rev/fun/determinant.hpp>
 #include <stan/math/rev/fun/digamma.hpp>
 #include <stan/math/rev/fun/dims.hpp>
@@ -62,6 +69,7 @@
 #include <stan/math/rev/fun/from_var_value.hpp>
 #include <stan/math/rev/fun/gamma_p.hpp>
 #include <stan/math/rev/fun/gamma_q.hpp>
+#include <stan/math/rev/fun/generalized_inverse.hpp>
 #include <stan/math/rev/fun/gp_periodic_cov.hpp>
 #include <stan/math/rev/fun/grad.hpp>
 #include <stan/math/rev/fun/grad_inc_beta.hpp>
@@ -126,6 +134,10 @@
 #include <stan/math/rev/fun/proj.hpp>
 #include <stan/math/rev/fun/quad_form.hpp>
 #include <stan/math/rev/fun/quad_form_sym.hpp>
+#include <stan/math/rev/fun/read_corr_L.hpp>
+#include <stan/math/rev/fun/read_corr_matrix.hpp>
+#include <stan/math/rev/fun/read_cov_L.hpp>
+#include <stan/math/rev/fun/read_cov_matrix.hpp>
 #include <stan/math/rev/fun/rising_factorial.hpp>
 #include <stan/math/rev/fun/round.hpp>
 #include <stan/math/rev/fun/rows_dot_product.hpp>

@@ -38,11 +38,13 @@ void check_unit_vector(const char* function, const char* name,
   using std::fabs;
   value_type_t<EigVec> ssq = theta.squaredNorm();
   if (!(fabs(1.0 - ssq) <= CONSTRAINT_TOLERANCE)) {
-    std::stringstream msg;
-    msg << "is not a valid unit vector."
-        << " The sum of the squares of the elements should be 1, but is ";
-    std::string msg_str(msg.str());
-    throw_domain_error(function, name, ssq, msg_str.c_str());
+    [&]() STAN_COLD_PATH {
+      std::stringstream msg;
+      msg << "is not a valid unit vector."
+          << " The sum of the squares of the elements should be 1, but is ";
+      std::string msg_str(msg.str());
+      throw_domain_error(function, name, ssq, msg_str.c_str());
+    }();
   }
 }
 

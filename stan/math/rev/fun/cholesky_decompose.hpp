@@ -157,14 +157,14 @@ inline auto opencl_cholesky_lambda(AMat& arena_A, LVari& vari_L) {
       const int k_j_ind = k - j;
       const int m_k_ind = M_ - k;
 
-      auto&& R_val = block(L_val, j, 0, k_j_ind, j);
-      auto&& R_adj = block(L_adj, j, 0, k_j_ind, j);
-      matrix_cl<double> D_val = block(L_val, j, j, k_j_ind, k_j_ind);
-      matrix_cl<double> D_adj = block(L_adj, j, j, k_j_ind, k_j_ind);
-      auto&& B_val = block(L_val, k, 0, m_k_ind, j);
-      auto&& B_adj = block(L_adj, k, 0, m_k_ind, j);
-      auto&& C_val = block(L_val, k, j, m_k_ind, k_j_ind);
-      auto&& C_adj = block(L_adj, k, j, m_k_ind, k_j_ind);
+      auto&& R_val = block_zero_based(L_val, j, 0, k_j_ind, j);
+      auto&& R_adj = block_zero_based(L_adj, j, 0, k_j_ind, j);
+      matrix_cl<double> D_val = block_zero_based(L_val, j, j, k_j_ind, k_j_ind);
+      matrix_cl<double> D_adj = block_zero_based(L_adj, j, j, k_j_ind, k_j_ind);
+      auto&& B_val = block_zero_based(L_val, k, 0, m_k_ind, j);
+      auto&& B_adj = block_zero_based(L_adj, k, 0, m_k_ind, j);
+      auto&& C_val = block_zero_based(L_val, k, j, m_k_ind, k_j_ind);
+      auto&& C_adj = block_zero_based(L_adj, k, j, m_k_ind, k_j_ind);
 
       C_adj = C_adj * tri_inverse(D_val);
       B_adj = B_adj - C_adj * R_val;
@@ -177,9 +177,9 @@ inline auto opencl_cholesky_lambda(AMat& arena_A, LVari& vari_L) {
       D_adj.triangular_transpose<TriangularMapCL::LowerToUpper>();
 
       R_adj = R_adj - transpose(C_adj) * B_val - D_adj * R_val;
-      D_adj = diagonal_multiply(D_adj, 0.5);
+      diagonal(D_adj) = diagonal(D_adj) * 0.5;
 
-      block(L_adj, j, j, k_j_ind, k_j_ind) = D_adj;
+      block_zero_based(L_adj, j, j, k_j_ind, k_j_ind) = D_adj;
     }
     L_adj.view(matrix_cl_view::Lower);
     std::vector<double> L_adj_cpu_res = packed_copy(L_adj);

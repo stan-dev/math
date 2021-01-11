@@ -19,9 +19,10 @@ namespace stan {
 template <typename T>
 struct is_rev_matrix<
     T,
-    require_any_t<is_var_matrix<T>, math::conjunction<is_eigen_matrix_base<T>,
-                                                      is_var<value_type_t<T>>>>>
-    : std::true_type {};
+    require_all_t<is_var<scalar_type_t<T>>,
+                  math::disjunction<
+                      math::conjunction<is_var<T>, is_eigen<value_type_t<T>>>,
+                      is_eigen<T>>>> : std::true_type {};
 
 /** \ingroup type_trait
  * Defines a static member named value which is defined to be true

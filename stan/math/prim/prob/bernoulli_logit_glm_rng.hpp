@@ -1,10 +1,13 @@
 #ifndef STAN_MATH_PRIM_PROB_BERNOULLI_LOGIT_GLM_RNG_HPP
 #define STAN_MATH_PRIM_PROB_BERNOULLI_LOGIT_GLM_RNG_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/inv_logit.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <boost/random/bernoulli_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <vector>
