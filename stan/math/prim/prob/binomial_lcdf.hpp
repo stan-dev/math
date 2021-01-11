@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/inc_beta.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -71,14 +72,14 @@ return_type_t<T_prob> binomial_lcdf(const T_n& n, const T_N& N,
   // The gradients are technically ill-defined,
   // but treated as negative infinity
   for (size_t i = 0; i < stan::math::size(n); i++) {
-    if (value_of(n_vec[i]) < 0) {
+    if (n_vec.val(i) < 0) {
       return ops_partials.build(NEGATIVE_INFTY);
     }
   }
 
   for (size_t i = 0; i < max_size_seq_view; i++) {
-    const T_partials_return n_dbl = value_of(n_vec[i]);
-    const T_partials_return N_dbl = value_of(N_vec[i]);
+    const T_partials_return n_dbl = n_vec.val(i);
+    const T_partials_return N_dbl = N_vec.val(i);
 
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
@@ -86,7 +87,7 @@ return_type_t<T_prob> binomial_lcdf(const T_n& n, const T_N& N,
       continue;
     }
 
-    const T_partials_return theta_dbl = value_of(theta_vec[i]);
+    const T_partials_return theta_dbl = theta_vec.val(i);
     const T_partials_return Pi
         = inc_beta(N_dbl - n_dbl, n_dbl + 1, 1 - theta_dbl);
 

@@ -673,6 +673,13 @@ TEST_F(AgradRev, var_matrix_view_row_plain_assignment) {
   EXPECT_MATRIX_FLOAT_EQ(A_v.adj(), deriv);
 }
 
+TEST_F(AgradRev, var_matrix_array) {
+  Eigen::MatrixXd A(4, 4);
+  A << 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15;
+  stan::math::var_value<Eigen::MatrixXd> A_v(A);
+  Eigen::Array<double, -1, -1> B_v = A_v.array().val();
+}
+
 TEST_F(AgradRev, a_eq_x) {
   AVAR a = 5.0;
   EXPECT_FLOAT_EQ(5.0, a.val());

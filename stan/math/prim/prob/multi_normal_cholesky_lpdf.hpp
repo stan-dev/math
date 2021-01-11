@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/dot_self.hpp>
 #include <stan/math/prim/fun/log.hpp>
@@ -11,6 +12,7 @@
 #include <stan/math/prim/fun/size_mvt.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/transpose.hpp>
+#include <stan/math/prim/fun/vector_seq_view.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
 
 namespace stan {

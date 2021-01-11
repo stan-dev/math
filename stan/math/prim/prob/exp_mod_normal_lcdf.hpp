@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/erf.hpp>
 #include <stan/math/prim/fun/exp.hpp>
@@ -10,6 +12,7 @@
 #include <stan/math/prim/fun/is_inf.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/square.hpp>

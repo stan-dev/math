@@ -10,10 +10,12 @@
 #include <stan/math/prim/fun/log1m_exp.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/poisson_binomial_log_probs.hpp>
+#include <stan/math/prim/fun/vector_seq_view.hpp>
 
 namespace stan {
 namespace math {
