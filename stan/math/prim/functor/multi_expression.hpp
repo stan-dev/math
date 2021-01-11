@@ -171,8 +171,7 @@ class eigen_results_ {
       expression_evaluators(std::get<Is>(expressions.exprs_)...);
 
       this->assign<all_linear && (N_col_major == 0 || N_row_major == 0)>(
-          expression_evaluators,
-          std::get<0>(expressions.exprs_).rows(),
+          expression_evaluators, std::get<0>(expressions.exprs_).rows(),
           std::get<0>(expressions.exprs_).cols());
     });
   }
