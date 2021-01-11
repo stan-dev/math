@@ -46,8 +46,8 @@ inline var dot_product(const T1& v1, const T2& v2) {
     arena_t<promote_scalar_t<var, T2>> v2_arena = v2;
     return make_callback_var(v1_arena.val().dot(v2_arena.val()),
 			     [v1_arena, v2_arena](const auto& vi) mutable {
+			       const auto res_adj = vi.adj();
 			       for (Eigen::Index i = 0; i < v1_arena.size(); ++i) {
-				 const auto res_adj = vi.adj();
 				 v1_arena.adj().coeffRef(i) += res_adj * v2_arena.val().coeff(i);
 				 v2_arena.adj().coeffRef(i) += res_adj * v1_arena.val().coeff(i);
 			       }
