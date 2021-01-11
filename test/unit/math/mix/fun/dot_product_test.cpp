@@ -49,12 +49,12 @@ TEST(mathMixMatFun, dotProduct) {
   v2 << 1, 2;
   Eigen::RowVectorXd rv2(2);
   rv2 << 1, 2;
-  std::vector<double> sv2 = { 1.0, 2.0 };
+  std::vector<double> sv2 = {1.0, 2.0};
   Eigen::VectorXd v2b(2);
   v2b << 10, 100;
   Eigen::RowVectorXd rv2b(2);
   rv2b << 10, 100;
-  std::vector<double> sv2b = { 10.0, 100.0 };
+  std::vector<double> sv2b = {10.0, 100.0};
   stan::test::expect_ad(f, v2, v2b);
   stan::test::expect_ad(f, rv2, v2b);
   stan::test::expect_ad(f, v2, rv2b);
@@ -71,12 +71,12 @@ TEST(mathMixMatFun, dotProduct) {
   v3 << 1, 3, -5;
   Eigen::RowVectorXd rv3(3);
   rv3 << 1, 3, -5;
-  std::vector<double> sv3 = { 1.0, 2.0, 3.0 };
+  std::vector<double> sv3 = {1.0, 2.0, 3.0};
   Eigen::VectorXd v3b(3);
   v3b << 4, -2, -1;
   Eigen::RowVectorXd rv3b(3);
   rv3b << 4, -2, -1;
-  std::vector<double> sv3b = { 4.0, -2.0, -1.0 };
+  std::vector<double> sv3b = {4.0, -2.0, -1.0};
   stan::test::expect_ad(f, v3, v3b);
   stan::test::expect_ad(f, v3, rv3b);
   stan::test::expect_ad(f, rv3, v3b);
@@ -91,10 +91,10 @@ TEST(mathMixMatFun, dotProduct) {
   // size 3, another case (originally from rev)
   v3 << -1, 0, 1;
   rv3 << -1, 0, 1;
-  sv3 = { -1.0, 0.0, 1.0 };
+  sv3 = {-1.0, 0.0, 1.0};
   v3b << 1, 2, 3;
   rv3b << 1, 2, 3;
-  sv3b = { 1.0, 2.0, 3.0 };
+  sv3b = {1.0, 2.0, 3.0};
   stan::test::expect_ad(f, v3, v3b);
   stan::test::expect_ad(f, v3, rv3b);
   stan::test::expect_ad(f, rv3, v3b);
