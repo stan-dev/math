@@ -148,24 +148,23 @@ class eigen_results_ {
             std::enable_if_t<sizeof...(T_results)
                              == sizeof...(T_expressions)>* = nullptr>
   void assign_select(const eigen_expressions_<T_expressions...>& expressions) {
-    constexpr bool all_linear = internal::constexpr_all(
-        static_cast<bool>(
-            Eigen::internal::evaluator<std::decay_t<T_expressions>>::Flags
-            & Eigen::LinearAccessBit)...,
-        static_cast<bool>(
-            Eigen::internal::evaluator<std::decay_t<T_results>>::Flags
-            & Eigen::LinearAccessBit)...);
-    constexpr int N_row_major = internal::constexpr_sum(
-        static_cast<bool>(
-            Eigen::internal::evaluator<std::decay_t<T_expressions>>::Flags
-            & Eigen::RowMajorBit)...,
-        static_cast<bool>(
-            Eigen::internal::evaluator<std::decay_t<T_results>>::Flags
-            & Eigen::RowMajorBit)...);
-    constexpr int N_col_major
-        = sizeof...(T_results) + sizeof...(T_expressions) - N_row_major;
-
-    index_apply<sizeof...(T_results)>([&](auto... Is) {
+    index_apply<sizeof...(T_results)>([&expressions, this](auto... Is) {
+      constexpr bool all_linear = internal::constexpr_all(
+          static_cast<bool>(
+              Eigen::internal::evaluator<std::decay_t<T_expressions>>::Flags
+              & Eigen::LinearAccessBit)...,
+          static_cast<bool>(
+              Eigen::internal::evaluator<std::decay_t<T_results>>::Flags
+              & Eigen::LinearAccessBit)...);
+      constexpr int N_row_major = internal::constexpr_sum(
+          static_cast<bool>(
+              Eigen::internal::evaluator<std::decay_t<T_expressions>>::Flags
+              & Eigen::RowMajorBit)...,
+          static_cast<bool>(
+              Eigen::internal::evaluator<std::decay_t<T_results>>::Flags
+              & Eigen::RowMajorBit)...);
+      constexpr int N_col_major
+          = sizeof...(T_results) + sizeof...(T_expressions) - N_row_major;
       std::tuple<Eigen::internal::evaluator<
           std::decay_t<decltype(std::get<Is>(expressions.exprs_))>>...>
       expression_evaluators(std::get<Is>(expressions.exprs_)...);
