@@ -10,6 +10,7 @@
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
@@ -84,20 +85,20 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lcdf(
 
   if (!is_constant_all<T_scale_succ, T_scale_fail>::value) {
     for (size_t i = 0; i < size_alpha; i++) {
-      digamma_alpha[i] = digamma(value_of(alpha_vec[i]));
+      digamma_alpha[i] = digamma(alpha_vec.val(i));
     }
     for (size_t i = 0; i < size_beta; i++) {
-      digamma_beta[i] = digamma(value_of(beta_vec[i]));
+      digamma_beta[i] = digamma(beta_vec.val(i));
     }
     for (size_t i = 0; i < size_alpha_beta; i++) {
-      digamma_sum[i] = digamma(value_of(alpha_vec[i]) + value_of(beta_vec[i]));
+      digamma_sum[i] = digamma(alpha_vec.val(i) + beta_vec.val(i));
     }
   }
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
-    const T_partials_return beta_dbl = value_of(beta_vec[n]);
+    const T_partials_return y_dbl = y_vec.val(n);
+    const T_partials_return alpha_dbl = alpha_vec.val(n);
+    const T_partials_return beta_dbl = beta_vec.val(n);
     const T_partials_return betafunc_dbl = beta(alpha_dbl, beta_dbl);
     const T_partials_return Pn = inc_beta(alpha_dbl, beta_dbl, y_dbl);
     const T_partials_return inv_Pn

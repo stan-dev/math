@@ -1,4 +1,4 @@
-#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
@@ -12,6 +12,7 @@ TEST(MathMetaPrim, VectorSeqView) {
 
   vector_seq_view<VectorXd> vsv(m1);
   EXPECT_FLOAT_EQ(m1(1), vsv[12](1));
+  EXPECT_EQ(vsv.size(), 1);
 
   vector<VectorXd> v;
   v.push_back(m1);
@@ -21,4 +22,5 @@ TEST(MathMetaPrim, VectorSeqView) {
   EXPECT_FLOAT_EQ(m1(0), vsv_vec[1][3]);
   EXPECT_FLOAT_EQ(m1(2), vsv_vec[1][1]);
   EXPECT_FLOAT_EQ(m1(2), vsv_vec[0][2]);
+  EXPECT_EQ(vsv_vec.size(), 2);
 }
