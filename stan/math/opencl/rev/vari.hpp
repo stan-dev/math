@@ -34,8 +34,8 @@ class vari_cl_base : public vari_base {
    * @param adj Adjoint of the constructed variable.
    */
   template <typename S, typename U,
-            require_convertible_t<std::decay_t<S>, T>* = nullptr,
-            require_convertible_t<std::decay_t<U>, T>* = nullptr>
+            require_t<std::is_constructible<T, std::decay_t<S>>>* = nullptr,
+            require_t<std::is_constructible<T, std::decay_t<U>>>* = nullptr>
   vari_cl_base(S&& val, U&& adj)
       : val_(std::forward<S>(val)), adj_(std::forward<U>(adj)) {}
 
