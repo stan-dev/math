@@ -11,6 +11,10 @@
 namespace stan {
 namespace math {
 
+// forward declare make_chainable_ptr
+template <typename T>
+auto make_chainable_ptr(T&& obj);
+
 /**
  * LDLT_factor is a structure that holds a matrix of type T and the
  * LDLT of its values.
@@ -47,6 +51,9 @@ class LDLT_factor<T, std::enable_if_t<bool_constant<
    * Return a const reference to the LDLT factor of the matrix
    */
   const auto& ldlt() const { return ldlt_; }
+
+  inline auto* chainable_ldlt_ptr() { return make_chainable_ptr(ldlt_); }
+
 };
 
 /**

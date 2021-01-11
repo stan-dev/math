@@ -19,14 +19,15 @@ class LDLT_factor<T, std::enable_if_t<bool_constant<
                          is_eigen_matrix_dynamic<T>::value
                          && is_var<scalar_type_t<T>>::value>::value>> {
  private:
-  const plain_type_t<T>& matrix_;
-  Eigen::LDLT<Eigen::MatrixXd> ldlt_;
+  arena_t<plain_type_t<T>> matrix_;
+  Eigen::LDLT<Eigen::MatrixXd>* ldlt_;
 
  public:
   template <typename S,
             require_same_t<plain_type_t<T>, plain_type_t<S>>* = nullptr>
   explicit LDLT_factor(const S& matrix)
-      : matrix_(matrix), ldlt_(matrix.val().ldlt()) {}
+      : matrix_(matrix),
+        ldlt_(make_chainable_ptr(matrix.val().ldlt())) {}
 
   /**
    * Return a const reference to the underlying matrix
@@ -36,7 +37,8 @@ class LDLT_factor<T, std::enable_if_t<bool_constant<
   /**
    * Return a const reference to the LDLT factor of the matrix values
    */
-  const auto& ldlt() const { return ldlt_; }
+   const auto& ldlt() const { return *ldlt_; }
+   auto* chainable_ldlt_ptr() { return ldlt_; }
 };
 
 /**
@@ -46,14 +48,15 @@ class LDLT_factor<T, std::enable_if_t<bool_constant<
 template <typename T>
 class LDLT_factor<T, std::enable_if_t<is_var_matrix<T>::value>> {
  private:
-  plain_type_t<T> matrix_;
-  Eigen::LDLT<Eigen::MatrixXd> ldlt_;
+  std::decay_t<T> matrix_;
+  Eigen::LDLT<Eigen::MatrixXd>* ldlt_;
 
  public:
   template <typename S,
             require_same_t<plain_type_t<T>, plain_type_t<S>>* = nullptr>
   explicit LDLT_factor(const S& matrix)
-      : matrix_(matrix), ldlt_(matrix.val().ldlt()) {}
+      : matrix_(matrix),
+       ldlt_(make_chainable_ptr(matrix.val().ldlt())) {}
 
   /**
    * Return a const reference the underlying `var_value`
@@ -63,7 +66,8 @@ class LDLT_factor<T, std::enable_if_t<is_var_matrix<T>::value>> {
   /**
    * Return a const reference to the LDLT factor of the matrix values
    */
-  const auto& ldlt() const { return ldlt_; }
+   const auto& ldlt() const { return *ldlt_; }
+   auto* chainable_ldlt_ptr() { return ldlt_; }
 };
 
 }  // namespace math

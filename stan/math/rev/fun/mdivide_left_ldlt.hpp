@@ -24,7 +24,7 @@ namespace math {
  */
 template <typename T1, typename T2, require_all_matrix_t<T1, T2>* = nullptr,
           require_any_st_var<T1, T2>* = nullptr>
-inline auto mdivide_left_ldlt(const LDLT_factor<T1>& A, const T2& B) {
+inline auto mdivide_left_ldlt(LDLT_factor<T1>& A, const T2& B) {
   using ret_val_type
       = Eigen::Matrix<double, Eigen::Dynamic, T2::ColsAtCompileTime>;
   using ret_type = promote_var_matrix_t<ret_val_type, T1, T2>;
@@ -39,7 +39,7 @@ inline auto mdivide_left_ldlt(const LDLT_factor<T1>& A, const T2& B) {
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
     arena_t<promote_scalar_t<var, T1>> arena_A = A.matrix();
     arena_t<ret_type> res = A.ldlt().solve(arena_B.val());
-    auto ldlt_ptr = make_chainable_ptr(A.ldlt());
+    auto* ldlt_ptr = A.chainable_ldlt_ptr();
 
     reverse_pass_callback([arena_A, arena_B, ldlt_ptr, res]() mutable {
       promote_scalar_t<double, T2> adjB = ldlt_ptr->solve(res.adj());
@@ -52,7 +52,7 @@ inline auto mdivide_left_ldlt(const LDLT_factor<T1>& A, const T2& B) {
   } else if (!is_constant<T1>::value) {
     arena_t<promote_scalar_t<var, T1>> arena_A = A.matrix();
     arena_t<ret_type> res = A.ldlt().solve(value_of(B));
-    auto ldlt_ptr = make_chainable_ptr(A.ldlt());
+    auto* ldlt_ptr = A.chainable_ldlt_ptr();
 
     reverse_pass_callback([arena_A, ldlt_ptr, res]() mutable {
       arena_A.adj() -= ldlt_ptr->solve(res.adj()) * res.val_op().transpose();
@@ -62,7 +62,7 @@ inline auto mdivide_left_ldlt(const LDLT_factor<T1>& A, const T2& B) {
   } else {
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
     arena_t<ret_type> res = A.ldlt().solve(arena_B.val());
-    auto ldlt_ptr = make_chainable_ptr(A.ldlt());
+    auto* ldlt_ptr = A.chainable_ldlt_ptr();
 
     reverse_pass_callback([arena_B, ldlt_ptr, res]() mutable {
       arena_B.adj() += ldlt_ptr->solve(res.adj());

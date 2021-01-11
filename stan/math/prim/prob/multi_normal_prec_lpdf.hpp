@@ -74,7 +74,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_prec_lpdf(
   const auto& Sigma_ref = to_ref(Sigma);
   check_symmetric(function, "Precision matrix", Sigma_ref);
 
-  const auto& ldlt_Sigma = make_ldlt_factor(Sigma_ref);
+  auto ldlt_Sigma = make_ldlt_factor(Sigma_ref);
   check_ldlt_factor(function, "LDLT_Factor of precision parameter", ldlt_Sigma);
 
   if (size_y == 0) {

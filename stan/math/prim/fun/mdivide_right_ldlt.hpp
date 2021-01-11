@@ -24,7 +24,7 @@ namespace math {
 template <typename EigMat, typename T,
           require_all_matrix_t<EigMat, T>* = nullptr,
           require_any_not_st_arithmetic<EigMat, T>* = nullptr>
-inline auto mdivide_right_ldlt(const EigMat& b, const LDLT_factor<T>& A) {
+inline auto mdivide_right_ldlt(const EigMat& b, LDLT_factor<T>& A) {
   check_multiplicable("mdivide_right_ldlt", "b", b, "A", A.matrix());
   check_ldlt_factor("mdivide_right_ldlt", "A", A);
 
@@ -48,7 +48,7 @@ template <typename EigMat, typename T,
           require_all_matrix_t<EigMat, T>* = nullptr,
           require_all_st_arithmetic<EigMat, T>* = nullptr>
 inline Eigen::Matrix<double, EigMat::RowsAtCompileTime, T::ColsAtCompileTime>
-mdivide_right_ldlt(const EigMat& b, const LDLT_factor<T>& A) {
+mdivide_right_ldlt(const EigMat& b, LDLT_factor<T>& A) {
   check_multiplicable("mdivide_right_ldlt", "b", b, "A", A.matrix());
   check_ldlt_factor("mdivide_right_ldlt", "A", A);
 
