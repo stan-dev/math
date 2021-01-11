@@ -7,6 +7,7 @@
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
@@ -60,9 +61,9 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
   if (size(theta) == 1) {
     size_t sum = 0;
     for (size_t n = 0; n < N; n++) {
-      sum += value_of(n_vec[n]);
+      sum += n_vec.val(n);
     }
-    const T_partials_return theta_dbl = value_of(theta_vec[0]);
+    const T_partials_return theta_dbl = theta_vec.val(0);
     // avoid nans when sum == N or sum == 0
     if (sum == N) {
       logp += N * log(theta_dbl);
@@ -88,8 +89,8 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
     }
   } else {
     for (size_t n = 0; n < N; n++) {
-      const int n_int = value_of(n_vec[n]);
-      const T_partials_return theta_dbl = value_of(theta_vec[n]);
+      const int n_int = n_vec.val(n);
+      const T_partials_return theta_dbl = theta_vec.val(n);
 
       if (n_int == 1) {
         logp += log(theta_dbl);

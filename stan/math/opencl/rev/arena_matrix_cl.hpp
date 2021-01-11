@@ -26,6 +26,7 @@ class arena_matrix_cl_impl : public chainable_alloc, public matrix_cl<T> {
   arena_matrix_cl_impl(arena_matrix_cl_impl<T>&&) = default;
   arena_matrix_cl_impl<T>& operator=(const arena_matrix_cl_impl<T>&) = default;
   arena_matrix_cl_impl<T>& operator=(arena_matrix_cl_impl<T>&&) = default;
+  using matrix_cl<T>::operator=;
 };
 
 }  // namespace internal
@@ -137,7 +138,6 @@ class arena_matrix_cl {
   ARENA_MATRIX_CL_CONST_FUNCTION_WRAPPER(wait_for_read_write_events)
   ARENA_MATRIX_CL_CONST_FUNCTION_WRAPPER(buffer)
   ARENA_MATRIX_CL_FUNCTION_WRAPPER(buffer)
-  ARENA_MATRIX_CL_FUNCTION_WRAPPER(sub_block)
   ARENA_MATRIX_CL_FUNCTION_WRAPPER(operator=)
 
 #undef ARENA_MATRIX_CL_FUNCTION_WRAPPER

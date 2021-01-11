@@ -11,6 +11,7 @@
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -89,20 +90,20 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lcdf(const T_y& y,
 
   if (!is_constant_all<T_loc, T_prec>::value) {
     for (size_t i = 0; i < size_mu_kappa; i++) {
-      const T_partials_return kappa_dbl = value_of(kappa_vec[i]);
-      const T_partials_return mukappa_dbl = value_of(mu_vec[i]) * kappa_dbl;
+      const T_partials_return kappa_dbl = kappa_vec.val(i);
+      const T_partials_return mukappa_dbl = mu_vec.val(i) * kappa_dbl;
       digamma_mukappa[i] = digamma(mukappa_dbl);
       digamma_kappa_mukappa[i] = digamma(kappa_dbl - mukappa_dbl);
     }
     for (size_t i = 0; i < size_kappa; i++) {
-      digamma_kappa[i] = digamma(value_of(kappa_vec[i]));
+      digamma_kappa[i] = digamma(kappa_vec.val(i));
     }
   }
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return mu_dbl = value_of(mu_vec[n]);
-    const T_partials_return kappa_dbl = value_of(kappa_vec[n]);
+    const T_partials_return y_dbl = y_vec.val(n);
+    const T_partials_return mu_dbl = mu_vec.val(n);
+    const T_partials_return kappa_dbl = kappa_vec.val(n);
     const T_partials_return mukappa_dbl = mu_dbl * kappa_dbl;
     const T_partials_return kappa_mukappa_dbl = kappa_dbl - mukappa_dbl;
     const T_partials_return betafunc_dbl = beta(mukappa_dbl, kappa_mukappa_dbl);

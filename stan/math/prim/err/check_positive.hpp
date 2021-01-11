@@ -42,11 +42,13 @@ inline void check_positive(const char* function, const char* name,
 inline void check_positive(const char* function, const char* name,
                            const char* expr, int size) {
   if (size <= 0) {
-    std::stringstream msg;
-    msg << "; dimension size expression = " << expr;
-    std::string msg_str(msg.str());
-    invalid_argument(function, name, size, "must have a positive size, but is ",
-                     msg_str.c_str());
+    [&]() STAN_COLD_PATH {
+      std::stringstream msg;
+      msg << "; dimension size expression = " << expr;
+      std::string msg_str(msg.str());
+      invalid_argument(function, name, size,
+                       "must have a positive size, but is ", msg_str.c_str());
+    }();
   }
 }
 
