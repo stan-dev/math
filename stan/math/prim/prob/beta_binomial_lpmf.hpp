@@ -69,7 +69,7 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
   }
 
   T_partials_return logp(0.0);
-  operands_and_partials<T_alpha_ref, T_beta_ref> ops_partials(alpha_ref,
+  auto ops_partials = operands_and_partials(alpha_ref,
                                                               beta_ref);
 
   scalar_seq_view<T_n> n_vec(n);
@@ -155,10 +155,10 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
     logp += lbeta_diff[i];
 
     if (!is_constant_all<T_size1>::value)
-      ops_partials.edge1_.partials_[i]
+      edge<0>(ops_partials).partials_[i]
           += digamma_n_plus_alpha[i] + digamma_diff[i] - digamma_alpha[i];
     if (!is_constant_all<T_size2>::value)
-      ops_partials.edge2_.partials_[i]
+      edge<1>(ops_partials).partials_[i]
           += digamma(N_vec.val(i) - n_vec.val(i) + beta_vec.val(i))
              + digamma_diff[i] - digamma_beta[i];
   }

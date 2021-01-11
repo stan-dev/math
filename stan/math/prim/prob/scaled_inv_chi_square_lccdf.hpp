@@ -47,7 +47,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lccdf(
   }
 
   T_partials_return P(0.0);
-  operands_and_partials<T_y_ref, T_nu_ref, T_s_ref> ops_partials(y_ref, nu_ref,
+  auto ops_partials = operands_and_partials(y_ref, nu_ref,
                                                                  s_ref);
 
   scalar_seq_view<T_y_ref> y_vec(y_ref);
@@ -99,11 +99,11 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lccdf(
     P += log(Pn);
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n]
+      edge<0>(ops_partials).partials_[n]
           -= half_nu_s2_overx_dbl * y_inv_dbl * gamma_p_deriv / Pn;
     }
     if (!is_constant_all<T_dof>::value) {
-      ops_partials.edge2_.partials_[n]
+      edge<1>(ops_partials).partials_[n]
           -= (0.5
                   * grad_reg_inc_gamma(half_nu_dbl, half_nu_s2_overx_dbl,
                                        gamma_vec[n], digamma_vec[n])
@@ -111,7 +111,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lccdf(
              / Pn;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n]
+      edge<2>(ops_partials).partials_[n]
           += 2.0 * half_nu_dbl * s_dbl * y_inv_dbl * gamma_p_deriv / Pn;
     }
   }

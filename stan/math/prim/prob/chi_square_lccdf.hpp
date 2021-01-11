@@ -56,7 +56,7 @@ return_type_t<T_y, T_dof> chi_square_lccdf(const T_y& y, const T_dof& nu) {
   }
 
   T_partials_return ccdf_log(0.0);
-  operands_and_partials<T_y_ref, T_nu_ref> ops_partials(y_ref, nu_ref);
+  auto ops_partials = operands_and_partials(y_ref, nu_ref);
 
   scalar_seq_view<T_y_ref> y_vec(y_ref);
   scalar_seq_view<T_nu_ref> nu_vec(nu_ref);
@@ -99,12 +99,12 @@ return_type_t<T_y, T_dof> chi_square_lccdf(const T_y& y, const T_dof& nu) {
     ccdf_log += log(Pn);
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] -= beta_dbl * exp(-beta_dbl * y_dbl)
+      edge<0>(ops_partials).partials_[n] -= beta_dbl * exp(-beta_dbl * y_dbl)
                                           * pow(beta_dbl * y_dbl, alpha_dbl - 1)
                                           / tgamma(alpha_dbl) / Pn;
     }
     if (!is_constant_all<T_dof>::value) {
-      ops_partials.edge2_.partials_[n]
+      edge<1>(ops_partials).partials_[n]
           += 0.5
              * grad_reg_inc_gamma(alpha_dbl, beta_dbl * y_dbl, gamma_vec[n],
                                   digamma_vec[n])

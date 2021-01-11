@@ -105,18 +105,18 @@ return_type_t<T_prob, T_prior_size> dirichlet_lpdf(const T_prob& theta,
     lp += (theta_log * alpha_m_1).sum();
   }
 
-  operands_and_partials<T_theta_ref, T_alpha_ref> ops_partials(theta_ref,
+  auto ops_partials = operands_and_partials(theta_ref,
                                                                alpha_ref);
   if (!is_constant_all<T_prob>::value) {
     for (size_t t = 0; t < t_length; t++) {
-      ops_partials.edge1_.partials_vec_[t]
+      edge<0>(ops_partials).partials_vec_[t]
           = alpha_m_1.col(t) / theta_dbl.col(t);
     }
   }
 
   if (!is_constant_all<T_prior_size>::value) {
     for (size_t t = 0; t < t_length; t++) {
-      ops_partials.edge2_.partials_vec_[t] = digamma(alpha_dbl.col(t).sum())
+      edge<1>(ops_partials).partials_vec_[t] = digamma(alpha_dbl.col(t).sum())
                                              - digamma(alpha_dbl.col(t))
                                              + theta_log.col(t);
     }

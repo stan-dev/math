@@ -102,10 +102,10 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
     logp += sum((beta_val - 1.0) * log1m_y) * N / max_size(y, beta);
   }
 
-  operands_and_partials<T_y_ref, T_alpha_ref, T_beta_ref> ops_partials(
+  auto ops_partials = operands_and_partials(
       y_ref, alpha_ref, beta_ref);
   if (!is_constant_all<T_y>::value) {
-    ops_partials.edge1_.partials_
+    edge<0>(ops_partials).partials_
         = (alpha_val - 1) / y_val + (beta_val - 1) / (y_val - 1);
   }
 
@@ -119,11 +119,11 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
           = to_ref_if < !is_constant_all<T_scale_succ>::value
             && !is_constant_all<T_scale_fail>::value > (digamma(alpha_beta));
       if (!is_constant_all<T_scale_succ>::value) {
-        ops_partials.edge2_.partials_
+        edge<1>(ops_partials).partials_
             = log_y + digamma_alpha_beta - digamma(alpha_val);
       }
       if (!is_constant_all<T_scale_fail>::value) {
-        ops_partials.edge3_.partials_
+        edge<2>(ops_partials).partials_
             = log1m_y + digamma_alpha_beta - digamma(beta_val);
       }
     }

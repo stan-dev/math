@@ -66,8 +66,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
     return 1.0;
   }
 
-  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref, T_lambda_ref>
-      ops_partials(y_ref, mu_ref, sigma_ref, lambda_ref);
+  auto ops_partials = operands_and_partials(y_ref, mu_ref, sigma_ref, lambda_ref);
 
   using T_y_val_scalar = scalar_type_t<decltype(y_val)>;
   if (is_vector<T_y>::value) {
@@ -126,14 +125,14 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
                                        && !is_constant_all<T_y>::value)>(
             cdf * (deriv_1 - deriv_2 + deriv_3) / cdf_n);
         if (!is_constant_all<T_y>::value) {
-          ops_partials.edge1_.partials_ = deriv;
+          edge<0>(ops_partials).partials_ = deriv;
         }
         if (!is_constant_all<T_loc>::value) {
-          ops_partials.edge2_.partials_ = -deriv;
+          edge<1>(ops_partials).partials_ = -deriv;
         }
       }
       if (!is_constant_all<T_scale>::value) {
-        ops_partials.edge3_.partials_
+        edge<2>(ops_partials).partials_
             = -cdf
               * ((deriv_1 - deriv_2) * v
                  + (deriv_3 - deriv_2) * scaled_diff * SQRT_TWO)
@@ -141,7 +140,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
       }
     }
     if (!is_constant_all<T_inv_scale>::value) {
-      ops_partials.edge4_.partials_
+      edge<3>(ops_partials).partials_
           = cdf * exp_term
             * (INV_SQRT_TWO_PI * sigma_val * exp_term_2
                - (v * sigma_val - diff) * erf_calc)

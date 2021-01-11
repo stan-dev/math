@@ -129,26 +129,26 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
         = isfinite(beta_val);
   }
 
-  operands_and_partials<T_x, T_beta, T_cuts> ops_partials(x, beta, cuts);
+  auto ops_partials = operands_and_partials(x, beta, cuts);
   if (!is_constant_all<T_x>::value) {
-    ops_partials.edge1_.partials_
+    edge<0>(ops_partials).partials_
         = transpose(location_derivative_cl) * transpose(beta_val);
   }
   if (!is_constant_all<T_beta>::value) {
     matrix_cl<double> edge2_partials_transpose = location_derivative_cl * x_val;
-    ops_partials.edge2_.partials_ = matrix_cl<double>(
+    edge<1>(ops_partials).partials_ = matrix_cl<double>(
         edge2_partials_transpose.buffer(), edge2_partials_transpose.cols(),
         edge2_partials_transpose.rows());
     if (beta.rows() != 0) {
-      forward_as<matrix_cl<double>>(ops_partials.edge2_.partials_)
+      forward_as<matrix_cl<double>>(edge<1>(ops_partials).partials_)
           .add_write_event(edge2_partials_transpose.write_events().back());
     }
   }
   if (!is_constant_all<T_cuts>::value) {
     if (wgs == 1) {
-      ops_partials.edge3_.partials_ = std::move(cuts_derivative_cl);
+      edge<2>(ops_partials).partials_ = std::move(cuts_derivative_cl);
     } else {
-      ops_partials.edge3_.partials_ = rowwise_sum(cuts_derivative_cl);
+      edge<2>(ops_partials).partials_ = rowwise_sum(cuts_derivative_cl);
     }
   }
   return ops_partials.build(logp);

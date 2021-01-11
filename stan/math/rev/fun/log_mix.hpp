@@ -80,7 +80,7 @@ inline return_type_t<T_theta, T_lambda1, T_lambda2> log_mix(
     const T_theta& theta, const T_lambda1& lambda1, const T_lambda2& lambda2) {
   using std::log;
 
-  operands_and_partials<T_theta, T_lambda1, T_lambda2> ops_partials(
+  auto ops_partials = operands_and_partials(
       theta, lambda1, lambda2);
 
   double theta_double = value_of(theta);
@@ -108,15 +108,15 @@ inline return_type_t<T_theta, T_lambda1, T_lambda2> log_mix(
   }
 
   if (!is_constant_all<T_theta>::value) {
-    ops_partials.edge1_.partials_[0]
+    edge<0>(ops_partials).partials_[0]
         = one_m_exp_lam2_m_lam1 * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
   }
   if (!is_constant_all<T_lambda1>::value) {
-    ops_partials.edge2_.partials_[0]
+    edge<1>(ops_partials).partials_[0]
         = theta_double * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
   }
   if (!is_constant_all<T_lambda2>::value) {
-    ops_partials.edge3_.partials_[0]
+    edge<2>(ops_partials).partials_[0]
         = one_m_t_prod_exp_lam2_m_lam1
           * one_d_t_plus_one_m_t_prod_exp_lam2_m_lam1;
   }

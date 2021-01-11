@@ -41,7 +41,7 @@ inline return_type_t<T_y> std_normal_cdf(const T_y& y) {
   }
 
   T_partials_return cdf(1.0);
-  operands_and_partials<T_y_ref> ops_partials(y_ref);
+  auto ops_partials = operands_and_partials(y_ref);
 
   scalar_seq_view<T_y_ref> y_vec(y_ref);
   size_t N = stan::math::size(y);
@@ -68,14 +68,14 @@ inline return_type_t<T_y> std_normal_cdf(const T_y& y) {
                 ? 0.0
                 : INV_SQRT_TWO_PI * exp(-scaled_y * scaled_y) / cdf_n;
       if (!is_constant_all<T_y>::value) {
-        ops_partials.edge1_.partials_[n] += rep_deriv;
+        edge<0>(ops_partials).partials_[n] += rep_deriv;
       }
     }
   }
 
   if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < N; ++n) {
-      ops_partials.edge1_.partials_[n] *= cdf;
+      edge<0>(ops_partials).partials_[n] *= cdf;
     }
   }
 

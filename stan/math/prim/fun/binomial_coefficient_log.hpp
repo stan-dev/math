@@ -102,7 +102,7 @@ inline return_type_t<T_n, T_k> binomial_coefficient_log(const T_n n,
   check_greater_or_equal(function, "(first argument - second argument + 1)",
                          n_plus_1_mk, 0.0);
 
-  operands_and_partials<T_n, T_k> ops_partials(n, k);
+  auto ops_partials = operands_and_partials(n, k);
 
   T_partials_return value;
   if (k_dbl == 0) {
@@ -126,22 +126,22 @@ inline return_type_t<T_n, T_k> binomial_coefficient_log(const T_n n,
     if (!is_constant_all<T_n>::value) {
       if (n_dbl == -1.0) {
         if (k_dbl == 0) {
-          ops_partials.edge1_.partials_[0] = 0;
+          edge<0>(ops_partials).partials_[0] = 0;
         } else {
-          ops_partials.edge1_.partials_[0] = NEGATIVE_INFTY;
+          edge<0>(ops_partials).partials_[0] = NEGATIVE_INFTY;
         }
       } else {
-        ops_partials.edge1_.partials_[0]
+        edge<0>(ops_partials).partials_[0]
             = (digamma(n_plus_1) - digamma_n_plus_1_mk);
       }
     }
     if (!is_constant_all<T_k>::value) {
       if (k_dbl == 0 && n_dbl == -1.0) {
-        ops_partials.edge2_.partials_[0] = NEGATIVE_INFTY;
+        edge<1>(ops_partials).partials_[0] = NEGATIVE_INFTY;
       } else if (k_dbl == -1) {
-        ops_partials.edge2_.partials_[0] = INFTY;
+        edge<1>(ops_partials).partials_[0] = INFTY;
       } else {
-        ops_partials.edge2_.partials_[0]
+        edge<1>(ops_partials).partials_[0]
             = (digamma_n_plus_1_mk - digamma(k_dbl + 1));
       }
     }

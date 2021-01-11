@@ -63,7 +63,7 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
   }
 
   T_partials_return logp = 0;
-  operands_and_partials<T_theta_ref> ops_partials(theta_ref);
+  auto ops_partials = operands_and_partials(theta_ref);
 
   scalar_seq_view<T_n_ref> n_vec(n_ref);
   scalar_seq_view<T_N_ref> N_vec(N_ref);
@@ -106,11 +106,11 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
       const T_partials_return theta_dbl = theta_vec.val(0);
       if (sum_N != 0) {
         if (sum_n == 0) {
-          ops_partials.edge1_.partials_[0] -= sum_N / (1.0 - theta_dbl);
+          edge<0>(ops_partials).partials_[0] -= sum_N / (1.0 - theta_dbl);
         } else if (sum_n == sum_N) {
-          ops_partials.edge1_.partials_[0] += sum_n / theta_dbl;
+          edge<0>(ops_partials).partials_[0] += sum_n / theta_dbl;
         } else {
-          ops_partials.edge1_.partials_[0]
+          edge<0>(ops_partials).partials_[0]
               += sum_n / theta_dbl - (sum_N - sum_n) / (1.0 - theta_dbl);
         }
       }
@@ -119,11 +119,11 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
         const T_partials_return theta_dbl = theta_vec.val(i);
         if (N_vec[i] != 0) {
           if (n_vec[i] == 0) {
-            ops_partials.edge1_.partials_[i] -= N_vec[i] / (1.0 - theta_dbl);
+            edge<0>(ops_partials).partials_[i] -= N_vec[i] / (1.0 - theta_dbl);
           } else if (n_vec[i] == N_vec[i]) {
-            ops_partials.edge1_.partials_[i] += n_vec[i] / theta_dbl;
+            edge<0>(ops_partials).partials_[i] += n_vec[i] / theta_dbl;
           } else {
-            ops_partials.edge1_.partials_[i]
+            edge<0>(ops_partials).partials_[i]
                 += n_vec[i] / theta_dbl
                    - (N_vec[i] - n_vec[i]) / (1.0 - theta_dbl);
           }

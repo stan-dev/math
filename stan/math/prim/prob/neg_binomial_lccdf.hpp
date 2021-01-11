@@ -47,7 +47,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lccdf(
   }
 
   T_partials_return P(0.0);
-  operands_and_partials<T_alpha_ref, T_beta_ref> ops_partials(alpha_ref,
+  auto ops_partials = operands_and_partials(alpha_ref,
                                                               beta_ref);
 
   scalar_seq_view<T_n> n_vec(n);
@@ -113,10 +113,10 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lccdf(
       grad_reg_inc_beta(g1, g2, alpha_dbl, n_dbl + 1, p_dbl,
                         digammaAlpha_vec[i], digammaN_vec[i], digammaSum_vec[i],
                         beta_func);
-      ops_partials.edge1_.partials_[i] -= g1 / Pi;
+      edge<0>(ops_partials).partials_[i] -= g1 / Pi;
     }
     if (!is_constant_all<T_inv_scale>::value) {
-      ops_partials.edge2_.partials_[i] -= d_dbl * pow(1 - p_dbl, n_dbl)
+      edge<1>(ops_partials).partials_[i] -= d_dbl * pow(1 - p_dbl, n_dbl)
                                           * pow(p_dbl, alpha_dbl - 1)
                                           / (beta_func * Pi);
     }

@@ -45,7 +45,7 @@ return_type_t<T_prob> bernoulli_lcdf(const T_n& n, const T_prob& theta) {
   }
 
   T_partials_return P(0.0);
-  operands_and_partials<T_theta_ref> ops_partials(theta_ref);
+  auto ops_partials = operands_and_partials(theta_ref);
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_theta_ref> theta_vec(theta_ref);
@@ -71,7 +71,7 @@ return_type_t<T_prob> bernoulli_lcdf(const T_n& n, const T_prob& theta) {
     P += log(Pi);
 
     if (!is_constant_all<T_prob>::value) {
-      ops_partials.edge1_.partials_[i] -= inv(Pi);
+      edge<0>(ops_partials).partials_[i] -= inv(Pi);
     }
   }
 

@@ -50,7 +50,7 @@ return_type_t<T_rate> poisson_lccdf(const T_n& n, const T_rate& lambda) {
     return 0;
   }
 
-  operands_and_partials<T_lambda_ref> ops_partials(lambda_ref);
+  auto ops_partials = operands_and_partials(lambda_ref);
 
   if (sum(promote_scalar<int>(n_val < 0))) {
     return ops_partials.build(0.0);
@@ -61,7 +61,7 @@ return_type_t<T_rate> poisson_lccdf(const T_n& n, const T_rate& lambda) {
   T_partials_return P = sum(log_Pi);
 
   if (!is_constant_all<T_rate>::value) {
-    ops_partials.edge1_.partials_ = exp(n_val * log(lambda_val) - lambda_val
+    edge<0>(ops_partials).partials_ = exp(n_val * log(lambda_val) - lambda_val
                                         - lgamma(n_val + 1.0) - log_Pi);
   }
 

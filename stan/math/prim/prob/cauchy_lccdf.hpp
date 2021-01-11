@@ -54,7 +54,7 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lccdf(const T_y& y, const T_loc& mu,
   }
 
   T_partials_return ccdf_log(0.0);
-  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref> ops_partials(
+  auto ops_partials = operands_and_partials(
       y_ref, mu_ref, sigma_ref);
 
   scalar_seq_view<T_y_ref> y_vec(y_ref);
@@ -75,13 +75,13 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lccdf(const T_y& y, const T_loc& mu,
     const T_partials_return rep_deriv
         = 1.0 / (Pn * pi() * (z * z * sigma_dbl + sigma_dbl));
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] -= rep_deriv;
+      edge<0>(ops_partials).partials_[n] -= rep_deriv;
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_[n] += rep_deriv;
+      edge<1>(ops_partials).partials_[n] += rep_deriv;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n] += rep_deriv * z;
+      edge<2>(ops_partials).partials_[n] += rep_deriv * z;
     }
   }
   return ops_partials.build(ccdf_log);

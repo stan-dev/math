@@ -75,7 +75,7 @@ return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
     return 0;
   }
 
-  operands_and_partials<T_y_ref, T_alpha_ref, T_sigma_ref> ops_partials(
+  auto ops_partials = operands_and_partials(
       y_ref, alpha_ref, sigma_ref);
 
   if (sum(promote_scalar<int>(y_val < 0))) {
@@ -106,15 +106,15 @@ return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
   }
 
   if (!is_constant_all<T_y>::value) {
-    ops_partials.edge1_.partials_
+    edge<0>(ops_partials).partials_
         = (alpha_val * (1 - y_div_sigma_pow_alpha) - 1.0) / y_val;
   }
   if (!is_constant_all<T_shape>::value) {
-    ops_partials.edge2_.partials_
+    edge<1>(ops_partials).partials_
         = inv(alpha_val) + (1.0 - y_div_sigma_pow_alpha) * (log_y - log_sigma);
   }
   if (!is_constant_all<T_scale>::value) {
-    ops_partials.edge3_.partials_
+    edge<2>(ops_partials).partials_
         = alpha_val * inv_sigma * (y_div_sigma_pow_alpha - 1.0);
   }
   return ops_partials.build(logp);

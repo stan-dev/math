@@ -60,7 +60,7 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
   }
 
   T_partials_return logp(0.0);
-  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref> ops_partials(
+  auto ops_partials = operands_and_partials(
       y_ref, mu_ref, sigma_ref);
 
   const auto& y_col = as_column_vector_or_scalar(y_ref);
@@ -101,14 +101,14 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
         = to_ref_if<(!is_constant_all<T_y>::value
                      && !is_constant_all<T_loc>::value)>(diff_sign * inv_sigma);
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_ = -rep_deriv;
+      edge<0>(ops_partials).partials_ = -rep_deriv;
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_ = rep_deriv;
+      edge<1>(ops_partials).partials_ = rep_deriv;
     }
   }
   if (!is_constant_all<T_scale>::value) {
-    ops_partials.edge3_.partials_ = inv_sigma * (scaled_diff - 1);
+    edge<2>(ops_partials).partials_ = inv_sigma * (scaled_diff - 1);
   }
 
   return ops_partials.build(logp);

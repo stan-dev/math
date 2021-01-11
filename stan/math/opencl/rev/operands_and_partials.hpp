@@ -25,8 +25,8 @@ class ops_partials_edge<double, var_value<Op>, require_matrix_cl_t<Op>> {
         operands_(ops) {}
 
  private:
-  template <typename, typename, typename, typename, typename, typename>
-  friend class stan::math::operands_and_partials;
+  template <typename, typename, typename...>
+  friend class stan::math::internal::operands_and_partials_impl;
   const var_value<Op>& operands_;
 
   void dump_operands(vari** varis) {}

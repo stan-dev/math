@@ -86,14 +86,14 @@ return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
             / max_size(n, N);
   }
 
-  operands_and_partials<T_alpha_ref> ops_partials(alpha_ref);
+  auto ops_partials = operands_and_partials(alpha_ref);
   if (!is_constant_all<T_prob>::value) {
     if (is_vector<T_prob>::value) {
-      ops_partials.edge1_.partials_
+      edge<0>(ops_partials).partials_
           = n_val * inv_logit_neg_alpha - (N_val - n_val) * inv_logit_alpha;
     } else {
       T_partials_return sum_n = sum(n_val) * maximum_size / size(n);
-      ops_partials.edge1_.partials_[0] = forward_as<T_partials_return>(
+      edge<0>(ops_partials).partials_[0] = forward_as<T_partials_return>(
           sum_n * inv_logit_neg_alpha
           - (sum(N_val) * maximum_size / size(N) - sum_n) * inv_logit_alpha);
     }

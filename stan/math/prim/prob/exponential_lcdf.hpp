@@ -44,7 +44,7 @@ return_type_t<T_y, T_inv_scale> exponential_lcdf(const T_y& y,
     return 0;
   }
 
-  operands_and_partials<T_y_ref, T_beta_ref> ops_partials(y_ref, beta_ref);
+  auto ops_partials = operands_and_partials(y_ref, beta_ref);
   const auto& exp_val = to_ref_if<!is_constant_all<T_y, T_inv_scale>::value>(
       exp(-beta_val * y_val));
 
@@ -55,10 +55,10 @@ return_type_t<T_y, T_inv_scale> exponential_lcdf(const T_y& y,
         !is_constant_all<T_y>::value || !is_constant_all<T_inv_scale>::value)>(
         -exp_val / (1.0 - exp_val));
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_ = -rep_deriv * beta_val;
+      edge<0>(ops_partials).partials_ = -rep_deriv * beta_val;
     }
     if (!is_constant_all<T_inv_scale>::value) {
-      ops_partials.edge2_.partials_ = -rep_deriv * y_val;
+      edge<1>(ops_partials).partials_ = -rep_deriv * y_val;
     }
   }
   return ops_partials.build(cdf_log);

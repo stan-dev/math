@@ -61,7 +61,7 @@ return_type_t<T_prob> binomial_lccdf(const T_n& n, const T_N& N,
   }
 
   T_partials_return P(0.0);
-  operands_and_partials<T_theta_ref> ops_partials(theta_ref);
+  auto ops_partials = operands_and_partials(theta_ref);
 
   scalar_seq_view<T_n_ref> n_vec(n_ref);
   scalar_seq_view<T_N_ref> N_vec(N_ref);
@@ -95,7 +95,7 @@ return_type_t<T_prob> binomial_lccdf(const T_n& n, const T_N& N,
 
     if (!is_constant_all<T_prob>::value) {
       const T_partials_return denom = beta(N_dbl - n_dbl, n_dbl + 1) * Pi;
-      ops_partials.edge1_.partials_[i]
+      edge<0>(ops_partials).partials_[i]
           += pow(theta_dbl, n_dbl) * pow(1 - theta_dbl, N_dbl - n_dbl - 1)
              / denom;
     }

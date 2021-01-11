@@ -61,7 +61,7 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_cdf(const T_y& y,
   }
 
   T_partials_return P(1.0);
-  operands_and_partials<T_y_ref, T_alpha_ref, T_beta_ref> ops_partials(
+  auto ops_partials = operands_and_partials(
       y_ref, alpha_ref, beta_ref);
 
   scalar_seq_view<T_y_ref> y_vec(y_ref);
@@ -109,18 +109,18 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_cdf(const T_y& y,
     P *= Pn;
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] += beta_dbl * exp(-beta_dbl * y_dbl)
+      edge<0>(ops_partials).partials_[n] += beta_dbl * exp(-beta_dbl * y_dbl)
                                           * pow(beta_dbl * y_dbl, alpha_dbl - 1)
                                           / tgamma(alpha_dbl) / Pn;
     }
     if (!is_constant_all<T_shape>::value) {
-      ops_partials.edge2_.partials_[n]
+      edge<1>(ops_partials).partials_[n]
           -= grad_reg_inc_gamma(alpha_dbl, beta_dbl * y_dbl, gamma_vec[n],
                                 digamma_vec[n])
              / Pn;
     }
     if (!is_constant_all<T_inv_scale>::value) {
-      ops_partials.edge3_.partials_[n] += y_dbl * exp(-beta_dbl * y_dbl)
+      edge<2>(ops_partials).partials_[n] += y_dbl * exp(-beta_dbl * y_dbl)
                                           * pow(beta_dbl * y_dbl, alpha_dbl - 1)
                                           / tgamma(alpha_dbl) / Pn;
     }
@@ -128,17 +128,17 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_cdf(const T_y& y,
 
   if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::math::size(y); ++n) {
-      ops_partials.edge1_.partials_[n] *= P;
+      edge<0>(ops_partials).partials_[n] *= P;
     }
   }
   if (!is_constant_all<T_shape>::value) {
     for (size_t n = 0; n < stan::math::size(alpha); ++n) {
-      ops_partials.edge2_.partials_[n] *= P;
+      edge<1>(ops_partials).partials_[n] *= P;
     }
   }
   if (!is_constant_all<T_inv_scale>::value) {
     for (size_t n = 0; n < stan::math::size(beta); ++n) {
-      ops_partials.edge3_.partials_[n] *= P;
+      edge<2>(ops_partials).partials_[n] *= P;
     }
   }
   return ops_partials.build(P);

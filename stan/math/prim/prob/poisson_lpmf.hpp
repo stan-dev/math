@@ -68,7 +68,7 @@ return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
     }
   }
 
-  operands_and_partials<T_lambda_ref> ops_partials(lambda_ref);
+  auto ops_partials = operands_and_partials(lambda_ref);
 
   T_partials_return logp = stan::math::sum(multiply_log(n_val, lambda_val));
   if (include_summand<propto, T_rate>::value) {
@@ -79,7 +79,7 @@ return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
   }
 
   if (!is_constant_all<T_rate>::value) {
-    ops_partials.edge1_.partials_ = n_val / lambda_val - 1.0;
+    edge<0>(ops_partials).partials_ = n_val / lambda_val - 1.0;
   }
 
   return ops_partials.build(logp);

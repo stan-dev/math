@@ -44,7 +44,7 @@ return_type_t<T_y, T_shape, T_scale> frechet_lcdf(const T_y& y,
   }
 
   T_partials_return cdf_log(0.0);
-  operands_and_partials<T_y_ref, T_alpha_ref, T_sigma_ref> ops_partials(
+  auto ops_partials = operands_and_partials(
       y_ref, alpha_ref, sigma_ref);
 
   scalar_seq_view<T_y> y_vec(y_ref);
@@ -60,13 +60,13 @@ return_type_t<T_y, T_shape, T_scale> frechet_lcdf(const T_y& y,
     cdf_log -= pow_n;
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] += pow_n * alpha_dbl / y_dbl;
+      edge<0>(ops_partials).partials_[n] += pow_n * alpha_dbl / y_dbl;
     }
     if (!is_constant_all<T_shape>::value) {
-      ops_partials.edge2_.partials_[n] += pow_n * log(y_dbl / sigma_dbl);
+      edge<1>(ops_partials).partials_[n] += pow_n * log(y_dbl / sigma_dbl);
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n] -= pow_n * alpha_dbl / sigma_dbl;
+      edge<2>(ops_partials).partials_[n] -= pow_n * alpha_dbl / sigma_dbl;
     }
   }
   return ops_partials.build(cdf_log);

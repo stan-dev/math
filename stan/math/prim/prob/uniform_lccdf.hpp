@@ -61,7 +61,7 @@ return_type_t<T_y, T_low, T_high> uniform_lccdf(const T_y& y,
     return 0;
   }
 
-  operands_and_partials<T_y_ref, T_alpha_ref, T_beta_ref> ops_partials(
+  auto ops_partials = operands_and_partials(
       y_ref, alpha_ref, beta_ref);
 
   const auto& b_minus_a
@@ -74,17 +74,17 @@ return_type_t<T_y, T_low, T_high> uniform_lccdf(const T_y& y,
   T_partials_return ccdf_log = sum(log(ccdf_log_n));
 
   if (!is_constant_all<T_y>::value) {
-    ops_partials.edge1_.partials_ = inv(-b_minus_a * ccdf_log_n);
+    edge<0>(ops_partials).partials_ = inv(-b_minus_a * ccdf_log_n);
   }
   if (!is_constant_all<T_low, T_high>::value) {
     const auto& rep_deriv = to_ref_if<(!is_constant_all<T_low>::value
                                        && !is_constant_all<T_high>::value)>(
         inv(b_minus_a * b_minus_a * ccdf_log_n));
     if (!is_constant_all<T_low>::value) {
-      ops_partials.edge2_.partials_ = (beta_val - y_val) * rep_deriv;
+      edge<1>(ops_partials).partials_ = (beta_val - y_val) * rep_deriv;
     }
     if (!is_constant_all<T_high>::value) {
-      ops_partials.edge3_.partials_ = (y_val - alpha_val) * rep_deriv;
+      edge<2>(ops_partials).partials_ = (y_val - alpha_val) * rep_deriv;
     }
   }
   return ops_partials.build(ccdf_log);

@@ -46,7 +46,7 @@ return_type_t<T_y, T_scale> rayleigh_cdf(const T_y& y, const T_scale& sigma) {
     return 1.0;
   }
 
-  operands_and_partials<T_y_ref, T_sigma_ref> ops_partials(y_ref, sigma_ref);
+  auto ops_partials = operands_and_partials(y_ref, sigma_ref);
 
   const auto& inv_sigma
       = to_ref_if<!is_constant_all<T_scale>::value>(inv(sigma_val));
@@ -62,10 +62,10 @@ return_type_t<T_y, T_scale> rayleigh_cdf(const T_y& y, const T_scale& sigma) {
                                           && !is_constant_all<T_scale>::value)>(
         y_val * inv_sigma_square * exp_val / (1.0 - exp_val) * cdf);
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_ = common_deriv;
+      edge<0>(ops_partials).partials_ = common_deriv;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge2_.partials_ = -y_val * inv_sigma * common_deriv;
+      edge<1>(ops_partials).partials_ = -y_val * inv_sigma * common_deriv;
     }
   }
 

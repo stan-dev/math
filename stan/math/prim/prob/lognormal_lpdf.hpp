@@ -61,7 +61,7 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
     return 0;
   }
 
-  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref> ops_partials(
+  auto ops_partials = operands_and_partials(
       y_ref, mu_ref, sigma_ref);
 
   if (sum(promote_scalar<int>(y_val == 0))) {
@@ -94,13 +94,13 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
                         + !is_constant_all<T_scale>::value
                     >= 2>(logy_m_mu * inv_sigma_sq);
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_ = -(1 + logy_m_mu_div_sigma) / y_val;
+      edge<0>(ops_partials).partials_ = -(1 + logy_m_mu_div_sigma) / y_val;
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_ = logy_m_mu_div_sigma;
+      edge<1>(ops_partials).partials_ = logy_m_mu_div_sigma;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_
+      edge<2>(ops_partials).partials_
           = (logy_m_mu_div_sigma * logy_m_mu - 1) * inv_sigma;
     }
   }

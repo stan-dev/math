@@ -52,7 +52,7 @@ return_type_t<T_y, T_loc, T_scale> cauchy_cdf(const T_y& y, const T_loc& mu,
   }
 
   T_partials_return P(1.0);
-  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref> ops_partials(
+  auto ops_partials = operands_and_partials(
       y_ref, mu_ref, sigma_ref);
 
   scalar_seq_view<T_y_ref> y_vec(y_ref);
@@ -86,32 +86,32 @@ return_type_t<T_y, T_loc, T_scale> cauchy_cdf(const T_y& y, const T_loc& mu,
     P *= Pn;
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n]
+      edge<0>(ops_partials).partials_[n]
           += sigma_inv_dbl / (pi() * (1.0 + z * z) * Pn);
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_[n]
+      edge<1>(ops_partials).partials_[n]
           += -sigma_inv_dbl / (pi() * (1.0 + z * z) * Pn);
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n]
+      edge<2>(ops_partials).partials_[n]
           += -z * sigma_inv_dbl / (pi() * (1.0 + z * z) * Pn);
     }
   }
 
   if (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::math::size(y); ++n) {
-      ops_partials.edge1_.partials_[n] *= P;
+      edge<0>(ops_partials).partials_[n] *= P;
     }
   }
   if (!is_constant_all<T_loc>::value) {
     for (size_t n = 0; n < stan::math::size(mu); ++n) {
-      ops_partials.edge2_.partials_[n] *= P;
+      edge<1>(ops_partials).partials_[n] *= P;
     }
   }
   if (!is_constant_all<T_scale>::value) {
     for (size_t n = 0; n < stan::math::size(sigma); ++n) {
-      ops_partials.edge3_.partials_[n] *= P;
+      edge<2>(ops_partials).partials_[n] *= P;
     }
   }
   return ops_partials.build(P);

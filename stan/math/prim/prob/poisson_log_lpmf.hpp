@@ -71,7 +71,7 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
     }
   }
 
-  operands_and_partials<T_alpha_ref> ops_partials(alpha_ref);
+  auto ops_partials = operands_and_partials(alpha_ref);
 
   const auto& exp_alpha
       = to_ref_if<!is_constant_all<T_log_rate>::value>(exp(alpha_val));
@@ -85,7 +85,7 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
   }
 
   if (!is_constant_all<T_log_rate>::value) {
-    ops_partials.edge1_.partials_ = n_val - exp_alpha;
+    edge<0>(ops_partials).partials_ = n_val - exp_alpha;
   }
 
   return ops_partials.build(logp);

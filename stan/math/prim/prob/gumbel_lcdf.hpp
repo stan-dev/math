@@ -66,7 +66,7 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lcdf(const T_y& y, const T_loc& mu,
     return 0;
   }
 
-  operands_and_partials<T_y_ref, T_mu_ref, T_beta_ref> ops_partials(
+  auto ops_partials = operands_and_partials(
       y_ref, mu_ref, beta_ref);
 
   const auto& scaled_diff
@@ -83,13 +83,13 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lcdf(const T_y& y, const T_loc& mu,
                                           + !is_constant_all<T_y>::value
                                       >= 2>(exp_scaled_diff / beta_val);
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_ = rep_deriv;
+      edge<0>(ops_partials).partials_ = rep_deriv;
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_ = -rep_deriv;
+      edge<1>(ops_partials).partials_ = -rep_deriv;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_ = rep_deriv * scaled_diff;
+      edge<2>(ops_partials).partials_ = rep_deriv * scaled_diff;
     }
   }
   return ops_partials.build(cdf_log);

@@ -5,7 +5,9 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/functor/broadcast_array.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
-#include <stan/math/fwd/core/fvar.hpp>
+#include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/meta.hpp>
+
 #include <vector>
 
 namespace stan {
@@ -22,13 +24,12 @@ class ops_partials_edge<Dx, fvar<Dx>> {
       : partial_(0), partials_(partial_), operand_(op) {}
 
  private:
-  template <typename, typename, typename, typename, typename, typename>
-  friend class stan::math::operands_and_partials;
+  template <typename, typename, typename...>
+  friend class stan::math::internal::operands_and_partials_impl;
   const Op& operand_;
 
   Dx dx() { return this->partials_[0] * this->operand_.d_; }
 };
-}  // namespace internal
 
 /** \ingroup type_trait
  * This class builds partial derivatives with respect to a set of
@@ -66,27 +67,14 @@ class ops_partials_edge<Dx, fvar<Dx>> {
  *   to a template metaprogram that calculates the scalar promotion of
  *   Op1 -- Op5
  */
-template <typename Op1, typename Op2, typename Op3, typename Op4, typename Op5,
-          typename Dx>
-class operands_and_partials<Op1, Op2, Op3, Op4, Op5, fvar<Dx>> {
+template <typename ReturnType, typename... Ops>
+class operands_and_partials_impl<ReturnType, require_fvar_t<ReturnType>, Ops...> {
  public:
-  internal::ops_partials_edge<Dx, std::decay_t<Op1>> edge1_;
-  internal::ops_partials_edge<Dx, std::decay_t<Op2>> edge2_;
-  internal::ops_partials_edge<Dx, std::decay_t<Op3>> edge3_;
-  internal::ops_partials_edge<Dx, std::decay_t<Op4>> edge4_;
-  internal::ops_partials_edge<Dx, std::decay_t<Op5>> edge5_;
-  using T_return_type = fvar<Dx>;
-  explicit operands_and_partials(const Op1& o1) : edge1_(o1) {}
-  operands_and_partials(const Op1& o1, const Op2& o2)
-      : edge1_(o1), edge2_(o2) {}
-  operands_and_partials(const Op1& o1, const Op2& o2, const Op3& o3)
-      : edge1_(o1), edge2_(o2), edge3_(o3) {}
-  operands_and_partials(const Op1& o1, const Op2& o2, const Op3& o3,
-                        const Op4& o4)
-      : edge1_(o1), edge2_(o2), edge3_(o3), edge4_(o4) {}
-  operands_and_partials(const Op1& o1, const Op2& o2, const Op3& o3,
-                        const Op4& o4, const Op5& o5)
-      : edge1_(o1), edge2_(o2), edge3_(o3), edge4_(o4), edge5_(o5) {}
+  using inner_type = typename ReturnType::Scalar;
+  std::tuple<internal::ops_partials_edge<inner_type, std::decay_t<Ops>>...> edges_;
+
+  template <typename... Types>
+  explicit operands_and_partials_impl(Types&&... ops) : edges_(internal::ops_partials_edge<inner_type, std::decay_t<Ops>>(std::forward<Types>(ops))...) {}
 
   /** \ingroup type_trait
    * Build the node to be stored on the autodiff graph.
@@ -101,14 +89,13 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, fvar<Dx>> {
    * @param value the return value of the function we are compressing
    * @return the value with its derivative
    */
-  T_return_type build(Dx value) {
-    Dx deriv
-        = edge1_.dx() + edge2_.dx() + edge3_.dx() + edge4_.dx() + edge5_.dx();
-    return T_return_type(value, deriv);
+  ReturnType build(inner_type value) {
+    inner_type deriv = apply([](auto&&... edges) {
+      return sum(std::vector<inner_type>{edges.dx()...});
+    }, edges_);
+    return ReturnType(value, deriv);
   }
 };
-
-namespace internal {
 
 // Vectorized Univariate
 template <typename Dx>
@@ -124,8 +111,8 @@ class ops_partials_edge<Dx, std::vector<fvar<Dx>>> {
         operands_(ops) {}
 
  private:
-  template <typename, typename, typename, typename, typename, typename>
-  friend class stan::math::operands_and_partials;
+  template <typename, typename, typename...>
+  friend class stan::math::internal::operands_and_partials_impl;
   const Op& operands_;
 
   Dx dx() {
@@ -150,8 +137,8 @@ class ops_partials_edge<Dx, Eigen::Matrix<fvar<Dx>, R, C>> {
         operands_(ops) {}
 
  private:
-  template <typename, typename, typename, typename, typename, typename>
-  friend class stan::math::operands_and_partials;
+  template <typename, typename, typename...>
+  friend class stan::math::internal::operands_and_partials_impl;
   const Op& operands_;
 
   Dx dx() {
@@ -178,8 +165,8 @@ class ops_partials_edge<Dx, std::vector<Eigen::Matrix<fvar<Dx>, R, C>>> {
   }
 
  private:
-  template <typename, typename, typename, typename, typename, typename>
-  friend class stan::math::operands_and_partials;
+  template <typename, typename, typename...>
+  friend class stan::math::internal::operands_and_partials_impl;
   const Op& operands_;
 
   Dx dx() {
@@ -207,8 +194,8 @@ class ops_partials_edge<Dx, std::vector<std::vector<fvar<Dx>>>> {
   }
 
  private:
-  template <typename, typename, typename, typename, typename, typename>
-  friend class stan::math::operands_and_partials;
+  template <typename, typename, typename...>
+  friend class stan::math::internal::operands_and_partials_impl;
   const Op& operands_;
 
   Dx dx() {

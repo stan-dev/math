@@ -107,10 +107,10 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
   }
   logp += sum((mukappa - 1) * log_y + (kappa_val - mukappa - 1) * log1m_y);
 
-  operands_and_partials<T_y_ref, T_mu_ref, T_kappa_ref> ops_partials(
+  auto ops_partials = operands_and_partials(
       y_ref, mu_ref, kappa_ref);
   if (!is_constant_all<T_y>::value) {
-    ops_partials.edge1_.partials_
+    edge<0>(ops_partials).partials_
         = (mukappa - 1) / y_val + (kappa_val - mukappa - 1) / (y_val - 1);
   }
   if (!is_constant_all<T_loc, T_prec>::value) {
@@ -121,12 +121,12 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
         !is_constant_all<T_loc>::value && !is_constant_all<T_prec>::value)>(
         digamma(kappa_val - mukappa));
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_
+      edge<1>(ops_partials).partials_
           = kappa_val
             * (digamma_kappa_mukappa - digamma_mukappa + log_y - log1m_y);
     }
     if (!is_constant_all<T_prec>::value) {
-      ops_partials.edge3_.partials_
+      edge<2>(ops_partials).partials_
           = digamma(kappa_val) + mu_val * (log_y - digamma_mukappa)
             + (1 - mu_val) * (log1m_y - digamma_kappa_mukappa);
     }

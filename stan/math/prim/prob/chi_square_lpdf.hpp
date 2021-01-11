@@ -89,16 +89,16 @@ return_type_t<T_y, T_dof> chi_square_lpdf(const T_y& y, const T_dof& nu) {
     logp -= 0.5 * sum(y_val) * N / size(y);
   }
 
-  operands_and_partials<T_y_ref, T_nu_ref> ops_partials(y_ref, nu_ref);
+  auto ops_partials = operands_and_partials(y_ref, nu_ref);
   if (!is_constant_all<T_y>::value) {
-    ops_partials.edge1_.partials_ = (half_nu - 1.0) / y_val - 0.5;
+    edge<0>(ops_partials).partials_ = (half_nu - 1.0) / y_val - 0.5;
   }
   if (!is_constant_all<T_dof>::value) {
     if (is_vector<T_dof>::value) {
-      ops_partials.edge2_.partials_ = forward_as<T_partials_array>(
+      edge<1>(ops_partials).partials_ = forward_as<T_partials_array>(
           (log_y - digamma(half_nu)) * 0.5 - HALF_LOG_TWO);
     } else {
-      ops_partials.edge2_.partials_[0]
+      edge<1>(ops_partials).partials_[0]
           = sum(log_y - digamma(half_nu)) * 0.5 - HALF_LOG_TWO * N;
     }
   }

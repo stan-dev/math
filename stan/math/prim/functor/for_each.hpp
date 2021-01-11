@@ -19,8 +19,7 @@ template <typename F, typename T, size_t... Is>
 constexpr inline auto for_each(F&& f, T&& t, std::index_sequence<Is...>) {
   using Swallow = int[];
   static_cast<void>(Swallow{(static_cast<void>(std::forward<F>(f)(
-                                 std::get<Is>(std::forward<T>(t)), Is)),
-                             0)...});
+                                 std::get<Is>(std::forward<T>(t)))), 0)...});
 }
 
 /**
@@ -34,7 +33,7 @@ constexpr inline auto for_each(F&& f, T1&& t1, T2&& t2,
   using Swallow = int[];
   static_cast<void>(Swallow{(static_cast<void>(std::forward<F>(f)(
                                  std::get<Is>(std::forward<T1>(t1)),
-                                 std::get<Is>(std::forward<T2>(t2)), Is)),
+                                 std::get<Is>(std::forward<T2>(t2)))),
                              0)...});
 }
 }  // namespace internal

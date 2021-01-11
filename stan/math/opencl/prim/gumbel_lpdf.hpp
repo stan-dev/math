@@ -94,15 +94,15 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> gumbel_lpdf(
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
-  operands_and_partials<T_y_cl, T_loc_cl, T_scale_cl> ops_partials(y, mu, beta);
+  auto ops_partials = operands_and_partials(y, mu, beta);
   if (!is_constant<T_y_cl>::value) {
-    ops_partials.edge1_.partials_ = std::move(y_deriv_cl);
+    edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);
   }
   if (!is_constant<T_loc_cl>::value) {
-    ops_partials.edge2_.partials_ = std::move(mu_deriv_cl);
+    edge<1>(ops_partials).partials_ = std::move(mu_deriv_cl);
   }
   if (!is_constant<T_scale_cl>::value) {
-    ops_partials.edge3_.partials_ = std::move(beta_deriv_cl);
+    edge<2>(ops_partials).partials_ = std::move(beta_deriv_cl);
   }
 
   return ops_partials.build(logp);

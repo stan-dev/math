@@ -67,7 +67,7 @@ return_type_t<T_size1, T_size2> beta_binomial_cdf(const T_n& n, const T_N& N,
                         beta_ref);
 
   T_partials_return P(1.0);
-  operands_and_partials<T_alpha_ref, T_beta_ref> ops_partials(alpha_ref,
+  auto ops_partials = operands_and_partials(alpha_ref,
                                                               beta_ref);
 
   scalar_seq_view<T_n> n_vec(n);
@@ -123,23 +123,23 @@ return_type_t<T_size1, T_size2> beta_binomial_cdf(const T_n& n, const T_N& N,
     if (!is_constant_all<T_size1>::value) {
       const T_partials_return g
           = -C * (digamma(mu) - digamma(alpha_dbl) + digammaDiff + dF[1] / F);
-      ops_partials.edge1_.partials_[i] += g / Pi;
+      edge<0>(ops_partials).partials_[i] += g / Pi;
     }
     if (!is_constant_all<T_size2>::value) {
       const T_partials_return g
           = -C * (digamma(nu) - digamma(beta_dbl) + digammaDiff - dF[4] / F);
-      ops_partials.edge2_.partials_[i] += g / Pi;
+      edge<1>(ops_partials).partials_[i] += g / Pi;
     }
   }
 
   if (!is_constant_all<T_size1>::value) {
     for (size_t i = 0; i < stan::math::size(alpha); ++i) {
-      ops_partials.edge1_.partials_[i] *= P;
+      edge<0>(ops_partials).partials_[i] *= P;
     }
   }
   if (!is_constant_all<T_size2>::value) {
     for (size_t i = 0; i < stan::math::size(beta); ++i) {
-      ops_partials.edge2_.partials_[i] *= P;
+      edge<1>(ops_partials).partials_[i] *= P;
     }
   }
 

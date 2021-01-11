@@ -33,7 +33,7 @@ inline return_type_t<T_y> std_normal_lccdf(const T_y& y) {
   }
 
   T_partials_return lccdf(0.0);
-  operands_and_partials<T_y_ref> ops_partials(y_ref);
+  auto ops_partials = operands_and_partials(y_ref);
 
   scalar_seq_view<T_y_ref> y_vec(y_ref);
   size_t N = stan::math::size(y);
@@ -60,7 +60,7 @@ inline return_type_t<T_y> std_normal_lccdf(const T_y& y) {
           = y_dbl > 8.25
                 ? INFTY
                 : SQRT_TWO_OVER_SQRT_PI * exp(-scaled_y * scaled_y) / one_m_erf;
-      ops_partials.edge1_.partials_[n] -= rep_deriv;
+      edge<0>(ops_partials).partials_[n] -= rep_deriv;
     }
   }
 

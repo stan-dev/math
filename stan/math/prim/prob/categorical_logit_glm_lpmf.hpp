@@ -124,7 +124,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   }
 
   // Compute the derivatives.
-  operands_and_partials<T_x_ref, T_alpha_ref, T_beta_ref> ops_partials(
+  auto ops_partials = operands_and_partials(
       x_ref, alpha_ref, beta_ref);
 
   if (!is_constant_all<T_x>::value) {
@@ -133,7 +133,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
       for (int i = 1; i < N_instances; i++) {
         beta_y += beta_val.col(y_seq[i] - 1).array();
       }
-      ops_partials.edge1_.partials_
+      edge<0>(ops_partials).partials_
           = beta_y
             - (exp_lin.matrix() * beta_val.transpose()).array().colwise()
                   * inv_sum_exp_lin * N_instances;
@@ -142,12 +142,12 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
       for (int i = 0; i < N_instances; i++) {
         beta_y.row(i) = beta_val.col(y_seq[i] - 1);
       }
-      ops_partials.edge1_.partials_
+      edge<0>(ops_partials).partials_
           = beta_y
             - (exp_lin.matrix() * beta_val.transpose()).array().colwise()
                   * inv_sum_exp_lin;
       // TODO(Tadej) maybe we can replace previous block with the following line
-      // when we have newer Eigen  ops_partials.edge1_.partials_ = beta_val(y -
+      // when we have newer Eigen  edge<0>(ops_partials).partials_ = beta_val(y -
       // 1, all) - (exp_lin.matrix() * beta.transpose()).colwise() *
       // inv_sum_exp_lin;
     }
@@ -157,13 +157,13 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
         = exp_lin.colwise() * -inv_sum_exp_lin;
     if (!is_constant_all<T_alpha>::value) {
       if (T_x_rows == 1) {
-        ops_partials.edge2_.partials_
+        edge<1>(ops_partials).partials_
             = neg_softmax_lin.colwise().sum() * N_instances;
       } else {
-        ops_partials.edge2_.partials_ = neg_softmax_lin.colwise().sum();
+        edge<1>(ops_partials).partials_ = neg_softmax_lin.colwise().sum();
       }
       for (int i = 0; i < N_instances; i++) {
-        ops_partials.edge2_.partials_[y_seq[i] - 1] += 1;
+        edge<1>(ops_partials).partials_[y_seq[i] - 1] += 1;
       }
     }
     if (!is_constant_all<T_beta>::value) {
@@ -183,10 +183,10 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
         }
       }
       // TODO(Tadej) maybe we can replace previous loop with the following line
-      // when we have newer Eigen  ops_partials.edge3_.partials_(Eigen::all, y -
+      // when we have newer Eigen  edge<2>(ops_partials).partials_(Eigen::all, y -
       // 1) += x_val.colwise.sum().transpose();
 
-      ops_partials.edge3_.partials_ = std::move(beta_derivative);
+      edge<2>(ops_partials).partials_ = std::move(beta_derivative);
     }
   }
   return ops_partials.build(logp);

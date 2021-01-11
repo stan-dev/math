@@ -41,7 +41,7 @@ return_type_t<T_prob> bernoulli_cdf(const T_n& n, const T_prob& theta) {
   }
 
   T_partials_return P(1.0);
-  operands_and_partials<T_theta_ref> ops_partials(theta_ref);
+  auto ops_partials = operands_and_partials(theta_ref);
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_theta_ref> theta_vec(theta_ref);
@@ -67,13 +67,13 @@ return_type_t<T_prob> bernoulli_cdf(const T_n& n, const T_prob& theta) {
     P *= Pi;
 
     if (!is_constant_all<T_prob>::value) {
-      ops_partials.edge1_.partials_[i] += -1 / Pi;
+      edge<0>(ops_partials).partials_[i] += -1 / Pi;
     }
   }
 
   if (!is_constant_all<T_prob>::value) {
     for (size_t i = 0; i < stan::math::size(theta); ++i) {
-      ops_partials.edge1_.partials_[i] *= P;
+      edge<0>(ops_partials).partials_[i] *= P;
     }
   }
   return ops_partials.build(P);
