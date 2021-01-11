@@ -12,7 +12,7 @@ TEST(MathMatrixPrimMat, dot_product) {
   std::vector<double> sv1 = { 1.0, 2.0, 3.0 };
   v1 << 1.0, 2.0, 3.0;
   rv1 = v1.transpose();
-  
+
   Eigen::VectorXd v2(3);
   Eigen::RowVectorXd rv2(3);
   std::vector<double> sv2 = { -2.0, -1.0, 3.0 };
@@ -34,7 +34,7 @@ TEST(MathMatrixPrimMat, dot_product_error) {
   std::vector<double> sv1 = { 1.0, 2.0, 3.0 };
   v1 << 1.0, 2.0, 3.0;
   rv1 = v1.transpose();
-  
+
   Eigen::VectorXd v2(2);
   Eigen::RowVectorXd rv2(2);
   std::vector<double> sv2 = { -2.0, -1.0 };
