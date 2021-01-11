@@ -3,6 +3,21 @@ N_TESTS ?= 100
 # to group the probability tests into
 
 ##
+# Any targets in test/benchmark (.d, .o, executable) needs the Google benchmark flags
+##
+benchmarks/%$(EXE) : CXXFLAGS += -I $(BENCHMARK)/include $(CXXFLAGS_GTEST) $(BENCHMARK_CXXFLAGS)
+benchmarks/%$(EXE) : LDFLAGS += -L $(BENCHMARK)/build/src $(BENCHMARK_LDFLAGS)
+benchmarks/%$(EXE) : LDLIBS += -lbenchmark
+benchmarks/%$(EXE) : CPPFLAGS += $(CPPFLAGS_GTEST) $(BENCHMARK_CPPFLAGS)
+benchmarks/%$(EXE) : INC += $(INC_GTEST)
+ifeq ($(OS),Windows_NT)
+  benchmarks/%$(EXE) : LDLIBS += -lshlwapi
+endif
+
+benchmarks/%$(EXE) : benchmarks/%.cpp $(GTEST)/src/gtest-all.o $(MPI_TARGETS) $(TBB_TARGETS)
+	$(LINK.cpp) $^ $(LDLIBS) $(OUTPUT_OPTION)
+
+##
 # Any targets in test/ (.d, .o, executable) needs the GTEST flags
 ##
 test/% : CXXFLAGS += $(CXXFLAGS_GTEST)
@@ -143,13 +158,13 @@ TEST_STANC = test/expressions/stanc$(EXE)
 endif
 
 ifneq ($(STANC3),)
-  
+
   # build stanc3 from local installation
   $(TEST_STANC) : $(call findfiles,$(STANC3)/src/,*.ml*) $(STANC#)
 	@mkdir -p $(dir $@)
 	cd $(STANC3) && echo "--- Rebuilding stanc ---\n" && dune build @install
 	cp $(STANC3)/_build/default/src/stanc/stanc.exe $@
-	
+
 else ifneq ($(STANC3_TEST_BIN_URL),)
 
 # download stanc3 build from specific branch
