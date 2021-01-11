@@ -88,22 +88,19 @@ class eigen_results_ {
   /**
    * Assign expressions to results using linear indexing.
    * @tparam Linear whether to use linear indexing
-   * @tparam T_res_evals types of result evaluators
    * @tparam T_expr_evals types of expression evaluators
-   * @param res_evals evaluators for results to assign to
    * @param expr_evals evaluators for expressions to assign
    * @param rows number of rows
    * @param cols number of cols
    */
-  template <bool Linear, typename... T_res_evals, typename... T_expr_evals,
+  template <bool Linear, typename... T_expr_evals,
             std::enable_if_t<Linear>* = nullptr>
-  inline void assign(std::tuple<T_res_evals...>& res_evals,
-                     const std::tuple<T_expr_evals...>& expr_evals,
+  inline void assign(const std::tuple<T_expr_evals...>& expr_evals,
                      Eigen::Index rows, Eigen::Index cols) {
     for (size_t i = 0; i < rows * cols; i++) {
       index_apply<sizeof...(T_results)>([&](auto... Is) {
         static_cast<void>(
-            std::initializer_list<int>{(std::get<Is>(res_evals).coeffRef(i)
+            std::initializer_list<int>{(std::get<Is>(this->results_).coeffRef(i)
                                         = std::get<Is>(expr_evals).coeff(i),
                                         0)...});
       });
@@ -112,17 +109,14 @@ class eigen_results_ {
   /**
    * Assign expressions to results using 2d indexing.
    * @tparam Linear whether to use linear indexing
-   * @tparam T_res_evals types of result evaluators
    * @tparam T_expr_evals types of expression evaluators
-   * @param res_evals evaluators for results to assign to
    * @param expr_evals evaluators for expressions to assign
    * @param rows number of rows
    * @param cols number of cols
    */
-  template <bool Linear, typename... T_res_evals, typename... T_expr_evals,
+  template <bool Linear, typename... T_expr_evals,
             std::enable_if_t<!Linear>* = nullptr>
-  inline void assign(std::tuple<T_res_evals...>& res_evals,
-                     const std::tuple<T_expr_evals...>& expr_evals,
+  inline void assign(const std::tuple<T_expr_evals...>& expr_evals,
                      Eigen::Index rows, Eigen::Index cols) {
     constexpr bool is_first_row_major
         = std::decay_t<decltype(std::get<0>(expr_evals))>::Flags
@@ -135,9 +129,9 @@ class eigen_results_ {
           static_cast<void>(std::initializer_list<int>{
               ((std::decay_t<decltype(std::get<0>(expr_evals))>::Flags
                         & Eigen::RowMajorBit
-                    ? std::get<Is>(res_evals).coeffRef(i, j)
+                    ? std::get<Is>(this->results_).coeffRef(i, j)
                       = std::get<Is>(expr_evals).coeff(i, j)
-                    : std::get<Is>(res_evals).coeffRef(j, i)
+                    : std::get<Is>(this->results_).coeffRef(j, i)
                       = std::get<Is>(expr_evals).coeff(j, i)),
                0)...});
         });
@@ -173,14 +167,11 @@ class eigen_results_ {
 
     index_apply<sizeof...(T_results)>([&](auto... Is) {
       std::tuple<Eigen::internal::evaluator<
-          std::decay_t<decltype(std::get<Is>(results_))>>...>
-      result_evaluators(std::get<Is>(results_)...);
-      std::tuple<Eigen::internal::evaluator<
           std::decay_t<decltype(std::get<Is>(expressions.exprs_))>>...>
       expression_evaluators(std::get<Is>(expressions.exprs_)...);
 
-      assign<all_linear && (N_col_major == 0 || N_row_major == 0)>(
-          result_evaluators, expression_evaluators,
+      this->assign<all_linear && (N_col_major == 0 || N_row_major == 0)>(
+          expression_evaluators,
           std::get<0>(expressions.exprs_).rows(),
           std::get<0>(expressions.exprs_).cols());
     });
@@ -207,7 +198,7 @@ class eigen_results_ {
     index_apply<sizeof...(T_results)>([&, this](auto... Is) {
       static_cast<void>(std::initializer_list<int>{
           (Eigen::internal::resize_if_allowed(
-               std::get<Is>(results_), std::get<Is>(expressions.exprs_),
+               std::get<Is>(this->results_), std::get<Is>(expressions.exprs_),
                Eigen::internal::assign_op<int, int>()),
            // types in the assign_op don't matter for the resizing
            0)...});
