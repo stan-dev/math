@@ -36,7 +36,7 @@ mdivide_left_ldlt(LDLT_factor<T>& A, const EigMat& b) {
 
   return A.ldlt().solve(
       Eigen::Matrix<return_type_t<T, EigMat>, EigMat::RowsAtCompileTime,
-                    EigMat::ColsAtCompileTime>(b));
+      EigMat::ColsAtCompileTime>(b));
 }
 
 }  // namespace math

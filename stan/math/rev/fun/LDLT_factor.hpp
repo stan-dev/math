@@ -15,30 +15,27 @@ namespace math {
  * of its values, with all member variable allocations are done in the arena.
  */
 template <typename T>
-class LDLT_factor<T, std::enable_if_t<bool_constant<
-                         is_eigen_matrix_dynamic<T>::value
-                         && is_var<scalar_type_t<T>>::value>::value>> {
+class LDLT_factor<T, require_eigen_matrix_dynamic_vt<is_var, T>> {
  private:
   arena_t<plain_type_t<T>> matrix_;
-  Eigen::LDLT<Eigen::MatrixXd>* ldlt_;
+  Eigen::LDLT<Eigen::MatrixXd> ldlt_;
 
  public:
   template <typename S,
             require_same_t<plain_type_t<T>, plain_type_t<S>>* = nullptr>
   explicit LDLT_factor(const S& matrix)
       : matrix_(matrix),
-        ldlt_(make_chainable_ptr(matrix.val().ldlt())) {}
+        ldlt_(matrix.val().ldlt()) {}
 
   /**
    * Return a const reference to the underlying matrix
    */
-  const auto& matrix() const { return matrix_; }
+  const auto& matrix() const noexcept { return matrix_; }
 
   /**
    * Return a const reference to the LDLT factor of the matrix values
    */
-   const auto& ldlt() const { return *ldlt_; }
-   auto* chainable_ldlt_ptr() { return ldlt_; }
+   const auto& ldlt() const noexcept { return ldlt_; }
 };
 
 /**
@@ -46,28 +43,27 @@ class LDLT_factor<T, std::enable_if_t<bool_constant<
  * holds a copy of the input `var_value` and the LDLT of its values.
  */
 template <typename T>
-class LDLT_factor<T, std::enable_if_t<is_var_matrix<T>::value>> {
+class LDLT_factor<T, require_var_matrix_t<T>> {
  private:
   std::decay_t<T> matrix_;
-  Eigen::LDLT<Eigen::MatrixXd>* ldlt_;
+  Eigen::LDLT<Eigen::MatrixXd> ldlt_;
 
  public:
   template <typename S,
             require_same_t<plain_type_t<T>, plain_type_t<S>>* = nullptr>
   explicit LDLT_factor(const S& matrix)
       : matrix_(matrix),
-       ldlt_(make_chainable_ptr(matrix.val().ldlt())) {}
+       ldlt_(matrix.val().ldlt()) {}
 
   /**
    * Return a const reference the underlying `var_value`
    */
-  const auto& matrix() const { return matrix_; }
+  const auto& matrix() const noexcept { return matrix_; }
 
   /**
    * Return a const reference to the LDLT factor of the matrix values
    */
-   const auto& ldlt() const { return *ldlt_; }
-   auto* chainable_ldlt_ptr() { return ldlt_; }
+   const auto& ldlt() const noexcept { return ldlt_; }
 };
 
 }  // namespace math
