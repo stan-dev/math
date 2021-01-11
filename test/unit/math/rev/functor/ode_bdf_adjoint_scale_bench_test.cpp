@@ -94,7 +94,8 @@ void run_benchmark(std::size_t system_size, int adjoint_integrator) {
 
       // Essentially sets the adjoint for all states to 1.
       var target = stan::math::sum(y[0]);
-      for (int k = 1; k < ts_size; k++) target += stan::math::sum(y[k]);
+      for (int k = 1; k < ts_size; k++)
+        target += stan::math::sum(y[k]);
 
       target.grad();
 
