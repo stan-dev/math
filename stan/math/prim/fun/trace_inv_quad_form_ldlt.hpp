@@ -25,8 +25,8 @@ namespace math {
  */
 template <typename T, typename EigMat2,
           typename = require_all_not_st_var<T, EigMat2>>
-inline return_type_t<T, EigMat2> trace_inv_quad_form_ldlt(
-    const LDLT_factor<T>& A, const EigMat2& B) {
+inline return_type_t<T, EigMat2> trace_inv_quad_form_ldlt(LDLT_factor<T>& A,
+                                                          const EigMat2& B) {
   check_multiplicable("trace_inv_quad_form_ldlt", "A", A.matrix(), "B", B);
 
   if (A.matrix().size() == 0) {

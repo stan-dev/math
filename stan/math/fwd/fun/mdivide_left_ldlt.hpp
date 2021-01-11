@@ -25,7 +25,7 @@ template <typename T, typename EigMat,
           require_eigen_vt<is_fvar, EigMat>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic,
                      EigMat::ColsAtCompileTime>
-mdivide_left_ldlt(const LDLT_factor<T>& A, const EigMat& b) {
+mdivide_left_ldlt(LDLT_factor<T>& A, const EigMat& b) {
   using EigMatValueScalar = typename value_type_t<EigMat>::Scalar;
   constexpr int R2 = EigMat::RowsAtCompileTime;
   constexpr int C2 = EigMat::ColsAtCompileTime;

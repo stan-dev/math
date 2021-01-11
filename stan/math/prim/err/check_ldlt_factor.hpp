@@ -23,7 +23,7 @@ namespace math {
  */
 template <typename T>
 inline void check_ldlt_factor(const char* function, const char* name,
-                              const LDLT_factor<T>& A) {
+                              LDLT_factor<T>& A) {
   if (!(A.ldlt().info() == Eigen::Success && A.ldlt().isPositive()
         && (A.ldlt().vectorD().array() > 0).all())) {
     std::ostringstream msg;

@@ -18,7 +18,7 @@ namespace math {
  * @return <code>true</code> if the LDLT factor is valid
  */
 template <typename T>
-inline bool is_ldlt_factor(const LDLT_factor<T>& A) {
+inline bool is_ldlt_factor(LDLT_factor<T>& A) {
   return A.ldlt().info() == Eigen::Success && A.ldlt().isPositive()
          && (A.ldlt().vectorD().array() > 0).all();
 }

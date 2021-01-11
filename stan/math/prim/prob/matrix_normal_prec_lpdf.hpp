@@ -40,13 +40,13 @@ return_type_t<T_y, T_Mu, T_Sigma, T_D> matrix_normal_prec_lpdf(
   check_finite(function, "Sigma", Sigma);
   check_symmetric(function, "Sigma", Sigma);
 
-  const auto& ldlt_Sigma = make_ldlt_factor(Sigma);
+  auto ldlt_Sigma = make_ldlt_factor(Sigma);
   check_ldlt_factor(function, "LDLT_Factor of Sigma", ldlt_Sigma);
   check_positive(function, "D rows", D.rows());
   check_finite(function, "D", D);
   check_symmetric(function, "D", D);
 
-  const auto& ldlt_D = make_ldlt_factor(D);
+  auto ldlt_D = make_ldlt_factor(D);
   check_ldlt_factor(function, "LDLT_Factor of D", ldlt_D);
   check_size_match(function, "Rows of random variable", y.rows(),
                    "Rows of location parameter", Mu.rows());

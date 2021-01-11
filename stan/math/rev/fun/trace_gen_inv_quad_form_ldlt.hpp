@@ -30,7 +30,7 @@ template <typename Td, typename Ta, typename Tb,
           require_not_col_vector_t<Td>* = nullptr,
           require_all_matrix_t<Td, Ta, Tb>* = nullptr,
           require_any_st_var<Td, Ta, Tb>* = nullptr>
-inline var trace_gen_inv_quad_form_ldlt(const Td& D, const LDLT_factor<Ta>& A,
+inline var trace_gen_inv_quad_form_ldlt(const Td& D, LDLT_factor<Ta>& A,
                                         const Tb& B) {
   check_square("trace_gen_inv_quad_form_ldlt", "D", D);
   check_multiplicable("trace_gen_inv_quad_form_ldlt", "A", A.matrix(), "B", B);

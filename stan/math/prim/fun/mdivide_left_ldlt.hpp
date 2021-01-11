@@ -27,7 +27,7 @@ template <typename T, typename EigMat, require_eigen_t<EigMat>* = nullptr,
                             is_fvar<value_type_t<EigMat>>>* = nullptr>
 inline Eigen::Matrix<return_type_t<T, EigMat>, Eigen::Dynamic,
                      EigMat::ColsAtCompileTime>
-mdivide_left_ldlt(const LDLT_factor<T>& A, const EigMat& b) {
+mdivide_left_ldlt(LDLT_factor<T>& A, const EigMat& b) {
   check_multiplicable("mdivide_left_ldlt", "A", A.matrix(), "b", b);
 
   if (A.matrix().cols() == 0) {

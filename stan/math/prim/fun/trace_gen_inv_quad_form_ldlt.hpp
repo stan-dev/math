@@ -34,7 +34,7 @@ template <typename EigMat1, typename T2, typename EigMat3,
           require_not_col_vector_t<EigMat1>* = nullptr,
           require_all_not_st_var<EigMat1, T2, EigMat3>* = nullptr>
 inline return_type_t<EigMat1, T2, EigMat3> trace_gen_inv_quad_form_ldlt(
-    const EigMat1& D, const LDLT_factor<T2>& A, const EigMat3& B) {
+    const EigMat1& D, LDLT_factor<T2>& A, const EigMat3& B) {
   check_square("trace_gen_inv_quad_form_ldlt", "D", D);
   check_multiplicable("trace_gen_inv_quad_form_ldlt", "A", A.matrix(), "B", B);
   check_multiplicable("trace_gen_inv_quad_form_ldlt", "B", B, "D", D);
