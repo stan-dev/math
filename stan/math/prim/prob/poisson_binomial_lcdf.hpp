@@ -51,7 +51,8 @@ return_type_t<T_theta> poisson_binomial_lcdf(const T_y& y,
     check_bounded(function, "Successes variable", y_vec[i], 0,
                   theta_vec[i].size());
     check_finite(function, "Probability parameters", value_of(theta_vec[i]));
-    check_bounded(function, "Probability parameters", value_of(theta_vec[i]), 0.0, 1.0);
+    check_bounded(function, "Probability parameters", value_of(theta_vec[i]),
+                  0.0, 1.0);
   }
 
   return sum(log_sum_exp(poisson_binomial_log_probs(y, theta)));
