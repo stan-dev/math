@@ -18,9 +18,9 @@ namespace internal {
 //  * Starts profiling the forward pass for the profile
 //  * with the specified name. Does not profile the reverse
 //  * pass.
-//  * 
+//  *
 //  * @tparam T profile type which must not a var
-//  * 
+//  *
 //  * @param name the name of the profile to start
 //  * @param profiles the map used for storing profiling info
 //  */
@@ -54,9 +54,9 @@ namespace internal {
 //  * Stops profiling the forward pass for the profile
 //  * with the specified name. Does not profile the reverse
 //  * pass.
-//  * 
+//  *
 //  * @tparam T profile type which must not a var
-//  * 
+//  *
 //  * @param name the name of the profile to stop
 //  * @param profiles the map used for storing profiling info
 //  */
@@ -87,9 +87,9 @@ namespace internal {
  * Starts profiling the forward pass for the profile
  * with the specified name and adds a var that stops
  * profiling the reverse pass in the reverse callback.
- * 
+ *
  * @tparam T profile type which must not a var
- * 
+ *
  * @param name the name of the profile to start
  * @param profiles the map used for storing profiling info
  */
@@ -105,10 +105,12 @@ inline auto profile_start(const char* name, profile_info& profile) {
   }
   profile.meta.fwd_pass_start_tp = steady_clock::now();
   profile.meta.fwd_pass_active = true;
-  profile.meta.start_chain_stack_size = ChainableStack::instance_->var_stack_.size();
+  profile.meta.start_chain_stack_size
+      = ChainableStack::instance_->var_stack_.size();
   reverse_pass_callback([name, &profile]() mutable {
     profile.rev_pass_time += duration<double>(steady_clock::now()
-                             - profile.meta.rev_pass_start_tp).count();
+                                              - profile.meta.rev_pass_start_tp)
+                                 .count();
     profile.meta.rev_pass_active = false;
     profile.n_rev_pass++;
   });
@@ -118,9 +120,9 @@ inline auto profile_start(const char* name, profile_info& profile) {
  * Stops profiling the forward pass for the profile
  * with the specified name and adds a var that starts
  * profiling the reverse pass in the reverse callback.
- * 
+ *
  * @tparam T profile type which must not a var
- * 
+ *
  * @param name the name of the profile to stop
  * @param profiles the map used for storing profiling info
  */
@@ -128,14 +130,16 @@ template <typename T, require_all_var_t<T>* = nullptr>
 inline auto profile_stop(const char* name, profile_info& profile) {
   using std::chrono::duration;
   using std::chrono::steady_clock;
-  profile.fwd_pass_time += duration<double>(steady_clock::now()
-                           - profile.meta.fwd_pass_start_tp).count();
+  profile.fwd_pass_time
+      += duration<double>(steady_clock::now() - profile.meta.fwd_pass_start_tp)
+             .count();
   profile.meta.fwd_pass_active = false;
   profile.n_fwd_pass++;
-  profile.chain_stack_size_sum += 
-    (ChainableStack::instance_->var_stack_.size() - profile.meta.start_chain_stack_size - 1);  
-  profile.nochain_stack_size_sum += 
-    (ChainableStack::instance_->var_nochain_stack_.size() - profile.meta.start_nochain_stack_size - 1);
+  profile.chain_stack_size_sum += (ChainableStack::instance_->var_stack_.size()
+                                   - profile.meta.start_chain_stack_size - 1);
+  profile.nochain_stack_size_sum
+      += (ChainableStack::instance_->var_nochain_stack_.size()
+          - profile.meta.start_nochain_stack_size - 1);
   reverse_pass_callback([name, &profile]() mutable {
     profile.meta.rev_pass_start_tp = steady_clock::now();
     profile.meta.rev_pass_active = true;
@@ -150,25 +154,24 @@ inline auto profile_stop(const char* name, profile_info& profile) {
  * AD tape. The destructor stops the profile for the forward pass and
  * places a var with a callback to start the profile for the reverse pass.
  * When T is not var, the constructor and destructor only profile the
- * 
- * 
+ *
+ *
  * @tparam T type of profile class. If var, the created object is used
  * to profile reverse mode AD. Only profiles the forward pass otherwise.
- */ 
+ */
 template <typename T>
 class profile {
   const char* name_;
   profile_info* profile_;
 
  public:
-  profile(const char* name, profile_map& profiles)
-      : name_(name) {
+  profile(const char* name, profile_map& profiles) : name_(name) {
     profile_key key = {name_, std::this_thread::get_id()};
     profile_map::iterator p = profiles.find(key);
     if (p == profiles.end()) {
       profiles[key] = {};
     }
-    profile_ = &profiles[key];    
+    profile_ = &profiles[key];
     internal::profile_start<T>(name_, *profile_);
   }
   ~profile() { internal::profile_stop<T>(name_, *profile_); }
