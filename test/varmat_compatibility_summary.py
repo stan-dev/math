@@ -5,7 +5,7 @@ import sys
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 import sig_utils
 
-def main(results_file, functions, print_which, print_names):
+def main(results_file, functions, print_which, print_fully, print_names):
     """
     Generates benchmark code, compiles it and runs the benchmark. Optionally plots the results.
     :param functions_or_sigs: List of function names and/or signatures to benchmark
@@ -13,30 +13,63 @@ def main(results_file, functions, print_which, print_names):
     with open(results_file, "r") as f:
         results = json.load(f)
 
-    if print_which == "compatible":
-        signatures = results["compatible_signatures"]
-    elif print_which == "incompatible":
-        signatures = results["incompatible_signatures"]
-    else:
-        signatures = results["impossible_signatures"]
+    compatible_signatures = set()
+    incompatible_signatures = set()
+    impossible_signatures = set()
+    if "compatible_signatures" in results:
+        compatible_signatures = set(results["compatible_signatures"])
+    if "incompatible_signatures" in results:
+        incompatible_signatures = set(results["incompatible_signatures"])
+    if "impossible_signatures" in results:
+        impossible_signatures = set(results["impossible_signatures"])
 
     requested_functions = set(functions)
 
     names_to_print = set()
 
-    for signature in signatures:
-        return_type, function_name, stan_args = sig_utils.parse_signature(signature)
+    def convert_signatures_list_to_functions(signatures):
+        functions = set()
+        for signature in signatures:
+            return_type, function_name, stan_args = sig_utils.parse_signature(signature)
 
-        if len(requested_functions) > 0 and function_name not in requested_functions:
-            continue
+            if len(requested_functions) > 0 and function_name not in requested_functions:
+                continue
 
-        if print_names:
-            names_to_print.add(function_name)
+            functions.add(function_name)
+        return functions
+
+    compatible_functions = convert_signatures_list_to_functions(compatible_signatures)
+    incompatible_functions = convert_signatures_list_to_functions(incompatible_signatures)
+    impossible_functions = convert_signatures_list_to_functions(impossible_signatures)
+
+    if print_fully:
+        fully_compatible_functions = compatible_functions - incompatible_functions
+        fully_incompatible_functions = incompatible_functions - compatible_functions
+        fully_impossible_functions = impossible_functions - compatible_functions - incompatible_functions
+        compatible_functions = fully_compatible_functions
+        incompatible_functions = fully_incompatible_functions
+        impossible_functions = fully_impossible_functions
+    
+    if print_names:
+        if print_which == "compatible":
+            names_to_print = compatible_functions
+        elif print_which == "incompatible":
+            names_to_print = incompatible_functions
         else:
-            names_to_print.add(signature)
+            names_to_print = impossible_functions
+    else:
+        if print_which == "compatible":
+            names_to_print = compatible_signatures
+        elif print_which == "incompatible":
+            names_to_print = incompatible_signatures
+        else:
+            names_to_print = impossible_signatures
     
     for name in sorted(names_to_print):
-        print(name.strip())
+        if print_names:
+            print(name.strip())
+        else:
+            print(name.replace("scalar_return_t", "real").strip())
 
 class FullErrorMsgParser(ArgumentParser):
     """
@@ -74,17 +107,28 @@ def processCLIArgs():
         "--which",
         default = "compatible",
         choices = ["compatible", "incompatible", "impossible"],
-        help = "Print which signatures."
+        help = "Print by compatibility."
     )
     parser.add_argument(
-        "--print_names",
+        "--fully",
+        default = False,
+        help = "When printing compatible or incompatible function names, print those that are fully compatible or incompatible, ignoring impossible functions. When printing impossible functions, print only those with no compatible or incompatible versions.",
+        action = "store_true"
+    )
+    parser.add_argument(
+        "--names",
         default=False,
         help="Print function names, not signatures.",
         action="store_true",
     )
     args = parser.parse_args()
 
-    main(args.results_file, args.functions, args.which, args.print_names)
+    main(
+        args.results_file, args.functions,
+        print_which = args.which,
+        print_fully = args.fully,
+        print_names = args.names
+    )
 
 
 if __name__ == "__main__":

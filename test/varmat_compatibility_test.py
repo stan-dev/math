@@ -182,11 +182,12 @@ def benchmark(
                 setup = ""
                 var_conversions = ""
                 generated_varmat = False
+                arg_types = []
                 
                 code = "    auto res = stan::math::eval(stan::math::{}(".format(
                     function_name
                 )
-                
+
                 for (
                         n,
                         (arg_overload, cpp_arg_template, stan_arg),
@@ -199,9 +200,11 @@ def benchmark(
                         is_argument_array_scalars = stan_arg2 in scalar_stan_types
                     else:
                         benchmark_name += "_" + arg_overload + "_" + stan_arg
-                        is_argumemt_array_scalars = False
+                        is_argument_array_scalars = False
                     scalar = overload_scalar[arg_overload]
                     arg_type = cpp_arg_template.replace("SCALAR", scalar)
+                    if not stan_arg.endswith("return_t"):
+                        arg_types.append(arg_type)
                     var_name = "arg" + str(n)
                     make_arg_function = "make_arg"
                     is_argument_autodiff = "var" in arg_type
@@ -216,7 +219,7 @@ def benchmark(
                             value = special_arg_values[function_name][n]
                     if scalar == "double":
                         setup += (
-                            "  {} {} = stan::test::{}<{}>({}, {});\n".format(
+                            "    {} {} = stan::test::{}<{}>({}, {});\n".format(
                                 arg_type,
                                 var_name,
                                 make_arg_function,
@@ -228,7 +231,7 @@ def benchmark(
                         if not is_argument_scalar:
                             if not is_argument_array_scalars and arg_overload == "Rev":
                                 generated_varmat = True
-                                setup += "  auto {} = stan::math::to_var_value({});\n".format(
+                                setup += "    auto {} = stan::math::to_var_value({});\n".format(
                                     var_name + "_varmat", var_name
                                 )
                                 var_name += "_varmat"
@@ -261,6 +264,10 @@ def benchmark(
                 if "Rev" in arg_overloads:
                     code += "    stan::math::grad();\n"
 
+                return_t_definition = "    using scalar_return_t = stan::return_type_t<" + ", ".join(arg_types) + ">;"
+
+                setup = return_t_definition + "\n" + setup
+                    
                 any_overload_generated_varmat = any_overload_generated_varmat or generated_varmat
                 
                 if generated_varmat:
