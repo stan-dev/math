@@ -322,7 +322,7 @@ class var_value<
  public:
   using value_type = T;  // type in vari_value.
   using vari_type = std::conditional_t<is_plain_type<value_type>::value,
-      vari_value<value_type>, vari_view<T>>;
+                                       vari_value<value_type>, vari_view<T>>;
 
   static constexpr int RowsAtCompileTime{vari_type::RowsAtCompileTime};
   static constexpr int ColsAtCompileTime{vari_type::ColsAtCompileTime};
