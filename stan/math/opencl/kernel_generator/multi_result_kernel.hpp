@@ -98,7 +98,9 @@ struct multi_result_kernel_internal {
 
     /**
      * Generates kernel source for assignment of expressions to results.
-     * @param[in,out] generated map from (pointer to) already generated
+     * @param[in,out] generated map from (pointer to) already generated local
+     * operations to variable names
+     * @param[in,out] generated_all map from (pointer to) already generated all
      * operations to variable names
      * @param ng name generator
      * @param row_index_name variable name of the row index
@@ -107,39 +109,47 @@ struct multi_result_kernel_internal {
      * @return kernel parts for the kernel
      */
     static kernel_parts generate(
-        std::map<const void*, const char*>& generated, name_generator& ng,
+        std::map<const void*, const char*>& generated,
+        std::map<const void*, const char*>& generated_all, name_generator& ng,
         const std::string& row_index_name, const std::string& col_index_name,
         const std::tuple<std::pair<T_results, T_expressions>...>&
             assignment_pairs) {
-      kernel_parts parts = next::generate(generated, ng, row_index_name,
-                                          col_index_name, assignment_pairs);
+      kernel_parts parts
+          = next::generate(generated, generated_all, ng, row_index_name,
+                           col_index_name, assignment_pairs);
 
       kernel_parts parts0
           = std::get<N>(assignment_pairs)
                 .second.get_whole_kernel_parts(
-                    generated, ng, row_index_name, col_index_name,
-                    std::get<N>(assignment_pairs).first);
+                    generated, generated_all, ng, row_index_name,
+                    col_index_name, std::get<N>(assignment_pairs).first);
       parts += parts0;
       return parts;
     }
 
     /**
      * Sets kernel arguments.
-     * @param[in,out] generated map from (pointer to) already generated
+     * @param[in,out] generated map from (pointer to) already generated local
+     * operations to variable names
+     * @param[in,out] generated_all map from (pointer to) already generated all
      * operations to variable names
      * @param kernel kernel to set arguments to
      * @param arg_num number of the next argument to set
      * @param assignment_pairs pairs of result and expression
      */
     static void set_args(
-        std::map<const void*, const char*>& generated, cl::Kernel& kernel,
+        std::map<const void*, const char*>& generated,
+        std::map<const void*, const char*>& generated_all, cl::Kernel& kernel,
         int& arg_num,
         const std::tuple<std::pair<T_results, T_expressions>...>&
             assignment_pairs) {
-      next::set_args(generated, kernel, arg_num, assignment_pairs);
+      next::set_args(generated, generated_all, kernel, arg_num,
+                     assignment_pairs);
 
-      std::get<N>(assignment_pairs).second.set_args(generated, kernel, arg_num);
-      std::get<N>(assignment_pairs).first.set_args(generated, kernel, arg_num);
+      std::get<N>(assignment_pairs)
+          .second.set_args(generated, generated_all, kernel, arg_num);
+      std::get<N>(assignment_pairs)
+          .first.set_args(generated, generated_all, kernel, arg_num);
     }
 
     /**
@@ -192,7 +202,8 @@ struct multi_result_kernel_internal<-1, T_results...> {
             assignment_pairs) {}
 
     static kernel_parts generate(
-        std::map<const void*, const char*>& generated, name_generator& ng,
+        std::map<const void*, const char*>& generated,
+        std::map<const void*, const char*>& generated_all, name_generator& ng,
         const std::string& row_index_name, const std::string& col_index_name,
         const std::tuple<std::pair<T_results, T_expressions>...>&
             assignment_pairs) {
@@ -200,7 +211,8 @@ struct multi_result_kernel_internal<-1, T_results...> {
     }
 
     static void set_args(
-        std::map<const void*, const char*>& generated, cl::Kernel& kernel,
+        std::map<const void*, const char*>& generated,
+        std::map<const void*, const char*>& generated_all, cl::Kernel& kernel,
         int& arg_num,
         const std::tuple<std::pair<T_results, T_expressions>...>&
             assignment_pairs) {}
@@ -348,8 +360,9 @@ class results_cl {
 
     name_generator ng;
     std::map<const void*, const char*> generated;
-    kernel_parts parts
-        = impl::generate(generated, ng, "i", "j", assignment_pairs);
+    std::map<const void*, const char*> generated_all;
+    kernel_parts parts = impl::generate(generated, generated_all, ng, "i", "j",
+                                        assignment_pairs);
     std::string src;
     if (require_specific_local_size) {
       src =
@@ -455,7 +468,9 @@ class results_cl {
       int arg_num = 0;
 
       std::map<const void*, const char*> generated;
-      impl::set_args(generated, kernel, arg_num, assignment_pairs);
+      std::map<const void*, const char*> generated_all;
+      impl::set_args(generated, generated_all, kernel, arg_num,
+                     assignment_pairs);
 
       std::vector<cl::Event> events;
       impl::get_clear_events(events, assignment_pairs);

@@ -55,31 +55,6 @@ class diagonal_
   }
 
   /**
-   * Generates kernel code for this and nested expressions.
-   * @param[in,out] generated map from (pointer to) already generated operations
-   * to variable names
-   * @param name_gen name generator for this kernel
-   * @param row_index_name row index variable name
-   * @param col_index_name column index variable name
-   * @param view_handled whether caller already handled matrix view
-   * @return part of kernel with code for this and nested expressions
-   */
-  inline kernel_parts get_kernel_parts(
-      std::map<const void*, const char*>& generated, name_generator& name_gen,
-      const std::string& row_index_name, const std::string& col_index_name,
-      bool view_handled) const {
-    kernel_parts res{};
-    if (generated.count(this) == 0) {
-      generated[this] = "";
-      std::map<const void*, const char*> generated2;
-      res = this->template get_arg<0>().get_kernel_parts(
-          generated2, name_gen, row_index_name, row_index_name, true);
-      var_name_ = this->template get_arg<0>().var_name_;
-    }
-    return res;
-  }
-
-  /**
    * Sets col_index_name to value of row_index_name. This is only used when
    * diagonal is assigned to.
    * @param[in, out] row_index_name row index
@@ -88,21 +63,6 @@ class diagonal_
   inline void modify_argument_indices(std::string& row_index_name,
                                       std::string& col_index_name) const {
     col_index_name = row_index_name;
-  }
-
-  /**
-   * Generates kernel code for this and nested expressions if this expression
-   * appears on the left hand side of an assignment.
-   * @param row_index_name row index variable name
-   * @param col_index_name column index variable name
-   * @param var_name_arg name of the variable in kernel that holds argument to
-   * this expression
-   * @return part of kernel with code for this expression
-   */
-  inline kernel_parts generate_lhs(const std::string& row_index_name,
-                                   const std::string& col_index_name,
-                                   const std::string& var_name_arg) const {
-    return {};
   }
 
   /**
