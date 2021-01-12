@@ -14,87 +14,19 @@
 namespace stan {
 namespace math {
 namespace internal {
-// /**
-//  * Starts profiling the forward pass for the profile
-//  * with the specified name. Does not profile the reverse
-//  * pass.
-//  *
-//  * @tparam T profile type which must not a var
-//  *
-//  * @param name the name of the profile to start
-//  * @param profiles the map used for storing profiling info
-//  */
-// template <typename T, require_all_not_var_t<T>* = nullptr>
-// inline void profile_start(const char* name, profile_map& profiles) {
-//   profile_key key = {name, std::this_thread::get_id()};
-//   profile_map::iterator p = profiles.find(key);
-//   if (p == profiles.end()) {
-//     std::pair<profile_map::iterator, bool> new_profile
-//         = profiles.emplace(std::make_pair(key, profile_info({})));
-//     p = new_profile.first;
-//   }
-//   if (p->second.meta.fwd_pass_active) {
-//     std::ostringstream msg;
-//     msg << "Profile '" << name << "' ";
-//     msg << "already started!";
-//     throw std::runtime_error(msg.str());
-//   }
-//   if (p->second.meta.rev_pass_active) {
-//     std::ostringstream msg;
-//     msg << "Reverse pass active for a non-autodiff profile '";
-//     msg << name << "'."
-//         << "Please file a bug report!";
-//     throw std::runtime_error(msg.str());
-//   }
-//   p->second.meta.fwd_pass_start_tp = std::chrono::steady_clock::now();
-//   p->second.meta.fwd_pass_active = true;
-// }
-
-// /**
-//  * Stops profiling the forward pass for the profile
-//  * with the specified name. Does not profile the reverse
-//  * pass.
-//  *
-//  * @tparam T profile type which must not a var
-//  *
-//  * @param name the name of the profile to stop
-//  * @param profiles the map used for storing profiling info
-//  */
-// template <typename T, require_all_not_var_t<T>* = nullptr>
-// inline void profile_stop(const char* name, profile_map& profiles) {
-//   profile_key key = {name, std::this_thread::get_id()};
-//   profile_map::iterator p = profiles.find(key);
-//   if (p == profiles.end()) {
-//     std::ostringstream msg;
-//     msg << "Stopping a non-registered profile '" << name
-//         << "'. Please file a bug report!";
-//     throw std::runtime_error("Stopping ");
-//   }
-//   if (!p->second.meta.fwd_pass_active) {
-//     std::ostringstream msg;
-//     msg << "Stopping forward pass profile '" << name
-//         << "' that was not started. Please file a bug report!";
-//     throw std::runtime_error(msg.str());
-//   }
-//   p->second.fwd_pass
-//       += std::chrono::duration<double>(std::chrono::steady_clock::now()
-//                                        - p->second.meta.fwd_pass_start_tp)
-//              .count();
-//   p->second.meta.fwd_pass_active = false;
-// }
-
 /**
  * Starts profiling the forward pass for the profile
  * with the specified name and adds a var that stops
- * profiling the reverse pass in the reverse callback.
+ * profiling the reverse pass in the reverse callback
+ * if the specified template parameter T is a var.
  *
  * @tparam T profile type which must not a var
  *
  * @param name the name of the profile to start
- * @param profiles the map used for storing profiling info
+ * @param profile reference to the object storing profiling data
  */
-template <typename T, require_all_var_t<T>* = nullptr>
-inline auto profile_start(const char* name, profile_info& profile) {
+template <typename T>
+inline auto profile_start(std::string name, profile_info& profile) {
   using std::chrono::duration;
   using std::chrono::steady_clock;
   if (profile.meta.fwd_pass_active) {
@@ -105,29 +37,32 @@ inline auto profile_start(const char* name, profile_info& profile) {
   }
   profile.meta.fwd_pass_start_tp = steady_clock::now();
   profile.meta.fwd_pass_active = true;
-  profile.meta.start_chain_stack_size
+  if (!is_constant<T>::value) {
+     profile.meta.start_chain_stack_size
       = ChainableStack::instance_->var_stack_.size();
-  reverse_pass_callback([name, &profile]() mutable {
-    profile.rev_pass_time += duration<double>(steady_clock::now()
-                                              - profile.meta.rev_pass_start_tp)
-                                 .count();
-    profile.meta.rev_pass_active = false;
-    profile.n_rev_pass++;
-  });
+    reverse_pass_callback([&profile]() mutable {
+      profile.rev_pass_time += duration<double>(steady_clock::now()
+                                                - profile.meta.rev_pass_start_tp)
+                                  .count();
+      profile.meta.rev_pass_active = false;
+      profile.n_rev_pass++;
+    });
+  } 
 }
 
 /**
  * Stops profiling the forward pass for the profile
  * with the specified name and adds a var that starts
- * profiling the reverse pass in the reverse callback.
+ * profiling the reverse pass in the reverse callback
+ * if the specified template parameter T is a var.
  *
  * @tparam T profile type which must not a var
  *
  * @param name the name of the profile to stop
- * @param profiles the map used for storing profiling info
+ * @param profile reference to the object storing profiling data
  */
-template <typename T, require_all_var_t<T>* = nullptr>
-inline auto profile_stop(const char* name, profile_info& profile) {
+template <typename T>
+inline auto profile_stop(std::string name, profile_info& profile) {
   using std::chrono::duration;
   using std::chrono::steady_clock;
   profile.fwd_pass_time
@@ -135,15 +70,17 @@ inline auto profile_stop(const char* name, profile_info& profile) {
              .count();
   profile.meta.fwd_pass_active = false;
   profile.n_fwd_pass++;
-  profile.chain_stack_size_sum += (ChainableStack::instance_->var_stack_.size()
-                                   - profile.meta.start_chain_stack_size - 1);
-  profile.nochain_stack_size_sum
-      += (ChainableStack::instance_->var_nochain_stack_.size()
-          - profile.meta.start_nochain_stack_size - 1);
-  reverse_pass_callback([name, &profile]() mutable {
-    profile.meta.rev_pass_start_tp = steady_clock::now();
-    profile.meta.rev_pass_active = true;
-  });
+  if (!is_constant<T>::value) {
+    profile.chain_stack_size_sum += (ChainableStack::instance_->var_stack_.size()
+                                    - profile.meta.start_chain_stack_size - 1);
+    profile.nochain_stack_size_sum
+        += (ChainableStack::instance_->var_nochain_stack_.size()
+            - profile.meta.start_nochain_stack_size);
+    reverse_pass_callback([&profile]() mutable {
+      profile.meta.rev_pass_start_tp = steady_clock::now();
+      profile.meta.rev_pass_active = true;
+    });
+  }
 }
 }  // namespace internal
 
@@ -161,11 +98,11 @@ inline auto profile_stop(const char* name, profile_info& profile) {
  */
 template <typename T>
 class profile {
-  const char* name_;
+  std::string name_;
   profile_info* profile_;
 
  public:
-  profile(const char* name, profile_map& profiles) : name_(name) {
+  profile(std::string name, profile_map& profiles) : name_(name) {
     profile_key key = {name_, std::this_thread::get_id()};
     profile_map::iterator p = profiles.find(key);
     if (p == profiles.end()) {

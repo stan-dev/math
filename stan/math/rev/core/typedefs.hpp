@@ -52,6 +52,32 @@ using vector_vi = Eigen::Matrix<vari*, Eigen::Dynamic, 1>;
  */
 using row_vector_vi = Eigen::Matrix<vari*, 1, Eigen::Dynamic>;
 
+/**
+ * Types used for profiling.
+ */
+struct profile_meta {
+  bool fwd_pass_active;
+  bool rev_pass_active;
+  std::chrono::time_point<std::chrono::steady_clock> fwd_pass_start_tp;
+  std::chrono::time_point<std::chrono::steady_clock> rev_pass_start_tp;
+  size_t start_chain_stack_size;
+  size_t start_nochain_stack_size;
+};
+
+struct profile_info {
+  double fwd_pass_time;
+  double rev_pass_time;
+  size_t chain_stack_size_sum;
+  size_t nochain_stack_size_sum;
+  size_t n_fwd_pass;
+  size_t n_rev_pass;
+  profile_meta meta;
+};
+
+using profile_key = std::pair<std::string, std::thread::id>;
+
+using profile_map = std::map<profile_key, profile_info>;
+
 }  // namespace math
 }  // namespace stan
 #endif
