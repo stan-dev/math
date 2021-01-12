@@ -69,12 +69,12 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
     if (sum == N) {
       logp += N * log(theta_dbl);
       if (!is_constant_all<T_prob>::value) {
-        ops_partials.edge1_.partials_[0] += N / theta_dbl;
+        ops_partials.edge1_.partials_[0] += N * inv(theta_dbl);
       }
     } else if (sum == 0) {
       logp += N * log1m(theta_dbl);
       if (!is_constant_all<T_prob>::value) {
-        ops_partials.edge1_.partials_[0] += N / (theta_dbl - 1);
+        ops_partials.edge1_.partials_[0] += N * inv(theta_dbl - 1);
       }
     } else {
       const T_partials_return log_theta = log(theta_dbl);
@@ -84,8 +84,8 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
       logp += (N - sum) * log1m_theta;
 
       if (!is_constant_all<T_prob>::value) {
-        ops_partials.edge1_.partials_[0] += sum / theta_dbl;
-        ops_partials.edge1_.partials_[0] += (N - sum) / (theta_dbl - 1);
+        ops_partials.edge1_.partials_[0] += sum * inv(theta_dbl);
+        ops_partials.edge1_.partials_[0] += (N - sum) * inv(theta_dbl - 1);
       }
     }
   } else {
