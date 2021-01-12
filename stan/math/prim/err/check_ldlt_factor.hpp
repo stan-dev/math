@@ -13,24 +13,23 @@ namespace math {
 /**
  * Raise domain error if the specified LDLT factor is invalid.  An
  * <code>LDLT_factor</code> is invalid if it was constructed from
- * a matrix that is not positive definite.  The check is that the
- * <code>success()</code> method returns <code>true</code>.
- * @tparam T type of scalar
- * @tparam R number of rows or Eigen::Dynamic
- * @tparam C number of columns or Eigen::Dynamic
+ * a matrix that is not positive definite.
+ *
+ * @tparam T Type matrix of LDLT
  * @param[in] function name of function for error messages
  * @param[in] name variable name for error messages
  * @param[in] A the LDLT factor to check for validity
  * @throws <code>std::domain_error</code> if the LDLT factor is invalid
  */
-template <typename T, int R, int C>
+template <typename T>
 inline void check_ldlt_factor(const char* function, const char* name,
-                              LDLT_factor<T, R, C>& A) {
-  if (!A.success()) {
+                              LDLT_factor<T>& A) {
+  if (!(A.ldlt().info() == Eigen::Success && A.ldlt().isPositive()
+        && (A.ldlt().vectorD().array() > 0).all())) {
     std::ostringstream msg;
     msg << "is not positive definite.  last conditional variance is ";
     std::string msg_str(msg.str());
-    T too_small = A.vectorD().tail(1)(0);
+    auto too_small = A.ldlt().vectorD().tail(1)(0);
     throw_domain_error(function, name, too_small, msg_str.c_str(), ".");
   }
 }

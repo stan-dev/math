@@ -26,6 +26,8 @@ TEST(ProbDistributionsMultiNormal, fvar_var) {
   fvar<var> res = stan::math::multi_normal_log(y, mu, Sigma);
   EXPECT_FLOAT_EQ(-11.73908, res.val_.val());
   EXPECT_FLOAT_EQ(0.54899865, res.d_.val());
+
+  stan::math::recover_memory();
 }
 
 TEST(ProbDistributionsMultiNormal, fvar_fvar_var) {
@@ -51,4 +53,6 @@ TEST(ProbDistributionsMultiNormal, fvar_fvar_var) {
   fvar<fvar<var> > res = stan::math::multi_normal_log(y, mu, Sigma);
   EXPECT_FLOAT_EQ(-11.73908, res.val_.val_.val());
   EXPECT_FLOAT_EQ(0.54899865, res.d_.val_.val());
+
+  stan::math::recover_memory();
 }
