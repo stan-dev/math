@@ -26,7 +26,7 @@ inline auto diag_pre_multiply(const T1& m1, const T2& m2) {
   check_size_match("diag_pre_multiply", "m1.size()", m1.size(), "m2.rows()",
                    m2.rows());
   check_vector("diag_pre_multiply", "m1", m1);
-  //we need to eval, other branches would return different types
+  // we need to eval - the branches would otherwise return different types
   if (m1.cols() == 1) {
     return eval(elt_multiply(rowwise_broadcast(m1), m2));
   } else {
@@ -37,4 +37,4 @@ inline auto diag_pre_multiply(const T1& m1, const T2& m2) {
 }  // namespace stan
 
 #endif
-#endif  // DIAG_PRE_MULTIPLY_HPP
+#endif

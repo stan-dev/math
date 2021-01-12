@@ -1,5 +1,5 @@
-#ifndef DIAG_PRE_MULTIPLY_HPP
-#define DIAG_PRE_MULTIPLY_HPP
+#ifndef STAN_MATH_OPENCL_REV_DIAG_PRE_MULTIPLY_HPP
+#define STAN_MATH_OPENCL_REV_DIAG_PRE_MULTIPLY_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_generator.hpp>
@@ -12,16 +12,16 @@ namespace stan {
 namespace math {
 
 /**
- * Returns the dot product of columns of the specified matrices.
+ * Return the product of the diagonal matrix formed from the vector
+ * or row_vector and a matrix.
  *
- * @tparam T1 type of the first matrix
- * @tparam T2 type of the second matrix
+ * @tparam T1 type of the vector/row_vector
+ * @tparam T2 type of the matrix
+ * @param m1 input vector/row_vector
+ * @param m2 input matrix
  *
- * @param v1 Matrix of first vectors.
- * @param v2 Matrix of second vectors.
- * @return Dot product of the vectors.
- * @throw std::invalid_argument If the vectors are not the same
- * size
+ * @return product of the diagonal matrix formed from the
+ * vector or row_vector and a matrix.
  */
 template <
     typename T1, typename T2, require_any_var_t<T1, T2>* = nullptr,
