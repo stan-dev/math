@@ -13,40 +13,50 @@ namespace math {
 /**
  * Returns the solution of the system xA=b given an LDLT_factor of A
  *
- * @tparam EigMat type of the matrix or vector
- * @tparam T type of elements in the LDLT_factor
- * @tparam R number of rows in the LDLT_factor, can be Eigen::Dynamic
- * @tparam C number of columns in the LDLT_factor, can be Eigen::Dynamic
+ * @tparam EigMat type of the right hand side
+ * @tparam T type of matrix in the LDLT_factor
  *
  * @param A LDLT_factor
  * @param b Right hand side matrix or vector.
  * @return x = b A^-1, solution of the linear system.
  * @throws std::domain_error if rows of b don't match the size of A.
  */
-template <typename EigMat, typename T, int R, int C,
-          require_eigen_t<EigMat>* = nullptr,
-          require_any_not_arithmetic_t<value_type_t<EigMat>, T>* = nullptr>
-inline Eigen::Matrix<return_type_t<EigMat, T>, EigMat::RowsAtCompileTime, C>
-mdivide_right_ldlt(const EigMat& b, const LDLT_factor<T, R, C>& A) {
-  check_multiplicable("mdivide_right_ldlt", "b", b, "A", A);
-  if (A.rows() == 0) {
-    return {b.rows(), 0};
-  }
+template <typename EigMat, typename T,
+          require_all_matrix_t<EigMat, T>* = nullptr,
+          require_any_not_st_arithmetic<EigMat, T>* = nullptr>
+inline auto mdivide_right_ldlt(const EigMat& b, LDLT_factor<T>& A) {
+  check_multiplicable("mdivide_right_ldlt", "b", b, "A", A.matrix());
+  check_ldlt_factor("mdivide_right_ldlt", "A", A);
 
-  return transpose(mdivide_left_ldlt(A, transpose(b)));
+  return mdivide_left_ldlt(A, b.transpose()).transpose().eval();
 }
 
-template <typename EigMat, typename T, int R, int C,
-          require_eigen_t<EigMat>* = nullptr,
-          require_all_arithmetic_t<value_type_t<EigMat>, T>* = nullptr>
-inline Eigen::Matrix<T, EigMat::RowsAtCompileTime, C> mdivide_right_ldlt(
-    const EigMat& b, const LDLT_factor<T, R, C>& A) {
-  check_multiplicable("mdivide_right_ldlt", "b", b, "A", A);
-  if (A.rows() == 0) {
+/**
+ * Returns the solution of the system xA=b given an LDLT_factor of A
+ *
+ * Overload for arithmetic types
+ *
+ * @tparam EigMat type of the right hand side
+ * @tparam T type of matrix in the LDLT_factor
+ *
+ * @param A LDLT_factor
+ * @param b Right hand side matrix or vector.
+ * @return x = b A^-1, solution of the linear system.
+ * @throws std::domain_error if rows of b don't match the size of A.
+ */
+template <typename EigMat, typename T,
+          require_all_matrix_t<EigMat, T>* = nullptr,
+          require_all_st_arithmetic<EigMat, T>* = nullptr>
+inline Eigen::Matrix<double, EigMat::RowsAtCompileTime, T::ColsAtCompileTime>
+mdivide_right_ldlt(const EigMat& b, LDLT_factor<T>& A) {
+  check_multiplicable("mdivide_right_ldlt", "b", b, "A", A.matrix());
+  check_ldlt_factor("mdivide_right_ldlt", "A", A);
+
+  if (A.matrix().rows() == 0) {
     return {b.rows(), 0};
   }
 
-  return A.solveRight(b);
+  return A.ldlt().solve(b.transpose()).transpose();
 }
 
 }  // namespace math

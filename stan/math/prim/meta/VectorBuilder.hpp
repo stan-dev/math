@@ -26,7 +26,9 @@ namespace stan {
 template <bool used, typename T1, typename... Args>
 class VectorBuilder {
  private:
-  using helper = VectorBuilderHelper<T1, used, math::disjunction<is_vector<Args>...>::value>;
+  using helper
+      = VectorBuilderHelper<T1, used,
+                            math::disjunction<is_vector<Args>...>::value>;
 
  public:
   using type = typename helper::type;

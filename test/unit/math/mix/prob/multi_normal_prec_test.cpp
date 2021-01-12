@@ -27,6 +27,8 @@ TEST(ProbDistributionsMultiNormalPrec, fvar_var) {
                   stan::math::multi_normal_prec_log(y, mu, L).val_.val());
   EXPECT_FLOAT_EQ(0.54899865,
                   stan::math::multi_normal_prec_log(y, mu, L).d_.val());
+
+  stan::math::recover_memory();
 }
 
 TEST(ProbDistributionsMultiNormalPrec, fvar_fvar_var) {
@@ -55,4 +57,6 @@ TEST(ProbDistributionsMultiNormalPrec, fvar_fvar_var) {
                   stan::math::multi_normal_prec_log(y, mu, L).val_.val_.val());
   EXPECT_FLOAT_EQ(0.54899865,
                   stan::math::multi_normal_prec_log(y, mu, L).d_.val_.val());
+
+  stan::math::recover_memory();
 }
