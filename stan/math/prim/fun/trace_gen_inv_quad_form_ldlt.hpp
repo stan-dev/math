@@ -68,8 +68,8 @@ template <typename EigVec, typename T, typename EigMat,
           require_all_not_st_var<EigVec, T, EigMat>* = nullptr>
 inline return_type_t<EigVec, T, EigMat> trace_gen_inv_quad_form_ldlt(
     const EigVec& D, LDLT_factor<T>& A, const EigMat& B) {
-  check_multiplicable("trace_gen_inv_quad_form_ldlt", "A", A.matrix(), "B",
-  B); check_multiplicable("trace_gen_inv_quad_form_ldlt", "B", B, "D", D);
+  check_multiplicable("trace_gen_inv_quad_form_ldlt", "A", A.matrix(), "B", B);
+  check_multiplicable("trace_gen_inv_quad_form_ldlt", "B", B, "D", D);
 
   if (D.size() == 0 || A.matrix().size() == 0) {
     return 0;
