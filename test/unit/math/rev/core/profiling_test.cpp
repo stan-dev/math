@@ -45,3 +45,49 @@ TEST(Profiling, profiling_var_basic) {
   EXPECT_TRUE(profiles[key].get_rev_time() > 0.0);
 }
 
+TEST(Profiling, profiling_var_exception) {
+  using stan::math::profile;
+  using stan::math::var;
+  stan::math::profile_map profiles;
+  var c;
+  try {
+    profile<var> t1 = profile<var>("t1", profiles);
+    var a = 2.0;
+    var b = 3.0;
+    c = a + b;
+    throw std::domain_error("error");
+    c.grad();
+  } catch (const std::exception& e) {
+  }  
+  stan::math::recover_memory();
+  stan::math::profile_key key_t1 = {"t1", std::this_thread::get_id()};
+  EXPECT_EQ(profiles[key_t1].get_chain_stack_used(), 1);
+  EXPECT_EQ(profiles[key_t1].get_nochain_stack_used(), 2);
+  EXPECT_EQ(profiles[key_t1].get_num_rev_passes(), 0);
+  EXPECT_EQ(profiles[key_t1].get_num_fwd_passes(), 1);
+  EXPECT_TRUE(profiles[key_t1].get_fwd_time() > 0.0); 
+  EXPECT_TRUE(profiles[key_t1].get_rev_time() == 0.0);
+}
+
+TEST(Profiling, profiling_var_loop) {
+  using stan::math::profile;
+  using stan::math::var;
+  stan::math::profile_map profiles;
+  var c = 1.0;
+  int N = 100;
+  for (int i = 0; i < N; i++) {
+    profile<var> t1 = profile<var>("t1", profiles);
+    var a = i;
+    var b = 2.0;
+    c = c + a;    
+  }
+  c.grad();
+  stan::math::recover_memory();
+  stan::math::profile_key key_t1 = {"t1", std::this_thread::get_id()};
+  EXPECT_EQ(profiles[key_t1].get_chain_stack_used(), 1);
+  EXPECT_EQ(profiles[key_t1].get_nochain_stack_used(), 2);
+  EXPECT_EQ(profiles[key_t1].get_num_rev_passes(), N);
+  EXPECT_EQ(profiles[key_t1].get_num_fwd_passes(), N);
+  EXPECT_TRUE(profiles[key_t1].get_fwd_time() > 0.0); 
+  EXPECT_TRUE(profiles[key_t1].get_rev_time() > 0.0);
+}
