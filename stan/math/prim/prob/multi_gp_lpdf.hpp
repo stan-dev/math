@@ -53,8 +53,7 @@ return_type_t<T_y, T_covar, T_w> multi_gp_lpdf(const T_y& y,
   check_positive_finite(function, "Kernel scales", w_ref);
   check_finite(function, "Random variable", y_t_ref);
 
-  LDLT_factor<value_type_t<T_covar>, Eigen::Dynamic, Eigen::Dynamic> ldlt_Sigma(
-      Sigma_ref);
+  auto ldlt_Sigma = make_ldlt_factor(Sigma_ref);
   check_ldlt_factor(function, "LDLT_Factor of Sigma", ldlt_Sigma);
 
   T_lp lp(0.0);
