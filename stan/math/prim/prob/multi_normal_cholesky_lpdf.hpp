@@ -138,13 +138,13 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
 
       logp -= 0.5 * dot_self(half);
 
-      if (!is_constant_all<T_y>::value) {
+      if constexpr (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_vec_[i] = -scaled_diff;
       }
-      if (!is_constant_all<T_loc>::value) {
+      if constexpr (!is_constant_all<T_loc>::value) {
         ops_partials.edge2_.partials_vec_[i] = scaled_diff;
       }
-      if (!is_constant_all<T_covar>::value) {
+      if constexpr (!is_constant_all<T_covar>::value) {
         ops_partials.edge3_.partials_ += scaled_diff * half;
       }
     }
@@ -152,7 +152,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
 
   if (include_summand<propto, T_covar_elem>::value) {
     logp += sum(log(inv_L_dbl.diagonal())) * size_vec;
-    if (!is_constant_all<T_covar>::value) {
+    if constexpr (!is_constant_all<T_covar>::value) {
       ops_partials.edge3_.partials_ -= size_vec * inv_L_dbl.transpose();
     }
   }

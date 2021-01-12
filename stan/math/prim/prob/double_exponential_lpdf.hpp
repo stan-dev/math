@@ -55,7 +55,7 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
   if (size_zero(y, mu, sigma)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
+  if constexpr (!include_summand<propto, T_y, T_loc, T_scale>::value) {
     return 0.0;
   }
 
@@ -95,19 +95,19 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
   }
   logp -= sum(scaled_diff);
 
-  if (!is_constant_all<T_y, T_loc>::value) {
+  if constexpr (!is_constant_all<T_y, T_loc>::value) {
     const auto& diff_sign = sign(y_m_mu);
     const auto& rep_deriv
         = to_ref_if<(!is_constant_all<T_y>::value
                      && !is_constant_all<T_loc>::value)>(diff_sign * inv_sigma);
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_ = -rep_deriv;
     }
-    if (!is_constant_all<T_loc>::value) {
+    if constexpr (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_ = rep_deriv;
     }
   }
-  if (!is_constant_all<T_scale>::value) {
+  if constexpr (!is_constant_all<T_scale>::value) {
     ops_partials.edge3_.partials_ = inv_sigma * (scaled_diff - 1);
   }
 

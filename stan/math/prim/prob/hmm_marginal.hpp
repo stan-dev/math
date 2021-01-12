@@ -128,7 +128,7 @@ inline auto hmm_marginal(const T_omega& log_omegas, const T_Gamma& Gamma,
     grad_corr[n] = exp(alpha_log_norms[n] + kappa_log_norms[n] - norm_norm);
   }
 
-  if (!is_constant_all<T_Gamma>::value) {
+  if constexpr (!is_constant_all<T_Gamma>::value) {
     for (int n = n_transitions - 1; n >= 0; --n) {
       ops_partials.edge2_.partials_
           += grad_corr[n] * alphas.col(n)
@@ -137,15 +137,15 @@ inline auto hmm_marginal(const T_omega& log_omegas, const T_Gamma& Gamma,
     }
   }
 
-  if (!is_constant_all<T_omega, T_rho>::value) {
+  if constexpr (!is_constant_all<T_omega, T_rho>::value) {
     // Boundary terms
     if (n_transitions == 0) {
-      if (!is_constant_all<T_omega>::value) {
+      if constexpr (!is_constant_all<T_omega>::value) {
         ops_partials.edge1_.partials_
             = omegas.cwiseProduct(rho_val) / exp(log_marginal_density);
       }
 
-      if (!is_constant_all<T_rho>::value) {
+      if constexpr (!is_constant_all<T_rho>::value) {
         ops_partials.edge3_.partials_
             = omegas.col(0) / exp(log_marginal_density);
       }
@@ -154,7 +154,7 @@ inline auto hmm_marginal(const T_omega& log_omegas, const T_Gamma& Gamma,
       auto grad_corr_boundary = exp(kappa_log_norms(0) - norm_norm);
       eig_vector_partial C = Gamma_val * omegas.col(1).cwiseProduct(kappa[0]);
 
-      if (!is_constant_all<T_omega>::value) {
+      if constexpr (!is_constant_all<T_omega>::value) {
         eig_matrix_partial log_omega_jacad
             = Eigen::MatrixXd::Zero(n_states, n_transitions + 1);
 
@@ -169,7 +169,7 @@ inline auto hmm_marginal(const T_omega& log_omegas, const T_Gamma& Gamma,
             = log_omega_jacad.cwiseProduct(omegas / unnormed_marginal);
       }
 
-      if (!is_constant_all<T_rho>::value) {
+      if constexpr (!is_constant_all<T_rho>::value) {
         ops_partials.edge3_.partials_ = grad_corr_boundary
                                         * C.cwiseProduct(omegas.col(0))
                                         / unnormed_marginal;

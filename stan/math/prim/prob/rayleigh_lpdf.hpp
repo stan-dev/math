@@ -47,7 +47,7 @@ return_type_t<T_y, T_scale> rayleigh_lpdf(const T_y& y, const T_scale& sigma) {
   if (size_zero(y, sigma)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y, T_scale>::value) {
+  if constexpr (!include_summand<propto, T_y, T_scale>::value) {
     return 0.0;
   }
 
@@ -67,14 +67,14 @@ return_type_t<T_y, T_scale> rayleigh_lpdf(const T_y& y, const T_scale& sigma) {
     logp += sum(log(y_val)) * N / size(y);
   }
 
-  if (!is_constant_all<T_y, T_scale>::value) {
+  if constexpr (!is_constant_all<T_y, T_scale>::value) {
     const auto& scaled_diff = to_ref_if<(!is_constant_all<T_y>::value
                                          && !is_constant_all<T_scale>::value)>(
         inv_sigma * y_over_sigma);
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_ = inv(y_val) - scaled_diff;
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (!is_constant_all<T_scale>::value) {
       ops_partials.edge2_.partials_
           = y_over_sigma * scaled_diff - 2.0 * inv_sigma;
     }

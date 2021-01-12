@@ -71,7 +71,7 @@ return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
   if (size_zero(y, alpha, sigma)) {
     return 0;
   }
-  if (!include_summand<propto, T_y, T_shape, T_scale>::value) {
+  if constexpr (!include_summand<propto, T_y, T_shape, T_scale>::value) {
     return 0;
   }
 
@@ -105,15 +105,15 @@ return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
     logp -= sum(alpha_val * log_sigma) * N / max_size(alpha, sigma);
   }
 
-  if (!is_constant_all<T_y>::value) {
+  if constexpr (!is_constant_all<T_y>::value) {
     ops_partials.edge1_.partials_
         = (alpha_val * (1 - y_div_sigma_pow_alpha) - 1.0) / y_val;
   }
-  if (!is_constant_all<T_shape>::value) {
+  if constexpr (!is_constant_all<T_shape>::value) {
     ops_partials.edge2_.partials_
         = inv(alpha_val) + (1.0 - y_div_sigma_pow_alpha) * (log_y - log_sigma);
   }
-  if (!is_constant_all<T_scale>::value) {
+  if constexpr (!is_constant_all<T_scale>::value) {
     ops_partials.edge3_.partials_
         = alpha_val * inv_sigma * (y_div_sigma_pow_alpha - 1.0);
   }

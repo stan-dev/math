@@ -80,7 +80,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
   check_positive_finite(function, "First shape parameter", alpha_val);
   check_positive_finite(function, "Second shape parameter", beta_val);
   check_bounded(function, "Random variable", y_val, 0, 1);
-  if (!include_summand<propto, T_y, T_scale_succ, T_scale_fail>::value) {
+  if constexpr (!include_summand<propto, T_y, T_scale_succ, T_scale_fail>::value) {
     return 0;
   }
 
@@ -104,7 +104,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
 
   operands_and_partials<T_y_ref, T_alpha_ref, T_beta_ref> ops_partials(
       y_ref, alpha_ref, beta_ref);
-  if (!is_constant_all<T_y>::value) {
+  if constexpr (!is_constant_all<T_y>::value) {
     ops_partials.edge1_.partials_
         = (alpha_val - 1) / y_val + (beta_val - 1) / (y_val - 1);
   }
@@ -114,15 +114,15 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
         = to_ref_if<!is_constant_all<T_scale_succ, T_scale_fail>::value>(
             alpha_val + beta_val);
     logp += sum(lgamma(alpha_beta)) * N / max_size(alpha, beta);
-    if (!is_constant_all<T_scale_succ, T_scale_fail>::value) {
+    if constexpr (!is_constant_all<T_scale_succ, T_scale_fail>::value) {
       const auto& digamma_alpha_beta
           = to_ref_if < !is_constant_all<T_scale_succ>::value
             && !is_constant_all<T_scale_fail>::value > (digamma(alpha_beta));
-      if (!is_constant_all<T_scale_succ>::value) {
+      if constexpr (!is_constant_all<T_scale_succ>::value) {
         ops_partials.edge2_.partials_
             = log_y + digamma_alpha_beta - digamma(alpha_val);
       }
-      if (!is_constant_all<T_scale_fail>::value) {
+      if constexpr (!is_constant_all<T_scale_fail>::value) {
         ops_partials.edge3_.partials_
             = log1m_y + digamma_alpha_beta - digamma(beta_val);
       }

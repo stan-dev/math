@@ -93,7 +93,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   if (size_zero(y, sigma)) {
     return 0;
   }
-  if (!include_summand<propto, T_y, T_x, T_alpha, T_beta, T_scale>::value) {
+  if constexpr (!include_summand<propto, T_y, T_x, T_alpha, T_beta, T_scale>::value) {
     return 0;
   }
 
@@ -137,14 +137,14 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
 
   if (!(is_constant_all<T_y, T_x, T_beta, T_alpha, T_scale>::value)) {
     Matrix<T_partials_return, Dynamic, 1> mu_derivative = inv_sigma * y_scaled;
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (!is_constant_all<T_y>::value) {
       if (is_vector<T_y>::value) {
         ops_partials.edge1_.partials_ = -mu_derivative;
       } else {
         ops_partials.edge1_.partials_[0] = -mu_derivative.sum();
       }
     }
-    if (!is_constant_all<T_x>::value) {
+    if constexpr (!is_constant_all<T_x>::value) {
       if (T_x_rows == 1) {
         ops_partials.edge2_.partials_
             = forward_as<Array<T_partials_return, Dynamic, T_x_rows>>(
@@ -154,7 +154,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
             = (beta_val_vec * mu_derivative.transpose()).transpose();
       }
     }
-    if (!is_constant_all<T_beta>::value) {
+    if constexpr (!is_constant_all<T_beta>::value) {
       if (T_x_rows == 1) {
         ops_partials.edge4_.partials_
             = forward_as<Matrix<T_partials_return, 1, Dynamic>>(
@@ -163,14 +163,14 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
         ops_partials.edge4_.partials_ = mu_derivative.transpose() * x_val;
       }
     }
-    if (!is_constant_all<T_alpha>::value) {
+    if constexpr (!is_constant_all<T_alpha>::value) {
       if (is_vector<T_alpha>::value) {
         ops_partials.edge3_.partials_ = mu_derivative;
       } else {
         ops_partials.edge3_.partials_[0] = sum(mu_derivative);
       }
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (!is_constant_all<T_scale>::value) {
       if (is_vector<T_scale>::value) {
         Array<T_partials_return, Dynamic, 1> y_scaled_sq = y_scaled * y_scaled;
         y_scaled_sq_sum = sum(y_scaled_sq);

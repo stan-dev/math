@@ -63,28 +63,28 @@ return_type_t<T_y, T_shape, T_scale> frechet_cdf(const T_y& y,
 
     cdf *= cdf_n;
 
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] += pow_n * alpha_dbl / y_dbl;
     }
-    if (!is_constant_all<T_shape>::value) {
+    if constexpr (!is_constant_all<T_shape>::value) {
       ops_partials.edge2_.partials_[n] += pow_n * log(y_dbl / sigma_dbl);
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_[n] -= pow_n * alpha_dbl / sigma_dbl;
     }
   }
 
-  if (!is_constant_all<T_y>::value) {
+  if constexpr (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::math::size(y); ++n) {
       ops_partials.edge1_.partials_[n] *= cdf;
     }
   }
-  if (!is_constant_all<T_shape>::value) {
+  if constexpr (!is_constant_all<T_shape>::value) {
     for (size_t n = 0; n < stan::math::size(alpha); ++n) {
       ops_partials.edge2_.partials_[n] *= cdf;
     }
   }
-  if (!is_constant_all<T_scale>::value) {
+  if constexpr (!is_constant_all<T_scale>::value) {
     for (size_t n = 0; n < stan::math::size(sigma); ++n) {
       ops_partials.edge3_.partials_[n] *= cdf;
     }

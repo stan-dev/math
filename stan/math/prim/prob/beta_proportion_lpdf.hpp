@@ -86,7 +86,7 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
   check_positive_finite(function, "Precision parameter", kappa_val);
   check_bounded(function, "Random variable", y_val, 0, 1);
 
-  if (!include_summand<propto, T_y, T_loc, T_prec>::value) {
+  if constexpr (!include_summand<propto, T_y, T_loc, T_prec>::value) {
     return 0;
   }
 
@@ -109,23 +109,23 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
 
   operands_and_partials<T_y_ref, T_mu_ref, T_kappa_ref> ops_partials(
       y_ref, mu_ref, kappa_ref);
-  if (!is_constant_all<T_y>::value) {
+  if constexpr (!is_constant_all<T_y>::value) {
     ops_partials.edge1_.partials_
         = (mukappa - 1) / y_val + (kappa_val - mukappa - 1) / (y_val - 1);
   }
-  if (!is_constant_all<T_loc, T_prec>::value) {
+  if constexpr (!is_constant_all<T_loc, T_prec>::value) {
     auto digamma_mukappa
         = to_ref_if<(!is_constant_all<T_loc>::value
                      && !is_constant_all<T_prec>::value)>(digamma(mukappa));
     auto digamma_kappa_mukappa = to_ref_if<(
         !is_constant_all<T_loc>::value && !is_constant_all<T_prec>::value)>(
         digamma(kappa_val - mukappa));
-    if (!is_constant_all<T_loc>::value) {
+    if constexpr (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_
           = kappa_val
             * (digamma_kappa_mukappa - digamma_mukappa + log_y - log1m_y);
     }
-    if (!is_constant_all<T_prec>::value) {
+    if constexpr (!is_constant_all<T_prec>::value) {
       ops_partials.edge3_.partials_
           = digamma(kappa_val) + mu_val * (log_y - digamma_mukappa)
             + (1 - mu_val) * (log1m_y - digamma_kappa_mukappa);

@@ -54,7 +54,7 @@ return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
   const auto& theta_arr = to_ref(as_array_or_scalar(theta_val));
 
   check_not_nan(function, "Logit transformed probability parameter", theta_arr);
-  if (!include_summand<propto, T_prob>::value) {
+  if constexpr (!include_summand<propto, T_prob>::value) {
     return 0.0;
   }
 
@@ -79,7 +79,7 @@ return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
                   (ntheta < -cutoff).select(ntheta, -log1p(exp_m_ntheta))));
 
   operands_and_partials<T_theta_ref> ops_partials(theta_ref);
-  if (!is_constant_all<T_prob>::value) {
+  if constexpr (!is_constant_all<T_prob>::value) {
     ops_partials.edge1_.partials_
         = (ntheta > cutoff)
               .select(-exp_m_ntheta,

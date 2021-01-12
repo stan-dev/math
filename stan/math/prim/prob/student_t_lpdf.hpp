@@ -96,7 +96,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
   if (size_zero(y, nu, mu, sigma)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y, T_dof, T_loc, T_scale>::value) {
+  if constexpr (!include_summand<propto, T_y, T_dof, T_loc, T_scale>::value) {
     return 0.0;
   }
 
@@ -126,25 +126,25 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
     logp -= sum(log(sigma_val)) * N / size(sigma);
   }
 
-  if (!is_constant_all<T_y, T_loc>::value) {
+  if constexpr (!is_constant_all<T_y, T_loc>::value) {
     const auto& square_sigma = square(sigma_val);
     const auto& deriv_y_mu = to_ref_if<(!is_constant_all<T_y>::value
                                         && !is_constant_all<T_loc>::value)>(
         (nu_val + 1) * (y_val - mu_val)
         / ((1 + square_y_scaled_over_nu) * square_sigma * nu_val));
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_ = -deriv_y_mu;
     }
-    if (!is_constant_all<T_loc>::value) {
+    if constexpr (!is_constant_all<T_loc>::value) {
       ops_partials.edge3_.partials_ = std::move(deriv_y_mu);
     }
   }
-  if (!is_constant_all<T_dof, T_scale>::value) {
+  if constexpr (!is_constant_all<T_dof, T_scale>::value) {
     const auto& rep_deriv = to_ref_if<(!is_constant_all<T_dof>::value
                                        && !is_constant_all<T_scale>::value)>(
         (nu_val + 1) * square_y_scaled_over_nu / (1 + square_y_scaled_over_nu)
         - 1);
-    if (!is_constant_all<T_dof>::value) {
+    if constexpr (!is_constant_all<T_dof>::value) {
       const auto& digamma_half_nu_plus_half = digamma(half_nu + 0.5);
       const auto& digamma_half_nu = digamma(half_nu);
       ops_partials.edge2_.partials_
@@ -152,7 +152,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
             * (digamma_half_nu_plus_half - digamma_half_nu - log1p_val
                + rep_deriv / nu_val);
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (!is_constant_all<T_scale>::value) {
       ops_partials.edge4_.partials_ = rep_deriv / sigma_val;
     }
   }

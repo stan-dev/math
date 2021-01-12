@@ -70,7 +70,7 @@ return_type_t<T_y, T_low, T_high> uniform_lcdf(const T_y& y, const T_low& alpha,
   const auto& cdf_log_n = y_minus_alpha / b_minus_a;
   T_partials_return cdf_log = sum(log(cdf_log_n));
 
-  if (!is_constant_all<T_y>::value) {
+  if constexpr (!is_constant_all<T_y>::value) {
     if (!is_vector<T_y>::value && is_vector<T_high>::value
         && !is_vector<T_low>::value) {
       ops_partials.edge1_.partials_ = size(beta) * inv(y_minus_alpha);
@@ -78,11 +78,11 @@ return_type_t<T_y, T_low, T_high> uniform_lcdf(const T_y& y, const T_low& alpha,
       ops_partials.edge1_.partials_ = inv(y_minus_alpha);
     }
   }
-  if (!is_constant_all<T_low>::value) {
+  if constexpr (!is_constant_all<T_low>::value) {
     ops_partials.edge2_.partials_
         = (y_val - beta_val) / (b_minus_a * y_minus_alpha);
   }
-  if (!is_constant_all<T_high>::value) {
+  if constexpr (!is_constant_all<T_high>::value) {
     if (is_vector<T_y>::value && !is_vector<T_low>::value
         && !is_vector<T_high>::value) {
       ops_partials.edge3_.partials_ = inv(-b_minus_a) * size(y);

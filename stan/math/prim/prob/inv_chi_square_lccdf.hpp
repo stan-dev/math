@@ -75,7 +75,7 @@ return_type_t<T_y, T_dof> inv_chi_square_lccdf(const T_y& y, const T_dof& nu) {
   VectorBuilder<!is_constant_all<T_dof>::value, T_partials_return, T_dof>
       digamma_vec(size(nu));
 
-  if (!is_constant_all<T_dof>::value) {
+  if constexpr (!is_constant_all<T_dof>::value) {
     for (size_t i = 0; i < stan::math::size(nu); i++) {
       const T_partials_return nu_dbl = nu_vec.val(i);
       gamma_vec[i] = tgamma(0.5 * nu_dbl);
@@ -98,13 +98,13 @@ return_type_t<T_y, T_dof> inv_chi_square_lccdf(const T_y& y, const T_dof& nu) {
 
     P += log(Pn);
 
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n]
           -= 0.5 * y_inv_dbl * y_inv_dbl * exp(-0.5 * y_inv_dbl)
              * pow(0.5 * y_inv_dbl, 0.5 * nu_dbl - 1) / tgamma(0.5 * nu_dbl)
              / Pn;
     }
-    if (!is_constant_all<T_dof>::value) {
+    if constexpr (!is_constant_all<T_dof>::value) {
       ops_partials.edge2_.partials_[n]
           -= 0.5
              * grad_reg_inc_gamma(0.5 * nu_dbl, 0.5 * y_inv_dbl, gamma_vec[n],

@@ -87,7 +87,7 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lccdf(const T_y& y,
                 T_prec>
       digamma_kappa(size_kappa);
 
-  if (!is_constant_all<T_loc, T_prec>::value) {
+  if constexpr (!is_constant_all<T_loc, T_prec>::value) {
     for (size_t i = 0; i < size_mu_kappa; i++) {
       const T_partials_return kappa_dbl = kappa_vec.val(i);
       const T_partials_return mukappa_dbl = mu_vec.val(i) * kappa_dbl;
@@ -115,7 +115,7 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lccdf(const T_y& y,
     const T_partials_return inv_Pn
         = is_constant_all<T_y, T_loc, T_prec>::value ? 0 : inv(Pn);
 
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= pow(1 - y_dbl, kappa_mukappa_dbl - 1)
                                           * pow(y_dbl, mukappa_dbl - 1) * inv_Pn
                                           / betafunc_dbl;
@@ -124,15 +124,15 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lccdf(const T_y& y,
     T_partials_return g1 = 0;
     T_partials_return g2 = 0;
 
-    if (!is_constant_all<T_loc, T_prec>::value) {
+    if constexpr (!is_constant_all<T_loc, T_prec>::value) {
       grad_reg_inc_beta(g1, g2, mukappa_dbl, kappa_mukappa_dbl, y_dbl,
                         digamma_mukappa[n], digamma_kappa_mukappa[n],
                         digamma_kappa[n], betafunc_dbl);
     }
-    if (!is_constant_all<T_loc>::value) {
+    if constexpr (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_[n] -= kappa_dbl * (g1 - g2) * inv_Pn;
     }
-    if (!is_constant_all<T_prec>::value) {
+    if constexpr (!is_constant_all<T_prec>::value) {
       ops_partials.edge3_.partials_[n]
           -= (g1 * mu_dbl + g2 * (1 - mu_dbl)) * inv_Pn;
     }

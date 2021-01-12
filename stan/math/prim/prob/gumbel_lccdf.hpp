@@ -80,20 +80,20 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lccdf(const T_y& y, const T_loc& mu,
           1.0 - cdf_log_n_tmp);
   T_partials_return ccdf_log = sum(log(ccdf_log_n));
 
-  if (!is_constant_all<T_y, T_loc, T_scale>::value) {
+  if constexpr (!is_constant_all<T_y, T_loc, T_scale>::value) {
     const auto& rep_deriv_tmp = exp(-scaled_diff - exp_m_scaled_diff);
     const auto& rep_deriv
         = to_ref_if<!is_constant_all<T_loc>::value
                         + !is_constant_all<T_scale>::value
                         + !is_constant_all<T_y>::value
                     >= 2>(rep_deriv_tmp / (beta_val * ccdf_log_n));
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_ = -rep_deriv;
     }
-    if (!is_constant_all<T_loc>::value) {
+    if constexpr (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_ = rep_deriv;
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_ = rep_deriv * scaled_diff;
     }
   }

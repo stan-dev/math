@@ -22,7 +22,7 @@ return_type_t<T_prob> categorical_logit_lpmf(int n, const T_prob& beta) {
   ref_type_t<T_prob> beta_ref = beta;
   check_finite(function, "log odds parameter", beta_ref);
 
-  if (!include_summand<propto, T_prob>::value) {
+  if constexpr (!include_summand<propto, T_prob>::value) {
     return 0.0;
   }
 
@@ -42,7 +42,7 @@ return_type_t<T_prob> categorical_logit_lpmf(const std::vector<int>& ns,
   ref_type_t<T_prob> beta_ref = beta;
   check_finite(function, "log odds parameter", beta_ref);
 
-  if (!include_summand<propto, T_prob>::value) {
+  if constexpr (!include_summand<propto, T_prob>::value) {
     return 0.0;
   }
 

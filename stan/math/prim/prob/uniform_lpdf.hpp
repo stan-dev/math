@@ -78,7 +78,7 @@ return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y, const T_low& alpha,
   if (size_zero(y, alpha, beta)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y, T_low, T_high>::value) {
+  if constexpr (!include_summand<propto, T_y, T_low, T_high>::value) {
     return 0.0;
   }
   if (sum(promote_scalar<int>(y_val < alpha_val))
@@ -95,11 +95,11 @@ return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y, const T_low& alpha,
   operands_and_partials<T_y_ref, T_alpha_ref, T_beta_ref> ops_partials(
       y_ref, alpha_ref, beta_ref);
 
-  if (!is_constant_all<T_low, T_high>::value) {
+  if constexpr (!is_constant_all<T_low, T_high>::value) {
     const auto& inv_beta_minus_alpha = to_ref_if<(
         !is_constant_all<T_high>::value && !is_constant_all<T_low>::value)>(
         inv(beta_val - alpha_val));
-    if (!is_constant_all<T_high>::value) {
+    if constexpr (!is_constant_all<T_high>::value) {
       if (is_vector<T_y>::value && !is_vector<T_low>::value
           && !is_vector<T_high>::value) {
         ops_partials.edge3_.partials_ = -inv_beta_minus_alpha * size(y);
@@ -107,7 +107,7 @@ return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y, const T_low& alpha,
         ops_partials.edge3_.partials_ = -inv_beta_minus_alpha;
       }
     }
-    if (!is_constant_all<T_low>::value) {
+    if constexpr (!is_constant_all<T_low>::value) {
       if (is_vector<T_y>::value && !is_vector<T_low>::value
           && !is_vector<T_high>::value) {
         ops_partials.edge2_.partials_ = inv_beta_minus_alpha * size(y);

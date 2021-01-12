@@ -68,7 +68,7 @@ return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
   if (size_zero(n, N, alpha)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_prob>::value) {
+  if constexpr (!include_summand<propto, T_prob>::value) {
     return 0.0;
   }
   const auto& inv_logit_alpha
@@ -87,7 +87,7 @@ return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
   }
 
   operands_and_partials<T_alpha_ref> ops_partials(alpha_ref);
-  if (!is_constant_all<T_prob>::value) {
+  if constexpr (!is_constant_all<T_prob>::value) {
     if (is_vector<T_prob>::value) {
       ops_partials.edge1_.partials_
           = n_val * inv_logit_neg_alpha - (N_val - n_val) * inv_logit_alpha;

@@ -68,7 +68,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_cdf(
                 T_precision>
       digamma_sum_vec(size_n_phi);
 
-  if (!is_constant_all<T_precision>::value) {
+  if constexpr (!is_constant_all<T_precision>::value) {
     for (size_t i = 0; i < size_phi; i++) {
       digamma_phi_vec[i] = digamma(phi_vec.val(i));
     }
@@ -100,11 +100,11 @@ return_type_t<T_location, T_precision> neg_binomial_2_cdf(
 
     P *= P_i;
 
-    if (!is_constant_all<T_location>::value) {
+    if constexpr (!is_constant_all<T_location>::value) {
       ops_partials.edge1_.partials_[i] -= inc_beta_ddz_i * phi_dbl;
     }
 
-    if (!is_constant_all<T_precision>::value) {
+    if constexpr (!is_constant_all<T_precision>::value) {
       ops_partials.edge2_.partials_[i]
           += inc_beta_dda(phi_dbl, n_dbl_p1, p_dbl, digamma_phi_vec[i],
                           digamma_sum_vec[i])
@@ -113,13 +113,13 @@ return_type_t<T_location, T_precision> neg_binomial_2_cdf(
     }
   }
 
-  if (!is_constant_all<T_location>::value) {
+  if constexpr (!is_constant_all<T_location>::value) {
     for (size_t i = 0; i < stan::math::size(mu); ++i) {
       ops_partials.edge1_.partials_[i] *= P;
     }
   }
 
-  if (!is_constant_all<T_precision>::value) {
+  if constexpr (!is_constant_all<T_precision>::value) {
     for (size_t i = 0; i < size_phi; ++i) {
       ops_partials.edge2_.partials_[i] *= P;
     }

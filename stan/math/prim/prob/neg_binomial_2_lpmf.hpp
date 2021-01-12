@@ -44,7 +44,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
   if (size_zero(n, mu, phi)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_location, T_precision>::value) {
+  if constexpr (!include_summand<propto, T_location, T_precision>::value) {
     return 0.0;
   }
 
@@ -97,11 +97,11 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
     logp += -phi_val[i] * (log1p(mu_val[i] / phi_val[i]))
             - n_vec[i] * log_mu_plus_phi[i];
 
-    if (!is_constant_all<T_location>::value) {
+    if constexpr (!is_constant_all<T_location>::value) {
       ops_partials.edge1_.partials_[i]
           += n_vec[i] / mu_val[i] - (n_vec[i] + phi_val[i]) / mu_plus_phi[i];
     }
-    if (!is_constant_all<T_precision>::value) {
+    if constexpr (!is_constant_all<T_precision>::value) {
       T_partials_return log_term;
       if (mu_val[i] < phi_val[i]) {
         log_term = log1p(-mu_val[i] / mu_plus_phi[i]);

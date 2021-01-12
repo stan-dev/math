@@ -70,7 +70,7 @@ return_type_t<T_prob> bernoulli_lcdf(const T_n& n, const T_prob& theta) {
 
     P += log(Pi);
 
-    if (!is_constant_all<T_prob>::value) {
+    if constexpr (!is_constant_all<T_prob>::value) {
       ops_partials.edge1_.partials_[i] -= inv(Pi);
     }
   }

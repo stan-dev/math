@@ -54,7 +54,7 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
   if (size_zero(n, alpha)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_log_rate>::value) {
+  if constexpr (!include_summand<propto, T_log_rate>::value) {
     return 0.0;
   }
 
@@ -84,7 +84,7 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
     logp -= sum(lgamma(n_val + 1.0)) * N / size(n);
   }
 
-  if (!is_constant_all<T_log_rate>::value) {
+  if constexpr (!is_constant_all<T_log_rate>::value) {
     ops_partials.edge1_.partials_ = n_val - exp_alpha;
   }
 

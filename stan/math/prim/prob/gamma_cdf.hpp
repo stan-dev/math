@@ -85,7 +85,7 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_cdf(const T_y& y,
   VectorBuilder<!is_constant_all<T_shape>::value, T_partials_return, T_shape>
       digamma_vec(size(alpha));
 
-  if (!is_constant_all<T_shape>::value) {
+  if constexpr (!is_constant_all<T_shape>::value) {
     for (size_t i = 0; i < stan::math::size(alpha); i++) {
       const T_partials_return alpha_dbl = alpha_vec.val(i);
       gamma_vec[i] = tgamma(alpha_dbl);
@@ -108,35 +108,35 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_cdf(const T_y& y,
 
     P *= Pn;
 
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] += beta_dbl * exp(-beta_dbl * y_dbl)
                                           * pow(beta_dbl * y_dbl, alpha_dbl - 1)
                                           / tgamma(alpha_dbl) / Pn;
     }
-    if (!is_constant_all<T_shape>::value) {
+    if constexpr (!is_constant_all<T_shape>::value) {
       ops_partials.edge2_.partials_[n]
           -= grad_reg_inc_gamma(alpha_dbl, beta_dbl * y_dbl, gamma_vec[n],
                                 digamma_vec[n])
              / Pn;
     }
-    if (!is_constant_all<T_inv_scale>::value) {
+    if constexpr (!is_constant_all<T_inv_scale>::value) {
       ops_partials.edge3_.partials_[n] += y_dbl * exp(-beta_dbl * y_dbl)
                                           * pow(beta_dbl * y_dbl, alpha_dbl - 1)
                                           / tgamma(alpha_dbl) / Pn;
     }
   }
 
-  if (!is_constant_all<T_y>::value) {
+  if constexpr (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::math::size(y); ++n) {
       ops_partials.edge1_.partials_[n] *= P;
     }
   }
-  if (!is_constant_all<T_shape>::value) {
+  if constexpr (!is_constant_all<T_shape>::value) {
     for (size_t n = 0; n < stan::math::size(alpha); ++n) {
       ops_partials.edge2_.partials_[n] *= P;
     }
   }
-  if (!is_constant_all<T_inv_scale>::value) {
+  if constexpr (!is_constant_all<T_inv_scale>::value) {
     for (size_t n = 0; n < stan::math::size(beta); ++n) {
       ops_partials.edge3_.partials_[n] *= P;
     }

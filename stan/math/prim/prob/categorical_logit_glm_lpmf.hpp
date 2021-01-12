@@ -74,7 +74,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   check_bounded(function, "categorical outcome out of support", y_ref, 1,
                 N_classes);
 
-  if (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
+  if constexpr (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
     return 0;
   }
 
@@ -127,7 +127,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   operands_and_partials<T_x_ref, T_alpha_ref, T_beta_ref> ops_partials(
       x_ref, alpha_ref, beta_ref);
 
-  if (!is_constant_all<T_x>::value) {
+  if constexpr (!is_constant_all<T_x>::value) {
     if (T_x_rows == 1) {
       Array<double, 1, Dynamic> beta_y = beta_val.col(y_seq[0] - 1);
       for (int i = 1; i < N_instances; i++) {
@@ -152,10 +152,10 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
       // inv_sum_exp_lin;
     }
   }
-  if (!is_constant_all<T_alpha, T_beta>::value) {
+  if constexpr (!is_constant_all<T_alpha, T_beta>::value) {
     Array<T_partials_return, T_x_rows, Dynamic> neg_softmax_lin
         = exp_lin.colwise() * -inv_sum_exp_lin;
-    if (!is_constant_all<T_alpha>::value) {
+    if constexpr (!is_constant_all<T_alpha>::value) {
       if (T_x_rows == 1) {
         ops_partials.edge2_.partials_
             = neg_softmax_lin.colwise().sum() * N_instances;
@@ -166,7 +166,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
         ops_partials.edge2_.partials_[y_seq[i] - 1] += 1;
       }
     }
-    if (!is_constant_all<T_beta>::value) {
+    if constexpr (!is_constant_all<T_beta>::value) {
       Matrix<T_partials_return, Dynamic, Dynamic> beta_derivative;
       if (T_x_rows == 1) {
         beta_derivative

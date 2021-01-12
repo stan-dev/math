@@ -109,7 +109,7 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y,
       cdf_log = stan::math::negative_infinity();
     }
 
-    if (!is_constant_all<T_y, T_loc, T_scale>::value) {
+    if constexpr (!is_constant_all<T_y, T_loc, T_scale>::value) {
       // compute partial derivatives
       // based on analytic form given by:
       // dln(CDF)/dx = exp(-x^2)/(sqrt(pi)*(1/2+erf(x)/2)
@@ -213,13 +213,13 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y,
         dncdf_log = stan::math::positive_infinity();
       }
 
-      if (!is_constant_all<T_y>::value) {
+      if constexpr (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_[n] += dncdf_log / sigma_sqrt2;
       }
-      if (!is_constant_all<T_loc>::value) {
+      if constexpr (!is_constant_all<T_loc>::value) {
         ops_partials.edge2_.partials_[n] -= dncdf_log / sigma_sqrt2;
       }
-      if (!is_constant_all<T_scale>::value) {
+      if constexpr (!is_constant_all<T_scale>::value) {
         ops_partials.edge3_.partials_[n] -= dncdf_log * scaled_diff / sigma_dbl;
       }
     }

@@ -52,7 +52,7 @@ return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
   if (size_zero(n, lambda)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_rate>::value) {
+  if constexpr (!include_summand<propto, T_rate>::value) {
     return 0.0;
   }
   if (sum(promote_scalar<int>(isinf(lambda_val)))) {
@@ -78,7 +78,7 @@ return_type_t<T_rate> poisson_lpmf(const T_n& n, const T_rate& lambda) {
     logp -= sum(lgamma(n_val + 1.0)) * N / size(n);
   }
 
-  if (!is_constant_all<T_rate>::value) {
+  if constexpr (!is_constant_all<T_rate>::value) {
     ops_partials.edge1_.partials_ = n_val / lambda_val - 1.0;
   }
 

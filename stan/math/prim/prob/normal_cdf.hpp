@@ -83,35 +83,35 @@ inline return_type_t<T_y, T_loc, T_scale> normal_cdf(const T_y& y,
 
     cdf *= cdf_n;
 
-    if (!is_constant_all<T_y, T_loc, T_scale>::value) {
+    if constexpr (!is_constant_all<T_y, T_loc, T_scale>::value) {
       const T_partials_return rep_deriv
           = (scaled_diff < -37.5 * INV_SQRT_TWO)
                 ? 0.0
                 : INV_SQRT_TWO_PI * exp(-scaled_diff * scaled_diff)
                       / (cdf_n * sigma_dbl);
-      if (!is_constant_all<T_y>::value) {
+      if constexpr (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_[n] += rep_deriv;
       }
-      if (!is_constant_all<T_loc>::value) {
+      if constexpr (!is_constant_all<T_loc>::value) {
         ops_partials.edge2_.partials_[n] -= rep_deriv;
       }
-      if (!is_constant_all<T_scale>::value) {
+      if constexpr (!is_constant_all<T_scale>::value) {
         ops_partials.edge3_.partials_[n] -= rep_deriv * scaled_diff * SQRT_TWO;
       }
     }
   }
 
-  if (!is_constant_all<T_y>::value) {
+  if constexpr (!is_constant_all<T_y>::value) {
     for (size_t n = 0; n < stan::math::size(y); ++n) {
       ops_partials.edge1_.partials_[n] *= cdf;
     }
   }
-  if (!is_constant_all<T_loc>::value) {
+  if constexpr (!is_constant_all<T_loc>::value) {
     for (size_t n = 0; n < stan::math::size(mu); ++n) {
       ops_partials.edge2_.partials_[n] *= cdf;
     }
   }
-  if (!is_constant_all<T_scale>::value) {
+  if constexpr (!is_constant_all<T_scale>::value) {
     for (size_t n = 0; n < stan::math::size(sigma); ++n) {
       ops_partials.edge3_.partials_[n] *= cdf;
     }

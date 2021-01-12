@@ -75,22 +75,22 @@ return_type_t<T_y, T_shape, T_scale> weibull_lcdf(const T_y& y,
 
   T_partials_return cdf_log = sum(log(1 - exp_n));
 
-  if (!is_constant_all<T_y, T_scale, T_shape>::value) {
+  if constexpr (!is_constant_all<T_y, T_scale, T_shape>::value) {
     const auto& rep_deriv = to_ref_if<(!is_constant_all<T_y, T_scale>::value
                                        && !is_constant_all<T_shape>::value)>(
         pow_n / (1.0 / exp_n - 1.0));
-    if (!is_constant_all<T_y, T_scale>::value) {
+    if constexpr (!is_constant_all<T_y, T_scale>::value) {
       const auto& deriv_y_sigma = to_ref_if<(
           !is_constant_all<T_y>::value && !is_constant_all<T_scale>::value)>(
           rep_deriv * alpha_val);
-      if (!is_constant_all<T_y>::value) {
+      if constexpr (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_ = deriv_y_sigma / y_val;
       }
-      if (!is_constant_all<T_scale>::value) {
+      if constexpr (!is_constant_all<T_scale>::value) {
         ops_partials.edge3_.partials_ = -deriv_y_sigma / sigma_val;
       }
     }
-    if (!is_constant_all<T_shape>::value) {
+    if constexpr (!is_constant_all<T_shape>::value) {
       ops_partials.edge2_.partials_ = rep_deriv * log(y_val / sigma_val);
     }
   }

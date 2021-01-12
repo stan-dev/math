@@ -71,30 +71,30 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lcdf(
   operands_and_partials<T_y_ref, T_mu_ref, T_lambda_ref, T_alpha_ref>
       ops_partials(y_ref, mu_ref, lambda_ref, alpha_ref);
 
-  if (!is_constant_all<T_y, T_loc, T_scale, T_shape>::value) {
+  if constexpr (!is_constant_all<T_y, T_loc, T_scale, T_shape>::value) {
     const auto& inv_p1_pow_alpha_minus_one
         = to_ref_if<(!is_constant_all<T_y, T_loc, T_scale, T_shape>::value
                      && !is_constant_all<T_shape>::value)>(
             inv(p1_pow_alpha - 1));
-    if (!is_constant_all<T_y, T_loc, T_scale, T_shape>::value) {
+    if constexpr (!is_constant_all<T_y, T_loc, T_scale, T_shape>::value) {
       const auto& grad_1_2
           = to_ref_if<(!is_constant_all<T_loc>::value
                        + !is_constant_all<T_scale>::value
                        + !is_constant_all<T_y>::value)
                       >= 2>(alpha_val * inv_p1_pow_alpha_minus_one
                             / (lambda_val - mu_val + y_val));
-      if (!is_constant_all<T_loc>::value) {
+      if constexpr (!is_constant_all<T_loc>::value) {
         ops_partials.edge2_.partials_ = -grad_1_2;
       }
-      if (!is_constant_all<T_scale>::value) {
+      if constexpr (!is_constant_all<T_scale>::value) {
         ops_partials.edge3_.partials_
             = (mu_val - y_val) * grad_1_2 / lambda_val;
       }
-      if (!is_constant_all<T_y>::value) {
+      if constexpr (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_ = std::move(grad_1_2);
       }
     }
-    if (!is_constant_all<T_shape>::value) {
+    if constexpr (!is_constant_all<T_shape>::value) {
       ops_partials.edge4_.partials_ = log(temp) * inv_p1_pow_alpha_minus_one;
     }
   }

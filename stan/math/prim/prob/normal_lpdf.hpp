@@ -73,7 +73,7 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
   if (size_zero(y, mu, sigma)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
+  if constexpr (!include_summand<propto, T_y, T_loc, T_scale>::value) {
     return 0.0;
   }
 
@@ -95,18 +95,18 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
     logp -= sum(log(sigma_val)) * N / size(sigma);
   }
 
-  if (!is_constant_all<T_y, T_scale, T_loc>::value) {
+  if constexpr (!is_constant_all<T_y, T_scale, T_loc>::value) {
     const auto& scaled_diff = to_ref_if<!is_constant_all<T_y>::value
                                             + !is_constant_all<T_scale>::value
                                             + !is_constant_all<T_loc>::value
                                         >= 2>(inv_sigma * y_scaled);
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_ = -scaled_diff;
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_ = inv_sigma * y_scaled_sq - inv_sigma;
     }
-    if (!is_constant_all<T_loc>::value) {
+    if constexpr (!is_constant_all<T_loc>::value) {
       ops_partials.edge2_.partials_ = std::move(scaled_diff);
     }
   }

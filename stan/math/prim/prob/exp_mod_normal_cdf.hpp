@@ -105,12 +105,12 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
     cdf = forward_as<T_partials_return>(cdf_n);
   }
 
-  if (!is_constant_all<T_y, T_loc, T_scale, T_inv_scale>::value) {
+  if constexpr (!is_constant_all<T_y, T_loc, T_scale, T_inv_scale>::value) {
     const auto& exp_term_2
         = to_ref_if<(!is_constant_all<T_y, T_loc, T_scale>::value
                      && !is_constant_all<T_inv_scale>::value)>(
             exp(-square(scaled_diff_diff)));
-    if (!is_constant_all<T_y, T_loc, T_scale>::value) {
+    if constexpr (!is_constant_all<T_y, T_loc, T_scale>::value) {
       constexpr bool need_deriv_refs = !is_constant_all<T_y, T_loc>::value
                                        && !is_constant_all<T_scale>::value;
       const auto& deriv_1
@@ -121,18 +121,18 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
       const auto& exp_m_sq_scaled_diff = exp(-sq_scaled_diff);
       const auto& deriv_3 = to_ref_if<need_deriv_refs>(
           INV_SQRT_TWO_PI * exp_m_sq_scaled_diff * inv_sigma);
-      if (!is_constant_all<T_y, T_loc>::value) {
+      if constexpr (!is_constant_all<T_y, T_loc>::value) {
         const auto& deriv = to_ref_if<(!is_constant_all<T_loc>::value
                                        && !is_constant_all<T_y>::value)>(
             cdf * (deriv_1 - deriv_2 + deriv_3) / cdf_n);
-        if (!is_constant_all<T_y>::value) {
+        if constexpr (!is_constant_all<T_y>::value) {
           ops_partials.edge1_.partials_ = deriv;
         }
-        if (!is_constant_all<T_loc>::value) {
+        if constexpr (!is_constant_all<T_loc>::value) {
           ops_partials.edge2_.partials_ = -deriv;
         }
       }
-      if (!is_constant_all<T_scale>::value) {
+      if constexpr (!is_constant_all<T_scale>::value) {
         ops_partials.edge3_.partials_
             = -cdf
               * ((deriv_1 - deriv_2) * v
@@ -140,7 +140,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
               / cdf_n;
       }
     }
-    if (!is_constant_all<T_inv_scale>::value) {
+    if constexpr (!is_constant_all<T_inv_scale>::value) {
       ops_partials.edge4_.partials_
           = cdf * exp_term
             * (INV_SQRT_TWO_PI * sigma_val * exp_term_2

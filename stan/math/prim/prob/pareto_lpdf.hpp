@@ -57,7 +57,7 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
   check_positive_finite(function, "Scale parameter", y_min_val);
   check_positive_finite(function, "Shape parameter", alpha_val);
 
-  if (!include_summand<propto, T_y, T_scale, T_shape>::value) {
+  if constexpr (!include_summand<propto, T_y, T_scale, T_shape>::value) {
     return 0;
   }
 
@@ -78,12 +78,12 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
 
   operands_and_partials<T_y_ref, T_y_min_ref, T_alpha_ref> ops_partials(
       y_ref, y_min_ref, alpha_ref);
-  if (!is_constant_all<T_y>::value) {
+  if constexpr (!is_constant_all<T_y>::value) {
     const auto& inv_y = inv(y_val);
     ops_partials.edge1_.partials_
         = -(alpha_val * inv_y + inv_y) * N / max_size(alpha, y);
   }
-  if (!is_constant_all<T_scale>::value) {
+  if constexpr (!is_constant_all<T_scale>::value) {
     ops_partials.edge2_.partials_
         = alpha_val / y_min_val * N / max_size(alpha, y_min);
   }
@@ -91,7 +91,7 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
     const auto& log_y_min
         = to_ref_if<!is_constant_all<T_shape>::value>(log(y_min_val));
     logp += sum(alpha_val * log_y_min) * N / max_size(alpha, y_min);
-    if (!is_constant_all<T_shape>::value) {
+    if constexpr (!is_constant_all<T_shape>::value) {
       ops_partials.edge3_.partials_ = inv(alpha_val) + log_y_min - log_y;
     }
   }

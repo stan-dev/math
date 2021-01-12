@@ -71,7 +71,7 @@ return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
   if (size_zero(y, nu)) {
     return 0;
   }
-  if (!include_summand<propto, T_y, T_dof>::value) {
+  if constexpr (!include_summand<propto, T_y, T_dof>::value) {
     return 0;
   }
 
@@ -92,12 +92,12 @@ return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
   if (include_summand<propto, T_y>::value) {
     const auto& inv_y = to_ref_if<!is_constant_all<T_y>::value>(inv(y_val));
     logp -= 0.5 * sum(inv_y) * N / size(y);
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_ = (0.5 * inv_y - half_nu - 1.0) * inv_y;
     }
   }
 
-  if (!is_constant_all<T_dof>::value) {
+  if constexpr (!is_constant_all<T_dof>::value) {
     ops_partials.edge2_.partials_
         = -HALF_LOG_TWO - (digamma(half_nu) + log_y) * 0.5;
   }

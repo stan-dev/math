@@ -77,23 +77,23 @@ return_type_t<T_y, T_scale, T_shape> pareto_lcdf(const T_y& y,
           exp(alpha_val * log_quot));
   T_partials_return P = sum(log(1 - exp_prod));
 
-  if (!is_constant_all<T_y, T_scale, T_shape>::value) {
+  if constexpr (!is_constant_all<T_y, T_scale, T_shape>::value) {
     const auto& common_deriv = to_ref_if<(!is_constant_all<T_y, T_scale>::value
                                           && !is_constant_all<T_shape>::value)>(
         exp_prod / (1 - exp_prod));
-    if (!is_constant_all<T_y, T_scale>::value) {
+    if constexpr (!is_constant_all<T_y, T_scale>::value) {
       const auto& y_min_inv = inv(y_min_val);
       const auto& common_deriv2 = to_ref_if<(
           !is_constant_all<T_y>::value && !is_constant_all<T_scale>::value)>(
           -alpha_val * y_min_inv * common_deriv);
-      if (!is_constant_all<T_y>::value) {
+      if constexpr (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_ = -common_deriv2 * exp(log_quot);
       }
-      if (!is_constant_all<T_scale>::value) {
+      if constexpr (!is_constant_all<T_scale>::value) {
         ops_partials.edge2_.partials_ = std::move(common_deriv2);
       }
     }
-    if (!is_constant_all<T_shape>::value) {
+    if constexpr (!is_constant_all<T_shape>::value) {
       ops_partials.edge3_.partials_ = -common_deriv * log_quot;
     }
   }

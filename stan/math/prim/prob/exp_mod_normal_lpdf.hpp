@@ -66,7 +66,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
   if (size_zero(y, mu, sigma, lambda)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y, T_loc, T_scale, T_inv_scale>::value) {
+  if constexpr (!include_summand<propto, T_y, T_loc, T_scale, T_inv_scale>::value) {
     return 0.0;
   }
 
@@ -95,29 +95,29 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
 
   operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref, T_lambda_ref>
       ops_partials(y_ref, mu_ref, sigma_ref, lambda_ref);
-  if (!is_constant_all<T_y, T_loc, T_scale, T_inv_scale>::value) {
+  if constexpr (!is_constant_all<T_y, T_loc, T_scale, T_inv_scale>::value) {
     const auto& exp_m_sq_inner_term = exp(-square(inner_term));
     const auto& deriv_logerfc = to_ref_if<
         !is_constant_all<T_y, T_loc>::value + !is_constant_all<T_scale>::value
             + !is_constant_all<T_inv_scale>::value
         >= 2>(-SQRT_TWO_OVER_SQRT_PI * exp_m_sq_inner_term / erfc_calc);
-    if (!is_constant_all<T_y, T_loc>::value) {
+    if constexpr (!is_constant_all<T_y, T_loc>::value) {
       const auto& deriv = to_ref_if < !is_constant_all<T_y>::value
                           && !is_constant_all<T_loc>::value
                                  > (lambda_val + deriv_logerfc * inv_sigma);
-      if (!is_constant_all<T_y>::value) {
+      if constexpr (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_ = -deriv;
       }
-      if (!is_constant_all<T_loc>::value) {
+      if constexpr (!is_constant_all<T_loc>::value) {
         ops_partials.edge2_.partials_ = deriv;
       }
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_
           = sigma_val * square(lambda_val)
             + deriv_logerfc * (lambda_val - mu_minus_y / sigma_sq);
     }
-    if (!is_constant_all<T_inv_scale>::value) {
+    if constexpr (!is_constant_all<T_inv_scale>::value) {
       ops_partials.edge4_.partials_ = inv(lambda_val) + lambda_sigma_sq
                                       + mu_minus_y + deriv_logerfc * sigma_val;
     }

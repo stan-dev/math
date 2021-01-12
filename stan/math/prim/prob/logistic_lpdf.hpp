@@ -56,7 +56,7 @@ return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y, const T_loc& mu,
   if (size_zero(y, mu, sigma)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
+  if constexpr (!include_summand<propto, T_y, T_loc, T_scale>::value) {
     return 0.0;
   }
 
@@ -76,19 +76,19 @@ return_type_t<T_y, T_loc, T_scale> logistic_lpdf(const T_y& y, const T_loc& mu,
     logp -= sum(log(sigma_val)) * N / size(sigma);
   }
 
-  if (!is_constant_all<T_y, T_scale>::value) {
+  if constexpr (!is_constant_all<T_y, T_scale>::value) {
     const auto& exp_y_minus_mu_div_sigma = exp(y_minus_mu_div_sigma);
     const auto& y_deriv = to_ref_if<(!is_constant_all<T_scale>::value
                                      && !is_constant_all<T_y>::value)>(
         (2 / (1 + exp_y_minus_mu_div_sigma) - 1) * inv_sigma);
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_ = y_deriv;
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_ = (-y_deriv * y_minus_mu - 1) * inv_sigma;
     }
   }
-  if (!is_constant_all<T_loc>::value) {
+  if constexpr (!is_constant_all<T_loc>::value) {
     const auto& exp_mu_div_sigma = to_ref(exp(mu_val * inv_sigma));
     ops_partials.edge2_.partials_
         = (1

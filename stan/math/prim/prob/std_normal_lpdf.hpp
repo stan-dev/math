@@ -39,7 +39,7 @@ return_type_t<T_y> std_normal_lpdf(const T_y& y) {
   if (size_zero(y)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y>::value) {
+  if constexpr (!include_summand<propto, T_y>::value) {
     return 0.0;
   }
 
@@ -52,7 +52,7 @@ return_type_t<T_y> std_normal_lpdf(const T_y& y) {
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_val = y_vec.val(n);
     logp += y_val * y_val;
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= y_val;
     }
   }

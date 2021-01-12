@@ -73,19 +73,19 @@ return_type_t<T_y, T_scale, T_shape> pareto_lccdf(const T_y& y,
   T_partials_return P = sum(alpha_val * log_quot);
 
   size_t N = max_size(y, y_min, alpha);
-  if (!is_constant_all<T_y, T_scale>::value) {
+  if constexpr (!is_constant_all<T_y, T_scale>::value) {
     const auto& alpha_div_y_min = to_ref_if<(
         !is_constant_all<T_y>::value && !is_constant_all<T_scale>::value)>(
         alpha_val / y_min_val);
-    if (!is_constant_all<T_y>::value) {
+    if constexpr (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_ = -alpha_div_y_min * exp(log_quot);
     }
-    if (!is_constant_all<T_scale>::value) {
+    if constexpr (!is_constant_all<T_scale>::value) {
       ops_partials.edge2_.partials_
           = alpha_div_y_min * N / max_size(y_min, alpha);
     }
   }
-  if (!is_constant_all<T_shape>::value) {
+  if constexpr (!is_constant_all<T_shape>::value) {
     if (is_vector<T_shape>::value) {
       using Log_quot_scalar = partials_return_t<T_y, T_scale>;
       using Log_quot_array = Eigen::Array<Log_quot_scalar, Eigen::Dynamic, 1>;

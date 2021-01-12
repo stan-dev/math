@@ -74,7 +74,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lcdf(
                 T_shape>
       digammaSum_vec(size_n_alpha);
 
-  if (!is_constant_all<T_shape>::value) {
+  if constexpr (!is_constant_all<T_shape>::value) {
     for (size_t i = 0; i < size_n; i++) {
       digammaN_vec[i] = digamma(n_vec.val(i) + 1);
     }
@@ -106,7 +106,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lcdf(
 
     P += log(Pi);
 
-    if (!is_constant_all<T_shape>::value) {
+    if constexpr (!is_constant_all<T_shape>::value) {
       T_partials_return g1 = 0;
       T_partials_return g2 = 0;
 
@@ -115,7 +115,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lcdf(
                         beta_func);
       ops_partials.edge1_.partials_[i] += g1 / Pi;
     }
-    if (!is_constant_all<T_inv_scale>::value) {
+    if constexpr (!is_constant_all<T_inv_scale>::value) {
       ops_partials.edge2_.partials_[i] += d_dbl * pow(1 - p_dbl, n_dbl)
                                           * pow(p_dbl, alpha_dbl - 1)
                                           / (beta_func * Pi);

@@ -82,7 +82,7 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   const auto& y_ref = to_ref(y);
   check_bounded(function, "Vector of dependent variables", y_ref, 0, 1);
 
-  if (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
+  if constexpr (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
     return 0;
   }
 
@@ -133,14 +133,14 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   operands_and_partials<T_x_ref, T_alpha_ref, T_beta_ref> ops_partials(
       x_ref, alpha_ref, beta_ref);
   // Compute the necessary derivatives.
-  if (!is_constant_all<T_beta, T_x, T_alpha>::value) {
+  if constexpr (!is_constant_all<T_beta, T_x, T_alpha>::value) {
     Matrix<T_partials_return, Dynamic, 1> theta_derivative
         = (ytheta > cutoff)
               .select(-exp_m_ytheta,
                       (ytheta < -cutoff)
                           .select(signs,
                                   signs * exp_m_ytheta / (exp_m_ytheta + 1)));
-    if (!is_constant_all<T_beta>::value) {
+    if constexpr (!is_constant_all<T_beta>::value) {
       if (T_x_rows == 1) {
         ops_partials.edge3_.partials_
             = forward_as<Matrix<T_partials_return, 1, Dynamic>>(
@@ -149,7 +149,7 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
         ops_partials.edge3_.partials_ = x_val.transpose() * theta_derivative;
       }
     }
-    if (!is_constant_all<T_x>::value) {
+    if constexpr (!is_constant_all<T_x>::value) {
       if (T_x_rows == 1) {
         ops_partials.edge1_.partials_
             = forward_as<Array<T_partials_return, Dynamic, T_x_rows>>(
@@ -159,7 +159,7 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
             = (beta_val_vec * theta_derivative.transpose()).transpose();
       }
     }
-    if (!is_constant_all<T_alpha>::value) {
+    if constexpr (!is_constant_all<T_alpha>::value) {
       ops_partials.edge2_.partials_ = theta_derivative;
     }
   }

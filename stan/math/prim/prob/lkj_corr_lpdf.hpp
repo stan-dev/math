@@ -67,7 +67,7 @@ return_type_t<T_y, T_shape> lkj_corr_lpdf(const T_y& y, const T_shape& eta) {
     return lp;
   }
 
-  if (!include_summand<propto, T_y, T_shape>::value) {
+  if constexpr (!include_summand<propto, T_y, T_shape>::value) {
     return lp;
   }
 

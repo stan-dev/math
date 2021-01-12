@@ -61,7 +61,7 @@ return_type_t<T_rate> poisson_cdf(const T_n& n, const T_rate& lambda) {
 
   T_partials_return P = prod(Pi);
 
-  if (!is_constant_all<T_rate>::value) {
+  if constexpr (!is_constant_all<T_rate>::value) {
     ops_partials.edge1_.partials_ = -exp(-lambda_val) * pow(lambda_val, n_val)
                                     / (tgamma(n_val + 1.0) * Pi) * P;
   }

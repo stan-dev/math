@@ -168,7 +168,7 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
 
   operands_and_partials<T_lambda_ref, T_cut_ref> ops_partials(lambda_ref,
                                                               c_ref);
-  if (!is_constant_all<T_loc, T_cut>::value) {
+  if constexpr (!is_constant_all<T_loc, T_cut>::value) {
     Array<T_partials_return, Dynamic, 1> exp_m_cut1 = exp(-cut1);
     Array<T_partials_return, Dynamic, 1> exp_m_cut2 = exp(-cut2);
     Array<T_partials_return, Dynamic, 1> exp_cuts_diff = exp(cuts_y2 - cuts_y1);
@@ -179,10 +179,10 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
         = 1 / (1 - exp_cuts_diff)
           - (cut1 > 0).select(exp_m_cut1 / (1 + exp_m_cut1),
                               1 / (1 + exp(cut1)));
-    if (!is_constant_all<T_loc>::value) {
+    if constexpr (!is_constant_all<T_loc>::value) {
       ops_partials.edge1_.partials_ = d1 - d2;
     }
-    if (!is_constant_all<T_cut>::value) {
+    if constexpr (!is_constant_all<T_cut>::value) {
       for (int i = 0; i < N; i++) {
         int c = y_seq[i];
         if (c != K) {

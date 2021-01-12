@@ -110,13 +110,13 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_cdf(
     }
   }
 
-  if (!is_constant_all<T_y>::value) {
+  if constexpr (!is_constant_all<T_y>::value) {
     ops_partials.edge1_.partials_ = rep_deriv;
   }
-  if (!is_constant_all<T_loc>::value) {
+  if constexpr (!is_constant_all<T_loc>::value) {
     ops_partials.edge2_.partials_ = -rep_deriv;
   }
-  if (!is_constant_all<T_scale>::value) {
+  if constexpr (!is_constant_all<T_scale>::value) {
     ops_partials.edge3_.partials_ = -rep_deriv * scaled_diff;
   }
   return ops_partials.build(cdf);

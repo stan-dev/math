@@ -69,23 +69,23 @@ return_type_t<T_y, T_low, T_high> uniform_cdf(const T_y& y, const T_low& alpha,
 
   T_partials_return cdf = prod(cdf_n);
 
-  if (!is_constant_all<T_y, T_low, T_high>::value) {
+  if constexpr (!is_constant_all<T_y, T_low, T_high>::value) {
     const auto& rep_deriv
         = to_ref_if<(!is_constant_all<T_y, T_low>::value
                      && !is_constant_all<T_high>::value)>(cdf / b_minus_a);
-    if (!is_constant_all<T_y, T_low>::value) {
+    if constexpr (!is_constant_all<T_y, T_low>::value) {
       const auto& deriv_y
           = to_ref_if<(!is_constant_all<T_low>::value
                        && !is_constant_all<T_y>::value)>(rep_deriv / cdf_n);
-      if (!is_constant_all<T_low>::value) {
+      if constexpr (!is_constant_all<T_low>::value) {
         ops_partials.edge2_.partials_
             = (y_val - beta_val) * deriv_y / b_minus_a;
       }
-      if (!is_constant_all<T_y>::value) {
+      if constexpr (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_ = std::move(deriv_y);
       }
     }
-    if (!is_constant_all<T_high>::value) {
+    if constexpr (!is_constant_all<T_high>::value) {
       if (is_vector<T_y>::value && !is_vector<T_low>::value
           && !is_vector<T_high>::value) {
         ops_partials.edge3_.partials_
