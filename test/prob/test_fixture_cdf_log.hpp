@@ -304,12 +304,6 @@ class AgradCdfLogTestFixture : public ::testing::Test {
                                       Args&... args) {
     grad.push_back(logprob.d_.val_);
 
-    stan::test::expect_near_rel(
-        "The order of gradients shouldn't matter when computing 2nd "
-        "derivatives because of the way the `fvar<fvar<double>>` s are "
-        "initialized",
-        logprob.d_.val_, logprob.val_.d_);
-
     return logprob.val().val();
   }
   template <typename... Args>
@@ -364,17 +358,6 @@ class AgradCdfLogTestFixture : public ::testing::Test {
     stan::math::set_zero_all_adjoints();
     logprob.d_.val_.grad();
     add_adjoints(grad, args...);
-
-    std::vector<double> grad_alt;
-    stan::math::set_zero_all_adjoints();
-    logprob.val_.d_.grad();
-    add_adjoints(grad_alt, args...);
-
-    stan::test::expect_near_rel(
-        "The order of derivatives shouldn't matter when computing 2nd "
-        "derivatives because of the way the `fvar<fvar<var>>` s are "
-        "initialized",
-        grad, grad_alt);
 
     return logprob.val_.val_.val();
   }
