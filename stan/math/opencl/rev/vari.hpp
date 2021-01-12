@@ -105,6 +105,15 @@ template <typename T>
 class vari_view<T, require_kernel_expression_lhs_t<T>>
     : public vari_cl_base<T> {
  public:
+  /**
+   * Rows at compile time
+   */
+  static constexpr int RowsAtCompileTime{-1};
+  /**
+   * Columns at compile time
+   */
+  static constexpr int ColsAtCompileTime{-1};
+
   using value_type = T;
   using vari_cl_base<T>::vari_cl_base;
   inline void set_zero_adjoint() final {}
