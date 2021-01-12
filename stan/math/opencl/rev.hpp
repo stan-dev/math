@@ -28,6 +28,7 @@
 #include <stan/math/opencl/rev/diag_pre_multiply.hpp>
 #include <stan/math/opencl/rev/diag_post_multiply.hpp>
 #include <stan/math/opencl/rev/diagonal.hpp>
+#include <stan/math/opencl/rev/digamma.hpp>
 #include <stan/math/opencl/rev/divide.hpp>
 #include <stan/math/opencl/rev/dot_product.hpp>
 #include <stan/math/opencl/rev/dot_self.hpp>
