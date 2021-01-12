@@ -41,7 +41,7 @@ TEST(Profiling, profiling_var_basic) {
   EXPECT_EQ(profiles[key].get_nochain_stack_used(), 2);
   EXPECT_EQ(profiles[key].get_num_rev_passes(), 1);
   EXPECT_EQ(profiles[key].get_num_fwd_passes(), 1);
-  EXPECT_TRUE(profiles[key].get_fwd_time() > 0.0); 
+  EXPECT_TRUE(profiles[key].get_fwd_time() > 0.0);
   EXPECT_TRUE(profiles[key].get_rev_time() > 0.0);
 }
 
@@ -58,14 +58,14 @@ TEST(Profiling, profiling_var_exception) {
     throw std::domain_error("error");
     c.grad();
   } catch (const std::exception& e) {
-  }  
+  }
   stan::math::recover_memory();
   stan::math::profile_key key_t1 = {"t1", std::this_thread::get_id()};
   EXPECT_EQ(profiles[key_t1].get_chain_stack_used(), 1);
   EXPECT_EQ(profiles[key_t1].get_nochain_stack_used(), 2);
   EXPECT_EQ(profiles[key_t1].get_num_rev_passes(), 0);
   EXPECT_EQ(profiles[key_t1].get_num_fwd_passes(), 1);
-  EXPECT_TRUE(profiles[key_t1].get_fwd_time() > 0.0); 
+  EXPECT_TRUE(profiles[key_t1].get_fwd_time() > 0.0);
   EXPECT_TRUE(profiles[key_t1].get_rev_time() == 0.0);
 }
 
@@ -79,7 +79,7 @@ TEST(Profiling, profiling_var_loop) {
     profile<var> t1 = profile<var>("t1", profiles);
     var a = i;
     var b = 2.0;
-    c = c + a;    
+    c = c + a;
   }
   c.grad();
   stan::math::recover_memory();
@@ -88,6 +88,6 @@ TEST(Profiling, profiling_var_loop) {
   EXPECT_EQ(profiles[key_t1].get_nochain_stack_used(), 2);
   EXPECT_EQ(profiles[key_t1].get_num_rev_passes(), N);
   EXPECT_EQ(profiles[key_t1].get_num_fwd_passes(), N);
-  EXPECT_TRUE(profiles[key_t1].get_fwd_time() > 0.0); 
+  EXPECT_TRUE(profiles[key_t1].get_fwd_time() > 0.0);
   EXPECT_TRUE(profiles[key_t1].get_rev_time() > 0.0);
 }

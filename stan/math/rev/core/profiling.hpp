@@ -14,13 +14,13 @@
 namespace stan {
 namespace math {
 
- /**
+/**
  * Class used for storing profiling information.
  */
 class profile_info {
  private:
   bool active_;
-  
+
   double fwd_pass_time_;
   double rev_pass_time_;
   size_t n_fwd_AD_passes_;
@@ -32,12 +32,17 @@ class profile_info {
   std::chrono::time_point<std::chrono::steady_clock> rev_pass_tp_;
   size_t start_chain_stack_size_;
   size_t start_nochain_stack_size_;
+
  public:
-  profile_info() :
-    active_(false),
-    fwd_pass_time_(0.0), rev_pass_time_(0.0),
-    n_fwd_AD_passes_(0), n_fwd_no_AD_passes_(0), n_rev_passes_(0),
-    chain_stack_size_sum_(0), nochain_stack_size_sum_(0) { };
+  profile_info()
+      : active_(false),
+        fwd_pass_time_(0.0),
+        rev_pass_time_(0.0),
+        n_fwd_AD_passes_(0),
+        n_fwd_no_AD_passes_(0),
+        n_rev_passes_(0),
+        chain_stack_size_sum_(0),
+        nochain_stack_size_sum_(0){};
 
   bool is_active() { return active_; }
 
@@ -45,7 +50,8 @@ class profile_info {
   void fwd_pass_start() {
     if (!is_constant<T>::value) {
       start_chain_stack_size_ = ChainableStack::instance_->var_stack_.size();
-      start_nochain_stack_size_ = ChainableStack::instance_->var_nochain_stack_.size();
+      start_nochain_stack_size_
+          = ChainableStack::instance_->var_nochain_stack_.size();
     }
     fwd_pass_tp_ = std::chrono::steady_clock::now();
     active_ = true;
@@ -55,23 +61,26 @@ class profile_info {
   void fwd_pass_stop() {
     if (!is_constant<T>::value) {
       n_fwd_AD_passes_++;
-      chain_stack_size_sum_ += (ChainableStack::instance_->var_stack_.size() - start_chain_stack_size_ - 1);
-      nochain_stack_size_sum_ += (ChainableStack::instance_->var_nochain_stack_.size() - start_nochain_stack_size_);
+      chain_stack_size_sum_ += (ChainableStack::instance_->var_stack_.size()
+                                - start_chain_stack_size_ - 1);
+      nochain_stack_size_sum_
+          += (ChainableStack::instance_->var_nochain_stack_.size()
+              - start_nochain_stack_size_);
     } else {
-      
       n_fwd_no_AD_passes_++;
     }
-    fwd_pass_time_ += 
-      std::chrono::duration<double>(std::chrono::steady_clock::now() - fwd_pass_tp_).count();
+    fwd_pass_time_ += std::chrono::duration<double>(
+                          std::chrono::steady_clock::now() - fwd_pass_tp_)
+                          .count();
     active_ = false;
   }
 
-  void rev_pass_start() {
-    rev_pass_tp_ = std::chrono::steady_clock::now();
-  }
+  void rev_pass_start() { rev_pass_tp_ = std::chrono::steady_clock::now(); }
 
   void rev_pass_stop() {
-    rev_pass_time_ += std::chrono::duration<double>(std::chrono::steady_clock::now() - rev_pass_tp_).count();
+    rev_pass_time_ += std::chrono::duration<double>(
+                          std::chrono::steady_clock::now() - rev_pass_tp_)
+                          .count();
     n_rev_passes_++;
   }
 
@@ -79,41 +88,31 @@ class profile_info {
     if (n_fwd_AD_passes_ == 0) {
       return 0;
     } else {
-      return chain_stack_size_sum_/n_fwd_AD_passes_;
-    }    
+      return chain_stack_size_sum_ / n_fwd_AD_passes_;
+    }
   }
 
   size_t get_nochain_stack_used() {
     if (n_fwd_AD_passes_ == 0) {
       return 0;
     } else {
-      return nochain_stack_size_sum_/n_fwd_AD_passes_;
-    }    
+      return nochain_stack_size_sum_ / n_fwd_AD_passes_;
+    }
   }
 
-  size_t get_num_fwd_passes() {
-    return n_fwd_AD_passes_ + n_fwd_no_AD_passes_;
-  }
+  size_t get_num_fwd_passes() { return n_fwd_AD_passes_ + n_fwd_no_AD_passes_; }
 
-  double get_fwd_time() {
-    return fwd_pass_time_;
-  }
+  double get_fwd_time() { return fwd_pass_time_; }
 
-  size_t get_num_rev_passes() {
-    return n_rev_passes_;
-  }
+  size_t get_num_rev_passes() { return n_rev_passes_; }
 
-  double get_rev_time() {
-    return rev_pass_time_;
-  }
-
+  double get_rev_time() { return rev_pass_time_; }
 };
 
 using profile_key = std::pair<std::string, std::thread::id>;
 
 using profile_map = std::map<profile_key, profile_info>;
 namespace internal {
-
 
 /**
  * Starts profiling the forward pass for the profile
@@ -137,10 +136,8 @@ inline auto profile_start(std::string name, profile_info& profile) {
   }
   profile.fwd_pass_start<T>();
   if (!is_constant<T>::value) {
-    reverse_pass_callback([&profile]() mutable {
-      profile.rev_pass_stop();
-    });
-  } 
+    reverse_pass_callback([&profile]() mutable { profile.rev_pass_stop(); });
+  }
 }
 
 /**
@@ -160,9 +157,7 @@ inline auto profile_stop(std::string name, profile_info& profile) {
   using std::chrono::steady_clock;
   profile.fwd_pass_stop<T>();
   if (!is_constant<T>::value) {
-    reverse_pass_callback([&profile]() mutable {
-      profile.rev_pass_start();
-    });
+    reverse_pass_callback([&profile]() mutable { profile.rev_pass_start(); });
   }
 }
 }  // namespace internal

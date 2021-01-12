@@ -3,28 +3,29 @@
 #include <gtest/gtest.h>
 
 namespace profiling_test {
-  stan::math::profile_map profiles_threading;
-  template <typename T>
-  struct grouped_count_lpdf {
-    grouped_count_lpdf() {}
+stan::math::profile_map profiles_threading;
+template <typename T>
+struct grouped_count_lpdf {
+  grouped_count_lpdf() {}
 
-    // does the reduction in the sub-slice start to end
-    template <typename VecInt1, typename VecT, typename VecInt2>
-    inline T operator()(VecInt1&& sub_slice, std::size_t start, std::size_t end,
-                        std::ostream* msgs, VecT&& lambda, VecInt2&& gidx) const {
-      stan::math::profile<stan::math::var> p1 = stan::math::profile<stan::math::var>("p1", profiles_threading);
-      const std::size_t num_terms = end - start + 1;
-      
-      std::decay_t<VecT> lambda_slice(num_terms);
-      for (std::size_t i = 0; i != num_terms; ++i)
-        lambda_slice[i] = lambda[gidx[start + i]];
+  // does the reduction in the sub-slice start to end
+  template <typename VecInt1, typename VecT, typename VecInt2>
+  inline T operator()(VecInt1&& sub_slice, std::size_t start, std::size_t end,
+                      std::ostream* msgs, VecT&& lambda, VecInt2&& gidx) const {
+    stan::math::profile<stan::math::var> p1
+        = stan::math::profile<stan::math::var>("p1", profiles_threading);
+    const std::size_t num_terms = end - start + 1;
 
-      return stan::math::poisson_lpmf(sub_slice, lambda_slice);
-    }
-  };
-}
+    std::decay_t<VecT> lambda_slice(num_terms);
+    for (std::size_t i = 0; i != num_terms; ++i)
+      lambda_slice[i] = lambda[gidx[start + i]];
 
-TEST(Profiling, profile_threading) {  
+    return stan::math::poisson_lpmf(sub_slice, lambda_slice);
+  }
+};
+}  // namespace profiling_test
+
+TEST(Profiling, profile_threading) {
   using stan::math::var;
   using stan::math::test::get_new_msg;
   double lambda_d = 10.0;
@@ -46,8 +47,9 @@ TEST(Profiling, profile_threading) {
     vlambda_v[i] = i + 0.2;
   var lambda_v = vlambda_v[0];
 
-  var poisson_lpdf = stan::math::reduce_sum<profiling_test::grouped_count_lpdf<var>>(
-      data, 5, get_new_msg(), vlambda_v, gidx);
+  var poisson_lpdf
+      = stan::math::reduce_sum<profiling_test::grouped_count_lpdf<var>>(
+          data, 5, get_new_msg(), vlambda_v, gidx);
 
   std::vector<var> vref_lambda_v;
   for (std::size_t i = 0; i != elems; ++i) {
@@ -57,7 +59,9 @@ TEST(Profiling, profile_threading) {
   var poisson_lpdf_ref = stan::math::poisson_lpmf(data, vref_lambda_v);
   var c = 1.0;
   {
-    stan::math::profile<stan::math::var> p1 = stan::math::profile<stan::math::var>("p1", profiling_test::profiles_threading);
+    stan::math::profile<stan::math::var> p1
+        = stan::math::profile<stan::math::var>(
+            "p1", profiling_test::profiles_threading);
     var a = 2.0;
     c = c + a;
   }
