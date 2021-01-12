@@ -77,7 +77,8 @@ class ops_partials_edge;
 template <typename ReturnType, typename... Ops>
 class operands_and_partials_impl<ReturnType, require_arithmetic_t<ReturnType>, Ops...> {
  public:
-  explicit operands_and_partials_impl(Ops&&... /* ops */) noexcept {}
+  template <typename... Types>
+  explicit operands_and_partials_impl(Types&&... /* ops */) noexcept {}
 
   /** \ingroup type_trait
    * Build the node to be stored on the autodiff graph.
@@ -96,14 +97,17 @@ class operands_and_partials_impl<ReturnType, require_arithmetic_t<ReturnType>, O
   std::tuple<internal::ops_partials_edge<double, std::decay_t<Ops>>...> edges_;
 };
 
-template <typename ViewElt, typename Op, typename Enable>
-class ops_partials_edge {
+template <typename ViewElt, typename Op>
+class ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>> {
  public:
-  empty_broadcast_array<ViewElt, Op> partials_;
-  static constexpr double operands_{0};
+   using partials_t = empty_broadcast_array<ViewElt, Op>;
+   partials_t partials_;
+   empty_broadcast_array<partials_t, Op> partials_vec_;
+   static constexpr double operands_{0};
 
   ops_partials_edge() {}
-  explicit ops_partials_edge(const Op& /* op */) noexcept {}
+  template <typename T, require_same_t<plain_type_t<T>, plain_type_t<Op>>* = nullptr>
+  explicit ops_partials_edge(T&& /* op */) noexcept {}
 
  private:
   template <typename, typename, typename...>
@@ -111,77 +115,8 @@ class ops_partials_edge {
   static constexpr ViewElt dx() { return 0; }  // used for fvars
   static constexpr int size() { return 0; }    // reverse mode
 };
-
-/** \ingroup type_trait
- * \callergraph
- * This class will be used for both multivariate (nested container)
- * operands_and_partials edges as well as for the univariate case.
- */
-template <typename Op, typename ViewElt>
-class ops_partials_edge<ViewElt, Op, require_eigen_st<std::is_arithmetic, Op>> {
- public:
-  using partials_t = empty_broadcast_array<ViewElt, Op>;
-  partials_t partials_;
-  empty_broadcast_array<partials_t, Op> partials_vec_;
-  static constexpr double operands_{0};
-  ops_partials_edge() noexcept {}
-  explicit ops_partials_edge(const Op& /* ops */) noexcept {}
-
- private:
-  template <typename, typename, typename...>
-  friend class stan::math::internal::operands_and_partials_impl;
-  static constexpr double dx() { return 0; }  // used for fvars
-  static constexpr int size() { return 0; }
-};
-
-/** \ingroup type_trait
- * \callergraph
- */
-template <typename Op, typename ViewElt, int R, int C>
-class ops_partials_edge<ViewElt, std::vector<Eigen::Matrix<Op, R, C>>> {
- public:
-  using partials_t = empty_broadcast_array<ViewElt, Eigen::Matrix<Op, R, C>>;
-  empty_broadcast_array<partials_t, Eigen::Matrix<Op, R, C>> partials_vec_;
-  static constexpr double operands_{0};
-  ops_partials_edge() noexcept {}
-  explicit ops_partials_edge(
-      const std::vector<Eigen::Matrix<Op, R, C>>& /* ops */) noexcept {}
-
- private:
-  template <typename, typename, typename...>
-  friend class stan::math::internal::operands_and_partials_impl;
-  static constexpr double dx() { return 0; }  // used for fvars
-  static constexpr int size() { return 0; }
-};
-
-/** \ingroup type_trait
- * \callergraph
- */
-template <typename Op, typename ViewElt>
-class ops_partials_edge<ViewElt, std::vector<std::vector<Op>>> {
- public:
-  using partials_t
-      = empty_broadcast_array<ViewElt, std::vector<std::vector<Op>>>;
-  partials_t partials_;
-  empty_broadcast_array<partials_t, std::vector<std::vector<Op>>> partials_vec_;
-  static constexpr double operands_{0};
-  ops_partials_edge() noexcept {}
-  explicit ops_partials_edge(
-      const std::vector<std::vector<Op>>& /* ops */) noexcept {}
-
- private:
-  template <typename, typename, typename...>
-  friend class stan::math::internal::operands_and_partials_impl;
-
-  inline void dump_partials(double* /* partials */) const noexcept {
-  }  // reverse mode
-  inline void dump_operands(void* /* operands */) const noexcept {
-  }                                           // reverse mode
-  static constexpr double dx() { return 0; }  // used for fvar
-  static constexpr int size() { return 0; }
-  static constexpr std::tuple<> container_operands() { return std::tuple<>(); }
-  static constexpr std::tuple<> container_partials() { return std::tuple<>(); }
-};
+template <typename ViewElt, typename Op>
+constexpr double ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>>::operands_;
 }  // namespace internal
 
 template <typename... Ops>

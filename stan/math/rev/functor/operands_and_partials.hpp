@@ -36,26 +36,37 @@ class ops_partials_edge<double, var> {
  private:
   template <typename, typename, typename...>
   friend class stan::math::internal::operands_and_partials_impl;
-  const var& operands_;
+  var operands_;
   static constexpr int size() { return 1; }
 };
 
 template <typename Scalar1, typename Scalar2, require_var_t<Scalar1>* = nullptr>
-inline void accumulate_adjoints(Scalar1&& x, Scalar2&& y, var z) {
+inline void accumulate_adjoints(Scalar1&& x, Scalar2&& y, const var& z) {
   x.adj() += z.adj() * y;
 }
 template <typename EigT1, typename EigT2, require_rev_matrix_t<EigT1>* = nullptr>
-inline void accumulate_adjoints(EigT1&& x, EigT2&& y, var z) {
+inline void accumulate_adjoints(EigT1&& x, EigT2&& y, const var& z) {
   x.adj().array() += z.adj() * y.array();
 }
 template <typename Arith, typename Alt, require_st_arithmetic<Arith>* = nullptr>
-inline void accumulate_adjoints(Arith&& /* x */, Alt&& /* y */, var z) {
+inline void accumulate_adjoints(Arith&& /* x */, Alt&& /* y */, const var& z) {
 }
+
 template <typename StdVec1, typename StdVec2, require_std_vector_t<StdVec1>* = nullptr>
 inline void accumulate_adjoints(StdVec1&& x, StdVec2&& y, const var& z) {
   for (size_t i = 0; i < x.size(); ++i) {
     accumulate_adjoints(x[i], y[i], z);
   }
+}
+
+template <typename T, require_same_t<broadcast_array<double>, T>* = nullptr>
+auto get_partials(T&& x) {
+  return x[0];
+}
+
+template <typename T, require_not_same_t<broadcast_array<double>, T>* = nullptr>
+auto get_partials(T&& x) {
+  return std::forward<T>(x);
 }
 
 /** \ingroup type_trait
@@ -118,14 +129,14 @@ inline void accumulate_adjoints(StdVec1&& x, StdVec2&& y, const var& z) {
       return std::make_tuple(to_arena(edges.operands_)...);
     }, edges_);
     auto partials_tuple = apply([](auto&&... edges) {
-      return std::make_tuple(to_arena(edges.partials_)...);
+      return std::make_tuple(to_arena(get_partials(edges.partials_))...);
     }, edges_);
     var ret(value);
-    reverse_pass_callback([ret, operands_tuple, partials_tuple]() mutable {
-       for_each([ret](auto& operand, auto& partial) mutable {
-         accumulate_adjoints(operand, partial, ret);
-       }, operands_tuple, partials_tuple);
-    });
+    for_each([ret](auto& operand, auto& partial) mutable {
+      reverse_pass_callback([operand, partial, ret]() mutable {
+        accumulate_adjoints(operand, partial, ret);
+      });
+    }, operands_tuple, partials_tuple);
     return ret;
   }
 };

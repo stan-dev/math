@@ -5,9 +5,8 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/functor/broadcast_array.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
-#include <stan/math/fwd/core.hpp>
-#include <stan/math/fwd/meta.hpp>
-
+#include <stan/math/fwd/core/fvar.hpp>
+#include <stan/math/fwd/meta/is_fvar.hpp>
 #include <vector>
 
 namespace stan {
@@ -30,6 +29,8 @@ class ops_partials_edge<Dx, fvar<Dx>> {
 
   Dx dx() { return this->partials_[0] * this->operand_.d_; }
 };
+
+
 
 /** \ingroup type_trait
  * This class builds partial derivatives with respect to a set of
@@ -67,14 +68,29 @@ class ops_partials_edge<Dx, fvar<Dx>> {
  *   to a template metaprogram that calculates the scalar promotion of
  *   Op1 -- Op5
  */
-template <typename ReturnType, typename... Ops>
-class operands_and_partials_impl<ReturnType, require_fvar_t<ReturnType>, Ops...> {
- public:
-  using inner_type = typename ReturnType::Scalar;
-  std::tuple<internal::ops_partials_edge<inner_type, std::decay_t<Ops>>...> edges_;
+ template <typename ReturnType, typename... Ops>
+ class operands_and_partials_impl<ReturnType, require_fvar_t<ReturnType>, Ops...> {
+   auto sum_dx() {
+     return 0;
+   }
 
+   template <typename T, typename... Types>
+   auto sum_dx(T& x, Types&... args) {
+     return x.dx() + sum_dx(args...);
+   }
+
+   template <typename T1, typename T2, typename... Types>
+   auto sum_dx(T1& x, T2& y, Types&... args) {
+     return x.dx() + y.dx() + sum_dx(args...);
+   }
+
+ public:
+  using Dx = typename std::decay_t<ReturnType>::Scalar;
+  std::tuple<internal::ops_partials_edge<Dx, std::decay_t<Ops>>...> edges_;
+  using T_return_type = fvar<Dx>;
   template <typename... Types>
-  explicit operands_and_partials_impl(Types&&... ops) : edges_(internal::ops_partials_edge<inner_type, std::decay_t<Ops>>(std::forward<Types>(ops))...) {}
+  explicit operands_and_partials_impl(Types&&... ops) :
+   edges_(internal::ops_partials_edge<Dx, std::decay_t<Ops>>(std::forward<Types>(ops))...) {}
 
   /** \ingroup type_trait
    * Build the node to be stored on the autodiff graph.
@@ -89,12 +105,14 @@ class operands_and_partials_impl<ReturnType, require_fvar_t<ReturnType>, Ops...>
    * @param value the return value of the function we are compressing
    * @return the value with its derivative
    */
-  ReturnType build(inner_type value) {
-    inner_type deriv = apply([](auto&&... edges) {
-      return sum(std::vector<inner_type>{edges.dx()...});
+  T_return_type build(Dx value) {
+    Dx deriv = apply([&](auto&... args) {
+      return this->sum_dx(args...);
     }, edges_);
-    return ReturnType(value, deriv);
+    return T_return_type(value, deriv);
   }
+
+
 };
 
 // Vectorized Univariate
