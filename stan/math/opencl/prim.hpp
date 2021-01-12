@@ -116,6 +116,7 @@
 #include <stan/math/opencl/prim/columns_dot_self.hpp>
 #include <stan/math/opencl/prim/crossprod.hpp>
 #include <stan/math/opencl/prim/diag_matrix.hpp>
+#include <stan/math/opencl/prim/diag_pre_multiply.hpp>
 #include <stan/math/opencl/prim/dims.hpp>
 #include <stan/math/opencl/prim/distance.hpp>
 #include <stan/math/opencl/prim/divide.hpp>

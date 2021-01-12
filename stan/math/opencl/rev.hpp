@@ -25,6 +25,7 @@
 #include <stan/math/opencl/rev/cosh.hpp>
 #include <stan/math/opencl/rev/crossprod.hpp>
 #include <stan/math/opencl/rev/diag_matrix.hpp>
+#include <stan/math/opencl/rev/diag_pre_multiply.hpp>
 #include <stan/math/opencl/rev/diagonal.hpp>
 #include <stan/math/opencl/rev/divide.hpp>
 #include <stan/math/opencl/rev/dot_product.hpp>
