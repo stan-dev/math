@@ -15,7 +15,6 @@ TEST(mathMixScalFun, step) {
   stan::test::expect_ad(f, std::numeric_limits<double>::quiet_NaN());
 }
 
-
 TEST(mathMixMatFun, step_varmat) {
   using stan::math::vec_concat;
   using stan::test::expect_ad_vector_matvar;
@@ -29,7 +28,7 @@ TEST(mathMixMatFun, step_varmat) {
   auto all_args = vec_concat(com_args, args);
   Eigen::VectorXd A(all_args.size());
   for (int i = 0; i < all_args.size(); ++i) {
-  A(i) = all_args[i];
+    A(i) = all_args[i];
   }
   expect_ad_vector_matvar(f, A);
 }
