@@ -57,4 +57,3 @@ TEST(OpenCLPrim, ldexp_scalar_significand_big) {
   stan::math::test::compare_cpu_opencl_prim_rev(ldexp_functor, a, b);
 }
 #endif
-

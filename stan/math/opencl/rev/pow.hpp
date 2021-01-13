@@ -70,11 +70,10 @@ inline var_value<matrix_cl<double>> pow(T_a&& a, T_b&& b) {
  * @param b scalar exponent
  * @return base raised to the power of the exponent
  */
-template <
-    typename T_a, typename T_b,
-    require_nonscalar_prim_or_rev_kernel_expression_t<T_a>* = nullptr,
-    require_stan_scalar_t<T_b>* = nullptr,
-    require_any_var_t<T_a, T_b>* = nullptr>
+template <typename T_a, typename T_b,
+          require_nonscalar_prim_or_rev_kernel_expression_t<T_a>* = nullptr,
+          require_stan_scalar_t<T_b>* = nullptr,
+          require_any_var_t<T_a, T_b>* = nullptr>
 inline var_value<matrix_cl<double>> pow(T_a&& a, T_b&& b) {
   arena_t<T_a> a_arena = std::forward<T_a>(a);
   arena_t<T_b> b_arena = std::forward<T_b>(b);
@@ -90,21 +89,26 @@ inline var_value<matrix_cl<double>> pow(T_a&& a, T_b&& b) {
         auto zeros = constant(0, res.rows(), res.cols());
         if (!is_constant<T_a>::value) {
           auto& a_adj = forward_as<var_value<matrix_cl<double>>>(a_arena).adj();
-          a_adj = a_adj + select(
-            isnan_res, constant_nan,
-            select(zero_a_arena, zeros,
-                   elt_multiply(res.adj(),
-                                elt_multiply(value_of(b_arena),
-                                             elt_divide(res.val(),
-                                                        value_of(a_arena))))));
+          a_adj
+              = a_adj
+                + select(
+                      isnan_res, constant_nan,
+                      select(zero_a_arena, zeros,
+                             elt_multiply(
+                                 res.adj(),
+                                 elt_multiply(value_of(b_arena),
+                                              elt_divide(res.val(),
+                                                         value_of(a_arena))))));
         }
         if (!is_constant<T_b>::value) {
           auto& y_adj = forward_as<var_value<double>>(b_arena).adj();
-          y_adj = y_adj + sum(select(
-            isnan_res, constant_nan,
-            select(zero_a_arena, zeros,
-                   elt_multiply(res.adj(), elt_multiply(log(value_of(a_arena)),
-                                                        res.val())))));
+          y_adj = y_adj
+                  + sum(select(
+                        isnan_res, constant_nan,
+                        select(zero_a_arena, zeros,
+                               elt_multiply(res.adj(),
+                                            elt_multiply(log(value_of(a_arena)),
+                                                         res.val())))));
         }
       });
 }
@@ -119,11 +123,10 @@ inline var_value<matrix_cl<double>> pow(T_a&& a, T_b&& b) {
  * @param b first expression of exponent
  * @return base raised to the power of the exponent
  */
-template <
-    typename T_a, typename T_b,
-    require_nonscalar_prim_or_rev_kernel_expression_t<T_b>* = nullptr,
-    require_stan_scalar_t<T_a>* = nullptr,
-    require_any_var_t<T_a, T_b>* = nullptr>
+template <typename T_a, typename T_b,
+          require_nonscalar_prim_or_rev_kernel_expression_t<T_b>* = nullptr,
+          require_stan_scalar_t<T_a>* = nullptr,
+          require_any_var_t<T_a, T_b>* = nullptr>
 inline var_value<matrix_cl<double>> pow(T_a&& a, T_b&& b) {
   arena_t<T_a> a_arena = std::forward<T_a>(a);
   arena_t<T_b> b_arena = std::forward<T_b>(b);
@@ -139,21 +142,26 @@ inline var_value<matrix_cl<double>> pow(T_a&& a, T_b&& b) {
         auto zeros = constant(0, res.rows(), res.cols());
         if (!is_constant<T_a>::value) {
           auto& a_adj = forward_as<var_value<double>>(a_arena).adj();
-          a_adj = a_adj + sum(select(
-            isnan_res, constant_nan,
-            select(zero_a_arena, zeros,
-                   elt_multiply(res.adj(),
+          a_adj = a_adj
+                  + sum(select(
+                        isnan_res, constant_nan,
+                        select(
+                            zero_a_arena, zeros,
+                            elt_multiply(
+                                res.adj(),
                                 elt_multiply(value_of(b_arena),
                                              elt_divide(res.val(),
                                                         value_of(a_arena)))))));
         }
         if (!is_constant<T_b>::value) {
           auto& y_adj = forward_as<var_value<matrix_cl<double>>>(b_arena).adj();
-          y_adj = y_adj + select(
-            isnan_res, constant_nan,
-            select(zero_a_arena, zeros,
-                   elt_multiply(res.adj(), elt_multiply(log(value_of(a_arena)),
-                                                        res.val()))));
+          y_adj = y_adj
+                  + select(
+                        isnan_res, constant_nan,
+                        select(zero_a_arena, zeros,
+                               elt_multiply(res.adj(),
+                                            elt_multiply(log(value_of(a_arena)),
+                                                         res.val()))));
         }
       });
 }

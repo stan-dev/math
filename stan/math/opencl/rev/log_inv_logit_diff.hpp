@@ -62,11 +62,10 @@ inline var_value<matrix_cl<double>> log_inv_logit_diff(T_x&& x, T_y&& y) {
  * @param y scalar
  * @return Result of log difference of inverse logits of arguments.
  */
-template <
-    typename T_x, typename T_y,
-    require_nonscalar_prim_or_rev_kernel_expression_t<T_x>* = nullptr,
-    require_stan_scalar_t<T_y>* = nullptr,
-    require_any_var_t<T_x, T_y>* = nullptr>
+template <typename T_x, typename T_y,
+          require_nonscalar_prim_or_rev_kernel_expression_t<T_x>* = nullptr,
+          require_stan_scalar_t<T_y>* = nullptr,
+          require_any_var_t<T_x, T_y>* = nullptr>
 inline var_value<matrix_cl<double>> log_inv_logit_diff(T_x&& x, T_y&& y) {
   arena_t<T_x> x_arena = std::forward<T_x>(x);
   arena_t<T_y> y_arena = std::forward<T_y>(y);
@@ -79,15 +78,19 @@ inline var_value<matrix_cl<double>> log_inv_logit_diff(T_x&& x, T_y&& y) {
       [x_arena, y_arena](const vari_value<matrix_cl<double>>& res) mutable {
         if (!is_constant<T_x>::value) {
           auto& x_adj = forward_as<var_value<matrix_cl<double>>>(x_arena).adj();
-          x_adj = x_adj - elt_multiply(
-            res.adj(), inv(expm1(value_of(y_arena) - value_of(x_arena)))
-                           + inv_logit(value_of(x_arena)));
+          x_adj
+              = x_adj
+                - elt_multiply(res.adj(),
+                               inv(expm1(value_of(y_arena) - value_of(x_arena)))
+                                   + inv_logit(value_of(x_arena)));
         }
         if (!is_constant<T_y>::value) {
           auto& y_adj = forward_as<var_value<double>>(y_arena).adj();
-          y_adj = y_adj - sum(elt_multiply(
-            res.adj(), inv(expm1(value_of(x_arena) - value_of(y_arena)))
-                           + inv_logit(value_of(y_arena))));
+          y_adj = y_adj
+                  - sum(elt_multiply(
+                        res.adj(),
+                        inv(expm1(value_of(x_arena) - value_of(y_arena)))
+                            + inv_logit(value_of(y_arena))));
         }
       });
 }
@@ -102,11 +105,10 @@ inline var_value<matrix_cl<double>> log_inv_logit_diff(T_x&& x, T_y&& y) {
  * @param y scalar
  * @return Result of log difference of inverse logits of arguments.
  */
-template <
-    typename T_x, typename T_y,
-    require_nonscalar_prim_or_rev_kernel_expression_t<T_y>* = nullptr,
-    require_stan_scalar_t<T_x>* = nullptr,
-    require_any_var_t<T_x, T_y>* = nullptr>
+template <typename T_x, typename T_y,
+          require_nonscalar_prim_or_rev_kernel_expression_t<T_y>* = nullptr,
+          require_stan_scalar_t<T_x>* = nullptr,
+          require_any_var_t<T_x, T_y>* = nullptr>
 inline var_value<matrix_cl<double>> log_inv_logit_diff(T_x&& x, T_y&& y) {
   arena_t<T_x> x_arena = std::forward<T_x>(x);
   arena_t<T_y> y_arena = std::forward<T_y>(y);
@@ -119,15 +121,19 @@ inline var_value<matrix_cl<double>> log_inv_logit_diff(T_x&& x, T_y&& y) {
       [x_arena, y_arena](const vari_value<matrix_cl<double>>& res) mutable {
         if (!is_constant<T_x>::value) {
           auto& x_adj = forward_as<var_value<double>>(x_arena).adj();
-          x_adj = x_adj - sum(elt_multiply(
-            res.adj(), inv(expm1(value_of(y_arena) - value_of(x_arena)))
-                           + inv_logit(value_of(x_arena))));
+          x_adj = x_adj
+                  - sum(elt_multiply(
+                        res.adj(),
+                        inv(expm1(value_of(y_arena) - value_of(x_arena)))
+                            + inv_logit(value_of(x_arena))));
         }
         if (!is_constant<T_y>::value) {
           auto& y_adj = forward_as<var_value<matrix_cl<double>>>(y_arena).adj();
-          y_adj = y_adj - elt_multiply(
-            res.adj(), inv(expm1(value_of(x_arena) - value_of(y_arena)))
-                           + inv_logit(value_of(y_arena)));
+          y_adj
+              = y_adj
+                - elt_multiply(res.adj(),
+                               inv(expm1(value_of(x_arena) - value_of(y_arena)))
+                                   + inv_logit(value_of(y_arena)));
         }
       });
 }

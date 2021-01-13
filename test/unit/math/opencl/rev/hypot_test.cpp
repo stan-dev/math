@@ -40,7 +40,6 @@ TEST(OpenCLMatrixhypot, prim_rev_values_large) {
   stan::math::test::compare_cpu_opencl_prim_rev(hypot_functor, a, b);
 }
 
-
 TEST(OpenCLMatrixhypot, prim_rev_scalar_values_large) {
   int N = 71;
   int M = 83;

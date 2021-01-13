@@ -52,11 +52,10 @@ inline var_value<matrix_cl<double>> elt_divide(T_a&& a, T_b&& b) {
  * @param b scalar
  * @return Elementwise division of the input arguments
  */
-template <
-    typename T_a, typename T_b,
-    require_nonscalar_prim_or_rev_kernel_expression_t<T_a>* = nullptr,
-    require_stan_scalar_t<T_b>* = nullptr,
-    require_any_var_t<T_a, T_b>* = nullptr>
+template <typename T_a, typename T_b,
+          require_nonscalar_prim_or_rev_kernel_expression_t<T_a>* = nullptr,
+          require_stan_scalar_t<T_b>* = nullptr,
+          require_any_var_t<T_a, T_b>* = nullptr>
 inline var_value<matrix_cl<double>> elt_divide(T_a&& a, T_b&& b) {
   arena_t<T_a> a_arena = std::forward<T_a>(a);
   arena_t<T_b> b_arena = std::forward<T_b>(b);
@@ -85,11 +84,10 @@ inline var_value<matrix_cl<double>> elt_divide(T_a&& a, T_b&& b) {
  * @param b kernel generator expression
  * @return Elementwise division of the input arguments
  */
-template <
-    typename T_a, typename T_b,
-    require_nonscalar_prim_or_rev_kernel_expression_t<T_b>* = nullptr,
-    require_stan_scalar_t<T_a>* = nullptr,
-    require_any_var_t<T_a, T_b>* = nullptr>
+template <typename T_a, typename T_b,
+          require_nonscalar_prim_or_rev_kernel_expression_t<T_b>* = nullptr,
+          require_stan_scalar_t<T_a>* = nullptr,
+          require_any_var_t<T_a, T_b>* = nullptr>
 inline var_value<matrix_cl<double>> elt_divide(T_a&& a, T_b&& b) {
   arena_t<T_a> a_arena = std::forward<T_a>(a);
   arena_t<T_b> b_arena = std::forward<T_b>(b);
