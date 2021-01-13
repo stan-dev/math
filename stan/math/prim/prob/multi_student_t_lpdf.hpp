@@ -12,6 +12,7 @@
 #include <stan/math/prim/fun/max_size_mvt.hpp>
 #include <stan/math/prim/fun/size_mvt.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/fun/vector_seq_view.hpp>
 #include <stan/math/prim/prob/multi_normal_log.hpp>
 #include <cmath>
 #include <cstdlib>
@@ -99,8 +100,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_lpdf(
   const auto& Sigma_ref = to_ref(Sigma);
   check_symmetric(function, "Scale parameter", Sigma_ref);
 
-  LDLT_factor<T_scale_elem, Eigen::Dynamic, Eigen::Dynamic> ldlt_Sigma(
-      Sigma_ref);
+  auto ldlt_Sigma = make_ldlt_factor(Sigma_ref);
   check_ldlt_factor(function, "LDLT_Factor of scale parameter", ldlt_Sigma);
 
   if (size_y == 0) {

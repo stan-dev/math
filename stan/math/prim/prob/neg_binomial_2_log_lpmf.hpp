@@ -10,6 +10,7 @@
 #include <stan/math/prim/fun/log1p_exp.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -66,13 +67,13 @@ return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
 
   VectorBuilder<true, T_partials_return, T_log_location> eta_val(size_eta);
   for (size_t i = 0; i < size_eta; ++i) {
-    eta_val[i] = value_of(eta_vec[i]);
+    eta_val[i] = eta_vec.val(i);
   }
 
   VectorBuilder<true, T_partials_return, T_precision> phi_val(size_phi);
   VectorBuilder<true, T_partials_return, T_precision> log_phi(size_phi);
   for (size_t i = 0; i < size_phi; ++i) {
-    phi_val[i] = value_of(phi_vec[i]);
+    phi_val[i] = phi_vec.val(i);
     log_phi[i] = log(phi_val[i]);
   }
 

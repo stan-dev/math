@@ -12,6 +12,7 @@
 #include <stan/math/prim/fun/size_mvt.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/transpose.hpp>
+#include <stan/math/prim/fun/vector_seq_view.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
 
 namespace stan {
