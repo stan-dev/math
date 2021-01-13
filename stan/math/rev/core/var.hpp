@@ -420,9 +420,9 @@ class var_value<
   inline auto& adj() const { return vi_->adj(); }
   inline auto& adj_op() { return vi_->adj(); }
 
-  inline Eigen::Index rows() const { return vi_->val_.rows(); }
-  inline Eigen::Index cols() const { return vi_->val_.cols(); }
-  inline Eigen::Index size() const { return vi_->val_.size(); }
+  inline Eigen::Index rows() const { return vi_->rows(); }
+  inline Eigen::Index cols() const { return vi_->cols(); }
+  inline Eigen::Index size() const { return vi_->size(); }
 
   // POINTER OVERRIDES
 
