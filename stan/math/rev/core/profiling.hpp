@@ -46,7 +46,7 @@ class profile_info {
         fwd_pass_tp_(std::chrono::steady_clock::now()),
         rev_pass_tp_(std::chrono::steady_clock::now()),
         start_chain_stack_size_(0),
-        start_nochain_stack_size_(0){}
+        start_nochain_stack_size_(0) {}
 
   bool is_active() const noexcept { return active_; }
 
