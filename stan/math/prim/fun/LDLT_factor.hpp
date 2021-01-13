@@ -37,7 +37,8 @@ class LDLT_factor<T, std::enable_if_t<bool_constant<
  public:
   template <typename S,
             require_same_t<plain_type_t<T>, plain_type_t<S>>* = nullptr>
-  explicit LDLT_factor(const S& matrix) : matrix_(matrix), ldlt_(matrix_.ldlt()) {}
+  explicit LDLT_factor(const S& matrix)
+      : matrix_(matrix), ldlt_(matrix_.ldlt()) {}
 
   /**
    * Return a const reference to the underlying matrix
