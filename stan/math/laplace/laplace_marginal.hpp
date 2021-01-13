@@ -16,17 +16,12 @@
 #include <fstream>  // CHECK -- do we need this?
 
 // Reference for calculations of marginal and its gradients:
-// Rasmussen and Williams,
-// "Gaussian Processes for Machine Learning",
-// Algorithms 3.1 and 5.1.
-// The MIT Press, 2006.
-// &
-// Margossian,
-// "The Search for simulation algorithms in pathological spaces"
-// Algorithms 3 and 5
-// Thesis proposal, 2020
-// Note 1: where I didn't conflict with my own notation, I used their notation,
-// which significantly helps when debuging the code.
+// Charles C Margossian, Aki Vehtari, Daniel Simpson and Raj Agrawal
+// "Hamiltonian Monte Carlo using an adjoint-differentiated
+// Laplace approximation: Bayesian inference for latent Gaussian
+// models and beyond."  NeurIPS 2020
+// https://arxiv.org/abs/2004.12550
+
 
 namespace stan {
 namespace math {

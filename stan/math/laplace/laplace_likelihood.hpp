@@ -10,15 +10,6 @@ namespace math {
 // function acting as a child structure.
 
 /**
- * Create an Eigen vector whose elements are all ones.
- */
-// Eigen::VectorXd init_one(int n) {
-//   Eigen::VectorXd ones(n);
-//   for (int i = 0; i < n; i++) ones(i) = 1;
-//   return ones;
-// }
-
-/**
  * A structure to compute the log density, first, second,
  * and third-order derivatives for a log poisson likelihood
  * whith multiple groups.
