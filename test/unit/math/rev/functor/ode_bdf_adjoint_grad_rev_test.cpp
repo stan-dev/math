@@ -60,14 +60,14 @@ class test_functor_double_var {
     y0 << 1.25, 0.0;
 
     double t0 = 0.0;
-    std::vector<double> ts{5.0};
+    std::vector<double> ts{2.5, 5.0};
 
     std::vector<Eigen::Matrix<T, Eigen::Dynamic, 1>> ys
         = (lmm_ == TEST_CVODES_ADAMS)
               ? stan::math::ode_bdf_adjoint(sho, y0, t0, ts, nullptr, omega)
               : stan::math::ode_bdf(sho, y0, t0, ts, nullptr, omega);
 
-    return ys[0](state);
+    return ys[1](state);
   }
 };
 
@@ -87,13 +87,13 @@ TEST(StanMathOdeIntegrateODEGradMat, double_var) {
     stan::math::gradient(func1, x, f, grad);
 
     EXPECT_NEAR(y1(t, omega, chi), f, 1e-8);
-    EXPECT_NEAR(dy1_domega(t, omega, chi), grad(0), 1e-7);
+    EXPECT_NEAR(dy1_domega(t, omega, chi), grad(0), 1e-6);
 
     test_functor_double_var<1> func2(TEST_CVODES_ADAMS);
     stan::math::gradient(func2, x, f, grad);
 
     EXPECT_NEAR(y2(t, omega, chi), f, 1e-8);
-    EXPECT_NEAR(dy2_domega(t, omega, chi), grad(0), 1e-7);
+    EXPECT_NEAR(dy2_domega(t, omega, chi), grad(0), 1e-6);
   }
 
   {  // bdf
@@ -196,14 +196,14 @@ class test_functor_var_var {
     y0 << x(1), 0.0;
 
     double t0 = 0.0;
-    std::vector<double> ts{5.0};
+    std::vector<double> ts{2.0, 5.0};
 
     std::vector<Eigen::Matrix<T, Eigen::Dynamic, 1>> ys
         = (lmm_ == TEST_CVODES_ADAMS)
-              ? stan::math::ode_bdf_adjoint(sho, y0, t0, ts, nullptr, omega)
+        ? stan::math::ode_adams_tol(sho, y0, t0, ts, 1E-10, 1E-10, 10000, nullptr, omega)
               : stan::math::ode_bdf(sho, y0, t0, ts, nullptr, omega);
 
-    return ys[0](state);
+    return ys[1](state);
   }
 };
 
@@ -220,6 +220,8 @@ TEST(StanMathOdeIntegrateODEGradMat, var_var) {
   Eigen::VectorXd grad(2);
 
   {
+    stan::math::nested_rev_autodiff nested;
+    
     test_functor_var_var<0> func1(TEST_CVODES_ADAMS);
     stan::math::gradient(func1, x, f, grad);
 
@@ -231,11 +233,13 @@ TEST(StanMathOdeIntegrateODEGradMat, var_var) {
     stan::math::gradient(func2, x, f, grad);
 
     EXPECT_NEAR(y2(t, omega, chi), f, 1e-8);
-    EXPECT_NEAR(dy2_domega(t, omega, chi), grad(0), 1e-7);
+    EXPECT_NEAR(dy2_domega(t, omega, chi), grad(0), 1e-6);
     EXPECT_NEAR(dy2_dchi(t, omega, chi), grad(1), 1e-7);
   }
 
   {
+    stan::math::nested_rev_autodiff nested;
+    
     test_functor_var_var<0> func1(TEST_CVODES_BDF);
     stan::math::gradient(func1, x, f, grad);
 
@@ -247,7 +251,7 @@ TEST(StanMathOdeIntegrateODEGradMat, var_var) {
     stan::math::gradient(func2, x, f, grad);
 
     EXPECT_NEAR(y2(t, omega, chi), f, 1e-8);
-    EXPECT_NEAR(dy2_domega(t, omega, chi), grad(0), 1e-7);
+    EXPECT_NEAR(dy2_domega(t, omega, chi), grad(0), 1e-6);
     EXPECT_NEAR(dy2_dchi(t, omega, chi), grad(1), 1e-7);
   }
 }
