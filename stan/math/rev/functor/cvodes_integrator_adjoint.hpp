@@ -541,7 +541,8 @@ class cvodes_integrator_adjoint_vari : public vari {
     // initialize forward sensitivity system of CVODES as needed
     if (t0_vars_ + ts_vars_ + y0_vars_ + args_vars_ > 0) {
       check_flag_sundials(
-          //CVodeAdjInit(memory->cvodes_mem_, steps_checkpoint_, CV_POLYNOMIAL),
+          // CVodeAdjInit(memory->cvodes_mem_, steps_checkpoint_,
+          // CV_POLYNOMIAL),
           CVodeAdjInit(memory->cvodes_mem_, steps_checkpoint_, CV_HERMITE),
           "CVodeAdjInit");
     }
