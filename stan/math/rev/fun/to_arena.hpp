@@ -68,6 +68,12 @@ inline arena_t<T> to_arena(const T& a) {
   return arena_t<T>(a);
 }
 
+template <typename T>
+inline auto to_arena(const arena_t<T>& a) {
+  return a;
+}
+
+
 /**
  * Converts given argument into a type that either has any dynamic allocation on
  * AD stack or schedules its destructor to be called when AD stack memory is
