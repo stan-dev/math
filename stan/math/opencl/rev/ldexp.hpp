@@ -13,15 +13,16 @@ namespace math {
  * Returns the elementwise `ldexp()` of the input
  * `var_value<matrix_cl<double>>` and kernel generator expression.
  *
- * @param a input `var_value<matrix_cl<double>>` representing
+ * @param a input rev kernel generator expression representing
  * significands
  * @param b input kernel generator expression representing
  * the integer exponents.
  * @return Elementwise `ldexp()` of the input argument.
  */
-template <typename T_b,
+template <typename T_a, typename T_b,
+          require_all_kernel_expressions_and_none_scalar_t<T_a>* = nullptr,
           require_all_kernel_expressions_t<T_b>* = nullptr>
-inline var_value<matrix_cl<double>> ldexp(const var_value<matrix_cl<double>>& a,
+inline var_value<matrix_cl<double>> ldexp(const var_value<matrix_cl<T_a>>& a,
                                           const T_b& b) {
   const arena_t<T_b>& b_arena = b;
 
@@ -38,15 +39,15 @@ inline var_value<matrix_cl<double>> ldexp(const var_value<matrix_cl<double>>& a,
  * Returns the elementwise `ldexp()` of the input
  * `var_value<matrix_cl<double>>` and kernel generator expression.
  *
- * @param a input `var_value<matrix_cl<double>>` representing
+ * @param a input rev kernel generator expression representing
  * significands
  * @param b input kernel generator expression representing
  * the integer exponents.
  * @return Elementwise `ldexp()` of the input argument.
  */
-template <typename T_b,
-          require_all_kernel_expressions_and_none_scalar_t<T_b>* = nullptr>
-inline var_value<matrix_cl<double>> ldexp(const var_value<double>& a,
+template <typename T_a, typename T_b,
+          require_all_kernel_expressions_and_none_scalar_t<T_a, T_b>* = nullptr>
+inline var_value<matrix_cl<double>> ldexp(const var_value<matrix_cl<T_a>>& a,
                                           const T_b& b) {
   const arena_t<T_b>& b_arena = b;
 
