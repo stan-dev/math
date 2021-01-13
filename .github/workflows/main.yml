@@ -14,7 +14,7 @@ on:
       - 'RELEASE-NOTES.txt'
 jobs:
   prim-rev:
-    name: prim and rev unit tests
+    name: prim and rev tests
     runs-on: windows-latest
 
     steps:
@@ -64,7 +64,7 @@ jobs:
         name: gtest_outputs_xml
         path: '**/*_test.xml'
   fwd-mix:
-    name: fwd and mix unit tests
+    name: fwd and mix tests
     runs-on: windows-latest
 
     steps:
