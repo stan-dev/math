@@ -50,13 +50,10 @@ template <typename T_b,
 inline var_value<matrix_cl<double>> ldexp(const var_value<double>& a,
                                           const T_b& b) {
   const arena_t<T_b>& b_arena = b;
-
   var_value<matrix_cl<double>> res = ldexp(a.val(), b);
-
   reverse_pass_callback([a, b_arena, res]() mutable {
     a.adj() = a.adj() + sum(ldexp(res.adj(), value_of(b_arena)));
   });
-
   return res;
 }
 
