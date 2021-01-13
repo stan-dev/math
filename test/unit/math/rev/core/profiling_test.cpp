@@ -92,8 +92,8 @@ TEST(Profiling, var_loop) {
   c.grad();
   stan::math::recover_memory();
   stan::math::profile_key key_t1 = {"t1", std::this_thread::get_id()};
-  EXPECT_EQ(profiles[key_t1].get_chain_stack_used(), 100);
-  EXPECT_EQ(profiles[key_t1].get_nochain_stack_used(), 200);
+  EXPECT_EQ(profiles[key_t1].get_chain_stack_used(), N);
+  EXPECT_EQ(profiles[key_t1].get_nochain_stack_used(), 2 * N);
   EXPECT_EQ(profiles[key_t1].get_num_rev_passes(), N);
   EXPECT_EQ(profiles[key_t1].get_num_fwd_passes(), N);
   EXPECT_EQ(profiles[key_t1].get_num_no_AD_fwd_passes(), 0);
