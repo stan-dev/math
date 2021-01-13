@@ -5,7 +5,7 @@ TEST(MathMatrixPrim, trace_gen_inv_quad_form_ldlt) {
   using stan::math::matrix_d;
   using stan::math::trace_gen_inv_quad_form_ldlt;
 
-  stan::math::LDLT_factor<double, 0, 0> ldlt_A0;
+  auto ldlt_A0 = stan::math::make_ldlt_factor(Eigen::MatrixXd());
   matrix_d B00(0, 0), B02(0, 2);
   matrix_d D00(0, 0), D22(2, 2);
   D22 << 1, 2, 3, 4;
@@ -26,9 +26,7 @@ TEST(MathMatrixPrim, trace_gen_inv_quad_form_ldlt) {
 
   gen_inv_quad_form = D * B.transpose() * A.inverse() * B;
 
-  stan::math::LDLT_factor<double, -1, -1> ldlt_A;
-  ldlt_A.compute(A);
-  ASSERT_TRUE(ldlt_A.success());
+  auto ldlt_A = stan::math::make_ldlt_factor(A);
 
   EXPECT_FLOAT_EQ(stan::math::trace(gen_inv_quad_form),
                   stan::math::trace_gen_inv_quad_form_ldlt(D, ldlt_A, B));

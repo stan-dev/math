@@ -28,6 +28,8 @@ TEST(ProbDistributionsMultiStudentT, fvar_var) {
   fvar<var> lp = multi_student_t_log(y, nu, mu, Sigma);
   EXPECT_NEAR(-10.1246, lp.val_.val(), 0.0001);
   EXPECT_NEAR(-0.0411685, lp.d_.val(), 0.0001);
+
+  stan::math::recover_memory();
 }
 
 TEST(ProbDistributionsMultiStudentT, fvar_fvar_var) {
@@ -55,4 +57,6 @@ TEST(ProbDistributionsMultiStudentT, fvar_fvar_var) {
   fvar<fvar<var> > lp = multi_student_t_log(y, nu, mu, Sigma);
   EXPECT_NEAR(-10.1246, lp.val_.val_.val(), 0.0001);
   EXPECT_NEAR(-0.0411685, lp.d_.val_.val(), 0.0001);
+
+  stan::math::recover_memory();
 }
