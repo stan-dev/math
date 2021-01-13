@@ -116,12 +116,17 @@ ode_adams_tol(const F& f, const T_y0& y0, const T_t0& t0,
               double absolute_tolerance,
               long int max_num_steps,  // NOLINT(runtime/int)
               std::ostream* msgs, const T_Args&... args) {
-  double absolute_tolerance_B = absolute_tolerance * 10.0;
-  double absolute_tolerance_QB = absolute_tolerance_B * 10.0;
+  // sensitivities are output with absolute_tolerance
+  double absolute_tolerance_QB = absolute_tolerance;
+  // backward solve is 10x more precise than quadrature
+  double absolute_tolerance_B = absolute_tolerance_QB / 10.0;
+  // forward solve is 10x more precise that backward solve
+  double absolute_tolerance_F = absolute_tolerance_B / 10.0;
+
   long int steps_checkpoint = 100;
 
   return ode_adams_tol_impl("ode_adams_tol", f, y0, t0, ts, relative_tolerance,
-                            absolute_tolerance, max_num_steps, msgs,
+                            absolute_tolerance_F, max_num_steps, msgs,
                             absolute_tolerance_B, absolute_tolerance_QB,
                             steps_checkpoint, args...);
 }
