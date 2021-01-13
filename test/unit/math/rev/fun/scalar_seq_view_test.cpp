@@ -64,17 +64,17 @@ void expect_scalar_seq_view_adjoints(const C& v) {
   using stan::scalar_seq_view;
   scalar_seq_view<C> sv(v);
   std::vector<stan::math::var> stdv(sv.size());
-  for(size_t i = 0; i < sv.size(); ++i) {
+  for (size_t i = 0; i < sv.size(); ++i) {
     stdv[i] = sv[i];
   }
 
-  for(size_t i = 0; i < sv.size(); ++i) {
+  for (size_t i = 0; i < sv.size(); ++i) {
     stan::math::set_zero_all_adjoints();
     stdv[i].grad();
     EXPECT_EQ(1.0, v.adj()(i));
-    for(size_t j = 0; j < sv.size(); ++j) {
-      if(j != i) {
-	EXPECT_EQ(0.0, v.adj()(j));
+    for (size_t j = 0; j < sv.size(); ++j) {
+      if (j != i) {
+        EXPECT_EQ(0.0, v.adj()(j));
       }
     }
   }
