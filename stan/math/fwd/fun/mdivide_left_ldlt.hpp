@@ -13,27 +13,27 @@ namespace math {
 /**
  * Returns the solution of the system Ax=b given an LDLT_factor of A
  *
- * @tparam R1 number of rows in the LDLT_factor, can be Eigen::Dynamic
- * @tparam C1 number of columns in the LDLT_factor, can be Eigen::Dynamic
+ * @tparam T type of matrix for the LDLT_factor
  * @tparam EigMat type of the right-hand side matrix or vector
- *
  * @param A LDLT_factor
  * @param b right-hand side matrix or vector
  * @return x = b A^-1, solution of the linear system.
  * @throws std::domain_error if rows of b don't match the size of A.
  */
-template <int R1, int C1, typename EigMat,
+template <typename T, typename EigMat,
+          require_eigen_vt<std::is_arithmetic, T>* = nullptr,
           require_eigen_vt<is_fvar, EigMat>* = nullptr>
-inline Eigen::Matrix<value_type_t<EigMat>, R1, EigMat::ColsAtCompileTime>
-mdivide_left_ldlt(const LDLT_factor<double, R1, C1>& A, const EigMat& b) {
-  using T = typename value_type_t<EigMat>::Scalar;
+inline Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic,
+                     EigMat::ColsAtCompileTime>
+mdivide_left_ldlt(LDLT_factor<T>& A, const EigMat& b) {
+  using EigMatValueScalar = typename value_type_t<EigMat>::Scalar;
   constexpr int R2 = EigMat::RowsAtCompileTime;
   constexpr int C2 = EigMat::ColsAtCompileTime;
-  check_multiplicable("mdivide_left_ldlt", "A", A, "b", b);
+  check_multiplicable("mdivide_left_ldlt", "A", A.matrix(), "b", b);
 
-  const Eigen::Ref<const plain_type_t<EigMat>>& b_ref = b;
-  Eigen::Matrix<T, R2, C2> b_val(b.rows(), b.cols());
-  Eigen::Matrix<T, R2, C2> b_der(b.rows(), b.cols());
+  const auto& b_ref = to_ref(b);
+  Eigen::Matrix<EigMatValueScalar, R2, C2> b_val(b.rows(), b.cols());
+  Eigen::Matrix<EigMatValueScalar, R2, C2> b_der(b.rows(), b.cols());
   for (int j = 0; j < b.cols(); j++) {
     for (int i = 0; i < b.rows(); i++) {
       b_val.coeffRef(i, j) = b_ref.coeff(i, j).val_;

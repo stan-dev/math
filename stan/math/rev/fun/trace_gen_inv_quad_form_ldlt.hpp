@@ -17,40 +17,152 @@ namespace math {
  *       trace(D B^T A^-1 B)
  * where D is a square matrix and the LDLT_factor of A is provided.
  *
- * @tparam EigMat1 type of the first matrix
- * @tparam T2 type of elements in the LDLT_factor
- * @tparam R2 number of rows in the LDLT_factor, can be Eigen::Dynamic
- * @tparam C2 number of columns in the LDLT_factor, can be Eigen::Dynamic
- * @tparam EigMat3 type of the second matrix
+ * @tparam Td type of the first matrix
+ * @tparam Ta type of matrix in the LDLT_factor
+ * @tparam Tb type of the second matrix
  *
  * @param D a square matrix
  * @param A an LDLT_factor
  * @param B a matrix
  * @return The trace of the inverse quadratic form.
  */
-template <typename EigMat1, typename T2, int R2, int C2, typename EigMat3,
-          require_all_eigen_t<EigMat1, EigMat3>* = nullptr,
-          require_any_st_var<EigMat1, T2, EigMat3>* = nullptr>
-inline var trace_gen_inv_quad_form_ldlt(const EigMat1& D,
-                                        const LDLT_factor<T2, R2, C2>& A,
-                                        const EigMat3& B) {
-  using T3 = value_type_t<EigMat3>;
-  constexpr int R3 = EigMat3::RowsAtCompileTime;
-  constexpr int C3 = EigMat3::ColsAtCompileTime;
+template <typename Td, typename Ta, typename Tb,
+          require_all_matrix_t<Td, Ta, Tb>* = nullptr,
+          require_any_st_var<Td, Ta, Tb>* = nullptr>
+inline var trace_gen_inv_quad_form_ldlt(const Td& D, LDLT_factor<Ta>& A,
+                                        const Tb& B) {
   check_square("trace_gen_inv_quad_form_ldlt", "D", D);
-  check_multiplicable("trace_gen_inv_quad_form_ldlt", "A", A, "B", B);
+  check_multiplicable("trace_gen_inv_quad_form_ldlt", "A", A.matrix(), "B", B);
   check_multiplicable("trace_gen_inv_quad_form_ldlt", "B", B, "D", D);
-  if (D.size() == 0 || A.cols() == 0) {
+
+  if (D.size() == 0 || A.matrix().size() == 0) {
     return 0;
   }
 
-  auto* _impl
-      = new internal::trace_inv_quad_form_ldlt_impl<T2, R2, C2, T3, R3, C3>(
-          D, A, B);
+  if (!is_constant<Ta>::value && !is_constant<Tb>::value
+      && !is_constant<Td>::value) {
+    arena_t<promote_scalar_t<var, Ta>> arena_A = A.matrix();
+    arena_t<promote_scalar_t<var, Tb>> arena_B = B;
+    arena_t<promote_scalar_t<var, Td>> arena_D = D;
+    auto AsolveB = to_arena(A.ldlt().solve(arena_B.val()));
+    auto BTAsolveB = to_arena(arena_B.val_op().transpose() * AsolveB);
 
-  return var(
-      new internal::trace_inv_quad_form_ldlt_vari<T2, R2, C2, T3, R3, C3>(
-          _impl));
+    var res = (arena_D.val() * BTAsolveB).trace();
+
+    reverse_pass_callback(
+        [arena_A, BTAsolveB, AsolveB, arena_B, arena_D, res]() mutable {
+          double C_adj = res.adj();
+
+          arena_A.adj() -= C_adj * AsolveB * arena_D.val_op().transpose()
+                           * AsolveB.transpose();
+          arena_B.adj() += C_adj * AsolveB
+                           * (arena_D.val_op() + arena_D.val_op().transpose());
+          arena_D.adj() += C_adj * BTAsolveB;
+        });
+
+    return res;
+  } else if (!is_constant<Ta>::value && !is_constant<Tb>::value
+             && is_constant<Td>::value) {
+    arena_t<promote_scalar_t<var, Ta>> arena_A = A.matrix();
+    arena_t<promote_scalar_t<var, Tb>> arena_B = B;
+    arena_t<promote_scalar_t<double, Td>> arena_D = value_of(D);
+    auto AsolveB = to_arena(A.ldlt().solve(arena_B.val()));
+
+    var res = (arena_D * arena_B.val_op().transpose() * AsolveB).trace();
+
+    reverse_pass_callback([arena_A, AsolveB, arena_B, arena_D, res]() mutable {
+      double C_adj = res.adj();
+
+      arena_A.adj()
+          -= C_adj * AsolveB * arena_D.transpose() * AsolveB.transpose();
+      arena_B.adj() += C_adj * AsolveB * (arena_D + arena_D.transpose());
+    });
+
+    return res;
+  } else if (!is_constant<Ta>::value && is_constant<Tb>::value
+             && !is_constant<Td>::value) {
+    arena_t<promote_scalar_t<var, Ta>> arena_A = A.matrix();
+    const auto& B_ref = to_ref(B);
+    arena_t<promote_scalar_t<var, Td>> arena_D = D;
+    auto AsolveB = to_arena(A.ldlt().solve(value_of(B_ref)));
+    auto BTAsolveB = to_arena(value_of(B_ref).transpose() * AsolveB);
+
+    var res = (arena_D.val() * BTAsolveB).trace();
+
+    reverse_pass_callback(
+        [arena_A, BTAsolveB, AsolveB, arena_D, res]() mutable {
+          double C_adj = res.adj();
+
+          arena_A.adj() -= C_adj * AsolveB * arena_D.val_op().transpose()
+                           * AsolveB.transpose();
+          arena_D.adj() += C_adj * BTAsolveB;
+        });
+
+    return res;
+  } else if (!is_constant<Ta>::value && is_constant<Tb>::value
+             && is_constant<Td>::value) {
+    arena_t<promote_scalar_t<var, Ta>> arena_A = A.matrix();
+    const auto& B_ref = to_ref(B);
+    arena_t<promote_scalar_t<double, Td>> arena_D = value_of(D);
+    auto AsolveB = to_arena(A.ldlt().solve(value_of(B_ref)));
+
+    var res = (arena_D * value_of(B_ref).transpose() * AsolveB).trace();
+
+    reverse_pass_callback([arena_A, AsolveB, arena_D, res]() mutable {
+      double C_adj = res.adj();
+
+      arena_A.adj() -= C_adj * AsolveB * arena_D.val_op().transpose()
+                       * AsolveB.transpose();
+    });
+
+    return res;
+  } else if (is_constant<Ta>::value && !is_constant<Tb>::value
+             && !is_constant<Td>::value) {
+    arena_t<promote_scalar_t<var, Tb>> arena_B = B;
+    arena_t<promote_scalar_t<var, Td>> arena_D = D;
+    auto AsolveB = to_arena(A.ldlt().solve(arena_B.val()));
+    auto BTAsolveB = to_arena(arena_B.val_op().transpose() * AsolveB);
+
+    var res = (arena_D.val() * BTAsolveB).trace();
+
+    reverse_pass_callback(
+        [BTAsolveB, AsolveB, arena_B, arena_D, res]() mutable {
+          double C_adj = res.adj();
+
+          arena_B.adj() += C_adj * AsolveB
+                           * (arena_D.val_op() + arena_D.val_op().transpose());
+          arena_D.adj() += C_adj * BTAsolveB;
+        });
+
+    return res;
+  } else if (is_constant<Ta>::value && !is_constant<Tb>::value
+             && is_constant<Td>::value) {
+    arena_t<promote_scalar_t<var, Tb>> arena_B = B;
+    arena_t<promote_scalar_t<double, Td>> arena_D = value_of(D);
+    auto AsolveB = to_arena(A.ldlt().solve(arena_B.val()));
+
+    var res = (arena_D * arena_B.val_op().transpose() * AsolveB).trace();
+
+    reverse_pass_callback([AsolveB, arena_B, arena_D, res]() mutable {
+      arena_B.adj() += res.adj() * AsolveB * (arena_D + arena_D.transpose());
+    });
+
+    return res;
+  } else if (is_constant<Ta>::value && is_constant<Tb>::value
+             && !is_constant<Td>::value) {
+    const auto& B_ref = to_ref(B);
+    arena_t<promote_scalar_t<var, Td>> arena_D = D;
+    auto BTAsolveB = to_arena(value_of(B_ref).transpose()
+                              * A.ldlt().solve(value_of(B_ref)));
+
+    var res = (arena_D.val() * BTAsolveB).trace();
+
+    reverse_pass_callback([BTAsolveB, arena_D, res]() mutable {
+      arena_D.adj() += res.adj() * BTAsolveB;
+    });
+
+    return res;
+  }
 }
 
 }  // namespace math
