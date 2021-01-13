@@ -1,8 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
 #include <stdexcept>
 
-TEST(MathMixMatFun, singularValues) {
-  auto f = [](const auto& x) { return stan::math::singular_values(x); };
+TEST(MathMixMatFun, svd_V) {
+  auto f = [](const auto& x) { return stan::math::svd_V(x); };
 
   Eigen::MatrixXd m00(0, 0);
   EXPECT_THROW(f(m00), std::invalid_argument);
@@ -19,10 +19,12 @@ TEST(MathMixMatFun, singularValues) {
 
   Eigen::MatrixXd m23(2, 3);
   m23 << 3, 5, -7, -11, 13, -17;
-  Eigen::MatrixXd m32 = m23.transpose();
   stan::test::expect_ad(f, m23);
-  stan::test::expect_ad(f, m32);
   stan::test::expect_ad_matvar(f, m23);
+
+  Eigen::MatrixXd m32(3, 2);
+  m32 << 1, 3, -5, 7, 9, -11;
+  stan::test::expect_ad(f, m32);
   stan::test::expect_ad_matvar(f, m32);
 
   Eigen::MatrixXd a22(2, 2);
