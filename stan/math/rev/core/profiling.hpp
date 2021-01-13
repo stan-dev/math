@@ -149,13 +149,15 @@ class profile {
     }
     profile_->fwd_pass_start<T>();
     if (!is_constant<T>::value) {
-      reverse_pass_callback([profile=this->profile_]() mutable { profile->rev_pass_stop(); });
+      reverse_pass_callback(
+          [profile = this->profile_]() mutable { profile->rev_pass_stop(); });
     }
   }
   ~profile() {
     profile_->fwd_pass_stop<T>();
     if (!is_constant<T>::value) {
-      reverse_pass_callback([profile=this->profile_]() mutable { profile->rev_pass_start(); });
+      reverse_pass_callback(
+          [profile = this->profile_]() mutable { profile->rev_pass_start(); });
     }
   }
 };
