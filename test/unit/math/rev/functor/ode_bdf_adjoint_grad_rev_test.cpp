@@ -200,7 +200,8 @@ class test_functor_var_var {
 
     std::vector<Eigen::Matrix<T, Eigen::Dynamic, 1>> ys
         = (lmm_ == TEST_CVODES_ADAMS)
-        ? stan::math::ode_adams_tol(sho, y0, t0, ts, 1E-10, 1E-10, 10000, nullptr, omega)
+              ? stan::math::ode_adams_tol(sho, y0, t0, ts, 1E-10, 1E-10, 10000,
+                                          nullptr, omega)
               : stan::math::ode_bdf(sho, y0, t0, ts, nullptr, omega);
 
     return ys[1](state);
@@ -221,7 +222,7 @@ TEST(StanMathOdeIntegrateODEGradMat, var_var) {
 
   {
     stan::math::nested_rev_autodiff nested;
-    
+
     test_functor_var_var<0> func1(TEST_CVODES_ADAMS);
     stan::math::gradient(func1, x, f, grad);
 
@@ -239,7 +240,7 @@ TEST(StanMathOdeIntegrateODEGradMat, var_var) {
 
   {
     stan::math::nested_rev_autodiff nested;
-    
+
     test_functor_var_var<0> func1(TEST_CVODES_BDF);
     stan::math::gradient(func1, x, f, grad);
 

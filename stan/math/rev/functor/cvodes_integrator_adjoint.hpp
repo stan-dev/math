@@ -677,41 +677,44 @@ class cvodes_integrator_adjoint_vari : public vari {
                 "CVodeInitB");
 
             check_flag_sundials(
-                CVodeSStolerancesB(memory->cvodes_mem_, indexB, relative_tolerance_,
-                                   absolute_tolerance_B_),
+                CVodeSStolerancesB(memory->cvodes_mem_, indexB,
+                                   relative_tolerance_, absolute_tolerance_B_),
                 "CVodeSStolerancesB");
 
-            check_flag_sundials(
-                CVodeSetMaxNumStepsB(memory->cvodes_mem_, indexB, max_num_steps_),
-                "CVodeSetMaxNumStepsB");
+            check_flag_sundials(CVodeSetMaxNumStepsB(memory->cvodes_mem_,
+                                                     indexB, max_num_steps_),
+                                "CVodeSetMaxNumStepsB");
 
             check_flag_sundials(
                 CVodeSetLinearSolverB(memory->cvodes_mem_, indexB, LSB_, AB_),
                 "CVodeSetLinearSolverB");
 
             check_flag_sundials(
-                CVodeSetJacFnB(memory->cvodes_mem_, indexB,
-                               &cvodes_integrator_adjoint_vari::cv_jacobian_adj),
+                CVodeSetJacFnB(
+                    memory->cvodes_mem_, indexB,
+                    &cvodes_integrator_adjoint_vari::cv_jacobian_adj),
                 "CVodeSetJacFnB");
 
             // Allocate space for backwards quadrature
             if (args_vars_ > 0) {
               check_flag_sundials(
-                  CVodeQuadInitB(memory->cvodes_mem_, indexB,
-                                 &cvodes_integrator_adjoint_vari::cv_quad_rhs_adj,
-                                 nv_quad),
+                  CVodeQuadInitB(
+                      memory->cvodes_mem_, indexB,
+                      &cvodes_integrator_adjoint_vari::cv_quad_rhs_adj,
+                      nv_quad),
                   "CVodeQuadInitB");
 
               check_flag_sundials(
                   CVodeQuadSStolerancesB(memory->cvodes_mem_, indexB,
-                                         relative_tolerance_, absolute_tolerance_QB_),
+                                         relative_tolerance_,
+                                         absolute_tolerance_QB_),
                   "CVodeQuadSStolerancesB");
 
               check_flag_sundials(
                   CVodeSetQuadErrConB(memory->cvodes_mem_, indexB, SUNTRUE),
                   "CVodeSetQuadErrConB");
             }
-            
+
             cvodes_backward_initialized = true;
           } else {
             // just re-initialize the solver
