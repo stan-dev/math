@@ -781,7 +781,7 @@ class cvodes_integrator_adjoint_vari : public vari {
 */
       // old code without nice error messages, but works according to
       // grad test
-      
+
       // At every time step, collect the adjoints from the output
       // variables and re-initialize the solver
       double t_init = value_of(memory->ts_.back());
@@ -860,7 +860,6 @@ class cvodes_integrator_adjoint_vari : public vari {
         args_varis_[s]->adj_ += quad(s);
       }
 
-      
     } catch (const std::exception& e) {
       SUNLinSolFree(LSB_);
       SUNMatDestroy(AB_);
