@@ -60,6 +60,7 @@
 #include <stan/math/opencl/rev/log1m_inv_logit.hpp>
 #include <stan/math/opencl/rev/log_inv_logit_diff.hpp>
 #include <stan/math/opencl/rev/log_diff_exp.hpp>
+#include <stan/math/opencl/rev/mdivide_left_tri_low.hpp>
 #include <stan/math/opencl/rev/multiply.hpp>
 #include <stan/math/opencl/rev/multiply_log.hpp>
 #include <stan/math/opencl/rev/operands_and_partials.hpp>
