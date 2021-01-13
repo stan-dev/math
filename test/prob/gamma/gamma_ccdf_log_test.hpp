@@ -16,14 +16,14 @@ class AgradCcdfLogGamma : public AgradCcdfLogTest {
     param[2] = 0.9;  // beta
     parameters.push_back(param);
     ccdf_log.push_back(
-    std::log(1.0 - 0.4199241634320857175));  // expected ccdf_log
+        std::log(1.0 - 0.4199241634320857175));  // expected ccdf_log
 
     param[0] = 1.2;   // y
     param[1] = 0.25;  // alpha
     param[2] = 0.75;  // beta
     parameters.push_back(param);
     ccdf_log.push_back(
-    std::log(1.0 - 0.9209749374046803938));  // expected ccdf_log
+        std::log(1.0 - 0.9209749374046803938));  // expected ccdf_log
 
     param[0] = 1.0;  // y
     param[1] = 1.0;  // alpha
