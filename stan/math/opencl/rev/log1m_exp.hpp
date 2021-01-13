@@ -15,15 +15,13 @@ namespace math {
  * @param A argument
  * @return Elementwise `log1m_exp()` of the input.
  */
-inline var_value<matrix_cl<double>> log1m_exp(
-    const var_value<matrix_cl<double>>& A) {
-  var_value<matrix_cl<double>> res = log1m_exp(A.val());
-
-  reverse_pass_callback([A, res]() mutable {
-    A.adj() = A.adj() - elt_divide(res.adj(), expm1(-A.val()));
-  });
-
-  return res;
+template <typename T,
+          require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
+inline var_value<matrix_cl<double>> log1m_exp(const var_value<T>& A) {
+  return make_callback_var(
+      log1m_exp(A.val()), [A](vari_value<matrix_cl<double>>& res) mutable {
+        A.adj() = A.adj() - elt_divide(res.adj(), expm1(-A.val()));
+      });
 }
 
 }  // namespace math
