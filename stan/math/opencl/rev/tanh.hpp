@@ -16,17 +16,15 @@ namespace math {
  * @param A argument
  * @return Elementwise `tanh()` of the input, in radians.
  */
-inline var_value<matrix_cl<double>> tanh(
-    const var_value<matrix_cl<double>>& A) {
-  var_value<matrix_cl<double>> res = tanh(A.val());
-
-  reverse_pass_callback([A, res]() mutable {
-    auto cosh_A_val = cosh(A.val());
-    A.adj()
-        = A.adj() + elt_divide(res.adj(), elt_multiply(cosh_A_val, cosh_A_val));
-  });
-
-  return res;
+template <typename T,
+          require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
+inline var_value<matrix_cl<double>> tanh(const var_value<T>& A) {
+  return make_callback_var(
+      tanh(A.val()), [A](vari_value<matrix_cl<double>>& res) mutable {
+        auto cosh_A_val = cosh(A.val());
+        A.adj() = A.adj()
+                  + elt_divide(res.adj(), elt_multiply(cosh_A_val, cosh_A_val));
+      });
 }
 
 }  // namespace math
