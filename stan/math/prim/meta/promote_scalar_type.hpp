@@ -80,7 +80,7 @@ struct promote_scalar_type<T, S,
  * @tparam S input matrix type
  */
 template <typename T, typename S>
-struct promote_scalar_type<T, S, require_eigen_t<S>> {
+struct promote_scalar_type<T, S, require_all_t<is_eigen<S>, bool_constant<!is_arena_matrix<S>::value>>> {
   /**
    * The promoted type.
    */

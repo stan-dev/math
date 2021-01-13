@@ -61,6 +61,16 @@ struct arena_type_impl<
 template <typename T>
 using arena_t = typename internal::arena_type_impl<std::decay_t<T>>::type;
 
+namespace math {
+  template <typename T, typename S>
+  struct promote_scalar_type<T, S, require_all_t<is_eigen<S>, is_arena_matrix<S>>> {
+    /**
+     * The promoted type.
+     */
+    using type = arena_t<typename promote_scalar_type<T, typename std::decay_t<S>::PlainObject>::type>;
+  };
+
+}
 }  // namespace stan
 
 #endif
