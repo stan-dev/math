@@ -19,19 +19,16 @@ namespace math {
  * the integer exponents.
  * @return Elementwise `ldexp()` of the input argument.
  */
-template <typename T_b,
-          require_all_kernel_expressions_and_none_scalar_t<T_b>* = nullptr>
-inline var_value<matrix_cl<double>> ldexp(const var_value<matrix_cl<double>>& a,
-                                          const T_b& b) {
-  const arena_t<T_b>& b_arena = b;
+template <typename T_a, typename T_b,
+          require_all_kernel_expressions_and_none_scalar_t<T_a, T_b>* = nullptr>
+inline var_value<matrix_cl<double>> ldexp(const var_value<T_a>& a,
+                                          T_b&& b) {
+  const arena_t<T_b>& b_arena = std::forward<T_b>(b);
 
-  var_value<matrix_cl<double>> res = ldexp(a.val(), b);
-
-  reverse_pass_callback([a, b_arena, res]() mutable {
-    a.adj() = a.adj() + ldexp(res.adj(), value_of(b_arena));
-  });
-
-  return res;
+  return make_callback_var(ldexp(a.val(), b),
+                    [a, b_arena](vari_value<matrix_cl<double>>& res) mutable {
+                      a.adj() = a.adj() + ldexp(res.adj(), value_of(b_arena));
+                    });
 }
 
 }  // namespace math

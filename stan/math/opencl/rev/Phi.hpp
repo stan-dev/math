@@ -15,20 +15,19 @@ namespace math {
  * @param A argument
  * @return Elementwise `Phi()` of the input.
  */
-inline var_value<matrix_cl<double>> Phi(const var_value<matrix_cl<double>>& A) {
-  var_value<matrix_cl<double>> res = Phi(A.val());
-
-  reverse_pass_callback([A, res]() mutable {
-    A.adj()
-        = A.adj()
-          + elt_multiply(
-                res.adj(),
-                elt_multiply(
-                    INV_SQRT_TWO_PI,
-                    exp(elt_multiply(-0.5, elt_multiply(A.val(), A.val())))));
-  });
-
-  return res;
+template <typename T,
+          require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
+inline var_value<matrix_cl<double>> Phi(const var_value<T>& A) {
+  return make_callback_var(
+      Phi(A.val()), [A](vari_value<matrix_cl<double>>& res) mutable {
+        A.adj()
+            = A.adj()
+              + elt_multiply(
+                  res.adj(),
+                  elt_multiply(
+                      INV_SQRT_TWO_PI,
+                      exp(elt_multiply(-0.5, elt_multiply(A.val(), A.val())))));
+      });
 }
 
 }  // namespace math

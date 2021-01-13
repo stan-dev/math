@@ -18,7 +18,7 @@ namespace math {
  * @tparam T type of the matrix
  * @param v Matrix.
  */
-template <typename T, require_var_vt<is_matrix_cl, T>* = nullptr>
+template <typename T, require_var_vt<is_kernel_expression_and_not_scalar, T>* = nullptr>
 inline var_value<matrix_cl<double>> rows_dot_self(T&& v) {
   arena_t<T> v_arena = std::forward<T>(v);
 

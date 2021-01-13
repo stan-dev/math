@@ -16,14 +16,11 @@ namespace math {
  * @param A argument
  * @return Elementwise `cosh()` of the input, in radians.
  */
-inline var_value<matrix_cl<double>> cosh(
-    const var_value<matrix_cl<double>>& A) {
-  var_value<matrix_cl<double>> res = cosh(A.val());
-  reverse_pass_callback([A, res]() mutable {
+template <typename T, require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
+inline var_value<matrix_cl<double>> cosh(const var_value<T>& A) {
+  return make_callback_var(cosh(A.val()), [A](vari_value<matrix_cl<double>>& res) mutable {
     A.adj() = A.adj() + elt_multiply(res.adj(), sinh(A.val()));
   });
-
-  return res;
 }
 
 }  // namespace math
