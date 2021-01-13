@@ -37,7 +37,7 @@ struct scaling_rhs {
       dydt(a) = +k12[i] * y(m) - k21[i] * y(a);
 
       if (i != 0) {
-        dydt(m) += ksat[i-1] * y(2 * (i - 1));
+        dydt(m) += ksat[i - 1] * y(2 * (i - 1));
       }
     }
     return dydt;
@@ -82,20 +82,23 @@ void run_benchmark(std::size_t system_size, int adjoint_integrator) {
     double t0 = 0.0;
 
     try {
+      std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> y;
       if (adjoint_integrator) {
-        std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> y
-            = ode_bdf_adjoint_tol(ode, y0, t0, ts, rel_tol, abs_tol,
-                                  max_num_steps, nullptr, abs_tol_B, abs_tol_QB,
-                                  steps_checkpoint, kt, e50, k12, k21);
-
-        stan::math::grad();
+        y = ode_bdf_adjoint_tol(ode, y0, t0, ts, rel_tol, abs_tol,
+                                max_num_steps, nullptr, abs_tol_B, abs_tol_QB,
+                                steps_checkpoint, kt, e50, k12, k21);
       } else {
-        std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> y
-            = ode_bdf_tol(ode, y0, t0, ts, rel_tol, abs_tol_QB, max_num_steps,
-                          nullptr, kt, e50, k12, k21);
-
-        stan::math::grad();
+        y = ode_bdf_tol(ode, y0, t0, ts, rel_tol, abs_tol_QB, max_num_steps,
+                        nullptr, kt, e50, k12, k21);
       }
+
+      // Essentially sets the adjoint for all states to 1.
+      var target = stan::math::sum(y[0]);
+      for (int k = 1; k < ts_size; k++)
+        target += stan::math::sum(y[k]);
+
+      target.grad();
+
     } catch (std::exception& exc) {
       std::cout << "oops, keep going please!" << std::endl;
       std::cerr << exc.what() << std::endl;

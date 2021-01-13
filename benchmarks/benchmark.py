@@ -85,7 +85,7 @@ def run_benchmark(exe_filepath, n_repeats=1, csv_out_file=None):
     command = [exe_filepath]
     if n_repeats > 1:
         command.append("--benchmark_repetitions={}".format(n_repeats))
-        command.append("--benchmark_report_aggregates_only=true")
+        command.append("--benchmark_display_aggregates_only=true")
     if csv_out_file is not None:
         command.append("--benchmark_out={}".format(csv_out_file))
         command.append("--benchmark_out_format=csv")
@@ -121,10 +121,11 @@ def plot_results(csv_filename, out_file="", plot_log_y=False):
                 f.seek(f.tell() - len(line) - 1, os.SEEK_SET)
                 break
         data = pandas.read_csv(f)
+    name_split = data["name"].str.split("/", expand=True)
     timing_data = pandas.concat(
-        [data["name"].str.split("/", expand=True).iloc[:, :2], data["real_time"]],
+        [name_split.iloc[:, :2], data["real_time"]],
         axis=1,
-    )
+    ).loc[name_split.iloc[:, 2]=="manual_time", :]
     timing_data.columns = ["signatures", "sizes", "times"]
     timing_data.loc[:, "sizes"] = timing_data["sizes"].astype(int)
     timing_data.loc[:, "times"] /= 1000  # convert to microseconds
@@ -136,14 +137,8 @@ def plot_results(csv_filename, out_file="", plot_log_y=False):
         ax.set_yscale("log")
     ax.set_xlabel("size")
     ax.set_ylabel("time[us]")
+	
     for n, (signature, sub_data) in enumerate(timing_data.groupby("signatures")):
-        ax.plot(
-            sub_data["sizes"],
-            sub_data["times"],
-            "x",
-            color=pick_color(n),
-            label="_nolegend_",
-        )
         avg_sig_times = (
             sub_data.groupby(by="sizes")["times"]
                 .median()
@@ -155,6 +150,15 @@ def plot_results(csv_filename, out_file="", plot_log_y=False):
             avg_sig_times["times"],
             label=signature,
             color=pick_color(n),
+        )
+    for n, (signature, sub_data) in enumerate(timing_data.groupby("signatures")):
+        ax.plot(
+            sub_data["sizes"],
+            sub_data["times"],
+            "x",
+            color=pick_color(n),
+            label="_nolegend_",
+			scaley=False,
         )
     [
         spine.set_visible(False)
@@ -197,17 +201,19 @@ def plot_compare(csv_filename, reference_csv_filename, out_file="", plot_log_y=F
                 f.seek(f.tell() - len(line) - 1, os.SEEK_SET)
                 break
         reference_data = pandas.read_csv(f)
+    name_split = data["name"].str.split("/", expand=True)
     timing_data = pandas.concat(
-        [data["name"].str.split("/", expand=True).iloc[:, :2], data["real_time"]],
+        [name_split.iloc[:, :2], data["real_time"]],
         axis=1,
-    )
+    ).loc[name_split.iloc[:, 2]=="manual_time", :]
+    reference_name_split = reference_data["name"].str.split("/", expand=True)
     reference_timing_data = pandas.concat(
         [
-            reference_data["name"].str.split("/", expand=True).iloc[:, :2],
+            reference_name_split.iloc[:, :2],
             reference_data["real_time"],
         ],
         axis=1,
-    )
+    ).loc[reference_name_split.iloc[:, 2]=="manual_time", :]
     timing_data.columns = reference_timing_data.columns = [
         "signatures",
         "sizes",
@@ -233,13 +239,6 @@ def plot_compare(csv_filename, reference_csv_filename, out_file="", plot_log_y=F
     ax.set_ylabel("speedup")
 
     for n, (signature, sub_data) in enumerate(timing_data.groupby("signatures")):
-        ax.plot(
-            sub_data["sizes"],
-            sub_data["speedup"],
-            "x",
-            color=pick_color(n),
-            label="_nolegend_",
-        )
         avg_sig_speedups = (
             sub_data.groupby(by="sizes")["speedup"]
                 .median()
@@ -253,6 +252,15 @@ def plot_compare(csv_filename, reference_csv_filename, out_file="", plot_log_y=F
             color=pick_color(n),
         )
     plt.plot([1, max(timing_data["sizes"])], [1, 1], "--", color="gray")
+    for n, (signature, sub_data) in enumerate(timing_data.groupby("signatures")):
+        ax.plot(
+            sub_data["sizes"],
+            sub_data["speedup"],
+            "x",
+            color=pick_color(n),
+            label="_nolegend_",
+			scaley=False,
+        )
 
     [
         spine.set_visible(False)
@@ -383,9 +391,14 @@ def benchmark(
             benchmark_name = function_name
             setup = ""
             var_conversions = ""
-            code = "    auto res = stan::math::eval(stan::math::{}(".format(
-                function_name
-            )
+            if opencl in ("copy", "copy_rev") and return_type not in scalar_stan_types:
+                code = "    auto res = stan::math::from_matrix_cl(stan::math::{}(".format(
+                    function_name
+                )
+            else:
+                code = "    auto res = stan::math::eval(stan::math::{}(".format(
+                    function_name
+                )
             for (
                     n,
                     (arg_overload, cpp_arg_template, stan_arg),
@@ -401,6 +414,8 @@ def benchmark(
                 arg_type = cpp_arg_template.replace("SCALAR", scalar)
                 var_name = "arg" + str(n)
                 make_arg_function = "make_arg"
+                is_argument_autodiff = "var" in arg_type
+                is_argument_scalar = stan_arg in scalar_stan_types
                 value = 0.4
                 if function_name in special_arg_values:
                     if isinstance(special_arg_values[function_name][n], str):
@@ -419,16 +434,17 @@ def benchmark(
                             value,
                         )
                     )
-                    if opencl == "base":
-                        setup += "  auto {} = stan::math::to_matrix_cl({});\n".format(
-                            var_name + "_cl", var_name
-                        )
-                        var_name += "_cl"
-                    elif varmat == "base" and arg_overload == "Rev":
-                        setup += "  auto {} = stan::math::to_var_value({});\n".format(
-                            var_name + "_varmat", var_name
-                        )
-                        var_name += "_varmat"
+                    if not is_argument_scalar:
+                        if opencl == "base" or opencl == "copy_rev":
+                            setup += "  auto {} = stan::math::to_matrix_cl({});\n".format(
+                                var_name + "_cl", var_name
+                            )
+                            var_name += "_cl"
+                        elif varmat == "base" and arg_overload == "Rev":
+                            setup += "  auto {} = stan::math::to_var_value({});\n".format(
+                                var_name + "_varmat", var_name
+                            )
+                            var_name += "_varmat"
                 else:
                     var_conversions += (
                         "    {} {} = stan::test::{}<{}>({}, state.range(0));\n".format(
@@ -439,25 +455,26 @@ def benchmark(
                             value,
                         )
                     )
-                    if opencl == "base":
-                        var_conversions += (
-                            "    auto {} = stan::math::to_matrix_cl({});\n".format(
-                                var_name + "_cl", var_name
+                    if not is_argument_scalar:
+                        if opencl == "base" or (opencl == "copy_rev" and not is_argument_autodiff):
+                            var_conversions += (
+                                "    auto {} = stan::math::to_matrix_cl({});\n".format(
+                                    var_name + "_cl", var_name
+                                )
                             )
-                        )
-                        var_name += "_cl"
-                    elif varmat == "base" and arg_overload == "Rev":
-                        var_conversions += (
-                            "    auto {} = stan::math::to_var_value({});\n".format(
-                                var_name + "_varmat", var_name
+                            var_name += "_cl"
+                        elif varmat == "base" and arg_overload == "Rev":
+                            var_conversions += (
+                                "    auto {} = stan::math::to_var_value({});\n".format(
+                                    var_name + "_varmat", var_name
+                                )
                             )
-                        )
-                        var_name += "_varmat"
-                if opencl == "copy" and stan_arg not in ("int", "real"):
+                            var_name += "_varmat"
+                if (opencl == "copy" or opencl == "copy_rev" and is_argument_autodiff) and not is_argument_scalar:
                     code += "stan::math::to_matrix_cl({}), ".format(var_name)
                 elif (
                         varmat == "copy"
-                        and stan_arg not in ("int", "real")
+                        and not is_argument_scalar
                         and arg_overload == "Rev"
                 ):
                     code += "stan::math::to_var_value({}), ".format(var_name)
@@ -688,7 +705,8 @@ def processCLIArgs():
         default=False,
         help="Benchmark OpenCL overloads. Possible values: "
              "base - benchmark just the execution time, "
-             "copy - include argument copying time",
+             "copy - include argument copying time"
+             "copy_rev - include argument copying time for var arguments only",
     )
     parser.add_argument(
         "--varmat",
