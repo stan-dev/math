@@ -23,10 +23,10 @@ inline var_value<matrix_cl<double>> Phi(const var_value<T>& A) {
         A.adj()
             = A.adj()
               + elt_multiply(
-                  res.adj(),
-                  elt_multiply(
-                      INV_SQRT_TWO_PI,
-                      exp(elt_multiply(-0.5, elt_multiply(A.val(), A.val())))));
+                    res.adj(),
+                    elt_multiply(INV_SQRT_TWO_PI,
+                                 exp(elt_multiply(
+                                     -0.5, elt_multiply(A.val(), A.val())))));
       });
 }
 

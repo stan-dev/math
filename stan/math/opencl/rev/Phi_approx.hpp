@@ -22,13 +22,13 @@ inline var_value<matrix_cl<double>> Phi_approx(const var_value<T>& A) {
       Phi_approx(A.val()), [A](vari_value<matrix_cl<double>>& res) mutable {
         A.adj() = A.adj()
                   + elt_multiply(
-                      res.adj(),
-                      elt_multiply(
-                          res.val(),
-                          elt_multiply(
-                              (1 - res.val()),
-                              (3.0 * 0.07056 * elt_multiply(A.val(), A.val())
-                               + 1.5976))));
+                        res.adj(),
+                        elt_multiply(
+                            res.val(),
+                            elt_multiply(
+                                (1 - res.val()),
+                                (3.0 * 0.07056 * elt_multiply(A.val(), A.val())
+                                 + 1.5976))));
       });
 }
 

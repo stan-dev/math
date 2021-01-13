@@ -15,7 +15,8 @@ namespace math {
  * @param A argument
  * @return Elementwise `inv_sqrt()` of the input.
  */
-template <typename T, require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
+template <typename T,
+          require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
 inline var_value<matrix_cl<double>> inv_sqrt(const var_value<T>& A) {
   return make_callback_var(
       inv_sqrt(A.val()), [A](vari_value<matrix_cl<double>>& res) mutable {

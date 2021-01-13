@@ -16,13 +16,15 @@ namespace math {
  * @param A argument
  * @return Elementwise `asinh()` of the input, in radians.
  */
-template <typename T, require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
+template <typename T,
+          require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
 inline var_value<matrix_cl<double>> asinh(const var_value<T>& A) {
-  return make_callback_var(asinh(A.val()), [A](vari_value<matrix_cl<double>>& res) mutable {
-    A.adj()
-        = A.adj()
-          + elt_divide(res.adj(), sqrt(elt_multiply(A.val(), A.val()) + 1.0));
-  });
+  return make_callback_var(
+      asinh(A.val()), [A](vari_value<matrix_cl<double>>& res) mutable {
+        A.adj() = A.adj()
+                  + elt_divide(res.adj(),
+                               sqrt(elt_multiply(A.val(), A.val()) + 1.0));
+      });
 }
 
 }  // namespace math

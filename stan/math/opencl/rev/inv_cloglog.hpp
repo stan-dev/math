@@ -15,7 +15,8 @@ namespace math {
  * @param A argument
  * @return Elementwise `inv_cloglog()` of the input.
  */
-template <typename T, require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
+template <typename T,
+          require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
 inline var_value<matrix_cl<double>> inv_cloglog(const var_value<T>& A) {
   return make_callback_var(
       inv_cloglog(A.val()), [A](vari_value<matrix_cl<double>>& res) mutable {

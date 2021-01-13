@@ -21,7 +21,8 @@ namespace math {
  * @throw std::domain_error if m is not a symmetric matrix or
  *   if m is not positive definite (if m has more than 0 elements)
  */
-template <typename T, require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
+template <typename T,
+          require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
 inline var_value<matrix_cl<double>> cholesky_decompose(const var_value<T>& A) {
   check_nan("cholesky_decompose", "A", A.val());
   var_value<matrix_cl<double>> L_A = cholesky_decompose(A.val());
