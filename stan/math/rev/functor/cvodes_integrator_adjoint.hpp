@@ -778,7 +778,7 @@ class cvodes_integrator_adjoint_vari : public vari {
       for (size_t s = 0; s < args_vars_; s++) {
         args_varis_[s]->adj_ += quad(s);
       }
-      
+
     } catch (const std::exception& e) {
       SUNLinSolFree(LSB_);
       SUNMatDestroy(AB_);
