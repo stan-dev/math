@@ -29,42 +29,6 @@ auto elt_multiply(const Mat1& m1, const Mat2& m2) {
 
 /**
  * Return the elementwise multiplication of the specified
- * matrix and a scalar.
- *
- * @tparam Mat type of the matrix or expression
- * @tparam Scal type of the scalar
- *
- * @param m matrix or expression
- * @param s scalar
- * @return Elementwise product of a matrix and a scalar.
- */
-template <typename Mat, typename Scal,
-          require_eigen_t<Mat>* = nullptr,
-          require_stan_scalar_t<Scal>* = nullptr>
-auto elt_multiply(const Mat& m, const Scal& s) {
-  return m * s;
-}
-
-/**
- * Return the elementwise multiplication of the specified
- * matrix and a scalar.
- *
- * @tparam Mat1 type of the matrix or expression
- * @tparam Mat2 type of the scalar
- *
- * @param m1 matrix or expression
- * @param m2 scalar
- * @return Elementwise product of a matrix and a scalar.
- */
-template <typename Mat, typename Scal,
-          require_eigen_t<Mat>* = nullptr,
-          require_stan_scalar_t<Scal>* = nullptr>
-auto elt_multiply(const Scal& s, const Mat& m) {
-  return s * m;
-}
-
-/**
- * Return the elementwise multiplication of the specified
  * scalars.
  *
  * @tparam Mat1 type of the first scalar
