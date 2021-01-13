@@ -46,7 +46,7 @@ class profile_info {
         fwd_pass_tp_(std::chrono::steady_clock::now()),
         rev_pass_tp_(std::chrono::steady_clock::now()),
         start_chain_stack_size_(0),
-        start_nochain_stack_size_(0) {};
+        start_nochain_stack_size_(0){};
 
   bool is_active() const noexcept { return active_; }
 
@@ -88,21 +88,29 @@ class profile_info {
     n_rev_passes_++;
   }
 
-  size_t get_chain_stack_used() const noexcept { return chain_stack_size_sum_; };
+  size_t get_chain_stack_used() const noexcept {
+    return chain_stack_size_sum_;
+  };
 
-  size_t get_nochain_stack_used() const noexcept { return nochain_stack_size_sum_; };
+  size_t get_nochain_stack_used() const noexcept {
+    return nochain_stack_size_sum_;
+  };
 
-  size_t get_num_no_AD_fwd_passes() const noexcept { return n_fwd_no_AD_passes_; }
+  size_t get_num_no_AD_fwd_passes() const noexcept {
+    return n_fwd_no_AD_passes_;
+  }
 
   size_t get_num_AD_fwd_passes() const noexcept { return n_fwd_AD_passes_; }
 
-  size_t get_num_fwd_passes() const noexcept { return n_fwd_AD_passes_ + n_fwd_no_AD_passes_; }
+  size_t get_num_fwd_passes() const noexcept {
+    return n_fwd_AD_passes_ + n_fwd_no_AD_passes_;
+  }
 
-  double get_fwd_time() const noexcept  { return fwd_pass_time_; }
+  double get_fwd_time() const noexcept { return fwd_pass_time_; }
 
   size_t get_num_rev_passes() const noexcept { return n_rev_passes_; }
 
-  double get_rev_time() const noexcept  { return rev_pass_time_; }
+  double get_rev_time() const noexcept { return rev_pass_time_; }
 };
 
 using profile_key = std::pair<std::string, std::thread::id>;
@@ -127,7 +135,8 @@ class profile {
   profile_info* profile_;
 
  public:
-  profile(std::string name, profile_map& profiles) : key_({name, std::this_thread::get_id()}) {
+  profile(std::string name, profile_map& profiles)
+      : key_({name, std::this_thread::get_id()}) {
     profile_map::iterator p = profiles.find(key_);
     if (p == profiles.end()) {
       profiles[key_] = profile_info();
@@ -143,11 +152,11 @@ class profile {
       reverse_pass_callback([=]() mutable { profile_->rev_pass_stop(); });
     }
   }
-  ~profile() { 
+  ~profile() {
     profile_->fwd_pass_stop<T>();
     if (!is_constant<T>::value) {
       reverse_pass_callback([=]() mutable { profile_->rev_pass_start(); });
-    } 
+    }
   }
 };
 
