@@ -685,7 +685,7 @@ class cvodes_integrator_adjoint_vari : public vari {
             CVodeSetQuadErrConB(memory->cvodes_mem_, indexB, SUNTRUE),
             "CVodeSetQuadErrConB");
       }
-
+      /* newer, but buggy code
       // At every time step, collect the adjoints from the output
       // variables and re-initialize the solver
       double t_init = value_of(memory->ts_.back());
@@ -776,6 +776,90 @@ class cvodes_integrator_adjoint_vari : public vari {
       for (size_t s = 0; s < args_vars_; s++) {
         args_varis_[s]->adj_ += quad(s);
       }
+
+*/
+      // old code without nice error messages, but works according to
+      // grad test
+      
+      // At every time step, collect the adjoints from the output
+      // variables and re-initialize the solver
+      double t_init = value_of(memory->ts_.back());
+      for (int i = memory->ts_.size() - 1; i >= 0; --i) {
+        // Take in the adjoints from all the output variables at this point
+        // in time
+        Eigen::VectorXd step_sens = Eigen::VectorXd::Zero(N_);
+        for (int j = 0; j < N_; j++) {
+          // std::cout << "i: " << i << ", j: " << j << std::endl;
+          state_sens(j) += non_chaining_varis_[i * N_ + j]->adj_;
+          step_sens(j) += non_chaining_varis_[i * N_ + j]->adj_;
+        }
+
+        if (ts_vars_ > 0 && i >= 0) {
+          ts_varis_[i]->adj_ += apply(
+              [&](auto&&... args) {
+                double adj = step_sens.dot(
+                    memory->f_(t_init, memory->y_[i], msgs_, args...));
+                // std::cout << "adj: " << adj << ", i: " << i << std::endl;
+                return adj;
+              },
+              memory->value_of_args_tuple_);
+        }
+
+        double t_final = value_of((i > 0) ? memory->ts_[i - 1] : memory->t0_);
+        if (t_final != t_init) {
+          check_flag_sundials(
+              CVodeReInitB(memory->cvodes_mem_, indexB, t_init, nv_state_sens),
+              "CVodeReInitB");
+
+          if (args_vars_ > 0) {
+            check_flag_sundials(
+                CVodeQuadReInitB(memory->cvodes_mem_, indexB, nv_quad),
+                "CVodeQuadReInitB");
+          }
+
+          check_flag_sundials(CVodeB(memory->cvodes_mem_, t_final, CV_NORMAL),
+                              "CVodeB");
+
+          check_flag_sundials(
+              CVodeGetB(memory->cvodes_mem_, indexB, &t_init, nv_state_sens),
+              "CVodeGetB");
+
+          if (args_vars_ > 0) {
+            check_flag_sundials(
+                CVodeGetQuadB(memory->cvodes_mem_, indexB, &t_init, nv_quad),
+                "CVodeGetQuadB");
+          }
+        }
+      }
+
+      if (t0_vars_ > 0) {
+        Eigen::VectorXd y0d = value_of(memory->y0_);
+        t0_varis_[0]->adj_ += apply(
+            [&](auto&&... args) {
+              return -state_sens.dot(memory->f_(t_init, y0d, msgs_, args...));
+            },
+            memory->value_of_args_tuple_);
+      }
+
+      if (args_vars_ > 0) {
+        check_flag_sundials(
+            CVodeGetQuadB(memory->cvodes_mem_, indexB, &t_init, nv_quad),
+            "CVodeGetQuadB");
+      }
+
+      // After integrating all the way back to t0, we finally have the
+      // the adjoints we wanted
+      // These are the dlog_density / d(initial_conditions[s]) adjoints
+      for (size_t s = 0; s < y0_vars_; s++) {
+        y0_varis_[s]->adj_ += state_sens(s);
+      }
+
+      // These are the dlog_density / d(parameters[s]) adjoints
+      for (size_t s = 0; s < args_vars_; s++) {
+        args_varis_[s]->adj_ += quad(s);
+      }
+
+      
     } catch (const std::exception& e) {
       SUNLinSolFree(LSB_);
       SUNMatDestroy(AB_);

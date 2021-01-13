@@ -166,9 +166,9 @@ ode_bdf_adjoint(const F& f, const T_y0& y0, const T_t0& t0,
                 const T_Args&... args) {
   double relative_tolerance = 1e-10;
   double absolute_tolerance = 1e-10;
-  double absolute_tolerance_B = 1e-8;
-  double absolute_tolerance_QB = 1e-6;
-  long int steps_checkpoint = 150;
+  double absolute_tolerance_B = 1e-9;
+  double absolute_tolerance_QB = 1e-8;
+  long int steps_checkpoint = 100;
   long int max_num_steps = 1e8;
 
   return ode_bdf_adjoint_tol_impl(
