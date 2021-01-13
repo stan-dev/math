@@ -207,7 +207,8 @@ class indexing_
   }
 
   /**
-   * Sets view of the underlying matrix depending on which part is written.
+   * Sets the view of the underlying matrix depending on which of its parts are
+   * written to.
    * @param bottom_diagonal Index of the top sub- or super- diagonal written
    * with nonzero elements.
    * @param top_diagonal Index of the top sub- or super- diagonal written with
