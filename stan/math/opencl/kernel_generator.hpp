@@ -76,14 +76,12 @@
  *     - Default: Bottom diagonal equals to min of bottom diagonals of
  * arguments. Top diagonal equals to max of top diagonals of arguments.
  *
- * If an operation should support being assigned to it should also define the
- * following:
- *
- * 1. Member function `generate_lhs` with same signature as `generate`
- * that returns generated code when the operation is assigned to.
- *
  * The below functions can be optionally defined for operations that support
  * being assigned to. Defaults are in `operation_cl_lhs`.
+ * - `kernel_parts generate_lhs(const std::string& i, const std::string& j,
+ *                            const std::string& var_name_arg)`:
+ *     - Generates kernel code for this expression
+ *     - Default: Generates code that copies the result of the first argument.
  * - `void set_view(int bottom_diagonal, int top_diagonal, int
  * bottom_zero_diagonal, int top_zero_diagonal)`:
  *    - Sets view of the underlying `matrix_cl` depending on where the extreme
@@ -136,6 +134,7 @@
 #include <stan/math/opencl/kernel_generator/evaluate_into.hpp>
 
 #include <stan/math/opencl/kernel_generator/matrix_cl_conversion.hpp>
+#include <stan/math/opencl/kernel_generator/compound_assignments.hpp>
 
 #include <stan/math/opencl/kernel_generator/matrix_vector_multiply.hpp>
 

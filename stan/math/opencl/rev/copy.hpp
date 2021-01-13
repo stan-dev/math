@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/rev/vari.hpp>
+#include <stan/math/opencl/copy.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
@@ -17,27 +18,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-template <typename T_arg_adj, require_eigen_t<T_arg_adj>* = nullptr>
-class op_copy_to_cl_vari final
-    : public vari_value<matrix_cl<value_type_t<T_arg_adj>>> {
-  T_arg_adj arg_adj_;
-
- public:
-  template <typename T_arg_val, require_eigen_t<T_arg_val>* = nullptr,
-            require_vt_same<T_arg_val, T_arg_adj>* = nullptr>
-  explicit op_copy_to_cl_vari(const T_arg_val& val, T_arg_adj adj)
-      : vari_value<matrix_cl<value_type_t<T_arg_adj>>>(to_matrix_cl(val)),
-        arg_adj_(adj) {}
-
-  virtual void chain() {
-    arg_adj_ += from_matrix_cl<std::decay_t<T_arg_adj>::RowsAtCompileTime,
-                               std::decay_t<T_arg_adj>::ColsAtCompileTime>(
-        this->adj_);
-  }
-};
-}  // namespace internal
-
 /** \ingroup opencl
  * Copies the source var containing Eigen matrices to destination var that has
  * data stored on the OpenCL device.
@@ -49,8 +29,11 @@ class op_copy_to_cl_vari final
 template <typename T>
 inline var_value<matrix_cl<value_type_t<T>>> to_matrix_cl(
     const var_value<T>& a) {
-  return new internal::op_copy_to_cl_vari<decltype(a.vi_->adj_)>(a.val(),
-                                                                 a.vi_->adj_);
+  return make_callback_var(to_matrix_cl(a.val()), [a](auto& res_vari) mutable {
+    a.adj()
+        += from_matrix_cl<std::decay_t<T>::RowsAtCompileTime,
+                          std::decay_t<T>::ColsAtCompileTime>(res_vari.adj());
+  });
 }
 
 /** \ingroup opencl
@@ -69,23 +52,6 @@ inline var_value<matrix_cl<value_type_t<T>>> to_matrix_cl(
                                                                  a.size()));
 }
 
-namespace internal {
-template <typename T, int Rows, int Cols,
-          require_all_kernel_expressions_t<T>* = nullptr>
-class op_copy_from_cl_vari final
-    : public vari_value<Eigen::Matrix<value_type_t<T>, Rows, Cols>> {
-  vari_value<T>& a_;
-
- public:
-  explicit op_copy_from_cl_vari(vari_value<T>& a)
-      : vari_value<Eigen::Matrix<value_type_t<T>, Rows, Cols>>(
-            from_matrix_cl<Rows, Cols>(a.val_)),
-        a_(a) {}
-
-  virtual void chain() { a_.adj_ = a_.adj_ + to_matrix_cl(this->adj_); }
-};
-}  // namespace internal
-
 /** \ingroup opencl
  * Copies the source var that has data stored on the OpenCL device to
  * destination var containing Eigen matrices.
@@ -100,7 +66,9 @@ template <int Rows = Eigen::Dynamic, int Cols = Eigen::Dynamic, typename T,
           require_all_kernel_expressions_t<T>* = nullptr>
 inline var_value<Eigen::Matrix<value_type_t<T>, Rows, Cols>> from_matrix_cl(
     const var_value<T>& a) {
-  return new internal::op_copy_from_cl_vari<T, Rows, Cols>(*a.vi_);
+  return make_callback_var(
+      from_matrix_cl<Rows, Cols>(a.val()),
+      [a](auto& res_vari) mutable { a.adj() += to_matrix_cl(res_vari.adj()); });
 }
 
 /** \ingroup opencl
@@ -122,8 +90,13 @@ inline var_value<matrix_cl<value_type_t<value_type_t<T>>>> to_matrix_cl(
       = ChainableStack::instance_->memalloc_.alloc_array<var>(src.size());
   Eigen::Map<plain_type_t<T>> src_stacked(src_array, src.rows(), src.cols());
   src_stacked = src;
-  return new internal::op_copy_to_cl_vari<decltype(src_stacked.adj())>(
-      src_stacked.val(), src_stacked.adj());
+
+  return make_callback_var(
+      to_matrix_cl(src_stacked.val()), [src_stacked](auto& res_vari) mutable {
+        src_stacked.adj() += from_matrix_cl<std::decay_t<T>::RowsAtCompileTime,
+                                            std::decay_t<T>::ColsAtCompileTime>(
+            res_vari.adj());
+      });
 }
 
 }  // namespace math
