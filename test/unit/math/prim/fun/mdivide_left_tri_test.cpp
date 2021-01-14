@@ -2,7 +2,6 @@
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-
 TEST(MathMatrixPrim, mdivide_left_tri_val) {
   using stan::math::mdivide_left_tri;
   stan::math::matrix_d I = Eigen::MatrixXd::Identity(2, 2);

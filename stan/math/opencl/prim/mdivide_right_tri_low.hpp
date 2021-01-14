@@ -22,8 +22,7 @@ namespace math {
  */
 template <typename T1, typename T2,
           require_all_kernel_expressions_t<T1, T2>* = nullptr>
-inline matrix_cl<double> mdivide_right_tri_low(
-    const T2& b, const T1& A) {
+inline matrix_cl<double> mdivide_right_tri_low(const T2& b, const T1& A) {
   check_square("mdivide_right_tri_low (OpenCL)", "A", A);
   check_multiplicable("mdivide_right_tri_low (OpenCL)", "b", b, "A", A);
   if (A.size() == 0 || b.size() == 0) {
