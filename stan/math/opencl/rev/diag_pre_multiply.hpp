@@ -7,6 +7,7 @@
 #include <stan/math/rev/fun/adjoint_of.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/eval.hpp>
 
 namespace stan {
 namespace math {
@@ -17,8 +18,8 @@ namespace math {
  *
  * @tparam T1 type of the vector/row_vector
  * @tparam T2 type of the matrix
- * @param m1 input vector/row_vector
- * @param m2 input matrix
+ * @param v1 input vector/row_vector
+ * @param v2 input matrix
  *
  * @return product of the diagonal matrix formed from the
  * vector or row_vector and a matrix.

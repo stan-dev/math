@@ -7,6 +7,7 @@
 #include <stan/math/rev/fun/adjoint_of.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/eval.hpp>
 
 namespace stan {
 namespace math {
