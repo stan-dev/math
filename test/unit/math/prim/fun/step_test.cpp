@@ -1,7 +1,7 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 #include <limits>
- 
+
 TEST(MathFunctions, step_double) {
   using stan::math::step;
   EXPECT_EQ(1.0, step(3.7));
