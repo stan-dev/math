@@ -4,6 +4,7 @@
 
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/adjoint_of.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 
 namespace stan {
@@ -24,8 +25,8 @@ template <
     require_all_nonscalar_prim_or_rev_kernel_expression_t<T_a, T_b>* = nullptr,
     require_any_var_t<T_a, T_b>* = nullptr>
 inline var_value<matrix_cl<double>> multiply_log(T_a&& a, T_b&& b) {
-  arena_t<T_a> a_arena = std::forward<T_a>(a);
-  arena_t<T_b> b_arena = std::forward<T_b>(b);
+  const arena_t<T_a>& a_arena = std::forward<T_a>(a);
+  const arena_t<T_b>& b_arena = std::forward<T_b>(b);
 
   matrix_cl<double> res_val
       = multiply_log(value_of(a_arena), value_of(b_arena));
@@ -56,25 +57,22 @@ template <typename T_a, typename T_b,
           require_nonscalar_prim_or_rev_kernel_expression_t<T_a>* = nullptr,
           require_stan_scalar_t<T_b>* = nullptr,
           require_any_var_t<T_a, T_b>* = nullptr>
-inline var_value<matrix_cl<double>> multiply_log(T_a&& a, T_b&& b) {
-  arena_t<T_a> a_arena = std::forward<T_a>(a);
-  arena_t<T_b> b_arena = std::forward<T_b>(b);
+inline var_value<matrix_cl<double>> multiply_log(T_a&& a, const T_b& b) {
+  const arena_t<T_a>& a_arena = std::forward<T_a>(a);
 
   matrix_cl<double> res_val
-      = multiply_log(value_of(a_arena), value_of(b_arena));
+      = multiply_log(value_of(a_arena), value_of(b));
 
   return make_callback_var(
       res_val,
-      [a_arena, b_arena](const vari_value<matrix_cl<double>>& res) mutable {
+      [a_arena, b](const vari_value<matrix_cl<double>>& res) mutable {
         if (!is_constant<T_a>::value) {
           auto& a_adj = forward_as<var_value<matrix_cl<double>>>(a_arena).adj();
-          a_adj = a_adj + elt_multiply(res.adj(), log(value_of(b_arena)));
+          a_adj = a_adj + elt_multiply(res.adj(), log(value_of(b)));
         }
         if (!is_constant<T_b>::value) {
-          auto& y_adj = forward_as<var_value<double>>(b_arena).adj();
-          y_adj = y_adj
-                  + sum(elt_multiply(res.adj(), elt_divide(value_of(a_arena),
-                                                           value_of(b_arena))));
+          adjoint_of(b) += sum(elt_multiply(res.adj(), elt_divide(value_of(a_arena),
+                                                           value_of(b))));
         }
       });
 }
@@ -92,24 +90,22 @@ template <typename T_a, typename T_b,
           require_nonscalar_prim_or_rev_kernel_expression_t<T_b>* = nullptr,
           require_stan_scalar_t<T_a>* = nullptr,
           require_any_var_t<T_a, T_b>* = nullptr>
-inline var_value<matrix_cl<double>> multiply_log(T_a&& a, T_b&& b) {
-  arena_t<T_a> a_arena = std::forward<T_a>(a);
-  arena_t<T_b> b_arena = std::forward<T_b>(b);
+inline var_value<matrix_cl<double>> multiply_log(const T_a& a, T_b&& b) {
+  const arena_t<T_b>& b_arena = std::forward<T_b>(b);
 
   matrix_cl<double> res_val
-      = multiply_log(value_of(a_arena), value_of(b_arena));
+      = multiply_log(value_of(a), value_of(b_arena));
 
   return make_callback_var(
       res_val,
-      [a_arena, b_arena](const vari_value<matrix_cl<double>>& res) mutable {
+      [a, b_arena](const vari_value<matrix_cl<double>>& res) mutable {
         if (!is_constant<T_a>::value) {
-          auto& a_adj = forward_as<var_value<double>>(a_arena).adj();
-          a_adj = a_adj + sum(elt_multiply(res.adj(), log(value_of(b_arena))));
+          adjoint_of(a) += sum(elt_multiply(res.adj(), log(value_of(b_arena))));
         }
         if (!is_constant<T_b>::value) {
           auto& b_adj = forward_as<var_value<matrix_cl<double>>>(b_arena).adj();
           b_adj = b_adj
-                  + elt_multiply(res.adj(), elt_divide(value_of(a_arena),
+                  + elt_multiply(res.adj(), elt_divide(value_of(a),
                                                        value_of(b_arena)));
         }
       });

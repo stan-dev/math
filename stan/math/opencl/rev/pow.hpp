@@ -7,6 +7,7 @@
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/prim/sum.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/adjoint_of.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -29,8 +30,8 @@ template <
     require_all_nonscalar_prim_or_rev_kernel_expression_t<T_a, T_b>* = nullptr,
     require_any_var_t<T_a, T_b>* = nullptr>
 inline var_value<matrix_cl<double>> pow(T_a&& a, T_b&& b) {
-  arena_t<T_a> a_arena = std::forward<T_a>(a);
-  arena_t<T_b> b_arena = std::forward<T_b>(b);
+  const arena_t<T_a>& a_arena = std::forward<T_a>(a);
+  const arena_t<T_b>& b_arena = std::forward<T_b>(b);
 
   matrix_cl<double> res_val = pow(value_of(a_arena), value_of(b_arena));
 
@@ -74,15 +75,14 @@ template <typename T_a, typename T_b,
           require_nonscalar_prim_or_rev_kernel_expression_t<T_a>* = nullptr,
           require_stan_scalar_t<T_b>* = nullptr,
           require_any_var_t<T_a, T_b>* = nullptr>
-inline var_value<matrix_cl<double>> pow(T_a&& a, T_b&& b) {
-  arena_t<T_a> a_arena = std::forward<T_a>(a);
-  arena_t<T_b> b_arena = std::forward<T_b>(b);
+inline var_value<matrix_cl<double>> pow(T_a&& a, const T_b& b) {
+  const arena_t<T_a>& a_arena = std::forward<T_a>(a);
 
-  matrix_cl<double> res_val = pow(value_of(a_arena), value_of(b_arena));
+  matrix_cl<double> res_val = pow(value_of(a_arena), value_of(b));
 
   return make_callback_var(
       res_val,
-      [a_arena, b_arena](const vari_value<matrix_cl<double>>& res) mutable {
+      [a_arena, b](const vari_value<matrix_cl<double>>& res) mutable {
         auto isnan_res = isnan(res.val());
         auto constant_nan = constant(NOT_A_NUMBER, res.rows(), res.cols());
         auto zero_a_arena = value_of(a_arena) == 0.0;
@@ -96,14 +96,12 @@ inline var_value<matrix_cl<double>> pow(T_a&& a, T_b&& b) {
                       select(zero_a_arena, zeros,
                              elt_multiply(
                                  res.adj(),
-                                 elt_multiply(value_of(b_arena),
+                                 elt_multiply(value_of(b),
                                               elt_divide(res.val(),
                                                          value_of(a_arena))))));
         }
         if (!is_constant<T_b>::value) {
-          auto& y_adj = forward_as<var_value<double>>(b_arena).adj();
-          y_adj = y_adj
-                  + sum(select(
+          adjoint_of(b) += sum(select(
                         isnan_res, constant_nan,
                         select(zero_a_arena, zeros,
                                elt_multiply(res.adj(),
@@ -127,23 +125,20 @@ template <typename T_a, typename T_b,
           require_nonscalar_prim_or_rev_kernel_expression_t<T_b>* = nullptr,
           require_stan_scalar_t<T_a>* = nullptr,
           require_any_var_t<T_a, T_b>* = nullptr>
-inline var_value<matrix_cl<double>> pow(T_a&& a, T_b&& b) {
-  arena_t<T_a> a_arena = std::forward<T_a>(a);
-  arena_t<T_b> b_arena = std::forward<T_b>(b);
+inline var_value<matrix_cl<double>> pow(const T_a& a, T_b&& b) {
+  const arena_t<T_b>& b_arena = std::forward<T_b>(b);
 
-  matrix_cl<double> res_val = pow(value_of(a_arena), value_of(b_arena));
+  matrix_cl<double> res_val = pow(value_of(a), value_of(b_arena));
 
   return make_callback_var(
       res_val,
-      [a_arena, b_arena](const vari_value<matrix_cl<double>>& res) mutable {
+      [a, b_arena](const vari_value<matrix_cl<double>>& res) mutable {
         auto isnan_res = isnan(res.val());
         auto constant_nan = constant(NOT_A_NUMBER, res.rows(), res.cols());
-        auto zero_a_arena = value_of(a_arena) == 0.0;
+        auto zero_a_arena = value_of(a) == 0.0;
         auto zeros = constant(0, res.rows(), res.cols());
         if (!is_constant<T_a>::value) {
-          auto& a_adj = forward_as<var_value<double>>(a_arena).adj();
-          a_adj = a_adj
-                  + sum(select(
+          adjoint_of(a) += sum(select(
                         isnan_res, constant_nan,
                         select(
                             zero_a_arena, zeros,
@@ -151,16 +146,16 @@ inline var_value<matrix_cl<double>> pow(T_a&& a, T_b&& b) {
                                 res.adj(),
                                 elt_multiply(value_of(b_arena),
                                              elt_divide(res.val(),
-                                                        value_of(a_arena)))))));
+                                                        value_of(a)))))));
         }
         if (!is_constant<T_b>::value) {
-          auto& y_adj = forward_as<var_value<matrix_cl<double>>>(b_arena).adj();
-          y_adj = y_adj
+          auto& b_adj = forward_as<var_value<matrix_cl<double>>>(b_arena).adj();
+          b_adj = b_adj
                   + select(
                         isnan_res, constant_nan,
                         select(zero_a_arena, zeros,
                                elt_multiply(res.adj(),
-                                            elt_multiply(log(value_of(a_arena)),
+                                            elt_multiply(log(value_of(a)),
                                                          res.val()))));
         }
       });

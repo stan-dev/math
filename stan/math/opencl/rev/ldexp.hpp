@@ -23,8 +23,8 @@ template <typename T_a, typename T_b,
           require_all_kernel_expressions_and_none_scalar_t<T_a>* = nullptr,
           require_all_kernel_expressions_t<T_b>* = nullptr>
 inline var_value<matrix_cl<double>> ldexp(const var_value<T_a>& a,
-                                          const T_b& b) {
-  const arena_t<T_b>& b_arena = b;
+                                          T_b&& b) {
+  const arena_t<T_b>& b_arena = std::forward<T_b>(b);
 
   var_value<matrix_cl<double>> res = ldexp(a.val(), b);
 
@@ -37,7 +37,7 @@ inline var_value<matrix_cl<double>> ldexp(const var_value<T_a>& a,
 
 /**
  * Returns the elementwise `ldexp()` of the input
- * `var_value<matrix_cl<double>>` and kernel generator expression.
+ * `var_value<double>` and kernel generator expression.
  *
  * @param a input rev kernel generator expression representing
  * significands
@@ -48,12 +48,15 @@ inline var_value<matrix_cl<double>> ldexp(const var_value<T_a>& a,
 template <typename T_b,
           require_all_kernel_expressions_and_none_scalar_t<T_b>* = nullptr>
 inline var_value<matrix_cl<double>> ldexp(const var_value<double>& a,
-                                          const T_b& b) {
-  const arena_t<T_b>& b_arena = b;
+                                          T_b&& b) {
+  const arena_t<T_b>& b_arena = std::forward<T_b>(b);
+
   var_value<matrix_cl<double>> res = ldexp(a.val(), b);
+
   reverse_pass_callback([a, b_arena, res]() mutable {
     a.adj() = a.adj() + sum(ldexp(res.adj(), value_of(b_arena)));
   });
+
   return res;
 }
 

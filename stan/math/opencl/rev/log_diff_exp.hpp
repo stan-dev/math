@@ -7,6 +7,7 @@
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/prim/sum.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/adjoint_of.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -85,27 +86,24 @@ template <typename T_x, typename T_y,
           require_nonscalar_prim_or_rev_kernel_expression_t<T_x>* = nullptr,
           require_stan_scalar_t<T_y>* = nullptr,
           require_any_var_t<T_x, T_y>* = nullptr>
-inline var_value<matrix_cl<double>> log_diff_exp(T_x&& x, T_y&& y) {
+inline var_value<matrix_cl<double>> log_diff_exp(T_x&& x, const T_y& y) {
   arena_t<T_x> x_arena = std::forward<T_x>(x);
-  arena_t<T_y> y_arena = std::forward<T_y>(y);
 
   matrix_cl<double> res_val
-      = log_diff_exp(value_of(x_arena), value_of(y_arena));
+      = log_diff_exp(value_of(x_arena), value_of(y));
 
   return make_callback_var(
       res_val,
-      [x_arena, y_arena](const vari_value<matrix_cl<double>>& res) mutable {
+      [x_arena, y](const vari_value<matrix_cl<double>>& res) mutable {
         if (!is_constant<T_x>::value) {
           auto& x_adj = forward_as<var_value<matrix_cl<double>>>(x_arena).adj();
           x_adj = x_adj
                   - elt_divide(res.adj(),
-                               expm1(value_of(y_arena) - value_of(x_arena)));
+                               expm1(value_of(y) - value_of(x_arena)));
         }
         if (!is_constant<T_y>::value) {
-          auto& y_adj = forward_as<var_value<double>>(y_arena).adj();
-          y_adj = y_adj
-                  - sum(elt_divide(res.adj(), expm1(value_of(x_arena)
-                                                    - value_of(y_arena))));
+          adjoint_of(y) -= sum(elt_divide(res.adj(), expm1(value_of(x_arena)
+                                                    - value_of(y))));
         }
       });
 }
@@ -127,27 +125,24 @@ template <typename T_x, typename T_y,
           require_nonscalar_prim_or_rev_kernel_expression_t<T_y>* = nullptr,
           require_stan_scalar_t<T_x>* = nullptr,
           require_any_var_t<T_x, T_y>* = nullptr>
-inline var_value<matrix_cl<double>> log_diff_exp(T_x&& x, T_y&& y) {
-  arena_t<T_x> x_arena = std::forward<T_x>(x);
+inline var_value<matrix_cl<double>> log_diff_exp(const T_x& x, T_y&& y) {
   arena_t<T_y> y_arena = std::forward<T_y>(y);
 
   matrix_cl<double> res_val
-      = log_diff_exp(value_of(x_arena), value_of(y_arena));
+      = log_diff_exp(value_of(x), value_of(y_arena));
 
   return make_callback_var(
       res_val,
-      [x_arena, y_arena](const vari_value<matrix_cl<double>>& res) mutable {
+      [x, y_arena](const vari_value<matrix_cl<double>>& res) mutable {
         if (!is_constant<T_x>::value) {
-          auto& x_adj = forward_as<var_value<double>>(x_arena).adj();
-          x_adj = x_adj
-                  - sum(elt_divide(res.adj(), expm1(value_of(y_arena)
-                                                    - value_of(x_arena))));
+          adjoint_of(x) -= sum(elt_divide(res.adj(), expm1(value_of(y_arena)
+                                                    - value_of(x))));
         }
         if (!is_constant<T_y>::value) {
           auto& y_adj = forward_as<var_value<matrix_cl<double>>>(y_arena).adj();
           y_adj = y_adj
                   - elt_divide(res.adj(),
-                               expm1(value_of(x_arena) - value_of(y_arena)));
+                               expm1(value_of(x) - value_of(y_arena)));
         }
       });
 }
