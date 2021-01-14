@@ -260,8 +260,6 @@ TEST(StanMathOdeIntegrateODEGradMat, var_var) {
   }
 }
 
-
-
 template <int state>
 class test_functor_sum_var_var {
   int lmm_;
@@ -311,15 +309,19 @@ TEST(StanMathOdeIntegrateODEGradMat, sum_var_var) {
     stan::math::gradient(func1, x, f, grad);
 
     EXPECT_NEAR(y1(t1, omega, chi) + y1(t2, omega, chi), f, 1e-8);
-    EXPECT_NEAR(dy1_domega(t1, omega, chi) + dy1_domega(t2, omega, chi), grad(0), 1e-7);
-    EXPECT_NEAR(dy1_dchi(t1, omega, chi) + dy1_dchi(t2, omega, chi), grad(1), 1e-7);
+    EXPECT_NEAR(dy1_domega(t1, omega, chi) + dy1_domega(t2, omega, chi),
+                grad(0), 1e-7);
+    EXPECT_NEAR(dy1_dchi(t1, omega, chi) + dy1_dchi(t2, omega, chi), grad(1),
+                1e-7);
 
     test_functor_sum_var_var<1> func2(TEST_CVODES_ADAMS);
     stan::math::gradient(func2, x, f, grad);
 
     EXPECT_NEAR(y2(t1, omega, chi) + y2(t2, omega, chi), f, 1e-8);
-    EXPECT_NEAR(dy2_domega(t1, omega, chi) + dy2_domega(t2, omega, chi), grad(0), 1e-6);
-    EXPECT_NEAR(dy2_dchi(t1, omega, chi) + dy2_dchi(t2, omega, chi), grad(1), 1e-7);
+    EXPECT_NEAR(dy2_domega(t1, omega, chi) + dy2_domega(t2, omega, chi),
+                grad(0), 1e-6);
+    EXPECT_NEAR(dy2_dchi(t1, omega, chi) + dy2_dchi(t2, omega, chi), grad(1),
+                1e-7);
   }
 
   {
@@ -329,14 +331,18 @@ TEST(StanMathOdeIntegrateODEGradMat, sum_var_var) {
     stan::math::gradient(func1, x, f, grad);
 
     EXPECT_NEAR(y1(t1, omega, chi) + y1(t2, omega, chi), f, 1e-8);
-    EXPECT_NEAR(dy1_domega(t1, omega, chi) + dy1_domega(t2, omega, chi), grad(0), 1e-7);
-    EXPECT_NEAR(dy1_dchi(t1, omega, chi) + dy1_dchi(t2, omega, chi), grad(1), 1e-7);
+    EXPECT_NEAR(dy1_domega(t1, omega, chi) + dy1_domega(t2, omega, chi),
+                grad(0), 1e-7);
+    EXPECT_NEAR(dy1_dchi(t1, omega, chi) + dy1_dchi(t2, omega, chi), grad(1),
+                1e-7);
 
     test_functor_sum_var_var<1> func2(TEST_CVODES_BDF);
     stan::math::gradient(func2, x, f, grad);
 
     EXPECT_NEAR(y2(t1, omega, chi) + y2(t2, omega, chi), f, 1e-8);
-    EXPECT_NEAR(dy2_domega(t1, omega, chi) + dy2_domega(t2, omega, chi), grad(0), 1e-6);
-    EXPECT_NEAR(dy2_dchi(t1, omega, chi) + dy2_dchi(t2, omega, chi), grad(1), 1e-7);
+    EXPECT_NEAR(dy2_domega(t1, omega, chi) + dy2_domega(t2, omega, chi),
+                grad(0), 1e-6);
+    EXPECT_NEAR(dy2_dchi(t1, omega, chi) + dy2_dchi(t2, omega, chi), grad(1),
+                1e-7);
   }
 }
