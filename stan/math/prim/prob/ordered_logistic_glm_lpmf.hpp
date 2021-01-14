@@ -74,7 +74,7 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
   T_cuts_ref cuts_ref = cuts;
   const auto& cuts_val = value_of_rec(cuts_ref);
   const auto& cuts_val_vec = to_ref(as_column_vector_or_scalar(cuts_val));
-  check_bounded(function, "Vector of dependent variables", y_ref, 1, N_classes);
+  check_bounded(function, "Vector of dependent variables", value_of(y_ref), 1, N_classes);
   check_ordered(function, "Cut-points", cuts_val_vec);
   if (N_classes > 1) {
     if (N_classes > 2) {

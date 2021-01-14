@@ -41,8 +41,8 @@ return_type_t<T_prob> bernoulli_lpmf(const T_n& n, const T_prob& theta) {
                          "Probability parameter", theta);
   const T_n_ref n_ref = to_ref(n);
   const T_theta_ref theta_ref = to_ref(theta);
-  check_bounded(function, "n", n_ref, 0, 1);
-  check_bounded(function, "Probability parameter", theta_ref, 0.0, 1.0);
+  check_bounded(function, "n", value_of(n_ref), 0, 1);
+  check_bounded(function, "Probability parameter", value_of(theta_ref), 0.0, 1.0);
 
   if (size_zero(n, theta)) {
     return 0.0;

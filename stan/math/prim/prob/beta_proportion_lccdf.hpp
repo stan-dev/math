@@ -64,7 +64,7 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lccdf(const T_y& y,
   check_positive(function, "Location parameter", mu_ref);
   check_less(function, "Location parameter", mu_ref, 1.0);
   check_positive_finite(function, "Precision parameter", kappa_ref);
-  check_bounded(function, "Random variable", y_ref, 0.0, 1.0);
+  check_bounded(function, "Random variable", value_of(y_ref), 0.0, 1.0);
 
   T_partials_return ccdf_log(0.0);
   operands_and_partials<T_y_ref, T_mu_ref, T_kappa_ref> ops_partials(

@@ -103,7 +103,7 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
   const auto& lambda_arr = as_array_or_scalar(lambda_ref);
   ref_type_t<decltype(value_of(lambda_arr))> lambda_val = value_of(lambda_arr);
 
-  check_bounded(function, "Random variable", y_ref, 1, K);
+  check_bounded(function, "Random variable", value_of(y_ref), 1, K);
   check_finite(function, "Location parameter", lambda_val);
 
   check_nonzero_size(function, "Cut-points", c_vec[0]);

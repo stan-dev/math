@@ -84,7 +84,7 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
   check_positive(function, "Location parameter", mu_val);
   check_less(function, "Location parameter", mu_val, 1.0);
   check_positive_finite(function, "Precision parameter", kappa_val);
-  check_bounded(function, "Random variable", y_val, 0, 1);
+  check_bounded(function, "Random variable", value_of(y_val), 0, 1);
 
   if (!include_summand<propto, T_y, T_loc, T_prec>::value) {
     return 0;
