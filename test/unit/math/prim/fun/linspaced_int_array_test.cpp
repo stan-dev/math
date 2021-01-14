@@ -22,7 +22,7 @@ TEST(MathFunctions, linspaced_int_array) {
                        std::vector<int>({0, 3, 6, 9, 12}));
 }
 
-TEST(MathFunctions, linspaced_array_throw) {
+TEST(MathFunctions, linspaced_int_array_throw) {
   using stan::math::linspaced_int_array;
   int low = -2;
   int high = 5;
