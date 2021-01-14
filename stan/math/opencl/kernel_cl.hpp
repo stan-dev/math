@@ -29,7 +29,7 @@ namespace internal {
  * @param t The type that will be returned.
  * @return the input t.
  */
-template <typename T, typename K = double>
+template <typename T, require_not_matrix_cl_t<T>* = nullptr>
 inline const T& get_kernel_args(const T& t) {
   return t;
 }
@@ -41,8 +41,8 @@ inline const T& get_kernel_args(const T& t) {
  * @param m The \c matrix with an OpenCL Buffer.
  * @return The OpenCL Buffer.
  */
-template <typename K>
-inline const cl::Buffer& get_kernel_args(const stan::math::matrix_cl<K>& m) {
+template <typename K, require_matrix_cl_t<K>* = nullptr>
+inline const cl::Buffer& get_kernel_args(const K& m) {
   return m.buffer();
 }
 
@@ -61,13 +61,13 @@ struct assign_event_helper {
    * @param e the event to be assigned.
    * @param m The \c matrix_cl to be assigned to.
    */
-  inline void set(const cl::Event& e, const stan::math::matrix_cl<K>& m) {}
+  inline void set(const cl::Event& e, const K& m) {}
 };
 
 // Specialization for \c in_buffer
 template <typename K>
 struct assign_event_helper<in_buffer, K> {
-  inline void set(const cl::Event& e, const stan::math::matrix_cl<K>& m) {
+  inline void set(const cl::Event& e, const K& m) {
     m.add_read_event(e);
   }
 };
@@ -75,7 +75,7 @@ struct assign_event_helper<in_buffer, K> {
 // Specialization for \c out_buffer
 template <typename K>
 struct assign_event_helper<out_buffer, K> {
-  inline void set(const cl::Event& e, const stan::math::matrix_cl<K>& m) {
+  inline void set(const cl::Event& e, const K& m) {
     m.add_write_event(e);
   }
 };
@@ -83,7 +83,7 @@ struct assign_event_helper<out_buffer, K> {
 // Specialization for \c in_out_buffer
 template <typename K>
 struct assign_event_helper<in_out_buffer, K> {
-  inline void set(const cl::Event& e, const stan::math::matrix_cl<K>& m) {
+  inline void set(const cl::Event& e, const K& m) {
     m.add_read_write_event(e);
   }
 };
@@ -105,9 +105,9 @@ inline void assign_event(const cl::Event& e, const T&) {}
  * @param e The event to be assigned.
  * @param m The \c matrix_cl to be assigned
  */
-template <typename T, typename K>
+template <typename T, typename K, require_matrix_cl_t<K>* = nullptr>
 inline void assign_event(const cl::Event& e,
-                         const stan::math::matrix_cl<K>& m) {
+                         const K& m) {
   assign_event_helper<T, K> helper;
   helper.set(e, m);
 }
@@ -159,7 +159,7 @@ struct select_event_helper {
 // Specialization for in_buffer
 template <typename K>
 struct select_event_helper<in_buffer, K> {
-  inline const std::vector<cl::Event> get(const stan::math::matrix_cl<K>& m) {
+  inline const std::vector<cl::Event> get(const K& m) {
     return m.write_events();
   }
 };
@@ -167,7 +167,7 @@ struct select_event_helper<in_buffer, K> {
 // Specialization for out_buffer
 template <typename K>
 struct select_event_helper<out_buffer, K> {
-  inline const std::vector<cl::Event> get(const stan::math::matrix_cl<K>& m) {
+  inline const std::vector<cl::Event> get(const K& m) {
     return m.read_write_events();
   }
 };
@@ -175,7 +175,7 @@ struct select_event_helper<out_buffer, K> {
 // Specialization for in_out_buffer
 template <typename K>
 struct select_event_helper<in_out_buffer, K> {
-  inline const std::vector<cl::Event> get(const stan::math::matrix_cl<K>& m) {
+  inline const std::vector<cl::Event> get(const K& m) {
     return m.read_write_events();
   }
 };
@@ -196,9 +196,9 @@ inline const std::vector<cl::Event> select_events(const T& m) {
 }
 
 // Specialization for \c matrix_cl
-template <typename T, typename K>
+template <typename T, typename K, require_matrix_cl_t<K>* = nullptr>
 inline const std::vector<cl::Event> select_events(
-    const stan::math::matrix_cl<K>& m) {
+    const K& m) {
   select_event_helper<T, K> helper;
   return helper.get(m);
 }

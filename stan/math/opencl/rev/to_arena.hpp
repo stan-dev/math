@@ -20,9 +20,9 @@ namespace math {
  * @param a argument
  * @return argument
  */
-template <typename T>
-arena_t<matrix_cl<T>> to_arena(const matrix_cl<T>& a) {
-  arena_t<matrix_cl<T>> res(a.buffer(), a.rows(), a.cols(), a.view());
+template <typename T, require_matrix_cl_t<T>* = nullptr>
+arena_t<T> to_arena(const T& a) {
+  arena_t<T> res(a.buffer(), a.rows(), a.cols(), a.view());
   for (cl::Event e : a.read_events()) {
     res.add_read_event(e);
   }
