@@ -17,8 +17,8 @@ namespace math {
    \f[
    \mbox{step}(x) =
    \begin{cases}
-     0 & \mbox{if } x \leq 0 \\
-     1 & \mbox{if } x > 0  \\[6pt]
+     0 & \mbox{if } x \le 0 \\
+     1 & \mbox{if } x \ge 0  \\[6pt]
      0 & \mbox{if } x = \textrm{NaN}
    \end{cases}
    \f]
@@ -37,11 +37,11 @@ inline T step(const T& y) {
  */
 struct step_fun {
   /**
-   * Return the sign of the specified argument.
+   * Return zero if the value is less than zero and one otherwise
    *
    * @tparam T type of argument
    * @param y argument
-   * @return zero if the value is less than zero, and one otherwise
+   * @return step(y)
    */
   template <typename T>
   static inline T fun(const T& y) {
