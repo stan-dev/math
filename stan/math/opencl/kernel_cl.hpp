@@ -67,25 +67,19 @@ struct assign_event_helper {
 // Specialization for \c in_buffer
 template <typename K>
 struct assign_event_helper<in_buffer, K> {
-  inline void set(const cl::Event& e, const K& m) {
-    m.add_read_event(e);
-  }
+  inline void set(const cl::Event& e, const K& m) { m.add_read_event(e); }
 };
 
 // Specialization for \c out_buffer
 template <typename K>
 struct assign_event_helper<out_buffer, K> {
-  inline void set(const cl::Event& e, const K& m) {
-    m.add_write_event(e);
-  }
+  inline void set(const cl::Event& e, const K& m) { m.add_write_event(e); }
 };
 
 // Specialization for \c in_out_buffer
 template <typename K>
 struct assign_event_helper<in_out_buffer, K> {
-  inline void set(const cl::Event& e, const K& m) {
-    m.add_read_write_event(e);
-  }
+  inline void set(const cl::Event& e, const K& m) { m.add_read_write_event(e); }
 };
 
 /** \ingroup kernel_executor_opencl
@@ -106,8 +100,7 @@ inline void assign_event(const cl::Event& e, const T&) {}
  * @param m The \c matrix_cl to be assigned
  */
 template <typename T, typename K, require_matrix_cl_t<K>* = nullptr>
-inline void assign_event(const cl::Event& e,
-                         const K& m) {
+inline void assign_event(const cl::Event& e, const K& m) {
   assign_event_helper<T, K> helper;
   helper.set(e, m);
 }
@@ -197,8 +190,7 @@ inline const std::vector<cl::Event> select_events(const T& m) {
 
 // Specialization for \c matrix_cl
 template <typename T, typename K, require_matrix_cl_t<K>* = nullptr>
-inline const std::vector<cl::Event> select_events(
-    const K& m) {
+inline const std::vector<cl::Event> select_events(const K& m) {
   select_event_helper<T, K> helper;
   return helper.get(m);
 }
