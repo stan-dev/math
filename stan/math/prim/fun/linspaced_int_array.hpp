@@ -11,7 +11,7 @@ namespace math {
 /**
  * Return an array of linearly spaced integers.
  *
- * This produces an array from low to high (included) with integers spaced
+ * This produces an array from low to high (inclusive) with integers spaced
  * as (high - low) / (K - 1). For K=1, the array will contain the high value;
  * for K=0 it returns an empty array.
  *
@@ -20,8 +20,7 @@ namespace math {
  * @param high largest value
  * @return An array of size K with elements linearly spaced between
  * low and high.
- * @throw std::domain_error if K is negative, if high is less than low
- * or if ().
+ * @throw std::domain_error if K is negative or high is less than low.
  */
 inline std::vector<double> linspaced_int_array(int K, int low, int high) {
   static const char* function = "linspaced_int_array";
