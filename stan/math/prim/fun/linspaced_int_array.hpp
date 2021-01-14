@@ -31,7 +31,8 @@ inline std::vector<int> linspaced_int_array(int K, int low, int high) {
   }
 
   Eigen::VectorXi v = Eigen::VectorXi::LinSpaced(K, low, high);
-  return {v.data(), v.data() + K};;
+  return {v.data(), v.data() + K};
+  ;
 }
 
 }  // namespace math
