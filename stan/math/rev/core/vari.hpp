@@ -557,9 +557,10 @@ class vari_view_eigen {
 };
 
 template <typename T>
-class vari_view<T, require_not_plain_type_t<T>> final
-    : public vari_base,
-      public vari_view_eigen<vari_view<T, require_not_plain_type_t<T>>> {
+class vari_view<
+    T, require_all_t<is_eigen<T>, bool_constant<!is_plain_type<T>::value>>>
+    final : public vari_base,
+            public vari_view_eigen<vari_view<T, require_not_plain_type_t<T>>> {
  public:
   using PlainObject = plain_type_t<T>;
   using value_type = std::decay_t<T>;  // The underlying type for this class

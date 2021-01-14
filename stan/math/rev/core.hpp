@@ -51,6 +51,7 @@
 #include <stan/math/rev/core/precomp_vvv_vari.hpp>
 #include <stan/math/rev/core/precomputed_gradients.hpp>
 #include <stan/math/rev/core/print_stack.hpp>
+#include <stan/math/rev/core/profiling.hpp>
 #include <stan/math/rev/core/read_var.hpp>
 #include <stan/math/rev/core/recover_memory.hpp>
 #include <stan/math/rev/core/recover_memory_nested.hpp>

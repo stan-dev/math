@@ -67,22 +67,25 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
 
   /**
    * Generates kernel code for this and nested expressions.
-   * @param[in,out] generated map from (pointer to) already generated operations
-   * to variable names
+   * @param[in,out] generated map from (pointer to) already generated local
+   * operations to variable names
+   * @param[in,out] generated_all map from (pointer to) already generated all
+   * operations to variable names
    * @param name_gen name generator for this kernel
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts get_kernel_parts_lhs(
-      std::map<const void*, const char*>& generated, name_generator& name_gen,
-      const std::string& row_index_name,
+      std::map<const void*, const char*>& generated,
+      std::map<const void*, const char*>& generated_all,
+      name_generator& name_gen, const std::string& row_index_name,
       const std::string& col_index_name) const {
     kernel_parts res;
     this->var_name_ = name_gen.generate();
     generated[this] = "";
-    res = arg_.get_kernel_parts(generated, name_gen, row_index_name,
-                                col_index_name, false);
+    res = arg_.get_kernel_parts(generated, generated_all, name_gen,
+                                row_index_name, col_index_name, false);
 
     res.args += "__global int* " + var_name_ + "_buffer, __global "
                 + type_str<value_type_t<T>>() + "* " + var_name_ + "_value, ";
@@ -98,16 +101,19 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
 
   /**
    * Sets kernel arguments for this expression.
-   * @param[in,out] generated map of expressions that already set their kernel
-   * arguments
+   * @param[in,out] generated map from (pointer to) already generated local
+   * operations to variable names
+   * @param[in,out] generated_all map from (pointer to) already generated all
+   * operations to variable names
    * @param kernel kernel to set arguments on
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
   inline void set_args(std::map<const void*, const char*>& generated,
+                       std::map<const void*, const char*>& generated_all,
                        cl::Kernel& kernel, int& arg_num) const {
     generated[this] = "";
-    arg_.set_args(generated, kernel, arg_num);
+    arg_.set_args(generated, generated_all, kernel, arg_num);
     kernel.setArg(arg_num++, buffer_.buffer());
     kernel.setArg(arg_num++, value_.buffer());
   }
