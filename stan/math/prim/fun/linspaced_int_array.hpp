@@ -11,10 +11,17 @@ namespace math {
 /**
  * Return an array of linearly spaced integers.
  *
- * This produces an array from low to high (inclusive) with integers spaced
- * as (high - low) / (K - 1). For K=1, the array will contain the high value;
- * for K=0 it returns an empty array. If there are less integers between
- * high and low than K, there will be duplicate integers.
+ * This produces an array from `low` to `high` (inclusive). If `high - low` is
+ * greater or equal to `K - 1`, then the integers are evenly spaced. If it is
+ * not possible to get from `low` to `high` with a multiple of an integer, `high`
+ * is lowered until this is possible.
+ *
+ * If `K - 1` is greater than `high - low`, then integers are repeated. For
+ * instance, `low, low, low + 1, low + 1, ...`. `high` is lowered until `K - 1`
+ * is a multiple of `high - low`
+ *
+ * For `K = 1`, the array will contain the `high` value. For `K = 0` it returns
+ * an empty array.
  *
  * @param K size of the array
  * @param low smallest value
