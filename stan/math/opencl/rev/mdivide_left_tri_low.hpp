@@ -2,6 +2,7 @@
 #define STAN_MATH_OPENCL_REV_MDIVIDE_LEFT_TRI_LOW_HPP
 #ifdef STAN_OPENCL
 
+#include <stan/math/opencl/rev/arena_type.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/prim/mdivide_left_tri_low.hpp>
 #include <stan/math/rev/core.hpp>
@@ -27,17 +28,25 @@ template <
     require_all_nonscalar_prim_or_rev_kernel_expression_t<T1, T2>* = nullptr,
     require_any_var_t<T1, T2>* = nullptr>
 inline var_value<matrix_cl<double>> mdivide_left_tri_low(T1&& A, T2&& b) {
+  check_square("mdivide_left_tri_low", "A", A);
+  check_multiplicable("mdivide_left_tri_low", "A", A, "b", b);
+  if (A.size() == 0 || b.size() == 0) {
+    return var_value<matrix_cl<double>>(matrix_cl<double>(A.rows(), b.cols()));
+  }
   arena_t<T1> A_arena = std::forward<T1>(A);
   arena_t<T2> b_arena = std::forward<T2>(b);
   return make_callback_var(
       mdivide_left_tri_low(value_of(A_arena), value_of(b_arena)),
       [A_arena, b_arena](const vari_value<matrix_cl<double>>& res) {
-        matrix_cl<double> adjB = transpose(tri_inverse(A_arena)) * res.adj();
+        matrix_cl<double> adjB
+            = transpose(tri_inverse<matrix_cl_view::Lower>(value_of(A_arena)))
+              * res.adj();
         if (!is_constant<T1>::value) {
-          matrix_cl<double> adjA = adjB * transpose(res.adj());
-          results(adjoint_of(A_arena), adjoint_of(b_arena))
-              += expressions(-adjA, calc_if<!is_constant<T2>::value>(adjB));
-        } else {
+          matrix_cl<double> adjA = adjB * transpose(res.val());
+          adjA.view(matrix_cl_view::Lower);
+          adjoint_of(A_arena) -= adjA;
+        }
+        if (!is_constant<T2>::value) {
           adjoint_of(b_arena) += adjB;
         }
       });

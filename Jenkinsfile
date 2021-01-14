@@ -238,10 +238,8 @@ pipeline {
                                 runTests("test/unit/math/opencl")
                                 runTests("test/unit/multiple_translation_units_test.cpp")
                                 runTests("test/unit/math/prim/fun/gp_exp_quad_cov_test.cpp")
-                                runTests("test/unit/math/prim/fun/mdivide_left_tri_test.cpp")
                                 runTests("test/unit/math/prim/fun/mdivide_right_tri_test.cpp")
                                 runTests("test/unit/math/prim/fun/multiply_test.cpp")
-                                runTests("test/unit/math/rev/fun/mdivide_left_tri_test.cpp")
                                 runTests("test/unit/math/rev/fun/multiply_test.cpp")
                             } else {
                                 deleteDirWin()
@@ -255,10 +253,8 @@ pipeline {
                                 runTestsWin("test/unit/math/opencl", false, false)
                                 runTestsWin("test/unit/multiple_translation_units_test.cpp", false, false)
                                 runTestsWin("test/unit/math/prim/fun/gp_exp_quad_cov_test.cpp", false, false)
-                                runTestsWin("test/unit/math/prim/fun/mdivide_left_tri_test.cpp", false, false)
                                 runTestsWin("test/unit/math/prim/fun/mdivide_right_tri_test.cpp", false, false)
-                                runTestsWin("test/unit/math/prim/fun/multiply_test.cpp", false, false)                      
-                                runTestsWin("test/unit/math/rev/fun/mdivide_left_tri_test.cpp", false, false)
+                                runTestsWin("test/unit/math/prim/fun/multiply_test.cpp", false, false)          
                                 runTestsWin("test/unit/math/rev/fun/multiply_test.cpp", false, false)
                             }
                         }
@@ -278,10 +274,8 @@ pipeline {
                                 runTests("test/unit/math/opencl")
                                 runTests("test/unit/multiple_translation_units_test.cpp")
                                 runTests("test/unit/math/prim/fun/gp_exp_quad_cov_test.cpp")
-                                runTests("test/unit/math/prim/fun/mdivide_left_tri_test.cpp")
                                 runTests("test/unit/math/prim/fun/mdivide_right_tri_test.cpp")
                                 runTests("test/unit/math/prim/fun/multiply_test.cpp")
-                                runTests("test/unit/math/rev/fun/mdivide_left_tri_test.cpp")
                                 runTests("test/unit/math/rev/fun/multiply_test.cpp")
                             } else {
                                 deleteDirWin()
@@ -295,10 +289,8 @@ pipeline {
                                 runTestsWin("test/unit/math/opencl", false, false)
                                 runTestsWin("test/unit/multiple_translation_units_test.cpp", false, false)
                                 runTestsWin("test/unit/math/prim/fun/gp_exp_quad_cov_test.cpp", false, false)
-                                runTestsWin("test/unit/math/prim/fun/mdivide_left_tri_test.cpp", false, false)
                                 runTestsWin("test/unit/math/prim/fun/mdivide_right_tri_test.cpp", false, false)
-                                runTestsWin("test/unit/math/prim/fun/multiply_test.cpp", false, false)                      
-                                runTestsWin("test/unit/math/rev/fun/mdivide_left_tri_test.cpp", false, false)
+                                runTestsWin("test/unit/math/prim/fun/multiply_test.cpp", false, false)             
                                 runTestsWin("test/unit/math/rev/fun/multiply_test.cpp", false, false)
                             }
                             
