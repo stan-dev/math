@@ -82,6 +82,18 @@
     EXPECT_FLOAT_EQ(A[i], B[i]);
 
 /**
+ * Tests for elementwise equality of the input std::vectors
+ * of any type with the EXPECT_EQ macro from GTest.
+ *
+ * @param A first input vector of integers to compare
+ * @param B second input vector of integers to compare
+ */
+#define EXPECT_STD_VECTOR_EQ(A, B) \
+  EXPECT_EQ(A.size(), B.size());         \
+  for (int i = 0; i < A.size(); ++i)     \
+    EXPECT_EQ(A[i], B[i]);
+
+/**
  * Tests if any elementwise difference of the input matrices
  * of doubles is greater than DELTA. This uses the
  * EXPECT_NEAR macro from GTest.
