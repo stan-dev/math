@@ -1,7 +1,62 @@
-#include <stan/math/mix.hpp>
-#include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/math/distributions.hpp>
+#include <test/unit/math/test_ad.hpp>
+
+TEST(ProbDistributionsMultiStudentT, matvar) {
+  auto f
+      = [](const auto& y, const auto& nu, const auto& mu, const auto& sigma) {
+          auto sigma_sym = stan::math::multiply(0.5, sigma + sigma.transpose());
+          return stan::math::multi_student_t_lpdf(y, nu, mu, sigma_sym);
+        };
+
+  auto f_const_y = [](const auto& y) {
+    return [&y](const auto& nu, const auto& mu, const auto& sigma) {
+      auto sigma_sym = stan::math::multiply(0.5, sigma + sigma.transpose());
+      return stan::math::multi_student_t_lpdf(y, nu, mu, sigma_sym);
+    };
+  };
+
+  auto f_const_nu = [](const auto& nu) {
+    return [&nu](const auto& y, const auto& mu, const auto& sigma) {
+      auto sigma_sym = stan::math::multiply(0.5, sigma + sigma.transpose());
+      return stan::math::multi_student_t_lpdf(y, nu, mu, sigma_sym);
+    };
+  };
+
+  Eigen::VectorXd y1(1);
+  y1 << 1;
+  Eigen::VectorXd mu1(1);
+  mu1 << 3.4;
+  Eigen::MatrixXd Sigma11(1, 1);
+  Sigma11 << 1;
+  double nu = 1.1;
+  stan::test::expect_ad(f_const_y(y1), nu, mu1, Sigma11);
+  stan::test::expect_ad(f_const_nu(nu), y1, mu1, Sigma11);
+  stan::test::expect_ad_matvar(f, y1, nu, mu1, Sigma11);
+
+  Eigen::VectorXd y0(0);
+  Eigen::VectorXd mu0(0);
+  Eigen::MatrixXd Sigma00(0, 0);
+  stan::test::expect_ad(f_const_y(y0), nu, mu0, Sigma00);
+  stan::test::expect_ad(f_const_nu(nu), y0, mu0, Sigma00);
+  stan::test::expect_ad_matvar(f, y0, nu, mu0, Sigma00);
+
+  Eigen::VectorXd y2(2);
+  y2 << 1.0, 0.1;
+  Eigen::VectorXd mu2(2);
+  mu2 << 0.1, 2.0;
+  Eigen::MatrixXd Sigma22(2, 2);
+  Sigma22 << 2.0, 0.5, 0.5, 1.1;
+  stan::test::expect_ad(f_const_y(y2), nu, mu2, Sigma22);
+  stan::test::expect_ad(f_const_nu(nu), y2, mu2, Sigma22);
+  stan::test::expect_ad_matvar(f, y2, nu, mu2, Sigma22);
+
+  // Error sizes
+  stan::test::expect_ad(f_const_y(y0), nu, mu0, Sigma11);
+  stan::test::expect_ad(f_const_nu(nu), y0, mu0, Sigma11);
+  stan::test::expect_ad(f_const_y(y1), nu, mu0, Sigma11);
+  stan::test::expect_ad(f_const_nu(nu), y1, mu0, Sigma11);
+  stan::test::expect_ad_matvar(f, y0, nu, mu0, Sigma11);
+  stan::test::expect_ad_matvar(f, y1, nu, mu1, Sigma00);
+}
 
 TEST(ProbDistributionsMultiStudentT, fvar_var) {
   using Eigen::Dynamic;
@@ -28,6 +83,8 @@ TEST(ProbDistributionsMultiStudentT, fvar_var) {
   fvar<var> lp = multi_student_t_log(y, nu, mu, Sigma);
   EXPECT_NEAR(-10.1246, lp.val_.val(), 0.0001);
   EXPECT_NEAR(-0.0411685, lp.d_.val(), 0.0001);
+
+  stan::math::recover_memory();
 }
 
 TEST(ProbDistributionsMultiStudentT, fvar_fvar_var) {
@@ -55,4 +112,6 @@ TEST(ProbDistributionsMultiStudentT, fvar_fvar_var) {
   fvar<fvar<var> > lp = multi_student_t_log(y, nu, mu, Sigma);
   EXPECT_NEAR(-10.1246, lp.val_.val_.val(), 0.0001);
   EXPECT_NEAR(-0.0411685, lp.d_.val_.val(), 0.0001);
+
+  stan::math::recover_memory();
 }

@@ -14,7 +14,9 @@ namespace math {
  * @param M input matrix
  * @return transposed matrix
  */
-inline auto transpose(const var_value<matrix_cl<double>>& M) {
+template <typename T,
+          require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
+inline auto transpose(const var_value<T>& M) {
   return M.transpose();
 }
 

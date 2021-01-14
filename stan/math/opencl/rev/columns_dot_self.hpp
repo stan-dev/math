@@ -17,7 +17,8 @@ namespace math {
  * @tparam T type of the matrix
  * @param v Matrix.
  */
-template <typename T, require_var_vt<is_matrix_cl, T>* = nullptr>
+template <typename T,
+          require_var_vt<is_kernel_expression_and_not_scalar, T>* = nullptr>
 inline var_value<matrix_cl<double>> columns_dot_self(T&& v) {
   if (size_zero(v)) {
     return var_value<matrix_cl<double>>(constant(0.0, 1, v.cols()));

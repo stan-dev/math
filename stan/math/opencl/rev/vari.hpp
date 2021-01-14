@@ -96,7 +96,7 @@ class vari_cl_base : public vari_base {
   /**
    * Return the size of this class's `val_` member
    */
-  const Eigen::Index size() const { return val_.size(); }
+  const Eigen::Index size() const { return rows() * cols(); }
 
   virtual void chain() {}
 };

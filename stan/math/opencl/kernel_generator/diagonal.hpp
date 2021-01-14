@@ -83,8 +83,9 @@ class diagonal_
   inline int cols() const { return 1; }
 
   /**
-   * Sets view of the underlying matrix depending on which part is written.
-   * Setting view to diagonal never changes view of the underlying matrix.
+   * Sets the view of the underlying matrix depending on which of its parts are
+   * written to. Setting view to diagonal never changes view of the underlying
+   * matrix.
    * @param bottom_diagonal Index of the top sub- or super- diagonal written
    * with nonzero elements.
    * @param top_diagonal Index of the top sub- or super- diagonal written with
