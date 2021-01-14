@@ -64,8 +64,7 @@ inline var_value<matrix_cl<double>> hypot(T_a&& a, const T_b& b) {
   matrix_cl<double> res_val = hypot(value_of(a_arena), value_of(b));
 
   return make_callback_var(
-      res_val,
-      [a_arena, b](const vari_value<matrix_cl<double>>& res) mutable {
+      res_val, [a_arena, b](const vari_value<matrix_cl<double>>& res) mutable {
         if (!is_constant<T_a>::value) {
           auto& a_adj = forward_as<var_value<matrix_cl<double>>>(a_arena).adj();
           a_adj = a_adj
@@ -73,8 +72,8 @@ inline var_value<matrix_cl<double>> hypot(T_a&& a, const T_b& b) {
                                  elt_divide(value_of(a_arena), res.val()));
         }
         if (!is_constant<T_b>::value) {
-          adjoint_of(b) += sum(elt_multiply(res.adj(),
-                                     elt_divide(value_of(b), res.val())));
+          adjoint_of(b) += sum(
+              elt_multiply(res.adj(), elt_divide(value_of(b), res.val())));
         }
       });
 }
@@ -100,11 +99,10 @@ inline var_value<matrix_cl<double>> hypot(const T_a& a, T_b&& b) {
   matrix_cl<double> res_val = hypot(value_of(a), value_of(b_arena));
 
   return make_callback_var(
-      res_val,
-      [a, b_arena](const vari_value<matrix_cl<double>>& res) mutable {
+      res_val, [a, b_arena](const vari_value<matrix_cl<double>>& res) mutable {
         if (!is_constant<T_a>::value) {
-          adjoint_of(a) += sum(elt_multiply(res.adj(),
-                                     elt_divide(value_of(a), res.val())));
+          adjoint_of(a) += sum(
+              elt_multiply(res.adj(), elt_divide(value_of(a), res.val())));
         }
         if (!is_constant<T_b>::value) {
           auto& b_adj = forward_as<var_value<matrix_cl<double>>>(b_arena).adj();

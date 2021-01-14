@@ -78,8 +78,7 @@ template <typename T_a, typename T_b,
 inline auto lbeta(T_a&& a, const T_b& b) {
   const arena_t<T_a>& a_arena = std::forward<T_a>(a);
 
-  var_value<matrix_cl<double>> res
-      = lbeta(value_of(a_arena), value_of(b));
+  var_value<matrix_cl<double>> res = lbeta(value_of(a_arena), value_of(b));
 
   reverse_pass_callback([a_arena, b, res]() mutable {
     auto adj_val = elt_multiply(res.adj(), res.val());
@@ -92,8 +91,7 @@ inline auto lbeta(T_a&& a, const T_b& b) {
     }
     if (!is_constant<T_b>::value) {
       adjoint_of(b)
-              += sum(elt_multiply(res.adj(),
-                                 (digamma(value_of(b)) - digamma_ab)));
+          += sum(elt_multiply(res.adj(), (digamma(value_of(b)) - digamma_ab)));
     }
   });
   return res;
@@ -116,15 +114,14 @@ template <typename T_a, typename T_b,
 inline auto lbeta(const T_a& a, T_b&& b) {
   const arena_t<T_b>& b_arena = std::forward<T_b>(b);
 
-  var_value<matrix_cl<double>> res
-      = lbeta(value_of(a), value_of(b_arena));
+  var_value<matrix_cl<double>> res = lbeta(value_of(a), value_of(b_arena));
 
   reverse_pass_callback([a, b_arena, res]() mutable {
     auto adj_val = elt_multiply(res.adj(), res.val());
     auto digamma_ab = digamma(value_of(a) + value_of(b_arena));
     if (!is_constant<T_a>::value) {
-      adjoint_of(a) += sum(elt_multiply(res.adj(),
-                                 (digamma(value_of(a)) - digamma_ab)));
+      adjoint_of(a)
+          += sum(elt_multiply(res.adj(), (digamma(value_of(a)) - digamma_ab)));
     }
     if (!is_constant<T_b>::value) {
       auto& b_adj = forward_as<var_value<matrix_cl<double>>>(b_arena).adj();

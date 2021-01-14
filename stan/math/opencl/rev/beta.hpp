@@ -91,8 +91,8 @@ inline auto beta(T_a&& a, const T_b& b) {
             + elt_multiply(adj_val, (digamma(value_of(a_arena)) - digamma_ab));
     }
     if (!is_constant<T_b>::value) {
-      adjoint_of(b) += sum(elt_multiply(adj_val,
-                                 (digamma(value_of(b)) - digamma_ab)));
+      adjoint_of(b)
+          += sum(elt_multiply(adj_val, (digamma(value_of(b)) - digamma_ab)));
     }
   });
   return res;
@@ -121,8 +121,8 @@ inline auto beta(const T_a& a, T_b&& b) {
     auto adj_val = elt_multiply(res.adj(), res.val());
     auto digamma_ab = digamma(value_of(a) + value_of(b_arena));
     if (!is_constant<T_a>::value) {
-      adjoint_of(a) += sum(elt_multiply(adj_val,
-                                 (digamma(value_of(a)) - digamma_ab)));
+      adjoint_of(a)
+          += sum(elt_multiply(adj_val, (digamma(value_of(a)) - digamma_ab)));
     }
     if (!is_constant<T_b>::value) {
       auto& b_adj = forward_as<var_value<matrix_cl<double>>>(b_arena).adj();

@@ -89,21 +89,19 @@ template <typename T_x, typename T_y,
 inline var_value<matrix_cl<double>> log_diff_exp(T_x&& x, const T_y& y) {
   arena_t<T_x> x_arena = std::forward<T_x>(x);
 
-  matrix_cl<double> res_val
-      = log_diff_exp(value_of(x_arena), value_of(y));
+  matrix_cl<double> res_val = log_diff_exp(value_of(x_arena), value_of(y));
 
   return make_callback_var(
-      res_val,
-      [x_arena, y](const vari_value<matrix_cl<double>>& res) mutable {
+      res_val, [x_arena, y](const vari_value<matrix_cl<double>>& res) mutable {
         if (!is_constant<T_x>::value) {
           auto& x_adj = forward_as<var_value<matrix_cl<double>>>(x_arena).adj();
-          x_adj = x_adj
-                  - elt_divide(res.adj(),
-                               expm1(value_of(y) - value_of(x_arena)));
+          x_adj
+              = x_adj
+                - elt_divide(res.adj(), expm1(value_of(y) - value_of(x_arena)));
         }
         if (!is_constant<T_y>::value) {
-          adjoint_of(y) -= sum(elt_divide(res.adj(), expm1(value_of(x_arena)
-                                                    - value_of(y))));
+          adjoint_of(y) -= sum(
+              elt_divide(res.adj(), expm1(value_of(x_arena) - value_of(y))));
         }
       });
 }
@@ -128,21 +126,19 @@ template <typename T_x, typename T_y,
 inline var_value<matrix_cl<double>> log_diff_exp(const T_x& x, T_y&& y) {
   arena_t<T_y> y_arena = std::forward<T_y>(y);
 
-  matrix_cl<double> res_val
-      = log_diff_exp(value_of(x), value_of(y_arena));
+  matrix_cl<double> res_val = log_diff_exp(value_of(x), value_of(y_arena));
 
   return make_callback_var(
-      res_val,
-      [x, y_arena](const vari_value<matrix_cl<double>>& res) mutable {
+      res_val, [x, y_arena](const vari_value<matrix_cl<double>>& res) mutable {
         if (!is_constant<T_x>::value) {
-          adjoint_of(x) -= sum(elt_divide(res.adj(), expm1(value_of(y_arena)
-                                                    - value_of(x))));
+          adjoint_of(x) -= sum(
+              elt_divide(res.adj(), expm1(value_of(y_arena) - value_of(x))));
         }
         if (!is_constant<T_y>::value) {
           auto& y_adj = forward_as<var_value<matrix_cl<double>>>(y_arena).adj();
-          y_adj = y_adj
-                  - elt_divide(res.adj(),
-                               expm1(value_of(x) - value_of(y_arena)));
+          y_adj
+              = y_adj
+                - elt_divide(res.adj(), expm1(value_of(x) - value_of(y_arena)));
         }
       });
 }

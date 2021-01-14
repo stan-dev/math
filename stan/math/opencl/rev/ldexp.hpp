@@ -22,8 +22,7 @@ namespace math {
 template <typename T_a, typename T_b,
           require_all_kernel_expressions_and_none_scalar_t<T_a>* = nullptr,
           require_all_kernel_expressions_t<T_b>* = nullptr>
-inline var_value<matrix_cl<double>> ldexp(const var_value<T_a>& a,
-                                          T_b&& b) {
+inline var_value<matrix_cl<double>> ldexp(const var_value<T_a>& a, T_b&& b) {
   const arena_t<T_b>& b_arena = std::forward<T_b>(b);
 
   var_value<matrix_cl<double>> res = ldexp(a.val(), b);
@@ -47,8 +46,7 @@ inline var_value<matrix_cl<double>> ldexp(const var_value<T_a>& a,
  */
 template <typename T_b,
           require_all_kernel_expressions_and_none_scalar_t<T_b>* = nullptr>
-inline var_value<matrix_cl<double>> ldexp(const var_value<double>& a,
-                                          T_b&& b) {
+inline var_value<matrix_cl<double>> ldexp(const var_value<double>& a, T_b&& b) {
   const arena_t<T_b>& b_arena = std::forward<T_b>(b);
 
   var_value<matrix_cl<double>> res = ldexp(a.val(), b);

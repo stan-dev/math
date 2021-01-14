@@ -62,8 +62,7 @@ inline var_value<matrix_cl<double>> elt_divide(T_a&& a, const T_b& b) {
   matrix_cl<double> res_val = elt_divide(value_of(a_arena), value_of(b));
 
   return make_callback_var(
-      res_val,
-      [a_arena, b](const vari_value<matrix_cl<double>>& res) mutable {
+      res_val, [a_arena, b](const vari_value<matrix_cl<double>>& res) mutable {
         if (!is_constant<T_a>::value) {
           auto& a_adj = forward_as<var_value<matrix_cl<double>>>(a_arena).adj();
           a_adj = a_adj + elt_divide(res.adj(), value_of(b));
@@ -92,8 +91,7 @@ inline var_value<matrix_cl<double>> elt_divide(const T_a& a, T_b&& b) {
   matrix_cl<double> res_val = elt_divide(value_of(a), value_of(b_arena));
 
   return make_callback_var(
-      res_val,
-      [a, b_arena](const vari_value<matrix_cl<double>>& res) mutable {
+      res_val, [a, b_arena](const vari_value<matrix_cl<double>>& res) mutable {
         if (!is_constant<T_a>::value) {
           adjoint_of(a) += sum(elt_divide(res.adj(), value_of(b_arena)));
         }
