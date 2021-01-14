@@ -2,6 +2,7 @@
 #define STAN_MATH_LAPLACE_LAPLACE_LIKELIHOOD_HPP
 
 #include <stan/math/prim/fun/lgamma.hpp>
+#include <stan/math/prim/fun/binomial_coefficient_log.hpp>
 
 namespace stan {
 namespace math {
@@ -16,6 +17,8 @@ namespace math {
  * This structure can be passed to the the laplace_marginal function.
  * Uses sufficient statistics for the data.
  */
+ // FIX ME -- cannot use the sufficient statistic to compute log density in
+ // because of log factorial term.
 struct diff_poisson_log {
   /* The number of samples in each group. */
   Eigen::VectorXd n_samples_;
@@ -166,6 +169,51 @@ struct diff_logistic_log {
   }
 };
 
+struct diff_neg_binomial_2_log {
+  /* Observed counts */
+  Eigen::VectorXd y_;
+  /* Latent parameter index for each observation. */
+  std::vector<int> y_index_;
+  /* The number of samples in each group. */
+  Eigen::VectorXd n_samples_;
+  /* The sum of cours in each group. */
+  Eigen::VectorXd sums_;
+  /* Number of latent Gaussian variables. */
+  int n_theta_;
+
+  diff_neg_binomial_2_log(const Eigen::VectorXd& y,
+                          const std::vector<int>& y_index,
+                          int n_theta)
+    : y_(y), y_index_(y_index), n_theta_(n_theta) {
+    sums_ = Eigen::VectorXd::Zero(n_theta);
+    n_samples_ = Eigen::VectorXd::Zero(n_theta);
+
+    for (int i = 0; i < n_theta; i++) {
+      n_samples_(y_index[i]) += 1;
+      sums_(y_index[i]) += 1;
+    }
+  }
+
+  template <typename T_theta, typename T_eta>
+  return_type_t<T_theta, T_eta>
+  log_likelihood (const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
+                  const T_eta& eta) {
+    return_type_t<T_theta, T_eta> logp = 0;
+    for (size_t i = 0; i < y_.size(); i++) {
+      logp += binomial_coefficient_log(y_(i) + eta - 1, y_(i));
+    }
+    // CHECK -- is it better to vectorize this loop?
+    Eigen::Matrix<T_theta, Eigen::Dynamic, 1> exp_theta = exp(theta);
+    for (int i = 0; i < n_theta_; i++) {
+      return_type_t<T_theta, T_eta>
+        log_theta_plus_exp_theta = log(exp_theta(i) + eta);
+      logp += y_(i) * (theta(i) - log_theta_plus_exp_theta)
+               + n_samples_(i) * eta * (log(eta) - log_theta_plus_exp_theta);
+    }
+    return logp;
+  }
+};
+
 struct diff_student_t {
   /* Observations. */
   Eigen::VectorXd y_;
@@ -180,19 +228,19 @@ struct diff_student_t {
   /**
    * Returns the log density.
    */
-  template <typename T_theta, typename T_nu>
-  return_type_t<T_theta, T_nu>
+  template <typename T_theta, typename T_eta>
+  return_type_t<T_theta, T_eta>
   log_likelihood (const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
-                  const Eigen::Matrix<T_nu, Eigen::Dynamic, 1>& eta)
+                  const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta)
     const {
-    T_nu nu = eta(0);
-    T_nu sigma = eta(1);
-    T_nu sigma_squared = sigma * sigma;
+    T_eta nu = eta(0);
+    T_eta sigma = eta(1);
+    T_eta sigma_squared = sigma * sigma;
 
     int n = theta.size();
 
     // CHECK -- probably don't need normalizing constant.
-    return_type_t<T_theta, T_nu>
+    return_type_t<T_theta, T_eta>
     log_constant = n * (lgamma((nu + 1) / 2) - lgamma(nu / 2)
                     - LOG_SQRT_PI - 0.5 * log(nu) - log(sigma));
 
