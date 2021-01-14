@@ -42,11 +42,11 @@ run_benchmark <- function(..., num_iter=250, adapt_delta=0.8) {
 bdf_fit <- run_benchmark(adjoint_integrator=0)
 adjoint_fit <- run_benchmark(adjoint_integrator=1)
 
-adjoint_fit_2 <- run_benchmark(adjoint_integrator=1, adapt_delta=0.65)
-
-adjoint_fit_3 <- run_benchmark(adjoint_integrator=1, adapt_delta=0.95)
-
-adjoint_fit_4 <- run_benchmark(adjoint_integrator=1, abs_tol=1E-10, rel_tol=1E-10)
+if(FALSE) {
+    adjoint_fit_2 <- run_benchmark(adjoint_integrator=1, adapt_delta=0.65)
+    adjoint_fit_3 <- run_benchmark(adjoint_integrator=1, adapt_delta=0.95)
+    adjoint_fit_4 <- run_benchmark(adjoint_integrator=1, abs_tol=1E-10, rel_tol=1E-10)
+}
 
 summarize_benchmark <- function(fit) {
     sdiag_all  <- fit$sampler_diagnostics(inc_warmup=TRUE)
@@ -58,12 +58,13 @@ summarize_benchmark <- function(fit) {
     num_leaps <- sum(sdiag_all[,,"n_leapfrog__"])
     fit_time <- fit$time()$total
 
-    ess_speed <- fit$summary("lp__")[1,c("ess_bulk", "ess_tail")] / fit_time
+    ess_speed <- as.vector(fit$summary("lp__")[1,c("ess_bulk", "ess_tail")]) / fit_time
+    lp_est <- as.vector(fit$summary("lp__"))
 
     list(num_leaps=num_leaps, time=fit_time, time_per_leap=1E3 * fit_time / num_leaps,
          step_size=fit$metadata()$step_size_adaptation,
          num_divergent=num_divergent, accept_stat=accept_stat, treedepth=treedepth,
-         ess_lp_speed=ess_speed)
+         ess_lp_speed=ess_speed, lp_est=lp_est)
 }
 
 mcmc_rhat(rhat = rhat(bdf_fit))  + yaxis_text(hjust = 0)
@@ -80,3 +81,4 @@ bdf_fit$metadata()
 bdf_fit$time()
 
 
+bdf_fit$summary("lp__")

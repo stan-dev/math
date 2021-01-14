@@ -1,7 +1,7 @@
 functions {
 
   vector linked_mass_flow(real t, vector y,
-                          real[] kt, real[] e50, real[] k12, real[] k21) {
+                          vector kt, vector e50, vector k12, vector k21) {
 
     int num_main_states = num_elements(kt);
     int num_states = 2 * num_main_states;
@@ -37,31 +37,14 @@ functions {
                          vector log_kt, vector log_e50, vector log_k12, vector log_k21) {
     int num_sim = num_elements(ts);
     int num_states = num_elements(log_a0);
-    int system_size = num_elements(log_kt);
     vector[num_states] y[num_sim];
-    real kt[system_size];
-    real e50[system_size];
-    real k12[system_size];
-    real k21[system_size];
-    vector[num_states] a0;
-
-    for(i in 1:system_size) {
-      kt[i] = exp(log_kt[i]);
-      e50[i] = exp(log_e50[i]);
-      k12[i] = exp(log_k12[i]);
-      k21[i] = exp(log_k21[i]);
-    }
-
-    for(i in 1:num_states) {
-        a0[i] = exp(log_a0[i]);
-    }
 
     if(adjoint_integrator) {
-      y = ode_adams_tol(linked_mass_flow, a0, t0, ts, rel_tol, abs_tol, max_num_steps,
-                        kt, e50, k12, k21);
+      y = ode_adams_tol(linked_mass_flow, exp(log_a0), t0, ts, rel_tol, abs_tol, max_num_steps,
+                        exp(log_kt), exp(log_e50), exp(log_k12), exp(log_k21));
     } else {
-      y = ode_bdf_tol(linked_mass_flow, a0, t0, ts, rel_tol, abs_tol, max_num_steps,
-                      kt, e50, k12, k21);
+      y = ode_bdf_tol(linked_mass_flow, exp(log_a0), t0, ts, rel_tol, abs_tol, max_num_steps,
+                      exp(log_kt), exp(log_e50), exp(log_k12), exp(log_k21));
     }
 
     return y;
@@ -140,16 +123,9 @@ model {
   target += normal_lpdf(log_a0| 0.0, sigma_sim);
   target += normal_lpdf(log_sigma_y| 0.0, sigma_y);
 
-  /*
   for(j in 1:system_size) {
     int m = 2*(j-1) + 1;
     target += lognormal_lpdf(to_vector(y_[:,m])| log(to_vector(mu[:,m])+1E-3), exp(log_sigma_y[j]));
-  }
-  */
-  
-  for(j in 1:system_size) {
-    int m = 2*(j-1) + 1;
-    target += lognormal_lpdf(y_[num_obs,m]| log(mu[num_obs,m]+1E-3), exp(log_sigma_y[j]));
   }
 }
 generated quantities {
@@ -174,5 +150,5 @@ generated quantities {
     rank_log_sigma_y[i] = (log_sigma_y[i] > log_sigma_y_[i] ? 1 : 0);
     rank_log_a0[i] = (log_a0[i] > log_a0_[i] ? 1 : 0);
   }
-  
+
 }
