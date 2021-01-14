@@ -1,5 +1,50 @@
 #include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
+#include <test/unit/math/test_ad.hpp>
+
+TEST(ProbDistributionsMultiGP, matvar) {
+  auto f = [](const auto& y, const auto& sigma, const auto& w) {
+    auto sigma_sym = stan::math::multiply(0.5, sigma + sigma.transpose());
+    return stan::math::multi_gp_lpdf(y, sigma_sym, w);
+  };
+
+  Eigen::MatrixXd y11(1, 1);
+  y11 << 1;
+  Eigen::VectorXd w1(1);
+  w1 << 3.4;
+  Eigen::MatrixXd Sigma11(1, 1);
+  Sigma11 << 1;
+  stan::test::expect_ad(f, y11, Sigma11, w1);
+  stan::test::expect_ad_matvar(f, y11, Sigma11, w1);
+
+  Eigen::MatrixXd y00(0, 0);
+  Eigen::VectorXd w0(0);
+  Eigen::MatrixXd Sigma00(0, 0);
+  stan::test::expect_ad(f, y00, Sigma00, w0);
+  stan::test::expect_ad_matvar(f, y00, Sigma00, w0);
+
+  Eigen::MatrixXd y22(2, 2);
+  y22 << 1.0, 0.1, 0.3, 0.5;
+  Eigen::VectorXd w2(2);
+  w2 << 0.1, 2.0;
+  Eigen::MatrixXd Sigma22(2, 2);
+  Sigma22 << 3.0, 0.5, 0.5, 2.0;
+  stan::test::expect_ad(f, y22, Sigma22, w2);
+  stan::test::expect_ad_matvar(f, y22, Sigma22, w2);
+
+  Eigen::MatrixXd y12(1, 2);
+  y12 << 1.0, 0.1;
+  stan::test::expect_ad(f, y12, Sigma22, w1);
+  stan::test::expect_ad_matvar(f, y12, Sigma22, w1);
+
+  // Error sizes
+  stan::test::expect_ad(f, y00, Sigma00, w2);
+  stan::test::expect_ad(f, y00, Sigma22, w0);
+  stan::test::expect_ad(f, y00, Sigma22, w2);
+  stan::test::expect_ad(f, y22, Sigma22, w0);
+  stan::test::expect_ad(f, y22, Sigma00, w2);
+  stan::test::expect_ad(f, y22, Sigma00, w0);
+}
 
 TEST(ProbDistributionsMultiGP, fvar_var) {
   using Eigen::Dynamic;
