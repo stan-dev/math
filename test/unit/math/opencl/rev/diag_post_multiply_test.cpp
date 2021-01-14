@@ -28,7 +28,7 @@ TEST(OpenCL_diag_post_multiply, diag_post_multiply_small_row_vector) {
 }
 
 TEST(OpenCL_diag_post_multiply, zero) {
-  Eigen::MatrixXd in1(4,0);
+  Eigen::MatrixXd in1(4, 0);
   Eigen::VectorXd in2;
   stan::math::test::compare_cpu_opencl_prim_rev(diag_post_multiply_functor, in1,
                                                 in2);

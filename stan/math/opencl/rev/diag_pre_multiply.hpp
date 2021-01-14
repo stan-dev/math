@@ -54,16 +54,17 @@ inline var_value<matrix_cl<double>> diag_pre_multiply(T1&& v1, T2&& v2) {
           if (!is_constant<std::decay_t<T1>>::value) {
             auto v1_adj_transpose = transpose(
                 forward_as<var_value<matrix_cl<double>>>(v1_arena).adj());
-            v1_adj_transpose = v1_adj_transpose
-                     + rowwise_sum(elt_multiply(res.adj(), value_of(v2_arena)));
+            v1_adj_transpose
+                = v1_adj_transpose
+                  + rowwise_sum(elt_multiply(res.adj(), value_of(v2_arena)));
           }
           if (!is_constant<std::decay_t<T2>>::value) {
             auto& v2_adj
                 = forward_as<var_value<matrix_cl<double>>>(v2_arena).adj();
             v2_adj = v2_adj
                      + elt_multiply(
-                         res.adj(),
-                         rowwise_broadcast(transpose(value_of(v1_arena))));
+                           res.adj(),
+                           rowwise_broadcast(transpose(value_of(v1_arena))));
           }
         }
       });

@@ -23,7 +23,7 @@ TEST(OpenCLDigamma, prim_rev_size_0) {
 TEST(OpenCLDigamma, prim_rev_values_large) {
   int N = 71;
 
-  Eigen::MatrixXd a = Eigen::MatrixXd::Random(N, N)*7;
+  Eigen::MatrixXd a = Eigen::MatrixXd::Random(N, N) * 7;
   stan::math::test::compare_cpu_opencl_prim_rev(digamma_functor, a);
 }
 
