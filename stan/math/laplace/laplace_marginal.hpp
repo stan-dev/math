@@ -413,7 +413,6 @@ namespace math {
        const K& covariance_function,
        const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
        const Tx& x,
-       // const std::vector<Eigen::VectorXd>& x,
        const std::vector<double>& delta,
        const std::vector<int>& delta_int,
        const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,

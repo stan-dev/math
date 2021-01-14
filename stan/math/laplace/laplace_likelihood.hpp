@@ -166,6 +166,48 @@ struct diff_logistic_log {
   }
 };
 
+struct diff_student_t {
+  /* Observations. */
+  Eigen::VectorXd y_;
+  /* Latent parameter index for each observation. */
+  std::vector<int> y_index_;
+  // QUESTION - Save eta here too?
+
+  diff_student_t(const Eigen::VectorXd& y,
+                 const std::vector<int>& y_index)
+    : y_(y), y_index_(y_index) { }
+
+  /**
+   * Returns the log density.
+   */
+  template <typename T_theta, typename T_nu>
+  return_type_t<T_theta, T_nu>
+  log_likelihood (const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
+                  const Eigen::Matrix<T_nu, Eigen::Dynamic, 1>& eta)
+    const {
+    T_nu nu = eta(0);
+    T_nu sigma = eta(1);
+    T_nu sigma_squared = sigma * sigma;
+
+    int n = theta.size();
+
+    // CHECK -- probably don't need normalizing constant.
+    return_type_t<T_theta, T_nu>
+    log_constant = n * (lgamma((nu + 1) / 2) - lgamma(nu / 2)
+                    - LOG_SQRT_PI - 0.5 * log(nu) - log(sigma));
+
+    T_theta log_kernel = 0;
+
+    for (int i = 0; i < n; i++) {
+      T_theta distance = y_(i) - theta(y_index_[i]);
+      log_kernel += log(1 + distance * distance / (nu * sigma_squared));
+    }
+
+    return log_constant - 0.5 * (nu + 1) * log_kernel;
+  }
+};
+
+
 // TO DO: delete this structure.
 // To experiment with the prototype, provide a built-in covariance
 // function. In the final version, the user will pass the covariance
@@ -187,6 +229,8 @@ struct sqr_exp_kernel_functor {
     return kernel;
   }
 };
+
+
 
 }  // namespace math
 }  // namespace stan
