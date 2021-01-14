@@ -35,12 +35,12 @@ inline var_value<matrix_cl<double>> mdivide_left_tri_low(T1&& A, T2&& b) {
   }
   arena_t<T1> A_arena = std::forward<T1>(A);
   arena_t<T2> b_arena = std::forward<T2>(b);
+  arena_matrix_cl<double> A_tri_inv
+      = tri_inverse<matrix_cl_view::Lower>(value_of(A_arena));
   return make_callback_var(
-      mdivide_left_tri_low(value_of(A_arena), value_of(b_arena)),
-      [A_arena, b_arena](const vari_value<matrix_cl<double>>& res) {
-        matrix_cl<double> adjB
-            = transpose(tri_inverse<matrix_cl_view::Lower>(value_of(A_arena)))
-              * res.adj();
+      A_tri_inv * value_of(b_arena),
+      [A_arena, b_arena, A_tri_inv](const vari_value<matrix_cl<double>>& res) {
+        matrix_cl<double> adjB = transpose(A_tri_inv) * res.adj();
         if (!is_constant<T1>::value) {
           matrix_cl<double> adjA = adjB * transpose(res.val());
           adjA.view(matrix_cl_view::Lower);
@@ -49,6 +49,34 @@ inline var_value<matrix_cl<double>> mdivide_left_tri_low(T1&& A, T2&& b) {
         if (!is_constant<T2>::value) {
           adjoint_of(b_arena) += adjB;
         }
+      });
+}
+
+/**
+ * Returns the solution of the system Ax=b when A is triangular and b=I.
+ *
+ * @tparam T type of elements in A
+ * @param A Triangular matrix.
+ * @return x = A^-1 .
+ * @throws std::domain_error if A is not square
+ */
+template <typename T1,
+          require_all_nonscalar_prim_or_rev_kernel_expression_t<T1>* = nullptr,
+          require_any_var_t<T1>* = nullptr>
+inline var_value<matrix_cl<double>> mdivide_left_tri_low(T1&& A) {
+  check_square("mdivide_left_tri_low", "A", A);
+  if (A.size() == 0) {
+    return A;
+  }
+  arena_t<T1> A_arena = std::forward<T1>(A);
+  return make_callback_var(
+      mdivide_left_tri_low(value_of(A_arena)),
+      [A_arena](const vari_value<matrix_cl<double>>& res) {
+        matrix_cl<double> res_val_transpose = transpose(res.val());
+        matrix_cl<double> adjA
+            = res_val_transpose * res.adj() * res_val_transpose;
+        adjA.view(matrix_cl_view::Lower);
+        adjoint_of(A_arena) -= adjA;
       });
 }
 

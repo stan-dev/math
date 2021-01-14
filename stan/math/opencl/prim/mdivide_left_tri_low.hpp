@@ -23,11 +23,10 @@ namespace math {
  */
 template <typename T1, typename T2,
           require_all_kernel_expressions_t<T1, T2>* = nullptr>
-inline matrix_cl<double> mdivide_left_tri_low(
-    const T1& A, const T2& b) {
+inline matrix_cl<double> mdivide_left_tri_low(const T1& A, const T2& b) {
   check_square("mdivide_left_tri_low", "A", A);
   check_multiplicable("mdivide_left_tri_low", "A", A, "b", b);
-  if(A.size() == 0 || b.size() ==0){
+  if (A.size() == 0 || b.size() == 0) {
     return matrix_cl<double>(A.rows(), b.cols());
   }
   return tri_inverse<matrix_cl_view::Lower>(eval(A)) * b;
@@ -37,8 +36,6 @@ inline matrix_cl<double> mdivide_left_tri_low(
  * Returns the solution of the system Ax=b when A is triangular and b=I.
  *
  * @tparam T type of elements in A
- * @tparam R1 number of rows in A
- * @tparam C1 number of columns in A
  * @param A Triangular matrix.
  * @return x = A^-1 .
  * @throws std::domain_error if A is not square
@@ -46,7 +43,7 @@ inline matrix_cl<double> mdivide_left_tri_low(
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
 inline matrix_cl<double> mdivide_left_tri_low(const T& A) {
   check_square("mdivide_left_tri_low", "A", A);
-  if(A.size() == 0){
+  if (A.size() == 0) {
     return A;
   }
   return tri_inverse<matrix_cl_view::Lower>(eval(A));
