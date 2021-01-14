@@ -23,6 +23,7 @@
 #include <stan/math/opencl/kernels/device_functions/multiply_log.hpp>
 #include <stan/math/opencl/kernels/device_functions/Phi.hpp>
 #include <stan/math/opencl/kernels/device_functions/Phi_approx.hpp>
+#include <stan/math/opencl/kernels/device_functions/trigamma.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/kernel_generator/common_return_scalar.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
@@ -315,6 +316,8 @@ ADD_UNARY_FUNCTION_WITH_INCLUDES(inv_Phi, opencl_kernels::log1m_device_function,
                                  opencl_kernels::inv_phi_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(
     log1m_inv_logit, opencl_kernels::log1m_inv_logit_device_function)
+ADD_UNARY_FUNCTION_WITH_INCLUDES(trigamma,
+                                 opencl_kernels::trigamma_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(square, "double square(double x){return x*x;}")
 
 ADD_CLASSIFICATION_FUNCTION(isfinite, {-rows() + 1, cols() - 1})
