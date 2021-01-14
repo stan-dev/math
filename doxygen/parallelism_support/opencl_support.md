@@ -109,16 +109,58 @@ var_value<matrix_cl<double>> A_cl = to_matrix_cl(A);
 var_value<matrix_cl<double>> B_cl = to_matrix_cl(B);
 var_value<matrix_cl<double>> C_cl = A_cl * B_cl;
 var C_sum = sum(C_cl);
+C_sum.grad();
 ```
 
 #### Supported functions
 
+- acos, acosh
+- add, operator+
+- add_diag, diag_matrix, diagonal
+- asin, asinh
+- atan, atanh
+- beta, lbeta
+- block, col, row, sub_col, sub_row
+- cbrt
+- ceil, floor, round, trunc
 - cholesky_decompose
-- gp_exp_quad_cov
-- mdivide_right_tri, mdivide_right_tri_low
-- mdivide_left_tri, mdivide_left_tri_low
-- multiply
+- cols, dims, num_elements, rows, size
+- columns_dot_product, columns_dot_self
+- cos, cosh
+- crossprod, tcrossprod
+- diag_post_multiply, diag_pre_multiply
+- digamma
+- distance, squared_distance
+- dot_product, dot_self
+- elt_divide, operator./
+- elt_multiply, operator.*
+- erf, erfc
+- exp, exp2, expm1
+- fabs
+- hypot
+- inv, inv_cloglog, inv_logit, inv_sqrt, inv_square, inv_Phi
+- ldexp
+- lgamma
+- log, log10, log1m, log1p, log2, logit
+- log1m_exp, log1p_exp, log1m_inv_logit, log_inv_logit
+- log_diff_exp, log_inv_logit_diff
+- rows_dot_product, rows_dot_self
+- head, tail
+- mean
+- mdivide_left_tri_low, mdivide_right_tri_low
+- multiply, operator*
+- multiply_log, lmultiply
+- Phi, Phi_approx
+- pow
+- segment
+- sin, sinh
+- sqrt
+- square
+- subtract, operator-
 - sum
+- tan, tanh
+- tgamma
+- transpose
 
 #### Supported distributions
 
@@ -180,45 +222,7 @@ Eigen::Matrix<double, -1, -1> C = from_matrix_cl(C_cl);
 In addition to the functions listed in the reverse mode list, 
 the following functions can be used with `matrix_cl<T>` arguments:
 
-- acos, acosh
-- add
 - append_col, append_row
-- asin, asinh
-- atan, atanh
-- block
-- cbrt
-- ceil
-- col
-- cols
-- cos, cosh
-- diagonal
-- digamma
-- dims
-- divide
-- elt_divide
-- elt_multiply
-- erf, erfc
-- exp, exp2, expm1
-- fabs
-- floor
-- inv, inv_logit, inv_sqrt, inv_square
-- lbeta
-- lgamma
-- log, log10, log1m_exp, log1m_inv_logit
-- log1p, log1p_exp, log2, logit
-- minus
-- operator-, operator+, operator*
-- plus
-- pow
-- rep_matrix, rep_row_vector, rep_vector
-- round
-- row
-- rows
-- sin, sinh
-- size
-- sqrt
-- tan, tanh
-- tcrossprod
-- tgamma
-- transpose
-- trunc
+- gp_exp_quad_cov
+- trace
+- trigamma
