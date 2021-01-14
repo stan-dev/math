@@ -23,16 +23,15 @@ namespace math {
 template <typename ScalarT, require_stan_scalar_t<ScalarT>* = nullptr>
 size_t size_mvt(const ScalarT& /* unused */) {
   throw std::invalid_argument("size_mvt passed to an unrecognized type.");
+}
+
+template <typename MatrixT, require_matrix_t<MatrixT>* = nullptr>
+size_t size_mvt(const MatrixT& /* unused */) {
   return 1U;
 }
 
-template <typename EigenT, require_eigen_t<EigenT>* = nullptr>
-size_t size_mvt(const EigenT& /* unused */) {
-  return 1U;
-}
-
-template <typename T, int R, int C>
-size_t size_mvt(const std::vector<Eigen::Matrix<T, R, C> >& x) {
+template <typename MatrixT, require_matrix_t<MatrixT>* = nullptr>
+size_t size_mvt(const std::vector<MatrixT>& x) {
   return x.size();
 }
 
