@@ -88,9 +88,9 @@
  * @param A first input vector of integers to compare
  * @param B second input vector of integers to compare
  */
-#define EXPECT_STD_VECTOR_EQ(A, B) \
-  EXPECT_EQ(A.size(), B.size());         \
-  for (int i = 0; i < A.size(); ++i)     \
+#define EXPECT_STD_VECTOR_EQ(A, B)   \
+  EXPECT_EQ(A.size(), B.size());     \
+  for (int i = 0; i < A.size(); ++i) \
     EXPECT_EQ(A[i], B[i]);
 
 /**
