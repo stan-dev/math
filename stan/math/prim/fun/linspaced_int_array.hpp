@@ -13,7 +13,8 @@ namespace math {
  *
  * This produces an array from low to high (inclusive) with integers spaced
  * as (high - low) / (K - 1). For K=1, the array will contain the high value;
- * for K=0 it returns an empty array.
+ * for K=0 it returns an empty array. If there are less integers between
+ * high and low than K, there will be duplicate integers.
  *
  * @param K size of the array
  * @param low smallest value
@@ -32,7 +33,6 @@ inline std::vector<int> linspaced_int_array(int K, int low, int high) {
 
   Eigen::VectorXi v = Eigen::VectorXi::LinSpaced(K, low, high);
   return {v.data(), v.data() + K};
-  ;
 }
 
 }  // namespace math
