@@ -13,8 +13,8 @@ namespace math {
  *
  * This produces an array from `low` to `high` (inclusive). If `high - low` is
  * greater or equal to `K - 1`, then the integers are evenly spaced. If it is
- * not possible to get from `low` to `high` with a multiple of an integer, `high`
- * is lowered until this is possible.
+ * not possible to get from `low` to `high` with a multiple of an integer,
+ * `high` is lowered until this is possible.
  *
  * If `K - 1` is greater than `high - low`, then integers are repeated. For
  * instance, `low, low, low + 1, low + 1, ...`. `high` is lowered until `K - 1`
