@@ -22,7 +22,7 @@ namespace math {
  * low and high.
  * @throw std::domain_error if K is negative or high is less than low.
  */
-inline std::vector<double> linspaced_int_array(int K, int low, int high) {
+inline std::vector<int> linspaced_int_array(int K, int low, int high) {
   static const char* function = "linspaced_int_array";
   check_nonnegative(function, "size", K);
   check_greater_or_equal(function, "high", high, low);
@@ -31,7 +31,7 @@ inline std::vector<double> linspaced_int_array(int K, int low, int high) {
   }
 
   Eigen::VectorXi v = Eigen::VectorXi::LinSpaced(K, low, high);
-  return {&v[0], &v[0] + K};
+  return {v.data(), v.data() + K};;
 }
 
 }  // namespace math
