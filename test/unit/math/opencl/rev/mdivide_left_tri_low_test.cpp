@@ -12,7 +12,7 @@ auto mdivide_left_tri_low_functor = [](const auto& a, const auto& b) {
 TEST(OpenCL_mdivide_left_tri_low, mdivide_left_tri_low_small) {
   Eigen::MatrixXd in1(3, 3);
   in1 << 0.5, 3.4, 5.2, 7.5, 1, 2, 3, 4, 5;
-  Eigen::VectorXd in2(4);
+  Eigen::VectorXd in2(3);
   in2 << 3.3, 0.9, 6.7;
   stan::math::test::compare_cpu_opencl_prim_rev(mdivide_left_tri_low_functor,
                                                 in1, in2);

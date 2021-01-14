@@ -26,7 +26,7 @@ template <
     typename T1, typename T2,
     require_all_nonscalar_prim_or_rev_kernel_expression_t<T1, T2>* = nullptr,
     require_any_var_t<T1, T2>* = nullptr>
-inline matrix_cl<return_type_t<T1, T2>> mdivide_left_tri_low(T1&& A, T2&& b) {
+inline var_value<matrix_cl<double>> mdivide_left_tri_low(T1&& A, T2&& b) {
   arena_t<T1> A_arena = std::forward<T1>(A);
   arena_t<T2> b_arena = std::forward<T2>(b);
   return make_callback_var(
