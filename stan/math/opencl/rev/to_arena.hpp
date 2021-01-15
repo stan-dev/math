@@ -2,8 +2,9 @@
 #define STAN_MATH_OPENCL_REV_TO_ARENA_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/opencl/rev/arena_type.hpp>
+#include <stan/math/opencl/plain_type.hpp>
+#include <stan/math/prim/meta.hpp>
 
 namespace stan {
 namespace math {
