@@ -42,7 +42,9 @@ inline plain_type_t<T> tri_inverse(const T& A) {
   // the input matrix
   matrix_cl_view tri_view = matrix_view;
   if (matrix_view == matrix_cl_view::Entire) {
-    check_triangular("tri_inverse (OpenCL)", "A", A);
+    if (A.view() != matrix_cl_view::Diagonal) {
+      check_triangular("tri_inverse (OpenCL)", "A", A);
+    }
     tri_view = A.view();
   }
   if (tri_view == matrix_cl_view::Diagonal) {
