@@ -3,9 +3,19 @@
 
 #include <stan/math/memory/stack_alloc.hpp>
 #include <vector>
+#include <map>
+#include <utility>
+#include <string>
+#include <thread>
 
 namespace stan {
 namespace math {
+
+// Forward declaration of profile info and associated types
+class profile_info;
+
+using profile_key = std::pair<std::string, std::thread::id>;
+using profile_map = std::map<profile_key, profile_info>;
 
 // Internal macro used to modify global pointer definition to the
 // global AD instance.
@@ -110,6 +120,9 @@ struct AutodiffStackSingleton {
     std::vector<size_t> nested_var_stack_sizes_;
     std::vector<size_t> nested_var_nochain_stack_sizes_;
     std::vector<size_t> nested_var_alloc_stack_starts_;
+
+    // profile information
+    profile_map profiles_;
   };
 
   explicit AutodiffStackSingleton(AutodiffStackSingleton_t const &) = delete;

@@ -1,12 +1,9 @@
 #ifndef STAN_MATH_REV_CORE_PROFILING_HPP
 #define STAN_MATH_REV_CORE_PROFILING_HPP
 
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
-#include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/fun/value_of.hpp>
-#include <stan/math/prim/err.hpp>
+#include <stan/math/rev/core/autodiffstackstorage.hpp>
 #include <iostream>
 #include <sstream>
 #include <thread>
@@ -113,10 +110,6 @@ class profile_info {
   double get_rev_time() const noexcept { return rev_pass_time_; }
 };
 
-using profile_key = std::pair<std::string, std::thread::id>;
-
-using profile_map = std::map<profile_key, profile_info>;
-
 /**
  * Profiles C++ lines where the object is in scope.
  * When T is var, the constructor starts the profile for the forward pass
@@ -135,8 +128,9 @@ class profile {
   profile_info* profile_;
 
  public:
-  profile(std::string name, profile_map& profiles)
+  profile(std::string name)
       : key_({name, std::this_thread::get_id()}) {
+    profile_map& profiles = ChainableStack::instance_->profiles_;
     profile_map::iterator p = profiles.find(key_);
     if (p == profiles.end()) {
       profiles[key_] = profile_info();
@@ -161,6 +155,39 @@ class profile {
     }
   }
 };
+
+  // Add some sort of write function here
+  /*void write_profiling(stan::callbacks::writer& writer,
+                     stan::math::profile_map& p) {
+    stan::math::profile_map::iterator it;
+    std::stringstream profile_csv_stream;
+    profile_csv_stream << "name,thread_id,time_total,forward_time,reverse_time,chain_stack_total,nochain_stack_total,autodiff_passes,no_autodiff_passes" << std::endl;
+    for (it = p.begin(); it != p.end(); it++) {
+        std::cout << it->first.first << std::endl;
+        profile_csv_stream 
+            // name
+            <<  it->first.first << ","
+            // thread_id
+            << it->first.second << ","  //
+            // time_total
+            << (it->second.get_fwd_time() + it->second.get_rev_time()) << ","
+            // forward_time
+            << it->second.get_fwd_time() << ","
+            // reverse_time
+            << it->second.get_rev_time() << ","
+            // chain_stack_total
+            << it->second.get_chain_stack_used() << ","
+            // nochain_stack_total
+            << it->second.get_nochain_stack_used() << ","
+            // autodiff_passes
+            << it->second.get_num_rev_passes() << ","
+            // no_autodiff_passes
+            << it->second.get_num_no_AD_fwd_passes()
+            << std::endl;
+    }
+    writer(profile_csv_stream.str());
+    }*/
+
 
 }  // namespace math
 }  // namespace stan
