@@ -270,6 +270,10 @@ LDLIBS_TBB ?=
 
 endif
 
+ifdef TBB_INTERFACE_NEW
+CPPFLAGS_TBB ?= -DTBB_INTERFACE_NEW
+endif
+
 ################################################################################
 # Setup STAN_THREADS
 #
