@@ -17,14 +17,10 @@ namespace math {
  * @param[in] m Specified matrix.
  * @return Trace of the matrix.
  */
-template <typename T, typename = require_eigen_t<T>>
+template <typename T, require_eigen_t<T>* = nullptr,
+          require_not_st_var<T>* = nullptr>
 inline value_type_t<T> trace(const T& m) {
   return m.trace();
-}
-
-template <typename T, typename = require_not_eigen_t<T>, typename = void>
-inline T trace(const T& m) {
-  return m;
 }
 
 }  // namespace math

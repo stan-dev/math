@@ -15,16 +15,15 @@ namespace math {
  * @param A argument
  * @return Elementwise `inv_logit()` of the input.
  */
-inline var_value<matrix_cl<double>> inv_logit(
-    const var_value<matrix_cl<double>>& A) {
-  var_value<matrix_cl<double>> res = inv_logit(A.val());
-
-  reverse_pass_callback([A, res]() mutable {
-    A.adj()
-        = A.adj()
-          + elt_multiply(res.adj(), elt_multiply(res.val(), 1.0 - res.val()));
-  });
-  return res;
+template <typename T,
+          require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
+inline var_value<matrix_cl<double>> inv_logit(const var_value<T>& A) {
+  return make_callback_var(
+      inv_logit(A.val()), [A](vari_value<matrix_cl<double>>& res) mutable {
+        A.adj() = A.adj()
+                  + elt_multiply(res.adj(),
+                                 elt_multiply(res.val(), 1.0 - res.val()));
+      });
 }
 
 }  // namespace math

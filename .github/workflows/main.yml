@@ -1,6 +1,8 @@
 name: Windows RTools 3.5
 
 on:
+  pull_request:
+    branches: [ develop, master ]
   push:
     branches: [ develop ]
     paths-ignore:
@@ -12,10 +14,15 @@ on:
       - 'RELEASE-NOTES.txt'
 jobs:
   prim-rev:
-    name: prim and rev unit tests
+    name: prim and rev tests
     runs-on: windows-latest
 
     steps:
+    - uses: n1hility/cancel-previous-runs@v2
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+      if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/master' && github.ref != 'refs/heads/develop'"
+  
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
       with:
@@ -57,7 +64,7 @@ jobs:
         name: gtest_outputs_xml
         path: '**/*_test.xml'
   fwd-mix:
-    name: fwd and mix unit tests
+    name: fwd and mix tests
     runs-on: windows-latest
 
     steps:

@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/vector_seq_view.hpp>
 
 namespace stan {
 namespace math {

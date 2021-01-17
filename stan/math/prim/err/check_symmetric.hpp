@@ -28,7 +28,7 @@ namespace math {
  * @throw <code>std::domain_error</code> if any element not on the
  *   main diagonal is <code>NaN</code>
  */
-template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
+template <typename EigMat, require_matrix_t<EigMat>* = nullptr>
 inline void check_symmetric(const char* function, const char* name,
                             const EigMat& y) {
   check_square(function, name, y);

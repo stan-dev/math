@@ -7,6 +7,7 @@
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <cmath>
@@ -65,8 +66,8 @@ double discrete_range_lpmf(const T_y& y, const T_lower& lower,
   size_t N = max_size(y, lower, upper);
 
   for (size_t n = 0; n < N; ++n) {
-    const double y_dbl = value_of(y_vec[n]);
-    if (y_dbl < value_of(lower_vec[n]) || y_dbl > value_of(upper_vec[n])) {
+    const double y_dbl = y_vec.val(n);
+    if (y_dbl < lower_vec.val(n) || y_dbl > upper_vec.val(n)) {
       return LOG_ZERO;
     }
   }
@@ -75,8 +76,8 @@ double discrete_range_lpmf(const T_y& y, const T_lower& lower,
       size_lower_upper);
 
   for (size_t i = 0; i < size_lower_upper; i++) {
-    const double lower_dbl = value_of(lower_vec[i]);
-    const double upper_dbl = value_of(upper_vec[i]);
+    const double lower_dbl = lower_vec.val(i);
+    const double upper_dbl = upper_vec.val(i);
     log_upper_minus_lower[i] = log(upper_dbl - lower_dbl + 1);
   }
 

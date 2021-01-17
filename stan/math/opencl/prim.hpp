@@ -116,7 +116,10 @@
 #include <stan/math/opencl/prim/columns_dot_self.hpp>
 #include <stan/math/opencl/prim/crossprod.hpp>
 #include <stan/math/opencl/prim/diag_matrix.hpp>
+#include <stan/math/opencl/prim/diag_pre_multiply.hpp>
+#include <stan/math/opencl/prim/diag_post_multiply.hpp>
 #include <stan/math/opencl/prim/dims.hpp>
+#include <stan/math/opencl/prim/distance.hpp>
 #include <stan/math/opencl/prim/divide.hpp>
 #include <stan/math/opencl/prim/divide_columns.hpp>
 #include <stan/math/opencl/prim/dot_product.hpp>
@@ -164,6 +167,7 @@
 #include <stan/math/opencl/prim/segment.hpp>
 #include <stan/math/opencl/prim/sign.hpp>
 #include <stan/math/opencl/prim/size.hpp>
+#include <stan/math/opencl/prim/squared_distance.hpp>
 #include <stan/math/opencl/prim/sub_col.hpp>
 #include <stan/math/opencl/prim/sub_row.hpp>
 #include <stan/math/opencl/prim/std_normal_lpdf.hpp>
