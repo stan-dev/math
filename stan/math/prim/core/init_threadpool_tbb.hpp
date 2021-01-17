@@ -40,8 +40,8 @@ inline int get_num_threads() {
   const char* env_stan_num_threads = std::getenv("STAN_NUM_THREADS");
   if (env_stan_num_threads != nullptr) {
     try {
-      const int env_num_threads =
-          boost::lexical_cast<int>(env_stan_num_threads);
+      const int env_num_threads
+          = boost::lexical_cast<int>(env_stan_num_threads);
       if (env_num_threads > 0) {
         num_threads = env_num_threads;
       } else if (env_num_threads == -1) {
