@@ -136,3 +136,17 @@ TEST(ProbDistributionsPoissonBinomial,
   EXPECT_THROW(stan::math::poisson_binomial_lcdf(ys, thetas),
                std::invalid_argument);
 }
+
+TEST(ProbDistributionsPoissonBinomial, log_cdf_matches_lcdf) {
+  using vec = Eigen::Matrix<double, Eigen::Dynamic, 1>;
+
+  int y = 2;
+  vec theta(3, 1);
+  theta << 0.5, 0.2, 0.7;
+
+  EXPECT_FLOAT_EQ((stan::math::poisson_binomial_lcdf(y, theta)),
+                  (stan::math::poisson_binomial_cdf_log(y, theta)));
+
+  EXPECT_FLOAT_EQ((stan::math::poisson_binomial_lcdf<int, vec>(y, theta)),
+                  (stan::math::poisson_binomial_cdf_log<int, vec>(y, theta)));
+}
