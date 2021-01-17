@@ -88,7 +88,7 @@ inline tbb::task_arena& init_threadpool_tbb() {
   auto tbb_gc_mp = tbb::global_control::max_allowed_parallelism;
   int tbb_max_threads = internal::get_num_threads();
 
-  tbb::global_control tbb_gc(tbb_gc_mp, tbb_max_threads);
+  static tbb::global_control tbb_gc(tbb_gc_mp, tbb_max_threads);
 
   static tbb::task_arena tbb_arena(tbb_max_threads, 1,
                                    tbb::task_arena::priority::normal);
