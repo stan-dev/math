@@ -19,6 +19,7 @@ TEST(OpenCLAdjointResults, errors) {
   EXPECT_THROW(
       stan::math::adjoint_results(c, e) += stan::math::expressions(a, e.val()),
       std::invalid_argument);
+  EXPECT_NO_THROW(stan::math::adjoint_results() += stan::math::expressions());
 }
 
 TEST(OpenCLAdjointResults, matrix_expressions) {

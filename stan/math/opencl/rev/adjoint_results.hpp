@@ -51,8 +51,7 @@ class adjoint_results_cl : protected results_cl<T_results...> {
 
             index_apply<std::tuple_size<decltype(scalars)>::value>(
                 [&](auto... Is_scal) {
-                  int n_cols = std::get<0>(nonscalars).second.thread_cols();
-                  if (n_cols == 1) {
+                  if (is_vectors(nonscalars)) {
                     // evaluate all expressions
                     this->assignment_impl(std::tuple_cat(
                         nonscalars, this->make_assignment_pair(
@@ -82,6 +81,15 @@ class adjoint_results_cl : protected results_cl<T_results...> {
   }
 
  private:
+
+  template<typename T>
+  bool is_vectors(const T& pairs){
+    return std::get<0>(pairs).second.thread_cols()==1;
+  }
+  bool is_vectors(const std::tuple<>&){
+    return true;
+  }
+
   /**
    * Selects assignments that have scalar var results.
    * @tparam T_expression type of expression
