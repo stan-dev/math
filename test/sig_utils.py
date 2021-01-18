@@ -149,51 +149,51 @@ no_fwd_overload = [
 ]
 
 internal_signatures = [
-    "vector unit_vector_constrain(vector)",
-    "vector unit_vector_constrain(vector, real)",
-    "vector unit_vector_free(vector)",
-    "vector positive_ordered_constrain(vector)",
-    "vector positive_ordered_constrain(vector, real)",
-    "vector positive_ordered_free(vector)",
-    "vector ordered_constrain(vector)",
-    "vector ordered_constrain(vector, real)",
-    "vector ordered_free(vector)",
-    "vector simplex_constrain(vector)",
-    "vector simplex_constrain(vector, real)",
-    "vector simplex_free(vector)",
-    "int is_cholesky_factor(matrix)",
-    "int is_cholesky_factor_corr(matrix)",
-    "int is_column_index(matrix, int)",
-    "int is_column_index(vector, int)",
-    "int is_corr_matrix(matrix)",
-    "int is_cholesky_factor(matrix)",
-    "int is_lower_triangular(matrix)",
-    "int is_mat_finite(matrix)",
-    "int is_mat_finite(vector)",
-    "int is_matching_dims(matrix, matrix)",
-    "int is_matching_dims(vector, matrix)",
-    "int is_matching_dims(matrix, vector)",
-    "int is_matching_dims(row_vector, matrix)",
-    "int is_matching_dims(matrix, row_vector)",
-    "int is_matching_dims(matrix, matrix)",
-    "int is_matching_dims(row_vector, row_vector)",
-    "int is_matching_dims(vector, row_vector)",
-    "int is_matching_dims(row_vector, vector)",
-    "int is_matching_dims(vector, vector)",
-    "int is_pos_definite(matrix)",
-    "int is_square(matrix)",
-    "int is_square(vector)",
-    "int is_square(row_vector)",
-    "int is_symmetric(matrix)",
-    "int is_unit_vector(vector)",
+    "unit_vector_constrain(vector) => vector",
+    "unit_vector_constrain(vector, real) => vector",
+    "unit_vector_free(vector) => vector",
+    "positive_ordered_constrain(vector) => vector",
+    "positive_ordered_constrain(vector, real) => vector",
+    "positive_ordered_free(vector) => vector",
+    "ordered_constrain(vector) => vector",
+    "ordered_constrain(vector, real) => vector",
+    "ordered_free(vector) => vector",
+    "simplex_constrain(vector) => vector",
+    "simplex_constrain(vector, real) => vector",
+    "simplex_free(vector) => vector",
+    "is_cholesky_factor(matrix) => int",
+    "is_cholesky_factor_corr(matrix) => int",
+    "is_column_index(matrix, int) => int",
+    "is_column_index(vector, int) => int",
+    "is_corr_matrix(matrix) => int",
+    "is_cholesky_factor(matrix) => int",
+    "is_lower_triangular(matrix) => int",
+    "is_mat_finite(matrix) => int",
+    "is_mat_finite(vector) => int",
+    "is_matching_dims(matrix, matrix) => int",
+    "is_matching_dims(vector, matrix) => int",
+    "is_matching_dims(matrix, vector) => int",
+    "is_matching_dims(row_vector, matrix) => int",
+    "is_matching_dims(matrix, row_vector) => int",
+    "is_matching_dims(matrix, matrix) => int",
+    "is_matching_dims(row_vector, row_vector) => int",
+    "is_matching_dims(vector, row_vector) => int",
+    "is_matching_dims(row_vector, vector) => int",
+    "is_matching_dims(vector, vector) => int",
+    "is_pos_definite(matrix) => int",
+    "is_square(matrix) => int",
+    "is_square(vector) => int",
+    "is_square(row_vector) => int",
+    "is_symmetric(matrix) => int",
+    "is_unit_vector(vector) => int",
     # variadic functions: these are tested with one vector for variadic args
-    "real[,] ode_adams((real, vector, ostream_ptr, vector) => vector, vector, real, real[], ostream_ptr, vector)",
-    "real[,] ode_adams_tol((real, vector, ostream_ptr, vector) => vector, vector, real, real[], real, real, real, ostream_ptr, vector)",
-    "real[,] ode_bdf((real, vector, ostream_ptr, vector) => vector, vector, real, real[], ostream_ptr, vector)",
-    "real[,] ode_bdf_tol((real, vector, ostream_ptr, vector) => vector, vector, real, real[], real, real, real, ostream_ptr, vector)",
-    "real[,] ode_rk45((real, vector, ostream_ptr, vector) => vector, vector, real, real[], ostream_ptr, vector)",
-    "real[,] ode_rk45_tol((real, vector, ostream_ptr, vector) => vector, vector, real, real[], real, real, real, ostream_ptr, vector)",
-    "real reduce_sum(real[], int, vector)",
+    "ode_adams((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, ostream_ptr, vector) => array[,] real",
+    "ode_adams_tol((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, real, real, real, ostream_ptr, vector) => array[,] real",
+    "ode_bdf((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, ostream_ptr, vector) => array[,] real",
+    "ode_bdf_tol((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, real, real, real, ostream_ptr, vector) => array[,] real",
+    "ode_rk45((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, ostream_ptr, vector) => array[,] real",
+    "ode_rk45_tol((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, real, real, real, ostream_ptr, vector) => array[,] real",
+    "reduce_sum(array[] real, int, vector) => real",
 ]
 
 
@@ -249,13 +249,10 @@ def parse_signature(signature):
     :param signature: stanc3 function signature
     :return: return type, fucntion name and list of function argument types
     """
-    signature = signature[:-1] # Remove the close paren at the end.
-    rt_name, args = signature.split("(", ) # There's only one open paren and it occurs on the function name.
-    # The last word is the function name, the rest is the return type.
-    rt_name = rt_name.split()
-    return_type = " ".join(rt_name[:-1])
-    function_name = rt_name[-1]
-    args = args.split(", ")
+    rest, return_type = signature.rsplit(" => ", 1)
+    function_name, rest = rest.split("(", 1)
+    args = re.findall(r"(?:[(][^()]+[)][^,()]+)|(?:[^,()]+(?:,*[]])?)", rest)
+    args = [i.strip() for i in args if i.strip()]
     return return_type, function_name, args
 
 
@@ -286,6 +283,6 @@ def reference_vector_argument(arg):
     :param arg: argument
     :return: reference argument
     """
-    if arg in ("real[]", "row_vector"):
+    if arg in ("array[] real", "row_vector"):
         return "vector"
     return arg
