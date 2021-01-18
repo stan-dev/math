@@ -3,6 +3,8 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_generator/multi_result_kernel.hpp>
+#include <stan/math/rev/core.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <tuple>
 #include <utility>
 
