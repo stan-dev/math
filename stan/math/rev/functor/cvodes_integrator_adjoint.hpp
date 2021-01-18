@@ -672,7 +672,8 @@ class cvodes_integrator_adjoint_vari : public vari {
         }
 
         double t_final = value_of((i > 0) ? memory->ts_[i - 1] : memory->t0_);
-        //std::cout << "time-point " << i << "; t_init = " << t_init << "; t_final = " << t_final << std::endl;
+        // std::cout << "time-point " << i << "; t_init = " << t_init << ";
+        // t_final = " << t_final << std::endl;
         if (t_final != t_init) {
           if (!cvodes_backward_initialized) {
             // initialize CVODES backward machinery.
