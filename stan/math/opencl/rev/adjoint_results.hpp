@@ -81,17 +81,26 @@ class adjoint_results_cl : protected results_cl<T_results...> {
   }
 
  private:
+  /**
+   * Determines if the assignments are column vectors.
+   * @param pairs pairs of result and expression
+   * @return true if they are vectors
+   */
   template <typename T>
   bool is_vectors(const T& pairs) {
     return std::get<0>(pairs).second.thread_cols() == 1;
   }
+  /**
+   * Determines if the assignments are column vectors.
+   * @return true
+   */
   bool is_vectors(const std::tuple<>&) { return true; }
 
   /**
    * Selects assignments that have scalar var results.
    * @tparam T_expression type of expression
    * @param result result
-   * @param expresion expresion
+   * @param expression expression
    * @return triplet of reference to adjoint, expression and temporary
    * `matrix_cl`
    */
@@ -106,7 +115,7 @@ class adjoint_results_cl : protected results_cl<T_results...> {
    * results.
    * @tparam T_expression type of expression
    * @param result result
-   * @param expresion expresion
+   * @param expression expression
    * @return empty tuple
    */
   template <typename T_result, typename T_expression,
@@ -120,7 +129,7 @@ class adjoint_results_cl : protected results_cl<T_results...> {
    * @tparam T_result type of result. This overload is used for non-scalar vars.
    * @tparam T_expression type of expression
    * @param result result
-   * @param expresion expresion
+   * @param expression expression
    * @return pair of result and expression or empty tuple (if the result is
    * check or the expression is `calc_if<false,T>`.
    */
@@ -138,7 +147,7 @@ class adjoint_results_cl : protected results_cl<T_results...> {
    * either scalars or not vars.
    * @tparam T_expression type of expression
    * @param result result
-   * @param expresion expresion
+   * @param expression expression
    * @return empty tuple
    */
   template <
