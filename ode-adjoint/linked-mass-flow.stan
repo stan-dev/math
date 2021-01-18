@@ -80,6 +80,7 @@ data {
 }
 transformed data {
   int num_states = 2 * system_size;
+  real param_scale = sigma_sim / sqrt(num_obs/4);
 
   vector[system_size] log_kt_ = sample_vector_rng(0.0, sigma_sim, system_size);
   vector[system_size] log_e50_ = sample_vector_rng(0.0, sigma_sim, system_size);
@@ -120,12 +121,12 @@ transformed data {
   print("y_: ", y_);
 }
 parameters {
-  vector[system_size] log_kt;
-  vector[system_size] log_e50;
-  vector[system_size] log_k12;
-  vector[system_size] log_k21;
-  vector[system_size] log_sigma_y;
-  vector[num_states] log_a0;
+  vector<multiplier=param_scale,offset=log_kt_>[system_size] log_kt;
+  vector<multiplier=param_scale,offset=log_e50_>[system_size] log_e50;
+  vector<multiplier=param_scale,offset=log_k12_>[system_size] log_k12;
+  vector<multiplier=param_scale,offset=log_k21_>[system_size] log_k21;
+  vector<offset=log_sigma_y_>[system_size] log_sigma_y;
+  vector<multiplier=param_scale,offset=log_a0_>[num_states] log_a0;
 }
 transformed parameters {
 }
@@ -140,16 +141,9 @@ model {
   target += normal_lpdf(log_a0| 0.0, sigma_sim);
   target += normal_lpdf(log_sigma_y| 0.0, sigma_y);
 
-  /*
   for(j in 1:system_size) {
     int m = 2*(j-1) + 1;
     target += lognormal_lpdf(to_vector(y_[:,m])| log(to_vector(mu[:,m])+1E-3), exp(log_sigma_y[j]));
-  }
-  */
-  
-  for(j in 1:system_size) {
-    int m = 2*(j-1) + 1;
-    target += lognormal_lpdf(y_[num_obs,m]| log(mu[num_obs,m]+1E-3), exp(log_sigma_y[j]));
   }
 }
 generated quantities {
