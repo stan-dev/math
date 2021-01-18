@@ -74,21 +74,18 @@ class adjoint_results_cl : protected results_cl<T_results...> {
                   std::tie(std::get<0>(std::get<Is_scal>(scalars))...)
                       = std::make_tuple(std::get<0>(std::get<Is_scal>(scalars))
                                         + sum(from_matrix_cl(std::get<2>(
-                                            std::get<Is_scal>(scalars))))...);
+                                              std::get<Is_scal>(scalars))))...);
                 });
           });
     });
   }
 
  private:
-
-  template<typename T>
-  bool is_vectors(const T& pairs){
-    return std::get<0>(pairs).second.thread_cols()==1;
+  template <typename T>
+  bool is_vectors(const T& pairs) {
+    return std::get<0>(pairs).second.thread_cols() == 1;
   }
-  bool is_vectors(const std::tuple<>&){
-    return true;
-  }
+  bool is_vectors(const std::tuple<>&) { return true; }
 
   /**
    * Selects assignments that have scalar var results.
