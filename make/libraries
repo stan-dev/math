@@ -54,12 +54,22 @@ SUNDIALS_KINSOL := $(patsubst %.c,%.o, \
   $(wildcard $(SUNDIALS)/src/sunnonlinsol/newton/[^f]*.c) \
   $(wildcard $(SUNDIALS)/src/sunnonlinsol/fixedpoint/[^f]*.c))
 
+SUNDIALS_ARKODE := $(patsubst %.c,%.o,\
+  $(wildcard $(SUNDIALS)/src/arkode/*.c) \
+  $(wildcard $(SUNDIALS)/src/sundials/*.c) \
+  $(wildcard $(SUNDIALS)/src/sunmatrix/band/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunmatrix/dense/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunlinsol/band/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunlinsol/dense/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunnonlinsol/newton/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunnonlinsol/fixedpoint/[^f]*.c))
+
 SUNDIALS_NVECSERIAL := $(patsubst %.c,%.o,\
   $(addprefix $(SUNDIALS)/src/, nvector/serial/nvector_serial.c sundials/sundials_math.c))
 
-$(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_NVECSERIAL)) : CXXFLAGS = $(CXXFLAGS_SUNDIALS) $(CXXFLAGS_OS) $(CXXFLAGS_OPTIM_SUNDIALS) -O$(O) $(INC_SUNDIALS)
-$(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_NVECSERIAL)) : CPPFLAGS = $(CPPFLAGS_SUNDIALS) $(CPPFLAGS_OS) $(CPPFLAGS_OPTIM_SUNDIALS) -O$(O)
-$(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_NVECSERIAL)) : %.o : %.c
+$(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_ARKODE) $(SUNDIALS_NVECSERIAL)) : CXXFLAGS = $(CXXFLAGS_SUNDIALS) $(CXXFLAGS_OS) $(CXXFLAGS_OPTIM_SUNDIALS) -O$(O) $(INC_SUNDIALS)
+$(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_ARKODE) $(SUNDIALS_NVECSERIAL)) : CPPFLAGS = $(CPPFLAGS_SUNDIALS) $(CPPFLAGS_OS) $(CPPFLAGS_OPTIM_SUNDIALS) -O$(O)
+$(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_ARKODE) $(SUNDIALS_NVECSERIAL)) : %.o : %.c
 	@mkdir -p $(dir $@)
 	$(COMPILE.cpp) -x c -include $(SUNDIALS)/include/stan_sundials_printf_override.hpp $< $(OUTPUT_OPTION)
 
@@ -75,18 +85,22 @@ $(SUNDIALS)/lib/libsundials_kinsol.a: $(SUNDIALS_KINSOL)
 	@mkdir -p $(dir $@)
 	$(AR) -rs $@ $^
 
+$(SUNDIALS)/lib/libsundials_arkode.a: $(SUNDIALS_ARKODE)
+	@mkdir -p $(dir $@)
+	$(AR) -rs $@ $^
+
 $(SUNDIALS)/lib/libsundials_nvecserial.a: $(SUNDIALS_NVECSERIAL)
 	@mkdir -p $(dir $@)
 	$(AR) -rs $@ $^
 
-LIBSUNDIALS := $(SUNDIALS)/lib/libsundials_nvecserial.a $(SUNDIALS)/lib/libsundials_cvodes.a $(SUNDIALS)/lib/libsundials_idas.a $(SUNDIALS)/lib/libsundials_kinsol.a
+LIBSUNDIALS := $(SUNDIALS)/lib/libsundials_nvecserial.a $(SUNDIALS)/lib/libsundials_cvodes.a $(SUNDIALS)/lib/libsundials_idas.a $(SUNDIALS)/lib/libsundials_kinsol.a $(SUNDIALS)/lib/libsundials_arkode.a
 
-STAN_SUNDIALS_HEADERS :=  $(call findfiles,$(MATH)stan,*cvodes*.hpp) $(call findfiles,$(MATH)stan,*idas*.hpp) $(call findfiles,$(MATH)stan,*kinsol*.hpp)
+STAN_SUNDIALS_HEADERS :=  $(call findfiles,$(MATH)stan,*cvodes*.hpp) $(call findfiles,$(MATH)stan,*idas*.hpp) $(call findfiles,$(MATH)stan,*kinsol*.hpp) $(call findfiles,$(MATH)stan,*arkode*.hpp)
 $(STAN_SUNDIALS_HEADERS) : $(LIBSUNDIALS)
 
 clean-sundials:
 	@echo '  cleaning sundials targets'
-	$(RM) $(wildcard $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_NVECSERIAL) $(LIBSUNDIALS)))
+	$(RM) $(wildcard $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_ARKODE) $(SUNDIALS_NVECSERIAL) $(LIBSUNDIALS)))
 
 
 ############################################################

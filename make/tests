@@ -61,6 +61,15 @@ $(EXPRESSION_TESTS) : $(LIBSUNDIALS)
 
 ############################################################
 #
+# ARKODE tests
+##
+
+ARKODE_TESTS := $(subst .cpp,$(EXE),$(call findfiles,test,*arkode*_test.cpp) $(call findfiles,test,*_erk45_*_test.cpp))
+$(ARKODE_TESTS) : $(LIBSUNDIALS)
+
+
+############################################################
+#
 # CVODES tests
 ##
 
