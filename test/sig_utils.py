@@ -12,15 +12,15 @@ else:
 
 arg_types = {
     "int": "int",
-    "int[]": "std::vector<int>",
-    "int[,]": "std::vector<std::vector<int>>",
+    "array[] int": "std::vector<int>",
+    "array[,] int": "std::vector<std::vector<int>>",
     "real": "SCALAR",
-    "real[]": "std::vector<SCALAR>",
-    "real[,]": "std::vector<std::vector<SCALAR>>",
+    "array[] real": "std::vector<SCALAR>",
+    "array[,] real": "std::vector<std::vector<SCALAR>>",
     "vector": "Eigen::Matrix<SCALAR, Eigen::Dynamic, 1>",
-    "vector[]": "std::vector<Eigen::Matrix<SCALAR, Eigen::Dynamic, 1>>",
+    "array[] vector": "std::vector<Eigen::Matrix<SCALAR, Eigen::Dynamic, 1>>",
     "row_vector": "Eigen::Matrix<SCALAR, 1, Eigen::Dynamic>",
-    "row_vector[]": "std::vector<Eigen::Matrix<SCALAR, 1, Eigen::Dynamic>>",
+    "array[] row_vector": "std::vector<Eigen::Matrix<SCALAR, 1, Eigen::Dynamic>>",
     "matrix": "Eigen::Matrix<SCALAR, Eigen::Dynamic, Eigen::Dynamic>",
     "rng": "std::minstd_rand",
     "ostream_ptr": "std::ostream*",
@@ -249,10 +249,13 @@ def parse_signature(signature):
     :param signature: stanc3 function signature
     :return: return type, fucntion name and list of function argument types
     """
-    return_type, rest = signature.split(" ", 1)
-    function_name, rest = rest.split("(", 1)
-    args = re.findall(r"(?:[(][^()]+[)][^,()]+)|(?:[^,()]+(?:,*[]])?)", rest)
-    args = [i.strip() for i in args if i.strip()]
+    signature = signature[:-1] # Remove the close paren at the end.
+    rt_name, args = signature.split("(", ) # There's only one open paren and it occurs on the function name.
+    # The last word is the function name, the rest is the return type.
+    rt_name = rt_name.split()
+    return_type = " ".join(rt_name[:-1])
+    function_name = rt_name[-1]
+    args = args.split(", ")
     return return_type, function_name, args
 
 
