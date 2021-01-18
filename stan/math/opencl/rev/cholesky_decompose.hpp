@@ -2,11 +2,11 @@
 #define STAN_MATH_OPENCL_REV_CHOLESKY_DECOMPOSE_HPP
 #ifdef STAN_OPENCL
 
+#include <stan/math/opencl/triangular_transpose.hpp>
 #include <stan/math/opencl/prim/cholesky_decompose.hpp>
 #include <stan/math/opencl/err/check_nan.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
-#include <stan/math/opencl/triangular_transpose.hpp>
 
 namespace stan {
 namespace math {

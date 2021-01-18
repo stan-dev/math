@@ -115,10 +115,17 @@ class calc_if_
 };
 
 template <bool Do_Calculate, typename T,
-          require_all_kernel_expressions_t<T>* = nullptr>
-inline calc_if_<Do_Calculate, as_operation_cl_t<T>> calc_if(T&& a) {
-  return calc_if_<Do_Calculate, as_operation_cl_t<T>>(
+          require_all_kernel_expressions_t<T>* = nullptr,
+          std::enable_if_t<Do_Calculate>* = nullptr>
+inline calc_if_<true, as_operation_cl_t<T>> calc_if(T&& a) {
+  return calc_if_<true, as_operation_cl_t<T>>(
       as_operation_cl(std::forward<T>(a)));
+}
+
+template <bool Do_Calculate, typename T,
+          std::enable_if_t<!Do_Calculate>* = nullptr>
+inline calc_if_<false, scalar_<double>> calc_if(T&& a) {
+  return calc_if_<false, scalar_<double>>(scalar_<double>(0.0));
 }
 
 namespace internal {
