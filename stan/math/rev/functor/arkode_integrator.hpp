@@ -159,7 +159,7 @@ class arkode_integrator {
     check_positive(function_name, "max_num_steps", max_num_steps_);
 
     if (mem_ == nullptr) {
-      throw std::runtime_error("CVodeCreate failed to allocate memory");
+      throw std::runtime_error("ERKStepCreate failed to allocate memory");
     }
   }
 
@@ -170,8 +170,7 @@ class arkode_integrator {
 
   /**
    * Solve the ODE initial value problem y' = f(t, y), y(t0) = y0 at a set of
-   * times, { t1, t2, t3, ... } using the stiff backward differentiation formula
-   * (BDF) solver in ARKode.
+   * times, { t1, t2, t3, ... } using the selected RK solver in ARKode.
    *
    * @return std::vector of Eigen::Matrix of the states of the ODE, one for each
    *   solution time (excluding the initial state)
@@ -184,6 +183,7 @@ class arkode_integrator {
     CHECK_SUNDIALS_CALL(ERKStepSetMaxNumSteps(mem_, max_num_steps_));
     CHECK_SUNDIALS_CALL(ERKStepSetTableNum(mem_, scheme_id));
     CHECK_SUNDIALS_CALL(ERKStepSetAdaptivityMethod(mem_, 2, 1, 0, 0));
+    CHECK_SUNDIALS_CALL(ERKStepSetInitStep(mem_, 0.1));
     CHECK_SUNDIALS_CALL(ERKStepSetUserData(mem_, reinterpret_cast<void*>(this)));
 
     for (size_t n = 0; n < ts_.size(); ++n) {
