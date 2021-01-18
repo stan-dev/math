@@ -2,7 +2,6 @@
 #define STAN_MATH_REV_FUNCTOR_INTEGRATE_ODE_ARKODE_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/functor/cvodes_utils.hpp>
 #include <stan/math/rev/functor/coupled_ode_system.hpp>
 #include <stan/math/rev/functor/ode_store_sensitivities.hpp>
 #include <stan/math/rev/functor/sundials_check.hpp>
@@ -21,10 +20,9 @@ namespace stan {
 namespace math {
 
 /**
- * Integrator interface for CVODES' ODE solvers (Adams & BDF
- * methods).
+ * Integrator interface for ARKode' ODE solvers
  *
- * @tparam Lmm ID of ODE solver (1: ADAMS, 2: BDF)
+ * @tparam scheme_id Butcher ID of ERK schemes.
  * @tparam F Type of ODE right hand side
  * @tparam T_y0 Type of initial state
  * @tparam T_param Type of scalars for parameters
@@ -62,7 +60,7 @@ class arkode_integrator {
 
   /**
    * Implements the function of type CVRhsFn which is the user-defined
-   * ODE RHS passed to CVODES.
+   * ODE RHS passed to ARKode.
    */
   static int arkode_rhs(realtype t, N_Vector y, N_Vector ydot, void* user_data) {
     arkode_integrator* integrator = static_cast<arkode_integrator*>(user_data);
@@ -74,7 +72,7 @@ class arkode_integrator {
    * Calculates the RHS of the sensitivity ODE system which
    * corresponds to the coupled ode system from which the first N
    * states are omitted, since the first N states are the ODE RHS
-   * which CVODES separates from the main ODE RHS.
+   * which ARKode separates from the main ODE RHS.
    */
   inline void rhs(double t, N_Vector y, N_Vector ydot) {
     size_t n = coupled_state_.size();
@@ -96,8 +94,8 @@ class arkode_integrator {
    * @param t0 Initial time
    * @param ts Times at which to solve the ODE at. All values must be sorted and
    *   not less than t0.
-   * @param relative_tolerance Relative tolerance passed to CVODES
-   * @param absolute_tolerance Absolute tolerance passed to CVODES
+   * @param relative_tolerance Relative tolerance passed to ARKode
+   * @param absolute_tolerance Absolute tolerance passed to ARKode
    * @param max_num_steps Upper limit on the number of integration steps to
    *   take between each output (error if exceeded)
    * @param[in, out] msgs the print stream for warning messages
@@ -173,7 +171,7 @@ class arkode_integrator {
   /**
    * Solve the ODE initial value problem y' = f(t, y), y(t0) = y0 at a set of
    * times, { t1, t2, t3, ... } using the stiff backward differentiation formula
-   * (BDF) solver in CVODES.
+   * (BDF) solver in ARKode.
    *
    * @return std::vector of Eigen::Matrix of the states of the ODE, one for each
    *   solution time (excluding the initial state)
@@ -207,7 +205,7 @@ class arkode_integrator {
 
     return y;
   }
-};  // cvodes integrator
+};  // arkode integrator
 
 }  // namespace math
 }  // namespace stan

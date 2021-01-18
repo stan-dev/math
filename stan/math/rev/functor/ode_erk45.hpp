@@ -4,9 +4,6 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/functor/arkode_integrator.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <arkode/arkode.h>
-#include <arkode/arkode_erkstep.h>
-#include <arkode/arkode_butcher_erk.h>
 #include <ostream>
 #include <vector>
 

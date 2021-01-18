@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_FUNCTOR_INTEGRATE_ODE_ERK45_HPP
-#define STAN_MATH_PRIM_FUNCTOR_INTEGRATE_ODE_ERK45_HPP
+#ifndef STAN_MATH_REV_FUNCTOR_INTEGRATE_ODE_ERK45_HPP
+#define STAN_MATH_REV_FUNCTOR_INTEGRATE_ODE_ERK45_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/functor/integrate_ode_std_vector_interface_adapter.hpp>
