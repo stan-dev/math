@@ -6,6 +6,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/adjoint_of.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -27,9 +28,9 @@ template <
     typename T_a, typename T_b,
     require_all_nonscalar_prim_or_rev_kernel_expression_t<T_a, T_b>* = nullptr,
     require_any_var_t<T_a, T_b>* = nullptr>
-inline auto beta(const T_a& a, const T_b& b) {
-  const arena_t<T_a>& a_arena = a;
-  const arena_t<T_b>& b_arena = b;
+inline auto beta(T_a&& a, T_b&& b) {
+  const arena_t<T_a>& a_arena = std::forward<T_a>(a);
+  const arena_t<T_b>& b_arena = std::forward<T_b>(b);
 
   var_value<matrix_cl<double>> res = beta(value_of(a_arena), value_of(b_arena));
 
@@ -52,6 +53,78 @@ inline auto beta(const T_a& a, const T_b& b) {
           = a_adj
             + elt_multiply(adj_val, (digamma(value_of(a_arena)) - digamma_ab));
     } else {
+      auto& b_adj = forward_as<var_value<matrix_cl<double>>>(b_arena).adj();
+      b_adj
+          = b_adj
+            + elt_multiply(adj_val, (digamma(value_of(b_arena)) - digamma_ab));
+    }
+  });
+  return res;
+}
+
+/**
+ * Return the elementwise `beta()` on an input kernel
+ * generator expression and scalar.
+ *
+ * @tparam T_a type of first expression
+ * @tparam T_b type of scalar
+ * @param a kernel generator expression
+ * @param b scalar
+ * @return elementwise `beta()`
+ */
+template <typename T_a, typename T_b,
+          require_nonscalar_prim_or_rev_kernel_expression_t<T_a>* = nullptr,
+          require_stan_scalar_t<T_b>* = nullptr,
+          require_any_var_t<T_a, T_b>* = nullptr>
+inline auto beta(T_a&& a, const T_b& b) {
+  const arena_t<T_a>& a_arena = std::forward<T_a>(a);
+
+  var_value<matrix_cl<double>> res = beta(value_of(a_arena), value_of(b));
+
+  reverse_pass_callback([a_arena, b, res]() mutable {
+    auto adj_val = elt_multiply(res.adj(), res.val());
+    auto digamma_ab = digamma(value_of(a_arena) + value_of(b));
+    if (!is_constant<T_a>::value) {
+      auto& a_adj = forward_as<var_value<matrix_cl<double>>>(a_arena).adj();
+      a_adj
+          = a_adj
+            + elt_multiply(adj_val, (digamma(value_of(a_arena)) - digamma_ab));
+    }
+    if (!is_constant<T_b>::value) {
+      adjoint_of(b)
+          += sum(elt_multiply(adj_val, (digamma(value_of(b)) - digamma_ab)));
+    }
+  });
+  return res;
+}
+
+/**
+ * Return the elementwise `beta()` on an input kernel
+ * generator expression and scalar.
+ *
+ * @tparam T_a type of scalar
+ * @tparam T_b type of first expression
+ * @param a scalar
+ * @param b kernel generator expression
+ * @return elementwise `beta()`
+ */
+template <typename T_a, typename T_b,
+          require_nonscalar_prim_or_rev_kernel_expression_t<T_b>* = nullptr,
+          require_stan_scalar_t<T_a>* = nullptr,
+          require_any_var_t<T_a, T_b>* = nullptr>
+inline auto beta(const T_a& a, T_b&& b) {
+  const arena_t<T_b>& b_arena = std::forward<T_b>(b);
+
+  var_value<matrix_cl<double>> res = beta(value_of(a), value_of(b_arena));
+
+  reverse_pass_callback([a, b_arena, res]() mutable {
+    auto adj_val = elt_multiply(res.adj(), res.val());
+    auto digamma_ab = digamma(value_of(a) + value_of(b_arena));
+    if (!is_constant<T_a>::value) {
+      adjoint_of(a)
+          += sum(elt_multiply(adj_val, (digamma(value_of(a)) - digamma_ab)));
+    }
+    if (!is_constant<T_b>::value) {
       auto& b_adj = forward_as<var_value<matrix_cl<double>>>(b_arena).adj();
       b_adj
           = b_adj

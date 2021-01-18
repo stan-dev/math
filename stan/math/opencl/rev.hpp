@@ -25,7 +25,10 @@
 #include <stan/math/opencl/rev/cosh.hpp>
 #include <stan/math/opencl/rev/crossprod.hpp>
 #include <stan/math/opencl/rev/diag_matrix.hpp>
+#include <stan/math/opencl/rev/diag_pre_multiply.hpp>
+#include <stan/math/opencl/rev/diag_post_multiply.hpp>
 #include <stan/math/opencl/rev/diagonal.hpp>
+#include <stan/math/opencl/rev/digamma.hpp>
 #include <stan/math/opencl/rev/divide.hpp>
 #include <stan/math/opencl/rev/dot_product.hpp>
 #include <stan/math/opencl/rev/dot_self.hpp>
@@ -60,6 +63,8 @@
 #include <stan/math/opencl/rev/log1m_inv_logit.hpp>
 #include <stan/math/opencl/rev/log_inv_logit_diff.hpp>
 #include <stan/math/opencl/rev/log_diff_exp.hpp>
+#include <stan/math/opencl/rev/mdivide_left_tri_low.hpp>
+#include <stan/math/opencl/rev/mdivide_right_tri_low.hpp>
 #include <stan/math/opencl/rev/multiply.hpp>
 #include <stan/math/opencl/rev/multiply_log.hpp>
 #include <stan/math/opencl/rev/operands_and_partials.hpp>

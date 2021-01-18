@@ -45,4 +45,16 @@ TEST(OpenCLMatrix_log_inv_logit_diff, prim_rev_values_large) {
                                                 b);
 }
 
+TEST(OpenCLMatrix_log_inv_logit_diff, prim_rev_scalar_values_large) {
+  int N = 71;
+  int M = 83;
+
+  Eigen::MatrixXd a = Eigen::MatrixXd::Random(N, M);
+  double b = 0.3;
+  stan::math::test::compare_cpu_opencl_prim_rev(log_inv_logit_diff_functor, a,
+                                                b);
+  stan::math::test::compare_cpu_opencl_prim_rev(log_inv_logit_diff_functor, b,
+                                                a);
+}
+
 #endif
