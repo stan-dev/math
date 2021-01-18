@@ -52,15 +52,20 @@ plain_type_t<T_theta> poisson_binomial_log_probs(int y, const T_theta& theta) {
   return alpha.row(size_theta);
 }
 
-template <typename T_theta, typename T_scalar = scalar_type_t<T_theta>>
-auto poisson_binomial_log_probs(const std::vector<int>& y,
-                                const T_theta& theta) {
+template <typename T_y, typename T_theta,
+          typename = std::enable_if_t<
+              (std::is_same<int, T_y>::value
+               || (is_std_vector<T_y>::value
+                   && std::is_same<int, scalar_type_t<T_y>>::value))>,
+          typename T_scalar = scalar_type_t<T_theta>>
+auto poisson_binomial_log_probs(const T_y& y, const T_theta& theta) {
   size_t max_sizes = std::max(stan::math::size(y), size_mvt(theta));
   std::vector<Eigen::Matrix<T_scalar, Eigen::Dynamic, 1>> result(max_sizes);
+  scalar_seq_view<T_y> y_vec(y);
   vector_seq_view<T_theta> theta_vec(theta);
 
   for (size_t i = 0; i < max_sizes; ++i) {
-    result[i] = poisson_binomial_log_probs(y[i], theta_vec[i]);
+    result[i] = poisson_binomial_log_probs(y_vec[i], theta_vec[i]);
   }
 
   return result;

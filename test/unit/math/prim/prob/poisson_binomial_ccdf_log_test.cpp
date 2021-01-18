@@ -39,6 +39,32 @@ TEST(ProbDistributionsPoissonBinomial, lccdf_works_on_vectorial_y_and_theta) {
   EXPECT_NEAR(-2.65926 - 0.798508, poisson_binomial_lccdf(y, ps), 0.001);
 }
 
+TEST(ProbDistributionsPoissonBinomial,
+     lccdf_works_on_scalar_y_and_vectorial_theta) {
+  using stan::math::poisson_binomial_lccdf;
+  using vec = Eigen::Matrix<double, Eigen::Dynamic, 1>;
+
+  vec p(3, 1);
+  p << 0.5, 0.2, 0.7;
+  int y = 2;
+  std::vector<vec> ps{p};
+
+  EXPECT_NEAR(-2.65926, poisson_binomial_lccdf(y, ps), 0.001);
+}
+
+TEST(ProbDistributionsPoissonBinomial,
+     lccdf_works_on_scalar_y_and_vectorial_theta2) {
+  using stan::math::poisson_binomial_lccdf;
+  using vec = Eigen::Matrix<double, Eigen::Dynamic, 1>;
+
+  vec p(3, 1);
+  p << 0.5, 0.2, 0.7;
+  int y = 2;
+  std::vector<vec> ps{p, p};
+
+  EXPECT_NEAR(-2.65926 * 2.0, poisson_binomial_lccdf(y, ps), 0.001);
+}
+
 TEST(ProbDistributionsPoissonBinomial, lccdf_check_error_scalar_y_oob) {
   static double inff = std::numeric_limits<double>::infinity();
 
@@ -151,4 +177,21 @@ TEST(ProbDistributionsPoissonBinomial, log_ccdf_matches_lcdf) {
 
   EXPECT_FLOAT_EQ((stan::math::poisson_binomial_lccdf<int, vec>(y, theta)),
                   (stan::math::poisson_binomial_ccdf_log<int, vec>(y, theta)));
+}
+
+TEST(ProbDistributionsPoissonBinomial, log_ccdf_matches_lcdf_vectorial) {
+  using vec = Eigen::Matrix<double, Eigen::Dynamic, 1>;
+
+  int y = 2;
+  vec theta(3, 1);
+  theta << 0.5, 0.2, 0.7;
+  std::vector<vec> thetas{theta, theta};
+
+  EXPECT_FLOAT_EQ((stan::math::poisson_binomial_lccdf(y, thetas)),
+                  (stan::math::poisson_binomial_ccdf_log(y, thetas)));
+
+  EXPECT_FLOAT_EQ(
+      (stan::math::poisson_binomial_lccdf<int, std::vector<vec>>(y, thetas)),
+      (stan::math::poisson_binomial_ccdf_log<int, std::vector<vec>>(y,
+                                                                    thetas)));
 }
