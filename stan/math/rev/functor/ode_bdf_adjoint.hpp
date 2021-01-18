@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_FUNCTOR_ODE_BDF_ADJOINT_HPP
 
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/prim/fun/eval.hpp>
 #include <stan/math/rev/functor/cvodes_integrator_adjoint.hpp>
 #include <ostream>
 #include <vector>
@@ -61,16 +62,38 @@ ode_bdf_adjoint_tol_impl(const char* function_name, const F& f, const T_y0& y0,
         auto integrator
             = new stan::math::cvodes_integrator_adjoint_vari<CV_BDF, F, T_y0,
   T_t0, T_ts, T_Args...>( function_name, f, y0, t0, ts, relative_tolerance,
-  absolute_tolerance, max_num_steps, msgs, args_refs...); return
-  (*integrator)();
+                          absolute_tolerance, absolute_tolerance_B, absolute_tolerance_QB,
+                          steps_checkpoint, max_num_steps, msgs, args_refs...);
+        return (*integrator)();
       }, args_ref_tuple);
-  */
+      */
+  /*
+  const auto& args_eval_tuple = std::make_tuple(eval(args)...);
+  return apply(
+      [&](const auto&... args_eval) {
+        auto integrator
+            = new stan::math::cvodes_integrator_adjoint_vari<CV_BDF, F, T_y0,
+  T_t0, T_ts, T_Args...>( function_name, f, y0, t0, ts, relative_tolerance,
+                          absolute_tolerance, absolute_tolerance_B, absolute_tolerance_QB,
+                          steps_checkpoint, max_num_steps, msgs, args_eval...);
+        return (*integrator)();
+      }, args_eval_tuple);
+      */
+  /*
   auto integrator
       = new stan::math::cvodes_integrator_adjoint_vari<CV_BDF, F, T_y0, T_t0,
                                                        T_ts, T_Args...>(
           function_name, f, y0, t0, ts, relative_tolerance, absolute_tolerance,
           absolute_tolerance_B, absolute_tolerance_QB, steps_checkpoint,
-          max_num_steps, msgs, args...);
+          max_num_steps, msgs, eval(args)...);
+  return (*integrator)();
+  */
+  auto integrator
+      = new stan::math::cvodes_integrator_adjoint_vari<CV_BDF, F, plain_type_t<T_y0>, T_t0,
+                                                       T_ts, plain_type_t<T_Args>...>(
+                                                           function_name, f, eval(y0), t0, ts, relative_tolerance, absolute_tolerance,
+          absolute_tolerance_B, absolute_tolerance_QB, steps_checkpoint,
+          max_num_steps, msgs, eval(args)...);
   return (*integrator)();
 }
 

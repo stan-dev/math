@@ -262,6 +262,8 @@ class cvodes_integrator_adjoint_vari : public vari {
    * Calculate the adjoint sensitivity RHS for varying initial conditions
    * and parameters
    *
+   * Equation 2.23 in the cvs_guide.
+   *
    * @param[in] initial var vector
    * @param[in] param var vector
    * @param[in] t time
@@ -300,7 +302,10 @@ class cvodes_integrator_adjoint_vari : public vari {
   }
 
   /*
-   * Calculate the RHS for the quadrature part of the adjoint ODE problem.
+   * Calculate the RHS for the quadrature part of the adjoint ODE
+   * problem.
+   *
+   * This is the integrand of equation 2.22 in the cvs_guide.
    *
    * @param[in] initial var vector
    * @param[in] param var vector
@@ -667,9 +672,12 @@ class cvodes_integrator_adjoint_vari : public vari {
         }
 
         double t_final = value_of((i > 0) ? memory->ts_[i - 1] : memory->t0_);
+        //std::cout << "time-point " << i << "; t_init = " << t_init << "; t_final = " << t_final << std::endl;
         if (t_final != t_init) {
           if (!cvodes_backward_initialized) {
-            // initialize CVODES backward machinery
+            // initialize CVODES backward machinery.
+            // the states of the backward problem *are* the adjoints
+            // of the ode states
             check_flag_sundials(
                 CVodeInitB(memory->cvodes_mem_, indexB,
                            &cvodes_integrator_adjoint_vari::cv_rhs_adj_sens,
@@ -695,7 +703,13 @@ class cvodes_integrator_adjoint_vari : public vari {
                     &cvodes_integrator_adjoint_vari::cv_jacobian_adj),
                 "CVodeSetJacFnB");
 
-            // Allocate space for backwards quadrature
+            // Allocate space for backwards quadrature needed when
+            // parameters vary. The function for which we seek the
+            // derivative wrt to all parameters p is (in notation of
+            // the CVODES manual)
+            // g(t,y,p) = sum_i=1^N y_i * a^y_i * delta(t-T)
+            // this is the sum over each state y_i multiplied with
+            // it's adjoint and a delta function which peaks at t=T
             if (args_vars_ > 0) {
               check_flag_sundials(
                   CVodeQuadInitB(
@@ -743,6 +757,8 @@ class cvodes_integrator_adjoint_vari : public vari {
           // CV_NORMAL),
           //                    "CVodeB");
 
+          // obtain adjoint states and update t_init to time point
+          // reached of t_final
           check_flag_sundials(
               CVodeGetB(memory->cvodes_mem_, indexB, &t_init, nv_state_sens),
               "CVodeGetB");
@@ -764,11 +780,14 @@ class cvodes_integrator_adjoint_vari : public vari {
             memory->value_of_args_tuple_);
       }
 
+      // do we need this a 2nd time? Don't think so.
+      /*
       if (args_vars_ > 0) {
         check_flag_sundials(
             CVodeGetQuadB(memory->cvodes_mem_, indexB, &t_init, nv_quad),
             "CVodeGetQuadB");
       }
+      */
 
       // After integrating all the way back to t0, we finally have the
       // the adjoints we wanted
