@@ -160,6 +160,7 @@
 #include <stan/math/prim/fun/LDLT_factor.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/linspaced_array.hpp>
+#include <stan/math/prim/fun/linspaced_int_array.hpp>
 #include <stan/math/prim/fun/linspaced_row_vector.hpp>
 #include <stan/math/prim/fun/linspaced_vector.hpp>
 #include <stan/math/prim/fun/lmgamma.hpp>

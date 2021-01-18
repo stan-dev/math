@@ -1,6 +1,10 @@
 #ifndef STAN_MATH_REV_CORE_VAR_HPP
 #define STAN_MATH_REV_CORE_VAR_HPP
 
+#ifdef STAN_OPENCL
+#include <stan/math/opencl/rev/vari.hpp>
+#include <stan/math/opencl/plain_type.hpp>
+#endif
 #include <stan/math/rev/core/vari.hpp>
 #include <stan/math/rev/core/grad.hpp>
 #include <stan/math/rev/core/chainable_alloc.hpp>
@@ -10,10 +14,6 @@
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
 #include <ostream>
 #include <vector>
-#ifdef STAN_OPENCL
-#include <stan/math/opencl/rev/vari.hpp>
-#include <stan/math/opencl/plain_type.hpp>
-#endif
 
 namespace stan {
 namespace math {

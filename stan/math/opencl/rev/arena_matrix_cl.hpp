@@ -36,7 +36,7 @@ class arena_matrix_cl_impl : public chainable_alloc, public matrix_cl<T> {
  * can be used on the AD stack.
  */
 template <typename T>
-class arena_matrix_cl {
+class arena_matrix_cl : public matrix_cl_base {
  private:
   internal::arena_matrix_cl_impl<T>* impl_;
 
