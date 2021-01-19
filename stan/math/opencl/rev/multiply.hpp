@@ -2,13 +2,15 @@
 #define STAN_MATH_OPENCL_REV_MULTIPLY_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/prim/meta/is_kernel_expression.hpp>
+#include <stan/math/opencl/rev/adjoint_results.hpp>
 #include <stan/math/opencl/prim/multiply.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/adjoint_of.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/meta/is_kernel_expression.hpp>
 
 namespace stan {
 namespace math {
@@ -26,25 +28,22 @@ template <
     typename T_a, typename T_b,
     require_all_nonscalar_prim_or_rev_kernel_expression_t<T_a, T_b>* = nullptr,
     require_any_var_t<T_a, T_b>* = nullptr>
-inline auto multiply(const T_a& A, const T_b& B) {
+inline auto multiply(T_a&& A, T_b&& B) {
   check_size_match("multiply ((OpenCL))", "A.cols()", A.cols(), "B.rows()",
                    B.rows());
-  const arena_t<T_a>& a_arena = A;
-  const arena_t<T_b>& b_arena = B;
+  arena_t<T_a> a_arena = std::forward<T_a>(A);
+  arena_t<T_b> b_arena = std::forward<T_b>(B);
 
-  var_value<matrix_cl<double>> res = value_of(a_arena) * value_of(b_arena);
-
-  reverse_pass_callback([a_arena, b_arena, res]() mutable {
-    if (!is_constant<T_a>::value) {
-      auto& a_adj = forward_as<var_value<matrix_cl<double>>>(a_arena).adj();
-      a_adj = a_adj + res.adj() * transpose(value_of(b_arena));
-    }
-    if (!is_constant<T_b>::value) {
-      auto& b_adj = forward_as<var_value<matrix_cl<double>>>(b_arena).adj();
-      b_adj = b_adj + transpose(value_of(a_arena)) * res.adj();
-    }
-  });
-  return res;
+  return make_callback_var(
+      value_of(a_arena) * value_of(b_arena),
+      [a_arena, b_arena](vari_value<matrix_cl<double>>& res) mutable {
+        if (!is_constant<T_a>::value) {
+          adjoint_of(a_arena) += res.adj() * transpose(value_of(b_arena));
+        }
+        if (!is_constant<T_b>::value) {
+          adjoint_of(b_arena) += transpose(value_of(a_arena)) * res.adj();
+        }
+      });
 }
 
 /**
@@ -77,23 +76,16 @@ inline auto operator*(const T_a& A, const T_b& B) {
 template <typename T1, typename T2, require_stan_scalar_t<T1>* = nullptr,
           require_all_nonscalar_prim_or_rev_kernel_expression_t<T2>* = nullptr,
           require_any_var_t<T1, T2>* = nullptr>
-inline auto multiply(const T1& A, const T2& B) {
-  const arena_t<T1>& a_arena = A;
-  const arena_t<T2>& b_arena = B;
+inline auto multiply(const T1& A, T2&& B) {
+  arena_t<T2> b_arena = std::forward<T2>(B);
 
-  var_value<matrix_cl<double>> res = value_of(a_arena) * value_of(b_arena);
-
-  reverse_pass_callback([a_arena, b_arena, res]() mutable {
-    if (!is_constant<T1>::value) {
-      auto& a_adj = forward_as<var_value<double>>(a_arena).adj();
-      a_adj = a_adj + sum(elt_multiply(res.adj(), value_of(b_arena)));
-    }
-    if (!is_constant<T2>::value) {
-      auto& b_adj = forward_as<var_value<matrix_cl<double>>>(b_arena).adj();
-      b_adj = b_adj + value_of(a_arena) * res.adj();
-    }
-  });
-  return res;
+  return make_callback_var(
+      value_of(A) * value_of(b_arena),
+      [A, b_arena](vari_value<matrix_cl<double>>& res) mutable {
+        adjoint_results(A, b_arena)
+            += expressions(elt_multiply(res.adj(), value_of(b_arena)),
+                           value_of(A) * res.adj());
+      });
 }
 
 /**

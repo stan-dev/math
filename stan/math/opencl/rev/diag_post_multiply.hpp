@@ -52,8 +52,7 @@ inline var_value<matrix_cl<double>> diag_post_multiply(T1&& v1, T2&& v2) {
         while (tmp.rows() > 1) {
           tmp = eval(colwise_sum(tmp));
         }
-        auto& v2_adj = forward_as<var_value<matrix_cl<double>>>(v2_arena).adj();
-        v2_adj = v2_adj + tmp;
+        adjoint_of(v2_arena) += tmp;
       }
     } else {
       auto v1_adj_inc = elt_multiply(
@@ -69,8 +68,7 @@ inline var_value<matrix_cl<double>> diag_post_multiply(T1&& v1, T2&& v2) {
         while (tmp.rows() > 1) {
           tmp = eval(colwise_sum(tmp));
         }
-        auto& v2_adj = forward_as<var_value<matrix_cl<double>>>(v2_arena).adj();
-        v2_adj = v2_adj + transpose(tmp);
+        adjoint_of(v2_arena) += transpose(tmp);
       }
     }
   });

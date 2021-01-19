@@ -20,7 +20,7 @@ template <typename T,
 inline var_value<matrix_cl<double>> sqrt(const var_value<T>& A) {
   return make_callback_var(
       sqrt(A.val()), [A](vari_value<matrix_cl<double>>& res) mutable {
-        A.adj() = A.adj() + elt_divide(res.adj(), 2.0 * res.val());
+        A.adj() += elt_divide(res.adj(), 2.0 * res.val());
       });
 }
 

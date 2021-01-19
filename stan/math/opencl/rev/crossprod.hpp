@@ -23,7 +23,7 @@ inline var_value<matrix_cl<double>> crossprod(const var_value<T>& M) {
   return make_callback_var(
       transpose(M.val()) * M.val(),
       [M](vari_value<matrix_cl<double>>& res) mutable {
-        M.adj() = M.adj() + M.val() * (res.adj() + transpose(res.adj()));
+        M.adj() += M.val() * (res.adj() + transpose(res.adj()));
       });
 }
 

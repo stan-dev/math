@@ -21,7 +21,7 @@ template <typename T,
 inline var_value<matrix_cl<double>> sin(const var_value<T>& A) {
   return make_callback_var(
       sin(A.val()), [A](vari_value<matrix_cl<double>>& res) mutable {
-        A.adj() = A.adj() + elt_multiply(res.adj(), cos(A.val()));
+        A.adj() += elt_multiply(res.adj(), cos(A.val()));
       });
 }
 
