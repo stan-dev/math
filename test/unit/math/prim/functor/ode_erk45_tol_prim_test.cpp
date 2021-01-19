@@ -18,18 +18,18 @@ TEST(ode_erk45_tol_prim, y0_errors) {
   double a = 1.5;
 
   EXPECT_NO_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
-                                           1e-10, 1e-10, 1e6, nullptr, a));
+                                            1e-10, 1e-10, 1e6, nullptr, a));
 
   EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0inf, t0, ts,
-                                        1e-10, 1e-10, 1e6, nullptr, a),
+                                         1e-10, 1e-10, 1e6, nullptr, a),
                std::domain_error);
 
   EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0NaN, t0, ts,
-                                        1e-10, 1e-10, 1e6, nullptr, a),
+                                         1e-10, 1e-10, 1e6, nullptr, a),
                std::domain_error);
 
-  EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0_empty, t0, ts,
-                                        1e-10, 1e-10, 1e6, nullptr, a),
+  EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0_empty, t0,
+                                         ts, 1e-10, 1e-10, 1e6, nullptr, a),
                std::invalid_argument);
 }
 
@@ -43,14 +43,14 @@ TEST(ode_erk45_tol_prim, t0_errors) {
   double a = 1.5;
 
   EXPECT_NO_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
-                                           1e-10, 1e-10, 1e6, nullptr, a));
+                                            1e-10, 1e-10, 1e6, nullptr, a));
 
   EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0inf, ts,
-                                        1e-10, 1e-10, 1e6, nullptr, a),
+                                         1e-10, 1e-10, 1e6, nullptr, a),
                std::domain_error);
 
   EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0NaN, ts,
-                                        1e-10, 1e-10, 1e6, nullptr, a),
+                                         1e-10, 1e-10, 1e6, nullptr, a),
                std::domain_error);
 }
 
@@ -71,39 +71,41 @@ TEST(ode_erk45_tol_prim, ts_errors) {
   std::vector<Eigen::VectorXd> out;
   EXPECT_NO_THROW(out
                   = stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
-                                             1e-10, 1e-10, 1e6, nullptr, a));
+                                              1e-10, 1e-10, 1e6, nullptr, a));
   EXPECT_EQ(out.size(), ts.size());
 
   EXPECT_NO_THROW(out = stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0,
-                                                 ts_repeat, 1e-10, 1e-10, 1e6,
-                                                 nullptr, a));
+                                                  ts_repeat, 1e-10, 1e-10, 1e6,
+                                                  nullptr, a));
   EXPECT_EQ(out.size(), ts_repeat.size());
   EXPECT_MATRIX_FLOAT_EQ(out[0], out[1]);
 
   EXPECT_NO_THROW(out = stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0,
-                                                 ts_lots, 1e-10, 1e-10, 1e6,
-                                                 nullptr, a));
+                                                  ts_lots, 1e-10, 1e-10, 1e6,
+                                                  nullptr, a));
   EXPECT_EQ(out.size(), ts_lots.size());
 
-  EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts_empty,
-                                        1e-10, 1e-10, 1e6, nullptr, a),
-               std::invalid_argument);
+  EXPECT_THROW(
+      stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts_empty, 1e-10,
+                                1e-10, 1e6, nullptr, a),
+      std::invalid_argument);
 
-  EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts_early,
-                                        1e-10, 1e-10, 1e6, nullptr, a),
-               std::domain_error);
+  EXPECT_THROW(
+      stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts_early, 1e-10,
+                                1e-10, 1e6, nullptr, a),
+      std::domain_error);
 
   EXPECT_THROW(
       stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts_decreasing,
-                               1e-10, 1e-10, 1e6, nullptr, a),
+                                1e-10, 1e-10, 1e6, nullptr, a),
       std::domain_error);
 
   EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, tsinf,
-                                        1e-10, 1e-10, 1e6, nullptr, a),
+                                         1e-10, 1e-10, 1e6, nullptr, a),
                std::domain_error);
 
   EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, tsNaN,
-                                        1e-10, 1e-10, 1e6, nullptr, a),
+                                         1e-10, 1e-10, 1e6, nullptr, a),
                std::domain_error);
 }
 
@@ -136,58 +138,58 @@ TEST(ode_erk45_tol_prim, one_arg_errors) {
   std::vector<Eigen::VectorXd> veaNaN = {eaNaN};
 
   EXPECT_NO_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
-                                           1e-10, 1e-10, 1e6, nullptr, a));
+                                            1e-10, 1e-10, 1e6, nullptr, a));
 
   EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
-                                        1e-10, 1e-10, 1e6, nullptr, ainf),
+                                         1e-10, 1e-10, 1e6, nullptr, ainf),
                std::domain_error);
 
   EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
-                                        1e-10, 1e-10, 1e6, nullptr, aNaN),
-               std::domain_error);
-
-  EXPECT_NO_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
-                                           1e-10, 1e-10, 1e6, nullptr, va));
-
-  EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
-                                        1e-10, 1e-10, 1e6, nullptr, vainf),
-               std::domain_error);
-
-  EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
-                                        1e-10, 1e-10, 1e6, nullptr, vaNaN),
+                                         1e-10, 1e-10, 1e6, nullptr, aNaN),
                std::domain_error);
 
   EXPECT_NO_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
-                                           1e-10, 1e-10, 1e6, nullptr, ea));
+                                            1e-10, 1e-10, 1e6, nullptr, va));
 
   EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
-                                        1e-10, 1e-10, 1e6, nullptr, eainf),
+                                         1e-10, 1e-10, 1e6, nullptr, vainf),
                std::domain_error);
 
   EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
-                                        1e-10, 1e-10, 1e6, nullptr, eaNaN),
-               std::domain_error);
-
-  EXPECT_NO_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
-                                           1e-10, 1e-10, 1e6, nullptr, vva));
-
-  EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
-                                        1e-10, 1e-10, 1e6, nullptr, vvainf),
-               std::domain_error);
-
-  EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
-                                        1e-10, 1e-10, 1e6, nullptr, vvaNaN),
+                                         1e-10, 1e-10, 1e6, nullptr, vaNaN),
                std::domain_error);
 
   EXPECT_NO_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
-                                           1e-10, 1e-10, 1e6, nullptr, vea));
+                                            1e-10, 1e-10, 1e6, nullptr, ea));
 
   EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
-                                        1e-10, 1e-10, 1e6, nullptr, veainf),
+                                         1e-10, 1e-10, 1e6, nullptr, eainf),
                std::domain_error);
 
   EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
-                                        1e-10, 1e-10, 1e6, nullptr, veaNaN),
+                                         1e-10, 1e-10, 1e6, nullptr, eaNaN),
+               std::domain_error);
+
+  EXPECT_NO_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
+                                            1e-10, 1e-10, 1e6, nullptr, vva));
+
+  EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
+                                         1e-10, 1e-10, 1e6, nullptr, vvainf),
+               std::domain_error);
+
+  EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
+                                         1e-10, 1e-10, 1e6, nullptr, vvaNaN),
+               std::domain_error);
+
+  EXPECT_NO_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
+                                            1e-10, 1e-10, 1e6, nullptr, vea));
+
+  EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
+                                         1e-10, 1e-10, 1e6, nullptr, veainf),
+               std::domain_error);
+
+  EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
+                                         1e-10, 1e-10, 1e6, nullptr, veaNaN),
                std::domain_error);
 }
 
@@ -220,58 +222,58 @@ TEST(ode_erk45_tol_prim, two_arg_errors) {
   std::vector<Eigen::VectorXd> veaNaN = {eaNaN};
 
   EXPECT_NO_THROW(stan::math::ode_erk45_tol(stan::test::Cos2Arg(), y0, t0, ts,
-                                           1e-10, 1e-10, 1e6, nullptr, a, a));
+                                            1e-10, 1e-10, 1e6, nullptr, a, a));
 
   EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::Cos2Arg(), y0, t0, ts,
-                                        1e-10, 1e-10, 1e6, nullptr, a, ainf),
+                                         1e-10, 1e-10, 1e6, nullptr, a, ainf),
                std::domain_error);
 
   EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::Cos2Arg(), y0, t0, ts,
-                                        1e-10, 1e-10, 1e6, nullptr, a, aNaN),
-               std::domain_error);
-
-  EXPECT_NO_THROW(stan::math::ode_erk45_tol(stan::test::Cos2Arg(), y0, t0, ts,
-                                           1e-10, 1e-10, 1e6, nullptr, a, va));
-
-  EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::Cos2Arg(), y0, t0, ts,
-                                        1e-10, 1e-10, 1e6, nullptr, a, vainf),
-               std::domain_error);
-
-  EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::Cos2Arg(), y0, t0, ts,
-                                        1e-10, 1e-10, 1e6, nullptr, a, vaNaN),
+                                         1e-10, 1e-10, 1e6, nullptr, a, aNaN),
                std::domain_error);
 
   EXPECT_NO_THROW(stan::math::ode_erk45_tol(stan::test::Cos2Arg(), y0, t0, ts,
-                                           1e-10, 1e-10, 1e6, nullptr, a, ea));
+                                            1e-10, 1e-10, 1e6, nullptr, a, va));
 
   EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::Cos2Arg(), y0, t0, ts,
-                                        1e-10, 1e-10, 1e6, nullptr, a, eainf),
+                                         1e-10, 1e-10, 1e6, nullptr, a, vainf),
                std::domain_error);
 
   EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::Cos2Arg(), y0, t0, ts,
-                                        1e-10, 1e-10, 1e6, nullptr, a, eaNaN),
-               std::domain_error);
-
-  EXPECT_NO_THROW(stan::math::ode_erk45_tol(stan::test::Cos2Arg(), y0, t0, ts,
-                                           1e-10, 1e-10, 1e6, nullptr, a, vva));
-
-  EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::Cos2Arg(), y0, t0, ts,
-                                        1e-10, 1e-10, 1e6, nullptr, a, vvainf),
-               std::domain_error);
-
-  EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::Cos2Arg(), y0, t0, ts,
-                                        1e-10, 1e-10, 1e6, nullptr, a, vvaNaN),
+                                         1e-10, 1e-10, 1e6, nullptr, a, vaNaN),
                std::domain_error);
 
   EXPECT_NO_THROW(stan::math::ode_erk45_tol(stan::test::Cos2Arg(), y0, t0, ts,
-                                           1e-10, 1e-10, 1e6, nullptr, a, vea));
+                                            1e-10, 1e-10, 1e6, nullptr, a, ea));
 
   EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::Cos2Arg(), y0, t0, ts,
-                                        1e-10, 1e-10, 1e6, nullptr, a, veainf),
+                                         1e-10, 1e-10, 1e6, nullptr, a, eainf),
                std::domain_error);
 
   EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::Cos2Arg(), y0, t0, ts,
-                                        1e-10, 1e-10, 1e6, nullptr, a, veaNaN),
+                                         1e-10, 1e-10, 1e6, nullptr, a, eaNaN),
+               std::domain_error);
+
+  EXPECT_NO_THROW(stan::math::ode_erk45_tol(
+      stan::test::Cos2Arg(), y0, t0, ts, 1e-10, 1e-10, 1e6, nullptr, a, vva));
+
+  EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::Cos2Arg(), y0, t0, ts,
+                                         1e-10, 1e-10, 1e6, nullptr, a, vvainf),
+               std::domain_error);
+
+  EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::Cos2Arg(), y0, t0, ts,
+                                         1e-10, 1e-10, 1e6, nullptr, a, vvaNaN),
+               std::domain_error);
+
+  EXPECT_NO_THROW(stan::math::ode_erk45_tol(
+      stan::test::Cos2Arg(), y0, t0, ts, 1e-10, 1e-10, 1e6, nullptr, a, vea));
+
+  EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::Cos2Arg(), y0, t0, ts,
+                                         1e-10, 1e-10, 1e6, nullptr, a, veainf),
+               std::domain_error);
+
+  EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::Cos2Arg(), y0, t0, ts,
+                                         1e-10, 1e-10, 1e6, nullptr, a, veaNaN),
                std::domain_error);
 }
 
@@ -288,18 +290,18 @@ TEST(ode_erk45_tol_prim, rtol_errors) {
   double a = 1.5;
 
   EXPECT_NO_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
-                                           rtol, 1e-10, 1e6, nullptr, a));
+                                            rtol, 1e-10, 1e6, nullptr, a));
 
   EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
-                                        rtol_negative, 1e-10, 1e6, nullptr, a),
+                                         rtol_negative, 1e-10, 1e6, nullptr, a),
                std::domain_error);
 
   EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
-                                        rtolinf, 1e-10, 1e6, nullptr, a),
+                                         rtolinf, 1e-10, 1e6, nullptr, a),
                std::domain_error);
 
   EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
-                                        rtolNaN, 1e-10, 1e6, nullptr, a),
+                                         rtolNaN, 1e-10, 1e6, nullptr, a),
                std::domain_error);
 }
 
@@ -316,18 +318,18 @@ TEST(ode_erk45_tol_prim, atol_errors) {
   double a = 1.5;
 
   EXPECT_NO_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
-                                           1e-6, atol, 1e6, nullptr, a));
+                                            1e-6, atol, 1e6, nullptr, a));
 
-  EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts, 1e-6,
-                                        atol_negative, 1e6, nullptr, a),
+  EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
+                                         1e-6, atol_negative, 1e6, nullptr, a),
                std::domain_error);
 
-  EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts, 1e-6,
-                                        atolinf, 1e6, nullptr, a),
+  EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
+                                         1e-6, atolinf, 1e6, nullptr, a),
                std::domain_error);
 
-  EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts, 1e-6,
-                                        atolNaN, 1e6, nullptr, a),
+  EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
+                                         1e-6, atolNaN, 1e6, nullptr, a),
                std::domain_error);
 }
 
@@ -343,17 +345,18 @@ TEST(ode_erk45_tol_prim, max_num_steps_errors) {
   double a = 1.5;
 
   EXPECT_NO_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
-                                           1e-6, 1e-6, max_num_steps, nullptr,
-                                           a));
+                                            1e-6, 1e-6, max_num_steps, nullptr,
+                                            a));
 
   EXPECT_THROW(
       stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts, 1e-6, 1e-6,
-                               max_num_steps_negative, nullptr, a),
+                                max_num_steps_negative, nullptr, a),
       std::domain_error);
 
-  EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts, 1e-6,
-                                        1e-6, max_num_steps_zero, nullptr, a),
-               std::domain_error);
+  EXPECT_THROW(
+      stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts, 1e-6, 1e-6,
+                                max_num_steps_zero, nullptr, a),
+      std::domain_error);
 }
 
 TEST(ode_erk45_tol_prim, rhs_wrong_size_errors) {
@@ -364,10 +367,10 @@ TEST(ode_erk45_tol_prim, rhs_wrong_size_errors) {
   double a = 1.5;
 
   EXPECT_NO_THROW(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
-                                           1e-6, 1e-6, 100, nullptr, a));
+                                            1e-6, 1e-6, 100, nullptr, a));
 
   EXPECT_THROW(stan::math::ode_erk45_tol(stan::test::CosArgWrongSize(), y0, t0,
-                                        ts, 1e-6, 1e-6, 100, nullptr, a),
+                                         ts, 1e-6, 1e-6, 100, nullptr, a),
                std::invalid_argument);
 }
 
@@ -379,7 +382,7 @@ TEST(ode_erk45_tol_prim, error_name) {
   double ainf = stan::math::INFTY;
 
   EXPECT_THROW_MSG(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
-                                            1e-6, 1e-6, 100, nullptr, ainf),
+                                             1e-6, 1e-6, 100, nullptr, ainf),
                    std::domain_error, "ode_erk45_tol");
 }
 
@@ -391,7 +394,7 @@ TEST(ode_erk45_tol_prim, too_much_work) {
   double a = 1.0;
 
   EXPECT_THROW_MSG(stan::math::ode_erk45_tol(stan::test::CosArg1(), y0, t0, ts,
-                                            1e-6, 1e-6, 100, nullptr, a),
+                                             1e-6, 1e-6, 100, nullptr, a),
                    std::domain_error,
                    "ode_erk45_tol:  Failed to integrate to next output time");
 }

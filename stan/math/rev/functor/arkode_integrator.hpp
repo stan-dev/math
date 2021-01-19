@@ -29,8 +29,8 @@ namespace math {
  * @tparam T_t0 Type of scalar of initial time point
  * @tparam T_ts Type of time-points where ODE solution is returned
  */
-template <int scheme_id, typename F, typename T_y0, typename T_t0, typename T_ts,
-          typename... T_Args>
+template <int scheme_id, typename F, typename T_y0, typename T_t0,
+          typename T_ts, typename... T_Args>
 class arkode_integrator {
   using T_Return = return_type_t<T_y0, T_t0, T_ts, T_Args...>;
   using T_y0_t0 = return_type_t<T_y0, T_t0>;
@@ -62,7 +62,8 @@ class arkode_integrator {
    * Implements the function of type CVRhsFn which is the user-defined
    * ODE RHS passed to ARKode.
    */
-  static int arkode_rhs(realtype t, N_Vector y, N_Vector ydot, void* user_data) {
+  static int arkode_rhs(realtype t, N_Vector y, N_Vector ydot,
+                        void* user_data) {
     arkode_integrator* integrator = static_cast<arkode_integrator*>(user_data);
     integrator->rhs(t, y, ydot);
     return 0;
@@ -114,8 +115,8 @@ class arkode_integrator {
   arkode_integrator(const char* function_name, const F& f, const T_y0& y0,
                     const T_t0& t0, const std::vector<T_ts>& ts,
                     double relative_tolerance, double absolute_tolerance,
-                    long int max_num_steps,
-                    std::ostream* msgs, const T_Args&... args)
+                    long int max_num_steps, std::ostream* msgs,
+                    const T_Args&... args)
       : f_(f),
         y0_(y0.template cast<T_y0_t0>()),
         t0_(t0),
@@ -132,8 +133,7 @@ class arkode_integrator {
         coupled_ode_(f, y0_, msgs, args...),
         coupled_state_(coupled_ode_.initial_state()),
         nv_y_(N_VMake_Serial(coupled_ode_.size(), &coupled_state_[0])),
-        mem_(ERKStepCreate(arkode_rhs, value_of(t0_), nv_y_))
-  {
+        mem_(ERKStepCreate(arkode_rhs, value_of(t0_), nv_y_)) {
     check_finite(function_name, "initial state", y0_);
     check_finite(function_name, "initial time", t0_);
     check_finite(function_name, "times", ts_);
@@ -152,10 +152,8 @@ class arkode_integrator {
     check_nonzero_size(function_name, "initial state", y0_);
     check_sorted(function_name, "times", ts_);
     check_less(function_name, "initial time", t0_, ts_[0]);
-    check_positive_finite(function_name, "relative_tolerance",
-                          rtol_);
-    check_positive_finite(function_name, "absolute_tolerance",
-                          atol_);
+    check_positive_finite(function_name, "relative_tolerance", rtol_);
+    check_positive_finite(function_name, "absolute_tolerance", atol_);
     check_positive(function_name, "max_num_steps", max_num_steps_);
 
     if (mem_ == nullptr) {
@@ -184,21 +182,23 @@ class arkode_integrator {
     CHECK_SUNDIALS_CALL(ERKStepSetTableNum(mem_, scheme_id));
     CHECK_SUNDIALS_CALL(ERKStepSetAdaptivityMethod(mem_, 2, 1, 0, 0));
     CHECK_SUNDIALS_CALL(ERKStepSetInitStep(mem_, 0.1));
-    CHECK_SUNDIALS_CALL(ERKStepSetUserData(mem_, reinterpret_cast<void*>(this)));
+    CHECK_SUNDIALS_CALL(
+        ERKStepSetUserData(mem_, reinterpret_cast<void*>(this)));
 
     for (size_t n = 0; n < ts_.size(); ++n) {
       double t_final = value_of(ts_[n]);
 
       if (t_final != t_init) {
-        CHECK_SUNDIALS_CALL(ERKStepEvolve(mem_, t_final, nv_y_, &t_init, ARK_NORMAL));
+        CHECK_SUNDIALS_CALL(
+            ERKStepEvolve(mem_, t_final, nv_y_, &t_init, ARK_NORMAL));
       }
 
       y.emplace_back(apply(
-                           [&](auto&&... args) {
-                             return ode_store_sensitivities(f_, coupled_state_, y0_, t0_,
-                                                            ts_[n], msgs_, args...);
-                           },
-                           args_tuple_));
+          [&](auto&&... args) {
+            return ode_store_sensitivities(f_, coupled_state_, y0_, t0_, ts_[n],
+                                           msgs_, args...);
+          },
+          args_tuple_));
 
       // t_init = t_final;
     }

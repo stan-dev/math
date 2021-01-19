@@ -33,10 +33,10 @@ std::vector<std::vector<double>> finite_diff_params(
   std::vector<std::vector<double>> ode_res_ub;
   std::vector<std::vector<double>> ode_res_lb;
 
-  ode_res_ub = integrate_ode_erk45(f, y_in, t_in, ts, theta_ub, x,
-                                              x_int, &msgs);
-  ode_res_lb = integrate_ode_erk45(f, y_in, t_in, ts, theta_lb, x,
-                                              x_int, &msgs);
+  ode_res_ub
+      = integrate_ode_erk45(f, y_in, t_in, ts, theta_ub, x, x_int, &msgs);
+  ode_res_lb
+      = integrate_ode_erk45(f, y_in, t_in, ts, theta_lb, x, x_int, &msgs);
 
   std::vector<std::vector<double>> results(ts.size());
 
@@ -46,7 +46,8 @@ std::vector<std::vector<double>> finite_diff_params(
   return results;
 }
 
-// calculates finite diffs for integrate_ode_erk45 with varying initial positions
+// calculates finite diffs for integrate_ode_erk45 with varying initial
+// positions
 template <typename F>
 std::vector<std::vector<double>> finite_diff_initial_position(
     const F& f, const double& t_in, const std::vector<double>& ts,
@@ -69,10 +70,10 @@ std::vector<std::vector<double>> finite_diff_initial_position(
   std::vector<std::vector<double>> ode_res_ub;
   std::vector<std::vector<double>> ode_res_lb;
 
-  ode_res_ub = integrate_ode_erk45(f, y_in_ub, t_in, ts, theta, x,
-                                              x_int, &msgs);
-  ode_res_lb = integrate_ode_erk45(f, y_in_lb, t_in, ts, theta, x,
-                                              x_int, &msgs);
+  ode_res_ub
+      = integrate_ode_erk45(f, y_in_ub, t_in, ts, theta, x, x_int, &msgs);
+  ode_res_lb
+      = integrate_ode_erk45(f, y_in_lb, t_in, ts, theta, x, x_int, &msgs);
 
   std::vector<std::vector<double>> results(ts.size());
 
@@ -107,8 +108,7 @@ void test_ode_finite_diff_dv(const F& f, const double& t_in,
 
   std::vector<std::vector<stan::math::var>> ode_res;
 
-  ode_res = integrate_ode_erk45(f, y_in, t_in, ts, theta_v, x, x_int,
-                                           &msgs);
+  ode_res = integrate_ode_erk45(f, y_in, t_in, ts, theta_v, x, x_int, &msgs);
 
   for (size_t i = 0; i < ts.size(); i++) {
     for (size_t j = 0; j < y_in.size(); j++) {
@@ -151,8 +151,7 @@ void test_ode_finite_diff_vd(const F& f, const double& t_in,
 
   std::vector<std::vector<stan::math::var>> ode_res;
 
-  ode_res = integrate_ode_erk45(f, y_in_v, t_in, ts, theta, x, x_int,
-                                           &msgs);
+  ode_res = integrate_ode_erk45(f, y_in_v, t_in, ts, theta, x, x_int, &msgs);
 
   for (size_t i = 0; i < ts.size(); i++) {
     for (size_t j = 0; j < y_in.size(); j++) {
@@ -208,8 +207,7 @@ void test_ode_finite_diff_vv(const F& f, const double& t_in,
 
   std::vector<std::vector<stan::math::var>> ode_res;
 
-  ode_res = integrate_ode_erk45(f, y_in_v, t_in, ts, theta_v, x,
-                                           x_int, &msgs);
+  ode_res = integrate_ode_erk45(f, y_in_v, t_in, ts, theta_v, x, x_int, &msgs);
 
   for (size_t i = 0; i < ts.size(); i++) {
     for (size_t j = 0; j < y_in.size(); j++) {

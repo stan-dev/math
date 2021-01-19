@@ -22,9 +22,9 @@ inline auto integrate_ode_erk45(
     std::ostream* msgs = nullptr, double relative_tolerance = 1e-6,
     double absolute_tolerance = 1e-6, int max_num_steps = 1e6) {
   internal::integrate_ode_std_vector_interface_adapter<F> f_adapted(f);
-  auto y = ode_erk45_tol_impl("integrate_ode_erk45", f_adapted, to_vector(y0), t0,
-                             ts, relative_tolerance, absolute_tolerance,
-                             max_num_steps, msgs, theta, x, x_int);
+  auto y = ode_erk45_tol_impl("integrate_ode_erk45", f_adapted, to_vector(y0),
+                              t0, ts, relative_tolerance, absolute_tolerance,
+                              max_num_steps, msgs, theta, x, x_int);
 
   std::vector<std::vector<return_type_t<T_y0, T_param, T_t0, T_ts>>>
       y_converted;

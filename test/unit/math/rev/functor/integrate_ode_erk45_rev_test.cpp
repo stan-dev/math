@@ -258,15 +258,15 @@ TEST(StanAgradRevOde_integrate_ode_erk45, t0_as_param_AD) {
     stan::math::set_zero_all_adjoints();
   };
   res = integrate_ode_erk45(ode, y0, t0v, ts, theta, x, x_int, nullptr, 1e-10,
-                           1e-10, 1e6);
+                            1e-10, 1e6);
   test_ad();
   res = integrate_ode_erk45(ode, y0v, t0v, ts, theta, x, x_int, nullptr, 1e-10,
-                           1e-10, 1e6);
+                            1e-10, 1e6);
   test_ad();
   res = integrate_ode_erk45(ode, y0, t0v, ts, thetav, x, x_int, nullptr, 1e-10,
-                           1e-10, 1e6);
+                            1e-10, 1e6);
   test_ad();
   res = integrate_ode_erk45(ode, y0v, t0v, ts, thetav, x, x_int, nullptr, 1e-10,
-                           1e-10, 1e6);
+                            1e-10, 1e6);
   test_ad();
 }
