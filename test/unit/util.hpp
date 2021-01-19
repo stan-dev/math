@@ -170,8 +170,8 @@
  * @param a first type
  * @param b second type (code for this one can contain commas)
  **/
-#define EXPECT_SAME_TYPE(a, ...)                                             \
-  EXPECT_TRUE((std::is_same<a, __VA_ARGS__>::value))                                 \
+#define EXPECT_SAME_TYPE(a, ...)                                           \
+  EXPECT_TRUE((std::is_same<a, __VA_ARGS__>::value))                       \
       << "Type a is" << stan::math::test::type_name<a>() << ". Type b is " \
       << stan::math::test::type_name<__VA_ARGS__>();
 
