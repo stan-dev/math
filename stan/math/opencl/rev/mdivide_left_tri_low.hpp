@@ -62,7 +62,8 @@ inline var_value<matrix_cl<double>> mdivide_left_tri_low(T1&& A, T2&& b) {
  */
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
-inline var_value<matrix_cl<double>> mdivide_left_tri_low(const var_value<T>& A) {
+inline var_value<matrix_cl<double>> mdivide_left_tri_low(
+    const var_value<T>& A) {
   check_square("mdivide_left_tri_low", "A", A);
   if (A.size() == 0) {
     return A;

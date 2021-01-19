@@ -21,9 +21,7 @@ inline var_value<matrix_cl<double>> erf(const var_value<T>& A) {
   return make_callback_var(
       erf(A.val()), [A](vari_value<matrix_cl<double>>& res) mutable {
         A.adj() += elt_multiply(
-                        res.adj(),
-                        elt_multiply(TWO_OVER_SQRT_PI,
-                                     exp(-square(A.val()))));
+            res.adj(), elt_multiply(TWO_OVER_SQRT_PI, exp(-square(A.val()))));
       });
 }
 

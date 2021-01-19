@@ -25,9 +25,10 @@ inline var_value<matrix_cl<double>> columns_dot_self(const var_value<T>& v) {
   }
 
   return make_callback_var(
-      columns_dot_self(v.val()), [v](const vari_value<matrix_cl<double>>& res) mutable {
-        v.adj() += elt_multiply(colwise_broadcast(res.adj() * 2.0),
-                                       value_of(v));
+      columns_dot_self(v.val()),
+      [v](const vari_value<matrix_cl<double>>& res) mutable {
+        v.adj()
+            += elt_multiply(colwise_broadcast(res.adj() * 2.0), value_of(v));
       });
 }
 

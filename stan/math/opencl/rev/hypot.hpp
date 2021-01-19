@@ -21,11 +21,10 @@ namespace math {
  *
  * @return Elementwise `hypot()` of the input.
  */
-template <
-    typename T_a, typename T_b,
-    require_all_prim_or_rev_kernel_expression_t<T_a, T_b>* = nullptr,
-    require_any_var_t<T_a, T_b>* = nullptr,
-    require_any_not_stan_scalar_t<T_a, T_b>* = nullptr>
+template <typename T_a, typename T_b,
+          require_all_prim_or_rev_kernel_expression_t<T_a, T_b>* = nullptr,
+          require_any_var_t<T_a, T_b>* = nullptr,
+          require_any_not_stan_scalar_t<T_a, T_b>* = nullptr>
 inline var_value<matrix_cl<double>> hypot(T_a&& a, T_b&& b) {
   arena_t<T_a> a_arena = std::forward<T_a>(a);
   arena_t<T_b> b_arena = std::forward<T_b>(b);
