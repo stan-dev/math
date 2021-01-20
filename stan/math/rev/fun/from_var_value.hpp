@@ -26,7 +26,7 @@ Eigen::Matrix<var, T::RowsAtCompileTime, T::ColsAtCompileTime> from_var_value(
 }
 
 /**
- * This is a no-op for Eigen containers of vars or scalars or prim types.
+ * This is a no-op for Eigen containers of vars, scalars or prim types.
  *
  * @tparam T type of the input
  * @param a matrix to convert
