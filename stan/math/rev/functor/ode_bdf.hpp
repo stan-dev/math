@@ -110,7 +110,7 @@ ode_bdf_tol(const F& f, const T_y0& y0, const T_t0& t0,
             long int max_num_steps,  // NOLINT(runtime/int)
             std::ostream* msgs, const T_Args&... args) {
   return ode_erk45_tol_impl("ode_bdf_tol", f, y0, t0, ts, relative_tolerance,
-                          absolute_tolerance, max_num_steps, msgs, args...);
+                            absolute_tolerance, max_num_steps, msgs, args...);
 }
 
 /**
@@ -154,7 +154,7 @@ ode_bdf(const F& f, const T_y0& y0, const T_t0& t0, const std::vector<T_ts>& ts,
   long int max_num_steps = 1e8;  // NOLINT(runtime/int)
 
   return ode_erk45_tol_impl("ode_bdf", f, y0, t0, ts, relative_tolerance,
-                          absolute_tolerance, max_num_steps, msgs, args...);
+                            absolute_tolerance, max_num_steps, msgs, args...);
 }
 
 }  // namespace math
