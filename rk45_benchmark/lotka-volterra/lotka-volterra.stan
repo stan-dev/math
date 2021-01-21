@@ -33,14 +33,13 @@ parameters {
   real<lower = 0> sigma[2];   // measurement errors
 }
 transformed parameters {
+  real z[N, 2];
   if(use_erk45 == 1) {
-    real z[N, 2]
-      = integrate_ode_bdf(dz_dt, z_init, 0, ts, theta,
+    z = integrate_ode_bdf(dz_dt, z_init, 0, ts, theta,
                           rep_array(0.0, 0), rep_array(0, 0),
                           rtol, atol, 5e2);    
   } else {
-    real z[N, 2]
-      = integrate_ode_rk45(dz_dt, z_init, 0, ts, theta,
+    z = integrate_ode_rk45(dz_dt, z_init, 0, ts, theta,
                            rep_array(0.0, 0), rep_array(0, 0),
                            rtol, atol, 5e2);    
   }

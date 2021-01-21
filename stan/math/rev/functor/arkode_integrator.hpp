@@ -181,7 +181,7 @@ class arkode_integrator {
     CHECK_SUNDIALS_CALL(ERKStepSetMaxNumSteps(mem_, max_num_steps_));
     CHECK_SUNDIALS_CALL(ERKStepSetTableNum(mem_, scheme_id));
     CHECK_SUNDIALS_CALL(ERKStepSetAdaptivityMethod(mem_, 2, 1, 0, 0));
-    // CHECK_SUNDIALS_CALL(ERKStepSetInitStep(mem_, 0.1));
+    CHECK_SUNDIALS_CALL(ERKStepSetInitStep(mem_, 0.1));
     ERKStepSetMaxEFailGrowth(mem_, 0.50);
     ERKStepSetMinReduction(mem_, 0.30);
     ERKStepSetFixedStepBounds(mem_, 1.0, 1.1);
