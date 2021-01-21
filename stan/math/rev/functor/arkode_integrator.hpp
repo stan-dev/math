@@ -186,7 +186,8 @@ class arkode_integrator {
     ERKStepSetMinReduction(mem_, 0.30);
     ERKStepSetFixedStepBounds(mem_, 1.0, 1.1);
     CHECK_SUNDIALS_CALL(ERKStepSetSafetyFactor(mem_, 0.9));
-    CHECK_SUNDIALS_CALL(ERKStepSetUserData(mem_, reinterpret_cast<void*>(this)));
+    CHECK_SUNDIALS_CALL(
+        ERKStepSetUserData(mem_, reinterpret_cast<void*>(this)));
 
     for (size_t n = 0; n < ts_.size(); ++n) {
       double t_final = value_of(ts_[n]);
@@ -206,8 +207,8 @@ class arkode_integrator {
       // t_init = t_final;
     }
 
-  /* Print some final statistics */
-    static long int nst = 0, nst_a =0, nfe=0, netf=0, logging = false;
+    /* Print some final statistics */
+    static long int nst = 0, nst_a = 0, nfe = 0, netf = 0, logging = false;
     int flag;
     // flag = ERKStepGetNumSteps(mem_, &nst);
     // flag = ERKStepGetNumStepAttempts(mem_, &nst_a);
