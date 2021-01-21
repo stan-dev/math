@@ -181,9 +181,12 @@ class arkode_integrator {
     CHECK_SUNDIALS_CALL(ERKStepSetMaxNumSteps(mem_, max_num_steps_));
     CHECK_SUNDIALS_CALL(ERKStepSetTableNum(mem_, scheme_id));
     CHECK_SUNDIALS_CALL(ERKStepSetAdaptivityMethod(mem_, 2, 1, 0, 0));
-    CHECK_SUNDIALS_CALL(ERKStepSetInitStep(mem_, 0.1));
-    CHECK_SUNDIALS_CALL(
-        ERKStepSetUserData(mem_, reinterpret_cast<void*>(this)));
+    // CHECK_SUNDIALS_CALL(ERKStepSetInitStep(mem_, 0.1));
+    ERKStepSetMaxEFailGrowth(mem_, 0.50);
+    ERKStepSetMinReduction(mem_, 0.30);
+    ERKStepSetFixedStepBounds(mem_, 1.0, 1.1);
+    CHECK_SUNDIALS_CALL(ERKStepSetSafetyFactor(mem_, 0.9));
+    CHECK_SUNDIALS_CALL(ERKStepSetUserData(mem_, reinterpret_cast<void*>(this)));
 
     for (size_t n = 0; n < ts_.size(); ++n) {
       double t_final = value_of(ts_[n]);
@@ -202,6 +205,19 @@ class arkode_integrator {
 
       // t_init = t_final;
     }
+
+  /* Print some final statistics */
+    static long int nst = 0, nst_a =0, nfe=0, netf=0, logging = false;
+    int flag;
+    // flag = ERKStepGetNumSteps(mem_, &nst);
+    // flag = ERKStepGetNumStepAttempts(mem_, &nst_a);
+    // flag = ERKStepGetNumRhsEvals(mem_, &nfe);
+    // flag = ERKStepGetNumErrTestFails(mem_, &netf);
+
+    // printf("\nFinal Solver Statistics:\n");
+    // printf("   Internal solver steps = %li (attempted = %li)\n", nst, nst_a);
+    // printf("   Total RHS evals = %li\n", nfe);
+    // printf("   Total number of error test failures = %li\n\n", netf);
 
     return y;
   }
