@@ -13,6 +13,8 @@
 #include <stan/math/opencl/kernels/device_functions/lgamma_stirling.hpp>
 #include <stan/math/opencl/kernels/device_functions/lgamma_stirling_diff.hpp>
 #include <stan/math/opencl/kernels/device_functions/log_inv_logit.hpp>
+#include <stan/math/opencl/kernels/device_functions/log_inv_logit_diff.hpp>
+#include <stan/math/opencl/kernels/device_functions/log_diff_exp.hpp>
 #include <stan/math/opencl/kernels/device_functions/log1m.hpp>
 #include <stan/math/opencl/kernels/device_functions/log1m_exp.hpp>
 #include <stan/math/opencl/kernels/device_functions/log1m_inv_logit.hpp>
@@ -21,6 +23,7 @@
 #include <stan/math/opencl/kernels/device_functions/multiply_log.hpp>
 #include <stan/math/opencl/kernels/device_functions/Phi.hpp>
 #include <stan/math/opencl/kernels/device_functions/Phi_approx.hpp>
+#include <stan/math/opencl/kernels/device_functions/trigamma.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/kernel_generator/common_return_scalar.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
@@ -313,6 +316,8 @@ ADD_UNARY_FUNCTION_WITH_INCLUDES(inv_Phi, opencl_kernels::log1m_device_function,
                                  opencl_kernels::inv_phi_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(
     log1m_inv_logit, opencl_kernels::log1m_inv_logit_device_function)
+ADD_UNARY_FUNCTION_WITH_INCLUDES(trigamma,
+                                 opencl_kernels::trigamma_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(square, "double square(double x){return x*x;}")
 
 ADD_CLASSIFICATION_FUNCTION(isfinite, {-rows() + 1, cols() - 1})
@@ -321,20 +326,29 @@ ADD_CLASSIFICATION_FUNCTION(isinf,
 ADD_CLASSIFICATION_FUNCTION(isnan,
                             this->template get_arg<0>().extreme_diagonals())
 
-ADD_BINARY_FUNCTION_WITH_INCLUDES(pow)
+ADD_BINARY_FUNCTION_WITH_INCLUDES(hypot)
 ADD_BINARY_FUNCTION_WITH_INCLUDES(ldexp)
+ADD_BINARY_FUNCTION_WITH_INCLUDES(pow)
+
 ADD_BINARY_FUNCTION_WITH_INCLUDES(
     beta, stan::math::opencl_kernels::beta_device_function)
-ADD_BINARY_FUNCTION_WITH_INCLUDES(
-    lbeta, stan::math::opencl_kernels::lgamma_stirling_device_function,
-    stan::math::opencl_kernels::lgamma_stirling_diff_device_function,
-    stan::math::opencl_kernels::lbeta_device_function)
 ADD_BINARY_FUNCTION_WITH_INCLUDES(
     binomial_coefficient_log,
     stan::math::opencl_kernels::lgamma_stirling_device_function,
     stan::math::opencl_kernels::lgamma_stirling_diff_device_function,
     stan::math::opencl_kernels::lbeta_device_function,
     stan::math::opencl_kernels::binomial_coefficient_log_device_function)
+ADD_BINARY_FUNCTION_WITH_INCLUDES(
+    lbeta, stan::math::opencl_kernels::lgamma_stirling_device_function,
+    stan::math::opencl_kernels::lgamma_stirling_diff_device_function,
+    stan::math::opencl_kernels::lbeta_device_function)
+ADD_BINARY_FUNCTION_WITH_INCLUDES(
+    log_inv_logit_diff, opencl_kernels::log1p_exp_device_function,
+    opencl_kernels::log1m_exp_device_function,
+    opencl_kernels::log_inv_logit_diff_device_function)
+ADD_BINARY_FUNCTION_WITH_INCLUDES(log_diff_exp,
+                                  opencl_kernels::log1m_exp_device_function,
+                                  opencl_kernels::log_diff_exp_device_function)
 ADD_BINARY_FUNCTION_WITH_INCLUDES(
     multiply_log, stan::math::opencl_kernels::multiply_log_device_function)
 

@@ -44,13 +44,12 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
    */
   struct recursive_reducer {
     Vec vmapped_;
-    std::ostream* msgs_;
+    std::stringstream msgs_;
     std::tuple<Args...> args_tuple_;
     return_type_t<Vec, Args...> sum_{0.0};
 
     recursive_reducer(Vec&& vmapped, std::ostream* msgs, Args&&... args)
         : vmapped_(std::forward<Vec>(vmapped)),
-          msgs_(msgs),
           args_tuple_(std::forward<Args>(args)...) {}
 
     /**
@@ -60,9 +59,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
      *   partial sum.
      */
     recursive_reducer(recursive_reducer& other, tbb::split)
-        : vmapped_(other.vmapped_),
-          msgs_(other.msgs_),
-          args_tuple_(other.args_tuple_) {}
+        : vmapped_(other.vmapped_), args_tuple_(other.args_tuple_) {}
 
     /**
      * Compute the value and of `ReduceFunction` over the range defined by r
@@ -85,7 +82,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
 
       sum_ += apply(
           [&](auto&&... args) {
-            return ReduceFunction()(sub_slice, r.begin(), r.end() - 1, msgs_,
+            return ReduceFunction()(sub_slice, r.begin(), r.end() - 1, &msgs_,
                                     args...);
           },
           args_tuple_);
@@ -96,7 +93,10 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
      *
      * @param rhs Another partial sum
      */
-    inline void join(const recursive_reducer& rhs) { sum_ += rhs.sum_; }
+    inline void join(const recursive_reducer& rhs) {
+      sum_ += rhs.sum_;
+      msgs_ << rhs.msgs_.str();
+    }
   };
 
   /**
@@ -159,6 +159,9 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
       tbb::parallel_deterministic_reduce(
           tbb::blocked_range<std::size_t>(0, num_terms, grainsize), worker,
           partitioner);
+    }
+    if (msgs) {
+      *msgs << worker.msgs_.str();
     }
 
     return worker.sum_;

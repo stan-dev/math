@@ -16,15 +16,13 @@ namespace math {
  * @param M Specified matrix.
  * @return Diagonal of the matrix.
  */
-inline var_value<matrix_cl<double>> diagonal(
-    const var_value<matrix_cl<double>>& M) {
-  var_value<matrix_cl<double>> res = diagonal(M.val());
-
-  reverse_pass_callback([M, res]() mutable {
-    diagonal(M.adj()) = diagonal(M.adj()) + res.adj();
-  });
-
-  return res;
+template <typename T,
+          require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
+inline var_value<matrix_cl<double>> diagonal(const var_value<T>& M) {
+  return make_callback_var(diagonal(M.val()),
+                           [M](vari_value<matrix_cl<double>>& res) mutable {
+                             diagonal(M.adj()) = diagonal(M.adj()) + res.adj();
+                           });
 }
 
 }  // namespace math

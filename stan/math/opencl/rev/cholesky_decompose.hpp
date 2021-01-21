@@ -2,11 +2,11 @@
 #define STAN_MATH_OPENCL_REV_CHOLESKY_DECOMPOSE_HPP
 #ifdef STAN_OPENCL
 
+#include <stan/math/opencl/triangular_transpose.hpp>
 #include <stan/math/opencl/prim/cholesky_decompose.hpp>
 #include <stan/math/opencl/err/check_nan.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
-#include <stan/math/opencl/triangular_transpose.hpp>
 
 namespace stan {
 namespace math {
@@ -21,8 +21,9 @@ namespace math {
  * @throw std::domain_error if m is not a symmetric matrix or
  *   if m is not positive definite (if m has more than 0 elements)
  */
-inline var_value<matrix_cl<double>> cholesky_decompose(
-    const var_value<matrix_cl<double>>& A) {
+template <typename T,
+          require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
+inline var_value<matrix_cl<double>> cholesky_decompose(const var_value<T>& A) {
   check_nan("cholesky_decompose", "A", A.val());
   var_value<matrix_cl<double>> L_A = cholesky_decompose(A.val());
 
