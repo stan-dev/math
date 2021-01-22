@@ -129,8 +129,10 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
       const auto& mu_col = as_column_vector_or_scalar(mu_vec[i]);
 
       const row_vector_partials_t half
-          = (inv_L_dbl.template triangularView<Eigen::Lower>() *
-	     (value_of(y_col) - value_of(mu_col)).template cast<T_partials_return>()).transpose();
+          = (inv_L_dbl.template triangularView<Eigen::Lower>()
+             * (value_of(y_col) - value_of(mu_col))
+                   .template cast<T_partials_return>())
+                .transpose();
       const vector_partials_t scaled_diff
           = (half * inv_L_dbl.template triangularView<Eigen::Lower>())
                 .transpose();

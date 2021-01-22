@@ -1,21 +1,20 @@
 #include <test/unit/math/test_ad.hpp>
 
 namespace dirichlet_test {
-  template <typename T>
-  std::vector<T> vectorize_softmax(const std::vector<T>& y) {
-    std::vector<T> y_simplex;
-    for(size_t i = 0; i < y.size(); ++i) {
-      y_simplex.push_back(stan::math::softmax(y[i]));
-    }
-    return y_simplex;
+template <typename T>
+std::vector<T> vectorize_softmax(const std::vector<T>& y) {
+  std::vector<T> y_simplex;
+  for (size_t i = 0; i < y.size(); ++i) {
+    y_simplex.push_back(stan::math::softmax(y[i]));
   }
+  return y_simplex;
+}
 
-  template <typename T,
-	    stan::require_not_std_vector_t<T>* = nullptr>
-  T vectorize_softmax(const T& y) {
-    return stan::math::softmax(y);
-  }
-} 
+template <typename T, stan::require_not_std_vector_t<T>* = nullptr>
+T vectorize_softmax(const T& y) {
+  return stan::math::softmax(y);
+}
+}  // namespace dirichlet_test
 
 TEST(ProbDistributions, dirichlet) {
   auto f = [](const auto& y, const auto& alpha) {
@@ -29,7 +28,7 @@ TEST(ProbDistributions, dirichlet) {
   Eigen::VectorXd v2(2);
   v2 << 1.0, 0.5;
 
-  std::vector<Eigen::VectorXd> vs = { v1, v2 };
+  std::vector<Eigen::VectorXd> vs = {v1, v2};
 
   stan::test::expect_ad(f, v1, v2);
   stan::test::expect_ad(f, v1, vs);
