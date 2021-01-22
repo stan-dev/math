@@ -119,6 +119,7 @@
 #include <stan/math/opencl/prim/diag_pre_multiply.hpp>
 #include <stan/math/opencl/prim/diag_post_multiply.hpp>
 #include <stan/math/opencl/prim/dims.hpp>
+#include <stan/math/opencl/prim/dirichlet_lpdf.hpp>
 #include <stan/math/opencl/prim/distance.hpp>
 #include <stan/math/opencl/prim/divide.hpp>
 #include <stan/math/opencl/prim/divide_columns.hpp>
