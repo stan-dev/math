@@ -9,6 +9,7 @@
 #include <stan/math/prim/fun/value_of.hpp>
 #include <arkode/arkode.h>
 #include <arkode/arkode_erkstep.h>
+#include <arkode/arkode_arkstep.h>
 #include <arkode/arkode_butcher_erk.h>
 #include <nvector/nvector_serial.h>
 #include <sunlinsol/sunlinsol_dense.h>
@@ -180,12 +181,13 @@ class arkode_integrator {
     CHECK_SUNDIALS_CALL(ERKStepSStolerances(mem_, rtol_, atol_));
     CHECK_SUNDIALS_CALL(ERKStepSetMaxNumSteps(mem_, max_num_steps_));
     CHECK_SUNDIALS_CALL(ERKStepSetTableNum(mem_, scheme_id));
-    CHECK_SUNDIALS_CALL(ERKStepSetAdaptivityMethod(mem_, 2, 1, 0, 0));
-    CHECK_SUNDIALS_CALL(ERKStepSetInitStep(mem_, 0.1));
-    ERKStepSetMaxEFailGrowth(mem_, 0.50);
-    ERKStepSetMinReduction(mem_, 0.30);
-    ERKStepSetFixedStepBounds(mem_, 1.0, 1.1);
-    CHECK_SUNDIALS_CALL(ERKStepSetSafetyFactor(mem_, 0.9));
+    ARKStepSetOptimalParams(mem_);
+    // CHECK_SUNDIALS_CALL(ERKStepSetAdaptivityMethod(mem_, 2, 1, 0, 0));
+    // CHECK_SUNDIALS_CALL(ERKStepSetInitStep(mem_, 0.1));
+    // ERKStepSetMaxEFailGrowth(mem_, 0.50);
+    // ERKStepSetMinReduction(mem_, 0.30);
+    // ERKStepSetFixedStepBounds(mem_, 1.0, 1.1);
+    // CHECK_SUNDIALS_CALL(ERKStepSetSafetyFactor(mem_, 0.9));
     CHECK_SUNDIALS_CALL(
         ERKStepSetUserData(mem_, reinterpret_cast<void*>(this)));
 

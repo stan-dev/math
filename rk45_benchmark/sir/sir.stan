@@ -54,7 +54,7 @@ transformed parameters {
   {
     real theta[5] = {beta, kappa, gamma, xi, delta};
     if(use_erk45 == 1) {
-      y = integrate_ode_bdf(simple_SIR, y0, t0, t, theta, x_r, x_i, 1e-5, 1e-8, 5000);      
+      y = integrate_ode_adams(simple_SIR, y0, t0, t, theta, x_r, x_i, 1e-5, 1e-8, 5000);      
     } else {
       y = integrate_ode_rk45(simple_SIR, y0, t0, t, theta, x_r, x_i, 1e-5, 1e-8, 5000);      
     }

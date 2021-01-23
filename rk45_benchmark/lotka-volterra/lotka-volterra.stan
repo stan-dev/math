@@ -35,7 +35,7 @@ parameters {
 transformed parameters {
   real z[N, 2];
   if(use_erk45 == 1) {
-    z = integrate_ode_bdf(dz_dt, z_init, 0, ts, theta,
+    z = integrate_ode_adams(dz_dt, z_init, 0, ts, theta,
                           rep_array(0.0, 0), rep_array(0, 0),
                           rtol, atol, 5e2);    
   } else {

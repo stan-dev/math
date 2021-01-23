@@ -9,7 +9,7 @@ summary <- function(fit) {
 
 benchmark.rk45 <- function(model.file, data.file1, data.file2, seed) {
     file <- file.path(model.file)
-    mod <- cmdstan_model(file, quiet=FALSE, force_recompile=FALSE)
+    mod <- cmdstan_model(file, quiet=FALSE, force_recompile=TRUE)
     fit.erk45 <- mod$sample(
                         data = data.file2,
                         iter_warmup = 1000,
