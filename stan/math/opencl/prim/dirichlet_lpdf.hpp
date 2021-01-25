@@ -92,9 +92,9 @@ inline return_type_t<T_prob_cl, T_prior_size_cl> dirichlet_lpdf(
   matrix_cl<double> theta_deriv_cl;
   matrix_cl<double> alpha_deriv_cl;
   if (theta.cols() > alpha.cols()) {
-    auto alpha_csum = colwise_sum(alpha_val /* * (double)theta.cols()*/);
+    auto alpha_csum = colwise_sum(alpha_val);
     auto lgamma_alpha_csum
-        = colwise_sum(lgamma(alpha_val) /* * (double)theta.cols()*/);
+        = colwise_sum(lgamma(alpha_val));
     matrix_cl<double> digamma_alpha_cl(alpha.rows(), alpha.cols());
     results(check_alpha_positive, alpha_csum_cl, lgamma_alpha_csum_cl,
             digamma_alpha_cl)
@@ -292,7 +292,8 @@ inline return_type_t<T_prob_cl, T_prior_size_cl> dirichlet_lpdf(
   }
   if (!is_constant<T_prior_size_cl>::value) {
     if (theta.cols() > alpha.cols()) {
-      matrix_cl<double> tmp_cl = digamma(alpha_csum_cl) * (double)theta.cols();
+      matrix_cl<double> tmp_cl
+          = digamma(alpha_csum_cl) * static_cast<double>(theta.cols());
       ops_partials.edge2_.partials_
           = colwise_broadcast(tmp_cl) + rowwise_sum(alpha_deriv_cl);
     } else {

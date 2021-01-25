@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_generator.hpp>
+#include <stan/math/opencl/prim/dot_self.hpp>
 #include <stan/math/opencl/prim/mdivide_left_tri_low.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
