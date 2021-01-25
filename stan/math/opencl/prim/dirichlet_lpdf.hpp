@@ -93,8 +93,7 @@ inline return_type_t<T_prob_cl, T_prior_size_cl> dirichlet_lpdf(
   matrix_cl<double> alpha_deriv_cl;
   if (theta.cols() > alpha.cols()) {
     auto alpha_csum = colwise_sum(alpha_val);
-    auto lgamma_alpha_csum
-        = colwise_sum(lgamma(alpha_val));
+    auto lgamma_alpha_csum = colwise_sum(lgamma(alpha_val));
     matrix_cl<double> digamma_alpha_cl(alpha.rows(), alpha.cols());
     results(check_alpha_positive, alpha_csum_cl, lgamma_alpha_csum_cl,
             digamma_alpha_cl)
