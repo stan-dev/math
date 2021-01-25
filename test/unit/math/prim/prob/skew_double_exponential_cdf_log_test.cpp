@@ -200,9 +200,6 @@ TEST(ProbDistributionsSkewedDoubleExponential, lcdf_check_inconsistent_size) {
                std::invalid_argument);
 }
 
-#include <stan/math/prim.hpp>
-#include <gtest/gtest.h>
-
 TEST(ProbDistributionsSkewedDoubleExponential, cdf_log_matches_lcdf) {
   double y = 0.8;
   double mu = 2;
