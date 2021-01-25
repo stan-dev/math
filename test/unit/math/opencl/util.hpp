@@ -39,7 +39,7 @@ template <typename T, require_not_st_same<T, int>* = nullptr,
 auto var_argument(const T& x) {
   std::vector<decltype(var_argument(x[0]))> res;
   res.reserve(x.size());
-  for(auto& i : x){
+  for (auto& i : x) {
     res.push_back(var_argument(i));
   }
   return res;
