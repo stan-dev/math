@@ -20,9 +20,8 @@ template <typename T,
 inline var_value<matrix_cl<double>> tgamma(const var_value<T>& A) {
   return make_callback_var(
       tgamma(A.val()), [A](vari_value<matrix_cl<double>>& res) mutable {
-        A.adj() = A.adj()
-                  + elt_multiply(res.adj(),
-                                 elt_multiply(res.val(), digamma(A.val())));
+        A.adj() += elt_multiply(elt_multiply(res.adj(), res.val()),
+                                digamma(A.val()));
       });
 }
 

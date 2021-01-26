@@ -20,8 +20,7 @@ template <typename T,
 inline var_value<matrix_cl<double>> ceil(const var_value<T>& A) {
   return make_callback_var(
       ceil(A.val()), [A](vari_value<matrix_cl<double>>& res) mutable {
-        A.adj() = select(isnan(A.val()),
-                         constant(NOT_A_NUMBER, A.rows(), A.cols()), A.adj());
+        A.adj() = select(isnan(A.val()), NOT_A_NUMBER, A.adj());
       });
 }
 
