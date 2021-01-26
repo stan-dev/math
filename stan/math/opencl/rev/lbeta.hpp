@@ -2,10 +2,12 @@
 #define STAN_MATH_OPENCL_REV_LBETA_HPP
 #ifdef STAN_OPENCL
 
+#include <stan/math/opencl/rev/adjoint_results.hpp>
 #include <stan/math/prim/meta/is_kernel_expression.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/adjoint_of.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -23,41 +25,22 @@ namespace math {
  * @param b second expression
  * @return elementwise `lbeta()`
  */
-template <
-    typename T_a, typename T_b,
-    require_all_nonscalar_prim_or_rev_kernel_expression_t<T_a, T_b>* = nullptr,
-    require_any_var_t<T_a, T_b>* = nullptr>
-inline auto lbeta(const T_a& a, const T_b& b) {
-  const arena_t<T_a>& a_arena = a;
-  const arena_t<T_b>& b_arena = b;
+template <typename T_a, typename T_b,
+          require_all_prim_or_rev_kernel_expression_t<T_a, T_b>* = nullptr,
+          require_any_var_t<T_a, T_b>* = nullptr,
+          require_any_not_stan_scalar_t<T_a, T_b>* = nullptr>
+inline auto lbeta(T_a&& a, T_b&& b) {
+  arena_t<T_a> a_arena = std::forward<T_a>(a);
+  arena_t<T_b> b_arena = std::forward<T_b>(b);
 
-  var_value<matrix_cl<double>> res
-      = lbeta(value_of(a_arena), value_of(b_arena));
-  reverse_pass_callback([a_arena, b_arena, res]() mutable {
-    auto digamma_ab = digamma(value_of(a_arena) + value_of(b_arena));
-    if (!is_constant<T_a>::value && !is_constant<T_b>::value) {
-      auto& a_adj = forward_as<var_value<matrix_cl<double>>>(a_arena).adj();
-      auto& b_adj = forward_as<var_value<matrix_cl<double>>>(b_arena).adj();
-      results(a_adj, b_adj) = expressions(
-          a_adj
-              + elt_multiply(res.adj(),
-                             (digamma(value_of(a_arena)) - digamma_ab)),
-          b_adj
-              + elt_multiply(res.adj(),
-                             (digamma(value_of(b_arena)) - digamma_ab)));
-    } else if (!is_constant<T_a>::value) {
-      auto& a_adj = forward_as<var_value<matrix_cl<double>>>(a_arena).adj();
-      a_adj = a_adj
-              + elt_multiply(res.adj(),
-                             (digamma(value_of(a_arena)) - digamma_ab));
-    } else {
-      auto& b_adj = forward_as<var_value<matrix_cl<double>>>(b_arena).adj();
-      b_adj = b_adj
-              + elt_multiply(res.adj(),
-                             (digamma(value_of(b_arena)) - digamma_ab));
-    }
-  });
-  return res;
+  return make_callback_var(
+      lbeta(value_of(a_arena), value_of(b_arena)),
+      [a_arena, b_arena](vari_value<matrix_cl<double>>& res) mutable {
+        auto digamma_ab = digamma(value_of(a_arena) + value_of(b_arena));
+        adjoint_results(a_arena, b_arena) += expressions(
+            elt_multiply(res.adj(), digamma(value_of(a_arena)) - digamma_ab),
+            elt_multiply(res.adj(), digamma(value_of(b_arena)) - digamma_ab));
+      });
 }
 
 }  // namespace math

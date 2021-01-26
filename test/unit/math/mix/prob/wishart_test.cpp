@@ -1,8 +1,38 @@
-#include <stan/math/mix.hpp>
-#include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/math/special_functions/digamma.hpp>
-#include <boost/math/distributions.hpp>
+#include <test/unit/math/test_ad.hpp>
+
+TEST(ProbDistributionsWishart, matvar) {
+  auto f = [](const auto& y, const auto& dof, const auto& sigma) {
+    auto y_sym = stan::math::multiply(0.5, y + y.transpose());
+    auto sigma_sym = stan::math::multiply(0.5, sigma + sigma.transpose());
+    return stan::math::wishart_lpdf(y_sym, dof, sigma_sym);
+  };
+
+  double dof = 3.4;
+  Eigen::MatrixXd y11(1, 1);
+  y11 << 1;
+  Eigen::MatrixXd Sigma11(1, 1);
+  Sigma11 << 1;
+  stan::test::expect_ad(f, y11, dof, Sigma11);
+  stan::test::expect_ad_matvar(f, y11, dof, Sigma11);
+
+  Eigen::MatrixXd y00(0, 0);
+  Eigen::MatrixXd Sigma00(0, 0);
+  stan::test::expect_ad(f, y00, dof, Sigma00);
+  stan::test::expect_ad_matvar(f, y00, dof, Sigma00);
+
+  Eigen::MatrixXd y22(2, 2);
+  y22 << 1.0, 0.1, 0.1, 2.0;
+  Eigen::MatrixXd Sigma22(2, 2);
+  Sigma22 << 2.0, 0.5, 0.5, 1.1;
+  stan::test::expect_ad(f, y22, dof, Sigma22);
+  stan::test::expect_ad_matvar(f, y22, dof, Sigma22);
+
+  // Error sizes
+  stan::test::expect_ad(f, y00, dof, Sigma11);
+  stan::test::expect_ad(f, y11, dof, Sigma00);
+  stan::test::expect_ad_matvar(f, y00, dof, Sigma11);
+  stan::test::expect_ad_matvar(f, y11, dof, Sigma00);
+}
 
 TEST(ProbDistributionsWishart, fvar_var) {
   using Eigen::Dynamic;

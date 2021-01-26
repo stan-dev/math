@@ -15,15 +15,13 @@ namespace math {
  * @param A argument
  * @return Elementwise `sqrt()` of the input.
  */
-inline var_value<matrix_cl<double>> sqrt(
-    const var_value<matrix_cl<double>>& A) {
-  var_value<matrix_cl<double>> res = sqrt(A.val());
-
-  reverse_pass_callback([A, res]() mutable {
-    A.adj() = A.adj() + elt_divide(res.adj(), 2.0 * res.val());
-  });
-
-  return res;
+template <typename T,
+          require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
+inline var_value<matrix_cl<double>> sqrt(const var_value<T>& A) {
+  return make_callback_var(sqrt(A.val()),
+                           [A](vari_value<matrix_cl<double>>& res) mutable {
+                             A.adj() += elt_divide(res.adj(), 2.0 * res.val());
+                           });
 }
 
 }  // namespace math

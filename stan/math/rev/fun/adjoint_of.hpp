@@ -9,6 +9,10 @@ namespace math {
 namespace internal {
 struct nonexisting_adjoint {
   template <typename T>
+  nonexisting_adjoint operator+(const T&) {
+    return *this;
+  }
+  template <typename T>
   nonexisting_adjoint operator+=(T) {
     throw std::runtime_error(
         "internal::nonexisting_adjoint::operator+= should never be called! "
