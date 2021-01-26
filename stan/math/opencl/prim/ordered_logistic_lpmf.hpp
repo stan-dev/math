@@ -1,9 +1,10 @@
-#ifndef STAN_MATH_OPENCL_PRIM_MULTI_NORMAL_CHOLESKY_LPDF_HPP
-#define STAN_MATH_OPENCL_PRIM_MULTI_NORMAL_CHOLESKY_LPDF_HPP
+#ifndef STAN_MATH_OPENCL_PRIM_ORDERED_LOGISTIC_LPMF_HPP
+#define STAN_MATH_OPENCL_PRIM_ORDERED_LOGISTIC_LPMF_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/opencl/prim/mdivide_left_tri_low.hpp>
+#include <stan/math/opencl/kernels/add.hpp>
+#include <stan/math/opencl/kernels/ordered_logistic_lpmf.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
@@ -20,7 +21,7 @@ namespace math {
  * of integers given the vector of continuous locations and
  * specified cutpoints in an ordered logistic model.
  *
- * <p>Typically the continuous location
+ * <p>Typically the continuous lambda
  * will be the dot product of a vector of regression coefficients
  * and a vector of predictors for the outcome
  *
@@ -48,12 +49,12 @@ namespace math {
  *
  * @tparam propto True if calculating up to a proportion.
  * @tparam T_y Y variable type (integer or array of integers).
- * @tparam T_loc Location type.
+ * @tparam T_loc lambda type.
  * @tparam T_cut Cut-point type.
  * @param y Array of integers
- * @param lambda Vector of continuous location variables.
+ * @param lambda Vector of continuous lambda variables.
  * @param c Positive increasing vector of cutpoints.
- * @return Log probability of outcome given location and
+ * @return Log probability of outcome given lambda and
  * cutpoints.
  * @throw std::domain_error If the outcome is not between 1 and
  * the number of cutpoints plus 2; if the cutpoint vector is
@@ -66,158 +67,94 @@ namespace math {
 template <bool propto, typename T_y_cl, typename T_loc_cl, typename T_cuts_cl,
           require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_loc_cl,
                                                       T_cuts_cl>* = nullptr>
-inline return_type_t<T_y_cl, T_loc_cl, T_cut_cl> ordered_logistic_lpmf(
+inline return_type_t<T_y_cl, T_loc_cl, T_cuts_cl> ordered_logistic_lpmf(
     const T_y_cl& y, const T_loc_cl& lambda, const T_cuts_cl& cuts) {
+  constexpr bool is_y_vector = !is_stan_scalar<T_y_cl>::value;
   static const char* function = "ordered_logistic_lpmf(OpenCL)";
 
-  check_nonzero_size(function, "Cut-points", c);
-  check_consistent_sizes(function, "Integers", y, "Locations", lambda);
+  if (size(y) != 1) {
+    check_size_match(function, "Size of ", "y", size(y), "Size of", "lambda",
+                     size(lambda));
+  }
 
   int N_instances = max_size(y, lambda);
   int N_classes = cuts.rows() + 1;
   int N_cut_sets = cuts.cols();
 
   if (N_cut_sets > 1) {
-    check_size_match(function, "Length of location variables ", N_instances,
+    check_size_match(function, "Length of lambda variables ", N_instances,
                      "Number of cutpoint vectors ", N_cut_sets);
   }
-
-  if (max_size(y, lambda) == 0) {
+  if (N_instances == 0 || N_classes == 1) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y_cl, T_loc_cl, T_cuts_cl>::value) {
-    return 0.0;
-  }
-
-  const auto& y_val = value_of(y);
-  const auto& lambda_val = value_of(lambda);
-  const auto& cuts_val = value_of(cuts);
-
+  const auto& cuts_val = eval(value_of(cuts));
   if (N_classes >= 2) {
     auto cuts_head
-        = block_zero_based(cuts_val, 0, 0, size(cuts) - 1, N_cut_sets);
+        = block_zero_based(cuts_val, 0, 0, cuts.rows() - 1, N_cut_sets);
     auto cuts_tail
-        = block_zero_based(cuts_val, 1, 0, size(cuts) - 1, N_cut_sets);
+        = block_zero_based(cuts_val, 1, 0, cuts.rows() - 1, N_cut_sets);
     check_cl(function, "Cuts", cuts_head, "ordered and finite")
         = cuts_head < cuts_tail && isfinite(cuts_head) && isfinite(cuts_tail);
-  } else {
+  } else if (N_classes == 1) {
     check_cl(function, "Cuts", cuts_val, "finite") = isfinite(cuts_val);
   }
 
-  auto cuts_y1 = select(y_val != N_classes,
-                        indexing(cuts_val, y_val - 1, col_index()), INFINITY);
-  auto cuts_y2 = select(y_val != 1, indexing(cuts_val, y_val - 2, col_index()),
-                        -INFINITY);
-  auto cut2 = lambda_val - cuts_y2;
-  auto cut1 = lambda_val - cuts_y1;
-  auto m_log_1p_exp_cut1 = -log1p_exp(cut1);
-  auto m_log_1p_exp_m_cut2 = -log1p_exp(-cut2);
-  auto log1m_exp_cuts_diff = log1m_exp(cut1 - cut2);
-  auto logp_tmp = colwise_sum(
-      y_val == 1, m_log_1p_exp_cut1,
-      select(y_val == N_classes, m_log_1p_exp_m_cut2,
-             m_log_1p_exp_m_cut2 + log1m_exp_cuts_diff + m_log_1p_exp_cut1));
-
-  auto exp_m_cut1 = exp(-cut1);
-  auto exp_m_cut2 = exp(-cut2);
-  auto exp_cuts_diff = exp(cuts_y2 - cuts_y1);
-  auto d1
-      = select(cut2 > 0.0, exp_m_cut2 / (1.0 + exp_m_cut2), 1.0 / (1.0 + exp(cut2)))
-        - exp_cuts_diff / (exp_cuts_diff - 1.0);
-  auto d2
-      = 1.0 / (1.0 - exp_cuts_diff)
-        - select(cut1 > 0.0, exp_m_cut1 / (1.0 + exp_m_cut1),
-                            1.0 / (1.0 + exp(cut1)));
-
-
-  operands_and_partials<T_y_cl, T_loc_cl, T_cuts_cl> ops_partials(y, lambda,
-                                                                   cuts);
-
-
-
-  int L_size = L_val_eval.rows();
-  int N_cases = std::max(y_val.cols(), lambda_val.cols());
-
-  double logp = 0;
-  if (include_summand<propto>::value) {
-    logp += NEG_LOG_SQRT_TWO_PI * L_size * N_cases;
+  if (!include_summand<propto, T_loc_cl, T_cuts_cl>::value) {
+    return 0.0;
   }
 
-  matrix_cl<double> L_lower(L_val_eval.buffer(), L_val_eval.rows(),
-                            L_val_eval.cols(), matrix_cl_view::Lower);
-  matrix_cl<double> inv_L = mdivide_left_tri_low(L_lower);
+  const auto& y_val = eval(value_of(y));
+  const auto& lambda_val = eval(value_of(lambda));
 
-  auto check_lambda_finite
-      = check_cl(function, "Location parameter", lambda_val, "finite");
-  auto lambda_finite = isfinite(lambda_val);
-  auto check_y_not_nan
-      = check_cl(function, "Random variable", y_val, "not nan");
-  auto y_not_nan = !isnan(y_val);
+  const auto& y_val_cl = to_matrix_cl(y_val);
 
-  auto sum_log_diag_inv_L = colwise_sum(log(diagonal(inv_L)));
-  auto y_lambda_diff = rowwise_optional_broadcast(y_val)
-                       - rowwise_optional_broadcast(lambda_val);
+  const int local_size
+      = opencl_kernels::ordered_logistic_glm.get_option("LOCAL_SIZE_");
+  const int wgs = (N_instances + local_size - 1) / local_size;
 
-  matrix_cl<double> y_lambda_diff_cl;
-  matrix_cl<double> sum_log_diag_inv_L_cl;
+  bool need_lambda_derivative = !is_constant_all<T_loc_cl>::value;
+  bool need_cuts_derivative = !is_constant_all<T_cuts_cl>::value;
+  bool need_broadcasting = N_cut_sets == 1 && N_instances != 1;
+  matrix_cl<double> logp_cl(wgs, 1);
+  matrix_cl<double> lambda_sum_cl(wgs, 1);
+  matrix_cl<double> lambda_derivative_cl(N_instances,
+                                         need_lambda_derivative ? 1 : 0);
+  matrix_cl<double> cuts_derivative_cl(
+      N_classes - 1,
+      need_cuts_derivative ? (need_broadcasting ? wgs : N_cut_sets) : 0);
 
-  if (y_val.cols() == 1 && lambda_val.cols() == 1) {
-    results(check_lambda_finite, check_y_not_nan, y_lambda_diff_cl,
-            sum_log_diag_inv_L_cl)
-        = expressions(lambda_finite, y_not_nan, y_lambda_diff,
-                      calc_if<include_summand<propto, T_covar_cl>::value>(
-                          sum_log_diag_inv_L));
-  } else if (y_val.cols() == 1) {
-    results(check_y_not_nan, sum_log_diag_inv_L_cl) = expressions(
-        y_not_nan, calc_if<include_summand<propto, T_covar_cl>::value>(
-                       sum_log_diag_inv_L));
-    results(check_lambda_finite, y_lambda_diff_cl)
-        = expressions(lambda_finite, y_lambda_diff);
-  } else if (lambda_val.cols() == 1) {
-    results(check_lambda_finite, sum_log_diag_inv_L_cl) = expressions(
-        lambda_finite, calc_if<include_summand<propto, T_covar_cl>::value>(
-                           sum_log_diag_inv_L));
-    results(check_y_not_nan, y_lambda_diff_cl)
-        = expressions(y_not_nan, y_lambda_diff);
-  } else {
-    sum_log_diag_inv_L_cl = calc_if<include_summand<propto, T_covar_cl>::value>(
-        sum_log_diag_inv_L);
-    results(check_lambda_finite, check_y_not_nan, y_lambda_diff_cl)
-        = expressions(lambda_finite, y_not_nan, y_lambda_diff);
+  try {
+    opencl_kernels::ordered_logistic(
+        cl::NDRange(local_size * wgs), cl::NDRange(local_size), lambda_sum_cl,
+        logp_cl, lambda_derivative_cl, cuts_derivative_cl, y_val_cl, lambda_val,
+        cuts_val, N_instances, N_classes, is_y_vector, !need_broadcasting,
+        need_lambda_derivative, need_cuts_derivative);
+  } catch (const cl::Error& e) {
+    check_opencl_error(function, e);
   }
 
-  if (include_summand<propto, T_covar_cl>::value) {
-    logp += sum(from_matrix_cl(sum_log_diag_inv_L_cl)) * N_cases;
+  double logp = sum(from_matrix_cl(logp_cl));
+
+  if (!std::isfinite(sum(from_matrix_cl(lambda_sum_cl)))) {
+    results(check_cl(function, "Vector of dependent variables", y_val,
+                     "between 0 and number of classes"),
+            check_cl(function, "lambda vector", lambda_val, "finite"))
+        = expressions(y_val >= 1 && y_val <= static_cast<int>(N_classes),
+                      isfinite(lambda_val));
   }
+  operands_and_partials<T_loc_cl, T_cuts_cl> ops_partials(lambda, cuts);
 
-  matrix_cl<double> half = transpose(inv_L * y_lambda_diff_cl);
-  matrix_cl<double> scaled_diff = transpose(half * inv_L);
-  logp -= 0.5 * dot_self(half);
-
-  operands_and_partials<T_y_cl, T_loc_cl, T_covar_cl> ops_partials(y, lambda,
-                                                                   L);
-
-  if (!is_constant_all<T_y_cl>::value) {
-    if (y_val.cols() == 1) {
-      forward_as<matrix_cl<double>>(ops_partials.edge1_.partials_)
-          = -rowwise_sum(scaled_diff);
-    } else {
-      ops_partials.edge1_.partials_ = -scaled_diff;
-    }
-  }
   if (!is_constant_all<T_loc_cl>::value) {
-    if (lambda_val.cols() == 1) {
-      forward_as<matrix_cl<double>>(ops_partials.edge2_.partials_)
-          = rowwise_sum(scaled_diff);
+    ops_partials.edge1_.partials_ = lambda_derivative_cl;
+  }
+  if (!is_constant_all<T_cuts_cl>::value) {
+    if (need_broadcasting) {
+      ops_partials.edge2_.partials_ = rowwise_sum(cuts_derivative_cl);
     } else {
-      ops_partials.edge2_.partials_ = scaled_diff;
+      ops_partials.edge2_.partials_ = std::move(cuts_derivative_cl);
     }
   }
-  if (!is_constant_all<T_covar_cl>::value) {
-    ops_partials.edge3_.partials_
-        = scaled_diff * half - N_cases * transpose(inv_L);
-  }
-
   return ops_partials.build(logp);
 }
 
