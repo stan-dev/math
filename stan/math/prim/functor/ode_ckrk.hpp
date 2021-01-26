@@ -16,8 +16,7 @@ namespace math {
 
 /**
  * Solve the ODE initial value problem y' = f(t, y), y(t0) = y0 at a set of
- * times, { t1, t2, t3, ... } using the non-stiff Runge-Kutta 45 solver in
- * Boost.
+ * times, { t1, t2, t3, ... } using Boost's Cash-Karp54 solver.
  *
  * If the system of equations is stiff, <code>ode_bdf</code> will likely be
  * faster.
@@ -160,8 +159,7 @@ ode_ckrk_tol_impl(const char* function_name, const F& f, const T_y0& y0_arg,
 
 /**
  * Solve the ODE initial value problem y' = f(t, y), y(t0) = y0 at a set of
- * times, { t1, t2, t3, ... } using the non-stiff Runge-Kutta 45 solver in
- * Boost.
+ * times, { t1, t2, t3, ... } using Boost's Cash-Karp solver.
  *
  * If the system of equations is stiff, <code>ode_bdf</code> will likely be
  * faster.
@@ -210,7 +208,7 @@ ode_ckrk_tol(const F& f, const T_y0& y0_arg, T_t0 t0,
 
 /**
  * Solve the ODE initial value problem y' = f(t, y), y(t0) = y0 at a set of
- * times, { t1, t2, t3, ... } using the non-stiff Runge-Kutta 45 solver in Boost
+ * times, { t1, t2, t3, ... } using Boost's Cash-Karp Runge-Kutta solver
  * with defaults for relative_tolerance, absolute_tolerance, and max_num_steps.
  *
  * If the system of equations is stiff, <code>ode_bdf</code> will likely be
