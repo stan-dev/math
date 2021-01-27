@@ -112,8 +112,7 @@ TEST(laplace, likelihood_differentiation) {
     = diff_functor.diff2_theta_eta(theta, eta, W_root);
 
   Eigen::VectorXd finite_hessian_theta_eta
-   = ((-hessian_theta_u).cwiseSqrt() - (-hessian_theta_l).cwiseSqrt())
-       / (2 * epsilon);
+   = (hessian_theta_u - hessian_theta_l) / (2 * epsilon);
 
   EXPECT_FLOAT_EQ(finite_hessian_theta_eta(0), diff2_theta_eta(0, 0));
   EXPECT_FLOAT_EQ(finite_hessian_theta_eta(1), diff2_theta_eta(1, 0));
@@ -124,6 +123,8 @@ TEST(laplace, neg_binomial_2_log_dbl) {
   using stan::math::diff_neg_binomial_2_log;
   using stan::math::sqr_exp_kernel_functor;
   using stan::math::laplace_marginal_density;
+  using stan::math::var;
+  using stan::math::value_of;
 
   int dim_phi = 2, dim_eta = 1, dim_theta = 2;
   Eigen::VectorXd phi(dim_phi), eta(dim_eta), theta_0(dim_theta);
@@ -140,8 +141,8 @@ TEST(laplace, neg_binomial_2_log_dbl) {
 
   std::vector<double> delta;
   std::vector<int> delta_int;
-  std::vector<int> y_index = {1, 1};
-  Eigen::VectorXd y = to_vector({1, 0});
+  std::vector<int> y_index = {0, 1};
+  Eigen::VectorXd y = to_vector({1, 6});
 
   diff_neg_binomial_2_log diff_functor(y, y_index, dim_theta);
   stan::math::sqr_exp_kernel_functor K;
@@ -149,7 +150,60 @@ TEST(laplace, neg_binomial_2_log_dbl) {
   double log_p = laplace_marginal_density(diff_functor, K, phi, eta, x, delta,
                                           delta_int, theta_0);
 
-  // TODO: add test.
+  Eigen::Matrix<var, Eigen::Dynamic, 1> phi_v = phi, eta_v = eta;
 
+  var target
+    = laplace_marginal_density(diff_functor, K, phi_v, eta_v, x, delta,
+                               delta_int, theta_0);
 
+  VEC g;
+  AVEC parm_vec = createAVEC(phi_v(0), phi_v(1), eta_v(0));
+  target.grad(parm_vec, g);
+
+  for (size_t i = 0; i < g.size(); i++) std::cout << g[i] << " ";
+  std::cout << std::endl;
+
+  // finite diff test
+  double diff = 1e-10;
+  Eigen::VectorXd phi_dbl = value_of(phi), eta_dbl = value_of(eta);
+  Eigen::VectorXd phi_1l = phi_dbl, phi_1u = phi_dbl,
+    phi_2l = phi_dbl, phi_2u = phi_dbl, eta_l = eta_dbl, eta_u = eta_dbl;
+  phi_1l(0) -= diff;
+  phi_1u(0) += diff;
+  phi_2l(1) -= diff;
+  phi_2u(1) += diff;
+  eta_l(0) -= diff;
+  eta_u(0) += diff;
+
+  double target_phi_1u = laplace_marginal_density(diff_functor, K, phi_1u,
+                                                         eta_dbl, x, delta,
+                                                         delta_int, theta_0),
+         target_phi_1l = laplace_marginal_density(diff_functor, K, phi_1l,
+                                                         eta_dbl, x, delta,
+                                                         delta_int, theta_0),
+         target_phi_2u = laplace_marginal_density(diff_functor, K, phi_2u,
+                                                         eta_dbl, x, delta,
+                                                         delta_int, theta_0),
+         target_phi_2l = laplace_marginal_density(diff_functor, K, phi_2l,
+                                                         eta_dbl, x, delta,
+                                                         delta_int, theta_0),
+         target_eta_u = laplace_marginal_density(diff_functor, K, phi_dbl,
+                                                         eta_u, x, delta,
+                                                         delta_int, theta_0),
+         target_eta_l = laplace_marginal_density(diff_functor, K, phi_1u,
+                                                         eta_l, x, delta,
+                                                         delta_int, theta_0);
+
+  VEC g_finite(dim_phi + dim_eta);
+  g_finite[0] = (target_phi_1u - target_phi_1l) / (2 * diff);
+  g_finite[1] = (target_phi_2u - target_phi_2l) / (2 * diff);
+  g_finite[2] = (target_eta_u - target_eta_l) / (2 * diff);
+
+  for (int i = 0; i < 3; i++) std::cout << g_finite[i] << " ";
+  std::cout << std::endl;
+
+  // double tol = 1e-4;
+  // EXPECT_NEAR(g_finite[0], g[0], tol);
+  // EXPECT_NEAR(g_finite[1], g[1], tol);
+  // EXPECT_NEAR(g_finite[2], g[2], tol);
 }

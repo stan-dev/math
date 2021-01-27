@@ -240,7 +240,7 @@ struct diff_neg_binomial_2_log {
   template <typename T_theta, typename T_eta>
   Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, 1>
   third_diff(const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
-             const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) {
+             const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) const {
     typedef return_type_t<T_theta, T_eta> scalar;
     Eigen::Matrix<T_theta, Eigen::Dynamic, 1> exp_theta = exp(theta);
     T_eta eta_scalar = eta(0);
@@ -258,7 +258,7 @@ struct diff_neg_binomial_2_log {
   template <typename T_theta, typename T_eta>
   Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, 1>
   diff_eta(const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
-           const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) {
+           const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) const {
     typedef return_type_t<T_theta, T_eta> scalar;
     T_eta eta_scalar = eta(0);
     Eigen::Matrix<T_eta, Eigen::Dynamic, 1>
@@ -284,7 +284,7 @@ struct diff_neg_binomial_2_log {
   template <typename T_theta, typename T_eta>
   Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, Eigen::Dynamic>
   diff_theta_eta(const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
-                 const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) {
+                 const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) const {
     typedef return_type_t<T_theta, T_eta> scalar;
     T_eta eta_scalar = eta(0);
     Eigen::Matrix<T_theta, Eigen::Dynamic, 1> exp_neg_theta = exp(-theta);
@@ -296,11 +296,14 @@ struct diff_neg_binomial_2_log {
     return diff_matrix;
   }
 
+  // TODO: Address special case where we have an empty group (induces zero
+  // elements in W).
   template <typename T_theta, typename T_eta>
   Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, Eigen::Dynamic>
   diff2_theta_eta(const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
                   const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta,
-                  const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& W_root) {
+                  const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& W_root)
+  const {
     typedef return_type_t<T_theta, T_eta> scalar;
     T_eta eta_scalar = eta(0);
     Eigen::Matrix<T_theta, Eigen::Dynamic, 1> exp_neg_theta = exp(-theta);
@@ -310,11 +313,11 @@ struct diff_neg_binomial_2_log {
     Eigen::Matrix<scalar, Eigen::Dynamic, Eigen::Dynamic>
       diff_matrix(theta.size(), 1);
 
-    diff_matrix.col(0) = 0.5 * (W_root.cwiseInverse()).cwiseProduct(
-      elt_divide(exp_neg_theta.cwiseProduct(
+    diff_matrix.col(0) = // 0.5 * (W_root.cwiseInverse()).cwiseProduct(
+      - elt_divide(exp_neg_theta.cwiseProduct(
       - eta_scalar * exp_neg_theta.cwiseProduct(sums_)
       + sums_ + 2 * eta_scalar * n_samples_),
-      square(one_plus_eta_exp).cwiseProduct(one_plus_eta_exp)));
+      square(one_plus_eta_exp).cwiseProduct(one_plus_eta_exp)); // );
 
     return diff_matrix;
   }

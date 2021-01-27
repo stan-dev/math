@@ -304,21 +304,35 @@ namespace math {
      }
      recover_memory_nested();
 
-     if (eta_size_ != 0) {
-       VectorXd diff_eta = diff_likelihood.diff_eta(theta, eta_dbl);
-       MatrixXd diff_theta_eta = diff_likelihood.diff_theta_eta(theta, eta_dbl);
-       MatrixXd diff2_theta_eta
-         = diff_likelihood.diff2_theta_eta(theta, eta_dbl);
-       for (int l = 0; l < eta_size_; l++) {
-         VectorXd b = diff_theta_eta.col(l);
-         // CHECK -- can we use the fact the covariance matrix is symmetric?
-         VectorXd s3 = b - covariance * (R * b);
+    eta_adj_ = Eigen::VectorXd(eta_size_);
+    if (eta_size_ != 0) {
+     VectorXd diff_eta = diff_likelihood.diff_eta(theta, eta_dbl);
+     MatrixXd diff_theta_eta = diff_likelihood.diff_theta_eta(theta, eta_dbl);
+     MatrixXd diff2_theta_eta
+       = diff_likelihood.diff2_theta_eta(theta, eta_dbl, W_root);
 
-         eta_adj_(l) = diff_eta(l) - (W_root.cwiseInverse().asDiagonal()
-           * (R * (covariance * diff2_theta_eta.col(l)))).trace()
-           - s2.dot(s3);
-       }
+     for (int l = 0; l < eta_size_; l++) {
+       VectorXd b = covariance * diff_theta_eta.col(l);
+       // CHECK -- can we use the fact the covariance matrix is symmetric?
+       VectorXd s3 = b - covariance * (R * b);
+
+      std::cout << diff_eta(l) << std::endl
+      << - 0.5 * (L.transpose().triangularView<Eigen::Upper>()
+        .solve(L.triangularView<Eigen::Lower>()
+         .solve(- covariance * diff2_theta_eta.col(l)))).trace() << std::endl
+      << - s2.dot(s3) << std::endl;
+
+       eta_adj_(l) = diff_eta(l)
+         - 0.5 * (L.transpose().triangularView<Eigen::Upper>()
+           .solve(L.triangularView<Eigen::Lower>()
+            .solve(- covariance * diff2_theta_eta.col(l)))).trace()
+       // - (mdivide_left_tri<Eigen::Upper>(L.transpose(),
+       //     C * diff2_theta_eta.col(l))).trace()
+       // - (W_root.cwiseInverse().asDiagonal()
+       // * (R * (covariance * diff2_theta_eta.col(l)))).trace()
+         - s2.dot(s3);
      }
+   }
 
      // auto end = std::chrono::system_clock::now();
      // std::chrono::duration<double> time = end - ;
@@ -395,11 +409,13 @@ namespace math {
    * @param[in] max_num_steps maximum number of steps for the Newton solver.
    * @return the log maginal density, p(y | phi).
    */
-  template <typename T0, typename T1, typename D, typename K, typename Tx>
+  template <typename T0, typename T1, typename T2, typename D, typename K,
+            typename Tx>
   T1 laplace_marginal_density
       (const D& diff_likelihood,
        const K& covariance_function,
        const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
+       const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta,
        const Tx& x,
        const std::vector<double>& delta,
        const std::vector<int>& delta_int,
@@ -418,8 +434,8 @@ namespace math {
     marginal_density_dbl
       = laplace_marginal_density(diff_likelihood,
                                  covariance_function,
-                                 value_of(phi), x, delta, delta_int,
-                                 covariance,
+                                 value_of(phi), value_of(eta),
+                                 x, delta, delta_int, covariance,
                                  theta, W_root, L, a, l_grad,
                                  value_of(theta_0),
                                  msgs,
@@ -437,7 +453,7 @@ namespace math {
     laplace_marginal_density_vari* vi0
       = new laplace_marginal_density_vari(diff_likelihood,
                                           covariance_function,
-                                          phi, x, delta, delta_int,
+                                          phi, eta, x, delta, delta_int,
                                           marginal_density_dbl,
                                           covariance,
                                           theta, W_root, L, a, l_grad,
