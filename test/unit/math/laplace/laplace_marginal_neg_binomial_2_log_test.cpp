@@ -71,8 +71,6 @@ TEST(laplace, likelihood_differentiation) {
   finite_third_diff(0) = (hessian_u0 - hessian_l0)(0) / (2 * epsilon);
   finite_third_diff(1) = (hessian_u1 - hessian_l1)(1) / (2 * epsilon);
 
-  // std::cout << third_diff << std::endl;
-  // std::cout << finite_third_diff << std::endl;
 
   EXPECT_FLOAT_EQ(finite_gradient(0), gradient(0));
   EXPECT_FLOAT_EQ(finite_gradient(1), gradient(1));
@@ -80,4 +78,42 @@ TEST(laplace, likelihood_differentiation) {
   EXPECT_FLOAT_EQ(finite_hessian(1), hessian(1));
   EXPECT_FLOAT_EQ(finite_third_diff(0), third_diff(0));
   EXPECT_FLOAT_EQ(finite_third_diff(1), third_diff(1));
+
+  // derivatives wrt eta
+  Eigen::VectorXd diff_eta = diff_functor.diff_eta(theta, eta);
+
+  Eigen::VectorXd eta_l(1), eta_u(1);
+  eta_l(0) = eta(0) - epsilon;
+  eta_u(0) = eta(0) + epsilon;
+  double finite_gradient_eta =
+    (diff_functor.log_likelihood(theta, eta_u)
+      - diff_functor.log_likelihood(theta, eta_l)) / (2 * epsilon);
+
+  EXPECT_FLOAT_EQ(finite_gradient_eta,  diff_eta(0));
+
+  Eigen::VectorXd diff_theta_eta = diff_functor.diff_theta_eta(theta, eta);
+
+  Eigen::VectorXd gradient_theta_l,
+                  gradient_theta_u,
+                  hessian_theta_u,
+                  hessian_theta_l;
+
+  diff_functor.diff(theta, eta_l, gradient_theta_l, hessian_theta_l);
+  diff_functor.diff(theta, eta_u, gradient_theta_u, hessian_theta_u);
+  Eigen::VectorXd finite_gradient_theta_eta
+    = (gradient_theta_u - gradient_theta_l) / (2 * epsilon);
+
+  EXPECT_FLOAT_EQ(finite_gradient_theta_eta(0), diff_theta_eta(0));
+  EXPECT_FLOAT_EQ(finite_gradient_theta_eta(1), diff_theta_eta(1));
+
+  Eigen::VectorXd W_root = (-hessian).cwiseSqrt();
+  Eigen::VectorXd diff2_theta_eta
+    = diff_functor.diff2_theta_eta(theta, eta, W_root);
+
+  Eigen::VectorXd finite_hessian_theta_eta
+   = ((-hessian_theta_u).cwiseSqrt() - (-hessian_theta_l).cwiseSqrt())
+       / (2 * epsilon);
+
+  EXPECT_FLOAT_EQ(finite_hessian_theta_eta(0), diff2_theta_eta(0));
+  EXPECT_FLOAT_EQ(finite_hessian_theta_eta(1), diff2_theta_eta(1));  
 }

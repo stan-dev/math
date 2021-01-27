@@ -1,4 +1,4 @@
-#ifndef STAN_MATH_LAPLACE_LAPLACE_LIKELIHOOD_HPP
+ #ifndef STAN_MATH_LAPLACE_LAPLACE_LIKELIHOOD_HPP
 #define STAN_MATH_LAPLACE_LAPLACE_LIKELIHOOD_HPP
 
 #include <stan/math/prim/fun/lgamma.hpp>
@@ -231,8 +231,7 @@ struct diff_neg_binomial_2_log {
 
     Eigen::Matrix<scalar, Eigen::Dynamic, 1>
       one_plus_exp = one + eta_scalar * exp_neg_theta;
-    gradient = sums_ - sums_plus_n_eta.
-                cwiseProduct(elt_divide(one, one_plus_exp));
+    gradient = sums_ - elt_divide(sums_plus_n_eta, one_plus_exp);
 
     hessian = - eta_scalar * sums_plus_n_eta.
       cwiseProduct(elt_divide(exp_neg_theta, square(one_plus_exp)));
@@ -254,12 +253,62 @@ struct diff_neg_binomial_2_log {
       cwiseProduct(exp_theta.cwiseProduct(
         elt_divide(eta_vec - exp_theta,
         square(eta_plus_exp_theta).cwiseProduct(eta_plus_exp_theta))));
-
-    // return (((sums_ + eta_scalar * n_samples_) * eta_scalar).
-    //   cwiseProduct(one - 4 * eta_scalar * exp_neg_theta)).
-    //   cwiseProduct(elt_divide(exp_neg_theta,
-    //                  square(one + eta_scalar * exp_neg_theta)));
   }
+
+  template <typename T_theta, typename T_eta>
+  Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, 1>
+  diff_eta(const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
+           const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) {
+    typedef return_type_t<T_theta, T_eta> scalar;
+    T_eta eta_scalar = eta(0);
+    Eigen::Matrix<T_eta, Eigen::Dynamic, 1>
+      y_plus_eta = y_ + rep_vector(eta_scalar, y_.size());
+    Eigen::Matrix<T_theta, Eigen::Dynamic, 1> exp_theta = exp(theta);
+    Eigen::Matrix<scalar, Eigen::Dynamic, 1>
+      exp_theta_plus_eta = exp_theta + rep_vector(eta_scalar, theta.size());
+
+    T_eta y_plus_eta_digamma_sum = 0;
+    for (int i = 0; i < y_.size(); i++)
+      y_plus_eta_digamma_sum += digamma(y_plus_eta(i));
+
+   Eigen::Matrix<scalar, Eigen::Dynamic, 1> gradient_eta(1);
+   gradient_eta(0) =
+     y_plus_eta_digamma_sum - y_.size() * digamma(eta_scalar)
+      - sum(elt_divide(sums_ + n_samples_ * eta_scalar, exp_theta_plus_eta))
+      + sum(n_samples_ * log(eta_scalar)
+            - n_samples_.cwiseProduct(log(exp_theta_plus_eta))
+            + n_samples_);
+    return gradient_eta;
+  }
+
+  template <typename T_theta, typename T_eta>
+  Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, 1>
+  diff_theta_eta(const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
+                 const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) {
+    T_eta eta_scalar = eta(0);
+    Eigen::Matrix<T_theta, Eigen::Dynamic, 1> exp_neg_theta = exp(-theta);
+
+    return - elt_divide(n_samples_ - sums_.cwiseProduct(exp_neg_theta),
+      square(eta_scalar * exp_neg_theta + rep_vector(1, theta.size())));
+  }
+
+  template <typename T_theta, typename T_eta>
+  Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, 1>
+  diff2_theta_eta(const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
+                  const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta,
+                  const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& W_root) {
+    T_eta eta_scalar = eta(0);
+    Eigen::Matrix<T_theta, Eigen::Dynamic, 1> exp_neg_theta = exp(-theta);
+    Eigen::Matrix<T_theta, Eigen::Dynamic, 1> one_plus_eta_exp
+      = rep_vector(1, theta.size()) + eta_scalar * exp_neg_theta;
+
+    return 0.5 * (W_root.cwiseInverse()).cwiseProduct(
+      elt_divide(exp_neg_theta.cwiseProduct(
+      - eta_scalar * exp_neg_theta.cwiseProduct(sums_)
+      + sums_ + 2 * eta_scalar * n_samples_),
+      square(one_plus_eta_exp).cwiseProduct(one_plus_eta_exp)));
+  }
+
 
 };
 
