@@ -67,10 +67,10 @@ TEST(ProbDistributionsBinomialLogit, opencl_matches_cpu_small) {
   Eigen::VectorXd alpha(N);
   alpha << 0.0, -0.8, 1.0;
 
-  stan::math::test::compare_cpu_opencl_prim_rev(binomial_logit_lpmf_functor, n, m,
-                                                alpha);
-  stan::math::test::compare_cpu_opencl_prim_rev(binomial_logit_lpmf_functor_propto, n,
+  stan::math::test::compare_cpu_opencl_prim_rev(binomial_logit_lpmf_functor, n,
                                                 m, alpha);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      binomial_logit_lpmf_functor_propto, n, m, alpha);
 }
 
 TEST(ProbDistributionsBinomialLogit, opencl_broadcast_n) {
@@ -81,8 +81,8 @@ TEST(ProbDistributionsBinomialLogit, opencl_broadcast_n) {
   Eigen::VectorXd alpha(N);
   alpha << 0.0, -0.8, 1.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(binomial_logit_lpmf_functor,
-                                                         n, m, alpha);
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
+      binomial_logit_lpmf_functor, n, m, alpha);
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       binomial_logit_lpmf_functor_propto, n, m, alpha);
 }
@@ -95,8 +95,8 @@ TEST(ProbDistributionsBinomialLogit, opencl_broadcast_N) {
   Eigen::VectorXd alpha(N);
   alpha << 0.0, -0.8, 1.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(binomial_logit_lpmf_functor,
-                                                         n, m, alpha);
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
+      binomial_logit_lpmf_functor, n, m, alpha);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       binomial_logit_lpmf_functor_propto, n, m, alpha);
 }
@@ -108,8 +108,8 @@ TEST(ProbDistributionsBinomialLogit, opencl_broadcast_alpha) {
   std::vector<int> m{0, 1, 123};
   double alpha_scal = 0.4;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<2>(binomial_logit_lpmf_functor,
-                                                         n, m, alpha_scal);
+  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
+      binomial_logit_lpmf_functor, n, m, alpha_scal);
   stan::math::test::test_opencl_broadcasting_prim_rev<2>(
       binomial_logit_lpmf_functor_propto, n, m, alpha_scal);
 }
@@ -127,10 +127,10 @@ TEST(ProbDistributionsBinomialLogit, opencl_matches_cpu_big) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> alpha
       = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1);
 
-  stan::math::test::compare_cpu_opencl_prim_rev(binomial_logit_lpmf_functor, n, m,
-                                                alpha);
-  stan::math::test::compare_cpu_opencl_prim_rev(binomial_logit_lpmf_functor_propto, n,
+  stan::math::test::compare_cpu_opencl_prim_rev(binomial_logit_lpmf_functor, n,
                                                 m, alpha);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      binomial_logit_lpmf_functor_propto, n, m, alpha);
 }
 
 TEST(ProbDistributionsBinomialLogit, opencl_n_N_scalar) {
@@ -141,10 +141,10 @@ TEST(ProbDistributionsBinomialLogit, opencl_n_N_scalar) {
   Eigen::VectorXd alpha(N);
   alpha << 0.3, 0.8, 0.9;
 
-  stan::math::test::compare_cpu_opencl_prim_rev(binomial_logit_lpmf_functor, n, m,
-                                                alpha);
-  stan::math::test::compare_cpu_opencl_prim_rev(binomial_logit_lpmf_functor_propto, n,
+  stan::math::test::compare_cpu_opencl_prim_rev(binomial_logit_lpmf_functor, n,
                                                 m, alpha);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      binomial_logit_lpmf_functor_propto, n, m, alpha);
 }
 
 #endif

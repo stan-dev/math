@@ -67,7 +67,7 @@ inline int get_num_threads() {
 #ifdef TBB_INTERFACE_NEW
 /**
  * Initialize the Intel TBB threadpool and global scheduler through
- * the tbb::global_control object. In case an instance of the
+ * the tbb::task_arena object. In case an instance of the
  * tbb::task_scheduler_object has been instantiated prior to calling
  * this function, then any subsequent initialization is ignored by the
  * Intel TBB.
@@ -84,13 +84,17 @@ inline int get_num_threads() {
  * @throws std::runtime_error if the value of STAN_NUM_THREADS env. variable
  * is invalid
  */
-inline tbb::global_control& init_threadpool_tbb() {
+inline tbb::task_arena& init_threadpool_tbb() {
   int tbb_max_threads = internal::get_num_threads();
 
-  static tbb::global_control tbb_scheduler(
+  static tbb::global_control tbb_gc(
       tbb::global_control::max_allowed_parallelism, tbb_max_threads);
 
-  return tbb_scheduler;
+  static tbb::task_arena tbb_arena(tbb_max_threads, 1,
+                                   tbb::task_arena::priority::normal);
+  tbb_arena.initialize();
+
+  return tbb_arena;
 }
 #else
 /**

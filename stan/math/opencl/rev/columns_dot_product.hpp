@@ -2,6 +2,7 @@
 #define STAN_MATH_OPENCL_REV_COLUMNS_DOT_PRODUCT_HPP
 #ifdef STAN_OPENCL
 
+#include <stan/math/opencl/rev/adjoint_results.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/adjoint_of.hpp>
@@ -62,9 +63,7 @@ inline var_value<matrix_cl<double>> columns_dot_product(T1&& v1, T2&& v2) {
             = elt_multiply(colwise_broadcast(res.adj()), value_of(v2_arena));
         auto v2_deriv
             = elt_multiply(colwise_broadcast(res.adj()), value_of(v1_arena));
-        results(adjoint_of(v1_arena), adjoint_of(v2_arena))
-            += expressions(calc_if<is_var<T1>::value>(v1_deriv),
-                           calc_if<is_var<T2>::value>(v2_deriv));
+        adjoint_results(v1_arena, v2_arena) += expressions(v1_deriv, v2_deriv);
       });
 }
 

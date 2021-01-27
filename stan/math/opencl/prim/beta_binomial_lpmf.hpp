@@ -92,8 +92,7 @@ return_type_t<T_n_cl, T_size1_cl, T_size2_cl> beta_binomial_lpmf(
 
   results(check_N_nonnegative, check_alpha_pos_finite, check_beta_pos_finite,
           logp_cl, alpha_deriv_cl, beta_deriv_cl)
-      = expressions(N_nonnegative, alpha_pos_finite, beta_pos_finite,
-                    logp_expr,
+      = expressions(N_nonnegative, alpha_pos_finite, beta_pos_finite, logp_expr,
                     calc_if<!is_constant<T_size1_cl>::value>(alpha_deriv),
                     calc_if<!is_constant<T_size2_cl>::value>(beta_deriv));
 

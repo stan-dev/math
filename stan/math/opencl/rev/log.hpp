@@ -20,7 +20,7 @@ template <typename T,
 inline var_value<matrix_cl<double>> log(const var_value<T>& A) {
   return make_callback_var(log(A.val()),
                            [A](vari_value<matrix_cl<double>>& res) mutable {
-                             A.adj() = A.adj() + elt_divide(res.adj(), A.val());
+                             A.adj() += elt_divide(res.adj(), A.val());
                            });
 }
 

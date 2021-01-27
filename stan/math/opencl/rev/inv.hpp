@@ -18,11 +18,10 @@ namespace math {
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
 inline var_value<matrix_cl<double>> inv(const var_value<T>& A) {
-  return make_callback_var(
-      inv(A.val()), [A](vari_value<matrix_cl<double>>& res) mutable {
-        A.adj()
-            = A.adj() - elt_divide(res.adj(), elt_multiply(A.val(), A.val()));
-      });
+  return make_callback_var(inv(A.val()),
+                           [A](vari_value<matrix_cl<double>>& res) mutable {
+                             A.adj() -= elt_divide(res.adj(), square(A.val()));
+                           });
 }
 
 }  // namespace math
