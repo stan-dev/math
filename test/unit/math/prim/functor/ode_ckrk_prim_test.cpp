@@ -132,13 +132,16 @@ TEST(StanMathOde_ode_ckrk, error_conditions) {
       (ode_ckrk(harm_osc, y0, t0, ts, msgs, theta, x, x_int_bad)),
       std::out_of_range, "vector");
 
-  EXPECT_THROW_MSG((ode_ckrk_tol(harm_osc, y0, t0, ts, -1, 1e-6, 10, msgs, theta, x, x_int)),
+  EXPECT_THROW_MSG((ode_ckrk_tol(harm_osc, y0, t0, ts, -1, 1e-6, 10,
+                                  msgs, theta, x, x_int)),
                    std::domain_error, "relative_tolerance");
 
-  EXPECT_THROW_MSG((ode_ckrk_tol(harm_osc, y0, t0, ts, 1e-6, -1, 10, msgs, theta, x, x_int)),
+  EXPECT_THROW_MSG((ode_ckrk_tol(harm_osc, y0, t0, ts, 1e-6, -1, 10,
+                                 msgs, theta, x, x_int)),
                    std::domain_error, "absolute_tolerance");
 
-  EXPECT_THROW_MSG((ode_ckrk_tol(harm_osc, y0, t0, ts, 1e-6, 1e-6, -1, msgs, theta, x, x_int)),
+  EXPECT_THROW_MSG((ode_ckrk_tol(harm_osc, y0, t0, ts, 1e-6, 1e-6, -1,
+                                  msgs, theta, x, x_int)),
                    std::domain_error, "max_num_steps");
 }
 

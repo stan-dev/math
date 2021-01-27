@@ -30,13 +30,15 @@ finite_diff_params(solver_functor_t& sol,
     }
   }
 
-  std::vector<Eigen::VectorXd> ode_res_ub = sol(f, y_in, t_in, ts, &msgs, theta_ub, x, x_int);
-  std::vector<Eigen::VectorXd> ode_res_lb = sol(f, y_in, t_in, ts, &msgs, theta_lb, x, x_int);
+  std::vector<Eigen::VectorXd>
+    ode_res_ub = sol(f, y_in, t_in, ts, &msgs, theta_ub, x, x_int);
+  std::vector<Eigen::VectorXd>
+    ode_res_lb = sol(f, y_in, t_in, ts, &msgs, theta_lb, x, x_int);
 
   std::vector<Eigen::VectorXd> results(ts.size());
 
   for (size_t i = 0; i < ts.size(); ++i) {
-    results[i] = (ode_res_ub[i] - ode_res_lb[i]) / (2.0 * diff);    
+    results[i] = (ode_res_ub[i] - ode_res_lb[i]) / (2.0 * diff);
   }
   return results;
 }
@@ -59,13 +61,15 @@ finite_diff_initial_position(solver_functor_t& sol,
     }
   }
 
-  std::vector<Eigen::VectorXd> ode_res_ub = sol(f, y_in_ub, t_in, ts, &msgs, theta, x, x_int);
-  std::vector<Eigen::VectorXd> ode_res_lb = sol(f, y_in_lb, t_in, ts, &msgs, theta, x, x_int);
+  std::vector<Eigen::VectorXd>
+    ode_res_ub = sol(f, y_in_ub, t_in, ts, &msgs, theta, x, x_int);
+  std::vector<Eigen::VectorXd>
+    ode_res_lb = sol(f, y_in_lb, t_in, ts, &msgs, theta, x, x_int);
 
   std::vector<Eigen::Matrix<double, -1, 1>> results(ts.size());
 
   for (size_t i = 0; i < ts.size(); ++i) {
-    results[i] = (ode_res_ub[i] - ode_res_lb[i]) / (2 * diff);    
+    results[i] = (ode_res_ub[i] - ode_res_lb[i]) / (2 * diff);
   }
   return results;
 }
@@ -127,9 +131,11 @@ void test_ode_finite_diff_vd(solver_functor_t& sol,
   std::stringstream msgs;
 
   std::vector<std::vector<Eigen::VectorXd>> finite_diff_res(y_in.size());
-  for (size_t i = 0; i < y_in.size(); i++)
-    finite_diff_res[i] = finite_diff_initial_position(sol, f, t_in, ts, y_in, theta,
-                                                      x, x_int, i, diff);
+  for (size_t i = 0; i < y_in.size(); i++) {
+    finite_diff_res[i] =
+      finite_diff_initial_position(sol, f, t_in, ts, y_in, theta,
+                                   x, x_int, i, diff);
+  }
 
   std::vector<double> grads_eff;
 
@@ -170,9 +176,11 @@ void test_ode_finite_diff_vv(solver_functor_t& sol,
   std::stringstream msgs;
 
   std::vector<std::vector<Eigen::VectorXd>> finite_diff_res_y(y_in.size());
-  for (size_t i = 0; i < y_in.size(); i++)
+  for (size_t i = 0; i < y_in.size(); i++) {
     finite_diff_res_y[i] =
-      finite_diff_initial_position(sol, f, t_in, ts, y_in, theta, x, x_int, i, diff);
+      finite_diff_initial_position(sol, f, t_in, ts, y_in,
+                                   theta, x, x_int, i, diff);
+  }
 
   std::vector<std::vector<Eigen::VectorXd>> finite_diff_res_p(theta.size());
   for (size_t i = 0; i < theta.size(); i++)

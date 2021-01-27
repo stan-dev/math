@@ -26,14 +26,13 @@ TEST(StanAgradRevOde_ode_ckrk, harmonic_oscillator_finite_diff) {
   ckrk_integrator sol;
   std::vector<double> ts;
   for (int i = 0; i < 20; i++) {
-    ts.push_back(0.5 * (i + 1));    
+    ts.push_back(0.5 * (i + 1));
   }
   std::vector<double> theta{0.15};
   Eigen::VectorXd y0(2);
   y0 << 1.0, 0.0;
   std::vector<int> x_i;
   std::vector<double> x_r;
-  
   test_ode(sol, f, 0.0, ts, y0, theta, x_r, x_i, 1.e-8, 1.e-4);
 }
 
@@ -42,14 +41,13 @@ TEST(StanAgradRevOde_ode_ckrk, FN_oscillator_finite_diff) {
   Field_Noyes_osc f;
   std::vector<double> ts;
   for (int i = 0; i < 2; i++) {
-    ts.push_back(0.1 * (i + 1));    
+    ts.push_back(0.1 * (i + 1));
   }
   std::vector<double> theta{0.7};
   Eigen::VectorXd y0(3);
   y0 << 4.0, 1.1, 4.0;
   std::vector<int> x_i;
   std::vector<double> x_r;
-  
   test_ode(sol, f, 0.0, ts, y0, theta, x_r, x_i, 1.e-8, 1.e-4);
 }
 

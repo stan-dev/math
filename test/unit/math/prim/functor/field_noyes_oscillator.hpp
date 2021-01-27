@@ -24,7 +24,6 @@ struct Field_Noyes_osc {
     res(2) = 0.161 * (y(0) - y(2));
 
     return res;
-
   }
 };
 
