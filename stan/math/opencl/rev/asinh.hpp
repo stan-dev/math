@@ -21,9 +21,7 @@ template <typename T,
 inline var_value<matrix_cl<double>> asinh(const var_value<T>& A) {
   return make_callback_var(
       asinh(A.val()), [A](vari_value<matrix_cl<double>>& res) mutable {
-        A.adj() = A.adj()
-                  + elt_divide(res.adj(),
-                               sqrt(elt_multiply(A.val(), A.val()) + 1.0));
+        A.adj() += elt_divide(res.adj(), sqrt(square(A.val()) + 1.0));
       });
 }
 

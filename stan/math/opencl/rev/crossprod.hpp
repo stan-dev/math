@@ -20,11 +20,11 @@ namespace math {
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
 inline var_value<matrix_cl<double>> crossprod(const var_value<T>& M) {
-  return make_callback_var(
-      transpose(M.val()) * M.val(),
-      [M](vari_value<matrix_cl<double>>& res) mutable {
-        M.adj() = M.adj() + M.val() * (res.adj() + transpose(res.adj()));
-      });
+  return make_callback_var(transpose(M.val()) * M.val(),
+                           [M](vari_value<matrix_cl<double>>& res) mutable {
+                             M.adj() += M.val()
+                                        * (res.adj() + transpose(res.adj()));
+                           });
 }
 
 }  // namespace math

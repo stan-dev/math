@@ -16,12 +16,11 @@ namespace math {
  * @param[in] v Vector.
  * @return Dot product of the vector with itself.
  */
-template <typename T, require_var_vt<is_matrix_cl, T>* = nullptr>
-inline var dot_self(T&& v) {
-  arena_t<T> v_arena = std::forward<T>(v);
-
-  return make_callback_var(dot_self(v.val()), [v_arena](vari& res) mutable {
-    v_arena.adj() = v_arena.adj() + 2.0 * res.adj() * v_arena.val();
+template <typename T,
+          require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
+inline var dot_self(const var_value<T>& v) {
+  return make_callback_var(dot_self(v.val()), [v](vari& res) mutable {
+    v.adj() += 2.0 * res.adj() * v.val();
   });
 }
 
