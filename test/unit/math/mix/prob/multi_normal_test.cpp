@@ -30,6 +30,16 @@ TEST(ProbDistributionsMultiNormal, matvar) {
   stan::test::expect_ad(f, y2, mu2, Sigma22);
   stan::test::expect_ad_matvar(f, y2, mu2, Sigma22);
 
+  Eigen::VectorXd y22(2);
+  y22 << 0.4, 0.3;
+  Eigen::VectorXd mu22(2);
+  mu22 << 2.1, 1.0;
+  std::vector<Eigen::VectorXd> y2s = {y2, y22};
+  std::vector<Eigen::VectorXd> mu2s = {mu2, mu22};
+  stan::test::expect_ad(f, y2, mu2s, Sigma22);
+  stan::test::expect_ad(f, y2s, mu2, Sigma22);
+  stan::test::expect_ad(f, y2s, mu2s, Sigma22);
+
   // Error sizes
   stan::test::expect_ad(f, y0, mu0, Sigma11);
   stan::test::expect_ad(f, y1, mu1, Sigma00);

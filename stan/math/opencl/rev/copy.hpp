@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/rev/vari.hpp>
+#include <stan/math/opencl/rev/arena_type.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/err.hpp>
@@ -84,12 +85,7 @@ inline var_value<Eigen::Matrix<value_type_t<T>, Rows, Cols>> from_matrix_cl(
 template <typename T, require_eigen_vt<is_var, T>* = nullptr>
 inline var_value<matrix_cl<value_type_t<value_type_t<T>>>> to_matrix_cl(
     const T& src) {
-  // the matrix can go out of scope before chain() is called. So we store a map
-  // to the data
-  var* src_array
-      = ChainableStack::instance_->memalloc_.alloc_array<var>(src.size());
-  Eigen::Map<plain_type_t<T>> src_stacked(src_array, src.rows(), src.cols());
-  src_stacked = src;
+  arena_t<T> src_stacked = src;
 
   return make_callback_var(
       to_matrix_cl(src_stacked.val()), [src_stacked](auto& res_vari) mutable {

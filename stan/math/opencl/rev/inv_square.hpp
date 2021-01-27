@@ -20,12 +20,8 @@ template <typename T,
 inline var_value<matrix_cl<double>> inv_square(const var_value<T>& A) {
   return make_callback_var(
       inv_square(A.val()), [A](vari_value<matrix_cl<double>>& res) mutable {
-        A.adj()
-            = A.adj()
-              - 2.0
-                    * elt_divide(res.adj(),
-                                 elt_multiply(elt_multiply(A.val(), A.val()),
-                                              A.val()));
+        A.adj() -= elt_divide(2.0 * res.adj(),
+                              elt_multiply(square(A.val()), A.val()));
       });
 }
 

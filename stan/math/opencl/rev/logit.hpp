@@ -20,7 +20,7 @@ template <typename T,
 inline var_value<matrix_cl<double>> logit(const var_value<T>& A) {
   return make_callback_var(
       logit(A.val()), [A](vari_value<matrix_cl<double>>& res) mutable {
-        A.adj() = A.adj() + elt_divide(res.adj(), A.val() * LOG_TEN);
+        A.adj() += elt_divide(res.adj(), A.val() * LOG_TEN);
       });
 }
 
