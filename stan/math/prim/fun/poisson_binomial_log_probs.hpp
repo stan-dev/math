@@ -22,7 +22,7 @@ namespace math {
  * @return the last row of the computed log probability matrix
  */
 template <typename T_theta, typename T_scalar = scalar_type_t<T_theta>,
-          require_eigen_col_vector_t<T_theta>* = nullptr>
+          require_eigen_vector_t<T_theta>* = nullptr>
 plain_type_t<T_theta> poisson_binomial_log_probs(int y, const T_theta& theta) {
   int size_theta = theta.size();
   plain_type_t<T_theta> log_theta = log(theta);
