@@ -28,12 +28,26 @@ arg_types = {
 
 scalar_stan_types = ("int", "real", "rng", "ostream_ptr")
 
+def parse_array(stan_arg):
+    """
+    parses stan array type
+    :param stan_arg: stan type, possibly an array
+    :return: number of nested arrays, inner type
+    """
+    if stan_arg.startswith("array["):
+        print(stan_arg)
+        commas, inner_type = stan_arg.lstrip("array[").split("]")
+        return len(commas)+1, inner_type
+    return 0, stan_arg
+
 def get_cpp_type(stan_type):
-    n_vec = 0
-    if stan_type.endswith("]"):
-        stan_type, vec = stan_type.split("[")
-        n_vec = len(vec)
-    res = arg_types[stan_type]
+    """
+    Determines cpp type that implements given stan type.
+    :param stan_type: stan type
+    :return: cpp type
+    """
+    n_vec, inner_type = parse_array(stan_type)
+    res = arg_types[inner_type]
     for i in range(n_vec):
         res = "std::vector<{}>".format(res)
     return res
@@ -208,7 +222,7 @@ def parse_signature_file(sig_file):
     for signature in sig_file:
         signature = part_sig + signature
         part_sig = ""
-        if not signature.endswith(")\n"):
+        if signature.endswith(",\n"):
             part_sig = signature
             continue
         res.append(signature)
@@ -251,9 +265,10 @@ def parse_signature(signature):
     """
     rest, return_type = signature.rsplit(" => ", 1)
     function_name, rest = rest.split("(", 1)
-    args = re.findall(r"(?:[(][^()]+[)][^,()]+)|(?:[^,()]+(?:,*[]])?)", rest)
-    args = [i.strip() for i in args if i.strip()]
-    return return_type, function_name, args
+    args = re.findall(r"(?:[(][^()]+[)][^,()]+)|(?:[^,()]+(?:,*[]][^,()]+)?)", rest)
+    #  regex parts:        ^^^^^^functor^^^^^^     ^^^^any other arg^^^^^^^
+    args = [i.lstrip("data").strip() if "data" in i else i.strip() for i in args if i.strip()]
+    return return_type.strip(), function_name, args
 
 
 def handle_function_list(functions_input):
