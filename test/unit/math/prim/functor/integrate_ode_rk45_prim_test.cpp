@@ -51,7 +51,7 @@ void sho_test(double t0) {
 }
 
 void sho_data_test(double t0) {
-  harm_osc_ode_data_fun_eigen harm_osc;
+  harm_osc_ode_data_fun harm_osc;
 
   std::vector<double> theta;
   theta.push_back(0.15);

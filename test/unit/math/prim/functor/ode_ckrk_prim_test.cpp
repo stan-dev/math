@@ -10,8 +10,6 @@
 #include <vector>
 #include <limits>
 
-std::ostream* msgs = nullptr;
-
 using stan::math::ode_ckrk;
 using stan::math::ode_ckrk_tol;
 using stan::math::to_vector;
@@ -76,6 +74,7 @@ TEST(StanMathOde_ode_ckrk, harmonic_oscillator) {
 }
 
 TEST(StanMathOde_ode_ckrk, error_conditions) {
+  std::ostream* msgs = nullptr;
   harm_osc_ode_data_fun_eigen harm_osc;
 
   std::vector<double> theta;
@@ -139,6 +138,7 @@ TEST(StanMathOde_ode_ckrk, error_conditions) {
 }
 
 TEST(StanMathOde_ode_ckrk, error_conditions_nan) {
+  std::ostream* msgs = nullptr;
   harm_osc_ode_data_fun_eigen harm_osc;
 
   std::vector<double> theta;
@@ -202,6 +202,7 @@ TEST(StanMathOde_ode_ckrk, error_conditions_nan) {
 }
 
 TEST(StanMathOde_ode_ckrk, error_conditions_inf) {
+  std::ostream* msgs = nullptr;
   harm_osc_ode_data_fun_eigen harm_osc;
   std::stringstream expected_is_inf;
   expected_is_inf << "is " << std::numeric_limits<double>::infinity();
@@ -294,6 +295,7 @@ TEST(StanMathOde_ode_ckrk, error_conditions_inf) {
 }
 
 TEST(StanMathOde_ode_ckrk, error_name) {
+  std::ostream* msgs = nullptr;
   harm_osc_ode_data_fun_eigen harm_osc;
 
   std::vector<double> theta;
