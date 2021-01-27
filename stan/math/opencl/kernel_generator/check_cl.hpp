@@ -64,6 +64,7 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
 
   // this operation can not be used on the right hand side of assignment
   inline kernel_parts get_kernel_parts(...) = delete;
+  inline void extreme_diagonals(...) = delete;
 
   /**
    * Generates kernel code for this and nested expressions.
