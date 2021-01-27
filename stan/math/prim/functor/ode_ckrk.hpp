@@ -144,7 +144,7 @@ ode_ckrk_tol_impl(const char* function_name, const F& f, const T_y0& y0_arg,
     integrate_times(
         make_controlled(absolute_tolerance, relative_tolerance,
                         runge_kutta_cash_karp54<std::vector<double>, double,
-                        std::vector<double>, double>()),
+                                                std::vector<double>, double>()),
         std::ref(coupled_system), initial_coupled_state, std::begin(ts_vec),
         std::end(ts_vec), step_size, filtered_observer,
         max_step_checker(max_num_steps));

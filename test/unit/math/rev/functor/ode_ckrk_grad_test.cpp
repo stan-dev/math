@@ -6,9 +6,9 @@
 #include <vector>
 #include <stdexcept>
 
+using stan::math::ode_ckrk;
 using std::cos;
 using std::sin;
-using stan::math::ode_ckrk;
 
 double y1(double t, double omega, double chi) { return chi * cos(omega * t); }
 
@@ -33,11 +33,10 @@ double dy2_dchi(double t, double omega, double chi) {
 class sho_functor {
  public:
   template <typename T0, typename T1, typename T2>
-  inline Eigen::Matrix<stan::return_type_t<T1, T2>, -1, 1>
-  operator()(const T0& t_in, const Eigen::Matrix<T1, -1, 1>& y_in,
-             std::ostream* msgs,
-             const std::vector<T2>& theta, const std::vector<double>& x,
-             const std::vector<int>& x_int) const {
+  inline Eigen::Matrix<stan::return_type_t<T1, T2>, -1, 1> operator()(
+      const T0& t_in, const Eigen::Matrix<T1, -1, 1>& y_in, std::ostream* msgs,
+      const std::vector<T2>& theta, const std::vector<double>& x,
+      const std::vector<int>& x_int) const {
     if (y_in.size() != 2)
       throw std::domain_error("Functor called with inconsistent state");
 
@@ -69,7 +68,7 @@ class test_functor_double_var_1 {
 
     auto ys = ode_ckrk(sho, y0, t0, ts, 0, theta, data, data_int);
 
-   return ys[0][0];
+    return ys[0][0];
   }
 };
 

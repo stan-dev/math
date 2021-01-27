@@ -12,15 +12,14 @@
 
 std::ostream* msgs = nullptr;
 
-using stan::math::to_vector;
-using stan::math::ode_ckrk_tol;
 using stan::math::ode_ckrk;
+using stan::math::ode_ckrk_tol;
+using stan::math::to_vector;
 
 template <typename F, typename... Args>
 void sho_value_test(F harm_osc, Eigen::Matrix<double, -1, 1>& y0, double t0,
                     std::vector<double>& ts, Args&... args) {
-  auto ode_res_vd
-    = stan::math::ode_ckrk(harm_osc, y0, t0, ts, 0, args...);
+  auto ode_res_vd = stan::math::ode_ckrk(harm_osc, y0, t0, ts, 0, args...);
   EXPECT_NEAR(0.995029, ode_res_vd[0][0], 1e-5);
   EXPECT_NEAR(-0.0990884, ode_res_vd[0][1], 1e-5);
 
@@ -97,51 +96,45 @@ TEST(StanMathOde_ode_ckrk, error_conditions) {
   ASSERT_NO_THROW((ode_ckrk(harm_osc, y0, t0, ts, msgs, theta, x, x_int)));
 
   Eigen::VectorXd y0_bad;
-  EXPECT_THROW_MSG(
-      (ode_ckrk(harm_osc, y0_bad, t0, ts, msgs, theta, x, x_int)),
-      std::invalid_argument, "initial state has size 0");
+  EXPECT_THROW_MSG((ode_ckrk(harm_osc, y0_bad, t0, ts, msgs, theta, x, x_int)),
+                   std::invalid_argument, "initial state has size 0");
 
   double t0_bad = 2.0;
-  EXPECT_THROW_MSG(
-      (ode_ckrk(harm_osc, y0, t0_bad, ts, msgs, theta, x, x_int)),
-      std::domain_error, "initial time is 2, but must be less than 0.1");
+  EXPECT_THROW_MSG((ode_ckrk(harm_osc, y0, t0_bad, ts, msgs, theta, x, x_int)),
+                   std::domain_error,
+                   "initial time is 2, but must be less than 0.1");
 
   std::vector<double> ts_bad;
-  EXPECT_THROW_MSG(
-      (ode_ckrk(harm_osc, y0, t0, ts_bad, msgs, theta, x, x_int)),
-      std::invalid_argument, "times has size 0");
+  EXPECT_THROW_MSG((ode_ckrk(harm_osc, y0, t0, ts_bad, msgs, theta, x, x_int)),
+                   std::invalid_argument, "times has size 0");
 
   ts_bad.push_back(3);
   ts_bad.push_back(1);
-  EXPECT_THROW_MSG(
-      (ode_ckrk(harm_osc, y0, t0, ts_bad, msgs, theta, x, x_int)),
-      std::domain_error, "times is not a valid sorted vector");
+  EXPECT_THROW_MSG((ode_ckrk(harm_osc, y0, t0, ts_bad, msgs, theta, x, x_int)),
+                   std::domain_error, "times is not a valid sorted vector");
 
   std::vector<double> theta_bad;
-  EXPECT_THROW_MSG(
-      (ode_ckrk(harm_osc, y0, t0, ts, msgs, theta_bad, x, x_int)),
-      std::out_of_range, "vector");
+  EXPECT_THROW_MSG((ode_ckrk(harm_osc, y0, t0, ts, msgs, theta_bad, x, x_int)),
+                   std::out_of_range, "vector");
 
   std::vector<double> x_bad;
-  EXPECT_THROW_MSG(
-      (ode_ckrk(harm_osc, y0, t0, ts, msgs, theta, x_bad, x_int)),
-      std::out_of_range, "vector");
+  EXPECT_THROW_MSG((ode_ckrk(harm_osc, y0, t0, ts, msgs, theta, x_bad, x_int)),
+                   std::out_of_range, "vector");
 
   std::vector<int> x_int_bad;
+  EXPECT_THROW_MSG((ode_ckrk(harm_osc, y0, t0, ts, msgs, theta, x, x_int_bad)),
+                   std::out_of_range, "vector");
+
   EXPECT_THROW_MSG(
-      (ode_ckrk(harm_osc, y0, t0, ts, msgs, theta, x, x_int_bad)),
-      std::out_of_range, "vector");
+      (ode_ckrk_tol(harm_osc, y0, t0, ts, -1, 1e-6, 10, msgs, theta, x, x_int)),
+      std::domain_error, "relative_tolerance");
 
-  EXPECT_THROW_MSG((ode_ckrk_tol(harm_osc, y0, t0, ts, -1, 1e-6, 10,
-                                  msgs, theta, x, x_int)),
-                   std::domain_error, "relative_tolerance");
+  EXPECT_THROW_MSG(
+      (ode_ckrk_tol(harm_osc, y0, t0, ts, 1e-6, -1, 10, msgs, theta, x, x_int)),
+      std::domain_error, "absolute_tolerance");
 
-  EXPECT_THROW_MSG((ode_ckrk_tol(harm_osc, y0, t0, ts, 1e-6, -1, 10,
-                                 msgs, theta, x, x_int)),
-                   std::domain_error, "absolute_tolerance");
-
-  EXPECT_THROW_MSG((ode_ckrk_tol(harm_osc, y0, t0, ts, 1e-6, 1e-6, -1,
-                                  msgs, theta, x, x_int)),
+  EXPECT_THROW_MSG((ode_ckrk_tol(harm_osc, y0, t0, ts, 1e-6, 1e-6, -1, msgs,
+                                 theta, x, x_int)),
                    std::domain_error, "max_num_steps");
 }
 
@@ -171,36 +164,30 @@ TEST(StanMathOde_ode_ckrk, error_conditions_nan) {
 
   Eigen::VectorXd y0_bad = y0;
   y0_bad[0] = nan;
-  EXPECT_THROW_MSG(
-      (ode_ckrk(harm_osc, y0_bad, t0, ts, msgs, theta, x, x_int)),
-      std::domain_error, "initial state");
-  EXPECT_THROW_MSG(
-      (ode_ckrk(harm_osc, y0_bad, t0, ts, msgs, theta, x, x_int)),
-      std::domain_error, expected_is_nan.str());
+  EXPECT_THROW_MSG((ode_ckrk(harm_osc, y0_bad, t0, ts, msgs, theta, x, x_int)),
+                   std::domain_error, "initial state");
+  EXPECT_THROW_MSG((ode_ckrk(harm_osc, y0_bad, t0, ts, msgs, theta, x, x_int)),
+                   std::domain_error, expected_is_nan.str());
 
   double t0_bad = nan;
-  EXPECT_THROW_MSG(
-      (ode_ckrk(harm_osc, y0, t0_bad, ts, msgs, theta, x, x_int)),
-      std::domain_error, "initial time");
-  EXPECT_THROW_MSG(
-      (ode_ckrk(harm_osc, y0, t0_bad, ts, msgs, theta, x, x_int)),
-      std::domain_error, expected_is_nan.str());
+  EXPECT_THROW_MSG((ode_ckrk(harm_osc, y0, t0_bad, ts, msgs, theta, x, x_int)),
+                   std::domain_error, "initial time");
+  EXPECT_THROW_MSG((ode_ckrk(harm_osc, y0, t0_bad, ts, msgs, theta, x, x_int)),
+                   std::domain_error, expected_is_nan.str());
 
   std::vector<double> ts_bad = ts;
   ts_bad[0] = nan;
   EXPECT_THROW_MSG((ode_ckrk(harm_osc, y0, t0, ts_bad, msgs, theta, x, x_int)),
-      std::domain_error, "times");
+                   std::domain_error, "times");
   EXPECT_THROW_MSG((ode_ckrk(harm_osc, y0, t0, ts_bad, msgs, theta, x, x_int)),
-      std::domain_error, expected_is_nan.str());
+                   std::domain_error, expected_is_nan.str());
 
   std::vector<double> theta_bad = theta;
   theta_bad[0] = nan;
-  EXPECT_THROW_MSG(
-      (ode_ckrk(harm_osc, y0, t0, ts, msgs, theta_bad, x, x_int)),
-      std::domain_error, "parameters and data");
-  EXPECT_THROW_MSG(
-      (ode_ckrk(harm_osc, y0, t0, ts, msgs, theta_bad, x, x_int)),
-      std::domain_error, expected_is_nan.str());
+  EXPECT_THROW_MSG((ode_ckrk(harm_osc, y0, t0, ts, msgs, theta_bad, x, x_int)),
+                   std::domain_error, "parameters and data");
+  EXPECT_THROW_MSG((ode_ckrk(harm_osc, y0, t0, ts, msgs, theta_bad, x, x_int)),
+                   std::domain_error, expected_is_nan.str());
 
   if (x.size() > 0) {
     std::vector<double> x_bad = x;
@@ -241,67 +228,51 @@ TEST(StanMathOde_ode_ckrk, error_conditions_inf) {
   double inf = std::numeric_limits<double>::infinity();
   Eigen::VectorXd y0_bad = y0;
   y0_bad[0] = inf;
-  EXPECT_THROW_MSG(
-      (ode_ckrk(harm_osc, y0_bad, t0, ts, msgs, theta, x, x_int)),
-      std::domain_error, "initial state");
-  EXPECT_THROW_MSG(
-      (ode_ckrk(harm_osc, y0_bad, t0, ts, msgs, theta, x, x_int)),
-      std::domain_error, expected_is_inf.str());
+  EXPECT_THROW_MSG((ode_ckrk(harm_osc, y0_bad, t0, ts, msgs, theta, x, x_int)),
+                   std::domain_error, "initial state");
+  EXPECT_THROW_MSG((ode_ckrk(harm_osc, y0_bad, t0, ts, msgs, theta, x, x_int)),
+                   std::domain_error, expected_is_inf.str());
 
   y0_bad[0] = -inf;
-  EXPECT_THROW_MSG(
-      (ode_ckrk(harm_osc, y0_bad, t0, ts, msgs, theta, x, x_int)),
-      std::domain_error, "initial state");
-  EXPECT_THROW_MSG(
-      (ode_ckrk(harm_osc, y0_bad, t0, ts, msgs, theta, x, x_int)),
-      std::domain_error, expected_is_neg_inf.str());
+  EXPECT_THROW_MSG((ode_ckrk(harm_osc, y0_bad, t0, ts, msgs, theta, x, x_int)),
+                   std::domain_error, "initial state");
+  EXPECT_THROW_MSG((ode_ckrk(harm_osc, y0_bad, t0, ts, msgs, theta, x, x_int)),
+                   std::domain_error, expected_is_neg_inf.str());
 
   double t0_bad = inf;
-  EXPECT_THROW_MSG(
-      (ode_ckrk(harm_osc, y0, t0_bad, ts, msgs, theta, x, x_int)),
-      std::domain_error, "initial time");
-  EXPECT_THROW_MSG(
-      (ode_ckrk(harm_osc, y0, t0_bad, ts, msgs, theta, x, x_int)),
-      std::domain_error, expected_is_inf.str());
+  EXPECT_THROW_MSG((ode_ckrk(harm_osc, y0, t0_bad, ts, msgs, theta, x, x_int)),
+                   std::domain_error, "initial time");
+  EXPECT_THROW_MSG((ode_ckrk(harm_osc, y0, t0_bad, ts, msgs, theta, x, x_int)),
+                   std::domain_error, expected_is_inf.str());
   t0_bad = -inf;
-  EXPECT_THROW_MSG(
-      (ode_ckrk(harm_osc, y0, t0_bad, ts, msgs, theta, x, x_int)),
-      std::domain_error, "initial time");
-  EXPECT_THROW_MSG(
-      (ode_ckrk(harm_osc, y0, t0_bad, ts, msgs, theta, x, x_int)),
-      std::domain_error, expected_is_neg_inf.str());
+  EXPECT_THROW_MSG((ode_ckrk(harm_osc, y0, t0_bad, ts, msgs, theta, x, x_int)),
+                   std::domain_error, "initial time");
+  EXPECT_THROW_MSG((ode_ckrk(harm_osc, y0, t0_bad, ts, msgs, theta, x, x_int)),
+                   std::domain_error, expected_is_neg_inf.str());
 
   std::vector<double> ts_bad = ts;
   ts_bad.push_back(inf);
-  EXPECT_THROW_MSG(
-      (ode_ckrk(harm_osc, y0, t0, ts_bad, msgs, theta, x, x_int)),
-      std::domain_error, "times");
-  EXPECT_THROW_MSG(
-      (ode_ckrk(harm_osc, y0, t0, ts_bad, msgs, theta, x, x_int)),
-      std::domain_error, expected_is_inf.str());
+  EXPECT_THROW_MSG((ode_ckrk(harm_osc, y0, t0, ts_bad, msgs, theta, x, x_int)),
+                   std::domain_error, "times");
+  EXPECT_THROW_MSG((ode_ckrk(harm_osc, y0, t0, ts_bad, msgs, theta, x, x_int)),
+                   std::domain_error, expected_is_inf.str());
   ts_bad[0] = -inf;
-  EXPECT_THROW_MSG(
-      (ode_ckrk(harm_osc, y0, t0, ts_bad, msgs, theta, x, x_int)),
-      std::domain_error, "times");
-  EXPECT_THROW_MSG(
-      (ode_ckrk(harm_osc, y0, t0, ts_bad, msgs, theta, x, x_int)),
-      std::domain_error, expected_is_neg_inf.str());
+  EXPECT_THROW_MSG((ode_ckrk(harm_osc, y0, t0, ts_bad, msgs, theta, x, x_int)),
+                   std::domain_error, "times");
+  EXPECT_THROW_MSG((ode_ckrk(harm_osc, y0, t0, ts_bad, msgs, theta, x, x_int)),
+                   std::domain_error, expected_is_neg_inf.str());
 
   std::vector<double> theta_bad = theta;
   theta_bad[0] = inf;
-  EXPECT_THROW_MSG(
-      (ode_ckrk(harm_osc, y0, t0, ts, msgs, theta_bad, x, x_int)),
-      std::domain_error, "parameters and data");
-  EXPECT_THROW_MSG(
-      (ode_ckrk(harm_osc, y0, t0, ts, msgs, theta_bad, x, x_int)),
-      std::domain_error, expected_is_inf.str());
+  EXPECT_THROW_MSG((ode_ckrk(harm_osc, y0, t0, ts, msgs, theta_bad, x, x_int)),
+                   std::domain_error, "parameters and data");
+  EXPECT_THROW_MSG((ode_ckrk(harm_osc, y0, t0, ts, msgs, theta_bad, x, x_int)),
+                   std::domain_error, expected_is_inf.str());
   theta_bad[0] = -inf;
-  EXPECT_THROW_MSG(
-      (ode_ckrk(harm_osc, y0, t0, ts, msgs, theta_bad, x, x_int)),
-      std::domain_error, "parameters and data");
-  EXPECT_THROW_MSG(
-      (ode_ckrk(harm_osc, y0, t0, ts, msgs, theta_bad, x, x_int)),
-      std::domain_error, expected_is_neg_inf.str());
+  EXPECT_THROW_MSG((ode_ckrk(harm_osc, y0, t0, ts, msgs, theta_bad, x, x_int)),
+                   std::domain_error, "parameters and data");
+  EXPECT_THROW_MSG((ode_ckrk(harm_osc, y0, t0, ts, msgs, theta_bad, x, x_int)),
+                   std::domain_error, expected_is_neg_inf.str());
 
   if (x.size() > 0) {
     std::vector<double> x_bad = x;
@@ -338,7 +309,6 @@ TEST(StanMathOde_ode_ckrk, error_name) {
   std::vector<int> x_int(2, 0);
 
   Eigen::VectorXd y0_bad;
-  EXPECT_THROW_MSG(
-      (ode_ckrk(harm_osc, y0_bad, t0, ts, msgs, theta, x, x_int)),
-      std::invalid_argument, "ode_ckrk");
+  EXPECT_THROW_MSG((ode_ckrk(harm_osc, y0_bad, t0, ts, msgs, theta, x, x_int)),
+                   std::invalid_argument, "ode_ckrk");
 }
