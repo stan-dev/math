@@ -21,7 +21,7 @@ template <typename T,
 inline var_value<matrix_cl<double>> log1m_inv_logit(const var_value<T>& A) {
   return make_callback_var(log1m_inv_logit(A.val()),
                            [A](vari_value<matrix_cl<double>>& res) mutable {
-                             A.adj() = A.adj() - inv_logit(A.val());
+                             A.adj() -= inv_logit(A.val());
                            });
 }
 

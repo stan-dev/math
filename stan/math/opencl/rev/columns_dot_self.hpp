@@ -18,32 +18,17 @@ namespace math {
  * @param v Matrix.
  */
 template <typename T,
-          require_var_vt<is_kernel_expression_and_not_scalar, T>* = nullptr>
-inline var_value<matrix_cl<double>> columns_dot_self(T&& v) {
+          require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
+inline var_value<matrix_cl<double>> columns_dot_self(const var_value<T>& v) {
   if (size_zero(v)) {
     return var_value<matrix_cl<double>>(constant(0.0, 1, v.cols()));
   }
 
-  arena_t<T> v_arena;
-  if ((std::is_rvalue_reference<T&&>::value && is_matrix_cl<T>::value)
-      || is_var<T>::value) {
-    v_arena = std::forward<T>(v);
-  }
-
-  matrix_cl<double> res_val;
-  results(v_arena, res_val) = expressions(
-      calc_if<((std::is_lvalue_reference<T>::value || !is_matrix_cl<T>::value)
-               && !is_var<T>::value)>(value_of(v)),
-      colwise_sum(square(value_of(v))));
-  while (res_val.rows() > 1) {
-    res_val = colwise_sum(res_val).eval();
-  }
-
   return make_callback_var(
-      res_val, [v_arena](const vari_value<matrix_cl<double>>& res) mutable {
-        v_arena.adj() = v_arena.adj()
-                        + elt_multiply(colwise_broadcast(res.adj() * 2),
-                                       value_of(v_arena));
+      columns_dot_self(v.val()),
+      [v](const vari_value<matrix_cl<double>>& res) mutable {
+        v.adj()
+            += elt_multiply(colwise_broadcast(res.adj() * 2.0), value_of(v));
       });
 }
 

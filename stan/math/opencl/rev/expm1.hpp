@@ -20,7 +20,7 @@ template <typename T,
 inline var_value<matrix_cl<double>> expm1(const var_value<T>& A) {
   return make_callback_var(
       expm1(A.val()), [A](vari_value<matrix_cl<double>>& res) mutable {
-        A.adj() = A.adj() + elt_multiply(res.adj(), res.val() + 1.0);
+        A.adj() += elt_multiply(res.adj(), res.val() + 1.0);
       });
 }
 
