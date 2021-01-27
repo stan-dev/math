@@ -87,7 +87,7 @@ auto beta_binomial_lpmf_functor_propto
       };
 
 TEST(ProbDistributionsBetaBinomial, opencl_matches_cpu_small) {
-  int N_=3;
+  int N_ = 3;
 
   std::vector<int> n{2, 0, 12};
   std::vector<int> N{2, 0, 123};
@@ -96,14 +96,14 @@ TEST(ProbDistributionsBetaBinomial, opencl_matches_cpu_small) {
   Eigen::VectorXd beta(N_);
   beta << 0.3, 1.8, 1.2;
 
-  stan::math::test::compare_cpu_opencl_prim_rev(beta_binomial_lpmf_functor, n, N,
-                                                alpha, beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(beta_binomial_lpmf_functor, n,
+                                                N, alpha, beta);
   stan::math::test::compare_cpu_opencl_prim_rev(
       beta_binomial_lpmf_functor_propto, n, N, alpha, beta);
 }
 
 TEST(ProbDistributionsBetaBinomial, opencl_broadcast_n) {
-  int N_=3;
+  int N_ = 3;
 
   int n = 1;
   std::vector<int> N{2, 0, 123};
@@ -119,7 +119,7 @@ TEST(ProbDistributionsBetaBinomial, opencl_broadcast_n) {
 }
 
 TEST(ProbDistributionsBetaBinomial, opencl_broadcast_N) {
-  int N_=3;
+  int N_ = 3;
 
   std::vector<int> n{2, 0, 12};
   int N = 15;
@@ -135,7 +135,7 @@ TEST(ProbDistributionsBetaBinomial, opencl_broadcast_N) {
 }
 
 TEST(ProbDistributionsBetaBinomial, opencl_broadcast_alpha) {
-  int N_=3;
+  int N_ = 3;
 
   std::vector<int> n{2, 0, 12};
   std::vector<int> N{2, 0, 123};
@@ -150,7 +150,7 @@ TEST(ProbDistributionsBetaBinomial, opencl_broadcast_alpha) {
 }
 
 TEST(ProbDistributionsBetaBinomial, opencl_broadcast_beta) {
-  int N_=3;
+  int N_ = 3;
 
   std::vector<int> n{2, 0, 12};
   std::vector<int> N{2, 0, 123};
@@ -170,14 +170,16 @@ TEST(ProbDistributionsBetaBinomial, opencl_matches_cpu_big) {
   std::vector<int> N(N_);
   for (int i = 0; i < N_; i++) {
     n[i] = Eigen::Array<int, Eigen::Dynamic, 1>::Random(1, 1).abs()(0) % 123;
-    N[i] = Eigen::Array<int, Eigen::Dynamic, 1>::Random(1, 1).abs()(0) % 123 + 123;
+    N[i] = Eigen::Array<int, Eigen::Dynamic, 1>::Random(1, 1).abs()(0) % 123
+           + 123;
   }
   Eigen::Matrix<double, Eigen::Dynamic, 1> alpha
       = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N_, 1).abs();
   Eigen::Matrix<double, Eigen::Dynamic, 1> beta
       = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N_, 1).abs();
 
-  stan::math::test::compare_cpu_opencl_prim_rev(beta_binomial_lpmf_functor, n, N, alpha, beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(beta_binomial_lpmf_functor, n,
+                                                N, alpha, beta);
   stan::math::test::compare_cpu_opencl_prim_rev(
       beta_binomial_lpmf_functor_propto, n, N, alpha, beta);
 }
