@@ -96,8 +96,9 @@ TEST(laplace, poisson_lgm_dim2) {
   std::vector<int> sums = {1, 0};
 
   squared_kernel_functor K;
-  var target = laplace_marginal_poisson_log_lpmf(sums, n_samples, K, phi, x, delta,
-                                            delta_int, theta_0);
+  var target
+    = laplace_marginal_poisson_log_lpmf(sums, n_samples, K, phi, x, delta,
+                                        delta_int, theta_0);
 
   // Test with exposure argument
   Eigen::VectorXd ye(2);

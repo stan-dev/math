@@ -197,7 +197,7 @@ struct diff_neg_binomial_2_log {
   template <typename T_theta, typename T_eta>
   return_type_t<T_theta, T_eta>
   log_likelihood (const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
-                  const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) {
+                  const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) const {
     T_eta eta_scalar = eta(0);
     return_type_t<T_theta, T_eta> logp = 0;
     for (size_t i = 0; i < y_.size(); i++) {
@@ -271,42 +271,52 @@ struct diff_neg_binomial_2_log {
     for (int i = 0; i < y_.size(); i++)
       y_plus_eta_digamma_sum += digamma(y_plus_eta(i));
 
-   Eigen::Matrix<scalar, Eigen::Dynamic, 1> gradient_eta(1);
-   gradient_eta(0) =
-     y_plus_eta_digamma_sum - y_.size() * digamma(eta_scalar)
-      - sum(elt_divide(sums_ + n_samples_ * eta_scalar, exp_theta_plus_eta))
-      + sum(n_samples_ * log(eta_scalar)
-            - n_samples_.cwiseProduct(log(exp_theta_plus_eta))
-            + n_samples_);
-    return gradient_eta;
+     Eigen::Matrix<scalar, Eigen::Dynamic, 1> gradient_eta(1);
+     gradient_eta(0) =
+       y_plus_eta_digamma_sum - y_.size() * digamma(eta_scalar)
+        - sum(elt_divide(sums_ + n_samples_ * eta_scalar, exp_theta_plus_eta))
+        + sum(n_samples_ * log(eta_scalar)
+              - n_samples_.cwiseProduct(log(exp_theta_plus_eta))
+              + n_samples_);
+      return gradient_eta;
   }
 
   template <typename T_theta, typename T_eta>
-  Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, 1>
+  Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, Eigen::Dynamic>
   diff_theta_eta(const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
                  const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) {
+    typedef return_type_t<T_theta, T_eta> scalar;
     T_eta eta_scalar = eta(0);
     Eigen::Matrix<T_theta, Eigen::Dynamic, 1> exp_neg_theta = exp(-theta);
-
-    return - elt_divide(n_samples_ - sums_.cwiseProduct(exp_neg_theta),
+    Eigen::Matrix<scalar, Eigen::Dynamic, Eigen::Dynamic>
+      diff_matrix(theta.size(), 1);
+    diff_matrix.col(0)
+      = - elt_divide(n_samples_ - sums_.cwiseProduct(exp_neg_theta),
       square(eta_scalar * exp_neg_theta + rep_vector(1, theta.size())));
+    return diff_matrix;
   }
 
   template <typename T_theta, typename T_eta>
-  Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, 1>
+  Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, Eigen::Dynamic>
   diff2_theta_eta(const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
                   const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta,
                   const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& W_root) {
+    typedef return_type_t<T_theta, T_eta> scalar;
     T_eta eta_scalar = eta(0);
     Eigen::Matrix<T_theta, Eigen::Dynamic, 1> exp_neg_theta = exp(-theta);
     Eigen::Matrix<T_theta, Eigen::Dynamic, 1> one_plus_eta_exp
       = rep_vector(1, theta.size()) + eta_scalar * exp_neg_theta;
 
-    return 0.5 * (W_root.cwiseInverse()).cwiseProduct(
+    Eigen::Matrix<scalar, Eigen::Dynamic, Eigen::Dynamic>
+      diff_matrix(theta.size(), 1);
+
+    diff_matrix.col(0) = 0.5 * (W_root.cwiseInverse()).cwiseProduct(
       elt_divide(exp_neg_theta.cwiseProduct(
       - eta_scalar * exp_neg_theta.cwiseProduct(sums_)
       + sums_ + 2 * eta_scalar * n_samples_),
       square(one_plus_eta_exp).cwiseProduct(one_plus_eta_exp)));
+
+    return diff_matrix;
   }
 
 

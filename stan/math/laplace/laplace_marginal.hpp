@@ -26,8 +26,8 @@
 namespace stan {
 namespace math {
   /**
-   * For a latent Gaussian model with global parameters phi, latent
-   * variables theta, and observations y, this function computes
+   * For a latent Gaussian model with hyperparameters phi and eta,
+   * latent variables theta, and observations y, this function computes
    * an approximation of the log marginal density, p(y | phi).
    * This is done by marginalizing out theta, using a Laplace
    * approxmation. The latter is obtained by finding the mode,
@@ -52,7 +52,8 @@ namespace math {
    *            an array of vectors.
    * @param[in] D structure to compute and differentiate the log likelihood.
    * @param[in] K structure to compute the covariance function.
-   * @param[in] phi the global parameter (input for the covariance function).
+   * @param[in] phi hyperparameter (input for the covariance function).
+   * @param[in] eta hyperparameter (input for likelihood).
    * @param[in] x fixed spatial data (input for the covariance function).
    * @param[in] delta additional fixed real data (input for covariance
    *            function).
@@ -76,7 +77,7 @@ namespace math {
   laplace_marginal_density (const D& diff_likelihood,
                             const K& covariance_function,
                             const Eigen::VectorXd& phi,
-                            // const std::vector<Eigen::VectorXd>& x,
+                            const Eigen::VectorXd& eta,
                             const Tx& x,
                             const std::vector<double>& delta,
                             const std::vector<int>& delta_int,
@@ -93,9 +94,8 @@ namespace math {
     using Eigen::MatrixXd;
     using Eigen::VectorXd;
 
-    int group_size = theta_0.size();  // CHECK -- do we ever need this?
+    int group_size = theta_0.size();
     covariance = covariance_function(phi, x, delta, delta_int, msgs);
-    // CHECK -- should we compute the derivatives here too?
     theta = theta_0;
     double objective_old = - 1e+10;  // CHECK -- what value to use?
     double objective_new;
@@ -110,7 +110,7 @@ namespace math {
 
       // Compute variable a.
       VectorXd hessian;
-      diff_likelihood.diff(theta, l_grad, hessian);
+      diff_likelihood.diff(theta, eta, l_grad, hessian);
       VectorXd W = - hessian;
       W_root = sqrt(W);
       {
@@ -129,7 +129,7 @@ namespace math {
       // Check for convergence.
       if (i != 0) objective_old = objective_new;
       objective_new = -0.5 * a.dot(theta)
-        + diff_likelihood.log_likelihood(theta);
+        + diff_likelihood.log_likelihood(theta, eta);
       double objective_diff = abs(objective_new - objective_old);
       if (objective_diff < tolerance) break;
     }
@@ -150,7 +150,7 @@ namespace math {
    * threshold under which change is deemed small enough) and
    * maximum number of steps.
    *
-   * Wrapper for when the global parameter is passed as a double.
+   * Wrapper for when the hyperparameters passed as a double.
    *
    * @tparam T type of the initial guess.
    * @tparam D structure type for the likelihood object.
@@ -171,13 +171,14 @@ namespace math {
    * @param[in] max_num_steps maximum number of steps for the Newton solver.
    * @return the log maginal density, p(y | phi).
    */
+  // TODO: Operands and partials version of this.
   template <typename T, typename D, typename K, typename Tx>
   double
   laplace_marginal_density (const D& diff_likelihood,
                             const K& covariance_function,
                             const Eigen::VectorXd& phi,
+                            const Eigen::VectorXd& eta,
                             const Tx& x,
-                            // const std::vector<Eigen::VectorXd>& x,
                             const std::vector<double>& delta,
                             const std::vector<int>& delta_int,
                             const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta_0,
@@ -187,53 +188,12 @@ namespace math {
     Eigen::VectorXd theta, W_root, a, l_grad;
     Eigen::MatrixXd L, covariance;
     return laplace_marginal_density(diff_likelihood, covariance_function,
-                                    phi, x, delta, delta_int,
+                                    phi, eta, x, delta, delta_int,
                                     covariance,
                                     theta, W_root, L, a, l_grad,
                                     value_of(theta_0), msgs,
                                     tolerance, max_num_steps);
   }
-
-  // TO DO -- remove this code from final implementation.
-  /**
-   * A structure to compute sensitivities of the covariance
-   * function using forward mode autodiff. The functor is formatted
-   * so that it can be passed to Jacobian(). This requires one input
-   * vector and one output vector.
-   *
-   * TO DO: make this structure no templated. See comment by @SteveBronder.
-   * TO DO: remove this structure for final code: new differentiation
-   * algorithm does not require it.
-   */
-  // template <typename K>
-  // struct covariance_sensitivities {
-  //   /* input data for the covariance function. */
-  //   std::vector<Eigen::VectorXd> x_;
-  //   /* additional fixed real variable */
-  //   std::vector<double> delta_;
-  //   /* additional fixed integer variable */
-  //   std::vector<int> delta_int_;
-  //   /* structure to compute the covariance function. */
-  //   K covariance_function_;
-  //   /* ostream for printing statements inside covariance function */
-  //   std::ostream* msgs_;
-  //
-  //   covariance_sensitivities (const std::vector<Eigen::VectorXd>& x,
-  //                             const std::vector<double>& delta,
-  //                             const std::vector<int>& delta_int,
-  //                             const K& covariance_function,
-  //                             std::ostream* msgs) :
-  //   // TO DO -- make covariance function the first argument
-  //   x_(x), delta_(delta), delta_int_(delta_int),
-  //   covariance_function_(covariance_function), msgs_(msgs) { }
-  //
-  //   template <typename T>
-  //   Eigen::Matrix<T, Eigen::Dynamic, 1>
-  //   operator() (const Eigen::Matrix<T, Eigen::Dynamic, 1>& phi) const {
-  //     return to_vector(covariance_function_(phi, x_, delta_,
-  //                                           delta_int_, msgs_));
-  //   }
-  // };
 
   /**
    * The vari class for the laplace marginal density.
@@ -249,23 +209,29 @@ namespace math {
    * instead of multiple large matrices.
    */
   struct laplace_marginal_density_vari : public vari {
-    /* dimension of the global parameters. */
+    /* dimension of hyperparameters. */
     int phi_size_;
-    /* global parameters. */
+    /* hyperparameters for covariance K. */
     vari** phi_;
+    /* dimension of hyperparameters for likelihood. */
+    int eta_size_;
+    /* hyperparameters for likelihood. */
+    vari** eta_;
     /* the marginal density of the observation, conditional on the
      * globl parameters. */
     vari** marginal_density_;
     /* An object to store the sensitivities of phi. */
     Eigen::VectorXd phi_adj_;
+    /* An object to store the sensitivities of eta. */
+    Eigen::VectorXd eta_adj_;
 
     template <typename T, typename K, typename D, typename Tx>
     laplace_marginal_density_vari
       (const D& diff_likelihood,
        const K& covariance_function,
        const Eigen::Matrix<T, Eigen::Dynamic, 1>& phi,
+       const Eigen::Matrix<T, Eigen::Dynamic, 1>& eta,
        const Tx& x,
-       // const std::vector<Eigen::VectorXd>& x,
        const std::vector<double>& delta,
        const std::vector<int>& delta_int,
        double marginal_density,
@@ -280,23 +246,25 @@ namespace math {
         phi_size_(phi.size()),
         phi_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
 	        phi.size())),
+        eta_size_(eta.size()),
+        eta_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
+          eta.size())),
         marginal_density_(
           ChainableStack::instance_->memalloc_.alloc_array<vari*>(1)) {
       using Eigen::Matrix;
       using Eigen::Dynamic;
+      using Eigen::MatrixXd;
+      using Eigen::VectorXd;
 
       int theta_size = theta.size();
       for (int i = 0; i < phi_size_; i++) phi_[i] = phi(i).vi_;
+      for (int i = 0; i < eta_size_; i++) eta_[i] = eta(i).vi_;
 
       // CHECK -- is there a cleaner way of doing this?
       marginal_density_[0] = this;
       marginal_density_[0] = new vari(marginal_density, false);
 
-      // compute derivatives of covariance matrix with respect to phi.
-      // EXPERIMENT: reverse-mode variation
-
       // auto start = std::chrono::system_clock::now();
-
       Eigen::MatrixXd R;
       {
         Eigen::MatrixXd W_root_diag = W_root.asDiagonal();
@@ -310,10 +278,11 @@ namespace math {
         C = mdivide_left_tri<Eigen::Lower>(L,
                   diag_pre_multiply(W_root, covariance));
 
+      Eigen::VectorXd eta_dbl = value_of(eta);
       // CHECK -- should there be a minus sign here?
       Eigen::VectorXd s2 = 0.5 * (covariance.diagonal()
                  - (C.transpose() * C).diagonal())
-                 .cwiseProduct(diff_likelihood.third_diff(theta));
+                 .cwiseProduct(diff_likelihood.third_diff(theta, eta_dbl));
 
      phi_adj_ = Eigen::VectorXd(phi_size_);
      start_nested();
@@ -327,13 +296,29 @@ namespace math {
        set_zero_all_adjoints_nested();
        grad(Z.vi_);
 
-       for (int j = 0; j < phi_size_; j++)
-         phi_adj_[j] = phi_v(j).adj();
+       for (int j = 0; j < phi_size_; j++) phi_adj_[j] = phi_v(j).adj();
+
      } catch (const std::exception& e) {
        recover_memory_nested();
        throw;
      }
      recover_memory_nested();
+
+     if (eta_size_ != 0) {
+       VectorXd diff_eta = diff_likelihood.diff_eta(theta, eta_dbl);
+       MatrixXd diff_theta_eta = diff_likelihood.diff_theta_eta(theta, eta_dbl);
+       MatrixXd diff2_theta_eta
+         = diff_likelihood.diff2_theta_eta(theta, eta_dbl);
+       for (int l = 0; l < eta_size_; l++) {
+         VectorXd b = diff_theta_eta.col(l);
+         // CHECK -- can we use the fact the covariance matrix is symmetric?
+         VectorXd s3 = b - covariance * (R * b);
+
+         eta_adj_(l) = diff_eta(l) - (W_root.cwiseInverse().asDiagonal()
+           * (R * (covariance * diff2_theta_eta.col(l)))).trace()
+           - s2.dot(s3);
+       }
+     }
 
      // auto end = std::chrono::system_clock::now();
      // std::chrono::duration<double> time = end - ;
@@ -372,6 +357,9 @@ namespace math {
     void chain() {
       for (int j = 0; j < phi_size_; j++)
         phi_[j]->adj_ += marginal_density_[0]->adj_ * phi_adj_[j];
+
+      for (int l = 0; l < eta_size_; l++)
+        eta_[l]->adj_ += marginal_density_[0]->adj_ * eta_adj_[l];
     }
   };
 

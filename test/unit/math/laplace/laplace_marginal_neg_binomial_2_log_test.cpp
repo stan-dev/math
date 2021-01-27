@@ -1,5 +1,6 @@
 #include <stan/math.hpp>
 #include <stan/math/laplace/laplace_likelihood.hpp>
+#include <stan/math/laplace/laplace_marginal.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 
 #include <gtest/gtest.h>
@@ -91,7 +92,7 @@ TEST(laplace, likelihood_differentiation) {
 
   EXPECT_FLOAT_EQ(finite_gradient_eta,  diff_eta(0));
 
-  Eigen::VectorXd diff_theta_eta = diff_functor.diff_theta_eta(theta, eta);
+  Eigen::MatrixXd diff_theta_eta = diff_functor.diff_theta_eta(theta, eta);
 
   Eigen::VectorXd gradient_theta_l,
                   gradient_theta_u,
@@ -103,17 +104,52 @@ TEST(laplace, likelihood_differentiation) {
   Eigen::VectorXd finite_gradient_theta_eta
     = (gradient_theta_u - gradient_theta_l) / (2 * epsilon);
 
-  EXPECT_FLOAT_EQ(finite_gradient_theta_eta(0), diff_theta_eta(0));
-  EXPECT_FLOAT_EQ(finite_gradient_theta_eta(1), diff_theta_eta(1));
+  EXPECT_FLOAT_EQ(finite_gradient_theta_eta(0), diff_theta_eta(0, 0));
+  EXPECT_FLOAT_EQ(finite_gradient_theta_eta(1), diff_theta_eta(1, 0));
 
   Eigen::VectorXd W_root = (-hessian).cwiseSqrt();
-  Eigen::VectorXd diff2_theta_eta
+  Eigen::MatrixXd diff2_theta_eta
     = diff_functor.diff2_theta_eta(theta, eta, W_root);
 
   Eigen::VectorXd finite_hessian_theta_eta
    = ((-hessian_theta_u).cwiseSqrt() - (-hessian_theta_l).cwiseSqrt())
        / (2 * epsilon);
 
-  EXPECT_FLOAT_EQ(finite_hessian_theta_eta(0), diff2_theta_eta(0));
-  EXPECT_FLOAT_EQ(finite_hessian_theta_eta(1), diff2_theta_eta(1));  
+  EXPECT_FLOAT_EQ(finite_hessian_theta_eta(0), diff2_theta_eta(0, 0));
+  EXPECT_FLOAT_EQ(finite_hessian_theta_eta(1), diff2_theta_eta(1, 0));
+}
+
+TEST(laplace, neg_binomial_2_log_dbl) {
+  using stan::math::to_vector;
+  using stan::math::diff_neg_binomial_2_log;
+  using stan::math::sqr_exp_kernel_functor;
+  using stan::math::laplace_marginal_density;
+
+  int dim_phi = 2, dim_eta = 1, dim_theta = 2;
+  Eigen::VectorXd phi(dim_phi), eta(dim_eta), theta_0(dim_theta);
+  phi << 1.6, 0.45;
+  eta << 1;
+  theta_0 << 0, 0;
+
+  std::vector<Eigen::VectorXd> x(dim_theta);
+  Eigen::VectorXd x_0(2), x_1(2);
+  x_0 <<  0.05100797, 0.16086164;
+  x_1 << -0.59823393, 0.98701425;
+  x[0] = x_0;
+  x[1] = x_1;
+
+  std::vector<double> delta;
+  std::vector<int> delta_int;
+  std::vector<int> y_index = {1, 1};
+  Eigen::VectorXd y = to_vector({1, 0});
+
+  diff_neg_binomial_2_log diff_functor(y, y_index, dim_theta);
+  stan::math::sqr_exp_kernel_functor K;
+
+  double log_p = laplace_marginal_density(diff_functor, K, phi, eta, x, delta,
+                                          delta_int, theta_0);
+
+  // TODO: add test.
+
+
 }
