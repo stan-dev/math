@@ -14,63 +14,106 @@ using stan::math::ode_ckrk;
 using stan::math::ode_ckrk_tol;
 using stan::math::to_vector;
 
-template <typename F, typename... Args>
-void sho_value_test(F harm_osc, Eigen::Matrix<double, -1, 1>& y0, double t0,
-                    std::vector<double>& ts, Args&... args) {
-  auto ode_res_vd = stan::math::ode_ckrk(harm_osc, y0, t0, ts, 0, args...);
-  EXPECT_NEAR(0.995029, ode_res_vd[0][0], 1e-5);
-  EXPECT_NEAR(-0.0990884, ode_res_vd[0][1], 1e-5);
-
-  EXPECT_NEAR(-0.421907, ode_res_vd[99][0], 1e-5);
-  EXPECT_NEAR(0.246407, ode_res_vd[99][1], 1e-5);
-}
-
-void sho_test(double t0) {
+TEST(StanMathOde_ode_ckrk, harmonic_oscillator_value) {
+  using stan::math::ode_ckrk;
+  std::vector<double> theta{0.15};
+  Eigen::VectorXd y0(2);
+  y0 << 1.0, 0.0;
+  std::vector<double> ts(100);
+  std::vector<double> x_r;
+  std::vector<int> x_i;
+  double t0;
   harm_osc_ode_fun_eigen harm_osc;
 
-  std::vector<double> theta;
-  theta.push_back(0.15);
+  {
+    t0 = 0.0;
+    for (int i = 0; i < ts.size(); ++i) {
+      ts[i] = t0 + 0.1 * (i + 1);
+    }
+    auto res = ode_ckrk(harm_osc, y0, t0, ts, 0, theta, x_r, x_i);
+    EXPECT_NEAR(0.995029, res[0][0], 1e-5);
+    EXPECT_NEAR(-0.0990884, res[0][1], 1e-5);
 
-  Eigen::VectorXd y0(2);
-  y0 << 1.0, 0.0;
+    EXPECT_NEAR(-0.421907, res[99][0], 1e-5);
+    EXPECT_NEAR(0.246407, res[99][1], 1e-5);
+  }
 
-  std::vector<double> ts;
-  for (int i = 0; i < 100; i++)
-    ts.push_back(t0 + 0.1 * (i + 1));
+  {
+    t0 = -1.0;
+    for (int i = 0; i < ts.size(); ++i) {
+      ts[i] = t0 + 0.1 * (i + 1);
+    }
+    auto res = ode_ckrk(harm_osc, y0, t0, ts, 0, theta, x_r, x_i);
+    EXPECT_NEAR(0.995029, res[0][0], 1e-5);
+    EXPECT_NEAR(-0.0990884, res[0][1], 1e-5);
 
-  std::vector<double> x;
-  std::vector<int> x_int;
+    EXPECT_NEAR(-0.421907, res[99][0], 1e-5);
+    EXPECT_NEAR(0.246407, res[99][1], 1e-5);
+  }
 
-  sho_value_test(harm_osc, y0, t0, ts, theta, x, x_int);
+  {
+    t0 = 1.0;
+    for (int i = 0; i < ts.size(); ++i) {
+      ts[i] = t0 + 0.1 * (i + 1);
+    }
+    auto res = ode_ckrk(harm_osc, y0, t0, ts, 0, theta, x_r, x_i);
+    EXPECT_NEAR(0.995029, res[0][0], 1e-5);
+    EXPECT_NEAR(-0.0990884, res[0][1], 1e-5);
+
+    EXPECT_NEAR(-0.421907, res[99][0], 1e-5);
+    EXPECT_NEAR(0.246407, res[99][1], 1e-5);    
+  }
 }
 
-void sho_data_test(double t0) {
+TEST(StanMathOde_ode_ckrk, harmonic_oscillator_data_value) {
+  using stan::math::ode_ckrk;
+  std::vector<double> theta{0.15};
+  Eigen::VectorXd y0(2);
+  y0 << 1.0, 0.0;
+  std::vector<double> ts(100);
+  std::vector<double> x_r(3, 1);
+  std::vector<int> x_i(2, 0);
+  double t0;
   harm_osc_ode_data_fun_eigen harm_osc;
 
-  std::vector<double> theta;
-  theta.push_back(0.15);
+  {
+    t0 = 0.0;
+    for (int i = 0; i < ts.size(); ++i) {
+      ts[i] = t0 + 0.1 * (i + 1);
+    }
+    auto res = ode_ckrk(harm_osc, y0, t0, ts, 0, theta, x_r, x_i);
+    EXPECT_NEAR(0.995029, res[0][0], 1e-5);
+    EXPECT_NEAR(-0.0990884, res[0][1], 1e-5);
 
-  Eigen::VectorXd y0(2);
-  y0 << 1.0, 0.0;
+    EXPECT_NEAR(-0.421907, res[99][0], 1e-5);
+    EXPECT_NEAR(0.246407, res[99][1], 1e-5);
+  }
 
-  std::vector<double> ts;
-  for (int i = 0; i < 100; i++)
-    ts.push_back(t0 + 0.1 * (i + 1));
+  {
+    t0 = -1.0;
+    for (int i = 0; i < ts.size(); ++i) {
+      ts[i] = t0 + 0.1 * (i + 1);
+    }
+    auto res = ode_ckrk(harm_osc, y0, t0, ts, 0, theta, x_r, x_i);
+    EXPECT_NEAR(0.995029, res[0][0], 1e-5);
+    EXPECT_NEAR(-0.0990884, res[0][1], 1e-5);
 
-  std::vector<double> x(3, 1);
-  std::vector<int> x_int(2, 0);
+    EXPECT_NEAR(-0.421907, res[99][0], 1e-5);
+    EXPECT_NEAR(0.246407, res[99][1], 1e-5);
+  }
 
-  sho_value_test(harm_osc, y0, t0, ts, theta, x, x_int);
-}
+  {
+    t0 = 1.0;
+    for (int i = 0; i < ts.size(); ++i) {
+      ts[i] = t0 + 0.1 * (i + 1);
+    }
+    auto res = ode_ckrk(harm_osc, y0, t0, ts, 0, theta, x_r, x_i);
+    EXPECT_NEAR(0.995029, res[0][0], 1e-5);
+    EXPECT_NEAR(-0.0990884, res[0][1], 1e-5);
 
-TEST(StanMathOde_ode_ckrk, harmonic_oscillator) {
-  sho_test(0.0);
-  sho_test(1.0);
-  sho_test(-1.0);
-
-  sho_data_test(0.0);
-  sho_data_test(1.0);
-  sho_data_test(-1.0);
+    EXPECT_NEAR(-0.421907, res[99][0], 1e-5);
+    EXPECT_NEAR(0.246407, res[99][1], 1e-5);    
+  }
 }
 
 TEST(StanMathOde_ode_ckrk, error_conditions) {
