@@ -18,22 +18,21 @@ namespace stan {
 namespace math {
 
 /** \ingroup opencl
- * The log of the beta density for the specified scalar(s) given the specified
- * sample stan::math::size(s). y, alpha, or beta can each either be scalar or a
- * vector on OpenCL device. Any vector inputs must be the same length.
+ * Returns the log PMF of the Beta-Binomial distribution with given population
+ * size, prior success, and prior failure parameters. Given containers of
+ * matching sizes, returns the log sum of probabilities.
  *
- * <p> The result log probability is defined to be the sum of
- * the log probabilities for each observation/alpha/beta triple.
- *
- * Prior sample sizes, alpha and beta, must be greater than 0.
- *
- * @tparam T_n_cl type of scalar outcome
- * @tparam T_size1_cl type of prior scale for successes
- * @tparam T_size2_cl type of prior scale for failures
- * @param y (Sequence of) scalar(s).
- * @param alpha (Sequence of) prior sample stan::math::size(s).
- * @param beta (Sequence of) prior sample stan::math::size(s).
- * @return The log of the product of densities.
+ * @tparam T_n type of success parameter
+ * @tparam T_N type of population size parameter
+ * @tparam T_size1 type of prior success parameter
+ * @tparam T_size2 type of prior failure parameter
+ * @param n success parameter
+ * @param N population size parameter
+ * @param alpha prior success parameter
+ * @param beta prior failure parameter
+ * @return log probability or log sum of probabilities
+ * @throw std::domain_error if N, alpha, or beta fails to be positive
+ * @throw std::invalid_argument if container sizes mismatch
  */
 template <
     bool propto, typename T_n_cl, typename T_N_cl, typename T_size1_cl,
