@@ -49,7 +49,7 @@ template <
     require_any_not_stan_scalar_t<T_omega_cl, T_Gamma_cl, T_rho_cl>* = nullptr>
 inline return_type_t<T_omega_cl, T_Gamma_cl, T_rho_cl> hmm_marginal(
     const T_omega_cl& log_omegas, const T_Gamma_cl& Gamma,
-                             const T_rho_cl& rho) {
+    const T_rho_cl& rho) {
   static const char* function = "hmm_marginal(OpenCL)";
   using T_partials_return = partials_return_t<T_omega_cl, T_Gamma_cl, T_rho_cl>;
   using std::isfinite;
@@ -64,8 +64,8 @@ inline return_type_t<T_omega_cl, T_Gamma_cl, T_rho_cl> hmm_marginal(
   check_nonzero_size(function, "Gamma", Gamma);
   check_multiplicable(function, "Gamma", Gamma, "log_omegas", log_omegas);
 
-  //rho simplex
-  //gamma rows simlex
+  // rho simplex
+  // gamma rows simlex
 
   const auto& log_omegas_val = value_of(log_omegas);
   const auto& Gamma_val = value_of(Gamma);
@@ -73,25 +73,20 @@ inline return_type_t<T_omega_cl, T_Gamma_cl, T_rho_cl> hmm_marginal(
 
   auto check_rho_nonnegative
       = check_cl(function, "rho", rho_val, "nonnegative");
-  auto rho_nonnegative = rho_val>=0.0;
+  auto rho_nonnegative = rho_val >= 0.0;
   auto check_gamma_nonnegative
       = check_cl(function, "Gamma", Gamma_val, "nonnegative");
-  auto gamma_nonnegative = gamma_val>=0.0;
+  auto gamma_nonnegative = gamma_val >= 0.0;
   auto gamma_rowwise_sum = rowwise_sum(gamma);
-  auto check_gamma_sum_1
-      = check_cl(function, "Rowwise sum of gamma", gamma_rowwise_sum, "equal to 1");
-  auto gamma_sum_1 = fabs(gamma_rowwise_sum-1) <= CONSTRAINT_TOLERANCE;
+  auto check_gamma_sum_1 = check_cl(function, "Rowwise sum of gamma",
+                                    gamma_rowwise_sum, "equal to 1");
+  auto gamma_sum_1 = fabs(gamma_rowwise_sum - 1) <= CONSTRAINT_TOLERANCE;
   auto rho_sum = colwise_sum(rho);
 
   auto omegas = exp(log_omegas);
   auto alphas;
   auto alpha_log_norms;
   auto norm_norm;
-
-
-
-
-
 
   auto inv_sigma = elt_divide(1., sigma_val);
   auto y_scaled = elt_multiply((y_val - mu_val), inv_sigma);
@@ -124,7 +119,7 @@ inline return_type_t<T_omega_cl, T_Gamma_cl, T_rho_cl> hmm_marginal(
   }
 
   operands_and_partials<T_omega_cl, T_Gamma_cl, T_rho_cl> ops_partials(y, mu,
-                                                                   sigma);
+                                                                       sigma);
 
   if (!is_constant<T_omega_cl>::value) {
     ops_partials.edge1_.partials_ = std::move(y_deriv_cl);
