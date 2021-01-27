@@ -61,7 +61,7 @@ TEST(StanMathOde_ode_ckrk, harmonic_oscillator_value) {
     EXPECT_NEAR(-0.0990884, res[0][1], 1e-5);
 
     EXPECT_NEAR(-0.421907, res[99][0], 1e-5);
-    EXPECT_NEAR(0.246407, res[99][1], 1e-5);    
+    EXPECT_NEAR(0.246407, res[99][1], 1e-5);
   }
 }
 
@@ -112,7 +112,7 @@ TEST(StanMathOde_ode_ckrk, harmonic_oscillator_data_value) {
     EXPECT_NEAR(-0.0990884, res[0][1], 1e-5);
 
     EXPECT_NEAR(-0.421907, res[99][0], 1e-5);
-    EXPECT_NEAR(0.246407, res[99][1], 1e-5);    
+    EXPECT_NEAR(0.246407, res[99][1], 1e-5);
   }
 }
 
