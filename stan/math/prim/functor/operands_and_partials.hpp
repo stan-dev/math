@@ -126,7 +126,7 @@ inline auto operands_and_partials(Ops&&... ops) {
 }
 
 template<std::size_t I, class... Types >
-inline constexpr auto& edge(internal::operands_and_partials_impl<Types...>& x) noexcept {
+inline auto& edge(internal::operands_and_partials_impl<Types...>& x) noexcept {
   return std::get<I>(x.edges_);
 };
 

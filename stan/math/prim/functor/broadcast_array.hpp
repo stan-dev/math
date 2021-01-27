@@ -12,26 +12,26 @@ namespace stan {
 namespace math {
 namespace internal {
 
-template <typename T>
-class broadcast_array {
- private:
-  T& prim_;
+  template <typename T>
+  class broadcast_array {
+   private:
+    T& prim_;
 
- public:
-  explicit broadcast_array(T& prim) : prim_(prim) {}
+   public:
+    explicit broadcast_array(T& prim) : prim_(prim) {}
 
-  inline T& operator[](size_t /*i*/) noexcept { return prim_; }
+    T& operator[](int /*i*/) { return prim_; }
 
-  /** \ingroup type_trait
-   * Broadcast array can be assigned a scalar or a vector. If assigned a scalar,
-   * it will be used directly. If assigned a vector, the argument will be summed
-   * first.
-   */
-  template <typename Y>
-  inline void operator=(const Y& m) {
-    prim_ = sum(m);
-  }
-};
+    /** \ingroup type_trait
+     * Broadcast array can be assigned a scalar or a vector. If assigned a scalar,
+     * it will be used directly. If assigned a vector, the argument will be summed
+     * first.
+     */
+    template <typename Y>
+    void operator=(const Y& m) {
+      prim_ = sum(m);
+    }
+  };
 
 template <typename T, typename S, typename Enable = void>
 class empty_broadcast_array {
