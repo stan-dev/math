@@ -16,7 +16,7 @@ struct ckrk_integrator {
   std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, Args...>,
                             Eigen::Dynamic, 1>>
   operator()(const F& f, const T_y0& y0, T_t0 t0, const std::vector<T_ts>& ts,
-           std::ostream* msgs, const Args&... args) {
+             std::ostream* msgs, const Args&... args) {
     return stan::math::ode_ckrk(f, y0, t0, ts, msgs, args...);
   }
 };
