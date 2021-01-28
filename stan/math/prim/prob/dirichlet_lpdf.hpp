@@ -53,7 +53,9 @@ namespace math {
  * @throw std::domain_error if any element of theta is less than 0.
  * @throw std::domain_error if the sum of theta is not 1.
  */
-template <bool propto, typename T_prob, typename T_prior_size>
+template <bool propto, typename T_prob, typename T_prior_size,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_prob, T_prior_size>* = nullptr>
 return_type_t<T_prob, T_prior_size> dirichlet_lpdf(const T_prob& theta,
                                                    const T_prior_size& alpha) {
   using T_partials_return = partials_return_t<T_prob, T_prior_size>;
