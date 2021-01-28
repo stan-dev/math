@@ -1,0 +1,2 @@
+#include "../../fun/sum.hpp"
+
