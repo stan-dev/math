@@ -27,9 +27,13 @@ namespace internal {
      * it will be used directly. If assigned a vector, the argument will be summed
      * first.
      */
-    template <typename Y>
+    template <typename Y, require_not_stan_scalar_t<Y>* = nullptr>
     void operator=(const Y& m) {
       prim_ = sum(m);
+    }
+    template <typename Y, require_stan_scalar_t<Y>* = nullptr>
+    void operator=(const Y& m) {
+      prim_ = m;
     }
   };
 

@@ -28,10 +28,10 @@ namespace internal {
 template <>
 class ops_partials_edge<double, var> {
  public:
-  double partial_;
-  broadcast_array<double> partials_;
+  double partial_{0};
+  broadcast_array<double> partials_{partial_};
   explicit ops_partials_edge(const var& op) noexcept
-      : partial_(0), partials_(partial_), operands_(op) {}
+      : operands_(op) {}
 
  private:
   template <typename, typename, typename...>
@@ -109,7 +109,7 @@ auto get_partials(T&& x) {
   std::tuple<internal::ops_partials_edge<double, std::decay_t<Ops>>...> edges_;
   template <typename... Types>
   explicit operands_and_partials_impl(Types&&... ops) :
-    edges_(internal::ops_partials_edge<double, std::decay_t<Ops>>(std::forward<Types>(ops))...) {}
+    edges_(std::forward_as_tuple(internal::ops_partials_edge<double, std::decay_t<Ops>>(ops)...)) {}
 
   /** \ingroup type_trait
    * Build the node to be stored on the autodiff graph.
@@ -125,10 +125,10 @@ auto get_partials(T&& x) {
    * @return the node to be stored in the expression graph for autodiff
    */
   inline var build(double value) {
-    auto operands_tuple = apply([](auto&&... edges) {
+    auto operands_tuple = stan::math::apply([](auto&&... edges) {
       return std::make_tuple(to_arena(edges.operands_)...);
     }, edges_);
-    auto partials_tuple = apply([](auto&&... edges) {
+    auto partials_tuple = stan::math::apply([](auto&&... edges) {
       return std::make_tuple(to_arena(get_partials(edges.partials_))...);
     }, edges_);
     var ret(value);
@@ -139,20 +139,20 @@ auto get_partials(T&& x) {
     }, operands_tuple, partials_tuple);
     return ret;
   }
+
 };
 
 // Vectorized Univariate
-template <>
-class ops_partials_edge<double, std::vector<var>> {
+template <typename T>
+class ops_partials_edge<double, T, require_std_vector_vt<is_var, T>> {
  public:
-  using Op = arena_t<std::vector<var>>;
+  using Op = arena_t<T>;
   using partials_t = arena_t<Eigen::VectorXd>;
   partials_t partials_;                       // For univariate use-cases
-  broadcast_array<partials_t> partials_vec_;  // For multivariate
-  template <typename T, require_std_vector_t<T>* = nullptr>
-  explicit ops_partials_edge(T&& op)
+  broadcast_array<partials_t> partials_vec_{partials_};  // For multivariate
+  template <typename S, require_std_vector_vt<is_var, S>* = nullptr>
+  explicit ops_partials_edge(S&& op)
       : partials_(partials_t::Zero(op.size())),
-        partials_vec_(partials_),
         operands_(to_arena(op)) {}
 
  private:
@@ -167,11 +167,10 @@ class ops_partials_edge<double, Op, require_eigen_st<is_var, Op>> {
  public:
   using partials_t = arena_t<promote_scalar_t<double, Op>>;
   partials_t partials_;                       // For univariate use-cases
-  broadcast_array<partials_t> partials_vec_;  // For multivariate
+  broadcast_array<partials_t> partials_vec_{partials_};  // For multivariate
   explicit ops_partials_edge(const Op& ops)
       : partials_(partials_t::Zero(ops.rows(), ops.cols())),
-        partials_vec_(partials_),
-        operands_(ops) {}
+        operands_(to_arena(ops)) {}
 
  private:
   template <typename, typename, typename...>
@@ -206,11 +205,13 @@ class ops_partials_edge<double, std::vector<Eigen::Matrix<var, R, C>>> {
  public:
   using Op = arena_t<std::vector<arena_t<Eigen::Matrix<var, R, C>>>>;
   using partial_t = arena_t<Eigen::Matrix<double, R, C>>;
-  arena_t<std::vector<partial_t>> partials_vec_;
-  explicit ops_partials_edge(const Op& ops)
-      : partials_vec_(ops.size()), operands_(ops) {
+  arena_t<std::vector<partial_t>> partials_;
+  arena_t<std::vector<partial_t>>& partials_vec_{partials_};
+  template <typename S, require_std_vector_vt<is_eigen, S>* = nullptr>
+  explicit ops_partials_edge(const S& ops)
+      : partials_(ops.size()), operands_(to_arena(ops)) {
     for (size_t i = 0; i < ops.size(); ++i) {
-      partials_vec_[i] = partial_t::Zero(ops[i].rows(), ops[i].cols());
+      partials_[i] = partial_t::Zero(ops[i].rows(), ops[i].cols());
     }
   }
 
@@ -230,12 +231,14 @@ template <>
 class ops_partials_edge<double, std::vector<std::vector<var>>> {
  public:
   using Op = arena_t<std::vector<arena_t<std::vector<var>>>>;
-  using partial_t = arena_t<std::vector<double>>;
-  arena_t<std::vector<partial_t>> partials_vec_;
-  explicit ops_partials_edge(const Op& ops)
-      : partials_vec_(stan::math::size(ops)), operands_(to_arena(ops)) {
+  using partial_t = arena_t<Eigen::Matrix<double, -1, 1>>;
+  arena_t<std::vector<partial_t>> partials_;
+  arena_t<std::vector<partial_t>>& partials_vec_{partials_};
+  template <typename S, require_std_vector_vt<is_std_vector, S>* = nullptr>
+  explicit ops_partials_edge(const S& ops)
+      : partials_(stan::math::size(ops)), operands_(to_arena(ops)) {
     for (size_t i = 0; i < stan::math::size(ops); ++i) {
-      partials_vec_[i] = partial_t(stan::math::size(ops[i]), 0.0);
+      partials_[i] = partial_t(stan::math::size(ops[i]), 0.0);
     }
   }
 
@@ -256,11 +259,12 @@ class ops_partials_edge<double, std::vector<var_value<Op>>,
                         require_eigen_t<Op>> {
  public:
   using partials_t = arena_t<std::vector<Op>>;
-  partials_t partials_vec_;
+  partials_t partials_;
+  partials_t& partials_vec_{partials_};
   explicit ops_partials_edge(const std::vector<var_value<Op>>& ops)
-      : partials_vec_(ops.size()), operands_(to_arena(ops)) {
+      : partials_(ops.size()), operands_(to_arena(ops)) {
     for (size_t i = 0; i < ops.size(); ++i) {
-      partials_vec_[i]
+      partials_[i]
           = plain_type_t<Op>::Zero(ops[i].vi_->rows(), ops[i].vi_->cols());
     }
   }

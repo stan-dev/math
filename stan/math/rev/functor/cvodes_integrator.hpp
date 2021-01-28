@@ -103,7 +103,7 @@ class cvodes_integrator {
     const Eigen::VectorXd y_vec = Eigen::Map<const Eigen::VectorXd>(y, N_);
 
     Eigen::VectorXd dy_dt_vec
-        = apply([&](auto&&... args) { return f_(t, y_vec, msgs_, args...); },
+        = stan::math::apply([&](auto&&... args) { return f_(t, y_vec, msgs_, args...); },
                 value_of_args_tuple_);
 
     check_size_match("cvodes_integrator", "dy_dt", dy_dt_vec.size(), "states",
@@ -121,7 +121,7 @@ class cvodes_integrator {
     Eigen::MatrixXd Jfy;
 
     auto f_wrapped = [&](const Eigen::Matrix<var, Eigen::Dynamic, 1>& y) {
-      return apply([&](auto&&... args) { return f_(t, y, msgs_, args...); },
+      return stan::math::apply([&](auto&&... args) { return f_(t, y, msgs_, args...); },
                    value_of_args_tuple_);
     };
 

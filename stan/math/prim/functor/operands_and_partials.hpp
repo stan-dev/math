@@ -95,19 +95,21 @@ class operands_and_partials_impl<ReturnType, require_arithmetic_t<ReturnType>, O
    */
   inline auto build(double value) const noexcept { return value; }
   std::tuple<internal::ops_partials_edge<double, std::decay_t<Ops>>...> edges_;
+
 };
 
 template <typename ViewElt, typename Op>
 class ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>> {
  public:
-   using partials_t = empty_broadcast_array<ViewElt, Op>;
-   partials_t partials_;
-   empty_broadcast_array<partials_t, Op> partials_vec_;
+   double partial_{0};
+   broadcast_array<double> partials_{partial_};
+   broadcast_array<double> partials_vec_{partial_};
+
    static constexpr double operands_{0};
 
   ops_partials_edge() {}
-  template <typename T, require_same_t<plain_type_t<T>, plain_type_t<Op>>* = nullptr>
-  explicit ops_partials_edge(T&& /* op */) noexcept {}
+  template <typename T>
+  ops_partials_edge(T&& /* op */) noexcept {}
 
  private:
   template <typename, typename, typename...>
@@ -115,8 +117,10 @@ class ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>> {
   static constexpr ViewElt dx() { return 0; }  // used for fvars
   static constexpr int size() { return 0; }    // reverse mode
 };
+
 template <typename ViewElt, typename Op>
 constexpr double ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>>::operands_;
+
 }  // namespace internal
 
 template <typename... Ops>
