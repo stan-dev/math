@@ -68,6 +68,7 @@
 #include <stan/math/opencl/rev/mdivide_right_tri_low.hpp>
 #include <stan/math/opencl/rev/multiply.hpp>
 #include <stan/math/opencl/rev/multiply_log.hpp>
+#include <stan/math/opencl/rev/multiply_lower_tri_self_transpose.hpp>
 #include <stan/math/opencl/rev/operands_and_partials.hpp>
 #include <stan/math/opencl/rev/operator_unary_minus.hpp>
 #include <stan/math/opencl/rev/operator_unary_plus.hpp>
