@@ -54,7 +54,12 @@ return_type_t<T_theta> poisson_binomial_cdf(const T_y& y,
     check_bounded(function, "Probability parameters", theta_vec[i], 0.0, 1.0);
   }
 
-  return exp(sum(log_sum_exp(poisson_binomial_log_probs(y, theta))));
+  return_type_t<T_theta> lcdf = 0.0;
+  for (size_t i = 0; i < max_sz; ++i) {
+    auto x = log_sum_exp(poisson_binomial_log_probs(y_vec[i], theta_vec[i]));
+    lcdf += x;
+  }
+  return exp(lcdf);
 }
 
 template <typename T_y, typename T_theta>
