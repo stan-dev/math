@@ -104,7 +104,7 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
   ref_type_t<decltype(value_of(lambda_arr))> lambda_val = value_of(lambda_arr);
 
   check_finite(function, "Location parameter", lambda_val);
-  if(C_l==0 || N==0){
+  if (C_l == 0 || N == 0) {
     return 0;
   }
   int K = c_vec[0].size() + 1;

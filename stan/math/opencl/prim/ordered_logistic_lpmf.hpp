@@ -125,8 +125,8 @@ inline return_type_t<T_y_cl, T_loc_cl, T_cuts_cl> ordered_logistic_lpmf(
 
   try {
     opencl_kernels::ordered_logistic(
-        cl::NDRange(local_size * wgs), cl::NDRange(local_size),
-        logp_cl, lambda_derivative_cl, cuts_derivative_cl, y_val_cl, lambda_val,
+        cl::NDRange(local_size * wgs), cl::NDRange(local_size), logp_cl,
+        lambda_derivative_cl, cuts_derivative_cl, y_val_cl, lambda_val,
         cuts_val, N_instances, N_classes, is_y_vector, !need_broadcasting,
         need_lambda_derivative, need_cuts_derivative);
   } catch (const cl::Error& e) {
