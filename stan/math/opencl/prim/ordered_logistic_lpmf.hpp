@@ -53,7 +53,7 @@ namespace math {
  * @tparam T_cut Cut-point type.
  * @param y Array of integers
  * @param lambda Vector of continuous lambda variables.
- * @param c Positive increasing vector of cutpoints.
+ * @param cuts Positive increasing vector of cutpoints.
  * @return Log probability of outcome given lambda and
  * cutpoints.
  * @throw std::domain_error If the outcome is not between 1 and
@@ -117,7 +117,6 @@ inline return_type_t<T_y_cl, T_loc_cl, T_cuts_cl> ordered_logistic_lpmf(
   bool need_cuts_derivative = !is_constant_all<T_cuts_cl>::value;
   bool need_broadcasting = N_cut_sets == 1 && N_instances != 1;
   matrix_cl<double> logp_cl(wgs, 1);
-  matrix_cl<double> lambda_sum_cl(wgs, 1);
   matrix_cl<double> lambda_derivative_cl(N_instances,
                                          need_lambda_derivative ? 1 : 0);
   matrix_cl<double> cuts_derivative_cl(
@@ -126,7 +125,7 @@ inline return_type_t<T_y_cl, T_loc_cl, T_cuts_cl> ordered_logistic_lpmf(
 
   try {
     opencl_kernels::ordered_logistic(
-        cl::NDRange(local_size * wgs), cl::NDRange(local_size), lambda_sum_cl,
+        cl::NDRange(local_size * wgs), cl::NDRange(local_size),
         logp_cl, lambda_derivative_cl, cuts_derivative_cl, y_val_cl, lambda_val,
         cuts_val, N_instances, N_classes, is_y_vector, !need_broadcasting,
         need_lambda_derivative, need_cuts_derivative);
@@ -136,7 +135,7 @@ inline return_type_t<T_y_cl, T_loc_cl, T_cuts_cl> ordered_logistic_lpmf(
 
   double logp = sum(from_matrix_cl(logp_cl));
 
-  if (!std::isfinite(sum(from_matrix_cl(lambda_sum_cl)))) {
+  if (!std::isfinite(logp)) {
     results(check_cl(function, "Vector of dependent variables", y_val,
                      "between 0 and number of classes"),
             check_cl(function, "lambda vector", lambda_val, "finite"))
