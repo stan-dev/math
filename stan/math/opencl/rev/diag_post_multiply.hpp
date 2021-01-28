@@ -34,46 +34,46 @@ inline var_value<matrix_cl<double>> diag_post_multiply(T1&& v1, T2&& v2) {
   matrix_cl<double> res_val
       = diag_post_multiply(value_of(v1_arena), value_of(v2_arena));
 
-  return make_callback_var(res_val, [v1_arena, v2_arena](
-                                        const vari_value<matrix_cl<double>>&
-                                            res) mutable {
-    if (v2_arena.rows() == 1) {
-      auto v1_adj_inc
-          = elt_multiply(res.adj(), colwise_broadcast(value_of(v2_arena)));
-      auto v2_adj_inc
-          = colwise_sum(elt_multiply(res.adj(), value_of(v1_arena)));
-      matrix_cl<double> tmp;
-      auto&& v1_adj = adjoint_of(v1_arena);
-      results(v1_adj, tmp) = expressions(
-          calc_if<!is_constant<std::decay_t<T1>>::value>(v1_adj + v1_adj_inc),
-          calc_if<!is_constant<std::decay_t<T2>>::value>(v2_adj_inc));
+  return make_callback_var(
+      res_val,
+      [v1_arena, v2_arena](const vari_value<matrix_cl<double>>& res) mutable {
+        if (v2_arena.rows() == 1) {
+          auto v1_adj_inc
+              = elt_multiply(res.adj(), colwise_broadcast(value_of(v2_arena)));
+          auto v2_adj_inc
+              = colwise_sum(elt_multiply(res.adj(), value_of(v1_arena)));
+          matrix_cl<double> tmp;
+          auto&& v1_adj = adjoint_of(v1_arena);
+          results(v1_adj, tmp) = expressions(
+              calc_if<!is_constant<std::decay_t<T1>>::value>(v1_adj
+                                                             + v1_adj_inc),
+              calc_if<!is_constant<std::decay_t<T2>>::value>(v2_adj_inc));
 
-      if (!is_constant<std::decay_t<T2>>::value) {
-        while (tmp.rows() > 1) {
-          tmp = eval(colwise_sum(tmp));
+          if (!is_constant<std::decay_t<T2>>::value) {
+            while (tmp.rows() > 1) {
+              tmp = eval(colwise_sum(tmp));
+            }
+            adjoint_of(v2_arena) += tmp;
+          }
+        } else {
+          auto v1_adj_inc = elt_multiply(
+              res.adj(), colwise_broadcast(transpose(value_of(v2_arena))));
+          auto v2_adj_inc
+              = colwise_sum(elt_multiply(res.adj(), value_of(v1_arena)));
+          matrix_cl<double> tmp;
+          auto&& v1_adj = adjoint_of(v1_arena);
+          results(v1_adj, tmp) = expressions(
+              calc_if<!is_constant<std::decay_t<T1>>::value>(v1_adj
+                                                             + v1_adj_inc),
+              calc_if<!is_constant<std::decay_t<T2>>::value>(v2_adj_inc));
+          if (!is_constant<std::decay_t<T2>>::value) {
+            while (tmp.rows() > 1) {
+              tmp = eval(colwise_sum(tmp));
+            }
+            adjoint_of(v2_arena) += transpose(tmp);
+          }
         }
-        auto& v2_adj = forward_as<var_value<matrix_cl<double>>>(v2_arena).adj();
-        v2_adj = v2_adj + tmp;
-      }
-    } else {
-      auto v1_adj_inc = elt_multiply(
-          res.adj(), colwise_broadcast(transpose(value_of(v2_arena))));
-      auto v2_adj_inc
-          = colwise_sum(elt_multiply(res.adj(), value_of(v1_arena)));
-      matrix_cl<double> tmp;
-      auto&& v1_adj = adjoint_of(v1_arena);
-      results(v1_adj, tmp) = expressions(
-          calc_if<!is_constant<std::decay_t<T1>>::value>(v1_adj + v1_adj_inc),
-          calc_if<!is_constant<std::decay_t<T2>>::value>(v2_adj_inc));
-      if (!is_constant<std::decay_t<T2>>::value) {
-        while (tmp.rows() > 1) {
-          tmp = eval(colwise_sum(tmp));
-        }
-        auto& v2_adj = forward_as<var_value<matrix_cl<double>>>(v2_arena).adj();
-        v2_adj = v2_adj + transpose(tmp);
-      }
-    }
-  });
+      });
 }
 
 }  // namespace math

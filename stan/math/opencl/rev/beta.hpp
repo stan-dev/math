@@ -2,14 +2,14 @@
 #define STAN_MATH_OPENCL_REV_BETA_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/prim/meta/is_kernel_expression.hpp>
+#include <stan/math/opencl/rev/adjoint_results.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/adjoint_of.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/meta/is_kernel_expression.hpp>
 
 namespace stan {
 namespace math {

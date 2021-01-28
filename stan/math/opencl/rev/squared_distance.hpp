@@ -2,7 +2,7 @@
 #define STAN_MATH_OPENCL_REV_SQUARED_DISTANCE_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/prim/meta/is_kernel_expression.hpp>
+#include <stan/math/opencl/rev/adjoint_results.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/prim/sum.hpp>
@@ -11,6 +11,7 @@
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/meta/is_kernel_expression.hpp>
 
 namespace stan {
 namespace math {
@@ -32,15 +33,13 @@ inline var_value<double> squared_distance(T_a&& a, T_b&& b) {
   arena_t<T_a> a_arena = std::forward<T_a>(a);
   arena_t<T_b> b_arena = std::forward<T_b>(b);
 
-  double res_val = squared_distance(value_of(a_arena), value_of(b_arena));
-
   return make_callback_var(
-      res_val, [a_arena, b_arena](const vari_value<double>& res) mutable {
+      squared_distance(value_of(a_arena), value_of(b_arena)),
+      [a_arena, b_arena](const vari_value<double>& res) mutable {
         auto res_two_mult_diff = elt_multiply(
             res.adj(), 2.0 * (value_of(a_arena) - value_of(b_arena)));
-        results(adjoint_of(a_arena), adjoint_of(b_arena))
-            += expressions(calc_if<is_var<T_a>::value>(res_two_mult_diff),
-                           calc_if<is_var<T_b>::value>(-res_two_mult_diff));
+        adjoint_results(a_arena, b_arena)
+            += expressions(res_two_mult_diff, -res_two_mult_diff);
       });
 }
 

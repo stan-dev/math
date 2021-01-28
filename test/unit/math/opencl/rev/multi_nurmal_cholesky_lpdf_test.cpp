@@ -66,10 +66,12 @@ TEST(ProbDistributionsMultiNormalCholesky, error_checking) {
                std::invalid_argument);
   EXPECT_THROW(stan::math::multi_normal_cholesky_lpdf(y1_cl, mu_size2_cl, L_cl),
                std::invalid_argument);
-  EXPECT_THROW(stan::math::multi_normal_cholesky_lpdf(y1_cl, mu1_cl, L_size1_cl),
-               std::invalid_argument);
-  EXPECT_THROW(stan::math::multi_normal_cholesky_lpdf(y1_cl, mu1_cl, L_size2_cl),
-               std::invalid_argument);
+  EXPECT_THROW(
+      stan::math::multi_normal_cholesky_lpdf(y1_cl, mu1_cl, L_size1_cl),
+      std::invalid_argument);
+  EXPECT_THROW(
+      stan::math::multi_normal_cholesky_lpdf(y1_cl, mu1_cl, L_size2_cl),
+      std::invalid_argument);
 
   EXPECT_THROW(stan::math::multi_normal_cholesky_lpdf(y_value_cl, mu1_cl, L_cl),
                std::domain_error);
