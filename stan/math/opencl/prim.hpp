@@ -116,7 +116,11 @@
 #include <stan/math/opencl/prim/columns_dot_self.hpp>
 #include <stan/math/opencl/prim/crossprod.hpp>
 #include <stan/math/opencl/prim/diag_matrix.hpp>
+#include <stan/math/opencl/prim/diag_pre_multiply.hpp>
+#include <stan/math/opencl/prim/diag_post_multiply.hpp>
 #include <stan/math/opencl/prim/dims.hpp>
+#include <stan/math/opencl/prim/dirichlet_lpdf.hpp>
+#include <stan/math/opencl/prim/distance.hpp>
 #include <stan/math/opencl/prim/divide.hpp>
 #include <stan/math/opencl/prim/divide_columns.hpp>
 #include <stan/math/opencl/prim/dot_product.hpp>
@@ -139,6 +143,7 @@
 #include <stan/math/opencl/prim/mdivide_left_tri_low.hpp>
 #include <stan/math/opencl/prim/mdivide_right_tri_low.hpp>
 #include <stan/math/opencl/prim/mean.hpp>
+#include <stan/math/opencl/prim/multi_normal_cholesky_lpdf.hpp>
 #include <stan/math/opencl/prim/neg_binomial_lpmf.hpp>
 #include <stan/math/opencl/prim/neg_binomial_2_lpmf.hpp>
 #include <stan/math/opencl/prim/neg_binomial_2_log_lpmf.hpp>
@@ -164,6 +169,7 @@
 #include <stan/math/opencl/prim/segment.hpp>
 #include <stan/math/opencl/prim/sign.hpp>
 #include <stan/math/opencl/prim/size.hpp>
+#include <stan/math/opencl/prim/squared_distance.hpp>
 #include <stan/math/opencl/prim/sub_col.hpp>
 #include <stan/math/opencl/prim/sub_row.hpp>
 #include <stan/math/opencl/prim/std_normal_lpdf.hpp>

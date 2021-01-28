@@ -2,9 +2,6 @@
 #define STAN_MATH_OPENCL_COPY_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/vec_concat.hpp>
 #include <stan/math/opencl/buffer_types.hpp>
 #include <stan/math/opencl/kernel_cl.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
@@ -16,6 +13,9 @@
 #include <stan/math/opencl/kernels/unpack.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/opencl/err/check_triangular.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/vec_concat.hpp>
 
 #include <CL/cl2.hpp>
 #include <algorithm>
@@ -41,9 +41,9 @@ namespace math {
  * @param src source Eigen matrix
  * @return matrix_cl with a copy of the data in the source matrix
  */
-template <typename T, require_vt_arithmetic<T>* = nullptr>
-inline matrix_cl<value_type_t<T>> to_matrix_cl(T&& src) {
-  return matrix_cl<value_type_t<T>>(std::forward<T>(src));
+template <typename T, require_st_arithmetic<T>* = nullptr>
+inline matrix_cl<scalar_type_t<T>> to_matrix_cl(T&& src) {
+  return matrix_cl<scalar_type_t<T>>(std::forward<T>(src));
 }
 
 /** \ingroup opencl
@@ -54,9 +54,10 @@ inline matrix_cl<value_type_t<T>> to_matrix_cl(T&& src) {
  * @return Eigen matrix with a copy of the data in the source matrix
  */
 template <int R = Eigen::Dynamic, int C = Eigen::Dynamic, typename T,
-          typename = require_arithmetic_t<T>>
-inline Eigen::Matrix<T, R, C> from_matrix_cl(const matrix_cl<T>& src) {
-  Eigen::Matrix<T, R, C> dst(src.rows(), src.cols());
+          require_matrix_cl_t<T>* = nullptr>
+inline Eigen::Matrix<value_type_t<T>, R, C> from_matrix_cl(const T& src) {
+  using T_val = value_type_t<T>;
+  Eigen::Matrix<T_val, R, C> dst(src.rows(), src.cols());
   if (src.size() == 0) {
     return dst;
   }
@@ -64,7 +65,7 @@ inline Eigen::Matrix<T, R, C> from_matrix_cl(const matrix_cl<T>& src) {
        || src.view() == matrix_cl_view::Upper)
       && src.rows() == src.cols()) {
     using T_not_bool
-        = std::conditional_t<std::is_same<T, bool>::value, char, T>;
+        = std::conditional_t<std::is_same<T_val, bool>::value, char, T_val>;
     std::vector<T_not_bool> packed = packed_copy(src);
 
     size_t pos = 0;
@@ -92,7 +93,7 @@ inline Eigen::Matrix<T, R, C> from_matrix_cl(const matrix_cl<T>& src) {
       cl::Event copy_event;
       const cl::CommandQueue queue = opencl_context.queue();
       queue.enqueueReadBuffer(src.buffer(), opencl_context.in_order(), 0,
-                              sizeof(T) * dst.size(), dst.data(),
+                              sizeof(T_val) * dst.size(), dst.data(),
                               &src.write_events(), &copy_event);
       copy_event.wait();
       src.clear_write_events();
@@ -101,11 +102,11 @@ inline Eigen::Matrix<T, R, C> from_matrix_cl(const matrix_cl<T>& src) {
     }
     if (!contains_nonzero(src.view(), matrix_cl_view::Lower)) {
       dst.template triangularView<Eigen::StrictlyLower>()
-          = Eigen::Matrix<T, R, C>::Zero(dst.rows(), dst.cols());
+          = Eigen::Matrix<T_val, R, C>::Zero(dst.rows(), dst.cols());
     }
     if (!contains_nonzero(src.view(), matrix_cl_view::Upper)) {
       dst.template triangularView<Eigen::StrictlyUpper>()
-          = Eigen::Matrix<T, R, C>::Zero(dst.rows(), dst.cols());
+          = Eigen::Matrix<T_val, R, C>::Zero(dst.rows(), dst.cols());
     }
   }
   return dst;
@@ -136,19 +137,20 @@ inline Eigen::Matrix<value_type_t<T>, R, C> from_matrix_cl(const T& src) {
  * @return the packed std::vector
  * @throw <code>std::invalid_argument</code> if the matrix is not triangular
  */
-template <typename T, typename = require_arithmetic_t<T>>
-inline std::vector<std::conditional_t<std::is_same<T, bool>::value, char, T>>
-packed_copy(const matrix_cl<T>& src) {
+template <typename T, require_matrix_cl_t<T>* = nullptr>
+inline auto packed_copy(const T& src) {
   check_triangular("packed_copy", "src", src);
   const int packed_size = src.rows() * (src.rows() + 1) / 2;
-  using T_not_bool = std::conditional_t<std::is_same<T, bool>::value, char, T>;
+  using T_val = value_type_t<T>;
+  using T_not_bool
+      = std::conditional_t<std::is_same<T_val, bool>::value, char, T_val>;
   std::vector<T_not_bool> dst(packed_size);
   if (dst.size() == 0) {
     return dst;
   }
   try {
     const cl::CommandQueue queue = opencl_context.queue();
-    matrix_cl<T> packed(packed_size, 1);
+    matrix_cl<T_val> packed(packed_size, 1);
     stan::math::opencl_kernels::pack(cl::NDRange(src.rows(), src.rows()),
                                      packed, src, src.rows(), src.rows(),
                                      src.view());
@@ -156,8 +158,8 @@ packed_copy(const matrix_cl<T>& src) {
         = vec_concat(packed.read_write_events(), src.write_events());
     cl::Event copy_event;
     queue.enqueueReadBuffer(packed.buffer(), opencl_context.in_order(), 0,
-                            sizeof(T) * packed_size, dst.data(), &mat_events,
-                            &copy_event);
+                            sizeof(T_val) * packed_size, dst.data(),
+                            &mat_events, &copy_event);
     copy_event.wait();
     src.clear_write_events();
   } catch (const cl::Error& e) {
@@ -225,9 +227,9 @@ inline matrix_cl<Vec_scalar> packed_copy(Vec&& src, int rows) {
  * @throw <code>std::invalid_argument</code> if the
  * matrices do not have matching dimensions
  */
-template <typename T, typename = require_arithmetic_t<T>>
-inline matrix_cl<T> copy_cl(const matrix_cl<T>& src) {
-  return matrix_cl<T>(src);
+template <typename T, require_matrix_cl_t<T>* = nullptr>
+inline plain_type_t<T> copy_cl(const T& src) {
+  return plain_type_t<T>(src);
 }
 
 /** \ingroup opencl

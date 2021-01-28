@@ -131,12 +131,6 @@ struct traits<stan::math::arena_matrix<T>> {
   };
 };
 
-template <typename T>
-struct evaluator<stan::math::arena_matrix<T>> : evaluator<Eigen::Map<T>> {
-  using base = evaluator<Eigen::Map<T>>;
-  enum { Flags = base::Flags, Alignment = base::Alignment };
-};
-
 }  // namespace internal
 }  // namespace Eigen
 

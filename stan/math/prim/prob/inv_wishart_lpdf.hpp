@@ -63,9 +63,9 @@ return_type_t<T_y, T_dof, T_scale> inv_wishart_lpdf(const T_y& W,
   check_symmetric(function, "random variable", W_ref);
   check_symmetric(function, "scale parameter", S_ref);
 
-  LDLT_factor<scalar_type_t<T_y>, Dynamic, Dynamic> ldlt_W(W_ref);
+  auto ldlt_W = make_ldlt_factor(W_ref);
   check_ldlt_factor(function, "LDLT_Factor of random variable", ldlt_W);
-  LDLT_factor<scalar_type_t<T_scale>, Dynamic, Dynamic> ldlt_S(S_ref);
+  auto ldlt_S = make_ldlt_factor(S_ref);
   check_ldlt_factor(function, "LDLT_Factor of scale parameter", ldlt_S);
 
   return_type_t<T_y, T_dof, T_scale> lp(0.0);
@@ -80,9 +80,7 @@ return_type_t<T_y, T_dof, T_scale> inv_wishart_lpdf(const T_y& W,
     lp -= 0.5 * (nu_ref + k + 1.0) * log_determinant_ldlt(ldlt_W);
   }
   if (include_summand<propto, T_y, T_scale>::value) {
-    Matrix<return_type_t<T_y, T_scale>, Dynamic, Dynamic> Winv_S(
-        mdivide_left_ldlt(ldlt_W, S_ref));
-    lp -= 0.5 * trace(Winv_S);
+    lp -= 0.5 * trace(mdivide_left_ldlt(ldlt_W, S_ref));
   }
   if (include_summand<propto, T_dof, T_scale>::value) {
     lp -= nu_ref * k * HALF_LOG_TWO;

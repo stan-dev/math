@@ -15,15 +15,13 @@ namespace math {
  * @param A argument
  * @return Elementwise `inv_cloglog()` of the input.
  */
-inline var_value<matrix_cl<double>> inv_cloglog(
-    const var_value<matrix_cl<double>>& A) {
-  var_value<matrix_cl<double>> res = inv_cloglog(A.val());
-
-  reverse_pass_callback([A, res]() mutable {
-    A.adj() = A.adj() + elt_multiply(res.adj(), exp(A.val() - exp(A.val())));
-  });
-
-  return res;
+template <typename T,
+          require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
+inline var_value<matrix_cl<double>> inv_cloglog(const var_value<T>& A) {
+  return make_callback_var(
+      inv_cloglog(A.val()), [A](vari_value<matrix_cl<double>>& res) mutable {
+        A.adj() += elt_multiply(res.adj(), exp(A.val() - exp(A.val())));
+      });
 }
 
 }  // namespace math

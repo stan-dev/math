@@ -14,13 +14,13 @@ namespace math {
  * @param M input kernel expression
  * @return result of unary minus of the input.
  */
-inline var_value<matrix_cl<double>> operator-(
-    const var_value<matrix_cl<double>>& M) {
-  var_value<matrix_cl<double>> res = -M.val();
-
-  reverse_pass_callback([M, res]() mutable { M.adj() = M.adj() - res.adj(); });
-
-  return res;
+template <typename T,
+          require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
+inline var_value<matrix_cl<double>> operator-(const var_value<T>& M) {
+  return make_callback_var(-M.val(),
+                           [M](vari_value<matrix_cl<double>>& res) mutable {
+                             M.adj() -= res.adj();
+                           });
 }
 
 }  // namespace math

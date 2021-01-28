@@ -60,8 +60,10 @@ class colwise_reduction
 
   /**
    * Generates kernel code for assigning this expression into result expression.
-   * @param[in,out] generated map from (pointer to) already generated operations
-   * to variable names
+   * @param[in,out] generated map from (pointer to) already generated local
+   * operations to variable names
+   * @param[in,out] generated_all map from (pointer to) already generated all
+   * operations to variable names
    * @param ng name generator for this kernel
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
@@ -70,13 +72,14 @@ class colwise_reduction
    */
   template <typename T_result>
   kernel_parts get_whole_kernel_parts(
-      std::map<const void*, const char*>& generated, name_generator& ng,
+      std::map<const void*, const char*>& generated,
+      std::map<const void*, const char*>& generated_all, name_generator& ng,
       const std::string& row_index_name, const std::string& col_index_name,
       const T_result& result) const {
     kernel_parts parts = derived().get_kernel_parts(
-        generated, ng, row_index_name, col_index_name, false);
+        generated, generated_all, ng, row_index_name, col_index_name, false);
     kernel_parts out_parts = result.get_kernel_parts_lhs(
-        generated, ng, row_index_name, col_index_name);
+        generated, generated_all, ng, row_index_name, col_index_name);
 
     parts.args += out_parts.args;
     parts.reduction += "if (lid_i == 0) {\n"
