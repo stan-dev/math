@@ -110,7 +110,7 @@ inline return_type_t<T_y_cl, T_loc_cl, T_cuts_cl> ordered_logistic_lpmf(
   const auto& y_val_cl = to_matrix_cl(y_val);
 
   const int local_size
-      = opencl_kernels::ordered_logistic_glm.get_option("LOCAL_SIZE_");
+      = opencl_kernels::ordered_logistic.get_option("LOCAL_SIZE_");
   const int wgs = (N_instances + local_size - 1) / local_size;
 
   bool need_lambda_derivative = !is_constant_all<T_loc_cl>::value;
