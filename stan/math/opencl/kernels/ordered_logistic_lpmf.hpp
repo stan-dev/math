@@ -30,18 +30,20 @@ static const char* ordered_logistic_kernel_code = STRINGIFY(
      * @param N_classes number of classes
      * @param is_y_vector 0 or 1 - whether y is a vector (alternatively it is a
      * scalar we need to broadcast)
-     * @param is_cuts_matrix 0 or 1 - whether cuts is a matrix (alternatively it is a
-     * vector we need to broadcast)
-     * @param need_lambda_derivative 0 or 1 - whether lambda_derivative needs to be computed
-     * @param need_cuts_derivative 0 or 1 - whether cuts_derivative needs to be computed
+     * @param is_cuts_matrix 0 or 1 - whether cuts is a matrix (alternatively it
+     * is a vector we need to broadcast)
+     * @param need_lambda_derivative 0 or 1 - whether lambda_derivative needs to
+     * be computed
+     * @param need_cuts_derivative 0 or 1 - whether cuts_derivative needs to be
+     * computed
      */
     __kernel void ordered_logistic(
-        __global double* logp_global,
-        __global double* lambda_derivative, __global double* cuts_derivative,
-        const __global int* y_global, const __global double* lambda_global,
-        const __global double* cuts, const int N_instances, const int N_classes,
-        const int is_y_vector, const int is_cuts_matrix,
-        const int need_lambda_derivative, const int need_cuts_derivative) {
+        __global double* logp_global, __global double* lambda_derivative,
+        __global double* cuts_derivative, const __global int* y_global,
+        const __global double* lambda_global, const __global double* cuts,
+        const int N_instances, const int N_classes, const int is_y_vector,
+        const int is_cuts_matrix, const int need_lambda_derivative,
+        const int need_cuts_derivative) {
       const int gid = get_global_id(0);
       const int lid = get_local_id(0);
       const int lsize = get_local_size(0);
@@ -167,8 +169,8 @@ static const char* ordered_logistic_kernel_code = STRINGIFY(
  * See the docs for \link kernels/ordered_logistic_lpmf.hpp
  * ordered_logistic() \endlink
  */
-const kernel_cl<out_buffer, out_buffer, out_buffer, in_buffer,
-                in_buffer, in_buffer, int, int, int, int, int, int>
+const kernel_cl<out_buffer, out_buffer, out_buffer, in_buffer, in_buffer,
+                in_buffer, int, int, int, int, int, int>
     ordered_logistic("ordered_logistic",
                      {log1p_exp_device_function, log1m_exp_device_function,
                       ordered_logistic_kernel_code},
