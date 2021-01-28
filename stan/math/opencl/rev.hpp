@@ -64,6 +64,7 @@
 #include <stan/math/opencl/rev/log1m_inv_logit.hpp>
 #include <stan/math/opencl/rev/log_inv_logit_diff.hpp>
 #include <stan/math/opencl/rev/log_diff_exp.hpp>
+#include <stan/math/opencl/rev/matrix_power.hpp>
 #include <stan/math/opencl/rev/mdivide_left_tri_low.hpp>
 #include <stan/math/opencl/rev/mdivide_right_tri_low.hpp>
 #include <stan/math/opencl/rev/multiply.hpp>

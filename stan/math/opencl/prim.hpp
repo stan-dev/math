@@ -140,6 +140,7 @@
 #include <stan/math/opencl/prim/inv_sqrt.hpp>
 #include <stan/math/opencl/prim/logistic_lpdf.hpp>
 #include <stan/math/opencl/prim/lognormal_lpdf.hpp>
+#include <stan/math/opencl/prim/matrix_power.hpp>
 #include <stan/math/opencl/prim/mdivide_left_tri_low.hpp>
 #include <stan/math/opencl/prim/mdivide_right_tri_low.hpp>
 #include <stan/math/opencl/prim/mean.hpp>
