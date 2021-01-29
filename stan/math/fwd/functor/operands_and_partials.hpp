@@ -18,10 +18,11 @@ template <typename InnerType, typename T>
 class ops_partials_edge<InnerType, T, require_fvar_t<T>> {
  public:
   using Op = std::decay_t<T>;
-  std::decay_t<InnerType> partial_{0};
-  broadcast_array<std::decay_t<InnerType>> partials_{partial_};
+  using Dx = std::decay_t<InnerType>;
+  Dx partial_{0};
+  broadcast_array<Dx> partials_{partial_};
 
-  template <typename OpT, require_same_t<OpT, Op>* = nullptr>
+  template <typename OpT, require_same_t<plain_type_t<OpT>, plain_type_t<Op>>* = nullptr>
   explicit ops_partials_edge(const OpT& op)
       : operand_(op) {}
 
@@ -30,7 +31,7 @@ class ops_partials_edge<InnerType, T, require_fvar_t<T>> {
   friend class stan::math::internal::operands_and_partials_impl;
   const Op& operand_;
 
-  auto dx() { return this->partial_ * this->operand_.d_; }
+  Dx dx() { return this->partial_ * this->operand_.d_; }
 };
 
 
@@ -81,29 +82,14 @@ class ops_partials_edge<InnerType, T, require_fvar_t<T>> {
    auto sum_dx(T1& a) {
      return a.dx();
    }
-   template <typename T1, typename T2>
-   auto sum_dx(T1& a, T2& b) {
-     return a.dx() + b.dx();
-   }
-
-   template <typename T1, typename T2, typename T3>
-   auto sum_dx(T1& a, T2& b, T3& c) {
-     return a.dx() + b.dx() + c.dx();
-   }
-
-   template <typename T1, typename T2, typename T3, typename T4>
-   auto sum_dx(T1& a, T2& b, T3& c, T4& d) {
-     return a.dx() + b.dx() + c.dx() + d.dx();
-   }
-
-   template <typename T1, typename T2, typename T3, typename T4, typename T5>
-   auto sum_dx(T1& a, T2& b, T3& c, T4& d, T5& ff) {
-     return a.dx() + b.dx() + c.dx() + d.dx() + ff.dx();
+   template <typename T1, typename T2, typename... Types>
+   auto sum_dx(T1& a, T2& b, Types&... args) {
+     return a.dx() + b.dx() + sum_dx(args...);
    }
 
  public:
   using Dx = partials_type_t<ReturnType>;
-  std::tuple<internal::ops_partials_edge<Dx, std::decay_t<Ops>>...> edges_;
+  std::tuple<internal::ops_partials_edge<Dx, plain_type_t<std::decay_t<Ops>>>...> edges_;
   using T_return_type = fvar<Dx>;
   template <typename... Types>
   explicit operands_and_partials_impl(Types&&... ops) :
@@ -148,7 +134,7 @@ class ops_partials_edge<InnerType, T, require_std_vector_vt<is_fvar, T>> {
  private:
   template <typename, typename, typename...>
   friend class stan::math::internal::operands_and_partials_impl;
-  const Op& operands_;
+  Op operands_;
 
   Dx dx() {
     Dx derivative(0);
@@ -173,7 +159,7 @@ class ops_partials_edge<Dx, Eigen::Matrix<fvar<Dx>, R, C>> {
  private:
   template <typename, typename, typename...>
   friend class stan::math::internal::operands_and_partials_impl;
-  const Op& operands_;
+  Op operands_;
 
   Dx dx() {
     Dx derivative(0);
@@ -201,7 +187,7 @@ class ops_partials_edge<Dx, std::vector<Eigen::Matrix<fvar<Dx>, R, C>>> {
  private:
   template <typename, typename, typename...>
   friend class stan::math::internal::operands_and_partials_impl;
-  const Op& operands_;
+  Op operands_;
 
   Dx dx() {
     Dx derivative(0);
@@ -218,20 +204,19 @@ template <typename Dx>
 class ops_partials_edge<Dx, std::vector<std::vector<fvar<Dx>>>> {
  public:
   using Op = std::vector<std::vector<fvar<Dx>>>;
-  using partial_t = std::vector<Dx>;
+  using partial_t = Eigen::Matrix<Dx, -1, 1>;
   std::vector<partial_t> partials_vec_;
   explicit ops_partials_edge(const Op& ops)
       : partials_vec_(stan::math::size(ops)), operands_(ops) {
     for (size_t i = 0; i < stan::math::size(ops); ++i) {
-      partials_vec_[i] = partial_t(stan::math::size(ops[i]), 0.0);
+      partials_vec_[i] = partial_t::Zero(stan::math::size(ops[i]));
     }
   }
 
  private:
   template <typename, typename, typename...>
   friend class stan::math::internal::operands_and_partials_impl;
-  const Op& operands_;
-
+  Op operands_;
   Dx dx() {
     Dx derivative(0);
     for (size_t i = 0; i < this->operands_.size(); ++i) {

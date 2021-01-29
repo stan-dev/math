@@ -96,14 +96,32 @@ return_type_t<T_theta, T_lam> log_mix(const T_theta& theta,
 
   T_partials_return logp = log_sum_exp(log(theta_dbl) + lam_dbl);
 
-  auto ops_partials = operands_and_partials(theta_ref,lambda_ref);
-  if constexpr (!is_constant_all<T_lam, T_theta>::value) {
+  auto ops_partials = operands_and_partials(theta_ref, lambda_ref);
+  if (!is_constant_all<T_lam, T_theta>::value) {
     T_partials_vec theta_deriv = (lam_dbl.array() - logp).exp();
-    if constexpr (!is_constant<T_lam>::value) {
-      as_column_vector_or_scalar(edge<1>(ops_partials).partials_) = as_column_vector_or_scalar(theta_deriv.cwiseProduct(theta_dbl));
+    if (!is_constant_all<T_lam>::value) {
+      using lam_dbl_t = std::conditional_t<is_eigen_row_vector<plain_type_t<T_lam>>::value,
+        Eigen::Matrix<double, 1, -1>, Eigen::Matrix<double, -1, 1>>;
+      using forwarded_type = promote_scalar_t<T_partials_return, lam_dbl_t>;
+      using wugghh_t = std::conditional_t<is_var<return_type_t<T_lam>>::value, arena_t<forwarded_type>, forwarded_type>;
+    try {
+      as_column_vector_or_scalar(forward_as<wugghh_t>(edge<1>(ops_partials).partials_)) = as_column_vector_or_scalar(theta_deriv.cwiseProduct(theta_dbl));
+    } catch (...) {
+      puts("\n1\n");
+      throw;
     }
-    if constexpr (!is_constant<T_theta>::value) {
-      as_column_vector_or_scalar(edge<0>(ops_partials).partials_) = as_column_vector_or_scalar(std::move(theta_deriv));
+    }
+    if (!is_constant_all<T_theta>::value) {
+      using T_theta_base = std::conditional_t<is_eigen_row_vector<plain_type_t<T_theta>>::value,
+        Eigen::Matrix<double, 1, -1>, Eigen::Matrix<double, -1, 1>>;
+      using forwarded_type = promote_scalar_t<T_partials_return, T_theta_base>;
+      using wugghh_t = std::conditional_t<is_var<return_type_t<T_theta_base>>::value, arena_t<forwarded_type>, forwarded_type>;
+      try {
+      as_column_vector_or_scalar(forward_as<wugghh_t>(edge<0>(ops_partials).partials_))  = as_column_vector_or_scalar(theta_deriv);
+    } catch (...) {
+      puts("\n2\n");
+      throw;
+    }
     }
   }
   return ops_partials.build(logp);
@@ -178,18 +196,34 @@ return_type_t<T_theta, std::vector<T_lam>> log_mix(
   }
 
   auto ops_partials = operands_and_partials(theta_ref, lambda);
-  if constexpr (!is_constant_all<T_theta, T_lam>::value) {
+  if (!is_constant_all<T_theta, T_lam>::value) {
     T_partials_mat derivs = exp(lam_dbl.rowwise() - logp.transpose());
-    if constexpr (!is_constant_all<T_theta>::value) {
-      as_column_vector_or_scalar(edge<0>(ops_partials).partials_) = as_column_vector_or_scalar(derivs.rowwise().sum());
+    if (!is_constant_all<T_theta>::value) {
+      using T_theta_t = std::conditional_t<is_eigen_row_vector<plain_type_t<T_theta>>::value,
+        Eigen::Matrix<double, 1, -1>, Eigen::Matrix<double, -1, 1>>;
+      using forwarded_type = promote_scalar_t<T_partials_return, plain_type_t<std::decay_t<T_theta_t>>>;
+      using wugghh_t = std::conditional_t<is_var<return_type_t<T_lam>>::value, arena_t<forwarded_type>, forwarded_type>;
+      try {
+        as_column_vector_or_scalar(forward_as<wugghh_t>(edge<0>(ops_partials).partials_)) = as_column_vector_or_scalar(derivs.rowwise().sum());
+      } catch (...) {
+        puts("\n4\n");
+        throw;
+      }
     }
-    if constexpr (!is_constant_all<T_lam>::value) {
+    if (!is_constant_all<T_lam>::value) {
+      using T_lam_t = std::conditional_t<is_eigen_row_vector<plain_type_t<T_lam>>::value,
+        Eigen::Matrix<double, 1, -1>, Eigen::Matrix<double, -1, 1>>;
+      using forwarded_type = promote_scalar_t<T_partials_return, plain_type_t<std::decay_t<T_lam_t>>>;
+      using wugghh_t = std::conditional_t<is_var<return_type_t<T_lam>>::value, arena_t<forwarded_type>, forwarded_type>;
+      try {
       for (int n = 0; n < N; ++n) {
-        as_column_vector_or_scalar(
-            forward_as<promote_scalar_t<T_partials_return, T_lam>>(
-                edge<1>(ops_partials).partials_vec_[n]))
+        as_column_vector_or_scalar(forward_as<wugghh_t>(edge<1>(ops_partials).partials_vec_[n]))
             = as_column_vector_or_scalar(derivs.col(n).cwiseProduct(theta_dbl));
       }
+    } catch (...) {
+      puts("\n3\n");
+      throw;
+    }
     }
   }
   return ops_partials.build(logp.sum());

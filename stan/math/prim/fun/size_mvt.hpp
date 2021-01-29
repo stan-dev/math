@@ -35,6 +35,11 @@ size_t size_mvt(const std::vector<MatrixT>& x) {
   return x.size();
 }
 
+template <typename VectorT, require_std_vector_t<VectorT>* = nullptr>
+size_t size_mvt(const std::vector<VectorT>& x) {
+  return x.size();
+}
+
 }  // namespace math
 }  // namespace stan
 #endif

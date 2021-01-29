@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/promote_scalar_type.hpp>
 #include <stan/math/prim/meta/ref_type.hpp>
+#include <stan/math/prim/meta/forward_as.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stdexcept>
@@ -27,9 +28,14 @@ namespace internal {
      * it will be used directly. If assigned a vector, the argument will be summed
      * first.
      */
-    template <typename Y, require_not_stan_scalar_t<Y>* = nullptr>
+    template <typename Y, typename YY = T, require_not_stan_scalar_t<Y>* = nullptr,
+     require_same_t<scalar_type_t<YY>, scalar_type_t<Y>>* = nullptr>
     void operator=(const Y& m) {
       prim_ = sum(m);
+    }
+    template <typename Y, typename YY = T, require_not_stan_scalar_t<Y>* = nullptr,
+     require_not_same_t<scalar_type_t<YY>, scalar_type_t<Y>>* = nullptr>
+    void operator=(const Y& m) {
     }
     template <typename Y, require_stan_scalar_t<Y>* = nullptr>
     void operator=(const Y& m) {
