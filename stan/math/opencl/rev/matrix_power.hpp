@@ -2,6 +2,7 @@
 #define STAN_MATH_OPENCL_REV_MATRIX_POWER_HPP
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/rev/arena_type.hpp>
+#include <stan/math/opencl/prim/multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/prim/diag_matrix.hpp>
 #include <stan/math/rev/core.hpp>
