@@ -22,28 +22,6 @@ namespace math {
 
 namespace internal {
 
-/** \ingroup type_trait
- * \callergraph
- */
-template <>
-class ops_partials_edge<double, var> {
- public:
-  double partial_{0};
-  broadcast_array<double> partials_{partial_};
-  explicit ops_partials_edge(const var& op) noexcept
-      : operands_(op) {}
-
-  inline auto& partial() {
-    return partial_;
-  }
-  inline auto& operand() noexcept {
-    return operands_;
-  }
-
-  var operands_;
-  static constexpr int size() { return 1; }
-};
-
 template <typename Scalar1, typename Scalar2, require_var_t<Scalar1>* = nullptr>
 inline void accumulate_adjoints(Scalar1&& x, Scalar2&& y, const var& z) {
   x.adj() += z.adj() * y;
@@ -132,6 +110,29 @@ inline void accumulate_adjoints(StdVec1&& x, StdVec2&& y, const var& z) {
   }
 
 };
+
+/** \ingroup type_trait
+ * \callergraph
+ */
+template <>
+class ops_partials_edge<double, var> {
+ public:
+  double partial_{0};
+  broadcast_array<double> partials_{partial_};
+  explicit ops_partials_edge(const var& op) noexcept
+      : operands_(op) {}
+
+  inline auto& partial() {
+    return partial_;
+  }
+  inline auto& operand() noexcept {
+    return operands_;
+  }
+
+  var operands_;
+  static constexpr int size() { return 1; }
+};
+
 
 // Vectorized Univariate
 template <>
