@@ -7,6 +7,7 @@
 #include <stan/math/opencl/rev/to_arena.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/vec_concat.hpp>
@@ -32,9 +33,7 @@ template <typename T>
 inline var_value<matrix_cl<value_type_t<T>>> to_matrix_cl(
     const var_value<T>& a) {
   return make_callback_var(to_matrix_cl(a.val()), [a](auto& res_vari) mutable {
-    a.adj()
-        += from_matrix_cl<std::decay_t<T>::RowsAtCompileTime,
-                          std::decay_t<T>::ColsAtCompileTime>(res_vari.adj());
+    a.adj() += from_matrix_cl<plain_type_t<T>>(res_vari.adj());
   });
 }
 
@@ -55,25 +54,6 @@ inline var_value<matrix_cl<value_type_t<T>>> to_matrix_cl(
 }
 
 /** \ingroup opencl
- * Copies the source var that has data stored on the OpenCL device to
- * destination var containing Eigen matrices.
- *
- * @tparam Rows number of compile time rows of the destination matrix
- * @tparam Rows number of compile time columns of the destination matrix
- * @tparam T type of the matrix or expression on the OpenCL device
- * @param a source matrix_cl or expression
- * @return var with a copy of the data on the host
- */
-template <int Rows = Eigen::Dynamic, int Cols = Eigen::Dynamic, typename T,
-          require_all_kernel_expressions_t<T>* = nullptr>
-inline var_value<Eigen::Matrix<value_type_t<T>, Rows, Cols>> from_matrix_cl(
-    const var_value<T>& a) {
-  return make_callback_var(
-      from_matrix_cl<Rows, Cols>(a.val()),
-      [a](auto& res_vari) mutable { a.adj() += to_matrix_cl(res_vari.adj()); });
-}
-
-/** \ingroup opencl
  * Copies the source Eigen matrix of vars to
  * the destination matrix that is stored
  * on the OpenCL device.
@@ -90,8 +70,8 @@ inline var_value<matrix_cl<value_type_t<value_type_t<T>>>> to_matrix_cl(
 
   return make_callback_var(
       to_matrix_cl(src_stacked.val()), [src_stacked](auto& res_vari) mutable {
-        src_stacked.adj() += from_matrix_cl<std::decay_t<T>::RowsAtCompileTime,
-                                            std::decay_t<T>::ColsAtCompileTime>(
+        src_stacked.adj() += from_matrix_cl<
+            Eigen::Matrix<double, T::RowsAtCompileTime, T::ColsAtCompileTime>>(
             res_vari.adj());
       });
 }
@@ -121,6 +101,32 @@ inline var_value<matrix_cl<value_type_t<value_type_t<T>>>> to_matrix_cl(
                   src_stacked[i].cols());
         }
       });
+}
+
+/** \ingroup opencl
+ * Copies the source var that has data stored on the OpenCL device to
+ * destination var containing Eigen matrices.
+ *
+ * @tparam Rows number of compile time rows of the destination matrix
+ * @tparam Rows number of compile time columns of the destination matrix
+ * @tparam T type of the matrix or expression on the OpenCL device
+ * @param a source matrix_cl or expression
+ * @return var with a copy of the data on the host
+ */
+template <typename T_dst, typename T,
+          require_var_vt<is_eigen, T_dst>* = nullptr,
+          require_all_kernel_expressions_t<T>* = nullptr>
+inline T_dst from_matrix_cl(const var_value<T>& a) {
+  return make_callback_var(
+      from_matrix_cl<
+          Eigen::Matrix<double, T_dst::RowsAtCompileTime, T_dst::ColsAtCompileTime>>(
+          a.val()),
+      [a](auto& res_vari) mutable { a.adj() += to_matrix_cl(res_vari.adj()); });
+}
+
+template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
+auto from_matrix_cl(const var_value<T>& src) {
+  return from_matrix_cl<var_value<Eigen::MatrixXd>>(src);
 }
 
 }  // namespace math
