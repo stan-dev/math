@@ -70,7 +70,8 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_cdf(
           pow(temp, -alpha_val));
   T_partials_return P = prod(1.0 - p1_pow_alpha);
 
-  auto ops_partials = operands_and_partials(y_ref, mu_ref, lambda_ref, alpha_ref);
+  auto ops_partials
+      = operands_and_partials(y_ref, mu_ref, lambda_ref, alpha_ref);
 
   if (!is_constant_all<T_y, T_loc, T_scale, T_shape>::value) {
     const auto& P_div_Pn

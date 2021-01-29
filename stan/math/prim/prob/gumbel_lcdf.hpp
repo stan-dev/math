@@ -66,8 +66,7 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lcdf(const T_y& y, const T_loc& mu,
     return 0;
   }
 
-  auto ops_partials = operands_and_partials(
-      y_ref, mu_ref, beta_ref);
+  auto ops_partials = operands_and_partials(y_ref, mu_ref, beta_ref);
 
   const auto& scaled_diff
       = to_ref_if<!is_constant_all<T_y, T_loc, T_scale>::value>((mu_val - y_val)

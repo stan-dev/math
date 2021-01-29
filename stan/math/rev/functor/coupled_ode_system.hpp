@@ -124,9 +124,9 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
     for (size_t n = 0; n < N_; ++n)
       y_vars.coeffRef(n) = z[n];
 
-    Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars
-        = stan::math::apply([&](auto&&... args) { return f_(t, y_vars, msgs_, args...); },
-                local_args_tuple_);
+    Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars = stan::math::apply(
+        [&](auto&&... args) { return f_(t, y_vars, msgs_, args...); },
+        local_args_tuple_);
 
     check_size_match("coupled_ode_system", "dy_dt", f_y_t_vars.size(), "states",
                      N_);
@@ -148,7 +148,8 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
 
       // The vars here do not live on the nested stack so must be zero'd
       // separately
-      stan::math::apply([&](auto&&... args) { zero_adjoints(args...); }, local_args_tuple_);
+      stan::math::apply([&](auto&&... args) { zero_adjoints(args...); },
+                        local_args_tuple_);
 
       // No need to zero adjoints after last sweep
       if (i + 1 < N_) {

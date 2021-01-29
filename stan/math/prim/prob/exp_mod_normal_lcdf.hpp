@@ -67,7 +67,8 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
     return 0;
   }
 
-  auto ops_partials = operands_and_partials(y_ref, mu_ref, sigma_ref, lambda_ref);
+  auto ops_partials
+      = operands_and_partials(y_ref, mu_ref, sigma_ref, lambda_ref);
 
   scalar_seq_view<decltype(y_val)> y_vec(y_val);
   for (size_t n = 0, size_y = stan::math::size(y); n < size_y; n++) {

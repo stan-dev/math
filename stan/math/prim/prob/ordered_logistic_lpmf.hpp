@@ -166,8 +166,7 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
     }
   }
 
-  auto ops_partials = operands_and_partials(lambda_ref,
-                                                              c_ref);
+  auto ops_partials = operands_and_partials(lambda_ref, c_ref);
   if (!is_constant_all<T_loc, T_cut>::value) {
     Array<T_partials_return, Dynamic, 1> exp_m_cut1 = exp(-cut1);
     Array<T_partials_return, Dynamic, 1> exp_m_cut2 = exp(-cut2);

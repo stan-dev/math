@@ -98,8 +98,7 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl> normal_lpdf(
     logp += NEG_LOG_SQRT_TWO_PI * N;
   }
 
-  auto ops_partials = operands_and_partials(y, mu,
-                                                                   sigma);
+  auto ops_partials = operands_and_partials(y, mu, sigma);
 
   if (!is_constant<T_y_cl>::value) {
     edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);

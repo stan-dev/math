@@ -76,8 +76,7 @@ return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
     logp -= sum(alpha_val * log_y + log_y) * N / max_size(alpha, y);
   }
 
-  auto ops_partials = operands_and_partials(
-      y_ref, y_min_ref, alpha_ref);
+  auto ops_partials = operands_and_partials(y_ref, y_min_ref, alpha_ref);
   if (!is_constant_all<T_y>::value) {
     const auto& inv_y = inv(y_val);
     edge<0>(ops_partials).partials_

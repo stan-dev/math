@@ -83,7 +83,8 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
     logp -= sum((alpha_val + 1.0) * log1p_scaled_diff);
   }
 
-  auto ops_partials = operands_and_partials(y_ref, mu_ref, lambda_ref, alpha_ref);
+  auto ops_partials
+      = operands_and_partials(y_ref, mu_ref, lambda_ref, alpha_ref);
 
   if (!is_constant_all<T_y, T_loc, T_scale>::value) {
     const auto& inv_sum = to_ref_if<(!is_constant_all<T_y, T_loc>::value

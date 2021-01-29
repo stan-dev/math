@@ -112,8 +112,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> pareto_type_2_lpdf(
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
-  auto ops_partials = operands_and_partials(
-      y, mu, lambda, alpha);
+  auto ops_partials = operands_and_partials(y, mu, lambda, alpha);
   if (!is_constant<T_y_cl>::value) {
     edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);
   }

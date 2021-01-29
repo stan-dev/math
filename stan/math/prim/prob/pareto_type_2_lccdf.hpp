@@ -60,7 +60,8 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lccdf(
   check_positive_finite(function, "Shape parameter", alpha_val);
   check_greater_or_equal(function, "Random variable", y_val, mu_val);
 
-  auto ops_partials = operands_and_partials(y_ref, mu_ref, lambda_ref, alpha_ref);
+  auto ops_partials
+      = operands_and_partials(y_ref, mu_ref, lambda_ref, alpha_ref);
 
   const auto& log_temp = to_ref_if<!is_constant_all<T_shape>::value>(
       log1p((y_val - mu_val) / lambda_val));
@@ -76,7 +77,8 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lccdf(
       edge<0>(ops_partials).partials_ = -rep_deriv;
     }
     if (!is_constant_all<T_scale>::value) {
-      edge<2>(ops_partials).partials_ = rep_deriv * (y_val - mu_val) / lambda_val;
+      edge<2>(ops_partials).partials_
+          = rep_deriv * (y_val - mu_val) / lambda_val;
     }
     if (!is_constant_all<T_loc>::value) {
       edge<1>(ops_partials).partials_ = std::move(rep_deriv);

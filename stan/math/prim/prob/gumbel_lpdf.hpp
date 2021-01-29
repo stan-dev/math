@@ -72,8 +72,7 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(const T_y& y, const T_loc& mu,
     return 0.0;
   }
 
-  auto ops_partials = operands_and_partials(
-      y_ref, mu_ref, beta_ref);
+  auto ops_partials = operands_and_partials(y_ref, mu_ref, beta_ref);
 
   const auto& inv_beta
       = to_ref_if<!is_constant_all<T_y, T_loc, T_scale>::value>(inv(beta_val));

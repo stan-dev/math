@@ -63,8 +63,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lcdf(
   check_bounded(function, "Random variable", y_ref, 0, 1);
 
   T_partials_return cdf_log(0.0);
-  auto ops_partials = operands_and_partials(
-      y_ref, alpha_ref, beta_ref);
+  auto ops_partials = operands_and_partials(y_ref, alpha_ref, beta_ref);
   scalar_seq_view<T_y_ref> y_vec(y_ref);
   scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
   scalar_seq_view<T_beta_ref> beta_vec(beta_ref);
@@ -108,8 +107,8 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lcdf(
 
     if (!is_constant_all<T_y>::value) {
       edge<0>(ops_partials).partials_[n] += pow(1 - y_dbl, beta_dbl - 1)
-                                          * pow(y_dbl, alpha_dbl - 1) * inv_Pn
-                                          / betafunc_dbl;
+                                            * pow(y_dbl, alpha_dbl - 1) * inv_Pn
+                                            / betafunc_dbl;
     }
 
     T_partials_return g1 = 0;

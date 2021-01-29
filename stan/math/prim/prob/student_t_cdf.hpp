@@ -46,8 +46,7 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_cdf(const T_y& y,
   }
 
   T_partials_return P(1.0);
-  auto ops_partials = operands_and_partials(
-      y_ref, nu_ref, mu_ref, sigma_ref);
+  auto ops_partials = operands_and_partials(y_ref, nu_ref, mu_ref, sigma_ref);
   scalar_seq_view<T_y> y_vec(y_ref);
   scalar_seq_view<T_nu_ref> nu_vec(nu_ref);
   scalar_seq_view<T_mu_ref> mu_vec(mu_ref);

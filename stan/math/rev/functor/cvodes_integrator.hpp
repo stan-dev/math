@@ -102,9 +102,9 @@ class cvodes_integrator {
   inline void rhs(double t, const double y[], double dy_dt[]) const {
     const Eigen::VectorXd y_vec = Eigen::Map<const Eigen::VectorXd>(y, N_);
 
-    Eigen::VectorXd dy_dt_vec
-        = stan::math::apply([&](auto&&... args) { return f_(t, y_vec, msgs_, args...); },
-                value_of_args_tuple_);
+    Eigen::VectorXd dy_dt_vec = stan::math::apply(
+        [&](auto&&... args) { return f_(t, y_vec, msgs_, args...); },
+        value_of_args_tuple_);
 
     check_size_match("cvodes_integrator", "dy_dt", dy_dt_vec.size(), "states",
                      N_);
@@ -121,8 +121,9 @@ class cvodes_integrator {
     Eigen::MatrixXd Jfy;
 
     auto f_wrapped = [&](const Eigen::Matrix<var, Eigen::Dynamic, 1>& y) {
-      return stan::math::apply([&](auto&&... args) { return f_(t, y, msgs_, args...); },
-                   value_of_args_tuple_);
+      return stan::math::apply(
+          [&](auto&&... args) { return f_(t, y, msgs_, args...); },
+          value_of_args_tuple_);
     };
 
     jacobian(f_wrapped, Eigen::Map<const Eigen::VectorXd>(y, N_), fy, Jfy);

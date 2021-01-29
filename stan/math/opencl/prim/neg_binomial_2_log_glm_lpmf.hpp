@@ -177,8 +177,7 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
     logp += forward_as<double>(lgamma(y_val + phi_val)) * N;
   }
 
-  auto ops_partials = operands_and_partials(
-      x, alpha, beta, phi);
+  auto ops_partials = operands_and_partials(x, alpha, beta, phi);
   // Compute the necessary derivatives.
   if (!is_constant<T_x_cl>::value) {
     edge<0>(ops_partials).partials_

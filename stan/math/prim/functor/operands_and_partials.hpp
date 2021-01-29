@@ -69,7 +69,8 @@ class ops_partials_edge;
  * @tparam ReturnType The type returned from calling the `build()` method.
  */
 template <typename ReturnType, typename... Ops>
-class operands_and_partials_impl<ReturnType, require_arithmetic_t<ReturnType>, Ops...> {
+class operands_and_partials_impl<ReturnType, require_arithmetic_t<ReturnType>,
+                                 Ops...> {
  public:
   template <typename... Types>
   explicit operands_and_partials_impl(Types&&... /* ops */) noexcept {}
@@ -89,7 +90,6 @@ class operands_and_partials_impl<ReturnType, require_arithmetic_t<ReturnType>, O
    */
   inline double build(double value) const noexcept { return value; }
   std::tuple<internal::ops_partials_edge<double, std::decay_t<Ops>>...> edges_;
-
 };
 
 /**
@@ -103,7 +103,8 @@ class operands_and_partials_impl<ReturnType, require_arithmetic_t<ReturnType>, O
  */
 template <typename Op, typename ViewElt>
 struct ops_partials_edge<Op, ViewElt, require_st_arithmetic<ViewElt>> {
-  using inner_op = std::conditional_t<is_eigen<value_type_t<Op>>::value, value_type_t<Op>, Op>;
+  using inner_op = std::conditional_t<is_eigen<value_type_t<Op>>::value,
+                                      value_type_t<Op>, Op>;
   using partials_t = empty_broadcast_array<ViewElt, inner_op>;
   /**
    * The `partials_` are always called in `if` statements that will be
@@ -122,34 +123,30 @@ struct ops_partials_edge<Op, ViewElt, require_st_arithmetic<ViewElt>> {
    * Get the operand for the edge. For doubles this is a compile time
    * expression returning zero.
    */
-  static constexpr auto operand() noexcept {
-    return static_cast<double>(0.0);
-  }
+  static constexpr auto operand() noexcept { return static_cast<double>(0.0); }
 
   /**
    * Get the partial for the edge. For doubles this is a compile time
    * expression returning zero.
    */
-  static constexpr auto partial() noexcept {
-    return static_cast<double>(0.0);
-  }
+  static constexpr auto partial() noexcept { return static_cast<double>(0.0); }
   /**
    * Return the tangent for the edge. For doubles this is a comple time
    * expression returning zero.
    */
   static constexpr double dx() { return static_cast<double>(0); }
   /**
-   * Return the size of the operand for the edge. For doubles this is a comple time
-   * expression returning zero.
+   * Return the size of the operand for the edge. For doubles this is a comple
+   * time expression returning zero.
    */
-  static constexpr int size() { return 0; }                        // reverse mode
+  static constexpr int size() { return 0; }  // reverse mode
 };
 
 template <typename Op, typename ViewElt>
-constexpr double ops_partials_edge<Op, ViewElt, require_st_arithmetic<ViewElt>>::operands_;
+constexpr double
+    ops_partials_edge<Op, ViewElt, require_st_arithmetic<ViewElt>>::operands_;
 
 }  // namespace internal
-
 
 /**
  * Construct an `operands_and_partials_impl`.
@@ -159,8 +156,10 @@ constexpr double ops_partials_edge<Op, ViewElt, require_st_arithmetic<ViewElt>>:
  */
 template <typename... Ops>
 inline auto operands_and_partials(Ops&&... ops) {
-   using return_type = return_type_t<Ops...>;
-   return internal::operands_and_partials_impl<return_type, void, std::decay_t<Ops>...>(std::forward<Ops>(ops)...);
+  using return_type = return_type_t<Ops...>;
+  return internal::operands_and_partials_impl<return_type, void,
+                                              std::decay_t<Ops>...>(
+      std::forward<Ops>(ops)...);
 }
 
 /**
@@ -169,8 +168,9 @@ inline auto operands_and_partials(Ops&&... ops) {
  * @tparam Types The types inside of the operands and partials.
  * @param x An `operands_and_partials_impl` type whose edge will be accessed.
  */
-template<std::size_t I, class... Types >
-inline constexpr auto& edge(internal::operands_and_partials_impl<Types...>& x) noexcept {
+template <std::size_t I, class... Types>
+inline constexpr auto& edge(
+    internal::operands_and_partials_impl<Types...>& x) noexcept {
   return std::get<I>(x.edges_);
 };
 
