@@ -65,14 +65,8 @@ class ops_partials_edge;
  * like int or double. This is controlled with the
  * T_return_type type parameter.
  *
- * @tparam Op1 type of the first operand
- * @tparam Op2 type of the second operand
- * @tparam Op3 type of the third operand
- * @tparam Op4 type of the fourth operand
- * @tparam Op5 type of the fifth operand
- * @tparam T_return_type return type of the expression. This defaults
- *   to calling a template metaprogram that calculates the scalar
- *   promotion of Op1..Op4
+ * @tparam Ops type of the operands
+ * @tparam ReturnType The type returned from calling the `build()` method.
  */
 template <typename ReturnType, typename... Ops>
 class operands_and_partials_impl<ReturnType, require_arithmetic_t<ReturnType>, Ops...> {
@@ -98,23 +92,56 @@ class operands_and_partials_impl<ReturnType, require_arithmetic_t<ReturnType>, O
 
 };
 
+/**
+ * Class representing an edge with an inner type of double. This class
+ *  should never be used by the program and only exists so that
+ *  developer can write functions using `operands_and_partials` that works for
+ *  double, vars, and fvar types.
+ * @tparam One of `double`, `var`, `fvar`.
+ * @tparam ViewElt The type of the input operand. It's scalar type
+ *  for this specialization must be a `Arithmetic`
+ */
 template <typename Op, typename ViewElt>
 struct ops_partials_edge<Op, ViewElt, require_st_arithmetic<ViewElt>> {
   using inner_op = std::conditional_t<is_eigen<value_type_t<Op>>::value, value_type_t<Op>, Op>;
   using partials_t = empty_broadcast_array<ViewElt, inner_op>;
+  /**
+   * The `partials_` are always called in `if` statements that will be
+   *  removed by the dead code elimination pass of the compiler. So if we ever
+   *  move up to C++17 these can be made into `constexpr if` and
+   *  this can be deleted.
+   */
   partials_t partials_;
   empty_broadcast_array<partials_t, inner_op> partials_vec_;
+  static constexpr double operands_{0};
   ops_partials_edge() {}
   template <typename T>
   explicit ops_partials_edge(T&& /* op */) noexcept {}
+
+  /**
+   * Get the operand for the edge. For doubles this is a compile time
+   * expression returning zero.
+   */
   static constexpr auto operand() noexcept {
     return static_cast<double>(0.0);
   }
+
+  /**
+   * Get the partial for the edge. For doubles this is a compile time
+   * expression returning zero.
+   */
   static constexpr auto partial() noexcept {
     return static_cast<double>(0.0);
   }
-  static constexpr double operands_{0};
-  static constexpr double dx() { return static_cast<double>(0); }                      // used for fvars
+  /**
+   * Return the tangent for the edge. For doubles this is a comple time
+   * expression returning zero.
+   */
+  static constexpr double dx() { return static_cast<double>(0); }
+  /**
+   * Return the size of the operand for the edge. For doubles this is a comple time
+   * expression returning zero.
+   */
   static constexpr int size() { return 0; }                        // reverse mode
 };
 
@@ -123,14 +150,27 @@ constexpr double ops_partials_edge<Op, ViewElt, require_st_arithmetic<ViewElt>>:
 
 }  // namespace internal
 
+
+/**
+ * Construct an `operands_and_partials_impl`.
+ * @tparam Ops The type of the operands used in the edges of the
+ * `operands_and_partials_impl`.
+ * @param ops The operands to be placed into the edges.
+ */
 template <typename... Ops>
 inline auto operands_and_partials(Ops&&... ops) {
    using return_type = return_type_t<Ops...>;
    return internal::operands_and_partials_impl<return_type, void, std::decay_t<Ops>...>(std::forward<Ops>(ops)...);
 }
 
+/**
+ * Access the edge of an `operands_and_partials_impl`
+ * @tparam I The index of the edge to access
+ * @tparam Types The types inside of the operands and partials.
+ * @param x An `operands_and_partials_impl` type whose edge will be accessed.
+ */
 template<std::size_t I, class... Types >
-inline auto& edge(internal::operands_and_partials_impl<Types...>& x) noexcept {
+inline constexpr auto& edge(internal::operands_and_partials_impl<Types...>& x) noexcept {
   return std::get<I>(x.edges_);
 };
 

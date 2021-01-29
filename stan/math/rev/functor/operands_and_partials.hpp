@@ -91,11 +91,8 @@ inline void accumulate_adjoints(StdVec1&& x, StdVec2&& y, const var& z) {
  * that the entry for the first index is what gets assigned. The most common
  * use-case should be where the rhs is some container of length 1.
  *
- * @tparam Op1 type of the first operand
- * @tparam Op2 type of the second operand
- * @tparam Op3 type of the third operand
- * @tparam Op4 type of the fourth operand
- * @tparam Op5 type of the fifth operand
+ * @tparam Ops Type of the operands placed into the edges
+ * @tparam ReturnType The type returned from the `build()` method.
  */
  template <typename ReturnType, typename... Ops>
  class operands_and_partials_impl<ReturnType, require_var_t<ReturnType>, Ops...> {

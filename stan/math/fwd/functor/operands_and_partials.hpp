@@ -55,12 +55,8 @@ inline auto sum_dx(T1& a, T2& b, Types&... args) {
  * that the entry for the first index is what gets assigned. The most common
  * use-case should be where the rhs is some container of length 1.
  *
- * @tparam Op1 type of the first operand
- * @tparam Op2 type of the second operand
- * @tparam Op3 type of the third operand
- * @tparam Op4 type of the fourth operand
- * @tparam Op5 type of the fifth operand
- * @tparam T_return_type return type of the expression. This defaults
+ * @tparam Ops The types included in the edges.
+ * @tparam ReturnType return type of the expression. This defaults
  *   to a template metaprogram that calculates the scalar promotion of
  *   Op1 -- Op5
  */
@@ -172,7 +168,7 @@ class ops_partials_edge<Dx, std::vector<Eigen::Matrix<fvar<Dx>, R, C>>> {
       partials_vec_[i] = partial_t::Zero(ops[i].rows(), ops[i].cols());
     }
   }
-  Op operands_;
+  const Op& operands_;
 
   inline Dx dx() {
     Dx derivative(0);
@@ -198,7 +194,7 @@ class ops_partials_edge<Dx, std::vector<std::vector<fvar<Dx>>>> {
     }
   }
 
-  Op operands_;
+  const Op& operands_;
   inline Dx dx() {
     Dx derivative(0);
     for (size_t i = 0; i < this->operands_.size(); ++i) {
