@@ -301,7 +301,7 @@ TEST(MathMatrixCL, matrix_cl_matrix_copy_arithmetic) {
   // Use this for successful copy
   stan::math::matrix_cl<double> d22_cl(1, 1);
   EXPECT_NO_THROW(d22_cl = stan::math::to_matrix_cl(test_val));
-  EXPECT_NO_THROW(test_val = stan::math::from_matrix_cl_error_code(d22_cl));
+  EXPECT_NO_THROW(test_val = stan::math::from_matrix_cl<double>(d22_cl));
 }
 
 TEST(MathMatrixCL, matrix_cl_pack_unpack_copy_lower) {

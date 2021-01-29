@@ -160,12 +160,12 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
    */
   inline void add_write_event(cl::Event& e) const {
     e.wait();
-    Eigen::VectorXi res = from_matrix_cl<Eigen::Dynamic, 1>(buffer_);
+    Eigen::VectorXi res = from_matrix_cl<Eigen::VectorXi>(buffer_);
     if (res.coeff(0)) {
-      Eigen::VectorXd value = from_matrix_cl<Eigen::Dynamic, 1>(value_);
+      double value = from_matrix_cl<double>(value_);
       std::stringstream s;
       s << function_ << ": " << err_variable_ << "[" << res[1] << ", " << res[2]
-        << "] = " << value[0] << ", but it must be " << must_be_ << "!";
+        << "] = " << value << ", but it must be " << must_be_ << "!";
       throw std::domain_error(s.str());
     }
   }
