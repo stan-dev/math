@@ -33,7 +33,9 @@ namespace math {
  * @throw std::domain_error if N is negative or probability parameter is invalid
  * @throw std::invalid_argument if vector sizes do not match
  */
-template <bool propto, typename T_n, typename T_N, typename T_prob>
+template <bool propto, typename T_n, typename T_N, typename T_prob,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_n, T_N, T_prob>* = nullptr>
 return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
                                           const T_prob& alpha) {
   using T_partials_return = partials_return_t<T_n, T_N, T_prob>;

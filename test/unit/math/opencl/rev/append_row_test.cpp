@@ -15,7 +15,7 @@ TEST(OpenCLMatrix_append_row, prim_rev_values_small) {
   Eigen::MatrixXd a(N1, M);
   a << 1, 2, 3, 4, 5, 6;
   Eigen::MatrixXd b(N2, M);
-  b << 12, 11, 10, 9, 8, 7,6,5,4;
+  b << 12, 11, 10, 9, 8, 7, 6, 5, 4;
   stan::math::test::compare_cpu_opencl_prim_rev(append_row_functor, a, b);
 }
 
