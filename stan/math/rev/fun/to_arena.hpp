@@ -25,7 +25,7 @@ namespace math {
 template <typename T, require_not_same_t<T, arena_t<T>>* = nullptr,
           require_not_container_t<T>* = nullptr,
           require_not_matrix_cl_t<T>* = nullptr>
-inline arena_t<T> to_arena(T&& a) {
+inline static constexpr arena_t<T> to_arena(T&& a) {
   return std::forward<T>(a);
 }
 

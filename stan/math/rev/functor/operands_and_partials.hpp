@@ -33,13 +33,13 @@ class ops_partials_edge<double, var> {
   explicit ops_partials_edge(const var& op) noexcept
       : operands_(op) {}
 
-  inline auto& partials() {
+  inline auto& partial() {
     return partial_;
   }
+  inline auto& operand() noexcept {
+    return operands_;
+  }
 
- private:
-  template <typename, typename, typename...>
-  friend class stan::math::internal::operands_and_partials_impl;
   var operands_;
   static constexpr int size() { return 1; }
 };
@@ -120,10 +120,10 @@ inline void accumulate_adjoints(StdVec1&& x, StdVec2&& y, const var& z) {
    */
   inline var build(double value) {
     auto operands_tuple = stan::math::apply([](auto&&... edges) {
-      return std::make_tuple(to_arena(edges.operands_)...);
+      return std::make_tuple(edges.operand()...);
     }, edges_);
     auto partials_tuple = stan::math::apply([](auto&&... edges) {
-      return std::make_tuple(to_arena(edges.partials())...);
+      return std::make_tuple(edges.partial()...);
     }, edges_);
     var ret(value);
     for_each([ret](auto& operand, auto& partial) mutable {
@@ -148,15 +148,14 @@ class ops_partials_edge<double, std::vector<var>> {
       : partials_(Eigen::VectorXd::Zero(op.size())),
         partials_vec_(partials_),
         operands_(to_arena(op)) {}
-
-  inline auto& partials() noexcept {
+  inline auto& partial() noexcept {
     return partials_;
   }
- private:
-   template <typename, typename, typename...>
-   friend class stan::math::internal::operands_and_partials_impl;
-  Op operands_;
+  inline auto& operand() noexcept {
+    return operands_;
+  }
   inline int size() const noexcept { return this->operands_.size(); }
+  Op operands_;
 };
 
 template <typename Op>
@@ -170,12 +169,12 @@ class ops_partials_edge<double, Op, require_eigen_st<is_var, Op>> {
         partials_vec_(partials_),
         operands_(to_arena(ops)) {}
 
-  inline auto& partials() noexcept {
+  inline auto& partial() noexcept {
     return partials_;
   }
- private:
-   template <typename, typename, typename...>
-   friend class stan::math::internal::operands_and_partials_impl;
+  inline auto& operand() noexcept {
+    return operands_;
+  }
   arena_t<Op> operands_;
   inline auto size() const noexcept { return this->operands_.size(); }
 };
@@ -191,13 +190,13 @@ class ops_partials_edge<double, var_value<Op>, require_eigen_t<Op>> {
             plain_type_t<partials_t>::Zero(ops.vi_->rows(), ops.vi_->cols())),
         partials_vec_(partials_),
         operands_(ops) {}
-  inline auto& partials() noexcept {
+  inline auto& partial() noexcept {
     return partials_;
   }
+  inline auto& operand() noexcept {
+    return operands_;
+  }
 
- private:
-   template <typename, typename, typename...>
-   friend class stan::math::internal::operands_and_partials_impl;
   const var_value<Op>& operands_;
   static constexpr int size() { return 0; }
 };
@@ -217,19 +216,19 @@ class ops_partials_edge<double, std::vector<Eigen::Matrix<var, R, C>>> {
     }
   }
 
-  inline auto& partials() noexcept {
+  inline auto& partial() noexcept {
     return partials_vec_;
   }
- private:
-   template <typename, typename, typename...>
-   friend class stan::math::internal::operands_and_partials_impl;
-  Op operands_;
+  inline auto& operand() noexcept {
+    return operands_;
+  }
   inline int size() const noexcept {
     if (unlikely(this->operands_.size() == 0)) {
       return 0;
     }
     return this->operands_.size() * this->operands_[0].size();
   }
+  Op operands_;
 };
 
 template <>
@@ -244,20 +243,21 @@ class ops_partials_edge<double, std::vector<std::vector<var>>> {
       partials_vec_[i] = to_arena(Eigen::Matrix<double, -1, 1>(stan::math::size(ops[i])));
     }
   }
-  inline auto& partials() noexcept {
+  inline auto& partial() noexcept {
     return partials_vec_;
   }
 
- private:
-   template <typename, typename, typename...>
-   friend class stan::math::internal::operands_and_partials_impl;
-  arena_t<Op> operands_;
+  inline auto& operand() noexcept {
+    return operands_;
+  }
   inline int size() const noexcept {
     if (unlikely(this->operands_.size() == 0)) {
       return 0;
     }
     return this->operands_.size() * this->operands_[0].size();
   }
+
+  arena_t<Op> operands_;
 };
 
 template <typename Op>
@@ -273,14 +273,14 @@ class ops_partials_edge<double, std::vector<var_value<Op>>,
           = plain_type_t<Op>::Zero(ops[i].vi_->rows(), ops[i].vi_->cols());
     }
   }
-  inline auto& partials() noexcept {
+  inline auto& partial() noexcept {
     return partials_vec_;
   }
- private:
-   template <typename, typename, typename...>
-   friend class stan::math::internal::operands_and_partials_impl;
-  arena_t<std::vector<var_value<Op>>> operands_;
+  inline auto& operand() noexcept {
+    return operands_;
+  }
   static constexpr int size() noexcept { return 0; }
+  arena_t<std::vector<var_value<Op>>> operands_;
 };
 }  // namespace internal
 }  // namespace math
