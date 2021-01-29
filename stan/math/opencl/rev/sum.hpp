@@ -20,9 +20,8 @@ namespace math {
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
 inline var sum(const var_value<T>& x) {
-  return make_callback_var(sum(value_of(x)), [x](vari& res) mutable {
-    x.adj() = x.adj() + res.adj();
-  });
+  return make_callback_var(sum(value_of(x)),
+                           [x](vari& res) mutable { x.adj() += res.adj(); });
 }
 
 }  // namespace math
