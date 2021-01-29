@@ -14,12 +14,30 @@ namespace stan {
 namespace math {
 namespace internal {
 
+/**
+ * End of recursion for summing `.dx()` for `fvar<T>` ops and partials.
+ */
 static constexpr auto sum_dx() { return static_cast<double>(0.0); }
 
+/**
+ * End of recursion for summing `.dx()` for `fvar<T>` ops and partials.
+ * @tparam T1 a type with a `.dx()` method.
+ * @param a an edge from `operands_and_partials_impl`
+ */
 template <typename T1>
 inline auto sum_dx(T1& a) {
   return a.dx();
 }
+
+/**
+ * Accumulate the `.dx()` from each of the edges in `ops_and_partials_impl`.
+ * @tparam T1 a type with a `.dx()` method.
+ * @tparam T2 a type with a `.dx()` method.
+ * @tparam Types a type with a `.dx()` method.
+ * @param a an edge from `operands_and_partials_impl`
+ * @param b an edge from `operands_and_partials_impl`
+ * @param args edges from `operands_and_partials_impl`
+ */
 template <typename T1, typename T2, typename... Types>
 inline auto sum_dx(T1& a, T2& b, Types&... args) {
   return a.dx() + b.dx() + sum_dx(args...);
@@ -55,7 +73,7 @@ inline auto sum_dx(T1& a, T2& b, Types&... args) {
  * @tparam Ops The types included in the edges.
  * @tparam ReturnType return type of the expression. This defaults
  *   to a template metaprogram that calculates the scalar promotion of
- *   Op1 -- Op5
+ *   Ops
  */
 template <typename ReturnType, typename... Ops>
 class operands_and_partials_impl<ReturnType, require_fvar_t<ReturnType>,

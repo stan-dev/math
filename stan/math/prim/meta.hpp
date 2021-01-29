@@ -173,6 +173,7 @@
 
 #include <stan/math/prim/meta/ad_promotable.hpp>
 #include <stan/math/prim/meta/append_return_type.hpp>
+#include <stan/math/prim/meta/arena_type.hpp>
 #include <stan/math/prim/meta/base_type.hpp>
 #include <stan/math/prim/meta/child_type.hpp>
 #include <stan/math/prim/meta/compiler_attributes.hpp>
