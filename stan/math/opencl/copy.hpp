@@ -8,6 +8,7 @@
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/value_type.hpp>
+#include <stan/math/opencl/scalar_type.hpp>
 #include <stan/math/opencl/kernels/copy.hpp>
 #include <stan/math/opencl/kernels/pack.hpp>
 #include <stan/math/opencl/kernels/unpack.hpp>
@@ -153,6 +154,26 @@ inline T_dst from_matrix_cl(const matrix_cl<T>& src) {
     src.clear_write_events();
   } catch (const cl::Error& e) {
     check_opencl_error("from_matrix_cl<scalar>", e);
+  }
+  return dst;
+}
+
+template <typename T_dst, typename T, require_std_vector_t<T_dst>* = nullptr,
+          require_all_st_same<T_dst, T>* = nullptr>
+inline T_dst from_matrix_cl(const matrix_cl<T>& src) {
+  check_size_match("from_matrix_cl<std::vector>", "src.cols()", src.cols(),
+                   "dst.cols()", 1);
+  T_dst dst(src.rows());
+  try {
+    cl::Event copy_event;
+    const cl::CommandQueue queue = opencl_context.queue();
+    queue.enqueueReadBuffer(src.buffer(), opencl_context.in_order(), 0,
+                            sizeof(T) * src.rows(), dst.data(),
+                            &src.write_events(), &copy_event);
+    copy_event.wait();
+    src.clear_write_events();
+  } catch (const cl::Error& e) {
+    check_opencl_error("from_matrix_cl<std::vector>", e);
   }
   return dst;
 }

@@ -124,6 +124,18 @@ inline T_dst from_matrix_cl(const var_value<T>& a) {
       [a](auto& res_vari) mutable { a.adj() += to_matrix_cl(res_vari.adj()); });
 }
 
+template <typename T_dst, typename T,
+          require_eigen_vt<is_var, T_dst>* = nullptr,
+          require_all_kernel_expressions_t<T>* = nullptr>
+inline T_dst from_matrix_cl(const var_value<T>& a) {
+  arena_t<T_dst> res = from_matrix_cl<
+      Eigen::Matrix<double, T_dst::RowsAtCompileTime, T_dst::ColsAtCompileTime>>(
+      a.val());
+  reverse_pass_callback(
+        [a, res]() mutable { a.adj() += to_matrix_cl(res.adj()); });
+  return res;
+}
+
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
 auto from_matrix_cl(const var_value<T>& src) {
   return from_matrix_cl<var_value<Eigen::MatrixXd>>(src);

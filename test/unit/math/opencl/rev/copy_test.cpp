@@ -74,7 +74,7 @@ TEST(MathMatrixGPU, std_vector_matrix_var_to_matrix_cl) {
   }
 }
 
-TEST(VariCL, from_matrix_cl) {
+TEST(VariCL, var_matrix_from_matrix_cl) {
   using stan::math::var_value;
   Eigen::MatrixXd vals(2, 3);
   vals << 1, 2, 3, 4, 5, 6;
@@ -84,6 +84,21 @@ TEST(VariCL, from_matrix_cl) {
   EXPECT_MATRIX_EQ(a.val(), vals);
   a.adj() = Eigen::MatrixXd::Constant(2, 3, 1);
   a.vi_->chain();
+  EXPECT_MATRIX_EQ(from_matrix_cl(a_cl.adj()),
+                   Eigen::MatrixXd::Constant(2, 3, 1));
+}
+
+TEST(VariCL, eigen_var_from_matrix_cl) {
+  using stan::math::var_value;
+  Eigen::MatrixXd vals(2, 3);
+  vals << 1, 2, 3, 4, 5, 6;
+  stan::math::matrix_cl<double> vals_cl(vals);
+  var_value<stan::math::matrix_cl<double>> a_cl(vals_cl);
+  stan::math::matrix_v a
+      = stan::math::from_matrix_cl<stan::math::matrix_v>(a_cl);
+  EXPECT_MATRIX_EQ(a.val(), vals);
+  a.adj() = Eigen::MatrixXd::Constant(2, 3, 1);
+  stan::math::grad();
   EXPECT_MATRIX_EQ(from_matrix_cl(a_cl.adj()),
                    Eigen::MatrixXd::Constant(2, 3, 1));
 }
