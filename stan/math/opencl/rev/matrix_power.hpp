@@ -47,7 +47,7 @@ inline var_value<matrix_cl<double>> matrix_power(const var_value<T>& M,
     arena_powers[i] = arena_powers[1] * arena_powers[i - 1];
   }
 
- return make_callback_var(
+  return make_callback_var(
       arena_powers.back(),
       [M, n, arena_powers](vari_value<matrix_cl<double>> res) mutable {
         const auto& M_val = arena_powers[1];

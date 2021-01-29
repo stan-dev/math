@@ -4,12 +4,12 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
 
-auto matrix_power_functor = [](const auto& a, int b) { return stan::math::matrix_power(a, b); };
+auto matrix_power_functor
+    = [](const auto& a, int b) { return stan::math::matrix_power(a, b); };
 
 TEST(OpenCLMatrixPower, prim_rev_values_small) {
-  Eigen::MatrixXd a(3,3);
-  a << -2.2, -0.8, 0.5, 1, 1.5, 3, 3.4,
-      4, 0.4;
+  Eigen::MatrixXd a(3, 3);
+  a << -2.2, -0.8, 0.5, 1, 1.5, 3, 3.4, 4, 0.4;
   stan::math::test::compare_cpu_opencl_prim_rev(matrix_power_functor, a, 7);
 }
 

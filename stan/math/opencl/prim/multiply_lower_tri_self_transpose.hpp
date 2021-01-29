@@ -20,8 +20,8 @@ template <typename T_x,
           require_all_kernel_expressions_and_none_scalar_t<T_x>* = nullptr>
 inline auto multiply_lower_tri_self_transpose(T_x&& x) {
   matrix_cl<double> x_eval = std::forward<T_x>(x);
-  if(x_eval.size()==0){
-    return matrix_cl<double>(0,0);
+  if (x_eval.size() == 0) {
+    return matrix_cl<double>(0, 0);
   }
   matrix_cl<double> x_lower(x_eval.buffer(), x_eval.rows(), x_eval.cols(),
                             matrix_cl_view::Lower);

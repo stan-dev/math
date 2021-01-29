@@ -366,9 +366,7 @@ class operation_cl : public operation_cl_base {
    * expression.
    * @return number of elements
    */
-  inline int size() const {
-    return derived().rows() * derived().cols();
-  }
+  inline int size() const { return derived().rows() * derived().cols(); }
 
   /**
    * Number of rows threads need to be launched for. For most expressions this
