@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_OPENCL_REV_MATRIX_POWER_HPP
 #define STAN_MATH_OPENCL_REV_MATRIX_POWER_HPP
 #ifdef STAN_OPENCL
+#include <stan/math/opencl/rev/arena_type.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/prim/diag_matrix.hpp>
 #include <stan/math/rev/core.hpp>
@@ -11,16 +12,16 @@ namespace stan {
 namespace math {
 
 /**
- * Returns a Matrix with values added along the main diagonal
+ * Returns the nth power of the specific matrix. M^n = M * M * ... * M.
  *
- * @tparam T_m type of input kernel generator expression for the input matrix
- * @tparam T_a type of input kernel generator expression to add along the
- * diagonal
+ * @tparam T type of the matrix
  *
- * @param mat input kernel generator expression
- * @param to_add scalar value or input kernel generator expression to add along
- * the diagonal
- * @return a kernel generator expressio with to_add added along main diagonal
+ * @param[in] M a square matrix
+ * @param[in] n exponent
+ * @return nth power of M
+ * @throw std::domain_error if the matrix contains NaNs or infinities.
+ * @throw std::invalid_argument if the exponent is negative or the matrix is not
+ * square.
  */
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>

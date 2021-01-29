@@ -14,7 +14,7 @@ namespace math {
  * Returns the result of multiplying the lower triangular
  * portion of the input matrix by its own transpose.
  *
- * @param L Matrix to multiply.
+ * @param A Matrix to multiply.
  * @return The lower triangular values in L times their own
  * transpose.
  */
