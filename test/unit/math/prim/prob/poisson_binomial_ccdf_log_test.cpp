@@ -3,6 +3,15 @@
 #include <limits>
 #include <vector>
 
+TEST(ProbDistributionsPoissonBinomial, lccdf_length_0_length_1) {
+  Eigen::VectorXd v0(0);
+  Eigen::VectorXd v1(1);
+  v1 << 0.4;
+  
+  EXPECT_FLOAT_EQ(stan::math::poisson_binomial_lccdf(0, v0), -stan::math::INFTY);
+  EXPECT_FLOAT_EQ(stan::math::poisson_binomial_lccdf(1, v1), -stan::math::INFTY);
+}
+
 TEST(ProbDistributionsPoissonBinomial, lccdf_works_on_scalar_arguments) {
   using stan::math::poisson_binomial_lccdf;
   using vec = Eigen::Matrix<double, Eigen::Dynamic, 1>;
@@ -195,3 +204,4 @@ TEST(ProbDistributionsPoissonBinomial, log_ccdf_matches_lcdf_vectorial) {
       (stan::math::poisson_binomial_ccdf_log<int, std::vector<vec>>(y,
                                                                     thetas)));
 }
+

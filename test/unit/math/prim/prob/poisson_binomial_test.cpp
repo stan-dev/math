@@ -5,6 +5,15 @@
 #include <limits>
 #include <vector>
 
+TEST(ProbDistributionsPoissonBinomial, lpmf_length_0_length_1) {
+  Eigen::VectorXd v0(0);
+  Eigen::VectorXd v1(1);
+  v1 << 0.4;
+  
+  EXPECT_FLOAT_EQ(stan::math::poisson_binomial_lpmf(0, v0), 0.0);
+  EXPECT_FLOAT_EQ(stan::math::poisson_binomial_lpmf(1, v1), std::log(0.4));
+}
+
 TEST(ProbDistributionsPoissonBinomial, lpmf_works_on_scalar_arguments) {
   using stan::math::poisson_binomial_lpmf;
   using vec = Eigen::Matrix<double, Eigen::Dynamic, 1>;
