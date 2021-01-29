@@ -57,9 +57,17 @@ return_type_t<T_theta> poisson_binomial_lccdf(const T_y& y,
 
   return_type_t<T_theta> lccdf = 0.0;
   for (size_t i = 0; i < max_sz; ++i) {
-    auto x = log1m_exp(
-        log_sum_exp(poisson_binomial_log_probs(y_vec[i], theta_vec[i])));
-    lccdf += x;
+    if(stan::math::size(theta_vec[i]) == 1) {
+      if(y_vec[i] == 0) {
+	lccdf += log(theta_vec[i][0]);
+      } else {
+	lccdf -= stan::math::INFTY;
+      }
+    } else {
+      auto x = log1m_exp(
+			 log_sum_exp(poisson_binomial_log_probs(y_vec[i], theta_vec[i])));
+      lccdf += x;
+    }
   }
   return lccdf;
 }
