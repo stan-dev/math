@@ -5,9 +5,9 @@
 #include <vector>
 
 TEST(AgradPartialsVari, OperandsAndPartialsScal) {
+  using stan::math::edge;
   using stan::math::operands_and_partials;
   using stan::math::var;
-  using stan::math::edge;
 
   double d1;
   auto o3 = operands_and_partials(d1);
@@ -29,11 +29,11 @@ TEST(AgradPartialsVari, OperandsAndPartialsScal) {
 }
 
 TEST(AgradPartialsVari, OperandsAndPartialsVec) {
+  using stan::math::edge;
   using stan::math::operands_and_partials;
   using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_v;
-  using stan::math::edge;
 
   vector_d d_vec(4);
   auto o3 = operands_and_partials(d_vec);
@@ -69,9 +69,9 @@ TEST(AgradPartialsVari, OperandsAndPartialsVec) {
 }
 
 TEST(AgradPartialsVari, OperandsAndPartialsStdVec) {
+  using stan::math::edge;
   using stan::math::operands_and_partials;
   using stan::math::var;
-  using stan::math::edge;
 
   std::vector<double> d_vec(4);
   auto o3 = operands_and_partials(d_vec);
@@ -104,11 +104,11 @@ TEST(AgradPartialsVari, OperandsAndPartialsStdVec) {
 }
 
 TEST(AgradPartialsVari, OperandsAndPartialsMat) {
+  using stan::math::edge;
   using stan::math::matrix_d;
   using stan::math::matrix_v;
   using stan::math::operands_and_partials;
   using stan::math::var;
-  using stan::math::edge;
 
   matrix_d d_mat(2, 2);
   d_mat << 10.0, 20.0, 30.0, 40.0;
@@ -146,11 +146,11 @@ TEST(AgradPartialsVari, OperandsAndPartialsMat) {
 }
 
 TEST(AgradPartialsVari, OperandsAndPartialsMatMultivar) {
+  using stan::math::edge;
   using stan::math::matrix_d;
   using stan::math::matrix_v;
   using stan::math::operands_and_partials;
   using stan::math::var;
-  using stan::math::edge;
 
   matrix_d d_mat(2, 2);
   d_mat << 10.0, 20.0, 30.0, 40.0;
@@ -209,11 +209,11 @@ TEST(AgradPartialsVari, OperandsAndPartialsMatMultivar) {
 }
 
 TEST(AgradPartialsVari, OperandsAndPartialsMultivar) {
+  using stan::math::edge;
   using stan::math::operands_and_partials;
   using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_v;
-  using stan::math::edge;
 
   std::vector<vector_d> d_vec_vec(2);
   vector_d d_vec1(2);
@@ -261,12 +261,12 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultivar) {
 // XXX Test mixed - operands_and_partials<std::vector<matrix_v>,
 //                                        vector_d, vector_v>
 TEST(AgradPartialsVari, OperandsAndPartialsMultivarMixed) {
+  using stan::math::edge;
   using stan::math::matrix_v;
   using stan::math::operands_and_partials;
   using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_v;
-  using stan::math::edge;
 
   std::vector<vector_d> d_vec_vec(2);
   vector_d d_vec1(2);
@@ -333,11 +333,11 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultivarMixed) {
 }
 
 TEST(AgradPartialsVari, OperandsAndPartialsVarValueMat) {
+  using stan::math::edge;
   using stan::math::matrix_d;
   using stan::math::matrix_v;
   using stan::math::operands_and_partials;
   using stan::math::var;
-  using stan::math::edge;
 
   Eigen::MatrixXd a(2, 2);
   a << 10.0, 20.0, 30.0, 40.0;
@@ -352,11 +352,11 @@ TEST(AgradPartialsVari, OperandsAndPartialsVarValueMat) {
 }
 
 TEST(AgradPartialsVari, OperandsAndPartialsStdVectorVarValueMat) {
+  using stan::math::edge;
   using stan::math::matrix_d;
   using stan::math::matrix_v;
   using stan::math::operands_and_partials;
   using stan::math::var;
-  using stan::math::edge;
 
   Eigen::MatrixXd a(2, 2);
   a << 10.0, 20.0, 30.0, 40.0;

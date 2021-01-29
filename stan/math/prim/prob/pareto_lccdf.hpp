@@ -56,8 +56,7 @@ return_type_t<T_y, T_scale, T_shape> pareto_lccdf(const T_y& y,
   check_positive_finite(function, "Scale parameter", y_min_val);
   check_positive_finite(function, "Shape parameter", alpha_val);
 
-  auto ops_partials = operands_and_partials(
-      y_ref, y_min_ref, alpha_ref);
+  auto ops_partials = operands_and_partials(y_ref, y_min_ref, alpha_ref);
 
   if (sum(promote_scalar<int>(y_val < y_min_val))) {
     return ops_partials.build(0.0);

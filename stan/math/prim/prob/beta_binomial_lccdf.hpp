@@ -69,8 +69,7 @@ return_type_t<T_size1, T_size2> beta_binomial_lccdf(const T_n& n, const T_N& N,
                         beta_ref);
 
   T_partials_return P(0.0);
-  auto ops_partials = operands_and_partials(alpha_ref,
-                                                              beta_ref);
+  auto ops_partials = operands_and_partials(alpha_ref, beta_ref);
 
   scalar_seq_view<T_n> n_vec(n);
   scalar_seq_view<T_N_ref> N_vec(N_ref);

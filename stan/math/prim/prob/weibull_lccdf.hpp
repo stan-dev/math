@@ -65,8 +65,7 @@ return_type_t<T_y, T_shape, T_scale> weibull_lccdf(const T_y& y,
     return 0.0;
   }
 
-  auto ops_partials = operands_and_partials(
-      y_ref, alpha_ref, sigma_ref);
+  auto ops_partials = operands_and_partials(y_ref, alpha_ref, sigma_ref);
 
   const auto& pow_n = to_ref_if<!is_constant_all<T_y, T_shape, T_scale>::value>(
       pow(y_val / sigma_val, alpha_val));

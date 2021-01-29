@@ -134,8 +134,7 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
   logp += sum(as_array_or_scalar(y_val_vec) * theta.array()
               - exp(theta.array()));
 
-  auto ops_partials = operands_and_partials(
-      x_ref, alpha_ref, beta_ref);
+  auto ops_partials = operands_and_partials(x_ref, alpha_ref, beta_ref);
   // Compute the necessary derivatives.
   if (!is_constant_all<T_beta>::value) {
     if (T_x_rows == 1) {

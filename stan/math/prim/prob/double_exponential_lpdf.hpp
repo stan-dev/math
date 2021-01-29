@@ -60,8 +60,7 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
   }
 
   T_partials_return logp(0.0);
-  auto ops_partials = operands_and_partials(
-      y_ref, mu_ref, sigma_ref);
+  auto ops_partials = operands_and_partials(y_ref, mu_ref, sigma_ref);
 
   const auto& y_col = as_column_vector_or_scalar(y_ref);
   const auto& mu_col = as_column_vector_or_scalar(mu_ref);

@@ -132,7 +132,8 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
                * inv_sigma;
   }
 
-  auto ops_partials = operands_and_partials(y_ref, x_ref, alpha_ref, beta_ref, sigma_ref);
+  auto ops_partials
+      = operands_and_partials(y_ref, x_ref, alpha_ref, beta_ref, sigma_ref);
 
   if (!(is_constant_all<T_y, T_x, T_beta, T_alpha, T_scale>::value)) {
     Matrix<T_partials_return, Dynamic, 1> mu_derivative = inv_sigma * y_scaled;

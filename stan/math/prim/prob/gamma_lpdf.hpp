@@ -86,8 +86,7 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
     return 0.0;
   }
 
-  auto ops_partials = operands_and_partials(
-      y_ref, alpha_ref, beta_ref);
+  auto ops_partials = operands_and_partials(y_ref, alpha_ref, beta_ref);
 
   scalar_seq_view<decltype(y_val)> y_vec(y_val);
   for (size_t n = 0; n < stan::math::size(y); n++) {

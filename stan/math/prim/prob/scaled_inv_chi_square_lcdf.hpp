@@ -47,8 +47,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lcdf(
   }
 
   T_partials_return P(0.0);
-  auto ops_partials = operands_and_partials(y_ref, nu_ref,
-                                                                 s_ref);
+  auto ops_partials = operands_and_partials(y_ref, nu_ref, s_ref);
 
   scalar_seq_view<T_y_ref> y_vec(y_ref);
   scalar_seq_view<T_nu_ref> nu_vec(nu_ref);

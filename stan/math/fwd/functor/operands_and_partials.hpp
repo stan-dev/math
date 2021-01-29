@@ -14,9 +14,7 @@ namespace stan {
 namespace math {
 namespace internal {
 
-static constexpr auto sum_dx() {
-  return static_cast<double>(0.0);
-}
+static constexpr auto sum_dx() { return static_cast<double>(0.0); }
 
 template <typename T1>
 inline auto sum_dx(T1& a) {
@@ -26,7 +24,6 @@ template <typename T1, typename T2, typename... Types>
 inline auto sum_dx(T1& a, T2& b, Types&... args) {
   return a.dx() + b.dx() + sum_dx(args...);
 }
-
 
 /** \ingroup type_trait
  * This class builds partial derivatives with respect to a set of
@@ -60,15 +57,17 @@ inline auto sum_dx(T1& a, T2& b, Types&... args) {
  *   to a template metaprogram that calculates the scalar promotion of
  *   Op1 -- Op5
  */
- template <typename ReturnType, typename... Ops>
- class operands_and_partials_impl<ReturnType, require_fvar_t<ReturnType>, Ops...> {
+template <typename ReturnType, typename... Ops>
+class operands_and_partials_impl<ReturnType, require_fvar_t<ReturnType>,
+                                 Ops...> {
  public:
   using Dx = partials_type_t<ReturnType>;
-  std::tuple<internal::ops_partials_edge<Dx, plain_type_t<std::decay_t<Ops>>>...> edges_;
+  std::tuple<
+      internal::ops_partials_edge<Dx, plain_type_t<std::decay_t<Ops>>>...>
+      edges_;
   using T_return_type = fvar<Dx>;
   template <typename... Types>
-  explicit operands_and_partials_impl(Types&&... ops) :
-   edges_(ops...) {}
+  explicit operands_and_partials_impl(Types&&... ops) : edges_(ops...) {}
 
   /** \ingroup type_trait
    * Build the node to be stored on the autodiff graph.
@@ -84,13 +83,10 @@ inline auto sum_dx(T1& a, T2& b, Types&... args) {
    * @return the value with its derivative
    */
   inline T_return_type build(Dx value) {
-    auto deriv = stan::math::apply([](auto&... args) {
-      return sum_dx(args...);
-    }, edges_);
+    auto deriv = stan::math::apply(
+        [](auto&... args) { return sum_dx(args...); }, edges_);
     return T_return_type(value, deriv);
   }
-
-
 };
 
 template <typename InnerType, typename T>
@@ -101,9 +97,9 @@ class ops_partials_edge<InnerType, T, require_fvar_t<T>> {
   Dx partial_{0};
   broadcast_array<Dx> partials_{partial_};
 
-  template <typename OpT, require_same_t<plain_type_t<OpT>, plain_type_t<Op>>* = nullptr>
-  explicit ops_partials_edge(const OpT& op)
-      : operand_(op) {}
+  template <typename OpT,
+            require_same_t<plain_type_t<OpT>, plain_type_t<Op>>* = nullptr>
+  explicit ops_partials_edge(const OpT& op) : operand_(op) {}
 
   const Op& operand_;
 
@@ -117,11 +113,10 @@ class ops_partials_edge<InnerType, T, require_std_vector_vt<is_fvar, T>> {
   using Op = std::decay_t<T>;
   using Dx = std::decay_t<InnerType>;
   using partials_t = Eigen::Matrix<Dx, -1, 1>;
-  partials_t partials_;                       // For univariate use-cases
+  partials_t partials_;  // For univariate use-cases
   broadcast_array<partials_t> partials_vec_{partials_};  // For multivariate
   explicit ops_partials_edge(const Op& ops)
-      : partials_(partials_t::Zero(ops.size()).eval()),
-        operands_(ops) {}
+      : partials_(partials_t::Zero(ops.size()).eval()), operands_(ops) {}
   const Op& operands_;
 
   inline Dx dx() {
@@ -138,11 +133,10 @@ class ops_partials_edge<Dx, ViewElt, require_eigen_vt<is_fvar, ViewElt>> {
  public:
   using partials_t = promote_scalar_t<Dx, ViewElt>;
   using Op = plain_type_t<ViewElt>;
-  partials_t partials_;                       // For univariate use-cases
+  partials_t partials_;  // For univariate use-cases
   broadcast_array<partials_t> partials_vec_{partials_};  // For multivariate
   explicit ops_partials_edge(const Op& ops)
-      : partials_(partials_t::Zero(ops.rows(), ops.cols())),
-        operands_(ops) {}
+      : partials_(partials_t::Zero(ops.rows(), ops.cols())), operands_(ops) {}
 
   const Op& operands_;
 

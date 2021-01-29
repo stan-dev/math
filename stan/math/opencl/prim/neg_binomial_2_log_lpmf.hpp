@@ -105,8 +105,7 @@ neg_binomial_2_log_lpmf(const T_n_cl& n, const T_log_location_cl& eta,
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
-  auto ops_partials = operands_and_partials(eta,
-                                                                        phi);
+  auto ops_partials = operands_and_partials(eta, phi);
 
   if (!is_constant<T_log_location_cl>::value) {
     edge<0>(ops_partials).partials_ = std::move(eta_deriv_cl);

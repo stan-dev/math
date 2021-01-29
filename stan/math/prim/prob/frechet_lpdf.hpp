@@ -65,8 +65,7 @@ return_type_t<T_y, T_shape, T_scale> frechet_lpdf(const T_y& y,
     return 0;
   }
 
-  auto ops_partials = operands_and_partials(
-      y_ref, alpha_ref, sigma_ref);
+  auto ops_partials = operands_and_partials(y_ref, alpha_ref, sigma_ref);
 
   const auto& log_y
       = to_ref_if<(include_summand<propto, T_y, T_shape>::value

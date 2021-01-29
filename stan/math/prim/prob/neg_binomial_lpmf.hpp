@@ -56,8 +56,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
   }
 
   T_partials_return logp(0.0);
-  auto ops_partials = operands_and_partials(alpha_ref,
-                                                              beta_ref);
+  auto ops_partials = operands_and_partials(alpha_ref, beta_ref);
 
   scalar_seq_view<T_n_ref> n_vec(n_ref);
   scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
@@ -109,8 +108,8 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
 
     if (!is_constant_all<T_shape>::value) {
       edge<0>(ops_partials).partials_[i] += digamma(alpha_dbl + n_vec[i])
-                                          - digamma_alpha[i]
-                                          - log1p_inv_beta[i];
+                                            - digamma_alpha[i]
+                                            - log1p_inv_beta[i];
     }
     if (!is_constant_all<T_inv_scale>::value) {
       edge<1>(ops_partials).partials_[i]

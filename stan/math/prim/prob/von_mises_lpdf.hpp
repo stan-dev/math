@@ -58,8 +58,7 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
     return 0;
   }
 
-  auto ops_partials = operands_and_partials(
-      y_ref, mu_ref, kappa_ref);
+  auto ops_partials = operands_and_partials(y_ref, mu_ref, kappa_ref);
 
   const auto& cos_mu_minus_y
       = to_ref_if<!is_constant_all<T_scale>::value>(cos(mu_val - y_val));

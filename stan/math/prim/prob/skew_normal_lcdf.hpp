@@ -64,7 +64,8 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lcdf(
     return 0;
   }
 
-  auto ops_partials = operands_and_partials(y_ref, mu_ref, sigma_ref, alpha_ref);
+  auto ops_partials
+      = operands_and_partials(y_ref, mu_ref, sigma_ref, alpha_ref);
 
   const auto& diff = to_ref((y_val - mu_val) / sigma_val);
   const auto& scaled_diff

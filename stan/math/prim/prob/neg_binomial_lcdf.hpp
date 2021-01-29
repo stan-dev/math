@@ -47,8 +47,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lcdf(
   }
 
   T_partials_return P(0.0);
-  auto ops_partials = operands_and_partials(alpha_ref,
-                                                              beta_ref);
+  auto ops_partials = operands_and_partials(alpha_ref, beta_ref);
 
   scalar_seq_view<T_n_ref> n_vec(n_ref);
   scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
@@ -117,8 +116,8 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lcdf(
     }
     if (!is_constant_all<T_inv_scale>::value) {
       edge<1>(ops_partials).partials_[i] += d_dbl * pow(1 - p_dbl, n_dbl)
-                                          * pow(p_dbl, alpha_dbl - 1)
-                                          / (beta_func * Pi);
+                                            * pow(p_dbl, alpha_dbl - 1)
+                                            / (beta_func * Pi);
     }
   }
 

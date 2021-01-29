@@ -111,8 +111,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
     return T_return(0);
   }
 
-  auto ops_partials = operands_and_partials(y_ref, mu_ref,
-                                                                 L_ref);
+  auto ops_partials = operands_and_partials(y_ref, mu_ref, L_ref);
 
   T_partials_return logp(0);
   if (include_summand<propto>::value) {

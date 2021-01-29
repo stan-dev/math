@@ -68,8 +68,7 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lcdf(const T_y& y,
   check_bounded(function, "Random variable", y_ref, 0.0, 1.0);
 
   T_partials_return cdf_log(0.0);
-  auto ops_partials = operands_and_partials(
-      y_ref, mu_ref, kappa_ref);
+  auto ops_partials = operands_and_partials(y_ref, mu_ref, kappa_ref);
 
   scalar_seq_view<T_y_ref> y_vec(y_ref);
   scalar_seq_view<T_mu_ref> mu_vec(mu_ref);
@@ -116,9 +115,9 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lcdf(const T_y& y,
         = is_constant_all<T_y, T_loc, T_prec>::value ? 0 : inv(Pn);
 
     if (!is_constant_all<T_y>::value) {
-      edge<0>(ops_partials).partials_[n] += pow(1 - y_dbl, kappa_mukappa_dbl - 1)
-                                          * pow(y_dbl, mukappa_dbl - 1) * inv_Pn
-                                          / betafunc_dbl;
+      edge<0>(ops_partials).partials_[n]
+          += pow(1 - y_dbl, kappa_mukappa_dbl - 1) * pow(y_dbl, mukappa_dbl - 1)
+             * inv_Pn / betafunc_dbl;
     }
 
     T_partials_return g1 = 0;

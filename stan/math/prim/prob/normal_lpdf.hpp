@@ -77,8 +77,7 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
     return 0.0;
   }
 
-  auto ops_partials = operands_and_partials(
-      y_ref, mu_ref, sigma_ref);
+  auto ops_partials = operands_and_partials(y_ref, mu_ref, sigma_ref);
 
   const auto& inv_sigma
       = to_ref_if<!is_constant_all<T_y, T_scale, T_loc>::value>(inv(sigma_val));

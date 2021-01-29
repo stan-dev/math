@@ -13,35 +13,36 @@ namespace stan {
 namespace math {
 namespace internal {
 
-  template <typename T>
-  class broadcast_array {
-   private:
-    T& prim_;
+template <typename T>
+class broadcast_array {
+ private:
+  T& prim_;
 
-   public:
-    explicit broadcast_array(T& prim) : prim_(prim) {}
+ public:
+  explicit broadcast_array(T& prim) : prim_(prim) {}
 
-    T& operator[](int /*i*/) { return prim_; }
+  T& operator[](int /*i*/) { return prim_; }
 
-    /** \ingroup type_trait
-     * Broadcast array can be assigned a scalar or a vector. If assigned a scalar,
-     * it will be used directly. If assigned a vector, the argument will be summed
-     * first.
-     */
-    template <typename Y, typename YY = T, require_not_stan_scalar_t<Y>* = nullptr,
-     require_same_t<scalar_type_t<YY>, scalar_type_t<Y>>* = nullptr>
-    void operator=(const Y& m) {
-      prim_ = sum(m);
-    }
-    template <typename Y, typename YY = T, require_not_stan_scalar_t<Y>* = nullptr,
-     require_not_same_t<scalar_type_t<YY>, scalar_type_t<Y>>* = nullptr>
-    void operator=(const Y& m) {
-    }
-    template <typename Y, require_stan_scalar_t<Y>* = nullptr>
-    void operator=(const Y& m) {
-      prim_ = m;
-    }
-  };
+  /** \ingroup type_trait
+   * Broadcast array can be assigned a scalar or a vector. If assigned a scalar,
+   * it will be used directly. If assigned a vector, the argument will be summed
+   * first.
+   */
+  template <typename Y, typename YY = T,
+            require_not_stan_scalar_t<Y>* = nullptr,
+            require_same_t<scalar_type_t<YY>, scalar_type_t<Y>>* = nullptr>
+  void operator=(const Y& m) {
+    prim_ = sum(m);
+  }
+  template <typename Y, typename YY = T,
+            require_not_stan_scalar_t<Y>* = nullptr,
+            require_not_same_t<scalar_type_t<YY>, scalar_type_t<Y>>* = nullptr>
+  void operator=(const Y& m) {}
+  template <typename Y, require_stan_scalar_t<Y>* = nullptr>
+  void operator=(const Y& m) {
+    prim_ = m;
+  }
+};
 
 template <typename T, typename S, typename Enable = void>
 class empty_broadcast_array {

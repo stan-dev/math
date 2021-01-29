@@ -62,8 +62,7 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
   }
 
   T_partials_return logp(0.0);
-  auto ops_partials = operands_and_partials(
-      y_ref, mu_ref, sigma_ref);
+  auto ops_partials = operands_and_partials(y_ref, mu_ref, sigma_ref);
 
   const auto& y_col = as_column_vector_or_scalar(y_ref);
   const auto& mu_col = as_column_vector_or_scalar(mu_ref);
@@ -117,8 +116,8 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
     }
     if (!is_constant_all<T_scale>::value) {
       edge<2>(ops_partials).partials_ = (y_minus_mu_squared - sigma_squared)
-                                      * inv_sigma
-                                      / (sigma_squared + y_minus_mu_squared);
+                                        * inv_sigma
+                                        / (sigma_squared + y_minus_mu_squared);
     }
   }
   return ops_partials.build(logp);

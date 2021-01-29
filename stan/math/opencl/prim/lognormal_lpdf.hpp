@@ -57,8 +57,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> lognormal_lpdf(
   const auto& mu_val = value_of(mu);
   const auto& sigma_val = value_of(sigma);
 
-  auto ops_partials = operands_and_partials(y, mu,
-                                                                   sigma);
+  auto ops_partials = operands_and_partials(y, mu, sigma);
 
   auto check_y_nonnegative
       = check_cl(function, "Random variable", y_val, "nonnegative");

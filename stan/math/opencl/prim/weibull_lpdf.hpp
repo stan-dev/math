@@ -108,8 +108,7 @@ inline return_type_t<T_y_cl, T_shape_cl, T_scale_cl> weibull_lpdf(
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
-  auto ops_partials = operands_and_partials(y, alpha,
-                                                                     sigma);
+  auto ops_partials = operands_and_partials(y, alpha, sigma);
 
   if (!is_constant<T_y_cl>::value) {
     edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);

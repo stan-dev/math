@@ -44,8 +44,7 @@ return_type_t<T_y, T_shape, T_scale> frechet_lccdf(const T_y& y,
   }
 
   T_partials_return ccdf_log(0.0);
-  auto ops_partials = operands_and_partials(
-      y_ref, alpha_ref, sigma_ref);
+  auto ops_partials = operands_and_partials(y_ref, alpha_ref, sigma_ref);
 
   scalar_seq_view<T_y> y_vec(y_ref);
   scalar_seq_view<T_scale> sigma_vec(sigma_ref);

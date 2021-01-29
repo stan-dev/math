@@ -61,8 +61,7 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
     return 0;
   }
 
-  auto ops_partials = operands_and_partials(
-      y_ref, mu_ref, sigma_ref);
+  auto ops_partials = operands_and_partials(y_ref, mu_ref, sigma_ref);
 
   if (sum(promote_scalar<int>(y_val == 0))) {
     return ops_partials.build(LOG_ZERO);

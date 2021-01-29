@@ -130,8 +130,7 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
     check_finite(function, "Matrix of independent variables", ytheta);
   }
 
-  auto ops_partials = operands_and_partials(
-      x_ref, alpha_ref, beta_ref);
+  auto ops_partials = operands_and_partials(x_ref, alpha_ref, beta_ref);
   // Compute the necessary derivatives.
   if (!is_constant_all<T_beta, T_x, T_alpha>::value) {
     Matrix<T_partials_return, Dynamic, 1> theta_derivative

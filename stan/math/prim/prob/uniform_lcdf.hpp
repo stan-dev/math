@@ -59,8 +59,7 @@ return_type_t<T_y, T_low, T_high> uniform_lcdf(const T_y& y, const T_low& alpha,
     return negative_infinity();
   }
 
-  auto ops_partials = operands_and_partials(
-      y_ref, alpha_ref, beta_ref);
+  auto ops_partials = operands_and_partials(y_ref, alpha_ref, beta_ref);
 
   const auto& b_minus_a
       = to_ref_if<!is_constant_all<T_y, T_low, T_high>::value>(beta_val

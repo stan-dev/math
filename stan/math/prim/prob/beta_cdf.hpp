@@ -55,8 +55,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
   check_bounded(function, "Random variable", y_ref, 0, 1);
 
   T_partials_return P(1.0);
-  auto ops_partials = operands_and_partials(
-      y_ref, alpha_ref, beta_ref);
+  auto ops_partials = operands_and_partials(y_ref, alpha_ref, beta_ref);
   scalar_seq_view<T_y_ref> y_vec(y_ref);
   scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
   scalar_seq_view<T_beta_ref> beta_vec(beta_ref);

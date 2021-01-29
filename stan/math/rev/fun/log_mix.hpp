@@ -80,8 +80,7 @@ inline return_type_t<T_theta, T_lambda1, T_lambda2> log_mix(
     const T_theta& theta, const T_lambda1& lambda1, const T_lambda2& lambda2) {
   using std::log;
 
-  auto ops_partials = operands_and_partials(
-      theta, lambda1, lambda2);
+  auto ops_partials = operands_and_partials(theta, lambda1, lambda2);
 
   double theta_double = value_of(theta);
   const double lambda1_double = value_of(lambda1);

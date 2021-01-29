@@ -93,7 +93,8 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
   logp
       += sum(lambda_val * (mu_minus_y + 0.5 * lambda_sigma_sq) + log_erfc_calc);
 
-  auto ops_partials = operands_and_partials(y_ref, mu_ref, sigma_ref, lambda_ref);
+  auto ops_partials
+      = operands_and_partials(y_ref, mu_ref, sigma_ref, lambda_ref);
   if (!is_constant_all<T_y, T_loc, T_scale, T_inv_scale>::value) {
     const auto& exp_m_sq_inner_term = exp(-square(inner_term));
     const auto& deriv_logerfc = to_ref_if<
@@ -118,7 +119,8 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
     }
     if (!is_constant_all<T_inv_scale>::value) {
       edge<3>(ops_partials).partials_ = inv(lambda_val) + lambda_sigma_sq
-                                      + mu_minus_y + deriv_logerfc * sigma_val;
+                                        + mu_minus_y
+                                        + deriv_logerfc * sigma_val;
     }
   }
 

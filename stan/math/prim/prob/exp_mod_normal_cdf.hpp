@@ -66,7 +66,8 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
     return 1.0;
   }
 
-  auto ops_partials = operands_and_partials(y_ref, mu_ref, sigma_ref, lambda_ref);
+  auto ops_partials
+      = operands_and_partials(y_ref, mu_ref, sigma_ref, lambda_ref);
 
   using T_y_val_scalar = scalar_type_t<decltype(y_val)>;
   if (is_vector<T_y>::value) {

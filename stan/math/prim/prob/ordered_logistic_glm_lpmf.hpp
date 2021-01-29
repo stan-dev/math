@@ -154,8 +154,7 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
     }
   }
 
-  auto ops_partials = operands_and_partials(
-      x_ref, beta_ref, cuts_ref);
+  auto ops_partials = operands_and_partials(x_ref, beta_ref, cuts_ref);
   if (!is_constant_all<T_x, T_beta, T_cuts>::value) {
     Array<double, Dynamic, 1> exp_m_cut1 = exp(-cut1);
     Array<double, Dynamic, 1> exp_m_cut2 = exp(-cut2);
