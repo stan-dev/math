@@ -3,6 +3,8 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/rev/vari.hpp>
+#include <stan/math/opencl/rev/arena_type.hpp>
+#include <stan/math/opencl/rev/to_arena.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/err.hpp>
@@ -84,18 +86,40 @@ inline var_value<Eigen::Matrix<value_type_t<T>, Rows, Cols>> from_matrix_cl(
 template <typename T, require_eigen_vt<is_var, T>* = nullptr>
 inline var_value<matrix_cl<value_type_t<value_type_t<T>>>> to_matrix_cl(
     const T& src) {
-  // the matrix can go out of scope before chain() is called. So we store a map
-  // to the data
-  var* src_array
-      = ChainableStack::instance_->memalloc_.alloc_array<var>(src.size());
-  Eigen::Map<plain_type_t<T>> src_stacked(src_array, src.rows(), src.cols());
-  src_stacked = src;
+  arena_t<T> src_stacked = src;
 
   return make_callback_var(
       to_matrix_cl(src_stacked.val()), [src_stacked](auto& res_vari) mutable {
         src_stacked.adj() += from_matrix_cl<std::decay_t<T>::RowsAtCompileTime,
                                             std::decay_t<T>::ColsAtCompileTime>(
             res_vari.adj());
+      });
+}
+
+/** \ingroup opencl
+ * Copies the source vector of Eigen matrices of vars to
+ * the destination matrix that is stored
+ * on the OpenCL device. Each element of the vector is stored into one column of
+ * the returned matrix_cl.
+ *
+ * @param src source vector of Eigen matrices
+ * @return matrix_cl with a copy of the data in the source matrix
+ */
+template <typename T, require_eigen_vt<is_var, T>* = nullptr>
+inline var_value<matrix_cl<value_type_t<value_type_t<T>>>> to_matrix_cl(
+    const std::vector<T>& src) {
+  auto src_stacked = to_arena(src);
+
+  return make_callback_var(
+      to_matrix_cl(value_of(src_stacked)),
+      [src_stacked](auto& res_vari) mutable {
+        Eigen::MatrixXd adj = from_matrix_cl(res_vari.adj());
+        for (int i = 0; i < src_stacked.size(); i++) {
+          src_stacked[i].adj()
+              += Eigen::Map<plain_type_t<decltype(src_stacked[i].adj())>>(
+                  adj.data() + adj.rows() * i, src_stacked[i].rows(),
+                  src_stacked[i].cols());
+        }
       });
 }
 

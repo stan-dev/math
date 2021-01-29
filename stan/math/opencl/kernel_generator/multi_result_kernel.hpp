@@ -253,8 +253,10 @@ class expressions_cl {
 
  private:
   std::tuple<T_expressions...> expressions_;
-  template <typename... T_results>
+  template <typename...>
   friend class results_cl;
+  template <typename...>
+  friend class adjoint_results_cl;
 };
 
 /**
@@ -274,6 +276,7 @@ expressions_cl<T_expressions...> expressions(T_expressions&&... expressions) {
  */
 template <typename... T_results>
 class results_cl {
+ protected:
   std::tuple<T_results...> results_;
 
  public:
@@ -342,7 +345,7 @@ class results_cl {
     });
   }
 
- private:
+ protected:
   /**
    * Implementation of kernel source generation.
    * @tparam T_res types of results

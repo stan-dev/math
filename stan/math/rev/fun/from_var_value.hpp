@@ -26,23 +26,17 @@ Eigen::Matrix<var, T::RowsAtCompileTime, T::ColsAtCompileTime> from_var_value(
 }
 
 /**
- * This is a no-op for Eigen containers of vars.
+ * This is a no-op for Eigen containers of vars, scalars or prim types.
  *
  * @tparam T type of the input
  * @param a matrix to convert
  */
-template <typename T, require_eigen_vt<is_var, T>* = nullptr>
-T from_var_value(T&& a) {
-  return std::forward<T>(a);
-}
-
-/**
- * This is a no-op for scalar vars.
- *
- * @tparam T type of the input
- * @param a matrix to convert
- */
-template <typename T, require_var_vt<std::is_arithmetic, T>* = nullptr>
+template <
+    typename T,
+    require_any_t<
+        conjunction<is_eigen<T>, is_var<scalar_type_t<T>>>,
+        std::is_same<std::decay_t<T>, var>,
+        bool_constant<!std::is_same<scalar_type_t<T>, var>::value>>* = nullptr>
 T from_var_value(T&& a) {
   return std::forward<T>(a);
 }
