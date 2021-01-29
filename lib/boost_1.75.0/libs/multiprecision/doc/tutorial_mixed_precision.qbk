@@ -1,0 +1,83 @@
+[/
+  Copyright 2011 - 2020 John Maddock.
+  Copyright 2013 - 2019 Paul A. Bristow.
+  Copyright 2013 Christopher Kormanyos.
+
+  Distributed under the Boost Software License, Version 1.0.
+  (See accompanying file LICENSE_1_0.txt or copy at
+  http://www.boost.org/LICENSE_1_0.txt).
+]
+
+[section:mixed Mixed Precision Arithmetic]
+
+Mixed precision arithmetic is fully supported by the library.
+
+There are two different forms:
+
+* Where the operands are of different precision.
+* Where the operands are of the same precision, but yield a higher precision result.
+
+[h4 Mixing Operands of Differing Precision]
+
+If the arguments to a binary operator are of different precision, then the operation is allowed
+as long as there is an unambiguous implicit conversion from one argument type to the other.
+In all cases the arithmetic is performed "as if" the lower precision type is promoted to the
+higher precision type before applying the operator.  However, particular backends may optimise
+this and avoid actually creating a temporary if they are able to do so.
+
+For example:
+
+   mpfr_float_50         a(2), b;
+   mpfr_float_100        c(3), d;
+   static_mpfr_float_50  e(5), f;
+   mpz_int               i(20);
+
+   d = a * c;  // OK, result of operand is an mpfr_float_100.
+   b = a * c;  // Error, can't convert the result to an mpfr_float_50 as it will lose digits.
+   f = a * e;  // Error, operator is ambiguous, result could be of either type.
+   f = e * i;  // OK, unambiguous conversion from mpz_int to static_mpfr_float_50
+
+[h4 Operands of the Same Precision]
+
+Sometimes you want to apply an operator to two arguments of the same precision in
+such a way as to obtain a result of higher precision.  The most common situation
+occurs with fixed precision integers, where you want to multiply two N-bit numbers
+to obtain a 2N-bit result.  This is supported in this library by the following
+free functions:
+
+   template <class ResultType, class Source1 class Source2>
+   ResultType& add(ResultType& result, const Source1& a, const Source2& b);
+
+   template <class ResultType, class Source1 class Source2>
+   ResultType& subtract(ResultType& result, const Source1& a, const Source2& b);
+
+   template <class ResultType, class Source1 class Source2>
+   ResultType& multiply(ResultType& result, const Source1& a, const Source2& b);
+
+These functions apply the named operator to the arguments ['a] and ['b] and store the
+result in ['result], returning ['result].  In all cases they behave "as if"
+arguments ['a] and ['b] were first promoted to type `ResultType` before applying the
+operator, though particular backends may well avoid that step by way of an optimization.
+
+The type `ResultType` must be an instance of class `number`, and the types `Source1` and `Source2`
+may be either instances of class `number` or native integer types.  The latter is an optimization
+that allows arithmetic to be performed on native integer types producing an extended precision result.
+
+For example:
+
+[mixed_eg]
+
+Produces the output:
+
+[mixed_output]
+
+[h4 Backends With Optimized Mixed Precision Arithmetic]
+
+The following backends have at least some direct support for mixed-precision arithmetic,
+and therefore avoid creating unnecessary temporaries when using the interfaces above.
+Therefore when using these types it's more efficient to use mixed-precision arithmetic,
+than it is to explicitly cast the operands to the result type:
+
+__mpfr_float_backend, __mpf_float, __cpp_int.
+
+[endsect] [/section:mixed Mixed Precision Arithmetic]

@@ -1,0 +1,10 @@
+@PACKAGE_INIT@
+
+set(BOOST_JSON_STANDALONE @BOOST_JSON_STANDALONE@)
+
+if(NOT BOOST_JSON_STANDALONE)
+    include(CMakeFindDependencyMacro)
+    find_dependency(Boost REQUIRED COMPONENTS container system)
+endif()
+
+include("${CMAKE_CURRENT_LIST_DIR}/boost_json-targets.cmake")

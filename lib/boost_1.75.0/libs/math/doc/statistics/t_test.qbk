@@ -1,0 +1,102 @@
+[/
+Copyright (c) 2019 Nick Thompson
+Use, modification and distribution are subject to the
+Boost Software License, Version 1.0. (See accompanying file
+LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+]
+
+[section:t_test /t/-tests]
+
+[heading Synopsis]
+
+```
+#include <boost/math/statistics/t_test.hpp>
+
+namespace boost::math::statistics {
+
+template<typename Real>
+std::pair<Real, Real> one_sample_t_test(Real sample_mean, Real sample_variance, Real num_samples, Real assumed_mean);
+
+template<class ForwardIterator>
+auto one_sample_t_test(ForwardIterator begin, ForwardIterator end, typename std::iterator_traits<ForwardIterator>::value_type assumed_mean);
+
+template<class Container>
+auto one_sample_t_test(Container const & v, typename Container::value_type assumed_mean);
+
+}}}
+```
+
+[heading Background]
+
+A one-sample /t/-test attempts to answer the question "given a sample mean, is it likely that the population mean of my data is a certain value?"
+The test statistic is
+
+[$../graphs/one_sample_t_test_statistic.svg]
+
+where µ[sub 0] is the assumed mean, /s/[super 2] is the sample variance, and /n/ is the number of samples.
+If the absolute value of the test statistic is large, then we have low confidence that the population mean is equal to µ[sub 0], and if the absolute value of the test statistic is small, we have high confidence.
+We now ask the question "what constitutes large and small in this context?"
+
+Under reasonable assumptions, the test statistic /t/ can be assumed to come from a Student's /t/-distribution.
+Since we wish to know if the sample mean deviates from the true mean in either direction, the test is two-tailed.
+Hence the /p/-value is straightforward to calculate from the Student's /t/-distribution on /n/ - 1 degrees of freedom, but nonetheless it is convenient to have it computed here.
+
+An example usage is as follows:
+
+```
+#include <vector>
+#include <random>
+#include <boost/math/statistics/t_test.hpp>
+
+std::random_device rd;
+std::mt19937 gen{rd()};
+std::normal_distribution<double> dis{0,1};
+std::vector<double> v(1024);
+for (auto & x : v) {
+  x = dis(gen);
+}
+
+auto [t, p] = boost::math::statistics::one_sample_t_test(v, 0.0);
+```
+
+The test statistic is the first element of the pair, and the /p/-value is the second element.
+
+
+[heading Performance]
+
+There are two cases: Where the mean and sample variance have already been computed, and the case where the mean and sample variance must be computed on the fly.
+
+```
+----------------------------------------------
+Benchmark                                Time
+----------------------------------------------
+OneSampleTTest<double>/8               291 ns bytes_per_second=210.058M/s
+OneSampleTTest<double>/16             1064 ns bytes_per_second=114.697M/s
+OneSampleTTest<double>/32              407 ns bytes_per_second=599.213M/s
+OneSampleTTest<double>/64              595 ns bytes_per_second=821.086M/s
+OneSampleTTest<double>/128            1475 ns bytes_per_second=662.071M/s
+OneSampleTTest<double>/256            1746 ns bytes_per_second=1118.85M/s
+OneSampleTTest<double>/512            3303 ns bytes_per_second=1.15492G/s
+OneSampleTTest<double>/1024           6404 ns bytes_per_second=1.19139G/s
+OneSampleTTest<double>/2048          12461 ns bytes_per_second=1.2245G/s
+OneSampleTTest<double>/4096          24805 ns bytes_per_second=1.23029G/s
+OneSampleTTest<double>/8192          49639 ns bytes_per_second=1.22956G/s
+OneSampleTTest<double>/16384         98685 ns bytes_per_second=1.23698G/s
+OneSampleTTest<double>/32768        197434 ns bytes_per_second=1.23656G/s
+OneSampleTTest<double>/65536        393929 ns bytes_per_second=1.23952G/s
+OneSampleTTest<double>/131072       790967 ns bytes_per_second=1.23466G/s
+OneSampleTTest<double>/262144      1582366 ns bytes_per_second=1.23434G/s
+OneSampleTTest<double>/524288      3141112 ns bytes_per_second=1.24358G/s
+OneSampleTTest<double>/1048576     6260407 ns bytes_per_second=1.24792G/s
+OneSampleTTest<double>/2097152    12521811 ns bytes_per_second=1.24784G/s
+OneSampleTTest<double>/4194304    25076257 ns bytes_per_second=1.24619G/s
+OneSampleTTest<double>/8388608    50226183 ns bytes_per_second=1.2444G/s
+OneSampleTTest<double>/16777216  100522789 ns bytes_per_second=1.24353G/s
+OneSampleTTest<double>_BigO           5.99 N
+OneSampleTTest<double>_RMS               0 %
+OneSampleTTestKnownMeanAndVariance<double>        207 ns
+```
+
+
+[endsect]
+[/section:t_test]

@@ -1,0 +1,126 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template count</title>
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../index.html" title="Chapter 1. Boost.Histogram">
+<link rel="up" href="../../../histogram/reference.html#header.boost.histogram.accumulators.count_hpp" title="Header &lt;boost/histogram/accumulators/count.hpp&gt;">
+<link rel="prev" href="../weight_type.html" title="Struct template weight_type">
+<link rel="next" href="mean.html" title="Class template mean">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../weight_type.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../../histogram/reference.html#header.boost.histogram.accumulators.count_hpp"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="mean.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="boost.histogram.accumulators.count"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template count</span></h2>
+<p>boost::histogram::accumulators::count — Uses a C++ builtin arithmetic type to accumulate a count. </p>
+</div>
+<h2 xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" class="refsynopsisdiv-title">Synopsis</h2>
+<div xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../../histogram/reference.html#header.boost.histogram.accumulators.count_hpp" title="Header &lt;boost/histogram/accumulators/count.hpp&gt;">boost/histogram/accumulators/count.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ValueType<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="count.html" title="Class template count">count</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">ValueType</span>          <a name="boost.histogram.accumulators.count.value_type"></a><span class="identifier">value_type</span><span class="special">;</span>     
+  <span class="keyword">typedef</span> <span class="keyword">const</span> <span class="identifier">value_type</span> <span class="special">&amp;</span> <a name="boost.histogram.accumulators.count.const_reference"></a><span class="identifier">const_reference</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="count.html#boost.histogram.accumulators.countconstruct-copy-destruct">construct/copy/destruct</a></span>
+  <a class="link" href="count.html#idm45650365846192-bb"><span class="identifier">count</span></a><span class="special">(</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">default</span><span class="special">;</span>
+  <a class="link" href="count.html#idm45650365845792-bb"><span class="identifier">count</span></a><span class="special">(</span><span class="identifier">const_reference</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <a class="link" href="count.html#idm45650365844368-bb"><span class="identifier">count</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="count.html" title="Class template count">count</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="count.html#idm45650365882464-bb">public member functions</a></span>
+  <a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span> <a class="link" href="count.html#idm45650365881904-bb"><span class="keyword">operator</span><span class="special">++</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span> <a class="link" href="count.html#idm45650365880352-bb"><span class="keyword">operator</span><span class="special">+=</span></a><span class="special">(</span><span class="identifier">const_reference</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span> <a class="link" href="count.html#idm45650365878112-bb"><span class="keyword">operator</span><span class="special">+=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span> <a class="link" href="count.html#idm45650365875440-bb"><span class="keyword">operator</span> <span class="special">*=</span></a><span class="special">(</span><span class="identifier">const_reference</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="count.html#idm45650365873216-bb"><span class="keyword">operator</span><span class="special">==</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="count.html#idm45650365871120-bb"><span class="keyword">operator</span><span class="special">!=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_reference</span> <a class="link" href="count.html#idm45650365869024-bb"><span class="identifier">value</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="count.html#idm45650365867776-bb"><span class="keyword">operator</span> <span class="identifier">value_type</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Archive<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="count.html#idm45650365866544-bb"><span class="identifier">serialize</span></a><span class="special">(</span><span class="identifier">Archive</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">unsigned</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span> <a class="link" href="count.html#idm45650365863792-bb"><span class="keyword">operator</span> <span class="special">*=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="count.html" title="Class template count">count</a> <a class="link" href="count.html#idm45650365861408-bb"><span class="keyword">operator</span> <span class="special">*</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span> <a class="link" href="count.html#idm45650365859184-bb"><span class="keyword">operator</span><span class="special">/=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="count.html" title="Class template count">count</a> <a class="link" href="count.html#idm45650365856800-bb"><span class="keyword">operator</span><span class="special">/</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="count.html#idm45650365854576-bb"><span class="keyword">operator</span><span class="special">&lt;</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="count.html#idm45650365852480-bb"><span class="keyword">operator</span><span class="special">&gt;</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="count.html#idm45650365850384-bb"><span class="keyword">operator</span><span class="special">&lt;=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="count.html#idm45650365848288-bb"><span class="keyword">operator</span><span class="special">&gt;=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="idm46583565922528"></a><h2>Description</h2>
+<p>This wrapper class may be used as a base class by users who want to add custom metadata to each bin of a histogram. Otherwise, arithmetic types should be used directly as accumulators in storages for simplicity. In other words, prefer <code class="computeroutput">dense_storage&lt;double&gt;</code> over<code class="computeroutput">dense_storage&lt;count&lt;double&gt;&gt;</code>, both are functionally equivalent.</p>
+<p>When weighted data is accumulated and high precision is required, use <code class="computeroutput"><a class="link" href="sum.html" title="Class template sum">accumulators::sum</a></code> instead. If a local variance estimate for the weight distribution should be computed as well (generally needed for a detailed statistical analysis), use<code class="computeroutput"><a class="link" href="weighted_sum.html" title="Class template weighted_sum">accumulators::weighted_sum</a></code>.</p>
+<div class="refsect2">
+<a name="idm46583565917072"></a><h3>
+<a name="boost.histogram.accumulators.countconstruct-copy-destruct"></a><code class="computeroutput">count</code> 
+        public
+       construct/copy/destruct</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><a name="idm45650365846192-bb"></a><span class="identifier">count</span><span class="special">(</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">default</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><a name="idm45650365845792-bb"></a><span class="identifier">count</span><span class="special">(</span><span class="identifier">const_reference</span> value<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Initialize count to value and allow implicit conversion. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <a name="idm45650365844368-bb"></a><span class="identifier">count</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="count.html" title="Class template count">count</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span> c<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Allow implicit conversion from other count. </li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="idm46583565893408"></a><h3>
+<a name="idm45650365882464-bb"></a><code class="computeroutput">count</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span> <a name="idm45650365881904-bb"></a><span class="keyword">operator</span><span class="special">++</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Increment count by one. </li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span> <a name="idm45650365880352-bb"></a><span class="keyword">operator</span><span class="special">+=</span><span class="special">(</span><span class="identifier">const_reference</span> value<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Increment count by value. </li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span> <a name="idm45650365878112-bb"></a><span class="keyword">operator</span><span class="special">+=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span> s<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Add another count. </li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span> <a name="idm45650365875440-bb"></a><span class="keyword">operator</span> <span class="special">*=</span><span class="special">(</span><span class="identifier">const_reference</span> value<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Scale by value. </li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">bool</span> <a name="idm45650365873216-bb"></a><span class="keyword">operator</span><span class="special">==</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span> rhs<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">bool</span> <a name="idm45650365871120-bb"></a><span class="keyword">operator</span><span class="special">!=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span> rhs<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_reference</span> <a name="idm45650365869024-bb"></a><span class="identifier">value</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Return count. </li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">explicit</span> <a name="idm45650365867776-bb"></a><span class="keyword">operator</span> <span class="identifier">value_type</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Archive<span class="special">&gt;</span> <span class="keyword">void</span> <a name="idm45650365866544-bb"></a><span class="identifier">serialize</span><span class="special">(</span><span class="identifier">Archive</span> <span class="special">&amp;</span> ar<span class="special">,</span> <span class="keyword">unsigned</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span> <a name="idm45650365863792-bb"></a><span class="keyword">operator</span> <span class="special">*=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span> rhs<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="count.html" title="Class template count">count</a> <a name="idm45650365861408-bb"></a><span class="keyword">operator</span> <span class="special">*</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span> rhs<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span> <a name="idm45650365859184-bb"></a><span class="keyword">operator</span><span class="special">/=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span> rhs<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="count.html" title="Class template count">count</a> <a name="idm45650365856800-bb"></a><span class="keyword">operator</span><span class="special">/</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span> rhs<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">bool</span> <a name="idm45650365854576-bb"></a><span class="keyword">operator</span><span class="special">&lt;</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span> rhs<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">bool</span> <a name="idm45650365852480-bb"></a><span class="keyword">operator</span><span class="special">&gt;</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span> rhs<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">bool</span> <a name="idm45650365850384-bb"></a><span class="keyword">operator</span><span class="special">&lt;=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span> rhs<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">bool</span> <a name="idm45650365848288-bb"></a><span class="keyword">operator</span><span class="special">&gt;=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="count.html" title="Class template count">count</a> <span class="special">&amp;</span> rhs<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright © 2016-2019 Hans
+      Dembinski<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../weight_type.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../../histogram/reference.html#header.boost.histogram.accumulators.count_hpp"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="mean.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>
