@@ -13,7 +13,7 @@ class arena_matrix;
 namespace internal {
 template <typename T, typename = void, typename = void>
 struct arena_type_impl {};
-}
+}  // namespace internal
 
 /**
  * Determines a type that can be used in place of `T` that does any dynamic
@@ -23,5 +23,5 @@ struct arena_type_impl {};
 template <typename T>
 using arena_t = typename internal::arena_type_impl<std::decay_t<T>>::type;
 
-}
+}  // namespace stan
 #endif
