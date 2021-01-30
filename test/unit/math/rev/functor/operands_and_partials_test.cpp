@@ -12,7 +12,6 @@ TEST(AgradPartialsVari, OperandsAndPartialsScal) {
   double d1;
   auto o3 = operands_and_partials(d1);
 
-
   var v1 = var(0.0);
 
   std::vector<var> v_stdvec;
@@ -75,7 +74,6 @@ TEST(AgradPartialsVari, OperandsAndPartialsStdVec) {
   std::vector<double> d_vec(4);
   auto o3 = operands_and_partials(d_vec);
 
-
   std::vector<var> v_vec;
   var v1 = var(0.0);
   var v2 = var(1.0);
@@ -112,8 +110,6 @@ TEST(AgradPartialsVari, OperandsAndPartialsMat) {
   matrix_d d_mat(2, 2);
   d_mat << 10.0, 20.0, 30.0, 40.0;
   auto o3 = operands_and_partials(d_mat);
-
-
 
   matrix_v v_mat(2, 2);
   var v1 = var(0.0);
@@ -156,8 +152,6 @@ TEST(AgradPartialsVari, OperandsAndPartialsMatMultivar) {
   std::vector<matrix_d> d_mat_vec;
   d_mat_vec.push_back(d_mat);
   auto o3 = operands_and_partials(d_mat_vec);
-
-
 
   matrix_v v_mat1(2, 2);
   var v1 = var(0.0);
@@ -222,8 +216,6 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultivar) {
   d_vec_vec.push_back(d_vec1);
   d_vec_vec.push_back(d_vec2);
   auto o3 = operands_and_partials(d_vec_vec);
-
-
 
   vector_v v_vec1(2);
   var v1 = var(0.0);
@@ -298,7 +290,6 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultivarMixed) {
 
   // 2 partials stdvecs, 4 pointers to edges, 2 pointers to operands
   // vecs
-
 
   std::vector<double> grad;
   var v = o4.build(10.0);
