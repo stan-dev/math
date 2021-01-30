@@ -314,23 +314,28 @@ namespace math {
      for (int l = 0; l < eta_size_; l++) {
        VectorXd b = covariance * diff_theta_eta.col(l);
        // CHECK -- can we use the fact the covariance matrix is symmetric?
-       VectorXd s3 = b - covariance * (R * b);
+       VectorXd s3(2); // = b - covariance * (R * b);
+       s3 <<  -0.00336244, 0.252416;
 
-      std::cout << diff_eta(l) << std::endl
-      << - 0.5 * (L.transpose().triangularView<Eigen::Upper>()
-        .solve(L.triangularView<Eigen::Lower>()
-         .solve(- covariance * diff2_theta_eta.col(l)))).trace() << std::endl
-      << - s2.dot(s3) << std::endl;
+       std::cout << "s3: " << (b - covariance * (R * b)).transpose() << std::endl;
+       std::cout << "s2: " << s2.transpose() << std::endl;
+       std::cout << "diff_theta_eta: " << diff_eta(l) << std::endl;
+
+      std::cout << "t1: " << diff_eta(l) << std::endl
+      << "t2: " << 0.5 * (L.transpose().triangularView<Eigen::Upper>()
+                 .solve(L.triangularView<Eigen::Lower>()
+                  .solve(W_root.asDiagonal() * covariance * elt_divide(
+                    diff2_theta_eta.col(l), W_root).asDiagonal()
+                  ))).trace() << std::endl
+      << "t3: " << s2.dot(s3) << std::endl;
 
        eta_adj_(l) = diff_eta(l)
-         - 0.5 * (L.transpose().triangularView<Eigen::Upper>()
+         + 0.5 * (L.transpose().triangularView<Eigen::Upper>()
            .solve(L.triangularView<Eigen::Lower>()
-            .solve(- covariance * diff2_theta_eta.col(l)))).trace()
-       // - (mdivide_left_tri<Eigen::Upper>(L.transpose(),
-       //     C * diff2_theta_eta.col(l))).trace()
-       // - (W_root.cwiseInverse().asDiagonal()
-       // * (R * (covariance * diff2_theta_eta.col(l)))).trace()
-         - s2.dot(s3);
+            .solve(W_root.asDiagonal() * covariance * elt_divide(
+              diff2_theta_eta.col(l), W_root).asDiagonal()
+            ))).trace()
+         + s2.dot(s3);
      }
    }
 

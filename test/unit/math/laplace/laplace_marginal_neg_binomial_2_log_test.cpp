@@ -118,6 +118,21 @@ TEST(laplace, likelihood_differentiation) {
   EXPECT_FLOAT_EQ(finite_hessian_theta_eta(1), diff2_theta_eta(1, 0));
 }
 
+// unit tests for derivatives of B
+template <typename T>
+Eigen::MatrixXd compute_B(const Eigen::VectorXd& theta,
+                          const Eigen::VectorXd& eta,
+                          const Eigen::MatrixXd& covariance,
+                          T diff_functor) {
+  int group_size = theta.size();
+  Eigen::VectorXd l_grad, hessian;
+  diff_functor.diff(theta, eta, l_grad, hessian);
+  Eigen::VectorXd W_root = (- hessian).cwiseSqrt();
+
+  return Eigen::MatrixXd::Identity(group_size, group_size)
+    + stan::math::quad_form_diag(covariance, W_root);
+}
+
 TEST(laplace, neg_binomial_2_log_dbl) {
   using stan::math::to_vector;
   using stan::math::diff_neg_binomial_2_log;
@@ -160,11 +175,12 @@ TEST(laplace, neg_binomial_2_log_dbl) {
   AVEC parm_vec = createAVEC(phi_v(0), phi_v(1), eta_v(0));
   target.grad(parm_vec, g);
 
+  std::cout << "autodiff: ";
   for (size_t i = 0; i < g.size(); i++) std::cout << g[i] << " ";
   std::cout << std::endl;
 
   // finite diff test
-  double diff = 1e-10;
+  double diff = 1e-7;
   Eigen::VectorXd phi_dbl = value_of(phi), eta_dbl = value_of(eta);
   Eigen::VectorXd phi_1l = phi_dbl, phi_1u = phi_dbl,
     phi_2l = phi_dbl, phi_2u = phi_dbl, eta_l = eta_dbl, eta_u = eta_dbl;
@@ -199,8 +215,125 @@ TEST(laplace, neg_binomial_2_log_dbl) {
   g_finite[1] = (target_phi_2u - target_phi_2l) / (2 * diff);
   g_finite[2] = (target_eta_u - target_eta_l) / (2 * diff);
 
+  std::cout << "Finite: ";
   for (int i = 0; i < 3; i++) std::cout << g_finite[i] << " ";
   std::cout << std::endl;
+
+  // Save relevant variables for more detailed unit tests.
+  Eigen::MatrixXd covariance, L;
+  Eigen::VectorXd theta, a, theta_u, theta_l, W_root, l_grad, hessian;
+  target =  laplace_marginal_density(diff_functor, K, phi, eta_dbl, x,
+      delta, delta_int, covariance, theta, W_root, L, a, l_grad, theta_0);
+
+  Eigen::MatrixXd B = compute_B(theta, eta_dbl, covariance, diff_functor),
+  B_l = compute_B(theta, eta_l, covariance, diff_functor),
+  B_u = compute_B(theta, eta_u, covariance, diff_functor);
+
+  std::cout << std::endl << "B finite diff tests" << std::endl;
+  std::cout << "log|B|: " << log(B.determinant()) << std::endl;
+  std::cout << "finite diff: "
+    << (log(B_u.determinant()) - log(B_l.determinant())) / (2 * diff)
+            << std::endl;
+
+  diff_functor.diff(theta, eta_dbl, l_grad, hessian);
+  W_root = (-hessian).cwiseSqrt();
+
+  Eigen::VectorXd hessian_l, hessian_u;
+  diff_functor.diff(theta, eta_l, l_grad, hessian_l);
+  diff_functor.diff(theta, eta_u, l_grad, hessian_u);
+
+  // L = stan::math::cholesky_decompose(B);
+
+  // std::cout << "candiate 1: " <<
+  //   (B.inverse() * (-covariance * diff_functor.diff2_theta_eta(theta_0, eta_dbl, W_root)
+  //    )).trace() << std::endl;
+
+  Eigen::VectorXd W_finite_diff
+    = (hessian_u - hessian_l) / (2 * diff);
+
+  Eigen::VectorXd W_root_finite_diff
+    = ((-hessian_u).cwiseSqrt() - (-hessian_l).cwiseSqrt()) / (2 * diff);
+
+  Eigen::VectorXd W_root_diff = - 0.5 * stan::math::elt_divide(
+    diff_functor.diff2_theta_eta(theta, eta_dbl, W_root), W_root);
+
+  std::cout << "candiate 2: " <<
+     2 * (B.inverse() * (W_root.asDiagonal() * covariance * W_root_diff.asDiagonal())
+   ).trace() << std::endl;
+
+  double diff_log_B =
+    - (L.transpose().triangularView<Eigen::Upper>()
+      .solve(L.triangularView<Eigen::Lower>()
+       .solve(W_root.asDiagonal() * covariance
+      * stan::math::elt_divide(diff_functor.
+        diff2_theta_eta(theta, eta_dbl, W_root), W_root).asDiagonal()))).trace();
+
+  std::cout << "candiate 3: " << diff_log_B << std::endl;
+  std::cout << "full log B term: " << - 0.5 * diff_log_B << std::endl;
+
+  std::cout << std::endl << "W_root: " << W_root.transpose() << std::endl;
+
+  std::cout << "W_root finite diff: " << W_root_finite_diff.transpose() << std::endl;
+  std::cout << "W_root diff: " << W_root_diff.transpose() << std::endl;
+
+  std::cout << std::endl << "diff2 finite: " << W_finite_diff.transpose() << std::endl;
+  std::cout << std::endl << "diff: " <<
+    diff_functor.diff2_theta_eta(theta, eta_dbl, W_root).transpose() << std::endl;
+
+  std::cout << std::endl << "Differentiation of theta star." << std::endl;
+
+
+  Eigen::VectorXd b = covariance * diff_functor.diff_theta_eta(theta, eta_dbl);
+    Eigen::VectorXd s3 = (Eigen::MatrixXd::Identity(theta.size(), theta.size())
+      + covariance * stan::math::square(W_root).asDiagonal()).inverse() * b;
+
+  Eigen::VectorXd theta_star = theta;
+
+  target = laplace_marginal_density(diff_functor, K, phi, eta_u, x,
+      delta, delta_int, covariance, theta_u, W_root, L, a, l_grad, theta_0);
+  target = laplace_marginal_density(diff_functor, K, phi, eta_l, x,
+      delta, delta_int, covariance, theta_l, W_root, L, a, l_grad, theta_0);
+
+  std::cout << "theta: " << theta.transpose() << std::endl;
+  std::cout << "theta finite diff: "
+    << ((theta_u - theta_l) / (2 * diff)).transpose()
+    << std::endl;
+
+  std::cout << "theta analytical diff: " << s3.transpose() << std::endl;
+
+  std::cout << std::endl << "Computation of s2: " << std::endl;
+
+  // Reset the variables to their unperturbed states.
+  target =  laplace_marginal_density(diff_functor, K, phi, eta_dbl, x,
+      delta, delta_int, covariance, theta, W_root, L, a, l_grad, theta_0);
+
+  Eigen::VectorXd theta_1l = theta_star, theta_1u = theta_star,
+                  theta_2l = theta_star, theta_2u = theta_star;
+  theta_1l(0) -= diff;
+  theta_1u(0) += diff;
+  theta_2l(1) -= diff;
+  theta_2u(1) += diff;
+
+  B = compute_B(theta_star, eta, covariance, diff_functor);
+
+  double
+    log_B_1l = log(compute_B(theta_1l, eta_dbl, covariance, diff_functor).determinant()),
+    log_B_1u = log(compute_B(theta_1u, eta_dbl, covariance, diff_functor).determinant()),
+    log_B_2l = log(compute_B(theta_2l, eta_dbl, covariance, diff_functor).determinant()),
+    log_B_2u = log(compute_B(theta_2u, eta_dbl, covariance, diff_functor).determinant());
+
+  Eigen::VectorXd s2_finite(2);
+  s2_finite(0) = - 0.5 * (log_B_1u - log_B_1l) / (2 * diff);
+  s2_finite(1) = - 0.5 * (log_B_2u - log_B_2l) / (2 * diff);
+
+  std::cout << "s2_finite: " << s2_finite.transpose() << std::endl;
+
+
+  std::cout << "log diff finite: " <<
+    (diff_functor.log_likelihood(theta_star, eta_u)
+      - diff_functor.log_likelihood(theta_star, eta_l)) / (2 * diff)
+      << std::endl;
+
 
   // double tol = 1e-4;
   // EXPECT_NEAR(g_finite[0], g[0], tol);
