@@ -46,7 +46,8 @@ TEST(MathFunctions, for_each_with_iter_basic_binary) {
 
   EXPECT_EQ(count, 2);
 
-  EXPECT_THROW(stan::math::for_each_with_iter(f, x1, x2), std::invalid_argument);
+  EXPECT_THROW(stan::math::for_each_with_iter(f, x1, x2),
+               std::invalid_argument);
 }
 
 TEST(MathFunctions, for_each_with_iter_basic_binary_index) {
