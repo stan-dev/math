@@ -101,7 +101,7 @@ class operands_and_partials_impl<ReturnType, require_var_t<ReturnType>,
    */
   inline var build(double value) {
     var ret(value);
-    for_each(
+    stan::math::for_each(
         [ret](auto& edge) mutable {
           reverse_pass_callback(
               [operand = edge.operand(), partial = edge.partial(),

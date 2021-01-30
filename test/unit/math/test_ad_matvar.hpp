@@ -106,7 +106,7 @@ void expect_near_rel_matvar(const std::string& message,
     FAIL() << "The number of arguments in each tuple must match";
   }
 
-  stan::math::for_each(
+  stan::math::for_each_with_iter(
       [&message, &tols](const auto& x, const auto& y, const auto& i) {
         expect_near_rel_matvar(
             message + std::string(", argument ")
