@@ -267,8 +267,10 @@ TEST(MathMetaMix, OperandsAndPartialsMultiStdMix) {
   auto ops_partials = operands_and_partials(multi_std);
 
   // Do normal math on the fvar<var>, do addition to partials,
-  stan::math::edge<0>(ops_partials).partials_vec_[0] = stan::math::as_column_vector_or_scalar(dxm1);
-  stan::math::edge<0>(ops_partials).partials_vec_[1] = stan::math::as_column_vector_or_scalar(dxm1);
+  stan::math::edge<0>(ops_partials).partials_vec_[0]
+      = stan::math::as_column_vector_or_scalar(dxm1);
+  stan::math::edge<0>(ops_partials).partials_vec_[1]
+      = stan::math::as_column_vector_or_scalar(dxm1);
 
   std::vector<double> gradient;
   fvar<var> v = ops_partials.build(10.0);
@@ -336,8 +338,10 @@ TEST(MathMetaMix, OperandsAndPartialsMultiStdMix_dbl) {
   auto ops_partials = operands_and_partials(multi_std, m3);
 
   // Do normal math on the fvar<var>, do addition to partials,
-  stan::math::edge<0>(ops_partials).partials_vec_[0] = stan::math::as_column_vector_or_scalar(dxm1);
-  stan::math::edge<0>(ops_partials).partials_vec_[1] = stan::math::as_column_vector_or_scalar(dxm1);
+  stan::math::edge<0>(ops_partials).partials_vec_[0]
+      = stan::math::as_column_vector_or_scalar(dxm1);
+  stan::math::edge<0>(ops_partials).partials_vec_[1]
+      = stan::math::as_column_vector_or_scalar(dxm1);
 
   std::vector<double> gradient;
   fvar<var> v = ops_partials.build(10.0);
