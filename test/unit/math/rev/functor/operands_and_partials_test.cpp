@@ -11,7 +11,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsScal) {
 
   double d1;
   auto o3 = operands_and_partials(d1);
-  EXPECT_EQ(5, sizeof(o3));
+
 
   var v1 = var(0.0);
 
@@ -37,7 +37,6 @@ TEST(AgradPartialsVari, OperandsAndPartialsVec) {
 
   vector_d d_vec(4);
   auto o3 = operands_and_partials(d_vec);
-  EXPECT_EQ(6, sizeof(o3));
 
   vector_v v_vec(4);
   var v1 = var(0.0);
@@ -75,7 +74,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsStdVec) {
 
   std::vector<double> d_vec(4);
   auto o3 = operands_and_partials(d_vec);
-  EXPECT_EQ(5, sizeof(o3));
+
 
   std::vector<var> v_vec;
   var v1 = var(0.0);
@@ -114,7 +113,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsMat) {
   d_mat << 10.0, 20.0, 30.0, 40.0;
   auto o3 = operands_and_partials(d_mat);
 
-  EXPECT_EQ(6, sizeof(o3));
+
 
   matrix_v v_mat(2, 2);
   var v1 = var(0.0);
@@ -158,7 +157,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsMatMultivar) {
   d_mat_vec.push_back(d_mat);
   auto o3 = operands_and_partials(d_mat_vec);
 
-  EXPECT_EQ(5, sizeof(o3));
+
 
   matrix_v v_mat1(2, 2);
   var v1 = var(0.0);
@@ -224,7 +223,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultivar) {
   d_vec_vec.push_back(d_vec2);
   auto o3 = operands_and_partials(d_vec_vec);
 
-  EXPECT_EQ(5, sizeof(o3));
+
 
   vector_v v_vec1(2);
   var v1 = var(0.0);
@@ -299,7 +298,7 @@ TEST(AgradPartialsVari, OperandsAndPartialsMultivarMixed) {
 
   // 2 partials stdvecs, 4 pointers to edges, 2 pointers to operands
   // vecs
-  EXPECT_EQ(2 * sizeof(d_vec1) + 6 * sizeof(&v_vec), sizeof(o4));
+
 
   std::vector<double> grad;
   var v = o4.build(10.0);
