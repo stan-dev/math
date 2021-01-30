@@ -1,17 +1,11 @@
-#ifndef STAN_MATH_LAPLACE_LAPLACE_MARGINAL_POISSON_HPP
-#define STAN_MATH_LAPLACE_LAPLACE_MARGINAL_POISSON_HPP
+#ifndef STAN_MATH_LAPLACE_LAPLACE_MARGINAL_POISSON_LOG_HPP
+#define STAN_MATH_LAPLACE_LAPLACE_MARGINAL_POISSON_LOG_HPP
 
 #include <stan/math/laplace/laplace_marginal.hpp>
 #include <stan/math/laplace/laplace_likelihood.hpp>
 
 namespace stan {
 namespace math {
-  // EXPERIMENTAL
-  // Use the squared exponential kernel, for the time defined
-  // in the laplace_likelihood folder.
-  // In the final version, the user will provide the covariance
-  // function.
-
   /**
    * Wrapper function around the laplace_marginal function for
    * a log poisson likelihood. Returns the marginal density
@@ -24,7 +18,7 @@ namespace math {
    * @param[in] y total counts per group. Second sufficient statistics.
    * @param[in] n_samples number of samples per group. First sufficient
    *            statistics.
-   * NOTE: here we would have the covariance functor
+   * @param[in] covariance a function which returns the prior covariance.
    * @param[in] phi model parameters for the covariance functor.
    * @param[in] x data for the covariance functor.
    * @param[in] delta additional real data for the covariance functor.
