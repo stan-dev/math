@@ -12,30 +12,31 @@ namespace internal {
 
 /**
  * Implementation of for_each_with_iter.
- * @note The static cast to void is used in boost::hana's for_each_with_iter impl
- *  and is used to suppress unused value warnings from the compiler.
+ * @note The static cast to void is used in boost::hana's for_each_with_iter
+ * impl and is used to suppress unused value warnings from the compiler.
  */
 template <typename F, typename T, size_t... Is>
-constexpr inline auto for_each_with_iter(F&& f, T&& t, std::index_sequence<Is...>) {
+constexpr inline auto for_each_with_iter(F&& f, T&& t,
+                                         std::index_sequence<Is...>) {
   using Swallow = int[];
-  static_cast<void>(Swallow{
-      (static_cast<void>(std::forward<F>(f)(std::get<Is>(std::forward<T>(t)), Is)),
-       0)...});
+  static_cast<void>(Swallow{(static_cast<void>(std::forward<F>(f)(
+                                 std::get<Is>(std::forward<T>(t)), Is)),
+                             0)...});
 }
 
 /**
  * Implementation of Binary for_each_with_iter.
- * @note The static cast to void is used in boost::hana's for_each_with_iter impl
- *  and is used to suppress unused value warnings from the compiler.
+ * @note The static cast to void is used in boost::hana's for_each_with_iter
+ * impl and is used to suppress unused value warnings from the compiler.
  */
 template <typename F, typename T1, typename T2, size_t... Is>
 constexpr inline auto for_each_with_iter(F&& f, T1&& t1, T2&& t2,
-                               std::index_sequence<Is...>) {
+                                         std::index_sequence<Is...>) {
   using Swallow = int[];
-  static_cast<void>(Swallow{(
-      static_cast<void>(std::forward<F>(f)(std::get<Is>(std::forward<T1>(t1)),
-                                           std::get<Is>(std::forward<T2>(t2)), Is)),
-      0)...});
+  static_cast<void>(Swallow{(static_cast<void>(std::forward<F>(f)(
+                                 std::get<Is>(std::forward<T1>(t1)),
+                                 std::get<Is>(std::forward<T2>(t2)), Is)),
+                             0)...});
 }
 }  // namespace internal
 
@@ -64,8 +65,9 @@ constexpr inline auto for_each_with_iter(F&& f, T&& t) {
  */
 template <typename F, typename T1, typename T2>
 constexpr inline auto for_each_with_iter(F&& f, T1&& t1, T2&& t2) {
-  check_size_match("for_each_with_iter", "t1", std::tuple_size<std::decay_t<T1>>::value,
-                   "t2", std::tuple_size<std::decay_t<T2>>::value);
+  check_size_match("for_each_with_iter", "t1",
+                   std::tuple_size<std::decay_t<T1>>::value, "t2",
+                   std::tuple_size<std::decay_t<T2>>::value);
   return internal::for_each_with_iter(
       std::forward<F>(f), std::forward<T1>(t1), std::forward<T2>(t2),
       std::make_index_sequence<std::tuple_size<std::decay_t<T1>>::value>());
@@ -141,6 +143,5 @@ constexpr inline auto for_each(F&& f, T1&& t1, T2&& t2) {
 
 }  // namespace math
 }  // namespace stan
-
 
 #endif
