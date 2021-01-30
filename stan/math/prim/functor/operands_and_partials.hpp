@@ -97,12 +97,12 @@ class operands_and_partials_impl<ReturnType, require_arithmetic_t<ReturnType>,
  *  should never be used by the program and only exists so that
  *  developer can write functions using `operands_and_partials` that works for
  *  double, vars, and fvar types.
- * @tparam One of `double`, `var`, `fvar`.
- * @tparam ViewElt The type of the input operand. It's scalar type
+ * @tparam ViewElt One of `double`, `var`, `fvar`.
+ * @tparam Op The type of the input operand. It's scalar type
  *  for this specialization must be a `Arithmetic`
  */
-template <typename Op, typename ViewElt>
-struct ops_partials_edge<Op, ViewElt, require_st_arithmetic<ViewElt>> {
+template <typename ViewElt, typename Op>
+struct ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>> {
   using inner_op = std::conditional_t<is_eigen<value_type_t<Op>>::value,
                                       value_type_t<Op>, Op>;
   using partials_t = empty_broadcast_array<ViewElt, inner_op>;
@@ -142,9 +142,9 @@ struct ops_partials_edge<Op, ViewElt, require_st_arithmetic<ViewElt>> {
   static constexpr int size() { return 0; }  // reverse mode
 };
 
-template <typename Op, typename ViewElt>
+template <typename ViewElt, typename Op>
 constexpr double
-    ops_partials_edge<Op, ViewElt, require_st_arithmetic<ViewElt>>::operands_;
+    ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>>::operands_;
 
 }  // namespace internal
 

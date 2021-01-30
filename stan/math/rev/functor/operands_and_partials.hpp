@@ -99,20 +99,13 @@ class operands_and_partials_impl<ReturnType, require_var_t<ReturnType>,
    * @return the node to be stored in the expression graph for autodiff
    */
   inline var build(double value) {
-    auto operands_tuple = stan::math::apply(
-        [](auto&&... edges) { return std::make_tuple(edges.operand()...); },
-        edges_);
-    auto partials_tuple = stan::math::apply(
-        [](auto&&... edges) { return std::make_tuple(edges.partial()...); },
-        edges_);
     var ret(value);
-    for_each(
-        [ret](auto& operand, auto& partial) mutable {
-          reverse_pass_callback([operand, partial, ret]() mutable {
+    for_each([ret](auto& edge) mutable {
+          reverse_pass_callback([operand = edge.operand(), partial = edge.partial(), ret]() mutable {
             accumulate_adjoints(operand, partial, ret);
           });
         },
-        operands_tuple, partials_tuple);
+        edges_);
     return ret;
   }
 };
