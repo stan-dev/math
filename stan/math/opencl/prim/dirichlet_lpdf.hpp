@@ -281,7 +281,7 @@ inline return_type_t<T_prob_cl, T_prior_size_cl> dirichlet_lpdf(
     lp += from_matrix_cl(theta_log_alpha_m_1_csum_cl).sum();
   }
 
-  operands_and_partials<T_prob_cl, T_prior_size_cl> ops_partials(theta, alpha);
+  auto ops_partials = operands_and_partials(theta, alpha);
 
   if (!is_constant<T_prob_cl>::value) {
     if (theta.cols() < alpha.cols()) {

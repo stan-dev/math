@@ -26,7 +26,7 @@ TEST(MathMetaMix, OperandsAndPartialsUniMixMat) {
   d_dxs.push_back(dxm1(2));
   d_dxs.push_back(dxm1(3));
 
-  operands_and_partials<Eigen::Matrix<fvar<var>, -1, -1>> ops_partials(m1);
+  auto ops_partials = operands_and_partials(m1);
 
   // Do normal math on the fvar<var>, do addition to partials,
   ops_partials.edge1_.partials_vec_[0] += dxm1;
@@ -72,9 +72,7 @@ TEST(MathMetaMix, OperandsAndPartialsUniMixMat_dbl) {
   d_dxs.push_back(dxm1(2));
   d_dxs.push_back(dxm1(3));
 
-  operands_and_partials<Eigen::Matrix<fvar<var>, -1, -1>,
-                        Eigen::Matrix<double, -1, -1>>
-      ops_partials(m1, m2);
+  auto ops_partials = operands_and_partials(m1, m2);
 
   // Do normal math on the fvar<var>, do addition to partials,
   ops_partials.edge1_.partials_vec_[0] += dxm1;
@@ -135,7 +133,7 @@ TEST(MathMetaMix, OperandsAndPartialsMultiMix) {
   d_dxs.push_back(dxm1(2));
   d_dxs.push_back(dxm1(3));
 
-  operands_and_partials<std::vector<uni_mat_t>> ops_partials(multi_mat);
+  auto ops_partials = operands_and_partials(multi_mat);
 
   // Do normal math on the fvar<var>, do addition to partials,
   ops_partials.edge1_.partials_vec_[0] += dxm1;
@@ -200,8 +198,7 @@ TEST(MathMetaMix, OperandsAndPartialsMultiMix_dbl) {
   d_dxs.push_back(dxm1(2));
   d_dxs.push_back(dxm1(3));
 
-  operands_and_partials<std::vector<uni_mat_t>, Eigen::Matrix<double, -1, -1>>
-      ops_partials(multi_mat, m3);
+  auto ops_partials = operands_and_partials(multi_mat, m3);
 
   // Do normal math on the fvar<var>, do addition to partials,
   ops_partials.edge1_.partials_vec_[0] += dxm1;
@@ -267,7 +264,7 @@ TEST(MathMetaMix, OperandsAndPartialsMultiStdMix) {
   d_dxs.push_back(dxm1[2]);
   d_dxs.push_back(dxm1[3]);
 
-  operands_and_partials<std::vector<uni_std_t>> ops_partials(multi_std);
+  auto ops_partials = operands_and_partials(multi_std);
 
   // Do normal math on the fvar<var>, do addition to partials,
   ops_partials.edge1_.partials_vec_[0] = dxm1;
@@ -336,8 +333,7 @@ TEST(MathMetaMix, OperandsAndPartialsMultiStdMix_dbl) {
   d_dxs.push_back(dxm1[2]);
   d_dxs.push_back(dxm1[3]);
 
-  operands_and_partials<std::vector<uni_std_t>, Eigen::Matrix<double, -1, -1>>
-      ops_partials(multi_std, m3);
+  auto ops_partials = operands_and_partials(multi_std, m3);
 
   // Do normal math on the fvar<var>, do addition to partials,
   ops_partials.edge1_.partials_vec_[0] = dxm1;
@@ -379,7 +375,7 @@ TEST(MathMetaMix, OperandsAndPartialsMultiMixInt) {
   multi_mat.push_back(m1);
   multi_mat.push_back(m2);
 
-  operands_and_partials<std::vector<uni_mat_t>> ops_partials(multi_mat);
+  auto ops_partials = operands_and_partials(multi_mat);
 
   double v = ops_partials.build(10.0);
 
@@ -411,8 +407,7 @@ TEST(MathMetaMix, OperandsAndPartialsMultiMixInt_dbl) {
   Eigen::Matrix<double, -1, -1> m3(2, 2);
   m3 << 2.0, 2.0, 2.0, 2.0;
 
-  operands_and_partials<std::vector<uni_mat_t>, Eigen::Matrix<double, -1, -1>>
-      ops_partials(multi_mat);
+  auto ops_partials = operands_and_partials(multi_mat);
 
   double v = ops_partials.build(10.0);
 
