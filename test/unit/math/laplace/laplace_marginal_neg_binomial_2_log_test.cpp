@@ -206,7 +206,7 @@ TEST(laplace, neg_binomial_2_log_dbl) {
          target_eta_u = laplace_marginal_density(diff_functor, K, phi_dbl,
                                                          eta_u, x, delta,
                                                          delta_int, theta_0),
-         target_eta_l = laplace_marginal_density(diff_functor, K, phi_1u,
+         target_eta_l = laplace_marginal_density(diff_functor, K, phi_dbl,
                                                          eta_l, x, delta,
                                                          delta_int, theta_0);
 
