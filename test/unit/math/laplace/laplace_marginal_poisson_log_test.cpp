@@ -19,13 +19,14 @@ TEST(laplace, likelihood_differentiation) {
   theta << 1, 1;
   std::vector<int> n_samples = {1, 1};
   std::vector<int> sums = {1, 0};
+  Eigen::VectorXd eta_dummy;
 
   diff_poisson_log diff_functor(to_vector(n_samples),
                                 to_vector(sums));
-  double log_density = diff_functor.log_likelihood(theta);
+  double log_density = diff_functor.log_likelihood(theta, eta_dummy);
   Eigen::VectorXd gradient, hessian;
-  diff_functor.diff(theta, gradient, hessian);
-  Eigen::VectorXd third_tensor = diff_functor.third_diff(theta);
+  diff_functor.diff(theta, eta_dummy, gradient, hessian);
+  Eigen::VectorXd third_tensor = diff_functor.third_diff(theta, eta_dummy);
 
   EXPECT_FLOAT_EQ(-4.436564, log_density);
   EXPECT_FLOAT_EQ(-1.718282, gradient(0));
@@ -46,15 +47,16 @@ TEST(laplace, likelihood_differentiation2) {
   std::vector<int> n_samples = {1, 1};
   std::vector<int> sums = {1, 0};
   std::vector<double> log_exposure = {log(0.5), log(2)};
+  Eigen::VectorXd eta_dummy;
 
   diff_poisson_log diff_functor(to_vector(n_samples),
                                 to_vector(sums),
                                 to_vector(log_exposure));
 
-  double log_density = diff_functor.log_likelihood(theta);
+  double log_density = diff_functor.log_likelihood(theta, eta_dummy);
   Eigen::VectorXd gradient, hessian;
-  diff_functor.diff(theta, gradient, hessian);
-  Eigen::VectorXd third_tensor = diff_functor.third_diff(theta);
+  diff_functor.diff(theta, eta_dummy, gradient, hessian);
+  Eigen::VectorXd third_tensor = diff_functor.third_diff(theta, eta_dummy);
 
   EXPECT_FLOAT_EQ(-6.488852, log_density);
   EXPECT_FLOAT_EQ(-0.3591409, gradient(0));

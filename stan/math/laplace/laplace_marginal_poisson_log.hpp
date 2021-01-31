@@ -42,9 +42,11 @@ namespace math {
                 std::ostream* msgs = nullptr,
                 double tolerance = 1e-6,
                 long int max_num_steps = 100) {
+    // TODO: change this to a VectorXd once we have operands & partials.
+    Eigen::Matrix<T1, Eigen::Dynamic, 1> eta_dummy(0);
     return laplace_marginal_density(
       diff_poisson_log(to_vector(n_samples), to_vector(y)),
-      covariance_function, phi, x, delta, delta_int,
+      covariance_function, phi, eta_dummy, x, delta, delta_int,
       theta_0, msgs, tolerance, max_num_steps);
   }
 
@@ -62,9 +64,11 @@ namespace math {
                 std::ostream* msgs = nullptr,
                 double tolerance = 1e-6,
                 long int max_num_steps = 100) {
+    // TODO: change this to a VectorXd once we have operands & partials.
+    Eigen::Matrix<T1, Eigen::Dynamic, 1> eta_dummy(0);
     return laplace_marginal_density(
       diff_poisson_log(to_vector(n_samples), to_vector(y), log(ye)),
-      covariance_function, phi, x, delta, delta_int,
+      covariance_function, phi, eta_dummy, x, delta, delta_int,
       theta_0, msgs, tolerance, max_num_steps);
   }
 

@@ -225,12 +225,12 @@ namespace math {
     /* An object to store the sensitivities of eta. */
     Eigen::VectorXd eta_adj_;
 
-    template <typename T, typename K, typename D, typename Tx>
+    template <typename T1, typename T2, typename K, typename D, typename Tx>
     laplace_marginal_density_vari
       (const D& diff_likelihood,
        const K& covariance_function,
-       const Eigen::Matrix<T, Eigen::Dynamic, 1>& phi,
-       const Eigen::Matrix<T, Eigen::Dynamic, 1>& eta,
+       const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
+       const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta,
        const Tx& x,
        const std::vector<double>& delta,
        const std::vector<int>& delta_int,
@@ -309,7 +309,7 @@ namespace math {
      VectorXd diff_eta = diff_likelihood.diff_eta(theta, eta_dbl);
      MatrixXd diff_theta_eta = diff_likelihood.diff_theta_eta(theta, eta_dbl);
      MatrixXd diff2_theta_eta
-       = diff_likelihood.diff2_theta_eta(theta, eta_dbl, W_root);
+       = diff_likelihood.diff2_theta_eta(theta, eta_dbl);
 
     VectorXd W_root_inv = W_root.cwiseInverse();
 
