@@ -24,12 +24,13 @@ TEST(laplace, likelihood_differentiation) {
   y << 1, 0;
   n_samples << 1, 1;
   Eigen::Matrix<var, Eigen::Dynamic, 1> theta_v = theta;
+  Eigen::VectorXd eta_dummy;
 
   diff_logistic_log diff_functor(n_samples, y);
-  double log_density = diff_functor.log_likelihood(theta);
+  double log_density = diff_functor.log_likelihood(theta, eta_dummy);
   Eigen::VectorXd gradient, hessian;
-  diff_functor.diff(theta, gradient, hessian);
-  Eigen::VectorXd third_tensor = diff_functor.third_diff(theta);
+  diff_functor.diff(theta, eta_dummy, gradient, hessian);
+  Eigen::VectorXd third_tensor = diff_functor.third_diff(theta, eta_dummy);
 
   EXPECT_NEAR(-2.566843, log_density, test_tolerance);
 
@@ -43,10 +44,12 @@ TEST(laplace, likelihood_differentiation) {
   theta_1l(0) = theta(0) - diff;
   theta_2u(1) = theta(1) + diff;
   theta_2l(1) = theta(1) - diff;
-  double diff_1 = (diff_functor.log_likelihood(theta_1u)
-                     - diff_functor.log_likelihood(theta_1l)) / (2 * diff);
-  double diff_2 = (diff_functor.log_likelihood(theta_2u)
-                     - diff_functor.log_likelihood(theta_2l)) / (2 * diff);
+  double diff_1 = (diff_functor.log_likelihood(theta_1u, eta_dummy)
+                     - diff_functor.log_likelihood(theta_1l, eta_dummy))
+                     / (2 * diff);
+  double diff_2 = (diff_functor.log_likelihood(theta_2u, eta_dummy)
+                     - diff_functor.log_likelihood(theta_2l, eta_dummy))
+                     / (2 * diff);
 
   EXPECT_NEAR(diff_1, gradient(0), test_tolerance);
   EXPECT_NEAR(diff_2, gradient(1), test_tolerance);
@@ -54,10 +57,10 @@ TEST(laplace, likelihood_differentiation) {
   // finite diff calculation for second-order derivatives
   Eigen::VectorXd gradient_1u, gradient_1l, hessian_1u, hessian_1l,
   gradient_2u, gradient_2l, hessian_2u, hessian_2l;
-  diff_functor.diff(theta_1u, gradient_1u, hessian_1u);
-  diff_functor.diff(theta_1l, gradient_1l, hessian_1l);
-  diff_functor.diff(theta_2u, gradient_2u, hessian_2u);
-  diff_functor.diff(theta_2l, gradient_2l, hessian_2l);
+  diff_functor.diff(theta_1u, eta_dummy, gradient_1u, hessian_1u);
+  diff_functor.diff(theta_1l, eta_dummy, gradient_1l, hessian_1l);
+  diff_functor.diff(theta_2u, eta_dummy, gradient_2u, hessian_2u);
+  diff_functor.diff(theta_2l, eta_dummy, gradient_2l, hessian_2l);
 
   double diff_grad_1 = (gradient_1u(0) - gradient_1l(0)) / (2 * diff);
   double diff_grad_2 = (gradient_2u(1) - gradient_2l(1)) / (2 * diff);
@@ -110,6 +113,7 @@ TEST(laplace, logistic_lgm_dim500) {
   // CASE 1: phi is passed as a double.
   Eigen::VectorXd phi(2);
   phi << 1.6, 1;  // standard deviation, length scale
+  Eigen::VectorXd eta_dummy;
 
   auto start_optimization = std::chrono::system_clock::now();
 
@@ -117,7 +121,7 @@ TEST(laplace, logistic_lgm_dim500) {
     = laplace_marginal_density(
       diff_logistic_log(to_vector(n_samples), to_vector(y)),
       sqr_exp_kernel_functor(),
-      phi, x, delta, delta_int,
+      phi, eta_dummy, x, delta, delta_int,
       covariance, theta_laplace, W_root, L, a, l_grad,
       theta_0, 0, 1e-3, 100);
 
@@ -136,13 +140,14 @@ TEST(laplace, logistic_lgm_dim500) {
 
   // CASE 2: phi is passed as a var
   Eigen::Matrix<var, Eigen::Dynamic, 1> phi_v2 = phi;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> eta_dummy_v;
 
   start_optimization = std::chrono::system_clock::now();
   var marginal_density_v
     = laplace_marginal_density(
         diff_logistic_log(to_vector(n_samples), to_vector(y)),
         sqr_exp_kernel_functor(),
-        phi_v2, x, delta, delta_int,
+        phi_v2, eta_dummy_v, x, delta, delta_int,
         theta_0, 0, 1e-3, 100);
 
   VEC g2;

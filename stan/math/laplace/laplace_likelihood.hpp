@@ -152,8 +152,9 @@ struct diff_logistic_log {
    * @param[in] theta log poisson parameters for each group.
    * @return the log density.
    */
-  template <typename T>
-  T log_likelihood (const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta)
+  template <typename T1, typename T2>
+  T1 log_likelihood (const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
+                    const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy)
     const {
       Eigen::VectorXd one = rep_vector(1, theta.size());
       return sum(theta.cwiseProduct(sums_)
@@ -171,11 +172,12 @@ struct diff_logistic_log {
    * @param[in, out] gradient
    * @param[in, out] hessian diagonal, so stored in a vector.
    */
-  template <typename T>
-  void diff (const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta,
-             Eigen::Matrix<T, Eigen::Dynamic, 1>& gradient,
-             Eigen::Matrix<T, Eigen::Dynamic, 1>& hessian) const {
-    Eigen::Matrix<T, Eigen::Dynamic, 1> exp_theta = exp(theta);
+  template <typename T1, typename T2>
+  void diff (const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
+             const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy,
+             Eigen::Matrix<T1, Eigen::Dynamic, 1>& gradient,
+             Eigen::Matrix<T1, Eigen::Dynamic, 1>& hessian) const {
+    Eigen::Matrix<T1, Eigen::Dynamic, 1> exp_theta = exp(theta);
     Eigen::VectorXd one = rep_vector(1, theta.size());
 
     gradient = sums_ - n_samples_.cwiseProduct(inv_logit(theta));
@@ -189,12 +191,14 @@ struct diff_logistic_log {
    * the object is stored in a vector.
    * @tparam T type of the log poisson parameter.
    * @param[in] theta log poisson parameters for each group.
+   * @param[in] eta_dummy additional likelihood parameters (used for other lk)
    * @return A vector containing the non-zero elements of the third
    *         derivative tensor.
    */
-  template <typename T>
-  Eigen::Matrix<T, Eigen::Dynamic, 1>
-  third_diff(const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta) const {
+  template <typename T1, typename T2>
+  Eigen::Matrix<T1, Eigen::Dynamic, 1>
+  third_diff(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
+             const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy) const {
     Eigen::VectorXd exp_theta = exp(theta);
     Eigen::VectorXd one = rep_vector(1, theta.size());
     Eigen::VectorXd nominator = exp_theta.cwiseProduct(exp_theta - one);
@@ -202,6 +206,36 @@ struct diff_logistic_log {
                                    .cwiseProduct(one + exp_theta);
 
     return n_samples_.cwiseProduct(elt_divide(nominator, denominator));
+  }
+
+  template <typename T_theta, typename T_eta>
+  Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, 1>
+  diff_eta(const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
+           const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) const {
+    std::cout << "THIS FUNCTIONS SHOULD NEVER GET CALLED!" << std::endl;
+    Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, 1> void_matrix;
+    return void_matrix;
+  }
+
+  template <typename T_theta, typename T_eta>
+  Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, Eigen::Dynamic>
+  diff_theta_eta(const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
+                 const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) const {
+    std::cout << "THIS FUNCTIONS SHOULD NEVER GET CALLED!" << std::endl;
+    Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic,
+      Eigen::Dynamic> void_matrix;
+    return void_matrix;
+  }
+
+  template <typename T_theta, typename T_eta>
+  Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, Eigen::Dynamic>
+  diff2_theta_eta(const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
+                  const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta)
+  const {
+    std::cout << "THIS FUNCTIONS SHOULD NEVER GET CALLED!" << std::endl;
+    Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic,
+      Eigen::Dynamic> void_matrix;
+    return void_matrix;
   }
 };
 
