@@ -51,7 +51,8 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
       [](const auto& x_ref, const auto& ub_ref, const auto& lb_ref) {
         return add(elt_multiply(subtract(ub_ref, lb_ref), inv_logit(x_ref)),
                    lb_ref);
-      }, x_ref, ub_ref, lb_ref);
+      },
+      x_ref, ub_ref, lb_ref);
 }
 
 /**
@@ -106,7 +107,8 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
   return make_holder(
       [](const auto& diff, const auto& x_ref, const auto& lb_ref) {
         return add(elt_multiply(diff, inv_logit(x_ref)), lb_ref);
-      }, diff, x_ref, lb_ref);
+      },
+      diff, x_ref, lb_ref);
 }
 
 }  // namespace math
