@@ -9,6 +9,14 @@
 namespace stan {
 namespace math {
 
+/**
+ * Check that unit vector is at least size 2
+ *
+ * @param var_name Name of unit vector variable
+ * @param expr Expression in which variable is declared
+ * @param val Size of unit vector
+ * @throw std::invalid_argument if simplex size is less than 2
+ */
 inline void validate_unit_vector_index(const char* var_name, const char* expr,
                                        int val) {
   if (val <= 1) {

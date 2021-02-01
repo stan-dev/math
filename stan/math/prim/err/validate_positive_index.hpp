@@ -9,6 +9,14 @@
 namespace stan {
 namespace math {
 
+/**
+ * Check that simplex is at least size 1
+ *
+ * @param var_name Name of simplex variable
+ * @param expr Expression in which variable is declared
+ * @param val Size of simplex
+ * @throw std::invalid_argument if simplex size is less than 1
+ */
 inline void validate_positive_index(const char* var_name, const char* expr,
                                     int val) {
   if (val < 1) {
