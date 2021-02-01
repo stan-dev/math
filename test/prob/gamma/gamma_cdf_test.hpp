@@ -11,10 +11,10 @@ class AgradCdfGamma : public AgradCdfTest {
     vector<double> param(3);
 
     param[0] = 1.0;  // y
-    param[1] = 1.5;  // alpha
-    param[2] = 1.4;  // beta
+    param[1] = 2.0;  // alpha
+    param[2] = 2.0;  // beta
     parameters.push_back(param);
-    cdf.push_back(0.5765000829445408);  // expected cdf
+    cdf.push_back(0.5939941502901618930466);  // expected cdf
 
     param[0] = 2.0;   // y
     param[1] = 0.25;  // alpha

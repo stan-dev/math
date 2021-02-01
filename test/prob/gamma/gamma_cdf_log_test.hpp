@@ -11,11 +11,11 @@ class AgradCdfLogGamma : public AgradCdfLogTest {
                     vector<double>& cdf_log) {
     vector<double> param(3);
 
-    param[0] = 0.7;  // y
-    param[1] = 1.1;  // alpha
-    param[2] = 0.9;  // beta
+    param[0] = 1.0;  // y
+    param[1] = 2.0;  // alpha
+    param[2] = 2.0;  // beta
     parameters.push_back(param);
-    cdf_log.push_back(std::log(0.4199241634320857175));  // expected cdf_log
+    cdf_log.push_back(std::log(0.5939941502901618930466));  // expected cdf_log
 
     param[0] = 2.0;   // y
     param[1] = 0.25;  // alpha

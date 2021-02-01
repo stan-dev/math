@@ -11,19 +11,19 @@ class AgradCcdfLogGamma : public AgradCcdfLogTest {
                     vector<double>& ccdf_log) {
     vector<double> param(3);
 
-    param[0] = 0.7;  // y
-    param[1] = 1.1;  // alpha
-    param[2] = 0.9;  // beta
+    param[0] = 1.0;  // y
+    param[1] = 2.0;  // alpha
+    param[2] = 2.0;  // beta
     parameters.push_back(param);
     ccdf_log.push_back(
-        std::log(1.0 - 0.4199241634320857175));  // expected ccdf_log
+        std::log(1.0 - 0.5939941502901618930466));  // expected ccdf_log
 
-    param[0] = 1.2;   // y
+    param[0] = 2.0;   // y
     param[1] = 0.25;  // alpha
     param[2] = 0.75;  // beta
     parameters.push_back(param);
     ccdf_log.push_back(
-        std::log(1.0 - 0.9209749374046803938));  // expected ccdf_log
+        std::log(1.0 - 0.9665835558410209582547));  // expected ccdf_log
 
     param[0] = 1.0;  // y
     param[1] = 1.0;  // alpha
@@ -31,6 +31,12 @@ class AgradCcdfLogGamma : public AgradCcdfLogTest {
     parameters.push_back(param);
     ccdf_log.push_back(
         std::log(1.0 - 0.6321205588285576659757));  // expected ccdf_log
+
+    param[0] = 9.0;  // y	
+    param[1] = 1.2;  // alpha	
+    param[2] = 1.2;  // beta
+    parameters.push_back(param);	
+    ccdf_log.push_back(-10.221534317077268);  // expected ccdf_log
   }
 
   void invalid_values(vector<size_t>& index, vector<double>& value) {

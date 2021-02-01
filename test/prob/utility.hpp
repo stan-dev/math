@@ -94,7 +94,6 @@ fvar<fvar<double>> get_param<fvar<fvar<double>>>(const vector<double>& params,
   if (n < params.size()) {
     param = params[n];
     param.d_.val_ = 1.0;
-    // param.val_.d_ = 1.0;
   }
   return param;
 }
@@ -104,7 +103,6 @@ fvar<fvar<var>> get_param<fvar<fvar<var>>>(const vector<double>& params,
   fvar<fvar<var>> param = 0;
   if (n < params.size()) {
     param = params[n];
-    // param.val_.d_ = 1.0;
     param.d_.val_ = 1.0;
   }
   return param;
@@ -181,7 +179,6 @@ fvar<fvar<double>> get_params<fvar<fvar<double>>>(
   if (p < parameters[0].size()) {
     param = parameters[0][p];
     param.d_.val_ = 1.0;
-    // param.val_.d_ = 1.0;
   }
   return param;
 }
@@ -192,7 +189,6 @@ fvar<fvar<var>> get_params<fvar<fvar<var>>>(
   if (p < parameters[0].size()) {
     param = parameters[0][p];
     param.d_.val_ = 1.0;
-    // param.val_.d_ = 1.0;
   }
   return param;
 }
@@ -261,7 +257,6 @@ vector<fvar<fvar<double>>> get_params<vector<fvar<fvar<double>>>>(
     if (p < parameters[0].size()) {
       param[n] = parameters[n][p];
       param[n].d_.val_ = 1.0;
-      // param[n].val_.d_ = 1.0;
     }
   return param;
 }
@@ -273,7 +268,6 @@ vector<fvar<fvar<var>>> get_params<vector<fvar<fvar<var>>>>(
     if (p < parameters[0].size()) {
       param[n] = parameters[n][p];
       param[n].d_.val_ = 1.0;
-      // param[n].val_.d_ = 1.0;
     }
   return param;
 }
@@ -352,7 +346,6 @@ fvar<fvar<double>> get_params<fvar<fvar<double>>>(
   if (p < parameters[0].size()) {
     param = parameters[n][p];
     param.d_.val_ = 1.0;
-    // param.val_.d_ = 1.0;
   }
   return param;
 }
@@ -363,7 +356,6 @@ fvar<fvar<var>> get_params<fvar<fvar<var>>>(
   if (p < parameters[0].size()) {
     param = parameters[n][p];
     param.d_.val_ = 1.0;
-    // param.val_.d_ = 1.0;
   }
   return param;
 }
@@ -437,7 +429,6 @@ vector<fvar<fvar<double>>> get_params<vector<fvar<fvar<double>>>>(
     if (p < parameters[0].size()) {
       param[i] = parameters[i][p];
       param[i].d_.val_ = 1.0;
-      // param[i].val_.d_ = 1.0;
     }
   return param;
 }
@@ -450,7 +441,6 @@ vector<fvar<fvar<var>>> get_params<vector<fvar<fvar<var>>>>(
     if (p < parameters[0].size()) {
       param[i] = parameters[i][p];
       param[i].d_.val_ = 1.0;
-      // param[i].val_.d_ = 1.0;
     }
   return param;
 }

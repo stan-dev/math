@@ -47,7 +47,7 @@ return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
   }
   T_n_ref n_ref = n;
   T_theta_ref theta_ref = theta;
-  check_bounded(function, "n", value_of(n_ref), 0, 1);
+  check_bounded(function, "n", n_ref, 0, 1);
 
   const auto& theta_col = as_column_vector_or_scalar(theta_ref);
   const auto& theta_val = value_of(theta_col);
