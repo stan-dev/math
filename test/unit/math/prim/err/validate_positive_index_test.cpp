@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-TEST(ErrorHandling, validate_unit_vector_index) {
+TEST(ErrorHandling, validate_positive_index) {
   EXPECT_THROW(stan::math::validate_positive_index("unit_vector", "x", -1),
                std::invalid_argument);
   EXPECT_THROW(stan::math::validate_positive_index("unit_vector", "x", 0),
