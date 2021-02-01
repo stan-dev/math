@@ -117,8 +117,7 @@ class ops_partials_edge<InnerType, T, require_fvar_t<T>> {
   Dx partial_{0};
   broadcast_array<Dx> partials_{partial_};
 
-  template <typename OpT,
-            require_same_t<plain_type_t<OpT>, plain_type_t<Op>>* = nullptr>
+  template <typename OpT, require_fvar_t<OpT>* = nullptr>
   explicit ops_partials_edge(const OpT& op) : operand_(op) {}
 
   const Op& operand_;
@@ -135,7 +134,8 @@ class ops_partials_edge<InnerType, T, require_std_vector_vt<is_fvar, T>> {
   using partials_t = Eigen::Matrix<Dx, -1, 1>;
   partials_t partials_;  // For univariate use-cases
   broadcast_array<partials_t> partials_vec_{partials_};  // For multivariate
-  explicit ops_partials_edge(const Op& ops)
+  template <typename OpT, require_std_vector_vt<is_fvar, OpT>* = nullptr>
+  explicit ops_partials_edge(const OpT& ops)
       : partials_(partials_t::Zero(ops.size()).eval()), operands_(ops) {}
   const Op& operands_;
 
@@ -155,7 +155,8 @@ class ops_partials_edge<Dx, ViewElt, require_eigen_vt<is_fvar, ViewElt>> {
   using Op = plain_type_t<ViewElt>;
   partials_t partials_;  // For univariate use-cases
   broadcast_array<partials_t> partials_vec_{partials_};  // For multivariate
-  explicit ops_partials_edge(const Op& ops)
+  template <typename OpT, require_eigen_vt<is_fvar, OpT>* = nullptr>
+  explicit ops_partials_edge(const OpT& ops)
       : partials_(partials_t::Zero(ops.rows(), ops.cols())), operands_(ops) {}
 
   const Op& operands_;
