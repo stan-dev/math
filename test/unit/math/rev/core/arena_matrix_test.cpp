@@ -82,3 +82,26 @@ TEST(AgradRev, arena_matrix_row_vector_test) {
   EXPECT_MATRIX_EQ(a + a2 + a3 + b + b2 + e, RowVectorXd::Ones(3) * 9);
   stan::math::recover_memory();
 }
+
+TEST(AgradRev, arena_matrix_auto_transpose) {
+  using Eigen::VectorXd;
+  using Eigen::RowVectorXd;
+  using stan::math::arena_matrix;
+
+  VectorXd v1(2);
+  v1 << 1,2;
+  VectorXd v2(2);
+  v2 << 3,4;
+  RowVectorXd r1 = v1;
+  RowVectorXd r2 = v2;
+
+  arena_matrix<RowVectorXd> ra(v1);
+  EXPECT_MATRIX_EQ(ra, r1);
+  ra = v2;
+  EXPECT_MATRIX_EQ(ra, r2);
+
+  arena_matrix<VectorXd> va(r1);
+  EXPECT_MATRIX_EQ(va, v1);
+  va = r2;
+  EXPECT_MATRIX_EQ(va, v2);
+}
