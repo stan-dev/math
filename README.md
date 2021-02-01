@@ -108,6 +108,41 @@ this file to the same directory of the executable or to add the
 directory `/path/to/math/lib/tbb` as absolute path to the system-wide
 `PATH` variable.
 
+Intel TBB
+---------
+
+`math` now supports the new interface of Intel TBB and allows using external library (e.g., with [`oneTBB`](https://github.com/oneapi-src/oneTBB) or the system TBB library), using `TBB_LIB` and `TBB_INC` environment variables.
+
+To build the development version of `math` with [`oneTBB`](https://github.com/oneapi-src/oneTBB):
+
+- Install [`oneTBB`](https://github.com/oneapi-src/oneTBB).
+
+For example, installing [`oneTBB`](https://github.com/oneapi-src/oneTBB) on Linux 64-bit (`x86_64`) to `$HOME` directory (change if needed!):
+```bash
+TBB_VERSION="2021.1.1"
+
+wget https://github.com/oneapi-src/oneTBB/releases/download/v2021.1.1/oneapi-tbb-$TBB_VERSION-lin.tgz
+tar zxvf oneapi-tbb-$TBB_VERSION-lin.tgz -C $HOME
+
+export TBB="$HOME/oneapi-tbb-$TBB_VERSION"
+```
+
+- Set the TBB environment variables (specifically: `TBB` for the installation prefix, `TBB_INC` for the directory that includes the header files, and `TBB_LIB` for the libraries directory).
+
+For example, installing [`oneTBB`](https://github.com/oneapi-src/oneTBB) on Linux 64-bit (`x86_64`) to `$HOME` directory (change if needed!):
+```bash
+source $TBB/env/vars.sh intel64
+
+export TBB_INC="$TBB/include"
+export TBB_LIB="$TBB/lib/intel64/gcc4.8"
+```
+
+- Set `Stan` local compiler flags to use the new TBB interface:
+```bash
+mkdir -p ~/.config/stan
+echo TBB_INTERFACE_NEW=true>> ~/.config/stan/make.local
+```
+
 Compilers
 ---------
 

@@ -25,51 +25,52 @@ template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
 inline var_value<matrix_cl<double>> cholesky_decompose(const var_value<T>& A) {
   check_nan("cholesky_decompose", "A", A.val());
-  var_value<matrix_cl<double>> L_A = cholesky_decompose(A.val());
 
-  reverse_pass_callback([A, L_A]() mutable {
-    int M_ = A.rows();
-    int block_size
-        = M_ / opencl_context.tuning_opts().cholesky_rev_block_partition;
-    block_size = std::max(block_size, 8);
-    block_size = std::min(
-        block_size, opencl_context.tuning_opts().cholesky_rev_min_block_size);
-    matrix_cl<double> A_adj = L_A.adj();
-    for (int k = M_; k > 0; k -= block_size) {
-      const int j = std::max(0, k - block_size);
-      const int k_j_ind = k - j;
-      const int m_k_ind = M_ - k;
+  return make_callback_var(
+      cholesky_decompose(A.val()),
+      [A](vari_value<matrix_cl<double>>& L_A) mutable {
+        int M_ = A.rows();
+        int block_size
+            = M_ / opencl_context.tuning_opts().cholesky_rev_block_partition;
+        block_size = std::max(block_size, 8);
+        block_size = std::min(
+            block_size,
+            opencl_context.tuning_opts().cholesky_rev_min_block_size);
+        matrix_cl<double> A_adj = L_A.adj();
+        for (int k = M_; k > 0; k -= block_size) {
+          const int j = std::max(0, k - block_size);
+          const int k_j_ind = k - j;
+          const int m_k_ind = M_ - k;
 
-      auto&& R_val = block_zero_based(L_A.val(), j, 0, k_j_ind, j);
-      auto&& R_adj = block_zero_based(A_adj, j, 0, k_j_ind, j);
-      matrix_cl<double> D_val
-          = block_zero_based(L_A.val(), j, j, k_j_ind, k_j_ind);
-      matrix_cl<double> D_adj = block_zero_based(A_adj, j, j, k_j_ind, k_j_ind);
-      auto&& B_val = block_zero_based(L_A.val(), k, 0, m_k_ind, j);
-      auto&& B_adj = block_zero_based(A_adj, k, 0, m_k_ind, j);
-      auto&& C_val = block_zero_based(L_A.val(), k, j, m_k_ind, k_j_ind);
-      auto&& C_adj = block_zero_based(A_adj, k, j, m_k_ind, k_j_ind);
+          auto&& R_val = block_zero_based(L_A.val(), j, 0, k_j_ind, j);
+          auto&& R_adj = block_zero_based(A_adj, j, 0, k_j_ind, j);
+          matrix_cl<double> D_val
+              = block_zero_based(L_A.val(), j, j, k_j_ind, k_j_ind);
+          matrix_cl<double> D_adj
+              = block_zero_based(A_adj, j, j, k_j_ind, k_j_ind);
+          auto&& B_val = block_zero_based(L_A.val(), k, 0, m_k_ind, j);
+          auto&& B_adj = block_zero_based(A_adj, k, 0, m_k_ind, j);
+          auto&& C_val = block_zero_based(L_A.val(), k, j, m_k_ind, k_j_ind);
+          auto&& C_adj = block_zero_based(A_adj, k, j, m_k_ind, k_j_ind);
 
-      C_adj = C_adj * tri_inverse(D_val);
-      B_adj = B_adj - C_adj * R_val;
-      D_adj = D_adj - transpose(C_adj) * C_val;
+          C_adj = C_adj * tri_inverse(D_val);
+          B_adj = B_adj - C_adj * R_val;
+          D_adj = D_adj - transpose(C_adj) * C_val;
 
-      D_adj = transpose(D_val) * D_adj;
-      D_adj.triangular_transpose<TriangularMapCL::LowerToUpper>();
-      D_val = transpose(tri_inverse(D_val));
-      D_adj = D_val * transpose(D_val * D_adj);
-      D_adj.triangular_transpose<TriangularMapCL::LowerToUpper>();
+          D_adj = transpose(D_val) * D_adj;
+          D_adj.triangular_transpose<TriangularMapCL::LowerToUpper>();
+          D_val = transpose(tri_inverse(D_val));
+          D_adj = D_val * transpose(D_val * D_adj);
+          D_adj.triangular_transpose<TriangularMapCL::LowerToUpper>();
 
-      R_adj = R_adj - transpose(C_adj) * B_val - D_adj * R_val;
-      diagonal(D_adj) = diagonal(D_adj) * 0.5;
+          R_adj = R_adj - transpose(C_adj) * B_val - D_adj * R_val;
+          diagonal(D_adj) = diagonal(D_adj) * 0.5;
 
-      block_zero_based(A_adj, j, j, k_j_ind, k_j_ind) = D_adj;
-    }
-    A_adj.view(matrix_cl_view::Lower);
-    A.adj() = A.adj() + A_adj;
-  });
-
-  return L_A;
+          block_zero_based(A_adj, j, j, k_j_ind, k_j_ind) = D_adj;
+        }
+        A_adj.view(matrix_cl_view::Lower);
+        A.adj() += A_adj;
+      });
 }
 
 }  // namespace math

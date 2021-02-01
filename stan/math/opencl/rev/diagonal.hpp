@@ -21,7 +21,7 @@ template <typename T,
 inline var_value<matrix_cl<double>> diagonal(const var_value<T>& M) {
   return make_callback_var(diagonal(M.val()),
                            [M](vari_value<matrix_cl<double>>& res) mutable {
-                             diagonal(M.adj()) = diagonal(M.adj()) + res.adj();
+                             diagonal(M.adj()) += res.adj();
                            });
 }
 

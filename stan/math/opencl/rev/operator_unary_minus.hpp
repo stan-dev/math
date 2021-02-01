@@ -19,7 +19,7 @@ template <typename T,
 inline var_value<matrix_cl<double>> operator-(const var_value<T>& M) {
   return make_callback_var(-M.val(),
                            [M](vari_value<matrix_cl<double>>& res) mutable {
-                             M.adj() = M.adj() - res.adj();
+                             M.adj() -= res.adj();
                            });
 }
 

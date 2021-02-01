@@ -318,7 +318,12 @@ ADD_UNARY_FUNCTION_WITH_INCLUDES(
     log1m_inv_logit, opencl_kernels::log1m_inv_logit_device_function)
 ADD_UNARY_FUNCTION_WITH_INCLUDES(trigamma,
                                  opencl_kernels::trigamma_device_function)
-ADD_UNARY_FUNCTION_WITH_INCLUDES(square, "double square(double x){return x*x;}")
+ADD_UNARY_FUNCTION_WITH_INCLUDES(
+    square,
+    "\n#ifndef STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_SQUARE\n"
+    "#define STAN_MATH_OPENCL_KERNELS_DEVICE_FUNCTIONS_SQUARE\n"
+    "double square(double x){return x*x;}\n"
+    "#endif\n")
 
 ADD_CLASSIFICATION_FUNCTION(isfinite, {-rows() + 1, cols() - 1})
 ADD_CLASSIFICATION_FUNCTION(isinf,
