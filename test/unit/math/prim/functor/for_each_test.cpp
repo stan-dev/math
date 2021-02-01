@@ -24,7 +24,11 @@ TEST(MathFunctions, for_each_basic_unary_index) {
   std::vector<int> v = {-5, 2};
   auto x = std::make_tuple(v, v);
 
-  auto f = [](auto& y) { y[0] += 1; y[1] += 1; return; };
+  auto f = [](auto& y) {
+    y[0] += 1;
+    y[1] += 1;
+    return;
+  };
 
   stan::math::for_each(f, x);
   EXPECT_EQ(std::get<0>(x)[0], -4);
@@ -56,9 +60,7 @@ TEST(MathFunctions, for_each_basic_binary) {
 TEST(MathFunctions, for_each_basic_binary_index) {
   std::vector<int> v1 = {-5, 2};
   auto x1 = std::make_tuple(v1[0], v1[1]);
-  auto f = [](const auto& y, const auto& z) {
-    EXPECT_EQ(y, z);
-  };
+  auto f = [](const auto& y, const auto& z) { EXPECT_EQ(y, z); };
 
   stan::math::for_each(f, x1, x1);
 }
