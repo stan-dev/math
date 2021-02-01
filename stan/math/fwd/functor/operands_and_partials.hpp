@@ -84,11 +84,11 @@ class operands_and_partials_impl<ReturnType, require_fvar_t<ReturnType>,
  public:
   using Dx = partials_type_t<ReturnType>;
   std::tuple<
-      internal::ops_partials_edge<Dx, plain_type_t<std::decay_t<Ops>>>...>
+      internal::ops_partials_edge<Dx, std::decay_t<plain_type_t<Ops>>>...>
       edges_;
   using T_return_type = fvar<Dx>;
   template <typename... Types>
-  explicit operands_and_partials_impl(const Types&... ops) : edges_(ops...) {}
+  explicit operands_and_partials_impl(Types&&... ops) : edges_(std::forward<Types>(ops)...) {}
 
   /** \ingroup type_trait
    * Build the node to be stored on the autodiff graph.
@@ -121,7 +121,7 @@ class ops_partials_edge<InnerType, T, require_fvar_t<T>> {
   template <typename OpT, require_fvar_t<OpT>* = nullptr>
   explicit ops_partials_edge(const OpT& op) : operand_(op) {}
 
-  const Op& operand_;
+  Op operand_;
 
   inline Dx dx() { return this->partial_ * this->operand_.d_; }
 };
@@ -136,9 +136,9 @@ class ops_partials_edge<InnerType, T, require_std_vector_vt<is_fvar, T>> {
   partials_t partials_;  // For univariate use-cases
   broadcast_array<partials_t> partials_vec_{partials_};  // For multivariate
   template <typename OpT, require_std_vector_vt<is_fvar, OpT>* = nullptr>
-  explicit ops_partials_edge(const OpT& ops)
-      : partials_(partials_t::Zero(ops.size()).eval()), operands_(ops) {}
-  const Op& operands_;
+  explicit ops_partials_edge(OpT&& ops)
+      : partials_(partials_t::Zero(ops.size()).eval()), operands_(std::forward<OpT>(ops)) {}
+  Op operands_;
 
   inline Dx dx() {
     Dx derivative(0);
@@ -157,10 +157,10 @@ class ops_partials_edge<Dx, ViewElt, require_eigen_vt<is_fvar, ViewElt>> {
   partials_t partials_;  // For univariate use-cases
   broadcast_array<partials_t> partials_vec_{partials_};  // For multivariate
   template <typename OpT, require_eigen_vt<is_fvar, OpT>* = nullptr>
-  explicit ops_partials_edge(const OpT& ops)
-      : partials_(partials_t::Zero(ops.rows(), ops.cols())), operands_(ops) {}
+  explicit ops_partials_edge(OpT&& ops)
+      : partials_(partials_t::Zero(ops.rows(), ops.cols())), operands_(std::forward<OpT>(ops)) {}
 
-  const Op& operands_;
+  Op operands_;
 
   inline Dx dx() {
     Dx derivative(0);
@@ -184,7 +184,7 @@ class ops_partials_edge<Dx, std::vector<Eigen::Matrix<fvar<Dx>, R, C>>> {
       partials_vec_[i] = partial_t::Zero(ops[i].rows(), ops[i].cols());
     }
   }
-  const Op& operands_;
+  Op operands_;
 
   inline Dx dx() {
     Dx derivative(0);
@@ -210,7 +210,7 @@ class ops_partials_edge<Dx, std::vector<std::vector<fvar<Dx>>>> {
     }
   }
 
-  const Op& operands_;
+  Op operands_;
   inline Dx dx() {
     Dx derivative(0);
     for (size_t i = 0; i < this->operands_.size(); ++i) {
