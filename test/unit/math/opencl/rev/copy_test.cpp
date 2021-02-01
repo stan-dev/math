@@ -129,7 +129,8 @@ TEST(VariCL, std_vector_var_eigen_from_matrix_cl) {
   stan::math::matrix_cl<double> vals_cl(vals);
   var_value<stan::math::matrix_cl<double>> a_cl(vals_cl);
   std::vector<var_value<Eigen::VectorXd>> a
-      = stan::math::from_matrix_cl<std::vector<var_value<Eigen::VectorXd>>>(a_cl);
+      = stan::math::from_matrix_cl<std::vector<var_value<Eigen::VectorXd>>>(
+          a_cl);
   EXPECT_MATRIX_EQ(stan::math::value_of(a[0]), vals.col(0));
   EXPECT_MATRIX_EQ(stan::math::value_of(a[1]), vals.col(1));
   EXPECT_MATRIX_EQ(stan::math::value_of(a[2]), vals.col(2));
