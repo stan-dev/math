@@ -184,9 +184,10 @@ return_type_t<T_theta, std::vector<T_lam>> log_mix(
       edge<0>(ops_partials).partials_ = derivs.rowwise().sum();
     }
     if (!is_constant_all<T_lam>::value) {
-        for (int n = 0; n < N; ++n) {
-          edge<1>(ops_partials).partials_vec_[n] = derivs.col(n).cwiseProduct(theta_dbl);
-        }
+      for (int n = 0; n < N; ++n) {
+        edge<1>(ops_partials).partials_vec_[n]
+            = derivs.col(n).cwiseProduct(theta_dbl);
+      }
     }
   }
   return ops_partials.build(logp.sum());
