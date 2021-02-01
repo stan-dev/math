@@ -51,10 +51,13 @@ inline matrix_cl<scalar_type_t<T>> to_matrix_cl(T&& src) {
  * Copies the source matrix that is stored on the OpenCL device to the
  * destination Eigen matrix.
  *
+ * @tparam T_ret destination type
+ * @tparam T scalar in the source matrix
  * @param src source matrix on the OpenCL device
  * @return Eigen matrix with a copy of the data in the source matrix
  */
-template <typename T_ret, typename T, require_eigen_t<T_ret>* = nullptr,
+template <typename T_ret, typename T,
+          require_eigen_vt<std::is_arithmetic, T_ret>* = nullptr,
           require_matrix_cl_t<T>* = nullptr,
           require_st_same<T_ret, T>* = nullptr>
 inline T_ret from_matrix_cl(const T& src) {
@@ -115,11 +118,10 @@ inline T_ret from_matrix_cl(const T& src) {
 }
 
 /** \ingroup opencl
- * Copies result of a kernel generator expression to the
- * destination Eigen matrix.
+ * Copies result of a kernel generator expression to the specified
+ * destination type.
  *
- * @tparam R rows type of the destination
- * @tparam C cols type of the destination
+ * @tparam T_ret destination type
  * @tparam T type of expression
  * @param src source expression
  * @return Eigen matrix with a copy of the data in the source matrix
@@ -132,7 +134,7 @@ inline T_ret from_matrix_cl(const T& src) {
 }
 
 /** \ingroup opencl
- * Copy A 1 by 1 source matrix from the Device to  the host.
+ * Copy A 1 by 1 source matrix from the Device to the host.
  * @tparam T An arithmetic type to pass the value from the OpenCL matrix to.
  * @param src A 1x1 matrix on the device.
  * @return dst Arithmetic to receive the matrix_cl value.
@@ -158,7 +160,17 @@ inline T_dst from_matrix_cl(const matrix_cl<T>& src) {
   return dst;
 }
 
-template <typename T_dst, typename T, require_std_vector_t<T_dst>* = nullptr,
+/** \ingroup opencl
+ * Copies the source matrix that is stored on the OpenCL device to the
+ * destination `std::vector`.
+ *
+ * @tparam T_dst destination type
+ * @tparam T scalar in the source matrix
+ * @param src source matrix on the OpenCL device
+ * @return `std::vector` with a copy of the data in the source matrix
+ */
+template <typename T_dst, typename T,
+          require_std_vector_vt<std::is_arithmetic, T_dst>* = nullptr,
           require_all_st_same<T_dst, T>* = nullptr>
 inline T_dst from_matrix_cl(const matrix_cl<T>& src) {
   check_size_match("from_matrix_cl<std::vector>", "src.cols()", src.cols(),
@@ -178,6 +190,37 @@ inline T_dst from_matrix_cl(const matrix_cl<T>& src) {
   return dst;
 }
 
+/** \ingroup opencl
+ * Copies the source matrix that is stored on the OpenCL device to the
+ * destination `std::vector` containing Eigen vectors.
+ *
+ * @tparam T_dst destination type
+ * @tparam T scalar in the source matrix
+ * @param src source matrix on the OpenCL device
+ * @return `std::vector` containing Eigen vectors with a copy of the data in the
+ * source matrix
+ */
+template <typename T_dst, typename T,
+          require_std_vector_vt<is_eigen_vector, T_dst>* = nullptr,
+          require_all_st_same<T_dst, T>* = nullptr>
+inline T_dst from_matrix_cl(const matrix_cl<T>& src) {
+  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> tmp = from_matrix_cl(src);
+  T_dst dst;
+  dst.reserve(src.cols());
+  for (int i = 0; i < src.cols(); i++) {
+    dst.emplace_back(tmp.col(i));
+  }
+  return dst;
+}
+
+/** \ingroup opencl
+ * Copies the source kernel generator expression or matrix that is stored on the
+ * OpenCL device to the destination Eigen matrix.
+ *
+ * @tparam T source type
+ * @param src expression or source matrix on the OpenCL device
+ * @return Eigen matrix with a copy of the data in the source matrix
+ */
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
 auto from_matrix_cl(const T& src) {
   return from_matrix_cl<

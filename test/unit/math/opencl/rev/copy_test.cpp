@@ -103,4 +103,65 @@ TEST(VariCL, eigen_var_from_matrix_cl) {
                    Eigen::MatrixXd::Constant(2, 3, 1));
 }
 
+TEST(VariCL, std_vector_var_from_matrix_cl) {
+  using stan::math::var;
+  using stan::math::var_value;
+  std::vector<double> vals{1, 2, 3, 4, 5, 6};
+  stan::math::matrix_cl<double> vals_cl(vals);
+  var_value<stan::math::matrix_cl<double>> a_cl(vals_cl);
+  std::vector<var> a = stan::math::from_matrix_cl<std::vector<var>>(a_cl);
+  EXPECT_STD_VECTOR_EQ(stan::math::value_of(a), vals);
+  stan::math::as_column_vector_or_scalar(a).adj()
+      = Eigen::VectorXd::Constant(6, 1.0);
+  stan::math::grad();
+  EXPECT_MATRIX_EQ(from_matrix_cl(a_cl.adj()),
+                   Eigen::VectorXd::Constant(6, 1.0));
+}
+
+TEST(VariCL, std_vector_var_eigen_from_matrix_cl) {
+  using stan::math::var;
+  using stan::math::var_value;
+  using stan::math::vector_v;
+
+  Eigen::MatrixXd vals(2, 3);
+  vals << 1, 2, 3, 4, 5, 6;
+
+  stan::math::matrix_cl<double> vals_cl(vals);
+  var_value<stan::math::matrix_cl<double>> a_cl(vals_cl);
+  std::vector<var_value<Eigen::VectorXd>> a
+      = stan::math::from_matrix_cl<std::vector<var_value<Eigen::VectorXd>>>(a_cl);
+  EXPECT_MATRIX_EQ(stan::math::value_of(a[0]), vals.col(0));
+  EXPECT_MATRIX_EQ(stan::math::value_of(a[1]), vals.col(1));
+  EXPECT_MATRIX_EQ(stan::math::value_of(a[2]), vals.col(2));
+  a[0].adj() = Eigen::VectorXd::Constant(2, 2.0);
+  a[1].adj() = Eigen::VectorXd::Constant(2, 2.0);
+  a[2].adj() = Eigen::VectorXd::Constant(2, 2.0);
+  stan::math::grad();
+  EXPECT_MATRIX_EQ(from_matrix_cl(a_cl.adj()),
+                   Eigen::MatrixXd::Constant(2, 3, 2.0));
+}
+
+TEST(VariCL, std_vector_eigen_var_from_matrix_cl) {
+  using stan::math::var;
+  using stan::math::var_value;
+  using stan::math::vector_v;
+
+  Eigen::MatrixXd vals(2, 3);
+  vals << 1, 2, 3, 4, 5, 6;
+
+  stan::math::matrix_cl<double> vals_cl(vals);
+  var_value<stan::math::matrix_cl<double>> a_cl(vals_cl);
+  std::vector<vector_v> a
+      = stan::math::from_matrix_cl<std::vector<vector_v>>(a_cl);
+  EXPECT_MATRIX_EQ(stan::math::value_of(a[0]), vals.col(0));
+  EXPECT_MATRIX_EQ(stan::math::value_of(a[1]), vals.col(1));
+  EXPECT_MATRIX_EQ(stan::math::value_of(a[2]), vals.col(2));
+  a[0].adj() = Eigen::VectorXd::Constant(2, 2.0);
+  a[1].adj() = Eigen::VectorXd::Constant(2, 2.0);
+  a[2].adj() = Eigen::VectorXd::Constant(2, 2.0);
+  stan::math::grad();
+  EXPECT_MATRIX_EQ(from_matrix_cl(a_cl.adj()),
+                   Eigen::MatrixXd::Constant(2, 3, 2.0));
+}
+
 #endif
