@@ -21,8 +21,8 @@ class ops_partials_edge<double, var_value<Op>, require_matrix_cl_t<Op>> {
   explicit ops_partials_edge(const var_value<Op>& ops)
       : partials_(constant(0, ops.vi_->rows(), ops.vi_->cols())),
         operands_(ops) {}
-  inline auto& partial() noexcept { return partial_; }
-  inline auto& operand() noexcept { return operands_; }
+  inline partials_t& partial() noexcept { return partials_; }
+  inline var_value<Op>& operand() noexcept { return operands_; }
   const var_value<Op>& operands_;
   static constexpr int size() { return 0; }
 };
