@@ -24,9 +24,9 @@ namespace math {
 
 namespace internal {
 
-template <typename T,
-          require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
-inline void accumulate_adjoints(var_value<T1>&& x, T2&& y, const var& z) {
+template <typename T1, typename T2,
+          require_all_kernel_expressions_and_none_scalar_t<T1>* = nullptr>
+inline void accumulate_adjoints(var_value<T1>& x, T2&& y, const var& z) {
   x.adj() += z.adj() * y;
 }
 
