@@ -12,119 +12,56 @@ namespace stan {
 namespace math {
 
 /**
- * LDLT_factor is a thin wrapper on Eigen::LDLT to allow for
- * reusing factorizations and efficient autodiff of things like
- * log determinants and solutions to linear systems.
- *
- * Memory is allocated in the constructor and stored in a
- * <code>std::shared_ptr</code>, which ensures that is freed
- * when the object is released.
- *
- * After the constructor and/or compute() is called, users of
- * LDLT_factor are responsible for calling success() to
- * check whether the factorization has succeeded.  Use of an LDLT_factor
- * object (e.g., in mdivide_left_ldlt) is undefined if success() is false.
- *
- * Its usage pattern is:
- *
- * ~~~
- * Eigen::Matrix<T, R, C> A1, A2;
- *
- * LDLT_factor<T, R, C> ldlt_A1(A1);
- * LDLT_factor<T, R, C> ldlt_A2;
- * ldlt_A2.compute(A2);
- * ~~~
- *
- * The caller should check that ldlt_A1.success() and ldlt_A2.success()
- * are true or abort accordingly.  Alternatively, call check_ldlt_factor().
- *
- * Note that ldlt_A1 and ldlt_A2 are completely equivalent.  They simply
- * demonstrate two different ways to construct the factorization.
- *
- * The caller can use the LDLT_factor objects as needed.  For
- * instance
- *
- * ~~~
- * x1 = mdivide_left_ldlt(ldlt_A1, b1);
- * x2 = mdivide_right_ldlt(b2, ldlt_A2);
- *
- * d1 = log_determinant_ldlt(ldlt_A1);
- * d2 = log_determinant_ldlt(ldlt_A2);
- * ~~~
- *
- * This class is conceptually similar to the corresponding Eigen
- * class.  Any symmetric, positive-definite matrix A can be
- * decomposed as LDL' where L is unit lower-triangular and D is
- * diagonal with positive diagonal elements.
+ * LDLT_factor is a structure that holds a matrix of type T and the
+ * LDLT of its values.
  *
  * @tparam T type of elements in the matrix
- * @tparam R number of rows, can be Eigen::Dynamic
- * @tparam C number of columns, can be Eigen::Dynamic
  */
-template <typename T, int R, int C>
-class LDLT_factor {
+template <typename T, typename Enable = void>
+class LDLT_factor;
+
+/**
+ * An LDLT_factor is a structure that holds a matrix of type T and the
+ * LDLT of its values.
+ *
+ * @tparam T type of elements in the matrix
+ */
+template <typename T>
+class LDLT_factor<T, std::enable_if_t<bool_constant<
+                         is_eigen_matrix_dynamic<T>::value
+                         && !is_var<scalar_type_t<T>>::value>::value>> {
+ private:
+  plain_type_t<T> matrix_;
+  Eigen::LDLT<plain_type_t<T>> ldlt_;
+
  public:
-  using vector_t = Eigen::Matrix<T, Eigen::Dynamic, 1>;
-  using matrix_t = Eigen::Matrix<T, R, C>;
-  using ldlt_t = Eigen::LDLT<matrix_t>;
-  using size_type = size_t;
-  using value_type = double;
+  template <typename S,
+            require_same_t<plain_type_t<T>, plain_type_t<S>>* = nullptr>
+  explicit LDLT_factor(const S& matrix)
+      : matrix_(matrix), ldlt_(matrix_.ldlt()) {}
 
-  LDLT_factor() : N_(0), ldltP_(new ldlt_t()) {}
+  /**
+   * Return a const reference to the underlying matrix
+   */
+  const auto& matrix() const { return matrix_; }
 
-  explicit LDLT_factor(const matrix_t& A) : N_(0), ldltP_(new ldlt_t()) {
-    compute(A);
-  }
-
-  inline void compute(const matrix_t& A) {
-    check_square("LDLT_factor", "A", A);
-    N_ = A.rows();
-    ldltP_->compute(A);
-  }
-
-  inline bool success() const {
-    if (ldltP_->info() != Eigen::Success) {
-      return false;
-    }
-    if (!(ldltP_->isPositive())) {
-      return false;
-    }
-    vector_t ldltP_diag(ldltP_->vectorD());
-    for (int i = 0; i < ldltP_diag.size(); ++i) {
-      if (ldltP_diag(i) <= 0 || is_nan(ldltP_diag(i))) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  inline T log_abs_det() const { return sum(log(ldltP_->vectorD())); }
-
-  inline void inverse(matrix_t& invA) const {
-    invA.setIdentity(N_);
-    ldltP_->solveInPlace(invA);
-  }
-
-  template <typename Rhs>
-  inline const Eigen::Solve<ldlt_t, Rhs> solve(
-      const Eigen::MatrixBase<Rhs>& b) const {
-    return ldltP_->solve(b);
-  }
-
-  inline matrix_t solveRight(const matrix_t& B) const {
-    return ldltP_->solve(B.transpose()).transpose();
-  }
-
-  inline vector_t vectorD() const { return ldltP_->vectorD(); }
-
-  inline ldlt_t matrixLDLT() const { return ldltP_->matrixLDLT(); }
-
-  inline size_t rows() const { return N_; }
-  inline size_t cols() const { return N_; }
-
-  size_t N_;
-  std::shared_ptr<ldlt_t> ldltP_;
+  /**
+   * Return a const reference to the LDLT factor of the matrix
+   */
+  const auto& ldlt() const { return ldlt_; }
 };
+
+/**
+ * Make an LDLT_factor with matrix type `plain_type_t<T>`
+ *
+ * @tparam T Type of matrix to take the LDLT of
+ * @param A Matrix to take the LDLT of
+ * @return LDLT_factor of A
+ */
+template <typename T, require_matrix_t<T>* = nullptr>
+inline auto make_ldlt_factor(const T& A) {
+  return LDLT_factor<plain_type_t<T>>(A);
+}
 
 }  // namespace math
 }  // namespace stan

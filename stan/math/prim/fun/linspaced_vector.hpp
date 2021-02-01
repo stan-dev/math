@@ -10,7 +10,7 @@ namespace math {
 /**
  * Return a vector of linearly spaced elements.
  *
- * This produces a vector from low to high (included) with elements spaced
+ * This produces a vector from low to high (inclusive) with elements spaced
  * as (high - low) / (K - 1). For K=1, the vector will contain the high value;
  * for K=0 it returns an empty vector.
  *

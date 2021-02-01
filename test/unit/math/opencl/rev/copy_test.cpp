@@ -47,6 +47,33 @@ TEST(VariCL, matrix_var_to_matrix_cl) {
   EXPECT_MATRIX_EQ(vars.adj(), Eigen::MatrixXd::Constant(2, 3, 1));
 }
 
+TEST(MathMatrixGPU, std_vector_matrix_var_to_matrix_cl) {
+  using stan::math::var_value;
+  stan::math::matrix_v a(2, 3);
+  a << 1, 2, 3, 4, 5, 6;
+  stan::math::matrix_v b(2, 3);
+  b << 7, 8, 9, 0, 1, 2;
+  stan::math::matrix_d a_adj(2, 3);
+  a_adj << 9, 8, 7, 6, 5, 4;
+  stan::math::matrix_d b_adj(2, 3);
+  b_adj << 6, 5, 4, 3, 2, 1;
+  std::vector<stan::math::matrix_v> vars = {a, b};
+  std::vector<stan::math::matrix_d> adjs = {a_adj, b_adj};
+  var_value<stan::math::matrix_cl<double>> vars_cl
+      = stan::math::to_matrix_cl(vars);
+
+  vars_cl.adj() = stan::math::to_matrix_cl(adjs);
+  vars_cl.vi_->chain();
+  EXPECT_MATRIX_EQ(vars[0].adj(), a_adj);
+  EXPECT_MATRIX_EQ(vars[1].adj(), b_adj);
+
+  stan::math::matrix_d vars_res = stan::math::from_matrix_cl(vars_cl.val());
+  for (size_t i = 0; i < a.size(); i++) {
+    EXPECT_FLOAT_EQ(vars_res(i), a(i).val());
+    EXPECT_FLOAT_EQ(vars_res(i + a.size()), b(i).val());
+  }
+}
+
 TEST(VariCL, from_matrix_cl) {
   using stan::math::var_value;
   Eigen::MatrixXd vals(2, 3);

@@ -102,8 +102,10 @@
 #include <stan/math/opencl/prim/bernoulli_lpmf.hpp>
 #include <stan/math/opencl/prim/bernoulli_logit_lpmf.hpp>
 #include <stan/math/opencl/prim/bernoulli_logit_glm_lpmf.hpp>
+#include <stan/math/opencl/prim/beta_binomial_lpmf.hpp>
 #include <stan/math/opencl/prim/beta_lpdf.hpp>
 #include <stan/math/opencl/prim/beta_proportion_lpdf.hpp>
+#include <stan/math/opencl/prim/binomial_logit_lpmf.hpp>
 #include <stan/math/opencl/prim/binomial_lpmf.hpp>
 #include <stan/math/opencl/prim/block.hpp>
 #include <stan/math/opencl/prim/categorical_logit_glm_lpmf.hpp>
@@ -116,7 +118,10 @@
 #include <stan/math/opencl/prim/columns_dot_self.hpp>
 #include <stan/math/opencl/prim/crossprod.hpp>
 #include <stan/math/opencl/prim/diag_matrix.hpp>
+#include <stan/math/opencl/prim/diag_pre_multiply.hpp>
+#include <stan/math/opencl/prim/diag_post_multiply.hpp>
 #include <stan/math/opencl/prim/dims.hpp>
+#include <stan/math/opencl/prim/dirichlet_lpdf.hpp>
 #include <stan/math/opencl/prim/distance.hpp>
 #include <stan/math/opencl/prim/divide.hpp>
 #include <stan/math/opencl/prim/divide_columns.hpp>
@@ -140,6 +145,7 @@
 #include <stan/math/opencl/prim/mdivide_left_tri_low.hpp>
 #include <stan/math/opencl/prim/mdivide_right_tri_low.hpp>
 #include <stan/math/opencl/prim/mean.hpp>
+#include <stan/math/opencl/prim/multi_normal_cholesky_lpdf.hpp>
 #include <stan/math/opencl/prim/neg_binomial_lpmf.hpp>
 #include <stan/math/opencl/prim/neg_binomial_2_lpmf.hpp>
 #include <stan/math/opencl/prim/neg_binomial_2_log_lpmf.hpp>

@@ -14,9 +14,10 @@ namespace math {
  * @param M input kernel expression
  * @return result of unary plus of the input.
  */
-inline var_value<matrix_cl<double>> operator+(
-    const var_value<matrix_cl<double>>& M) {
-  return M;
+template <typename T,
+          require_var_vt<is_kernel_expression_and_not_scalar, T>* = nullptr>
+inline T operator+(T&& M) {
+  return std::forward<T>(M);
 }
 
 }  // namespace math
