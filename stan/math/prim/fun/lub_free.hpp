@@ -46,7 +46,9 @@ inline auto lub_free(T&& y, L&& lb, U&& ub) {
   check_finite("lub_free", "ub", value_of(ub_ref));
   check_bounded("lub_free", "Bounded variable", value_of(y_ref),
                 value_of(lb_ref), value_of(ub_ref));
-  return eval(logit(divide(subtract(std::forward<decltype(y_ref)>(y_ref), lb_ref), subtract(std::forward<decltype(ub_ref)>(ub_ref), lb_ref))));
+  return eval(
+      logit(divide(subtract(std::forward<decltype(y_ref)>(y_ref), lb_ref),
+                   subtract(std::forward<decltype(ub_ref)>(ub_ref), lb_ref))));
 }
 
 }  // namespace math

@@ -33,7 +33,9 @@ Eigen::Matrix<value_type_t<T_CPCs>, Eigen::Dynamic, Eigen::Dynamic> read_cov_L(
   // adjust due to transformation from correlations to covariances
   log_prob += (sum(log(sds)) + LOG_TWO) * K;
   return make_holder(
-      [](const auto& b, const auto& sds) { return sds.matrix().asDiagonal() * b; },
+      [](const auto& b, const auto& sds) {
+        return sds.matrix().asDiagonal() * b;
+      },
       read_corr_L(CPCs, K, log_prob), to_ref(sds));
 }
 

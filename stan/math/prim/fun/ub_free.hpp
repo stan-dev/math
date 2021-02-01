@@ -37,7 +37,8 @@ inline return_type_t<T, U> ub_free(T&& y, U&& ub) {
   check_finite("ub_constrain", "ub", value_of(ub_ref));
   check_less_or_equal("ub_free", "Upper bounded variable", value_of(y_ref),
                       value_of(ub_ref));
-  return log(subtract(std::forward<decltype(ub_ref)>(ub_ref), std::forward<decltype(y_ref)>(y_ref)));
+  return log(subtract(std::forward<decltype(ub_ref)>(ub_ref),
+                      std::forward<decltype(y_ref)>(y_ref)));
 }
 
 }  // namespace math

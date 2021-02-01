@@ -34,8 +34,10 @@ inline auto ub_constrain(T&& x, L&& ub) {
   check_finite("ub_constrain", "ub", value_of(ub_ref));
 
   return make_holder(
-      [](const auto& xx, const auto& ub_ref) { return subtract(ub_ref, exp(xx)); },
-       std::forward<T>(x), std::forward<decltype(ub_ref)>(ub_ref));
+      [](const auto& xx, const auto& ub_ref) {
+        return subtract(ub_ref, exp(xx));
+      },
+      std::forward<T>(x), std::forward<decltype(ub_ref)>(ub_ref));
 }
 
 /**
@@ -70,7 +72,8 @@ inline auto ub_constrain(T&& x, L&& ub, return_type_t<T, L>& lp) {
       [](const auto& x_ref, const auto& ub_ref) {
         return subtract(ub_ref, exp(x_ref));
       },
-      std::forward<decltype(x_ref)>(x_ref), std::forward<decltype(ub_ref)>(ub_ref));
+      std::forward<decltype(x_ref)>(x_ref),
+      std::forward<decltype(ub_ref)>(ub_ref));
 }
 
 }  // namespace math

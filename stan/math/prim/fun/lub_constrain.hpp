@@ -91,8 +91,7 @@ inline auto lub_constrain(T&& x, L&& lb, U&& ub) {
  * @throw std::domain_error if ub <= lb
  */
 template <typename T, typename L, typename U>
-inline auto lub_constrain(T&& x, L&& lb, U&& ub,
-                          return_type_t<T, L, U>& lp) {
+inline auto lub_constrain(T&& x, L&& lb, U&& ub, return_type_t<T, L, U>& lp) {
   auto&& x_ref = to_ref(std::forward<T>(x));
   auto&& lb_ref = to_ref(std::forward<L>(lb));
   auto&& ub_ref = to_ref(std::forward<U>(ub));
@@ -103,8 +102,9 @@ inline auto lub_constrain(T&& x, L&& lb, U&& ub,
 
   auto diff = eval(subtract(std::forward<decltype(ub_ref)>(ub_ref), lb_ref));
 
-  lp += sum(add(log(diff),
-                subtract(-abs(x_ref), multiply(static_cast<double>(2), log1p_exp(-abs(x_ref))))));
+  lp += sum(
+      add(log(diff), subtract(-abs(x_ref), multiply(static_cast<double>(2),
+                                                    log1p_exp(-abs(x_ref))))));
 
   return make_holder(
       [](const auto& diff, const auto& x_ref, const auto& lb_ref) {
