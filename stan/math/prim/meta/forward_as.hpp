@@ -3,8 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <type_traits>
-#include <test/unit/pretty_print_types.hpp>
-#include <iostream>
 
 namespace stan {
 namespace math {
@@ -61,8 +59,6 @@ template <typename T_desired, typename T_actual,
               !std::is_same<std::decay<T_actual>, std::decay<T_desired>>::value
               && (!is_eigen<T_desired>::value || !is_eigen<T_actual>::value)>>
 inline T_desired forward_as(const T_actual& a) {
-  std::cout << "\nWanted a: " << stan::math::test::type_name<T_desired>()
-            << "Got a: " << stan::math::test::type_name<T_actual>() << "\n";
   throw std::runtime_error("Wrong type assumed! Please file a bug report.");
 }
 
@@ -124,8 +120,6 @@ template <
                T_desired::ColsAtCompileTime,
                std::decay_t<T_actual>::ColsAtCompileTime)>* = nullptr>
 inline T_desired forward_as(const T_actual& a) {
-  std::cout << "\nWanted a: " << stan::math::test::type_name<T_desired>()
-            << "Got a: " << stan::math::test::type_name<T_actual>() << "\n";
   throw std::runtime_error("Wrong type assumed! Please file a bug report.");
 }
 

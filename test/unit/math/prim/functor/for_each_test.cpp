@@ -4,7 +4,7 @@
 #include <type_traits>
 #include <vector>
 
-TEST(MathFunctions, for_each_basic_unary) {
+TEST(MathFunctions, for_each_with_iter_basic_unary) {
   int count = 0;
 
   auto f = [&count](const auto& x, const auto& i) { count++; };
