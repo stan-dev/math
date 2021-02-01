@@ -11,6 +11,7 @@
 #include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/functor/for_each.hpp>
 #include <vector>
+#include <tuple>
 
 namespace stan {
 namespace math {
