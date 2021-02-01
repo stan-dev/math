@@ -88,7 +88,8 @@ class operands_and_partials_impl<ReturnType, require_fvar_t<ReturnType>,
       edges_;
   using T_return_type = fvar<Dx>;
   template <typename... Types>
-  explicit operands_and_partials_impl(Types&&... ops) : edges_(std::forward<Types>(ops)...) {}
+  explicit operands_and_partials_impl(Types&&... ops)
+      : edges_(std::forward<Types>(ops)...) {}
 
   /** \ingroup type_trait
    * Build the node to be stored on the autodiff graph.
@@ -137,7 +138,8 @@ class ops_partials_edge<InnerType, T, require_std_vector_vt<is_fvar, T>> {
   broadcast_array<partials_t> partials_vec_{partials_};  // For multivariate
   template <typename OpT, require_std_vector_vt<is_fvar, OpT>* = nullptr>
   explicit ops_partials_edge(OpT&& ops)
-      : partials_(partials_t::Zero(ops.size()).eval()), operands_(std::forward<OpT>(ops)) {}
+      : partials_(partials_t::Zero(ops.size()).eval()),
+        operands_(std::forward<OpT>(ops)) {}
   Op operands_;
 
   inline Dx dx() {
@@ -158,7 +160,8 @@ class ops_partials_edge<Dx, ViewElt, require_eigen_vt<is_fvar, ViewElt>> {
   broadcast_array<partials_t> partials_vec_{partials_};  // For multivariate
   template <typename OpT, require_eigen_vt<is_fvar, OpT>* = nullptr>
   explicit ops_partials_edge(OpT&& ops)
-      : partials_(partials_t::Zero(ops.rows(), ops.cols())), operands_(std::forward<OpT>(ops)) {}
+      : partials_(partials_t::Zero(ops.rows(), ops.cols())),
+        operands_(std::forward<OpT>(ops)) {}
 
   Op operands_;
 
