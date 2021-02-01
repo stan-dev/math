@@ -53,7 +53,7 @@ inline plain_type_t<T1> unit_vector_constrain(const T1& y, T2& lp) {
   using std::sqrt;
   check_nonzero_size("unit_vector_constrain", "y", y);
   return make_holder(
-      [](const auto& y_ref, const auto& lp) {
+      [](const auto& y_ref, auto& lp) {
         value_type_t<T1> SN = dot_self(y_ref);
         check_positive_finite("unit_vector_constrain", "norm", SN);
         lp -= 0.5 * SN;
