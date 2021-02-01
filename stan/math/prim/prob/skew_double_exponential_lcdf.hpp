@@ -65,8 +65,7 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lcdf(
   }
 
   T_partials_return cdf_log(0.0);
-  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref, T_tau_ref> ops_partials(
-      y_ref, mu_ref, sigma_ref, tau_ref);
+  auto ops_partials = operands_and_partials(y_ref, mu_ref, sigma_ref, tau_ref);
 
   scalar_seq_view<T_y_ref> y_vec(y_ref);
   scalar_seq_view<T_mu_ref> mu_vec(mu_ref);
@@ -118,16 +117,16 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lcdf(
     }
 
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[i] += rep_deriv;
+      edge<0>(ops_partials).partials_[i] += rep_deriv;
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_[i] -= rep_deriv;
+      edge<1>(ops_partials).partials_[i] -= rep_deriv;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[i] += sig_deriv;
+      edge<2>(ops_partials).partials_[i] += sig_deriv;
     }
     if (!is_constant_all<T_skewness>::value) {
-      ops_partials.edge4_.partials_[i] += skew_deriv;
+      edge<3>(ops_partials).partials_[i] += skew_deriv;
     }
   }
   return ops_partials.build(cdf_log);

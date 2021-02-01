@@ -63,8 +63,7 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
     return 0.0;
   }
 
-  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref, T_tau_ref> ops_partials(
-      y_ref, mu_ref, sigma_ref, tau_ref);
+  auto ops_partials = operands_and_partials(y_ref, mu_ref, sigma_ref, tau_ref);
 
   const auto& y_col = as_column_vector_or_scalar(y_ref);
   const auto& mu_col = as_column_vector_or_scalar(mu_ref);
@@ -117,17 +116,17 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
         2.0 * (diff_sign_smaller_0 + diff_sign * tau_val) * diff_sign
         * inv_sigma);
     if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_ = -deriv;
+      edge<0>(ops_partials).partials_ = -deriv;
     }
     if (!is_constant_all<T_loc>::value) {
-      ops_partials.edge2_.partials_ = deriv;
+      edge<1>(ops_partials).partials_ = deriv;
     }
   }
   if (!is_constant_all<T_scale>::value) {
-    ops_partials.edge3_.partials_ = -inv_sigma + 2.0 * expo * inv_sigma;
+    edge<2>(ops_partials).partials_ = -inv_sigma + 2.0 * expo * inv_sigma;
   }
   if (!is_constant_all<T_skewness>::value) {
-    ops_partials.edge4_.partials_
+    edge<3>(ops_partials).partials_
         = inv(tau_val) - inv(1.0 - tau_val)
           + (-1.0 * diff_sign) * 2.0 * abs_diff_y_mu_over_sigma;
   }
