@@ -59,6 +59,13 @@ inline var operator-(const var& a) {
   });
 }
 
+/**
+ * Compute additive inverse of input
+ *
+ * @tparam T type of input
+ * @param a input
+ * @return negative of input
+ */
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto operator-(const T& a) {
   return make_callback_var(-a.val(), [a](const auto vi) {
