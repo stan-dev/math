@@ -35,7 +35,7 @@ inline auto ub_constrain(const T& x, const L& ub) {
 
   return make_holder(
       [&x](const auto& ub_ref) { return subtract(ub_ref, exp(x)); },
-      std::move(ub_ref));
+      ub_ref);
 }
 
 /**
@@ -69,8 +69,7 @@ inline auto ub_constrain(const T& x, const L& ub, return_type_t<T, L>& lp) {
   return make_holder(
       [](const auto& x_ref, const auto& ub_ref) {
         return subtract(ub_ref, exp(x_ref));
-      },
-      std::move(x_ref), std::move(ub_ref));
+      }, x_ref, ub_ref);
 }
 
 }  // namespace math
