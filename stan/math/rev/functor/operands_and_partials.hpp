@@ -24,6 +24,13 @@ namespace math {
 
 namespace internal {
 
+template <typename T,
+          require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
+inline void accumulate_adjoints(var_value<T1>&& x, T2&& y, const var& z) {
+  x.adj() += z.adj() * y;
+}
+
+
 template <typename Scalar1, typename Scalar2, require_var_t<Scalar1>* = nullptr,
           require_not_var_matrix_t<Scalar1>* = nullptr>
 inline void accumulate_adjoints(Scalar1&& x, Scalar2&& y, const var& z) {
@@ -34,6 +41,7 @@ template <typename EigT1, typename EigT2,
 inline void accumulate_adjoints(EigT1&& x, EigT2&& y, const var& z) {
   x.adj().array() += z.adj() * y.array();
 }
+
 template <typename Arith, typename Alt, require_st_arithmetic<Arith>* = nullptr>
 inline void accumulate_adjoints(Arith&& /* x */, Alt&& /* y */, const var& z) {}
 
@@ -133,7 +141,6 @@ class ops_partials_edge<double, var> {
 template <>
 class ops_partials_edge<double, std::vector<var>> {
  public:
-  using Op = arena_t<std::vector<var>>;
   using partials_t = arena_t<Eigen::VectorXd>;
   partials_t partials_;                       // For univariate use-cases
   broadcast_array<partials_t> partials_vec_;  // For multivariate
@@ -144,7 +151,7 @@ class ops_partials_edge<double, std::vector<var>> {
   inline auto& partial() noexcept { return partials_; }
   inline auto& operand() noexcept { return operands_; }
   inline int size() const noexcept { return this->operands_.size(); }
-  Op operands_;
+  arena_t<std::vector<var>> operands_;
 };
 
 template <typename Op>
@@ -178,7 +185,7 @@ class ops_partials_edge<double, var_value<Op>, require_eigen_t<Op>> {
   inline auto& partial() noexcept { return partials_; }
   inline auto& operand() noexcept { return operands_; }
 
-  const var_value<Op>& operands_;
+  var_value<Op> operands_;
   static constexpr int size() { return 0; }
 };
 
