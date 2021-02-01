@@ -84,14 +84,14 @@ TEST(AgradRev, arena_matrix_row_vector_test) {
 }
 
 TEST(AgradRev, arena_matrix_auto_transpose) {
-  using Eigen::VectorXd;
   using Eigen::RowVectorXd;
+  using Eigen::VectorXd;
   using stan::math::arena_matrix;
 
   VectorXd v1(2);
-  v1 << 1,2;
+  v1 << 1, 2;
   VectorXd v2(2);
-  v2 << 3,4;
+  v2 << 3, 4;
   RowVectorXd r1 = v1;
   RowVectorXd r2 = v2;
 
