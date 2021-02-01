@@ -12,15 +12,15 @@ else:
 
 arg_types = {
     "int": "int",
-    "int[]": "std::vector<int>",
-    "int[,]": "std::vector<std::vector<int>>",
+    "array[] int": "std::vector<int>",
+    "array[,] int": "std::vector<std::vector<int>>",
     "real": "SCALAR",
-    "real[]": "std::vector<SCALAR>",
-    "real[,]": "std::vector<std::vector<SCALAR>>",
+    "array[] real": "std::vector<SCALAR>",
+    "array[,] real": "std::vector<std::vector<SCALAR>>",
     "vector": "Eigen::Matrix<SCALAR, Eigen::Dynamic, 1>",
-    "vector[]": "std::vector<Eigen::Matrix<SCALAR, Eigen::Dynamic, 1>>",
+    "array[] vector": "std::vector<Eigen::Matrix<SCALAR, Eigen::Dynamic, 1>>",
     "row_vector": "Eigen::Matrix<SCALAR, 1, Eigen::Dynamic>",
-    "row_vector[]": "std::vector<Eigen::Matrix<SCALAR, 1, Eigen::Dynamic>>",
+    "array[] row_vector": "std::vector<Eigen::Matrix<SCALAR, 1, Eigen::Dynamic>>",
     "matrix": "Eigen::Matrix<SCALAR, Eigen::Dynamic, Eigen::Dynamic>",
     "rng": "std::minstd_rand",
     "ostream_ptr": "std::ostream*",
@@ -28,12 +28,26 @@ arg_types = {
 
 scalar_stan_types = ("int", "real", "rng", "ostream_ptr")
 
+def parse_array(stan_arg):
+    """
+    parses stan array type
+    :param stan_arg: stan type, possibly an array
+    :return: number of nested arrays, inner type
+    """
+    if stan_arg.startswith("array["):
+        print(stan_arg)
+        commas, inner_type = stan_arg.lstrip("array[").split("]")
+        return len(commas)+1, inner_type
+    return 0, stan_arg
+
 def get_cpp_type(stan_type):
-    n_vec = 0
-    if stan_type.endswith("]"):
-        stan_type, vec = stan_type.split("[")
-        n_vec = len(vec)
-    res = arg_types[stan_type]
+    """
+    Determines cpp type that implements given stan type.
+    :param stan_type: stan type
+    :return: cpp type
+    """
+    n_vec, inner_type = parse_array(stan_type)
+    res = arg_types[inner_type]
     for i in range(n_vec):
         res = "std::vector<{}>".format(res)
     return res
@@ -149,51 +163,51 @@ no_fwd_overload = [
 ]
 
 internal_signatures = [
-    "vector unit_vector_constrain(vector)",
-    "vector unit_vector_constrain(vector, real)",
-    "vector unit_vector_free(vector)",
-    "vector positive_ordered_constrain(vector)",
-    "vector positive_ordered_constrain(vector, real)",
-    "vector positive_ordered_free(vector)",
-    "vector ordered_constrain(vector)",
-    "vector ordered_constrain(vector, real)",
-    "vector ordered_free(vector)",
-    "vector simplex_constrain(vector)",
-    "vector simplex_constrain(vector, real)",
-    "vector simplex_free(vector)",
-    "int is_cholesky_factor(matrix)",
-    "int is_cholesky_factor_corr(matrix)",
-    "int is_column_index(matrix, int)",
-    "int is_column_index(vector, int)",
-    "int is_corr_matrix(matrix)",
-    "int is_cholesky_factor(matrix)",
-    "int is_lower_triangular(matrix)",
-    "int is_mat_finite(matrix)",
-    "int is_mat_finite(vector)",
-    "int is_matching_dims(matrix, matrix)",
-    "int is_matching_dims(vector, matrix)",
-    "int is_matching_dims(matrix, vector)",
-    "int is_matching_dims(row_vector, matrix)",
-    "int is_matching_dims(matrix, row_vector)",
-    "int is_matching_dims(matrix, matrix)",
-    "int is_matching_dims(row_vector, row_vector)",
-    "int is_matching_dims(vector, row_vector)",
-    "int is_matching_dims(row_vector, vector)",
-    "int is_matching_dims(vector, vector)",
-    "int is_pos_definite(matrix)",
-    "int is_square(matrix)",
-    "int is_square(vector)",
-    "int is_square(row_vector)",
-    "int is_symmetric(matrix)",
-    "int is_unit_vector(vector)",
+    "unit_vector_constrain(vector) => vector",
+    "unit_vector_constrain(vector, real) => vector",
+    "unit_vector_free(vector) => vector",
+    "positive_ordered_constrain(vector) => vector",
+    "positive_ordered_constrain(vector, real) => vector",
+    "positive_ordered_free(vector) => vector",
+    "ordered_constrain(vector) => vector",
+    "ordered_constrain(vector, real) => vector",
+    "ordered_free(vector) => vector",
+    "simplex_constrain(vector) => vector",
+    "simplex_constrain(vector, real) => vector",
+    "simplex_free(vector) => vector",
+    "is_cholesky_factor(matrix) => int",
+    "is_cholesky_factor_corr(matrix) => int",
+    "is_column_index(matrix, int) => int",
+    "is_column_index(vector, int) => int",
+    "is_corr_matrix(matrix) => int",
+    "is_cholesky_factor(matrix) => int",
+    "is_lower_triangular(matrix) => int",
+    "is_mat_finite(matrix) => int",
+    "is_mat_finite(vector) => int",
+    "is_matching_dims(matrix, matrix) => int",
+    "is_matching_dims(vector, matrix) => int",
+    "is_matching_dims(matrix, vector) => int",
+    "is_matching_dims(row_vector, matrix) => int",
+    "is_matching_dims(matrix, row_vector) => int",
+    "is_matching_dims(matrix, matrix) => int",
+    "is_matching_dims(row_vector, row_vector) => int",
+    "is_matching_dims(vector, row_vector) => int",
+    "is_matching_dims(row_vector, vector) => int",
+    "is_matching_dims(vector, vector) => int",
+    "is_pos_definite(matrix) => int",
+    "is_square(matrix) => int",
+    "is_square(vector) => int",
+    "is_square(row_vector) => int",
+    "is_symmetric(matrix) => int",
+    "is_unit_vector(vector) => int",
     # variadic functions: these are tested with one vector for variadic args
-    "real[,] ode_adams((real, vector, ostream_ptr, vector) => vector, vector, real, real[], ostream_ptr, vector)",
-    "real[,] ode_adams_tol((real, vector, ostream_ptr, vector) => vector, vector, real, real[], real, real, real, ostream_ptr, vector)",
-    "real[,] ode_bdf((real, vector, ostream_ptr, vector) => vector, vector, real, real[], ostream_ptr, vector)",
-    "real[,] ode_bdf_tol((real, vector, ostream_ptr, vector) => vector, vector, real, real[], real, real, real, ostream_ptr, vector)",
-    "real[,] ode_rk45((real, vector, ostream_ptr, vector) => vector, vector, real, real[], ostream_ptr, vector)",
-    "real[,] ode_rk45_tol((real, vector, ostream_ptr, vector) => vector, vector, real, real[], real, real, real, ostream_ptr, vector)",
-    "real reduce_sum(real[], int, vector)",
+    "ode_adams((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, ostream_ptr, vector) => array[,] real",
+    "ode_adams_tol((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, real, real, real, ostream_ptr, vector) => array[,] real",
+    "ode_bdf((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, ostream_ptr, vector) => array[,] real",
+    "ode_bdf_tol((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, real, real, real, ostream_ptr, vector) => array[,] real",
+    "ode_rk45((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, ostream_ptr, vector) => array[,] real",
+    "ode_rk45_tol((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, real, real, real, ostream_ptr, vector) => array[,] real",
+    "reduce_sum(array[] real, int, vector) => real",
 ]
 
 
@@ -208,7 +222,7 @@ def parse_signature_file(sig_file):
     for signature in sig_file:
         signature = part_sig + signature
         part_sig = ""
-        if not signature.endswith(")\n"):
+        if signature.endswith(",\n"):
             part_sig = signature
             continue
         res.append(signature)
@@ -249,11 +263,12 @@ def parse_signature(signature):
     :param signature: stanc3 function signature
     :return: return type, fucntion name and list of function argument types
     """
-    return_type, rest = signature.split(" ", 1)
+    rest, return_type = signature.rsplit(" => ", 1)
     function_name, rest = rest.split("(", 1)
-    args = re.findall(r"(?:[(][^()]+[)][^,()]+)|(?:[^,()]+(?:,*[]])?)", rest)
-    args = [i.strip() for i in args if i.strip()]
-    return return_type, function_name, args
+    args = re.findall(r"(?:[(][^()]+[)][^,()]+)|(?:[^,()]+(?:,*[]][^,()]+)?)", rest)
+    #  regex parts:        ^^^^^^functor^^^^^^     ^^^^any other arg^^^^^^^
+    args = [i.lstrip("data").strip() if "data" in i else i.strip() for i in args if i.strip()]
+    return return_type.strip(), function_name, args
 
 
 def handle_function_list(functions_input):
@@ -283,6 +298,6 @@ def reference_vector_argument(arg):
     :param arg: argument
     :return: reference argument
     """
-    if arg in ("real[]", "row_vector"):
+    if arg in ("array[] real", "row_vector"):
         return "vector"
     return arg
