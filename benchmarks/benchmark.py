@@ -403,10 +403,10 @@ def benchmark(
                     n,
                     (arg_overload, cpp_arg_template, stan_arg),
             ) in enumerate(zip(arg_overloads, cpp_arg_templates, stan_args)):
-                if stan_arg.endswith("]"):
-                    stan_arg2, vec = stan_arg.split("[")
+                n_vec, inner_type = parse_array(stan_arg)
+                if n_vec:
                     benchmark_name += (
-                            "_" + arg_overload + "_" + stan_arg2 + str(len(vec))
+                            "_" + arg_overload + "_" + inner_type + str(n_vec)
                     )
                 else:
                     benchmark_name += "_" + arg_overload + "_" + stan_arg
