@@ -175,8 +175,7 @@ class ops_partials_edge<Dx, std::vector<Eigen::Matrix<fvar<Dx>, R, C>>> {
   using Op = std::vector<Eigen::Matrix<fvar<Dx>, R, C>>;
   using partial_t = Eigen::Matrix<Dx, R, C>;
   std::vector<partial_t> partials_vec_;
-  ops_partials_edge(const Op& ops)
-      : partials_vec_(ops.size()), operands_(ops) {
+  ops_partials_edge(const Op& ops) : partials_vec_(ops.size()), operands_(ops) {
     for (size_t i = 0; i < ops.size(); ++i) {
       partials_vec_[i] = partial_t::Zero(ops[i].rows(), ops[i].cols());
     }
