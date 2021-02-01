@@ -38,10 +38,10 @@ namespace math {
  * @throw std::domain_error if ub <= lb
  */
 template <typename T, typename L, typename U>
-inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
-  const auto& x_ref = to_ref(x);
-  const auto& lb_ref = to_ref(lb);
-  const auto& ub_ref = to_ref(ub);
+inline auto lub_constrain(T&& x, L&& lb, U&& ub) {
+  auto&& x_ref = to_ref(std::forward<T>(x));
+  auto&& lb_ref = to_ref(std::forward<L>(lb));
+  auto&& ub_ref = to_ref(std::forward<U>(ub));
 
   check_less("lub_constrain", "lb", value_of(lb_ref), value_of(ub_ref));
   check_finite("lub_constrain", "lb", value_of(lb_ref));
@@ -52,7 +52,9 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
         return add(elt_multiply(subtract(ub_ref, lb_ref), inv_logit(x_ref)),
                    lb_ref);
       },
-      x_ref, ub_ref, lb_ref);
+      std::forward<decltype(x_ref)>(x_ref),
+      std::forward<decltype(ub_ref)>(ub_ref),
+      std::forward<decltype(lb_ref)>(lb_ref));
 }
 
 /**
@@ -89,26 +91,27 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
  * @throw std::domain_error if ub <= lb
  */
 template <typename T, typename L, typename U>
-inline auto lub_constrain(const T& x, const L& lb, const U& ub,
+inline auto lub_constrain(T&& x, L&& lb, U&& ub,
                           return_type_t<T, L, U>& lp) {
-  const auto& x_ref = to_ref(x);
-  const auto& lb_ref = to_ref(lb);
-  const auto& ub_ref = to_ref(ub);
+  auto&& x_ref = to_ref(std::forward<T>(x));
+  auto&& lb_ref = to_ref(std::forward<L>(lb));
+  auto&& ub_ref = to_ref(std::forward<U>(ub));
 
   check_less("lub_constrain", "lb", value_of(lb_ref), value_of(ub_ref));
   check_finite("lub_constrain", "lb", value_of(lb_ref));
   check_finite("lub_constrain", "ub", value_of(ub_ref));
 
-  const auto& diff = eval(subtract(ub_ref, lb_ref));
+  auto diff = eval(subtract(std::forward<decltype(ub_ref)>(ub_ref), lb_ref));
 
   lp += sum(add(log(diff),
-                subtract(-abs(x_ref), multiply(2, log1p_exp(-abs(x_ref))))));
+                subtract(-abs(x_ref), multiply(static_cast<double>(2), log1p_exp(-abs(x_ref))))));
 
   return make_holder(
       [](const auto& diff, const auto& x_ref, const auto& lb_ref) {
         return add(elt_multiply(diff, inv_logit(x_ref)), lb_ref);
       },
-      diff, x_ref, lb_ref);
+      std::move(diff), std::forward<decltype(x_ref)>(x_ref),
+      std::forward<decltype(lb_ref)>(lb_ref));
 }
 
 }  // namespace math

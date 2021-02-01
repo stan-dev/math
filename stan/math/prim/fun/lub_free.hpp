@@ -38,15 +38,15 @@ namespace math {
  *   greater than the upper bound
  */
 template <typename T, typename L, typename U>
-inline auto lub_free(T&& y, const L& lb, const U& ub) {
-  const auto& y_ref = to_ref(y);
-  const auto& lb_ref = to_ref(lb);
-  const auto& ub_ref = to_ref(ub);
+inline auto lub_free(T&& y, L&& lb, U&& ub) {
+  auto&& y_ref = to_ref(std::forward<T>(y));
+  auto&& lb_ref = to_ref(std::forward<L>(lb));
+  auto&& ub_ref = to_ref(std::forward<U>(ub));
   check_finite("lub_free", "lb", value_of(lb_ref));
   check_finite("lub_free", "ub", value_of(ub_ref));
   check_bounded("lub_free", "Bounded variable", value_of(y_ref),
                 value_of(lb_ref), value_of(ub_ref));
-  return eval(logit(divide(subtract(y_ref, lb_ref), subtract(ub_ref, lb_ref))));
+  return eval(logit(divide(subtract(std::forward<decltype(y_ref)>(y_ref), lb_ref), subtract(std::forward<decltype(ub_ref)>(ub_ref), lb_ref))));
 }
 
 }  // namespace math

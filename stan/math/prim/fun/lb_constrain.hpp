@@ -29,12 +29,12 @@ namespace math {
  * @return Constrained matrix
  */
 template <typename T, typename L>
-inline auto lb_constrain(const T& x, const L& lb) {
-  const auto& lb_ref = to_ref(lb);
+inline auto lb_constrain(T&& x, L&& lb) {
+  auto&& lb_ref = to_ref(std::forward<L>(lb));
   check_finite("lb_constrain", "lb", value_of(lb_ref));
 
-  return make_holder([&x](const auto& lb_ref) { return add(exp(x), lb_ref); },
-                     lb_ref);
+  return make_holder([](auto& lb_ref, const auto& xx) { return add(exp(xx), lb_ref); },
+                     std::forward<decltype(lb_ref)>(lb_ref), std::forward<T>(x));
 }
 
 /**
@@ -52,15 +52,15 @@ inline auto lb_constrain(const T& x, const L& lb) {
  * @return lower-bound constrained value corresponding to inputs
  */
 template <typename T, typename L>
-inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
-  const auto& x_ref = to_ref(x);
-  const auto& lb_ref = to_ref(lb);
+inline auto lb_constrain(T&& x, L&& lb, return_type_t<T, L>& lp) {
+  auto&& x_ref = to_ref(std::forward<T>(x));
+  auto&& lb_ref = to_ref(std::forward<L>(lb));
   check_finite("lb_constrain", "lb", value_of(lb_ref));
   lp += sum(x_ref);
 
   return make_holder([](const auto& x_ref,
                         const auto& lb_ref) { return add(exp(x_ref), lb_ref); },
-                     x_ref, lb_ref);
+                     std::forward<decltype(x_ref)>(x_ref), std::forward<decltype(lb_ref)>(lb_ref));
 }
 
 }  // namespace math
