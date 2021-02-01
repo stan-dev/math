@@ -30,7 +30,6 @@ inline void accumulate_adjoints(var_value<T1>& x, T2&& y, const var& z) {
   x.adj() += z.adj() * y;
 }
 
-
 template <typename Scalar1, typename Scalar2, require_var_t<Scalar1>* = nullptr,
           require_not_var_matrix_t<Scalar1>* = nullptr>
 inline void accumulate_adjoints(Scalar1&& x, Scalar2&& y, const var& z) {
