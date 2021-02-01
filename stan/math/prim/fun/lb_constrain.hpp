@@ -34,7 +34,7 @@ inline auto lb_constrain(T&& x, L&& lb) {
   check_finite("lb_constrain", "lb", value_of(lb_ref));
 
   return make_holder(
-      [](auto& lb_ref, const auto& xx) { return add(exp(xx), lb_ref); },
+      [](const auto& lb_ref, const auto& xx) { return add(exp(xx), lb_ref); },
       std::forward<decltype(lb_ref)>(lb_ref), std::forward<T>(x));
 }
 
@@ -58,7 +58,6 @@ inline auto lb_constrain(T&& x, L&& lb, return_type_t<T, L>& lp) {
   auto&& lb_ref = to_ref(std::forward<L>(lb));
   check_finite("lb_constrain", "lb", value_of(lb_ref));
   lp += sum(x_ref);
-
   return make_holder([](const auto& x_ref,
                         const auto& lb_ref) { return add(exp(x_ref), lb_ref); },
                      std::forward<decltype(x_ref)>(x_ref),
