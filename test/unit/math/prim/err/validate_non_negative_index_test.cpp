@@ -7,5 +7,6 @@ TEST(ErrorHandling, validate_unit_vector_index) {
                std::invalid_argument);
   EXPECT_THROW(stan::math::validate_non_negative_index("unit_vector", "x", -1),
                std::invalid_argument);
-  EXPECT_NO_THROW(stan::math::validate_non_negative_index("unit_vector", "x", 0));
+  EXPECT_NO_THROW(
+      stan::math::validate_non_negative_index("unit_vector", "x", 0));
 }

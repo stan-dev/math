@@ -18,10 +18,12 @@ inline void validate_unit_vector_index(const char* var_name, const char* expr,
         msg << "Found dimension size one in unit vector declaration."
             << " One-dimensional unit vector is discrete"
             << " but the target distribution must be continuous."
-            << " variable=" << var_name << "; dimension size expression=" << expr;
+            << " variable=" << var_name
+            << "; dimension size expression=" << expr;
       } else {
         msg << "Found dimension size less than one in unit vector declaration"
-            << "; variable=" << var_name << "; dimension size expression=" << expr
+            << "; variable=" << var_name
+            << "; dimension size expression=" << expr
             << "; expression value=" << val;
       }
       std::string msg_str(msg.str());
