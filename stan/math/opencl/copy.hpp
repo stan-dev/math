@@ -41,9 +41,9 @@ namespace math {
  * @param src source Eigen matrix
  * @return matrix_cl with a copy of the data in the source matrix
  */
-template <typename T, require_vt_arithmetic<T>* = nullptr>
-inline matrix_cl<value_type_t<T>> to_matrix_cl(T&& src) {
-  return matrix_cl<value_type_t<T>>(std::forward<T>(src));
+template <typename T, require_st_arithmetic<T>* = nullptr>
+inline matrix_cl<scalar_type_t<T>> to_matrix_cl(T&& src) {
+  return matrix_cl<scalar_type_t<T>>(std::forward<T>(src));
 }
 
 /** \ingroup opencl
