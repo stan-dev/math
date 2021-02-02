@@ -163,7 +163,7 @@ class check_cl_ : public operation_cl_lhs<check_cl_<T>, bool> {
     e.wait();
     Eigen::VectorXi res = from_matrix_cl<Eigen::VectorXi>(buffer_);
     if (res.coeff(0)) {
-      double value = from_matrix_cl<double>(value_);
+      double value = from_matrix_cl<scalar_type_t<T>>(value_);
       std::stringstream s;
       s << function_ << ": " << err_variable_ << "[" << res[1] << ", " << res[2]
         << "] = " << value << ", but it must be " << must_be_ << "!";
