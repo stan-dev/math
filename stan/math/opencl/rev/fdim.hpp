@@ -68,7 +68,8 @@ inline var_value<matrix_cl<double>> fdim(T_a&& a, T_b&& b) {
   return make_callback_var(
       res_val,
       [a_arena, b_arena](const vari_value<matrix_cl<double>>& res) mutable {
-        auto nan_check = select(isnan(value_of(a_arena)) || isnan(value_of(b_arena)), NAN, 0.0);
+        auto nan_check = select(
+            isnan(value_of(a_arena)) || isnan(value_of(b_arena)), NAN, 0.0);
         auto a_is_max = value_of(a_arena) > value_of(b_arena);
         auto a_deriv = select(a_is_max, res.adj(), nan_check);
         auto b_deriv = select(a_is_max, -res.adj(), nan_check);
