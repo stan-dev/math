@@ -40,8 +40,10 @@ inline var_value<matrix_cl<double>> fmax(T_a&& a, T_b&& b) {
       [a_arena, b_arena](const vari_value<matrix_cl<double>>& res) mutable {
         auto both_nan = isnan(value_of(a_arena)) && isnan(value_of(b_arena));
         auto a_is_min = value_of(a_arena) <= value_of(b_arena);
-        auto a_deriv = select(both_nan, NAN, select(!a_is_min, res.adj(), 0.0));
-        auto b_deriv = select(both_nan, NAN, select(a_is_min, res.adj(), 0.0));
+        auto a_deriv
+            = select(both_nan, NOT_A_NUMBER, select(!a_is_min, res.adj(), 0.0));
+        auto b_deriv
+            = select(both_nan, NOT_A_NUMBER, select(a_is_min, res.adj(), 0.0));
 
         adjoint_results(a_arena, b_arena) += expressions(a_deriv, b_deriv);
       });

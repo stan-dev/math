@@ -75,9 +75,9 @@ inline var_value<matrix_cl<double>> fmod(T_a&& a, T_b&& b) {
       [a_arena, b_arena](const vari_value<matrix_cl<double>>& res) mutable {
         auto any_nan = isnan(value_of(a_arena)) || isnan(value_of(b_arena));
         auto a_is_max = value_of(a_arena) > value_of(b_arena);
-        auto a_deriv = select(any_nan, NAN, res.adj());
+        auto a_deriv = select(any_nan, NOT_A_NUMBER, res.adj());
         auto b_deriv = select(
-            any_nan, NAN,
+            any_nan, NOT_A_NUMBER,
             elt_multiply(-res.adj(), trunc(elt_divide(value_of(a_arena),
                                                       value_of(b_arena)))));
 
