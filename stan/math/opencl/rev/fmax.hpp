@@ -20,9 +20,9 @@ namespace math {
  * Return the greater of the two specified arguments.  If one is
  * not-a-number, return the other.
  *
- * @param x First argument.
- * @param y Second argument.
- * @return Maximum of x or y and if one is NaN return the other
+ * @param a First argument.
+ * @param b Second argument.
+ * @return Maximum of a or b and if one is NaN return the other
  */
 template <typename T_a, typename T_b,
           require_all_prim_or_rev_kernel_expression_t<T_a, T_b>* = nullptr,
