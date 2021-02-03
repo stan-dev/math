@@ -39,22 +39,17 @@ namespace math {
  */
 template <typename T, typename L, typename U>
 inline auto lub_constrain(T&& x, L&& lb, U&& ub) {
-  auto&& x_ref = to_ref(std::forward<T>(x));
-  auto&& lb_ref = to_ref(std::forward<L>(lb));
-  auto&& ub_ref = to_ref(std::forward<U>(ub));
-
-  check_less("lub_constrain", "lb", value_of(lb_ref), value_of(ub_ref));
-  check_finite("lub_constrain", "lb", value_of(lb_ref));
-  check_finite("lub_constrain", "ub", value_of(ub_ref));
-
   return make_holder(
       [](const auto& x_ref, const auto& ub_ref, const auto& lb_ref) {
+        check_less("lub_constrain", "lb", value_of(lb_ref), value_of(ub_ref));
+        check_finite("lub_constrain", "lb", value_of(lb_ref));
+        check_finite("lub_constrain", "ub", value_of(ub_ref));
         return add(elt_multiply(subtract(ub_ref, lb_ref), inv_logit(x_ref)),
                    lb_ref);
       },
-      std::forward<decltype(x_ref)>(x_ref),
-      std::forward<decltype(ub_ref)>(ub_ref),
-      std::forward<decltype(lb_ref)>(lb_ref));
+      to_ref(std::forward<T>(x)),
+      to_ref(std::forward<U>(ub)),
+      to_ref(std::forward<L>(lb)));
 }
 
 /**
@@ -110,7 +105,7 @@ inline auto lub_constrain(T&& x, L&& lb, U&& ub, return_type_t<T, L, U>& lp) {
       [](const auto& diff, const auto& x_ref, const auto& lb_ref) {
         return add(elt_multiply(diff, inv_logit(x_ref)), lb_ref);
       },
-      diff, std::forward<decltype(x_ref)>(x_ref),
+      std::move(diff), std::forward<decltype(x_ref)>(x_ref),
       std::forward<decltype(lb_ref)>(lb_ref));
 }
 
