@@ -5,9 +5,6 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
-#ifdef STAN_OPENCL
-#include <stan/math/opencl/prim.hpp>
-#endif
 
 namespace stan {
 namespace math {
@@ -84,25 +81,11 @@ mdivide_right_tri(const EigMat1& b, const EigMat2& A) {
   if (A.rows() == 0) {
     return {b.rows(), 0};
   }
-
-#ifdef STAN_OPENCL
-  if (A.rows()
-      >= opencl_context.tuning_opts().tri_inverse_size_worth_transfer) {
-    matrix_cl<double> A_cl(A, from_eigen_uplo_type(TriView));
-    matrix_cl<double> b_cl(b);
-    matrix_cl<double> A_inv_cl = tri_inverse(A_cl);
-    matrix_cl<double> C_cl = b_cl * A_inv_cl;
-    return from_matrix_cl(C_cl);
-  } else {
-#endif
-    return to_ref(A)
-        .template triangularView<TriView>()
-        .transpose()
-        .solve(b.transpose())
-        .transpose();
-#ifdef STAN_OPENCL
-  }
-#endif
+  return to_ref(A)
+      .template triangularView<TriView>()
+      .transpose()
+      .solve(b.transpose())
+      .transpose();
 }
 
 }  // namespace math

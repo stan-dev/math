@@ -5,9 +5,6 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
-#ifdef STAN_OPENCL
-#include <stan/math/opencl/prim.hpp>
-#endif
 
 namespace stan {
 namespace math {
@@ -94,21 +91,7 @@ mdivide_left_tri(const T1 &A, const T2 &b) {
   if (A.rows() == 0) {
     return {0, b.cols()};
   }
-
-#ifdef STAN_OPENCL
-  if (A.rows()
-      >= opencl_context.tuning_opts().tri_inverse_size_worth_transfer) {
-    matrix_cl<double> A_cl(A, from_eigen_uplo_type(TriView));
-    matrix_cl<double> b_cl(b);
-    matrix_cl<double> A_inv_cl = tri_inverse(A_cl);
-    matrix_cl<double> C_cl = A_inv_cl * b_cl;
-    return from_matrix_cl(C_cl);
-  } else {
-#endif
-    return to_ref(A).template triangularView<TriView>().solve(b);
-#ifdef STAN_OPENCL
-  }
-#endif
+  return to_ref(A).template triangularView<TriView>().solve(b);
 }
 
 /**
@@ -130,22 +113,10 @@ inline plain_type_t<T> mdivide_left_tri(const T &A) {
   if (A.rows() == 0) {
     return {};
   }
-
   const int n = A.rows();
-#ifdef STAN_OPENCL
-  if (A.rows()
-      >= opencl_context.tuning_opts().tri_inverse_size_worth_transfer) {
-    matrix_cl<double> A_cl(A, from_eigen_uplo_type(TriView));
-    A_cl = tri_inverse(A_cl);
-    return from_matrix_cl(A_cl);
-  } else {
-#endif
-    plain_type_t<T> b = plain_type_t<T>::Identity(n, n);
-    A.template triangularView<TriView>().solveInPlace(b);
-    return b;
-#ifdef STAN_OPENCL
-  }
-#endif
+  plain_type_t<T> b = plain_type_t<T>::Identity(n, n);
+  A.template triangularView<TriView>().solveInPlace(b);
+  return b;
 }
 
 }  // namespace math

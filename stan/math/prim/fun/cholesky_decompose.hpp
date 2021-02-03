@@ -4,10 +4,6 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#ifdef STAN_OPENCL
-#include <stan/math/opencl/prim.hpp>
-#endif
-
 #include <cmath>
 
 namespace stan {
@@ -68,26 +64,12 @@ inline Eigen::Matrix<double, EigMat::RowsAtCompileTime,
 cholesky_decompose(const EigMat& m) {
   const eval_return_type_t<EigMat>& m_eval = m.eval();
   check_not_nan("cholesky_decompose", "m", m_eval);
-#ifdef STAN_OPENCL
-  if (m.rows() >= opencl_context.tuning_opts().cholesky_size_worth_transfer) {
-    matrix_cl<double> m_cl(m_eval);
-    return from_matrix_cl(cholesky_decompose(m_cl));
-  } else {
-    check_symmetric("cholesky_decompose", "m", m_eval);
-    Eigen::LLT<Eigen::Matrix<double, EigMat::RowsAtCompileTime,
-                             EigMat::ColsAtCompileTime>>
-        llt = m_eval.llt();
-    check_pos_definite("cholesky_decompose", "m", llt);
-    return llt.matrixL();
-  }
-#else
   check_symmetric("cholesky_decompose", "m", m_eval);
   Eigen::LLT<Eigen::Matrix<double, EigMat::RowsAtCompileTime,
                            EigMat::ColsAtCompileTime>>
       llt = m_eval.llt();
   check_pos_definite("cholesky_decompose", "m", llt);
   return llt.matrixL();
-#endif
 }
 
 }  // namespace math
