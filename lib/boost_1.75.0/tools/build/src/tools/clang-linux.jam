@@ -1,0 +1,289 @@
+#  Copyright 2020 Rene Rivera
+#  Copyright (c) 2003      Michael Stevens
+#  Copyright (c) 2010-2011 Bryce Lelbach (blelbach@cct.lsu.edu, maintainer)
+#
+#  Use, modification and distribution is subject to the Boost Software
+#  License Version 1.0. (See accompanying file LICENSE_1_0.txt or
+#  http://www.boost.org/LICENSE_1_0.txt)
+
+import common ;
+import toolset ;
+import feature ;
+import toolset : flags ;
+
+import clang ;
+import gcc ;
+import common ;
+import errors ;
+import generators ;
+import type ;
+import numbers ;
+import os ;
+import property ;
+
+feature.extend-subfeature toolset clang : platform : linux ;
+
+toolset.inherit-generators clang-linux
+    <toolset>clang <toolset-clang:platform>linux : gcc
+  : gcc.mingw.link gcc.mingw.link.dll gcc.cygwin.link gcc.cygwin.link.dll ;
+generators.override clang-linux.prebuilt : builtin.lib-generator ;
+generators.override clang-linux.prebuilt : builtin.prebuilt ;
+generators.override clang-linux.searched-lib-generator : searched-lib-generator ;
+
+# Override default do-nothing generators.
+generators.override clang-linux.compile.c.pch   : pch.default-c-pch-generator   ;
+generators.override clang-linux.compile.c++.pch : pch.default-cpp-pch-generator ;
+
+type.set-generated-target-suffix PCH
+  : <toolset>clang <toolset-clang:platform>linux : pth ;
+
+toolset.inherit-rules clang-linux : gcc ;
+toolset.inherit-flags clang-linux : gcc
+  : <inlining>full
+    <threading>multi/<target-os>windows
+    <lto>on/<lto-mode>full
+    <lto>on/<lto-mode>fat
+  ;
+
+if [ MATCH (--debug-configuration) : [ modules.peek : ARGV ] ] {
+  .debug-configuration = true ;
+}
+
+rule init ( version ? :  command * : options * ) {
+  command = [ common.get-invocation-command clang-linux : clang++
+    : $(command) ] ;
+
+  # Determine the version
+  if $(command) {
+    local command-string = \"$(command)\" ;
+    command-string = $(command-string:J=" ") ;
+    version ?= [ MATCH "version ([0-9.]+)"
+      : [ SHELL "$(command-string) --version" ] ] ;
+  }
+
+  local condition = [ common.check-init-parameters clang-linux
+    : version $(version) ] ;
+
+  common.handle-options clang-linux : $(condition) : $(command) : $(options) ;
+  clang.init-cxxstd-flags clang-linux : $(condition) : $(version) ;
+
+  # Support for gcc root as the backend, this is mainly useful for clang/gcc on Windows
+  # since on Linux gcc will be the default compiler already located on the PATH.
+  # On Windows it is possible to have multiple versions of mingw(-64)/gcc installed
+  # in different directories. The <root>option can be given so that the gcc backend
+  # can be found at runtime, while the $(command) can be a script that sets the
+  # PATH for both the clang directory and the backende gcc directory
+  # before calling clang++ when compiling/linking.
+
+  local root = [ feature.get-values <root> : $(options) ] ;
+
+  if $(root)
+    {
+        # On multilib 64-bit boxes, there are both 32-bit and 64-bit libraries
+        # and all must be added to LD_LIBRARY_PATH. The linker will pick the
+        # right onces. Note that we do not provide a clean way to build a 32-bit
+        # binary using a 64-bit compiler, but user can always pass -m32
+        # manually.
+        local lib_path = $(root)/bin $(root)/lib $(root)/lib32 $(root)/lib64 ;
+        if $(.debug-configuration)
+        {
+            ECHO "notice:" using gcc libraries with clang"::" $(condition) "::" $(lib_path) ;
+        }
+        toolset.flags clang-linux.link RUN_PATH $(condition) : $(lib_path) ;
+    }
+
+  # - Ranlib.
+  local ranlib = [ feature.get-values <ranlib> : $(options) ] ;
+  if ( ! $(ranlib) ) && $(root)
+    {
+    ranlib = $(root)/bin/ranlib ;
+    }
+  toolset.flags clang-linux.archive .RANLIB $(condition) : $(ranlib[1]) ;
+
+  # - Archive builder.
+  local archiver = [ feature.get-values <archiver> : $(options) ] ;
+  if ( ! $(archiver) ) && $(root)
+    {
+    archiver = $(root)/bin/ar ;
+    }
+  toolset.flags clang-linux.archive .AR $(condition) : $(archiver[1]) ;
+}
+
+###############################################################################
+# Flags
+
+# note: clang silently ignores some of these inlining options
+# For clang, 'on' and 'full' are identical.
+toolset.flags clang-linux.compile OPTIONS <inlining>full : -Wno-inline ;
+
+toolset.flags clang-linux.compile OPTIONS <threading>multi/<target-os>windows : -pthread ;
+toolset.flags clang-linux.link OPTIONS <threading>multi/<target-os>windows : -pthread ;
+
+# LTO
+toolset.flags clang-linux.compile OPTIONS <lto>on/<lto-mode>thin : -flto=thin ;
+toolset.flags clang-linux.link OPTIONS <lto>on/<lto-mode>thin : -flto=thin ;
+
+toolset.flags clang-linux.compile OPTIONS <lto>on/<lto-mode>full : -flto=full ;
+toolset.flags clang-linux.link OPTIONS <lto>on/<lto-mode>full : -flto=full ;
+
+# stdlib selection
+toolset.flags clang-linux.compile OPTIONS <stdlib>gnu <stdlib>gnu11 : -stdlib=libstdc++ ;
+toolset.flags clang-linux.link OPTIONS <stdlib>gnu <stdlib>gnu11 : -stdlib=libstdc++ ;
+
+toolset.flags clang-linux.compile OPTIONS <stdlib>libc++ : -stdlib=libc++ ;
+toolset.flags clang-linux.link OPTIONS <stdlib>libc++ : -stdlib=libc++ ;
+
+###############################################################################
+# C and C++ compilation
+
+rule compile.c++ ( targets * : sources * : properties * ) {
+  local pch-file = [ on $(<) return $(PCH_FILE) ] ;
+
+  if $(pch-file) {
+    DEPENDS $(<) : $(pch-file) ;
+    clang-linux.compile.c++.with-pch $(targets) : $(sources) ;
+  }
+  else {
+    clang-linux.compile.c++.without-pch $(targets) : $(sources) ;
+  }
+}
+
+actions compile.c++.without-pch {
+  "$(CONFIG_COMMAND)" -c -x c++ $(OPTIONS) $(USER_OPTIONS) -D$(DEFINES) -I"$(INCLUDES)" -include"$(FORCE_INCLUDES)" -o "$(<)" "$(>)"
+}
+
+actions compile.c++.with-pch bind PCH_FILE
+{
+  "$(CONFIG_COMMAND)" -c -x c++ $(OPTIONS) $(USER_OPTIONS) -D$(DEFINES) -I"$(INCLUDES)" -Xclang -include-pch -Xclang "$(PCH_FILE)" -include"$(FORCE_INCLUDES)" -o "$(<)" "$(>)"
+}
+
+rule compile.c ( targets * : sources * : properties * )
+{
+  local pch-file = [ on $(<) return $(PCH_FILE) ] ;
+
+  if $(pch-file) {
+    DEPENDS $(<) : $(pch-file) ;
+    clang-linux.compile.c.with-pch $(targets) : $(sources) ;
+  }
+  else {
+    clang-linux.compile.c.without-pch $(targets) : $(sources) ;
+  }
+}
+
+actions compile.c.without-pch
+{
+  "$(CONFIG_COMMAND)" -c -x c $(OPTIONS) $(USER_OPTIONS) -D$(DEFINES) -I"$(INCLUDES)" -include"$(FORCE_INCLUDES)" -c -o "$(<)" "$(>)"
+}
+
+actions compile.c.with-pch bind PCH_FILE
+{
+  "$(CONFIG_COMMAND)" -c -x c $(OPTIONS) $(USER_OPTIONS) -D$(DEFINES) -I"$(INCLUDES)" -Xclang -include-pch -Xclang "$(PCH_FILE)" -include"$(FORCE_INCLUDES)" -c -o "$(<)" "$(>)"
+}
+
+###############################################################################
+# PCH emission
+
+RM = [ common.rm-command ] ;
+
+rule compile.c++.pch ( targets * : sources * : properties * ) {
+}
+
+actions compile.c++.pch {
+  $(RM) -f "$(<)" && "$(CONFIG_COMMAND)" -c -x c++-header $(OPTIONS) $(USER_OPTIONS) -D$(DEFINES) -I"$(INCLUDES)" -include"$(FORCE_INCLUDES)" -Xclang -emit-pch -o "$(<)" "$(>)"
+}
+
+rule compile.c.pch ( targets * : sources * : properties * ) {
+}
+
+actions compile.c.pch
+{
+  $(RM) -f "$(<)" && "$(CONFIG_COMMAND)" -c -x c-header $(OPTIONS) $(USER_OPTIONS) -D$(DEFINES) -I"$(INCLUDES)" -include"$(FORCE_INCLUDES)" -Xclang -emit-pch -o "$(<)" "$(>)"
+}
+
+###############################################################################
+# Linking
+
+SPACE = " " ;
+
+rule link ( targets * : sources * : properties * ) {
+  SPACE on $(targets) = " " ;
+  JAM_SEMAPHORE on $(targets) = <s>clang-linux-link-semaphore ;
+  
+  local tosw ;
+  local pselect = [ property.select <target-os> : $(properties) ] ;
+  
+  if $(pselect)
+    {
+    
+    local tosv = [ feature.get-values <target-os> : $(pselect) ] ;
+    
+    if $(tosv) = windows
+        {
+        tosw = 1 ;
+        }
+    }
+  else if [ os.name ] in NT
+    {
+    tosw = 1 ;
+    }
+  if $(tosw)
+    {
+    link-w $(targets) : $(sources) ;
+    }
+  else
+    {
+    link-o $(targets) : $(sources) ;
+    }
+}
+
+rule link.dll ( targets * : sources * : properties * ) {
+  SPACE on $(targets) = " " ;
+  JAM_SEMAPHORE on $(targets) = <s>clang-linux-link-semaphore ;
+  
+  local tosw ;
+  local pselect = [ property.select <target-os> : $(properties) ] ;
+  
+  if $(pselect)
+    {
+    
+    local tosv = [ feature.get-values <target-os> : $(pselect) ] ;
+    
+    if $(tosv) = windows
+        {
+        tosw = 1 ;
+        }
+    }
+  else if [ os.name ] in NT
+    {
+    tosw = 1 ;
+    }
+  if $(tosw)
+    {
+    link.dll-w $(targets) : $(sources) ;
+    }
+  else
+    {
+    link.dll-o $(targets) : $(sources) ;
+    }
+}
+
+# Target OS is not Windows, needs the RPATH stuff
+actions link-o bind LIBRARIES {
+    "$(CONFIG_COMMAND)" -L"$(LINKPATH)" -o "$(<)" @"@($(<[1]:T).rsp:E=-Wl,-R$(SPACE)-Wl,"$(RPATH)" -Wl,-rpath-link$(SPACE)-Wl,"$(RPATH_LINK)" $(START-GROUP) "$(>:T)" "$(LIBRARIES:T)" $(FINDLIBS-ST-PFX:T) -l$(FINDLIBS-ST:T) $(FINDLIBS-SA-PFX:T) -l$(FINDLIBS-SA:T) $(END-GROUP))" $(OPTIONS) $(USER_OPTIONS)
+}
+
+# Target OS is not Windows, needs the RPATH and SONAME stuff
+actions link.dll-o bind LIBRARIES {
+    "$(CONFIG_COMMAND)" -L"$(LINKPATH)" -o "$(<)" @"@($(<[1]:T).rsp:E=-Wl,-R$(SPACE)-Wl,"$(RPATH)" -Wl,-soname$(SPACE)-Wl,$(<[1]:D=) -shared $(START-GROUP) "$(>:T)" "$(LIBRARIES:T)" $(FINDLIBS-ST-PFX:T) -l$(FINDLIBS-ST:T) $(FINDLIBS-SA-PFX:T) -l$(FINDLIBS-SA:T) $(END-GROUP))" $(OPTIONS) $(USER_OPTIONS)
+}
+
+# Target OS is Windows, does not need the RPATH stuff
+actions link-w bind LIBRARIES {
+    "$(CONFIG_COMMAND)" -L"$(LINKPATH)" -o "$(<)" @"@($(<[1]:T).rsp:E=$(START-GROUP) "$(>:T)" "$(LIBRARIES:T)" $(FINDLIBS-ST-PFX:T) -l$(FINDLIBS-ST:T) $(FINDLIBS-SA-PFX:T) -l$(FINDLIBS-SA:T) $(END-GROUP))" $(OPTIONS) $(USER_OPTIONS)
+}
+
+# Target OS is Windows, does not need the RPATH and SONAME stuff
+actions link.dll-w bind LIBRARIES {
+    "$(CONFIG_COMMAND)" -L"$(LINKPATH)" -o "$(<)" -shared @"@($(<[1]:T).rsp:E=$(START-GROUP) "$(>:T)" "$(LIBRARIES:T)" $(FINDLIBS-ST-PFX:T) -l$(FINDLIBS-ST:T) $(FINDLIBS-SA-PFX:T) -l$(FINDLIBS-SA:T) $(END-GROUP))" $(OPTIONS) $(USER_OPTIONS)
+    
+}
