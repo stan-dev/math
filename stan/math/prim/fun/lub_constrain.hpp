@@ -110,7 +110,7 @@ inline auto lub_constrain(T&& x, L&& lb, U&& ub, return_type_t<T, L, U>& lp) {
       [](const auto& diff, const auto& x_ref, const auto& lb_ref) {
         return add(elt_multiply(diff, inv_logit(x_ref)), lb_ref);
       },
-      std::move(diff), std::forward<decltype(x_ref)>(x_ref),
+      diff, std::forward<decltype(x_ref)>(x_ref),
       std::forward<decltype(lb_ref)>(lb_ref));
 }
 
