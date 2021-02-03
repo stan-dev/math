@@ -187,7 +187,8 @@ struct test_functor {
   auto operator()(T... args) const {
     using Ret_scal = return_type_t<T...>;
     return stan::test::make_arg<Eigen::Matrix<Ret_scal, Eigen::Dynamic, 1>>(
-        math::sum(std::vector<Ret_scal>{sum_if_number(args)...}));
+        math::sum(std::vector<Ret_scal>{
+            static_cast<Ret_scal>(sum_if_number(args))...}));
   }
 };
 
