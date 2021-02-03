@@ -88,8 +88,9 @@ class operands_and_partials_impl<ReturnType, require_fvar_t<ReturnType>,
   using T_return_type = fvar<Dx>;
 
   template <typename... Types>
-  explicit operands_and_partials_impl(Types&&... ops) :
-   edges_(internal::ops_partials_edge<Dx, plain_type_t<std::decay_t<Ops>>>(std::forward<Types>(ops))...) {}
+  explicit operands_and_partials_impl(Types&&... ops)
+      : edges_(internal::ops_partials_edge<Dx, plain_type_t<std::decay_t<Ops>>>(
+            std::forward<Types>(ops))...) {}
 
   /** \ingroup type_trait
    * Build the node to be stored on the autodiff graph.
@@ -121,11 +122,17 @@ class ops_partials_edge<InnerType, T, require_fvar_t<T>> {
 
   explicit ops_partials_edge(const T& op) : operands_(op) {}
 
-  explicit ops_partials_edge(const ops_partials_edge<InnerType, T, require_fvar_t<T>>& other) :
-   operands_(other.operands_), partial_(other.partial_), partials_(partial_) {}
+  explicit ops_partials_edge(
+      const ops_partials_edge<InnerType, T, require_fvar_t<T>>& other)
+      : operands_(other.operands_),
+        partial_(other.partial_),
+        partials_(partial_) {}
 
- explicit ops_partials_edge(ops_partials_edge<InnerType, T, require_fvar_t<T>>&& other) :
-  operands_(other.operands_), partial_(std::move(other.partial_)), partials_(partial_) {}
+  explicit ops_partials_edge(
+      ops_partials_edge<InnerType, T, require_fvar_t<T>>&& other)
+      : operands_(other.operands_),
+        partial_(std::move(other.partial_)),
+        partials_(partial_) {}
 
   const Op& operands_;
 
@@ -144,11 +151,19 @@ class ops_partials_edge<InnerType, T, require_std_vector_vt<is_fvar, T>> {
   explicit ops_partials_edge(const Op& ops)
       : partials_(partials_t::Zero(ops.size()).eval()), operands_(ops) {}
 
-  explicit ops_partials_edge(const ops_partials_edge<InnerType, T, require_std_vector_vt<is_fvar, T>>& other) :
-  operands_(other.operands_), partials_(other.partials_), partials_vec_(partials_) {}
+  explicit ops_partials_edge(
+      const ops_partials_edge<InnerType, T, require_std_vector_vt<is_fvar, T>>&
+          other)
+      : operands_(other.operands_),
+        partials_(other.partials_),
+        partials_vec_(partials_) {}
 
-  explicit ops_partials_edge(ops_partials_edge<InnerType, T, require_std_vector_vt<is_fvar, T>>&& other) :
-  operands_(other.operands_), partials_(std::move(other.partials_)), partials_vec_(partials_) {}
+  explicit ops_partials_edge(
+      ops_partials_edge<InnerType, T, require_std_vector_vt<is_fvar, T>>&&
+          other)
+      : operands_(other.operands_),
+        partials_(std::move(other.partials_)),
+        partials_vec_(partials_) {}
 
   const Op& operands_;
 
@@ -172,11 +187,19 @@ class ops_partials_edge<Dx, ViewElt, require_eigen_vt<is_fvar, ViewElt>> {
   explicit ops_partials_edge(const OpT& ops)
       : partials_(partials_t::Zero(ops.rows(), ops.cols())), operands_(ops) {}
 
-  explicit ops_partials_edge(const ops_partials_edge<Dx, ViewElt, require_eigen_vt<is_fvar, ViewElt>>& other) :
-  operands_(other.operands_), partials_(other.partials_), partials_vec_(partials_) {}
+  explicit ops_partials_edge(
+      const ops_partials_edge<Dx, ViewElt, require_eigen_vt<is_fvar, ViewElt>>&
+          other)
+      : operands_(other.operands_),
+        partials_(other.partials_),
+        partials_vec_(partials_) {}
 
-  explicit ops_partials_edge(ops_partials_edge<Dx, ViewElt, require_eigen_vt<is_fvar, ViewElt>>&& other) :
-  operands_(other.operands_), partials_(std::move(other.partials_)), partials_vec_(partials_) {}
+  explicit ops_partials_edge(
+      ops_partials_edge<Dx, ViewElt, require_eigen_vt<is_fvar, ViewElt>>&&
+          other)
+      : operands_(other.operands_),
+        partials_(std::move(other.partials_)),
+        partials_vec_(partials_) {}
 
   const Op& operands_;
 
