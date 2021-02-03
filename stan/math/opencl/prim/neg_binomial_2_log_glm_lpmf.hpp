@@ -149,7 +149,7 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
     check_opencl_error(function, e);
   }
 
-  T_partials_return logp = sum(from_matrix_cl<Dynamic, 1>(logp_cl));
+  T_partials_return logp = sum(from_matrix_cl(logp_cl));
   if (!std::isfinite(logp)) {
     results(
         check_cl(function, "Vector of dependent variables", y_val,
@@ -205,7 +205,7 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
     } else {
       forward_as<internal::broadcast_array<double>>(
           ops_partials.edge2_.partials_)[0]
-          = sum(from_matrix_cl<Dynamic, 1>(theta_derivative_sum_cl));
+          = sum(from_matrix_cl(theta_derivative_sum_cl));
     }
   }
   if (!is_constant_all<T_phi_cl>::value) {
@@ -214,7 +214,7 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
     } else {
       forward_as<internal::broadcast_array<double>>(
           ops_partials.edge4_.partials_)[0]
-          = sum(from_matrix_cl<Dynamic, 1>(phi_derivative_cl));
+          = sum(from_matrix_cl(phi_derivative_cl));
     }
   }
   return ops_partials.build(logp);
