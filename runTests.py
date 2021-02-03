@@ -27,6 +27,7 @@ allowed_paths_with_jumbo = [
     "test/unit/math/rev/",
     "test/unit/math/fwd/",
     "test/unit/math/mix/",
+    "test/unit/math/opencl/",
     "test/unit/",
 ]
 
@@ -53,6 +54,10 @@ jumbo_folders = [
     # "test/unit/math/mix/functor",
     "test/unit/math/mix/meta",
     "test/unit/math/mix/prob",
+    "test/unit/math/opencl/device_functions",
+    "test/unit/math/opencl/kernel_generator",
+    "test/unit/math/opencl/prim",
+    "test/unit/math/opencl/rev",
 ]
 
 
