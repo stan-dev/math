@@ -124,15 +124,15 @@ class ops_partials_edge<InnerType, T, require_fvar_t<T>> {
 
   explicit ops_partials_edge(
       const ops_partials_edge<InnerType, T, require_fvar_t<T>>& other)
-      : operands_(other.operands_),
-        partial_(other.partial_),
-        partials_(partial_) {}
+      : partial_(other.partial_),
+        partials_(partial_),
+        operands_(other.operands_) {}
 
   explicit ops_partials_edge(
       ops_partials_edge<InnerType, T, require_fvar_t<T>>&& other)
-      : operands_(other.operands_),
-        partial_(std::move(other.partial_)),
-        partials_(partial_) {}
+      : partial_(std::move(other.partial_)),
+        partials_(partial_),
+        operands_(other.operands_) {}
 
   const Op& operands_;
 
@@ -154,16 +154,16 @@ class ops_partials_edge<InnerType, T, require_std_vector_vt<is_fvar, T>> {
   explicit ops_partials_edge(
       const ops_partials_edge<InnerType, T, require_std_vector_vt<is_fvar, T>>&
           other)
-      : operands_(other.operands_),
-        partials_(other.partials_),
-        partials_vec_(partials_) {}
+      : partials_(other.partials_),
+        partials_vec_(partials_),
+        operands_(other.operands_) {}
 
   explicit ops_partials_edge(
       ops_partials_edge<InnerType, T, require_std_vector_vt<is_fvar, T>>&&
           other)
-      : operands_(other.operands_),
-        partials_(std::move(other.partials_)),
-        partials_vec_(partials_) {}
+      : partials_(std::move(other.partials_)),
+        partials_vec_(partials_),
+        operands_(other.operands_) {}
 
   const Op& operands_;
 
@@ -190,16 +190,16 @@ class ops_partials_edge<Dx, ViewElt, require_eigen_vt<is_fvar, ViewElt>> {
   explicit ops_partials_edge(
       const ops_partials_edge<Dx, ViewElt, require_eigen_vt<is_fvar, ViewElt>>&
           other)
-      : operands_(other.operands_),
-        partials_(other.partials_),
-        partials_vec_(partials_) {}
+      : partials_(other.partials_),
+        partials_vec_(partials_),
+        operands_(other.operands_) {}
 
   explicit ops_partials_edge(
       ops_partials_edge<Dx, ViewElt, require_eigen_vt<is_fvar, ViewElt>>&&
           other)
-      : operands_(other.operands_),
-        partials_(std::move(other.partials_)),
-        partials_vec_(partials_) {}
+      : partials_(std::move(other.partials_)),
+        partials_vec_(partials_),
+        operands_(other.operands_) {}
 
   const Op& operands_;
 
