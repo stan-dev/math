@@ -106,13 +106,15 @@ static const char* ordered_logistic_kernel_code = STRINGIFY(
       }
       if (need_cuts_derivative) {
         if (is_cuts_matrix) {
-          for (int i = 0; i < N_classes - 1; i++) {
-            if (y - 1 == i) {
-              cuts_derivative[cuts_start + i] = d2;
-            } else if (y - 2 == i) {
-              cuts_derivative[cuts_start + i] = -d1;
-            } else {
-              cuts_derivative[cuts_start + i] = 0.0;
+          if (gid < N_instances) {
+            for (int i = 0; i < N_classes - 1; i++) {
+              if (y - 1 == i) {
+                cuts_derivative[cuts_start + i] = d2;
+              } else if (y - 2 == i) {
+                cuts_derivative[cuts_start + i] = -d1;
+              } else {
+                cuts_derivative[cuts_start + i] = 0.0;
+              }
             }
           }
         } else {
