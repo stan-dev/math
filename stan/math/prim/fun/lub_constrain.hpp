@@ -47,8 +47,7 @@ inline auto lub_constrain(T&& x, L&& lb, U&& ub) {
         return add(elt_multiply(subtract(ub_ref, lb_ref), inv_logit(x_ref)),
                    lb_ref);
       },
-      to_ref(std::forward<T>(x)),
-      to_ref(std::forward<U>(ub)),
+      to_ref(std::forward<T>(x)), to_ref(std::forward<U>(ub)),
       to_ref(std::forward<L>(lb)));
 }
 

@@ -56,11 +56,12 @@ template <typename T, typename L>
 inline auto lb_constrain(T&& x, L&& lb, return_type_t<T, L>& lp) {
   auto&& x_ref = to_ref(std::forward<T>(x));
   lp += sum(x_ref);
-  return make_holder([](const auto& xx_ref, const auto& lb_ref) {
-    check_finite("lb_constrain", "lb", value_of(lb_ref));
-    return add(exp(xx_ref), lb_ref);
-  }, std::forward<decltype(x_ref)>(x_ref),
-  to_ref(std::forward<L>(lb)));
+  return make_holder(
+      [](const auto& xx_ref, const auto& lb_ref) {
+        check_finite("lb_constrain", "lb", value_of(lb_ref));
+        return add(exp(xx_ref), lb_ref);
+      },
+      std::forward<decltype(x_ref)>(x_ref), to_ref(std::forward<L>(lb)));
 }
 
 }  // namespace math
