@@ -91,7 +91,8 @@ class operands_and_partials_impl<ReturnType, require_var_t<ReturnType>,
       internal::ops_partials_edge<double, plain_type_t<std::decay_t<Ops>>>...>
       edges_;
   template <typename... Types>
-  explicit operands_and_partials_impl(Types&&... ops) : edges_(ops...) {}
+  explicit operands_and_partials_impl(Types&&... ops) :
+   edges_(internal::ops_partials_edge<double, plain_type_t<std::decay_t<Ops>>>(std::forward<Types>(ops))...) {}
 
   /** \ingroup type_trait
    * Build the node to be stored on the autodiff graph.
@@ -128,7 +129,8 @@ class ops_partials_edge<double, var> {
   double partial_{0};
   broadcast_array<double> partials_{partial_};
   explicit ops_partials_edge(const var& op) noexcept : operands_(op) {}
-
+  explicit ops_partials_edge(const ops_partials_edge<double, var>& other) :
+   partial_(other.partial_), partials_(partial_), operands_(other.operands_) {}
   inline auto& partial() { return partial_; }
   inline auto& operand() noexcept { return operands_; }
 
@@ -147,6 +149,10 @@ class ops_partials_edge<double, std::vector<var>> {
       : partials_(Eigen::VectorXd::Zero(op.size())),
         partials_vec_(partials_),
         operands_(to_arena(op)) {}
+
+  explicit ops_partials_edge(const ops_partials_edge<double, std::vector<var>>& other) :
+   partials_(other.partials_), partials_vec_(partials_), operands_(other.operands_) {}
+
   inline auto& partial() noexcept { return partials_; }
   inline auto& operand() noexcept { return operands_; }
   inline int size() const noexcept { return this->operands_.size(); }
@@ -163,6 +169,9 @@ class ops_partials_edge<double, Op, require_eigen_st<is_var, Op>> {
       : partials_(partials_t::Zero(ops.rows(), ops.cols())),
         partials_vec_(partials_),
         operands_(to_arena(ops)) {}
+
+  explicit ops_partials_edge(const ops_partials_edge<double, Op, require_eigen_st<is_var, Op>>& other) :
+  partials_(other.partials_), partials_vec_(partials_), operands_(other.operands_) {}
 
   inline auto& partial() noexcept { return partials_; }
   inline auto& operand() noexcept { return operands_; }
@@ -181,6 +190,11 @@ class ops_partials_edge<double, var_value<Op>, require_eigen_t<Op>> {
             plain_type_t<partials_t>::Zero(ops.vi_->rows(), ops.vi_->cols())),
         partials_vec_(partials_),
         operands_(ops) {}
+
+
+  explicit ops_partials_edge(const ops_partials_edge<double, var_value<Op>, require_eigen_t<Op>>& other) :
+  partials_(other.partials_), partials_vec_(partials_), operands_(other.operands_) {}
+
   inline auto& partial() noexcept { return partials_; }
   inline auto& operand() noexcept { return operands_; }
 
