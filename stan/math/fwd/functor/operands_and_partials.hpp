@@ -88,7 +88,8 @@ class operands_and_partials_impl<ReturnType, require_fvar_t<ReturnType>,
   using T_return_type = fvar<Dx>;
 
   template <typename... Types>
-  explicit operands_and_partials_impl(Types&&... ops) : edges_(std::forward<Types>(ops)...) {}
+  explicit operands_and_partials_impl(Types&&... ops)
+      : edges_(std::forward<Types>(ops)...) {}
 
   /** \ingroup type_trait
    * Build the node to be stored on the autodiff graph.
