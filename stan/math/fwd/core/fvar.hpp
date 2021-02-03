@@ -70,7 +70,7 @@ struct fvar {
   /**
    * Construct a forward variable with zero value and tangent.
    */
-  fvar() : val_(0.0), d_(0.0) {} // NOLINT
+  fvar() : val_(0.0), d_(0.0) {}  // NOLINT
 
   /**
    * Construct a forward variable with the specified value and
@@ -80,7 +80,7 @@ struct fvar {
    * @param[in] v value
    */
   template <typename V, std::enable_if_t<ad_promotable<V, T>::value>* = nullptr,
-   require_not_same_t<V, fvar<T>>* = nullptr>
+            require_not_same_t<V, fvar<T>>* = nullptr>
   fvar(const V& v) : val_(v), d_(0) {}  // NOLINT(runtime/explicit)
 
   /**
