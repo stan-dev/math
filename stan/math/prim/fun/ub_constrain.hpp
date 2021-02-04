@@ -29,15 +29,11 @@ namespace math {
  * @return matrix constrained to have upper bound
  */
 template <typename T, typename L>
-inline auto ub_constrain(T&& x, L&& ub) {
-  auto&& ub_ref = to_ref(std::forward<L>(ub));
+inline auto ub_constrain(const T& x, const L& ub) {
+  auto& ub_ref = to_ref(ub);
   check_finite("ub_constrain", "ub", value_of(ub_ref));
 
-  return make_holder(
-      [](const auto& xx, const auto& ub_ref) {
-        return subtract(ub_ref, exp(xx));
-      },
-      std::forward<T>(x), std::forward<decltype(ub_ref)>(ub_ref));
+  return eval(subtract(ub_ref, exp(x)));
 }
 
 /**
@@ -62,18 +58,13 @@ inline auto ub_constrain(T&& x, L&& ub) {
  * @return scalar constrained to have upper bound
  */
 template <typename T, typename L>
-inline auto ub_constrain(T&& x, L&& ub, return_type_t<T, L>& lp) {
-  auto&& ub_ref = to_ref(std::forward<L>(ub));
-  auto&& x_ref = to_ref(std::forward<T>(x));
+inline auto ub_constrain(const T& x, const L& ub, return_type_t<T, L>& lp) {
+  auto& ub_ref = to_ref(ub);
+  auto& x_ref = to_ref(x);
   check_finite("ub_constrain", "ub", value_of(ub_ref));
   lp += sum(x_ref);
 
-  return make_holder(
-      [](const auto& x_ref, const auto& ub_ref) {
-        return subtract(ub_ref, exp(x_ref));
-      },
-      std::forward<decltype(x_ref)>(x_ref),
-      std::forward<decltype(ub_ref)>(ub_ref));
+  return eval(subtract(ub_ref, exp(x_ref)));
 }
 
 }  // namespace math
