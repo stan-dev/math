@@ -108,9 +108,8 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> poisson_log_glm_lpmf(
   results(theta_derivative_cl, theta_derivative_sum_cl, logp_cl) = expressions(
       theta_derivative_expr, colwise_sum(theta_derivative_expr), logp_expr);
 
-  double theta_derivative_sum
-      = sum(from_matrix_cl<Dynamic, 1>(theta_derivative_sum_cl));
-  logp += sum(from_matrix_cl<Dynamic, 1>(logp_cl));
+  double theta_derivative_sum = sum(from_matrix_cl(theta_derivative_sum_cl));
+  logp += sum(from_matrix_cl(logp_cl));
   if (!std::isfinite(theta_derivative_sum)) {
     results(check_cl(function, "Vector of dependent variables", y_val,
                      "nonnegative"),

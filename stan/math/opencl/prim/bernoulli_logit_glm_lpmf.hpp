@@ -120,7 +120,7 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> bernoulli_logit_glm_lpmf(
       logp_expr, calc_if<need_theta_derivative>(theta_derivative_expr),
       calc_if<need_theta_derivative_sum>(colwise_sum(theta_derivative_expr)));
 
-  T_partials_return logp = sum(from_matrix_cl<Eigen::Dynamic, 1>(logp_cl));
+  T_partials_return logp = sum(from_matrix_cl(logp_cl));
   if (!std::isfinite(logp)) {
     results(check_cl(function, "Vector of dependent variables", y_val,
                      "in the interval [0, 1]"),

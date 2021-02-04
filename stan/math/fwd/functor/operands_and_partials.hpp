@@ -119,8 +119,8 @@ class ops_partials_edge<InnerType, T, require_fvar_t<T>> {
   using Dx = std::decay_t<InnerType>;
   Dx partial_{0};
   broadcast_array<Dx> partials_{partial_};
-
-  explicit ops_partials_edge(const T& op) : operands_(op) {}
+  
+  explicit ops_partials_edge(const T& op) : partial_(0), partials_(partial_), operands_(op) {}
 
   explicit ops_partials_edge(
       const ops_partials_edge<InnerType, T, require_fvar_t<T>>& other)
@@ -130,13 +130,17 @@ class ops_partials_edge<InnerType, T, require_fvar_t<T>> {
 
   explicit ops_partials_edge(
       ops_partials_edge<InnerType, T, require_fvar_t<T>>&& other)
-      : partial_(std::move(other.partial_)),
+      : partial_(other.partial_),
         partials_(partial_),
         operands_(other.operands_) {}
 
   const Op& operands_;
 
-  inline Dx dx() { return this->partial_ * this->operands_.d_; }
+  inline Dx dx() {
+    std::cout << "\ndx partial: " << this->partial_ << "\n";
+    std::cout << "\ndx operand: " << this->operands_.d_ << "\n";
+    return this->partial_ * this->operands_.d_;
+  }
 };
 
 // Vectorized Univariate

@@ -51,9 +51,10 @@ return_type_t<T_prob> binomial_lpmf(const T_n& n, const T_N& N,
   T_N_ref N_ref = N;
   T_theta_ref theta_ref = theta;
 
-  check_bounded(function, "Successes variable", n_ref, 0, N_ref);
+  check_bounded(function, "Successes variable", value_of(n_ref), 0, N_ref);
   check_nonnegative(function, "Population size parameter", N_ref);
-  check_bounded(function, "Probability parameter", theta_ref, 0.0, 1.0);
+  check_bounded(function, "Probability parameter", value_of(theta_ref), 0.0,
+                1.0);
 
   if (size_zero(n, N, theta)) {
     return 0.0;

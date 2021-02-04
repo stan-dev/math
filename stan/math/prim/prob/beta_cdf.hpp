@@ -52,7 +52,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
   T_beta_ref beta_ref = beta;
   check_positive_finite(function, "First shape parameter", alpha_ref);
   check_positive_finite(function, "Second shape parameter", beta_ref);
-  check_bounded(function, "Random variable", y_ref, 0, 1);
+  check_bounded(function, "Random variable", value_of(y_ref), 0, 1);
 
   T_partials_return P(1.0);
   auto ops_partials = operands_and_partials(y_ref, alpha_ref, beta_ref);

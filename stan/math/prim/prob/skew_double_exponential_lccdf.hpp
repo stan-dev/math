@@ -54,10 +54,10 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lccdf(
   T_sigma_ref sigma_ref = sigma;
   T_tau_ref tau_ref = tau;
 
-  check_not_nan(function, "Random variable", y_ref);
-  check_finite(function, "Location parameter", mu_ref);
-  check_positive_finite(function, "Scale parameter", sigma_ref);
-  check_bounded(function, "Skewness parameter", tau_ref, 0.0, 1.0);
+  check_not_nan(function, "Random variable", value_of(y_ref));
+  check_finite(function, "Location parameter", value_of(mu_ref));
+  check_positive_finite(function, "Scale parameter", value_of(sigma_ref));
+  check_bounded(function, "Skewness parameter", value_of(tau_ref), 0.0, 1.0);
 
   if (size_zero(y, mu, sigma, tau)) {
     return 0.0;
@@ -80,10 +80,10 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lccdf(
   }
 
   for (int i = 0; i < N; ++i) {
-    const T_partials_return y_dbl = value_of(y_vec[i]);
-    const T_partials_return mu_dbl = value_of(mu_vec[i]);
-    const T_partials_return sigma_dbl = value_of(sigma_vec[i]);
-    const T_partials_return tau_dbl = value_of(tau_vec[i]);
+    const T_partials_return y_dbl = y_vec.val(i);
+    const T_partials_return mu_dbl = mu_vec.val(i);
+    const T_partials_return sigma_dbl = sigma_vec.val(i);
+    const T_partials_return tau_dbl = tau_vec.val(i);
 
     const T_partials_return y_m_mu = y_dbl - mu_dbl;
     const T_partials_return diff_sign = sign(y_m_mu);

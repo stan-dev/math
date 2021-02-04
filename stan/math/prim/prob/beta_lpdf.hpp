@@ -79,7 +79,7 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
 
   check_positive_finite(function, "First shape parameter", alpha_val);
   check_positive_finite(function, "Second shape parameter", beta_val);
-  check_bounded(function, "Random variable", y_val, 0, 1);
+  check_bounded(function, "Random variable", value_of(y_val), 0, 1);
   if (!include_summand<propto, T_y, T_scale_succ, T_scale_fail>::value) {
     return 0;
   }
