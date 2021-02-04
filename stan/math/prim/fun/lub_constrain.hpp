@@ -39,6 +39,9 @@ namespace math {
  */
 template <typename T, typename L, typename U>
 inline auto lub_constrain(T&& x, L&& lb, U&& ub) {
+  const auto& x_ref = to_ref(x);
+  const auto& lb_ref = to_ref(lb);
+  const auto& ub_ref = to_ref(ub);
   check_less("lub_constrain", "lb", value_of(lb_ref), value_of(ub_ref));
   check_finite("lub_constrain", "lb", value_of(lb_ref));
   check_finite("lub_constrain", "ub", value_of(ub_ref));
