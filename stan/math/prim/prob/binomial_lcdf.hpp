@@ -54,7 +54,8 @@ return_type_t<T_prob> binomial_lcdf(const T_n& n, const T_N& N,
   T_theta_ref theta_ref = theta;
 
   check_nonnegative(function, "Population size parameter", N_ref);
-  check_bounded(function, "Probability parameter", theta_ref, 0.0, 1.0);
+  check_bounded(function, "Probability parameter", value_of(theta_ref), 0.0,
+                1.0);
 
   if (size_zero(n, N, theta)) {
     return 0;

@@ -24,7 +24,7 @@ TEST(MathMatrixCL, log1m_exp) {
   stan::math::matrix_cl<double> a_cl(a);
   stan::math::matrix_cl<double> res_cl(1000, 1);
   log1m_exp(cl::NDRange(1000), res_cl, a_cl);
-  Eigen::VectorXd res = stan::math::from_matrix_cl<-1, 1>(res_cl);
+  Eigen::VectorXd res = stan::math::from_matrix_cl<Eigen::VectorXd>(res_cl);
 
   stan::test::expect_near_rel("log1m_exp (OpenCL)", res,
                               stan::math::log1m_exp(a));
@@ -37,7 +37,7 @@ TEST(MathMatrixCL, log1m_exp_edge_cases) {
   stan::math::matrix_cl<double> a_cl(a);
   stan::math::matrix_cl<double> res_cl(11, 1);
   log1m_exp(cl::NDRange(11), res_cl, a_cl);
-  Eigen::VectorXd res = stan::math::from_matrix_cl<-1, 1>(res_cl);
+  Eigen::VectorXd res = stan::math::from_matrix_cl<Eigen::VectorXd>(res_cl);
 
   stan::test::expect_near_rel("log1m_exp (OpenCL)", res,
                               stan::math::log1m_exp(a));
