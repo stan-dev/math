@@ -39,6 +39,9 @@ namespace math {
  */
 template <typename T, typename L, typename U>
 inline auto lub_constrain(T&& x, L&& lb, U&& ub) {
+    check_less("lub_constrain", "lb", value_of(lb_ref), value_of(ub_ref));
+    check_finite("lub_constrain", "lb", value_of(lb_ref));
+    check_finite("lub_constrain", "ub", value_of(ub_ref));
     return add(elt_multiply(subtract(ub_ref, lb_ref), inv_logit(x_ref)),
                lb_ref);
 }
