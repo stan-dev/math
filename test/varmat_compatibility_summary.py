@@ -8,7 +8,11 @@ import sig_utils
 def main(results_file, functions, print_which, print_fully, print_names):
     """
     Generates benchmark code, compiles it and runs the benchmark. Optionally plots the results.
-    :param functions_or_sigs: List of function names and/or signatures to benchmark
+    :param results_file: File containing results of varmat compatibility calculation
+    :param functions: List of function names to check compatibility for
+    :param print_which: For which type of compatibility should functions be printed
+    :param print_fully: Only print fully compatible/incompatible signatures (no partial varmat support)
+    :param print_names: Print function names, not signatures
     """
     with open(results_file, "r") as f:
         results = json.load(f)
@@ -84,10 +88,10 @@ class FullErrorMsgParser(ArgumentParser):
 
 def processCLIArgs():
     """
-    Define and process the command line interface to the benchmark.py script.
+    Define and process the command line interface to the varmat compatibility summarize script.
     """
     parser = FullErrorMsgParser(
-        description="Generate and run_command benchmarks.",
+        description="Process results of varmat compatibility test.",
         formatter_class=ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(
