@@ -26,24 +26,18 @@ Eigen::Matrix<var, T::RowsAtCompileTime, T::ColsAtCompileTime> from_var_value(
 }
 
 /**
- * Forward Eigen containers of vars.
+ * This is a no-op for Eigen containers of vars, scalars or prim types.
  *
  * @tparam T type of the input
  * @param a matrix to convert
  */
-template <typename T, require_eigen_vt<is_var, T>* = nullptr>
-auto from_var_value(T&& a) {
-  return std::forward<T>(a);
-}
-
-/**
- * Forward scalar vars on.
- *
- * @tparam T type of the input
- * @param a matrix to convert
- */
-template <typename T, require_var_vt<std::is_arithmetic, T>* = nullptr>
-auto from_var_value(T&& a) {
+template <
+    typename T,
+    require_any_t<
+        conjunction<is_eigen<T>, is_var<scalar_type_t<T>>>,
+        std::is_same<std::decay_t<T>, var>,
+        bool_constant<!std::is_same<scalar_type_t<T>, var>::value>>* = nullptr>
+T from_var_value(T&& a) {
   return std::forward<T>(a);
 }
 
@@ -58,7 +52,7 @@ template <typename T>
 auto from_var_value(const std::vector<T>& a) {
   std::vector<decltype(from_var_value(std::declval<T>()))> out;
   out.reserve(a.size());
-  for(size_t i = 0; i < a.size(); ++i) {
+  for (size_t i = 0; i < a.size(); ++i) {
     out.emplace_back(from_var_value(a[i]));
   }
   return out;

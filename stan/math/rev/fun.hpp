@@ -8,7 +8,6 @@
 #include <stan/math/prim/functor.hpp>
 #include <stan/math/prim/meta.hpp>
 
-#include <stan/math/rev/fun/LDLT_alloc.hpp>
 #include <stan/math/rev/fun/LDLT_factor.hpp>
 #include <stan/math/rev/fun/Phi.hpp>
 #include <stan/math/rev/fun/Phi_approx.hpp>
@@ -144,6 +143,9 @@
 #include <stan/math/rev/fun/sd.hpp>
 #include <stan/math/rev/fun/simplex_constrain.hpp>
 #include <stan/math/rev/fun/sin.hpp>
+#include <stan/math/rev/fun/singular_values.hpp>
+#include <stan/math/rev/fun/svd_U.hpp>
+#include <stan/math/rev/fun/svd_V.hpp>
 #include <stan/math/rev/fun/sinh.hpp>
 #include <stan/math/rev/fun/softmax.hpp>
 #include <stan/math/rev/fun/sqrt.hpp>
@@ -159,6 +161,7 @@
 #include <stan/math/rev/fun/to_var.hpp>
 #include <stan/math/rev/fun/to_arena.hpp>
 #include <stan/math/rev/fun/to_var_value.hpp>
+#include <stan/math/rev/fun/trace.hpp>
 #include <stan/math/rev/fun/trace_gen_inv_quad_form_ldlt.hpp>
 #include <stan/math/rev/fun/trace_gen_quad_form.hpp>
 #include <stan/math/rev/fun/trace_inv_quad_form_ldlt.hpp>

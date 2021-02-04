@@ -78,7 +78,8 @@ template <
     typename T1, typename T2,
     require_any_t<conjunction<is_matrix<T1>, is_matrix<T2>>,
                   conjunction<is_prim_or_rev_kernel_expression<T1>,
-                              is_prim_or_rev_kernel_expression<T2>>>* = nullptr>
+                              is_prim_or_rev_kernel_expression<T2>>>* = nullptr,
+    require_any_not_stan_scalar_t<T1, T2>* = nullptr>
 inline void check_matching_dims(const char* function, const char* name1,
                                 const T1& y1, const char* name2, const T2& y2) {
   if (y1.rows() != y2.rows() || y1.cols() != y2.cols()) {

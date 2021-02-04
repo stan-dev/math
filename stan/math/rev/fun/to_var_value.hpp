@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_REV_FUN_TO_VAR_VALUE_HPP
 #define STAN_MATH_REV_FUN_TO_VAR_VALUE_HPP
 
-#include <stan/math/rev/core.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/rev/core.hpp>
 #include <stan/math/rev/core/arena_matrix.hpp>
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
 
@@ -28,13 +28,13 @@ to_var_value(const T& a) {
 }
 
 /**
- * Forward var_values on.
+ * This is a no-op for var_values.
  *
  * @tparam T type of the input
  * @param a matrix to convert
  */
 template <typename T, require_var_t<T>* = nullptr>
-auto to_var_value(T&& a) {
+T to_var_value(T&& a) {
   return std::forward<T>(a);
 }
 
@@ -49,7 +49,7 @@ template <typename T>
 auto to_var_value(const std::vector<T>& a) {
   std::vector<decltype(to_var_value(std::declval<T>()))> out;
   out.reserve(a.size());
-  for(size_t i = 0; i < a.size(); ++i) {
+  for (size_t i = 0; i < a.size(); ++i) {
     out.emplace_back(to_var_value(a[i]));
   }
   return out;
