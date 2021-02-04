@@ -26,29 +26,29 @@ namespace internal {
 
 template <typename T1, typename T2,
           require_all_kernel_expressions_and_none_scalar_t<T1>* = nullptr>
-inline void accumulate_adjoints(var_value<T1>& x, T2&& y, const var& z) {
+inline void update_adjoints(var_value<T1>& x, T2&& y, const var& z) {
   x.adj() += z.adj() * y;
 }
 
 template <typename Scalar1, typename Scalar2, require_var_t<Scalar1>* = nullptr,
           require_not_var_matrix_t<Scalar1>* = nullptr>
-inline void accumulate_adjoints(Scalar1&& x, Scalar2&& y, const var& z) {
+inline void update_adjoints(Scalar1&& x, Scalar2&& y, const var& z) {
   x.adj() += z.adj() * y;
 }
 template <typename EigT1, typename EigT2,
           require_rev_matrix_t<EigT1>* = nullptr>
-inline void accumulate_adjoints(EigT1&& x, EigT2&& y, const var& z) {
+inline void update_adjoints(EigT1&& x, EigT2&& y, const var& z) {
   x.adj().array() += z.adj() * y.array();
 }
 
 template <typename Arith, typename Alt, require_st_arithmetic<Arith>* = nullptr>
-inline void accumulate_adjoints(Arith&& /* x */, Alt&& /* y */, const var& z) {}
+inline void update_adjoints(Arith&& /* x */, Alt&& /* y */, const var& z) {}
 
 template <typename StdVec1, typename StdVec2,
           require_std_vector_t<StdVec1>* = nullptr>
-inline void accumulate_adjoints(StdVec1&& x, StdVec2&& y, const var& z) {
+inline void update_adjoints(StdVec1&& x, StdVec2&& y, const var& z) {
   for (size_t i = 0; i < x.size(); ++i) {
-    accumulate_adjoints(x[i], y[i], z);
+    update_adjoints(x[i], y[i], z);
   }
 }
 
@@ -115,7 +115,7 @@ class operands_and_partials_impl<ReturnType, require_var_t<ReturnType>,
         [ret](auto& edge) mutable {
           reverse_pass_callback(
               [operand = edge.operand(), partial = edge.partial(),
-               ret]() mutable { accumulate_adjoints(operand, partial, ret); });
+               ret]() mutable { update_adjoints(operand, partial, ret); });
         },
         edges_);
     return ret;
