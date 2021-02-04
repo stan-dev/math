@@ -28,16 +28,10 @@ class broadcast_array {
    * it will be used directly. If assigned a vector, the argument will be summed
    * first.
    */
-  template <typename Y, typename YY = T,
-            require_not_stan_scalar_t<Y>* = nullptr,
-            require_same_t<scalar_type_t<YY>, scalar_type_t<Y>>* = nullptr>
+  template <typename Y, require_not_stan_scalar_t<Y>* = nullptr>
   void operator=(const Y& m) {
     prim_ = sum(m);
   }
-  template <typename Y, typename YY = T,
-            require_not_stan_scalar_t<Y>* = nullptr,
-            require_not_same_t<scalar_type_t<YY>, scalar_type_t<Y>>* = nullptr>
-  void operator=(const Y& m) {}
   template <typename Y, require_stan_scalar_t<Y>* = nullptr>
   void operator=(const Y& m) {
     prim_ = m;

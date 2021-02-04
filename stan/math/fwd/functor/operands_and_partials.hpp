@@ -119,7 +119,7 @@ class ops_partials_edge<InnerType, T, require_fvar_t<T>> {
   using Dx = std::decay_t<InnerType>;
   Dx partial_{0};
   broadcast_array<Dx> partials_{partial_};
-  
+
   explicit ops_partials_edge(const T& op) : partial_(0), partials_(partial_), operands_(op) {}
 
   explicit ops_partials_edge(
@@ -137,8 +137,6 @@ class ops_partials_edge<InnerType, T, require_fvar_t<T>> {
   const Op& operands_;
 
   inline Dx dx() {
-    std::cout << "\ndx partial: " << this->partial_ << "\n";
-    std::cout << "\ndx operand: " << this->operands_.d_ << "\n";
     return this->partial_ * this->operands_.d_;
   }
 };

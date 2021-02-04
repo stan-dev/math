@@ -97,9 +97,8 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lccdf(
             N, 1, -forward_as<Log_temp_scalar>(log_temp));
       }
     } else {
-      forward_as<internal::broadcast_array<T_partials_return>>(
-          edge<3>(ops_partials).partials_)
-          = -log_temp * N / max_size(y, mu, lambda);
+          edge<3>(ops_partials).partials_[0]
+          = sum(-log_temp * static_cast<double>(N) / static_cast<double>(max_size(y, mu, lambda)));
     }
   }
 
