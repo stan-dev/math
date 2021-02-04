@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
@@ -73,20 +74,10 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
   T_nu_ref nu_ref = nu;
   T_sigma_ref sigma_ref = sigma;
 
-  const auto& y_col = as_column_vector_or_scalar(y_ref);
-  const auto& nu_col = as_column_vector_or_scalar(nu_ref);
-  const auto& mu_col = as_column_vector_or_scalar(mu_ref);
-  const auto& sigma_col = as_column_vector_or_scalar(sigma_ref);
-
-  const auto& y_arr = as_array_or_scalar(y_col);
-  const auto& nu_arr = as_array_or_scalar(nu_col);
-  const auto& mu_arr = as_array_or_scalar(mu_col);
-  const auto& sigma_arr = as_array_or_scalar(sigma_col);
-
-  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
-  ref_type_t<decltype(value_of(nu_arr))> nu_val = value_of(nu_arr);
-  ref_type_t<decltype(value_of(mu_arr))> mu_val = value_of(mu_arr);
-  ref_type_t<decltype(value_of(sigma_arr))> sigma_val = value_of(sigma_arr);
+  auto&& y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  auto&& nu_val = to_ref(as_value_column_array_or_scalar(nu_ref));
+  auto&& mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
+  auto&& sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
 
   check_not_nan(function, "Random variable", y_val);
   check_positive_finite(function, "Degrees of freedom parameter", nu_val);

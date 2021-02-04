@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/erf.hpp>
 #include <stan/math/prim/fun/erfc.hpp>
@@ -66,20 +67,10 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lpdf(
   operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref, T_tau_ref> ops_partials(
       y_ref, mu_ref, sigma_ref, tau_ref);
 
-  const auto& y_col = as_column_vector_or_scalar(y_ref);
-  const auto& mu_col = as_column_vector_or_scalar(mu_ref);
-  const auto& sigma_col = as_column_vector_or_scalar(sigma_ref);
-  const auto& tau_col = as_column_vector_or_scalar(tau_ref);
-
-  const auto& y_arr = as_array_or_scalar(y_col);
-  const auto& mu_arr = as_array_or_scalar(mu_col);
-  const auto& sigma_arr = as_array_or_scalar(sigma_col);
-  const auto& tau_arr = as_array_or_scalar(tau_col);
-
-  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
-  ref_type_t<decltype(value_of(mu_arr))> mu_val = value_of(mu_arr);
-  ref_type_t<decltype(value_of(sigma_arr))> sigma_val = value_of(sigma_arr);
-  ref_type_t<decltype(value_of(tau_arr))> tau_val = value_of(tau_arr);
+  auto&& y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  auto&& mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
+  auto&& sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
+  auto&& tau_val = to_ref(as_value_column_array_or_scalar(tau_ref));
 
   check_not_nan(function, "Random variable", y_val);
   check_finite(function, "Location parameter", mu_val);

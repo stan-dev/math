@@ -73,9 +73,9 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
   const auto& alpha_arr = as_array_or_scalar(alpha_col);
   const auto& beta_arr = as_array_or_scalar(beta_col);
 
-  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
-  ref_type_t<decltype(value_of(alpha_arr))> alpha_val = value_of(alpha_arr);
-  ref_type_t<decltype(value_of(beta_arr))> beta_val = value_of(beta_arr);
+  auto&& y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  auto&& alpha_val = to_ref(as_value_column_array_or_scalar(alpha_ref));
+  auto&& beta_val = to_ref(as_value_column_array_or_scalar(beta_ref));
 
   check_positive_finite(function, "First shape parameter", alpha_val);
   check_positive_finite(function, "Second shape parameter", beta_val);

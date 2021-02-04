@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
@@ -71,26 +72,13 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
   T_mu_ref mu_ref = mu;
   T_sigma_ref sigma_ref = sigma;
 
-  const auto& y_col = as_column_vector_or_scalar(y_ref);
-  const auto& s_squared_col = as_column_vector_or_scalar(s_squared_ref);
-  const auto& n_obs_col = as_column_vector_or_scalar(n_obs_ref);
-  const auto& mu_col = as_column_vector_or_scalar(mu_ref);
-  const auto& sigma_col = as_column_vector_or_scalar(sigma_ref);
-
-  const auto& y_arr = as_array_or_scalar(y_col);
-  const auto& s_squared_arr = as_array_or_scalar(s_squared_col);
-  const auto& n_obs_arr = as_array_or_scalar(n_obs_col);
-  const auto& mu_arr = as_array_or_scalar(mu_col);
-  const auto& sigma_arr = as_array_or_scalar(sigma_col);
-
-  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
-  ref_type_t<decltype(value_of(s_squared_arr))> s_squared_val
-      = value_of(s_squared_arr);
-  const auto& n_obs_val_int = value_of(n_obs_arr);
-  ref_type_t<decltype(promote_scalar<double>(n_obs_arr))> n_obs_val
-      = promote_scalar<double>(n_obs_arr);
-  ref_type_t<decltype(value_of(mu_arr))> mu_val = value_of(mu_arr);
-  ref_type_t<decltype(value_of(sigma_arr))> sigma_val = value_of(sigma_arr);
+  auto&& y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  auto&& s_squared_val = to_ref(as_value_column_array_or_scalar(s_squared_ref));
+  auto&& n_obs_val_int = to_ref(as_value_column_array_or_scalar(n_obs_ref));
+  ref_type_t<decltype(promote_scalar<double>(as_array_or_scalar(as_column_vector_or_scalar(n_obs_ref))))> n_obs_val
+      = promote_scalar<double>(as_array_or_scalar(as_column_vector_or_scalar(n_obs_ref)));
+  auto&& mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
+  auto&& sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
 
   check_finite(function, "Location parameter sufficient statistic", y_val);
   check_finite(function, "Scale parameter sufficient statistic", s_squared_val);
