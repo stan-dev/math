@@ -120,7 +120,8 @@ class ops_partials_edge<InnerType, T, require_fvar_t<T>> {
   Dx partial_{0};
   broadcast_array<Dx> partials_{partial_};
 
-  explicit ops_partials_edge(const T& op) : partial_(0), partials_(partial_), operands_(op) {}
+  explicit ops_partials_edge(const T& op)
+      : partial_(0), partials_(partial_), operands_(op) {}
 
   explicit ops_partials_edge(
       const ops_partials_edge<InnerType, T, require_fvar_t<T>>& other)
@@ -136,9 +137,7 @@ class ops_partials_edge<InnerType, T, require_fvar_t<T>> {
 
   const Op& operands_;
 
-  inline Dx dx() {
-    return this->partial_ * this->operands_.d_;
-  }
+  inline Dx dx() { return this->partial_ * this->operands_.d_; }
 };
 
 // Vectorized Univariate
