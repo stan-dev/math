@@ -211,7 +211,8 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
     if (is_phi_vector) {
       edge<3>(ops_partials).partials_ = std::move(phi_derivative_cl);
     } else {
-      edge<3>(ops_partials).partials_[0]
+       forward_as<internal::broadcast_array<double>>(
+      edge<3>(ops_partials).partials_)[0]
           = sum(from_matrix_cl(phi_derivative_cl));
     }
   }
