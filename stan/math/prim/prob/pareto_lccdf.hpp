@@ -96,8 +96,9 @@ return_type_t<T_y, T_scale, T_shape> pareto_lccdf(const T_y& y,
             N, 1, forward_as<Log_quot_scalar>(log_quot));
       }
     } else {
-          edge<2>(ops_partials).partials_[0]
-          = sum(log_quot * static_cast<double>(N) / static_cast<double>(max_size(y, y_min)));
+      edge<2>(ops_partials).partials_[0]
+          = sum(log_quot * static_cast<double>(N)
+                / static_cast<double>(max_size(y, y_min)));
     }
   }
   return ops_partials.build(P);

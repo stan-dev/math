@@ -55,8 +55,7 @@ return_type_t<T_y, T_inv_scale> exponential_lccdf(const T_y& y,
     } else if (is_vector<T_inv_scale>::value) {
       edge<0>(ops_partials).partials_ = -forward_as<beta_val_array>(beta_val);
     } else {
-      edge<0>(ops_partials).partials_[0]
-          = -sum(beta_val);
+      edge<0>(ops_partials).partials_[0] = -sum(beta_val);
     }
   }
   if (!is_constant_all<T_inv_scale>::value) {
@@ -68,8 +67,7 @@ return_type_t<T_y, T_inv_scale> exponential_lccdf(const T_y& y,
     } else if (is_vector<T_y>::value) {
       edge<1>(ops_partials).partials_ = -forward_as<y_val_array>(y_val);
     } else {
-          edge<1>(ops_partials).partials_[0]
-          = -forward_as<y_val_scalar>(y_val);
+      edge<1>(ops_partials).partials_[0] = -forward_as<y_val_scalar>(y_val);
     }
   }
   return ops_partials.build(ccdf_log);
