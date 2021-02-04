@@ -19,7 +19,8 @@ class ops_partials_edge<double, var_value<Op>, require_matrix_cl_t<Op>> {
   using partials_t = plain_type_t<Op>;
   partials_t partials_;  // For univariate use-cases
   explicit ops_partials_edge(const var_value<Op>& ops)
-      : partials_(constant(0, ops.vi_->rows(), ops.vi_->cols())),
+      : partials_(constant(0.0, ops.vi_->rows(), ops.vi_->cols())),
+        partials_vec_(partials_),
         operands_(ops) {}
   inline partials_t& partial() noexcept { return partials_; }
   inline var_value<Op>& operand() noexcept { return operands_; }
