@@ -45,7 +45,7 @@ inline auto lub_constrain(T&& x, L&& lb, U&& ub) {
   check_less("lub_constrain", "lb", value_of(lb_ref), value_of(ub_ref));
   check_finite("lub_constrain", "lb", value_of(lb_ref));
   check_finite("lub_constrain", "ub", value_of(ub_ref));
-  return add(elt_multiply(subtract(ub_ref, lb_ref), inv_logit(x_ref)), lb_ref);
+  return eval(add(elt_multiply(subtract(ub_ref, lb_ref), inv_logit(x_ref)), lb_ref));
 }
 
 /**
@@ -97,7 +97,7 @@ inline auto lub_constrain(T&& x, L&& lb, U&& ub, return_type_t<T, L, U>& lp) {
       add(log(diff), subtract(-abs(x_ref), multiply(static_cast<double>(2),
                                                     log1p_exp(-abs(x_ref))))));
 
-  return add(elt_multiply(diff, inv_logit(x_ref)), lb_ref);
+  return eval(add(elt_multiply(diff, inv_logit(x_ref)), lb_ref));
 }
 
 }  // namespace math
