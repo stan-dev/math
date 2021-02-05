@@ -24,8 +24,8 @@ class ops_partials_edge<double, var_value<Op>, require_matrix_cl_t<Op>> {
         partials_vec_(partials_),
         operands_(ops) {}
   inline partials_t& partial() noexcept { return partials_; }
-  inline var_value<Op>& operand() noexcept { return operands_; }
-  var_value<Op> operands_;
+  inline const var_value<Op>& operand() const noexcept { return operands_; }
+  const var_value<Op>& operands_;
   static constexpr int size() { return 0; }
 };
 
