@@ -221,7 +221,9 @@ Remember from [Thinking About Automatic Differentiation in Fun New Ways](https:/
 2. Storing the input and output into a memory arena
 3. Adding a callback to a callback stack that calculates the derivative of the function
 
-This process lets us call `stan::math::grad(z)` that goes up and calls all the callbacks in the callback stack and accumulates the gradients through all the outputs and inputs. (reverse pass)
+This process lets us call `stan::math::grad(z)` that goes up and calls all
+the callbacks in the callback stack and accumulates the gradients through
+all the outputs and inputs. (reverse pass)
 
 Reverse mode autodiff in Math requires a huge number of temporaries and
 intermediates to be computed and saved for the reverse pass. There are
@@ -230,20 +232,27 @@ avoid this, Math provides its own memory arena. The assumptions of
 the Math arena are:
 
 1. Individual objects allocated in the arena do not need their destructors
-called
+called (although there are ways to destruct something allocated in the arena,
+it just isn't automatic)
 2. All objects allocated on the arena have the same lifetime (that is the
-lifetime of the stack)
+lifetime of the stack - until `recover_memory` is called)
 
-The arena memory pattern fits nicely into automatic differentiation for MCMC as we will most commonly be calling gradients with data of the same size over and over again.
+The arena memory pattern fits nicely into automatic differentiation for MCMC
+as we will most commonly be calling gradients with data of the same size over
+and over again.
 
 Functions that use reverse mode autodiff are allowed to save whatever they
 need to the arena. Objects saved here will be available during the reverse
 pass.
 
-There is a utility for saving objects into the arena that do need their destructors called. This is discussed under `make_callback_ptr`. Arena types are helper functions and types for easily saving variables to the arena.
+There is a utility for saving objects into the arena that do need their
+destructors called. This is discussed under `make_callback_ptr`. Arena types
+are helper functions and types for easily saving variables to the arena.
 
 `arena_t<T>` defines, for a given type `T`, the type of a lightweight
-object pointing to memory in the arena that can store a `T`.
+object pointing to memory in the arena that can store a `T`. Memory for
+`arena_t<T>` objects is only recovered when `recover_memory` is called.
+No destructors are called for objects stored with `arena_t<T>`.
 
 Copying a variable `x` to the arena can be done with either `to_arena` or
 `arena_t<T>`:
@@ -501,7 +510,7 @@ suitable inputs.
   For some functions these checks should be more extensive that others,
   but there should at least be a two or three even in simple cases.
 
-The `prim` tests should only have scalar arithmetic types. No autodiff
+The `prim` tests should only have arithmetic types. No autodiff
 is tested here. The `prim` tests check that the function handles edge
 cases correctly and produces the correct output for different function
 values. The second set of tests should be in `stan/math/mix/fun` with

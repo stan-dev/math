@@ -9,7 +9,7 @@ and `matrix` do not map to just templated `Eigen::Matrix` types, they can
 also map to a variety of Eigen expressions.
 
 For instance, in the following code, the result `c` is not a vector, but
-a vector-like type representing the sum of `a` and `b`:
+a vector-like type representing the not-yet-calculated sum of `a` and `b`:
 
 ```cpp
 Eigen::VectorXd a(5);
@@ -58,10 +58,8 @@ type, and then a second faster overload that only works with a specific
 autodiff type.
 
 There can easily be ambiguities between the two function signatures. The
-previous examples took advantage of overloads. If a function overload
-is more specialized than a template, then the C++ compiler favors the
-overload. This only works in simple cases though. The more general solution
-are template metaprograms that take advantage of C++ substitution failure
+previous examples took advantage of simple overloads. The more general solution
+are template metaprograms that additionally make use of C++ substitution failure
 is not an error (SFINAE) semantics. For instance, for the norm function above,
 SFINAE could be used to limit one signature to work with reverse
 mode autodiff types and one to work with anything else:
@@ -84,7 +82,7 @@ type of `T` is a `var`. If the scalar type of `T` is not a `var`, then
 to do template substitution on this signature, and the compiler treats it as
 if it does not exist. This is how SFINAE (substitution failure is not an error)
 works. Because the substitution does not work, the signature is ignored.
-This is all built similarly to C++'s
+This is all built based on C++'s
 [std::enable_if](https://en.cppreference.com/w/cpp/types/enable_if)
 template metaprogram.
 
@@ -105,12 +103,14 @@ it new meta-programs should be added.
 ### Reference types
 
 Any time a function takes a vector or matrix type, it needs to be able
-to handle an expression. Some expressions can be expensive to evaluate, so
-when they are evaluated, they should be saved. This includes any arithmetic
-operation, a matrix multiply, or a sum, or something else. Some expressions
-are cheap to evaluate though, any of the Eigen views quality here (transpose,
-block access, segment, etc). In this case, evaluating the expression is not
-necessary -- it would only lead to another allocate and copy.
+to also handle an expression that evaluates to that type. Some expressions
+can be expensive to evaluate, so each expression should be evaluated only once.
+If the results of an expression is needed in multiple places, they should be saved.
+Eigen expressions can result from many places, including arithmetic operations,
+a matrix multiply, a sum, or a variety of other things. Some expressions are cheap
+to evaluate, any of the Eigen views qualify here (transpose, block access, segment, etc).
+In this case, evaluating the expression is not necessary -- it would only lead to another
+allocate and copy.
 
 The Math function `to_ref` is a solution for this. For a vector
 or matrix variable `x`, `to_ref(x)` returns an Eigen reference to the
@@ -154,14 +154,14 @@ Eigen::VectorXd a(5);
 Eigen::VectorXd c = add_zero(a);
 ```
 
-`make_holder` can be used to extend the scope of `b` so that it does
-not immediately get destructed.
+`make_holder` can be used to extend the lifetime of `b` so that it matches
+the expression it is used in.
 
 ```cpp
 template <typename T>
 auto add_zero(const T& a) {
   Eigen::VectorXd b = Eigen::VectorXd(a.size());
-  return make_holder([](const auto& l, const auto& r) { return l + r; }, std::move(b));
+  return make_holder([](const auto& l, const auto& r) { return l + r; }, a, std::move(b));
 }
 ```
 
