@@ -17,7 +17,7 @@ template <typename Op>
 class ops_partials_edge<double, var_value<Op>, require_matrix_cl_t<Op>> {
  public:
   using partials_t = plain_type_t<Op>;
-  partials_t partials_;  // For univariate use-cases
+  partials_t partials_;                       // For univariate use-cases
   broadcast_array<partials_t> partials_vec_;  // For multivariate
   explicit ops_partials_edge(const var_value<Op>& ops)
       : partials_(constant(0.0, ops.vi_->rows(), ops.vi_->cols())),
