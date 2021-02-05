@@ -1,11 +1,13 @@
 #ifdef STAN_OPENCL
-#include <stan/math/prim/meta.hpp>
+#include <stan/math/opencl/prim.hpp>
+#include <stan/math/prim.hpp>
+
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 #include <stan/math/opencl/pinned_matrix.hpp>
 
 TEST(MathMetaPrim, ref_type_for_opencl_for_opencl_non_eigen) {
-  using stan::ref_type_for_opencl_t;
+  using stan::math::ref_type_for_opencl_t;
   std::vector<int> a{1, 2, 3};
   ref_type_for_opencl_t<std::vector<int>> a_ref1 = a;
   ref_type_for_opencl_t<std::vector<int>&> a_ref2 = a;
@@ -40,7 +42,7 @@ TEST(MathMetaPrim, ref_type_for_opencl_for_opencl_non_eigen) {
 }
 
 TEST(MathMetaPrim, ref_type_for_opencl_eigen_contiguous) {
-  using stan::ref_type_for_opencl_t;
+  using stan::math::ref_type_for_opencl_t;
   Eigen::MatrixXd a(3, 3);
   a << 1, 2, 3, 4, 5, 6, 7, 8, 9;
   Eigen::MatrixXd a2 = a;
@@ -86,7 +88,7 @@ TEST(MathMetaPrim, ref_type_for_opencl_eigen_contiguous) {
 }
 
 TEST(MathMetaPrim, ref_type_for_opencl_eigen_non_contiguous) {
-  using stan::ref_type_for_opencl_t;
+  using stan::math::ref_type_for_opencl_t;
   Eigen::MatrixXd m(3, 3);
   m << 1, 2, 3, 4, 5, 6, 7, 8, 9;
   using RowMajorMatrixXd
@@ -129,7 +131,7 @@ TEST(MathMetaPrim, ref_type_for_opencl_eigen_non_contiguous) {
 
 TEST(MathMetaPrim, ref_type_for_opencl_eigen_expression) {
   using stan::plain_type_t;
-  using stan::ref_type_for_opencl_t;
+  using stan::math::ref_type_for_opencl_t;
   Eigen::MatrixXd m(3, 3);
   m << 1, 2, 3, 4, 5, 6, 7, 8, 9;
   auto a = m * 3;
