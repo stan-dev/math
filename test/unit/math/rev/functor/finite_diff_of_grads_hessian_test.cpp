@@ -66,4 +66,3 @@ TEST(RevFunctor, linear_function) {
   EXPECT_FLOAT_EQ(0, hess_fx(2, 1));
   EXPECT_FLOAT_EQ(0, hess_fx(2, 2));
 }
-
