@@ -24,8 +24,8 @@ namespace math {
  * </code>
  *
  * <p>For details of the algorithm, see
- * "Central difference approximation", under "Second-order derivatives based on gradient",
- * in: https://v8doc.sas.com/sashtml/ormp/chap5/sect28.htm
+ * "Central difference approximation", under "Second-order derivatives based on
+ * gradient", in: https://v8doc.sas.com/sashtml/ormp/chap5/sect28.htm
  *
  * <p>Step size for dimension `i` is set automatically using
  * `stan::math::finite_diff_stepsize(x(i))`.
@@ -38,10 +38,11 @@ namespace math {
  * @param[out] fx Function applied to argument
  * @param[out] grad_fx Gradient of function at argument
  * @param[out] hess_fx Hessian of function at argument
- */template <typename F>
-void finite_diff_of_grads_hessian(const F& f, const Eigen::VectorXd& x, double& fx,
-                              Eigen::VectorXd& grad_fx,
-                              Eigen::MatrixXd& hess_fx) {
+ */
+template <typename F>
+void finite_diff_of_grads_hessian(const F& f, const Eigen::VectorXd& x,
+                                  double& fx, Eigen::VectorXd& grad_fx,
+                                  Eigen::MatrixXd& hess_fx) {
   int d = x.size();
 
   Eigen::VectorXd x_temp(x);
@@ -52,13 +53,12 @@ void finite_diff_of_grads_hessian(const F& f, const Eigen::VectorXd& x, double& 
   std::vector<Eigen::VectorXd> g_plus(d);
   std::vector<Eigen::VectorXd> g_minus(d);
   std::vector<double> epsilons(d);
-  double tmp; 
+  double tmp;
 
   // compute the gradient at x+eps_i*e_i
   // such that eps_i is the step size and e_i is the unit vector
   // in the i-th direction
-  for (size_t i = 0; i < d; ++i)
-  {
+  for (size_t i = 0; i < d; ++i) {
     Eigen::VectorXd x_temp(x);
     epsilons[i] = finite_diff_stepsize(x(i));
     x_temp(i) += epsilons[i];
@@ -66,17 +66,17 @@ void finite_diff_of_grads_hessian(const F& f, const Eigen::VectorXd& x, double& 
   }
 
   // similarly, compute the gradient at x-eps_i*e_i
-  for (size_t i = 0; i < d; ++i)
-  {
+  for (size_t i = 0; i < d; ++i) {
     Eigen::VectorXd x_temp(x);
     x_temp(i) -= epsilons[i];
     gradient(f, x_temp, tmp, g_minus[i]);
   }
-  
-  // approximate the hessian as a finite difference of gradients 
+
+  // approximate the hessian as a finite difference of gradients
   for (int i = 0; i < d; ++i) {
     for (int j = i; j < d; ++j) {
-      hess_fx(j, i) = (g_plus[j](i)-g_minus[j](i))/(4*epsilons[j])+(g_plus[i](j)-g_minus[i](j))/(4*epsilons[i]);
+      hess_fx(j, i) = (g_plus[j](i) - g_minus[j](i)) / (4 * epsilons[j])
+                      + (g_plus[i](j) - g_minus[i](j)) / (4 * epsilons[i]);
       hess_fx(i, j) = hess_fx(j, i);
     }
   }

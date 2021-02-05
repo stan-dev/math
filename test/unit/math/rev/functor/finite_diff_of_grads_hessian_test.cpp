@@ -42,11 +42,12 @@ TEST(RevFunctor, finite_diff_hessian) {
   EXPECT_EQ(2, grad_fx.size());
   EXPECT_FLOAT_EQ(2 * x(0) * x(1), grad_fx(0));
   EXPECT_FLOAT_EQ(x(0) * x(0) + 3 * 2 * x(1), grad_fx(1));
-  EXPECT_FLOAT_EQ(2 * x(1), hess_fx(0,0));
-  EXPECT_FLOAT_EQ(2 * x(0), hess_fx(0,1));
-  EXPECT_FLOAT_EQ(2 * x(0), hess_fx(1,0));
-  EXPECT_FLOAT_EQ(6, hess_fx(1,1));
+  EXPECT_FLOAT_EQ(2 * x(1), hess_fx(0, 0));
+  EXPECT_FLOAT_EQ(2 * x(0), hess_fx(0, 1));
+  EXPECT_FLOAT_EQ(2 * x(0), hess_fx(1, 0));
+  EXPECT_FLOAT_EQ(6, hess_fx(1, 1));
 }
+<<<<<<< HEAD
 
 TEST(RevFunctor, linear_function) {
   fun2 f;
@@ -67,3 +68,5 @@ TEST(RevFunctor, linear_function) {
   EXPECT_FLOAT_EQ(0, hess_fx(2,2));
 }
 
+=======
+>>>>>>> 32e27e222d9bbc158be871394d738c02db8b63ec
