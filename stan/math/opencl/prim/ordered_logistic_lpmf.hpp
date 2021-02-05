@@ -142,7 +142,7 @@ inline return_type_t<T_y_cl, T_loc_cl, T_cuts_cl> ordered_logistic_lpmf(
         = expressions(y_val >= 1 && y_val <= static_cast<int>(N_classes),
                       isfinite(lambda_val));
   }
-  operands_and_partials<T_loc_cl, T_cuts_cl> ops_partials(lambda, cuts);
+  auto ops_partials = operands_and_partials(lambda, cuts);
 
   if (!is_constant_all<T_loc_cl>::value) {
     edge<0>(ops_partials).partials_ = lambda_derivative_cl;
