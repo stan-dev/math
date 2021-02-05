@@ -1,7 +1,7 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 
-TEST(Symmetrize, Error) {
+TEST(Symmetrize_upper, Error) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::symmetrize_from_upper_tri;
@@ -13,7 +13,7 @@ TEST(Symmetrize, Error) {
   EXPECT_THROW(symmetrize_from_upper_tri(m), std::invalid_argument);
 }
 
-TEST(Symmetrize, Value) {
+TEST(Symmetrize_upper, Value) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::is_symmetric;
