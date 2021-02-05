@@ -211,7 +211,27 @@ The general rules to follow for passing values to a function are:
 2. If you are writing a function for reverse mode, pass values by `const&`
 3. In prim, if you are confident and working with larger types, use perfect forwarding to pass values that can be moved from. Otherwise simply pass values by `const&`.
 
-### Copying non-arena variables to lambdas used in the reverse pass
+### Copying non-arena variables to lambdas used in the reverse pass (`make_callback_ptr`)
+
+When possible, non-arena variables should be copied to the arena to be
+used in the reverse pass. The two tools for that are `arena_t<T>` and
+`to_arena`.
+
+When these tools do not work, there is `make_callback_ptr(x)`.
+`make_callback_ptr(x)` constructs a copy of the argument `x` and returns
+a pointer to that copy. The copy of `x` will only be destructed when the
+enclosing `recover_memory` is called.
+
+The pointer is cheap to copy around and is safe to copy into lambdas for
+`reverse_pass_callback` and `make_callback_var`.
+
+As an example, see the implementation of `mdivide_left`
+[here](https://github.com/stan-dev/math/blob/develop/stan/math/rev/fun/mdivide_left.hpp)
+where `make_callback_ptr` is used to save the result of an Eigen
+Householder QR decomposition for use in the reverse pass.
+
+The implementation is in
+[stan/math/rev/core/chainable_object.hpp](https://github.com/stan-dev/math/blob/develop/stan/math/rev/core/chainable_object.hpp)
 
 ### Returning arena types
 
@@ -222,8 +242,6 @@ The general rules to follow for passing values to a function are:
 ### Const correctness, reverse mode autodiff, and arena types
 
 ## Handy tricks
-
-### `make_callback_ptr`
 
 ### `forward_as`
 
