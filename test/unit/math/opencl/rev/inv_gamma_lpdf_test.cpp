@@ -156,6 +156,28 @@ TEST(ProbDistributionsInvGamma, opencl_broadcast_beta) {
       inv_gamma_lpdf_functor_propto, y, alpha, beta);
 }
 
+auto inv_gamma_lpdf_functor_ab
+    = [](const auto& y, const auto& alpha_beta) {
+        return stan::math::inv_gamma_lpdf(y, alpha_beta, alpha_beta);
+      };
+auto inv_gamma_lpdf_functor_propto_ab
+    = [](const auto& y, const auto& alpha_beta) {
+        return stan::math::inv_gamma_lpdf<true>(y, alpha_beta, alpha_beta);
+      };
+
+TEST(ProbDistributionsInvGamma, opencl_broadcast_alpha_beta) {
+  int N = 3;
+
+  Eigen::VectorXd y(N);
+  y << 0.3, 0.8, 1.0;
+  double alpha_beta = 0.3;
+
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(inv_gamma_lpdf_functor_ab,
+                                                         y, alpha_beta);
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
+      inv_gamma_lpdf_functor_propto_ab, y, alpha_beta);
+}
+
 TEST(ProbDistributionsInvGamma, opencl_matches_cpu_big) {
   int N = 153;
 
