@@ -93,7 +93,7 @@ fvar<fvar<double>> get_param<fvar<fvar<double>>>(const vector<double>& params,
   fvar<fvar<double>> param = 0;
   if (n < params.size()) {
     param = params[n];
-    param.d_ = 1.0;
+    param.d_.val_ = 1.0;
   }
   return param;
 }
@@ -103,7 +103,7 @@ fvar<fvar<var>> get_param<fvar<fvar<var>>>(const vector<double>& params,
   fvar<fvar<var>> param = 0;
   if (n < params.size()) {
     param = params[n];
-    param.d_ = 1.0;
+    param.d_.val_ = 1.0;
   }
   return param;
 }
@@ -111,12 +111,22 @@ fvar<fvar<var>> get_param<fvar<fvar<var>>>(const vector<double>& params,
 // ------------------------------------------------------------
 
 // default template handles Eigen::Matrix
-template <typename T>
+template <typename T, stan::require_not_var_matrix_t<T>* = nullptr>
 T get_params(const vector<vector<double>>& parameters, const size_t p) {
   T param(parameters.size());
   for (size_t n = 0; n < parameters.size(); n++)
     if (p < parameters[0].size())
       param(n) = get_param<stan::scalar_type_t<T>>(parameters[n], p);
+  return param;
+}
+
+// handle `var_value<T>` where T is an Eigen type
+template <typename T, stan::require_var_matrix_t<T>* = nullptr>
+T get_params(const vector<vector<double>>& parameters, const size_t p) {
+  typename T::value_type param(parameters.size());
+  for (size_t n = 0; n < parameters.size(); n++)
+    if (p < parameters[0].size())
+      param(n) = get_param<double>(parameters[n], p);
   return param;
 }
 
@@ -168,7 +178,7 @@ fvar<fvar<double>> get_params<fvar<fvar<double>>>(
   fvar<fvar<double>> param(0);
   if (p < parameters[0].size()) {
     param = parameters[0][p];
-    param.d_ = 1.0;
+    param.d_.val_ = 1.0;
   }
   return param;
 }
@@ -178,7 +188,7 @@ fvar<fvar<var>> get_params<fvar<fvar<var>>>(
   fvar<fvar<var>> param(0);
   if (p < parameters[0].size()) {
     param = parameters[0][p];
-    param.d_ = 1.0;
+    param.d_.val_ = 1.0;
   }
   return param;
 }
@@ -246,7 +256,7 @@ vector<fvar<fvar<double>>> get_params<vector<fvar<fvar<double>>>>(
   for (size_t n = 0; n < parameters.size(); n++)
     if (p < parameters[0].size()) {
       param[n] = parameters[n][p];
-      param[n].d_ = 1.0;
+      param[n].d_.val_ = 1.0;
     }
   return param;
 }
@@ -257,7 +267,7 @@ vector<fvar<fvar<var>>> get_params<vector<fvar<fvar<var>>>>(
   for (size_t n = 0; n < parameters.size(); n++)
     if (p < parameters[0].size()) {
       param[n] = parameters[n][p];
-      param[n].d_ = 1.0;
+      param[n].d_.val_ = 1.0;
     }
   return param;
 }
@@ -265,13 +275,24 @@ vector<fvar<fvar<var>>> get_params<vector<fvar<fvar<var>>>>(
 // ------------------------------------------------------------
 
 // default template handles Eigen::Matrix
-template <typename T>
+template <typename T, stan::require_not_var_matrix_t<T>* = nullptr>
 T get_params(const vector<vector<double>>& parameters, const size_t /*n*/,
              const size_t p) {
   T param(parameters.size());
   for (size_t i = 0; i < parameters.size(); i++)
     if (p < parameters[0].size())
       param(i) = get_param<stan::scalar_type_t<T>>(parameters[i], p);
+  return param;
+}
+
+// handle `var_value<T>` where T is an Eigen type
+template <typename T, stan::require_var_matrix_t<T>* = nullptr>
+T get_params(const vector<vector<double>>& parameters, const size_t /*n*/,
+             const size_t p) {
+  typename T::value_type param(parameters.size());
+  for (size_t i = 0; i < parameters.size(); i++)
+    if (p < parameters[0].size())
+      param(i) = get_param<double>(parameters[i], p);
   return param;
 }
 
@@ -324,7 +345,7 @@ fvar<fvar<double>> get_params<fvar<fvar<double>>>(
   fvar<fvar<double>> param(0);
   if (p < parameters[0].size()) {
     param = parameters[n][p];
-    param.d_ = 1.0;
+    param.d_.val_ = 1.0;
   }
   return param;
 }
@@ -334,7 +355,7 @@ fvar<fvar<var>> get_params<fvar<fvar<var>>>(
   fvar<fvar<var>> param(0);
   if (p < parameters[0].size()) {
     param = parameters[n][p];
-    param.d_ = 1.0;
+    param.d_.val_ = 1.0;
   }
   return param;
 }
@@ -407,7 +428,7 @@ vector<fvar<fvar<double>>> get_params<vector<fvar<fvar<double>>>>(
   for (size_t i = 0; i < parameters.size(); i++)
     if (p < parameters[0].size()) {
       param[i] = parameters[i][p];
-      param[i].d_ = 1.0;
+      param[i].d_.val_ = 1.0;
     }
   return param;
 }
@@ -419,7 +440,7 @@ vector<fvar<fvar<var>>> get_params<vector<fvar<fvar<var>>>>(
   for (size_t i = 0; i < parameters.size(); i++)
     if (p < parameters[0].size()) {
       param[i] = parameters[i][p];
-      param[i].d_ = 1.0;
+      param[i].d_.val_ = 1.0;
     }
   return param;
 }
@@ -444,6 +465,26 @@ T get_repeated_params(const vector<double>& parameters, const size_t p,
   return params;
 }
 
+// handle `var_value<T>` where T is an Eigen type
+template <typename T, stan::require_var_matrix_t<T>* = nullptr>
+T get_repeated_params(const vector<double>& parameters, const size_t p,
+                      const size_t N_REPEAT) {
+  typename T::value_type params(N_REPEAT);
+  double param;
+
+  if (p < parameters.size())
+    param = get_param<double>(parameters, p);
+  else
+    param = 0;
+
+  for (size_t n = 0; n < N_REPEAT; n++) {
+    params(n) = param;
+  }
+
+  return params;
+}
+
+// handle `std::vector`
 template <typename T, stan::require_std_vector_t<T>* = nullptr>
 T get_repeated_params(const vector<double>& parameters, const size_t p,
                       const size_t N_REPEAT) {
@@ -551,99 +592,108 @@ struct any_vector {
 };
 
 // ------------------------------------------------------------
-template <typename T>
-void add_var(vector<var>& /*x*/, T& /*p*/) {}
+template <typename T, stan::require_not_var_matrix_t<T>* = nullptr>
+void add_adjoints(vector<double>& /*x*/, T& /*p*/) {}
 
 template <>
-void add_var<var>(vector<var>& x, var& p) {
-  x.push_back(p);
+void add_adjoints<var>(vector<double>& x, var& p) {
+  x.push_back(p.adj());
+}
+
+template <typename T, stan::require_var_matrix_t<T>* = nullptr>
+void add_adjoints(vector<double>& x, T& p) {
+  for (size_type n = 0; n < p.size(); n++) {
+    x.push_back(p.adj().coeff(n));
+  }
 }
 
 template <>
-void add_var<vector<var>>(vector<var>& x, vector<var>& p) {
-  x.insert(x.end(), p.begin(), p.end());
-}
-
-template <>
-void add_var<Eigen::Matrix<var, 1, Eigen::Dynamic>>(
-    vector<var>& x, Eigen::Matrix<var, 1, Eigen::Dynamic>& p) {
+void add_adjoints<vector<var>>(vector<double>& x, vector<var>& p) {
   for (size_type n = 0; n < p.size(); n++)
-    x.push_back(p(n));
+    x.push_back(p[n].adj());
 }
 
 template <>
-void add_var<Eigen::Matrix<var, Eigen::Dynamic, 1>>(
-    vector<var>& x, Eigen::Matrix<var, Eigen::Dynamic, 1>& p) {
+void add_adjoints<Eigen::Matrix<var, 1, Eigen::Dynamic>>(
+    vector<double>& x, Eigen::Matrix<var, 1, Eigen::Dynamic>& p) {
   for (size_type n = 0; n < p.size(); n++)
-    x.push_back(p(n));
+    x.push_back(p(n).adj());
 }
 
 template <>
-void add_var<fvar<var>>(vector<var>& x, fvar<var>& p) {
-  x.push_back(p.val_);
+void add_adjoints<Eigen::Matrix<var, Eigen::Dynamic, 1>>(
+    vector<double>& x, Eigen::Matrix<var, Eigen::Dynamic, 1>& p) {
+  for (size_type n = 0; n < p.size(); n++)
+    x.push_back(p(n).adj());
 }
 
 template <>
-void add_var<vector<fvar<var>>>(vector<var>& x, vector<fvar<var>>& p) {
+void add_adjoints<fvar<var>>(vector<double>& x, fvar<var>& p) {
+  x.push_back(p.val_.adj());
+}
+
+template <>
+void add_adjoints<vector<fvar<var>>>(vector<double>& x, vector<fvar<var>>& p) {
   for (size_t n = 0; n < p.size(); n++)
-    x.push_back(p[n].val_);
+    x.push_back(p[n].val_.adj());
 }
 
 template <>
-void add_var<Eigen::Matrix<fvar<var>, 1, Eigen::Dynamic>>(
-    vector<var>& x, Eigen::Matrix<fvar<var>, 1, Eigen::Dynamic>& p) {
+void add_adjoints<Eigen::Matrix<fvar<var>, 1, Eigen::Dynamic>>(
+    vector<double>& x, Eigen::Matrix<fvar<var>, 1, Eigen::Dynamic>& p) {
   for (size_type n = 0; n < p.size(); n++)
-    x.push_back(p(n).val_);
+    x.push_back(p(n).val_.adj());
 }
 
 template <>
-void add_var<Eigen::Matrix<fvar<var>, Eigen::Dynamic, 1>>(
-    vector<var>& x, Eigen::Matrix<fvar<var>, Eigen::Dynamic, 1>& p) {
+void add_adjoints<Eigen::Matrix<fvar<var>, Eigen::Dynamic, 1>>(
+    vector<double>& x, Eigen::Matrix<fvar<var>, Eigen::Dynamic, 1>& p) {
   for (size_type n = 0; n < p.size(); n++)
-    x.push_back(p(n).val_);
+    x.push_back(p(n).val_.adj());
 }
 
 template <>
-void add_var<fvar<fvar<var>>>(vector<var>& x, fvar<fvar<var>>& p) {
-  x.push_back(p.val_.val_);
+void add_adjoints<fvar<fvar<var>>>(vector<double>& x, fvar<fvar<var>>& p) {
+  x.push_back(p.val_.val_.adj());
 }
 
 template <>
-void add_var<vector<fvar<fvar<var>>>>(vector<var>& x,
-                                      vector<fvar<fvar<var>>>& p) {
+void add_adjoints<vector<fvar<fvar<var>>>>(vector<double>& x,
+                                           vector<fvar<fvar<var>>>& p) {
   for (size_t n = 0; n < p.size(); n++)
-    x.push_back(p[n].val_.val_);
+    x.push_back(p[n].val_.val_.adj());
 }
 
 template <>
-void add_var<Eigen::Matrix<fvar<fvar<var>>, 1, Eigen::Dynamic>>(
-    vector<var>& x, Eigen::Matrix<fvar<fvar<var>>, 1, Eigen::Dynamic>& p) {
+void add_adjoints<Eigen::Matrix<fvar<fvar<var>>, 1, Eigen::Dynamic>>(
+    vector<double>& x, Eigen::Matrix<fvar<fvar<var>>, 1, Eigen::Dynamic>& p) {
   for (size_type n = 0; n < p.size(); n++)
-    x.push_back(p(n).val_.val_);
+    x.push_back(p(n).val_.val_.adj());
 }
 
 template <>
-void add_var<Eigen::Matrix<fvar<fvar<var>>, Eigen::Dynamic, 1>>(
-    vector<var>& x, Eigen::Matrix<fvar<fvar<var>>, Eigen::Dynamic, 1>& p) {
+void add_adjoints<Eigen::Matrix<fvar<fvar<var>>, Eigen::Dynamic, 1>>(
+    vector<double>& x, Eigen::Matrix<fvar<fvar<var>>, Eigen::Dynamic, 1>& p) {
   for (size_type n = 0; n < p.size(); n++)
-    x.push_back(p(n).val_.val_);
+    x.push_back(p(n).val_.val_.adj());
 }
 
 template <typename T0, typename T1, typename T2, typename T3, typename T4,
           typename T5>
-void add_vars(vector<var>& x, T0& p0, T1& p1, T2& p2, T3& p3, T4& p4, T5& p5) {
+void add_adjoints(vector<double>& x, T0& p0, T1& p1, T2& p2, T3& p3, T4& p4,
+                  T5& p5) {
   if (!is_constant_all<T0>::value)
-    add_var(x, p0);
+    add_adjoints(x, p0);
   if (!is_constant_all<T1>::value)
-    add_var(x, p1);
+    add_adjoints(x, p1);
   if (!is_constant_all<T2>::value)
-    add_var(x, p2);
+    add_adjoints(x, p2);
   if (!is_constant_all<T3>::value)
-    add_var(x, p3);
+    add_adjoints(x, p3);
   if (!is_constant_all<T4>::value)
-    add_var(x, p4);
+    add_adjoints(x, p4);
   if (!is_constant_all<T5>::value)
-    add_var(x, p5);
+    add_adjoints(x, p5);
 }
 
 #endif

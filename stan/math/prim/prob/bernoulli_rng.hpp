@@ -32,7 +32,8 @@ inline typename VectorBuilder<true, int, T_theta>::type bernoulli_rng(
   using boost::variate_generator;
   static const char* function = "bernoulli_rng";
   ref_type_t<T_theta> theta_ref = theta;
-  check_bounded(function, "Probability parameter", theta_ref, 0.0, 1.0);
+  check_bounded(function, "Probability parameter", value_of(theta_ref), 0.0,
+                1.0);
 
   scalar_seq_view<T_theta> theta_vec(theta_ref);
   size_t N = stan::math::size(theta);
