@@ -62,7 +62,7 @@ class scalar_seq_view<C, require_var_matrix_t<C>> {
    * @param i index
    * @return the element at the specified position in the container
    */
-  inline auto operator[](size_t i) const { return c_.val().coeffRef(i); }
+  inline auto operator[](size_t i) const { return c_.coeff(i); }
   inline const auto* data() const noexcept { return c_.vi_; }
   inline auto* data() noexcept { return c_.vi_; }
 
@@ -70,7 +70,7 @@ class scalar_seq_view<C, require_var_matrix_t<C>> {
 
   template <typename T = C, require_st_autodiff<T>* = nullptr>
   inline auto val(size_t i) const {
-    return c_.val().coeffRef(i);
+    return c_.val().coeff(i);
   }
 
   template <typename T = C, require_st_autodiff<T>* = nullptr>

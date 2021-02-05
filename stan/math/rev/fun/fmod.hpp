@@ -21,7 +21,7 @@ class fmod_vv_vari : public op_vv_vari {
       bvi_->adj_ = NOT_A_NUMBER;
     } else {
       avi_->adj_ += adj_;
-      bvi_->adj_ -= adj_ * static_cast<int>(avi_->val_ / bvi_->val_);
+      bvi_->adj_ -= adj_ * std::trunc(avi_->val_ / bvi_->val_);
     }
   }
 };
@@ -47,7 +47,7 @@ class fmod_dv_vari : public op_dv_vari {
     if (unlikely(is_any_nan(bvi_->val_, ad_))) {
       bvi_->adj_ = NOT_A_NUMBER;
     } else {
-      int d = static_cast<int>(ad_ / bvi_->val_);
+      int d = std::trunc(ad_ / bvi_->val_);
       bvi_->adj_ -= adj_ * d;
     }
   }

@@ -156,6 +156,7 @@
 #include <stan/math/opencl/prim/normal_lpdf.hpp>
 #include <stan/math/opencl/prim/num_elements.hpp>
 #include <stan/math/opencl/prim/ordered_logistic_glm_lpmf.hpp>
+#include <stan/math/opencl/prim/ordered_logistic_lpmf.hpp>
 #include <stan/math/opencl/prim/pareto_lpdf.hpp>
 #include <stan/math/opencl/prim/pareto_type_2_lpdf.hpp>
 #include <stan/math/opencl/prim/poisson_log_glm_lpmf.hpp>

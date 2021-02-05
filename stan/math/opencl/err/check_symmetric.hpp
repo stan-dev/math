@@ -37,7 +37,7 @@ inline void check_symmetric(const char* function, const char* name,
     opencl_kernels::check_symmetric(cl::NDRange(y.rows(), y.cols()), y,
                                     symm_flag, y.rows(), y.cols(),
                                     math::CONSTRAINT_TOLERANCE);
-    symmetric_flag = from_matrix_cl_error_code(symm_flag);
+    symmetric_flag = from_matrix_cl<int>(symm_flag);
     if (!symmetric_flag) {
       throw_domain_error(function, name, "is not symmetric", "");
     }

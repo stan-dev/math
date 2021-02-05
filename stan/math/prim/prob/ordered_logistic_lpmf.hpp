@@ -68,7 +68,9 @@ namespace math {
  * @throw std::invalid_argument If y and lambda are different
  * lengths.
  */
-template <bool propto, typename T_y, typename T_loc, typename T_cut>
+template <bool propto, typename T_y, typename T_loc, typename T_cut,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_loc, T_cut>* = nullptr>
 return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
                                                   const T_loc& lambda,
                                                   const T_cut& c) {
@@ -82,10 +84,8 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
   using Eigen::Dynamic;
   static const char* function = "ordered_logistic";
 
-  check_nonzero_size(function, "Cut-points", c);
   T_cut_ref c_ref = c;
   vector_seq_view<T_cut_ref> c_vec(c_ref);
-  int K = c_vec[0].size() + 1;
   int N = size(lambda);
   int C_l = size_mvt(c);
 
@@ -103,18 +103,26 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
   const auto& lambda_arr = as_array_or_scalar(lambda_ref);
   ref_type_t<decltype(value_of(lambda_arr))> lambda_val = value_of(lambda_arr);
 
-  check_bounded(function, "Random variable", y_ref, 1, K);
   check_finite(function, "Location parameter", lambda_val);
+  if (C_l == 0 || N == 0) {
+    return 0;
+  }
+  int K = c_vec[0].size() + 1;
+  check_bounded(function, "Random variable", y_ref, 1, K);
 
-  check_nonzero_size(function, "Cut-points", c_vec[0]);
   for (int i = 0; i < C_l; i++) {
     check_size_match(function, "One cutpoint set", c_vec[i].size(),
                      "First cutpoint set", K - 1);
     check_ordered(function, "Cut-points", c_vec[i]);
-    if (K > 2) {
-      check_finite(function, "Final cut-point", c_vec[i].coeff(K - 2));
+    if (K > 1) {
+      if (K > 2) {
+        check_finite(function, "Final cut-point", c_vec[i].coeff(K - 2));
+      }
+      check_finite(function, "First cut-point", c_vec[i].coeff(0));
     }
-    check_finite(function, "First cut-point", c_vec[i].coeff(0));
+  }
+  if (!include_summand<propto, T_loc, T_cut>::value) {
+    return 0.0;
   }
 
   scalar_seq_view<decltype(lambda_val)> lam_vec(lambda_val);
