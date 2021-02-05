@@ -22,6 +22,6 @@ TEST(Symmetrize, Value) {
   Matrix<double, Dynamic, Dynamic> m(4, 4);
   for (int i = 0; i < 4; ++i)
     for (int j = 0; j < 4; ++j)
-      m(i, j) = (i + 1) * (j + 1);
+      m(i, j) = (i + 2) * (j + 1);
   EXPECT_TRUE(is_symmetric(symmetrize_from_lower_tri(m)));
 }
