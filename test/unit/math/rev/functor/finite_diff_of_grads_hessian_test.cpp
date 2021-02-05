@@ -26,7 +26,7 @@ struct fun1 {
 struct fun2 {
   template <typename T>
   inline T operator()(const Matrix<T, Dynamic, 1>& x) const {
-    return 3*x(0) - x(1) + 8 * x(2);
+    return 3 * x(0) - x(1) + 8 * x(2);
   }
 };
 
@@ -57,15 +57,15 @@ TEST(RevFunctor, linear_function) {
   Matrix<double, Dynamic, 1> grad_fx;
   Matrix<double, Dynamic, Dynamic> hess_fx;
   stan::math::finite_diff_of_grads_hessian(f, x, fx, grad_fx, hess_fx);
-  EXPECT_FLOAT_EQ(0, hess_fx(0,0));
-  EXPECT_FLOAT_EQ(0, hess_fx(0,1));
-  EXPECT_FLOAT_EQ(0, hess_fx(0,2));
-  EXPECT_FLOAT_EQ(0, hess_fx(1,0));
-  EXPECT_FLOAT_EQ(0, hess_fx(1,1));
-  EXPECT_FLOAT_EQ(0, hess_fx(1,2));
-  EXPECT_FLOAT_EQ(0, hess_fx(2,0));
-  EXPECT_FLOAT_EQ(0, hess_fx(2,1));
-  EXPECT_FLOAT_EQ(0, hess_fx(2,2));
+  EXPECT_FLOAT_EQ(0, hess_fx(0, 0));
+  EXPECT_FLOAT_EQ(0, hess_fx(0, 1));
+  EXPECT_FLOAT_EQ(0, hess_fx(0, 2));
+  EXPECT_FLOAT_EQ(0, hess_fx(1, 0));
+  EXPECT_FLOAT_EQ(0, hess_fx(1, 1));
+  EXPECT_FLOAT_EQ(0, hess_fx(1, 2));
+  EXPECT_FLOAT_EQ(0, hess_fx(2, 0));
+  EXPECT_FLOAT_EQ(0, hess_fx(2, 1));
+  EXPECT_FLOAT_EQ(0, hess_fx(2, 2));
 }
 
 =======
