@@ -9,7 +9,7 @@
 #include <test/unit/math/expect_near_rel.hpp>
 #include <string>
 
-static const std::string test_kernel_code = STRINGIFY(__kernel void test(
+static const std::string test_binomial_coefficient_log_kernel_code = STRINGIFY(__kernel void test(
     __global double *C, __global double *A, __global double *B) {
   const int i = get_global_id(0);
   C[i] = binomial_coefficient_log(A[i], B[i]);
@@ -25,7 +25,7 @@ const stan::math::opencl_kernels::kernel_cl<
          stan::math::opencl_kernels::lgamma_stirling_diff_device_function,
          stan::math::opencl_kernels::lbeta_device_function,
          stan::math::opencl_kernels::binomial_coefficient_log_device_function,
-         test_kernel_code});
+         test_binomial_coefficient_log_kernel_code});
 
 TEST(MathMatrixCL, binomial_coefficient_log) {
   Eigen::VectorXd a = Eigen::VectorXd::Random(1000).array() * 5 + 4;
