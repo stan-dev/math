@@ -62,8 +62,13 @@ inline return_type_t<T, U> ub_constrain(const T& x, const U& ub) {
  * @param[in,out] lp log density
  * @return scalar constrained to have upper bound
  */
+#ifdef USE_STANC3
 template <typename T, typename U, typename S>
 inline return_type_t<T, U> ub_constrain(const T& x, const U& ub, S& lp) {
+#else
+template <typename T, typename U>
+inline return_type_t<T, U> ub_constrain(const T& x, const U& ub, T& lp) {
+#endif
   using std::exp;
   if (ub == INFTY) {
     return identity_constrain(x, lp);

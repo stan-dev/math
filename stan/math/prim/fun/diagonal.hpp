@@ -17,7 +17,11 @@ namespace math {
  */
 template <typename T, typename = require_eigen_t<T>>
 inline auto diagonal(const T& m) {
+#ifdef USE_STANC3
   return m.diagonal();
+#else
+  return m.diagonal().eval();
+#endif
 }
 
 }  // namespace math

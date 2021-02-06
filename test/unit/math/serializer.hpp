@@ -200,7 +200,11 @@ struct serializer {
    * @tparam U type of specified scalar; must be assignable to T
    * @param x scalar to serialize
    */
+#ifdef USE_STANC3
   template <typename U, require_stan_scalar_t<U>* = nullptr>
+#else
+  template <typename U>
+#endif
   void write(const U& x) {
     vals_.push_back(x);
   }
@@ -237,6 +241,7 @@ struct serializer {
    * @tparam C column specification of Eigen container
    * @param x Eigen container to serialize.
    */
+#ifdef USE_STANC3
   template <typename U, require_eigen_t<U>* = nullptr>
   void write(const U& x) {
     for (int j = 0; j < x.cols(); ++j) {
@@ -245,6 +250,16 @@ struct serializer {
       }
     }
   }
+#else
+  template <typename U, int R, int C>
+  void write(const Eigen::Matrix<U, R, C>& x) {
+    for (int j = 0; j < x.cols(); ++j) {
+      for (int i = 0; i < x.rows(); ++i) {
+        write(x(i,j));
+      }
+    }
+  }
+#endif
 
   /**
    * Return the serialized values as a standard vector.

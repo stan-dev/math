@@ -5,7 +5,9 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
+#ifdef USE_STANC3
 #include <stan/math/prim/fun/to_ref.hpp>
+#endif
 #include <stan/math/prim/functor/apply_vector_unary.hpp>
 
 namespace stan {
@@ -39,6 +41,7 @@ namespace math {
  * @param[in] x vector to transform
  * @return log unit simplex result of the softmax transform of the vector.
  */
+#ifdef USE_STANC3
 template <typename Container, require_st_arithmetic<Container>* = nullptr>
 inline auto log_softmax(const Container& x) {
   check_nonzero_size("log_softmax", "v", x);
@@ -49,7 +52,21 @@ inline auto log_softmax(const Container& x) {
       },
       to_ref(x));
 }
-
+#else
+/**
+ * Note: The return must be evaluated otherwise the Ref object falls out
+ * of scope
+*/
+template <typename Container, require_st_arithmetic<Container>* = nullptr>
+inline auto log_softmax(const Container& x) {
+  check_nonzero_size("log_softmax", "v", x);
+  return apply_vector_unary<Container>::apply(x, [](const auto& v) {
+    const Eigen::Ref<const plain_type_t<decltype(v)>>& v_ref = v;
+    check_nonzero_size("log_softmax", "v", v_ref);
+    return (v_ref.array() - log_sum_exp(v_ref)).eval();
+  });
+}
+#endif
 }  // namespace math
 }  // namespace stan
 #endif

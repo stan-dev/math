@@ -5,7 +5,11 @@
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/is_vector_like.hpp>
+
+#ifdef USE_STANC3
 #include <stan/math/prim/meta/plain_type.hpp>
+#endif
+
 #include <utility>
 #include <vector>
 
@@ -62,8 +66,16 @@ struct apply_scalar_unary<F, T, require_eigen_t<T>> {
    * by F to the specified matrix.
    */
   static inline auto apply(const T& x) {
+#ifdef USE_STANC3
     return x.unaryExpr(
         [](scalar_t x) { return apply_scalar_unary<F, scalar_t>::apply(x); });
+#else
+    return x
+        .unaryExpr([](scalar_t x) {
+          return apply_scalar_unary<F, scalar_t>::apply(x);
+        })
+        .eval();
+#endif
   }
 
   /**
@@ -71,7 +83,11 @@ struct apply_scalar_unary<F, T, require_eigen_t<T>> {
    * expression template of type T.
    */
   using return_t = std::decay_t<decltype(
+#ifdef USE_STANC3
       apply_scalar_unary<F, T>::apply(std::declval<T>()))>;
+#else
+      apply_scalar_unary<F, T>::apply(std::declval<T>()).eval())>;
+#endif
 };
 
 /**
@@ -141,8 +157,13 @@ struct apply_scalar_unary<F, std::vector<T>> {
    * Return type, which is calculated recursively as a standard
    * vector of the return type of the contained type T.
    */
+#ifdef USE_STANC3
   using return_t = typename std::vector<
       plain_type_t<typename apply_scalar_unary<F, T>::return_t>>;
+#else
+  using return_t =
+      typename std::vector<typename apply_scalar_unary<F, T>::return_t>;
+#endif
 
   /**
    * Apply the function specified by F elementwise to the

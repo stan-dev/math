@@ -41,8 +41,12 @@ inline void print_mat_size(std::ostream& o) {
  * @param x Left-hand side.
  * @param y Right-hand side.
  */
+#ifdef USE_STANC3
 template <typename T_lhs, typename T_rhs,
           require_all_stan_scalar_t<T_lhs, T_rhs>* = nullptr>
+#else
+template <typename T_lhs, typename T_rhs>
+#endif
 inline void assign(T_lhs& x, const T_rhs& y) {
   x = y;
 }
@@ -62,12 +66,59 @@ inline void assign(T_lhs& x, const T_rhs& y) {
  * @param y Right-hand side matrix.
  * @throw std::invalid_argument if sizes do not match.
  */
+#ifdef USE_STANC3
 template <typename T_lhs, typename T_rhs,
           require_all_eigen_t<T_lhs, T_rhs>* = nullptr>
 inline void assign(T_lhs&& x, const T_rhs& y) {
   check_matching_dims("assign", "left-hand-side", x, "right-hand-side", y);
   x = y.template cast<value_type_t<T_lhs>>();
 }
+#else
+template <typename T_lhs, typename T_rhs, int R, int C>
+inline void assign(Eigen::Matrix<T_lhs, R, C>& x,
+                   const Eigen::Matrix<T_rhs, R, C>& y) {
+   check_matching_dims("assign", "left-hand-side", x, "right-hand-side", y);
+  for (int i = 0; i < x.size(); ++i) {
+    assign(x(i), y(i));
+  }
+}
+
+/**
+ * Copy the right-hand side's value to the left-hand side
+ * variable.
+ *
+ * <p>The <code>assign()</code> function is overloaded.  This
+ * instance will be called for arguments that are both
+ * <code>Eigen::Matrix</code> types and whose shapes match.  The
+ * shape of the right-hand side matrix is specified in the row and
+ * column shape template parameters.
+ *
+ * <p>The left-hand side is intentionally not a reference, because
+ * that won't match generally enough;  instead, a non-reference is
+ * used, which still holds onto a reference to the contained
+ * matrix and thus still updates the appropriate values.
+ *
+ * @tparam T_lhs Type of matrix block elements.
+ * @tparam T Type of right-hand side matrix elements.
+ * @tparam R Row shape for right-hand side matrix.
+ * @tparam C Column shape for right-hand side matrix.
+ * @param x Left-hand side block view of matrix.
+ * @param y Right-hand side matrix.
+ * @throw std::invalid_argument if sizes do not match.
+ */
+template <typename T_lhs, typename T, int R, int C>
+inline void assign(Eigen::Block<T_lhs> x, const Eigen::Matrix<T, R, C>& y) {
+  check_size_match("assign", "left-hand side rows", x.rows(),
+                   "right-hand side rows", y.rows());
+  check_size_match("assign", "left-hand side cols", x.cols(),
+                   "right-hand side cols", y.cols());
+  for (int n = 0; n < y.cols(); ++n) {
+    for (int m = 0; m < y.rows(); ++m) {
+      assign(x(m, n), y(m, n));
+    }
+  }
+}
+#endif
 
 /**
  * Copy the right-hand side's value to the left-hand side

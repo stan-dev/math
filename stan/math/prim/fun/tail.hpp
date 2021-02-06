@@ -24,7 +24,11 @@ inline auto tail(const T& v, size_t n) {
   if (n != 0) {
     check_vector_index("tail", "n", v, n);
   }
+#ifdef USE_STANC3
   return v.tail(n);
+#else
+  return v.tail(n).eval();
+#endif
 }
 
 /**

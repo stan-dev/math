@@ -24,7 +24,11 @@ template <typename Mat1, typename Mat2,
           require_all_not_st_var<Mat1, Mat2>* = nullptr>
 auto elt_multiply(const Mat1& m1, const Mat2& m2) {
   check_matching_dims("elt_multiply", "m1", m1, "m2", m2);
+#ifdef USE_STANC3
   return m1.cwiseProduct(m2);
+#else
+  return m1.cwiseProduct(m2).eval();
+#endif
 }
 
 /**

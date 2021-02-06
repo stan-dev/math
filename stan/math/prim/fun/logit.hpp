@@ -3,7 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/log.hpp>
+#ifdef USE_STANC3
 #include <stan/math/prim/fun/to_ref.hpp>
+#endif
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>
@@ -105,6 +107,7 @@ inline auto logit(const Container& x) {
 template <typename Container,
           require_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto logit(const Container& x) {
+#ifdef USE_STANC3
   return make_holder(
       [](const auto& v_ref) {
         return apply_vector_unary<ref_type_t<Container>>::apply(
@@ -112,6 +115,12 @@ inline auto logit(const Container& x) {
             [](const auto& v) { return (v.array() / (1 - v.array())).log(); });
       },
       to_ref(x));
+#else
+  return apply_vector_unary<Container>::apply(x, [](const auto& v) {
+    const Eigen::Ref<const plain_type_t<decltype(v)>>& v_ref = v;
+    return (v_ref.array() / (1 - v_ref.array())).log().eval();
+  });
+#endif
 }
 
 }  // namespace math

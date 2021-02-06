@@ -28,12 +28,23 @@ template <typename EigMat1, typename EigMat2,
           require_not_eigen_col_vector_t<EigMat2>* = nullptr,
           require_vt_same<EigMat1, EigMat2>* = nullptr,
           require_all_vt_arithmetic<EigMat1, EigMat2>* = nullptr>
+#ifdef USE_STANC3
 inline auto quad_form(const EigMat1& A, const EigMat2& B) {
   check_square("quad_form", "A", A);
   check_multiplicable("quad_form", "A", A, "B", B);
   return make_holder([&A](const auto& b) { return b.transpose() * A * b; },
                      to_ref(B));
 }
+#else
+inline Eigen::Matrix<value_type_t<EigMat2>, EigMat2::ColsAtCompileTime,
+                     EigMat2::ColsAtCompileTime>
+quad_form(const EigMat1& A, const EigMat2& B) {
+  check_square("quad_form", "A", A);
+  check_multiplicable("quad_form", "A", A, "B", B);
+  const auto& B_ref = to_ref(B);
+  return B_ref.transpose() * A * B_ref;
+}
+#endif
 
 /**
  * Return the quadratic form \f$ B^T A B \f$.

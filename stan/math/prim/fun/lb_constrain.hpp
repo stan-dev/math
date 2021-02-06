@@ -55,8 +55,13 @@ inline return_type_t<T, L> lb_constrain(const T& x, const L& lb) {
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
+#ifdef USE_STANC3
 template <typename T, typename L, typename S>
 inline return_type_t<T, L> lb_constrain(const T& x, const L& lb, S& lp) {
+#else
+template <typename T, typename L>
+inline return_type_t<T, L> lb_constrain(const T& x, const L& lb, T& lp) {
+#endif
   using std::exp;
   if (lb == NEGATIVE_INFTY) {
     return identity_constrain(x, lp);

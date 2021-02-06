@@ -144,9 +144,14 @@ inline void elementwise_check(const F& is_good, const char* function,
  */
 template <typename F, typename T, typename... Indexings,
           require_eigen_t<T>* = nullptr,
+#ifdef USE_STANC3
           std::enable_if_t<(Eigen::internal::traits<T>::Flags
                             & Eigen::LinearAccessBit)
                            || T::IsVectorAtCompileTime>* = nullptr>
+#else
+          std::enable_if_t<static_cast<bool>(Eigen::internal::traits<T>::Flags&(
+              Eigen::LinearAccessBit | Eigen::DirectAccessBit))>* = nullptr>
+#endif
 inline void elementwise_check(const F& is_good, const char* function,
                               const char* name, const T& x, const char* must_be,
                               const Indexings&... indexings) {
@@ -194,6 +199,7 @@ inline void elementwise_check(const F& is_good, const char* function,
  * @throws `std::domain_error` if `is_good` returns `false` for the value
  * of any element in `x`
  */
+#ifdef USE_STANC3
 template <typename F, typename T, typename... Indexings,
           require_eigen_t<T>* = nullptr,
           std::enable_if_t<!(Eigen::internal::traits<T>::Flags
@@ -201,6 +207,15 @@ template <typename F, typename T, typename... Indexings,
                            && !T::IsVectorAtCompileTime
                            && !(Eigen::internal::traits<T>::Flags
                                 & Eigen::RowMajorBit)>* = nullptr>
+#else
+template <
+    typename F, typename T, typename... Indexings,
+    require_eigen_t<T>* = nullptr,
+    std::enable_if_t<!(Eigen::internal::traits<T>::Flags
+                       & (Eigen::LinearAccessBit | Eigen::DirectAccessBit))
+                     && !(Eigen::internal::traits<T>::Flags
+                          & Eigen::RowMajorBit)>* = nullptr>
+#endif
 inline void elementwise_check(const F& is_good, const char* function,
                               const char* name, const T& x, const char* must_be,
                               const Indexings&... indexings) {
@@ -237,6 +252,7 @@ inline void elementwise_check(const F& is_good, const char* function,
  * @throws `std::domain_error` if `is_good` returns `false` for the value
  * of any element in `x`
  */
+#ifdef USE_STANC3
 template <typename F, typename T, typename... Indexings,
           require_eigen_t<T>* = nullptr,
           std::enable_if_t<
@@ -244,6 +260,15 @@ template <typename F, typename T, typename... Indexings,
               && !T::IsVectorAtCompileTime
               && static_cast<bool>(Eigen::internal::traits<T>::Flags
                                    & Eigen::RowMajorBit)>* = nullptr>
+#else
+template <
+    typename F, typename T, typename... Indexings,
+    require_eigen_t<T>* = nullptr,
+    std::enable_if_t<!(Eigen::internal::traits<T>::Flags
+                       & (Eigen::LinearAccessBit | Eigen::DirectAccessBit))
+                     && static_cast<bool>(Eigen::internal::traits<T>::Flags
+                                          & Eigen::RowMajorBit)>* = nullptr>
+#endif
 inline void elementwise_check(const F& is_good, const char* function,
                               const char* name, const T& x, const char* must_be,
                               const Indexings&... indexings) {

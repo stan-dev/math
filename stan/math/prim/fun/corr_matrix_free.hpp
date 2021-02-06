@@ -39,17 +39,29 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> corr_matrix_free(const T& y) {
   check_nonzero_size("corr_matrix_free", "y", y);
 
   Eigen::Index k = y.rows();
+#ifdef USE_STANC3
   Eigen::Index k_choose_2 = (k * (k - 1)) / 2;
+#else
+  Array<value_type_t<T>, Dynamic, 1> x(k_choose_2);
+#endif
   Eigen::Matrix<value_type_t<T>, Dynamic, 1> x(k_choose_2);
   Array<value_type_t<T>, Dynamic, 1> sds(k);
+#ifdef USE_STANC3
   bool successful = factor_cov_matrix(y, x.array(), sds);
+#else
+  bool successful = factor_cov_matrix(y, x, sds);
+#endif
   if (!successful) {
     throw_domain_error("corr_matrix_free", "factor_cov_matrix failed on y", y,
                        "");
   }
   check_bounded("corr_matrix_free", "log(sd)", sds, -CONSTRAINT_TOLERANCE,
                 CONSTRAINT_TOLERANCE);
+#ifdef USE_STANC3
   return x;
+#else
+  return x.matrix();
+#endif
 }
 
 }  // namespace math

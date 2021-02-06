@@ -26,7 +26,11 @@ inline auto sub_row(const T& m, size_t i, size_t j, size_t ncols) {
   if (ncols > 0) {
     check_column_index("sub_col", "j+ncols-1", m, j + ncols - 1);
   }
+#ifdef USE_STANC3
   return m.row(i - 1).segment(j - 1, ncols);
+#else
+  return m.row(i - 1).segment(j - 1, ncols).eval();
+#endif
 }
 
 }  // namespace math
