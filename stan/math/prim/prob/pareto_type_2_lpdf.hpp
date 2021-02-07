@@ -94,7 +94,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
         = to_ref_if<(!is_constant_all<T_y, T_loc>::value
                      && !is_constant_all<T_scale>::value)>(alpha_val * inv_sum);
     if (!is_constant_all<T_y, T_loc>::value) {
-      const auto& deriv_1_2 = to_ref_if<(!is_constant_all<T_y>::value
+      auto deriv_1_2 = to_ref_if<(!is_constant_all<T_y>::value
                                          && !is_constant_all<T_loc>::value)>(
           inv_sum + alpha_div_sum);
       if (!is_constant_all<T_y>::value) {
