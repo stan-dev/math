@@ -10,7 +10,7 @@
 
 namespace stan {
 namespace math {
-
+namespace internal {
 /**
  * Calculate the value and the Hessian of the specified function at
  * the specified argument using first-order finite difference of gradients,
@@ -81,6 +81,7 @@ void finite_diff_of_grads_hessian(const F& f, const Eigen::VectorXd& x,
     }
   }
 }
+}  // namespace internal
 }  // namespace math
 }  // namespace stan
 #endif
