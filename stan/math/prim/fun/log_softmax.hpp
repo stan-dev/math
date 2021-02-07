@@ -56,7 +56,7 @@ inline auto log_softmax(const Container& x) {
 /**
  * Note: The return must be evaluated otherwise the Ref object falls out
  * of scope
-*/
+ */
 template <typename Container, require_st_arithmetic<Container>* = nullptr>
 inline auto log_softmax(const Container& x) {
   check_nonzero_size("log_softmax", "v", x);

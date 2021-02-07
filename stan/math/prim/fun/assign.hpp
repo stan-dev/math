@@ -77,7 +77,7 @@ inline void assign(T_lhs&& x, const T_rhs& y) {
 template <typename T_lhs, typename T_rhs, int R, int C>
 inline void assign(Eigen::Matrix<T_lhs, R, C>& x,
                    const Eigen::Matrix<T_rhs, R, C>& y) {
-   check_matching_dims("assign", "left-hand-side", x, "right-hand-side", y);
+  check_matching_dims("assign", "left-hand-side", x, "right-hand-side", y);
   for (int i = 0; i < x.size(); ++i) {
     assign(x(i), y(i));
   }

@@ -255,7 +255,7 @@ struct serializer {
   void write(const Eigen::Matrix<U, R, C>& x) {
     for (int j = 0; j < x.cols(); ++j) {
       for (int i = 0; i < x.rows(); ++i) {
-        write(x(i,j));
+        write(x(i, j));
       }
     }
   }

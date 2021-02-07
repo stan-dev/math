@@ -23,7 +23,7 @@ namespace math {
 #ifdef USE_STANC3
 template <typename T, require_eigen_t<T>* = nullptr>
 #else
-template <typename T, typename = require_eigen_t<T>>
+template <typename T, typename = require_eigen_t<T> >
 #endif
 inline auto row(const T& m, size_t i) {
   check_row_index("row", "i", m, i);

@@ -50,7 +50,7 @@ auto elt_divide(const Mat& m, Scal s) {
 }
 #else
 template <typename Scal, typename Mat, typename = require_stan_scalar_t<Scal>,
-          typename = require_eigen_t<Mat>>
+          typename = require_eigen_t<Mat> >
 auto elt_divide(Scal s, const Mat& m) {
   return (s / m.array()).matrix().eval();
 }
