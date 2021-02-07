@@ -61,6 +61,36 @@ struct one_arg {
   }
 };
 
+/*
+ * Comparing the finite-diff approximation to the AD hessian.
+ */
+
+template <typename F>
+void test_hessian_finite_diff(const std::string& msg, const F& f,
+                              Eigen::VectorXd& x) {
+  double fx;
+  Eigen::VectorXd grad_fx;
+  Eigen::MatrixXd hess_fx;
+  stan::math::internal::finite_diff_of_grads_hessian(f, x, fx, grad_fx,
+                                                     hess_fx);
+
+  double fx_ad;
+  Eigen::VectorXd grad_fx_ad;
+  Eigen::MatrixXd hess_fx_ad;
+  stan::math::hessian(f, x, fx_ad, grad_fx_ad, hess_fx_ad);
+
+  EXPECT_FLOAT_EQ(fx_ad, fx) << msg;
+
+  EXPECT_EQ(grad_fx_ad.size(), grad_fx.size());
+  for (int i = 0; i < grad_fx_ad.size(); ++i)
+    EXPECT_NEAR(grad_fx_ad(i), grad_fx(i), 1e-5) << msg;
+
+  EXPECT_EQ(hess_fx_ad.rows(), hess_fx.rows()) << msg;
+  EXPECT_EQ(hess_fx_ad.cols(), hess_fx.cols()) << msg;
+  for (int i = 0; i < hess_fx_ad.size(); ++i)
+    EXPECT_NEAR(hess_fx_ad(i), hess_fx(i), 1e-4) << msg;
+}
+
 TEST(RevFunctor, polynomial) {
   poly f;
   Matrix<double, Dynamic, 1> x(2);
