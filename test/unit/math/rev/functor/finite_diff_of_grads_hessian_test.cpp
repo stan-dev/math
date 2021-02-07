@@ -13,25 +13,42 @@ using Eigen::Dynamic;
 using Eigen::Matrix;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
+using std::exp;
 
-// fun1(x, y) = (x^2 * y) + (3 * y^2)
-struct fun1 {
+// poly(x, y) = (x^2 * y) + (3 * y^2)
+struct poly {
   template <typename T>
   inline T operator()(const Matrix<T, Dynamic, 1>& x) const {
     return x(0) * x(0) * x(1) + 3.0 * x(1) * x(1);
   }
 };
 
-// fun2(x, y, z) = 3x-1y+8z
-struct fun2 {
+// linear(x, y, z) = 3x-1y+8z
+struct linear {
   template <typename T>
   inline T operator()(const Matrix<T, Dynamic, 1>& x) const {
     return 3 * x(0) - x(1) + 8 * x(2);
   }
 };
 
-TEST(RevFunctor, finite_diff_hessian) {
-  fun1 f;
+// exp_diag(x, y) = e^2x+e^y
+struct exp_diag {
+  template <typename T>
+  inline T operator()(const Matrix<T, Dynamic, 1>& x) const {
+    return exp(2 * x(0)) + exp(x(1));
+  }
+};
+
+// exp_full(x, y) = e^{x-y}
+struct exp_full {
+  template <typename T>
+  inline T operator()(const Matrix<T, Dynamic, 1>& x) const {
+    return exp(x(0) - x(1));
+  }
+};
+
+TEST(RevFunctor, polynomial) {
+  poly f;
   Matrix<double, Dynamic, 1> x(2);
   x << 5, 7;
   double fx;
@@ -49,7 +66,7 @@ TEST(RevFunctor, finite_diff_hessian) {
 }
 
 TEST(RevFunctor, linear_function) {
-  fun2 f;
+  linear f;
   Matrix<double, Dynamic, 1> x(3);
   x << 5, 7, -1;
   double fx;
@@ -67,3 +84,30 @@ TEST(RevFunctor, linear_function) {
   EXPECT_FLOAT_EQ(0, hess_fx(2, 2));
 }
 
+TEST(RevFunctor, exp_diag) {
+  exp_diag f;
+  Matrix<double, Dynamic, 1> x(2);
+  x << 2, -1;
+  double fx;
+  Matrix<double, Dynamic, 1> grad_fx;
+  Matrix<double, Dynamic, Dynamic> hess_fx;
+  stan::math::finite_diff_of_grads_hessian(f, x, fx, grad_fx, hess_fx);
+  EXPECT_FLOAT_EQ(4 * exp(2 * 2), hess_fx(0, 0));
+  EXPECT_FLOAT_EQ(0, hess_fx(0, 1));
+  EXPECT_FLOAT_EQ(0, hess_fx(1, 0));
+  EXPECT_FLOAT_EQ(exp(-1), hess_fx(1, 1));
+}
+
+TEST(RevFunctor, exp_full) {
+  exp_full f;
+  Matrix<double, Dynamic, 1> x(2);
+  x << 1, -3;
+  double fx;
+  Matrix<double, Dynamic, 1> grad_fx;
+  Matrix<double, Dynamic, Dynamic> hess_fx;
+  stan::math::finite_diff_of_grads_hessian(f, x, fx, grad_fx, hess_fx);
+  EXPECT_FLOAT_EQ(exp(4), hess_fx(0, 0));
+  EXPECT_FLOAT_EQ(-exp(4), hess_fx(0, 1));
+  EXPECT_FLOAT_EQ(-exp(4), hess_fx(1, 0));
+  EXPECT_FLOAT_EQ(exp(4), hess_fx(1, 1));
+}
