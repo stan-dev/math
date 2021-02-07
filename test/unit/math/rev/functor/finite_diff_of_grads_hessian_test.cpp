@@ -1,4 +1,5 @@
 #include <stan/math/rev.hpp>
+#include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
 
 #include <tbb/parallel_for.h>
@@ -15,6 +16,10 @@ using Eigen::MatrixXd;
 using Eigen::VectorXd;
 using std::exp;
 using std::pow;
+
+/*
+ * A set of functions to test the finite-difference approximation on.
+ */
 
 // poly(x, y) = (x^2 * y) + (3 * y^2)
 struct poly {
@@ -135,4 +140,31 @@ TEST(RevFunctor, one_arg) {
   stan::math::internal::finite_diff_of_grads_hessian(f, x, fx, grad_fx,
                                                      hess_fx);
   EXPECT_FLOAT_EQ(6 * 8, hess_fx(0, 0));
+}
+
+TEST(RevFunctor, FiniteDiffHessianAuto) {
+  auto norm_fun
+      = [](const auto& x) { return stan::math::normal_lpdf(x(0), x(1), x(2)); };
+  Eigen::VectorXd x(3);
+  for (const auto& scale : std::vector<double>{1, 1e10, 1e20, 1e30}) {
+    x << 1 * scale, 2 * scale, 1.5 * scale;
+    test_hessian_finite_diff("norm_fun({1, 2, 3})", norm_fun, x);
+  }
+  for (const auto& scale : std::vector<double>{1e-10, 1e-20, 1e-30}) {
+    x << scale, -scale, 1;  // finite diff fails with small sigma
+    test_hessian_finite_diff("norm_fun({1, 2, 3})", norm_fun, x);
+  }
+
+  auto log_fun
+      = [](const auto& x) { return stan::math::sum(stan::math::log(x)); };
+  Eigen::VectorXd y(0);
+  test_hessian_finite_diff("log_fun({})", log_fun, y);
+
+  Eigen::VectorXd z(1);
+  z << 2;
+  test_hessian_finite_diff("log_fun({2})", log_fun, z);
+
+  Eigen::VectorXd w(5);
+  w << 1, 2, 3, 4, 5;
+  test_hessian_finite_diff("log_fun({1, 2, 3, 4, 5})", log_fun, w);
 }
