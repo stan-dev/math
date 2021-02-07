@@ -27,7 +27,7 @@ inline int poisson_binomial_rng(
     const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta, RNG& rng) {
   static const char* function = "poisson_binomial_rng";
   check_finite(function, "Probability parameters", theta);
-  check_bounded(function, "Probability parameters", value_of(theta), 0.0, 1.0);
+  check_bounded(function, "Probability parameters", theta, 0.0, 1.0);
 
   int y = 0;
   for (size_t i = 0; i < theta.size(); ++i) {

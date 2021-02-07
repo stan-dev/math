@@ -2,8 +2,7 @@
 #define STAN_MATH_PRIM_META_VECTORBUILDER_HPP
 
 #include <stan/math/prim/meta/VectorBuilderHelper.hpp>
-#include <stan/math/prim/meta/disjunction.hpp>
-#include <stan/math/prim/meta/is_vector.hpp>
+#include <stan/math/prim/meta/contains_vector.hpp>
 
 namespace stan {
 
@@ -26,9 +25,7 @@ namespace stan {
 template <bool used, typename T1, typename... Args>
 class VectorBuilder {
  private:
-  using helper
-      = VectorBuilderHelper<T1, used,
-                            math::disjunction<is_vector<Args>...>::value>;
+  using helper = VectorBuilderHelper<T1, used, contains_vector<Args...>::value>;
 
  public:
   using type = typename helper::type;
