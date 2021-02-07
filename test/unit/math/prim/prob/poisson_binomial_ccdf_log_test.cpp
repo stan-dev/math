@@ -14,6 +14,20 @@ TEST(ProbDistributionsPoissonBinomial, lccdf_length_0_length_1) {
                   -stan::math::INFTY);
 }
 
+TEST(ProbDistributionsPoissonBinomial, lccdf_length_0_length_1_vectorial_y) {
+  Eigen::VectorXd v0(0);
+  Eigen::VectorXd v1(1);
+  v1 << 0.4;
+
+  std::vector<int> y0{0, 0};
+  std::vector<int> y1{1, 1};
+
+  EXPECT_FLOAT_EQ(stan::math::poisson_binomial_lccdf(y0, v0),
+                  -stan::math::INFTY);
+  EXPECT_FLOAT_EQ(stan::math::poisson_binomial_lccdf(y1, v1),
+                  -stan::math::INFTY);
+}
+
 TEST(ProbDistributionsPoissonBinomial, lccdf_works_on_scalar_arguments) {
   using stan::math::poisson_binomial_lccdf;
   using vec = Eigen::Matrix<double, Eigen::Dynamic, 1>;
