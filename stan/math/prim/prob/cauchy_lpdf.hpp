@@ -102,7 +102,7 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
         = to_ref_if<!is_constant_all<T_scale>::value>(square(y_minus_mu));
     if (!is_constant_all<T_y, T_loc>::value) {
       auto mu_deriv = to_ref_if<(!is_constant_all<T_y>::value
-                                        && !is_constant_all<T_loc>::value)>(
+                                 && !is_constant_all<T_loc>::value)>(
           2 * y_minus_mu / (sigma_squared + y_minus_mu_squared));
       if (!is_constant_all<T_y>::value) {
         if (is_vector<T_y>::value) {
