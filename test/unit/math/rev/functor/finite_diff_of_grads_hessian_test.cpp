@@ -14,6 +14,7 @@ using Eigen::Matrix;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 using std::exp;
+using std::pow;
 
 // poly(x, y) = (x^2 * y) + (3 * y^2)
 struct poly {
@@ -44,6 +45,14 @@ struct exp_full {
   template <typename T>
   inline T operator()(const Matrix<T, Dynamic, 1>& x) const {
     return exp(x(0) - x(1));
+  }
+};
+
+// one_arg(x) = x^3
+struct one_arg {
+  template <typename T>
+  inline T operator()(const Matrix<T, Dynamic, 1>& x) const {
+    return pow(x(0), 3);
   }
 };
 
@@ -110,4 +119,15 @@ TEST(RevFunctor, exp_full) {
   EXPECT_FLOAT_EQ(-exp(4), hess_fx(0, 1));
   EXPECT_FLOAT_EQ(-exp(4), hess_fx(1, 0));
   EXPECT_FLOAT_EQ(exp(4), hess_fx(1, 1));
+}
+
+TEST(RevFunctor, one_arg) {
+  one_arg f;
+  Matrix<double, Dynamic, 1> x(1);
+  x << 8;
+  double fx;
+  Matrix<double, Dynamic, 1> grad_fx;
+  Matrix<double, Dynamic, Dynamic> hess_fx;
+  stan::math::finite_diff_of_grads_hessian(f, x, fx, grad_fx, hess_fx);
+  EXPECT_FLOAT_EQ(6 * 8, hess_fx(0, 0));
 }
