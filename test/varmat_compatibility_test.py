@@ -15,7 +15,7 @@ from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 HERE = os.path.dirname(os.path.realpath(__file__))
 TEST_FOLDER = os.path.abspath(os.path.join(HERE, "..", "test"))
 sys.path.append(TEST_FOLDER)
-WORKING_FOLDER = "varmat-compatibility"
+WORKING_FOLDER = "test/varmat-compatibility"
 
 from sig_utils import *
 
@@ -171,19 +171,22 @@ def benchmark(
                 cpp_arg_templates.append(cpp_arg_template)
                 overload_opts.append(arg_overload_opts)
                 
-            any_overload_generated_varmat = False
-            for arg_overloads in itertools.product(*overload_opts):
+            any_overload_uses_varmat = False
+            for n, arg_overloads in enumerate(itertools.product(*overload_opts)):
                 # generate one benchmark
-                setup, code = generate_function_code(function_name, return_type, stan_args, arg_overloads, max_size)
+                fg = FunctionGenerator(function_name, return_type, stan_args, arg_overloads, max_size)
+                setup, code = fg.cpp()
 
                 result += BENCHMARK_TEMPLATE.format(
-                    benchmark_name=function_name,
+                    benchmark_name=f"{function_name}_{n}",
                     setup=setup,
                     code=code,
                     max_size=max_size,
                 )
 
-            if any_overload_generated_varmat:
+                any_overload_uses_varmat |= fg.uses_varmat()
+
+            if any_overload_uses_varmat:
                 f = tempfile.NamedTemporaryFile("w", dir = WORKING_FOLDER, prefix = f"{function_name}_", suffix = "_test.cpp", delete = False)
 
                 f.write("#include <test/expressions/expression_test_helpers.hpp>\n\n")
