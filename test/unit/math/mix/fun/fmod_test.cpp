@@ -12,6 +12,7 @@ TEST(mathMixScalFun, fmod) {
   stan::test::expect_ad(f, 2.7, 1.3);
   stan::test::expect_ad(f, 3.0, 2.0);
   stan::test::expect_ad(f, 3.0, 6.0);
+  stan::test::expect_ad(f, 3.0, -6.0);
 
   double nan = std::numeric_limits<double>::quiet_NaN();
   stan::test::expect_ad(f, 1.0, nan);
