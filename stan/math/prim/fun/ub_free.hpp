@@ -22,9 +22,6 @@ namespace math {
  *
  * <p>where \f$U\f$ is the upper bound.
  *
- * If the upper bound is positive infinity, this function
- * reduces to <code>identity_free(y)</code>.
- *
  * @tparam T type of scalar
  * @tparam U type of upper bound
  * @param y constrained scalar with specified upper bound
@@ -34,13 +31,14 @@ namespace math {
  *   than the upper bound.
  */
 template <typename T, typename U>
-inline return_type_t<T, U> ub_free(const T& y, const U& ub) {
-  using std::log;
-  if (ub == INFTY) {
-    return identity_free(y);
-  }
-  check_less_or_equal("ub_free", "Upper bounded variable", y, ub);
-  return log(ub - y);
+inline return_type_t<T, U> ub_free(T&& y, U&& ub) {
+  auto&& y_ref = to_ref(std::forward<T>(y));
+  auto&& ub_ref = to_ref(std::forward<U>(ub));
+  check_finite("ub_constrain", "ub", value_of(ub_ref));
+  check_less_or_equal("ub_free", "Upper bounded variable", value_of(y_ref),
+                      value_of(ub_ref));
+  return log(subtract(std::forward<decltype(ub_ref)>(ub_ref),
+                      std::forward<decltype(y_ref)>(y_ref)));
 }
 
 }  // namespace math
