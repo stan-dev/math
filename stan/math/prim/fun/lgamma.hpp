@@ -16,7 +16,7 @@
 // _REENTRANT must be defined during compilation to ensure that cmath
 // exports the reentrant safe lgamma_r version.
 #if !_REENTRANT
-#error \
+#warning \
     "stan-math requires _REENTRANT being defined during compilation" \
     "to make lgamma_r available."
 #endif
@@ -61,7 +61,7 @@ namespace math {
 * argument
 */
 inline double lgamma(double x) {
-#if !__MINGW32__
+#if !__MINGW32__ && !__REENTRANT__
   int sign = 1;
   return ::lgamma_r(x, &sign);
 #else
@@ -80,7 +80,7 @@ inline double lgamma(double x) {
  * argument
  */
 inline double lgamma(int x) {
-#if !__MINGW32__
+#if !__MINGW32__ && !__REENTRANT__
   int sign = 1;
   return ::lgamma_r(x, &sign);
 #else
