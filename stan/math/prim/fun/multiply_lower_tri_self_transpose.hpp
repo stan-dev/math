@@ -14,7 +14,6 @@ namespace math {
  * @param L Matrix to multiply.
  * @return The lower triangular values in L times their own
  * transpose.
- * @throw std::domain_error If the input matrix is not square.
  */
 template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr,
           require_not_st_autodiff<EigMat>* = nullptr>

@@ -105,13 +105,6 @@ TEST(ProbDistributions, ordered_logistic) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> lambda(K);
   lambda << 0.5, 0.5, 0.5, 0.5;
 
-  // init size zero
-  Eigen::Matrix<double, Eigen::Dynamic, 1> c_zero;
-  EXPECT_EQ(0, c_zero.size());
-  EXPECT_THROW(ordered_logistic_log(1, lambda[0], c_zero),
-               std::invalid_argument);
-  EXPECT_THROW(ordered_logistic_log(y, lambda, c_zero), std::invalid_argument);
-
   Eigen::Matrix<double, Eigen::Dynamic, 1> c_neg(1);
   c_neg << -13.7;
   EXPECT_NO_THROW(ordered_logistic_log(1, lambda[0], c_neg));
