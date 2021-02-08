@@ -60,7 +60,7 @@ void finite_diff_of_grads_hessian(const F& f, const Eigen::VectorXd& x,
   // in the i-th direction
   for (size_t i = 0; i < d; ++i) {
     Eigen::VectorXd x_temp(x);
-    epsilons[i] = finite_diff_stepsize(x(i));
+    epsilons[i] = 0.0001 * (1 + stan::math::abs(x(i)));
     x_temp(i) += epsilons[i];
     gradient(f, x_temp, tmp, g_plus[i]);
   }
@@ -71,7 +71,6 @@ void finite_diff_of_grads_hessian(const F& f, const Eigen::VectorXd& x,
     x_temp(i) -= epsilons[i];
     gradient(f, x_temp, tmp, g_minus[i]);
   }
-
   // approximate the hessian as a finite difference of gradients
   for (int i = 0; i < d; ++i) {
     for (int j = i; j < d; ++j) {
