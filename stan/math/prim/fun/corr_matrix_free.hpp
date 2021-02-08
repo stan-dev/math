@@ -42,7 +42,8 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> corr_matrix_free(const T& y) {
 #ifdef USE_STANC3
   Eigen::Index k_choose_2 = (k * (k - 1)) / 2;
 #else
-  Array<value_type_t<T>, Dynamic, 1> x(k_choose_2);
+  int k_choose_2 = (k * (k - 1)) / 2;
+//  Array<value_type_t<T>, Dynamic, 1> x(k_choose_2);
 #endif
   Eigen::Matrix<value_type_t<T>, Dynamic, 1> x(k_choose_2);
   Array<value_type_t<T>, Dynamic, 1> sds(k);
