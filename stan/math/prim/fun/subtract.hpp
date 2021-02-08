@@ -42,7 +42,11 @@ template <typename Mat1, typename Mat2,
           require_all_not_st_var<Mat1, Mat2>* = nullptr>
 inline auto subtract(const Mat1& m1, const Mat2& m2) {
   check_matching_dims("subtract", "m1", m1, "m2", m2);
+#ifdef USE_STANC3
   return m1 - m2;
+#else
+  return (m1 - m2).eval();
+#endif
 }
 
 /**
@@ -59,7 +63,11 @@ template <typename Scal, typename Mat, typename = require_stan_scalar_t<Scal>,
           require_eigen_t<Mat>* = nullptr,
           require_all_not_st_var<Mat, Scal>* = nullptr>
 inline auto subtract(const Scal c, const Mat& m) {
+#ifdef USE_STANC3
   return (c - m.array()).matrix();
+#else
+  return (c - m.array()).matrix().eval();
+#endif
 }
 
 /**
@@ -72,11 +80,19 @@ inline auto subtract(const Scal c, const Mat& m) {
  * @param c Scalar.
  * @return The matrix minus the scalar.
  */
+#ifdef USE_STANC3
 template <typename Mat, typename Scal, require_eigen_t<Mat>* = nullptr,
+#else
+template <typename Mat, typename Scal, typename = require_eigen_t<Mat>,
+#endif
           require_stan_scalar_t<Scal>* = nullptr,
           require_all_not_st_var<Scal, Mat>* = nullptr>
 inline auto subtract(const Mat& m, const Scal c) {
+#ifdef USE_STANC3
   return (m.array() - c).matrix();
+#else
+  return (m.array() - c).matrix().eval();
+#endif
 }
 
 }  // namespace math

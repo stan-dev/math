@@ -51,7 +51,11 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
   Eigen::Array<T_scalar, Eigen::Dynamic, 1> acc(K - 1);
   acc.setOnes();
   // Cholesky factor of correlation matrix
+#ifdef USE_STANC3
   Eigen::Matrix<T_scalar, Eigen::Dynamic, Eigen::Dynamic> L(K, K);
+#else
+  Eigen::Array<T_scalar, Eigen::Dynamic, Eigen::Dynamic> L(K, K);
+#endif
   L.setZero();
 
   size_t position = 0;
@@ -69,7 +73,11 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
     acc.tail(pull) *= T_scalar(1.0) - temp.square();
   }
   L(K - 1, K - 1) = sqrt(acc(K - 2));
+#ifdef USE_STANC3
   return L;
+#else
+  return L.matrix();
+#endif
 }
 
 /**

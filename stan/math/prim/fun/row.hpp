@@ -20,11 +20,19 @@ namespace math {
  * @return Specified row of the matrix.
  * @throw std::out_of_range if i is out of range.
  */
+#ifdef USE_STANC3
 template <typename T, require_eigen_t<T>* = nullptr>
+#else
+template <typename T, typename = require_eigen_t<T> >
+#endif
 inline auto row(const T& m, size_t i) {
   check_row_index("row", "i", m, i);
 
+#ifdef USE_STANC3
   return m.row(i - 1);
+#else
+  return m.row(i - 1).eval();
+#endif
 }
 
 }  // namespace math

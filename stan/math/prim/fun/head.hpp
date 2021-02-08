@@ -23,7 +23,11 @@ inline auto head(const T& v, size_t n) {
   if (n != 0) {
     check_vector_index("head", "n", v, n);
   }
+#ifdef USE_STANC3
   return v.head(n);
+#else
+  return v.head(n).eval();
+#endif
 }
 
 /**

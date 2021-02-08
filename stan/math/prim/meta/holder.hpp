@@ -2,8 +2,11 @@
 #define STAN_MATH_PRIM_FUN_HOLDER_HPP
 
 #include <stan/math/prim/meta/is_eigen.hpp>
+#ifdef USE_STANC3
 #include <stan/math/prim/meta/is_plain_type.hpp>
+#endif
 #include <stan/math/prim/fun/Eigen.hpp>
+
 #include <memory>
 #include <type_traits>
 #include <utility>
@@ -262,6 +265,7 @@ auto holder_handle_element(T& a, T*& res) {
   res = &a;
   return std::make_tuple();
 }
+#ifdef USE_STANC3
 template <typename T,
           std::enable_if_t<!(Eigen::internal::traits<std::decay_t<T>>::Flags
                              & Eigen::NestByRefBit)>* = nullptr>
@@ -269,6 +273,7 @@ auto holder_handle_element(T&& a, std::remove_reference_t<T>*& res) {
   res = &a;
   return std::make_tuple();
 }
+#endif
 
 /**
  * Handles single element (moving rvalue non-expressions to heap) for
@@ -280,10 +285,14 @@ auto holder_handle_element(T&& a, std::remove_reference_t<T>*& res) {
  * @param res resulting pointer to element
  * @return tuple of pointers allocated on heap (containing single pointer).
  */
+#ifdef USE_STANC3
 template <typename T, require_t<std::is_rvalue_reference<T&&>>* = nullptr,
           std::enable_if_t<
               static_cast<bool>(Eigen::internal::traits<std::decay_t<T>>::Flags&
                                     Eigen::NestByRefBit)>* = nullptr>
+#else
+template <typename T, require_t<std::is_rvalue_reference<T&&>>* = nullptr>
+#endif
 auto holder_handle_element(T&& a, T*& res) {
   res = new T(std::move(a));
   return std::make_tuple(res);
@@ -347,7 +356,11 @@ auto make_holder_impl(const F& func, std::index_sequence<Is...>,
  * @return `holder` referencing expression constructed by given functor
  */
 template <typename F, typename... Args,
+#ifdef USE_STANC3
           require_not_plain_type_t<
+#else
+          require_eigen_t<
+#endif
               decltype(std::declval<F>()(std::declval<Args&>()...))>* = nullptr>
 auto make_holder(const F& func, Args&&... args) {
   return internal::make_holder_impl(func,
@@ -355,6 +368,7 @@ auto make_holder(const F& func, Args&&... args) {
                                     std::forward<Args>(args)...);
 }
 
+#ifdef USE_STANC3
 /**
  * Calls given function with given arguments. No `holder` is necessary if the
  * function is not returning Eigen expression.
@@ -371,7 +385,7 @@ template <typename F, typename... Args,
 auto make_holder(const F& func, Args&&... args) {
   return func(std::forward<Args>(args)...);
 }
-
+#endif
 }  // namespace math
 }  // namespace stan
 

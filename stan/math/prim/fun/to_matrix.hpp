@@ -21,7 +21,12 @@ namespace math {
  * @return the matrix representation of the input
  */
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
+#ifdef USE_STANC3
 inline EigMat to_matrix(EigMat&& x) {
+#else
+inline Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>
+to_matrix(EigMat&& x) {
+#endif
   return std::forward<EigMat>(x);
 }
 
