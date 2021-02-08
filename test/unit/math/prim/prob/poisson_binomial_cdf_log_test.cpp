@@ -31,10 +31,10 @@ TEST(ProbDistributionsPoissonBinomial, lcdf_works_on_scalar_arguments) {
   vec p(3, 1);
   p << 0.5, 0.2, 0.7;
 
-  EXPECT_NEAR(-2.12026, poisson_binomial_lcdf(0, p), 0.001);
-  EXPECT_NEAR(-0.597837, poisson_binomial_lcdf(1, p), 0.001);
-  EXPECT_NEAR(-0.0725707, poisson_binomial_lcdf(2, p), 0.001);
-  EXPECT_NEAR(0, poisson_binomial_lcdf(3, p), 0.001);
+  EXPECT_NEAR(-2.12026, poisson_binomial_lcdf(0, p), 1e-5);
+  EXPECT_NEAR(-0.597837, poisson_binomial_lcdf(1, p), 1e-6);
+  EXPECT_NEAR(-0.0725707, poisson_binomial_lcdf(2, p), 1e-6);
+  EXPECT_NEAR(0, poisson_binomial_lcdf(3, p), 1e-6);
 }
 
 TEST(ProbDistributionsPoissonBinomial, lcdf_works_on_vectorial_y) {
@@ -45,7 +45,7 @@ TEST(ProbDistributionsPoissonBinomial, lcdf_works_on_vectorial_y) {
   p << 0.5, 0.2, 0.7;
   std::vector<int> y{2, 2};
 
-  EXPECT_NEAR(-0.0725707 * 2, poisson_binomial_lcdf(y, p), 0.001);
+  EXPECT_NEAR(-0.0725707 * 2, poisson_binomial_lcdf(y, p), 1e-6);
 }
 
 TEST(ProbDistributionsPoissonBinomial, lcdf_works_on_vectorial_y_and_theta) {
@@ -57,7 +57,7 @@ TEST(ProbDistributionsPoissonBinomial, lcdf_works_on_vectorial_y_and_theta) {
   std::vector<int> y{2, 1};
   std::vector<vec> ps{p, p};
 
-  EXPECT_NEAR(-0.0725707 - 0.597837, poisson_binomial_lcdf(y, ps), 0.001);
+  EXPECT_NEAR(-0.0725707 - 0.597837, poisson_binomial_lcdf(y, ps), 1e-6);
 }
 
 TEST(ProbDistributionsPoissonBinomial,
@@ -70,7 +70,7 @@ TEST(ProbDistributionsPoissonBinomial,
   int y = 2;
   std::vector<vec> ps{p};
 
-  EXPECT_NEAR(-0.0725707, poisson_binomial_lcdf(y, ps), 0.001);
+  EXPECT_NEAR(-0.0725707, poisson_binomial_lcdf(y, ps), 1e-6);
 }
 
 TEST(ProbDistributionsPoissonBinomial,
@@ -83,7 +83,7 @@ TEST(ProbDistributionsPoissonBinomial,
   int y = 2;
   std::vector<vec> ps{p, p};
 
-  EXPECT_NEAR(-0.0725707 * 2.0, poisson_binomial_lcdf(y, ps), 0.001);
+  EXPECT_NEAR(-0.0725707 * 2.0, poisson_binomial_lcdf(y, ps), 1e-6);
 }
 
 TEST(ProbDistributionsPoissonBinomial, lcdf_check_error_scalar_y_oob) {
@@ -193,9 +193,6 @@ TEST(ProbDistributionsPoissonBinomial, log_cdf_matches_lcdf) {
 
   EXPECT_FLOAT_EQ((stan::math::poisson_binomial_lcdf(y, theta)),
                   (stan::math::poisson_binomial_cdf_log(y, theta)));
-
-  EXPECT_FLOAT_EQ((stan::math::poisson_binomial_lcdf<int, vec>(y, theta)),
-                  (stan::math::poisson_binomial_cdf_log<int, vec>(y, theta)));
 }
 
 TEST(ProbDistributionsPoissonBinomial, log_cdf_matches_lcdf_vectorial) {
@@ -208,8 +205,4 @@ TEST(ProbDistributionsPoissonBinomial, log_cdf_matches_lcdf_vectorial) {
 
   EXPECT_FLOAT_EQ((stan::math::poisson_binomial_lcdf(y, thetas)),
                   (stan::math::poisson_binomial_cdf_log(y, thetas)));
-
-  EXPECT_FLOAT_EQ(
-      (stan::math::poisson_binomial_lcdf<int, std::vector<vec>>(y, thetas)),
-      (stan::math::poisson_binomial_cdf_log<int, std::vector<vec>>(y, thetas)));
 }

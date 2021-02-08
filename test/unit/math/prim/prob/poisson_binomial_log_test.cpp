@@ -16,16 +16,6 @@ TEST(ProbDistributionsPoissonBinomial, log_matches_lpmf) {
 
   EXPECT_FLOAT_EQ((stan::math::poisson_binomial_lpmf<false>(y, theta)),
                   (stan::math::poisson_binomial_log<false>(y, theta)));
-
-  EXPECT_FLOAT_EQ((stan::math::poisson_binomial_lpmf<true, int, vec>(y, theta)),
-                  (stan::math::poisson_binomial_log<true, int, vec>(y, theta)));
-
-  EXPECT_FLOAT_EQ(
-      (stan::math::poisson_binomial_lpmf<false, int, vec>(y, theta)),
-      (stan::math::poisson_binomial_log<false, int, vec>(y, theta)));
-
-  EXPECT_FLOAT_EQ((stan::math::poisson_binomial_lpmf<int, vec>(y, theta)),
-                  (stan::math::poisson_binomial_log<int, vec>(y, theta)));
 }
 
 TEST(ProbDistributionsPoissonBinomial, log_matches_lpmf_vectorial) {
@@ -44,20 +34,4 @@ TEST(ProbDistributionsPoissonBinomial, log_matches_lpmf_vectorial) {
 
   EXPECT_FLOAT_EQ((stan::math::poisson_binomial_lpmf<false>(y, thetas)),
                   (stan::math::poisson_binomial_log<false>(y, thetas)));
-
-  EXPECT_FLOAT_EQ(
-      (stan::math::poisson_binomial_lpmf<true, int, std::vector<vec>>(y,
-                                                                      thetas)),
-      (stan::math::poisson_binomial_log<true, int, std::vector<vec>>(y,
-                                                                     thetas)));
-
-  EXPECT_FLOAT_EQ(
-      (stan::math::poisson_binomial_lpmf<false, int, std::vector<vec>>(y,
-                                                                       thetas)),
-      (stan::math::poisson_binomial_log<false, int, std::vector<vec>>(y,
-                                                                      thetas)));
-
-  EXPECT_FLOAT_EQ(
-      (stan::math::poisson_binomial_lpmf<int, std::vector<vec>>(y, thetas)),
-      (stan::math::poisson_binomial_log<int, std::vector<vec>>(y, thetas)));
 }
