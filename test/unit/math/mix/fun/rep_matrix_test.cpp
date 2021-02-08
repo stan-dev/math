@@ -29,16 +29,26 @@ TEST(MathMixMatFun, repMatrix) {
 }
 
 TEST(MathMixMatFun, repVarMatrix) {
-  using stan::math::var;
-  using stan::math::var_value;
   using stan::math::rep_matrix;
   using stan::math::sum;
+  using stan::math::var;
+  using stan::math::var_value;
   auto x_var = var(1.0);
-  auto x = rep_matrix<var, var_value<Eigen::Matrix<double, -1, -1>>>(x_var, 5, 5);
+  auto x
+      = rep_matrix<var, var_value<Eigen::Matrix<double, -1, -1>>>(x_var, 5, 5);
   auto x_sum = sum(x);
   x_sum.grad();
 
-  std::cout << "\nx_sum: \n" << "(val): \n" << x_sum.val() << "\n(adj): \n" << x_sum.adj() << "\n";
-  std::cout << "\nx: \n" << "(val): \n" << x.val() << "\n(adj): \n" << x.adj() << "\n";
-  std::cout << "\nx_var: \n" << "(val): \n" << x_var.val() << "\n(adj): \n" << x_var.adj() << "\n";
+  std::cout << "\nx_sum: \n"
+            << "(val): \n"
+            << x_sum.val() << "\n(adj): \n"
+            << x_sum.adj() << "\n";
+  std::cout << "\nx: \n"
+            << "(val): \n"
+            << x.val() << "\n(adj): \n"
+            << x.adj() << "\n";
+  std::cout << "\nx_var: \n"
+            << "(val): \n"
+            << x_var.val() << "\n(adj): \n"
+            << x_var.adj() << "\n";
 }

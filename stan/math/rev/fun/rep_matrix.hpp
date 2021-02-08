@@ -9,7 +9,9 @@ namespace stan {
 namespace math {
 
 template <>
-inline auto rep_matrix<double, var_value<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>>(const double& x, int m, int n) {
+inline auto rep_matrix<
+    double, var_value<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>>(
+    const double& x, int m, int n) {
   check_nonnegative("rep_matrix", "rows", m);
   check_nonnegative("rep_matrix", "cols", n);
   using eig_mat = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>;
@@ -17,13 +19,15 @@ inline auto rep_matrix<double, var_value<Eigen::Matrix<double, Eigen::Dynamic, E
 }
 
 template <>
-inline auto rep_matrix<var, var_value<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>>(const var& x, int m, int n) {
+inline auto rep_matrix<
+    var, var_value<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>>(
+    const var& x, int m, int n) {
   check_nonnegative("rep_matrix", "rows", m);
   check_nonnegative("rep_matrix", "cols", n);
   using eig_mat = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>;
-  return make_callback_var(eig_mat::Constant(m, n, x.val()), [x](auto& rep) mutable {
-    x.adj() += rep.adj().sum();
-  });
+  return make_callback_var(
+      eig_mat::Constant(m, n, x.val()),
+      [x](auto& rep) mutable { x.adj() += rep.adj().sum(); });
 }
 
 }  // namespace math
