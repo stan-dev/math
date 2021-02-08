@@ -22,7 +22,7 @@ namespace math {
  * @throw std::domain_error if theta is not a valid probability
  */
 template <typename T_theta, typename RNG,
-	  require_eigen_vt<std::is_arithmetic, T_theta>* = nullptr>
+          require_eigen_vt<std::is_arithmetic, T_theta>* = nullptr>
 inline int poisson_binomial_rng(const T_theta& theta, RNG& rng) {
   static const char* function = "poisson_binomial_rng";
   check_finite(function, "Probability parameters", theta);
