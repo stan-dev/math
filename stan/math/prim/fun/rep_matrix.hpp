@@ -8,7 +8,7 @@
 namespace stan {
 namespace math {
 
-template <typename T, require_stan_scalar_t<T>* = nullptr>
+template <typename T, typename Ret = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>, require_stan_scalar_t<T>* = nullptr>
 inline auto rep_matrix(const T& x, int m, int n) {
   check_nonnegative("rep_matrix", "rows", m);
   check_nonnegative("rep_matrix", "cols", n);
