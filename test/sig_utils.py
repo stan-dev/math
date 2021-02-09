@@ -1,3 +1,4 @@
+import itertools
 import numbers
 import os
 import re
@@ -317,129 +318,53 @@ overload_scalar = {
     "Mix": "stan::math::fvar<stan::math::var>",
 }
 
-def generate_function_code(function_name, return_type, stan_args, arg_overloads, max_size):
-    benchmark_name = function_name
-    setup = ""
-    var_conversions = ""
-    arg_types = []
-        
-    cpp_arg_templates = []
-
-    for n, stan_arg in enumerate(stan_args):
-        cpp_arg_templates.append(get_cpp_type(stan_arg))
-                    
-    code = "    auto res = stan::math::eval(stan::math::{}(".format(
-        function_name
-    )
-
-    for (
-            n,
-            (arg_overload, cpp_arg_template, stan_arg),
-    ) in enumerate(zip(arg_overloads, cpp_arg_templates, stan_args)):
-        if stan_arg.endswith("]"):
-            stan_arg2, vec = stan_arg.split("[")
-            benchmark_name += (
-                    "_" + arg_overload + "_" + stan_arg2 + str(len(vec))
-            )
-            is_argument_array_scalars = stan_arg2 in scalar_stan_types
-        else:
-            benchmark_name += "_" + arg_overload + "_" + stan_arg
-            is_argument_array_scalars = False
-        scalar = overload_scalar[arg_overload]
-        arg_type = cpp_arg_template.replace("SCALAR", scalar)
-        if not stan_arg.endswith("return_t"):
-            arg_types.append(arg_type)
-        var_name = "arg" + str(n)
-        make_arg_function = "make_arg"
-        is_argument_scalar = stan_arg in scalar_stan_types
-        value = 0.4
-        if function_name in special_arg_values:
-            if isinstance(special_arg_values[function_name][n], str):
-                make_arg_function = special_arg_values[function_name][n]
-            elif isinstance(
-                    special_arg_values[function_name][n], numbers.Number
-            ):
-                value = special_arg_values[function_name][n]
-        if scalar == "double":
-            setup += (
-                "    {} {} = stan::test::{}<{}>({}, {});\n".format(
-                    arg_type,
-                    var_name,
-                    make_arg_function,
-                    arg_type,
-                    value,
-                    max_size,
-                )
-            )
-            if not is_argument_scalar:
-                if not is_argument_array_scalars and arg_overload == "Rev_SOA":
-                    setup += "    auto {} = stan::math::to_var_value({});\n".format(
-                        var_name + "_varmat", var_name
-                    )
-                    var_name += "_varmat"
-        else:
-            var_conversions += (
-                "    {} {} = stan::test::{}<{}>({}, {});\n".format(
-                    arg_type,
-                    var_name,
-                    make_arg_function,
-                    arg_type,
-                    value,
-                    max_size,
-                )
-            )
-            if not is_argument_scalar:
-                if not is_argument_array_scalars and arg_overload == "Rev_SOA":
-                    var_conversions += (
-                        "    auto {} = stan::math::to_var_value({});\n".format(
-                            var_name + "_varmat", var_name
-                        )
-                    )
-                    var_name += "_varmat"
-        if (not is_argument_scalar and arg_overload == "Rev_SOA"):
-            code += "stan::math::to_var_value({}), ".format(var_name)
-        else:
-            code += var_name + ", "
-
-    code = code[:-2] + "));\n"
-    if "Rev" in arg_overloads:
-        code += "    stan::math::grad();\n"
-
-    return_t_definition = "    using scalar_return_t = stan::return_type_t<" + ", ".join(arg_types) + ">;"
-
-    setup = return_t_definition + "\n" + setup
-        
-    #any_overload_generated_varmat = any_overload_generated_varmat or generated_varmat
-    
-    return [setup, code]
-
 class FunctionGenerator:
-    def __init__(self, function_name, return_type, stan_args, arg_overloads, max_size):
-        self.function_name = function_name
-        self.return_type = return_type
-        self.stan_args = stan_args
+    def __init__(self, signature):
+        self.return_type, self.function_name, self.stan_args = parse_signature(signature)
+    
+    def is_ode(self):
+        return self.function_name.find("ode") == 0
+
+    def overloads(self, overloads = None):
+        if overloads is None:
+            overloads = ["Prim", "Rev", "Rev_SOA"]
+
+        overload_opts = []
+        for n, self.stan_arg in enumerate(self.stan_args):
+            non_differentiable_arg = (
+                self.function_name in non_differentiable_args
+                and n in non_differentiable_args[self.function_name]
+            )
+
+            if "real" and non_differentiable_arg:
+                overload_opts.append(["Prim"])
+            else:
+                overload_opts.append(overloads)
+        
+        return itertools.product(*overload_opts)
+    
+    def cpp(self, arg_overloads, max_size):
         self.arg_overloads = arg_overloads
         self.max_size = max_size
-        self._uses_varmat = False
+        uses_varmat = False
 
-        benchmark_name = function_name
+        benchmark_name = self.function_name
         setup = ""
-        var_conversions = ""
         arg_types = []
             
         cpp_arg_templates = []
 
-        for n, stan_arg in enumerate(stan_args):
+        for n, stan_arg in enumerate(self.stan_args):
             cpp_arg_templates.append(get_cpp_type(stan_arg))
                         
         code = "    auto res = stan::math::eval(stan::math::{}(".format(
-            function_name
+            self.function_name
         )
 
         for (
                 n,
                 (arg_overload, cpp_arg_template, stan_arg),
-        ) in enumerate(zip(arg_overloads, cpp_arg_templates, stan_args)):
+        ) in enumerate(zip(arg_overloads, cpp_arg_templates, self.stan_args)):
             if stan_arg.endswith("]"):
                 stan_arg2, vec = stan_arg.split("[")
                 benchmark_name += (
@@ -457,8 +382,8 @@ class FunctionGenerator:
             make_arg_function = "make_arg"
             is_argument_scalar = stan_arg in scalar_stan_types
             value = 0.4
-            if function_name in special_arg_values and isinstance(special_arg_values[function_name][n], str):
-                make_arg_function = special_arg_values[function_name][n]
+            if self.function_name in special_arg_values and isinstance(special_arg_values[self.function_name][n], str):
+                make_arg_function = special_arg_values[self.function_name][n]
 
                 setup += (
                     "    {} {};".format(
@@ -467,8 +392,8 @@ class FunctionGenerator:
                     )
                 )
             else:
-                if function_name in special_arg_values:
-                    value = special_arg_values[function_name][n]
+                if self.function_name in special_arg_values and special_arg_values[self.function_name][n] is not None:
+                    value = special_arg_values[self.function_name][n]
 
                 if scalar == "double":
                     setup += (
@@ -483,7 +408,7 @@ class FunctionGenerator:
                     )
                     if not is_argument_scalar:
                         if not is_argument_array_scalars and arg_overload == "Rev_SOA":
-                            self._uses_varmat = True
+                            uses_varmat = True
                             setup += "    auto {} = stan::math::to_var_value({});\n".format(
                                 var_name + "_varmat", var_name
                             )
@@ -501,7 +426,7 @@ class FunctionGenerator:
                     )
                     if not is_argument_scalar:
                         if not is_argument_array_scalars and arg_overload == "Rev_SOA":
-                            self._uses_varmat = True
+                            uses_varmat = True
                             setup += (
                                 "    auto {} = stan::math::to_var_value({});\n".format(
                                     var_name + "_varmat", var_name
@@ -518,7 +443,7 @@ class FunctionGenerator:
         if "Rev" in arg_overloads:
             code += "    stan::math::grad();\n"
 
-        return_t_definition = "    using scalar_return_t = stan::return_type_t<" + ", ".join(arg_types) + ">;"
+        return_t_definition = "    using scalar_return_type = stan::return_type_t<" + ", ".join(arg_types) + ">;"
 
         setup = return_t_definition + "\n" + setup
             
@@ -527,11 +452,7 @@ class FunctionGenerator:
         self.setup = setup
         self.code = code
 
-    def cpp(self):
-        return [self.setup, self.code]
-    
-    def uses_varmat(self):
-        return self._uses_varmat
+        return [self.setup, self.code, uses_varmat]
 
 #setup, code = generate_function_code("whatever", "clown", ["real"], ["Prim"], 2)
 #print(setup)

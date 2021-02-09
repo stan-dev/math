@@ -54,33 +54,17 @@ def build(exe_filepath):
     """
     return run_command([make, exe_filepath])
 
-def benchmark(
-        functions_or_sigs,
-        results_file="results.json",
-        overloads=("Prim", "Rev"),
-        max_size_param=None,
-        cores=1,
-):
+def main(functions_or_sigs, results_file, cores):
     """
-    Generates benchmark code, compiles it and runs the benchmark.
+    yada yada
     :param functions_or_sigs: List of function names and/or signatures to benchmark
-    :param cpp_filename: filename of cpp file to use
-    :param overloads: Which overloads to benchmark
-    :param multiplier_param: Multiplyer, by which to increase argument size.
-    :param max_size_param: Maximum argument size.
-    :param max_dim: Maximum number of argument dimensions to benchmark. Signatures with any argument with
-             larger number of dimensions are skipped."
-    :param n_repeats: Number of times to repeat each benchmark.
-    :param skip_similar_signatures: Whether to skip similar signatures. Two signatures are similar if they
-             difffer only in similar vector types, which are vector, row_vector and real[].
-    :param csv_out_file: Filename of the csv file to store benchmark results in.
+    :param results_file: File to use as a results cache
+    :param cores: Number of cores to use for compiling
     """
     all_signatures = get_signatures()
     functions, signatures = handle_function_list(functions_or_sigs)
 
     requested_functions = set(functions)
-
-    parsed_signatures = {}
 
     compatible_signatures = set()
     incompatible_signatures = set()
@@ -100,7 +84,7 @@ def benchmark(
 
     skip_signatures = set(compatible_signatures)
 
-    ref_signatures = set()
+    signatures_to_check = set()
     for signature in all_signatures:
         return_type, function_name, stan_args = parse_signature(signature)
 
@@ -109,82 +93,39 @@ def benchmark(
                 continue
         elif signature in skip_signatures:
             continue
-
-        reference_args = tuple(reference_vector_argument(i) for i in stan_args)
         
-        parsed_signatures[signature] = [return_type, function_name, stan_args]
-        ref_signatures.add((function_name, reference_args))
+        signatures_to_check.add(signature)
 
-    max_args_with_max_dimm = 0
-    default_max_size = 2
+    max_size = 2
 
-    parsed_signatures_list = list(parsed_signatures.items())
-
-    def chunk(mylist, chunk_size):
+    def chunk(myiterable, chunk_size):
+        mylist = list(myiterable)
         for start in range(0, len(mylist), chunk_size):
             yield (start, mylist[start:min(start + chunk_size, len(mylist))])
 
-    for start, parsed_signatures_chunk in chunk(parsed_signatures_list, cores):
+    for start, signatures_to_check_chunk in chunk(signatures_to_check, cores):
         test_files_to_compile = {}
 
-        for signature, (return_type, function_name, stan_args) in parsed_signatures_chunk:
-            if any(arg.find("ode") >= 0 for arg in stan_args):
+        for signature in signatures_to_check_chunk:
+            fg = FunctionGenerator(signature)
+
+            if fg.is_ode():
                 test_files_to_compile[signature] = None
                 continue
 
             result = ""
-            dimm = 0
-            args_with_max_dimm = 0
-            for arg in stan_args:
-                arg_dimm = 0
-                if "vector" in arg:
-                    arg_dimm = 1
-                if "matrix" in arg:
-                    arg_dimm = 2
-                if "[" in arg:
-                    arg_dimm += len(arg.split("[")[1])
-                if arg_dimm == dimm:
-                    args_with_max_dimm += 1
-                elif arg_dimm > dimm:
-                    dimm = arg_dimm
-                    args_with_max_dimm = 1
-            max_args_with_max_dimm = max(max_args_with_max_dimm, args_with_max_dimm)
-            if max_size_param is None:
-                if dimm == 0:  # signature with only scalar arguments
-                    max_size = 1
-                else:
-                    max_size = default_max_size
-            else:
-                max_size = max_size_param
-
-            cpp_arg_templates = []
-            overload_opts = []
-
-            for n, stan_arg in enumerate(stan_args):
-                cpp_arg_template = get_cpp_type(stan_arg)
-                arg_overload_opts = ["Prim"]
-                if "SCALAR" in cpp_arg_template and not (
-                        function_name in non_differentiable_args
-                        and n in non_differentiable_args[function_name]
-                ):
-                    arg_overload_opts = ["Prim", "Rev", "Rev_SOA"]
-                cpp_arg_templates.append(cpp_arg_template)
-                overload_opts.append(arg_overload_opts)
-                
             any_overload_uses_varmat = False
-            for n, arg_overloads in enumerate(itertools.product(*overload_opts)):
+            for n, arg_overloads in enumerate(fg.overloads()):
                 # generate one benchmark
-                fg = FunctionGenerator(function_name, return_type, stan_args, arg_overloads, max_size)
-                setup, code = fg.cpp()
+                setup, code, uses_varmat = fg.cpp(arg_overloads, max_size)
 
                 result += BENCHMARK_TEMPLATE.format(
                     benchmark_name=f"{function_name}_{n}",
                     setup=setup,
                     code=code,
-                    max_size=max_size,
                 )
 
-                any_overload_uses_varmat |= fg.uses_varmat()
+                any_overload_uses_varmat |= uses_varmat
 
             if any_overload_uses_varmat:
                 f = tempfile.NamedTemporaryFile("w", dir = WORKING_FOLDER, prefix = f"{function_name}_", suffix = "_test.cpp", delete = False)
@@ -235,7 +176,7 @@ def benchmark(
             for n, finished in enumerate(concurrent.futures.as_completed(futures)):
                 signature, successful, attempted = finished.result()
         
-                print("Check results of test {0} / {1}, {2} ... ".format(n + start, len(parsed_signatures), signature.strip()), end = '')
+                print("Check results of test {0} / {1}, {2} ... ".format(n + start, len(signatures_to_check), signature.strip()), end = '')
 
                 if signature in compatible_signatures:
                     compatible_signatures.remove(signature)
@@ -264,16 +205,6 @@ def benchmark(
                             "incompatible_signatures" : list(incompatible_signatures),
                             "impossible_signatures" : list(impossible_signatures)
                         }, f, indent = 4, sort_keys = True)
-
-
-def main(
-        functions_or_sigs, results_file, cores
-):
-    """
-    Generates benchmark code, compiles it and runs the benchmark. Optionally plots the results.
-    :param functions_or_sigs: List of function names and/or signatures to benchmark
-    """
-    benchmark(functions_or_sigs, results_file = results_file, cores = cores)
 
 
 class FullErrorMsgParser(ArgumentParser):
