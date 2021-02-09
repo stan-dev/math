@@ -30,6 +30,7 @@ namespace math {
  *    factorized by factor_cov_matrix() or if the sds returned by
  *    factor_cov_matrix() on log scale are unconstrained.
  */
+#ifdef USE_STANC3
 template <typename T, require_eigen_t<T>* = nullptr>
 Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> corr_matrix_free(const T& y) {
   using Eigen::Array;
@@ -39,31 +40,45 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> corr_matrix_free(const T& y) {
   check_nonzero_size("corr_matrix_free", "y", y);
 
   Eigen::Index k = y.rows();
-#ifdef USE_STANC3
   Eigen::Index k_choose_2 = (k * (k - 1)) / 2;
-#else
-  int k_choose_2 = (k * (k - 1)) / 2;
-//  Array<value_type_t<T>, Dynamic, 1> x(k_choose_2);
-#endif
   Eigen::Matrix<value_type_t<T>, Dynamic, 1> x(k_choose_2);
   Array<value_type_t<T>, Dynamic, 1> sds(k);
-#ifdef USE_STANC3
   bool successful = factor_cov_matrix(y, x.array(), sds);
-#else
-  bool successful = factor_cov_matrix(y, x, sds);
-#endif
   if (!successful) {
     throw_domain_error("corr_matrix_free", "factor_cov_matrix failed on y", y,
                        "");
   }
   check_bounded("corr_matrix_free", "log(sd)", sds, -CONSTRAINT_TOLERANCE,
                 CONSTRAINT_TOLERANCE);
-#ifdef USE_STANC3
   return x;
-#else
-  return x.matrix();
-#endif
 }
+#else
+template <typename T>
+Eigen::Matrix<T, Eigen::Dynamic, 1> corr_matrix_free(
+    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& y) {
+  check_square("corr_matrix_free", "y", y);
+  check_nonzero_size("corr_matrix_free", "y", y);
+
+  using Eigen::Array;
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using size_type = typename index_type<Matrix<T, Dynamic, 1> >::type;
+
+  size_type k = y.rows();
+  size_type k_choose_2 = (k * (k - 1)) / 2;
+  Array<T, Dynamic, 1> x(k_choose_2);
+  Array<T, Dynamic, 1> sds(k);
+  bool successful = factor_cov_matrix(y, x, sds);
+  if (!successful) {
+    domain_error("corr_matrix_free", "factor_cov_matrix failed on y", y, "");
+  }
+  for (size_type i = 0; i < k; ++i) {
+    check_bounded("corr_matrix_free", "log(sd)", sds[i], -CONSTRAINT_TOLERANCE,
+                  CONSTRAINT_TOLERANCE);
+  }
+  return x.matrix();
+}
+#endif
 
 }  // namespace math
 }  // namespace stan
