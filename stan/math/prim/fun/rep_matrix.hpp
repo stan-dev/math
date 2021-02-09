@@ -13,11 +13,14 @@ namespace math {
  * type equal to the input scalar type.
  * @tparam Ret An Eigen type.
  * @tparam T A Scalar type.
- * @param x A Scalar whose values are propogated to all values in the return matrix.
+ * @param x A Scalar whose values are propogated to all values in the return
+ * matrix.
  * @param m Number or rows.
  * @param n Number of columns.
  */
-template <typename Ret, typename T, require_eigen_vt<is_stan_scalar, Ret>* = nullptr, require_stan_scalar_t<T>* = nullptr>
+template <typename Ret, typename T,
+          require_eigen_vt<is_stan_scalar, Ret>* = nullptr,
+          require_stan_scalar_t<T>* = nullptr>
 inline auto rep_matrix(const T& x, int m, int n) {
   check_nonnegative("rep_matrix", "rows", m);
   check_nonnegative("rep_matrix", "cols", n);
@@ -29,7 +32,8 @@ inline auto rep_matrix(const T& x, int m, int n) {
  * Default Implimentation of rep_matrix returning an Eigen matrix with scalar
  * type equal to the input scalar type.
  * @tparam T A Scalar type.
- * @param x A Scalar whose values are propogated to all values in the return matrix.
+ * @param x A Scalar whose values are propogated to all values in the return
+ * matrix.
  * @param m Number or rows.
  * @param n Number of columns.
  */
@@ -42,10 +46,13 @@ inline auto rep_matrix(const T& x, int m, int n) {
  * Impl of rep_matrix returning an Eigen matrix from an Eigen vector.
  * @tparam Ret An Eigen type.
  * @tparam Vec An Eigen vector with Arithmetic scalar type.
- * @param x An Eigen vector. For Row vectors the values are replacated rowwise and for column vectors the values are repliacated colwise.
+ * @param x An Eigen vector. For Row vectors the values are replacated rowwise
+ * and for column vectors the values are repliacated colwise.
  * @param n Number of rows or columns.
  */
-template <typename Ret, typename Vec, require_eigen_vt<is_stan_scalar, Ret>* = nullptr, require_eigen_vector_t<Vec>* = nullptr>
+template <typename Ret, typename Vec,
+          require_eigen_vt<is_stan_scalar, Ret>* = nullptr,
+          require_eigen_vector_t<Vec>* = nullptr>
 inline auto rep_matrix(const Vec& x, int n) {
   if (is_eigen_row_vector<Vec>::value) {
     check_nonnegative("rep_matrix", "rows", n);
@@ -57,9 +64,11 @@ inline auto rep_matrix(const Vec& x, int n) {
 }
 
 /**
- * Default Implimentation of rep_matrix returning an Eigen matrix from an Eigen vector.
+ * Default Implimentation of rep_matrix returning an Eigen matrix from an Eigen
+ * vector.
  * @tparam Vec An Eigen vector with Arithmetic scalar type.
- * @param x An Eigen vector. For Row vectors the values are replacated rowwise and for column vectors the values are repliacated colwise.
+ * @param x An Eigen vector. For Row vectors the values are replacated rowwise
+ * and for column vectors the values are repliacated colwise.
  * @param n Number of rows or columns.
  */
 template <typename Vec, require_vector_t<Vec>* = nullptr>

@@ -34,8 +34,7 @@ TEST(MathMixMatFun, repVarMatrix) {
   using stan::math::var;
   using stan::math::var_value;
   auto x_var = var(1.0);
-  auto x
-      = rep_matrix<var_value<Eigen::Matrix<double, -1, -1>>>(x_var, 5, 5);
+  auto x = rep_matrix<var_value<Eigen::Matrix<double, -1, -1>>>(x_var, 5, 5);
   auto x_sum = sum(x);
   x_sum.grad();
 
@@ -52,8 +51,7 @@ TEST(MathMixMatFun, repVarMatrixArithmetic) {
   using stan::math::var;
   using stan::math::var_value;
   double x_dbl = 1.0;
-  auto x
-      = rep_matrix<var_value<Eigen::Matrix<double, -1, -1>>>(x_dbl, 5, 5);
+  auto x = rep_matrix<var_value<Eigen::Matrix<double, -1, -1>>>(x_dbl, 5, 5);
   auto x_sum = sum(x);
   x_sum.grad();
 
@@ -95,7 +93,7 @@ TEST(MathMixMatFun, repVarMatrixVecArithmetic) {
   using stan::math::sum;
   using stan::math::var;
   using stan::math::var_value;
-  auto x_dbl  = Eigen::VectorXd::Ones(5).eval();
+  auto x_dbl = Eigen::VectorXd::Ones(5).eval();
   auto x = rep_matrix<var_value<Eigen::Matrix<double, -1, -1>>>(x_dbl, 5);
   for (int j = 0; j < x.cols(); ++j) {
     for (int i = 0; i < x.rows(); ++i) {
