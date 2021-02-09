@@ -56,7 +56,8 @@ auto simplex_constrain(const Vec& y) {
  * @param lp Log probability reference to increment.
  * @return Simplex of dimensionality K.
  */
-template <typename Vec, require_eigen_col_vector_t<Vec>* = nullptr>
+template <typename Vec, require_eigen_col_vector_t<Vec>* = nullptr,
+          require_not_st_var<Vec>* = nullptr>
 auto simplex_constrain(const Vec& y, value_type_t<Vec>& lp) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
