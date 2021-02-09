@@ -23,21 +23,11 @@ int ROW_VECTORS = 0;
 #endif
 
 void push_args(vector<string>& args, const string& type) {
-  if (type.compare("varmat") == 0) {
-    args.push_back("var");
-    args.push_back("std::vector<var>");
-    args.push_back(
-        "stan::math::var_value<Eigen::Matrix<double, Eigen::Dynamic, 1>>");
-    if (ROW_VECTORS == 1)
-      args.push_back(
-          "stan::math::var_value<Eigen::Matrix<double, 1, Eigen::Dynamic>>");
-  } else {
-    args.push_back(type);
-    args.push_back("std::vector<" + type + ">");
-    args.push_back("Eigen::Matrix<" + type + ", Eigen::Dynamic, 1>");
-    if (ROW_VECTORS == 1)
-      args.push_back("Eigen::Matrix<" + type + ", 1, Eigen::Dynamic>");
-  }
+  args.push_back(type);
+  args.push_back("std::vector<" + type + ">");
+  args.push_back("Eigen::Matrix<" + type + ", Eigen::Dynamic, 1>");
+  if (ROW_VECTORS == 1)
+    args.push_back("Eigen::Matrix<" + type + ", 1, Eigen::Dynamic>");
 }
 
 vector<string> lookup_argument(const string& argument, const int& ind) {
@@ -62,8 +52,6 @@ vector<string> lookup_argument(const string& argument, const int& ind) {
       push_args(args, "fvar<fvar<double> >");
     } else if (ind == 5) {
       push_args(args, "fvar<fvar<var> >");
-    } else if (ind == 6) {
-      push_args(args, "varmat");
     }
   }
   return args;
@@ -281,8 +269,6 @@ void write_types_typedef(vector<std::ostream*>& outs, string base, size_t& N,
             *out << "> type_ffd_" << N << ";" << endl;
           else if (index == 5)
             *out << "> type_ffv_" << N << ";" << endl;
-          else if (index == 6)
-            *out << "> type_vv_" << N << ";" << endl;
           N++;
         }
       }
@@ -321,9 +307,6 @@ void write_test(vector<std::ostream*>& outs, const string& test_name,
     else if (index == 5)
       *out << "typedef boost::mpl::vector<" << test_name << ", type_ffv_" << n
            << "> " << test_name << "_ffv_" << n << ";" << endl;
-    else if (index == 6)
-      *out << "typedef boost::mpl::vector<" << test_name << ", type_vv_" << n
-           << "> " << test_name << "_vv_" << n << ";" << endl;
   }
   for (size_t i = 0; i < outs.size(); i++) {
     *outs[i] << endl;
@@ -349,10 +332,6 @@ void write_test(vector<std::ostream*>& outs, const string& test_name,
     else if (index == 5)
       *out << "INSTANTIATE_TYPED_TEST_SUITE_P(" << test_name << "_ffv_" << n
            << ", " << fixture_name << ", " << test_name << "_ffv_" << n << ");"
-           << endl;
-    else if (index == 6)
-      *out << "INSTANTIATE_TYPED_TEST_SUITE_P(" << test_name << "_vv_" << n
-           << ", " << fixture_name << ", " << test_name << "_vv_" << n << ");"
            << endl;
   }
   for (size_t i = 0; i < outs.size(); i++) {
@@ -413,8 +392,6 @@ int create_files(const int& argc, const char* argv[], const int& index,
       out_name << "_generated_ffd_test.cpp";
     else if (index == 5)
       out_name << "_generated_ffv_test.cpp";
-    else if (index == 6)
-      out_name << "_generated_vv_test.cpp";
     std::string tmp(out_name.str());
     outs.push_back(new std::ofstream(tmp.c_str()));
   }
@@ -431,6 +408,7 @@ int create_files(const int& argc, const char* argv[], const int& index,
     delete (outs[n]);
   }
   outs.clear();
+
   return start + BATCHES;
 }
 
@@ -450,7 +428,6 @@ int main(int argc, const char* argv[]) {
   create_files(argc, argv, 3, -1, N_TESTS);  // create fv tests
   create_files(argc, argv, 4, -1, N_TESTS);  // create ffd tests
   create_files(argc, argv, 5, -1, N_TESTS);  // create ffv tests
-  create_files(argc, argv, 6, -1, N_TESTS);  // create varmat tests
 
   return 0;
 }
