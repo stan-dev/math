@@ -14,7 +14,7 @@ namespace math {
 namespace internal {
 
 template <typename Op>
-class ops_partials_edge<double, var_value<Op>, require_matrix_cl_t<Op>> {
+class ops_partials_edge<double, var_value<Op>, require_kernel_expression_lhs_t<Op>> {
  public:
   using partials_t = plain_type_t<Op>;
   partials_t partials_;                       // For univariate use-cases

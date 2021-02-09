@@ -672,6 +672,21 @@ class var_value<
   }
 
   /**
+   * View column of
+   * @param i Column index to slice
+   */
+  inline auto as_column_vector_or_scalar() const {
+    using vari_sub = decltype(vi_->as_column_vector_or_scalar());
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->as_column_vector_or_scalar()));
+  }
+  inline auto as_column_vector_or_scalar() {
+    using vari_sub = decltype(vi_->as_column_vector_or_scalar());
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->as_column_vector_or_scalar()));
+  }
+
+  /**
    * View element of eigen matrices. This creates a new
    * vari_value<double> so unlike the other views this subset will not
    * have the same adjoints as the original matrix and must be propogated
