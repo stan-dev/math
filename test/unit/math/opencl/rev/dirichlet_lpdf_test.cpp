@@ -179,7 +179,6 @@ TEST(ProbDistributionsDirichlet, opencl_matches_cpu_big) {
   stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor_propto,
                                                 theta3, alpha4);
 
-
   stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor, theta4,
                                                 alpha1);
   stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor_propto,

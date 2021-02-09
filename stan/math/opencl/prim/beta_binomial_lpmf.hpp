@@ -105,7 +105,8 @@ return_type_t<T_n_cl, T_size1_cl, T_size2_cl> beta_binomial_lpmf(
 
   double logp = sum(from_matrix_cl(logp_cl));
 
-  operands_and_partials<decltype(alpha_col), decltype(beta_col)> ops_partials(alpha_col, beta_col);
+  operands_and_partials<decltype(alpha_col), decltype(beta_col)> ops_partials(
+      alpha_col, beta_col);
   if (!is_constant<T_size1_cl>::value) {
     ops_partials.edge1_.partials_ = std::move(alpha_deriv_cl);
   }

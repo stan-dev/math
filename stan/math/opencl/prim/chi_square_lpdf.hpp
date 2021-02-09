@@ -90,7 +90,8 @@ return_type_t<T_y_cl, T_dof_cl> chi_square_lpdf(const T_y_cl& y,
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
-  operands_and_partials<decltype(y_col), decltype(nu_col)> ops_partials(y_col, nu_col);
+  operands_and_partials<decltype(y_col), decltype(nu_col)> ops_partials(y_col,
+                                                                        nu_col);
 
   if (!is_constant<T_y_cl>::value) {
     ops_partials.edge1_.partials_ = std::move(y_deriv_cl);
