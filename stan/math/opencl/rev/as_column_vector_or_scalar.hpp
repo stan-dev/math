@@ -10,15 +10,11 @@ namespace stan {
 namespace math {
 
 /**
- * Return a nrows x ncols submatrix starting at (i-1, j-1).
+ * Converts kernel generator expression row or column vector to a column vector.
  *
- * @tparam T type of elements in the matrix
- * @param m Matrix.
- * @param i Starting row.
- * @param j Starting column.
- * @param nrows Number of rows in as_column_vector_or_scalar.
- * @param ncols Number of columns in as_column_vector_or_scalar.
- * @throw std::out_of_range if either index is out of range.
+ * @tparam T kernel generator expression.
+ * @param m Specified input.
+ * @return input converted to a column vector.
  */
 template <typename T,
           require_all_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
