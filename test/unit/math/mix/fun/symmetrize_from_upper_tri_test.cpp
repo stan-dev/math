@@ -1,9 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
 
 void expect_upper_sym_tri(const Eigen::MatrixXd& m) {
-  auto f = [](const auto& x) { 
-		return stan::math::symmetrize_from_upper_tri(x); 
-	};
+  auto f
+      = [](const auto& x) { return stan::math::symmetrize_from_upper_tri(x); };
   Eigen::VectorXd v = stan::test::to_vector(m);
   Eigen::RowVectorXd rv = stan::test::to_row_vector(m);
   stan::test::expect_ad(f, m);
