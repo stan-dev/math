@@ -31,8 +31,9 @@ template <typename EigMat1, typename EigMat2,
 inline auto quad_form(const EigMat1& A, const EigMat2& B) {
   check_square("quad_form", "A", A);
   check_multiplicable("quad_form", "A", A, "B", B);
-  return make_holder([&A](const auto& b) { return b.transpose() * A * b; },
-                     to_ref(B));
+  return make_holder(
+      [](const auto& b, const auto& a) { return b.transpose() * a * b; },
+      to_ref(B), to_ref(A));
 }
 
 /**
