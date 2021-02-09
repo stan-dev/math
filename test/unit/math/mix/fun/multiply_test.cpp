@@ -236,6 +236,46 @@ void instantiate_multiply() {
   auto cv_v_outer_prod = stan::math::eval(multiply(cv_rowvec, v_vec));
   auto cv_cd_outer_prod = stan::math::eval(multiply(cv_rowvec, cd_vec));
   auto cv_cv_outer_prod = stan::math::eval(multiply(cv_rowvec, cv_vec));
+
+  auto d_d_rowvec_mat = stan::math::eval(multiply(d_rowvec, d_mat));
+  auto d_v_rowvec_mat = stan::math::eval(multiply(d_rowvec, v_mat));
+  auto d_cd_rowvec_mat = stan::math::eval(multiply(d_rowvec, cd_mat));
+  auto d_cv_rowvec_mat = stan::math::eval(multiply(d_rowvec, cv_mat));
+
+  auto v_d_rowvec_mat = stan::math::eval(multiply(v_rowvec, d_mat));
+  auto v_v_rowvec_mat = stan::math::eval(multiply(v_rowvec, v_mat));
+  auto v_cd_rowvec_mat = stan::math::eval(multiply(v_rowvec, cd_mat));
+  auto v_cv_rowvec_mat = stan::math::eval(multiply(v_rowvec, cv_mat));
+
+  auto cd_d_rowvec_mat = stan::math::eval(multiply(cd_rowvec, d_mat));
+  auto cd_v_rowvec_mat = stan::math::eval(multiply(cd_rowvec, v_mat));
+  auto cd_cd_rowvec_mat = stan::math::eval(multiply(cd_rowvec, cd_mat));
+  auto cd_cv_rowvec_mat = stan::math::eval(multiply(cd_rowvec, cv_mat));
+
+  auto cv_d_rowvec_mat = stan::math::eval(multiply(cv_rowvec, d_mat));
+  auto cv_v_rowvec_mat = stan::math::eval(multiply(cv_rowvec, v_mat));
+  auto cv_cd_rowvec_mat = stan::math::eval(multiply(cv_rowvec, cd_mat));
+  auto cv_cv_rowvec_mat = stan::math::eval(multiply(cv_rowvec, cv_mat));
+
+  auto d_d_mat_vec = stan::math::eval(multiply(d_mat, d_vec));
+  auto d_v_mat_vec = stan::math::eval(multiply(d_mat, v_vec));
+  auto d_cd_mat_vec = stan::math::eval(multiply(d_mat, cd_vec));
+  auto d_cv_mat_vec = stan::math::eval(multiply(d_mat, cv_vec));
+
+  auto v_d_mat_vec = stan::math::eval(multiply(v_mat, d_vec));
+  auto v_v_mat_vec = stan::math::eval(multiply(v_mat, v_vec));
+  auto v_cd_mat_vec = stan::math::eval(multiply(v_mat, cd_vec));
+  auto v_cv_mat_vec = stan::math::eval(multiply(v_mat, cv_vec));
+
+  auto cd_d_mat_vec = stan::math::eval(multiply(cd_mat, d_vec));
+  auto cd_v_mat_vec = stan::math::eval(multiply(cd_mat, v_vec));
+  auto cd_cd_mat_vec = stan::math::eval(multiply(cd_mat, cd_vec));
+  auto cd_cv_mat_vec = stan::math::eval(multiply(cd_mat, cv_vec));
+
+  auto cv_d_mat_vec = stan::math::eval(multiply(cv_mat, d_vec));
+  auto cv_v_mat_vec = stan::math::eval(multiply(cv_mat, v_vec));
+  auto cv_cd_mat_vec = stan::math::eval(multiply(cv_mat, cd_vec));
+  auto cv_cv_mat_vec = stan::math::eval(multiply(cv_mat, cv_vec));
 }
 
 TEST(mathMix, multiplicationPatterns) {
