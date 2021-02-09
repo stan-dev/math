@@ -94,36 +94,57 @@ TEST(ProbDistributionsMultiNormalCholesky, opencl_matches_cpu_small) {
 
   Eigen::VectorXd y1(N);
   y1 << 0.5, 0.4, 0.1;
-  Eigen::VectorXd y2(N);
+  Eigen::RowVectorXd y2(N);
   y2 << 0.6, 0.2, 0.2;
-  std::vector<Eigen::VectorXd> y{y1, y2};
+  std::vector<Eigen::VectorXd> y3{y1, y2};
+  std::vector<Eigen::RowVectorXd> y4{y2, y1};
   Eigen::VectorXd mu1(N);
   mu1 << 0.5, 0.1, 12.3;
-  Eigen::VectorXd mu2(N);
+  Eigen::RowVectorXd mu2(N);
   mu2 << 2.1, 3.4, 2.3;
-  std::vector<Eigen::VectorXd> mu{mu1, mu2};
+  std::vector<Eigen::VectorXd> mu3{mu1, mu2};
+  std::vector<Eigen::RowVectorXd> mu4{mu2, mu1};
   Eigen::MatrixXd L(N, N);
   L << 1, 0, 0, 2, 3, 0, -4, 5, -6;
-
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      multi_normal_cholesky_lpdf_functor, y, mu, L);
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      multi_normal_cholesky_lpdf_functor_propto, y, mu, L);
-
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      multi_normal_cholesky_lpdf_functor, y1, mu, L);
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      multi_normal_cholesky_lpdf_functor_propto, y1, mu, L);
-
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      multi_normal_cholesky_lpdf_functor, y, mu1, L);
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      multi_normal_cholesky_lpdf_functor_propto, y, mu1, L);
 
   stan::math::test::compare_cpu_opencl_prim_rev(
       multi_normal_cholesky_lpdf_functor, y1, mu1, L);
   stan::math::test::compare_cpu_opencl_prim_rev(
       multi_normal_cholesky_lpdf_functor_propto, y1, mu1, L);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      multi_normal_cholesky_lpdf_functor, y1, mu3, L);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      multi_normal_cholesky_lpdf_functor_propto, y1, mu3, L);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      multi_normal_cholesky_lpdf_functor, y1, mu4, L);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      multi_normal_cholesky_lpdf_functor_propto, y1, mu4, L);
+
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      multi_normal_cholesky_lpdf_functor, y3, mu1, L);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      multi_normal_cholesky_lpdf_functor_propto, y3, mu1, L);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      multi_normal_cholesky_lpdf_functor, y3, mu3, L);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      multi_normal_cholesky_lpdf_functor_propto, y3, mu3, L);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      multi_normal_cholesky_lpdf_functor, y3, mu4, L);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      multi_normal_cholesky_lpdf_functor_propto, y3, mu4, L);
+
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      multi_normal_cholesky_lpdf_functor, y4, mu1, L);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      multi_normal_cholesky_lpdf_functor_propto, y4, mu1, L);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      multi_normal_cholesky_lpdf_functor, y4, mu3, L);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      multi_normal_cholesky_lpdf_functor_propto, y4, mu3, L);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      multi_normal_cholesky_lpdf_functor, y4, mu4, L);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      multi_normal_cholesky_lpdf_functor_propto, y4, mu4, L);
 }
 
 TEST(ProbDistributionsMultiNormalCholesky, opencl_matches_cpu_big) {
@@ -131,37 +152,62 @@ TEST(ProbDistributionsMultiNormalCholesky, opencl_matches_cpu_big) {
   int M = 11;
   Eigen::VectorXd y1;
   Eigen::VectorXd mu1;
-  std::vector<Eigen::VectorXd> y;
-  std::vector<Eigen::VectorXd> mu;
+  std::vector<Eigen::VectorXd> y3;
+  std::vector<Eigen::VectorXd> mu3;
+  std::vector<Eigen::RowVectorXd> y4;
+  std::vector<Eigen::RowVectorXd> mu4;
   Eigen::MatrixXd L
       = Eigen::MatrixXd::Random(N, N).triangularView<Eigen::Lower>();
 
   for (int i = 0; i < M; i++) {
     y1 = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
     mu1 = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
-    y.push_back(y1);
-    mu.push_back(mu1);
+    y3.push_back(y1);
+    mu3.push_back(mu1);
+    y4.push_back(y1);
+    mu4.push_back(mu1);
   }
-
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      multi_normal_cholesky_lpdf_functor, y, mu, L);
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      multi_normal_cholesky_lpdf_functor_propto, y, mu, L);
-
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      multi_normal_cholesky_lpdf_functor, y1, mu, L);
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      multi_normal_cholesky_lpdf_functor_propto, y1, mu, L);
-
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      multi_normal_cholesky_lpdf_functor, y, mu1, L);
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      multi_normal_cholesky_lpdf_functor_propto, y, mu1, L);
+  Eigen::RowVectorXd y2 = y1;
+  Eigen::RowVectorXd mu2 = mu2;
 
   stan::math::test::compare_cpu_opencl_prim_rev(
       multi_normal_cholesky_lpdf_functor, y1, mu1, L);
   stan::math::test::compare_cpu_opencl_prim_rev(
       multi_normal_cholesky_lpdf_functor_propto, y1, mu1, L);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      multi_normal_cholesky_lpdf_functor, y1, mu3, L);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      multi_normal_cholesky_lpdf_functor_propto, y1, mu3, L);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      multi_normal_cholesky_lpdf_functor, y1, mu4, L);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      multi_normal_cholesky_lpdf_functor_propto, y1, mu4, L);
+
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      multi_normal_cholesky_lpdf_functor, y3, mu1, L);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      multi_normal_cholesky_lpdf_functor_propto, y3, mu1, L);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      multi_normal_cholesky_lpdf_functor, y3, mu3, L);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      multi_normal_cholesky_lpdf_functor_propto, y3, mu3, L);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      multi_normal_cholesky_lpdf_functor, y3, mu4, L);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      multi_normal_cholesky_lpdf_functor_propto, y3, mu4, L);
+
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      multi_normal_cholesky_lpdf_functor, y4, mu1, L);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      multi_normal_cholesky_lpdf_functor_propto, y4, mu1, L);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      multi_normal_cholesky_lpdf_functor, y4, mu3, L);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      multi_normal_cholesky_lpdf_functor_propto, y4, mu3, L);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      multi_normal_cholesky_lpdf_functor, y4, mu4, L);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      multi_normal_cholesky_lpdf_functor_propto, y4, mu4, L);
 }
 
 #endif
