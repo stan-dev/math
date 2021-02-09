@@ -21,6 +21,7 @@ namespace math {
  * @param[out] sds fill this unbounded
  * @return false if any of the diagonals of Sigma are 0
  */
+#ifdef USE_STANC3
 template <typename T_Sigma, typename T_CPCs, typename T_sds,
           require_eigen_t<T_Sigma>* = nullptr,
           require_all_eigen_vector_t<T_CPCs, T_sds>* = nullptr,
@@ -51,6 +52,37 @@ bool factor_cov_matrix(const T_Sigma& Sigma, T_CPCs&& CPCs, T_sds&& sds) {
   factor_U(U, CPCs);
   return true;
 }
+#else
+template <typename T>
+bool factor_cov_matrix(
+    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& Sigma,
+    Eigen::Array<T, Eigen::Dynamic, 1>& CPCs,
+    Eigen::Array<T, Eigen::Dynamic, 1>& sds) {
+  size_t K = sds.rows();
+
+  sds = Sigma.diagonal().array();
+  if ((sds <= 0.0).any()) {
+    return false;
+  }
+  sds = sds.sqrt();
+
+  Eigen::DiagonalMatrix<T, Eigen::Dynamic> D(K);
+  D.diagonal() = sds.inverse();
+  sds = sds.log();  // now unbounded
+
+  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> R = D * Sigma * D;
+  // to hopefully prevent pivoting due to floating point error
+  R.diagonal().setOnes();
+  Eigen::LDLT<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> > ldlt;
+  ldlt = R.ldlt();
+  if (!ldlt.isPositive()) {
+    return false;
+  }
+  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> U = ldlt.matrixU();
+  factor_U(U, CPCs);
+  return true;
+}
+#endif
 
 }  // namespace math
 }  // namespace stan
