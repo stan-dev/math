@@ -105,7 +105,7 @@ inline auto multiply(const Mat1& m1, const Mat2& m2) {
  * @throw <code>std::invalid_argument</code> if rv and v are not the same size
  */
 template <typename RowVec, typename ColVec,
-          require_not_t<is_var<return_type_t<RowVec, ColVec>>>* = nullptr,
+          require_not_var_t<return_type_t<RowVec, ColVec>>* = nullptr,
           require_eigen_row_and_col_t<RowVec, ColVec>* = nullptr>
 inline auto multiply(const RowVec& rv, const ColVec& v) {
   check_multiplicable("multiply", "rv", rv, "v", v);
