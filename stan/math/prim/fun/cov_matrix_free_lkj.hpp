@@ -56,7 +56,7 @@ Eigen::Matrix<T, Eigen::Dynamic, 1> cov_matrix_free_lkj(
   using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using size_type = typename index_type<Matrix<T, Dynamic, Dynamic>>::type;
+  using size_type = typename index_type<Matrix<T, Dynamic, Dynamic> >::type;
 
   check_nonzero_size("cov_matrix_free_lkj", "y", y);
   check_square("cov_matrix_free_lkj", "y", y);
