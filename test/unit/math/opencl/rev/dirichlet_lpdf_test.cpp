@@ -80,34 +80,55 @@ TEST(ProbDistributionsDirichlet, opencl_matches_cpu_small) {
 
   Eigen::VectorXd theta1(N);
   theta1 << 0.5, 0.4, 0.1;
-  Eigen::VectorXd theta2(N);
+  Eigen::RowVectorXd theta2(N);
   theta2 << 0.6, 0.2, 0.2;
-  std::vector<Eigen::VectorXd> theta{theta1, theta2};
+  std::vector<Eigen::VectorXd> theta3{theta1, theta2};
+  std::vector<Eigen::RowVectorXd> theta4{theta2, theta1};
   Eigen::VectorXd alpha1(N);
   alpha1 << 0.5, 0.1, 12.3;
-  Eigen::VectorXd alpha2(N);
+  Eigen::RowVectorXd alpha2(N);
   alpha2 << 2.1, 3.4, 2.3;
-  std::vector<Eigen::VectorXd> alpha{alpha1, alpha2};
-
-  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor, theta,
-                                                alpha);
-  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor_propto,
-                                                theta, alpha);
-
-  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor, theta1,
-                                                alpha);
-  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor_propto,
-                                                theta1, alpha);
-
-  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor, theta,
-                                                alpha1);
-  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor_propto,
-                                                theta, alpha1);
+  std::vector<Eigen::VectorXd> alpha3{alpha1, alpha2};
+  std::vector<Eigen::RowVectorXd> alpha4{alpha2, alpha1};
 
   stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor, theta1,
                                                 alpha1);
   stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor_propto,
                                                 theta1, alpha1);
+  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor, theta1,
+                                                alpha3);
+  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor_propto,
+                                                theta1, alpha3);
+  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor, theta1,
+                                                alpha4);
+  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor_propto,
+                                                theta1, alpha4);
+
+  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor, theta3,
+                                                alpha1);
+  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor_propto,
+                                                theta3, alpha1);
+  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor, theta1,
+                                                alpha3);
+  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor_propto,
+                                                theta3, alpha3);
+  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor, theta3,
+                                                alpha4);
+  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor_propto,
+                                                theta3, alpha4);
+
+  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor, theta4,
+                                                alpha1);
+  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor_propto,
+                                                theta4, alpha1);
+  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor, theta4,
+                                                alpha3);
+  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor_propto,
+                                                theta4, alpha3);
+  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor, theta4,
+                                                alpha4);
+  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor_propto,
+                                                theta4, alpha4);
 }
 
 TEST(ProbDistributionsDirichlet, opencl_matches_cpu_big) {
@@ -115,36 +136,62 @@ TEST(ProbDistributionsDirichlet, opencl_matches_cpu_big) {
   int M = 11;
   Eigen::VectorXd theta1;
   Eigen::VectorXd alpha1;
-  std::vector<Eigen::VectorXd> theta;
-  std::vector<Eigen::VectorXd> alpha;
+  std::vector<Eigen::VectorXd> theta3;
+  std::vector<Eigen::VectorXd> alpha3;
+  std::vector<Eigen::RowVectorXd> theta4;
+  std::vector<Eigen::RowVectorXd> alpha4;
 
   for (int i = 0; i < M; i++) {
     theta1 = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
     theta1 /= theta1.sum();
     alpha1 = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
-    theta.push_back(theta1);
-    alpha.push_back(alpha1);
+    theta3.push_back(theta1);
+    alpha3.push_back(alpha1);
+    theta4.push_back(theta1);
+    alpha4.push_back(alpha1);
   }
-
-  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor, theta,
-                                                alpha);
-  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor_propto,
-                                                theta, alpha);
-
-  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor, theta1,
-                                                alpha);
-  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor_propto,
-                                                theta1, alpha);
-
-  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor, theta,
-                                                alpha1);
-  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor_propto,
-                                                theta, alpha1);
+  Eigen::RowVectorXd theta2 = theta1;
+  Eigen::RowVectorXd alpha2 = alpha1;
 
   stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor, theta1,
                                                 alpha1);
   stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor_propto,
                                                 theta1, alpha1);
+  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor, theta1,
+                                                alpha3);
+  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor_propto,
+                                                theta1, alpha3);
+  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor, theta1,
+                                                alpha4);
+  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor_propto,
+                                                theta1, alpha4);
+
+  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor, theta3,
+                                                alpha1);
+  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor_propto,
+                                                theta3, alpha1);
+  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor, theta1,
+                                                alpha3);
+  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor_propto,
+                                                theta3, alpha3);
+  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor, theta3,
+                                                alpha4);
+  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor_propto,
+                                                theta3, alpha4);
+
+
+  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor, theta4,
+                                                alpha1);
+  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor_propto,
+                                                theta4, alpha1);
+  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor, theta4,
+                                                alpha3);
+  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor_propto,
+                                                theta4, alpha3);
+  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor, theta4,
+                                                alpha4);
+  stan::math::test::compare_cpu_opencl_prim_rev(dirichlet_lpdf_functor_propto,
+                                                theta4, alpha4);
 }
 
 #endif

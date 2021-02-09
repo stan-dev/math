@@ -55,9 +55,13 @@ return_type_t<T_y_cl, T_loc_cl, T_prec_cl> beta_proportion_lpdf(
     return 0.0;
   }
 
-  const auto& y_val = value_of(y);
-  const auto& mu_val = value_of(mu);
-  const auto& kappa_val = value_of(kappa);
+  const auto& y_col = as_column_vector_or_scalar(y);
+  const auto& mu_col = as_column_vector_or_scalar(mu);
+  const auto& kappa_col = as_column_vector_or_scalar(kappa);
+
+  const auto& y_val = value_of(y_col);
+  const auto& mu_val = value_of(mu_col);
+  const auto& kappa_val = value_of(kappa_col);
 
   auto check_y_bounded
       = check_cl(function, "Random variable", y_val, "in the interval [0, 1]");
@@ -76,9 +80,9 @@ return_type_t<T_y_cl, T_loc_cl, T_prec_cl> beta_proportion_lpdf(
       elt_multiply(mukappa_expr - 1, log_y_expr)
       + elt_multiply(kappa_val - mukappa_expr - 1, log1m_y_expr)
       + static_select<include_summand<propto, T_prec_cl>::value>(
-            lgamma(kappa_val), 0)
+          lgamma(kappa_val), 0)
       - static_select<include_summand<propto, T_loc_cl, T_prec_cl>::value>(
-            lgamma(mukappa_expr) + lgamma(kappa_val - mukappa_expr), 0));
+          lgamma(mukappa_expr) + lgamma(kappa_val - mukappa_expr), 0));
   auto y_deriv_expr = elt_divide(mukappa_expr - 1, y_val)
                       + elt_divide(kappa_val - mukappa_expr - 1, y_val - 1);
   auto digamma_mukappa_expr = digamma(mukappa_expr);
@@ -106,7 +110,8 @@ return_type_t<T_y_cl, T_loc_cl, T_prec_cl> beta_proportion_lpdf(
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
-  operands_and_partials<T_y_cl, T_loc_cl, T_prec_cl> ops_partials(y, mu, kappa);
+  operands_and_partials<decltype(y_col), decltype(mu_col), decltype(kappa_col)>
+      ops_partials(y_col, mu_col, kappa_col);
   if (!is_constant<T_y_cl>::value) {
     ops_partials.edge1_.partials_ = std::move(y_deriv_cl);
   }

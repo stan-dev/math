@@ -66,6 +66,10 @@ TEST(ProbDistributionsInvChiSquare, opencl_matches_cpu_small) {
                                                 nu);
   stan::math::test::compare_cpu_opencl_prim_rev(
       inv_chi_square_lpdf_functor_propto, y, nu);
+  stan::math::test::compare_cpu_opencl_prim_rev(inv_chi_square_lpdf_functor, y.transpose().eval(),
+                                                nu);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      inv_chi_square_lpdf_functor_propto, y, nu.transpose().eval());
 }
 
 TEST(ProbDistributionsInvChiSquare, opencl_matches_cpu_small_y_zero) {
@@ -120,6 +124,10 @@ TEST(ProbDistributionsInvChiSquare, opencl_matches_cpu_big) {
                                                 nu);
   stan::math::test::compare_cpu_opencl_prim_rev(
       inv_chi_square_lpdf_functor_propto, y, nu);
+  stan::math::test::compare_cpu_opencl_prim_rev(inv_chi_square_lpdf_functor, y.transpose().eval(),
+                                                nu.transpose().eval());
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      inv_chi_square_lpdf_functor_propto, y.transpose().eval(), nu.transpose().eval());
 }
 
 #endif

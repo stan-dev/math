@@ -58,8 +58,11 @@ return_type_t<T_n_cl, T_size1_cl, T_size2_cl> beta_binomial_lpmf(
     return 0.0;
   }
 
-  const auto& alpha_val = value_of(alpha);
-  const auto& beta_val = value_of(beta);
+  const auto& alpha_col = as_column_vector_or_scalar(alpha);
+  const auto& beta_col = as_column_vector_or_scalar(beta);
+
+  const auto& alpha_val = value_of(alpha_col);
+  const auto& beta_val = value_of(beta_col);
 
   auto check_N_nonnegative
       = check_cl(function, "Population size parameter", N, "nonnegative");
@@ -102,7 +105,7 @@ return_type_t<T_n_cl, T_size1_cl, T_size2_cl> beta_binomial_lpmf(
 
   double logp = sum(from_matrix_cl(logp_cl));
 
-  operands_and_partials<T_size1_cl, T_size2_cl> ops_partials(alpha, beta);
+  operands_and_partials<decltype(alpha_col), decltype(beta_col)> ops_partials(alpha_col, beta_col);
   if (!is_constant<T_size1_cl>::value) {
     ops_partials.edge1_.partials_ = std::move(alpha_deriv_cl);
   }

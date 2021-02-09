@@ -47,7 +47,8 @@ return_type_t<T_prob_cl> binomial_logit_lpmf(const T_n_cl& n, const T_N_cl N,
     return 0.0;
   }
 
-  const auto& alpha_val = value_of(alpha);
+  const auto& alpha_col = as_column_vector_or_scalar(alpha);
+  const auto& alpha_val = value_of(alpha_col);
 
   auto check_n_bounded
       = check_cl(function, "Successes variable", n, "in the interval [0, N]");
@@ -81,7 +82,7 @@ return_type_t<T_prob_cl> binomial_logit_lpmf(const T_n_cl& n, const T_N_cl N,
                     calc_if<!is_constant<T_prob_cl>::value>(alpha_deriv));
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
-  operands_and_partials<T_prob_cl> ops_partials(alpha);
+  operands_and_partials<decltype(alpha_col)> ops_partials(alpha_col);
   if (!is_constant<T_prob_cl>::value) {
     ops_partials.edge1_.partials_ = std::move(alpha_deriv_cl);
   }
