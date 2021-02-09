@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/v_vari.hpp>
+#include <stan/math/rev/core/callback_vari.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
 
@@ -48,7 +49,37 @@ class neg_vari final : public op_v_vari {
  * @param a Argument variable.
  * @return Negation of variable.
  */
-inline var operator-(const var& a) { return {new internal::neg_vari(a.vi_)}; }
+inline var operator-(const var& a) {
+  return make_callback_var(-a.val(), [a](const auto vi) {
+    if (unlikely(is_nan(a.val()))) {
+      a.adj() = NOT_A_NUMBER;
+    } else {
+      a.adj() -= vi.adj();
+    }
+  });
+}
+
+/**
+ * Compute additive inverse of input
+ *
+ * @tparam T type of input
+ * @param a input
+ * @return negative of input
+ */
+template <typename T, require_var_matrix_t<T>* = nullptr>
+inline auto operator-(const T& a) {
+  return make_callback_var(-a.val(), [a](const auto vi) {
+    for (Eigen::Index j = 0; j < a.cols(); ++j) {
+      for (Eigen::Index i = 0; i < a.rows(); ++i) {
+        if (unlikely(is_nan(a.val().coeffRef(i, j)))) {
+          a.adj().coeffRef(i, j) = NOT_A_NUMBER;
+        } else {
+          a.adj().coeffRef(i, j) -= vi.adj().coeff(i, j);
+        }
+      }
+    }
+  });
+}
 
 }  // namespace math
 }  // namespace stan
