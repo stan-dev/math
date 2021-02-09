@@ -54,7 +54,16 @@ class tgamma_vari : public op_v_vari {
  * @return The Gamma function applied to the specified argument.
  */
 inline var tgamma(const var& a) {
-  return var(new internal::tgamma_vari(a.vi_));
+  return make_callback_var(tgamma(a.val()), [a](auto& vi) mutable {
+    a.adj() += vi.adj() * vi.val() * digamma(a.val());
+  });
+}
+
+template <typename T, require_var_matrix_t<T>* = nullptr>
+inline auto tgamma(const T& a) {
+  return make_callback_var(tgamma(a.val()), [a](auto& vi) mutable {
+    a.adj().array() += vi.adj().array() * vi.val().array() * digamma(a.val()).array();
+  });
 }
 
 }  // namespace math

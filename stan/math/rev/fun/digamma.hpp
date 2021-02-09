@@ -18,7 +18,20 @@ class digamma_vari : public op_v_vari {
 }  // namespace internal
 
 inline var digamma(const var& a) {
-  return var(new internal::digamma_vari(a.vi_));
+  return make_callback_var(digamma(a.val()), [a](auto& vi) {
+    a.adj() += vi.adj() * trigamma(a.val());
+  });
+}
+
+template <typename T, require_var_matrix_t<T>* = nullptr>
+inline auto digamma(const T& a) {
+  return make_callback_var(a.val().array().unaryExpr([](auto& x) {
+    return digamma(x);
+  }).matrix().eval(), [a](auto& vi) mutable {
+    a.adj().array() += vi.adj().array() * a.val().array().unaryExpr([](auto& x) {
+      return trigamma(x);
+    });
+  });
 }
 
 }  // namespace math

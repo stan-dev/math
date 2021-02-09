@@ -62,7 +62,22 @@ class Phi_vari : public op_v_vari {
  * @param a Variable argument.
  * @return The unit normal cdf evaluated at the specified argument.
  */
-inline var Phi(const var& a) { return var(new internal::Phi_vari(a.vi_)); }
+inline var Phi(const var& a) {
+  return make_callback_var(Phi(a.val()), [a](auto& vi) mutable {
+    a.adj() += vi.adj() * INV_SQRT_TWO_PI
+                  * std::exp(-0.5 * a.val() * a.val());
+
+  });
+}
+
+template <typename T, require_var_matrix_t<T>* = nullptr>
+inline auto Phi(const T& a) {
+  return make_callback_var(Phi(a.val()), [a](auto& vi) mutable {
+    a.adj().array() += vi.adj().array() * INV_SQRT_TWO_PI
+                  * (-0.5 * a.val().array().square()).exp();
+
+  });
+}
 
 }  // namespace math
 }  // namespace stan

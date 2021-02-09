@@ -44,7 +44,7 @@ inline return_type_t<T1, T2> distance(const T1& x1, const T2& x2) {
  * size.
  */
 template <typename T1, typename T2,
-          require_all_eigen_vector_t<T1, T2>* = nullptr>
+          require_all_vector_t<T1, T2>* = nullptr>
 inline return_type_t<T1, T2> distance(const T1& x1, const T2& x2) {
   using std::sqrt;
   check_matching_sizes("distance", "x1", x1, "x2", x2);
