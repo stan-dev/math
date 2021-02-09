@@ -88,8 +88,9 @@ TEST(AgradRev, arena_matrix_transpose_test) {
 
   Eigen::VectorXd c = Eigen::VectorXd::Random(3);
   Eigen::RowVectorXd d = Eigen::RowVectorXd::Random(3);
-  
-  // The VectorXd/RowVectorXd mixup here is on purpose to test a vector can initialize a row vector and visa versa
+
+  // The VectorXd/RowVectorXd mixup here is on purpose to test a vector can
+  // initialize a row vector and visa versa
   arena_matrix<Eigen::VectorXd> a = d;
   arena_matrix<Eigen::RowVectorXd> b = c;
   EXPECT_MATRIX_EQ(a, d.transpose());
@@ -100,6 +101,6 @@ TEST(AgradRev, arena_matrix_transpose_test) {
   a = Eigen::VectorXd::Random(3);
   EXPECT_NO_THROW(b = a);
   EXPECT_MATRIX_EQ(a, b.transpose());
-  
+
   stan::math::recover_memory();
 }
