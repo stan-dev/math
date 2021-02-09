@@ -529,6 +529,20 @@ class vari_view_eigen {
   }
 
   /**
+   * Return an Array expression
+   */
+  inline auto array() const {
+    using inner_type = decltype(derived().val_.array());
+    return vari_view<inner_type>(derived().val_.array(),
+                                 derived().adj_.array());
+  }
+  inline auto array() {
+    using inner_type = decltype(derived().val_.array());
+    return vari_view<inner_type>(derived().val_.array(),
+                                 derived().adj_.array());
+  }
+
+  /**
    * Return the number of rows for this class's `val_` member
    */
   inline Eigen::Index rows() const { return derived().val_.rows(); }
@@ -543,9 +557,10 @@ class vari_view_eigen {
 };
 
 template <typename T>
-class vari_view<T, require_not_plain_type_t<T>> final
-    : public vari_base,
-      public vari_view_eigen<vari_view<T, require_not_plain_type_t<T>>> {
+class vari_view<
+    T, require_all_t<is_eigen<T>, bool_constant<!is_plain_type<T>::value>>>
+    final : public vari_base,
+            public vari_view_eigen<vari_view<T, require_not_plain_type_t<T>>> {
  public:
   using PlainObject = plain_type_t<T>;
   using value_type = std::decay_t<T>;  // The underlying type for this class

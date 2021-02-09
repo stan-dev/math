@@ -119,6 +119,22 @@ TEST_UNARY_FUNCTION(inv_logit)
 TEST_UNARY_FUNCTION(logit)
 TEST_UNARY_FUNCTION(log1m_inv_logit)
 TEST_UNARY_FUNCTION(square)
+TEST_UNARY_FUNCTION(Phi)
+TEST_UNARY_FUNCTION(Phi_approx)
+TEST_UNARY_FUNCTION(inv_Phi)
+
+TEST(KernelGenerator, trigamma_test) {
+  MatrixXd m1(3, 4);
+  m1 << -14.6, -7, -2.2, -1, -0.3, 0, 0.1, 1, 2.2, 7.6, 17.4, 123;
+
+  matrix_cl<double> m1_cl(m1);
+  auto tmp = stan::math::trigamma(m1_cl);
+  matrix_cl<double> res_cl = tmp;
+
+  MatrixXd res = stan::math::from_matrix_cl(res_cl);
+  MatrixXd correct = stan::math::trigamma(m1);
+  EXPECT_NEAR_REL(correct, res);
+}
 
 #define TEST_CLASSIFICATION_FUNCTION(fun)                                  \
   TEST(KernelGenerator, fun##_test) {                                      \
@@ -241,6 +257,10 @@ TEST(KernelGenerator, multiple_operations_with_includes_test) {
     EXPECT_NEAR_REL(correct5, res5);                                        \
   }
 
+TEST_BINARY_FUNCTION(fdim)
+TEST_BINARY_FUNCTION(fmax)
+TEST_BINARY_FUNCTION(fmin)
+TEST_BINARY_FUNCTION(fmod)
 TEST_BINARY_FUNCTION(pow)
 TEST_BINARY_FUNCTION(beta)
 TEST_BINARY_FUNCTION(lbeta)

@@ -16,16 +16,13 @@ namespace math {
  * @param A input `var_value<matrix_cl<double>>`.
  * @return Elementwise `trunc()` of the input argument.
  */
-inline var_value<matrix_cl<double>> trunc(
-    const var_value<matrix_cl<double>>& A) {
-  var_value<matrix_cl<double>> res = trunc(A.val());
-
-  reverse_pass_callback([A, res]() mutable {
-    A.adj() = select(isnan(A.val()), constant(NOT_A_NUMBER, A.rows(), A.cols()),
-                     A.adj());
-  });
-
-  return res;
+template <typename T,
+          require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
+inline var_value<matrix_cl<double>> trunc(const var_value<T>& A) {
+  return make_callback_var(
+      trunc(A.val()), [A](vari_value<matrix_cl<double>>& res) mutable {
+        A.adj() = select(isnan(A.val()), NOT_A_NUMBER, A.adj());
+      });
 }
 
 }  // namespace math

@@ -82,6 +82,18 @@
     EXPECT_FLOAT_EQ(A[i], B[i]);
 
 /**
+ * Tests for elementwise equality of the input std::vectors
+ * of any type with the EXPECT_EQ macro from GTest.
+ *
+ * @param A first input vector of integers to compare
+ * @param B second input vector of integers to compare
+ */
+#define EXPECT_STD_VECTOR_EQ(A, B)   \
+  EXPECT_EQ(A.size(), B.size());     \
+  for (int i = 0; i < A.size(); ++i) \
+    EXPECT_EQ(A[i], B[i]);
+
+/**
  * Tests if any elementwise difference of the input matrices
  * of doubles is greater than DELTA. This uses the
  * EXPECT_NEAR macro from GTest.
@@ -156,12 +168,12 @@
  * Tests if given types are the same type.
  *
  * @param a first type
- * @param b second type
+ * @param b second type (code for this one can contain commas)
  **/
-#define EXPECT_SAME_TYPE(a, b)                                             \
-  EXPECT_TRUE((std::is_same<a, b>::value))                                 \
+#define EXPECT_SAME_TYPE(a, ...)                                           \
+  EXPECT_TRUE((std::is_same<a, __VA_ARGS__>::value))                       \
       << "Type a is" << stan::math::test::type_name<a>() << ". Type b is " \
-      << stan::math::test::type_name<b>();
+      << stan::math::test::type_name<__VA_ARGS__>();
 
 /**
  * Count the number of times a substring is found in

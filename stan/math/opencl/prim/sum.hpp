@@ -28,7 +28,7 @@ value_type_t<T> sum(const T& m) {
   } else {
     res = colwise_sum(rowwise_sum(m));
   }
-  return sum(from_matrix_cl<Eigen::Dynamic, 1>(res));
+  return sum(from_matrix_cl(res));
 }
 
 }  // namespace math

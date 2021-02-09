@@ -173,8 +173,6 @@
 
 #include <stan/math/prim/meta/ad_promotable.hpp>
 #include <stan/math/prim/meta/append_return_type.hpp>
-#include <stan/math/prim/meta/as_array_or_scalar.hpp>
-#include <stan/math/prim/meta/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/meta/base_type.hpp>
 #include <stan/math/prim/meta/child_type.hpp>
 #include <stan/math/prim/meta/compiler_attributes.hpp>
@@ -225,13 +223,11 @@
 #include <stan/math/prim/meta/ref_type.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
 #include <stan/math/prim/meta/return_type.hpp>
-#include <stan/math/prim/meta/scalar_seq_view.hpp>
 #include <stan/math/prim/meta/scalar_type.hpp>
 #include <stan/math/prim/meta/scalar_type_pre.hpp>
 #include <stan/math/prim/meta/seq_view.hpp>
 #include <stan/math/prim/meta/static_select.hpp>
 #include <stan/math/prim/meta/value_type.hpp>
-#include <stan/math/prim/meta/vector_seq_view.hpp>
 #include <stan/math/prim/meta/void_t.hpp>
 #include <stan/math/prim/meta/StdVectorBuilder.hpp>
 #include <stan/math/prim/meta/VectorBuilder.hpp>

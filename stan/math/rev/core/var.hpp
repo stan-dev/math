@@ -1,6 +1,10 @@
 #ifndef STAN_MATH_REV_CORE_VAR_HPP
 #define STAN_MATH_REV_CORE_VAR_HPP
 
+#ifdef STAN_OPENCL
+#include <stan/math/opencl/rev/vari.hpp>
+#include <stan/math/opencl/plain_type.hpp>
+#endif
 #include <stan/math/rev/core/vari.hpp>
 #include <stan/math/rev/core/grad.hpp>
 #include <stan/math/rev/core/chainable_alloc.hpp>
@@ -10,9 +14,6 @@
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
 #include <ostream>
 #include <vector>
-#ifdef STAN_OPENCL
-#include <stan/math/opencl/rev/vari.hpp>
-#endif
 
 namespace stan {
 namespace math {
@@ -310,12 +311,9 @@ class var_value<T, require_floating_point_t<T>> {
  */
 template <typename T>
 class var_value<
-    T, require_t<bool_constant<is_eigen<T>::value || is_matrix_cl<T>::value>>> {
-  static_assert(
-      std::is_floating_point<value_type_t<T>>::value,
-      "The template for must be a floating point or a container holding"
-      " floating point types");
-
+    T, require_t<bool_constant<
+           (is_eigen<T>::value || is_kernel_expression_and_not_scalar<T>::value)
+           && std::is_floating_point<value_type_t<T>>::value>>> {
  public:
   using value_type = T;  // type in vari_value.
   using vari_type = std::conditional_t<is_plain_type<value_type>::value,
@@ -417,9 +415,9 @@ class var_value<
   inline auto& adj() const { return vi_->adj(); }
   inline auto& adj_op() { return vi_->adj(); }
 
-  inline Eigen::Index rows() const { return vi_->val_.rows(); }
-  inline Eigen::Index cols() const { return vi_->val_.cols(); }
-  inline Eigen::Index size() const { return vi_->val_.size(); }
+  inline Eigen::Index rows() const { return vi_->rows(); }
+  inline Eigen::Index cols() const { return vi_->cols(); }
+  inline Eigen::Index size() const { return vi_->size(); }
 
   // POINTER OVERRIDES
 
@@ -900,6 +898,20 @@ class var_value<
     using vari_sub = decltype(vi_->middleCols(start_col, n));
     using var_sub = var_value<value_type_t<vari_sub>>;
     return var_sub(new vari_sub(vi_->middleCols(start_col, n)));
+  }
+
+  /**
+   * Return an Array.
+   */
+  inline auto array() const {
+    using vari_sub = decltype(vi_->array());
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->array()));
+  }
+  inline auto array() {
+    using vari_sub = decltype(vi_->array());
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->array()));
   }
 
   /**
