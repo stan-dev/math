@@ -667,8 +667,7 @@ class var_value<
   }
 
   /**
-   * View column of
-   * @param i Column index to slice
+   * View a `matrix_cl` as a column vector.
    */
   inline auto as_column_vector_or_scalar() const {
     using vari_sub = decltype(vi_->as_column_vector_or_scalar());
