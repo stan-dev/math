@@ -52,14 +52,8 @@ TEST(mathMixMatFun, lb_mat_constrain) {
 
   stan::test::expect_ad(f1, A, lbm);
   stan::test::expect_ad(f1, A, lbd);
-  stan::test::expect_ad_matvar(f1, A, lbm);
-  stan::test::expect_ad_matvar(f1, A, lbd);
   stan::test::expect_ad(f2, A, lbm);
   stan::test::expect_ad(f2, A, lbd);
-  stan::test::expect_ad_matvar(f2, A, lbm);
-  stan::test::expect_ad_matvar(f2, A, lbd);
   stan::test::expect_ad(f3, A, lbm);
   stan::test::expect_ad(f3, A, lbd);
-  stan::test::expect_ad_matvar(f3, A, lbm);
-  stan::test::expect_ad_matvar(f3, A, lbd);
 }
