@@ -21,12 +21,12 @@ void expect_ub_constrain(double x, double ub) {
 }
 }  // namespace ub_constrain_test
 
-TEST(mathMixScalFun, ub_constrain) {
+TEST(mathMixScalFun, ub_constrain1) {
   ub_constrain_test::expect_ub_constrain(-1, 2);
   ub_constrain_test::expect_ub_constrain(2, 4);
 }
 
-TEST(mathMixMatFun, ub_mat_constrain) {
+TEST(mathMixMatFun, ub_mat_constrain1) {
   using stan::scalar_type_t;
   using stan::math::promote_scalar_t;
   using stan::math::ub_constrain;
@@ -55,14 +55,8 @@ TEST(mathMixMatFun, ub_mat_constrain) {
 
   stan::test::expect_ad(f1, A, ubm);
   stan::test::expect_ad(f1, A, ubd1);
-  stan::test::expect_ad_matvar(f1, A, ubm);
-  stan::test::expect_ad_matvar(f1, A, ubd1);
   stan::test::expect_ad(f2, A, ubm);
   stan::test::expect_ad(f2, A, ubd1);
-  stan::test::expect_ad_matvar(f2, A, ubm);
-  stan::test::expect_ad_matvar(f2, A, ubd1);
   stan::test::expect_ad(f3, A, ubm);
   stan::test::expect_ad(f3, A, ubd1);
-  stan::test::expect_ad_matvar(f3, A, ubm);
-  stan::test::expect_ad_matvar(f3, A, ubd1);
 }

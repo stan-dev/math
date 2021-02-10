@@ -1,7 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 #include <limits>
 
-TEST(mathMixMatFun, lb_mat_constrain) {
+TEST(mathMixMatFun, lb_mat_constrain2) {
   using stan::scalar_type_t;
   using stan::math::lb_constrain;
   using stan::math::promote_scalar_t;
