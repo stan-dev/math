@@ -323,6 +323,9 @@ class FunctionGenerator:
     
     def is_ode(self):
         return self.function_name.find("ode") == 0
+    
+    def is_high_order(self):
+        return any("=>" in arg for arg in self.stan_args)
 
     def overloads(self, overloads = None):
         if overloads is None:

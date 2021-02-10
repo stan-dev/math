@@ -109,7 +109,7 @@ def main(functions_or_sigs, results_file, cores):
         for signature in signatures_to_check_chunk:
             fg = FunctionGenerator(signature)
 
-            if fg.is_ode():
+            if fg.is_high_order():
                 test_files_to_compile[signature] = None
                 continue
 
