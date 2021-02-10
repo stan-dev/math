@@ -168,7 +168,7 @@ TEST(ProbDistributionsMultiNormalCholesky, opencl_matches_cpu_big) {
     mu4.push_back(mu1);
   }
   Eigen::RowVectorXd y2 = y1;
-  Eigen::RowVectorXd mu2 = mu2;
+  Eigen::RowVectorXd mu2 = mu1;
 
   stan::math::test::compare_cpu_opencl_prim_rev(
       multi_normal_cholesky_lpdf_functor, y1, mu1, L);
