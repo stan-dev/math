@@ -1,6 +1,5 @@
 #include <test/unit/math/test_ad.hpp>
 
-
 TEST(mathMixMatFun, lub_mat_constrain) {
   auto f1 = [](const auto& x, const auto& lb, const auto& ub) {
     return stan::math::lub_constrain(x, lb, ub);
@@ -71,5 +70,4 @@ TEST(mathMixMatFun, lub_mat_constrain) {
   stan::test::expect_ad(f3, x2, lb, lb);
   stan::test::expect_ad(f3, x2, lb, ubsb);
   stan::test::expect_ad(f3, x2, lbsb, ub);
-
 }
