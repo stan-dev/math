@@ -41,15 +41,14 @@ using boost::mpl::at_c;
 template <class T>
 class AgradDistributionTestFixture : public ::testing::Test {
  public:
-   std::tuple_element_t<0, T> TestClass;
-   typedef std::tuple_element_t<1, T> ArgClass;
-   typedef std::tuple_element_t<0, ArgClass> T0;
-   typedef std::tuple_element_t<1, ArgClass> T1;
-   typedef std::tuple_element_t<2, ArgClass> T2;
-   typedef std::tuple_element_t<3, ArgClass> T3;
-   typedef std::tuple_element_t<4, ArgClass> T4;
-   typedef std::tuple_element_t<5, ArgClass> T5;
-
+  std::tuple_element_t<0, T> TestClass;
+  typedef std::tuple_element_t<1, T> ArgClass;
+  typedef std::tuple_element_t<0, ArgClass> T0;
+  typedef std::tuple_element_t<1, ArgClass> T1;
+  typedef std::tuple_element_t<2, ArgClass> T2;
+  typedef std::tuple_element_t<3, ArgClass> T3;
+  typedef std::tuple_element_t<4, ArgClass> T4;
+  typedef std::tuple_element_t<5, ArgClass> T5;
 
   typedef typename scalar_type<T0>::type Scalar0;
   typedef typename scalar_type<T1>::type Scalar1;

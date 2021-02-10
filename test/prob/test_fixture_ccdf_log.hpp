@@ -77,7 +77,6 @@ class AgradCcdfLogTestFixture : public ::testing::Test {
   typedef std::tuple_element_t<4, ArgClass> T4;
   typedef std::tuple_element_t<5, ArgClass> T5;
 
-
   typedef typename scalar_type<T0>::type Scalar0;
   typedef typename scalar_type<T1>::type Scalar1;
   typedef typename scalar_type<T2>::type Scalar2;

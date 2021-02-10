@@ -269,8 +269,7 @@ void write_types_typedef(vector<std::ostream*>& outs, string base, size_t& N,
         N++;
       } else {
         if (check_all_double(base, args[n]) == false) {
-          *out << "typedef std::tuple<" << base << args[n]
-               << extra_args;
+          *out << "typedef std::tuple<" << base << args[n] << extra_args;
           if (extra_args.size() == 0)
             *out << " ";
           else if (index == 2)
@@ -307,23 +306,23 @@ void write_test(vector<std::ostream*>& outs, const string& test_name,
   for (size_t n = 0; n < N; n++) {
     std::ostream* out = outs[int(n / N_TESTS)];
     if (index == 1)
-      *out << "typedef std::tuple<" << test_name << ", type_v_" << n
-           << "> " << test_name << "_v_" << n << ";" << endl;
+      *out << "typedef std::tuple<" << test_name << ", type_v_" << n << "> "
+           << test_name << "_v_" << n << ";" << endl;
     else if (index == 2)
-      *out << "typedef std::tuple<" << test_name << ", type_fd_" << n
-           << "> " << test_name << "_fd_" << n << ";" << endl;
+      *out << "typedef std::tuple<" << test_name << ", type_fd_" << n << "> "
+           << test_name << "_fd_" << n << ";" << endl;
     else if (index == 3)
-      *out << "typedef std::tuple<" << test_name << ", type_fv_" << n
-           << "> " << test_name << "_fv_" << n << ";" << endl;
+      *out << "typedef std::tuple<" << test_name << ", type_fv_" << n << "> "
+           << test_name << "_fv_" << n << ";" << endl;
     else if (index == 4)
-      *out << "typedef std::tuple<" << test_name << ", type_ffd_" << n
-           << "> " << test_name << "_ffd_" << n << ";" << endl;
+      *out << "typedef std::tuple<" << test_name << ", type_ffd_" << n << "> "
+           << test_name << "_ffd_" << n << ";" << endl;
     else if (index == 5)
-      *out << "typedef std::tuple<" << test_name << ", type_ffv_" << n
-           << "> " << test_name << "_ffv_" << n << ";" << endl;
+      *out << "typedef std::tuple<" << test_name << ", type_ffv_" << n << "> "
+           << test_name << "_ffv_" << n << ";" << endl;
     else if (index == 6)
-      *out << "typedef std::tuple<" << test_name << ", type_vv_" << n
-           << "> " << test_name << "_vv_" << n << ";" << endl;
+      *out << "typedef std::tuple<" << test_name << ", type_vv_" << n << "> "
+           << test_name << "_vv_" << n << ";" << endl;
   }
   for (size_t i = 0; i < outs.size(); i++) {
     *outs[i] << endl;
