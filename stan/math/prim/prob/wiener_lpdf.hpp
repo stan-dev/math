@@ -100,11 +100,11 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
   T_beta_ref beta_ref = beta;
   T_delta_ref delta_ref = delta;
 
-  check_positive(function, "Random variable", y_ref);
-  check_positive_finite(function, "Boundary separation", alpha_ref);
-  check_positive_finite(function, "Nondecision time", tau_ref);
-  check_bounded(function, "A-priori bias", beta_ref, 0, 1);
-  check_finite(function, "Drift rate", delta_ref);
+  check_positive(function, "Random variable", value_of(y_ref));
+  check_positive_finite(function, "Boundary separation", value_of(alpha_ref));
+  check_positive_finite(function, "Nondecision time", value_of(tau_ref));
+  check_bounded(function, "A-priori bias", value_of(beta_ref), 0, 1);
+  check_finite(function, "Drift rate", value_of(delta_ref));
 
   if (size_zero(y, alpha, beta, tau, delta)) {
     return 0;

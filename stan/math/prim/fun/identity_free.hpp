@@ -18,8 +18,8 @@ namespace math {
  * @return value
  */
 template <typename T>
-inline T identity_free(const T& y) {
-  return y;
+inline auto identity_free(T&& y) {
+  return std::forward<T>(y);
 }
 
 }  // namespace math
