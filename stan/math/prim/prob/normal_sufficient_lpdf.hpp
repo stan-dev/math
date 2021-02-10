@@ -75,8 +75,8 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
   auto&& y_val = to_ref(as_value_column_array_or_scalar(y_ref));
   auto&& s_squared_val = to_ref(as_value_column_array_or_scalar(s_squared_ref));
   auto&& n_obs_val_int = to_ref(as_value_column_array_or_scalar(n_obs_ref));
-  auto&& n_obs_val = to_ref(promote_scalar<double>(
-          as_column_value_array_or_scalar(n_obs_ref)));
+  auto&& n_obs_val = to_ref(
+      promote_scalar<double>(as_column_value_array_or_scalar(n_obs_ref)));
   auto&& mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
   auto&& sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
 
