@@ -96,8 +96,8 @@ return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y, const T_low& alpha,
       y_ref, alpha_ref, beta_ref);
 
   if (!is_constant_all<T_low, T_high>::value) {
-    const auto& inv_beta_minus_alpha = to_ref_if<(
-        !is_constant_all<T_high>::value && !is_constant_all<T_low>::value)>(
+    auto inv_beta_minus_alpha = to_ref_if<(!is_constant_all<T_high>::value
+                                           && !is_constant_all<T_low>::value)>(
         inv(beta_val - alpha_val));
     if (!is_constant_all<T_high>::value) {
       if (is_vector<T_y>::value && !is_vector<T_low>::value
