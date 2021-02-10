@@ -6,6 +6,8 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/identity_free.hpp>
 #include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/subtract.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <cmath>
 
 namespace stan {
@@ -15,25 +17,23 @@ namespace math {
  * Return the unconstrained value that produces the specified
  * lower-bound constrained value.
  *
- * If the lower bound is negative infinity, it is ignored and
- * the function reduces to <code>identity_free(y)</code>.
- *
- * @tparam T type of scalar
+ * @tparam T type of bounded object
  * @tparam L type of lower bound
- * @param[in] y input scalar
+ * @param[in] y input object
  * @param[in] lb lower bound
  * @return unconstrained value that produces the input when
  * constrained
  * @throw std::domain_error if y is lower than the lower bound
  */
 template <typename T, typename L>
-inline return_type_t<T, L> lb_free(const T& y, const L& lb) {
-  using std::log;
-  if (lb == NEGATIVE_INFTY) {
-    return identity_free(y);
-  }
-  check_greater_or_equal("lb_free", "Lower bounded variable", y, lb);
-  return log(y - lb);
+inline auto lb_free(T&& y, L&& lb) {
+  auto&& y_ref = to_ref(std::forward<T>(y));
+  auto&& lb_ref = to_ref(std::forward<L>(lb));
+  check_finite("lb_constrain", "lb", value_of(lb_ref));
+  check_greater_or_equal("lb_free", "Lower bounded variable", value_of(y_ref),
+                         value_of(lb_ref));
+  return log(subtract(std::forward<decltype(y_ref)>(y_ref),
+                      std::forward<decltype(lb_ref)>(lb_ref)));
 }
 
 }  // namespace math
