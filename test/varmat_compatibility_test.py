@@ -103,7 +103,7 @@ def main(functions_or_sigs, results_file, cores):
         for start in range(0, len(mylist), chunk_size):
             yield (start, mylist[start:min(start + chunk_size, len(mylist))])
 
-    for start, signatures_to_check_chunk in chunk(signatures_to_check, cores):
+    for start, signatures_to_check_chunk in chunk(signatures_to_check, cores * 10):
         test_files_to_compile = {}
 
         for signature in signatures_to_check_chunk:
