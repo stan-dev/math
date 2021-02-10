@@ -2,9 +2,11 @@
 #define STAN_MATH_PRIM_FUN_LB_CONSTRAIN_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/add.hpp>
 #include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/fun/identity_constrain.hpp>
+#include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <cmath>
 
 namespace stan {
@@ -20,22 +22,17 @@ namespace math {
  *
  * <p>where \f$L\f$ is the constant lower bound.
  *
- * <p>If the lower bound is negative infinity, this function
- * reduces to <code>identity_constrain(x)</code>.
- *
- * @tparam T type of scalar
+ * @tparam T type of Matrix
  * @tparam L type of lower bound
- * @param[in] x Unconstrained scalar input
- * @param[in] lb lower bound on constrained output
- * @return lower bound constrained value corresponding to inputs
+ * @param[in] x Unconstrained Matrix input
+ * @param[in] lb Lower bound
+ * @return Constrained matrix
  */
 template <typename T, typename L>
-inline return_type_t<T, L> lb_constrain(const T& x, const L& lb) {
-  using std::exp;
-  if (lb == NEGATIVE_INFTY) {
-    return identity_constrain(x);
-  }
-  return exp(x) + lb;
+inline auto lb_constrain(const T& x, const L& lb) {
+  auto& lb_ref = to_ref(lb);
+  check_finite("lb_constrain", "lb", value_of(lb_ref));
+  return eval(add(exp(x), lb_ref));
 }
 
 /**
@@ -44,29 +41,24 @@ inline return_type_t<T, L> lb_constrain(const T& x, const L& lb) {
  * reference with the log absolute Jacobian determinant of the
  * transform.
  *
- * If the lower bound is negative infinity, this function
- * reduces to <code>identity_constraint(x, lp)</code>.
- *
- * @tparam T type of scalar
+ * @tparam T Type of Matrix
  * @tparam L type of lower bound
  * @tparam S type of log probability
- * @param[in] x unconstrained scalar input
+ * @param[in] x unconstrained Matrix input
  * @param[in] lb lower bound on output
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename L, typename S>
-inline return_type_t<T, L> lb_constrain(const T& x, const L& lb, S& lp) {
-  using std::exp;
-  if (lb == NEGATIVE_INFTY) {
-    return identity_constrain(x, lp);
-  }
-  lp += x;
-  return exp(x) + lb;
+template <typename T, typename L>
+inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
+  auto& x_ref = to_ref(x);
+  auto& lb_ref = to_ref(lb);
+  check_finite("lb_constrain", "lb", value_of(lb_ref));
+  lp += sum(x_ref);
+  return eval(add(exp(x_ref), lb_ref));
 }
 
 }  // namespace math
-
 }  // namespace stan
 
 #endif

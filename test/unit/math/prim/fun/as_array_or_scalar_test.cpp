@@ -66,3 +66,13 @@ TEST(MathMetaPrim, as_array_or_scalar_matrix_rvalue) {
   Eigen::ArrayXXd res = tmp;
   EXPECT_MATRIX_EQ(res, a);
 }
+
+TEST(MathMetaPrim, as_array_twice_compiles) {
+  int n = 100;
+  Eigen::MatrixXd a = Eigen::MatrixXd::Random(n, n);
+  auto&& tmp
+      = stan::math::as_array_or_scalar(stan::math::as_array_or_scalar(a));
+  tmp(0, 0) = 1234;
+  Eigen::ArrayXXd res = tmp;
+  EXPECT_MATRIX_EQ(res, a);
+}

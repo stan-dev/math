@@ -77,10 +77,10 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lcdf(
     if (!is_constant_all<T_y, T_loc, T_scale>::value) {
       const auto& erf_alpha_scaled_diff = erf(alpha_val * scaled_diff);
       const auto& exp_m_scaled_diff_square = exp(-0.5 * diff_square);
-      const auto& rep_deriv = to_ref_if<!is_constant_all<T_y>::value
-                                            + !is_constant_all<T_loc>::value
-                                            + !is_constant_all<T_scale>::value
-                                        >= 2>(
+      auto rep_deriv = to_ref_if<!is_constant_all<T_y>::value
+                                     + !is_constant_all<T_loc>::value
+                                     + !is_constant_all<T_scale>::value
+                                 >= 2>(
           (erf_alpha_scaled_diff + 1) * INV_SQRT_TWO_PI
           * exp_m_scaled_diff_square / (sigma_val * cdf_log_));
       if (!is_constant_all<T_loc>::value) {
