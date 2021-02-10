@@ -1,7 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
 
 TEST(MathMixMatFun, symmetrize_from_upper_tri) {
-  auto f = [](const auto& x) { return stan::math::symmetrize_from_upper_tri(x); };
+  auto f
+      = [](const auto& x) { return stan::math::symmetrize_from_upper_tri(x); };
 
   Eigen::MatrixXd a(0, 0);
   stan::test::expect_ad(f, a);
