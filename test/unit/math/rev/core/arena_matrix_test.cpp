@@ -83,25 +83,24 @@ TEST(AgradRev, arena_matrix_row_vector_test) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRev, arena_matrix_auto_transpose) {
-  using Eigen::RowVectorXd;
-  using Eigen::VectorXd;
+TEST(AgradRev, arena_matrix_transpose_test) {
   using stan::math::arena_matrix;
 
-  VectorXd v1(2);
-  v1 << 1, 2;
-  VectorXd v2(2);
-  v2 << 3, 4;
-  RowVectorXd r1 = v1;
-  RowVectorXd r2 = v2;
+  Eigen::VectorXd c = Eigen::VectorXd::Random(3);
+  Eigen::RowVectorXd d = Eigen::RowVectorXd::Random(3);
 
-  arena_matrix<RowVectorXd> ra(v1);
-  EXPECT_MATRIX_EQ(ra, r1);
-  ra = v2;
-  EXPECT_MATRIX_EQ(ra, r2);
+  // The VectorXd/RowVectorXd mixup here is on purpose to test a vector can
+  // initialize a row vector and visa versa
+  arena_matrix<Eigen::VectorXd> a = d;
+  arena_matrix<Eigen::RowVectorXd> b = c;
+  EXPECT_MATRIX_EQ(a, d.transpose());
+  EXPECT_MATRIX_EQ(b, c.transpose());
 
-  arena_matrix<VectorXd> va(r1);
-  EXPECT_MATRIX_EQ(va, v1);
-  va = r2;
-  EXPECT_MATRIX_EQ(va, v2);
+  EXPECT_NO_THROW(a = b);
+  EXPECT_MATRIX_EQ(a, b.transpose());
+  a = Eigen::VectorXd::Random(3);
+  EXPECT_NO_THROW(b = a);
+  EXPECT_MATRIX_EQ(a, b.transpose());
+
+  stan::math::recover_memory();
 }

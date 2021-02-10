@@ -74,7 +74,7 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
 
   if (!is_constant_all<T_y, T_loc>::value) {
     const auto& sin_diff = sin(y_val - mu_val);
-    const auto& kappa_sin
+    auto kappa_sin
         = to_ref_if<(!is_constant_all<T_y>::value
                      && !is_constant_all<T_loc>::value)>(kappa_val * sin_diff);
     if (!is_constant_all<T_y>::value) {

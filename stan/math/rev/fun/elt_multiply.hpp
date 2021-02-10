@@ -6,6 +6,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/eval.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/multiply.hpp>
 
 namespace stan {
 namespace math {
@@ -60,6 +61,7 @@ auto elt_multiply(const Mat1& m1, const Mat2& m2) {
     return ret_type(ret);
   }
 }
+
 }  // namespace math
 }  // namespace stan
 
