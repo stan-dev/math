@@ -451,7 +451,7 @@ TEST(AgradRevMatrix, mat_cholesky_1st_deriv_large_gradients) {
 
 TEST(AgradRevMatrix, cholesky_replicated_input) {
   using stan::math::var;
-  
+
   auto f = [](int size, const auto& y) {
     auto m = stan::math::diag_matrix(stan::math::rep_vector(y, size));
     auto L = stan::math::cholesky_decompose(m);
