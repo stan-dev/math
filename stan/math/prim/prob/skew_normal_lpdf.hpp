@@ -95,13 +95,13 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lpdf(
   if (!is_constant_all<T_y, T_loc, T_scale, T_shape>::value) {
     const auto& sq = square(alpha_val * y_minus_mu_over_sigma * INV_SQRT_TWO);
     const auto& ex = exp(-sq - log_erfc_alpha_z);
-    const auto& deriv_logerf = to_ref_if<!is_constant_all<T_y, T_loc>::value
-                                             + !is_constant_all<T_scale>::value
-                                             + !is_constant_all<T_shape>::value
-                                         >= 2>(SQRT_TWO_OVER_SQRT_PI * ex);
+    auto deriv_logerf = to_ref_if<!is_constant_all<T_y, T_loc>::value
+                                      + !is_constant_all<T_scale>::value
+                                      + !is_constant_all<T_shape>::value
+                                  >= 2>(SQRT_TWO_OVER_SQRT_PI * ex);
     if (!is_constant_all<T_y, T_loc>::value) {
-      const auto& deriv_y_loc = to_ref_if<(!is_constant_all<T_y>::value
-                                           && !is_constant_all<T_loc>::value)>(
+      auto deriv_y_loc = to_ref_if<(!is_constant_all<T_y>::value
+                                    && !is_constant_all<T_loc>::value)>(
           (y_minus_mu_over_sigma - deriv_logerf * alpha_val) * inv_sigma);
       if (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_ = -deriv_y_loc;

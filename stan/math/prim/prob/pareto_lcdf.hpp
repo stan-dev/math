@@ -83,8 +83,8 @@ return_type_t<T_y, T_scale, T_shape> pareto_lcdf(const T_y& y,
         exp_prod / (1 - exp_prod));
     if (!is_constant_all<T_y, T_scale>::value) {
       const auto& y_min_inv = inv(y_min_val);
-      const auto& common_deriv2 = to_ref_if<(
-          !is_constant_all<T_y>::value && !is_constant_all<T_scale>::value)>(
+      auto common_deriv2 = to_ref_if<(!is_constant_all<T_y>::value
+                                      && !is_constant_all<T_scale>::value)>(
           -alpha_val * y_min_inv * common_deriv);
       if (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_ = -common_deriv2 * exp(log_quot);
