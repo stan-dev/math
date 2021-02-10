@@ -62,7 +62,8 @@ inline var tgamma(const var& a) {
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto tgamma(const T& a) {
   return make_callback_var(tgamma(a.val()), [a](auto& vi) mutable {
-    a.adj().array() += vi.adj().array() * vi.val().array() * digamma(a.val()).array();
+    a.adj().array()
+        += vi.adj().array() * vi.val().array() * digamma(a.val()).array();
   });
 }
 

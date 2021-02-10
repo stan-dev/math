@@ -52,9 +52,7 @@ namespace math {
  */
 inline var Phi(const var& a) {
   return make_callback_var(Phi(a.val()), [a](auto& vi) mutable {
-    a.adj() += vi.adj() * INV_SQRT_TWO_PI
-                  * std::exp(-0.5 * a.val() * a.val());
-
+    a.adj() += vi.adj() * INV_SQRT_TWO_PI * std::exp(-0.5 * a.val() * a.val());
   });
 }
 
@@ -62,8 +60,7 @@ template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto Phi(const T& a) {
   return make_callback_var(Phi(a.val()), [a](auto& vi) mutable {
     a.adj().array() += vi.adj().array() * INV_SQRT_TWO_PI
-                  * (-0.5 * a.val().array().square()).exp();
-
+                       * (-0.5 * a.val().array().square()).exp();
   });
 }
 

@@ -47,9 +47,8 @@ inline var Phi_approx(const var& a) {
   double av_squared = a.val() * a.val();
   double f = inv_logit(0.07056 * a.val() * av_squared + 1.5976 * a.val());
   double da = f * (1 - f) * (3.0 * 0.07056 * av_squared + 1.5976);
-  return make_callback_var(f, [a, da](auto& vi) mutable {
-    a.adj() += vi.adj() * da;
-  });
+  return make_callback_var(
+      f, [a, da](auto& vi) mutable { a.adj() += vi.adj() * da; });
 }
 
 template <typename T, require_var_matrix_t<T>* = nullptr>
@@ -60,8 +59,10 @@ inline auto Phi_approx(const T& a) {
     for (Eigen::Index i = 0; i < a.rows(); ++i) {
       const auto a_val = a.val().coeff(i, j);
       const auto av_squared = a_val * a_val;
-      f.coeffRef(i, j) = inv_logit(0.07056 * a_val * av_squared + 1.5976 * a.val().coeff(i, j));
-      da.coeffRef(i, j) = f.coeff(i,j) * (1 - f.coeff(i,j)) * (3.0 * 0.07056 * av_squared + 1.5976);
+      f.coeffRef(i, j) = inv_logit(0.07056 * a_val * av_squared
+                                   + 1.5976 * a.val().coeff(i, j));
+      da.coeffRef(i, j) = f.coeff(i, j) * (1 - f.coeff(i, j))
+                          * (3.0 * 0.07056 * av_squared + 1.5976);
     }
   }
   return make_callback_var(f, [a, da](auto& vi) mutable {

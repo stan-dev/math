@@ -29,7 +29,6 @@ TEST(MathMixMatFun, tail) {
   }
 }
 
-
 TEST(MathMixMatFun, tailEig) {
   Eigen::VectorXd a(0);
   expect_tail(a, 0);

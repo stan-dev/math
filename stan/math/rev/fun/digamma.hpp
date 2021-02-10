@@ -25,13 +25,17 @@ inline var digamma(const var& a) {
 
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto digamma(const T& a) {
-  return make_callback_var(a.val().array().unaryExpr([](auto& x) {
-    return digamma(x);
-  }).matrix().eval(), [a](auto& vi) mutable {
-    a.adj().array() += vi.adj().array() * a.val().array().unaryExpr([](auto& x) {
-      return trigamma(x);
-    });
-  });
+  return make_callback_var(
+      a.val()
+          .array()
+          .unaryExpr([](auto& x) { return digamma(x); })
+          .matrix()
+          .eval(),
+      [a](auto& vi) mutable {
+        a.adj().array()
+            += vi.adj().array()
+               * a.val().array().unaryExpr([](auto& x) { return trigamma(x); });
+      });
 }
 
 }  // namespace math

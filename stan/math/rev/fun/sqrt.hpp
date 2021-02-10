@@ -53,13 +53,14 @@ inline var sqrt(const var& a) {
   return make_callback_var(std::sqrt(a.val()), [a](auto& vi) mutable {
     a.adj() += vi.adj() / (2.0 * vi.val());
   });
- }
+}
 
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto sqrt(const T& a) {
-  return make_callback_var(a.val().array().sqrt().matrix(), [a](auto& vi) mutable {
-    a.adj().array() += vi.adj().array() / (2.0 * vi.val_op().array());
-  });
+  return make_callback_var(
+      a.val().array().sqrt().matrix(), [a](auto& vi) mutable {
+        a.adj().array() += vi.adj().array() / (2.0 * vi.val_op().array());
+      });
 }
 
 /**
