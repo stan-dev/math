@@ -63,7 +63,7 @@ return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
   ref_type_t<decltype(value_of(N_arr))> N_val = value_of(N_arr);
   ref_type_t<decltype(value_of(alpha_arr))> alpha_val = value_of(alpha_arr);
 
-  check_bounded(function, "Successes variable", n_val, 0, N_val);
+  check_bounded(function, "Successes variable", value_of(n_val), 0, N_val);
   check_nonnegative(function, "Population size parameter", N_val);
   check_finite(function, "Probability parameter", alpha_val);
 
