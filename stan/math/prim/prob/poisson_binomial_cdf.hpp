@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_PROB_POISSON_BINOMIAL_LCDF_HPP
-#define STAN_MATH_PRIM_PROB_POISSON_BINOMIAL_LCDF_HPP
+#ifndef STAN_MATH_PRIM_PROB_POISSON_BINOMIAL_CDF_HPP
+#define STAN_MATH_PRIM_PROB_POISSON_BINOMIAL_CDF_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
@@ -20,7 +20,7 @@ namespace stan {
 namespace math {
 
 /** \ingroup prob_dists
- * Returns the log CDF for the Poisson-binomial distribution evaluated at the
+ * Returns the CDF for the Poisson-binomial distribution evaluated at the
  * specified number of successes and probabilities of successes.
  *
  * @tparam T_y type of number of successes parameter
@@ -33,9 +33,9 @@ namespace math {
  * @throw std::invalid_argument If y and theta are different lengths
  */
 template <bool propto, typename T_y, typename T_theta>
-return_type_t<T_theta> poisson_binomial_lcdf(const T_y& y,
-                                             const T_theta& theta) {
-  static const char* function = "poisson_binomial_lcdf";
+return_type_t<T_theta> poisson_binomial_cdf(const T_y& y,
+                                            const T_theta& theta) {
+  static const char* function = "poisson_binomial_cdf";
 
   size_t size_theta = size_mvt(theta);
   if (size_theta > 1) {
@@ -50,9 +50,8 @@ return_type_t<T_theta> poisson_binomial_lcdf(const T_y& y,
   for (size_t i = 0; i < max_sz; ++i) {
     check_bounded(function, "Successes variable", y_vec[i], 0,
                   theta_vec[i].size());
-    check_finite(function, "Probability parameters", theta_vec.val(i));
-    check_bounded(function, "Probability parameters", theta_vec.val(i), 0.0,
-                  1.0);
+    check_finite(function, "Probability parameters", theta_vec[i]);
+    check_bounded(function, "Probability parameters", theta_vec[i], 0.0, 1.0);
   }
 
   return_type_t<T_theta> lcdf = 0.0;
@@ -60,13 +59,13 @@ return_type_t<T_theta> poisson_binomial_lcdf(const T_y& y,
     auto x = log_sum_exp(poisson_binomial_log_probs(y_vec[i], theta_vec[i]));
     lcdf += x;
   }
-  return lcdf;
+  return exp(lcdf);
 }
 
 template <typename T_y, typename T_theta>
-return_type_t<T_theta> poisson_binomial_lcdf(const T_y& y,
-                                             const T_theta& theta) {
-  return poisson_binomial_lcdf<false>(y, theta);
+return_type_t<T_theta> poisson_binomial_cdf(const T_y& y,
+                                            const T_theta& theta) {
+  return poisson_binomial_cdf<false>(y, theta);
 }
 
 }  // namespace math
