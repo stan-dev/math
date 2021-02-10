@@ -46,7 +46,7 @@ inline auto rep_matrix(const T& x, int m, int n) {
  * Impl of rep_matrix returning an Eigen matrix from an Eigen vector.
  * @tparam Ret An Eigen type.
  * @tparam Vec An Eigen vector with Arithmetic scalar type.
- * @param x An Eigen vector. For Row vectors the values are replacated rowwise
+ * @param x An Eigen vector. For Row vectors the values are replacated rowwise.
  * and for column vectors the values are repliacated colwise.
  * @param n Number of rows or columns.
  */
