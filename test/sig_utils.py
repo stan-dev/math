@@ -38,10 +38,9 @@ def parse_array(stan_arg):
     :return: number of nested arrays, inner type
     """
     if stan_arg.startswith("array["):
-        print(stan_arg)
         commas, inner_type = stan_arg.lstrip("array[").split("]")
-        return len(commas)+1, inner_type
-    return 0, stan_arg
+        return len(commas)+1, inner_type.strip()
+    return 0, stan_arg.strip()
 
 def get_cpp_type(stan_type):
     """
@@ -365,12 +364,10 @@ class FunctionGenerator:
                 n,
                 (arg_overload, cpp_arg_template, stan_arg),
         ) in enumerate(zip(arg_overloads, cpp_arg_templates, self.stan_args)):
-            if stan_arg.endswith("]"):
-                stan_arg2, vec = stan_arg.split("[")
-                benchmark_name += (
-                        "_" + arg_overload + "_" + stan_arg2 + str(len(vec))
-                )
-                is_argument_array_scalars = stan_arg2 in scalar_stan_types
+            n_vec, inner_type = parse_array(stan_arg)
+            if n_vec:
+                benchmark_name += "_" + arg_overload + "_" + inner_type + str(n_vec)
+                is_argument_array_scalars = inner_type in scalar_stan_types
             else:
                 benchmark_name += "_" + arg_overload + "_" + stan_arg
                 is_argument_array_scalars = False
