@@ -101,7 +101,8 @@ inline return_type_t<T_n_cl, T_shape_cl, T_inv_scale_cl> neg_binomial_lpmf(
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
-  operands_and_partials<decltype(alpha_col), decltype(beta_col)> ops_partials(alpha_col, beta_col);
+  operands_and_partials<decltype(alpha_col), decltype(beta_col)> ops_partials(
+      alpha_col, beta_col);
 
   if (!is_constant<T_shape_cl>::value) {
     ops_partials.edge1_.partials_ = std::move(alpha_deriv_cl);

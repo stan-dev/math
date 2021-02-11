@@ -104,8 +104,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> cauchy_lpdf(
   if (include_summand<propto>::value) {
     logp -= N * LOG_PI;
   }
-  operands_and_partials<decltype(y_col), decltype(mu_col),
-                        decltype(sigma_col)>
+  operands_and_partials<decltype(y_col), decltype(mu_col), decltype(sigma_col)>
       ops_partials(y_col, mu_col, sigma_col);
 
   if (!is_constant<T_y_cl>::value) {

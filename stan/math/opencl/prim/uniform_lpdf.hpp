@@ -110,8 +110,9 @@ inline return_type_t<T_y_cl, T_low_cl, T_high_cl> uniform_lpdf(
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
-  operands_and_partials<decltype(y_col), decltype(alpha_col), decltype(beta_col)> ops_partials(
-      y_col, alpha_col, beta_col);
+  operands_and_partials<decltype(y_col), decltype(alpha_col),
+                        decltype(beta_col)>
+      ops_partials(y_col, alpha_col, beta_col);
 
   if (!is_constant<T_low_cl>::value) {
     ops_partials.edge2_.partials_ = std::move(alpha_deriv_cl);
