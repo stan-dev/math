@@ -31,6 +31,8 @@ arg_types = {
 
 scalar_stan_types = ("int", "real", "rng", "ostream_ptr")
 
+eigen_types = set(("matrix", "vector", "row_vector"))
+
 def parse_array(stan_arg):
     """
     parses stan array type
@@ -39,7 +41,7 @@ def parse_array(stan_arg):
     """
     if stan_arg.startswith("array["):
         commas, inner_type = stan_arg.lstrip("array[").split("]")
-        return len(commas)+1, inner_type.strip()
+        return len(commas) + 1, inner_type.strip()
     return 0, stan_arg.strip()
 
 def get_cpp_type(stan_type):
@@ -322,10 +324,19 @@ class FunctionGenerator:
         self.return_type, self.function_name, self.stan_args = parse_signature(signature)
     
     def is_ode(self):
-        return self.function_name.find("ode") == 0
+        return self.function_name.startswith("ode")
     
     def is_high_order(self):
         return any("=>" in arg for arg in self.stan_args)
+
+    def is_rng(self):
+        return self.function_name.endswith("_rng")
+
+    def has_vector_arg(self):
+        return any(arg in eigen_types for arg in self.stan_args)
+
+    def returns_int(self):
+        return "int" in self.return_type
 
     def overloads(self, overloads = None):
         if overloads is None:
@@ -344,37 +355,28 @@ class FunctionGenerator:
                 overload_opts.append(overloads)
         
         return itertools.product(*overload_opts)
-    
+
     def cpp(self, arg_overloads, max_size):
-        self.arg_overloads = arg_overloads
-        self.max_size = max_size
         uses_varmat = False
 
         benchmark_name = self.function_name
         setup = ""
         arg_types = []
-            
-        cpp_arg_templates = []
 
-        for n, stan_arg in enumerate(self.stan_args):
-            cpp_arg_templates.append(get_cpp_type(stan_arg))
-                        
         code = "    auto res = stan::math::eval(stan::math::{}(".format(
             self.function_name
         )
 
-        for (
-                n,
-                (arg_overload, cpp_arg_template, stan_arg),
-        ) in enumerate(zip(arg_overloads, cpp_arg_templates, self.stan_args)):
-            n_vec, inner_type = parse_array(stan_arg)
-            if n_vec:
-                benchmark_name += "_" + arg_overload + "_" + inner_type + str(n_vec)
+        for n, (arg_overload, stan_arg) in enumerate(zip(arg_overloads, self.stan_args)):
+            number_nested_arrays, inner_type = parse_array(stan_arg)
+            if number_nested_arrays > 0:
+                benchmark_name += "_" + arg_overload + "_" + inner_type + str(number_nested_arrays)
                 is_argument_array_scalars = inner_type in scalar_stan_types
             else:
                 benchmark_name += "_" + arg_overload + "_" + stan_arg
                 is_argument_array_scalars = False
             scalar = overload_scalar[arg_overload]
+            cpp_arg_template = get_cpp_type(stan_arg)
             arg_type = cpp_arg_template.replace("SCALAR", scalar)
             if not stan_arg.endswith("return_t"):
                 arg_types.append(arg_type)
@@ -406,13 +408,6 @@ class FunctionGenerator:
                             max_size,
                         )
                     )
-                    if not is_argument_scalar:
-                        if not is_argument_array_scalars and arg_overload == "Rev_SOA":
-                            uses_varmat = True
-                            setup += "    auto {} = stan::math::to_var_value({});\n".format(
-                                var_name + "_varmat", var_name
-                            )
-                            var_name += "_varmat"
                 else:
                     setup += (
                         "    {} {} = stan::test::{}<{}>({}, {});\n".format(
@@ -424,19 +419,16 @@ class FunctionGenerator:
                             max_size,
                         )
                     )
-                    if not is_argument_scalar:
-                        if not is_argument_array_scalars and arg_overload == "Rev_SOA":
-                            uses_varmat = True
-                            setup += (
-                                "    auto {} = stan::math::to_var_value({});\n".format(
-                                    var_name + "_varmat", var_name
-                                )
+                
+                if not is_argument_scalar:
+                    if not is_argument_array_scalars and arg_overload == "Rev_SOA":
+                        uses_varmat = True
+                        setup += (
+                            "    auto {} = stan::math::to_var_value({});\n".format(
+                                var_name + "_varmat", var_name
                             )
-                            var_name += "_varmat"
-                #if (not is_argument_scalar and arg_overload == "Rev_SOA"):
-                #    self._uses_varmat = True
-                #    code += "stan::math::to_var_value({}), ".format(var_name)
-                #else:
+                        )
+                        var_name += "_varmat"
             code += var_name + ", "
 
         code = code[:-2] + "));\n"

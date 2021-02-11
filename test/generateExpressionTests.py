@@ -5,7 +5,6 @@ from sig_utils import *
 src_folder = "./test/expressions/"
 build_folder = "./test/expressions/"
 
-eigen_types = ["matrix", "vector", "row_vector"]
 
 test_code_template = """
 TEST(ExpressionTest{overload}, {function_name}{signature_number}) {{
@@ -113,50 +112,49 @@ def main(functions=(), j=1):
 
     test_n = {}
     tests = []
-    signatures = get_signatures()
-    functions, extra_signatures = handle_function_list(functions)
-    signatures += extra_signatures
+    functions, signatures = handle_function_list(functions)
+
+    signatures = set(signatures)
+
+    if not functions and not signatures:
+        default_checks = True
+        signatures |= get_signatures()
+    else:
+        default_checks = False
+
     remaining_functions = set(functions)
     for signature in signatures:
+        fg = FunctionGenerator(signature)
+
         return_type, function_name, function_args = parse_signature(signature)
-        # skip ignored signatures
-        if (
-            function_name in ignored
-            and not functions
-            and signature not in extra_signatures
-        ):
+
+        # skip ignored signatures if running the default checks
+        if default_checks and fg.function_name in ignored:
             continue
-        # skip default if we have list of function names/signatures to test
-        if (
-            (functions or extra_signatures)
-            and function_name not in functions
-            and signature not in extra_signatures
-        ):
-            continue
+
         # skip signatures without eigen inputs
-        for arg2test in eigen_types:
-            if arg2test in function_args:
-                break
-        else:
+        if not fg.has_vector_arg():
             continue
-        if function_name in remaining_functions:
-            remaining_functions.remove(function_name)
+
         func_test_n = test_n.get(function_name, 0)
         test_n[function_name] = func_test_n + 1
 
-        if function_name.endswith("_rng"):
-            function_args.append("rng")
+        for overload in ("Prim", "Rev", "Fwd"):
+            if fg.is_rng() and overload != "Prim":
+                function_args.append("rng")
+            if function_name in no_fwd_overload and overload == "Fwd":
+                continue
+            if function_name in no_rev_overload and overload == "Rev":
+                continue
+
+            setup, code, uses_varmat = fg.cpp(len(fg.stan_args) * [overload], 2)
+
         for overload, scalar in (
             ("Prim", "double"),
             ("Rev", "stan::math::var"),
             ("Fwd", "stan::math::fvar<double>"),
         ):
-            if function_name.endswith("_rng") and overload != "Prim":
-                continue
-            if function_name in no_fwd_overload and overload == "Fwd":
-                continue
-            if function_name in no_rev_overload and overload == "Rev":
-                continue
+            # Declare inputs
             mat_declarations = ""
             for n, arg in enumerate(function_args):
                 mat_declarations += (
@@ -165,6 +163,7 @@ def main(functions=(), j=1):
                 )
             mat_arg_list = ", ".join("arg_mat%d" % n for n in range(len(function_args)))
 
+            # Convert to expressions
             expression_declarations = ""
             for n, arg in enumerate(function_args):
                 expression_declarations += (
@@ -177,6 +176,8 @@ def main(functions=(), j=1):
                         "  stan::test::counterOp<%s> counter_op%d(&counter%d);\n"
                         % (scalar, n, n)
                     )
+            
+            # Build argument list
             expression_arg_list = ""
             for n, arg in enumerate(function_args[:-1]):
                 if arg in eigen_types:
@@ -217,6 +218,8 @@ def main(functions=(), j=1):
                     )
             else:
                 expression_arg_list += "arg_expr%d" % (len(function_args) - 1)
+
+            # Build checks that happen after function call
             checks = ""
             for n, arg in enumerate(function_args):
                 if arg in eigen_types:
@@ -256,3 +259,6 @@ def main(functions=(), j=1):
     if remaining_functions:
         raise NameError("Functions not found: " + ", ".join(remaining_functions))
     save_tests_in_files(j, tests)
+
+if __name__ == "__main__":
+    main(["dot_product"])
