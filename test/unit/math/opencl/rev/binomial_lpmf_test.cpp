@@ -94,8 +94,8 @@ TEST(ProbDistributionsBinomial, opencl_broadcast_n) {
                                                          n, m, theta);
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       binomial_lpmf_functor_propto, n, m, theta);
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(binomial_lpmf_functor,
-                                                         n, m, theta.transpose().eval());
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
+      binomial_lpmf_functor, n, m, theta.transpose().eval());
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       binomial_lpmf_functor_propto, n, m, theta.transpose().eval());
 }
@@ -112,8 +112,8 @@ TEST(ProbDistributionsBinomial, opencl_broadcast_N) {
                                                          n, m, theta);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       binomial_lpmf_functor_propto, n, m, theta);
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(binomial_lpmf_functor,
-                                                         n, m, theta.transpose().eval());
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
+      binomial_lpmf_functor, n, m, theta.transpose().eval());
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       binomial_lpmf_functor_propto, n, m, theta.transpose().eval());
 }

@@ -131,7 +131,8 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl> exp_mod_normal_lpdf(
     logp -= LOG_TWO * N;
   }
 
-  operands_and_partials<decltype(y_col), decltype(mu_col), decltype(sigma_col), decltype(lambda_col)>
+  operands_and_partials<decltype(y_col), decltype(mu_col), decltype(sigma_col),
+                        decltype(lambda_col)>
       ops_partials(y_col, mu_col, sigma_col, lambda_col);
   if (!is_constant<T_y_cl>::value) {
     ops_partials.edge1_.partials_ = std::move(y_deriv_cl);
