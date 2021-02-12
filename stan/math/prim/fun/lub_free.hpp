@@ -42,14 +42,21 @@ inline auto lub_free(T&& y, L&& lb, U&& ub) {
   auto&& y_ref = to_ref(std::forward<T>(y));
   auto&& lb_ref = to_ref(std::forward<L>(lb));
   auto&& ub_ref = to_ref(std::forward<U>(ub));
-  check_finite("lub_free", "lb", value_of(lb_ref));
-  check_finite("lub_free", "ub", value_of(ub_ref));
+  using y_t = decltype(y_ref);
+  using lb_t = decltype(lb_ref);
+  using ub_t = decltype(ub_ref);
   check_bounded("lub_free", "Bounded variable", value_of(y_ref),
                 value_of(lb_ref), value_of(ub_ref));
-  return eval(
-      logit(divide(subtract(std::forward<decltype(y_ref)>(y_ref), lb_ref),
-                   subtract(std::forward<decltype(ub_ref)>(ub_ref), lb_ref))));
-}
+  if (!is_positive_infinity(ub_ref)) {
+    return eval(lb_constrain(identity_constrain(std::forward<y_t>(y_ref), std::forward<ub_t>(ub_ref)), std::forward<lb_t>(lb_ref)));
+  } else if (!is_negative_infinity(lb_ref)) {
+    return eval(ub_constrain(identity_constrain(std::forward<y_t>(y_ref), std::forward<lb_t>(lb_ref)), std::forward<ub_t>(ub_ref)));
+  } else {
+    return eval(
+        logit(divide(subtract(std::forward<y_t>(y_ref), lb_ref),
+                     subtract(std::forward<ub_t>(ub_ref), lb_ref))));
+   }
+  }
 
 }  // namespace math
 }  // namespace stan

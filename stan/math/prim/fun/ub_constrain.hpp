@@ -4,8 +4,11 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/exp.hpp>
+#include <stan/math/prim/fun/identity_constrain.hpp>
+#include <stan/math/prim/fun/identity_free.hpp>
 #include <stan/math/prim/fun/subtract.hpp>
 #include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/to_var_value_if.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <cmath>
 
@@ -30,10 +33,13 @@ namespace math {
  */
 template <typename T, typename L>
 inline auto ub_constrain(const T& x, const L& ub) {
-  auto& ub_ref = to_ref(ub);
-  check_finite("ub_constrain", "ub", value_of(ub_ref));
-
-  return eval(subtract(ub_ref, exp(x)));
+  auto&& x_ref = to_ref(x);
+  auto&& ub_ref = to_ref(ub);
+  if (is_positive_infinity(ub_ref)) {
+    return identity_constrain(x, ub_ref);
+  } else {
+    return eval(subtract(ub_ref, exp(x_ref)));
+  }
 }
 
 /**
@@ -59,12 +65,14 @@ inline auto ub_constrain(const T& x, const L& ub) {
  */
 template <typename T, typename L>
 inline auto ub_constrain(const T& x, const L& ub, return_type_t<T, L>& lp) {
-  auto& ub_ref = to_ref(ub);
-  auto& x_ref = to_ref(x);
-  check_finite("ub_constrain", "ub", value_of(ub_ref));
-  lp += sum(x_ref);
-
-  return eval(subtract(ub_ref, exp(x_ref)));
+  auto&& x_ref = to_ref(x);
+  auto&& ub_ref = to_ref(ub);
+  if (is_positive_infinity(ub_ref)) {
+    return identity_constrain(x, ub_ref);
+  } else {
+    lp += sum(x_ref);
+    return eval(subtract(ub_ref, exp(x_ref)));
+  }
 }
 
 }  // namespace math

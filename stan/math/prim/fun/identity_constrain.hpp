@@ -8,37 +8,17 @@ namespace math {
 
 /**
  * Returns the result of applying the identity constraint
- * transform to the input.
+ * transform to the input. This promotes the input to the least upper
+ * bound of the input types.
  *
- * <p>This method is effectively a no-op and is mainly useful as a
- * placeholder in auto-generated code.
- *
- * @tparam T Any type.
+ * @tparam T type of value to promote
+ * @tparam Types Other types.
  * @param[in] x object
  * @return transformed input
  */
-template <typename T>
-inline auto identity_constrain(T&& x) {
-  return std::forward<T>(x);
-}
-
-/**
- * Returns the result of applying the identity constraint
- * transform to the input and increments the log probability
- * reference with the log absolute Jacobian determinant.
- *
- * <p>This method is effectively a no-op and mainly useful as a
- * placeholder in auto-generated code.
- *
- * @tparam T Any type
- * @tparam S type of log probability
- * @param[in] x object
- * @param[in] lp log density reference
- * @return transformed input
- */
-template <typename T, typename S>
-inline auto identity_constrain(T&& x, S& lp) {
-  return std::forward<T>(x);
+template <typename T, typename... Types, require_all_not_var_matrix_t<T, Types...>* = nullptr>
+inline auto identity_constrain(T&& x, Types&&... /* args */) {
+  return promote_scalar_t<return_type_t<T, Types...>, T>(x);
 }
 
 }  // namespace math

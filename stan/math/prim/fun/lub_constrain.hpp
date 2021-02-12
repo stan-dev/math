@@ -7,12 +7,15 @@
 #include <stan/math/prim/fun/add.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/elt_multiply.hpp>
+#include <stan/math/prim/fun/identity_constrain.hpp>
 #include <stan/math/prim/fun/inv_logit.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
+#include <stan/math/prim/fun/lb_constrain.hpp>
 #include <stan/math/prim/fun/multiply.hpp>
 #include <stan/math/prim/fun/subtract.hpp>
 #include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/ub_constrain.hpp>
 #include <cmath>
 
 namespace stan {
@@ -27,9 +30,9 @@ namespace math {
  *
  * <p>\f$f(x) = L + (U - L) \mbox{logit}^{-1}(x)\f$
  *
- * @tparam T Type of scalar.
- * @tparam L Type of lower bound.
- * @tparam U Type of upper bound.
+ * @tparam T A scalar or Eigen matrix.
+ * @tparam L A scalar or Eigen matrix.
+ * @tparam U A scalar or Eigen matrix.
  * @param[in] x Free scalar to transform.
  * @param[in] lb Lower bound.
  * @param[in] ub Upper bound.
@@ -37,16 +40,20 @@ namespace math {
  *   the free scalar.
  * @throw std::domain_error if ub <= lb
  */
-template <typename T, typename L, typename U>
+ template <typename T, typename L, typename U>
 inline auto lub_constrain(T&& x, L&& lb, U&& ub) {
-  const auto& x_ref = to_ref(x);
-  const auto& lb_ref = to_ref(lb);
-  const auto& ub_ref = to_ref(ub);
+  auto&& x_ref = to_ref(x);
+  auto&& lb_ref = to_ref(lb);
+  auto&& ub_ref = to_ref(ub);
   check_less("lub_constrain", "lb", value_of(lb_ref), value_of(ub_ref));
-  check_finite("lub_constrain", "lb", value_of(lb_ref));
-  check_finite("lub_constrain", "ub", value_of(ub_ref));
-  return eval(
-      add(elt_multiply(subtract(ub_ref, lb_ref), inv_logit(x_ref)), lb_ref));
+  if (!is_positive_infinity(ub_ref)) {
+    return eval(lb_constrain(identity_constrain(x_ref, ub_ref), lb_ref));
+  } else if (!is_negative_infinity(lb_ref)) {
+    return eval(ub_constrain(identity_constrain(x_ref, lb_ref), ub_ref));
+  } else {
+    return eval(
+        add(elt_multiply(subtract(ub_ref, lb_ref), inv_logit(x_ref)), lb_ref));
+  }
 }
 
 /**
@@ -71,9 +78,9 @@ inline auto lub_constrain(T&& x, L&& lb, U&& ub) {
  * <p>\f$ {} = \log (U - L) + \log (\mbox{logit}^{-1}(x))
  *                          + \log (1 - \mbox{logit}^{-1}(x))\f$
  *
- * @tparam T Type of scalar.
- * @tparam L Type of lower bound.
- * @tparam U Type of upper bound.
+ * @tparam T A scalar or Eigen matrix.
+ * @tparam L A scalar or Eigen matrix.
+ * @tparam U A scalar or Eigen matrix.
  * @param[in] x Free scalar to transform.
  * @param[in] lb Lower bound.
  * @param[in] ub Upper bound.
@@ -87,18 +94,19 @@ inline auto lub_constrain(T&& x, L&& lb, U&& ub, return_type_t<T, L, U>& lp) {
   auto&& x_ref = to_ref(std::forward<T>(x));
   auto&& lb_ref = to_ref(std::forward<L>(lb));
   auto&& ub_ref = to_ref(std::forward<U>(ub));
-
   check_less("lub_constrain", "lb", value_of(lb_ref), value_of(ub_ref));
-  check_finite("lub_constrain", "lb", value_of(lb_ref));
-  check_finite("lub_constrain", "ub", value_of(ub_ref));
+  if (!is_positive_infinity(ub_ref)) {
+    return eval(lb_constrain(identity_constrain(x_ref, ub_ref), lb_ref, lp));
+  } else if (!is_negative_infinity(lb_ref)) {
+    return eval(lb_constrain(identity_constrain(x_ref, ub_ref), lb_ref, lp));
+  } else {
+    auto diff = eval(subtract(std::forward<decltype(ub_ref)>(ub_ref), lb_ref));
+    lp += sum(
+        add(log(diff), subtract(-abs(x_ref), multiply(static_cast<double>(2),
+                                                      log1p_exp(-abs(x_ref))))));
 
-  auto diff = eval(subtract(std::forward<decltype(ub_ref)>(ub_ref), lb_ref));
-
-  lp += sum(
-      add(log(diff), subtract(-abs(x_ref), multiply(static_cast<double>(2),
-                                                    log1p_exp(-abs(x_ref))))));
-
-  return eval(add(elt_multiply(diff, inv_logit(x_ref)), lb_ref));
+    return eval(add(elt_multiply(diff, inv_logit(x_ref)), lb_ref));
+  }
 }
 
 }  // namespace math

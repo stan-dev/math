@@ -60,11 +60,13 @@
 #include <stan/math/prim/err/is_mat_finite.hpp>
 #include <stan/math/prim/err/is_matching_dims.hpp>
 #include <stan/math/prim/err/is_matching_size.hpp>
+#include <stan/math/prim/err/is_negative_infinity.hpp>
 #include <stan/math/prim/err/is_nonzero_size.hpp>
 #include <stan/math/prim/err/is_not_nan.hpp>
 #include <stan/math/prim/err/is_ordered.hpp>
 #include <stan/math/prim/err/is_pos_definite.hpp>
 #include <stan/math/prim/err/is_positive.hpp>
+#include <stan/math/prim/err/is_positive_infinity.hpp>
 #include <stan/math/prim/err/is_scal_finite.hpp>
 #include <stan/math/prim/err/is_size_match.hpp>
 #include <stan/math/prim/err/is_square.hpp>

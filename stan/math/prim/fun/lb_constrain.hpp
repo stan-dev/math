@@ -22,17 +22,21 @@ namespace math {
  *
  * <p>where \f$L\f$ is the constant lower bound.
  *
- * @tparam T type of Matrix
- * @tparam L type of lower bound
- * @param[in] x Unconstrained Matrix input
+ * @tparam T A scalar or matrix.
+ * @tparam L A scalar or matrix.
+ * @param[in] x Unconstrained input
  * @param[in] lb Lower bound
  * @return Constrained matrix
  */
 template <typename T, typename L>
 inline auto lb_constrain(const T& x, const L& lb) {
-  auto& lb_ref = to_ref(lb);
-  check_finite("lb_constrain", "lb", value_of(lb_ref));
-  return eval(add(exp(x), lb_ref));
+  auto&& x_ref = to_ref(x);
+  auto&& lb_ref = to_ref(lb);
+  if (is_negative_infinity(lb_ref)) {
+    return identity_constrain(x_ref, lb_ref);
+  } else {
+    return eval(add(exp(x_ref), lb_ref));
+  }
 }
 
 /**
@@ -41,21 +45,23 @@ inline auto lb_constrain(const T& x, const L& lb) {
  * reference with the log absolute Jacobian determinant of the
  * transform.
  *
- * @tparam T Type of Matrix
- * @tparam L type of lower bound
- * @tparam S type of log probability
- * @param[in] x unconstrained Matrix input
+ * @tparam T A scalar or matrix.
+ * @tparam L A scalar or matrix.
+ * @param[in] x unconstrained input
  * @param[in] lb lower bound on output
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
 template <typename T, typename L>
 inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
-  auto& x_ref = to_ref(x);
-  auto& lb_ref = to_ref(lb);
-  check_finite("lb_constrain", "lb", value_of(lb_ref));
-  lp += sum(x_ref);
-  return eval(add(exp(x_ref), lb_ref));
+  auto&& x_ref = to_ref(x);
+  auto&& lb_ref = to_ref(lb);
+  if (is_negative_infinity(lb_ref)) {
+    return identity_constrain(x_ref, lb_ref);
+  } else {
+    lp += sum(x_ref);
+    return eval(add(exp(x_ref), lb_ref));
+  }
 }
 
 }  // namespace math
