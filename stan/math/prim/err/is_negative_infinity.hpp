@@ -16,7 +16,7 @@ namespace math {
 template <typename T, require_matrix_t<T>* = nullptr>
 inline bool is_negative_infinity(const T& y) {
   return value_of_rec(y).array().unaryExpr([](auto&& x) {
-    return x == INFTY;
+    return x == NEGATIVE_INFTY;
   }).all();
   return value_of_rec(y).array().isFinite().all();
 }
@@ -29,7 +29,7 @@ inline bool is_negative_infinity(const T& y) {
 template <typename T, require_std_vector_t<T>* = nullptr>
 inline bool is_negative_infinity(const T& y) {
   for (Eigen::Index i = 0; i < y.size(); ++i) {
-    if (value_of_rec(y[i]) == INFTY) {
+    if (value_of_rec(y[i]) == NEGATIVE_INFTY) {
       return true;
     }
   }
@@ -43,7 +43,7 @@ inline bool is_negative_infinity(const T& y) {
  */
 template <typename T, require_stan_scalar_t<T>* = nullptr>
 inline bool is_negative_infinity(const T& y) {
-  return value_of_rec(y) == INFTY;
+  return value_of_rec(y) == NEGATIVE_INFTY;
 }
 
 }  // namespace math

@@ -35,6 +35,7 @@ inline auto ub_constrain(const T& x, const L& ub) {
   if (is_positive_infinity(ub)) {
     return identity_constrain(x, ub);
   } else {
+    //check_greater("ub_constrain", "ub", value_of(x), value_of(ub));
     return subtract(ub, exp(x));
   }
 }
@@ -65,6 +66,7 @@ inline auto ub_constrain(const T& x, const L& ub, std::decay_t<return_type_t<T, 
   if (is_positive_infinity(ub)) {
     return identity_constrain(x, ub);
   } else {
+    //check_greater("ub_constrain", "ub", value_of(x), value_of(ub));
     lp += x;
     return subtract(ub, exp(x));
   }

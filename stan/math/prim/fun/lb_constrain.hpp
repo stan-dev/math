@@ -32,9 +32,11 @@ namespace math {
  */
 template <typename T, typename L, require_all_stan_scalar_t<T, L> * = nullptr, require_all_not_st_var<T, L>* = nullptr>
 inline auto lb_constrain(const T& x, const L& lb) {
+
   if (unlikely(is_negative_infinity(lb))) {
     return identity_constrain(x, lb);
   } else {
+    //check_less("lb_constrain", "lb", value_of(x), value_of(lb));
     return add(exp(x), lb);
   }
 }
@@ -57,6 +59,7 @@ inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
   if (is_negative_infinity(lb)) {
     return identity_constrain(x, lb);
   } else {
+    //check_less("lb_constrain", "lb", value_of(x), value_of(lb));
     lp += x;
     return add(exp(x), lb);
   }
@@ -83,7 +86,7 @@ template <typename T, typename L, require_eigen_t<T>* = nullptr,
   require_stan_scalar_t<L>* = nullptr,
   require_all_not_st_var<T, L>* = nullptr>
 inline auto lb_constrain(const T& x, const L& ub, std::decay_t<return_type_t<T, L>>& lp) {
-  return eval(to_ref(x).unaryExpr([ub, &lp](auto&& xx) {
+  return eval(x.unaryExpr([ub, &lp](auto&& xx) {
     return lb_constrain(xx, ub, lp);
   }));
 }
@@ -91,7 +94,7 @@ inline auto lb_constrain(const T& x, const L& ub, std::decay_t<return_type_t<T, 
 template <typename T, typename L, require_all_eigen_t<T, L>* = nullptr,
   require_all_not_st_var<T, L>* = nullptr>
 inline auto lb_constrain(const T& x, const L& ub, std::decay_t<return_type_t<T, L>>& lp) {
-  return eval(to_ref(x).binaryExpr(ub, [&lp](auto&& xx, auto&& ubb) {
+  return eval(x.binaryExpr(ub, [&lp](auto&& xx, auto&& ubb) {
     return lb_constrain(xx, ubb, lp);
   }));
 }
