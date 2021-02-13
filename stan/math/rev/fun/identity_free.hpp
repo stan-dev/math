@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_FUN_IDENTITY_CONSTRAIN_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/identity_free.hpp>
 
 namespace stan {
 namespace math {

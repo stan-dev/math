@@ -3,8 +3,8 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/fun/identity_constrain.hpp>
 #include <stan/math/rev/fun/to_var_value.hpp>
-
 namespace stan {
 namespace math {
 

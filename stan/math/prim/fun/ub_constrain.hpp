@@ -8,7 +8,6 @@
 #include <stan/math/prim/fun/identity_free.hpp>
 #include <stan/math/prim/fun/subtract.hpp>
 #include <stan/math/prim/fun/sum.hpp>
-#include <stan/math/prim/fun/to_var_value_if.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <cmath>
 
@@ -31,14 +30,12 @@ namespace math {
  * @param[in] ub upper bound
  * @return matrix constrained to have upper bound
  */
-template <typename T, typename L>
+ template <typename T, typename L, require_all_stan_scalar_t<T, L>* = nullptr, require_all_not_st_var<T, L>* = nullptr>
 inline auto ub_constrain(const T& x, const L& ub) {
-  auto&& x_ref = to_ref(x);
-  auto&& ub_ref = to_ref(ub);
-  if (is_positive_infinity(ub_ref)) {
-    return identity_constrain(x, ub_ref);
+  if (is_positive_infinity(ub)) {
+    return identity_constrain(x, ub);
   } else {
-    return eval(subtract(ub_ref, exp(x_ref)));
+    return subtract(ub, exp(x));
   }
 }
 
@@ -63,17 +60,95 @@ inline auto ub_constrain(const T& x, const L& ub) {
  * @param[in,out] lp log density
  * @return scalar constrained to have upper bound
  */
-template <typename T, typename L>
-inline auto ub_constrain(const T& x, const L& ub, return_type_t<T, L>& lp) {
-  auto&& x_ref = to_ref(x);
-  auto&& ub_ref = to_ref(ub);
-  if (is_positive_infinity(ub_ref)) {
-    return identity_constrain(x, ub_ref);
+template <typename T, typename L, require_all_stan_scalar_t<T, L>* = nullptr, require_all_not_st_var<T, L>* = nullptr>
+inline auto ub_constrain(const T& x, const L& ub, std::decay_t<return_type_t<T, L>>& lp) {
+  if (is_positive_infinity(ub)) {
+    return identity_constrain(x, ub);
   } else {
-    lp += sum(x_ref);
-    return eval(subtract(ub_ref, exp(x_ref)));
+    lp += x;
+    return subtract(ub, exp(x));
   }
 }
+
+
+template <typename T, typename L, require_eigen_t<T>* = nullptr,
+  require_stan_scalar_t<L>* = nullptr,
+  require_all_not_st_var<T, L>* = nullptr>
+inline auto ub_constrain(const T& x, const L& ub) {
+  return x.unaryExpr([ub](auto&& xx) {
+    return ub_constrain(xx, ub);
+  });
+}
+
+template <typename T, typename L, require_all_eigen_t<T, L>* = nullptr,
+  require_all_not_st_var<T, L>* = nullptr>
+inline auto ub_constrain(const T& x, const L& ub) {
+  return x.binaryExpr(ub, [](auto&& xx, auto&& ubb) {
+    return ub_constrain(xx, ubb);
+  });
+}
+
+template <typename T, typename L, require_eigen_t<T>* = nullptr,
+  require_stan_scalar_t<L>* = nullptr,
+  require_all_not_st_var<T, L>* = nullptr>
+inline auto ub_constrain(const T& x, const L& ub, std::decay_t<return_type_t<T, L>>& lp) {
+  return eval(to_ref(x).unaryExpr([ub, &lp](auto&& xx) {
+    return ub_constrain(xx, ub, lp);
+  }));
+}
+
+template <typename T, typename L, require_all_eigen_t<T, L>* = nullptr,
+  require_all_not_st_var<T, L>* = nullptr>
+inline auto ub_constrain(const T& x, const L& ub, std::decay_t<return_type_t<T, L>>& lp) {
+  return eval(to_ref(x).binaryExpr(ub, [&lp](auto&& xx, auto&& ubb) {
+    return ub_constrain(xx, ubb, lp);
+  }));
+}
+
+// VEC
+
+template <typename T, typename L,
+  require_stan_scalar_t<L>* = nullptr>
+inline auto ub_constrain(const std::vector<T>& x, const L& ub) {
+  std::vector<promote_scalar_t<return_type_t<T, L>, T>> ret;
+  ret.reserve(x.size());
+  for (size_t i = 0; i < x.size(); ++i) {
+    ret[i] = ub_constrain(x[i], ub);
+  }
+  return ret;
+}
+
+template <typename T, typename L, require_container_t<L>* = nullptr>
+inline auto ub_constrain(const std::vector<T>& x, const L& ub) {
+  std::vector<promote_scalar_t<return_type_t<T, L>, T>> ret;
+  ret.reserve(x.size());
+  for (size_t i = 0; i < x.size(); ++i) {
+    ret[i] = ub_constrain(x[i], ub[i]);
+  }
+  return ret;
+}
+
+template <typename T, typename L,
+  require_stan_scalar_t<L>* = nullptr>
+inline auto ub_constrain(const std::vector<T>& x, const L& ub, std::decay_t<return_type_t<T, L>>& lp) {
+  std::vector<promote_scalar_t<return_type_t<T, L>, T>> ret;
+  ret.reserve(x.size());
+  for (size_t i = 0; i < x.size(); ++i) {
+    ret[i] = ub_constrain(x[i], ub, lp);
+  }
+  return ret;
+}
+
+template <typename T, typename L, require_container_t<L>* = nullptr>
+inline auto ub_constrain(const std::vector<T>& x, const L& ub, std::decay_t<return_type_t<T, L>>& lp) {
+  std::vector<promote_scalar_t<return_type_t<T, L>, T>> ret;
+  ret.reserve(x.size());
+  for (size_t i = 0; i < x.size(); ++i) {
+    ret[i] = ub_constrain(x[i], ub[i], lp);
+  }
+  return ret;
+}
+
 
 }  // namespace math
 }  // namespace stan

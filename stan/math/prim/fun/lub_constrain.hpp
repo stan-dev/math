@@ -40,19 +40,16 @@ namespace math {
  *   the free scalar.
  * @throw std::domain_error if ub <= lb
  */
- template <typename T, typename L, typename U>
+template <typename T, typename L, typename U, require_all_stan_scalar_t<T, L, U>* = nullptr, require_not_var_t<return_type_t<T, L, U>>* = nullptr>
 inline auto lub_constrain(T&& x, L&& lb, U&& ub) {
-  auto&& x_ref = to_ref(x);
-  auto&& lb_ref = to_ref(lb);
-  auto&& ub_ref = to_ref(ub);
-  check_less("lub_constrain", "lb", value_of(lb_ref), value_of(ub_ref));
-  if (!is_positive_infinity(ub_ref)) {
-    return eval(lb_constrain(identity_constrain(x_ref, ub_ref), lb_ref));
-  } else if (!is_negative_infinity(lb_ref)) {
-    return eval(ub_constrain(identity_constrain(x_ref, lb_ref), ub_ref));
+  check_less("lub_constrain", "lb", value_of(lb), value_of(ub));
+  if (!is_positive_infinity(ub)) {
+    return eval(lb_constrain(identity_constrain(x, ub), lb));
+  } else if (!is_negative_infinity(lb)) {
+    return eval(ub_constrain(identity_constrain(x, lb), ub));
   } else {
     return eval(
-        add(elt_multiply(subtract(ub_ref, lb_ref), inv_logit(x_ref)), lb_ref));
+        add(elt_multiply(subtract(ub, lb), inv_logit(x)), lb));
   }
 }
 
@@ -89,25 +86,24 @@ inline auto lub_constrain(T&& x, L&& lb, U&& ub) {
  *   the free scalar.
  * @throw std::domain_error if ub <= lb
  */
-template <typename T, typename L, typename U>
+template <typename T, typename L, typename U, require_all_stan_scalar_t<T, L, U>* = nullptr, require_not_var_t<return_type_t<T, L, U>>* = nullptr>
 inline auto lub_constrain(T&& x, L&& lb, U&& ub, return_type_t<T, L, U>& lp) {
-  auto&& x_ref = to_ref(std::forward<T>(x));
-  auto&& lb_ref = to_ref(std::forward<L>(lb));
-  auto&& ub_ref = to_ref(std::forward<U>(ub));
-  check_less("lub_constrain", "lb", value_of(lb_ref), value_of(ub_ref));
-  if (!is_positive_infinity(ub_ref)) {
-    return eval(lb_constrain(identity_constrain(x_ref, ub_ref), lb_ref, lp));
-  } else if (!is_negative_infinity(lb_ref)) {
-    return eval(lb_constrain(identity_constrain(x_ref, ub_ref), lb_ref, lp));
+  check_less("lub_constrain", "lb", value_of(lb), value_of(ub));
+  if (!is_positive_infinity(ub)) {
+    return lb_constrain(identity_constrain(x, ub), lb, lp);
+  } else if (!is_negative_infinity(lb)) {
+    return lb_constrain(identity_constrain(x, ub), lb, lp);
   } else {
-    auto diff = eval(subtract(std::forward<decltype(ub_ref)>(ub_ref), lb_ref));
+    auto diff = subtract(std::forward<decltype(ub)>(ub), lb);
     lp += sum(
-        add(log(diff), subtract(-abs(x_ref), multiply(static_cast<double>(2),
-                                                      log1p_exp(-abs(x_ref))))));
+        add(log(diff), subtract(-abs(x), multiply(static_cast<double>(2),
+                                                      log1p_exp(-abs(x))))));
 
-    return eval(add(elt_multiply(diff, inv_logit(x_ref)), lb_ref));
+    return add(elt_multiply(diff, inv_logit(x)), lb);
   }
 }
+
+
 
 }  // namespace math
 }  // namespace stan

@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/identity_constrain.hpp>
+#include <stan/math/prim/fun/identity_free.hpp>
 #include <stan/math/prim/fun/add.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/sum.hpp>
@@ -28,14 +30,12 @@ namespace math {
  * @param[in] lb Lower bound
  * @return Constrained matrix
  */
-template <typename T, typename L>
+template <typename T, typename L, require_all_stan_scalar_t<T, L> * = nullptr, require_all_not_st_var<T, L>* = nullptr>
 inline auto lb_constrain(const T& x, const L& lb) {
-  auto&& x_ref = to_ref(x);
-  auto&& lb_ref = to_ref(lb);
-  if (is_negative_infinity(lb_ref)) {
-    return identity_constrain(x_ref, lb_ref);
+  if (unlikely(is_negative_infinity(lb))) {
+    return identity_constrain(x, lb);
   } else {
-    return eval(add(exp(x_ref), lb_ref));
+    return add(exp(x), lb);
   }
 }
 
@@ -52,17 +52,94 @@ inline auto lb_constrain(const T& x, const L& lb) {
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename L>
+template <typename T, typename L, require_all_stan_scalar_t<T, L> * = nullptr, require_all_not_st_var<T, L>* = nullptr>
 inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
-  auto&& x_ref = to_ref(x);
-  auto&& lb_ref = to_ref(lb);
-  if (is_negative_infinity(lb_ref)) {
-    return identity_constrain(x_ref, lb_ref);
+  if (is_negative_infinity(lb)) {
+    return identity_constrain(x, lb);
   } else {
-    lp += sum(x_ref);
-    return eval(add(exp(x_ref), lb_ref));
+    lp += x;
+    return add(exp(x), lb);
   }
 }
+
+template <typename T, typename L, require_eigen_t<T>* = nullptr,
+  require_stan_scalar_t<L>* = nullptr,
+  require_all_not_st_var<T, L>* = nullptr>
+inline auto lb_constrain(const T& x, const L& ub) {
+  return x.unaryExpr([ub](auto&& xx) {
+    return lb_constrain(xx, ub);
+  });
+}
+
+template <typename T, typename L, require_all_eigen_t<T, L>* = nullptr,
+  require_all_not_st_var<T, L>* = nullptr>
+inline auto lb_constrain(const T& x, const L& ub) {
+  return x.binaryExpr(ub, [](auto&& xx, auto&& ubb) {
+    return lb_constrain(xx, ubb);
+  });
+}
+
+template <typename T, typename L, require_eigen_t<T>* = nullptr,
+  require_stan_scalar_t<L>* = nullptr,
+  require_all_not_st_var<T, L>* = nullptr>
+inline auto lb_constrain(const T& x, const L& ub, std::decay_t<return_type_t<T, L>>& lp) {
+  return eval(to_ref(x).unaryExpr([ub, &lp](auto&& xx) {
+    return lb_constrain(xx, ub, lp);
+  }));
+}
+
+template <typename T, typename L, require_all_eigen_t<T, L>* = nullptr,
+  require_all_not_st_var<T, L>* = nullptr>
+inline auto lb_constrain(const T& x, const L& ub, std::decay_t<return_type_t<T, L>>& lp) {
+  return eval(to_ref(x).binaryExpr(ub, [&lp](auto&& xx, auto&& ubb) {
+    return lb_constrain(xx, ubb, lp);
+  }));
+}
+
+// VEC
+
+template <typename T, typename L,
+  require_stan_scalar_t<L>* = nullptr>
+inline auto lb_constrain(const std::vector<T>& x, const L& ub) {
+  std::vector<promote_scalar_t<return_type_t<T, L>, T>> ret;
+  ret.reserve(x.size());
+  for (size_t i = 0; i < x.size(); ++i) {
+    ret[i] = lb_constrain(x[i], ub);
+  }
+  return ret;
+}
+
+template <typename T, typename L, require_container_t<L>* = nullptr>
+inline auto lb_constrain(const std::vector<T>& x, const L& ub) {
+  std::vector<promote_scalar_t<return_type_t<T, L>, T>> ret;
+  ret.reserve(x.size());
+  for (size_t i = 0; i < x.size(); ++i) {
+    ret[i] = lb_constrain(x[i], ub[i]);
+  }
+  return ret;
+}
+
+template <typename T, typename L,
+  require_stan_scalar_t<L>* = nullptr>
+inline auto lb_constrain(const std::vector<T>& x, const L& ub, std::decay_t<return_type_t<T, L>>& lp) {
+  std::vector<promote_scalar_t<return_type_t<T, L>, T>> ret;
+  ret.reserve(x.size());
+  for (size_t i = 0; i < x.size(); ++i) {
+    ret[i] = lb_constrain(x[i], ub, lp);
+  }
+  return ret;
+}
+
+template <typename T, typename L, require_container_t<L>* = nullptr>
+inline auto lb_constrain(const std::vector<T>& x, const L& ub, std::decay_t<return_type_t<T, L>>& lp) {
+  std::vector<promote_scalar_t<return_type_t<T, L>, T>> ret;
+  ret.reserve(x.size());
+  for (size_t i = 0; i < x.size(); ++i) {
+    ret[i] = lb_constrain(x[i], ub[i], lp);
+  }
+  return ret;
+}
+
 
 }  // namespace math
 }  // namespace stan
