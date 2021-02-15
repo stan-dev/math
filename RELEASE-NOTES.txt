@@ -131,7 +131,6 @@ OpenCL backend:
   - Added OpenCL reverse mode implementations of matrix multiply and sum.(#2099)
   - vari_base can now be constructed with matrix_cl value and adjoint. Copying between host and device is possible for vars containing Eigen::Matrix/matrix_cl. Adjoints are propagated over these copies.(#1967)
 
-
 ======================================================================
 v3.3.0 (28 July 2020)
 ======================================================================
