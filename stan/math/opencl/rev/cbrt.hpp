@@ -21,7 +21,10 @@ template <typename T,
 inline var_value<matrix_cl<double>> cbrt(const var_value<T>& A) {
   return make_callback_var(
       cbrt(A.val()), [A](vari_value<matrix_cl<double>>& res) mutable {
-        A.adj() += elt_divide(res.adj(), elt_multiply(3.0, square(res.val())));
+        A.adj() = A.adj()
+                  + elt_divide(
+                        res.adj(),
+                        elt_multiply(3.0, elt_multiply(res.val(), res.val())));
       });
 }
 

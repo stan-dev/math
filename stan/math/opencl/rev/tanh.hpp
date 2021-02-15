@@ -21,7 +21,9 @@ template <typename T,
 inline var_value<matrix_cl<double>> tanh(const var_value<T>& A) {
   return make_callback_var(
       tanh(A.val()), [A](vari_value<matrix_cl<double>>& res) mutable {
-        A.adj() += elt_divide(res.adj(), square(cosh(A.val())));
+        auto cosh_A_val = cosh(A.val());
+        A.adj() = A.adj()
+                  + elt_divide(res.adj(), elt_multiply(cosh_A_val, cosh_A_val));
       });
 }
 

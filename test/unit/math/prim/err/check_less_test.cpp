@@ -8,8 +8,10 @@ TEST(ErrorHandlingMat, CheckLess_Matrix) {
   const char* function = "check_less";
   double x;
   double high;
-  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> x_vec(3, 1);
-  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> high_vec(3, 1);
+  Eigen::Matrix<double, Eigen::Dynamic, 1> x_vec;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> high_vec;
+  x_vec.resize(3);
+  high_vec.resize(3);
 
   // x_vec, high
   x_vec << -5, 0, 5;
@@ -132,7 +134,7 @@ TEST(ErrorHandlingMat, CheckLess_Matrix_one_indexed_message) {
   }
 
   EXPECT_EQ(std::string::npos, message.find("["))
-      << "index provided when x has none" << std::endl
+      << "no index provided" << std::endl
       << message;
 }
 

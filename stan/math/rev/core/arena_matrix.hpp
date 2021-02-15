@@ -59,17 +59,9 @@ class arena_matrix : public Eigen::Map<MatrixType> {
    */
   template <typename T, require_eigen_t<T>* = nullptr>
   arena_matrix(const T& other)  // NOLINT
-      : Base::Map(
-            ChainableStack::instance_->memalloc_.alloc_array<Scalar>(
-                other.size()),
-            (RowsAtCompileTime == 1 && T::ColsAtCompileTime == 1)
-                    || (ColsAtCompileTime == 1 && T::RowsAtCompileTime == 1)
-                ? other.cols()
-                : other.rows(),
-            (RowsAtCompileTime == 1 && T::ColsAtCompileTime == 1)
-                    || (ColsAtCompileTime == 1 && T::RowsAtCompileTime == 1)
-                ? other.rows()
-                : other.cols()) {
+      : Base::Map(ChainableStack::instance_->memalloc_.alloc_array<Scalar>(
+                      other.size()),
+                  other.rows(), other.cols()) {
     *this = other;
   }
 
@@ -112,19 +104,10 @@ class arena_matrix : public Eigen::Map<MatrixType> {
    */
   template <typename T>
   arena_matrix& operator=(const T& a) {
-    // do we need to transpose?
-    if ((RowsAtCompileTime == 1 && T::ColsAtCompileTime == 1)
-        || (ColsAtCompileTime == 1 && T::RowsAtCompileTime == 1)) {
-      // placement new changes what data map points to - there is no allocation
-      new (this) Base(
-          ChainableStack::instance_->memalloc_.alloc_array<Scalar>(a.size()),
-          a.cols(), a.rows());
-
-    } else {
-      new (this) Base(
-          ChainableStack::instance_->memalloc_.alloc_array<Scalar>(a.size()),
-          a.rows(), a.cols());
-    }
+    // placement new changes what data map points to - there is no allocation
+    new (this)
+        Base(ChainableStack::instance_->memalloc_.alloc_array<Scalar>(a.size()),
+             a.rows(), a.cols());
     Base::operator=(a);
     return *this;
   }

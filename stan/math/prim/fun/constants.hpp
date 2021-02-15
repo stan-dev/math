@@ -29,22 +29,22 @@ inline double pi() { return boost::math::constants::pi<double>(); }
 /**
  * Smallest positive value.
  */
-constexpr double EPSILON = std::numeric_limits<double>::epsilon();
+const double EPSILON = std::numeric_limits<double>::epsilon();
 
 /**
  * Positive infinity.
  */
-constexpr double INFTY = std::numeric_limits<double>::infinity();
+const double INFTY = std::numeric_limits<double>::infinity();
 
 /**
  * Negative infinity.
  */
-constexpr double NEGATIVE_INFTY = -INFTY;
+const double NEGATIVE_INFTY = -INFTY;
 
 /**
  * (Quiet) not-a-number value.
  */
-constexpr double NOT_A_NUMBER = std::numeric_limits<double>::quiet_NaN();
+const double NOT_A_NUMBER = std::numeric_limits<double>::quiet_NaN();
 
 /**
  * Twice the value of \f$ \pi \f$,
@@ -182,21 +182,21 @@ const double POISSON_MAX_RATE = std::pow(2.0, 30);
  *
  * @return Positive infinity.
  */
-static constexpr inline double positive_infinity() { return INFTY; }
+inline double positive_infinity() { return INFTY; }
 
 /**
  * Return negative infinity.
  *
  * @return Negative infinity.
  */
-static constexpr inline double negative_infinity() { return NEGATIVE_INFTY; }
+inline double negative_infinity() { return NEGATIVE_INFTY; }
 
 /**
  * Return (quiet) not-a-number.
  *
  * @return Quiet not-a-number.
  */
-static constexpr inline double not_a_number() { return NOT_A_NUMBER; }
+inline double not_a_number() { return NOT_A_NUMBER; }
 
 /**
  * Returns the difference between 1.0 and the next value
@@ -204,7 +204,7 @@ static constexpr inline double not_a_number() { return NOT_A_NUMBER; }
  *
  * @return Minimum positive number.
  */
-static constexpr inline double machine_precision() { return EPSILON; }
+inline double machine_precision() { return EPSILON; }
 
 /**
  * Returns the natural logarithm of ten.

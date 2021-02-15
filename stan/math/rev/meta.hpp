@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/meta/arena_type.hpp>
-#include <stan/math/rev/meta/conditional_var_value.hpp>
 #include <stan/math/rev/meta/is_arena_matrix.hpp>
 #include <stan/math/rev/meta/is_var.hpp>
 #include <stan/math/rev/meta/is_rev_matrix.hpp>
