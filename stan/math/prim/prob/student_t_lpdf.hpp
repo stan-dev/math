@@ -128,8 +128,8 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_lpdf(const T_y& y,
 
   if (!is_constant_all<T_y, T_loc>::value) {
     const auto& square_sigma = square(sigma_val);
-    const auto& deriv_y_mu = to_ref_if<(!is_constant_all<T_y>::value
-                                        && !is_constant_all<T_loc>::value)>(
+    auto deriv_y_mu = to_ref_if<(!is_constant_all<T_y>::value
+                                 && !is_constant_all<T_loc>::value)>(
         (nu_val + 1) * (y_val - mu_val)
         / ((1 + square_y_scaled_over_nu) * square_sigma * nu_val));
     if (!is_constant_all<T_y>::value) {

@@ -66,8 +66,8 @@ return_type_t<T_y, T_scale, T_shape> pareto_lccdf(const T_y& y,
     return ops_partials.build(negative_infinity());
   }
 
-  const auto& log_quot = to_ref_if<(!is_constant_all<T_y>::value
-                                    || !is_constant_all<T_shape>::value)>(
+  auto log_quot = to_ref_if<(!is_constant_all<T_y>::value
+                             || !is_constant_all<T_shape>::value)>(
       log(y_min_val / y_val));
 
   T_partials_return P = sum(alpha_val * log_quot);

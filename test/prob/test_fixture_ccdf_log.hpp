@@ -4,6 +4,7 @@
 #include <stan/math/rev.hpp>
 #include <test/prob/utility.hpp>
 #include <type_traits>
+#include <tuple>
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
@@ -67,13 +68,14 @@ class AgradCcdfLogTest {
 template <class T>
 class AgradCcdfLogTestFixture : public ::testing::Test {
  public:
-  typename at_c<T, 0>::type TestClass;
-  typedef typename at_c<typename at_c<T, 1>::type, 0>::type T0;
-  typedef typename at_c<typename at_c<T, 1>::type, 1>::type T1;
-  typedef typename at_c<typename at_c<T, 1>::type, 2>::type T2;
-  typedef typename at_c<typename at_c<T, 1>::type, 3>::type T3;
-  typedef typename at_c<typename at_c<T, 1>::type, 4>::type T4;
-  typedef typename at_c<typename at_c<T, 1>::type, 5>::type T5;
+  std::tuple_element_t<0, T> TestClass;
+  typedef std::tuple_element_t<1, T> ArgClass;
+  typedef std::tuple_element_t<0, ArgClass> T0;
+  typedef std::tuple_element_t<1, ArgClass> T1;
+  typedef std::tuple_element_t<2, ArgClass> T2;
+  typedef std::tuple_element_t<3, ArgClass> T3;
+  typedef std::tuple_element_t<4, ArgClass> T4;
+  typedef std::tuple_element_t<5, ArgClass> T5;
 
   typedef typename scalar_type<T0>::type Scalar0;
   typedef typename scalar_type<T1>::type Scalar1;
