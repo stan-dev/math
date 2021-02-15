@@ -68,11 +68,10 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lccdf(
   T_partials_return P = -sum(alpha_val * log_temp);
 
   if (!is_constant_all<T_y, T_loc, T_scale>::value) {
-    const auto& rep_deriv
-        = to_ref_if<(!is_constant_all<T_y>::value
-                     + !is_constant_all<T_scale>::value
-                     + !is_constant_all<T_loc>::value)
-                    >= 2>(alpha_val / (y_val - mu_val + lambda_val));
+    auto rep_deriv = to_ref_if<(!is_constant_all<T_y>::value
+                                + !is_constant_all<T_scale>::value
+                                + !is_constant_all<T_loc>::value)
+                               >= 2>(alpha_val / (y_val - mu_val + lambda_val));
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_ = -rep_deriv;
     }

@@ -88,3 +88,16 @@ TEST(ProbAgradDistributionsVonMises, FvarVar_2ndDeriv2) {
   // Fails: g[0] is -nan
   // EXPECT_FLOAT_EQ(0, g[0]);
 }
+
+// This test once failed sanitizer checks -- nothing explicitly tested in the
+// code itself
+TEST(ProbAgradDistributionsVonMises, sanitizer_error_fixed) {
+  using stan::math::var;
+  double y = boost::math::constants::third_pi<double>();
+  double mu = boost::math::constants::sixth_pi<double>();
+  std::vector<var> kappa = {0.5};
+
+  auto lp = stan::math::von_mises_lpdf(y, mu, kappa);
+
+  lp.grad();
+}

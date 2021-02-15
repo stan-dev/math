@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
@@ -26,14 +26,8 @@ return_type_t<T_y, T_inv_scale> exponential_lccdf(const T_y& y,
   T_y_ref y_ref = y;
   T_beta_ref beta_ref = beta;
 
-  const auto& y_col = as_column_vector_or_scalar(y_ref);
-  const auto& beta_col = as_column_vector_or_scalar(beta_ref);
-
-  const auto& y_arr = as_array_or_scalar(y_col);
-  const auto& beta_arr = as_array_or_scalar(beta_col);
-
-  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
-  ref_type_t<decltype(value_of(beta_arr))> beta_val = value_of(beta_arr);
+  auto y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  auto beta_val = to_ref(as_value_column_array_or_scalar(beta_ref));
 
   check_nonnegative(function, "Random variable", y_val);
   check_positive_finite(function, "Inverse scale parameter", beta_val);
@@ -55,9 +49,7 @@ return_type_t<T_y, T_inv_scale> exponential_lccdf(const T_y& y,
     } else if (is_vector<T_inv_scale>::value) {
       ops_partials.edge1_.partials_ = -forward_as<beta_val_array>(beta_val);
     } else {
-      forward_as<internal::broadcast_array<T_partials_return>>(
-          ops_partials.edge1_.partials_)
-          = -forward_as<beta_val_scalar>(beta_val);
+      ops_partials.edge1_.partials_[0] = -sum(beta_val);
     }
   }
   if (!is_constant_all<T_inv_scale>::value) {
@@ -69,9 +61,7 @@ return_type_t<T_y, T_inv_scale> exponential_lccdf(const T_y& y,
     } else if (is_vector<T_y>::value) {
       ops_partials.edge2_.partials_ = -forward_as<y_val_array>(y_val);
     } else {
-      forward_as<internal::broadcast_array<T_partials_return>>(
-          ops_partials.edge2_.partials_)
-          = -forward_as<y_val_scalar>(y_val);
+      ops_partials.edge2_.partials_[0] = -sum(y_val);
     }
   }
   return ops_partials.build(ccdf_log);
