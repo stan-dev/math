@@ -100,6 +100,8 @@ TEST(RevFunctor, polynomial) {
   stan::math::internal::finite_diff_hessian_auto(f, x, fx, grad_fx, hess_fx);
   EXPECT_FLOAT_EQ(5 * 5 * 7 + 3 * 7 * 7, fx);
   EXPECT_EQ(2, grad_fx.size());
+  EXPECT_EQ(2, hess_fx.rows());
+  EXPECT_EQ(2, hess_fx.cols());
   EXPECT_FLOAT_EQ(2 * x(0) * x(1), grad_fx(0));
   EXPECT_FLOAT_EQ(x(0) * x(0) + 3 * 2 * x(1), grad_fx(1));
   EXPECT_FLOAT_EQ(2 * x(1), hess_fx(0, 0));
@@ -116,6 +118,8 @@ TEST(RevFunctor, linear_function) {
   Matrix<double, Dynamic, 1> grad_fx;
   Matrix<double, Dynamic, Dynamic> hess_fx;
   stan::math::internal::finite_diff_hessian_auto(f, x, fx, grad_fx, hess_fx);
+  EXPECT_EQ(3, hess_fx.rows());
+  EXPECT_EQ(3, hess_fx.cols());
   EXPECT_FLOAT_EQ(0, hess_fx(0, 0));
   EXPECT_FLOAT_EQ(0, hess_fx(0, 1));
   EXPECT_FLOAT_EQ(0, hess_fx(0, 2));
@@ -135,6 +139,8 @@ TEST(RevFunctor, exp_diag) {
   Matrix<double, Dynamic, 1> grad_fx;
   Matrix<double, Dynamic, Dynamic> hess_fx;
   stan::math::internal::finite_diff_hessian_auto(f, x, fx, grad_fx, hess_fx);
+  EXPECT_EQ(2, hess_fx.rows());
+  EXPECT_EQ(2, hess_fx.cols());
   EXPECT_FLOAT_EQ(4 * exp(2 * 2), hess_fx(0, 0));
   EXPECT_FLOAT_EQ(0, hess_fx(0, 1));
   EXPECT_FLOAT_EQ(0, hess_fx(1, 0));
@@ -149,6 +155,8 @@ TEST(RevFunctor, exp_full) {
   Matrix<double, Dynamic, 1> grad_fx;
   Matrix<double, Dynamic, Dynamic> hess_fx;
   stan::math::internal::finite_diff_hessian_auto(f, x, fx, grad_fx, hess_fx);
+  EXPECT_EQ(2, hess_fx.rows());
+  EXPECT_EQ(2, hess_fx.cols());
   EXPECT_FLOAT_EQ(exp(4), hess_fx(0, 0));
   EXPECT_FLOAT_EQ(-exp(4), hess_fx(0, 1));
   EXPECT_FLOAT_EQ(-exp(4), hess_fx(1, 0));
@@ -163,6 +171,8 @@ TEST(RevFunctor, one_arg) {
   Matrix<double, Dynamic, 1> grad_fx;
   Matrix<double, Dynamic, Dynamic> hess_fx;
   stan::math::internal::finite_diff_hessian_auto(f, x, fx, grad_fx, hess_fx);
+  EXPECT_EQ(1, hess_fx.rows());
+  EXPECT_EQ(1, hess_fx.cols());
   EXPECT_FLOAT_EQ(6 * 8, hess_fx(0, 0));
 }
 
