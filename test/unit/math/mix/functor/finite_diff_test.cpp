@@ -84,13 +84,13 @@ TEST(AgradFiniteDiff, hessian) {
   Matrix<double, Dynamic, Dynamic> fin_diff_auto_H_norm;
 
   stan::math::hessian(f, f_vec, f_eval, grad_f, H_f);
-  stan::math::internal::finite_diff_of_grads_hessian(
-      f, f_vec, f_fin_diff_eval, fin_diff_grad_f, fin_diff_H_f);
+  stan::math::internal::finite_diff_hessian_auto(f, f_vec, f_fin_diff_eval,
+                                                 fin_diff_grad_f, fin_diff_H_f);
 
   EXPECT_FLOAT_EQ(f_eval, f_fin_diff_eval);
 
   stan::math::hessian(norm, norm_vec, norm_eval, grad_norm, H_norm);
-  stan::math::internal::finite_diff_of_grads_hessian(
+  stan::math::internal::finite_diff_hessian_auto(
       norm, norm_vec, norm_fin_diff_eval, fin_diff_grad_norm, fin_diff_H_norm);
 
   EXPECT_FLOAT_EQ(norm_eval, norm_fin_diff_eval);
@@ -242,8 +242,8 @@ TEST(AgradFiniteDiff, hessianZeroOneArg) {
   Matrix<double, Dynamic, Dynamic> f_hess_sum;
 
   stan::math::hessian(sum_f, sum_vec, eval_sum, grad_sum, hess_sum);
-  stan::math::internal::finite_diff_of_grads_hessian(sum_f, sum_vec, f_eval_sum,
-                                                     f_grad_sum, f_hess_sum);
+  stan::math::internal::finite_diff_hessian_auto(sum_f, sum_vec, f_eval_sum,
+                                                 f_grad_sum, f_hess_sum);
 
   EXPECT_NEAR(grad_sum(0), f_grad_sum(0), 1e-12);
   EXPECT_NEAR(hess_sum(0, 0), f_hess_sum(0, 0), 1e-12);
@@ -261,6 +261,6 @@ TEST(AgradFiniteDiff, hessianZeroOneArg) {
   Matrix<double, Dynamic, Dynamic> f_z_hess_sum;
 
   stan::math::hessian(sum_f, z_sum_vec, z_eval_sum, z_grad_sum, z_hess_sum);
-  stan::math::internal::finite_diff_of_grads_hessian(
-      sum_f, z_sum_vec, f_z_eval_sum, f_z_grad_sum, f_z_hess_sum);
+  stan::math::internal::finite_diff_hessian_auto(sum_f, z_sum_vec, f_z_eval_sum,
+                                                 f_z_grad_sum, f_z_hess_sum);
 }

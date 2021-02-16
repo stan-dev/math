@@ -71,7 +71,7 @@ void test_hessian_finite_diff(const std::string& msg, const F& f,
   double fx;
   Eigen::VectorXd grad_fx;
   Eigen::MatrixXd hess_fx;
-  stan::math::internal::finite_diff_of_grads_hessian(f, x, fx, grad_fx,
+  stan::math::internal::finite_diff_hessian_auto(f, x, fx, grad_fx,
                                                      hess_fx);
 
   double fx_ad;
@@ -98,7 +98,7 @@ TEST(RevFunctor, polynomial) {
   double fx;
   Matrix<double, Dynamic, 1> grad_fx;
   Matrix<double, Dynamic, Dynamic> hess_fx;
-  stan::math::internal::finite_diff_of_grads_hessian(f, x, fx, grad_fx,
+  stan::math::internal::finite_diff_hessian_auto(f, x, fx, grad_fx,
                                                      hess_fx);
   EXPECT_FLOAT_EQ(5 * 5 * 7 + 3 * 7 * 7, fx);
   EXPECT_EQ(2, grad_fx.size());
@@ -117,7 +117,7 @@ TEST(RevFunctor, linear_function) {
   double fx;
   Matrix<double, Dynamic, 1> grad_fx;
   Matrix<double, Dynamic, Dynamic> hess_fx;
-  stan::math::internal::finite_diff_of_grads_hessian(f, x, fx, grad_fx,
+  stan::math::internal::finite_diff_hessian_auto(f, x, fx, grad_fx,
                                                      hess_fx);
   EXPECT_FLOAT_EQ(0, hess_fx(0, 0));
   EXPECT_FLOAT_EQ(0, hess_fx(0, 1));
@@ -137,7 +137,7 @@ TEST(RevFunctor, exp_diag) {
   double fx;
   Matrix<double, Dynamic, 1> grad_fx;
   Matrix<double, Dynamic, Dynamic> hess_fx;
-  stan::math::internal::finite_diff_of_grads_hessian(f, x, fx, grad_fx,
+  stan::math::internal::finite_diff_hessian_auto(f, x, fx, grad_fx,
                                                      hess_fx);
   EXPECT_FLOAT_EQ(4 * exp(2 * 2), hess_fx(0, 0));
   EXPECT_FLOAT_EQ(0, hess_fx(0, 1));
@@ -152,7 +152,7 @@ TEST(RevFunctor, exp_full) {
   double fx;
   Matrix<double, Dynamic, 1> grad_fx;
   Matrix<double, Dynamic, Dynamic> hess_fx;
-  stan::math::internal::finite_diff_of_grads_hessian(f, x, fx, grad_fx,
+  stan::math::internal::finite_diff_hessian_auto(f, x, fx, grad_fx,
                                                      hess_fx);
   EXPECT_FLOAT_EQ(exp(4), hess_fx(0, 0));
   EXPECT_FLOAT_EQ(-exp(4), hess_fx(0, 1));
@@ -167,7 +167,7 @@ TEST(RevFunctor, one_arg) {
   double fx;
   Matrix<double, Dynamic, 1> grad_fx;
   Matrix<double, Dynamic, Dynamic> hess_fx;
-  stan::math::internal::finite_diff_of_grads_hessian(f, x, fx, grad_fx,
+  stan::math::internal::finite_diff_hessian_auto(f, x, fx, grad_fx,
                                                      hess_fx);
   EXPECT_FLOAT_EQ(6 * 8, hess_fx(0, 0));
 }

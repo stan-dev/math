@@ -40,7 +40,7 @@ namespace internal {
  * @param[out] hess_fx Hessian of function at argument
  */
 template <typename F>
-void finite_diff_of_grads_hessian(const F& f, const Eigen::VectorXd& x,
+void finite_diff_hessian_auto(const F& f, const Eigen::VectorXd& x,
                                   double& fx, Eigen::VectorXd& grad_fx,
                                   Eigen::MatrixXd& hess_fx) {
   int d = x.size();
