@@ -264,8 +264,12 @@
 #include <stan/math/prim/prob/pareto_type_2_log.hpp>
 #include <stan/math/prim/prob/pareto_type_2_lpdf.hpp>
 #include <stan/math/prim/prob/pareto_type_2_rng.hpp>
+#include <stan/math/prim/prob/poisson_binomial_ccdf_log.hpp>
+#include <stan/math/prim/prob/poisson_binomial_cdf.hpp>
+#include <stan/math/prim/prob/poisson_binomial_cdf_log.hpp>
 #include <stan/math/prim/prob/poisson_binomial_lccdf.hpp>
 #include <stan/math/prim/prob/poisson_binomial_lcdf.hpp>
+#include <stan/math/prim/prob/poisson_binomial_log.hpp>
 #include <stan/math/prim/prob/poisson_binomial_lpmf.hpp>
 #include <stan/math/prim/prob/poisson_binomial_rng.hpp>
 #include <stan/math/prim/prob/poisson_ccdf_log.hpp>
@@ -297,6 +301,14 @@
 #include <stan/math/prim/prob/scaled_inv_chi_square_log.hpp>
 #include <stan/math/prim/prob/scaled_inv_chi_square_lpdf.hpp>
 #include <stan/math/prim/prob/scaled_inv_chi_square_rng.hpp>
+#include <stan/math/prim/prob/skew_double_exponential_ccdf_log.hpp>
+#include <stan/math/prim/prob/skew_double_exponential_cdf.hpp>
+#include <stan/math/prim/prob/skew_double_exponential_cdf_log.hpp>
+#include <stan/math/prim/prob/skew_double_exponential_lpdf.hpp>
+#include <stan/math/prim/prob/skew_double_exponential_lcdf.hpp>
+#include <stan/math/prim/prob/skew_double_exponential_lccdf.hpp>
+#include <stan/math/prim/prob/skew_double_exponential_log.hpp>
+#include <stan/math/prim/prob/skew_double_exponential_rng.hpp>
 #include <stan/math/prim/prob/skew_normal_ccdf_log.hpp>
 #include <stan/math/prim/prob/skew_normal_cdf.hpp>
 #include <stan/math/prim/prob/skew_normal_cdf_log.hpp>

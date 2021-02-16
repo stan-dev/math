@@ -362,6 +362,13 @@ class operation_cl : public operation_cl_base {
   }
 
   /**
+   * Size of a matrix that would be the result of evaluating this
+   * expression.
+   * @return number of elements
+   */
+  inline int size() const { return derived().rows() * derived().cols(); }
+
+  /**
    * Number of rows threads need to be launched for. For most expressions this
    * equals number of rows of the result.
    * @return number of rows

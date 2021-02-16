@@ -59,7 +59,7 @@ return_type_t<T_y, T_scale> rayleigh_lcdf(const T_y& y, const T_scale& sigma) {
   T_partials_return cdf_log = sum(log1m(exp_val));
 
   if (!is_constant_all<T_y, T_scale>::value) {
-    const auto& common_deriv = y_div_sigma_square * exp_val / (1 - exp_val);
+    auto common_deriv = y_div_sigma_square * exp_val / (1 - exp_val);
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge2_.partials_ = -y_val * inv_sigma * common_deriv;
     }

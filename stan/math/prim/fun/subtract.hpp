@@ -55,7 +55,7 @@ inline auto subtract(const Mat1& m1, const Mat2& m2) {
  * @param m Matrix or expression.
  * @return The scalar minus the matrix.
  */
-template <typename Scal, typename Mat, typename = require_stan_scalar_t<Scal>,
+template <typename Scal, typename Mat, require_stan_scalar_t<Scal>* = nullptr,
           require_eigen_t<Mat>* = nullptr,
           require_all_not_st_var<Mat, Scal>* = nullptr>
 inline auto subtract(const Scal c, const Mat& m) {
