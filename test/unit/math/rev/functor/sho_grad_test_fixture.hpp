@@ -11,13 +11,12 @@
 
 struct sho_grad_ode_test : public testing::Test {
   class sho_functor {
-  public:
+   public:
     template <typename T0, typename T1, typename T2>
-    inline Eigen::Matrix<stan::return_type_t<T1, T2>, -1, 1>
-    operator()(const T0& t_in,
-               const Eigen::Matrix<T1, -1, 1>& y_in, std::ostream* msgs,
-               const std::vector<T2>& theta, const std::vector<double>& x,
-               const std::vector<int>& x_int) const {
+    inline Eigen::Matrix<stan::return_type_t<T1, T2>, -1, 1> operator()(
+        const T0& t_in, const Eigen::Matrix<T1, -1, 1>& y_in,
+        std::ostream* msgs, const std::vector<T2>& theta,
+        const std::vector<double>& x, const std::vector<int>& x_int) const {
       if (y_in.size() != 2)
         throw std::domain_error("Functor called with inconsistent state");
 
@@ -28,9 +27,9 @@ struct sho_grad_ode_test : public testing::Test {
     }
   };
 
-  template<typename solver_functor_t>
+  template <typename solver_functor_t>
   class test_functor_double_var_1 {
-  public:
+   public:
     template <typename T>
     inline T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
       sho_functor sho;
@@ -55,9 +54,9 @@ struct sho_grad_ode_test : public testing::Test {
     }
   };
 
-  template<typename solver_functor_t>
+  template <typename solver_functor_t>
   class test_functor_double_var_2 {
-  public:
+   public:
     template <typename T>
     inline T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
       sho_functor sho;
@@ -82,9 +81,9 @@ struct sho_grad_ode_test : public testing::Test {
     }
   };
 
-  template<typename solver_functor_t>
+  template <typename solver_functor_t>
   class test_functor_var_double_1 {
-  public:
+   public:
     template <typename T>
     inline T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
       sho_functor sho;
@@ -109,9 +108,9 @@ struct sho_grad_ode_test : public testing::Test {
     }
   };
 
-  template<typename solver_functor_t>
+  template <typename solver_functor_t>
   class test_functor_var_double_2 {
-  public:
+   public:
     template <typename T>
     inline T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
       sho_functor sho;
@@ -136,9 +135,9 @@ struct sho_grad_ode_test : public testing::Test {
     }
   };
 
-  template<typename solver_functor_t>
+  template <typename solver_functor_t>
   class test_functor_var_var_1 {
-  public:
+   public:
     template <typename T>
     inline T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
       sho_functor sho;
@@ -163,9 +162,9 @@ struct sho_grad_ode_test : public testing::Test {
     }
   };
 
-  template<typename solver_functor_t>
+  template <typename solver_functor_t>
   class test_functor_var_var_2 {
-  public:
+   public:
     template <typename T>
     inline T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
       sho_functor sho;
@@ -190,17 +189,13 @@ struct sho_grad_ode_test : public testing::Test {
     }
   };
 
-  double y1(double t, double omega, double chi) {
-    return chi * cos(omega * t);
-  }
+  double y1(double t, double omega, double chi) { return chi * cos(omega * t); }
 
   double dy1_domega(double t, double omega, double chi) {
     return -t * chi * sin(omega * t);
   }
 
-  double dy1_dchi(double t, double omega, double chi) {
-    return cos(omega * t);
-  }
+  double dy1_dchi(double t, double omega, double chi) { return cos(omega * t); }
 
   double y2(double t, double omega, double chi) {
     return -omega * chi * sin(omega * t);
@@ -219,9 +214,7 @@ struct sho_grad_ode_test : public testing::Test {
     stan::math::recover_memory();
   }
 
-  sho_grad_ode_test() {
-      SetUp();
-  }
+  sho_grad_ode_test() { SetUp(); }
 };
 
 #endif
