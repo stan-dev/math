@@ -277,7 +277,7 @@ def parse_signature(signature):
     args = re.findall(r"(?:[(][^()]+[)][^,()]+)|(?:[^,()]+(?:,*[]][^,()]+)?)", rest)
     #  regex parts:        ^^^^^^functor^^^^^^     ^^^^any other arg^^^^^^^
     args = [i.lstrip("data").strip() if "data" in i else i.strip() for i in args if i.strip()]
-    return return_type.strip(), function_name, args
+    return return_type.strip(), function_name.strip(), args
 
 
 def handle_function_list(functions_input):
@@ -319,6 +319,87 @@ overload_scalar = {
     "Mix": "stan::math::fvar<stan::math::var>",
 }
 
+class IntArgument:
+    def __init__(self, name, value = 1):
+        self.name = name
+        self.value = value
+
+    def cpp(self):
+        return f"int {self.name} = {self.value};"
+
+class RealArgument:
+    def __init__(self, overload, name, value = 0.4):
+        self.overload = overload
+        self.name = name
+        self.value = value
+    
+    def cpp(self):
+        scalar = overload_scalar[self.overload]
+
+        return f"{scalar} {self.name} = {self.value};"
+
+class MatrixArgument:
+    def __init__(self, overload, name, stan_arg, value = 0.4):
+        self.overload = overload
+        self.name = name
+        self.stan_arg = stan_arg
+        self.value = value
+    
+    def cpp(self):
+        scalar = overload_scalar[self.overload]
+        cpp_arg_template = get_cpp_type(self.stan_arg)
+        arg_type = cpp_arg_template.replace("SCALAR", scalar)
+
+        return f"auto {self.name} = stan::test::make_arg<{arg_type}>({self.value}, 1);"
+
+class RngArgument:
+    def __init__(self, name):
+        self.name = name
+    
+    def cpp(self):
+        return f"std::minstd_rand {self.name};"
+
+class OStreamArgument:
+    def __init__(self, name):
+        self.name = name
+    
+    def cpp(self):
+        return f"std::ostream {self.name};"
+
+class ArrayArgument:
+    def __init__(self, overload, name, number_nested_arrays, inner_type, value = 0.4):
+        self.overload = overload
+        self.name = name
+        self.number_nested_arrays = number_nested_arrays
+        self.inner_type = inner_type
+        self.value = value
+    
+    def cpp(self):
+        scalar = overload_scalar[self.overload]
+        arg_type = arg_types[self.inner_type]
+        for n in range(self.number_nested_arrays):
+            arg_type = "std::vector<{}>".format(arg_type)
+        arg_type = arg_type.replace("SCALAR", scalar)
+
+        return f"auto {self.name} = stan::test::make_arg<{arg_type}>({self.value}, 1);"
+
+class FunctionCallAssign:
+    def __init__(self, function_name, name, *args):
+        self.function_name = function_name
+        self.name = name
+        self.arg_str = ','.join(arg.name for arg in args)
+
+    def cpp(self):
+        return f"auto {self.name} = stan::math::eval(stan::math::{self.function_name}({self.arg_str}));"
+
+class FunctionCall:
+    def __init__(self, function_name, *args):
+        self.function_name = function_name
+        self.arg_str = ','.join(arg.name for arg in args)
+
+    def cpp(self):
+        return f"stan::math::{self.function_name}({self.arg_str});"
+
 class FunctionGenerator:
     def __init__(self, signature):
         self.return_type, self.function_name, self.stan_args = parse_signature(signature)
@@ -343,13 +424,15 @@ class FunctionGenerator:
             overloads = ["Prim", "Rev", "Rev_SOA"]
 
         overload_opts = []
-        for n, self.stan_arg in enumerate(self.stan_args):
-            non_differentiable_arg = (
+        for n, stan_arg in enumerate(self.stan_args):
+            is_non_differentiable_arg = (
                 self.function_name in non_differentiable_args
                 and n in non_differentiable_args[self.function_name]
             )
 
-            if "real" and non_differentiable_arg:
+            number_nested_arrays, inner_type = parse_array(stan_arg)
+
+            if "int" == inner_type or is_non_differentiable_arg:
                 overload_opts.append(["Prim"])
             else:
                 overload_opts.append(overloads)
@@ -359,89 +442,115 @@ class FunctionGenerator:
     def cpp(self, arg_overloads, max_size):
         uses_varmat = False
 
-        benchmark_name = self.function_name
-        setup = ""
-        arg_types = []
-
-        code = "    auto res = stan::math::eval(stan::math::{}(".format(
-            self.function_name
-        )
-
-        for n, (arg_overload, stan_arg) in enumerate(zip(arg_overloads, self.stan_args)):
+        code_list = []
+        arg_list = []
+        for n, (overload, stan_arg) in enumerate(zip(arg_overloads, self.stan_args)):
             number_nested_arrays, inner_type = parse_array(stan_arg)
-            if number_nested_arrays > 0:
-                benchmark_name += "_" + arg_overload + "_" + inner_type + str(number_nested_arrays)
-                is_argument_array_scalars = inner_type in scalar_stan_types
-            else:
-                benchmark_name += "_" + arg_overload + "_" + stan_arg
-                is_argument_array_scalars = False
-            scalar = overload_scalar[arg_overload]
-            cpp_arg_template = get_cpp_type(stan_arg)
-            arg_type = cpp_arg_template.replace("SCALAR", scalar)
-            if not stan_arg.endswith("return_t"):
-                arg_types.append(arg_type)
-            var_name = "arg" + str(n)
-            make_arg_function = "make_arg"
-            is_argument_scalar = stan_arg in scalar_stan_types
-            value = 0.4
-            if self.function_name in special_arg_values and isinstance(special_arg_values[self.function_name][n], str):
-                make_arg_function = special_arg_values[self.function_name][n]
 
-                setup += (
-                    "    {} {};".format(
-                        make_arg_function,
-                        var_name
-                    )
-                )
+            if number_nested_arrays == 0:
+                if stan_arg == "int":
+                    arg = IntArgument(f"int{n}")
+                elif stan_arg == "real":
+                    arg = RealArgument(overload, f"real{n}")
+                elif stan_arg in ("vector", "row_vector", "matrix"):
+                    arg = MatrixArgument(overload, f"matrix{n}", stan_arg)
+                elif stan_arg == "rng":
+                    arg = RngArgument(f"rng{n}")
+                elif stan_arg == "ostream_ptr":
+                    arg = OStreamArgument(f"ostream{n}")
             else:
-                if self.function_name in special_arg_values and special_arg_values[self.function_name][n] is not None:
-                    value = special_arg_values[self.function_name][n]
+                arg = ArrayArgument(overload, f"array{n}", number_nested_arrays, inner_type)
 
-                if scalar == "double":
-                    setup += (
-                        "    {} {} = stan::test::{}<{}>({}, {});\n".format(
-                            arg_type,
-                            var_name,
-                            make_arg_function,
-                            arg_type,
-                            value,
-                            max_size,
-                        )
-                    )
-                else:
-                    setup += (
-                        "    {} {} = stan::test::{}<{}>({}, {});\n".format(
-                            arg_type,
-                            var_name,
-                            make_arg_function,
-                            arg_type,
-                            value,
-                            max_size,
-                        )
-                    )
+            code_list.append(arg)
+
+            if overload == "Rev_SOA" and inner_type in ("vector", "row_vector", "matrix"):
+                uses_varmat = True
+                arg = FunctionCallAssign("to_var_value", arg.name + "_varmat", arg)
+                code_list.append(arg)
+            
+            arg_list.append(arg)
+
+        code_list.append(FunctionCallAssign(self.function_name, "result", *arg_list))
+        if "Rev" in arg_overloads or "Rev_SOA" in arg_overloads:
+            code_list.append(FunctionCall("grad"))
+
+        code = os.linesep.join(statement.cpp() for statement in code_list)
+
+        # for n, (arg_overload, stan_arg) in enumerate(zip(arg_overloads, self.stan_args)):
+        #     number_nested_arrays, inner_type = parse_array(stan_arg)
+        #     if number_nested_arrays > 0:
+        #         benchmark_name += "_" + arg_overload + "_" + inner_type + str(number_nested_arrays)
+        #         is_argument_array_scalars = inner_type in scalar_stan_types
+        #     else:
+        #         benchmark_name += "_" + arg_overload + "_" + stan_arg
+        #         is_argument_array_scalars = False
+        #     scalar = overload_scalar[arg_overload]
+        #     cpp_arg_template = get_cpp_type(stan_arg)
+        #     arg_type = cpp_arg_template.replace("SCALAR", scalar)
+        #     if not stan_arg.endswith("return_t"):
+        #         arg_types.append(arg_type)
+        #     var_name = "arg" + str(n)
+        #     make_arg_function = "make_arg"
+        #     is_argument_scalar = stan_arg in scalar_stan_types
+        #     value = 0.4
+        #     if self.function_name in special_arg_values and isinstance(special_arg_values[self.function_name][n], str):
+        #         make_arg_function = special_arg_values[self.function_name][n]
+
+        #         setup += (
+        #             "    {} {};".format(
+        #                 make_arg_function,
+        #                 var_name
+        #             )
+        #         )
+        #     else:
+        #         if self.function_name in special_arg_values and special_arg_values[self.function_name][n] is not None:
+        #             value = special_arg_values[self.function_name][n]
+
+        #         if scalar == "double":
+        #             setup += (
+        #                 "    {} {} = stan::test::{}<{}>({}, {});\n".format(
+        #                     arg_type,
+        #                     var_name,
+        #                     make_arg_function,
+        #                     arg_type,
+        #                     value,
+        #                     max_size,
+        #                 )
+        #             )
+        #         else:
+        #             setup += (
+        #                 "    {} {} = stan::test::{}<{}>({}, {});\n".format(
+        #                     arg_type,
+        #                     var_name,
+        #                     make_arg_function,
+        #                     arg_type,
+        #                     value,
+        #                     max_size,
+        #                 )
+        #             )
                 
-                if not is_argument_scalar:
-                    if not is_argument_array_scalars and arg_overload == "Rev_SOA":
-                        uses_varmat = True
-                        setup += (
-                            "    auto {} = stan::math::to_var_value({});\n".format(
-                                var_name + "_varmat", var_name
-                            )
-                        )
-                        var_name += "_varmat"
-            code += var_name + ", "
+        #         if not is_argument_scalar:
+        #             if not is_argument_array_scalars and arg_overload == "Rev_SOA":
+        #                 uses_varmat = True
+        #                 setup += (
+        #                     "    auto {} = stan::math::to_var_value({});\n".format(
+        #                         var_name + "_varmat", var_name
+        #                     )
+        #                 )
+        #                 var_name += "_varmat"
+        #     code += var_name + ", "
 
-        code = code[:-2] + "));\n"
-        if "Rev" in arg_overloads:
-            code += "    stan::math::grad();\n"
+        # code = code[:-2] + "));\n"
+        # if "Rev" in arg_overloads:
+        #     code += "    stan::math::grad();\n"
 
-        return_t_definition = "    using scalar_return_type = stan::return_type_t<" + ", ".join(arg_types) + ">;"
+        # return_t_definition = "    using scalar_return_type = stan::return_type_t<" + ", ".join(arg_types) + ">;"
 
-        setup = return_t_definition + "\n" + setup
+        # setup = return_t_definition + "\n" + setup
             
         #any_overload_generated_varmat = any_overload_generated_varmat or generated_varmat
         
-        self.setup = setup
+        self.setup = ""
         self.code = code
 
         return [self.setup, self.code, uses_varmat]

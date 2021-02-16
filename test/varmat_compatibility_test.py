@@ -103,7 +103,7 @@ def main(functions_or_sigs, results_file, cores):
         for start in range(0, len(mylist), chunk_size):
             yield (start, mylist[start:min(start + chunk_size, len(mylist))])
 
-    for start, signatures_to_check_chunk in chunk(signatures_to_check, cores * 10):
+    for start, signatures_to_check_chunk in chunk(signatures_to_check, cores):
         test_files_to_compile = {}
 
         for signature in signatures_to_check_chunk:
@@ -120,15 +120,14 @@ def main(functions_or_sigs, results_file, cores):
                 setup, code, uses_varmat = fg.cpp(arg_overloads, max_size)
 
                 result += BENCHMARK_TEMPLATE.format(
-                    benchmark_name=f"{function_name}_{n}",
+                    benchmark_name=f"{fg.function_name}_{n}",
                     setup=setup,
                     code=code,
                 )
-
                 any_overload_uses_varmat |= uses_varmat
 
             if any_overload_uses_varmat:
-                f = tempfile.NamedTemporaryFile("w", dir = WORKING_FOLDER, prefix = f"{function_name}_", suffix = "_test.cpp", delete = False)
+                f = tempfile.NamedTemporaryFile("w", dir = WORKING_FOLDER, prefix = f"{fg.function_name}_", suffix = "_test.cpp", delete = False)
 
                 f.write("#include <test/expressions/expression_test_helpers.hpp>\n\n")
                 f.write(result)
