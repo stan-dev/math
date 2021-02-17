@@ -316,7 +316,8 @@ inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
             for (size_t i = 0; i < arena_x.rows(); ++i) {
               double ret_adj = ret.adj().coeff(i, j);
               if (likely(is_not_inf_lb.coeff(i, j))) {
-                arena_x.adj().coeffRef(i, j) += ret_adj * exp_x.coeff(i, j) + lp_adj;
+                arena_x.adj().coeffRef(i, j)
+                    += ret_adj * exp_x.coeff(i, j) + lp_adj;
                 arena_lb.adj().coeffRef(i, j) += ret_adj;
               } else {
                 arena_x.adj().coeffRef(i, j) += ret_adj;
