@@ -44,8 +44,7 @@ return_type_t<T_prob_cl> bernoulli_logit_lpmf(const T_n_cl& n,
     return 0.0;
   }
 
-  const auto& theta_col = as_column_vector_or_scalar(theta);
-  const auto& theta_val = value_of(theta_col);
+  const auto& theta_val = value_of(theta);
 
   auto check_n_bounded = check_cl(function, "n", n, "in the interval [0, 1]");
   auto n_bounded_expr = 0 <= n && n <= 1;
@@ -78,7 +77,7 @@ return_type_t<T_prob_cl> bernoulli_logit_lpmf(const T_n_cl& n,
                     n_bounded_expr, theta_not_nan_expr);
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
-  operands_and_partials<decltype(theta_col)> ops_partials(theta_col);
+  operands_and_partials<T_prob_cl> ops_partials(theta);
 
   if (!is_constant_all<T_prob_cl>::value) {
     ops_partials.edge1_.partials_ = deriv_cl;

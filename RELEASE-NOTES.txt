@@ -1,15 +1,7 @@
 Stan Math Library Release Notes
 
 ======================================================================
-v4.0.1 (17 February 2021)
-======================================================================
-
-- Fixed issue with `cholesky_decompose` not propagating derivatives correctly .
-- Fixed OpenCL implementations of distributions mostly not working with row vectors.
-- Fixed handling of input expressions with reduce_sum.
-
-======================================================================
-v4.0.0 (26 January 2021)
+v4.0.0 (26 January 2020)
 ======================================================================
 
 New functions:  
@@ -131,6 +123,7 @@ OpenCL backend:
   - Simplified tests of GPU GLMs by moving repeated code into a common utility header.(#2097)
   - Added OpenCL reverse mode implementations of matrix multiply and sum.(#2099)
   - vari_base can now be constructed with matrix_cl value and adjoint. Copying between host and device is possible for vars containing Eigen::Matrix/matrix_cl. Adjoints are propagated over these copies.(#1967)
+
 
 ======================================================================
 v3.3.0 (28 July 2020)

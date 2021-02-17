@@ -79,7 +79,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_cdf(
                      && !is_constant_all<T_shape>::value)>(
             P / (1.0 - p1_pow_alpha));
     if (!is_constant_all<T_y, T_loc, T_scale>::value) {
-      const auto& grad_1_2
+      auto grad_1_2
           = to_ref_if<!is_constant_all<T_loc>::value
                           + !is_constant_all<T_scale>::value
                           + !is_constant_all<T_y>::value

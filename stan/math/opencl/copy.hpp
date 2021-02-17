@@ -8,6 +8,7 @@
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/value_type.hpp>
+#include <stan/math/opencl/scalar_type.hpp>
 #include <stan/math/opencl/kernels/copy.hpp>
 #include <stan/math/opencl/kernels/pack.hpp>
 #include <stan/math/opencl/kernels/unpack.hpp>
@@ -41,23 +42,27 @@ namespace math {
  * @param src source Eigen matrix
  * @return matrix_cl with a copy of the data in the source matrix
  */
-template <typename T, require_vt_arithmetic<T>* = nullptr>
-inline matrix_cl<value_type_t<T>> to_matrix_cl(T&& src) {
-  return matrix_cl<value_type_t<T>>(std::forward<T>(src));
+template <typename T, require_st_arithmetic<T>* = nullptr>
+inline matrix_cl<scalar_type_t<T>> to_matrix_cl(T&& src) {
+  return matrix_cl<scalar_type_t<T>>(std::forward<T>(src));
 }
 
 /** \ingroup opencl
  * Copies the source matrix that is stored on the OpenCL device to the
  * destination Eigen matrix.
  *
+ * @tparam T_ret destination type
+ * @tparam T scalar in the source matrix
  * @param src source matrix on the OpenCL device
  * @return Eigen matrix with a copy of the data in the source matrix
  */
-template <int R = Eigen::Dynamic, int C = Eigen::Dynamic, typename T,
-          require_matrix_cl_t<T>* = nullptr>
-inline Eigen::Matrix<value_type_t<T>, R, C> from_matrix_cl(const T& src) {
+template <typename T_ret, typename T,
+          require_eigen_vt<std::is_arithmetic, T_ret>* = nullptr,
+          require_matrix_cl_t<T>* = nullptr,
+          require_st_same<T_ret, T>* = nullptr>
+inline T_ret from_matrix_cl(const T& src) {
   using T_val = value_type_t<T>;
-  Eigen::Matrix<T_val, R, C> dst(src.rows(), src.cols());
+  T_ret dst(src.rows(), src.cols());
   if (src.size() == 0) {
     return dst;
   }
@@ -102,31 +107,124 @@ inline Eigen::Matrix<value_type_t<T>, R, C> from_matrix_cl(const T& src) {
     }
     if (!contains_nonzero(src.view(), matrix_cl_view::Lower)) {
       dst.template triangularView<Eigen::StrictlyLower>()
-          = Eigen::Matrix<T_val, R, C>::Zero(dst.rows(), dst.cols());
+          = T_ret::Zero(dst.rows(), dst.cols());
     }
     if (!contains_nonzero(src.view(), matrix_cl_view::Upper)) {
       dst.template triangularView<Eigen::StrictlyUpper>()
-          = Eigen::Matrix<T_val, R, C>::Zero(dst.rows(), dst.cols());
+          = T_ret::Zero(dst.rows(), dst.cols());
     }
   }
   return dst;
 }
 
 /** \ingroup opencl
- * Copies result of a kernel generator expression to the
- * destination Eigen matrix.
+ * Copies result of a kernel generator expression to the specified
+ * destination type.
  *
- * @tparam R rows type of the destination
- * @tparam C cols type of the destination
+ * @tparam T_ret destination type
  * @tparam T type of expression
  * @param src source expression
  * @return Eigen matrix with a copy of the data in the source matrix
  */
-template <int R = Eigen::Dynamic, int C = Eigen::Dynamic, typename T,
+template <typename T_ret, typename T,
           require_all_kernel_expressions_t<T>* = nullptr,
           require_not_matrix_cl_t<T>* = nullptr>
-inline Eigen::Matrix<value_type_t<T>, R, C> from_matrix_cl(const T& src) {
-  return from_matrix_cl<R, C>(src.eval());
+inline T_ret from_matrix_cl(const T& src) {
+  return from_matrix_cl<T_ret>(src.eval());
+}
+
+/** \ingroup opencl
+ * Copy A 1 by 1 source matrix from the Device to the host.
+ * @tparam T An arithmetic type to pass the value from the OpenCL matrix to.
+ * @param src A 1x1 matrix on the device.
+ * @return dst Arithmetic to receive the matrix_cl value.
+ */
+template <typename T_dst, typename T, require_arithmetic_t<T>* = nullptr,
+          require_same_t<T_dst, T>* = nullptr>
+inline T_dst from_matrix_cl(const matrix_cl<T>& src) {
+  T dst;
+  check_size_match("from_matrix_cl<scalar>", "src.rows()", src.rows(),
+                   "dst.rows()", 1);
+  check_size_match("from_matrix_cl<scalar>", "src.cols()", src.cols(),
+                   "dst.cols()", 1);
+  try {
+    cl::Event copy_event;
+    const cl::CommandQueue queue = opencl_context.queue();
+    queue.enqueueReadBuffer(src.buffer(), opencl_context.in_order(), 0,
+                            sizeof(T), &dst, &src.write_events(), &copy_event);
+    copy_event.wait();
+    src.clear_write_events();
+  } catch (const cl::Error& e) {
+    check_opencl_error("from_matrix_cl<scalar>", e);
+  }
+  return dst;
+}
+
+/** \ingroup opencl
+ * Copies the source matrix that is stored on the OpenCL device to the
+ * destination `std::vector`.
+ *
+ * @tparam T_dst destination type
+ * @tparam T scalar in the source matrix
+ * @param src source matrix on the OpenCL device
+ * @return `std::vector` with a copy of the data in the source matrix
+ */
+template <typename T_dst, typename T,
+          require_std_vector_vt<std::is_arithmetic, T_dst>* = nullptr,
+          require_all_st_same<T_dst, T>* = nullptr>
+inline T_dst from_matrix_cl(const matrix_cl<T>& src) {
+  check_size_match("from_matrix_cl<std::vector>", "src.cols()", src.cols(),
+                   "dst.cols()", 1);
+  T_dst dst(src.rows());
+  try {
+    cl::Event copy_event;
+    const cl::CommandQueue queue = opencl_context.queue();
+    queue.enqueueReadBuffer(src.buffer(), opencl_context.in_order(), 0,
+                            sizeof(T) * src.rows(), dst.data(),
+                            &src.write_events(), &copy_event);
+    copy_event.wait();
+    src.clear_write_events();
+  } catch (const cl::Error& e) {
+    check_opencl_error("from_matrix_cl<std::vector>", e);
+  }
+  return dst;
+}
+
+/** \ingroup opencl
+ * Copies the source matrix that is stored on the OpenCL device to the
+ * destination `std::vector` containing Eigen vectors.
+ *
+ * @tparam T_dst destination type
+ * @tparam T scalar in the source matrix
+ * @param src source matrix on the OpenCL device
+ * @return `std::vector` containing Eigen vectors with a copy of the data in the
+ * source matrix
+ */
+template <typename T_dst, typename T,
+          require_std_vector_vt<is_eigen_vector, T_dst>* = nullptr,
+          require_all_st_same<T_dst, T>* = nullptr>
+inline T_dst from_matrix_cl(const matrix_cl<T>& src) {
+  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> tmp = from_matrix_cl(src);
+  T_dst dst;
+  dst.reserve(src.cols());
+  for (int i = 0; i < src.cols(); i++) {
+    dst.emplace_back(tmp.col(i));
+  }
+  return dst;
+}
+
+/** \ingroup opencl
+ * Copies the source kernel generator expression or matrix that is stored on the
+ * OpenCL device to the destination Eigen matrix.
+ *
+ * @tparam T source type
+ * @param src expression or source matrix on the OpenCL device
+ * @return Eigen matrix with a copy of the data in the source matrix
+ */
+template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
+auto from_matrix_cl(const T& src) {
+  return from_matrix_cl<
+      Eigen::Matrix<scalar_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>>(src);
 }
 
 /** \ingroup opencl
@@ -230,32 +328,6 @@ inline matrix_cl<Vec_scalar> packed_copy(Vec&& src, int rows) {
 template <typename T, require_matrix_cl_t<T>* = nullptr>
 inline plain_type_t<T> copy_cl(const T& src) {
   return plain_type_t<T>(src);
-}
-
-/** \ingroup opencl
- * Copy A 1 by 1 source matrix from the Device to  the host.
- * @tparam T An arithmetic type to pass the value from the OpenCL matrix to.
- * @param src A 1x1 matrix on the device.
- * @return dst Arithmetic to receive the matrix_cl value.
- */
-template <typename T, typename = require_arithmetic_t<T>>
-inline T from_matrix_cl_error_code(const matrix_cl<T>& src) {
-  T dst;
-  check_size_match("copy_error_code ((OpenCL) -> (OpenCL))", "src.rows()",
-                   src.rows(), "dst.rows()", 1);
-  check_size_match("copy_error_code ((OpenCL) -> (OpenCL))", "src.cols()",
-                   src.cols(), "dst.cols()", 1);
-  try {
-    cl::Event copy_event;
-    const cl::CommandQueue queue = opencl_context.queue();
-    queue.enqueueReadBuffer(src.buffer(), opencl_context.in_order(), 0,
-                            sizeof(T), &dst, &src.write_events(), &copy_event);
-    copy_event.wait();
-    src.clear_write_events();
-  } catch (const cl::Error& e) {
-    check_opencl_error("copy_error_code (OpenCL)->(OpenCL)", e);
-  }
-  return dst;
 }
 
 }  // namespace math

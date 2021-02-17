@@ -59,15 +59,10 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> skew_normal_lpdf(
     return 0.0;
   }
 
-  const auto& y_col = as_column_vector_or_scalar(y);
-  const auto& mu_col = as_column_vector_or_scalar(mu);
-  const auto& sigma_col = as_column_vector_or_scalar(sigma);
-  const auto& alpha_col = as_column_vector_or_scalar(alpha);
-
-  const auto& y_val = value_of(y_col);
-  const auto& mu_val = value_of(mu_col);
-  const auto& sigma_val = value_of(sigma_col);
-  const auto& alpha_val = value_of(alpha_col);
+  const auto& y_val = value_of(y);
+  const auto& mu_val = value_of(mu);
+  const auto& sigma_val = value_of(sigma);
+  const auto& alpha_val = value_of(alpha);
 
   auto check_y_not_nan
       = check_cl(function, "Random variable", y_val, "not NaN");
@@ -133,9 +128,8 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> skew_normal_lpdf(
     logp -= HALF_LOG_TWO_PI * N;
   }
 
-  operands_and_partials<decltype(y_col), decltype(mu_col), decltype(sigma_col),
-                        decltype(alpha_col)>
-      ops_partials(y_col, mu_col, sigma_col, alpha_col);
+  operands_and_partials<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> ops_partials(
+      y, mu, sigma, alpha);
 
   if (!is_constant<T_y_cl>::value) {
     ops_partials.edge1_.partials_ = std::move(y_deriv_cl);

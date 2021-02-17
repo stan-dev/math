@@ -12,6 +12,11 @@
 #include <stan/math/prim/err/check_pos_definite.hpp>
 #include <stan/math/prim/err/check_square.hpp>
 #include <stan/math/prim/err/check_symmetric.hpp>
+
+#ifdef STAN_OPENCL
+#include <stan/math/opencl/prim.hpp>
+#endif
+
 #include <algorithm>
 #include <vector>
 
@@ -50,24 +55,22 @@ inline auto unblocked_cholesky_lambda(T1& L_A, T2& L, T3& A) {
     const size_t N = A.rows();
     // Algorithm is in rowmajor so we make the adjoint copy rowmajor
     Eigen::Matrix<double, -1, -1, Eigen::RowMajor> adjL(L.rows(), L.cols());
-    Eigen::MatrixXd adjA = Eigen::MatrixXd::Zero(L.rows(), L.cols());
     adjL.template triangularView<Eigen::Lower>() = L.adj();
     for (int i = N - 1; i >= 0; --i) {
       for (int j = i; j >= 0; --j) {
         if (i == j) {
-          adjA.coeffRef(i, j) = 0.5 * adjL.coeff(i, j) / L_A.coeff(i, j);
+          A.adj()(i, j) = 0.5 * adjL.coeff(i, j) / L_A.coeff(i, j);
         } else {
-          adjA.coeffRef(i, j) = adjL.coeff(i, j) / L_A.coeff(j, j);
+          A.adj()(i, j) = adjL.coeff(i, j) / L_A.coeff(j, j);
           adjL.coeffRef(j, j)
               -= adjL.coeff(i, j) * L_A.coeff(i, j) / L_A.coeff(j, j);
         }
         for (int k = j - 1; k >= 0; --k) {
-          adjL.coeffRef(i, k) -= adjA.coeff(i, j) * L_A.coeff(j, k);
-          adjL.coeffRef(j, k) -= adjA.coeff(i, j) * L_A.coeff(i, k);
+          adjL.coeffRef(i, k) -= A.adj().coeff(i, j) * L_A.coeff(j, k);
+          adjL.coeffRef(j, k) -= A.adj().coeff(i, j) * L_A.coeff(i, k);
         }
       }
     }
-    A.adj() += adjA;
   };
 }
 
@@ -84,7 +87,7 @@ inline auto cholesky_lambda(T1& L_A, T2& L, T3& A) {
     using Eigen::Lower;
     using Eigen::StrictlyUpper;
     using Eigen::Upper;
-    Eigen::MatrixXd L_adj = Eigen::MatrixXd::Zero(L.rows(), L.cols());
+    Eigen::MatrixXd L_adj(L.rows(), L.cols());
     L_adj.template triangularView<Eigen::Lower>() = L.adj();
     const int M_ = L_A.rows();
     int block_size_ = std::max(M_ / 8, 8);
@@ -116,9 +119,81 @@ inline auto cholesky_lambda(T1& L_A, T2& L, T3& A) {
       R_adj.noalias() -= D_adj.template selfadjointView<Lower>() * R;
       D_adj.diagonal() *= 0.5;
     }
-    A.adj().template triangularView<Eigen::Lower>() += L_adj;
+    A.adj().template triangularView<Eigen::Lower>() = L_adj;
   };
 }
+
+#ifdef STAN_OPENCL
+/**
+ * Reverse mode differentiation for Cholesky using OpenCL
+ * Reverse mode differentiation algorithm reference:
+ *
+ * Iain Murray: Differentiation of the Cholesky decomposition, 2016.
+ *
+ */
+template <typename AMat, typename LVari>
+inline auto opencl_cholesky_lambda(AMat& arena_A, LVari& vari_L) {
+  return [arena_A, vari_L]() mutable {
+    const int M_ = arena_A.rows();
+    const int packed_size = M_ * (M_ + 1) / 2;
+    Eigen::Map<Eigen::Matrix<vari*, Eigen::Dynamic, 1>> L_cpu(
+        vari_L, M_ * (M_ + 1) / 2);
+    Eigen::VectorXd L_val_cpu = L_cpu.val();
+    Eigen::VectorXd L_adj_cpu = L_cpu.adj();
+    matrix_cl<double> L_val = packed_copy<matrix_cl_view::Lower>(L_val_cpu, M_);
+    matrix_cl<double> L_adj = packed_copy<matrix_cl_view::Lower>(L_adj_cpu, M_);
+    int block_size
+        = M_
+          / std::max(1,
+                     opencl_context.tuning_opts().cholesky_rev_block_partition);
+    block_size = std::max(block_size, 8);
+    block_size = std::min(
+        block_size, opencl_context.tuning_opts().cholesky_rev_min_block_size);
+    // The following is an OpenCL implementation of
+    // the chain() function from the cholesky_block
+    // vari class implementation
+    for (int k = M_; k > 0; k -= block_size) {
+      const int j = std::max(0, k - block_size);
+      const int k_j_ind = k - j;
+      const int m_k_ind = M_ - k;
+
+      auto&& R_val = block_zero_based(L_val, j, 0, k_j_ind, j);
+      auto&& R_adj = block_zero_based(L_adj, j, 0, k_j_ind, j);
+      matrix_cl<double> D_val = block_zero_based(L_val, j, j, k_j_ind, k_j_ind);
+      matrix_cl<double> D_adj = block_zero_based(L_adj, j, j, k_j_ind, k_j_ind);
+      auto&& B_val = block_zero_based(L_val, k, 0, m_k_ind, j);
+      auto&& B_adj = block_zero_based(L_adj, k, 0, m_k_ind, j);
+      auto&& C_val = block_zero_based(L_val, k, j, m_k_ind, k_j_ind);
+      auto&& C_adj = block_zero_based(L_adj, k, j, m_k_ind, k_j_ind);
+
+      C_adj = C_adj * tri_inverse(D_val);
+      B_adj = B_adj - C_adj * R_val;
+      D_adj = D_adj - transpose(C_adj) * C_val;
+
+      D_adj = transpose(D_val) * D_adj;
+      D_adj.triangular_transpose<TriangularMapCL::LowerToUpper>();
+      D_val = transpose(tri_inverse(D_val));
+      D_adj = D_val * transpose(D_val * D_adj);
+      D_adj.triangular_transpose<TriangularMapCL::LowerToUpper>();
+
+      R_adj = R_adj - transpose(C_adj) * B_val - D_adj * R_val;
+      diagonal(D_adj) = diagonal(D_adj) * 0.5;
+
+      block_zero_based(L_adj, j, j, k_j_ind, k_j_ind) = D_adj;
+    }
+    L_adj.view(matrix_cl_view::Lower);
+    std::vector<double> L_adj_cpu_res = packed_copy(L_adj);
+    int pos = 0;
+    for (Eigen::Index j = 0; j < arena_A.rows(); ++j) {
+      for (Eigen::Index i = j; i < arena_A.rows(); ++i) {
+        arena_A.coeffRef(i, j)->adj_ += L_adj_cpu_res[pos];
+        pos++;
+      }
+    }
+  };
+}
+
+#endif
 }  // namespace internal
 
 /**
@@ -137,11 +212,13 @@ inline auto cholesky_decompose(const EigMat& A) {
   check_square("cholesky_decompose", "A", A);
   arena_t<EigMat> arena_A = A;
   arena_t<Eigen::Matrix<double, -1, -1>> L_A(arena_A.val());
-
+#ifdef STAN_OPENCL
+  L_A = cholesky_decompose(L_A);
+#else
   check_symmetric("cholesky_decompose", "A", A);
   Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>, Eigen::Lower> L_factor(L_A);
   check_pos_definite("cholesky_decompose", "m", L_factor);
-
+#endif
   L_A.template triangularView<Eigen::StrictlyUpper>().setZero();
   // looping gradient calcs faster for small matrices compared to
   // cholesky_block
@@ -151,8 +228,31 @@ inline auto cholesky_decompose(const EigMat& A) {
     internal::initialize_return(L, L_A, dummy);
     reverse_pass_callback(internal::unblocked_cholesky_lambda(L_A, L, arena_A));
   } else {
+#ifdef STAN_OPENCL
+    if (L_A.rows()
+        > opencl_context.tuning_opts().cholesky_size_worth_transfer) {
+      vari** vari_L = ChainableStack::instance_->memalloc_.alloc_array<vari*>(
+          arena_A.rows() * (arena_A.rows() + 1) / 2);
+      size_t pos = 0;
+      for (Eigen::Index j = 0; j < arena_A.rows(); ++j) {
+        for (Eigen::Index i = j; i < arena_A.rows(); ++i) {
+          vari_L[pos] = new vari(L_A.coeffRef(i, j), false);
+          L.coeffRef(i, j).vi_ = vari_L[pos];
+          ++pos;
+        }
+        for (Eigen::Index k = 0; k < j; ++k) {
+          L.coeffRef(k, j).vi_ = dummy;
+        }
+      }
+      reverse_pass_callback(internal::opencl_cholesky_lambda(arena_A, vari_L));
+    } else {
+      internal::initialize_return(L, L_A, dummy);
+      reverse_pass_callback(internal::cholesky_lambda(L_A, L, arena_A));
+    }
+#else
     internal::initialize_return(L, L_A, dummy);
     reverse_pass_callback(internal::cholesky_lambda(L_A, L, arena_A));
+#endif
   }
   return plain_type_t<EigMat>(L);
 }

@@ -80,12 +80,6 @@ TEST(ProbDistributionsCauchy, opencl_matches_cpu_small) {
                                                 sigma);
   stan::math::test::compare_cpu_opencl_prim_rev(cauchy_lpdf_functor_propto, y,
                                                 mu, sigma);
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      cauchy_lpdf_functor, y.transpose().eval(), mu.transpose().eval(),
-      sigma.transpose().eval());
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      cauchy_lpdf_functor_propto, y.transpose().eval(), mu.transpose().eval(),
-      sigma.transpose().eval());
 }
 
 TEST(ProbDistributionsCauchy, opencl_broadcast_y) {
@@ -101,10 +95,6 @@ TEST(ProbDistributionsCauchy, opencl_broadcast_y) {
                                                          y_scal, mu, sigma);
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       cauchy_lpdf_functor_propto, y_scal, mu, sigma);
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
-      cauchy_lpdf_functor, y_scal, mu.transpose().eval(), sigma);
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
-      cauchy_lpdf_functor_propto, y_scal, mu, sigma.transpose().eval());
 }
 
 TEST(ProbDistributionsCauchy, opencl_broadcast_mu) {
@@ -120,10 +110,6 @@ TEST(ProbDistributionsCauchy, opencl_broadcast_mu) {
                                                          mu_scal, sigma);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       cauchy_lpdf_functor_propto, y, mu_scal, sigma);
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
-      cauchy_lpdf_functor, y.transpose().eval(), mu_scal, sigma);
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
-      cauchy_lpdf_functor_propto, y, mu_scal, sigma.transpose().eval());
 }
 
 TEST(ProbDistributionsCauchy, opencl_broadcast_sigma) {
@@ -139,10 +125,6 @@ TEST(ProbDistributionsCauchy, opencl_broadcast_sigma) {
                                                          mu, sigma_scal);
   stan::math::test::test_opencl_broadcasting_prim_rev<2>(
       cauchy_lpdf_functor_propto, y, mu, sigma_scal);
-  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
-      cauchy_lpdf_functor, y.transpose().eval(), mu, sigma_scal);
-  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
-      cauchy_lpdf_functor_propto, y, mu.transpose().eval(), sigma_scal);
 }
 
 TEST(ProbDistributionsCauchy, opencl_matches_cpu_big) {
@@ -159,12 +141,6 @@ TEST(ProbDistributionsCauchy, opencl_matches_cpu_big) {
                                                 sigma);
   stan::math::test::compare_cpu_opencl_prim_rev(cauchy_lpdf_functor_propto, y,
                                                 mu, sigma);
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      cauchy_lpdf_functor, y.transpose().eval(), mu.transpose().eval(),
-      sigma.transpose().eval());
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      cauchy_lpdf_functor_propto, y.transpose().eval(), mu.transpose().eval(),
-      sigma.transpose().eval());
 }
 
 #endif

@@ -74,12 +74,10 @@ TEST(ProbDistributionsBetaProportion, opencl_matches_cpu_small) {
   Eigen::VectorXd kappa(N);
   kappa << 0.3, 1.8, 3.0;
 
+  stan::math::test::compare_cpu_opencl_prim_rev(beta_proportion_lpdf_functor, y,
+                                                mu, kappa);
   stan::math::test::compare_cpu_opencl_prim_rev(
-      beta_proportion_lpdf_functor, y.transpose().eval(), mu.transpose().eval(),
-      kappa.transpose().eval());
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      beta_proportion_lpdf_functor_propto, y.transpose().eval(),
-      mu.transpose().eval(), kappa.transpose().eval());
+      beta_proportion_lpdf_functor_propto, y, mu, kappa);
 }
 
 TEST(ProbDistributionsBetaProportion, opencl_broadcast_y) {
@@ -95,11 +93,6 @@ TEST(ProbDistributionsBetaProportion, opencl_broadcast_y) {
       beta_proportion_lpdf_functor, y_scal, mu, kappa);
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       beta_proportion_lpdf_functor_propto, y_scal, mu, kappa);
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
-      beta_proportion_lpdf_functor, y_scal, mu.transpose().eval(), kappa);
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
-      beta_proportion_lpdf_functor_propto, y_scal, mu,
-      kappa.transpose().eval());
 }
 
 TEST(ProbDistributionsBetaProportion, opencl_broadcast_mu) {
@@ -115,11 +108,6 @@ TEST(ProbDistributionsBetaProportion, opencl_broadcast_mu) {
       beta_proportion_lpdf_functor, y, mu_scal, kappa);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       beta_proportion_lpdf_functor_propto, y, mu_scal, kappa);
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
-      beta_proportion_lpdf_functor, y.transpose().eval(), mu_scal, kappa);
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
-      beta_proportion_lpdf_functor_propto, y, mu_scal,
-      kappa.transpose().eval());
 }
 
 TEST(ProbDistributionsBetaProportion, opencl_broadcast_kappa) {
@@ -135,11 +123,6 @@ TEST(ProbDistributionsBetaProportion, opencl_broadcast_kappa) {
       beta_proportion_lpdf_functor, y, mu, kappa_scal);
   stan::math::test::test_opencl_broadcasting_prim_rev<2>(
       beta_proportion_lpdf_functor_propto, y, mu, kappa_scal);
-  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
-      beta_proportion_lpdf_functor, y.transpose().eval(), mu, kappa_scal);
-  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
-      beta_proportion_lpdf_functor_propto, y, mu.transpose().eval(),
-      kappa_scal);
 }
 
 TEST(ProbDistributionsBetaProportion, opencl_matches_cpu_big) {
@@ -156,12 +139,6 @@ TEST(ProbDistributionsBetaProportion, opencl_matches_cpu_big) {
                                                 mu, kappa);
   stan::math::test::compare_cpu_opencl_prim_rev(
       beta_proportion_lpdf_functor_propto, y, mu, kappa);
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      beta_proportion_lpdf_functor, y.transpose().eval(), mu.transpose().eval(),
-      kappa.transpose().eval());
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      beta_proportion_lpdf_functor_propto, y.transpose().eval(),
-      mu.transpose().eval(), kappa.transpose().eval());
 }
 
 #endif

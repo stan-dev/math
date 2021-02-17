@@ -43,14 +43,10 @@ return_type_t<T_y_cl, T_scale_cl> rayleigh_lpdf(const T_y_cl& y,
     return 0.0;
   }
 
-  const auto& y_col = as_column_vector_or_scalar(y);
-  const auto& sigma_col = as_column_vector_or_scalar(sigma);
+  const auto& y_val = value_of(y);
+  const auto& sigma_val = value_of(sigma);
 
-  const auto& y_val = value_of(y_col);
-  const auto& sigma_val = value_of(sigma_col);
-
-  operands_and_partials<decltype(y_col), decltype(sigma_col)> ops_partials(
-      y_col, sigma_col);
+  operands_and_partials<T_y_cl, T_scale_cl> ops_partials(y, sigma);
 
   auto check_y_positive
       = check_cl(function, "Random variable", y_val, "positive");

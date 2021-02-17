@@ -58,13 +58,9 @@ inline return_type_t<T_y_cl, T_dof_cl, T_scale_cl> scaled_inv_chi_square_lpdf(
     return 0.0;
   }
 
-  const auto& y_col = as_column_vector_or_scalar(y);
-  const auto& nu_col = as_column_vector_or_scalar(nu);
-  const auto& s_col = as_column_vector_or_scalar(s);
-
-  const auto& y_val = value_of(y_col);
-  const auto& nu_val = value_of(nu_col);
-  const auto& s_val = value_of(s_col);
+  const auto& y_val = value_of(y);
+  const auto& nu_val = value_of(nu);
+  const auto& s_val = value_of(s);
 
   auto check_y_not_nan
       = check_cl(function, "Random variable", y_val, "not NaN");
@@ -126,8 +122,7 @@ inline return_type_t<T_y_cl, T_dof_cl, T_scale_cl> scaled_inv_chi_square_lpdf(
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
-  operands_and_partials<decltype(y_col), decltype(nu_col), decltype(s_col)>
-      ops_partials(y_col, nu_col, s_col);
+  operands_and_partials<T_y_cl, T_dof_cl, T_scale_cl> ops_partials(y, nu, s);
 
   if (!is_constant<T_y_cl>::value) {
     ops_partials.edge1_.partials_ = std::move(y_deriv_cl);

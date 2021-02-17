@@ -83,7 +83,6 @@
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 
-#include <stan/math/opencl/scalar_type.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/cholesky_decompose.hpp>
 #include <stan/math/opencl/is_constant.hpp>
@@ -93,6 +92,7 @@
 #include <stan/math/opencl/pinned_matrix.hpp>
 #include <stan/math/opencl/plain_type.hpp>
 #include <stan/math/opencl/ref_type_for_opencl.hpp>
+#include <stan/math/opencl/scalar_type.hpp>
 #include <stan/math/opencl/to_ref_for_opencl.hpp>
 #include <stan/math/opencl/triangular_transpose.hpp>
 #include <stan/math/opencl/value_type.hpp>
@@ -102,8 +102,10 @@
 #include <stan/math/opencl/prim/bernoulli_lpmf.hpp>
 #include <stan/math/opencl/prim/bernoulli_logit_lpmf.hpp>
 #include <stan/math/opencl/prim/bernoulli_logit_glm_lpmf.hpp>
+#include <stan/math/opencl/prim/beta_binomial_lpmf.hpp>
 #include <stan/math/opencl/prim/beta_lpdf.hpp>
 #include <stan/math/opencl/prim/beta_proportion_lpdf.hpp>
+#include <stan/math/opencl/prim/binomial_logit_lpmf.hpp>
 #include <stan/math/opencl/prim/binomial_lpmf.hpp>
 #include <stan/math/opencl/prim/block.hpp>
 #include <stan/math/opencl/prim/categorical_logit_glm_lpmf.hpp>
@@ -119,6 +121,7 @@
 #include <stan/math/opencl/prim/diag_pre_multiply.hpp>
 #include <stan/math/opencl/prim/diag_post_multiply.hpp>
 #include <stan/math/opencl/prim/dims.hpp>
+#include <stan/math/opencl/prim/dirichlet_lpdf.hpp>
 #include <stan/math/opencl/prim/distance.hpp>
 #include <stan/math/opencl/prim/divide.hpp>
 #include <stan/math/opencl/prim/divide_columns.hpp>
@@ -139,9 +142,12 @@
 #include <stan/math/opencl/prim/inv_sqrt.hpp>
 #include <stan/math/opencl/prim/logistic_lpdf.hpp>
 #include <stan/math/opencl/prim/lognormal_lpdf.hpp>
+#include <stan/math/opencl/prim/matrix_power.hpp>
 #include <stan/math/opencl/prim/mdivide_left_tri_low.hpp>
 #include <stan/math/opencl/prim/mdivide_right_tri_low.hpp>
 #include <stan/math/opencl/prim/mean.hpp>
+#include <stan/math/opencl/prim/multi_normal_cholesky_lpdf.hpp>
+#include <stan/math/opencl/prim/multiply_lower_tri_self_transpose.hpp>
 #include <stan/math/opencl/prim/neg_binomial_lpmf.hpp>
 #include <stan/math/opencl/prim/neg_binomial_2_lpmf.hpp>
 #include <stan/math/opencl/prim/neg_binomial_2_log_lpmf.hpp>
@@ -150,6 +156,7 @@
 #include <stan/math/opencl/prim/normal_lpdf.hpp>
 #include <stan/math/opencl/prim/num_elements.hpp>
 #include <stan/math/opencl/prim/ordered_logistic_glm_lpmf.hpp>
+#include <stan/math/opencl/prim/ordered_logistic_lpmf.hpp>
 #include <stan/math/opencl/prim/pareto_lpdf.hpp>
 #include <stan/math/opencl/prim/pareto_type_2_lpdf.hpp>
 #include <stan/math/opencl/prim/poisson_log_glm_lpmf.hpp>

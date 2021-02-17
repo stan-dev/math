@@ -68,10 +68,6 @@ TEST(ProbDistributionsExponential, opencl_matches_cpu_small) {
                                                 beta);
   stan::math::test::compare_cpu_opencl_prim_rev(exponential_lpdf_functor_propto,
                                                 y, beta);
-  stan::math::test::compare_cpu_opencl_prim_rev(exponential_lpdf_functor,
-                                                y.transpose().eval(), beta);
-  stan::math::test::compare_cpu_opencl_prim_rev(exponential_lpdf_functor_propto,
-                                                y, beta.transpose().eval());
 }
 
 TEST(ProbDistributionsExponential, opencl_broadcast_y) {
@@ -112,11 +108,6 @@ TEST(ProbDistributionsExponential, opencl_matches_cpu_big) {
                                                 beta);
   stan::math::test::compare_cpu_opencl_prim_rev(exponential_lpdf_functor_propto,
                                                 y, beta);
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      exponential_lpdf_functor, y.transpose().eval(), beta.transpose().eval());
-  stan::math::test::compare_cpu_opencl_prim_rev(exponential_lpdf_functor_propto,
-                                                y.transpose().eval(),
-                                                beta.transpose().eval());
 }
 
 #endif

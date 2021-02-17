@@ -58,10 +58,6 @@ TEST(ProbDistributionsBernoulliLogit, opencl_matches_cpu_small) {
                                                 theta);
   stan::math::test::compare_cpu_opencl_prim_rev(
       bernoulli_logit_lpmf_functor_propto, n, theta);
-  stan::math::test::compare_cpu_opencl_prim_rev(bernoulli_logit_lpmf_functor, n,
-                                                theta.transpose().eval());
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      bernoulli_logit_lpmf_functor_propto, n, theta.transpose().eval());
 }
 
 TEST(ProbDistributionsBernoulliLogit, opencl_broadcast_n) {
@@ -103,10 +99,6 @@ TEST(ProbDistributionsBernoulliLogit, opencl_matches_cpu_big) {
                                                 theta);
   stan::math::test::compare_cpu_opencl_prim_rev(
       bernoulli_logit_lpmf_functor_propto, n, theta);
-  stan::math::test::compare_cpu_opencl_prim_rev(bernoulli_logit_lpmf_functor, n,
-                                                theta.transpose().eval());
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      bernoulli_logit_lpmf_functor_propto, n, theta.transpose().eval());
 }
 
 #endif

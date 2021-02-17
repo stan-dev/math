@@ -92,12 +92,6 @@ TEST(ProbDistributionsLogistic, opencl_matches_cpu_small) {
                                                 sigma);
   stan::math::test::compare_cpu_opencl_prim_rev(logistic_lpdf_functor_propto, y,
                                                 mu, sigma);
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      logistic_lpdf_functor, y.transpose().eval(), mu.transpose().eval(),
-      sigma.transpose().eval());
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      logistic_lpdf_functor_propto, y.transpose().eval(), mu.transpose().eval(),
-      sigma.transpose().eval());
 }
 
 TEST(ProbDistributionsLogistic, opencl_broadcast_y) {
@@ -113,10 +107,6 @@ TEST(ProbDistributionsLogistic, opencl_broadcast_y) {
                                                          y, mu, sigma);
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       logistic_lpdf_functor_propto, y, mu, sigma);
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
-      logistic_lpdf_functor, y, mu.transpose().eval(), sigma);
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
-      logistic_lpdf_functor_propto, y, mu, sigma.transpose().eval());
 }
 
 TEST(ProbDistributionsLogistic, opencl_broadcast_mu) {
@@ -132,10 +122,6 @@ TEST(ProbDistributionsLogistic, opencl_broadcast_mu) {
                                                          y, mu, sigma);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       logistic_lpdf_functor_propto, y, mu, sigma);
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
-      logistic_lpdf_functor, y.transpose().eval(), mu, sigma);
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
-      logistic_lpdf_functor_propto, y, mu, sigma.transpose().eval());
 }
 
 TEST(ProbDistributionsLogistic, opencl_broadcast_sigma) {
@@ -151,10 +137,6 @@ TEST(ProbDistributionsLogistic, opencl_broadcast_sigma) {
                                                          y, mu, sigma);
   stan::math::test::test_opencl_broadcasting_prim_rev<2>(
       logistic_lpdf_functor_propto, y, mu, sigma);
-  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
-      logistic_lpdf_functor, y.transpose().eval(), mu, sigma);
-  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
-      logistic_lpdf_functor_propto, y, mu.transpose().eval(), sigma);
 }
 
 TEST(ProbDistributionsLogistic, opencl_matches_cpu_big) {
@@ -171,12 +153,6 @@ TEST(ProbDistributionsLogistic, opencl_matches_cpu_big) {
                                                 sigma);
   stan::math::test::compare_cpu_opencl_prim_rev(logistic_lpdf_functor_propto, y,
                                                 mu, sigma);
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      logistic_lpdf_functor, y.transpose().eval(), mu.transpose().eval(),
-      sigma.transpose().eval());
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      logistic_lpdf_functor_propto, y.transpose().eval(), mu.transpose().eval(),
-      sigma.transpose().eval());
 }
 
 TEST(ProbDistributionsLogistic, opencl_sigma_mu_scalar) {

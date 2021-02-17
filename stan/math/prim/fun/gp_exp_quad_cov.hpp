@@ -8,6 +8,10 @@
 #include <stan/math/prim/fun/squared_distance.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/square.hpp>
+#ifdef STAN_OPENCL
+#include <stan/math/opencl/prim.hpp>
+#endif
+
 #include <cmath>
 #include <type_traits>
 #include <vector>
@@ -333,6 +337,308 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
                                   square(sigma));
   return cov;
 }
+
+#ifdef STAN_OPENCL
+/**
+ * Returns a squared exponential kernel.
+ *
+ * @param x std::vector of scalars that can be used in square distance.
+ * @param sigma marginal standard deviation or magnitude
+ * @param length_scale length scale
+ * @return squared distance
+ * @throw std::domain_error if sigma <= 0, l <= 0, or
+ *   x is nan or infinite
+ */
+template <>
+inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x,
+                                       const double &sigma,
+                                       const double &length_scale) {
+  const char *function_name = "gp_exp_quad_cov";
+  check_positive(function_name, "magnitude", sigma);
+  check_positive(function_name, "length scale", length_scale);
+
+  const auto x_size = x.size();
+  Eigen::MatrixXd cov(x_size, x_size);
+  if (x_size == 0) {
+    return cov;
+  }
+  const auto total_size = x_size + cov.size();
+  if (total_size < opencl_context.tuning_opts().gp_exp_quad_cov_simple) {
+    for (size_t n = 0; n < x_size; ++n) {
+      check_not_nan("gp_exp_quad_cov", "x", x[n]);
+    }
+
+    cov = internal::gp_exp_quad_cov(x, square(sigma),
+                                    -0.5 / square(length_scale));
+    return cov;
+  }
+
+  matrix_cl<double> x_cl(x, 1, x.size());
+  check_nan(function_name, "x", x_cl);
+  matrix_cl<double> cov_cl = gp_exp_quad_cov(x_cl, sigma, length_scale);
+  cov = from_matrix_cl(cov_cl);
+
+  return cov;
+}
+
+/**
+ * Returns a squared exponential kernel.
+ *
+ * @param x std::vector of scalars that can be used in square distance.
+ *    This function assumes each element of x is the same size.
+ * @param sigma marginal standard deviation or magnitude
+ * @param length_scale length scale
+ * @return squared distance
+ * @throw std::domain_error if sigma <= 0, l <= 0, or
+ *   x is nan or infinite
+ */
+template <>
+inline Eigen::MatrixXd gp_exp_quad_cov(const std::vector<Eigen::VectorXd> &x,
+                                       const double &sigma,
+                                       const double &length_scale) {
+  const char *function_name = "gp_exp_quad_cov";
+  check_positive(function_name, "magnitude", sigma);
+  check_positive(function_name, "length scale", length_scale);
+
+  const size_t x_size = x.size();
+  Eigen::MatrixXd cov(x_size, x_size);
+
+  if (x_size == 0) {
+    return cov;
+  }
+
+  const size_t inner_x1_size = x[0].size();
+  const auto total_size = x_size * inner_x1_size + cov.size();
+  if (total_size < opencl_context.tuning_opts().gp_exp_quad_cov_complex) {
+    for (size_t i = 0; i < x_size; ++i) {
+      check_not_nan("gp_exp_quad_cov", "x", x[i]);
+    }
+    cov = internal::gp_exp_quad_cov(x, square(sigma),
+                                    -0.5 / square(length_scale));
+    return cov;
+  }
+
+  matrix_cl<double> x_cl(x);
+  check_nan(function_name, "x", x_cl);
+  matrix_cl<double> cov_cl = gp_exp_quad_cov(x_cl, sigma, length_scale);
+  cov = from_matrix_cl(cov_cl);
+
+  return cov;
+}
+
+/**
+ * Returns a squared exponential kernel.
+ *
+ * @param x std::vector of Eigen vectors of scalars.
+ * @param sigma marginal standard deviation or magnitude
+ * @param length_scale std::vector length scale
+ * @return squared distance
+ * @throw std::domain_error if sigma <= 0, l <= 0, or
+ *   x is nan or infinite
+ */
+template <>
+inline Eigen::MatrixXd gp_exp_quad_cov(
+    const std::vector<Eigen::VectorXd> &x, const double &sigma,
+    const std::vector<double> &length_scale) {
+  const char *function_name = "gp_exp_quad_cov";
+  check_positive_finite(function_name, "magnitude", sigma);
+  check_positive_finite(function_name, "length scale", length_scale);
+
+  const size_t x_size = x.size();
+  Eigen::MatrixXd cov(x_size, x_size);
+
+  if (x_size == 0) {
+    return cov;
+  }
+
+  const size_t inner_x1_size = x[0].size();
+  check_size_match(function_name, "x dimension", inner_x1_size,
+                   "number of length scales", length_scale.size());
+  const auto total_size = x_size * inner_x1_size + inner_x1_size + cov.size();
+  if (total_size < opencl_context.tuning_opts().gp_exp_quad_cov_complex) {
+    return internal::gp_exp_quad_cov(divide_columns(x, length_scale),
+                                     square(sigma));
+  }
+
+  matrix_cl<double> x_cl(x);
+  check_nan(function_name, "x", x_cl);
+  matrix_cl<double> length_scale_cl(length_scale, length_scale.size(), 1);
+  divide_columns(x_cl, length_scale_cl);
+  matrix_cl<double> cov_cl = gp_exp_quad_cov(x_cl, sigma, 1);
+  cov = from_matrix_cl(cov_cl);
+  return cov;
+}
+
+/**
+ * Returns a squared exponential kernel.
+ *
+ * This function is for the cross covariance matrix
+ * needed to compute posterior predictive density.
+ *
+ * @param x1 std::vector of elements that can be used in square distance
+ * @param x2 std::vector of elements that can be used in square distance
+ * @param sigma standard deviation
+ * @param length_scale length scale
+ * @return squared distance
+ * @throw std::domain_error if sigma <= 0, l <= 0, or
+ *   x is nan or infinite
+ */
+template <>
+inline typename Eigen::MatrixXd gp_exp_quad_cov(const std::vector<double> &x1,
+                                                const std::vector<double> &x2,
+                                                const double &sigma,
+                                                const double &length_scale) {
+  const char *function_name = "gp_exp_quad_cov";
+  check_positive_finite(function_name, "magnitude", sigma);
+  check_positive_finite(function_name, "length scale", length_scale);
+
+  Eigen::MatrixXd cov(x1.size(), x2.size());
+  if (x1.size() == 0 || x1.size() == 0) {
+    return cov;
+  }
+  const auto total_size = x1.size() + x2.size() + cov.size();
+  if (total_size < opencl_context.tuning_opts().gp_exp_quad_cov_simple) {
+    for (size_t i = 0; i < x1.size(); ++i) {
+      check_not_nan(function_name, "x1", x1[i]);
+    }
+    for (size_t i = 0; i < x2.size(); ++i) {
+      check_not_nan(function_name, "x2", x2[i]);
+    }
+
+    cov = internal::gp_exp_quad_cov(x1, x2, square(sigma),
+                                    -0.5 / square(length_scale));
+    return cov;
+  }
+
+  matrix_cl<double> x1_cl(x1, 1, x1.size());
+  check_nan(function_name, "x1", x1_cl);
+  matrix_cl<double> x2_cl(x2, 1, x2.size());
+  check_nan(function_name, "x2", x2_cl);
+  matrix_cl<double> cov_cl = gp_exp_quad_cov(x1_cl, x2_cl, sigma, length_scale);
+  cov = from_matrix_cl(cov_cl);
+  return cov;
+}
+
+/**
+ * Returns a squared exponential kernel.
+ *
+ * This function is for the cross covariance matrix
+ * needed to compute posterior predictive density.
+ *
+ * @param x1 std::vector of elements that can be used in square distance
+ * @param x2 std::vector of elements that can be used in square distance
+ *    This function assumes each element of x1 and x2 are the same size.
+ * @param sigma standard deviation
+ * @param length_scale length scale
+ * @return squared distance
+ * @throw std::domain_error if sigma <= 0, l <= 0, or
+ *   x is nan or infinite
+ */
+template <>
+inline typename Eigen::MatrixXd gp_exp_quad_cov(
+    const std::vector<Eigen::VectorXd> &x1,
+    const std::vector<Eigen::VectorXd> &x2, const double &sigma,
+    const double &length_scale) {
+  const char *function_name = "gp_exp_quad_cov";
+  const int x1_size = x1.size();
+  const int x2_size = x2.size();
+  check_positive_finite(function_name, "magnitude", sigma);
+  check_positive_finite(function_name, "length scale", length_scale);
+
+  Eigen::MatrixXd cov(x1.size(), x2.size());
+  if (x1.size() == 0 || x1.size() == 0) {
+    return cov;
+  }
+
+  const int x1_inner_size = x1[0].size();
+  const int x2_inner_size = x1[0].size();
+  const auto total_size
+      = x1_size * x1_inner_size + x2_size * x2_inner_size + cov.size();
+  if (total_size < opencl_context.tuning_opts().gp_exp_quad_cov_complex) {
+    for (size_t i = 0; i < x1.size(); ++i) {
+      check_not_nan(function_name, "x1", x1[i]);
+    }
+    for (size_t i = 0; i < x2.size(); ++i) {
+      check_not_nan(function_name, "x2", x2[i]);
+    }
+
+    cov = internal::gp_exp_quad_cov(x1, x2, square(sigma),
+                                    -0.5 / square(length_scale));
+    return cov;
+  }
+
+  matrix_cl<double> x1_cl(x1);
+  check_nan(function_name, "x1", x1_cl);
+  matrix_cl<double> x2_cl(x2);
+  check_nan(function_name, "x2", x2_cl);
+  matrix_cl<double> cov_cl = gp_exp_quad_cov(x1_cl, x2_cl, sigma, length_scale);
+  cov = from_matrix_cl(cov_cl);
+  return cov;
+}
+
+/**
+ * Returns a squared exponential kernel.
+ *
+ * This function is for the cross covariance
+ * matrix needed to compute the posterior predictive density.
+ *
+ * @param x1 std::vector of Eigen vectors of scalars.
+ * @param x2 std::vector of Eigen vectors of scalars.
+ * @param sigma standard deviation
+ * @param length_scale std::vector of length scale
+ * @return squared distance
+ * @throw std::domain_error if sigma <= 0, l <= 0, or
+ *   x is nan or infinite
+ */
+template <>
+inline typename Eigen::MatrixXd gp_exp_quad_cov(
+    const std::vector<Eigen::VectorXd> &x1,
+    const std::vector<Eigen::VectorXd> &x2, const double &sigma,
+    const std::vector<double> &length_scale) {
+  size_t x1_size = x1.size();
+  size_t x2_size = x2.size();
+  size_t l_size = length_scale.size();
+
+  Eigen::MatrixXd cov(x1_size, x2_size);
+  if (x1_size == 0 || x2_size == 0) {
+    return cov;
+  }
+
+  const int x1_inner_size = x1[0].size();
+  const int x2_inner_size = x1[0].size();
+  const char *function_name = "gp_exp_quad_cov";
+  check_positive_finite(function_name, "magnitude", sigma);
+  check_positive_finite(function_name, "length scale", length_scale);
+  check_size_match(function_name, "x dimension", x1[0].size(),
+                   "number of length scales", l_size);
+  check_size_match(function_name, "x dimension", x2[0].size(),
+                   "number of length scales", l_size);
+  const auto total_size
+      = x1_size * x1_inner_size + x2_size * x2_inner_size + l_size + cov.size();
+  if (total_size < opencl_context.tuning_opts().gp_exp_quad_cov_complex) {
+    for (size_t i = 0; i < x1_size; ++i) {
+      check_not_nan(function_name, "x1", x1[i]);
+    }
+    for (size_t i = 0; i < x2_size; ++i) {
+      check_not_nan(function_name, "x1", x2[i]);
+    }
+    cov = internal::gp_exp_quad_cov(divide_columns(x1, length_scale),
+                                    divide_columns(x2, length_scale),
+                                    square(sigma));
+    return cov;
+  }
+  matrix_cl<double> x1_cl(x1);
+  check_nan(function_name, "x1", x1_cl);
+  matrix_cl<double> length_scale_cl(length_scale, length_scale.size(), 1);
+  divide_columns(x1_cl, length_scale_cl);
+  matrix_cl<double> x2_cl(x2);
+  check_nan(function_name, "x2", x2_cl);
+  divide_columns(x2_cl, length_scale_cl);
+  matrix_cl<double> cov_cl = gp_exp_quad_cov(x1_cl, x2_cl, sigma, 1);
+  cov = from_matrix_cl(cov_cl);
+  return cov;
+}
+#endif
 
 }  // namespace math
 }  // namespace stan

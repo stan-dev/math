@@ -57,10 +57,6 @@ TEST(ProbDistributionsPoissonLog, opencl_matches_cpu_small) {
                                                 alpha);
   stan::math::test::compare_cpu_opencl_prim_rev(poisson_log_lpmf_functor_propto,
                                                 n, alpha);
-  stan::math::test::compare_cpu_opencl_prim_rev(poisson_log_lpmf_functor, n,
-                                                alpha.transpose().eval());
-  stan::math::test::compare_cpu_opencl_prim_rev(poisson_log_lpmf_functor_propto,
-                                                n, alpha.transpose().eval());
 }
 
 TEST(ProbDistributionsPoissonLog, opencl_broadcast_n) {
@@ -102,10 +98,6 @@ TEST(ProbDistributionsPoissonLog, opencl_matches_cpu_big) {
                                                 alpha);
   stan::math::test::compare_cpu_opencl_prim_rev(poisson_log_lpmf_functor_propto,
                                                 n, alpha);
-  stan::math::test::compare_cpu_opencl_prim_rev(poisson_log_lpmf_functor, n,
-                                                alpha.transpose().eval());
-  stan::math::test::compare_cpu_opencl_prim_rev(poisson_log_lpmf_functor_propto,
-                                                n, alpha.transpose().eval());
 }
 
 #endif

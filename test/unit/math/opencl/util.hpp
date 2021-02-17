@@ -17,7 +17,7 @@ namespace test {
 namespace internal {
 
 template <typename T, require_stan_scalar_t<T>* = nullptr>
-T opencl_argument(T&& x) {
+T opencl_argument(const T& x) {
   return x;
 }
 template <typename T, require_not_stan_scalar_t<T>* = nullptr>
@@ -26,12 +26,23 @@ auto opencl_argument(const T& x) {
 }
 
 template <typename T, require_st_same<T, int>* = nullptr>
-T var_argument(T&& x) {
+T var_argument(const T& x) {
   return x;
 }
-template <typename T, require_not_st_same<T, int>* = nullptr>
-auto var_argument(T&& x) {
+template <typename T, require_not_st_same<T, int>* = nullptr,
+          require_not_std_vector_t<T>* = nullptr>
+auto var_argument(const T& x) {
   return to_var(x);
+}
+template <typename T, require_not_st_same<T, int>* = nullptr,
+          require_std_vector_t<T>* = nullptr>
+auto var_argument(const T& x) {
+  std::vector<decltype(var_argument(x[0]))> res;
+  res.reserve(x.size());
+  for (auto& i : x) {
+    res.push_back(var_argument(i));
+  }
+  return res;
 }
 
 template <typename T, require_arithmetic_t<T>* = nullptr>
@@ -199,26 +210,15 @@ void test_opencl_broadcasting_prim_rev_impl(const Functor& functor,
                                                 const auto& args_vector) {
         auto res_scalar
             = eval(functor(opencl_argument(std::get<Is>(args_broadcast))...));
+        auto res_vec = eval(functor(opencl_argument(
+            to_vector_if<Is == I>(std::get<Is>(args_vector), N))...));
         std::string signature = type_name<decltype(args_broadcast)>().data();
-
-        try {
-          auto res_vec = eval(functor(opencl_argument(
-              to_vector_if<Is == I>(std::get<Is>(args_vector), N))...));
-          expect_eq(res_vec, res_scalar,
-                    ("return values of broadcast and vector arguments do not "
-                     "match for signature "
-                     + signature + "!")
-                        .c_str());
-          try {
-            var(recursive_sum(res_scalar) + recursive_sum(res_vec)).grad();
-          } catch (...) {
-            std::cerr << "throw in rev pass!" << std::endl;
-            throw;
-          }
-        } catch (...) {
-          std::cerr << "throw in signature: " << signature << "!" << std::endl;
-          throw;
-        }
+        expect_eq(res_vec, res_scalar,
+                  ("return values of broadcast and vector arguments do not "
+                   "match for signature "
+                   + signature + "!")
+                      .c_str());
+        var(recursive_sum(res_scalar) + recursive_sum(res_vec)).grad();
 
         static_cast<void>(std::initializer_list<int>{
             (expect_adj_near(

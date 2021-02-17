@@ -49,13 +49,9 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> double_exponential_lpdf(
     return 0.0;
   }
 
-  const auto& y_col = as_column_vector_or_scalar(y);
-  const auto& mu_col = as_column_vector_or_scalar(mu);
-  const auto& sigma_col = as_column_vector_or_scalar(sigma);
-
-  const auto& y_val = value_of(y_col);
-  const auto& mu_val = value_of(mu_col);
-  const auto& sigma_val = value_of(sigma_col);
+  const auto& y_val = value_of(y);
+  const auto& mu_val = value_of(mu);
+  const auto& sigma_val = value_of(sigma);
 
   auto check_y_finite = check_cl(function, "Random variable", y_val, "finite");
   auto y_finite_expr = isfinite(y_val);
@@ -91,8 +87,8 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> double_exponential_lpdf(
   if (include_summand<propto>::value) {
     logp -= N * LOG_TWO;
   }
-  operands_and_partials<decltype(y_col), decltype(mu_col), decltype(sigma_col)>
-      ops_partials(y_col, mu_col, sigma_col);
+  operands_and_partials<T_y_cl, T_loc_cl, T_scale_cl> ops_partials(y, mu,
+                                                                   sigma);
 
   if (!is_constant<T_y_cl>::value) {
     ops_partials.edge1_.partials_ = std::move(y_deriv_cl);

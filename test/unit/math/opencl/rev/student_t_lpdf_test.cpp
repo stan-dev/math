@@ -106,12 +106,6 @@ TEST(ProbDistributionsStudentT, opencl_matches_cpu_small) {
                                                 mu, sigma);
   stan::math::test::compare_cpu_opencl_prim_rev(student_t_lpdf_functor_propto,
                                                 y, nu, mu, sigma);
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      student_t_lpdf_functor, y.transpose().eval(), nu.transpose().eval(),
-      mu.transpose().eval(), sigma.transpose().eval());
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      student_t_lpdf_functor_propto, y.transpose().eval(),
-      nu.transpose().eval(), mu.transpose().eval(), sigma.transpose().eval());
 }
 
 TEST(ProbDistributionsStudentT, opencl_broadcast_y) {
@@ -129,12 +123,57 @@ TEST(ProbDistributionsStudentT, opencl_broadcast_y) {
                                                          y_scal, nu, mu, sigma);
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       student_t_lpdf_functor_propto, y_scal, nu, mu, sigma);
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
-      student_t_lpdf_functor, y_scal, nu.transpose().eval(),
-      mu.transpose().eval(), sigma);
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
-      student_t_lpdf_functor_propto, y_scal, nu, mu.transpose().eval(),
-      sigma.transpose().eval());
+}
+
+TEST(ProbDistributionsStudentT, opencl_broadcast_nu) {
+  int N = 3;
+
+  Eigen::VectorXd y(N);
+  y << 0.3, -0.8, 1.0;
+  double nu_scal = 12.3;
+  Eigen::VectorXd mu(N);
+  mu << 0.3, 0.8, -1.0;
+  Eigen::VectorXd sigma(N);
+  sigma << 0.3, 0.8, 1.0;
+
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(student_t_lpdf_functor,
+                                                         y, nu_scal, mu, sigma);
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
+      student_t_lpdf_functor_propto, y, nu_scal, mu, sigma);
+}
+
+TEST(ProbDistributionsStudentT, opencl_broadcast_mu) {
+  int N = 3;
+
+  Eigen::VectorXd y(N);
+  y << 0.3, -0.8, 1.0;
+  Eigen::VectorXd nu(N);
+  nu << 0.3, 0.3, 1.5;
+  double mu_scal = 12.3;
+  Eigen::VectorXd sigma(N);
+  sigma << 0.3, 0.8, 1.0;
+
+  stan::math::test::test_opencl_broadcasting_prim_rev<2>(student_t_lpdf_functor,
+                                                         y, nu, mu_scal, sigma);
+  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
+      student_t_lpdf_functor_propto, y, nu, mu_scal, sigma);
+}
+
+TEST(ProbDistributionsStudentT, opencl_broadcast_sigma) {
+  int N = 3;
+
+  Eigen::VectorXd y(N);
+  y << 0.3, -0.8, 1.0;
+  Eigen::VectorXd nu(N);
+  nu << 0.3, 0.3, 1.5;
+  Eigen::VectorXd mu(N);
+  mu << 0.3, 0.8, -1.0;
+  double sigma_scal = 12.3;
+
+  stan::math::test::test_opencl_broadcasting_prim_rev<3>(student_t_lpdf_functor,
+                                                         y, nu, mu, sigma_scal);
+  stan::math::test::test_opencl_broadcasting_prim_rev<3>(
+      student_t_lpdf_functor_propto, y, nu, mu, sigma_scal);
 }
 
 TEST(ProbDistributionsStudentT, opencl_matches_cpu_big) {
@@ -153,12 +192,6 @@ TEST(ProbDistributionsStudentT, opencl_matches_cpu_big) {
                                                 mu, sigma);
   stan::math::test::compare_cpu_opencl_prim_rev(student_t_lpdf_functor_propto,
                                                 y, nu, mu, sigma);
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      student_t_lpdf_functor, y.transpose().eval(), nu.transpose().eval(),
-      mu.transpose().eval(), sigma);
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      student_t_lpdf_functor_propto, y.transpose().eval(),
-      nu.transpose().eval(), mu.transpose().eval(), sigma.transpose().eval());
 }
 
 #endif

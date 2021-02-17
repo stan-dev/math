@@ -57,15 +57,10 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> pareto_type_2_lpdf(
     return 0.0;
   }
 
-  const auto& y_col = as_column_vector_or_scalar(y);
-  const auto& mu_col = as_column_vector_or_scalar(mu);
-  const auto& lambda_col = as_column_vector_or_scalar(lambda);
-  const auto& alpha_col = as_column_vector_or_scalar(alpha);
-
-  const auto& y_val = value_of(y_col);
-  const auto& mu_val = value_of(mu_col);
-  const auto& lambda_val = value_of(lambda_col);
-  const auto& alpha_val = value_of(alpha_col);
+  const auto& y_val = value_of(y);
+  const auto& mu_val = value_of(mu);
+  const auto& lambda_val = value_of(lambda);
+  const auto& alpha_val = value_of(alpha);
 
   auto y_minus_mu = y_val - mu_val;
   auto check_y_ge_mu
@@ -117,9 +112,8 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> pareto_type_2_lpdf(
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
-  operands_and_partials<decltype(y_col), decltype(mu_col), decltype(lambda_col),
-                        decltype(alpha_col)>
-      ops_partials(y_col, mu_col, lambda_col, alpha_col);
+  operands_and_partials<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> ops_partials(
+      y, mu, lambda, alpha);
   if (!is_constant<T_y_cl>::value) {
     ops_partials.edge1_.partials_ = std::move(y_deriv_cl);
   }

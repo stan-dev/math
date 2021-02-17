@@ -97,12 +97,6 @@ TEST(ProbDistributionsFrechet, opencl_matches_cpu_small) {
                                                 sigma);
   stan::math::test::compare_cpu_opencl_prim_rev(frechet_lpdf_functor_propto, y,
                                                 alpha, sigma);
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      frechet_lpdf_functor, y.transpose().eval(), alpha.transpose().eval(),
-      sigma.transpose().eval());
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      frechet_lpdf_functor_propto, y.transpose().eval(),
-      alpha.transpose().eval(), sigma.transpose().eval());
 }
 
 TEST(ProbDistributionsFrechet, opencl_broadcast_y) {
@@ -118,10 +112,6 @@ TEST(ProbDistributionsFrechet, opencl_broadcast_y) {
                                                          y, alpha, sigma);
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       frechet_lpdf_functor_propto, y, alpha, sigma);
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
-      frechet_lpdf_functor, y, alpha.transpose().eval(), sigma);
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
-      frechet_lpdf_functor_propto, y, alpha, sigma.transpose().eval());
 }
 
 TEST(ProbDistributionsFrechet, opencl_broadcast_alpha) {
@@ -137,10 +127,6 @@ TEST(ProbDistributionsFrechet, opencl_broadcast_alpha) {
                                                          y, alpha, sigma);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       frechet_lpdf_functor_propto, y, alpha, sigma);
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
-      frechet_lpdf_functor, y.transpose().eval(), alpha, sigma);
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
-      frechet_lpdf_functor_propto, y, alpha, sigma.transpose().eval());
 }
 
 TEST(ProbDistributionsFrechet, opencl_broadcast_sigma) {
@@ -158,10 +144,6 @@ TEST(ProbDistributionsFrechet, opencl_broadcast_sigma) {
                                                          y, alpha, sigma);
   stan::math::test::test_opencl_broadcasting_prim_rev<2>(
       frechet_lpdf_functor_propto, y, alpha, sigma);
-  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
-      frechet_lpdf_functor, y.transpose().eval(), alpha, sigma);
-  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
-      frechet_lpdf_functor_propto, y, alpha.transpose().eval(), sigma);
 }
 
 TEST(ProbDistributionsFrechet, opencl_matches_cpu_big) {
@@ -178,12 +160,6 @@ TEST(ProbDistributionsFrechet, opencl_matches_cpu_big) {
                                                 sigma);
   stan::math::test::compare_cpu_opencl_prim_rev(frechet_lpdf_functor_propto, y,
                                                 alpha, sigma);
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      frechet_lpdf_functor, y.transpose().eval(), alpha.transpose().eval(),
-      sigma.transpose().eval());
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      frechet_lpdf_functor_propto, y.transpose().eval(),
-      alpha.transpose().eval(), sigma.transpose().eval());
 }
 
 #endif

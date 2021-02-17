@@ -63,10 +63,6 @@ TEST(ProbDistributionsRayleigh, opencl_matches_cpu_small) {
                                                 sigma);
   stan::math::test::compare_cpu_opencl_prim_rev(rayleigh_lpdf_functor_propto, y,
                                                 sigma);
-  stan::math::test::compare_cpu_opencl_prim_rev(rayleigh_lpdf_functor,
-                                                y.transpose().eval(), sigma);
-  stan::math::test::compare_cpu_opencl_prim_rev(rayleigh_lpdf_functor_propto, y,
-                                                sigma.transpose().eval());
 }
 
 TEST(ProbDistributionsRayleigh, opencl_broadcast_y) {
@@ -107,11 +103,6 @@ TEST(ProbDistributionsRayleigh, opencl_matches_cpu_big) {
                                                 sigma);
   stan::math::test::compare_cpu_opencl_prim_rev(rayleigh_lpdf_functor_propto, y,
                                                 sigma);
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      rayleigh_lpdf_functor, y.transpose().eval(), sigma.transpose().eval());
-  stan::math::test::compare_cpu_opencl_prim_rev(rayleigh_lpdf_functor_propto,
-                                                y.transpose().eval(),
-                                                sigma.transpose().eval());
 }
 
 #endif

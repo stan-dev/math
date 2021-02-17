@@ -55,13 +55,9 @@ return_type_t<T_y_cl, T_loc_cl, T_prec_cl> beta_proportion_lpdf(
     return 0.0;
   }
 
-  const auto& y_col = as_column_vector_or_scalar(y);
-  const auto& mu_col = as_column_vector_or_scalar(mu);
-  const auto& kappa_col = as_column_vector_or_scalar(kappa);
-
-  const auto& y_val = value_of(y_col);
-  const auto& mu_val = value_of(mu_col);
-  const auto& kappa_val = value_of(kappa_col);
+  const auto& y_val = value_of(y);
+  const auto& mu_val = value_of(mu);
+  const auto& kappa_val = value_of(kappa);
 
   auto check_y_bounded
       = check_cl(function, "Random variable", y_val, "in the interval [0, 1]");
@@ -110,8 +106,7 @@ return_type_t<T_y_cl, T_loc_cl, T_prec_cl> beta_proportion_lpdf(
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
-  operands_and_partials<decltype(y_col), decltype(mu_col), decltype(kappa_col)>
-      ops_partials(y_col, mu_col, kappa_col);
+  operands_and_partials<T_y_cl, T_loc_cl, T_prec_cl> ops_partials(y, mu, kappa);
   if (!is_constant<T_y_cl>::value) {
     ops_partials.edge1_.partials_ = std::move(y_deriv_cl);
   }

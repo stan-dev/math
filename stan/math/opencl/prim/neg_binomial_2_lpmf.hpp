@@ -57,11 +57,8 @@ inline return_type_t<T_n_cl, T_location_cl, T_precision_cl> neg_binomial_2_lpmf(
     return 0.0;
   }
 
-  const auto& mu_col = as_column_vector_or_scalar(mu);
-  const auto& phi_col = as_column_vector_or_scalar(phi);
-
-  const auto& mu_val = value_of(mu_col);
-  const auto& phi_val = value_of(phi_col);
+  const auto& mu_val = value_of(mu);
+  const auto& phi_val = value_of(phi);
 
   auto check_n_nonnegative
       = check_cl(function, "Failures variable", n, "nonnegative");
@@ -106,8 +103,7 @@ inline return_type_t<T_n_cl, T_location_cl, T_precision_cl> neg_binomial_2_lpmf(
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
-  operands_and_partials<decltype(mu_col), decltype(phi_col)> ops_partials(
-      mu_col, phi_col);
+  operands_and_partials<T_location_cl, T_precision_cl> ops_partials(mu, phi);
 
   if (!is_constant<T_location_cl>::value) {
     ops_partials.edge1_.partials_ = std::move(mu_deriv_cl);

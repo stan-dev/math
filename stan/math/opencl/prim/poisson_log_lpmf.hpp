@@ -47,11 +47,10 @@ return_type_t<T_log_rate_cl> poisson_log_lpmf(const T_n_cl& n,
     return 0.0;
   }
 
-  const auto& alpha_col = as_column_vector_or_scalar(alpha);
-  const auto& alpha_val = value_of(alpha_col);
+  const auto& alpha_val = value_of(alpha);
 
   T_partials_return logp(0.0);
-  operands_and_partials<decltype(alpha_col)> ops_partials(alpha_col);
+  operands_and_partials<T_log_rate_cl> ops_partials(alpha);
 
   auto check_n_nonnegative
       = check_cl(function, "Random variable", n, "nonnegative");

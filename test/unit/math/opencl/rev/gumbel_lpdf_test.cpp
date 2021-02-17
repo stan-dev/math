@@ -90,12 +90,6 @@ TEST(ProbDistributionsGumbel, opencl_matches_cpu_small) {
                                                 beta);
   stan::math::test::compare_cpu_opencl_prim_rev(gumbel_lpdf_functor_propto, y,
                                                 mu, beta);
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      gumbel_lpdf_functor, y.transpose().eval(), mu.transpose().eval(),
-      beta.transpose().eval());
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      gumbel_lpdf_functor_propto, y.transpose().eval(), mu.transpose().eval(),
-      beta.transpose().eval());
 }
 
 TEST(ProbDistributionsGumbel, opencl_broadcast_y) {
@@ -111,10 +105,6 @@ TEST(ProbDistributionsGumbel, opencl_broadcast_y) {
                                                          mu, beta);
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       gumbel_lpdf_functor_propto, y, mu, beta);
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
-      gumbel_lpdf_functor, y, mu.transpose().eval(), beta);
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
-      gumbel_lpdf_functor_propto, y, mu, beta.transpose().eval());
 }
 
 TEST(ProbDistributionsGumbel, opencl_broadcast_mu) {
@@ -130,10 +120,6 @@ TEST(ProbDistributionsGumbel, opencl_broadcast_mu) {
                                                          mu, beta);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       gumbel_lpdf_functor_propto, y, mu, beta);
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
-      gumbel_lpdf_functor, y.transpose().eval(), mu, beta);
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
-      gumbel_lpdf_functor_propto, y, mu, beta.transpose().eval());
 }
 
 TEST(ProbDistributionsGumbel, opencl_broadcast_beta) {
@@ -149,10 +135,6 @@ TEST(ProbDistributionsGumbel, opencl_broadcast_beta) {
                                                          mu, beta);
   stan::math::test::test_opencl_broadcasting_prim_rev<2>(
       gumbel_lpdf_functor_propto, y, mu, beta);
-  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
-      gumbel_lpdf_functor, y.transpose().eval(), mu, beta);
-  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
-      gumbel_lpdf_functor_propto, y, mu.transpose().eval(), beta);
 }
 
 TEST(ProbDistributionsGumbel, opencl_matches_cpu_big) {
@@ -169,12 +151,6 @@ TEST(ProbDistributionsGumbel, opencl_matches_cpu_big) {
                                                 beta);
   stan::math::test::compare_cpu_opencl_prim_rev(gumbel_lpdf_functor_propto, y,
                                                 mu, beta);
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      gumbel_lpdf_functor, y.transpose().eval(), mu.transpose().eval(),
-      beta.transpose().eval());
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      gumbel_lpdf_functor_propto, y.transpose().eval(), mu.transpose().eval(),
-      beta.transpose().eval());
 }
 
 #endif

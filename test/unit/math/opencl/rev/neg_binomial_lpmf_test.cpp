@@ -86,12 +86,6 @@ TEST(muProbDistributionsNegBinomial, opencl_matches_cpu_small) {
                                                 alpha, beta);
   stan::math::test::compare_cpu_opencl_prim_rev(
       neg_binomial_lpmf_functor_propto, n, alpha, beta);
-  stan::math::test::compare_cpu_opencl_prim_rev(neg_binomial_lpmf_functor, n,
-                                                alpha.transpose().eval(),
-                                                beta.transpose().eval());
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      neg_binomial_lpmf_functor_propto, n, alpha.transpose().eval(),
-      beta.transpose().eval());
 }
 
 TEST(muProbDistributionsNegBinomial, opencl_broadcast_n) {
@@ -107,10 +101,6 @@ TEST(muProbDistributionsNegBinomial, opencl_broadcast_n) {
       neg_binomial_lpmf_functor, n, alpha, beta);
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       neg_binomial_lpmf_functor_propto, n, alpha, beta);
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
-      neg_binomial_lpmf_functor, n, alpha.transpose().eval(), beta);
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
-      neg_binomial_lpmf_functor_propto, n, alpha, beta.transpose().eval());
 }
 
 TEST(muProbDistributionsNegBinomial, opencl_broadcast_alpha) {
@@ -125,10 +115,6 @@ TEST(muProbDistributionsNegBinomial, opencl_broadcast_alpha) {
       neg_binomial_lpmf_functor, n, alpha, beta);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       neg_binomial_lpmf_functor_propto, n, alpha, beta);
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
-      neg_binomial_lpmf_functor, n, alpha, beta.transpose().eval());
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
-      neg_binomial_lpmf_functor_propto, n, alpha, beta.transpose().eval());
 }
 
 TEST(muProbDistributionsNegBinomial, opencl_broadcast_beta) {
@@ -143,10 +129,6 @@ TEST(muProbDistributionsNegBinomial, opencl_broadcast_beta) {
       neg_binomial_lpmf_functor, n, alpha, beta);
   stan::math::test::test_opencl_broadcasting_prim_rev<2>(
       neg_binomial_lpmf_functor_propto, n, alpha, beta);
-  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
-      neg_binomial_lpmf_functor, n, alpha.transpose().eval(), beta);
-  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
-      neg_binomial_lpmf_functor_propto, n, alpha.transpose().eval(), beta);
 }
 
 TEST(muProbDistributionsNegBinomial, opencl_matches_cpu_big) {
@@ -165,12 +147,6 @@ TEST(muProbDistributionsNegBinomial, opencl_matches_cpu_big) {
                                                 alpha, beta);
   stan::math::test::compare_cpu_opencl_prim_rev(
       neg_binomial_lpmf_functor_propto, n, alpha, beta);
-  stan::math::test::compare_cpu_opencl_prim_rev(neg_binomial_lpmf_functor, n,
-                                                alpha.transpose().eval(),
-                                                beta.transpose().eval());
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      neg_binomial_lpmf_functor_propto, n, alpha.transpose().eval(),
-      beta.transpose().eval());
 }
 
 #endif

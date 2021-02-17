@@ -109,7 +109,6 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
 
-#include <stan/math/opencl/kernel_generator/as_column_vector_or_scalar.hpp>
 #include <stan/math/opencl/kernel_generator/load.hpp>
 #include <stan/math/opencl/kernel_generator/scalar.hpp>
 #include <stan/math/opencl/kernel_generator/constant.hpp>

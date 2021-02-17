@@ -449,34 +449,6 @@ TEST(AgradRevMatrix, mat_cholesky_1st_deriv_large_gradients) {
   test_simple_vec_mult(45, 1e-08);
 }
 
-TEST(AgradRevMatrix, cholesky_replicated_input) {
-  using stan::math::var;
-
-  auto f = [](int size, const auto& y) {
-    auto m = stan::math::diag_matrix(stan::math::rep_vector(y, size));
-    auto L = stan::math::cholesky_decompose(m);
-    return stan::math::sum(L);
-  };
-
-  double ydbl = 1.5;
-  double dx = 1e-5;
-  var y = ydbl;
-  int size = 4;
-  var s = f(size, y);
-  s.grad();
-
-  double fd_ref = (f(size, ydbl + dx) - f(size, ydbl - dx)) / (2.0 * dx);
-  EXPECT_FLOAT_EQ(y.adj(), fd_ref);
-
-  stan::math::set_zero_all_adjoints();
-  size = 40;
-  s = f(size, y);
-  s.grad();
-
-  fd_ref = (f(size, ydbl + dx) - f(size, ydbl - dx)) / (2.0 * dx);
-  EXPECT_FLOAT_EQ(y.adj(), fd_ref);
-}
-
 #ifdef STAN_OPENCL
 TEST(AgradRevMatrix, mat_cholesky_1st_deriv_large_gradients_opencl) {
   stan::math::opencl_context.tuning_opts().cholesky_size_worth_transfer = 25;

@@ -257,6 +257,10 @@ TEST(KernelGenerator, multiple_operations_with_includes_test) {
     EXPECT_NEAR_REL(correct5, res5);                                        \
   }
 
+TEST_BINARY_FUNCTION(fdim)
+TEST_BINARY_FUNCTION(fmax)
+TEST_BINARY_FUNCTION(fmin)
+TEST_BINARY_FUNCTION(fmod)
 TEST_BINARY_FUNCTION(pow)
 TEST_BINARY_FUNCTION(beta)
 TEST_BINARY_FUNCTION(lbeta)

@@ -35,10 +35,6 @@ TEST(ProbDistributionsStdNormal, opencl_matches_cpu_small) {
   stan::math::test::compare_cpu_opencl_prim_rev(std_normal_lpdf_functor, y);
   stan::math::test::compare_cpu_opencl_prim_rev(std_normal_lpdf_functor_propto,
                                                 y);
-  stan::math::test::compare_cpu_opencl_prim_rev(std_normal_lpdf_functor,
-                                                y.transpose().eval());
-  stan::math::test::compare_cpu_opencl_prim_rev(std_normal_lpdf_functor_propto,
-                                                y.transpose().eval());
 }
 
 TEST(ProbDistributionsStdNormal, opencl_matches_cpu_big) {
@@ -50,10 +46,6 @@ TEST(ProbDistributionsStdNormal, opencl_matches_cpu_big) {
   stan::math::test::compare_cpu_opencl_prim_rev(std_normal_lpdf_functor, y);
   stan::math::test::compare_cpu_opencl_prim_rev(std_normal_lpdf_functor_propto,
                                                 y);
-  stan::math::test::compare_cpu_opencl_prim_rev(std_normal_lpdf_functor,
-                                                y.transpose().eval());
-  stan::math::test::compare_cpu_opencl_prim_rev(std_normal_lpdf_functor_propto,
-                                                y.transpose().eval());
 }
 
 #endif

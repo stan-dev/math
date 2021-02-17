@@ -86,17 +86,6 @@ class vari_cl_base : public vari_base {
   }
 
   /**
-   * Returns column vector view into the row or column vector.
-   * @return column vector view
-   */
-  auto as_column_vector_or_scalar() {
-    auto&& val_t = stan::math::as_column_vector_or_scalar(val_);
-    auto&& adj_t = stan::math::as_column_vector_or_scalar(adj_);
-    return vari_view<std::decay_t<decltype(val_t)>>(std::move(val_t),
-                                                    std::move(adj_t));
-  }
-
-  /**
    * Return the number of rows for this class's `val_` member
    */
   const Eigen::Index rows() const { return val_.rows(); }

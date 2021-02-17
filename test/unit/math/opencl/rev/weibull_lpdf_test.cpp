@@ -90,12 +90,6 @@ TEST(ProbDistributionsWeibull, opencl_matches_cpu_small) {
                                                 sigma);
   stan::math::test::compare_cpu_opencl_prim_rev(weibull_lpdf_functor_propto, y,
                                                 alpha, sigma);
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      weibull_lpdf_functor, y.transpose().eval(), alpha.transpose().eval(),
-      sigma.transpose().eval());
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      weibull_lpdf_functor_propto, y.transpose().eval(),
-      alpha.transpose().eval(), sigma.transpose().eval());
 }
 
 TEST(ProbDistributionsWeibull, opencl_broadcast_y) {
@@ -111,10 +105,6 @@ TEST(ProbDistributionsWeibull, opencl_broadcast_y) {
                                                          y_scal, alpha, sigma);
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       weibull_lpdf_functor_propto, y_scal, alpha, sigma);
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
-      weibull_lpdf_functor, y_scal, alpha.transpose().eval(), sigma);
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
-      weibull_lpdf_functor_propto, y_scal, alpha, sigma.transpose().eval());
 }
 
 TEST(ProbDistributionsWeibull, opencl_broadcast_alpha) {
@@ -130,10 +120,6 @@ TEST(ProbDistributionsWeibull, opencl_broadcast_alpha) {
                                                          y, alpha_scal, sigma);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       weibull_lpdf_functor_propto, y, alpha_scal, sigma);
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
-      weibull_lpdf_functor, y.transpose().eval(), alpha_scal, sigma);
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
-      weibull_lpdf_functor_propto, y, alpha_scal, sigma.transpose().eval());
 }
 
 TEST(ProbDistributionsWeibull, opencl_broadcast_sigma) {
@@ -149,10 +135,6 @@ TEST(ProbDistributionsWeibull, opencl_broadcast_sigma) {
                                                          y, alpha, sigma_scal);
   stan::math::test::test_opencl_broadcasting_prim_rev<2>(
       weibull_lpdf_functor_propto, y, alpha, sigma_scal);
-  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
-      weibull_lpdf_functor, y.transpose().eval(), alpha, sigma_scal);
-  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
-      weibull_lpdf_functor_propto, y, alpha.transpose().eval(), sigma_scal);
 }
 
 TEST(ProbDistributionsWeibull, opencl_matches_cpu_big) {
@@ -169,12 +151,6 @@ TEST(ProbDistributionsWeibull, opencl_matches_cpu_big) {
                                                 sigma);
   stan::math::test::compare_cpu_opencl_prim_rev(weibull_lpdf_functor_propto, y,
                                                 alpha, sigma);
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      weibull_lpdf_functor, y.transpose().eval(), alpha.transpose().eval(),
-      sigma.transpose().eval());
-  stan::math::test::compare_cpu_opencl_prim_rev(
-      weibull_lpdf_functor_propto, y.transpose().eval(),
-      alpha.transpose().eval(), sigma.transpose().eval());
 }
 
 #endif

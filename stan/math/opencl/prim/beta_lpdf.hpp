@@ -60,17 +60,12 @@ return_type_t<T_y_cl, T_scale_succ_cl, T_scale_fail_cl> beta_lpdf(
     return 0.0;
   }
 
-  const auto& y_col = as_column_vector_or_scalar(y);
-  const auto& alpha_col = as_column_vector_or_scalar(alpha);
-  const auto& beta_col = as_column_vector_or_scalar(beta);
+  const auto& y_val = value_of(y);
+  const auto& alpha_val = value_of(alpha);
+  const auto& beta_val = value_of(beta);
 
-  const auto& y_val = value_of(y_col);
-  const auto& alpha_val = value_of(alpha_col);
-  const auto& beta_val = value_of(beta_col);
-
-  operands_and_partials<decltype(y_col), decltype(alpha_col),
-                        decltype(beta_col)>
-      ops_partials(y_col, alpha_col, beta_col);
+  operands_and_partials<T_y_cl, T_scale_succ_cl, T_scale_fail_cl> ops_partials(
+      y, alpha, beta);
 
   auto check_alpha_pos_finite = check_cl(function, "First shape parameter",
                                          alpha_val, "positive finite");

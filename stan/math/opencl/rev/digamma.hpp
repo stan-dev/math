@@ -19,7 +19,7 @@ inline var_value<matrix_cl<double>> digamma(
     const var_value<matrix_cl<double>>& A) {
   return make_callback_var(
       digamma(A.val()), [A](const vari_value<matrix_cl<double>> res) mutable {
-        A.adj() = A.adj() + elt_multiply(res.adj(), trigamma(A.val()));
+        A.adj() += elt_multiply(res.adj(), trigamma(A.val()));
       });
 }
 
