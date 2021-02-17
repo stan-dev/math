@@ -6,9 +6,11 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/lb_constrain.hpp>
+#include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/rev/fun/identity_constrain.hpp>
 #include <stan/math/rev/fun/identity_free.hpp>
+#include <stan/math/rev/fun/sum.hpp>
 #include <stan/math/rev/fun/to_arena.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <cmath>
@@ -96,26 +98,22 @@ inline auto lb_constrain(const T& x, const L& lb, var& lp) {
   if (unlikely(lb_val == NEGATIVE_INFTY)) {
     return identity_constrain(x, lb);
   } else {
+    lp += value_of(x);
     if (!is_constant<T>::value && !is_constant<L>::value) {
-      lp += value_of(x);
       auto exp_x = std::exp(value_of(x));
       return make_callback_var(
           exp_x + lb_val,
           [lp, arena_x = var(x), arena_lb = var(lb), exp_x](auto& vi) mutable {
             arena_x.adj() += vi.adj() * exp_x + lp.adj();
             arena_lb.adj() += vi.adj();
-            lp.adj() += vi.adj();
           });
     } else if (!is_constant<T>::value) {
-      lp += value_of(x);
       auto exp_x = std::exp(value_of(x));
       return make_callback_var(exp_x + lb_val,
                                [lp, arena_x = var(x), exp_x](auto& vi) mutable {
                                  arena_x.adj() += vi.adj() * exp_x + lp.adj();
-                                 lp.adj() += vi.adj();
                                });
     } else {
-      lp += value_of(x);
       return make_callback_var(std::exp(value_of(x)) + lb_val,
                                [lp, arena_lb = var(lb)](auto& vi) mutable {
                                  arena_lb.adj() += vi.adj();
@@ -203,9 +201,7 @@ inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
       reverse_pass_callback(
           [arena_x, ret, lp, arena_lb = var(lb), exp_x]() mutable {
             arena_x.adj().array() += ret.adj().array() * exp_x + lp.adj();
-            const double ret_adj_sum = ret.adj().sum();
-            arena_lb.adj() += ret_adj_sum;
-            lp.adj() += ret_adj_sum;
+            arena_lb.adj() += ret.adj().sum();
           });
       return ret_type(ret);
     } else if (!is_constant<T>::value) {
@@ -215,16 +211,14 @@ inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
       lp += arena_x.val().sum();
       reverse_pass_callback([arena_x, ret, exp_x, lp]() mutable {
         arena_x.adj().array() += ret.adj().array() * exp_x + lp.adj();
-        lp.adj() += ret.adj().sum();
       });
       return ret_type(ret);
     } else {
-      auto x_ref = to_ref(value_of(x));
-      arena_t<ret_type> ret = x_ref.array().exp() + lb_val;
-      lp += x_ref.sum();
+      const auto& x_ref = to_ref(x);
+      lp += sum(x_ref);
+      arena_t<ret_type> ret = value_of(x_ref).array().exp() + lb_val;
       reverse_pass_callback([ret, lp, arena_lb = var(lb)]() mutable {
-        const double ret_adj = ret.adj().sum();
-        arena_lb.adj() += ret_adj;
+        arena_lb.adj() += ret.adj().sum();
       });
       return ret_type(ret);
     }
@@ -317,20 +311,18 @@ inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
     lp += (is_not_inf_lb).select(arena_x.val(), 0).sum();
     reverse_pass_callback(
         [arena_x, arena_lb, ret, lp, exp_x, is_not_inf_lb]() mutable {
-          const double lp_adj = lp.adj();
+          const auto lp_adj = lp.adj();
           for (size_t j = 0; j < arena_x.cols(); ++j) {
             for (size_t i = 0; i < arena_x.rows(); ++i) {
               double ret_adj = ret.adj().coeff(i, j);
               if (likely(is_not_inf_lb.coeff(i, j))) {
-                arena_x.adj().coeffRef(i, j)
-                    += ret_adj * exp_x.coeff(i, j) + lp_adj;
+                arena_x.adj().coeffRef(i, j) += ret_adj * exp_x.coeff(i, j) + lp_adj;
                 arena_lb.adj().coeffRef(i, j) += ret_adj;
               } else {
                 arena_x.adj().coeffRef(i, j) += ret_adj;
               }
             }
           }
-          lp.adj() += ret.adj().sum();
         });
     return ret_type(ret);
   } else if (!is_constant<T>::value) {
@@ -340,9 +332,10 @@ inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
     auto exp_x = to_arena(arena_x.val().array().exp());
     arena_t<ret_type> ret
         = (is_not_inf_lb).select(exp_x + lb_val, arena_x.val().array());
+    auto lp_old = lp;
     lp += (is_not_inf_lb).select(arena_x.val(), 0).sum();
-    reverse_pass_callback([arena_x, ret, lp, exp_x, is_not_inf_lb]() mutable {
-      const double lp_adj = lp.adj();
+    reverse_pass_callback([arena_x, ret, exp_x, lp, is_not_inf_lb]() mutable {
+      const auto lp_adj = lp.adj();
       for (size_t j = 0; j < arena_x.cols(); ++j) {
         for (size_t i = 0; i < arena_x.rows(); ++i) {
           if (likely(is_not_inf_lb.coeff(i, j))) {
@@ -354,7 +347,6 @@ inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
           }
         }
       }
-      lp.adj() += ret.adj().sum();
     });
     return ret_type(ret);
   } else {
