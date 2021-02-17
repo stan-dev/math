@@ -41,9 +41,7 @@ TEST(prob_transform, lb_j) {
 TEST(prob_transform, lb_f) {
   EXPECT_FLOAT_EQ(log(3.0 - 2.0), stan::math::lb_free(3.0, 2.0));
 }
-TEST(prob_transform, lb_f_exception) {
-  double lb = 2.0;
-}
+TEST(prob_transform, lb_f_exception) { double lb = 2.0; }
 TEST(prob_transform, lb_rt) {
   double x = -1.0;
   double xc = stan::math::lb_constrain(x, 2.0);
