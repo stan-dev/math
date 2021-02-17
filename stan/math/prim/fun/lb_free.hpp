@@ -27,13 +27,15 @@ namespace math {
  */
 template <typename T, typename L>
 inline auto lb_free(T&& y, L&& lb) {
-  auto&& y_ref = to_ref(std::forward<T>(y));
-  auto&& lb_ref = to_ref(std::forward<L>(lb));
-  check_finite("lb_constrain", "lb", value_of(lb_ref));
-  check_greater_or_equal("lb_free", "Lower bounded variable", value_of(y_ref),
-                         value_of(lb_ref));
-  return log(subtract(std::forward<decltype(y_ref)>(y_ref),
-                      std::forward<decltype(lb_ref)>(lb_ref)));
+  if (value_of_rec(lb) == NEGATIVE_INFTY) {
+    return identity_free(y, lb);
+  } else {
+    auto&& y_ref = to_ref(std::forward<T>(y));
+    auto&& lb_ref = to_ref(std::forward<L>(lb));
+    check_greater_or_equal("lb_free", "Lower bounded variable", y_ref, lb_ref);
+    return log(subtract(std::forward<decltype(y_ref)>(y_ref),
+                        std::forward<decltype(lb_ref)>(lb_ref)));    
+  }
 }
 
 }  // namespace math

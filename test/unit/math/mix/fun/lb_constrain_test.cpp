@@ -70,21 +70,20 @@ TEST(mathMixScalFun, lbConstrain_neg_inf) {
 }
 
 TEST(mathMixMatFun, lb_mat_constrain) {
-  Eigen::MatrixXd A(2, 2);
-  // Doesn't work for values near zero fail for fvar hessian?
-  A << 5.0, 2.0, 4.0, -2.0;  //, 0.0, 0.005;
-  Eigen::MatrixXd lbm(2, 2);
-  lbm << 7.0, 5.0, 6.0, 100.0;  //, 0.0, 0.0005;
+  Eigen::MatrixXd A(2, 3);
+  A << 5.0, 2.0, 4.0, -2.0, 0.0, 0.005;
+  Eigen::MatrixXd lbm(2, 3);
+  lbm << 7.0, 5.0, 6.0, 100.0, 0.0, 0.0005;
   lb_constrain_test::expect(A, lbm);
   double lbd = 6.0;
   lb_constrain_test::expect(A, lbd);
 }
 
 TEST(mathMixMatFun, lb_mat_constrain_neg_inf) {
-  Eigen::MatrixXd A(2, 2);
-  A << 5.0, 2.0, 4.0, -2.0;
-  Eigen::MatrixXd lbm(2, 2);
-  lbm << 7.0, 5.0, stan::math::NEGATIVE_INFTY, 100.0;
+  Eigen::MatrixXd A(2, 3);
+  A << 5.0, 2.0, 4.0, -2.0, 0.0, 0.005;
+  Eigen::MatrixXd lbm(2, 3);
+  lbm << 7.0, 5.0, stan::math::NEGATIVE_INFTY, 100.0, 0.0, 0.0005;
   lb_constrain_test::expect(A, lbm);
   lb_constrain_test::expect(A, stan::math::NEGATIVE_INFTY);
 }
@@ -105,11 +104,10 @@ TEST(mathMixMatFun, lb_stdvec_constrain_neg_inf) {
 }
 
 TEST(mathMixMatFun, lb_stdvec_mat_mat_constrain) {
-  Eigen::MatrixXd A_inner(2, 1);
-  // Doesn't work for values near zero fail for fvar hessian?
-  A_inner << 5.0, 2.0;  //, 4.0, -2.0;//, 0.0, 0.005;
-  Eigen::MatrixXd lbm_inner(2, 1);
-  lbm_inner << 7.0, 5.0;  //, 6.0, 100.0;//, 0.0, 0.0005;
+  Eigen::MatrixXd A_inner(2, 3);
+  A_inner << 5.0, 2.0, 4.0, -2.0, 0.0, 0.005;
+  Eigen::MatrixXd lbm_inner(2, 3);
+  lbm_inner << 7.0, 5.0, 6.0, 100.0, 0.0, 0.0005;
   std::vector<Eigen::MatrixXd> A;
   A.push_back(A_inner);
   A.push_back(A_inner);
@@ -120,11 +118,10 @@ TEST(mathMixMatFun, lb_stdvec_mat_mat_constrain) {
 }
 
 TEST(mathMixMatFun, lb_stdvec_mat_constrain) {
-  Eigen::MatrixXd A_inner(2, 2);
-  // Doesn't work for values near zero fail for fvar hessian?
-  A_inner << 5.0, 2.0, 4.0, -2.0;  //, 0.0, 0.005;
-  Eigen::MatrixXd lbm_inner(2, 2);
-  lbm_inner << 7.0, 5.0, 6.0, 100.0;  //, 0.0, 0.0005;
+  Eigen::MatrixXd A_inner(2, 3);
+  A_inner << 5.0, 2.0, 4.0, -2.0, 0.0, 0.005;
+  Eigen::MatrixXd lbm_inner(2, 3);
+  lbm_inner << 7.0, 5.0, 6.0, 100.0, 0.0, 0.0005;
   std::vector<Eigen::MatrixXd> A;
   A.push_back(A_inner);
   A.push_back(A_inner);
