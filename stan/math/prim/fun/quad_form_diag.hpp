@@ -15,10 +15,8 @@ inline auto quad_form_diag(const EigMat& mat, const EigVec& vec) {
   check_size_match("quad_form_diag", "rows of mat", mat.rows(), "size of vec",
                    vec.size());
   return make_holder(
-      [](const auto& v, const auto& x) {
-        return v.asDiagonal() * x * v.asDiagonal();
-      },
-      to_ref(vec), to_ref(mat));
+      [&mat](const auto& v) { return v.asDiagonal() * mat * v.asDiagonal(); },
+      to_ref(vec));
 }
 
 }  // namespace math

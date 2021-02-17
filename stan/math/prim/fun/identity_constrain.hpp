@@ -13,13 +13,13 @@ namespace math {
  * <p>This method is effectively a no-op and is mainly useful as a
  * placeholder in auto-generated code.
  *
- * @tparam T Any type.
- * @param[in] x object
+ * @tparam T Type of scalar.
+ * @param[in] x free scalar
  * @return transformed input
  */
 template <typename T>
-inline auto identity_constrain(T&& x) {
-  return std::forward<T>(x);
+inline T identity_constrain(const T& x) {
+  return x;
 }
 
 /**
@@ -30,15 +30,15 @@ inline auto identity_constrain(T&& x) {
  * <p>This method is effectively a no-op and mainly useful as a
  * placeholder in auto-generated code.
  *
- * @tparam T Any type
+ * @tparam T type of scalar
  * @tparam S type of log probability
- * @param[in] x object
+ * @param[in] x scalar
  * @param[in] lp log density reference
  * @return transformed input
  */
 template <typename T, typename S>
-inline auto identity_constrain(T&& x, S& lp) {
-  return std::forward<T>(x);
+inline T identity_constrain(const T& x, S& lp) {
+  return x;
 }
 
 }  // namespace math

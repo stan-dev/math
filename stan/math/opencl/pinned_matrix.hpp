@@ -32,34 +32,19 @@ class pinned_matrix : public Eigen::Map<MatrixType> {
  protected:
   cl::Buffer buffer_;
 
-  pinned_matrix(cl::Buffer&& b, Eigen::Index rows, Eigen::Index cols) try : Base
-    ::Map(b() != NULL ? map_memory(b, rows* cols) : nullptr, rows, cols),
+  pinned_matrix(cl::Buffer&& b, Eigen::Index rows, Eigen::Index cols)
+      : Base::Map(static_cast<Scalar*>(opencl_context.queue().enqueueMapBuffer(
+                      b, true, CL_MAP_WRITE_INVALIDATE_REGION, 0,
+                      sizeof(Scalar) * rows * cols)),
+                  rows, cols),
         buffer_(std::move(b)) {}
-  catch (const cl::Error& e) {
-    check_opencl_error("pinned_matrix(buffer, rows, cols)", e);
-  }
 
-  pinned_matrix(cl::Buffer&& b, Eigen::Index size) try : Base
-    ::Map(b() != NULL ? map_memory(b, size) : nullptr, size),
+  pinned_matrix(cl::Buffer&& b, Eigen::Index size)
+      : Base::Map(static_cast<Scalar*>(opencl_context.queue().enqueueMapBuffer(
+                      b, true, CL_MAP_WRITE_INVALIDATE_REGION, 0,
+                      sizeof(Scalar) * size)),
+                  size),
         buffer_(std::move(b)) {}
-  catch (const cl::Error& e) {
-    check_opencl_error("pinned_matrix(buffer, size)", e);
-  }
-
-  Scalar* map_memory(cl::Buffer& b, Eigen::Index size) {
-    return static_cast<Scalar*>(opencl_context.queue().enqueueMapBuffer(
-        b, true, CL_MAP_WRITE_INVALIDATE_REGION, 0, sizeof(Scalar) * size));
-  }
-
-  void unmap_memory(const char* function) {
-    if (this->data() != nullptr) {
-      try {
-        opencl_context.queue().enqueueUnmapMemObject(buffer_, this->data());
-      } catch (const cl::Error& e) {
-        check_opencl_error(function, e);
-      }
-    }
-  }
 
  public:
   /**
@@ -76,30 +61,21 @@ class pinned_matrix : public Eigen::Map<MatrixType> {
    * @param rows number of rows
    * @param cols number of columns
    */
-  pinned_matrix(Eigen::Index rows, Eigen::Index cols) try
-      : pinned_matrix(rows* cols != 0 ? cl::Buffer(opencl_context.context(),
-                                                   CL_MEM_ALLOC_HOST_PTR,
-                                                   sizeof(Scalar) * rows * cols)
-                                      : cl::Buffer(),
-                      rows, cols) {
-  } catch (const cl::Error& e) {
-    check_opencl_error("pinned_matrix(rows, cols)", e);
-  }
+  pinned_matrix(Eigen::Index rows, Eigen::Index cols)
+      : pinned_matrix(
+            cl::Buffer(opencl_context.context(), CL_MEM_ALLOC_HOST_PTR,
+                       sizeof(Scalar) * rows * cols),
+            rows, cols) {}
 
   /**
    * Constructs `pinned_matrix` with given size. This only works if
    * `MatrixType` is row or col vector.
    * @param size number of elements
    */
-  explicit pinned_matrix(Eigen::Index size) try
-      : pinned_matrix(size != 0 ? cl::Buffer(opencl_context.context(),
-                                             CL_MEM_ALLOC_HOST_PTR,
-                                             sizeof(Scalar) * size)
-                                : cl::Buffer(),
-                      size) {
-  } catch (const cl::Error& e) {
-    check_opencl_error("pinned_matrix(size)", e);
-  }
+  explicit pinned_matrix(Eigen::Index size)
+      : pinned_matrix(cl::Buffer(opencl_context.context(),
+                                 CL_MEM_ALLOC_HOST_PTR, sizeof(Scalar) * size),
+                      size) {}
 
   /**
    * Constructs `pinned_matrix` from an expression.
@@ -126,14 +102,7 @@ class pinned_matrix : public Eigen::Map<MatrixType> {
    */
   pinned_matrix(pinned_matrix<MatrixType>&& other)
       : Base::Map(other.data(), other.rows(), other.cols()),
-        buffer_(std::move(other.buffer_)) {
-    new (&other) pinned_matrix();
-  }
-
-  /**
-   * Destructor unmaps the memory.
-   */
-  ~pinned_matrix() { unmap_memory("~pinned_matrix()"); }
+        buffer_(std::move(other.buffer_)) {}
 
   // without this using, compiler prefers combination of implicit construction
   // and copy assignment to the inherited operator when assigned an expression
@@ -146,20 +115,15 @@ class pinned_matrix : public Eigen::Map<MatrixType> {
    */
   pinned_matrix& operator=(const pinned_matrix<MatrixType>& other) {
     if (this->rows() != other.rows() || this->cols() != other.cols()) {
-      unmap_memory("pinned_matrix::operator=(const&)");
-      if (other.size() == 0) {
-        new (this) Base(nullptr, other.rows(), other.cols());
-      } else {
-        buffer_ = cl::Buffer(opencl_context.context(), CL_MEM_ALLOC_HOST_PTR,
-                             sizeof(Scalar) * other.size());
-        // placement new changes what data map points to - only allocation
-        // happens when creating new Buffer
-        new (this)
-            Base(static_cast<Scalar*>(opencl_context.queue().enqueueMapBuffer(
-                     buffer_, true, CL_MAP_WRITE_INVALIDATE_REGION, 0,
-                     sizeof(Scalar) * other.size())),
-                 other.rows(), other.cols());
-      }
+      buffer_ = cl::Buffer(opencl_context.context(), CL_MEM_ALLOC_HOST_PTR,
+                           sizeof(Scalar) * other.size());
+      // placement new changes what data map points to - only allocation happens
+      // when creating new Buffer
+      new (this)
+          Base(static_cast<Scalar*>(opencl_context.queue().enqueueMapBuffer(
+                   buffer_, true, CL_MAP_WRITE_INVALIDATE_REGION, 0,
+                   sizeof(Scalar) * other.size())),
+               other.rows(), other.cols());
     }
     Base::operator=(other);
     return *this;
@@ -171,12 +135,10 @@ class pinned_matrix : public Eigen::Map<MatrixType> {
    * @return `*this`
    */
   pinned_matrix& operator=(pinned_matrix<MatrixType>&& other) {
-    unmap_memory("pinned_matrix::operator=(&&)");
     // placement new changes what data map points to - there is no allocation
     new (this)
         Base(const_cast<Scalar*>(other.data()), other.rows(), other.cols());
     buffer_ = std::move(other.buffer_);
-    new (&other) pinned_matrix();
     return *this;
   }
 
@@ -188,7 +150,6 @@ class pinned_matrix : public Eigen::Map<MatrixType> {
   template <typename T>
   pinned_matrix& operator=(const T& other) {
     if (this->rows() != other.rows() || this->cols() != other.cols()) {
-      unmap_memory("pinned_matrix::operator=(T)");
       buffer_ = cl::Buffer(opencl_context.context(), CL_MEM_ALLOC_HOST_PTR,
                            sizeof(Scalar) * other.size());
       // placement new changes what data map points to - only allocation happens
@@ -206,25 +167,6 @@ class pinned_matrix : public Eigen::Map<MatrixType> {
 
 }  // namespace math
 }  // namespace stan
-
-namespace Eigen {
-namespace internal {
-
-template <typename T>
-struct traits<stan::math::pinned_matrix<T>> {
-  using base = traits<Eigen::Map<T>>;
-  using XprKind = typename base::XprKind;
-  enum {
-    PlainObjectTypeInnerSize = base::PlainObjectTypeInnerSize,
-    InnerStrideAtCompileTime = base::InnerStrideAtCompileTime,
-    OuterStrideAtCompileTime = base::OuterStrideAtCompileTime,
-    Alignment = base::Alignment,
-    Flags = base::Flags
-  };
-};
-
-}  // namespace internal
-}  // namespace Eigen
 
 #endif
 #endif

@@ -11,12 +11,13 @@
 
 TEST(intel_tbb_new_init, check_status) {
   set_n_threads(-1);
-  tbb::task_arena& tbb_init = stan::math::init_threadpool_tbb();
+  tbb::global_control& tbb_init = stan::math::init_threadpool_tbb();
   EXPECT_TRUE(tbb_init.is_active());
 
-  EXPECT_EQ(std::thread::hardware_concurrency(), tbb_init.max_concurrency());
+  EXPECT_EQ(std::thread::hardware_concurrency(),
+            tbb::this_task_arena::max_concurrency());
 
-  tbb::task_arena& tbb_reinit = stan::math::init_threadpool_tbb();
+  tbb::global_control& tbb_reinit = stan::math::init_threadpool_tbb();
   EXPECT_TRUE(tbb_init.is_active());
 
   tbb_init.terminate();

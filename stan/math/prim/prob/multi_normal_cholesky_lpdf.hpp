@@ -27,6 +27,9 @@ namespace math {
  * http://qwone.com/~jason/writing/multivariateNormal.pdf
  * written by Jason D. M. Rennie.
  *
+ * All expressions are adapted to avoid (most) inversions and maximal
+ * reuse of intermediates.
+ *
  * @param y A scalar vector
  * @param mu The mean vector of the multivariate normal distribution.
  * @param L The Cholesky decomposition of a variance matrix
@@ -38,9 +41,7 @@ namespace math {
  * @tparam T_loc Type of location.
  * @tparam T_covar Type of scale.
  */
-template <bool propto, typename T_y, typename T_loc, typename T_covar,
-          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
-              T_y, T_loc, T_covar>* = nullptr>
+template <bool propto, typename T_y, typename T_loc, typename T_covar>
 return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
     const T_y& y, const T_loc& mu, const T_covar& L) {
   static const char* function = "multi_normal_cholesky_lpdf";

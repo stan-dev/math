@@ -77,6 +77,7 @@ inline double integrate(const F& f, double a, double b,
                                &levels)
           + integrator_right.integrate(f_wrap, 0.0, b, relative_tolerance,
                                        &error2, &L2, &levels);
+      error2 *= 0.5 * b;
       used_two_integrals = true;
     }
   } else if (std::isinf(b)) {
@@ -90,6 +91,7 @@ inline double integrate(const F& f, double a, double b,
                                     &L1, &levels)
           + integrator.integrate(f_wrap, relative_tolerance, &error2, &L2,
                                  &levels);
+      error1 *= -0.5 * a;
       used_two_integrals = true;
     }
   } else {
@@ -100,10 +102,13 @@ inline double integrate(const F& f, double a, double b,
                                &levels)
           + integrator.integrate(f_wrap, 0.0, b, relative_tolerance, &error2,
                                  &L2, &levels);
+      error1 *= -0.5 * a;
+      error2 *= 0.5 * b;
       used_two_integrals = true;
     } else {
       Q = integrator.integrate(f_wrap, a, b, relative_tolerance, &error1, &L1,
                                &levels);
+      error1 *= 0.5 * (b - a);
     }
   }
 
