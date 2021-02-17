@@ -4,6 +4,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/lb_constrain.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/rev/fun/identity_constrain.hpp>
@@ -45,16 +46,18 @@ inline auto lb_constrain(const T& x, const L& lb) {
     return identity_constrain(x, lb);
   } else {
     if (!is_constant<T>::value && !is_constant<L>::value) {
+      auto exp_x = std::exp(value_of(x));
       return make_callback_var(
-          std::exp(value_of(x)) + lb_val,
-          [arena_x = var(x), arena_lb = var(lb)](auto& vi) mutable {
-            arena_x.adj() += vi.adj() * std::exp(arena_x.val());
+          exp_x + lb_val,
+          [arena_x = var(x), arena_lb = var(lb), exp_x](auto& vi) mutable {
+            arena_x.adj() += vi.adj() * exp_x;
             arena_lb.adj() += vi.adj();
           });
     } else if (!is_constant<T>::value) {
+      auto exp_x = std::exp(value_of(x));
       return make_callback_var(
-          std::exp(value_of(x)) + lb_val, [arena_x = var(x)](auto& vi) mutable {
-            arena_x.adj() += vi.adj() * std::exp(arena_x.val());
+          exp_x + lb_val, [arena_x = var(x), exp_x](auto& vi) mutable {
+            arena_x.adj() += vi.adj() * exp_x;
           });
     } else {
       return make_callback_var(std::exp(value_of(x)) + lb_val,
@@ -95,19 +98,19 @@ inline auto lb_constrain(const T& x, const L& lb, var& lp) {
   } else {
     if (!is_constant<T>::value && !is_constant<L>::value) {
       lp += value_of(x);
-      return make_callback_var(
-          std::exp(value_of(x)) + lb_val,
-          [lp, arena_x = var(x), arena_lb = var(lb)](auto& vi) mutable {
-            arena_x.adj() += vi.adj() * std::exp(arena_x.val()) + lp.adj();
+      auto exp_x = std::exp(value_of(x));
+      return make_callback_var(exp_x + lb_val,
+          [lp, arena_x = var(x), arena_lb = var(lb), exp_x](auto& vi) mutable {
+            arena_x.adj() += vi.adj() * exp_x + lp.adj();
             arena_lb.adj() += vi.adj();
             lp.adj() += vi.adj();
           });
     } else if (!is_constant<T>::value) {
       lp += value_of(x);
-      return make_callback_var(
-          std::exp(value_of(x)) + lb_val,
-          [lp, arena_x = var(x)](auto& vi) mutable {
-            arena_x.adj() += vi.adj() * std::exp(arena_x.val()) + lp.adj();
+      auto exp_x = std::exp(value_of(x));
+      return make_callback_var(exp_x + lb_val,
+          [lp, arena_x = var(x), exp_x](auto& vi) mutable {
+            arena_x.adj() += vi.adj() * exp_x + lp.adj();
             lp.adj() += vi.adj();
           });
     } else {
@@ -115,7 +118,6 @@ inline auto lb_constrain(const T& x, const L& lb, var& lp) {
       return make_callback_var(std::exp(value_of(x)) + lb_val,
                                [lp, arena_lb = var(lb)](auto& vi) mutable {
                                  arena_lb.adj() += vi.adj();
-                                 lp.adj() += vi.adj();
                                });
     }
   }

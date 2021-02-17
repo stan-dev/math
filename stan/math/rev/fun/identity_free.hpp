@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/identity_free.hpp>
+#include <stan/math/rev/fun/to_var_value.hpp>
 
 namespace stan {
 namespace math {
@@ -21,7 +22,7 @@ namespace math {
 template <typename T, typename... Types,
           require_any_var_matrix_t<T, Types...>* = nullptr>
 inline auto identity_free(T&& x, Types&&... args) {
-  return to_var_value_if<is_any_var_matrix<T, Types...>::value>(x);
+  return to_var_value(x);
 }
 
 }  // namespace math
