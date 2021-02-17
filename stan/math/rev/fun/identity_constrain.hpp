@@ -14,7 +14,8 @@ namespace math {
  * of doubles to var matrix types.
  *
  * @tparam T Any type.
- * @tparam Types Any type with one of `T` and `Types` being a `var_value` matrix.
+ * @tparam Types Any type with one of `T` and `Types` being a `var_value`
+ * matrix.
  * @param[in] x object
  * @param[in]
  * @return transformed input

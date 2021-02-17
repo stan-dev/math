@@ -14,7 +14,8 @@ namespace math {
  * this promotes the input `x` to `var_value`.
  *
  * @tparam T Any type.
- * @tparam Types Any type with one of `T` and `Types` being a `var_value` matrix.
+ * @tparam Types Any type with one of `T` and `Types` being a `var_value`
+ * matrix.
  * @param[in] x object
  * @return transformed input
  */
