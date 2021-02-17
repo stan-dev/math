@@ -41,10 +41,12 @@ namespace math {
         return identity_constrain(x, ub);
       } else {
         //check_greater("ub_constrain", "ub", value_of(x), value_of(ub));
-        return make_callback_var(ub_val - std::exp(value_of(x)),
-          [arena_x = var(x), arena_ub = var(ub)](auto& vi) mutable {
-              arena_x.adj() += vi.adj() * -std::exp(arena_x.val());
-              arena_ub.adj() += vi.adj();
+        auto neg_exp_x = -std::exp(value_of(x));
+        return make_callback_var(ub_val + neg_exp_x,
+          [arena_x = var(x), arena_ub = var(ub), neg_exp_x](auto& vi) mutable {
+            const auto vi_adj = vi.adj();
+            arena_x.adj() += vi_adj * neg_exp_x;
+            arena_ub.adj() += vi_adj;
           });
       }
     } else if(!is_constant<T>::value) {
@@ -52,9 +54,10 @@ namespace math {
         return identity_constrain(x, ub);
       } else {
         //check_greater("ub_constrain", "ub", value_of(x), value_of(ub));
-        return make_callback_var(ub_val - std::exp(value_of(x)),
-          [arena_x = var(x)](auto& vi) mutable {
-              arena_x.adj() += vi.adj() * -std::exp(arena_x.val());
+        auto neg_exp_x = -std::exp(value_of(x));
+        return make_callback_var(ub_val + neg_exp_x,
+          [arena_x = var(x), neg_exp_x](auto& vi) mutable {
+              arena_x.adj() += vi.adj() * neg_exp_x;
           });
       }
     } else {
@@ -99,37 +102,39 @@ namespace math {
       if (unlikely(is_ub_inf)) {
         return identity_constrain(x, ub);
       } else {
-        //check_greater("ub_constrain", "ub", value_of(x), value_of(ub));
         lp += value_of(x);
-        return make_callback_var(value_of(ub) - std::exp(value_of(x)),
-          [lp, arena_x = var(x), arena_ub = var(ub)](auto& vi) mutable {
-            arena_x.adj() += vi.adj() * -std::exp(arena_x.val()) + lp.adj();
-            arena_ub.adj() += vi.adj();
-            lp.adj() += vi.adj();
+        auto neg_exp_x = -std::exp(value_of(x));
+        return make_callback_var(value_of(ub) + neg_exp_x,
+          [lp, arena_x = var(x), arena_ub = var(ub), neg_exp_x](auto& vi) mutable {
+            const auto vi_adj = vi.adj();
+            arena_x.adj() += vi_adj * neg_exp_x + lp.adj();
+            arena_ub.adj() += vi_adj;
+            lp.adj() += vi_adj;
         });
       }
     } else if(!is_constant<T>::value) {
       if (unlikely(is_ub_inf)) {
         return identity_constrain(x, ub);
       } else {
-        //check_greater("ub_constrain", "ub", value_of(x), value_of(ub));
         lp += value_of(x);
-        return make_callback_var(value_of(ub) - std::exp(value_of(x)),
-          [lp, arena_x = var(x)](auto& vi) mutable {
-            arena_x.adj() += vi.adj() * -std::exp(arena_x.val()) + lp.adj();
-            lp.adj() += vi.adj();
+        auto neg_exp_x = -std::exp(value_of(x));
+        return make_callback_var(value_of(ub) + neg_exp_x,
+          [lp, arena_x = var(x), neg_exp_x](auto& vi) mutable {
+            const auto vi_adj = vi.adj();
+            arena_x.adj() += vi_adj * neg_exp_x + lp.adj();
+            lp.adj() += vi_adj;
         });
       }
     } else {
       if (unlikely(is_ub_inf)) {
         return identity_constrain(x, ub);
       } else {
-        //check_greater("ub_constrain", "ub", value_of(x), value_of(ub));
         lp += value_of(x);
         return make_callback_var(value_of(ub) - std::exp(value_of(x)),
           [lp, arena_ub = var(ub)](auto& vi) mutable {
-            arena_ub.adj() += vi.adj();
-            lp.adj() += vi.adj();
+            const auto vi_adj = vi.adj();
+            arena_ub.adj() += vi_adj;
+            lp.adj() += vi_adj;
         });
       }
     }
@@ -158,9 +163,9 @@ namespace math {
    * @return lower bound constrained value corresponding to inputs
    */
   template <typename T, typename L,
-            require_any_matrix_t<T, L>* = nullptr,
-            require_any_st_var<T, L>* = nullptr,
-            require_stan_scalar_t<L>* = nullptr>
+            require_matrix_t<T>* = nullptr,
+            require_stan_scalar_t<L>* = nullptr,
+            require_any_st_var<T, L>* = nullptr>
   inline auto ub_constrain(const T& x, const L& ub) {
     using std::exp;
     using ret_type = return_var_matrix_t<T, T, L>;
@@ -171,10 +176,10 @@ namespace math {
         return identity_constrain(x, ub);
       } else {
         arena_t<promote_scalar_t<var, T>> arena_x = x;
-        //check_greater("ub_constrain", "ub", value_of(arena_x), value_of(ub));
-        arena_t<ret_type> ret = ub_val - arena_x.val().array().exp();
-        reverse_pass_callback([arena_x, ret, arena_ub = var(ub)]() mutable {
-          arena_x.adj().array() += ret.adj().array() * -arena_x.val_op().array().exp();
+        auto arena_neg_exp_x = to_arena(-arena_x.val().array().exp());
+        arena_t<ret_type> ret = ub_val + arena_neg_exp_x;
+        reverse_pass_callback([arena_x, arena_neg_exp_x, ret, arena_ub = var(ub)]() mutable {
+          arena_x.adj().array() += ret.adj().array() * arena_neg_exp_x;
           arena_ub.adj() += ret.adj().sum();
         });
         return ret_type(ret);
@@ -184,10 +189,10 @@ namespace math {
         return identity_constrain(x, ub);
       } else {
         arena_t<promote_scalar_t<var, T>> arena_x = x;
-        //check_greater("ub_constrain", "ub", value_of(arena_x), value_of(ub));
-        arena_t<ret_type> ret = ub_val - arena_x.val().array().exp();
-        reverse_pass_callback([arena_x, ret]() mutable {
-            arena_x.adj().array() += ret.adj().array() * -arena_x.val_op().array().exp();
+        auto arena_neg_exp_x = to_arena(-arena_x.val().array().exp());
+        arena_t<ret_type> ret = ub_val + arena_neg_exp_x;
+        reverse_pass_callback([arena_x, arena_neg_exp_x, ret]() mutable {
+            arena_x.adj().array() += ret.adj().array() * arena_neg_exp_x;
         });
         return ret_type(ret);
       }
@@ -195,9 +200,7 @@ namespace math {
       if (unlikely(is_ub_inf)) {
         return identity_constrain(x, ub);
       } else {
-        auto x_ref = to_ref(x);
-        //check_greater("ub_constrain", "ub", value_of(x_ref), value_of(ub));
-        arena_t<ret_type> ret = ub_val - value_of(x_ref).array().exp();
+        arena_t<ret_type> ret = ub_val - value_of(x).array().exp();
         reverse_pass_callback([ret, arena_ub = var(ub)]() mutable {
             arena_ub.adj() += ret.adj().sum();
         });
@@ -226,9 +229,9 @@ namespace math {
    * @return lower bound constrained value corresponding to inputs
    */
   template <typename T, typename L,
-            require_any_matrix_t<T, L>* = nullptr,
-            require_any_st_var<T, L>* = nullptr,
-            require_stan_scalar_t<L>* = nullptr>
+            require_matrix_t<T>* = nullptr,
+            require_stan_scalar_t<L>* = nullptr,
+            require_any_st_var<T, L>* = nullptr>
   inline auto ub_constrain(const T& x, const L& ub, return_type_t<T, L>& lp) {
     using std::exp;
     using ret_type = return_var_matrix_t<T, T, L>;
@@ -240,12 +243,11 @@ namespace math {
       } else {
         arena_t<promote_scalar_t<var, T>> arena_x = x;
         arena_t<promote_scalar_t<var, L>> arena_ub = ub;
-        //check_greater("ub_constrain", "ub", value_of(arena_x), value_of(ub));
-        double lp_val = 0.0;
-        arena_t<ret_type> ret = ub_val - arena_x.val().array().exp();
+        auto arena_neg_exp_x = to_arena(-arena_x.val().array().exp());
+        arena_t<ret_type> ret = ub_val + arena_neg_exp_x;
         lp += arena_x.val().sum();
-        reverse_pass_callback([arena_x, arena_ub, ret, lp]() mutable {
-            arena_x.adj().array() += ret.adj().array() * -arena_x.val().array().exp() + lp.adj();
+        reverse_pass_callback([arena_x, arena_neg_exp_x, arena_ub, ret, lp]() mutable {
+            arena_x.adj().array() += ret.adj().array() * arena_neg_exp_x + lp.adj();
             const double ret_adj_sum = ret.adj().sum();
             arena_ub.adj() += ret_adj_sum;
             lp.adj() += ret_adj_sum;
@@ -258,12 +260,11 @@ namespace math {
       } else {
         arena_t<promote_scalar_t<var, T>> arena_x = x;
         arena_t<promote_scalar_t<double, L>> arena_ub = value_of(ub);
-        //check_greater("ub_constrain", "ub", value_of(arena_x), value_of(ub));
-        double lp_val = 0.0;
-        arena_t<ret_type> ret = ub_val - arena_x.val().array().exp();
+        auto arena_neg_exp_x = to_arena(-arena_x.val().array().exp());
+        arena_t<ret_type> ret = ub_val + arena_neg_exp_x;
         lp += arena_x.val().sum();
-        reverse_pass_callback([arena_x, arena_ub, ret, lp]() mutable {
-            arena_x.adj().array() += ret.adj().array() * -arena_x.val().array().exp() + lp.adj();
+        reverse_pass_callback([arena_x, arena_neg_exp_x, arena_ub, ret, lp]() mutable {
+            arena_x.adj().array() += ret.adj().array() * arena_neg_exp_x + lp.adj();
             lp.adj() += ret.adj().sum();
         });
         return ret_type(ret);
@@ -272,11 +273,10 @@ namespace math {
       if (unlikely(is_ub_inf)) {
         return identity_constrain(x, ub);
       } else {
-        auto x_ref = to_ref(x);
-        //check_greater("ub_constrain", "ub", value_of(x_ref), value_of(ub));
+        auto x_ref = to_ref(value_of(x));
         arena_t<promote_scalar_t<var, L>> arena_ub = ub;
-        arena_t<ret_type> ret = ub_val - value_of(x_ref).array().exp();
-        lp += value_of(x).sum();
+        arena_t<ret_type> ret = ub_val - x_ref.array().exp();
+        lp += x_ref.sum();
         reverse_pass_callback([arena_ub, ret, lp]() mutable {
           const double ret_adj_sum = ret.adj().sum();
           arena_ub.adj() += ret_adj_sum;
@@ -318,63 +318,50 @@ inline auto ub_constrain(const T& x, const L& ub) {
   if(!is_constant<T>::value && !is_constant<L>::value) {
     arena_t<promote_scalar_t<var, T>> arena_x = x;
     arena_t<promote_scalar_t<var, L>> arena_ub = ub;
-    arena_t<ret_type> ret = ub_constrain(arena_x.val(), arena_ub.val());
-    reverse_pass_callback([arena_x, arena_ub, ret]() mutable {
-      const auto check_fin = arena_ub.val().array().isFinite().template cast<double>().eval();
-      arena_x.adj().array() += ret.adj().array() * -(arena_x.val().array() * check_fin).exp();
-      arena_ub.adj().array() += ret.adj().array() * check_fin;
-      /*
+    auto ub_val = to_ref(arena_ub.val());
+    auto is_inf_ub = to_arena((ub_val.array() != INFTY).template cast<double>());
+    auto neg_exp_x = to_arena(-(arena_x.val().array()).exp());
+    arena_t<ret_type> ret = (is_inf_ub).select(ub_val.array() + neg_exp_x, arena_x.val().array());
+    reverse_pass_callback([arena_x, neg_exp_x, arena_ub, ret, is_inf_ub]() mutable {
       for (Eigen::Index j = 0; j < arena_x.cols(); ++j) {
         for (Eigen::Index i = 0; i < arena_x.rows(); ++i) {
-          if (unlikely(arena_ub.val().coeff(i, j) == INFTY)) {
-            arena_x.adj().coeffRef(i, j) += ret.adj().coeff(i, j);
+          const double ret_adj = ret.adj().coeff(i, j);
+          if (unlikely(!is_inf_ub.coeff(i, j))) {
+            arena_x.adj().coeffRef(i, j) += ret_adj;
           } else {
-            const double ret_adj = ret.adj().coeff(i, j);
-            arena_x.adj().coeffRef(i, j) += ret_adj * -std::exp(arena_x.val().coeff(i, j));
+            arena_x.adj().coeffRef(i, j) += ret_adj * neg_exp_x.coeff(i, j);
             arena_ub.adj().coeffRef(i, j) += ret_adj;
           }
         }
       }
-      */
     });
     return ret_type(ret);
   } else if(!is_constant<T>::value) {
     arena_t<promote_scalar_t<var, T>> arena_x = x;
-    arena_t<promote_scalar_t<double, L>> arena_ub = value_of(ub);
-    arena_t<ret_type> ret = ub_constrain(arena_x.val(), arena_ub.val());
-    reverse_pass_callback([arena_x, arena_ub, ret]() mutable {
-      arena_x.adj().array() += ret.adj().array() * -(arena_x.val().array() * arena_ub.val().array().isFinite().template cast<double>()).exp();
-      /*
+    auto ub_val = to_ref(value_of(ub));
+    auto is_inf_ub = to_arena((ub_val.array() != INFTY).template cast<double>());
+    auto neg_exp_x = to_arena(-(arena_x.val().array()).exp());
+    arena_t<ret_type> ret = (is_inf_ub).select(ub_val.array() + neg_exp_x, arena_x.val().array());
+    reverse_pass_callback([arena_x, neg_exp_x, ret, is_inf_ub]() mutable {
       for (Eigen::Index j = 0; j < arena_x.cols(); ++j) {
         for (Eigen::Index i = 0; i < arena_x.rows(); ++i) {
-          // Note: exp(0) = 1 trick here
-          if (unlikely(arena_ub.val().coeff(i, j) == INFTY)) {
-            arena_x.adj().coeffRef(i, j) += ret.adj().coeff(i, j);
+          const double ret_adj = ret.adj().coeff(i, j);
+          if (unlikely(!is_inf_ub.coeff(i, j))) {
+            arena_x.adj().coeffRef(i, j) += ret_adj;
           } else {
-            arena_x.adj().coeffRef(i, j) +=
-            ret.adj().coeff(i, j) * -std::exp(arena_x.val().coeff(i, j));
+            arena_x.adj().coeffRef(i, j) += ret_adj * neg_exp_x.coeff(i, j);
           }
         }
       }
-      */
     });
     return ret_type(ret);
   } else {
-    arena_t<promote_scalar_t<var, L>> arena_ub = ub;
-    arena_t<ret_type> ret = ub_constrain(value_of(x), arena_ub.val());
-    reverse_pass_callback([arena_ub, ret]() mutable {
-      arena_ub.adj().array() += ret.adj().array() * arena_ub.val().array().isFinite().template cast<double>();
-      /*
-      for (Eigen::Index j = 0; j < arena_ub.cols(); ++j) {
-        for (Eigen::Index i = 0; i < arena_ub.rows(); ++i) {
-          if (arena_ub.val().coeff(i, j) != INFTY) {
-            arena_ub.adj().coeffRef(i, j) += ret.adj().coeff(i, j);
-          }
-        }
-      }
-      */
+    arena_t<promote_scalar_t<var, L>> arena_ub = to_arena(ub);
+    auto is_inf_ub = to_arena((arena_ub.val().array() != INFTY).template cast<double>());
+    arena_t<ret_type> ret = (is_inf_ub).select(arena_ub.val().array() - (value_of(x).array()).exp(), value_of(x).array());
+    reverse_pass_callback([arena_ub, ret, is_inf_ub]() mutable {
+      arena_ub.adj().array() += ret.adj().array() * is_inf_ub;
     });
-
     return ret_type(ret);
   }
 }
@@ -412,22 +399,17 @@ inline auto ub_constrain(const T& x, const L& ub, return_type_t<T, L>& lp) {
     arena_t<ret_type> ret = ub_constrain(arena_x.val(), arena_ub.val(), lp_val);
     lp += lp_val;
     reverse_pass_callback([arena_x, arena_ub, ret, lp]() mutable {
-      const auto check_fin = arena_ub.val().array().isFinite().template cast<double>().eval();
-      arena_x.adj().array() += ret.adj().array() * -(arena_x.val().array() * check_fin).exp() + (check_fin * lp.adj());
-      arena_ub.adj().array() += ret.adj().array() * check_fin;
-      /*
       for (Eigen::Index j = 0; j < arena_x.cols(); ++j) {
         for (Eigen::Index i = 0; i < arena_x.rows(); ++i) {
           if (unlikely(arena_ub.val().coeff(i, j) == INFTY)) {
             arena_x.adj().coeffRef(i, j) += ret.adj().coeff(i, j);
           } else {
             const double ret_adj = ret.adj().coeff(i, j);
-            arena_x.adj().coeffRef(i, j) += ret_adj * -exp(arena_x.val().coeff(i, j)) + lp_adj;
+            arena_x.adj().coeffRef(i, j) += ret_adj * -exp(arena_x.val().coeff(i, j)) + lp.adj();
             arena_ub.adj().coeffRef(i, j) += ret_adj;
           }
         }
       }
-      */
     });
     return ret_type(ret);
   } else if(!is_constant<T>::value) {
@@ -437,19 +419,15 @@ inline auto ub_constrain(const T& x, const L& ub, return_type_t<T, L>& lp) {
     arena_t<ret_type> ret = ub_constrain(arena_x.val(), arena_ub.val(), lp_val);
     lp += lp_val;
     reverse_pass_callback([arena_x, arena_ub, ret, lp]() mutable {
-    const auto check_fin = arena_ub.val().array().isFinite().template cast<double>().eval();
-    arena_x.adj().array() += ret.adj().array() * -(arena_x.val().array() * check_fin).exp() + (check_fin * lp.adj());
-/*
       for (Eigen::Index j = 0; j < arena_x.cols(); ++j) {
         for (Eigen::Index i = 0; i < arena_x.rows(); ++i) {
           if (unlikely(arena_ub.val().coeff(i, j) == INFTY)) {
             arena_x.adj().coeffRef(i, j) += ret.adj().coeff(i, j);
           } else {
-            arena_x.adj().coeffRef(i, j) += ret.adj().coeff(i, j) * -std::exp(arena_x.val().coeff(i, j)) + lp_adj;
+            arena_x.adj().coeffRef(i, j) += ret.adj().coeff(i, j) * -std::exp(arena_x.val().coeff(i, j)) + lp.adj();
           }
         }
       }
-*/
     });
     return ret_type(ret);
   } else {

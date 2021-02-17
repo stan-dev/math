@@ -145,7 +145,7 @@ template <typename T, typename L, typename U, require_all_eigen_t<T, L>* = nullp
 inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
   auto x_ref = to_ref(x);
   auto lb_ref = to_ref(lb);
-  plain_type_t<T> x_ret(x.rows(), x.cols());
+  promote_scalar_t<return_type_t<T, L, U>, T> x_ret(x.rows(), x.cols());
   for (Eigen::Index j = 0; j < x_ref.cols(); ++j) {
     for (Eigen::Index i = 0; i < x_ref.rows(); ++i) {
       x_ret.coeffRef(i, j) = lub_constrain(x_ref.coeff(i, j), lb_ref.coeff(i, j), ub);
@@ -164,7 +164,7 @@ template <typename T, typename L, typename U, require_all_eigen_t<T, L>* = nullp
 inline auto lub_constrain(const T& x, const L& lb, const U& ub, std::decay_t<return_type_t<T, L, U>>& lp) {
   auto x_ref = to_ref(x);
   auto lb_ref = to_ref(lb);
-  plain_type_t<T> x_ret(x.rows(), x.cols());
+  promote_scalar_t<return_type_t<T, L, U>, T> x_ret(x.rows(), x.cols());
   for (Eigen::Index j = 0; j < x_ref.cols(); ++j) {
     for (Eigen::Index i = 0; i < x_ref.rows(); ++i) {
       x_ret.coeffRef(i, j) = lub_constrain(x_ref.coeff(i, j), lb_ref.coeff(i, j), ub, lp);
@@ -183,7 +183,7 @@ template <typename T, typename L, typename U, require_all_eigen_t<T, U>* = nullp
 inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
   auto x_ref = to_ref(x);
   auto ub_ref = to_ref(ub);
-  plain_type_t<T> x_ret(x.rows(), x.cols());
+  promote_scalar_t<return_type_t<T, L, U>, T> x_ret(x.rows(), x.cols());
   for (Eigen::Index j = 0; j < x_ref.cols(); ++j) {
     for (Eigen::Index i = 0; i < x_ref.rows(); ++i) {
       x_ret.coeffRef(i, j) = lub_constrain(x_ref.coeff(i, j), lb, ub_ref.coeff(i, j));
@@ -202,7 +202,7 @@ template <typename T, typename L, typename U, require_all_eigen_t<T, U>* = nullp
 inline auto lub_constrain(const T& x, const L& lb, const U& ub, std::decay_t<return_type_t<T, L, U>>& lp) {
   auto x_ref = to_ref(x);
   auto ub_ref = to_ref(ub);
-  plain_type_t<T> x_ret(x.rows(), x.cols());
+  promote_scalar_t<return_type_t<T, L, U>, T> x_ret(x.rows(), x.cols());
   for (Eigen::Index j = 0; j < x_ref.cols(); ++j) {
     for (Eigen::Index i = 0; i < x_ref.rows(); ++i) {
       x_ret.coeffRef(i, j) = lub_constrain(x_ref.coeff(i, j), lb, ub_ref.coeff(i, j), lp);
@@ -221,7 +221,7 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
   auto x_ref = to_ref(x);
   auto lb_ref = to_ref(lb);
   auto ub_ref = to_ref(ub);
-  plain_type_t<T> x_ret(x.rows(), x.cols());
+  promote_scalar_t<return_type_t<T, L, U>, T> x_ret(x.rows(), x.cols());
   for (Eigen::Index j = 0; j < x_ref.cols(); ++j) {
     for (Eigen::Index i = 0; i < x_ref.rows(); ++i) {
       x_ret.coeffRef(i, j) = lub_constrain(x_ref.coeff(i, j), lb_ref.coeff(i, j), ub_ref.coeff(i, j));
@@ -240,7 +240,7 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub, std::decay_t<ret
   auto x_ref = to_ref(x);
   auto lb_ref = to_ref(lb);
   auto ub_ref = to_ref(ub);
-  plain_type_t<T> x_ret(x.rows(), x.cols());
+  promote_scalar_t<return_type_t<T, L, U>, T> x_ret(x.rows(), x.cols());
   for (Eigen::Index j = 0; j < x_ref.cols(); ++j) {
     for (Eigen::Index i = 0; i < x_ref.rows(); ++i) {
       x_ret.coeffRef(i, j) = lub_constrain(x_ref.coeff(i, j), lb_ref.coeff(i, j), ub_ref.coeff(i, j), lp);
