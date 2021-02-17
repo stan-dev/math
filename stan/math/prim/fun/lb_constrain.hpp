@@ -4,8 +4,6 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/identity_constrain.hpp>
-#include <stan/math/prim/fun/identity_free.hpp>
 #include <stan/math/prim/fun/add.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/eval.hpp>
@@ -35,7 +33,7 @@ namespace math {
 template <typename T, typename L, require_stan_scalar_t<L>* = nullptr>
 inline auto lb_constrain(const T& x, const L& lb) {
   if (unlikely(lb == NEGATIVE_INFTY)) {
-    return identity_constrain(x, lb);
+    return x;
   } else {
     return eval(add(exp(x), lb));
   }
@@ -57,7 +55,7 @@ inline auto lb_constrain(const T& x, const L& lb) {
 template <typename T, typename L, require_stan_scalar_t<L>* = nullptr>
 inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
   if (lb == NEGATIVE_INFTY) {
-    return identity_constrain(x, lb);
+    return x;
   } else {
     // check_less("lb_constrain", "lb", value_of(x), value_of(lb));
     lp += sum(x);

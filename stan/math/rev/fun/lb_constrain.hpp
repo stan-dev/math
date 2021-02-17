@@ -7,8 +7,6 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/lb_constrain.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
-#include <stan/math/rev/fun/identity_constrain.hpp>
-#include <stan/math/rev/fun/identity_free.hpp>
 #include <stan/math/rev/fun/to_arena.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <cmath>
