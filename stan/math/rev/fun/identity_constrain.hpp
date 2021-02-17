@@ -12,28 +12,29 @@ namespace math {
  * Returns the result of applying the identity constraint
  * transform to the input. This specialization handles convert Eigen matrices
  * of doubles to var matrix types.
- * containing var matrix types to a var matrix.
  *
  * @tparam T Any type.
+ * @tparam Types Any type with one of `T` and `Types` being a `var_value` matrix.
  * @param[in] x object
+ * @param[in]
  * @return transformed input
  */
 template <typename T, typename... Types,
           require_eigen_vt<std::is_arithmetic, T>* = nullptr,
           require_any_var_matrix_t<T, Types...>* = nullptr>
-inline auto identity_constrain(T&& x, Types&&... args) {
+inline auto identity_constrain(T&& x, Types&&... /* args */) {
   return var_value<plain_type_t<T>>(x);
 }
 
 template <typename T, typename... Types, require_eigen_vt<is_var, T>* = nullptr,
           require_any_var_matrix_t<T, Types...>* = nullptr>
-inline auto identity_constrain(T&& x, Types&&... args) {
+inline auto identity_constrain(T&& x, Types&&... /* args */) {
   return to_var_value(x);
 }
 
 template <typename T, typename... Types, require_var_matrix_t<T>* = nullptr,
           require_any_var_matrix_t<T, Types...>* = nullptr>
-inline auto identity_constrain(T&& x, Types&&... args) {
+inline auto identity_constrain(T&& x, Types&&... /* args */) {
   return x;
 }
 
