@@ -280,7 +280,7 @@ template <typename T>
 auto bad_wrong_derivatives(const T& a) {
   auto ops = operands_and_partials(a);
   if (!is_constant<T>::value && std::is_same<T, plain_type_t<T>>::value) {
-    ops.edge1_.partials_[0] = 1234;
+    edge<0>(ops).partials_[0] = 1234;
   }
   return ops.build(0);
 }
