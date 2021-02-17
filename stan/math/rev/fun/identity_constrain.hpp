@@ -17,7 +17,6 @@ namespace math {
  * @tparam Types Any type with one of `T` and `Types` being a `var_value`
  * matrix.
  * @param[in] x object
- * @param[in]
  * @return transformed input
  */
 template <typename T, typename... Types,
