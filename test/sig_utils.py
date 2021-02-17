@@ -59,7 +59,6 @@ def get_cpp_type(stan_type):
 
 simplex = "make_simplex"
 pos_definite = "make_pos_definite_matrix"
-scalar_return_type = "scalar_return_type"
 
 # list of function arguments that need special scalar values.
 # None means to use the default argument value.
@@ -108,18 +107,18 @@ special_arg_values = {
     "pareto_type_2_cdf": [1.5, 0.7, None, None],
     "pareto_type_2_cdf_log": [1.5, 0.7, None, None],
     "pareto_type_2_lcdf": [1.5, 0.7, None, None],
-    "positive_ordered_constrain" : [None, scalar_return_type],
+    "positive_ordered_constrain" : [None, "scalar_return_type"],
     "positive_ordered_free": [1.0],
-    "ordered_constrain" : [None, scalar_return_type],
+    "ordered_constrain" : [None, "scalar_return_type"],
     "ordered_free": [1.0],
-    "simplex_constrain" : [None, scalar_return_type],
+    "simplex_constrain" : [None, "scalar_return_type"],
     "simplex_free": [simplex],
     "student_t_cdf": [0.8, None, 0.4, None],
     "student_t_cdf_log": [0.8, None, 0.4, None],
     "student_t_ccdf_log": [0.8, None, 0.4, None],
     "student_t_lccdf": [0.8, None, 0.4, None],
     "student_t_lcdf": [0.8, None, 0.4, None],
-    "unit_vector_constrain" : [None, scalar_return_type],
+    "unit_vector_constrain" : [None, "scalar_return_type"],
     "unit_vector_free": [simplex],
     "uniform_cdf": [None, 0.2, 0.9],
     "uniform_ccdf_log": [None, 0.2, 0.9],
@@ -173,16 +172,16 @@ no_fwd_overload = [
 
 internal_signatures = [
     "unit_vector_constrain(vector) => vector",
-    "unit_vector_constrain(vector, scalar_return_t) => vector",
+    "unit_vector_constrain(vector, real) => vector",
     "unit_vector_free(vector) => vector",
     "positive_ordered_constrain(vector) => vector",
-    "positive_ordered_constrain(vector, scalar_return_t) => vector",
+    "positive_ordered_constrain(vector, real) => vector",
     "positive_ordered_free(vector) => vector",
     "ordered_constrain(vector) => vector",
-    "ordered_constrain(vector, scalar_return_t) => vector",
+    "ordered_constrain(vector, real) => vector",
     "ordered_free(vector) => vector",
     "simplex_constrain(vector) => vector",
-    "simplex_constrain(vector, scalar_return_t) => vector",
+    "simplex_constrain(vector, real) => vector",
     "simplex_free(vector) => vector",
     "is_cholesky_factor(matrix) => int",
     "is_cholesky_factor_corr(matrix) => int",
@@ -313,9 +312,12 @@ def reference_vector_argument(arg):
 
 overload_scalar = {
     "Prim": "double",
+    "PrimExp": "double",
     "Rev": "stan::math::var",
-    "Rev_SOA": "stan::math::var",
+    "RevSOA": "stan::math::var",
+    "RevExp": "stan::math::var",
     "Fwd": "stan::math::fvar<double>",
+    "FwdExp": "stan::math::fvar<double>",
     "Mix": "stan::math::fvar<stan::math::var>",
 }
 
@@ -351,6 +353,15 @@ class MatrixArgument:
         arg_type = cpp_arg_template.replace("SCALAR", scalar)
 
         return f"auto {self.name} = stan::test::make_arg<{arg_type}>({self.value}, 1);"
+
+class ReturnTypeTArgument:
+    def __init__(self, name, *args):
+        self.name = name
+        arg_names = [f'decltype({arg.name})' for arg in args]
+        self.type_str = f"stan::math::return_type_t<{','.join(arg_names)}>"
+    
+    def cpp(self):
+        return f"{self.type_str} {self.name} = 0;"
 
 class RngArgument:
     def __init__(self, name):
@@ -400,6 +411,29 @@ class FunctionCall:
     def cpp(self):
         return f"stan::math::{self.function_name}({self.arg_str});"
 
+class ExpressionArgument:
+    def __init__(self, overload, name, arg):
+        self.overload = overload
+        self.name = name
+        self.arg = arg
+
+    def cpp(self):
+        scalar = overload_scalar[self.overload]
+        counter_name = f"{self.name}_counter"
+        counter_op_name = f"{self.name}_counter_op"
+
+        code = (
+            f"int {self.name}_counter = 0;" + os.linesep +
+            f"stan::test::counterOp<{scalar}> {counter_op_name}(&{counter_name});" + os.linesep
+        )
+
+        if self.arg.stan_arg == "matrix":
+            return code + f"auto {self.name} = {self.arg.name}.block(0,0,1,1).unaryExpr({counter_op_name});"
+        elif self.arg.stan_arg in ("vector", "row_vector"):
+            return code + f"auto {self.name} = {self.arg.name}.segment(0,1).unaryExpr({counter_op_name});"
+        else:
+            raise Exception(f"Can't make an expression out of a {self.arg.stan_arg}")
+
 class FunctionGenerator:
     def __init__(self, signature):
         self.return_type, self.function_name, self.stan_args = parse_signature(signature)
@@ -421,7 +455,7 @@ class FunctionGenerator:
 
     def overloads(self, overloads = None):
         if overloads is None:
-            overloads = ["Prim", "Rev", "Rev_SOA"]
+            overloads = ["Prim", "Rev", "RevSOA"]
 
         overload_opts = []
         for n, stan_arg in enumerate(self.stan_args):
@@ -447,31 +481,44 @@ class FunctionGenerator:
         for n, (overload, stan_arg) in enumerate(zip(arg_overloads, self.stan_args)):
             number_nested_arrays, inner_type = parse_array(stan_arg)
 
+            try:
+                special_type = special_arg_values[self.function_name][n]
+                if special_type is not None:
+                    inner_type = special_type
+            except KeyError:
+                pass
+
             if number_nested_arrays == 0:
-                if stan_arg == "int":
+                if inner_type == "int":
                     arg = IntArgument(f"int{n}")
-                elif stan_arg == "real":
+                elif inner_type == "real":
                     arg = RealArgument(overload, f"real{n}")
-                elif stan_arg in ("vector", "row_vector", "matrix"):
+                elif inner_type in ("vector", "row_vector", "matrix"):
                     arg = MatrixArgument(overload, f"matrix{n}", stan_arg)
-                elif stan_arg == "rng":
+                elif inner_type == "rng":
                     arg = RngArgument(f"rng{n}")
-                elif stan_arg == "ostream_ptr":
+                elif inner_type == "ostream_ptr":
                     arg = OStreamArgument(f"ostream{n}")
+                elif inner_type == "scalar_return_type":
+                    arg = ReturnTypeTArgument(f"ret_type{n}", *arg_list)
             else:
                 arg = ArrayArgument(overload, f"array{n}", number_nested_arrays, inner_type)
 
             code_list.append(arg)
 
-            if overload == "Rev_SOA" and inner_type in ("vector", "row_vector", "matrix"):
+            if overload == "RevSOA" and inner_type in ("vector", "row_vector", "matrix"):
                 uses_varmat = True
                 arg = FunctionCallAssign("to_var_value", arg.name + "_varmat", arg)
+                code_list.append(arg)
+            
+            if overload.endswith("Exp") and inner_type in ("vector", "row_vector", "matrix"):
+                arg = ExpressionArgument(overload, arg.name + "_expr", arg)
                 code_list.append(arg)
             
             arg_list.append(arg)
 
         code_list.append(FunctionCallAssign(self.function_name, "result", *arg_list))
-        if "Rev" in arg_overloads or "Rev_SOA" in arg_overloads:
+        if "Rev" in arg_overloads or "RevSOA" in arg_overloads:
             code_list.append(FunctionCall("grad"))
 
         code = os.linesep.join(statement.cpp() for statement in code_list)

@@ -21,6 +21,7 @@ TEST(ExpressionTest{overload}, {function_name}{signature_number}) {{
 """
 
 
+
 def make_arg_code(arg, scalar, var_name, var_number, function_name):
     """
     Makes code for declaration and initialization of an argument to function.
@@ -120,27 +121,27 @@ def main(functions=(), j=1):
         default_checks = True
         signatures |= get_signatures()
     else:
+        for function in functions:
+            for signature in get_signatures():
+                return_type, function_name, function_args = parse_signature(signature)
+                if function == function_name:
+                    signatures.add(signature)
+                    break
         default_checks = False
 
-    remaining_functions = set(functions)
     for signature in signatures:
-        fg = FunctionGenerator(signature)
-
-        return_type, function_name, function_args = parse_signature(signature)
-
-        # skip ignored signatures if running the default checks
-        if default_checks and fg.function_name in ignored:
-            continue
-
-        # skip signatures without eigen inputs
-        if not fg.has_vector_arg():
-            continue
-
-        func_test_n = test_n.get(function_name, 0)
-        test_n[function_name] = func_test_n + 1
-
         for overload in ("Prim", "Rev", "Fwd"):
-            if fg.is_rng() and overload != "Prim":
+            fg = FunctionGenerator(signature)
+
+            # skip ignored signatures if running the default checks
+            if default_checks and fg.function_name in ignored:
+                continue
+
+            # skip signatures without eigen inputs
+            if not fg.has_vector_arg():
+                continue
+
+            if fg.is_rng() and not overload == "Prim":
                 function_args.append("rng")
             if function_name in no_fwd_overload and overload == "Fwd":
                 continue
@@ -148,116 +149,117 @@ def main(functions=(), j=1):
                 continue
 
             setup, code, uses_varmat = fg.cpp(len(fg.stan_args) * [overload], 2)
+            print(code)
+            print(setup)
 
-        for overload, scalar in (
-            ("Prim", "double"),
-            ("Rev", "stan::math::var"),
-            ("Fwd", "stan::math::fvar<double>"),
-        ):
-            # Declare inputs
-            mat_declarations = ""
-            for n, arg in enumerate(function_args):
-                mat_declarations += (
-                    make_arg_code(arg, scalar, "arg_mat%d" % n, n, function_name)
-                    + ";\n"
-                )
-            mat_arg_list = ", ".join("arg_mat%d" % n for n in range(len(function_args)))
+        # for overload, scalar in (
+        #     ("Prim", "double"),
+        #     ("Rev", "stan::math::var"),
+        #     ("Fwd", "stan::math::fvar<double>"),
+        # ):
+        #     # Declare inputs
+        #     mat_declarations = ""
+        #     for n, arg in enumerate(function_args):
+        #         mat_declarations += (
+        #             make_arg_code(arg, scalar, "arg_mat%d" % n, n, function_name)
+        #             + ";\n"
+        #         )
+        #     mat_arg_list = ", ".join("arg_mat%d" % n for n in range(len(function_args)))
 
-            # Convert to expressions
-            expression_declarations = ""
-            for n, arg in enumerate(function_args):
-                expression_declarations += (
-                    make_arg_code(arg, scalar, "arg_expr%d" % n, n, function_name)
-                    + ";\n"
-                )
-                if arg in eigen_types:
-                    expression_declarations += "  int counter%d = 0;\n" % n
-                    expression_declarations += (
-                        "  stan::test::counterOp<%s> counter_op%d(&counter%d);\n"
-                        % (scalar, n, n)
-                    )
+        #     # Convert to expressions
+        #     expression_declarations = ""
+        #     for n, arg in enumerate(function_args):
+        #         expression_declarations += (
+        #             make_arg_code(arg, scalar, "arg_expr%d" % n, n, function_name)
+        #             + ";\n"
+        #         )
+        #         if arg in eigen_types:
+        #             expression_declarations += "  int counter%d = 0;\n" % n
+        #             expression_declarations += (
+        #                 "  stan::test::counterOp<%s> counter_op%d(&counter%d);\n"
+        #                 % (scalar, n, n)
+        #             )
             
-            # Build argument list
-            expression_arg_list = ""
-            for n, arg in enumerate(function_args[:-1]):
-                if arg in eigen_types:
-                    if arg == "matrix":
-                        expression_arg_list += (
-                            "arg_expr%d.block(0,0,1,1).unaryExpr(counter_op%d), "
-                            % (
-                                n,
-                                n,
-                            )
-                        )
-                    else:
-                        expression_arg_list += (
-                            "arg_expr%d.segment(0,1).unaryExpr(counter_op%d), "
-                            % (
-                                n,
-                                n,
-                            )
-                        )
-                else:
-                    expression_arg_list += "arg_expr%d, " % n
-            if function_args[-1] in eigen_types:
-                if function_args[-1] == "matrix":
-                    expression_arg_list += (
-                        "arg_expr%d.block(0,0,1,1).unaryExpr(counter_op%d)"
-                        % (
-                            len(function_args) - 1,
-                            len(function_args) - 1,
-                        )
-                    )
-                else:
-                    expression_arg_list += (
-                        "arg_expr%d.segment(0,1).unaryExpr(counter_op%d)"
-                        % (
-                            len(function_args) - 1,
-                            len(function_args) - 1,
-                        )
-                    )
-            else:
-                expression_arg_list += "arg_expr%d" % (len(function_args) - 1)
+        #     # Build argument list
+        #     expression_arg_list = ""
+        #     for n, arg in enumerate(function_args[:-1]):
+        #         if arg in eigen_types:
+        #             if arg == "matrix":
+        #                 expression_arg_list += (
+        #                     "arg_expr%d.block(0,0,1,1).unaryExpr(counter_op%d), "
+        #                     % (
+        #                         n,
+        #                         n,
+        #                     )
+        #                 )
+        #             else:
+        #                 expression_arg_list += (
+        #                     "arg_expr%d.segment(0,1).unaryExpr(counter_op%d), "
+        #                     % (
+        #                         n,
+        #                         n,
+        #                     )
+        #                 )
+        #         else:
+        #             expression_arg_list += "arg_expr%d, " % n
+        #     if function_args[-1] in eigen_types:
+        #         if function_args[-1] == "matrix":
+        #             expression_arg_list += (
+        #                 "arg_expr%d.block(0,0,1,1).unaryExpr(counter_op%d)"
+        #                 % (
+        #                     len(function_args) - 1,
+        #                     len(function_args) - 1,
+        #                 )
+        #             )
+        #         else:
+        #             expression_arg_list += (
+        #                 "arg_expr%d.segment(0,1).unaryExpr(counter_op%d)"
+        #                 % (
+        #                     len(function_args) - 1,
+        #                     len(function_args) - 1,
+        #                 )
+        #             )
+        #     else:
+        #         expression_arg_list += "arg_expr%d" % (len(function_args) - 1)
 
-            # Build checks that happen after function call
-            checks = ""
-            for n, arg in enumerate(function_args):
-                if arg in eigen_types:
-                    # besides evaluating its input rank also accesses one of the elements,
-                    # resulting in counter being incremented twice.
-                    if function_name == "rank":
-                        checks += "  EXPECT_LE(counter%d, 2);\n" % n
-                    else:
-                        checks += "  EXPECT_LE(counter%d, 1);\n" % n
-            if overload == "Rev" and (
-                return_type.startswith("real")
-                or return_type.startswith("vector")
-                or return_type.startswith("row_vector")
-                or return_type.startswith("matrix")
-            ):
-                checks += "  (stan::test::recursive_sum(res_mat) + stan::test::recursive_sum(res_expr)).grad();\n"
-                for n, arg in enumerate(function_args):
-                    # functors don't have adjoints to check
-                    if "=>" in arg:
-                        continue
-                    checks += "  EXPECT_STAN_ADJ_EQ(arg_expr%d,arg_mat%d);\n" % (
-                        n,
-                        n,
-                    )
-            tests.append(
-                test_code_template.format(
-                    overload=overload,
-                    function_name=function_name,
-                    signature_number=func_test_n,
-                    matrix_argument_declarations=mat_declarations,
-                    matrix_argument_list=mat_arg_list,
-                    expression_argument_declarations=expression_declarations,
-                    expression_argument_list=expression_arg_list,
-                    checks=checks,
-                )
-            )
-    if remaining_functions:
-        raise NameError("Functions not found: " + ", ".join(remaining_functions))
+        #     # Build checks that happen after function call
+        #     checks = ""
+        #     for n, arg in enumerate(function_args):
+        #         if arg in eigen_types:
+        #             # besides evaluating its input rank also accesses one of the elements,
+        #             # resulting in counter being incremented twice.
+        #             if function_name == "rank":
+        #                 checks += "  EXPECT_LE(counter%d, 2);\n" % n
+        #             else:
+        #                 checks += "  EXPECT_LE(counter%d, 1);\n" % n
+        #     if overload == "Rev" and (
+        #         return_type.startswith("real")
+        #         or return_type.startswith("vector")
+        #         or return_type.startswith("row_vector")
+        #         or return_type.startswith("matrix")
+        #     ):
+        #         checks += "  (stan::test::recursive_sum(res_mat) + stan::test::recursive_sum(res_expr)).grad();\n"
+        #         for n, arg in enumerate(function_args):
+        #             # functors don't have adjoints to check
+        #             if "=>" in arg:
+        #                 continue
+        #             checks += "  EXPECT_STAN_ADJ_EQ(arg_expr%d,arg_mat%d);\n" % (
+        #                 n,
+        #                 n,
+        #             )
+        #     tests.append(
+        #         test_code_template.format(
+        #             overload=overload,
+        #             function_name=function_name,
+        #             signature_number=func_test_n,
+        #             matrix_argument_declarations=mat_declarations,
+        #             matrix_argument_list=mat_arg_list,
+        #             expression_argument_declarations=expression_declarations,
+        #             expression_argument_list=expression_arg_list,
+        #             checks=checks,
+        #         )
+        #     )
+    
     save_tests_in_files(j, tests)
 
 if __name__ == "__main__":
