@@ -14,7 +14,7 @@ namespace math {
  *
  * @tparam T type of value to promote
  * @tparam Types Other types.
- * @param[in] y value to promote
+ * @param[in] x value to promote
  * @return value
  */
 template <typename T, typename... Types,
