@@ -34,7 +34,7 @@ inline auto lb_free(T&& y, L&& lb) {
     auto&& lb_ref = to_ref(std::forward<L>(lb));
     check_greater_or_equal("lb_free", "Lower bounded variable", y_ref, lb_ref);
     return log(subtract(std::forward<decltype(y_ref)>(y_ref),
-                        std::forward<decltype(lb_ref)>(lb_ref)));    
+                        std::forward<decltype(lb_ref)>(lb_ref)));
   }
 }
 
