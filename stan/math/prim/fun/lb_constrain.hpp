@@ -82,11 +82,11 @@ template <typename T, typename L, require_eigen_t<T>* = nullptr,
           require_stan_scalar_t<L>* = nullptr,
           require_all_not_st_var<T, L>* = nullptr>
 inline auto lb_constrain(T&& x, L&& lb) {
-  return make_holder([](const auto& x, const auto& lb) {
-      return x.unaryExpr([lb](auto&& x) {
-         return lb_constrain(x, lb);
-       });
-  }, std::forward<T>(x), std::forward<L>(lb));
+  return make_holder(
+      [](const auto& x, const auto& lb) {
+        return x.unaryExpr([lb](auto&& x) { return lb_constrain(x, lb); });
+      },
+      std::forward<T>(x), std::forward<L>(lb));
 }
 
 /**
@@ -105,7 +105,8 @@ template <typename T, typename L, require_eigen_t<T>* = nullptr,
           require_all_not_st_var<T, L>* = nullptr>
 inline auto lb_constrain(const T& x, const L& lb,
                          std::decay_t<return_type_t<T, L>>& lp) {
-  return eval(x.unaryExpr([lb, &lp](auto&& xx) { return lb_constrain(xx, lb, lp); }));
+  return eval(
+      x.unaryExpr([lb, &lp](auto&& xx) { return lb_constrain(xx, lb, lp); }));
 }
 
 /**
@@ -121,11 +122,12 @@ inline auto lb_constrain(const T& x, const L& lb,
 template <typename T, typename L, require_all_eigen_t<T, L>* = nullptr,
           require_all_not_st_var<T, L>* = nullptr>
 inline auto lb_constrain(T&& x, L&& lb) {
-  return make_holder([](const auto& x, const auto& lb) {
-    return x.binaryExpr(lb, [](auto&& x, auto&& lb) {
-       return lb_constrain(x, lb);
-    });
-  }, std::forward<T>(x), std::forward<L>(lb));
+  return make_holder(
+      [](const auto& x, const auto& lb) {
+        return x.binaryExpr(
+            lb, [](auto&& x, auto&& lb) { return lb_constrain(x, lb); });
+      },
+      std::forward<T>(x), std::forward<L>(lb));
 }
 
 /**

@@ -35,9 +35,9 @@ TEST(mathMixMatFun, lb_matvar_constrain) {
   using stan::math::promote_scalar_t;
   Eigen::MatrixXd A(2, 2);
   // Doesn't work for values near zero fail for fvar hessian?
-  A << 5.0, 2.0, 4.0, -2.0;//, 0.0, 0.005;
+  A << 5.0, 2.0, 4.0, -2.0;  //, 0.0, 0.005;
   Eigen::MatrixXd lbm(2, 2);
-  lbm << 7.0, 5.0, 6.0, 100.0;//, 0.0, 0.0005;
+  lbm << 7.0, 5.0, 6.0, 100.0;  //, 0.0, 0.0005;
   ub_constrain_test::expect_matvar(A, lbm);
   double lbd = 6.0;
   ub_constrain_test::expect_matvar(A, lbd);
@@ -50,5 +50,4 @@ TEST(mathMixMatFun, lb_matvar_constrain_neg_inf) {
   lbm << 7.0, 5.0, stan::math::NEGATIVE_INFTY, 100.0;
   ub_constrain_test::expect_matvar(A, lbm);
   ub_constrain_test::expect_matvar(A, stan::math::NEGATIVE_INFTY);
-
 }

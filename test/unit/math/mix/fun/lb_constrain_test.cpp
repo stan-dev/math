@@ -22,12 +22,12 @@ void expect(const T1& x, const T2& lb) {
     return stan::math::add(lp, stan::math::sum(xx));
   };
 
-  //stan::test::expect_ad(f1, x, lb);
+  // stan::test::expect_ad(f1, x, lb);
   stan::test::expect_ad(f2, x, lb);
-  //stan::test::expect_ad(f3, x, lb);
-  //stan::test::expect_ad(f4, x, lb);
+  // stan::test::expect_ad(f3, x, lb);
+  // stan::test::expect_ad(f4, x, lb);
 }
-}  // namespace ub_constrain_test
+}  // namespace lb_constrain_test
 
 TEST(mathMixScalFun, lbConstrain) {
   lb_constrain_test::expect(-1, 2);
@@ -42,9 +42,9 @@ TEST(mathMixScalFun, lbConstrain_neg_inf) {
 TEST(mathMixMatFun, lb_mat_constrain) {
   Eigen::MatrixXd A(2, 2);
   // Doesn't work for values near zero fail for fvar hessian?
-  A << 5.0, 2.0, 4.0, -2.0;//, 0.0, 0.005;
+  A << 5.0, 2.0, 4.0, -2.0;  //, 0.0, 0.005;
   Eigen::MatrixXd lbm(2, 2);
-  lbm << 7.0, 5.0, 6.0, 100.0;//, 0.0, 0.0005;
+  lbm << 7.0, 5.0, 6.0, 100.0;  //, 0.0, 0.0005;
   lb_constrain_test::expect(A, lbm);
   double lbd = 6.0;
   lb_constrain_test::expect(A, lbd);
