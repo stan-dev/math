@@ -73,6 +73,8 @@
 #include <stan/math/rev/fun/grad.hpp>
 #include <stan/math/rev/fun/grad_inc_beta.hpp>
 #include <stan/math/rev/fun/hypot.hpp>
+#include <stan/math/rev/fun/identity_constrain.hpp>
+#include <stan/math/rev/fun/identity_free.hpp>
 #include <stan/math/rev/fun/if_else.hpp>
 #include <stan/math/rev/fun/inc_beta.hpp>
 #include <stan/math/rev/fun/initialize_fill.hpp>
@@ -88,6 +90,7 @@
 #include <stan/math/rev/fun/is_nan.hpp>
 #include <stan/math/rev/fun/is_uninitialized.hpp>
 #include <stan/math/rev/fun/lambert_w.hpp>
+#include <stan/math/rev/fun/lb_constrain.hpp>
 #include <stan/math/rev/fun/lbeta.hpp>
 #include <stan/math/rev/fun/ldexp.hpp>
 #include <stan/math/rev/fun/lgamma.hpp>
