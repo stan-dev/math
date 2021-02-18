@@ -8,9 +8,6 @@
 #include <stan/math/prim/functor/coupled_ode_system.hpp>
 #include <stan/math/prim/functor/finite_diff_gradient.hpp>
 #include <stan/math/prim/functor/finite_diff_gradient_auto.hpp>
-#include <stan/math/prim/functor/finite_diff_hessian.hpp>
-#include <stan/math/prim/functor/finite_diff_hessian_auto.hpp>
-#include <stan/math/prim/functor/finite_diff_hessian_helper.hpp>
 #include <stan/math/prim/functor/for_each.hpp>
 #include <stan/math/prim/functor/integrate_1d.hpp>
 #include <stan/math/prim/functor/integrate_ode_rk45.hpp>

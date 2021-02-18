@@ -77,12 +77,11 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lcdf(
                      && !is_constant_all<T_shape>::value)>(
             inv(p1_pow_alpha - 1));
     if (!is_constant_all<T_y, T_loc, T_scale, T_shape>::value) {
-      const auto& grad_1_2
-          = to_ref_if<(!is_constant_all<T_loc>::value
-                       + !is_constant_all<T_scale>::value
-                       + !is_constant_all<T_y>::value)
-                      >= 2>(alpha_val * inv_p1_pow_alpha_minus_one
-                            / (lambda_val - mu_val + y_val));
+      auto grad_1_2 = to_ref_if<(!is_constant_all<T_loc>::value
+                                 + !is_constant_all<T_scale>::value
+                                 + !is_constant_all<T_y>::value)
+                                >= 2>(alpha_val * inv_p1_pow_alpha_minus_one
+                                      / (lambda_val - mu_val + y_val));
       if (!is_constant_all<T_loc>::value) {
         ops_partials.edge2_.partials_ = -grad_1_2;
       }

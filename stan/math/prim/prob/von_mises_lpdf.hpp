@@ -75,7 +75,7 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
 
   if (!is_constant_all<T_y, T_loc>::value) {
     const auto& sin_diff = sin(y_val - mu_val);
-    const auto& kappa_sin
+    auto kappa_sin
         = to_ref_if<(!is_constant_all<T_y>::value
                      && !is_constant_all<T_loc>::value)>(kappa_val * sin_diff);
     if (!is_constant_all<T_y>::value) {
@@ -86,9 +86,10 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
     }
   }
   if (!is_constant_all<T_scale>::value) {
-    const auto& bessel0 = modified_bessel_first_kind(0, kappa_val);
-    const auto& bessel1 = modified_bessel_first_kind(-1, kappa_val);
-    ops_partials.edge3_.partials_ = cos_mu_minus_y - bessel1 / bessel0;
+    ops_partials.edge3_.partials_
+        = cos_mu_minus_y
+          - modified_bessel_first_kind(-1, kappa_val)
+                / modified_bessel_first_kind(0, kappa_val);
   }
 
   return ops_partials.build(logp);

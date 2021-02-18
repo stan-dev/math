@@ -47,9 +47,9 @@ inline return_type_t<T_x, T_mu, T_k> von_mises_lccdf(const T_x& x,
   T_mu_ref mu_ref = mu;
   T_k_ref k_ref = k;
 
-  check_bounded(function, "Random variable", x_ref, -pi, pi);
-  check_finite(function, "Location parameter", mu_ref);
-  check_positive(function, "Scale parameter", k_ref);
+  check_bounded(function, "Random variable", value_of(x_ref), -pi, pi);
+  check_finite(function, "Location parameter", value_of(mu_ref));
+  check_positive(function, "Scale parameter", value_of(k_ref));
 
   if (size_zero(x, mu, k)) {
     return 0.0;
