@@ -4,9 +4,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
 
-auto to_vector_functor
-    = [](const auto& a) { return stan::math::to_vector(a); };
-
+auto to_vector_functor = [](const auto& a) { return stan::math::to_vector(a); };
 
 TEST(OpenCLToVector, prim_rev_values_small) {
   Eigen::VectorXd a(6);

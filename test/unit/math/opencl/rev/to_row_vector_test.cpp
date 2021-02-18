@@ -7,7 +7,6 @@
 auto to_row_vector_functor
     = [](const auto& a) { return stan::math::to_row_vector(a); };
 
-
 TEST(OpenCLToRowVector, prim_rev_values_small) {
   Eigen::VectorXd a(6);
   a << -2.2, -0.8, 0.5, 1, 1.5, 3;

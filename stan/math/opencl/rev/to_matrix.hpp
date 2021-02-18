@@ -25,7 +25,7 @@ namespace math {
 template <typename T_x,
           require_all_kernel_expressions_and_none_scalar_t<T_x>* = nullptr>
 inline var_value<matrix_cl<double>> to_matrix(const var_value<T_x>& x, int m,
-                                               int n) {
+                                              int n) {
   return make_callback_var(
       to_matrix(value_of(x), m, n),
       [x, m, n](vari_value<matrix_cl<double>>& res) mutable {
