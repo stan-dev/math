@@ -109,10 +109,10 @@ inline return_type_t<T_y_cl, T_low_cl, T_high_cl> uniform_lpdf(
   auto ops_partials = operands_and_partials(y, alpha, beta);
 
   if (!is_constant<T_low_cl>::value) {
-    edge<1>(ops_partials).partials_ = std::move(alpha_deriv_cl);
+    edge<1>(ops_partials).partials_ = alpha_deriv_cl;
   }
   if (!is_constant<T_high_cl>::value) {
-    edge<2>(ops_partials).partials_ = std::move(beta_deriv_cl);
+    edge<1>(ops_partials).partials_ = alpha_deriv_cl;
   }
   return ops_partials.build(logp);
 }

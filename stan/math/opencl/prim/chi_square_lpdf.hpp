@@ -90,10 +90,10 @@ return_type_t<T_y_cl, T_dof_cl> chi_square_lpdf(const T_y_cl& y,
   auto ops_partials = operands_and_partials(y, nu);
 
   if (!is_constant<T_y_cl>::value) {
-    edge<0>(ops_partials).partials_ = std::move(y_deriv_cl);
+    edge<0>(ops_partials).partials_ = y_deriv_cl;
   }
   if (!is_constant<T_dof_cl>::value) {
-    edge<1>(ops_partials).partials_ = std::move(nu_deriv_cl);
+    edge<1>(ops_partials).partials_ = nu_deriv_cl;
   }
   return ops_partials.build(logp);
 }
