@@ -146,7 +146,7 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
   }
   if (!is_constant_all<T_cuts>::value) {
     if (wgs == 1) {
-      edge<2>(ops_partials).partials_ = std::move(cuts_derivative_cl);
+      edge<2>(ops_partials).partials_ = cuts_derivative_cl;
     } else {
       edge<2>(ops_partials).partials_ = rowwise_sum(cuts_derivative_cl);
     }

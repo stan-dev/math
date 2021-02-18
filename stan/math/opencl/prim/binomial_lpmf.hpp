@@ -125,7 +125,7 @@ return_type_t<T_prob_cl> binomial_lpmf(const T_n_cl& n, const T_N_cl N,
         }
       }
     } else {
-      edge<0>(ops_partials).partials_ = std::move(deriv_cl);
+      edge<0>(ops_partials).partials_ = deriv_cl;
     }
   }
 
