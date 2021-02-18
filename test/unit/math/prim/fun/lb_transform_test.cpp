@@ -48,7 +48,6 @@ TEST(prob_transform, lb_f) {
       1.7, stan::math::lb_free(1.7, -std::numeric_limits<double>::infinity()));
 }
 
-
 TEST(prob_transform, lb_f_exception) {
   double lb = 2.0;
   EXPECT_THROW(stan::math::lb_free(lb - 0.01, lb), std::domain_error);
