@@ -18,8 +18,6 @@
 namespace stan {
 namespace math {
 
-// scalar
-
 /**
  * Return the lower-bounded value for the specified unconstrained input
  * and specified lower bound.
