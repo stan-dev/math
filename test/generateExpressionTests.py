@@ -7,16 +7,8 @@ build_folder = "./test/expressions/"
 
 
 test_code_template = """
-TEST(ExpressionTest{overload}, {function_name}{signature_number}) {{
-{matrix_argument_declarations}
-  auto res_mat = stan::math::{function_name}({matrix_argument_list});
-
-{expression_argument_declarations}
-  auto res_expr = stan::math::{function_name}({expression_argument_list});
-
-  EXPECT_STAN_EQ(res_expr, res_mat);
-
-{checks}
+TEST(ExpressionTest{overload}, {test_name}) {{
+{code}
 }}
 """
 
@@ -111,7 +103,6 @@ def main(functions=(), j=1):
     :param j: number of files to split tests in
     """
 
-    test_n = {}
     tests = []
     functions, signatures = handle_function_list(functions)
 
@@ -129,8 +120,8 @@ def main(functions=(), j=1):
                     break
         default_checks = False
 
-    for signature in signatures:
-        for overload in ("Prim", "Rev", "Fwd"):
+    for n, signature in enumerate(signatures):
+        for overload in ("PrimExp", "RevExp", "FwdExp"):
             fg = FunctionGenerator(signature)
 
             # skip ignored signatures if running the default checks
@@ -141,16 +132,21 @@ def main(functions=(), j=1):
             if not fg.has_vector_arg():
                 continue
 
-            if fg.is_rng() and not overload == "Prim":
+            if fg.is_rng() and not overload == "PrimExp":
                 function_args.append("rng")
-            if function_name in no_fwd_overload and overload == "Fwd":
+            if function_name in no_fwd_overload and overload == "FwdExp":
                 continue
-            if function_name in no_rev_overload and overload == "Rev":
+            if function_name in no_rev_overload and overload == "RevExp":
                 continue
 
             setup, code, uses_varmat = fg.cpp(len(fg.stan_args) * [overload], 2)
-            print(code)
-            print(setup)
+
+            tests.append(
+                test_code_template.format(
+                    overload=overload,
+                    test_name=f"{function_name}_{n}",
+                    code = code,                )
+            )
 
         # for overload, scalar in (
         #     ("Prim", "double"),

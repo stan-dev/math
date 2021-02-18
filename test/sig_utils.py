@@ -401,7 +401,7 @@ class FunctionCallAssign:
         self.arg_str = ','.join(arg.name for arg in args)
 
     def cpp(self):
-        return f"auto {self.name} = stan::math::eval(stan::math::{self.function_name}({self.arg_str}));"
+        return f"auto {self.name} = stan::math::eval({self.function_name}({self.arg_str}));"
 
 class FunctionCall:
     def __init__(self, function_name, *args):
@@ -409,22 +409,22 @@ class FunctionCall:
         self.arg_str = ','.join(arg.name for arg in args)
 
     def cpp(self):
-        return f"stan::math::{self.function_name}({self.arg_str});"
+        return f"{self.function_name}({self.arg_str});"
 
 class ExpressionArgument:
     def __init__(self, overload, name, arg):
         self.overload = overload
         self.name = name
+        self.counter = IntArgument(f"{self.name}_counter", 0)
         self.arg = arg
 
     def cpp(self):
         scalar = overload_scalar[self.overload]
-        counter_name = f"{self.name}_counter"
         counter_op_name = f"{self.name}_counter_op"
 
         code = (
-            f"int {self.name}_counter = 0;" + os.linesep +
-            f"stan::test::counterOp<{scalar}> {counter_op_name}(&{counter_name});" + os.linesep
+            self.counter.cpp() + os.linesep +
+            f"stan::test::counterOp<{scalar}> {counter_op_name}(&{self.counter.name});" + os.linesep
         )
 
         if self.arg.stan_arg == "matrix":
@@ -475,9 +475,11 @@ class FunctionGenerator:
 
     def cpp(self, arg_overloads, max_size):
         uses_varmat = False
+        is_reverse_mode = any(overload.startswith("Rev") for overload in arg_overloads)
 
         code_list = []
         arg_list = []
+        arg_list_base = []
         for n, (overload, stan_arg) in enumerate(zip(arg_overloads, self.stan_args)):
             number_nested_arrays, inner_type = parse_array(stan_arg)
 
@@ -506,9 +508,11 @@ class FunctionGenerator:
 
             code_list.append(arg)
 
+            arg_list_base.append(arg)
+
             if overload == "RevSOA" and inner_type in ("vector", "row_vector", "matrix"):
                 uses_varmat = True
-                arg = FunctionCallAssign("to_var_value", arg.name + "_varmat", arg)
+                arg = FunctionCallAssign("stan::math::to_var_value", arg.name + "_varmat", arg)
                 code_list.append(arg)
             
             if overload.endswith("Exp") and inner_type in ("vector", "row_vector", "matrix"):
@@ -517,9 +521,35 @@ class FunctionGenerator:
             
             arg_list.append(arg)
 
-        code_list.append(FunctionCallAssign(self.function_name, "result", *arg_list))
-        if "Rev" in arg_overloads or "RevSOA" in arg_overloads:
-            code_list.append(FunctionCall("grad"))
+        result = FunctionCallAssign(f"stan::math::{self.function_name}", "result", *arg_list)
+        code_list.append(result)
+        if is_reverse_mode:
+            summed_result = FunctionCallAssign("stan::test::recursive_sum", "summed_result", result)
+            code_list.append(summed_result)
+            code_list.append(FunctionCall("stan::test::grad", summed_result))
+
+        if any(overload.endswith("Exp") for overload in arg_overloads):
+            # Check results with expressions and without are the same
+            result_base = FunctionCallAssign(f"stan::math::{self.function_name}", "result_base", *arg_list_base)
+            code_list.append(result_base)
+            code_list.append(FunctionCall("EXPECT_STAN_EQ", result, result_base))
+
+            if is_reverse_mode:
+                # Check that adjoints with and without expressions are the same
+                adjoint_copies = [FunctionCallAssign("stan::test::adjoints_of", f"{arg.name}_adjoints", arg) for arg in arg_list]
+                code_list.extend(adjoint_copies)
+                summed_result_base = FunctionCallAssign("stan::test::recursive_sum", "summed_result_base", result_base)
+                code_list.append(summed_result_base)
+                code_list.append(FunctionCall("stan::math::set_zero_all_adjoints"))
+                code_list.append(FunctionCall("stan::test::grad", summed_result_base))
+                adjoint_base_copies = [FunctionCallAssign("stan::test::adjoints_of", f"{arg.name}_adjoints", arg) for arg in arg_list_base]
+                code_list.extend(adjoint_base_copies)
+                code_list.extend(FunctionCall("EXPECT_STAN_EQ", adjoint, adjoint_base) for adjoint, adjoint_base in zip(adjoint_copies, adjoint_base_copies))
+            
+            # Check that expressions evaluated only once
+            for arg in arg_list:
+                if isinstance(arg, ExpressionArgument):
+                    code_list.append(FunctionCall("EXPECT_LEQ_ONE", arg.counter))
 
         code = os.linesep.join(statement.cpp() for statement in code_list)
 
