@@ -119,6 +119,13 @@ TEST(ProbDistributionsExpModNormal, opencl_matches_cpu_small) {
                                                 mu, sigma, lambda);
   stan::math::test::compare_cpu_opencl_prim_rev(
       exp_mod_normal_lpdf_functor_propto, y, mu, sigma, lambda);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      exp_mod_normal_lpdf_functor, y.transpose().eval(), mu.transpose().eval(),
+      sigma.transpose().eval(), lambda.transpose().eval());
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      exp_mod_normal_lpdf_functor_propto, y.transpose().eval(),
+      mu.transpose().eval(), sigma.transpose().eval(),
+      lambda.transpose().eval());
 }
 
 TEST(ProbDistributionsExpModNormal, opencl_broadcast_y) {
@@ -136,6 +143,12 @@ TEST(ProbDistributionsExpModNormal, opencl_broadcast_y) {
       exp_mod_normal_lpdf_functor, y, mu, sigma, lambda);
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       exp_mod_normal_lpdf_functor_propto, y, mu, sigma, lambda);
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
+      exp_mod_normal_lpdf_functor, y, mu.transpose().eval(),
+      sigma.transpose().eval(), lambda);
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
+      exp_mod_normal_lpdf_functor_propto, y, mu, sigma.transpose().eval(),
+      lambda.transpose().eval());
 }
 
 TEST(ProbDistributionsExpModNormal, opencl_broadcast_mu) {
@@ -153,6 +166,12 @@ TEST(ProbDistributionsExpModNormal, opencl_broadcast_mu) {
       exp_mod_normal_lpdf_functor, y, mu, sigma, lambda);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       exp_mod_normal_lpdf_functor_propto, y, mu, sigma, lambda);
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
+      exp_mod_normal_lpdf_functor, y, mu, sigma.transpose().eval(),
+      lambda.transpose().eval());
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
+      exp_mod_normal_lpdf_functor_propto, y.transpose().eval(), mu, sigma,
+      lambda.transpose().eval());
 }
 
 TEST(ProbDistributionsExpModNormal, opencl_broadcast_sigma) {
@@ -170,6 +189,12 @@ TEST(ProbDistributionsExpModNormal, opencl_broadcast_sigma) {
       exp_mod_normal_lpdf_functor, y, mu, sigma, lambda);
   stan::math::test::test_opencl_broadcasting_prim_rev<2>(
       exp_mod_normal_lpdf_functor_propto, y, mu, sigma, lambda);
+  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
+      exp_mod_normal_lpdf_functor, y.transpose().eval(), mu, sigma,
+      lambda.transpose().eval());
+  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
+      exp_mod_normal_lpdf_functor_propto, y.transpose().eval(),
+      mu.transpose().eval(), sigma, lambda);
 }
 
 TEST(ProbDistributionsExpModNormal, opencl_broadcast_lambda) {
@@ -187,6 +212,12 @@ TEST(ProbDistributionsExpModNormal, opencl_broadcast_lambda) {
       exp_mod_normal_lpdf_functor, y, mu, sigma, lambda);
   stan::math::test::test_opencl_broadcasting_prim_rev<3>(
       exp_mod_normal_lpdf_functor_propto, y, mu, sigma, lambda);
+  stan::math::test::test_opencl_broadcasting_prim_rev<3>(
+      exp_mod_normal_lpdf_functor, y.transpose().eval(), mu.transpose().eval(),
+      sigma, lambda);
+  stan::math::test::test_opencl_broadcasting_prim_rev<3>(
+      exp_mod_normal_lpdf_functor_propto, y, mu.transpose().eval(),
+      sigma.transpose().eval(), lambda);
 }
 
 TEST(ProbDistributionsExpModNormal, opencl_matches_cpu_big) {
@@ -206,6 +237,13 @@ TEST(ProbDistributionsExpModNormal, opencl_matches_cpu_big) {
                                                 mu, sigma, lambda);
   stan::math::test::compare_cpu_opencl_prim_rev(
       exp_mod_normal_lpdf_functor_propto, y, mu, sigma, lambda);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      exp_mod_normal_lpdf_functor, y.transpose().eval(), mu.transpose().eval(),
+      sigma.transpose().eval(), lambda.transpose().eval());
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      exp_mod_normal_lpdf_functor_propto, y.transpose().eval(),
+      mu.transpose().eval(), sigma.transpose().eval(),
+      lambda.transpose().eval());
 }
 
 #endif
