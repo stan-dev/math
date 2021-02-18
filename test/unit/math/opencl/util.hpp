@@ -210,15 +210,26 @@ void test_opencl_broadcasting_prim_rev_impl(const Functor& functor,
                                                 const auto& args_vector) {
         auto res_scalar
             = eval(functor(opencl_argument(std::get<Is>(args_broadcast))...));
-        auto res_vec = eval(functor(opencl_argument(
-            to_vector_if<Is == I>(std::get<Is>(args_vector), N))...));
         std::string signature = type_name<decltype(args_broadcast)>().data();
-        expect_eq(res_vec, res_scalar,
-                  ("return values of broadcast and vector arguments do not "
-                   "match for signature "
-                   + signature + "!")
-                      .c_str());
-        var(recursive_sum(res_scalar) + recursive_sum(res_vec)).grad();
+
+        try {
+          auto res_vec = eval(functor(opencl_argument(
+              to_vector_if<Is == I>(std::get<Is>(args_vector), N))...));
+          expect_eq(res_vec, res_scalar,
+                    ("return values of broadcast and vector arguments do not "
+                     "match for signature "
+                     + signature + "!")
+                        .c_str());
+          try {
+            var(recursive_sum(res_scalar) + recursive_sum(res_vec)).grad();
+          } catch (...) {
+            std::cerr << "throw in rev pass!" << std::endl;
+            throw;
+          }
+        } catch (...) {
+          std::cerr << "throw in signature: " << signature << "!" << std::endl;
+          throw;
+        }
 
         static_cast<void>(std::initializer_list<int>{
             (expect_adj_near(
