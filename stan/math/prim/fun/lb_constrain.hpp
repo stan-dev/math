@@ -116,7 +116,7 @@ template <typename T, typename L, require_all_eigen_t<T, L>* = nullptr,
           require_all_not_st_var<T, L>* = nullptr>
 inline auto lb_constrain(T&& x, L&& lb) {
   return eval(x.binaryExpr(
-            lb, [](auto&& x, auto&& lb) { return lb_constrain(x, lb); }));
+      lb, [](auto&& x, auto&& lb) { return lb_constrain(x, lb); }));
 }
 
 /**

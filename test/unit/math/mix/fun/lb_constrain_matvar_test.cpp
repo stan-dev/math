@@ -57,7 +57,7 @@ void expect_vec_matvar(const T1& x, const T2& lb) {
   stan::test::expect_ad_matvar(f4, x, lb);
 }
 
-}  // namespace ub_constrain_test
+}  // namespace lb_constrain_test
 
 TEST(mathMixMatFun, lb_matvar_constrain) {
   using stan::scalar_type_t;
