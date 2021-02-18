@@ -38,7 +38,6 @@ inline auto lb_constrain(const T& x, const L& lb) {
   if (unlikely(value_of_rec(lb) == NEGATIVE_INFTY)) {
     return identity_constrain(x, lb);
   } else {
-    // check_less("lb_constrain", "lb", value_of(x), value_of(lb));
     return add(exp(x), lb);
   }
 }
@@ -62,7 +61,6 @@ inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
   if (value_of_rec(lb) == NEGATIVE_INFTY) {
     return identity_constrain(x, lb);
   } else {
-    // check_less("lb_constrain", "lb", value_of(x), value_of(lb));
     lp += x;
     return add(exp(x), lb);
   }
@@ -82,11 +80,7 @@ template <typename T, typename L, require_eigen_t<T>* = nullptr,
           require_stan_scalar_t<L>* = nullptr,
           require_all_not_st_var<T, L>* = nullptr>
 inline auto lb_constrain(T&& x, L&& lb) {
-  return make_holder(
-      [](const auto& x, const auto& lb) {
-        return x.unaryExpr([lb](auto&& x) { return lb_constrain(x, lb); });
-      },
-      std::forward<T>(x), std::forward<L>(lb));
+  return eval(x.unaryExpr([lb](auto&& x) { return lb_constrain(x, lb); }));
 }
 
 /**
@@ -103,8 +97,7 @@ inline auto lb_constrain(T&& x, L&& lb) {
 template <typename T, typename L, require_eigen_t<T>* = nullptr,
           require_stan_scalar_t<L>* = nullptr,
           require_all_not_st_var<T, L>* = nullptr>
-inline auto lb_constrain(const T& x, const L& lb,
-                         std::decay_t<return_type_t<T, L>>& lp) {
+inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
   return eval(
       x.unaryExpr([lb, &lp](auto&& xx) { return lb_constrain(xx, lb, lp); }));
 }
@@ -122,12 +115,8 @@ inline auto lb_constrain(const T& x, const L& lb,
 template <typename T, typename L, require_all_eigen_t<T, L>* = nullptr,
           require_all_not_st_var<T, L>* = nullptr>
 inline auto lb_constrain(T&& x, L&& lb) {
-  return make_holder(
-      [](const auto& x, const auto& lb) {
-        return x.binaryExpr(
-            lb, [](auto&& x, auto&& lb) { return lb_constrain(x, lb); });
-      },
-      std::forward<T>(x), std::forward<L>(lb));
+  return eval(x.binaryExpr(
+            lb, [](auto&& x, auto&& lb) { return lb_constrain(x, lb); }));
 }
 
 /**
@@ -143,8 +132,7 @@ inline auto lb_constrain(T&& x, L&& lb) {
  */
 template <typename T, typename L, require_all_eigen_t<T, L>* = nullptr,
           require_all_not_st_var<T, L>* = nullptr>
-inline auto lb_constrain(const T& x, const L& lb,
-                         std::decay_t<return_type_t<T, L>>& lp) {
+inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
   return eval(x.binaryExpr(
       lb, [&lp](auto&& xx, auto&& lbb) { return lb_constrain(xx, lbb, lp); }));
 }
@@ -221,7 +209,7 @@ inline auto lb_constrain(const std::vector<T>& x, const L& lb) {
  */
 template <typename T, typename L, require_all_matrix_t<T, L>* = nullptr>
 inline auto lb_constrain(const std::vector<T>& x, const L& lb,
-                         std::decay_t<return_type_t<T, L>>& lp) {
+                         return_type_t<T, L>& lp) {
   std::vector<plain_type_t<decltype(lb_constrain(x[0], lb))>> ret(x.size());
   for (size_t i = 0; i < x.size(); ++i) {
     ret[i] = lb_constrain(x[i], lb, lp);

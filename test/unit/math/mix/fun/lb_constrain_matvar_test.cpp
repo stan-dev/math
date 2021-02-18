@@ -57,7 +57,7 @@ void expect_vec_matvar(const T1& x, const T2& lb) {
   stan::test::expect_ad_matvar(f4, x, lb);
 }
 
-}  // namespace lb_constrain_test
+}  // namespace ub_constrain_test
 
 TEST(mathMixMatFun, lb_matvar_constrain) {
   using stan::scalar_type_t;
@@ -81,49 +81,3 @@ TEST(mathMixMatFun, lb_matvar_constrain_neg_inf) {
   lb_constrain_test::expect_matvar(A, lbm);
   lb_constrain_test::expect_matvar(A, stan::math::NEGATIVE_INFTY);
 }
-/*
-TEST(mathMixMatFun, lb_stdvec_matvar_mat_constrain) {
-  Eigen::MatrixXd A_inner(2, 1);
-  // Doesn't work for values near zero fail for fvar hessian?
-  A_inner << 5.0, 2.0;//, 4.0, -2.0;//, 0.0, 0.005;
-  Eigen::MatrixXd lbm_inner(2, 1);
-  lbm_inner << 7.0, 5.0;//, 6.0, 100.0;//, 0.0, 0.0005;
-  std::vector<Eigen::MatrixXd> A;
-  A.push_back(A_inner);
-  A.push_back(A_inner);
-  //A.push_back(A_inner);
-  lb_constrain_test::expect_vec_matvar(A, lbm_inner);
-  double lbd = 6.0;
-  lb_constrain_test::expect_vec_matvar(A, lbd);
-}
-
-TEST(mathMixMatFun, lb_stdvec_matvar_constrain) {
-  Eigen::MatrixXd A_inner(2, 2);
-  // Doesn't work for values near zero fail for fvar hessian?
-  A_inner << 5.0, 2.0, 4.0, -2.0;//, 0.0, 0.005;
-  Eigen::MatrixXd lbm_inner(2, 2);
-  lbm_inner << 7.0, 5.0, 6.0, 100.0;//, 0.0, 0.0005;
-  std::vector<Eigen::MatrixXd> A;
-  A.push_back(A_inner);
-  A.push_back(A_inner);
-  A.push_back(A_inner);
-  std::vector<Eigen::MatrixXd> lbm;
-  lbm.push_back(lbm_inner);
-  lbm.push_back(lbm_inner);
-  lbm.push_back(lbm_inner);
-  lb_constrain_test::expect_vec_matvar(A, lbm);
-  double lbd = 6.0;
-  lb_constrain_test::expect_vec_matvar(A, lbd);
-}
-
-TEST(mathMixMatFun, lb_stdvec_matvar_constrain_neg_inf) {
-  Eigen::MatrixXd A_inner(2, 2);
-  A_inner << 5.0, 2.0, 4.0, -2.0;
-  Eigen::MatrixXd lbm_inner(2, 2);
-  lbm_inner << 7.0, 5.0, stan::math::NEGATIVE_INFTY, 100.0;
-  std::vector<Eigen::MatrixXd> A{A_inner, A_inner, A_inner};
-  std::vector<Eigen::MatrixXd> lbm{lbm_inner, lbm_inner, lbm_inner};
-  lb_constrain_test::expect_vec_matvar(A, lbm);
-  lb_constrain_test::expect_vec_matvar(A, stan::math::NEGATIVE_INFTY);
-}
-*/
