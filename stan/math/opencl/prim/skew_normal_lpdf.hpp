@@ -133,7 +133,8 @@ inline return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> skew_normal_lpdf(
     logp -= HALF_LOG_TWO_PI * N;
   }
 
-  auto ops_partials = operands_and_partials(y_col, mu_col, sigma_col, alpha_col);
+  auto ops_partials
+      = operands_and_partials(y_col, mu_col, sigma_col, alpha_col);
 
   if (!is_constant<T_y_cl>::value) {
     edge<0>(ops_partials).partials_ = y_deriv_cl;

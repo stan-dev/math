@@ -131,7 +131,8 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl> exp_mod_normal_lpdf(
     logp -= LOG_TWO * N;
   }
 
-  auto ops_partials = operands_and_partials(y_col, mu_col, sigma_col, lambda_col);
+  auto ops_partials
+      = operands_and_partials(y_col, mu_col, sigma_col, lambda_col);
   if (!is_constant<T_y_cl>::value) {
     edge<0>(ops_partials).partials_ = y_deriv_cl;
   }
