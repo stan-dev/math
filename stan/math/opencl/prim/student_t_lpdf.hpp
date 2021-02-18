@@ -68,10 +68,15 @@ inline return_type_t<T_y_cl, T_dof_cl, T_loc_cl, T_scale_cl> student_t_lpdf(
     return 0.0;
   }
 
-  const auto& y_val = value_of(y);
-  const auto& nu_val = value_of(nu);
-  const auto& mu_val = value_of(mu);
-  const auto& sigma_val = value_of(sigma);
+  const auto& y_col = as_column_vector_or_scalar(y);
+  const auto& nu_col = as_column_vector_or_scalar(nu);
+  const auto& mu_col = as_column_vector_or_scalar(mu);
+  const auto& sigma_col = as_column_vector_or_scalar(sigma);
+
+  const auto& y_val = value_of(y_col);
+  const auto& nu_val = value_of(nu_col);
+  const auto& mu_val = value_of(mu_col);
+  const auto& sigma_val = value_of(sigma_col);
 
   auto check_y_not_nan
       = check_cl(function, "Random variable", y_val, "not NaN");
@@ -135,7 +140,7 @@ inline return_type_t<T_y_cl, T_dof_cl, T_loc_cl, T_scale_cl> student_t_lpdf(
     logp -= LOG_SQRT_PI * N;
   }
 
-  auto ops_partials = operands_and_partials(y, nu, mu, sigma);
+  auto ops_partials = operands_and_partials(y_col, nu_col, mu_col, sigma_col);
 
   if (!is_constant<T_y_cl>::value) {
     edge<0>(ops_partials).partials_ = y_deriv_cl;

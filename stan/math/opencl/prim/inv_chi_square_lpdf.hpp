@@ -58,10 +58,12 @@ return_type_t<T_y_cl, T_dof_cl> inv_chi_square_lpdf(const T_y_cl& y,
     return 0.0;
   }
 
-  const auto& y_val = value_of(y);
-  const auto& nu_val = value_of(nu);
+  const auto& y_col = as_column_vector_or_scalar(y);
+  const auto& nu_col = as_column_vector_or_scalar(nu);
 
-  auto ops_partials = operands_and_partials(y, nu);
+  const auto& y_val = value_of(y_col);
+  const auto& nu_val = value_of(nu_col);
+  auto ops_partials = operands_and_partials(y_col, nu_col);
 
   auto check_nu_pos_finite = check_cl(function, "Degrees of freedom parameter",
                                       nu_val, "positive finite");

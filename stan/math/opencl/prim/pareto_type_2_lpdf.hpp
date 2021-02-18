@@ -57,10 +57,15 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> pareto_type_2_lpdf(
     return 0.0;
   }
 
-  const auto& y_val = value_of(y);
-  const auto& mu_val = value_of(mu);
-  const auto& lambda_val = value_of(lambda);
-  const auto& alpha_val = value_of(alpha);
+  const auto& y_col = as_column_vector_or_scalar(y);
+  const auto& mu_col = as_column_vector_or_scalar(mu);
+  const auto& lambda_col = as_column_vector_or_scalar(lambda);
+  const auto& alpha_col = as_column_vector_or_scalar(alpha);
+
+  const auto& y_val = value_of(y_col);
+  const auto& mu_val = value_of(mu_col);
+  const auto& lambda_val = value_of(lambda_col);
+  const auto& alpha_val = value_of(alpha_col);
 
   auto y_minus_mu = y_val - mu_val;
   auto check_y_ge_mu
@@ -112,7 +117,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> pareto_type_2_lpdf(
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
-  auto ops_partials = operands_and_partials(y, mu, lambda, alpha);
+  auto ops_partials = operands_and_partials(y_col, mu_col, lambda_col, alpha_col);
   if (!is_constant<T_y_cl>::value) {
     edge<0>(ops_partials).partials_ = y_deriv_cl;
   }

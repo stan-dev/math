@@ -50,7 +50,8 @@ return_type_t<T_prob_cl> binomial_lpmf(const T_n_cl& n, const T_N_cl N,
     return 0.0;
   }
 
-  const auto& theta_val = value_of(theta);
+  const auto& theta_col = as_column_vector_or_scalar(theta);
+  const auto& theta_val = value_of(theta_col);
 
   auto check_n_bounded
       = check_cl(function, "Successes variable", n, "in the interval [0, N]");
@@ -106,7 +107,7 @@ return_type_t<T_prob_cl> binomial_lpmf(const T_n_cl& n, const T_N_cl N,
                     calc_if<need_deriv>(deriv_theta));
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
-  auto ops_partials = operands_and_partials(theta);
+  auto ops_partials = operands_and_partials(theta_col);
 
   if (!is_constant_all<T_prob_cl>::value) {
     if (need_sums) {

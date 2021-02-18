@@ -60,8 +60,11 @@ neg_binomial_2_log_lpmf(const T_n_cl& n, const T_log_location_cl& eta,
     return 0.0;
   }
 
-  const auto& eta_val = value_of(eta);
-  const auto& phi_val = value_of(phi);
+  const auto& eta_col = as_column_vector_or_scalar(eta);
+  const auto& phi_col = as_column_vector_or_scalar(phi);
+
+  const auto& eta_val = value_of(eta_col);
+  const auto& phi_val = value_of(phi_col);
 
   auto check_n_nonnegative
       = check_cl(function, "Failures variable", n, "nonnegative");
@@ -105,7 +108,7 @@ neg_binomial_2_log_lpmf(const T_n_cl& n, const T_log_location_cl& eta,
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
-  auto ops_partials = operands_and_partials(eta, phi);
+  auto ops_partials = operands_and_partials(eta_col, phi_col);
 
   if (!is_constant<T_log_location_cl>::value) {
     edge<0>(ops_partials).partials_ = eta_deriv_cl;

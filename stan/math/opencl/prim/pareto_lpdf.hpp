@@ -52,9 +52,13 @@ return_type_t<T_y_cl, T_scale_cl, T_shape_cl> pareto_lpdf(
     return 0.0;
   }
 
-  const auto& y_val = value_of(y);
-  const auto& y_min_val = value_of(y_min);
-  const auto& alpha_val = value_of(alpha);
+  const auto& y_col = as_column_vector_or_scalar(y);
+  const auto& y_min_col = as_column_vector_or_scalar(y_min);
+  const auto& alpha_col = as_column_vector_or_scalar(alpha);
+
+  const auto& y_val = value_of(y_col);
+  const auto& y_min_val = value_of(y_min_col);
+  const auto& alpha_val = value_of(alpha_col);
 
   auto check_y_not_nan
       = check_cl(function, "Random variable", y_val, "not NaN");
@@ -104,7 +108,7 @@ return_type_t<T_y_cl, T_scale_cl, T_shape_cl> pareto_lpdf(
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
-  auto ops_partials = operands_and_partials(y, y_min, alpha);
+  auto ops_partials = operands_and_partials(y_col, y_min_col, alpha_col);
 
   if (!is_constant<T_y_cl>::value) {
     edge<0>(ops_partials).partials_ = y_deriv_cl;

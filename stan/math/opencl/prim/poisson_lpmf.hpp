@@ -46,10 +46,11 @@ return_type_t<T_rate_cl> poisson_lpmf(const T_n_cl& n,
     return 0.0;
   }
 
-  const auto& lambda_val = value_of(lambda);
+  const auto& lambda_col = as_column_vector_or_scalar(lambda);
+  const auto& lambda_val = value_of(lambda_col);
 
   T_partials_return logp(0.0);
-  auto ops_partials = operands_and_partials(lambda);
+  auto ops_partials = operands_and_partials(lambda_col);
 
   auto check_n_nonnegative
       = check_cl(function, "Random variable", n, "nonnegative");

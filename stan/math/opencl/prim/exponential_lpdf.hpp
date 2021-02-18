@@ -60,10 +60,12 @@ return_type_t<T_y_cl, T_inv_scale_cl> exponential_lpdf(
     return 0.0;
   }
 
-  const auto& y_val = value_of(y);
-  const auto& beta_val = value_of(beta);
+  const auto& y_col = as_column_vector_or_scalar(y);
+  const auto& beta_col = as_column_vector_or_scalar(beta);
 
-  auto ops_partials = operands_and_partials(y, beta);
+  const auto& y_val = value_of(y_col);
+  const auto& beta_val = value_of(beta_col);
+  auto ops_partials = operands_and_partials(y_col, beta_col);
 
   auto check_y_nonnegative
       = check_cl(function, "Random variable", y_val, "nonnegative");

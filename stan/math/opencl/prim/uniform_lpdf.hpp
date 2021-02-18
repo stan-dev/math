@@ -57,9 +57,13 @@ inline return_type_t<T_y_cl, T_low_cl, T_high_cl> uniform_lpdf(
     return 0.0;
   }
 
-  const auto& y_val = value_of(y);
-  const auto& alpha_val = value_of(alpha);
-  const auto& beta_val = value_of(beta);
+  const auto& y_col = as_column_vector_or_scalar(y);
+  const auto& alpha_col = as_column_vector_or_scalar(alpha);
+  const auto& beta_col = as_column_vector_or_scalar(beta);
+
+  const auto& y_val = value_of(y_col);
+  const auto& alpha_val = value_of(alpha_col);
+  const auto& beta_val = value_of(beta_col);
 
   auto check_y_not_nan
       = check_cl(function, "Random variable", y_val, "not NaN");
@@ -106,8 +110,7 @@ inline return_type_t<T_y_cl, T_low_cl, T_high_cl> uniform_lpdf(
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
-  auto ops_partials = operands_and_partials(y, alpha, beta);
-
+  auto ops_partials = operands_and_partials(y_col, alpha_col, beta_col);
   if (!is_constant<T_low_cl>::value) {
     edge<1>(ops_partials).partials_ = alpha_deriv_cl;
   }
