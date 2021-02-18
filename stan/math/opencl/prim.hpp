@@ -183,6 +183,9 @@
 #include <stan/math/opencl/prim/sum.hpp>
 #include <stan/math/opencl/prim/tail.hpp>
 #include <stan/math/opencl/prim/tcrossprod.hpp>
+#include <stan/math/opencl/prim/to_matrix.hpp>
+#include <stan/math/opencl/prim/to_row_vector.hpp>
+#include <stan/math/opencl/prim/to_vector.hpp>
 #include <stan/math/opencl/prim/uniform_lpdf.hpp>
 #include <stan/math/opencl/prim/weibull_lpdf.hpp>
 
