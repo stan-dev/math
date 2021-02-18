@@ -104,10 +104,10 @@ return_type_t<T_n_cl, T_size1_cl, T_size2_cl> beta_binomial_lpmf(
 
   auto ops_partials = operands_and_partials(alpha, beta);
   if (!is_constant<T_size1_cl>::value) {
-    edge<0>(ops_partials).partials_ = alpha_deriv_cl;
+    edge<0>(ops_partials).partials_ = std::move(alpha_deriv_cl);
   }
   if (!is_constant<T_size2_cl>::value) {
-    edge<1>(ops_partials).partials_ = beta_deriv_cl;
+    edge<1>(ops_partials).partials_ = std::move(beta_deriv_cl);
   }
 
   return ops_partials.build(logp);

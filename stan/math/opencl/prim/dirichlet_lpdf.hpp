@@ -287,7 +287,7 @@ inline return_type_t<T_prob_cl, T_prior_size_cl> dirichlet_lpdf(
     if (theta.cols() < alpha.cols()) {
       edge<0>(ops_partials).partials_ = rowwise_sum(theta_deriv_cl);
     } else {
-      edge<0>(ops_partials).partials_ = theta_deriv_cl;
+      edge<0>(ops_partials).partials_ = std::move(theta_deriv_cl);
     }
   }
   if (!is_constant<T_prior_size_cl>::value) {

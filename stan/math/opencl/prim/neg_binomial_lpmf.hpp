@@ -101,10 +101,10 @@ inline return_type_t<T_n_cl, T_shape_cl, T_inv_scale_cl> neg_binomial_lpmf(
   auto ops_partials = operands_and_partials(alpha, beta);
 
   if (!is_constant<T_shape_cl>::value) {
-    edge<0>(ops_partials).partials_ = alpha_deriv_cl;
+    edge<0>(ops_partials).partials_ = std::move(alpha_deriv_cl);
   }
   if (!is_constant<T_inv_scale_cl>::value) {
-    edge<0>(ops_partials).partials_ = alpha_deriv_cl;
+    edge<1>(ops_partials).partials_ = std::move(beta_deriv_cl);
   }
   return ops_partials.build(logp);
 }

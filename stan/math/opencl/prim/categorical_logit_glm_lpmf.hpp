@@ -139,7 +139,7 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   }
   if (!is_constant_all<T_alpha>::value) {
     if (wgs == 1) {
-      edge<1>(ops_partials).partials_ = alpha_derivative_cl;
+      edge<1>(ops_partials).partials_ = std::move(alpha_derivative_cl);
     } else {
       edge<1>(ops_partials).partials_ = rowwise_sum(alpha_derivative_cl);
     }

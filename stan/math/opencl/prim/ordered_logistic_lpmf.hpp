@@ -151,7 +151,7 @@ inline return_type_t<T_y_cl, T_loc_cl, T_cuts_cl> ordered_logistic_lpmf(
     if (need_broadcasting) {
       edge<1>(ops_partials).partials_ = rowwise_sum(cuts_derivative_cl);
     } else {
-      edge<1>(ops_partials).partials_ = cuts_derivative_cl;
+      edge<1>(ops_partials).partials_ = std::move(cuts_derivative_cl);
     }
   }
   return ops_partials.build(logp);
