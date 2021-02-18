@@ -34,8 +34,7 @@ inline Eigen::Matrix<var, Mat::RowsAtCompileTime, 1> rows_dot_self(
  */
 template <typename Mat, require_var_matrix_t<Mat>* = nullptr>
 inline auto rows_dot_self(const Mat& x) {
-  using ret_type
-    = var_value<Eigen::VectorXd>;
+  using ret_type = var_value<Eigen::VectorXd>;
   arena_t<ret_type> res = x.val().rowwise().squaredNorm();
   if (x.size() >= 0) {
     reverse_pass_callback([res, x]() mutable {
