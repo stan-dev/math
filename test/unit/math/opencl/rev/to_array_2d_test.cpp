@@ -4,9 +4,9 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
 
-auto to_array_2d_functor
-    = [](const auto& a) { return stan::math::to_matrix(stan::math::to_array_2d(a)); };
-
+auto to_array_2d_functor = [](const auto& a) {
+  return stan::math::to_matrix(stan::math::to_array_2d(a));
+};
 
 TEST(OpenCLToVector, prim_rev_values_small) {
   Eigen::MatrixXd a(3, 2);
