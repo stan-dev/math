@@ -28,35 +28,6 @@ void expect_matvar(const T1& x, const T2& lb) {
   stan::test::expect_ad_matvar(f4, x, lb);
 }
 
-template <typename T1, typename T2>
-void expect_vec_matvar(const T1& x, const T2& lb) {
-  auto f1 = [](const auto& x, const auto& lb) {
-    return stan::math::lb_constrain(x, lb);
-  };
-  auto f2 = [](const auto& x, const auto& lb) {
-    stan::return_type_t<decltype(x), decltype(lb)> lp = 0;
-    return stan::math::lb_constrain(x, lb, lp);
-  };
-  auto f3 = [](const auto& x, const auto& lb) {
-    stan::return_type_t<decltype(x), decltype(lb)> lp = 0;
-    stan::math::lb_constrain(x, lb, lp);
-    return lp;
-  };
-  auto f4 = [](const auto& x, const auto& lb) {
-    stan::return_type_t<decltype(x), decltype(lb)> lp = 0;
-    auto xx = stan::math::eval(stan::math::lb_constrain(x, lb, lp));
-    stan::return_type_t<decltype(x), decltype(lb)> xx_acc = 0;
-    for (size_t i = 0; i < xx.size(); ++i) {
-      xx_acc += stan::math::sum(xx[i]);
-    }
-    return stan::math::add(lp, xx_acc);
-  };
-  stan::test::expect_ad_matvar(f1, x, lb);
-  stan::test::expect_ad_matvar(f2, x, lb);
-  stan::test::expect_ad_matvar(f3, x, lb);
-  stan::test::expect_ad_matvar(f4, x, lb);
-}
-
 }  // namespace lb_constrain_test
 
 TEST(mathMixMatFun, lb_matvar_constrain) {
@@ -71,6 +42,8 @@ TEST(mathMixMatFun, lb_matvar_constrain) {
   lb_constrain_test::expect_matvar(A, lbm);
   double lbd = 6.0;
   lb_constrain_test::expect_matvar(A, lbd);
+  double lbi = stan::Math::NEGATIVE_INFTY;
+  lb_constrain_test::expect(A, lbi);
 }
 
 TEST(mathMixMatFun, lb_matvar_constrain_neg_inf) {

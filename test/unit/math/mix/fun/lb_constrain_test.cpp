@@ -59,6 +59,7 @@ void expect_vec(const T1& x, const T2& lb) {
 
 }  // namespace lb_constrain_test
 
+// real, real
 TEST(mathMixScalFun, lbConstrain) {
   lb_constrain_test::expect(-1, 2);
   lb_constrain_test::expect(2, 4);
@@ -69,6 +70,8 @@ TEST(mathMixScalFun, lbConstrain_neg_inf) {
   lb_constrain_test::expect(2, stan::math::NEGATIVE_INFTY);
 }
 
+// matrix, matrix
+// matrix, real
 TEST(mathMixMatFun, lb_mat_constrain) {
   Eigen::MatrixXd A(2, 3);
   A << 5.0, 2.0, 4.0, -2.0, 0.0, 0.005;
@@ -77,8 +80,6 @@ TEST(mathMixMatFun, lb_mat_constrain) {
   lb_constrain_test::expect(A, lbm);
   double lbd = 6.0;
   lb_constrain_test::expect(A, lbd);
-  double lbi = stan::Math::NEGATIVE_INFTY;
-  lb_constrain_test::expect(A, lbi);
 }
 
 TEST(mathMixMatFun, lb_mat_constrain_neg_inf) {
@@ -90,6 +91,8 @@ TEST(mathMixMatFun, lb_mat_constrain_neg_inf) {
   lb_constrain_test::expect(A, stan::math::NEGATIVE_INFTY);
 }
 
+// real[], real
+// real[], real[]
 TEST(mathMixMatFun, lb_stdvec_constrain) {
   std::vector<double> A{5.0, 2.0, 4.0, -2.0};
   std::vector<double> lbm{7.0, 5.0, 6.0, 100.0};
@@ -105,36 +108,51 @@ TEST(mathMixMatFun, lb_stdvec_constrain_neg_inf) {
   lb_constrain_test::expect(A, stan::math::NEGATIVE_INFTY);
 }
 
+// matrix[], matrix
+// matrix[], real
 TEST(mathMixMatFun, lb_stdvec_mat_mat_constrain) {
   Eigen::MatrixXd A_inner(2, 3);
   A_inner << 5.0, 2.0, 4.0, -2.0, 0.0, 0.005;
   Eigen::MatrixXd lbm_inner(2, 3);
   lbm_inner << 7.0, 5.0, 6.0, 100.0, 0.0, 0.0005;
+  Eigen::MatrixXd A_inner2 = 2.0 * A_inner;
   std::vector<Eigen::MatrixXd> A;
   A.push_back(A_inner);
-  A.push_back(A_inner);
-  // A.push_back(A_inner);
+  A.push_back(A_inner2);
   lb_constrain_test::expect_vec(A, lbm_inner);
   double lbd = 6.0;
   lb_constrain_test::expect_vec(A, lbd);
 }
 
+TEST(mathMixMatFun, lb_stdvec_mat_mat_constrain_neg_inf) {
+  Eigen::MatrixXd A_inner(2, 3);
+  A_inner << 5.0, 2.0, 4.0, -2.0, 0.0, 0.005;
+  Eigen::MatrixXd lbm_inner(2, 3);
+  lbm_inner << 7.0, 5.0, 6.0, stan::math::NEGATIVE_INFTY, 0.0, 0.0005;
+  Eigen::MatrixXd A_inner2 = 2.0 * A_inner;
+  std::vector<Eigen::MatrixXd> A;
+  A.push_back(A_inner);
+  A.push_back(A_inner2);
+  lb_constrain_test::expect_vec(A, lbm_inner);
+  double lbi = stan::math::NEGATIVE_INFTY;
+  lb_constrain_test::expect_vec(A, lbi);
+}
+
+// matrix[], matrix[]
 TEST(mathMixMatFun, lb_stdvec_mat_constrain) {
   Eigen::MatrixXd A_inner(2, 3);
   A_inner << 5.0, 2.0, 4.0, -2.0, 0.0, 0.005;
   Eigen::MatrixXd lbm_inner(2, 3);
   lbm_inner << 7.0, 5.0, 6.0, 100.0, 0.0, 0.0005;
+  Eigen::MatrixXd A_inner2 = 2.0 * A_inner;
+  Eigen::MatrixXd lbm_inner2 = 3.0 * lbm_inner;
   std::vector<Eigen::MatrixXd> A;
   A.push_back(A_inner);
-  A.push_back(A_inner);
-  A.push_back(A_inner);
+  A.push_back(A_inner2);
   std::vector<Eigen::MatrixXd> lbm;
   lbm.push_back(lbm_inner);
-  lbm.push_back(lbm_inner);
-  lbm.push_back(lbm_inner);
+  lbm.push_back(lbm_inner2);
   lb_constrain_test::expect_vec(A, lbm);
-  double lbd = 6.0;
-  lb_constrain_test::expect_vec(A, lbd);
 }
 
 TEST(mathMixMatFun, lb_stdvec_mat_constrain_neg_inf) {
@@ -142,8 +160,12 @@ TEST(mathMixMatFun, lb_stdvec_mat_constrain_neg_inf) {
   A_inner << 5.0, 2.0, 4.0, -2.0;
   Eigen::MatrixXd lbm_inner(2, 2);
   lbm_inner << 7.0, 5.0, stan::math::NEGATIVE_INFTY, 100.0;
-  std::vector<Eigen::MatrixXd> A{A_inner, A_inner, A_inner};
-  std::vector<Eigen::MatrixXd> lbm{lbm_inner, lbm_inner, lbm_inner};
+  Eigen::MatrixXd A_inner2 = 2 * A_inner;
+  Eigen::MatrixXd lbm_inner2(2, 2);
+  lbm_inner << 7.0, stan::math::NEGATIVE_INFTY, 5.0, 100.0;
+  std::vector<Eigen::MatrixXd> A{A_inner, A_inner2};
+  std::vector<Eigen::MatrixXd> lbm{lbm_inner, lbm_inner2};
   lb_constrain_test::expect_vec(A, lbm);
+  lb_constrain_test::expect_vec(A, A_inner);
   lb_constrain_test::expect_vec(A, stan::math::NEGATIVE_INFTY);
 }
