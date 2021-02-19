@@ -27,7 +27,6 @@ void expect_matvar(const T1& x, const T2& lb) {
   stan::test::expect_ad_matvar(f3, x, lb);
   stan::test::expect_ad_matvar(f4, x, lb);
 }
-
 }  // namespace lb_constrain_test
 
 TEST(mathMixMatFun, lb_matvar_constrain) {
@@ -35,15 +34,12 @@ TEST(mathMixMatFun, lb_matvar_constrain) {
   using stan::math::lb_constrain;
   using stan::math::promote_scalar_t;
   Eigen::MatrixXd A(2, 2);
-  // Doesn't work for values near zero fail for fvar hessian?
-  A << 5.0, 2.0, 4.0, -2.0;  //, 0.0, 0.005;
+  A << 5.0, 2.0, 0.0, 0.005;
   Eigen::MatrixXd lbm(2, 2);
-  lbm << 7.0, 5.0, 6.0, 100.0;  //, 0.0, 0.0005;
+  lbm << 7.0, 5.0, 0.0, 0.0005;
   lb_constrain_test::expect_matvar(A, lbm);
   double lbd = 6.0;
   lb_constrain_test::expect_matvar(A, lbd);
-  double lbi = stan::Math::NEGATIVE_INFTY;
-  lb_constrain_test::expect(A, lbi);
 }
 
 TEST(mathMixMatFun, lb_matvar_constrain_neg_inf) {
