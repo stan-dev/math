@@ -22,6 +22,13 @@ inline T value_of(T&& x) {
   return std::forward<T>(x);
 }
 
+template <typename T, require_complex_t<T>* = nullptr,
+          require_t<std::is_arithmetic<
+              typename std::decay_t<T>::value_type>>* = nullptr>
+inline decltype(auto) value_of(T&& x) {
+  return std::forward<T>(x);
+}
+
 /**
  * For std::vectors of non-arithmetic types, return a std::vector composed
  * of value_of applied to each element.
