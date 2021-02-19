@@ -57,8 +57,8 @@ def get_cpp_type(stan_type):
     return res
 
 
-simplex = "make_simplex"
-pos_definite = "make_pos_definite_matrix"
+simplex = "simplex"
+pos_definite = "positive_definite_matrix"
 
 # list of function arguments that need special scalar values.
 # None means to use the default argument value.
@@ -321,31 +321,62 @@ overload_scalar = {
     "Mix": "stan::math::fvar<stan::math::var>",
 }
 
-class IntArgument:
-    def __init__(self, name, value = 1):
+class CppStatement:
+    def init(self):
+        raise Exception("CppStatement should never be instantiated directly")
+
+    def is_reverse_mode(self):
+        return False
+    
+    def is_matrix_like(self):
+        return False
+    
+    def is_varmat(self):
+        return False
+
+class IntArgument(CppStatement):
+    def __init__(self, name, value = None):
         self.name = name
-        self.value = value
+        if value is None:
+            self.value = 1
+        else:
+            self.value = value
 
     def cpp(self):
         return f"int {self.name} = {self.value};"
 
-class RealArgument:
-    def __init__(self, overload, name, value = 0.4):
+class RealArgument(CppStatement):
+    def __init__(self, overload, name, value = None):
         self.overload = overload
         self.name = name
-        self.value = value
+        if value is None:
+            self.value = 0.4
+        else:
+            self.value = value
+    
+    def is_reverse_mode(self):
+        return self.overload.startswith("Rev")
     
     def cpp(self):
         scalar = overload_scalar[self.overload]
 
         return f"{scalar} {self.name} = {self.value};"
 
-class MatrixArgument:
-    def __init__(self, overload, name, stan_arg, value = 0.4):
+class MatrixArgument(CppStatement):
+    def __init__(self, overload, name, stan_arg, value = None):
         self.overload = overload
         self.name = name
         self.stan_arg = stan_arg
-        self.value = value
+        if value is None:
+            self.value = 0.4
+        else:
+            self.value = value
+    
+    def is_reverse_mode(self):
+        return self.overload.startswith("Rev")
+
+    def is_matrix_like(self):
+        return True
     
     def cpp(self):
         scalar = overload_scalar[self.overload]
@@ -354,36 +385,89 @@ class MatrixArgument:
 
         return f"auto {self.name} = stan::test::make_arg<{arg_type}>({self.value}, 1);"
 
-class ReturnTypeTArgument:
+class SimplexArgument(CppStatement):
+    def __init__(self, overload, name, stan_arg, value = None):
+        self.overload = overload
+        self.name = name
+        self.stan_arg = stan_arg
+        if value is None:
+            self.value = 0.4
+        else:
+            self.value = value
+    
+    def is_reverse_mode(self):
+        return self.overload.startswith("Rev")
+
+    def is_matrix_like(self):
+        return True
+    
+    def cpp(self):
+        scalar = overload_scalar[self.overload]
+        cpp_arg_template = get_cpp_type(self.stan_arg)
+        arg_type = cpp_arg_template.replace("SCALAR", scalar)
+
+        return f"auto {self.name} = stan::test::make_simplex<{arg_type}>({self.value}, 1);"
+
+class PositiveDefiniteMatrixArgument(CppStatement):
+    def __init__(self, overload, name, stan_arg, value = None):
+        self.overload = overload
+        self.name = name
+        self.stan_arg = stan_arg
+        if value is None:
+            self.value = 0.4
+        else:
+            self.value = value
+    
+    def is_reverse_mode(self):
+        return self.overload.startswith("Rev")
+
+    def is_matrix_like(self):
+        return True
+    
+    def cpp(self):
+        scalar = overload_scalar[self.overload]
+        cpp_arg_template = get_cpp_type(self.stan_arg)
+        arg_type = cpp_arg_template.replace("SCALAR", scalar)
+
+        return f"auto {self.name} = stan::test::make_pos_definite_matrix<{arg_type}>({self.value}, 1);"
+
+class ReturnTypeTArgument(CppStatement):
     def __init__(self, name, *args):
         self.name = name
         arg_names = [f'decltype({arg.name})' for arg in args]
-        self.type_str = f"stan::math::return_type_t<{','.join(arg_names)}>"
+        self.type_str = f"stan::return_type_t<{','.join(arg_names)}>"
+        self.__is_reverse_mode = any(arg.is_reverse_mode() for arg in args)
+    
+    def is_reverse_mode(self):
+        return self.__is_reverse_mode
     
     def cpp(self):
         return f"{self.type_str} {self.name} = 0;"
 
-class RngArgument:
+class RngArgument(CppStatement):
     def __init__(self, name):
         self.name = name
     
     def cpp(self):
         return f"std::minstd_rand {self.name};"
 
-class OStreamArgument:
+class OStreamArgument(CppStatement):
     def __init__(self, name):
         self.name = name
     
     def cpp(self):
         return f"std::ostream {self.name};"
 
-class ArrayArgument:
+class ArrayArgument(CppStatement):
     def __init__(self, overload, name, number_nested_arrays, inner_type, value = 0.4):
         self.overload = overload
         self.name = name
         self.number_nested_arrays = number_nested_arrays
         self.inner_type = inner_type
         self.value = value
+    
+    def is_reverse_mode(self):
+        return self.overload.startswith("Rev")
     
     def cpp(self):
         scalar = overload_scalar[self.overload]
@@ -394,29 +478,46 @@ class ArrayArgument:
 
         return f"auto {self.name} = stan::test::make_arg<{arg_type}>({self.value}, 1);"
 
-class FunctionCallAssign:
+class FunctionCallAssign(CppStatement):
     def __init__(self, function_name, name, *args):
         self.function_name = function_name
         self.name = name
         self.arg_str = ','.join(arg.name for arg in args)
+        self.__is_reverse_mode = any(arg.is_reverse_mode() for arg in args)
+
+    def is_reverse_mode(self):
+        return self.__is_reverse_mode
+
+    def is_matrix_like(self):
+        raise Exception("is_matrix_like not implemented for FunctionCallAssign")
 
     def cpp(self):
         return f"auto {self.name} = stan::math::eval({self.function_name}({self.arg_str}));"
 
-class FunctionCall:
+class FunctionCall(CppStatement):
     def __init__(self, function_name, *args):
         self.function_name = function_name
         self.arg_str = ','.join(arg.name for arg in args)
+        self.__is_reverse_mode = any(arg.is_reverse_mode() for arg in args)
+
+    def is_reverse_mode(self):
+        return self.__is_reverse_mode
 
     def cpp(self):
         return f"{self.function_name}({self.arg_str});"
 
-class ExpressionArgument:
+class ExpressionArgument(CppStatement):
     def __init__(self, overload, name, arg):
         self.overload = overload
         self.name = name
         self.counter = IntArgument(f"{self.name}_counter", 0)
         self.arg = arg
+    
+    def is_reverse_mode(self):
+        return self.overload.startswith("Rev")
+
+    def is_matrix_like(self):
+        return True
 
     def cpp(self):
         scalar = overload_scalar[self.overload]
@@ -437,7 +538,14 @@ class ExpressionArgument:
 class FunctionGenerator:
     def __init__(self, signature):
         self.return_type, self.function_name, self.stan_args = parse_signature(signature)
+        self.reset()
+
+    def reset(self):
+        self.code_list = []
     
+    def number_arguments(self):
+        return len(self.stan_args)
+
     def is_ode(self):
         return self.function_name.startswith("ode")
     
@@ -473,164 +581,65 @@ class FunctionGenerator:
         
         return itertools.product(*overload_opts)
 
-    def cpp(self, arg_overloads, max_size):
-        uses_varmat = False
-        is_reverse_mode = any(overload.startswith("Rev") for overload in arg_overloads)
+    def add(self, statement):
+        if not isinstance(statement, CppStatement):
+            raise Exception("Argument to FunctionGenerator.add must be an instance of an object that inherits from CppStatement")
 
-        code_list = []
+        self.code_list.append(statement)
+        return statement
+
+    def build_arguments(self, arg_overloads, max_size):
         arg_list = []
-        arg_list_base = []
         for n, (overload, stan_arg) in enumerate(zip(arg_overloads, self.stan_args)):
             number_nested_arrays, inner_type = parse_array(stan_arg)
 
+            value = 0.4
+
+            # Check if argument is differentiable
             try:
-                special_type = special_arg_values[self.function_name][n]
-                if special_type is not None:
-                    inner_type = special_type
+                if n in non_differentiable_args[self.function_name]:
+                    overload = "Prim"
+            except KeyError:
+                pass
+
+            # Check for special arguments (constrained variables or types)
+            try:
+                special_arg = special_arg_values[self.function_name][n]
+                if isinstance(special_arg, numbers.Number):
+                    value = special_arg
+                elif special_arg is not None:
+                    inner_type = special_arg
             except KeyError:
                 pass
 
             if number_nested_arrays == 0:
                 if inner_type == "int":
-                    arg = IntArgument(f"int{n}")
+                    arg = IntArgument(f"int{n}", value)
                 elif inner_type == "real":
-                    arg = RealArgument(overload, f"real{n}")
+                    arg = RealArgument(overload, f"real{n}", value)
                 elif inner_type in ("vector", "row_vector", "matrix"):
-                    arg = MatrixArgument(overload, f"matrix{n}", stan_arg)
+                    arg = MatrixArgument(overload, f"matrix{n}", stan_arg, value)
                 elif inner_type == "rng":
                     arg = RngArgument(f"rng{n}")
                 elif inner_type == "ostream_ptr":
                     arg = OStreamArgument(f"ostream{n}")
                 elif inner_type == "scalar_return_type":
                     arg = ReturnTypeTArgument(f"ret_type{n}", *arg_list)
+                elif inner_type == "simplex":
+                    arg = SimplexArgument(overload, f"simplex{n}", stan_arg, value)
+                elif inner_type == "positive_definite_matrix":
+                    arg = PositiveDefiniteMatrixArgument(overload, f"positive_definite_matrix{n}", stan_arg, value)
+                else:
+                    raise Exception(f"Inner type '{inner_type}' not supported")
             else:
                 arg = ArrayArgument(overload, f"array{n}", number_nested_arrays, inner_type)
 
-            code_list.append(arg)
+            arg_list.append(self.add(arg))
 
-            arg_list_base.append(arg)
+        return arg_list
 
-            if overload == "RevSOA" and inner_type in ("vector", "row_vector", "matrix"):
-                uses_varmat = True
-                arg = FunctionCallAssign("stan::math::to_var_value", arg.name + "_varmat", arg)
-                code_list.append(arg)
-            
-            if overload.endswith("Exp") and inner_type in ("vector", "row_vector", "matrix"):
-                arg = ExpressionArgument(overload, arg.name + "_expr", arg)
-                code_list.append(arg)
-            
-            arg_list.append(arg)
-
-        result = FunctionCallAssign(f"stan::math::{self.function_name}", "result", *arg_list)
-        code_list.append(result)
-        if is_reverse_mode:
-            summed_result = FunctionCallAssign("stan::test::recursive_sum", "summed_result", result)
-            code_list.append(summed_result)
-            code_list.append(FunctionCall("stan::test::grad", summed_result))
-
-        if any(overload.endswith("Exp") for overload in arg_overloads):
-            # Check results with expressions and without are the same
-            result_base = FunctionCallAssign(f"stan::math::{self.function_name}", "result_base", *arg_list_base)
-            code_list.append(result_base)
-            code_list.append(FunctionCall("EXPECT_STAN_EQ", result, result_base))
-
-            if is_reverse_mode:
-                # Check that adjoints with and without expressions are the same
-                adjoint_copies = [FunctionCallAssign("stan::test::adjoints_of", f"{arg.name}_adjoints", arg) for arg in arg_list]
-                code_list.extend(adjoint_copies)
-                summed_result_base = FunctionCallAssign("stan::test::recursive_sum", "summed_result_base", result_base)
-                code_list.append(summed_result_base)
-                code_list.append(FunctionCall("stan::math::set_zero_all_adjoints"))
-                code_list.append(FunctionCall("stan::test::grad", summed_result_base))
-                adjoint_base_copies = [FunctionCallAssign("stan::test::adjoints_of", f"{arg.name}_adjoints", arg) for arg in arg_list_base]
-                code_list.extend(adjoint_base_copies)
-                code_list.extend(FunctionCall("EXPECT_STAN_EQ", adjoint, adjoint_base) for adjoint, adjoint_base in zip(adjoint_copies, adjoint_base_copies))
-            
-            # Check that expressions evaluated only once
-            for arg in arg_list:
-                if isinstance(arg, ExpressionArgument):
-                    code_list.append(FunctionCall("EXPECT_LEQ_ONE", arg.counter))
-
-        code = os.linesep.join(statement.cpp() for statement in code_list)
-
-        # for n, (arg_overload, stan_arg) in enumerate(zip(arg_overloads, self.stan_args)):
-        #     number_nested_arrays, inner_type = parse_array(stan_arg)
-        #     if number_nested_arrays > 0:
-        #         benchmark_name += "_" + arg_overload + "_" + inner_type + str(number_nested_arrays)
-        #         is_argument_array_scalars = inner_type in scalar_stan_types
-        #     else:
-        #         benchmark_name += "_" + arg_overload + "_" + stan_arg
-        #         is_argument_array_scalars = False
-        #     scalar = overload_scalar[arg_overload]
-        #     cpp_arg_template = get_cpp_type(stan_arg)
-        #     arg_type = cpp_arg_template.replace("SCALAR", scalar)
-        #     if not stan_arg.endswith("return_t"):
-        #         arg_types.append(arg_type)
-        #     var_name = "arg" + str(n)
-        #     make_arg_function = "make_arg"
-        #     is_argument_scalar = stan_arg in scalar_stan_types
-        #     value = 0.4
-        #     if self.function_name in special_arg_values and isinstance(special_arg_values[self.function_name][n], str):
-        #         make_arg_function = special_arg_values[self.function_name][n]
-
-        #         setup += (
-        #             "    {} {};".format(
-        #                 make_arg_function,
-        #                 var_name
-        #             )
-        #         )
-        #     else:
-        #         if self.function_name in special_arg_values and special_arg_values[self.function_name][n] is not None:
-        #             value = special_arg_values[self.function_name][n]
-
-        #         if scalar == "double":
-        #             setup += (
-        #                 "    {} {} = stan::test::{}<{}>({}, {});\n".format(
-        #                     arg_type,
-        #                     var_name,
-        #                     make_arg_function,
-        #                     arg_type,
-        #                     value,
-        #                     max_size,
-        #                 )
-        #             )
-        #         else:
-        #             setup += (
-        #                 "    {} {} = stan::test::{}<{}>({}, {});\n".format(
-        #                     arg_type,
-        #                     var_name,
-        #                     make_arg_function,
-        #                     arg_type,
-        #                     value,
-        #                     max_size,
-        #                 )
-        #             )
-                
-        #         if not is_argument_scalar:
-        #             if not is_argument_array_scalars and arg_overload == "Rev_SOA":
-        #                 uses_varmat = True
-        #                 setup += (
-        #                     "    auto {} = stan::math::to_var_value({});\n".format(
-        #                         var_name + "_varmat", var_name
-        #                     )
-        #                 )
-        #                 var_name += "_varmat"
-        #     code += var_name + ", "
-
-        # code = code[:-2] + "));\n"
-        # if "Rev" in arg_overloads:
-        #     code += "    stan::math::grad();\n"
-
-        # return_t_definition = "    using scalar_return_type = stan::return_type_t<" + ", ".join(arg_types) + ">;"
-
-        # setup = return_t_definition + "\n" + setup
-            
-        #any_overload_generated_varmat = any_overload_generated_varmat or generated_varmat
-        
-        self.setup = ""
-        self.code = code
-
-        return [self.setup, self.code, uses_varmat]
+    def cpp(self):
+        return os.linesep.join(statement.cpp() for statement in self.code_list)
 
 #setup, code = generate_function_code("whatever", "clown", ["real"], ["Prim"], 2)
 #print(setup)

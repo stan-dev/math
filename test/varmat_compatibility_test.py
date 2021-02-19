@@ -21,7 +21,6 @@ from sig_utils import *
 
 BENCHMARK_TEMPLATE = """
 static void {benchmark_name}() {{
-{setup}
 {code}
 }}
 """
@@ -115,16 +114,26 @@ def main(functions_or_sigs, results_file, cores):
 
             result = ""
             any_overload_uses_varmat = False
-            for n, arg_overloads in enumerate(fg.overloads()):
-                # generate one benchmark
-                setup, code, uses_varmat = fg.cpp(arg_overloads, max_size)
+            
+            for n, overloads in enumerate(list(itertools.product(("Prim", "Rev", "RevSOA"), repeat = fg.number_arguments()))):
+                fg.reset()
+
+                arg_list_base = fg.build_arguments(overloads, max_size)
+
+                arg_list = []
+                for overload, arg in zip(overloads, arg_list_base):
+                    if arg.is_reverse_mode() and arg.is_matrix_like() and overload.endswith("SOA"):
+                        any_overload_uses_varmat = True
+                        arg = fg.add(FunctionCallAssign("stan::math::to_var_value", arg.name + "_varmat", arg))
+                    
+                    arg_list.append(arg)
+
+                fg.add(FunctionCallAssign(f"stan::math::{fg.function_name}", "result", *arg_list))
 
                 result += BENCHMARK_TEMPLATE.format(
                     benchmark_name=f"{fg.function_name}_{n}",
-                    setup=setup,
-                    code=code,
+                    code=fg.cpp(),
                 )
-                any_overload_uses_varmat |= uses_varmat
 
             if any_overload_uses_varmat:
                 f = tempfile.NamedTemporaryFile("w", dir = WORKING_FOLDER, prefix = f"{fg.function_name}_", suffix = "_test.cpp", delete = False)

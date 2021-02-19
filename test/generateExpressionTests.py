@@ -1,4 +1,5 @@
 import numbers
+from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
 from sig_utils import *
 
@@ -12,6 +13,15 @@ TEST(ExpressionTest{overload}, {test_name}) {{
 }}
 """
 
+class FullErrorMsgParser(ArgumentParser):
+    """
+    Modified ArgumentParser that prints full error message on any error.
+    """
+
+    def error(self, message):
+        sys.stderr.write("error: %s\n" % message)
+        self.print_help()
+        sys.exit(2)
 
 
 def make_arg_code(arg, scalar, var_name, var_number, function_name):
@@ -117,11 +127,10 @@ def main(functions=(), j=1):
                 return_type, function_name, function_args = parse_signature(signature)
                 if function == function_name:
                     signatures.add(signature)
-                    break
         default_checks = False
 
     for n, signature in enumerate(signatures):
-        for overload in ("PrimExp", "RevExp", "FwdExp"):
+        for overload in ("Prim", "Rev", "Fwd"):
             fg = FunctionGenerator(signature)
 
             # skip ignored signatures if running the default checks
@@ -132,131 +141,86 @@ def main(functions=(), j=1):
             if not fg.has_vector_arg():
                 continue
 
-            if fg.is_rng() and not overload == "PrimExp":
+            if fg.is_rng() and not overload == "Prim":
                 function_args.append("rng")
-            if function_name in no_fwd_overload and overload == "FwdExp":
+            if function_name in no_fwd_overload and overload == "Fwd":
                 continue
-            if function_name in no_rev_overload and overload == "RevExp":
+            if function_name in no_rev_overload and overload == "Rev":
                 continue
 
-            setup, code, uses_varmat = fg.cpp(len(fg.stan_args) * [overload], 2)
+            arg_list_base = fg.build_arguments(len(fg.stan_args) * [overload], 2)
+            is_reverse_mode = any(arg.is_reverse_mode() for arg in arg_list_base)
+
+            arg_list = []
+            for arg in arg_list_base:
+                if arg.is_matrix_like():
+                    arg = fg.add(ExpressionArgument(overload, arg.name + "_expr", arg))
+                
+                arg_list.append(arg)
+
+            result = fg.add(FunctionCallAssign(f"stan::math::{fg.function_name}", "result", *arg_list))
+            if is_reverse_mode:
+                summed_result = fg.add(FunctionCallAssign("stan::test::recursive_sum", "summed_result", result))
+                fg.add(FunctionCall("stan::test::grad", summed_result))
+
+            # Check results with expressions and without are the same
+            result_base = fg.add(FunctionCallAssign(f"stan::math::{fg.function_name}", "result_base", *arg_list_base))
+            fg.add(FunctionCall("EXPECT_STAN_EQ", result, result_base))
+
+            if is_reverse_mode:
+                # Check that adjoints with and without expressions are the same
+                adjoint_base_expression_copies = [fg.add(FunctionCallAssign("stan::test::adjoints_of", f"{arg.name}_adjoints_expr", arg)) for arg in arg_list_base]
+                summed_result_base = fg.add(FunctionCallAssign("stan::test::recursive_sum", "summed_result_base", result_base))
+                fg.add(FunctionCall("stan::math::set_zero_all_adjoints"))
+                fg.add(FunctionCall("stan::test::grad", summed_result_base))
+                adjoint_base_copies = [fg.add(FunctionCallAssign("stan::test::adjoints_of", f"{arg.name}_adjoints", arg)) for arg in arg_list_base]
+                for adjoint, adjoint_base in zip(adjoint_base_expression_copies, adjoint_base_copies):
+                    fg.add(FunctionCall("EXPECT_STAN_EQ", adjoint, adjoint_base))
+            
+            # Check that expressions evaluated only once
+            for arg in arg_list:
+                if isinstance(arg, ExpressionArgument):
+                    fg.add(FunctionCall("EXPECT_LEQ_ONE", arg.counter))
+
+            # Clean up memory
+            if is_reverse_mode:
+                fg.add(FunctionCall("stan::math::recover_memory"))
 
             tests.append(
                 test_code_template.format(
                     overload=overload,
                     test_name=f"{function_name}_{n}",
-                    code = code,                )
+                    code = fg.cpp(),
+                )
             )
-
-        # for overload, scalar in (
-        #     ("Prim", "double"),
-        #     ("Rev", "stan::math::var"),
-        #     ("Fwd", "stan::math::fvar<double>"),
-        # ):
-        #     # Declare inputs
-        #     mat_declarations = ""
-        #     for n, arg in enumerate(function_args):
-        #         mat_declarations += (
-        #             make_arg_code(arg, scalar, "arg_mat%d" % n, n, function_name)
-        #             + ";\n"
-        #         )
-        #     mat_arg_list = ", ".join("arg_mat%d" % n for n in range(len(function_args)))
-
-        #     # Convert to expressions
-        #     expression_declarations = ""
-        #     for n, arg in enumerate(function_args):
-        #         expression_declarations += (
-        #             make_arg_code(arg, scalar, "arg_expr%d" % n, n, function_name)
-        #             + ";\n"
-        #         )
-        #         if arg in eigen_types:
-        #             expression_declarations += "  int counter%d = 0;\n" % n
-        #             expression_declarations += (
-        #                 "  stan::test::counterOp<%s> counter_op%d(&counter%d);\n"
-        #                 % (scalar, n, n)
-        #             )
-            
-        #     # Build argument list
-        #     expression_arg_list = ""
-        #     for n, arg in enumerate(function_args[:-1]):
-        #         if arg in eigen_types:
-        #             if arg == "matrix":
-        #                 expression_arg_list += (
-        #                     "arg_expr%d.block(0,0,1,1).unaryExpr(counter_op%d), "
-        #                     % (
-        #                         n,
-        #                         n,
-        #                     )
-        #                 )
-        #             else:
-        #                 expression_arg_list += (
-        #                     "arg_expr%d.segment(0,1).unaryExpr(counter_op%d), "
-        #                     % (
-        #                         n,
-        #                         n,
-        #                     )
-        #                 )
-        #         else:
-        #             expression_arg_list += "arg_expr%d, " % n
-        #     if function_args[-1] in eigen_types:
-        #         if function_args[-1] == "matrix":
-        #             expression_arg_list += (
-        #                 "arg_expr%d.block(0,0,1,1).unaryExpr(counter_op%d)"
-        #                 % (
-        #                     len(function_args) - 1,
-        #                     len(function_args) - 1,
-        #                 )
-        #             )
-        #         else:
-        #             expression_arg_list += (
-        #                 "arg_expr%d.segment(0,1).unaryExpr(counter_op%d)"
-        #                 % (
-        #                     len(function_args) - 1,
-        #                     len(function_args) - 1,
-        #                 )
-        #             )
-        #     else:
-        #         expression_arg_list += "arg_expr%d" % (len(function_args) - 1)
-
-        #     # Build checks that happen after function call
-        #     checks = ""
-        #     for n, arg in enumerate(function_args):
-        #         if arg in eigen_types:
-        #             # besides evaluating its input rank also accesses one of the elements,
-        #             # resulting in counter being incremented twice.
-        #             if function_name == "rank":
-        #                 checks += "  EXPECT_LE(counter%d, 2);\n" % n
-        #             else:
-        #                 checks += "  EXPECT_LE(counter%d, 1);\n" % n
-        #     if overload == "Rev" and (
-        #         return_type.startswith("real")
-        #         or return_type.startswith("vector")
-        #         or return_type.startswith("row_vector")
-        #         or return_type.startswith("matrix")
-        #     ):
-        #         checks += "  (stan::test::recursive_sum(res_mat) + stan::test::recursive_sum(res_expr)).grad();\n"
-        #         for n, arg in enumerate(function_args):
-        #             # functors don't have adjoints to check
-        #             if "=>" in arg:
-        #                 continue
-        #             checks += "  EXPECT_STAN_ADJ_EQ(arg_expr%d,arg_mat%d);\n" % (
-        #                 n,
-        #                 n,
-        #             )
-        #     tests.append(
-        #         test_code_template.format(
-        #             overload=overload,
-        #             function_name=function_name,
-        #             signature_number=func_test_n,
-        #             matrix_argument_declarations=mat_declarations,
-        #             matrix_argument_list=mat_arg_list,
-        #             expression_argument_declarations=expression_declarations,
-        #             expression_argument_list=expression_arg_list,
-        #             checks=checks,
-        #         )
-        #     )
     
     save_tests_in_files(j, tests)
 
+def processCLIArgs():
+    """
+    Define and process the command line interface to the benchmark.py script.
+    """
+    parser = FullErrorMsgParser(
+        description="Generate and run_command benchmarks.",
+        formatter_class=ArgumentDefaultsHelpFormatter,
+    )
+    parser.add_argument(
+        "--functions",
+        nargs="+",
+        type=str,
+        default=[],
+        help="Signatures and/or function names to benchmark. Ignores any finished checks in results file (if given).",
+    )
+    parser.add_argument(
+        "-j",
+        type=int,
+        default=1,
+        help="Number of parallel cores to use.",
+    )
+    args = parser.parse_args()
+
+    main(functions=args.functions, j = args.j)
+
 if __name__ == "__main__":
-    main(["dot_product"])
+    processCLIArgs()
+
