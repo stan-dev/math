@@ -77,7 +77,7 @@ TEST(mathMixMatFun, lb_mat_constrain) {
   lb_constrain_test::expect(A, lbm);
   double lbd = 6.0;
   lb_constrain_test::expect(A, lbd);
-  double lbi = stan::Math::NEGATIVE_INFTY;
+  double lbi = stan::math::NEGATIVE_INFTY;
   lb_constrain_test::expect(A, lbi);
 }
 
