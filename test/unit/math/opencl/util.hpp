@@ -80,12 +80,12 @@ void expect_eq(const std::vector<T>& a, const std::vector<T>& b,
 template <typename T1, typename T2,
           require_nonscalar_prim_or_rev_kernel_expression_t<T1>* = nullptr>
 void expect_eq(const T1& a, const T2& b, const char* msg) {
-  expect_eq(from_matrix_cl(a), b, msg);
+  expect_eq(from_matrix_cl<plain_type_t<T2>>(a), b, msg);
 }
 template <typename T1, typename T2,
           require_nonscalar_prim_or_rev_kernel_expression_t<T2>* = nullptr>
 void expect_eq(const T1& a, const T2& b, const char* msg) {
-  expect_eq(a, from_matrix_cl(b), msg);
+  expect_eq(a, from_matrix_cl<plain_type_t<T1>>(b), msg);
 }
 
 template <typename T>
@@ -94,7 +94,7 @@ auto recursive_sum(const T& a) {
 }
 template <typename T>
 auto recursive_sum(const std::vector<T>& a) {
-  scalar_type_t<T> res = recursive_sum(a[0]);
+  scalar_type_t<T> res = 0;
   for (int i = 0; i < a.size(); i++) {
     res += recursive_sum(a[i]);
   }
