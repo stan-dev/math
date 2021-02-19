@@ -147,8 +147,7 @@ inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
  * @param[in] lb lower bound on output
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename L,
-	  require_not_std_vector_t<L>* = nullptr>
+template <typename T, typename L, require_not_std_vector_t<L>* = nullptr>
 inline auto lb_constrain(const std::vector<T>& x, const L& lb) {
   std::vector<plain_type_t<decltype(lb_constrain(x[0], lb))>> ret(x.size());
   for (size_t i = 0; i < x.size(); ++i) {
@@ -168,8 +167,7 @@ inline auto lb_constrain(const std::vector<T>& x, const L& lb) {
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename L,
-	  require_not_std_vector_t<L>* = nullptr>
+template <typename T, typename L, require_not_std_vector_t<L>* = nullptr>
 inline auto lb_constrain(const std::vector<T>& x, const L& lb,
                          return_type_t<T, L>& lp) {
   std::vector<plain_type_t<decltype(lb_constrain(x[0], lb))>> ret(x.size());
