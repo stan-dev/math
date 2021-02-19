@@ -31,7 +31,8 @@ namespace math {
  * @param[in] ub upper bound
  * @return matrix constrained to have upper bound
  */
- template <typename T, typename L, require_all_stan_scalar_t<T, L>* = nullptr, require_all_not_st_var<T, L>* = nullptr>
+template <typename T, typename L, require_all_stan_scalar_t<T, L>* = nullptr,
+          require_all_not_st_var<T, L>* = nullptr>
 inline auto ub_constrain(const T& x, const L& ub) {
   if (value_of_rec(ub) == INFTY) {
     return identity_constrain(x, ub);
@@ -61,8 +62,10 @@ inline auto ub_constrain(const T& x, const L& ub) {
  * @param[in,out] lp log density
  * @return scalar constrained to have upper bound
  */
-template <typename T, typename L, require_all_stan_scalar_t<T, L>* = nullptr, require_all_not_st_var<T, L>* = nullptr>
-inline auto ub_constrain(const T& x, const L& ub, std::decay_t<return_type_t<T, L>>& lp) {
+template <typename T, typename L, require_all_stan_scalar_t<T, L>* = nullptr,
+          require_all_not_st_var<T, L>* = nullptr>
+inline auto ub_constrain(const T& x, const L& ub,
+                         std::decay_t<return_type_t<T, L>>& lp) {
   if (value_of_rec(ub) == INFTY) {
     return identity_constrain(x, ub);
   } else {
@@ -71,39 +74,35 @@ inline auto ub_constrain(const T& x, const L& ub, std::decay_t<return_type_t<T, 
   }
 }
 
-
 template <typename T, typename L, require_eigen_t<T>* = nullptr,
-  require_stan_scalar_t<L>* = nullptr,
-  require_all_not_st_var<T, L>* = nullptr>
+          require_stan_scalar_t<L>* = nullptr,
+          require_all_not_st_var<T, L>* = nullptr>
 inline auto ub_constrain(const T& x, const L& ub) {
-  return eval(x.unaryExpr([ub](auto&& xx) {
-    return ub_constrain(xx, ub);
-  }));
+  return eval(x.unaryExpr([ub](auto&& xx) { return ub_constrain(xx, ub); }));
 }
 
 template <typename T, typename L, require_all_eigen_t<T, L>* = nullptr,
-  require_all_not_st_var<T, L>* = nullptr>
+          require_all_not_st_var<T, L>* = nullptr>
 inline auto ub_constrain(const T& x, const L& ub) {
-  return eval(x.binaryExpr(ub, [](auto&& xx, auto&& ubb) {
-    return ub_constrain(xx, ubb);
-  }));
+  return eval(x.binaryExpr(
+      ub, [](auto&& xx, auto&& ubb) { return ub_constrain(xx, ubb); }));
 }
 
 template <typename T, typename L, require_eigen_t<T>* = nullptr,
-  require_stan_scalar_t<L>* = nullptr,
-  require_all_not_st_var<T, L>* = nullptr>
-inline auto ub_constrain(const T& x, const L& ub, std::decay_t<return_type_t<T, L>>& lp) {
-  return eval(x.unaryExpr([ub, &lp](auto&& xx) {
-    return ub_constrain(xx, ub, lp);
-  }));
+          require_stan_scalar_t<L>* = nullptr,
+          require_all_not_st_var<T, L>* = nullptr>
+inline auto ub_constrain(const T& x, const L& ub,
+                         std::decay_t<return_type_t<T, L>>& lp) {
+  return eval(
+      x.unaryExpr([ub, &lp](auto&& xx) { return ub_constrain(xx, ub, lp); }));
 }
 
 template <typename T, typename L, require_all_eigen_t<T, L>* = nullptr,
-  require_all_not_st_var<T, L>* = nullptr>
-inline auto ub_constrain(const T& x, const L& ub, std::decay_t<return_type_t<T, L>>& lp) {
-  return eval(x.binaryExpr(ub, [&lp](auto&& xx, auto&& ubb) {
-    return ub_constrain(xx, ubb, lp);
-  }));
+          require_all_not_st_var<T, L>* = nullptr>
+inline auto ub_constrain(const T& x, const L& ub,
+                         std::decay_t<return_type_t<T, L>>& lp) {
+  return eval(x.binaryExpr(
+      ub, [&lp](auto&& xx, auto&& ubb) { return ub_constrain(xx, ubb, lp); }));
 }
 
 // VEC
@@ -227,7 +226,6 @@ inline auto ub_constrain(const std::vector<T>& x, const std::vector<L>& ub,
   }
   return ret;
 }
-
 
 }  // namespace math
 }  // namespace stan

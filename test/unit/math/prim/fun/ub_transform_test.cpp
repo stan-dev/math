@@ -39,7 +39,7 @@ TEST(prob_transform, ub_j) {
 
   double lp2 = 1.87;
   EXPECT_NO_THROW(stan::math::ub_constrain(
-                   -5.2, std::numeric_limits<double>::infinity(), lp2));
+      -5.2, std::numeric_limits<double>::infinity(), lp2));
   EXPECT_FLOAT_EQ(1.87, lp2);
 }
 TEST(prob_transform, ub_f) {

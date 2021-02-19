@@ -58,7 +58,6 @@ void expect_vec(const T1& x, const T2& ub) {
 }
 }  // namespace ub_constrain_test
 
-
 TEST(mathMixScalFun, ub_constrain) {
   ub_constrain_test::expect(-1, 2);
   ub_constrain_test::expect(2, 4);
@@ -91,7 +90,6 @@ TEST(mathMixMatFun, ub_mat_constrain_inf) {
   ub_constrain_test::expect(A, ubm);
   ub_constrain_test::expect(A, ubd1);
 }
-
 
 TEST(mathMixMatFun, ub_stdvec_constrain) {
   std::vector<double> A{5.0, 2.0, 4.0, -2.0};

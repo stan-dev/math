@@ -260,7 +260,9 @@ inline auto ub_constrain(const T& x, const U& ub) {
     auto ub_val = to_ref(value_of(ub));
     auto is_not_inf_ub = to_arena((ub_val.array() != INFTY));
     auto neg_exp_x = to_arena(-arena_x.val().array().exp());
-    arena_t<ret_type> ret = (is_not_inf_ub).select(ub_val.array() + neg_exp_x, arena_x.val().array());
+    arena_t<ret_type> ret
+        = (is_not_inf_ub)
+              .select(ub_val.array() + neg_exp_x, arena_x.val().array());
     reverse_pass_callback([arena_x, neg_exp_x, ret, is_not_inf_ub]() mutable {
       arena_x.adj().array()
           += (is_not_inf_ub)
@@ -312,7 +314,8 @@ inline auto ub_constrain(const T& x, const U& ub, return_type_t<T, U>& lp) {
                            is_not_inf_ub]() mutable {
       arena_x.adj().array()
           += (is_not_inf_ub)
-                 .select(ret.adj().array() * neg_exp_x + lp.adj(), ret.adj().array());
+                 .select(ret.adj().array() * neg_exp_x + lp.adj(),
+                         ret.adj().array());
       arena_ub.adj().array() += (is_not_inf_ub).select(ret.adj().array(), 0.0);
     });
     return ret_type(ret);
@@ -321,13 +324,17 @@ inline auto ub_constrain(const T& x, const U& ub, return_type_t<T, U>& lp) {
     auto ub_val = to_ref(value_of(ub));
     auto is_not_inf_ub = to_arena((ub_val.array() != INFTY));
     auto neg_exp_x = to_arena(-arena_x.val().array().exp());
-    arena_t<ret_type> ret = (is_not_inf_ub).select(ub_val.array() + neg_exp_x, arena_x.val().array());
+    arena_t<ret_type> ret
+        = (is_not_inf_ub)
+              .select(ub_val.array() + neg_exp_x, arena_x.val().array());
     lp += (is_not_inf_ub).select(arena_x.val().array(), 0).sum();
-    reverse_pass_callback([arena_x, neg_exp_x, ret, lp, is_not_inf_ub]() mutable {
-      arena_x.adj().array()
-          += (is_not_inf_ub)
-                 .select(ret.adj().array() * neg_exp_x + lp.adj(), ret.adj().array());
-    });
+    reverse_pass_callback(
+        [arena_x, neg_exp_x, ret, lp, is_not_inf_ub]() mutable {
+          arena_x.adj().array()
+              += (is_not_inf_ub)
+                     .select(ret.adj().array() * neg_exp_x + lp.adj(),
+                             ret.adj().array());
+        });
     return ret_type(ret);
   } else {
     arena_t<promote_scalar_t<var, U>> arena_ub = to_arena(ub);
