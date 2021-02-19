@@ -440,16 +440,18 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
    */
   matrix_cl<T>& operator=(const matrix_cl<T>& a) {
     this->view_ = a.view();
-    this->rows_ = a.rows();
-    this->cols_ = a.cols();
     if (a.size() == 0) {
+      this->rows_ = a.rows();
+      this->cols_ = a.cols();
       return *this;
     }
     this->wait_for_read_write_events();
     if (size() != a.size()) {
       buffer_cl_ = cl::Buffer(opencl_context.context(), CL_MEM_READ_WRITE,
-                              sizeof(T) * this->size());
+                              sizeof(T) * a.size());
     }
+    this->rows_ = a.rows();
+    this->cols_ = a.cols();
     initialize_buffer_cl(a);
     return *this;
   }
