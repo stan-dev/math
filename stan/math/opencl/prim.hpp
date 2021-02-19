@@ -83,6 +83,7 @@
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 
+#include <stan/math/opencl/scalar_type.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/cholesky_decompose.hpp>
 #include <stan/math/opencl/is_constant.hpp>
@@ -92,7 +93,6 @@
 #include <stan/math/opencl/pinned_matrix.hpp>
 #include <stan/math/opencl/plain_type.hpp>
 #include <stan/math/opencl/ref_type_for_opencl.hpp>
-#include <stan/math/opencl/scalar_type.hpp>
 #include <stan/math/opencl/to_ref_for_opencl.hpp>
 #include <stan/math/opencl/triangular_transpose.hpp>
 #include <stan/math/opencl/value_type.hpp>

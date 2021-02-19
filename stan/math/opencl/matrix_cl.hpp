@@ -448,7 +448,7 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
     this->wait_for_read_write_events();
     if (size() != a.size()) {
       buffer_cl_ = cl::Buffer(opencl_context.context(), CL_MEM_READ_WRITE,
-                                sizeof(T) * this->size());
+                              sizeof(T) * this->size());
     }
     initialize_buffer_cl(a);
     return *this;
@@ -592,8 +592,8 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
     try {
       cl::Event cstr_event;
       opencl_context.queue().enqueueCopyBuffer(A.buffer(), this->buffer(), 0, 0,
-                              A.size() * sizeof(T), &A.write_events(),
-                              &cstr_event);
+                                               A.size() * sizeof(T),
+                                               &A.write_events(), &cstr_event);
       this->add_write_event(cstr_event);
       A.add_read_event(cstr_event);
     } catch (const cl::Error& e) {

@@ -214,7 +214,7 @@ void test_hessian_fvar(const ad_tolerances& tols, const F& f,
   double fx_fd;
   Eigen::VectorXd grad_fd;
   Eigen::MatrixXd H_fd;
-  stan::math::finite_diff_hessian_auto(f, x, fx_fd, grad_fd, H_fd);
+  stan::math::internal::finite_diff_hessian_auto(f, x, fx_fd, grad_fd, H_fd);
   expect_near_rel("hessian_fvar() grad", grad_fd, grad_ad,
                   tols.hessian_fvar_grad_);
   expect_near_rel("hessian_fvar() Hessian", H_fd, H_ad,
@@ -258,7 +258,7 @@ void test_hessian(const ad_tolerances& tols, const F& f,
   double fx_fd;
   Eigen::VectorXd grad_fd;
   Eigen::MatrixXd H_fd;
-  stan::math::finite_diff_hessian_auto(f, x, fx_fd, grad_fd, H_fd);
+  stan::math::internal::finite_diff_hessian_auto(f, x, fx_fd, grad_fd, H_fd);
   expect_near_rel("hessian() grad", grad_fd, grad_ad, tols.hessian_grad_);
   expect_near_rel("hessian() Hessian", H_fd, H_ad, tols.hessian_hessian_);
 }
