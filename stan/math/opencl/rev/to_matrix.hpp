@@ -4,7 +4,7 @@
 
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
-#include <stan/math/rev/core/callback_vari.hpp>
+#include <stan/math/rev/core.hpp>
 
 namespace stan {
 namespace math {

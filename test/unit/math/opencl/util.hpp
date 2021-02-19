@@ -25,16 +25,16 @@ auto opencl_argument(const T& x) {
   return to_matrix_cl(x);
 }
 
-template <typename T, require_t<std::is_integral<T>>* = nullptr>
+template <typename T, require_t<std::is_integral<scalar_type_t<T>>>* = nullptr>
 T var_argument(const T& x) {
   return x;
 }
-template <typename T, require_not_t<std::is_integral<T>>* = nullptr,
+template <typename T, require_not_t<std::is_integral<scalar_type_t<T>>>* = nullptr,
           require_not_std_vector_t<T>* = nullptr>
 auto var_argument(const T& x) {
   return to_var(x);
 }
-template <typename T, require_not_t<std::is_integral<T>>* = nullptr,
+template <typename T, require_not_t<std::is_integral<scalar_type_t<T>>>* = nullptr,
           require_std_vector_t<T>* = nullptr>
 auto var_argument(const T& x) {
   std::vector<decltype(var_argument(x[0]))> res;
