@@ -73,6 +73,10 @@ TEST(laplace, likelihood_differentiation) {
   finite_third_diff(0) = (hessian_u0 - hessian_l0)(0) / (2 * epsilon);
   finite_third_diff(1) = (hessian_u1 - hessian_l1)(1) / (2 * epsilon);
 
+  std::cout << "gradient: " << gradient << std::endl;
+  std::cout << "hessian: " << hessian << std::endl;
+  std::cout << "third_diff: " << third_diff << std::endl;
+
 
   EXPECT_FLOAT_EQ(finite_gradient(0), gradient(0));
   EXPECT_FLOAT_EQ(finite_gradient(1), gradient(1));
@@ -91,6 +95,8 @@ TEST(laplace, likelihood_differentiation) {
     (diff_functor.log_likelihood(theta, eta_u)
       - diff_functor.log_likelihood(theta, eta_l)) / (2 * epsilon);
 
+  std::cout << "diff_eta: " << diff_eta.transpose() << std::endl;
+
   EXPECT_FLOAT_EQ(finite_gradient_eta,  diff_eta(0));
 
   Eigen::MatrixXd diff_theta_eta = diff_functor.diff_theta_eta(theta, eta);
@@ -105,15 +111,19 @@ TEST(laplace, likelihood_differentiation) {
   Eigen::VectorXd finite_gradient_theta_eta
     = (gradient_theta_u - gradient_theta_l) / (2 * epsilon);
 
+  std::cout << "diff_theta_eta: " << diff_theta_eta.transpose() << std::endl;
+
   EXPECT_FLOAT_EQ(finite_gradient_theta_eta(0), diff_theta_eta(0, 0));
   EXPECT_FLOAT_EQ(finite_gradient_theta_eta(1), diff_theta_eta(1, 0));
 
-  Eigen::VectorXd W_root = (-hessian).cwiseSqrt();
+  // Eigen::VectorXd W_root = (-hessian).cwiseSqrt();
   Eigen::MatrixXd diff2_theta_eta
-    = diff_functor.diff2_theta_eta(theta, eta, W_root);
+    = diff_functor.diff2_theta_eta(theta, eta);
 
   Eigen::VectorXd finite_hessian_theta_eta
    = (hessian_theta_u - hessian_theta_l) / (2 * epsilon);
+
+  std::cout << "diff2_theta_eta: " << diff2_theta_eta.transpose() << std::endl;
 
   EXPECT_FLOAT_EQ(finite_hessian_theta_eta(0), diff2_theta_eta(0, 0));
   EXPECT_FLOAT_EQ(finite_hessian_theta_eta(1), diff2_theta_eta(1, 0));
