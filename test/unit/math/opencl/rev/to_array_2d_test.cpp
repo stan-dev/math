@@ -8,17 +8,17 @@ auto to_array_2d_functor = [](const auto& a) {
   return stan::math::to_matrix(stan::math::to_array_2d(a));
 };
 
-TEST(OpenCLToVector, prim_rev_values_small) {
+TEST(OpenCLToArray2D, prim_rev_values_small) {
   Eigen::MatrixXd a(3, 2);
   stan::math::test::compare_cpu_opencl_prim_rev(to_array_2d_functor, a);
 }
 
-TEST(OpenCLToVector, prim_rev_size_0) {
+TEST(OpenCLToArray2D, prim_rev_size_0) {
   Eigen::MatrixXd a(0, 0);
   stan::math::test::compare_cpu_opencl_prim_rev(to_array_2d_functor, a);
 }
 
-TEST(OpenCLToVector, prim_rev_values_large) {
+TEST(OpenCLToArray2D, prim_rev_values_large) {
   int N = 71;
   int M = 87;
   Eigen::MatrixXd a = Eigen::MatrixXd::Random(N, M);
