@@ -39,7 +39,7 @@ TEST(mathMixMatFun, lub_constrain_scalar) {
   stan::test::expect_ad(f3, x2, lb, lb);
 }
 
-TEST(mathMixMatFun, lub_mat_constrain) {
+TEST(mathMixMatFun, lub_mat_constrain_1) {
   auto f1 = [](const auto& x, const auto& lb, const auto& ub) {
     return stan::math::lub_constrain(x, lb, ub);
   };
