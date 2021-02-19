@@ -265,6 +265,86 @@ TEST(StanMathOde_ode_rk45, scalar_std_vector_args) {
   EXPECT_NEAR(a1[0].adj(), -0.50107310888, 1e-5);
 }
 
+TEST(StanMathOde_ode_rk45, closure_var) {
+  using stan::math::var;
+
+  Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
+  double t0 = 0.0;
+  std::vector<double> ts = {1.1};
+
+  var a0 = 0.75;
+  std::vector<var> a1 = {0.75};
+
+  auto f = stan::math::from_lambda(
+      [&](const auto& a, const auto& t, const auto& y, const auto& b,
+          std::ostream* msgs) {
+        return stan::test::Cos2Arg()(t, y, msgs, a, b);
+      },
+      a0);
+
+  var output = stan::math::ode_rk45(f, y0, t0, ts, nullptr, a1)[0][0];
+
+  output.grad();
+
+  EXPECT_NEAR(output.val(), 0.66457668563, 1e-5);
+  EXPECT_NEAR(a0.adj(), -0.50107310888, 1e-5);
+  EXPECT_NEAR(a1[0].adj(), -0.50107310888, 1e-5);
+}
+
+TEST(StanMathOde_ode_rk45, closure_double) {
+  using stan::math::var;
+
+  Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
+  double t0 = 0.0;
+  std::vector<double> ts = {1.1};
+
+  var a0 = 0.75;
+  std::vector<double> a1 = {0.75};
+
+  auto f = stan::math::from_lambda(
+      [](const auto& a, const auto& t, const auto& y, const auto& b,
+         std::ostream* msgs) {
+        return stan::test::Cos2Arg()(t, y, msgs, a, b);
+      },
+      a0);
+
+  var output = stan::math::ode_rk45(f, y0, t0, ts, nullptr, a1)[0][0];
+
+  output.grad();
+
+  EXPECT_NEAR(output.val(), 0.66457668563, 1e-5);
+  EXPECT_NEAR(a0.adj(), -0.50107310888, 1e-5);
+}
+
+TEST(StanMathOde_ode_rk45, higher_order) {
+  using stan::math::var;
+
+  Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
+  double t0 = 0.0;
+  std::vector<double> ts = {1.1};
+
+  var a0 = 0.75;
+  std::vector<double> a1 = {0.75};
+
+  auto f = stan::math::from_lambda(
+      [](const auto& a, const auto& t, const auto& y, const auto& b,
+         std::ostream* msgs) {
+        return stan::test::Cos2Arg()(t, y, msgs, a, b);
+      },
+      a0);
+
+  auto wrapper
+      = [](const auto& t, const auto& y, std::ostream* msgs, const auto& fa,
+           const auto& b) { return fa(msgs, t, y, b); };
+
+  var output = stan::math::ode_rk45(wrapper, y0, t0, ts, nullptr, f, a1)[0][0];
+
+  output.grad();
+
+  EXPECT_NEAR(output.val(), 0.66457668563, 1e-5);
+  EXPECT_NEAR(a0.adj(), -0.50107310888, 1e-5);
+}
+
 TEST(StanMathOde_ode_rk45, std_vector_std_vector_args) {
   using stan::math::var;
 

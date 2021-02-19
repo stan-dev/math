@@ -190,8 +190,8 @@ struct return_type {
 
 template <typename T, typename... Ts>
 struct return_type<T, Ts...> {
-  using type
-      = scalar_lub_t<scalar_type_t<T>, typename return_type<Ts...>::type>;
+  using type = scalar_lub_t<scalar_type_t<T>,
+                            typename return_type<scalar_type_t<Ts>...>::type>;
 };
 
 /**

@@ -69,6 +69,19 @@ inline auto value_of(EigMat&& M) {
       std::forward<EigMat>(M));
 }
 
+/**
+ * Closures that capture non-arithmetic types have value_of__() method.
+ *
+ * @tparam F Input element type
+ * @param[in] f Input closure
+ * @return closure
+ **/
+template <typename F, require_stan_closure_t<F>* = nullptr,
+          require_not_st_arithmetic<F>* = nullptr>
+inline auto value_of(const F& f) {
+  return f.value_of__();
+}
+
 }  // namespace math
 }  // namespace stan
 

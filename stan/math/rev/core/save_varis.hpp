@@ -29,6 +29,10 @@ template <typename EigT, require_eigen_vt<is_var, EigT>* = nullptr,
           typename... Pargs>
 inline vari** save_varis(vari** dest, EigT&& x, Pargs&&... args);
 
+template <typename F, require_stan_closure_t<F>* = nullptr,
+          require_not_st_arithmetic<F>* = nullptr, typename... Pargs>
+inline vari** save_varis(vari** dest, F& f, Pargs&&... args);
+
 template <typename Arith, require_st_arithmetic<Arith>* = nullptr,
           typename... Pargs>
 inline vari** save_varis(vari** dest, Arith&& x, Pargs&&... args);
@@ -116,6 +120,25 @@ inline vari** save_varis(vari** dest, EigT&& x, Pargs&&... args) {
     dest[i] = x.coeff(i).vi_;
   }
   return save_varis(dest + x.size(), std::forward<Pargs>(args)...);
+}
+
+/**
+ * Save the vari pointers in f into the memory pointed to by dest,
+ *   increment the dest storage pointer,
+ *   recursively call save_varis on the rest of the arguments,
+ *   and return the final value of the dest storage pointer.
+ *
+ * @tparam F A closure type with var value type
+ * @tparam Pargs Types of remaining arguments
+ * @param[in, out] dest Pointer to where vari pointers are saved
+ * @param[in] f A closure capturing vars
+ * @param[in] args Additional arguments to have their varis saved
+ * @return Final position of dest pointer
+ */
+template <typename F, require_stan_closure_t<F>*, require_not_st_arithmetic<F>*,
+          typename... Pargs>
+inline vari** save_varis(vari** dest, F& f, Pargs&&... args) {
+  return save_varis(f.save_varis__(dest), std::forward<Pargs>(args)...);
 }
 
 /**

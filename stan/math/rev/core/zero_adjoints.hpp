@@ -19,6 +19,10 @@ inline void zero_adjoints(var& x, Pargs&... args);
 template <int R, int C, typename... Pargs>
 inline void zero_adjoints(Eigen::Matrix<var, R, C>& x, Pargs&... args);
 
+template <typename F, typename... Pargs, require_stan_closure_t<F>* = nullptr,
+          require_not_st_arithmetic<F>* = nullptr>
+inline void zero_adjoints(F& f, Pargs&... args);
+
 template <typename T, typename... Pargs, require_st_autodiff<T>* = nullptr>
 inline void zero_adjoints(std::vector<T>& x, Pargs&... args);
 
@@ -72,6 +76,23 @@ template <int R, int C, typename... Pargs>
 inline void zero_adjoints(Eigen::Matrix<var, R, C>& x, Pargs&... args) {
   for (size_t i = 0; i < x.size(); ++i)
     x.coeffRef(i).vi_->set_zero_adjoint();
+  zero_adjoints(args...);
+}
+
+/**
+ * Zero the adjoints of the varis of every var in a closure.
+ * Recursively call zero_adjoints on the rest of the arguments.
+ *
+ * @tparam F type of current argument
+ * @tparam Pargs type of rest of arguments
+ *
+ * @param f current argument
+ * @param args rest of arguments to zero
+ */
+template <typename F, typename... Pargs, require_stan_closure_t<F>*,
+          require_not_st_arithmetic<F>*>
+inline void zero_adjoints(F& f, Pargs&... args) {
+  f.zero_adjoints__();
   zero_adjoints(args...);
 }
 

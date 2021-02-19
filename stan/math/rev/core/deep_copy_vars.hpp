@@ -81,6 +81,19 @@ inline auto deep_copy_vars(EigT&& arg) {
       .eval();
 }
 
+/**
+ * Copy the vars in f but reallocate new varis for them
+ *
+ * @tparam F A closure type
+ * @param f A closure of vars
+ * @return A new std::vector of vars
+ */
+template <typename F, require_stan_closure_t<F>* = nullptr,
+          require_not_arithmetic_t<scalar_type_t<F>>* = nullptr>
+inline auto deep_copy_vars(F&& f) {
+  return f.deep_copy_vars__();
+}
+
 }  // namespace math
 }  // namespace stan
 

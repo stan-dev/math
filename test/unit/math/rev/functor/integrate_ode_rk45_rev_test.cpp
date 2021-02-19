@@ -271,3 +271,67 @@ TEST(StanAgradRevOde_integrate_ode_rk45, t0_as_param_AD) {
                            1e-10, 1e6);
   test_ad();
 }
+
+TEST(StanAgradRevOde_integrate_ode_rk45, closure) {
+  using stan::math::integrate_ode_rk45;
+  using stan::math::to_var;
+  using stan::math::value_of;
+  using stan::math::var;
+  const double t0 = 0.0;
+  std::ostream* msgs = NULL;
+
+  stan::math::var a0 = 0.0;
+  auto ode = from_lambda(
+      [](const auto& a, const auto& t_in, const auto& y_in, const auto& theta,
+         const std::vector<double>& x, const std::vector<int>& x_int,
+         std::ostream* msgs) {
+        if (y_in.size() != 2)
+          throw std::domain_error(
+              "this function was called with inconsistent state");
+
+        std::vector<stan::return_type_t<decltype(y_in), decltype(theta)>> res;
+        res.push_back(y_in.at(1));
+        res.push_back(-y_in.at(0) - theta.at(0) * y_in.at(1));
+
+        return res;
+      },
+      a0);
+
+  std::vector<double> theta{0.15};
+  std::vector<double> y0{1.0, 0.0};
+  std::vector<double> ts = {5.0, 10.0};
+
+  std::vector<double> x;
+  std::vector<int> x_int;
+  std::vector<stan::math::var> y0v = to_var(y0);
+  std::vector<stan::math::var> thetav = to_var(theta);
+  stan::math::var t0v = to_var(t0);
+
+  std::vector<std::vector<stan::math::var>> res;
+  auto test_ad = [&res, &t0v, &a0, &theta, &x, &x_int, &msgs]() {
+    res[0][0].grad();
+    EXPECT_FLOAT_EQ(t0v.adj(), -0.66360742442816977871);
+    stan::math::set_zero_all_adjoints();
+    res[0][1].grad();
+    EXPECT_FLOAT_EQ(t0v.adj(), 0.23542843380353062344);
+    stan::math::set_zero_all_adjoints();
+    res[1][0].grad();
+    EXPECT_FLOAT_EQ(t0v.adj(), -0.2464078910913158893);
+    stan::math::set_zero_all_adjoints();
+    res[1][1].grad();
+    EXPECT_FLOAT_EQ(t0v.adj(), -0.38494826636037426937);
+    stan::math::set_zero_all_adjoints();
+  };
+  res = integrate_ode_rk45(ode, y0, t0v, ts, theta, x, x_int, nullptr, 1e-10,
+                           1e-10, 1e6);
+  test_ad();
+  res = integrate_ode_rk45(ode, y0v, t0v, ts, theta, x, x_int, nullptr, 1e-10,
+                           1e-10, 1e6);
+  test_ad();
+  res = integrate_ode_rk45(ode, y0, t0v, ts, thetav, x, x_int, nullptr, 1e-10,
+                           1e-10, 1e6);
+  test_ad();
+  res = integrate_ode_rk45(ode, y0v, t0v, ts, thetav, x, x_int, nullptr, 1e-10,
+                           1e-10, 1e6);
+  test_ad();
+}

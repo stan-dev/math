@@ -124,6 +124,13 @@ inline void elementwise_check(const F& is_good, const char* function,
     }();
   }
 }
+template <typename F, typename T, typename... Indexings,
+          require_stan_closure_t<T>* = nullptr>
+inline void elementwise_check(const F& is_good, const char* function,
+                              const char* name, const T& x, const char* must_be,
+                              const Indexings&... indexings) {
+  // XXX skip closures
+}
 /**
  * Check that the predicate holds for all elements of the value of `x`. This
  * overload works on Eigen types that support linear indexing.

@@ -29,6 +29,10 @@ inline size_t count_vars_impl(size_t count, EigT&& x, Pargs&&... args);
 template <typename... Pargs>
 inline size_t count_vars_impl(size_t count, const var& x, Pargs&&... args);
 
+template <typename F, require_stan_closure_t<F>* = nullptr,
+          require_not_st_arithmetic<F>* = nullptr, typename... Pargs>
+inline size_t count_vars_impl(size_t count, const F& f, Pargs&&... args);
+
 template <typename Arith, require_arithmetic_t<scalar_type_t<Arith>>* = nullptr,
           typename... Pargs>
 inline size_t count_vars_impl(size_t count, Arith& x, Pargs&&... args);
@@ -108,6 +112,26 @@ inline size_t count_vars_impl(size_t count, EigT&& x, Pargs&&... args) {
 template <typename... Pargs>
 inline size_t count_vars_impl(size_t count, const var& x, Pargs&&... args) {
   return count_vars_impl(count + 1, std::forward<Pargs>(args)...);
+}
+
+/**
+ * Count the number of vars in f (a closure capturing vars),
+ *  add it to the running total,
+ *  count the number of vars in the remaining arguments
+ *  and return the result.
+ *
+ * @tparam F A closure type
+ * @tparam Pargs Types of remaining arguments
+ * @param[in] count The current count of the number of vars
+ * @param[in] f A closure holding vars
+ * @param[in] args objects to be forwarded to recursive call of
+ * `count_vars_impl`
+ */
+template <typename F, require_stan_closure_t<F>*, require_not_st_arithmetic<F>*,
+          typename... Pargs>
+inline size_t count_vars_impl(size_t count, const F& f, Pargs&&... args) {
+  return count_vars_impl(count + f.count_vars__(),
+                         std::forward<Pargs>(args)...);
 }
 
 /**
