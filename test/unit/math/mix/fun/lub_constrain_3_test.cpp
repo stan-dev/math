@@ -1,9 +1,6 @@
 #include <test/unit/math/test_ad.hpp>
 
 TEST(mathMixMatFun, lub_mat_constrain_3) {
-  auto f1 = [](const auto& x, const auto& lb, const auto& ub) {
-    return stan::math::lub_constrain(x, lb, ub);
-  };
   auto f2 = [](const auto& x, const auto& lb, const auto& ub) {
     stan::return_type_t<decltype(x), decltype(lb), decltype(ub)> lp = 0;
     return stan::math::lub_constrain(x, lb, ub, lp);
@@ -27,6 +24,9 @@ TEST(mathMixMatFun, lub_mat_constrain_3) {
   double lbsb = 100.0;
   double ubsb = -100.0;
 
+  stan::test::expect_ad(f2, x1, lb, lb);
+  stan::test::expect_ad(f2, x1, lb, ubsb);
+  stan::test::expect_ad(f2, x1, lbsb, ub);
   stan::test::expect_ad(f2, x2, lb, lb);
   stan::test::expect_ad(f2, x2, lb, ubsb);
   stan::test::expect_ad(f2, x2, lbsb, ub);
