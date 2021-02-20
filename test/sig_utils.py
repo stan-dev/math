@@ -180,6 +180,7 @@ internal_signatures = [
     "ordered_constrain(vector) => vector",
     "ordered_constrain(vector, real) => vector",
     "ordered_free(vector) => vector",
+    "rabbit(array[] int, vector) => real",
     "simplex_constrain(vector) => vector",
     "simplex_constrain(vector, real) => vector",
     "simplex_free(vector) => vector",
@@ -464,7 +465,10 @@ class ArrayArgument(CppStatement):
         self.name = name
         self.number_nested_arrays = number_nested_arrays
         self.inner_type = inner_type
-        self.value = value
+        if inner_type == "int":
+            self.value = int(value)
+        else:
+            self.value = value
     
     def is_reverse_mode(self):
         return self.overload.startswith("Rev")
