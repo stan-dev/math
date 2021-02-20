@@ -25,7 +25,7 @@ TEST(prob_transform, lb_constrain) {
     EXPECT_FLOAT_EQ(exp(x) + lb, result);
     EXPECT_FLOAT_EQ(x, resulti);
     EXPECT_FLOAT_EQ(0.0, lp);
-    EXPECT_FLOAT_EQ(1.0, lp);
+    EXPECT_FLOAT_EQ(1.0, lpi);
   }
 }
 
@@ -36,11 +36,13 @@ TEST(prob_transform, lb_constrain_matrix) {
   lb << 2.0, stan::math::NEGATIVE_INFTY;
   double lbd = 2.0;
 
+  Eigen::VectorXd lb_bad(3);
+
   // matrix, real
   {
     Eigen::VectorXd result = stan::math::lb_constrain(x, lbd);
     for(size_t i = 0; i < result.size(); ++i) {
-      EXPECT_MATRIX_EQ(result(i), stan::math::lb_constrain(x(i), lbd));
+      EXPECT_FLOAT_EQ(result(i), stan::math::lb_constrain(x(i), lbd));
     }
     EXPECT_MATRIX_EQ(x, stan::math::lb_free(result, lbd));
   }
@@ -49,9 +51,10 @@ TEST(prob_transform, lb_constrain_matrix) {
   {
     Eigen::VectorXd result = stan::math::lb_constrain(x, lb);
     for(size_t i = 0; i < result.size(); ++i) {
-      EXPECT_MATRIX_EQ(result(i), stan::math::lb_constrain(x(i), lb(i)));
+      EXPECT_FLOAT_EQ(result(i), stan::math::lb_constrain(x(i), lb(i)));
     }
     EXPECT_MATRIX_EQ(x, stan::math::lb_free(result, lb));
+    EXPECT_THROW(stan::math::lb_constrain(x, lb_bad), std::invalid_argument);
   }
 
   // matrix, real
@@ -60,7 +63,7 @@ TEST(prob_transform, lb_constrain_matrix) {
     double lp1 = 0.0;
     Eigen::VectorXd result = stan::math::lb_constrain(x, lbd, lp0);
     for(size_t i = 0; i < result.size(); ++i) {
-      EXPECT_MATRIX_EQ(result(i), stan::math::lb_constrain(x(i), lbd, lp1));
+      EXPECT_FLOAT_EQ(result(i), stan::math::lb_constrain(x(i), lbd, lp1));
     }
     EXPECT_FLOAT_EQ(lp0, lp1);
   }
@@ -71,9 +74,10 @@ TEST(prob_transform, lb_constrain_matrix) {
     double lp1 = 0.0;
     Eigen::VectorXd result = stan::math::lb_constrain(x, lb, lp0);
     for(size_t i = 0; i < result.size(); ++i) {
-      EXPECT_MATRIX_EQ(result(i), stan::math::lb_constrain(x(i), lb(i), lp1));
+      EXPECT_FLOAT_EQ(result(i), stan::math::lb_constrain(x(i), lb(i), lp1));
     }
     EXPECT_FLOAT_EQ(lp0, lp1);
+    EXPECT_THROW(stan::math::lb_constrain(x, lb_bad, lp1), std::invalid_argument);
   }
 }
 
@@ -83,11 +87,16 @@ TEST(prob_transform, lb_constrain_std_vector) {
   Eigen::VectorXd lb(2);
   lb << 2.0, stan::math::NEGATIVE_INFTY;
   Eigen::VectorXd lb2(2);
-  lb << stan::math::NEGATIVE_INFTY << 1.0;
+  lb << stan::math::NEGATIVE_INFTY, 1.0;
   double lbd = 2.0;
+
+  Eigen::VectorXd lb_bad(3);
 
   std::vector<Eigen::VectorXd> x_vec = { x, 2 * x };
   std::vector<Eigen::VectorXd> lb_vec = { lb, lb2 };
+
+  std::vector<Eigen::VectorXd> lb_vec_bad1 = { lb, lb2, lb };
+  std::vector<Eigen::VectorXd> lb_vec_bad2 = { lb, lb_bad };
 
   // matrix[], real
   {
@@ -111,6 +120,7 @@ TEST(prob_transform, lb_constrain_std_vector) {
     for(size_t i = 0; i < result.size(); ++i) {
       EXPECT_MATRIX_EQ(x[i], free_x[i]);
     }
+    EXPECT_THROW(stan::math::lb_constrain(x_vec, lb_bad), std::invalid_argument);
   }
 
   // matrix[], matrix[]
@@ -123,6 +133,8 @@ TEST(prob_transform, lb_constrain_std_vector) {
     for(size_t i = 0; i < result.size(); ++i) {
       EXPECT_MATRIX_EQ(x[i], free_x[i]);
     }
+    EXPECT_THROW(stan::math::lb_constrain(x_vec, lb_vec_bad1), std::invalid_argument);
+    EXPECT_THROW(stan::math::lb_constrain(x_vec, lb_vec_bad2), std::invalid_argument);
   }
 
   // matrix[], real
@@ -145,6 +157,7 @@ TEST(prob_transform, lb_constrain_std_vector) {
       EXPECT_MATRIX_EQ(result[i], stan::math::lb_constrain(x_vec[i], lb, lp1));
     }
     EXPECT_FLOAT_EQ(lp0, lp1);
+    EXPECT_THROW(stan::math::lb_constrain(x_vec, lb_bad, lp1), std::invalid_argument);
   }
 
   // matrix[], matrix[]
@@ -156,21 +169,23 @@ TEST(prob_transform, lb_constrain_std_vector) {
       EXPECT_MATRIX_EQ(result[i], stan::math::lb_constrain(x_vec[i], lb_vec[i], lp1));
     }
     EXPECT_FLOAT_EQ(lp0, lp1);
+    EXPECT_THROW(stan::math::lb_constrain(x_vec, lb_vec_bad1, lp1), std::invalid_argument);
+    EXPECT_THROW(stan::math::lb_constrain(x_vec, lb_vec_bad2, lp1), std::invalid_argument);
   }
 }
 
 TEST(prob_transform, lb_free_exception) {
   double lbd = 2.0;
   Eigen::VectorXd lb(2);
-  lbd << 1.0, 2.0;
+  lb << 1.0, 2.0;
   Eigen::VectorXd lb2(2);
-  lbd2 << -1.0, 5.0;
+  lb2 << -1.0, 5.0;
   std::vector<Eigen::VectorXd> lb_vec = { lb, lb2 };
 
   double xd_bad = -5.0;
-  Eigen::Vector x_bad(2);
+  Eigen::VectorXd x_bad(2);
   x_bad << -10.0, -5.0;
-  Eigen::Vector x_bad2(2);
+  Eigen::VectorXd x_bad2(2);
   x_bad2 << -10.0, -5.0;
   std::vector<Eigen::VectorXd> x_bad_vec = { x_bad, x_bad2 };
 

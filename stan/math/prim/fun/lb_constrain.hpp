@@ -115,6 +115,7 @@ inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
 template <typename T, typename L, require_all_eigen_t<T, L>* = nullptr,
           require_all_not_st_var<T, L>* = nullptr>
 inline auto lb_constrain(T&& x, L&& lb) {
+  check_matching_dims("lb_constrain", "x", x, "lb", lb);
   return eval(x.binaryExpr(
       lb, [](auto&& x, auto&& lb) { return lb_constrain(x, lb); }));
 }
@@ -133,6 +134,7 @@ inline auto lb_constrain(T&& x, L&& lb) {
 template <typename T, typename L, require_all_eigen_t<T, L>* = nullptr,
           require_all_not_st_var<T, L>* = nullptr>
 inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
+  check_matching_dims("lb_constrain", "x", x, "lb", lb);
   return eval(x.binaryExpr(
       lb, [&lp](auto&& xx, auto&& lbb) { return lb_constrain(xx, lbb, lp); }));
 }
@@ -191,6 +193,7 @@ inline auto lb_constrain(const std::vector<T>& x, const L& lb,
  */
 template <typename T, typename L>
 inline auto lb_constrain(const std::vector<T>& x, const std::vector<L>& lb) {
+  check_matching_dims("lb_constrain", "x", x, "lb", lb);
   std::vector<plain_type_t<decltype(lb_constrain(x[0], lb[0]))>> ret(x.size());
   for (size_t i = 0; i < x.size(); ++i) {
     ret[i] = lb_constrain(x[i], lb[i]);
@@ -212,6 +215,7 @@ inline auto lb_constrain(const std::vector<T>& x, const std::vector<L>& lb) {
 template <typename T, typename L>
 inline auto lb_constrain(const std::vector<T>& x, const std::vector<L>& lb,
                          return_type_t<T, L>& lp) {
+  check_matching_dims("lb_constrain", "x", x, "lb", lb);
   std::vector<plain_type_t<decltype(lb_constrain(x[0], lb[0]))>> ret(x.size());
   for (size_t i = 0; i < x.size(); ++i) {
     ret[i] = lb_constrain(x[i], lb[i], lp);
