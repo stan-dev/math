@@ -115,6 +115,7 @@
 #include <stan/math/rev/fun/log_softmax.hpp>
 #include <stan/math/rev/fun/log_sum_exp.hpp>
 #include <stan/math/rev/fun/logit.hpp>
+#include <stan/math/rev/fun/lub_constrain.hpp>
 #include <stan/math/rev/fun/matrix_exp_multiply.hpp>
 #include <stan/math/rev/fun/matrix_power.hpp>
 #include <stan/math/rev/fun/mdivide_left.hpp>
