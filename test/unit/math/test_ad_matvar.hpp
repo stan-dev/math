@@ -429,8 +429,6 @@ void expect_ad_matvar_impl(const ad_tolerances& tols, const F& f,
 
   if(is_eigen<T_vm_ret>::value ||
      (is_std_vector<T_vm_ret>::value && is_eigen<value_type_t<T_vm_ret>>::value)) {
-    std::cout << type_name<decltype(std::get<0>(A_vm_tuple))>() << std::endl;
-    std::cout << type_name<decltype(std::get<1>(A_vm_tuple))>() << std::endl;
     FAIL() << "A function with varmat inputs should not return " << type_name<T_vm_ret>() << std::endl;
   }
 
