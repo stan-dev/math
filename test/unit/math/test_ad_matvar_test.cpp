@@ -316,6 +316,112 @@ TEST(test_unit_math_test_ad_matvar, one_arg_bad_grads_std_vector) {
       EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x), ""), "");
 }
 
+template <typename T1, typename T2>
+auto two_args_bad_vals_std_vector(const std::vector<T1>& x1, const std::vector<T2>& x2) {
+  std::vector<stan::plain_type_t<decltype(stan::math::add(std::declval<T1>(),
+							  std::declval<T2>()))>> array_sum;
+  for(size_t i = 0; i < x1.size(); ++i) {
+    array_sum.push_back(stan::math::add(x1[i], x2[i]));
+  }
+
+  return array_sum;
+}
+
+template <typename T1, typename T2>
+auto two_args_bad_vals_std_vector(const std::vector<T1>& x1,
+				  const std::vector<stan::math::var_value<T2>>& x2) {
+  using ret_type = std::vector<stan::math::var_value<T2>>;
+  stan::arena_t<std::vector<T1>> arena_x1(x1.size());
+  stan::arena_t<ret_type> arena_x2(x2.size());
+
+  stan::arena_t<ret_type> out(x1.size());
+  ret_type out_heap(out.size());
+  for (size_t i = 0; i < x1.size(); ++i) {
+    arena_x1[i] = x1[i];
+    arena_x2[i] = x2[i];
+    out[i] = x2[i].val() * 0.0;
+    out_heap[i] = out[i];
+  }
+
+  stan::math::reverse_pass_callback([arena_x1, arena_x2, out]() mutable {
+    for (size_t i = 0; i < arena_x1.size(); ++i) {
+      if(!stan::is_constant<T1>::value) {
+	stan::math::forward_as<stan::return_var_matrix_t<T2, T1, stan::math::var>>(arena_x1[i]).adj() += out[i].adj();
+      }
+      arena_x2[i].adj() += out[i].adj();
+    }
+  });
+
+  return out_heap;
+}
+
+TEST(test_unit_math_test_ad_matvar, two_args_bad_vals_std_vector) {
+  auto f = [](const auto& x1, const auto& x2) {
+    return two_args_bad_vals_std_vector(x1, x2);
+  };
+
+  std::vector<Eigen::VectorXd> x1 = {Eigen::VectorXd::Ones(2)};
+  std::vector<Eigen::VectorXd> x2 = {Eigen::VectorXd::Zero(2)};
+
+  EXPECT_NONFATAL_FAILURE(
+  EXPECT_NONFATAL_FAILURE(
+  stan::test::expect_ad_matvar(f, x1, x2);
+  , ""), "");
+}
+
+template <typename T1, typename T2>
+auto two_args_bad_grads_std_vector(const std::vector<T1>& x1, const std::vector<T2>& x2) {
+  std::vector<stan::plain_type_t<decltype(stan::math::add(std::declval<T1>(),
+							  std::declval<T2>()))>> array_sum;
+  for(size_t i = 0; i < x1.size(); ++i) {
+    array_sum.push_back(stan::math::add(x1[i], x2[i]));
+  }
+
+  return array_sum;
+}
+
+template <typename T1, typename T2>
+auto two_args_bad_grads_std_vector(const std::vector<T1>& x1,
+				  const std::vector<stan::math::var_value<T2>>& x2) {
+  using ret_type = std::vector<stan::math::var_value<T2>>;
+  stan::arena_t<std::vector<T1>> arena_x1(x1.size());
+  stan::arena_t<ret_type> arena_x2(x2.size());
+
+  stan::arena_t<ret_type> out(x1.size());
+  ret_type out_heap(out.size());
+  for (size_t i = 0; i < x1.size(); ++i) {
+    arena_x1[i] = x1[i];
+    arena_x2[i] = x2[i];
+    out[i] = stan::math::add(stan::math::value_of(x1[i]), x2[i].val());
+    out_heap[i] = out[i];
+  }
+
+  stan::math::reverse_pass_callback([arena_x1, arena_x2, out]() mutable {
+    for (size_t i = 0; i < arena_x1.size(); ++i) {
+      if(!stan::is_constant<T1>::value) {
+	stan::math::forward_as<stan::return_var_matrix_t<T2, T1, stan::math::var>>(arena_x1[i]).adj() += out[i].adj();
+      }
+      arena_x2[i].adj() += out[i].adj() * 0;
+    }
+  });
+
+  return out_heap;
+}
+
+TEST(test_unit_math_test_ad_matvar, two_args_bad_grads_std_vector) {
+  auto f = [](const auto& x1, const auto& x2) {
+    return two_args_bad_grads_std_vector(x1, x2);
+  };
+
+  std::vector<Eigen::VectorXd> x1 = {Eigen::VectorXd::Ones(2)};
+  std::vector<Eigen::VectorXd> x2 = {Eigen::VectorXd::Zero(2)};
+
+  EXPECT_NONFATAL_FAILURE(
+  EXPECT_NONFATAL_FAILURE(
+  stan::test::expect_ad_matvar(f, x1, x2);
+  , ""), "");
+}
+
 template <typename T>
 auto bad_return_type(const T& x) {
   return x;
@@ -362,20 +468,18 @@ auto bad_return_type_std_vector(
 }
 
 TEST(test_unit_math_test_ad_matvar, bad_return_type_std_vector) {
-  // The nonfatal failure comes because the gradients are not implemented
-  EXPECT_NONFATAL_FAILURE(EXPECT_FATAL_FAILURE(
-                              {
-                                auto f = [](const auto& x) {
-                                  return bad_return_type_std_vector(x);
-                                };
+  EXPECT_FATAL_FAILURE(
+		       {
+			 auto f = [](const auto& x) {
+			   return bad_return_type_std_vector(x);
+			 };
 
-                                std::vector<Eigen::VectorXd> x
-                                    = {Eigen::VectorXd::Ones(2)};
-
-                                stan::test::expect_ad_matvar(f, x);
-                              },
-                              ""),
-                          "");
+			 std::vector<Eigen::VectorXd> x
+			   = {Eigen::VectorXd::Ones(2)};
+			 
+			 stan::test::expect_ad_matvar(f, x);
+		       },
+		       "");
 }
 
 template <typename T>

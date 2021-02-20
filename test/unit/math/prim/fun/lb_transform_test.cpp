@@ -3,60 +3,183 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-TEST(prob_transform, lb) {
-  EXPECT_FLOAT_EQ(exp(-1.0) + 2.0, stan::math::lb_constrain(-1.0, 2.0));
-  EXPECT_FLOAT_EQ(7.9, stan::math::lb_constrain(
-                           7.9, -std::numeric_limits<double>::infinity()));
-}
-
-TEST(prob_transform, lb_vec) {
-  Eigen::VectorXd input(2);
-  input << -1.0, 1.1;
-  Eigen::VectorXd lbv(2);
-  lbv << 2.0, 3.0;
-  double lb = 2.0;
-
-  Eigen::VectorXd resv(2);
-  resv << exp(-1.0) + 2.0, exp(1.1) + 3.0;
-  Eigen::VectorXd res(2);
-  res << exp(-1.0) + 2.0, exp(1.1) + 2.0;
-
-  EXPECT_MATRIX_EQ(resv, stan::math::lb_constrain(input, lbv));
-  EXPECT_MATRIX_EQ(res, stan::math::lb_constrain(input, lb));
-
-  double lp = 0.0;
-  EXPECT_MATRIX_EQ(resv, stan::math::lb_constrain(input, lbv, lp));
-  EXPECT_EQ(input.sum(), lp);
-  lp = 0.0;
-  EXPECT_MATRIX_EQ(res, stan::math::lb_constrain(input, lb, lp));
-  EXPECT_EQ(input.sum(), lp);
-}
-
-TEST(prob_transform, lb_j) {
-  double lp = 15.0;
-  EXPECT_FLOAT_EQ(exp(-1.0) + 2.0, stan::math::lb_constrain(-1.0, 2.0, lp));
-  EXPECT_FLOAT_EQ(15.0 - 1.0, lp);
-
-  double lp2 = 8.6;
-  EXPECT_FLOAT_EQ(7.9, stan::math::lb_constrain(
-                           7.9, -std::numeric_limits<double>::infinity(), lp2));
-  EXPECT_FLOAT_EQ(8.6, lp2);
-}
-TEST(prob_transform, lb_f) {
-  EXPECT_FLOAT_EQ(log(3.0 - 2.0), stan::math::lb_free(3.0, 2.0));
-  EXPECT_FLOAT_EQ(
-      1.7, stan::math::lb_free(1.7, -std::numeric_limits<double>::infinity()));
-}
-
-TEST(prob_transform, lb_f_exception) {
-  double lb = 2.0;
-  EXPECT_THROW(stan::math::lb_free(lb - 0.01, lb), std::domain_error);
-}
-TEST(prob_transform, lb_rt) {
+TEST(prob_transform, lb_constrain) {
   double x = -1.0;
-  double xc = stan::math::lb_constrain(x, 2.0);
-  double xcf = stan::math::lb_free(xc, 2.0);
-  EXPECT_FLOAT_EQ(x, xcf);
-  double xcfc = stan::math::lb_constrain(xcf, 2.0);
-  EXPECT_FLOAT_EQ(xc, xcfc);
+  double lb = 2.0;
+  double lbi = stan::math::NEGATIVE_INFTY;
+
+  {
+    double result = stan::math::lb_constrain(x, lb);
+    double resulti = stan::math::lb_constrain(x, lbi);
+    EXPECT_FLOAT_EQ(exp(x) + lb, result);
+    EXPECT_FLOAT_EQ(x, resulti);
+    EXPECT_FLOAT_EQ(x, stan::math::lb_free(result, lb));
+    EXPECT_FLOAT_EQ(x, stan::math::lb_free(resulti, lbi));
+  }
+
+  {
+    double lp = 1.0;
+    double lpi = 1.0;
+    double result = stan::math::lb_constrain(x, lb, lp);
+    double resulti = stan::math::lb_constrain(x, lbi, lpi);
+    EXPECT_FLOAT_EQ(exp(x) + lb, result);
+    EXPECT_FLOAT_EQ(x, resulti);
+    EXPECT_FLOAT_EQ(0.0, lp);
+    EXPECT_FLOAT_EQ(1.0, lp);
+  }
+}
+
+TEST(prob_transform, lb_constrain_matrix) {
+  Eigen::VectorXd x(2);
+  x << -1.0, 1.1;
+  Eigen::VectorXd lb(2);
+  lb << 2.0, stan::math::NEGATIVE_INFTY;
+  double lbd = 2.0;
+
+  // matrix, real
+  {
+    Eigen::VectorXd result = stan::math::lb_constrain(x, lbd);
+    for(size_t i = 0; i < result.size(); ++i) {
+      EXPECT_MATRIX_EQ(result(i), stan::math::lb_constrain(x(i), lbd));
+    }
+    EXPECT_MATRIX_EQ(x, stan::math::lb_free(result, lbd));
+  }
+
+  // matrix, matrix
+  {
+    Eigen::VectorXd result = stan::math::lb_constrain(x, lb);
+    for(size_t i = 0; i < result.size(); ++i) {
+      EXPECT_MATRIX_EQ(result(i), stan::math::lb_constrain(x(i), lb(i)));
+    }
+    EXPECT_MATRIX_EQ(x, stan::math::lb_free(result, lb));
+  }
+
+  // matrix, real
+  {
+    double lp0 = 0.0;
+    double lp1 = 0.0;
+    Eigen::VectorXd result = stan::math::lb_constrain(x, lbd, lp0);
+    for(size_t i = 0; i < result.size(); ++i) {
+      EXPECT_MATRIX_EQ(result(i), stan::math::lb_constrain(x(i), lbd, lp1));
+    }
+    EXPECT_FLOAT_EQ(lp0, lp1);
+  }
+
+  // matrix, matrix
+  {
+    double lp0 = 0.0;
+    double lp1 = 0.0;
+    Eigen::VectorXd result = stan::math::lb_constrain(x, lb, lp0);
+    for(size_t i = 0; i < result.size(); ++i) {
+      EXPECT_MATRIX_EQ(result(i), stan::math::lb_constrain(x(i), lb(i), lp1));
+    }
+    EXPECT_FLOAT_EQ(lp0, lp1);
+  }
+}
+
+TEST(prob_transform, lb_constrain_std_vector) {
+  Eigen::VectorXd x(2);
+  x << -1.0, 1.1;
+  Eigen::VectorXd lb(2);
+  lb << 2.0, stan::math::NEGATIVE_INFTY;
+  Eigen::VectorXd lb2(2);
+  lb << stan::math::NEGATIVE_INFTY << 1.0;
+  double lbd = 2.0;
+
+  std::vector<Eigen::VectorXd> x_vec = { x, 2 * x };
+  std::vector<Eigen::VectorXd> lb_vec = { lb, lb2 };
+
+  // matrix[], real
+  {
+    std::vector<Eigen::VectorXd> result = stan::math::lb_constrain(x_vec, lbd);
+    for(size_t i = 0; i < result.size(); ++i) {
+      EXPECT_MATRIX_EQ(result[i], stan::math::lb_constrain(x_vec[i], lbd));
+    }
+    auto free_x = stan::math::lb_free(result, lbd);
+    for(size_t i = 0; i < result.size(); ++i) {
+      EXPECT_MATRIX_EQ(x[i], free_x[i]);
+    }
+  }
+
+  // matrix[], matrix
+  {
+    std::vector<Eigen::VectorXd> result = stan::math::lb_constrain(x_vec, lb);
+    for(size_t i = 0; i < result.size(); ++i) {
+      EXPECT_MATRIX_EQ(result[i], stan::math::lb_constrain(x_vec[i], lb));
+    }
+    auto free_x = stan::math::lb_free(result, lb);
+    for(size_t i = 0; i < result.size(); ++i) {
+      EXPECT_MATRIX_EQ(x[i], free_x[i]);
+    }
+  }
+
+  // matrix[], matrix[]
+  {
+    std::vector<Eigen::VectorXd> result = stan::math::lb_constrain(x_vec, lb_vec);
+    for(size_t i = 0; i < result.size(); ++i) {
+      EXPECT_MATRIX_EQ(result[i], stan::math::lb_constrain(x_vec[i], lb_vec[i]));
+    }
+    auto free_x = stan::math::lb_free(result, lb_vec);
+    for(size_t i = 0; i < result.size(); ++i) {
+      EXPECT_MATRIX_EQ(x[i], free_x[i]);
+    }
+  }
+
+  // matrix[], real
+  {
+    double lp0 = 0.0;
+    double lp1 = 0.0;
+    std::vector<Eigen::VectorXd> result = stan::math::lb_constrain(x_vec, lbd, lp0);
+    for(size_t i = 0; i < result.size(); ++i) {
+      EXPECT_MATRIX_EQ(result[i], stan::math::lb_constrain(x_vec[i], lbd, lp1));
+    }
+    EXPECT_FLOAT_EQ(lp0, lp1);
+  }
+
+  // matrix[], matrix
+  {
+    double lp0 = 0.0;
+    double lp1 = 0.0;
+    std::vector<Eigen::VectorXd> result = stan::math::lb_constrain(x_vec, lb, lp0);
+    for(size_t i = 0; i < result.size(); ++i) {
+      EXPECT_MATRIX_EQ(result[i], stan::math::lb_constrain(x_vec[i], lb, lp1));
+    }
+    EXPECT_FLOAT_EQ(lp0, lp1);
+  }
+
+  // matrix[], matrix[]
+  {
+    double lp0 = 0.0;
+    double lp1 = 0.0;
+    std::vector<Eigen::VectorXd> result = stan::math::lb_constrain(x_vec, lb_vec, lp0);
+    for(size_t i = 0; i < result.size(); ++i) {
+      EXPECT_MATRIX_EQ(result[i], stan::math::lb_constrain(x_vec[i], lb_vec[i], lp1));
+    }
+    EXPECT_FLOAT_EQ(lp0, lp1);
+  }
+}
+
+TEST(prob_transform, lb_free_exception) {
+  double lbd = 2.0;
+  Eigen::VectorXd lb(2);
+  lbd << 1.0, 2.0;
+  Eigen::VectorXd lb2(2);
+  lbd2 << -1.0, 5.0;
+  std::vector<Eigen::VectorXd> lb_vec = { lb, lb2 };
+
+  double xd_bad = -5.0;
+  Eigen::Vector x_bad(2);
+  x_bad << -10.0, -5.0;
+  Eigen::Vector x_bad2(2);
+  x_bad2 << -10.0, -5.0;
+  std::vector<Eigen::VectorXd> x_bad_vec = { x_bad, x_bad2 };
+
+  EXPECT_THROW(stan::math::lb_free(xd_bad, lbd), std::domain_error);
+
+  EXPECT_THROW(stan::math::lb_free(x_bad, lbd), std::domain_error);
+  EXPECT_THROW(stan::math::lb_free(x_bad, lb), std::domain_error);
+
+  EXPECT_THROW(stan::math::lb_free(x_bad_vec, lbd), std::domain_error);
+  EXPECT_THROW(stan::math::lb_free(x_bad_vec, lb), std::domain_error);
+  EXPECT_THROW(stan::math::lb_free(x_bad_vec, lb_vec), std::domain_error);
 }
