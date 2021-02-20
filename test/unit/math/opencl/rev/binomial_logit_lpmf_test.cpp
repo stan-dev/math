@@ -71,6 +71,10 @@ TEST(ProbDistributionsBinomialLogit, opencl_matches_cpu_small) {
                                                 m, alpha);
   stan::math::test::compare_cpu_opencl_prim_rev(
       binomial_logit_lpmf_functor_propto, n, m, alpha);
+  stan::math::test::compare_cpu_opencl_prim_rev(binomial_logit_lpmf_functor, n,
+                                                m, alpha.transpose().eval());
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      binomial_logit_lpmf_functor_propto, n, m, alpha.transpose().eval());
 }
 
 TEST(ProbDistributionsBinomialLogit, opencl_broadcast_n) {
@@ -85,6 +89,10 @@ TEST(ProbDistributionsBinomialLogit, opencl_broadcast_n) {
       binomial_logit_lpmf_functor, n, m, alpha);
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       binomial_logit_lpmf_functor_propto, n, m, alpha);
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
+      binomial_logit_lpmf_functor, n, m, alpha.transpose().eval());
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
+      binomial_logit_lpmf_functor_propto, n, m, alpha.transpose().eval());
 }
 
 TEST(ProbDistributionsBinomialLogit, opencl_broadcast_N) {
@@ -99,6 +107,10 @@ TEST(ProbDistributionsBinomialLogit, opencl_broadcast_N) {
       binomial_logit_lpmf_functor, n, m, alpha);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       binomial_logit_lpmf_functor_propto, n, m, alpha);
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
+      binomial_logit_lpmf_functor, n, m, alpha.transpose().eval());
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
+      binomial_logit_lpmf_functor_propto, n, m, alpha.transpose().eval());
 }
 
 TEST(ProbDistributionsBinomialLogit, opencl_broadcast_alpha) {
@@ -131,6 +143,10 @@ TEST(ProbDistributionsBinomialLogit, opencl_matches_cpu_big) {
                                                 m, alpha);
   stan::math::test::compare_cpu_opencl_prim_rev(
       binomial_logit_lpmf_functor_propto, n, m, alpha);
+  stan::math::test::compare_cpu_opencl_prim_rev(binomial_logit_lpmf_functor, n,
+                                                m, alpha.transpose().eval());
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      binomial_logit_lpmf_functor_propto, n, m, alpha.transpose().eval());
 }
 
 TEST(ProbDistributionsBinomialLogit, opencl_n_N_scalar) {
