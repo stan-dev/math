@@ -27,14 +27,14 @@ TEST(mathMixMatFun, lub_mat_constrain_2) {
   double lbsb = 100.0;
   double ubsb = -100.0;
 
-  stan::test::expect_ad(f2, x2, lb, lb);
-  stan::test::expect_ad(f2, x2, lb, ubsb);
-  stan::test::expect_ad(f2, x2, lbsb, ub);
+  stan::test::expect_ad_matvar(f1, x1, lb, lb);
+  stan::test::expect_ad_matvar(f1, x1, lb, ubsb);
+  stan::test::expect_ad_matvar(f1, x1, lbsb, ub);
+  stan::test::expect_ad_matvar(f1, x2, lb, lb);
+  stan::test::expect_ad_matvar(f1, x2, lb, ubsb);
+  stan::test::expect_ad_matvar(f1, x2, lbsb, ub);
 
-  stan::test::expect_ad(f3, x1, lb, lb);
-  stan::test::expect_ad(f3, x1, lb, ubsb);
-  stan::test::expect_ad(f3, x1, lbsb, ub);
-  stan::test::expect_ad(f3, x2, lb, lb);
-  stan::test::expect_ad(f3, x2, lb, ubsb);
-  stan::test::expect_ad(f3, x2, lbsb, ub);
+  stan::test::expect_ad_matvar(f2, x1, lb, lb);
+  stan::test::expect_ad_matvar(f2, x1, lb, ubsb);
+  stan::test::expect_ad_matvar(f2, x1, lbsb, ub);
 }
