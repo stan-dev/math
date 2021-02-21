@@ -78,7 +78,7 @@ TEST(mathMixMatFun, lb_mat_constrain) {
   Eigen::MatrixXd lbm(2, 3);
   lbm << 7.0, 5.0, 6.0, 100.0, 0.0, 0.0005;
   Eigen::MatrixXd lbm_bad(2, 2);
-  lbm << 7.0, 5.0, 6.0, 100.0;
+  lbm_bad << 7.0, 5.0, 6.0, 100.0;
   lb_constrain_test::expect(A, lbm);
   lb_constrain_test::expect(A, lbm_bad);
   double lbd = 6.0;
@@ -120,8 +120,8 @@ TEST(mathMixMatFun, lb_stdvec_mat_mat_constrain) {
   A_inner << 5.0, 2.0, 4.0, -2.0, 0.0, 0.005;
   Eigen::MatrixXd lbm_inner(2, 3);
   lbm_inner << 7.0, 5.0, 6.0, 100.0, 0.0, 0.0005;
-  Eigen::MatrixXd lbm_inner_bad(2);
-  lbm_inner << 7.0, 5.0, 6.0, 100.0;
+  Eigen::MatrixXd lbm_inner_bad(2, 1);
+  lbm_inner_bad << 7.0, 5.0;
   Eigen::MatrixXd A_inner2 = 2.0 * A_inner;
   std::vector<Eigen::MatrixXd> A;
   A.push_back(A_inner);
