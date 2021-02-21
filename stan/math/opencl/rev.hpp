@@ -5,6 +5,7 @@
 #include <stan/math/opencl/prim.hpp>
 #include <stan/math/opencl/rev/append_col.hpp>
 #include <stan/math/opencl/rev/append_row.hpp>
+#include <stan/math/opencl/rev/as_column_vector_or_scalar.hpp>
 #include <stan/math/opencl/rev/acos.hpp>
 #include <stan/math/opencl/rev/acosh.hpp>
 #include <stan/math/opencl/rev/add.hpp>
