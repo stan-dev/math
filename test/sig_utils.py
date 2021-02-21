@@ -334,6 +334,9 @@ class CppStatement:
     
     def is_varmat(self):
         return False
+    
+    def is_expression(self):
+        return False
 
 class IntArgument(CppStatement):
     def __init__(self, name, value = None):
@@ -518,9 +521,12 @@ class ExpressionArgument(CppStatement):
         self.arg = arg
     
     def is_reverse_mode(self):
-        return self.overload.startswith("Rev")
+        return self.arg.is_reverse_mode()
 
     def is_matrix_like(self):
+        return True
+    
+    def is_expression(self):
         return True
 
     def cpp(self):
@@ -565,26 +571,6 @@ class FunctionGenerator:
     def returns_int(self):
         return "int" in self.return_type
 
-    def overloads(self, overloads = None):
-        if overloads is None:
-            overloads = ["Prim", "Rev", "RevSOA"]
-
-        overload_opts = []
-        for n, stan_arg in enumerate(self.stan_args):
-            is_non_differentiable_arg = (
-                self.function_name in non_differentiable_args
-                and n in non_differentiable_args[self.function_name]
-            )
-
-            number_nested_arrays, inner_type = parse_array(stan_arg)
-
-            if "int" == inner_type or is_non_differentiable_arg:
-                overload_opts.append(["Prim"])
-            else:
-                overload_opts.append(overloads)
-        
-        return itertools.product(*overload_opts)
-
     def add(self, statement):
         if not isinstance(statement, CppStatement):
             raise Exception("Argument to FunctionGenerator.add must be an instance of an object that inherits from CppStatement")
@@ -601,6 +587,8 @@ class FunctionGenerator:
 
             # Check if argument is differentiable
             try:
+                if inner_type == "int":
+                    overload = "Prim"
                 if n in non_differentiable_args[self.function_name]:
                     overload = "Prim"
             except KeyError:

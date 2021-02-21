@@ -143,9 +143,9 @@ def main(functions=(), j=1):
 
             if fg.is_rng() and not overload == "Prim":
                 function_args.append("rng")
-            if function_name in no_fwd_overload and overload == "Fwd":
+            if fg.function_name in no_fwd_overload and overload == "Fwd":
                 continue
-            if function_name in no_rev_overload and overload == "Rev":
+            if fg.function_name in no_rev_overload and overload == "Rev":
                 continue
 
             arg_list_base = fg.build_arguments(len(fg.stan_args) * [overload], 2)
@@ -169,13 +169,19 @@ def main(functions=(), j=1):
 
             if is_reverse_mode:
                 # Check that adjoints with and without expressions are the same
-                adjoint_base_expression_copies = [fg.add(FunctionCallAssign("stan::test::adjoints_of", f"{arg.name}_adjoints_expr", arg)) for arg in arg_list_base]
+                adjoints_from_expression = []
+                for arg in arg_list_base:
+                    if arg.is_reverse_mode():
+                        adjoints_from_expression.append(fg.add(FunctionCallAssign("stan::test::adjoints_of", f"{arg.name}_adjoints_expr", arg)))
                 summed_result_base = fg.add(FunctionCallAssign("stan::test::recursive_sum", "summed_result_base", result_base))
                 fg.add(FunctionCall("stan::math::set_zero_all_adjoints"))
                 fg.add(FunctionCall("stan::test::grad", summed_result_base))
-                adjoint_base_copies = [fg.add(FunctionCallAssign("stan::test::adjoints_of", f"{arg.name}_adjoints", arg)) for arg in arg_list_base]
-                for adjoint, adjoint_base in zip(adjoint_base_expression_copies, adjoint_base_copies):
-                    fg.add(FunctionCall("EXPECT_STAN_EQ", adjoint, adjoint_base))
+                adjoints_from_non_expression = []
+                for arg in arg_list_base:
+                    if arg.is_reverse_mode():
+                        adjoints_from_non_expression.append(fg.add(FunctionCallAssign("stan::test::adjoints_of", f"{arg.name}_adjoints_expr", arg)))
+                for adjoint_from_expression, adjoint_from_non_expression in zip(adjoints_from_expression, adjoints_from_non_expression):
+                    fg.add(FunctionCall("EXPECT_STAN_EQ", adjoint_from_expression, adjoint_from_non_expression))
             
             # Check that expressions evaluated only once
             for arg in arg_list:
@@ -189,7 +195,7 @@ def main(functions=(), j=1):
             tests.append(
                 test_code_template.format(
                     overload=overload,
-                    test_name=f"{function_name}_{n}",
+                    test_name=f"{fg.function_name}_{n}",
                     code = fg.cpp(),
                 )
             )
