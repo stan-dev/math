@@ -3,6 +3,7 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/functor/cvodes_integrator.hpp>
+#include <stan/math/prim/functor/closure_adapter.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <ostream>
 #include <vector>
@@ -79,8 +80,8 @@ ode_bdf_tol_impl(const char* function_name, const F& f, const T_y0& y0,
                  std::ostream* msgs, const T_Args&... args) {
   internal::ode_closure_adapter f_adapter;
   return ode_bdf_tol_impl(function_name, f_adapter, y0, t0, ts,
-                          relative_tolerance, absolute_tolerance,
-                          max_num_steps, msgs, f, args...);
+                          relative_tolerance, absolute_tolerance, max_num_steps,
+                          msgs, f, args...);
 }
 
 /**

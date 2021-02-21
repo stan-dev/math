@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUNCTOR_CLOSURE_ADAPTER_HPP
 #define STAN_MATH_PRIM_FUNCTOR_CLOSURE_ADAPTER_HPP
 
+#include <stan/math/prim/meta/is_stan_closure.hpp>
 #include <stan/math/prim/meta/return_type.hpp>
 #include <ostream>
 
