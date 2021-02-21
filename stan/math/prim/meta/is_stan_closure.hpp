@@ -58,16 +58,25 @@ template <typename T>
 struct capture_type<T, true> {
   using type = const T&;
 };
+
 template <typename T>
 struct capture_type<T, false,
                     require_not_stan_closure_t<std::remove_reference_t<T>>> {
   using type = std::remove_reference_t<T>;
 };
+
 template <typename T>
 struct capture_type<T, false,
                     require_stan_closure_t<std::remove_reference_t<T>>> {
   using type = typename std::remove_reference_t<T>::CopyOf__;
 };
+
+/**
+ * Type for things captured either by const reference or by copy.
+ *
+ * @tparam T type of object being captured
+ * @tparam Ref true if reference, false if copy
+ */
 template <typename T, bool Ref>
 using capture_type_t = typename capture_type<T, Ref>::type;
 

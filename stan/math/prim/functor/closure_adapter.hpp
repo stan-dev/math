@@ -63,11 +63,17 @@ struct one_arg_closure {
   }
 };
 
+/**
+ * Create a closure object from a callable.
+ */
 template <typename F>
 auto from_lambda(F f) {
   return empty_closure<F>(f);
 }
 
+/**
+ * Create a closure that captures a single argument.
+ */
 template <typename F, typename T>
 auto from_lambda(F f, T a) {
   return one_arg_closure<F, T>(f, a);
