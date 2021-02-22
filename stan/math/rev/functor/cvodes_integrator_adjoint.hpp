@@ -168,7 +168,7 @@ class cvodes_integrator_adjoint_vari : public vari {
   int interpolation_polynomial_;
   int solver_f_;
   int solver_b_;
-  
+
   const size_t t0_vars_;
   const size_t ts_vars_;
   const size_t y0_vars_;
@@ -429,7 +429,8 @@ class cvodes_integrator_adjoint_vari : public vari {
    * @param abs_tol_q Absolute tolerance for quadrature problem passed to CVODES
    * @param max_num_steps Upper limit on the number of integration steps to
    *   take between each output (error if exceeded)
-   * @param num_checkpoints Number of integrator steps after which a checkpoint is stored for the backward pass
+   * @param num_checkpoints Number of integrator steps after which a checkpoint
+   * is stored for the backward pass
    * @param interpolation_polynomial type of polynomial used for interpolation
    * @param solver_f solver used for forward pass
    * @param solver_b solver used for backward pass
@@ -444,13 +445,10 @@ class cvodes_integrator_adjoint_vari : public vari {
   template <require_eigen_col_vector_t<T_y0>* = nullptr>
   cvodes_integrator_adjoint_vari(
       const char* function_name, const F& f, const T_y0& y0, const T_t0& t0,
-      const std::vector<T_ts>& ts,
-      double rel_tol_f, Eigen::VectorXd abs_tol_f,
-      double rel_tol_b, double abs_tol_b,
-      double rel_tol_q, double abs_tol_q,
+      const std::vector<T_ts>& ts, double rel_tol_f, Eigen::VectorXd abs_tol_f,
+      double rel_tol_b, double abs_tol_b, double rel_tol_q, double abs_tol_q,
       long int max_num_steps, long int num_checkpoints,
-      int interpolation_polynomial,
-      int solver_f, int solver_b,
+      int interpolation_polynomial, int solver_f, int solver_b,
       std::ostream* msgs, const T_Args&... args)
       : function_name_(function_name),
         vari(NOT_A_NUMBER),
@@ -468,7 +466,7 @@ class cvodes_integrator_adjoint_vari : public vari {
         interpolation_polynomial_(interpolation_polynomial),
         solver_f_(solver_f),
         solver_b_(solver_b),
-        msgs_(msgs),        
+        msgs_(msgs),
         t0_vars_(count_vars(t0)),
         ts_vars_(count_vars(ts)),
         y0_vars_(count_vars(y0)),
@@ -557,7 +555,7 @@ class cvodes_integrator_adjoint_vari : public vari {
         "CVodeSetUserData");
 
     cvodes_set_options(memory->cvodes_mem_, rel_tol_f_,
-                       abs_tol_f_(0), // MAKE THIS USE THE VECTOR
+                       abs_tol_f_(0),  // MAKE THIS USE THE VECTOR
                        max_num_steps_);
 
     // for the stiff solvers we need to reserve additional memory
@@ -575,9 +573,9 @@ class cvodes_integrator_adjoint_vari : public vari {
 
     // initialize forward sensitivity system of CVODES as needed
     if (t0_vars_ + ts_vars_ + y0_vars_ + args_vars_ > 0) {
-      check_flag_sundials(
-          CVodeAdjInit(memory->cvodes_mem_, num_checkpoints_, interpolation_polynomial_),
-          "CVodeAdjInit");
+      check_flag_sundials(CVodeAdjInit(memory->cvodes_mem_, num_checkpoints_,
+                                       interpolation_polynomial_),
+                          "CVodeAdjInit");
     }
 
     double t_init = t0_dbl;
@@ -713,10 +711,9 @@ class cvodes_integrator_adjoint_vari : public vari {
                            t_init, nv_state_sens),
                 "CVodeInitB");
 
-            check_flag_sundials(
-                CVodeSStolerancesB(memory->cvodes_mem_, indexB,
-                                   rel_tol_b_, abs_tol_b_),
-                "CVodeSStolerancesB");
+            check_flag_sundials(CVodeSStolerancesB(memory->cvodes_mem_, indexB,
+                                                   rel_tol_b_, abs_tol_b_),
+                                "CVodeSStolerancesB");
 
             check_flag_sundials(CVodeSetMaxNumStepsB(memory->cvodes_mem_,
                                                      indexB, max_num_steps_),
@@ -749,8 +746,7 @@ class cvodes_integrator_adjoint_vari : public vari {
 
               check_flag_sundials(
                   CVodeQuadSStolerancesB(memory->cvodes_mem_, indexB,
-                                         rel_tol_q_,
-                                         abs_tol_q_),
+                                         rel_tol_q_, abs_tol_q_),
                   "CVodeQuadSStolerancesB");
 
               check_flag_sundials(

@@ -285,20 +285,16 @@ class test_functor_sum_var_var {
 
     std::vector<Eigen::Matrix<T, Eigen::Dynamic, 1>> ys
         = (lmm_ == TEST_CVODES_ADAMS)
-        ? stan::math::ode_adjoint(sho, y0, t0, ts, nullptr,
-                                  1E-10, abs_tol_f,
-                                  1E-10, 1E-10,
-                                  1E-10, 1E-10,
-                                  10000, 50,
-                                  1, 1, 1,
-                                  //nullptr,
-                                  omega)
+              ? stan::math::ode_adjoint(sho, y0, t0, ts, nullptr, 1E-10,
+                                        abs_tol_f, 1E-10, 1E-10, 1E-10, 1E-10,
+                                        10000, 50, 1, 1, 1,
+                                        // nullptr,
+                                        omega)
               : stan::math::ode_bdf(sho, y0, t0, ts, nullptr, omega);
 
     return stan::math::sum(ys[0](state) + ys[1](state));
   }
 };
-
 
 TEST(StanMathOdeIntegrateODEGradMat, sum_var_var) {
   double omega = 0.5;
