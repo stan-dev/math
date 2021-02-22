@@ -25,7 +25,8 @@ namespace math {
  * constrained
  * @throw std::domain_error if y is lower than the lower bound
  */
-template <typename T, typename L>
+template <typename T, typename L, require_not_std_vector_t<T>* = nullptr,
+  require_stan_scalar_t<L>* = nullptr>
 inline auto lb_free(T&& y, L&& lb) {
   if (value_of_rec(lb) == NEGATIVE_INFTY) {
     return identity_free(y, lb);
@@ -33,9 +34,41 @@ inline auto lb_free(T&& y, L&& lb) {
     auto&& y_ref = to_ref(std::forward<T>(y));
     auto&& lb_ref = to_ref(std::forward<L>(lb));
     check_greater_or_equal("lb_free", "Lower bounded variable", y_ref, lb_ref);
-    return log(subtract(std::forward<decltype(y_ref)>(y_ref),
-                        std::forward<decltype(lb_ref)>(lb_ref)));
+    return eval(log(subtract(std::forward<decltype(y_ref)>(y_ref),
+                        std::forward<decltype(lb_ref)>(lb_ref))));
   }
+}
+
+template <typename T, typename L, require_all_eigen_t<T, L>* = nullptr>
+inline auto lb_free(T&& y, L&& lb) {
+  auto&& y_ref = to_ref(std::forward<T>(y));
+  auto&& lb_ref = to_ref(std::forward<L>(lb));
+  promote_scalar_t<return_type_t<T, L>, T> ret(y.rows(), y.cols());
+  for (Eigen::Index j = 0; j < y.cols(); ++j) {
+    for (Eigen::Index i = 0; i < y.rows(); ++i) {
+      ret.coeffRef(i, j) = lb_free(y_ref.coeff(i, j), lb_ref.coeff(i, j));
+    }
+  }
+  return ret;
+}
+
+template <typename T, typename L, require_not_std_vector_t<L>* = nullptr>
+inline auto lb_free(const std::vector<T> y, const L& lb) {
+  auto&& lb_ref = to_ref(lb);
+  std::vector<decltype(lb_free(y[0], lb))> ret(y.size());
+  for (Eigen::Index i = 0; i < y.size(); ++i) {
+      ret[i] = lb_free(y[i], lb_ref);
+  }
+  return ret;
+}
+
+template <typename T, typename L>
+inline auto lb_free(const std::vector<T> y, const std::vector<L>& lb) {
+  std::vector<decltype(lb_free(y[0], lb[0]))> ret(y.size());
+  for (Eigen::Index i = 0; i < y.size(); ++i) {
+      ret[i] = lb_free(y[i], lb[i]);
+  }
+  return ret;
 }
 
 }  // namespace math
