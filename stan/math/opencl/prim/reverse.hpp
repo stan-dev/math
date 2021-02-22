@@ -19,7 +19,8 @@ template <typename T_x,
           require_all_kernel_expressions_and_none_scalar_t<T_x>* = nullptr>
 inline auto reverse(T_x&& x) {
   check_vector("reverse(OpenCL)", "x", x);
-  return indexing(std::forward<T_x>(x), x.rows() - row_index(x.rows(), x.cols()) - 1,
+  return indexing(std::forward<T_x>(x),
+                  x.rows() - row_index(x.rows(), x.cols()) - 1,
                   x.cols() - col_index() - 1);
 }
 }  // namespace math

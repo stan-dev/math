@@ -18,8 +18,9 @@ namespace math {
  * @param y Second vector
  * @return A vector of x and y concatenated together (in that order)
  */
-template <typename T_x, typename T_y,
-          require_all_nonscalar_prim_or_rev_kernel_expression_t<T_x, T_y>* = nullptr>
+template <
+    typename T_x, typename T_y,
+    require_all_nonscalar_prim_or_rev_kernel_expression_t<T_x, T_y>* = nullptr>
 inline auto append_array(T_x&& x, T_y&& y) {
   return append_row(std::forward<T_x>(x), std::forward<T_y>(y));
 }
