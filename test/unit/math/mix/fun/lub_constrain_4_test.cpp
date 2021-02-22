@@ -18,7 +18,8 @@ TEST(mathMixMatFun, lub_stdvec_constrain) {
 
 TEST(mathMixMatFun, lub_stdvec_constrain_neg_inf) {
   std::vector<double> A{5.0, 2.0, 4.0, -2.0};
-  std::vector<double> lbm{stan::math::NEGATIVE_INFTY, 3.0, stan::math::NEGATIVE_INFTY, 6.0};
+  std::vector<double> lbm{stan::math::NEGATIVE_INFTY, 3.0,
+                          stan::math::NEGATIVE_INFTY, 6.0};
   std::vector<double> ubm{-1.0, stan::math::INFTY, stan::math::INFTY, 38.0};
   lub_constrain_tests::expect_vec(A, lbm, ubm);
   double lbd = stan::math::NEGATIVE_INFTY;

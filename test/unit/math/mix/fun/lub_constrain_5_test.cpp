@@ -39,7 +39,8 @@ TEST(mathMixMatFun, lub_stdvec_mat_mat_constrain_infty) {
   Eigen::MatrixXd A_inner(2, 3);
   A_inner << 5.0, 2.0, 4.0, -2.0, 0.05, 0.1;
   Eigen::MatrixXd lb_inner(2, 3);
-  lb_inner << stan::math::NEGATIVE_INFTY, 1.0, stan::math::NEGATIVE_INFTY, 1.0, 0.0, 0.01;
+  lb_inner << stan::math::NEGATIVE_INFTY, 1.0, stan::math::NEGATIVE_INFTY, 1.0,
+      0.0, 0.01;
   Eigen::MatrixXd ub_inner(2, 3);
   ub_inner << 6.0, stan::math::INFTY, stan::math::INFTY, 38.0, 0.1, 0.15;
 

@@ -56,7 +56,6 @@ void expect_vec(const T1& x, const T2& lb, const T3& ub) {
   stan::test::expect_ad(f3, x, lb, ub);
   stan::test::expect_ad(f4, x, lb, ub);
 }
-}
-
+}  // namespace lub_constrain_tests
 
 #endif

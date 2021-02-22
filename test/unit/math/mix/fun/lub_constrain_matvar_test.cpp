@@ -26,10 +26,9 @@ void expect_matvar(const T1& x, const T2& lb, const T3& ub) {
   stan::test::expect_ad_matvar(f3, x, lb, ub);
   stan::test::expect_ad_matvar(f4, x, lb, ub);
 }
-}
+}  // namespace lub_constrain_tests
 
 TEST(mathMixMatFun, lub_constrain_scalars_matvar) {
-
   double x1 = 0.7;
   double x2 = -38.1;
   double lb = -2.0;
@@ -51,11 +50,9 @@ TEST(mathMixMatFun, lub_constrain_scalars_matvar) {
   // both inf
   lub_constrain_tests::expect_matvar(x1, lb_inf, ub_inf);
   lub_constrain_tests::expect_matvar(x2, lb_inf, ub_inf);
-
 }
 
 TEST(mathMixMatFun, lub_constrain_vector_scalar_scalar_matvar) {
-
   Eigen::MatrixXd x1(1, 1);
   x1 << 0.7;
   Eigen::MatrixXd x2(1, 1);
@@ -66,7 +63,6 @@ TEST(mathMixMatFun, lub_constrain_vector_scalar_scalar_matvar) {
   lub_constrain_tests::expect_matvar(x2, lb, ub);
   lub_constrain_tests::expect_matvar(x1, lb, lb);
   lub_constrain_tests::expect_matvar(x2, lb, lb);
-
 
   // ub inf
   auto ub_inf = stan::math::INFTY;
@@ -81,11 +77,9 @@ TEST(mathMixMatFun, lub_constrain_vector_scalar_scalar_matvar) {
   // both inf
   lub_constrain_tests::expect_matvar(x1, lb_inf, ub_inf);
   lub_constrain_tests::expect_matvar(x2, lb_inf, ub_inf);
-
 }
 
 TEST(mathMixMatFun, lub_constrain_vector_vector_scalar_matvar) {
-
   Eigen::MatrixXd x1(2, 2);
   x1 << 5.0, 2.0, 4.0, 5.0;
   Eigen::MatrixXd x2(2, 2);
@@ -101,16 +95,14 @@ TEST(mathMixMatFun, lub_constrain_vector_vector_scalar_matvar) {
   lub_constrain_tests::expect_matvar(x1, lb, ub_inf);
   lub_constrain_tests::expect_matvar(x2, lb, ub_inf);
 
-
   // lb inf
-  lb(1, 1) =  stan::math::NEGATIVE_INFTY;
+  lb(1, 1) = stan::math::NEGATIVE_INFTY;
   lub_constrain_tests::expect_matvar(x1, lb, ub);
   lub_constrain_tests::expect_matvar(x2, lb, ub);
 
   // both inf
   lub_constrain_tests::expect_matvar(x1, lb, ub_inf);
   lub_constrain_tests::expect_matvar(x2, lb, ub_inf);
-
 }
 
 TEST(mathMixMatFun, lub_constrain_vector_scalar_vector_matvar) {
@@ -130,7 +122,6 @@ TEST(mathMixMatFun, lub_constrain_vector_scalar_vector_matvar) {
   lub_constrain_tests::expect_matvar(x1, lb, ub);
   lub_constrain_tests::expect_matvar(x2, lb, ub);
 
-
   // lb inf
   ub(1, 1) = 38.0;
   auto lb_inf = stan::math::NEGATIVE_INFTY;
@@ -141,11 +132,9 @@ TEST(mathMixMatFun, lub_constrain_vector_scalar_vector_matvar) {
   ub(1, 1) = stan::math::INFTY;
   lub_constrain_tests::expect_matvar(x1, lb_inf, ub);
   lub_constrain_tests::expect_matvar(x2, lb_inf, ub);
-
 }
 
 TEST(mathMixMatFun, lub_constrain_vector_vector_vector_matvar) {
-
   Eigen::MatrixXd x1(2, 2);
   x1 << 5.0, 2.0, 4.0, 5.0;
   Eigen::MatrixXd x2(2, 2);
@@ -162,7 +151,6 @@ TEST(mathMixMatFun, lub_constrain_vector_vector_vector_matvar) {
   lub_constrain_tests::expect_matvar(x1, lb, ub);
   lub_constrain_tests::expect_matvar(x2, lb, ub);
 
-
   // lb inf
   ub(1, 1) = 38.0;
   lb(1, 1) = stan::math::NEGATIVE_INFTY;
@@ -173,5 +161,4 @@ TEST(mathMixMatFun, lub_constrain_vector_vector_vector_matvar) {
   ub(1, 1) = stan::math::INFTY;
   lub_constrain_tests::expect_matvar(x1, lb, ub);
   lub_constrain_tests::expect_matvar(x2, lb, ub);
-
 }
