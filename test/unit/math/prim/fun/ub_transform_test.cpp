@@ -3,11 +3,6 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-#include <stan/math/prim.hpp>
-#include <test/unit/util.hpp>
-#include <gtest/gtest.h>
-#include <limits>
-
 TEST(prob_transform, ub_constrain) {
   double x = -1.0;
   double ub = 2.0;
@@ -50,7 +45,7 @@ TEST(prob_transform, ub_constrain_matrix) {
       EXPECT_FLOAT_EQ(result(i), stan::math::ub_constrain(x(i), ubd));
     }
     auto x_free = stan::math::ub_free(result, ubd);
-    //EXPECT_MATRIX_EQ(x, x_free);
+    // EXPECT_MATRIX_EQ(x, x_free);
     for (size_t i = 0; i < x.size(); ++i) {
       EXPECT_FLOAT_EQ(x.coeff(i), x_free.coeff(i));
     }
@@ -74,6 +69,7 @@ TEST(prob_transform, ub_constrain_matrix) {
     }
     EXPECT_FLOAT_EQ(lp0, lp1);
   }
+
   // matrix, matrix
   {
     double lp0 = 0.0;
@@ -99,11 +95,12 @@ TEST(prob_transform, ub_constrain_std_vector) {
 
   Eigen::VectorXd ub_bad(3);
 
-  std::vector<Eigen::VectorXd> x_vec = {x, x};
+  std::vector<Eigen::VectorXd> x_vec = {x, 2 * x};
   std::vector<Eigen::VectorXd> ub_vec = {ub, ub2};
 
   std::vector<Eigen::VectorXd> ub_vec_bad1 = {ub, ub2, ub};
   std::vector<Eigen::VectorXd> ub_vec_bad2 = {ub, ub_bad};
+
   // matrix[], real
   {
     std::vector<Eigen::VectorXd> result = stan::math::ub_constrain(x_vec, ubd);
@@ -113,7 +110,7 @@ TEST(prob_transform, ub_constrain_std_vector) {
     auto free_x = stan::math::ub_free(result, ubd);
     for (size_t i = 0; i < result.size(); ++i) {
       for (size_t j = 0; j < x.size(); ++j) {
-        EXPECT_FLOAT_EQ(x.coeff(j), free_x[i].coeff(j));
+        EXPECT_FLOAT_EQ(x_vec[i].coeff(j), free_x[i].coeff(j));
       }
     }
   }
@@ -127,7 +124,7 @@ TEST(prob_transform, ub_constrain_std_vector) {
     auto free_x = stan::math::ub_free(result, ub);
     for (size_t i = 0; i < result.size(); ++i) {
       for (size_t j = 0; j < x.size(); ++j) {
-        EXPECT_FLOAT_EQ(x.coeff(j), free_x[i].coeff(j));
+        EXPECT_FLOAT_EQ(x_vec[i].coeff(j), free_x[i].coeff(j));
       }
     }
     EXPECT_THROW(stan::math::ub_constrain(x_vec, ub_bad),
@@ -145,7 +142,7 @@ TEST(prob_transform, ub_constrain_std_vector) {
     auto free_x = stan::math::ub_free(result, ub_vec);
     for (size_t i = 0; i < result.size(); ++i) {
       for (size_t j = 0; j < x.size(); ++j) {
-        EXPECT_FLOAT_EQ(x.coeff(j), free_x[i].coeff(j));
+        EXPECT_FLOAT_EQ(x_vec[i].coeff(j), free_x[i].coeff(j));
       }
     }
     EXPECT_THROW(stan::math::ub_constrain(x_vec, ub_vec_bad1),
