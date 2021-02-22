@@ -45,6 +45,20 @@ inline auto ub_free(T&& y, U&& ub) {
   }
 }
 
+/**
+ * Return the free matrix that corresponds to the specified
+ * upper-bounded matrix with respect to the specified upper bound.
+ *
+ * The transform is the reverse of the `ub_constrain` transform.
+ *
+ * @tparam T type of matrix
+ * @tparam U type of upper bound
+ * @param y constrained matrix with specified upper bound
+ * @param ub upper bound
+ * @return unconstrained matrix with respect to upper bound
+ * @throw std::invalid_argument if any element of constrained variable
+ *   is greater than the upper bound.
+ */
 template <typename T, typename L, require_all_eigen_t<T, L>* = nullptr>
 inline auto ub_free(T&& y, L&& ub) {
   check_matching_dims("ub_free", "y", y, "ub", ub);
@@ -59,6 +73,20 @@ inline auto ub_free(T&& y, L&& ub) {
   return ret;
 }
 
+/**
+ * Return the free variable that corresponds to the specified
+ * upper-bounded variable with respect to the specified upper bound.
+ *
+ * The transform is the reverse of the `ub_constrain` transform.
+ *
+ * @tparam T type of constrained variable
+ * @tparam U type of upper bound
+ * @param y constrained variable with specified upper bound
+ * @param ub upper bound
+ * @return unconstrained variable with respect to upper bound
+ * @throw std::invalid_argument if any element of constrained variable
+ *   is greater than the upper bound.
+ */
 template <typename T, typename L, require_not_std_vector_t<L>* = nullptr>
 inline auto ub_free(const std::vector<T> y, const L& ub) {
   auto&& ub_ref = to_ref(ub);
@@ -69,6 +97,20 @@ inline auto ub_free(const std::vector<T> y, const L& ub) {
   return ret;
 }
 
+/**
+ * Return the free variable that corresponds to the specified
+ * upper-bounded variable with respect to the specified upper bound.
+ *
+ * The transform is the reverse of the `ub_constrain` transform.
+ *
+ * @tparam T type of constrained variable
+ * @tparam U type of upper bound
+ * @param y constrained variable with specified upper bound
+ * @param ub upper bound
+ * @return unconstrained variable with respect to upper bound
+ * @throw std::invalid_argument if any element of constrained variable
+ *   is greater than the upper bound.
+ */
 template <typename T, typename L>
 inline auto ub_free(const std::vector<T> y, const std::vector<L>& ub) {
   check_matching_dims("ub_free", "y", y, "ub", ub);
