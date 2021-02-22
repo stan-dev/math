@@ -155,4 +155,3 @@ TEST(mathMixMatFun, lb_stdvec_mat_constrain_matvar_neg_inf) {
   lb_constrain_test::expect_vec_matvar(A, A_inner);
   lb_constrain_test::expect_vec_matvar(A, stan::math::NEGATIVE_INFTY);
 }
-

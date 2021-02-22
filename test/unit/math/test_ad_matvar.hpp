@@ -264,8 +264,7 @@ inline void test_matvar_gradient(const ad_tolerances& tols, ResultMV& A_mv_ret,
  * @param x argument
  * @return x
  */
-template<typename T, typename S,
-	 require_all_st_arithmetic<T, S>* = nullptr>
+template <typename T, typename S, require_all_st_arithmetic<T, S>* = nullptr>
 auto convert_to_matvar(const S& x) {
   return x;
 }
@@ -279,9 +278,8 @@ auto convert_to_matvar(const S& x) {
  * @param x argument
  * @return x with scalars promoted to var
  */
-template<typename T, typename S,
-	 require_st_var<T>* = nullptr,
-	 require_st_arithmetic<S>* = nullptr>
+template <typename T, typename S, require_st_var<T>* = nullptr,
+          require_st_arithmetic<S>* = nullptr>
 auto convert_to_matvar(const S& x) {
   return stan::math::promote_scalar_t<stan::math::var, S>(x);
 }
@@ -295,11 +293,11 @@ auto convert_to_matvar(const S& x) {
  * @param x argument
  * @return x with scalars promoted to var
  */
-template<typename T, typename S,
-	 require_st_var<T>* = nullptr,
-	 require_st_arithmetic<S>* = nullptr>
+template <typename T, typename S, require_st_var<T>* = nullptr,
+          require_st_arithmetic<S>* = nullptr>
 auto convert_to_matvar(const std::vector<S>& x) {
-  using vec_mat_var = std::vector<stan::math::promote_scalar_t<stan::math::var, S>>;
+  using vec_mat_var
+      = std::vector<stan::math::promote_scalar_t<stan::math::var, S>>;
   vec_mat_var A_vec_mv;
   for (auto xi : x) {
     A_vec_mv.push_back(xi);
@@ -322,9 +320,8 @@ auto convert_to_matvar(const std::vector<S>& x) {
  * @param x argument
  * @return x
  */
-template<typename T, typename S,
-	 require_not_var_matrix_t<T>* = nullptr,
-	 require_st_arithmetic<S>* = nullptr>
+template <typename T, typename S, require_not_var_matrix_t<T>* = nullptr,
+          require_st_arithmetic<S>* = nullptr>
 auto convert_to_varmat(const S& x) {
   return convert_to_matvar<T>(x);
 }
@@ -337,9 +334,8 @@ auto convert_to_varmat(const S& x) {
  * @param x argument
  * @return x as a varmat
  */
-template<typename T, typename S,
-	 require_var_matrix_t<T>* = nullptr,
-	 require_st_arithmetic<S>* = nullptr>
+template <typename T, typename S, require_var_matrix_t<T>* = nullptr,
+          require_st_arithmetic<S>* = nullptr>
 auto convert_to_varmat(const S& x) {
   return stan::math::var_value<plain_type_t<S>>(x);
 }
@@ -352,9 +348,8 @@ auto convert_to_varmat(const S& x) {
  * @param x argument
  * @return x as a varmat
  */
-template<typename T, typename S,
-	 require_var_matrix_t<T>* = nullptr,
-	 require_st_arithmetic<S>* = nullptr>
+template <typename T, typename S, require_var_matrix_t<T>* = nullptr,
+          require_st_arithmetic<S>* = nullptr>
 auto convert_to_varmat(const std::vector<S>& x) {
   using vec_var_mat = std::vector<stan::math::var_value<plain_type_t<S>>>;
   vec_var_mat A_vec_vm;
@@ -387,33 +382,39 @@ auto convert_to_varmat(const std::vector<S>& x) {
 template <typename... Types, typename F, typename... EigMats>
 void expect_ad_matvar_impl(const ad_tolerances& tols, const F& f,
                            const EigMats&... x) {
+  using stan::is_eigen;
   using stan::is_var;
   using stan::is_var_matrix;
-  using stan::is_eigen;
   using stan::plain_type_t;
   using stan::math::promote_scalar_t;
   using stan::math::var;
   using stan::math::var_value;
   using stan::math::test::type_name;
-  
-  if(!stan::math::disjunction<is_var_matrix<Types>...>::value) {
-    FAIL() << "expect_ad_matvar requires at least one varmat input!" << std::endl;
+
+  if (!stan::math::disjunction<is_var_matrix<Types>...>::value) {
+    FAIL() << "expect_ad_matvar requires at least one varmat input!"
+           << std::endl;
   }
 
-  if(!stan::math::disjunction<is_var<scalar_type_t<Types>>...>::value) {
-    FAIL() << "expect_ad_matvar requires at least one autodiff input!" << std::endl;
+  if (!stan::math::disjunction<is_var<scalar_type_t<Types>>...>::value) {
+    FAIL() << "expect_ad_matvar requires at least one autodiff input!"
+           << std::endl;
   }
 
   auto A_mv_tuple = std::make_tuple(convert_to_matvar<Types>(x)...);
   auto A_vm_tuple = std::make_tuple(convert_to_varmat<Types>(x)...);
 
-  bool any_varmat = stan::math::apply([](const auto&... args) {
-      return stan::math::disjunction<is_var_matrix<decltype(args)>...>::value ||
-      stan::math::disjunction<stan::math::conjunction<is_std_vector<decltype(args)>, is_var_matrix<value_type_t<decltype(args)>>>...>::value;
-    }, A_vm_tuple);
+  bool any_varmat = stan::math::apply(
+      [](const auto&... args) {
+        return stan::math::disjunction<is_var_matrix<decltype(args)>...>::value
+               || stan::math::disjunction<stan::math::conjunction<
+                      is_std_vector<decltype(args)>,
+                      is_var_matrix<value_type_t<decltype(args)>>>...>::value;
+      },
+      A_vm_tuple);
 
-  if(!any_varmat) {
-    SUCCEED(); // If no varmats are created, skip this test
+  if (!any_varmat) {
+    SUCCEED();  // If no varmats are created, skip this test
     return;
   }
 
@@ -423,14 +424,18 @@ void expect_ad_matvar_impl(const ad_tolerances& tols, const F& f,
   T_mv_ret A_mv_ret;
   T_vm_ret A_vm_ret;
 
-  if(is_var_matrix<T_mv_ret>::value ||
-     (is_std_vector<T_mv_ret>::value && is_var_matrix<value_type_t<T_mv_ret>>::value)) {
-    FAIL() << "A function with matvar inputs should not return " << type_name<T_mv_ret>() << std::endl;
+  if (is_var_matrix<T_mv_ret>::value
+      || (is_std_vector<T_mv_ret>::value
+          && is_var_matrix<value_type_t<T_mv_ret>>::value)) {
+    FAIL() << "A function with matvar inputs should not return "
+           << type_name<T_mv_ret>() << std::endl;
   }
 
-  if(is_eigen<T_vm_ret>::value ||
-     (is_std_vector<T_vm_ret>::value && is_eigen<value_type_t<T_vm_ret>>::value)) {
-    FAIL() << "A function with varmat inputs should not return " << type_name<T_vm_ret>() << std::endl;
+  if (is_eigen<T_vm_ret>::value
+      || (is_std_vector<T_vm_ret>::value
+          && is_eigen<value_type_t<T_vm_ret>>::value)) {
+    FAIL() << "A function with varmat inputs should not return "
+           << type_name<T_vm_ret>() << std::endl;
   }
 
   // If one throws, the other should throw as well
