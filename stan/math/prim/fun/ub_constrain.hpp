@@ -74,6 +74,16 @@ inline auto ub_constrain(const T& x, const U& ub,
   }
 }
 
+/**
+ * Specialization of `ub_constrain` to apply a scalar upper bound elementwise
+ *  to each input.
+ *
+ * @tparam T A type inheriting from `EigenBase`.
+ * @tparam U Scalar.
+ * @param[in] x unconstrained input
+ * @param[in] ub upper bound on output
+ * @return upper-bound constrained value corresponding to inputs
+ */
 template <typename T, typename U, require_eigen_t<T>* = nullptr,
           require_stan_scalar_t<U>* = nullptr,
           require_all_not_st_var<T, U>* = nullptr>
@@ -81,14 +91,17 @@ inline auto ub_constrain(const T& x, const U& ub) {
   return eval(x.unaryExpr([ub](auto&& xx) { return ub_constrain(xx, ub); }));
 }
 
-template <typename T, typename U, require_all_eigen_t<T, U>* = nullptr,
-          require_all_not_st_var<T, U>* = nullptr>
-inline auto ub_constrain(const T& x, const U& ub) {
-  check_matching_dims("ub_constrain", "x", x, "ub", ub);
-  return eval(x.binaryExpr(
-      ub, [](auto&& xx, auto&& ubb) { return ub_constrain(xx, ubb); }));
-}
-
+/**
+ * Specialization of `ub_constrain` to apply a scalar upper bound elementwise
+ *  to each input.
+ *
+ * @tparam T A type inheriting from `EigenBase`.
+ * @tparam U Scalar.
+ * @param[in] x unconstrained input
+ * @param[in] ub upper bound on output
+ * @param[in,out] lp reference to log probability to increment
+ * @return upper-bound constrained value corresponding to inputs
+ */
 template <typename T, typename U, require_eigen_t<T>* = nullptr,
           require_stan_scalar_t<U>* = nullptr,
           require_all_not_st_var<T, U>* = nullptr>
@@ -98,16 +111,43 @@ inline auto ub_constrain(const T& x, const U& ub,
       x.unaryExpr([ub, &lp](auto&& xx) { return ub_constrain(xx, ub, lp); }));
 }
 
+/**
+ * Specialization of `ub_constrain` to apply a matrix of upper bounds
+ * elementwise to each input element.
+ *
+ * @tparam T A type inheriting from `EigenBase`.
+ * @tparam U A type inheriting from `EigenBase`.
+ * @param[in] x unconstrained input
+ * @param[in] ub upper bound on output
+ * @return upper-bound constrained value corresponding to inputs
+ */
+template <typename T, typename U, require_all_eigen_t<T, U>* = nullptr,
+          require_all_not_st_var<T, U>* = nullptr>
+inline auto ub_constrain(const T& x, const U& ub) {
+  check_matching_dims("ub_constrain", "x", x, "ub", ub);
+  return eval(x.binaryExpr(
+      ub, [](auto&& xx, auto&& ubb) { return ub_constrain(xx, ubb); }));
+}
+
+/**
+ * Specialization of `ub_constrain` to apply a matrix of upper bounds
+ * elementwise to each input element.
+ *
+ * @tparam T A type inheriting from `EigenBase`.
+ * @tparam U A type inheriting from `EigenBase`.
+ * @param[in] x unconstrained input
+ * @param[in] ub upper bound on output
+ * @param[in,out] lp reference to log probability to increment
+ * @return upper-bound constrained value corresponding to inputs
+ */
 template <typename T, typename U, require_all_eigen_t<T, U>* = nullptr,
           require_all_not_st_var<T, U>* = nullptr>
 inline auto ub_constrain(const T& x, const U& ub,
                          std::decay_t<return_type_t<T, U>>& lp) {
-   check_matching_dims("ub_constrain", "x", x, "ub", ub);
+  check_matching_dims("ub_constrain", "x", x, "ub", ub);
   return eval(x.binaryExpr(
       ub, [&lp](auto&& xx, auto&& ubb) { return ub_constrain(xx, ubb, lp); }));
 }
-
-// VEC
 
 /**
  * Specialization of `ub_constrain` to apply a scalar upper bound elementwise

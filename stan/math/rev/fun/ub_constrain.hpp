@@ -237,6 +237,7 @@ inline auto ub_constrain(const T& x, const U& ub, return_type_t<T, U>& lp) {
 template <typename T, typename U, require_all_matrix_t<T, U>* = nullptr,
           require_any_st_var<T, U>* = nullptr>
 inline auto ub_constrain(const T& x, const U& ub) {
+  check_matching_dims("ub_constrain", "x", x, "ub", ub);
   using ret_type = return_var_matrix_t<T, T, U>;
   if (!is_constant<T>::value && !is_constant<U>::value) {
     arena_t<promote_scalar_t<var, T>> arena_x = x;
@@ -299,6 +300,7 @@ inline auto ub_constrain(const T& x, const U& ub) {
 template <typename T, typename U, require_all_matrix_t<T, U>* = nullptr,
           require_any_st_var<T, U>* = nullptr>
 inline auto ub_constrain(const T& x, const U& ub, return_type_t<T, U>& lp) {
+  check_matching_dims("ub_constrain", "x", x, "ub", ub);
   using ret_type = return_var_matrix_t<T, T, U>;
   if (!is_constant<T>::value && !is_constant<U>::value) {
     arena_t<promote_scalar_t<var, T>> arena_x = x;
