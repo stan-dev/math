@@ -146,7 +146,6 @@ TEST(mathMixMatFun, ub_stdvec_mat_mat_constrain_inf) {
   ub_constrain_test::expect_vec(A, ubi);
 }
 
-
 // matrix[], matrix[]
 TEST(mathMixMatFun, ub_stdvec_mat_constrain) {
   Eigen::MatrixXd A_inner(2, 3);
@@ -186,4 +185,3 @@ TEST(mathMixMatFun, ub_stdvec_mat_constrain_neg_inf) {
   ub_constrain_test::expect_vec(A, A_inner);
   ub_constrain_test::expect_vec(A, stan::math::INFTY);
 }
-
