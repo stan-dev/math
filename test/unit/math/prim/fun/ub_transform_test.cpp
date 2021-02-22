@@ -6,7 +6,7 @@
 TEST(prob_transform, ub_constrain) {
   double x = -1.0;
   double ub = 2.0;
-  double ubi = stan::math::NEGATIVE_INFTY;
+  double ubi = stan::math::INFTY;
 
   {
     double result = stan::math::ub_constrain(x, ub);
@@ -33,7 +33,7 @@ TEST(prob_transform, ub_constrain_matrix) {
   Eigen::VectorXd x(2);
   x << -1.0, 1.1;
   Eigen::VectorXd ub(2);
-  ub << 2.0, stan::math::NEGATIVE_INFTY;
+  ub << 2.0, stan::math::INFTY;
   double ubd = 2.0;
 
   Eigen::VectorXd ub_bad(3);
@@ -44,9 +44,12 @@ TEST(prob_transform, ub_constrain_matrix) {
     for (size_t i = 0; i < result.size(); ++i) {
       EXPECT_FLOAT_EQ(result(i), stan::math::ub_constrain(x(i), ubd));
     }
-    EXPECT_MATRIX_EQ(x, stan::math::ub_free(result, ubd));
+    auto x_free = stan::math::ub_free(result, ubd);
+    // EXPECT_MATRIX_EQ(x, x_free);
+    for (size_t i = 0; i < x.size(); ++i) {
+      EXPECT_FLOAT_EQ(x.coeff(i), x_free.coeff(i));
+    }
   }
-
   // matrix, matrix
   {
     Eigen::VectorXd result = stan::math::ub_constrain(x, ub);
@@ -56,7 +59,6 @@ TEST(prob_transform, ub_constrain_matrix) {
     EXPECT_MATRIX_EQ(x, stan::math::ub_free(result, ub));
     EXPECT_THROW(stan::math::ub_constrain(x, ub_bad), std::invalid_argument);
   }
-
   // matrix, real
   {
     double lp0 = 0.0;
@@ -86,9 +88,9 @@ TEST(prob_transform, ub_constrain_std_vector) {
   Eigen::VectorXd x(2);
   x << -1.0, 1.1;
   Eigen::VectorXd ub(2);
-  ub << 2.0, stan::math::NEGATIVE_INFTY;
+  ub << 2.0, stan::math::INFTY;
   Eigen::VectorXd ub2(2);
-  ub << stan::math::NEGATIVE_INFTY, 1.0;
+  ub << stan::math::INFTY, 1.0;
   double ubd = 2.0;
 
   Eigen::VectorXd ub_bad(3);
@@ -107,7 +109,9 @@ TEST(prob_transform, ub_constrain_std_vector) {
     }
     auto free_x = stan::math::ub_free(result, ubd);
     for (size_t i = 0; i < result.size(); ++i) {
-      EXPECT_MATRIX_EQ(x[i], free_x[i]);
+      for (size_t j = 0; j < x.size(); ++j) {
+        EXPECT_FLOAT_EQ(x_vec[i].coeff(j), free_x[i].coeff(j));
+      }
     }
   }
 
@@ -119,7 +123,9 @@ TEST(prob_transform, ub_constrain_std_vector) {
     }
     auto free_x = stan::math::ub_free(result, ub);
     for (size_t i = 0; i < result.size(); ++i) {
-      EXPECT_MATRIX_EQ(x[i], free_x[i]);
+      for (size_t j = 0; j < x.size(); ++j) {
+        EXPECT_FLOAT_EQ(x_vec[i].coeff(j), free_x[i].coeff(j));
+      }
     }
     EXPECT_THROW(stan::math::ub_constrain(x_vec, ub_bad),
                  std::invalid_argument);
@@ -135,7 +141,9 @@ TEST(prob_transform, ub_constrain_std_vector) {
     }
     auto free_x = stan::math::ub_free(result, ub_vec);
     for (size_t i = 0; i < result.size(); ++i) {
-      EXPECT_MATRIX_EQ(x[i], free_x[i]);
+      for (size_t j = 0; j < x.size(); ++j) {
+        EXPECT_FLOAT_EQ(x_vec[i].coeff(j), free_x[i].coeff(j));
+      }
     }
     EXPECT_THROW(stan::math::ub_constrain(x_vec, ub_vec_bad1),
                  std::invalid_argument);

@@ -44,9 +44,12 @@ TEST(prob_transform, lb_constrain_matrix) {
     for (size_t i = 0; i < result.size(); ++i) {
       EXPECT_FLOAT_EQ(result(i), stan::math::lb_constrain(x(i), lbd));
     }
-    EXPECT_MATRIX_EQ(x, stan::math::lb_free(result, lbd));
+    auto x_free = stan::math::lb_free(result, lbd);
+    // EXPECT_MATRIX_EQ(x, x_free);
+    for (size_t i = 0; i < x.size(); ++i) {
+      EXPECT_FLOAT_EQ(x.coeff(i), x_free.coeff(i));
+    }
   }
-
   // matrix, matrix
   {
     Eigen::VectorXd result = stan::math::lb_constrain(x, lb);
@@ -56,7 +59,6 @@ TEST(prob_transform, lb_constrain_matrix) {
     EXPECT_MATRIX_EQ(x, stan::math::lb_free(result, lb));
     EXPECT_THROW(stan::math::lb_constrain(x, lb_bad), std::invalid_argument);
   }
-
   // matrix, real
   {
     double lp0 = 0.0;
@@ -67,7 +69,6 @@ TEST(prob_transform, lb_constrain_matrix) {
     }
     EXPECT_FLOAT_EQ(lp0, lp1);
   }
-
   // matrix, matrix
   {
     double lp0 = 0.0;
@@ -93,12 +94,11 @@ TEST(prob_transform, lb_constrain_std_vector) {
 
   Eigen::VectorXd lb_bad(3);
 
-  std::vector<Eigen::VectorXd> x_vec = {x, 2 * x};
+  std::vector<Eigen::VectorXd> x_vec = {x, x};
   std::vector<Eigen::VectorXd> lb_vec = {lb, lb2};
 
   std::vector<Eigen::VectorXd> lb_vec_bad1 = {lb, lb2, lb};
   std::vector<Eigen::VectorXd> lb_vec_bad2 = {lb, lb_bad};
-
   // matrix[], real
   {
     std::vector<Eigen::VectorXd> result = stan::math::lb_constrain(x_vec, lbd);
@@ -107,7 +107,9 @@ TEST(prob_transform, lb_constrain_std_vector) {
     }
     auto free_x = stan::math::lb_free(result, lbd);
     for (size_t i = 0; i < result.size(); ++i) {
-      EXPECT_MATRIX_EQ(x[i], free_x[i]);
+      for (size_t j = 0; j < x.size(); ++j) {
+        EXPECT_FLOAT_EQ(x.coeff(j), free_x[i].coeff(j));
+      }
     }
   }
 
@@ -119,7 +121,9 @@ TEST(prob_transform, lb_constrain_std_vector) {
     }
     auto free_x = stan::math::lb_free(result, lb);
     for (size_t i = 0; i < result.size(); ++i) {
-      EXPECT_MATRIX_EQ(x[i], free_x[i]);
+      for (size_t j = 0; j < x.size(); ++j) {
+        EXPECT_FLOAT_EQ(x.coeff(j), free_x[i].coeff(j));
+      }
     }
     EXPECT_THROW(stan::math::lb_constrain(x_vec, lb_bad),
                  std::invalid_argument);
@@ -135,7 +139,9 @@ TEST(prob_transform, lb_constrain_std_vector) {
     }
     auto free_x = stan::math::lb_free(result, lb_vec);
     for (size_t i = 0; i < result.size(); ++i) {
-      EXPECT_MATRIX_EQ(x[i], free_x[i]);
+      for (size_t j = 0; j < x.size(); ++j) {
+        EXPECT_FLOAT_EQ(x.coeff(j), free_x[i].coeff(j));
+      }
     }
     EXPECT_THROW(stan::math::lb_constrain(x_vec, lb_vec_bad1),
                  std::invalid_argument);
