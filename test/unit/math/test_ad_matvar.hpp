@@ -264,8 +264,7 @@ inline void test_matvar_gradient(const ad_tolerances& tols, ResultMV& A_mv_ret,
  * @param x argument
  * @return x
  */
-template<typename T, typename S,
-	 require_all_st_arithmetic<T, S>* = nullptr>
+template <typename T, typename S, require_all_st_arithmetic<T, S>* = nullptr>
 auto make_matvar_compatible(const S& x) {
   return x;
 }
@@ -279,9 +278,8 @@ auto make_matvar_compatible(const S& x) {
  * @param x argument
  * @return x with scalars promoted to var
  */
-template<typename T, typename S,
-	 require_st_var<T>* = nullptr,
-	 require_st_arithmetic<S>* = nullptr>
+template <typename T, typename S, require_st_var<T>* = nullptr,
+          require_st_arithmetic<S>* = nullptr>
 auto make_matvar_compatible(const S& x) {
   return stan::math::promote_scalar_t<stan::math::var, S>(x);
 }
@@ -295,11 +293,11 @@ auto make_matvar_compatible(const S& x) {
  * @param x argument
  * @return x with scalars promoted to var
  */
-template<typename T, typename S,
-	 require_st_var<T>* = nullptr,
-	 require_st_arithmetic<S>* = nullptr>
+template <typename T, typename S, require_st_var<T>* = nullptr,
+          require_st_arithmetic<S>* = nullptr>
 auto make_matvar_compatible(const std::vector<S>& x) {
-  using vec_mat_var = std::vector<stan::math::promote_scalar_t<stan::math::var, S>>;
+  using vec_mat_var
+      = std::vector<stan::math::promote_scalar_t<stan::math::var, S>>;
   vec_mat_var A_vec_mv;
   for (auto xi : x) {
     A_vec_mv.push_back(xi);
@@ -322,9 +320,8 @@ auto make_matvar_compatible(const std::vector<S>& x) {
  * @param x argument
  * @return x
  */
-template<typename T, typename S,
-	 require_not_var_matrix_t<T>* = nullptr,
-	 require_st_arithmetic<S>* = nullptr>
+template <typename T, typename S, require_not_var_matrix_t<T>* = nullptr,
+          require_st_arithmetic<S>* = nullptr>
 auto make_varmat_compatible(const S& x) {
   return make_matvar_compatible<T>(x);
 }
@@ -337,9 +334,8 @@ auto make_varmat_compatible(const S& x) {
  * @param x argument
  * @return x as a varmat
  */
-template<typename T, typename S,
-	 require_var_matrix_t<T>* = nullptr,
-	 require_st_arithmetic<S>* = nullptr>
+template <typename T, typename S, require_var_matrix_t<T>* = nullptr,
+          require_st_arithmetic<S>* = nullptr>
 auto make_varmat_compatible(const S& x) {
   return stan::math::var_value<plain_type_t<S>>(x);
 }
@@ -352,9 +348,8 @@ auto make_varmat_compatible(const S& x) {
  * @param x argument
  * @return x as a varmat
  */
-template<typename T, typename S,
-	 require_var_matrix_t<T>* = nullptr,
-	 require_st_arithmetic<S>* = nullptr>
+template <typename T, typename S, require_var_matrix_t<T>* = nullptr,
+          require_st_arithmetic<S>* = nullptr>
 auto make_varmat_compatible(const std::vector<S>& x) {
   using vec_var_mat = std::vector<stan::math::var_value<plain_type_t<S>>>;
   vec_var_mat A_vec_vm;
