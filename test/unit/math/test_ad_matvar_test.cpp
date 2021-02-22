@@ -25,10 +25,11 @@ TEST(test_unit_math_test_ad_matvar, one_arg_bad_vals) {
   //  that we expect them both:
   //  https://stackoverflow.com/questions/24037390/how-can-i-expect-multiple-failures-in-google-test
   //  https://github.com/google/googletest/blob/35fb11efbe1a2761ce923f49a9df1a430e5d16be/googletest/docs/AdvancedGuide.md#catching-failures
-  // They do not work properly unless you also include a string to match (the outer
-  // expect will ignore the inner expect's failure to fail)
+  // They do not work properly unless you also include a string to match (the
+  // outer expect will ignore the inner expect's failure to fail)
   EXPECT_NONFATAL_FAILURE(
-  EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x), "values"), "values");
+      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x), "values"),
+      "values");
 }
 
 template <typename T>
@@ -48,7 +49,8 @@ TEST(test_unit_math_test_ad_matvar, one_arg_bad_grads) {
   Eigen::VectorXd x = Eigen::VectorXd::Ones(2);
 
   EXPECT_NONFATAL_FAILURE(
-      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x), "adjoints"), "adjoints");
+      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x), "adjoints"),
+      "adjoints");
 }
 
 template <typename T1, typename T2>
@@ -102,14 +104,14 @@ TEST(test_unit_math_test_ad_matvar, two_arg_bad_vals) {
   double y = 1.0;
 
   EXPECT_NONFATAL_FAILURE(
+      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, y, x), "values"),
+      "values");
   EXPECT_NONFATAL_FAILURE(
-  stan::test::expect_ad_matvar(f, y, x), "values"), "values");
+      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x, y), "values"),
+      "values");
   EXPECT_NONFATAL_FAILURE(
-    EXPECT_NONFATAL_FAILURE(
-			    stan::test::expect_ad_matvar(f, x, y), "values"), "values");
-  EXPECT_NONFATAL_FAILURE(
-  EXPECT_NONFATAL_FAILURE(
-			  stan::test::expect_ad_matvar(f, x, x), "values"), "values");
+      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x, x), "values"),
+      "values");
 }
 
 template <typename T1, typename T2>
@@ -164,11 +166,17 @@ TEST(test_unit_math_test_ad_matvar, two_arg_bad_grads) {
   double y = 1.0;
 
   EXPECT_NONFATAL_FAILURE(
-      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, y, x), "adjoints"), "adjoints");
+      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, y, x),
+                              "adjoints"),
+      "adjoints");
   EXPECT_NONFATAL_FAILURE(
-      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x, y), "adjoints"), "adjoints");
+      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x, y),
+                              "adjoints"),
+      "adjoints");
   EXPECT_NONFATAL_FAILURE(
-      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x, x), "adjoints"), "adjoints");
+      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x, x),
+                              "adjoints"),
+      "adjoints");
 }
 
 template <typename T1, typename T2, typename T3>
@@ -199,9 +207,8 @@ auto three_arg_bad_vals(const T1& x1, const T2& x2,
 
 template <typename T1, typename T2, typename T3,
           stan::require_all_st_arithmetic<T1, T2>* = nullptr>
-auto three_arg_bad_vals(const T1& x1,
-                        const stan::math::var_value<T3>& x3,
-			const T2& x2) {
+auto three_arg_bad_vals(const T1& x1, const stan::math::var_value<T3>& x3,
+                        const T2& x2) {
   auto ret_val = stan::math::add(x1, stan::math::add(x2, 0.0 * x3.val()));
   using ret_type = stan::return_var_matrix_t<decltype(ret_val), T1, T2,
                                              stan::math::var_value<T3>>;
@@ -221,8 +228,8 @@ auto three_arg_bad_vals(const T1& x1,
 
 template <typename T1, typename T2, typename T3,
           stan::require_all_st_arithmetic<T1, T2>* = nullptr>
-auto three_arg_bad_vals(const stan::math::var_value<T3>& x3,
-                        const T1& x1, const T2& x2) {
+auto three_arg_bad_vals(const stan::math::var_value<T3>& x3, const T1& x1,
+                        const T2& x2) {
   auto ret_val = stan::math::add(x1, stan::math::add(x2, 0.0 * x3.val()));
   using ret_type = stan::return_var_matrix_t<decltype(ret_val), T1, T2,
                                              stan::math::var_value<T3>>;
@@ -249,25 +256,32 @@ TEST(test_unit_math_test_ad_matvar, three_arg_bad_vals) {
   double y = 1.0;
 
   EXPECT_NONFATAL_FAILURE(
-      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, y, y, x), "values"),
+      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, y, y, x),
+                              "values"),
       "values");
   EXPECT_NONFATAL_FAILURE(
-      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, y, x, y), "values"),
+      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, y, x, y),
+                              "values"),
       "values");
   EXPECT_NONFATAL_FAILURE(
-      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, y, x, x), "values"),
+      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, y, x, x),
+                              "values"),
       "values");
   EXPECT_NONFATAL_FAILURE(
-      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x, y, y), "values"),
+      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x, y, y),
+                              "values"),
       "values");
   EXPECT_NONFATAL_FAILURE(
-      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x, y, x), "values"),
+      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x, y, x),
+                              "values"),
       "values");
   EXPECT_NONFATAL_FAILURE(
-      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x, x, y), "values"),
+      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x, x, y),
+                              "values"),
       "values");
   EXPECT_NONFATAL_FAILURE(
-      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x, x, x), "values"),
+      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x, x, x),
+                              "values"),
       "values");
 }
 
@@ -299,9 +313,8 @@ auto three_arg_bad_grads(const T1& x1, const T2& x2,
 
 template <typename T1, typename T2, typename T3,
           stan::require_all_st_arithmetic<T1, T2>* = nullptr>
-auto three_arg_bad_grads(const T1& x1,
-                         const stan::math::var_value<T3>& x3,
-			 const T2& x2) {
+auto three_arg_bad_grads(const T1& x1, const stan::math::var_value<T3>& x3,
+                         const T2& x2) {
   auto ret_val = stan::math::add(x1, stan::math::add(x2, x3.val()));
   using ret_type = stan::return_var_matrix_t<decltype(ret_val), T1, T2,
                                              stan::math::var_value<T3>>;
@@ -321,8 +334,8 @@ auto three_arg_bad_grads(const T1& x1,
 
 template <typename T1, typename T2, typename T3,
           stan::require_all_st_arithmetic<T1, T2>* = nullptr>
-auto three_arg_bad_grads(const stan::math::var_value<T3>& x3,
-                         const T1& x1, const T2& x2) {
+auto three_arg_bad_grads(const stan::math::var_value<T3>& x3, const T1& x1,
+                         const T2& x2) {
   auto ret_val = stan::math::add(x1, stan::math::add(x2, x3.val()));
   using ret_type = stan::return_var_matrix_t<decltype(ret_val), T1, T2,
                                              stan::math::var_value<T3>>;
@@ -349,25 +362,32 @@ TEST(test_unit_math_test_ad_matvar, three_arg_bad_grads) {
   double y = 1.0;
 
   EXPECT_NONFATAL_FAILURE(
-      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, y, y, x), "adjoints"),
+      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, y, y, x),
+                              "adjoints"),
       "adjoints");
   EXPECT_NONFATAL_FAILURE(
-      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, y, x, y), "adjoints"),
+      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, y, x, y),
+                              "adjoints"),
       "adjoints");
   EXPECT_NONFATAL_FAILURE(
-      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, y, x, x), "adjoints"),
+      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, y, x, x),
+                              "adjoints"),
       "adjoints");
   EXPECT_NONFATAL_FAILURE(
-      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x, y, y), "adjoints"),
+      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x, y, y),
+                              "adjoints"),
       "adjoints");
   EXPECT_NONFATAL_FAILURE(
-      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x, y, x), "adjoints"),
+      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x, y, x),
+                              "adjoints"),
       "adjoints");
   EXPECT_NONFATAL_FAILURE(
-      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x, x, y), "adjoints"),
+      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x, x, y),
+                              "adjoints"),
       "adjoints");
   EXPECT_NONFATAL_FAILURE(
-      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x, x, x), "adjoints"),
+      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x, x, x),
+                              "adjoints"),
       "adjoints");
 }
 
@@ -405,7 +425,8 @@ TEST(test_unit_math_test_ad_matvar, one_arg_bad_vals_std_vector) {
   std::vector<Eigen::VectorXd> x = {Eigen::VectorXd::Ones(2)};
 
   EXPECT_NONFATAL_FAILURE(
-      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x), "values"), "values");
+      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x), "values"),
+      "values");
 }
 
 template <typename T>
@@ -442,14 +463,17 @@ TEST(test_unit_math_test_ad_matvar, one_arg_bad_grads_std_vector) {
   std::vector<Eigen::VectorXd> x = {Eigen::VectorXd::Ones(2)};
 
   EXPECT_NONFATAL_FAILURE(
-      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x), "adjoints"), "adjoints");
+      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x), "adjoints"),
+      "adjoints");
 }
 
 template <typename T1, typename T2>
-auto two_args_bad_vals_std_vector(const std::vector<T1>& x1, const std::vector<T2>& x2) {
-  std::vector<stan::plain_type_t<decltype(stan::math::add(std::declval<T1>(),
-							  std::declval<T2>()))>> array_sum;
-  for(size_t i = 0; i < x1.size(); ++i) {
+auto two_args_bad_vals_std_vector(const std::vector<T1>& x1,
+                                  const std::vector<T2>& x2) {
+  std::vector<stan::plain_type_t<decltype(
+      stan::math::add(std::declval<T1>(), std::declval<T2>()))>>
+      array_sum;
+  for (size_t i = 0; i < x1.size(); ++i) {
     array_sum.push_back(stan::math::add(x1[i], x2[i]));
   }
 
@@ -457,8 +481,9 @@ auto two_args_bad_vals_std_vector(const std::vector<T1>& x1, const std::vector<T
 }
 
 template <typename T1, typename T2>
-auto two_args_bad_vals_std_vector(const std::vector<T1>& x1,
-				  const std::vector<stan::math::var_value<T2>>& x2) {
+auto two_args_bad_vals_std_vector(
+    const std::vector<T1>& x1,
+    const std::vector<stan::math::var_value<T2>>& x2) {
   using ret_type = std::vector<stan::math::var_value<T2>>;
   stan::arena_t<std::vector<T1>> arena_x1(x1.size());
   stan::arena_t<ret_type> arena_x2(x2.size());
@@ -474,8 +499,11 @@ auto two_args_bad_vals_std_vector(const std::vector<T1>& x1,
 
   stan::math::reverse_pass_callback([arena_x1, arena_x2, out]() mutable {
     for (size_t i = 0; i < arena_x1.size(); ++i) {
-      if(!stan::is_constant<T1>::value) {
-	stan::math::forward_as<stan::return_var_matrix_t<T2, T1, stan::math::var>>(arena_x1[i]).adj() += out[i].adj();
+      if (!stan::is_constant<T1>::value) {
+        stan::math::forward_as<
+            stan::return_var_matrix_t<T2, T1, stan::math::var>>(arena_x1[i])
+            .adj()
+            += out[i].adj();
       }
       arena_x2[i].adj() += out[i].adj();
     }
@@ -493,16 +521,18 @@ TEST(test_unit_math_test_ad_matvar, two_args_bad_vals_std_vector) {
   std::vector<Eigen::VectorXd> x2 = {Eigen::VectorXd::Zero(2)};
 
   EXPECT_NONFATAL_FAILURE(
-  EXPECT_NONFATAL_FAILURE(
-  stan::test::expect_ad_matvar(f, x1, x2);
-  , "values"), "values");
+      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x1, x2);
+                              , "values"),
+      "values");
 }
 
 template <typename T1, typename T2>
-auto two_args_bad_grads_std_vector(const std::vector<T1>& x1, const std::vector<T2>& x2) {
-  std::vector<stan::plain_type_t<decltype(stan::math::add(std::declval<T1>(),
-							  std::declval<T2>()))>> array_sum;
-  for(size_t i = 0; i < x1.size(); ++i) {
+auto two_args_bad_grads_std_vector(const std::vector<T1>& x1,
+                                   const std::vector<T2>& x2) {
+  std::vector<stan::plain_type_t<decltype(
+      stan::math::add(std::declval<T1>(), std::declval<T2>()))>>
+      array_sum;
+  for (size_t i = 0; i < x1.size(); ++i) {
     array_sum.push_back(stan::math::add(x1[i], x2[i]));
   }
 
@@ -510,8 +540,9 @@ auto two_args_bad_grads_std_vector(const std::vector<T1>& x1, const std::vector<
 }
 
 template <typename T1, typename T2>
-auto two_args_bad_grads_std_vector(const std::vector<T1>& x1,
-				  const std::vector<stan::math::var_value<T2>>& x2) {
+auto two_args_bad_grads_std_vector(
+    const std::vector<T1>& x1,
+    const std::vector<stan::math::var_value<T2>>& x2) {
   using ret_type = std::vector<stan::math::var_value<T2>>;
   stan::arena_t<std::vector<T1>> arena_x1(x1.size());
   stan::arena_t<ret_type> arena_x2(x2.size());
@@ -527,8 +558,11 @@ auto two_args_bad_grads_std_vector(const std::vector<T1>& x1,
 
   stan::math::reverse_pass_callback([arena_x1, arena_x2, out]() mutable {
     for (size_t i = 0; i < arena_x1.size(); ++i) {
-      if(!stan::is_constant<T1>::value) {
-	stan::math::forward_as<stan::return_var_matrix_t<T2, T1, stan::math::var>>(arena_x1[i]).adj() += out[i].adj();
+      if (!stan::is_constant<T1>::value) {
+        stan::math::forward_as<
+            stan::return_var_matrix_t<T2, T1, stan::math::var>>(arena_x1[i])
+            .adj()
+            += out[i].adj();
       }
       arena_x2[i].adj() += out[i].adj() * 0;
     }
@@ -546,9 +580,9 @@ TEST(test_unit_math_test_ad_matvar, two_args_bad_grads_std_vector) {
   std::vector<Eigen::VectorXd> x2 = {Eigen::VectorXd::Zero(2)};
 
   EXPECT_NONFATAL_FAILURE(
-  EXPECT_NONFATAL_FAILURE(
-  stan::test::expect_ad_matvar(f, x1, x2);
-  , "adjoints"), "adjoints");
+      EXPECT_NONFATAL_FAILURE(stan::test::expect_ad_matvar(f, x1, x2);
+                              , "adjoints"),
+      "adjoints");
 }
 
 template <typename T>
@@ -598,17 +632,14 @@ auto bad_return_type_std_vector(
 
 TEST(test_unit_math_test_ad_matvar, bad_return_type_std_vector) {
   EXPECT_FATAL_FAILURE(
-		       {
-			 auto f = [](const auto& x) {
-			   return bad_return_type_std_vector(x);
-			 };
+      {
+        auto f = [](const auto& x) { return bad_return_type_std_vector(x); };
 
-			 std::vector<Eigen::VectorXd> x
-			   = {Eigen::VectorXd::Ones(2)};
-			 
-			 stan::test::expect_ad_matvar(f, x);
-		       },
-		       "");
+        std::vector<Eigen::VectorXd> x = {Eigen::VectorXd::Ones(2)};
+
+        stan::test::expect_ad_matvar(f, x);
+      },
+      "");
 }
 
 template <typename T>

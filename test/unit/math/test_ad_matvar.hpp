@@ -387,33 +387,39 @@ auto make_varmat_compatible(const std::vector<S>& x) {
 template <typename... Types, typename F, typename... EigMats>
 void expect_ad_matvar_impl(const ad_tolerances& tols, const F& f,
                            const EigMats&... x) {
+  using stan::is_eigen;
   using stan::is_var;
   using stan::is_var_matrix;
-  using stan::is_eigen;
   using stan::plain_type_t;
   using stan::math::promote_scalar_t;
   using stan::math::var;
   using stan::math::var_value;
   using stan::math::test::type_name;
-  
-  if(!stan::math::disjunction<is_var_matrix<Types>...>::value) {
-    FAIL() << "expect_ad_matvar requires at least one varmat input!" << std::endl;
+
+  if (!stan::math::disjunction<is_var_matrix<Types>...>::value) {
+    FAIL() << "expect_ad_matvar requires at least one varmat input!"
+           << std::endl;
   }
 
-  if(!stan::math::disjunction<is_var<scalar_type_t<Types>>...>::value) {
-    FAIL() << "expect_ad_matvar requires at least one autodiff input!" << std::endl;
+  if (!stan::math::disjunction<is_var<scalar_type_t<Types>>...>::value) {
+    FAIL() << "expect_ad_matvar requires at least one autodiff input!"
+           << std::endl;
   }
 
   auto A_mv_tuple = std::make_tuple(make_matvar_compatible<Types>(x)...);
   auto A_vm_tuple = std::make_tuple(make_varmat_compatible<Types>(x)...);
 
-  bool any_varmat = stan::math::apply([](const auto&... args) {
-      return stan::math::disjunction<is_var_matrix<decltype(args)>...>::value ||
-      stan::math::disjunction<stan::math::conjunction<is_std_vector<decltype(args)>, is_var_matrix<value_type_t<decltype(args)>>>...>::value;
-    }, A_vm_tuple);
+  bool any_varmat = stan::math::apply(
+      [](const auto&... args) {
+        return stan::math::disjunction<is_var_matrix<decltype(args)>...>::value
+               || stan::math::disjunction<stan::math::conjunction<
+                      is_std_vector<decltype(args)>,
+                      is_var_matrix<value_type_t<decltype(args)>>>...>::value;
+      },
+      A_vm_tuple);
 
-  if(!any_varmat) {
-    SUCCEED(); // If no varmats are created, skip this test
+  if (!any_varmat) {
+    SUCCEED();  // If no varmats are created, skip this test
     return;
   }
 
@@ -423,14 +429,18 @@ void expect_ad_matvar_impl(const ad_tolerances& tols, const F& f,
   T_mv_ret A_mv_ret;
   T_vm_ret A_vm_ret;
 
-  if(is_var_matrix<T_mv_ret>::value ||
-     (is_std_vector<T_mv_ret>::value && is_var_matrix<value_type_t<T_mv_ret>>::value)) {
-    FAIL() << "A function with matvar inputs should not return " << type_name<T_mv_ret>() << std::endl;
+  if (is_var_matrix<T_mv_ret>::value
+      || (is_std_vector<T_mv_ret>::value
+          && is_var_matrix<value_type_t<T_mv_ret>>::value)) {
+    FAIL() << "A function with matvar inputs should not return "
+           << type_name<T_mv_ret>() << std::endl;
   }
 
-  if(is_eigen<T_vm_ret>::value ||
-     (is_std_vector<T_vm_ret>::value && is_eigen<value_type_t<T_vm_ret>>::value)) {
-    FAIL() << "A function with varmat inputs should not return " << type_name<T_vm_ret>() << std::endl;
+  if (is_eigen<T_vm_ret>::value
+      || (is_std_vector<T_vm_ret>::value
+          && is_eigen<value_type_t<T_vm_ret>>::value)) {
+    FAIL() << "A function with varmat inputs should not return "
+           << type_name<T_vm_ret>() << std::endl;
   }
 
   // If one throws, the other should throw as well
