@@ -115,7 +115,7 @@ def main(functions_or_sigs, results_file, cores):
             result = ""
             any_overload_uses_varmat = False
             
-            for n, overloads in enumerate(list(itertools.product(("Prim", "Rev", "RevSOA"), repeat = fg.number_arguments()))):
+            for n, overloads in enumerate(itertools.product(("Prim", "Rev", "RevSOA"), repeat = fg.number_arguments())):
                 fg.reset()
 
                 arg_list_base = fg.build_arguments(overloads, max_size)
@@ -246,13 +246,6 @@ def processCLIArgs():
         type=int,
         default=1,
         help="Number of parallel cores to use.",
-    )
-    parser.add_argument(
-        "--cpp",
-        metavar="filename",
-        type=str,
-        default="benchmark.cpp",
-        help="Filename of the cpp file to generate.",
     )
     parser.add_argument(
         "--results_file",
