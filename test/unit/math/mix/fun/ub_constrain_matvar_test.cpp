@@ -60,8 +60,8 @@ void expect_vec_matvar(const T1& x, const T2& ub) {
 
 TEST(mathMixMatFun, ub_matvar_constrain) {
   using stan::scalar_type_t;
-  using stan::math::ub_constrain;
   using stan::math::promote_scalar_t;
+  using stan::math::ub_constrain;
   Eigen::MatrixXd A(2, 2);
   A << 5.0, 2.0, 0.0, 0.005;
   Eigen::MatrixXd ubm(2, 2);
