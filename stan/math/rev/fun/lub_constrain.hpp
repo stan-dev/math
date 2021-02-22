@@ -228,7 +228,8 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
     arena_t<ret_type> ret = diff * inv_logit_x + lb_val;
     reverse_pass_callback([arena_x, ub, lb, ret, diff, exp_x, inv_logit_x]() mutable {
       if (!is_constant<T>::value) {
-        forward_as<arena_t<promote_scalar_t<var, T>>>(arena_x).adj().array()
+        using T_var = arena_t<promote_scalar_t<var, T>>;
+        forward_as<T_var>(arena_x).adj().array()
             += ret.adj().array() * (exp_x * diff) / (1.0 + exp_x).square();
       }
       if (!is_constant<L>::value) {
@@ -393,7 +394,7 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub, std::decay_t<ret
     reverse_pass_callback(
     [arena_x, ub, arena_lb, ret, lp, diff, neg_abs_x, exp_neg_x, inv_logit_x, is_lb_inf]() mutable {
       using T_var = arena_t<promote_scalar_t<var, T>>;
-      using L_var = arena_t<promote_scalar_t<var, T>>;
+      using L_var = arena_t<promote_scalar_t<var, L>>;
       const auto lp_adj = lp.adj();
       if (!is_constant<T>::value) {
         const auto x_sign = value_of(arena_x).array().sign().eval();
@@ -562,7 +563,7 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
   auto diff = to_arena(ub_val - lb_val);
   // if both, identity, then lb_inf -> ub_constrain, then ub_inf -> lb_constrain
   arena_t<ret_type> ret = (is_lb_ub_inf).select(
-    identity_constrain(arena_x_val.array(), lb, ub),
+    arena_x_val.array(),
     (is_lb_inf).select(
       ub_val - arena_x.val().array().exp(),
       (is_ub_inf).select(
@@ -651,7 +652,7 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
    auto diff = to_arena(ub_val - lb_val);
    // if both, identity, then lb_inf -> ub_constrain, then ub_inf -> lb_constrain
    arena_t<ret_type> ret = (is_lb_ub_inf).select(
-     identity_constrain(arena_x_val.array(), lb, ub),
+     arena_x_val.array(),
      (is_lb_inf).select(
        ub_val - arena_x.val().array().exp(),
        (is_ub_inf).select(

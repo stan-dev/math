@@ -234,6 +234,7 @@ inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
 template <typename T, typename L, require_all_matrix_t<T, L>* = nullptr,
           require_any_st_var<T, L>* = nullptr>
 inline auto lb_constrain(const T& x, const L& lb) {
+  check_matching_dims("lb_constrain", "x", x, "lb", lb);
   using ret_type = return_var_matrix_t<T, T, L>;
   if (!is_constant<T>::value && !is_constant<L>::value) {
     arena_t<promote_scalar_t<var, T>> arena_x = x;
@@ -297,6 +298,7 @@ inline auto lb_constrain(const T& x, const L& lb) {
 template <typename T, typename L, require_all_matrix_t<T, L>* = nullptr,
           require_any_st_var<T, L>* = nullptr>
 inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
+  check_matching_dims("lb_constrain", "x", x, "lb", lb);
   using ret_type = return_var_matrix_t<T, T, L>;
   if (!is_constant<T>::value && !is_constant<L>::value) {
     arena_t<promote_scalar_t<var, T>> arena_x = x;
