@@ -666,19 +666,19 @@ class var_value<
     return var_sub(new vari_sub(vi_->col(i)));
   }
 
- /**
-  * View a `matrix_cl` as a column vector.
-  */
- inline auto as_column_vector_or_scalar() const {
-   using vari_sub = decltype(vi_->as_column_vector_or_scalar());
-   using var_sub = var_value<value_type_t<vari_sub>>;
-   return var_sub(new vari_sub(vi_->as_column_vector_or_scalar()));
- }
- inline auto as_column_vector_or_scalar() {
-   using vari_sub = decltype(vi_->as_column_vector_or_scalar());
-   using var_sub = var_value<value_type_t<vari_sub>>;
-   return var_sub(new vari_sub(vi_->as_column_vector_or_scalar()));
- }
+  /**
+   * View a `matrix_cl` as a column vector.
+   */
+  inline auto as_column_vector_or_scalar() const {
+    using vari_sub = decltype(vi_->as_column_vector_or_scalar());
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->as_column_vector_or_scalar()));
+  }
+  inline auto as_column_vector_or_scalar() {
+    using vari_sub = decltype(vi_->as_column_vector_or_scalar());
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->as_column_vector_or_scalar()));
+  }
 
   /**
    * View element of eigen matrices. This creates a new
