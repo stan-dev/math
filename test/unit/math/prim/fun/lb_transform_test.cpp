@@ -45,7 +45,7 @@ TEST(prob_transform, lb_constrain_matrix) {
       EXPECT_FLOAT_EQ(result(i), stan::math::lb_constrain(x(i), lbd));
     }
     auto x_free = stan::math::lb_free(result, lbd);
-    //EXPECT_MATRIX_EQ(x, x_free);
+    // EXPECT_MATRIX_EQ(x, x_free);
     for (size_t i = 0; i < x.size(); ++i) {
       EXPECT_FLOAT_EQ(x.coeff(i), x_free.coeff(i));
     }

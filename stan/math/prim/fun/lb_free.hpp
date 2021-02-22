@@ -26,7 +26,7 @@ namespace math {
  * @throw std::domain_error if y is lower than the lower bound
  */
 template <typename T, typename L, require_not_std_vector_t<T>* = nullptr,
-  require_stan_scalar_t<L>* = nullptr>
+          require_stan_scalar_t<L>* = nullptr>
 inline auto lb_free(T&& y, L&& lb) {
   if (value_of_rec(lb) == NEGATIVE_INFTY) {
     return identity_free(y, lb);
@@ -35,7 +35,7 @@ inline auto lb_free(T&& y, L&& lb) {
     auto&& lb_ref = to_ref(std::forward<L>(lb));
     check_greater_or_equal("lb_free", "Lower bounded variable", y_ref, lb_ref);
     return eval(log(subtract(std::forward<decltype(y_ref)>(y_ref),
-                        std::forward<decltype(lb_ref)>(lb_ref))));
+                             std::forward<decltype(lb_ref)>(lb_ref))));
   }
 }
 
@@ -57,7 +57,7 @@ inline auto lb_free(const std::vector<T> y, const L& lb) {
   auto&& lb_ref = to_ref(lb);
   std::vector<decltype(lb_free(y[0], lb))> ret(y.size());
   for (Eigen::Index i = 0; i < y.size(); ++i) {
-      ret[i] = lb_free(y[i], lb_ref);
+    ret[i] = lb_free(y[i], lb_ref);
   }
   return ret;
 }
@@ -66,7 +66,7 @@ template <typename T, typename L>
 inline auto lb_free(const std::vector<T> y, const std::vector<L>& lb) {
   std::vector<decltype(lb_free(y[0], lb[0]))> ret(y.size());
   for (Eigen::Index i = 0; i < y.size(); ++i) {
-      ret[i] = lb_free(y[i], lb[i]);
+    ret[i] = lb_free(y[i], lb[i]);
   }
   return ret;
 }
