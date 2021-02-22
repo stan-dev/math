@@ -251,8 +251,8 @@ inline void test_matvar_gradient(const ad_tolerances& tols, ResultMV& A_mv_ret,
   }
 }
 
-/** @name convert_to_matvar
- * Convert input to be matvar compatible with the
+/** @name make_matvar_compatible
+ * Make the input be matvar compatible with the
  * same scalar type as T.
  */
 ///@{
@@ -266,7 +266,7 @@ inline void test_matvar_gradient(const ad_tolerances& tols, ResultMV& A_mv_ret,
  */
 template<typename T, typename S,
 	 require_all_st_arithmetic<T, S>* = nullptr>
-auto convert_to_matvar(const S& x) {
+auto make_matvar_compatible(const S& x) {
   return x;
 }
 
@@ -282,7 +282,7 @@ auto convert_to_matvar(const S& x) {
 template<typename T, typename S,
 	 require_st_var<T>* = nullptr,
 	 require_st_arithmetic<S>* = nullptr>
-auto convert_to_matvar(const S& x) {
+auto make_matvar_compatible(const S& x) {
   return stan::math::promote_scalar_t<stan::math::var, S>(x);
 }
 
@@ -298,7 +298,7 @@ auto convert_to_matvar(const S& x) {
 template<typename T, typename S,
 	 require_st_var<T>* = nullptr,
 	 require_st_arithmetic<S>* = nullptr>
-auto convert_to_matvar(const std::vector<S>& x) {
+auto make_matvar_compatible(const std::vector<S>& x) {
   using vec_mat_var = std::vector<stan::math::promote_scalar_t<stan::math::var, S>>;
   vec_mat_var A_vec_mv;
   for (auto xi : x) {
@@ -308,9 +308,9 @@ auto convert_to_matvar(const std::vector<S>& x) {
 }
 ///@}
 
-/** @name convert_to_matvar
- * Convert input to be varmat compatible if T is a varmat
- * type, otherwise convert to be matvar compatible.
+/** @name make_matvar_compatible
+ * Make input to varmat compatible if T is a varmat
+ * type, otherwise make it be matvar compatible.
  */
 ///@{
 /**
@@ -325,8 +325,8 @@ auto convert_to_matvar(const std::vector<S>& x) {
 template<typename T, typename S,
 	 require_not_var_matrix_t<T>* = nullptr,
 	 require_st_arithmetic<S>* = nullptr>
-auto convert_to_varmat(const S& x) {
-  return convert_to_matvar<T>(x);
+auto make_varmat_compatible(const S& x) {
+  return make_matvar_compatible<T>(x);
 }
 
 /**
@@ -340,7 +340,7 @@ auto convert_to_varmat(const S& x) {
 template<typename T, typename S,
 	 require_var_matrix_t<T>* = nullptr,
 	 require_st_arithmetic<S>* = nullptr>
-auto convert_to_varmat(const S& x) {
+auto make_varmat_compatible(const S& x) {
   return stan::math::var_value<plain_type_t<S>>(x);
 }
 
@@ -355,7 +355,7 @@ auto convert_to_varmat(const S& x) {
 template<typename T, typename S,
 	 require_var_matrix_t<T>* = nullptr,
 	 require_st_arithmetic<S>* = nullptr>
-auto convert_to_varmat(const std::vector<S>& x) {
+auto make_varmat_compatible(const std::vector<S>& x) {
   using vec_var_mat = std::vector<stan::math::var_value<plain_type_t<S>>>;
   vec_var_mat A_vec_vm;
   for (auto xi : x) {
@@ -404,8 +404,8 @@ void expect_ad_matvar_impl(const ad_tolerances& tols, const F& f,
     FAIL() << "expect_ad_matvar requires at least one autodiff input!" << std::endl;
   }
 
-  auto A_mv_tuple = std::make_tuple(convert_to_matvar<Types>(x)...);
-  auto A_vm_tuple = std::make_tuple(convert_to_varmat<Types>(x)...);
+  auto A_mv_tuple = std::make_tuple(make_matvar_compatible<Types>(x)...);
+  auto A_vm_tuple = std::make_tuple(make_varmat_compatible<Types>(x)...);
 
   bool any_varmat = stan::math::apply([](const auto&... args) {
       return stan::math::disjunction<is_var_matrix<decltype(args)>...>::value ||
