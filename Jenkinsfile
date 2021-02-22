@@ -10,7 +10,7 @@ def runTests(String testPath, boolean jumbo = false) {
             sh "./runTests.py -j${env.PARALLEL} ${testPath}"
         }
     }
-    finally { junit 'test/**/*.xml' }    
+    finally { junit 'test/**/*.xml' }
 }
 
 def runTestsWin(String testPath, boolean buildLibs = true, boolean jumbo = false) {
@@ -19,11 +19,11 @@ def runTestsWin(String testPath, boolean buildLibs = true, boolean jumbo = false
        if (buildLibs){
            bat "mingw32-make.exe -f make/standalone math-libs"
        }
-       try { 
+       try {
            if (jumbo) {
-               bat "runTests.py -j${env.PARALLEL} ${testPath} --jumbo" 
+               bat "runTests.py -j${env.PARALLEL} ${testPath} --jumbo"
             } else {
-               bat "runTests.py -j${env.PARALLEL} ${testPath}" 
+               bat "runTests.py -j${env.PARALLEL} ${testPath}"
             }
        }
        finally { junit 'test/**/*.xml' }
@@ -252,7 +252,7 @@ pipeline {
                                 runTestsWin("test/unit/math/opencl", false, false)
                                 runTestsWin("test/unit/multiple_translation_units_test.cpp", false, false)
                                 runTestsWin("test/unit/math/prim/fun/gp_exp_quad_cov_test.cpp", false, false)
-                                runTestsWin("test/unit/math/prim/fun/multiply_test.cpp", false, false)          
+                                runTestsWin("test/unit/math/prim/fun/multiply_test.cpp", false, false)
                                 runTestsWin("test/unit/math/rev/fun/multiply_test.cpp", false, false)
                             }
                         }
@@ -286,10 +286,10 @@ pipeline {
                                 runTestsWin("test/unit/math/opencl", false, false)
                                 runTestsWin("test/unit/multiple_translation_units_test.cpp", false, false)
                                 runTestsWin("test/unit/math/prim/fun/gp_exp_quad_cov_test.cpp", false, false)
-                                runTestsWin("test/unit/math/prim/fun/multiply_test.cpp", false, false)             
+                                runTestsWin("test/unit/math/prim/fun/multiply_test.cpp", false, false)
                                 runTestsWin("test/unit/math/rev/fun/multiply_test.cpp", false, false)
                             }
-                            
+
                         }
                     }
                 }
@@ -339,7 +339,7 @@ pipeline {
                                 sh "find . -name *_test.xml | xargs rm"
                                 runTests("test/unit -f reduce_sum")
                             }
-                        }                      
+                        }
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }

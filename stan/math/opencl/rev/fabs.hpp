@@ -22,7 +22,7 @@ inline var_value<matrix_cl<double>> fabs(const var_value<T>& A) {
   return make_callback_var(
       fabs(A.val()), [A](vari_value<matrix_cl<double>>& res) mutable {
         A.adj() = select(
-            isnan(A.val()), constant(NOT_A_NUMBER, A.rows(), A.cols()),
+            isnan(A.val()), NOT_A_NUMBER,
             select(A.val() < 0.0, A.adj() - res.adj(), A.adj() + res.adj()));
       });
 }

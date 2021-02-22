@@ -7,16 +7,72 @@ TEST(prob_transform, lub) {
   EXPECT_FLOAT_EQ(2.0 + (5.0 - 2.0) * stan::math::inv_logit(-1.0),
                   stan::math::lub_constrain(-1.0, 2.0, 5.0));
 
-  EXPECT_FLOAT_EQ(1.7, stan::math::lub_constrain(
-                           1.7, -std::numeric_limits<double>::infinity(),
-                           +std::numeric_limits<double>::infinity()));
-  EXPECT_FLOAT_EQ(stan::math::lb_constrain(1.8, 3.0),
-                  stan::math::lub_constrain(
-                      1.8, 3.0, +std::numeric_limits<double>::infinity()));
-  EXPECT_FLOAT_EQ(stan::math::ub_constrain(1.9, -12.5),
-                  stan::math::lub_constrain(
-                      1.9, -std::numeric_limits<double>::infinity(), -12.5));
+  EXPECT_THROW(
+      stan::math::lub_constrain(1.7, -std::numeric_limits<double>::infinity(),
+                                +std::numeric_limits<double>::infinity()),
+      std::domain_error);
+  EXPECT_THROW(stan::math::lub_constrain(
+                   1.8, 3.0, +std::numeric_limits<double>::infinity()),
+               std::domain_error);
+  EXPECT_THROW(stan::math::lub_constrain(
+                   1.9, -std::numeric_limits<double>::infinity(), -12.5),
+               std::domain_error);
 }
+
+TEST(prob_transform, lub_vec) {
+  Eigen::VectorXd input(2);
+  input << -1.0, 1.1;
+  Eigen::VectorXd lbv(2);
+  lbv << -1.0, 0.5;
+  Eigen::VectorXd ubv(2);
+  ubv << 2.0, 3.0;
+  double lb = 1.0;
+  double ub = 2.0;
+
+  Eigen::VectorXd resvv(2);
+  resvv << (2.0 + 1.0) * stan::math::inv_logit(-1.0) - 1.0,
+      (3.0 - 0.5) * stan::math::inv_logit(1.1) + 0.5;
+  Eigen::VectorXd ressv(2);
+  ressv << (2.0 - 1.0) * stan::math::inv_logit(-1.0) + 1.0,
+      (3.0 - 1.0) * stan::math::inv_logit(1.1) + 1.0;
+  Eigen::VectorXd resvs(2);
+  resvs << (2.0 + 1.0) * stan::math::inv_logit(-1.0) - 1.0,
+      (2.0 - 0.5) * stan::math::inv_logit(1.1) + 0.5;
+  Eigen::VectorXd res(2);
+  res << (2.0 - 1.0) * stan::math::inv_logit(-1.0) + 1.0,
+      (2.0 - 1.0) * stan::math::inv_logit(1.1) + 1.0;
+
+  EXPECT_MATRIX_EQ(resvv, stan::math::lub_constrain(input, lbv, ubv));
+  EXPECT_MATRIX_EQ(ressv, stan::math::lub_constrain(input, lb, ubv));
+  EXPECT_MATRIX_EQ(resvs, stan::math::lub_constrain(input, lbv, ub));
+  EXPECT_MATRIX_EQ(res, stan::math::lub_constrain(input, lb, ub));
+
+  double lp = 0.0;
+  EXPECT_MATRIX_EQ(resvv, stan::math::lub_constrain(input, lbv, ubv, lp));
+  EXPECT_FLOAT_EQ(((ubv - lbv).array().log() + input.array()
+                   - 2 * input.array().exp().log1p().array())
+                      .sum(),
+                  lp);
+  lp = 0.0;
+  EXPECT_MATRIX_EQ(ressv, stan::math::lub_constrain(input, lb, ubv, lp));
+  EXPECT_FLOAT_EQ(((ubv.array() - lb).log() + input.array()
+                   - 2 * input.array().exp().log1p().array())
+                      .sum(),
+                  lp);
+  lp = 0.0;
+  EXPECT_MATRIX_EQ(resvs, stan::math::lub_constrain(input, lbv, ub, lp));
+  EXPECT_FLOAT_EQ(((ub - lbv.array()).log() + input.array()
+                   - 2 * input.array().exp().log1p().array())
+                      .sum(),
+                  lp);
+  lp = 0.0;
+  EXPECT_MATRIX_EQ(res, stan::math::lub_constrain(input, lb, ub, lp));
+  EXPECT_FLOAT_EQ((std::log(ub - lb) + input.array()
+                   - 2 * input.array().exp().log1p().array())
+                      .sum(),
+                  lp);
+}
+
 TEST(prob_transform, lub_j) {
   double lp = -17.0;
   double L = 2.0;
@@ -29,27 +85,27 @@ TEST(prob_transform, lub_j) {
                   lp);
 
   double lp1 = -12.9;
-  EXPECT_FLOAT_EQ(1.7, stan::math::lub_constrain(
-                           1.7, -std::numeric_limits<double>::infinity(),
-                           +std::numeric_limits<double>::infinity(), lp1));
+  EXPECT_THROW(
+      stan::math::lub_constrain(1.7, -std::numeric_limits<double>::infinity(),
+                                +std::numeric_limits<double>::infinity(), lp1),
+      std::domain_error);
   EXPECT_FLOAT_EQ(-12.9, lp1);
 
   double lp2 = -19.8;
   double lp2_expected = -19.8;
-  EXPECT_FLOAT_EQ(stan::math::lb_constrain(1.8, 3.0, lp2_expected),
-                  stan::math::lub_constrain(
-                      1.8, 3.0, +std::numeric_limits<double>::infinity(), lp2));
+  EXPECT_THROW(stan::math::lub_constrain(
+                   1.8, 3.0, +std::numeric_limits<double>::infinity(), lp2),
+               std::domain_error);
   EXPECT_FLOAT_EQ(lp2_expected, lp2);
 
   double lp3 = -422;
   double lp3_expected = -422;
-  EXPECT_FLOAT_EQ(
-      stan::math::ub_constrain(1.9, -12.5, lp3_expected),
-      stan::math::lub_constrain(1.9, -std::numeric_limits<double>::infinity(),
-                                -12.5, lp3));
+  EXPECT_THROW(stan::math::lub_constrain(
+                   1.9, -std::numeric_limits<double>::infinity(), -12.5, lp3),
+               std::domain_error);
   EXPECT_FLOAT_EQ(lp3_expected, lp3);
 }
-TEST(ProbTransform, lubException) {
+TEST(prob_transform, lubException) {
   using stan::math::lub_constrain;
   EXPECT_THROW(lub_constrain(5.0, 1.0, 1.0), std::domain_error);
   EXPECT_NO_THROW(lub_constrain(5.0, 1.0, 1.01));
@@ -64,15 +120,16 @@ TEST(prob_transform, lub_f) {
   EXPECT_FLOAT_EQ(stan::math::logit((y - L) / (U - L)),
                   stan::math::lub_free(y, L, U));
 
-  EXPECT_FLOAT_EQ(
-      14.2, stan::math::lub_free(14.2, -std::numeric_limits<double>::infinity(),
-                                 std::numeric_limits<double>::infinity()));
-  EXPECT_FLOAT_EQ(stan::math::ub_free(-18.3, 7.6),
-                  stan::math::lub_free(
-                      -18.3, -std::numeric_limits<double>::infinity(), 7.6));
-  EXPECT_FLOAT_EQ(stan::math::lb_free(763.9, -3122.2),
-                  stan::math::lub_free(
-                      763.9, -3122.2, std::numeric_limits<double>::infinity()));
+  EXPECT_THROW(
+      stan::math::lub_free(14.2, -std::numeric_limits<double>::infinity(),
+                           std::numeric_limits<double>::infinity()),
+      std::domain_error);
+  EXPECT_THROW(stan::math::lub_free(
+                   -18.3, -std::numeric_limits<double>::infinity(), 7.6),
+               std::domain_error);
+  EXPECT_THROW(stan::math::lub_free(763.9, -3122.2,
+                                    std::numeric_limits<double>::infinity()),
+               std::domain_error);
 }
 TEST(prob_transform, lub_f_exception) {
   double L = -10.0;

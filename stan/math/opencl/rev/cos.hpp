@@ -19,10 +19,10 @@ namespace math {
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
 inline var_value<matrix_cl<double>> cos(const var_value<T>& A) {
-  return make_callback_var(
-      cos(A.val()), [A](vari_value<matrix_cl<double>>& res) mutable {
-        A.adj() = A.adj() - elt_multiply(res.adj(), sin(A.val()));
-      });
+  return make_callback_var(cos(A.val()),
+                           [A](vari_value<matrix_cl<double>>& res) mutable {
+                             A.adj() -= elt_multiply(res.adj(), sin(A.val()));
+                           });
 }
 
 }  // namespace math

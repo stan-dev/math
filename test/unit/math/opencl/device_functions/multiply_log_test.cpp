@@ -28,7 +28,7 @@ TEST(MathMatrixCL, multiply_log) {
   stan::math::matrix_cl<double> b_cl(b);
   stan::math::matrix_cl<double> res_cl(1000, 1);
   multiply_log(cl::NDRange(1000), res_cl, a_cl, b_cl);
-  Eigen::VectorXd res = stan::math::from_matrix_cl<-1, 1>(res_cl);
+  Eigen::VectorXd res = stan::math::from_matrix_cl<Eigen::VectorXd>(res_cl);
 
   EXPECT_NEAR_REL(res, stan::math::multiply_log(a, b));
 }
@@ -44,7 +44,7 @@ TEST(MathMatrixCL, multiply_log_edge_cases) {
   stan::math::matrix_cl<double> b_cl(b);
   stan::math::matrix_cl<double> res_cl(7, 1);
   multiply_log(cl::NDRange(7), res_cl, a_cl, b_cl);
-  Eigen::VectorXd res = stan::math::from_matrix_cl<-1, 1>(res_cl);
+  Eigen::VectorXd res = stan::math::from_matrix_cl<Eigen::VectorXd>(res_cl);
 
   EXPECT_NEAR_REL(res, stan::math::multiply_log(a, b));
 }

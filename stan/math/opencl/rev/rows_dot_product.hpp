@@ -2,10 +2,10 @@
 #define STAN_MATH_OPENCL_REV_ROWS_DOT_PRODUCT_HPP
 #ifdef STAN_OPENCL
 
+#include <stan/math/opencl/rev/adjoint_results.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/prim/rows_dot_product.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/adjoint_of.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 
@@ -33,18 +33,12 @@ inline var_value<matrix_cl<double>> rows_dot_product(T1&& v1, T2&& v2) {
   arena_t<T1> v1_arena = std::forward<T1>(v1);
   arena_t<T2> v2_arena = std::forward<T2>(v2);
 
-  matrix_cl<double> res_val = rows_dot_product(value_of(v1), value_of(v2));
-
   return make_callback_var(
-      res_val,
+      rows_dot_product(value_of(v1), value_of(v2)),
       [v1_arena, v2_arena](const vari_value<matrix_cl<double>>& res) mutable {
-        auto v1_deriv
-            = elt_multiply(rowwise_broadcast(res.adj()), value_of(v2_arena));
-        auto v2_deriv
-            = elt_multiply(rowwise_broadcast(res.adj()), value_of(v1_arena));
-        results(adjoint_of(v1_arena), adjoint_of(v2_arena))
-            += expressions(calc_if<is_var<T1>::value>(v1_deriv),
-                           calc_if<is_var<T2>::value>(v2_deriv));
+        adjoint_results(v1_arena, v2_arena) += expressions(
+            elt_multiply(rowwise_broadcast(res.adj()), value_of(v2_arena)),
+            elt_multiply(rowwise_broadcast(res.adj()), value_of(v1_arena)));
       });
 }
 

@@ -21,9 +21,7 @@ template <typename T,
 inline var_value<matrix_cl<double>> atan(const var_value<T>& A) {
   return make_callback_var(
       atan(A.val()), [A](vari_value<matrix_cl<double>>& res) mutable {
-        A.adj()
-            = A.adj()
-              + elt_divide(res.adj(), (1.0 + elt_multiply(A.val(), A.val())));
+        A.adj() += elt_divide(res.adj(), (1.0 + square(A.val())));
       });
 }
 

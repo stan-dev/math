@@ -53,7 +53,9 @@ namespace math {
  * @throw std::domain_error if any element of theta is less than 0.
  * @throw std::domain_error if the sum of theta is not 1.
  */
-template <bool propto, typename T_prob, typename T_prior_size>
+template <bool propto, typename T_prob, typename T_prior_size,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_prob, T_prior_size>* = nullptr>
 return_type_t<T_prob, T_prior_size> dirichlet_lpdf(const T_prob& theta,
                                                    const T_prior_size& alpha) {
   using T_partials_return = partials_return_t<T_prob, T_prior_size>;
@@ -110,15 +112,16 @@ return_type_t<T_prob, T_prior_size> dirichlet_lpdf(const T_prob& theta,
   if (!is_constant_all<T_prob>::value) {
     for (size_t t = 0; t < t_length; t++) {
       ops_partials.edge1_.partials_vec_[t]
-          = alpha_m_1.col(t) / theta_dbl.col(t);
+          += (alpha_m_1.col(t) / theta_dbl.col(t)).matrix();
     }
   }
 
   if (!is_constant_all<T_prior_size>::value) {
     for (size_t t = 0; t < t_length; t++) {
-      ops_partials.edge2_.partials_vec_[t] = digamma(alpha_dbl.col(t).sum())
-                                             - digamma(alpha_dbl.col(t))
-                                             + theta_log.col(t);
+      ops_partials.edge2_.partials_vec_[t]
+          += (digamma(alpha_dbl.col(t).sum()) - digamma(alpha_dbl.col(t))
+              + theta_log.col(t))
+                 .matrix();
     }
   }
   return ops_partials.build(lp);
