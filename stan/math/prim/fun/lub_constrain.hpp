@@ -233,6 +233,79 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
   return x_ret;
 }
 
+template <typename T, typename L, typename U, require_all_not_std_vector_t<L, U>* = nullptr>
+inline auto lub_constrain(const std::vector<T>& x, const L& lb, const U& ub) {
+  std::vector<plain_type_t<decltype(lub_constrain(x[0], lb, ub))>> ret(x.size());
+  for (size_t i = 0; i < x.size(); ++i) {
+    ret[i] = lub_constrain(x[i], lb, ub);
+  }
+  return ret;
+}
+
+template <typename T, typename L, typename U, require_all_not_std_vector_t<L, U>* = nullptr>
+inline auto lub_constrain(const std::vector<T>& x, const L& lb, const U& ub, return_type_t<T, L, U>& lp) {
+  std::vector<plain_type_t<decltype(lub_constrain(x[0], lb, ub))>> ret(x.size());
+  for (size_t i = 0; i < x.size(); ++i) {
+    ret[i] = lub_constrain(x[i], lb, ub, lp);
+  }
+  return ret;
+}
+
+template <typename T, typename L, typename U, require_not_std_vector_t<L>* = nullptr>
+inline auto lub_constrain(const std::vector<T>& x, const L& lb, const std::vector<U>& ub) {
+  std::vector<plain_type_t<decltype(lub_constrain(x[0], lb, ub[0]))>> ret(x.size());
+  for (size_t i = 0; i < x.size(); ++i) {
+    ret[i] = lub_constrain(x[i], lb, ub[i]);
+  }
+  return ret;
+}
+
+template <typename T, typename L, typename U, require_not_std_vector_t<L>* = nullptr>
+inline auto lub_constrain(const std::vector<T>& x, const L& lb, const std::vector<U>& ub, return_type_t<T, L, U>& lp) {
+  std::vector<plain_type_t<decltype(lub_constrain(x[0], lb, ub[0]))>> ret(x.size());
+  for (size_t i = 0; i < x.size(); ++i) {
+    ret[i] = lub_constrain(x[i], lb, ub[i], lp);
+  }
+  return ret;
+}
+
+template <typename T, typename L, typename U, require_not_std_vector_t<U>* = nullptr>
+inline auto lub_constrain(const std::vector<T>& x, const std::vector<L>& lb, const U& ub) {
+  std::vector<plain_type_t<decltype(lub_constrain(x[0], lb[0], ub))>> ret(x.size());
+  for (size_t i = 0; i < x.size(); ++i) {
+    ret[i] = lub_constrain(x[i], lb[i], ub);
+  }
+  return ret;
+}
+
+template <typename T, typename L, typename U, require_not_std_vector_t<U>* = nullptr>
+inline auto lub_constrain(const std::vector<T>& x, const std::vector<L>& lb, const U& ub, return_type_t<T, L, U>& lp) {
+  std::vector<plain_type_t<decltype(lub_constrain(x[0], lb[0], ub))>> ret(x.size());
+  for (size_t i = 0; i < x.size(); ++i) {
+    ret[i] = lub_constrain(x[i], lb[i], ub, lp);
+  }
+  return ret;
+}
+
+
+template <typename T, typename L, typename U>
+inline auto lub_constrain(const std::vector<T>& x, const std::vector<L>& lb, const std::vector<U>& ub) {
+  std::vector<plain_type_t<decltype(lub_constrain(x[0], lb[0], ub[0]))>> ret(x.size());
+  for (size_t i = 0; i < x.size(); ++i) {
+    ret[i] = lub_constrain(x[i], lb[i], ub[i]);
+  }
+  return ret;
+}
+
+template <typename T, typename L, typename U>
+inline auto lub_constrain(const std::vector<T>& x, const std::vector<L>& lb, const std::vector<U>& ub, return_type_t<T, L, U>& lp) {
+  std::vector<plain_type_t<decltype(lub_constrain(x[0], lb[0], ub[0]))>> ret(x.size());
+  for (size_t i = 0; i < x.size(); ++i) {
+    ret[i] = lub_constrain(x[i], lb[i], ub[i], lp);
+  }
+  return ret;
+}
+
 
 }  // namespace math
 }  // namespace stan
