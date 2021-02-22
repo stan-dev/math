@@ -59,12 +59,12 @@ inline auto ub_free(T&& y, U&& ub) {
  * @throw std::invalid_argument if any element of constrained variable
  *   is greater than the upper bound.
  */
-template <typename T, typename L, require_all_eigen_t<T, L>* = nullptr>
-inline auto ub_free(T&& y, L&& ub) {
+template <typename T, typename U, require_all_eigen_t<T, U>* = nullptr>
+inline auto ub_free(T&& y, U&& ub) {
   check_matching_dims("ub_free", "y", y, "ub", ub);
   auto&& y_ref = to_ref(std::forward<T>(y));
-  auto&& ub_ref = to_ref(std::forward<L>(ub));
-  promote_scalar_t<return_type_t<T, L>, T> ret(y.rows(), y.cols());
+  auto&& ub_ref = to_ref(std::forward<U>(ub));
+  promote_scalar_t<return_type_t<T, U>, T> ret(y.rows(), y.cols());
   for (Eigen::Index j = 0; j < y.cols(); ++j) {
     for (Eigen::Index i = 0; i < y.rows(); ++i) {
       ret.coeffRef(i, j) = ub_free(y_ref.coeff(i, j), ub_ref.coeff(i, j));
@@ -87,8 +87,8 @@ inline auto ub_free(T&& y, L&& ub) {
  * @throw std::invalid_argument if any element of constrained variable
  *   is greater than the upper bound.
  */
-template <typename T, typename L, require_not_std_vector_t<L>* = nullptr>
-inline auto ub_free(const std::vector<T> y, const L& ub) {
+template <typename T, typename U, require_not_std_vector_t<U>* = nullptr>
+inline auto ub_free(const std::vector<T> y, const U& ub) {
   auto&& ub_ref = to_ref(ub);
   std::vector<decltype(ub_free(y[0], ub))> ret(y.size());
   for (Eigen::Index i = 0; i < y.size(); ++i) {
@@ -111,8 +111,8 @@ inline auto ub_free(const std::vector<T> y, const L& ub) {
  * @throw std::invalid_argument if any element of constrained variable
  *   is greater than the upper bound.
  */
-template <typename T, typename L>
-inline auto ub_free(const std::vector<T> y, const std::vector<L>& ub) {
+template <typename T, typename U>
+inline auto ub_free(const std::vector<T> y, const std::vector<U>& ub) {
   check_matching_dims("ub_free", "y", y, "ub", ub);
   std::vector<decltype(ub_free(y[0], ub[0]))> ret(y.size());
   for (Eigen::Index i = 0; i < y.size(); ++i) {
