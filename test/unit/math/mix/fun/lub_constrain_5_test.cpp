@@ -12,8 +12,8 @@
 // array matrix[], real, real
 TEST(mathMixMatFun, lub_stdvec_mat_mat_constrain) {
   Eigen::MatrixXd A_inner(2, 3);
-  // swapping 0.05 for 0 causes a failure for the hessian?
-  A_inner << 5.0, 2.0, 4.0, -2.0, 0.05, 0.1;
+  // swapping 0.0000001 for 0 causes a failure for the hessian?
+  A_inner << 5.0, 2.0, 4.0, -2.0, 0.0000001, 0.1;
   Eigen::MatrixXd lb_inner(2, 3);
   lb_inner << -1.0, 1.0, -6.0, 1.0, 0.0, 0.01;
   Eigen::MatrixXd ub_inner(2, 3);
