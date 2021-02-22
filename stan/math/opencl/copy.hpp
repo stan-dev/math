@@ -176,6 +176,9 @@ inline T_dst from_matrix_cl(const matrix_cl<T>& src) {
   check_size_match("from_matrix_cl<std::vector>", "src.cols()", src.cols(),
                    "dst.cols()", 1);
   T_dst dst(src.rows());
+  if (src.rows() == 0) {
+    return dst;
+  }
   try {
     cl::Event copy_event;
     const cl::CommandQueue queue = opencl_context.queue();

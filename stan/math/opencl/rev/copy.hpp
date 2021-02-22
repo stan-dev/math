@@ -47,9 +47,9 @@ inline var_value<matrix_cl<value_type_t<T>>> to_matrix_cl(
  */
 template <typename T, require_stan_scalar_t<T>* = nullptr>
 inline var_value<matrix_cl<value_type_t<T>>> to_matrix_cl(
-    std::vector<var_value<T>>& a) {
+    const std::vector<var_value<T>>& a) {
   return to_matrix_cl(
-      Eigen::Map<Eigen::Matrix<var_value<T>, Eigen::Dynamic, 1>>(a.data(),
+      Eigen::Map<const Eigen::Matrix<var_value<T>, Eigen::Dynamic, 1>>(a.data(),
                                                                  a.size()));
 }
 
