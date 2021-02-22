@@ -111,7 +111,6 @@ inline auto lub_constrain(T&& x, L&& lb, U&& ub, return_type_t<T, L, U>& lp) {
   }
 }
 
-
 /**
  * Specialization for Eigen matrix and scalar bounds.
  */
