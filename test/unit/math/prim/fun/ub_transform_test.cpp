@@ -50,7 +50,7 @@ TEST(prob_transform, ub_constrain_matrix) {
       EXPECT_FLOAT_EQ(result(i), stan::math::ub_constrain(x(i), ubd));
     }
     auto x_free = stan::math::ub_free(result, ubd);
-    //EXPECT_MATRIX_EQ(x, x_free);
+    // EXPECT_MATRIX_EQ(x, x_free);
     for (size_t i = 0; i < x.size(); ++i) {
       EXPECT_FLOAT_EQ(x.coeff(i), x_free.coeff(i));
     }

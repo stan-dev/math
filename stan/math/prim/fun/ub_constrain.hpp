@@ -102,7 +102,7 @@ template <typename T, typename L, require_all_eigen_t<T, L>* = nullptr,
           require_all_not_st_var<T, L>* = nullptr>
 inline auto ub_constrain(const T& x, const L& ub,
                          std::decay_t<return_type_t<T, L>>& lp) {
-   check_matching_dims("ub_constrain", "x", x, "ub", ub);
+  check_matching_dims("ub_constrain", "x", x, "ub", ub);
   return eval(x.binaryExpr(
       ub, [&lp](auto&& xx, auto&& ubb) { return ub_constrain(xx, ubb, lp); }));
 }

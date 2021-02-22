@@ -31,7 +31,7 @@ namespace math {
  *   than the upper bound.
  */
 template <typename T, typename U, require_not_std_vector_t<T>* = nullptr,
- require_stan_scalar_t<U>* = nullptr>
+          require_stan_scalar_t<U>* = nullptr>
 inline auto ub_free(T&& y, U&& ub) {
   if (value_of_rec(ub) == INFTY) {
     return identity_free(y, ub);
@@ -41,7 +41,7 @@ inline auto ub_free(T&& y, U&& ub) {
     check_less_or_equal("ub_free", "Upper bounded variable", value_of(y_ref),
                         value_of(ub_ref));
     return eval(log(subtract(std::forward<decltype(ub_ref)>(ub_ref),
-                        std::forward<decltype(y_ref)>(y_ref))));
+                             std::forward<decltype(y_ref)>(y_ref))));
   }
 }
 
@@ -64,7 +64,7 @@ inline auto ub_free(const std::vector<T> y, const L& ub) {
   auto&& ub_ref = to_ref(ub);
   std::vector<decltype(ub_free(y[0], ub))> ret(y.size());
   for (Eigen::Index i = 0; i < y.size(); ++i) {
-      ret[i] = ub_free(y[i], ub_ref);
+    ret[i] = ub_free(y[i], ub_ref);
   }
   return ret;
 }
@@ -74,7 +74,7 @@ inline auto ub_free(const std::vector<T> y, const std::vector<L>& ub) {
   check_matching_dims("ub_free", "y", y, "ub", ub);
   std::vector<decltype(ub_free(y[0], ub[0]))> ret(y.size());
   for (Eigen::Index i = 0; i < y.size(); ++i) {
-      ret[i] = ub_free(y[i], ub[i]);
+    ret[i] = ub_free(y[i], ub[i]);
   }
   return ret;
 }
