@@ -138,56 +138,16 @@ inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
 }
 
 /**
- * Specialization of `lb_constrain` to apply a scalar lower bound elementwise
- *  to each input element.
- *
- * @tparam T A Any type with a Scalar `scalar_type`.
- * @tparam L Scalar.
- * @param[in] x unconstrained input
- * @param[in] lb lower bound on output
- * @return lower-bound constrained value corresponding to inputs
- */
-template <typename T, typename L, require_stan_scalar_t<L>* = nullptr>
-inline auto lb_constrain(const std::vector<T>& x, const L& lb) {
-  std::vector<plain_type_t<decltype(lb_constrain(x[0], lb))>> ret(x.size());
-  for (size_t i = 0; i < x.size(); ++i) {
-    ret[i] = lb_constrain(x[i], lb);
-  }
-  return ret;
-}
-
-/**
- * Specialization of `lb_constrain` to apply a scalar lower bound elementwise
- *  to each input element.
- *
- * @tparam T A Any type with a Scalar `scalar_type`.
- * @tparam L Scalar.
- * @param[in] x unconstrained input
- * @param[in] lb lower bound on output
- * @param[in,out] lp reference to log probability to increment
- * @return lower-bound constrained value corresponding to inputs
- */
-template <typename T, typename L, require_stan_scalar_t<L>* = nullptr>
-inline auto lb_constrain(const std::vector<T>& x, const L& lb,
-                         return_type_t<T, L>& lp) {
-  std::vector<plain_type_t<decltype(lb_constrain(x[0], lb))>> ret(x.size());
-  for (size_t i = 0; i < x.size(); ++i) {
-    ret[i] = lb_constrain(x[i], lb, lp);
-  }
-  return ret;
-}
-
-/**
  * Specialization of `lb_constrain` to apply a container of lower bounds
  * elementwise to each input element.
  *
  * @tparam T A Any type with a Scalar `scalar_type`.
- * @tparam L A type inheriting from `EigenBase` or a standard vector.
+ * @tparam L A type inheriting from `EigenBase` or a scalar.
  * @param[in] x unconstrained input
  * @param[in] lb lower bound on output
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename L, require_all_matrix_t<T, L>* = nullptr>
+template <typename T, typename L, require_not_std_vector_t<L>* = nullptr>
 inline auto lb_constrain(const std::vector<T>& x, const L& lb) {
   std::vector<plain_type_t<decltype(lb_constrain(x[0], lb))>> ret(x.size());
   for (size_t i = 0; i < x.size(); ++i) {
@@ -207,7 +167,7 @@ inline auto lb_constrain(const std::vector<T>& x, const L& lb) {
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename L, require_all_matrix_t<T, L>* = nullptr>
+template <typename T, typename L, require_not_std_vector_t<L>* = nullptr>
 inline auto lb_constrain(const std::vector<T>& x, const L& lb,
                          return_type_t<T, L>& lp) {
   std::vector<plain_type_t<decltype(lb_constrain(x[0], lb))>> ret(x.size());

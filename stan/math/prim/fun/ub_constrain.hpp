@@ -117,7 +117,7 @@ inline auto ub_constrain(const T& x, const L& ub,
  * @param[in] ub upper bound on output
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename L, require_stan_scalar_t<L>* = nullptr>
+template <typename T, typename L, require_not_std_vector_t<L>* = nullptr>
 inline auto ub_constrain(const std::vector<T>& x, const L& ub) {
   std::vector<plain_type_t<decltype(ub_constrain(x[0], ub))>> ret(x.size());
   for (size_t i = 0; i < x.size(); ++i) {
@@ -137,47 +137,7 @@ inline auto ub_constrain(const std::vector<T>& x, const L& ub) {
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename L, require_stan_scalar_t<L>* = nullptr>
-inline auto ub_constrain(const std::vector<T>& x, const L& ub,
-                         return_type_t<T, L>& lp) {
-  std::vector<plain_type_t<decltype(ub_constrain(x[0], ub))>> ret(x.size());
-  for (size_t i = 0; i < x.size(); ++i) {
-    ret[i] = ub_constrain(x[i], ub, lp);
-  }
-  return ret;
-}
-
-/**
- * Specialization of `ub_constrain` to apply a container of upper bounds
- * elementwise to each input element.
- *
- * @tparam T A Any type with a Scalar `scalar_type`.
- * @tparam L A type inheriting from `EigenBase` or a standard vector.
- * @param[in] x unconstrained input
- * @param[in] ub upper bound on output
- * @return lower-bound constrained value corresponding to inputs
- */
-template <typename T, typename L, require_all_matrix_t<T, L>* = nullptr>
-inline auto ub_constrain(const std::vector<T>& x, const L& ub) {
-  std::vector<plain_type_t<decltype(ub_constrain(x[0], ub))>> ret(x.size());
-  for (size_t i = 0; i < x.size(); ++i) {
-    ret[i] = ub_constrain(x[i], ub);
-  }
-  return ret;
-}
-
-/**
- * Specialization of `ub_constrain` to apply a container of upper bounds
- * elementwise to each input element.
- *
- * @tparam T A Any type with a Scalar `scalar_type`.
- * @tparam L A type inheriting from `EigenBase` or a standard vector.
- * @param[in] x unconstrained input
- * @param[in] ub upper bound on output
- * @param[in,out] lp reference to log probability to increment
- * @return lower-bound constrained value corresponding to inputs
- */
-template <typename T, typename L, require_all_matrix_t<T, L>* = nullptr>
+template <typename T, typename L, require_not_std_vector_t<L>* = nullptr>
 inline auto ub_constrain(const std::vector<T>& x, const L& ub,
                          return_type_t<T, L>& lp) {
   std::vector<plain_type_t<decltype(ub_constrain(x[0], ub))>> ret(x.size());
