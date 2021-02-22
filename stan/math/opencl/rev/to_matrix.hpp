@@ -31,6 +31,12 @@ inline var_value<matrix_cl<double>> to_matrix(const var_value<T_x>& x, int m,
       [x, m, n](vari_value<matrix_cl<double>>& res) mutable {
         matrix_cl<double> x_adj_cpy = std::move(x.adj());
         matrix_cl<double> reshaped(x_adj_cpy.buffer(), m, n);
+        for (cl::Event e : x_adj_cpy.read_events()) {
+          reshaped.add_read_event(e);
+        }
+        for (cl::Event e : x_adj_cpy.write_events()) {
+          reshaped.add_write_event(e);
+        }
         reshaped += res.adj();
         for (cl::Event e : reshaped.write_events()) {
           x_adj_cpy.add_write_event(e);
