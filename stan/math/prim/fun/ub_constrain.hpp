@@ -84,6 +84,7 @@ inline auto ub_constrain(const T& x, const L& ub) {
 template <typename T, typename L, require_all_eigen_t<T, L>* = nullptr,
           require_all_not_st_var<T, L>* = nullptr>
 inline auto ub_constrain(const T& x, const L& ub) {
+  check_matching_dims("ub_constrain", "x", x, "ub", ub);
   return eval(x.binaryExpr(
       ub, [](auto&& xx, auto&& ubb) { return ub_constrain(xx, ubb); }));
 }
@@ -101,6 +102,7 @@ template <typename T, typename L, require_all_eigen_t<T, L>* = nullptr,
           require_all_not_st_var<T, L>* = nullptr>
 inline auto ub_constrain(const T& x, const L& ub,
                          std::decay_t<return_type_t<T, L>>& lp) {
+   check_matching_dims("ub_constrain", "x", x, "ub", ub);
   return eval(x.binaryExpr(
       ub, [&lp](auto&& xx, auto&& ubb) { return ub_constrain(xx, ubb, lp); }));
 }
@@ -159,6 +161,7 @@ inline auto ub_constrain(const std::vector<T>& x, const L& ub,
  */
 template <typename T, typename L>
 inline auto ub_constrain(const std::vector<T>& x, const std::vector<L>& ub) {
+  check_matching_dims("ub_constrain", "x", x, "ub", ub);
   std::vector<plain_type_t<decltype(ub_constrain(x[0], ub[0]))>> ret(x.size());
   for (size_t i = 0; i < x.size(); ++i) {
     ret[i] = ub_constrain(x[i], ub[i]);
@@ -180,6 +183,7 @@ inline auto ub_constrain(const std::vector<T>& x, const std::vector<L>& ub) {
 template <typename T, typename L>
 inline auto ub_constrain(const std::vector<T>& x, const std::vector<L>& ub,
                          return_type_t<T, L>& lp) {
+  check_matching_dims("ub_constrain", "x", x, "ub", ub);
   std::vector<plain_type_t<decltype(ub_constrain(x[0], ub[0]))>> ret(x.size());
   for (size_t i = 0; i < x.size(); ++i) {
     ret[i] = ub_constrain(x[i], ub[i], lp);
