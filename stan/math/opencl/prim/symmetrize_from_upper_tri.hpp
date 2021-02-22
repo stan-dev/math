@@ -13,7 +13,7 @@ namespace math {
  * the input matrix.
  *
  * @tparam T_x type of the matrix
- * @param m Matrix.
+ * @param x Matrix.
  * @throw std:invalid_argument if the matrix is not square.
  */
 template <typename T_x,

@@ -14,7 +14,7 @@ namespace math {
  * Return reversed view into the specified vector or row vector.
  *
  * @tparam T type of expression
- * @param x vector or row vector to reverse
+ * @param m vector or row vector to reverse
  * @return reversed vector or row vector
  */
 template <typename T,
