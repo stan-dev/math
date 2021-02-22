@@ -42,7 +42,7 @@ struct sho_functor {
     return out;
   }
 };
-
+/*
 template <int state>
 class test_functor_double_var {
   int lmm_;
@@ -64,7 +64,7 @@ class test_functor_double_var {
 
     std::vector<Eigen::Matrix<T, Eigen::Dynamic, 1>> ys
         = (lmm_ == TEST_CVODES_ADAMS)
-              ? stan::math::ode_bdf_adjoint(sho, y0, t0, ts, nullptr, omega)
+              ? stan::math::ode_adjoint(sho, y0, t0, ts, nullptr, omega)
               : stan::math::ode_bdf(sho, y0, t0, ts, nullptr, omega);
 
     return ys[1](state);
@@ -134,7 +134,7 @@ class test_functor_var_double {
 
     std::vector<Eigen::Matrix<T, Eigen::Dynamic, 1>> ys
         = (lmm_ == TEST_CVODES_ADAMS)
-              ? stan::math::ode_bdf_adjoint(sho, y0, t0, ts, nullptr, omega)
+              ? stan::math::ode_adjoint(sho, y0, t0, ts, nullptr, omega)
               : stan::math::ode_bdf(sho, y0, t0, ts, nullptr, omega);
 
     return ys[0](state);
@@ -203,7 +203,7 @@ class test_functor_var_var {
 
     std::vector<Eigen::Matrix<T, Eigen::Dynamic, 1>> ys
         = (lmm_ == TEST_CVODES_ADAMS)
-              ? stan::math::ode_adams_tol(sho, y0, t0, ts, 1E-10, 1E-10, 10000,
+              ? stan::math::ode_adjoint(sho, y0, t0, ts, 1E-10, 1E-10, 10000,
                                           nullptr, omega)
               : stan::math::ode_bdf(sho, y0, t0, ts, nullptr, omega);
 
@@ -259,6 +259,7 @@ TEST(StanMathOdeIntegrateODEGradMat, var_var) {
     EXPECT_NEAR(dy2_dchi(t, omega, chi), grad(1), 1e-7);
   }
 }
+*/
 
 template <int state>
 class test_functor_sum_var_var {
@@ -279,15 +280,25 @@ class test_functor_sum_var_var {
     double t0 = 0.0;
     std::vector<double> ts{2.0, 5.0};
 
+    Eigen::VectorXd abs_tol_f(2);
+    abs_tol_f << 1E-10, 1E-10;
+
     std::vector<Eigen::Matrix<T, Eigen::Dynamic, 1>> ys
         = (lmm_ == TEST_CVODES_ADAMS)
-              ? stan::math::ode_adams_tol(sho, y0, t0, ts, 1E-10, 1E-10, 10000,
-                                          nullptr, omega)
+        ? stan::math::ode_adjoint(sho, y0, t0, ts, nullptr,
+                                  1E-10, abs_tol_f,
+                                  1E-10, 1E-10,
+                                  1E-10, 1E-10,
+                                  10000, 50,
+                                  1, 1, 1,
+                                  //nullptr,
+                                  omega)
               : stan::math::ode_bdf(sho, y0, t0, ts, nullptr, omega);
 
     return stan::math::sum(ys[0](state) + ys[1](state));
   }
 };
+
 
 TEST(StanMathOdeIntegrateODEGradMat, sum_var_var) {
   double omega = 0.5;
