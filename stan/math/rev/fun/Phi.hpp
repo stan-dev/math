@@ -56,6 +56,13 @@ inline var Phi(const var& a) {
   });
 }
 
+/**
+ * Vectorized unit normal cumulative density function for varmat types.
+ *
+ * @tparam T a `var_value` with inner Eigen type
+ * @param a input
+ * @return The vectorized unit normal cdf
+ */
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto Phi(const T& a) {
   return make_callback_var(Phi(a.val()), [a](auto& vi) mutable {
