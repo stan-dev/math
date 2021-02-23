@@ -5,6 +5,7 @@
 #include <stan/math/opencl/prim.hpp>
 #include <stan/math/opencl/rev/append_col.hpp>
 #include <stan/math/opencl/rev/append_row.hpp>
+#include <stan/math/opencl/rev/as_column_vector_or_scalar.hpp>
 #include <stan/math/opencl/rev/acos.hpp>
 #include <stan/math/opencl/rev/acosh.hpp>
 #include <stan/math/opencl/rev/add.hpp>
@@ -96,8 +97,9 @@
 #include <stan/math/opencl/rev/tanh.hpp>
 #include <stan/math/opencl/rev/tcrossprod.hpp>
 #include <stan/math/opencl/rev/tgamma.hpp>
-#include <stan/math/opencl/rev/transpose.hpp>
 #include <stan/math/opencl/rev/to_arena.hpp>
+#include <stan/math/opencl/rev/to_matrix.hpp>
+#include <stan/math/opencl/rev/transpose.hpp>
 #include <stan/math/opencl/rev/trunc.hpp>
 #include <stan/math/rev.hpp>
 

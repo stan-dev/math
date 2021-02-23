@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 // real[, ] to_array_2d(matrix)
-template <typename EigMat>
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
 inline std::vector<std::vector<value_type_t<EigMat>>> to_array_2d(
     const EigMat& matrix) {
   using std::vector;

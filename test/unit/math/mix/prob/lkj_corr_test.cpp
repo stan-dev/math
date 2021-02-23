@@ -119,8 +119,8 @@ TEST(ProbDistributionsLkjCorrCholesky, hessian) {
   stan::math::lkj_corr_cholesky_cd test_func_2(dim_mat);
   stan::math::lkj_corr_cholesky_dd test_func_3(dim_mat);
 
-  using stan::math::finite_diff_hessian;
   using stan::math::hessian;
+  using stan::math::internal::finite_diff_hessian_auto;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> grad_hess_3;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> hess_3;
@@ -129,7 +129,7 @@ TEST(ProbDistributionsLkjCorrCholesky, hessian) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> hess_ad_3;
   double fx_hess_ad_3;
 
-  finite_diff_hessian(test_func_3, x3, fx_hess_3, grad_hess_3, hess_3);
+  finite_diff_hessian_auto(test_func_3, x3, fx_hess_3, grad_hess_3, hess_3);
   hessian(test_func_3, x3, fx_hess_ad_3, grad_hess_ad_3, hess_ad_3);
 
   test_hess_eq(hess_3, hess_ad_3);
@@ -142,7 +142,7 @@ TEST(ProbDistributionsLkjCorrCholesky, hessian) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> hess_ad_2;
   double fx_hess_ad_2;
 
-  finite_diff_hessian(test_func_2, x2, fx_hess_2, grad_hess_2, hess_2);
+  finite_diff_hessian_auto(test_func_2, x2, fx_hess_2, grad_hess_2, hess_2);
   hessian(test_func_2, x2, fx_hess_ad_2, grad_hess_ad_2, hess_ad_2);
 
   test_hess_eq(hess_2, hess_ad_2);
@@ -155,7 +155,7 @@ TEST(ProbDistributionsLkjCorrCholesky, hessian) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> hess_ad_1;
   double fx_hess_ad_1;
 
-  finite_diff_hessian(test_func_1, x1, fx_hess_1, grad_hess_1, hess_1);
+  finite_diff_hessian_auto(test_func_1, x1, fx_hess_1, grad_hess_1, hess_1);
   hessian(test_func_1, x1, fx_hess_ad_1, grad_hess_ad_1, hess_ad_1);
 
   test_hess_eq(hess_1, hess_ad_1);
