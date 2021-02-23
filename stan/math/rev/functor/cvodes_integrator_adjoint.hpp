@@ -64,17 +64,19 @@ inline std::vector<Eigen::VectorXd> build_varis<double>(
   return y;
 }
 
-template <int Lmm, typename F, typename T_y0, typename T_t0, typename T_ts,
+template <typename F, typename T_y0, typename T_t0, typename T_ts,
           typename... T_Args>
 class cvodes_integrator_adjoint_vari;
 
-template <int Lmm, typename F, typename T_y0, typename T_t0, typename T_ts,
+template <typename F, typename T_y0, typename T_t0, typename T_ts,
           typename... T_Args>
 class cvodes_integrator_adjoint_memory : public chainable_alloc {
   using T_Return = return_type_t<T_y0, T_t0, T_ts, T_Args...>;
   using T_y0_t0 = return_type_t<T_y0, T_t0>;
 
   const size_t N_;
+  Eigen::VectorXd abs_tol_f_;
+  const int lmm_f_;
   const F f_;
   const Eigen::Matrix<T_y0_t0, Eigen::Dynamic, 1> y0_;
   const T_t0 t0_;
@@ -89,14 +91,19 @@ class cvodes_integrator_adjoint_memory : public chainable_alloc {
   void* cvodes_mem_;
   Eigen::VectorXd state;
   N_Vector nv_state_;
+  N_Vector nv_abs_tol_f_;
   SUNMatrix A_;
   SUNLinearSolver LS_;
 
   template <require_eigen_col_vector_t<T_y0>* = nullptr>
-  cvodes_integrator_adjoint_memory(const F& f, const T_y0& y0, const T_t0& t0,
+  cvodes_integrator_adjoint_memory(Eigen::VectorXd abs_tol_f,
+                                   int lmm_f,
+                                   const F& f, const T_y0& y0, const T_t0& t0,
                                    const std::vector<T_ts>& ts,
                                    const T_Args&... args)
       : N_(y0.size()),
+        abs_tol_f_(abs_tol_f),
+        lmm_f_(lmm_f),
         f_(f),
         y0_(y0),
         t0_(t0),
@@ -109,10 +116,11 @@ class cvodes_integrator_adjoint_memory : public chainable_alloc {
         state(value_of(y0)) {
     if (N_ > 0) {
       nv_state_ = N_VMake_Serial(N_, state.data());
+      nv_abs_tol_f_ = N_VMake_Serial(N_, &abs_tol_f_(0));
       A_ = SUNDenseMatrix(N_, N_);
       LS_ = SUNDenseLinearSolver(nv_state_, A_);
 
-      cvodes_mem_ = CVodeCreate(Lmm);
+      cvodes_mem_ = CVodeCreate(lmm_f_);
       if (cvodes_mem_ == nullptr) {
         throw std::runtime_error("CVodeCreate failed to allocate memory");
       }
@@ -125,6 +133,7 @@ class cvodes_integrator_adjoint_memory : public chainable_alloc {
       SUNMatDestroy(A_);
 
       N_VDestroy_Serial(nv_state_);
+      N_VDestroy_Serial(nv_abs_tol_f_);
 
       if (cvodes_mem_) {
         CVodeFree(&cvodes_mem_);
@@ -132,7 +141,7 @@ class cvodes_integrator_adjoint_memory : public chainable_alloc {
     }
   }
 
-  friend class cvodes_integrator_adjoint_vari<Lmm, F, T_y0, T_t0, T_ts,
+  friend class cvodes_integrator_adjoint_vari<F, T_y0, T_t0, T_ts,
                                               T_Args...>;
 };
 
@@ -140,14 +149,13 @@ class cvodes_integrator_adjoint_memory : public chainable_alloc {
  * Integrator interface for CVODES' ODE solvers (Adams & BDF
  * methods).
  *
- * @tparam Lmm ID of ODE solver (1: ADAMS, 2: BDF)
  * @tparam F Type of ODE right hand side
  * @tparam T_y0 Type of scalars for initial state
  * @tparam T_param Type of scalars for parameters
  * @tparam T_t0 Type of scalar of initial time point
  * @tparam T_ts Type of time-points where ODE solution is returned
  */
-template <int Lmm, typename F, typename T_y0, typename T_t0, typename T_ts,
+template <typename F, typename T_y0, typename T_t0, typename T_ts,
           typename... T_Args>
 class cvodes_integrator_adjoint_vari : public vari {
   using T_Return = return_type_t<T_y0, T_t0, T_ts, T_Args...>;
@@ -168,6 +176,8 @@ class cvodes_integrator_adjoint_vari : public vari {
   int interpolation_polynomial_;
   int solver_f_;
   int solver_b_;
+  int lmm_f_;
+  int lmm_b_;
   
   const size_t t0_vars_;
   const size_t ts_vars_;
@@ -181,7 +191,7 @@ class cvodes_integrator_adjoint_vari : public vari {
   vari** y0_varis_;
   vari** args_varis_;
 
-  cvodes_integrator_adjoint_memory<Lmm, F, T_y0, T_t0, T_ts, T_Args...>* memory;
+  cvodes_integrator_adjoint_memory<F, T_y0, T_t0, T_ts, T_Args...>* memory;
 
   /**
    * Implements the function of type CVRhsFn which is the user-defined
@@ -468,6 +478,8 @@ class cvodes_integrator_adjoint_vari : public vari {
         interpolation_polynomial_(interpolation_polynomial),
         solver_f_(solver_f),
         solver_b_(solver_b),
+        lmm_f_(solver_f_ == 1 ? CV_ADAMS : CV_BDF),
+        lmm_b_(solver_b_ == 1 ? CV_ADAMS : CV_BDF),
         msgs_(msgs),        
         t0_vars_(count_vars(t0)),
         ts_vars_(count_vars(ts)),
@@ -483,8 +495,8 @@ class cvodes_integrator_adjoint_vari : public vari {
             args_vars_)) {
     const char* fun = "cvodes_integrator::integrate";
 
-    memory = new cvodes_integrator_adjoint_memory<Lmm, F, T_y0, T_t0, T_ts,
-                                                  T_Args...>(f, y0, t0, ts,
+    memory = new cvodes_integrator_adjoint_memory<F, T_y0, T_t0, T_ts,
+                                                  T_Args...>(abs_tol_f_, lmm_f_, f, y0, t0, ts,
                                                              args...);
 
     save_varis(t0_varis_, t0);
@@ -511,6 +523,7 @@ class cvodes_integrator_adjoint_vari : public vari {
     check_less(fun, "initial time", t0, ts[0]);
     check_positive_finite(fun, "rel_tol_f", rel_tol_f_);
     check_positive_finite(fun, "abs_tol_f", abs_tol_f_);
+    check_size_match(fun, "abs_tol_f", abs_tol_f_.size(), "states", N_);
     check_positive_finite(fun, "rel_tol_b", rel_tol_b_);
     check_positive_finite(fun, "abs_tol_b", abs_tol_b_);
     check_positive_finite(fun, "rel_tol_q", rel_tol_q_);
@@ -519,8 +532,9 @@ class cvodes_integrator_adjoint_vari : public vari {
     check_positive(fun, "num_checkpoints", num_checkpoints_);
     // for polynomial: 1=CV_HERMITE / 2=CV_POLYNOMIAL
     check_range(fun, "interpolation_polynomial", 2, interpolation_polynomial_);
-    check_range(fun, "solver_f", 3, solver_f_);
-    check_range(fun, "solver_b", 3, solver_b_);
+    // 1=Adams, 2=BDF, 3=BDF_iterated (todo)
+    check_range(fun, "solver_f", 2, solver_f_);
+    check_range(fun, "solver_b", 2, solver_b_);
 
     /*
     std::cout << "relative_tolerance = " << relative_tolerance << std::endl;
@@ -557,8 +571,11 @@ class cvodes_integrator_adjoint_vari : public vari {
         "CVodeSetUserData");
 
     cvodes_set_options(memory->cvodes_mem_, rel_tol_f_,
-                       abs_tol_f_(0), // MAKE THIS USE THE VECTOR
+                       abs_tol_f_(0),
                        max_num_steps_);
+
+    check_flag_sundials(CVodeSVtolerances(memory->cvodes_mem_, rel_tol_f_, memory->nv_abs_tol_f_),
+                        "CVodeSVtolerances");
 
     // for the stiff solvers we need to reserve additional memory
     // and provide a Jacobian function call. new API since 3.0.0:
@@ -666,7 +683,7 @@ class cvodes_integrator_adjoint_vari : public vari {
       int indexB;
 
       // This is all boilerplate CVODES setting up the adjoint ODE to solve
-      check_flag_sundials(CVodeCreateB(memory->cvodes_mem_, Lmm, &indexB),
+      check_flag_sundials(CVodeCreateB(memory->cvodes_mem_, lmm_b_, &indexB),
                           "CVodeCreateB");
 
       check_flag_sundials(CVodeSetUserDataB(memory->cvodes_mem_, indexB,

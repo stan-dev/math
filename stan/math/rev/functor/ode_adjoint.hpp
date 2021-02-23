@@ -101,7 +101,7 @@ ode_adjoint_impl(const char* function_name, const F& f,
   return (*integrator)();
   */
   auto integrator = new stan::math::cvodes_integrator_adjoint_vari<
-      CV_BDF, F, plain_type_t<T_y0>, T_t0, T_ts, plain_type_t<T_Args>...>(
+      F, plain_type_t<T_y0>, T_t0, T_ts, plain_type_t<T_Args>...>(
       function_name, f, eval(y0), t0, ts,
       rel_tol_f, abs_tol_f,
       rel_tol_b, abs_tol_b,
