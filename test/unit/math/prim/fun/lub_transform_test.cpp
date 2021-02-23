@@ -479,3 +479,43 @@ TEST(prob_transform, lub_constrain_stdvec_matrix) {
     }
   }
 }
+
+TEST(prob_transform, ub_free_exception) {
+  double ubd = 2.0;
+  Eigen::VectorXd ub(2);
+  ub << 1.0, 2.0;
+  Eigen::VectorXd ub2(2);
+  ub2 << -1.0, 5.0;
+  std::vector<Eigen::VectorXd> ub_vec = {ub, ub2};
+
+  double lbd = 1.0;
+  Eigen::VectorXd lb(2);
+  lb << 0.0, 1.0;
+  Eigen::VectorXd lb2(2);
+  lb2 << -2.0, 4.0;
+  std::vector<Eigen::VectorXd> lb_vec = {lb, lb2};
+
+  double xd_bad = 5.0;
+  Eigen::VectorXd x_bad(2);
+  x_bad << 10.0, 5.0;
+  Eigen::VectorXd x_bad2(2);
+  x_bad2 << 10.0, 5.0;
+  std::vector<Eigen::VectorXd> x_bad_vec = {x_bad, x_bad2};
+
+  EXPECT_THROW(stan::math::lub_free(xd_bad, lbd, ubd), std::domain_error);
+
+  EXPECT_THROW(stan::math::lub_free(x_bad, lbd, ubd), std::domain_error);
+  EXPECT_THROW(stan::math::lub_free(x_bad, lbd, ub), std::domain_error);
+  EXPECT_THROW(stan::math::lub_free(x_bad, lb, ubd), std::domain_error);
+  EXPECT_THROW(stan::math::lub_free(x_bad, lb, ub), std::domain_error);
+
+  EXPECT_THROW(stan::math::lub_free(x_bad_vec, lbd, ubd), std::domain_error);
+  EXPECT_THROW(stan::math::lub_free(x_bad_vec, lbd, ub), std::domain_error);
+  EXPECT_THROW(stan::math::lub_free(x_bad_vec, lbd, ub_vec), std::domain_error);
+  EXPECT_THROW(stan::math::lub_free(x_bad_vec, lb, ubd), std::domain_error);
+  EXPECT_THROW(stan::math::lub_free(x_bad_vec, lb, ub), std::domain_error);
+  EXPECT_THROW(stan::math::lub_free(x_bad_vec, lb, ub_vec), std::domain_error);
+  EXPECT_THROW(stan::math::lub_free(x_bad_vec, lb_vec, ubd), std::domain_error);
+  EXPECT_THROW(stan::math::lub_free(x_bad_vec, lb_vec, ub), std::domain_error);
+  EXPECT_THROW(stan::math::lub_free(x_bad_vec, lb_vec, ub_vec), std::domain_error);
+}

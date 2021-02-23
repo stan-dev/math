@@ -11,65 +11,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-/**
- * For scalar input values calculate the underflow adjusted
- * `exp(-x)` and inverse logit.
- * @tparam T1 Scalar
- * @tparam T3 Scalar
- * @tparam T3 Scalar
- * @param[out] exp_x Returns the value of underflow corrected `exp(-x)`
- * @param[out] inv_logit_x Returns the value of underflow corrected inverse
- * logit.
- * @param[in] x_val The values of `x` to calculate both of the above from.
- */
-template <typename T1, typename T2, typename T3,
-          require_arithmetic_t<T3>* = nullptr>
-void setup_inv_logit_and_exp_x(T1& exp_x, T2& inv_logit_x, const T3& x_val) {
-  if (x_val < 0) {
-    exp_x = std::exp(x_val);
-    if (x_val > LOG_EPSILON) {
-      inv_logit_x = exp_x / (1.0 + exp_x);
-    } else {
-      inv_logit_x = exp_x;
-    }
-  } else {
-    exp_x = std::exp(-x_val);
-    inv_logit_x = 1.0 / (1.0 + exp_x);
-  }
-}
-/**
- * For Matrix input values calculate the underflow adjusted
- * `exp(-x)` and inverse logit.
- * @tparam T1 Eigen Array
- * @tparam T3 Eigen Array
- * @tparam T3 Eigen Array
- * @param[out] exp_x Returns the value of underflow corrected `exp(-x)`
- * @param[out] inv_logit_x Returns the value of underflow corrected inverse
- * logit.
- * @param[in] x_val The values of `x` to calculate both of the above from.
- */
-template <typename T1, typename T2, typename T3, require_eigen_t<T3>* = nullptr>
-void setup_inv_logit_and_exp_x(T1& exp_x, T2& inv_logit_x, const T3& x_val) {
-  for (Eigen::Index j = 0; j < x_val.cols(); ++j) {
-    for (Eigen::Index i = 0; i < x_val.rows(); ++i) {
-      if (x_val.coeff(i, j) < 0) {
-        exp_x.coeffRef(i, j) = std::exp(x_val.coeff(i, j));
-        if (x_val.coeff(i, j) > LOG_EPSILON) {
-          inv_logit_x.coeffRef(i, j)
-              = exp_x.coeff(i, j) / (1.0 + exp_x.coeff(i, j));
-        } else {
-          inv_logit_x.coeffRef(i, j) = exp_x.coeff(i, j);
-        }
-      } else {
-        exp_x.coeffRef(i, j) = std::exp(-x_val.coeff(i, j));
-        inv_logit_x.coeffRef(i, j) = 1.0 / (1.0 + exp_x.coeff(i, j));
-      }
-    }
-  }
-}
-}  // namespace internal
-
 /**
  * Return the lower and upper-bounded scalar derived by
  * transforming the specified free scalar given the specified
@@ -107,16 +48,13 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
   } else {
     check_less("lub_constrain mat scale", "lb", lb_val, ub_val);
     auto diff = ub_val - lb_val;
-    double x_val = value_of(x);
-    double exp_x = 0.0;
-    double inv_logit_x = 0.0;
-    internal::setup_inv_logit_and_exp_x(exp_x, inv_logit_x, x_val);
+    double inv_logit_x = inv_logit(value_of(x));
     return make_callback_var(
         diff * inv_logit_x + lb_val,
-        [x, ub, lb, diff, exp_x, inv_logit_x](auto& vi) mutable {
+        [x, ub, lb, diff, inv_logit_x](auto& vi) mutable {
           if (!is_constant<T>::value) {
             forward_as<var>(x).adj()
-                += vi.adj() * (exp_x * diff) / std::pow(1.0 + exp_x, 2);
+	      += vi.adj() * diff * inv_logit_x * (1.0 - inv_logit_x);
           }
           if (!is_constant<L>::value) {
             forward_as<var>(lb).adj() += vi.adj() * (1.0 - inv_logit_x);
@@ -181,22 +119,14 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
     check_less("lub_constrain mat scale", "lb", lb_val, ub_val);
     auto neg_abs_x = -abs(value_of(x));
     auto diff = ub_val - lb_val;
+    double inv_logit_x = inv_logit(value_of(x));
     lp += (log(diff) + (neg_abs_x - (2.0 * log1p_exp(neg_abs_x))));
-    double x_val = value_of(x);
-    double exp_x = 0.0;
-    double inv_logit_x = 0.0;
-    internal::setup_inv_logit_and_exp_x(exp_x, inv_logit_x, x_val);
     return make_callback_var(
         diff * inv_logit_x + lb_val,
-        [x, ub, lb, diff, neg_abs_x, lp, exp_x, inv_logit_x](auto& vi) mutable {
+        [x, ub, lb, diff, lp, inv_logit_x](auto& vi) mutable {
           if (!is_constant<T>::value) {
-            const auto x_sign = sign(x);
-            const auto exp_neg_abs_x = exp(neg_abs_x);
             forward_as<var>(x).adj()
-                += vi.adj() * ((exp_x * diff) / std::pow(1.0 + exp_x, 2))
-                   + ((2.0 * exp_neg_abs_x * x_sign) / (1.0 + exp_neg_abs_x)
-                      - x_sign)
-                         * lp.adj();
+                += vi.adj() * diff * inv_logit_x * (1.0 - inv_logit_x) + lp.adj() * (1.0 - 2.0 * inv_logit_x);
           }
           if (!is_constant<L>::value && !is_constant<U>::value) {
             const auto one_over_diff = 1.0 / diff;
@@ -238,17 +168,14 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
     arena_t<T> arena_x = x;
     check_less("lub_constrain mat scale", "lb", lb_val, ub_val);
     const auto diff = ub_val - lb_val;
-    auto x_val = value_of(x).array().eval();
-    arena_t<plain_type_t<decltype(x_val)>> exp_x(x.rows(), x.cols());
-    arena_t<plain_type_t<decltype(x_val)>> inv_logit_x(x.rows(), x.cols());
-    internal::setup_inv_logit_and_exp_x(exp_x, inv_logit_x, x_val.array());
+    auto inv_logit_x = to_arena(inv_logit(arena_x.val().array()));
     arena_t<ret_type> ret = diff * inv_logit_x + lb_val;
-    reverse_pass_callback([arena_x, ub, lb, ret, diff, exp_x,
+    reverse_pass_callback([arena_x, ub, lb, ret, diff,
                            inv_logit_x]() mutable {
       if (!is_constant<T>::value) {
         using T_var = arena_t<promote_scalar_t<var, T>>;
         forward_as<T_var>(arena_x).adj().array()
-            += ret.adj().array() * (exp_x * diff) / (1.0 + exp_x).square();
+	  += ret.adj().array() * diff * inv_logit_x * (1.0 - inv_logit_x);
       }
       if (!is_constant<L>::value) {
         forward_as<var>(lb).adj()
@@ -287,21 +214,13 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
     arena_t<T> arena_x = x;
     auto neg_abs_x = to_arena(-(value_of(arena_x).array()).abs());
     auto diff = ub_val - lb_val;
-    const auto& x_val = to_ref(value_of(x).array());
-    arena_t<plain_type_t<decltype(x_val)>> exp_x(x.rows(), x.cols());
-    arena_t<plain_type_t<decltype(x_val)>> inv_logit_x(x.rows(), x.cols());
-    internal::setup_inv_logit_and_exp_x(exp_x, inv_logit_x, x_val.val());
     lp += (log(diff) + (neg_abs_x - (2.0 * log1p_exp(neg_abs_x)))).sum();
+    auto inv_logit_x = to_arena(inv_logit(value_of(arena_x).array()));
     arena_t<ret_type> ret = diff * inv_logit_x + lb_val;
-    reverse_pass_callback([arena_x, ub, lb, ret, lp, diff, neg_abs_x, exp_x,
-                           inv_logit_x]() mutable {
+    reverse_pass_callback([arena_x, ub, lb, ret, lp, diff, inv_logit_x]() mutable {
       if (!is_constant<T>::value) {
-        const auto x_sign = value_of(arena_x).array().sign().eval();
-        const auto exp_neg_abs_x = (neg_abs_x).exp().eval();
         forward_as<arena_t<promote_scalar_t<var, T>>>(arena_x).adj().array()
-            += ret.adj().array() * (exp_x * diff) / (1 + exp_x).square()
-               + ((2.0 * exp_neg_abs_x * x_sign) / (1 + exp_neg_abs_x) - x_sign)
-                     * lp.adj();
+	  += ret.adj().array() * diff * inv_logit_x * (1.0 - inv_logit_x) + lp.adj() * (1.0 - 2.0 * inv_logit_x);
       }
       if (!is_constant<L>::value && !is_constant<U>::value) {
         const auto lp_calc = lp.adj() * ret.size();
@@ -346,21 +265,17 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
     check_less("lub_constrain mat scale", "lb", lb_val, ub_val);
     auto is_lb_inf = to_arena((lb_val == NEGATIVE_INFTY));
     auto diff = to_arena(ub_val - lb_val);
-    const auto& x_val = to_ref(value_of(x).array());
-    arena_t<plain_type_t<decltype(x_val)>> exp_neg_x(x.rows(), x.cols());
-    arena_t<plain_type_t<decltype(x_val)>> inv_logit_x(x.rows(), x.cols());
-    internal::setup_inv_logit_and_exp_x(exp_neg_x, inv_logit_x, x_val.val());
+    auto inv_logit_x = to_arena(inv_logit(value_of(arena_x).array()));
     arena_t<ret_type> ret = (is_lb_inf).select(
         ub_val - value_of(arena_x).array().exp(), diff * inv_logit_x + lb_val);
     reverse_pass_callback([arena_x, ub, arena_lb, ret, diff, inv_logit_x,
-                           exp_neg_x, is_lb_inf]() mutable {
+                           is_lb_inf]() mutable {
       using T_var = arena_t<promote_scalar_t<var, T>>;
       using L_var = arena_t<promote_scalar_t<var, L>>;
       if (!is_constant<T>::value) {
         forward_as<T_var>(arena_x).adj().array() += (is_lb_inf).select(
             ret.adj().array() * -value_of(arena_x).array().exp(),
-            ret.adj().array()
-                * ((exp_neg_x * diff) / (1 + exp_neg_x).square()));
+            ret.adj().array() * diff * inv_logit_x * (1.0 - inv_logit_x));
       }
       if (!is_constant<U>::value) {
         forward_as<var>(ub).adj()
@@ -402,29 +317,23 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
     auto is_lb_inf = to_arena((lb_val == NEGATIVE_INFTY));
     auto diff = to_arena(ub_val - lb_val);
     auto neg_abs_x = to_arena(-(value_of(arena_x).array()).abs());
-    arena_t<plain_type_t<decltype(x_val)>> exp_neg_x(x.rows(), x.cols());
-    arena_t<plain_type_t<decltype(x_val)>> inv_logit_x(x.rows(), x.cols());
-    internal::setup_inv_logit_and_exp_x(exp_neg_x, inv_logit_x, x_val);
+    auto inv_logit_x = to_arena(inv_logit(value_of(arena_x).array()));
     arena_t<ret_type> ret = (is_lb_inf).select(
         ub_val - value_of(arena_x).array().exp(), diff * inv_logit_x + lb_val);
     lp += (is_lb_inf)
               .select(value_of(arena_x).array(),
                       log(diff) + (neg_abs_x - (2.0 * log1p_exp(neg_abs_x))))
               .sum();
-    reverse_pass_callback([arena_x, ub, arena_lb, ret, lp, diff, neg_abs_x,
-                           exp_neg_x, inv_logit_x, is_lb_inf]() mutable {
+    reverse_pass_callback([arena_x, ub, arena_lb, ret, lp, diff,
+			   inv_logit_x, is_lb_inf]() mutable {
       using T_var = arena_t<promote_scalar_t<var, T>>;
       using L_var = arena_t<promote_scalar_t<var, L>>;
       const auto lp_adj = lp.adj();
       if (!is_constant<T>::value) {
         const auto x_sign = value_of(arena_x).array().sign().eval();
-        const auto exp_neg_abs_x = neg_abs_x.exp().eval();
         forward_as<T_var>(arena_x).adj().array() += (is_lb_inf).select(
             ret.adj().array() * -value_of(arena_x).array().exp() + lp_adj,
-            ret.adj().array() * ((exp_neg_x * diff) / (1 + exp_neg_x).square())
-                + ((2.0 * exp_neg_abs_x * x_sign) / (1 + exp_neg_abs_x)
-                   - x_sign)
-                      * lp_adj);
+            ret.adj().array() * diff * inv_logit_x * (1.0 - inv_logit_x) + lp.adj() * (1.0 - 2.0 * inv_logit_x));
       }
       if (!is_constant<L>::value) {
         forward_as<L_var>(arena_lb).adj().array()
@@ -466,23 +375,17 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
     check_less("lub_constrain mat scale", "lb", lb_val, ub_val);
     auto is_ub_inf = to_arena((ub_val == INFTY));
     auto diff = to_arena(ub_val - lb_val);
-    arena_t<plain_type_t<decltype(arena_x_val.array())>> exp_neg_x(x.rows(),
-                                                                   x.cols());
-    arena_t<plain_type_t<decltype(arena_x_val.array())>> inv_logit_x(x.rows(),
-                                                                     x.cols());
-    internal::setup_inv_logit_and_exp_x(exp_neg_x, inv_logit_x,
-                                        arena_x_val.array());
+    auto inv_logit_x = to_arena(inv_logit(arena_x_val.array()));
     arena_t<ret_type> ret = (is_ub_inf).select(
         arena_x_val.array().exp() + lb_val, diff * inv_logit_x + lb_val);
     reverse_pass_callback([arena_x, arena_x_val, arena_ub, lb, ret, is_ub_inf,
-                           exp_neg_x, inv_logit_x, diff]() mutable {
+                           inv_logit_x, diff]() mutable {
       using T_var = arena_t<promote_scalar_t<var, T>>;
       using U_var = arena_t<promote_scalar_t<var, U>>;
       if (!is_constant<T>::value) {
         forward_as<T_var>(arena_x).adj().array() += (is_ub_inf).select(
             ret.adj().array() * arena_x_val.array().exp(),
-            ret.adj().array()
-                * ((exp_neg_x * diff) / (1 + exp_neg_x).square()));
+            ret.adj().array() * diff * inv_logit_x * (1.0 - inv_logit_x));
       }
       if (!is_constant<L>::value) {
         forward_as<var>(lb).adj()
@@ -529,29 +432,19 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
               .select(arena_x_val.array(),
                       log(diff) + (neg_abs_x - (2.0 * log1p_exp(neg_abs_x))))
               .sum();
-    arena_t<plain_type_t<decltype(arena_x_val.array())>> exp_neg_x(x.rows(),
-                                                                   x.cols());
-    arena_t<plain_type_t<decltype(arena_x_val.array())>> inv_logit_x(x.rows(),
-                                                                     x.cols());
-    internal::setup_inv_logit_and_exp_x(exp_neg_x, inv_logit_x,
-                                        arena_x_val.array());
+    auto inv_logit_x = to_arena(inv_logit(arena_x_val.array()));
     arena_t<ret_type> ret = (is_ub_inf).select(
         arena_x_val.array().exp() + lb_val, diff * inv_logit_x + lb_val);
-    reverse_pass_callback([arena_x, neg_abs_x, arena_x_val, diff, exp_neg_x,
+    reverse_pass_callback([arena_x, arena_x_val, diff,
                            inv_logit_x, arena_ub, lb, ret, lp,
                            is_ub_inf]() mutable {
       using T_var = arena_t<promote_scalar_t<var, T>>;
       using U_var = arena_t<promote_scalar_t<var, U>>;
       const auto lp_adj = lp.adj();
       if (!is_constant<T>::value) {
-        const auto x_sign = arena_x_val.array().sign().eval();
-        const auto exp_neg_abs_x = neg_abs_x.exp().eval();
         forward_as<T_var>(arena_x).adj().array() += (is_ub_inf).select(
             ret.adj().array() * arena_x_val.array().exp() + lp_adj,
-            ret.adj().array() * (exp_neg_x * diff) / (1 + exp_neg_x).square()
-                + ((2.0 * exp_neg_abs_x * x_sign) / (1 + exp_neg_abs_x)
-                   - x_sign)
-                      * lp_adj);
+	    ret.adj().array() * diff * inv_logit_x * (1.0 - inv_logit_x) + lp.adj() * (1.0 - 2.0 * inv_logit_x));
       }
       if (!is_constant<L>::value) {
         forward_as<var>(lb).adj()
@@ -587,10 +480,7 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
   auto ub_val = value_of(arena_ub).array();
   check_less("lub_constrain mat scale", "lb", lb_val, ub_val);
   using plain_x_array = plain_type_t<decltype(arena_x_val.array())>;
-  arena_t<plain_x_array> exp_neg_x(x.rows(), x.cols());
-  arena_t<plain_x_array> inv_logit_x(x.rows(), x.cols());
-  internal::setup_inv_logit_and_exp_x(exp_neg_x, inv_logit_x,
-                                      arena_x_val.array());
+  auto inv_logit_x = to_arena(inv_logit(arena_x_val.array()));
   auto is_lb_inf = to_arena((lb_val == NEGATIVE_INFTY));
   auto is_ub_inf = to_arena((ub_val == INFTY));
   auto is_lb_ub_inf = to_arena(is_lb_inf && is_ub_inf);
@@ -603,7 +493,7 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
                         ub_val - arena_x.val().array().exp(),
                         (is_ub_inf).select(arena_x_val.array().exp() + lb_val,
                                            diff * inv_logit_x + lb_val)));
-  reverse_pass_callback([arena_x, arena_x_val, exp_neg_x, inv_logit_x, arena_ub,
+  reverse_pass_callback([arena_x, arena_x_val, inv_logit_x, arena_ub,
                          arena_lb, diff, ret, is_ub_inf, is_lb_inf,
                          is_lb_ub_inf]() mutable {
     using T_var = arena_t<promote_scalar_t<var, T>>;
@@ -613,9 +503,7 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
     const bool is_none_inf = !(is_lb_inf.any() || is_ub_inf.any());
     if (is_none_inf) {
       if (!is_constant<T>::value) {
-        forward_as<T_var>(arena_x).adj().array() += ret.adj().array()
-                                                    * (exp_neg_x * diff)
-                                                    / (1 + exp_neg_x).square();
+        forward_as<T_var>(arena_x).adj().array() += ret.adj().array() * diff * inv_logit_x * (1.0 - inv_logit_x);
       }
       if (!is_constant<L>::value) {
         forward_as<L_var>(arena_lb).adj().array()
@@ -635,8 +523,7 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
                            ret.adj().array() * -arena_x_val.array().exp(),
                            (is_ub_inf).select(
                                ret.adj().array() * arena_x_val.array().exp(),
-                               ret.adj().array() * (exp_neg_x * diff)
-                                   / (1 + exp_neg_x).square())));
+                               ret.adj().array() * diff * inv_logit_x * (1.0 - inv_logit_x))));
       }
       if (!is_constant<U>::value) {
         forward_as<U_var>(arena_ub).adj().array() += (is_ub_inf).select(
@@ -671,10 +558,7 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
   auto ub_val = value_of(arena_ub).array();
   check_less("lub_constrain mat scale", "lb", lb_val, ub_val);
   using plain_x_array = plain_type_t<decltype(arena_x_val.array())>;
-  arena_t<plain_x_array> exp_neg_x(x.rows(), x.cols());
-  arena_t<plain_x_array> inv_logit_x(x.rows(), x.cols());
-  internal::setup_inv_logit_and_exp_x(exp_neg_x, inv_logit_x,
-                                      arena_x_val.array());
+  auto inv_logit_x = to_arena(inv_logit(arena_x_val.array()));
   auto is_lb_inf = to_arena((lb_val == NEGATIVE_INFTY));
   auto is_ub_inf = to_arena((ub_val == INFTY));
   auto is_lb_ub_inf = to_arena(is_lb_inf && is_ub_inf);
@@ -696,8 +580,8 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
                         arena_x_val.array(),
                         log(diff) + (neg_abs_x - (2.0 * log1p_exp(neg_abs_x)))))
             .sum();
-  reverse_pass_callback([arena_x, arena_x_val, exp_neg_x, inv_logit_x,
-                         neg_abs_x, arena_ub, arena_lb, diff, ret, is_ub_inf,
+  reverse_pass_callback([arena_x, arena_x_val, inv_logit_x,
+                         arena_ub, arena_lb, diff, ret, is_ub_inf,
                          is_lb_inf, is_lb_ub_inf, lp]() mutable {
     using T_var = arena_t<promote_scalar_t<var, T>>;
     using L_var = arena_t<promote_scalar_t<var, L>>;
@@ -707,12 +591,8 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
     const bool is_none_inf = !(is_lb_inf.any() || is_ub_inf.any());
     if (is_none_inf) {
       if (!is_constant<T>::value) {
-        const auto x_sign = arena_x_val.array().sign().eval();
-        const auto exp_neg_abs_x = neg_abs_x.exp().eval();
         forward_as<T_var>(arena_x).adj().array()
-            += ret.adj().array() * (exp_neg_x * diff) / (1 + exp_neg_x).square()
-               + ((2.0 * exp_neg_abs_x * x_sign) / (1 + exp_neg_abs_x) - x_sign)
-                     * lp_adj;
+            += ret.adj().array() * diff * inv_logit_x * (1.0 - inv_logit_x) + lp.adj() * (1.0 - 2.0 * inv_logit_x);
       }
       if (!is_constant<L>::value) {
         forward_as<L_var>(arena_lb).adj().array()
@@ -724,8 +604,6 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
       }
     } else {
       if (!is_constant<T>::value) {
-        const auto x_sign = arena_x_val.array().sign().eval();
-        const auto exp_neg_abs_x = neg_abs_x.exp().eval();
         forward_as<T_var>(arena_x).adj().array()
             += (is_lb_ub_inf)
                    .select(ret.adj().array(),
@@ -735,12 +613,8 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
                                (is_ub_inf).select(
                                    ret.adj().array() * arena_x_val.array().exp()
                                        + lp_adj,
-                                   ret.adj().array() * (exp_neg_x * diff)
-                                           / (1 + exp_neg_x).square()
-                                       + ((2.0 * exp_neg_abs_x * x_sign)
-                                              / (1 + exp_neg_abs_x)
-                                          - x_sign)
-                                             * lp_adj)));
+				   ret.adj().array() * diff * inv_logit_x *
+				   (1.0 - inv_logit_x) + lp.adj() * (1.0 - 2.0 * inv_logit_x))));
       }
       if (!is_constant<L>::value) {
         forward_as<L_var>(arena_lb).adj().array() += (is_lb_inf).select(
