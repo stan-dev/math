@@ -480,7 +480,7 @@ TEST(prob_transform, lub_constrain_stdvec_matrix) {
   }
 }
 
-TEST(prob_transform, ub_free_exception) {
+TEST(prob_transform, ub_free_vec_exception) {
   double ubd = 2.0;
   Eigen::VectorXd ub(2);
   ub << 1.0, 2.0;
