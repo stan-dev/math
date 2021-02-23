@@ -96,8 +96,7 @@ class cvodes_integrator_adjoint_memory : public chainable_alloc {
   SUNLinearSolver LS_;
 
   template <require_eigen_col_vector_t<T_y0>* = nullptr>
-  cvodes_integrator_adjoint_memory(Eigen::VectorXd abs_tol_f,
-                                   int lmm_f,
+  cvodes_integrator_adjoint_memory(Eigen::VectorXd abs_tol_f, int lmm_f,
                                    const F& f, const T_y0& y0, const T_t0& t0,
                                    const std::vector<T_ts>& ts,
                                    const T_Args&... args)
@@ -141,8 +140,7 @@ class cvodes_integrator_adjoint_memory : public chainable_alloc {
     }
   }
 
-  friend class cvodes_integrator_adjoint_vari<F, T_y0, T_t0, T_ts,
-                                              T_Args...>;
+  friend class cvodes_integrator_adjoint_vari<F, T_y0, T_t0, T_ts, T_Args...>;
 };
 
 /**
@@ -178,7 +176,7 @@ class cvodes_integrator_adjoint_vari : public vari {
   int solver_b_;
   int lmm_f_;
   int lmm_b_;
-  
+
   const size_t t0_vars_;
   const size_t ts_vars_;
   const size_t y0_vars_;
@@ -478,7 +476,7 @@ class cvodes_integrator_adjoint_vari : public vari {
         solver_b_(solver_b),
         lmm_f_(solver_f_ == 1 ? CV_ADAMS : CV_BDF),
         lmm_b_(solver_b_ == 1 ? CV_ADAMS : CV_BDF),
-        msgs_(msgs),        
+        msgs_(msgs),
 
         t0_vars_(count_vars(t0)),
         ts_vars_(count_vars(ts)),
@@ -494,9 +492,9 @@ class cvodes_integrator_adjoint_vari : public vari {
             args_vars_)) {
     const char* fun = "cvodes_integrator::integrate";
 
-    memory = new cvodes_integrator_adjoint_memory<F, T_y0, T_t0, T_ts,
-                                                  T_Args...>(abs_tol_f_, lmm_f_, f, y0, t0, ts,
-                                                             args...);
+    memory
+        = new cvodes_integrator_adjoint_memory<F, T_y0, T_t0, T_ts, T_Args...>(
+            abs_tol_f_, lmm_f_, f, y0, t0, ts, args...);
 
     save_varis(t0_varis_, t0);
     save_varis(ts_varis_, ts);
@@ -569,11 +567,11 @@ class cvodes_integrator_adjoint_vari : public vari {
         CVodeSetUserData(memory->cvodes_mem_, reinterpret_cast<void*>(this)),
         "CVodeSetUserData");
 
-    cvodes_set_options(memory->cvodes_mem_, rel_tol_f_,
-                       abs_tol_f_(0),
+    cvodes_set_options(memory->cvodes_mem_, rel_tol_f_, abs_tol_f_(0),
                        max_num_steps_);
 
-    check_flag_sundials(CVodeSVtolerances(memory->cvodes_mem_, rel_tol_f_, memory->nv_abs_tol_f_),
+    check_flag_sundials(CVodeSVtolerances(memory->cvodes_mem_, rel_tol_f_,
+                                          memory->nv_abs_tol_f_),
                         "CVodeSVtolerances");
 
     // for the stiff solvers we need to reserve additional memory
