@@ -14,20 +14,13 @@ namespace opencl_kernels {
 static const std::string rep_matrix_rev_kernel_code = STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
-     * Creates a matrix from a matrix_cl of size 1x1 by
-     * replicating the single value or by replicating the
-     * vector or row_vector input.
+     * Implements reverse pass of rep_matrix.
      *
-     * @param[out] A result matrix
-     * @param[in] B input matrix (1x1, vector or row_vector)
-     * @param A_rows Number of rows for matrix A
-     * @param A_cols Number of columns for matrix A
+     * @param[in,out] A_adj adjoint of argument matrix
+     * @param[in] B_adj adjoint of result matrix
      * @param B_rows Number of rows for matrix B
      * @param B_cols Number of columns for matrix B
-     * @param view_A triangular part of matrix A to use
-     *
-     * @note Code is a string held in <code>rep_matrix_kernel_code.</code>
-     * This kernel uses the helper macros available in helpers.cl.
+     * @param view_B triangular part of matrix B to use
      */
     __kernel void rep_matrix_rev(__global double* A_adj, __global double* B_adj,
                              unsigned int B_rows, unsigned int B_cols,
@@ -37,7 +30,6 @@ static const std::string rep_matrix_rev_kernel_code = STRINGIFY(
       const int gsize_i = get_global_size(0);
       const int gsize_j = get_global_size(1);
       double tmp = 0;
-      //      j_start = contains_nonzero(view_B, LOWER) ? gid_j :
       for (int j = gid_j; j < B_cols; j += gsize_j) {
         int i_start
             = contains_nonzero(view_B, UPPER)
@@ -49,21 +41,6 @@ static const std::string rep_matrix_rev_kernel_code = STRINGIFY(
         }
       }
       A_adj[gid_j * gsize_i + gid_i] += tmp;
-
-//      if (i < A_rows && j < A_cols) {
-//        double val = 0;
-//        if (B_cols == 1 && B_rows == 1) {
-//          val = B[0];
-//        } else if (B_cols == 1) {
-//          val = B[i];
-//        } else if (B_rows == 1) {
-//          val = B[j];
-//        }
-//        if ((contains_nonzero(view_A, LOWER) && j <= i)
-//            || (contains_nonzero(view_A, UPPER) && j >= i)) {
-//          A[j * A_rows + i] = val;
-//        }
-//      }
     }
     // \cond
 );

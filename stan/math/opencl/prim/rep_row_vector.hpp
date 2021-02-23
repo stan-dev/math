@@ -15,7 +15,7 @@ namespace math {
  *
  * @tparam T type of the input
  * @param x the input value
- * @param m number of rows in the results row_vector
+ * @param n number of cols in the results row_vector
  *
  * @return matrix_cl with replicated value from the input matrix
  *

@@ -5,12 +5,10 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <test/unit/util.hpp>
 
-auto identity_matrix_functorCPU = [](int n) {
-  return stan::math::identity_matrix(n);
-};
+auto identity_matrix_functorCPU
+    = [](int n) { return stan::math::identity_matrix(n); };
 auto identity_matrix_functorCL = [](int n) {
-  return stan::math::identity_matrix<stan::conditional_var_value_t<
-      decltype(a), stan::math::matrix_cl<double>>>( n);
+  return stan::math::identity_matrix<stan::math::matrix_cl<double>>(n);
 };
 
 TEST(OpenCLIdentityMatrix, scalar_prim_rev_values_small) {

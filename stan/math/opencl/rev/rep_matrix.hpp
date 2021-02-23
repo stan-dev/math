@@ -15,7 +15,7 @@ namespace math {
  * Creates a matrix_cl by replicating the given value of arithmetic type.
  *
  * @tparam T type of the result matrix
- * @param x the input value
+ * @param A the input value
  * @param n number of rows in the result matrix
  * @param m number of columns in the result matrix
  *
