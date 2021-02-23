@@ -12,17 +12,17 @@ auto rep_array_functorCL = [](const auto& a, int n) {
       decltype(a), stan::math::matrix_cl<double>>>(a, n);
 };
 
-TEST(OpenCLRepRowVector, scalar_prim_rev_values_small) {
+TEST(OpenCLRepArray, scalar_prim_rev_values_small) {
   stan::math::test::compare_cpu_opencl_prim_rev_separate(
       rep_array_functorCPU, rep_array_functorCL, 6.7, 7);
 }
 
-TEST(OpenCLRepRowVector, scalar_prim_rev_size_0) {
+TEST(OpenCLRepArray, scalar_prim_rev_size_0) {
   stan::math::test::compare_cpu_opencl_prim_rev_separate(
       rep_array_functorCPU, rep_array_functorCL, 6.7, 0);
 }
 
-TEST(OpenCLRepRowVector, scalar_prim_rev_values_large) {
+TEST(OpenCLRepArray, scalar_prim_rev_values_large) {
   stan::math::test::compare_cpu_opencl_prim_rev_separate(
       rep_array_functorCPU, rep_array_functorCL, 6.7, 79);
 }

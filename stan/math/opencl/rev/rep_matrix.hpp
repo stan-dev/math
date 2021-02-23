@@ -7,6 +7,7 @@
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/opencl/kernels/rep_matrix.hpp>
 #include <stan/math/opencl/prim/rep_matrix.hpp>
+#include <stan/math/opencl/prim/sum.hpp>
 
 namespace stan {
 namespace math {
