@@ -14,10 +14,15 @@ namespace math {
    */
   template <typename F>
   void third_diff_directional(
-    const F& f, const Eigen::VectorXd& x, double& fx,
+    const F& f, const Eigen::VectorXd& x,
+    const Eigen::VectorXd& eta,
+    const Eigen::VectorXd& delta,
+    const std::vector<int>& delta_int,
+    double& fx,
     Eigen::VectorXd& third_diff,
     Eigen::VectorXd& v,
-    Eigen::VectorXd& w) {
+    Eigen::VectorXd& w,
+    std::ostream* pstream = 0) {
     using Eigen::Matrix;
     using Eigen::Dynamic;
     nested_rev_autodiff nested;
@@ -28,13 +33,13 @@ namespace math {
     for (int i = 0; i < x_size; ++i) {
       x_fvar(i) = fvar<var>(x_var(i), v(i));
     }
-    fvar<var> fx_fvar = f(x_fvar);
+    fvar<var> fx_fvar = f(x_fvar, eta, delta, delta_int, pstream);
 
     Matrix<fvar<fvar<var>>, -1, 1> x_ffvar(x_size);
     for (int i = 0; i < x_size; ++i) {
       x_ffvar(i) = fvar<fvar<var>>(x_fvar(i), w(i));
     }
-    fvar<fvar<var>> fx_ffvar = f(x_ffvar);
+    fvar<fvar<var>> fx_ffvar = f(x_ffvar, eta, delta, delta_int, pstream);
 
     grad(fx_ffvar.d_.d_.vi_);
 
@@ -46,8 +51,5 @@ namespace math {
 
 }  // namespace math
 }  // namespace stan
-
-
-// TODO: figure out which files to include.
 
 #endif

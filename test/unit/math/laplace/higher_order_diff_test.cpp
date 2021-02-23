@@ -1,6 +1,8 @@
 #include <stan/math.hpp>
 #include <stan/math/laplace/laplace_likelihood.hpp>
+#include <stan/math/laplace/laplace_likelihood_general.hpp>
 #include <stan/math/laplace/third_diff_directional.hpp>
+#include <stan/math/laplace/hessian_times_vector.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <stan/math/mix.hpp>
 #include <stan/math/fwd.hpp>
@@ -36,11 +38,13 @@ struct f_theta {
   std::ostream* pstream_;
   F f_functor_;
 
-  f_theta(const Eigen::VectorXd& eta,
+  f_theta() { }  // default constructor required for default class.
+
+  f_theta(const F& f_functor,
+          const Eigen::VectorXd& eta,
           const Eigen::VectorXd& delta,
           const std::vector<int>& delta_int,
-          std::ostream* pstream,
-          F f_functor) :
+          std::ostream* pstream) :
     eta_(eta), delta_(delta), delta_int_(delta_int), f_functor_(f_functor) { }
 
   template <typename T>
@@ -49,28 +53,42 @@ struct f_theta {
   }
 };
 
-TEST(laplace_diff, gradient) {
+class neg_bin_log_diff_test : public::testing::Test {
+protected:
+  void SetUp() override {
+    theta.resize(2);
+    theta << 1, 1;
+    theta_dbl = value_of(theta);
+    eta.resize(1);
+    eta << 1.2;
+
+    y.resize(2);
+    y << 0, 1;
+    y_index.resize(2);
+    y_index[0] = 0;
+    y_index[1] = 1;
+
+    f_theta<neg_bin_log_likelihood> f_(likelihood, eta, y, y_index, 0);
+    f = f_;
+  }
+
+  Eigen::Matrix<stan::math::var, -1, 1> theta;
+  Eigen::VectorXd theta_dbl;
+  Eigen::VectorXd eta;
+  Eigen::VectorXd y;
+  std::vector<int> y_index;
+  neg_bin_log_likelihood likelihood;
+  f_theta<neg_bin_log_likelihood> f;
+};
+
+
+TEST_F(neg_bin_log_diff_test, manual_calls) {
   using stan::math::fvar;
   using stan::math::var;
   using stan::math::value_of;
   using stan::math::hessian_times_vector;
   using stan::math::nested_rev_autodiff;
   using stan::math::third_diff_directional;
-
-  Eigen::Matrix<var, -1, 1> theta(2);
-  theta << 1, 1;
-  Eigen::VectorXd theta_dbl = value_of(theta);
-  Eigen::VectorXd eta(1);
-  eta << 1.2;
-
-  Eigen::VectorXd y(2);
-  y << 1, 1;
-  std::vector<int> y_index(2);
-  y_index[0] = 0;
-  y_index[1] = 1;
-
-  neg_bin_log_likelihood likelihood;
-  f_theta<neg_bin_log_likelihood> f(eta, y, y_index, 0, likelihood);
 
   // var log_density = likelihood(theta, eta, y, y_index, 0);
   var log_density = f(theta);
@@ -151,11 +169,34 @@ TEST(laplace_diff, gradient) {
     // for (int i = 0; i < theta.size(); ++i) Hv(i) = theta_var(i).adj();
   }
 
-  // Test function
+  // Test function for directional Hessian and directional third diff.
+  Eigen::VectorXd hessian_v;
+  hessian_times_vector(likelihood, theta_dbl, eta, y, y_index,
+                       tangent, fx, hessian_v, 0);
+
+  std::cout << "hessian_v: " << hessian_v.transpose() << std::endl;
+
   Eigen::VectorXd third_diff;
-  third_diff_directional(f, theta_dbl, fx, third_diff, tangent, tangent);
+  third_diff_directional(likelihood, theta_dbl, eta, y, y_index,
+                         fx, third_diff, tangent, tangent, 0);
 
   std::cout << "f: " << fx << std::endl;
   std::cout << "third diff: " << third_diff.transpose() << std::endl;
+}
+
+TEST_F(neg_bin_log_diff_test, diff_likelihood) {
+  using stan::math::diff_likelihood;
+  using Eigen::VectorXd;
+
+  diff_likelihood<neg_bin_log_likelihood> lk(likelihood, y, y_index, 0);
+  double lpmf = lk.log_likelihood(theta_dbl, eta);
+  VectorXd gradient, hessian;
+  lk.diff(theta_dbl, eta, gradient, hessian);
+  VectorXd third_diff = lk.third_diff(theta_dbl, eta);
+
+  std::cout << "lpmf: " << lpmf << std::endl
+    << "gradient: " << gradient.transpose() << std::endl
+    << "hessian: " << hessian.transpose() << std::endl
+    << "third diff: " << third_diff.transpose() << std::endl;
 
 }
