@@ -60,9 +60,12 @@ template <typename T_ret, typename T,
           require_eigen_vt<std::is_arithmetic, T_ret>* = nullptr,
           require_matrix_cl_t<T>* = nullptr,
           require_st_same<T_ret, T>* = nullptr>
-inline T_ret from_matrix_cl(const T& src) {
+inline auto from_matrix_cl(const T& src) {
   using T_val = value_type_t<T>;
-  T_ret dst(src.rows(), src.cols());
+  using T_ret_col_major
+      = Eigen::Matrix<scalar_type_t<T_ret>, T_ret::RowsAtCompileTime,
+                      T_ret::ColsAtCompileTime>;
+  T_ret_col_major dst(src.rows(), src.cols());
   if (src.size() == 0) {
     return dst;
   }
@@ -107,11 +110,11 @@ inline T_ret from_matrix_cl(const T& src) {
     }
     if (!contains_nonzero(src.view(), matrix_cl_view::Lower)) {
       dst.template triangularView<Eigen::StrictlyLower>()
-          = T_ret::Zero(dst.rows(), dst.cols());
+          = T_ret_col_major::Zero(dst.rows(), dst.cols());
     }
     if (!contains_nonzero(src.view(), matrix_cl_view::Upper)) {
       dst.template triangularView<Eigen::StrictlyUpper>()
-          = T_ret::Zero(dst.rows(), dst.cols());
+          = T_ret_col_major::Zero(dst.rows(), dst.cols());
     }
   }
   return dst;
@@ -129,7 +132,7 @@ inline T_ret from_matrix_cl(const T& src) {
 template <typename T_ret, typename T,
           require_all_kernel_expressions_t<T>* = nullptr,
           require_not_matrix_cl_t<T>* = nullptr>
-inline T_ret from_matrix_cl(const T& src) {
+inline auto from_matrix_cl(const T& src) {
   return from_matrix_cl<T_ret>(src.eval());
 }
 
@@ -176,6 +179,9 @@ inline T_dst from_matrix_cl(const matrix_cl<T>& src) {
   check_size_match("from_matrix_cl<std::vector>", "src.cols()", src.cols(),
                    "dst.cols()", 1);
   T_dst dst(src.rows());
+  if (src.rows() == 0) {
+    return dst;
+  }
   try {
     cl::Event copy_event;
     const cl::CommandQueue queue = opencl_context.queue();
