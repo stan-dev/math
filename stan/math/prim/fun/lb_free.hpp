@@ -39,6 +39,20 @@ inline auto lb_free(T&& y, L&& lb) {
   }
 }
 
+/**
+ * Return the free matrix that corresponds to the specified
+ * lower-bounded matrix with respect to the specified lower bound.
+ *
+ * The transform is the reverse of the `lb_constrain` transform.
+ *
+ * @tparam T type of matrix
+ * @tparam L type of lower bound
+ * @param y constrained matrix with specified lower bound
+ * @param lb lower bound
+ * @return unconstrained matrix with respect to lower bound
+ * @throw std::invalid_argument if any element of constrained variable
+ *   is greater than the lower bound.
+ */
 template <typename T, typename L, require_all_eigen_t<T, L>* = nullptr>
 inline auto lb_free(T&& y, L&& lb) {
   auto&& y_ref = to_ref(std::forward<T>(y));
@@ -52,6 +66,20 @@ inline auto lb_free(T&& y, L&& lb) {
   return ret;
 }
 
+/**
+ * Return the free variable that corresponds to the specified
+ * lower-bounded variable with respect to the specified lower bound.
+ *
+ * The transform is the reverse of the `lb_constrain` transform.
+ *
+ * @tparam T type of constrained variable
+ * @tparam L type of lower bound
+ * @param y constrained variable with specified lower bound
+ * @param lb lower bound
+ * @return unconstrained variable with respect to lower bound
+ * @throw std::invalid_argument if any element of constrained variable
+ *   is greater than the lower bound.
+ */
 template <typename T, typename L, require_not_std_vector_t<L>* = nullptr>
 inline auto lb_free(const std::vector<T> y, const L& lb) {
   auto&& lb_ref = to_ref(lb);
@@ -62,6 +90,20 @@ inline auto lb_free(const std::vector<T> y, const L& lb) {
   return ret;
 }
 
+/**
+ * Return the free variable that corresponds to the specified
+ * lower-bounded variable with respect to the specified lower bound.
+ *
+ * The transform is the reverse of the `lb_constrain` transform.
+ *
+ * @tparam T type of constrained variable
+ * @tparam L type of lower bound
+ * @param y constrained variable with specified lower bound
+ * @param lb lower bound
+ * @return unconstrained variable with respect to lower bound
+ * @throw std::invalid_argument if any element of constrained variable
+ *   is greater than the lower bound.
+ */
 template <typename T, typename L>
 inline auto lb_free(const std::vector<T> y, const std::vector<L>& lb) {
   std::vector<decltype(lb_free(y[0], lb[0]))> ret(y.size());
