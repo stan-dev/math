@@ -62,7 +62,8 @@ inline auto lub_free(T&& y, L&& lb, U&& ub) {
 }
 
 /**
- * Overload for matrix constrained variable, matrix lower bound, scalar upper bound
+ * Overload for matrix constrained variable, matrix lower bound, scalar upper
+ * bound
  */
 template <typename T, typename L, typename U,
           require_all_eigen_t<T, L>* = nullptr,
@@ -81,7 +82,8 @@ inline auto lub_free(T&& y, L&& lb, U&& ub) {
 }
 
 /**
- * Overload for matrix constrained variable, matrix upper bound, scalar lower bound
+ * Overload for matrix constrained variable, matrix upper bound, scalar lower
+ * bound
  */
 template <typename T, typename L, typename U,
           require_all_eigen_t<T, U>* = nullptr,
@@ -100,7 +102,8 @@ inline auto lub_free(T&& y, L&& lb, U&& ub) {
 }
 
 /**
- * Overload for matrix constrained variable, matrix upper bound, matrix lower bound
+ * Overload for matrix constrained variable, matrix upper bound, matrix lower
+ * bound
  */
 template <typename T, typename L, typename U,
           require_all_eigen_t<T, L, U>* = nullptr>

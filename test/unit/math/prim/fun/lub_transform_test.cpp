@@ -517,5 +517,6 @@ TEST(prob_transform, ub_free_exception) {
   EXPECT_THROW(stan::math::lub_free(x_bad_vec, lb, ub_vec), std::domain_error);
   EXPECT_THROW(stan::math::lub_free(x_bad_vec, lb_vec, ubd), std::domain_error);
   EXPECT_THROW(stan::math::lub_free(x_bad_vec, lb_vec, ub), std::domain_error);
-  EXPECT_THROW(stan::math::lub_free(x_bad_vec, lb_vec, ub_vec), std::domain_error);
+  EXPECT_THROW(stan::math::lub_free(x_bad_vec, lb_vec, ub_vec),
+               std::domain_error);
 }
