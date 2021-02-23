@@ -57,7 +57,7 @@ inline var Phi(const var& a) {
 }
 
 /**
- * Vectorized unit normal cumulative density function for varmat types.
+ * Elementwise unit normal cumulative density function for varmat types.
  *
  * @tparam T a `var_value` with inner Eigen type
  * @param a input

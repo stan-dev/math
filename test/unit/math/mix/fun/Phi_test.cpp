@@ -17,10 +17,7 @@ TEST(mathMixMatFun, Phi_varmat) {
     return Phi(x1);
   };
   std::vector<double> com_args = common_nonzero_args();
-  std::vector<double> args{-27.5, 27.5};
-  for (double x = -37.5; x <= 10; x += 0.5) {
-    args.push_back(x);
-  }
+  std::vector<double> args{-27.5, -0.5, 0.0, 1.1 27.5};
   auto all_args = vec_concat(com_args, args);
   Eigen::VectorXd A(all_args.size());
   for (int i = 0; i < all_args.size(); ++i) {

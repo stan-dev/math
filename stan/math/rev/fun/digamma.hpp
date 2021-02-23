@@ -9,20 +9,27 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class digamma_vari : public op_v_vari {
- public:
-  explicit digamma_vari(vari* avi) : op_v_vari(digamma(avi->val_), avi) {}
-  void chain() { avi_->adj_ += adj_ * trigamma(avi_->val_); }
-};
-}  // namespace internal
-
+/**
+ * Return the derivative of the log gamma function
+ * at the specified value.
+ *
+ * @param[in] a argument
+ * @return derivative of log gamma function at argument
+ */
 inline var digamma(const var& a) {
   return make_callback_var(digamma(a.val()), [a](auto& vi) {
     a.adj() += vi.adj() * trigamma(a.val());
   });
 }
 
+/**
+ * Return the elementwise derivative of the log gamma function
+ * at the given input vector
+ *
+ * @tparam T a `var_value` with inner Eigen type
+ * @param[in] a vector
+ * @return elementwise derivative of log gamma function
+ */
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto digamma(const T& a) {
   return make_callback_var(

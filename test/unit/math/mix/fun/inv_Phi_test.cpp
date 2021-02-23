@@ -17,8 +17,7 @@ TEST(mathMixMatFun, invPhi_varmat) {
     return inv_Phi(x1);
   };
   std::vector<double> com_args = common_args();
-  std::vector<double> args{0.02425, 0.97575, -100.25, -2, 0.01,
-                           0.1,     0.98,    0.5,     2.0};
+  std::vector<double> args{0.02425, 0.97575, -2, 0.1, 0.5, 2.0};
   auto all_args = vec_concat(com_args, args);
   Eigen::VectorXd A(all_args.size());
   for (int i = 0; i < all_args.size(); ++i) {
