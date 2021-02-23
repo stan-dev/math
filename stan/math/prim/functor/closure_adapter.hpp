@@ -13,7 +13,6 @@ struct empty_closure {
   using captured_scalar_t__ = double;
   using ValueOf__ = empty_closure<F>;
   using CopyOf__ = empty_closure<F>;
-  static const size_t vars_count__ = 0;
   F f_;
 
   explicit empty_closure(const F& f) : f_(f) {}
@@ -23,9 +22,9 @@ struct empty_closure {
     return f_(args..., msgs);
   }
   size_t count_vars__() const { return 0; }
-  auto value_of__() const { return empty_closure<F>(f_); }
-  auto shallow_copy__() const { return empty_closure<F>(f_); }
-  auto deep_copy_vars__() const { return empty_closure<F>(f_); }
+  auto value_of__() const { return ValueOf__(f_); }
+  auto copy_of__() const { return CopyOf__(f_); }
+  auto deep_copy_vars__() const { return CopyOf__(f_); }
   void zero_adjoints__() const {}
   double* accumulate_adjoints__(double* dest) const { return dest; }
   template <typename Vari>
@@ -34,13 +33,14 @@ struct empty_closure {
   }
 };
 
-template <typename F, typename T>
+template <bool Ref, typename F, typename T>
 struct one_arg_closure {
   using captured_scalar_t__ = return_type_t<T>;
-  using ValueOf__ = one_arg_closure<F, decltype(value_of(std::declval<T>()))>;
-  using CopyOf__ = one_arg_closure<F, T>;
+  using ValueOf__
+      = one_arg_closure<false, F, decltype(value_of(std::declval<T>()))>;
+  using CopyOf__ = one_arg_closure<false, F, T>;
   F f_;
-  T s_;
+  capture_type_t<T, Ref> s_;
 
   explicit one_arg_closure(const F& f, const T& s) : f_(f), s_(s) {}
 
@@ -50,10 +50,8 @@ struct one_arg_closure {
   }
   size_t count_vars__() const { return count_vars(s_); }
   auto value_of__() const { return ValueOf__(f_, value_of(s_)); }
-  auto shallow_copy__() const { return one_arg_closure<F, T>(f_, s_); }
-  auto deep_copy_vars__() const {
-    return one_arg_closure<F, T>(f_, deep_copy_vars(s_));
-  }
+  auto copy_of__() const { return CopyOf__(f_, s_); }
+  auto deep_copy_vars__() const { return CopyOf__(f_, deep_copy_vars(s_)); }
   void zero_adjoints__() { zero_adjoints(s_); }
   double* accumulate_adjoints__(double* dest) const {
     return accumulate_adjoints(dest, s_);
@@ -64,11 +62,88 @@ struct one_arg_closure {
   }
 };
 
+template <typename F>
+struct empty_closure_rng {
+  using captured_scalar_t__ = double;
+  using ValueOf__ = empty_closure_rng<F>;
+  using CopyOf__ = empty_closure_rng<F>;
+  F f_;
+
+  explicit empty_closure_rng(const F& f) : f_(f) {}
+
+  template <typename Rng, typename... Args>
+  auto operator()(const Rng& rng, std::ostream* msgs, Args... args) const {
+    return f_(args..., rng, msgs);
+  }
+  size_t count_vars__() const { return 0; }
+  auto value_of__() const { return ValueOf__(f_); }
+  auto copy_of__() const { return CopyOf__(f_); }
+  auto deep_copy_vars__() const { return CopyOf__(f_); }
+  void zero_adjoints__() const {}
+  double* accumulate_adjoints__(double* dest) const { return dest; }
+  template <typename Vari>
+  Vari** save_varis(Vari** dest) const {
+    return dest;
+  }
+};
+
+template <typename F>
+struct empty_closure_lpdf {
+  using captured_scalar_t__ = double;
+  using ValueOf__ = empty_closure_lpdf<F>;
+  using CopyOf__ = empty_closure_lpdf<F>;
+  F f_;
+
+  explicit empty_closure_lpdf(const F& f) : f_(f) {}
+
+  template <bool propto = false, typename... Args>
+  auto operator()(std::ostream* msgs, Args... args) const {
+    return f_.template operator()<propto>(args..., msgs);
+  }
+  size_t count_vars__() const { return 0; }
+  auto value_of__() const { return ValueOf__(f_); }
+  auto copy_of__() const { return CopyOf__(f_); }
+  auto deep_copy_vars__() const { return CopyOf__(f_); }
+  void zero_adjoints__() const {}
+  double* accumulate_adjoints__(double* dest) const { return dest; }
+  template <typename Vari>
+  Vari** save_varis(Vari** dest) const {
+    return dest;
+  }
+};
+
+template <typename F>
+struct empty_closure_lp {
+  using captured_scalar_t__ = double;
+  using ValueOf__ = empty_closure_lp<F>;
+  using CopyOf__ = empty_closure_lp<F>;
+  static const size_t vars_count__ = 0;
+  F f_;
+
+  explicit empty_closure_lp(const F& f) : f_(f) {}
+
+  template <typename T_lp, typename T_lp_accum, typename... Args>
+  auto operator()(T_lp_accum& lp, T_lp& lp_accum, std::ostream* msgs,
+                  Args... args) const {
+    return f_(args..., lp, lp_accum, msgs);
+  }
+  size_t count_vars__() const { return 0; }
+  auto value_of__() const { return ValueOf__(f_); }
+  auto copy_of__() const { return CopyOf__(f_); }
+  auto deep_copy_vars__() const { return CopyOf__(f_); }
+  void zero_adjoints__() const {}
+  double* accumulate_adjoints__(double* dest) const { return dest; }
+  template <typename Vari>
+  Vari** save_varis(Vari** dest) const {
+    return dest;
+  }
+};
+
 /**
  * Create a closure object from a callable.
  */
 template <typename F>
-auto from_lambda(F f) {
+auto from_lambda(const F& f) {
   return empty_closure<F>(f);
 }
 
@@ -76,8 +151,23 @@ auto from_lambda(F f) {
  * Create a closure that captures a single argument.
  */
 template <typename F, typename T>
-auto from_lambda(F f, T a) {
-  return one_arg_closure<F, T>(f, a);
+auto from_lambda(const F& f, const T& a) {
+  return one_arg_closure<true, F, T>(f, a);
+}
+
+template <typename F>
+auto rng_from_lambda(const F& f) {
+  return empty_closure_rng<F>(f);
+}
+
+template <typename F>
+auto lpdf_from_lambda(const F& f) {
+  return empty_closure_lpdf<F>(f);
+}
+
+template <typename F>
+auto lp_from_lambda(const F& f) {
+  return empty_closure_lp<F>(f);
 }
 
 template <bool Propto, typename F, bool Ref>

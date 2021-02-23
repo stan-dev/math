@@ -20,11 +20,11 @@ namespace internal {
  * state as an Eigen::Matrix. The adapter converts to and from these forms
  * so that the old ODE interfaces can work.
  */
-template <bool is_closure, typename F>
+template <bool is_closure, typename F, bool Ref>
 struct integrate_ode_std_vector_interface_adapter_impl;
 
-template <typename F>
-struct integrate_ode_std_vector_interface_adapter_impl<false, F> {
+template <typename F, bool Ref>
+struct integrate_ode_std_vector_interface_adapter_impl<false, F, Ref> {
   const F& f_;
   explicit integrate_ode_std_vector_interface_adapter_impl(const F& f)
       : f_(f) {}
@@ -38,13 +38,14 @@ struct integrate_ode_std_vector_interface_adapter_impl<false, F> {
   }
 };
 
-template <typename F>
-struct integrate_ode_std_vector_interface_adapter_impl<true, F> {
+template <typename F, bool Ref>
+struct integrate_ode_std_vector_interface_adapter_impl<true, F, Ref> {
   using captured_scalar_t__ = typename F::captured_scalar_t__;
-  using ValueOf__
-      = integrate_ode_std_vector_interface_adapter_impl<true,
-                                                        typename F::ValueOf__>;
-  F f_;
+  using ValueOf__ = integrate_ode_std_vector_interface_adapter_impl<
+      true, typename F::ValueOf__, false>;
+  using CopyOf__ = integrate_ode_std_vector_interface_adapter_impl<
+      true, typename F::CopyOf__, false>;
+  capture_type_t<F, Ref> f_;
 
   explicit integrate_ode_std_vector_interface_adapter_impl(const F& f)
       : f_(f) {}
@@ -59,10 +60,7 @@ struct integrate_ode_std_vector_interface_adapter_impl<true, F> {
 
   size_t count_vars__() const { return f_.count_vars__(); }
   auto value_of__() const { return ValueOf__(f_.value_of__()); }
-  auto deep_copy_vars__() const {
-    return integrate_ode_std_vector_interface_adapter_impl<true, F>(
-        f_.deep_copy_vars__());
-  }
+  auto deep_copy_vars__() const { return CopyOf__(f_.deep_copy_vars__()); }
   void zero_adjoints__() { f_.zero_adjoints__(); }
   double* accumulate_adjoints__(double* dest) const {
     return f_.accumulate_adjoints__(dest);
@@ -76,7 +74,7 @@ struct integrate_ode_std_vector_interface_adapter_impl<true, F> {
 template <typename F>
 using integrate_ode_std_vector_interface_adapter
     = integrate_ode_std_vector_interface_adapter_impl<is_stan_closure<F>::value,
-                                                      F>;
+                                                      F, true>;
 
 }  // namespace internal
 
