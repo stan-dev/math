@@ -15,12 +15,11 @@ namespace math {
  * @return An identity matrix of size K.
  * @throw std::domain_error if K is negative.
  */
-template <typename T_x,
-          require_matrix_cl_t<T_x>* = nullptr>
+template <typename T_x, require_matrix_cl_t<T_x>* = nullptr>
 inline auto identity_matrix(int K) {
   using T_val = value_type_t<T_x>;
   check_nonnegative("identity_matrix(OpenCL)", "size", K);
-  return select(row_index(K,K)==col_index(), T_val(1), T_val(0));
+  return select(row_index(K, K) == col_index(), T_val(1), T_val(0));
 }
 }  // namespace math
 }  // namespace stan

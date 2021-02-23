@@ -188,7 +188,7 @@ template <typename FunctorCPU, typename FunctorCL, std::size_t... Is,
           typename... Args>
 void compare_cpu_opencl_prim_rev_impl(const FunctorCPU& functorCPU,
                                       const FunctorCL& functorCL,
-                                          std::index_sequence<Is...>,
+                                      std::index_sequence<Is...>,
                                       const Args&... args) {
   prim_rev_argument_combinations(
       [&functorCPU, &functorCL](const auto& args_for_cpu,
@@ -347,8 +347,8 @@ void compare_cpu_opencl_prim_rev(const Functor& functor, const Args&... args) {
  */
 template <typename FunctorCPU, typename FunctorCL, typename... Args>
 void compare_cpu_opencl_prim_rev_separate(const FunctorCPU& functorCPU,
-                                 const FunctorCL& fucntorCL,
-                                 const Args&... args) {
+                                          const FunctorCL& fucntorCL,
+                                          const Args&... args) {
   internal::compare_cpu_opencl_prim_rev_impl(
       functorCPU, fucntorCL, std::make_index_sequence<sizeof...(args)>{},
       args...);

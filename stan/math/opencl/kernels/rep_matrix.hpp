@@ -23,8 +23,8 @@ static const std::string rep_matrix_rev_kernel_code = STRINGIFY(
      * @param view_B triangular part of matrix B to use
      */
     __kernel void rep_matrix_rev(__global double* A_adj, __global double* B_adj,
-                             unsigned int B_rows, unsigned int B_cols,
-                             unsigned int view_B) {
+                                 unsigned int B_rows, unsigned int B_cols,
+                                 unsigned int view_B) {
       const int gid_i = get_global_id(0);
       const int gid_j = get_global_id(1);
       const int gsize_i = get_global_size(0);
@@ -35,7 +35,7 @@ static const std::string rep_matrix_rev_kernel_code = STRINGIFY(
             = contains_nonzero(view_B, UPPER)
                   ? gid_i
                   : ((j - gid_i + gsize_i - 1) / gsize_i) * gsize_i + gid_i;
-        int i_end = contains_nonzero(view_B, LOWER) ? B_rows : j+1;
+        int i_end = contains_nonzero(view_B, LOWER) ? B_rows : j + 1;
         for (int i = i_start; i < i_end; i += gsize_i) {
           tmp += B_adj[j * B_rows + i];
         }
@@ -51,7 +51,7 @@ static const std::string rep_matrix_rev_kernel_code = STRINGIFY(
  */
 const kernel_cl<in_out_buffer, in_buffer, int, int, matrix_cl_view>
     rep_matrix_rev("rep_matrix_rev",
-               {view_kernel_helpers, rep_matrix_rev_kernel_code});
+                   {view_kernel_helpers, rep_matrix_rev_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math

@@ -5,9 +5,8 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <test/unit/util.hpp>
 
-auto rep_array_functorCPU = [](const auto& a, int n) {
-  return stan::math::rep_array(a, n);
-};
+auto rep_array_functorCPU
+    = [](const auto& a, int n) { return stan::math::rep_array(a, n); };
 auto rep_array_functorCL = [](const auto& a, int n) {
   return stan::math::rep_array<stan::conditional_var_value_t<
       decltype(a), stan::math::matrix_cl<double>>>(a, n);
