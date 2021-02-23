@@ -94,16 +94,6 @@ TEST_F(neg_bin_log_diff_test, manual_calls) {
   var log_density = f(theta);
   std::cout << log_density.val() << std::endl;
 
-  // autodiff for first derivative
-  // if (FALSE) {
-  //   VEC g;
-  //   AVEC parm_vec = createAVEC(theta(0), theta(1));
-  //   log_density.grad(parm_vec, g);
-  //   std::cout << "Gradien: ";
-  //   for (int i = 0; i < theta.size(); i++) std::cout << g[i] << " ";
-  //   std::cout << std::endl;
-  // }
-
   // specify initial tangent
   Eigen::VectorXd tangent(2);
   tangent << 1, 1;
@@ -134,11 +124,6 @@ TEST_F(neg_bin_log_diff_test, manual_calls) {
     std::cout << "fx: " << value_of(fx_fvar.val_) << std::endl;
     std::cout << "grad_fx_dot_v: " << value_of(fx_fvar.d_) << std::endl;
 
-    // grad(fx_fvar.d_.vi_);
-    // for (int i = 0; i < theta_dbl.size(); ++i)
-    //   std::cout << theta_var(i).adj() << " ";
-    // std::cout << std::endl;
-
     Matrix<fvar<fvar<var>>, -1, 1> theta_ffvar(theta_dbl.size());
     for (int i = 0; i < theta_dbl.size(); ++i) {
       theta_ffvar(i) = fvar<fvar<var>>(theta_fvar(i), tangent(i));
@@ -159,14 +144,6 @@ TEST_F(neg_bin_log_diff_test, manual_calls) {
       grad3_f_v(i) = theta_var(i).adj();
 
     std::cout << "grad3 f: " << grad3_f_v.transpose() << std::endl;
-
-    // var fx_var;
-    // var grad_fx_var_dot_v;
-    // gradient_dot_vector(f, theta_var, tang, fx_var, grad_fx_var_dot_v);
-    // fx = fx_var.val();
-    // grad(grad_fx_var_dot_v.vi_);
-    // Hv.resize(theta.size());
-    // for (int i = 0; i < theta.size(); ++i) Hv(i) = theta_var(i).adj();
   }
 
   // Test function for directional Hessian and directional third diff.

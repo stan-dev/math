@@ -21,7 +21,7 @@ TEST(laplace, disease_map_dim_911) {
   // Based on (Vanhatalo, Pietilainen and Vethari, 2010). See
   // https://research.cs.aalto.fi/pml/software/gpstuff/demo_spatial1.shtml
   using stan::math::var;
-  using stan::math::laplace_marginal_poisson;
+  using stan::math::laplace_marginal_poisson_log_lpmf;
   using stan::math::sqr_exp_kernel_functor;
 
   int dim_theta = 911;
@@ -61,7 +61,7 @@ TEST(laplace, disease_map_dim_911) {
   auto start = std::chrono::system_clock::now();
 
   var marginal_density
-    = laplace_marginal_poisson(y, n_samples, ye, sqr_exp_kernel_functor(),
+    = laplace_marginal_poisson_log_lpmf(y, n_samples, ye, sqr_exp_kernel_functor(),
                                phi, x, delta, delta_int, theta_0);
 
   auto end = std::chrono::system_clock::now();
@@ -84,9 +84,12 @@ TEST(laplace, disease_map_dim_911) {
 
   ////////////////////////////////////////////////////////////////////////
   // Let's now generate a sample theta from the estimated posterior
+  /*
   using stan::math::diff_poisson_log;
   using stan::math::to_vector;
   using stan::math::sqr_exp_kernel_functor;
+  using stan::math::laplace_rng;
+  using stan::math::laplace_poisson_log_rng;
 
   diff_poisson_log diff_likelihood(to_vector(n_samples),
                                    to_vector(y),
@@ -94,10 +97,10 @@ TEST(laplace, disease_map_dim_911) {
   boost::random::mt19937 rng;
   start = std::chrono::system_clock::now();
   Eigen::VectorXd
-    theta_pred = laplace_approx_rng(diff_likelihood,
-                                    sqr_exp_kernel_functor(),
-                                    phi, x, delta, delta_int,
-                                    theta_0, rng);
+    theta_pred = laplace_rng(diff_likelihood,
+                            sqr_exp_kernel_functor(),
+                            phi, x, delta, delta_int,
+                            theta_0, rng);
 
   end = std::chrono::system_clock::now();
   elapsed_time = end - start;
@@ -110,14 +113,15 @@ TEST(laplace, disease_map_dim_911) {
   // total time: 0.404114
 
   start = std::chrono::system_clock::now();
-  theta_pred = laplace_approx_poisson_rng(y, n_samples, ye,
-                                          sqr_exp_kernel_functor(),
-                                          phi, x, delta, delta_int,
-                                          theta_0, rng);
+  theta_pred = laplace_poisson_log_rng(y, n_samples, ye,
+                                       sqr_exp_kernel_functor(),
+                                       phi, x, delta, delta_int,
+                                       theta_0, rng);
   end = std::chrono::system_clock::now();
   elapsed_time = end - start;
 
   std::cout << "LAPLACE_APPROX_POISSON_RNG" << std::endl
             << "total time: " << elapsed_time.count() << std::endl
             << std::endl;
+  */
 }
