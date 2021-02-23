@@ -182,6 +182,38 @@ void compare_cpu_opencl_prim_rev_impl(const Functor& functor,
       args...);
 }
 
+template <typename FunctorCPU, typename FunctorCL, std::size_t... Is,
+          typename... Args>
+void compare_cpu_opencl_prim_rev_impl(const FunctorCPU& functorCPU,
+                                      const FunctorCL& functorCL,
+                                          std::index_sequence<Is...>,
+                                      const Args&... args) {
+  prim_rev_argument_combinations(
+      [&functorCPU, &functorCL](const auto& args_for_cpu,
+                                const auto& args_for_opencl) {
+        auto res_cpu = eval(functorCPU(std::get<Is>(args_for_cpu)...));
+        auto res_opencl = eval(
+            functorCL(opencl_argument(std::get<Is>(args_for_opencl))...));
+        std::string signature = type_name<decltype(args_for_cpu)>().data();
+        expect_eq(res_opencl, res_cpu,
+                  ("CPU and OpenCL return values do not match for signature "
+                   + signature + "!")
+                      .c_str());
+        var(recursive_sum(res_cpu) + recursive_sum(res_opencl)).grad();
+
+        static_cast<void>(std::initializer_list<int>{
+            (expect_adj_near(
+                 std::get<Is>(args_for_opencl), std::get<Is>(args_for_cpu),
+                 ("CPU and OpenCL adjoints do not match for argument "
+                  + std::to_string(Is) + " for signature " + signature + "!")
+                     .c_str()),
+             0)...});
+
+        set_zero_all_adjoints();
+      },
+      args...);
+}
+
 template <bool Condition, typename T, std::enable_if_t<Condition>* = nullptr>
 auto to_vector_if(const T& x, std::size_t N) {
   return Eigen::Matrix<T, Eigen::Dynamic, 1>::Constant(N, x);
@@ -291,6 +323,33 @@ template <typename Functor, typename... Args>
 void compare_cpu_opencl_prim_rev(const Functor& functor, const Args&... args) {
   internal::compare_cpu_opencl_prim_rev_impl(
       functor, std::make_index_sequence<sizeof...(args)>{}, args...);
+  recover_memory();
+}
+
+/**
+ * Tests that given functor calculates same values and adjoints when given
+ * arguments on CPU and OpenCL device.
+ *
+ * The functor must accept all possible combinations of converted `args`.
+ * All std/row/col vectors and matrices are converted to `matrix_cl`. `double`
+ * scalars can be converted to `var`s or left as `double`s. When converting
+ * scalars to `double` in containers, `var_value<matrix_cl<double>>` is used
+ * instead.
+ *
+ * @tparam FunctorCPU type of the CPU functor
+ * @tparam FunctorCL type of the OpenCL functor
+ * @tparam Args types of the arguments
+ * @param fucntor functor to test
+ * @param args arguments to test the functor with. These should be just values
+ * in CPU memory (no vars, no arguments on the OpenCL device).
+ */
+template <typename FunctorCPU, typename FunctorCL, typename... Args>
+void compare_cpu_opencl_prim_rev_separate(const FunctorCPU& functorCPU,
+                                 const FunctorCL& fucntorCL,
+                                 const Args&... args) {
+  internal::compare_cpu_opencl_prim_rev_impl(
+      functorCPU, fucntorCL, std::make_index_sequence<sizeof...(args)>{},
+      args...);
   recover_memory();
 }
 

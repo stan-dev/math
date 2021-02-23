@@ -83,6 +83,7 @@
 #include <stan/math/opencl/rev/Phi.hpp>
 #include <stan/math/opencl/rev/Phi_approx.hpp>
 #include <stan/math/opencl/rev/pow.hpp>
+#include <stan/math/opencl/rev/rep_matrix.hpp>
 #include <stan/math/opencl/rev/round.hpp>
 #include <stan/math/opencl/rev/rows_dot_product.hpp>
 #include <stan/math/opencl/rev/rows_dot_self.hpp>

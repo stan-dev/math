@@ -11,7 +11,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const std::string rep_matrix_kernel_code = STRINGIFY(
+static const std::string rep_matrix_rev_kernel_code = STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
      * Creates a matrix from a matrix_cl of size 1x1 by
@@ -29,37 +29,52 @@ static const std::string rep_matrix_kernel_code = STRINGIFY(
      * @note Code is a string held in <code>rep_matrix_kernel_code.</code>
      * This kernel uses the helper macros available in helpers.cl.
      */
-    __kernel void rep_matrix(__global double* A, __global double* B,
-                             unsigned int A_rows, unsigned int A_cols,
+    __kernel void rep_matrix_rev(__global double* A_adj, __global double* B_adj,
                              unsigned int B_rows, unsigned int B_cols,
-                             unsigned int view_A) {
-      const int i = get_global_id(0);
-      const int j = get_global_id(1);
-      if (i < A_rows && j < A_cols) {
-        double val = 0;
-        if (B_cols == 1 && B_rows == 1) {
-          val = B[0];
-        } else if (B_cols == 1) {
-          val = B[i];
-        } else if (B_rows == 1) {
-          val = B[j];
-        }
-        if ((contains_nonzero(view_A, LOWER) && j <= i)
-            || (contains_nonzero(view_A, UPPER) && j >= i)) {
-          A[j * A_rows + i] = val;
+                             unsigned int view_B) {
+      const int gid_i = get_global_id(0);
+      const int gid_j = get_global_id(1);
+      const int gsize_i = get_global_size(0);
+      const int gsize_j = get_global_size(1);
+      double tmp = 0;
+      //      j_start = contains_nonzero(view_B, LOWER) ? gid_j :
+      for (int j = gid_j; j < B_cols; j += gsize_j) {
+        int i_start
+            = contains_nonzero(view_B, UPPER)
+                  ? gid_i
+                  : ((j - gid_i + gsize_i - 1) / gsize_i) * gsize_i + gid_i;
+        int i_end = contains_nonzero(view_B, LOWER) ? B_rows : j+1;
+        for (int i = i_start; i < i_end; i += gsize_i) {
+          tmp += B_adj[j * B_rows + i];
         }
       }
+      A_adj[gid_j * gsize_i + gid_i] += tmp;
+
+//      if (i < A_rows && j < A_cols) {
+//        double val = 0;
+//        if (B_cols == 1 && B_rows == 1) {
+//          val = B[0];
+//        } else if (B_cols == 1) {
+//          val = B[i];
+//        } else if (B_rows == 1) {
+//          val = B[j];
+//        }
+//        if ((contains_nonzero(view_A, LOWER) && j <= i)
+//            || (contains_nonzero(view_A, UPPER) && j >= i)) {
+//          A[j * A_rows + i] = val;
+//        }
+//      }
     }
     // \cond
 );
 // \endcond
 
 /** \ingroup opencl_kernels
- * See the docs for \link kernels/rep_matrix.hpp rep_matrix() \endlink
+ * See the docs for \link kernels/rep_matrix.hpp rep_matrix_rev() \endlink
  */
-const kernel_cl<out_buffer, in_buffer, int, int, int, int, matrix_cl_view>
-    rep_matrix("rep_matrix",
-               {indexing_helpers, view_kernel_helpers, rep_matrix_kernel_code});
+const kernel_cl<in_out_buffer, in_buffer, int, int, matrix_cl_view>
+    rep_matrix_rev("rep_matrix_rev",
+               {view_kernel_helpers, rep_matrix_rev_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math
