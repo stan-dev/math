@@ -112,7 +112,7 @@ inline auto lub_constrain(T&& x, L&& lb, U&& ub, return_type_t<T, L, U>& lp) {
 }
 
 /**
- * Specialization for Eigen matrix and scalar bounds.
+ * Overload for Eigen matrix and scalar bounds.
  */
 template <typename T, typename L, typename U, require_eigen_t<T>* = nullptr,
           require_all_stan_scalar_t<L, U>* = nullptr,
@@ -123,7 +123,7 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
 }
 
 /**
- * Specialization for Eigen matrix and scalar bounds plus lp.
+ * Overload for Eigen matrix and scalar bounds plus lp.
  */
 template <typename T, typename L, typename U, require_eigen_t<T>* = nullptr,
           require_all_stan_scalar_t<L, U>* = nullptr,
@@ -135,7 +135,7 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
 }
 
 /**
- * Specialization for Eigen matrix with matrix lower bound and scalar upper
+ * Overload for Eigen matrix with matrix lower bound and scalar upper
  * bound.
  */
 template <typename T, typename L, typename U,
@@ -149,7 +149,7 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
 }
 
 /**
- * Specialization for Eigen matrix with matrix lower bound and scalar upper
+ * Overload for Eigen matrix with matrix lower bound and scalar upper
  * bound plus lp.
  */
 template <typename T, typename L, typename U,
@@ -165,7 +165,7 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
 }
 
 /**
- * Specialization for Eigen matrix with scalar lower bound and matrix upper
+ * Overload for Eigen matrix with scalar lower bound and matrix upper
  * bound.
  */
 template <typename T, typename L, typename U,
@@ -179,7 +179,7 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
 }
 
 /**
- * Specialization for Eigen matrix with scalar lower bound and matrix upper
+ * Overload for Eigen matrix with scalar lower bound and matrix upper
  * bound plus lp.
  */
 template <typename T, typename L, typename U,
@@ -195,7 +195,7 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
 }
 
 /**
- * Specialization for Eigen matrix and matrix bounds.
+ * Overload for Eigen matrix and matrix bounds.
  */
 template <typename T, typename L, typename U,
           require_all_eigen_t<T, L, U>* = nullptr,
@@ -217,7 +217,7 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
 }
 
 /**
- * Specialization for Eigen matrix and matrix bounds plus lp.
+ * Overload for Eigen matrix and matrix bounds plus lp.
  */
 template <typename T, typename L, typename U,
           require_all_eigen_t<T, L, U>* = nullptr,
@@ -240,7 +240,7 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
 }
 
 /**
- * Specialization for array of x and non-array lb and ub
+ * Overload for array of x and non-array lb and ub
  */
 template <typename T, typename L, typename U,
           require_all_not_std_vector_t<L, U>* = nullptr>
@@ -254,7 +254,7 @@ inline auto lub_constrain(const std::vector<T>& x, const L& lb, const U& ub) {
 }
 
 /**
- * Specialization for array of x and non-array lb and ub with lp
+ * Overload for array of x and non-array lb and ub with lp
  */
 template <typename T, typename L, typename U,
           require_all_not_std_vector_t<L, U>* = nullptr>
@@ -269,7 +269,7 @@ inline auto lub_constrain(const std::vector<T>& x, const L& lb, const U& ub,
 }
 
 /**
- * Specialization for array of x and ub and non-array lb
+ * Overload for array of x and ub and non-array lb
  */
 template <typename T, typename L, typename U,
           require_not_std_vector_t<L>* = nullptr>
@@ -285,7 +285,7 @@ inline auto lub_constrain(const std::vector<T>& x, const L& lb,
 }
 
 /**
- * Specialization for array of x and ub and non-array lb with lp
+ * Overload for array of x and ub and non-array lb with lp
  */
 template <typename T, typename L, typename U,
           require_not_std_vector_t<L>* = nullptr>
@@ -302,7 +302,7 @@ inline auto lub_constrain(const std::vector<T>& x, const L& lb,
 }
 
 /**
- * Specialization for array of x and lb and non-array ub
+ * Overload for array of x and lb and non-array ub
  */
 template <typename T, typename L, typename U,
           require_not_std_vector_t<U>* = nullptr>
@@ -318,7 +318,7 @@ inline auto lub_constrain(const std::vector<T>& x, const std::vector<L>& lb,
 }
 
 /**
- * Specialization for array of x and lb and non-array ub with lp
+ * Overload for array of x and lb and non-array ub with lp
  */
 template <typename T, typename L, typename U,
           require_not_std_vector_t<U>* = nullptr>
@@ -334,7 +334,7 @@ inline auto lub_constrain(const std::vector<T>& x, const std::vector<L>& lb,
 }
 
 /**
- * Specialization for array of x, lb, and ub with lp
+ * Overload for array of x, lb, and ub with lp
  */
 template <typename T, typename L, typename U>
 inline auto lub_constrain(const std::vector<T>& x, const std::vector<L>& lb,
@@ -350,7 +350,7 @@ inline auto lub_constrain(const std::vector<T>& x, const std::vector<L>& lb,
 }
 
 /**
- * Specialization for array of x, lb, and ub
+ * Overload for array of x, lb, and ub
  */
 template <typename T, typename L, typename U>
 inline auto lub_constrain(const std::vector<T>& x, const std::vector<L>& lb,

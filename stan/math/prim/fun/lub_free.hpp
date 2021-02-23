@@ -13,12 +13,11 @@
 namespace stan {
 namespace math {
 
-/**
- * Return the unconstrained scalar that transforms to the
- * specified lower- and upper-bounded scalar given the specified
- * bounds.
+/** lub_free
+ * Return the unconstrained variable that transforms to the
+ * y given the specified bounds.
  *
- * <p>The transform in <code>lub_constrain(T, double, double)</code>,
+ * <p>The transform in `lub_constrain`,
  * is reversed by a transformed and scaled logit,
  *
  * <p>\f$f^{-1}(y) = \mbox{logit}(\frac{y - L}{U - L})\f$
@@ -31,11 +30,15 @@ namespace math {
  * @param y constrained value
  * @param lb lower bound
  * @param ub upper bound
- * @return the free object that transforms to the input scalar
+ * @return the free object that transforms to the input
  *   given the bounds
  * @throw std::invalid_argument if the lower bound is greater than
  *   the upper bound, y is less than the lower bound, or y is
  *   greater than the upper bound
+ */
+///@{
+/**
+ * Overload for all scalar arguments
  */
 template <typename T, typename L, typename U,
           require_not_std_vector_t<T>* = nullptr,
@@ -58,6 +61,9 @@ inline auto lub_free(T&& y, L&& lb, U&& ub) {
   }
 }
 
+/**
+ * Overload for matrix constrained variable, matrix lower bound, scalar upper bound
+ */
 template <typename T, typename L, typename U,
           require_all_eigen_t<T, L>* = nullptr,
           require_stan_scalar_t<U>* = nullptr>
@@ -74,6 +80,9 @@ inline auto lub_free(T&& y, L&& lb, U&& ub) {
   return ret;
 }
 
+/**
+ * Overload for matrix constrained variable, matrix upper bound, scalar lower bound
+ */
 template <typename T, typename L, typename U,
           require_all_eigen_t<T, U>* = nullptr,
           require_stan_scalar_t<L>* = nullptr>
@@ -90,6 +99,9 @@ inline auto lub_free(T&& y, L&& lb, U&& ub) {
   return ret;
 }
 
+/**
+ * Overload for matrix constrained variable, matrix upper bound, matrix lower bound
+ */
 template <typename T, typename L, typename U,
           require_all_eigen_t<T, L, U>* = nullptr>
 inline auto lub_free(T&& y, L&& lb, U&& ub) {
@@ -108,6 +120,9 @@ inline auto lub_free(T&& y, L&& lb, U&& ub) {
   return ret;
 }
 
+/**
+ * Overload for `std::vector` constrained variable
+ */
 template <typename T, typename L, typename U,
           require_all_not_std_vector_t<L, U>* = nullptr>
 inline auto lub_free(const std::vector<T> y, const L& lb, const U& ub) {
@@ -118,6 +133,9 @@ inline auto lub_free(const std::vector<T> y, const L& lb, const U& ub) {
   return ret;
 }
 
+/**
+ * Overload for `std::vector` constrained variable and `std::vector` upper bound
+ */
 template <typename T, typename L, typename U,
           require_not_std_vector_t<L>* = nullptr>
 inline auto lub_free(const std::vector<T> y, const L& lb,
@@ -130,6 +148,9 @@ inline auto lub_free(const std::vector<T> y, const L& lb,
   return ret;
 }
 
+/**
+ * Overload for `std::vector` constrained variable and `std::vector` lower bound
+ */
 template <typename T, typename L, typename U,
           require_not_std_vector_t<U>* = nullptr>
 inline auto lub_free(const std::vector<T> y, const std::vector<L>& lb,
@@ -142,6 +163,9 @@ inline auto lub_free(const std::vector<T> y, const std::vector<L>& lb,
   return ret;
 }
 
+/**
+ * Overload for `std::vector` constrained variable and `std::vector` constraints
+ */
 template <typename T, typename L, typename U>
 inline auto lub_free(const std::vector<T> y, const std::vector<L>& lb,
                      const std::vector<U>& ub) {
@@ -153,6 +177,7 @@ inline auto lub_free(const std::vector<T> y, const std::vector<L>& lb,
   }
   return ret;
 }
+///@}
 
 }  // namespace math
 }  // namespace stan
