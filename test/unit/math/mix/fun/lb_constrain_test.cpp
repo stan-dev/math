@@ -178,7 +178,7 @@ TEST(mathMixMatFun, lb_stdvec_mat_constrain_neg_inf) {
   lbm_inner << 7.0, 5.0, stan::math::NEGATIVE_INFTY, 100.0;
   Eigen::MatrixXd A_inner2 = 2 * A_inner;
   Eigen::MatrixXd lbm_inner2(2, 2);
-  lbm_inner << 7.0, stan::math::NEGATIVE_INFTY, 5.0, 100.0;
+  lbm_inner2 << 7.0, stan::math::NEGATIVE_INFTY, 5.0, 100.0;
   std::vector<Eigen::MatrixXd> A{A_inner, A_inner2};
   std::vector<Eigen::MatrixXd> lbm{lbm_inner, lbm_inner2};
   lb_constrain_test::expect_vec(A, lbm);

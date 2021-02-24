@@ -178,7 +178,7 @@ TEST(mathMixMatFun, ub_stdvec_mat_constrain_neg_inf) {
   ubm_inner << 7.0, 5.0, stan::math::INFTY, 100.0;
   Eigen::MatrixXd A_inner2 = 2 * A_inner;
   Eigen::MatrixXd ubm_inner2(2, 2);
-  ubm_inner << 7.0, stan::math::INFTY, 5.0, 100.0;
+  ubm_inner2 << 7.0, stan::math::INFTY, 5.0, 100.0;
   std::vector<Eigen::MatrixXd> A{A_inner, A_inner2};
   std::vector<Eigen::MatrixXd> ubm{ubm_inner, ubm_inner2};
   ub_constrain_test::expect_vec(A, ubm);
