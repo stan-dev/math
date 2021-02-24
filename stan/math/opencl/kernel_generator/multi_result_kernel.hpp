@@ -249,7 +249,7 @@ class expressions_cl {
    */
   explicit expressions_cl(T_expressions&&... expressions)
       : expressions_(
-          T_expressions(std::forward<T_expressions>(expressions))...) {}
+            T_expressions(std::forward<T_expressions>(expressions))...) {}
 
  private:
   std::tuple<T_expressions...> expressions_;
@@ -487,7 +487,7 @@ class results_cl {
             = (std::min(preferred_work_groups, (n_rows + local - 1) / local)
                + n_cols - 1)
               / n_cols;
-                int wgs_cols = (n_cols + wgs_rows - 1) / wgs_rows;
+        int wgs_cols = (n_cols + wgs_rows - 1) / wgs_rows;
 
         opencl_context.queue().enqueueNDRangeKernel(
             kernel, cl::NullRange, cl::NDRange(local * wgs_rows, wgs_cols),

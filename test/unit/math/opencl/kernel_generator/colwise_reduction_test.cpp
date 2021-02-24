@@ -125,7 +125,7 @@ TEST(KernelGenerator, nested_rowwise_colwise_sum) {
 TEST(KernelGenerator, colwise_sum_test_large) {
   for (int M : {1, 2, 5, 9, 63, 64, 65, 4095, 4096, 4967, 4096 * 4}) {
     for (int N : {1, 2, 5, 9, 63, 64, 65, 4095, 4096, 4967, 4096 * 4}) {
-      if (N*M>1e6){
+      if (N * M > 1e6) {
         continue;
       }
       MatrixXd m = MatrixXd::Random(N, M);
