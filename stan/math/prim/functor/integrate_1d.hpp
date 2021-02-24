@@ -132,12 +132,24 @@ inline double integrate(const F& f, double a, double b,
   return Q;
 }
 
+/**
+ * Compute the integral of the single variable function f from a to b to within
+ * a specified relative tolerance. a and b can be finite or infinite.
+ *
+ * @tparam T Type of f
+ * @param f the function to be integrated
+ * @param a lower limit of integration
+ * @param b upper limit of integration
+ * @param relative_tolerance tolerance passed to Boost quadrature
+ * @param[in, out] msgs the print stream for warning messages
+ * @param args additional arguments passed to f
+ * @return numeric integral of function f
+ */
 template <typename F, typename... Args,
 	  require_all_not_st_var<Args...>* = nullptr>
-inline double integrate_1d_new(const F& f, double a, double b,
-			       double relative_tolerance,
-			       std::ostream* msgs, const Args&... args) {
-  //const double relative_tolerance = std::sqrt(EPSILON);
+inline double integrate_1d_impl(const F& f, double a, double b,
+				double relative_tolerance,
+				std::ostream* msgs, const Args&... args) {
   static const char* function = "integrate_1d";
   check_less_or_equal(function, "lower limit", a, b);
 
@@ -207,9 +219,9 @@ inline double integrate_1d(const F& f, double a, double b,
                            const std::vector<int>& x_i, std::ostream* msgs,
                            const double relative_tolerance
                            = std::sqrt(EPSILON)) {
-  return integrate_1d_new(integrate_1d_adapter<F>(f), a, b,
-			  relative_tolerance, msgs,
-			  theta, x_r, x_i);
+  return integrate_1d_impl(integrate_1d_adapter<F>(f), a, b,
+			   relative_tolerance, msgs,
+			   theta, x_r, x_i);
 }
 
 }  // namespace math
