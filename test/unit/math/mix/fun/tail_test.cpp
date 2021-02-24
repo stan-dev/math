@@ -28,3 +28,21 @@ TEST(MathMixMatFun, tail) {
     expect_tail(v, n);
   }
 }
+
+TEST(MathMixMatFun, tailEig) {
+  Eigen::VectorXd a(0);
+  expect_tail(a, 0);
+  expect_tail(a, 1);
+
+  Eigen::VectorXd b(1);
+  b << 1;
+  expect_tail(b, 0);
+  expect_tail(b, 1);
+  expect_tail(b, 2);
+
+  Eigen::VectorXd v(3);
+  v << 1, 2, 3;
+  for (int n = 0; n < 5; ++n) {
+    expect_tail(v, n);
+  }
+}
