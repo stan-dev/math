@@ -10,7 +10,7 @@
 // array matrix[], matrix[], real
 // array matrix[], real, matrix[]
 // array matrix[], real, real
-TEST(mathMixMatFun, lub_stdvec_mat_scalar_constrain) {
+TEST(mathMixMatFun, lub_stdvec_mat_scalar1_constrain) {
   Eigen::MatrixXd A_inner(2, 3);
   // swapping 0.0000001 for 0 causes a failure for the hessian?
   A_inner << 5.0, 2.0, 4.0, -2.0, 0.0000001, 0.1;
@@ -24,12 +24,11 @@ TEST(mathMixMatFun, lub_stdvec_mat_scalar_constrain) {
   std::vector<Eigen::MatrixXd> ub_vec{ub_inner, ub_inner};
   double lb_scal = -1.0;
   double ub_scal = 7.0;
-  lub_constrain_tests::expect_vec(A, lb_scal, ub_inner);
-  lub_constrain_tests::expect_vec(A, lb_inner, ub_scal);
-  lub_constrain_tests::expect_vec(A, lb_scal, ub_scal);
+  lub_constrain_tests::expect_vec(A, lb_vec, ub_scal);
+  lub_constrain_tests::expect_vec(A, lb_scal, ub_vec);
 }
 
-TEST(mathMixMatFun, lub_stdvec_mat_scalar_constrain_infty) {
+TEST(mathMixMatFun, lub_stdvec_mat_scalar1_constrain_infty) {
   Eigen::MatrixXd A_inner(2, 3);
   A_inner << 5.0, 2.0, 4.0, -2.0, 0.05, 0.1;
   Eigen::MatrixXd lb_inner(2, 3);
@@ -43,7 +42,6 @@ TEST(mathMixMatFun, lub_stdvec_mat_scalar_constrain_infty) {
   std::vector<Eigen::MatrixXd> ub_vec{ub_inner, ub_inner};
   double lb_scal = stan::math::NEGATIVE_INFTY;
   double ub_scal = stan::math::INFTY;
-  lub_constrain_tests::expect_vec(A, lb_scal, ub_inner);
-  lub_constrain_tests::expect_vec(A, lb_inner, ub_scal);
-  lub_constrain_tests::expect_vec(A, lb_scal, ub_scal);
+  lub_constrain_tests::expect_vec(A, lb_vec, ub_scal);
+  lub_constrain_tests::expect_vec(A, lb_scal, ub_vec);
 }
