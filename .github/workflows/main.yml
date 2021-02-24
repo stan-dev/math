@@ -96,7 +96,7 @@ jobs:
     - name: Run fwd and mix unit tests
       shell: powershell
       run: |
-        python.exe runTests.py -j2 test/unit/math/fwd        
+        python.exe runTests.py test/unit/math/fwd        
         python.exe runTests.py test/unit/math/mix
         
     - name: Upload gtest_output xml
