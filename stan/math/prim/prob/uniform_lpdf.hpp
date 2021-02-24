@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
@@ -38,7 +40,9 @@ namespace math {
  * @throw std::invalid_argument if the lower bound is greater than
  *    or equal to the lower bound
  */
-template <bool propto, typename T_y, typename T_low, typename T_high>
+template <bool propto, typename T_y, typename T_low, typename T_high,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_low, T_high>* = nullptr>
 return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y, const T_low& alpha,
                                                const T_high& beta) {
   using T_partials_return = partials_return_t<T_y, T_low, T_high>;
@@ -92,8 +96,8 @@ return_type_t<T_y, T_low, T_high> uniform_lpdf(const T_y& y, const T_low& alpha,
       y_ref, alpha_ref, beta_ref);
 
   if (!is_constant_all<T_low, T_high>::value) {
-    const auto& inv_beta_minus_alpha = to_ref_if<(
-        !is_constant_all<T_high>::value && !is_constant_all<T_low>::value)>(
+    auto inv_beta_minus_alpha = to_ref_if<(!is_constant_all<T_high>::value
+                                           && !is_constant_all<T_low>::value)>(
         inv(beta_val - alpha_val));
     if (!is_constant_all<T_high>::value) {
       if (is_vector<T_y>::value && !is_vector<T_low>::value

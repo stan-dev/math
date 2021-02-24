@@ -10,7 +10,7 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
-#include <set>
+#include <map>
 #include <string>
 #include <type_traits>
 #include <utility>
@@ -31,7 +31,8 @@ struct matvec_mul_opt {
   static matrix_cl_view view(const Arg&) { return matrix_cl_view::Entire; }
 
   static kernel_parts get_kernel_parts(
-      const Arg& a, std::set<const operation_cl_base*>& generated,
+      const Arg& a, std::map<const void*, const char*>& generated,
+      std::map<const void*, const char*>& generated_all,
       name_generator& name_gen, const std::string& row_index_name,
       const std::string& col_index_name) {
     return {};
@@ -60,35 +61,39 @@ struct matvec_mul_opt<elt_multiply_<Mat, broadcast_<VecT, true, false>>> {
    * optimization - ignoring the triangular view of the vector, as it is already
    * handeled by rowwise reduction.
    * @param mul argument of the rowwise reduction
-   * @param[in,out] generated set of (pointer to) already generated operations
+   * @param[in,out] generated map from (pointer to) already generated local
+   * operations to variable names
+   * @param[in,out] generated_all map from (pointer to) already generated all
+   * operations to variable names
    * @param name_gen name generator for this kernel
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
    * @return part of kernel with code for this and nested expressions
    */
   static kernel_parts get_kernel_parts(
-      const Arg& mul, std::set<const operation_cl_base*>& generated,
+      const Arg& mul, std::map<const void*, const char*>& generated,
+      std::map<const void*, const char*>& generated_all,
       name_generator& name_gen, const std::string& row_index_name,
       const std::string& col_index_name) {
     kernel_parts res{};
     if (generated.count(&mul) == 0) {
       mul.var_name_ = name_gen.generate();
-      generated.insert(&mul);
+      generated[&mul] = "";
 
       const auto& matrix = mul.template get_arg<0>();
       const auto& broadcast = mul.template get_arg<1>();
-      res = matrix.get_kernel_parts(generated, name_gen, row_index_name,
-                                    col_index_name, true);
+      res = matrix.get_kernel_parts(generated, generated_all, name_gen,
+                                    row_index_name, col_index_name, true);
       if (generated.count(&broadcast) == 0) {
         broadcast.var_name_ = name_gen.generate();
-        generated.insert(&broadcast);
+        generated[&broadcast] = "";
 
         const auto& vec = broadcast.template get_arg<0>();
         std::string row_index_name_bc = row_index_name;
         std::string col_index_name_bc = col_index_name;
         broadcast.modify_argument_indices(row_index_name_bc, col_index_name_bc);
-        res += vec.get_kernel_parts(generated, name_gen, row_index_name_bc,
-                                    col_index_name_bc, true);
+        res += vec.get_kernel_parts(generated, generated_all, name_gen,
+                                    row_index_name_bc, col_index_name_bc, true);
         res += broadcast.generate(row_index_name, col_index_name, true,
                                   vec.var_name_);
       }
@@ -138,7 +143,10 @@ class rowwise_reduction
 
   /**
    * Generates kernel code for this and nested expressions.
-   * @param[in,out] generated set of (pointer to) already generated operations
+   * @param[in,out] generated map from (pointer to) already generated local
+   * operations to variable names
+   * @param[in,out] generated_all map from (pointer to) already generated all
+   * operations to variable names
    * @param name_gen name generator for this kernel
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
@@ -146,22 +154,24 @@ class rowwise_reduction
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts get_kernel_parts(
-      std::set<const operation_cl_base*>& generated, name_generator& name_gen,
-      const std::string& row_index_name, const std::string& col_index_name,
-      bool view_handled) const {
+      std::map<const void*, const char*>& generated,
+      std::map<const void*, const char*>& generated_all,
+      name_generator& name_gen, const std::string& row_index_name,
+      const std::string& col_index_name, bool view_handled) const {
     kernel_parts res{};
     if (generated.count(this) == 0) {
       this->var_name_ = name_gen.generate();
-      generated.insert(this);
+      generated[this] = "";
 
+      std::map<const void*, const char*> generated2;
       if (PassZero && internal::matvec_mul_opt<T_no_ref>::is_possible) {
         res = internal::matvec_mul_opt<T_no_ref>::get_kernel_parts(
-            this->template get_arg<0>(), generated, name_gen, row_index_name,
-            var_name_ + "_j");
+            this->template get_arg<0>(), generated2, generated_all, name_gen,
+            row_index_name, var_name_ + "_j");
       } else {
         res = this->template get_arg<0>().get_kernel_parts(
-            generated, name_gen, row_index_name, var_name_ + "_j",
-            view_handled || PassZero);
+            generated2, generated_all, name_gen, row_index_name,
+            var_name_ + "_j", view_handled || PassZero);
       }
       kernel_parts my_part
           = generate(row_index_name, col_index_name, view_handled,
@@ -227,17 +237,22 @@ class rowwise_reduction
 
   /**
    * Sets kernel arguments for this and nested expressions.
-   * @param[in,out] generated set of expressions that already set their kernel
-   * arguments
+   * @param[in,out] generated map from (pointer to) already generated local
+   * operations to variable names
+   * @param[in,out] generated_all map from (pointer to) already generated all
+   * operations to variable names
    * @param kernel kernel to set arguments on
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::set<const operation_cl_base*>& generated,
+  inline void set_args(std::map<const void*, const char*>& generated,
+                       std::map<const void*, const char*>& generated_all,
                        cl::Kernel& kernel, int& arg_num) const {
     if (generated.count(this) == 0) {
-      generated.insert(this);
-      this->template get_arg<0>().set_args(generated, kernel, arg_num);
+      generated[this] = "";
+      std::map<const void*, const char*> generated2;
+      this->template get_arg<0>().set_args(generated2, generated_all, kernel,
+                                           arg_num);
       kernel.setArg(arg_num++, this->template get_arg<0>().view());
       kernel.setArg(arg_num++, this->template get_arg<0>().cols());
       if (PassZero && internal::matvec_mul_opt<T>::is_possible) {
@@ -261,7 +276,7 @@ class rowwise_reduction
   inline std::pair<int, int> extreme_diagonals() const {
     return {-rows() + 1, cols() - 1};
   }
-};  // namespace math
+};
 
 /**
  * Operation for sum reduction.

@@ -2,10 +2,10 @@
 #define STAN_MATH_OPENCL_PRIM_BERNOULLI_LOGIT_GLM_LPMF_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/opencl/rev/size.hpp>
+#include <stan/math/opencl/prim/size.hpp>
 #include <stan/math/opencl/rev/operands_and_partials.hpp>
 #include <stan/math/opencl/copy.hpp>
-#include <stan/math/opencl/multiply.hpp>
+#include <stan/math/opencl/prim/multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
@@ -120,7 +120,7 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> bernoulli_logit_glm_lpmf(
       logp_expr, calc_if<need_theta_derivative>(theta_derivative_expr),
       calc_if<need_theta_derivative_sum>(colwise_sum(theta_derivative_expr)));
 
-  T_partials_return logp = sum(from_matrix_cl<Eigen::Dynamic, 1>(logp_cl));
+  T_partials_return logp = sum(from_matrix_cl(logp_cl));
   if (!std::isfinite(logp)) {
     results(check_cl(function, "Vector of dependent variables", y_val,
                      "in the interval [0, 1]"),

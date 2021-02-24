@@ -4,6 +4,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <gtest/gtest.h>
+#include <test/unit/util.hpp>
 #include <CL/cl2.hpp>
 #include <algorithm>
 #include <vector>
@@ -237,15 +238,29 @@ TEST(MathMatrixGPU, matrix_cl_vector_copy) {
 TEST(MathMatrixGPU, matrix_cl_std_vector_copy) {
   std::vector<double> d1_cpu{10.0, 20.0, 30.0};
   std::vector<double> d_empty;
-  stan::math::matrix_d d1_cpu_ret;
+  std::vector<double> d1_cpu_ret;
 
   stan::math::matrix_cl<double> d11_cl = stan::math::to_matrix_cl(d1_cpu);
   stan::math::matrix_cl<double> d_empty_cl;
   EXPECT_NO_THROW(d_empty_cl = stan::math::to_matrix_cl(d_empty));
-  EXPECT_NO_THROW(d1_cpu_ret = stan::math::from_matrix_cl(d11_cl));
-  EXPECT_EQ(10.0, d1_cpu_ret(0));
-  EXPECT_EQ(20.0, d1_cpu_ret(1));
-  EXPECT_EQ(30.0, d1_cpu_ret(2));
+  EXPECT_NO_THROW(d1_cpu_ret
+                  = stan::math::from_matrix_cl<std::vector<double>>(d11_cl));
+  EXPECT_STD_VECTOR_EQ(d1_cpu_ret, d1_cpu);
+}
+
+TEST(MathMatrixGPU, matrix_cl_std_vector_eigen_copy) {
+  Eigen::VectorXd v1(3);
+  v1 << 1, 2, 3;
+  Eigen::VectorXd v2(3);
+  v2 << 4, 5, 6;
+  std::vector<Eigen::VectorXd> v{v1, v2};
+  stan::math::matrix_cl<double> v_cl;
+  EXPECT_NO_THROW(v_cl = stan::math::to_matrix_cl(v));
+  std::vector<Eigen::VectorXd> v_ret;
+  EXPECT_NO_THROW(
+      v_ret = stan::math::from_matrix_cl<std::vector<Eigen::VectorXd>>(v_cl));
+  EXPECT_MATRIX_EQ(v_ret[0], v1);
+  EXPECT_MATRIX_EQ(v_ret[1], v2);
 }
 
 TEST(MathMatrixGPU, matrix_cl_packed_std_vector_copy_rvalue) {
@@ -301,7 +316,7 @@ TEST(MathMatrixCL, matrix_cl_matrix_copy_arithmetic) {
   // Use this for successful copy
   stan::math::matrix_cl<double> d22_cl(1, 1);
   EXPECT_NO_THROW(d22_cl = stan::math::to_matrix_cl(test_val));
-  EXPECT_NO_THROW(test_val = stan::math::from_matrix_cl_error_code(d22_cl));
+  EXPECT_NO_THROW(test_val = stan::math::from_matrix_cl<double>(d22_cl));
 }
 
 TEST(MathMatrixCL, matrix_cl_pack_unpack_copy_lower) {

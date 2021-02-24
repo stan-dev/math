@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/erf.hpp>
 #include <stan/math/prim/fun/erfc.hpp>
@@ -86,7 +88,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_cdf(
     if (!is_constant_all<T_y, T_loc, T_scale>::value) {
       const auto& erf_alpha_scaled_diff = erf(alpha_val * scaled_diff);
       const auto& exp_m_scaled_diff_square = exp(-0.5 * diff_square);
-      const auto& rep_deriv
+      auto rep_deriv
           = to_ref_if<!is_constant_all<T_y>::value
                           + !is_constant_all<T_scale>::value
                           + !is_constant_all<T_loc>::value

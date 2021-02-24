@@ -7,6 +7,7 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
+#include <map>
 #include <string>
 #include <utility>
 
@@ -80,7 +81,10 @@ class indexing_
 
   /**
    * Generates kernel code for this and nested expressions.
-   * @param[in,out] generated set of (pointer to) already generated operations
+   * @param[in,out] generated map from (pointer to) already generated local
+   * operations to variable names
+   * @param[in,out] generated_all map from (pointer to) already generated all
+   * operations to variable names
    * @param name_gen name generator for this kernel
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
@@ -88,23 +92,28 @@ class indexing_
    * @return part of kernel with code for this and nested expressions
    */
   inline kernel_parts get_kernel_parts(
-      std::set<const operation_cl_base*>& generated, name_generator& name_gen,
-      const std::string& row_index_name, const std::string& col_index_name,
-      bool view_handled) const {
+      std::map<const void*, const char*>& generated,
+      std::map<const void*, const char*>& generated_all,
+      name_generator& name_gen, const std::string& row_index_name,
+      const std::string& col_index_name, bool view_handled) const {
     kernel_parts res{};
     if (generated.count(this) == 0) {
-      generated.insert(this);
+      generated[this] = "";
 
       const auto& mat = this->template get_arg<0>();
       const auto& row_index = this->template get_arg<1>();
       const auto& col_index = this->template get_arg<2>();
 
       kernel_parts parts_row_idx = row_index.get_kernel_parts(
-          generated, name_gen, row_index_name, col_index_name, view_handled);
+          generated, generated_all, name_gen, row_index_name, col_index_name,
+          view_handled);
       kernel_parts parts_col_idx = col_index.get_kernel_parts(
-          generated, name_gen, row_index_name, col_index_name, view_handled);
+          generated, generated_all, name_gen, row_index_name, col_index_name,
+          view_handled);
+      std::map<const void*, const char*> generated2;
       kernel_parts parts_mat = mat.get_kernel_parts(
-          generated, name_gen, row_index.var_name_, col_index.var_name_, false);
+          generated2, generated_all, name_gen, row_index.var_name_,
+          col_index.var_name_, false);
 
       res = parts_row_idx + parts_col_idx + parts_mat;
       var_name_ = mat.var_name_;
@@ -115,29 +124,37 @@ class indexing_
   /**
    * Generates kernel code for this expression if it appears on the left hand
    * side of an assignment.
-   * @param[in,out] generated set of (pointer to) already generated operations
+   * @param[in,out] generated map from (pointer to) already generated local
+   * operations to variable names
+   * @param[in,out] generated_all map from (pointer to) already generated all
+   * operations to variable names
    * @param name_gen name generator for this kernel
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
    * @return part of kernel with code for this expressions
    */
   inline kernel_parts get_kernel_parts_lhs(
-      std::set<const operation_cl_base*>& generated, name_generator& name_gen,
-      const std::string& row_index_name,
+      std::map<const void*, const char*>& generated,
+      std::map<const void*, const char*>& generated_all,
+      name_generator& name_gen, const std::string& row_index_name,
       const std::string& col_index_name) const {
     if (generated.count(this) == 0) {
-      generated.insert(this);
+      generated[this] = "";
     }
     const auto& mat = this->template get_arg<0>();
     const auto& row_index = this->template get_arg<1>();
     const auto& col_index = this->template get_arg<2>();
 
-    kernel_parts parts_row_idx = row_index.get_kernel_parts(
-        generated, name_gen, row_index_name, col_index_name, false);
-    kernel_parts parts_col_idx = col_index.get_kernel_parts(
-        generated, name_gen, row_index_name, col_index_name, false);
-    kernel_parts parts_mat = mat.get_kernel_parts_lhs(
-        generated, name_gen, row_index.var_name_, col_index.var_name_);
+    kernel_parts parts_row_idx
+        = row_index.get_kernel_parts(generated, generated_all, name_gen,
+                                     row_index_name, col_index_name, false);
+    kernel_parts parts_col_idx
+        = col_index.get_kernel_parts(generated, generated_all, name_gen,
+                                     row_index_name, col_index_name, false);
+    std::map<const void*, const char*> generated2;
+    kernel_parts parts_mat
+        = mat.get_kernel_parts_lhs(generated2, generated_all, name_gen,
+                                   row_index.var_name_, col_index.var_name_);
 
     kernel_parts res = parts_row_idx + parts_col_idx + parts_mat;
     var_name_ = mat.var_name_;
@@ -146,19 +163,26 @@ class indexing_
 
   /**
    * Sets kernel arguments for this expression.
-   * @param[in,out] generated set of expressions that already set their kernel
-   * arguments
+   * @param[in,out] generated map from (pointer to) already generated local
+   * operations to variable names
+   * @param[in,out] generated_all map from (pointer to) already generated all
+   * operations to variable names
    * @param kernel kernel to set arguments on
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::set<const operation_cl_base*>& generated,
+  inline void set_args(std::map<const void*, const char*>& generated,
+                       std::map<const void*, const char*>& generated_all,
                        cl::Kernel& kernel, int& arg_num) const {
     if (generated.count(this) == 0) {
-      generated.insert(this);
-      this->template get_arg<1>().set_args(generated, kernel, arg_num);
-      this->template get_arg<2>().set_args(generated, kernel, arg_num);
-      this->template get_arg<0>().set_args(generated, kernel, arg_num);
+      generated[this] = "";
+      this->template get_arg<1>().set_args(generated, generated_all, kernel,
+                                           arg_num);
+      this->template get_arg<2>().set_args(generated, generated_all, kernel,
+                                           arg_num);
+      std::map<const void*, const char*> generated2;
+      this->template get_arg<0>().set_args(generated2, generated_all, kernel,
+                                           arg_num);
     }
   }
 
@@ -183,7 +207,8 @@ class indexing_
   }
 
   /**
-   * Sets view of the underlying matrix depending on which part is written.
+   * Sets the view of the underlying matrix depending on which of its parts are
+   * written to.
    * @param bottom_diagonal Index of the top sub- or super- diagonal written
    * with nonzero elements.
    * @param top_diagonal Index of the top sub- or super- diagonal written with
@@ -233,6 +258,18 @@ class indexing_
     this->template get_arg<1>().add_read_event(e);
     this->template get_arg<2>().add_read_event(e);
     this->template get_arg<0>().add_write_event(e);
+  }
+
+  /**
+   * Adds all read and write events on any matrices used by nested expressions
+   * to a list and clears them from those matrices.
+   * @param[out] events List of all events.
+   */
+  inline void get_clear_read_write_events(
+      std::vector<cl::Event>& events) const {
+    this->template get_arg<0>().get_clear_read_write_events(events);
+    this->template get_arg<1>().get_write_events(events);
+    this->template get_arg<2>().get_write_events(events);
   }
 };
 

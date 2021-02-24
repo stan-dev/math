@@ -23,7 +23,7 @@ namespace math {
 template <typename T, typename = require_eigen_t<T>>
 inline auto col(const T& m, size_t j) {
   check_column_index("col", "j", m, j);
-  return m.col(j - 1).eval();
+  return m.col(j - 1);
 }
 
 }  // namespace math

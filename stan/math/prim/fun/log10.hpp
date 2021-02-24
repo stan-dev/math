@@ -34,8 +34,10 @@ struct log10_fun {
  * @param x container
  * @return Log base-10 applied to each value in x.
  */
-template <typename Container,
-          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
+template <
+    typename Container,
+    require_not_container_st<std::is_arithmetic, Container>* = nullptr,
+    require_not_nonscalar_prim_or_rev_kernel_expression_t<Container>* = nullptr>
 inline auto log10(const Container& x) {
   return apply_scalar_unary<log10_fun, Container>::apply(x);
 }

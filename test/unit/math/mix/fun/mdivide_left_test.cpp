@@ -13,18 +13,24 @@ TEST(MathMixMatFun, mdivideLeft) {
   stan::test::expect_ad(f, m00, m00);
   stan::test::expect_ad(f, m00, m02);
   stan::test::expect_ad(f, m00, v0);
+  stan::test::expect_ad_matvar(f, m00, m00);
+  stan::test::expect_ad_matvar(f, m00, m02);
+  stan::test::expect_ad_matvar(f, m00, v0);
 
   Eigen::MatrixXd aa(1, 1);
   aa << 1;
   Eigen::MatrixXd bb(1, 1);
   bb << 2;
   stan::test::expect_ad(f, aa, bb);
+  stan::test::expect_ad_matvar(f, aa, bb);
   Eigen::MatrixXd b0(1, 0);
   stan::test::expect_ad(f, aa, b0);
+  stan::test::expect_ad_matvar(f, aa, b0);
 
   Eigen::VectorXd cc(1);
   cc << 3;
   stan::test::expect_ad(f, aa, cc);
+  stan::test::expect_ad_matvar(f, aa, cc);
 
   Eigen::MatrixXd a(2, 2);
   a << 2, 3, 3, 7;
@@ -47,12 +53,14 @@ TEST(MathMixMatFun, mdivideLeft) {
   for (const auto& m1 : std::vector<Eigen::MatrixXd>{a, b, c, d}) {
     for (const auto& m2 : std::vector<Eigen::MatrixXd>{a, b, c, d, e}) {
       stan::test::expect_ad(f, m1, m2);
+      stan::test::expect_ad_matvar(f, m1, m2);
     }
   }
 
   // matrix, vector
   for (const auto& m : std::vector<Eigen::MatrixXd>{a, b, c, d}) {
     stan::test::expect_ad(f, m, g);
+    stan::test::expect_ad_matvar(f, m, g);
   }
 
   Eigen::MatrixXd v(5, 5);
@@ -61,6 +69,7 @@ TEST(MathMixMatFun, mdivideLeft) {
   Eigen::VectorXd u(5);
   u << 62, 84, 84, 76, 108;
   stan::test::expect_ad(f, v, u);
+  stan::test::expect_ad_matvar(f, v, u);
 
   Eigen::MatrixXd m33 = Eigen::MatrixXd::Zero(3, 3);
   Eigen::MatrixXd m44 = Eigen::MatrixXd::Zero(4, 4);
@@ -72,7 +81,10 @@ TEST(MathMixMatFun, mdivideLeft) {
   // exceptions: wrong sizes
   stan::test::expect_ad(f, m33, m44);
   stan::test::expect_ad(f, m33, v4);
+  stan::test::expect_ad_matvar(f, m33, m44);
+  stan::test::expect_ad_matvar(f, m33, v4);
 
   // exceptions: wrong types
   stan::test::expect_ad(f, m33, rv3);
+  stan::test::expect_ad_matvar(f, m33, rv3);
 }

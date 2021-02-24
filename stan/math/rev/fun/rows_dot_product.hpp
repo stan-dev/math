@@ -7,6 +7,7 @@
 #include <stan/math/rev/fun/dot_product.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/rows_dot_product.hpp>
 #include <type_traits>
 
 namespace stan {
@@ -62,7 +63,7 @@ template <typename Mat1, typename Mat2,
 inline auto rows_dot_product(const Mat1& v1, const Mat2& v2) {
   check_matching_sizes("rows_dot_product", "v1", v1, "v2", v2);
 
-  using return_t = promote_var_matrix_t<
+  using return_t = return_var_matrix_t<
       decltype((v1.val().array() * v2.val().array()).rowwise().sum().matrix()),
       Mat1, Mat2>;
 

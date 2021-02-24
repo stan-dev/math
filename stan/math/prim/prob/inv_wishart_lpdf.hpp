@@ -58,12 +58,14 @@ return_type_t<T_y, T_dof, T_scale> inv_wishart_lpdf(const T_y& W,
   Eigen::Index k = S.rows();
   T_nu_ref nu_ref = nu;
   T_S_ref S_ref = S;
+  T_W_ref W_ref = W;
   check_greater(function, "Degrees of freedom parameter", nu_ref, k - 1);
+  check_symmetric(function, "random variable", W_ref);
+  check_symmetric(function, "scale parameter", S_ref);
 
-  LDLT_factor<value_type_t<T_y>, Eigen::Dynamic, Eigen::Dynamic> ldlt_W(W);
+  auto ldlt_W = make_ldlt_factor(W_ref);
   check_ldlt_factor(function, "LDLT_Factor of random variable", ldlt_W);
-  LDLT_factor<value_type_t<T_scale>, Eigen::Dynamic, Eigen::Dynamic> ldlt_S(
-      S_ref);
+  auto ldlt_S = make_ldlt_factor(S_ref);
   check_ldlt_factor(function, "LDLT_Factor of scale parameter", ldlt_S);
 
   return_type_t<T_y, T_dof, T_scale> lp(0.0);
@@ -78,18 +80,7 @@ return_type_t<T_y, T_dof, T_scale> inv_wishart_lpdf(const T_y& W,
     lp -= 0.5 * (nu_ref + k + 1.0) * log_determinant_ldlt(ldlt_W);
   }
   if (include_summand<propto, T_y, T_scale>::value) {
-    //    L = crossprod(mdivide_left_tri_low(L));
-    //    Eigen::Matrix<T_y, Eigen::Dynamic, 1> W_inv_vec = Eigen::Map<
-    //      const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> >(
-    //      &L(0), L.size(), 1);
-    //    Eigen::Matrix<T_scale, Eigen::Dynamic, 1> S_vec = Eigen::Map<
-    //      const Eigen::Matrix<T_scale, Eigen::Dynamic, Eigen::Dynamic> >(
-    //      &S(0), S.size(), 1);
-    //    lp -= 0.5 * dot_product(S_vec, W_inv_vec); // trace(S * W^-1)
-    Eigen::Matrix<return_type_t<T_y, T_scale>, Eigen::Dynamic, Eigen::Dynamic>
-        Winv_S(mdivide_left_ldlt(
-            ldlt_W, S_ref.template selfadjointView<Eigen::Lower>()));
-    lp -= 0.5 * trace(Winv_S);
+    lp -= 0.5 * trace(mdivide_left_ldlt(ldlt_W, S_ref));
   }
   if (include_summand<propto, T_dof, T_scale>::value) {
     lp -= nu_ref * k * HALF_LOG_TWO;

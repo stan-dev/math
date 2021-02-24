@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/dot_self.hpp>
 #include <stan/math/prim/fun/log.hpp>
@@ -11,6 +12,7 @@
 #include <stan/math/prim/fun/size_mvt.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/transpose.hpp>
+#include <stan/math/prim/fun/vector_seq_view.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
 
 namespace stan {
@@ -25,9 +27,6 @@ namespace math {
  * http://qwone.com/~jason/writing/multivariateNormal.pdf
  * written by Jason D. M. Rennie.
  *
- * All expressions are adapted to avoid (most) inversions and maximal
- * reuse of intermediates.
- *
  * @param y A scalar vector
  * @param mu The mean vector of the multivariate normal distribution.
  * @param L The Cholesky decomposition of a variance matrix
@@ -39,7 +38,9 @@ namespace math {
  * @tparam T_loc Type of location.
  * @tparam T_covar Type of scale.
  */
-template <bool propto, typename T_y, typename T_loc, typename T_covar>
+template <bool propto, typename T_y, typename T_loc, typename T_covar,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_loc, T_covar>* = nullptr>
 return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
     const T_y& y, const T_loc& mu, const T_covar& L) {
   static const char* function = "multi_normal_cholesky_lpdf";
@@ -128,7 +129,8 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
 
       const row_vector_partials_t half
           = (inv_L_dbl.template triangularView<Eigen::Lower>()
-             * (value_of(y_col) - value_of(mu_col)))
+             * (value_of(y_col) - value_of(mu_col))
+                   .template cast<T_partials_return>())
                 .transpose();
       const vector_partials_t scaled_diff
           = (half * inv_L_dbl.template triangularView<Eigen::Lower>())
@@ -137,10 +139,10 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
       logp -= 0.5 * dot_self(half);
 
       if (!is_constant_all<T_y>::value) {
-        ops_partials.edge1_.partials_vec_[i] = -scaled_diff;
+        ops_partials.edge1_.partials_vec_[i] -= scaled_diff;
       }
       if (!is_constant_all<T_loc>::value) {
-        ops_partials.edge2_.partials_vec_[i] = scaled_diff;
+        ops_partials.edge2_.partials_vec_[i] += scaled_diff;
       }
       if (!is_constant_all<T_covar>::value) {
         ops_partials.edge3_.partials_ += scaled_diff * half;

@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/promote_scalar.hpp>
 #include <stan/math/prim/fun/size.hpp>
@@ -72,7 +74,7 @@ return_type_t<T_y, T_low, T_high> uniform_cdf(const T_y& y, const T_low& alpha,
         = to_ref_if<(!is_constant_all<T_y, T_low>::value
                      && !is_constant_all<T_high>::value)>(cdf / b_minus_a);
     if (!is_constant_all<T_y, T_low>::value) {
-      const auto& deriv_y
+      auto deriv_y
           = to_ref_if<(!is_constant_all<T_low>::value
                        && !is_constant_all<T_y>::value)>(rep_deriv / cdf_n);
       if (!is_constant_all<T_low>::value) {

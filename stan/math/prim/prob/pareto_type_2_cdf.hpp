@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size.hpp>
@@ -77,7 +79,7 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_cdf(
                      && !is_constant_all<T_shape>::value)>(
             P / (1.0 - p1_pow_alpha));
     if (!is_constant_all<T_y, T_loc, T_scale>::value) {
-      const auto& grad_1_2
+      auto grad_1_2
           = to_ref_if<!is_constant_all<T_loc>::value
                           + !is_constant_all<T_scale>::value
                           + !is_constant_all<T_y>::value

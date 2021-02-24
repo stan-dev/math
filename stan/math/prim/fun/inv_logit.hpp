@@ -81,7 +81,9 @@ struct inv_logit_fun {
  * @param x container
  * @return Inverse logit applied to each value in x.
  */
-template <typename T>
+template <
+    typename T, require_not_var_matrix_t<T>* = nullptr,
+    require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
 inline auto inv_logit(const T& x) {
   return apply_scalar_unary<inv_logit_fun, T>::apply(x);
 }

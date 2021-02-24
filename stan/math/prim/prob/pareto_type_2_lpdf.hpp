@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
@@ -18,7 +20,9 @@ namespace math {
 
 // pareto_type_2(y|lambda, alpha)  [y >= 0;  lambda > 0;  alpha > 0]
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
-          typename T_shape>
+          typename T_shape,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_loc, T_scale, T_shape>* = nullptr>
 return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
     const T_y& y, const T_loc& mu, const T_scale& lambda,
     const T_shape& alpha) {
@@ -56,10 +60,9 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
   ref_type_t<decltype(value_of(lambda_arr))> lambda_val = value_of(lambda_arr);
   ref_type_t<decltype(value_of(alpha_arr))> alpha_val = value_of(alpha_arr);
 
-  check_not_nan(function, "Random variable", y_val);
+  check_greater_or_equal(function, "Random variable", y_val, mu_val);
   check_positive_finite(function, "Scale parameter", lambda_val);
   check_positive_finite(function, "Shape parameter", alpha_val);
-  check_greater_or_equal(function, "Random variable", y_val, mu_val);
 
   if (!include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
     return 0.0;
@@ -91,8 +94,8 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
         = to_ref_if<(!is_constant_all<T_y, T_loc>::value
                      && !is_constant_all<T_scale>::value)>(alpha_val * inv_sum);
     if (!is_constant_all<T_y, T_loc>::value) {
-      const auto& deriv_1_2 = to_ref_if<(!is_constant_all<T_y>::value
-                                         && !is_constant_all<T_loc>::value)>(
+      auto deriv_1_2 = to_ref_if<(!is_constant_all<T_y>::value
+                                  && !is_constant_all<T_loc>::value)>(
           inv_sum + alpha_div_sum);
       if (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_ = -deriv_1_2;

@@ -1,6 +1,10 @@
 #ifndef STAN_MATH_REV_CORE_VAR_HPP
 #define STAN_MATH_REV_CORE_VAR_HPP
 
+#ifdef STAN_OPENCL
+#include <stan/math/opencl/rev/vari.hpp>
+#include <stan/math/opencl/plain_type.hpp>
+#endif
 #include <stan/math/rev/core/vari.hpp>
 #include <stan/math/rev/core/grad.hpp>
 #include <stan/math/rev/core/chainable_alloc.hpp>
@@ -10,9 +14,6 @@
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
 #include <ostream>
 #include <vector>
-#ifdef STAN_OPENCL
-#include <stan/math/opencl/rev/vari.hpp>
-#endif
 
 namespace stan {
 namespace math {
@@ -91,7 +92,7 @@ class var_value<T, require_floating_point_t<T>> {
    *
    * @return The value of this variable.
    */
-  inline const auto& val() const { return vi_->val_; }
+  inline const auto& val() const { return vi_->val(); }
 
   /**
    * Return a reference of the derivative of the root expression with
@@ -101,7 +102,7 @@ class var_value<T, require_floating_point_t<T>> {
    *
    * @return Adjoint for this variable.
    */
-  inline auto& adj() const { return vi_->adj_; }
+  inline auto& adj() const { return vi_->adj(); }
 
   /**
    * Return a reference to the derivative of the root expression with
@@ -112,6 +113,7 @@ class var_value<T, require_floating_point_t<T>> {
    * @return Adjoint for this variable.
    */
   inline auto& adj() { return vi_->adj_; }
+
   /**
    * Compute the gradient of this (dependent) variable with respect to
    * the specified vector of (independent) variables, assigning the
@@ -309,12 +311,9 @@ class var_value<T, require_floating_point_t<T>> {
  */
 template <typename T>
 class var_value<
-    T, require_t<bool_constant<is_eigen<T>::value || is_matrix_cl<T>::value>>> {
-  static_assert(
-      std::is_floating_point<value_type_t<T>>::value,
-      "The template for must be a floating point or a container holding"
-      " floating point types");
-
+    T, require_t<bool_constant<
+           (is_eigen<T>::value || is_kernel_expression_and_not_scalar<T>::value)
+           && std::is_floating_point<value_type_t<T>>::value>>> {
  public:
   using value_type = T;  // type in vari_value.
   using vari_type = std::conditional_t<is_plain_type<value_type>::value,
@@ -401,8 +400,8 @@ class var_value<
    *
    * @return The value of this variable.
    */
-  inline const auto& val() const { return vi_->val_; }
-  inline auto& val_op() { return vi_->val_; }
+  inline const auto& val() const { return vi_->val(); }
+  inline auto& val_op() { return vi_->val(); }
 
   /**
    * Return a reference to the derivative of the root expression with
@@ -412,13 +411,13 @@ class var_value<
    *
    * @return Adjoint for this variable.
    */
-  inline auto& adj() { return vi_->adj_; }
-  inline auto& adj() const { return vi_->adj_; }
-  inline auto& adj_op() { return vi_->adj_; }
+  inline auto& adj() { return vi_->adj(); }
+  inline auto& adj() const { return vi_->adj(); }
+  inline auto& adj_op() { return vi_->adj(); }
 
-  inline Eigen::Index rows() const { return vi_->val_.rows(); }
-  inline Eigen::Index cols() const { return vi_->val_.cols(); }
-  inline Eigen::Index size() const { return vi_->val_.size(); }
+  inline Eigen::Index rows() const { return vi_->rows(); }
+  inline Eigen::Index cols() const { return vi_->cols(); }
+  inline Eigen::Index size() const { return vi_->size(); }
 
   // POINTER OVERRIDES
 
@@ -485,7 +484,8 @@ class var_value<
    * @return The result of subtracting the specified variable from
    * this variable.
    */
-  inline var_value<T>& operator-=(const var_value<T>& b);
+  template <typename S, require_st_var<S>* = nullptr>
+  inline var_value<T>& operator-=(const S& b);
 
   /**
    * The compound subtract/assignment operator for scalars (C++).
@@ -498,7 +498,8 @@ class var_value<
    * @return The result of subtracting the specified variable from this
    * variable.
    */
-  inline var_value<T>& operator-=(T b);
+  template <typename S, require_st_arithmetic<S>* = nullptr>
+  inline var_value<T>& operator-=(const S& b);
 
   /**
    * The compound multiply/assignment operator for variables (C++).
@@ -663,6 +664,20 @@ class var_value<
     using vari_sub = decltype(vi_->col(i));
     using var_sub = var_value<value_type_t<vari_sub>>;
     return var_sub(new vari_sub(vi_->col(i)));
+  }
+
+  /**
+   * View a `matrix_cl` as a column vector.
+   */
+  inline auto as_column_vector_or_scalar() const {
+    using vari_sub = decltype(vi_->as_column_vector_or_scalar());
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->as_column_vector_or_scalar()));
+  }
+  inline auto as_column_vector_or_scalar() {
+    using vari_sub = decltype(vi_->as_column_vector_or_scalar());
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->as_column_vector_or_scalar()));
   }
 
   /**
@@ -900,6 +915,20 @@ class var_value<
   }
 
   /**
+   * Return an Array.
+   */
+  inline auto array() const {
+    using vari_sub = decltype(vi_->array());
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->array()));
+  }
+  inline auto array() {
+    using vari_sub = decltype(vi_->array());
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->array()));
+  }
+
+  /**
    * Write the value of this autodiff variable and its adjoint to
    * the specified output stream.
    *
@@ -1026,8 +1055,9 @@ using var = var_value<double>;
  * @ingroup type_trait
  */
 template <typename T>
-struct scalar_type<math::var_value<T>> {
-  using type = math::var_value<scalar_type_t<T>>;
+struct scalar_type<T, std::enable_if_t<is_var<T>::value>> {
+  using type
+      = math::var_value<scalar_type_t<typename std::decay_t<T>::value_type>>;
 };
 
 }  // namespace stan

@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
@@ -18,7 +20,9 @@ namespace stan {
 namespace math {
 
 // Pareto(y|y_m, alpha)  [y > y_m;  y_m > 0;  alpha > 0]
-template <bool propto, typename T_y, typename T_scale, typename T_shape>
+template <bool propto, typename T_y, typename T_scale, typename T_shape,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_scale, T_shape>* = nullptr>
 return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
                                                  const T_scale& y_min,
                                                  const T_shape& alpha) {

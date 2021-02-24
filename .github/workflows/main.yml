@@ -1,6 +1,8 @@
 name: Windows RTools 3.5
 
 on:
+  pull_request:
+    branches: [ develop, master ]
   push:
     branches: [ develop ]
     paths-ignore:
@@ -12,10 +14,15 @@ on:
       - 'RELEASE-NOTES.txt'
 jobs:
   prim-rev:
-    name: prim and rev unit tests
+    name: prim and rev tests
     runs-on: windows-latest
 
     steps:
+    - uses: n1hility/cancel-previous-runs@v2
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+      if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/master' && github.ref != 'refs/heads/develop'"
+  
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
       with:
@@ -43,12 +50,12 @@ jobs:
       run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
     - name: Run prim and rev unit tests
       shell: powershell
-      run: 
+      run: |
         python.exe runTests.py -j2 test/unit/*_test.cpp
         python.exe runTests.py -j2 test/unit/math/*_test.cpp
-        python.exe runTests.py -j2 test/unit/prim
-        python.exe runTests.py -j2 test/unit/rev
-        python.exe runTests.py -j2 test/unit/memory
+        python.exe runTests.py -j2 test/unit/math/prim
+        python.exe runTests.py -j2 test/unit/math/rev
+        python.exe runTests.py -j2 test/unit/math/memory
         
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v2
@@ -57,7 +64,7 @@ jobs:
         name: gtest_outputs_xml
         path: '**/*_test.xml'
   fwd-mix:
-    name: fwd and mix unit tests
+    name: fwd and mix tests
     runs-on: windows-latest
 
     steps:
@@ -86,11 +93,11 @@ jobs:
     - name: Add TBB to PATH
       shell: powershell
       run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
-    - name: Run prim and rev unit tests
+    - name: Run fwd and mix unit tests
       shell: powershell
-      run: 
-        python.exe runTests.py -j2 test/unit/fwd
-        python.exe runTests.py -j2 test/unit/mix
+      run: |
+        python.exe runTests.py -j2 test/unit/math/fwd
+        python.exe runTests.py -j2 test/unit/math/mix
         
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v2

@@ -33,10 +33,14 @@ namespace math {
    \end{cases}
    \f]
  *
+ * @tparam T A floating point type or an Eigen type with floating point scalar.
  * @param a Variable input.
  * @return Absolute value of variable.
  */
-inline var abs(const var& a) { return fabs(a); }
+template <typename T>
+inline auto abs(const var_value<T>& a) {
+  return fabs(a);
+}
 
 /**
  * Return the absolute value of the complex argument.

@@ -1,5 +1,5 @@
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/rev/opencl.hpp>
+#include <stan/math/opencl/rev.hpp>
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
@@ -59,6 +59,10 @@ TEST(ProbDistributionsChiSquare, opencl_matches_cpu_small) {
   stan::math::test::compare_cpu_opencl_prim_rev(chi_square_lpdf_functor, y, nu);
   stan::math::test::compare_cpu_opencl_prim_rev(chi_square_lpdf_functor_propto,
                                                 y, nu);
+  stan::math::test::compare_cpu_opencl_prim_rev(chi_square_lpdf_functor,
+                                                y.transpose().eval(), nu);
+  stan::math::test::compare_cpu_opencl_prim_rev(chi_square_lpdf_functor_propto,
+                                                y, nu.transpose().eval());
 }
 
 TEST(ProbDistributionsChiSquare, opencl_broadcast_y) {
@@ -98,6 +102,11 @@ TEST(ProbDistributionsChiSquare, opencl_matches_cpu_big) {
   stan::math::test::compare_cpu_opencl_prim_rev(chi_square_lpdf_functor, y, nu);
   stan::math::test::compare_cpu_opencl_prim_rev(chi_square_lpdf_functor_propto,
                                                 y, nu);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      chi_square_lpdf_functor, y.transpose().eval(), nu.transpose().eval());
+  stan::math::test::compare_cpu_opencl_prim_rev(chi_square_lpdf_functor_propto,
+                                                y.transpose().eval(),
+                                                nu.transpose().eval());
 }
 
 #endif

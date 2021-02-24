@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
@@ -124,8 +126,8 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
   operands_and_partials<T_y_ref, T_s_ref, T_mu_ref, T_sigma_ref> ops_partials(
       y_ref, s_squared_ref, mu_ref, sigma_ref);
   if (!is_constant_all<T_y, T_loc>::value) {
-    const auto& common_derivative = to_ref_if<(
-        !is_constant_all<T_loc>::value && !is_constant_all<T_y>::value)>(
+    auto common_derivative = to_ref_if<(!is_constant_all<T_loc>::value
+                                        && !is_constant_all<T_y>::value)>(
         N / max_size(y_bar, mu, n_obs, sigma) * n_obs_val / sigma_squared
         * diff);
     if (!is_constant_all<T_loc>::value) {

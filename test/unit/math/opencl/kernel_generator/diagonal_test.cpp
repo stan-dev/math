@@ -71,11 +71,25 @@ TEST(KernelGenerator, diagonal_of_a_block_test) {
 
   matrix_cl<double> m_cl(m);
 
-  diagonal(block(m_cl, 0, 1, 3, 3)) = diagonal(block(m_cl, 1, 0, 3, 3));
+  diagonal(block_zero_based(m_cl, 0, 1, 3, 3))
+      = diagonal(block_zero_based(m_cl, 1, 0, 3, 3));
   MatrixXd res = stan::math::from_matrix_cl(m_cl);
 
   MatrixXd correct = m;
   correct.diagonal(1) = correct.diagonal(-1);
+  EXPECT_MATRIX_NEAR(res, correct, 1e-9);
+}
+
+TEST(KernelGenerator, diagonal_lhs_add_assign_test) {
+  MatrixXd m = MatrixXd::Random(3, 4);
+  MatrixXd correct = m;
+  correct.diagonal().array() += 1;
+
+  matrix_cl<double> m_cl(m);
+
+  diagonal(m_cl) += 1;
+  MatrixXd res = stan::math::from_matrix_cl(m_cl);
+
   EXPECT_MATRIX_NEAR(res, correct, 1e-9);
 }
 

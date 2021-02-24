@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <boost/random/binomial_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
@@ -40,7 +41,8 @@ inline typename VectorBuilder<true, int, T_N, T_theta>::type binomial_rng(
   T_N_ref N_ref = N;
   T_theta_ref theta_ref = theta;
   check_nonnegative(function, "Population size parameter", N_ref);
-  check_bounded(function, "Probability parameter", theta_ref, 0.0, 1.0);
+  check_bounded(function, "Probability parameter", value_of(theta_ref), 0.0,
+                1.0);
 
   scalar_seq_view<T_N_ref> N_vec(N_ref);
   scalar_seq_view<T_theta_ref> theta_vec(theta_ref);

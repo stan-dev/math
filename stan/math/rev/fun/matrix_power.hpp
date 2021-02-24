@@ -52,8 +52,8 @@ inline plain_type_t<T> matrix_power(const T& M, const int n) {
   for (size_t i = 2; i <= n; ++i) {
     arena_powers[i] = arena_powers[1] * arena_powers[i - 1];
   }
-
-  arena_t<plain_type_t<T>> res = arena_powers[arena_powers.size() - 1];
+  using ret_type = return_var_matrix_t<T>;
+  arena_t<ret_type> res = arena_powers[arena_powers.size() - 1];
 
   reverse_pass_callback([arena_M, n, res, arena_powers]() mutable {
     const auto& M_val = arena_powers[1];
@@ -66,7 +66,7 @@ inline plain_type_t<T> matrix_power(const T& M, const int n) {
     arena_M.adj() += adj_M + adj_C;
   });
 
-  return res;
+  return ret_type(res);
 }
 
 }  // namespace math

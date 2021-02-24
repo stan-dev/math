@@ -2,12 +2,12 @@
 #define STAN_MATH_OPENCL_PRIM_POISSON_LOG_GLM_LPMF_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/opencl/rev/size.hpp>
+#include <stan/math/opencl/prim/size.hpp>
 #include <stan/math/opencl/rev/operands_and_partials.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/multiply.hpp>
+#include <stan/math/opencl/prim/multiply.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
@@ -108,9 +108,8 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> poisson_log_glm_lpmf(
   results(theta_derivative_cl, theta_derivative_sum_cl, logp_cl) = expressions(
       theta_derivative_expr, colwise_sum(theta_derivative_expr), logp_expr);
 
-  double theta_derivative_sum
-      = sum(from_matrix_cl<Dynamic, 1>(theta_derivative_sum_cl));
-  logp += sum(from_matrix_cl<Dynamic, 1>(logp_cl));
+  double theta_derivative_sum = sum(from_matrix_cl(theta_derivative_sum_cl));
+  logp += sum(from_matrix_cl(logp_cl));
   if (!std::isfinite(theta_derivative_sum)) {
     results(check_cl(function, "Vector of dependent variables", y_val,
                      "nonnegative"),

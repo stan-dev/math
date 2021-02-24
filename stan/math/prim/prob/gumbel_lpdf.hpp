@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
@@ -31,7 +33,9 @@ namespace math {
  * @throw std::domain_error if y is nan, mu is infinite, or beta is nonpositive
  * @throw std::invalid_argument if container sizes mismatch
  */
-template <bool propto, typename T_y, typename T_loc, typename T_scale>
+template <bool propto, typename T_y, typename T_loc, typename T_scale,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_loc, T_scale>* = nullptr>
 return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(const T_y& y, const T_loc& mu,
                                                const T_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
@@ -59,7 +63,6 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lpdf(const T_y& y, const T_loc& mu,
 
   check_not_nan(function, "Random variable", y_val);
   check_finite(function, "Location parameter", mu_val);
-  check_not_nan(function, "Scale parameter", beta_val);
   check_positive(function, "Scale parameter", beta_val);
 
   if (size_zero(y, mu, beta)) {

@@ -10,7 +10,7 @@ def runTests(String testPath, boolean jumbo = false) {
             sh "./runTests.py -j${env.PARALLEL} ${testPath}"
         }
     }
-    finally { junit 'test/**/*.xml' }    
+    finally { junit 'test/**/*.xml' }
 }
 
 def runTestsWin(String testPath, boolean buildLibs = true, boolean jumbo = false) {
@@ -19,11 +19,11 @@ def runTestsWin(String testPath, boolean buildLibs = true, boolean jumbo = false
        if (buildLibs){
            bat "mingw32-make.exe -f make/standalone math-libs"
        }
-       try { 
+       try {
            if (jumbo) {
-               bat "runTests.py -j${env.PARALLEL} ${testPath} --jumbo" 
+               bat "runTests.py -j${env.PARALLEL} ${testPath} --jumbo"
             } else {
-               bat "runTests.py -j${env.PARALLEL} ${testPath}" 
+               bat "runTests.py -j${env.PARALLEL} ${testPath}"
             }
        }
        finally { junit 'test/**/*.xml' }
@@ -36,8 +36,6 @@ def deleteDirWin() {
 }
 
 def skipRemainingStages = false
-def runGpuAsync = false
-def openClGpuLabel = "gpu"
 
 def utils = new org.stan.Utils()
 
@@ -60,7 +58,6 @@ pipeline {
         string(defaultValue: '', name: 'cmdstan_pr', description: 'PR to test CmdStan upstream against e.g. PR-630')
         string(defaultValue: '', name: 'stan_pr', description: 'PR to test Stan upstream against e.g. PR-630')
         booleanParam(defaultValue: false, name: 'withRowVector', description: 'Run additional distribution tests on RowVectors (takes 5x as long)')
-        booleanParam(defaultValue: false, name: 'gpu_async', description: 'Run the OpenCL tests on both a sync (AMD) GPU and an async (NVIDIA) one.')
         booleanParam(defaultValue: false, name: 'run_win_tests', description: 'Run full unit tests on Windows.')
     }
     options {
@@ -167,14 +164,6 @@ pipeline {
 
                     def paths = ['stan', 'make', 'lib', 'test', 'runTests.py', 'runChecks.py', 'makefile', 'Jenkinsfile', '.clang-format'].join(" ")
                     skipRemainingStages = utils.verifyChanges(paths)
-
-                    if(!utils.verifyChanges(["stan/math/opencl", "test/unit/math/opencl"].join(" ")) || params.gpu_async){
-                        runGpuAsync = true
-                        openClGpuLabel = "gpu-no-async"
-                    }
-                    else{
-                        runGpuAsync = false
-                    }
                 }
             }
         }
@@ -235,50 +224,74 @@ pipeline {
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
-                stage('OpenCL tests') {
-                    agent { label openClGpuLabel }
+                stage('OpenCL CPU tests') {
+                    agent { label "gelman-group-win2 || gg-linux" }
                     steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh "echo CXX=${env.CXX} -Werror > make/local"
-                        sh "echo STAN_OPENCL=true>> make/local"
-                        sh "echo OPENCL_PLATFORM_ID=0>> make/local"
-                        sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
-                        runTests("test/unit/math/opencl")
-						runTests("test/unit/multiple_translation_units_test.cpp")
-                        runTests("test/unit/math/prim/fun/gp_exp_quad_cov_test.cpp")
-                        runTests("test/unit/math/prim/fun/mdivide_left_tri_test.cpp")
-                        runTests("test/unit/math/prim/fun/mdivide_right_tri_test.cpp")
-                        runTests("test/unit/math/prim/fun/multiply_test.cpp")
-                        runTests("test/unit/math/rev/fun/mdivide_left_tri_test.cpp")
-                        runTests("test/unit/math/rev/fun/multiply_test.cpp")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('OpenCL tests async') {
-                    agent { label "gpu-async" }
-                    when {
-                        expression {
-                            runGpuAsync
+                        script {
+                            if (isUnix()) {
+                                deleteDir()
+                                unstash 'MathSetup'
+                                sh "echo CXX=${env.CXX} -Werror > make/local"
+                                sh "echo STAN_OPENCL=true>> make/local"
+                                sh "echo OPENCL_PLATFORM_ID=0>> make/local"
+                                sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
+                                runTests("test/unit/math/opencl")
+                                runTests("test/unit/multiple_translation_units_test.cpp")
+                                runTests("test/unit/math/prim/fun/gp_exp_quad_cov_test.cpp")
+                                runTests("test/unit/math/prim/fun/multiply_test.cpp")
+                                runTests("test/unit/math/rev/fun/multiply_test.cpp")
+                            } else {
+                                deleteDirWin()
+                                unstash 'MathSetup'
+                                bat "echo CXX=${env.CXX} -Werror > make/local"
+                                bat "echo STAN_OPENCL=true >> make/local"
+                                bat "echo OPENCL_PLATFORM_ID=1 >> make/local"
+                                bat "echo OPENCL_DEVICE_ID=0 >> make/local"
+                                bat 'echo LDFLAGS_OPENCL= -L"C:\\Program Files (x86)\\IntelSWTools\\system_studio_2020\\OpenCL\\sdk\\lib\\x64" -lOpenCL >> make/local'
+                                bat "mingw32-make.exe -f make/standalone math-libs"
+                                runTestsWin("test/unit/math/opencl", false, false)
+                                runTestsWin("test/unit/multiple_translation_units_test.cpp", false, false)
+                                runTestsWin("test/unit/math/prim/fun/gp_exp_quad_cov_test.cpp", false, false)
+                                runTestsWin("test/unit/math/prim/fun/multiply_test.cpp", false, false)
+                                runTestsWin("test/unit/math/rev/fun/multiply_test.cpp", false, false)
+                            }
                         }
                     }
+                }
+                stage('OpenCL GPU tests') {
+                    agent { label "gelman-group-win2 || gg-linux" }
                     steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh "echo CXX=${env.CXX} -Werror > make/local"
-                        sh "echo STAN_OPENCL=true>> make/local"
-                        sh "echo OPENCL_PLATFORM_ID=0>> make/local"
-                        sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
-                        runTests("test/unit/math/opencl")
-						runTests("test/unit/multiple_translation_units_test.cpp")
-                        runTests("test/unit/math/prim/fun/gp_exp_quad_cov_test.cpp")
-                        runTests("test/unit/math/prim/fun/mdivide_left_tri_test.cpp")
-                        runTests("test/unit/math/prim/fun/mdivide_right_tri_test.cpp")
-                        runTests("test/unit/math/prim/fun/multiply_test.cpp")
-                        runTests("test/unit/math/rev/fun/mdivide_left_tri_test.cpp")
-                        runTests("test/unit/math/rev/fun/multiply_test.cpp")
+                        script {
+                            if (isUnix()) {
+                                deleteDir()
+                                unstash 'MathSetup'
+                                sh "echo CXX=${env.CXX} -Werror > make/local"
+                                sh "echo STAN_OPENCL=true>> make/local"
+                                sh "echo OPENCL_PLATFORM_ID=1>> make/local"
+                                sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
+                                runTests("test/unit/math/opencl")
+                                runTests("test/unit/multiple_translation_units_test.cpp")
+                                runTests("test/unit/math/prim/fun/gp_exp_quad_cov_test.cpp")
+                                runTests("test/unit/math/prim/fun/multiply_test.cpp")
+                                runTests("test/unit/math/rev/fun/multiply_test.cpp")
+                            } else {
+                                deleteDirWin()
+                                unstash 'MathSetup'
+                                bat "echo CXX=${env.CXX} -Werror > make/local"
+                                bat "echo STAN_OPENCL=true >> make/local"
+                                bat "echo OPENCL_PLATFORM_ID=0 >> make/local"
+                                bat "echo OPENCL_DEVICE_ID=0 >> make/local"
+                                bat 'echo LDFLAGS_OPENCL= -L"C:\\Program Files (x86)\\IntelSWTools\\system_studio_2020\\OpenCL\\sdk\\lib\\x64" -lOpenCL >> make/local'
+                                bat "mingw32-make.exe -f make/standalone math-libs"
+                                runTestsWin("test/unit/math/opencl", false, false)
+                                runTestsWin("test/unit/multiple_translation_units_test.cpp", false, false)
+                                runTestsWin("test/unit/math/prim/fun/gp_exp_quad_cov_test.cpp", false, false)
+                                runTestsWin("test/unit/math/prim/fun/multiply_test.cpp", false, false)
+                                runTestsWin("test/unit/math/rev/fun/multiply_test.cpp", false, false)
+                            }
+
+                        }
                     }
-                    post { always { retry(3) { deleteDir() } } }
                 }
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
@@ -326,7 +339,7 @@ pipeline {
                                 sh "find . -name *_test.xml | xargs rm"
                                 runTests("test/unit -f reduce_sum")
                             }
-                        }                      
+                        }
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }

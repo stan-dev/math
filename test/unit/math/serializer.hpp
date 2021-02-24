@@ -138,8 +138,11 @@ struct deserializer {
   template <typename U, int R, int C>
   Eigen::Matrix<T, R, C> read(const Eigen::Matrix<U, R, C>& x) {
     Eigen::Matrix<T, R, C> y(x.rows(), x.cols());
-    for (int i = 0; i < x.size(); ++i)
-      y(i) = read(x(i));
+    for (int j = 0; j < x.cols(); ++j) {
+      for (int i = 0; i < x.rows(); ++i) {
+        y(i + j * x.rows()) = read(x(i, j));
+      }
+    }
     return y;
   }
 
@@ -159,8 +162,11 @@ struct deserializer {
   Eigen::Matrix<std::complex<T>, R, C> read(
       const Eigen::Matrix<std::complex<U>, R, C>& x) {
     Eigen::Matrix<std::complex<T>, R, C> y(x.rows(), x.cols());
-    for (int i = 0; i < x.size(); ++i)
-      y(i) = read(x(i));
+    for (int j = 0; j < x.cols(); ++j) {
+      for (int i = 0; i < x.rows(); ++i) {
+        y(i + j * x.rows()) = read(x(i, j));
+      }
+    }
     return y;
   }
 };
@@ -194,7 +200,7 @@ struct serializer {
    * @tparam U type of specified scalar; must be assignable to T
    * @param x scalar to serialize
    */
-  template <typename U>
+  template <typename U, require_stan_scalar_t<U>* = nullptr>
   void write(const U& x) {
     vals_.push_back(x);
   }
@@ -231,10 +237,13 @@ struct serializer {
    * @tparam C column specification of Eigen container
    * @param x Eigen container to serialize.
    */
-  template <typename U, int R, int C>
-  void write(const Eigen::Matrix<U, R, C>& x) {
-    for (int i = 0; i < x.size(); ++i)
-      write(x(i));
+  template <typename U, require_eigen_t<U>* = nullptr>
+  void write(const U& x) {
+    for (int j = 0; j < x.cols(); ++j) {
+      for (int i = 0; i < x.rows(); ++i) {
+        write(x.coeff(i, j));
+      }
+    }
   }
 
   /**
