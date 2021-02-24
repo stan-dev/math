@@ -216,7 +216,7 @@ void test_derivatives(const F &f, double a, double b,
     for (size_t i = 0; i < thetas.size(); ++i)
       thetas_[i] = thetas[i];
 
-    var integral = stan::math::integrate_1d_new(f, a_, b_, tolerance, msgs, thetas_, x_r, x_i);
+    var integral = stan::math::integrate_1d_impl(f, a_, b_, tolerance, msgs, thetas_, x_r, x_i);
     integral.grad();
     EXPECT_LE(std::abs(val - integral.val()), tolerance);
     if (stan::is_var<T_theta>::value) {
@@ -239,11 +239,11 @@ TEST(StanMath_integrate_1d_rev, test_integer_arguments) {
   std::vector<double> x_r;
   std::vector<int> x_i;
   EXPECT_NO_THROW(
-      v = stan::math::integrate_1d_new(f2{}, 0, 1, 1e-6, msgs, theta, x_r, x_i));
+      v = stan::math::integrate_1d_impl(f2{}, 0, 1, 1e-6, msgs, theta, x_r, x_i));
   EXPECT_NO_THROW(
-      v = stan::math::integrate_1d_new(f2{}, 0.0, 1, 1e-6, msgs, theta, x_r, x_i));
+      v = stan::math::integrate_1d_impl(f2{}, 0.0, 1, 1e-6, msgs, theta, x_r, x_i));
   EXPECT_NO_THROW(
-      v = stan::math::integrate_1d_new(f2{}, 0, 1.0, 1e-6, msgs, theta, x_r, x_i));
+      v = stan::math::integrate_1d_impl(f2{}, 0, 1.0, 1e-6, msgs, theta, x_r, x_i));
 }
 
 TEST(StanMath_integrate_1d_rev, TestDerivatives_easy) {
