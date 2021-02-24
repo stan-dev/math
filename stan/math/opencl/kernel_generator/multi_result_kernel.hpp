@@ -249,7 +249,7 @@ class expressions_cl {
    */
   explicit expressions_cl(T_expressions&&... expressions)
       : expressions_(
-            T_expressions(std::forward<T_expressions>(expressions))...) {}
+          T_expressions(std::forward<T_expressions>(expressions))...) {}
 
  private:
   std::tuple<T_expressions...> expressions_;
@@ -373,21 +373,17 @@ class results_cl {
           "kernel void calculate(" + parts.args +
           "const int rows, const int cols){\n"
           "const int gid_i = get_global_id(0);\n"
+          "const int gid_j = get_global_id(1);\n"
           "const int lid_i = get_local_id(0);\n"
           "const int lsize_i = get_local_size(0);\n"
+          "const int gsize_i = get_global_size(0);\n"
+          "const int gsize_j = get_global_size(1);\n"
           "const int wg_id_i = get_group_id(0);\n"
-          "const int wg_id_j = get_group_id(1);\n"
           "const int n_groups_i = get_num_groups(0);\n"
-          "const int blocks_rows = (rows + lsize_i - 1) / lsize_i;\n"
-          "const int blocks_cols = (cols + lsize_i - 1) / lsize_i;\n"
-          "const int i0 = lsize_i * wg_id_i;\n"
-          "const int i = i0 + lid_i;\n"
-          "const int j0 = lsize_i * wg_id_j;\n"
           + parts.declarations +
-          "for(int lid_j = 0; lid_j < min(cols - j0, lsize_i); lid_j++){\n"
-          "const int j = j0 + lid_j;\n"
+          "for(int j = gid_j; j < cols; j+=gsize_j){\n"
           + parts.initialization +
-          "if(i < rows){\n"
+          "for(int i = gid_i; i < rows; i+=gsize_i){\n"
           + parts.body
           + parts.body_suffix +
           "}\n"
@@ -481,9 +477,17 @@ class results_cl {
       if (require_specific_local_size) {
         kernel.setArg(arg_num++, n_rows);
         kernel.setArg(arg_num++, n_cols);
+
         int local = opencl_context.base_opts().at("LOCAL_SIZE_");
-        int wgs_rows = (n_rows + local - 1) / local;
-        int wgs_cols = (n_cols + local - 1) / local;
+        int preferred_work_groups
+            = opencl_context.device()[0].getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>()
+              * 16;
+        // round up n_rows/local/n_cols
+        int wgs_rows
+            = (std::min(preferred_work_groups, (n_rows + local - 1) / local)
+               + n_cols - 1)
+              / n_cols;
+                int wgs_cols = (n_cols + wgs_rows - 1) / wgs_rows;
 
         opencl_context.queue().enqueueNDRangeKernel(
             kernel, cl::NullRange, cl::NDRange(local * wgs_rows, wgs_cols),
