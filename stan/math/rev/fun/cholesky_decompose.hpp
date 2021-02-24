@@ -50,22 +50,24 @@ inline auto unblocked_cholesky_lambda(T1& L_A, T2& L, T3& A) {
     const size_t N = A.rows();
     // Algorithm is in rowmajor so we make the adjoint copy rowmajor
     Eigen::Matrix<double, -1, -1, Eigen::RowMajor> adjL(L.rows(), L.cols());
+    Eigen::MatrixXd adjA = Eigen::MatrixXd::Zero(L.rows(), L.cols());
     adjL.template triangularView<Eigen::Lower>() = L.adj();
     for (int i = N - 1; i >= 0; --i) {
       for (int j = i; j >= 0; --j) {
         if (i == j) {
-          A.adj()(i, j) = 0.5 * adjL.coeff(i, j) / L_A.coeff(i, j);
+          adjA.coeffRef(i, j) = 0.5 * adjL.coeff(i, j) / L_A.coeff(i, j);
         } else {
-          A.adj()(i, j) = adjL.coeff(i, j) / L_A.coeff(j, j);
+          adjA.coeffRef(i, j) = adjL.coeff(i, j) / L_A.coeff(j, j);
           adjL.coeffRef(j, j)
               -= adjL.coeff(i, j) * L_A.coeff(i, j) / L_A.coeff(j, j);
         }
         for (int k = j - 1; k >= 0; --k) {
-          adjL.coeffRef(i, k) -= A.adj().coeff(i, j) * L_A.coeff(j, k);
-          adjL.coeffRef(j, k) -= A.adj().coeff(i, j) * L_A.coeff(i, k);
+          adjL.coeffRef(i, k) -= adjA.coeff(i, j) * L_A.coeff(j, k);
+          adjL.coeffRef(j, k) -= adjA.coeff(i, j) * L_A.coeff(i, k);
         }
       }
     }
+    A.adj() += adjA;
   };
 }
 
@@ -82,7 +84,7 @@ inline auto cholesky_lambda(T1& L_A, T2& L, T3& A) {
     using Eigen::Lower;
     using Eigen::StrictlyUpper;
     using Eigen::Upper;
-    Eigen::MatrixXd L_adj(L.rows(), L.cols());
+    Eigen::MatrixXd L_adj = Eigen::MatrixXd::Zero(L.rows(), L.cols());
     L_adj.template triangularView<Eigen::Lower>() = L.adj();
     const int M_ = L_A.rows();
     int block_size_ = std::max(M_ / 8, 8);
@@ -114,7 +116,7 @@ inline auto cholesky_lambda(T1& L_A, T2& L, T3& A) {
       R_adj.noalias() -= D_adj.template selfadjointView<Lower>() * R;
       D_adj.diagonal() *= 0.5;
     }
-    A.adj().template triangularView<Eigen::Lower>() = L_adj;
+    A.adj().template triangularView<Eigen::Lower>() += L_adj;
   };
 }
 }  // namespace internal
@@ -135,9 +137,11 @@ inline auto cholesky_decompose(const EigMat& A) {
   check_square("cholesky_decompose", "A", A);
   arena_t<EigMat> arena_A = A;
   arena_t<Eigen::Matrix<double, -1, -1>> L_A(arena_A.val());
+
   check_symmetric("cholesky_decompose", "A", A);
   Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>, Eigen::Lower> L_factor(L_A);
   check_pos_definite("cholesky_decompose", "m", L_factor);
+
   L_A.template triangularView<Eigen::StrictlyUpper>().setZero();
   // looping gradient calcs faster for small matrices compared to
   // cholesky_block

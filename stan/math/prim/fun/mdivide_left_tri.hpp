@@ -25,7 +25,6 @@ namespace math {
  */
 template <Eigen::UpLoType TriView, typename T1, typename T2,
           require_all_eigen_t<T1, T2> * = nullptr,
-          require_any_not_vt_same<double, T1, T2> * = nullptr,
           require_all_not_eigen_vt<is_var, T1, T2> * = nullptr>
 inline Eigen::Matrix<return_type_t<T1, T2>, T1::RowsAtCompileTime,
                      T2::ColsAtCompileTime>
@@ -52,8 +51,7 @@ mdivide_left_tri(const T1 &A, const T2 &b) {
  * @return x = A^-1 .
  * @throws std::domain_error if A is not square
  */
-template <Eigen::UpLoType TriView, typename T, require_eigen_t<T> * = nullptr,
-          require_not_vt_same<double, T> * = nullptr>
+template <Eigen::UpLoType TriView, typename T, require_eigen_t<T> * = nullptr>
 inline plain_type_t<T> mdivide_left_tri(const T &A) {
   check_square("mdivide_left_tri", "A", A);
   if (A.rows() == 0) {
@@ -61,59 +59,6 @@ inline plain_type_t<T> mdivide_left_tri(const T &A) {
   }
 
   int n = A.rows();
-  plain_type_t<T> b = plain_type_t<T>::Identity(n, n);
-  A.template triangularView<TriView>().solveInPlace(b);
-  return b;
-}
-
-/**
- * Returns the solution of the system Ax=b when A is triangular
- * and A and b are matrices of doubles.
- *
- * @tparam TriView Specifies whether A is upper (Eigen::Upper)
- * or lower triangular (Eigen::Lower).
- * @tparam T1 type of the triangular matrix
- * @tparam T2 type of the right-hand side matrix or vector
- *
- * @param A Triangular matrix.
- * @param b Right hand side matrix or vector.
- * @return x = A^-1 b, solution of the linear system.
- * @throws std::domain_error if A is not square or the rows of b don't
- * match the size of A.
- */
-template <Eigen::UpLoType TriView, typename T1, typename T2,
-          require_all_eigen_t<T1, T2> * = nullptr,
-          require_all_vt_same<double, T1, T2> * = nullptr>
-inline Eigen::Matrix<double, T1::RowsAtCompileTime, T2::ColsAtCompileTime>
-mdivide_left_tri(const T1 &A, const T2 &b) {
-  check_square("mdivide_left_tri", "A", A);
-  check_multiplicable("mdivide_left_tri", "A", A, "b", b);
-  if (A.rows() == 0) {
-    return {0, b.cols()};
-  }
-  return to_ref(A).template triangularView<TriView>().solve(b);
-}
-
-/**
- * Returns the solution of the system Ax=b when A is triangular, b=I and
- * both are matrices of doubles.
- *
- * @tparam TriView Specifies whether A is upper (Eigen::Upper)
- * or lower triangular (Eigen::Lower).
- * @tparam T type of the matrix
- *
- * @param A Triangular matrix.
- * @return x = A^-1 .
- * @throws std::domain_error if A is not square
- */
-template <Eigen::UpLoType TriView, typename T, require_eigen_t<T> * = nullptr,
-          require_vt_same<double, T> * = nullptr>
-inline plain_type_t<T> mdivide_left_tri(const T &A) {
-  check_square("mdivide_left_tri", "A", A);
-  if (A.rows() == 0) {
-    return {};
-  }
-  const int n = A.rows();
   plain_type_t<T> b = plain_type_t<T>::Identity(n, n);
   A.template triangularView<TriView>().solveInPlace(b);
   return b;

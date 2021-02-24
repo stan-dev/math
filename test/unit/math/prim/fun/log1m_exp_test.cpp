@@ -17,8 +17,9 @@ TEST(MathFunctions, log1m_exp) {
   EXPECT_FLOAT_EQ(-23.02585, log1m_exp(-1e-10));
   EXPECT_FLOAT_EQ(-46.0517, log1m_exp(-1e-20));
   EXPECT_FLOAT_EQ(-92.1034, log1m_exp(-1e-40));
-  EXPECT_NO_THROW(log1m_exp(0));
   EXPECT_NO_THROW(log1m_exp(1));
+  EXPECT_FLOAT_EQ(log1m_exp(0), -stan::math::INFTY);
+  EXPECT_TRUE(std::isnan(log1m_exp(0.001)));
 }
 
 TEST(MathFunctions, log1m_exp_nan) {

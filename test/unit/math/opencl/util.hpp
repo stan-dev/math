@@ -25,16 +25,18 @@ auto opencl_argument(const T& x) {
   return to_matrix_cl(x);
 }
 
-template <typename T, require_st_same<T, int>* = nullptr>
+template <typename T, require_t<std::is_integral<scalar_type_t<T>>>* = nullptr>
 T var_argument(const T& x) {
   return x;
 }
-template <typename T, require_not_st_same<T, int>* = nullptr,
+template <typename T,
+          require_not_t<std::is_integral<scalar_type_t<T>>>* = nullptr,
           require_not_std_vector_t<T>* = nullptr>
 auto var_argument(const T& x) {
   return to_var(x);
 }
-template <typename T, require_not_st_same<T, int>* = nullptr,
+template <typename T,
+          require_not_t<std::is_integral<scalar_type_t<T>>>* = nullptr,
           require_std_vector_t<T>* = nullptr>
 auto var_argument(const T& x) {
   std::vector<decltype(var_argument(x[0]))> res;
@@ -80,12 +82,12 @@ void expect_eq(const std::vector<T>& a, const std::vector<T>& b,
 template <typename T1, typename T2,
           require_nonscalar_prim_or_rev_kernel_expression_t<T1>* = nullptr>
 void expect_eq(const T1& a, const T2& b, const char* msg) {
-  expect_eq(from_matrix_cl(a), b, msg);
+  expect_eq(from_matrix_cl<plain_type_t<T2>>(a), b, msg);
 }
 template <typename T1, typename T2,
           require_nonscalar_prim_or_rev_kernel_expression_t<T2>* = nullptr>
 void expect_eq(const T1& a, const T2& b, const char* msg) {
-  expect_eq(a, from_matrix_cl(b), msg);
+  expect_eq(a, from_matrix_cl<plain_type_t<T1>>(b), msg);
 }
 
 template <typename T>
@@ -94,7 +96,7 @@ auto recursive_sum(const T& a) {
 }
 template <typename T>
 auto recursive_sum(const std::vector<T>& a) {
-  scalar_type_t<T> res = recursive_sum(a[0]);
+  scalar_type_t<T> res = 0;
   for (int i = 0; i < a.size(); i++) {
     res += recursive_sum(a[i]);
   }
@@ -210,15 +212,26 @@ void test_opencl_broadcasting_prim_rev_impl(const Functor& functor,
                                                 const auto& args_vector) {
         auto res_scalar
             = eval(functor(opencl_argument(std::get<Is>(args_broadcast))...));
-        auto res_vec = eval(functor(opencl_argument(
-            to_vector_if<Is == I>(std::get<Is>(args_vector), N))...));
         std::string signature = type_name<decltype(args_broadcast)>().data();
-        expect_eq(res_vec, res_scalar,
-                  ("return values of broadcast and vector arguments do not "
-                   "match for signature "
-                   + signature + "!")
-                      .c_str());
-        var(recursive_sum(res_scalar) + recursive_sum(res_vec)).grad();
+
+        try {
+          auto res_vec = eval(functor(opencl_argument(
+              to_vector_if<Is == I>(std::get<Is>(args_vector), N))...));
+          expect_eq(res_vec, res_scalar,
+                    ("return values of broadcast and vector arguments do not "
+                     "match for signature "
+                     + signature + "!")
+                        .c_str());
+          try {
+            var(recursive_sum(res_scalar) + recursive_sum(res_vec)).grad();
+          } catch (...) {
+            std::cerr << "throw in rev pass!" << std::endl;
+            throw;
+          }
+        } catch (...) {
+          std::cerr << "throw in signature: " << signature << "!" << std::endl;
+          throw;
+        }
 
         static_cast<void>(std::initializer_list<int>{
             (expect_adj_near(

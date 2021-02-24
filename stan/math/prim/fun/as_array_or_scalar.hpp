@@ -21,13 +21,26 @@ inline T as_array_or_scalar(T&& v) {
 }
 
 /**
+ * Returns specified input value.
+ *
+ * @tparam T Type of element.
+ * @param v Specified value.
+ * @return Same value.
+ */
+template <typename T, require_eigen_array_t<T>* = nullptr>
+inline T as_array_or_scalar(T&& v) {
+  return std::forward<T>(v);
+}
+
+/**
  * Converts a matrix type to an array.
  *
  * @tparam T Type of \c Eigen \c Matrix or expression
  * @param v Specified \c Eigen \c Matrix or expression.
  * @return Matrix converted to an array.
  */
-template <typename T, require_eigen_t<T>* = nullptr>
+template <typename T, typename = require_eigen_t<T>,
+          require_not_eigen_array_t<T>* = nullptr>
 inline auto as_array_or_scalar(T&& v) {
   return make_holder([](auto& x) { return x.array(); }, std::forward<T>(v));
 }

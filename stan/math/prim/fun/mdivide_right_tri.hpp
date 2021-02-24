@@ -25,8 +25,7 @@ namespace math {
  * match the size of A.
  */
 template <Eigen::UpLoType TriView, typename EigMat1, typename EigMat2,
-          require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
-          require_any_not_st_same<double, EigMat1, EigMat2>* = nullptr>
+          require_all_eigen_t<EigMat1, EigMat2>* = nullptr>
 inline Eigen::Matrix<return_type_t<EigMat1, EigMat2>,
                      EigMat1::RowsAtCompileTime, EigMat2::ColsAtCompileTime>
 mdivide_right_tri(const EigMat1& b, const EigMat2& A) {
@@ -51,40 +50,6 @@ mdivide_right_tri(const EigMat1& b, const EigMat2& A) {
                         EigMat1::RowsAtCompileTime, EigMat1::ColsAtCompileTime>(
               b)
               .transpose())
-      .transpose();
-}
-
-/**
- * Returns the solution of the system xA=b when A is triangular
- * and A and b are matrices of doubles.
- *
- * @tparam TriView Specifies whether A is upper (Eigen::Upper)
- * or lower triangular (Eigen::Lower).
- * @tparam EigMat1 type of the right-hand side matrix or vector
- * @tparam EigMat2 type of the triangular matrix
- *
- * @param A Triangular matrix.  Specify upper or lower with TriView
- * being Eigen::Upper or Eigen::Lower.
- * @param b Right hand side matrix or vector.
- * @return x = b A^-1, solution of the linear system.
- * @throws std::domain_error if A is not square or the rows of b don't
- * match the size of A.
- */
-template <Eigen::UpLoType TriView, typename EigMat1, typename EigMat2,
-          require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
-          require_all_st_same<double, EigMat1, EigMat2>* = nullptr>
-inline Eigen::Matrix<double, EigMat1::RowsAtCompileTime,
-                     EigMat2::ColsAtCompileTime>
-mdivide_right_tri(const EigMat1& b, const EigMat2& A) {
-  check_square("mdivide_right_tri", "A", A);
-  check_multiplicable("mdivide_right_tri", "b", b, "A", A);
-  if (A.rows() == 0) {
-    return {b.rows(), 0};
-  }
-  return to_ref(A)
-      .template triangularView<TriView>()
-      .transpose()
-      .solve(b.transpose())
       .transpose();
 }
 
