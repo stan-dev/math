@@ -135,7 +135,7 @@ class colwise_reduction
   inline int rows() const {
     int arg_rows = this->template get_arg<0>().rows();
     int arg_cols = this->template get_arg<0>().cols();
-    if(arg_cols==0){
+    if (arg_cols == 0) {
       return 0;
     }
     int local = opencl_context.base_opts().at("LOCAL_SIZE_");
