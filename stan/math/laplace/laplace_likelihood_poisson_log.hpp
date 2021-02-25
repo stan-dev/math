@@ -46,7 +46,7 @@ struct diff_poisson_log {
    */
   template <typename T1, typename T2>
   T1 log_likelihood (const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
-                    const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy)
+                     const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy)
     const {
     double factorial_term = 0;
     for (int i = 0; i < sums_.size(); i++)

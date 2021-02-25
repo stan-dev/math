@@ -3,6 +3,7 @@
 #include <stan/math/laplace/laplace_likelihood_general.hpp>
 #include <stan/math/laplace/third_diff_directional.hpp>
 #include <stan/math/laplace/hessian_times_vector.hpp>
+#include <stan/math/laplace/hessian_block_diag.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <stan/math/mix.hpp>
 #include <stan/math/fwd.hpp>
@@ -175,5 +176,15 @@ TEST_F(neg_bin_log_diff_test, diff_likelihood) {
     << "gradient: " << gradient.transpose() << std::endl
     << "hessian: " << hessian.transpose() << std::endl
     << "third diff: " << third_diff.transpose() << std::endl;
+}
 
+TEST_F(neg_bin_log_diff_test, diff_block_diagonal) {
+  using stan::math::hessian_block_diag;
+
+  Eigen::MatrixXd H;
+  double fx;
+  int m = 1;  // size of block (1 for diagonal Hessian)
+  hessian_block_diag(likelihood, theta_dbl, eta, y, y_index, m, fx, H);
+
+  std::cout << "Hessian: " << std::endl << H << std::endl;
 }
