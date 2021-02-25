@@ -1,48 +1,43 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/fun/lub_constrain_helpers.hpp>
 
-TEST(mathMixMatFun, lub_mat_constrain_6) {
-  auto f1 = [](const auto& x, const auto& lb, const auto& ub) {
-    return stan::math::lub_constrain(x, lb, ub);
-  };
-  auto f2 = [](const auto& x, const auto& lb, const auto& ub) {
-    stan::return_type_t<decltype(x), decltype(lb), decltype(ub)> lp = 0;
-    return stan::math::lub_constrain(x, lb, ub, lp);
-  };
-  auto f3 = [](const auto& x, const auto& lb, const auto& ub) {
-    stan::return_type_t<decltype(x), decltype(lb), decltype(ub)> lp = 0;
-    stan::math::lub_constrain(x, lb, ub, lp);
-    return lp;
-  };
+// array matrix[], array matrix[], array matrix[]
+// array matrix[], array matrix[], matrix[]
+// array matrix[], matrix[], array matrix[]
+// array matrix[], matrix[], matrix[]
+// array matrix[], array matrix[], real
+// array matrix[], real, array matrix[]
+// array matrix[], matrix[], real
+// array matrix[], real, matrix[]
+// array matrix[], real, real
+TEST(mathMixMatFun, lub_stdvec_lb_vec_ub_mat_constrain) {
+  Eigen::MatrixXd A_inner(2, 3);
+  // swapping 0.0000001 for 0 causes a failure for the hessian?
+  A_inner << 5.0, 2.0, 4.0, -2.0, 0.0000001, 0.1;
+  Eigen::MatrixXd lb_inner(2, 3);
+  lb_inner << -1.0, 1.0, -6.0, 1.0, 0.0, 0.01;
+  Eigen::MatrixXd ub_inner(2, 3);
+  ub_inner << 6.0, 3.0, 12.0, 38.0, 0.1, 0.15;
 
-  Eigen::MatrixXd x1(2, 2);
-  x1 << 0.7, -1.0, 1.1, -3.8;
-  Eigen::MatrixXd x2(2, 2);
-  x2 << 1.1, 2.0, -0.3, 1.1;
-  Eigen::MatrixXd lb(2, 2);
-  lb << 2.7, -1.0, -3.0, 1.1;
-  double lbs = 0.1;
-  Eigen::MatrixXd ub(2, 2);
-  ub << 2.3, -0.5, 1.4, 1.2;
-  double ubs = 3.0;
+  std::vector<Eigen::MatrixXd> A{A_inner, A_inner};
+  std::vector<Eigen::MatrixXd> lb_vec{lb_inner, lb_inner};
+  std::vector<Eigen::MatrixXd> ub_vec{ub_inner, ub_inner};
+  lub_constrain_tests::expect_vec(A, lb_vec, ub_vec);
+  lub_constrain_tests::expect_vec(A, lb_vec, ub_inner);
+}
 
-  stan::test::expect_ad_matvar(f1, x1, lb, ub);
-  stan::test::expect_ad_matvar(f1, x1, lb, ubs);
-  stan::test::expect_ad_matvar(f1, x1, lbs, ub);
-  stan::test::expect_ad_matvar(f1, x2, lb, ub);
-  stan::test::expect_ad_matvar(f1, x2, lb, ubs);
-  stan::test::expect_ad_matvar(f1, x2, lbs, ub);
+TEST(mathMixMatFun, lub_stdvec_lb_vec_ub_mat_constrain_infty) {
+  Eigen::MatrixXd A_inner(2, 3);
+  A_inner << 5.0, 2.0, 4.0, -2.0, 0.05, 0.1;
+  Eigen::MatrixXd lb_inner(2, 3);
+  lb_inner << stan::math::NEGATIVE_INFTY, 1.0, stan::math::NEGATIVE_INFTY, 1.0,
+      0.0, 0.01;
+  Eigen::MatrixXd ub_inner(2, 3);
+  ub_inner << 6.0, stan::math::INFTY, stan::math::INFTY, 38.0, 0.1, 0.15;
 
-  stan::test::expect_ad_matvar(f2, x1, lb, ub);
-  stan::test::expect_ad_matvar(f2, x1, lb, ubs);
-  stan::test::expect_ad_matvar(f2, x1, lbs, ub);
-  stan::test::expect_ad_matvar(f2, x2, lb, ub);
-  stan::test::expect_ad_matvar(f2, x2, lb, ubs);
-  stan::test::expect_ad_matvar(f2, x2, lbs, ub);
-
-  stan::test::expect_ad_matvar(f3, x1, lb, ub);
-  stan::test::expect_ad_matvar(f3, x1, lb, ubs);
-  stan::test::expect_ad_matvar(f3, x1, lbs, ub);
-  stan::test::expect_ad_matvar(f3, x2, lb, ub);
-  stan::test::expect_ad_matvar(f3, x2, lb, ubs);
-  stan::test::expect_ad_matvar(f3, x2, lbs, ub);
+  std::vector<Eigen::MatrixXd> A{A_inner, A_inner};
+  std::vector<Eigen::MatrixXd> lb_vec{lb_inner, lb_inner};
+  std::vector<Eigen::MatrixXd> ub_vec{ub_inner, ub_inner};
+  lub_constrain_tests::expect_vec(A, lb_vec, ub_vec);
+  lub_constrain_tests::expect_vec(A, lb_vec, ub_inner);
 }
