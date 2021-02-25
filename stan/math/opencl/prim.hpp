@@ -163,6 +163,7 @@
 #include <stan/math/opencl/prim/poisson_log_lpmf.hpp>
 #include <stan/math/opencl/prim/poisson_lpmf.hpp>
 #include <stan/math/opencl/prim/rayleigh_lpdf.hpp>
+#include <stan/math/opencl/prim/rep_array.hpp>
 #include <stan/math/opencl/prim/rep_matrix.hpp>
 #include <stan/math/opencl/prim/rep_row_vector.hpp>
 #include <stan/math/opencl/prim/rep_vector.hpp>
