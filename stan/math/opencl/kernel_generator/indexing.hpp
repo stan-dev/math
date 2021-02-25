@@ -259,6 +259,18 @@ class indexing_
     this->template get_arg<2>().add_read_event(e);
     this->template get_arg<0>().add_write_event(e);
   }
+
+  /**
+   * Adds all read and write events on any matrices used by nested expressions
+   * to a list and clears them from those matrices.
+   * @param[out] events List of all events.
+   */
+  inline void get_clear_read_write_events(
+      std::vector<cl::Event>& events) const {
+    this->template get_arg<0>().get_clear_read_write_events(events);
+    this->template get_arg<1>().get_write_events(events);
+    this->template get_arg<2>().get_write_events(events);
+  }
 };
 
 /**

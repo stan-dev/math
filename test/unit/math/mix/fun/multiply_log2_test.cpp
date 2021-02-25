@@ -1,7 +1,15 @@
 #include <test/unit/math/test_ad.hpp>
 #include <limits>
 
+<<<<<<< HEAD
 TEST(mathMixScalFun, multiplyLog_vec) {
+=======
+<<<<<<< HEAD:test/unit/math/mix/fun/multiply_log3_test.cpp
+TEST(mathMixScalFun, multiplyLog_matvec) {
+=======
+TEST(mathMixScalFun, multiplyLog2_vec) {
+>>>>>>> origin/develop:test/unit/math/mix/fun/multiply_log2_test.cpp
+>>>>>>> origin/develop
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::multiply_log;
     return multiply_log(x1, x2);
@@ -11,7 +19,10 @@ TEST(mathMixScalFun, multiplyLog_vec) {
   in1 << 3, 1;
   Eigen::VectorXd in2(2);
   in2 << 0.5, 3.4;
+<<<<<<< HEAD
   stan::test::expect_ad_vectorized_binary(f, in1, in2);
+=======
+>>>>>>> origin/develop
 
   Eigen::VectorXd x1(3);
   x1 << 1.0, 2.0, 3.0;
@@ -20,6 +31,7 @@ TEST(mathMixScalFun, multiplyLog_vec) {
   Eigen::MatrixXd x3(2, 3);
   x3 << 1.0, 2.0, 3.0, 4.0, 5.0, 6.0;
 
+<<<<<<< HEAD
   stan::test::expect_ad(f, x1, x1);
   stan::test::expect_ad(f, x1, 2.0);
   stan::test::expect_ad(f, 3.0, x1);
@@ -29,11 +41,23 @@ TEST(mathMixScalFun, multiplyLog_vec) {
   stan::test::expect_ad(f, x3, x3);
   stan::test::expect_ad(f, x3, 4.0);
   stan::test::expect_ad(f, 5.0, x3);
+=======
+  stan::test::expect_ad_matvar(f, x1, x1);
+  stan::test::expect_ad_matvar(f, x1, 2.0);
+  stan::test::expect_ad_matvar(f, 3.0, x1);
+  stan::test::expect_ad_matvar(f, x2, x2);
+  stan::test::expect_ad_matvar(f, x2, 2.5);
+  stan::test::expect_ad_matvar(f, 3.5, x2);
+  stan::test::expect_ad_matvar(f, x3, x3);
+  stan::test::expect_ad_matvar(f, x3, 4.0);
+  stan::test::expect_ad_matvar(f, 5.0, x3);
+>>>>>>> origin/develop
 
   Eigen::VectorXd x4(0);
   Eigen::RowVectorXd x5(0);
   Eigen::MatrixXd x6(0, 0);
 
+<<<<<<< HEAD
   stan::test::expect_ad(f, x4, x4);
   stan::test::expect_ad(f, x4, 2.0);
   stan::test::expect_ad(f, 3.0, x4);
@@ -43,4 +67,15 @@ TEST(mathMixScalFun, multiplyLog_vec) {
   stan::test::expect_ad(f, x6, x6);
   stan::test::expect_ad(f, x6, 4.0);
   stan::test::expect_ad(f, 5.0, x6);
+=======
+  stan::test::expect_ad_matvar(f, x4, x4);
+  stan::test::expect_ad_matvar(f, x4, 2.0);
+  stan::test::expect_ad_matvar(f, 3.0, x4);
+  stan::test::expect_ad_matvar(f, x5, x5);
+  stan::test::expect_ad_matvar(f, x5, 2.5);
+  stan::test::expect_ad_matvar(f, 3.5, x5);
+  stan::test::expect_ad_matvar(f, x6, x6);
+  stan::test::expect_ad_matvar(f, x6, 4.0);
+  stan::test::expect_ad_matvar(f, 5.0, x6);
+>>>>>>> origin/develop
 }

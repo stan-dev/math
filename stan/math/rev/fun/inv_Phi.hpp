@@ -10,21 +10,8 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class inv_Phi_vari : public op_v_vari {
- public:
-  explicit inv_Phi_vari(vari* avi) : op_v_vari(inv_Phi(avi->val_), avi) {}
-  void chain() {
-    static const double NEG_HALF = -0.5;
-    avi_->adj_ += adj_ * SQRT_TWO_PI / std::exp(NEG_HALF * val_ * val_);
-  }
-};
-}  // namespace internal
-
 /**
  * The inverse of unit normal cumulative density function.
- *
- * See inv_Phi() for the double-based version.
  *
  * The derivative is the reciprocal of unit normal density function,
  *
@@ -32,7 +19,24 @@ class inv_Phi_vari : public op_v_vari {
  * @return The unit normal inverse cdf evaluated at p
  */
 inline var inv_Phi(const var& p) {
-  return var(new internal::inv_Phi_vari(p.vi_));
+  return make_callback_var(inv_Phi(p.val()), [p](auto& vi) mutable {
+    p.adj() += vi.adj() * SQRT_TWO_PI / std::exp(-0.5 * vi.val() * vi.val());
+  });
+}
+
+/**
+ * Return the elementwise inverse of unit normal cumulative density function.
+ *
+ * @tparam T a `var_value` with inner Eigen type
+ * @param p Probability vector
+ * @return Elementwise unit normal inverse cdf
+ */
+template <typename T, require_var_matrix_t<T>* = nullptr>
+inline auto inv_Phi(const T& p) {
+  return make_callback_var(inv_Phi(p.val()), [p](auto& vi) mutable {
+    p.adj().array() += vi.adj().array() * SQRT_TWO_PI
+                       / (-0.5 * vi.val().array().square()).exp();
+  });
 }
 
 }  // namespace math

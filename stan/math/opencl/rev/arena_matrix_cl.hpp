@@ -95,10 +95,6 @@ class arena_matrix_cl : public matrix_cl_base {
   inline void zeros_strict_tri() {
     impl_->template zeros_strict_tri<matrix_view>();
   }
-  template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
-  inline void triangular_transpose() {
-    impl_->template triangular_transpose<triangular_map>();
-  }
 
 /**
  * Implements a wrapper for a non-const function in `matrix_cl`.

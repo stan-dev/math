@@ -114,10 +114,10 @@ class operands_and_partials_impl<ReturnType, require_var_t<ReturnType>,
     stan::math::for_each(
         [ret](auto& edge) mutable {
           reverse_pass_callback(
-              [operand = edge.operand(), partial = edge.partial(),
+              [operand = to_arena(edge.operand()), partial = to_arena(edge.partial()),
                ret]() mutable { update_adjoints(operand, partial, ret); });
         },
-        edges_);
+        std::move(edges_));
     return ret;
   }
 };

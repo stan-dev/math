@@ -25,15 +25,92 @@ namespace math {
  * constrained
  * @throw std::domain_error if y is lower than the lower bound
  */
-template <typename T, typename L>
+template <typename T, typename L, require_not_std_vector_t<T>* = nullptr,
+          require_stan_scalar_t<L>* = nullptr>
+inline auto lb_free(T&& y, L&& lb) {
+  if (value_of_rec(lb) == NEGATIVE_INFTY) {
+    return identity_free(y, lb);
+  } else {
+    auto&& y_ref = to_ref(std::forward<T>(y));
+    auto&& lb_ref = to_ref(std::forward<L>(lb));
+    check_greater_or_equal("lb_free", "Lower bounded variable", y_ref, lb_ref);
+    return eval(log(subtract(std::forward<decltype(y_ref)>(y_ref),
+                             std::forward<decltype(lb_ref)>(lb_ref))));
+  }
+}
+
+/**
+ * Return the free matrix that corresponds to the specified
+ * lower-bounded matrix with respect to the specified lower bound.
+ *
+ * The transform is the reverse of the `lb_constrain` transform.
+ *
+ * @tparam T type of matrix
+ * @tparam L type of lower bound
+ * @param y constrained matrix with specified lower bound
+ * @param lb lower bound
+ * @return unconstrained matrix with respect to lower bound
+ * @throw std::invalid_argument if any element of constrained variable
+ *   is greater than the lower bound.
+ */
+template <typename T, typename L, require_all_eigen_t<T, L>* = nullptr>
 inline auto lb_free(T&& y, L&& lb) {
   auto&& y_ref = to_ref(std::forward<T>(y));
   auto&& lb_ref = to_ref(std::forward<L>(lb));
-  check_finite("lb_constrain", "lb", value_of(lb_ref));
-  check_greater_or_equal("lb_free", "Lower bounded variable", value_of(y_ref),
-                         value_of(lb_ref));
-  return log(subtract(std::forward<decltype(y_ref)>(y_ref),
-                      std::forward<decltype(lb_ref)>(lb_ref)));
+  promote_scalar_t<return_type_t<T, L>, T> ret(y.rows(), y.cols());
+  for (Eigen::Index j = 0; j < y.cols(); ++j) {
+    for (Eigen::Index i = 0; i < y.rows(); ++i) {
+      ret.coeffRef(i, j) = lb_free(y_ref.coeff(i, j), lb_ref.coeff(i, j));
+    }
+  }
+  return ret;
+}
+
+/**
+ * Return the free variable that corresponds to the specified
+ * lower-bounded variable with respect to the specified lower bound.
+ *
+ * The transform is the reverse of the `lb_constrain` transform.
+ *
+ * @tparam T type of constrained variable
+ * @tparam L type of lower bound
+ * @param y constrained variable with specified lower bound
+ * @param lb lower bound
+ * @return unconstrained variable with respect to lower bound
+ * @throw std::invalid_argument if any element of constrained variable
+ *   is greater than the lower bound.
+ */
+template <typename T, typename L, require_not_std_vector_t<L>* = nullptr>
+inline auto lb_free(const std::vector<T> y, const L& lb) {
+  auto&& lb_ref = to_ref(lb);
+  std::vector<decltype(lb_free(y[0], lb))> ret(y.size());
+  for (Eigen::Index i = 0; i < y.size(); ++i) {
+    ret[i] = lb_free(y[i], lb_ref);
+  }
+  return ret;
+}
+
+/**
+ * Return the free variable that corresponds to the specified
+ * lower-bounded variable with respect to the specified lower bound.
+ *
+ * The transform is the reverse of the `lb_constrain` transform.
+ *
+ * @tparam T type of constrained variable
+ * @tparam L type of lower bound
+ * @param y constrained variable with specified lower bound
+ * @param lb lower bound
+ * @return unconstrained variable with respect to lower bound
+ * @throw std::invalid_argument if any element of constrained variable
+ *   is greater than the lower bound.
+ */
+template <typename T, typename L>
+inline auto lb_free(const std::vector<T> y, const std::vector<L>& lb) {
+  std::vector<decltype(lb_free(y[0], lb[0]))> ret(y.size());
+  for (Eigen::Index i = 0; i < y.size(); ++i) {
+    ret[i] = lb_free(y[i], lb[i]);
+  }
+  return ret;
 }
 
 }  // namespace math

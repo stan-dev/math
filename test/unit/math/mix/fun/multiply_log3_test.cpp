@@ -1,7 +1,15 @@
 #include <test/unit/math/test_ad.hpp>
 #include <limits>
 
+<<<<<<< HEAD
+<<<<<<< HEAD:test/unit/math/mix/fun/multiply_log3_test.cpp
 TEST(mathMixScalFun, multiplyLog_matvec) {
+=======
+TEST(mathMixScalFun, multiplyLog2_vec) {
+>>>>>>> origin/develop:test/unit/math/mix/fun/multiply_log2_test.cpp
+=======
+TEST(mathMixScalFun, multiplyLog3_vec) {
+>>>>>>> origin/develop
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::multiply_log;
     return multiply_log(x1, x2);
@@ -11,7 +19,6 @@ TEST(mathMixScalFun, multiplyLog_matvec) {
   in1 << 3, 1;
   Eigen::VectorXd in2(2);
   in2 << 0.5, 3.4;
-  stan::test::expect_ad_vectorized_binary(f, in1, in2);
 
   Eigen::VectorXd x1(3);
   x1 << 1.0, 2.0, 3.0;
