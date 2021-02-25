@@ -52,7 +52,6 @@ inline var sin(const var& a) {
 /**
  * Return the sine of a radian-scaled variable (cmath).
  *
- *
  * @tparam Varmat a `var_value` with inner Eigen type
  * @param a Variable for radians of angle.
  * @return Sine of variable.

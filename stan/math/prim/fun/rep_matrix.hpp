@@ -8,12 +8,16 @@
 namespace stan {
 namespace math {
 
-template <typename T, require_stan_scalar_t<T>* = nullptr>
-inline auto rep_matrix(const T& x, int m, int n) {
+template <typename T_ret, require_eigen_matrix_dynamic_t<T_ret>* = nullptr>
+inline auto rep_matrix(const value_type_t<T_ret>& x, int m, int n) {
   check_nonnegative("rep_matrix", "rows", m);
   check_nonnegative("rep_matrix", "cols", n);
-  return Eigen::Matrix<return_type_t<T>, Eigen::Dynamic,
-                       Eigen::Dynamic>::Constant(m, n, x);
+  return T_ret::Constant(m, n, x);
+}
+template <typename T, require_stan_scalar_t<T>* = nullptr>
+inline auto rep_matrix(const T& x, int m, int n) {
+  return rep_matrix<
+      Eigen::Matrix<return_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>>(x, m, n);
 }
 
 template <typename ColVec, require_eigen_col_vector_t<ColVec>* = nullptr>
