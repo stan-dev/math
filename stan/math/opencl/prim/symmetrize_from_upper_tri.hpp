@@ -18,11 +18,11 @@ namespace math {
  */
 template <typename T_x,
           require_all_kernel_expressions_and_none_scalar_t<T_x>* = nullptr>
-inline auto symmetrize_from_lower_tri(T_x&& x) {
-  check_square("symmetrize_from_lower_tri", "x", x);
+inline auto symmetrize_from_upper_tri(T_x&& x) {
+  check_square("symmetrize_from_upper_tri", "x", x);
   return make_holder_cl(
       [](auto& arg) {
-        return select(col_index() > row_index(), transpose(arg), arg);
+        return select(col_index() < row_index(), transpose(arg), arg);
       },
       std::forward<T_x>(x));
 }
