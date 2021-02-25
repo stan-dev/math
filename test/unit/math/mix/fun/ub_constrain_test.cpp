@@ -42,34 +42,34 @@ TEST(mathMixMatFun, ub_mat_constrain1) {
 =======
 >>>>>>> origin/develop
 
-template <typename T1, typename T2>
-void expect_vec(const T1& x, const T2& ub) {
-  auto f1 = [](const auto& x, const auto& ub) {
-    return stan::math::ub_constrain(x, ub);
-  };
-  auto f2 = [](const auto& x, const auto& ub) {
-    stan::return_type_t<decltype(x), decltype(ub)> lp = 0;
-    return stan::math::ub_constrain(x, ub, lp);
-  };
-  auto f3 = [](const auto& x, const auto& ub) {
-    stan::return_type_t<decltype(x), decltype(ub)> lp = 0;
-    stan::math::ub_constrain(x, ub, lp);
-    return lp;
-  };
-  auto f4 = [](const auto& x, const auto& ub) {
-    stan::return_type_t<decltype(x), decltype(ub)> lp = 0;
-    auto xx = stan::math::eval(stan::math::ub_constrain(x, ub, lp));
-    stan::return_type_t<decltype(x), decltype(ub)> xx_acc = 0;
-    for (size_t i = 0; i < xx.size(); ++i) {
-      xx_acc += stan::math::sum(xx[i]);
-    }
-    return stan::math::add(lp, xx_acc);
-  };
-  stan::test::expect_ad(f1, x, ub);
-  stan::test::expect_ad(f2, x, ub);
-  stan::test::expect_ad(f3, x, ub);
-  stan::test::expect_ad(f4, x, ub);
-}
+  template <typename T1, typename T2>
+  void expect_vec(const T1& x, const T2& ub) {
+    auto f1 = [](const auto& x, const auto& ub) {
+      return stan::math::ub_constrain(x, ub);
+    };
+    auto f2 = [](const auto& x, const auto& ub) {
+      stan::return_type_t<decltype(x), decltype(ub)> lp = 0;
+      return stan::math::ub_constrain(x, ub, lp);
+    };
+    auto f3 = [](const auto& x, const auto& ub) {
+      stan::return_type_t<decltype(x), decltype(ub)> lp = 0;
+      stan::math::ub_constrain(x, ub, lp);
+      return lp;
+    };
+    auto f4 = [](const auto& x, const auto& ub) {
+      stan::return_type_t<decltype(x), decltype(ub)> lp = 0;
+      auto xx = stan::math::eval(stan::math::ub_constrain(x, ub, lp));
+      stan::return_type_t<decltype(x), decltype(ub)> xx_acc = 0;
+      for (size_t i = 0; i < xx.size(); ++i) {
+        xx_acc += stan::math::sum(xx[i]);
+      }
+      return stan::math::add(lp, xx_acc);
+    };
+    stan::test::expect_ad(f1, x, ub);
+    stan::test::expect_ad(f2, x, ub);
+    stan::test::expect_ad(f3, x, ub);
+    stan::test::expect_ad(f4, x, ub);
+  }
 
 }  // namespace ub_constrain_test
 
@@ -186,12 +186,12 @@ TEST(mathMixMatFun, ub_stdvec_mat_constrain) {
 }
 
 <<<<<<< HEAD
-  stan::test::expect_ad(f1, A, ubm);
-  stan::test::expect_ad(f1, A, ubd1);
-  stan::test::expect_ad(f2, A, ubm);
-  stan::test::expect_ad(f2, A, ubd1);
-  stan::test::expect_ad(f3, A, ubm);
-  stan::test::expect_ad(f3, A, ubd1);
+stan::test::expect_ad(f1, A, ubm);
+stan::test::expect_ad(f1, A, ubd1);
+stan::test::expect_ad(f2, A, ubm);
+stan::test::expect_ad(f2, A, ubd1);
+stan::test::expect_ad(f3, A, ubm);
+stan::test::expect_ad(f3, A, ubd1);
 =======
 TEST(mathMixMatFun, ub_stdvec_mat_constrain_neg_inf) {
   Eigen::MatrixXd A_inner(2, 2);
