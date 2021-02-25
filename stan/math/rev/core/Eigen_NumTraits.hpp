@@ -24,16 +24,21 @@ struct NumTraits<stan::math::var> : GenericNumTraits<stan::math::var> {
   using Real = stan::math::var;
   using NonInteger = stan::math::var;
   using Nested = stan::math::var;
-
+  using Literal = stan::math::var;
   /**
    * Return the precision for <code>stan::math::var</code> delegates
    * to precision for <code>double</code>.
    *
    * @return precision
    */
-  static inline stan::math::var dummy_precision() {
+  static inline Real dummy_precision() {
     return NumTraits<double>::dummy_precision();
   }
+
+  static inline Real epsilon() { return NumTraits<double>::epsilon(); }
+
+  static inline Real highest() { return NumTraits<double>::highest(); }
+  static inline Real lowest() { return NumTraits<double>::lowest(); }
 
   enum {
     /**

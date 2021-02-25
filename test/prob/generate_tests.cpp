@@ -87,7 +87,7 @@ void write_includes(vector<std::ostream*>& outs, const string& include) {
   for (size_t n = 0; n < outs.size(); n++) {
     std::ostream* out = outs[n];
     *out << "#include <gtest/gtest.h>" << endl;
-    *out << "#include <boost/mpl/vector.hpp>" << endl;
+    *out << "#include <tuple>" << endl;
     *out << "#include <test/prob/test_fixture_distr.hpp>" << endl;
     *out << "#include <test/prob/test_fixture_cdf.hpp>" << endl;
     *out << "#include <test/prob/test_fixture_cdf_log.hpp>" << endl;
@@ -262,15 +262,14 @@ void write_types_typedef(vector<std::ostream*>& outs, string base, size_t& N,
     for (size_t n = 0; n < args.size(); n++) {
       std::ostream* out = outs[int(N / N_TESTS)];
       if (index == 1) {
-        *out << "typedef boost::mpl::vector<" << base << args[n] << extra_args;
+        *out << "typedef std::tuple<" << base << args[n] << extra_args;
         if (extra_args.size() == 0)
           *out << " ";
         *out << "> type_v_" << N << ";" << endl;
         N++;
       } else {
         if (check_all_double(base, args[n]) == false) {
-          *out << "typedef boost::mpl::vector<" << base << args[n]
-               << extra_args;
+          *out << "typedef std::tuple<" << base << args[n] << extra_args;
           if (extra_args.size() == 0)
             *out << " ";
           else if (index == 2)
@@ -307,23 +306,23 @@ void write_test(vector<std::ostream*>& outs, const string& test_name,
   for (size_t n = 0; n < N; n++) {
     std::ostream* out = outs[int(n / N_TESTS)];
     if (index == 1)
-      *out << "typedef boost::mpl::vector<" << test_name << ", type_v_" << n
-           << "> " << test_name << "_v_" << n << ";" << endl;
+      *out << "typedef std::tuple<" << test_name << ", type_v_" << n << "> "
+           << test_name << "_v_" << n << ";" << endl;
     else if (index == 2)
-      *out << "typedef boost::mpl::vector<" << test_name << ", type_fd_" << n
-           << "> " << test_name << "_fd_" << n << ";" << endl;
+      *out << "typedef std::tuple<" << test_name << ", type_fd_" << n << "> "
+           << test_name << "_fd_" << n << ";" << endl;
     else if (index == 3)
-      *out << "typedef boost::mpl::vector<" << test_name << ", type_fv_" << n
-           << "> " << test_name << "_fv_" << n << ";" << endl;
+      *out << "typedef std::tuple<" << test_name << ", type_fv_" << n << "> "
+           << test_name << "_fv_" << n << ";" << endl;
     else if (index == 4)
-      *out << "typedef boost::mpl::vector<" << test_name << ", type_ffd_" << n
-           << "> " << test_name << "_ffd_" << n << ";" << endl;
+      *out << "typedef std::tuple<" << test_name << ", type_ffd_" << n << "> "
+           << test_name << "_ffd_" << n << ";" << endl;
     else if (index == 5)
-      *out << "typedef boost::mpl::vector<" << test_name << ", type_ffv_" << n
-           << "> " << test_name << "_ffv_" << n << ";" << endl;
+      *out << "typedef std::tuple<" << test_name << ", type_ffv_" << n << "> "
+           << test_name << "_ffv_" << n << ";" << endl;
     else if (index == 6)
-      *out << "typedef boost::mpl::vector<" << test_name << ", type_vv_" << n
-           << "> " << test_name << "_vv_" << n << ";" << endl;
+      *out << "typedef std::tuple<" << test_name << ", type_vv_" << n << "> "
+           << test_name << "_vv_" << n << ";" << endl;
   }
   for (size_t i = 0; i < outs.size(); i++) {
     *outs[i] << endl;

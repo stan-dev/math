@@ -55,8 +55,6 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
   // Forward declare the methods that work in place on the matrix
   template <matrix_cl_view matrix_view = matrix_cl_view::Entire>
   inline void zeros_strict_tri();
-  template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
-  inline void triangular_transpose();
 
   int rows() const { return rows_; }
 
@@ -197,7 +195,9 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
     if (A.size() == 0) {
       return;
     }
-    initialize_buffer(A);
+    buffer_cl_ = cl::Buffer(opencl_context.context(), CL_MEM_READ_WRITE,
+                            sizeof(T) * this->size());
+    initialize_buffer_cl(A);
   }
 
   /**
@@ -438,13 +438,19 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
    */
   matrix_cl<T>& operator=(const matrix_cl<T>& a) {
     this->view_ = a.view();
-    this->rows_ = a.rows();
-    this->cols_ = a.cols();
     if (a.size() == 0) {
+      this->rows_ = a.rows();
+      this->cols_ = a.cols();
       return *this;
     }
     this->wait_for_read_write_events();
-    initialize_buffer(a);
+    if (size() != a.size()) {
+      buffer_cl_ = cl::Buffer(opencl_context.context(), CL_MEM_READ_WRITE,
+                              sizeof(T) * a.size());
+    }
+    this->rows_ = a.rows();
+    this->cols_ = a.cols();
+    initialize_buffer_cl(a);
     return *this;
   }
 
@@ -582,15 +588,12 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
    * size of given matrix.
    * @param A matrix_cl
    */
-  void initialize_buffer(const matrix_cl<T>& A) {
-    cl::Context& ctx = opencl_context.context();
-    cl::CommandQueue queue = opencl_context.queue();
+  void initialize_buffer_cl(const matrix_cl<T>& A) {
     try {
-      buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * this->size());
       cl::Event cstr_event;
-      queue.enqueueCopyBuffer(A.buffer(), this->buffer(), 0, 0,
-                              A.size() * sizeof(T), &A.write_events(),
-                              &cstr_event);
+      opencl_context.queue().enqueueCopyBuffer(A.buffer(), this->buffer(), 0, 0,
+                                               A.size() * sizeof(T),
+                                               &A.write_events(), &cstr_event);
       this->add_write_event(cstr_event);
       A.add_read_event(cstr_event);
     } catch (const cl::Error& e) {
