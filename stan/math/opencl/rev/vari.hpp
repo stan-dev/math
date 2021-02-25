@@ -5,6 +5,7 @@
 #include <stan/math/rev/core/vari.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
+#include <stan/math/opencl/prim/reverse.hpp>
 
 namespace stan {
 namespace math {
@@ -92,6 +93,17 @@ class vari_cl_base : public vari_base {
   auto as_column_vector_or_scalar() {
     auto&& val_t = stan::math::as_column_vector_or_scalar(val_);
     auto&& adj_t = stan::math::as_column_vector_or_scalar(adj_);
+    return vari_view<std::decay_t<decltype(val_t)>>(std::move(val_t),
+                                                    std::move(adj_t));
+  }
+
+  /**
+   * Returns reverse view into the row or column vector.
+   * @return reverse view
+   */
+  auto reverse() {
+    auto&& val_t = stan::math::reverse(val_);
+    auto&& adj_t = stan::math::reverse(adj_);
     return vari_view<std::decay_t<decltype(val_t)>>(std::move(val_t),
                                                     std::move(adj_t));
   }

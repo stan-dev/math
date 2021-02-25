@@ -2,8 +2,8 @@
 #define STAN_MATH_OPENCL_REV_CHOLESKY_DECOMPOSE_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/opencl/triangular_transpose.hpp>
 #include <stan/math/opencl/prim/cholesky_decompose.hpp>
+#include <stan/math/opencl/prim/symmetrize_from_lower_tri.hpp>
 #include <stan/math/opencl/err/check_nan.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
@@ -57,11 +57,9 @@ inline var_value<matrix_cl<double>> cholesky_decompose(const var_value<T>& A) {
           B_adj = B_adj - C_adj * R_val;
           D_adj = D_adj - transpose(C_adj) * C_val;
 
-          D_adj = transpose(D_val) * D_adj;
-          D_adj.triangular_transpose<TriangularMapCL::LowerToUpper>();
+          D_adj = symmetrize_from_lower_tri(transpose(D_val) * D_adj);
           D_val = transpose(tri_inverse(D_val));
-          D_adj = D_val * transpose(D_val * D_adj);
-          D_adj.triangular_transpose<TriangularMapCL::LowerToUpper>();
+          D_adj = symmetrize_from_lower_tri(D_val * transpose(D_val * D_adj));
 
           R_adj = R_adj - transpose(C_adj) * B_val - D_adj * R_val;
           diagonal(D_adj) = diagonal(D_adj) * 0.5;

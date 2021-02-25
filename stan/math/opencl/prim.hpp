@@ -94,11 +94,11 @@
 #include <stan/math/opencl/plain_type.hpp>
 #include <stan/math/opencl/ref_type_for_opencl.hpp>
 #include <stan/math/opencl/to_ref_for_opencl.hpp>
-#include <stan/math/opencl/triangular_transpose.hpp>
 #include <stan/math/opencl/value_type.hpp>
 #include <stan/math/opencl/zeros_strict_tri.hpp>
 
 #include <stan/math/opencl/prim/add_diag.hpp>
+#include <stan/math/opencl/prim/append_array.hpp>
 #include <stan/math/opencl/prim/bernoulli_lpmf.hpp>
 #include <stan/math/opencl/prim/bernoulli_logit_lpmf.hpp>
 #include <stan/math/opencl/prim/bernoulli_logit_glm_lpmf.hpp>
@@ -166,6 +166,7 @@
 #include <stan/math/opencl/prim/rep_matrix.hpp>
 #include <stan/math/opencl/prim/rep_row_vector.hpp>
 #include <stan/math/opencl/prim/rep_vector.hpp>
+#include <stan/math/opencl/prim/reverse.hpp>
 #include <stan/math/opencl/prim/row.hpp>
 #include <stan/math/opencl/prim/rows.hpp>
 #include <stan/math/opencl/prim/rows_dot_product.hpp>
@@ -181,6 +182,8 @@
 #include <stan/math/opencl/prim/student_t_lpdf.hpp>
 #include <stan/math/opencl/prim/skew_normal_lpdf.hpp>
 #include <stan/math/opencl/prim/sum.hpp>
+#include <stan/math/opencl/prim/symmetrize_from_lower_tri.hpp>
+#include <stan/math/opencl/prim/symmetrize_from_upper_tri.hpp>
 #include <stan/math/opencl/prim/tail.hpp>
 #include <stan/math/opencl/prim/tcrossprod.hpp>
 #include <stan/math/opencl/prim/to_array_1d.hpp>
@@ -188,6 +191,7 @@
 #include <stan/math/opencl/prim/to_matrix.hpp>
 #include <stan/math/opencl/prim/to_row_vector.hpp>
 #include <stan/math/opencl/prim/to_vector.hpp>
+#include <stan/math/opencl/prim/trace.hpp>
 #include <stan/math/opencl/prim/uniform_lpdf.hpp>
 #include <stan/math/opencl/prim/weibull_lpdf.hpp>
 
