@@ -25,8 +25,8 @@ TEST(ProbDistributionsStudentT, opencl_broadcast_nu) {
   Eigen::VectorXd sigma(N);
   sigma << 0.3, 0.8, 1.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(student_t_lpdf2_functor,
-                                                         y, nu_scal, mu, sigma);
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
+      student_t_lpdf2_functor, y, nu_scal, mu, sigma);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       student_t_lpdf2_functor_propto, y, nu_scal, mu, sigma);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
@@ -48,8 +48,8 @@ TEST(ProbDistributionsStudentT, opencl_broadcast_mu) {
   Eigen::VectorXd sigma(N);
   sigma << 0.3, 0.8, 1.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<2>(student_t_lpdf2_functor,
-                                                         y, nu, mu_scal, sigma);
+  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
+      student_t_lpdf2_functor, y, nu, mu_scal, sigma);
   stan::math::test::test_opencl_broadcasting_prim_rev<2>(
       student_t_lpdf2_functor_propto, y, nu, mu_scal, sigma);
   stan::math::test::test_opencl_broadcasting_prim_rev<2>(
@@ -71,8 +71,8 @@ TEST(ProbDistributionsStudentT, opencl_broadcast_sigma) {
   mu << 0.3, 0.8, -1.0;
   double sigma_scal = 12.3;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<3>(student_t_lpdf2_functor,
-                                                         y, nu, mu, sigma_scal);
+  stan::math::test::test_opencl_broadcasting_prim_rev<3>(
+      student_t_lpdf2_functor, y, nu, mu, sigma_scal);
   stan::math::test::test_opencl_broadcasting_prim_rev<3>(
       student_t_lpdf2_functor_propto, y, nu, mu, sigma_scal);
   stan::math::test::test_opencl_broadcasting_prim_rev<3>(
