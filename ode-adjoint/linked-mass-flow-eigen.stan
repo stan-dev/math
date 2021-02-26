@@ -40,8 +40,14 @@ functions {
     vector[num_states] y[num_sim];
 
     if(adjoint_integrator) {
-      y = ode_adams_tol(linked_mass_flow, exp(log_a0), t0, ts, rel_tol, abs_tol, max_num_steps,
-                        exp(log_kt), exp(log_e50), exp(log_k12), exp(log_k21));
+      y = ode_adjoint(linked_mass_flow, exp(log_a0), t0, ts,
+                      rel_tol, rep_vector(abs_tol, num_states), // forward
+                      rel_tol, 10*abs_tol, // backward
+                      rel_tol, 100*abs_tol, // quadrature
+                      max_num_steps, 50, 1,
+                      2, // bdf forward
+                      2, // bdf backward
+                      exp(log_kt), exp(log_e50), exp(log_k12), exp(log_k21));
     } else {
       y = ode_bdf_tol(linked_mass_flow, exp(log_a0), t0, ts, rel_tol, abs_tol, max_num_steps,
                       exp(log_kt), exp(log_e50), exp(log_k12), exp(log_k21));

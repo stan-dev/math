@@ -34,6 +34,8 @@ functions {
 
   vector[] simulate_mean(real t0, vector log_a0, real[] ts, int adjoint_integrator,
                          real rel_tol, real abs_tol, int max_num_steps,
+                         int num_checkpoints,
+                         int solver_f, int solver_b,
                          vector log_kt, vector log_e50, vector log_k12, vector log_k21) {
     int num_sim = num_elements(ts);
     int num_states = num_elements(log_a0);
@@ -57,8 +59,16 @@ functions {
     }
 
     if(adjoint_integrator) {
-      y = ode_adams_tol(linked_mass_flow, a0, t0, ts, rel_tol, abs_tol, max_num_steps,
-                        kt, e50, k12, k21);
+      y = ode_adjoint_tol(linked_mass_flow, a0, t0, ts, 
+                          rel_tol, rep_vector(abs_tol, num_states), // forward
+                          rel_tol, 10*abs_tol, // backward
+                          rel_tol, 100*abs_tol, // quadrature
+                          max_num_steps,
+                          num_checkpoints, // number of steps between checkpoints
+                          1,  // hermite polynomials
+                          solver_f,  // bdf forward
+                          solver_b,  // bdf backward
+                          kt, e50, k12, k21);
     } else {
       y = ode_bdf_tol(linked_mass_flow, a0, t0, ts, rel_tol, abs_tol, max_num_steps,
                       kt, e50, k12, k21);
@@ -73,6 +83,9 @@ data {
   real<lower=0> abs_tol;
   int<lower=0,upper=1> adjoint_integrator;
   int<lower=1> max_num_steps;
+  int<lower=1> num_checkpoints;
+  int<lower=1,upper=2> solver_f;
+  int<lower=1,upper=2> solver_b;
   int<lower=1> system_size;
   int<lower=1> num_obs;
   real<lower=0> sigma_sim;
@@ -98,6 +111,8 @@ transformed data {
   }
 
   y_ = simulate_mean(t0, log_a0_, ts, 0, rel_tol, abs_tol, max_num_steps,
+                     num_checkpoints,
+                     solver_f, solver_b,
                      log_kt_, log_e50_, log_k12_, log_k21_);
   
   for(i in 1:num_obs) {
@@ -115,6 +130,9 @@ transformed data {
   print("relative tolerance: ", rel_tol);
   print("absolute tolerance: ", abs_tol);
   print("maximum number of steps: ", max_num_steps);
+  print("number of checkpoints: ", num_checkpoints);
+  print("solver forward: ", solver_f);
+  print("solver backward: ", solver_b);
   print("number of time points: ", num_obs);
   print("system size: ", system_size);
   print("time points: ", ts);
@@ -132,6 +150,8 @@ transformed parameters {
 }
 model {
   vector[num_states] mu[num_obs] = simulate_mean(t0, log_a0, ts, adjoint_integrator, rel_tol, abs_tol, max_num_steps,
+                                                 num_checkpoints,
+                                                 solver_f, solver_b,
                                                  log_kt, log_e50, log_k12, log_k21);
   
   target += normal_lpdf(log_kt| 0.0, sigma_sim);

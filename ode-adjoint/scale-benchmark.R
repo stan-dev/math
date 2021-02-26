@@ -37,11 +37,14 @@ addProblem("linked_mass_flow",
 
 addAlgorithm("stan_cvodes", run_benchmark)
 
-pdes <- list(linked_mass_flow = data.frame(system_size=c(1,2,4,8,16)))
-ades <- list(stan_cvodes= data.frame(adjoint_integrator=c(0,1)))
+##pdes <- list(linked_mass_flow = data.frame(system_size=c(1,2,4,8,16)))
+##pdes <- list(linked_mass_flow = data.frame(system_size=c(1,4)))
+
+pdes <- list(linked_mass_flow = data.frame(system_size=c(1,2,4,8)))
+ades <- list(stan_cvodes= expand.grid(adjoint_integrator=c(1), num_checkpoints=c(10, 100, 250), solver_f=1:2, solver_b=1:2))
 
 ##addExperiments(pdes, ades, repls = 1000)
-addExperiments(pdes, ades, repls = 2)
+addExperiments(pdes, ades, repls = 4)
 
 summarizeExperiments()
 
@@ -63,11 +66,13 @@ submitJobs(ids)
 
 getStatus()
 
-getLog(3)
+findErrors()
+
+getLog(47)
 
 if(FALSE) {
 
-    job1 <- testJob(3)
+    job1 <- testJob(47)
 
     names(job1)
 
@@ -98,12 +103,16 @@ scale_benchmark <- ijoin(
   ## grab job parameters
   unwrap(getJobPars()),
   unwrap(reduceResultsDataTable(fun=reduce_run_bench))
-)
+) %>% filter(!(system_size==8 & num_checkpoints==100 & solver_f==2 & solver_b==2))
 
 head(scale_benchmark)
 
 scale_benchmark <- mutate(scale_benchmark,
-                          adjoint_integrator=factor(adjoint_integrator))
+                          adjoint_integrator=factor(adjoint_integrator),
+                          ##num_checkpoints=factor(num_checkpoints),
+                          solver_f=factor(solver_f),
+                          solver_b=factor(solver_b)
+                          )
 
 saveRDS(scale_benchmark, file = "scale_benchmark.rds")
 
@@ -112,12 +121,25 @@ removeRegistry(0)
 sessionInfo()
 
 scale_benchmark <- as.data.frame(scale_benchmark)
-scale_benchmark <- mutate(scale_benchmark, repl=factor(rep(1:2, 10)), set=paste(repl,adjoint_integrator,sep="-"))
+scale_benchmark <- mutate(scale_benchmark, repl=factor(repl), set=paste(repl,adjoint_integrator,sep="-"), solver=factor(paste(solver_f, solver_b, sep="-")))
 
 
 scale_benchmark_ref <- left_join(scale_benchmark, filter(scale_benchmark, adjoint_integrator==0)[c("repl", "system_size", "time_per_leap")], suffix=c("", "_ref"), by=c("repl", "system_size"))
 
 scale_benchmark_ref
+
+lf <- lm(log(time_per_leap) ~ 1 + solver_f + solver_b + factor(num_checkpoints), data=subset(scale_benchmark_ref, system_size==8))
+summary(lf) ## bdf for backward makes things by 13% slower... change polyonmial?
+
+theme_set(theme_bw())
+ggplot(scale_benchmark, aes(num_checkpoints, time_per_leap, colour=solver, shape=repl)) +
+    facet_wrap(~system_size, scales="free_y") +
+   geom_point()  + geom_line() +
+    ##scale_x_log10(breaks=c(1,2,4,8,16)) +
+    scale_y_log10() +
+    ggtitle("Time per leapfrog of adjoint and forward per replication")
+
+ggsave("tuning_scale_time_per_leap.png", width=1.6 *4, height=4, dpi=120)
 
 theme_set(theme_bw())
 ggplot(scale_benchmark, aes(system_size, time_per_leap, group=set, colour=adjoint_integrator, shape=repl)) +

@@ -8,6 +8,7 @@ if(!("sbc_dir" %in%  ls())) {
 }
 
 stan_model_file <- normalizePath(file.path(sbc_dir, "linked-mass-flow.stan"))
+##stan_model_file <- normalizePath(file.path(sbc_dir, "linked-mass-flow-eigen.stan"))
 
 stan_model <- cmdstan_model(stan_model_file)
 
@@ -16,6 +17,9 @@ setup_system <- function(data, job, ...) {
     base_stan_data <- list(rel_tol=1e-6,
                            abs_tol=1e-6,
                            max_num_steps=10000,
+                           num_checkpoints=50,
+                           solver_f=2,
+                           solver_b=2,
                            adjoint_integrator=0,
                            system_size=1,
                            num_obs=8,
@@ -24,8 +28,11 @@ setup_system <- function(data, job, ...) {
     modifyList(base_stan_data, args)
 }
 
-run_benchmark <- function(data, job, instance, adjoint_integrator, ...) {
-    fit_data <- modifyList(instance, list(adjoint_integrator=adjoint_integrator))
+run_benchmark <- function(data, job, instance, adjoint_integrator, num_checkpoints, solver_f, solver_b, ...) {
+    fit_data <- modifyList(instance, list(adjoint_integrator=adjoint_integrator,
+                                          num_checkpoints=num_checkpoints,
+                                          solver_f=solver_f,
+                                          solver_b=solver_b))
     r <- job$repl
     fit <- data$stan_model$sample(
         data = fit_data,
@@ -40,7 +47,7 @@ run_benchmark <- function(data, job, instance, adjoint_integrator, ...) {
         adapt_delta=data$adapt_delta
         ##verbose=TRUE
         )
-    summarize_benchmark(fit)
+    c(summarize_benchmark(fit), list(repl=r))
 }
 
 
@@ -132,14 +139,14 @@ auto_submit <- function(jobs, registry, resources=list(), max_num_tries = 10) {
 reduce_run <- function(x) {
     c(as.list(x$rank),
       ess_speed=as.list(x$ess_lp_speed),
-      x[c("num_leaps", "time", "time_per_leap", "num_divergent")]
+      x[c("num_leaps", "time", "time_per_leap", "num_divergent", "repl")]
       )
 }
 
 reduce_run_bench <- function(x) {
     c(
       ess_speed=as.list(x$ess_lp_speed),
-      x[c("num_leaps", "time", "time_per_leap", "num_divergent")]
+      x[c("num_leaps", "time", "time_per_leap", "num_divergent", "repl")]
       )
 }
 
