@@ -56,6 +56,7 @@
 #include <stan/math/opencl/rev/inv_Phi.hpp>
 #include <stan/math/opencl/rev/inv_sqrt.hpp>
 #include <stan/math/opencl/rev/inv_square.hpp>
+#include <stan/math/opencl/rev/lb_constrain.hpp>
 #include <stan/math/opencl/rev/lbeta.hpp>
 #include <stan/math/opencl/rev/ldexp.hpp>
 #include <stan/math/opencl/rev/lgamma.hpp>
@@ -71,6 +72,7 @@
 #include <stan/math/opencl/rev/log1m_inv_logit.hpp>
 #include <stan/math/opencl/rev/log_inv_logit_diff.hpp>
 #include <stan/math/opencl/rev/log_diff_exp.hpp>
+#include <stan/math/opencl/rev/lub_constrain.hpp>
 #include <stan/math/opencl/rev/matrix_power.hpp>
 #include <stan/math/opencl/rev/mdivide_left_tri_low.hpp>
 #include <stan/math/opencl/rev/mdivide_right_tri_low.hpp>
@@ -106,6 +108,7 @@
 #include <stan/math/opencl/rev/trace.hpp>
 #include <stan/math/opencl/rev/transpose.hpp>
 #include <stan/math/opencl/rev/trunc.hpp>
+#include <stan/math/opencl/rev/ub_constrain.hpp>
 #include <stan/math/rev.hpp>
 
 #endif
