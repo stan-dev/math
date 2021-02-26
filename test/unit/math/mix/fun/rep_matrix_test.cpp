@@ -27,5 +27,5 @@ TEST(MathMixMatFun, repMatrix) {
   Eigen::RowVectorXd b(2);
   b << 2, 2;
   stan::test::expect_ad(g(3), b);
-  //stan::test::expect_ad_matvar(g(3), b);
+  stan::test::expect_ad_matvar(g(3), b);
 }
