@@ -136,7 +136,7 @@ class colwise_reduction
     int arg_rows = this->template get_arg<0>().rows();
     int arg_cols = this->template get_arg<0>().cols();
     if (arg_cols == 0) {
-      return 0;
+      return 1;
     }
     int local = opencl_context.base_opts().at("LOCAL_SIZE_");
     int preferred_work_groups
