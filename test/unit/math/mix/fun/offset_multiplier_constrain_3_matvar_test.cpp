@@ -23,7 +23,8 @@ TEST(mathMixMatFun, offset_multiplier_stdvec_mu_mat_sigma_vec_constrain) {
   std::vector<Eigen::MatrixXd> mu_vec{mu_inner, mu_inner};
   std::vector<Eigen::MatrixXd> sigma_vec{sigma_inner, sigma_inner};
   offset_multiplier_constrain_tests::expect_vec_matvar(A, mu_inner, sigma_vec);
-  offset_multiplier_constrain_tests::expect_vec_matvar(A, mu_inner, sigma_inner);
+  offset_multiplier_constrain_tests::expect_vec_matvar(A, mu_inner,
+                                                       sigma_inner);
 }
 
 // array matrix[], array matrix[], array matrix[]
@@ -50,7 +51,6 @@ TEST(mathMixMatFun, offset_multiplier_stdvec_mu_vec_sigma_mat_constrain) {
   offset_multiplier_constrain_tests::expect_vec_matvar(A, mu_vec, sigma_vec);
   offset_multiplier_constrain_tests::expect_vec_matvar(A, mu_vec, sigma_inner);
 }
-
 
 // array matrix[], array matrix[], array matrix[]
 // array matrix[], array matrix[], matrix[]

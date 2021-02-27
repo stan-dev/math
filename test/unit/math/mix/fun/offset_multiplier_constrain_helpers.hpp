@@ -17,7 +17,8 @@ void expect(const T1& x, const T2& mu, const T3& sigma) {
     return lp;
   };
   auto f4 = [](const auto& x, const auto& mu, const auto& sigma) {
-    using lub_t = stan::return_type_t<decltype(x), decltype(mu), decltype(sigma)>;
+    using lub_t
+        = stan::return_type_t<decltype(x), decltype(mu), decltype(sigma)>;
     lub_t lp = 0;
     auto xx = stan::math::offset_multiplier_constrain(x, mu, sigma, lp);
     return stan::math::add(lp, lub_t(stan::math::sum(xx)));
@@ -43,7 +44,8 @@ void expect_vec(const T1& x, const T2& mu, const T3& sigma) {
     return lp;
   };
   auto f4 = [](const auto& x, const auto& mu, const auto& sigma) {
-    using lub_t = stan::return_type_t<decltype(x), decltype(mu), decltype(sigma)>;
+    using lub_t
+        = stan::return_type_t<decltype(x), decltype(mu), decltype(sigma)>;
     lub_t lp = 0;
     auto xx = stan::math::offset_multiplier_constrain(x, mu, sigma, lp);
     lub_t xx_acc = 0;

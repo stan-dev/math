@@ -51,7 +51,6 @@ TEST(mathMixMatFun, offset_multiplier_stdvec_mu_vec_sigma_mat_constrain) {
   offset_multiplier_constrain_tests::expect_vec(A, mu_vec, sigma_inner);
 }
 
-
 // array matrix[], array matrix[], array matrix[]
 // array matrix[], array matrix[], matrix[]
 // array matrix[], matrix[], array matrix[]

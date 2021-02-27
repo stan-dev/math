@@ -12,7 +12,6 @@ TEST(mathMixMatFun, offset_multiplier_constrain_vector_scalar_vector) {
 
   offset_multiplier_constrain_tests::expect_matvar(x1, mu, sigma);
   offset_multiplier_constrain_tests::expect_matvar(x2, mu, sigma);
-
 }
 
 TEST(mathMixMatFun, offset_multiplier_constrain_vector_vector_vector) {
@@ -26,7 +25,6 @@ TEST(mathMixMatFun, offset_multiplier_constrain_vector_vector_vector) {
   sigma << -1.0, 5.0, 0.0, 38.0;
   offset_multiplier_constrain_tests::expect_matvar(x1, mu, sigma);
   offset_multiplier_constrain_tests::expect_matvar(x2, mu, sigma);
-
 }
 
 // real[], real[], real[]
@@ -43,7 +41,6 @@ TEST(mathMixMatFun, offset_multiplier_stdvec_constrain) {
   offset_multiplier_constrain_tests::expect_vec_matvar(A, mud, sigmad);
   offset_multiplier_constrain_tests::expect_vec_matvar(A, mum, sigmad);
 }
-
 
 // array matrix[], array matrix[], array matrix[]
 // array matrix[], array matrix[], matrix[]
