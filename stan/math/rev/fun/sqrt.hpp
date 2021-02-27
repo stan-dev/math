@@ -13,14 +13,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class sqrt_vari : public op_v_vari {
- public:
-  explicit sqrt_vari(vari* avi) : op_v_vari(std::sqrt(avi->val_), avi) {}
-  void chain() { avi_->adj_ += adj_ / (2.0 * val_); }
-};
-}  // namespace internal
-
 /**
  * Return the square root of the specified variable (cmath).
  *
@@ -49,7 +41,26 @@ class sqrt_vari : public op_v_vari {
  * @param a Variable whose square root is taken.
  * @return Square root of variable.
  */
-inline var sqrt(const var& a) { return var(new internal::sqrt_vari(a.vi_)); }
+inline var sqrt(const var& a) {
+  return make_callback_var(std::sqrt(a.val()), [a](auto& vi) mutable {
+    a.adj() += vi.adj() / (2.0 * vi.val());
+  });
+}
+
+/**
+ * Return elementwise square root of vector
+ *
+ * @tparam T a `var_value` with inner Eigen type
+ * @param a input
+ * @return elementwise square root of vector
+ */
+template <typename T, require_var_matrix_t<T>* = nullptr>
+inline auto sqrt(const T& a) {
+  return make_callback_var(
+      a.val().array().sqrt().matrix(), [a](auto& vi) mutable {
+        a.adj().array() += vi.adj().array() / (2.0 * vi.val_op().array());
+      });
+}
 
 /**
  * Return the square root of the complex argument.
