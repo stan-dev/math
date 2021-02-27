@@ -1,7 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 #include <test/unit/math/mix/fun/offset_multiplier_constrain_matvar_helpers.hpp>
 
-TEST(mathMixMatFun, offset_multiplier_constrain_vector_scalar_vector) {
+TEST(mathMixMatFun, offset_multiplier_constrain_matvar_vector_scalar_vector) {
   Eigen::MatrixXd x1(2, 2);
   x1 << 5.0, 2.0, 4.0, 5.0;
   Eigen::MatrixXd x2(2, 2);
@@ -14,7 +14,7 @@ TEST(mathMixMatFun, offset_multiplier_constrain_vector_scalar_vector) {
   offset_multiplier_constrain_tests::expect_matvar(x2, mu, sigma);
 }
 
-TEST(mathMixMatFun, offset_multiplier_constrain_vector_vector_vector) {
+TEST(mathMixMatFun, offset_multiplier_constrain_matvar_vector_vector_vector) {
   Eigen::MatrixXd x1(2, 2);
   x1 << 5.0, 2.0, 4.0, 5.0;
   Eigen::MatrixXd x2(2, 2);
@@ -30,7 +30,7 @@ TEST(mathMixMatFun, offset_multiplier_constrain_vector_vector_vector) {
 // real[], real[], real[]
 // real[], real, real[]
 // real[], real[], real
-TEST(mathMixMatFun, offset_multiplier_stdvec_constrain) {
+TEST(mathMixMatFun, offset_multiplier_constrain_matvar_stdvec_constrain) {
   std::vector<double> A{5.0, 2.0, 4.0, -2.0};
   std::vector<double> mum{-3.0, 3.0, -6.0, 6.0};
   std::vector<double> sigmam{-1.0, 5.0, 0.0, 38.0};
