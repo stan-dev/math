@@ -10,7 +10,8 @@
 // array matrix[], matrix[], real
 // array matrix[], real, matrix[]
 // array matrix[], real, real
-TEST(mathMixMatFun, offset_multiplier_matvar_stdvec_mu_mat_sigma_vec_constrain) {
+TEST(mathMixMatFun,
+     offset_multiplier_matvar_stdvec_mu_mat_sigma_vec_constrain) {
   Eigen::MatrixXd A_inner(2, 3);
   // swapping 0.0000001 for 0 causes a failure for the hessian?
   A_inner << 5.0, 2.0, 4.0, -2.0, 0.0000001, 0.1;
@@ -36,7 +37,8 @@ TEST(mathMixMatFun, offset_multiplier_matvar_stdvec_mu_mat_sigma_vec_constrain) 
 // array matrix[], matrix[], real
 // array matrix[], real, matrix[]
 // array matrix[], real, real
-TEST(mathMixMatFun, offset_multiplier_matvar_stdvec_mu_vec_sigma_mat_constrain) {
+TEST(mathMixMatFun,
+     offset_multiplier_matvar_stdvec_mu_vec_sigma_mat_constrain) {
   Eigen::MatrixXd A_inner(2, 3);
   // swapping 0.0000001 for 0 causes a failure for the hessian?
   A_inner << 5.0, 2.0, 4.0, -2.0, 0.0000001, 0.1;
