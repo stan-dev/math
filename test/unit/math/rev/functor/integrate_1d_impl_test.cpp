@@ -12,9 +12,9 @@ std::ostringstream *msgs = nullptr;
 struct f1 {
   template <typename T1, typename T2, typename T3>
   inline stan::return_type_t<T1, T2, T3> operator()(
-      const T1 &x, const T2 &xc,
-      std::ostream *msgs, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i) const {
+      const T1 &x, const T2 &xc, std::ostream *msgs,
+      const std::vector<T3> &theta, const std::vector<double> &x_r,
+      const std::vector<int> &x_i) const {
     return exp(x) + theta[0];
   }
 };
@@ -22,9 +22,9 @@ struct f1 {
 struct f2 {
   template <typename T1, typename T2, typename T3>
   inline stan::return_type_t<T1, T2, T3> operator()(
-      const T1 &x, const T2 &xc,
-      std::ostream *msgs, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i) const {
+      const T1 &x, const T2 &xc, std::ostream *msgs,
+      const std::vector<T3> &theta, const std::vector<double> &x_r,
+      const std::vector<int> &x_i) const {
     return exp(theta[0] * cos(2 * 3.141593 * x)) + theta[0];
   }
 };
@@ -32,9 +32,9 @@ struct f2 {
 struct f3 {
   template <typename T1, typename T2, typename T3>
   inline stan::return_type_t<T1, T2, T3> operator()(
-      const T1 &x, const T2 &xc,
-      std::ostream *msgs, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i) const {
+      const T1 &x, const T2 &xc, std::ostream *msgs,
+      const std::vector<T3> &theta, const std::vector<double> &x_r,
+      const std::vector<int> &x_i) const {
     return exp(x) + pow(theta[0], x_r[0]) + 2 * pow(theta[1], x_r[1])
            + 2 * theta[2];
   }
@@ -43,9 +43,9 @@ struct f3 {
 struct f4 {
   template <typename T1, typename T2, typename T3>
   inline stan::return_type_t<T1, T2, T3> operator()(
-      const T1 &x, const T2 &xc,
-      std::ostream *msgs, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i) const {
+      const T1 &x, const T2 &xc, std::ostream *msgs,
+      const std::vector<T3> &theta, const std::vector<double> &x_r,
+      const std::vector<int> &x_i) const {
     return exp(-x) / sqrt(x);
   }
 };
@@ -53,9 +53,9 @@ struct f4 {
 struct f5 {
   template <typename T1, typename T2, typename T3>
   inline stan::return_type_t<T1, T2, T3> operator()(
-      const T1 &x, const T2 &xc,
-      std::ostream *msgs, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i) const {
+      const T1 &x, const T2 &xc, std::ostream *msgs,
+      const std::vector<T3> &theta, const std::vector<double> &x_r,
+      const std::vector<int> &x_i) const {
     return exp(-theta[0] * x) / sqrt(theta[1] * x);
   }
 };
@@ -63,9 +63,9 @@ struct f5 {
 struct f6 {
   template <typename T1, typename T2, typename T3>
   inline stan::return_type_t<T1, T2, T3> operator()(
-      const T1 &x, const T2 &xc,
-      std::ostream *msgs, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i) const {
+      const T1 &x, const T2 &xc, std::ostream *msgs,
+      const std::vector<T3> &theta, const std::vector<double> &x_r,
+      const std::vector<int> &x_i) const {
     return sqrt(x / (1 - theta[0] * x * x));
   }
 };
@@ -73,9 +73,9 @@ struct f6 {
 struct f7 {
   template <typename T1, typename T2, typename T3>
   inline stan::return_type_t<T1, T2, T3> operator()(
-      const T1 &x, const T2 &xc,
-      std::ostream *msgs, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i) const {
+      const T1 &x, const T2 &xc, std::ostream *msgs,
+      const std::vector<T3> &theta, const std::vector<double> &x_r,
+      const std::vector<int> &x_i) const {
     return exp(-theta[0] * x);
   }
 };
@@ -83,9 +83,9 @@ struct f7 {
 struct f8 {
   template <typename T1, typename T2, typename T3>
   inline stan::return_type_t<T1, T2, T3> operator()(
-      const T1 &x, const T2 &xc,
-      std::ostream *msgs, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i) const {
+      const T1 &x, const T2 &xc, std::ostream *msgs,
+      const std::vector<T3> &theta, const std::vector<double> &x_r,
+      const std::vector<int> &x_i) const {
     return exp(theta[0] * x);
   }
 };
@@ -93,9 +93,9 @@ struct f8 {
 struct f10 {
   template <typename T1, typename T2, typename T3>
   inline stan::return_type_t<T1, T2, T3> operator()(
-      const T1 &x, const T2 &xc,
-      std::ostream *msgs, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i) const {
+      const T1 &x, const T2 &xc, std::ostream *msgs,
+      const std::vector<T3> &theta, const std::vector<double> &x_r,
+      const std::vector<int> &x_i) const {
     return 1 / (1 + pow(x, x_i[0]) / x_r[0]);
   }
 };
@@ -103,9 +103,9 @@ struct f10 {
 struct f11 {
   template <typename T1, typename T2, typename T3>
   inline stan::return_type_t<T1, T2, T3> operator()(
-      const T1 &x, const T2 &xc,
-      std::ostream *msgs, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i) const {
+      const T1 &x, const T2 &xc, std::ostream *msgs,
+      const std::vector<T3> &theta, const std::vector<double> &x_r,
+      const std::vector<int> &x_i) const {
     return pow(x, theta[0] - 1.0)
            * pow((x > 0.5) ? xc : (1 - x), theta[1] - 1.0);
   }
@@ -114,9 +114,9 @@ struct f11 {
 struct f12 {
   template <typename T1, typename T2, typename T3>
   inline stan::return_type_t<T1, T2, T3> operator()(
-      const T1 &x, const T2 &xc,
-      std::ostream *msgs, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i) const {
+      const T1 &x, const T2 &xc, std::ostream *msgs,
+      const std::vector<T3> &theta, const std::vector<double> &x_r,
+      const std::vector<int> &x_i) const {
     T3 mu = theta[0];
     T3 sigma = theta[1];
     return exp(-0.5 * stan::math::square((x - mu) / sigma))
@@ -127,9 +127,9 @@ struct f12 {
 struct f13 {
   template <typename T1, typename T2, typename T3>
   inline stan::return_type_t<T1, T2, T3> operator()(
-      const T1 &x, const T2 &xc,
-      std::ostream *msgs, const std::vector<T3> &theta,
-      const std::vector<double> &x_r, const std::vector<int> &x_i) const {
+      const T1 &x, const T2 &xc, std::ostream *msgs,
+      const std::vector<T3> &theta, const std::vector<double> &x_r,
+      const std::vector<int> &x_i) const {
     return x + theta[0] + theta[1];
   }
 };
@@ -216,7 +216,8 @@ void test_derivatives(const F &f, double a, double b,
     for (size_t i = 0; i < thetas.size(); ++i)
       thetas_[i] = thetas[i];
 
-    var integral = stan::math::integrate_1d_impl(f, a_, b_, tolerance, msgs, thetas_, x_r, x_i);
+    var integral = stan::math::integrate_1d_impl(f, a_, b_, tolerance, msgs,
+                                                 thetas_, x_r, x_i);
     integral.grad();
     EXPECT_LE(std::abs(val - integral.val()), tolerance);
     if (stan::is_var<T_theta>::value) {
@@ -238,12 +239,12 @@ TEST(StanMath_integrate_1d_impl_rev, test_integer_arguments) {
   std::vector<stan::math::var> theta = {0.5};
   std::vector<double> x_r;
   std::vector<int> x_i;
-  EXPECT_NO_THROW(
-      v = stan::math::integrate_1d_impl(f2{}, 0, 1, 1e-6, msgs, theta, x_r, x_i));
-  EXPECT_NO_THROW(
-      v = stan::math::integrate_1d_impl(f2{}, 0.0, 1, 1e-6, msgs, theta, x_r, x_i));
-  EXPECT_NO_THROW(
-      v = stan::math::integrate_1d_impl(f2{}, 0, 1.0, 1e-6, msgs, theta, x_r, x_i));
+  EXPECT_NO_THROW(v = stan::math::integrate_1d_impl(f2{}, 0, 1, 1e-6, msgs,
+                                                    theta, x_r, x_i));
+  EXPECT_NO_THROW(v = stan::math::integrate_1d_impl(f2{}, 0.0, 1, 1e-6, msgs,
+                                                    theta, x_r, x_i));
+  EXPECT_NO_THROW(v = stan::math::integrate_1d_impl(f2{}, 0, 1.0, 1e-6, msgs,
+                                                    theta, x_r, x_i));
 }
 
 TEST(StanMath_integrate_1d_impl_rev, TestDerivatives_easy) {
@@ -260,7 +261,7 @@ TEST(StanMath_integrate_1d_impl_rev, TestDerivatives_easy) {
   test_derivatives<double, double, var>(f1{}, 0.0, 0.0, {0.75}, {}, {}, 0.0,
                                         {0.0});
   test_derivatives<double, double, var>(f2{}, 1.0, 1.0, {0.5}, {}, {}, 0.0,
-					{0.0});
+                                        {0.0});
 }
 
 TEST(StanMath_integrate_1d_impl_rev, TestDerivatives_zero_crossing) {
@@ -274,7 +275,8 @@ TEST(StanMath_integrate_1d_impl_rev, TestDerivatives_zero_crossing) {
                                   -19.06340613646808, 21.41380852375568);
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestDerivatives_var_right_endpoint_var_params) {
+TEST(StanMath_integrate_1d_impl_rev,
+     TestDerivatives_var_right_endpoint_var_params) {
   // Zero crossing integral + test x_r + vars at right endpoint
   using stan::math::var;
   test_derivatives<double, var, var>(
@@ -284,7 +286,8 @@ TEST(StanMath_integrate_1d_impl_rev, TestDerivatives_var_right_endpoint_var_para
       {5 * pow(0.5, 1.5), 12 * 1.75 * 1.75, 4.0}, 0.0, 21.41380852375568);
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestDerivatives_var_left_endpoint_var_params) {
+TEST(StanMath_integrate_1d_impl_rev,
+     TestDerivatives_var_left_endpoint_var_params) {
   // Zero crossing integral + test x_r + var at left endpoint
   using stan::math::var;
   test_derivatives<var, double, var>(
@@ -405,7 +408,8 @@ TEST(StanMath_integrate_1d_impl_rev, TestDerivatives_gaussian) {
       {0.0, 0.0});
 }
 
-TEST(StanMath_integrate_1d_impl_rev, TestDerivativesSameVarAtEndpointAndInParams) {
+TEST(StanMath_integrate_1d_impl_rev,
+     TestDerivativesSameVarAtEndpointAndInParams) {
   using stan::math::var;
 
   var a = 2.0;
@@ -414,8 +418,8 @@ TEST(StanMath_integrate_1d_impl_rev, TestDerivativesSameVarAtEndpointAndInParams
   std::vector<double> x_r = {};
   std::vector<int> x_i = {};
 
-  var integral
-    = stan::math::integrate_1d_impl(f13{}, a, b, 1e-8, msgs, thetas, x_r, x_i);
+  var integral = stan::math::integrate_1d_impl(f13{}, a, b, 1e-8, msgs, thetas,
+                                               x_r, x_i);
   integral.grad();
 
   EXPECT_LT(std::abs(18.0 - integral.val()), 1e-8);
@@ -433,8 +437,8 @@ TEST(StanMath_integrate_1d_impl_rev, TestBeta) {
   AVEC theta = {alpha, beta};
   std::vector<double> x_r = {};
   std::vector<int> x_i = {};
-  auto pdf = [](auto x, auto xc,
-                std::ostream *msgs, auto theta, auto x_r, auto x_i) {
+  auto pdf = [](auto x, auto xc, std::ostream *msgs, auto theta, auto x_r,
+                auto x_i) {
     return exp(stan::math::beta_lpdf(x, theta[0], theta[1]));
   };
   var I = integrate_1d_impl(pdf, 0.0, 1.0, 1e-8, msgs, theta, x_r, x_i);
@@ -459,8 +463,8 @@ TEST(StanMath_integrate_1d_impl_rev, TestCauchy) {
   double a = -b;
   std::vector<double> x_r = {};
   std::vector<int> x_i = {};
-  auto pdf = [](auto x, auto xc,
-                std::ostream *msgs, auto theta, auto x_r, auto x_i) {
+  auto pdf = [](auto x, auto xc, std::ostream *msgs, auto theta, auto x_r,
+                auto x_i) {
     return exp(stan::math::cauchy_lpdf(x, theta[0], theta[1]));
   };
   var I = integrate_1d_impl(pdf, a, b, 1e-8, msgs, theta, x_r, x_i);
@@ -484,10 +488,9 @@ TEST(StanMath_integrate_1d_impl_rev, TestChiSquare) {
   double a = 0;
   std::vector<double> x_r = {};
   std::vector<int> x_i = {};
-  auto pdf = [](auto x, auto xc,
-                std::ostream *msgs, auto theta, auto x_r, auto x_i) {
-    return exp(stan::math::chi_square_lpdf(x, theta[0]));
-  };
+  auto pdf
+      = [](auto x, auto xc, std::ostream *msgs, auto theta, auto x_r,
+           auto x_i) { return exp(stan::math::chi_square_lpdf(x, theta[0])); };
   var I = integrate_1d_impl(pdf, a, b, 1e-8, msgs, theta, x_r, x_i);
   EXPECT_FLOAT_EQ(1, I.val());
 
@@ -509,8 +512,8 @@ TEST(StanMath_integrate_1d_impl_rev, TestDoubleExponential) {
   double b = mu.val();
   std::vector<double> x_r = {};
   std::vector<int> x_i = {};
-  auto pdf = [](auto x, auto xc,
-                std::ostream *msgs, auto theta, auto x_r, auto x_i) {
+  auto pdf = [](auto x, auto xc, std::ostream *msgs, auto theta, auto x_r,
+                auto x_i) {
     return exp(stan::math::double_exponential_lpdf(x, theta[0], theta[1]));
   };
   // requires two subintervals to achieve numerical accuracy
@@ -536,10 +539,9 @@ TEST(StanMath_integrate_1d_impl_rev, TestExponential) {
   double a = 0;
   std::vector<double> x_r = {};
   std::vector<int> x_i = {};
-  auto pdf = [](auto x, auto xc,
-                std::ostream *msgs, auto theta, auto x_r, auto x_i) {
-    return exp(stan::math::exponential_lpdf(x, theta[0]));
-  };
+  auto pdf
+      = [](auto x, auto xc, std::ostream *msgs, auto theta, auto x_r,
+           auto x_i) { return exp(stan::math::exponential_lpdf(x, theta[0])); };
   var I = integrate_1d_impl(pdf, a, b, 1e-8, msgs, theta, x_r, x_i);
   EXPECT_FLOAT_EQ(1, I.val());
 
@@ -561,8 +563,8 @@ TEST(StanMath_integrate_1d_impl_rev, TestFrechet) {
   double a = 0;
   std::vector<double> x_r = {};
   std::vector<int> x_i = {};
-  auto pdf = [](auto x, auto xc,
-                std::ostream *msgs, auto theta, auto x_r, auto x_i) {
+  auto pdf = [](auto x, auto xc, std::ostream *msgs, auto theta, auto x_r,
+                auto x_i) {
     return exp(stan::math::frechet_lpdf(x, theta[0], theta[1]));
   };
   var I = integrate_1d_impl(pdf, a, b, 1e-8, msgs, theta, x_r, x_i);
@@ -587,8 +589,8 @@ TEST(StanMath_integrate_1d_impl_rev, TestGamma) {
   double a = 0;
   std::vector<double> x_r = {};
   std::vector<int> x_i = {};
-  auto pdf = [](auto x, auto xc,
-                std::ostream *msgs, auto theta, auto x_r, auto x_i) {
+  auto pdf = [](auto x, auto xc, std::ostream *msgs, auto theta, auto x_r,
+                auto x_i) {
     return exp(stan::math::gamma_lpdf(x, theta[0], theta[1]));
   };
   var I = integrate_1d_impl(pdf, a, b, 1e-8, msgs, theta, x_r, x_i);
@@ -613,8 +615,8 @@ TEST(StanMath_integrate_1d_impl_rev, TestGumbel) {
   double a = -b;
   std::vector<double> x_r = {};
   std::vector<int> x_i = {};
-  auto pdf = [](auto x, auto xc,
-                std::ostream *msgs, auto theta, auto x_r, auto x_i) {
+  auto pdf = [](auto x, auto xc, std::ostream *msgs, auto theta, auto x_r,
+                auto x_i) {
     return exp(stan::math::gumbel_lpdf(x, theta[0], theta[1]));
   };
   var I = integrate_1d_impl(pdf, a, b, 1e-8, msgs, theta, x_r, x_i);
@@ -638,8 +640,8 @@ TEST(StanMath_integrate_1d_impl_rev, TestInvChiSquared) {
   double a = 0;
   std::vector<double> x_r = {};
   std::vector<int> x_i = {};
-  auto pdf = [](auto x, auto xc,
-                std::ostream *msgs, auto theta, auto x_r, auto x_i) {
+  auto pdf = [](auto x, auto xc, std::ostream *msgs, auto theta, auto x_r,
+                auto x_i) {
     return exp(stan::math::inv_chi_square_lpdf(x, theta[0]));
   };
   var I = integrate_1d_impl(pdf, a, b, 1e-8, msgs, theta, x_r, x_i);
@@ -663,8 +665,8 @@ TEST(StanMath_integrate_1d_impl_rev, TestLogistic) {
   double a = -b;
   std::vector<double> x_r = {};
   std::vector<int> x_i = {};
-  auto pdf = [](auto x, auto xc,
-                std::ostream *msgs, auto theta, auto x_r, auto x_i) {
+  auto pdf = [](auto x, auto xc, std::ostream *msgs, auto theta, auto x_r,
+                auto x_i) {
     return exp(stan::math::logistic_lpdf(x, theta[0], theta[1]));
   };
   var I = integrate_1d_impl(pdf, a, b, 1e-8, msgs, theta, x_r, x_i);
@@ -689,8 +691,8 @@ TEST(StanMath_integrate_1d_impl_rev, TestLogNormal) {
   double a = 0;
   std::vector<double> x_r = {};
   std::vector<int> x_i = {};
-  auto pdf = [](auto x, auto xc,
-                std::ostream *msgs, auto theta, auto x_r, auto x_i) {
+  auto pdf = [](auto x, auto xc, std::ostream *msgs, auto theta, auto x_r,
+                auto x_i) {
     return exp(stan::math::lognormal_lpdf(x, theta[0], theta[1]));
   };
   var I = integrate_1d_impl(pdf, a, b, 1e-8, msgs, theta, x_r, x_i);
@@ -715,8 +717,8 @@ TEST(StanMath_integrate_1d_impl_rev, TestNormal) {
   double a = -b;
   std::vector<double> x_r = {};
   std::vector<int> x_i = {};
-  auto pdf = [](auto x, auto xc,
-                std::ostream *msgs, auto theta, auto x_r, auto x_i) {
+  auto pdf = [](auto x, auto xc, std::ostream *msgs, auto theta, auto x_r,
+                auto x_i) {
     return exp(stan::math::normal_lpdf(x, theta[0], theta[1]));
   };
   var I = integrate_1d_impl(pdf, a, b, 1e-8, msgs, theta, x_r, x_i);
@@ -741,8 +743,8 @@ TEST(StanMath_integrate_1d_impl_rev, TestPareto) {
   var a = m;
   std::vector<double> x_r = {};
   std::vector<int> x_i = {};
-  auto pdf = [](auto x, auto xc,
-                std::ostream *msgs, auto theta, auto x_r, auto x_i) {
+  auto pdf = [](auto x, auto xc, std::ostream *msgs, auto theta, auto x_r,
+                auto x_i) {
     return exp(stan::math::pareto_lpdf(x, theta[0], theta[1]));
   };
   var I = integrate_1d_impl(pdf, a, b, 1e-8, msgs, theta, x_r, x_i);
@@ -768,8 +770,8 @@ TEST(StanMath_integrate_1d_impl_rev, TestPareto2) {
   var a = mu;
   std::vector<double> x_r = {};
   std::vector<int> x_i = {};
-  auto pdf = [](auto x, auto xc,
-                std::ostream *msgs, auto theta, auto x_r, auto x_i) {
+  auto pdf = [](auto x, auto xc, std::ostream *msgs, auto theta, auto x_r,
+                auto x_i) {
     return exp(stan::math::pareto_type_2_lpdf(x, theta[0], theta[1], theta[2]));
   };
   var I = integrate_1d_impl(pdf, a, b, 1e-8, msgs, theta, x_r, x_i);
@@ -794,10 +796,9 @@ TEST(StanMath_integrate_1d_impl_rev, TestRayleigh) {
   double a = 0;
   std::vector<double> x_r = {};
   std::vector<int> x_i = {};
-  auto pdf = [](auto x, auto xc,
-                std::ostream *msgs, auto theta, auto x_r, auto x_i) {
-    return exp(stan::math::rayleigh_lpdf(x, theta[0]));
-  };
+  auto pdf
+      = [](auto x, auto xc, std::ostream *msgs, auto theta, auto x_r,
+           auto x_i) { return exp(stan::math::rayleigh_lpdf(x, theta[0])); };
   var I = integrate_1d_impl(pdf, a, b, 1e-8, msgs, theta, x_r, x_i);
   EXPECT_FLOAT_EQ(1, I.val());
 
@@ -819,8 +820,8 @@ TEST(StanMath_integrate_1d_impl_rev, TestScaledInvChiSquare) {
   double a = 0;
   std::vector<double> x_r = {};
   std::vector<int> x_i = {};
-  auto pdf = [](auto x, auto xc,
-                std::ostream *msgs, auto theta, auto x_r, auto x_i) {
+  auto pdf = [](auto x, auto xc, std::ostream *msgs, auto theta, auto x_r,
+                auto x_i) {
     return exp(stan::math::scaled_inv_chi_square_lpdf(x, theta[0], theta[1]));
   };
   var I = integrate_1d_impl(pdf, a, b, 1e-8, msgs, theta, x_r, x_i);
@@ -846,8 +847,8 @@ TEST(StanMath_integrate_1d_impl_rev, TestStudentT) {
   double a = -b;
   std::vector<double> x_r = {};
   std::vector<int> x_i = {};
-  auto pdf = [](auto x, auto xc,
-                std::ostream *msgs, auto theta, auto x_r, auto x_i) {
+  auto pdf = [](auto x, auto xc, std::ostream *msgs, auto theta, auto x_r,
+                auto x_i) {
     return exp(stan::math::student_t_lpdf(x, theta[0], theta[1], theta[2]));
   };
   var I = integrate_1d_impl(pdf, a, b, 1e-8, msgs, theta, x_r, x_i);
@@ -871,8 +872,8 @@ TEST(StanMath_integrate_1d_impl_rev, TestUniform) {
   std::vector<double> x_r = {};
   std::vector<int> x_i = {};
   AVEC theta = {a, b};
-  auto pdf = [](auto x, auto xc,
-                std::ostream *msgs, auto theta, auto x_r, auto x_i) {
+  auto pdf = [](auto x, auto xc, std::ostream *msgs, auto theta, auto x_r,
+                auto x_i) {
     return exp(stan::math::uniform_lpdf(x, theta[0], theta[1]));
   };
   var I = integrate_1d_impl(pdf, a, b, 1e-8, msgs, theta, x_r, x_i);
@@ -897,8 +898,8 @@ TEST(StanMath_integrate_1d_impl_rev, TestVonMises) {
   double a = 0;
   std::vector<double> x_r = {};
   std::vector<int> x_i = {};
-  auto pdf = [](auto x, auto xc,
-                std::ostream *msgs, auto theta, auto x_r, auto x_i) {
+  auto pdf = [](auto x, auto xc, std::ostream *msgs, auto theta, auto x_r,
+                auto x_i) {
     return exp(stan::math::von_mises_lpdf(x, theta[0], theta[1]));
   };
   var I = integrate_1d_impl(pdf, a, b, 1e-8, msgs, theta, x_r, x_i);
@@ -923,8 +924,8 @@ TEST(StanMath_integrate_1d_impl_rev, TestWeibull) {
   double a = 0;
   std::vector<double> x_r = {};
   std::vector<int> x_i = {};
-  auto pdf = [](auto x, auto xc,
-                std::ostream *msgs, auto theta, auto x_r, auto x_i) {
+  auto pdf = [](auto x, auto xc, std::ostream *msgs, auto theta, auto x_r,
+                auto x_i) {
     return exp(stan::math::weibull_lpdf(x, theta[0], theta[1]));
   };
   var I = integrate_1d_impl(pdf, a, b, 1e-8, msgs, theta, x_r, x_i);

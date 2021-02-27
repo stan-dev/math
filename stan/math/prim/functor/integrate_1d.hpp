@@ -146,10 +146,10 @@ inline double integrate(const F& f, double a, double b,
  * @return numeric integral of function f
  */
 template <typename F, typename... Args,
-	  require_all_not_st_var<Args...>* = nullptr>
+          require_all_not_st_var<Args...>* = nullptr>
 inline double integrate_1d_impl(const F& f, double a, double b,
-				double relative_tolerance,
-				std::ostream* msgs, const Args&... args) {
+                                double relative_tolerance, std::ostream* msgs,
+                                const Args&... args) {
   static const char* function = "integrate_1d";
   check_less_or_equal(function, "lower limit", a, b);
 
@@ -159,10 +159,9 @@ inline double integrate_1d_impl(const F& f, double a, double b,
     }
     return 0.0;
   } else {
-    return integrate(
-        std::bind<double>(f, std::placeholders::_1, std::placeholders::_2,
-                          msgs, args...),
-        a, b, relative_tolerance);
+    return integrate(std::bind<double>(f, std::placeholders::_1,
+                                       std::placeholders::_2, msgs, args...),
+                     a, b, relative_tolerance);
   }
 }
 
@@ -219,9 +218,8 @@ inline double integrate_1d(const F& f, double a, double b,
                            const std::vector<int>& x_i, std::ostream* msgs,
                            const double relative_tolerance
                            = std::sqrt(EPSILON)) {
-  return integrate_1d_impl(integrate_1d_adapter<F>(f), a, b,
-			   relative_tolerance, msgs,
-			   theta, x_r, x_i);
+  return integrate_1d_impl(integrate_1d_adapter<F>(f), a, b, relative_tolerance,
+                           msgs, theta, x_r, x_i);
 }
 
 }  // namespace math
