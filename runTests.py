@@ -144,7 +144,7 @@ def isWin():
 
 
 batchSize = 20 if isWin() else 200
-jumboSize = 5 if isWin() else 10
+jumboSize = 5 if isWin() else 15
 
 def mungeName(name):
     """Set up the makefile target name"""
