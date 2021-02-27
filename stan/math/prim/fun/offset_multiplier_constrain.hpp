@@ -7,6 +7,8 @@
 #include <stan/math/prim/fun/identity_constrain.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
 #include <stan/math/prim/fun/size.hpp>
+#include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <cmath>
 
 namespace stan {
@@ -36,18 +38,12 @@ namespace math {
  * @throw std::domain_error if mu is not finite
  */
 template <typename T, typename M, typename S>
-inline return_type_t<T, M, S> offset_multiplier_constrain(const T& x,
-                                                          const M& mu,
-                                                          const S& sigma) {
-  check_finite("offset_multiplier_constrain", "offset", mu);
-  if (sigma == 1) {
-    if (mu == 0) {
-      return identity_constrain(x);
-    }
-    return mu + x;
-  }
-  check_positive_finite("offset_multiplier_constrain", "multiplier", sigma);
-  return fma(sigma, x, mu);
+inline auto offset_multiplier_constrain(const T& x, const M& mu, const S& sigma) {
+  auto&& mu_ref = to_ref(mu);
+  auto&& sigma_ref = to_ref(sigma);
+  check_finite("offset_multiplier_constrain", "offset", value_of_rec(mu_ref));
+  check_positive_finite("offset_multiplier_constrain", "multiplier", value_of_rec(sigma_ref));
+  return fma(sigma_ref, x, mu_ref);
 }
 
 /**
@@ -77,22 +73,150 @@ inline return_type_t<T, M, S> offset_multiplier_constrain(const T& x,
  * @throw std::domain_error if mu is not finite
  */
 template <typename T, typename M, typename S>
-inline return_type_t<T, M, S> offset_multiplier_constrain(const T& x,
-                                                          const M& mu,
-                                                          const S& sigma,
-                                                          T& lp) {
-  using std::log;
-  check_finite("offset_multiplier_constrain", "offset", mu);
-  if (sigma == 1) {
-    if (mu == 0) {
-      return identity_constrain(x);
-    }
-    return mu + x;
-  }
-  check_positive_finite("offset_multiplier_constrain", "multiplier", sigma);
-  lp += multiply_log(size(x), sigma);
-  return fma(sigma, x, mu);
+inline auto offset_multiplier_constrain(const T& x, const M& mu, const S& sigma, return_type_t<T, M, S>& lp) {
+  auto&& mu_ref = to_ref(mu);
+  auto&& sigma_ref = to_ref(sigma);
+  check_finite("offset_multiplier_constrain", "offset", value_of_rec(mu_ref));
+  check_positive_finite("offset_multiplier_constrain", "multiplier", value_of_rec(sigma_ref));
+  lp += sum(multiply_log(size(x), sigma_ref));
+  return fma(sigma_ref, x, mu_ref);
 }
+
+/**
+ * Overload for array of x and non-array mu and sigma
+ */
+template <typename T, typename M, typename S,
+          require_all_not_std_vector_t<M, S>* = nullptr>
+inline auto offset_multiplier_constrain(const std::vector<T>& x, const M& mu, const S& sigma) {
+  std::vector<plain_type_t<decltype(offset_multiplier_constrain(x[0], mu, sigma))>> ret;
+  ret.reserve(x.size());
+  auto&& mu_ref = to_ref(mu);
+  auto&& sigma_ref = to_ref(sigma);
+  for (size_t i = 0; i < x.size(); ++i) {
+    ret.emplace_back(offset_multiplier_constrain(x[i], mu_ref, sigma_ref));
+  }
+  return ret;
+}
+
+/**
+ * Overload for array of x and non-array mu and sigma with lp
+ */
+template <typename T, typename M, typename S,
+          require_all_not_std_vector_t<M, S>* = nullptr>
+inline auto offset_multiplier_constrain(const std::vector<T>& x, const M& mu, const S& sigma,
+                          return_type_t<T, M, S>& lp) {
+  std::vector<plain_type_t<decltype(offset_multiplier_constrain(x[0], mu, sigma))>> ret;
+  ret.reserve(x.size());
+  auto&& mu_ref = to_ref(mu);
+  auto&& sigma_ref = to_ref(sigma);
+  for (size_t i = 0; i < x.size(); ++i) {
+    ret.emplace_back(offset_multiplier_constrain(x[i], mu_ref, sigma_ref, lp));
+  }
+  return ret;
+}
+
+/**
+ * Overload for array of x and sigma and non-array mu
+ */
+template <typename T, typename M, typename S,
+          require_not_std_vector_t<M>* = nullptr>
+inline auto offset_multiplier_constrain(const std::vector<T>& x, const M& mu,
+                          const std::vector<S>& sigma) {
+  check_matching_dims("offset_multiplier_constrain", "x", x, "sigma", sigma);
+  std::vector<plain_type_t<decltype(offset_multiplier_constrain(x[0], mu, sigma[0]))>> ret;
+  ret.reserve(x.size());
+  auto&& mu_ref = to_ref(mu);
+  for (size_t i = 0; i < x.size(); ++i) {
+    ret.emplace_back(offset_multiplier_constrain(x[i], mu_ref, sigma[i]));
+  }
+  return ret;
+}
+
+/**
+ * Overload for array of x and sigma and non-array mu with lp
+ */
+template <typename T, typename M, typename S,
+          require_not_std_vector_t<M>* = nullptr>
+inline auto offset_multiplier_constrain(const std::vector<T>& x, const M& mu,
+                          const std::vector<S>& sigma,
+                          return_type_t<T, M, S>& lp) {
+  check_matching_dims("offset_multiplier_constrain", "x", x, "sigma", sigma);
+  std::vector<plain_type_t<decltype(offset_multiplier_constrain(x[0], mu, sigma[0]))>> ret;
+  ret.reserve(x.size());
+  auto&& mu_ref = to_ref(mu);
+  for (size_t i = 0; i < x.size(); ++i) {
+    ret.emplace_back(offset_multiplier_constrain(x[i], mu_ref, sigma[i], lp));
+  }
+  return ret;
+}
+
+/**
+ * Overload for array of x and mu and non-array sigma
+ */
+template <typename T, typename M, typename S,
+          require_not_std_vector_t<S>* = nullptr>
+inline auto offset_multiplier_constrain(const std::vector<T>& x, const std::vector<M>& mu,
+                          const S& sigma) {
+  check_matching_dims("offset_multiplier_constrain", "x", x, "mu", mu);
+  std::vector<plain_type_t<decltype(offset_multiplier_constrain(x[0], mu[0], sigma))>> ret;
+  ret.reserve(x.size());
+  auto&& sigma_ref = to_ref(sigma);
+  for (size_t i = 0; i < x.size(); ++i) {
+    ret.emplace_back(offset_multiplier_constrain(x[i], mu[i], sigma_ref));
+  }
+  return ret;
+}
+
+/**
+ * Overload for array of x and mu and non-array sigma with lp
+ */
+template <typename T, typename M, typename S,
+          require_not_std_vector_t<S>* = nullptr>
+inline auto offset_multiplier_constrain(const std::vector<T>& x, const std::vector<M>& mu,
+                          const S& sigma, return_type_t<T, M, S>& lp) {
+  check_matching_dims("offset_multiplier_constrain", "x", x, "mu", mu);
+  std::vector<plain_type_t<decltype(offset_multiplier_constrain(x[0], mu[0], sigma))>> ret;
+  ret.reserve(x.size());
+  auto&& sigma_ref = to_ref(sigma);
+  for (size_t i = 0; i < x.size(); ++i) {
+    ret.emplace_back(offset_multiplier_constrain(x[i], mu[i], sigma_ref, lp));
+  }
+  return ret;
+}
+
+/**
+ * Overload for array of x, mu, and sigma with lp
+ */
+template <typename T, typename M, typename S>
+inline auto offset_multiplier_constrain(const std::vector<T>& x, const std::vector<M>& mu,
+                          const std::vector<S>& sigma) {
+  check_matching_dims("offset_multiplier_constrain", "x", x, "mu", mu);
+  check_matching_dims("offset_multiplier_constrain", "x", x, "sigma", sigma);
+  std::vector<plain_type_t<decltype(offset_multiplier_constrain(x[0], mu[0], sigma[0]))>> ret;
+  ret.reserve(x.size());
+  for (size_t i = 0; i < x.size(); ++i) {
+    ret.emplace_back(offset_multiplier_constrain(x[i], mu[i], sigma[i]));
+  }
+  return ret;
+}
+
+/**
+ * Overload for array of x, mu, and sigma
+ */
+template <typename T, typename M, typename S>
+inline auto offset_multiplier_constrain(const std::vector<T>& x, const std::vector<M>& mu,
+                          const std::vector<S>& sigma,
+                          return_type_t<T, M, S>& lp) {
+  check_matching_dims("offset_multiplier_constrain", "x", x, "mu", mu);
+  check_matching_dims("offset_multiplier_constrain", "x", x, "sigma", sigma);
+  std::vector<plain_type_t<decltype(offset_multiplier_constrain(x[0], mu[0], sigma[0]))>> ret;
+  ret.reserve(x.size());
+  for (size_t i = 0; i < x.size(); ++i) {
+    ret.emplace_back(offset_multiplier_constrain(x[i], mu[i], sigma[i], lp));
+  }
+  return ret;
+}
+
 
 }  // namespace math
 }  // namespace stan
