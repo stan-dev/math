@@ -1,5 +1,5 @@
-#ifndef STAN_TEST_UNIT_MATH_MIX_FUN_offset_multiplier_CONSTRAIN_HELPERS_HPP
-#define STAN_TEST_UNIT_MATH_MIX_FUN_offset_multiplier_CONSTRAIN_HELPERS_HPP
+#ifndef STAN_TEST_UNIT_MATH_MIX_FUN_OFFSET_MULTIPLIER_MATVAR_CONSTRAIN_HELPERS_HPP
+#define STAN_TEST_UNIT_MATH_MIX_FUN_OFFSET_MULTIPLIER_MATVAR_CONSTRAIN_HELPERS_HPP
 
 namespace offset_multiplier_constrain_tests {
 template <typename T1, typename T2, typename T3>
