@@ -60,12 +60,17 @@ return_type_t<T_y_cl, T_scale_succ_cl, T_scale_fail_cl> beta_lpdf(
     return 0.0;
   }
 
-  const auto& y_val = value_of(y);
-  const auto& alpha_val = value_of(alpha);
-  const auto& beta_val = value_of(beta);
+  const auto& y_col = as_column_vector_or_scalar(y);
+  const auto& alpha_col = as_column_vector_or_scalar(alpha);
+  const auto& beta_col = as_column_vector_or_scalar(beta);
 
-  operands_and_partials<T_y_cl, T_scale_succ_cl, T_scale_fail_cl> ops_partials(
-      y, alpha, beta);
+  const auto& y_val = value_of(y_col);
+  const auto& alpha_val = value_of(alpha_col);
+  const auto& beta_val = value_of(beta_col);
+
+  operands_and_partials<decltype(y_col), decltype(alpha_col),
+                        decltype(beta_col)>
+      ops_partials(y_col, alpha_col, beta_col);
 
   auto check_alpha_pos_finite = check_cl(function, "First shape parameter",
                                          alpha_val, "positive finite");
@@ -87,14 +92,14 @@ return_type_t<T_y_cl, T_scale_succ_cl, T_scale_fail_cl> beta_lpdf(
       static_select<include_summand<propto, T_scale_succ_cl>::value>(
           -lgamma(alpha_val), zero_expr)
       + static_select<include_summand<propto, T_scale_fail_cl>::value>(
-            -lgamma(beta_val), zero_expr)
+          -lgamma(beta_val), zero_expr)
       + static_select<include_summand<propto, T_y_cl, T_scale_succ_cl>::value>(
-            elt_multiply((alpha_val - 1.0), log_y_expr), zero_expr)
+          elt_multiply((alpha_val - 1.0), log_y_expr), zero_expr)
       + static_select<include_summand<propto, T_y_cl, T_scale_fail_cl>::value>(
-            elt_multiply((beta_val - 1.0), log1m_y_expr), zero_expr)
+          elt_multiply((beta_val - 1.0), log1m_y_expr), zero_expr)
       + static_select<
-            include_summand<propto, T_scale_succ_cl, T_scale_fail_cl>::value>(
-            lgamma(alpha_beta_expr), zero_expr));
+          include_summand<propto, T_scale_succ_cl, T_scale_fail_cl>::value>(
+          lgamma(alpha_beta_expr), zero_expr));
 
   auto y_deriv_expr = calc_if<!is_constant<T_y_cl>::value>(
       elt_divide((alpha_val - 1), y_val)

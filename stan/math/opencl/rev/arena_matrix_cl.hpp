@@ -51,8 +51,8 @@ class arena_matrix_cl : public matrix_cl_base {
    */
   template <typename... Args>
   explicit arena_matrix_cl(Args&&... args)
-      : impl_(new internal::arena_matrix_cl_impl<T>(
-            std::forward<Args>(args)...)) {}
+      : impl_(
+          new internal::arena_matrix_cl_impl<T>(std::forward<Args>(args)...)) {}
 
   arena_matrix_cl(const arena_matrix_cl<T>&) = default;
   arena_matrix_cl(arena_matrix_cl<T>&) = default;
@@ -71,7 +71,7 @@ class arena_matrix_cl : public matrix_cl_base {
             require_all_kernel_expressions_and_none_scalar_t<Expr>* = nullptr>
   arena_matrix_cl(Expr&& expression)  // NOLINT(runtime/explicit)
       : impl_(new internal::arena_matrix_cl_impl<T>(
-            std::forward<Expr>(expression))) {}
+          std::forward<Expr>(expression))) {}
 
   /**
    * Implicit conversion operator to `matrix_cl`.
@@ -94,10 +94,6 @@ class arena_matrix_cl : public matrix_cl_base {
   template <matrix_cl_view matrix_view = matrix_cl_view::Entire>
   inline void zeros_strict_tri() {
     impl_->template zeros_strict_tri<matrix_view>();
-  }
-  template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
-  inline void triangular_transpose() {
-    impl_->template triangular_transpose<triangular_map>();
   }
 
 /**
