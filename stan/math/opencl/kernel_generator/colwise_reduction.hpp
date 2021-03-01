@@ -32,7 +32,7 @@ class colwise_reduction_base {};
  * @param n_cols number of columns of expression to resuce
  * @return number of work groups in rows direction
  */
-int colwise_reduction_wgs_rows(int n_rows, int n_cols) {
+inline int colwise_reduction_wgs_rows(int n_rows, int n_cols) {
   int local = opencl_context.base_opts().at("LOCAL_SIZE_");
   int preferred_work_groups
       = opencl_context.device()[0].getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>() * 16;
