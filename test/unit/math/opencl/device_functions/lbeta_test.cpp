@@ -8,7 +8,7 @@
 #include <test/unit/math/expect_near_rel.hpp>
 #include <string>
 
-static const std::string test_kernel_code = STRINGIFY(__kernel void test(
+static const std::string test_lbeta_kernel_code = STRINGIFY(__kernel void test(
     __global double *C, __global double *B, __global double *A) {
   const int i = get_global_id(0);
   C[i] = lbeta(A[i], B[i]);
@@ -22,7 +22,7 @@ const stan::math::opencl_kernels::kernel_cl<
           {stan::math::opencl_kernels::lgamma_stirling_device_function,
            stan::math::opencl_kernels::lgamma_stirling_diff_device_function,
            stan::math::opencl_kernels::lbeta_device_function,
-           test_kernel_code});
+           test_lbeta_kernel_code});
 
 TEST(MathMatrixCL, lbeta) {
   Eigen::VectorXd a = Eigen::VectorXd::Random(1000).array() * 15 + 30;
