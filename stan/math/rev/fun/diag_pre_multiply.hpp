@@ -43,25 +43,27 @@ auto diag_pre_multiply(const Mat1& m1, const Mat2& m2) {
   using inner_ret_type = decltype(value_of(m1).asDiagonal() * value_of(m2));
   using ret_type = return_var_matrix_t<inner_ret_type, Mat1, Mat2>;
   if (!is_constant<Mat1>::value && !is_constant<Mat2>::value) {
-    /* arena_t<promote_scalar_t<var, Mat1>> arena_m1 = m1;
+    arena_t<promote_scalar_t<var, Mat1>> arena_m1 = m1;
     arena_t<promote_scalar_t<var, Mat2>> arena_m2 = m2;
-    arena_t<ret_type> ret(arena_m1.val().cwiseProduct(arena_m2.val()));
+    arena_t<ret_type> ret(arena_m1.val().asDiagonal() * arena_m2.val());
     reverse_pass_callback([ret, arena_m1, arena_m2]() mutable {
-      for (Eigen::Index j = 0; j < arena_m2.cols(); ++j) {
-        for (Eigen::Index i = 0; i < arena_m2.rows(); ++i) {
+      for (int i = 0; i < arena_m2.cols(); ++i) {
+        for (int j = 0; j < arena_m2.rows(); ++j) {
           const auto ret_adj = ret.adj().coeffRef(i, j);
-          arena_m1.adj().coeffRef(i, j) += arena_m2.val().coeff(i, j) * ret_adj;
-          arena_m2.adj().coeffRef(i, j) += arena_m1.val().coeff(i, j) * ret_adj;
+          arena_m1.adj().coeffRef(i) += arena_m2.val().coeff(i, j) * ret_adj;
+          arena_m2.adj().coeffRef(i, j) += arena_m1.val().coeff(i) * ret_adj;
         }
       }
     });
-    return ret_type(ret); */
+    return ret_type(ret);
   } else if (!is_constant<Mat1>::value) {
 		std::cout << "Inside else if." << std::endl;
     arena_t<promote_scalar_t<var, Mat1>> arena_m1 = m1;
     arena_t<promote_scalar_t<double, Mat2>> arena_m2 = value_of(m2);
     arena_t<ret_type> ret(arena_m1.val().asDiagonal() * arena_m2);
 		std::cout << ret << std::endl;
+		std::cout << "ret.adj(): " << std::endl << ret.adj() << std::endl 
+			<< "---------------" << std::endl;
     reverse_pass_callback([ret, arena_m1, arena_m2]() mutable {
 			for (int i = 0; i < arena_m1.size(); ++i) {
 				for (int j = 0; j < arena_m1.size(); ++j) {
@@ -77,15 +79,36 @@ auto diag_pre_multiply(const Mat1& m1, const Mat2& m2) {
       // arena_m1.adj().array() += arena_m2.array() * ret.adj().array(); // CHANGE HERE!
     });
     return ret_type(ret);
-  } /* else if (!is_constant<Mat2>::value) {
+  } else if (!is_constant<Mat2>::value) {
     arena_t<promote_scalar_t<double, Mat1>> arena_m1 = value_of(m1);
     arena_t<promote_scalar_t<var, Mat2>> arena_m2 = m2;
-    arena_t<ret_type> ret(arena_m1.cwiseProduct(arena_m2.val()));
-    reverse_pass_callback([ret, arena_m2, arena_m1]() mutable {
-      arena_m2.adj().array() += arena_m1.array() * ret.adj().array();
+		arena_t<ret_type> ret(arena_m1.asDiagonal() * arena_m2.val());
+		std::cout << "Initialized adj():" << std::endl << arena_m2.adj()
+			<< std::endl << "-------------------" << std::endl;
+		std::cout << "Initialized adj().coeffRef:" << std::endl << arena_m2.adj().coeffRef(0, 0)
+			<< std::endl << "-------------------" << std::endl;
+		std::cout << "arena_m1.val():" << std::endl << arena_m1.val()
+			<< std::endl << "-------------------" << std::endl;
+		std::cout << "ret.adj():" << std::endl << ret.adj()
+			<< std::endl << "-------------------" << std::endl;
+		std::cout << "m1.size():" << std::endl << arena_m1.size()
+			<< std::endl << "-------------------" << std::endl;
+		std::cout << "ret:" << std::endl << ret
+			<< std::endl << "-------------------" << std::endl;
+    reverse_pass_callback([ret, arena_m1, arena_m2]() mutable {
+			std::cout << "hh" << std::endl;
+			/* for (int i = 0; i < arena_m1.size(); ++i) {
+				for (int j = 0; j < arena_m1.size(); ++j) {
+					std::cout << "oo" << std::endl;
+					// arena_m2.adj().coeffRef(i,j) += 2;
+					//arena_m2.adj().coeffRef(i,j) += arena_m1.val().coeff(i); *
+					//	ret.adj().coeffRef(i, j);
+				}
+			} */
     });
+		std::cout << "Works here." << std::endl;
     return ret_type(ret);
-  } */
+  }
 }
 
 }  // namespace math
