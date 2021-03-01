@@ -44,7 +44,7 @@ inline auto offset_multiplier_constrain(const T& x, const M& mu,
   const auto& mu_ref = to_ref(mu);
   const auto& sigma_ref = to_ref(sigma);
   check_consistent_sizes(function, "offset", mu, "multiplier", sigma,
-			 "parameter", x);
+                         "parameter", x);
   check_finite(function, "offset", value_of_rec(mu_ref));
   check_positive_finite(function, "multiplier", value_of_rec(sigma_ref));
   return fma(sigma_ref, x, mu_ref);
@@ -83,10 +83,10 @@ inline auto offset_multiplier_constrain(const T& x, const M& mu, const S& sigma,
   const auto& mu_ref = to_ref(mu);
   const auto& sigma_ref = to_ref(sigma);
   check_consistent_sizes(function, "offset", mu, "multiplier", sigma,
-			 "parameter", x);
+                         "parameter", x);
   check_finite(function, "offset", value_of_rec(mu_ref));
   check_positive_finite(function, "multiplier", value_of_rec(sigma_ref));
-  if(size(sigma_ref) == 1 && size(x) > 1) {
+  if (size(sigma_ref) == 1 && size(x) > 1) {
     lp += sum(multiply_log(size(x), sigma_ref));
   } else {
     lp += sum(log(sigma_ref));

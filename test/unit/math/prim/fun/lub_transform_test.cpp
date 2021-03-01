@@ -192,7 +192,8 @@ TEST(prob_transform, lub_constrain_matrix) {
     double lp1 = 0.0;
     Eigen::VectorXd result = stan::math::lub_constrain(x, lbd, ubd, lp0);
     for (size_t i = 0; i < result.size(); ++i) {
-      EXPECT_FLOAT_EQ(result(i), stan::math::lub_constrain(x(i), lbd, ubd, lp1));
+      EXPECT_FLOAT_EQ(result(i),
+                      stan::math::lub_constrain(x(i), lbd, ubd, lp1));
     }
     EXPECT_FLOAT_EQ(lp0, lp1);
     auto x_free = stan::math::lub_free(result, lbd, ubd);
@@ -206,7 +207,8 @@ TEST(prob_transform, lub_constrain_matrix) {
     double lp1 = 0.0;
     Eigen::VectorXd result = stan::math::lub_constrain(x, lb, ubd, lp0);
     for (size_t i = 0; i < result.size(); ++i) {
-      EXPECT_FLOAT_EQ(result(i), stan::math::lub_constrain(x(i), lb(i), ubd, lp1));
+      EXPECT_FLOAT_EQ(result(i),
+                      stan::math::lub_constrain(x(i), lb(i), ubd, lp1));
     }
     EXPECT_FLOAT_EQ(lp0, lp1);
     auto x_free = stan::math::lub_free(result, lb, ubd);
@@ -222,7 +224,8 @@ TEST(prob_transform, lub_constrain_matrix) {
     double lp1 = 0.0;
     Eigen::VectorXd result = stan::math::lub_constrain(x, lbd, ub, lp0);
     for (size_t i = 0; i < result.size(); ++i) {
-      EXPECT_FLOAT_EQ(result(i), stan::math::lub_constrain(x(i), lbd, ub(i), lp1));
+      EXPECT_FLOAT_EQ(result(i),
+                      stan::math::lub_constrain(x(i), lbd, ub(i), lp1));
     }
     EXPECT_FLOAT_EQ(lp0, lp1);
     auto x_free = stan::math::lub_free(result, lbd, ub);
@@ -238,7 +241,8 @@ TEST(prob_transform, lub_constrain_matrix) {
     double lp1 = 0.0;
     Eigen::VectorXd result = stan::math::lub_constrain(x, lb, ub, lp0);
     for (size_t i = 0; i < result.size(); ++i) {
-      EXPECT_FLOAT_EQ(result(i), stan::math::lub_constrain(x(i), lb(i), ub(i), lp1));
+      EXPECT_FLOAT_EQ(result(i),
+                      stan::math::lub_constrain(x(i), lb(i), ub(i), lp1));
     }
     EXPECT_FLOAT_EQ(lp0, lp1);
     auto x_free = stan::math::lub_free(result, lb, ub);
