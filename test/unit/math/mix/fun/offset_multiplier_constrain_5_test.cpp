@@ -1,19 +1,11 @@
 #include <test/unit/math/test_ad.hpp>
 #include <test/unit/math/mix/fun/offset_multiplier_constrain_helpers.hpp>
 
-// array matrix[], array matrix[], array matrix[]
-// array matrix[], array matrix[], matrix[]
-// array matrix[], matrix[], array matrix[]
-// array matrix[], matrix[], matrix[]
-// array matrix[], array matrix[], real
-// array matrix[], real, array matrix[]
-// array matrix[], matrix[], real
-// array matrix[], real, matrix[]
-// array matrix[], real, real
+// array[] matrix, array[] matrix, real
+// array[] matrix, real, array[] matrix
 TEST(mathMixMatFun, offset_multiplier_stdvec_mat_scalar1_constrain) {
   Eigen::MatrixXd A_inner(2, 3);
-  // swapping 0.0000001 for 0 causes a failure for the hessian?
-  A_inner << 5.0, 2.0, 4.0, -2.0, 0.0000001, 0.1;
+  A_inner << 5.0, 2.0, 4.0, -2.0, 0.0, 0.1;
   Eigen::MatrixXd mu_inner(2, 3);
   mu_inner << -1.0, 1.0, -6.0, 1.0, 0.0, 0.01;
   Eigen::MatrixXd sigma_inner(2, 3);

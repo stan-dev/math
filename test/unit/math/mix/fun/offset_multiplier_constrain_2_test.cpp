@@ -23,6 +23,6 @@ TEST(mathMixMatFun, offset_multiplier_constrain_vector_vector_vector) {
   mu << -3.0, 0.0, -6.0, 6.0;
   Eigen::MatrixXd sigma(2, 2);
   sigma << -1.0, 5.0, 0.0, 38.0;
-  // offset_multiplier_constrain_tests::expect(x1, mu, sigma);
+  offset_multiplier_constrain_tests::expect(x1, mu, sigma);
   offset_multiplier_constrain_tests::expect(x2, mu, sigma);
 }
