@@ -12,7 +12,7 @@ TEST(AgradRev, set_zero_all_adjoints_nested_outside) {
   EXPECT_FLOAT_EQ(chaining.adj(), 2.0);
 
   stan::math::recover_memory_nested();
-  
+
   stan::math::var non_chaining = new stan::math::vari(1.0, false);
   non_chaining.adj() = 2.0;
 

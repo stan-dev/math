@@ -26,8 +26,8 @@ static void set_zero_all_adjoints_nested() {
   const size_t start1
       = ChainableStack::instance_->nested_var_stack_sizes_.back();
   // avoid wrap with unsigned when start1 == 0
-  for (size_t i = start1;
-       i < ChainableStack::instance_->var_stack_.size(); ++i) {
+  for (size_t i = start1; i < ChainableStack::instance_->var_stack_.size();
+       ++i) {
     ChainableStack::instance_->var_stack_[i]->set_zero_adjoint();
   }
 
