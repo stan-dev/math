@@ -233,8 +233,8 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
    */
   template <typename Vec, require_std_vector_vt<is_eigen, Vec>* = nullptr,
             require_st_same<Vec, T>* = nullptr>
-  explicit matrix_cl(Vec&& A) try
-      : rows_(A.empty() ? 0 : A[0].size()), cols_(A.size()) {
+  explicit matrix_cl(Vec&& A) try : rows_(A.empty() ? 0 : A[0].size()),
+                                    cols_(A.size()) {
     if (this->size() == 0) {
       return;
     }
