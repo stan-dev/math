@@ -10,6 +10,7 @@
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/rowwise_reduction.hpp>
+#include <stan/math/opencl/kernel_generator/calc_if.hpp>
 #include <map>
 #include <string>
 #include <type_traits>
@@ -20,6 +21,27 @@ namespace math {
 /** \addtogroup opencl_kernel_generator
  *  @{
  */
+
+namespace internal {
+class colwise_reduction_base {};
+
+/**
+ * Determine number of work groups in rows direction that will be run fro
+ * colwise reduction of given size.
+ * @param n_rows number of rows of expression to resuce
+ * @param n_cols number of columns of expression to resuce
+ * @return number of work groups in rows direction
+ */
+int colwise_reduction_wgs_rows(int n_rows, int n_cols) {
+  int local = opencl_context.base_opts().at("LOCAL_SIZE_");
+  int preferred_work_groups
+      = opencl_context.device()[0].getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>() * 16;
+  // round up n_rows/local/n_cols
+  return (std::min(preferred_work_groups, (n_rows + local - 1) / local) + n_cols
+          - 1)
+         / n_cols;
+}
+}  // namespace internal
 
 /**
  * Represents a column wise reduction in kernel generator expressions. So as to
@@ -36,7 +58,8 @@ namespace math {
  */
 template <typename Derived, typename T, typename Operation>
 class colwise_reduction
-    : public operation_cl<Derived, typename std::remove_reference_t<T>::Scalar,
+    : public internal::colwise_reduction_base,
+      public operation_cl<Derived, typename std::remove_reference_t<T>::Scalar,
                           T> {
  public:
   using Scalar = typename std::remove_reference_t<T>::Scalar;
@@ -138,14 +161,10 @@ class colwise_reduction
     if (arg_cols == 0) {
       return 1;
     }
-    int local = opencl_context.base_opts().at("LOCAL_SIZE_");
-    int preferred_work_groups
-        = opencl_context.device()[0].getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>()
-          * 16;
-
-    return (std::min(preferred_work_groups, (arg_rows + local - 1) / local)
-            + arg_cols - 1)
-           / arg_cols;
+    if (arg_cols == -1) {
+      return -1;
+    }
+    return internal::colwise_reduction_wgs_rows(arg_rows, arg_cols);
   }
 
   /**
@@ -297,6 +316,25 @@ inline auto colwise_min(T&& a) {
   return colwise_min_<as_operation_cl_t<T>>(
       as_operation_cl(std::forward<T>(a)));
 }
+
+namespace internal {
+template <typename T>
+struct is_colwise_reduction_impl
+    : public std::is_base_of<internal::colwise_reduction_base,
+                             std::decay_t<T>> {};
+template <typename T>
+struct is_colwise_reduction_impl<calc_if_<true, T>>
+    : public std::is_base_of<internal::colwise_reduction_base,
+                             std::decay_t<T>> {};
+}  // namespace internal
+
+/**
+ * Check whether a kernel generator expression is a colwise reduction.
+ */
+template <typename T>
+using is_colwise_reduction
+    = internal::is_colwise_reduction_impl<std::decay_t<T>>;
+
 /** @}*/
 }  // namespace math
 }  // namespace stan

@@ -161,23 +161,29 @@ void compare_cpu_opencl_prim_rev_impl(const Functor& functor,
                                       const Args&... args) {
   prim_rev_argument_combinations(
       [&functor](const auto& args_for_cpu, const auto& args_for_opencl) {
-        auto res_cpu = eval(functor(std::get<Is>(args_for_cpu)...));
-        auto res_opencl
-            = eval(functor(opencl_argument(std::get<Is>(args_for_opencl))...));
         std::string signature = type_name<decltype(args_for_cpu)>().data();
-        expect_eq(res_opencl, res_cpu,
-                  ("CPU and OpenCL return values do not match for signature "
-                   + signature + "!")
-                      .c_str());
-        var(recursive_sum(res_cpu) + recursive_sum(res_opencl)).grad();
+        try {
+          auto res_cpu = eval(functor(std::get<Is>(args_for_cpu)...));
+          auto res_opencl = eval(
+              functor(opencl_argument(std::get<Is>(args_for_opencl))...));
+          expect_eq(res_opencl, res_cpu,
+                    ("CPU and OpenCL return values do not match for signature "
+                     + signature + "!")
+                        .c_str());
+          var(recursive_sum(res_cpu) + recursive_sum(res_opencl)).grad();
 
-        static_cast<void>(std::initializer_list<int>{
-            (expect_adj_near(
-                 std::get<Is>(args_for_opencl), std::get<Is>(args_for_cpu),
-                 ("CPU and OpenCL adjoints do not match for argument "
-                  + std::to_string(Is) + " for signature " + signature + "!")
-                     .c_str()),
-             0)...});
+          static_cast<void>(std::initializer_list<int>{
+              (expect_adj_near(
+                   std::get<Is>(args_for_opencl), std::get<Is>(args_for_cpu),
+                   ("CPU and OpenCL adjoints do not match for argument "
+                    + std::to_string(Is) + " for signature " + signature + "!")
+                       .c_str()),
+               0)...});
+        } catch (...) {
+          std::cerr << "exception thrown in signature " << signature << ":"
+                    << std::endl;
+          throw;
+        }
 
         set_zero_all_adjoints();
       },
