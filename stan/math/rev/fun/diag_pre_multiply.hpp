@@ -57,13 +57,9 @@ auto diag_pre_multiply(const Mat1& m1, const Mat2& m2) {
     });
     return ret_type(ret);
   } else if (!is_constant<Mat1>::value) {
-		std::cout << "Inside else if." << std::endl;
     arena_t<promote_scalar_t<var, Mat1>> arena_m1 = m1;
     arena_t<promote_scalar_t<double, Mat2>> arena_m2 = value_of(m2);
     arena_t<ret_type> ret(arena_m1.val().asDiagonal() * arena_m2);
-		std::cout << ret << std::endl;
-		std::cout << "ret.adj(): " << std::endl << ret.adj() << std::endl 
-			<< "---------------" << std::endl;
     reverse_pass_callback([ret, arena_m1, arena_m2]() mutable {
 			for (int i = 0; i < arena_m1.size(); ++i) {
 				for (int j = 0; j < arena_m1.size(); ++j) {
@@ -71,12 +67,6 @@ auto diag_pre_multiply(const Mat1& m1, const Mat2& m2) {
 						ret.adj().coeffRef(i, j);
 				}
 			}
-			std::cout << "ret.adj(): " << std::endl << ret.adj() << std::endl 
-			<< "---------------" << std::endl;
-			std::cout << "ret.adj().array(): " << std::endl << ret.adj().array() << std::endl 
-			<< "---------------" << std::endl;
-			// arena.m1.adj().coeffRef(i) += 
-      // arena_m1.adj().array() += arena_m2.array() * ret.adj().array(); // CHANGE HERE!
     });
     return ret_type(ret);
   } else if (!is_constant<Mat2>::value) {
