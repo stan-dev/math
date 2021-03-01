@@ -181,7 +181,7 @@ TEST(KernelGenerator, colwise_reduction_of_rowwise_broadcast_test) {
   MatrixXd raw_res = stan::math::from_matrix_cl(res2_cl);
   EXPECT_GE(v.rows(), raw_res.rows());
   MatrixXd res = raw_res.colwise().sum();
-  MatrixXd correct = v.replicate(1,2).colwise().sum();
+  MatrixXd correct = v.replicate(1, 2).colwise().sum();
   EXPECT_EQ(correct.rows(), res.rows());
   EXPECT_EQ(correct.cols(), res.cols());
   EXPECT_MATRIX_NEAR(correct, res, 1e-9);
