@@ -235,11 +235,8 @@ pipeline {
                                 sh "echo STAN_OPENCL=true>> make/local"
                                 sh "echo OPENCL_PLATFORM_ID=0>> make/local"
                                 sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
-                                runTests("test/unit/math/opencl")
+                                runTests("test/unit/math/opencl", false)
                                 runTests("test/unit/multiple_translation_units_test.cpp")
-                                runTests("test/unit/math/prim/fun/gp_exp_quad_cov_test.cpp")
-                                runTests("test/unit/math/prim/fun/multiply_test.cpp")
-                                runTests("test/unit/math/rev/fun/multiply_test.cpp")
                             } else {
                                 deleteDirWin()
                                 unstash 'MathSetup'
@@ -251,9 +248,6 @@ pipeline {
                                 bat "mingw32-make.exe -f make/standalone math-libs"
                                 runTestsWin("test/unit/math/opencl", false, false)
                                 runTestsWin("test/unit/multiple_translation_units_test.cpp", false, false)
-                                runTestsWin("test/unit/math/prim/fun/gp_exp_quad_cov_test.cpp", false, false)
-                                runTestsWin("test/unit/math/prim/fun/multiply_test.cpp", false, false)
-                                runTestsWin("test/unit/math/rev/fun/multiply_test.cpp", false, false)
                             }
                         }
                     }
@@ -269,11 +263,8 @@ pipeline {
                                 sh "echo STAN_OPENCL=true>> make/local"
                                 sh "echo OPENCL_PLATFORM_ID=1>> make/local"
                                 sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
-                                runTests("test/unit/math/opencl")
+                                runTests("test/unit/math/opencl", false)
                                 runTests("test/unit/multiple_translation_units_test.cpp")
-                                runTests("test/unit/math/prim/fun/gp_exp_quad_cov_test.cpp")
-                                runTests("test/unit/math/prim/fun/multiply_test.cpp")
-                                runTests("test/unit/math/rev/fun/multiply_test.cpp")
                             } else {
                                 deleteDirWin()
                                 unstash 'MathSetup'
@@ -285,9 +276,6 @@ pipeline {
                                 bat "mingw32-make.exe -f make/standalone math-libs"
                                 runTestsWin("test/unit/math/opencl", false, false)
                                 runTestsWin("test/unit/multiple_translation_units_test.cpp", false, false)
-                                runTestsWin("test/unit/math/prim/fun/gp_exp_quad_cov_test.cpp", false, false)
-                                runTestsWin("test/unit/math/prim/fun/multiply_test.cpp", false, false)
-                                runTestsWin("test/unit/math/rev/fun/multiply_test.cpp", false, false)
                             }
 
                         }

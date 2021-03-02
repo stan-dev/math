@@ -6,7 +6,7 @@
 #include <test/unit/math/expect_near_rel.hpp>
 #include <string>
 
-static const std::string test_kernel_code
+static const std::string test_digamma_kernel_code
     = STRINGIFY(__kernel void test(__global double *B, __global double *A) {
         const int i = get_global_id(0);
         B[i] = digamma(A[i]);
@@ -16,7 +16,7 @@ const stan::math::opencl_kernels::kernel_cl<
     stan::math::opencl_kernels::out_buffer,
     stan::math::opencl_kernels::in_buffer>
     digamma("test", {stan::math::opencl_kernels::digamma_device_function,
-                     test_kernel_code});
+                     test_digamma_kernel_code});
 
 TEST(MathMatrixCL, digamma) {
   Eigen::VectorXd a = Eigen::VectorXd::Random(1000).array() * 30;
