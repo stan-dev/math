@@ -33,7 +33,7 @@ template <typename Mat1, typename Mat2,
           require_eigen_t<Mat2>* = nullptr> */
 // template <typename Mat1, typename Mat2>
 auto diag_pre_multiply(const Mat1& m1, const Mat2& m2) {
-	std::cout << "Using rev." << std::endl;
+	// std::cout << "Using rev." << std::endl;
 	check_size_match("diag_pre_multiply", "m1.size()", m1.size(), "m2.rows()",
                    m2.rows());
   using inner_ret_type = decltype(value_of(m1).asDiagonal() * value_of(m2));
@@ -58,12 +58,17 @@ auto diag_pre_multiply(const Mat1& m1, const Mat2& m2) {
     arena_t<ret_type> ret(arena_m1.val().asDiagonal() * arena_m2);
     reverse_pass_callback([ret, arena_m1, arena_m2]() mutable {
       // We can do this vectorized with for example rowwise().sum() I think.
-			for (int i = 0; i < arena_m1.size(); ++i) {
-				for (int j = 0; j < arena_m2.cols(); ++j) {
-					arena_m1.adj().coeffRef(i) += arena_m2.val().coeff(i, j) *
-						ret.adj().coeffRef(i, j);
-				}
-			}
+			// for (int i = 0; i < arena_m1.size(); ++i) {
+			// 	for (int j = 0; j < arena_m2.cols(); ++j) {
+			// 		arena_m1.adj().coeffRef(i) += arena_m2.val().coeff(i, j) *
+			// 			ret.adj().coeffRef(i, j);
+			// 	}
+			// }
+
+      //arena_m1.adj().array() += arena_m2.val().cwiseProduct(ret.adj()).rowwise().sum();
+      // arena_m1.adj().array() += arena_m1.adj().array();
+      // arena_m1.adj() += arena_m2.val().rowwise().sum();
+      arena_m1.adj().array() += arena_m2.val().array().cwiseProduct(ret.adj().array()).rowwise().sum();
       // Can I do: arena_m1.adj() += (arena_m2.val() * ret.adj()).rowwise().sum()?
       // Or: arena_m1.adj().array() += (arena_m2.val().array() * ret.adj().array()).rowwise().sum()?
       // Or declare a new temporary variable for the product?

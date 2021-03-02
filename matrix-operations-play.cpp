@@ -24,5 +24,9 @@ int main() {
   Eigen::Matrix<stan::math::var, 2, 1> M5;
   M5 =  M2.val().cwiseProduct(M2.val()).rowwise().sum();
   std::cout << M5 << std::endl;
+
+  Eigen::Matrix<stan::math::var, 2, 1> M6;
+  M6 =  M2.val().cwiseProduct(M2.adj()).rowwise().sum();
+  std::cout << M6 << std::endl;
 	return 0;
 }
