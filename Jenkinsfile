@@ -229,6 +229,11 @@ pipeline {
                     post { always { retry(3) { deleteDir() } } }
                 }
                 stage('OpenCL CPU tests') {
+                    when {
+                        expression {
+                            !skipOpenCL
+                        }
+                    }
                     agent { label "gelman-group-win2 || gg-linux" }
                     steps {
                         script {
@@ -257,11 +262,6 @@ pipeline {
                     }
                 }
                 stage('OpenCL GPU tests') {
-                    when {
-                        expression {
-                            !skipOpenCL
-                        }
-                    }
                     agent { label "gelman-group-win2 || gg-linux" }
                     steps {
                         script {
