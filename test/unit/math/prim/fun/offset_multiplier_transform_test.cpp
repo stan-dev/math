@@ -195,7 +195,6 @@ TEST(prob_transform, offset_multiplier_constrain_matrix) {
     }
     EXPECT_EQ(lp0, lp1);
     auto x_free = stan::math::offset_multiplier_free(result, offsetd, sigma);
-    EXPECT_MATRIX_EQ(x, x_free);
     for (size_t i = 0; i < x.size(); ++i) {
       EXPECT_FLOAT_EQ(x.coeff(i), x_free.coeff(i));
     }
@@ -428,7 +427,7 @@ TEST(prob_transform, offset_multiplier_constrain_stdvec_matrix) {
         std::invalid_argument);
     EXPECT_THROW(
         stan::math::offset_multiplier_free(x_vec, offset_vec, sigma_bad),
-        std::invalid_argument);
+        std::domain_error);
     EXPECT_THROW(
         stan::math::offset_multiplier_constrain(x_vec, offset_bad_vec, sigma),
         std::invalid_argument);
@@ -493,7 +492,7 @@ TEST(prob_transform, offset_multiplier_constrain_stdvec_matrix) {
         stan::math::offset_multiplier_constrain(x_vec, offset, sigma_bad),
         std::invalid_argument);
     EXPECT_THROW(stan::math::offset_multiplier_free(x_vec, offset, sigma_bad),
-                 std::invalid_argument);
+                 std::domain_error);
   }
   // The rest of the real versions of these don't need the throw test
   // array[] matrix, matrix, real

@@ -11,13 +11,13 @@ TEST(prob_transform, offset_multiplier_matrix_j) {
   sigma << 5.0, 6.0;
   Eigen::VectorXd x(2);
   x << -1.0, 2.0;
-  using stan::math::multiply_log;
+  using stan::math::log;
   using stan::math::offset_multiplier_constrain;
   using stan::math::size;
   using stan::math::sum;
   EXPECT_MATRIX_EQ(mu.array() + sigma.array() * x.array(),
                    offset_multiplier_constrain(x, mu, sigma, lp));
-  EXPECT_FLOAT_EQ(-17.0 + sum(multiply_log(size(x), sigma)), lp);
+  EXPECT_FLOAT_EQ(-17.0 + sum(log(sigma)), lp);
 
   double lp1 = -12.9;
 }

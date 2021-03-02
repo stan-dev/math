@@ -47,6 +47,84 @@ inline auto offset_multiplier_free(const T& y, const L& mu, const S& sigma) {
   return divide(subtract(y, mu_ref), sigma_ref);
 }
 
+
+/**
+ * Overload for array of x and non-array mu and sigma
+ */
+template <typename T, typename M, typename S,
+          require_all_not_std_vector_t<M, S>* = nullptr>
+inline auto offset_multiplier_free(const std::vector<T>& x, const M& mu,
+                                        const S& sigma) {
+  std::vector<
+      plain_type_t<decltype(offset_multiplier_free(x[0], mu, sigma))>>
+      ret;
+  ret.reserve(x.size());
+  const auto& mu_ref = to_ref(mu);
+  const auto& sigma_ref = to_ref(sigma);
+  for (size_t i = 0; i < x.size(); ++i) {
+    ret.emplace_back(offset_multiplier_free(x[i], mu_ref, sigma_ref));
+  }
+  return ret;
+}
+
+/**
+ * Overload for array of x and sigma and non-array mu
+ */
+template <typename T, typename M, typename S,
+          require_not_std_vector_t<M>* = nullptr>
+inline auto offset_multiplier_free(const std::vector<T>& x, const M& mu,
+                                        const std::vector<S>& sigma) {
+  check_matching_dims("offset_multiplier_free", "x", x, "sigma", sigma);
+  std::vector<
+      plain_type_t<decltype(offset_multiplier_free(x[0], mu, sigma[0]))>>
+      ret;
+  ret.reserve(x.size());
+  const auto& mu_ref = to_ref(mu);
+  for (size_t i = 0; i < x.size(); ++i) {
+    ret.emplace_back(offset_multiplier_free(x[i], mu_ref, sigma[i]));
+  }
+  return ret;
+}
+
+/**
+ * Overload for array of x and mu and non-array sigma
+ */
+template <typename T, typename M, typename S,
+          require_not_std_vector_t<S>* = nullptr>
+inline auto offset_multiplier_free(const std::vector<T>& x,
+                                        const std::vector<M>& mu,
+                                        const S& sigma) {
+  check_matching_dims("offset_multiplier_free", "x", x, "mu", mu);
+  std::vector<
+      plain_type_t<decltype(offset_multiplier_free(x[0], mu[0], sigma))>>
+      ret;
+  ret.reserve(x.size());
+  const auto& sigma_ref = to_ref(sigma);
+  for (size_t i = 0; i < x.size(); ++i) {
+    ret.emplace_back(offset_multiplier_free(x[i], mu[i], sigma_ref));
+  }
+  return ret;
+}
+
+/**
+ * Overload for array of x, mu, and sigma
+ */
+template <typename T, typename M, typename S>
+inline auto offset_multiplier_free(const std::vector<T>& x,
+                                        const std::vector<M>& mu,
+                                        const std::vector<S>& sigma) {
+  check_matching_dims("offset_multiplier_free", "x", x, "mu", mu);
+  check_matching_dims("offset_multiplier_free", "x", x, "sigma", sigma);
+  std::vector<plain_type_t<decltype(
+      offset_multiplier_free(x[0], mu[0], sigma[0]))>>
+      ret;
+  ret.reserve(x.size());
+  for (size_t i = 0; i < x.size(); ++i) {
+    ret.emplace_back(offset_multiplier_free(x[i], mu[i], sigma[i]));
+  }
+  return ret;
+}
+
 }  // namespace math
 }  // namespace stan
 #endif
