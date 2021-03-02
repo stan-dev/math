@@ -8,6 +8,7 @@
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/calc_if.hpp>
 #include <stan/math/opencl/kernel_generator/check_cl.hpp>
+#include <stan/math/opencl/kernel_generator/colwise_reduction.hpp>
 #include <stan/math/opencl/kernel_generator/load.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
 #include <algorithm>
@@ -71,23 +72,29 @@ struct multi_result_kernel_internal {
       const auto& result = std::get<N>(assignment_pairs).first;
       const char* function = "results.operator=";
 
-      int expressin_rows = expression.rows();
-      int expressin_cols = expression.cols();
+      int expression_rows = expression.rows();
+      int expression_cols = expression.cols();
+      if (is_colwise_reduction<T_current_expression>::value
+          && expression_cols == -1) {
+        expression_cols = n_cols;
+        expression_rows = internal::colwise_reduction_wgs_rows(
+            expression.thread_rows(), expression_cols);
+      }
       if (expression.thread_rows() != -1) {
         check_size_match(function, "Rows of ", "expression",
                          expression.thread_rows(), "rows of ",
                          "first expression", n_rows);
       } else {
-        expressin_rows = n_rows;
+        expression_rows = n_rows;
       }
       if (expression.thread_cols() != -1) {
         check_size_match(function, "Columns of ", "expression",
                          expression.thread_cols(), "columns of ",
                          "first expression", n_cols);
       } else {
-        expressin_cols = n_cols;
+        expression_cols = n_cols;
       }
-      result.check_assign_dimensions(expressin_rows, expressin_cols);
+      result.check_assign_dimensions(expression_rows, expression_cols);
       int bottom_written = 1 - expression.rows();
       int top_written = expression.cols() - 1;
       std::pair<int, int> extreme_diagonals = expression.extreme_diagonals();
@@ -373,21 +380,17 @@ class results_cl {
           "kernel void calculate(" + parts.args +
           "const int rows, const int cols){\n"
           "const int gid_i = get_global_id(0);\n"
+          "const int gid_j = get_global_id(1);\n"
           "const int lid_i = get_local_id(0);\n"
           "const int lsize_i = get_local_size(0);\n"
+          "const int gsize_i = get_global_size(0);\n"
+          "const int gsize_j = get_global_size(1);\n"
           "const int wg_id_i = get_group_id(0);\n"
-          "const int wg_id_j = get_group_id(1);\n"
           "const int n_groups_i = get_num_groups(0);\n"
-          "const int blocks_rows = (rows + lsize_i - 1) / lsize_i;\n"
-          "const int blocks_cols = (cols + lsize_i - 1) / lsize_i;\n"
-          "const int i0 = lsize_i * wg_id_i;\n"
-          "const int i = i0 + lid_i;\n"
-          "const int j0 = lsize_i * wg_id_j;\n"
           + parts.declarations +
-          "for(int lid_j = 0; lid_j < min(cols - j0, lsize_i); lid_j++){\n"
-          "const int j = j0 + lid_j;\n"
+          "for(int j = gid_j; j < cols; j+=gsize_j){\n"
           + parts.initialization +
-          "if(i < rows){\n"
+          "for(int i = gid_i; i < rows; i+=gsize_i){\n"
           + parts.body
           + parts.body_suffix +
           "}\n"
@@ -481,9 +484,11 @@ class results_cl {
       if (require_specific_local_size) {
         kernel.setArg(arg_num++, n_rows);
         kernel.setArg(arg_num++, n_cols);
+
         int local = opencl_context.base_opts().at("LOCAL_SIZE_");
-        int wgs_rows = (n_rows + local - 1) / local;
-        int wgs_cols = (n_cols + local - 1) / local;
+
+        int wgs_rows = internal::colwise_reduction_wgs_rows(n_rows, n_cols);
+        int wgs_cols = (n_cols + wgs_rows - 1) / wgs_rows;
 
         opencl_context.queue().enqueueNDRangeKernel(
             kernel, cl::NullRange, cl::NDRange(local * wgs_rows, wgs_cols),
