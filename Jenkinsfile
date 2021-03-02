@@ -166,8 +166,8 @@ pipeline {
                     def paths = ['stan', 'make', 'lib', 'test', 'runTests.py', 'runChecks.py', 'makefile', 'Jenkinsfile', '.clang-format'].join(" ")
                     skipRemainingStages = utils.verifyChanges(paths)
 
-                    def paths = ['stan/math/opencl', 'test/unit/math/opencl'].join(" ")
-                    skipOpenCL = utils.verifyChanges(paths)
+                    def openCLPaths = ['stan/math/opencl', 'test/unit/math/opencl'].join(" ")
+                    skipOpenCL = utils.verifyChanges(openCLPaths)
                 }
             }
         }
