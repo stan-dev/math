@@ -9,7 +9,9 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <cvodes/cvodes.h>
+#include <sunmatrix/sunmatrix_sparse.h>
 #include <sunlinsol/sunlinsol_dense.h>
+#include <sunlinsol/sunlinsol_klu.h>
 #include <algorithm>
 #include <ostream>
 #include <utility>
@@ -77,6 +79,7 @@ class cvodes_integrator_adjoint_memory : public chainable_alloc {
   const size_t N_;
   Eigen::VectorXd abs_tol_f_;
   const int lmm_f_;
+  const int ls_sparse_f_;
   const F f_;
   const Eigen::Matrix<T_y0_t0, Eigen::Dynamic, 1> y0_;
   const T_t0 t0_;
@@ -92,17 +95,20 @@ class cvodes_integrator_adjoint_memory : public chainable_alloc {
   Eigen::VectorXd state;
   N_Vector nv_state_;
   N_Vector nv_abs_tol_f_;
-  SUNMatrix A_;
-  SUNLinearSolver LS_;
+  SUNMatrix J_dense_states_;
+  SUNMatrix A_f_;
+  SUNLinearSolver LS_f_;
+  const int nz_;
 
   template <require_eigen_col_vector_t<T_y0>* = nullptr>
-  cvodes_integrator_adjoint_memory(Eigen::VectorXd abs_tol_f, int lmm_f,
+  cvodes_integrator_adjoint_memory(Eigen::VectorXd abs_tol_f, int lmm_f, int ls_sparse_f,
                                    const F& f, const T_y0& y0, const T_t0& t0,
                                    const std::vector<T_ts>& ts,
                                    const T_Args&... args)
       : N_(y0.size()),
         abs_tol_f_(abs_tol_f),
         lmm_f_(lmm_f),
+        ls_sparse_f_(ls_sparse_f),
         f_(f),
         y0_(y0),
         t0_(t0),
@@ -112,13 +118,19 @@ class cvodes_integrator_adjoint_memory : public chainable_alloc {
         value_of_args_tuple_(value_of(args)...),
         y_(ts_.size()),
         cvodes_mem_(nullptr),
-        state(value_of(y0)) {
+        state(value_of(y0)),
+        nz_(N_*N_) {
     if (N_ > 0) {
       nv_state_ = N_VMake_Serial(N_, state.data());
       nv_abs_tol_f_ = N_VMake_Serial(N_, &abs_tol_f_(0));
-      A_ = SUNDenseMatrix(N_, N_);
-      LS_ = SUNDenseLinearSolver(nv_state_, A_);
-
+      J_dense_states_ = SUNDenseMatrix(N_, N_);
+      if (ls_sparse_f) {
+        A_f_ = SUNSparseMatrix(N_, N_, nz_, CSC_MAT);
+        LS_f_ = SUNLinSol_KLU(nv_state_, A_f_);
+      } else {
+        A_f_ = SUNDenseMatrix(N_, N_); 
+        LS_f_ = SUNDenseLinearSolver(nv_state_, A_f_);
+      }
       cvodes_mem_ = CVodeCreate(lmm_f_);
       if (cvodes_mem_ == nullptr) {
         throw std::runtime_error("CVodeCreate failed to allocate memory");
@@ -128,8 +140,9 @@ class cvodes_integrator_adjoint_memory : public chainable_alloc {
 
   ~cvodes_integrator_adjoint_memory() {
     if (N_ > 0) {
-      SUNLinSolFree(LS_);
-      SUNMatDestroy(A_);
+      SUNLinSolFree(LS_f_);
+      SUNMatDestroy(J_dense_states_);
+      SUNMatDestroy(A_f_);
 
       N_VDestroy_Serial(nv_state_);
       N_VDestroy_Serial(nv_abs_tol_f_);
@@ -176,6 +189,8 @@ class cvodes_integrator_adjoint_vari : public vari {
   int solver_b_;
   int lmm_f_;
   int lmm_b_;
+  int ls_sparse_f_;
+  int ls_sparse_b_;
 
   const size_t t0_vars_;
   const size_t ts_vars_;
@@ -240,6 +255,14 @@ class cvodes_integrator_adjoint_vari : public vari {
     integrator->jacobian_states(t, y, J);
     return 0;
   }
+  static int cv_jacobian_states_sparse(realtype t, N_Vector y, N_Vector fy,
+                                       SUNMatrix J, void* user_data, N_Vector tmp1,
+                                       N_Vector tmp2, N_Vector tmp3) {
+    const cvodes_integrator_adjoint_vari* integrator
+        = static_cast<const cvodes_integrator_adjoint_vari*>(user_data);
+    integrator->jacobian_states_sparse(t, y, J);
+    return 0;
+  }
 
   /**
    * Implements the CVLsJacFnB function for evaluating the jacobian of
@@ -251,6 +274,15 @@ class cvodes_integrator_adjoint_vari : public vari {
     const cvodes_integrator_adjoint_vari* integrator
         = static_cast<const cvodes_integrator_adjoint_vari*>(user_data);
     integrator->jacobian_adj(t, y, J);
+    return 0;
+  }
+
+  static int cv_jacobian_adj_sparse(realtype t, N_Vector y, N_Vector yB, N_Vector fyB,
+                                    SUNMatrix J, void* user_data, N_Vector tmp1,
+                                    N_Vector tmp2, N_Vector tmp3) {
+    const cvodes_integrator_adjoint_vari* integrator
+        = static_cast<const cvodes_integrator_adjoint_vari*>(user_data);
+    integrator->jacobian_adj_sparse(t, y, J);
     return 0;
   }
 
@@ -371,8 +403,8 @@ class cvodes_integrator_adjoint_vari : public vari {
    * given time-point t and state y.
    */
   inline void jacobian_states(double t, N_Vector y, SUNMatrix J) const {
-    Eigen::VectorXd fy;
-    Eigen::MatrixXd Jfy;
+    Eigen::Map<Eigen::MatrixXd> Jfy(SM_DATA_D(J), N_, N_);
+    Eigen::Map<const Eigen::VectorXd> x(NV_DATA_S(y), N_);
 
     auto f_wrapped = [&](const Eigen::Matrix<var, Eigen::Dynamic, 1>& y) {
       return apply(
@@ -380,14 +412,33 @@ class cvodes_integrator_adjoint_vari : public vari {
           memory->value_of_args_tuple_);
     };
 
-    jacobian(f_wrapped, Eigen::Map<const Eigen::VectorXd>(NV_DATA_S(y), N_), fy,
-             Jfy);
+    nested_rev_autodiff nested;
 
-    for (size_t j = 0; j < Jfy.cols(); ++j) {
-      for (size_t i = 0; i < Jfy.rows(); ++i) {
-        SM_ELEMENT_D(J, i, j) = Jfy(i, j);
-      }
+    Eigen::Matrix<var, Eigen::Dynamic, 1> x_var(x);
+    Eigen::Matrix<var, Eigen::Dynamic, 1> fx_var = f_wrapped(x_var);
+    grad(fx_var(0).vi_);
+    for (size_t j = 0; j < N_; ++j) {
+      //SM_ELEMENT_D(Jfy, 0, j) = x_var(j).adj();
+      Jfy(0, j) = x_var(j).adj();
+    } 
+    for (int i = 1; i < fx_var.size(); ++i) {
+      nested.set_zero_all_adjoints();
+      grad(fx_var(i).vi_);
+      for (size_t j = 0; j < N_; ++j) {
+        //SM_ELEMENT_D(Jfy, i, j) = x_var(j).adj();
+        Jfy(i, j) = x_var(j).adj();
+      } 
     }
+  }
+
+  inline void jacobian_states_sparse(double t, N_Vector y, SUNMatrix J) const {
+    //SUNMatrix J_dense = SUNDenseMatrix(N_, N_);
+
+    jacobian_states(t, y, memory->J_dense_states_);
+    
+    J = SUNSparseFromDenseMatrix(memory->J_dense_states_, 1E-8, CSC_MAT);
+
+    //SUNMatDestroy(J_dense);
   }
 
   /*
@@ -399,8 +450,29 @@ class cvodes_integrator_adjoint_vari : public vari {
    * @param[out] J CVode structure where output is to be stored
    */
   inline void jacobian_adj(double t, N_Vector y, SUNMatrix J) const {
-    Eigen::VectorXd fy;
-    Eigen::MatrixXd Jfy;
+    Eigen::Map<Eigen::MatrixXd> J_adj_y(SM_DATA_D(J), N_, N_);
+
+    // J_adj_y = -1 * transpose(J_y)
+    jacobian_states(t, y, J);
+
+    J_adj_y.transposeInPlace();
+    J_adj_y.array() *= -1.0;    
+  }
+
+  inline void jacobian_adj_sparse(double t, N_Vector y, SUNMatrix J) const {
+    //SUNMatrix J_adj_y_dense = SUNDenseMatrix(N_, N_);
+
+    jacobian_adj(t, y, memory->J_dense_states_);
+    
+    J = SUNSparseFromDenseMatrix(memory->J_dense_states_, 1E-8, CSC_MAT);
+
+    //SUNMatDestroy(J_adj_y_dense);
+
+    /*    
+    //Eigen::VectorXd fy;
+    //Eigen::MatrixXd Jfy;
+    SUNMatrix Jfy = SUNDenseMatrix(N_, N_);
+    Eigen::Map<const Eigen::VectorXd> x(NV_DATA_S(y), N_);
 
     auto f_wrapped = [&](const Eigen::Matrix<var, Eigen::Dynamic, 1>& y) {
       return apply(
@@ -408,16 +480,40 @@ class cvodes_integrator_adjoint_vari : public vari {
           memory->value_of_args_tuple_);
     };
 
-    jacobian(f_wrapped, Eigen::Map<const Eigen::VectorXd>(NV_DATA_S(y), N_), fy,
-             Jfy);
 
+    nested_rev_autodiff nested;
+
+    Eigen::Matrix<var, Eigen::Dynamic, 1> x_var(x);
+    Eigen::Matrix<var, Eigen::Dynamic, 1> fx_var = f_wrapped(x_var);
+    grad(fx_var(0).vi_);
+    for (size_t j = 0; j < N_; ++j) {
+      //SM_ELEMENT_D(Jfy_dense, j, 0) = -1 *  Jfy(0, j);
+      SM_ELEMENT_D(Jfy, j, 0) = -1 *  x_var(j).adj();
+    } 
+    for (int i = 1; i < fx_var.size(); ++i) {
+      nested.set_zero_all_adjoints();
+      grad(fx_var(i).vi_);
+      for (size_t j = 0; j < N_; ++j) {
+        //SM_ELEMENT_D(Jfy_dense, j, 0) = -1 *  Jfy(0, j);
+        SM_ELEMENT_D(Jfy, j, i) = -1 *  x_var(j).adj();
+      } 
+    }
+
+    //SUNMatZero(J);
+    J = SUNSparseFromDenseMatrix(Jfy, 1E-8, CSC_MAT);
+
+    SUNMatDestroy(Jfy);
+    */
+    /*
     for (size_t j = 0; j < Jfy.cols(); ++j) {
       for (size_t i = 0; i < Jfy.rows(); ++i) {
         SM_ELEMENT_D(J, j, i) = -Jfy(i, j);
       }
     }
+    */
   }
 
+  
  public:
   /**
    * Construct cvodes_integrator object
@@ -474,8 +570,10 @@ class cvodes_integrator_adjoint_vari : public vari {
         interpolation_polynomial_(interpolation_polynomial),
         solver_f_(solver_f),
         solver_b_(solver_b),
-        lmm_f_(solver_f_ == 1 ? CV_ADAMS : CV_BDF),
-        lmm_b_(solver_b_ == 1 ? CV_ADAMS : CV_BDF),
+        lmm_f_(solver_f_ % 2 ? CV_ADAMS : CV_BDF),
+        lmm_b_(solver_b_ % 2 ? CV_ADAMS : CV_BDF),
+        ls_sparse_f_(solver_f_ > 2 ? 1 : 0),
+        ls_sparse_b_(solver_b_ > 2 ? 1 : 0),
         msgs_(msgs),
 
         t0_vars_(count_vars(t0)),
@@ -489,12 +587,13 @@ class cvodes_integrator_adjoint_vari : public vari {
         y0_varis_(
             ChainableStack::instance_->memalloc_.alloc_array<vari*>(y0_vars_)),
         args_varis_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-            args_vars_)) {
+            args_vars_))
+  {
     const char* fun = "cvodes_integrator::integrate";
 
     memory
         = new cvodes_integrator_adjoint_memory<F, T_y0, T_t0, T_ts, T_Args...>(
-            abs_tol_f_, lmm_f_, f, y0, t0, ts, args...);
+            abs_tol_f_, lmm_f_, ls_sparse_f_, f, y0, t0, ts, args...);
 
     save_varis(t0_varis_, t0);
     save_varis(ts_varis_, ts);
@@ -529,9 +628,9 @@ class cvodes_integrator_adjoint_vari : public vari {
     check_positive(fun, "num_checkpoints", num_checkpoints_);
     // for polynomial: 1=CV_HERMITE / 2=CV_POLYNOMIAL
     check_range(fun, "interpolation_polynomial", 2, interpolation_polynomial_);
-    // 1=Adams, 2=BDF, 3=BDF_iterated (todo)
-    check_range(fun, "solver_f", 2, solver_f_);
-    check_range(fun, "solver_b", 2, solver_b_);
+    // 1=Adams, 2=BDF, 3=Adams_sparse, 4=BDF_sparse 
+    check_range(fun, "solver_f", 4, solver_f_);
+    check_range(fun, "solver_b", 4, solver_b_);
 
     /*
     std::cout << "relative_tolerance = " << relative_tolerance << std::endl;
@@ -579,13 +678,20 @@ class cvodes_integrator_adjoint_vari : public vari {
     // create matrix object and linear solver object; resource
     // (de-)allocation is handled in the cvodes_ode_data
     check_flag_sundials(
-        CVodeSetLinearSolver(memory->cvodes_mem_, memory->LS_, memory->A_),
+        CVodeSetLinearSolver(memory->cvodes_mem_, memory->LS_f_, memory->A_f_),
         "CVodeSetLinearSolver");
 
-    check_flag_sundials(
-        CVodeSetJacFn(memory->cvodes_mem_,
-                      &cvodes_integrator_adjoint_vari::cv_jacobian_states),
-        "CVodeSetJacFn");
+    if(ls_sparse_f_) {
+      check_flag_sundials(
+          CVodeSetJacFn(memory->cvodes_mem_,
+                        &cvodes_integrator_adjoint_vari::cv_jacobian_states_sparse),
+          "CVodeSetJacFn");
+    } else {
+      check_flag_sundials(
+          CVodeSetJacFn(memory->cvodes_mem_,
+                        &cvodes_integrator_adjoint_vari::cv_jacobian_states),
+          "CVodeSetJacFn");
+    }
 
     // initialize forward sensitivity system of CVODES as needed
     if (t0_vars_ + ts_vars_ + y0_vars_ + args_vars_ > 0) {
@@ -661,8 +767,15 @@ class cvodes_integrator_adjoint_vari : public vari {
     N_VConst(0.0, nv_state_sens);
     N_VConst(0.0, nv_quad);
 
-    SUNMatrix AB_ = SUNDenseMatrix(N_, N_);
-    SUNLinearSolver LSB_ = SUNDenseLinearSolver(nv_state_sens, AB_);
+    SUNMatrix A_b;
+    SUNLinearSolver LS_b;
+    if (ls_sparse_b_) {
+      A_b = SUNSparseMatrix(N_, N_, N_*N_, CSC_MAT);
+      LS_b = SUNLinSol_KLU(nv_state_sens, A_b);
+    } else {
+      A_b = SUNDenseMatrix(N_, N_); 
+      LS_b = SUNDenseLinearSolver(nv_state_sens, A_b);
+    }
 
     /* check these if needed
       flag = CVodeSetUserDataB(cvode_mem, which, user_dataB);
@@ -736,22 +849,25 @@ class cvodes_integrator_adjoint_vari : public vari {
                                 "CVodeSetMaxNumStepsB");
 
             check_flag_sundials(
-                CVodeSetLinearSolverB(memory->cvodes_mem_, indexB, LSB_, AB_),
+                CVodeSetLinearSolverB(memory->cvodes_mem_, indexB, LS_b, A_b),
                 "CVodeSetLinearSolverB");
 
-            check_flag_sundials(
-                CVodeSetJacFnB(
-                    memory->cvodes_mem_, indexB,
-                    &cvodes_integrator_adjoint_vari::cv_jacobian_adj),
-                "CVodeSetJacFnB");
+            if(ls_sparse_b_) {
+              check_flag_sundials(
+                  CVodeSetJacFnB(
+                      memory->cvodes_mem_, indexB,
+                      &cvodes_integrator_adjoint_vari::cv_jacobian_adj_sparse),
+                  "CVodeSetJacFnB");
+            } else {
+              check_flag_sundials(
+                  CVodeSetJacFnB(
+                      memory->cvodes_mem_, indexB,
+                      &cvodes_integrator_adjoint_vari::cv_jacobian_adj),
+                  "CVodeSetJacFnB");
+            }
 
             // Allocate space for backwards quadrature needed when
-            // parameters vary. The function for which we seek the
-            // derivative wrt to all parameters p is (in notation of
-            // the CVODES manual)
-            // g(t,y,p) = sum_i=1^N y_i * a^y_i * delta(t-T)
-            // this is the sum over each state y_i multiplied with
-            // it's adjoint and a delta function which peaks at t=T
+            // parameters vary.
             if (args_vars_ > 0) {
               check_flag_sundials(
                   CVodeQuadInitB(
@@ -843,15 +959,15 @@ class cvodes_integrator_adjoint_vari : public vari {
       }
 
     } catch (const std::exception& e) {
-      SUNLinSolFree(LSB_);
-      SUNMatDestroy(AB_);
+      SUNLinSolFree(LS_b);
+      SUNMatDestroy(A_b);
       N_VDestroy_Serial(nv_state_sens);
       N_VDestroy_Serial(nv_quad);
       throw;
     }
 
-    SUNLinSolFree(LSB_);
-    SUNMatDestroy(AB_);
+    SUNLinSolFree(LS_b);
+    SUNMatDestroy(A_b);
     N_VDestroy_Serial(nv_state_sens);
     N_VDestroy_Serial(nv_quad);
   }

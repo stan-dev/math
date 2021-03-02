@@ -26,6 +26,7 @@ job_resources <- list(walltime=4*60, memory=2000, ncpus=1, max.concurrent.jobs=3
 
 ## choose number of sample as being dividable by 2 minus one. This gives us exactly by 2 divisable number of bins.
 base_data  <- list(num_warmup=20, num_sampling=20, adapt_delta=0.9, stan_model=stan_model)
+base_data  <- list(num_warmup=10, num_sampling=10, adapt_delta=0.9, stan_model=stan_model)
 
 addProblem("linked_mass_flow",
            data = base_data,
@@ -43,8 +44,20 @@ addAlgorithm("stan_cvodes", run_benchmark)
 pdes <- list(linked_mass_flow = data.frame(system_size=c(1,2,4,8)))
 ades <- list(stan_cvodes= expand.grid(adjoint_integrator=c(1), num_checkpoints=c(10, 100, 250), solver_f=1:2, solver_b=1:2))
 
+
+pdes <- list(linked_mass_flow = data.frame(system_size=c(128)))
+
+ades <- list(stan_cvodes= rbind(expand.grid(adjoint_integrator=c(1), num_checkpoints=c(250), solver_f=2, solver_b=2),
+                                expand.grid(adjoint_integrator=c(1), num_checkpoints=c(250), solver_f=4, solver_b=4))
+             )
+
+
+##ades <- list(stan_cvodes= rbind(expand.grid(adjoint_integrator=c(1), num_checkpoints=c(250), solver_f=1:2, solver_b=1:2),
+##                                expand.grid(adjoint_integrator=c(1), num_checkpoints=c(250)##, solver_f=3:4, solver_b=3:4))
+##             )
+
 ##addExperiments(pdes, ades, repls = 1000)
-addExperiments(pdes, ades, repls = 4)
+addExperiments(pdes, ades, repls = 1)
 
 summarizeExperiments()
 
@@ -109,9 +122,13 @@ head(scale_benchmark)
 
 scale_benchmark <- mutate(scale_benchmark,
                           adjoint_integrator=factor(adjoint_integrator),
+                          sparse_f=solver_f > 2,
+                          sparse_b=solver_b > 2,
+                          lmm_f=case_when(solver_f %% 2 == 0 ~ "BDF", TRUE ~ "Adams"),
+                          lmm_b=case_when(solver_b %% 2 == 0 ~ "BDF", TRUE ~ "Adams")
                           ##num_checkpoints=factor(num_checkpoints),
-                          solver_f=factor(solver_f),
-                          solver_b=factor(solver_b)
+                          ##solver_f=factor(solver_f),
+                          ##solver_b=factor(solver_b)
                           )
 
 saveRDS(scale_benchmark, file = "scale_benchmark.rds")
@@ -140,6 +157,15 @@ ggplot(scale_benchmark, aes(num_checkpoints, time_per_leap, colour=solver, shape
     ggtitle("Time per leapfrog of adjoint and forward per replication")
 
 ggsave("tuning_scale_time_per_leap.png", width=1.6 *4, height=4, dpi=120)
+
+
+ggplot(scale_benchmark, aes(sparse_f, time_per_leap, colour=sparse_b, linetype=lmm_f, shape=repl)) +
+    facet_grid(system_size~lmm_b, scales="free_y") +
+   geom_point()  + geom_line() +
+    ##scale_x_log10(breaks=c(1,2,4,8,16)) +
+    scale_y_log10() +
+    ggtitle("Time per leapfrog of adjoint and forward per replication")
+
 
 theme_set(theme_bw())
 ggplot(scale_benchmark, aes(system_size, time_per_leap, group=set, colour=adjoint_integrator, shape=repl)) +

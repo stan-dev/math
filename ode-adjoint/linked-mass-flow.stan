@@ -84,8 +84,8 @@ data {
   int<lower=0,upper=1> adjoint_integrator;
   int<lower=1> max_num_steps;
   int<lower=1> num_checkpoints;
-  int<lower=1,upper=2> solver_f;
-  int<lower=1,upper=2> solver_b;
+  int<lower=1,upper=4> solver_f;
+  int<lower=1,upper=4> solver_b;
   int<lower=1> system_size;
   int<lower=1> num_obs;
   real<lower=0> sigma_sim;
