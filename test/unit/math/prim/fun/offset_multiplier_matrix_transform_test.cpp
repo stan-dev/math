@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <limits>
 
-TEST(prob_transform, offset_multiplier_j) {
+TEST(prob_transform, offset_multiplier_matrix_j) {
   double lp = -17.0;
   Eigen::VectorXd mu(2);
   mu << 2.0, 3.0;
@@ -22,7 +22,7 @@ TEST(prob_transform, offset_multiplier_j) {
   double lp1 = -12.9;
 }
 
-TEST(ProbTransform, offset_multiplierException) {
+TEST(ProbTransform, offset_multiplier_matrix_Exception) {
   using stan::math::offset_multiplier_constrain;
   using stan::math::offset_multiplier_free;
   Eigen::VectorXd x(2);
@@ -53,7 +53,7 @@ TEST(ProbTransform, offset_multiplierException) {
   EXPECT_THROW(offset_multiplier_constrain(x, mu_nan, sigma, lp),
                std::domain_error);
 }
-TEST(prob_transform, offset_multiplier_f) {
+TEST(prob_transform, offset_multiplier_matrix_f) {
   using stan::math::offset_multiplier_constrain;
   using stan::math::offset_multiplier_free;
   Eigen::VectorXd mu(2);
@@ -68,7 +68,7 @@ TEST(prob_transform, offset_multiplier_f) {
       x, offset_multiplier_free(offset_multiplier_constrain(x, mu, sigma), mu,
                                 sigma));
 }
-TEST(prob_transform, offset_multiplier_f_exception) {
+TEST(prob_transform, offset_multiplier_matrix_f_exception) {
   using stan::math::offset_multiplier_constrain;
   using stan::math::offset_multiplier_free;
   Eigen::VectorXd mu(2);
