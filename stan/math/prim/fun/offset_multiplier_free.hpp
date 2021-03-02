@@ -4,6 +4,8 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/identity_free.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <cmath>
 
 namespace stan {
@@ -36,17 +38,13 @@ namespace math {
  * @throw std::domain_error if mu is not finite
  */
 template <typename T, typename L, typename S>
-inline return_type_t<T, L, S> offset_multiplier_free(const T& y, const L& mu,
+inline auto offset_multiplier_free(const T& y, const L& mu,
                                                      const S& sigma) {
-  check_finite("offset_multiplier_free", "offset", mu);
-  if (sigma == 1) {
-    if (mu == 0) {
-      return identity_free(y);
-    }
-    return y - mu;
-  }
-  check_positive_finite("offset_multiplier_free", "multiplier", sigma);
-  return (y - mu) / sigma;
+  auto&& mu_ref = to_ref(mu);
+  auto&& sigma_ref = to_ref(sigma);
+  check_finite("offset_multiplier_free", "offset", value_of(mu_ref));
+  check_positive_finite("offset_multiplier_free", "multiplier", value_of(sigma_ref));
+  return divide(subtract(y, mu_ref), sigma_ref);
 }
 
 }  // namespace math

@@ -47,6 +47,21 @@ inline auto divide(const Mat& m, Scal c) {
   return m / c;
 }
 
+/**
+ * Return matrix divided by matrix.
+ *
+ * @tparam Mat1 type of the matrix or expression
+ * @tparam Mat2 type of the matrix or expression
+ * @param[in] m specified matrix or expression
+ * @param[in] c specified matrix or expression
+ * @return matrix divided elementwise by `c`
+ */
+template <typename Mat1, typename Mat2,
+  require_all_eigen_t<Mat1, Mat2>* = nullptr>
+inline auto divide(const Mat1& m, const Mat2& c) {
+  return (m.array() / c.array()).matrix();
+}
+
 }  // namespace math
 }  // namespace stan
 
