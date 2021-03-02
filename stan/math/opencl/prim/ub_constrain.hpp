@@ -56,7 +56,7 @@ template <typename T, typename U,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr,
           require_all_kernel_expressions_t<U>* = nullptr>
 inline auto ub_constrain(T&& x, U&& ub, return_type_t<T, U>& lp) {
-  lp += sum(x);
+  lp += sum(select(ub == INFTY, 0.0, x));
   return ub_constrain(std::forward<T>(x), std::forward<U>(ub));
 }
 

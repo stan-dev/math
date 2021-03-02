@@ -157,6 +157,7 @@
 #include <stan/math/opencl/prim/normal_id_glm_lpdf.hpp>
 #include <stan/math/opencl/prim/normal_lpdf.hpp>
 #include <stan/math/opencl/prim/num_elements.hpp>
+#include <stan/math/opencl/prim/offset_multiplier_constrain.hpp>
 #include <stan/math/opencl/prim/ordered_logistic_glm_lpmf.hpp>
 #include <stan/math/opencl/prim/ordered_logistic_lpmf.hpp>
 #include <stan/math/opencl/prim/pareto_lpdf.hpp>
@@ -197,6 +198,7 @@
 #include <stan/math/opencl/prim/trace.hpp>
 #include <stan/math/opencl/prim/ub_constrain.hpp>
 #include <stan/math/opencl/prim/uniform_lpdf.hpp>
+#include <stan/math/opencl/prim/unit_vector_constrain.hpp>
 #include <stan/math/opencl/prim/weibull_lpdf.hpp>
 
 #include <stan/math/opencl/err.hpp>

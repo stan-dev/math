@@ -15,6 +15,12 @@ auto ub_constrain_functor2 = [](const auto& a, const auto& b) {
   }
   return stan::math::ub_constrain(a, b, lp);
 };
+auto ub_constrain_functor3 = [](const auto& a, const auto& b) {
+  using T_lp = stan::return_type_t<decltype(a), decltype(b)>;
+  T_lp lp(4);
+  stan::math::eval(stan::math::ub_constrain(a, b, lp));
+  return lp;
+};
 
 TEST(OpenCLUbConstrain, prim_rev_values_small) {
   Eigen::VectorXd a(8);
@@ -27,6 +33,8 @@ TEST(OpenCLUbConstrain, prim_rev_values_small) {
   stan::math::test::compare_cpu_opencl_prim_rev(ub_constrain_functor, a, c);
   stan::math::test::compare_cpu_opencl_prim_rev(ub_constrain_functor2, a, b);
   stan::math::test::compare_cpu_opencl_prim_rev(ub_constrain_functor2, a, c);
+  stan::math::test::compare_cpu_opencl_prim_rev(ub_constrain_functor3, a, b);
+  stan::math::test::compare_cpu_opencl_prim_rev(ub_constrain_functor3, a, c);
 }
 
 TEST(OpenCLUbConstrain, prim_rev_size_0) {
@@ -40,6 +48,8 @@ TEST(OpenCLUbConstrain, prim_rev_size_0) {
   stan::math::test::compare_cpu_opencl_prim_rev(ub_constrain_functor, a, c);
   stan::math::test::compare_cpu_opencl_prim_rev(ub_constrain_functor2, a, b);
   stan::math::test::compare_cpu_opencl_prim_rev(ub_constrain_functor2, a, c);
+  stan::math::test::compare_cpu_opencl_prim_rev(ub_constrain_functor3, a, b);
+  stan::math::test::compare_cpu_opencl_prim_rev(ub_constrain_functor3, a, c);
 }
 
 TEST(OpenCLUbConstrain, prim_rev_values_large) {
@@ -53,6 +63,8 @@ TEST(OpenCLUbConstrain, prim_rev_values_large) {
   stan::math::test::compare_cpu_opencl_prim_rev(ub_constrain_functor, a, c);
   stan::math::test::compare_cpu_opencl_prim_rev(ub_constrain_functor2, a, b);
   stan::math::test::compare_cpu_opencl_prim_rev(ub_constrain_functor2, a, c);
+  stan::math::test::compare_cpu_opencl_prim_rev(ub_constrain_functor3, a, b);
+  stan::math::test::compare_cpu_opencl_prim_rev(ub_constrain_functor3, a, c);
 }
 
 #endif

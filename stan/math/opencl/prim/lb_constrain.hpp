@@ -57,7 +57,7 @@ template <typename T, typename U,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr,
           require_all_kernel_expressions_t<U>* = nullptr>
 inline auto lb_constrain(T&& x, U&& lb, return_type_t<T, U>& lp) {
-  lp += sum(x);
+  lp += sum(select(lb == NEGATIVE_INFTY, 0.0, x));
   return lb_constrain(std::forward<T>(x), std::forward<U>(lb));
 }
 

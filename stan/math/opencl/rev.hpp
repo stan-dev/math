@@ -79,6 +79,7 @@
 #include <stan/math/opencl/rev/multiply.hpp>
 #include <stan/math/opencl/rev/multiply_log.hpp>
 #include <stan/math/opencl/rev/multiply_lower_tri_self_transpose.hpp>
+#include <stan/math/opencl/rev/offset_multiplier_constrain.hpp>
 #include <stan/math/opencl/rev/operands_and_partials.hpp>
 #include <stan/math/opencl/rev/operator_unary_minus.hpp>
 #include <stan/math/opencl/rev/operator_unary_plus.hpp>
@@ -109,6 +110,7 @@
 #include <stan/math/opencl/rev/transpose.hpp>
 #include <stan/math/opencl/rev/trunc.hpp>
 #include <stan/math/opencl/rev/ub_constrain.hpp>
+#include <stan/math/opencl/rev/unit_vector_constrain.hpp>
 #include <stan/math/rev.hpp>
 
 #endif
