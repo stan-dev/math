@@ -28,7 +28,7 @@ namespace math {
 template <typename Mat1, typename Mat2,
           require_all_matrix_t<Mat1, Mat2>* = nullptr,
           require_any_rev_matrix_t<Mat1, Mat2>* = nullptr>
-/* template <typename Mat1, typename Mat2, 
+/* template <typename Mat1, typename Mat2,
 					require_eigen_vector_t<Mat1>* = nullptr,
           require_eigen_t<Mat2>* = nullptr> */
 // template <typename Mat1, typename Mat2>
@@ -43,8 +43,8 @@ auto diag_pre_multiply(const Mat1& m1, const Mat2& m2) {
     arena_t<promote_scalar_t<var, Mat2>> arena_m2 = m2;
     arena_t<ret_type> ret(arena_m1.val().asDiagonal() * arena_m2.val());
     reverse_pass_callback([ret, arena_m1, arena_m2]() mutable {
-      for (int i = 0; i < arena_m2.cols(); ++i) {
-        for (int j = 0; j < arena_m2.rows(); ++j) {
+      for (int i = 0; i < arena_m2.rows(); ++i) {
+        for (int j = 0; j < arena_m2.cols(); ++j) {
           const auto ret_adj = ret.adj().coeffRef(i, j);
           arena_m1.adj().coeffRef(i) += arena_m2.val().coeff(i, j) * ret_adj;
           arena_m2.adj().coeffRef(i, j) += arena_m1.val().coeff(i) * ret_adj;
@@ -52,33 +52,39 @@ auto diag_pre_multiply(const Mat1& m1, const Mat2& m2) {
       }
     });
     return ret_type(ret);
-  } /*else if (!is_constant<Mat1>::value) {
+  } else if (!is_constant<Mat1>::value) {
     arena_t<promote_scalar_t<var, Mat1>> arena_m1 = m1;
     arena_t<promote_scalar_t<double, Mat2>> arena_m2 = value_of(m2);
     arena_t<ret_type> ret(arena_m1.val().asDiagonal() * arena_m2);
     reverse_pass_callback([ret, arena_m1, arena_m2]() mutable {
+      // We can do this vectorized with for example rowwise().sum() I think.
 			for (int i = 0; i < arena_m1.size(); ++i) {
-				for (int j = 0; j < arena_m1.size(); ++j) {
+				for (int j = 0; j < arena_m2.cols(); ++j) {
 					arena_m1.adj().coeffRef(i) += arena_m2.val().coeff(i, j) *
 						ret.adj().coeffRef(i, j);
 				}
 			}
+      // Can I do: arena_m1.adj() += (arena_m2.val() * ret.adj()).rowwise().sum()?
+      // Or: arena_m1.adj().array() += (arena_m2.val().array() * ret.adj().array()).rowwise().sum()?
+      // Or declare a new temporary variable for the product?
+      // * will not work, I need elementwise multiplication.
+      // I can probably try this in a separate test script.
     });
     return ret_type(ret);
-  } else if (!is_constant<Mat2>::value) {
+  } else if (!is_constant<Mat2>::value) { // Should here be just else?
     arena_t<promote_scalar_t<double, Mat1>> arena_m1 = value_of(m1);
     arena_t<promote_scalar_t<var, Mat2>> arena_m2 = m2;
 		arena_t<ret_type> ret(arena_m1.asDiagonal() * arena_m2.val());
     reverse_pass_callback([ret, arena_m1, arena_m2]() mutable {
 			for (int i = 0; i < arena_m1.size(); ++i) {
-				for (int j = 0; j < arena_m1.size(); ++j) {
+				for (int j = 0; j < arena_m2.cols(); ++j) {
 					arena_m2.adj().coeffRef(i,j) += arena_m1.val().coeff(i) *
 						ret.adj().coeffRef(i, j);
 				}
 			}
     });
     return ret_type(ret);
-  }*/
+  }
 }
 
 }  // namespace math
