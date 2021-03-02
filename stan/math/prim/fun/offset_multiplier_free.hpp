@@ -38,12 +38,12 @@ namespace math {
  * @throw std::domain_error if mu is not finite
  */
 template <typename T, typename L, typename S>
-inline auto offset_multiplier_free(const T& y, const L& mu,
-                                                     const S& sigma) {
+inline auto offset_multiplier_free(const T& y, const L& mu, const S& sigma) {
   auto&& mu_ref = to_ref(mu);
   auto&& sigma_ref = to_ref(sigma);
   check_finite("offset_multiplier_free", "offset", value_of(mu_ref));
-  check_positive_finite("offset_multiplier_free", "multiplier", value_of(sigma_ref));
+  check_positive_finite("offset_multiplier_free", "multiplier",
+                        value_of(sigma_ref));
   return divide(subtract(y, mu_ref), sigma_ref);
 }
 
