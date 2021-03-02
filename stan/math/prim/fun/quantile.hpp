@@ -28,7 +28,7 @@ namespace math {
 template <typename T>
 inline T quantile(const std::vector<T>& xs, double p) {
   check_not_nan("quantile", "container argument", xs);
-  check_bounded("sort_asc", "p", p, 0, 1);
+  check_bounded("quantile", "p", p, 0, 1);
   size_t n_sample = xs.size();
   if (n_sample == 1)
     return xs[0];
