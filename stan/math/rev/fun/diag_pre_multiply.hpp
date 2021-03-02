@@ -33,11 +33,7 @@ template <typename Mat1, typename Mat2,
           require_eigen_t<Mat2>* = nullptr> */
 // template <typename Mat1, typename Mat2>
 auto diag_pre_multiply(const Mat1& m1, const Mat2& m2) {
-	std::cout << "I am using rev." << std::endl;
-  // check_matching_dims("elt_multiply", "m1", m1, "m2", m2);
-	
-	
-	
+	std::cout << "Using rev." << std::endl;
 	check_size_match("diag_pre_multiply", "m1.size()", m1.size(), "m2.rows()",
                    m2.rows());
   using inner_ret_type = decltype(value_of(m1).asDiagonal() * value_of(m2));
@@ -56,7 +52,7 @@ auto diag_pre_multiply(const Mat1& m1, const Mat2& m2) {
       }
     });
     return ret_type(ret);
-  } else if (!is_constant<Mat1>::value) {
+  } /*else if (!is_constant<Mat1>::value) {
     arena_t<promote_scalar_t<var, Mat1>> arena_m1 = m1;
     arena_t<promote_scalar_t<double, Mat2>> arena_m2 = value_of(m2);
     arena_t<ret_type> ret(arena_m1.val().asDiagonal() * arena_m2);
@@ -73,32 +69,16 @@ auto diag_pre_multiply(const Mat1& m1, const Mat2& m2) {
     arena_t<promote_scalar_t<double, Mat1>> arena_m1 = value_of(m1);
     arena_t<promote_scalar_t<var, Mat2>> arena_m2 = m2;
 		arena_t<ret_type> ret(arena_m1.asDiagonal() * arena_m2.val());
-		std::cout << "Initialized adj():" << std::endl << arena_m2.adj()
-			<< std::endl << "-------------------" << std::endl;
-		std::cout << "Initialized adj().coeffRef:" << std::endl << arena_m2.adj().coeffRef(0, 0)
-			<< std::endl << "-------------------" << std::endl;
-		std::cout << "arena_m1.val():" << std::endl << arena_m1.val()
-			<< std::endl << "-------------------" << std::endl;
-		std::cout << "ret.adj():" << std::endl << ret.adj()
-			<< std::endl << "-------------------" << std::endl;
-		std::cout << "m1.size():" << std::endl << arena_m1.size()
-			<< std::endl << "-------------------" << std::endl;
-		std::cout << "ret:" << std::endl << ret
-			<< std::endl << "-------------------" << std::endl;
     reverse_pass_callback([ret, arena_m1, arena_m2]() mutable {
-			std::cout << "hh" << std::endl;
-			/* for (int i = 0; i < arena_m1.size(); ++i) {
+			for (int i = 0; i < arena_m1.size(); ++i) {
 				for (int j = 0; j < arena_m1.size(); ++j) {
-					std::cout << "oo" << std::endl;
-					// arena_m2.adj().coeffRef(i,j) += 2;
-					//arena_m2.adj().coeffRef(i,j) += arena_m1.val().coeff(i); *
-					//	ret.adj().coeffRef(i, j);
+					arena_m2.adj().coeffRef(i,j) += arena_m1.val().coeff(i) *
+						ret.adj().coeffRef(i, j);
 				}
-			} */
+			}
     });
-		std::cout << "Works here." << std::endl;
     return ret_type(ret);
-  }
+  }*/
 }
 
 }  // namespace math
