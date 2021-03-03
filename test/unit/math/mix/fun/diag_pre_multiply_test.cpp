@@ -74,4 +74,19 @@ TEST(MathMixMatFun, diagPreMultiply) {
   Eigen::MatrixXd b23(2, 3);
   b23 << 1, 2, 3, 4, 5, 6;
   expect_diag_pre_multiply(u2, b23);
+
+  Eigen::MatrixXd b32(3, 2);
+  b32 << 1, 2, 3, 4, 5, 6;
+  expect_diag_pre_multiply(u3, b32);
+
+  Eigen::MatrixXd b13(1, 3);
+  b13 << 1, 2, 3;
+  expect_diag_pre_multiply(u1, b13);
+
+  Eigen::MatrixXd b31(3, 1);
+  b31 << 1, 2, 3;
+  expect_diag_pre_multiply(u3, b31);
+
+  // non-square error: mismatched sizes
+  expect_diag_pre_multiply(u3d, b23);
 }
