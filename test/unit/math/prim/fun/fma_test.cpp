@@ -36,9 +36,9 @@ TEST(MathFunctions, fma_nan) {
 }
 
 TEST(MathFunctions, fma_matrix) {
-  using stan::math::fma;
-  using stan::math::elt_multiply;
   using stan::math::add;
+  using stan::math::elt_multiply;
+  using stan::math::fma;
 
   double xd = 1.0;
   Eigen::VectorXd xv(2);
@@ -46,8 +46,7 @@ TEST(MathFunctions, fma_matrix) {
   Eigen::RowVectorXd xr(2);
   xr << 1.0, 2.0;
   Eigen::MatrixXd xm(2, 2);
-  xm << 1.0, 2.0,
-    -1.0, 1.1;
+  xm << 1.0, 2.0, -1.0, 1.1;
 
   double yd = 2.0;
   Eigen::VectorXd yv(2);
@@ -55,8 +54,7 @@ TEST(MathFunctions, fma_matrix) {
   Eigen::RowVectorXd yr(2);
   yr << 2.0, -3.0;
   Eigen::MatrixXd ym(2, 2);
-  xm << 1.0, 2.0,
-    -1.0, 1.1;
+  xm << 1.0, 2.0, -1.0, 1.1;
 
   double zd = 3.0;
   Eigen::VectorXd zv(2);
@@ -64,8 +62,7 @@ TEST(MathFunctions, fma_matrix) {
   Eigen::RowVectorXd zr(2);
   zr << -3.0, 4.0;
   Eigen::MatrixXd zm(2, 2);
-  xm << 3.0, 4.0,
-    -1.0, 1.1;
+  xm << 3.0, 4.0, -1.0, 1.1;
 
   EXPECT_MATRIX_EQ(add(elt_multiply(xd, yd), zv), fma(xd, yd, zv));
   EXPECT_MATRIX_EQ(add(elt_multiply(xd, yv), zd), fma(xd, yv, zd));
