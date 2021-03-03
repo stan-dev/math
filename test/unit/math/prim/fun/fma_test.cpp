@@ -40,71 +40,72 @@ TEST(MathFunctions, fma_matrix) {
   using stan::math::elt_multiply;
   using stan::math::fma;
 
-  double xd = 1.0;
-  Eigen::VectorXd xv(2);
-  xv << 1.0, 2.0;
-  Eigen::RowVectorXd xr(2);
-  xr << 1.0, 2.0;
-  Eigen::MatrixXd xm(2, 2);
-  xm << 1.0, 2.0, -1.0, 1.1;
+  double x_scalar = 1.0;
+  Eigen::VectorXd x_vec(2);
+  x_vec << 1.0, 2.0;
+  Eigen::RowVectorXd x_rowvec(2);
+  x_rowvec << 1.0, 2.0;
+  Eigen::MatrixXd x_mat(2, 2);
+  x_mat << 1.0, 2.0, -1.0, 1.1;
 
-  double yd = 2.0;
-  Eigen::VectorXd yv(2);
-  yv << 2.0, -3.0;
-  Eigen::RowVectorXd yr(2);
-  yr << 2.0, -3.0;
-  Eigen::MatrixXd ym(2, 2);
-  xm << 1.0, 2.0, -1.0, 1.1;
+  double y_scalar = 2.0;
+  Eigen::VectorXd y_vec(2);
+  y_vec << 2.0, -3.0;
+  Eigen::RowVectorXd y_rowvec(2);
+  y_rowvec << 2.0, -3.0;
+  Eigen::MatrixXd y_mat(2, 2);
+  x_mat << 1.0, 2.0, -1.0, 1.1;
 
-  double zd = 3.0;
-  Eigen::VectorXd zv(2);
-  zv << -3.0, 4.0;
-  Eigen::RowVectorXd zr(2);
-  zr << -3.0, 4.0;
+  double z_scalar = 3.0;
+  Eigen::VectorXd z_vec(2);
+  z_vec << -3.0, 4.0;
+  Eigen::RowVectorXd z_rowvec(2);
+  z_rowvec << -3.0, 4.0;
   Eigen::MatrixXd zm(2, 2);
-  xm << 3.0, 4.0, -1.0, 1.1;
+  x_mat << 3.0, 4.0, -1.0, 1.1;
 
-  EXPECT_MATRIX_EQ(add(elt_multiply(xd, yd), zv), fma(xd, yd, zv));
-  EXPECT_MATRIX_EQ(add(elt_multiply(xd, yv), zd), fma(xd, yv, zd));
-  EXPECT_MATRIX_EQ(add(elt_multiply(xd, yv), zv), fma(xd, yv, zv));
-  EXPECT_MATRIX_EQ(add(elt_multiply(xv, yd), zd), fma(xv, yd, zd));
-  EXPECT_MATRIX_EQ(add(elt_multiply(xv, yd), zv), fma(xv, yd, zv));
-  EXPECT_MATRIX_EQ(add(elt_multiply(xv, yv), zd), fma(xv, yv, zd));
-  EXPECT_MATRIX_EQ(add(elt_multiply(xv, yv), zv), fma(xv, yv, zv));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_scalar, y_scalar), z_vec), fma(x_scalar, y_scalar, z_vec));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_scalar, y_vec), z_scalar), fma(x_scalar, y_vec, z_scalar));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_scalar, y_vec), z_vec), fma(x_scalar, y_vec, z_vec));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_vec, y_scalar), z_scalar), fma(x_vec, y_scalar, z_scalar));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_vec, y_scalar), z_vec), fma(x_vec, y_scalar, z_vec));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_vec, y_vec), z_scalar), fma(x_vec, y_vec, z_scalar));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_vec, y_vec), z_vec), fma(x_vec, y_vec, z_vec));
 
-  EXPECT_MATRIX_EQ(add(elt_multiply(xd, yd), zr), fma(xd, yd, zr));
-  EXPECT_MATRIX_EQ(add(elt_multiply(xd, yr), zd), fma(xd, yr, zd));
-  EXPECT_MATRIX_EQ(add(elt_multiply(xd, yr), zr), fma(xd, yr, zr));
-  EXPECT_MATRIX_EQ(add(elt_multiply(xr, yd), zd), fma(xr, yd, zd));
-  EXPECT_MATRIX_EQ(add(elt_multiply(xr, yd), zr), fma(xr, yd, zr));
-  EXPECT_MATRIX_EQ(add(elt_multiply(xr, yr), zd), fma(xr, yr, zd));
-  EXPECT_MATRIX_EQ(add(elt_multiply(xr, yr), zr), fma(xr, yr, zr));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_scalar, y_scalar), z_rowvec), fma(x_scalar, y_scalar, z_rowvec));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_scalar, y_rowvec), z_scalar), fma(x_scalar, y_rowvec, z_scalar));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_scalar, y_rowvec), z_rowvec), fma(x_scalar, y_rowvec, z_rowvec));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_rowvec, y_scalar), z_scalar), fma(x_rowvec, y_scalar, z_scalar));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_rowvec, y_scalar), z_rowvec), fma(x_rowvec, y_scalar, z_rowvec));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_rowvec, y_rowvec), z_scalar), fma(x_rowvec, y_rowvec, z_scalar));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_rowvec, y_rowvec), z_rowvec), fma(x_rowvec, y_rowvec, z_rowvec));
 
-  EXPECT_MATRIX_EQ(add(elt_multiply(xd, yd), zm), fma(xd, yd, zm));
-  EXPECT_MATRIX_EQ(add(elt_multiply(xd, ym), zd), fma(xd, ym, zd));
-  EXPECT_MATRIX_EQ(add(elt_multiply(xd, ym), zm), fma(xd, ym, zm));
-  EXPECT_MATRIX_EQ(add(elt_multiply(xm, yd), zd), fma(xm, yd, zd));
-  EXPECT_MATRIX_EQ(add(elt_multiply(xm, yd), zm), fma(xm, yd, zm));
-  EXPECT_MATRIX_EQ(add(elt_multiply(xm, ym), zd), fma(xm, ym, zd));
-  EXPECT_MATRIX_EQ(add(elt_multiply(xm, ym), zm), fma(xm, ym, zm));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_scalar, y_scalar), zm), fma(x_scalar, y_scalar, zm));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_scalar, y_mat), z_scalar), fma(x_scalar, y_mat, z_scalar));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_scalar, y_mat), zm), fma(x_scalar, y_mat, zm));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_mat, y_scalar), z_scalar), fma(x_mat, y_scalar, z_scalar));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_mat, y_scalar), zm), fma(x_mat, y_scalar, zm));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_mat, y_mat), z_scalar), fma(x_mat, y_mat, z_scalar));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_mat, y_mat), zm), fma(x_mat, y_mat, zm));
 }
 
 TEST(MathFunctions, fma_matrix_error) {
-  double xd = 1.0;
-  Eigen::RowVectorXd xr(2);
-  xr << 1.0, 2.0;
+  using stan::math::fma;
+  double x_scalar = 1.0;
+  Eigen::RowVectorXd x_rowvec(2);
+  x_rowvec << 1.0, 2.0;
 
-  double yd = 2.0;
-  Eigen::VectorXd yv(2);
-  yv << 2.0, -3.0;
-  Eigen::RowVectorXd yr(2);
-  yr << 2.0, -3.0;
+  double y_scalar = 2.0;
+  Eigen::VectorXd y_vec(2);
+  y_vec << 2.0, -3.0;
+  Eigen::RowVectorXd y_rowvec(2);
+  y_rowvec << 2.0, -3.0;
 
-  double zd = 3.0;
-  Eigen::VectorXd zv(2);
-  zv << -3.0, 4.0;
+  double z_scalar = 3.0;
+  Eigen::VectorXd z_vec(2);
+  z_vec << -3.0, 4.0;
 
-  EXPECT_THROW(fma(xd, yr, zv), std::invalid_argument);
-  EXPECT_THROW(fma(xr, yd, zv), std::invalid_argument);
-  EXPECT_THROW(fma(xr, yv, zd), std::invalid_argument);
+  EXPECT_THROW(fma(x_scalar, y_rowvec, z_vec), std::invalid_argument);
+  EXPECT_THROW(fma(x_rowvec, y_scalar, z_vec), std::invalid_argument);
+  EXPECT_THROW(fma(x_rowvec, y_vec, z_scalar), std::invalid_argument);
 }
