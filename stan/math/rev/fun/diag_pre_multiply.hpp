@@ -33,7 +33,6 @@ template <typename Mat1, typename Mat2,
           require_eigen_t<Mat2>* = nullptr> */
 // template <typename Mat1, typename Mat2>
 auto diag_pre_multiply(const Mat1& m1, const Mat2& m2) {
-	// std::cout << "Using rev." << std::endl;
 	check_size_match("diag_pre_multiply", "m1.size()", m1.size(), "m2.rows()",
                    m2.rows());
   using inner_ret_type = decltype(value_of(m1).asDiagonal() * value_of(m2));
@@ -43,12 +42,18 @@ auto diag_pre_multiply(const Mat1& m1, const Mat2& m2) {
     arena_t<promote_scalar_t<var, Mat2>> arena_m2 = m2;
     arena_t<ret_type> ret(arena_m1.val().asDiagonal() * arena_m2.val());
     reverse_pass_callback([ret, arena_m1, arena_m2]() mutable {
-      for (int i = 0; i < arena_m2.rows(); ++i) {
-        for (int j = 0; j < arena_m2.cols(); ++j) {
-          const auto ret_adj = ret.adj().coeffRef(i, j);
-          arena_m1.adj().coeffRef(i) += arena_m2.val().coeff(i, j) * ret_adj;
-          arena_m2.adj().coeffRef(i, j) += arena_m1.val().coeff(i) * ret_adj;
-        }
+      // for (int i = 0; i < arena_m2.rows(); ++i) {
+      //   for (int j = 0; j < arena_m2.cols(); ++j) {
+      //     const auto ret_adj = ret.adj().coeffRef(i, j);
+      //     arena_m1.adj().coeffRef(i) += arena_m2.val().coeff(i, j) * ret_adj;
+      //     arena_m2.adj().coeffRef(i, j) += arena_m1.val().coeff(i) * ret_adj;
+      //   }
+      // }
+      arena_m1.adj().array() += arena_m2.val().array().cwiseProduct(ret.adj().array()).rowwise().sum();
+      if (arena_m1.cols() >= arena_m1.rows()) {
+        arena_m2.adj().array() += arena_m1.val().array().transpose().replicate(1, arena_m2.cols()).cwiseProduct(ret.adj().array());
+      } else {
+        arena_m2.adj().array() += arena_m1.val().array().replicate(1, arena_m2.cols()).cwiseProduct(ret.adj().array());
       }
     });
     return ret_type(ret);
