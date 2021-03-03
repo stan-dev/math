@@ -599,7 +599,7 @@ TEST(prob_transform, offset_multiplier_consistent_sizes) {
   double xd = 1.0;
   Eigen::VectorXd x(4);
   x << 1.0, 2.0, 3.0, 4.0;
-  
+
   double mud = 2.0;
   Eigen::RowVectorXd mu(4);
   mu << 1.0, 2.0, 3.0, 4.0;
@@ -608,11 +608,17 @@ TEST(prob_transform, offset_multiplier_consistent_sizes) {
   Eigen::MatrixXd sigma(2, 2);
   sigma << 1.0, 2.0, 3.0, 4.0;
 
-  EXPECT_THROW(stan::math::offset_multiplier_constrain(xd, mu, sigma), std::invalid_argument);
-  EXPECT_THROW(stan::math::offset_multiplier_constrain(x, mud, sigma), std::invalid_argument);
-  EXPECT_THROW(stan::math::offset_multiplier_constrain(x, mu, sigmad), std::invalid_argument);
+  EXPECT_THROW(stan::math::offset_multiplier_constrain(xd, mu, sigma),
+               std::invalid_argument);
+  EXPECT_THROW(stan::math::offset_multiplier_constrain(x, mud, sigma),
+               std::invalid_argument);
+  EXPECT_THROW(stan::math::offset_multiplier_constrain(x, mu, sigmad),
+               std::invalid_argument);
 
-  EXPECT_THROW(stan::math::offset_multiplier_free(xd, mu, sigma), std::invalid_argument);
-  EXPECT_THROW(stan::math::offset_multiplier_free(x, mud, sigma), std::invalid_argument);
-  EXPECT_THROW(stan::math::offset_multiplier_free(x, mu, sigmad), std::invalid_argument);
+  EXPECT_THROW(stan::math::offset_multiplier_free(xd, mu, sigma),
+               std::invalid_argument);
+  EXPECT_THROW(stan::math::offset_multiplier_free(x, mud, sigma),
+               std::invalid_argument);
+  EXPECT_THROW(stan::math::offset_multiplier_free(x, mu, sigmad),
+               std::invalid_argument);
 }
