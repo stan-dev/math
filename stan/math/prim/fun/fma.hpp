@@ -32,12 +32,12 @@ template <typename T1, typename T2, typename T3,
           require_any_matrix_t<T1, T2, T3>* = nullptr,
           require_not_var_t<return_type_t<T1, T2, T3>>* = nullptr>
 inline auto fma(T1&& x, T2&& y, T3&& z) {
-  if(is_matrix<T1>::value && is_matrix<T2>::value) {
+  if (is_matrix<T1>::value && is_matrix<T2>::value) {
     check_matching_dims("fma", "x", x, "y", y);
   }
-  if(is_matrix<T1>::value && is_matrix<T3>::value) {
+  if (is_matrix<T1>::value && is_matrix<T3>::value) {
     check_matching_dims("fma", "x", x, "z", z);
-  } else if(is_matrix<T2>::value && is_matrix<T3>::value) {
+  } else if (is_matrix<T2>::value && is_matrix<T3>::value) {
     check_matching_dims("fma", "y", y, "z", z);
   }
   return make_holder(

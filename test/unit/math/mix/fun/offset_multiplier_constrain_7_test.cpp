@@ -8,7 +8,7 @@ TEST(mathMixMatFun, offset_multiplier_consistent_sizes) {
   double xd = 1.0;
   Eigen::VectorXd x(4);
   x << 1.0, 2.0, 3.0, 4.0;
-  
+
   double mud = 2.0;
   Eigen::RowVectorXd mu(4);
   mu << 1.0, 2.0, 3.0, 4.0;

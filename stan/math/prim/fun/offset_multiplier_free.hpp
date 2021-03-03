@@ -43,12 +43,12 @@ inline auto offset_multiplier_free(const T& y, const M& mu, const S& sigma) {
   const char* function = "offset_multiplier_free";
   auto&& mu_ref = to_ref(mu);
   auto&& sigma_ref = to_ref(sigma);
-  if(is_matrix<T>::value && is_matrix<M>::value) {
+  if (is_matrix<T>::value && is_matrix<M>::value) {
     check_matching_dims("function", "y", y, "mu", mu);
   }
-  if(is_matrix<T>::value && is_matrix<S>::value) {
+  if (is_matrix<T>::value && is_matrix<S>::value) {
     check_matching_dims("function", "y", y, "sigma", sigma);
-  } else if(is_matrix<M>::value && is_matrix<S>::value) {
+  } else if (is_matrix<M>::value && is_matrix<S>::value) {
     check_matching_dims("function", "mu", mu, "sigma", sigma);
   }
 
