@@ -53,7 +53,8 @@ inline auto offset_multiplier_free(const T& y, const M& mu, const S& sigma) {
   }
 
   check_finite("offset_multiplier_constrain", "offset", value_of(mu_ref));
-  check_positive_finite("offset_multiplier_constrain", "multiplier", value_of(sigma_ref));
+  check_positive_finite("offset_multiplier_constrain", "multiplier",
+                        value_of(sigma_ref));
   return divide(subtract(y, mu_ref), sigma_ref);
 }
 
