@@ -40,8 +40,7 @@ inline auto fma(const T1& x, const T2& y, const T3& z) {
   } else if (is_matrix<T2>::value && is_matrix<T3>::value) {
     check_matching_dims("fma", "y", y, "z", z);
   }
-  return (as_array_or_scalar(x) * as_array_or_scalar(y)
-          + as_array_or_scalar(z)).matrix().eval();
+  return add(elt_multiply(x, y), z).eval();
 }
 
 }  // namespace math

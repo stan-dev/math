@@ -52,14 +52,8 @@ inline auto offset_multiplier_constrain(const T& x, const M& mu,
                         sigma);
   }
 
-  check_finite(
-      "offset_multiplier_constrain"
-      "offset",
-      value_of_rec(mu_ref));
-  check_positive_finite(
-      "offset_multiplier_constrain"
-      "multiplier",
-      value_of_rec(sigma_ref));
+  check_finite("offset_multiplier_constrain", "offset", value_of_rec(mu_ref));
+  check_positive_finite("offset_multiplier_constrain", "multiplier", value_of_rec(sigma_ref));
   return fma(sigma_ref, x, mu_ref);
 }
 
