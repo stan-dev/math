@@ -52,9 +52,8 @@ inline int colwise_reduction_wgs_rows(int n_rows, int n_cols) {
  * other operations - they can only be evaluated.
  * @tparam Derived derived type
  * @tparam T type of first argument
- * @tparam operation type with member function generate that accepts two
+ * @tparam Operation type with member function generate that accepts two
  * variable names and returns OpenCL source code for reduction operation_cl
- * @tparam PassZero whether \c operation passes trough zeros
  */
 template <typename Derived, typename T, typename Operation>
 class colwise_reduction

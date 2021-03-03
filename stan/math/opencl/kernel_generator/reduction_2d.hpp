@@ -25,37 +25,19 @@ namespace math {
 
 namespace internal {
 class reduction_2d_base {};
-
-///**
-// * Determine number of work groups in rows direction that will be run fro
-// * colwise reduction of given size.
-// * @param n_rows number of rows of expression to resuce
-// * @param n_cols number of columns of expression to resuce
-// * @return number of work groups in rows direction
-// */
-//inline int reduction_2d_wgs_rows(int n_rows, int n_cols) {
-//  int local = opencl_context.base_opts().at("LOCAL_SIZE_");
-//  int preferred_work_groups
-//      = opencl_context.device()[0].getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>() * 16;
-
-//  return (std::min(preferred_work_groups, (n_rows + local - 1) / local) + n_cols
-//          - 1)
-//         / n_cols;
-//}
 }  // namespace internal
 
 /**
- * Represents a column wise reduction in kernel generator expressions. So as to
- * be efficient column wise reductions are only done partially. That means
- * instead of 1 row kernel output will have a few rows that need to be reduced
- * to obtain final result. This can be done in a separate kernel or after
- * copying to CPU. Also column wise reductions can not be used as arguments to
- * other operations - they can only be evaluated.
+ * Represents a two dimensional reduction in kernel generator expressions. So as
+ * to be efficient two dimensional reductions are only done partially. That
+ * means instead of 1 element kernel output can have a few rows and a few
+ * columns that need to be reduced to obtain final result. This can be done in a
+ * separate kernel or after copying to CPU. Also two dimensional reductions can
+ * not be used as arguments to other operations - they can only be evaluated.
  * @tparam Derived derived type
  * @tparam T type of first argument
- * @tparam operation type with member function generate that accepts two
+ * @tparam Operation type with member function generate that accepts two
  * variable names and returns OpenCL source code for reduction operation_cl
- * @tparam PassZero whether \c operation passes trough zeros
  */
 template <typename Derived, typename T, typename Operation>
 class reduction_2d
@@ -207,7 +189,7 @@ class reduction_2d
 };  // namespace math
 
 /**
- * Represents column wise sum - reduction in kernel generator expressions.
+ * Represents two dimensional sum - reduction in kernel generator expressions.
  * @tparam T type of expression
  */
 template <typename T>
@@ -217,8 +199,7 @@ class sum_2d_ : public reduction_2d<sum_2d_<T>, T, sum_op> {
 
  public:
   explicit sum_2d_(T&& a)
-      : reduction_2d<sum_2d_<T>, T, sum_op>(std::forward<T>(a), "0") {
-  }
+      : reduction_2d<sum_2d_<T>, T, sum_op>(std::forward<T>(a), "0") {}
   /**
    * Creates a deep copy of this expression.
    * @return copy of \c *this
@@ -231,12 +212,12 @@ class sum_2d_ : public reduction_2d<sum_2d_<T>, T, sum_op> {
 };
 
 /**
- * Column wise sum - reduction of a kernel generator expression. So as to
- * be efficient column wise reductions are only done partially. That means
- * instead of 1 row kernel output will have a few rows that need to be reduced
- * to obtain final result. This can be done in a separate kernel or after
- * copying to CPU. Also column wise reductions can not be used as arguments to
- * other operations - they can only be evaluated.
+ * two dimensional sum - reduction of a kernel generator expression. So as to
+ * be efficient two dimensional reductions are only done partially. That means
+ * instead of 1 element kernel output can have a few rows and a few columns
+ * that need to be reduced to obtain final result. This can be done in a
+ * separate kernel or after copying to CPU. Also two dimensional reductions can
+ * not be used as arguments to other operations - they can only be evaluated.
  * @tparam T type of input expression
  * @param a expression to reduce
  * @return sum
@@ -244,28 +225,26 @@ class sum_2d_ : public reduction_2d<sum_2d_<T>, T, sum_op> {
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
 inline auto sum_2d(T&& a) {
   auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
-  return sum_2d_<as_operation_cl_t<T>>(
-      as_operation_cl(std::forward<T>(a)));
+  return sum_2d_<as_operation_cl_t<T>>(as_operation_cl(std::forward<T>(a)));
 }
 
 /**
- * Represents column wise max - reduction in kernel generator expressions.
+ * Represents two dimensional max - reduction in kernel generator expressions.
  * @tparam T type of expression
  */
 template <typename T>
-class max_2d_ : public reduction_2d<
-                         max_2d_<T>, T,
-                         max_op<typename std::remove_reference_t<T>::Scalar>> {
+class max_2d_
+    : public reduction_2d<max_2d_<T>, T,
+                          max_op<typename std::remove_reference_t<T>::Scalar>> {
   using base
       = reduction_2d<max_2d_<T>, T,
-                          max_op<typename std::remove_reference_t<T>::Scalar>>;
+                     max_op<typename std::remove_reference_t<T>::Scalar>>;
   using base::arguments_;
 
  public:
   using op = max_op<typename std::remove_reference_t<T>::Scalar>;
   explicit max_2d_(T&& a)
-      : reduction_2d<max_2d_<T>, T, op>(std::forward<T>(a),
-                                                  op::init()) {}
+      : reduction_2d<max_2d_<T>, T, op>(std::forward<T>(a), op::init()) {}
   /**
    * Creates a deep copy of this expression.
    * @return copy of \c *this
@@ -278,12 +257,12 @@ class max_2d_ : public reduction_2d<
 };
 
 /**
- * Column wise max - reduction of a kernel generator expression. So as to
- * be efficient column wise reductions are only done partially. That means
- * instead of 1 row kernel output will have a few rows that need to be reduced
- * to obtain final result. This can be done in a separate kernel or after
- * copying to CPU. Also column wise reductions can not be used as arguments to
- * other operations - they can only be evaluated.
+ * two dimensional max - reduction of a kernel generator expression. So as to
+ * be efficient two dimensional reductions are only done partially. That means
+ * instead of 1 element kernel output can have a few rows and a few columns that
+ * need to be reduced to obtain final result. This can be done in a separate
+ * kernel or after copying to CPU. Also two dimensional reductions can not be
+ * used as arguments to other operations - they can only be evaluated.
  * @tparam T type of input expression
  * @param a expression to reduce
  * @return max
@@ -291,28 +270,26 @@ class max_2d_ : public reduction_2d<
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
 inline auto max_2d(T&& a) {
   auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
-  return max_2d_<as_operation_cl_t<T>>(
-      as_operation_cl(std::forward<T>(a)));
+  return max_2d_<as_operation_cl_t<T>>(as_operation_cl(std::forward<T>(a)));
 }
 
 /**
- * Represents column wise min - reduction in kernel generator expressions.
+ * Represents two dimensional min - reduction in kernel generator expressions.
  * @tparam T type of expression
  */
 template <typename T>
-class min_2d_ : public reduction_2d<
-                         min_2d_<T>, T,
-                         min_op<typename std::remove_reference_t<T>::Scalar>> {
+class min_2d_
+    : public reduction_2d<min_2d_<T>, T,
+                          min_op<typename std::remove_reference_t<T>::Scalar>> {
   using base
       = reduction_2d<min_2d_<T>, T,
-                          min_op<typename std::remove_reference_t<T>::Scalar>>;
+                     min_op<typename std::remove_reference_t<T>::Scalar>>;
   using base::arguments_;
 
  public:
   using op = min_op<typename std::remove_reference_t<T>::Scalar>;
   explicit min_2d_(T&& a)
-      : reduction_2d<min_2d_<T>, T, op>(std::forward<T>(a),
-                                                  op::init()) {}
+      : reduction_2d<min_2d_<T>, T, op>(std::forward<T>(a), op::init()) {}
   /**
    * Creates a deep copy of this expression.
    * @return copy of \c *this
@@ -325,39 +302,35 @@ class min_2d_ : public reduction_2d<
 };
 
 /**
- * Column wise min - reduction of a kernel generator expression.  So as to
- * be efficient column wise reductions are only done partially. That means
+ * two dimensional min - reduction of a kernel generator expression.  So as to
+ * be efficient two dimensional reductions are only done partially. That means
  * instead of 1 row kernel output will have a few rows that need to be reduced
  * to obtain final result. This can be done in a separate kernel or after
- * copying to CPU. Also column wise reductions can not be used as arguments to
- * other operations - they can only be evaluated.
+ * copying to CPU. Also two dimensional reductions can not be used as arguments
+ * to other operations - they can only be evaluated.
  * @tparam T type of input expression
  * @param a expression to reduce
  * @return min
  */
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
 inline auto min_2d(T&& a) {
-  return min_2d_<as_operation_cl_t<T>>(
-      as_operation_cl(std::forward<T>(a)));
+  return min_2d_<as_operation_cl_t<T>>(as_operation_cl(std::forward<T>(a)));
 }
 
 namespace internal {
 template <typename T>
 struct is_reduction_2d_impl
-    : public std::is_base_of<internal::reduction_2d_base,
-                             std::decay_t<T>> {};
+    : public std::is_base_of<internal::reduction_2d_base, std::decay_t<T>> {};
 template <typename T>
 struct is_reduction_2d_impl<calc_if_<true, T>>
-    : public std::is_base_of<internal::reduction_2d_base,
-                             std::decay_t<T>> {};
+    : public std::is_base_of<internal::reduction_2d_base, std::decay_t<T>> {};
 }  // namespace internal
 
 /**
  * Check whether a kernel generator expression is a colwise reduction.
  */
 template <typename T>
-using is_reduction_2d
-    = internal::is_reduction_2d_impl<std::decay_t<T>>;
+using is_reduction_2d = internal::is_reduction_2d_impl<std::decay_t<T>>;
 
 /** @}*/
 }  // namespace math
