@@ -36,6 +36,7 @@
 #include <stan/math/opencl/rev/divide.hpp>
 #include <stan/math/opencl/rev/dot_product.hpp>
 #include <stan/math/opencl/rev/dot_self.hpp>
+#include <stan/math/opencl/rev/dot.hpp>
 #include <stan/math/opencl/rev/elt_divide.hpp>
 #include <stan/math/opencl/rev/elt_multiply.hpp>
 #include <stan/math/opencl/rev/erf.hpp>
@@ -71,6 +72,8 @@
 #include <stan/math/opencl/rev/log1m_inv_logit.hpp>
 #include <stan/math/opencl/rev/log_inv_logit_diff.hpp>
 #include <stan/math/opencl/rev/log_diff_exp.hpp>
+#include <stan/math/opencl/rev/log_softmax.hpp>
+#include <stan/math/opencl/rev/log_sum_exp.hpp>
 #include <stan/math/opencl/rev/matrix_power.hpp>
 #include <stan/math/opencl/rev/mdivide_left_tri_low.hpp>
 #include <stan/math/opencl/rev/mdivide_right_tri_low.hpp>
@@ -88,8 +91,10 @@
 #include <stan/math/opencl/rev/round.hpp>
 #include <stan/math/opencl/rev/rows_dot_product.hpp>
 #include <stan/math/opencl/rev/rows_dot_self.hpp>
+#include <stan/math/opencl/rev/sd.hpp>
 #include <stan/math/opencl/rev/sin.hpp>
 #include <stan/math/opencl/rev/sinh.hpp>
+#include <stan/math/opencl/rev/softmax.hpp>
 #include <stan/math/opencl/rev/sqrt.hpp>
 #include <stan/math/opencl/rev/square.hpp>
 #include <stan/math/opencl/rev/squared_distance.hpp>
@@ -106,6 +111,7 @@
 #include <stan/math/opencl/rev/trace.hpp>
 #include <stan/math/opencl/rev/transpose.hpp>
 #include <stan/math/opencl/rev/trunc.hpp>
+#include <stan/math/opencl/rev/variance.hpp>
 #include <stan/math/rev.hpp>
 
 #endif
