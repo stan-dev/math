@@ -8,18 +8,15 @@ TEST(mathMixScalFun, fma_vector) {
 
   double xd = 1.0;
   Eigen::MatrixXd xm(2, 2);
-  xm << 1.0, 2.0,
-    -1.0, 1.1;
+  xm << 1.0, 2.0, -1.0, 1.1;
 
   double yd = 2.0;
   Eigen::MatrixXd ym(2, 2);
-  xm << 1.0, 2.0,
-    -1.0, 1.1;
+  xm << 1.0, 2.0, -1.0, 1.1;
 
   double zd = 3.0;
   Eigen::MatrixXd zm(2, 2);
-  xm << 1.0, 2.0,
-    -1.0, 1.1;
+  xm << 1.0, 2.0, -1.0, 1.1;
 
   stan::test::expect_ad(f, xd, yd, zm);
   stan::test::expect_ad(f, xd, ym, zd);

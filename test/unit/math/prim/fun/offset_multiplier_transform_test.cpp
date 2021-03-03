@@ -545,7 +545,7 @@ TEST(prob_transform, offset_multiplier_free_exception) {
   double xd = 1.0;
   Eigen::VectorXd x(2);
   x << 1.0, 2.0;
-  
+
   double mu = 2.0;
 
   double mu_bad1 = stan::math::INFTY;
@@ -564,20 +564,33 @@ TEST(prob_transform, offset_multiplier_free_exception) {
   sigma_bad5 << -1.0, 2.0;
   Eigen::VectorXd sigma_bad6(3);
 
-  EXPECT_THROW(stan::math::offset_multiplier_free(xd, mu_bad1, sigma), std::domain_error);
+  EXPECT_THROW(stan::math::offset_multiplier_free(xd, mu_bad1, sigma),
+               std::domain_error);
 
-  EXPECT_THROW(stan::math::offset_multiplier_free(xd, mu, sigma_bad1), std::domain_error);
-  EXPECT_THROW(stan::math::offset_multiplier_free(xd, mu, sigma_bad2), std::domain_error);
-  EXPECT_THROW(stan::math::offset_multiplier_free(xd, mu, sigma_bad3), std::domain_error);
+  EXPECT_THROW(stan::math::offset_multiplier_free(xd, mu, sigma_bad1),
+               std::domain_error);
+  EXPECT_THROW(stan::math::offset_multiplier_free(xd, mu, sigma_bad2),
+               std::domain_error);
+  EXPECT_THROW(stan::math::offset_multiplier_free(xd, mu, sigma_bad3),
+               std::domain_error);
 
-  EXPECT_THROW(stan::math::offset_multiplier_free(x, mu, sigma_bad1), std::domain_error);
-  EXPECT_THROW(stan::math::offset_multiplier_free(x, mu, sigma_bad2), std::domain_error);
-  EXPECT_THROW(stan::math::offset_multiplier_free(x, mu, sigma_bad3), std::domain_error);
-  EXPECT_THROW(stan::math::offset_multiplier_free(x, mu, sigma_bad4), std::domain_error);
-  EXPECT_THROW(stan::math::offset_multiplier_free(x, mu, sigma_bad5), std::domain_error);
-  EXPECT_THROW(stan::math::offset_multiplier_free(x, mu, sigma_bad6), std::invalid_argument);
+  EXPECT_THROW(stan::math::offset_multiplier_free(x, mu, sigma_bad1),
+               std::domain_error);
+  EXPECT_THROW(stan::math::offset_multiplier_free(x, mu, sigma_bad2),
+               std::domain_error);
+  EXPECT_THROW(stan::math::offset_multiplier_free(x, mu, sigma_bad3),
+               std::domain_error);
+  EXPECT_THROW(stan::math::offset_multiplier_free(x, mu, sigma_bad4),
+               std::domain_error);
+  EXPECT_THROW(stan::math::offset_multiplier_free(x, mu, sigma_bad5),
+               std::domain_error);
+  EXPECT_THROW(stan::math::offset_multiplier_free(x, mu, sigma_bad6),
+               std::invalid_argument);
 
-  EXPECT_THROW(stan::math::offset_multiplier_free(x, mu_bad1, sigma), std::domain_error);
-  EXPECT_THROW(stan::math::offset_multiplier_free(x, mu_bad2, sigma), std::domain_error);
-  EXPECT_THROW(stan::math::offset_multiplier_free(x, mu_bad3, sigma), std::invalid_argument);
+  EXPECT_THROW(stan::math::offset_multiplier_free(x, mu_bad1, sigma),
+               std::domain_error);
+  EXPECT_THROW(stan::math::offset_multiplier_free(x, mu_bad2, sigma),
+               std::domain_error);
+  EXPECT_THROW(stan::math::offset_multiplier_free(x, mu_bad3, sigma),
+               std::invalid_argument);
 }

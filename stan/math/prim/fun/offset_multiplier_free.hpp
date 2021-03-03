@@ -43,7 +43,8 @@ inline auto offset_multiplier_free(const T& y, const L& mu, const S& sigma) {
   const char* function = "offset_multiplier_free";
   auto&& mu_ref = to_ref(mu);
   auto&& sigma_ref = to_ref(sigma);
-  check_consistent_sizes(function, "offset", mu, "multiplier", sigma, "parameter", y);
+  check_consistent_sizes(function, "offset", mu, "multiplier", sigma,
+                         "parameter", y);
   check_finite(function, "offset", value_of(mu_ref));
   check_positive_finite(function, "multiplier", value_of(sigma_ref));
   return divide(subtract(y, mu_ref), sigma_ref);
