@@ -12,8 +12,8 @@ namespace stan {
 namespace math {
 
 /**
- * Return the unconstrained scalar that transforms to the
- * specified offset and multiplier constrained scalar given the specified
+ * Return the unconstrained variable that transforms to the
+ * specified offset and multiplier constrained variable given the specified
  * offset and multiplier.
  *
  * <p>The transform in <code>locmultiplier_constrain(T, double, double)</code>,
@@ -26,24 +26,26 @@ namespace math {
  * <p>If the offset is zero and multiplier is one,
  * this function reduces to  <code>identity_free(y)</code>.
  *
- * @tparam T type of scalar
+ * @tparam T type of constrained variable
  * @tparam L type of offset
  * @tparam S type of multiplier
  * @param y constrained value
  * @param[in] mu offset of constrained output
  * @param[in] sigma multiplier of constrained output
- * @return the free scalar that transforms to the input scalar
- *   given the offset and multiplier
+ * @return the unconstrained variable that transforms to the given constrained
+ *  variable given the offset and multiplier
  * @throw std::domain_error if sigma <= 0
  * @throw std::domain_error if mu is not finite
+ * @throw std::invalid_argument if non-scalar arguments don't match in size
  */
 template <typename T, typename L, typename S>
 inline auto offset_multiplier_free(const T& y, const L& mu, const S& sigma) {
+  const char* function = "offset_multiplier_free";
   auto&& mu_ref = to_ref(mu);
   auto&& sigma_ref = to_ref(sigma);
-  check_finite("offset_multiplier_free", "offset", value_of(mu_ref));
-  check_positive_finite("offset_multiplier_free", "multiplier",
-                        value_of(sigma_ref));
+  check_consistent_sizes(function, "offset", mu, "multiplier", sigma, "parameter", y);
+  check_finite(function, "offset", value_of(mu_ref));
+  check_positive_finite(function, "multiplier", value_of(sigma_ref));
   return divide(subtract(y, mu_ref), sigma_ref);
 }
 
