@@ -40,20 +40,19 @@ namespace math {
  */
 template <typename T, typename M, typename S>
 inline auto offset_multiplier_free(const T& y, const M& mu, const S& sigma) {
-  const char* function = "offset_multiplier_free";
   auto&& mu_ref = to_ref(mu);
   auto&& sigma_ref = to_ref(sigma);
   if (is_matrix<T>::value && is_matrix<M>::value) {
-    check_matching_dims("function", "y", y, "mu", mu);
+    check_matching_dims("offset_multiplier_constrain", "y", y, "mu", mu);
   }
   if (is_matrix<T>::value && is_matrix<S>::value) {
-    check_matching_dims("function", "y", y, "sigma", sigma);
+    check_matching_dims("offset_multiplier_constrain", "y", y, "sigma", sigma);
   } else if (is_matrix<M>::value && is_matrix<S>::value) {
-    check_matching_dims("function", "mu", mu, "sigma", sigma);
+    check_matching_dims("offset_multiplier_constrain", "mu", mu, "sigma", sigma);
   }
 
-  check_finite(function, "offset", value_of(mu_ref));
-  check_positive_finite(function, "multiplier", value_of(sigma_ref));
+  check_finite("offset_multiplier_constrain" "offset", value_of(mu_ref));
+  check_positive_finite("offset_multiplier_constrain" "multiplier", value_of(sigma_ref));
   return divide(subtract(y, mu_ref), sigma_ref);
 }
 

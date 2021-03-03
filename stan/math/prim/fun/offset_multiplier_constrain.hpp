@@ -40,20 +40,19 @@ namespace math {
 template <typename T, typename M, typename S>
 inline auto offset_multiplier_constrain(const T& x, const M& mu,
                                         const S& sigma) {
-  const char* function = "offset_multiplier_constrain";
   const auto& mu_ref = to_ref(mu);
   const auto& sigma_ref = to_ref(sigma);
   if (is_matrix<T>::value && is_matrix<M>::value) {
-    check_matching_dims("function", "x", x, "mu", mu);
+    check_matching_dims("offset_multiplier_constrain", "x", x, "mu", mu);
   }
   if (is_matrix<T>::value && is_matrix<S>::value) {
-    check_matching_dims("function", "x", x, "sigma", sigma);
+    check_matching_dims("offset_multiplier_constrain", "x", x, "sigma", sigma);
   } else if (is_matrix<M>::value && is_matrix<S>::value) {
-    check_matching_dims("function", "mu", mu, "sigma", sigma);
+    check_matching_dims("offset_multiplier_constrain", "mu", mu, "sigma", sigma);
   }
 
-  check_finite(function, "offset", value_of_rec(mu_ref));
-  check_positive_finite(function, "multiplier", value_of_rec(sigma_ref));
+  check_finite("offset_multiplier_constrain" "offset", value_of_rec(mu_ref));
+  check_positive_finite("offset_multiplier_constrain" "multiplier", value_of_rec(sigma_ref));
   return fma(sigma_ref, x, mu_ref);
 }
 
@@ -86,20 +85,19 @@ inline auto offset_multiplier_constrain(const T& x, const M& mu,
 template <typename T, typename M, typename S>
 inline auto offset_multiplier_constrain(const T& x, const M& mu, const S& sigma,
                                         return_type_t<T, M, S>& lp) {
-  const char* function = "offset_multiplier_constrain";
   const auto& mu_ref = to_ref(mu);
   const auto& sigma_ref = to_ref(sigma);
   if (is_matrix<T>::value && is_matrix<M>::value) {
-    check_matching_dims("function", "x", x, "mu", mu);
+    check_matching_dims("offset_multiplier_constrain", "x", x, "mu", mu);
   }
   if (is_matrix<T>::value && is_matrix<S>::value) {
-    check_matching_dims("function", "x", x, "sigma", sigma);
+    check_matching_dims("offset_multiplier_constrain", "x", x, "sigma", sigma);
   } else if (is_matrix<M>::value && is_matrix<S>::value) {
-    check_matching_dims("function", "mu", mu, "sigma", sigma);
+    check_matching_dims("offset_multiplier_constrain", "mu", mu, "sigma", sigma);
   }
 
-  check_finite(function, "offset", value_of_rec(mu_ref));
-  check_positive_finite(function, "multiplier", value_of_rec(sigma_ref));
+  check_finite("offset_multiplier_constrain", "offset", value_of_rec(mu_ref));
+  check_positive_finite("offset_multiplier_constrain", "multiplier", value_of_rec(sigma_ref));
   if (size(sigma_ref) == 1 && size(x) > 1) {
     lp += sum(multiply_log(size(x), sigma_ref));
   } else {
