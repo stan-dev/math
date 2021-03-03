@@ -581,3 +581,16 @@ TEST(prob_transform, offset_multiplier_free_exception) {
   EXPECT_THROW(stan::math::offset_multiplier_free(x, mu_bad2, sigma), std::domain_error);
   EXPECT_THROW(stan::math::offset_multiplier_free(x, mu_bad3, sigma), std::invalid_argument);
 }
+
+TEST(prob_transform, offset_multiplier_consistent_sizes) {
+  Eigen::VectorXd x(4);
+  x << 1.0, 2.0, 3.0, 4.0;
+  
+  double mu = 2.0;
+
+  Eigen::MatrixXd sigma(2, 2);
+  sigma << 1.0, 2.0, 3.0, 4.0;
+
+  EXPECT_THROW(stan::math::offset_multiplier_free(x, mu, sigma), std::invalid_argument);
+
+}
