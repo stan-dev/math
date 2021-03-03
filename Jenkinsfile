@@ -36,6 +36,7 @@ def deleteDirWin() {
 }
 
 def skipRemainingStages = false
+def skipOpenCL = false
 
 def utils = new org.stan.Utils()
 
@@ -164,6 +165,9 @@ pipeline {
 
                     def paths = ['stan', 'make', 'lib', 'test', 'runTests.py', 'runChecks.py', 'makefile', 'Jenkinsfile', '.clang-format'].join(" ")
                     skipRemainingStages = utils.verifyChanges(paths)
+
+                    def openCLPaths = ['stan/math/opencl', 'test/unit/math/opencl'].join(" ")
+                    skipOpenCL = utils.verifyChanges(openCLPaths)
                 }
             }
         }
@@ -225,6 +229,11 @@ pipeline {
                     post { always { retry(3) { deleteDir() } } }
                 }
                 stage('OpenCL CPU tests') {
+                    when {
+                        expression {
+                            !skipOpenCL
+                        }
+                    }
                     agent { label "gelman-group-win2 || gg-linux" }
                     steps {
                         script {
