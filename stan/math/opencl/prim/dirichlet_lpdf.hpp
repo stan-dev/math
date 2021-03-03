@@ -89,7 +89,7 @@ inline return_type_t<T_prob_cl, T_prior_size_cl> dirichlet_lpdf(
   matrix_cl<double> theta_csum_cl;
   matrix_cl<double> alpha_csum_cl;
   matrix_cl<double> lgamma_alpha_csum_cl;
-  matrix_cl<double> theta_log_alpha_m_1_csum_cl;
+  matrix_cl<double> theta_log_alpha_m_1_sum_cl;
   matrix_cl<double> theta_deriv_cl;
   matrix_cl<double> alpha_deriv_cl;
   if (theta.cols() > alpha.cols()) {
@@ -106,19 +106,18 @@ inline return_type_t<T_prob_cl, T_prior_size_cl> dirichlet_lpdf(
                 lgamma_alpha_csum),
             calc_if<!is_constant<T_prior_size_cl>::value>(digamma(alpha_val)));
 
-    auto theta_log_alpha_m_1_csum
-        = colwise_sum(elt_multiply(theta_log, alpha_m_1));
+    auto theta_log_alpha_m_1_sum = sum_2d(elt_multiply(theta_log, alpha_m_1));
 
     auto theta_deriv
         = elt_divide(alpha_m_1, rowwise_optional_broadcast(theta_val));
     auto alpha_deriv = theta_log - rowwise_optional_broadcast(digamma_alpha_cl);
 
-    results(check_theta_nonnegative, theta_csum_cl, theta_log_alpha_m_1_csum_cl,
+    results(check_theta_nonnegative, theta_csum_cl, theta_log_alpha_m_1_sum_cl,
             theta_deriv_cl, alpha_deriv_cl)
         = expressions(
             theta_nonnegative, theta_csum,
             calc_if<include_summand<propto, T_prob_cl, T_prior_size_cl>::value>(
-                theta_log_alpha_m_1_csum),
+                theta_log_alpha_m_1_sum),
             calc_if<!is_constant<T_prob_cl>::value>(theta_deriv),
             calc_if<!is_constant<T_prior_size_cl>::value>(alpha_deriv));
 
@@ -135,17 +134,8 @@ inline return_type_t<T_prob_cl, T_prior_size_cl> dirichlet_lpdf(
         lgamma_alpha_csum_cl = std::move(lgamma_alpha_csum_cl2);
       }
     }
-    matrix_cl<double> theta_csum_cl2;
-    matrix_cl<double> theta_log_alpha_m_1_csum_cl2;
     while (theta_csum_cl.rows() > 1) {
-      results(theta_csum_cl2, theta_log_alpha_m_1_csum_cl2) = expressions(
-          colwise_sum(theta_csum_cl),
-          calc_if<include_summand<propto, T_prob_cl, T_prior_size_cl>::value>(
-              colwise_sum(theta_log_alpha_m_1_csum_cl)));
-      theta_csum_cl = std::move(theta_csum_cl2);
-      if (include_summand<propto, T_prob_cl, T_prior_size_cl>::value) {
-        theta_log_alpha_m_1_csum_cl = std::move(theta_log_alpha_m_1_csum_cl2);
-      }
+      theta_csum_cl = colwise_sum(theta_csum_cl).eval();
     }
   } else {
     auto alpha_csum = colwise_sum(alpha_val);
@@ -159,16 +149,17 @@ inline return_type_t<T_prob_cl, T_prior_size_cl> dirichlet_lpdf(
                   include_summand<propto, T_prob_cl, T_prior_size_cl>::value>(
                   theta_log));
 
-      auto theta_log_alpha_m_1_csum = colwise_sum(
-          elt_multiply(rowwise_optional_broadcast(log_theta_cl), alpha_m_1));
+      auto log_theta_bc = rowwise_optional_broadcast(log_theta_cl);
+      auto theta_log_alpha_m_1_sum = sum_2d(
+          elt_multiply(log_theta_bc, alpha_m_1));
 
       auto theta_deriv
           = elt_divide(alpha_m_1, rowwise_optional_broadcast(theta_val));
-      auto alpha_deriv = rowwise_optional_broadcast(log_theta_cl)
+      auto alpha_deriv = log_theta_bc
                          - rowwise_optional_broadcast(digamma(alpha_val));
 
       results(check_alpha_positive, alpha_csum_cl, lgamma_alpha_csum_cl,
-              theta_log_alpha_m_1_csum_cl, theta_deriv_cl, alpha_deriv_cl)
+              theta_log_alpha_m_1_sum_cl, theta_deriv_cl, alpha_deriv_cl)
           = expressions(
               alpha_positive,
               calc_if<include_summand<propto, T_prior_size_cl>::value>(
@@ -177,38 +168,30 @@ inline return_type_t<T_prob_cl, T_prior_size_cl> dirichlet_lpdf(
                   lgamma_alpha_csum),
               calc_if<
                   include_summand<propto, T_prob_cl, T_prior_size_cl>::value>(
-                  theta_log_alpha_m_1_csum),
+                  theta_log_alpha_m_1_sum),
               calc_if<!is_constant<T_prob_cl>::value>(theta_deriv),
               calc_if<!is_constant<T_prior_size_cl>::value>(alpha_deriv));
 
       while (alpha_csum_cl.rows() > 1) {
         matrix_cl<double> alpha_csum_cl2;
         matrix_cl<double> lgamma_alpha_csum_cl2;
-        matrix_cl<double> theta_log_alpha_m_1_csum_cl2;
-        results(alpha_csum_cl2, lgamma_alpha_csum_cl2,
-                theta_log_alpha_m_1_csum_cl2)
+        results(alpha_csum_cl2, lgamma_alpha_csum_cl2)
             = expressions(
                 calc_if<include_summand<propto, T_prior_size_cl>::value>(
                     colwise_sum(alpha_csum_cl)),
                 calc_if<include_summand<propto, T_prior_size_cl>::value>(
-                    colwise_sum(lgamma_alpha_csum_cl)),
-                calc_if<
-                    include_summand<propto, T_prob_cl, T_prior_size_cl>::value>(
-                    colwise_sum(theta_log_alpha_m_1_csum_cl)));
+                    colwise_sum(lgamma_alpha_csum_cl)));
         if (include_summand<propto, T_prior_size_cl>::value) {
           alpha_csum_cl = std::move(alpha_csum_cl2);
           lgamma_alpha_csum_cl = std::move(lgamma_alpha_csum_cl2);
-        }
-        if (include_summand<propto, T_prob_cl, T_prior_size_cl>::value) {
-          theta_log_alpha_m_1_csum_cl = std::move(theta_log_alpha_m_1_csum_cl2);
         }
       }
       double theta_sum = sum(from_matrix_cl(theta_csum));
       check_cl(function, "sum of probabilities", theta_sum, "equal to 1")
           = (fabs(theta_sum - 1.0) <= CONSTRAINT_TOLERANCE);
     } else {
-      auto theta_log_alpha_m_1_csum
-          = colwise_sum(elt_multiply(theta_log, alpha_m_1));
+      auto theta_log_alpha_m_1_sum
+          = sum_2d(elt_multiply(theta_log, alpha_m_1));
 
       auto theta_deriv
           = elt_divide(alpha_m_1, rowwise_optional_broadcast(theta_val));
@@ -216,7 +199,7 @@ inline return_type_t<T_prob_cl, T_prior_size_cl> dirichlet_lpdf(
           = theta_log - rowwise_optional_broadcast(digamma(alpha_val));
 
       results(check_alpha_positive, check_theta_nonnegative, theta_csum_cl,
-              alpha_csum_cl, lgamma_alpha_csum_cl, theta_log_alpha_m_1_csum_cl,
+              alpha_csum_cl, lgamma_alpha_csum_cl, theta_log_alpha_m_1_sum_cl,
               theta_deriv_cl, alpha_deriv_cl)
           = expressions(
               alpha_positive, theta_nonnegative, theta_csum,
@@ -226,7 +209,7 @@ inline return_type_t<T_prob_cl, T_prior_size_cl> dirichlet_lpdf(
                   lgamma_alpha_csum),
               calc_if<
                   include_summand<propto, T_prob_cl, T_prior_size_cl>::value>(
-                  theta_log_alpha_m_1_csum),
+                  theta_log_alpha_m_1_sum),
               calc_if<!is_constant<T_prob_cl>::value>(theta_deriv),
               calc_if<!is_constant<T_prior_size_cl>::value>(alpha_deriv));
 
@@ -234,25 +217,18 @@ inline return_type_t<T_prob_cl, T_prior_size_cl> dirichlet_lpdf(
         matrix_cl<double> theta_csum_cl2;
         matrix_cl<double> alpha_csum_cl2;
         matrix_cl<double> lgamma_alpha_csum_cl2;
-        matrix_cl<double> theta_log_alpha_m_1_csum_cl2;
-        results(theta_csum_cl2, alpha_csum_cl2, lgamma_alpha_csum_cl2,
-                theta_log_alpha_m_1_csum_cl2)
+        results(theta_csum_cl2, alpha_csum_cl2, lgamma_alpha_csum_cl2
+                )
             = expressions(
                 colwise_sum(theta_csum_cl),
                 calc_if<include_summand<propto, T_prior_size_cl>::value>(
                     colwise_sum(alpha_csum_cl)),
                 calc_if<include_summand<propto, T_prior_size_cl>::value>(
-                    colwise_sum(lgamma_alpha_csum_cl)),
-                calc_if<
-                    include_summand<propto, T_prob_cl, T_prior_size_cl>::value>(
-                    colwise_sum(theta_log_alpha_m_1_csum_cl)));
+                    colwise_sum(lgamma_alpha_csum_cl)));
         theta_csum_cl = std::move(theta_csum_cl2);
         if (include_summand<propto, T_prior_size_cl>::value) {
           alpha_csum_cl = std::move(alpha_csum_cl2);
           lgamma_alpha_csum_cl = std::move(lgamma_alpha_csum_cl2);
-        }
-        if (include_summand<propto, T_prob_cl, T_prior_size_cl>::value) {
-          theta_log_alpha_m_1_csum_cl = std::move(theta_log_alpha_m_1_csum_cl2);
         }
       }
     }
@@ -280,7 +256,7 @@ inline return_type_t<T_prob_cl, T_prior_size_cl> dirichlet_lpdf(
     }
   }
   if (include_summand<propto, T_prob_cl, T_prior_size_cl>::value) {
-    lp += from_matrix_cl(theta_log_alpha_m_1_csum_cl).sum();
+    lp += from_matrix_cl(theta_log_alpha_m_1_sum_cl).sum();
   }
 
   operands_and_partials<T_prob_cl, T_prior_size_cl> ops_partials(theta, alpha);

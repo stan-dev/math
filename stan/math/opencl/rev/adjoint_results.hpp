@@ -53,51 +53,25 @@ class adjoint_results_cl : protected results_cl<T_results...> {
 
             index_apply<std::tuple_size<decltype(scalars)>::value>(
                 [&](auto... Is_scal) {
-                  if (is_vectors(nonscalars)) {
-                    // evaluate all expressions
-                    this->assignment_impl(std::tuple_cat(
-                        nonscalars, this->make_assignment_pair(
-                                        std::get<2>(std::get<Is_scal>(scalars)),
-                                        colwise_sum(std::get<1>(
-                                            std::get<Is_scal>(scalars))))...));
+                  // evaluate all expressions
+                  this->assignment_impl(std::tuple_cat(
+                      nonscalars,
+                      this->make_assignment_pair(
+                          std::get<2>(std::get<Is_scal>(scalars)),
+                          sum_2d(std::get<1>(std::get<Is_scal>(scalars))))...));
 
-                  } else {
-                    // evaluate the expressions with nonscalar results
-                    this->assignment_impl(nonscalars);
-                    // evaluate the expressions with scalar results
-                    this->assignment_impl(
-                        std::tuple_cat(this->make_assignment_pair(
-                            std::get<2>(std::get<Is_scal>(scalars)),
-                            colwise_sum(rowwise_sum(
-                                std::get<1>(std::get<Is_scal>(scalars)))))...));
-                  }
                   // copy results from the OpenCL device and increment the
                   // adjoints
                   std::tie(std::get<0>(std::get<Is_scal>(scalars))...)
                       = std::make_tuple(std::get<0>(std::get<Is_scal>(scalars))
                                         + sum(from_matrix_cl(std::get<2>(
-                                              std::get<Is_scal>(scalars))))...);
+                                            std::get<Is_scal>(scalars))))...);
                 });
           });
     });
   }
 
  private:
-  /**
-   * Determines if the assignments are column vectors.
-   * @param pairs pairs of result and expression
-   * @return true if they are vectors
-   */
-  template <typename T>
-  bool is_vectors(const T& pairs) {
-    return std::get<0>(pairs).second.thread_cols() == 1;
-  }
-  /**
-   * Determines if the assignments are column vectors.
-   * @return true
-   */
-  bool is_vectors(const std::tuple<>&) { return true; }
-
   /**
    * Selects assignments that have scalar var results.
    * @tparam T_expression type of expression
