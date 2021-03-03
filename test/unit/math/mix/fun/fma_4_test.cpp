@@ -19,20 +19,20 @@ TEST(mathMixScalFun, fma_matrix) {
   xm << 1.0, 2.0, -1.0, 1.1;
 
   stan::test::expect_ad(f, xd, yd, zm);
-/*
-  stan::test::expect_ad(f, xd, ym, zd);
-  stan::test::expect_ad(f, xd, ym, zm);
-  stan::test::expect_ad(f, xm, yd, zd);
-  stan::test::expect_ad(f, xm, yd, zm);
-  stan::test::expect_ad(f, xm, ym, zd);
-  stan::test::expect_ad(f, xm, ym, zm);
+  /*
+    stan::test::expect_ad(f, xd, ym, zd);
+    stan::test::expect_ad(f, xd, ym, zm);
+    stan::test::expect_ad(f, xm, yd, zd);
+    stan::test::expect_ad(f, xm, yd, zm);
+    stan::test::expect_ad(f, xm, ym, zd);
+    stan::test::expect_ad(f, xm, ym, zm);
 
-  stan::test::expect_ad_matvar(f, xd, yd, zm);
-  stan::test::expect_ad_matvar(f, xd, ym, zd);
-  stan::test::expect_ad_matvar(f, xd, ym, zm);
-  stan::test::expect_ad_matvar(f, xm, yd, zd);
-  stan::test::expect_ad_matvar(f, xm, yd, zm);
-  stan::test::expect_ad_matvar(f, xm, ym, zd);
-  stan::test::expect_ad_matvar(f, xm, ym, zm);
-  */
+    stan::test::expect_ad_matvar(f, xd, yd, zm);
+    stan::test::expect_ad_matvar(f, xd, ym, zd);
+    stan::test::expect_ad_matvar(f, xd, ym, zm);
+    stan::test::expect_ad_matvar(f, xm, yd, zd);
+    stan::test::expect_ad_matvar(f, xm, yd, zm);
+    stan::test::expect_ad_matvar(f, xm, ym, zd);
+    stan::test::expect_ad_matvar(f, xm, ym, zm);
+    */
 }

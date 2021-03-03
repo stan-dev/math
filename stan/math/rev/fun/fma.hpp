@@ -208,8 +208,7 @@ inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
     if (!is_constant<T2>::value) {
       forward_as<T2_var>(arena_y).adj().array()
           += ret.adj().array() * value_of(arena_x).array();
-          std::cout << "\ny: \n" << forward_as<T2_var>(arena_y).adj() << "\n";
-
+      std::cout << "\ny: \n" << forward_as<T2_var>(arena_y).adj() << "\n";
     }
     if (!is_constant<T3>::value) {
       forward_as<T3_var>(arena_z).adj().array() += ret.adj().array();
@@ -295,14 +294,13 @@ inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
       std::cout << "\nx: \n" << forward_as<T1_var>(arena_x).adj() << "\n";
     }
     if (!is_constant<T2>::value) {
-          std::cout << "\ny: \n" << forward_as<T2_var>(arena_y).adj() << "\n";
+      std::cout << "\ny: \n" << forward_as<T2_var>(arena_y).adj() << "\n";
     }
     if (!is_constant<T3>::value) {
       std::cout << "\nz: \n" << forward_as<T3_var>(arena_z).adj() << "\n";
     }
     std::cout << "\nret: \n" << ret.adj() << "\n";
     std::cout << "\n------END-------\n";
-
   };
 }
 
