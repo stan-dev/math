@@ -31,7 +31,7 @@ inline double fma(T1 x, T2 y, T3 z) {
 template <typename T1, typename T2, typename T3,
           require_any_matrix_t<T1, T2, T3>* = nullptr,
           require_not_var_t<return_type_t<T1, T2, T3>>* = nullptr>
-inline auto fma(T1&& x, T2&& y, T3&& z) {
+inline auto fma(const T1& x, const T2& y, const T3& z) {
   if (is_matrix<T1>::value && is_matrix<T2>::value) {
     check_matching_dims("fma", "x", x, "y", y);
   }
@@ -40,13 +40,8 @@ inline auto fma(T1&& x, T2&& y, T3&& z) {
   } else if (is_matrix<T2>::value && is_matrix<T3>::value) {
     check_matching_dims("fma", "y", y, "z", z);
   }
-  return make_holder(
-      [](auto&& x, auto&& y, auto&& z) {
-        return ((as_array_or_scalar(x) * as_array_or_scalar(y))
-                + as_array_or_scalar(z))
-            .matrix();
-      },
-      std::forward<T1>(x), std::forward<T2>(y), std::forward<T3>(z));
+  return (as_array_or_scalar(x) * as_array_or_scalar(y)
+          + as_array_or_scalar(z)).matrix().eval();
 }
 
 }  // namespace math

@@ -196,8 +196,6 @@ namespace internal {
 template <typename T1, typename T2, typename T3, typename T4,
           require_all_matrix_t<T1, T2, T3>* = nullptr>
 inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
-  check_matching_dims("fma", "x", arena_x, "y", arena_y);
-  check_matching_dims("fma", "x", arena_x, "z", arena_z);
   return [arena_x, arena_y, arena_z, ret]() mutable {
     using T1_var = arena_t<promote_scalar_t<var, T1>>;
     using T2_var = arena_t<promote_scalar_t<var, T2>>;
@@ -205,13 +203,17 @@ inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
     if (!is_constant<T1>::value) {
       forward_as<T1_var>(arena_x).adj().array()
           += ret.adj().array() * value_of(arena_y).array();
+      std::cout << "\nx: \n" << forward_as<T1_var>(arena_x).adj() << "\n";
     }
     if (!is_constant<T2>::value) {
       forward_as<T2_var>(arena_y).adj().array()
           += ret.adj().array() * value_of(arena_x).array();
+          std::cout << "\ny: \n" << forward_as<T2_var>(arena_y).adj() << "\n";
+
     }
     if (!is_constant<T3>::value) {
       forward_as<T3_var>(arena_z).adj().array() += ret.adj().array();
+      std::cout << "\nz: \n" << forward_as<T3_var>(arena_z).adj() << "\n";
     }
   };
 }
@@ -223,7 +225,6 @@ template <typename T1, typename T2, typename T3, typename T4,
           require_all_matrix_t<T2, T3>* = nullptr,
           require_stan_scalar_t<T1>* = nullptr>
 inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
-  check_matching_dims("fma", "y", arena_y, "z", arena_z);
   return [arena_x, arena_y, arena_z, ret]() mutable {
     using T1_var = arena_t<promote_scalar_t<var, T1>>;
     using T2_var = arena_t<promote_scalar_t<var, T2>>;
@@ -249,7 +250,6 @@ template <typename T1, typename T2, typename T3, typename T4,
           require_all_matrix_t<T1, T3>* = nullptr,
           require_stan_scalar_t<T2>* = nullptr>
 inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
-  check_matching_dims("fma", "x", arena_x, "z", arena_z);
   return [arena_x, arena_y, arena_z, ret]() mutable {
     using T1_var = arena_t<promote_scalar_t<var, T1>>;
     using T2_var = arena_t<promote_scalar_t<var, T2>>;
@@ -290,6 +290,19 @@ inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
     if (!is_constant<T3>::value) {
       forward_as<T3_var>(arena_z).adj().array() += ret.adj().array();
     }
+    std::cout << "\n------BEGIN-------\n";
+    if (!is_constant<T1>::value) {
+      std::cout << "\nx: \n" << forward_as<T1_var>(arena_x).adj() << "\n";
+    }
+    if (!is_constant<T2>::value) {
+          std::cout << "\ny: \n" << forward_as<T2_var>(arena_y).adj() << "\n";
+    }
+    if (!is_constant<T3>::value) {
+      std::cout << "\nz: \n" << forward_as<T3_var>(arena_z).adj() << "\n";
+    }
+    std::cout << "\nret: \n" << ret.adj() << "\n";
+    std::cout << "\n------END-------\n";
+
   };
 }
 
@@ -300,7 +313,6 @@ template <typename T1, typename T2, typename T3, typename T4,
           require_all_matrix_t<T1, T2>* = nullptr,
           require_stan_scalar_t<T3>* = nullptr>
 inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
-  check_matching_dims("fma", "x", arena_x, "y", arena_y);
   return [arena_x, arena_y, arena_z, ret]() mutable {
     using T1_var = arena_t<promote_scalar_t<var, T1>>;
     using T2_var = arena_t<promote_scalar_t<var, T2>>;
@@ -396,6 +408,15 @@ inline auto fma(const T1& x, const T2& y, const T3& z) {
   arena_t<T1> arena_x = x;
   arena_t<T2> arena_y = y;
   arena_t<T3> arena_z = z;
+  if (is_matrix<T1>::value && is_matrix<T2>::value) {
+    check_matching_dims("fma", "x", arena_x, "y", arena_y);
+  }
+  if (is_matrix<T1>::value && is_matrix<T3>::value) {
+    check_matching_dims("fma", "x", arena_x, "z", arena_z);
+  }
+  if (is_matrix<T2>::value && is_matrix<T3>::value) {
+    check_matching_dims("fma", "y", arena_y, "z", arena_z);
+  }
   using inner_ret_type
       = decltype(fma(value_of(arena_x), value_of(arena_y), value_of(arena_z)));
   using ret_type = return_var_matrix_t<inner_ret_type, T1, T2, T3>;
