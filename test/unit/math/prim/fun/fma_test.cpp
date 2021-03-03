@@ -64,28 +64,48 @@ TEST(MathFunctions, fma_matrix) {
   Eigen::MatrixXd zm(2, 2);
   x_mat << 3.0, 4.0, -1.0, 1.1;
 
-  EXPECT_MATRIX_EQ(add(elt_multiply(x_scalar, y_scalar), z_vec), fma(x_scalar, y_scalar, z_vec));
-  EXPECT_MATRIX_EQ(add(elt_multiply(x_scalar, y_vec), z_scalar), fma(x_scalar, y_vec, z_scalar));
-  EXPECT_MATRIX_EQ(add(elt_multiply(x_scalar, y_vec), z_vec), fma(x_scalar, y_vec, z_vec));
-  EXPECT_MATRIX_EQ(add(elt_multiply(x_vec, y_scalar), z_scalar), fma(x_vec, y_scalar, z_scalar));
-  EXPECT_MATRIX_EQ(add(elt_multiply(x_vec, y_scalar), z_vec), fma(x_vec, y_scalar, z_vec));
-  EXPECT_MATRIX_EQ(add(elt_multiply(x_vec, y_vec), z_scalar), fma(x_vec, y_vec, z_scalar));
-  EXPECT_MATRIX_EQ(add(elt_multiply(x_vec, y_vec), z_vec), fma(x_vec, y_vec, z_vec));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_scalar, y_scalar), z_vec),
+                   fma(x_scalar, y_scalar, z_vec));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_scalar, y_vec), z_scalar),
+                   fma(x_scalar, y_vec, z_scalar));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_scalar, y_vec), z_vec),
+                   fma(x_scalar, y_vec, z_vec));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_vec, y_scalar), z_scalar),
+                   fma(x_vec, y_scalar, z_scalar));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_vec, y_scalar), z_vec),
+                   fma(x_vec, y_scalar, z_vec));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_vec, y_vec), z_scalar),
+                   fma(x_vec, y_vec, z_scalar));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_vec, y_vec), z_vec),
+                   fma(x_vec, y_vec, z_vec));
 
-  EXPECT_MATRIX_EQ(add(elt_multiply(x_scalar, y_scalar), z_rowvec), fma(x_scalar, y_scalar, z_rowvec));
-  EXPECT_MATRIX_EQ(add(elt_multiply(x_scalar, y_rowvec), z_scalar), fma(x_scalar, y_rowvec, z_scalar));
-  EXPECT_MATRIX_EQ(add(elt_multiply(x_scalar, y_rowvec), z_rowvec), fma(x_scalar, y_rowvec, z_rowvec));
-  EXPECT_MATRIX_EQ(add(elt_multiply(x_rowvec, y_scalar), z_scalar), fma(x_rowvec, y_scalar, z_scalar));
-  EXPECT_MATRIX_EQ(add(elt_multiply(x_rowvec, y_scalar), z_rowvec), fma(x_rowvec, y_scalar, z_rowvec));
-  EXPECT_MATRIX_EQ(add(elt_multiply(x_rowvec, y_rowvec), z_scalar), fma(x_rowvec, y_rowvec, z_scalar));
-  EXPECT_MATRIX_EQ(add(elt_multiply(x_rowvec, y_rowvec), z_rowvec), fma(x_rowvec, y_rowvec, z_rowvec));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_scalar, y_scalar), z_rowvec),
+                   fma(x_scalar, y_scalar, z_rowvec));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_scalar, y_rowvec), z_scalar),
+                   fma(x_scalar, y_rowvec, z_scalar));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_scalar, y_rowvec), z_rowvec),
+                   fma(x_scalar, y_rowvec, z_rowvec));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_rowvec, y_scalar), z_scalar),
+                   fma(x_rowvec, y_scalar, z_scalar));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_rowvec, y_scalar), z_rowvec),
+                   fma(x_rowvec, y_scalar, z_rowvec));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_rowvec, y_rowvec), z_scalar),
+                   fma(x_rowvec, y_rowvec, z_scalar));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_rowvec, y_rowvec), z_rowvec),
+                   fma(x_rowvec, y_rowvec, z_rowvec));
 
-  EXPECT_MATRIX_EQ(add(elt_multiply(x_scalar, y_scalar), zm), fma(x_scalar, y_scalar, zm));
-  EXPECT_MATRIX_EQ(add(elt_multiply(x_scalar, y_mat), z_scalar), fma(x_scalar, y_mat, z_scalar));
-  EXPECT_MATRIX_EQ(add(elt_multiply(x_scalar, y_mat), zm), fma(x_scalar, y_mat, zm));
-  EXPECT_MATRIX_EQ(add(elt_multiply(x_mat, y_scalar), z_scalar), fma(x_mat, y_scalar, z_scalar));
-  EXPECT_MATRIX_EQ(add(elt_multiply(x_mat, y_scalar), zm), fma(x_mat, y_scalar, zm));
-  EXPECT_MATRIX_EQ(add(elt_multiply(x_mat, y_mat), z_scalar), fma(x_mat, y_mat, z_scalar));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_scalar, y_scalar), zm),
+                   fma(x_scalar, y_scalar, zm));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_scalar, y_mat), z_scalar),
+                   fma(x_scalar, y_mat, z_scalar));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_scalar, y_mat), zm),
+                   fma(x_scalar, y_mat, zm));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_mat, y_scalar), z_scalar),
+                   fma(x_mat, y_scalar, z_scalar));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_mat, y_scalar), zm),
+                   fma(x_mat, y_scalar, zm));
+  EXPECT_MATRIX_EQ(add(elt_multiply(x_mat, y_mat), z_scalar),
+                   fma(x_mat, y_mat, z_scalar));
   EXPECT_MATRIX_EQ(add(elt_multiply(x_mat, y_mat), zm), fma(x_mat, y_mat, zm));
 }
 
