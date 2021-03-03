@@ -88,3 +88,23 @@ TEST(MathFunctions, fma_matrix) {
   EXPECT_MATRIX_EQ(add(elt_multiply(xm, ym), zd), fma(xm, ym, zd));
   EXPECT_MATRIX_EQ(add(elt_multiply(xm, ym), zm), fma(xm, ym, zm));
 }
+
+TEST(MathFunctions, fma_matrix_error) {
+  double xd = 1.0;
+  Eigen::RowVectorXd xr(2);
+  xr << 1.0, 2.0;
+
+  double yd = 2.0;
+  Eigen::VectorXd yv(2);
+  yv << 2.0, -3.0;
+  Eigen::RowVectorXd yr(2);
+  yr << 2.0, -3.0;
+
+  double zd = 3.0;
+  Eigen::VectorXd zv(2);
+  zv << -3.0, 4.0;
+
+  EXPECT_THROW(fma(xd, yr, zv), std::invalid_argument);
+  EXPECT_THROW(fma(xr, yd, zv), std::invalid_argument);
+  EXPECT_THROW(fma(xr, yv, zd), std::invalid_argument);
+}

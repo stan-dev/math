@@ -38,13 +38,20 @@ namespace math {
  * @throw std::domain_error if mu is not finite
  * @throw std::invalid_argument if non-scalar arguments don't match in size
  */
-template <typename T, typename L, typename S>
-inline auto offset_multiplier_free(const T& y, const L& mu, const S& sigma) {
+template <typename T, typename M, typename S>
+inline auto offset_multiplier_free(const T& y, const M& mu, const S& sigma) {
   const char* function = "offset_multiplier_free";
   auto&& mu_ref = to_ref(mu);
   auto&& sigma_ref = to_ref(sigma);
-  check_consistent_sizes(function, "offset", mu, "multiplier", sigma,
-                         "parameter", y);
+  if(is_matrix<T>::value && is_matrix<M>::value) {
+    check_matching_dims("function", "y", y, "mu", mu);
+  }
+  if(is_matrix<T>::value && is_matrix<S>::value) {
+    check_matching_dims("function", "y", y, "sigma", sigma);
+  } else if(is_matrix<M>::value && is_matrix<S>::value) {
+    check_matching_dims("function", "mu", mu, "sigma", sigma);
+  }
+
   check_finite(function, "offset", value_of(mu_ref));
   check_positive_finite(function, "multiplier", value_of(sigma_ref));
   return divide(subtract(y, mu_ref), sigma_ref);

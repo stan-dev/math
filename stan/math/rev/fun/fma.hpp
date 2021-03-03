@@ -23,16 +23,16 @@ namespace math {
  *
  * \f$\frac{\partial}{\partial z} (x * y) + z = 1\f$.
  *
- * @param a First multiplicand.
- * @param b Second multiplicand.
- * @param c Summand.
+ * @param x First multiplicand.
+ * @param y Second multiplicand.
+ * @param z Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
-inline var fma(const var& a, const var& b, const var& c) {
-  return make_callback_var(fma(a.val(), b.val(), c.val()), [a, b, c](auto& vi) {
-    a.adj() += vi.adj() * b.val();
-    b.adj() += vi.adj() * a.val();
-    c.adj() += vi.adj();
+inline var fma(const var& x, const var& y, const var& z) {
+  return make_callback_var(fma(x.val(), y.val(), z.val()), [x, y, z](auto& vi) {
+    x.adj() += vi.adj() * y.val();
+    y.adj() += vi.adj() * x.val();
+    z.adj() += vi.adj();
   });
 }
 
@@ -43,21 +43,21 @@ inline var fma(const var& a, const var& b, const var& c) {
  *
  * The partial derivatives are
  *
- * \f$\frac{\partial}{\partial x} (x * y) + c = y\f$, and
+ * \f$\frac{\partial}{\partial x} (x * y) + z = y\f$, and
  *
- * \f$\frac{\partial}{\partial y} (x * y) + c = x\f$.
+ * \f$\frac{\partial}{\partial y} (x * y) + z = x\f$.
  *
  * @tparam Tc type of the summand
- * @param a First multiplicand.
- * @param b Second multiplicand.
- * @param c Summand.
+ * @param x First multiplicand.
+ * @param y Second multiplicand.
+ * @param z Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
 template <typename Tc, require_arithmetic_t<Tc>* = nullptr>
-inline var fma(const var& a, const var& b, Tc&& c) {
-  return make_callback_var(fma(a.val(), b.val(), c), [a, b](auto& vi) {
-    a.adj() += vi.adj() * b.val();
-    b.adj() += vi.adj() * a.val();
+inline var fma(const var& x, const var& y, Tc&& z) {
+  return make_callback_var(fma(x.val(), y.val(), z), [x, y](auto& vi) {
+    x.adj() += vi.adj() * y.val();
+    y.adj() += vi.adj() * x.val();
   });
 }
 
@@ -68,26 +68,26 @@ inline var fma(const var& a, const var& b, Tc&& c) {
  *
  * The partial derivatives are
  *
- * \f$\frac{\partial}{\partial x} (x * c) + z = c\f$, and
+ * \f$\frac{\partial}{\partial x} (x * y) + z = y\f$, and
  *
- * \f$\frac{\partial}{\partial z} (x * c) + z = 1\f$.
+ * \f$\frac{\partial}{\partial z} (x * y) + z = 1\f$.
  *
  * @tparam Ta type of the first multiplicand
  * @tparam Tb type of the second multiplicand
  * @tparam Tc type of the summand
  *
- * @param a First multiplicand.
- * @param b Second multiplicand.
- * @param c Summand.
+ * @param x First multiplicand.
+ * @param y Second multiplicand.
+ * @param z Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
 template <typename Ta, typename Tb, typename Tc,
           require_arithmetic_t<Tb>* = nullptr,
           require_all_var_t<Ta, Tc>* = nullptr>
-inline var fma(Ta&& a, Tb&& b, Tc&& c) {
-  return make_callback_var(fma(a.val(), b, c.val()), [a, b, c](auto& vi) {
-    a.adj() += vi.adj() * b;
-    c.adj() += vi.adj();
+inline var fma(Ta&& x, Tb&& y, Tc&& z) {
+  return make_callback_var(fma(x.val(), y, z.val()), [x, y, z](auto& vi) {
+    x.adj() += vi.adj() * y;
+    z.adj() += vi.adj();
   });
 }
 
@@ -102,20 +102,20 @@ inline var fma(Ta&& a, Tb&& b, Tc&& c) {
  *
  * The derivative is
  *
- * \f$\frac{d}{d x} (x * c) + d = c\f$.
+ * \f$\frac{d}{d x} (x * y) + z = y\f$.
  *
  * @tparam Tb type of the second multiplicand
  * @tparam Tc type of the summand
  *
- * @param a First multiplicand.
- * @param b Second multiplicand.
- * @param c Summand.
+ * @param x First multiplicand.
+ * @param y Second multiplicand.
+ * @param z Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
 template <typename Tb, typename Tc, require_all_arithmetic_t<Tb, Tc>* = nullptr>
-inline var fma(const var& a, Tb&& b, Tc&& c) {
-  return make_callback_var(fma(a.val(), b, c),
-                           [a, b](auto& vi) { a.adj() += vi.adj() * b; });
+inline var fma(const var& x, Tb&& y, Tc&& z) {
+  return make_callback_var(fma(x.val(), y, z),
+                           [x, y](auto& vi) { x.adj() += vi.adj() * y; });
 }
 
 /**
@@ -125,20 +125,20 @@ inline var fma(const var& a, Tb&& b, Tc&& c) {
  *
  * The derivative is
  *
- * \f$\frac{d}{d y} (c * y) + d = c\f$, and
+ * \f$\frac{d}{d y} (x * y) + z = x\f$, and
  *
  * @tparam Ta type of the first multiplicand
  * @tparam Tc type of the summand
  *
- * @param a First multiplicand.
- * @param b Second multiplicand.
- * @param c Summand.
+ * @param x First multiplicand.
+ * @param y Second multiplicand.
+ * @param z Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
 template <typename Ta, typename Tc, require_all_arithmetic_t<Ta, Tc>* = nullptr>
-inline var fma(Ta&& a, const var& b, Tc&& c) {
-  return make_callback_var(fma(a, b.val(), c),
-                           [a, b](auto& vi) { b.adj() += vi.adj() * a; });
+inline var fma(Ta&& x, const var& y, Tc&& z) {
+  return make_callback_var(fma(x, y.val(), z),
+                           [x, y](auto& vi) { y.adj() += vi.adj() * x; });
 }
 
 /**
@@ -148,20 +148,20 @@ inline var fma(Ta&& a, const var& b, Tc&& c) {
  *
  * The derivative is
  *
- * \f$\frac{\partial}{\partial z} (c * d) + z = 1\f$.
+ * \f$\frac{\partial}{\partial z} (x * y) + z = 1\f$.
  *
  * @tparam Ta type of the first multiplicand
  * @tparam Tb type of the second multiplicand
  *
- * @param a First multiplicand.
- * @param b Second multiplicand.
- * @param c Summand.
+ * @param x First multiplicand.
+ * @param y Second multiplicand.
+ * @param z Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
 template <typename Ta, typename Tb, require_all_arithmetic_t<Ta, Tb>* = nullptr>
-inline var fma(Ta&& a, Tb&& b, const var& c) {
-  return make_callback_var(fma(a, b, c.val()),
-                           [c](auto& vi) { c.adj() += vi.adj(); });
+inline var fma(Ta&& x, Tb&& y, const var& z) {
+  return make_callback_var(fma(x, y, z.val()),
+                           [z](auto& vi) { z.adj() += vi.adj(); });
 }
 
 /**
@@ -171,21 +171,21 @@ inline var fma(Ta&& a, Tb&& b, const var& c) {
  *
  * The partial derivatives are
  *
- * \f$\frac{\partial}{\partial y} (c * y) + z = c\f$, and
+ * \f$\frac{\partial}{\partial y} (x * y) + z = x\f$, and
  *
- * \f$\frac{\partial}{\partial z} (c * y) + z = 1\f$.
+ * \f$\frac{\partial}{\partial z} (x * y) + z = 1\f$.
  *
  * @tparam Ta type of the first multiplicand
- * @param a First multiplicand.
- * @param b Second multiplicand.
- * @param c Summand.
+ * @param x First multiplicand.
+ * @param y Second multiplicand.
+ * @param z Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
 template <typename Ta, require_arithmetic_t<Ta>* = nullptr>
-inline var fma(Ta&& a, const var& b, const var& c) {
-  return make_callback_var(fma(a, b.val(), c.val()), [a, b, c](auto& vi) {
-    b.adj() += vi.adj() * a;
-    c.adj() += vi.adj();
+inline var fma(Ta&& x, const var& y, const var& z) {
+  return make_callback_var(fma(x, y.val(), z.val()), [x, y, z](auto& vi) {
+    y.adj() += vi.adj() * x;
+    z.adj() += vi.adj();
   });
 }
 
@@ -195,21 +195,23 @@ namespace internal {
  */
 template <typename T1, typename T2, typename T3, typename T4,
           require_all_matrix_t<T1, T2, T3>* = nullptr>
-inline auto fma_reverse_pass(T1& arena_a, T2& arena_b, T3& arena_c, T4& ret) {
-  return [arena_a, arena_b, arena_c, ret]() mutable {
+inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
+  check_matching_dims("fma", "x", arena_x, "y", arena_y);
+  check_matching_dims("fma", "x", arena_x, "z", arena_z);
+  return [arena_x, arena_y, arena_z, ret]() mutable {
     using T1_var = arena_t<promote_scalar_t<var, T1>>;
     using T2_var = arena_t<promote_scalar_t<var, T2>>;
     using T3_var = arena_t<promote_scalar_t<var, T3>>;
     if (!is_constant<T1>::value) {
-      forward_as<T1_var>(arena_a).adj().array()
-          += ret.adj().array() * value_of(arena_b).array();
+      forward_as<T1_var>(arena_x).adj().array()
+          += ret.adj().array() * value_of(arena_y).array();
     }
     if (!is_constant<T2>::value) {
-      forward_as<T2_var>(arena_b).adj().array()
-          += ret.adj().array() * value_of(arena_a).array();
+      forward_as<T2_var>(arena_y).adj().array()
+          += ret.adj().array() * value_of(arena_x).array();
     }
     if (!is_constant<T3>::value) {
-      forward_as<T3_var>(arena_c).adj().array() += ret.adj().array();
+      forward_as<T3_var>(arena_z).adj().array() += ret.adj().array();
     }
   };
 }
@@ -220,21 +222,22 @@ inline auto fma_reverse_pass(T1& arena_a, T2& arena_b, T3& arena_c, T4& ret) {
 template <typename T1, typename T2, typename T3, typename T4,
           require_all_matrix_t<T2, T3>* = nullptr,
           require_stan_scalar_t<T1>* = nullptr>
-inline auto fma_reverse_pass(T1& arena_a, T2& arena_b, T3& arena_c, T4& ret) {
-  return [arena_a, arena_b, arena_c, ret]() mutable {
+inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
+  check_matching_dims("fma", "y", arena_y, "z", arena_z);
+  return [arena_x, arena_y, arena_z, ret]() mutable {
     using T1_var = arena_t<promote_scalar_t<var, T1>>;
     using T2_var = arena_t<promote_scalar_t<var, T2>>;
     using T3_var = arena_t<promote_scalar_t<var, T3>>;
     if (!is_constant<T1>::value) {
-      forward_as<T1_var>(arena_a).adj()
-          += (ret.adj().array() * value_of(arena_b).array()).sum();
+      forward_as<T1_var>(arena_x).adj()
+          += (ret.adj().array() * value_of(arena_y).array()).sum();
     }
     if (!is_constant<T2>::value) {
-      forward_as<T2_var>(arena_b).adj().array()
-          += ret.adj().array() * value_of(arena_a);
+      forward_as<T2_var>(arena_y).adj().array()
+          += ret.adj().array() * value_of(arena_x);
     }
     if (!is_constant<T3>::value) {
-      forward_as<T3_var>(arena_c).adj().array() += ret.adj().array();
+      forward_as<T3_var>(arena_z).adj().array() += ret.adj().array();
     }
   };
 }
@@ -245,21 +248,22 @@ inline auto fma_reverse_pass(T1& arena_a, T2& arena_b, T3& arena_c, T4& ret) {
 template <typename T1, typename T2, typename T3, typename T4,
           require_all_matrix_t<T1, T3>* = nullptr,
           require_stan_scalar_t<T2>* = nullptr>
-inline auto fma_reverse_pass(T1& arena_a, T2& arena_b, T3& arena_c, T4& ret) {
-  return [arena_a, arena_b, arena_c, ret]() mutable {
+inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
+  check_matching_dims("fma", "x", arena_x, "z", arena_z);
+  return [arena_x, arena_y, arena_z, ret]() mutable {
     using T1_var = arena_t<promote_scalar_t<var, T1>>;
     using T2_var = arena_t<promote_scalar_t<var, T2>>;
     using T3_var = arena_t<promote_scalar_t<var, T3>>;
     if (!is_constant<T1>::value) {
-      forward_as<T1_var>(arena_a).adj().array()
-          += ret.adj().array() * value_of(arena_b);
+      forward_as<T1_var>(arena_x).adj().array()
+          += ret.adj().array() * value_of(arena_y);
     }
     if (!is_constant<T2>::value) {
-      forward_as<T2_var>(arena_b).adj()
-          += (ret.adj().array() * value_of(arena_a).array()).sum();
+      forward_as<T2_var>(arena_y).adj()
+          += (ret.adj().array() * value_of(arena_x).array()).sum();
     }
     if (!is_constant<T3>::value) {
-      forward_as<T3_var>(arena_c).adj().array() += ret.adj().array();
+      forward_as<T3_var>(arena_z).adj().array() += ret.adj().array();
     }
   };
 }
@@ -270,21 +274,21 @@ inline auto fma_reverse_pass(T1& arena_a, T2& arena_b, T3& arena_c, T4& ret) {
 template <typename T1, typename T2, typename T3, typename T4,
           require_matrix_t<T3>* = nullptr,
           require_all_stan_scalar_t<T1, T2>* = nullptr>
-inline auto fma_reverse_pass(T1& arena_a, T2& arena_b, T3& arena_c, T4& ret) {
-  return [arena_a, arena_b, arena_c, ret]() mutable {
+inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
+  return [arena_x, arena_y, arena_z, ret]() mutable {
     using T1_var = arena_t<promote_scalar_t<var, T1>>;
     using T2_var = arena_t<promote_scalar_t<var, T2>>;
     using T3_var = arena_t<promote_scalar_t<var, T3>>;
     if (!is_constant<T1>::value) {
-      forward_as<T1_var>(arena_a).adj()
-          += (ret.adj().array() * value_of(arena_b)).sum();
+      forward_as<T1_var>(arena_x).adj()
+          += (ret.adj().array() * value_of(arena_y)).sum();
     }
     if (!is_constant<T2>::value) {
-      forward_as<T2_var>(arena_b).adj()
-          += (ret.adj().array() * value_of(arena_a)).sum();
+      forward_as<T2_var>(arena_y).adj()
+          += (ret.adj().array() * value_of(arena_x)).sum();
     }
     if (!is_constant<T3>::value) {
-      forward_as<T3_var>(arena_c).adj().array() += ret.adj().array();
+      forward_as<T3_var>(arena_z).adj().array() += ret.adj().array();
     }
   };
 }
@@ -295,21 +299,22 @@ inline auto fma_reverse_pass(T1& arena_a, T2& arena_b, T3& arena_c, T4& ret) {
 template <typename T1, typename T2, typename T3, typename T4,
           require_all_matrix_t<T1, T2>* = nullptr,
           require_stan_scalar_t<T3>* = nullptr>
-inline auto fma_reverse_pass(T1& arena_a, T2& arena_b, T3& arena_c, T4& ret) {
-  return [arena_a, arena_b, arena_c, ret]() mutable {
+inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
+  check_matching_dims("fma", "x", arena_x, "y", arena_y);
+  return [arena_x, arena_y, arena_z, ret]() mutable {
     using T1_var = arena_t<promote_scalar_t<var, T1>>;
     using T2_var = arena_t<promote_scalar_t<var, T2>>;
     using T3_var = arena_t<promote_scalar_t<var, T3>>;
     if (!is_constant<T1>::value) {
-      forward_as<T1_var>(arena_a).adj().array()
-          += ret.adj().array() * value_of(arena_b).array();
+      forward_as<T1_var>(arena_x).adj().array()
+          += ret.adj().array() * value_of(arena_y).array();
     }
     if (!is_constant<T2>::value) {
-      forward_as<T2_var>(arena_b).adj().array()
-          += ret.adj().array() * value_of(arena_a).array();
+      forward_as<T2_var>(arena_y).adj().array()
+          += ret.adj().array() * value_of(arena_x).array();
     }
     if (!is_constant<T3>::value) {
-      forward_as<T3_var>(arena_c).adj() += ret.adj().sum();
+      forward_as<T3_var>(arena_z).adj() += ret.adj().sum();
     }
   };
 }
@@ -320,21 +325,21 @@ inline auto fma_reverse_pass(T1& arena_a, T2& arena_b, T3& arena_c, T4& ret) {
 template <typename T1, typename T2, typename T3, typename T4,
           require_matrix_t<T2>* = nullptr,
           require_all_stan_scalar_t<T1, T3>* = nullptr>
-inline auto fma_reverse_pass(T1& arena_a, T2& arena_b, T3& arena_c, T4& ret) {
-  return [arena_a, arena_b, arena_c, ret]() mutable {
+inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
+  return [arena_x, arena_y, arena_z, ret]() mutable {
     using T1_var = arena_t<promote_scalar_t<var, T1>>;
     using T2_var = arena_t<promote_scalar_t<var, T2>>;
     using T3_var = arena_t<promote_scalar_t<var, T3>>;
     if (!is_constant<T1>::value) {
-      forward_as<T1_var>(arena_a).adj()
-          += (ret.adj().array() * value_of(arena_b).array()).sum();
+      forward_as<T1_var>(arena_x).adj()
+          += (ret.adj().array() * value_of(arena_y).array()).sum();
     }
     if (!is_constant<T2>::value) {
-      forward_as<T2_var>(arena_b).adj().array()
-          += ret.adj().array() * value_of(arena_a);
+      forward_as<T2_var>(arena_y).adj().array()
+          += ret.adj().array() * value_of(arena_x);
     }
     if (!is_constant<T3>::value) {
-      forward_as<T3_var>(arena_c).adj() += ret.adj().sum();
+      forward_as<T3_var>(arena_z).adj() += ret.adj().sum();
     }
   };
 }
@@ -345,21 +350,21 @@ inline auto fma_reverse_pass(T1& arena_a, T2& arena_b, T3& arena_c, T4& ret) {
 template <typename T1, typename T2, typename T3, typename T4,
           require_matrix_t<T1>* = nullptr,
           require_all_stan_scalar_t<T2, T3>* = nullptr>
-inline auto fma_reverse_pass(T1& arena_a, T2& arena_b, T3& arena_c, T4& ret) {
-  return [arena_a, arena_b, arena_c, ret]() mutable {
+inline auto fma_reverse_pass(T1& arena_x, T2& arena_y, T3& arena_z, T4& ret) {
+  return [arena_x, arena_y, arena_z, ret]() mutable {
     using T1_var = arena_t<promote_scalar_t<var, T1>>;
     using T2_var = arena_t<promote_scalar_t<var, T2>>;
     using T3_var = arena_t<promote_scalar_t<var, T3>>;
     if (!is_constant<T1>::value) {
-      forward_as<T1_var>(arena_a).adj().array()
-          += ret.adj().array() * value_of(arena_b);
+      forward_as<T1_var>(arena_x).adj().array()
+          += ret.adj().array() * value_of(arena_y);
     }
     if (!is_constant<T2>::value) {
-      forward_as<T2_var>(arena_b).adj()
-          += (ret.adj().array() * value_of(arena_a).array()).sum();
+      forward_as<T2_var>(arena_y).adj()
+          += (ret.adj().array() * value_of(arena_x).array()).sum();
     }
     if (!is_constant<T3>::value) {
-      forward_as<T3_var>(arena_c).adj() += ret.adj().sum();
+      forward_as<T3_var>(arena_z).adj() += ret.adj().sum();
     }
   };
 }
@@ -379,25 +384,25 @@ inline auto fma_reverse_pass(T1& arena_a, T2& arena_b, T3& arena_c, T4& ret) {
  *
  * \f$\frac{\partial}{\partial z} (x * y) + z = 1\f$.
  *
- * @param a First multiplicand.
- * @param b Second multiplicand.
- * @param c Summand.
+ * @param x First multiplicand.
+ * @param y Second multiplicand.
+ * @param z Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
 template <typename T1, typename T2, typename T3,
           require_any_matrix_t<T1, T2, T3>* = nullptr,
           require_var_t<return_type_t<T1, T2, T3>>* = nullptr>
-inline auto fma(const T1& a, const T2& b, const T3& c) {
-  arena_t<T1> arena_a = a;
-  arena_t<T2> arena_b = b;
-  arena_t<T3> arena_c = c;
+inline auto fma(const T1& x, const T2& y, const T3& z) {
+  arena_t<T1> arena_x = x;
+  arena_t<T2> arena_y = y;
+  arena_t<T3> arena_z = z;
   using inner_ret_type
-      = decltype(fma(value_of(arena_a), value_of(arena_b), value_of(arena_c)));
+      = decltype(fma(value_of(arena_x), value_of(arena_y), value_of(arena_z)));
   using ret_type = return_var_matrix_t<inner_ret_type, T1, T2, T3>;
   arena_t<ret_type> ret
-      = fma(value_of(arena_a), value_of(arena_b), value_of(arena_c));
+      = fma(value_of(arena_x), value_of(arena_y), value_of(arena_z));
   reverse_pass_callback(
-      internal::fma_reverse_pass(arena_a, arena_b, arena_c, ret));
+      internal::fma_reverse_pass(arena_x, arena_y, arena_z, ret));
   return ret_type(ret);
 }
 
