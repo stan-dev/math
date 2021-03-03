@@ -28,5 +28,10 @@ int main() {
   Eigen::Matrix<stan::math::var, 2, 1> M6;
   M6 =  M2.val().cwiseProduct(M2.adj()).rowwise().sum();
   std::cout << M6 << std::endl;
+
+  std::cout << "Replicate: " << std::endl;
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> M_rep;
+  M_rep = M1.replicate(8,1);
+  std::cout << M_rep << std::endl;
 	return 0;
 }
