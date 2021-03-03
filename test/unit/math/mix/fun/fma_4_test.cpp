@@ -34,5 +34,4 @@ TEST(mathMixScalFun, fma_matrix) {
   stan::test::expect_ad_matvar(f, xm, yd, zm);
   stan::test::expect_ad_matvar(f, xm, ym, zd);
   stan::test::expect_ad_matvar(f, xm, ym, zm);
-
 }

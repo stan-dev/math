@@ -43,8 +43,9 @@ inline auto fma(T1&& x, T2&& y, T3&& z) {
   return make_holder(
       [](auto&& x, auto&& y, auto&& z) {
         return ((as_array_or_scalar(x) * as_array_or_scalar(y))
-                + as_array_or_scalar(z)).matrix();
-              },
+                + as_array_or_scalar(z))
+            .matrix();
+      },
       std::forward<T1>(x), std::forward<T2>(y), std::forward<T3>(z));
 }
 
