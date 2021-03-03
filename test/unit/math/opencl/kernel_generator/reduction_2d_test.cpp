@@ -107,8 +107,7 @@ TEST(KernelGenerator, nested_rowwise_sum_2d) {
 
   matrix_cl<double> m_cl(m);
 
-  matrix_cl<double> res_cl
-      = stan::math::sum_2d(stan::math::rowwise_sum(m_cl));
+  matrix_cl<double> res_cl = stan::math::sum_2d(stan::math::rowwise_sum(m_cl));
   MatrixXd raw_res = stan::math::from_matrix_cl(res_cl);
   EXPECT_GE(m.rows(), raw_res.rows());
   EXPECT_GE(m.cols(), raw_res.cols());

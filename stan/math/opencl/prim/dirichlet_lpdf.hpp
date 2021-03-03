@@ -150,13 +150,13 @@ inline return_type_t<T_prob_cl, T_prior_size_cl> dirichlet_lpdf(
                   theta_log));
 
       auto log_theta_bc = rowwise_optional_broadcast(log_theta_cl);
-      auto theta_log_alpha_m_1_sum = sum_2d(
-          elt_multiply(log_theta_bc, alpha_m_1));
+      auto theta_log_alpha_m_1_sum
+          = sum_2d(elt_multiply(log_theta_bc, alpha_m_1));
 
       auto theta_deriv
           = elt_divide(alpha_m_1, rowwise_optional_broadcast(theta_val));
-      auto alpha_deriv = log_theta_bc
-                         - rowwise_optional_broadcast(digamma(alpha_val));
+      auto alpha_deriv
+          = log_theta_bc - rowwise_optional_broadcast(digamma(alpha_val));
 
       results(check_alpha_positive, alpha_csum_cl, lgamma_alpha_csum_cl,
               theta_log_alpha_m_1_sum_cl, theta_deriv_cl, alpha_deriv_cl)
@@ -175,12 +175,11 @@ inline return_type_t<T_prob_cl, T_prior_size_cl> dirichlet_lpdf(
       while (alpha_csum_cl.rows() > 1) {
         matrix_cl<double> alpha_csum_cl2;
         matrix_cl<double> lgamma_alpha_csum_cl2;
-        results(alpha_csum_cl2, lgamma_alpha_csum_cl2)
-            = expressions(
-                calc_if<include_summand<propto, T_prior_size_cl>::value>(
-                    colwise_sum(alpha_csum_cl)),
-                calc_if<include_summand<propto, T_prior_size_cl>::value>(
-                    colwise_sum(lgamma_alpha_csum_cl)));
+        results(alpha_csum_cl2, lgamma_alpha_csum_cl2) = expressions(
+            calc_if<include_summand<propto, T_prior_size_cl>::value>(
+                colwise_sum(alpha_csum_cl)),
+            calc_if<include_summand<propto, T_prior_size_cl>::value>(
+                colwise_sum(lgamma_alpha_csum_cl)));
         if (include_summand<propto, T_prior_size_cl>::value) {
           alpha_csum_cl = std::move(alpha_csum_cl2);
           lgamma_alpha_csum_cl = std::move(lgamma_alpha_csum_cl2);
@@ -190,8 +189,7 @@ inline return_type_t<T_prob_cl, T_prior_size_cl> dirichlet_lpdf(
       check_cl(function, "sum of probabilities", theta_sum, "equal to 1")
           = (fabs(theta_sum - 1.0) <= CONSTRAINT_TOLERANCE);
     } else {
-      auto theta_log_alpha_m_1_sum
-          = sum_2d(elt_multiply(theta_log, alpha_m_1));
+      auto theta_log_alpha_m_1_sum = sum_2d(elt_multiply(theta_log, alpha_m_1));
 
       auto theta_deriv
           = elt_divide(alpha_m_1, rowwise_optional_broadcast(theta_val));
@@ -217,8 +215,7 @@ inline return_type_t<T_prob_cl, T_prior_size_cl> dirichlet_lpdf(
         matrix_cl<double> theta_csum_cl2;
         matrix_cl<double> alpha_csum_cl2;
         matrix_cl<double> lgamma_alpha_csum_cl2;
-        results(theta_csum_cl2, alpha_csum_cl2, lgamma_alpha_csum_cl2
-                )
+        results(theta_csum_cl2, alpha_csum_cl2, lgamma_alpha_csum_cl2)
             = expressions(
                 colwise_sum(theta_csum_cl),
                 calc_if<include_summand<propto, T_prior_size_cl>::value>(
