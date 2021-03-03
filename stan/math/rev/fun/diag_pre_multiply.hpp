@@ -57,23 +57,7 @@ auto diag_pre_multiply(const Mat1& m1, const Mat2& m2) {
     arena_t<promote_scalar_t<double, Mat2>> arena_m2 = value_of(m2);
     arena_t<ret_type> ret(arena_m1.val().asDiagonal() * arena_m2);
     reverse_pass_callback([ret, arena_m1, arena_m2]() mutable {
-      // We can do this vectorized with for example rowwise().sum() I think.
-			// for (int i = 0; i < arena_m1.size(); ++i) {
-			// 	for (int j = 0; j < arena_m2.cols(); ++j) {
-			// 		arena_m1.adj().coeffRef(i) += arena_m2.val().coeff(i, j) *
-			// 			ret.adj().coeffRef(i, j);
-			// 	}
-			// }
-
-      //arena_m1.adj().array() += arena_m2.val().cwiseProduct(ret.adj()).rowwise().sum();
-      // arena_m1.adj().array() += arena_m1.adj().array();
-      // arena_m1.adj() += arena_m2.val().rowwise().sum();
       arena_m1.adj().array() += arena_m2.val().array().cwiseProduct(ret.adj().array()).rowwise().sum();
-      // Can I do: arena_m1.adj() += (arena_m2.val() * ret.adj()).rowwise().sum()?
-      // Or: arena_m1.adj().array() += (arena_m2.val().array() * ret.adj().array()).rowwise().sum()?
-      // Or declare a new temporary variable for the product?
-      // * will not work, I need elementwise multiplication.
-      // I can probably try this in a separate test script.
     });
     return ret_type(ret);
   } else if (!is_constant<Mat2>::value) { // Should here be just else?
@@ -81,28 +65,11 @@ auto diag_pre_multiply(const Mat1& m1, const Mat2& m2) {
     arena_t<promote_scalar_t<var, Mat2>> arena_m2 = m2;
 		arena_t<ret_type> ret(arena_m1.asDiagonal() * arena_m2.val());
     reverse_pass_callback([ret, arena_m1, arena_m2]() mutable {
-      // std::cout << arena_m2.cols() << std::endl;
-      // std::cout << arena_m2.adj() << std::endl;
-      // std::cout << ret.adj() << std::endl;
-      // std::cout << arena_m1.val() << std::endl;
-      // std::cout << arena_m1.val().array().replicate(arena_m2.cols(),1) << std::endl;
-      // std::cout << arena_m1.val().array().transpose().replicate(arena_m2.cols(), 1) << std::endl;
-      // std::cout << arena_m1.val().array().replicate(arena_m2.cols(), 1) << std::endl;
-      // std::cout << arena_m1.val().array().transpose().replicate(arena_m2.cols(), 1).cwiseProduct(ret.adj().array()) << std::endl;
       if (arena_m1.cols() >= arena_m1.rows()) {
-        // std::cout << arena_m1.transpose().replicate(1, arena_m2.cols()) << std::endl;
         arena_m2.adj().array() += arena_m1.val().array().transpose().replicate(1, arena_m2.cols()).cwiseProduct(ret.adj().array());
       } else {
-        // std::cout << arena_m1.replicate(1, arena_m2.cols()) << std::endl;
         arena_m2.adj().array() += arena_m1.val().array().replicate(1, arena_m2.cols()).cwiseProduct(ret.adj().array());
       }
-      // arena_m2.adj().array() += arena_m1.val().array().transpose().replicate(1, arena_m2.cols()).cwiseProduct(ret.adj().array());
-			// for (int i = 0; i < arena_m1.size(); ++i) {
-			// 	for (int j = 0; j < arena_m2.cols(); ++j) {
-			// 		arena_m2.adj().coeffRef(i,j) += arena_m1.val().coeff(i) *
-			// 			ret.adj().coeffRef(i, j);
-			// 	}
-			// }
     });
     return ret_type(ret);
   }
