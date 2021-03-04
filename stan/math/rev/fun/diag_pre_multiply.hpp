@@ -37,15 +37,17 @@ auto diag_pre_multiply(const T1& m1, const T2& m2) {
       arena_m1.adj().array() += arena_m2.val().array().
                                   cwiseProduct(ret.adj().array()).
                                   rowwise().sum();
-      if (arena_m1.cols() >= arena_m1.rows()) {
-        arena_m2.adj().array() += arena_m1.val().array().
-                                    transpose().replicate(1, arena_m2.cols()).
-                                    cwiseProduct(ret.adj().array());
-      } else {
-        arena_m2.adj().array() += arena_m1.val().array().
-                                    replicate(1, arena_m2.cols()).
-                                    cwiseProduct(ret.adj().array());
-      }
+      arena_m2.adj()+= arena_m1.val().asDiagonal() * ret.adj();
+      // if (arena_m1.cols() >= arena_m1.rows()) {
+      //   arena_m2.adj()+= arena_m1.val().asDiagonal() * ret.adj();
+      //   // arena_m2.adj().array() += arena_m1.val().array().
+      //   //                             transpose().replicate(1, arena_m2.cols()).
+      //   //                             cwiseProduct(ret.adj().array());
+      // } else {
+      //   arena_m2.adj().array() += arena_m1.val().array().
+      //                               replicate(1, arena_m2.cols()).
+      //                               cwiseProduct(ret.adj().array());
+      // }
     });
     return ret_type(ret);
   } else if (!is_constant<T1>::value) {
