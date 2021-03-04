@@ -139,6 +139,7 @@ namespace internal {
 template <typename T>
 struct traits<stan::math::arena_matrix<T>> {
   using base = traits<Eigen::Map<T>>;
+  using XprKind = typename Eigen::internal::traits<std::decay_t<T>>::XprKind;
   enum {
     PlainObjectTypeInnerSize = base::PlainObjectTypeInnerSize,
     InnerStrideAtCompileTime = base::InnerStrideAtCompileTime,

@@ -115,6 +115,7 @@ TEST(prob_transform, lub_rt) {
   double xcfc = stan::math::lub_constrain(xcf, 2.0, 4.0);
   EXPECT_FLOAT_EQ(xc, xcfc);
 }
+
 TEST(prob_transform, underflow) {
   EXPECT_EQ(0, stan::math::lub_constrain(-1000, 0, 1));
   double lp = 0;
@@ -142,7 +143,6 @@ TEST(prob_transform, lub_constrain_matrix) {
       EXPECT_FLOAT_EQ(result(i), stan::math::lub_constrain(x(i), lbd, ubd));
     }
     auto x_free = stan::math::lub_free(result, lbd, ubd);
-    // EXPECT_MATRIX_EQ(x, x_free);
     for (size_t i = 0; i < x.size(); ++i) {
       EXPECT_FLOAT_EQ(x.coeff(i), x_free.coeff(i));
     }
@@ -154,7 +154,6 @@ TEST(prob_transform, lub_constrain_matrix) {
       EXPECT_FLOAT_EQ(result(i), stan::math::lub_constrain(x(i), lb(i), ubd));
     }
     auto x_free = stan::math::lub_free(result, lb, ubd);
-    // EXPECT_MATRIX_EQ(x, x_free);
     for (size_t i = 0; i < x.size(); ++i) {
       EXPECT_FLOAT_EQ(x.coeff(i), x_free.coeff(i));
     }
@@ -168,7 +167,6 @@ TEST(prob_transform, lub_constrain_matrix) {
       EXPECT_FLOAT_EQ(result(i), stan::math::lub_constrain(x(i), lbd, ub(i)));
     }
     auto x_free = stan::math::lub_free(result, lbd, ub);
-    // EXPECT_MATRIX_EQ(x, x_free);
     for (size_t i = 0; i < x.size(); ++i) {
       EXPECT_FLOAT_EQ(x.coeff(i), x_free.coeff(i));
     }
@@ -182,7 +180,72 @@ TEST(prob_transform, lub_constrain_matrix) {
       EXPECT_FLOAT_EQ(result(i), stan::math::lub_constrain(x(i), lb(i), ub(i)));
     }
     auto x_free = stan::math::lub_free(result, lb, ub);
-    // EXPECT_MATRIX_EQ(x, x_free);
+    for (size_t i = 0; i < x.size(); ++i) {
+      EXPECT_FLOAT_EQ(x.coeff(i), x_free.coeff(i));
+    }
+    EXPECT_THROW(stan::math::lub_constrain(x, lb, ub_bad),
+                 std::invalid_argument);
+  }
+  // matrix, real, real, lp
+  {
+    double lp0 = 0.0;
+    double lp1 = 0.0;
+    Eigen::VectorXd result = stan::math::lub_constrain(x, lbd, ubd, lp0);
+    for (size_t i = 0; i < result.size(); ++i) {
+      EXPECT_FLOAT_EQ(result(i),
+                      stan::math::lub_constrain(x(i), lbd, ubd, lp1));
+    }
+    EXPECT_FLOAT_EQ(lp0, lp1);
+    auto x_free = stan::math::lub_free(result, lbd, ubd);
+    for (size_t i = 0; i < x.size(); ++i) {
+      EXPECT_FLOAT_EQ(x.coeff(i), x_free.coeff(i));
+    }
+  }
+  // matrix, matrix, real, lp
+  {
+    double lp0 = 0.0;
+    double lp1 = 0.0;
+    Eigen::VectorXd result = stan::math::lub_constrain(x, lb, ubd, lp0);
+    for (size_t i = 0; i < result.size(); ++i) {
+      EXPECT_FLOAT_EQ(result(i),
+                      stan::math::lub_constrain(x(i), lb(i), ubd, lp1));
+    }
+    EXPECT_FLOAT_EQ(lp0, lp1);
+    auto x_free = stan::math::lub_free(result, lb, ubd);
+    for (size_t i = 0; i < x.size(); ++i) {
+      EXPECT_FLOAT_EQ(x.coeff(i), x_free.coeff(i));
+    }
+    EXPECT_THROW(stan::math::lub_constrain(x, lb_bad, ubd),
+                 std::invalid_argument);
+  }
+  // matrix, real, matrix, lp
+  {
+    double lp0 = 0.0;
+    double lp1 = 0.0;
+    Eigen::VectorXd result = stan::math::lub_constrain(x, lbd, ub, lp0);
+    for (size_t i = 0; i < result.size(); ++i) {
+      EXPECT_FLOAT_EQ(result(i),
+                      stan::math::lub_constrain(x(i), lbd, ub(i), lp1));
+    }
+    EXPECT_FLOAT_EQ(lp0, lp1);
+    auto x_free = stan::math::lub_free(result, lbd, ub);
+    for (size_t i = 0; i < x.size(); ++i) {
+      EXPECT_FLOAT_EQ(x.coeff(i), x_free.coeff(i));
+    }
+    EXPECT_THROW(stan::math::lub_constrain(x, lbd, ub_bad),
+                 std::invalid_argument);
+  }
+  // matrix, matrix, matrix, lp
+  {
+    double lp0 = 0.0;
+    double lp1 = 0.0;
+    Eigen::VectorXd result = stan::math::lub_constrain(x, lb, ub, lp0);
+    for (size_t i = 0; i < result.size(); ++i) {
+      EXPECT_FLOAT_EQ(result(i),
+                      stan::math::lub_constrain(x(i), lb(i), ub(i), lp1));
+    }
+    EXPECT_FLOAT_EQ(lp0, lp1);
+    auto x_free = stan::math::lub_free(result, lb, ub);
     for (size_t i = 0; i < x.size(); ++i) {
       EXPECT_FLOAT_EQ(x.coeff(i), x_free.coeff(i));
     }
@@ -210,7 +273,6 @@ TEST(prob_transform, lub_constrain_stdvec) {
       EXPECT_FLOAT_EQ(result[i], stan::math::lub_constrain(x[i], lbd, ubd));
     }
     auto x_free = stan::math::lub_free(result, lbd, ubd);
-    // EXPECT_MATRIX_EQ(x, x_free);
     for (size_t i = 0; i < x.size(); ++i) {
       EXPECT_FLOAT_EQ(x[i], x_free[i]);
     }
@@ -222,7 +284,6 @@ TEST(prob_transform, lub_constrain_stdvec) {
       EXPECT_FLOAT_EQ(result[i], stan::math::lub_constrain(x[i], lb[i], ubd));
     }
     auto x_free = stan::math::lub_free(result, lb, ubd);
-    // EXPECT_MATRIX_EQ(x, x_free);
     for (size_t i = 0; i < x.size(); ++i) {
       EXPECT_FLOAT_EQ(x[i], x_free[i]);
     }
@@ -236,7 +297,6 @@ TEST(prob_transform, lub_constrain_stdvec) {
       EXPECT_FLOAT_EQ(result[i], stan::math::lub_constrain(x[i], lbd, ub[i]));
     }
     auto x_free = stan::math::lub_free(result, lbd, ub);
-    // EXPECT_MATRIX_EQ(x, x_free);
     for (size_t i = 0; i < x.size(); ++i) {
       EXPECT_FLOAT_EQ(x[i], x_free[i]);
     }
@@ -250,7 +310,6 @@ TEST(prob_transform, lub_constrain_stdvec) {
       EXPECT_FLOAT_EQ(result[i], stan::math::lub_constrain(x[i], lb[i], ub[i]));
     }
     auto x_free = stan::math::lub_free(result, lb, ub);
-    // EXPECT_MATRIX_EQ(x, x_free);
     for (size_t i = 0; i < x.size(); ++i) {
       EXPECT_FLOAT_EQ(x[i], x_free[i]);
     }
@@ -290,7 +349,6 @@ TEST(prob_transform, lub_constrain_stdvec_matrix) {
       }
     }
     auto x_vec_free = stan::math::lub_free(result, lb_vec, ub_vec);
-    // EXPECT_MATRIX_EQ(x, x_free);
     for (size_t i = 0; i < x_vec.size(); ++i) {
       for (size_t j = 0; j < x_vec[i].size(); ++j) {
         EXPECT_FLOAT_EQ(x_vec[i].coeff(j), x_vec_free[i].coeff(j));
@@ -319,7 +377,6 @@ TEST(prob_transform, lub_constrain_stdvec_matrix) {
       }
     }
     auto x_vec_free = stan::math::lub_free(result, lb_vec, ubd);
-    // EXPECT_MATRIX_EQ(x, x_free);
     for (size_t i = 0; i < x_vec.size(); ++i) {
       for (size_t j = 0; j < x_vec[i].size(); ++j) {
         EXPECT_FLOAT_EQ(x_vec[i].coeff(j), x_vec_free[i].coeff(j));
@@ -340,7 +397,6 @@ TEST(prob_transform, lub_constrain_stdvec_matrix) {
       }
     }
     auto x_vec_free = stan::math::lub_free(result, lbd, ub_vec);
-    // EXPECT_MATRIX_EQ(x, x_free);
     for (size_t i = 0; i < x_vec.size(); ++i) {
       for (size_t j = 0; j < x_vec[i].size(); ++j) {
         EXPECT_FLOAT_EQ(x_vec[i].coeff(j), x_vec_free[i].coeff(j));
@@ -361,7 +417,6 @@ TEST(prob_transform, lub_constrain_stdvec_matrix) {
       }
     }
     auto x_vec_free = stan::math::lub_free(result, lb_vec, ub);
-    // EXPECT_MATRIX_EQ(x, x_free);
     for (size_t i = 0; i < x_vec.size(); ++i) {
       for (size_t j = 0; j < x_vec[i].size(); ++j) {
         EXPECT_FLOAT_EQ(x_vec[i].coeff(j), x_vec_free[i].coeff(j));
@@ -386,7 +441,6 @@ TEST(prob_transform, lub_constrain_stdvec_matrix) {
       }
     }
     auto x_vec_free = stan::math::lub_free(result, lb, ub_vec);
-    // EXPECT_MATRIX_EQ(x, x_free);
     for (size_t i = 0; i < x_vec.size(); ++i) {
       for (size_t j = 0; j < x_vec[i].size(); ++j) {
         EXPECT_FLOAT_EQ(x_vec[i].coeff(j), x_vec_free[i].coeff(j));
@@ -411,7 +465,6 @@ TEST(prob_transform, lub_constrain_stdvec_matrix) {
       }
     }
     auto x_vec_free = stan::math::lub_free(result, lb, ub);
-    // EXPECT_MATRIX_EQ(x, x_free);
     for (size_t i = 0; i < x_vec.size(); ++i) {
       for (size_t j = 0; j < x_vec[i].size(); ++j) {
         EXPECT_FLOAT_EQ(x_vec[i].coeff(j), x_vec_free[i].coeff(j));
@@ -437,7 +490,6 @@ TEST(prob_transform, lub_constrain_stdvec_matrix) {
       }
     }
     auto x_vec_free = stan::math::lub_free(result, lb, ubd);
-    // EXPECT_MATRIX_EQ(x, x_free);
     for (size_t i = 0; i < x_vec.size(); ++i) {
       for (size_t j = 0; j < x_vec[i].size(); ++j) {
         EXPECT_FLOAT_EQ(x_vec[i].coeff(j), x_vec_free[i].coeff(j));
@@ -454,7 +506,6 @@ TEST(prob_transform, lub_constrain_stdvec_matrix) {
       }
     }
     auto x_vec_free = stan::math::lub_free(result, lbd, ub);
-    // EXPECT_MATRIX_EQ(x, x_free);
     for (size_t i = 0; i < x_vec.size(); ++i) {
       for (size_t j = 0; j < x_vec[i].size(); ++j) {
         EXPECT_FLOAT_EQ(x_vec[i].coeff(j), x_vec_free[i].coeff(j));
@@ -471,7 +522,6 @@ TEST(prob_transform, lub_constrain_stdvec_matrix) {
       }
     }
     auto x_vec_free = stan::math::lub_free(result, lbd, ubd);
-    // EXPECT_MATRIX_EQ(x, x_free);
     for (size_t i = 0; i < x_vec.size(); ++i) {
       for (size_t j = 0; j < x_vec[i].size(); ++j) {
         EXPECT_FLOAT_EQ(x_vec[i].coeff(j), x_vec_free[i].coeff(j));
@@ -480,7 +530,7 @@ TEST(prob_transform, lub_constrain_stdvec_matrix) {
   }
 }
 
-TEST(prob_transform, ub_free_vec_exception) {
+TEST(prob_transform, lub_free_vec_exception) {
   double ubd = 2.0;
   Eigen::VectorXd ub(2);
   ub << 1.0, 2.0;
