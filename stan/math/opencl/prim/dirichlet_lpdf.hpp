@@ -122,27 +122,29 @@ inline return_type_t<T_prob_cl, T_prior_size_cl> dirichlet_lpdf(
             calc_if<!is_constant<T_prob_cl>::value>(theta_deriv),
             calc_if<!is_constant<T_prior_size_cl>::value>(alpha_deriv));
 
-    while (theta_csum_cl.rows() > 1) {
-      matrix_cl<double> theta_csum_cl2;
-      matrix_cl<double> theta_log_alpha_m_1_csum_cl2;
+    if (include_summand<propto, T_prior_size_cl>::value) {
       matrix_cl<double> alpha_csum_cl2;
       matrix_cl<double> lgamma_alpha_csum_cl2;
+      while (alpha_csum_cl.rows() > 1) {
+        results(alpha_csum_cl2, lgamma_alpha_csum_cl2) = expressions(
+            calc_if<include_summand<propto, T_prior_size_cl>::value>(
+                colwise_sum(alpha_csum_cl)),
+            calc_if<include_summand<propto, T_prior_size_cl>::value>(
+                colwise_sum(lgamma_alpha_csum_cl)));
+        alpha_csum_cl = std::move(alpha_csum_cl2);
+        lgamma_alpha_csum_cl = std::move(lgamma_alpha_csum_cl2);
+      }
+    }
+    matrix_cl<double> theta_csum_cl2;
+    matrix_cl<double> theta_log_alpha_m_1_csum_cl2;
+    while (theta_csum_cl.rows() > 1) {
       results(theta_csum_cl2, theta_log_alpha_m_1_csum_cl2) = expressions(
           colwise_sum(theta_csum_cl),
           calc_if<include_summand<propto, T_prob_cl, T_prior_size_cl>::value>(
               colwise_sum(theta_log_alpha_m_1_csum_cl)));
-      results(alpha_csum_cl2, lgamma_alpha_csum_cl2) = expressions(
-          calc_if<include_summand<propto, T_prior_size_cl>::value>(
-              colwise_sum(alpha_csum_cl)),
-          calc_if<include_summand<propto, T_prior_size_cl>::value>(
-              colwise_sum(lgamma_alpha_csum_cl)));
       theta_csum_cl = std::move(theta_csum_cl2);
       if (include_summand<propto, T_prob_cl, T_prior_size_cl>::value) {
         theta_log_alpha_m_1_csum_cl = std::move(theta_log_alpha_m_1_csum_cl2);
-      }
-      if (include_summand<propto, T_prior_size_cl>::value) {
-        alpha_csum_cl = std::move(alpha_csum_cl2);
-        lgamma_alpha_csum_cl = std::move(lgamma_alpha_csum_cl2);
       }
     }
   } else {

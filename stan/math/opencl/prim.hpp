@@ -93,6 +93,7 @@
 #include <stan/math/opencl/pinned_matrix.hpp>
 #include <stan/math/opencl/plain_type.hpp>
 #include <stan/math/opencl/ref_type_for_opencl.hpp>
+#include <stan/math/opencl/ref_type.hpp>
 #include <stan/math/opencl/to_ref_for_opencl.hpp>
 #include <stan/math/opencl/value_type.hpp>
 #include <stan/math/opencl/zeros_strict_tri.hpp>
@@ -163,6 +164,7 @@
 #include <stan/math/opencl/prim/poisson_log_lpmf.hpp>
 #include <stan/math/opencl/prim/poisson_lpmf.hpp>
 #include <stan/math/opencl/prim/rayleigh_lpdf.hpp>
+#include <stan/math/opencl/prim/rep_array.hpp>
 #include <stan/math/opencl/prim/rep_matrix.hpp>
 #include <stan/math/opencl/prim/rep_row_vector.hpp>
 #include <stan/math/opencl/prim/rep_vector.hpp>
