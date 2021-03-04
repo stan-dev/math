@@ -164,7 +164,7 @@ class reduction_2d
       return -1;
     }
     int wgs_rows = internal::colwise_reduction_wgs_rows(arg_rows, arg_cols);
-    if(wgs_rows==0){
+    if (wgs_rows == 0) {
       return 0;
     }
     return (arg_cols + wgs_rows - 1) / wgs_rows;
