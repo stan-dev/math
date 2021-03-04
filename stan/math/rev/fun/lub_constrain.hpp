@@ -46,7 +46,7 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
   } else if (unlikely(is_lb_inf)) {
     return ub_constrain(identity_constrain(x, lb), ub);
   } else {
-    check_less("lub_constrain mat scale", "lb", lb_val, ub_val);
+    check_less("lub_constrain", "lb", lb_val, ub_val);
     auto diff = ub_val - lb_val;
     double inv_logit_x = inv_logit(value_of(x));
     return make_callback_var(
@@ -116,7 +116,7 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
   } else if (unlikely(is_lb_inf)) {
     return ub_constrain(identity_constrain(x, lb), ub, lp);
   } else {
-    check_less("lub_constrain mat scale", "lb", lb_val, ub_val);
+    check_less("lub_constrain", "lb", lb_val, ub_val);
     auto neg_abs_x = -abs(value_of(x));
     auto diff = ub_val - lb_val;
     double inv_logit_x = inv_logit(value_of(x));
@@ -167,7 +167,7 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
     return ret_type(ub_constrain(identity_constrain(x, lb), ub));
   } else {
     arena_t<T> arena_x = x;
-    check_less("lub_constrain mat scale", "lb", lb_val, ub_val);
+    check_less("lub_constrain", "lb", lb_val, ub_val);
     const auto diff = ub_val - lb_val;
     auto inv_logit_x = to_arena(inv_logit(arena_x.val().array()));
     arena_t<ret_type> ret = diff * inv_logit_x + lb_val;
@@ -210,7 +210,7 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
   } else if (unlikely(is_lb_inf)) {
     return ret_type(ub_constrain(identity_constrain(x, lb), ub, lp));
   } else {
-    check_less("lub_constrain mat scale", "lb", lb_val, ub_val);
+    check_less("lub_constrain", "lb", lb_val, ub_val);
     arena_t<T> arena_x = x;
     auto neg_abs_x = to_arena(-(value_of(arena_x).array()).abs());
     auto diff = ub_val - lb_val;
@@ -264,7 +264,7 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
     arena_t<T> arena_x = x;
     arena_t<L> arena_lb = lb;
     const auto lb_val = value_of(arena_lb).array().eval();
-    check_less("lub_constrain mat scale", "lb", lb_val, ub_val);
+    check_less("lub_constrain", "lb", lb_val, ub_val);
     auto is_lb_inf = to_arena((lb_val == NEGATIVE_INFTY));
     auto diff = to_arena(ub_val - lb_val);
     auto inv_logit_x = to_arena(inv_logit(value_of(arena_x).array()));
@@ -315,7 +315,7 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
     arena_t<L> arena_lb = lb;
     const auto x_val = value_of(arena_x).array();
     const auto lb_val = value_of(arena_lb).array().eval();
-    check_less("lub_constrain mat scale", "lb", lb_val, ub_val);
+    check_less("lub_constrain", "lb", lb_val, ub_val);
     auto is_lb_inf = to_arena((lb_val == NEGATIVE_INFTY));
     auto diff = to_arena(ub_val - lb_val);
     auto neg_abs_x = to_arena(-(value_of(arena_x).array()).abs());
@@ -375,7 +375,7 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
     auto arena_x_val = to_arena(value_of(arena_x));
     arena_t<U> arena_ub = ub;
     const auto ub_val = value_of(arena_ub).array().eval();
-    check_less("lub_constrain mat scale", "lb", lb_val, ub_val);
+    check_less("lub_constrain", "lb", lb_val, ub_val);
     auto is_ub_inf = to_arena((ub_val == INFTY));
     auto diff = to_arena(ub_val - lb_val);
     auto inv_logit_x = to_arena(inv_logit(arena_x_val.array()));
@@ -427,7 +427,7 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
     auto arena_x_val = to_arena(value_of(arena_x));
     arena_t<U> arena_ub = ub;
     const auto& ub_val = to_ref(value_of(arena_ub));
-    check_less("lub_constrain mat scale", "lb", lb_val, ub_val);
+    check_less("lub_constrain", "lb", lb_val, ub_val);
     auto is_ub_inf = to_arena((ub_val.array() == INFTY));
     auto diff = to_arena(ub_val.array() - lb_val);
     auto neg_abs_x = to_arena(-(arena_x_val.array()).abs());
@@ -481,7 +481,7 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
   arena_t<U> arena_ub = ub;
   auto lb_val = value_of(arena_lb).array();
   auto ub_val = value_of(arena_ub).array();
-  check_less("lub_constrain mat scale", "lb", lb_val, ub_val);
+  check_less("lub_constrain", "lb", lb_val, ub_val);
   using plain_x_array = plain_type_t<decltype(arena_x_val.array())>;
   auto inv_logit_x = to_arena(inv_logit(arena_x_val.array()));
   auto is_lb_inf = to_arena((lb_val == NEGATIVE_INFTY));
@@ -561,7 +561,7 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
   arena_t<U> arena_ub = ub;
   auto lb_val = value_of(arena_lb).array();
   auto ub_val = value_of(arena_ub).array();
-  check_less("lub_constrain mat scale", "lb", lb_val, ub_val);
+  check_less("lub_constrain", "lb", lb_val, ub_val);
   using plain_x_array = plain_type_t<decltype(arena_x_val.array())>;
   auto inv_logit_x = to_arena(inv_logit(arena_x_val.array()));
   auto is_lb_inf = to_arena((lb_val == NEGATIVE_INFTY));
