@@ -59,16 +59,25 @@ functions {
     }
 
     if(adjoint_integrator) {
+      /* parser does not accept vector backward for now... */
+      y = ode_adjoint_tol_ctl(linked_mass_flow, a0, t0, ts, 
+                              rel_tol, rep_vector(abs_tol, num_states), // forward
+                              //rel_tol, rep_vector(10*abs_tol, num_states), // backward
+                              rel_tol, 10*abs_tol, // backward
+                              rel_tol, 100*abs_tol, // quadrature
+                              max_num_steps,
+                              num_checkpoints, // number of steps between checkpoints
+                              1,  // hermite polynomials
+                              solver_f,  // bdf forward
+                              solver_b,  // bdf backward
+                              kt, e50, k12, k21);
+      /**/
+      /*
       y = ode_adjoint_tol(linked_mass_flow, a0, t0, ts, 
-                          rel_tol, rep_vector(abs_tol, num_states), // forward
-                          rel_tol, 10*abs_tol, // backward
-                          rel_tol, 100*abs_tol, // quadrature
-                          max_num_steps,
-                          num_checkpoints, // number of steps between checkpoints
-                          1,  // hermite polynomials
-                          solver_f,  // bdf forward
-                          solver_b,  // bdf backward
-                          kt, e50, k12, k21);
+                              rel_tol, abs_tol,
+                              max_num_steps,
+                              kt, e50, k12, k21);
+      */
     } else {
       y = ode_bdf_tol(linked_mass_flow, a0, t0, ts, rel_tol, abs_tol, max_num_steps,
                       kt, e50, k12, k21);
