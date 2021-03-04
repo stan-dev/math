@@ -28,7 +28,7 @@ inline var variance(const var_value<T>& A) {
   arena_matrix_cl<double> diff;
   matrix_cl<double> sq_norm;
   auto diff_expr = A.val() - A_mean;
-  auto sq_norm_expr = sum_2d(diff * diff);
+  auto sq_norm_expr = sum_2d(square(diff));
   results(diff, sq_norm) = expressions(diff_expr, sq_norm_expr);
 
   return make_callback_var(

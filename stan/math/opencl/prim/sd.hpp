@@ -23,7 +23,7 @@ namespace math {
  */
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
-inline matrix_cl<double> sd(const T& a) {
+inline double sd(const T& a) {
 return sqrt(variance(a));
 }
 

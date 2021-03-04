@@ -25,9 +25,9 @@ inline var_value<matrix_cl<double>> softmax(const var_value<T>& A) {
     return A;
   }
   return make_callback_var(
-      softmax(A.val()),
-      [A](vari_value<matrix_cl<double>>& res) mutable {
-        A.adj() += elt_multiply(res.val(), (res.adj() - dot(res.adj(), res.val())));
+      softmax(A.val()), [A](vari_value<matrix_cl<double>>& res) mutable {
+        A.adj() += elt_multiply(
+            res.val(), (res.adj() - dot_product(res.adj(), res.val())));
       });
 }
 

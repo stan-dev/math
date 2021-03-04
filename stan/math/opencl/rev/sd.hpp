@@ -27,14 +27,14 @@ inline var sd(const var_value<T>& A) {
   double A_mean = mean(A.val());
   arena_matrix_cl<double> diff;
   matrix_cl<double> sq_norm;
-  auto diff_expr = A - mean;
-  auto sq_norm_expr = sum_2d(diff * diff);
+  auto diff_expr = A.val() - A_mean;
+  auto sq_norm_expr = sum_2d(square(diff));
   results(diff, sq_norm) = expressions(diff_expr, sq_norm_expr);
 
   return make_callback_var(
-      sqrt(from_matrix_cl(sq_norm).sum() / (A.size() - 1)),
-      [A, diff](vari_value<matrix_cl<double>>& res) mutable {
-        A.adj() += res.adj() / (res.val() * (A.size() - 1)) * diff;
+      sqrt(from_matrix_cl(sq_norm).sum() / (A.size() - 1.0)),
+      [A, diff](vari& res) mutable {
+        A.adj() += res.adj() / (res.val() * (A.size() - 1.0)) * diff;
       });
 }
 

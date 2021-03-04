@@ -128,7 +128,6 @@
 #include <stan/math/opencl/prim/divide_columns.hpp>
 #include <stan/math/opencl/prim/dot_product.hpp>
 #include <stan/math/opencl/prim/dot_self.hpp>
-#include <stan/math/opencl/prim/dot.hpp>
 #include <stan/math/opencl/prim/double_exponential_lpdf.hpp>
 #include <stan/math/opencl/prim/exp_mod_normal_lpdf.hpp>
 #include <stan/math/opencl/prim/exponential_lpdf.hpp>

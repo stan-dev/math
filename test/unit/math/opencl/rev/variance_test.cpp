@@ -13,10 +13,11 @@ TEST(OpenCLVariance, prim_rev_values_small) {
   stan::math::test::compare_cpu_opencl_prim_rev(variance_functor, a);
 }
 
-TEST(OpenCLVariance, prim_rev_size_0) {
-  int N = 0;
+TEST(OpenCLVariance, prim_rev_size_1) {
+  int N = 1;
 
   Eigen::MatrixXd a(N, N);
+  a << 123;
   stan::math::test::compare_cpu_opencl_prim_rev(variance_functor, a);
 }
 
