@@ -1,15 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 #include <limits>
 
-<<<<<<< HEAD
-<<<<<<< HEAD:test/unit/math/mix/fun/multiply_log3_test.cpp
-TEST(mathMixScalFun, multiplyLog_matvec) {
-=======
-TEST(mathMixScalFun, multiplyLog2_vec) {
->>>>>>> origin/develop:test/unit/math/mix/fun/multiply_log2_test.cpp
-=======
 TEST(mathMixScalFun, multiplyLog3_vec) {
->>>>>>> origin/develop
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::multiply_log;
     return multiply_log(x1, x2);
