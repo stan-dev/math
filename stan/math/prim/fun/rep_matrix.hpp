@@ -24,12 +24,7 @@ template <typename Ret, typename T,
 inline auto rep_matrix(const T& x, int m, int n) {
   check_nonnegative("rep_matrix", "rows", m);
   check_nonnegative("rep_matrix", "cols", n);
-  return T_ret::Constant(m, n, x);
-}
-template <typename T, require_stan_scalar_t<T>* = nullptr>
-inline auto rep_matrix(const T& x, int m, int n) {
-  return rep_matrix<
-      Eigen::Matrix<return_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>>(x, m, n);
+  return Ret::Constant(m, n, x);
 }
 
 /**
