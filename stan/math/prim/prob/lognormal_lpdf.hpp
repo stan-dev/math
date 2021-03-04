@@ -39,9 +39,9 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
   T_mu_ref mu_ref = mu;
   T_sigma_ref sigma_ref = sigma;
 
-  auto&& y_val = to_ref(as_value_column_array_or_scalar(y_ref));
-  auto&& mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
-  auto&& sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  decltype(auto) mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
+  decltype(auto) sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
 
   check_nonnegative(function, "Random variable", y_val);
   check_finite(function, "Location parameter", mu_val);

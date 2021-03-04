@@ -40,10 +40,10 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_cdf(
   T_sigma_ref sigma_ref = sigma;
   T_alpha_ref alpha_ref = alpha;
 
-  auto&& y_val = to_ref(as_value_column_array_or_scalar(y_ref));
-  auto&& mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
-  auto&& sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
-  auto&& alpha_val = to_ref(as_value_column_array_or_scalar(alpha_ref));
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  decltype(auto) mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
+  decltype(auto) sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
+  decltype(auto) alpha_val = to_ref(as_value_column_array_or_scalar(alpha_ref));
 
   check_not_nan(function, "Random variable", y_val);
   check_finite(function, "Location parameter", mu_val);

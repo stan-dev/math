@@ -72,13 +72,13 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
   T_mu_ref mu_ref = mu;
   T_sigma_ref sigma_ref = sigma;
 
-  auto&& y_val = to_ref(as_value_column_array_or_scalar(y_ref));
-  auto&& s_squared_val = to_ref(as_value_column_array_or_scalar(s_squared_ref));
-  auto&& n_obs_val_int = to_ref(as_value_column_array_or_scalar(n_obs_ref));
-  auto&& n_obs_val = to_ref(
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  decltype(auto) s_squared_val = to_ref(as_value_column_array_or_scalar(s_squared_ref));
+  decltype(auto) n_obs_val_int = to_ref(as_value_column_array_or_scalar(n_obs_ref));
+  decltype(auto) n_obs_val = to_ref(
       promote_scalar<double>(as_value_column_array_or_scalar(n_obs_ref)));
-  auto&& mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
-  auto&& sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
+  decltype(auto) mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
+  decltype(auto) sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
 
   check_finite(function, "Location parameter sufficient statistic", y_val);
   check_finite(function, "Scale parameter sufficient statistic", s_squared_val);

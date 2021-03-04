@@ -33,9 +33,9 @@ return_type_t<T_y, T_low, T_high> uniform_cdf(const T_y& y, const T_low& alpha,
   T_alpha_ref alpha_ref = alpha;
   T_beta_ref beta_ref = beta;
 
-  auto&& y_val = to_ref(as_value_column_array_or_scalar(y_ref));
-  auto&& alpha_val = to_ref(as_value_column_array_or_scalar(alpha_ref));
-  auto&& beta_val = to_ref(as_value_column_array_or_scalar(beta_ref));
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  decltype(auto) alpha_val = to_ref(as_value_column_array_or_scalar(alpha_ref));
+  decltype(auto) beta_val = to_ref(as_value_column_array_or_scalar(beta_ref));
 
   check_not_nan(function, "Random variable", y_val);
   check_finite(function, "Lower bound parameter", alpha_val);

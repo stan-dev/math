@@ -101,7 +101,7 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
 
   scalar_seq_view<T_y_ref> y_seq(y_ref);
 
-  auto&& lambda_val = to_ref(as_value_array_or_scalar(lambda_ref));
+  decltype(auto) lambda_val = to_ref(as_value_array_or_scalar(lambda_ref));
 
   check_finite(function, "Location parameter", lambda_val);
   if (C_l == 0 || N == 0) {

@@ -33,8 +33,8 @@ return_type_t<T_y, T_scale> rayleigh_lpdf(const T_y& y, const T_scale& sigma) {
   T_y_ref y_ref = y;
   T_sigma_ref sigma_ref = sigma;
 
-  auto&& y_val = to_ref(as_value_column_array_or_scalar(y_ref));
-  auto&& sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  decltype(auto) sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
 
   check_positive(function, "Scale parameter", sigma_val);
   check_positive(function, "Random variable", y_val);

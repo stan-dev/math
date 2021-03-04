@@ -52,9 +52,9 @@ return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
   T_N_ref N_ref = N;
   T_alpha_ref alpha_ref = alpha;
 
-  auto&& n_val = to_ref(as_value_column_array_or_scalar(n_ref));
-  auto&& N_val = to_ref(as_value_column_array_or_scalar(N_ref));
-  auto&& alpha_val = to_ref(as_value_column_array_or_scalar(alpha_ref));
+  decltype(auto) n_val = to_ref(as_value_column_array_or_scalar(n_ref));
+  decltype(auto) N_val = to_ref(as_value_column_array_or_scalar(N_ref));
+  decltype(auto) alpha_val = to_ref(as_value_column_array_or_scalar(alpha_ref));
 
   check_bounded(function, "Successes variable", value_of(n_val), 0, N_val);
   check_nonnegative(function, "Population size parameter", N_val);

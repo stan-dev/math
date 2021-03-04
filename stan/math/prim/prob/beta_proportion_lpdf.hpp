@@ -69,9 +69,9 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
   T_mu_ref mu_ref = mu;
   T_kappa_ref kappa_ref = kappa;
 
-  auto&& y_val = to_ref(as_value_column_array_or_scalar(y_ref));
-  auto&& mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
-  auto&& kappa_val = to_ref(as_value_column_array_or_scalar(kappa_ref));
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  decltype(auto) mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
+  decltype(auto) kappa_val = to_ref(as_value_column_array_or_scalar(kappa_ref));
 
   check_positive(function, "Location parameter", mu_val);
   check_less(function, "Location parameter", mu_val, 1.0);

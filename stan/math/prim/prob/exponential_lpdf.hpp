@@ -62,8 +62,8 @@ return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
   T_y_ref y_ref = y;
   T_beta_ref beta_ref = beta;
 
-  auto&& y_val = to_ref(as_value_column_array_or_scalar(y_ref));
-  auto&& beta_val = to_ref(as_value_column_array_or_scalar(beta_ref));
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  decltype(auto) beta_val = to_ref(as_value_column_array_or_scalar(beta_ref));
 
   check_nonnegative(function, "Random variable", y_val);
   check_positive_finite(function, "Inverse scale parameter", beta_val);

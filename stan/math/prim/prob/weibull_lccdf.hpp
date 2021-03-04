@@ -46,9 +46,9 @@ return_type_t<T_y, T_shape, T_scale> weibull_lccdf(const T_y& y,
   T_alpha_ref alpha_ref = alpha;
   T_sigma_ref sigma_ref = sigma;
 
-  auto&& y_val = to_ref(as_value_column_array_or_scalar(y_ref));
-  auto&& alpha_val = to_ref(as_value_column_array_or_scalar(alpha_ref));
-  auto&& sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  decltype(auto) alpha_val = to_ref(as_value_column_array_or_scalar(alpha_ref));
+  decltype(auto) sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
 
   check_nonnegative(function, "Random variable", y_val);
   check_positive_finite(function, "Shape parameter", alpha_val);
