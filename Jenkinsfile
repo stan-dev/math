@@ -36,6 +36,7 @@ def deleteDirWin() {
 }
 
 def skipRemainingStages = false
+def skipOpenCL = false
 
 def utils = new org.stan.Utils()
 
@@ -164,6 +165,9 @@ pipeline {
 
                     def paths = ['stan', 'make', 'lib', 'test', 'runTests.py', 'runChecks.py', 'makefile', 'Jenkinsfile', '.clang-format'].join(" ")
                     skipRemainingStages = utils.verifyChanges(paths)
+
+                    def openCLPaths = ['stan/math/opencl', 'test/unit/math/opencl'].join(" ")
+                    skipOpenCL = utils.verifyChanges(openCLPaths)
                 }
             }
         }
@@ -225,6 +229,11 @@ pipeline {
                     post { always { retry(3) { deleteDir() } } }
                 }
                 stage('OpenCL CPU tests') {
+                    when {
+                        expression {
+                            !skipOpenCL
+                        }
+                    }
                     agent { label "gelman-group-win2 || gg-linux" }
                     steps {
                         script {
@@ -235,11 +244,8 @@ pipeline {
                                 sh "echo STAN_OPENCL=true>> make/local"
                                 sh "echo OPENCL_PLATFORM_ID=0>> make/local"
                                 sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
-                                runTests("test/unit/math/opencl")
+                                runTests("test/unit/math/opencl", false)
                                 runTests("test/unit/multiple_translation_units_test.cpp")
-                                runTests("test/unit/math/prim/fun/gp_exp_quad_cov_test.cpp")
-                                runTests("test/unit/math/prim/fun/multiply_test.cpp")
-                                runTests("test/unit/math/rev/fun/multiply_test.cpp")
                             } else {
                                 deleteDirWin()
                                 unstash 'MathSetup'
@@ -251,9 +257,6 @@ pipeline {
                                 bat "mingw32-make.exe -f make/standalone math-libs"
                                 runTestsWin("test/unit/math/opencl", false, false)
                                 runTestsWin("test/unit/multiple_translation_units_test.cpp", false, false)
-                                runTestsWin("test/unit/math/prim/fun/gp_exp_quad_cov_test.cpp", false, false)
-                                runTestsWin("test/unit/math/prim/fun/multiply_test.cpp", false, false)
-                                runTestsWin("test/unit/math/rev/fun/multiply_test.cpp", false, false)
                             }
                         }
                     }
@@ -269,11 +272,8 @@ pipeline {
                                 sh "echo STAN_OPENCL=true>> make/local"
                                 sh "echo OPENCL_PLATFORM_ID=1>> make/local"
                                 sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
-                                runTests("test/unit/math/opencl")
+                                runTests("test/unit/math/opencl", false)
                                 runTests("test/unit/multiple_translation_units_test.cpp")
-                                runTests("test/unit/math/prim/fun/gp_exp_quad_cov_test.cpp")
-                                runTests("test/unit/math/prim/fun/multiply_test.cpp")
-                                runTests("test/unit/math/rev/fun/multiply_test.cpp")
                             } else {
                                 deleteDirWin()
                                 unstash 'MathSetup'
@@ -285,9 +285,6 @@ pipeline {
                                 bat "mingw32-make.exe -f make/standalone math-libs"
                                 runTestsWin("test/unit/math/opencl", false, false)
                                 runTestsWin("test/unit/multiple_translation_units_test.cpp", false, false)
-                                runTestsWin("test/unit/math/prim/fun/gp_exp_quad_cov_test.cpp", false, false)
-                                runTestsWin("test/unit/math/prim/fun/multiply_test.cpp", false, false)
-                                runTestsWin("test/unit/math/rev/fun/multiply_test.cpp", false, false)
                             }
 
                         }

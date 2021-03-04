@@ -166,8 +166,6 @@ class opencl_context_base {
          {"UPPER", static_cast<int>(matrix_cl_view::Upper)},
          {"ENTIRE", static_cast<int>(matrix_cl_view::Entire)},
          {"DIAGONAL", static_cast<int>(matrix_cl_view::Diagonal)},
-         {"UPPER_TO_LOWER", static_cast<int>(TriangularMapCL::UpperToLower)},
-         {"LOWER_TO_UPPER", static_cast<int>(TriangularMapCL::LowerToUpper)},
          {"THREAD_BLOCK_SIZE", 32},
          {"WORK_PER_THREAD", 8},
          {"REDUCTION_STEP_SIZE", 4},

@@ -73,6 +73,8 @@
 #include <stan/math/rev/fun/grad.hpp>
 #include <stan/math/rev/fun/grad_inc_beta.hpp>
 #include <stan/math/rev/fun/hypot.hpp>
+#include <stan/math/rev/fun/identity_constrain.hpp>
+#include <stan/math/rev/fun/identity_free.hpp>
 #include <stan/math/rev/fun/if_else.hpp>
 #include <stan/math/rev/fun/inc_beta.hpp>
 #include <stan/math/rev/fun/initialize_fill.hpp>
@@ -88,6 +90,7 @@
 #include <stan/math/rev/fun/is_nan.hpp>
 #include <stan/math/rev/fun/is_uninitialized.hpp>
 #include <stan/math/rev/fun/lambert_w.hpp>
+#include <stan/math/rev/fun/lb_constrain.hpp>
 #include <stan/math/rev/fun/lbeta.hpp>
 #include <stan/math/rev/fun/ldexp.hpp>
 #include <stan/math/rev/fun/lgamma.hpp>
@@ -112,6 +115,7 @@
 #include <stan/math/rev/fun/log_softmax.hpp>
 #include <stan/math/rev/fun/log_sum_exp.hpp>
 #include <stan/math/rev/fun/logit.hpp>
+#include <stan/math/rev/fun/lub_constrain.hpp>
 #include <stan/math/rev/fun/matrix_exp_multiply.hpp>
 #include <stan/math/rev/fun/matrix_power.hpp>
 #include <stan/math/rev/fun/mdivide_left.hpp>
@@ -140,6 +144,7 @@
 #include <stan/math/rev/fun/rising_factorial.hpp>
 #include <stan/math/rev/fun/round.hpp>
 #include <stan/math/rev/fun/rows_dot_product.hpp>
+#include <stan/math/rev/fun/rows_dot_self.hpp>
 #include <stan/math/rev/fun/sd.hpp>
 #include <stan/math/rev/fun/simplex_constrain.hpp>
 #include <stan/math/rev/fun/sin.hpp>
@@ -169,6 +174,7 @@
 #include <stan/math/rev/fun/trigamma.hpp>
 #include <stan/math/rev/fun/trunc.hpp>
 #include <stan/math/rev/fun/unit_vector_constrain.hpp>
+#include <stan/math/rev/fun/ub_constrain.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/fun/value_of_rec.hpp>
 #include <stan/math/rev/fun/variance.hpp>

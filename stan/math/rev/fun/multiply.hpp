@@ -18,12 +18,12 @@ namespace math {
  * @tparam T1 type of first matrix
  * @tparam T2 type of second matrix
  *
+ *
  * @param[in] A first matrix
  * @param[in] B second matrix
  * @return A * B
  */
 template <typename T1, typename T2, require_all_matrix_t<T1, T2>* = nullptr,
-          require_any_st_var<T1, T2>* = nullptr,
           require_return_type_t<is_var, T1, T2>* = nullptr,
           require_not_row_and_col_vector_t<T1, T2>* = nullptr>
 inline auto multiply(const T1& A, const T2& B) {
@@ -85,7 +85,7 @@ inline auto multiply(const T1& A, const T2& B) {
  * @return A * B as a scalar
  */
 template <typename T1, typename T2, require_all_matrix_t<T1, T2>* = nullptr,
-          require_any_st_var<T1, T2>* = nullptr,
+          require_return_type_t<is_var, T1, T2>* = nullptr,
           require_row_and_col_vector_t<T1, T2>* = nullptr>
 inline var multiply(const T1& A, const T2& B) {
   check_multiplicable("multiply", "A", A, "B", B);
@@ -135,7 +135,7 @@ inline var multiply(const T1& A, const T2& B) {
  */
 template <typename T1, typename T2, require_not_matrix_t<T1>* = nullptr,
           require_matrix_t<T2>* = nullptr,
-          require_any_st_var<T1, T2>* = nullptr,
+          require_return_type_t<is_var, T1, T2>* = nullptr,
           require_not_row_and_col_vector_t<T1, T2>* = nullptr>
 inline auto multiply(const T1& A, const T2& B) {
   if (!is_constant<T2>::value && !is_constant<T1>::value) {
