@@ -92,9 +92,7 @@ class operands_and_partials_impl<ReturnType, require_var_t<ReturnType>,
       edges_;
   template <typename... Types>
   explicit operands_and_partials_impl(Types&&... ops)
-      : edges_(internal::ops_partials_edge<double,
-                                           plain_type_t<std::decay_t<Ops>>>(
-            std::forward<Types>(ops))...) {}
+      : edges_(std::forward<Types>(ops)...) {}
 
   /** \ingroup type_trait
    * Build the node to be stored on the autodiff graph.
@@ -112,13 +110,12 @@ class operands_and_partials_impl<ReturnType, require_var_t<ReturnType>,
   inline var build(double value) {
     var ret(value);
     stan::math::for_each(
-        [ret](auto& edge) mutable {
+        [ret](auto&& edge) mutable {
           reverse_pass_callback(
-              [operand = to_arena(edge.operand()),
-               partial = to_arena(edge.partial()),
+              [operand = edge.operand(),
+               partial = edge.partial(),
                ret]() mutable { update_adjoints(operand, partial, ret); });
-        },
-        std::move(edges_));
+        }, edges_);
     return ret;
   }
 };
