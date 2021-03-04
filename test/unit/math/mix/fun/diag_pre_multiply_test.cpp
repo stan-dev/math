@@ -2,19 +2,15 @@
 #include <iostream>
 
 void expect_diag_pre_multiply(const Eigen::VectorXd& v,
-                              const Eigen::MatrixXd& a,
-                              const stan::test::ad_tolerances& tols) {
+                              const Eigen::MatrixXd& a) {
   auto f = [](const auto& x, const auto& y) {
     return stan::math::diag_pre_multiply(x, y);
   };
-  stan::test::expect_ad(tols, f, v, a);
+  stan::test::expect_ad(f, v, a);
+  stan::test::expect_ad_matvar(f, v, a);
   Eigen::RowVectorXd rv(v);
-  stan::test::expect_ad(tols, f, rv, a);
-}
-void expect_diag_pre_multiply(const Eigen::VectorXd& v,
-                              const Eigen::MatrixXd& a) {
-  stan::test::ad_tolerances tols;
-  expect_diag_pre_multiply(v, a, tols);
+  stan::test::expect_ad(f, rv, a);
+  stan::test::expect_ad_matvar(f, rv, a);
 }
 TEST(MathMixMatFun, diagPreMultiply) {
   using stan::test::relative_tolerance;
@@ -50,21 +46,17 @@ TEST(MathMixMatFun, diagPreMultiply) {
   u3c << 1, 2, 3;
   expect_diag_pre_multiply(u3c, a33c);
 
-  stan::test::ad_tolerances tols;
-  tols.hessian_hessian_ = relative_tolerance(1e-4, 2e-2);
-  tols.hessian_fvar_hessian_ = relative_tolerance(1e-4, 2e-2);
-
   Eigen::MatrixXd a33(3, 3);
   a33 << 1, 10, 100, 1000, 2, -4, 8, -16, 32;
   Eigen::VectorXd u3(3);
   u3 << -1.7, 111.2, -29.3;
-  expect_diag_pre_multiply(u3, a33, tols);
+  expect_diag_pre_multiply(u3, a33);
 
   Eigen::MatrixXd a33d(3, 3);
   a33d << 1, 0, 0, 0, 2, 0, 0, 0, 3;
   Eigen::VectorXd u3d(3);
   u3d << 1, 2, 3;
-  expect_diag_pre_multiply(u3d, a33d, tols);
+  expect_diag_pre_multiply(u3d, a33d);
 
   // error: mismatched sizes
   expect_diag_pre_multiply(u2, a33);

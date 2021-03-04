@@ -74,9 +74,9 @@ TEST(MathMatrixPrimMat, diagPreMultiplyZero) {
   using Eigen::Matrix;
   using stan::math::diag_pre_multiply;
   Eigen::VectorXd in1(0);
-  Eigen::VectorXd in2(0);
-  Eigen::VectorXd in3(0);
-  Eigen::VectorXd in4(0);
+  Eigen::MatrixXd in2(0, 0);
+  Eigen::MatrixXd in3;
+  Eigen::MatrixXd in4(0, 0);
   in3 = diag_pre_multiply(in1, in2);
   EXPECT_EQ(in4, in3);
 }
