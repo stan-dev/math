@@ -37,7 +37,8 @@ return_type_t<T_rate> poisson_lccdf(const T_n& n, const T_rate& lambda) {
   T_lambda_ref lambda_ref = lambda;
 
   decltype(auto) n_val = to_ref(as_value_column_array_or_scalar(n_ref));
-  decltype(auto) lambda_val = to_ref(as_value_column_array_or_scalar(lambda_ref));
+  decltype(auto) lambda_val
+      = to_ref(as_value_column_array_or_scalar(lambda_ref));
 
   check_nonnegative(function, "Rate parameter", lambda_val);
 

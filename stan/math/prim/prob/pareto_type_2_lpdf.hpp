@@ -48,7 +48,8 @@ return_type_t<T_y, T_loc, T_scale, T_shape> pareto_type_2_lpdf(
 
   decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
   decltype(auto) mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
-  decltype(auto) lambda_val = to_ref(as_value_column_array_or_scalar(lambda_ref));
+  decltype(auto) lambda_val
+      = to_ref(as_value_column_array_or_scalar(lambda_ref));
   decltype(auto) alpha_val = to_ref(as_value_column_array_or_scalar(alpha_ref));
 
   check_greater_or_equal(function, "Random variable", y_val, mu_val);

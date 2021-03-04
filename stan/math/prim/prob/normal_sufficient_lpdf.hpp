@@ -73,8 +73,10 @@ return_type_t<T_y, T_s, T_loc, T_scale> normal_sufficient_lpdf(
   T_sigma_ref sigma_ref = sigma;
 
   decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
-  decltype(auto) s_squared_val = to_ref(as_value_column_array_or_scalar(s_squared_ref));
-  decltype(auto) n_obs_val_int = to_ref(as_value_column_array_or_scalar(n_obs_ref));
+  decltype(auto) s_squared_val
+      = to_ref(as_value_column_array_or_scalar(s_squared_ref));
+  decltype(auto) n_obs_val_int
+      = to_ref(as_value_column_array_or_scalar(n_obs_ref));
   decltype(auto) n_obs_val = to_ref(
       promote_scalar<double>(as_value_column_array_or_scalar(n_obs_ref)));
   decltype(auto) mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
