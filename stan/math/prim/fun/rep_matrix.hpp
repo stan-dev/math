@@ -19,13 +19,17 @@ namespace math {
  * @param n Number of columns.
  */
 template <typename Ret, typename T,
-          require_eigen_vt<is_stan_scalar, Ret>* = nullptr,
+          require_eigen_matrix_dynamic_vt<is_stan_scalar, Ret>* = nullptr,
           require_stan_scalar_t<T>* = nullptr>
 inline auto rep_matrix(const T& x, int m, int n) {
   check_nonnegative("rep_matrix", "rows", m);
   check_nonnegative("rep_matrix", "cols", n);
-  return Eigen::Matrix<return_type_t<T>, Eigen::Dynamic,
-                       Eigen::Dynamic>::Constant(m, n, x);
+  return T_ret::Constant(m, n, x);
+}
+template <typename T, require_stan_scalar_t<T>* = nullptr>
+inline auto rep_matrix(const T& x, int m, int n) {
+  return rep_matrix<
+      Eigen::Matrix<return_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>>(x, m, n);
 }
 
 /**

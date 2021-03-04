@@ -33,7 +33,7 @@ class constant_ : public operation_cl<constant_<T>, T> {
 
  public:
   static_assert(std::is_arithmetic<T>::value,
-                "class scalar_<T>: std::is_arithmetic<T> must be true!");
+                "class constant_<T>: std::is_arithmetic<T> must be true!");
   using Scalar = T;
   using base = operation_cl<constant_<T>, T>;
   using base::var_name_;
