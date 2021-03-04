@@ -181,8 +181,6 @@ ode_adjoint_tol(const F& f, const T_y0& y0, const T_t0& t0,
       interpolation_polynomial, solver_f, solver_b, msgs, args...);
 }
 
-// TODO(wds15): ask @rok/all to name this ode_adjoint_tol ?
-
 }  // namespace math
 }  // namespace stan
 #endif

@@ -1,40 +1,30 @@
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/fun/lub_constrain_helpers.hpp>
 
-TEST(mathMixMatFun, lub_mat_constrain_4) {
-  auto f1 = [](const auto& x, const auto& lb, const auto& ub) {
-    return stan::math::lub_constrain(x, lb, ub);
-  };
-  auto f2 = [](const auto& x, const auto& lb, const auto& ub) {
-    stan::return_type_t<decltype(x), decltype(lb), decltype(ub)> lp = 0;
-    return stan::math::lub_constrain(x, lb, ub, lp);
-  };
-  auto f3 = [](const auto& x, const auto& lb, const auto& ub) {
-    stan::return_type_t<decltype(x), decltype(lb), decltype(ub)> lp = 0;
-    stan::math::lub_constrain(x, lb, ub, lp);
-    return lp;
-  };
+// real[], real[], real[]
+// real[], real, real[]
+// real[], real[], real
+TEST(mathMixMatFun, lub_stdvec_constrain) {
+  std::vector<double> A{5.0, 2.0, 4.0, -2.0};
+  std::vector<double> lbm{-3.0, 3.0, -6.0, 6.0};
+  std::vector<double> ubm{-1.0, 5.0, 0.0, 38.0};
+  lub_constrain_tests::expect_vec(A, lbm, ubm);
+  double lbd = -6.0;
+  lub_constrain_tests::expect_vec(A, lbd, ubm);
+  double ubd = 8.0;
+  lub_constrain_tests::expect_vec(A, lbd, ubd);
+  lub_constrain_tests::expect_vec(A, lbm, ubd);
+}
 
-  Eigen::MatrixXd x1(2, 2);
-  x1 << 0.7, -1.0, 1.1, -3.8;
-  Eigen::MatrixXd x2(2, 2);
-  x2 << 1.1, 2.0, -0.3, 1.1;
-  Eigen::MatrixXd lb(2, 2);
-  lb << 2.7, -1.0, -3.0, 1.1;
-  Eigen::MatrixXd ub(2, 2);
-  ub << 2.3, -0.5, 1.4, 1.2;
-
-  // Error cases
-  double lbsb = 100.0;
-  double ubsb = -100.0;
-
-  stan::test::expect_ad_matvar(f1, x1, lb, lb);
-  stan::test::expect_ad_matvar(f1, x1, lb, ubsb);
-  stan::test::expect_ad_matvar(f1, x1, lbsb, ub);
-  stan::test::expect_ad_matvar(f1, x2, lb, lb);
-  stan::test::expect_ad_matvar(f1, x2, lb, ubsb);
-  stan::test::expect_ad_matvar(f1, x2, lbsb, ub);
-
-  stan::test::expect_ad_matvar(f2, x1, lb, lb);
-  stan::test::expect_ad_matvar(f2, x1, lb, ubsb);
-  stan::test::expect_ad_matvar(f2, x1, lbsb, ub);
+TEST(mathMixMatFun, lub_stdvec_constrain_neg_inf) {
+  std::vector<double> A{5.0, 2.0, 4.0, -2.0};
+  std::vector<double> lbm{stan::math::NEGATIVE_INFTY, 3.0,
+                          stan::math::NEGATIVE_INFTY, 6.0};
+  std::vector<double> ubm{-1.0, stan::math::INFTY, stan::math::INFTY, 38.0};
+  lub_constrain_tests::expect_vec(A, lbm, ubm);
+  double lbd = stan::math::NEGATIVE_INFTY;
+  lub_constrain_tests::expect_vec(A, lbd, ubm);
+  double ubd = stan::math::INFTY;
+  lub_constrain_tests::expect_vec(A, lbd, ubd);
+  lub_constrain_tests::expect_vec(A, lbm, ubd);
 }

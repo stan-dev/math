@@ -112,7 +112,7 @@ TEST(StanMathOdeIntegrateODEGradMat, double_var) {
     EXPECT_NEAR(dy2_domega(t, omega, chi), grad(0), 1e-7);
   }
 }
-
+*/
 template <int state>
 class test_functor_var_double {
   int lmm_;
@@ -134,7 +134,7 @@ class test_functor_var_double {
 
     std::vector<Eigen::Matrix<T, Eigen::Dynamic, 1>> ys
         = (lmm_ == TEST_CVODES_ADAMS)
-              ? stan::math::ode_adjoint(sho, y0, t0, ts, nullptr, omega)
+        ? stan::math::ode_adjoint_tol(sho, y0, t0, ts, 1E-10, 1E-10, 10000, nullptr, omega)
               : stan::math::ode_bdf(sho, y0, t0, ts, nullptr, omega);
 
     return ys[0](state);
@@ -203,8 +203,8 @@ class test_functor_var_var {
 
     std::vector<Eigen::Matrix<T, Eigen::Dynamic, 1>> ys
         = (lmm_ == TEST_CVODES_ADAMS)
-              ? stan::math::ode_adjoint(sho, y0, t0, ts, 1E-10, 1E-10, 10000,
-                                          nullptr, omega)
+        ? stan::math::ode_adjoint_tol(sho, y0, t0, ts, 1E-10, 1E-10, 10000,
+                                      nullptr, omega)
               : stan::math::ode_bdf(sho, y0, t0, ts, nullptr, omega);
 
     return ys[1](state);
@@ -259,7 +259,7 @@ TEST(StanMathOdeIntegrateODEGradMat, var_var) {
     EXPECT_NEAR(dy2_dchi(t, omega, chi), grad(1), 1e-7);
   }
 }
-*/
+
 
 template <int state>
 class test_functor_sum_var_var {

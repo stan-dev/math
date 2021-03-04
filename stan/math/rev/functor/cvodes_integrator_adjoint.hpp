@@ -124,6 +124,7 @@ class cvodes_integrator_adjoint_memory : public chainable_alloc {
       nv_abs_tol_b_ = N_VMake_Serial(N_, &abs_tol_b_(0));
       A_f_ = SUNDenseMatrix(N_, N_); 
       LS_f_ = SUNDenseLinearSolver(nv_state_, A_f_);
+
       cvodes_mem_ = CVodeCreate(lmm_f_);
       if (cvodes_mem_ == nullptr) {
         throw std::runtime_error("CVodeCreate failed to allocate memory");
@@ -391,16 +392,16 @@ class cvodes_integrator_adjoint_vari : public vari {
     Eigen::Matrix<var, Eigen::Dynamic, 1> fx_var = f_wrapped(x_var);
     grad(fx_var(0).vi_);
     for (size_t j = 0; j < N_; ++j) {
-      //SM_ELEMENT_D(Jfy, 0, j) = x_var(j).adj();
+      // SM_ELEMENT_D(Jfy, 0, j) = x_var(j).adj();
       Jfy(0, j) = x_var(j).adj();
-    } 
+    }
     for (int i = 1; i < fx_var.size(); ++i) {
       nested.set_zero_all_adjoints();
       grad(fx_var(i).vi_);
       for (size_t j = 0; j < N_; ++j) {
-        //SM_ELEMENT_D(Jfy, i, j) = x_var(j).adj();
+        // SM_ELEMENT_D(Jfy, i, j) = x_var(j).adj();
         Jfy(i, j) = x_var(j).adj();
-      } 
+      }
     }
   }
 
@@ -419,9 +420,9 @@ class cvodes_integrator_adjoint_vari : public vari {
     jacobian_states(t, y, J);
 
     J_adj_y.transposeInPlace();
-    J_adj_y.array() *= -1.0;    
+    J_adj_y.array() *= -1.0;
   }
-  
+
  public:
   /**
    * Construct cvodes_integrator object
@@ -493,8 +494,7 @@ class cvodes_integrator_adjoint_vari : public vari {
         y0_varis_(
             ChainableStack::instance_->memalloc_.alloc_array<vari*>(y0_vars_)),
         args_varis_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-            args_vars_))
-  {
+            args_vars_)) {
     const char* fun = "cvodes_integrator::integrate";
 
     memory
