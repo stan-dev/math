@@ -53,7 +53,7 @@ inline auto lub_constrain(T&& x, L&& lb, U&& ub) {
   } else if (unlikely(is_lb_inf)) {
     return ub_constrain(identity_constrain(x, lb), ub);
   } else {
-    check_less("lub_constrain scal", "lb", value_of(lb), value_of(ub));
+    check_less("lub_constrain", "lb", value_of(lb), value_of(ub));
     return (ub - lb) * inv_logit(x) + lb;
   }
 }
@@ -104,7 +104,7 @@ inline auto lub_constrain(T&& x, L&& lb, U&& ub, return_type_t<T, L, U>& lp) {
   } else if (unlikely(is_lb_inf)) {
     return ub_constrain(identity_constrain(x, lb), ub, lp);
   } else {
-    check_less("lub_constrain scal lp", "lb", value_of(lb), value_of(ub));
+    check_less("lub_constrain", "lb", value_of(lb), value_of(ub));
     const auto diff = ub - lb;
     lp += add(log(diff), subtract(-abs(x), multiply(2.0, log1p_exp(-abs(x)))));
     return diff * inv_logit(x) + lb;

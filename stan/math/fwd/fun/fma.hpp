@@ -55,7 +55,8 @@ namespace math {
  * @param x3 Third value.
  * @return Product of the first two values plus the third.
  */
-template <typename T1, typename T2, typename T3>
+template <typename T1, typename T2, typename T3,
+          require_all_stan_scalar_t<T1, T2, T3>* = nullptr>
 inline fvar<return_type_t<T1, T2, T3>> fma(const fvar<T1>& x1,
                                            const fvar<T2>& x2,
                                            const fvar<T3>& x3) {
@@ -67,7 +68,8 @@ inline fvar<return_type_t<T1, T2, T3>> fma(const fvar<T1>& x1,
 /**
  * See all-var input signature for details on the function and derivatives.
  */
-template <typename T1, typename T2, typename T3>
+template <typename T1, typename T2, typename T3,
+          require_all_stan_scalar_t<T1, T2, T3>* = nullptr>
 inline fvar<return_type_t<T1, T2, T3>> fma(const T1& x1, const fvar<T2>& x2,
                                            const fvar<T3>& x3) {
   return fvar<return_type_t<T1, T2, T3>>(fma(x1, x2.val_, x3.val_),
@@ -77,7 +79,8 @@ inline fvar<return_type_t<T1, T2, T3>> fma(const T1& x1, const fvar<T2>& x2,
 /**
  * See all-var input signature for details on the function and derivatives.
  */
-template <typename T1, typename T2, typename T3>
+template <typename T1, typename T2, typename T3,
+          require_all_stan_scalar_t<T1, T2, T3>* = nullptr>
 inline fvar<return_type_t<T1, T2, T3>> fma(const fvar<T1>& x1, const T2& x2,
                                            const fvar<T3>& x3) {
   return fvar<return_type_t<T1, T2, T3>>(fma(x1.val_, x2, x3.val_),
@@ -87,7 +90,8 @@ inline fvar<return_type_t<T1, T2, T3>> fma(const fvar<T1>& x1, const T2& x2,
 /**
  * See all-var input signature for details on the function and derivatives.
  */
-template <typename T1, typename T2, typename T3>
+template <typename T1, typename T2, typename T3,
+          require_all_stan_scalar_t<T1, T2, T3>* = nullptr>
 inline fvar<return_type_t<T1, T2, T3>> fma(const fvar<T1>& x1,
                                            const fvar<T2>& x2, const T3& x3) {
   return fvar<return_type_t<T1, T2, T3>>(fma(x1.val_, x2.val_, x3),
@@ -97,7 +101,8 @@ inline fvar<return_type_t<T1, T2, T3>> fma(const fvar<T1>& x1,
 /**
  * See all-var input signature for details on the function and derivatives.
  */
-template <typename T1, typename T2, typename T3>
+template <typename T1, typename T2, typename T3,
+          require_all_stan_scalar_t<T1, T2, T3>* = nullptr>
 inline fvar<return_type_t<T1, T2, T3>> fma(const T1& x1, const T2& x2,
                                            const fvar<T3>& x3) {
   return fvar<return_type_t<T1, T2, T3>>(fma(x1, x2, x3.val_), x3.d_);
@@ -106,7 +111,8 @@ inline fvar<return_type_t<T1, T2, T3>> fma(const T1& x1, const T2& x2,
 /**
  * See all-var input signature for details on the function and derivatives.
  */
-template <typename T1, typename T2, typename T3>
+template <typename T1, typename T2, typename T3,
+          require_all_stan_scalar_t<T1, T2, T3>* = nullptr>
 inline fvar<return_type_t<T1, T2, T3>> fma(const fvar<T1>& x1, const T2& x2,
                                            const T3& x3) {
   return fvar<return_type_t<T1, T2, T3>>(fma(x1.val_, x2, x3), x1.d_ * x2);
@@ -115,7 +121,8 @@ inline fvar<return_type_t<T1, T2, T3>> fma(const fvar<T1>& x1, const T2& x2,
 /**
  * See all-var input signature for details on the function and derivatives.
  */
-template <typename T1, typename T2, typename T3>
+template <typename T1, typename T2, typename T3,
+          require_all_stan_scalar_t<T1, T2, T3>* = nullptr>
 inline fvar<return_type_t<T1, T2, T3>> fma(const T1& x1, const fvar<T2>& x2,
                                            const T3& x3) {
   return fvar<return_type_t<T1, T2, T3>>(fma(x1, x2.val_, x3), x2.d_ * x1);
