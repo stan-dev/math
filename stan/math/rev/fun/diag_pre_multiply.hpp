@@ -19,13 +19,20 @@ namespace math {
  *
  * @return product of the diagonal matrix formed from the
  * vector or row_vector and a matrix.
+<<<<<<< HEAD
 */
 template <typename T1, typename T2,
           require_vector_t<T1>* = nullptr,
           require_matrix_t<T2>* = nullptr,
           require_any_st_var<T1, T2>* = nullptr>
+=======
+ */
+template <typename T1, typename T2, require_eigen_vector_t<T1>* = nullptr,
+          require_eigen_t<T2>* = nullptr,
+          require_any_rev_matrix_t<T1, T2>* = nullptr>
+>>>>>>> 2d6e53e4bc537bee92f07eb1a66b8065c462e2ea
 auto diag_pre_multiply(const T1& m1, const T2& m2) {
-	check_size_match("diag_pre_multiply", "m1.size()", m1.size(), "m2.rows()",
+  check_size_match("diag_pre_multiply", "m1.size()", m1.size(), "m2.rows()",
                    m2.rows());
   using inner_ret_type = decltype(value_of(m1).asDiagonal() * value_of(m2));
   using ret_type = return_var_matrix_t<inner_ret_type, T1, T2>;
@@ -34,8 +41,28 @@ auto diag_pre_multiply(const T1& m1, const T2& m2) {
     arena_t<promote_scalar_t<var, T2>> arena_m2 = m2;
     arena_t<ret_type> ret(arena_m1.val().asDiagonal() * arena_m2.val());
     reverse_pass_callback([ret, arena_m1, arena_m2]() mutable {
+<<<<<<< HEAD
       arena_m1.adj()+= arena_m2.val().cwiseProduct(ret.adj()).rowwise().sum();
       arena_m2.adj()+= arena_m1.val().asDiagonal() * ret.adj();
+=======
+      arena_m1.adj().array() += arena_m2.val()
+                                    .array()
+                                    .cwiseProduct(ret.adj().array())
+                                    .rowwise()
+                                    .sum();
+      if (arena_m1.cols() >= arena_m1.rows()) {
+        arena_m2.adj().array() += arena_m1.val()
+                                      .array()
+                                      .transpose()
+                                      .replicate(1, arena_m2.cols())
+                                      .cwiseProduct(ret.adj().array());
+      } else {
+        arena_m2.adj().array() += arena_m1.val()
+                                      .array()
+                                      .replicate(1, arena_m2.cols())
+                                      .cwiseProduct(ret.adj().array());
+      }
+>>>>>>> 2d6e53e4bc537bee92f07eb1a66b8065c462e2ea
     });
     return ret_type(ret);
   } else if (!is_constant<T1>::value) {
@@ -43,15 +70,38 @@ auto diag_pre_multiply(const T1& m1, const T2& m2) {
     arena_t<promote_scalar_t<double, T2>> arena_m2 = value_of(m2);
     arena_t<ret_type> ret(arena_m1.val().asDiagonal() * arena_m2);
     reverse_pass_callback([ret, arena_m1, arena_m2]() mutable {
+<<<<<<< HEAD
       arena_m1.adj()+= arena_m2.val().cwiseProduct(ret.adj()).rowwise().sum();
+=======
+      arena_m1.adj().array() += arena_m2.val()
+                                    .array()
+                                    .cwiseProduct(ret.adj().array())
+                                    .rowwise()
+                                    .sum();
+>>>>>>> 2d6e53e4bc537bee92f07eb1a66b8065c462e2ea
     });
     return ret_type(ret);
   } else if (!is_constant<T2>::value) {
     arena_t<promote_scalar_t<double, T1>> arena_m1 = value_of(m1);
     arena_t<promote_scalar_t<var, T2>> arena_m2 = m2;
-		arena_t<ret_type> ret(arena_m1.asDiagonal() * arena_m2.val());
+    arena_t<ret_type> ret(arena_m1.asDiagonal() * arena_m2.val());
     reverse_pass_callback([ret, arena_m1, arena_m2]() mutable {
+<<<<<<< HEAD
       arena_m2.adj()+= arena_m1.val().asDiagonal() * ret.adj();
+=======
+      if (arena_m1.cols() >= arena_m1.rows()) {
+        arena_m2.adj().array() += arena_m1.val()
+                                      .array()
+                                      .transpose()
+                                      .replicate(1, arena_m2.cols())
+                                      .cwiseProduct(ret.adj().array());
+      } else {
+        arena_m2.adj().array() += arena_m1.val()
+                                      .array()
+                                      .replicate(1, arena_m2.cols())
+                                      .cwiseProduct(ret.adj().array());
+      }
+>>>>>>> 2d6e53e4bc537bee92f07eb1a66b8065c462e2ea
     });
     return ret_type(ret);
   }
@@ -59,6 +109,5 @@ auto diag_pre_multiply(const T1& m1, const T2& m2) {
 
 }  // namespace math
 }  // namespace stan
-
 
 #endif
