@@ -99,7 +99,8 @@ class cvodes_integrator_adjoint_memory : public chainable_alloc {
   SUNLinearSolver LS_f_;
 
   template <require_eigen_col_vector_t<T_y0>* = nullptr>
-  cvodes_integrator_adjoint_memory(Eigen::VectorXd abs_tol_f, Eigen::VectorXd abs_tol_b, int lmm_f, 
+  cvodes_integrator_adjoint_memory(Eigen::VectorXd abs_tol_f,
+                                   Eigen::VectorXd abs_tol_b, int lmm_f,
                                    const F& f, const T_y0& y0, const T_t0& t0,
                                    const std::vector<T_ts>& ts,
                                    const T_Args&... args)
@@ -116,13 +117,12 @@ class cvodes_integrator_adjoint_memory : public chainable_alloc {
         value_of_args_tuple_(value_of(args)...),
         y_(ts_.size()),
         cvodes_mem_(nullptr),
-        state(value_of(y0))
-  {
+        state(value_of(y0)) {
     if (N_ > 0) {
       nv_state_ = N_VMake_Serial(N_, state.data());
       nv_abs_tol_f_ = N_VMake_Serial(N_, &abs_tol_f_(0));
       nv_abs_tol_b_ = N_VMake_Serial(N_, &abs_tol_b_(0));
-      A_f_ = SUNDenseMatrix(N_, N_); 
+      A_f_ = SUNDenseMatrix(N_, N_);
       LS_f_ = SUNDenseLinearSolver(nv_state_, A_f_);
 
       cvodes_mem_ = CVodeCreate(lmm_f_);
@@ -459,8 +459,8 @@ class cvodes_integrator_adjoint_vari : public vari {
   cvodes_integrator_adjoint_vari(
       const char* function_name, const F& f, const T_y0& y0, const T_t0& t0,
       const std::vector<T_ts>& ts, double rel_tol_f, Eigen::VectorXd abs_tol_f,
-      double rel_tol_b, Eigen::VectorXd abs_tol_b, double rel_tol_q, double abs_tol_q,
-      long int max_num_steps, long int num_checkpoints,
+      double rel_tol_b, Eigen::VectorXd abs_tol_b, double rel_tol_q,
+      double abs_tol_q, long int max_num_steps, long int num_checkpoints,
       int interpolation_polynomial, int solver_f, int solver_b,
       std::ostream* msgs, const T_Args&... args)
       : function_name_(function_name),
@@ -669,7 +669,7 @@ class cvodes_integrator_adjoint_vari : public vari {
 
     SUNMatrix A_b;
     SUNLinearSolver LS_b;
-    A_b = SUNDenseMatrix(N_, N_); 
+    A_b = SUNDenseMatrix(N_, N_);
     LS_b = SUNDenseLinearSolver(nv_state_sens, A_b);
 
     /* check these if needed
@@ -735,9 +735,10 @@ class cvodes_integrator_adjoint_vari : public vari {
                            t_init, nv_state_sens),
                 "CVodeInitB");
 
-            check_flag_sundials(CVodeSVtolerancesB(memory->cvodes_mem_, indexB,
-                                                   rel_tol_b_, memory->nv_abs_tol_b_),
-                                "CVodeSVtolerancesB");
+            check_flag_sundials(
+                CVodeSVtolerancesB(memory->cvodes_mem_, indexB, rel_tol_b_,
+                                   memory->nv_abs_tol_b_),
+                "CVodeSVtolerancesB");
 
             check_flag_sundials(CVodeSetMaxNumStepsB(memory->cvodes_mem_,
                                                      indexB, max_num_steps_),

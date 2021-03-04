@@ -59,11 +59,11 @@ std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, T_Args...>,
                           Eigen::Dynamic, 1>>
 ode_adjoint_impl(const char* function_name, const F& f, const T_y0& y0,
                  const T_t0& t0, const std::vector<T_ts>& ts, double rel_tol_f,
-                 Eigen::VectorXd abs_tol_f, double rel_tol_b, Eigen::VectorXd abs_tol_b,
-                 double rel_tol_q, double abs_tol_q, long int max_num_steps,
-                 long int num_checkpoints, int interpolation_polynomial,
-                 int solver_f, int solver_b, std::ostream* msgs,
-                 const T_Args&... args) {
+                 Eigen::VectorXd abs_tol_f, double rel_tol_b,
+                 Eigen::VectorXd abs_tol_b, double rel_tol_q, double abs_tol_q,
+                 long int max_num_steps, long int num_checkpoints,
+                 int interpolation_polynomial, int solver_f, int solver_b,
+                 std::ostream* msgs, const T_Args&... args) {
   /*
   const auto& args_ref_tuple = std::make_tuple(to_ref(args)...);
   return apply(
@@ -143,19 +143,19 @@ template <typename F, typename T_y0, typename T_t0, typename T_ts,
 std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, T_Args...>,
                           Eigen::Dynamic, 1>>
 ode_adjoint_tol_ctl(const F& f, const T_y0& y0, const T_t0& t0,
-                    const std::vector<T_ts>& ts,
-                    double rel_tol_f, Eigen::VectorXd abs_tol_f,
-                    double rel_tol_b, double abs_tol_b_scalar, //Eigen::VectorXd abs_tol_b,
-                    double rel_tol_q, double abs_tol_q,
-                    long int max_num_steps, long int num_checkpoints,
-                    int interpolation_polynomial, int solver_f, int solver_b,
-                    std::ostream* msgs,
+                    const std::vector<T_ts>& ts, double rel_tol_f,
+                    Eigen::VectorXd abs_tol_f, double rel_tol_b,
+                    double abs_tol_b_scalar,  // Eigen::VectorXd abs_tol_b,
+                    double rel_tol_q, double abs_tol_q, long int max_num_steps,
+                    long int num_checkpoints, int interpolation_polynomial,
+                    int solver_f, int solver_b, std::ostream* msgs,
                     const T_Args&... args) {
   const int N = y0.size();
-  const Eigen::VectorXd abs_tol_b = Eigen::VectorXd::Constant(N, abs_tol_b_scalar);
+  const Eigen::VectorXd abs_tol_b
+      = Eigen::VectorXd::Constant(N, abs_tol_b_scalar);
   return ode_adjoint_impl(
-      "ode_adjoint_tol_ctl", f, y0, t0, ts, rel_tol_f, abs_tol_f, rel_tol_b, abs_tol_b,
-      rel_tol_q, abs_tol_q, max_num_steps, num_checkpoints,
+      "ode_adjoint_tol_ctl", f, y0, t0, ts, rel_tol_f, abs_tol_f, rel_tol_b,
+      abs_tol_b, rel_tol_q, abs_tol_q, max_num_steps, num_checkpoints,
       interpolation_polynomial, solver_f, solver_b, msgs, args...);
 }
 
@@ -164,21 +164,22 @@ template <typename F, typename T_y0, typename T_t0, typename T_ts,
 std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, T_Args...>,
                           Eigen::Dynamic, 1>>
 ode_adjoint_tol(const F& f, const T_y0& y0, const T_t0& t0,
-                const std::vector<T_ts>& ts,
-                double rel_tol, double abs_tol,
-                long int max_num_steps,
-                std::ostream* msgs, const T_Args&... args) {
+                const std::vector<T_ts>& ts, double rel_tol, double abs_tol,
+                long int max_num_steps, std::ostream* msgs,
+                const T_Args&... args) {
   const int N = y0.size();
-  const Eigen::VectorXd abs_tol_f = Eigen::VectorXd::Constant(N, abs_tol/100.0);
-  const Eigen::VectorXd abs_tol_b = Eigen::VectorXd::Constant(N, abs_tol/10.0);
+  const Eigen::VectorXd abs_tol_f
+      = Eigen::VectorXd::Constant(N, abs_tol / 100.0);
+  const Eigen::VectorXd abs_tol_b
+      = Eigen::VectorXd::Constant(N, abs_tol / 10.0);
   const long int num_checkpoints = 250;
   const int interpolation_polynomial = 1;
   const int solver_f = 2;
   const int solver_b = 2;
-  return ode_adjoint_impl(
-      "ode_adjoint_tol", f, y0, t0, ts, rel_tol, abs_tol_f, rel_tol,
-      abs_tol_b, rel_tol, abs_tol, max_num_steps, num_checkpoints,
-      interpolation_polynomial, solver_f, solver_b, msgs, args...);
+  return ode_adjoint_impl("ode_adjoint_tol", f, y0, t0, ts, rel_tol, abs_tol_f,
+                          rel_tol, abs_tol_b, rel_tol, abs_tol, max_num_steps,
+                          num_checkpoints, interpolation_polynomial, solver_f,
+                          solver_b, msgs, args...);
 }
 
 }  // namespace math
