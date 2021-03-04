@@ -9,6 +9,7 @@
 #include <stan/math/opencl/kernel_generator/calc_if.hpp>
 #include <stan/math/opencl/kernel_generator/check_cl.hpp>
 #include <stan/math/opencl/kernel_generator/colwise_reduction.hpp>
+#include <stan/math/opencl/kernel_generator/reduction_2d.hpp>
 #include <stan/math/opencl/kernel_generator/load.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
 #include <algorithm>
@@ -79,6 +80,12 @@ struct multi_result_kernel_internal {
         expression_cols = n_cols;
         expression_rows = internal::colwise_reduction_wgs_rows(
             expression.thread_rows(), expression_cols);
+      }
+      if (is_reduction_2d<T_current_expression>::value
+          && expression_cols == -1) {
+        expression_rows = internal::colwise_reduction_wgs_rows(
+            expression.thread_rows(), n_cols);
+        expression_cols = (n_cols + expression_rows - 1) / expression_rows;
       }
       if (expression.thread_rows() != -1) {
         check_size_match(function, "Rows of ", "expression",
@@ -386,6 +393,7 @@ class results_cl {
           "const int gsize_i = get_global_size(0);\n"
           "const int gsize_j = get_global_size(1);\n"
           "const int wg_id_i = get_group_id(0);\n"
+          "const int wg_id_j = get_group_id(1);\n"
           "const int n_groups_i = get_num_groups(0);\n"
           + parts.declarations +
           "for(int j = gid_j; j < cols; j+=gsize_j){\n"
@@ -394,8 +402,9 @@ class results_cl {
           + parts.body
           + parts.body_suffix +
           "}\n"
-          + parts.reduction +
+          + parts.reduction_1d +
           "}\n"
+          + parts.reduction_2d +
           "}\n";
     } else {
       src =
@@ -409,7 +418,8 @@ class results_cl {
           + parts.initialization
           + parts.body
           + parts.body_suffix
-          + parts.reduction +
+          + parts.reduction_1d
+          + parts.reduction_2d +
           "}\n";
     }
     return src;
