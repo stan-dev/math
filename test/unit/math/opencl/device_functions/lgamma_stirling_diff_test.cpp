@@ -7,7 +7,7 @@
 #include <test/unit/math/expect_near_rel.hpp>
 #include <string>
 
-static const std::string test_kernel_code
+static const std::string test_lgamma_kernel_code
     = STRINGIFY(__kernel void test(__global double *B, __global double *A) {
         const int i = get_global_id(0);
         B[i] = lgamma_stirling_diff(A[i]);
@@ -20,7 +20,7 @@ const stan::math::opencl_kernels::kernel_cl<
         "test",
         {stan::math::opencl_kernels::lgamma_stirling_device_function,
          stan::math::opencl_kernels::lgamma_stirling_diff_device_function,
-         test_kernel_code});
+         test_lgamma_kernel_code});
 
 TEST(MathMatrixCL, lgamma_stirling_diff) {
   Eigen::VectorXd a = Eigen::VectorXd::Random(1000).array() * 15 + 30;

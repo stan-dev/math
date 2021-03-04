@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_OPENCL_PRIM_REP_ROW_VECTOR_HPP
-#define STAN_MATH_OPENCL_PRIM_REP_ROW_VECTOR_HPP
+#ifndef STAN_MATH_OPENCL_PRIM_REP_ARRAY_HPP
+#define STAN_MATH_OPENCL_PRIM_REP_ARRAY_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta.hpp>
@@ -9,13 +9,14 @@
 
 namespace stan {
 namespace math {
+
 /** \ingroup opencl
- * Creates a matrix_cl representing a row vector
+ * Creates a matrix_cl representing an array
  * by replicating the input value.
  *
  * @tparam T type of the input
  * @param x the input value
- * @param n number of cols in the results row_vector
+ * @param n number of elements in the result array
  *
  * @return matrix_cl with replicated value from the input matrix
  *
@@ -28,8 +29,8 @@ template <
     require_any_t<
         is_matrix_cl<T>,
         math::conjunction<is_var<T>, is_matrix_cl<value_type_t<T>>>>* = nullptr>
-auto rep_row_vector(const scalar_type_t<T>& x, int n) {
-  return rep_matrix<T>(x, 1, n);
+auto rep_array(const scalar_type_t<T>& x, int n) {
+  return rep_matrix<T>(x, n, 1);
 }
 
 }  // namespace math
