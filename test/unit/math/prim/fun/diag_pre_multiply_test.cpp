@@ -68,3 +68,16 @@ TEST(MathMatrixPrimMat, diagPreMultiplyException) {
   v << 1, 2, 3;
   EXPECT_THROW(diag_pre_multiply(v, m), std::invalid_argument);
 }
+
+TEST(MathMatrixPrimMat, diagPreMultiplyZero) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::diag_pre_multiply;
+  Eigen::VectorXd in1(0);
+  Eigen::VectorXd in2(0);
+	Eigen::VectorXd in3(0);
+  Eigen::VectorXd in4(0);
+	in3 = diag_pre_multiply(in1, in2);
+  EXPECT_EQ(in4, in3);
+
+}
