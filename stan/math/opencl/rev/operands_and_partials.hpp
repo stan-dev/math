@@ -18,7 +18,7 @@ class ops_partials_edge<double, var_value<Op>,
                         require_kernel_expression_lhs_t<Op>> {
  public:
   using partials_t = plain_type_t<Op>;
-  arena_t<partials_t> partials_;                     // For univariate use-cases
+  arena_t<partials_t> partials_;              // For univariate use-cases
   broadcast_array<partials_t> partials_vec_;  // For multivariate
   explicit ops_partials_edge(const var_value<Op>& ops)
       : partials_(constant(0.0, ops.vi_->rows(), ops.vi_->cols())),
