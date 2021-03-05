@@ -141,6 +141,7 @@
 #include <stan/math/opencl/prim/inv_cloglog.hpp>
 #include <stan/math/opencl/prim/inv_gamma_lpdf.hpp>
 #include <stan/math/opencl/prim/inv_sqrt.hpp>
+#include <stan/math/opencl/prim/log_mix.hpp>
 #include <stan/math/opencl/prim/log_softmax.hpp>
 #include <stan/math/opencl/prim/logistic_lpdf.hpp>
 #include <stan/math/opencl/prim/log_sum_exp.hpp>
@@ -165,6 +166,7 @@
 #include <stan/math/opencl/prim/poisson_log_glm_lpmf.hpp>
 #include <stan/math/opencl/prim/poisson_log_lpmf.hpp>
 #include <stan/math/opencl/prim/poisson_lpmf.hpp>
+#include <stan/math/opencl/prim/rank.hpp>
 #include <stan/math/opencl/prim/rayleigh_lpdf.hpp>
 #include <stan/math/opencl/prim/rep_array.hpp>
 #include <stan/math/opencl/prim/rep_matrix.hpp>
