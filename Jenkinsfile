@@ -228,7 +228,6 @@ pipeline {
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
-                /*
                 stage('OpenCL CPU tests') {
                     when {
                         expression {
@@ -291,7 +290,6 @@ pipeline {
                         }
                     }
                 }
-                */
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
                     steps {
