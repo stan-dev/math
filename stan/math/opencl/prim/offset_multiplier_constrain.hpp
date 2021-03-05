@@ -42,8 +42,8 @@ inline auto offset_multiplier_constrain(const T& x, const M& mu,
   auto check_mu = check_cl(function, "offset", mu, "finite");
   auto check_sigma = check_cl(function, "multiplier", sigma, "positive finite");
   matrix_cl<double> res;
-  results(check_mu, check_sigma, res)
-      = expressions(isfinite(mu), isfinite(sigma) && sigma > 0, x * sigma + mu);
+  results(check_mu, check_sigma, res) = expressions(
+      isfinite(mu), isfinite(sigma) && sigma > 0, elt_multiply(x, sigma) + mu);
   return res;
 }
 
@@ -82,9 +82,11 @@ inline auto offset_multiplier_constrain(const T& x, const M& mu, const S& sigma,
   auto check_mu = check_cl(function, "offset", mu, "finite");
   auto check_sigma = check_cl(function, "multiplier", sigma, "positive finite");
   matrix_cl<double> res;
-  results(check_mu, check_sigma, res)
-      = expressions(isfinite(mu), isfinite(sigma) && sigma > 0, x * sigma + mu);
-  lp += multiply_log(size(x), sigma);
+  matrix_cl<double> lp_inc;
+  results(check_mu, check_sigma, res, lp_inc) = expressions(
+      isfinite(mu), isfinite(sigma) && sigma > 0, elt_multiply(x, sigma) + mu,
+        sum_2d(multiply_log(size(x), sigma)));
+  lp += sum(from_matrix_cl(lp_inc));
   return res;
 }
 

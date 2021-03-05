@@ -35,7 +35,6 @@ inline auto lb_constrain(T&& x, U&& lb) {
       std::forward<T>(x), std::forward<U>(lb));
 }
 
-
 /**
  * Return the lower-bounded value for the specified unconstrained input
  * and specified lower bound.
@@ -56,9 +55,15 @@ inline auto lb_constrain(T&& x, U&& lb) {
 template <typename T, typename U,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr,
           require_all_kernel_expressions_t<U>* = nullptr>
-inline auto lb_constrain(T&& x, U&& lb, return_type_t<T, U>& lp) {
-  lp += sum(select(lb == NEGATIVE_INFTY, 0.0, x));
-  return lb_constrain(std::forward<T>(x), std::forward<U>(lb));
+inline auto lb_constrain(const T& x, const U& lb, return_type_t<T, U>& lp) {
+  matrix_cl<double> lp_inc;
+  matrix_cl<double> res;
+  auto lb_inf = lb == NEGATIVE_INFTY;
+  auto lp_inc_expr = sum_2d(select(lb_inf, 0.0, x));
+  auto res_expr = select(lb_inf, x, lb + exp(x));
+  results(lp_inc, res) = expressions(lp_inc_expr, res_expr);
+  lp += sum(from_matrix_cl(lp_inc));
+  return res;
 }
 
 }  // namespace math

@@ -40,9 +40,9 @@ inline matrix_cl<double> lub_constrain(const T& x, const L& lb, const U& ub) {
   matrix_cl<double> res;
 
   results(check, res) = expressions(
-      diff > 0.0,
-      select(lb_inf, select(ub_inf, x, ub-exp(x)),
-             select(ub_inf, exp(x) + lb, elt_multiply(diff, inv_logit(x)) + lb)));
+      diff > 0.0, select(lb_inf, select(ub_inf, x, ub - exp(x)),
+                         select(ub_inf, exp(x) + lb,
+                                elt_multiply(diff, inv_logit(x)) + lb)));
   return res;
 }
 
@@ -75,18 +75,23 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
   auto lb_inf = lb == NEGATIVE_INFTY;
   auto ub_inf = ub == INFTY;
   auto abs_x = fabs(x);
-
   auto check
       = check_cl("lub_constrain (OpenCL)", "(ub - lb)", diff, "positive");
+
   matrix_cl<double> res;
-  lp += sum(
+  matrix_cl<double> lp_inc;
+
+  auto lp_inc_expr = sum_2d(
       select(lb_inf, select(ub_inf, 0.0, x),
              select(ub_inf, x, log(diff) - abs_x - 2.0 * log1p_exp(-abs_x))));
+  auto res_expr = select(
+      lb_inf, select(ub_inf, x, ub - exp(x)),
+      select(ub_inf, exp(x) + lb, elt_multiply(diff, inv_logit(x)) + lb));
 
-  results(check, res) = expressions(
-      diff > 0.0,
-      select(lb_inf, select(ub_inf, x, ub-exp(x)),
-             select(ub_inf, exp(x) + lb, elt_multiply(diff, inv_logit(x)) + lb)));
+  results(check, res, lp_inc) = expressions(diff > 0.0, res_expr, lp_inc_expr);
+
+  lp += sum(from_matrix_cl(lp_inc));
+
   return res;
 }
 

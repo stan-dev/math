@@ -55,9 +55,15 @@ inline auto ub_constrain(T&& x, U&& ub) {
 template <typename T, typename U,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr,
           require_all_kernel_expressions_t<U>* = nullptr>
-inline auto ub_constrain(T&& x, U&& ub, return_type_t<T, U>& lp) {
-  lp += sum(select(ub == INFTY, 0.0, x));
-  return ub_constrain(std::forward<T>(x), std::forward<U>(ub));
+inline auto ub_constrain(const T& x, const U& ub, return_type_t<T, U>& lp) {
+  matrix_cl<double> lp_inc;
+  matrix_cl<double> res;
+  auto ub_inf = ub == INFTY;
+  auto lp_inc_expr = sum_2d(select(ub_inf, 0.0, x));
+  auto res_expr = select(ub_inf, x, ub - exp(x));
+  results(lp_inc, res) = expressions(lp_inc_expr, res_expr);
+  lp += sum(from_matrix_cl(lp_inc));
+  return res;
 }
 
 }  // namespace math

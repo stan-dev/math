@@ -38,13 +38,14 @@ template <
     require_all_nonscalar_prim_or_rev_kernel_expression_t<T, M, S>* = nullptr,
     require_any_not_stan_scalar_t<T, M, S>* = nullptr,
     require_any_var_t<T, M, S>* = nullptr>
-inline var_value<matrix_cl<double>> offset_multiplier_constrain(
-    const T& A, const M& mu, const S& sigma) {
-  arena_t<T> A_arena = A;
-  arena_t<M> mu_arena = mu;
-  arena_t<S> sigma_arena = sigma;
+inline var_value<matrix_cl<double>> offset_multiplier_constrain(T&& A, M&& mu,
+                                                                S&& sigma) {
+  arena_t<T> A_arena = std::forward<T>(A);
+  arena_t<M> mu_arena = std::forward<M>(mu);
+  arena_t<S> sigma_arena = std::forward<S>(sigma);
   return make_callback_var(
-      offset_multiplier_constrain(value_of(A), value_of(mu), value_of(sigma)),
+      offset_multiplier_constrain(value_of(A_arena), value_of(mu_arena),
+                                  value_of(sigma_arena)),
       [A_arena, mu_arena,
        sigma_arena](vari_value<matrix_cl<double>>& res) mutable {
         adjoint_results(A_arena, mu_arena, sigma_arena)
@@ -82,17 +83,16 @@ template <
     require_all_nonscalar_prim_or_rev_kernel_expression_t<T, M, S>* = nullptr,
     require_any_not_stan_scalar_t<T, M, S>* = nullptr,
     require_any_var_t<T, M, S>* = nullptr>
-inline var_value<matrix_cl<double>> offset_multiplier_constrain(const T& A,
-                                                                const M& mu,
-                                                                const S& sigma,
+inline var_value<matrix_cl<double>> offset_multiplier_constrain(T&& A, M&& mu,
+                                                                S&& sigma,
                                                                 var& lp) {
-  arena_t<T> A_arena = A;
-  arena_t<M> mu_arena = mu;
-  arena_t<S> sigma_arena = sigma;
+  arena_t<T> A_arena = std::forward<T>(A);
+  arena_t<M> mu_arena = std::forward<M>(mu);
+  arena_t<S> sigma_arena = std::forward<S>(sigma);
 
   double lp_inc = 0;
-  auto res = offset_multiplier_constrain(value_of(A), value_of(mu),
-                                         value_of(sigma), lp_inc);
+  auto res = offset_multiplier_constrain(value_of(A_arena), value_of(mu_arena),
+                                         value_of(sigma_arena), lp_inc);
   lp += lp_inc;
   return make_callback_var(
       std::move(res), [A_arena, mu_arena, sigma_arena,
