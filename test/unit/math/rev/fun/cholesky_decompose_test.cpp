@@ -4,10 +4,6 @@
 #include <boost/random/mersenne_twister.hpp>
 #include <vector>
 
-#ifdef STAN_OPENCL
-#include <stan/math/opencl/prim.hpp>
-#endif
-
 template <typename T_x>
 std::vector<T_x> fill_vec(Eigen::Matrix<T_x, -1, 1> inp) {
   std::vector<T_x> ret_vec;
@@ -476,25 +472,3 @@ TEST(AgradRevMatrix, cholesky_replicated_input) {
   fd_ref = (f(size, ydbl + dx) - f(size, ydbl - dx)) / (2.0 * dx);
   EXPECT_FLOAT_EQ(y.adj(), fd_ref);
 }
-
-#ifdef STAN_OPENCL
-TEST(AgradRevMatrix, mat_cholesky_1st_deriv_large_gradients_opencl) {
-  stan::math::opencl_context.tuning_opts().cholesky_size_worth_transfer = 25;
-  test_gradient(51, 1e-08);
-  test_gp_grad(1300, 1e-08);
-  test_gp_grad(2000, 1e-08);
-  test_chol_mult(50, 1e-08);
-  test_simple_vec_mult(45, 1e-08);
-  // below the threshold
-  test_gradient(10, 1e-08);
-  test_gp_grad(10, 1e-08);
-}
-
-TEST(AgradRevMatrix, check_varis_on_stack_large_opencl) {
-  stan::math::opencl_context.tuning_opts().cholesky_size_worth_transfer = 25;
-  stan::math::matrix_v m1 = stan::math::matrix_v::Random(50, 50);
-  stan::math::matrix_v m1_pos_def
-      = m1 * m1.transpose() + 50 * stan::math::matrix_v::Identity(50, 50);
-  test::check_varis_on_stack(stan::math::cholesky_decompose(m1_pos_def));
-}
-#endif
