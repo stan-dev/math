@@ -242,8 +242,8 @@ pipeline {
                                 unstash 'MathSetup'
                                 sh "echo CXX=${env.CXX} -Werror > make/local"
                                 sh "echo STAN_OPENCL=true>> make/local"
-                                sh "echo OPENCL_PLATFORM_ID=0>> make/local"
-                                sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
+                                sh "echo OPENCL_PLATFORM_ID=${env.OPENCL_PLATFORM_ID}>> make/local"
+                                sh "echo OPENCL_DEVICE_ID=${env.OPENCL_DEVICE_ID}>> make/local"
                                 runTests("test/unit/math/opencl", false)
                                 runTests("test/unit/multiple_translation_units_test.cpp")
                             } else {
@@ -270,8 +270,8 @@ pipeline {
                                 unstash 'MathSetup'
                                 sh "echo CXX=${env.CXX} -Werror > make/local"
                                 sh "echo STAN_OPENCL=true>> make/local"
-                                sh "echo OPENCL_PLATFORM_ID=1>> make/local"
-                                sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
+                                sh "echo OPENCL_PLATFORM_ID=${env.OPENCL_PLATFORM_ID}>> make/local"
+                                sh "echo OPENCL_DEVICE_ID=${env.OPENCL_DEVICE_ID}>> make/local"
                                 runTests("test/unit/math/opencl", false)
                                 runTests("test/unit/multiple_translation_units_test.cpp")
                             } else {
