@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Impl of rep_matrix returning an Eigen matrix with scalar
+ * Implementation of rep_matrix returning an Eigen matrix with scalar
  * type equal to the input scalar type.
  * @tparam Ret An Eigen type.
  * @tparam T A Scalar type.
@@ -28,7 +28,7 @@ inline auto rep_matrix(const T& x, int m, int n) {
 }
 
 /**
- * Default Implimentation of rep_matrix returning an Eigen matrix with scalar
+ * Default Implementation of rep_matrix returning an Eigen matrix with scalar
  * type equal to the input scalar type.
  * @tparam T A Scalar type.
  * @param x A Scalar whose values are propogated to all values in the return
@@ -42,15 +42,14 @@ inline auto rep_matrix(const T& x, int m, int n) {
 }
 
 /**
- * Impl of rep_matrix returning an Eigen matrix from an Eigen vector.
- * @tparam Ret An Eigen type.
- * @tparam Vec An Eigen vector with Arithmetic scalar type.
+ * Implementation of rep_matrix returning an Eigen matrix from an Eigen
+ * vector.
+ * @tparam Vec An Eigen vector.
  * @param x An Eigen vector. For Row vectors the values are replacated rowwise.
  * and for column vectors the values are repliacated colwise.
  * @param n Number of rows or columns.
  */
-template <typename Ret, typename Vec,
-          require_eigen_vt<is_stan_scalar, Ret>* = nullptr,
+template <typename Vec,
           require_eigen_vector_t<Vec>* = nullptr>
 inline auto rep_matrix(const Vec& x, int n) {
   if (is_eigen_row_vector<Vec>::value) {
@@ -60,21 +59,6 @@ inline auto rep_matrix(const Vec& x, int n) {
     check_nonnegative("rep_matrix", "cols", n);
     return x.replicate(1, n);
   }
-}
-
-/**
- * Default Implimentation of rep_matrix returning an Eigen matrix from an Eigen
- * vector.
- * @tparam Vec An Eigen vector with Arithmetic scalar type.
- * @param x An Eigen vector. For Row vectors the values are replacated rowwise
- * and for column vectors the values are repliacated colwise.
- * @param n Number of rows or columns.
- */
-template <typename Vec, require_vector_t<Vec>* = nullptr>
-inline auto rep_matrix(const Vec& x, int n) {
-  using scalar_t = value_type_t<Vec>;
-  using ret_t = Eigen::Matrix<scalar_t, Eigen::Dynamic, Eigen::Dynamic>;
-  return rep_matrix<ret_t>(x, n);
 }
 
 }  // namespace math
