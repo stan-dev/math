@@ -98,10 +98,10 @@ ode_adjoint_impl(const char* function_name, const F& f, const T_y0& y0,
   return (*integrator)();
   */
   auto integrator = new stan::math::cvodes_integrator_adjoint_vari<
-      F, plain_type_t<T_y0>, T_t0, T_ts, plain_type_t<T_Args>...>(
+      F, plain_type_t<T_y0>, T_t0, T_ts, ref_type_t<T_Args>...>(
       function_name, f, eval(y0), t0, ts, rel_tol_f, abs_tol_f, rel_tol_b,
       abs_tol_b, rel_tol_q, abs_tol_q, max_num_steps, num_checkpoints,
-      interpolation_polynomial, solver_f, solver_b, msgs, eval(args)...);
+      interpolation_polynomial, solver_f, solver_b, msgs, to_ref(args)...);
   return (*integrator)();
 }
 
