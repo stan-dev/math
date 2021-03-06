@@ -29,7 +29,7 @@ TEST(OpenCL_diag_pre_multiply, diag_pre_multiply_small_row_vector) {
 
 TEST(OpenCL_diag_pre_multiply, zero) {
   Eigen::VectorXd in1;
-  Eigen::VectorXd in2;
+  Eigen::MatrixXd in2;
   stan::math::test::compare_cpu_opencl_prim_rev(diag_pre_multiply_functor, in1,
                                                 in2);
 }
@@ -38,7 +38,7 @@ TEST(OpenCL_diag_pre_multiply, prim_rev_values_large) {
   int N = 71;
 
   Eigen::VectorXd a = Eigen::VectorXd::Random(N);
-  Eigen::VectorXd b = Eigen::VectorXd::Random(N);
+  Eigen::MatrixXd b = Eigen::MatrixXd::Random(N, N);
   stan::math::test::compare_cpu_opencl_prim_rev(diag_pre_multiply_functor, a,
                                                 b);
 }
