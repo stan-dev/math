@@ -38,7 +38,7 @@ inline auto rep_matrix(const T& x, int m, int n) {
  */
 template <typename T, require_stan_scalar_t<T>* = nullptr>
 inline auto rep_matrix(const T& x, int m, int n) {
-  return rep_matrix<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>(x, m, n);
+  return rep_matrix<Eigen::Matrix<return_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>>(x, m, n);
 }
 
 /**
