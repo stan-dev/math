@@ -7,7 +7,11 @@
 
 namespace stan {
 namespace math {
+namespace internal {
 
+/**
+ * A closure that wraps a C++ lambda.
+ */
 template <typename F>
 struct empty_closure {
   using captured_scalar_t__ = double;
@@ -33,6 +37,9 @@ struct empty_closure {
   }
 };
 
+/**
+ * A closure that holds one autodiffable capture.
+ */
 template <bool Ref, typename F, typename T>
 struct one_arg_closure {
   using captured_scalar_t__ = return_type_t<T>;
@@ -62,6 +69,9 @@ struct one_arg_closure {
   }
 };
 
+/**
+ * A closure that takes rng argument.
+ */
 template <typename F>
 struct empty_closure_rng {
   using captured_scalar_t__ = double;
@@ -87,6 +97,9 @@ struct empty_closure_rng {
   }
 };
 
+/**
+ * A closure that can be called with `propto` template argument.
+ */
 template <typename F>
 struct empty_closure_lpdf {
   using captured_scalar_t__ = double;
@@ -112,6 +125,9 @@ struct empty_closure_lpdf {
   }
 };
 
+/**
+ * A closure that accesses logprob accumulator.
+ */
 template <typename F>
 struct empty_closure_lp {
   using captured_scalar_t__ = double;
@@ -140,11 +156,24 @@ struct empty_closure_lp {
 };
 
 /**
+ * Higher-order functor suitable for calling a closure inside variadic ODE solvers.
+ */
+struct ode_closure_adapter {
+  template <typename F, typename T0, typename T1, typename... Args>
+  auto operator()(const T0& t, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
+                  std::ostream* msgs, const F& f, Args... args) const {
+    return f(msgs, t, y, args...);
+  }
+};
+
+}  // namespace internal
+
+/**
  * Create a closure object from a callable.
  */
 template <typename F>
 auto from_lambda(const F& f) {
-  return empty_closure<F>(f);
+  return internal::empty_closure<F>(f);
 }
 
 /**
@@ -152,24 +181,36 @@ auto from_lambda(const F& f) {
  */
 template <typename F, typename T>
 auto from_lambda(const F& f, const T& a) {
-  return one_arg_closure<true, F, T>(f, a);
+  return internal::one_arg_closure<true, F, T>(f, a);
 }
 
+/**
+ * Create a closure from an rng functor.
+ */
 template <typename F>
 auto rng_from_lambda(const F& f) {
-  return empty_closure_rng<F>(f);
+  return internal::empty_closure_rng<F>(f);
 }
 
+/**
+ * Create a closure from an lpdf functor.
+ */
 template <typename F>
 auto lpdf_from_lambda(const F& f) {
-  return empty_closure_lpdf<F>(f);
+  return internal::empty_closure_lpdf<F>(f);
 }
 
+/**
+ * Create a closure from a functor that needs access to logprob accumulator.
+ */
 template <typename F>
 auto lp_from_lambda(const F& f) {
-  return empty_closure_lp<F>(f);
+  return internal::empty_closure_lp<F>(f);
 }
 
+/**
+ * A wrapper that sets propto template argument when calling the inner closure.
+ */
 template <bool Propto, typename F, bool Ref>
 struct lpdf_wrapper {
   using captured_scalar_t__ = return_type_t<F>;
@@ -204,6 +245,9 @@ struct lpdf_wrapper {
   }
 };
 
+/**
+ * Higher-order functor that invokes a closure inside a reduce_sum call.
+ */
 struct reduce_sum_closure_adapter {
   template <typename F, typename T, typename... Args>
   auto operator()(const std::vector<T>& sub_slice, std::size_t start,
@@ -212,18 +256,6 @@ struct reduce_sum_closure_adapter {
     return f(msgs, sub_slice, start, end, args...);
   }
 };
-
-namespace internal {
-
-struct ode_closure_adapter {
-  template <typename F, typename T0, typename T1, typename... Args>
-  auto operator()(const T0& t, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
-                  std::ostream* msgs, const F& f, Args... args) const {
-    return f(msgs, t, y, args...);
-  }
-};
-
-}  // namespace internal
 
 }  // namespace math
 }  // namespace stan

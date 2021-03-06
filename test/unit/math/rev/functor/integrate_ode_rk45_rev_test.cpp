@@ -291,7 +291,7 @@ TEST(StanAgradRevOde_integrate_ode_rk45, closure) {
 
         std::vector<stan::return_type_t<decltype(y_in), decltype(theta)>> res;
         res.push_back(y_in.at(1));
-        res.push_back(-y_in.at(0) - theta.at(0) * y_in.at(1));
+        res.push_back(-y_in.at(0) - (a + theta.at(0)) * y_in.at(1));
 
         return res;
       },
@@ -311,15 +311,19 @@ TEST(StanAgradRevOde_integrate_ode_rk45, closure) {
   auto test_ad = [&res, &t0v, &a0, &theta, &x, &x_int, &msgs]() {
     res[0][0].grad();
     EXPECT_FLOAT_EQ(t0v.adj(), -0.66360742442816977871);
+    EXPECT_FLOAT_EQ(a0.adj(), -0.80045092);
     stan::math::set_zero_all_adjoints();
     res[0][1].grad();
     EXPECT_FLOAT_EQ(t0v.adj(), 0.23542843380353062344);
+    EXPECT_FLOAT_EQ(a0.adj(), -1.5989847);
     stan::math::set_zero_all_adjoints();
     res[1][0].grad();
     EXPECT_FLOAT_EQ(t0v.adj(), -0.2464078910913158893);
+    EXPECT_FLOAT_EQ(a0.adj(), 1.904654);
     stan::math::set_zero_all_adjoints();
     res[1][1].grad();
     EXPECT_FLOAT_EQ(t0v.adj(), -0.38494826636037426937);
+    EXPECT_FLOAT_EQ(a0.adj(), -1.3748885);
     stan::math::set_zero_all_adjoints();
   };
   res = integrate_ode_rk45(ode, y0, t0v, ts, theta, x, x_int, nullptr, 1e-10,
