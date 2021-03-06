@@ -290,7 +290,6 @@ pipeline {
                         }
                     }
                 }
-                */
                 stage('Distribution tests') {
                     agent { label "distribution-tests" }
                     steps {
