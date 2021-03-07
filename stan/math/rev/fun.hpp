@@ -42,6 +42,7 @@
 #include <stan/math/rev/fun/cov_exp_quad.hpp>
 #include <stan/math/rev/fun/cov_matrix_constrain_lkj.hpp>
 #include <stan/math/rev/fun/determinant.hpp>
+#include <stan/math/rev/fun/diag_pre_multiply.hpp>
 #include <stan/math/rev/fun/digamma.hpp>
 #include <stan/math/rev/fun/dims.hpp>
 #include <stan/math/rev/fun/divide.hpp>
