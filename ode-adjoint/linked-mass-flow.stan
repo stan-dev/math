@@ -62,8 +62,7 @@ functions {
       /* parser does not accept vector backward for now... */
       y = ode_adjoint_tol_ctl(linked_mass_flow, a0, t0, ts, 
                               rel_tol, rep_vector(abs_tol, num_states), // forward
-                              //rel_tol, rep_vector(10*abs_tol, num_states), // backward
-                              rel_tol, 10*abs_tol, // backward
+                              rel_tol, rep_vector(10*abs_tol, num_states), // backward
                               rel_tol, 100*abs_tol, // quadrature
                               max_num_steps,
                               num_checkpoints, // number of steps between checkpoints
