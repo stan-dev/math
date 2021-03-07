@@ -129,8 +129,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
 
       const row_vector_partials_t half
           = (inv_L_dbl.template triangularView<Eigen::Lower>()
-             * (y_val - mu_val)
-                   .template cast<T_partials_return>())
+             * (y_val - mu_val).template cast<T_partials_return>())
                 .transpose();
       const vector_partials_t scaled_diff
           = (half * inv_L_dbl.template triangularView<Eigen::Lower>())
