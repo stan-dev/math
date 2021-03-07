@@ -12,7 +12,10 @@ class arena_matrix;
 
 namespace internal {
 template <typename T, typename = void, typename = void>
-struct arena_type_impl {};
+struct arena_type_impl {
+  // idt this is safe, but I need to exist for the opencl prim lpdf till fixed
+  using type = std::decay_t<T>;
+};
 }  // namespace internal
 
 /**
