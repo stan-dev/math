@@ -150,8 +150,10 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
     try {
       opencl_kernels::categorical_logit_glm_beta_derivative(
           cl::NDRange(local_size * N_attributes), cl::NDRange(local_size),
-          forward_as<arena_t<matrix_cl<double>>>(edge<2>(ops_partials).partials_), temp,
-          y_val_cl, x_val, N_instances, N_attributes, N_classes, is_y_vector);
+          forward_as<arena_t<matrix_cl<double>>>(
+              edge<2>(ops_partials).partials_),
+          temp, y_val_cl, x_val, N_instances, N_attributes, N_classes,
+          is_y_vector);
     } catch (const cl::Error& e) {
       check_opencl_error(function, e);
     }

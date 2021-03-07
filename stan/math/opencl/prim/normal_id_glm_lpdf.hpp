@@ -170,8 +170,8 @@ normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
     // transposition of a vector can be done without copying
     const matrix_cl<double> mu_derivative_transpose_cl(
         mu_derivative_cl.buffer(), 1, mu_derivative_cl.rows());
-    auto&& edge4_partials
-        = forward_as<arena_t<matrix_cl<double>>>(edge<3>(ops_partials).partials_);
+    auto&& edge4_partials = forward_as<arena_t<matrix_cl<double>>>(
+        edge<3>(ops_partials).partials_);
     matrix_cl<double> edge4_partials_transpose_cl
         = mu_derivative_transpose_cl * x_val;
     edge4_partials = matrix_cl<double>(edge4_partials_transpose_cl.buffer(),
