@@ -167,7 +167,6 @@ class ops_partials_edge<InnerType, T, require_std_vector_vt<is_fvar, T>> {
         operands_(other.operands_) {}
 
   const Op& operands_;
-
   inline Dx dx() {
     Dx derivative(0);
     for (size_t i = 0; i < this->operands_.size(); ++i) {
