@@ -157,8 +157,8 @@ constexpr double
 template <typename... Ops>
 inline auto operands_and_partials(Ops&&... ops) {
   using return_type = return_type_t<Ops...>;
-  return internal::operands_and_partials_impl<return_type, void,
-                                              plain_type_t<std::decay_t<Ops>>...>(
+  return internal::operands_and_partials_impl<
+      return_type, void, plain_type_t<std::decay_t<Ops>>...>(
       std::forward<Ops>(ops)...);
 }
 
