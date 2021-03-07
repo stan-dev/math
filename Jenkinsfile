@@ -358,7 +358,7 @@ pipeline {
                         deleteDirWin()
                         unstash 'MathSetup'
                         bat "mingw32-make.exe -f make/standalone math-libs"
-                        runTestsWin("test/unit", false, true)
+                        runTestsWin("test/unit", false, false)
                     }
                 }
             }
