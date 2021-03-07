@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/binomial_coefficient_log.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
 #include <stan/math/prim/fun/inv_logit.hpp>
@@ -51,17 +52,9 @@ return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
   T_N_ref N_ref = N;
   T_alpha_ref alpha_ref = alpha;
 
-  const auto& n_col = as_column_vector_or_scalar(n_ref);
-  const auto& N_col = as_column_vector_or_scalar(N_ref);
-  const auto& alpha_col = as_column_vector_or_scalar(alpha_ref);
-
-  const auto& n_arr = as_array_or_scalar(n_col);
-  const auto& N_arr = as_array_or_scalar(N_col);
-  const auto& alpha_arr = as_array_or_scalar(alpha_col);
-
-  ref_type_t<decltype(value_of(n_arr))> n_val = value_of(n_arr);
-  ref_type_t<decltype(value_of(N_arr))> N_val = value_of(N_arr);
-  ref_type_t<decltype(value_of(alpha_arr))> alpha_val = value_of(alpha_arr);
+  decltype(auto) n_val = to_ref(as_value_column_array_or_scalar(n_ref));
+  decltype(auto) N_val = to_ref(as_value_column_array_or_scalar(N_ref));
+  decltype(auto) alpha_val = to_ref(as_value_column_array_or_scalar(alpha_ref));
 
   check_bounded(function, "Successes variable", value_of(n_val), 0, N_val);
   check_nonnegative(function, "Population size parameter", N_val);
