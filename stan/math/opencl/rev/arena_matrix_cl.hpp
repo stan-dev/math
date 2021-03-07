@@ -77,6 +77,7 @@ class arena_matrix_cl : public matrix_cl_base {
    * Implicit conversion operator to `matrix_cl`.
    * @return `matrix_cl` equivalent to `*this`
    */
+  operator matrix_cl<T>() & { return *impl_; }  // NOLINT(runtime/explicit)
   operator matrix_cl<T>() const& { return *impl_; }  // NOLINT(runtime/explicit)
   operator matrix_cl<T>() && {                       // NOLINT(runtime/explicit)
     return std::move(*impl_);

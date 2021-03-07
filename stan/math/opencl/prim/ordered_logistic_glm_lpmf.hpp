@@ -140,7 +140,7 @@ return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
         edge2_partials_transpose.buffer(), edge2_partials_transpose.cols(),
         edge2_partials_transpose.rows());
     if (beta.rows() != 0) {
-      forward_as<matrix_cl<double>>(edge<1>(ops_partials).partials_)
+      forward_as<arena_t<matrix_cl<double>>>(edge<1>(ops_partials).partials_)
           .add_write_event(edge2_partials_transpose.write_events().back());
     }
   }

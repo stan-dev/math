@@ -151,8 +151,8 @@ return_type_t<T_x_cl, T_alpha_cl, T_beta_cl> bernoulli_logit_glm_lpmf(
     // transposition of a vector can be done without copying
     const matrix_cl<double> theta_derivative_transpose_cl(
         theta_derivative_cl.buffer(), 1, theta_derivative_cl.rows());
-    matrix_cl<double>& edge3_partials
-        = forward_as<matrix_cl<double>&>(edge<2>(ops_partials).partials_);
+    auto&& edge3_partials
+        = forward_as<arena_t<matrix_cl<double>>>(edge<2>(ops_partials).partials_);
     matrix_cl<double> edge3_partials_transpose_cl
         = theta_derivative_transpose_cl * x_val;
     edge3_partials = matrix_cl<double>(edge3_partials_transpose_cl.buffer(),
