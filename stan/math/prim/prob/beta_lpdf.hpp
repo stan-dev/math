@@ -4,7 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
-#include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
@@ -64,14 +64,6 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
   T_y_ref y_ref = y;
   T_alpha_ref alpha_ref = alpha;
   T_beta_ref beta_ref = beta;
-
-  const auto& y_col = as_column_vector_or_scalar(y_ref);
-  const auto& alpha_col = as_column_vector_or_scalar(alpha_ref);
-  const auto& beta_col = as_column_vector_or_scalar(beta_ref);
-
-  const auto& y_arr = as_array_or_scalar(y_col);
-  const auto& alpha_arr = as_array_or_scalar(alpha_col);
-  const auto& beta_arr = as_array_or_scalar(beta_col);
 
   decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
   decltype(auto) alpha_val = to_ref(as_value_column_array_or_scalar(alpha_ref));
