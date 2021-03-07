@@ -202,7 +202,7 @@ class ops_partials_edge<Dx, ViewElt, require_eigen_vt<is_fvar, ViewElt>> {
         partials_vec_(partials_),
         operands_(other.operands_) {}
 
-  const Op& operands_;
+  Op operands_;
 
   inline Dx dx() {
     Dx derivative(0);
@@ -227,7 +227,7 @@ class ops_partials_edge<Dx, std::vector<Eigen::Matrix<fvar<Dx>, R, C>>> {
     }
   }
 
-  const Op& operands_;
+  Op operands_;
 
   inline Dx dx() {
     Dx derivative(0);
@@ -253,7 +253,7 @@ class ops_partials_edge<Dx, std::vector<std::vector<fvar<Dx>>>> {
     }
   }
 
-  const Op& operands_;
+  Op operands_;
   inline Dx dx() {
     Dx derivative(0);
     for (size_t i = 0; i < this->operands_.size(); ++i) {
