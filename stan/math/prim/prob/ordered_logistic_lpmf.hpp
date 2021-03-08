@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_array_or_scalar.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/inv_logit.hpp>
 #include <stan/math/prim/fun/is_integer.hpp>
@@ -100,8 +101,7 @@ return_type_t<T_loc, T_cut> ordered_logistic_lpmf(const T_y& y,
 
   scalar_seq_view<T_y_ref> y_seq(y_ref);
 
-  const auto& lambda_arr = as_array_or_scalar(lambda_ref);
-  ref_type_t<decltype(value_of(lambda_arr))> lambda_val = value_of(lambda_arr);
+  decltype(auto) lambda_val = to_ref(as_value_array_or_scalar(lambda_ref));
 
   check_finite(function, "Location parameter", lambda_val);
   if (C_l == 0 || N == 0) {

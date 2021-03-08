@@ -34,7 +34,7 @@ class reduction_2d_base {};
  * columns that need to be reduced to obtain final result. This can be done in a
  * separate kernel or after copying to CPU. Also two dimensional reductions can
  * not be used as arguments to other operations - they can only be evaluated.
- * @tparam Derived derived type
+ * @tparam Derived Type derived from `reduction_2d`
  * @tparam T type of first argument
  * @tparam Operation type with member function generate that accepts two
  * variable names and returns OpenCL source code for reduction operation_cl
@@ -143,8 +143,8 @@ class reduction_2d
     if (arg_cols == 0) {
       return 1;
     }
-    if (arg_cols == -1) {
-      return -1;
+    if (arg_cols == base::dynamic) {
+      return base::dynamic;
     }
     return internal::colwise_reduction_wgs_rows(arg_rows, arg_cols);
   }
@@ -160,8 +160,8 @@ class reduction_2d
     if (arg_cols == 0) {
       return 0;
     }
-    if (arg_cols == -1) {
-      return -1;
+    if (arg_cols == base::dynamic) {
+      return base::dynamic;
     }
     int wgs_rows = internal::colwise_reduction_wgs_rows(arg_rows, arg_cols);
     if (wgs_rows == 0) {
