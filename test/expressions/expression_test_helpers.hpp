@@ -268,12 +268,10 @@ auto bad_multiple_evaluations(const T& a) {
   return a + a;
 }
 
+// Steve(idk why this needed to change. What is this testing in test0?)
 template <typename T>
 auto bad_wrong_value(const T& a) {
-  if (std::is_same<T, plain_type_t<T>>::value) {
-    return a(0, 0);
-  }
-  return a(0, 0) + 1;
+    return a(0, 0) + 1;
 }
 
 template <typename T>
