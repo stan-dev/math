@@ -305,10 +305,9 @@ void test_opencl_broadcasting_prim_rev_impl(const Functor& functor,
  */
 template <typename Functor, typename... Args>
 void compare_cpu_opencl_prim(const Functor& functor, const Args&... args) {
-  auto res_cpu = functor(args...);
-  auto res_opencl = from_matrix_cl(functor(internal::opencl_argument(args)...));
-  stan::test::expect_near_rel("CPU and OpenCL return values do not match!",
-                              res_cpu, res_opencl);
+  auto res_cpu = eval(functor(args...));
+  auto res_opencl = eval(functor(internal::opencl_argument(args)...));
+  internal::expect_eq(res_cpu, res_opencl, "CPU and OpenCL return values do not match!");
 }
 
 /**

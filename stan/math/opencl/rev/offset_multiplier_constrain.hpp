@@ -33,13 +33,15 @@ namespace math {
  * @throw std::domain_error if sigma <= 0
  * @throw std::domain_error if mu is not finite
  */
-template <
-    typename T, typename M, typename S,
-    require_all_nonscalar_prim_or_rev_kernel_expression_t<T, M, S>* = nullptr,
-    require_any_not_stan_scalar_t<T, M, S>* = nullptr,
-    require_any_var_t<T, M, S>* = nullptr>
+template <typename T, typename M, typename S,
+          require_all_prim_or_rev_kernel_expression_t<T, M, S>* = nullptr,
+          require_any_not_stan_scalar_t<T, M, S>* = nullptr,
+          require_any_var_t<T, M, S>* = nullptr>
 inline var_value<matrix_cl<double>> offset_multiplier_constrain(T&& A, M&& mu,
                                                                 S&& sigma) {
+  if(A.size()==0){
+    return A;
+  }
   arena_t<T> A_arena = std::forward<T>(A);
   arena_t<M> mu_arena = std::forward<M>(mu);
   arena_t<S> sigma_arena = std::forward<S>(sigma);
@@ -48,9 +50,9 @@ inline var_value<matrix_cl<double>> offset_multiplier_constrain(T&& A, M&& mu,
                                   value_of(sigma_arena)),
       [A_arena, mu_arena,
        sigma_arena](vari_value<matrix_cl<double>>& res) mutable {
-        adjoint_results(A_arena, mu_arena, sigma_arena)
-            += expressions(res.adj() * value_of(mu_arena),
-                           res.adj() * value_of(A_arena), res.adj());
+        adjoint_results(A_arena, mu_arena, sigma_arena) += expressions(
+            elt_multiply(res.adj(), value_of(sigma_arena)), res.adj(),
+            elt_multiply(res.adj(), value_of(A_arena)));
       });
 }
 
@@ -78,14 +80,16 @@ inline var_value<matrix_cl<double>> offset_multiplier_constrain(T&& A, M&& mu,
  * @throw std::domain_error if sigma <= 0
  * @throw std::domain_error if mu is not finite
  */
-template <
-    typename T, typename M, typename S,
-    require_all_nonscalar_prim_or_rev_kernel_expression_t<T, M, S>* = nullptr,
-    require_any_not_stan_scalar_t<T, M, S>* = nullptr,
-    require_any_var_t<T, M, S>* = nullptr>
+template <typename T, typename M, typename S,
+          require_all_prim_or_rev_kernel_expression_t<T, M, S>* = nullptr,
+          require_any_not_stan_scalar_t<T, M, S>* = nullptr,
+          require_any_var_t<T, M, S>* = nullptr>
 inline var_value<matrix_cl<double>> offset_multiplier_constrain(T&& A, M&& mu,
                                                                 S&& sigma,
                                                                 var& lp) {
+  if(A.size()==0){
+    return A;
+  }
   arena_t<T> A_arena = std::forward<T>(A);
   arena_t<M> mu_arena = std::forward<M>(mu);
   arena_t<S> sigma_arena = std::forward<S>(sigma);
@@ -98,11 +102,9 @@ inline var_value<matrix_cl<double>> offset_multiplier_constrain(T&& A, M&& mu,
       std::move(res), [A_arena, mu_arena, sigma_arena,
                        lp](vari_value<matrix_cl<double>>& res) mutable {
         adjoint_results(A_arena, mu_arena, sigma_arena) += expressions(
-            res.adj() * value_of(mu_arena), res.adj() * value_of(A_arena),
-            res.adj()
-                + lp.adj()
-                      * elt_divide(static_cast<double>(size(A_arena)),
-                                   value_of(sigma_arena)));
+            elt_multiply(res.adj(), value_of(sigma_arena)), res.adj(),
+            elt_multiply(res.adj(), value_of(A_arena))
+                + elt_divide(lp.adj(), value_of(sigma_arena)));
       });
 }
 

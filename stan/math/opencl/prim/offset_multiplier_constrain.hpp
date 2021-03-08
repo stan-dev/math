@@ -36,6 +36,7 @@ template <typename T, typename M, typename S,
           require_any_not_stan_scalar_t<T, M, S>* = nullptr>
 inline auto offset_multiplier_constrain(const T& x, const M& mu,
                                         const S& sigma) {
+  using std::isfinite;
   const char* function = "offset_multiplier_constrain(OpenCL)";
   check_consistent_sizes(function, "offset", mu, "multiplier", sigma,
                          "parameter", x);
@@ -76,6 +77,7 @@ template <typename T, typename M, typename S,
           require_any_not_stan_scalar_t<T, M, S>* = nullptr>
 inline auto offset_multiplier_constrain(const T& x, const M& mu, const S& sigma,
                                         double& lp) {
+  using std::isfinite;
   const char* function = "offset_multiplier_constrain(OpenCL)";
   check_consistent_sizes(function, "offset", mu, "multiplier", sigma,
                          "parameter", x);
@@ -83,9 +85,9 @@ inline auto offset_multiplier_constrain(const T& x, const M& mu, const S& sigma,
   auto check_sigma = check_cl(function, "multiplier", sigma, "positive finite");
   matrix_cl<double> res;
   matrix_cl<double> lp_inc;
-  results(check_mu, check_sigma, res, lp_inc) = expressions(
-      isfinite(mu), isfinite(sigma) && sigma > 0, elt_multiply(x, sigma) + mu,
-        sum_2d(multiply_log(size(x), sigma)));
+  results(check_mu, check_sigma, res, lp_inc)
+      = expressions(isfinite(mu), isfinite(sigma) && sigma > 0,
+                    elt_multiply(x, sigma) + mu, sum_2d(log(sigma)));
   lp += sum(from_matrix_cl(lp_inc));
   return res;
 }
