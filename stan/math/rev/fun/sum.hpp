@@ -77,10 +77,9 @@ inline var sum(const std::vector<var>& m) {
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline var sum(const T& x) {
   arena_t<T> x_arena = x;
-  var res(sum(value_of(x_arena)));
-  reverse_pass_callback(
-      [res, x_arena]() mutable { x_arena.adj().array() += res.adj(); });
-  return res;
+  return make_callback_var(sum(x_arena.val()), [x_arena](auto& vi) mutable {
+    x_arena.adj().array() += vi.adj();
+  });
 }
 
 }  // namespace math
