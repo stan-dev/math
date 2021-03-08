@@ -23,6 +23,14 @@ namespace stan {
  */
 template <bool Condition, typename T, typename = void>
 struct ref_type_if {
+  using type = std::conditional_t<std::is_rvalue_reference<T>::value,
+                                  std::remove_reference_t<T>, const T&>;
+};
+
+template <bool Condition, typename T>
+struct ref_type_if<
+    Condition, T,
+    require_all_t<is_eigen<T>, bool_constant<!is_arena_matrix<T>::value>>> {
   using T_plain = plain_type_t<T>;
   using T_optionally_ref
       = std::conditional_t<std::is_rvalue_reference<T>::value,
@@ -34,12 +42,6 @@ struct ref_type_if {
               template match<T_dec>::MatchAtCompileTime
           || !Condition,
       T_optionally_ref, T_plain>;
-};
-
-template <bool Condition, typename T>
-struct ref_type_if<Condition, T, require_not_eigen_t<T>> {
-  using type = std::conditional_t<std::is_rvalue_reference<T>::value,
-                                  std::remove_reference_t<T>, const T&>;
 };
 
 template <bool Condition, typename T>

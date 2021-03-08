@@ -4,7 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
-#include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_array_or_scalar.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
@@ -49,11 +49,9 @@ return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
   T_theta_ref theta_ref = theta;
   check_bounded(function, "n", n_ref, 0, 1);
 
-  const auto& theta_col = as_column_vector_or_scalar(theta_ref);
-  const auto& theta_val = value_of(theta_col);
-  const auto& theta_arr = to_ref(as_array_or_scalar(theta_val));
+  decltype(auto) theta_val = to_ref(as_value_column_array_or_scalar(theta_ref));
 
-  check_not_nan(function, "Logit transformed probability parameter", theta_arr);
+  check_not_nan(function, "Logit transformed probability parameter", theta_val);
   if (!include_summand<propto, T_prob>::value) {
     return 0.0;
   }
@@ -65,10 +63,10 @@ return_type_t<T_prob> bernoulli_logit_lpmf(const T_n& n, const T_prob& theta) {
       (2 * as_array_or_scalar(n_double) - 1));
   T_partials_array ntheta;
   if (is_vector<T_n>::value || is_vector<T_prob>::value) {
-    ntheta = forward_as<T_partials_array>(signs * theta_arr);
+    ntheta = forward_as<T_partials_array>(signs * theta_val);
   } else {
     T_partials_return ntheta_s
-        = forward_as<T_partials_return>(signs * theta_arr);
+        = forward_as<T_partials_return>(signs * theta_val);
     ntheta = T_partials_array::Constant(1, 1, ntheta_s);
   }
   T_partials_array exp_m_ntheta = exp(-ntheta);
