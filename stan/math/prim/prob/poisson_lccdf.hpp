@@ -52,8 +52,7 @@ return_type_t<T_rate> poisson_lccdf(const T_n& n, const T_rate& lambda) {
     return ops_partials.build(0.0);
   }
 
-  const auto& log_Pi = to_ref_if<!is_constant_all<T_rate>::value>(
-      log(gamma_p(n_val + 1.0, lambda_val)));
+  const auto& log_Pi = to_ref(log(gamma_p(n_val + 1.0, lambda_val)));
   T_partials_return P = sum(log_Pi);
 
   if (!is_constant_all<T_rate>::value) {
