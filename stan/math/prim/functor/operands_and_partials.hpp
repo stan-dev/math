@@ -71,17 +71,6 @@ struct ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>> {
  private:
   template <typename, typename, typename, typename, typename, typename>
   friend class stan::math::operands_and_partials;
-
-  static constexpr void dump_partials(double* /* partials */) noexcept {
-  }  // reverse mode
-  static constexpr void dump_operands(void* /* operands */) noexcept {
-  }  // reverse mode
-  static constexpr std::tuple<> container_operands() noexcept {
-    return std::tuple<>();
-  }
-  static constexpr std::tuple<> container_partials() noexcept {
-    return std::tuple<>();
-  }
 };
 template <typename ViewElt, typename Op>
 constexpr double

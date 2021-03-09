@@ -28,16 +28,13 @@ class ops_partials_edge<double, var_value<Op>,
  private:
   template <typename, typename, typename, typename, typename, typename>
   friend class stan::math::operands_and_partials;
-  const var_value<Op>& operands_;
-
-  static constexpr void dump_operands(vari** varis) {}
-  static constexpr void dump_partials(double* partials) {}
+  var_value<Op> operands_;
   static constexpr int size() noexcept { return 0; }
-  std::tuple<var_value<Op>> container_operands() {
-    return std::make_tuple(operands_);
+  inline auto& operand() noexcept {
+    return this->operands_;
   }
-  std::tuple<partials_t> container_partials() {
-    return std::make_tuple(partials_);
+  inline auto partial() noexcept {
+    return this->partials_;
   }
 };
 
