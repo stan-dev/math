@@ -85,7 +85,7 @@ class Holder : private std::tuple<Args...>, public BaseExpr {
   template <typename Functor, require_same_t<decltype(std::declval<Functor>()(
                                                  std::declval<Args&>()...)),
                                              BaseExpr>* = nullptr>
-  Holder(const Functor& f, Args&&... args)
+  explicit Holder(const Functor& f, Args&&... args)
       : std::tuple<Args...>(std::forward<Args>(args)...),
         BaseExpr(index_apply<sizeof...(Args)>(
             [this, &f](auto... Is) { return f(std::get<Is>(*this)...); })) {}
