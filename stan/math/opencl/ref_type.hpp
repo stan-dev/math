@@ -46,8 +46,8 @@ struct is_trivial_kg_expression<math::broadcast_<T, Colwise, Rowwise>>
 template <typename T>
 struct is_trivial_kg_expression<math::calc_if_<true, T>>
     : public is_trivial_kg_expression<std::decay_t<T>> {};
-template <typename T>
-struct is_trivial_kg_expression<math::holder_cl_<T>>
+template <typename T, typename... Args>
+struct is_trivial_kg_expression<math::Holder<T, Args...>>
     : public is_trivial_kg_expression<std::decay_t<T>> {};
 template <typename T, bool Colwise, bool Rowwise>
 struct is_trivial_kg_expression<math::optional_broadcast_<T, Colwise, Rowwise>>

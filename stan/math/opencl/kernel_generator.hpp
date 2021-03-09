@@ -125,7 +125,6 @@
 #include <stan/math/opencl/kernel_generator/broadcast.hpp>
 #include <stan/math/opencl/kernel_generator/optional_broadcast.hpp>
 #include <stan/math/opencl/kernel_generator/diagonal.hpp>
-#include <stan/math/opencl/kernel_generator/holder_cl.hpp>
 #include <stan/math/opencl/kernel_generator/check_cl.hpp>
 #include <stan/math/opencl/kernel_generator/index.hpp>
 #include <stan/math/opencl/kernel_generator/indexing.hpp>

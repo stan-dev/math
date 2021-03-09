@@ -20,7 +20,7 @@ template <typename T_x,
           require_all_kernel_expressions_and_none_scalar_t<T_x>* = nullptr>
 inline auto symmetrize_from_lower_tri(T_x&& x) {
   check_square("symmetrize_from_lower_tri", "x", x);
-  return make_holder_cl(
+  return make_holder(
       [](auto& arg) {
         return select(row_index() < col_index(), transpose(arg), arg);
       },
