@@ -65,7 +65,6 @@ TEST(MathFunctions, for_each_basic_binary_index) {
   stan::math::for_each(f, x1, x1);
 }
 
-
 TEST(MathFunctions, for_each_basic_trinary) {
   int count = 0;
 
@@ -93,7 +92,7 @@ TEST(MathFunctions, for_each_basic_trinary_index) {
   auto x1 = std::make_tuple(v1[0], v1[1], v1[2]);
   auto f = [](const auto& x, const auto& y, const auto& z) {
     EXPECT_EQ(x, z);
-    EXPECT_EQ(x, y); 
+    EXPECT_EQ(x, y);
   };
 
   stan::math::for_each(f, x1, x1, x1);

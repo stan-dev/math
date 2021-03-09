@@ -17,68 +17,73 @@ template <typename Op1 = double, typename Op2 = double, typename Op3 = double,
 class operands_and_partials;  // Forward declaration
 
 namespace internal {
-  template <typename ViewElt, typename Op, typename = void>
-  struct ops_partials_edge;
+template <typename ViewElt, typename Op, typename = void>
+struct ops_partials_edge;
+/**
+ * Class representing an edge with an inner type of double. This class
+ *  should never be used by the program and only exists so that
+ *  developer can write functions using `operands_and_partials` that works for
+ *  double, vars, and fvar types.
+ * @tparam ViewElt One of `double`, `var`, `fvar`.
+ * @tparam Op The type of the input operand. It's scalar type
+ *  for this specialization must be an `Arithmetic`
+ */
+template <typename ViewElt, typename Op>
+struct ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>> {
+  using inner_op = std::conditional_t<is_eigen<value_type_t<Op>>::value,
+                                      value_type_t<Op>, Op>;
+  using partials_t = empty_broadcast_array<ViewElt, inner_op>;
   /**
-   * Class representing an edge with an inner type of double. This class
-   *  should never be used by the program and only exists so that
-   *  developer can write functions using `operands_and_partials` that works for
-   *  double, vars, and fvar types.
-   * @tparam ViewElt One of `double`, `var`, `fvar`.
-   * @tparam Op The type of the input operand. It's scalar type
-   *  for this specialization must be an `Arithmetic`
+   * The `partials_` are always called in `if` statements that will be
+   *  removed by the dead code elimination pass of the compiler. So if we ever
+   *  move up to C++17 these can be made into `constexpr if` and
+   *  this can be deleted.
    */
-  template <typename ViewElt, typename Op>
-  struct ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>> {
-    using inner_op = std::conditional_t<is_eigen<value_type_t<Op>>::value,
-                                        value_type_t<Op>, Op>;
-    using partials_t = empty_broadcast_array<ViewElt, inner_op>;
-    /**
-     * The `partials_` are always called in `if` statements that will be
-     *  removed by the dead code elimination pass of the compiler. So if we ever
-     *  move up to C++17 these can be made into `constexpr if` and
-     *  this can be deleted.
-     */
-    partials_t partials_;
-    empty_broadcast_array<partials_t, inner_op> partials_vec_;
-    static constexpr double operands_{0};
-    ops_partials_edge() {}
-    template <typename T>
-    explicit ops_partials_edge(T&& /* op */) noexcept {}
+  partials_t partials_;
+  empty_broadcast_array<partials_t, inner_op> partials_vec_;
+  static constexpr double operands_{0};
+  ops_partials_edge() {}
+  template <typename T>
+  explicit ops_partials_edge(T&& /* op */) noexcept {}
 
-    /**
-     * Get the operand for the edge. For doubles this is a compile time
-     * expression returning zero.
-     */
-    static constexpr auto operand() noexcept { return static_cast<double>(0.0); }
+  /**
+   * Get the operand for the edge. For doubles this is a compile time
+   * expression returning zero.
+   */
+  static constexpr auto operand() noexcept { return static_cast<double>(0.0); }
 
-    /**
-     * Get the partial for the edge. For doubles this is a compile time
-     * expression returning zero.
-     */
-    static constexpr auto partial() noexcept { return static_cast<double>(0.0); }
-    /**
-     * Return the tangent for the edge. For doubles this is a comple time
-     * expression returning zero.
-     */
-    static constexpr double dx() { return static_cast<double>(0); }
-    /**
-     * Return the size of the operand for the edge. For doubles this is a comple
-     * time expression returning zero.
-     */
-    static constexpr int size() { return 0; }  // reverse mode
+  /**
+   * Get the partial for the edge. For doubles this is a compile time
+   * expression returning zero.
+   */
+  static constexpr auto partial() noexcept { return static_cast<double>(0.0); }
+  /**
+   * Return the tangent for the edge. For doubles this is a comple time
+   * expression returning zero.
+   */
+  static constexpr double dx() { return static_cast<double>(0); }
+  /**
+   * Return the size of the operand for the edge. For doubles this is a comple
+   * time expression returning zero.
+   */
+  static constexpr int size() { return 0; }  // reverse mode
 
-  private:
-   template <typename, typename, typename, typename, typename, typename>
-   friend class stan::math::operands_and_partials;
+ private:
+  template <typename, typename, typename, typename, typename, typename>
+  friend class stan::math::operands_and_partials;
 
-   static constexpr void dump_partials(double* /* partials */) noexcept {}  // reverse mode
-   static constexpr void dump_operands(void* /* operands */) noexcept {}    // reverse mode
-   static constexpr std::tuple<> container_operands() noexcept { return std::tuple<>(); }
-   static constexpr std::tuple<> container_partials() noexcept { return std::tuple<>(); }
-
-  };
-  template <typename ViewElt, typename Op>
+  static constexpr void dump_partials(double* /* partials */) noexcept {
+  }  // reverse mode
+  static constexpr void dump_operands(void* /* operands */) noexcept {
+  }  // reverse mode
+  static constexpr std::tuple<> container_operands() noexcept {
+    return std::tuple<>();
+  }
+  static constexpr std::tuple<> container_partials() noexcept {
+    return std::tuple<>();
+  }
+};
+template <typename ViewElt, typename Op>
 constexpr double
     ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>>::operands_;
 }  // namespace internal

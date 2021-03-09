@@ -38,11 +38,19 @@ class ops_partials_edge<double, var> {
   friend class stan::math::operands_and_partials;
   const var& operand_;
 
-  inline void dump_partials(double* partials) noexcept { *partials = this->partial_; }
-  inline void dump_operands(vari** varis) noexcept { *varis = this->operand_.vi_; }
+  inline void dump_partials(double* partials) noexcept {
+    *partials = this->partial_;
+  }
+  inline void dump_operands(vari** varis) noexcept {
+    *varis = this->operand_.vi_;
+  }
   static constexpr int size() noexcept { return 1; }
-  static constexpr std::tuple<> container_operands() noexcept { return std::tuple<>(); }
-  static constexpr std::tuple<> container_partials() noexcept { return std::tuple<>(); }
+  static constexpr std::tuple<> container_operands() noexcept {
+    return std::tuple<>();
+  }
+  static constexpr std::tuple<> container_partials() noexcept {
+    return std::tuple<>();
+  }
 };
 
 template <typename T1, typename T2,
@@ -65,7 +73,8 @@ inline void update_adjoints(Matrix1& x, Matrix2&& y, const var& z) {
 }
 
 template <typename Arith, typename Alt, require_st_arithmetic<Arith>* = nullptr>
-inline void update_adjoints(Arith&& /* x */, Alt&& /* y */, const var& /* z */) {}
+inline void update_adjoints(Arith&& /* x */, Alt&& /* y */,
+                            const var& /* z */) {}
 
 template <typename StdVec1, typename Vec2,
           require_std_vector_t<StdVec1>* = nullptr,
@@ -172,18 +181,18 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
       }
     });
     stan::math::for_each(
-    [ret](auto&& operand_i, auto&& partial_i) mutable {
-      reverse_pass_callback(
-          [operand = to_arena(operand_i), partial = to_arena(partial_i), ret]() mutable {
-              internal::update_adjoints(operand, partial, ret);
-            });
-    }, std::tuple_cat(
-        edge1_.container_operands(), edge2_.container_operands(),
-        edge3_.container_operands(), edge4_.container_operands(),
-        edge5_.container_operands()), std::tuple_cat(
-        edge1_.container_partials(), edge2_.container_partials(),
-        edge3_.container_partials(), edge4_.container_partials(),
-        edge5_.container_partials()));
+        [ret](auto&& operand_i, auto&& partial_i) mutable {
+          reverse_pass_callback([operand = to_arena(operand_i),
+                                 partial = to_arena(partial_i), ret]() mutable {
+            internal::update_adjoints(operand, partial, ret);
+          });
+        },
+        std::tuple_cat(edge1_.container_operands(), edge2_.container_operands(),
+                       edge3_.container_operands(), edge4_.container_operands(),
+                       edge5_.container_operands()),
+        std::tuple_cat(edge1_.container_partials(), edge2_.container_partials(),
+                       edge3_.container_partials(), edge4_.container_partials(),
+                       edge5_.container_partials()));
     return ret;
   }
 };
@@ -218,8 +227,12 @@ class ops_partials_edge<double, std::vector<var>> {
     }
   }
   int size() { return this->operands_.size(); }
-  static constexpr std::tuple<> container_operands() noexcept { return std::tuple<>(); }
-  static constexpr std::tuple<> container_partials() noexcept { return std::tuple<>(); }
+  static constexpr std::tuple<> container_operands() noexcept {
+    return std::tuple<>();
+  }
+  static constexpr std::tuple<> container_partials() noexcept {
+    return std::tuple<>();
+  }
 };
 
 template <typename Op>
@@ -249,8 +262,12 @@ class ops_partials_edge<double, Op, require_eigen_st<is_var, Op>> {
         = this->partials_;
   }
   int size() { return this->operands_.size(); }
-  static constexpr std::tuple<> container_operands() noexcept { return std::tuple<>(); }
-  static constexpr std::tuple<> container_partials() noexcept { return std::tuple<>(); }
+  static constexpr std::tuple<> container_operands() noexcept {
+    return std::tuple<>();
+  }
+  static constexpr std::tuple<> container_partials() noexcept {
+    return std::tuple<>();
+  }
 };
 
 template <typename Op>
@@ -323,8 +340,12 @@ class ops_partials_edge<double, std::vector<Eigen::Matrix<var, R, C>>> {
     }
     return this->operands_.size() * this->operands_[0].size();
   }
-  static constexpr std::tuple<> container_operands() noexcept { return std::tuple<>(); }
-  static constexpr std::tuple<> container_partials() noexcept { return std::tuple<>(); }
+  static constexpr std::tuple<> container_operands() noexcept {
+    return std::tuple<>();
+  }
+  static constexpr std::tuple<> container_partials() noexcept {
+    return std::tuple<>();
+  }
 };
 
 template <>
@@ -367,8 +388,12 @@ class ops_partials_edge<double, std::vector<std::vector<var>>> {
     }
     return this->operands_.size() * this->operands_[0].size();
   }
-  static constexpr std::tuple<> container_operands() noexcept { return std::tuple<>(); }
-  static constexpr std::tuple<> container_partials() noexcept { return std::tuple<>(); }
+  static constexpr std::tuple<> container_operands() noexcept {
+    return std::tuple<>();
+  }
+  static constexpr std::tuple<> container_partials() noexcept {
+    return std::tuple<>();
+  }
 };
 
 template <typename Op>

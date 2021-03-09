@@ -50,7 +50,7 @@ constexpr inline auto for_each(F&& f, T1&& t1, T2&& t2, T3&& t3,
   static_cast<void>(Swallow{(
       static_cast<void>(std::forward<F>(f)(std::get<Is>(std::forward<T1>(t1)),
                                            std::get<Is>(std::forward<T2>(t2)),
-                                         std::get<Is>(std::forward<T3>(t3)))),
+                                           std::get<Is>(std::forward<T3>(t3)))),
       0)...});
 }
 }  // namespace internal
@@ -103,9 +103,10 @@ constexpr inline auto for_each(F&& f, T1&& t1, T2&& t2, T3&& t3) {
   check_size_match("for_each", "t1", std::tuple_size<std::decay_t<T1>>::value,
                    "t2", std::tuple_size<std::decay_t<T2>>::value);
   check_size_match("for_each", "t1", std::tuple_size<std::decay_t<T1>>::value,
-                  "t3", std::tuple_size<std::decay_t<T3>>::value);
+                   "t3", std::tuple_size<std::decay_t<T3>>::value);
   return internal::for_each(
-      std::forward<F>(f), std::forward<T1>(t1), std::forward<T2>(t2), std::forward<T3>(t3),
+      std::forward<F>(f), std::forward<T1>(t1), std::forward<T2>(t2),
+      std::forward<T3>(t3),
       std::make_index_sequence<std::tuple_size<std::decay_t<T1>>::value>());
 }
 
