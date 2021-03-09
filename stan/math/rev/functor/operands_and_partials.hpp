@@ -38,12 +38,8 @@ class ops_partials_edge<double, var> {
   friend class stan::math::operands_and_partials;
   var operand_;
   static constexpr int size() noexcept { return 1; }
-  inline auto operand() noexcept {
-    return this->operand_;
-  }
-  inline auto partial() noexcept {
-    return this->partial_;
-  }
+  inline auto operand() noexcept { return this->operand_; }
+  inline auto partial() noexcept { return this->partial_; }
 };
 
 template <typename T1, typename T2,
@@ -157,12 +153,10 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
             internal::update_adjoints(operand, partial, ret);
           });
         },
-        std::make_tuple(edge1_.operand(), edge2_.operand(),
-                       edge3_.operand(), edge4_.operand(),
-                       edge5_.operand()),
-        std::make_tuple(edge1_.partial(), edge2_.partial(),
-                       edge3_.partial(), edge4_.partial(),
-                       edge5_.partial()));
+        std::make_tuple(edge1_.operand(), edge2_.operand(), edge3_.operand(),
+                        edge4_.operand(), edge5_.operand()),
+        std::make_tuple(edge1_.partial(), edge2_.partial(), edge3_.partial(),
+                        edge4_.partial(), edge5_.partial()));
     return ret;
   }
 };
@@ -187,12 +181,8 @@ class ops_partials_edge<double, std::vector<var>> {
   Op operands_;
 
   int size() { return this->operands_.size(); }
-  inline auto operand() noexcept {
-    return this->operands_;
-  }
-  inline auto partial() noexcept {
-    return this->partials_;
-  }
+  inline auto operand() noexcept { return this->operands_; }
+  inline auto partial() noexcept { return this->partials_; }
 };
 
 template <typename Op>
@@ -211,12 +201,8 @@ class ops_partials_edge<double, Op, require_eigen_st<is_var, Op>> {
   friend class stan::math::operands_and_partials;
   arena_t<Op> operands_;
   int size() const noexcept { return this->operands_.size(); }
-  inline auto operand() noexcept {
-    return this->operands_;
-  }
-  inline auto partial() noexcept {
-    return this->partials_;
-  }
+  inline auto operand() noexcept { return this->operands_; }
+  inline auto partial() noexcept { return this->partials_; }
 };
 
 template <typename Op>
@@ -239,12 +225,8 @@ class ops_partials_edge<double, var_value<Op>, require_eigen_t<Op>> {
   static constexpr void dump_operands(vari** varis) {}
   static constexpr void dump_partials(double* partials) {}
   static constexpr int size() noexcept { return 0; }
-  inline auto operand() {
-    return this->operands_;
-  }
-  inline auto partials() {
-    return this->partials_;
-  }
+  inline auto operand() { return this->operands_; }
+  inline auto partials() { return this->partials_; }
 };
 
 // SPECIALIZATIONS FOR MULTIVARIATE VECTORIZATIONS
@@ -274,12 +256,8 @@ class ops_partials_edge<double, std::vector<Eigen::Matrix<var, R, C>>> {
     }
     return this->operands_.size() * this->operands_[0].size();
   }
-  inline auto operand() noexcept {
-    return this->operands_;
-  }
-  inline auto partial() noexcept {
-    return this->partials_vec_;
-  }
+  inline auto operand() noexcept { return this->operands_; }
+  inline auto partial() noexcept { return this->partials_vec_; }
 };
 
 template <>
@@ -307,12 +285,8 @@ class ops_partials_edge<double, std::vector<std::vector<var>>> {
     }
     return this->operands_.size() * this->operands_[0].size();
   }
-  inline auto operand() noexcept {
-    return this->operands_;
-  }
-  inline auto partial() noexcept {
-    return this->partials_vec_;
-  }
+  inline auto operand() noexcept { return this->operands_; }
+  inline auto partial() noexcept { return this->partials_vec_; }
 };
 
 template <typename Op>
@@ -335,12 +309,8 @@ class ops_partials_edge<double, std::vector<var_value<Op>>,
   std::vector<var_value<Op>, arena_allocator<Op>> operands_;
 
   static constexpr int size() noexcept { return 0; }
-  inline auto operand() noexcept {
-    return this->operands_;
-  }
-  inline auto partial() noexcept {
-    return this->partials_vec_;
-  }
+  inline auto operand() noexcept { return this->operands_; }
+  inline auto partial() noexcept { return this->partials_vec_; }
 };
 }  // namespace internal
 }  // namespace math

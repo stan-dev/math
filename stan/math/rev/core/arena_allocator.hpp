@@ -43,7 +43,6 @@ struct arena_allocator {
    */
   void deallocate(T* /*p*/, std::size_t /*n*/) noexcept {}
 
-
   /**
    * Constructs an object of type T in allocated uninitialized storage pointed
    * to by p, using placement-new
@@ -62,7 +61,7 @@ struct arena_allocator {
    * @param args Parameter pack of objects used in constructor.
    */
   template <class U, class... Args>
-  void construct(U* p, Args&&... args ) {
+  void construct(U* p, Args&&... args) {
     new (static_cast<void*>(p)) U(std::forward<Args>(args)...);
   }
 
@@ -77,8 +76,8 @@ struct arena_allocator {
    * @param p a pointer of type `U`
    * @param args Parameter pack of objects used in constructor.
    */
-  template<class U, class... Args >
-  static void construct(arena_allocator<U>& a, U* p, Args&&... args ) {
+  template <class U, class... Args>
+  static void construct(arena_allocator<U>& a, U* p, Args&&... args) {
     a.construct(p, args...);
   }
 
@@ -109,9 +108,9 @@ struct arena_allocator {
    * Inequality comparison operator.
    * @return false
    */
-   constexpr bool operator!=(const arena_allocator&) const noexcept {
-     return false;
-   }
+  constexpr bool operator!=(const arena_allocator&) const noexcept {
+    return false;
+  }
 };
 
 }  // namespace math

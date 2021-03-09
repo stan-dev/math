@@ -30,12 +30,8 @@ class ops_partials_edge<double, var_value<Op>,
   friend class stan::math::operands_and_partials;
   var_value<Op> operands_;
   static constexpr int size() noexcept { return 0; }
-  inline auto& operand() noexcept {
-    return this->operands_;
-  }
-  inline auto partial() noexcept {
-    return this->partials_;
-  }
+  inline auto& operand() noexcept { return this->operands_; }
+  inline auto partial() noexcept { return this->partials_; }
 };
 
 }  // namespace internal
