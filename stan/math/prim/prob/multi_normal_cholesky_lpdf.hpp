@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/dot_self.hpp>
 #include <stan/math/prim/fun/log.hpp>
@@ -124,13 +124,12 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
 
   if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
     for (size_t i = 0; i < size_vec; i++) {
-      const auto& y_col = as_column_vector_or_scalar(y_vec[i]);
-      const auto& mu_col = as_column_vector_or_scalar(mu_vec[i]);
+      decltype(auto) y_val = as_value_column_vector_or_scalar(y_vec[i]);
+      decltype(auto) mu_val = as_value_column_vector_or_scalar(mu_vec[i]);
 
       const row_vector_partials_t half
           = (inv_L_dbl.template triangularView<Eigen::Lower>()
-             * (value_of(y_col) - value_of(mu_col))
-                   .template cast<T_partials_return>())
+             * (y_val - mu_val).template cast<T_partials_return>())
                 .transpose();
       const vector_partials_t scaled_diff
           = (half * inv_L_dbl.template triangularView<Eigen::Lower>())
