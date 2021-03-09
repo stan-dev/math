@@ -53,8 +53,6 @@ TEST(MathFunctions, for_each_basic_binary) {
   stan::math::for_each(f, x2, y2);
 
   EXPECT_EQ(count, 2);
-
-  EXPECT_THROW(stan::math::for_each(f, x1, x2), std::invalid_argument);
 }
 
 TEST(MathFunctions, for_each_basic_binary_index) {
@@ -83,8 +81,6 @@ TEST(MathFunctions, for_each_basic_trinary) {
   stan::math::for_each(f, x2, y2, z2);
 
   EXPECT_EQ(count, 2);
-
-  EXPECT_THROW(stan::math::for_each(f, x1, x2, z2), std::invalid_argument);
 }
 
 TEST(MathFunctions, for_each_basic_trinary_index) {

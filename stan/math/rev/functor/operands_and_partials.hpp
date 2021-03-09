@@ -14,6 +14,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/functor/broadcast_array.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/functor/for_each.hpp>
 #include <vector>
 #include <tuple>
 
