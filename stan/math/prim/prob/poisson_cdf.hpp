@@ -52,7 +52,9 @@ return_type_t<T_rate> poisson_cdf(const T_n& n, const T_rate& lambda) {
     return ops_partials.build(0.0);
   }
 
-  const auto& Pi = to_ref(gamma_q(n_val + 1.0, lambda_val));
+  const auto& Pi = to_ref_if<!is_constant_all<T_rate>::value>(
+      gamma_q(n_val + 1.0, lambda_val));
+
   T_partials_return P = prod(Pi);
 
   if (!is_constant_all<T_rate>::value) {
