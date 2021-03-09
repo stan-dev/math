@@ -277,7 +277,7 @@ auto bad_wrong_value(const T& a) {
 template <typename T>
 auto bad_wrong_derivatives(const T& a) {
   auto ops = operands_and_partials(a);
-  if (!is_constant<T>::value) {
+  if (!is_constant<T>::value) { 
     edge<0>(ops).partials_(0) = 1234;
   }
   return ops.build(0);
