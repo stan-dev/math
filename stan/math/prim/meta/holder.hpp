@@ -87,8 +87,9 @@ class Holder : private std::tuple<Args...>, public BaseExpr {
                                              BaseExpr>* = nullptr>
   explicit Holder(const Functor& f, Args&&... args)
       : std::tuple<Args...>(std::forward<Args>(args)...),
-        BaseExpr(index_apply<sizeof...(Args)>(
-            [this, &f](auto... Is) { return f(std::get<Is>(*this)...); })) {}
+        BaseExpr(index_apply<sizeof...(Args)>([this, &f](auto... Is) {
+          return f(std::get<Is>(static_cast<std::tuple<Args...>>(*this))...);
+        })) {}
 
   // we need to explicitely default copy and move constructors as we are
   // defining copy and move assignment operators
