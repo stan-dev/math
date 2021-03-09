@@ -444,12 +444,15 @@ int create_files(const int& argc, const char* argv[], const int& index,
  */
 int main(int argc, const char* argv[]) {
   int N_TESTS = atoi(argv[2]);
+
   create_files(argc, argv, 1, -1, N_TESTS);  // create var tests
+  create_files(argc, argv, 5, -1, N_TESTS);  // create ffv tests
+  create_files(argc, argv, 6, -1, N_TESTS);  // create varmat tests
+#ifdef STAN_PROB_TEST_ALL
   create_files(argc, argv, 2, -1, N_TESTS);  // create fd tests
   create_files(argc, argv, 3, -1, N_TESTS);  // create fv tests
   create_files(argc, argv, 4, -1, N_TESTS);  // create ffd tests
-  create_files(argc, argv, 5, -1, N_TESTS);  // create ffv tests
-  create_files(argc, argv, 6, -1, N_TESTS);  // create varmat tests
+#endif
 
   return 0;
 }

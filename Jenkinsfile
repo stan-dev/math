@@ -303,6 +303,7 @@ pipeline {
                         script {
                             if (params.withRowVector || isBranch('develop') || isBranch('master')) {
                                 sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
+                                sh "echo CXXFLAGS+=-DSTAN_PROB_TEST_ALL >> make/local"
                             }
                         }
                         sh "./runTests.py -j${env.PARALLEL} test/prob > dist.log 2>&1"
