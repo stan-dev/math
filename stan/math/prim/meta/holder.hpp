@@ -115,11 +115,9 @@ class Holder : private std::tuple<Args...>, public BaseExpr {
 namespace Eigen {
 namespace internal {
 
-template <class Functor, typename... Args>
-struct traits<stan::math::Holder<Functor, Args...>> {
-  using BaseExpression = std::decay_t<decltype(
-      std::declval<Functor>()(std::declval<Args&>()...))>;
-  using BaseTraits = traits<BaseExpression>;
+template <class BaseExpr, typename... Args>
+struct traits<stan::math::Holder<BaseExpr, Args...>> {
+  using BaseTraits = traits<BaseExpr>;
   typedef typename BaseTraits::StorageKind StorageKind;
   typedef typename BaseTraits::XprKind XprKind;
   typedef typename BaseTraits::StorageIndex StorageIndex;
