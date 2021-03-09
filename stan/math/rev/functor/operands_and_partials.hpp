@@ -38,11 +38,11 @@ class ops_partials_edge<double, var> {
   friend class stan::math::operands_and_partials;
   const var& operand_;
 
-  void dump_partials(double* partials) { *partials = this->partial_; }
-  void dump_operands(vari** varis) { *varis = this->operand_.vi_; }
-  int size() const { return 1; }
-  std::tuple<> container_operands() { return std::tuple<>(); }
-  std::tuple<> container_partials() { return std::tuple<>(); }
+  inline void dump_partials(double* partials) noexcept { *partials = this->partial_; }
+  inline void dump_operands(vari** varis) noexcept { *varis = this->operand_.vi_; }
+  static constexpr int size() noexcept { return 1; }
+  static constexpr std::tuple<> container_operands() noexcept { return std::tuple<>(); }
+  static constexpr std::tuple<> container_partials() noexcept { return std::tuple<>(); }
 };
 }  // namespace internal
 
@@ -201,8 +201,8 @@ class ops_partials_edge<double, std::vector<var>> {
     }
   }
   int size() { return this->operands_.size(); }
-  std::tuple<> container_operands() { return std::tuple<>(); }
-  std::tuple<> container_partials() { return std::tuple<>(); }
+  static constexpr std::tuple<> container_operands() noexcept { return std::tuple<>(); }
+  static constexpr std::tuple<> container_partials() noexcept { return std::tuple<>(); }
 };
 
 template <typename Op>
@@ -232,8 +232,8 @@ class ops_partials_edge<double, Op, require_eigen_st<is_var, Op>> {
         = this->partials_;
   }
   int size() { return this->operands_.size(); }
-  std::tuple<> container_operands() { return std::tuple<>(); }
-  std::tuple<> container_partials() { return std::tuple<>(); }
+  static constexpr std::tuple<> container_operands() noexcept { return std::tuple<>(); }
+  static constexpr std::tuple<> container_partials() noexcept { return std::tuple<>(); }
 };
 
 template <typename Op>
@@ -253,9 +253,9 @@ class ops_partials_edge<double, var_value<Op>, require_eigen_t<Op>> {
   friend class stan::math::operands_and_partials;
   const var_value<Op>& operands_;
 
-  void dump_operands(vari** varis) {}
-  void dump_partials(double* partials) {}
-  int size() { return 0; }
+  static constexpr void dump_operands(vari** varis) {}
+  static constexpr void dump_partials(double* partials) {}
+  static constexpr int size() noexcept { return 0; }
   std::tuple<const var_value<Op>&> container_operands() {
     return std::forward_as_tuple(operands_);
   }
@@ -306,8 +306,8 @@ class ops_partials_edge<double, std::vector<Eigen::Matrix<var, R, C>>> {
     }
     return this->operands_.size() * this->operands_[0].size();
   }
-  std::tuple<> container_operands() { return std::tuple<>(); }
-  std::tuple<> container_partials() { return std::tuple<>(); }
+  static constexpr std::tuple<> container_operands() noexcept { return std::tuple<>(); }
+  static constexpr std::tuple<> container_partials() noexcept { return std::tuple<>(); }
 };
 
 template <>
@@ -350,8 +350,8 @@ class ops_partials_edge<double, std::vector<std::vector<var>>> {
     }
     return this->operands_.size() * this->operands_[0].size();
   }
-  std::tuple<> container_operands() { return std::tuple<>(); }
-  std::tuple<> container_partials() { return std::tuple<>(); }
+  static constexpr std::tuple<> container_operands() noexcept { return std::tuple<>(); }
+  static constexpr std::tuple<> container_partials() noexcept { return std::tuple<>(); }
 };
 
 template <typename Op>
@@ -373,9 +373,9 @@ class ops_partials_edge<double, std::vector<var_value<Op>>,
   friend class stan::math::operands_and_partials;
   const std::vector<var_value<Op>>& operands_;
 
-  void dump_operands(vari** varis) {}
-  void dump_partials(double* partials) {}
-  int size() { return 0; }
+  static constexpr void dump_operands(vari** varis) {}
+  static constexpr void dump_partials(double* partials) {}
+  static constexpr int size() noexcept { return 0; }
   std::tuple<const std::vector<var_value<Op>>&> container_operands() {
     return std::forward_as_tuple(operands_);
   }

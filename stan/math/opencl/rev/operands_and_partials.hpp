@@ -30,14 +30,14 @@ class ops_partials_edge<double, var_value<Op>,
   friend class stan::math::operands_and_partials;
   const var_value<Op>& operands_;
 
-  void dump_operands(vari** varis) {}
-  void dump_partials(double* partials) {}
-  int size() { return 0; }
+  static constexpr void dump_operands(vari** varis) {}
+  static constexpr void dump_partials(double* partials) {}
+  static constexpr int size() noexcept { return 0; }
   std::tuple<var_value<Op>> container_operands() {
     return std::make_tuple(operands_);
   }
   std::tuple<partials_t> container_partials() {
-    return std::make_tuple(partials_);
+    return std::make_tuple(to_arena(partials_));
   }
 };
 
