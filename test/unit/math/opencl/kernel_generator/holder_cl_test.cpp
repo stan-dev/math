@@ -11,12 +11,10 @@ using Eigen::MatrixXd;
 using Eigen::MatrixXi;
 using stan::math::matrix_cl;
 
-
-
 template <typename T>
 auto f2(T&& a) {
   return stan::math::make_holder([](const auto& a) { return a + a; },
-                                    std::forward<T>(a));
+                                 std::forward<T>(a));
 }
 
 TEST(KernelGenerator, make_holder_cl_lvalue_test) {
