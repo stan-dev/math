@@ -44,6 +44,38 @@ class ops_partials_edge<double, var> {
   static constexpr std::tuple<> container_operands() noexcept { return std::tuple<>(); }
   static constexpr std::tuple<> container_partials() noexcept { return std::tuple<>(); }
 };
+
+template <typename T1, typename T2,
+          require_all_kernel_expressions_and_none_scalar_t<T1, T2>* = nullptr>
+inline void update_adjoints(var_value<T1>& x, T2&& y, const var& z) {
+  x.adj() += z.adj() * y;
+}
+
+template <typename Scalar1, typename Scalar2, require_var_t<Scalar1>* = nullptr,
+          require_not_var_matrix_t<Scalar1>* = nullptr,
+          require_arithmetic_t<Scalar2>* = nullptr>
+inline void update_adjoints(Scalar1& x, Scalar2&& y, const var& z) {
+  x.adj() += z.adj() * y;
+}
+template <typename Matrix1, typename Matrix2,
+          require_rev_matrix_t<Matrix1>* = nullptr,
+          require_st_arithmetic<Matrix2>* = nullptr>
+inline void update_adjoints(Matrix1& x, Matrix2&& y, const var& z) {
+  x.adj().array() += z.adj() * y.array();
+}
+
+template <typename Arith, typename Alt, require_st_arithmetic<Arith>* = nullptr>
+inline void update_adjoints(Arith&& /* x */, Alt&& /* y */, const var& /* z */) {}
+
+template <typename StdVec1, typename Vec2,
+          require_std_vector_t<StdVec1>* = nullptr,
+          require_st_arithmetic<Vec2>* = nullptr>
+inline void update_adjoints(StdVec1& x, Vec2&& y, const var& z) {
+  for (size_t i = 0; i < x.size(); ++i) {
+    update_adjoints(x[i], y[i], z);
+  }
+}
+
 }  // namespace internal
 
 /** \ingroup type_trait
@@ -133,41 +165,26 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
     edge5_.dump_operands(&varis[idx += edge4_.size()]);
     edge5_.dump_partials(&partials[idx]);
 
-    auto container_operands = std::tuple_cat(
+    var ret(value);
+    reverse_pass_callback([ret, varis, partials, edges_size]() {
+      for (size_t i = 0; i < edges_size; ++i) {
+        varis[i]->adj_ += ret.adj() * partials[i];
+      }
+    });
+    stan::math::for_each(
+    [ret](auto&& operand_i, auto&& partial_i) mutable {
+      reverse_pass_callback(
+          [operand = to_arena(operand_i), partial = to_arena(partial_i), ret]() mutable {
+              internal::update_adjoints(operand, partial, ret);
+            });
+    }, std::tuple_cat(
         edge1_.container_operands(), edge2_.container_operands(),
         edge3_.container_operands(), edge4_.container_operands(),
-        edge5_.container_operands());
-    auto container_partials = std::tuple_cat(
+        edge5_.container_operands()), std::tuple_cat(
         edge1_.container_partials(), edge2_.container_partials(),
         edge3_.container_partials(), edge4_.container_partials(),
-        edge5_.container_partials());
-
-    return var(return_vari(value, edges_size, varis, partials,
-                           container_operands, container_partials));
-  }
-
- private:
-  /**
-   * Deduces types and constructs the vari to return from `build()`.
-   * @param value the value
-   * @param edges_size number of elements in all non-var_value of container
-   * edges
-   * @param varis pointer to varis from non-var_value of container edges
-   * @param partials pointer to values for partials from non-var_value of
-   * container edges
-   * @param container_operands operands from var_value of container edges
-   * @param container_partials partial derivatives from var_value of container
-   * edges
-   */
-  template <typename... Ops, typename... Partials>
-  auto* return_vari(double value, size_t edges_size, vari** varis,
-                    double* partials,
-                    const std::tuple<Ops...>& container_operands,
-                    const std::tuple<Partials...>& container_partials) {
-    return new precomputed_gradients_vari_template<
-        std::tuple<arena_t<Ops>...>, std::tuple<arena_t<Partials>...>>(
-        value, edges_size, varis, partials, container_operands,
-        container_partials);
+        edge5_.container_partials()));
+    return ret;
   }
 };
 

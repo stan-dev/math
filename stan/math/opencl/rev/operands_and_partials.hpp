@@ -37,7 +37,7 @@ class ops_partials_edge<double, var_value<Op>,
     return std::make_tuple(operands_);
   }
   std::tuple<partials_t> container_partials() {
-    return std::make_tuple(to_arena(partials_));
+    return std::make_tuple(partials_);
   }
 };
 
