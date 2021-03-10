@@ -129,22 +129,29 @@ Eigen::Matrix<scalar_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_newton(
 
   const auto& x_eval = x.eval();
   const auto& y_eval = y.eval();
+  const auto& x_val = (value_of(x_eval)).eval();
+  const auto& y_val = (value_of(y_eval)).eval();
   Eigen::VectorXd theta_dbl = algebra_solver_newton(
       f, x_eval, value_of(y_eval), dat, dat_int, msgs, scaling_step_size,
       function_tolerance, max_num_steps);
 
-  typedef system_functor<F, double, double, false> Fy;
-  typedef system_functor<F, double, double, true> Fs;
-  typedef hybrj_functor_solver<Fs, F, double, double> Fx;
-  Fx fx(Fs(), f, value_of(x_eval), value_of(y_eval), dat, dat_int, msgs);
+  typedef system_functor<F, double, double, true> Fsx;
+  typedef hybrj_functor_solver<Fsx, F, double, double> Fx;
+  Fx fx(Fsx(), f, value_of(x_eval), value_of(y_eval), dat, dat_int, msgs);
+
+  typedef system_functor<F, double, double, false> Fsy;
+  typedef hybrj_functor_solver<Fsy, F, double, double> Fy;
+  Fsy fy(f, value_of(x_eval), value_of(y_eval), dat, dat_int, msgs);
 
   // Construct vari
-  auto* vi0 = new algebra_solver_vari<Fy, F, scalar_type_t<T2>, Fx>(
-      Fy(), f, value_of(x_eval), y_eval, dat, dat_int, theta_dbl, fx, msgs);
+  algebra_solver_vari<Fsy, value_type_t<T2>, Fx>* vi0
+      = new algebra_solver_vari<Fsy, value_type_t<T2>, Fx>(
+          fy, y_val, fx, theta_dbl);
   Eigen::Matrix<var, Eigen::Dynamic, 1> theta(x.size());
-  theta(0) = var(vi0->theta_[0]);
-  for (int i = 1; i < x.size(); ++i)
-    theta(i) = var(vi0->theta_[i]);
+  theta(0) = var(vi0->x_[0]);
+  for (int i = 1; i < x.size(); ++i) {
+    theta(i) = var(vi0->x_[i]);
+  }
 
   return theta;
 }

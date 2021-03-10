@@ -7,6 +7,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/mdivide_left.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/fun/eval.hpp>
 #include <unsupported/Eigen/NonLinearOptimization>
 #include <iostream>
 #include <string>
@@ -21,58 +22,76 @@ namespace math {
  * function theorem. The call to Jacobian() occurs outside the call to
  * chain() -- this prevents malloc issues.
  */
-template <typename Fs, typename F, typename T, typename Fx>
+template <typename Fy, typename T, typename Fx>
 struct algebra_solver_vari : public vari {
-  /** vector of parameters */
-  vari** y_;
   /** number of parameters */
-  int y_size_;
+  const int y_size_;
+  /** value of parameters */
+  const Eigen::Matrix<T, Eigen::Dynamic, 1>& y_val_;
+  /** System functor (f_) w.r.t. inputs (y_) */
+  Fy fy_;
+  /** array of parameters */
+  vari** y_;
   /** number of unknowns */
-  int x_size_;
-  /** vector of solution */
-  vari** theta_;
-  /** Jacobian of the solution w.r.t parameters */
-  double* Jx_y_;
+  const int x_size_;
+  /** value of unknowns */
+  const Eigen::VectorXd& x_val_;
+  /** System functor (f_) w.r.t. outputs (x_) */
+  Fx fx_;
+  /** array of unknowns */
+  vari** x_;
 
-  algebra_solver_vari(const Fs& fs, const F& f, const Eigen::VectorXd& x,
-                      const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
-                      const std::vector<double>& dat,
-                      const std::vector<int>& dat_int,
-                      const Eigen::VectorXd& theta_dbl, Fx& fx,
-                      std::ostream* msgs)
-      : vari(theta_dbl(0)),
-        y_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(y.size())),
+  algebra_solver_vari(Fy& fy, const Eigen::Matrix<T, Eigen::Dynamic, 1>& y, Fx& fx, const Eigen::VectorXd& x)
+      : vari(x(0)),
         y_size_(y.size()),
+        y_val_(y),
+        fy_(fy),
+        y_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(y_size_)),
         x_size_(x.size()),
-        theta_(
-            ChainableStack::instance_->memalloc_.alloc_array<vari*>(x_size_)),
-        Jx_y_(ChainableStack::instance_->memalloc_.alloc_array<double>(
-            x_size_ * y_size_)) {
+        x_val_(x),
+        fx_(fx),
+        x_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(x_size_))
+  {
     using Eigen::Map;
     using Eigen::MatrixXd;
     for (int i = 0; i < y.size(); ++i) {
       y_[i] = y(i).vi_;
     }
 
-    theta_[0] = this;
+    x_[0] = this;
     for (int i = 1; i < x.size(); ++i) {
-      theta_[i] = new vari(theta_dbl(i), false);
+      x_[i] = new vari(x(i), false);
     }
-
-    // Compute the Jacobian and store in array, using the
-    // implicit function theorem, i.e. Jx_y = Jf_y / Jf_x
-    using f_y = hybrj_functor_solver<Fs, F, double, double>;
-    Map<MatrixXd>(&Jx_y_[0], x_size_, y_size_)
-        = -mdivide_left(fx.get_jacobian(theta_dbl),
-                        f_y(fs, f, theta_dbl, value_of(y), dat, dat_int, msgs)
-                            .get_jacobian(value_of(y)));
   }
 
   void chain() {
+    using Eigen::Matrix;
+    using Eigen::MatrixXd;
+    using Eigen::VectorXd;
+    using Eigen::Dynamic;
+
+    // Compute (transpose of) specificities with respect to x.
+    VectorXd x_bar_(x_size_); // TODO: Is this zeroing out memory?
+    for (int i = 0; i < x_size_; ++i) {
+      x_bar_[i] = x_[i]->adj_;
+    }
+
+    // Contract specificities with inverse Jacobian of f with respect to x.
+    MatrixXd Jf_x = fx_.get_jacobian(x_val_);
+    VectorXd eta_ = - Jf_x.partialPivLu().solve(x_bar_);
+
+    // Contract with Jacobian of f with respect to y using a nested reverse
+    // autodiff pass.
+    Matrix<var, Eigen::Dynamic, 1> y_nrad_ = y_val_;
+    {
+      stan::math::nested_rev_autodiff();
+      auto x_nrad_ = fy_(y_nrad_);
+      x_nrad_.adj() = eta_;
+      stan::math::grad();
+    }
+
     for (int j = 0; j < y_size_; j++) {
-      for (int i = 0; i < x_size_; i++) {
-        y_[j]->adj_ += theta_[i]->adj_ * Jx_y_[j * x_size_ + i];
-      }
+        y_[j]->adj_ += y_nrad_.adj()[j];
     }
   }
 };
@@ -98,7 +117,7 @@ struct algebra_solver_vari : public vari {
  * @param[in] f Functor that evaluates the system of equations.
  * @param[in] x Vector of starting values.
  * @param[in] y parameter vector for the equation system. The function
- *            is overloaded to treat y as a vector of doubles or of a
+ *            is overloaded to treat y as a vector of doubles or as a
  *            a template type T.
  * @param[in] dat continuous data vector for the equation system.
  * @param[in] dat_int integer data vector for the equation system.
@@ -134,10 +153,7 @@ Eigen::VectorXd algebra_solver_powell(
   algebra_solver_check(x_val, y, dat, dat_int, function_tolerance,
                        max_num_steps);
   check_nonnegative("alegbra_solver", "relative_tolerance", relative_tolerance);
-  // if (relative_tolerance < 0)
-  //   invalid_argument("algebra_solver", "relative_tolerance,",
-  //                    function_tolerance, "",
-  //                    ", must be greater than or equal to 0");
+
 
   // Create functor for algebraic system
   using Fs = system_functor<F, double, double, true>;
@@ -149,32 +165,10 @@ Eigen::VectorXd algebra_solver_powell(
   check_matching_sizes("algebra_solver", "the algebraic system's output",
                        fx.get_value(x_val), "the vector of unknowns, x,", x);
 
-  // Compute theta_dbl
-  Eigen::VectorXd theta_dbl = x_val;
-  solver.parameters.xtol = relative_tolerance;
-  solver.parameters.maxfev = max_num_steps;
-  solver.solve(theta_dbl);
-
-  // Check if the max number of steps has been exceeded
-  if (solver.nfev >= max_num_steps) {
-    throw_domain_error("algebra_solver", "maximum number of iterations",
-                       max_num_steps, "(", ") was exceeded in the solve.");
-  }
-
-  // Check solution is a root
-  double system_norm = fx.get_value(theta_dbl).stableNorm();
-  if (system_norm > function_tolerance) {
-    std::ostringstream message;
-    message << "the norm of the algebraic function is " << system_norm
-            << " but should be lower than the function "
-            << "tolerance:";
-    throw_domain_error("algebra_solver", message.str().c_str(),
-                       function_tolerance, "",
-                       ". Consider decreasing the relative tolerance and "
-                       "increasing max_num_steps.");
-  }
-
-  return theta_dbl;
+  // Solve the system
+  return algebra_solver_powell_(solver, fx, x, y, dat, dat_int, msgs,
+                                relative_tolerance, function_tolerance,
+                                max_num_steps);
 }
 
 /**
@@ -234,27 +228,38 @@ Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_powell(
   const auto& y_eval = y.eval();
   const auto& x_val = (value_of(x_eval)).eval();
   const auto& y_val = (value_of(y_eval)).eval();
-  Eigen::VectorXd theta_dbl = algebra_solver_powell(
-      f, x_eval, y_val, dat, dat_int, 0, relative_tolerance, function_tolerance,
-      max_num_steps);
 
-  using Fy = system_functor<F, double, double, false>;
+  algebra_solver_check(x_val, y, dat, dat_int, function_tolerance,
+                       max_num_steps);
+  check_nonnegative("alegbra_solver", "relative_tolerance", relative_tolerance);
 
-  // TODO(charlesm93): a similar object gets constructed inside
-  // the call to algebra_solver. Cache the previous result
-  // and use it here (if possible).
-  using Fs = system_functor<F, double, double, true>;
-  using Fx = hybrj_functor_solver<Fs, F, double, double>;
-  Fx fx(Fs(), f, x_val, y_val, dat, dat_int, msgs);
+  // Construct the Powell solver
+  using Fsx = system_functor<F, double, double, true>;
+  using Fx = hybrj_functor_solver<Fsx, F, double, double>;
+  Fx fx(Fsx(), f, x_val, y_val, dat, dat_int, msgs);
+  Eigen::HybridNonLinearSolver<Fx> solver(fx);
+
+  // Check dimension unknowns equals dimension of system output
+  check_matching_sizes("algebra_solver", "the algebraic system's output",
+                       fx.get_value(x_val), "the vector of unknowns, x,", x);
+
+  // Solve the system
+  Eigen::VectorXd theta_dbl = algebra_solver_powell_(
+      solver, fx, x_eval, y_val, dat, dat_int, 0, relative_tolerance,
+      function_tolerance, max_num_steps);
+
+  using Fsy = system_functor<F, double, double, false>;
+  using Fy = hybrj_functor_solver<Fsy, F, double, double>;
+  Fsy fy(f, x_val, y_val, dat, dat_int, msgs);
 
   // Construct vari
-  algebra_solver_vari<Fy, F, value_type_t<T2>, Fx>* vi0
-      = new algebra_solver_vari<Fy, F, value_type_t<T2>, Fx>(
-          Fy(), f, x_val, y_eval, dat, dat_int, theta_dbl, fx, msgs);
+  algebra_solver_vari<Fsy, value_type_t<T2>, Fx>* vi0
+      = new algebra_solver_vari<Fsy, value_type_t<T2>, Fx>(
+          fy, y_val, fx, theta_dbl);
   Eigen::Matrix<var, Eigen::Dynamic, 1> theta(x.size());
-  theta(0) = var(vi0->theta_[0]);
+  theta(0) = var(vi0->x_[0]);
   for (int i = 1; i < x.size(); ++i) {
-    theta(i) = var(vi0->theta_[i]);
+    theta(i) = var(vi0->x_[i]);
   }
 
   return theta;
@@ -314,6 +319,43 @@ Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, 1> algebra_solver(
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
   return algebra_solver_powell(f, x, y, dat, dat_int, msgs, relative_tolerance,
                                function_tolerance, max_num_steps);
+}
+
+template <typename S, typename F, typename T, require_eigen_vector_t<T>* = nullptr>
+Eigen::VectorXd algebra_solver_powell_(
+    S& solver, const F& fx, const T& x, const Eigen::VectorXd& y,
+    const std::vector<double>& dat, const std::vector<int>& dat_int,
+    std::ostream* msgs, double relative_tolerance,
+    double function_tolerance, long int max_num_steps ) {  // NOLINT(runtime/int)
+  const auto& x_eval = x.eval();
+  const auto& x_val = (value_of(x_eval)).eval();
+
+  // Compute theta_dbl
+  Eigen::VectorXd theta_dbl = x_val;
+  solver.parameters.xtol = relative_tolerance;
+  solver.parameters.maxfev = max_num_steps;
+  solver.solve(theta_dbl);
+
+  // Check if the max number of steps has been exceeded
+  if (solver.nfev >= max_num_steps) {
+    throw_domain_error("algebra_solver", "maximum number of iterations",
+                       max_num_steps, "(", ") was exceeded in the solve.");
+  }
+
+  // Check solution is a root
+  double system_norm = fx.get_value(theta_dbl).stableNorm();
+  if (system_norm > function_tolerance) {
+    std::ostringstream message;
+    message << "the norm of the algebraic function is " << system_norm
+            << " but should be lower than the function "
+            << "tolerance:";
+    throw_domain_error("algebra_solver", message.str().c_str(),
+                       function_tolerance, "",
+                       ". Consider decreasing the relative tolerance and "
+                       "increasing max_num_steps.");
+  }
+
+  return theta_dbl;
 }
 
 }  // namespace math
