@@ -27,7 +27,7 @@ struct algebra_solver_vari : public vari {
   /** number of parameters */
   const int y_size_;
   /** value of parameters */
-  const Eigen::Matrix<T, Eigen::Dynamic, 1>& y_val_;
+  const Eigen::Matrix<T, Eigen::Dynamic, 1> y_val_;
   /** System functor (f_) w.r.t. inputs (y_) */
   Fy fy_;
   /** array of parameters */
@@ -36,13 +36,15 @@ struct algebra_solver_vari : public vari {
   const int x_size_;
   /** value of unknowns */
   const Eigen::VectorXd& x_val_;
+  /** Hybrj functor solver (f_) w.r.t. outputs (x_) */
   Fx fx_;
   /** array of unknowns */
   vari** x_;
   /** Jacobian of f w.r.t. outputs (x_) */
   const Eigen::MatrixXd Jf_x_;
 
-  algebra_solver_vari(Fy& fy, const Eigen::Matrix<T, Eigen::Dynamic, 1>& y, Fx& fx, const Eigen::VectorXd& x)
+  algebra_solver_vari(Fy& fy, const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
+                      Fx& fx, const Eigen::VectorXd& x)
       : vari(x(0)),
         y_size_(y.size()),
         y_val_(y),
@@ -50,12 +52,13 @@ struct algebra_solver_vari : public vari {
         y_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(y_size_)),
         x_size_(x.size()),
         x_val_(x),
-        Jf_x_(fx_.get_jacobian(x_val_)),
+        Jf_x_(fx.get_jacobian(x_val_)),
         fx_(fx),
         x_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(x_size_))
   {
     using Eigen::Map;
     using Eigen::MatrixXd;
+
     for (int i = 0; i < y_size_; ++i) {
       y_[i] = y(i).vi_;
     }
@@ -83,16 +86,15 @@ struct algebra_solver_vari : public vari {
 
     // Contract with Jacobian of f with respect to y using a nested reverse
     // autodiff pass.
-    Matrix<var, Eigen::Dynamic, 1> y_nrad_ = y_val_;
     {
       stan::math::nested_rev_autodiff();
-      auto x_nrad_ = fy_(y_nrad_);
+      Matrix<var, Eigen::Dynamic, 1> y_nrad_ = y_val_;
+      auto x_nrad_ = stan::math::eval(fy_(y_nrad_));
       x_nrad_.adj() = eta_;
       stan::math::grad();
-    }
-
-    for (int j = 0; j < y_size_; j++) {
-        y_[j]->adj_ += y_nrad_.adj()[j];
+      for (int j = 0; j < y_size_; j++) {
+          y_[j]->adj_ += y_nrad_.adj()[j];
+      }
     }
   }
 };
