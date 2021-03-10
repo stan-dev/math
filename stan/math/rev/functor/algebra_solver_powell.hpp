@@ -36,10 +36,11 @@ struct algebra_solver_vari : public vari {
   const int x_size_;
   /** value of unknowns */
   const Eigen::VectorXd& x_val_;
-  /** System functor (f_) w.r.t. outputs (x_) */
   Fx fx_;
   /** array of unknowns */
   vari** x_;
+  /** Jacobian of f w.r.t. outputs (x_) */
+  const Eigen::MatrixXd Jf_x_;
 
   algebra_solver_vari(Fy& fy, const Eigen::Matrix<T, Eigen::Dynamic, 1>& y, Fx& fx, const Eigen::VectorXd& x)
       : vari(x(0)),
@@ -49,17 +50,18 @@ struct algebra_solver_vari : public vari {
         y_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(y_size_)),
         x_size_(x.size()),
         x_val_(x),
+        Jf_x_(fx_.get_jacobian(x_val_)),
         fx_(fx),
         x_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(x_size_))
   {
     using Eigen::Map;
     using Eigen::MatrixXd;
-    for (int i = 0; i < y.size(); ++i) {
+    for (int i = 0; i < y_size_; ++i) {
       y_[i] = y(i).vi_;
     }
 
     x_[0] = this;
-    for (int i = 1; i < x.size(); ++i) {
+    for (int i = 1; i < x_size_; ++i) {
       x_[i] = new vari(x(i), false);
     }
   }
@@ -77,8 +79,7 @@ struct algebra_solver_vari : public vari {
     }
 
     // Contract specificities with inverse Jacobian of f with respect to x.
-    MatrixXd Jf_x = fx_.get_jacobian(x_val_);
-    VectorXd eta_ = - Jf_x.partialPivLu().solve(x_bar_);
+    VectorXd eta_ = - Jf_x_.transpose().fullPivLu().solve(x_bar_);
 
     // Contract with Jacobian of f with respect to y using a nested reverse
     // autodiff pass.
