@@ -268,17 +268,21 @@ auto bad_multiple_evaluations(const T& a) {
   return a + a;
 }
 
+/**
+ * The bad_* functions are meant to be used when generating a failure
+ */
 template <typename T>
 auto bad_wrong_value(const T& a) {
   if (std::is_same<T, plain_type_t<T>>::value) {
     return a(0, 0);
   }
+
   return a(0, 0) + 1;
 }
 
 template <typename T>
 auto bad_wrong_derivatives(const T& a) {
-  operands_and_partials<T> ops(a);
+  operands_and_partials<plain_type_t<T>> ops(a);
   if (!is_constant<T>::value && std::is_same<T, plain_type_t<T>>::value) {
     ops.edge1_.partials_[0] = 1234;
   }
