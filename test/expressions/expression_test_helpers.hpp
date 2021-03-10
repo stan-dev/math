@@ -178,7 +178,7 @@ template <typename T>
 auto adjoints_of(const std::vector<T>& a) {
   std::vector<decltype(adjoints_of(std::declval<T>()))> b;
   for(size_t i = 0; i < a.size(); ++i) {
-    b.push_back(adjoints_of(b[i]));
+    b.push_back(adjoints_of(a[i]));
   }
   return b;
 }

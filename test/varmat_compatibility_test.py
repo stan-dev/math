@@ -32,7 +32,6 @@ overload_scalar = {
     "Mix": "stan::math::fvar<stan::math::var>",
 }
 
-
 def run_command(command):
     """
     Runs given command and waits until it finishes executing.
@@ -46,14 +45,36 @@ def run_command(command):
     else:
         return (False, stdout, stderr)
 
-def build(exe_filepath):
-    """
-    Builds a file using make.
-    :param exe_filepath: File to build
-    """
-    return run_command([make, exe_filepath])
+def build_signature(signature, cpp_path):
+    attempted = False
+    successful = False
 
-def main(functions_or_sigs, results_file, cores):
+    if cpp_path:
+        attempted = True
+
+        object_path = cpp_path.replace(".cpp", ".o")
+        dependency_path = cpp_path.replace(".cpp", ".d")
+        stdout_path = cpp_path.replace(".cpp", ".stdout")
+        stderr_path = cpp_path.replace(".cpp", ".stderr")
+            
+        successful, stdout, stderr = run_command([make, object_path])
+
+        # Only clean up files if check succesful
+        if successful:
+            with contextlib.suppress(FileNotFoundError):
+                os.remove(cpp_path)
+                os.remove(dependency_path)
+                os.remove(object_path)
+        else:
+            with open(stdout_path, "w") as stdout_f:
+                stdout_f.write(stdout.decode("utf-8"))
+
+            with open(stderr_path, "w") as stderr_f:
+                stderr_f.write(stderr.decode("utf-8"))
+        
+    return signature, successful, attempted
+
+def main(functions_or_sigs, results_file, cores, chunk_size):
     """
     yada yada
     :param functions_or_sigs: List of function names and/or signatures to benchmark
@@ -68,29 +89,12 @@ def main(functions_or_sigs, results_file, cores):
     compatible_signatures = set()
     incompatible_signatures = set()
     impossible_signatures = set()
-    if results_file and os.path.exists(results_file):
-        with open(results_file, "r") as f:
-            results_file_contents = json.load(f)
-
-            if "compatible_signatures" in results_file_contents:
-                compatible_signatures = set(results_file_contents["compatible_signatures"])
-            
-            if "incompatible_signatures" in results_file_contents:
-                incompatible_signatures = set(results_file_contents["incompatible_signatures"])
-
-            if "impossible_signatures" in results_file_contents:
-                impossible_signatures = set(results_file_contents["impossible_signatures"])
-
-    skip_signatures = set(compatible_signatures)
 
     signatures_to_check = set()
     for signature in all_signatures:
         return_type, function_name, stan_args = parse_signature(signature)
 
-        if len(requested_functions) > 0:
-            if function_name not in requested_functions:
-                continue
-        elif signature in skip_signatures:
+        if len(requested_functions) > 0 and function_name not in requested_functions:
             continue
         
         signatures_to_check.add(signature)
@@ -102,7 +106,7 @@ def main(functions_or_sigs, results_file, cores):
         for start in range(0, len(mylist), chunk_size):
             yield (start, mylist[start:min(start + chunk_size, len(mylist))])
 
-    for start, signatures_to_check_chunk in chunk(signatures_to_check, cores):
+    for start, signatures_to_check_chunk in chunk(signatures_to_check, chunk_size * cores):
         test_files_to_compile = {}
 
         for signature in signatures_to_check_chunk:
@@ -147,53 +151,15 @@ def main(functions_or_sigs, results_file, cores):
             else:
                 test_files_to_compile[signature] = None
 
-        def do_build(signature, cpp_path):
-            attempted = False
-            successful = False
-
-            if cpp_path:
-                attempted = True
-
-                object_path = cpp_path.replace(".cpp", ".o")
-                dependency_path = cpp_path.replace(".cpp", ".d")
-                stdout_path = cpp_path.replace(".cpp", ".stdout")
-                stderr_path = cpp_path.replace(".cpp", ".stderr")
-                    
-                successful, stdout, stderr = build(object_path)
-
-                # Only clean up files if check succesful
-                if successful:
-                    with contextlib.suppress(FileNotFoundError):
-                        os.remove(cpp_path)
-                        os.remove(dependency_path)
-                        os.remove(object_path)
-                else:
-                    with open(stdout_path, "w") as stdout_f:
-                        stdout_f.write(stdout.decode("utf-8"))
-
-                    with open(stderr_path, "w") as stderr_f:
-                        stderr_f.write(stderr.decode("utf-8"))
-                
-            return signature, successful, attempted
-
         with concurrent.futures.ThreadPoolExecutor(cores) as e:
             futures = []
             for signature, cpp_path in test_files_to_compile.items():
-                futures.append(e.submit(do_build, signature, cpp_path))
+                futures.append(e.submit(build_signature, signature, cpp_path))
 
             for n, finished in enumerate(concurrent.futures.as_completed(futures)):
                 signature, successful, attempted = finished.result()
-        
+
                 print("Check results of test {0} / {1}, {2} ... ".format(n + start, len(signatures_to_check), signature.strip()), end = '')
-
-                if signature in compatible_signatures:
-                    compatible_signatures.remove(signature)
-
-                if signature in incompatible_signatures:
-                    incompatible_signatures.remove(signature)
-
-                if signature in impossible_signatures:
-                    impossible_signatures.remove(signature)
 
                 if attempted:
                     if successful:
@@ -248,14 +214,20 @@ def processCLIArgs():
         help="Number of parallel cores to use.",
     )
     parser.add_argument(
-        "--results_file",
+        "-c",
+        type=int,
+        default=10,
+        help="Work in tests in chunks of size c * j.",
+    )
+    parser.add_argument(
+        "results_file",
         type=str,
         default=None,
-        help="File to save results in. If it already exists, it is used to skip already finished checks.",
+        help="File to save results in.",
     )
     args = parser.parse_args()
 
-    main(functions_or_sigs=args.functions, results_file = args.results_file, cores = args.j)
+    main(functions_or_sigs=args.functions, results_file = args.results_file, cores = args.j, chunk_size = args.c)
 
 
 if __name__ == "__main__":

@@ -23,64 +23,6 @@ class FullErrorMsgParser(ArgumentParser):
         self.print_help()
         sys.exit(2)
 
-
-def make_arg_code(arg, scalar, var_name, var_number, function_name):
-    """
-    Makes code for declaration and initialization of an argument to function.
-
-    Default argument range (between 0 and 1) works for most function, but some need
-    values outside this range - these require special handling. Specific lambda is
-    also hardcoded - if we use more functor arguments in future this may need to be
-    extended.
-    :param arg: stan lang type of the argument
-    :param scalar: scalar type used in argument
-    :param var_name: name of the variable to create
-    :param var_number: number of variable in the function call
-    :param function_name: name of the function that will be tested using this argument
-    :return: code for declaration and initialization of an argument
-    """
-    if (
-        function_name in non_differentiable_args
-        and var_number in non_differentiable_args[function_name]
-    ):
-        scalar = "double"
-    if arg == "(vector, vector, data real[], data int[]) => vector":
-        return "  stan::test::simple_eq_functor " + var_name
-    elif "=>" in arg:  # functors
-        return_type = arg_types[arg.split(" => ")[1]].replace("SCALAR", scalar)
-        return "  stan::test::test_functor " + var_name
-    arg_type = arg_types[arg].replace("SCALAR", scalar)
-    if (function_name in special_arg_values) and (arg != "rng"):
-        if isinstance(special_arg_values[function_name][var_number], numbers.Number):
-            return "  {} {} = stan::test::make_arg<{}>({})".format(
-                arg_type,
-                var_name,
-                arg_type,
-                special_arg_values[function_name][var_number],
-            )
-        elif isinstance(special_arg_values[function_name][var_number], str):
-            return "  {} {} = stan::test::{}<{}>()".format(
-                arg_type,
-                var_name,
-                special_arg_values[function_name][var_number],
-                arg_type,
-            )
-    if (
-        function_name in ("csr_to_dense_matrix", "csr_matrix_times_vector")
-        and var_number == 4
-    ):
-        return "  {} {}{{1, 2}}".format(
-            arg_type,
-            var_name,
-        )
-    else:
-        return "  %s %s = stan::test::make_arg<%s>()" % (
-            arg_type,
-            var_name,
-            arg_type,
-        )
-
-
 def save_tests_in_files(N_files, tests):
     """
     Saves tests in files
@@ -137,7 +79,7 @@ def main(functions=(), j=1):
             if default_checks and fg.function_name in ignored:
                 continue
 
-            # skip signatures without eigen inputs
+            # skip signatures without inputs that can be eigen types
             if not fg.has_vector_arg():
                 continue
 
@@ -149,7 +91,7 @@ def main(functions=(), j=1):
                 continue
 
             arg_list_base = fg.build_arguments(len(fg.stan_args) * [overload], 2)
-            is_reverse_mode = any(arg.is_reverse_mode() for arg in arg_list_base)
+            is_reverse_mode = any(arg.is_reverse_mode() for arg in arg_list_base) and not fg.returns_int()
 
             arg_list = []
             for arg in arg_list_base:
@@ -179,7 +121,7 @@ def main(functions=(), j=1):
                 adjoints_from_non_expression = []
                 for arg in arg_list_base:
                     if arg.is_reverse_mode():
-                        adjoints_from_non_expression.append(fg.add(FunctionCallAssign("stan::test::adjoints_of", f"{arg.name}_adjoints_expr", arg)))
+                        adjoints_from_non_expression.append(fg.add(FunctionCallAssign("stan::test::adjoints_of", f"{arg.name}_adjoints_base", arg)))
                 for adjoint_from_expression, adjoint_from_non_expression in zip(adjoints_from_expression, adjoints_from_non_expression):
                     fg.add(FunctionCall("EXPECT_STAN_EQ", adjoint_from_expression, adjoint_from_non_expression))
             

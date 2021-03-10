@@ -59,6 +59,7 @@ def get_cpp_type(stan_type):
 
 simplex = "simplex"
 pos_definite = "positive_definite_matrix"
+scalar_return_type = "scalar_return_type"
 
 # list of function arguments that need special scalar values.
 # None means to use the default argument value.
@@ -71,6 +72,8 @@ special_arg_values = {
     "categorical_rng": [simplex, None],
     "categorical_lpmf": [None, simplex],
     "cholesky_decompose": [pos_definite, None],
+    "csr_to_dense_matrix": [1, 1, None, [1], [1, 2]],
+    "csr_matrix_times_vector": [1, 1, None, [1], [1, 2], None],
     "distance": [0.6, 0.4],
     "dirichlet_log": [simplex, None],
     "dirichlet_lpdf": [simplex, None],
@@ -107,18 +110,18 @@ special_arg_values = {
     "pareto_type_2_cdf": [1.5, 0.7, None, None],
     "pareto_type_2_cdf_log": [1.5, 0.7, None, None],
     "pareto_type_2_lcdf": [1.5, 0.7, None, None],
-    "positive_ordered_constrain" : [None, "scalar_return_type"],
+    "positive_ordered_constrain" : [None, scalar_return_type],
     "positive_ordered_free": [1.0],
-    "ordered_constrain" : [None, "scalar_return_type"],
+    "ordered_constrain" : [None, scalar_return_type],
     "ordered_free": [1.0],
-    "simplex_constrain" : [None, "scalar_return_type"],
+    "simplex_constrain" : [None, scalar_return_type],
     "simplex_free": [simplex],
     "student_t_cdf": [0.8, None, 0.4, None],
     "student_t_cdf_log": [0.8, None, 0.4, None],
     "student_t_ccdf_log": [0.8, None, 0.4, None],
     "student_t_lccdf": [0.8, None, 0.4, None],
     "student_t_lcdf": [0.8, None, 0.4, None],
-    "unit_vector_constrain" : [None, "scalar_return_type"],
+    "unit_vector_constrain" : [None, scalar_return_type],
     "unit_vector_free": [simplex],
     "uniform_cdf": [None, 0.2, 0.9],
     "uniform_ccdf_log": [None, 0.2, 0.9],
@@ -180,7 +183,6 @@ internal_signatures = [
     "ordered_constrain(vector) => vector",
     "ordered_constrain(vector, real) => vector",
     "ordered_free(vector) => vector",
-    "rabbit(array[] int, vector) => real",
     "simplex_constrain(vector) => vector",
     "simplex_constrain(vector, real) => vector",
     "simplex_free(vector) => vector",
@@ -210,12 +212,12 @@ internal_signatures = [
     "is_symmetric(matrix) => int",
     "is_unit_vector(vector) => int",
     # variadic functions: these are tested with one vector for variadic args
-    "ode_adams((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, ostream_ptr, vector) => array[,] real",
-    "ode_adams_tol((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, real, real, real, ostream_ptr, vector) => array[,] real",
-    "ode_bdf((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, ostream_ptr, vector) => array[,] real",
-    "ode_bdf_tol((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, real, real, real, ostream_ptr, vector) => array[,] real",
-    "ode_rk45((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, ostream_ptr, vector) => array[,] real",
-    "ode_rk45_tol((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, real, real, real, ostream_ptr, vector) => array[,] real",
+    "ode_adams((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, ostream_ptr, vector) => array[] vector",
+    "ode_adams_tol((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, real, real, real, ostream_ptr, vector) => array[] vector",
+    "ode_bdf((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, ostream_ptr, vector) => array[] vector",
+    "ode_bdf_tol((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, real, real, real, ostream_ptr, vector) => array[] vector",
+    "ode_rk45((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, ostream_ptr, vector) => array[] vector",
+    "ode_rk45_tol((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, real, real, real, ostream_ptr, vector) => array[] vector",
     "reduce_sum(array[] real, int, vector) => real",
 ]
 
@@ -435,6 +437,22 @@ class PositiveDefiniteMatrixArgument(CppStatement):
 
         return f"auto {self.name} = stan::test::make_pos_definite_matrix<{arg_type}>({self.value}, 1);"
 
+# These are used with algebra_solver
+class AlgebraSolverFunctorArgument(CppStatement):
+    def __init__(self, name):
+        self.name = name
+    
+    def cpp(self):
+        return f"stan::test::simple_eq_functor {self.name};"
+
+# These are used with ode_adams
+class OdeFunctorArgument(CppStatement):
+    def __init__(self, name):
+        self.name = name
+    
+    def cpp(self):
+        return f"stan::test::test_functor {self.name};"
+
 class ReturnTypeTArgument(CppStatement):
     def __init__(self, name, *args):
         self.name = name
@@ -460,18 +478,27 @@ class OStreamArgument(CppStatement):
         self.name = name
     
     def cpp(self):
-        return f"std::ostream {self.name};"
+        return f"std::ostream* {self.name} = &std::cout;"
 
 class ArrayArgument(CppStatement):
-    def __init__(self, overload, name, number_nested_arrays, inner_type, value = 0.4):
+    def __init__(self, overload, name, number_nested_arrays, inner_type, value = None, size = None):
         self.overload = overload
         self.name = name
         self.number_nested_arrays = number_nested_arrays
         self.inner_type = inner_type
-        if inner_type == "int":
-            self.value = int(value)
+
+        if not value:
+            if inner_type == "int":
+                self.value = 1
+            else:
+                self.value = 0.4
         else:
             self.value = value
+
+        if size:
+            self.size = size
+        else:
+            self.size = 1
     
     def is_reverse_mode(self):
         return self.overload.startswith("Rev")
@@ -483,13 +510,24 @@ class ArrayArgument(CppStatement):
             arg_type = "std::vector<{}>".format(arg_type)
         arg_type = arg_type.replace("SCALAR", scalar)
 
-        return f"auto {self.name} = stan::test::make_arg<{arg_type}>({self.value}, 1);"
+        if isinstance(self.value, numbers.Number):
+            value_string = f"{self.value}"
+        else:
+            value_string = f"{{{','.join([repr(v) for v in self.value])}}}"
+
+        if isinstance(self.value, numbers.Number):
+            return f"auto {self.name} = stan::test::make_arg<{arg_type}>({self.value}, {self.size});"
+        else:
+            value_string = repr(self.value).replace('[', '{').replace(']', '}').replace('(', '{').replace(')', '}')
+            return f"{arg_type} {self.name} = {value_string};"
 
 class FunctionCallAssign(CppStatement):
     def __init__(self, function_name, name, *args):
         self.function_name = function_name
         self.name = name
         self.arg_str = ','.join(arg.name for arg in args)
+        # This isn't always accurate cause the output could be an int or a boolean
+        # or something even if the input is reverse mode
         self.__is_reverse_mode = any(arg.is_reverse_mode() for arg in args)
 
     def is_reverse_mode(self):
@@ -583,7 +621,7 @@ class FunctionGenerator:
         for n, (overload, stan_arg) in enumerate(zip(arg_overloads, self.stan_args)):
             number_nested_arrays, inner_type = parse_array(stan_arg)
 
-            value = 0.4
+            value = None
 
             # Check if argument is differentiable
             try:
@@ -597,10 +635,10 @@ class FunctionGenerator:
             # Check for special arguments (constrained variables or types)
             try:
                 special_arg = special_arg_values[self.function_name][n]
-                if isinstance(special_arg, numbers.Number):
-                    value = special_arg
-                elif special_arg is not None:
+                if isinstance(special_arg, str):
                     inner_type = special_arg
+                elif special_arg is not None:
+                    value = special_arg
             except KeyError:
                 pass
 
@@ -621,10 +659,14 @@ class FunctionGenerator:
                     arg = SimplexArgument(overload, f"simplex{n}", stan_arg, value)
                 elif inner_type == "positive_definite_matrix":
                     arg = PositiveDefiniteMatrixArgument(overload, f"positive_definite_matrix{n}", stan_arg, value)
+                elif inner_type == "(vector, vector, data array[] real, data array[] int) => vector":
+                    arg = AlgebraSolverFunctorArgument(f"functor{n}")
+                elif inner_type == "(real, vector, ostream_ptr, vector) => vector":
+                    arg = OdeFunctorArgument(f"functor{n}")
                 else:
                     raise Exception(f"Inner type '{inner_type}' not supported")
             else:
-                arg = ArrayArgument(overload, f"array{n}", number_nested_arrays, inner_type)
+                arg = ArrayArgument(overload, f"array{n}", number_nested_arrays, inner_type, value = value)
 
             arg_list.append(self.add(arg))
 
@@ -632,8 +674,3 @@ class FunctionGenerator:
 
     def cpp(self):
         return os.linesep.join(statement.cpp() for statement in self.code_list)
-
-#setup, code = generate_function_code("whatever", "clown", ["real"], ["Prim"], 2)
-#print(setup)
-#print(code)
-#print("\n".join(generate_function_code("whatever", "clown", ["vector"], ["Rev_SOA"], 2)))
