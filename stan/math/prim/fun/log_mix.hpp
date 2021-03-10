@@ -189,7 +189,7 @@ return_type_t<T_theta, std::vector<T_lam>> log_mix(
     }
     if (!is_constant_all<T_lam>::value) {
       for (int n = 0; n < N; ++n) {
-        ops_partials.edge2_.partials_vec_[n]
+        as_column_vector_or_scalar(ops_partials.edge2_.partials_vec_[n])
             = derivs.col(n).cwiseProduct(theta_dbl);
       }
     }
