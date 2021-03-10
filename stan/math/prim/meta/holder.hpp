@@ -86,7 +86,7 @@ class Holder : private std::tuple<Args...>, public BaseExpr {
                                                  std::declval<Args&>()...)),
                                              BaseExpr>* = nullptr>
   explicit Holder(const Functor& f, Args&&... args)
-      : std::tuple<Args...>(std::forward<Args>(args)...),
+      : std::tuple<Args...>(std::make_tuple(std::forward<Args>(args)...)),
         BaseExpr(index_apply<sizeof...(Args)>([this, &f](auto... Is) {
           return f(std::get<Is>(*static_cast<std::tuple<Args...>*>(this))...);
         })) {}
