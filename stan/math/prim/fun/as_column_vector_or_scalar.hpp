@@ -8,8 +8,8 @@
 namespace stan {
 namespace math {
 namespace internal {
-  template <typename T, typename S, typename Enable>
-  class empty_broadcast_array;
+template <typename T, typename S, typename Enable>
+class empty_broadcast_array;
 }
 /**
  * no-op that passes the scalar
@@ -29,7 +29,8 @@ inline T as_column_vector_or_scalar(const T& a) {
  * compiler can resolve it's output type.
  */
 template <typename T, typename S>
-internal::empty_broadcast_array<T, S, void>& as_column_vector_or_scalar(internal::empty_broadcast_array<T, S, void>& a);
+internal::empty_broadcast_array<T, S, void>& as_column_vector_or_scalar(
+    internal::empty_broadcast_array<T, S, void>& a);
 
 /**
  * no-op that returns a column vector.
