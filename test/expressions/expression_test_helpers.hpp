@@ -164,12 +164,12 @@ void expect_adj_eq(const std::vector<T>& a, const std::vector<T>& b,
   }
 }
 
-template <typename T, require_stan_scalar_t<T> * = nullptr>
+template <typename T, require_stan_scalar_t<T>* = nullptr>
 auto adjoints_of(const T& a) {
   return a.adj();
 }
 
-template <typename T, require_eigen_t<T> * = nullptr>
+template <typename T, require_eigen_t<T>* = nullptr>
 auto adjoints_of(const T& a) {
   return a.adj().eval();
 }
@@ -177,15 +177,13 @@ auto adjoints_of(const T& a) {
 template <typename T>
 auto adjoints_of(const std::vector<T>& a) {
   std::vector<decltype(adjoints_of(std::declval<T>()))> b;
-  for(size_t i = 0; i < a.size(); ++i) {
+  for (size_t i = 0; i < a.size(); ++i) {
     b.push_back(adjoints_of(a[i]));
   }
   return b;
 }
 
-void grad(stan::math::var& a) {
-  a.grad();
-}
+void grad(stan::math::var& a) { a.grad(); }
 
 #define EXPECT_LEQ_ONE(x) EXPECT_LE(x, 1)
 #define TO_STRING_(x) #x
