@@ -148,31 +148,36 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
     var ret(value);
     if (!is_constant<Op1>::value) {
       reverse_pass_callback([operand = to_arena(edge1_.operand()),
-                             partial = to_arena(edge1_.partial()), ret]() mutable {
+                             partial = to_arena(edge1_.partial()),
+                             ret]() mutable {
         internal::update_adjoints(operand, partial, ret);
       });
     }
     if (!is_constant<Op2>::value) {
       reverse_pass_callback([operand = to_arena(edge2_.operand()),
-                             partial = to_arena(edge2_.partial()), ret]() mutable {
+                             partial = to_arena(edge2_.partial()),
+                             ret]() mutable {
         internal::update_adjoints(operand, partial, ret);
       });
     }
     if (!is_constant<Op3>::value) {
       reverse_pass_callback([operand = to_arena(edge3_.operand()),
-                             partial = to_arena(edge3_.partial()), ret]() mutable {
+                             partial = to_arena(edge3_.partial()),
+                             ret]() mutable {
         internal::update_adjoints(operand, partial, ret);
       });
     }
     if (!is_constant<Op4>::value) {
       reverse_pass_callback([operand = to_arena(edge4_.operand()),
-                             partial = to_arena(edge4_.partial()), ret]() mutable {
+                             partial = to_arena(edge4_.partial()),
+                             ret]() mutable {
         internal::update_adjoints(operand, partial, ret);
       });
     }
     if (!is_constant<Op5>::value) {
       reverse_pass_callback([operand = to_arena(edge5_.operand()),
-                             partial = to_arena(edge5_.partial()), ret]() mutable {
+                             partial = to_arena(edge5_.partial()),
+                             ret]() mutable {
         internal::update_adjoints(operand, partial, ret);
       });
     }
