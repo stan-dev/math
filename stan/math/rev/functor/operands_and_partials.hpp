@@ -14,7 +14,6 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/functor/broadcast_array.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
-#include <stan/math/prim/functor/for_each.hpp>
 #include <vector>
 #include <tuple>
 
@@ -147,17 +146,36 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
    */
   var build(double value) {
     var ret(value);
-    stan::math::for_each(
-        [ret](auto&& operand_i, auto&& partial_i) mutable {
-          reverse_pass_callback([operand = to_arena(operand_i),
-                                 partial = to_arena(partial_i), ret]() mutable {
-            internal::update_adjoints(operand, partial, ret);
-          });
-        },
-        std::make_tuple(edge1_.operand(), edge2_.operand(), edge3_.operand(),
-                        edge4_.operand(), edge5_.operand()),
-        std::make_tuple(edge1_.partial(), edge2_.partial(), edge3_.partial(),
-                        edge4_.partial(), edge5_.partial()));
+    if (!is_constant<Op1>::value) {
+      reverse_pass_callback([operand = to_arena(edge1_.operand()),
+                             partial = to_arena(edge1_.partial()), ret]() mutable {
+        internal::update_adjoints(operand, partial, ret);
+      });
+    }
+    if (!is_constant<Op2>::value) {
+      reverse_pass_callback([operand = to_arena(edge2_.operand()),
+                             partial = to_arena(edge2_.partial()), ret]() mutable {
+        internal::update_adjoints(operand, partial, ret);
+      });
+    }
+    if (!is_constant<Op3>::value) {
+      reverse_pass_callback([operand = to_arena(edge3_.operand()),
+                             partial = to_arena(edge3_.partial()), ret]() mutable {
+        internal::update_adjoints(operand, partial, ret);
+      });
+    }
+    if (!is_constant<Op4>::value) {
+      reverse_pass_callback([operand = to_arena(edge4_.operand()),
+                             partial = to_arena(edge4_.partial()), ret]() mutable {
+        internal::update_adjoints(operand, partial, ret);
+      });
+    }
+    if (!is_constant<Op5>::value) {
+      reverse_pass_callback([operand = to_arena(edge5_.operand()),
+                             partial = to_arena(edge5_.partial()), ret]() mutable {
+        internal::update_adjoints(operand, partial, ret);
+      });
+    }
     return ret;
   }
 };
@@ -183,7 +201,7 @@ class ops_partials_edge<double, std::vector<var>> {
 
   int size() { return this->operands_.size(); }
   inline auto operand() noexcept { return this->operands_; }
-  inline auto partial() noexcept { return this->partials_; }
+  inline auto&& partial() noexcept { return std::move(this->partials_); }
 };
 
 template <typename Op>
@@ -227,7 +245,7 @@ class ops_partials_edge<double, var_value<Op>, require_eigen_t<Op>> {
   static constexpr void dump_partials(double* partials) {}
   static constexpr int size() noexcept { return 0; }
   inline auto operand() { return this->operands_; }
-  inline auto partials() { return this->partials_; }
+  inline auto partial() { return this->partials_; }
 };
 
 // SPECIALIZATIONS FOR MULTIVARIATE VECTORIZATIONS
@@ -257,8 +275,8 @@ class ops_partials_edge<double, std::vector<Eigen::Matrix<var, R, C>>> {
     }
     return this->operands_.size() * this->operands_[0].size();
   }
-  inline auto operand() noexcept { return this->operands_; }
-  inline auto partial() noexcept { return this->partials_vec_; }
+  inline auto&& operand() noexcept { return std::move(this->operands_); }
+  inline auto&& partial() noexcept { return std::move(this->partials_vec_); }
 };
 
 template <>
@@ -286,8 +304,8 @@ class ops_partials_edge<double, std::vector<std::vector<var>>> {
     }
     return this->operands_.size() * this->operands_[0].size();
   }
-  inline auto operand() noexcept { return this->operands_; }
-  inline auto partial() noexcept { return this->partials_vec_; }
+  inline auto&& operand() noexcept { return std::move(this->operands_); }
+  inline auto&& partial() noexcept { return std::move(this->partials_vec_); }
 };
 
 template <typename Op>
@@ -307,11 +325,11 @@ class ops_partials_edge<double, std::vector<var_value<Op>>,
  private:
   template <typename, typename, typename, typename, typename, typename>
   friend class stan::math::operands_and_partials;
-  std::vector<var_value<Op>, arena_allocator<Op>> operands_;
+  std::vector<var_value<Op>, arena_allocator<var_value<Op>>> operands_;
 
   static constexpr int size() noexcept { return 0; }
-  inline auto operand() noexcept { return this->operands_; }
-  inline auto partial() noexcept { return this->partials_vec_; }
+  inline auto&& operand() noexcept { return std::move(this->operands_); }
+  inline auto&& partial() noexcept { return std::move(this->partials_vec_); }
 };
 }  // namespace internal
 }  // namespace math

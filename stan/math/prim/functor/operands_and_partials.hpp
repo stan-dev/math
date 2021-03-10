@@ -50,20 +50,20 @@ struct ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>> {
    * Get the operand for the edge. For doubles this is a compile time
    * expression returning zero.
    */
-  static constexpr auto operand() noexcept { return static_cast<double>(0.0); }
+  static constexpr double operand() noexcept { return 0.0; }
 
   /**
    * Get the partial for the edge. For doubles this is a compile time
    * expression returning zero.
    */
-  static constexpr auto partial() noexcept { return static_cast<double>(0.0); }
+  static constexpr double partial() noexcept { return 0.0; }
   /**
-   * Return the tangent for the edge. For doubles this is a comple time
+   * Return the tangent for the edge. For doubles this is a compile time
    * expression returning zero.
    */
-  static constexpr double dx() { return static_cast<double>(0); }
+  static constexpr double dx() { return 0.0; }
   /**
-   * Return the size of the operand for the edge. For doubles this is a comple
+   * Return the size of the operand for the edge. For doubles this is a compile
    * time expression returning zero.
    */
   static constexpr int size() { return 0; }  // reverse mode
@@ -139,7 +139,7 @@ class operands_and_partials {
    * @param value the return value of the function we are compressing
    * @return the value with its derivative
    */
-  T_return_type build(double value) { return value; }
+  static inline T_return_type build(double value) noexcept { return value; }
 
   // These will always be 0 size base template instantiations (above).
   internal::ops_partials_edge<double, std::decay_t<Op1>> edge1_;
