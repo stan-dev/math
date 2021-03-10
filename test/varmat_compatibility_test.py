@@ -205,7 +205,7 @@ def processCLIArgs():
         nargs="+",
         type=str,
         default=[],
-        help="Signatures and/or function names to benchmark. Ignores any finished checks in results file (if given).",
+        help="Signatures and/or function names to benchmark.",
     )
     parser.add_argument(
         "-j",
