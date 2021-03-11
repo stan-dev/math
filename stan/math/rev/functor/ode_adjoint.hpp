@@ -170,7 +170,7 @@ ode_adjoint_tol(const F& f, const T_y0& y0, const T_t0& t0,
   const Eigen::VectorXd abs_tol_b
       = Eigen::VectorXd::Constant(N, abs_tol / 10.0);
   const long int num_checkpoints = 250;
-  const int interpolation_polynomial = CV_POLYNOMIAL;
+  const int interpolation_polynomial = CV_HERMITE;
   const int solver_f = CV_BDF;
   const int solver_b = CV_BDF;
   return ode_adjoint_impl("ode_adjoint_tol", f, y0, t0, ts, rel_tol, abs_tol_f,
