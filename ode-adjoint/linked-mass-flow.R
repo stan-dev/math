@@ -74,22 +74,22 @@ summarize_benchmark <- function(fit) {
 }
 
 
-bdf_fit <- run_benchmark(adjoint_integrator=0, num_iter=50)
-adjoint_fit <- run_benchmark(adjoint_integrator=1, num_iter=50)
+bdf_fit <- run_benchmark(adjoint_integrator=0, model=mod, num_iter=50)
+adjoint_fit <- run_benchmark(adjoint_integrator=1, model=mod, num_iter=50)
 ## vary solvers, e.g.
 ##adjoint_fit <- run_benchmark(adjoint_integrator=1, solver_f=2, solver_b=1, num_iter=50)
 
 str(summarize_benchmark(bdf_fit))
 str(summarize_benchmark(adjoint_fit))
 
-Lbdf_fit <- run_benchmark(adjoint_integrator=0, system_size=5, model=mod, num_iter=50)
-Ladjoint_fit <- run_benchmark(adjoint_integrator=1, solver_f=2, solver_b=2, system_size=5, interpolation_polynomial=1, model=mod, num_iter=50)
-Ladjoint_fit_1 <- run_benchmark(adjoint_integrator=1, solver_f=2, solver_b=1, system_size=5, interpolation_polynomial=1, model=mod, num_iter=50)
+Lbdf_fit <- run_benchmark(adjoint_integrator=0, system_size=6, model=mod, num_iter=50)
+Ladjoint_fit <- run_benchmark(adjoint_integrator=1, solver_f=2, solver_b=2, system_size=6, model=mod, num_iter=50)
 
 str(summarize_benchmark(Lbdf_fit))
 str(summarize_benchmark(Ladjoint_fit))
-str(summarize_benchmark(Ladjoint_fit_1))
 
+## there is no gain by adjoint method if there are not more parameters
+## than states
 Lbdf_fit_fixed <- run_benchmark(adjoint_integrator=0, system_size=5, model=mod_fixed, num_iter=50)
 Ladjoint_fit_fixed <- run_benchmark(adjoint_integrator=1, solver_f=2, solver_b=2, system_size=5, model=mod_fixed, interpolation_polynomial=1, num_iter=50)
 
