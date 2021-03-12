@@ -3,11 +3,6 @@ from sig_utils import parse_signature, no_fwd_overload, no_rev_overload, ignored
 class SignatureParser:
     def __init__(self, signature):
         self.return_type, self.function_name, self.stan_args = parse_signature(signature)
-        self.name_counter = 0
-        self.reset()
-
-    def reset(self):
-        self.code_list = []
     
     def number_arguments(self):
         return len(self.stan_args)

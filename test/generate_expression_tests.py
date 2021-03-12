@@ -9,7 +9,6 @@ from code_generator import CodeGenerator
 src_folder = "./test/expressions/"
 build_folder = "./test/expressions/"
 
-
 test_code_template = """
 TEST(ExpressionTest{overload}, {test_name}) {{
 {code}
