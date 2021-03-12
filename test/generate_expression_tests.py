@@ -98,7 +98,7 @@ def main(functions=(), j=1):
             # Generate two sets of arguments, one will be expressions one will not
             arg_list_expression_base = cg.build_arguments(sp, sp.number_arguments() * [overload])
             arg_list_expression = [cg.convert_to_expression(arg) if arg.is_matrix_like() else arg for arg in arg_list_expression_base]
-            arg_list_no_expression = cg.build_arguments(sp, sp.number_arguments() * [overload], 2)
+            arg_list_no_expression = cg.build_arguments(sp, sp.number_arguments() * [overload])
 
             # Check results with expressions and without are the same
             cpp_function_name = f"stan::math::{sp.function_name}"
