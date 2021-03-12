@@ -534,7 +534,7 @@ class FunctionCallAssign(CppStatement):
         return self.__is_reverse_mode
 
     def is_matrix_like(self):
-        raise Exception("is_matrix_like not implemented for FunctionCallAssign")
+        raise NotImplementedError("is_matrix_like not implemented for FunctionCallAssign")
 
     def cpp(self):
         return f"auto {self.name} = stan::math::eval({self.function_name}({self.arg_str}));"
