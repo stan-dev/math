@@ -1,7 +1,9 @@
-from sig_utils import *
+import numbers
+import os
+from sig_utils import overload_scalar, get_cpp_type, arg_types, parse_array, non_differentiable_args, special_arg_values
 
 class CppStatement:
-    def init(self):
+    def __init__(self):
         raise Exception("CppStatement should never be instantiated directly")
 
     def is_reverse_mode(self):
@@ -60,6 +62,9 @@ class MatrixArgument(CppStatement):
     def is_matrix_like(self):
         return True
     
+    def is_varmat(self):
+        return self.overload.endswith("Varmat")
+    
     def cpp(self):
         scalar = overload_scalar[self.overload]
         cpp_arg_template = get_cpp_type(self.stan_arg)
@@ -83,6 +88,9 @@ class SimplexArgument(CppStatement):
     def is_matrix_like(self):
         return True
     
+    def is_varmat(self):
+        return self.overload.endswith("Varmat")
+    
     def cpp(self):
         scalar = overload_scalar[self.overload]
         cpp_arg_template = get_cpp_type(self.stan_arg)
@@ -105,6 +113,9 @@ class PositiveDefiniteMatrixArgument(CppStatement):
 
     def is_matrix_like(self):
         return True
+    
+    def is_varmat(self):
+        return self.overload.endswith("Varmat")
     
     def cpp(self):
         scalar = overload_scalar[self.overload]
@@ -212,20 +223,18 @@ class FunctionCallAssign(CppStatement):
     def is_matrix_like(self):
         raise Exception("is_matrix_like not implemented for FunctionCallAssign")
 
-    def cpp(self):
-        return f"auto {self.name} = stan::math::eval({self.function_name}({self.arg_str}));"
+    def is_varmat(self):
+        raise Exception("is_varmat not implemented for FunctionCallAssign")
 
-class FunctionCall(CppStatement):
+    def cpp(self):
+        if self.name:
+            return f"auto {self.name} = stan::math::eval({self.function_name}({self.arg_str}));"
+        else:
+            return f"{self.function_name}({self.arg_str});"
+
+class FunctionCall(FunctionCallAssign):
     def __init__(self, function_name, *args):
-        self.function_name = function_name
-        self.arg_str = ','.join(arg.name for arg in args)
-        self.__is_reverse_mode = any(arg.is_reverse_mode() for arg in args)
-
-    def is_reverse_mode(self):
-        return self.__is_reverse_mode
-
-    def cpp(self):
-        return f"{self.function_name}({self.arg_str});"
+        FunctionCallAssign.__init__(self, function_name, None, *args)
 
 class ExpressionArgument(CppStatement):
     def __init__(self, overload, name, arg):
@@ -259,41 +268,10 @@ class ExpressionArgument(CppStatement):
         else:
             raise Exception(f"Can't make an expression out of a {self.arg.stan_arg}")
 
-class FunctionGenerator:
-    def __init__(self, signature):
-        self.return_type, self.function_name, self.stan_args = parse_signature(signature)
+class CodeGenerator:
+    def __init__(self):
         self.name_counter = 0
-        self.reset()
-
-    def reset(self):
         self.code_list = []
-    
-    def number_arguments(self):
-        return len(self.stan_args)
-
-    def is_ode(self):
-        return self.function_name.startswith("ode")
-    
-    def is_high_order(self):
-        return any("=>" in arg for arg in self.stan_args)
-
-    def is_rng(self):
-        return self.function_name.endswith("_rng")
-    
-    def no_fwd_overload(self):
-        return self.function_name in no_fwd_overload
-
-    def no_rev_overload(self):
-        return self.function_name in no_fwd_overload
-
-    def is_ignored(self):
-        return self.function_name in ignored
-
-    def has_vector_arg(self):
-        return any(arg in eigen_types for arg in self.stan_args)
-
-    def returns_int(self):
-        return "int" in self.return_type
 
     def add_op(self, statement):
         if not isinstance(statement, CppStatement):
@@ -302,13 +280,19 @@ class FunctionGenerator:
         self.code_list.append(statement)
         return statement
 
+    def cpp(self):
+        return os.linesep.join(statement.cpp() for statement in self.code_list)
+
     def get_next_name(self):
         self.name_counter += 1
         return repr(self.name_counter - 1)
 
-    def build_arguments(self, arg_overloads, max_size):
+    def build_arguments(self, signature_parser, arg_overloads, max_size = None):
+        if not max_size:
+            max_size = 2
+
         arg_list = []
-        for overload, stan_arg in zip(arg_overloads, self.stan_args):
+        for overload, stan_arg in zip(arg_overloads, signature_parser.stan_args):
             n = self.get_next_name()
 
             number_nested_arrays, inner_type = parse_array(stan_arg)
@@ -319,14 +303,14 @@ class FunctionGenerator:
             try:
                 if inner_type == "int":
                     overload = "Prim"
-                if n in non_differentiable_args[self.function_name]:
+                if n in non_differentiable_args[signature_parser.function_name]:
                     overload = "Prim"
             except KeyError:
                 pass
 
             # Check for special arguments (constrained variables or types)
             try:
-                special_arg = special_arg_values[self.function_name][n]
+                special_arg = special_arg_values[signature_parser.function_name][n]
                 if isinstance(special_arg, str):
                     inner_type = special_arg
                 elif special_arg is not None:
@@ -362,13 +346,19 @@ class FunctionGenerator:
 
             arg_list.append(self.add_op(arg))
 
+        if signature_parser.is_rng():
+            arg_list.append(self.add_op(RngArgument(f"rng{self.get_next_name()}")))
+
         return arg_list
 
+    def add(self, arg1, arg2):
+        return self.add_op(FunctionCallAssign("stan::math::add", f"sum_of_sums{self.get_next_name()}", arg1, arg2))
+    
     def convert_to_expression(self, arg):
         return self.add_op(ExpressionArgument(arg.overload, f"{arg.name}_expr{self.get_next_name()}", arg))
     
-    def function_call_assign(self, cpp_function_name, *args):
-        return self.add_op(FunctionCallAssign(cpp_function_name, f"result{self.get_next_name()}", *args))
+    def expect_adj_eq(self, arg1, arg2):
+        return self.add_op(FunctionCall("stan::test::expect_adj_eq", arg1, arg2))
 
     def expect_eq(self, arg1, arg2):
         return self.add_op(FunctionCall("EXPECT_STAN_EQ", arg1, arg2))
@@ -376,20 +366,17 @@ class FunctionGenerator:
     def expect_leq_one(self, arg):
         return self.add_op(FunctionCall("EXPECT_LEQ_ONE", arg))
     
-    def recursive_sum(self, arg):
-        return self.add_op(FunctionCallAssign("stan::test::recursive_sum", f"summed_result{self.get_next_name()}", arg))
-    
-    def add(self, arg1, arg2):
-        return self.add_op(FunctionCallAssign("stan::math::add", f"sum_of_sums{self.get_next_name()}", arg1, arg2))
-    
+    def function_call_assign(self, cpp_function_name, *args):
+        return self.add_op(FunctionCallAssign(cpp_function_name, f"result{self.get_next_name()}", *args))
+
     def grad(self, arg):
         return self.add_op(FunctionCall("stan::test::grad", arg))
     
-    def expect_adj_eq(self, arg1, arg2):
-        return self.add_op(FunctionCall("stan::test::expect_adj_eq", arg1, arg2))
-
     def recover_memory(self):
         return self.add_op(FunctionCall("stan::math::recover_memory"))
 
-    def cpp(self):
-        return os.linesep.join(statement.cpp() for statement in self.code_list)
+    def recursive_sum(self, arg):
+        return self.add_op(FunctionCallAssign("stan::test::recursive_sum", f"summed_result{self.get_next_name()}", arg))
+    
+    def to_var_value(self, arg):
+        return self.add_op(FunctionCallAssign("stan::math::to_var_value", f"{arg.name}_varmat{self.get_next_name()}", arg))

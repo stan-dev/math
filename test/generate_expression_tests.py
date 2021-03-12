@@ -1,8 +1,10 @@
-import numbers
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
+import numbers
+import sys
 
-from sig_utils import handle_function_list, parse_signature, get_signatures
-from function_generator import FunctionGenerator
+from sig_utils import handle_function_list, get_signatures
+from signature_parser import SignatureParser
+from code_generator import CodeGenerator
 
 src_folder = "./test/expressions/"
 build_folder = "./test/expressions/"
@@ -66,68 +68,66 @@ def main(functions=(), j=1):
         signatures |= get_signatures()
     else:
         for signature in get_signatures():
-            return_type, function_name, function_args = parse_signature(signature)
-            if function_name in functions:
+            sp = SignatureParser(signature)
+            if sp.function_name in functions:
                 signatures.add(signature)
         default_checks = False
 
     for n, signature in enumerate(signatures):
         for overload in ("Prim", "Rev", "Fwd"):
-            fg = FunctionGenerator(signature)
+            sp = SignatureParser(signature)
 
             # skip ignored signatures if running the default checks
-            if default_checks and fg.is_ignored():
+            if default_checks and sp.is_ignored():
                 continue
 
             # skip signatures without inputs that can be eigen types
-            if not fg.has_vector_arg():
+            if not sp.has_vector_arg():
                 continue
-
-            # skip rngs
-            if fg.is_rng() and not overload == "Prim":
-                function_args.append("rng")
 
             # skip functions in forward mode with no forward mode overload, same for reverse mode
-            if fg.no_fwd_overload() and overload == "Fwd":
+            if overload == "Fwd" and not sp.is_fwd_compatible():
                 continue
-            if fg.no_rev_overload() and overload == "Rev":
+            if overload == "Rev" and not sp.is_rev_compatible():
                 continue
 
-            is_reverse_mode = not fg.returns_int() and overload == "Rev"
+            is_reverse_mode = overload == "Rev" and not sp.returns_int()
+
+            cg = CodeGenerator()
 
             # Generate two sets of arguments, one will be expressions one will not
-            arg_list_expression_base = fg.build_arguments(len(fg.stan_args) * [overload], 2)
-            arg_list_expression = [fg.convert_to_expression(arg) if arg.is_matrix_like() else arg for arg in arg_list_expression_base]
-            arg_list_no_expression = fg.build_arguments(len(fg.stan_args) * [overload], 2)
+            arg_list_expression_base = cg.build_arguments(sp, sp.number_arguments() * [overload])
+            arg_list_expression = [cg.convert_to_expression(arg) if arg.is_matrix_like() else arg for arg in arg_list_expression_base]
+            arg_list_no_expression = cg.build_arguments(sp, sp.number_arguments() * [overload], 2)
 
             # Check results with expressions and without are the same
-            cpp_function_name = f"stan::math::{fg.function_name}"
-            result = fg.function_call_assign(cpp_function_name, *arg_list_expression)
-            result_no_expression = fg.function_call_assign(cpp_function_name, *arg_list_no_expression)
-            fg.expect_eq(result, result_no_expression)
+            cpp_function_name = f"stan::math::{sp.function_name}"
+            result = cg.function_call_assign(cpp_function_name, *arg_list_expression)
+            result_no_expression = cg.function_call_assign(cpp_function_name, *arg_list_no_expression)
+            cg.expect_eq(result, result_no_expression)
 
             # Check that expressions evaluated only once
             for arg in arg_list_expression:
                 if arg.is_expression():
-                    fg.expect_leq_one(arg.counter)
+                    cg.expect_leq_one(arg.counter)
 
             # If reverse mode, check the adjoints            
             if is_reverse_mode:
-                summed_result = fg.recursive_sum(result)
-                summed_result_no_expression = fg.recursive_sum(result_no_expression)
-                sum_of_sums = fg.add(summed_result, summed_result_no_expression)
-                fg.grad(sum_of_sums)
+                summed_result = cg.recursive_sum(result)
+                summed_result_no_expression = cg.recursive_sum(result_no_expression)
+                sum_of_sums = cg.add(summed_result, summed_result_no_expression)
+                cg.grad(sum_of_sums)
 
                 for arg, arg_no_expression in zip(arg_list_no_expression, arg_list_expression):
-                    fg.expect_adj_eq(arg, arg_no_expression)
+                    cg.expect_adj_eq(arg, arg_no_expression)
 
-                fg.recover_memory()
+                cg.recover_memory()
 
             tests.append(
                 test_code_template.format(
                     overload=overload,
-                    test_name=f"{fg.function_name}_{n}",
-                    code = fg.cpp(),
+                    test_name=f"{sp.function_name}_{n}",
+                    code = cg.cpp(),
                 )
             )
     

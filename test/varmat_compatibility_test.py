@@ -5,12 +5,16 @@ import contextlib
 import concurrent.futures
 import itertools
 import json
+from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 import numbers
 import os
 import subprocess
 import sys
 import tempfile
-from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
+
+from sig_utils import handle_function_list, get_signatures
+from signature_parser import SignatureParser
+from code_generator import CodeGenerator
 
 HERE = os.path.dirname(os.path.realpath(__file__))
 TEST_FOLDER = os.path.abspath(os.path.join(HERE, "..", "test"))
@@ -99,8 +103,6 @@ def main(functions_or_sigs, results_file, cores, chunk_size):
         
         signatures_to_check.add(signature)
 
-    max_size = 2
-
     def chunk(myiterable, chunk_size):
         mylist = list(myiterable)
         for start in range(0, len(mylist), chunk_size):
@@ -110,37 +112,37 @@ def main(functions_or_sigs, results_file, cores, chunk_size):
         test_files_to_compile = {}
 
         for signature in signatures_to_check_chunk:
-            fg = FunctionGenerator(signature)
+            sp = SignatureParser(signature)
 
-            if fg.is_high_order():
+            if sp.is_high_order():
                 test_files_to_compile[signature] = None
                 continue
 
             result = ""
             any_overload_uses_varmat = False
             
-            for n, overloads in enumerate(itertools.product(("Prim", "Rev", "RevSOA"), repeat = fg.number_arguments())):
-                fg.reset()
+            for n, overloads in enumerate(itertools.product(("Prim", "Rev", "RevSOA"), repeat = sp.number_arguments())):
+                cg = CodeGenerator()
 
-                arg_list_base = fg.build_arguments(overloads, max_size)
+                arg_list_base = cg.build_arguments(sp, overloads)
 
                 arg_list = []
                 for overload, arg in zip(overloads, arg_list_base):
                     if arg.is_reverse_mode() and arg.is_matrix_like() and overload.endswith("SOA"):
                         any_overload_uses_varmat = True
-                        arg = fg.add(FunctionCallAssign("stan::math::to_var_value", arg.name + "_varmat", arg))
+                        arg = cg.to_var_value(arg)
                     
                     arg_list.append(arg)
 
-                fg.add(FunctionCallAssign(f"stan::math::{fg.function_name}", "result", *arg_list))
+                cg.function_call_assign(f"stan::math::{sp.function_name}", *arg_list)
 
                 result += BENCHMARK_TEMPLATE.format(
-                    benchmark_name=f"{fg.function_name}_{n}",
-                    code=fg.cpp(),
+                    benchmark_name=f"{sp.function_name}_{n}",
+                    code=cg.cpp(),
                 )
 
             if any_overload_uses_varmat:
-                f = tempfile.NamedTemporaryFile("w", dir = WORKING_FOLDER, prefix = f"{fg.function_name}_", suffix = "_test.cpp", delete = False)
+                f = tempfile.NamedTemporaryFile("w", dir = WORKING_FOLDER, prefix = f"{sp.function_name}_", suffix = "_test.cpp", delete = False)
 
                 f.write("#include <test/expressions/expression_test_helpers.hpp>\n\n")
                 f.write(result)
