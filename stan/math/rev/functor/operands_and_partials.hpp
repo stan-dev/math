@@ -38,37 +38,37 @@ class ops_partials_edge<double, var> {
   friend class stan::math::operands_and_partials;
   var operand_;
   static constexpr int size() noexcept { return 1; }
-  inline auto operand() noexcept { return this->operand_; }
-  inline auto partial() noexcept { return this->partial_; }
+  inline auto& operand() noexcept { return this->operand_; }
+  inline auto& partial() noexcept { return this->partial_; }
 };
 
 template <typename T1, typename T2,
           require_all_kernel_expressions_and_none_scalar_t<T1, T2>* = nullptr>
-inline void update_adjoints(var_value<T1>& x, T2&& y, const var& z) {
+inline void update_adjoints(var_value<T1>& x, const T2& y, const vari& z) {
   x.adj() += z.adj() * y;
 }
 
 template <typename Scalar1, typename Scalar2, require_var_t<Scalar1>* = nullptr,
           require_not_var_matrix_t<Scalar1>* = nullptr,
           require_arithmetic_t<Scalar2>* = nullptr>
-inline void update_adjoints(Scalar1& x, Scalar2&& y, const var& z) {
+inline void update_adjoints(Scalar1& x, Scalar2 y, const vari& z) {
   x.adj() += z.adj() * y;
 }
 template <typename Matrix1, typename Matrix2,
           require_rev_matrix_t<Matrix1>* = nullptr,
           require_st_arithmetic<Matrix2>* = nullptr>
-inline void update_adjoints(Matrix1& x, Matrix2&& y, const var& z) {
+inline void update_adjoints(Matrix1& x, const Matrix2& y, const vari& z) {
   x.adj().array() += z.adj() * y.array();
 }
 
 template <typename Arith, typename Alt, require_st_arithmetic<Arith>* = nullptr>
 inline void update_adjoints(Arith&& /* x */, Alt&& /* y */,
-                            const var& /* z */) {}
+                            const vari& /* z */) {}
 
 template <typename StdVec1, typename Vec2,
           require_std_vector_t<StdVec1>* = nullptr,
           require_st_arithmetic<Vec2>* = nullptr>
-inline void update_adjoints(StdVec1& x, Vec2&& y, const var& z) {
+inline void update_adjoints(StdVec1& x, const Vec2& y, const vari& z) {
   for (size_t i = 0; i < x.size(); ++i) {
     update_adjoints(x[i], y[i], z);
   }
@@ -145,45 +145,37 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
    * @return the node to be stored in the expression graph for autodiff
    */
   var build(double value) {
-    var ret(value);
-    if (!is_constant<Op1>::value) {
-      reverse_pass_callback([operand = to_arena(edge1_.operand()),
-                             partial = to_arena(edge1_.partial()),
-                             ret]() mutable {
-        internal::update_adjoints(operand, partial, ret);
+    return make_callback_var(value, [
+      operand1 = edge1_.operand(),
+      partial1 = edge1_.partial(),
+      operand2 = edge2_.operand(),
+      partial2 = edge2_.partial(),
+      operand3 = edge3_.operand(),
+      partial3 = edge3_.partial(),
+      operand4 = edge4_.operand(),
+      partial4 = edge4_.partial(),
+      operand5 = edge5_.operand(),
+      partial5 = edge5_.partial()
+      ](const auto& vi) mutable {
+        if (!is_constant<Op1>::value) {
+          internal::update_adjoints(operand1, partial1, vi);
+        }
+        if (!is_constant<Op2>::value) {
+          internal::update_adjoints(operand2, partial2, vi);
+        }
+        if (!is_constant<Op3>::value) {
+          internal::update_adjoints(operand3, partial3, vi);
+        }
+        if (!is_constant<Op4>::value) {
+          internal::update_adjoints(operand4, partial4, vi);
+        }
+        if (!is_constant<Op5>::value) {
+          internal::update_adjoints(operand5, partial5, vi);
+        }
       });
-    }
-    if (!is_constant<Op2>::value) {
-      reverse_pass_callback([operand = to_arena(edge2_.operand()),
-                             partial = to_arena(edge2_.partial()),
-                             ret]() mutable {
-        internal::update_adjoints(operand, partial, ret);
-      });
-    }
-    if (!is_constant<Op3>::value) {
-      reverse_pass_callback([operand = to_arena(edge3_.operand()),
-                             partial = to_arena(edge3_.partial()),
-                             ret]() mutable {
-        internal::update_adjoints(operand, partial, ret);
-      });
-    }
-    if (!is_constant<Op4>::value) {
-      reverse_pass_callback([operand = to_arena(edge4_.operand()),
-                             partial = to_arena(edge4_.partial()),
-                             ret]() mutable {
-        internal::update_adjoints(operand, partial, ret);
-      });
-    }
-    if (!is_constant<Op5>::value) {
-      reverse_pass_callback([operand = to_arena(edge5_.operand()),
-                             partial = to_arena(edge5_.partial()),
-                             ret]() mutable {
-        internal::update_adjoints(operand, partial, ret);
-      });
-    }
-    return ret;
   }
 };
+
 
 namespace internal {
 // Vectorized Univariate
@@ -205,7 +197,7 @@ class ops_partials_edge<double, std::vector<var>> {
   Op operands_;
 
   int size() { return this->operands_.size(); }
-  inline auto operand() noexcept { return this->operands_; }
+  inline auto&& operand() noexcept { return std::move(this->operands_); }
   inline auto&& partial() noexcept { return std::move(this->partials_); }
 };
 
