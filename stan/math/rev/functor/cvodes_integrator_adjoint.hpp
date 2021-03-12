@@ -292,9 +292,9 @@ class cvodes_integrator_adjoint_vari : public vari {
    */
   void rhs_adj_sens(double t, N_Vector y, N_Vector yB, N_Vector yBdot) const {
     Eigen::Map<Eigen::VectorXd> y_vec(NV_DATA_S(y), N_);
-    Eigen::Map<Eigen::VectorXd> lambda(NV_DATA_S(yB), N_);
-    Eigen::Map<Eigen::VectorXd> lambda_dot(NV_DATA_S(yBdot), N_);
-    lambda_dot = Eigen::VectorXd::Zero(N_);
+    Eigen::Map<Eigen::VectorXd> mu(NV_DATA_S(yB), N_);
+    Eigen::Map<Eigen::VectorXd> mu_dot(NV_DATA_S(yBdot), N_);
+    mu_dot = Eigen::VectorXd::Zero(N_);
 
     const nested_rev_autodiff nested;
 
@@ -310,13 +310,13 @@ class cvodes_integrator_adjoint_vari : public vari {
                      "states", N_);
 
     for (size_t i = 0; i < f_y_t_vars.size(); ++i) {
-      f_y_t_vars(i).vi_->adj_ = -lambda(i);
+      f_y_t_vars(i).vi_->adj_ = -mu(i);
     }
 
     grad();
 
     for (size_t i = 0; i < y_vars.size(); ++i) {
-      lambda_dot(i) = y_vars(i).adj();
+      mu_dot(i) = y_vars(i).adj();
     }
   }
 
@@ -335,7 +335,7 @@ class cvodes_integrator_adjoint_vari : public vari {
    */
   void quad_rhs_adj(double t, N_Vector y, N_Vector yB, N_Vector qBdot) const {
     Eigen::VectorXd y_vec = Eigen::Map<Eigen::VectorXd>(NV_DATA_S(y), N_);
-    Eigen::Map<Eigen::VectorXd> lambda(NV_DATA_S(yB), N_);
+    Eigen::Map<Eigen::VectorXd> mu(NV_DATA_S(yB), N_);
     Eigen::Map<Eigen::VectorXd> mu_dot(NV_DATA_S(qBdot), args_vars_);
     mu_dot = Eigen::VectorXd::Zero(args_vars_);
 
@@ -363,7 +363,7 @@ class cvodes_integrator_adjoint_vari : public vari {
                      "states", N_);
 
     for (size_t i = 0; i < f_y_t_vars.size(); ++i) {
-      f_y_t_vars(i).vi_->adj_ = -lambda(i);
+      f_y_t_vars(i).vi_->adj_ = -mu(i);
     }
 
     grad();
