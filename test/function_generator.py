@@ -286,24 +286,30 @@ class FunctionGenerator:
     def no_rev_overload(self):
         return self.function_name in no_fwd_overload
 
+    def is_ignored(self):
+        return self.function_name in ignored
+
     def has_vector_arg(self):
         return any(arg in eigen_types for arg in self.stan_args)
 
     def returns_int(self):
         return "int" in self.return_type
 
-    def add(self, statement):
+    def add_op(self, statement):
         if not isinstance(statement, CppStatement):
-            raise Exception("Argument to FunctionGenerator.add must be an instance of an object that inherits from CppStatement")
+            raise Exception("Argument to FunctionGenerator.add_op must be an instance of an object that inherits from CppStatement")
 
         self.code_list.append(statement)
         return statement
 
+    def get_next_name(self):
+        self.name_counter += 1
+        return repr(self.name_counter - 1)
+
     def build_arguments(self, arg_overloads, max_size):
         arg_list = []
         for overload, stan_arg in zip(arg_overloads, self.stan_args):
-            n = self.name_counter
-            self.name_counter += 1
+            n = self.get_next_name()
 
             number_nested_arrays, inner_type = parse_array(stan_arg)
 
@@ -354,9 +360,36 @@ class FunctionGenerator:
             else:
                 arg = ArrayArgument(overload, f"array{n}", number_nested_arrays, inner_type, value = value)
 
-            arg_list.append(self.add(arg))
+            arg_list.append(self.add_op(arg))
 
         return arg_list
+
+    def convert_to_expression(self, arg):
+        return self.add_op(ExpressionArgument(arg.overload, f"{arg.name}_expr{self.get_next_name()}", arg))
+    
+    def function_call_assign(self, cpp_function_name, *args):
+        return self.add_op(FunctionCallAssign(cpp_function_name, f"result{self.get_next_name()}", *args))
+
+    def expect_eq(self, arg1, arg2):
+        return self.add_op(FunctionCall("EXPECT_STAN_EQ", arg1, arg2))
+    
+    def expect_leq_one(self, arg):
+        return self.add_op(FunctionCall("EXPECT_LEQ_ONE", arg))
+    
+    def recursive_sum(self, arg):
+        return self.add_op(FunctionCallAssign("stan::test::recursive_sum", f"summed_result{self.get_next_name()}", arg))
+    
+    def add(self, arg1, arg2):
+        return self.add_op(FunctionCallAssign("stan::math::add", f"sum_of_sums{self.get_next_name()}", arg1, arg2))
+    
+    def grad(self, arg):
+        return self.add_op(FunctionCall("stan::test::grad", arg))
+    
+    def expect_adj_eq(self, arg1, arg2):
+        return self.add_op(FunctionCall("stan::test::expect_adj_eq", arg1, arg2))
+
+    def recover_memory(self):
+        return self.add_op(FunctionCall("stan::math::recover_memory"))
 
     def cpp(self):
         return os.linesep.join(statement.cpp() for statement in self.code_list)

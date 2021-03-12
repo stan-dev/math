@@ -1,8 +1,8 @@
 import numbers
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
-from sig_utils import *
-from function_generator import *
+from sig_utils import handle_function_list, parse_signature, get_signatures
+from function_generator import FunctionGenerator
 
 src_folder = "./test/expressions/"
 build_folder = "./test/expressions/"
@@ -76,53 +76,52 @@ def main(functions=(), j=1):
             fg = FunctionGenerator(signature)
 
             # skip ignored signatures if running the default checks
-            if default_checks and fg.function_name in ignored:
+            if default_checks and fg.is_ignored():
                 continue
 
             # skip signatures without inputs that can be eigen types
             if not fg.has_vector_arg():
                 continue
 
+            # skip rngs
             if fg.is_rng() and not overload == "Prim":
                 function_args.append("rng")
+
+            # skip functions in forward mode with no forward mode overload, same for reverse mode
             if fg.no_fwd_overload() and overload == "Fwd":
                 continue
             if fg.no_rev_overload() and overload == "Rev":
                 continue
 
-            arg_list_no_expression = fg.build_arguments(len(fg.stan_args) * [overload], 2)
-            arg_list_expression_base = fg.build_arguments(len(fg.stan_args) * [overload], 2)
-
             is_reverse_mode = not fg.returns_int() and overload == "Rev"
 
-            arg_list_expression = []
-            for arg in arg_list_expression_base:
-                if arg.is_matrix_like():
-                    arg = fg.add(ExpressionArgument(overload, arg.name + "_expr", arg))
-                
-                arg_list_expression.append(arg)
+            # Generate two sets of arguments, one will be expressions one will not
+            arg_list_expression_base = fg.build_arguments(len(fg.stan_args) * [overload], 2)
+            arg_list_expression = [fg.convert_to_expression(arg) if arg.is_matrix_like() else arg for arg in arg_list_expression_base]
+            arg_list_no_expression = fg.build_arguments(len(fg.stan_args) * [overload], 2)
 
             # Check results with expressions and without are the same
-            result = fg.add(FunctionCallAssign(f"stan::math::{fg.function_name}", "result", *arg_list_expression))
-            result_no_expression = fg.add(FunctionCallAssign(f"stan::math::{fg.function_name}", "result_no_expression", *arg_list_no_expression))
-            fg.add(FunctionCall("EXPECT_STAN_EQ", result, result_no_expression))
+            cpp_function_name = f"stan::math::{fg.function_name}"
+            result = fg.function_call_assign(cpp_function_name, *arg_list_expression)
+            result_no_expression = fg.function_call_assign(cpp_function_name, *arg_list_no_expression)
+            fg.expect_eq(result, result_no_expression)
 
             # Check that expressions evaluated only once
             for arg in arg_list_expression:
                 if arg.is_expression():
-                    fg.add(FunctionCall("EXPECT_LEQ_ONE", arg.counter))
+                    fg.expect_leq_one(arg.counter)
 
             # If reverse mode, check the adjoints            
             if is_reverse_mode:
-                summed_result = fg.add(FunctionCallAssign("stan::test::recursive_sum", "summed_result", result))
-                summed_result_no_expression = fg.add(FunctionCallAssign("stan::test::recursive_sum", "summed_result_no_expression", result_no_expression))
-                sum_of_sums = fg.add(FunctionCallAssign("stan::math::add", "sum_of_sums", summed_result, summed_result_no_expression))
-                fg.add(FunctionCall("stan::test::grad", sum_of_sums))
+                summed_result = fg.recursive_sum(result)
+                summed_result_no_expression = fg.recursive_sum(result_no_expression)
+                sum_of_sums = fg.add(summed_result, summed_result_no_expression)
+                fg.grad(sum_of_sums)
 
                 for arg, arg_no_expression in zip(arg_list_no_expression, arg_list_expression):
-                    fg.add(FunctionCall("stan::test::expect_adj_eq", arg, arg_no_expression))
+                    fg.expect_adj_eq(arg, arg_no_expression)
 
-                fg.add(FunctionCall("stan::math::recover_memory"))
+                fg.recover_memory()
 
             tests.append(
                 test_code_template.format(
