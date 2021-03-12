@@ -135,15 +135,15 @@ void expect_eq(const std::vector<T>& a, const std::vector<T>& b,
 }
 
 template <typename T, require_not_st_var<T>* = nullptr>
-void expect_adj_eq(const T& a, const T& b, const char* msg) {}
+void expect_adj_eq(const T& a, const T& b, const char* msg = "expect_ad_eq") {}
 
-void expect_adj_eq(math::var a, math::var b, const char* msg) {
+void expect_adj_eq(math::var a, math::var b, const char* msg = "expect_ad_eq") {
   EXPECT_EQ(a.adj(), b.adj()) << msg;
 }
 
 template <typename T1, typename T2, require_all_eigen_t<T1, T2>* = nullptr,
           require_vt_same<T1, T2>* = nullptr>
-void expect_adj_eq(const T1& a, const T2& b, const char* msg) {
+void expect_adj_eq(const T1& a, const T2& b, const char* msg = "expect_ad_eq") {
   EXPECT_EQ(a.rows(), b.rows()) << msg;
   EXPECT_EQ(a.cols(), b.cols()) << msg;
   const auto& a_ref = math::to_ref(a);
@@ -157,30 +157,11 @@ void expect_adj_eq(const T1& a, const T2& b, const char* msg) {
 
 template <typename T>
 void expect_adj_eq(const std::vector<T>& a, const std::vector<T>& b,
-                   const char* msg) {
+                   const char* msg = "expect_ad_eq") {
   EXPECT_EQ(a.size(), b.size()) << msg;
   for (int i = 0; i < a.size(); i++) {
     expect_adj_eq(a[i], b[i], msg);
   }
-}
-
-template <typename T, require_stan_scalar_t<T>* = nullptr>
-auto adjoints_of(const T& a) {
-  return a.adj();
-}
-
-template <typename T, require_eigen_t<T>* = nullptr>
-auto adjoints_of(const T& a) {
-  return a.adj().eval();
-}
-
-template <typename T>
-auto adjoints_of(const std::vector<T>& a) {
-  std::vector<decltype(adjoints_of(std::declval<T>()))> b;
-  for (size_t i = 0; i < a.size(); ++i) {
-    b.push_back(adjoints_of(a[i]));
-  }
-  return b;
 }
 
 void grad(stan::math::var& a) { a.grad(); }

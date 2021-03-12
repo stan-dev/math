@@ -2,6 +2,7 @@ import numbers
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
 from sig_utils import *
+from function_generator import *
 
 src_folder = "./test/expressions/"
 build_folder = "./test/expressions/"
@@ -64,11 +65,10 @@ def main(functions=(), j=1):
         default_checks = True
         signatures |= get_signatures()
     else:
-        for function in functions:
-            for signature in get_signatures():
-                return_type, function_name, function_args = parse_signature(signature)
-                if function == function_name:
-                    signatures.add(signature)
+        for signature in get_signatures():
+            return_type, function_name, function_args = parse_signature(signature)
+            if function_name in functions:
+                signatures.add(signature)
         default_checks = False
 
     for n, signature in enumerate(signatures):
@@ -85,53 +85,43 @@ def main(functions=(), j=1):
 
             if fg.is_rng() and not overload == "Prim":
                 function_args.append("rng")
-            if fg.function_name in no_fwd_overload and overload == "Fwd":
+            if fg.no_fwd_overload() and overload == "Fwd":
                 continue
-            if fg.function_name in no_rev_overload and overload == "Rev":
+            if fg.no_rev_overload() and overload == "Rev":
                 continue
 
-            arg_list_base = fg.build_arguments(len(fg.stan_args) * [overload], 2)
-            is_reverse_mode = any(arg.is_reverse_mode() for arg in arg_list_base) and not fg.returns_int()
+            arg_list_no_expression = fg.build_arguments(len(fg.stan_args) * [overload], 2)
+            arg_list_expression_base = fg.build_arguments(len(fg.stan_args) * [overload], 2)
 
-            arg_list = []
-            for arg in arg_list_base:
+            is_reverse_mode = not fg.returns_int() and overload == "Rev"
+
+            arg_list_expression = []
+            for arg in arg_list_expression_base:
                 if arg.is_matrix_like():
                     arg = fg.add(ExpressionArgument(overload, arg.name + "_expr", arg))
                 
-                arg_list.append(arg)
-
-            result = fg.add(FunctionCallAssign(f"stan::math::{fg.function_name}", "result", *arg_list))
-            if is_reverse_mode:
-                summed_result = fg.add(FunctionCallAssign("stan::test::recursive_sum", "summed_result", result))
-                fg.add(FunctionCall("stan::test::grad", summed_result))
+                arg_list_expression.append(arg)
 
             # Check results with expressions and without are the same
-            result_base = fg.add(FunctionCallAssign(f"stan::math::{fg.function_name}", "result_base", *arg_list_base))
-            fg.add(FunctionCall("EXPECT_STAN_EQ", result, result_base))
+            result = fg.add(FunctionCallAssign(f"stan::math::{fg.function_name}", "result", *arg_list_expression))
+            result_no_expression = fg.add(FunctionCallAssign(f"stan::math::{fg.function_name}", "result_no_expression", *arg_list_no_expression))
+            fg.add(FunctionCall("EXPECT_STAN_EQ", result, result_no_expression))
 
-            if is_reverse_mode:
-                # Check that adjoints with and without expressions are the same
-                adjoints_from_expression = []
-                for arg in arg_list_base:
-                    if arg.is_reverse_mode():
-                        adjoints_from_expression.append(fg.add(FunctionCallAssign("stan::test::adjoints_of", f"{arg.name}_adjoints_expr", arg)))
-                summed_result_base = fg.add(FunctionCallAssign("stan::test::recursive_sum", "summed_result_base", result_base))
-                fg.add(FunctionCall("stan::math::set_zero_all_adjoints"))
-                fg.add(FunctionCall("stan::test::grad", summed_result_base))
-                adjoints_from_non_expression = []
-                for arg in arg_list_base:
-                    if arg.is_reverse_mode():
-                        adjoints_from_non_expression.append(fg.add(FunctionCallAssign("stan::test::adjoints_of", f"{arg.name}_adjoints_base", arg)))
-                for adjoint_from_expression, adjoint_from_non_expression in zip(adjoints_from_expression, adjoints_from_non_expression):
-                    fg.add(FunctionCall("EXPECT_STAN_EQ", adjoint_from_expression, adjoint_from_non_expression))
-            
             # Check that expressions evaluated only once
-            for arg in arg_list:
-                if isinstance(arg, ExpressionArgument):
+            for arg in arg_list_expression:
+                if arg.is_expression():
                     fg.add(FunctionCall("EXPECT_LEQ_ONE", arg.counter))
 
-            # Clean up memory
+            # If reverse mode, check the adjoints            
             if is_reverse_mode:
+                summed_result = fg.add(FunctionCallAssign("stan::test::recursive_sum", "summed_result", result))
+                summed_result_no_expression = fg.add(FunctionCallAssign("stan::test::recursive_sum", "summed_result_no_expression", result_no_expression))
+                sum_of_sums = fg.add(FunctionCallAssign("stan::math::add", "sum_of_sums", summed_result, summed_result_no_expression))
+                fg.add(FunctionCall("stan::test::grad", sum_of_sums))
+
+                for arg, arg_no_expression in zip(arg_list_no_expression, arg_list_expression):
+                    fg.add(FunctionCall("stan::test::expect_adj_eq", arg, arg_no_expression))
+
                 fg.add(FunctionCall("stan::math::recover_memory"))
 
             tests.append(
