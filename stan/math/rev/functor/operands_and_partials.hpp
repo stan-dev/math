@@ -145,37 +145,31 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, var> {
    * @return the node to be stored in the expression graph for autodiff
    */
   var build(double value) {
-    return make_callback_var(value, [
-      operand1 = edge1_.operand(),
-      partial1 = edge1_.partial(),
-      operand2 = edge2_.operand(),
-      partial2 = edge2_.partial(),
-      operand3 = edge3_.operand(),
-      partial3 = edge3_.partial(),
-      operand4 = edge4_.operand(),
-      partial4 = edge4_.partial(),
-      operand5 = edge5_.operand(),
-      partial5 = edge5_.partial()
-      ](const auto& vi) mutable {
-        if (!is_constant<Op1>::value) {
-          internal::update_adjoints(operand1, partial1, vi);
-        }
-        if (!is_constant<Op2>::value) {
-          internal::update_adjoints(operand2, partial2, vi);
-        }
-        if (!is_constant<Op3>::value) {
-          internal::update_adjoints(operand3, partial3, vi);
-        }
-        if (!is_constant<Op4>::value) {
-          internal::update_adjoints(operand4, partial4, vi);
-        }
-        if (!is_constant<Op5>::value) {
-          internal::update_adjoints(operand5, partial5, vi);
-        }
-      });
+    return make_callback_var(
+        value, [operand1 = edge1_.operand(), partial1 = edge1_.partial(),
+                operand2 = edge2_.operand(), partial2 = edge2_.partial(),
+                operand3 = edge3_.operand(), partial3 = edge3_.partial(),
+                operand4 = edge4_.operand(), partial4 = edge4_.partial(),
+                operand5 = edge5_.operand(),
+                partial5 = edge5_.partial()](const auto& vi) mutable {
+          if (!is_constant<Op1>::value) {
+            internal::update_adjoints(operand1, partial1, vi);
+          }
+          if (!is_constant<Op2>::value) {
+            internal::update_adjoints(operand2, partial2, vi);
+          }
+          if (!is_constant<Op3>::value) {
+            internal::update_adjoints(operand3, partial3, vi);
+          }
+          if (!is_constant<Op4>::value) {
+            internal::update_adjoints(operand4, partial4, vi);
+          }
+          if (!is_constant<Op5>::value) {
+            internal::update_adjoints(operand5, partial5, vi);
+          }
+        });
   }
 };
-
 
 namespace internal {
 // Vectorized Univariate

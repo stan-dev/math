@@ -84,9 +84,9 @@ constexpr inline auto for_each(F&& f, T1&& t1, T2&& t2) {
   constexpr auto t2_size = std::tuple_size<std::decay_t<T2>>::value;
   static_assert(t1_size == t2_size,
                 "Size Mismatch between t1 and t2 in for_each");
-  return internal::for_each(
-      std::forward<F>(f), std::forward<T1>(t1), std::forward<T2>(t2),
-      std::make_index_sequence<t1_size>());
+  return internal::for_each(std::forward<F>(f), std::forward<T1>(t1),
+                            std::forward<T2>(t2),
+                            std::make_index_sequence<t1_size>());
 }
 
 /**
@@ -109,10 +109,9 @@ constexpr inline auto for_each(F&& f, T1&& t1, T2&& t2, T3&& t3) {
                 "Size Mismatch between t1 and t2 in for_each");
   static_assert(t1_size == t3_size,
                 "Size Mismatch between t1 and t3 in for_each");
-  return internal::for_each(
-      std::forward<F>(f), std::forward<T1>(t1), std::forward<T2>(t2),
-      std::forward<T3>(t3),
-      std::make_index_sequence<t1_size>());
+  return internal::for_each(std::forward<F>(f), std::forward<T1>(t1),
+                            std::forward<T2>(t2), std::forward<T3>(t3),
+                            std::make_index_sequence<t1_size>());
 }
 
 }  // namespace math
