@@ -87,7 +87,7 @@ struct algebra_solver_vari : public vari {
     // Contract with Jacobian of f with respect to y using a nested reverse
     // autodiff pass.
     {
-      stan::math::nested_rev_autodiff();
+      stan::math::nested_rev_autodiff rev;
       Matrix<var, Eigen::Dynamic, 1> y_nrad_ = y_val_;
       auto x_nrad_ = stan::math::eval(fy_(y_nrad_));
       x_nrad_.adj() = eta_;
