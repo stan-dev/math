@@ -54,8 +54,7 @@ struct algebra_solver_vari : public vari {
         x_val_(x),
         Jf_x_(fx.get_jacobian(x_val_)),
         fx_(fx),
-        x_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(x_size_))
-  {
+        x_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(x_size_)) {
     using Eigen::Map;
     using Eigen::MatrixXd;
 
@@ -70,19 +69,19 @@ struct algebra_solver_vari : public vari {
   }
 
   void chain() {
+    using Eigen::Dynamic;
     using Eigen::Matrix;
     using Eigen::MatrixXd;
     using Eigen::VectorXd;
-    using Eigen::Dynamic;
 
     // Compute (transpose of) specificities with respect to x.
-    VectorXd x_bar_(x_size_); // TODO: Is this zeroing out memory?
+    VectorXd x_bar_(x_size_);  // TODO: Is this zeroing out memory?
     for (int i = 0; i < x_size_; ++i) {
       x_bar_[i] = x_[i]->adj_;
     }
 
     // Contract specificities with inverse Jacobian of f with respect to x.
-    VectorXd eta_ = - Jf_x_.transpose().fullPivLu().solve(x_bar_);
+    VectorXd eta_ = -Jf_x_.transpose().fullPivLu().solve(x_bar_);
 
     // Contract with Jacobian of f with respect to y using a nested reverse
     // autodiff pass.
@@ -93,7 +92,7 @@ struct algebra_solver_vari : public vari {
       x_nrad_.adj() = eta_;
       stan::math::grad();
       for (int j = 0; j < y_size_; j++) {
-          y_[j]->adj_ += y_nrad_.adj()[j];
+        y_[j]->adj_ += y_nrad_.adj()[j];
       }
     }
   }
@@ -156,7 +155,6 @@ Eigen::VectorXd algebra_solver_powell(
   algebra_solver_check(x_val, y, dat, dat_int, function_tolerance,
                        max_num_steps);
   check_nonnegative("alegbra_solver", "relative_tolerance", relative_tolerance);
-
 
   // Create functor for algebraic system
   using Fs = system_functor<F, double, double, true>;
@@ -257,8 +255,8 @@ Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_powell(
 
   // Construct vari
   algebra_solver_vari<Fsy, value_type_t<T2>, Fx>* vi0
-      = new algebra_solver_vari<Fsy, value_type_t<T2>, Fx>(
-          fy, y_val, fx, theta_dbl);
+      = new algebra_solver_vari<Fsy, value_type_t<T2>, Fx>(fy, y_val, fx,
+                                                           theta_dbl);
   Eigen::Matrix<var, Eigen::Dynamic, 1> theta(x.size());
   theta(0) = var(vi0->x_[0]);
   for (int i = 1; i < x.size(); ++i) {
@@ -324,12 +322,13 @@ Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, 1> algebra_solver(
                                function_tolerance, max_num_steps);
 }
 
-template <typename S, typename F, typename T, require_eigen_vector_t<T>* = nullptr>
+template <typename S, typename F, typename T,
+          require_eigen_vector_t<T>* = nullptr>
 Eigen::VectorXd algebra_solver_powell_(
     S& solver, const F& fx, const T& x, const Eigen::VectorXd& y,
     const std::vector<double>& dat, const std::vector<int>& dat_int,
-    std::ostream* msgs, double relative_tolerance,
-    double function_tolerance, long int max_num_steps ) {  // NOLINT(runtime/int)
+    std::ostream* msgs, double relative_tolerance, double function_tolerance,
+    long int max_num_steps) {  // NOLINT(runtime/int)
   const auto& x_eval = x.eval();
   const auto& x_val = (value_of(x_eval)).eval();
 
