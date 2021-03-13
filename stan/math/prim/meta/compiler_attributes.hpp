@@ -6,6 +6,11 @@
 #define unlikely(x) __builtin_expect(!!(x), 0)
 #ifdef __has_attribute
 #if __has_attribute (noinline) && __has_attribute (cold)
+/**
+ * Functions tagged with this attribute are not inlined and moved
+ *  to a cold branch to tell the CPU to not attempt to pre-fetch
+ *  the associated function.
+ */
 #define STAN_COLD_PATH __attribute__((noinline, cold))
 #endif
 #endif
@@ -15,7 +20,9 @@
 #define STAN_COLD_PATH
 #endif
 
-
+/**
+ * Turns all range and size checks into no-ops
+ */
 #ifndef STAN_NO_RANGE_AND_SIZE_CHECK
 #ifdef STAN_NDEBUG
 #define STAN_NO_RANGE_AND_SIZE_CHECK return
