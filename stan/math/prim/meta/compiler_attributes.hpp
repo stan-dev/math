@@ -24,6 +24,9 @@
  * Turns all range and size checks into no-ops
  */
 #ifndef STAN_NO_RANGE_AND_SIZE_CHECK
+/**
+ * If defined, will turn off all range and size checks.
+ */
 #ifdef STAN_NDEBUG
 #define STAN_NO_RANGE_AND_SIZE_CHECK return
 #else
