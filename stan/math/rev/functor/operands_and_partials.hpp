@@ -191,8 +191,8 @@ class ops_partials_edge<double, std::vector<var>> {
   Op operands_;
 
   int size() { return this->operands_.size(); }
-  inline auto&& operand() noexcept { return std::move(this->operands_); }
-  inline auto&& partial() noexcept { return std::move(this->partials_); }
+  inline auto& operand() noexcept { return this->operands_; }
+  inline auto& partial() noexcept { return this->partials_; }
 };
 
 template <typename Op>
@@ -266,8 +266,8 @@ class ops_partials_edge<double, std::vector<Eigen::Matrix<var, R, C>>> {
     }
     return this->operands_.size() * this->operands_[0].size();
   }
-  inline auto&& operand() noexcept { return std::move(this->operands_); }
-  inline auto&& partial() noexcept { return std::move(this->partials_vec_); }
+  inline auto& operand() noexcept { return this->operands_; }
+  inline auto& partial() noexcept { return this->partials_vec_; }
 };
 
 template <>
@@ -295,15 +295,15 @@ class ops_partials_edge<double, std::vector<std::vector<var>>> {
     }
     return this->operands_.size() * this->operands_[0].size();
   }
-  inline auto&& operand() noexcept { return std::move(this->operands_); }
-  inline auto&& partial() noexcept { return std::move(this->partials_vec_); }
+  inline auto& operand() noexcept { return this->operands_; }
+  inline auto& partial() noexcept { return this->partials_vec_; }
 };
 
 template <typename Op>
 class ops_partials_edge<double, std::vector<var_value<Op>>,
                         require_eigen_t<Op>> {
  public:
-  using partials_t = std::vector<Op, arena_allocator<Op>>;
+  using partials_t = std::vector<arena_t<Op>, arena_allocator<arena_t<Op>>>;
   partials_t partials_vec_;
   explicit ops_partials_edge(const std::vector<var_value<Op>>& ops)
       : partials_vec_(ops.size()), operands_(ops.begin(), ops.end()) {
@@ -319,8 +319,8 @@ class ops_partials_edge<double, std::vector<var_value<Op>>,
   std::vector<var_value<Op>, arena_allocator<var_value<Op>>> operands_;
 
   static constexpr int size() noexcept { return 0; }
-  inline auto&& operand() noexcept { return std::move(this->operands_); }
-  inline auto&& partial() noexcept { return std::move(this->partials_vec_); }
+  inline auto& operand() noexcept { return this->operands_; }
+  inline auto& partial() noexcept { return this->partials_vec_; }
 };
 }  // namespace internal
 }  // namespace math
