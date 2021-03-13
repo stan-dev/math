@@ -8,14 +8,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class inv_vari : public op_v_vari {
- public:
-  explicit inv_vari(vari* avi) : op_v_vari(inv(avi->val_), avi) {}
-  void chain() { avi_->adj_ -= adj_ / (avi_->val_ * avi_->val_); }
-};
-}  // namespace internal
-
 /**
  *
    \f[
@@ -35,7 +27,11 @@ class inv_vari : public op_v_vari {
    \f]
  *
  */
-inline var inv(const var& a) { return var(new internal::inv_vari(a.vi_)); }
+inline var inv(const var& a) {
+  return make_callback_var(inv(a.val()), [a](auto& vi) mutable {
+    a.adj() -= vi.adj() / (a.val() * a.val());
+  });
+}
 
 }  // namespace math
 }  // namespace stan
