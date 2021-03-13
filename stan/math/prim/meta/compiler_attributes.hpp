@@ -17,7 +17,7 @@
 
 
 #ifndef STAN_NO_RANGE_AND_SIZE_CHECK
-#ifdef NDEBUG
+#ifdef STAN_NDEBUG
 #define STAN_NO_RANGE_AND_SIZE_CHECK return
 #endif
 #else
