@@ -61,12 +61,12 @@ struct ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>> {
    * Return the tangent for the edge. For doubles this is a compile time
    * expression returning zero.
    */
-  static constexpr double dx() { return 0.0; }
+  static constexpr double dx() noexcept { return 0.0; }
   /**
    * Return the size of the operand for the edge. For doubles this is a compile
    * time expression returning zero.
    */
-  static constexpr int size() { return 0; }  // reverse mode
+  static constexpr int size() noexcept { return 0; }  // reverse mode
 
  private:
   template <typename, typename, typename, typename, typename, typename>
@@ -116,15 +116,15 @@ template <typename Op1, typename Op2, typename Op3, typename Op4, typename Op5,
           typename T_return_type>
 class operands_and_partials {
  public:
-  explicit operands_and_partials(const Op1& /* op1 */) {}
-  operands_and_partials(const Op1& /* op1 */, const Op2& /* op2 */) {}
+  explicit operands_and_partials(const Op1& /* op1 */) noexcept {}
+  operands_and_partials(const Op1& /* op1 */, const Op2& /* op2 */) noexcept {}
   operands_and_partials(const Op1& /* op1 */, const Op2& /* op2 */,
-                        const Op3& /* op3 */) {}
+                        const Op3& /* op3 */) noexcept {}
   operands_and_partials(const Op1& /* op1 */, const Op2& /* op2 */,
-                        const Op3& /* op3 */, const Op4& /* op4 */) {}
+                        const Op3& /* op3 */, const Op4& /* op4 */) noexcept {}
   operands_and_partials(const Op1& /* op1 */, const Op2& /* op2 */,
                         const Op3& /* op3 */, const Op4& /* op4 */,
-                        const Op5& /* op5 */) {}
+                        const Op5& /* op5 */) noexcept {}
 
   /** \ingroup type_trait
    * Build the node to be stored on the autodiff graph.
@@ -139,7 +139,7 @@ class operands_and_partials {
    * @param value the return value of the function we are compressing
    * @return the value with its derivative
    */
-  static inline T_return_type build(double value) noexcept { return value; }
+  inline double build(double value) const noexcept { return value; }
 
   // These will always be 0 size base template instantiations (above).
   internal::ops_partials_edge<double, std::decay_t<Op1>> edge1_;

@@ -30,7 +30,7 @@ class ops_partials_edge<double, var> {
  public:
   double partial_;
   broadcast_array<double> partials_;
-  explicit ops_partials_edge(const var& op)
+  explicit ops_partials_edge(const var& op) noexcept
       : partial_(0), partials_(partial_), operand_(op) {}
 
  private:
@@ -38,8 +38,8 @@ class ops_partials_edge<double, var> {
   friend class stan::math::operands_and_partials;
   var operand_;
   static constexpr int size() noexcept { return 1; }
-  inline auto& operand() noexcept { return this->operand_; }
-  inline auto& partial() noexcept { return this->partial_; }
+  inline auto operand() const noexcept { return this->operand_; }
+  inline auto partial() const noexcept { return this->partial_; }
 };
 
 template <typename T1, typename T2,
@@ -51,7 +51,7 @@ inline void update_adjoints(var_value<T1>& x, const T2& y, const vari& z) {
 template <typename Scalar1, typename Scalar2, require_var_t<Scalar1>* = nullptr,
           require_not_var_matrix_t<Scalar1>* = nullptr,
           require_arithmetic_t<Scalar2>* = nullptr>
-inline void update_adjoints(Scalar1& x, Scalar2 y, const vari& z) {
+inline void update_adjoints(Scalar1 x, Scalar2 y, const vari& z) noexcept {
   x.adj() += z.adj() * y;
 }
 template <typename Matrix1, typename Matrix2,
@@ -62,8 +62,8 @@ inline void update_adjoints(Matrix1& x, const Matrix2& y, const vari& z) {
 }
 
 template <typename Arith, typename Alt, require_st_arithmetic<Arith>* = nullptr>
-inline void update_adjoints(Arith&& /* x */, Alt&& /* y */,
-                            const vari& /* z */) {}
+inline constexpr void update_adjoints(Arith&& /* x */, Alt&& /* y */,
+                            const vari& /* z */) noexcept {}
 
 template <typename StdVec1, typename Vec2,
           require_std_vector_t<StdVec1>* = nullptr,
