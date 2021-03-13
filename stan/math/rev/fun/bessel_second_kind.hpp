@@ -9,12 +9,12 @@ namespace stan {
 namespace math {
 
 inline var bessel_second_kind(int v, const var& a) {
-  return make_callback_var(bessel_second_kind(v, a.val()),
-    [v, a](auto& vi) mutable {
-      a.adj() += vi.adj()
-                    * (v * bessel_second_kind(v, a.val()) / a.val()
-                       - bessel_second_kind(v + 1, a.val()));
-    });
+  return make_callback_var(
+      bessel_second_kind(v, a.val()), [v, a](auto& vi) mutable {
+        a.adj() += vi.adj()
+                   * (v * bessel_second_kind(v, a.val()) / a.val()
+                      - bessel_second_kind(v + 1, a.val()));
+      });
 }
 
 }  // namespace math

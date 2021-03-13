@@ -91,9 +91,8 @@ inline var fmax(const var& a, const var& b) {
 inline var fmax(const var& a, double b) {
   if (unlikely(is_nan(a))) {
     if (unlikely(is_nan(b))) {
-      return make_callback_var(NOT_A_NUMBER, [a](auto& vi) mutable {
-        a.adj() = NOT_A_NUMBER;
-      });
+      return make_callback_var(
+          NOT_A_NUMBER, [a](auto& vi) mutable { a.adj() = NOT_A_NUMBER; });
     }
     return var(b);
   }
@@ -120,9 +119,8 @@ inline var fmax(const var& a, double b) {
 inline var fmax(double a, const var& b) {
   if (unlikely(is_nan(b))) {
     if (unlikely(is_nan(a))) {
-      return make_callback_var(NOT_A_NUMBER, [b](auto& vi) mutable {
-        b.adj() = NOT_A_NUMBER;
-      });
+      return make_callback_var(
+          NOT_A_NUMBER, [b](auto& vi) mutable { b.adj() = NOT_A_NUMBER; });
     }
     return var(a);
   }

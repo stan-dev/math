@@ -10,9 +10,11 @@ namespace stan {
 namespace math {
 
 inline var falling_factorial(const var& a, int b) {
-  return make_callback_var(falling_factorial(a.val(), b), [a, b](auto& vi) mutable {
-    a.adj() += vi.adj() * vi.val() * (digamma(a.val() + 1) - digamma(a.val() - b + 1));
-  });
+  return make_callback_var(
+      falling_factorial(a.val(), b), [a, b](auto& vi) mutable {
+        a.adj() += vi.adj() * vi.val()
+                   * (digamma(a.val() + 1) - digamma(a.val() - b + 1));
+      });
 }
 
 }  // namespace math

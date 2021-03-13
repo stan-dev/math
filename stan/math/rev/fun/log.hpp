@@ -48,7 +48,7 @@ inline var log(const var& a) {
   return make_callback_var(std::log(a.val()), [a](auto& vi) mutable {
     a.adj() += vi.adj() / a.val();
   });
- }
+}
 
 /**
  * Return the natural logarithm (base e) of the specified complex argument.

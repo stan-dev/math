@@ -37,7 +37,7 @@ namespace math {
  */
 inline var exp2(const var& a) {
   return make_callback_var(std::exp2(a.val()), [a](auto& vi) mutable {
-     a.adj() += vi.adj() * vi.val() * LOG_TWO;
+    a.adj() += vi.adj() * vi.val() * LOG_TWO;
   });
 }
 
