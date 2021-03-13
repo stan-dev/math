@@ -5,7 +5,7 @@
 #define likely(x) __builtin_expect(!!(x), 1)
 #define unlikely(x) __builtin_expect(!!(x), 0)
 #ifdef __has_attribute
-#if __has_attribute (noinline) && __has_attribute (cold)
+#if __has_attribute(noinline) && __has_attribute(cold)
 /**
  * Functions tagged with this attribute are not inlined and moved
  *  to a cold branch to tell the CPU to not attempt to pre-fetch
