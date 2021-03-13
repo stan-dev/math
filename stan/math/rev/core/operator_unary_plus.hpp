@@ -43,7 +43,7 @@ namespace math {
 inline var operator+(const var& a) {
   if (unlikely(is_nan(a.val()))) {
     return make_callback_var(a.val(), [a](auto& vi) mutable {
-      a.adj() += NOT_A_NUMBER;
+      a.adj() = NOT_A_NUMBER;
     });
   }
   return a;

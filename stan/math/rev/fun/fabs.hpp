@@ -56,7 +56,7 @@ inline var fabs(const var& a) {
     return var(new vari(0));
   } else {
     return make_callback_var(NOT_A_NUMBER, [a](auto& vi) mutable {
-      a.adj() += NOT_A_NUMBER;
+      a.adj() = NOT_A_NUMBER;
     });
   }
 }

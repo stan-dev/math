@@ -86,7 +86,7 @@ inline var fmin(const var& a, double b) {
   if (unlikely(is_nan(a))) {
     if (unlikely(is_nan(b))) {
       return make_callback_var(NOT_A_NUMBER, [a](auto& vi) mutable {
-        a.adj() += NOT_A_NUMBER;
+        a.adj() = NOT_A_NUMBER;
       });
     }
     return var(b);
