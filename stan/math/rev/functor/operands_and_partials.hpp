@@ -63,7 +63,7 @@ inline void update_adjoints(Matrix1& x, const Matrix2& y, const vari& z) {
 
 template <typename Arith, typename Alt, require_st_arithmetic<Arith>* = nullptr>
 inline constexpr void update_adjoints(Arith&& /* x */, Alt&& /* y */,
-                            const vari& /* z */) noexcept {}
+                                      const vari& /* z */) noexcept {}
 
 template <typename StdVec1, typename Vec2,
           require_std_vector_t<StdVec1>* = nullptr,
