@@ -9,14 +9,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class log2_vari : public op_v_vari {
- public:
-  explicit log2_vari(vari* avi) : op_v_vari(log2(avi->val_), avi) {}
-  void chain() { avi_->adj_ += adj_ / (LOG_TWO * avi_->val_); }
-};
-}  // namespace internal
-
 /**
  * Returns the base 2 logarithm of the specified variable (C99).
  *
@@ -47,7 +39,11 @@ class log2_vari : public op_v_vari {
  * @param a Specified variable.
  * @return Base 2 logarithm of the variable.
  */
-inline var log2(const var& a) { return var(new internal::log2_vari(a.vi_)); }
+inline var log2(const var& a) {
+  return make_callback_var(log2(a.val()), [a](auto& vi) mutable {
+    a.adj() += vi.adj() / (LOG_TWO * a.val());
+  });
+}
 
 }  // namespace math
 }  // namespace stan

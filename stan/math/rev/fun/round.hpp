@@ -10,18 +10,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class round_vari : public op_v_vari {
- public:
-  explicit round_vari(vari* avi) : op_v_vari(round(avi->val_), avi) {}
-  void chain() {
-    if (unlikely(is_nan(avi_->val_))) {
-      avi_->adj_ = NOT_A_NUMBER;
-    }
-  }
-};
-}  // namespace internal
-
 /**
  * Returns the rounded form of the specified variable (C99).
  *
@@ -52,7 +40,13 @@ class round_vari : public op_v_vari {
  * @param a Specified variable.
  * @return Rounded variable.
  */
-inline var round(const var& a) { return var(new internal::round_vari(a.vi_)); }
+inline var round(const var& a) {
+  return make_callback_var(round(a.val()), [a](auto& vi) mutable {
+    if (unlikely(is_nan(a.val()))) {
+      a.adj() = NOT_A_NUMBER;
+    }
+  });
+}
 
 }  // namespace math
 }  // namespace stan
