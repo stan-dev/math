@@ -1,3 +1,4 @@
+import numbers
 import os
 import statement_types
 from sig_utils import parse_array, non_differentiable_args, special_arg_values
@@ -52,13 +53,13 @@ class CodeGenerator:
             except KeyError:
                 pass
 
-            if number_nested_arrays == 0:
+            if value is None or isinstance(value, numbers.Number):
                 if inner_type == "int":
                     arg = statement_types.IntArgument("int" + suffix, value)
                 elif inner_type == "real":
                     arg = statement_types.RealArgument(overload, "real" + suffix, value)
                 elif inner_type in ("vector", "row_vector", "matrix"):
-                    arg = statement_types.MatrixArgument(overload, "matrix" + suffix, stan_arg, value)
+                    arg = statement_types.MatrixArgument(overload, "matrix" + suffix, inner_type, value)
                 elif inner_type == "rng":
                     arg = statement_types.RngArgument("rng" + suffix)
                 elif inner_type == "ostream_ptr":
@@ -66,15 +67,19 @@ class CodeGenerator:
                 elif inner_type == "scalar_return_type":
                     arg = statement_types.ReturnTypeTArgument("ret_type" + suffix, *arg_list)
                 elif inner_type == "simplex":
-                    arg = statement_types.SimplexArgument(overload, "simplex" + suffix, stan_arg, value)
+                    arg = statement_types.SimplexArgument(overload, "simplex" + suffix, value)
                 elif inner_type == "positive_definite_matrix":
-                    arg = statement_types.PositiveDefiniteMatrixArgument(overload, "positive_definite_matrix" + suffix, stan_arg, value)
+                    arg = statement_types.PositiveDefiniteMatrixArgument(overload, "positive_definite_matrix" + suffix, value)
                 elif inner_type == "(vector, vector, data array[] real, data array[] int) => vector":
                     arg = statement_types.AlgebraSolverFunctorArgument("functor" + suffix)
                 elif inner_type == "(real, vector, ostream_ptr, vector) => vector":
                     arg = statement_types.OdeFunctorArgument("functor" + suffix)
                 else:
                     raise Exception("Inner type " + inner_type + " not supported")
+
+                if number_nested_arrays > 0:
+                    self.add_statement(arg)
+                    arg = statement_types.ArrayArgument(overload, "array" + suffix, number_nested_arrays, inner_type, value = arg)
             else:
                 arg = statement_types.ArrayArgument(overload, "array" + suffix, number_nested_arrays, inner_type, value = value)
 

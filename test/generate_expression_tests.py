@@ -11,6 +11,7 @@ build_folder = "./test/expressions/"
 
 test_code_template = """
 TEST(ExpressionTest{overload}, {test_name}) {{
+//{comment}
 {code}
 }}
 """
@@ -125,6 +126,7 @@ def main(functions=(), j=1):
             tests.append(
                 test_code_template.format(
                     overload=overload,
+                    comment=signature.strip(),
                     test_name=sp.function_name + repr(n),
                     code = cg.cpp(),
                 )

@@ -149,7 +149,7 @@ def main(functions_or_sigs, results_file, cores):
 
             arg_list = []
             for overload, arg in zip(overloads, arg_list_base):
-                if arg.is_reverse_mode() and arg.is_matrix_like() and overload.endswith("Varmat"):
+                if arg.is_reverse_mode() and arg.is_varmat_compatible():
                     any_overload_uses_varmat = True
                     arg = cg.to_var_value(arg)
                 

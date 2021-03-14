@@ -13,6 +13,9 @@ class CppStatement:
     def is_matrix_like(self):
         return False
 
+    def is_varmat_compatible(self):
+        return False
+
     def is_expression(self):
         return False
 
@@ -60,6 +63,9 @@ class MatrixArgument(CppStatement):
     def is_matrix_like(self):
         return True
     
+    def is_varmat_compatible(self):
+        return True
+    
     def is_varmat(self):
         return self.overload.endswith("Varmat")
     
@@ -71,10 +77,10 @@ class MatrixArgument(CppStatement):
         return "auto {name} = stan::test::make_arg<{type}>({value}, 1);".format(name = self.name, type = arg_type, value = self.value)
 
 class SimplexArgument(CppStatement):
-    def __init__(self, overload, name, stan_arg, value = None):
+    def __init__(self, overload, name, value = None):
         self.overload = overload
         self.name = name
-        self.stan_arg = stan_arg
+        self.stan_arg = "vector"
         if value is None:
             self.value = 0.4
         else:
@@ -86,8 +92,8 @@ class SimplexArgument(CppStatement):
     def is_matrix_like(self):
         return True
     
-    def is_varmat(self):
-        return self.overload.endswith("Varmat")
+    def is_varmat_compatible(self):
+        return True
     
     def cpp(self):
         scalar = overload_scalar[self.overload]
@@ -97,10 +103,10 @@ class SimplexArgument(CppStatement):
         return "auto {name} = stan::test::make_simplex<{type}>({value}, 1);".format(name = self.name, type = arg_type, value = self.value)
 
 class PositiveDefiniteMatrixArgument(CppStatement):
-    def __init__(self, overload, name, stan_arg, value = None):
+    def __init__(self, overload, name, value = None):
         self.overload = overload
         self.name = name
-        self.stan_arg = stan_arg
+        self.stan_arg = "matrix"
         if value is None:
             self.value = 0.4
         else:
@@ -112,8 +118,8 @@ class PositiveDefiniteMatrixArgument(CppStatement):
     def is_matrix_like(self):
         return True
     
-    def is_varmat(self):
-        return self.overload.endswith("Varmat")
+    def is_varmat_compatible(self):
+        return True
     
     def cpp(self):
         scalar = overload_scalar[self.overload]
@@ -171,14 +177,7 @@ class ArrayArgument(CppStatement):
         self.name = name
         self.number_nested_arrays = number_nested_arrays
         self.inner_type = inner_type
-
-        if not value:
-            if inner_type == "int":
-                self.value = 1
-            else:
-                self.value = 0.4
-        else:
-            self.value = value
+        self.value = value
 
         if size:
             self.size = size
@@ -186,20 +185,35 @@ class ArrayArgument(CppStatement):
             self.size = 1
     
     def is_reverse_mode(self):
-        return self.overload.startswith("Rev")
+        try:
+            return self.value.is_reverse_mode()
+        except AttributeError:
+            return self.overload.startswith("Rev") and self.inner_type != "int"
+
+    def is_varmat_compatible(self):
+        try:
+            return self.value.is_varmat_compatible()
+        except AttributeError:
+            return False
     
     def cpp(self):
-        scalar = overload_scalar[self.overload]
-        arg_type = arg_types[self.inner_type]
-        for n in range(self.number_nested_arrays):
-            arg_type = "std::vector<{}>".format(arg_type)
-        arg_type = arg_type.replace("SCALAR", scalar)
+        try:
+            lhs_string = "decltype({name})".format(name = self.value.name)
+            rhs_string = self.value.name
+            for n in range(self.number_nested_arrays):
+                lhs_string = "<" + lhs_string + ">"
+                rhs_string = "{" + ",".join([rhs_string] * self.size) + "}"
+            arg_type = "std::vector" + lhs_string
 
-        if isinstance(self.value, numbers.Number):
-            return "auto {name} = stan::test::make_arg<{type}>({value}, {size});".format(name = self.name, type = arg_type, value = self.value, size = self.size)
-        else:
+            return "{type} {name} = {rhs_string};".format(type = arg_type, name = self.name, lhs_string = lhs_string, rhs_string = rhs_string)
+        except AttributeError:
+            lhs_string = arg_types[self.inner_type]
+            for n in range(self.number_nested_arrays):
+                lhs_string = "<" + lhs_string + ">"
+            arg_type = "std::vector" + lhs_string
+
             value_string = repr(self.value).replace('[', '{').replace(']', '}').replace('(', '{').replace(')', '}')
-            return "{arg_type} {name} = {value};".format(type = arg_type, name = self.name, value = value_string)
+            return "{type} {name} = {value};".format(type = arg_type, name = self.name, value = value_string)
 
 class FunctionCallAssign(CppStatement):
     def __init__(self, function_name, name, *args):
