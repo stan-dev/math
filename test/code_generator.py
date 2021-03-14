@@ -17,7 +17,7 @@ class CodeGenerator:
     def cpp(self):
         return os.linesep.join(statement.cpp() for statement in self.code_list)
 
-    def get_next_name(self):
+    def get_next_name_suffix(self):
         self.name_counter += 1
         return repr(self.name_counter - 1)
 
@@ -26,8 +26,8 @@ class CodeGenerator:
             max_size = 2
 
         arg_list = []
-        for overload, stan_arg in zip(arg_overloads, signature_parser.stan_args):
-            n = self.get_next_name()
+        for n, (overload, stan_arg) in enumerate(zip(arg_overloads, signature_parser.stan_args)):
+            suffix = self.get_next_name_suffix()
 
             number_nested_arrays, inner_type = parse_array(stan_arg)
 
@@ -54,42 +54,42 @@ class CodeGenerator:
 
             if number_nested_arrays == 0:
                 if inner_type == "int":
-                    arg = statement_types.IntArgument(f"int{n}", value)
+                    arg = statement_types.IntArgument("int" + suffix, value)
                 elif inner_type == "real":
-                    arg = statement_types.RealArgument(overload, f"real{n}", value)
+                    arg = statement_types.RealArgument(overload, "real" + suffix, value)
                 elif inner_type in ("vector", "row_vector", "matrix"):
-                    arg = statement_types.MatrixArgument(overload, f"matrix{n}", stan_arg, value)
+                    arg = statement_types.MatrixArgument(overload, "matrix" + suffix, stan_arg, value)
                 elif inner_type == "rng":
-                    arg = statement_types.RngArgument(f"rng{n}")
+                    arg = statement_types.RngArgument("rng" + suffix)
                 elif inner_type == "ostream_ptr":
-                    arg = statement_types.OStreamArgument(f"ostream{n}")
+                    arg = statement_types.OStreamArgument("ostream" + suffix)
                 elif inner_type == "scalar_return_type":
-                    arg = statement_types.ReturnTypeTArgument(f"ret_type{n}", *arg_list)
+                    arg = statement_types.ReturnTypeTArgument("ret_type" + suffix, *arg_list)
                 elif inner_type == "simplex":
-                    arg = statement_types.SimplexArgument(overload, f"simplex{n}", stan_arg, value)
+                    arg = statement_types.SimplexArgument(overload, "simplex" + suffix, stan_arg, value)
                 elif inner_type == "positive_definite_matrix":
-                    arg = statement_types.PositiveDefiniteMatrixArgument(overload, f"positive_definite_matrix{n}", stan_arg, value)
+                    arg = statement_types.PositiveDefiniteMatrixArgument(overload, "positive_definite_matrix" + suffix, stan_arg, value)
                 elif inner_type == "(vector, vector, data array[] real, data array[] int) => vector":
-                    arg = statement_types.AlgebraSolverFunctorArgument(f"functor{n}")
+                    arg = statement_types.AlgebraSolverFunctorArgument("functor" + suffix)
                 elif inner_type == "(real, vector, ostream_ptr, vector) => vector":
-                    arg = statement_types.OdeFunctorArgument(f"functor{n}")
+                    arg = statement_types.OdeFunctorArgument("functor" + suffix)
                 else:
-                    raise Exception(f"Inner type '{inner_type}' not supported")
+                    raise Exception("Inner type " + inner_type + " not supported")
             else:
-                arg = statement_types.ArrayArgument(overload, f"array{n}", number_nested_arrays, inner_type, value = value)
+                arg = statement_types.ArrayArgument(overload, "array" + suffix, number_nested_arrays, inner_type, value = value)
 
             arg_list.append(self.add_statement(arg))
 
         if signature_parser.is_rng():
-            arg_list.append(self.add_statement(statement_types.RngArgument(f"rng{self.get_next_name()}")))
+            arg_list.append(self.add_statement(statement_types.RngArgument("rng" + self.get_next_name_suffix())))
 
         return arg_list
 
     def add(self, arg1, arg2):
-        return self.add_statement(statement_types.FunctionCallAssign("stan::math::add", f"sum_of_sums{self.get_next_name()}", arg1, arg2))
+        return self.add_statement(statement_types.FunctionCallAssign("stan::math::add", "sum_of_sums" + self.get_next_name_suffix(), arg1, arg2))
     
     def convert_to_expression(self, arg):
-        return self.add_statement(statement_types.ExpressionArgument(arg.overload, f"{arg.name}_expr{self.get_next_name()}", arg))
+        return self.add_statement(statement_types.ExpressionArgument(arg.overload, arg.name + "_expr" + self.get_next_name_suffix(), arg))
     
     def expect_adj_eq(self, arg1, arg2):
         return self.add_statement(statement_types.FunctionCall("stan::test::expect_adj_eq", arg1, arg2))
@@ -101,7 +101,7 @@ class CodeGenerator:
         return self.add_statement(statement_types.FunctionCall("EXPECT_LEQ_ONE", arg))
     
     def function_call_assign(self, cpp_function_name, *args):
-        return self.add_statement(statement_types.FunctionCallAssign(cpp_function_name, f"result{self.get_next_name()}", *args))
+        return self.add_statement(statement_types.FunctionCallAssign(cpp_function_name, "result" + self.get_next_name_suffix(), *args))
 
     def grad(self, arg):
         return self.add_statement(statement_types.FunctionCall("stan::test::grad", arg))
@@ -110,7 +110,7 @@ class CodeGenerator:
         return self.add_statement(statement_types.FunctionCall("stan::math::recover_memory"))
 
     def recursive_sum(self, arg):
-        return self.add_statement(statement_types.FunctionCallAssign("stan::test::recursive_sum", f"summed_result{self.get_next_name()}", arg))
+        return self.add_statement(statement_types.FunctionCallAssign("stan::test::recursive_sum", "summed_result" + self.get_next_name_suffix(), arg))
     
     def to_var_value(self, arg):
-        return self.add_statement(statement_types.FunctionCallAssign("stan::math::to_var_value", f"{arg.name}_varmat{self.get_next_name()}", arg))
+        return self.add_statement(statement_types.FunctionCallAssign("stan::math::to_var_value", arg.name + "_varmat" + self.get_next_name_suffix(), arg))

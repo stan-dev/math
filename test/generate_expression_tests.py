@@ -100,7 +100,7 @@ def main(functions=(), j=1):
             arg_list_no_expression = cg.build_arguments(sp, sp.number_arguments() * [overload])
 
             # Check results with expressions and without are the same
-            cpp_function_name = f"stan::math::{sp.function_name}"
+            cpp_function_name = "stan::math::" + sp.function_name
             result = cg.function_call_assign(cpp_function_name, *arg_list_expression)
             result_no_expression = cg.function_call_assign(cpp_function_name, *arg_list_no_expression)
             cg.expect_eq(result, result_no_expression)
@@ -125,7 +125,7 @@ def main(functions=(), j=1):
             tests.append(
                 test_code_template.format(
                     overload=overload,
-                    test_name=f"{sp.function_name}_{n}",
+                    test_name=sp.function_name + repr(n),
                     code = cg.cpp(),
                 )
             )

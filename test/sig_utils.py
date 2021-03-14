@@ -317,7 +317,7 @@ overload_scalar = {
     "Prim": "double",
     "PrimExp": "double",
     "Rev": "stan::math::var",
-    "RevSOA": "stan::math::var",
+    "RevVarmat": "stan::math::var",
     "RevExp": "stan::math::var",
     "Fwd": "stan::math::fvar<double>",
     "FwdExp": "stan::math::fvar<double>",
