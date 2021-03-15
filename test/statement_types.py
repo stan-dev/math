@@ -201,19 +201,17 @@ class ArrayArgument(CppStatement):
             lhs_string = "decltype({name})".format(name = self.value.name)
             rhs_string = self.value.name
             for n in range(self.number_nested_arrays):
-                lhs_string = "<" + lhs_string + ">"
+                lhs_string = "std::vector<" + lhs_string + ">"
                 rhs_string = "{" + ",".join([rhs_string] * self.size) + "}"
-            arg_type = "std::vector" + lhs_string
 
-            return "{type} {name} = {rhs_string};".format(type = arg_type, name = self.name, lhs_string = lhs_string, rhs_string = rhs_string)
+            return "{lhs_string} {name} = {rhs_string};".format(lhs_string = lhs_string, name = self.name, rhs_string = rhs_string)
         except AttributeError:
             lhs_string = arg_types[self.inner_type]
             for n in range(self.number_nested_arrays):
-                lhs_string = "<" + lhs_string + ">"
-            arg_type = "std::vector" + lhs_string
+                lhs_string = "std::vector<" + lhs_string + ">"
 
             value_string = repr(self.value).replace('[', '{').replace(']', '}').replace('(', '{').replace(')', '}')
-            return "{type} {name} = {value};".format(type = arg_type, name = self.name, value = value_string)
+            return "{lhs_string} {name} = {value};".format(lhs_string = lhs_string, name = self.name, value = value_string)
 
 class FunctionCallAssign(CppStatement):
     def __init__(self, function_name, name, *args):
