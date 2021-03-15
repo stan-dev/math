@@ -90,11 +90,9 @@ str(summarize_benchmark(adjoint_fit))
 
 Lbdf_fit <- run_benchmark(adjoint_integrator=0, system_size=6, model=mod, num_iter=50)
 Ladjoint_fit <- run_benchmark(adjoint_integrator=1, solver_f=2, solver_b=2, system_size=6, model=mod, num_iter=50)
-Ladjoint_fit_2 <- run_benchmark(adjoint_integrator=1, solver_f=2, solver_b=2, system_size=6, model=mod, num_iter=50)
 
 str(summarize_benchmark(Lbdf_fit))
 str(summarize_benchmark(Ladjoint_fit))
-str(summarize_benchmark(Ladjoint_fit_2))
 
 ## there is no gain by adjoint method if there are not more parameters
 ## than states

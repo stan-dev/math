@@ -65,11 +65,11 @@ functions {
     }
 
     if(adjoint_integrator) {
-      y = ode_adjoint_tol_ctl(linked_mass_flow, a0, t0, ts, 
+      y = ode_adjoint_tol_ctl(linked_mass_flow, a0, t0, ts,
                               rel_tol_f, rep_vector(abs_tol_f, num_states), // forward
                               rel_tol_b, rep_vector(abs_tol_b, num_states), // backward
                               rel_tol_q, abs_tol_q, // quadrature
-                              max_num_steps, 
+                              max_num_steps,
                               num_checkpoints, // number of steps between checkpoints
                               interpolation_polynomial,  // polynomials
                               solver_f,  // bdf forward
