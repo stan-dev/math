@@ -2,6 +2,7 @@
 #define STAN_MATH_LAPLACE_LAPLACE_LIKELIHOOD_POISSON_LOG_HPP
 
 #include <stan/math/prim/fun/lgamma.hpp>
+#include <Eigen/Sparse>
 
 namespace stan {
 namespace math {
@@ -73,12 +74,20 @@ struct diff_poisson_log {
   void diff (const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
              const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy,
              Eigen::Matrix<T1, Eigen::Dynamic, 1>& gradient,
-             Eigen::Matrix<T1, Eigen::Dynamic, 1>& hessian) const {
+             // Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic>& hessian,
+             Eigen::SparseMatrix<double>& hessian,
+             int hessian_block_size = 1)
+    const {
+    int theta_size = theta.size();
     Eigen::Matrix<T1, Eigen::Dynamic, 1>
       common_term = n_samples_.cwiseProduct(exp(theta + log_exposure_));
 
     gradient = sums_ - common_term;
-    hessian = - common_term;
+    hessian.resize(theta_size, theta_size);
+    hessian.reserve(Eigen::VectorXi::Constant(theta_size, hessian_block_size));
+    // hessian.col(0) = - common_term;
+    for (int i = 0; i < theta_size; i++)
+      hessian.insert(i, i) = - common_term(i);
   }
 
   /**
@@ -97,11 +106,21 @@ struct diff_poisson_log {
     return -n_samples_.cwiseProduct(exp(theta + log_exposure_));
   }
 
+  Eigen::VectorXd compute_s2(const Eigen::VectorXd& theta,
+                             const Eigen::VectorXd& eta,
+                             const Eigen::MatrixXd& L,
+                             const Eigen::MatrixXd& covariance,
+                             int hessian_block_size) const {
+    std::cout << "THIS FUNCTION SHOULD NEVER GET CALLED!" << std::endl;
+    Eigen::VectorXd void_vector;
+    return void_vector;
+  }
+
   template <typename T_theta, typename T_eta>
   Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, 1>
   diff_eta(const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
            const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) const {
-    std::cout << "THIS FUNCTIONS SHOULD NEVER GET CALLED!" << std::endl;
+    std::cout << "THIS FUNCTION SHOULD NEVER GET CALLED!" << std::endl;
     Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, 1> void_matrix;
     return void_matrix;
   }
@@ -110,7 +129,7 @@ struct diff_poisson_log {
   Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, Eigen::Dynamic>
   diff_theta_eta(const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
                  const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) const {
-    std::cout << "THIS FUNCTIONS SHOULD NEVER GET CALLED!" << std::endl;
+    std::cout << "THIS FUNCTION SHOULD NEVER GET CALLED!" << std::endl;
     Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic,
       Eigen::Dynamic> void_matrix;
     return void_matrix;
@@ -121,7 +140,7 @@ struct diff_poisson_log {
   diff2_theta_eta(const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
                   const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta)
   const {
-    std::cout << "THIS FUNCTIONS SHOULD NEVER GET CALLED!" << std::endl;
+    std::cout << "THIS FUNCTION SHOULD NEVER GET CALLED!" << std::endl;
     Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic,
       Eigen::Dynamic> void_matrix;
     return void_matrix;

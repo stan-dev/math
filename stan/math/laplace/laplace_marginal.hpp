@@ -8,19 +8,20 @@
 #include <stan/math/prim/fun/cholesky_decompose.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/rev/fun/cholesky_decompose.hpp>
-#include <stan/math/laplace/laplace_likelihood.hpp>
+// #include <stan/math/laplace/laplace_likelihood.hpp>
 #include <stan/math/laplace/laplace_pseudo_target.hpp>
+#include <stan/math/laplace/block_matrix_sqrt.hpp>
+
+#include <Eigen/Sparse>
+#include <Eigen/LU>
+#include <unsupported/Eigen/MatrixFunctions>
 
 #include <iostream>
 #include <istream>  // CHECK -- do we need this?
 #include <fstream>  // CHECK -- do we need this?
 
 // Reference for calculations of marginal and its gradients:
-// Charles C Margossian, Aki Vehtari, Daniel Simpson and Raj Agrawal
-// "Hamiltonian Monte Carlo using an adjoint-differentiated
-// Laplace approximation: Bayesian inference for latent Gaussian
-// models and beyond."  NeurIPS 2020
-// https://arxiv.org/abs/2004.12550
+// Margossian et al, 2020, https://arxiv.org/abs/2004.12550
 
 
 namespace stan {
@@ -83,22 +84,28 @@ namespace math {
                             const std::vector<int>& delta_int,
                             Eigen::MatrixXd& covariance,
                             Eigen::VectorXd& theta,
-                            Eigen::VectorXd& W_root,
+                            Eigen::SparseMatrix<double>& W_r,
+                            // Eigen::MatrixXd& W_root,
                             Eigen::MatrixXd& L,
                             Eigen::VectorXd& a,
                             Eigen::VectorXd& l_grad,
+                            Eigen::PartialPivLU<Eigen::MatrixXd>& LU,
                             const Eigen::VectorXd& theta_0,
                             std::ostream* msgs = nullptr,
                             double tolerance = 1e-6,
-                            long int max_num_steps = 100) {
+                            long int max_num_steps = 100,
+                            int hessian_block_size = 1) {
     using Eigen::MatrixXd;
     using Eigen::VectorXd;
+    using Eigen::SparseMatrix;
 
-    int group_size = theta_0.size();
+    int theta_size = theta_0.size();
     covariance = covariance_function(phi, x, delta, delta_int, msgs);
     theta = theta_0;
     double objective_old = - 1e+10;  // CHECK -- what value to use?
     double objective_new;
+    double B_log_determinant;
+
 
     for (int i = 0; i <= max_num_steps; i++) {
       if (i == max_num_steps) {
@@ -109,19 +116,47 @@ namespace math {
       }
 
       // Compute variable a.
-      VectorXd hessian;
-      diff_likelihood.diff(theta, eta, l_grad, hessian);
-      VectorXd W = - hessian;
-      W_root = sqrt(W);
+      SparseMatrix<double> hessian;  // VectorXd hessian;
+      diff_likelihood.diff(theta, eta, l_grad, hessian, hessian_block_size);
+      SparseMatrix<double> W = - hessian; // VectorXd W = - hessian;
+
+      VectorXd b;
       {
-        MatrixXd B = MatrixXd::Identity(group_size, group_size)
-          + quad_form_diag(covariance, W_root);
-        L = cholesky_decompose(B);
+        MatrixXd B;
+        if (hessian_block_size == 1) {  // W_root = sqrt(W);
+          W_r = W.cwiseSqrt();
+          B = MatrixXd::Identity(theta_size, theta_size)
+               + quad_form_diag(covariance, W_r.diagonal());
+
+          L = cholesky_decompose(B);
+          B_log_determinant = 2 * sum(L.diagonal().array().log());
+        } else {
+          // TODO -- version which uses W_root?
+
+         W_r = W;
+         B = MatrixXd::Identity(theta_size, theta_size) + covariance * W;
+         LU = Eigen::PartialPivLU<Eigen::MatrixXd>(B);
+
+         // TODO: compute log determinant directly.
+         B_log_determinant = log(LU.determinant());
+        }
+
+        if (hessian_block_size == 1) {
+          b = W.diagonal().cwiseProduct(theta) + l_grad.head(theta_size);
+          a = b - W_r
+            * mdivide_left_tri<Eigen::Upper>(transpose(L),
+               mdivide_left_tri<Eigen::Lower>(L,
+               diag_pre_multiply(W_r.diagonal(), multiply(covariance, b))));
+        } else {
+          b = W * theta + l_grad.head(theta_size);
+          a = b - W * LU.solve(covariance * b);
+
+          // a = b - W_root
+          //   * mdivide_left_tri<Eigen::Upper>(transpose(L),
+          //       mdivide_left_tri<Eigen::Lower>(L,
+          //       W_root * (covariance * b)));
+        }
       }
-      VectorXd b = W.cwiseProduct(theta) + l_grad;
-      a = b - W_root.asDiagonal() * mdivide_left_tri<Eigen::Upper>(transpose(L),
-           mdivide_left_tri<Eigen::Lower>(L,
-           diag_pre_multiply(W_root, multiply(covariance, b))));
 
       // Simple Newton step
       theta = covariance * a;
@@ -134,7 +169,7 @@ namespace math {
       if (objective_diff < tolerance) break;
     }
 
-    return objective_new - sum(L.diagonal().array().log());
+    return objective_new - 0.5 * B_log_determinant;
   }
 
   /**
@@ -184,15 +219,21 @@ namespace math {
                             const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta_0,
                             std::ostream* msgs = nullptr,
                             double tolerance = 1e-6,
-                            long int max_num_steps = 100) {
-    Eigen::VectorXd theta, W_root, a, l_grad;
+                            long int max_num_steps = 100,
+                            int hessian_block_size = 1) {
+    // Eigen::VectorXd theta, W_root, a, l_grad;
+    // Eigen::MatrixXd L, covariance;
+    Eigen::VectorXd theta, a, l_grad;
     Eigen::MatrixXd L, covariance;
+    Eigen::SparseMatrix<double> W_r;
+    Eigen::PartialPivLU<Eigen::MatrixXd> LU;
     return laplace_marginal_density(diff_likelihood, covariance_function,
                                     phi, eta, x, delta, delta_int,
                                     covariance,
-                                    theta, W_root, L, a, l_grad,
+                                    theta, W_r, L, a, l_grad, LU,
                                     value_of(theta_0), msgs,
-                                    tolerance, max_num_steps);
+                                    tolerance, max_num_steps,
+                                    hessian_block_size);
   }
 
   /**
@@ -237,11 +278,14 @@ namespace math {
        double marginal_density,
        const Eigen::MatrixXd& covariance,
        const Eigen::VectorXd& theta,
-       const Eigen::VectorXd& W_root,
+       // const Eigen::MatrixXd& W_root,
+       const Eigen::SparseMatrix<double>& W_r,
        const Eigen::MatrixXd& L,
        const Eigen::VectorXd& a,
        const Eigen::VectorXd& l_grad,
-       std::ostream* msgs = nullptr)
+       const Eigen::PartialPivLU<Eigen::MatrixXd> LU,
+       std::ostream* msgs = nullptr,
+       int hessian_block_size = 1)
       : vari(marginal_density),
         phi_size_(phi.size()),
         phi_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
@@ -255,6 +299,7 @@ namespace math {
       using Eigen::Dynamic;
       using Eigen::MatrixXd;
       using Eigen::VectorXd;
+      using Eigen::SparseMatrix;
 
       int theta_size = theta.size();
       for (int i = 0; i < phi_size_; i++) phi_[i] = phi(i).vi_;
@@ -265,24 +310,79 @@ namespace math {
       marginal_density_[0] = new vari(marginal_density, false);
 
       // auto start = std::chrono::system_clock::now();
-      Eigen::MatrixXd R;
-      {
-        Eigen::MatrixXd W_root_diag = W_root.asDiagonal();
-        R = W_root_diag *
-              L.transpose().triangularView<Eigen::Upper>()
-               .solve(L.triangularView<Eigen::Lower>()
-                 .solve(W_root_diag));
+      MatrixXd R;
+      if (hessian_block_size == 1){
+        MatrixXd W_root_diag = W_r;
+        R = W_r * L.transpose().triangularView<Eigen::Upper>()
+                                      .solve(L.triangularView<Eigen::Lower>()
+                                        .solve(W_root_diag));
+      } else {
+        R = W_r - W_r * LU.solve(covariance * W_r);
       }
 
-      Eigen::MatrixXd
-        C = mdivide_left_tri<Eigen::Lower>(L,
-                  diag_pre_multiply(W_root, covariance));
+      // Eigen::MatrixXd R;
+      // {
+      //   Eigen::MatrixXd W_root_diag;
+      //   if (hessian_block_size == 1) {
+      //     W_root_diag = W_root.col(0).asDiagonal();
+      //   } else {
+      //     W_root_diag = W_root;
+      //   }
+      //   R = W_root_diag *
+      //         L.transpose().triangularView<Eigen::Upper>()
+      //          .solve(L.triangularView<Eigen::Lower>()
+      //            .solve(W_root_diag));
+      // }
 
       Eigen::VectorXd eta_dbl = value_of(eta);
-      // CHECK -- should there be a minus sign here?
-      Eigen::VectorXd s2 = 0.5 * (covariance.diagonal()
-                 - (C.transpose() * C).diagonal())
-                 .cwiseProduct(diff_likelihood.third_diff(theta, eta_dbl));
+      Eigen::VectorXd partial_parm;
+      Eigen::VectorXd s2;
+
+      if (hessian_block_size == 1) {
+        Eigen::MatrixXd
+          C = mdivide_left_tri<Eigen::Lower>(L, W_r * covariance);
+        s2 = 0.5 * (covariance.diagonal()
+               - (C.transpose() * C).diagonal())
+              .cwiseProduct(diff_likelihood.third_diff(theta, eta_dbl));
+      } else {
+        // Eigen::MatrixXd A = covariance - C.transpose() * C;
+        Eigen::MatrixXd A = covariance
+          - covariance * W_r * LU.solve(covariance);
+        partial_parm
+          = diff_likelihood.compute_s2(theta, eta_dbl, A, hessian_block_size);
+        s2 = partial_parm.head(theta_size);
+      }
+
+      // std::cout << "s2: " << s2.transpose() << std::endl;
+
+      // TEST -- finite diff benchmark for s2
+      // double eps = 1e-7;
+      // Eigen::VectorXd theta_u0 = theta, theta_l0 = theta;
+      // theta_u0(11) += eps;
+      // theta_l0(11) -= eps;
+      // int group_size = theta.size();
+      //
+      // Eigen::VectorXd l_grad_store;
+      // SparseMatrix<double> hessian_store;  // VectorXd hessian;
+      // diff_likelihood.diff(theta_u0, value_of(eta), l_grad_store,
+      //                      hessian_store, hessian_block_size);
+      // SparseMatrix<double> W_u0 = - hessian_store;
+      // diff_likelihood.diff(theta_l0, value_of(eta), l_grad_store,
+      //                      hessian_store, hessian_block_size);
+      // SparseMatrix<double> W_l0 = - hessian_store;
+      //
+      // Eigen::MatrixXd B_u0 = Eigen::MatrixXd::Identity(group_size, group_size)
+      //   + covariance * W_u0;
+      // Eigen::MatrixXd B_l0 = Eigen::MatrixXd::Identity(group_size, group_size)
+      //     + covariance * W_l0;
+      // std::cout << "s2_finite_diff: "
+      //            << -0.5 * (log(B_u0.determinant()) - log(B_l0.determinant()))
+      //                  / (2 * eps) << std::endl;
+
+      // // CHECK -- should there be a minus sign here?
+      // Eigen::VectorXd s2 = 0.5 * (covariance.diagonal()
+      //            - (C.transpose() * C).diagonal())
+      //            .cwiseProduct(diff_likelihood.third_diff(theta, eta_dbl));
 
      phi_adj_ = Eigen::VectorXd(phi_size_);
      start_nested();
@@ -291,6 +391,7 @@ namespace math {
        Matrix<var, Dynamic, 1> phi_v = value_of(phi);
        Matrix<var, Dynamic, Dynamic>
          K_var = covariance_function(phi_v, x, delta, delta_int, msgs);
+       Eigen::VectorXd l_grad_theta = l_grad.head(theta_size);
        var Z = laplace_pseudo_target(K_var, a, R, l_grad, s2);
 
        set_zero_all_adjoints_nested();
@@ -298,12 +399,38 @@ namespace math {
 
        for (int j = 0; j < phi_size_; j++) phi_adj_[j] = phi_v(j).adj();
 
-     } catch (const std::exception& e) {
-       recover_memory_nested();
-       throw;
-     }
-     recover_memory_nested();
+       // finite diff benchmark
+       // double eps = 1e-7;
+       // Eigen::VectorXd phi_u0 = value_of(phi), phi_l0 = value_of(phi);
+       // phi_u0(1) += eps;
+       // phi_l0(1) -= eps;
+       // Eigen::MatrixXd K_u0 =
+       //   covariance_function(phi_u0, x, delta, delta_int, msgs),
+       // K_l0 = covariance_function(phi_l0, x, delta, delta_int, msgs);
+       // double Z_u0 = laplace_pseudo_target(K_u0, a, R, l_grad, s2),
+       //        Z_l0 = laplace_pseudo_target(K_l0, a, R, l_grad, s2);
+       // std::cout << "finite diff Z: " << (Z_u0 - Z_l0) / (2 * eps)
+       //   << std::endl;
 
+    } catch (const std::exception& e) {
+      recover_memory_nested();
+      throw;
+    }
+    recover_memory_nested();
+
+    eta_adj_ = Eigen::VectorXd(eta_size_);
+    if (eta_size_ != 0) {  // TODO: instead, check if eta contains var.
+      VectorXd diff_eta = l_grad.tail(eta_size_);
+
+    Eigen::VectorXd v = (Eigen::MatrixXd::Identity(theta_size, theta_size)
+                          - R) * (covariance * s2);
+
+      eta_adj_ = l_grad.tail(eta_size_) + partial_parm.tail(eta_size_)
+        + diff_likelihood.diff_eta_implicit(v, theta, eta_dbl);
+    }
+
+// TODO: reimplement eta case.
+/*
     eta_adj_ = Eigen::VectorXd(eta_size_);
     if (eta_size_ != 0) {
      VectorXd diff_eta = diff_likelihood.diff_eta(theta, eta_dbl);
@@ -321,14 +448,14 @@ namespace math {
        eta_adj_(l) = diff_eta(l)
          + 0.5 * (W_root_inv.asDiagonal() * R * (covariance *
              elt_divide(diff2_theta_eta.col(l), W_root).asDiagonal())).trace()
+         + s2.dot(s3);
          // + 0.5 * (L.transpose().triangularView<Eigen::Upper>()
          //   .solve(L.triangularView<Eigen::Lower>()
          //    .solve(W_root.asDiagonal() * covariance * elt_divide(
          //      diff2_theta_eta.col(l), W_root).asDiagonal()
          //    ))).trace()
-         + s2.dot(s3);
      }
-   }
+   } */
 
      // auto end = std::chrono::system_clock::now();
      // std::chrono::duration<double> time = end - ;
@@ -338,30 +465,34 @@ namespace math {
       // and then following R&W's scheme.
       /*
        = std::chrono::system_clock::now();
-      covariance_sensitivities<K> f(x, delta, delta_int,
-                                    covariance_function, msgs);
-      Eigen::MatrixXd diff_cov;
-      {
-        Eigen::VectorXd covariance_vector;
-        jacobian_fwd(f, value_of(phi), covariance_vector, diff_cov);
-        // covariance = to_matrix(covariance_vector, theta_size, theta_size);
-      }
-
-      phi_adj_ = Eigen::VectorXd(phi_size_);
-
-      for (int j = 0; j < phi_size_; j++) {
-        Eigen::VectorXd j_col = diff_cov.col(j);
-        C = to_matrix(j_col, theta_size, theta_size);
-        double s1 = 0.5 * quad_form(C, a) - 0.5 * sum((R * C).diagonal());
-        Eigen::VectorXd b = C * l_grad;
-        Eigen::VectorXd s3 = b - covariance * (R * b);
-        // std::cout << "old Z: " << s1 + s2.dot(s3) << std::endl;
-        phi_adj_[j] = s1 + s2.dot(s3);
-      }
-      end = std::chrono::system_clock::now();
-      time = end - ;
-      std::cout << "Former diff: " << time.count() << std::endl;
       */
+      // covariance_sensitivities<K> f(x, delta, delta_int,
+      //                               covariance_function, msgs);
+      // Eigen::MatrixXd diff_cov;
+      // {
+      //   Eigen::VectorXd covariance_vector;
+      //   jacobian_fwd(f, value_of(phi), covariance_vector, diff_cov);
+      //   // covariance = to_matrix(covariance_vector, theta_size, theta_size);
+      // }
+      //
+      // phi_adj_ = Eigen::VectorXd(phi_size_);
+      //
+      // std::cout << "phi_adj: ";
+      // for (int j = 0; j < phi_size_; j++) {
+      //   Eigen::VectorXd j_col = diff_cov.col(j);
+      //   Eigen::MatrixXd C = to_matrix(j_col, theta_size, theta_size);
+      //   double s1 = 0.5 * quad_form(C, a) - 0.5 * sum((R * C).diagonal());
+      //   Eigen::VectorXd b = C * l_grad;
+      //   Eigen::VectorXd s3 = b - covariance * (R * b);
+      //   // std::cout << "old Z: " << s1 + s2.dot(s3) << std::endl;
+      //   phi_adj_[j] = s1 + s2.dot(s3);
+      //   std::cout << phi_adj_[j] << " ";
+      // }
+      // std::cout << std::endl;
+
+      // end = std::chrono::system_clock::now();
+      // time = end - ;
+      // std::cout << "Former diff: " << time.count() << std::endl;
     }
 
     void chain() {
@@ -418,11 +549,16 @@ namespace math {
        const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
        std::ostream* msgs = nullptr,
        double tolerance = 1e-6,
-       long int max_num_steps = 100) {
-    Eigen::VectorXd theta, W_root, a, l_grad;
+       long int max_num_steps = 100,
+       int hessian_block_size = 1) {
+    // Eigen::VectorXd theta, W_root, a, l_grad;
+    Eigen::VectorXd theta, a, l_grad;
+    // Eigen::MatrixXd W_root;
+    Eigen::SparseMatrix<double> W_root;
     Eigen::MatrixXd L;
     double marginal_density_dbl;
     Eigen::MatrixXd covariance;
+    Eigen::PartialPivLU<Eigen::MatrixXd> LU;
 
     // TEST
     // auto start = std::chrono::system_clock::now();
@@ -432,10 +568,11 @@ namespace math {
                                  covariance_function,
                                  value_of(phi), value_of(eta),
                                  x, delta, delta_int, covariance,
-                                 theta, W_root, L, a, l_grad,
+                                 theta, W_root, L, a, l_grad, LU,
                                  value_of(theta_0),
                                  msgs,
-                                 tolerance, max_num_steps);
+                                 tolerance, max_num_steps,
+                                 hessian_block_size);
 
     // TEST
     // auto end = std::chrono::system_clock::now();
@@ -452,8 +589,8 @@ namespace math {
                                           phi, eta, x, delta, delta_int,
                                           marginal_density_dbl,
                                           covariance,
-                                          theta, W_root, L, a, l_grad,
-                                          msgs);
+                                          theta, W_root, L, a, l_grad, LU,
+                                          msgs, hessian_block_size);
 
     var marginal_density = var(vi0->marginal_density_[0]);
 

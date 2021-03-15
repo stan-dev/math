@@ -35,7 +35,7 @@ namespace math {
     }
     fvar<var> fx_fvar = f(x_fvar, eta, delta, delta_int, pstream);
 
-    Matrix<fvar<fvar<var>>, -1, 1> x_ffvar(x_size);
+    Matrix<fvar<fvar<var>>, Dynamic, 1> x_ffvar(x_size);
     for (int i = 0; i < x_size; ++i) {
       x_ffvar(i) = fvar<fvar<var>>(x_fvar(i), w(i));
     }

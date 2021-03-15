@@ -73,12 +73,14 @@ protected:
 
 
 TEST_F(laplace_disease_map_test, lk_analytical) {
+
   // Based on (Vanhatalo, Pietilainen and Vethari, 2010). See
   // https://research.cs.aalto.fi/pml/software/gpstuff/demo_spatial1.shtml
   using stan::math::var;
   using stan::math::laplace_marginal_poisson_log_lpmf;
-  using stan::math::sqr_exp_kernel_functor;
 
+
+/*
   auto start = std::chrono::system_clock::now();
 
   var marginal_density
@@ -107,7 +109,7 @@ TEST_F(laplace_disease_map_test, lk_analytical) {
   // TODO(charlesm93): update signatures for rng functions.
   ////////////////////////////////////////////////////////////////////////
   // Let's now generate a sample theta from the estimated posterior
-  /*
+
   using stan::math::diff_poisson_log;
   using stan::math::to_vector;
   using stan::math::sqr_exp_kernel_functor;
@@ -175,7 +177,6 @@ TEST_F(laplace_disease_map_test, lk_autodiff) {
   using stan::math::var;
   using stan::math::laplace_marginal_density;
   using stan::math::diff_likelihood;
-  using stan::math::sqr_exp_kernel_functor;
 
   Eigen::VectorXd delta_lk(2 * n_observations);
   for (int i = 0; i < n_observations; i++) delta_lk(i) = y[i];
@@ -186,15 +187,33 @@ TEST_F(laplace_disease_map_test, lk_autodiff) {
     diff_functor(f, delta_lk, n_samples);
 
   auto start = std::chrono::system_clock::now();
-
   Eigen::Matrix<var, -1, 1> eta_dummy;
-  var marginal_density
+  int hessian_block_size = 1;
+  double marginal_density_dbl
     = laplace_marginal_density(diff_functor,
-                               sqr_exp_kernel_functor(), phi, eta_dummy,
-                               x, delta, delta_int, theta_0);
+                               sqr_exp_kernel_functor(),
+                               value_of(phi), value_of(eta_dummy),
+                               x, delta, delta_int, theta_0,
+                               0, 1e-6, 100, hessian_block_size);
 
   auto end = std::chrono::system_clock::now();
   std::chrono::duration<double> elapsed_time = end - start;
+
+  std::cout << "LAPLACE MARGINAL (dbl)" << std::endl
+            << "hessian block size: " << hessian_block_size << std::endl
+            << "density: " << marginal_density_dbl << std::endl
+            << "total time: " << elapsed_time.count() << std::endl;
+
+  start = std::chrono::system_clock::now();
+
+  var marginal_density
+    = laplace_marginal_density(diff_functor,
+                               sqr_exp_kernel_functor(), phi, eta_dummy,
+                               x, delta, delta_int, theta_0,
+                               0, 1e-6, 100, hessian_block_size);
+
+  end = std::chrono::system_clock::now();
+  elapsed_time = end - start;
 
   VEC g;
   AVEC parm_vec = createAVEC(phi(0), phi(1));
@@ -208,4 +227,62 @@ TEST_F(laplace_disease_map_test, lk_autodiff) {
   // Should return consistent evaluation of density and gradient as
   // previous iteration.
   // Expected run time: 0.39 s
+}
+
+TEST_F(laplace_disease_map_test, finite_diff_benchmark) {
+  ///////////////////////////////////////////////////////////////////
+  // finite_diff benchmark
+  using stan::math::var;
+  using stan::math::laplace_marginal_density;
+  using stan::math::diff_likelihood;
+
+  Eigen::VectorXd delta_lk(2 * n_observations);
+  for (int i = 0; i < n_observations; i++) delta_lk(i) = y[i];
+  for (int i = 0; i < n_observations; i++) delta_lk(n_observations + i) = ye(i);
+
+  poisson_log_likelihood f;
+  diff_likelihood<poisson_log_likelihood>
+    diff_functor(f, delta_lk, n_samples);
+  Eigen::Matrix<var, -1, 1> eta_dummy;
+
+  Eigen::VectorXd phi_dbl = value_of(phi);
+  Eigen::VectorXd phi_u0 = phi_dbl, phi_u1 = phi_dbl,
+                  phi_l0 = phi_dbl, phi_l1 = phi_dbl;
+  double eps = 1e-7;
+
+  int hessian_block_size = 1;
+
+  phi_u0(0) += eps;
+  phi_u1(1) += eps;
+  phi_l0(0) -= eps;
+  phi_l1(1) -= eps;
+
+  double target_u0 = laplace_marginal_density(diff_functor,
+                                 sqr_exp_kernel_functor(),
+                                 phi_u0, value_of(eta_dummy),
+                                 x, delta, delta_int, theta_0,
+                                 0, 1e-6, 100, hessian_block_size),
+
+  target_u1 = laplace_marginal_density(diff_functor,
+                                 sqr_exp_kernel_functor(),
+                                 phi_u1, value_of(eta_dummy),
+                                 x, delta, delta_int, theta_0,
+                                 0, 1e-6, 100, hessian_block_size),
+
+  target_l0 = laplace_marginal_density(diff_functor,
+                                       sqr_exp_kernel_functor(),
+                                       phi_l0, value_of(eta_dummy),
+                                       x, delta, delta_int, theta_0,
+                                       0, 1e-6, 100, hessian_block_size),
+
+  target_l1 = laplace_marginal_density(diff_functor,
+                                       sqr_exp_kernel_functor(),
+                                       phi_l1, value_of(eta_dummy),
+                                       x, delta, delta_int, theta_0,
+                                       0, 1e-6, 100, hessian_block_size);
+
+  std::cout << "Finite_diff benchmark: " << std::endl
+            << "grad: " << (target_u0 - target_l0) / (2 * eps)
+            << " " << (target_u1 - target_l1) / (2 * eps)
+            << std::endl;
 }

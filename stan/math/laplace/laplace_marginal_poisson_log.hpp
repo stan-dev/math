@@ -2,7 +2,7 @@
 #define STAN_MATH_LAPLACE_LAPLACE_MARGINAL_POISSON_LOG_HPP
 
 #include <stan/math/laplace/laplace_marginal.hpp>
-#include <stan/math/laplace/laplace_likelihood.hpp>
+#include <stan/math/laplace/laplace_likelihood_poisson_log.hpp>
 
 namespace stan {
 namespace math {

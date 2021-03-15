@@ -438,31 +438,6 @@ struct diff_student_t {
   }
 };
 
-
-// TO DO: delete this structure.
-// To experiment with the prototype, provide a built-in covariance
-// function. In the final version, the user will pass the covariance
-// function.
-struct sqr_exp_kernel_functor {
-  template <typename T1, typename T2>
-  Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic>
-  operator() (const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
-              const T2& x,
-              const std::vector<double>& delta,
-              const std::vector<int>& delta_int,
-              std::ostream* msgs = nullptr) const {
-    double jitter = 1e-8;
-    Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic>
-      kernel = stan::math::gp_exp_quad_cov(x, phi(0), phi(1));
-    for (int i = 0; i < kernel.cols(); i++)
-      kernel(i, i) += jitter;
-
-    return kernel;
-  }
-};
-
-
-
 }  // namespace math
 }  // namespace stan
 
