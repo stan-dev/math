@@ -69,13 +69,13 @@ functions {
                               rel_tol_f, rep_vector(abs_tol_f, num_states), // forward
                               rel_tol_b, rep_vector(abs_tol_b, num_states), // backward
                               rel_tol_q, abs_tol_q, // quadrature
-                              max_num_steps,
+                              max_num_steps, 
                               num_checkpoints, // number of steps between checkpoints
                               interpolation_polynomial,  // polynomials
                               solver_f,  // bdf forward
                               solver_b,  // bdf backward
                               kp, ks, e50, k12, k21);
-      /* simplified interface
+      /* simplified interface 
       y = ode_adjoint_tol(linked_mass_flow, a0, t0, ts, 
                               rel_tol, abs_tol,
                               max_num_steps,

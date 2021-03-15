@@ -19,12 +19,14 @@ stan_model_fixed_file <- "linked-mass-flow-fixed.stan"
 mod <- cmdstan_model(stan_model_file)
 mod_fixed <- cmdstan_model(stan_model_fixed_file)
 
-base_data <- list(rel_tol_f=1e-8,
-                  abs_tol_f=1e-8,
-                  rel_tol_b=1e-6,
-                  abs_tol_b=1e-6,
-                  rel_tol_q=1e-5,
-                  abs_tol_q=1e-5,
+rel_tol_f <- 1E-8
+abs_tol_f <- 1E-8
+base_data <- list(rel_tol_f=rel_tol_f,
+                  abs_tol_f=abs_tol_f,
+                  rel_tol_b=rel_tol_f * 100,
+                  abs_tol_b=abs_tol_f * 100,
+                  rel_tol_q=rel_tol_f * 1000,
+                  abs_tol_q=abs_tol_f * 1000,
                   adjoint_integrator=0,
                   max_num_steps=10000,
                   num_checkpoints=150,
@@ -88,9 +90,11 @@ str(summarize_benchmark(adjoint_fit))
 
 Lbdf_fit <- run_benchmark(adjoint_integrator=0, system_size=6, model=mod, num_iter=50)
 Ladjoint_fit <- run_benchmark(adjoint_integrator=1, solver_f=2, solver_b=2, system_size=6, model=mod, num_iter=50)
+Ladjoint_fit_2 <- run_benchmark(adjoint_integrator=1, solver_f=2, solver_b=2, system_size=6, model=mod, num_iter=50)
 
 str(summarize_benchmark(Lbdf_fit))
 str(summarize_benchmark(Ladjoint_fit))
+str(summarize_benchmark(Ladjoint_fit_2))
 
 ## there is no gain by adjoint method if there are not more parameters
 ## than states
