@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_OPENCL_KERNEL_GENERATOR_COLWISE_REDUCTION_HPP
-#define STAN_MATH_OPENCL_KERNEL_GENERATOR_COLWISE_REDUCTION_HPP
+#ifndef STAN_MATH_OPENCL_KERNEL_GENERATOR_REDUCTION_2D_HPP
+#define STAN_MATH_OPENCL_KERNEL_GENERATOR_REDUCTION_2D_HPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta.hpp>
@@ -9,6 +9,7 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
+#include <stan/math/opencl/kernel_generator/colwise_reduction.hpp>
 #include <stan/math/opencl/kernel_generator/rowwise_reduction.hpp>
 #include <stan/math/opencl/kernel_generator/calc_if.hpp>
 #include <map>
@@ -23,43 +24,26 @@ namespace math {
  */
 
 namespace internal {
-class colwise_reduction_base {};
-
-/**
- * Determine number of work groups in rows direction that will be run fro
- * colwise reduction of given size.
- * @param n_rows number of rows of expression to resuce
- * @param n_cols number of columns of expression to resuce
- * @return number of work groups in rows direction
- */
-inline int colwise_reduction_wgs_rows(int n_rows, int n_cols) {
-  int local = opencl_context.base_opts().at("LOCAL_SIZE_");
-  int preferred_work_groups
-      = opencl_context.device()[0].getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>() * 16;
-  // round up n_rows/local/n_cols
-  return (std::min(preferred_work_groups, (n_rows + local - 1) / local) + n_cols
-          - 1)
-         / n_cols;
-}
+class reduction_2d_base {};
 }  // namespace internal
 
 /**
- * Represents a column wise reduction in kernel generator expressions. So as to
- * be efficient column wise reductions are only done partially. That means
- * instead of 1 row kernel output will have a few rows that need to be reduced
- * to obtain final result (actually it is 1
+ * Represents a two dimensional reduction in kernel generator expressions. So as
+ * to be efficient two dimensional reductions are only done partially. That
+ * means instead of 1 element kernel output can have a few rows and a few
+ * columns that need to be reduced to obtain final result (actually it is 1
  * reslut per work group run - roughly 16 times the number of compute units on
- * the OpenCL device). This can be done in a separate kernel or after
- * copying to CPU. Also column wise reductions can not be used as arguments to
- * other operations - they can only be evaluated.
- * @tparam Derived derived type
+ * the OpenCL device). This can be done in a separate kernel or after copying to
+ * CPU. Also two dimensional reductions can not be used as arguments to other
+ * operations - they can only be evaluated.
+ * @tparam Derived Type derived from `reduction_2d`
  * @tparam T type of first argument
  * @tparam Operation type with member function generate that accepts two
  * variable names and returns OpenCL source code for reduction operation_cl
  */
 template <typename Derived, typename T, typename Operation>
-class colwise_reduction
-    : public internal::colwise_reduction_base,
+class reduction_2d
+    : public internal::reduction_2d_base,
       public operation_cl<Derived, typename std::remove_reference_t<T>::Scalar,
                           T> {
  public:
@@ -79,7 +63,7 @@ class colwise_reduction
    * @param a the expression to reduce
    * @param init OpenCL source code of initialization value for reduction
    */
-  explicit colwise_reduction(T&& a, const std::string& init)
+  explicit reduction_2d(T&& a, const std::string& init)
       : base(std::forward<T>(a)), init_(init) {}
 
   /**
@@ -106,9 +90,9 @@ class colwise_reduction
         generated, generated_all, ng, row_index_name, col_index_name);
 
     parts.args += out_parts.args;
-    parts.reduction_1d += "if (lid_i == 0) {\n"
+    parts.reduction_2d += "if (lid_i == 0) {\n"
                      + result.var_name_
-                     + "_global[j * n_groups_i + wg_id_i] = "
+                     + "_global[wg_id_j * n_groups_i + wg_id_i] = "
                      + derived().var_name_ + "_local[0];\n"
                      "}\n";
     return parts;
@@ -130,11 +114,10 @@ class colwise_reduction
     kernel_parts res;
     res.declarations = "__local " + type_str<Scalar>() + " " + var_name_
                        + "_local[LOCAL_SIZE_];\n" + type_str<Scalar>() + " "
-                       + var_name_ + ";\n";
-    res.initialization = var_name_ + " = " + init_ + ";\n";
+                       + var_name_ + " = " + init_ + ";\n";
     res.body = var_name_ + " = " + Operation::generate(var_name_, var_name_arg)
                + ";\n";
-    res.reduction_1d =
+    res.reduction_2d =
           var_name_ + "_local[lid_i] = " + var_name_ + ";\n"
           "barrier(CLK_LOCAL_MEM_FENCE);\n"
           "for (int step = lsize_i / REDUCTION_STEP_SIZE; "
@@ -162,10 +145,31 @@ class colwise_reduction
     if (arg_cols == 0) {
       return 1;
     }
-    if (arg_cols == -1) {
-      return -1;
+    if (arg_cols == base::dynamic) {
+      return base::dynamic;
     }
     return internal::colwise_reduction_wgs_rows(arg_rows, arg_cols);
+  }
+
+  /**
+   * Number of columns of a matrix that would be the result of evaluating this
+   * expression.
+   * @return number of columns
+   */
+  inline int cols() const {
+    int arg_rows = this->template get_arg<0>().rows();
+    int arg_cols = this->template get_arg<0>().cols();
+    if (arg_cols == 0) {
+      return 0;
+    }
+    if (arg_cols == base::dynamic) {
+      return base::dynamic;
+    }
+    int wgs_rows = internal::colwise_reduction_wgs_rows(arg_rows, arg_cols);
+    if (wgs_rows == 0) {
+      return 0;
+    }
+    return (arg_cols + wgs_rows - 1) / wgs_rows;
   }
 
   /**
@@ -173,6 +177,12 @@ class colwise_reduction
    * @return number of rows
    */
   inline int thread_rows() const { return this->template get_arg<0>().rows(); }
+
+  /**
+   * Number of rows threads need to be launched for.
+   * @return number of rows
+   */
+  inline int thread_cols() const { return this->template get_arg<0>().cols(); }
 
   /**
    * Determine indices of extreme sub- and superdiagonals written.
@@ -184,160 +194,154 @@ class colwise_reduction
 };  // namespace math
 
 /**
- * Represents column wise sum - reduction in kernel generator expressions.
+ * Represents two dimensional sum - reduction in kernel generator expressions.
  * @tparam T type of expression
  */
 template <typename T>
-class colwise_sum_ : public colwise_reduction<colwise_sum_<T>, T, sum_op> {
-  using base = colwise_reduction<colwise_sum_<T>, T, sum_op>;
+class sum_2d_ : public reduction_2d<sum_2d_<T>, T, sum_op> {
+  using base = reduction_2d<sum_2d_<T>, T, sum_op>;
   using base::arguments_;
 
  public:
-  explicit colwise_sum_(T&& a)
-      : colwise_reduction<colwise_sum_<T>, T, sum_op>(std::forward<T>(a), "0") {
-  }
+  explicit sum_2d_(T&& a)
+      : reduction_2d<sum_2d_<T>, T, sum_op>(std::forward<T>(a), "0") {}
   /**
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
   inline auto deep_copy() const {
     auto&& arg_copy = this->template get_arg<0>().deep_copy();
-    return colwise_sum_<std::remove_reference_t<decltype(arg_copy)>>(
+    return sum_2d_<std::remove_reference_t<decltype(arg_copy)>>(
         std::move(arg_copy));
   }
 };
 
 /**
- * Column wise sum - reduction of a kernel generator expression. So as to
- * be efficient column wise reductions are only done partially. That means
- * instead of 1 row kernel output will have a few rows that need to be reduced
- * to obtain final result (actually it is 1 reslut per work group run - roughly
- * 16 times the number of compute units on the OpenCL device). This can be done
- * in a separate kernel or after copying to CPU. Also column wise reductions can
- * not be used as arguments to other operations - they can only be evaluated.
+ * two dimensional sum - reduction of a kernel generator expression. So as to
+ * be efficient two dimensional reductions are only done partially. That means
+ * instead of 1 element kernel output can have a few rows and a few columns
+ * that need to be reduced to obtain final result (actually it is 1 reslut per
+ * work group run - roughly 16 times the number of compute units on the OpenCL
+ * device). This can be done in a separate kernel or after copying to CPU. Also
+ * two dimensional reductions can not be used as arguments to other operations -
+ * they can only be evaluated.
  * @tparam T type of input expression
  * @param a expression to reduce
  * @return sum
  */
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
-inline auto colwise_sum(T&& a) {
+inline auto sum_2d(T&& a) {
   auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
-  return colwise_sum_<as_operation_cl_t<T>>(
-      as_operation_cl(std::forward<T>(a)));
+  return sum_2d_<as_operation_cl_t<T>>(as_operation_cl(std::forward<T>(a)));
 }
 
 /**
- * Represents column wise max - reduction in kernel generator expressions.
+ * Represents two dimensional max - reduction in kernel generator expressions.
  * @tparam T type of expression
  */
 template <typename T>
-class colwise_max_ : public colwise_reduction<
-                         colwise_max_<T>, T,
-                         max_op<typename std::remove_reference_t<T>::Scalar>> {
+class max_2d_
+    : public reduction_2d<max_2d_<T>, T,
+                          max_op<typename std::remove_reference_t<T>::Scalar>> {
   using base
-      = colwise_reduction<colwise_max_<T>, T,
-                          max_op<typename std::remove_reference_t<T>::Scalar>>;
+      = reduction_2d<max_2d_<T>, T,
+                     max_op<typename std::remove_reference_t<T>::Scalar>>;
   using base::arguments_;
 
  public:
   using op = max_op<typename std::remove_reference_t<T>::Scalar>;
-  explicit colwise_max_(T&& a)
-      : colwise_reduction<colwise_max_<T>, T, op>(std::forward<T>(a),
-                                                  op::init()) {}
+  explicit max_2d_(T&& a)
+      : reduction_2d<max_2d_<T>, T, op>(std::forward<T>(a), op::init()) {}
   /**
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
   inline auto deep_copy() const {
     auto&& arg_copy = this->template get_arg<0>().deep_copy();
-    return colwise_max_<std::remove_reference_t<decltype(arg_copy)>>(
+    return max_2d_<std::remove_reference_t<decltype(arg_copy)>>(
         std::move(arg_copy));
   }
 };
 
 /**
- * Column wise max - reduction of a kernel generator expression. So as to
- * be efficient column wise reductions are only done partially. That means
- * instead of 1 row kernel output will have a few rows that need to be reduced
- * to obtain final result (actually it is 1 reslut per work group run - roughly
- * 16 times the number of compute units on the OpenCL device). This can be done
- * in a separate kernel or after copying to CPU. Also column wise reductions can
- * not be used as arguments to other operations - they can only be evaluated.
+ * two dimensional max - reduction of a kernel generator expression. So as to
+ * be efficient two dimensional reductions are only done partially. That means
+ * instead of 1 element kernel output can have a few rows and a few columns that
+ * need to be reduced to obtain final result (actually it is 1 reslut per work
+ * group run - roughly 16 times the number of compute units on the OpenCL
+ * device). This can be done in a separate kernel or after copying to CPU. Also
+ * two dimensional reductions can not be used as arguments to other operations -
+ * they can only be evaluated.
  * @tparam T type of input expression
  * @param a expression to reduce
  * @return max
  */
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
-inline auto colwise_max(T&& a) {
+inline auto max_2d(T&& a) {
   auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
-  return colwise_max_<as_operation_cl_t<T>>(
-      as_operation_cl(std::forward<T>(a)));
+  return max_2d_<as_operation_cl_t<T>>(as_operation_cl(std::forward<T>(a)));
 }
 
 /**
- * Represents column wise min - reduction in kernel generator expressions.
+ * Represents two dimensional min - reduction in kernel generator expressions.
  * @tparam T type of expression
  */
 template <typename T>
-class colwise_min_ : public colwise_reduction<
-                         colwise_min_<T>, T,
-                         min_op<typename std::remove_reference_t<T>::Scalar>> {
+class min_2d_
+    : public reduction_2d<min_2d_<T>, T,
+                          min_op<typename std::remove_reference_t<T>::Scalar>> {
   using base
-      = colwise_reduction<colwise_min_<T>, T,
-                          min_op<typename std::remove_reference_t<T>::Scalar>>;
+      = reduction_2d<min_2d_<T>, T,
+                     min_op<typename std::remove_reference_t<T>::Scalar>>;
   using base::arguments_;
 
  public:
   using op = min_op<typename std::remove_reference_t<T>::Scalar>;
-  explicit colwise_min_(T&& a)
-      : colwise_reduction<colwise_min_<T>, T, op>(std::forward<T>(a),
-                                                  op::init()) {}
+  explicit min_2d_(T&& a)
+      : reduction_2d<min_2d_<T>, T, op>(std::forward<T>(a), op::init()) {}
   /**
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
   inline auto deep_copy() const {
     auto&& arg_copy = this->template get_arg<0>().deep_copy();
-    return colwise_min_<std::remove_reference_t<decltype(arg_copy)>>(
+    return min_2d_<std::remove_reference_t<decltype(arg_copy)>>(
         std::move(arg_copy));
   }
 };
 
 /**
- * Column wise min - reduction of a kernel generator expression.  So as to
- * be efficient column wise reductions are only done partially. That means
+ * two dimensional min - reduction of a kernel generator expression.  So as to
+ * be efficient two dimensional reductions are only done partially. That means
  * instead of 1 row kernel output will have a few rows that need to be reduced
  * to obtain final result (actually it is 1 reslut per work group run - roughly
  * 16 times the number of compute units on the OpenCL device). This can be done
- * in a separate kernel or after copying to CPU. Also column wise reductions can
- * not be used as arguments to other operations - they can only be evaluated.
+ * in a separate kernel or after copying to CPU. Also two dimensional reductions
+ * can not be used as arguments to other operations - they can only be
+ * evaluated.
  * @tparam T type of input expression
  * @param a expression to reduce
  * @return min
  */
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
-inline auto colwise_min(T&& a) {
-  return colwise_min_<as_operation_cl_t<T>>(
-      as_operation_cl(std::forward<T>(a)));
+inline auto min_2d(T&& a) {
+  return min_2d_<as_operation_cl_t<T>>(as_operation_cl(std::forward<T>(a)));
 }
 
 namespace internal {
 template <typename T>
-struct is_colwise_reduction_impl
-    : public std::is_base_of<internal::colwise_reduction_base,
-                             std::decay_t<T>> {};
+struct is_reduction_2d_impl
+    : public std::is_base_of<internal::reduction_2d_base, std::decay_t<T>> {};
 template <typename T>
-struct is_colwise_reduction_impl<calc_if_<true, T>>
-    : public std::is_base_of<internal::colwise_reduction_base,
-                             std::decay_t<T>> {};
+struct is_reduction_2d_impl<calc_if_<true, T>>
+    : public std::is_base_of<internal::reduction_2d_base, std::decay_t<T>> {};
 }  // namespace internal
 
 /**
  * Check whether a kernel generator expression is a colwise reduction.
  */
 template <typename T>
-using is_colwise_reduction
-    = internal::is_colwise_reduction_impl<std::decay_t<T>>;
+using is_reduction_2d = internal::is_reduction_2d_impl<std::decay_t<T>>;
 
 /** @}*/
 }  // namespace math
