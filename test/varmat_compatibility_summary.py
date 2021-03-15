@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import argparse
 import json
 import sys
@@ -133,7 +135,6 @@ def processCLIArgs():
         print_fully = args.fully,
         print_names = args.names
     )
-
 
 if __name__ == "__main__":
     processCLIArgs()
