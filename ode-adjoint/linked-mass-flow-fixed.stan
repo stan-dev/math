@@ -76,8 +76,8 @@ functions {
   
 }
 data {
-  real<lower=0> rel_tol;
-  real<lower=0> abs_tol;
+  real<lower=0> rel_tol_f;
+  real<lower=0> abs_tol_f;
   int<lower=0,upper=1> adjoint_integrator;
   int<lower=1> max_num_steps;
   int<lower=1> num_checkpoints;
@@ -109,7 +109,7 @@ transformed data {
     ts[i] = 1.5 * ts[i-1];
   }
 
-  y_ = simulate_mean(t0, log_a0_, ts, 0, rel_tol, abs_tol, max_num_steps,
+  y_ = simulate_mean(t0, log_a0_, ts, 0, rel_tol_f, abs_tol_f, max_num_steps,
                      num_checkpoints,
                      interpolation_polynomial,
                      solver_f, solver_b,
@@ -127,8 +127,8 @@ transformed data {
   } else {
     print("Using bdf integrator.");
   }
-  print("relative tolerance: ", rel_tol);
-  print("absolute tolerance: ", abs_tol);
+  print("relative tolerance: ", rel_tol_f);
+  print("absolute tolerance: ", abs_tol_f);
   print("maximum number of steps: ", max_num_steps);
   print("number of checkpoints: ", num_checkpoints);
   print("interpolation polynomial: ", interpolation_polynomial);
@@ -156,7 +156,7 @@ model {
   vector[num_states] mu[num_obs];
 
   profile("ode") {
-    mu = simulate_mean(t0, log_a0, ts, adjoint_integrator, rel_tol, abs_tol, max_num_steps,
+    mu = simulate_mean(t0, log_a0, ts, adjoint_integrator, rel_tol_f, abs_tol_f, max_num_steps,
                        num_checkpoints,
                        interpolation_polynomial,
                        solver_f, solver_b,

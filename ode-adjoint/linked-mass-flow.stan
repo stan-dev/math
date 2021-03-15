@@ -33,7 +33,10 @@ functions {
   }
 
   vector[] simulate_mean(real t0, vector log_a0, real[] ts, int adjoint_integrator,
-                         real rel_tol, real abs_tol, int max_num_steps,
+                         real rel_tol_f, real abs_tol_f,
+                         real rel_tol_b, real abs_tol_b,
+                         real rel_tol_q, real abs_tol_q,
+                         int max_num_steps,
                          int num_checkpoints,
                          int interpolation_polynomial,
                          int solver_f, int solver_b,
@@ -63,9 +66,9 @@ functions {
 
     if(adjoint_integrator) {
       y = ode_adjoint_tol_ctl(linked_mass_flow, a0, t0, ts, 
-                              rel_tol, rep_vector(abs_tol/100.0, num_states), // forward
-                              rel_tol, rep_vector(abs_tol/10.0, num_states), // backward
-                              rel_tol, abs_tol, // quadrature
+                              rel_tol_f, rep_vector(abs_tol_f, num_states), // forward
+                              rel_tol_b, rep_vector(abs_tol_b, num_states), // backward
+                              rel_tol_q, abs_tol_q, // quadrature
                               max_num_steps,
                               num_checkpoints, // number of steps between checkpoints
                               interpolation_polynomial,  // polynomials
@@ -79,7 +82,9 @@ functions {
                               kp, ks, e50, k12, k21);
       */
     } else {
-      y = ode_bdf_tol(linked_mass_flow, a0, t0, ts, rel_tol, abs_tol, max_num_steps,
+      y = ode_bdf_tol(linked_mass_flow, a0, t0, ts,
+                      rel_tol_f, abs_tol_f,
+                      max_num_steps,
                       kp, ks, e50, k12, k21);
     }
 
@@ -88,8 +93,12 @@ functions {
   
 }
 data {
-  real<lower=0> rel_tol;
-  real<lower=0> abs_tol;
+  real<lower=0> rel_tol_f;
+  real<lower=0> abs_tol_f;
+  real<lower=0> rel_tol_b;
+  real<lower=0> abs_tol_b;
+  real<lower=0> rel_tol_q;
+  real<lower=0> abs_tol_q;
   int<lower=0,upper=1> adjoint_integrator;
   int<lower=1> max_num_steps;
   int<lower=1> num_checkpoints;
@@ -121,7 +130,11 @@ transformed data {
     ts[i] = 1.5 * ts[i-1];
   }
 
-  y_ = simulate_mean(t0, log_a0_, ts, 0, rel_tol, abs_tol, max_num_steps,
+  y_ = simulate_mean(t0, log_a0_, ts, 0,
+                     rel_tol_f, abs_tol_f,
+                     rel_tol_b, abs_tol_b,
+                     rel_tol_q, abs_tol_q,
+                     max_num_steps,
                      num_checkpoints,
                      interpolation_polynomial,
                      solver_f, solver_b,
@@ -139,8 +152,12 @@ transformed data {
   } else {
     print("Using bdf integrator.");
   }
-  print("relative tolerance: ", rel_tol);
-  print("absolute tolerance: ", abs_tol);
+  print("relative tolerance forward: ", rel_tol_f);
+  print("absolute tolerance forward: ", abs_tol_f);
+  print("relative tolerance backward: ", rel_tol_b);
+  print("absolute tolerance backward: ", abs_tol_b);
+  print("relative tolerance quadrature: ", rel_tol_q);
+  print("absolute tolerance quadrature: ", abs_tol_q);
   print("maximum number of steps: ", max_num_steps);
   print("number of checkpoints: ", num_checkpoints);
   print("interpolation polynomial: ", interpolation_polynomial);
@@ -168,7 +185,11 @@ model {
   vector[num_states] mu[num_obs];
 
   profile("ode") {
-    mu = simulate_mean(t0, log_a0, ts, adjoint_integrator, rel_tol, abs_tol, max_num_steps,
+    mu = simulate_mean(t0, log_a0, ts, adjoint_integrator,
+                       rel_tol_f, abs_tol_f,
+                       rel_tol_b, abs_tol_b,
+                       rel_tol_q, abs_tol_q,
+                       max_num_steps,
                        num_checkpoints,
                        interpolation_polynomial,
                        solver_f, solver_b,

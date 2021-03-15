@@ -19,8 +19,12 @@ stan_model_fixed_file <- "linked-mass-flow-fixed.stan"
 mod <- cmdstan_model(stan_model_file)
 mod_fixed <- cmdstan_model(stan_model_fixed_file)
 
-base_data <- list(rel_tol=1e-6,
-                  abs_tol=1e-4,
+base_data <- list(rel_tol_f=1e-8,
+                  abs_tol_f=1e-8,
+                  rel_tol_b=1e-6,
+                  abs_tol_b=1e-6,
+                  rel_tol_q=1e-5,
+                  abs_tol_q=1e-5,
                   adjoint_integrator=0,
                   max_num_steps=10000,
                   num_checkpoints=150,
