@@ -189,7 +189,7 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
 template <typename T1, typename T2, typename F, require_eigen_t<T1>* = nullptr,
           require_stan_scalar_t<T2>* = nullptr>
 inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
-  return x.unaryExpr([&f, &y](const auto& v) { return f(v, y); });
+  return x.unaryExpr([&f, y](const auto& v) { return f(v, y); });
 }
 
 /**
@@ -213,7 +213,7 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
 template <typename T1, typename T2, typename F,
           require_stan_scalar_t<T1>* = nullptr, require_eigen_t<T2>* = nullptr>
 inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
-  return y.unaryExpr([&f, &x](const auto& v) { return f(x, v); });
+  return y.unaryExpr([&f, x](const auto& v) { return f(x, v); });
 }
 
 /**
