@@ -13,7 +13,9 @@ build_folder = "./test/expressions/"
 
 test_code_template = """
 TEST(ExpressionTest{overload}, {test_name}) {{
-//{comment}
+/*
+{comment}
+ */
 {code}
 }}
 """

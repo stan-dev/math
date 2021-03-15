@@ -39,7 +39,7 @@ class IntVariable(CppStatement):
         if value is None:
             self.value = 1
         else:
-            self.value = value
+            self.value = int(value)
 
     def cpp(self):
         """Generate C++"""
