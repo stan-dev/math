@@ -67,7 +67,7 @@ def main(functions=(), j=1):
 
     if not functions and not signatures:
         default_checks = True
-        signatures |= get_signatures()
+        signatures |= set(get_signatures())
     else:
         for signature in get_signatures():
             sp = SignatureParser(signature)
