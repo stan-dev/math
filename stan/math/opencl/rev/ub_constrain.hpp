@@ -44,7 +44,8 @@ inline var_value<matrix_cl<double>> ub_constrain(T_x&& x, T_ub&& ub) {
       [x_arena, ub_arena](vari_value<matrix_cl<double>>& res) mutable {
         auto ub_inf = value_of(ub_arena) == INFTY;
         adjoint_results(x_arena, ub_arena) += expressions(
-            select(ub_inf, res.adj(), -elt_multiply(res.adj(), exp(value_of(x_arena)))),
+            select(ub_inf, res.adj(),
+                   -elt_multiply(res.adj(), exp(value_of(x_arena)))),
             select(ub_inf, 0, res.adj()));
       });
 }

@@ -307,7 +307,8 @@ template <typename Functor, typename... Args>
 void compare_cpu_opencl_prim(const Functor& functor, const Args&... args) {
   auto res_cpu = eval(functor(args...));
   auto res_opencl = eval(functor(internal::opencl_argument(args)...));
-  internal::expect_eq(res_cpu, res_opencl, "CPU and OpenCL return values do not match!");
+  internal::expect_eq(res_cpu, res_opencl,
+                      "CPU and OpenCL return values do not match!");
 }
 
 /**

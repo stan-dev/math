@@ -39,7 +39,7 @@ template <typename T, typename M, typename S,
           require_any_var_t<T, M, S>* = nullptr>
 inline var_value<matrix_cl<double>> offset_multiplier_constrain(T&& A, M&& mu,
                                                                 S&& sigma) {
-  if(A.size()==0){
+  if (A.size() == 0) {
     return A;
   }
   arena_t<T> A_arena = std::forward<T>(A);
@@ -87,7 +87,7 @@ template <typename T, typename M, typename S,
 inline var_value<matrix_cl<double>> offset_multiplier_constrain(T&& A, M&& mu,
                                                                 S&& sigma,
                                                                 var& lp) {
-  if(A.size()==0){
+  if (A.size() == 0) {
     return A;
   }
   arena_t<T> A_arena = std::forward<T>(A);

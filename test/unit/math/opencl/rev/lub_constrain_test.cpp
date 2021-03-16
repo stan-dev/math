@@ -67,17 +67,20 @@ TEST(OpenCLLubConstrain, prim_rev_size_0) {
   double c_scal = 8;
 
   stan::math::test::compare_cpu_opencl_prim_rev(lub_constrain_functor, a, b, c);
-  stan::math::test::compare_cpu_opencl_prim_rev(lub_constrain_functor, a, b_scal, c);
-  stan::math::test::compare_cpu_opencl_prim_rev(lub_constrain_functor, a, b, c_scal);
-  stan::math::test::compare_cpu_opencl_prim_rev(lub_constrain_functor, a, b_scal, c_scal);
+  stan::math::test::compare_cpu_opencl_prim_rev(lub_constrain_functor, a,
+                                                b_scal, c);
+  stan::math::test::compare_cpu_opencl_prim_rev(lub_constrain_functor, a, b,
+                                                c_scal);
+  stan::math::test::compare_cpu_opencl_prim_rev(lub_constrain_functor, a,
+                                                b_scal, c_scal);
   stan::math::test::compare_cpu_opencl_prim_rev(lub_constrain_functor2, a, b,
                                                 c);
-  stan::math::test::compare_cpu_opencl_prim_rev(lub_constrain_functor2, a, b_scal,
-                                                c);
+  stan::math::test::compare_cpu_opencl_prim_rev(lub_constrain_functor2, a,
+                                                b_scal, c);
   stan::math::test::compare_cpu_opencl_prim_rev(lub_constrain_functor2, a, b,
                                                 c_scal);
-  stan::math::test::compare_cpu_opencl_prim_rev(lub_constrain_functor2, a, b_scal,
-                                                c_scal);
+  stan::math::test::compare_cpu_opencl_prim_rev(lub_constrain_functor2, a,
+                                                b_scal, c_scal);
   stan::math::test::compare_cpu_opencl_prim_rev(lub_constrain_functor3, a, b,
                                                 c);
   stan::math::test::compare_cpu_opencl_prim_rev(lub_constrain_functor3, a,
