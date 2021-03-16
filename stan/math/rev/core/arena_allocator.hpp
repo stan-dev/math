@@ -85,7 +85,7 @@ struct arena_allocator {
    * No-op. If anything needs destroyed on the stack this happens
    *  when calling `recover_memory()`.
    */
-  static inline void destroy(pointer p) { }
+  static inline void destroy(pointer p) {}
 
   /**
    * Returns the actual address of x even in presence of overloaded operator&

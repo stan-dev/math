@@ -173,8 +173,9 @@ normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
         mu_derivative_cl.buffer(), 1, mu_derivative_cl.rows());
     matrix_cl<double> edge4_partials_transpose_cl
         = mu_derivative_transpose_cl * x_val;
-    ops_partials.edge4_.partials_ = matrix_cl<double>(edge4_partials_transpose_cl.buffer(),
-                                       edge4_partials_transpose_cl.cols(), 1);
+    ops_partials.edge4_.partials_
+        = matrix_cl<double>(edge4_partials_transpose_cl.buffer(),
+                            edge4_partials_transpose_cl.cols(), 1);
     if (beta_val.rows() != 0) {
       ops_partials.edge4_.partials_.add_write_event(
           edge4_partials_transpose_cl.write_events().back());
