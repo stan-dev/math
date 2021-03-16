@@ -178,7 +178,6 @@ pipeline {
                         unstash 'MathSetup'
                         script {
                             sh "echo O=0 > make/local"
-			    sh "echo STANC3_TEST_BIN_URL=nightly >> make/local"
                             withEnv(['PATH+TBB=./lib/tbb']) {
                                 try { sh "./runTests.py -j${env.PARALLEL} test/expressions" }
                                 finally { junit 'test/**/*.xml' }
