@@ -234,7 +234,7 @@ pipeline {
                             !skipOpenCL
                         }
                     }
-                    agent { label "gelman-group-win2 || gg-linux" }
+                    agent { label "gelman-group-win2 || linux-gpu" }
                     steps {
                         script {
                             if (isUnix()) {
@@ -242,8 +242,8 @@ pipeline {
                                 unstash 'MathSetup'
                                 sh "echo CXX=${env.CXX} -Werror > make/local"
                                 sh "echo STAN_OPENCL=true>> make/local"
-                                sh "echo OPENCL_PLATFORM_ID=0>> make/local"
-                                sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
+                                sh "echo OPENCL_PLATFORM_ID=${env.OPENCL_PLATFORM_ID_CPU}>> make/local"
+                                sh "echo OPENCL_DEVICE_ID=${env.OPENCL_DEVICE_ID_CPU}>> make/local"
                                 runTests("test/unit/math/opencl", false)
                                 runTests("test/unit/multiple_translation_units_test.cpp")
                             } else {
@@ -251,8 +251,8 @@ pipeline {
                                 unstash 'MathSetup'
                                 bat "echo CXX=${env.CXX} -Werror > make/local"
                                 bat "echo STAN_OPENCL=true >> make/local"
-                                bat "echo OPENCL_PLATFORM_ID=1 >> make/local"
-                                bat "echo OPENCL_DEVICE_ID=0 >> make/local"
+                                bat "echo OPENCL_PLATFORM_ID=${env.OPENCL_PLATFORM_ID_CPU} >> make/local"
+                                bat "echo OPENCL_DEVICE_ID=${env.OPENCL_DEVICE_ID_CPU} >> make/local"
                                 bat 'echo LDFLAGS_OPENCL= -L"C:\\Program Files (x86)\\IntelSWTools\\system_studio_2020\\OpenCL\\sdk\\lib\\x64" -lOpenCL >> make/local'
                                 bat "mingw32-make.exe -f make/standalone math-libs"
                                 runTestsWin("test/unit/math/opencl", false, false)
@@ -262,7 +262,7 @@ pipeline {
                     }
                 }
                 stage('OpenCL GPU tests') {
-                    agent { label "gelman-group-win2 || gg-linux" }
+                    agent { label "gelman-group-win2 || linux-gpu" }
                     steps {
                         script {
                             if (isUnix()) {
@@ -270,8 +270,8 @@ pipeline {
                                 unstash 'MathSetup'
                                 sh "echo CXX=${env.CXX} -Werror > make/local"
                                 sh "echo STAN_OPENCL=true>> make/local"
-                                sh "echo OPENCL_PLATFORM_ID=1>> make/local"
-                                sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID}>> make/local"
+                                sh "echo OPENCL_PLATFORM_ID=${env.OPENCL_PLATFORM_ID_GPU} >> make/local"
+                                sh "echo OPENCL_DEVICE_ID=${env.OPENCL_DEVICE_ID_GPU} >> make/local"
                                 runTests("test/unit/math/opencl", false)
                                 runTests("test/unit/multiple_translation_units_test.cpp")
                             } else {
@@ -279,8 +279,8 @@ pipeline {
                                 unstash 'MathSetup'
                                 bat "echo CXX=${env.CXX} -Werror > make/local"
                                 bat "echo STAN_OPENCL=true >> make/local"
-                                bat "echo OPENCL_PLATFORM_ID=0 >> make/local"
-                                bat "echo OPENCL_DEVICE_ID=0 >> make/local"
+                                bat "echo OPENCL_PLATFORM_ID=${env.OPENCL_PLATFORM_ID_GPU} >> make/local"
+                                bat "echo OPENCL_DEVICE_ID=${env.OPENCL_DEVICE_ID_GPU} >> make/local"
                                 bat 'echo LDFLAGS_OPENCL= -L"C:\\Program Files (x86)\\IntelSWTools\\system_studio_2020\\OpenCL\\sdk\\lib\\x64" -lOpenCL >> make/local'
                                 bat "mingw32-make.exe -f make/standalone math-libs"
                                 runTestsWin("test/unit/math/opencl", false, false)
@@ -303,6 +303,7 @@ pipeline {
                         script {
                             if (params.withRowVector || isBranch('develop') || isBranch('master')) {
                                 sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
+                                sh "echo CXXFLAGS+=-DSTAN_PROB_TEST_ALL >> make/local"
                             }
                         }
                         sh "./runTests.py -j${env.PARALLEL} test/prob > dist.log 2>&1"
@@ -358,7 +359,7 @@ pipeline {
                         deleteDirWin()
                         unstash 'MathSetup'
                         bat "mingw32-make.exe -f make/standalone math-libs"
-                        runTestsWin("test/unit", false, true)
+                        runTestsWin("test/unit", false, false)
                     }
                 }
             }

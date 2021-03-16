@@ -80,26 +80,29 @@ struct multi_result_kernel_internal {
         expression_cols = n_cols;
         expression_rows = internal::colwise_reduction_wgs_rows(
             expression.thread_rows(), expression_cols);
-      }
-      if (is_reduction_2d<T_current_expression>::value
-          && expression_cols == -1) {
-        expression_rows = internal::colwise_reduction_wgs_rows(
-            expression.thread_rows(), n_cols);
-        expression_cols = (n_cols + expression_rows - 1) / expression_rows;
-      }
-      if (expression.thread_rows() != -1) {
-        check_size_match(function, "Rows of ", "expression",
-                         expression.thread_rows(), "rows of ",
-                         "first expression", n_rows);
+      } else if (is_reduction_2d<T_current_expression>::value
+                 && expression_cols == -1) {
+        expression_rows = internal::colwise_reduction_wgs_rows(n_rows, n_cols);
+        if (expression_rows == 0) {
+          expression_cols = 0;
+        } else {
+          expression_cols = (n_cols + expression_rows - 1) / expression_rows;
+        }
       } else {
-        expression_rows = n_rows;
-      }
-      if (expression.thread_cols() != -1) {
-        check_size_match(function, "Columns of ", "expression",
-                         expression.thread_cols(), "columns of ",
-                         "first expression", n_cols);
-      } else {
-        expression_cols = n_cols;
+        if (expression.thread_rows() != -1) {
+          check_size_match(function, "Rows of ", "expression",
+                           expression.thread_rows(), "rows of ",
+                           "first expression", n_rows);
+        } else {
+          expression_rows = n_rows;
+        }
+        if (expression.thread_cols() != -1) {
+          check_size_match(function, "Columns of ", "expression",
+                           expression.thread_cols(), "columns of ",
+                           "first expression", n_cols);
+        } else {
+          expression_cols = n_cols;
+        }
       }
       result.check_assign_dimensions(expression_rows, expression_cols);
       int bottom_written = 1 - expression.rows();

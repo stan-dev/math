@@ -31,10 +31,12 @@ class reduction_2d_base {};
  * Represents a two dimensional reduction in kernel generator expressions. So as
  * to be efficient two dimensional reductions are only done partially. That
  * means instead of 1 element kernel output can have a few rows and a few
- * columns that need to be reduced to obtain final result. This can be done in a
- * separate kernel or after copying to CPU. Also two dimensional reductions can
- * not be used as arguments to other operations - they can only be evaluated.
- * @tparam Derived derived type
+ * columns that need to be reduced to obtain final result (actually it is 1
+ * reslut per work group run - roughly 16 times the number of compute units on
+ * the OpenCL device). This can be done in a separate kernel or after copying to
+ * CPU. Also two dimensional reductions can not be used as arguments to other
+ * operations - they can only be evaluated.
+ * @tparam Derived Type derived from `reduction_2d`
  * @tparam T type of first argument
  * @tparam Operation type with member function generate that accepts two
  * variable names and returns OpenCL source code for reduction operation_cl
@@ -143,8 +145,8 @@ class reduction_2d
     if (arg_cols == 0) {
       return 1;
     }
-    if (arg_cols == -1) {
-      return -1;
+    if (arg_cols == base::dynamic) {
+      return base::dynamic;
     }
     return internal::colwise_reduction_wgs_rows(arg_rows, arg_cols);
   }
@@ -160,8 +162,8 @@ class reduction_2d
     if (arg_cols == 0) {
       return 0;
     }
-    if (arg_cols == -1) {
-      return -1;
+    if (arg_cols == base::dynamic) {
+      return base::dynamic;
     }
     int wgs_rows = internal::colwise_reduction_wgs_rows(arg_rows, arg_cols);
     if (wgs_rows == 0) {
@@ -218,9 +220,11 @@ class sum_2d_ : public reduction_2d<sum_2d_<T>, T, sum_op> {
  * two dimensional sum - reduction of a kernel generator expression. So as to
  * be efficient two dimensional reductions are only done partially. That means
  * instead of 1 element kernel output can have a few rows and a few columns
- * that need to be reduced to obtain final result. This can be done in a
- * separate kernel or after copying to CPU. Also two dimensional reductions can
- * not be used as arguments to other operations - they can only be evaluated.
+ * that need to be reduced to obtain final result (actually it is 1 reslut per
+ * work group run - roughly 16 times the number of compute units on the OpenCL
+ * device). This can be done in a separate kernel or after copying to CPU. Also
+ * two dimensional reductions can not be used as arguments to other operations -
+ * they can only be evaluated.
  * @tparam T type of input expression
  * @param a expression to reduce
  * @return sum
@@ -263,9 +267,11 @@ class max_2d_
  * two dimensional max - reduction of a kernel generator expression. So as to
  * be efficient two dimensional reductions are only done partially. That means
  * instead of 1 element kernel output can have a few rows and a few columns that
- * need to be reduced to obtain final result. This can be done in a separate
- * kernel or after copying to CPU. Also two dimensional reductions can not be
- * used as arguments to other operations - they can only be evaluated.
+ * need to be reduced to obtain final result (actually it is 1 reslut per work
+ * group run - roughly 16 times the number of compute units on the OpenCL
+ * device). This can be done in a separate kernel or after copying to CPU. Also
+ * two dimensional reductions can not be used as arguments to other operations -
+ * they can only be evaluated.
  * @tparam T type of input expression
  * @param a expression to reduce
  * @return max
@@ -308,9 +314,11 @@ class min_2d_
  * two dimensional min - reduction of a kernel generator expression.  So as to
  * be efficient two dimensional reductions are only done partially. That means
  * instead of 1 row kernel output will have a few rows that need to be reduced
- * to obtain final result. This can be done in a separate kernel or after
- * copying to CPU. Also two dimensional reductions can not be used as arguments
- * to other operations - they can only be evaluated.
+ * to obtain final result (actually it is 1 reslut per work group run - roughly
+ * 16 times the number of compute units on the OpenCL device). This can be done
+ * in a separate kernel or after copying to CPU. Also two dimensional reductions
+ * can not be used as arguments to other operations - they can only be
+ * evaluated.
  * @tparam T type of input expression
  * @param a expression to reduce
  * @return min
