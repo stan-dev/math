@@ -171,6 +171,33 @@ pipeline {
                 }
             }
         }
+	        stage('Math functions expressions test') {
+                    agent any
+                    steps {
+                        unstash 'MathSetup'
+                        setupCXX(true, env.CXX, stanc3_bin_url())
+                        script {
+                            sh "echo O=0 > make/local"
+                            withEnv(['PATH+TBB=./lib/tbb']) {
+                                try { sh "./runTests.py -j${env.PARALLEL} test/expressions" }
+                                finally { junit 'test/**/*.xml' }
+                            }
+                            withEnv(['PATH+TBB=./lib/tbb']) {
+                                sh "python ./test/expressions/test_expression_testing_framework.py"
+                            }
+                            sh "make clean-all"
+                            sh "echo STAN_THREADS=true >> make/local"
+                            withEnv(['PATH+TBB=./lib/tbb']) {
+                                try {
+				    sh "./runTests.py -j${env.PARALLEL} test/expressions --only-functions reduce_sum map_rect"
+				}
+                                finally { junit 'test/**/*.xml' }
+                            }
+                        }
+                    }
+                    post { always { deleteDir() } }
+                }
+
         stage('Headers check') {
             when {
                 expression {
