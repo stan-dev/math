@@ -18,8 +18,8 @@ namespace math {
  *
  * @tparam T type of the container
  *
- * @param m Specified container.
- * @return Sample variance.
+ * @param a Specified container.
+ * @return Sample standard deviation.
  */
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>

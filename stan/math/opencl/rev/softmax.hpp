@@ -13,9 +13,9 @@ namespace math {
 /**
  * Returns softmax of given argument.
  *
- * @tparam T1 type of the argument
+ * @tparam T type of the argument
  *
- * @param v argument
+ * @param A argument
  * @return Softmax of the argument
  */
 template <typename T,

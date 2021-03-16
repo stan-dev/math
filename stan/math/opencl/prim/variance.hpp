@@ -15,8 +15,8 @@ namespace math {
 /**
  * Return the softmax of the specified vector.
  *
- * @tparam ColVec type of elements in the vector
- * @param[in] v Vector to transform.
+ * @tparam T type of elements in the vector
+ * @param[in] a Vector to transform.
  * @return Unit simplex result of the softmax transform of the vector.
  */
 template <typename T,

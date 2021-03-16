@@ -11,15 +11,12 @@ namespace stan {
 namespace math {
 
 /**
- * Returns the dot product.
+ * Return log of the softmax of the specified vector.
  *
- * @tparam T1 type of the first vector
- * @tparam T2 type of the second vector
+ * @tparam T type of the vector
  *
- * @param[in] v1 First vector.
- * @param[in] v2 Second vector.
- * @return Dot product of the vectors.
- * @throw std::domain_error if sizes of v1 and v2 do not match.
+ * @param[in] A vector
+ * @return log of the softmax
  */
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>

@@ -13,7 +13,7 @@ namespace math {
 
 /**
  * Return the log of the sum of the exponentiated values of the specified
- * matrix of values.  The matrix may be a full matrix, a vector,
+ * matrix of values. The matrix may be a full matrix, a vector,
  * a row vector.
  *
  * The function is defined as follows to prevent overflow in exponential
@@ -23,12 +23,13 @@ namespace math {
  * \max(x))\f$.
  *
  * @tparam T type of input vector or matrix
- * @param[in] x matrix of specified values
- * @return The log of the sum of the exponentiated vector values.
+ * @param[in] a matrix of specified values
+ * @return the log of the sum of the exponentiated vector values
  */
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
 inline double log_sum_exp(const T& a) {
+  using std::log;
   if (a.size() == 0) {
     return NEGATIVE_INFTY;
   }

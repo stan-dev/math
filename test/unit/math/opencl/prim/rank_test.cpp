@@ -3,7 +3,7 @@
 #include <stan/math/opencl/prim.hpp>
 #include <test/unit/util.hpp>
 
-TEST(MathMatrixCL, sign_test) {
+TEST(MathMatrixCL, rank_test) {
   Eigen::VectorXd x(7);
   x << 0.2, -0.8, 0, -0.1, INFINITY, -INFINITY, -1.5;
 

@@ -14,9 +14,9 @@ namespace math {
  * Return the sample standard deviation of the var_value matrix
  *
  * @tparam T Input type
- * @param[in] x input matrix
+ * @param[in] A input matrix
  * @return sample standard deviation of specified matrix
- * @throw domain error  size is not greater than zero.
+ * @throw domain error size is not greater than zero.
  */
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>

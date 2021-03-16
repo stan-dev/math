@@ -14,9 +14,9 @@ namespace math {
 /**
  * Return the softmax of the specified vector.
  *
- * @tparam ColVec type of elements in the vector
- * @param[in] v Vector to transform.
- * @return Unit simplex result of the softmax transform of the vector.
+ * @tparam T type of the vector
+ * @param[in] a Vector to transform.
+ * @return softmax of the vector
  */
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
