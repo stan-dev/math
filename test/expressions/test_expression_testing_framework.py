@@ -30,23 +30,23 @@ class TestExpressionTestingFramework(unittest.TestCase):
     def testMultipleEvaluationsFailure(self):
         return_code, stdout, stderr = self.runCommand((sys.executable, "./runTests.py", "./test/expressions", "-e1", "--only-functions", "bad_multiple_evaluations(matrix) => matrix"))
         self.assertNotEqual(return_code, 0)
-        self.assertStdoutContains("[  FAILED  ] ExpressionTestPrim.bad_multiple_evaluations_0", stdout, stderr)
-        self.assertStdoutContains("[  FAILED  ] ExpressionTestRev.bad_multiple_evaluations_0", stdout, stderr)
-        self.assertStdoutContains("[  FAILED  ] ExpressionTestFwd.bad_multiple_evaluations_0", stdout, stderr)
+        self.assertStdoutContains("[  FAILED  ] ExpressionTestPrim.bad_multiple_evaluations0", stdout, stderr)
+        self.assertStdoutContains("[  FAILED  ] ExpressionTestRev.bad_multiple_evaluations0", stdout, stderr)
+        self.assertStdoutContains("[  FAILED  ] ExpressionTestFwd.bad_multiple_evaluations0", stdout, stderr)
 
     def testWrongResultFailure(self):
         return_code, stdout, stderr = self.runCommand((sys.executable, "./runTests.py", "./test/expressions", "-e1", "--only-functions", "bad_wrong_value(matrix) => real"))
         self.assertNotEqual(return_code, 0)
-        self.assertStdoutContains("[  FAILED  ] ExpressionTestPrim.bad_wrong_value_0", stdout, stderr)
-        self.assertStdoutContains("[  FAILED  ] ExpressionTestRev.bad_wrong_value_0", stdout, stderr)
-        self.assertStdoutContains("[  FAILED  ] ExpressionTestFwd.bad_wrong_value_0", stdout, stderr)
+        self.assertStdoutContains("[  FAILED  ] ExpressionTestPrim.bad_wrong_value0", stdout, stderr)
+        self.assertStdoutContains("[  FAILED  ] ExpressionTestRev.bad_wrong_value0", stdout, stderr)
+        self.assertStdoutContains("[  FAILED  ] ExpressionTestFwd.bad_wrong_value0", stdout, stderr)
 
     def testWrongDerivativeFailure(self):
         return_code, stdout, stderr = self.runCommand((sys.executable, "./runTests.py", "./test/expressions", "-e1", "--only-functions", "bad_wrong_derivatives(vector) => real"))
         self.assertNotEqual(return_code, 0)
-        self.assertStdoutContains("[       OK ] ExpressionTestPrim.bad_wrong_derivatives_0", stdout, stderr)
-        self.assertStdoutContains("[  FAILED  ] ExpressionTestRev.bad_wrong_derivatives_0", stdout, stderr)
-        self.assertStdoutContains("[  FAILED  ] ExpressionTestFwd.bad_wrong_derivatives_0", stdout, stderr)
+        self.assertStdoutContains("[       OK ] ExpressionTestPrim.bad_wrong_derivatives0", stdout, stderr)
+        self.assertStdoutContains("[  FAILED  ] ExpressionTestRev.bad_wrong_derivatives0", stdout, stderr)
+        self.assertStdoutContains("[  FAILED  ] ExpressionTestFwd.bad_wrong_derivatives0", stdout, stderr)
 
 
 if __name__ == '__main__':
