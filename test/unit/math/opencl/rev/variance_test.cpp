@@ -4,8 +4,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
 
-auto variance_functor
-    = [](const auto& a) { return stan::math::variance(a); };
+auto variance_functor = [](const auto& a) { return stan::math::variance(a); };
 
 TEST(OpenCLVariance, prim_rev_values_small) {
   Eigen::VectorXd a(8);

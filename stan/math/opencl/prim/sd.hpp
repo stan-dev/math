@@ -24,7 +24,7 @@ namespace math {
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
 inline double sd(const T& a) {
-return sqrt(variance(a));
+  return sqrt(variance(a));
 }
 
 }  // namespace math

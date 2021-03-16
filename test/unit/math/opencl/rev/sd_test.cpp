@@ -4,8 +4,7 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
 
-auto sd_functor
-    = [](const auto& a) { return stan::math::sd(a); };
+auto sd_functor = [](const auto& a) { return stan::math::sd(a); };
 
 TEST(OpenCLSd, prim_rev_values_small) {
   Eigen::VectorXd a(8);

@@ -25,8 +25,7 @@ template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
 inline var_value<matrix_cl<double>> log_softmax(const var_value<T>& A) {
   return make_callback_var(
-      log_softmax(A.val()),
-      [A](vari_value<matrix_cl<double>>& res) mutable {
+      log_softmax(A.val()), [A](vari_value<matrix_cl<double>>& res) mutable {
         A.adj() += res.adj() - sum(res.adj()) * exp(res.val());
       });
 }

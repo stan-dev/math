@@ -4,7 +4,8 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/opencl/util.hpp>
 
-auto log_softmax_functor = [](const auto& a) { return stan::math::log_softmax(a); };
+auto log_softmax_functor
+    = [](const auto& a) { return stan::math::log_softmax(a); };
 
 TEST(OpenCLLogSoftmax, prim_rev_values_small) {
   Eigen::VectorXd a(8);
