@@ -16,8 +16,8 @@ namespace stan {
 namespace math {
 
 /**
- * Return the lower-bounded value for the specified unconstrained input
- * and specified lower bound.
+ * Return the bounded value for the specified unconstrained input
+ * and specified bounds.
  *
  * <p>The transform applied is
  *
@@ -25,10 +25,12 @@ namespace math {
  *
  * <p>where \f$L\f$ is the constant lower bound.
  *
- * @tparam T kernel generator expression
- * @tparam L kernel generator expression
+ * @tparam T_x type of the unconstrained input
+ * @tparam T_lb type of lower bound
+ * @tparam T_ub type of upper bound
  * @param[in] x unconstrained input
  * @param[in] lb lower bound
+ * @param[in] ub upper bound
  * @return constrained matrix
  */
 template <
@@ -69,8 +71,8 @@ inline var_value<matrix_cl<double>> lub_constrain(T_x&& x, T_lb&& lb,
 }
 
 /**
- * Return the lower-bounded value for the specified unconstrained input
- * and specified lower bound.
+ * Return the bounded value for the specified unconstrained input
+ * and specified bounds.
  *
  * <p>The transform applied is
  *
@@ -78,10 +80,12 @@ inline var_value<matrix_cl<double>> lub_constrain(T_x&& x, T_lb&& lb,
  *
  * <p>where \f$L\f$ is the constant lower bound.
  *
- * @tparam T kernel generator expression
- * @tparam L kernel generator expression
+ * @tparam T_x type of the unconstrained input
+ * @tparam T_lb type of lower bound
+ * @tparam T_ub type of upper bound
  * @param[in] x unconstrained input
  * @param[in] lb lower bound
+ * @param[in] ub upper bound
  * @param[in,out] lp reference to log probability to increment
  * @return constrained matrix
  */

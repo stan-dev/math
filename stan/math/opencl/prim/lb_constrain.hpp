@@ -24,15 +24,15 @@ namespace math {
  * @param[in] lb lower bound
  * @return constrained matrix
  */
-template <typename T, typename U,
+template <typename T, typename L,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr,
-          require_all_kernel_expressions_t<U>* = nullptr>
-inline auto lb_constrain(T&& x, U&& lb) {
+          require_all_kernel_expressions_t<L>* = nullptr>
+inline auto lb_constrain(T&& x, L&& lb) {
   return make_holder_cl(
       [](auto& x_, auto& lb_) {
         return select(lb_ == NEGATIVE_INFTY, x_, lb_ + exp(x_));
       },
-      std::forward<T>(x), std::forward<U>(lb));
+      std::forward<T>(x), std::forward<L>(lb));
 }
 
 /**
@@ -52,10 +52,10 @@ inline auto lb_constrain(T&& x, U&& lb) {
  * @param[in,out] lp reference to log probability to increment
  * @return constrained matrix
  */
-template <typename T, typename U,
+template <typename T, typename L,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr,
-          require_all_kernel_expressions_t<U>* = nullptr>
-inline auto lb_constrain(const T& x, const U& lb, return_type_t<T, U>& lp) {
+          require_all_kernel_expressions_t<L>* = nullptr>
+inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
   matrix_cl<double> lp_inc;
   matrix_cl<double> res;
   auto lb_inf = lb == NEGATIVE_INFTY;

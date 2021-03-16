@@ -26,7 +26,7 @@ namespace math {
  * @tparam T type of unconstrained input
  * @tparam M type of offset
  * @tparam S type of multiplier
- * @param[in] x Unconstrained input
+ * @param[in] A Unconstrained input
  * @param[in] mu offset of constrained output
  * @param[in] sigma multiplier of constrained output
  * @return linear transformed value corresponding to inputs
@@ -72,7 +72,7 @@ inline var_value<matrix_cl<double>> offset_multiplier_constrain(T&& A, M&& mu,
  * @tparam T type of unconstrained input
  * @tparam M type of offset
  * @tparam S type of multiplier
- * @param[in] x Unconstrained input
+ * @param[in] A Unconstrained input
  * @param[in] mu offset of constrained output
  * @param[in] sigma multiplier of constrained output
  * @param[in,out] lp Reference to log probability to increment.

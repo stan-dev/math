@@ -25,8 +25,8 @@ namespace math {
  *
  * <p>where \f$L\f$ is the constant lower bound.
  *
- * @tparam T kernel generator expression
- * @tparam L kernel generator expression
+ * @tparam T_x type of unconstrained input
+ * @tparam T_lb type of lower bound
  * @param[in] x unconstrained input
  * @param[in] lb lower bound
  * @return constrained matrix
@@ -60,8 +60,8 @@ inline var_value<matrix_cl<double>> lb_constrain(T_x&& x, T_lb&& lb) {
  *
  * <p>where \f$L\f$ is the constant lower bound.
  *
- * @tparam T kernel generator expression
- * @tparam L kernel generator expression
+ * @tparam T_x type of unconstrained input
+ * @tparam T_lb type of lower bound
  * @param[in] x unconstrained input
  * @param[in] lb lower bound
  * @param[in,out] lp reference to log probability to increment

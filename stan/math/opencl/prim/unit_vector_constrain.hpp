@@ -9,16 +9,15 @@ namespace stan {
 namespace math {
 
 /**
- * Return the unit length vector corresponding to the free vector y.
+ * Return the unit length vector corresponding to the given free vector.
  *
  * See <a
  * href="https://en.wikipedia.org/wiki/N-sphere#Generating_random_points">the
  * Wikipedia page on generating random points on an N-sphere</a>.
  *
- * @tparam EigMat type inheriting from `EigenBase` that does not have an fvar
- *  scalar type.
- * @param y vector of K unrestricted variables
- * @return Unit length vector of dimension K
+ * @tparam T_x type of the vector
+ * @param x vector of unrestricted variables
+ * @return Unit length vector
  */
 template <typename T_x,
           require_all_kernel_expressions_and_none_scalar_t<T_x>* = nullptr>
@@ -30,16 +29,16 @@ inline auto unit_vector_constrain(T_x&& x) {
 }
 
 /**
- * Return the unit length vector corresponding to the free vector y.
+ * Return the unit length vector corresponding to the given free vector.
  *
  * See <a
  * href="https://en.wikipedia.org/wiki/N-sphere#Generating_random_points">the
  * Wikipedia page on generating random points on an N-sphere</a>.
  *
- * @tparam EigMat type inheriting from `EigenBase` that does not have an fvar
- *  scalar type.
- * @param y vector of K unrestricted variables
- * @return Unit length vector of dimension K
+ * @tparam T_x type of the vector
+ * @param x vector of unrestricted variables
+ * @param[in,out] lp log probability to increment
+ * @return Unit length vector
  */
 template <typename T_x,
           require_all_kernel_expressions_and_none_scalar_t<T_x>* = nullptr>

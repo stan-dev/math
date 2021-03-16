@@ -25,8 +25,8 @@ namespace math {
  *
  * <p>where \f$U\f$ is the constant upper bound.
  *
- * @tparam T kernel generator expression
- * @tparam U kernel generator expression
+ * @tparam T_x kernel generator expression
+ * @tparam T_ub kernel generator expression
  * @param[in] x unconstrained input
  * @param[in] ub upper bound
  * @return constrained matrix
@@ -59,8 +59,8 @@ inline var_value<matrix_cl<double>> ub_constrain(T_x&& x, T_ub&& ub) {
  *
  * <p>where \f$U\f$ is the constant upper bound.
  *
- * @tparam T kernel generator expression
- * @tparam U kernel generator expression
+ * @tparam T_x kernel generator expression
+ * @tparam T_ub kernel generator expression
  * @param[in] x unconstrained input
  * @param[in] ub upper bound
  * @param[in,out] lp reference to log probability to increment

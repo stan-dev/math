@@ -13,10 +13,9 @@ namespace math {
  * Return the unit length vector corresponding to the free vector y.
  * See https://en.wikipedia.org/wiki/N-sphere#Generating_random_points
  *
- * @tparam EigMat type inheriting from `EigenBase` that has a `var`
- *  scalar type.
- * @param y vector of K unrestricted variables
- * @return Unit length vector of dimension K
+ * @tparam T type of the value of input matrix
+ * @param A vector of K unrestricted variables
+ * @return Unit length vector
  **/
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
@@ -35,11 +34,10 @@ inline var_value<matrix_cl<double>> unit_vector_constrain(
  * Return the unit length vector corresponding to the free vector y.
  * See https://en.wikipedia.org/wiki/N-sphere#Generating_random_points
  *
- * @tparam EigMat type inheriting from `EigenBase` that has a `var`
- *  scalar type.
- * @param y vector of K unrestricted variables
+ * @tparam T type of the value of input matrix
+ * @param A vector of K unrestricted variables
  * @param lp Log probability reference to increment.
- * @return Unit length vector of dimension K
+ * @return Unit length vector
  **/
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
