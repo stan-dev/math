@@ -71,6 +71,30 @@ struct normal_likelihood {
   }
 };
 
+// include a global variance (passed through eta)
+struct normal_likelihood2 {
+  template<typename T_theta, typename T_eta>
+  stan::return_type_t<T_theta, T_eta>
+  operator()(const Eigen::Matrix<T_theta, -1, 1>& theta,
+             const Eigen::Matrix<T_eta, -1, 1>& eta,
+             const Eigen::VectorXd& y,
+             const std::vector<int>& delta_int,
+             std::ostream* pstream) const {
+    using stan::math::multiply;
+    int n_obs = delta_int[0];
+    Eigen::Matrix<T_theta, -1, 1> mu(n_obs);
+    Eigen::Matrix<T_theta, -1, 1> sigma(n_obs);
+    for (int i = 0; i < n_obs; i++) {
+      mu(i) = theta(2 * i);
+      sigma(i) = exp(0.5 * theta(2 * i + 1));
+    }
+
+    T_eta sigma_global = eta(0);
+
+    return stan::math::normal_lpdf(y, mu, multiply(sigma_global, sigma));
+  }
+};
+
 class laplace_motorcyle_gp_test : public::testing::Test {
 protected:
   void SetUp() override {
@@ -112,6 +136,8 @@ protected:
       theta0(2 * i) = mu_hat(i);
       theta0(2 * i + 1) = 0;
     }
+
+    compute_W_root = 0;
   }
 
   int n_obs;
@@ -128,6 +154,7 @@ protected:
   Eigen::VectorXd theta0;
   Eigen::VectorXd eta_dummy_dbl;
   Eigen::Matrix<stan::math::var, -1, 1> eta_dummy;
+  int compute_W_root;
 };
 
 TEST_F(laplace_motorcyle_gp_test, lk_autodiff) {
@@ -137,9 +164,6 @@ TEST_F(laplace_motorcyle_gp_test, lk_autodiff) {
   using stan::math::diff_likelihood;
 
   normal_likelihood f;
-
-  // std::cout << f(theta0, eta_dummy_dbl, y, delta_int, 0) << std::endl;
-
   diff_likelihood<normal_likelihood> diff_functor(f, y, delta_int);
 
   int hessian_block_size = 2;
@@ -148,7 +172,8 @@ TEST_F(laplace_motorcyle_gp_test, lk_autodiff) {
                                covariance_motorcycle_functor(),
                                value_of(phi), eta_dummy_dbl,
                                x, delta_dummy, delta_int, theta0,
-                               0, 1e-8, 100, hessian_block_size);
+                               0, 1e-8, 100, hessian_block_size,
+                               compute_W_root);
 
   std::cout << "density: " << marginal_density_dbl << std::endl;
 
@@ -157,7 +182,8 @@ TEST_F(laplace_motorcyle_gp_test, lk_autodiff) {
                                covariance_motorcycle_functor(),
                                phi, eta_dummy,
                                x, delta_dummy, delta_int, theta0,
-                               0, 1e-8, 100, hessian_block_size);
+                               0, 1e-8, 100, hessian_block_size,
+                               compute_W_root);
 
   VEC g;
   AVEC parm_vec = createAVEC(phi(0), phi(1), phi(2), phi(3));
@@ -166,18 +192,20 @@ TEST_F(laplace_motorcyle_gp_test, lk_autodiff) {
   << std::endl;
 
   // FINITE DIFF benchmark
+  // TODO: benchmark against all the inputs.
   double eps = 1e-7;
   Eigen::VectorXd phi_dbl = value_of(phi);
   Eigen::VectorXd phi_u0 = phi_dbl, phi_l0 = phi_dbl;
-  phi_u0(3) += eps;
-  phi_l0(3) -= eps;
+  phi_u0(0) += eps;
+  phi_l0(0) -= eps;
 
   double target_u0
     = laplace_marginal_density(diff_functor,
                                covariance_motorcycle_functor(),
                                phi_u0, eta_dummy_dbl,
                                x, delta_dummy, delta_int, theta0,
-                               0, 1e-6, 100, hessian_block_size);
+                               0, 1e-6, 100, hessian_block_size,
+                               compute_W_root);
 
 
   double target_l0
@@ -185,7 +213,70 @@ TEST_F(laplace_motorcyle_gp_test, lk_autodiff) {
                                covariance_motorcycle_functor(),
                                phi_l0, eta_dummy_dbl,
                                x, delta_dummy, delta_int, theta0,
-                               0, 1e-6, 100, hessian_block_size);
+                               0, 1e-6, 100, hessian_block_size,
+                               compute_W_root);
 
   std::cout << "g[0]: " << (target_u0 - target_l0) / (2 * eps) << std::endl;
+}
+
+TEST_F(laplace_motorcyle_gp_test, lk_autodiff_eta) {
+  using stan::math::var;
+  using stan::math::value_of;
+  using stan::math::laplace_marginal_density;
+  using stan::math::diff_likelihood;
+
+  normal_likelihood2 f;
+  diff_likelihood<normal_likelihood2> diff_functor(f, y, delta_int);
+  Eigen::Matrix<var, -1, 1> eta(1);
+  eta(0) = 1;
+  int hessian_block_size = 2;
+  double marginal_density_dbl
+    = laplace_marginal_density(diff_functor,
+                               covariance_motorcycle_functor(),
+                               value_of(phi), value_of(eta),
+                               x, delta_dummy, delta_int, theta0,
+                               0, 1e-8, 100, hessian_block_size,
+                               compute_W_root);
+
+  std::cout << "density: " << marginal_density_dbl << std::endl;
+
+  var marginal_density
+    = laplace_marginal_density(diff_functor,
+                               covariance_motorcycle_functor(),
+                               phi, eta,
+                               x, delta_dummy, delta_int, theta0,
+                               0, 1e-8, 100, hessian_block_size,
+                               compute_W_root);
+
+  VEC g;
+  AVEC parm_vec = createAVEC(phi(0), phi(1), phi(2), phi(3), eta(0));
+  marginal_density.grad(parm_vec, g);
+  std::cout << "grad: "
+    << g[0] << " " << g[1] << " " << g[2] << " " << g[3] << " " << g[4]
+    << std::endl;
+
+  // finite diff benchmark
+  double eps = 1e-7;
+  Eigen::VectorXd eta_dbl = value_of(eta);
+  Eigen::VectorXd eta_u = eta_dbl, eta_l = eta_dbl;
+  eta_u(0) += eps;
+  eta_l(0) -= eps;
+
+  double target_u
+  = laplace_marginal_density(diff_functor,
+                             covariance_motorcycle_functor(),
+                             value_of(phi), eta_u,
+                             x, delta_dummy, delta_int, theta0,
+                             0, 1e-8, 100, hessian_block_size,
+                             compute_W_root);
+
+  double target_l
+  = laplace_marginal_density(diff_functor,
+                             covariance_motorcycle_functor(),
+                             value_of(phi), eta_l,
+                             x, delta_dummy, delta_int, theta0,
+                             0, 1e-8, 100, hessian_block_size,
+                             compute_W_root);
+
+  std::cout << "gf[4]: " << (target_u - target_l) / (2 * eps) << std::endl;
 }
