@@ -1,4 +1,4 @@
-from sig_utils import parse_signature, no_fwd_overload, no_rev_overload, ignored, eigen_types
+from sig_utils import parse_signature, no_fwd_overload, no_rev_overload, ignored
 
 class SignatureParser:
     """SignatureParser parses Stanc3 function signatures and returns helpful information about them"""
