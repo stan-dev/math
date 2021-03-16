@@ -190,7 +190,7 @@ class ops_partials_edge<double, std::vector<var>> {
   friend class stan::math::operands_and_partials;
   Op operands_;
 
-  int size() { return this->operands_.size(); }
+  inline int size() const noexcept { return this->operands_.size(); }
   inline auto& operand() noexcept { return this->operands_; }
   inline auto& partial() noexcept { return this->partials_; }
 };
@@ -232,8 +232,6 @@ class ops_partials_edge<double, var_value<Op>, require_eigen_t<Op>> {
   friend class stan::math::operands_and_partials;
   var_value<Op> operands_;
 
-  static constexpr void dump_operands(vari** varis) {}
-  static constexpr void dump_partials(double* partials) {}
   static constexpr int size() noexcept { return 0; }
   inline auto operand() { return this->operands_; }
   inline auto partial() { return this->partials_; }
