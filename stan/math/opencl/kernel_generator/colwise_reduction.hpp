@@ -47,7 +47,9 @@ inline int colwise_reduction_wgs_rows(int n_rows, int n_cols) {
  * Represents a column wise reduction in kernel generator expressions. So as to
  * be efficient column wise reductions are only done partially. That means
  * instead of 1 row kernel output will have a few rows that need to be reduced
- * to obtain final result. This can be done in a separate kernel or after
+ * to obtain final result (actually it is 1
+ * reslut per work group run - roughly 16 times the number of compute units on
+ * the OpenCL device). This can be done in a separate kernel or after
  * copying to CPU. Also column wise reductions can not be used as arguments to
  * other operations - they can only be evaluated.
  * @tparam Derived derived type
@@ -209,9 +211,10 @@ class colwise_sum_ : public colwise_reduction<colwise_sum_<T>, T, sum_op> {
  * Column wise sum - reduction of a kernel generator expression. So as to
  * be efficient column wise reductions are only done partially. That means
  * instead of 1 row kernel output will have a few rows that need to be reduced
- * to obtain final result. This can be done in a separate kernel or after
- * copying to CPU. Also column wise reductions can not be used as arguments to
- * other operations - they can only be evaluated.
+ * to obtain final result (actually it is 1 reslut per work group run - roughly
+ * 16 times the number of compute units on the OpenCL device). This can be done
+ * in a separate kernel or after copying to CPU. Also column wise reductions can
+ * not be used as arguments to other operations - they can only be evaluated.
  * @tparam T type of input expression
  * @param a expression to reduce
  * @return sum
@@ -256,9 +259,10 @@ class colwise_max_ : public colwise_reduction<
  * Column wise max - reduction of a kernel generator expression. So as to
  * be efficient column wise reductions are only done partially. That means
  * instead of 1 row kernel output will have a few rows that need to be reduced
- * to obtain final result. This can be done in a separate kernel or after
- * copying to CPU. Also column wise reductions can not be used as arguments to
- * other operations - they can only be evaluated.
+ * to obtain final result (actually it is 1 reslut per work group run - roughly
+ * 16 times the number of compute units on the OpenCL device). This can be done
+ * in a separate kernel or after copying to CPU. Also column wise reductions can
+ * not be used as arguments to other operations - they can only be evaluated.
  * @tparam T type of input expression
  * @param a expression to reduce
  * @return max
@@ -303,9 +307,10 @@ class colwise_min_ : public colwise_reduction<
  * Column wise min - reduction of a kernel generator expression.  So as to
  * be efficient column wise reductions are only done partially. That means
  * instead of 1 row kernel output will have a few rows that need to be reduced
- * to obtain final result. This can be done in a separate kernel or after
- * copying to CPU. Also column wise reductions can not be used as arguments to
- * other operations - they can only be evaluated.
+ * to obtain final result (actually it is 1 reslut per work group run - roughly
+ * 16 times the number of compute units on the OpenCL device). This can be done
+ * in a separate kernel or after copying to CPU. Also column wise reductions can
+ * not be used as arguments to other operations - they can only be evaluated.
  * @tparam T type of input expression
  * @param a expression to reduce
  * @return min
