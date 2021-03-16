@@ -5,6 +5,7 @@
 #include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
+#include <stan/math/opencl/rev/arena_matrix_cl.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/rev/arena_type.hpp>
 #include <stan/math/opencl/rev/to_arena.hpp>
@@ -17,7 +18,7 @@ template <typename Op>
 class ops_partials_edge<double, var_value<Op>,
                         require_kernel_expression_lhs_t<Op>> {
  public:
-  using partials_t = plain_type_t<Op>;
+  using partials_t = arena_matrix_cl<value_type_t<Op>>;
   partials_t partials_;                       // For univariate use-cases
   broadcast_array<partials_t> partials_vec_;  // For multivariate
   explicit ops_partials_edge(const var_value<Op>& ops)
