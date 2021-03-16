@@ -35,7 +35,7 @@ class SignatureParser:
 
     def has_vector_arg(self):
         """Return true if any argument is vector-like (can be an Eigen c++ type)"""
-        return any(arg in eigen_types for arg in self.stan_args)
+        return any(arg in ("matrix", "vector", "row_vector") for arg in self.stan_args)
 
     def returns_int(self):
         """Return true if the function returns an int"""

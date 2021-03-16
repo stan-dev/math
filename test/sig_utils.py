@@ -17,7 +17,6 @@ arg_types = {
     "array[] int": "std::vector<int>",
     "array[,] int": "std::vector<std::vector<int>>",
     "real": "SCALAR",
-    "scalar_return_t": "SCALAR",
     "array[] real": "std::vector<SCALAR>",
     "array[,] real": "std::vector<std::vector<SCALAR>>",
     "vector": "Eigen::Matrix<SCALAR, Eigen::Dynamic, 1>",
@@ -25,13 +24,9 @@ arg_types = {
     "row_vector": "Eigen::Matrix<SCALAR, 1, Eigen::Dynamic>",
     "array[] row_vector": "std::vector<Eigen::Matrix<SCALAR, 1, Eigen::Dynamic>>",
     "matrix": "Eigen::Matrix<SCALAR, Eigen::Dynamic, Eigen::Dynamic>",
-    "rng": "std::minstd_rand",
-    "ostream_ptr": "std::ostream*",
 }
 
 scalar_stan_types = ("int", "real", "rng", "ostream_ptr")
-
-eigen_types = set(("matrix", "vector", "row_vector"))
 
 def parse_array(stan_arg):
     """
@@ -315,11 +310,7 @@ def reference_vector_argument(arg):
 
 overload_scalar = {
     "Prim": "double",
-    "PrimExp": "double",
     "Rev": "stan::math::var",
-    "RevVarmat": "stan::math::var",
-    "RevExp": "stan::math::var",
     "Fwd": "stan::math::fvar<double>",
-    "FwdExp": "stan::math::fvar<double>",
     "Mix": "stan::math::fvar<stan::math::var>",
 }

@@ -182,18 +182,12 @@ pipeline {
                                 sh "python ./test/expressions/test_expression_testing_framework.py"
                             }
                             withEnv(['PATH+TBB=./lib/tbb']) {
-                                sh "pytest ./test/code_generator_test.py"
-                            }
-                            withEnv(['PATH+TBB=./lib/tbb']) {
-                                sh "pytest ./test/signature_parser_test.py"
-                            }
-                            withEnv(['PATH+TBB=./lib/tbb']) {
-                                sh "pytest ./test/statement_types_test.py"
-                            }
-                            withEnv(['PATH+TBB=./lib/tbb']) {
                                 try { sh "./runTests.py -j${env.PARALLEL} test/expressions" }
                                 finally { junit 'test/**/*.xml' }
                             }
+                            sh "pytest ./test/code_generator_test.py"
+                            sh "pytest ./test/signature_parser_test.py"
+                            sh "pytest ./test/statement_types_test.py"
                             sh "make clean-all"
                             sh "echo STAN_THREADS=true >> make/local"
                             withEnv(['PATH+TBB=./lib/tbb']) {
