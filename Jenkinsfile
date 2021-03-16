@@ -30,6 +30,7 @@ def runTestsWin(String testPath, boolean buildLibs = true, boolean jumbo = false
     }
 }
 
+
 def deleteDirWin() {
     bat "attrib -r -s /s /d"
     deleteDir()
@@ -175,9 +176,9 @@ pipeline {
                     agent any
                     steps {
                         unstash 'MathSetup'
-                        setupCXX(true, env.CXX, stanc3_bin_url())
                         script {
                             sh "echo O=0 > make/local"
+			    sh "echo STANC3_TEST_BIN_URL=nightly >> make/local"
                             withEnv(['PATH+TBB=./lib/tbb']) {
                                 try { sh "./runTests.py -j${env.PARALLEL} test/expressions" }
                                 finally { junit 'test/**/*.xml' }
