@@ -179,11 +179,20 @@ pipeline {
                         script {
                             sh "echo O=0 > make/local"
                             withEnv(['PATH+TBB=./lib/tbb']) {
-                                try { sh "./runTests.py -j${env.PARALLEL} test/expressions" }
-                                finally { junit 'test/**/*.xml' }
+                                sh "python ./test/expressions/test_expression_testing_framework.py"
                             }
                             withEnv(['PATH+TBB=./lib/tbb']) {
-                                sh "python ./test/expressions/test_expression_testing_framework.py"
+                                sh "pytest ./test/code_generator_test.py"
+                            }
+                            withEnv(['PATH+TBB=./lib/tbb']) {
+                                sh "pytest ./test/signature_parser_test.py"
+                            }
+                            withEnv(['PATH+TBB=./lib/tbb']) {
+                                sh "pytest ./test/statement_types_test.py"
+                            }
+                            withEnv(['PATH+TBB=./lib/tbb']) {
+                                try { sh "./runTests.py -j${env.PARALLEL} test/expressions" }
+                                finally { junit 'test/**/*.xml' }
                             }
                             sh "make clean-all"
                             sh "echo STAN_THREADS=true >> make/local"
