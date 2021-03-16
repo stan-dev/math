@@ -9,12 +9,12 @@ const int wg_id_i = get_group_id(0);
 const int wg_id_j = get_group_id(1);
 const int n_groups_i = get_num_groups(0);
 __local double var1_local[LOCAL_SIZE_];
-double var1;
+double var1 = 0;
 for(int j = gid_j; j < cols; j+=gsize_j){
-var1 = 0;
 for(int i = gid_i; i < rows; i+=gsize_i){
 double var2 = 0; if (!((!contains_nonzero(var2_view, LOWER) && j < i) || (!contains_nonzero(var2_view, UPPER) && j > i))) {var2 = var2_global[i + var2_rows * j];}
 var1 = var1 + var2;
+}
 }
 var1_local[lid_i] = var1;
 barrier(CLK_LOCAL_MEM_FENCE);
@@ -27,7 +27,6 @@ for (int step = lsize_i / REDUCTION_STEP_SIZE; step > 0; step /= REDUCTION_STEP_
   barrier(CLK_LOCAL_MEM_FENCE);
 }
 if (lid_i == 0) {
-var3_global[j * n_groups_i + wg_id_i] = var1_local[0];
-}
+var3_global[wg_id_j * n_groups_i + wg_id_i] = var1_local[0];
 }
 }
