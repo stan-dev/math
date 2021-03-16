@@ -46,14 +46,23 @@ TEST(stack_alloc, bytes_allocated) {
   }
 }
 
+namespace stan {
+  namespace test {
+    template <typename T>
+    bool is_aligned(T* ptr, unsigned int bytes_aligned) {
+      return (reinterpret_cast<uintptr_t>(ptr) % bytes_aligned) == 0U;
+    }
+  }
+}
+
 TEST(stack_alloc, is_aligned) {
   char* ptr = static_cast<char*>(malloc(1024));
-  EXPECT_TRUE(stan::math::is_aligned(ptr, 1U));
-  EXPECT_TRUE(stan::math::is_aligned(ptr, 2U));
-  EXPECT_TRUE(stan::math::is_aligned(ptr, 4U));
-  EXPECT_TRUE(stan::math::is_aligned(ptr, 8U));
+  EXPECT_TRUE(stan::test::is_aligned(ptr, 1U));
+  EXPECT_TRUE(stan::test::is_aligned(ptr, 2U));
+  EXPECT_TRUE(stan::test::is_aligned(ptr, 4U));
+  EXPECT_TRUE(stan::test::is_aligned(ptr, 8U));
 
-  EXPECT_FALSE(stan::math::is_aligned(ptr + 1, 8U));
+  EXPECT_FALSE(stan::test::is_aligned(ptr + 1, 8U));
   // not very safe, but just a test
   free(ptr);
 }
@@ -118,4 +127,66 @@ TEST(stack_alloc, in_stack_second_block) {
   allocator.recover_all();
   EXPECT_FALSE(allocator.in_stack(x));
   EXPECT_FALSE(allocator.in_stack(y));
+}
+
+TEST(stack_alloc, reserve_new_block) {
+  stan::math::stack_alloc allocator;
+  size_t orig_bytes = allocator.bytes_allocated();
+  EXPECT_EQ(65536, orig_bytes);
+  allocator.reserve(8192 * sizeof(double) * 2);
+  EXPECT_EQ(196608, allocator.bytes_allocated());
+  double* y = allocator.alloc_array<double>(stan::math::internal::DEFAULT_INITIAL_NBYTES);
+  double* x = allocator.alloc_array<double>(stan::math::internal::DEFAULT_INITIAL_NBYTES * 2);
+  // move up to the next block
+  double* z = allocator.alloc_array<double>(stan::math::internal::DEFAULT_INITIAL_NBYTES * 2);
+  EXPECT_EQ(3866624, allocator.bytes_allocated());
+  EXPECT_TRUE(allocator.in_stack(y));
+  EXPECT_TRUE(allocator.in_stack(x));
+  EXPECT_TRUE(allocator.in_stack(z));
+}
+
+TEST(stack_alloc, reserve_same_block) {
+  stan::math::stack_alloc allocator;
+  size_t orig_bytes = allocator.bytes_allocated();
+  EXPECT_EQ(65536, orig_bytes);
+  allocator.reserve(8191 * sizeof(double));
+  EXPECT_EQ(65536, allocator.bytes_allocated());
+  double* y = allocator.alloc_array<double>(10);
+  EXPECT_EQ(65536, allocator.bytes_allocated());
+  // move up to the next block
+  double* z = allocator.alloc_array<double>(stan::math::internal::DEFAULT_INITIAL_NBYTES / sizeof(double));
+  EXPECT_EQ(196608, allocator.bytes_allocated());
+  EXPECT_TRUE(allocator.in_stack(y));
+  EXPECT_TRUE(allocator.in_stack(z));
+}
+
+TEST(stack_alloc, reserve_t_new_block) {
+  stan::math::stack_alloc allocator;
+  size_t orig_bytes = allocator.bytes_allocated();
+  EXPECT_EQ(65536, orig_bytes);
+  allocator.reserve_array<double>(8192 * 2);
+  EXPECT_EQ(196608, allocator.bytes_allocated());
+  double* y = allocator.alloc_array<double>(stan::math::internal::DEFAULT_INITIAL_NBYTES);
+  double* x = allocator.alloc_array<double>(stan::math::internal::DEFAULT_INITIAL_NBYTES * 2);
+  // move up to the next block
+  double* z = allocator.alloc_array<double>(stan::math::internal::DEFAULT_INITIAL_NBYTES * 2);
+  EXPECT_EQ(3866624, allocator.bytes_allocated());
+  EXPECT_TRUE(allocator.in_stack(y));
+  EXPECT_TRUE(allocator.in_stack(x));
+  EXPECT_TRUE(allocator.in_stack(z));
+}
+
+TEST(stack_alloc, reserve_t_same_block) {
+  stan::math::stack_alloc allocator;
+  size_t orig_bytes = allocator.bytes_allocated();
+  EXPECT_EQ(65536, orig_bytes);
+  allocator.reserve_array<double>(8191);
+  EXPECT_EQ(65536, allocator.bytes_allocated());
+  double* y = allocator.alloc_array<double>(10);
+  EXPECT_EQ(65536, allocator.bytes_allocated());
+  // move up to the next block
+  double* z = allocator.alloc_array<double>(stan::math::internal::DEFAULT_INITIAL_NBYTES / sizeof(double));
+  EXPECT_EQ(196608, allocator.bytes_allocated());
+  EXPECT_TRUE(allocator.in_stack(y));
+  EXPECT_TRUE(allocator.in_stack(z));
 }
