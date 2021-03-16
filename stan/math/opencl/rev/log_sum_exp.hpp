@@ -22,11 +22,9 @@ namespace math {
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
 inline var log_sum_exp(const var_value<T>& A) {
-  return make_callback_var(
-      log_sum_exp(A.val()),
-      [A](vari& res) mutable {
-        A.adj() += res.adj() * exp(A.val() - res.val());
-      });
+  return make_callback_var(log_sum_exp(A.val()), [A](vari& res) mutable {
+    A.adj() += res.adj() * exp(A.val() - res.val());
+  });
 }
 
 }  // namespace math
