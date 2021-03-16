@@ -113,7 +113,7 @@ inline var_value<matrix_cl<double>> lub_constrain(T_x&& x, T_lb&& lb, T_ub&& ub,
         auto exp_x = exp(value_of(x_arena));
         auto res_adj_exp_x = elt_multiply(res.adj(), exp_x);
         adjoint_results(x_arena, lb_arena, ub_arena) += expressions(
-            select(lb_inf, select(ub_inf, res.adj(),  lp.adj()-res_adj_exp_x),
+            select(lb_inf, select(ub_inf, res.adj(), lp.adj() - res_adj_exp_x),
                    select(ub_inf, res_adj_exp_x + lp.adj(),
                           elt_multiply(
                               elt_multiply(res.adj(), diff),
