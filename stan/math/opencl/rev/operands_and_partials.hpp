@@ -32,7 +32,7 @@ class ops_partials_edge<double, var_value<Op>,
   var_value<Op> operands_;
   static constexpr int size() noexcept { return 0; }
   inline auto& operand() noexcept { return this->operands_; }
-  inline auto partial() noexcept { return to_arena(this->partials_); }
+  inline auto& partial() noexcept { return this->partials_; }
 };
 
 }  // namespace internal
