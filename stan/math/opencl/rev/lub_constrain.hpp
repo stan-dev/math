@@ -9,6 +9,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/meta/is_kernel_expression.hpp>
 
