@@ -64,7 +64,7 @@ $(EXPRESSION_TESTS) : $(LIBSUNDIALS)
 # CVODES tests
 ##
 
-CVODES_TESTS := $(subst .cpp,$(EXE),$(call findfiles,test,*cvodes*_test.cpp) $(call findfiles,test,*_bdf_*_test.cpp) $(call findfiles,test,*_adams_*_test.cpp))
+CVODES_TESTS := $(subst .cpp,$(EXE),$(call findfiles,test,*cvodes*_test.cpp) $(call findfiles,test,*_bdf_*_test.cpp) $(call findfiles,test,*_adams_*_test.cpp) $(call findfiles,test,ode_typed_*_test.cpp))
 $(CVODES_TESTS) : $(LIBSUNDIALS)
 
 
