@@ -38,11 +38,12 @@ inline var beta(const var& a, const var& b) {
   double digamma_ab = digamma(a.val() + b.val());
   double digamma_a = digamma(a.val()) - digamma_ab;
   double digamma_b = digamma(b.val()) - digamma_ab;
-  return make_callback_var(beta(a.val(), b.val()), [a, b, digamma_a, digamma_b](auto& vi) mutable {
-    const double adj_val = vi.adj() * vi.val();
-    a.adj() += adj_val * digamma_a;
-    b.adj() += adj_val * digamma_b;
-  });
+  return make_callback_var(beta(a.val(), b.val()),
+                           [a, b, digamma_a, digamma_b](auto& vi) mutable {
+                             const double adj_val = vi.adj() * vi.val();
+                             a.adj() += adj_val * digamma_a;
+                             b.adj() += adj_val * digamma_b;
+                           });
 }
 
 /**
@@ -65,9 +66,10 @@ inline var beta(const var& a, const var& b) {
  */
 inline var beta(const var& a, double b) {
   auto digamma_ab = digamma(a.val()) - digamma(a.val() + b);
-  return make_callback_var(beta(a.val(), b), [a, b, digamma_ab](auto& vi) mutable {
-    a.adj() += vi.adj() * digamma_ab * vi.val();
-  });
+  return make_callback_var(beta(a.val(), b),
+                           [a, b, digamma_ab](auto& vi) mutable {
+                             a.adj() += vi.adj() * digamma_ab * vi.val();
+                           });
 }
 
 /**

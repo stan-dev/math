@@ -15,9 +15,10 @@ namespace math {
  */
 inline var log1p_exp(const var& a) {
   auto precomp_inv_logit = inv_logit(a.val());
-  return make_callback_var(log1p_exp(a.val()), [a, precomp_inv_logit](auto& vi) mutable {
-    a.adj() += vi.adj() * precomp_inv_logit;
-  });
+  return make_callback_var(log1p_exp(a.val()),
+                           [a, precomp_inv_logit](auto& vi) mutable {
+                             a.adj() += vi.adj() * precomp_inv_logit;
+                           });
 }
 
 /**

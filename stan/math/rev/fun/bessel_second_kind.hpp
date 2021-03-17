@@ -10,11 +10,11 @@ namespace math {
 
 inline var bessel_second_kind(int v, const var& a) {
   auto precomp_bessel = v * bessel_second_kind(v, a.val()) / a.val()
-     - bessel_second_kind(v + 1, a.val());
-  return make_callback_var(
-      bessel_second_kind(v, a.val()), [precomp_bessel, a](auto& vi) mutable {
-        a.adj() += vi.adj() * precomp_bessel;
-      });
+                        - bessel_second_kind(v + 1, a.val());
+  return make_callback_var(bessel_second_kind(v, a.val()),
+                           [precomp_bessel, a](auto& vi) mutable {
+                             a.adj() += vi.adj() * precomp_bessel;
+                           });
 }
 
 }  // namespace math
