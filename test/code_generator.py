@@ -45,13 +45,8 @@ class CodeGenerator:
             number_nested_arrays, inner_type = parse_array(stan_arg)
 
             # Check if argument is differentiable
-            try:
-                if inner_type == "int":
-                    overload = "Prim"
-                if n in non_differentiable_args[signature_parser.function_name]:
-                    overload = "Prim"
-            except KeyError:
-                pass
+            if inner_type == "int" or n in non_differentiable_args.get(signature_parser.function_name, []):
+                  overload = "Prim"
 
             # By default the variable value is None and a default will be substituted
             value = None
