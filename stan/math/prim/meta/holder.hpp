@@ -251,10 +251,11 @@ namespace math {
  * @param args Args for the functor
  * @return `holder` referencing expression constructed by given functor
  */
-template <typename F, typename... Args,
-          require_t<disjunction<conjunction<std::is_lvalue_reference<Args&&>...>,
-                                is_plain_type<decltype(std::declval<F>()(
-                                    std::declval<Args&>()...))>>>* = nullptr>
+template <
+    typename F, typename... Args,
+    require_t<disjunction<conjunction<std::is_lvalue_reference<Args&&>...>,
+                          is_plain_type<decltype(std::declval<F>()(
+                              std::declval<Args&>()...))>>>* = nullptr>
 auto make_holder(const F& func, Args&&... args) {
   return func(std::forward<Args>(args)...);
 }
