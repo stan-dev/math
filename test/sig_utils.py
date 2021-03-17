@@ -269,7 +269,7 @@ def parse_signature(signature):
     :param signature: stanc3 function signature
     :return: return type, fucntion name and list of function argument types
     """
-    rest, return_type = signature.rsplit(" => ", 1)
+    rest, return_type = signature.rsplit("=>", 1)
     function_name, rest = rest.split("(", 1)
     args = re.findall(r"(?:[(][^()]+[)][^,()]+)|(?:[^,()]+(?:,*[]][^,()]+)?)", rest)
     #  regex parts:        ^^^^^^functor^^^^^^     ^^^^any other arg^^^^^^^
@@ -291,7 +291,7 @@ def handle_function_list(functions_input):
         if ("." in f) or ("/" in f) or ("\\" in f):
             with open(f) as fh:
                 functions_input.extend(parse_signature_file(fh))
-        elif " " in f:
+        elif "(" in f:
             function_signatures.append(f)
         else:
             function_names.append(f)

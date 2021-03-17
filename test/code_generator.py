@@ -15,7 +15,7 @@ class CodeGenerator:
     def _add_statement(self, statement):
         """Add a statement to the code generator"""
         if not isinstance(statement, statement_types.CppStatement):
-            raise Exception("Argument to FunctionGenerator._add_statement must be an instance of an object that inherits from CppStatement")
+            raise TypeError("Argument to FunctionGenerator._add_statement must be an instance of an object that inherits from CppStatement")
 
         self.code_list.append(statement)
         return statement
