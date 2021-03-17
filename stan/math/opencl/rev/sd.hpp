@@ -2,6 +2,7 @@
 #define STAN_MATH_OPENCL_REV_SD_HPP
 #ifdef STAN_OPENCL
 
+#include <stan/math/opencl/rev/arena_matrix_cl.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/prim/mean.hpp>
 #include <stan/math/rev/core.hpp>
