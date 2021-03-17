@@ -24,6 +24,9 @@ inline std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> build_varis(
     vari* ode_vari, arena_t<Eigen::Matrix<var, -1, 1>>& non_chaining_vars,
     const std::vector<Eigen::VectorXd>& y);
 
+/**
+ * Why is ode_vari here?
+ */
 template <>
 inline std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> build_varis<var>(
     vari* ode_vari, arena_t<Eigen::Matrix<var, -1, 1>>& non_chaining_vars,
@@ -37,14 +40,14 @@ inline std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> build_varis<var>(
 
   for (size_t i = 0; i < y.size(); ++i) {
     for (size_t j = 0; j < N; j++) {
-      non_chaining_vars[i * N + j] = y[i][j];
+      non_chaining_vars.coeffRef(i * N + j) = y[i].coeff(j);
     }
   }
-
-  std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> y_return(y.size(), Eigen::Matrix<var, Eigen::Dynamic, 1>(N));
+  using inner_mat = Eigen::Matrix<var, Eigen::Dynamic, 1>;
+  std::vector<inner_mat> y_return(y.size(), inner_mat(N));
   for (size_t i = 0; i < y.size(); ++i) {
     for (size_t j = 0; j < N; j++)
-      y_return[i][j] = non_chaining_vars[i * N + j];
+      y_return[i].coeffRef(j) = non_chaining_vars.coeff(i * N + j);
   }
 
   return y_return;
@@ -61,62 +64,54 @@ inline std::vector<Eigen::VectorXd> build_varis<double>(
   return y;
 }
 
-template <typename F, typename T_y0, typename T_t0, typename T_ts,
-          typename... T_Args>
-class cvodes_integrator_adjoint_vari;
+namespace internal {
 
-template <typename F, typename T_y0, typename T_t0, typename T_ts,
-          typename... T_Args>
-class cvodes_integrator_adjoint_memory : public chainable_alloc {
-  using T_Return = return_type_t<T_y0, T_t0, T_ts, T_Args...>;
-  using T_y0_t0 = return_type_t<T_y0, T_t0>;
+  struct cvodes_integrator_adjoint_memory : public chainable_alloc {
 
-  // std::tuple<T_Args...> args_tuple_;
-  size_t N_;
-  std::vector<Eigen::VectorXd> y_;
-  N_Vector nv_state_;
-  N_Vector nv_abs_tol_f_;
-  N_Vector nv_abs_tol_b_;
-  SUNMatrix A_f_;
-  SUNLinearSolver LS_f_;
-  void* cvodes_mem_;
-public:
-  template <require_eigen_col_vector_t<T_y0>* = nullptr>
-  cvodes_integrator_adjoint_memory(size_t y0_size, size_t ts_size,
-     int lmm_f,
-     arena_t<Eigen::VectorXd>& state,
-     arena_t<Eigen::VectorXd>& abs_tol_f,
-     arena_t<Eigen::VectorXd>& abs_tol_b)
-      : N_(y0_size), y_(ts_size),
-        nv_state_(N_VMake_Serial(y0_size, state.data())),
-        nv_abs_tol_f_(N_VMake_Serial(y0_size, abs_tol_f.data())),
-        nv_abs_tol_b_(N_VMake_Serial(y0_size, abs_tol_b.data())),
-        A_f_(SUNDenseMatrix(y0_size, y0_size)),
-        LS_f_(SUNDenseLinearSolver(nv_state_, A_f_)),
-        cvodes_mem_(CVodeCreate(lmm_f)) {
-    if (y0_size > 0) {
-      if (cvodes_mem_ == nullptr) {
-        throw std::runtime_error("CVodeCreate failed to allocate memory");
+    // std::tuple<T_Args...> args_tuple_;
+    size_t N_;
+    std::vector<Eigen::VectorXd> y_;
+    N_Vector nv_state_;
+    N_Vector nv_abs_tol_f_;
+    N_Vector nv_abs_tol_b_;
+    SUNMatrix A_f_;
+    SUNLinearSolver LS_f_;
+    void* cvodes_mem_;
+    cvodes_integrator_adjoint_memory(size_t y0_size, size_t ts_size,
+       int lmm_f,
+       arena_t<Eigen::VectorXd>& state,
+       arena_t<Eigen::VectorXd>& abs_tol_f,
+       arena_t<Eigen::VectorXd>& abs_tol_b)
+        : N_(y0_size), y_(ts_size),
+          nv_state_(N_VMake_Serial(y0_size, state.data())),
+          nv_abs_tol_f_(N_VMake_Serial(y0_size, abs_tol_f.data())),
+          nv_abs_tol_b_(N_VMake_Serial(y0_size, abs_tol_b.data())),
+          A_f_(SUNDenseMatrix(y0_size, y0_size)),
+          LS_f_(SUNDenseLinearSolver(nv_state_, A_f_)),
+          cvodes_mem_(CVodeCreate(lmm_f)) {
+      if (y0_size > 0) {
+        if (cvodes_mem_ == nullptr) {
+          throw std::runtime_error("CVodeCreate failed to allocate memory");
+        }
       }
     }
-  }
 
-  ~cvodes_integrator_adjoint_memory() {
-    if (N_ > 0) {
-      SUNLinSolFree(LS_f_);
-      SUNMatDestroy(A_f_);
-      // from the cvodes docs, do you need these?
-      N_VDestroy_Serial(nv_state_);
-      N_VDestroy_Serial(nv_abs_tol_f_);
+    ~cvodes_integrator_adjoint_memory() {
+      if (N_ > 0) {
+        SUNLinSolFree(LS_f_);
+        SUNMatDestroy(A_f_);
+        // from the cvodes docs, do you need these?
+        N_VDestroy_Serial(nv_state_);
+        N_VDestroy_Serial(nv_abs_tol_f_);
 
-      if (cvodes_mem_) {
-        CVodeFree(&cvodes_mem_);
+        if (cvodes_mem_) {
+          CVodeFree(&cvodes_mem_);
+        }
       }
     }
-  }
-private:
-  friend class cvodes_integrator_adjoint_vari<F, T_y0, T_t0, T_ts, T_Args...>;
-};
+  };
+
+}
 
 /*
 If we use this we could store the args varis in a tuple then use a for_each()
@@ -149,7 +144,12 @@ template <typename F, typename T_y0, typename T_t0, typename T_ts,
 class cvodes_integrator_adjoint_vari : public vari {
   using T_Return = return_type_t<T_y0, T_t0, T_ts, T_Args...>;
   using T_y0_t0 = return_type_t<T_y0, T_t0>;
-
+  /**
+   * Returns object with inner type changed to the partial type for that object.
+   * i.e. Matrix<var> becomes Matrix<double>
+   */
+  template <typename S>
+  using partial_arena_t = arena_t<plain_type_t<promote_scalar_t<partials_type_t<S>, S>>>;
   const char* function_name_;
   F f_;
   size_t N_;
@@ -175,9 +175,8 @@ class cvodes_integrator_adjoint_vari : public vari {
   arena_t<Eigen::Matrix<var, -1, 1>> non_chaining_vars_;
   size_t args_vars_total_;
   vari** args_varis_;
-  cvodes_integrator_adjoint_memory<F, T_y0, T_t0, T_ts, T_Args...>* memory;
-  std::tuple<arena_t<plain_type_t<decltype(value_of(std::declval<const T_Args&>()))>>...>
-      value_of_args_tuple_;
+  internal::cvodes_integrator_adjoint_memory* memory;
+  std::tuple<partial_arena_t<T_Args>...> value_of_args_tuple_;
   std::tuple<arena_t<plain_type_t<T_Args>>...> local_args_tuple_;
 //  std::array<bool, sizeof...(T_Args)> cumulative_arg_sizes;
   bool returned_{false};
@@ -253,10 +252,10 @@ public:
         args_vars_total_(count_vars(args...)),
         args_varis_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
             args_vars_total_)),
-      value_of_args_tuple_(value_of(args)...),
+      value_of_args_tuple_(to_arena(value_of(args))...),
       local_args_tuple_(to_arena(deep_copy_vars(args))...),
-      memory(new cvodes_integrator_adjoint_memory<F, T_y0, T_t0, T_ts, T_Args...>(
-            y0.size(), ts.size(), solver_f_ % 2 ? CV_ADAMS : CV_BDF, state_, abs_tol_f_, abs_tol_b_)) {
+      memory(new internal::cvodes_integrator_adjoint_memory(
+            y0.size(), ts.size(), lmm_f_, state_, abs_tol_f_, abs_tol_b_)) {
     constexpr const char* fun = "cvodes_integrator::integrate";
     save_varis(args_varis_, args...);
 
@@ -614,7 +613,7 @@ private:
     if (returned_ == false)
       return;
 
-    if (is_var_t0 + is_var_ts + is_var_y0 + args_vars_total_ == 0) {
+    if (!(is_var_t0 || is_var_ts || is_var_y0 || is_any_var_args)) {
       return;
     }
 
