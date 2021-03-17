@@ -35,7 +35,7 @@ double dy2_dchi(double t, double omega, double chi) {
 struct sho_functor {
   template <typename T0, typename T1, typename T2>
   inline Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1>
-  operator()(const T0& t, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
+  operator()(const T0& t, const T1& y,
              std::ostream* msgs, const T2& omega) const {
     Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1> out(2);
     out << y.coeff(1), -omega * omega * y.coeff(0);
@@ -51,10 +51,10 @@ class test_functor_double_var {
   explicit test_functor_double_var(int lmm) : lmm_(lmm) {}
 
   template <typename T>
-  inline T operator()(Eigen::Matrix<T, Eigen::Dynamic, 1>& x) const {
+  inline stan::value_type_t<T> operator()(T& x) const {
     sho_functor sho;
-
-    T omega = x(0);
+    using T_scalar = stan::value_type_t<T>;
+    T_scalar omega = x(0);
 
     Eigen::VectorXd y0(2);
     y0 << 1.25, 0.0;
@@ -62,7 +62,7 @@ class test_functor_double_var {
     double t0 = 0.0;
     std::vector<double> ts{2.5, 5.0};
 
-    std::vector<Eigen::Matrix<T, Eigen::Dynamic, 1>> ys
+    std::vector<Eigen::Matrix<T_scalar, Eigen::Dynamic, 1>> ys
         = (lmm_ == TEST_CVODES_ADAMS)
               ? stan::math::ode_adjoint_tol(sho, y0, t0, ts, 1E-10, 1E-10,
                                             10000, nullptr, omega)

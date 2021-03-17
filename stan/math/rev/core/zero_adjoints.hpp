@@ -27,6 +27,27 @@ inline void zero_adjoints(std::vector<T>& x, Pargs&... args);
  */
 inline void zero_adjoints() {}
 
+template <typename T, require_st_arithmetic<T>* = nullptr>
+inline void zero_adjoints(T&& /* x */) {}
+
+template <typename T, require_var_t<T>* = nullptr>
+inline void zero_adjoints(T&& x) {
+  x.adj() = 0;
+}
+
+template <typename T, require_eigen_vt<is_var, T>* = nullptr>
+inline void zero_adjoints(T&& x) {
+  x.adj().setZero();
+}
+
+template <typename T, require_std_vector_st<is_var, T>* = nullptr>
+inline void zero_adjoints(T&& x) {
+  for (size_t i = 0; i < x.size(); ++i) {
+    zero_adjoints(x[i]);
+  }
+}
+
+
 /**
  * Do nothing for non-autodiff arguments. Recursively call zero_adjoints
  * on the rest of the arguments.
