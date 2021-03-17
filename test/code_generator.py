@@ -1,3 +1,4 @@
+import collections
 import numbers
 import os
 import statement_types
@@ -43,8 +44,6 @@ class CodeGenerator:
 
             number_nested_arrays, inner_type = parse_array(stan_arg)
 
-            value = None
-
             # Check if argument is differentiable
             try:
                 if inner_type == "int":
@@ -53,6 +52,9 @@ class CodeGenerator:
                     overload = "Prim"
             except KeyError:
                 pass
+
+            # By default the variable value is None and a default will be substituted
+            value = None
 
             # Check for special arguments (constrained variables or types)
             try:
@@ -64,7 +66,11 @@ class CodeGenerator:
             except KeyError:
                 pass
 
-            if value is None or isinstance(value, numbers.Number):
+            # The first case here is used for the array initializers in sig_utils.special_arg_values
+            # Everything else uses the second case
+            if number_nested_arrays > 0 and isinstance(value, collections.Iterable):
+                arg = statement_types.ArrayVariable(overload, "array" + suffix, number_nested_arrays, inner_type, value, 1)
+            else:
                 if inner_type == "int":
                     arg = statement_types.IntVariable("int" + suffix, value)
                 elif inner_type == "real":
@@ -91,8 +97,6 @@ class CodeGenerator:
                 if number_nested_arrays > 0:
                     self._add_statement(arg)
                     arg = statement_types.ArrayVariable(overload, "array" + suffix, number_nested_arrays, inner_type, arg, 1)
-            else:
-                arg = statement_types.ArrayVariable(overload, "array" + suffix, number_nested_arrays, inner_type, value, 1)
 
             arg_list.append(self._add_statement(arg))
 

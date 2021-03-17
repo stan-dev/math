@@ -318,21 +318,21 @@ class ArrayVariable(CppStatement):
 
         Otherwise return true if the overload is reverse mode and inner type isn't an integer
         """
-        try:
+        if isinstance(self.value, CppStatement):
             return self.value.is_reverse_mode()
-        except AttributeError:
+        else:
             return self.overload.startswith("Rev") and self.inner_type != "int"
 
     def is_varmat_compatible(self):
         """Return true if the underlying value is a CppStatement and is varmat compatible"""
-        try:
+        if isinstance(self.value, CppStatement):
             return self.value.is_varmat_compatible()
-        except AttributeError:
+        else:
             return False
     
     def cpp(self):
         """Generate C++"""
-        try:
+        if isinstance(self.value, CppStatement):
             lhs_string = "decltype({name})".format(name = self.value.name)
             rhs_string = self.value.name
             for n in range(self.number_nested_arrays):
@@ -340,16 +340,15 @@ class ArrayVariable(CppStatement):
                 rhs_string = "{" + ",".join([rhs_string] * self.size) + "}"
 
             return "{lhs_string} {name} = {rhs_string};".format(lhs_string = lhs_string, name = self.name, rhs_string = rhs_string)
-        except AttributeError:
-            scalar = overload_scalar[self.overload]
-            lhs_string = arg_types[self.inner_type].replace("SCALAR", scalar)
-            for n in range(self.number_nested_arrays):
-                lhs_string = "std::vector<" + lhs_string + ">"
+        else:
+            if self.number_nested_arrays == 1:
+                scalar = overload_scalar[self.overload]
+                lhs_string = "std::vector<{type}>".format(type = arg_types[self.inner_type].replace("SCALAR", scalar))
 
-            # This is a bit of a nasty way to convert a python iterable type to C++ code
-            # It doesn't respect the self.size variable
-            value_string = repr(self.value).replace('[', '{').replace(']', '}').replace('(', '{').replace(')', '}')
-            return "{lhs_string} {name} = {value};".format(lhs_string = lhs_string, name = self.name, value = value_string)
+                value_string = ",".join([repr(value) for value in self.value])
+                return "{lhs_string} {name} = {{{value}}};".format(lhs_string = lhs_string, name = self.name, value = value_string)
+            else:
+                raise NotImplementedError("Array initializers are not implemented for number_nested_arrays = " + repr(self.number_nested_arrays))
 
 class FunctionCallAssign(CppStatement):
     """Represents a function call and optional assignment"""
