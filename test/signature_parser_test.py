@@ -50,8 +50,8 @@ def test_is_ignored(add, if_else):
     assert if_else.is_ignored() == True
 
 def test_has_vector_arg(add, if_else):
-    assert add.has_vector_arg() == True
-    assert if_else.has_vector_arg() == False
+    assert add.has_eigen_compatible_arg() == True
+    assert if_else.has_eigen_compatible_arg() == False
 
 def test_returns_int(add, if_else):
     assert add.returns_int() == False

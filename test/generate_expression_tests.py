@@ -86,7 +86,7 @@ def main(functions=(), j=1):
                 continue
 
             # skip signatures without inputs that can be eigen types
-            if not sp.has_vector_arg():
+            if not sp.has_eigen_compatible_arg():
                 continue
 
             # skip functions in forward mode with no forward mode overload, same for reverse mode
@@ -101,7 +101,7 @@ def main(functions=(), j=1):
 
             # Generate two sets of arguments, one will be expressions one will not
             arg_list_expression_base = cg.build_arguments(sp, sp.number_arguments() * [overload], size = 1)
-            arg_list_expression = [cg.convert_to_expression(arg, size = 1) if arg.is_matrix_like() else arg for arg in arg_list_expression_base]
+            arg_list_expression = [cg.convert_to_expression(arg, size = 1) if arg.is_eigen_compatible() else arg for arg in arg_list_expression_base]
             arg_list_no_expression = cg.build_arguments(sp, sp.number_arguments() * [overload], size = 1)
 
             # Check results with expressions and without are the same
@@ -115,7 +115,7 @@ def main(functions=(), j=1):
                 if arg.is_expression():
                     cg.expect_leq_one(arg.counter)
 
-            # If reverse mode, check the adjoints            
+            # If reverse mode, check the adjoints
             if is_reverse_mode:
                 summed_result = cg.recursive_sum(result)
                 summed_result_no_expression = cg.recursive_sum(result_no_expression)

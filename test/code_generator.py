@@ -29,7 +29,7 @@ class CodeGenerator:
         """Generate and return the c++ code corresponding to the list of statements in the code generator"""
         return os.linesep.join(statement.cpp() for statement in self.code_list)
 
-    def build_arguments(self, signature_parser, arg_overloads, size = None):
+    def build_arguments(self, signature_parser, arg_overloads, size):
         """
         Generate argument variables for each of the arguments in the given signature_parser
         with the given overloads in arg_overloads and with the given size
@@ -64,14 +64,14 @@ class CodeGenerator:
             # The first case here is used for the array initializers in sig_utils.special_arg_values
             # Everything else uses the second case
             if number_nested_arrays > 0 and isinstance(value, collections.Iterable):
-                arg = statement_types.ArrayVariable(overload, "array" + suffix, number_nested_arrays, inner_type, value, 1)
+                arg = statement_types.ArrayVariable(overload, "array" + suffix, number_nested_arrays, inner_type, size = 1, value = value)
             else:
                 if inner_type == "int":
                     arg = statement_types.IntVariable("int" + suffix, value)
                 elif inner_type == "real":
                     arg = statement_types.RealVariable(overload, "real" + suffix, value)
                 elif inner_type in ("vector", "row_vector", "matrix"):
-                    arg = statement_types.MatrixVariable(overload, "matrix" + suffix, inner_type, value, size)
+                    arg = statement_types.MatrixVariable(overload, "matrix" + suffix, inner_type, size, value)
                 elif inner_type == "rng":
                     arg = statement_types.RngVariable("rng" + suffix)
                 elif inner_type == "ostream_ptr":
@@ -79,9 +79,9 @@ class CodeGenerator:
                 elif inner_type == "scalar_return_type":
                     arg = statement_types.ReturnTypeTVariable("ret_type" + suffix, *arg_list)
                 elif inner_type == "simplex":
-                    arg = statement_types.SimplexVariable(overload, "simplex" + suffix, value, size)
+                    arg = statement_types.SimplexVariable(overload, "simplex" + suffix, size, value)
                 elif inner_type == "positive_definite_matrix":
-                    arg = statement_types.PositiveDefiniteMatrixVariable(overload, "positive_definite_matrix" + suffix, value, size)
+                    arg = statement_types.PositiveDefiniteMatrixVariable(overload, "positive_definite_matrix" + suffix, size, value)
                 elif inner_type == "(vector, vector, data array[] real, data array[] int) => vector":
                     arg = statement_types.AlgebraSolverFunctorVariable("functor" + suffix)
                 elif inner_type == "(real, vector, ostream_ptr, vector) => vector":
@@ -91,7 +91,7 @@ class CodeGenerator:
 
                 if number_nested_arrays > 0:
                     self._add_statement(arg)
-                    arg = statement_types.ArrayVariable(overload, "array" + suffix, number_nested_arrays, inner_type, arg, 1)
+                    arg = statement_types.ArrayVariable(overload, "array" + suffix, number_nested_arrays, inner_type, size = 1, value = arg)
 
             arg_list.append(self._add_statement(arg))
 
@@ -102,43 +102,40 @@ class CodeGenerator:
 
     def add(self, arg1, arg2):
         """Generate code for arg1 + arg2"""
-        return self._add_statement(statement_types.FunctionCallAssign("stan::math::add", "sum_of_sums" + self._get_next_name_suffix(), arg1, arg2))
+        return self._add_statement(statement_types.FunctionCall("stan::math::add", "sum_of_sums" + self._get_next_name_suffix(), arg1, arg2))
     
     def convert_to_expression(self, arg, size = None):
         """Generate code to convert arg to an expression type of given size. If size is None, use the argument size"""
-        if not size:
-            size = arg.size
-
         return self._add_statement(statement_types.ExpressionVariable(arg.name + "_expr" + self._get_next_name_suffix(), arg, size))
     
     def expect_adj_eq(self, arg1, arg2):
         """Generate code that checks that the adjoints of arg1 and arg2 are equal"""
-        return self._add_statement(statement_types.FunctionCall("stan::test::expect_adj_eq", arg1, arg2))
+        return self._add_statement(statement_types.FunctionCall("stan::test::expect_adj_eq", None, arg1, arg2))
 
     def expect_eq(self, arg1, arg2):
         """Generate code that checks that values of arg1 and arg2 are equal"""
-        return self._add_statement(statement_types.FunctionCall("EXPECT_STAN_EQ", arg1, arg2))
+        return self._add_statement(statement_types.FunctionCall("EXPECT_STAN_EQ", None, arg1, arg2))
     
     def expect_leq_one(self, arg):
         """Generate code to check that arg is less than or equal to one"""
-        return self._add_statement(statement_types.FunctionCall("EXPECT_LEQ_ONE", arg))
+        return self._add_statement(statement_types.FunctionCall("EXPECT_LEQ_ONE", None, arg))
     
     def function_call_assign(self, cpp_function_name, *args):
         """Generate code to call the c++ function given by cpp_function_name with given args and assign the result to another variable"""
-        return self._add_statement(statement_types.FunctionCallAssign(cpp_function_name, "result" + self._get_next_name_suffix(), *args))
+        return self._add_statement(statement_types.FunctionCall(cpp_function_name, "result" + self._get_next_name_suffix(), *args))
 
     def grad(self, arg):
         """Generate code to call stan::math::grad()"""
-        return self._add_statement(statement_types.FunctionCall("stan::test::grad", arg))
+        return self._add_statement(statement_types.FunctionCall("stan::test::grad", None, arg))
     
     def recover_memory(self):
         """Generate code to call stan::math::recover_memory()"""
-        return self._add_statement(statement_types.FunctionCall("stan::math::recover_memory"))
+        return self._add_statement(statement_types.FunctionCall("stan::math::recover_memory", None))
 
     def recursive_sum(self, arg):
         """Generate code that repeatedly sums arg until all that is left is a scalar"""
-        return self._add_statement(statement_types.FunctionCallAssign("stan::test::recursive_sum", "summed_result" + self._get_next_name_suffix(), arg))
+        return self._add_statement(statement_types.FunctionCall("stan::test::recursive_sum", "summed_result" + self._get_next_name_suffix(), arg))
     
     def to_var_value(self, arg):
         """Generate code to convert arg to a varmat"""
-        return self._add_statement(statement_types.FunctionCallAssign("stan::math::to_var_value", arg.name + "_varmat" + self._get_next_name_suffix(), arg))
+        return self._add_statement(statement_types.FunctionCall("stan::math::to_var_value", arg.name + "_varmat" + self._get_next_name_suffix(), arg))

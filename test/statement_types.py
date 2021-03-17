@@ -12,7 +12,7 @@ class CppStatement:
         """By default, a statement is not reverse mode"""
         return False
     
-    def is_matrix_like(self):
+    def is_eigen_compatible(self):
         """By default, a statement is not matrix-like"""
         return False
 
@@ -75,7 +75,7 @@ class RealVariable(CppStatement):
 
 class MatrixVariable(CppStatement):
     """Represents a matrix variable"""
-    def __init__(self, overload, name, stan_arg, value = None, size = None):
+    def __init__(self, overload, name, stan_arg, size, value = None):
         """
         Initialize matrix
         
@@ -88,21 +88,18 @@ class MatrixVariable(CppStatement):
         self.overload = overload
         self.name = name
         self.stan_arg = stan_arg
+        self.size = size
+        
         if value is None:
             self.value = 0.4
         else:
             self.value = value
-        
-        if size is None:
-            self.size = 1
-        else:
-            self.size = size
     
     def is_reverse_mode(self):
         """Return true if the overload is reverse mode"""
         return self.overload.startswith("Rev")
 
-    def is_matrix_like(self):
+    def is_eigen_compatible(self):
         """Return true (this is a matrix like variable)"""
         return True
     
@@ -120,7 +117,7 @@ class MatrixVariable(CppStatement):
 
 class SimplexVariable(CppStatement):
     """Represents a simplex variable"""
-    def __init__(self, overload, name, value = None, size = None):
+    def __init__(self, overload, name, size, value = None):
         """
         Initialize simplex
         
@@ -132,21 +129,18 @@ class SimplexVariable(CppStatement):
         self.overload = overload
         self.name = name
         self.stan_arg = "vector"
+        self.size = size
+
         if value is None:
             self.value = 0.4
         else:
             self.value = value
-        
-        if size is None:
-            self.size = 1
-        else:
-            self.size = size
     
     def is_reverse_mode(self):
         """Return true if the overload is reverse mode"""
         return self.overload.startswith("Rev")
 
-    def is_matrix_like(self):
+    def is_eigen_compatible(self):
         """Return true (simplices are vectors)"""
         return True
     
@@ -164,7 +158,7 @@ class SimplexVariable(CppStatement):
 
 class PositiveDefiniteMatrixVariable(CppStatement):
     """Represents a positive definite matrix variable"""
-    def __init__(self, overload, name, value = None, size = None):
+    def __init__(self, overload, name, size, value = None):
         """
         Initialize positive definite matrix
         
@@ -176,21 +170,18 @@ class PositiveDefiniteMatrixVariable(CppStatement):
         self.overload = overload
         self.name = name
         self.stan_arg = "matrix"
+        self.size = size
+
         if value is None:
             self.value = 0.4
         else:
             self.value = value
-        
-        if size is None:
-            self.size = 1
-        else:
-            self.size = size
     
     def is_reverse_mode(self):
         """Return true if the overload is reverse mode"""
         return self.overload.startswith("Rev")
 
-    def is_matrix_like(self):
+    def is_eigen_compatible(self):
         """Return true (positive definite matrices are matrices)"""
         return True
     
@@ -290,7 +281,7 @@ class OStreamVariable(CppStatement):
 
 class ArrayVariable(CppStatement):
     """Represents an array variable"""
-    def __init__(self, overload, name, number_nested_arrays, inner_type, value = None, size = None):
+    def __init__(self, overload, name, number_nested_arrays, inner_type, size, value):
         """
         Initialize an array
         
@@ -306,11 +297,7 @@ class ArrayVariable(CppStatement):
         self.number_nested_arrays = number_nested_arrays
         self.inner_type = inner_type
         self.value = value
-
-        if not size:
-            self.size = 1
-        else:
-            self.size = size
+        self.size = size
     
     def is_reverse_mode(self):
         """
@@ -350,7 +337,7 @@ class ArrayVariable(CppStatement):
             else:
                 raise NotImplementedError("Array initializers are not implemented for number_nested_arrays = " + repr(self.number_nested_arrays))
 
-class FunctionCallAssign(CppStatement):
+class FunctionCall(CppStatement):
     """Represents a function call and optional assignment"""
     def __init__(self, function_name, name, *args):
         """
@@ -374,8 +361,8 @@ class FunctionCallAssign(CppStatement):
         """
         return self._is_reverse_mode
 
-    def is_matrix_like(self):
-        raise Exception("is_matrix_like not implemented for FunctionCallAssign")
+    def is_eigen_compatible(self):
+        raise Exception("is_eigen_compatible not implemented for FunctionCallAssign")
 
     def is_varmat(self):
         raise Exception("is_varmat not implemented for FunctionCallAssign")
@@ -386,17 +373,6 @@ class FunctionCallAssign(CppStatement):
             return "auto {name} = stan::math::eval({function_name}({arg_str}));".format(name = self.name, function_name = self.function_name, arg_str = self.arg_str)
         else:
             return "{function_name}({arg_str});".format(function_name = self.function_name, arg_str = self.arg_str)
-
-class FunctionCall(FunctionCallAssign):
-    """Represents a function call with no return"""
-    def __init__(self, function_name, *args):
-        """
-        Initialize a function call
-        
-        :param function_name: C++ name of function
-        :param args: Args to pass to function call
-        """
-        FunctionCallAssign.__init__(self, function_name, None, *args)
 
 class ExpressionVariable(CppStatement):
     """Represents an Eigen expression"""
@@ -423,7 +399,7 @@ class ExpressionVariable(CppStatement):
         """Return true if the base argument was reverse mode"""
         return self._is_reverse_mode
 
-    def is_matrix_like(self):
+    def is_eigen_compatible(self):
         """Return true (expressions are Eigen types)"""
         return True
     

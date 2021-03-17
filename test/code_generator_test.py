@@ -21,24 +21,24 @@ def real_var2():
 
 @pytest.fixture
 def matrix_var():
-    return MatrixVariable("Rev", "mymatrix", "matrix", 0.5, 2)
+    return MatrixVariable("Rev", "mymatrix", "matrix", 2, 0.5)
 
 @pytest.fixture
 def cg():
     return CodeGenerator()
 
 def test_prim_prim(add, cg):
-    cg.build_arguments(add, ["Prim", "Prim"])
+    cg.build_arguments(add, ["Prim", "Prim"], 1)
     assert cg.cpp() == """double real0 = 0.4;
 auto matrix1 = stan::test::make_arg<Eigen::Matrix<double, Eigen::Dynamic, 1>>(0.4, 1);"""
 
 def test_prim_rev(add, cg):
-    cg.build_arguments(add, ["Prim", "Rev"])
+    cg.build_arguments(add, ["Prim", "Rev"], 1)
     assert cg.cpp() == """double real0 = 0.4;
 auto matrix1 = stan::test::make_arg<Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1>>(0.4, 1);"""
 
 def test_rev_rev(add, cg):
-    cg.build_arguments(add, ["Rev", "Rev"])
+    cg.build_arguments(add, ["Rev", "Rev"], 1)
     assert cg.cpp() == """stan::math::var real0 = 0.4;
 auto matrix1 = stan::test::make_arg<Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1>>(0.4, 1);"""
 
