@@ -19,7 +19,13 @@ TYPED_TEST_P(harmonic_oscillator_test, no_error) {
 TYPED_TEST_P(harmonic_oscillator_test, error_conditions) {
   this->test_bad();
 }
-REGISTER_TYPED_TEST_SUITE_P(harmonic_oscillator_test, no_error, error_conditions);
+TYPED_TEST_P(harmonic_oscillator_test, value) {
+  this->test_value(0.0);
+  this->test_value(1.0);
+  this->test_value(-1.0);
+}
+REGISTER_TYPED_TEST_SUITE_P(harmonic_oscillator_test, no_error,
+                            error_conditions, value);
 INSTANTIATE_TYPED_TEST_SUITE_P(StanOde,
                                harmonic_oscillator_test,
                                harmonic_oscillator_test_types);
@@ -45,8 +51,14 @@ TYPED_TEST_SUITE_P(harmonic_oscillator_data_test);
 TYPED_TEST_P(harmonic_oscillator_data_test, bad_param_and_data) {
   this->test_bad_param_and_data();
 }
-REGISTER_TYPED_TEST_SUITE_P(harmonic_oscillator_data_test, bad_param_and_data);
+TYPED_TEST_P(harmonic_oscillator_data_test, value) {
+  this->test_value(0.0);
+  this->test_value(1.0);
+  this->test_value(-1.0);
+}
+REGISTER_TYPED_TEST_SUITE_P(harmonic_oscillator_data_test,
+                            bad_param_and_data, value);
 INSTANTIATE_TYPED_TEST_SUITE_P(StanOde,
                                harmonic_oscillator_data_test,
-                               harmonic_oscillator_integrate_ode_test_types);
+                               harmonic_oscillator_test_types);
 

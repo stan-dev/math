@@ -1,3 +1,6 @@
+#ifndef STAN_MATH_TEST_FIXTURE_ODE_SHO_HPP
+#define STAN_MATH_TEST_FIXTURE_ODE_SHO_HPP
+
 #include <stan/math/rev.hpp>
 #include <boost/numeric/odeint.hpp>
 #include <gtest/gtest.h>
@@ -41,6 +44,12 @@ struct harmonic_oscillator_ode_base {
   }
 };
 
+/**
+ * Inheriting base type, various fixtures differs by the type of ODE
+ * functor used in <code>apply_solver</code> calls, intended for
+ * different kind of tests.
+ * 
+ */
 template<typename T>
 struct harmonic_oscillator_test : public harmonic_oscillator_ode_base,
                                          public ODETestFixture<harmonic_oscillator_test<T>> {
@@ -54,7 +63,7 @@ struct harmonic_oscillator_test : public harmonic_oscillator_ode_base,
 
   auto apply_solver_tol() {
     std::tuple_element_t<1, T> sol;
-    sol(f_eigen, y0, t0, ts, rtol, atol, max_num_step, nullptr, theta, x_r, x_i);
+    return sol(f_eigen, y0, t0, ts, rtol, atol, max_num_step, nullptr, theta, x_r, x_i);
   }
 
   void test_good() {
@@ -173,8 +182,30 @@ struct harmonic_oscillator_test : public harmonic_oscillator_ode_base,
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, expected_is_neg_inf.str());
     x_r = x_r_;
   }
+
+  void test_value(double t0_in) {
+    t0 = t0_in;
+    for (size_t i = 0; i < ts.size(); ++i) {
+      ts[i] = t0 + 0.1 * (i + 1);
+    }
+
+    rtol = 1e-8;
+    atol = 1e-10;
+    max_num_step = 1e6;
+    std::vector<Eigen::VectorXd> res = apply_solver_tol();
+
+    EXPECT_NEAR(0.995029, res[0][0], 1e-5);
+    EXPECT_NEAR(-0.0990884, res[0][1], 1e-5);
+
+    EXPECT_NEAR(-0.421907, res[99][0], 1e-5);
+    EXPECT_NEAR(0.246407, res[99][1], 1e-5);    
+  }
 };
 
+/**
+ * Bad ODE RHS type tests.
+ * 
+ */
 template<typename T>
 struct harmonic_oscillator_bad_ode_test : public harmonic_oscillator_ode_base,
                                            public ODETestFixture<harmonic_oscillator_bad_ode_test<T>> {
@@ -188,7 +219,7 @@ struct harmonic_oscillator_bad_ode_test : public harmonic_oscillator_ode_base,
 
   auto apply_solver_tol() {
     std::tuple_element_t<1, T> sol;
-    sol(f_wrong_size_1, stan::math::to_array_1d(y0), t0, ts, theta, x_r, x_i, 0, rtol, atol, max_num_step);
+    return sol(f_wrong_size_1, stan::math::to_array_1d(y0), t0, ts, theta, x_r, x_i, 0, rtol, atol, max_num_step);
   }
 
   void test_bad_ode() {
@@ -197,20 +228,27 @@ struct harmonic_oscillator_bad_ode_test : public harmonic_oscillator_ode_base,
   }
 };
 
+/**
+ * ODE RHS type that utilize <code>double</code> & <code>int</code> data
+ * 
+ */
 template<typename T>
 struct harmonic_oscillator_data_test : public harmonic_oscillator_ode_base,
                                             public ODETestFixture<harmonic_oscillator_data_test<T>> {
   harmonic_oscillator_data_test() : harmonic_oscillator_ode_base()
-  {}
+  {
+    x_r = std::vector<double>(3, 1);
+    x_i = std::vector<int>(2, 0);    
+  }
 
   auto apply_solver() {
     std::tuple_element_t<0, T> sol;
-    return sol(f_data, stan::math::to_array_1d(y0), t0, ts, theta, x_r, x_i, 0);
+    return sol(f_data_eigen, y0, t0, ts, 0, theta, x_r, x_i);
   }
 
   auto apply_solver_tol() {
     std::tuple_element_t<1, T> sol;
-    sol(f_data, stan::math::to_array_1d(y0), t0, ts, theta, x_r, x_i, 0, rtol, atol, max_num_step);
+    return sol(f_data_eigen, y0, t0, ts, rtol, atol, max_num_step, 0, theta, x_r, x_i);
   }
 
   void test_bad_param_and_data() {
@@ -231,4 +269,24 @@ struct harmonic_oscillator_data_test : public harmonic_oscillator_ode_base,
     max_num_step = -1;
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, "max_num_steps");
   }
+
+  void test_value(double t0_in) {
+    t0 = t0_in;
+    for (size_t i = 0; i < ts.size(); ++i) {
+      ts[i] = t0 + 0.1 * (i + 1);
+    }
+
+    rtol = 1e-8;
+    atol = 1e-10;
+    max_num_step = 1e6;
+    std::vector<Eigen::VectorXd> res = apply_solver_tol();
+
+    EXPECT_NEAR(0.995029, res[0][0], 1e-5);
+    EXPECT_NEAR(-0.0990884, res[0][1], 1e-5);
+
+    EXPECT_NEAR(-0.421907, res[99][0], 1e-5);
+    EXPECT_NEAR(0.246407, res[99][1], 1e-5);    
+  }
 };
+
+#endif
