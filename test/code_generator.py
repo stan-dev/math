@@ -46,13 +46,8 @@ class CodeGenerator:
             value = None
 
             # Check if argument is differentiable
-            try:
-                if inner_type == "int":
-                    overload = "Prim"
-                if n in non_differentiable_args[signature_parser.function_name]:
-                    overload = "Prim"
-            except KeyError:
-                pass
+            if inner_type == "int" or n in non_differentiable_args.get(signature_parser.function_name, []):
+                  overload = "Prim"
 
             # Check for special arguments (constrained variables or types)
             try:
