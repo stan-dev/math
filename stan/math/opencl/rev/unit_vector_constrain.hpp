@@ -21,6 +21,7 @@ template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
 inline var_value<matrix_cl<double>> unit_vector_constrain(
     const var_value<T>& A) {
+  using std::sqrt;
   const double r = sqrt(dot_self(A.val()));
   return make_callback_var(
       elt_divide(A.val(), r),
@@ -43,6 +44,7 @@ template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
 inline var_value<matrix_cl<double>> unit_vector_constrain(const var_value<T>& A,
                                                           var& lp) {
+  using std::sqrt;
   double r = dot_self(A.val());
   lp -= 0.5 * r;
   r = sqrt(r);
