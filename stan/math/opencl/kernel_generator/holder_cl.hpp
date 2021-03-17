@@ -29,103 +29,69 @@ namespace math {
  * @tparam Derived derived type
  * @tparam T type of the argument
  */
-template <typename T, typename... Ptrs>
+template <typename T, typename... Args>
 class holder_cl_
-    : public operation_cl<holder_cl_<T, Ptrs...>,
+    : private std::tuple<Args...>,
+      public operation_cl<holder_cl_<T, Args...>,
                           typename std::remove_reference_t<T>::Scalar, T> {
  public:
   using Scalar = typename std::remove_reference_t<T>::Scalar;
-  using base = operation_cl<holder_cl_<T, Ptrs...>, Scalar, T>;
+  using base = operation_cl<holder_cl_<T, Args...>, Scalar, T>;
   using base::var_name_;
 
- protected:
-  std::tuple<std::unique_ptr<Ptrs>...> m_unique_ptrs;
-
- public:
   /**
    * Constructor
-   * @param a argument expression
-   * @param ptrs pointers this object takes ownership of
+   * @param f functor callable with given arguments that returns an expression
+   * @param args arguments for the functor
    */
-  holder_cl_(T&& a, Ptrs*... ptrs)
-      : base(std::forward<T>(a)),
-        m_unique_ptrs(std::unique_ptr<Ptrs>(ptrs)...) {}
+  template <typename Functor, require_same_t<decltype(std::declval<Functor>()(
+                                                 std::declval<Args&>()...)),
+                                             T>* = nullptr>
+  explicit holder_cl_(const Functor& f, Args&&... args)
+      : std::tuple<Args...>(std::forward<Args>(args)...),
+        base(index_apply<sizeof...(Args)>([this, &f](auto... Is) {
+          return f(std::get<Is>(*static_cast<std::tuple<Args...>*>(this))...);
+        })) {}
 };
 
 /**
- * Constructs a no-op operation that also holds pointer to some other
- * expressions, allocated on heap. When the object is destructed those
- * expressions will be deleted.
- * @tparam T type of argument expression
- * @tparam Ptrs types of pointers
- * @param a argument expression
- * @param ptrs pointers to objects the constructed object will own.
- * @return holder_cl_ operation
- */
-template <typename T, typename... Ptrs,
-          require_all_kernel_expressions_t<T, Ptrs...>* = nullptr>
-auto holder_cl(T&& a, Ptrs*... ptrs) {
-  return holder_cl_<as_operation_cl_t<T>, Ptrs...>(
-      as_operation_cl(std::forward<T>(a)), ptrs...);
-}
-
-namespace internal {
-/**
- * Second step in implementation of construction `holder_cl` from a functor.
- * @tparam T type of the result expression
- * @tparam Is index sequence for `ptrs`
- * @tparam Args types of pointes to heap
- * @param expr result expression
- * @param ptrs pointers to heap that need to be released when the expression is
- * destructed
- * @return `holder_cl` referencing given expression
- */
-template <typename T, std::size_t... Is, typename... Args>
-auto make_holder_cl_impl_step2(T&& expr, std::index_sequence<Is...>,
-                               const std::tuple<Args*...>& ptrs) {
-  return holder_cl(std::forward<T>(expr), std::get<Is>(ptrs)...);
-}
-
-/**
- * First step in implementation of construction `holder_cl` from a functor.
- * @tparam T type of the functor
- * @tparam Is index sequence for `args`
- * @tparam Args types of arguments
- * @param func functor
- * @param args arguments for the functor
- * @return `holder_cl` referencing given expression
- */
-template <typename T, std::size_t... Is, typename... Args>
-auto make_holder_cl_impl_step1(const T& func, std::index_sequence<Is...>,
-                               Args&&... args) {
-  std::tuple<std::remove_reference_t<Args>*...> res;
-  auto ptrs = std::tuple_cat(
-      holder_handle_element(std::forward<Args>(args), std::get<Is>(res))...);
-  return make_holder_cl_impl_step2(
-      func(*std::get<Is>(res)...),
-      std::make_index_sequence<std::tuple_size<decltype(ptrs)>::value>(), ptrs);
-}
-
-}  // namespace internal
-
-/**
- * Constructs an expression from given arguments using given functor.
- * This is similar to calling the functor with given arguments. Except that any
- * rvalue argument will be moved to heap first. The arguments moved to heap are
- * deleted once the expression is destructed.
- * @tparam T type of functor
- * @tparam Args types of arguments
+ * Calls given function with given Args. No `holder` is necessary if the
+ * function is not returning Eigen expression or if all arguments are lvalues.
+ *
+ * @tparam F type of the functor
+ * @tparam Args types of the Args
  * @param func the functor
- * @param args arguments for the functor
+ * @param args Args for the functor
+ * @return `holder` referencing expression constructed by given functor
  */
-template <typename T, typename... Args,
-          require_all_kernel_expressions_t<
-              decltype(std::declval<T>()(std::declval<Args&>()...)),
-              Args...>* = nullptr>
-auto make_holder_cl(const T& func, Args&&... args) {
-  return internal::make_holder_cl_impl_step1(
-      func, std::make_index_sequence<sizeof...(Args)>(),
-      std::forward<Args>(args)...);
+template <
+    typename F, typename... Args,
+    require_t<disjunction<conjunction<std::is_lvalue_reference<Args&&>...>,
+                          is_plain_type<decltype(std::declval<F>()(
+                              std::declval<Args&>()...))>>>* = nullptr>
+auto make_holder_cl(const F& func, Args&&... args) {
+  return func(std::forward<Args>(args)...);
+}
+
+/**
+ * Constructs an expression from given Args using given functor.
+ * This is similar to calling the functor with given Args. Except that any
+ * rvalue argument will be moved to heap first. The Args moved to heap are
+ * deleted once the expression is destructed.
+ *
+ * @tparam F type of the functor
+ * @tparam Args types of the Args
+ * @param func the functor
+ * @param args Args for the functor
+ * @return `holder` referencing expression constructed by given functor
+ */
+template <typename F, typename... Args,
+          require_not_plain_type_t<
+              decltype(std::declval<F>()(std::declval<Args&>()...))>* = nullptr,
+          require_any_t<std::is_rvalue_reference<Args&&>...>* = nullptr>
+auto make_holder_cl(const F& func, Args&&... args) {
+  return holder_cl_<std::decay_t<decltype(func(args...))>, Args...>(
+      func, std::forward<Args>(args)...);
 }
 
 /** @}*/

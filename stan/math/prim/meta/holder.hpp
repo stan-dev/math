@@ -1,8 +1,10 @@
 #ifndef STAN_MATH_PRIM_FUN_HOLDER_HPP
 #define STAN_MATH_PRIM_FUN_HOLDER_HPP
 
+#include <stan/math/prim/meta/index_apply.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/is_plain_type.hpp>
+#include <stan/math/prim/meta/require_generics.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <memory>
 #include <type_traits>
@@ -18,15 +20,15 @@
 /**
  * \ingroup returning_expressions
  *
- * Operations in Eigen Expressions hold their arguments either by value or by
- * reference. Which one is chosen depends on type of the argument. Other
- * operations are held by value. "Heavy" objects that can hold data themselves,
- * such as `Eigen::Matrix` or `Eigen::Ref` are instead held by reference. THis
- * is the only criterion - holding rvalue arguments by value is not supported,
- * so we can not use perfect forwarding.
+ * Operations in Eigen Expressions hold their Args either by value or by
+ * reference. Which one is chosen depends on type of the argument. "Heavy"
+ * objects that can hold data themselves, such as `Eigen::Matrix` or
+ * `Eigen::Ref` are held by reference. Other operations are held by value. This
+ * is the only criterion - holding rvalue Args by value is not supported, so we
+ * can not use perfect forwarding.
  *
  * When returning an expression from function we have to be careful that any
- * arguments in this expression that are held by reference do not go out of
+ * Args in this expression that are held by reference do not go out of
  * scope. For instance, consider the function:
  *
  * ```
@@ -51,14 +53,20 @@
  * reference.
  *
  * So a function returning an expression referencing local matrices or
- * matrices that were rvalue reference arguments to the function will not work.
+ * matrices that were rvalue reference Args to the function will not work.
  *
- * A workarount to this issue is allocating and constructing or moving such
- * objects to heap. `Holder` object is a no-op operation that can also take
- * pointers to such objects and release them when it goes out of scope. It can
- * be created either by directly supplying pointers to such objects to `holder`
- * function or by forwarding function arguments and moving local variables to
- * `make_holder`, which will move any rvalues to heap first.
+ * A workarount to this issue is any referenced object part of the returned
+ * expression. `Holder` object is a no-op operation that can also contain such
+ * objects. It can be created either by forwarding function argumnets and moving
+ * local variables to `make_holder`, which will construct a Holder object
+ * containing these objects and behaving as an expression returned by given
+ * functor.
+ *
+ * Same holder object can also be used for OpenCL kernel generator expressions.
+ * Kernel generator expressions can themselves hold rvalue argumets, so using
+ * holder for simple cases, such as the example above is not needed. However, we
+ * do need holder when a rvalue object is referenced multiple times by the
+ * returned expression.
  */
 
 // This was implenmented following the tutorial on edding new expressions to
@@ -67,7 +75,7 @@
 namespace stan {
 namespace math {
 
-template <class ArgType, typename... Ptrs>
+template <class BaseExpr, typename... Ptrs>
 class Holder;
 
 }  // namespace math
@@ -76,25 +84,25 @@ class Holder;
 namespace Eigen {
 namespace internal {
 
-template <class ArgType, typename... Ptrs>
-struct traits<stan::math::Holder<ArgType, Ptrs...>> {
-  typedef typename ArgType::StorageKind StorageKind;
-  typedef typename traits<ArgType>::XprKind XprKind;
-  typedef typename ArgType::StorageIndex StorageIndex;
-  typedef typename ArgType::Scalar Scalar;
+template <class BaseExpr, typename... Args>
+struct traits<stan::math::Holder<BaseExpr, Args...>> {
+  typedef typename BaseExpr::StorageKind StorageKind;
+  typedef typename traits<BaseExpr>::XprKind XprKind;
+  typedef typename BaseExpr::StorageIndex StorageIndex;
+  typedef typename BaseExpr::Scalar Scalar;
   enum {
     // Possible flags are documented here:
     // https://eigen.tuxfamily.org/dox/group__flags.html
-    Flags = (ArgType::Flags
+    Flags = (BaseExpr::Flags
              & (RowMajorBit | LvalueBit | LinearAccessBit | DirectAccessBit
                 | PacketAccessBit | NoPreferredStorageOrderBit))
             | NestByRefBit,
-    RowsAtCompileTime = ArgType::RowsAtCompileTime,
-    ColsAtCompileTime = ArgType::ColsAtCompileTime,
-    MaxRowsAtCompileTime = ArgType::MaxRowsAtCompileTime,
-    MaxColsAtCompileTime = ArgType::MaxColsAtCompileTime,
-    InnerStrideAtCompileTime = ArgType::InnerStrideAtCompileTime,
-    OuterStrideAtCompileTime = ArgType::OuterStrideAtCompileTime
+    RowsAtCompileTime = BaseExpr::RowsAtCompileTime,
+    ColsAtCompileTime = BaseExpr::ColsAtCompileTime,
+    MaxRowsAtCompileTime = BaseExpr::MaxRowsAtCompileTime,
+    MaxColsAtCompileTime = BaseExpr::MaxColsAtCompileTime,
+    InnerStrideAtCompileTime = BaseExpr::InnerStrideAtCompileTime,
+    OuterStrideAtCompileTime = BaseExpr::OuterStrideAtCompileTime
   };
 };
 
@@ -111,22 +119,29 @@ namespace math {
  * @tparam Derived derived type
  * @tparam T type of the argument
  */
-template <typename ArgType, typename... Ptrs>
+template <typename BaseExpr, typename... Args>
 class Holder
-    : public Eigen::internal::dense_xpr_base<Holder<ArgType, Ptrs...>>::type {
+    : private std::tuple<Args...>,
+      public Eigen::internal::dense_xpr_base<Holder<BaseExpr, Args...>>::type {
  public:
-  typedef typename Eigen::internal::ref_selector<Holder<ArgType, Ptrs...>>::type
-      Nested;
-  typename Eigen::internal::ref_selector<ArgType>::non_const_type m_arg;
-  std::tuple<std::unique_ptr<Ptrs>...> m_unique_ptrs;
+  typedef
+      typename Eigen::internal::ref_selector<Holder<BaseExpr, Args...>>::type
+          Nested;
+  typename Eigen::internal::ref_selector<BaseExpr>::non_const_type m_arg;
 
-  explicit Holder(ArgType&& arg, Ptrs*... pointers)
-      : m_arg(arg), m_unique_ptrs(std::unique_ptr<Ptrs>(pointers)...) {}
+  template <typename Functor, require_same_t<decltype(std::declval<Functor>()(
+                                                 std::declval<Args&>()...)),
+                                             BaseExpr>* = nullptr>
+  explicit Holder(const Functor& f, Args&&... args)
+      : std::tuple<Args...>(std::forward<Args>(args)...),
+        m_arg(index_apply<sizeof...(Args)>([this, &f](auto... Is) {
+          return f(std::get<Is>(*static_cast<std::tuple<Args...>*>(this))...);
+        })) {}
 
   // we need to explicitely default copy and move constructors as we are
   // defining copy and move assignment operators
-  Holder(const Holder<ArgType, Ptrs...>&) = default;
-  Holder(Holder<ArgType, Ptrs...>&&) = default;
+  Holder(const Holder<BaseExpr, Args...>&) = default;
+  Holder(Holder<BaseExpr, Args...>&&) = default;
 
   // all these functions just call the same on the argument
   Eigen::Index rows() const { return m_arg.rows(); }
@@ -141,19 +156,20 @@ class Holder
    * @return *this
    */
   template <typename T, require_eigen_t<T>* = nullptr>
-  inline Holder<ArgType, Ptrs...>& operator=(const T& other) {
+  inline Holder<BaseExpr, Args...>& operator=(const T& other) {
     m_arg = other;
     return *this;
   }
 
   // copy and move assignment operators need to be separately overloaded,
   // otherwise defaults will be used.
-  inline Holder<ArgType, Ptrs...>& operator=(
-      const Holder<ArgType, Ptrs...>& other) {
+  inline Holder<BaseExpr, Args...>& operator=(
+      const Holder<BaseExpr, Args...>& other) {
     m_arg = other;
     return *this;
   }
-  inline Holder<ArgType, Ptrs...>& operator=(Holder<ArgType, Ptrs...>&& other) {
+  inline Holder<BaseExpr, Args...>& operator=(
+      Holder<BaseExpr, Args...>&& other) {
     m_arg = std::move(other.m_arg);
     return *this;
   }
@@ -165,11 +181,11 @@ class Holder
 namespace Eigen {
 namespace internal {
 
-template <typename ArgType, typename... Ptrs>
-struct evaluator<stan::math::Holder<ArgType, Ptrs...>>
-    : evaluator_base<stan::math::Holder<ArgType, Ptrs...>> {
-  typedef stan::math::Holder<ArgType, Ptrs...> XprType;
-  typedef typename remove_all<ArgType>::type ArgTypeNestedCleaned;
+template <typename BaseExpr, typename... Args>
+struct evaluator<stan::math::Holder<BaseExpr, Args...>>
+    : evaluator_base<stan::math::Holder<BaseExpr, Args...>> {
+  typedef stan::math::Holder<BaseExpr, Args...> XprType;
+  typedef typename remove_all<BaseExpr>::type ArgTypeNestedCleaned;
   typedef typename XprType::CoeffReturnType CoeffReturnType;
   typedef typename XprType::Scalar Scalar;
   enum {
@@ -226,150 +242,42 @@ namespace stan {
 namespace math {
 
 /**
- * Constructs a no-op operation that also holds pointer to some other
- * expressions, allocated on heap. When the object is destructed those
- * expressions will be deleted.
- * @tparam T type of argument expression
- * @tparam Ptrs types of pointers
- * @param a argument expression
- * @param ptrs pointers to objects the constructed object will own.
- * @return holder operation
- */
-template <typename T, typename... Ptrs,
-          std::enable_if_t<sizeof...(Ptrs) >= 1>* = nullptr>
-Holder<T, Ptrs...> holder(T&& arg, Ptrs*... pointers) {
-  return Holder<T, Ptrs...>(std::forward<T>(arg), pointers...);
-}
-// trivial case with no pointers constructs no holder object
-template <typename T>
-T holder(T&& arg) {
-  return std::forward<T>(arg);
-}
-
-namespace internal {
-// the function holder_handle_element is also used in holder_cl
-/**
- * Handles single element (moving rvalue non-expressions to heap) for
- * construction of `holder` or `holder_cl` from a functor. For lvalues or
- * expressions just sets the `res` pointer.
- * @tparam T type of the element
- * @param a element to handle
- * @param res resulting pointer to element
- * @return tuple of pointers allocated on heap (empty).
- */
-template <typename T>
-auto holder_handle_element(T& a, T*& res) {
-  res = &a;
-  return std::make_tuple();
-}
-template <typename T,
-          std::enable_if_t<!(Eigen::internal::traits<std::decay_t<T>>::Flags
-                             & Eigen::NestByRefBit)>* = nullptr>
-auto holder_handle_element(T&& a, std::remove_reference_t<T>*& res) {
-  res = &a;
-  return std::make_tuple();
-}
-
-/**
- * Handles single element (moving rvalue non-expressions to heap) for
- * construction of `holder` or `holder_cl` from a functor. Rvalue non-expression
- * is moved to heap and the pointer to heap memory is assigned to res and
- * returned in a tuple.
- * @tparam T type of the element
- * @param a element to handle
- * @param res resulting pointer to element
- * @return tuple of pointers allocated on heap (containing single pointer).
- */
-template <typename T, require_t<std::is_rvalue_reference<T&&>>* = nullptr,
-          std::enable_if_t<
-              static_cast<bool>(Eigen::internal::traits<std::decay_t<T>>::Flags&
-                                    Eigen::NestByRefBit)>* = nullptr>
-auto holder_handle_element(T&& a, T*& res) {
-  res = new T(std::move(a));
-  return std::make_tuple(res);
-}
-template <typename T, require_t<std::is_rvalue_reference<T&&>>* = nullptr,
-          require_not_eigen_t<T>* = nullptr>
-auto holder_handle_element(T&& a, T*& res) {
-  res = new T(std::move(a));
-  return std::make_tuple(res);
-}
-
-/**
- * Second step in implementation of construction `holder` from a functor.
- * Constructs holder object form given expression and tuple of pointers.
- * @tparam T type of the result expression
- * @tparam Is index sequence for `ptrs`
- * @tparam Args types of pointes to heap
- * @param expr result expression
- * @param ptrs pointers to heap that need to be released when the expression is
- * destructed
- * @return `holder` referencing given expression
- */
-template <typename T, std::size_t... Is, typename... Args>
-auto make_holder_impl_construct_object(T&& expr, std::index_sequence<Is...>,
-                                       const std::tuple<Args*...>& ptrs) {
-  return holder(std::forward<T>(expr), std::get<Is>(ptrs)...);
-}
-
-/**
- * Implementation of construction `holder` from a functor.
+ * Calls given function with given Args. No `holder` is necessary if the
+ * function is not returning Eigen expression or if all arguments are lvalues.
+ *
  * @tparam F type of the functor
- * @tparam Is index sequence for `args`
- * @tparam Args types of the arguments
- * @param func functor
- * @param args arguments for the functor
+ * @tparam Args types of the Args
+ * @param func the functor
+ * @param args Args for the functor
  * @return `holder` referencing expression constructed by given functor
  */
-template <typename F, std::size_t... Is, typename... Args>
-auto make_holder_impl(const F& func, std::index_sequence<Is...>,
-                      Args&&... args) {
-  std::tuple<std::remove_reference_t<Args>*...> res;
-  auto ptrs = std::tuple_cat(
-      holder_handle_element(std::forward<Args>(args), std::get<Is>(res))...);
-  return make_holder_impl_construct_object(
-      func(*std::get<Is>(res)...),
-      std::make_index_sequence<std::tuple_size<decltype(ptrs)>::value>(), ptrs);
+template <typename F, typename... Args,
+          require_t<disjunction<conjunction<std::is_lvalue_reference<Args&&>...>,
+                                is_plain_type<decltype(std::declval<F>()(
+                                    std::declval<Args&>()...))>>>* = nullptr>
+auto make_holder(const F& func, Args&&... args) {
+  return func(std::forward<Args>(args)...);
 }
 
-}  // namespace internal
-
 /**
- * Constructs an expression from given arguments using given functor.
- * This is similar to calling the functor with given arguments. Except that any
- * rvalue argument will be moved to heap first. The arguments moved to heap are
+ * Constructs an expression from given Args using given functor.
+ * This is similar to calling the functor with given Args. Except that any
+ * rvalue argument will be moved to heap first. The Args moved to heap are
  * deleted once the expression is destructed.
  *
  * @tparam F type of the functor
- * @tparam Args types of the arguments
+ * @tparam Args types of the Args
  * @param func the functor
- * @param args arguments for the functor
+ * @param args Args for the functor
  * @return `holder` referencing expression constructed by given functor
  */
 template <typename F, typename... Args,
           require_not_plain_type_t<
-              decltype(std::declval<F>()(std::declval<Args&>()...))>* = nullptr>
+              decltype(std::declval<F>()(std::declval<Args&>()...))>* = nullptr,
+          require_any_t<std::is_rvalue_reference<Args&&>...>* = nullptr>
 auto make_holder(const F& func, Args&&... args) {
-  return internal::make_holder_impl(func,
-                                    std::make_index_sequence<sizeof...(Args)>(),
-                                    std::forward<Args>(args)...);
-}
-
-/**
- * Calls given function with given arguments. No `holder` is necessary if the
- * function is not returning Eigen expression.
- *
- * @tparam F type of the functor
- * @tparam Args types of the arguments
- * @param func the functor
- * @param args arguments for the functor
- * @return `holder` referencing expression constructed by given functor
- */
-template <typename F, typename... Args,
-          require_plain_type_t<
-              decltype(std::declval<F>()(std::declval<Args&>()...))>* = nullptr>
-auto make_holder(const F& func, Args&&... args) {
-  return func(std::forward<Args>(args)...);
+  return Holder<std::decay_t<decltype(func(args...))>, Args...>(
+      func, std::forward<Args>(args)...);
 }
 
 }  // namespace math
