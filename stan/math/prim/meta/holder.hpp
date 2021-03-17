@@ -127,7 +127,7 @@ class Holder
   typedef
       typename Eigen::internal::ref_selector<Holder<BaseExpr, Args...>>::type
           Nested;
-  typename Eigen::internal::ref_selector<BaseExpr>::non_const_type m_arg;
+  BaseExpr m_arg;
 
   template <typename Functor, require_same_t<decltype(std::declval<Functor>()(
                                                  std::declval<Args&>()...)),
