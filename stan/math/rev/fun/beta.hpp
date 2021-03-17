@@ -35,11 +35,13 @@ namespace math {
  * @return Result of beta function
  */
 inline var beta(const var& a, const var& b) {
-  return make_callback_var(beta(a.val(), b.val()), [a, b](auto& vi) mutable {
+  double digamma_ab = digamma(a.val() + b.val());
+  double digamma_a = digamma(a.val()) - digamma_ab;
+  double digamma_b = digamma(b.val()) - digamma_ab;
+  return make_callback_var(beta(a.val(), b.val()), [a, b, digamma_a, digamma_b](auto& vi) mutable {
     const double adj_val = vi.adj() * vi.val();
-    const double digamma_ab = digamma(a.val() + b.val());
-    a.adj() += adj_val * (digamma(a.val()) - digamma_ab);
-    b.adj() += adj_val * (digamma(b.val()) - digamma_ab);
+    a.adj() += adj_val * digamma_a;
+    b.adj() += adj_val * digamma_b;
   });
 }
 
@@ -62,8 +64,9 @@ inline var beta(const var& a, const var& b) {
  * @return Result of beta function
  */
 inline var beta(const var& a, double b) {
-  return make_callback_var(beta(a.val(), b), [a, b](auto& vi) mutable {
-    a.adj() += vi.adj() * (digamma(a.val()) - digamma(a.val() + b)) * vi.val();
+  auto digamma_ab = digamma(a.val()) - digamma(a.val() + b);
+  return make_callback_var(beta(a.val(), b), [a, b, digamma_ab](auto& vi) mutable {
+    a.adj() += vi.adj() * digamma_ab * vi.val();
   });
 }
 
@@ -86,8 +89,10 @@ inline var beta(const var& a, double b) {
  * @return Result of beta function
  */
 inline var beta(double a, const var& b) {
-  return make_callback_var(beta(a, b.val()), [a, b](auto& vi) mutable {
-    b.adj() += vi.adj() * (digamma(b.val()) - digamma(a + b.val())) * vi.val();
+  auto beta_val = beta(a, b.val());
+  auto digamma_ab = (digamma(b.val()) - digamma(a + b.val())) * beta_val;
+  return make_callback_var(beta_val, [a, b, digamma_ab](auto& vi) mutable {
+    b.adj() += vi.adj() * digamma_ab;
   });
 }
 

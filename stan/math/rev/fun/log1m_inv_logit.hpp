@@ -17,8 +17,9 @@ namespace math {
  * @return log of one minus the inverse logit of the argument
  */
 inline var log1m_inv_logit(const var& u) {
-  return make_callback_var(log1m_inv_logit(u.val()), [u](auto& vi) mutable {
-    u.adj() += vi.adj() * -inv_logit(u.val());
+  auto precomp_inv_logit = -inv_logit(u.val());
+  return make_callback_var(log1m_inv_logit(u.val()), [u, precomp_inv_logit](auto& vi) mutable {
+    u.adj() += vi.adj() * precomp_inv_logit;
   });
 }
 

@@ -29,8 +29,9 @@ namespace math {
  *
  */
 inline var inv_sqrt(const var& a) {
-  return make_callback_var(inv_sqrt(a.val()), [a](auto& vi) mutable {
-    a.adj() -= 0.5 * vi.adj() / (a.val() * std::sqrt(a.val()));
+  auto denom = a.val() * std::sqrt(a.val());
+  return make_callback_var(inv_sqrt(a.val()), [a, denom](auto& vi) mutable {
+    a.adj() -= 0.5 * vi.adj() / denom;
   });
 }
 

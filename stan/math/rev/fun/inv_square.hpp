@@ -28,8 +28,9 @@ namespace math {
  *
  */
 inline var inv_square(const var& a) {
-  return make_callback_var(inv_square(a.val()), [a](auto& vi) mutable {
-    a.adj() -= 2 * vi.adj() / (a.val() * a.val() * a.val());
+  auto a_cube = a.val() * a.val() * a.val();
+  return make_callback_var(inv_square(a.val()), [a, a_cube](auto& vi) mutable {
+    a.adj() -= 2 * vi.adj() / a_cube;
   });
 }
 

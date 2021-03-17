@@ -9,11 +9,10 @@ namespace stan {
 namespace math {
 
 inline var bessel_first_kind(int v, const var& a) {
+  auto precomp_bessel = v * bessel_first_kind(v, a.val()) / a.val() - bessel_first_kind(v + 1, a.val());
   return make_callback_var(
-      bessel_first_kind(v, a.val()), [v, a](const auto& vi) mutable {
-        a.adj() += vi.adj_
-                   * (v * bessel_first_kind(v, a.val()) / a.val()
-                      - bessel_first_kind(v + 1, a.val()));
+      bessel_first_kind(v, a.val()), [precomp_bessel, a](const auto& vi) mutable {
+        a.adj() += vi.adj_ * precomp_bessel;
       });
 }
 

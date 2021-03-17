@@ -14,8 +14,9 @@ namespace math {
  * variable.
  */
 inline var log1p_exp(const var& a) {
-  return make_callback_var(log1p_exp(a.val()), [a](auto& vi) mutable {
-    a.adj() += vi.adj() * inv_logit(a.val());
+  auto precomp_inv_logit = inv_logit(a.val());
+  return make_callback_var(log1p_exp(a.val()), [a, precomp_inv_logit](auto& vi) mutable {
+    a.adj() += vi.adj() * precomp_inv_logit;
   });
 }
 
