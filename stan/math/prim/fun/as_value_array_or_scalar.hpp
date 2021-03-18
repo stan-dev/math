@@ -19,7 +19,9 @@ namespace math {
  */
 template <typename T>
 inline auto as_value_array_or_scalar(T&& v) {
-  return value_of(as_array_or_scalar(std::forward<T>(v)));
+  return make_holder([](auto& x) {
+    return value_of(as_array_or_scalar(x));
+  }, std::forward<T>(v));
 }
 
 }  // namespace math

@@ -3,6 +3,7 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 
 namespace stan {
 namespace math {
@@ -23,6 +24,13 @@ namespace math {
 template <typename T>
 inline auto& value_of(const var_value<T>& v) {
   return v.vi_->val_;
+}
+
+template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
+inline auto value_of(EigMat&& v) {
+  return make_holder([](auto&& a) {
+    return std::forward<decltype(a)>(a).val();
+  }, std::forward<EigMat>(v));
 }
 
 }  // namespace math

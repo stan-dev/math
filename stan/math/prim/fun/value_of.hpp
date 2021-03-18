@@ -60,7 +60,8 @@ inline auto value_of(const T& x) {
  * @return Matrix of values
  **/
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
-          require_not_st_arithmetic<EigMat>* = nullptr>
+          require_not_st_arithmetic<EigMat>* = nullptr,
+          require_not_st_var<EigMat>* = nullptr>
 inline auto value_of(EigMat&& M) {
   return make_holder(
       [](auto& a) {
