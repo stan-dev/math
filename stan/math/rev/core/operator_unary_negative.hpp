@@ -35,8 +35,8 @@ namespace math {
  * @return Negation of variable.
  */
 inline var operator-(const var& a) {
-  return make_callback_var(-a.val(),
-                           [a](const auto& vi) mutable { a.adj() -= vi.adj(); });
+  return make_callback_var(
+      -a.val(), [a](const auto& vi) mutable { a.adj() -= vi.adj(); });
 }
 
 /**
