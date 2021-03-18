@@ -1,15 +1,16 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
+#include <test/unit/math/prim/err/util.hpp>
 #include <limits>
 
 TEST(ErrorHandlingMatrix, checkVectorMatrix) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> x;
 
   x.resize(3, 3);
-  EXPECT_THROW(stan::math::check_vector("checkVector", "x", x),
+  STAN_EXPECT_THROW(stan::math::check_vector("checkVector", "x", x),
                std::invalid_argument);
   x.resize(0, 0);
-  EXPECT_THROW(stan::math::check_vector("checkVector", "x", x),
+  STAN_EXPECT_THROW(stan::math::check_vector("checkVector", "x", x),
                std::invalid_argument);
 
   x.resize(1, 5);
@@ -25,10 +26,10 @@ TEST(ErrorHandlingMatrix, checkVectorMatrix_nan) {
 
   x.resize(3, 3);
   x << nan, nan, nan, nan, nan, nan, nan, nan, nan;
-  EXPECT_THROW(stan::math::check_vector("checkVector", "x", x),
+  STAN_EXPECT_THROW(stan::math::check_vector("checkVector", "x", x),
                std::invalid_argument);
   x.resize(0, 0);
-  EXPECT_THROW(stan::math::check_vector("checkVector", "x", x),
+  STAN_EXPECT_THROW(stan::math::check_vector("checkVector", "x", x),
                std::invalid_argument);
 
   x.resize(1, 5);

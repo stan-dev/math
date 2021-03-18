@@ -74,7 +74,6 @@ struct bounded<T_y, T_low, T_high, true> {
 template <typename T_y, typename T_low, typename T_high>
 inline void check_bounded(const char* function, const char* name, const T_y& y,
                           const T_low& low, const T_high& high) {
-  STAN_NO_RANGE_AND_SIZE_CHECK;
   if (size_zero(y, low, high)) {
     return;
   }

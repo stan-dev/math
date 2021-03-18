@@ -25,7 +25,7 @@ namespace math {
 template <typename T>
 inline void check_std_vector_index(const char* function, const char* name,
                                    const std::vector<T>& y, int i) {
-  STAN_NO_RANGE_AND_SIZE_CHECK;
+  STAN_NO_RANGE_CHECKS_RETURN;
   if (!(i >= static_cast<int>(stan::error_index::value)
         && i < static_cast<int>(y.size() + stan::error_index::value))) {
     [&]() STAN_COLD_PATH {

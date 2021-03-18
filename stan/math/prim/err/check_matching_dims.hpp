@@ -28,7 +28,6 @@ template <typename T1, typename T2, require_all_not_matrix_t<T1, T2>* = nullptr,
               T1, T2>* = nullptr>
 inline void check_matching_dims(const char* function, const char* name1,
                                 const T1& y1, const char* name2, const T2& y2) {
-  STAN_NO_RANGE_AND_SIZE_CHECK;
   std::vector<int> y1_d = dims(y1);
   std::vector<int> y2_d = dims(y2);
   bool error = false;
@@ -83,7 +82,6 @@ template <
     require_any_not_stan_scalar_t<T1, T2>* = nullptr>
 inline void check_matching_dims(const char* function, const char* name1,
                                 const T1& y1, const char* name2, const T2& y2) {
-  STAN_NO_RANGE_AND_SIZE_CHECK;
   if (y1.rows() != y2.rows() || y1.cols() != y2.cols()) {
     [&]() STAN_COLD_PATH {
       std::ostringstream y1_err;

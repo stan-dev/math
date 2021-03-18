@@ -1,5 +1,6 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
+#include <test/unit/math/prim/err/util.hpp>
 #include <limits>
 #include <vector>
 
@@ -20,12 +21,12 @@ TEST(ErrorHandlingMatrix, checkStdVectorIndexMatrix) {
       "checkStdVectorIndexMatrix", "i", y, i));
 
   y.resize(2);
-  EXPECT_THROW(stan::math::check_std_vector_index("checkStdVectorIndexMatrix",
+  STAN_EXPECT_THROW(stan::math::check_std_vector_index("checkStdVectorIndexMatrix",
                                                   "i", y, i),
                std::out_of_range);
 
   i = 0;
-  EXPECT_THROW(stan::math::check_std_vector_index("checkStdVectorIndexMatrix",
+  STAN_EXPECT_THROW(stan::math::check_std_vector_index("checkStdVectorIndexMatrix",
                                                   "i", y, i),
                std::out_of_range);
 }
@@ -48,12 +49,12 @@ TEST(ErrorHandlingMatrix, checkStdVectorIndexMatrix_nan) {
       "checkStdVectorIndexMatrix", "i", y, i));
 
   y.resize(2);
-  EXPECT_THROW(stan::math::check_std_vector_index("checkStdVectorIndexMatrix",
+  STAN_EXPECT_THROW(stan::math::check_std_vector_index("checkStdVectorIndexMatrix",
                                                   "i", y, i),
                std::out_of_range);
 
   i = 0;
-  EXPECT_THROW(stan::math::check_std_vector_index("checkStdVectorIndexMatrix",
+  STAN_EXPECT_THROW(stan::math::check_std_vector_index("checkStdVectorIndexMatrix",
                                                   "i", y, i),
                std::out_of_range);
 }

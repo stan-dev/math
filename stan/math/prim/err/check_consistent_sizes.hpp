@@ -46,7 +46,6 @@ template <typename T1, typename T2, typename... Ts>
 inline void check_consistent_sizes(const char* function, const char* name1,
                                    const T1& x1, const char* name2,
                                    const T2& x2, const Ts&... names_and_xs) {
-  STAN_NO_RANGE_AND_SIZE_CHECK;
   if (!is_vector<T1>::value && is_vector<T2>::value) {
     check_consistent_sizes(function, name2, x2, name1, x1, names_and_xs...);
   } else if (!is_vector<T2>::value) {

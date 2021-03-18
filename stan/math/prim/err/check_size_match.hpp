@@ -23,7 +23,6 @@ namespace math {
 template <typename T_size1, typename T_size2>
 inline void check_size_match(const char* function, const char* name_i,
                              T_size1 i, const char* name_j, T_size2 j) {
-  STAN_NO_RANGE_AND_SIZE_CHECK;
   if (i != static_cast<T_size1>(j)) {
     [&]() STAN_COLD_PATH {
       std::ostringstream msg;
@@ -51,7 +50,6 @@ template <typename T_size1, typename T_size2>
 inline void check_size_match(const char* function, const char* expr_i,
                              const char* name_i, T_size1 i, const char* expr_j,
                              const char* name_j, T_size2 j) {
-  STAN_NO_RANGE_AND_SIZE_CHECK;
   if (i != static_cast<T_size1>(j)) {
     [&]() STAN_COLD_PATH {
       std::ostringstream updated_name;
