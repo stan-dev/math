@@ -32,7 +32,6 @@ class IntVariable(CppStatement):
         
         :param overload: Type of overload as string (Prim/Fwd/Rev/etc.)
         :param name: C++ name of variable
-        :param stan_arg: Stanc3 type string
         :param value: Scalar value to initialize matrix with
         """
         self.name = name
@@ -53,7 +52,6 @@ class RealVariable(CppStatement):
         
         :param overload: Type of overload as string (Prim/Fwd/Rev/etc.)
         :param name: C++ name of variable
-        :param stan_arg: Stanc3 type string
         :param value: Scalar value to initialize matrix with
         """
         self.overload = overload
@@ -82,8 +80,8 @@ class MatrixVariable(CppStatement):
         :param overload: Type of overload as string (Prim/Fwd/Rev/etc.)
         :param name: C++ name of variable
         :param stan_arg: Stanc3 type string
-        :param value: Scalar value to initialize matrix with
         :param size: Number of rows/columns in matrix
+        :param value: Scalar value to initialize matrix with
         """
         self.overload = overload
         self.name = name
@@ -123,8 +121,8 @@ class SimplexVariable(CppStatement):
         
         :param overload: Type of overload as string (Prim/Fwd/Rev/etc.)
         :param name: C++ name of variable
-        :param value: Scalar value to initialize matrix with
         :param size: Number of simplex elements
+        :param value: Scalar value to initialize matrix with
         """
         self.overload = overload
         self.name = name
@@ -164,8 +162,8 @@ class PositiveDefiniteMatrixVariable(CppStatement):
         
         :param overload: Type of overload as string (Prim/Fwd/Rev/etc.)
         :param name: C++ name of variable
-        :param value: Scalar value to initialize matrix with
         :param size: Number of rows/columns of positive definite matrix
+        :param value: Scalar value to initialize matrix with
         """
         self.overload = overload
         self.name = name
@@ -205,7 +203,6 @@ class AlgebraSolverFunctorVariable(CppStatement):
         
         :param overload: Type of overload as string (Prim/Fwd/Rev/etc.)
         :param name: C++ name of variable
-        :param value: Scalar value to initialize matrix with
         """
         self.name = name
     
@@ -221,7 +218,6 @@ class OdeFunctorVariable(CppStatement):
         
         :param overload: Type of overload as string (Prim/Fwd/Rev/etc.)
         :param name: C++ name of variable
-        :param value: Scalar value to initialize matrix with
         """
         self.name = name
     
@@ -289,8 +285,8 @@ class ArrayVariable(CppStatement):
         :param name: C++ name of variable
         :param number_nested_arrays: Number of array dimensions
         :param inner_type: Stanc3 type string of inner type of array
-        :param value: Either a scalar value (represented as another CppStatement) to initialize the array with or an iterable type of Python values (not CppStatements)
         :param size: Size of arrays
+        :param value: Either a scalar value (represented as another CppStatement) to initialize the array with or an iterable type of Python values (not CppStatements)
         """
         self.overload = overload
         self.name = name
@@ -328,6 +324,7 @@ class ArrayVariable(CppStatement):
 
             return "{lhs_string} {name} = {rhs_string};".format(lhs_string = lhs_string, name = self.name, rhs_string = rhs_string)
         else:
+            # For when self.value is an initializer list
             if self.number_nested_arrays == 1:
                 scalar = overload_scalar[self.overload]
                 lhs_string = "std::vector<{type}>".format(type = arg_types[self.inner_type].replace("SCALAR", scalar))
