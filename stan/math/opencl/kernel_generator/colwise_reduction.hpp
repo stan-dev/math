@@ -237,8 +237,8 @@ class colwise_prod_ : public colwise_reduction<colwise_prod_<T>, T, prod_op> {
 
  public:
   explicit colwise_prod_(T&& a)
-      : colwise_reduction<colwise_prod_<T>, T, prod_op>(std::forward<T>(a), "1") {
-  }
+      : colwise_reduction<colwise_prod_<T>, T, prod_op>(std::forward<T>(a),
+                                                        "1") {}
   /**
    * Creates a deep copy of this expression.
    * @return copy of \c *this
