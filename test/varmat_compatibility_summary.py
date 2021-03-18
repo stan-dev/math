@@ -5,20 +5,65 @@ import json
 import sys
 
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
-import sig_utils
+from signature_parser import SignatureParser
 
-def main(results_file, functions, print_which, print_fully, print_names):
+def convert_signatures_list_to_functions(signatures):
     """
-    Generates benchmark code, compiles it and runs the benchmark. Optionally plots the results.
-    :param results_file: File containing results of varmat compatibility calculation
+    Take a list of signatures and extract the unique set of functions they represent
+
+    :param signatures: List of signatures
+    """
+    functions = set()
+    for signature in signatures:
+        sp = SignatureParser(signature)
+        functions.add(sp.function_name)
+    return functions
+
+def select_signatures_matching_functions(signatures, functions):
+    """
+    Select from a collection of signatures those which have function names in the given function list
+
+    :param signatures: List of signatures
+    :param functions: Function names to match against
+    """
+    signatures_out = set()
+    for signature in signatures:
+        sp = SignatureParser(signature)
+
+        if sp.function_name not in functions:
+            continue
+
+        signatures_out.add(signature)
+    return signatures_out
+
+def remove_signatures_matching_functions(signatures, functions):
+    """
+    Filter from a collection of signatures those which have function names in the given function list
+
+    :param signatures: List of signatures
+    :param functions: Function names to filter against
+    """
+    signatures_out = set()
+    for signature in signatures:
+        sp = SignatureParser(signature)
+
+        if sp.function_name in functions:
+            continue
+
+        signatures_out.add(signature)
+    return signatures_out
+
+def process_results(results, functions, which, fully, names):
+    """
+    Processes results of varmat compatiblity results file and returns list of functions/signatures that
+    match the given criteria
+
+    :param results: Results of varmat compatibility calculation
     :param functions: List of function names to check compatibility for
-    :param print_which: For which type of compatibility should functions be printed
-    :param print_fully: Only print fully compatible/incompatible signatures (no partial varmat support)
-    :param print_names: Print function names, not signatures
+    :param which: For which type of compatibility should functions be printed
+    :param fully: Only print fully compatible/incompatible signatures (no partial varmat support)
+    :param names: Print function names, not signatures
     """
-    with open(results_file, "r") as f:
-        results = json.load(f)
-
     compatible_signatures = set()
     incompatible_signatures = set()
     impossible_signatures = set()
@@ -31,51 +76,47 @@ def main(results_file, functions, print_which, print_fully, print_names):
 
     requested_functions = set(functions)
 
-    names_to_print = set()
-
-    def convert_signatures_list_to_functions(signatures):
-        functions = set()
-        for signature in signatures:
-            return_type, function_name, stan_args = sig_utils.parse_signature(signature)
-
-            if len(requested_functions) > 0 and function_name not in requested_functions:
-                continue
-
-            functions.add(function_name)
-        return functions
+    if len(requested_functions) > 0:
+        compatible_signatures = select_signatures_matching_functions(compatible_signatures, requested_functions)
+        incompatible_signatures = select_signatures_matching_functions(incompatible_signatures, requested_functions)
+        impossible_signatures = select_signatures_matching_functions(impossible_signatures, requested_functions)
 
     compatible_functions = convert_signatures_list_to_functions(compatible_signatures)
     incompatible_functions = convert_signatures_list_to_functions(incompatible_signatures)
     impossible_functions = convert_signatures_list_to_functions(impossible_signatures)
 
-    if print_fully:
-        fully_compatible_functions = compatible_functions - incompatible_functions
-        fully_incompatible_functions = incompatible_functions - compatible_functions
-        fully_impossible_functions = impossible_functions - compatible_functions - incompatible_functions
-        compatible_functions = fully_compatible_functions
-        incompatible_functions = fully_incompatible_functions
-        impossible_functions = fully_impossible_functions
-    
-    if print_names:
-        if print_which == "compatible":
-            names_to_print = compatible_functions
-        elif print_which == "incompatible":
-            names_to_print = incompatible_functions
+    if not names:
+        if which == "compatible":
+            if fully:
+                return remove_signatures_matching_functions(compatible_signatures, incompatible_functions)
+            else:
+                return compatible_signatures
+        elif which == "incompatible":
+            if fully:
+                return remove_signatures_matching_functions(incompatible_signatures, compatible_functions)
+            else:
+                return incompatible_signatures
         else:
-            names_to_print = impossible_functions
+            if fully:
+                return remove_signatures_matching_functions(impossible_signatures, set(compatible_functions) | set(incompatible_functions))
+            else:
+                return impossible_signatures
     else:
-        if print_which == "compatible":
-            names_to_print = compatible_signatures
-        elif print_which == "incompatible":
-            names_to_print = incompatible_signatures
+        if which == "compatible":
+            if fully:
+                return compatible_functions - incompatible_functions
+            else:
+                return compatible_functions
+        elif which == "incompatible":
+            if fully:
+                return incompatible_functions - compatible_functions
+            else:
+                return incompatible_functions
         else:
-            names_to_print = impossible_signatures
-    
-    for name in sorted(names_to_print):
-        if print_names:
-            print(name.strip())
-        else:
-            print(name.replace("scalar_return_t", "real").strip())
+            if fully:
+                return impossible_functions - compatible_functions - incompatible_functions
+            else:
+                return impossible_functions
 
 class FullErrorMsgParser(ArgumentParser):
     """
@@ -86,7 +127,6 @@ class FullErrorMsgParser(ArgumentParser):
         sys.stderr.write("error: %s\n" % message)
         self.print_help()
         sys.exit(2)
-
 
 def processCLIArgs():
     """
@@ -129,12 +169,18 @@ def processCLIArgs():
     )
     args = parser.parse_args()
 
-    main(
-        args.results_file, args.functions,
+    with open(args.results_file, "r") as f:
+        results = json.load(f)
+
+    names_to_print = process_results(
+        results, args.functions,
         print_which = args.which,
         print_fully = args.fully,
         print_names = args.names
     )
+
+    for name in sorted(names_to_print):
+        print(name.strip())
 
 if __name__ == "__main__":
     processCLIArgs()
