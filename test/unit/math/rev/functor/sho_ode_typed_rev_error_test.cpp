@@ -6,27 +6,34 @@
 #include <test/unit/math/rev/functor/test_fixture_ode_sho.hpp>
 #include <test/unit/math/rev/functor/ode_test_functors.hpp>
 
-using harmonic_oscillator_test_types = ::testing::Types<
-  std::tuple<ode_rk45_functor, ode_rk45_functor, double, stan::math::var, double>,
-  std::tuple<ode_ckrk_functor, ode_ckrk_functor, double, stan::math::var, double>,
-  std::tuple<ode_bdf_functor, ode_bdf_functor, double, stan::math::var, double>,
-  std::tuple<ode_adams_functor, ode_adams_functor, double, stan::math::var, double>,
-  std::tuple<ode_rk45_functor, ode_rk45_functor, double, double, stan::math::var>,
-  std::tuple<ode_ckrk_functor, ode_ckrk_functor, double, double, stan::math::var>,
-  std::tuple<ode_bdf_functor, ode_bdf_functor, double, double, stan::math::var>,
-  std::tuple<ode_adams_functor, ode_adams_functor, double, double, stan::math::var>,
-  std::tuple<ode_ckrk_functor, ode_ckrk_functor, double, stan::math::var, stan::math::var>,
-  std::tuple<ode_bdf_functor, ode_bdf_functor, double, stan::math::var, stan::math::var>,
-  std::tuple<ode_adams_functor, ode_adams_functor, double, stan::math::var, stan::math::var> >;
+using harmonic_oscillator_test_types
+    = ::testing::Types<std::tuple<ode_rk45_functor, ode_rk45_functor, double,
+                                  stan::math::var, double>,
+                       std::tuple<ode_ckrk_functor, ode_ckrk_functor, double,
+                                  stan::math::var, double>,
+                       std::tuple<ode_bdf_functor, ode_bdf_functor, double,
+                                  stan::math::var, double>,
+                       std::tuple<ode_adams_functor, ode_adams_functor, double,
+                                  stan::math::var, double>,
+                       std::tuple<ode_rk45_functor, ode_rk45_functor, double,
+                                  double, stan::math::var>,
+                       std::tuple<ode_ckrk_functor, ode_ckrk_functor, double,
+                                  double, stan::math::var>,
+                       std::tuple<ode_bdf_functor, ode_bdf_functor, double,
+                                  double, stan::math::var>,
+                       std::tuple<ode_adams_functor, ode_adams_functor, double,
+                                  double, stan::math::var>,
+                       std::tuple<ode_ckrk_functor, ode_ckrk_functor, double,
+                                  stan::math::var, stan::math::var>,
+                       std::tuple<ode_bdf_functor, ode_bdf_functor, double,
+                                  stan::math::var, stan::math::var>,
+                       std::tuple<ode_adams_functor, ode_adams_functor, double,
+                                  stan::math::var, stan::math::var> >;
 
 TYPED_TEST_SUITE_P(harmonic_oscillator_test);
 
-TYPED_TEST_P(harmonic_oscillator_test, no_error) {
-  this->test_good();
-}
-TYPED_TEST_P(harmonic_oscillator_test, error_conditions) {
-  this->test_bad();
-}
+TYPED_TEST_P(harmonic_oscillator_test, no_error) { this->test_good(); }
+TYPED_TEST_P(harmonic_oscillator_test, error_conditions) { this->test_bad(); }
 TYPED_TEST_P(harmonic_oscillator_test, value) {
   this->test_value(0.0);
   this->test_value(1.0);
@@ -34,8 +41,7 @@ TYPED_TEST_P(harmonic_oscillator_test, value) {
 }
 REGISTER_TYPED_TEST_SUITE_P(harmonic_oscillator_test, no_error,
                             error_conditions, value);
-INSTANTIATE_TYPED_TEST_SUITE_P(StanOde,
-                               harmonic_oscillator_test,
+INSTANTIATE_TYPED_TEST_SUITE_P(StanOde, harmonic_oscillator_test,
                                harmonic_oscillator_test_types);
 
 TYPED_TEST_SUITE_P(harmonic_oscillator_data_test);
@@ -47,8 +53,7 @@ TYPED_TEST_P(harmonic_oscillator_data_test, value) {
   this->test_value(1.0);
   this->test_value(-1.0);
 }
-REGISTER_TYPED_TEST_SUITE_P(harmonic_oscillator_data_test,
-                            bad_param_and_data, value);
-INSTANTIATE_TYPED_TEST_SUITE_P(StanOde,
-                               harmonic_oscillator_data_test,
+REGISTER_TYPED_TEST_SUITE_P(harmonic_oscillator_data_test, bad_param_and_data,
+                            value);
+INSTANTIATE_TYPED_TEST_SUITE_P(StanOde, harmonic_oscillator_data_test,
                                harmonic_oscillator_test_types);

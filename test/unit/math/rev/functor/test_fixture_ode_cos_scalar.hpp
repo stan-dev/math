@@ -24,10 +24,14 @@ struct cos_arg_ode_base {
   double atol;
   int max_num_step;
 
-  cos_arg_ode_base() :
-    y0(1), t0(0.0), ts{0.45, 1.1}, a(1.5),
-    rtol(1.e-10), atol(1.e-10), max_num_step(100000)
-  {
+  cos_arg_ode_base()
+      : y0(1),
+        t0(0.0),
+        ts{0.45, 1.1},
+        a(1.5),
+        rtol(1.e-10),
+        atol(1.e-10),
+        max_num_step(100000) {
     y0[0] = 0.0;
   }
 };
@@ -36,13 +40,12 @@ struct cos_arg_ode_base {
  * Inheriting base type, various fixtures differs by the type of ODE
  * functor used in <code>apply_solver</code> calls, intended for
  * different kind of tests.
- * 
+ *
  */
-template<typename T>
+template <typename T>
 struct cos_arg_test : public cos_arg_ode_base,
                       public ODETestFixture<cos_arg_test<T>> {
-  cos_arg_test() : cos_arg_ode_base()
-  {}
+  cos_arg_test() : cos_arg_ode_base() {}
 
   int dim() { return 1; }
   int param_size() { return 99; }
@@ -54,7 +57,7 @@ struct cos_arg_test : public cos_arg_ode_base,
     return sol(stan::test::CosArg1(), y0, t0, ts, nullptr, a);
   }
 
-  template<typename T1, typename T2>
+  template <typename T1, typename T2>
   auto apply_solver(Eigen::Matrix<T1, -1, 1>& init, std::vector<T2>& va) {
     std::tuple_element_t<0, T> sol;
     return sol(stan::test::CosArg1(), init, t0, ts, nullptr, va);
@@ -62,31 +65,34 @@ struct cos_arg_test : public cos_arg_ode_base,
 
   auto apply_solver_tol() {
     std::tuple_element_t<1, T> sol;
-    return sol(stan::test::CosArg1(), y0, t0, ts, rtol, atol, max_num_step, nullptr, a);
+    return sol(stan::test::CosArg1(), y0, t0, ts, rtol, atol, max_num_step,
+               nullptr, a);
   }
 
-  template<typename a_type>
+  template <typename a_type>
   auto apply_solver_arg(a_type const& a_) {
     std::tuple_element_t<0, T> sol;
     return sol(stan::test::CosArg1(), y0, t0, ts, nullptr, a_);
   }
 
-  template<typename a_type>
+  template <typename a_type>
   auto apply_solver_arg_tol(a_type const& a_) {
     std::tuple_element_t<1, T> sol;
-    return sol(stan::test::CosArg1(), y0, t0, ts, rtol, atol, max_num_step, nullptr, a_);
+    return sol(stan::test::CosArg1(), y0, t0, ts, rtol, atol, max_num_step,
+               nullptr, a_);
   }
 
-  template<typename a_type, typename b_type>
+  template <typename a_type, typename b_type>
   auto apply_solver_arg(a_type const& a_, b_type const& b_) {
     std::tuple_element_t<0, T> sol;
     return sol(stan::test::CosArg1(), y0, t0, ts, nullptr, a_, b_);
   }
 
-  template<typename a_type, typename b_type>
+  template <typename a_type, typename b_type>
   auto apply_solver_arg_tol(a_type const& a_, b_type const& b_) {
     std::tuple_element_t<1, T> sol;
-    return sol(stan::test::CosArg1(), y0, t0, ts, rtol, atol, max_num_step, nullptr, a_, b_);
+    return sol(stan::test::CosArg1(), y0, t0, ts, rtol, atol, max_num_step,
+               nullptr, a_, b_);
   }
 
   void test_y0_error() {
@@ -124,7 +130,7 @@ struct cos_arg_test : public cos_arg_ode_base,
     t0 = stan::math::NOT_A_NUMBER;
     EXPECT_THROW(apply_solver(), std::domain_error);
   }
-  
+
   void test_t0_error_with_tol() {
     t0 = stan::math::INFTY;
     EXPECT_THROW(apply_solver_tol(), std::domain_error);
@@ -427,8 +433,8 @@ struct cos_arg_test : public cos_arg_ode_base,
 
   void test_rhs_wrong_size_error_with_tol() {
     std::tuple_element_t<1, T> sol;
-    EXPECT_THROW(sol(stan::test::CosArgWrongSize(), y0, t0, ts, rtol,
-                     atol, max_num_step, nullptr, a),
+    EXPECT_THROW(sol(stan::test::CosArgWrongSize(), y0, t0, ts, rtol, atol,
+                     max_num_step, nullptr, a),
                  std::invalid_argument);
   }
 
@@ -511,8 +517,7 @@ struct cos_arg_test : public cos_arg_ode_base,
   void test_too_much_work() {
     ts[1] = 1e4;
     max_num_step = 10;
-    EXPECT_THROW_MSG(apply_solver_tol(),
-                     std::domain_error,
+    EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error,
                      "Failed to integrate to next output time");
   }
 };
