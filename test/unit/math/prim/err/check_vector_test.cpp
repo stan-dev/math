@@ -8,10 +8,10 @@ TEST(ErrorHandlingMatrix, checkVectorMatrix) {
 
   x.resize(3, 3);
   STAN_EXPECT_THROW(stan::math::check_vector("checkVector", "x", x),
-               std::invalid_argument);
+                    std::invalid_argument);
   x.resize(0, 0);
   STAN_EXPECT_THROW(stan::math::check_vector("checkVector", "x", x),
-               std::invalid_argument);
+                    std::invalid_argument);
 
   x.resize(1, 5);
   EXPECT_NO_THROW(stan::math::check_vector("checkVector", "x", x));
@@ -27,10 +27,10 @@ TEST(ErrorHandlingMatrix, checkVectorMatrix_nan) {
   x.resize(3, 3);
   x << nan, nan, nan, nan, nan, nan, nan, nan, nan;
   STAN_EXPECT_THROW(stan::math::check_vector("checkVector", "x", x),
-               std::invalid_argument);
+                    std::invalid_argument);
   x.resize(0, 0);
   STAN_EXPECT_THROW(stan::math::check_vector("checkVector", "x", x),
-               std::invalid_argument);
+                    std::invalid_argument);
 
   x.resize(1, 5);
   x << nan, nan, nan, nan, nan;
