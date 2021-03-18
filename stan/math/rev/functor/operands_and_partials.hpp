@@ -191,13 +191,7 @@ class ops_partials_edge<double, std::vector<var>> {
   Op operands_;
 
   inline int size() const noexcept { return this->operands_.size(); }
-  /**
-   * WARNING: In order to avoid calling the copy constructor/assignment
-   *  operators for `std::vector` this moves the memory from the operands
-   *  into wherever they are being assigned. After calling this function
-   *  `operands` will be in a valid but unspecified state.
-   */
-  inline auto&& operand() noexcept { return std::move(this->operands_); }
+  inline auto& operand() noexcept { return this->operands_; }
   inline auto& partial() noexcept { return this->partials_; }
 };
 
@@ -270,20 +264,8 @@ class ops_partials_edge<double, std::vector<Eigen::Matrix<var, R, C>>> {
     }
     return this->operands_.size() * this->operands_[0].size();
   }
-  /**
-   * WARNING: In order to avoid calling the copy constructor/assignment
-   *  operators for `std::vector` this moves the memory from the operands
-   *  into wherever they are being assigned. After calling this function
-   *  `operands` will be in a valid but unspecified state.
-   */
-  inline auto&& operand() noexcept { return std::move(this->operands_); }
-  /**
-   * WARNING: In order to avoid calling the copy constructor/assignment
-   *  operators for `std::vector` this moves the memory from the partials
-   *  into wherever they are being assigned. After calling this function
-   *  `partials` will be in a valid but unspecified state.
-   */
-  inline auto&& partial() noexcept { return std::move(this->partials_vec_); }
+  inline auto& operand() noexcept { return this->operands_; }
+  inline auto& partial() noexcept { return this->partials_vec_; }
 };
 
 template <>
@@ -305,26 +287,14 @@ class ops_partials_edge<double, std::vector<std::vector<var>>> {
   template <typename, typename, typename, typename, typename, typename>
   friend class stan::math::operands_and_partials;
   Op operands_;
-  inline int size() const noexcept {
+  int size() {
     if (unlikely(this->operands_.size() == 0)) {
       return 0;
     }
     return this->operands_.size() * this->operands_[0].size();
   }
-  /**
-   * WARNING: In order to avoid calling the copy constructor/assignment
-   *  operators for `std::vector` this moves the memory from the operands
-   *  into wherever they are being assigned. After calling this function
-   *  `operands` will be in a valid but unspecified state.
-   */
-  inline auto&& operand() noexcept { return std::move(this->operands_); }
-  /**
-   * WARNING: In order to avoid calling the copy constructor/assignment
-   *  operators for `std::vector` this moves the memory from the partials
-   *  into wherever they are being assigned. After calling this function
-   *  `partials` will be in a valid but unspecified state.
-   */
-  inline auto&& partial() noexcept { return std::move(this->partials_vec_); }
+  inline auto& operand() noexcept { return this->operands_; }
+  inline auto& partial() noexcept { return this->partials_vec_; }
 };
 
 template <typename Op>
@@ -347,20 +317,8 @@ class ops_partials_edge<double, std::vector<var_value<Op>>,
   std::vector<var_value<Op>, arena_allocator<var_value<Op>>> operands_;
 
   static constexpr int size() noexcept { return 0; }
-  /**
-   * WARNING: In order to avoid calling the copy constructor/assignment
-   *  operators for `std::vector` this moves the memory from the operands
-   *  into wherever they are being assigned. After calling this function
-   *  `operands` will be in a valid but unspecified state.
-   */
-  inline auto&& operand() noexcept { return std::move(this->operands_); }
-  /**
-   * WARNING: In order to avoid calling the copy constructor/assignment
-   *  operators for `std::vector` this moves the memory from the partials
-   *  into wherever they are being assigned. After calling this function
-   *  `partials` will be in a valid but unspecified state.
-   */
-  inline auto&& partial() noexcept { return std::move(this->partials_vec_); }
+  inline auto& operand() noexcept { return this->operands_; }
+  inline auto& partial() noexcept { return this->partials_vec_; }
 };
 }  // namespace internal
 }  // namespace math
