@@ -45,11 +45,7 @@ namespace math {
  * @return Ceiling of the variable.
  */
 inline var ceil(const var& a) {
-  return make_callback_var(std::ceil(a.val()), [a](auto& vi) mutable {
-    if (unlikely(is_nan(a.val()))) {
-      a.adj() = NOT_A_NUMBER;
-    }
-  });
+  return var(std::ceil(a.val()));
 }
 
 }  // namespace math

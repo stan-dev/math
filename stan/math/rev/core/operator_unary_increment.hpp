@@ -21,11 +21,7 @@ namespace math {
  */
 inline var& operator++(var& a) {
   a = make_callback_var(a.val() + 1.0, [a](auto& vi) {
-    if (unlikely(is_nan(a.val()))) {
-      a.adj() = NOT_A_NUMBER;
-    } else {
       a.adj() += vi.adj();
-    }
   });
   return a;
 }
@@ -44,11 +40,7 @@ inline var& operator++(var& a) {
 inline var operator++(var& a, int /*dummy*/) {
   var temp(a);
   a = make_callback_var(a.val() + 1.0, [a](auto& vi) {
-    if (unlikely(is_nan(a.val()))) {
-      a.adj() = NOT_A_NUMBER;
-    } else {
       a.adj() += vi.adj();
-    }
   });
   return temp;
 }

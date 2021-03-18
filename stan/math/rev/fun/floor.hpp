@@ -45,11 +45,7 @@ namespace math {
  * @return Floor of the variable.
  */
 inline var floor(const var& a) {
-  return make_callback_var(std::floor(a.val()), [a](auto& vi) mutable {
-    if (unlikely(is_nan(a.val()))) {
-      a.adj() = NOT_A_NUMBER;
-    }
-  });
+  return var(std::floor(a.val()));
 }
 
 }  // namespace math

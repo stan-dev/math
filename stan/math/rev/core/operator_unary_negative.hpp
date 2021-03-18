@@ -36,11 +36,7 @@ namespace math {
  */
 inline var operator-(const var& a) {
   return make_callback_var(-a.val(), [a](const auto vi) mutable {
-    if (unlikely(is_nan(a.val()))) {
-      a.adj() = NOT_A_NUMBER;
-    } else {
       a.adj() -= vi.adj();
-    }
   });
 }
 
@@ -56,11 +52,7 @@ inline auto operator-(const T& a) {
   return make_callback_var(-a.val(), [a](const auto vi) mutable {
     for (Eigen::Index j = 0; j < a.cols(); ++j) {
       for (Eigen::Index i = 0; i < a.rows(); ++i) {
-        if (unlikely(is_nan(a.val().coeffRef(i, j)))) {
-          a.adj().coeffRef(i, j) = NOT_A_NUMBER;
-        } else {
           a.adj().coeffRef(i, j) -= vi.adj().coeff(i, j);
-        }
       }
     }
   });

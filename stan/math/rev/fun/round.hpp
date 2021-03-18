@@ -41,11 +41,7 @@ namespace math {
  * @return Rounded variable.
  */
 inline var round(const var& a) {
-  return make_callback_var(round(a.val()), [a](auto& vi) mutable {
-    if (unlikely(is_nan(a.val()))) {
-      a.adj() = NOT_A_NUMBER;
-    }
-  });
+  return var(round(a.val()));
 }
 
 }  // namespace math

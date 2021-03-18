@@ -41,11 +41,7 @@ namespace math {
  * @return Truncation of the variable.
  */
 inline var trunc(const var& a) {
-  return make_callback_var(trunc(a.val()), [a](auto& vi) mutable {
-    if (unlikely(is_nan(a.val()))) {
-      a.adj() = NOT_A_NUMBER;
-    }
-  });
+  return var(trunc(a.val()));
 }
 
 }  // namespace math
