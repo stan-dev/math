@@ -16,8 +16,8 @@ namespace math {
  * Raise domain error if size is not greater than zero.
  *
  * @tparam Mat input matrix type
- * @param[in] A a input
- * @return sample variance of input
+ * @param A input
+ * @return sample variance of the input
  */
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>

@@ -13,11 +13,12 @@ namespace stan {
 namespace math {
 
 /**
- * Return the softmax of the specified vector.
+ * Return the sample variance of the var_value matrix
+ * Raise domain error if size is not greater than zero.
  *
- * @tparam T type of elements in the vector
- * @param[in] a Vector to transform.
- * @return Unit simplex result of the softmax transform of the vector.
+ * @tparam T input matrix type
+ * @param a input
+ * @return sample variance of the input
  */
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
