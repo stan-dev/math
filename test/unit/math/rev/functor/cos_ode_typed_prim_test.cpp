@@ -14,27 +14,40 @@ using cos_arg_test_types = ::testing::Types<
 TYPED_TEST_SUITE_P(cos_arg_test);
 TYPED_TEST_P(cos_arg_test, y0_error) {
   this->test_y0_error();
+  this->test_y0_error_with_tol();
 }
 TYPED_TEST_P(cos_arg_test, t0_error) {
   this->test_t0_error();
+  this->test_t0_error_with_tol();
 }
 TYPED_TEST_P(cos_arg_test, ts_error) {
   this->test_ts_error();
+  this->test_ts_error_with_tol();
 }
 TYPED_TEST_P(cos_arg_test, one_arg_error) {
   this->test_one_arg_error();
+  this->test_one_arg_error_with_tol();
 }
 TYPED_TEST_P(cos_arg_test, two_arg_error) {
   this->test_two_arg_error();
+  this->test_two_arg_error_with_tol();
 }
 TYPED_TEST_P(cos_arg_test, rhs_wrong_size_error) {
   this->test_rhs_wrong_size_error();
+  this->test_rhs_wrong_size_error_with_tol();
 }
 TYPED_TEST_P(cos_arg_test, error_name) {
   this->test_error_name();
+  this->test_error_name_with_tol();
+}
+TYPED_TEST_P(cos_arg_test, tol_error) {
+  this->test_rtol_error();
+  this->test_atol_error();
+  this->test_max_num_step_error();
+  this->test_too_much_work();
 }
 REGISTER_TYPED_TEST_SUITE_P(cos_arg_test, y0_error, t0_error,
                             ts_error, one_arg_error, two_arg_error,
-                            rhs_wrong_size_error, error_name);
+                            rhs_wrong_size_error, error_name, tol_error);
 INSTANTIATE_TYPED_TEST_SUITE_P(StanOde, cos_arg_test,
                                cos_arg_test_types);

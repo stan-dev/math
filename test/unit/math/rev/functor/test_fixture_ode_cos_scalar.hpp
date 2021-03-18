@@ -26,7 +26,7 @@ struct cos_arg_ode_base {
 
   cos_arg_ode_base() :
     y0(1), t0(0.0), ts{0.45, 1.1}, a(1.5),
-    rtol(1.e-6), atol(1.e-8), max_num_step(100000)
+    rtol(1.e-10), atol(1.e-10), max_num_step(100000)
   {
     y0[0] = 0.0;
   }
@@ -44,9 +44,20 @@ struct cos_arg_test : public cos_arg_ode_base,
   cos_arg_test() : cos_arg_ode_base()
   {}
 
+  int dim() { return 1; }
+  int param_size() { return 99; }
+  Eigen::VectorXd init() { return y0; }
+  std::vector<double> param() { return {a}; }
+
   auto apply_solver() {
     std::tuple_element_t<0, T> sol;
     return sol(stan::test::CosArg1(), y0, t0, ts, nullptr, a);
+  }
+
+  template<typename T1, typename T2>
+  auto apply_solver(Eigen::Matrix<T1, -1, 1>& init, std::vector<T2>& va) {
+    std::tuple_element_t<0, T> sol;
+    return sol(stan::test::CosArg1(), init, t0, ts, nullptr, va);
   }
 
   auto apply_solver_tol() {
@@ -60,13 +71,26 @@ struct cos_arg_test : public cos_arg_ode_base,
     return sol(stan::test::CosArg1(), y0, t0, ts, nullptr, a_);
   }
 
+  template<typename a_type>
+  auto apply_solver_arg_tol(a_type const& a_) {
+    std::tuple_element_t<1, T> sol;
+    return sol(stan::test::CosArg1(), y0, t0, ts, rtol, atol, max_num_step, nullptr, a_);
+  }
+
   template<typename a_type, typename b_type>
   auto apply_solver_arg(a_type const& a_, b_type const& b_) {
     std::tuple_element_t<0, T> sol;
     return sol(stan::test::CosArg1(), y0, t0, ts, nullptr, a_, b_);
   }
 
+  template<typename a_type, typename b_type>
+  auto apply_solver_arg_tol(a_type const& a_, b_type const& b_) {
+    std::tuple_element_t<1, T> sol;
+    return sol(stan::test::CosArg1(), y0, t0, ts, rtol, atol, max_num_step, nullptr, a_, b_);
+  }
+
   void test_y0_error() {
+    y0 = Eigen::VectorXd::Zero(1);
     ASSERT_NO_THROW(apply_solver());
 
     y0[0] = stan::math::INFTY;
@@ -79,6 +103,20 @@ struct cos_arg_test : public cos_arg_ode_base,
     EXPECT_THROW(apply_solver(), std::invalid_argument);
   }
 
+  void test_y0_error_with_tol() {
+    y0 = Eigen::VectorXd::Zero(1);
+    ASSERT_NO_THROW(apply_solver_tol());
+
+    y0[0] = stan::math::INFTY;
+    EXPECT_THROW(apply_solver_tol(), std::domain_error);
+
+    y0[0] = stan::math::NOT_A_NUMBER;
+    EXPECT_THROW(apply_solver_tol(), std::domain_error);
+
+    y0 = Eigen::VectorXd();
+    EXPECT_THROW(apply_solver_tol(), std::invalid_argument);
+  }
+
   void test_t0_error() {
     t0 = stan::math::INFTY;
     EXPECT_THROW(apply_solver(), std::domain_error);
@@ -87,6 +125,14 @@ struct cos_arg_test : public cos_arg_ode_base,
     EXPECT_THROW(apply_solver(), std::domain_error);
   }
   
+  void test_t0_error_with_tol() {
+    t0 = stan::math::INFTY;
+    EXPECT_THROW(apply_solver_tol(), std::domain_error);
+
+    t0 = stan::math::NOT_A_NUMBER;
+    EXPECT_THROW(apply_solver_tol(), std::domain_error);
+  }
+
   void test_ts_error() {
     std::vector<double> ts_repeat = {0.45, 0.45};
     std::vector<double> ts_lots = {0.45, 0.45, 1.1, 1.1, 2.0};
@@ -123,9 +169,52 @@ struct cos_arg_test : public cos_arg_ode_base,
 
     ts = tsNaN;
     EXPECT_THROW(apply_solver(), std::domain_error);
+
+    ts = {0.45, 1.1};
+  }
+
+  void test_ts_error_with_tol() {
+    std::vector<double> ts_repeat = {0.45, 0.45};
+    std::vector<double> ts_lots = {0.45, 0.45, 1.1, 1.1, 2.0};
+    std::vector<double> ts_empty = {};
+    std::vector<double> ts_early = {-0.45, 0.2};
+    std::vector<double> ts_decreasing = {0.45, 0.2};
+    std::vector<double> tsinf = {stan::math::INFTY, 1.1};
+    std::vector<double> tsNaN = {0.45, stan::math::NOT_A_NUMBER};
+
+    std::vector<Eigen::VectorXd> out;
+    EXPECT_NO_THROW(out = apply_solver_tol());
+    EXPECT_EQ(out.size(), ts.size());
+
+    ts = ts_repeat;
+    EXPECT_NO_THROW(out = apply_solver_tol());
+    EXPECT_EQ(out.size(), ts_repeat.size());
+    EXPECT_MATRIX_FLOAT_EQ(out[0], out[1]);
+
+    ts = ts_lots;
+    EXPECT_NO_THROW(out = apply_solver_tol());
+    EXPECT_EQ(out.size(), ts_lots.size());
+
+    ts = ts_empty;
+    EXPECT_THROW(apply_solver_tol(), std::invalid_argument);
+
+    ts = ts_early;
+    EXPECT_THROW(apply_solver_tol(), std::domain_error);
+
+    ts = ts_decreasing;
+    EXPECT_THROW(apply_solver_tol(), std::domain_error);
+
+    ts = tsinf;
+    EXPECT_THROW(apply_solver_tol(), std::domain_error);
+
+    ts = tsNaN;
+    EXPECT_THROW(apply_solver_tol(), std::domain_error);
+
+    ts = {0.45, 1.1};
   }
 
   void test_one_arg_error() {
+    a = 1.5;
     double ainf = stan::math::INFTY;
     double aNaN = stan::math::NOT_A_NUMBER;
     std::vector<double> va = {a};
@@ -172,7 +261,56 @@ struct cos_arg_test : public cos_arg_ode_base,
     EXPECT_THROW(apply_solver_arg(veaNaN), std::domain_error);
   }
 
+  void test_one_arg_error_with_tol() {
+    a = 1.5;
+    double ainf = stan::math::INFTY;
+    double aNaN = stan::math::NOT_A_NUMBER;
+    std::vector<double> va = {a};
+    std::vector<double> vainf = {ainf};
+    std::vector<double> vaNaN = {aNaN};
+
+    Eigen::VectorXd ea(1);
+    ea << a;
+    Eigen::VectorXd eainf(1);
+    eainf << ainf;
+    Eigen::VectorXd eaNaN(1);
+    eaNaN << aNaN;
+
+    std::vector<std::vector<double>> vva = {va};
+    std::vector<std::vector<double>> vvainf = {vainf};
+    std::vector<std::vector<double>> vvaNaN = {vaNaN};
+
+    std::vector<Eigen::VectorXd> vea = {ea};
+    std::vector<Eigen::VectorXd> veainf = {eainf};
+    std::vector<Eigen::VectorXd> veaNaN = {eaNaN};
+
+    EXPECT_NO_THROW(apply_solver_tol());
+
+    a = ainf;
+    EXPECT_THROW(apply_solver_tol(), std::domain_error);
+
+    a = aNaN;
+    EXPECT_THROW(apply_solver_tol(), std::domain_error);
+
+    EXPECT_NO_THROW(apply_solver_arg_tol(va));
+    EXPECT_THROW(apply_solver_arg_tol(vainf), std::domain_error);
+    EXPECT_THROW(apply_solver_arg_tol(vaNaN), std::domain_error);
+
+    EXPECT_NO_THROW(apply_solver_arg_tol(ea));
+    EXPECT_THROW(apply_solver_arg_tol(eainf), std::domain_error);
+    EXPECT_THROW(apply_solver_arg_tol(eaNaN), std::domain_error);
+
+    EXPECT_NO_THROW(apply_solver_arg_tol(vva));
+    EXPECT_THROW(apply_solver_arg_tol(vvainf), std::domain_error);
+    EXPECT_THROW(apply_solver_arg_tol(vvaNaN), std::domain_error);
+
+    EXPECT_NO_THROW(apply_solver_arg_tol(vea));
+    EXPECT_THROW(apply_solver_arg_tol(veainf), std::domain_error);
+    EXPECT_THROW(apply_solver_arg_tol(veaNaN), std::domain_error);
+  }
+
   void test_two_arg_error() {
+    a = 1.5;
     double ainf = stan::math::INFTY;
     double aNaN = stan::math::NOT_A_NUMBER;
 
@@ -226,9 +364,71 @@ struct cos_arg_test : public cos_arg_ode_base,
     EXPECT_THROW(apply_solver_arg(a, veaNaN), std::domain_error);
   }
 
+  void test_two_arg_error_with_tol() {
+    a = 1.5;
+    double ainf = stan::math::INFTY;
+    double aNaN = stan::math::NOT_A_NUMBER;
+
+    std::vector<double> va = {a};
+    std::vector<double> vainf = {ainf};
+    std::vector<double> vaNaN = {aNaN};
+
+    Eigen::VectorXd ea(1);
+    ea << a;
+    Eigen::VectorXd eainf(1);
+    eainf << ainf;
+    Eigen::VectorXd eaNaN(1);
+    eaNaN << aNaN;
+
+    std::vector<std::vector<double>> vva = {va};
+    std::vector<std::vector<double>> vvainf = {vainf};
+    std::vector<std::vector<double>> vvaNaN = {vaNaN};
+
+    std::vector<Eigen::VectorXd> vea = {ea};
+    std::vector<Eigen::VectorXd> veainf = {eainf};
+    std::vector<Eigen::VectorXd> veaNaN = {eaNaN};
+
+    EXPECT_NO_THROW(apply_solver_arg_tol(a, a));
+
+    EXPECT_THROW(apply_solver_arg_tol(a, ainf), std::domain_error);
+
+    EXPECT_THROW(apply_solver_arg_tol(a, aNaN), std::domain_error);
+
+    EXPECT_NO_THROW(apply_solver_arg_tol(a, va));
+
+    EXPECT_THROW(apply_solver_arg_tol(a, vainf), std::domain_error);
+
+    EXPECT_THROW(apply_solver_arg_tol(a, vaNaN), std::domain_error);
+
+    EXPECT_NO_THROW(apply_solver_arg_tol(a, ea));
+
+    EXPECT_THROW(apply_solver_arg_tol(a, eainf), std::domain_error);
+
+    EXPECT_THROW(apply_solver_arg_tol(a, eaNaN), std::domain_error);
+
+    EXPECT_NO_THROW(apply_solver_arg_tol(a, vva));
+
+    EXPECT_THROW(apply_solver_arg_tol(a, vvainf), std::domain_error);
+
+    EXPECT_THROW(apply_solver_arg_tol(a, vvaNaN), std::domain_error);
+
+    EXPECT_NO_THROW(apply_solver_arg_tol(a, vea));
+
+    EXPECT_THROW(apply_solver_arg_tol(a, veainf), std::domain_error);
+
+    EXPECT_THROW(apply_solver_arg_tol(a, veaNaN), std::domain_error);
+  }
+
   void test_rhs_wrong_size_error() {
     std::tuple_element_t<0, T> sol;
     EXPECT_THROW(sol(stan::test::CosArgWrongSize(), y0, t0, ts, nullptr, a),
+                 std::invalid_argument);
+  }
+
+  void test_rhs_wrong_size_error_with_tol() {
+    std::tuple_element_t<1, T> sol;
+    EXPECT_THROW(sol(stan::test::CosArgWrongSize(), y0, t0, ts, rtol,
+                     atol, max_num_step, nullptr, a),
                  std::invalid_argument);
   }
 
@@ -236,6 +436,84 @@ struct cos_arg_test : public cos_arg_ode_base,
     a = stan::math::INFTY;
     std::tuple_element_t<0, T> sol;
     EXPECT_THROW_MSG(apply_solver(), std::domain_error, sol.functor_name);
+  }
+
+  void test_error_name_with_tol() {
+    a = stan::math::INFTY;
+    std::tuple_element_t<1, T> sol;
+    EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, sol.functor_name);
+  }
+
+  void test_rtol_error() {
+    y0 = Eigen::VectorXd::Zero(1);
+    t0 = 0;
+    ts = {0.45, 1.1};
+    a = 1.5;
+
+    rtol = 1e-6;
+    atol = 1e-6;
+    double rtol_negative = -1e-6;
+    double rtolinf = stan::math::INFTY;
+    double rtolNaN = stan::math::NOT_A_NUMBER;
+
+    EXPECT_NO_THROW(apply_solver_tol());
+
+    rtol = rtol_negative;
+    EXPECT_THROW(apply_solver_tol(), std::domain_error);
+
+    rtol = rtolinf;
+    EXPECT_THROW(apply_solver_tol(), std::domain_error);
+
+    rtol = rtolNaN;
+    EXPECT_THROW(apply_solver_tol(), std::domain_error);
+  }
+
+  void test_atol_error() {
+    y0 = Eigen::VectorXd::Zero(1);
+    t0 = 0;
+    ts = {0.45, 1.1};
+    a = 1.5;
+
+    rtol = 1e-6;
+    atol = 1e-6;
+    double atol_negative = -1e-6;
+    double atolinf = stan::math::INFTY;
+    double atolNaN = stan::math::NOT_A_NUMBER;
+
+    EXPECT_NO_THROW(apply_solver_tol());
+
+    atol = atol_negative;
+    EXPECT_THROW(apply_solver_tol(), std::domain_error);
+
+    atol = atolinf;
+    EXPECT_THROW(apply_solver_tol(), std::domain_error);
+
+    atol = atolNaN;
+    EXPECT_THROW(apply_solver_tol(), std::domain_error);
+  }
+
+  void test_max_num_step_error() {
+    rtol = 1e-6;
+    atol = 1e-6;
+    max_num_step = 500;
+    int max_num_steps_negative = -500;
+    int max_num_steps_zero = 0;
+
+    EXPECT_NO_THROW(apply_solver_tol());
+
+    max_num_step = max_num_steps_negative;
+    EXPECT_THROW(apply_solver_tol(), std::domain_error);
+
+    max_num_step = max_num_steps_zero;
+    EXPECT_THROW(apply_solver_tol(), std::domain_error);
+  }
+
+  void test_too_much_work() {
+    ts[1] = 1e4;
+    max_num_step = 10;
+    EXPECT_THROW_MSG(apply_solver_tol(),
+                     std::domain_error,
+                     "Failed to integrate to next output time");
   }
 };
 

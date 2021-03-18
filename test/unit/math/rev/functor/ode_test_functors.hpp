@@ -9,6 +9,8 @@
 
 #define STAN_DEF_ODE_SOLVER_FUNCTOR(solver_name, solver_func)  \
 struct solver_name##_functor {\
+  const std::string functor_name = #solver_name ;\
+\
   template <typename F, typename T_y0, typename T_t0, typename T_ts,    \
             typename... Args, stan::require_eigen_vector_t<T_y0>* = nullptr> \
   std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, Args...>, Eigen::Dynamic, 1>> \

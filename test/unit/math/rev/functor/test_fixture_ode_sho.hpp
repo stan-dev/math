@@ -14,6 +14,7 @@
 #include <limits>
 #include <string>
 
+template<typename T>
 struct harmonic_oscillator_ode_base {
   harm_osc_ode_fun f;
   harm_osc_ode_fun_eigen f_eigen;
@@ -22,11 +23,14 @@ struct harmonic_oscillator_ode_base {
   harm_osc_ode_wrong_size_1_fun f_wrong_size_1;
   harm_osc_ode_wrong_size_2_fun f_wrong_size_2;
 
-  std::vector<double> theta;
-  Eigen::VectorXd y0;
-  std::vector<double> y0_eigen;
+  using T_t = std::tuple_element_t<2, T>;
+  using T_y = std::tuple_element_t<3, T>;
+  using T_p = std::tuple_element_t<4, T>;
+
+  std::vector<T_p> theta;
+  Eigen::Matrix<T_y, -1, 1> y0;
   double t0;
-  std::vector<double> ts;
+  std::vector<T_t> ts;
   std::vector<double> x_r;
   std::vector<int> x_i;
   double rtol;
@@ -42,6 +46,11 @@ struct harmonic_oscillator_ode_base {
       ts[i] = t0 + 0.1 * (i + 1);
     }
   }
+
+  int dim() { return 2; }
+  int param_size() { return 1; }
+  Eigen::VectorXd init() { return y0; }
+  std::vector<double> param() { return theta; }
 };
 
 /**
@@ -51,19 +60,29 @@ struct harmonic_oscillator_ode_base {
  * 
  */
 template<typename T>
-struct harmonic_oscillator_test : public harmonic_oscillator_ode_base,
-                                         public ODETestFixture<harmonic_oscillator_test<T>> {
-  harmonic_oscillator_test() : harmonic_oscillator_ode_base()
+struct harmonic_oscillator_test : public harmonic_oscillator_ode_base<T>,
+                                  public ODETestFixture<harmonic_oscillator_test<T>> {
+  harmonic_oscillator_test() : harmonic_oscillator_ode_base<T>()
   {}
 
   auto apply_solver() {
     std::tuple_element_t<0, T> sol;
-    return sol(f_eigen, y0, t0, ts, nullptr, theta, x_r, x_i);
+    return sol(this -> f_eigen, this -> y0, this -> t0, this -> ts,
+               nullptr, this -> theta, this -> x_r, this -> x_i);    
+  }
+
+  template<typename T1, typename T2>
+  auto apply_solver(T1&& init, T2&& theta_in) {
+    std::tuple_element_t<0, T> sol;
+    return sol(this -> f_eigen, init, this -> t0, this -> ts,
+               nullptr, theta_in, this -> x_r, this -> x_i);
   }
 
   auto apply_solver_tol() {
     std::tuple_element_t<1, T> sol;
-    return sol(f_eigen, y0, t0, ts, rtol, atol, max_num_step, nullptr, theta, x_r, x_i);
+    return sol(this -> f_eigen, this -> y0, this -> t0, this -> ts,
+    this -> rtol, this -> atol, this -> max_num_step, nullptr, this ->
+    theta, this -> x_r, this -> x_i);
   }
 
   void test_good() {
@@ -71,69 +90,71 @@ struct harmonic_oscillator_test : public harmonic_oscillator_ode_base,
   }
 
   void test_bad() {
-    const Eigen::VectorXd y0_(y0);
+    const auto y0_(this -> y0);
 
-    y0 = Eigen::VectorXd();
+    this -> y0.resize(0);
     EXPECT_THROW_MSG(apply_solver(), std::invalid_argument, "initial state has size 0");
-    y0 = y0_;
+    this -> y0 = y0_;
 
-    const double t0_ = t0;
-    t0 = 2.0;
+    const auto t0_ = this -> t0;
+    this -> t0 = 2.0;
     EXPECT_THROW_MSG(apply_solver(), std::domain_error, "initial time is 2, but must be less than 0.1");
-    t0 = t0_;
+    this -> t0 = t0_;
 
-    const std::vector<double> ts_ = ts;
-    ts = std::vector<double>();
+    const auto ts_ = this -> ts;
+    this -> ts.resize(0);
     EXPECT_THROW_MSG(apply_solver(), std::invalid_argument, "times has size 0");
-    ts = ts_;
+    this -> ts = ts_;
 
-    ts = std::vector<double>{3, 1};
+    this -> ts.resize(2);
+    this -> ts[0] = 3.0;
+    this -> ts[1] = 1.0;
     EXPECT_THROW_MSG(apply_solver(), std::domain_error, "times is not a valid sorted vector");
-    ts = ts_;
+    this -> ts = ts_;
 
-    const std::vector<double> theta_= theta;
-    const std::vector<double> x_r_ = x_r;
-    const std::vector<int> x_i_ = x_i;
-
-    const double rtol_ = rtol;
-    rtol = -1;
+    const double rtol_ = this -> rtol;
+    this -> rtol = -1;
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, "relative_tolerance");
-    rtol = rtol_;
+    this -> rtol = rtol_;
 
-    const double atol_ = atol;
-    atol = -1;
+    const double atol_ = this -> atol;
+    this -> atol = -1;
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, "absolute_tolerance");
-    atol = atol_;
+    this -> atol = atol_;
+
+    const auto theta_= this -> theta;
+    const auto x_r_ = this -> x_r;
+    const auto x_i_ = this -> x_i;
 
     // NaN errors
     double nan = std::numeric_limits<double>::quiet_NaN();
     std::stringstream expected_is_nan;
     expected_is_nan << "is " << nan;
 
-    y0[0] = nan;
+    this -> y0[0] = nan;
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, "initial state");
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, expected_is_nan.str());
-    y0 = y0_;
+    this -> y0 = y0_;
 
-    t0 = nan;
+    this -> t0 = nan;
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, "initial time");
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, expected_is_nan.str());
-    t0 = t0_;
+    this -> t0 = t0_;
 
-    ts[0] = nan;
+    this -> ts[0] = nan;
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, "times");
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, expected_is_nan.str());
-    ts = ts_;
+    this -> ts = ts_;
 
-    theta[0] = nan;
+    this -> theta[0] = nan;
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, "ode parameters and data");
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, expected_is_nan.str());
-    theta = theta_;
+    this -> theta = theta_;
 
-    x_r.push_back(nan);
+    this -> x_r.push_back(nan);
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, "ode parameters and data");
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, expected_is_nan.str());
-    x_r = x_r_;
+    this -> x_r = x_r_;
 
     // inf test
     std::stringstream expected_is_inf;
@@ -142,63 +163,63 @@ struct harmonic_oscillator_test : public harmonic_oscillator_ode_base,
     expected_is_neg_inf << "is " << -std::numeric_limits<double>::infinity();    
     double inf = std::numeric_limits<double>::infinity();
 
-    y0[0] = inf;
+    this -> y0[0] = inf;
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, "initial state");
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, expected_is_inf.str());    
-    y0[0] = -inf;
+    this -> y0[0] = -inf;
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, "initial state");
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, expected_is_neg_inf.str());    
-    y0 = y0_;
+    this -> y0 = y0_;
     
-    t0 = inf;
+    this -> t0 = inf;
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, "initial time");
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, expected_is_inf.str());    
-    t0 = -inf;
+    this -> t0 = -inf;
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, "initial time");
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, expected_is_neg_inf.str());    
-    t0 = t0_;
+    this -> t0 = t0_;
 
-    ts.back() = inf;
+    this -> ts.back() = inf;
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, "times");
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, expected_is_inf.str());    
-    ts.back() = -inf;
+    this -> ts.back() = -inf;
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, "times");
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, expected_is_neg_inf.str());    
-    ts = ts_;
+    this -> ts = ts_;
 
-    theta[0] = inf;
+    this -> theta[0] = inf;
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, "ode parameters and data");
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, expected_is_inf.str());
-    theta[0] = -inf;
+    this -> theta[0] = -inf;
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, "ode parameters and data");
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, expected_is_neg_inf.str());
-    theta = theta_;
+    this -> theta = theta_;
 
-    x_r = std::vector<double>{inf};
+    this -> x_r = std::vector<double>{inf};
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, "ode parameters and data");
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, expected_is_inf.str());
-    x_r[0] = -inf;
+    this -> x_r[0] = -inf;
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, "ode parameters and data");
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, expected_is_neg_inf.str());
-    x_r = x_r_;
+    this -> x_r = x_r_;
   }
 
   void test_value(double t0_in) {
-    t0 = t0_in;
-    for (size_t i = 0; i < ts.size(); ++i) {
-      ts[i] = t0 + 0.1 * (i + 1);
+    this -> t0 = t0_in;
+    for (size_t i = 0; i < this -> ts.size(); ++i) {
+      this -> ts[i] = this -> t0 + 0.1 * (i + 1);
     }
 
-    rtol = 1e-8;
-    atol = 1e-10;
-    max_num_step = 1e6;
-    std::vector<Eigen::VectorXd> res = apply_solver_tol();
+    this -> rtol = 1e-8;
+    this -> atol = 1e-10;
+    this -> max_num_step = 1e6;
+    auto res = apply_solver_tol();
 
-    EXPECT_NEAR(0.995029, res[0][0], 1e-5);
-    EXPECT_NEAR(-0.0990884, res[0][1], 1e-5);
+    EXPECT_NEAR(0.995029, stan::math::value_of(res[0][0]), 1e-5);
+    EXPECT_NEAR(-0.0990884, stan::math::value_of(res[0][1]), 1e-5);
 
-    EXPECT_NEAR(-0.421907, res[99][0], 1e-5);
-    EXPECT_NEAR(0.246407, res[99][1], 1e-5);    
+    EXPECT_NEAR(-0.421907, stan::math::value_of(res[99][0]), 1e-5);
+    EXPECT_NEAR(0.246407, stan::math::value_of(res[99][1]), 1e-5);
   }
 };
 
@@ -207,19 +228,23 @@ struct harmonic_oscillator_test : public harmonic_oscillator_ode_base,
  * 
  */
 template<typename T>
-struct harmonic_oscillator_bad_ode_test : public harmonic_oscillator_ode_base,
-                                           public ODETestFixture<harmonic_oscillator_bad_ode_test<T>> {
-  harmonic_oscillator_bad_ode_test() : harmonic_oscillator_ode_base()
+struct harmonic_oscillator_bad_ode_test : public harmonic_oscillator_ode_base<T>,
+                                          public ODETestFixture<harmonic_oscillator_bad_ode_test<T>> {
+  harmonic_oscillator_bad_ode_test() : harmonic_oscillator_ode_base<T>()
   {}
 
   auto apply_solver() {
     std::tuple_element_t<0, T> sol;
-    return sol(f_wrong_size_1, stan::math::to_array_1d(y0), t0, ts, theta, x_r, x_i, 0);
+    return sol(this -> f_wrong_size_1, stan::math::to_array_1d(this ->
+    y0), this -> t0, this -> ts, this -> theta, this -> x_r, this ->
+    x_i, 0);
   }
 
   auto apply_solver_tol() {
     std::tuple_element_t<1, T> sol;
-    return sol(f_wrong_size_1, stan::math::to_array_1d(y0), t0, ts, theta, x_r, x_i, 0, rtol, atol, max_num_step);
+    return sol(this -> f_wrong_size_1, stan::math::to_array_1d(this ->
+    y0), this -> t0, this -> ts, this -> theta, this -> x_r, this ->
+    x_i, 0, this -> rtol, this -> atol, this -> max_num_step);
   }
 
   void test_bad_ode() {
@@ -233,59 +258,70 @@ struct harmonic_oscillator_bad_ode_test : public harmonic_oscillator_ode_base,
  * 
  */
 template<typename T>
-struct harmonic_oscillator_data_test : public harmonic_oscillator_ode_base,
-                                            public ODETestFixture<harmonic_oscillator_data_test<T>> {
-  harmonic_oscillator_data_test() : harmonic_oscillator_ode_base()
+struct harmonic_oscillator_data_test : public harmonic_oscillator_ode_base<T>,
+                                       public ODETestFixture<harmonic_oscillator_data_test<T>> {
+  harmonic_oscillator_data_test() : harmonic_oscillator_ode_base<T>()
   {
-    x_r = std::vector<double>(3, 1);
-    x_i = std::vector<int>(2, 0);    
+    this -> x_r = std::vector<double>(3, 1);
+    this -> x_i = std::vector<int>(2, 0);    
   }
 
   auto apply_solver() {
     std::tuple_element_t<0, T> sol;
-    return sol(f_data_eigen, y0, t0, ts, 0, theta, x_r, x_i);
+    return sol(this -> f_data_eigen, this -> y0, this -> t0, this ->
+    ts, 0, this -> theta, this -> x_r, this -> x_i);
+  }
+
+  template<typename T1, typename T2>
+  auto apply_solver(T1&& init, T2&& theta_in) {
+    std::tuple_element_t<0, T> sol;
+    return sol(this -> f_data_eigen, init, this -> t0, this ->
+               ts, nullptr, theta_in, this -> x_r, this -> x_i);    
   }
 
   auto apply_solver_tol() {
     std::tuple_element_t<1, T> sol;
-    return sol(f_data_eigen, y0, t0, ts, rtol, atol, max_num_step, 0, theta, x_r, x_i);
+    return sol(this -> f_data_eigen, this -> y0, this -> t0, this ->
+               ts, this -> rtol, this -> atol, this -> max_num_step, 0, this ->
+               theta, this -> x_r, this -> x_i);
   }
 
   void test_bad_param_and_data() {
-    const std::vector<double> theta_= theta;
-    theta = std::vector<double>();
+    const auto theta_= this -> theta;
+    this -> theta.resize(0);
     EXPECT_THROW_MSG(apply_solver(), std::out_of_range, "vector");
-    theta = theta_;
+    this -> theta = theta_;
 
-    const std::vector<double> x_r_ = x_r;
-    x_r = std::vector<double>();
+    const auto x_r_ = this -> x_r;
+    this -> x_r.resize(0);
     EXPECT_THROW_MSG(apply_solver(), std::out_of_range, "vector");
-    x_r = x_r_;
+    this -> x_r = x_r_;
 
-    const std::vector<int> x_i_ = x_i;
-    x_i = std::vector<int>();
+    const auto x_i_ = this -> x_i;
+    this -> x_i.resize(0);
     EXPECT_THROW_MSG(apply_solver(), std::out_of_range, "vector");
+    this -> x_i = x_i_;
 
-    max_num_step = -1;
+    this -> max_num_step = -1;
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, "max_num_steps");
   }
 
   void test_value(double t0_in) {
-    t0 = t0_in;
-    for (size_t i = 0; i < ts.size(); ++i) {
-      ts[i] = t0 + 0.1 * (i + 1);
+    this -> t0 = t0_in;
+    for (size_t i = 0; i < this -> ts.size(); ++i) {
+      this -> ts[i] = this -> t0 + 0.1 * (i + 1);
     }
 
-    rtol = 1e-8;
-    atol = 1e-10;
-    max_num_step = 1e6;
-    std::vector<Eigen::VectorXd> res = apply_solver_tol();
+    this -> rtol = 1e-8;
+    this -> atol = 1e-10;
+    this -> max_num_step = 1e6;
+    auto res = apply_solver_tol();
 
-    EXPECT_NEAR(0.995029, res[0][0], 1e-5);
-    EXPECT_NEAR(-0.0990884, res[0][1], 1e-5);
+    EXPECT_NEAR(0.995029, stan::math::value_of(res[0][0]), 1e-5);
+    EXPECT_NEAR(-0.0990884, stan::math::value_of(res[0][1]), 1e-5);
 
-    EXPECT_NEAR(-0.421907, res[99][0], 1e-5);
-    EXPECT_NEAR(0.246407, res[99][1], 1e-5);    
+    EXPECT_NEAR(-0.421907, stan::math::value_of(res[99][0]), 1e-5);
+    EXPECT_NEAR(0.246407, stan::math::value_of(res[99][1]), 1e-5);    
   }
 };
 
