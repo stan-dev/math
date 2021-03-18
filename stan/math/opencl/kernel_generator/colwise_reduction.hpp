@@ -48,7 +48,7 @@ inline int colwise_reduction_wgs_rows(int n_rows, int n_cols) {
  * be efficient column wise reductions are only done partially. That means
  * instead of 1 row kernel output will have a few rows that need to be reduced
  * to obtain final result (actually it is 1
- * reslut per work group run - roughly 16 times the number of compute units on
+ * result per work group run - roughly 16 times the number of compute units on
  * the OpenCL device). This can be done in a separate kernel or after
  * copying to CPU. Also column wise reductions can not be used as arguments to
  * other operations - they can only be evaluated.
@@ -211,12 +211,12 @@ class colwise_sum_ : public colwise_reduction<colwise_sum_<T>, T, sum_op> {
  * Column wise sum - reduction of a kernel generator expression. So as to
  * be efficient column wise reductions are only done partially. That means
  * instead of 1 row kernel output will have a few rows that need to be reduced
- * to obtain final result (actually it is 1 reslut per work group run - roughly
+ * to obtain the final result (actually it is 1 result per work group run - roughly
  * 16 times the number of compute units on the OpenCL device). This can be done
  * in a separate kernel or after copying to CPU. Also column wise reductions can
  * not be used as arguments to other operations - they can only be evaluated.
  * @tparam T type of input expression
- * @param a expression to reduce
+ * @param an expression to reduce
  * @return sum
  */
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
@@ -254,12 +254,12 @@ class colwise_prod_ : public colwise_reduction<colwise_prod_<T>, T, prod_op> {
  * Column wise product - reduction of a kernel generator expression. So as to
  * be efficient column wise reductions are only done partially. That means
  * instead of 1 row kernel output will have a few rows that need to be reduced
- * to obtain final result (actually it is 1 reslut per work group run - roughly
+ * to obtain the final result (actually it is 1 result per work group run - roughly
  * 16 times the number of compute units on the OpenCL device). This can be done
  * in a separate kernel or after copying to CPU. Also column wise reductions can
  * not be used as arguments to other operations - they can only be evaluated.
  * @tparam T type of input expression
- * @param a expression to reduce
+ * @param an expression to reduce
  * @return prod
  */
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
@@ -302,12 +302,12 @@ class colwise_max_ : public colwise_reduction<
  * Column wise max - reduction of a kernel generator expression. So as to
  * be efficient column wise reductions are only done partially. That means
  * instead of 1 row kernel output will have a few rows that need to be reduced
- * to obtain final result (actually it is 1 reslut per work group run - roughly
+ * to obtain the final result (actually it is 1 result per work group run - roughly
  * 16 times the number of compute units on the OpenCL device). This can be done
  * in a separate kernel or after copying to CPU. Also column wise reductions can
  * not be used as arguments to other operations - they can only be evaluated.
  * @tparam T type of input expression
- * @param a expression to reduce
+ * @param an expression to reduce
  * @return max
  */
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
@@ -350,12 +350,12 @@ class colwise_min_ : public colwise_reduction<
  * Column wise min - reduction of a kernel generator expression.  So as to
  * be efficient column wise reductions are only done partially. That means
  * instead of 1 row kernel output will have a few rows that need to be reduced
- * to obtain final result (actually it is 1 reslut per work group run - roughly
+ * to obtain the final result (actually it is 1 result per work group run - roughly
  * 16 times the number of compute units on the OpenCL device). This can be done
  * in a separate kernel or after copying to CPU. Also column wise reductions can
  * not be used as arguments to other operations - they can only be evaluated.
  * @tparam T type of input expression
- * @param a expression to reduce
+ * @param an expression to reduce
  * @return min
  */
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
