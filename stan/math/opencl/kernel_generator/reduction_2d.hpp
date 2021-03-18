@@ -236,7 +236,8 @@ inline auto sum_2d(T&& a) {
 }
 
 /**
- * Represents two dimensional product - reduction in kernel generator expressions.
+ * Represents two dimensional product - reduction in kernel generator
+ * expressions.
  * @tparam T type of expression
  */
 template <typename T>
