@@ -310,7 +310,7 @@ class colwise_max_ : public colwise_reduction<
  * reductions can not be used as arguments to other operations - they can only
  * be evaluated.
  * @tparam T type of input expression
- * @param a expression to reduce
+ * @param a an expression to reduce
  * @return max
  */
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
@@ -359,7 +359,7 @@ class colwise_min_ : public colwise_reduction<
  * reductions can not be used as arguments to other operations - they can only
  * be evaluated.
  * @tparam T type of input expression
- * @param an expression to reduce
+ * @param a an expression to reduce
  * @return min
  */
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
