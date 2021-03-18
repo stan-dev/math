@@ -19,17 +19,15 @@ class multiply_vv_vari final : public op_vv_vari {
   multiply_vv_vari(vari* avi, vari* bvi)
       : op_vv_vari(avi->val_ * bvi->val_, avi, bvi) {}
   void chain() {
-      avi_->adj_ += bvi_->val_ * adj_;
-      bvi_->adj_ += avi_->val_ * adj_;
+    avi_->adj_ += bvi_->val_ * adj_;
+    bvi_->adj_ += avi_->val_ * adj_;
   }
 };
 
 class multiply_vd_vari final : public op_vd_vari {
  public:
   multiply_vd_vari(vari* avi, double b) : op_vd_vari(avi->val_ * b, avi, b) {}
-  void chain() {
-      avi_->adj_ += adj_ * bd_;
-  }
+  void chain() { avi_->adj_ += adj_ * bd_; }
 };
 }  // namespace internal
 

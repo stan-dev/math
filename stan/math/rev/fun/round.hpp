@@ -40,9 +40,7 @@ namespace math {
  * @param a Specified variable.
  * @return Rounded variable.
  */
-inline var round(const var& a) {
-  return var(round(a.val()));
-}
+inline var round(const var& a) { return var(round(a.val())); }
 
 }  // namespace math
 }  // namespace stan

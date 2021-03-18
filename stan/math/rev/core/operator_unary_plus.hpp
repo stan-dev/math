@@ -41,9 +41,7 @@ namespace math {
  * @param a Argument variable.
  * @return The input reference.
  */
-inline var operator+(const var& a) {
-  return a;
-}
+inline var operator+(const var& a) { return a; }
 
 }  // namespace math
 }  // namespace stan

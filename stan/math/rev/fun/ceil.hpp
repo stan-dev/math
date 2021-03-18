@@ -44,9 +44,7 @@ namespace math {
  * @param a Input variable.
  * @return Ceiling of the variable.
  */
-inline var ceil(const var& a) {
-  return var(std::ceil(a.val()));
-}
+inline var ceil(const var& a) { return var(std::ceil(a.val())); }
 
 }  // namespace math
 }  // namespace stan

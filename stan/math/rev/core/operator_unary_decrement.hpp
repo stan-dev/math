@@ -24,9 +24,7 @@ namespace math {
  * @return Reference the result of decrementing this input variable.
  */
 inline var& operator--(var& a) {
-  a = make_callback_var(a.val() - 1.0, [a](auto& vi) {
-      a.adj() += vi.adj();
-  });
+  a = make_callback_var(a.val() - 1.0, [a](auto& vi) { a.adj() += vi.adj(); });
   return a;
 }
 
@@ -43,9 +41,7 @@ inline var& operator--(var& a) {
  */
 inline var operator--(var& a, int /*dummy*/) {
   var temp(a);
-  a = make_callback_var(a.val() - 1.0, [a](auto& vi) {
-      a.adj() += vi.adj();
-  });
+  a = make_callback_var(a.val() - 1.0, [a](auto& vi) { a.adj() += vi.adj(); });
   return temp;
 }
 

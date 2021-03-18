@@ -44,9 +44,7 @@ namespace math {
  * @param a Input variable.
  * @return Floor of the variable.
  */
-inline var floor(const var& a) {
-  return var(std::floor(a.val()));
-}
+inline var floor(const var& a) { return var(std::floor(a.val())); }
 
 }  // namespace math
 }  // namespace stan

@@ -75,10 +75,9 @@ inline var operator+(const var& a, Arith b) {
   if (unlikely(b == 0.0)) {
     return a;
   }
-  return make_callback_vari(a.vi_->val_ + b,
-                            [avi = a.vi_, b](const auto& vi) mutable {
-                                avi->adj_ += vi.adj_;
-                            });
+  return make_callback_vari(
+      a.vi_->val_ + b,
+      [avi = a.vi_, b](const auto& vi) mutable { avi->adj_ += vi.adj_; });
 }
 
 /**

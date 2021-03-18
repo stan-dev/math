@@ -40,9 +40,7 @@ namespace math {
  * @param a Specified variable.
  * @return Truncation of the variable.
  */
-inline var trunc(const var& a) {
-  return var(trunc(a.val()));
-}
+inline var trunc(const var& a) { return var(trunc(a.val())); }
 
 }  // namespace math
 }  // namespace stan
