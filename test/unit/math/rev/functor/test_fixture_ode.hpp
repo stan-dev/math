@@ -13,23 +13,23 @@
 #include <limits>
 #include <string>
 
-template<class ode_problem_type>
+template <class ode_problem_type>
 struct ODETestFixture : public ::testing::Test {
   void test_good() {
     ode_problem_type& ode = static_cast<ode_problem_type&>(*this);
     ASSERT_NO_THROW(ode.apply_solver());
   }
-  
-  /** 
-   * Gradient wrt to certain param using central difference 
-   * 
+
+  /**
+   * Gradient wrt to certain param using central difference
+   *
    * @param param_index index to param of which sensitivity is seeked
    * @param h finite difference step/perturbation.
-   * 
+   *
    * @return gradient
    */
-  std::vector<Eigen::VectorXd>
-  fd_param(const size_t& param_index, const double& h) {
+  std::vector<Eigen::VectorXd> fd_param(const size_t& param_index,
+                                        const double& h) {
     std::stringstream msgs;
     ode_problem_type& ode = static_cast<ode_problem_type&>(*this);
 
@@ -48,16 +48,16 @@ struct ODETestFixture : public ::testing::Test {
     return results;
   }
 
-  /** 
-   * Gradient wrt to certain param using central difference 
-   * 
+  /**
+   * Gradient wrt to certain param using central difference
+   *
    * @param param_index index to param of which sensitivity is seeked
    * @param h finite difference step/perturbation.
-   * 
+   *
    * @return gradient
    */
-  std::vector<Eigen::VectorXd>
-  fd_init(const size_t& param_index, const double& h) {
+  std::vector<Eigen::VectorXd> fd_init(const size_t& param_index,
+                                       const double& h) {
     std::stringstream msgs;
     ode_problem_type& ode = static_cast<ode_problem_type&>(*this);
 
@@ -89,7 +89,7 @@ struct ODETestFixture : public ::testing::Test {
     std::vector<double> grads_eff;
 
     std::vector<Eigen::Matrix<stan::math::var, -1, 1>> ode_res
-      = ode.apply_solver(ode.init(), theta_v);
+        = ode.apply_solver(ode.init(), theta_v);
 
     for (size_t i = 0; i < ode.ts.size(); i++) {
       for (size_t j = 0; j < ode_res[0].size(); j++) {
@@ -98,9 +98,9 @@ struct ODETestFixture : public ::testing::Test {
 
         for (size_t k = 0; k < n; k++)
           EXPECT_NEAR(grads_eff[k], fd_res[k][i][j], tol)
-            << "Gradient of ODE solver failed with initial positions"
-            << " known and parameters unknown at time index " << i
-            << ", equation index " << j << ", and parameter index: " << k;
+              << "Gradient of ODE solver failed with initial positions"
+              << " known and parameters unknown at time index " << i
+              << ", equation index " << j << ", and parameter index: " << k;
 
         stan::math::set_zero_all_adjoints();
       }
@@ -120,7 +120,7 @@ struct ODETestFixture : public ::testing::Test {
     std::vector<double> grads_eff;
 
     std::vector<Eigen::Matrix<stan::math::var, -1, 1>> ode_res
-      = ode.apply_solver(y0_v, ode.param());
+        = ode.apply_solver(y0_v, ode.param());
 
     std::vector<stan::math::var> y_vec(to_array_1d(y0_v));
 
@@ -131,9 +131,9 @@ struct ODETestFixture : public ::testing::Test {
 
         for (size_t k = 0; k < n; k++)
           EXPECT_NEAR(grads_eff[k], fd_res[k][i][j], tol)
-            << "Gradient of ode solver failed with initial positions"
-            << " unknown and parameters known at time index " << i
-            << ", equation index " << j << ", and parameter index: " << k;
+              << "Gradient of ode solver failed with initial positions"
+              << " unknown and parameters known at time index " << i
+              << ", equation index " << j << ", and parameter index: " << k;
 
         stan::math::set_zero_all_adjoints();
       }
@@ -153,10 +153,11 @@ struct ODETestFixture : public ::testing::Test {
 
     std::vector<std::vector<Eigen::VectorXd>> fd_res_p(m);
     for (size_t i = 0; i < m; ++i) {
-      fd_res_p[i] = fd_param(i, diff);      
+      fd_res_p[i] = fd_param(i, diff);
     }
 
-    std::vector<stan::math::var> vars(stan::math::to_array_1d(stan::math::to_var(ode.init())));
+    std::vector<stan::math::var> vars(
+        stan::math::to_array_1d(stan::math::to_var(ode.init())));
     auto theta = ode.param();
     for (int i = 0; i < m; ++i) {
       vars.push_back(theta[i]);
@@ -168,7 +169,7 @@ struct ODETestFixture : public ::testing::Test {
     std::vector<stan::math::var> theta_v(vars.begin() + n, vars.end());
 
     std::vector<Eigen::Matrix<stan::math::var, -1, 1>> ode_res
-      = ode.apply_solver(yv, theta_v);
+        = ode.apply_solver(yv, theta_v);
 
     std::vector<double> grads_eff;
     for (size_t i = 0; i < ode.ts.size(); i++) {
@@ -178,16 +179,17 @@ struct ODETestFixture : public ::testing::Test {
 
         for (size_t k = 0; k < m; k++) {
           EXPECT_NEAR(grads_eff[k + n], fd_res_p[k][i][j], tol)
-            << "Gradient of ode solver failed with initial positions"
-            << " unknown and parameters unknown for param at time index " << i
-            << ", equation index " << j << ", and parameter index: " << k;
+              << "Gradient of ode solver failed with initial positions"
+              << " unknown and parameters unknown for param at time index " << i
+              << ", equation index " << j << ", and parameter index: " << k;
         }
         for (size_t k = 0; k < n; k++) {
           EXPECT_NEAR(grads_eff[k], fd_res_y[k][i][j], tol)
-            << "Gradient of ode solver failed with initial positions"
-            << " unknown and parameters known for initial position at time "
-            "index "
-            << i << ", equation index " << j << ", and parameter index: " << k;
+              << "Gradient of ode solver failed with initial positions"
+              << " unknown and parameters known for initial position at time "
+                 "index "
+              << i << ", equation index " << j
+              << ", and parameter index: " << k;
         }
 
         stan::math::set_zero_all_adjoints();
@@ -195,6 +197,5 @@ struct ODETestFixture : public ::testing::Test {
     }
   }
 };
-
 
 #endif
