@@ -260,14 +260,14 @@ class prod_2d_ : public reduction_2d<prod_2d_<T>, T, prod_op> {
 };
 
 /**
- * Two dimensional product - reduction of a kernel generator expression. So as to
- * be efficient two dimensional reductions are only done partially. That means
- * instead of 1 element kernel output can have a few rows and a few columns
- * that need to be reduced to obtain final result (actually it is 1 result per
- * work group run - roughly 16 times the number of compute units on the OpenCL
- * device). This can be done in a separate kernel or after copying to CPU. Also
- * two dimensional reductions can not be used as arguments to other operations -
- * they can only be evaluated.
+ * Two dimensional product - reduction of a kernel generator expression. So as
+ * to be efficient two dimensional reductions are only done partially. That
+ * means instead of 1 element kernel output can have a few rows and a few
+ * columns that need to be reduced to obtain final result (actually it is 1
+ * result per work group run - roughly 16 times the number of compute units on
+ * the OpenCL device). This can be done in a separate kernel or after copying to
+ * CPU. Also two dimensional reductions can not be used as arguments to other
+ * operations - they can only be evaluated.
  * @tparam T type of input expression
  * @param an expression to reduce
  * @return prod

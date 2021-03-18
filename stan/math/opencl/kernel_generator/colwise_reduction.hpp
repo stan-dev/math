@@ -211,10 +211,11 @@ class colwise_sum_ : public colwise_reduction<colwise_sum_<T>, T, sum_op> {
  * Column wise sum - reduction of a kernel generator expression. So as to
  * be efficient column wise reductions are only done partially. That means
  * instead of 1 row kernel output will have a few rows that need to be reduced
- * to obtain the final result (actually it is 1 result per work group run - roughly
- * 16 times the number of compute units on the OpenCL device). This can be done
- * in a separate kernel or after copying to CPU. Also column wise reductions can
- * not be used as arguments to other operations - they can only be evaluated.
+ * to obtain the final result (actually it is 1 result per work group run -
+ * roughly 16 times the number of compute units on the OpenCL device). This can
+ * be done in a separate kernel or after copying to CPU. Also column wise
+ * reductions can not be used as arguments to other operations - they can only
+ * be evaluated.
  * @tparam T type of input expression
  * @param an expression to reduce
  * @return sum
@@ -254,10 +255,11 @@ class colwise_prod_ : public colwise_reduction<colwise_prod_<T>, T, prod_op> {
  * Column wise product - reduction of a kernel generator expression. So as to
  * be efficient column wise reductions are only done partially. That means
  * instead of 1 row kernel output will have a few rows that need to be reduced
- * to obtain the final result (actually it is 1 result per work group run - roughly
- * 16 times the number of compute units on the OpenCL device). This can be done
- * in a separate kernel or after copying to CPU. Also column wise reductions can
- * not be used as arguments to other operations - they can only be evaluated.
+ * to obtain the final result (actually it is 1 result per work group run -
+ * roughly 16 times the number of compute units on the OpenCL device). This can
+ * be done in a separate kernel or after copying to CPU. Also column wise
+ * reductions can not be used as arguments to other operations - they can only
+ * be evaluated.
  * @tparam T type of input expression
  * @param an expression to reduce
  * @return prod
@@ -302,10 +304,11 @@ class colwise_max_ : public colwise_reduction<
  * Column wise max - reduction of a kernel generator expression. So as to
  * be efficient column wise reductions are only done partially. That means
  * instead of 1 row kernel output will have a few rows that need to be reduced
- * to obtain the final result (actually it is 1 result per work group run - roughly
- * 16 times the number of compute units on the OpenCL device). This can be done
- * in a separate kernel or after copying to CPU. Also column wise reductions can
- * not be used as arguments to other operations - they can only be evaluated.
+ * to obtain the final result (actually it is 1 result per work group run -
+ * roughly 16 times the number of compute units on the OpenCL device). This can
+ * be done in a separate kernel or after copying to CPU. Also column wise
+ * reductions can not be used as arguments to other operations - they can only
+ * be evaluated.
  * @tparam T type of input expression
  * @param an expression to reduce
  * @return max
@@ -350,10 +353,11 @@ class colwise_min_ : public colwise_reduction<
  * Column wise min - reduction of a kernel generator expression.  So as to
  * be efficient column wise reductions are only done partially. That means
  * instead of 1 row kernel output will have a few rows that need to be reduced
- * to obtain the final result (actually it is 1 result per work group run - roughly
- * 16 times the number of compute units on the OpenCL device). This can be done
- * in a separate kernel or after copying to CPU. Also column wise reductions can
- * not be used as arguments to other operations - they can only be evaluated.
+ * to obtain the final result (actually it is 1 result per work group run -
+ * roughly 16 times the number of compute units on the OpenCL device). This can
+ * be done in a separate kernel or after copying to CPU. Also column wise
+ * reductions can not be used as arguments to other operations - they can only
+ * be evaluated.
  * @tparam T type of input expression
  * @param an expression to reduce
  * @return min
