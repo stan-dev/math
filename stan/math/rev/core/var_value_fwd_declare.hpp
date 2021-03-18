@@ -6,6 +6,6 @@ namespace math {
 // forward declaration of var
 template <typename T, typename = void>
 class var_value;
-}
-}
+}  // namespace math
+}  // namespace stan
 #endif
