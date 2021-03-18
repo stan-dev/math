@@ -166,6 +166,7 @@
 #include <stan/math/opencl/prim/poisson_log_glm_lpmf.hpp>
 #include <stan/math/opencl/prim/poisson_log_lpmf.hpp>
 #include <stan/math/opencl/prim/poisson_lpmf.hpp>
+#include <stan/math/opencl/prim/prod.hpp>
 #include <stan/math/opencl/prim/rayleigh_lpdf.hpp>
 #include <stan/math/opencl/prim/rep_array.hpp>
 #include <stan/math/opencl/prim/rep_matrix.hpp>
