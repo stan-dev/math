@@ -141,11 +141,13 @@
 #include <stan/math/opencl/prim/inv_cloglog.hpp>
 #include <stan/math/opencl/prim/inv_gamma_lpdf.hpp>
 #include <stan/math/opencl/prim/inv_sqrt.hpp>
+#include <stan/math/opencl/prim/lb_constrain.hpp>
 #include <stan/math/opencl/prim/log_mix.hpp>
 #include <stan/math/opencl/prim/log_softmax.hpp>
 #include <stan/math/opencl/prim/logistic_lpdf.hpp>
 #include <stan/math/opencl/prim/log_sum_exp.hpp>
 #include <stan/math/opencl/prim/lognormal_lpdf.hpp>
+#include <stan/math/opencl/prim/lub_constrain.hpp>
 #include <stan/math/opencl/prim/matrix_power.hpp>
 #include <stan/math/opencl/prim/mdivide_left_tri_low.hpp>
 #include <stan/math/opencl/prim/mdivide_right_tri_low.hpp>
@@ -159,6 +161,7 @@
 #include <stan/math/opencl/prim/normal_id_glm_lpdf.hpp>
 #include <stan/math/opencl/prim/normal_lpdf.hpp>
 #include <stan/math/opencl/prim/num_elements.hpp>
+#include <stan/math/opencl/prim/offset_multiplier_constrain.hpp>
 #include <stan/math/opencl/prim/ordered_logistic_glm_lpmf.hpp>
 #include <stan/math/opencl/prim/ordered_logistic_lpmf.hpp>
 #include <stan/math/opencl/prim/pareto_lpdf.hpp>
@@ -200,7 +203,9 @@
 #include <stan/math/opencl/prim/to_row_vector.hpp>
 #include <stan/math/opencl/prim/to_vector.hpp>
 #include <stan/math/opencl/prim/trace.hpp>
+#include <stan/math/opencl/prim/ub_constrain.hpp>
 #include <stan/math/opencl/prim/uniform_lpdf.hpp>
+#include <stan/math/opencl/prim/unit_vector_constrain.hpp>
 #include <stan/math/opencl/prim/variance.hpp>
 #include <stan/math/opencl/prim/weibull_lpdf.hpp>
 
