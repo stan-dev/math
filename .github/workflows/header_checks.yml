@@ -79,4 +79,4 @@ jobs:
     - name: Run header tests
       run: |
         echo "CXXFLAGS+=-DSTAN_NO_RANGE_CHECKS" > make/local
-        make -j2 ./test/unit/math/prim/err/
+        ./runTests.py -j2 ./test/unit/math/prim/err/
