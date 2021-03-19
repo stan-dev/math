@@ -166,7 +166,6 @@ void expect_adj_eq(const std::vector<T>& a, const std::vector<T>& b,
 
 void grad(stan::math::var& a) { a.grad(); }
 
-#define EXPECT_LEQ_ONE(x) EXPECT_LE(x, 1)
 #define TO_STRING_(x) #x
 #define TO_STRING(x) TO_STRING_(x)
 #define EXPECT_STAN_EQ(a, b) \

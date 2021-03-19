@@ -52,7 +52,8 @@ auto mymatrix_expr0 = mymatrix.block(0,0,2,2).unaryExpr(mymatrix_expr0_counter_o
 
     def test_expect_leq_one(self):
         self.cg.expect_leq_one(self.int_var)
-        self.assertEqual(self.cg.cpp(), "EXPECT_LEQ_ONE(myint);")
+        self.assertEqual(self.cg.cpp(), """int int0 = 1;
+EXPECT_LE(myint,int0);""")
 
     def test_function_call_assign(self):
         self.cg.function_call_assign("stan::math::add", self.real_var1, self.real_var2)

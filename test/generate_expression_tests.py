@@ -20,16 +20,6 @@ TEST(ExpressionTest{overload}, {test_name}) {{
 }}
 """
 
-class FullErrorMsgParser(ArgumentParser):
-    """
-    Modified ArgumentParser that prints full error message on any error.
-    """
-
-    def error(self, message):
-        sys.stderr.write("error: %s\n" % message)
-        self.print_help()
-        sys.exit(2)
-
 def save_tests_in_files(N_files, tests):
     """
     Saves tests in files
@@ -137,31 +127,3 @@ def main(functions=(), j=1):
             )
     
     save_tests_in_files(j, tests)
-
-def processCLIArgs():
-    """
-    Define and process the command line interface to the benchmark.py script.
-    """
-    parser = FullErrorMsgParser(
-        description="Generate and run_command benchmarks.",
-        formatter_class=ArgumentDefaultsHelpFormatter,
-    )
-    parser.add_argument(
-        "--functions",
-        nargs="+",
-        type=str,
-        default=[],
-        help="Signatures and/or function names to benchmark. Ignores any finished checks in results file (if given).",
-    )
-    parser.add_argument(
-        "-j",
-        type=int,
-        default=1,
-        help="Number of parallel cores to use.",
-    )
-    args = parser.parse_args()
-
-    main(functions=args.functions, j = args.j)
-
-if __name__ == "__main__":
-    processCLIArgs()
