@@ -73,3 +73,35 @@ REGISTER_TYPED_TEST_SUITE_P(harmonic_oscillator_data_test,
                             param_and_data_finite_diff);
 INSTANTIATE_TYPED_TEST_SUITE_P(StanOde, harmonic_oscillator_data_test,
                                harmonic_oscillator_test_types);
+
+
+using harmonic_oscillator_t0_ad_test_types = ::testing::Types<
+  std::tuple<ode_rk45_functor, ode_rk45_functor, double, double, double>,
+  std::tuple<ode_ckrk_functor, ode_ckrk_functor, double, double, double>,
+  std::tuple<ode_bdf_functor, ode_bdf_functor, double, double, double>,
+  std::tuple<ode_adams_functor, ode_adams_functor, double, double, double>,
+  std::tuple<ode_rk45_functor, ode_rk45_functor, double, stan::math::var, double>,
+  std::tuple<ode_ckrk_functor, ode_ckrk_functor, double, stan::math::var, double>,
+  std::tuple<ode_bdf_functor, ode_bdf_functor, double, stan::math::var, double>,
+  std::tuple<ode_adams_functor, ode_adams_functor, double, stan::math::var, double>>;
+
+TYPED_TEST_SUITE_P(harmonic_oscillator_t0_ad_test);
+TYPED_TEST_P(harmonic_oscillator_t0_ad_test, t0_ad) {
+  if (std::is_same<std::tuple_element_t<0, TypeParam>, ode_rk45_functor>::value) {
+    this->test_t0_ad(5e-6);
+  }
+  if (std::is_same<std::tuple_element_t<0, TypeParam>, ode_ckrk_functor>::value) {
+    this->test_t0_ad(5e-6);
+  }
+  if (std::is_same<std::tuple_element_t<0, TypeParam>, ode_adams_functor>::value) {
+    this->test_t0_ad(1e-8);
+  }
+  if (std::is_same<std::tuple_element_t<0, TypeParam>, ode_bdf_functor>::value) {
+    this->test_t0_ad(1e-7);
+  }
+}
+REGISTER_TYPED_TEST_SUITE_P(harmonic_oscillator_t0_ad_test,
+                            t0_ad);
+INSTANTIATE_TYPED_TEST_SUITE_P(StanOde, harmonic_oscillator_t0_ad_test,
+                               harmonic_oscillator_t0_ad_test_types);
+

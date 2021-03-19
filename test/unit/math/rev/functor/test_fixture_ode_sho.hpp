@@ -89,8 +89,6 @@ struct harmonic_oscillator_test
                this->x_i);
   }
 
-  void test_good() { ASSERT_NO_THROW(apply_solver()); }
-
   void test_bad() {
     const auto y0_(this->y0);
 
@@ -248,6 +246,43 @@ struct harmonic_oscillator_test
 
     EXPECT_NEAR(-0.421907, stan::math::value_of(res[99][0]), 1e-5);
     EXPECT_NEAR(0.246407, stan::math::value_of(res[99][1]), 1e-5);
+  }
+};
+
+template <typename T>
+struct harmonic_oscillator_t0_ad_test
+    : public harmonic_oscillator_ode_base<T>,
+      public ODETestFixture<harmonic_oscillator_t0_ad_test<T>> {
+
+  stan::math::var t0v;
+
+  harmonic_oscillator_t0_ad_test() : harmonic_oscillator_ode_base<T>(),
+                                     t0v(stan::math::to_var(this -> t0))
+  {
+    this -> ts = std::vector<double>{5.0, 10.0};    
+  }
+
+  auto apply_solver() {
+    std::tuple_element_t<0, T> sol;
+    return sol(this->f_eigen, this->y0, t0v, this->ts, nullptr,
+               this->theta, this->x_r, this->x_i);
+  }
+
+  void test_t0_ad(double tol) {
+    auto res = apply_solver();
+    res[0][0].grad();
+    EXPECT_NEAR(t0v.adj(), -0.66360742442816977871, tol);
+    stan::math::set_zero_all_adjoints();
+    res[0][1].grad();
+    EXPECT_NEAR(t0v.adj(), 0.23542843380353062344, tol);
+    stan::math::set_zero_all_adjoints();
+    res[1][0].grad();
+    EXPECT_NEAR(t0v.adj(), -0.2464078910913158893, tol);
+    stan::math::set_zero_all_adjoints();
+    res[1][1].grad();
+    EXPECT_NEAR(t0v.adj(), -0.38494826636037426937, tol);
+    stan::math::set_zero_all_adjoints();
+    stan::math::recover_memory();
   }
 };
 
