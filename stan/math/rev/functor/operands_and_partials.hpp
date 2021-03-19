@@ -190,8 +190,8 @@ class ops_partials_edge<double, std::vector<var>> {
   friend class stan::math::operands_and_partials;
   Op operands_;
 
-  int size() { return this->operands_.size(); }
-  inline auto& operand() noexcept { return this->operands_; }
+  inline int size() const noexcept { return this->operands_.size(); }
+  inline auto&& operand() noexcept { return std::move(this->operands_); }
   inline auto& partial() noexcept { return this->partials_; }
 };
 
@@ -210,7 +210,7 @@ class ops_partials_edge<double, Op, require_eigen_st<is_var, Op>> {
   template <typename, typename, typename, typename, typename, typename>
   friend class stan::math::operands_and_partials;
   arena_t<Op> operands_;
-  int size() const noexcept { return this->operands_.size(); }
+  inline int size() const noexcept { return this->operands_.size(); }
   inline auto operand() noexcept { return this->operands_; }
   inline auto partial() noexcept { return this->partials_; }
 };
@@ -266,7 +266,7 @@ class ops_partials_edge<double, std::vector<Eigen::Matrix<var, R, C>>> {
     }
     return this->operands_.size() * this->operands_[0].size();
   }
-  inline auto& operand() noexcept { return this->operands_; }
+  inline auto&& operand() noexcept { return std::move(this->operands_); }
   inline auto& partial() noexcept { return this->partials_vec_; }
 };
 
@@ -289,14 +289,11 @@ class ops_partials_edge<double, std::vector<std::vector<var>>> {
   template <typename, typename, typename, typename, typename, typename>
   friend class stan::math::operands_and_partials;
   Op operands_;
-  int size() {
-    if (unlikely(this->operands_.size() == 0)) {
-      return 0;
-    }
+  inline int size() const noexcept {
     return this->operands_.size() * this->operands_[0].size();
   }
-  inline auto& operand() noexcept { return this->operands_; }
-  inline auto& partial() noexcept { return this->partials_vec_; }
+  inline auto&& operand() noexcept { return std::move(this->operands_); }
+  inline auto&& partial() noexcept { return std::move(this->partials_vec_); }
 };
 
 template <typename Op>
@@ -319,8 +316,8 @@ class ops_partials_edge<double, std::vector<var_value<Op>>,
   std::vector<var_value<Op>, arena_allocator<var_value<Op>>> operands_;
 
   static constexpr int size() noexcept { return 0; }
-  inline auto& operand() noexcept { return this->operands_; }
-  inline auto& partial() noexcept { return this->partials_vec_; }
+  inline auto&& operand() noexcept { return std::move(this->operands_); }
+  inline auto&& partial() noexcept { return std::move(this->partials_vec_); }
 };
 }  // namespace internal
 }  // namespace math
