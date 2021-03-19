@@ -87,7 +87,7 @@ TEST(opencl_context, switch_devices_errors) {
   EXPECT_THROW(stan::math::opencl_context.select_device(0, 99999),
                std::system_error);
 }
-
+/*
 // Checks that select_device() works for all devices found on the system. If
 // there are multiple devices, this also tests that select_device() calls work
 // after another device was already in use.
@@ -112,5 +112,5 @@ TEST(opencl_context, switch_devices) {
   stan::math::opencl_context.select_device(OPENCL_PLATFORM_ID,
                                            OPENCL_DEVICE_ID);
 }
-
+*/
 #endif
