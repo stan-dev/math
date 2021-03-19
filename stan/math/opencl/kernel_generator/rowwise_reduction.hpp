@@ -321,7 +321,7 @@ class rowwise_sum_
 /**
  * Rowwise sum reduction of a kernel generator expression.
  * @tparam T type of input expression
- * @param an expression to reduce
+ * @param a the expression to reduce
  * @return sum
  */
 template <typename T,
@@ -375,7 +375,7 @@ class rowwise_prod_
 /**
  * Rowwise product reduction of a kernel generator expression.
  * @tparam T type of input expression
- * @param an expression to reduce
+ * @param a the expression to reduce
  * @return prod
  */
 template <typename T,
@@ -443,7 +443,7 @@ class rowwise_max_
 /**
  * Rowwise max reduction of a kernel generator expression.
  * @tparam T type of input expression
- * @param an expression to reduce
+ * @param a the expression to reduce
  * @return max
  */
 template <typename T,
@@ -510,7 +510,7 @@ class rowwise_min_
 /**
  * Min reduction of a kernel generator expression.
  * @tparam T type of input expression
- * @param an expression to reduce
+ * @param a the expression to reduce
  * @return min
  */
 template <typename T,

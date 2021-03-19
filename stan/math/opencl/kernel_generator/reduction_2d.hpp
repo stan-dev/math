@@ -226,7 +226,7 @@ class sum_2d_ : public reduction_2d<sum_2d_<T>, T, sum_op> {
  * two dimensional reductions can not be used as arguments to other operations -
  * they can only be evaluated.
  * @tparam T type of input expression
- * @param an expression to reduce
+ * @param a the expression to reduce
  * @return sum
  */
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
@@ -269,7 +269,7 @@ class prod_2d_ : public reduction_2d<prod_2d_<T>, T, prod_op> {
  * CPU. Also two dimensional reductions can not be used as arguments to other
  * operations - they can only be evaluated.
  * @tparam T type of input expression
- * @param an expression to reduce
+ * @param a the expression to reduce
  * @return prod
  */
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
@@ -316,7 +316,7 @@ class max_2d_
  * two dimensional reductions can not be used as arguments to other operations -
  * they can only be evaluated.
  * @tparam T type of input expression
- * @param an expression to reduce
+ * @param a the expression to reduce
  * @return max
  */
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
@@ -363,7 +363,7 @@ class min_2d_
  * can not be used as arguments to other operations - they can only be
  * evaluated.
  * @tparam T type of input expression
- * @param an expression to reduce
+ * @param a the expression to reduce
  * @return min
  */
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
