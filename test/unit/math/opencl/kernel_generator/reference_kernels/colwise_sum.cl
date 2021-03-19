@@ -6,6 +6,7 @@ const int lsize_i = get_local_size(0);
 const int gsize_i = get_global_size(0);
 const int gsize_j = get_global_size(1);
 const int wg_id_i = get_group_id(0);
+const int wg_id_j = get_group_id(1);
 const int n_groups_i = get_num_groups(0);
 __local double var1_local[LOCAL_SIZE_];
 double var1;

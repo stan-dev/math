@@ -304,9 +304,9 @@ def handleExpressionTests(tests, only_functions, n_test_files):
         HERE = os.path.dirname(os.path.realpath(__file__))
         sys.path.append(os.path.join(HERE, "test"))
         sys.path.append(os.path.join(HERE, "test/expressions"))
-        import generateExpressionTests
+        import generate_expression_tests
 
-        generateExpressionTests.main(only_functions, n_test_files)
+        generate_expression_tests.main(only_functions, n_test_files)
         for i in range(n_test_files):
             tests.append("test/expressions/tests%d_test.cpp" % i)
     elif only_functions:

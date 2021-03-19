@@ -47,14 +47,15 @@ inline int colwise_reduction_wgs_rows(int n_rows, int n_cols) {
  * Represents a column wise reduction in kernel generator expressions. So as to
  * be efficient column wise reductions are only done partially. That means
  * instead of 1 row kernel output will have a few rows that need to be reduced
- * to obtain final result. This can be done in a separate kernel or after
+ * to obtain final result (actually it is 1
+ * result per work group run - roughly 16 times the number of compute units on
+ * the OpenCL device). This can be done in a separate kernel or after
  * copying to CPU. Also column wise reductions can not be used as arguments to
  * other operations - they can only be evaluated.
  * @tparam Derived derived type
  * @tparam T type of first argument
- * @tparam operation type with member function generate that accepts two
+ * @tparam Operation type with member function generate that accepts two
  * variable names and returns OpenCL source code for reduction operation_cl
- * @tparam PassZero whether \c operation passes trough zeros
  */
 template <typename Derived, typename T, typename Operation>
 class colwise_reduction
@@ -105,7 +106,7 @@ class colwise_reduction
         generated, generated_all, ng, row_index_name, col_index_name);
 
     parts.args += out_parts.args;
-    parts.reduction += "if (lid_i == 0) {\n"
+    parts.reduction_1d += "if (lid_i == 0) {\n"
                      + result.var_name_
                      + "_global[j * n_groups_i + wg_id_i] = "
                      + derived().var_name_ + "_local[0];\n"
@@ -133,7 +134,7 @@ class colwise_reduction
     res.initialization = var_name_ + " = " + init_ + ";\n";
     res.body = var_name_ + " = " + Operation::generate(var_name_, var_name_arg)
                + ";\n";
-    res.reduction =
+    res.reduction_1d =
           var_name_ + "_local[lid_i] = " + var_name_ + ";\n"
           "barrier(CLK_LOCAL_MEM_FENCE);\n"
           "for (int step = lsize_i / REDUCTION_STEP_SIZE; "
@@ -210,17 +211,63 @@ class colwise_sum_ : public colwise_reduction<colwise_sum_<T>, T, sum_op> {
  * Column wise sum - reduction of a kernel generator expression. So as to
  * be efficient column wise reductions are only done partially. That means
  * instead of 1 row kernel output will have a few rows that need to be reduced
- * to obtain final result. This can be done in a separate kernel or after
- * copying to CPU. Also column wise reductions can not be used as arguments to
- * other operations - they can only be evaluated.
+ * to obtain the final result (actually it is 1 result per work group run -
+ * roughly 16 times the number of compute units on the OpenCL device). This can
+ * be done in a separate kernel or after copying to CPU. Also column wise
+ * reductions can not be used as arguments to other operations - they can only
+ * be evaluated.
  * @tparam T type of input expression
- * @param a expression to reduce
+ * @param a the expression to reduce
  * @return sum
  */
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
 inline auto colwise_sum(T&& a) {
   auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
   return colwise_sum_<as_operation_cl_t<T>>(
+      as_operation_cl(std::forward<T>(a)));
+}
+
+/**
+ * Represents column wise product - reduction in kernel generator expressions.
+ * @tparam T type of expression
+ */
+template <typename T>
+class colwise_prod_ : public colwise_reduction<colwise_prod_<T>, T, prod_op> {
+  using base = colwise_reduction<colwise_prod_<T>, T, prod_op>;
+  using base::arguments_;
+
+ public:
+  explicit colwise_prod_(T&& a)
+      : colwise_reduction<colwise_prod_<T>, T, prod_op>(std::forward<T>(a),
+                                                        "1") {}
+  /**
+   * Creates a deep copy of this expression.
+   * @return copy of \c *this
+   */
+  inline auto deep_copy() const {
+    auto&& arg_copy = this->template get_arg<0>().deep_copy();
+    return colwise_prod_<std::remove_reference_t<decltype(arg_copy)>>(
+        std::move(arg_copy));
+  }
+};
+
+/**
+ * Column wise product - reduction of a kernel generator expression. So as to
+ * be efficient column wise reductions are only done partially. That means
+ * instead of 1 row kernel output will have a few rows that need to be reduced
+ * to obtain the final result (actually it is 1 result per work group run -
+ * roughly 16 times the number of compute units on the OpenCL device). This can
+ * be done in a separate kernel or after copying to CPU. Also column wise
+ * reductions can not be used as arguments to other operations - they can only
+ * be evaluated.
+ * @tparam T type of input expression
+ * @param a the expression to reduce
+ * @return prod
+ */
+template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
+inline auto colwise_prod(T&& a) {
+  auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
+  return colwise_prod_<as_operation_cl_t<T>>(
       as_operation_cl(std::forward<T>(a)));
 }
 
@@ -257,11 +304,13 @@ class colwise_max_ : public colwise_reduction<
  * Column wise max - reduction of a kernel generator expression. So as to
  * be efficient column wise reductions are only done partially. That means
  * instead of 1 row kernel output will have a few rows that need to be reduced
- * to obtain final result. This can be done in a separate kernel or after
- * copying to CPU. Also column wise reductions can not be used as arguments to
- * other operations - they can only be evaluated.
+ * to obtain the final result (actually it is 1 result per work group run -
+ * roughly 16 times the number of compute units on the OpenCL device). This can
+ * be done in a separate kernel or after copying to CPU. Also column wise
+ * reductions can not be used as arguments to other operations - they can only
+ * be evaluated.
  * @tparam T type of input expression
- * @param a expression to reduce
+ * @param a the expression to reduce
  * @return max
  */
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
@@ -304,11 +353,13 @@ class colwise_min_ : public colwise_reduction<
  * Column wise min - reduction of a kernel generator expression.  So as to
  * be efficient column wise reductions are only done partially. That means
  * instead of 1 row kernel output will have a few rows that need to be reduced
- * to obtain final result. This can be done in a separate kernel or after
- * copying to CPU. Also column wise reductions can not be used as arguments to
- * other operations - they can only be evaluated.
+ * to obtain the final result (actually it is 1 result per work group run -
+ * roughly 16 times the number of compute units on the OpenCL device). This can
+ * be done in a separate kernel or after copying to CPU. Also column wise
+ * reductions can not be used as arguments to other operations - they can only
+ * be evaluated.
  * @tparam T type of input expression
- * @param a expression to reduce
+ * @param a the expression to reduce
  * @return min
  */
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
