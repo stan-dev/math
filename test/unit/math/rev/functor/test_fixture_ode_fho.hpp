@@ -12,22 +12,20 @@
 #include <limits>
 #include <string>
 
-
-
 template <typename T>
 struct forced_harm_osc_base {
   struct forced_harm_osc {
     template <typename T0, typename T1, typename T2>
-    inline Eigen::Matrix<stan::return_type_t<T0, T1, T2>, -1, 1>
-    operator()(const T0& t_in, const Eigen::Matrix<T1, -1, 1>& y_in,
-               std::ostream* msgs, const std::vector<T2>& theta) const {
+    inline Eigen::Matrix<stan::return_type_t<T0, T1, T2>, -1, 1> operator()(
+        const T0& t_in, const Eigen::Matrix<T1, -1, 1>& y_in,
+        std::ostream* msgs, const std::vector<T2>& theta) const {
       if (y_in.size() != 2)
         throw std::domain_error(
-                                "this function was called with inconsistent state");
+            "this function was called with inconsistent state");
 
       Eigen::Matrix<stan::return_type_t<T0, T1, T2>, -1, 1> res(2);
       res << y_in(1),
-        -y_in(0) * sin(theta.at(1) * t_in) - theta.at(0) * y_in(1);
+          -y_in(0) * sin(theta.at(1) * t_in) - theta.at(0) * y_in(1);
 
       return res;
     }
@@ -48,13 +46,13 @@ struct forced_harm_osc_base {
   int max_num_step;
 
   forced_harm_osc_base()
-    : theta{0.15, 0.25},
-      y0(2),
-      t0(0),
-      ts(100),
-      rtol(1.e-6),
-      atol(1.e-8),
-      max_num_step(100000) {
+      : theta{0.15, 0.25},
+        y0(2),
+        t0(0),
+        ts(100),
+        rtol(1.e-6),
+        atol(1.e-8),
+        max_num_step(100000) {
     y0 << 1.0, 0.0;
     for (size_t i = 0; i < ts.size(); ++i) {
       ts[i] = t0 + 0.1 * (i + 1);
@@ -92,13 +90,13 @@ struct forced_harm_osc_ts_test
 
   auto apply_solver_tol() {
     std::tuple_element_t<1, T> sol;
-    return sol(this->f, this->y0, this->t0, this->ts, this->rtol,
-               this->atol, this->max_num_step, nullptr, this->theta);
+    return sol(this->f, this->y0, this->t0, this->ts, this->rtol, this->atol,
+               this->max_num_step, nullptr, this->theta);
   }
 
-  template<typename Ttime, typename T1>
+  template <typename Ttime, typename T1>
   auto eval_rhs(const Ttime& t, const T1& y) {
-    return this -> f(t, y, nullptr, this -> theta);
+    return this->f(t, y, nullptr, this->theta);
   }
 };
 

@@ -253,19 +253,17 @@ template <typename T>
 struct harmonic_oscillator_t0_ad_test
     : public harmonic_oscillator_ode_base<T>,
       public ODETestFixture<harmonic_oscillator_t0_ad_test<T>> {
-
   stan::math::var t0v;
 
-  harmonic_oscillator_t0_ad_test() : harmonic_oscillator_ode_base<T>(),
-                                     t0v(stan::math::to_var(this -> t0))
-  {
-    this -> ts = std::vector<double>{5.0, 10.0};    
+  harmonic_oscillator_t0_ad_test()
+      : harmonic_oscillator_ode_base<T>(), t0v(stan::math::to_var(this->t0)) {
+    this->ts = std::vector<double>{5.0, 10.0};
   }
 
   auto apply_solver() {
     std::tuple_element_t<0, T> sol;
-    return sol(this->f_eigen, this->y0, t0v, this->ts, nullptr,
-               this->theta, this->x_r, this->x_i);
+    return sol(this->f_eigen, this->y0, t0v, this->ts, nullptr, this->theta,
+               this->x_r, this->x_i);
   }
 
   void test_t0_ad(double tol) {
