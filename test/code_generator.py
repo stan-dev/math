@@ -145,7 +145,8 @@ class CodeGenerator:
         
         :param arg: Argument to check
         """
-        return self._add_statement(statement_types.FunctionCall("EXPECT_LEQ_ONE", None, arg))
+        one = self._add_statement(statement_types.IntVariable("int" + self._get_next_name_suffix(), 1))
+        return self._add_statement(statement_types.FunctionCall("EXPECT_LE", None, arg, one))
     
     def function_call_assign(self, cpp_function_name, *args):
         """
