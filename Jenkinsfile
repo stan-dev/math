@@ -30,6 +30,7 @@ def runTestsWin(String testPath, boolean buildLibs = true, boolean jumbo = false
     }
 }
 
+
 def deleteDirWin() {
     bat "attrib -r -s /s /d"
     deleteDir()
@@ -317,6 +318,34 @@ pipeline {
                             echo "Distribution tests failed. Check out dist.log.zip artifact for test logs."
                             }
                     }
+                }
+	            stage('Expressions test') {
+                    agent any
+                    steps {
+                        unstash 'MathSetup'
+                        script {
+                            sh "echo O=0 > make/local"
+                            sh "python ./test/code_generator_test.py"
+                            sh "python ./test/signature_parser_test.py"
+                            sh "python ./test/statement_types_test.py"
+                            withEnv(['PATH+TBB=./lib/tbb']) {
+                                sh "python ./test/expressions/test_expression_testing_framework.py"
+                            }
+                            withEnv(['PATH+TBB=./lib/tbb']) {
+                                try { sh "./runTests.py -j${env.PARALLEL} test/expressions" }
+                                finally { junit 'test/**/*.xml' }
+                            }
+                            sh "make clean-all"
+                            sh "echo STAN_THREADS=true >> make/local"
+                            withEnv(['PATH+TBB=./lib/tbb']) {
+                                try {
+                                    sh "./runTests.py -j${env.PARALLEL} test/expressions --only-functions reduce_sum map_rect"
+				                }
+                                finally { junit 'test/**/*.xml' }
+                            }
+                        }
+                    }
+                    post { always { deleteDir() } }
                 }
                 stage('Threading tests') {
                     agent any
