@@ -221,6 +221,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
  * @return numeric integral of function f
  */
 template <typename F, typename T_a, typename T_b, typename T_theta,
+          typename = require_not_stan_closure_t<F>,
           typename = require_any_var_t<T_a, T_b, T_theta>>
 inline return_type_t<T_a, T_b, T_theta> integrate_1d(
     const F &f, const T_a &a, const T_b &b, const std::vector<T_theta> &theta,
@@ -228,6 +229,17 @@ inline return_type_t<T_a, T_b, T_theta> integrate_1d(
     std::ostream *msgs, const double relative_tolerance = std::sqrt(EPSILON)) {
   return integrate_1d_impl(integrate_1d_adapter<F>(f), a, b, relative_tolerance,
                            msgs, theta, x_r, x_i);
+}
+
+template <typename F, typename T_a, typename T_b, typename T_theta,
+          typename = require_stan_closure_t<F>,
+          typename = require_any_var_t<return_type_t<F>, T_a, T_b, T_theta>>
+inline return_type_t<F, T_a, T_b, T_theta> integrate_1d(
+    const F &f, const T_a &a, const T_b &b, const std::vector<T_theta> &theta,
+    const std::vector<double> &x_r, const std::vector<int> &x_i,
+    std::ostream *msgs, const double relative_tolerance = std::sqrt(EPSILON)) {
+  return integrate_1d_impl(integrate_1d_closure_adapter(), a, b,
+                           relative_tolerance, msgs, f, theta, x_r, x_i);
 }
 
 }  // namespace math

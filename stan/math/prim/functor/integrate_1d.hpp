@@ -211,7 +211,7 @@ inline double integrate_1d_impl(const F& f, double a, double b,
  * @param relative_tolerance tolerance passed to Boost quadrature
  * @return numeric integral of function f
  */
-template <typename F>
+template <typename F, require_not_stan_closure_t<F>* = nullptr>
 inline double integrate_1d(const F& f, double a, double b,
                            const std::vector<double>& theta,
                            const std::vector<double>& x_r,
@@ -220,6 +220,18 @@ inline double integrate_1d(const F& f, double a, double b,
                            = std::sqrt(EPSILON)) {
   return integrate_1d_impl(integrate_1d_adapter<F>(f), a, b, relative_tolerance,
                            msgs, theta, x_r, x_i);
+}
+
+template <typename F, require_stan_closure_t<F>* = nullptr,
+          require_arithmetic_t<return_type_t<F>>* = nullptr>
+inline double integrate_1d(const F& f, double a, double b,
+                           const std::vector<double>& theta,
+                           const std::vector<double>& x_r,
+                           const std::vector<int>& x_i, std::ostream* msgs,
+                           const double relative_tolerance
+                           = std::sqrt(EPSILON)) {
+  return integrate_1d_impl(integrate_1d_closure_adapter(), a, b,
+                           relative_tolerance, msgs, f, theta, x_r, x_i);
 }
 
 }  // namespace math
