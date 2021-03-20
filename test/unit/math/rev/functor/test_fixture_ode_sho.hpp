@@ -16,12 +16,29 @@
 
 template <typename T>
 struct harmonic_oscillator_ode_base {
+  struct sho_square_fun {
+    template <typename T0, typename T1, typename T2>
+    inline Eigen::Matrix<stan::return_type_t<T1, T2>, -1, 1> operator()(
+        const T0& t_in, const Eigen::Matrix<T1, -1, 1>& y_in,
+        std::ostream* msgs, const std::vector<T2>& theta,
+        const std::vector<double>& x, const std::vector<int>& x_int) const {
+      if (y_in.size() != 2)
+        throw std::domain_error("Functor called with inconsistent state");
+
+      Eigen::Matrix<stan::return_type_t<T1, T2>, -1, 1> f(2);
+      f << (y_in(1)), (-theta.at(0) * theta.at(0) * y_in(0));
+
+      return f;
+    }
+  };
+
   harm_osc_ode_fun f;
   harm_osc_ode_fun_eigen f_eigen;
   harm_osc_ode_data_fun f_data;
   harm_osc_ode_data_fun_eigen f_data_eigen;
   harm_osc_ode_wrong_size_1_fun f_wrong_size_1;
   harm_osc_ode_wrong_size_2_fun f_wrong_size_2;
+  sho_square_fun f_square;
 
   using T_t = std::tuple_element_t<2, T>;
   using T_y = std::tuple_element_t<3, T>;
@@ -382,6 +399,101 @@ struct harmonic_oscillator_data_test
 
     EXPECT_NEAR(-0.421907, stan::math::value_of(res[99][0]), 1e-5);
     EXPECT_NEAR(0.246407, stan::math::value_of(res[99][1]), 1e-5);
+  }
+};
+
+template <typename T>
+struct harmonic_oscillator_dv_functor : public harmonic_oscillator_ode_base<T> {
+  harmonic_oscillator_dv_functor() : harmonic_oscillator_ode_base<T>()
+  {}
+
+  template <typename Tx>
+  Eigen::Matrix<Tx, -1, 1> operator()(Eigen::Matrix<Tx, -1, 1>& x) const {
+    std::tuple_element_t<0, T> sol;
+    std::vector<Tx> theta_tx{x(0)};
+    auto ys = sol(this -> f_square, this -> y0, this -> t0, this -> ts,
+                  nullptr, theta_tx, this -> x_r, this -> x_i);
+    return ys[0];
+  }
+};
+
+template <typename T>
+struct harmonic_oscillator_vd_functor : public harmonic_oscillator_ode_base<T> {
+  harmonic_oscillator_vd_functor() : harmonic_oscillator_ode_base<T>()
+  {}
+
+  template <typename Tx>
+  Eigen::Matrix<Tx, -1, 1> operator()(Eigen::Matrix<Tx, -1, 1>& x) const {
+    std::tuple_element_t<0, T> sol;
+    Eigen::Matrix<Tx, -1, 1> y0_tx(2);
+    y0_tx << x(0), this -> y0(1);
+    auto ys = sol(this -> f_square, y0_tx, this -> t0, this -> ts,
+                  nullptr, this -> theta, this -> x_r, this -> x_i);
+    return ys[0];
+  }
+};
+
+template <typename T>
+struct harmonic_oscillator_vv_functor : public harmonic_oscillator_ode_base<T> {
+  harmonic_oscillator_vv_functor() : harmonic_oscillator_ode_base<T>()
+  {}
+
+  template <typename Tx>
+  Eigen::Matrix<Tx, -1, 1> operator()(Eigen::Matrix<Tx, -1, 1>& x) const {
+    std::tuple_element_t<0, T> sol;
+    std::vector<Tx> theta_tx{x(0)};
+    Eigen::Matrix<Tx, -1, 1> y0_tx(2);
+    y0_tx << x(1), this -> y0(1);
+    auto ys = sol(this -> f_square, y0_tx, this -> t0, this -> ts,
+                  nullptr, theta_tx, this -> x_r, this -> x_i);
+    return ys[0];
+  }
+};
+
+template <typename T>
+struct harmonic_oscillator_analytical_test :
+       public ODETestFixture<harmonic_oscillator_analytical_test<T>> {
+  harmonic_oscillator_dv_functor<T> ode_sol_dv;
+  harmonic_oscillator_vd_functor<T> ode_sol_vd;
+  harmonic_oscillator_vv_functor<T> ode_sol_vv;
+
+  auto analy_sol_functor() {
+    auto f = [](double t, double omega, double chi) {
+      Eigen::VectorXd y(2);
+      y << chi * cos(omega * t), -omega * chi * sin(omega * t);
+      return y; };
+    return f;
+  }
+
+  auto analy_grad_sol_functor() {
+    auto f = [](double t, double omega, double chi) {
+      Eigen::MatrixXd dy(2, 2);
+      dy(0, 0) = -t * chi * sin(omega * t);
+      dy(1, 0) = cos(omega * t);
+      dy(0, 1) = -chi * (sin(omega * t) + omega * t * cos(omega * t));
+      dy(1, 1) = -omega * sin(omega * t);
+      return dy; };
+    return f;
+  }
+
+  auto analy_grad_omega_sol_functor() {
+    auto f = [this](double t, double omega, double chi) {
+      Eigen::MatrixXd dy = analy_grad_sol_functor()(t, omega, chi);
+      Eigen::Matrix<double, -1, -1> d(1, 2);
+      d(0, 0) = dy(0, 0);
+      d(0, 1) = dy(0, 1);
+      return d; };
+    return f;
+  }
+
+  auto analy_grad_chi_sol_functor() {
+    auto f = [this](double t, double omega, double chi) {
+      Eigen::MatrixXd dy = analy_grad_sol_functor()(t, omega, chi);
+      Eigen::Matrix<double, -1, -1> d(1, 2);
+      d(0, 0) = dy(1, 0);
+      d(0, 1) = dy(1, 1);
+      return d; };
+    return f;
   }
 };
 
