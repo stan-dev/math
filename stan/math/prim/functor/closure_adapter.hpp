@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUNCTOR_CLOSURE_ADAPTER_HPP
 #define STAN_MATH_PRIM_FUNCTOR_CLOSURE_ADAPTER_HPP
 
+#include <stan/math/prim/meta/error_index.hpp>
 #include <stan/math/prim/meta/is_stan_closure.hpp>
 #include <stan/math/prim/meta/return_type.hpp>
 #include <ostream>
@@ -156,7 +157,8 @@ struct empty_closure_lp {
 };
 
 /**
- * Higher-order functor suitable for calling a closure inside variadic ODE solvers.
+ * Higher-order functor suitable for calling a closure inside variadic ODE
+ * solvers.
  */
 struct ode_closure_adapter {
   template <typename F, typename T0, typename T1, typename... Args>
@@ -253,7 +255,8 @@ struct reduce_sum_closure_adapter {
   auto operator()(const std::vector<T>& sub_slice, std::size_t start,
                   std::size_t end, std::ostream* msgs, const F& f,
                   Args... args) const {
-    return f(msgs, sub_slice, start, end, args...);
+    return f(msgs, sub_slice, start + error_index::value,
+             end + error_index::value, args...);
   }
 };
 
