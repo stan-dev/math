@@ -43,10 +43,9 @@ using byte = unsigned char;
  */
 class stack_alloc {
  private:
-  std::vector<byte*> blocks_;  // storage for blocks,
+  byte* block_;  // storage for blocks,
                                // may be bigger than cur_block_
-  std::vector<size_t> sizes_;  // could store initial & shift for others
-  size_t cur_block_;           // index into blocks_ for next alloc
+  size_t size_;  // could store initial & shift for others
   byte* cur_block_end_;        // ptr to cur_block_ptr_ + sizes_[cur_block_]
   byte* next_loc_;             // ptr to next available spot in cur
                                // block
@@ -65,6 +64,7 @@ class stack_alloc {
    */
   inline byte* move_to_next_block(size_t len) noexcept {
     byte* result;
+    /*
     ++cur_block_;
     // Find the next block (if any) containing at least len bytes.
     while ((cur_block_ < blocks_.size()) && (sizes_[cur_block_] < len)) {
@@ -82,10 +82,22 @@ class stack_alloc {
         sizes_.push_back(newsize);
       }();
     }
-    result = blocks_[cur_block_];
+    */
+    size_t newsize = size_ + size_ * 1.5;
+    newsize += 16;
+    if (newsize < len) {
+      newsize = len;
+      newsize += 16;
+    }
+    block_ = reinterpret_cast<byte*>(Eigen::internal::aligned_realloc(block_, newsize, size_));
+    void* original = reinterpret_cast<void*>(block_ + size_);
+    void* aligned = reinterpret_cast<void*>((reinterpret_cast<std::size_t>(original) & ~(std::size_t(EIGEN_DEFAULT_ALIGN_BYTES-1))) + EIGEN_DEFAULT_ALIGN_BYTES);
+    *(reinterpret_cast<void**>(aligned) - 1) = original;
+    result = reinterpret_cast<byte*>(aligned);
+    size_ = newsize;
     // Get the object's state back in order.
     next_loc_ = result + len;
-    cur_block_end_ = result + sizes_[cur_block_];
+    cur_block_end_ = block_ + size_;
     return result;
   }
 
@@ -100,11 +112,10 @@ class stack_alloc {
    * aligned.
    */
   inline explicit stack_alloc(size_t initial_nbytes = internal::DEFAULT_INITIAL_NBYTES) noexcept
-      : blocks_(1, reinterpret_cast<byte*>(Eigen::internal::aligned_malloc(initial_nbytes))),
-        sizes_(1, initial_nbytes),
-        cur_block_(0),
-        cur_block_end_(blocks_[0] + initial_nbytes),
-        next_loc_(blocks_[0]) {
+      : block_(reinterpret_cast<byte*>(Eigen::internal::aligned_malloc(initial_nbytes))),
+        size_(initial_nbytes),
+        cur_block_end_(block_ + initial_nbytes),
+        next_loc_(block_) {
   }
 
   /**
@@ -115,11 +126,7 @@ class stack_alloc {
    */
   ~stack_alloc() noexcept {
     // free ALL blocks
-    for (auto& block : blocks_) {
-      if (block) {
-        free(block);
-      }
-    }
+    free(block_);
   }
 
   /**
@@ -136,11 +143,17 @@ class stack_alloc {
    */
   inline void* alloc(size_t len) noexcept {
     // Typically, just return and increment the next location.
-    byte* result = next_loc_;
-    next_loc_ += len;
+    void* original = reinterpret_cast<void*>(next_loc_);
+    void *aligned = reinterpret_cast<void*>((reinterpret_cast<std::size_t>(original) & ~(std::size_t(EIGEN_DEFAULT_ALIGN_BYTES-1))) + EIGEN_DEFAULT_ALIGN_BYTES);
+    *(reinterpret_cast<void**>(aligned) - 1) = original;
+    byte* result = reinterpret_cast<byte*>(aligned);
+    next_loc_ = result + len;
     // Occasionally, we have to switch blocks.
     if (unlikely(next_loc_ >= cur_block_end_)) {
+      //puts("Made new mem");
       result = move_to_next_block(len);
+    } else {
+      //puts("Did not go through new");
     }
     return reinterpret_cast<void*>(result);
   }
@@ -164,7 +177,6 @@ class stack_alloc {
    * block, a new block of uninitialized memory is created of size new_cap,
    * otherwise the method does nothing.
    * @param len Number of bytes to allocate.
-   */
   inline void reserve(size_t new_cap) noexcept {
     // if current block has enough then no-op
     if (unlikely(next_loc_ + new_cap >= cur_block_end_)) {
@@ -191,7 +203,7 @@ class stack_alloc {
   inline void reserve_array(size_t new_cap) {
     this->reserve(new_cap * sizeof(T));
   }
-
+*/
 
   /**
    * Recover all the memory used by the stack allocator.  The stack
@@ -200,9 +212,8 @@ class stack_alloc {
    * function free_all().
    */
   inline void recover_all() noexcept {
-    cur_block_ = 0;
-    next_loc_ = blocks_[0];
-    cur_block_end_ = next_loc_ + sizes_[0];
+    next_loc_ = block_;
+    cur_block_end_ = block_ + size_;
   }
 
   /**
@@ -210,7 +221,7 @@ class stack_alloc {
    * recover back to start.
    */
   inline void start_nested() noexcept {
-    nested_cur_blocks_.push_back(cur_block_);
+    nested_cur_blocks_.push_back(0);
     nested_next_locs_.push_back(next_loc_);
     nested_cur_block_ends_.push_back(cur_block_end_);
   }
@@ -223,7 +234,6 @@ class stack_alloc {
       recover_all();
     }
 
-    cur_block_ = nested_cur_blocks_.back();
     nested_cur_blocks_.pop_back();
 
     next_loc_ = nested_next_locs_.back();
@@ -239,14 +249,6 @@ class stack_alloc {
    * destructor will free all memory.
    */
   inline void free_all() noexcept {
-    // frees all BUT the first (index 0) block
-    for (size_t i = 1; i < blocks_.size(); ++i) {
-      if (blocks_[i]) {
-        free(blocks_[i]);
-      }
-    }
-    sizes_.resize(1);
-    blocks_.resize(1);
     recover_all();
   }
 
@@ -261,11 +263,7 @@ class stack_alloc {
    * @return number of bytes allocated to this instance
    */
   inline size_t bytes_allocated() const noexcept {
-    size_t sum = 0;
-    for (size_t i = 0; i <= cur_block_; ++i) {
-      sum += sizes_[i];
-    }
-    return sum;
+    return size_;
   }
 
   /**
@@ -277,14 +275,9 @@ class stack_alloc {
    *    false otherwise.
    */
   inline bool in_stack(const void* ptr) const noexcept {
-    for (size_t i = 0; i < cur_block_; ++i) {
-      if (ptr >= blocks_[i] && ptr < blocks_[i] + sizes_[i]) {
+      if (reinterpret_cast<const byte*>(ptr) >= block_ && reinterpret_cast<const byte*>(ptr) < block_ + size_) {
         return true;
       }
-    }
-    if (ptr >= blocks_[cur_block_] && ptr < next_loc_) {
-      return true;
-    }
     return false;
   }
 };
