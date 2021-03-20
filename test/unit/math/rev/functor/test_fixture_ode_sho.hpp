@@ -404,55 +404,52 @@ struct harmonic_oscillator_data_test
 
 template <typename T>
 struct harmonic_oscillator_dv_functor : public harmonic_oscillator_ode_base<T> {
-  harmonic_oscillator_dv_functor() : harmonic_oscillator_ode_base<T>()
-  {}
+  harmonic_oscillator_dv_functor() : harmonic_oscillator_ode_base<T>() {}
 
   template <typename Tx>
   Eigen::Matrix<Tx, -1, 1> operator()(Eigen::Matrix<Tx, -1, 1>& x) const {
     std::tuple_element_t<0, T> sol;
     std::vector<Tx> theta_tx{x(0)};
-    auto ys = sol(this -> f_square, this -> y0, this -> t0, this -> ts,
-                  nullptr, theta_tx, this -> x_r, this -> x_i);
+    auto ys = sol(this->f_square, this->y0, this->t0, this->ts, nullptr,
+                  theta_tx, this->x_r, this->x_i);
     return ys[0];
   }
 };
 
 template <typename T>
 struct harmonic_oscillator_vd_functor : public harmonic_oscillator_ode_base<T> {
-  harmonic_oscillator_vd_functor() : harmonic_oscillator_ode_base<T>()
-  {}
+  harmonic_oscillator_vd_functor() : harmonic_oscillator_ode_base<T>() {}
 
   template <typename Tx>
   Eigen::Matrix<Tx, -1, 1> operator()(Eigen::Matrix<Tx, -1, 1>& x) const {
     std::tuple_element_t<0, T> sol;
     Eigen::Matrix<Tx, -1, 1> y0_tx(2);
-    y0_tx << x(0), this -> y0(1);
-    auto ys = sol(this -> f_square, y0_tx, this -> t0, this -> ts,
-                  nullptr, this -> theta, this -> x_r, this -> x_i);
+    y0_tx << x(0), this->y0(1);
+    auto ys = sol(this->f_square, y0_tx, this->t0, this->ts, nullptr,
+                  this->theta, this->x_r, this->x_i);
     return ys[0];
   }
 };
 
 template <typename T>
 struct harmonic_oscillator_vv_functor : public harmonic_oscillator_ode_base<T> {
-  harmonic_oscillator_vv_functor() : harmonic_oscillator_ode_base<T>()
-  {}
+  harmonic_oscillator_vv_functor() : harmonic_oscillator_ode_base<T>() {}
 
   template <typename Tx>
   Eigen::Matrix<Tx, -1, 1> operator()(Eigen::Matrix<Tx, -1, 1>& x) const {
     std::tuple_element_t<0, T> sol;
     std::vector<Tx> theta_tx{x(0)};
     Eigen::Matrix<Tx, -1, 1> y0_tx(2);
-    y0_tx << x(1), this -> y0(1);
-    auto ys = sol(this -> f_square, y0_tx, this -> t0, this -> ts,
-                  nullptr, theta_tx, this -> x_r, this -> x_i);
+    y0_tx << x(1), this->y0(1);
+    auto ys = sol(this->f_square, y0_tx, this->t0, this->ts, nullptr, theta_tx,
+                  this->x_r, this->x_i);
     return ys[0];
   }
 };
 
 template <typename T>
-struct harmonic_oscillator_analytical_test :
-       public ODETestFixture<harmonic_oscillator_analytical_test<T>> {
+struct harmonic_oscillator_analytical_test
+    : public ODETestFixture<harmonic_oscillator_analytical_test<T>> {
   harmonic_oscillator_dv_functor<T> ode_sol_dv;
   harmonic_oscillator_vd_functor<T> ode_sol_vd;
   harmonic_oscillator_vv_functor<T> ode_sol_vv;
@@ -461,7 +458,8 @@ struct harmonic_oscillator_analytical_test :
     auto f = [](double t, double omega, double chi) {
       Eigen::VectorXd y(2);
       y << chi * cos(omega * t), -omega * chi * sin(omega * t);
-      return y; };
+      return y;
+    };
     return f;
   }
 
@@ -472,7 +470,8 @@ struct harmonic_oscillator_analytical_test :
       dy(1, 0) = cos(omega * t);
       dy(0, 1) = -chi * (sin(omega * t) + omega * t * cos(omega * t));
       dy(1, 1) = -omega * sin(omega * t);
-      return dy; };
+      return dy;
+    };
     return f;
   }
 
@@ -482,7 +481,8 @@ struct harmonic_oscillator_analytical_test :
       Eigen::Matrix<double, -1, -1> d(1, 2);
       d(0, 0) = dy(0, 0);
       d(0, 1) = dy(0, 1);
-      return d; };
+      return d;
+    };
     return f;
   }
 
@@ -492,7 +492,8 @@ struct harmonic_oscillator_analytical_test :
       Eigen::Matrix<double, -1, -1> d(1, 2);
       d(0, 0) = dy(1, 0);
       d(0, 1) = dy(1, 1);
-      return d; };
+      return d;
+    };
     return f;
   }
 };

@@ -15,7 +15,7 @@
 
 template <class ode_problem_type>
 struct ODETestFixture : public ::testing::Test {
-  /** 
+  /**
    * test ODE solver pass
    */
   void test_good() {
@@ -23,10 +23,10 @@ struct ODETestFixture : public ::testing::Test {
     ASSERT_NO_THROW(ode.apply_solver());
   }
 
-  /** 
+  /**
    * test ODE solution against analytical solution
    *
-   * 
+   *
    * @param ode_sol solver functor that takes a <code>vector</code>
    * parameter variable that returns solution <code>vector</code>.
    * @param analy_sol analytical solution functor that returns
@@ -36,9 +36,8 @@ struct ODETestFixture : public ::testing::Test {
    * @param t time at which analyitical solution is evaluated
    * @param args parameters pack required by <code>analy_sol</code>.
    */
-  template<typename F_ode, typename F_sol, typename... T_args>
-  void test_analytical(F_ode const& ode_sol, F_sol const& analy_sol,
-                       double tol,
+  template <typename F_ode, typename F_sol, typename... T_args>
+  void test_analytical(F_ode const& ode_sol, F_sol const& analy_sol, double tol,
                        Eigen::VectorXd const& x, double t,
                        const T_args&... args) {
     ode_problem_type& ode = static_cast<ode_problem_type&>(*this);
@@ -50,11 +49,11 @@ struct ODETestFixture : public ::testing::Test {
     }
   }
 
-  /** 
+  /**
    * test ODE solution as well as sensitivity solution
    * against analytical solution.
    *
-   * 
+   *
    * @param ode_sol solver functor that takes a <code>vector</code>
    * parameter variable that returns solution <code>vector</code>.
    * @param analy_sol analytical solution functor that returns
@@ -68,11 +67,12 @@ struct ODETestFixture : public ::testing::Test {
    * @param t time at which analyitical solution is evaluated
    * @param args parameters pack required by <code>analy_sol</code>.
    */
-  template<typename F_ode, typename F_sol, typename F_grad_sol,
-           typename... T_args>
+  template <typename F_ode, typename F_sol, typename F_grad_sol,
+            typename... T_args>
   void test_analytical(F_ode const& ode_sol, F_sol const& analy_sol,
                        F_grad_sol const& analy_grad_sol, double tol,
-                       Eigen::VectorXd const& x, double t, const T_args&... args) {
+                       Eigen::VectorXd const& x, double t,
+                       const T_args&... args) {
     ode_problem_type& ode = static_cast<ode_problem_type&>(*this);
 
     auto sol_0 = analy_sol(t, args...);
@@ -80,7 +80,8 @@ struct ODETestFixture : public ::testing::Test {
     Eigen::Matrix<stan::math::var, -1, 1> sol = ode_sol(x_var);
     EXPECT_TRUE(sol.size() == sol_0.size());
     for (auto i = 0; i < sol.size(); ++i) {
-      EXPECT_NEAR(sol[i].val(), sol_0[i], tol) << "ODE solution failed for state i, i = " << i;
+      EXPECT_NEAR(sol[i].val(), sol_0[i], tol)
+          << "ODE solution failed for state i, i = " << i;
     }
 
     Eigen::Matrix<double, -1, -1> grad_0(analy_grad_sol(t, args...));
@@ -89,7 +90,9 @@ struct ODETestFixture : public ::testing::Test {
       sol[i].grad();
       for (auto j = 0; j < x.size(); ++j) {
         EXPECT_NEAR(x_var[j].adj(), grad_0(j, i), tol)
-          << "ODE sensitivity solution failed for state i and parameter j, (i, j) = (" << i << ", " << j << ").";
+            << "ODE sensitivity solution failed for state i and parameter j, "
+               "(i, j) = ("
+            << i << ", " << j << ").";
       }
     }
   }
