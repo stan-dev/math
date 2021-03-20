@@ -94,7 +94,8 @@ struct promote_scalar_type<T, S, require_eigen_t<S>> {
 };
 
 template <typename T, typename S>
-using promote_scalar_t = typename promote_scalar_type<T, S>::type;
+using promote_scalar_t =
+    typename promote_scalar_type<std::decay_t<T>, std::decay_t<S>>::type;
 
 }  // namespace math
 }  // namespace stan

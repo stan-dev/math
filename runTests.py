@@ -27,6 +27,7 @@ allowed_paths_with_jumbo = [
     "test/unit/math/rev/",
     "test/unit/math/fwd/",
     "test/unit/math/mix/",
+    "test/unit/math/opencl/",
     "test/unit/",
 ]
 
@@ -53,6 +54,10 @@ jumbo_folders = [
     # "test/unit/math/mix/functor",
     "test/unit/math/mix/meta",
     "test/unit/math/mix/prob",
+    "test/unit/math/opencl/device_functions",
+    "test/unit/math/opencl/kernel_generator",
+    "test/unit/math/opencl/prim",
+    "test/unit/math/opencl/rev",
 ]
 
 
@@ -139,7 +144,7 @@ def isWin():
 
 
 batchSize = 20 if isWin() else 200
-
+jumboSize = 5 if isWin() else 15
 
 def mungeName(name):
     """Set up the makefile target name"""
@@ -188,7 +193,7 @@ def generateJumboTests(paths):
             stopErr("The --jumbo flag is only allowed with top level folders.", 10)
     for jf in jumbo_files_to_create:
         tests_in_subfolder = sorted([x for x in os.listdir(jf) if x.endswith(testsfx)])
-        chunked_tests = divide_chunks(tests_in_subfolder, 15)
+        chunked_tests = divide_chunks(tests_in_subfolder, jumboSize)
         i = 0
         for tests in chunked_tests:
             i = i + 1
@@ -299,9 +304,9 @@ def handleExpressionTests(tests, only_functions, n_test_files):
         HERE = os.path.dirname(os.path.realpath(__file__))
         sys.path.append(os.path.join(HERE, "test"))
         sys.path.append(os.path.join(HERE, "test/expressions"))
-        import generateExpressionTests
+        import generate_expression_tests
 
-        generateExpressionTests.main(only_functions, n_test_files)
+        generate_expression_tests.main(only_functions, n_test_files)
         for i in range(n_test_files):
             tests.append("test/expressions/tests%d_test.cpp" % i)
     elif only_functions:
