@@ -62,7 +62,7 @@ TEST(MathPrim, basic_expressions) {
     stan::math::stan_print(&s, rv * m);
     EXPECT_TRUE(s.str().find("[2,2]") != std::string::npos);
   }
-  
+
   {
     std::stringstream s;
     stan::math::stan_print(&s, m * m);
