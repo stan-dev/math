@@ -1,0 +1,26 @@
+Solve the nonlinear system:
+    3x - cos((y-1)z) - 1/2 = 0
+    x^2 - 81(y-0.9)^2 + sin(z) + 1.06 = 0
+    exp(-x(y-1)) + 20z + (10 pi - 3)/3 = 0
+Analytic solution:
+    x = 0.5
+    y = 1
+    z = -0.523599
+Solution method: Anderson accelerated fixed point iteration.
+    tolerance = 1.49012e-06
+    max iters = 10
+    accel vec = 0
+    damping   = 1
+
+Final Statistics:
+Number of nonlinear iterations:      5
+Number of function evaluations:      5
+Computed solution:
+    x = 0.5
+    y = 1
+    z = -0.523598
+Solution error:
+    ex = 6.91114e-12
+    ey = 4.48202e-07
+    ez = 3.07455e-07
+PASS

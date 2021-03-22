@@ -1,0 +1,4 @@
+List of CUDA IDA examples
+
+  idaHeat2D_kry_cuda    : 2D heat equation with SPGMR, diagonal preconditioner and CUDA vector
+ 

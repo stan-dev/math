@@ -1,0 +1,25 @@
+List of PETSc IDA examples
+
+  idaHeat2D_petsc_spgmr  : 2D heat equation with Newton, SPGMR and PETSc vector
+  idaHeat2D_petsc_snes : 2D heat equation with PETSc SNES/KSP/PC
+
+The following CMake command was used to configure SUNDIALS:
+
+ cmake \
+-DBUILD_ARKODE=ON \
+-DBUILD_CVODE=ON \
+-DBUILD_CVODES=ON \
+-DBUILD_IDA=ON \
+-DBUILD_IDAS=ON \
+-DBUILD_KINSOL=ON \
+-DCMAKE_INSTALL_PREFIX=/home/user1/sundials/build/install \
+-DEXAMPLES_INSTALL_PATH=/home/user1/sundials/build/install/examples \
+-DBUILD_SHARED_LIBS=ON \
+-DBUILD_STATIC_LIBS=ON \
+-DEXAMPLES_ENABLE_C=ON \
+-DEXAMPLES_ENABLE_CXX=ON \
+-DEXAMPLES_INSTALL=ON \
+-DENABLE_MPI=ON \
+-DENABLE_PETSC=ON \
+-DPETSC_DIR=/path/to/petsc/
+../sundials

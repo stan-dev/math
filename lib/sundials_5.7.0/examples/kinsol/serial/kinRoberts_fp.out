@@ -1,0 +1,17 @@
+Example problem from chemical kinetics solving
+the first time step in a Backward Euler solution for the
+following three rate equations:
+    dy1/dt = -.04*y1 + 1.e4*y2*y3
+    dy2/dt = .04*y1 - 1.e4*y2*y3 - 3.e2*(y2)^2
+    dy3/dt = 3.e2*(y2)^2
+on the interval from t = 0.0 to t = 0.1, with initial
+conditions: y1 = 1.0, y2 = y3 = 0.
+Solution method: Anderson accelerated fixed point iteration.
+
+Computed solution (||F|| = 3.96494e-12):
+
+y =  9.967854e-01    2.953006e-03    2.616074e-04
+
+Final Statistics.. 
+
+nni      =      8    nfe     =      8 

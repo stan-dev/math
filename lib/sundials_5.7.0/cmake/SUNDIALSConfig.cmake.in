@@ -1,0 +1,127 @@
+# ---------------------------------------------------------------
+# Programmer(s): Cody J. Balos @ LLNL
+# ---------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2002-2021, Lawrence Livermore National Security
+# and Southern Methodist University.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# ---------------------------------------------------------------
+
+include(CMakeFindDependencyMacro)
+include("${CMAKE_CURRENT_LIST_DIR}/SUNDIALSTargets.cmake")
+
+### ------- Alias targets
+set(_SUNDIALS_ALIAS_TARGETS "@_SUNDIALS_ALIAS_TARGETS@")
+foreach(ptr ${_SUNDIALS_ALIAS_TARGETS})
+  string(REGEX REPLACE "sundials_" "" ptr "${ptr}")
+  string(REGEX MATCHALL "([A-Za-z_]+)->([A-Za-z_]+)"
+         _matches "${ptr}")
+  set(_pointer ${CMAKE_MATCH_1})
+  set(_pointee ${CMAKE_MATCH_2})
+  set_target_properties(SUNDIALS::${_pointee} PROPERTIES IMPORTED_GLOBAL TRUE)
+  add_library(SUNDIALS::${_pointer} ALIAS SUNDIALS::${_pointee})
+endforeach()
+
+### ------- Create TPL imported targets
+
+if(@ENABLE_HYPRE@ AND NOT TARGET SUNDIALS::HYPRE)
+  add_library(SUNDIALS::HYPRE INTERFACE IMPORTED GLOBAL)
+  target_link_libraries(SUNDIALS::HYPRE INTERFACE "@HYPRE_LIBRARIES@")
+  set_target_properties(SUNDIALS::HYPRE PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "@HYPRE_INCLUDE_DIR@")
+endif()
+
+if(@ENABLE_KLU@ AND NOT TARGET SUNDIALS::KLU)
+  add_library(SUNDIALS::KLU INTERFACE IMPORTED GLOBAL)
+  target_link_libraries(SUNDIALS::KLU INTERFACE "@KLU_LIBRARIES@")
+  set_target_properties(SUNDIALS::KLU PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "@KLU_INCLUDE_DIR@")
+endif()
+
+if(@ENABLE_PETSC@)
+  set(PETSC_LIBRARY_SINGLE "@PETSC_LIBRARY_SINGLE@")
+  if(${PETSC_LIBRARY_SINGLE})
+    foreach(suffix SYS VEC MAT DM KSP SNES TS ALL)
+      if(NOT TARGET SUNDIALS::PETSC_${suffix})
+        add_library(SUNDIALS::PETSC_${suffix} UNKNOWN IMPORTED)
+        set_target_properties(SUNDIALS::PETSC_${suffix} PROPERTIES
+          INTERFACE_INCLUDE_DIRECTORIES "@PETSC_INCLUDES_@")
+        set_target_properties(SUNDIALS::PETSC_${suffix} PROPERTIES
+          INTERFACE_LINK_LIBRARIES "@PETSC_LIBRARIES_@")
+        set_target_properties(SUNDIALS::PETSC_${suffix} PROPERTIES
+          INTERFACE_COMPILE_OPTIONS "@PETSC_DEFINITIONS@")
+        set_target_properties(SUNDIALS::PETSC_${suffix} PROPERTIES
+          IMPORTED_LOCATION "${PETSC_LIBRARY_SINGLE}")
+      endif()
+    endforeach()
+  else()
+    set(PESTC_LIBRARY_SYS "@PETSC_LIBRARY_SYS@")
+    set(PESTC_LIBRARY_VEC "@PETSC_LIBRARY_VEC@")
+    set(PESTC_LIBRARY_MAT "@PETSC_LIBRARY_MAT@")
+    set(PESTC_LIBRARY_DM "@PETSC_LIBRARY_DM@")
+    set(PESTC_LIBRARY_KSP "@PETSC_LIBRARY_KSP@")
+    set(PESTC_LIBRARY_SNES "@PETSC_LIBRARY_SNES@")
+    set(PESTC_LIBRARY_TS "@PETSC_LIBRARY_TS@")
+    set(PESTC_LIBRARY_ALL "@PETSC_LIBRARY_ALL@")
+
+    set(PESTC_LIBRARIES_SYS "@PETSC_LIBRARIES_SYS@")
+    set(PESTC_LIBRARIES_VEC "@PETSC_LIBRARIES_VEC@")
+    set(PESTC_LIBRARIES_MAT "@PETSC_LIBRARIES_MAT@")
+    set(PESTC_LIBRARIES_DM "@PETSC_LIBRARIES_DM@")
+    set(PESTC_LIBRARIES_KSP "@PETSC_LIBRARIES_KSP@")
+    set(PESTC_LIBRARIES_SNES "@PETSC_LIBRARIES_SNES@")
+    set(PESTC_LIBRARIES_TS "@PETSC_LIBRARIES_TS@")
+    set(PESTC_LIBRARIES_ALL "@PETSC_LIBRARIES_ALL@")
+
+    foreach(suffix SYS VEC MAT DM KSP SNES TS ALL)
+      if(NOT TARGET SUNDIALS::PETSC_${suffix})
+        add_library(SUNDIALS::PETSC_${suffix} UNKNOWN IMPORTED)
+        set_target_properties (SUNDIALS::PETSC_${suffix} PROPERTIES
+          INTERFACE_INCLUDE_DIRECTORIES "@PETSC_INCLUDES_@")
+        set_target_properties (SUNDIALS::PETSC_${suffix} PROPERTIES
+          INTERFACE_LINK_LIBRARIES "${PETSC_LIBRARIES_${suffix}}")
+        set_target_properties (SUNDIALS::PETSC_${suffix} PROPERTIES
+          INTERFACE_COMPILE_OPTIONS "${PETSC_DEFINITIONS}")
+        set_target_properties (SUNDIALS::PETSC_${suffix} PROPERTIES
+          IMPORTED_LOCATION "${PETSC_LIBRARY_${suffix}}")
+      endif()
+    endforeach()
+  endif()
+endif()
+
+if(@ENABLE_MAGMA@ AND NOT TARGET SUNDIALS::MAGMA)
+  add_library(SUNDIALS::MAGMA INTERFACE IMPORTED GLOBAL)
+  target_link_libraries(SUNDIALS::MAGMA INTERFACE "@MAGMA_LIBRARIES@")
+  set_target_properties(SUNDIALS::MAGMA PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "@MAGMA_INCLUDE_DIR@")
+endif()
+
+if(@ENABLE_SUPERLUDIST@ AND NOT TARGET SUNDIALS::SUPERLUDIST)
+  add_library(SUNDIALS::SUPERLUDIST INTERFACE IMPORTED GLOBAL)
+  target_link_libraries(SUNDIALS::SUPERLUDIST INTERFACE "@SUPERLUDIST_LIBRARIES@")
+  set_target_properties(SUNDIALS::SUPERLUDIST PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "@SUPERLUDIST_INCLUDE_DIR@")
+endif()
+
+if(@ENABLE_SUPERLUMT@ AND NOT TARGET SUNDIALS::SUPERLUMT)
+  add_library(SUNDIALS::SUPERLUMT INTERFACE IMPORTED GLOBAL)
+  target_link_libraries(SUNDIALS::SUPERLUMT INTERFACE "@SUPERLUMT_LIBRARIES@")
+  set_target_properties(SUNDIALS::SUPERLUMT PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "@SUPERLUMT_INCLUDE_DIR@")
+endif()
+
+if(@ENABLE_RAJA@ AND NOT TARGET RAJA)
+  find_package(RAJA PATHS @RAJA_DIR@)
+endif()
+
+if(@ENABLE_TRILINOS@ AND NOT TARGET SUNDIALS::TRILINOS)
+  add_library(SUNDIALS::TRILINOS INTERFACE IMPORTED GLOBAL)
+  target_link_libraries(SUNDIALS::TRILINOS INTERFACE "@Trilinos_LIBRARIES@")
+  set_target_properties(SUNDIALS::TRILINOS PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "@Trilinos_INCLUDE_DIRS@")
+endif()
+
+if(@ENABLE_XBRAID@ AND NOT TARGET SUNDIALS::XBRAID)
+  add_library(SUNDIALS::XBRAID INTERFACE IMPORTED GLOBAL)
+  target_link_libraries(SUNDIALS::XBRAID INTERFACE "@XBRAID_LIBRARIES@")
+  set_target_properties(SUNDIALS::XBRAID PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "@XBRAID_INCLUDE_DIR@")
+endif()

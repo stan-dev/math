@@ -1,0 +1,38 @@
+List of custom ARKODE F2003 examples
+
+  ark_analytic_complex_f2003
+  ark_brusselator1D_f2003
+
+The ark_analytic_complex examples relies a custom module:
+
+  fnvector_complex_mod -- Fortran-supplied N_Vector implementation
+                          using complex numbers
+
+The ark_brusselator1D example relies on three custom modules:
+
+  fnvector_fortran_mod -- Fortran-supplied N_Vector implementation
+                          using 2D multidimensional data array.
+  fsunmatrix_fortran_mod -- Fortran-supplied SUNMatrix implementation
+                          for a block-diagonal matrix structure
+                          via 3D multidimensional data array.
+  fsunlinsol_fortran_mod -- Fortran-supplied SUNLinearSolver
+                          implementation for direct linear solves
+                          corresponding with above matrices/vectors.
+
+The test progams are used to test the custom module implementations.
+
+The following CMake command was used to configure SUNDIALS:
+
+cmake \
+  -D CMAKE_INSTALL_PREFIX=$SUNDIALS_INSTALL_DIR \
+  -D EXAMPLES_INSTALL_PATH=$SUNDIALS_INSTALL_DIR/examples\
+  -D BUILD_SHARED_LIBS=ON \
+  -D BUILD_STATIC_LIBS=ON \
+  -D BUILD_ARKODE=ON \
+  -D BUILD_TESTING=ON \
+  -D BUILD_FORTRAN_MODULE_INTERFACE=ON \
+  -D EXAMPLES_ENABLE_F2003=ON \
+  -D SUNDIALS_INDEX_SIZE=64 \
+  -D SUNDIALS_PRECISION=double \
+$SUNDIALS_SOURCE_DIR
+

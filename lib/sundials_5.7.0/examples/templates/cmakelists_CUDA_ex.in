@@ -1,0 +1,110 @@
+# -----------------------------------------------------------------
+# Programmer(s): Cody J. Balos @ LLNL
+# -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2002-2021, Lawrence Livermore National Security
+# and Southern Methodist University.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
+
+# Set the minimum required cmake version
+cmake_minimum_required(VERSION 3.12)
+
+# Set cache variables for compilers and flags
+set(CMAKE_C_COMPILER
+  @CMAKE_C_COMPILER@
+  CACHE FILEPATH "C compiler")
+
+set(CMAKE_C_FLAGS
+  "@CMAKE_C_FLAGS@"
+  CACHE STRING "C compiler flags")
+
+# Set cache variables for compilers and flags
+set(CMAKE_CXX_COMPILER
+  @CMAKE_CXX_COMPILER@
+  CACHE FILEPATH "CXX compiler")
+
+set(CMAKE_CXX_FLAGS
+  "@CMAKE_CXX_FLAGS@"
+  CACHE STRING "CXX compiler flags")
+
+set(CMAKE_CUDA_COMPILER
+  @CMAKE_CUDA_COMPILER@
+  CACHE FILEPATH "CUDA compiler")
+set(CMAKE_CUDA_FLAGS
+  "@CMAKE_CUDA_FLAGS@"
+  CACHE STRING "CUDA compiler flags")
+set(CMAKE_CUDA_STANDARD 11)
+
+set(CMAKE_CUDA_HOST_COMPILER
+  ${CMAKE_CXX_COMPILER}
+  CACHE FILEPATH "CUDA host compiler")
+
+# Specify project name and languages
+project(@SOLVER@_examples @_SUNDIALS_ENABLED_LANGS@)
+
+# Enable testing
+include(CTest)
+
+# ------------------------------------------------------------------------------
+
+# Specify the path to SUNDIALSConfig.cmake
+set(SUNDIALS_DIR
+  @CMAKE_INSTALL_PREFIX@/@SUNDIALS_INSTALL_CMAKEDIR@
+  CACHE PATH "Location of SUNDIALSConfig.cmake")
+
+find_package(SUNDIALS REQUIRED NO_DEFAULT_PATH)
+
+# Set additional libraries
+set(SUNDIALS_EXTRA_LIBS @LIBS@ CACHE STRING "Additional libraries")
+
+# Set SUNDIALS targets needed
+set(SUNDIALS_TARGETS_NEEDED "")
+set(_list_of_targets "@EXAMPLES_CMAKE_TARGETS@")
+foreach(tgt ${_list_of_targets})
+  list(APPEND SUNDIALS_TARGETS_NEEDED SUNDIALS::${tgt})
+endforeach()
+
+# List of SUNDIALS libraries
+set(SUNDIALS_LIBRARIES
+    ${SUNDIALS_TARGETS_NEEDED}
+    ${SUNDIALS_EXTRA_LIBS})
+
+# Additional includes
+include_directories(. @EXTRA_INCLUDES@)
+
+# ------------------------------------------------------------------------------
+
+# Set the names of the examples to be built and their dependencies
+set(examples @EXAMPLES@)
+set(examples_dependencies @EXAMPLES_DEPENDENCIES@)
+if(examples)
+  list(REMOVE_DUPLICATES examples)
+endif()
+
+# Create targets for each example
+foreach(example ${examples})
+  # get filename without extension
+  get_filename_component(example_target ${example} NAME_WE)
+
+  # set the language
+  set_source_files_properties(${example} PROPERTIES LANGUAGE CUDA)
+
+  # example source files
+  add_executable(${example_target} ${example} ${examples_dependencies})
+
+  # directories to include
+  target_include_directories(${example_target} PRIVATE ${SUNDIALS_INCLUDE_DIR} ${SUNDIALS_EXTRA_INCLUDES})
+
+  # libraries to link against
+  target_link_libraries(${example_target} ${SUNDIALS_LIBRARIES})
+
+  # add the example to ctest
+  add_test(NAME ${example_target} COMMAND ${example})
+
+endforeach()

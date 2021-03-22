@@ -1,0 +1,30 @@
+
+idaHeat2D_klu: Heat equation, serial example problem for IDA
+          Discretized heat equation on 2D unit square.
+          Zero boundary conditions, polynomial initial conditions.
+          Mesh dimensions: 10 x 10        Total system size: 100
+
+Tolerance parameters:  rtol = 0   atol = 1e-08
+Constraints set to force all solution components >= 0. 
+Linear solver: KLU, sparse direct solver 
+       difference quotient Jacobian
+IDACalcIC called with input boundary values = 0 
+
+   Output Summary (umax = max-norm of solution) 
+
+  time       umax     k  nst  nni  nje   nre     h       
+ .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  . 
+  0.00   9.75461e-01  0    0    0    2     2   5.15e-10 
+  0.01   8.24056e-01  5   53   63   23    65   5.55e-04 
+  0.02   6.88097e-01  5   69   81   24    83   9.99e-04 
+  0.04   4.70961e-01  5   90  106   27   108   1.91e-03 
+  0.08   2.16312e-01  5  113  130   27   132   1.72e-03 
+  0.16   4.53210e-02  5  137  155   28   157   3.43e-03 
+  0.32   1.98864e-03  5  173  193   29   195   6.18e-03 
+  0.64   3.83238e-06  5  210  233   31   235   2.22e-02 
+  1.28   0.00000e+00  1  227  255   34   257   1.78e-01 
+  2.56   0.00000e+00  1  230  258   37   260   1.42e+00 
+  5.12   0.00000e+00  1  231  259   38   261   2.85e+00 
+ 10.24   0.00000e+00  1  232  260   39   262   5.69e+00 
+
+ netf = 2,   ncfn = 0 

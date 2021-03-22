@@ -1,0 +1,35 @@
+
+idaHeat2D_kry_petscsnes: Heat equation, parallel example problem for IDA
+                         Discretized heat equation on 2D unit square.
+                         Zero boundary conditions, polynomial initial conditions.
+                         Mesh dimensions: 10 x 10	Total system size: 100
+                         Subgrid dimensions: 5 x 5	Processor array: 2 x 2
+                         Tolerance parameters:  rtol = 0   atol = 0.0001
+
+Constraints set to force all solution components >= 0.
+SUPPRESSALG = SUNTRUE to suppress local error testing on all boundary components.
+Linear solver: PETSc KSP GMRES.
+Preconditioner: user-supplied, diagonal elements only.
+This example uses the PETSc SNES nonlinear solver interface.
+Use the SNES command line options to override defaults.
+
+   Output Summary (umax = max-norm of solution) 
+
+  time     umax       k  nst  nni  nli   nre     h      
+--------------------------------------------------------
+  0.00   9.75461e-01  0    0    0    0     0    0.00e+00  
+  0.01   8.24072e-01  3   15   30  112   187    2.38e-03  
+  0.02   6.88087e-01  3   19   38  156   251    2.38e-03  
+  0.04   4.70971e-01  4   24   48  216   336    4.75e-03  
+  0.08   2.16290e-01  5   30   60  295   445    9.50e-03  
+  0.16   4.53347e-02  5   37   74  401   586    1.71e-02  
+  0.32   1.99922e-03  5   46   92  543   773    1.71e-02  
+  0.64   7.55710e-18  2   54  108  670   940    6.84e-02  
+  1.28   1.48136e-17  1   57  114  752  1037    5.47e-01  
+  2.56   3.78526e-19  1   58  116  777  1067    1.09e+00  
+  5.12   1.71334e-21  1   60  120  822  1122    4.38e+00  
+ 10.24   1.84706e-23  1   61  122  839  1144    8.75e+00  
+
+Error test failures            = 0
+Nonlinear convergence failures = 0
+Linear convergence failures    = 0

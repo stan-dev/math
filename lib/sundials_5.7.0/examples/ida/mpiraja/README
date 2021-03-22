@@ -1,0 +1,5 @@
+List of MPI+RAJA IDA examples
+
+  idaHeat2D_kry_p_mpiraja  : 2D heat equation with SPGMR, diagonal preconditioner and MPI+RAJA vector
+
+ 
