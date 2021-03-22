@@ -120,99 +120,118 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
     logp += NEG_LOG_SQRT_TWO_PI * size_y * size_vec;
   }
 
-  if (include_summand<propto, T_y, T_loc, T_covar_elem>::value && is_constant<T_covar_elem>::value) {
+  if (include_summand<propto, T_y, T_loc, T_covar_elem>::value
+      && is_constant<T_covar_elem>::value) {
     matrix_partials_t L_val = value_of(L_ref);
 
-    if(size_vec > 1) {
-      Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic> y_val_minus_mu_val(size_y, size_vec);
+    if (size_vec > 1) {
+      Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic>
+          y_val_minus_mu_val(size_y, size_vec);
       for (size_t i = 0; i < size_vec; i++) {
-	decltype(auto) y_val = as_value_column_vector_or_scalar(y_vec[i]);
-	decltype(auto) mu_val = as_value_column_vector_or_scalar(mu_vec[i]);
-	y_val_minus_mu_val.col(i) = y_val - mu_val;
+        decltype(auto) y_val = as_value_column_vector_or_scalar(y_vec[i]);
+        decltype(auto) mu_val = as_value_column_vector_or_scalar(mu_vec[i]);
+        y_val_minus_mu_val.col(i) = y_val - mu_val;
       }
-    
-      matrix_partials_t half = mdivide_left_tri<Eigen::Lower>(L_val, y_val_minus_mu_val).transpose();
+
+      matrix_partials_t half
+          = mdivide_left_tri<Eigen::Lower>(L_val, y_val_minus_mu_val)
+                .transpose();
 
       logp -= 0.5 * sum(columns_dot_self(half));
 
-      matrix_partials_t scaled_diff = mdivide_right_tri<Eigen::Lower>(half, L_val).transpose();
+      matrix_partials_t scaled_diff
+          = mdivide_right_tri<Eigen::Lower>(half, L_val).transpose();
 
-      for(size_t i = 0; i < size_vec; i++) {
-	if (!is_constant_all<T_y>::value) {
-	  ops_partials.edge1_.partials_vec_[i] -= scaled_diff.col(i);
-	}
-	if (!is_constant_all<T_loc>::value) {
-	  ops_partials.edge2_.partials_vec_[i] += scaled_diff.col(i);
-	}
+      for (size_t i = 0; i < size_vec; i++) {
+        if (!is_constant_all<T_y>::value) {
+          ops_partials.edge1_.partials_vec_[i] -= scaled_diff.col(i);
+        }
+        if (!is_constant_all<T_loc>::value) {
+          ops_partials.edge2_.partials_vec_[i] += scaled_diff.col(i);
+        }
       }
     } else {
       decltype(auto) y_val = as_value_column_vector_or_scalar(y_vec[0]);
       decltype(auto) mu_val = as_value_column_vector_or_scalar(mu_vec[0]);
-      row_vector_partials_t half = mdivide_left_tri<Eigen::Lower>(L_val, y_val - mu_val).transpose();
+      row_vector_partials_t half
+          = mdivide_left_tri<Eigen::Lower>(L_val, y_val - mu_val).transpose();
 
       logp -= 0.5 * sum(dot_self(half));
 
-      vector_partials_t scaled_diff = mdivide_right_tri<Eigen::Lower>(half, L_val).transpose();
+      vector_partials_t scaled_diff
+          = mdivide_right_tri<Eigen::Lower>(half, L_val).transpose();
 
       if (!is_constant_all<T_y>::value) {
-	ops_partials.edge1_.partials_vec_[0] -= scaled_diff;
+        ops_partials.edge1_.partials_vec_[0] -= scaled_diff;
       }
       if (!is_constant_all<T_loc>::value) {
-	ops_partials.edge2_.partials_vec_[0] += scaled_diff;
+        ops_partials.edge2_.partials_vec_[0] += scaled_diff;
       }
     }
 
-    if(include_summand<propto, T_covar_elem>::value) {
+    if (include_summand<propto, T_covar_elem>::value) {
       logp -= sum(log(L_val.diagonal())) * size_vec;
     }
-  } else if (include_summand<propto, T_y, T_loc, T_covar_elem>::value && !is_constant<T_covar_elem>::value) {
-    matrix_partials_t inv_L_val = mdivide_left_tri<Eigen::Lower>(value_of(L_ref));
+  } else if (include_summand<propto, T_y, T_loc, T_covar_elem>::value
+             && !is_constant<T_covar_elem>::value) {
+    matrix_partials_t inv_L_val
+        = mdivide_left_tri<Eigen::Lower>(value_of(L_ref));
 
-    if(size_vec > 1) {
-      Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic> y_val_minus_mu_val(size_y, size_vec);
+    if (size_vec > 1) {
+      Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic>
+          y_val_minus_mu_val(size_y, size_vec);
       for (size_t i = 0; i < size_vec; i++) {
-	decltype(auto) y_val = as_value_column_vector_or_scalar(y_vec[i]);
-	decltype(auto) mu_val = as_value_column_vector_or_scalar(mu_vec[i]);
-	y_val_minus_mu_val.col(i) = y_val - mu_val;
+        decltype(auto) y_val = as_value_column_vector_or_scalar(y_vec[i]);
+        decltype(auto) mu_val = as_value_column_vector_or_scalar(mu_vec[i]);
+        y_val_minus_mu_val.col(i) = y_val - mu_val;
       }
-    
-      matrix_partials_t half = (inv_L_val.template triangularView<Eigen::Lower>() * y_val_minus_mu_val).transpose();
+
+      matrix_partials_t half
+          = (inv_L_val.template triangularView<Eigen::Lower>()
+             * y_val_minus_mu_val)
+                .transpose();
 
       logp -= 0.5 * sum(columns_dot_self(half));
-    
-      matrix_partials_t scaled_diff
-	= (half * inv_L_val.template triangularView<Eigen::Lower>()).transpose();
 
-      for(size_t i = 0; i < size_vec; ++i) {
-	if (!is_constant_all<T_y>::value) {
-	  ops_partials.edge1_.partials_vec_[i] -= scaled_diff.col(i);
-	}
-	if (!is_constant_all<T_loc>::value) {
-	  ops_partials.edge2_.partials_vec_[i] += scaled_diff.col(i);
-	}
-    
-	ops_partials.edge3_.partials_vec_[i] += scaled_diff.col(i) * half.row(i);
+      matrix_partials_t scaled_diff
+          = (half * inv_L_val.template triangularView<Eigen::Lower>())
+                .transpose();
+
+      for (size_t i = 0; i < size_vec; ++i) {
+        if (!is_constant_all<T_y>::value) {
+          ops_partials.edge1_.partials_vec_[i] -= scaled_diff.col(i);
+        }
+        if (!is_constant_all<T_loc>::value) {
+          ops_partials.edge2_.partials_vec_[i] += scaled_diff.col(i);
+        }
+
+        ops_partials.edge3_.partials_vec_[i]
+            += scaled_diff.col(i) * half.row(i);
       }
     } else {
       decltype(auto) y_val = as_value_column_vector_or_scalar(y_vec[0]);
       decltype(auto) mu_val = as_value_column_vector_or_scalar(mu_vec[0]);
-      row_vector_partials_t half = (inv_L_val.template triangularView<Eigen::Lower>() * (y_val - mu_val).template cast<T_partials_return>()).transpose();
-    
+      row_vector_partials_t half
+          = (inv_L_val.template triangularView<Eigen::Lower>()
+             * (y_val - mu_val).template cast<T_partials_return>())
+                .transpose();
+
       logp -= 0.5 * dot_self(half);
-    
+
       vector_partials_t scaled_diff
-	= (half * inv_L_val.template triangularView<Eigen::Lower>()).transpose();
+          = (half * inv_L_val.template triangularView<Eigen::Lower>())
+                .transpose();
 
       if (!is_constant_all<T_y>::value) {
-	ops_partials.edge1_.partials_vec_[0] -= scaled_diff;
+        ops_partials.edge1_.partials_vec_[0] -= scaled_diff;
       }
       if (!is_constant_all<T_loc>::value) {
-	ops_partials.edge2_.partials_vec_[0] += scaled_diff;
+        ops_partials.edge2_.partials_vec_[0] += scaled_diff;
       }
-    
+
       ops_partials.edge3_.partials_vec_[0] += scaled_diff * half;
     }
-  
+
     logp += sum(log(inv_L_val.diagonal())) * size_vec;
     ops_partials.edge3_.partials_ -= size_vec * inv_L_val.transpose();
   }
