@@ -1,5 +1,6 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
+#include <test/unit/math/prim/err/util.hpp>
 #include <limits>
 
 TEST(ErrorHandlingMatrix, checkVectorIndexColumnVector) {
@@ -18,12 +19,12 @@ TEST(ErrorHandlingMatrix, checkVectorIndexColumnVector) {
 
   y.resize(2);
   y << nan, nan;
-  EXPECT_THROW(
+  STAN_EXPECT_THROW(
       stan::math::check_vector_index("checkVectorIndexMatrix", "i", y, i),
       std::out_of_range);
 
   i = 0;
-  EXPECT_THROW(
+  STAN_EXPECT_THROW(
       stan::math::check_vector_index("checkVectorIndexMatrix", "i", y, i),
       std::out_of_range);
 }
@@ -44,12 +45,12 @@ TEST(ErrorHandlingMatrix, checkVectorIndexRowVector) {
 
   y.resize(2);
   y << nan, nan;
-  EXPECT_THROW(
+  STAN_EXPECT_THROW(
       stan::math::check_vector_index("checkVectorIndexMatrix", "i", y, i),
       std::out_of_range);
 
   i = 0;
-  EXPECT_THROW(
+  STAN_EXPECT_THROW(
       stan::math::check_vector_index("checkVectorIndexMatrix", "i", y, i),
       std::out_of_range);
 }
