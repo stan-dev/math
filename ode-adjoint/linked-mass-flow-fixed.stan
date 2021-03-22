@@ -1,9 +1,9 @@
 functions {
 
   vector linked_mass_flow(real t, vector y,
-                          real[] kp, real[] ks, real[] e50, real[] k12, real[] k21) {
+                          real kp, real ks, real e50, real k12, real k21) {
 
-    int num_main_states = num_elements(kp);
+    int num_main_states = num_elements(y)/2;
     int num_states = 2 * num_main_states;
 
     vector[num_states] dydt;
@@ -12,10 +12,10 @@ functions {
     for (i in 1:num_main_states) {
       int m = 2 * (i-1) + 1;  // main state
       int a = m + 1;  // auxilary state
-      mass_flow[i] = (kp[i] + ks[i]  / (y[m] + e50[i])) * y[m];
+      mass_flow[i] = (kp + ks  / (y[m] + e50)) * y[m];
 
-      dydt[m] = -mass_flow[i] - k12[i] * y[m] + k21[i] * y[a];
-      dydt[a] = +k12[i] * y[m] - k21[i] * y[a];
+      dydt[m] = -mass_flow[i] - k12 * y[m] + k21 * y[a];
+      dydt[a] = +k12 * y[m] - k21 * y[a];
 
       if (i != 1) {
         dydt[m] += mass_flow[i-1];
@@ -33,58 +33,41 @@ functions {
   }
 
   vector[] simulate_mean(real t0, vector log_a0, real[] ts, int adjoint_integrator,
-                         real rel_tol_f, real abs_tol_f,
-                         real rel_tol_b, real abs_tol_b,
-                         real rel_tol_q, real abs_tol_q,
-                         int max_num_steps,
+                         real rel_tol, real abs_tol, int max_num_steps,
                          int num_checkpoints,
                          int interpolation_polynomial,
                          int solver_f, int solver_b,
-                         vector log_kp, vector log_ks, vector log_e50, vector log_k12, vector log_k21) {
+                         real log_kp, real log_ks, real log_e50, real log_k12, real log_k21) {
     int num_sim = num_elements(ts);
     int num_states = num_elements(log_a0);
-    int system_size = num_elements(log_kp);
+    int system_size = num_states/2;
     vector[num_states] y[num_sim];
-    real kp[system_size];
-    real ks[system_size];
-    real e50[system_size];
-    real k12[system_size];
-    real k21[system_size];
-    vector[num_states] a0;
-
-    for(i in 1:system_size) {
-      kp[i] = exp(log_kp[i]);
-      ks[i] = exp(log_ks[i]);
-      e50[i] = exp(log_e50[i]);
-      k12[i] = exp(log_k12[i]);
-      k21[i] = exp(log_k21[i]);
-    }
-
-    for(i in 1:num_states) {
-        a0[i] = exp(log_a0[i]);
-    }
+    real kp = exp(log_kp);
+    real ks = exp(log_ks);
+    real e50 = exp(log_e50);
+    real k12 = exp(log_k12);
+    real k21 = exp(log_k21);
+    vector[num_states] a0 = exp(log_a0);
 
     if(adjoint_integrator) {
-      y = ode_adjoint_tol_ctl(linked_mass_flow, a0, t0, ts,
-                              rel_tol_f, rep_vector(abs_tol_f, num_states), // forward
-                              rel_tol_b, rep_vector(abs_tol_b, num_states), // backward
-                              rel_tol_q, abs_tol_q, // quadrature
+      y = ode_adjoint_tol_ctl(linked_mass_flow, a0, t0, ts, 
+                              rel_tol, rep_vector(abs_tol/100.0, num_states), // forward
+                              rel_tol, rep_vector(abs_tol/10.0, num_states), // backward
+                              rel_tol, abs_tol, // quadrature
                               max_num_steps,
                               num_checkpoints, // number of steps between checkpoints
                               interpolation_polynomial,  // polynomials
                               solver_f,  // bdf forward
                               solver_b,  // bdf backward
                               kp, ks, e50, k12, k21);
-      /* simplified interface 
+      /* simplified interface
       y = ode_adjoint_tol(linked_mass_flow, a0, t0, ts, 
                               rel_tol, abs_tol,
                               max_num_steps,
                               kp, ks, e50, k12, k21);
       */
     } else {
-      y = ode_bdf_tol(linked_mass_flow, a0, t0, ts,
-                      rel_tol_f, abs_tol_f,
-                      max_num_steps,
+      y = ode_bdf_tol(linked_mass_flow, a0, t0, ts, rel_tol, abs_tol, max_num_steps,
                       kp, ks, e50, k12, k21);
     }
 
@@ -95,10 +78,6 @@ functions {
 data {
   real<lower=0> rel_tol_f;
   real<lower=0> abs_tol_f;
-  real<lower=0> rel_tol_b;
-  real<lower=0> abs_tol_b;
-  real<lower=0> rel_tol_q;
-  real<lower=0> abs_tol_q;
   int<lower=0,upper=1> adjoint_integrator;
   int<lower=1> max_num_steps;
   int<lower=1> num_checkpoints;
@@ -114,11 +93,11 @@ transformed data {
   int num_states = 2 * system_size;
   real param_scale = sigma_sim / sqrt(num_obs/4);
 
-  vector[system_size] log_kp_ = sample_vector_rng(0.0, sigma_sim, system_size);
-  vector[system_size] log_ks_ = sample_vector_rng(0.0, sigma_sim, system_size);
-  vector[system_size] log_e50_ = sample_vector_rng(0.0, sigma_sim, system_size);
-  vector[system_size] log_k12_ = sample_vector_rng(0.0, sigma_sim, system_size);
-  vector[system_size] log_k21_ = sample_vector_rng(0.0, sigma_sim, system_size);
+  real log_kp_ = normal_rng(0.0, sigma_sim);
+  real log_ks_ = normal_rng(0.0, sigma_sim);
+  real log_e50_ = normal_rng(0.0, sigma_sim);
+  real log_k12_ = normal_rng(0.0, sigma_sim);
+  real log_k21_ = normal_rng(0.0, sigma_sim);
   vector[system_size] log_sigma_y_ = sample_vector_rng(0.0, sigma_y, system_size);
   vector[num_states] log_a0_ = sample_vector_rng(0.0, sigma_sim, num_states);
   vector[num_states] y_[num_obs];
@@ -130,11 +109,7 @@ transformed data {
     ts[i] = 1.5 * ts[i-1];
   }
 
-  y_ = simulate_mean(t0, log_a0_, ts, 0,
-                     rel_tol_f, abs_tol_f,
-                     rel_tol_b, abs_tol_b,
-                     rel_tol_q, abs_tol_q,
-                     max_num_steps,
+  y_ = simulate_mean(t0, log_a0_, ts, 0, rel_tol_f, abs_tol_f, max_num_steps,
                      num_checkpoints,
                      interpolation_polynomial,
                      solver_f, solver_b,
@@ -152,12 +127,8 @@ transformed data {
   } else {
     print("Using bdf integrator.");
   }
-  print("relative tolerance forward: ", rel_tol_f);
-  print("absolute tolerance forward: ", abs_tol_f);
-  print("relative tolerance backward: ", rel_tol_b);
-  print("absolute tolerance backward: ", abs_tol_b);
-  print("relative tolerance quadrature: ", rel_tol_q);
-  print("absolute tolerance quadrature: ", abs_tol_q);
+  print("relative tolerance: ", rel_tol_f);
+  print("absolute tolerance: ", abs_tol_f);
   print("maximum number of steps: ", max_num_steps);
   print("number of checkpoints: ", num_checkpoints);
   print("interpolation polynomial: ", interpolation_polynomial);
@@ -168,14 +139,14 @@ transformed data {
   print("time points: ", ts);
   print("y_: ", y_);
   print("ODE states N: ", num_states);
-  print("ODE parameters varying M: ", 5*system_size + num_states);
+  print("ODE parameters varying M: ", 5 + num_states);
 }
 parameters {
-  vector<multiplier=param_scale,offset=log_kp_>[system_size] log_kp;
-  vector<multiplier=param_scale,offset=log_ks_>[system_size] log_ks;
-  vector<multiplier=param_scale,offset=log_e50_>[system_size] log_e50;
-  vector<multiplier=param_scale,offset=log_k12_>[system_size] log_k12;
-  vector<multiplier=param_scale,offset=log_k21_>[system_size] log_k21;
+  real<multiplier=param_scale,offset=log_kp_> log_kp;
+  real<multiplier=param_scale,offset=log_ks_> log_ks;
+  real<multiplier=param_scale,offset=log_e50_> log_e50;
+  real<multiplier=param_scale,offset=log_k12_> log_k12;
+  real<multiplier=param_scale,offset=log_k21_> log_k21;
   vector<offset=log_sigma_y_>[system_size] log_sigma_y;
   vector<multiplier=param_scale,offset=log_a0_>[num_states] log_a0;
 }
@@ -185,11 +156,7 @@ model {
   vector[num_states] mu[num_obs];
 
   profile("ode") {
-    mu = simulate_mean(t0, log_a0, ts, adjoint_integrator,
-                       rel_tol_f, abs_tol_f,
-                       rel_tol_b, abs_tol_b,
-                       rel_tol_q, abs_tol_q,
-                       max_num_steps,
+    mu = simulate_mean(t0, log_a0, ts, adjoint_integrator, rel_tol_f, abs_tol_f, max_num_steps,
                        num_checkpoints,
                        interpolation_polynomial,
                        solver_f, solver_b,
@@ -210,27 +177,28 @@ model {
   }
 }
 generated quantities {
-  int rank_log_kp[system_size];
-  int rank_log_ks[system_size];
-  int rank_log_e50[system_size];
-  int rank_log_k12[system_size];
-  int rank_log_k21[system_size];
+  int rank_log_kp;
+  int rank_log_ks;
+  int rank_log_e50;
+  int rank_log_k12;
+  int rank_log_k21;
   int rank_log_sigma_y[system_size];
   int rank_log_a0[system_size];
-  vector[system_size] bias_log_kp = log_kp - log_kp_;
-  vector[system_size] bias_log_ks = log_ks - log_ks_;
-  vector[system_size] bias_log_e50 = log_e50 - log_e50_;
-  vector[system_size] bias_log_k12 = log_k12 - log_k12_;
-  vector[system_size] bias_log_k21 = log_k21 - log_k21_;
+  real bias_log_kp = log_kp - log_kp_;
+  real bias_log_ks = log_ks - log_ks_;
+  real bias_log_e50 = log_e50 - log_e50_;
+  real bias_log_k12 = log_k12 - log_k12_;
+  real bias_log_k21 = log_k21 - log_k21_;
   vector[system_size] bias_log_sigma_y = log_sigma_y - log_sigma_y_;
   vector[system_size] bias_log_a0 = log_a0 - log_a0_;
 
+  rank_log_kp = (log_kp > log_kp_ ? 1 : 0);
+  rank_log_ks = (log_ks > log_ks_ ? 1 : 0);
+  rank_log_e50 = (log_e50 > log_e50_ ? 1 : 0);
+  rank_log_k12 = (log_k12 > log_k12_ ? 1 : 0);
+  rank_log_k21 = (log_k21 > log_k21_ ? 1 : 0);
+  
   for(i in 1:system_size) {
-    rank_log_kp[i] = (log_kp[i] > log_kp_[i] ? 1 : 0);
-    rank_log_ks[i] = (log_ks[i] > log_ks_[i] ? 1 : 0);
-    rank_log_e50[i] = (log_e50[i] > log_e50_[i] ? 1 : 0);
-    rank_log_k12[i] = (log_k12[i] > log_k12_[i] ? 1 : 0);
-    rank_log_k21[i] = (log_k21[i] > log_k21_[i] ? 1 : 0);
     rank_log_sigma_y[i] = (log_sigma_y[i] > log_sigma_y_[i] ? 1 : 0);
     rank_log_a0[i] = (log_a0[i] > log_a0_[i] ? 1 : 0);
   }

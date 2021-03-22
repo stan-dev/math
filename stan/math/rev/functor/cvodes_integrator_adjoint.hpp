@@ -146,6 +146,13 @@ class cvodes_integrator_adjoint_memory : public chainable_alloc {
     }
   }
 
+  template <typename yT, typename... ArgsT>
+  constexpr auto rhs(double t, const yT& y, std::ostream* msgs,
+                     const std::tuple<ArgsT...>& args_tuple) const {
+    return apply([&](auto&&... args) { return f_(t, y, msgs, args...); },
+                 args_tuple);
+  }
+
   friend class cvodes_integrator_adjoint_vari<F, T_y0, T_t0, T_ts, T_Args...>;
 };
 
@@ -267,14 +274,13 @@ class cvodes_integrator_adjoint_vari : public vari {
   inline void rhs(double t, const double y[], double dy_dt[]) const {
     const Eigen::VectorXd y_vec = Eigen::Map<const Eigen::VectorXd>(y, N_);
 
-    Eigen::VectorXd dy_dt_vec = apply(
-        [&](auto&&... args) { return memory->f_(t, y_vec, msgs_, args...); },
-        memory->value_of_args_tuple_);
+    const Eigen::VectorXd dy_dt_vec
+        = memory->rhs(t, y_vec, msgs_, memory->value_of_args_tuple_);
 
     check_size_match("cvodes_integrator::rhs", "dy_dt", dy_dt_vec.size(),
                      "states", N_);
 
-    std::copy(dy_dt_vec.data(), dy_dt_vec.data() + dy_dt_vec.size(), dy_dt);
+    Eigen::Map<Eigen::VectorXd>(dy_dt, N_) = dy_dt_vec;
   }
 
   /*
@@ -292,32 +298,25 @@ class cvodes_integrator_adjoint_vari : public vari {
    */
   void rhs_adj_sens(double t, N_Vector y, N_Vector yB, N_Vector yBdot) const {
     Eigen::Map<Eigen::VectorXd> y_vec(NV_DATA_S(y), N_);
-    Eigen::Map<Eigen::VectorXd> lambda(NV_DATA_S(yB), N_);
-    Eigen::Map<Eigen::VectorXd> lambda_dot(NV_DATA_S(yBdot), N_);
-    lambda_dot = Eigen::VectorXd::Zero(N_);
+    Eigen::Map<Eigen::VectorXd> mu(NV_DATA_S(yB), N_);
+    Eigen::Map<Eigen::VectorXd> mu_dot(NV_DATA_S(yBdot), N_);
+    mu_dot = Eigen::VectorXd::Zero(N_);
 
     const nested_rev_autodiff nested;
 
-    Eigen::Matrix<var, Eigen::Dynamic, 1> y_vars(y_vec.size());
-    for (size_t i = 0; i < y_vars.size(); ++i)
-      y_vars(i) = new vari(y_vec(i));
+    Eigen::Matrix<var, Eigen::Dynamic, 1> y_vars(y_vec);
 
-    Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars = apply(
-        [&](auto&&... args) { return memory->f_(t, y_vars, msgs_, args...); },
-        memory->value_of_args_tuple_);
+    Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars
+        = memory->rhs(t, y_vars, msgs_, memory->value_of_args_tuple_);
 
     check_size_match("coupled_ode_system1", "dy_dt", f_y_t_vars.size(),
                      "states", N_);
 
-    for (size_t i = 0; i < f_y_t_vars.size(); ++i) {
-      f_y_t_vars(i).vi_->adj_ = -lambda(i);
-    }
+    f_y_t_vars.adj() = -mu;
 
     grad();
 
-    for (size_t i = 0; i < y_vars.size(); ++i) {
-      lambda_dot(i) = y_vars(i).adj();
-    }
+    mu_dot = y_vars.adj();
   }
 
   /*
@@ -334,37 +333,25 @@ class cvodes_integrator_adjoint_vari : public vari {
    * @param[out] qBdot evaluation of adjoint ODE quadrature RHS
    */
   void quad_rhs_adj(double t, N_Vector y, N_Vector yB, N_Vector qBdot) const {
-    Eigen::VectorXd y_vec = Eigen::Map<Eigen::VectorXd>(NV_DATA_S(y), N_);
-    Eigen::Map<Eigen::VectorXd> lambda(NV_DATA_S(yB), N_);
+    const Eigen::VectorXd y_vec = Eigen::Map<Eigen::VectorXd>(NV_DATA_S(y), N_);
+    Eigen::Map<Eigen::VectorXd> mu(NV_DATA_S(yB), N_);
     Eigen::Map<Eigen::VectorXd> mu_dot(NV_DATA_S(qBdot), args_vars_);
     mu_dot = Eigen::VectorXd::Zero(args_vars_);
 
     nested_rev_autodiff nested;
-
-    /*
-    auto local_args_tuple = apply(
-        [&](auto&&... args) {
-          return std::tuple<decltype(deep_copy_vars(args))...>(
-              deep_copy_vars(args)...);
-        },
-        memory->args_tuple_);
-    */
 
     // The vars here do not live on the nested stack so must be zero'd
     // separately
     apply([&](auto&&... args) { zero_adjoints(args...); },
           memory->local_args_tuple_);
 
-    Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars = apply(
-        [&](auto&&... args) { return memory->f_(t, y_vec, msgs_, args...); },
-        memory->local_args_tuple_);
+    Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars
+        = memory->rhs(t, y_vec, msgs_, memory->local_args_tuple_);
 
     check_size_match("coupled_ode_system2", "dy_dt", f_y_t_vars.size(),
                      "states", N_);
 
-    for (size_t i = 0; i < f_y_t_vars.size(); ++i) {
-      f_y_t_vars(i).vi_->adj_ = -lambda(i);
-    }
+    f_y_t_vars.adj() = -mu;
 
     grad();
 
@@ -380,29 +367,23 @@ class cvodes_integrator_adjoint_vari : public vari {
     Eigen::Map<Eigen::MatrixXd> Jfy(SM_DATA_D(J), N_, N_);
     Eigen::Map<const Eigen::VectorXd> x(NV_DATA_S(y), N_);
 
-    auto f_wrapped = [&](const Eigen::Matrix<var, Eigen::Dynamic, 1>& y) {
-      return apply(
-          [&](auto&&... args) { return memory->f_(t, y, msgs_, args...); },
-          memory->value_of_args_tuple_);
-    };
-
     nested_rev_autodiff nested;
 
-    Eigen::Matrix<var, Eigen::Dynamic, 1> x_var(x);
-    Eigen::Matrix<var, Eigen::Dynamic, 1> fx_var = f_wrapped(x_var);
-    grad(fx_var(0).vi_);
-    for (size_t j = 0; j < N_; ++j) {
-      // SM_ELEMENT_D(Jfy, 0, j) = x_var(j).adj();
-      Jfy(0, j) = x_var(j).adj();
-    }
-    for (int i = 1; i < fx_var.size(); ++i) {
+    const Eigen::Matrix<var, Eigen::Dynamic, 1> y_var(x);
+    Eigen::Matrix<var, Eigen::Dynamic, 1> fy_var
+        = memory->rhs(t, y_var, msgs_, memory->value_of_args_tuple_);
+
+    check_size_match("coupled_ode_system2", "dy_dt", fy_var.size(), "states",
+                     N_);
+
+    grad(fy_var.coeffRef(0).vi_);
+    Jfy.col(0) = y_var.adj();
+    for (int i = 1; i < fy_var.size(); ++i) {
       nested.set_zero_all_adjoints();
-      grad(fx_var(i).vi_);
-      for (size_t j = 0; j < N_; ++j) {
-        // SM_ELEMENT_D(Jfy, i, j) = x_var(j).adj();
-        Jfy(i, j) = x_var(j).adj();
-      }
+      grad(fy_var.coeffRef(i).vi_);
+      Jfy.col(i) = y_var.adj();
     }
+    Jfy.transposeInPlace();
   }
 
   /*
@@ -711,14 +692,18 @@ class cvodes_integrator_adjoint_vari : public vari {
         }
 
         if (ts_vars_ > 0 && i >= 0) {
-          ts_varis_[i]->adj_ += apply(
-              [&](auto&&... args) {
-                double adj = step_sens.dot(
-                    memory->f_(t_init, memory->y_[i], msgs_, args...));
-                // std::cout << "adj: " << adj << ", i: " << i << std::endl;
-                return adj;
-              },
-              memory->value_of_args_tuple_);
+          ts_varis_[i]->adj_ += step_sens.dot(memory->rhs(
+              t_init, memory->y_[i], msgs_, memory->value_of_args_tuple_));
+          /*
+            apply(
+            [&](auto&&... args) {
+            double adj = step_sens.dot(
+            memory->f_(t_init, memory->y_[i], msgs_, args...));
+            // std::cout << "adj: " << adj << ", i: " << i << std::endl;
+            return adj;
+            },
+            memory->value_of_args_tuple_);
+          */
         }
 
         double t_final = value_of((i > 0) ? memory->ts_[i - 1] : memory->t0_);
@@ -818,11 +803,15 @@ class cvodes_integrator_adjoint_vari : public vari {
 
       if (t0_vars_ > 0) {
         Eigen::VectorXd y0d = value_of(memory->y0_);
-        t0_varis_[0]->adj_ += apply(
+        t0_varis_[0]->adj_ += -state_sens.dot(
+            memory->rhs(t_init, y0d, msgs_, memory->value_of_args_tuple_));
+        /*
+          apply(
             [&](auto&&... args) {
               return -state_sens.dot(memory->f_(t_init, y0d, msgs_, args...));
             },
             memory->value_of_args_tuple_);
+        */
       }
 
       // do we need this a 2nd time? Don't think so.
@@ -838,12 +827,12 @@ class cvodes_integrator_adjoint_vari : public vari {
       // the adjoints we wanted
       // These are the dlog_density / d(initial_conditions[s]) adjoints
       for (size_t s = 0; s < y0_vars_; s++) {
-        y0_varis_[s]->adj_ += state_sens(s);
+        y0_varis_[s]->adj_ += state_sens.coeff(s);
       }
 
       // These are the dlog_density / d(parameters[s]) adjoints
       for (size_t s = 0; s < args_vars_; s++) {
-        args_varis_[s]->adj_ += quad(s);
+        args_varis_[s]->adj_ += quad.coeff(s);
       }
 
     } catch (const std::exception& e) {
