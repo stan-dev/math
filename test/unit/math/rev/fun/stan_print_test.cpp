@@ -3,7 +3,7 @@
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-TEST(AgradRev, print) {
+TEST(AgradRev, stan_print) {
   using stan::math::var;
 
   var a = 5.0;
