@@ -464,7 +464,7 @@ int SUNLinSolSolve_SPFGMR(SUNLinearSolver S, SUNMatrix A, N_Vector x,
 
 #ifdef SUNDIALS_BUILD_WITH_MONITORING
   if (SPFGMR_CONTENT(S)->print_level && SPFGMR_CONTENT(S)->info_file)
-    fprintf(SPFGMR_CONTENT(S)->info_file, "SUNLINSOL_SPFGMR:\n");
+    STAN_SUNDIALS_FPRINTF(SPFGMR_CONTENT(S)->info_file, "SUNLINSOL_SPFGMR:\n");
 #endif
 
   /* Check if Atimes function has been set */
@@ -506,7 +506,7 @@ int SUNLinSolSolve_SPFGMR(SUNLinearSolver S, SUNMatrix A, N_Vector x,
   /* print initial residual */
   if (SPFGMR_CONTENT(S)->print_level && SPFGMR_CONTENT(S)->info_file)
   {
-    fprintf(SPFGMR_CONTENT(S)->info_file,
+    STAN_SUNDIALS_FPRINTF(SPFGMR_CONTENT(S)->info_file,
             SUNLS_MSG_RESIDUAL,
             (long int) 0, *res_norm);
   }
@@ -597,7 +597,7 @@ int SUNLinSolSolve_SPFGMR(SUNLinearSolver S, SUNMatrix A, N_Vector x,
       /* print current iteration number and the residual */
       if (SPFGMR_CONTENT(S)->print_level && SPFGMR_CONTENT(S)->info_file)
       {
-        fprintf(SPFGMR_CONTENT(S)->info_file,
+        STAN_SUNDIALS_FPRINTF(SPFGMR_CONTENT(S)->info_file,
                 SUNLS_MSG_RESIDUAL,
                 (long int) *nli, *res_norm);
       }

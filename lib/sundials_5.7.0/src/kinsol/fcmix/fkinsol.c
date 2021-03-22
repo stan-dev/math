@@ -70,7 +70,7 @@ void FKIN_CREATE(int *ier)
   if ((F2C_KINSOL_vec->ops->nvgetarraypointer == NULL) ||
       (F2C_KINSOL_vec->ops->nvsetarraypointer == NULL)) {
     *ier = -1;
-    fprintf(stderr, "FKINCREATE: A required vector operation is not implemented.\n\n");
+    STAN_SUNDIALS_FPRINTF(stderr, "FKINCREATE: A required vector operation is not implemented.\n\n");
     return;
   }
 
@@ -120,7 +120,7 @@ void FKIN_MALLOC(long int *iout, realtype *rout, int *ier)
   if ((F2C_KINSOL_vec->ops->nvgetarraypointer == NULL) ||
       (F2C_KINSOL_vec->ops->nvsetarraypointer == NULL)) {
     *ier = -1;
-    fprintf(stderr, "A required vector operation is not implemented.\n\n");
+    STAN_SUNDIALS_FPRINTF(stderr, "A required vector operation is not implemented.\n\n");
     return;
   }
 
@@ -177,7 +177,7 @@ void FKIN_SETIIN(char key_name[], long int *ival, int *ier)
     *ier = KINSetNoResMon(KIN_kinmem, (booleantype) *ival);
   else {
     *ier = -99;
-    fprintf(stderr, "FKINSETIIN: Unrecognized key.\n\n");
+    STAN_SUNDIALS_FPRINTF(stderr, "FKINSETIIN: Unrecognized key.\n\n");
   }
 
 }
@@ -207,7 +207,7 @@ void FKIN_SETRIN(char key_name[], realtype *rval, int *ier)
     *ier = KINSetResMonParams(KIN_kinmem, rval[0], rval[1]);
   else {
     *ier = -99;
-    fprintf(stderr, "FKINSETRIN: Unrecognized key.\n\n");
+    STAN_SUNDIALS_FPRINTF(stderr, "FKINSETRIN: Unrecognized key.\n\n");
   }
 
 }
@@ -233,7 +233,7 @@ void FKIN_SETVIN(char key_name[], realtype *vval, int *ier)
     N_VDestroy(Vec);
   } else {
     *ier = -99;
-    fprintf(stderr, "FKINSETVIN: Unrecognized key.\n\n");
+    STAN_SUNDIALS_FPRINTF(stderr, "FKINSETVIN: Unrecognized key.\n\n");
   }
 
 }
