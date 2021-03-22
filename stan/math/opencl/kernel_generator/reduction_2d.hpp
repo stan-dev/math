@@ -32,7 +32,7 @@ class reduction_2d_base {};
  * to be efficient two dimensional reductions are only done partially. That
  * means instead of 1 element kernel output can have a few rows and a few
  * columns that need to be reduced to obtain final result (actually it is 1
- * reslut per work group run - roughly 16 times the number of compute units on
+ * result per work group run - roughly 16 times the number of compute units on
  * the OpenCL device). This can be done in a separate kernel or after copying to
  * CPU. Also two dimensional reductions can not be used as arguments to other
  * operations - they can only be evaluated.
@@ -217,22 +217,65 @@ class sum_2d_ : public reduction_2d<sum_2d_<T>, T, sum_op> {
 };
 
 /**
- * two dimensional sum - reduction of a kernel generator expression. So as to
+ * Two dimensional sum - reduction of a kernel generator expression. So as to
  * be efficient two dimensional reductions are only done partially. That means
  * instead of 1 element kernel output can have a few rows and a few columns
- * that need to be reduced to obtain final result (actually it is 1 reslut per
+ * that need to be reduced to obtain final result (actually it is 1 result per
  * work group run - roughly 16 times the number of compute units on the OpenCL
  * device). This can be done in a separate kernel or after copying to CPU. Also
  * two dimensional reductions can not be used as arguments to other operations -
  * they can only be evaluated.
  * @tparam T type of input expression
- * @param a expression to reduce
+ * @param a the expression to reduce
  * @return sum
  */
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
 inline auto sum_2d(T&& a) {
   auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
   return sum_2d_<as_operation_cl_t<T>>(as_operation_cl(std::forward<T>(a)));
+}
+
+/**
+ * Represents two dimensional product - reduction in kernel generator
+ * expressions.
+ * @tparam T type of expression
+ */
+template <typename T>
+class prod_2d_ : public reduction_2d<prod_2d_<T>, T, prod_op> {
+  using base = reduction_2d<prod_2d_<T>, T, prod_op>;
+  using base::arguments_;
+
+ public:
+  explicit prod_2d_(T&& a)
+      : reduction_2d<prod_2d_<T>, T, prod_op>(std::forward<T>(a), "1") {}
+  /**
+   * Creates a deep copy of this expression.
+   * @return copy of \c *this
+   */
+  inline auto deep_copy() const {
+    auto&& arg_copy = this->template get_arg<0>().deep_copy();
+    return prod_2d_<std::remove_reference_t<decltype(arg_copy)>>(
+        std::move(arg_copy));
+  }
+};
+
+/**
+ * Two dimensional product - reduction of a kernel generator expression. So as
+ * to be efficient two dimensional reductions are only done partially. That
+ * means instead of 1 element kernel output can have a few rows and a few
+ * columns that need to be reduced to obtain final result (actually it is 1
+ * result per work group run - roughly 16 times the number of compute units on
+ * the OpenCL device). This can be done in a separate kernel or after copying to
+ * CPU. Also two dimensional reductions can not be used as arguments to other
+ * operations - they can only be evaluated.
+ * @tparam T type of input expression
+ * @param a the expression to reduce
+ * @return prod
+ */
+template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
+inline auto prod_2d(T&& a) {
+  auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
+  return prod_2d_<as_operation_cl_t<T>>(as_operation_cl(std::forward<T>(a)));
 }
 
 /**
@@ -264,16 +307,16 @@ class max_2d_
 };
 
 /**
- * two dimensional max - reduction of a kernel generator expression. So as to
+ * Two dimensional max - reduction of a kernel generator expression. So as to
  * be efficient two dimensional reductions are only done partially. That means
  * instead of 1 element kernel output can have a few rows and a few columns that
- * need to be reduced to obtain final result (actually it is 1 reslut per work
+ * need to be reduced to obtain final result (actually it is 1 result per work
  * group run - roughly 16 times the number of compute units on the OpenCL
  * device). This can be done in a separate kernel or after copying to CPU. Also
  * two dimensional reductions can not be used as arguments to other operations -
  * they can only be evaluated.
  * @tparam T type of input expression
- * @param a expression to reduce
+ * @param a the expression to reduce
  * @return max
  */
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
@@ -311,16 +354,16 @@ class min_2d_
 };
 
 /**
- * two dimensional min - reduction of a kernel generator expression.  So as to
+ * Two dimensional min - reduction of a kernel generator expression.  So as to
  * be efficient two dimensional reductions are only done partially. That means
  * instead of 1 row kernel output will have a few rows that need to be reduced
- * to obtain final result (actually it is 1 reslut per work group run - roughly
+ * to obtain final result (actually it is 1 result per work group run - roughly
  * 16 times the number of compute units on the OpenCL device). This can be done
  * in a separate kernel or after copying to CPU. Also two dimensional reductions
  * can not be used as arguments to other operations - they can only be
  * evaluated.
  * @tparam T type of input expression
- * @param a expression to reduce
+ * @param a the expression to reduce
  * @return min
  */
 template <typename T, require_all_kernel_expressions_t<T>* = nullptr>

@@ -171,11 +171,11 @@
  * `require` type traits to detect types used with OpenCL.
  */
 
+#include <stan/math/prim/meta/compiler_attributes.hpp>
 #include <stan/math/prim/meta/ad_promotable.hpp>
 #include <stan/math/prim/meta/append_return_type.hpp>
 #include <stan/math/prim/meta/base_type.hpp>
 #include <stan/math/prim/meta/child_type.hpp>
-#include <stan/math/prim/meta/compiler_attributes.hpp>
 #include <stan/math/prim/meta/contains_fvar.hpp>
 #include <stan/math/prim/meta/contains_std_vector.hpp>
 #include <stan/math/prim/meta/error_index.hpp>
