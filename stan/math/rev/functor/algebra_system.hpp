@@ -105,8 +105,7 @@ struct hybrj_functor_solver : nlo_functor<double> {
   /** Jacobian of algebraic function wrt unknowns */
   Eigen::MatrixXd J_;
 
-  hybrj_functor_solver(const S& fs)
-      : fs_(fs) {}
+  hybrj_functor_solver(const S& fs) : fs_(fs) {}
 
   /**
    * Computes the value the algebraic function, f, when pluging in the

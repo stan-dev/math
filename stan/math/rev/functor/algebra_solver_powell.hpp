@@ -232,9 +232,7 @@ Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_powell(
 
   // Construct the Powell solver
 
-  auto myfunc = [&](const auto& x) {
-    return f(x, y_val, dat, dat_int, msgs);
-  };
+  auto myfunc = [&](const auto& x) { return f(x, y_val, dat, dat_int, msgs); };
 
   hybrj_functor_solver<decltype(myfunc)> fx(myfunc);
   Eigen::HybridNonLinearSolver<decltype(fx)> solver(fx);
@@ -258,41 +256,43 @@ Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_powell(
 
   arena_t<ret_type> ret = theta_dbl;
 
-  reverse_pass_callback([f, ret, arena_y, arena_dat, arena_dat_int, arena_Jf_x, msgs]() mutable {
-    using Eigen::Dynamic;
-    using Eigen::Matrix;
-    using Eigen::MatrixXd;
-    using Eigen::VectorXd;
+  reverse_pass_callback(
+      [f, ret, arena_y, arena_dat, arena_dat_int, arena_Jf_x, msgs]() mutable {
+        using Eigen::Dynamic;
+        using Eigen::Matrix;
+        using Eigen::MatrixXd;
+        using Eigen::VectorXd;
 
-    // Contract specificities with inverse Jacobian of f with respect to x.
-    std::cout << "ret_adj: " << ret.adj().transpose() << std::endl;
-    std::cout << "Jfx: " << arena_Jf_x << std::endl;
-    VectorXd ret_adj = ret.adj();
-    VectorXd eta = -arena_Jf_x.transpose().fullPivLu().solve(ret_adj);
+        // Contract specificities with inverse Jacobian of f with respect to x.
+        std::cout << "ret_adj: " << ret.adj().transpose() << std::endl;
+        std::cout << "Jfx: " << arena_Jf_x << std::endl;
+        VectorXd ret_adj = ret.adj();
+        VectorXd eta = -arena_Jf_x.transpose().fullPivLu().solve(ret_adj);
 
-    std::cout << "eta: " << eta.transpose() << std::endl;
+        std::cout << "eta: " << eta.transpose() << std::endl;
 
-    // Contract with Jacobian of f with respect to y using a nested reverse
-    // autodiff pass.
-    {
-      stan::math::nested_rev_autodiff rev;
-      Matrix<var, Eigen::Dynamic, 1> y_nrad_ = arena_y.val();
+        // Contract with Jacobian of f with respect to y using a nested reverse
+        // autodiff pass.
+        {
+          stan::math::nested_rev_autodiff rev;
+          Matrix<var, Eigen::Dynamic, 1> y_nrad_ = arena_y.val();
 
-      std::cout << "y_val: " << arena_y.val().transpose() << std::endl;
-      VectorXd ret_val = ret.val();
-      std::cout << "ret_val: " << ret_val.transpose() << std::endl;
-      auto x_nrad_ = stan::math::eval(f(ret_val, y_nrad_, arena_dat, arena_dat_int, msgs));
-      std::cout << "x_nrad: " << x_nrad_.val().transpose() << std::endl;
-      //auto x_nrad_ = stan::math::eval(fy_(y_nrad_));
-      x_nrad_.adj() = eta;
-      std::cout << "y_adj1: " << arena_y.adj().transpose() << std::endl;
-      stan::math::grad();
-      std::cout << "y_adj2: " << arena_y.adj().transpose() << std::endl;
-      std::cout << "y_nrad_: " << y_nrad_.adj().transpose() << std::endl;
-      arena_y.adj() += y_nrad_.adj();
-      std::cout << "y_adj3: " << arena_y.adj().transpose() << std::endl;
-    }
-  });
+          std::cout << "y_val: " << arena_y.val().transpose() << std::endl;
+          VectorXd ret_val = ret.val();
+          std::cout << "ret_val: " << ret_val.transpose() << std::endl;
+          auto x_nrad_ = stan::math::eval(
+              f(ret_val, y_nrad_, arena_dat, arena_dat_int, msgs));
+          std::cout << "x_nrad: " << x_nrad_.val().transpose() << std::endl;
+          // auto x_nrad_ = stan::math::eval(fy_(y_nrad_));
+          x_nrad_.adj() = eta;
+          std::cout << "y_adj1: " << arena_y.adj().transpose() << std::endl;
+          stan::math::grad();
+          std::cout << "y_adj2: " << arena_y.adj().transpose() << std::endl;
+          std::cout << "y_nrad_: " << y_nrad_.adj().transpose() << std::endl;
+          arena_y.adj() += y_nrad_.adj();
+          std::cout << "y_adj3: " << arena_y.adj().transpose() << std::endl;
+        }
+      });
 
   return ret_type(ret);
 }
