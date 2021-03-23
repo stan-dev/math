@@ -52,14 +52,22 @@ struct diff_bernoulli_logit {
   void diff (const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
              const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy,
              Eigen::Matrix<T1, Eigen::Dynamic, 1>& gradient,
-             Eigen::Matrix<T1, Eigen::Dynamic, 1>& hessian) const {
+             Eigen::SparseMatrix<double>& hessian,
+             // Eigen::Matrix<T1, Eigen::Dynamic, 1>& hessian,
+             int block_size_dummy) const {
     Eigen::Matrix<T1, Eigen::Dynamic, 1> exp_theta = exp(theta);
-    Eigen::VectorXd one = rep_vector(1, theta.size());
+    int theta_size = theta.size();
+    Eigen::VectorXd one = rep_vector(1, theta_size);
 
     gradient = sums_ - n_samples_.cwiseProduct(inv_logit(theta));
 
-    hessian = - n_samples_.cwiseProduct(elt_divide(exp_theta,
-                                                    square(one + exp_theta)));
+    Eigen::Matrix<T1, Eigen::Dynamic, 1>
+      hessian_diagonal = - n_samples_.cwiseProduct(elt_divide(exp_theta,
+                                                   square(one + exp_theta)));
+    hessian.resize(theta_size, theta_size);
+    hessian.reserve(Eigen::VectorXi::Constant(theta_size, 1));
+    for (int i = 0; i < theta_size; i++)
+      hessian.insert(i, i) = hessian_diagonal(i);
   }
 
   /**
@@ -89,7 +97,7 @@ struct diff_bernoulli_logit {
                              const Eigen::MatrixXd& A,
                              int hessian_block_size) const {
     std::cout << "THIS FUNCTIONS SHOULD NEVER GET CALLED!" << std::endl;
-    Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, 1> void_matrix;
+    Eigen::MatrixXd void_matrix;
     return void_matrix;
   }
 
@@ -97,7 +105,7 @@ struct diff_bernoulli_logit {
                                     const Eigen::VectorXd& theta,
                                     const Eigen::VectorXd& eta) const {
     std::cout << "THIS FUNCTIONS SHOULD NEVER GET CALLED!" << std::endl;
-    Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, 1> void_matrix;
+    Eigen::MatrixXd void_matrix;
     return void_matrix;
   }
 };

@@ -1,5 +1,4 @@
 #include <stan/math.hpp>
-#include <stan/math/laplace/laplace_likelihood.hpp>
 #include <stan/math/laplace/laplace_likelihood_general.hpp>
 #include <stan/math/laplace/laplace_likelihood_bernoulli_logit.hpp>
 #include <stan/math/laplace/laplace_marginal_bernoulli_logit.hpp>

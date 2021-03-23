@@ -2,7 +2,7 @@
 #define STAN_MATH_LAPLACE_LAPLACE_MARGINAL_BERNOULLI_HPP
 
 #include <stan/math/laplace/laplace_marginal.hpp>
-#include <stan/math/laplace/laplace_likelihood.hpp>
+#include <stan/math/laplace/laplace_likelihood_bernoulli_logit.hpp>
 
 namespace stan {
 namespace math {
@@ -32,30 +32,6 @@ namespace math {
    * @param[in] max_num_steps maximum number of steps before the Newton solver
    *            breaks and returns an error.
    */
-  // TODO: deprecate the below function. No default functor.
-  template <typename T0, typename T1>
-  T1 laplace_marginal_bernoulli_logit_lpmf
-               (const std::vector<int>& y,
-                const std::vector<int>& n_samples,
-                // const K& covariance function,
-                const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
-                const std::vector<Eigen::VectorXd>& x,
-                const std::vector<double>& delta,
-                const std::vector<int>& delta_int,
-                const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
-                std::ostream* msgs = nullptr,
-                double tolerance = 1e-6,
-                long int max_num_steps = 100) {
-    // TODO: change this to a VectorXd once we have operands & partials.
-    Eigen::Matrix<T1, Eigen::Dynamic, 1> eta_dummy(0);
-    return laplace_marginal_density(
-      diff_logistic_log(to_vector(n_samples), to_vector(y)),
-      sqr_exp_kernel_functor(),
-      phi, eta_dummy, x, delta, delta_int,
-      theta_0, msgs, tolerance, max_num_steps);
-  }
-
-  // Add signature that takes in a Kernel functor specified by the user.
   template <typename T0, typename T1, typename K>
   T1 laplace_marginal_bernoulli_logit_lpmf
     (const std::vector<int>& y,
@@ -72,7 +48,7 @@ namespace math {
     // TODO: change this to a VectorXd once we have operands & partials.
     Eigen::Matrix<T1, Eigen::Dynamic, 1> eta_dummy(0);
     return laplace_marginal_density(
-      diff_logistic_log(to_vector(n_samples), to_vector(y)),
+      diff_bernoulli_logit(to_vector(n_samples), to_vector(y)),
       covariance_function,
       phi, eta_dummy, x, delta, delta_int,
       theta_0, msgs, tolerance, max_num_steps);
@@ -95,7 +71,7 @@ namespace math {
   // TODO: change this to a VectorXd once we have operands & partials.
   Eigen::Matrix<T1, Eigen::Dynamic, 1> eta_dummy(0);
   return laplace_marginal_density(
-    diff_logistic_log(to_vector(n_samples), to_vector(y)),
+    diff_bernoulli_logit(to_vector(n_samples), to_vector(y)),
     covariance_function,
     phi, eta_dummy, x, delta, delta_int,
     theta_0, msgs, tolerance, max_num_steps);
