@@ -22,7 +22,7 @@
 /test/dummy.cpp
 /test/**/*.so
 /test/expressions/*.cpp
-
+/build/**
 # benchmarks
 /benchmarks/*
 !/benchmarks/*.*
