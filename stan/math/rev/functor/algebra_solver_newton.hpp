@@ -146,7 +146,7 @@ Eigen::Matrix<scalar_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_newton(
   // Construct vari
   algebra_solver_vari<Fsy, value_type_t<T2>, Fx>* vi0
       = new algebra_solver_vari<Fsy, value_type_t<T2>, Fx>(
-          fy, y_val, fx, theta_dbl);
+          fy, y_eval, fx, theta_dbl);
   Eigen::Matrix<var, Eigen::Dynamic, 1> theta(x.size());
   theta(0) = var(vi0->x_[0]);
   for (int i = 1; i < x.size(); ++i) {
