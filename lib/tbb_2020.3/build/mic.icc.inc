@@ -31,7 +31,7 @@ SDL_FLAGS = -fstack-protector -Wformat -Wformat-security
 
 ifeq (release,$(cfg))
     SDL_FLAGS += -D_FORTIFY_SOURCE=2
-    CPLUS_FLAGS = -O2 -g -DUSE_PTHREAD
+    CPLUS_FLAGS = -O2 -DUSE_PTHREAD
 else
     CPLUS_FLAGS = -O0 -g -DUSE_PTHREAD -DTBB_USE_DEBUG
 endif
@@ -70,6 +70,3 @@ M_CPLUS_FLAGS = $(CPLUS_FLAGS) -fno-rtti -fno-exceptions
 #------------------------------------------------------------------------------
 # End of setting tbbmalloc data.
 #------------------------------------------------------------------------------
-
-
-

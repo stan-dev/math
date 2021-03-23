@@ -1,0 +1,3 @@
+This file documents changes done for the stan-math project
+
+- drop -g flag from makefiles for release mode builds to decrease size of binaries

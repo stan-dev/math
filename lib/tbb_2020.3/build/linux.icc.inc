@@ -35,7 +35,7 @@ ITT_NOTIFY = -DDO_ITT_NOTIFY
 ifeq (release,$(cfg))
 SDL_FLAGS += -D_FORTIFY_SOURCE=2
 # -g is set intentionally in the release mode. It should not affect performance.
-CPLUS_FLAGS = -O2 -g -qno-opt-report-embed
+CPLUS_FLAGS = -O2 -qno-opt-report-embed
 else
 CPLUS_FLAGS = -O0 -g -DTBB_USE_DEBUG
 endif
@@ -116,4 +116,3 @@ M_CPLUS_FLAGS = $(CPLUS_FLAGS) -fno-rtti -fno-exceptions
 #------------------------------------------------------------------------------
 # End of setting tbbmalloc data.
 #------------------------------------------------------------------------------
-

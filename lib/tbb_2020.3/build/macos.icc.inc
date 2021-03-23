@@ -49,7 +49,7 @@ endif
 
 ifeq ($(cfg), release)
     SDL_FLAGS += -D_FORTIFY_SOURCE=2
-    CPLUS_FLAGS = -g -O2 -fno-omit-frame-pointer -qno-opt-report-embed
+    CPLUS_FLAGS = -O2 -fno-omit-frame-pointer -qno-opt-report-embed
 else
     CPLUS_FLAGS = -g -O0 -DTBB_USE_DEBUG
 endif

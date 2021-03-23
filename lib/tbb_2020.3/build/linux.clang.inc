@@ -36,7 +36,7 @@ C_FLAGS = $(CPLUS_FLAGS)
 
 ifeq ($(cfg), release)
         # -g is set intentionally in the release mode. It should not affect performance.
-        CPLUS_FLAGS = -O2 -g
+        CPLUS_FLAGS = -O2
 endif
 ifeq ($(cfg), debug)
         CPLUS_FLAGS = -DTBB_USE_DEBUG -O0 -g
