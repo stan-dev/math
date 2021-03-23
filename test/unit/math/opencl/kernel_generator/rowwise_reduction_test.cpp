@@ -25,6 +25,20 @@ TEST(KernelGenerator, rowwise_sum_test) {
   EXPECT_MATRIX_NEAR(correct1, res1, 1e-9);
 }
 
+TEST(KernelGenerator, rowwise_prod_test) {
+  MatrixXd m(3, 2);
+  m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;
+
+  matrix_cl<double> m_cl(m);
+
+  matrix_cl<double> res1_cl = stan::math::rowwise_prod(m_cl);
+  MatrixXd res1 = stan::math::from_matrix_cl(res1_cl);
+  MatrixXd correct1 = m.rowwise().prod();
+  EXPECT_EQ(correct1.rows(), res1.rows());
+  EXPECT_EQ(correct1.cols(), res1.cols());
+  EXPECT_MATRIX_NEAR(correct1, res1, 1e-9);
+}
+
 TEST(KernelGenerator, rowwise_min_test) {
   MatrixXd m(3, 2);
   m << 1.1, 1.2, 1.3, 1.4, 1.5, 1.6;

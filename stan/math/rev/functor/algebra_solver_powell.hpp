@@ -53,45 +53,45 @@ struct algebra_solver_vari : public vari {
         Jf_x_(fx.get_jacobian(x_val_)),
         x_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(x_size_))
   {
-    using Eigen::Map;
-    using Eigen::MatrixXd;
+  using Eigen::Map;
+  using Eigen::MatrixXd;
 
-    for (int i = 0; i < y_size_; ++i) {
-      y_[i] = y(i).vi_;
-    }
-
-    x_[0] = this;
-    for (int i = 1; i < x_size_; ++i) {
-      x_[i] = new vari(x(i), false);
-    }
+  for (int i = 0; i < y_size_; ++i) {
+    y_[i] = y(i).vi_;
   }
+
+  x_[0] = this;
+  for (int i = 1; i < x_size_; ++i) {
+    x_[i] = new vari(x(i), false);
+  }
+}
 
   void chain() {
-    using Eigen::Dynamic;
-    using Eigen::Matrix;
-    using Eigen::MatrixXd;
-    using Eigen::VectorXd;
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using Eigen::VectorXd;
 
-    // Compute (transpose of) specificities with respect to x.
-    VectorXd x_bar_(x_size_);
-    for (int i = 0; i < x_size_; ++i) {
-      x_bar_[i] = x_[i]->adj_;
-    }
-
-    // Contract specificities with inverse Jacobian of f with respect to x.
-    VectorXd eta_ = -Jf_x_.transpose().fullPivLu().solve(x_bar_);
-
-    // Contract with Jacobian of f with respect to y using a nested reverse
-    // autodiff pass.
-    {
-      stan::math::nested_rev_autodiff rev;
-      Matrix<var, Eigen::Dynamic, 1> y_nrad_ = y_val_;
-      auto x_nrad_ = stan::math::eval(fy_(y_nrad_));
-      x_nrad_.adj() = eta_;
-      stan::math::grad();
-    }
+  // Compute (transpose of) specificities with respect to x.
+  VectorXd x_bar_(x_size_);
+  for (int i = 0; i < x_size_; ++i) {
+    x_bar_[i] = x_[i]->adj_;
   }
-};
+
+  // Contract specificities with inverse Jacobian of f with respect to x.
+  VectorXd eta_ = -Jf_x_.transpose().fullPivLu().solve(x_bar_);
+
+  // Contract with Jacobian of f with respect to y using a nested reverse
+  // autodiff pass.
+  {
+    stan::math::nested_rev_autodiff rev;
+    Matrix<var, Eigen::Dynamic, 1> y_nrad_ = y_val_;
+    auto x_nrad_ = stan::math::eval(fy_(y_nrad_));
+    x_nrad_.adj() = eta_;
+    stan::math::grad();
+  }
+}
+};  // namespace math
 
 /**
  * Return the solution to the specified system of algebraic
@@ -355,7 +355,7 @@ Eigen::VectorXd algebra_solver_powell_(
   return theta_dbl;
 }
 
-}  // namespace math
+}  // namespace stan
 }  // namespace stan
 
 #endif
