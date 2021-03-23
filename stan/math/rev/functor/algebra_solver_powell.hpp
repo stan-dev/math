@@ -51,13 +51,8 @@ struct algebra_solver_vari : public vari {
         x_size_(x.size()),
         x_val_(x),
         Jf_x_(fx.get_jacobian(x_val_)),
-<<<<<<< HEAD
         x_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(x_size_))
   {
-=======
-        fx_(fx),
-        x_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(x_size_)) {
->>>>>>> origin/feature/issue-2401-alg-solver-adjoint
     using Eigen::Map;
     using Eigen::MatrixXd;
 
