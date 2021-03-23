@@ -137,7 +137,7 @@ Eigen::Matrix<scalar_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_newton(
 
   typedef system_functor<F, double, double, true> Fsx;
   typedef hybrj_functor_solver<Fsx, F, double, double> Fx;
-  Fx fx(Fsx(), f, value_of(x_eval), value_of(y_eval), dat, dat_int, msgs);
+  Fx fx(Fsx(), f, x_val, y_val, dat, dat_int, msgs);
 
   typedef system_functor<F, double, double, false> Fsy;
   typedef hybrj_functor_solver<Fsy, F, double, double> Fy;
@@ -145,7 +145,7 @@ Eigen::Matrix<scalar_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_newton(
 
   // Construct vari
   algebra_solver_vari<Fsy, value_type_t<T2>, Fx>* vi0
-      = new algebra_solver_vari<Fsy, value_type_t<T2>, Fx>(fy, y_val, fx,
+      = new algebra_solver_vari<Fsy, value_type_t<T2>, Fx>(fy, y_eval, fx,
                                                            theta_dbl);
   Eigen::Matrix<var, Eigen::Dynamic, 1> theta(x.size());
   theta(0) = var(vi0->x_[0]);

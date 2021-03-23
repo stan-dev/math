@@ -25,19 +25,17 @@ namespace math {
 template <typename Fy, typename T, typename Fx>
 struct algebra_solver_vari : public vari {
   /** number of parameters */
-  const int y_size_;
+  int y_size_;
   /** value of parameters */
-  const Eigen::Matrix<T, Eigen::Dynamic, 1> y_val_;
+  arena_t<Eigen::Matrix<T, Eigen::Dynamic, 1>> y_val_;
   /** System functor (f_) w.r.t. inputs (y_) */
   Fy fy_;
   /** array of parameters */
   vari** y_;
   /** number of unknowns */
-  const int x_size_;
+  int x_size_;
   /** value of unknowns */
-  const Eigen::VectorXd& x_val_;
-  /** Hybrj functor solver (f_) w.r.t. outputs (x_) */
-  Fx fx_;
+  arena_t<Eigen::VectorXd&> x_val_;
   /** array of unknowns */
   vari** x_;
   /** Jacobian of f w.r.t. outputs (x_) */
@@ -53,7 +51,6 @@ struct algebra_solver_vari : public vari {
         x_size_(x.size()),
         x_val_(x),
         Jf_x_(fx.get_jacobian(x_val_)),
-        fx_(fx),
         x_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(x_size_)) {
     using Eigen::Map;
     using Eigen::MatrixXd;
@@ -75,7 +72,7 @@ struct algebra_solver_vari : public vari {
     using Eigen::VectorXd;
 
     // Compute (transpose of) specificities with respect to x.
-    VectorXd x_bar_(x_size_);  // TODO: Is this zeroing out memory?
+    VectorXd x_bar_(x_size_);
     for (int i = 0; i < x_size_; ++i) {
       x_bar_[i] = x_[i]->adj_;
     }
@@ -91,12 +88,9 @@ struct algebra_solver_vari : public vari {
       auto x_nrad_ = stan::math::eval(fy_(y_nrad_));
       x_nrad_.adj() = eta_;
       stan::math::grad();
-      for (int j = 0; j < y_size_; j++) {
-        y_[j]->adj_ += y_nrad_.adj()[j];
-      }
     }
   }
-};
+};  // namespace math
 
 /**
  * Return the solution to the specified system of algebraic
