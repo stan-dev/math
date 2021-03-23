@@ -250,6 +250,12 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
                              std::forward<Vec>(vmapped),
                              std::forward<Args>(args)...);
 
+    // we must use task isolation as described here:
+    // https://software.intel.com/content/www/us/en/develop/documentation/tbb-documentation/top/intel-threading-building-blocks-developer-guide/task-isolation.html
+    // this is to ensure that the thread local AD tape ressource is
+    // not being modified from a different task which may happen
+    // whenever this function is being used itself in a parallel
+    // context (like running multiple chains for Stan)
     tbb::this_task_arena::isolate( [&]{
       if (auto_partitioning) {
         tbb::parallel_reduce(
