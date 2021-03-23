@@ -97,21 +97,16 @@ struct nlo_functor {
  * @tparam T0 scalar type for unknowns
  * @tparam T1 scalar type for auxiliary parameters
  */
-template <typename S, typename F, typename T0, typename T1>
+template <typename S>
 struct hybrj_functor_solver : nlo_functor<double> {
   /** Wrapper around algebraic system */
   S fs_;
-  /** number of unknowns */
-  int x_size_;
+
   /** Jacobian of algebraic function wrt unknowns */
   Eigen::MatrixXd J_;
 
-  hybrj_functor_solver(const S& fs, const F& f,
-                       const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
-                       const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
-                       const std::vector<double>& dat,
-                       const std::vector<int>& dat_int, std::ostream* msgs)
-      : fs_(f, x, y, dat, dat_int, msgs), x_size_(x.size()) {}
+  hybrj_functor_solver(const S& fs)
+      : fs_(fs) {}
 
   /**
    * Computes the value the algebraic function, f, when pluging in the

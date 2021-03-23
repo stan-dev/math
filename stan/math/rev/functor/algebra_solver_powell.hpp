@@ -150,7 +150,7 @@ Eigen::VectorXd algebra_solver_powell(
     std::ostream* msgs = nullptr, double relative_tolerance = 1e-10,
     double function_tolerance = 1e-6,
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
-  const auto& x_eval = x.eval();
+  /*const auto& x_eval = x.eval();
   const auto& x_val = (value_of(x_eval)).eval();
   algebra_solver_check(x_val, y, dat, dat_int, function_tolerance,
                        max_num_steps);
@@ -169,7 +169,7 @@ Eigen::VectorXd algebra_solver_powell(
   // Solve the system
   return algebra_solver_powell_(solver, fx, x, y, dat, dat_int, msgs,
                                 relative_tolerance, function_tolerance,
-                                max_num_steps);
+                                max_num_steps);*/
 }
 
 /**
@@ -226,19 +226,24 @@ Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_powell(
     double relative_tolerance = 1e-10, double function_tolerance = 1e-6,
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
   const auto& x_eval = x.eval();
-  const auto& y_eval = y.eval();
+  auto arena_y = to_arena(y);
+  auto arena_dat = to_arena(dat);
+  auto arena_dat_int = to_arena(dat_int);
   const auto& x_val = (value_of(x_eval)).eval();
-  const auto& y_val = (value_of(y_eval)).eval();
+  const auto& y_val = (value_of(arena_y)).eval();
 
   algebra_solver_check(x_val, y, dat, dat_int, function_tolerance,
                        max_num_steps);
   check_nonnegative("alegbra_solver", "relative_tolerance", relative_tolerance);
 
   // Construct the Powell solver
-  using Fsx = system_functor<F, double, double, true>;
-  using Fx = hybrj_functor_solver<Fsx, F, double, double>;
-  Fx fx(Fsx(), f, x_val, y_val, dat, dat_int, msgs);
-  Eigen::HybridNonLinearSolver<Fx> solver(fx);
+
+  auto myfunc = [&](const auto& x) {
+    return f(x, y_val, dat, dat_int, msgs);
+  };
+
+  hybrj_functor_solver<decltype(myfunc)> fx(myfunc);
+  Eigen::HybridNonLinearSolver<decltype(fx)> solver(fx);
 
   // Check dimension unknowns equals dimension of system output
   check_matching_sizes("algebra_solver", "the algebraic system's output",
@@ -249,21 +254,53 @@ Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_powell(
       solver, fx, x_eval, y_val, dat, dat_int, 0, relative_tolerance,
       function_tolerance, max_num_steps);
 
-  using Fsy = system_functor<F, double, double, false>;
-  using Fy = hybrj_functor_solver<Fsy, F, double, double>;
-  Fsy fy(f, x_val, y_val, dat, dat_int, msgs);
+  Eigen::MatrixXd Jf_x;
+  Eigen::VectorXd f_x;
 
-  // Construct vari
-  algebra_solver_vari<Fsy, value_type_t<T2>, Fx>* vi0
-      = new algebra_solver_vari<Fsy, value_type_t<T2>, Fx>(fy, y_val, fx,
-                                                           theta_dbl);
-  Eigen::Matrix<var, Eigen::Dynamic, 1> theta(x.size());
-  theta(0) = var(vi0->x_[0]);
-  for (int i = 1; i < x.size(); ++i) {
-    theta(i) = var(vi0->x_[i]);
-  }
+  jacobian(myfunc, theta_dbl, f_x, Jf_x);
 
-  return theta;
+  using ret_type = Eigen::Matrix<var, Eigen::Dynamic, -1>;
+  auto arena_Jf_x = to_arena(Jf_x);
+
+  arena_t<ret_type> ret = theta_dbl;
+
+  reverse_pass_callback([f, ret, arena_y, arena_dat, arena_dat_int, arena_Jf_x, msgs]() mutable {
+    using Eigen::Dynamic;
+    using Eigen::Matrix;
+    using Eigen::MatrixXd;
+    using Eigen::VectorXd;
+
+    // Contract specificities with inverse Jacobian of f with respect to x.
+    std::cout << "ret_adj: " << ret.adj().transpose() << std::endl;
+    std::cout << "Jfx: " << arena_Jf_x << std::endl;
+    VectorXd ret_adj = ret.adj();
+    VectorXd eta = -arena_Jf_x.transpose().fullPivLu().solve(ret_adj);
+
+    std::cout << "eta: " << eta.transpose() << std::endl;
+
+    // Contract with Jacobian of f with respect to y using a nested reverse
+    // autodiff pass.
+    {
+      stan::math::nested_rev_autodiff rev;
+      Matrix<var, Eigen::Dynamic, 1> y_nrad_ = arena_y.val();
+
+      std::cout << "y_val: " << arena_y.val().transpose() << std::endl;
+      VectorXd ret_val = ret.val();
+      std::cout << "ret_val: " << ret_val.transpose() << std::endl;
+      auto x_nrad_ = stan::math::eval(f(ret_val, y_nrad_, arena_dat, arena_dat_int, msgs));
+      std::cout << "x_nrad: " << x_nrad_.val().transpose() << std::endl;
+      //auto x_nrad_ = stan::math::eval(fy_(y_nrad_));
+      x_nrad_.adj() = eta;
+      std::cout << "y_adj1: " << arena_y.adj().transpose() << std::endl;
+      stan::math::grad();
+      std::cout << "y_adj2: " << arena_y.adj().transpose() << std::endl;
+      std::cout << "y_nrad_: " << y_nrad_.adj().transpose() << std::endl;
+      arena_y.adj() += y_nrad_.adj();
+      std::cout << "y_adj3: " << arena_y.adj().transpose() << std::endl;
+    }
+  });
+
+  return ret_type(ret);
 }
 
 /**

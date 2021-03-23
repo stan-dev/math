@@ -44,7 +44,7 @@ class algebra_solver_simple_eq_test : public ::testing::Test {
   Eigen::MatrixXd J;
 };
 
-class algebra_solver_simple_eq_nopara_test : public ::testing::Test {
+/*class algebra_solver_simple_eq_nopara_test : public ::testing::Test {
  protected:
   void SetUp() override { x = stan::math::to_vector({1, 1}); }
 
@@ -122,7 +122,7 @@ class degenerate_eq_test : public ::testing::Test {
   Eigen::MatrixXd J2;
   std::vector<double> dat;
   std::vector<int> dat_int;
-};
+};*/
 
 //////////////////////////////////////////////////////////////////////////
 // Tests for powell solver.
@@ -136,16 +136,22 @@ TEST_F(algebra_solver_simple_eq_test, powell) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta
         = simple_eq_test(simple_eq_functor(), y, is_newton);
 
+    stan::math::set_zero_all_adjoints();
     AVEC y_vec = createAVEC(y(0), y(1), y(2));
     VEC g;
     theta(k).grad(y_vec, g);
 
-    for (int i = 0; i < n_y; i++)
+    std::cout << "Solution: " << theta.val() << std::endl;
+
+    for (int i = 0; i < n_y; i++) {
+      std::cout << "i: " << i << ", k: " << k << std::endl;
+      std::cout << "J: " << J(k, i) << ", g: " << g[i] << std::endl;
       EXPECT_EQ(J(k, i), g[i]);
+    }
   }
 }
 
-TEST_F(algebra_solver_simple_eq_test, powell_tuned) {
+/*TEST_F(algebra_solver_simple_eq_test, powell_tuned) {
   using stan::math::var;
   bool is_newton = false;
   for (int k = 0; k < n_x; k++) {
@@ -589,3 +595,4 @@ TEST_F(degenerate_eq_test, newton_guess_saddle_point_dbl) {
                                          y_scale, dat, dat_int),
                    std::runtime_error, msg);
 }
+*/

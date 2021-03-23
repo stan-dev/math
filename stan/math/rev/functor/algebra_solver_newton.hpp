@@ -126,7 +126,7 @@ Eigen::Matrix<scalar_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_newton(
     const std::vector<int>& dat_int, std::ostream* msgs = nullptr,
     double scaling_step_size = 1e-3, double function_tolerance = 1e-6,
     long int max_num_steps = 200) {  // NOLINT(runtime/int)
-
+/*
   const auto& x_eval = x.eval();
   const auto& y_eval = y.eval();
   const auto& x_val = (value_of(x_eval)).eval();
@@ -153,7 +153,7 @@ Eigen::Matrix<scalar_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_newton(
     theta(i) = var(vi0->x_[i]);
   }
 
-  return theta;
+  return theta;*/
 }
 
 }  // namespace math
