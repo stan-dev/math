@@ -51,7 +51,7 @@ map_rect_concurrent(
   // not being modified from a different task which may happen
   // whenever this function is being used itself in a parallel
   // context (like running multiple chains for Stan)
-  tbb::this_task_arena::isolate( [&]{
+  tbb::this_task_arena::isolate([&] {
     tbb::parallel_for(tbb::blocked_range<std::size_t>(0, num_jobs),
                       [&](const tbb::blocked_range<size_t>& r) {
                         execute_chunk(r.begin(), r.end());

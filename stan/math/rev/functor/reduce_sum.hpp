@@ -256,7 +256,7 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
     // not being modified from a different task which may happen
     // whenever this function is being used itself in a parallel
     // context (like running multiple chains for Stan)
-    tbb::this_task_arena::isolate( [&]{
+    tbb::this_task_arena::isolate([&] {
       if (auto_partitioning) {
         tbb::parallel_reduce(
             tbb::blocked_range<std::size_t>(0, num_terms, grainsize), worker);
