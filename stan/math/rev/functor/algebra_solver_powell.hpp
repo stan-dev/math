@@ -89,9 +89,6 @@ struct algebra_solver_vari : public vari {
       auto x_nrad_ = stan::math::eval(fy_(y_nrad_));
       x_nrad_.adj() = eta_;
       stan::math::grad();
-      for (int j = 0; j < y_size_; j++) {
-          y_[j]->adj_ += y_nrad_.adj()[j];
-      }
     }
   }
 };
