@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/functor.hpp>
 #include <stan/math/rev/core.hpp>
+
 #include <tbb/task_arena.h>
 #include <tbb/parallel_reduce.h>
 #include <tbb/blocked_range.h>
@@ -249,15 +250,17 @@ struct reduce_sum_impl<ReduceFunction, require_var_t<ReturnType>, ReturnType,
                              std::forward<Vec>(vmapped),
                              std::forward<Args>(args)...);
 
-    if (auto_partitioning) {
-      tbb::parallel_reduce(
-          tbb::blocked_range<std::size_t>(0, num_terms, grainsize), worker);
-    } else {
-      tbb::simple_partitioner partitioner;
-      tbb::parallel_deterministic_reduce(
-          tbb::blocked_range<std::size_t>(0, num_terms, grainsize), worker,
-          partitioner);
-    }
+    tbb::this_task_arena::isolate( [&]{
+      if (auto_partitioning) {
+        tbb::parallel_reduce(
+            tbb::blocked_range<std::size_t>(0, num_terms, grainsize), worker);
+      } else {
+        tbb::simple_partitioner partitioner;
+        tbb::parallel_deterministic_reduce(
+            tbb::blocked_range<std::size_t>(0, num_terms, grainsize), worker,
+            partitioner);
+      }
+    });
 
     for (size_t i = 0; i < num_vars_shared_terms; ++i) {
       partials[num_vars_sliced_terms + i] = worker.args_adjoints_.coeff(i);

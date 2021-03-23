@@ -45,10 +45,12 @@ map_rect_concurrent(
   };
 
 #ifdef STAN_THREADS
-  tbb::parallel_for(tbb::blocked_range<std::size_t>(0, num_jobs),
-                    [&](const tbb::blocked_range<size_t>& r) {
-                      execute_chunk(r.begin(), r.end());
-                    });
+  tbb::this_task_arena::isolate( [&]{
+    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, num_jobs),
+                      [&](const tbb::blocked_range<size_t>& r) {
+                        execute_chunk(r.begin(), r.end());
+                      });
+  });
 #else
   execute_chunk(0, num_jobs);
 #endif
