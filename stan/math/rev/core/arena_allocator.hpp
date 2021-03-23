@@ -13,13 +13,6 @@ namespace math {
 template <typename T>
 struct arena_allocator {
   using value_type = T;
-  using pointer = T*;
-  using const_pointer = const T*;
-  using reference = T&;
-  using const_reference = const T&;
-  using size_type = size_t;
-  using difference_type = ptrdiff_t;
-  using propagate_on_container_move_assignment = std::true_type;
 
   /**
    * Allocates space for `n` items of type `T`.
@@ -29,13 +22,6 @@ struct arena_allocator {
    */
   T* allocate(std::size_t n) {
     return ChainableStack::instance_->memalloc_.alloc_array<T>(n);
-  }
-  /**
-   * Returns the maximum theoretically possible value of n,
-   *  for which the call allocate(n, 0) could succeed.
-   */
-  static constexpr size_type max_size() noexcept {
-    return std::numeric_limits<size_type>::max() / sizeof(T);
   }
 
   /**
