@@ -4,7 +4,25 @@ project("StanMath" VERSION 4.0.1
 
 option(STANMATH_ENABLE_TEST "Enable unit tests to be built." ON)
 option(STANMATH_ENABLE_COVERAGE "Build FastAD with coverage" OFF)
+set(BUILD_TESTING OFF)
+set(CMAKE_CXX_STANDARD 14)
 
+# Automate the choosing of config
+# if CMAKE_BUILD_TYPE not defined
+if (NOT CMAKE_BUILD_TYPE)
+    # if binary directory ends with "release", use release mode
+    if (${PROJECT_BINARY_DIR} MATCHES "release$")
+        set(CMAKE_BUILD_TYPE RELEASE)
+    # otherwise, use debug mode
+    else()
+        set(CMAKE_BUILD_TYPE DEBUG)
+    endif()
+endif()
+message(STATUS "Compiling in ${CMAKE_BUILD_TYPE} mode")
+
+
+cmake_policy(VERSION 3.14)
+set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 include(FetchContent)
 FetchContent_Declare(
   googletest
@@ -18,8 +36,11 @@ FetchContent_Declare(
   GIT_REPOSITORY https://gitlab.com/libeigen/eigen
   GIT_TAG        3.3.9
 )
-FetchContent_MakeAvailable(eigen)
-
+FetchContent_GetProperties(eigen)
+if(NOT eigen_POPULATED)
+  FetchContent_Populate(eigen)
+  add_subdirectory(${eigen_SOURCE_DIR} ${eigen_BINARY_DIR})
+endif()
 
 FetchContent_Declare(
   sundials
@@ -28,18 +49,28 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(sundials)
 
-
 FetchContent_Declare(
   oneTBB
   GIT_REPOSITORY https://github.com/oneapi-src/oneTBB
   GIT_TAG        v2021.1.1
 )
+set(TBB_TEST OFF)
 FetchContent_MakeAvailable(oneTBB)
+
+
+set(BOOST_ENABLE_CMAKE ON)
+FetchContent_Declare(
+        boostorg
+        GIT_REPOSITORY https://github.com/boostorg/boost.git
+        GIT_TAG        master
+)
+FetchContent_MakeAvailable(boostorg)
 
 # This is to make this library portable to other machines.
 # This will be used for install.
 include(GNUInstallDirs)
 
+set(BUILD_TESTING ON)
 
 # Add this library as interface (header-only)
 add_library(${PROJECT_NAME} INTERFACE)
@@ -82,19 +113,6 @@ install(FILES
 
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/include DESTINATION ${CMAKE_INSTALL_PREFIX})
 
-# Automate the choosing of config
-# if CMAKE_BUILD_TYPE not defined
-if (NOT CMAKE_BUILD_TYPE)
-    # if binary directory ends with "release", use release mode
-    if (${PROJECT_BINARY_DIR} MATCHES "release$")
-        set(CMAKE_BUILD_TYPE RELEASE)
-    # otherwise, use debug mode
-    else()
-        set(CMAKE_BUILD_TYPE DEBUG)
-    endif()
-endif()
-message(STATUS "Compiling in ${CMAKE_BUILD_TYPE} mode")
-
 if (STANMATH_ENABLE_TEST)
     # This will perform memcheck
     include(CTest)
@@ -106,6 +124,3 @@ if (STANMATH_ENABLE_TEST)
     # add test subdirectory
     add_subdirectory(${PROJECT_SOURCE_DIR}/test ${PROJECT_BINARY_DIR}/test)
 endif()
-
-# add lib subdirectory
-add_subdirectory(${PROJECT_SOURCE_DIR}/lib ${PROJECT_BINARY_DIR}/lib)
