@@ -8,7 +8,6 @@
 #include <stan/math/prim/fun/cholesky_decompose.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/rev/fun/cholesky_decompose.hpp>
-// #include <stan/math/laplace/laplace_likelihood.hpp>
 #include <stan/math/laplace/laplace_pseudo_target.hpp>
 #include <stan/math/laplace/block_matrix_sqrt.hpp>
 
@@ -115,6 +114,9 @@ namespace math {
       throw boost::math::evaluation_error(message.str());
     }
 
+    int block_size = (hessian_block_size == 0) ? hessian_block_size + 1
+                      : hessian_block_size;
+
     for (int i = 0; i <= max_num_steps; i++) {
       if (i == max_num_steps) {
         std::ostringstream message;
@@ -124,7 +126,7 @@ namespace math {
       }
 
       SparseMatrix<double> W;
-      diff_likelihood.diff(theta, eta, l_grad, W, hessian_block_size);
+      diff_likelihood.diff(theta, eta, l_grad, W, block_size);
       W = - W;
 
       VectorXd b;
@@ -136,7 +138,7 @@ namespace math {
             B = MatrixXd::Identity(theta_size, theta_size)
                  + quad_form_diag(covariance, W_r.diagonal());
           } else {
-            W_r = block_matrix_sqrt(W, hessian_block_size);
+            W_r = block_matrix_sqrt(W, block_size);
             B = MatrixXd::Identity(theta_size, theta_size)
                   + W_r * (covariance * W_r);
           }
@@ -313,6 +315,8 @@ namespace math {
       using Eigen::MatrixXd;
       using Eigen::VectorXd;
       using Eigen::SparseMatrix;
+
+std::cout << "marker a" << std::endl;
 
       int theta_size = theta.size();
       for (int i = 0; i < phi_size_; i++) phi_[i] = phi(i).vi_;

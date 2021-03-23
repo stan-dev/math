@@ -108,41 +108,18 @@ struct diff_poisson_log {
 
   Eigen::VectorXd compute_s2(const Eigen::VectorXd& theta,
                              const Eigen::VectorXd& eta,
-                             const Eigen::MatrixXd& L,
-                             const Eigen::MatrixXd& covariance,
+                             const Eigen::MatrixXd& A,
                              int hessian_block_size) const {
-    std::cout << "THIS FUNCTION SHOULD NEVER GET CALLED!" << std::endl;
-    Eigen::VectorXd void_vector;
-    return void_vector;
-  }
-
-  template <typename T_theta, typename T_eta>
-  Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, 1>
-  diff_eta(const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
-           const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) const {
-    std::cout << "THIS FUNCTION SHOULD NEVER GET CALLED!" << std::endl;
-    Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, 1> void_matrix;
+    std::cout << "THIS FUNCTIONS SHOULD NEVER GET CALLED!" << std::endl;
+    Eigen::MatrixXd void_matrix;
     return void_matrix;
   }
 
-  template <typename T_theta, typename T_eta>
-  Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, Eigen::Dynamic>
-  diff_theta_eta(const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
-                 const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) const {
-    std::cout << "THIS FUNCTION SHOULD NEVER GET CALLED!" << std::endl;
-    Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic,
-      Eigen::Dynamic> void_matrix;
-    return void_matrix;
-  }
-
-  template <typename T_theta, typename T_eta>
-  Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, Eigen::Dynamic>
-  diff2_theta_eta(const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
-                  const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta)
-  const {
-    std::cout << "THIS FUNCTION SHOULD NEVER GET CALLED!" << std::endl;
-    Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic,
-      Eigen::Dynamic> void_matrix;
+  Eigen::VectorXd diff_eta_implicit(const Eigen::VectorXd& v,
+                                    const Eigen::VectorXd& theta,
+                                    const Eigen::VectorXd& eta) const {
+    std::cout << "THIS FUNCTIONS SHOULD NEVER GET CALLED!" << std::endl;
+    Eigen::MatrixXd void_matrix;
     return void_matrix;
   }
 };

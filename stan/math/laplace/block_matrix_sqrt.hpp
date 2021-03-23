@@ -25,7 +25,6 @@ namespace math {
   // No block operation available for sparse matrices, so we have to loop.
   // See https://eigen.tuxfamily.org/dox/group__TutorialSparse.html#title7
   for (int i = 0; i < n_block; i++) {
-    std::cout << "block number: " << i << std::endl;
     for (int j = 0; j < block_size; j++) {
       for (int k = 0; k < block_size; k++) {
         local_block(j, k) = W.coeffRef(i * block_size + j, i * block_size + k);
