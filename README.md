@@ -121,7 +121,7 @@ For example, installing [`oneTBB`](https://github.com/oneapi-src/oneTBB) on Linu
 ```bash
 TBB_VERSION="2021.1.1"
 
-wget https://github.com/oneapi-src/oneTBB/releases/download/v$TBB_VERSION/oneapi-tbb-$TBB_VERSION-lin.tgz
+wget https://github.com/oneapi-src/oneTBB/releases/download/v${TBB_VERSION}/oneapi-tbb-${TBB_VERSION}-lin.tgz
 tar zxvf oneapi-tbb-$TBB_VERSION-lin.tgz -C $HOME
 
 export TBB="$HOME/oneapi-tbb-$TBB_VERSION"
