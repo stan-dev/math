@@ -26,7 +26,8 @@ namespace math {
  * @param sigma (Sequence of) scale(s).
  * @return The log of the product of densities.
  */
-template <typename T_y_cl, typename T_loc_cl, typename T_scale_cl,
+template <
+    typename T_y_cl, typename T_loc_cl, typename T_scale_cl,
     require_all_prim_or_rev_kernel_expression_t<T_y_cl, T_loc_cl,
                                                 T_scale_cl>* = nullptr,
     require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_scale_cl>* = nullptr>

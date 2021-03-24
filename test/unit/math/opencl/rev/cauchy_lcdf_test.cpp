@@ -56,9 +56,10 @@ TEST(ProbDistributionsCauchyLcdf, error_checking) {
                std::domain_error);
 }
 
-auto cauchy_lccdf_functor = [](const auto& y, const auto& mu, const auto& sigma) {
-  return stan::math::cauchy_lccdf(y, mu, sigma);
-};
+auto cauchy_lccdf_functor
+    = [](const auto& y, const auto& mu, const auto& sigma) {
+        return stan::math::cauchy_lccdf(y, mu, sigma);
+      };
 
 TEST(ProbDistributionsCauchyLcdf, opencl_matches_cpu_small) {
   int N = 3;
@@ -120,8 +121,8 @@ TEST(ProbDistributionsCauchyLcdf, opencl_broadcast_mu) {
   Eigen::VectorXd sigma(N);
   sigma << 0.3, 0.8, 1.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(cauchy_lccdf_functor, y,
-                                                         mu_scal, sigma);
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(cauchy_lccdf_functor,
+                                                         y, mu_scal, sigma);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       cauchy_lccdf_functor, y.transpose().eval(), mu_scal, sigma);
 }
@@ -135,8 +136,8 @@ TEST(ProbDistributionsCauchyLcdf, opencl_broadcast_sigma) {
   mu << 0.3, 0.8, 1.0;
   double sigma_scal = 12.3;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<2>(cauchy_lccdf_functor, y,
-                                                         mu, sigma_scal);
+  stan::math::test::test_opencl_broadcasting_prim_rev<2>(cauchy_lccdf_functor,
+                                                         y, mu, sigma_scal);
   stan::math::test::test_opencl_broadcasting_prim_rev<2>(
       cauchy_lccdf_functor, y.transpose().eval(), mu, sigma_scal);
 }

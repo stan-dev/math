@@ -60,10 +60,8 @@ return_type_t<T_prob_cl> bernoulli_cdf(const T_n_cl& n,
   matrix_cl<double> P_cl;
 
   results(check_theta_bounded, any_n_negative_cl, Pi_cl, P_cl)
-      = expressions(
-          theta_bounded_expr, any_n_negative,
-          calc_if<(!is_constant_all<T_prob_cl>::value)>(Pi),
-          P_expr);
+      = expressions(theta_bounded_expr, any_n_negative,
+                    calc_if<(!is_constant_all<T_prob_cl>::value)>(Pi), P_expr);
 
   if (from_matrix_cl(any_n_negative_cl).maxCoeff()) {
     return 0.0;
@@ -73,7 +71,7 @@ return_type_t<T_prob_cl> bernoulli_cdf(const T_n_cl& n,
   operands_and_partials<decltype(theta_col)> ops_partials(theta_col);
 
   if (!is_constant_all<T_prob_cl>::value) {
-      ops_partials.edge1_.partials_ = elt_divide(-P, Pi_cl);
+    ops_partials.edge1_.partials_ = elt_divide(-P, Pi_cl);
   }
 
   return ops_partials.build(P);
