@@ -95,6 +95,15 @@ doxygen:
 ##
 .PHONY: clean clean-doxygen clean-deps clean-all
 clean:
+	@echo '  removing generated test files'
+	@$(RM) $(wildcard test/prob/generate_tests$(EXE))
+	@$(RM) $(call findfiles,test/prob,*_generated_v_test.cpp)
+	@$(RM) $(call findfiles,test/prob,*_generated_vv_test.cpp)
+	@$(RM) $(call findfiles,test/prob,*_generated_fd_test.cpp)
+	@$(RM) $(call findfiles,test/prob,*_generated_fv_test.cpp)
+	@$(RM) $(call findfiles,test/prob,*_generated_ffd_test.cpp)
+	@$(RM) $(call findfiles,test/prob,*_generated_ffv_test.cpp)
+	@$(RM) $(call findfiles,test/prob,*_generated_*_test.cpp)
 	@echo '  removing test executables'
 	@$(RM) $(call findfiles,test,*_test$(EXE))
 	@$(RM) $(call findfiles,test,*_test.d)
@@ -102,9 +111,6 @@ clean:
 	@$(RM) $(call findfiles,test,*_test.xml)
 	@$(RM) $(call findfiles,test,*.o)
 	@$(RM) $(wildcard $(GTEST)/src/gtest-all.o)
-	@echo '  removing generated test files'
-	@$(RM) $(wildcard test/prob/generate_tests$(EXE))
-	@$(RM) $(call findfiles,test/prob,*_generated_*_test.cpp)
 	@$(RM) $(TEST_STANC)
 
 clean-doxygen:
