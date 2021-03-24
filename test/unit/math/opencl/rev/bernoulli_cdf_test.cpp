@@ -42,26 +42,33 @@ TEST(ProbDistributionsBernoulliCdf, error_checking) {
 auto bernoulli_cdf_functor = [](const auto& n, const auto& theta) {
   return stan::math::bernoulli_cdf(n, theta);
 };
-auto bernoulli_cdf_functor_propto = [](const auto& n, const auto& theta) {
-  return stan::math::bernoulli_cdf<true>(n, theta);
-};
 
 TEST(ProbDistributionsBernoulliCdf, opencl_matches_cpu_small) {
   int N = 3;
   int M = 2;
 
-  std::vector<int> n{0, 1, 0};
+  std::vector<int> n{0, 1, 3};
   Eigen::VectorXd theta(N);
   theta << 0.3, 0.8, 1.0;
 
   stan::math::test::compare_cpu_opencl_prim_rev(bernoulli_cdf_functor, n,
                                                 theta);
-  stan::math::test::compare_cpu_opencl_prim_rev(bernoulli_cdf_functor_propto,
-                                                n, theta);
   stan::math::test::compare_cpu_opencl_prim_rev(bernoulli_cdf_functor, n,
                                                 theta.transpose().eval());
-  stan::math::test::compare_cpu_opencl_prim_rev(bernoulli_cdf_functor_propto,
-                                                n, theta.transpose().eval());
+}
+
+TEST(ProbDistributionsBernoulliCdf, opencl_matches_cpu_small_n_negative) {
+  int N = 3;
+  int M = 2;
+
+  std::vector<int> n{0, 1, -5};
+  Eigen::VectorXd theta(N);
+  theta << 0.3, 0.8, 1.0;
+
+  stan::math::test::compare_cpu_opencl_prim_rev(bernoulli_cdf_functor, n,
+                                                theta);
+  stan::math::test::compare_cpu_opencl_prim_rev(bernoulli_cdf_functor, n,
+                                                theta.transpose().eval());
 }
 
 TEST(ProbDistributionsBernoulliCdf, opencl_broadcast_n) {
@@ -73,8 +80,6 @@ TEST(ProbDistributionsBernoulliCdf, opencl_broadcast_n) {
 
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(bernoulli_cdf_functor,
                                                          n_scal, theta);
-  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
-      bernoulli_cdf_functor_propto, n_scal, theta);
 }
 
 TEST(ProbDistributionsBernoulliCdf, opencl_broadcast_theta) {
@@ -85,8 +90,6 @@ TEST(ProbDistributionsBernoulliCdf, opencl_broadcast_theta) {
 
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(bernoulli_cdf_functor,
                                                          n, theta_scal);
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
-      bernoulli_cdf_functor_propto, n, theta_scal);
 }
 
 TEST(ProbDistributionsBernoulliCdf, opencl_matches_cpu_big) {
@@ -101,12 +104,8 @@ TEST(ProbDistributionsBernoulliCdf, opencl_matches_cpu_big) {
 
   stan::math::test::compare_cpu_opencl_prim_rev(bernoulli_cdf_functor, n,
                                                 theta);
-  stan::math::test::compare_cpu_opencl_prim_rev(bernoulli_cdf_functor_propto,
-                                                n, theta);
   stan::math::test::compare_cpu_opencl_prim_rev(bernoulli_cdf_functor, n,
                                                 theta.transpose().eval());
-  stan::math::test::compare_cpu_opencl_prim_rev(bernoulli_cdf_functor_propto,
-                                                n, theta.transpose().eval());
 }
 
 #endif

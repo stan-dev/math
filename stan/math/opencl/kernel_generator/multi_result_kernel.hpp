@@ -78,8 +78,9 @@ struct multi_result_kernel_internal {
       if (is_colwise_reduction<T_current_expression>::value
           && expression_cols == -1) {
         expression_cols = n_cols;
+        expression_rows = expression.thread_rows();
         expression_rows = internal::colwise_reduction_wgs_rows(
-            expression.thread_rows(), expression_cols);
+            expression_rows < 0 ? n_rows : expression_rows, expression_cols);
       } else if (is_reduction_2d<T_current_expression>::value
                  && expression_cols == -1) {
         expression_rows = internal::colwise_reduction_wgs_rows(n_rows, n_cols);
@@ -266,7 +267,7 @@ class expressions_cl {
    */
   explicit expressions_cl(T_expressions&&... expressions)
       : expressions_(
-            T_expressions(std::forward<T_expressions>(expressions))...) {}
+          T_expressions(std::forward<T_expressions>(expressions))...) {}
 
  private:
   std::tuple<T_expressions...> expressions_;
