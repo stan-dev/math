@@ -216,9 +216,9 @@ template <typename F, typename T1, typename... T_Args,
           require_all_eigen_vector_t<T1>* = nullptr,
           require_any_st_var<T_Args...>* = nullptr>
 Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
-    const F& f, const T1& x, std::ostream* msgs,
-    double relative_tolerance, double function_tolerance,
-    long int max_num_steps, const T_Args&... args) {  // NOLINT(runtime/int)
+    const F& f, const T1& x, std::ostream* msgs, double relative_tolerance,
+    double function_tolerance, long int max_num_steps,
+    const T_Args&... args) {  // NOLINT(runtime/int)
   const auto& x_eval = x.eval();
 
   auto arena_args_tuple = std::make_tuple(to_arena(args)...);
@@ -227,7 +227,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
 
   auto args_vals_tuple = std::make_tuple(eval(value_of(args))...);
 
-  //algebra_solver_check(x_val, y, dat, dat_int, function_tolerance,
+  // algebra_solver_check(x_val, y, dat, dat_int, function_tolerance,
   //                     max_num_steps);
   check_nonnegative("alegbra_solver", "relative_tolerance", relative_tolerance);
 
@@ -235,9 +235,8 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
 
 <<<<<<< HEAD
   auto myfunc = [&](const auto& x) {
-    return apply([&](const auto&... args) {
-      return f(x, msgs, args...);
-    }, args_vals_tuple);
+    return apply([&](const auto&... args) { return f(x, msgs, args...); },
+                 args_vals_tuple);
   };
 =======
   auto myfunc = [&](const auto& x) { return f(x, y_val, dat, dat_int, msgs); };
@@ -251,9 +250,9 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
                        fx.get_value(x_val), "the vector of unknowns, x,", x);
 
   // Solve the system
-  Eigen::VectorXd theta_dbl = algebra_solver_powell_(
-      solver, fx, x_eval, 0, relative_tolerance,
-      function_tolerance, max_num_steps);
+  Eigen::VectorXd theta_dbl
+      = algebra_solver_powell_(solver, fx, x_eval, 0, relative_tolerance,
+                               function_tolerance, max_num_steps);
 
   Eigen::MatrixXd Jf_x;
   Eigen::VectorXd f_x;
@@ -281,9 +280,9 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
       nested_rev_autodiff rev;
 
       VectorXd ret_val = ret.val();
-      auto x_nrad_ = apply([&](const auto&...args) {
-        return eval(f(ret_val, msgs, args...));
-      }, arena_args_tuple);
+      auto x_nrad_ = apply(
+          [&](const auto&... args) { return eval(f(ret_val, msgs, args...)); },
+          arena_args_tuple);
       x_nrad_.adj() = eta;
       grad();
     }
@@ -299,8 +298,9 @@ Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_powell(
     const std::vector<int>& dat_int, std::ostream* msgs = nullptr,
     double relative_tolerance = 1e-10, double function_tolerance = 1e-6,
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
-  return algebra_solver_powell_impl(f, x, y, dat, dat_int, msgs, relative_tolerance,
-                               function_tolerance, max_num_steps);
+  return algebra_solver_powell_impl(f, x, y, dat, dat_int, msgs,
+                                    relative_tolerance, function_tolerance,
+                                    max_num_steps);
 }
 
 /**
@@ -362,8 +362,8 @@ Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, 1> algebra_solver(
 template <typename S, typename F, typename T,
           require_eigen_vector_t<T>* = nullptr>
 Eigen::VectorXd algebra_solver_powell_(
-    S& solver, const F& fx, const T& x,
-    std::ostream* msgs, double relative_tolerance, double function_tolerance,
+    S& solver, const F& fx, const T& x, std::ostream* msgs,
+    double relative_tolerance, double function_tolerance,
     long int max_num_steps) {  // NOLINT(runtime/int)
   const auto& x_eval = x.eval();
   const auto& x_val = (value_of(x_eval)).eval();
