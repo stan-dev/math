@@ -2,4 +2,5 @@ PYTHON ?= python
 
 .PHONY: cpplint
 cpplint:
-	@$(PYTHON) $(CPPLINT)/cpplint.py --output=vs7 --counting=detailed --root=stan --extension=hpp,cpp --filter=-runtime/indentation_namespace,-build/c++11,-readability/namespace,-legal/copyright,-whitespace/indent,-runtime/reference,-build/header_guard,-build/include_order,-build/include_what_you_use,-runtime/string,-build/namespaces $(shell (find test/unit -name '*.hpp' -o -name '*.cpp') && (find stan -name '*.hpp' -o -name '*.cpp'))
+	@$(PYTHON) $(CPPLINT)/cpplint.py --output=vs7 --counting=detailed --root=stan --extension=hpp,cpp --filter=-runtime/indentation_namespace,-build/c++11,-readability/namespace,-legal/copyright,-whitespace/indent,-runtime/reference,-build/header_guard,-build/include_order,-build/include_what_you_use,-runtime/string,-build/namespaces $(shell (find stan -name '*.hpp' -o -name '*.cpp'))
+	@$(PYTHON) $(CPPLINT)/cpplint.py --output=vs7 --counting=detailed --root=stan --extension=hpp,cpp --filter=-runtime/indentation_namespace,-build/c++11,-readability/namespace,-legal/copyright,-whitespace/indent,-runtime/reference,-build/header_guard,-build/include_order,-build/include_what_you_use,-runtime/string,-build/namespaces $(shell (find test/unit -name '*.hpp' -o -name '*.cpp'))
