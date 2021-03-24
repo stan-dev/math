@@ -233,11 +233,15 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
 
   // Construct the Powell solver
 
+<<<<<<< HEAD
   auto myfunc = [&](const auto& x) {
     return apply([&](const auto&... args) {
       return f(x, msgs, args...);
     }, args_vals_tuple);
   };
+=======
+  auto myfunc = [&](const auto& x) { return f(x, y_val, dat, dat_int, msgs); };
+>>>>>>> 4848150b454d421fba117d6e25ae8d1df8f48ea8
 
   hybrj_functor_solver<decltype(myfunc)> fx(myfunc);
   Eigen::HybridNonLinearSolver<decltype(fx)> solver(fx);
