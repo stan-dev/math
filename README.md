@@ -27,7 +27,7 @@ Stan Math depends on four libraries:
 
 - Boost (version 1.75.0): [Boost Home Page](https://www.boost.org)
 - Eigen (version 3.3.9: [Eigen Home Page](https://eigen.tuxfamily.org/index.php?title=Main_Page)
-- SUNDIALS (version 5.6.1): [Sundials Home Page](https://computation.llnl.gov/projects/sundials/sundials-software)
+- SUNDIALS (version 5.7.0): [Sundials Home Page](https://computation.llnl.gov/projects/sundials/sundials-software)
 - Intel TBB (version 2020.3): [Intel TBB Home Page](https://www.threadingbuildingblocks.org)
 
 These are distributed under the `lib/` subdirectory. Only these
@@ -91,8 +91,13 @@ The standalone makefile ensures that all the required `-I` include
 statements are given to the compiler and the necessary libraries are
 linked: `~/stan-dev/math` and `~/stan-dev/math/lib/eigen_3.3.9` and
 `~/stan-dev/math/lib/boost_1.75.0` and
+<<<<<<< HEAD
 `~/stan-dev/math/lib/sundials_5.6.1/include` and
 `~/stan-dev/math/lib/tbb_2020.3/include`. The
+=======
+`~/stan-dev/math/lib/sundials_5.7.0/include` and
+`~/stan-dev/math/lib/tbb_2019_U8/include`. The
+>>>>>>> origin/develop
 `~/stan-dev/math/lib/tbb` directory is created by the `math-libs`
 makefile target automatically and contains the dynamically loaded
 Intel TBB library. The flags `-Wl,-rpath,...` instruct the linker to
