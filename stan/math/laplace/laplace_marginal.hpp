@@ -316,8 +316,6 @@ namespace math {
       using Eigen::VectorXd;
       using Eigen::SparseMatrix;
 
-std::cout << "marker a" << std::endl;
-
       int theta_size = theta.size();
       for (int i = 0; i < phi_size_; i++) phi_[i] = phi(i).vi_;
       for (int i = 0; i < eta_size_; i++) eta_[i] = eta(i).vi_;
@@ -351,11 +349,12 @@ std::cout << "marker a" << std::endl;
             = diff_likelihood.compute_s2(theta, eta_dbl, A, block_size);
           s2 = partial_parm.head(theta_size);
         }
-      } else {
+      } else {  // we have not computed W_root.
         LU_solve_covariance = LU.solve(covariance);
         R = W_r - W_r * LU_solve_covariance * W_r;
 
         Eigen::MatrixXd A = covariance - covariance * W_r * LU_solve_covariance;
+        // Eigen::MatrixXd A = covariance - covariance * R * covariance;
         partial_parm
           = diff_likelihood.compute_s2(theta, eta_dbl, A, hessian_block_size);
         s2 = partial_parm.head(theta_size);
@@ -388,10 +387,12 @@ std::cout << "marker a" << std::endl;
       Eigen::VectorXd v;
       if (compute_W_root == 1) {
         Eigen::MatrixXd W = W_r * W_r;  // NOTE: store W from Newton step?
-        v = covariance * s2 - covariance * W
-          * L.transpose().triangularView<Eigen::Upper>()
-              . solve(L.triangularView<Eigen::Lower>()
-                .solve(covariance * (covariance * s2)));
+        v = covariance * s2
+          - covariance * R * covariance * s2;
+          // - covariance * W
+          // * L.transpose().triangularView<Eigen::Upper>()
+          //     . solve(L.triangularView<Eigen::Lower>()
+          //       .solve(covariance * (covariance * s2)));
       } else {
         v = LU_solve_covariance * s2;
       }

@@ -129,7 +129,7 @@ protected:
     using stan::math::add;
 
     N = 100;
-    M = 200;  // options: 2, 50, 100, 150, 200
+    M = 2;  // options: 2, 50, 100, 150, 200
     // TODO: add to GitHub directory simulation for each configuration.
     // std::string data_directory = "test/unit/math/laplace/skim_data/" +
     //   std::to_string(M) + "_" + std::to_string(N) + "/";
