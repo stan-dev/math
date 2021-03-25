@@ -38,54 +38,45 @@ def run_command(command):
     else:
         return (False, stdout, stderr)
 
-def build_signature(cpp_code):
+def build_signature(prefix, cpp_code):
     """
     Try to build the given cpp code
 
-    Return a tuple (successful, attempted)
+    Return a true is the code was successfully built
 
-    attempted is true if there was an attempt to build the code
-
-    successful is true is the code was successfully built
-
-    :param cpp_code Code to build
+    :param prefix: Prefix to give file names so easier to debug
+    :param cpp_code: Code to build
     """
-    attempted = False
-    successful = False
+    f = tempfile.NamedTemporaryFile("w", dir = WORKING_FOLDER, prefix = prefix, suffix = "_test.cpp", delete = False)
+    f.write("#include <test/expressions/expression_test_helpers.hpp>\n\n")
+    f.write(cpp_code)
+    f.close()
 
-    if cpp_code:
-        attempted = True
+    cpp_path = os.path.join(WORKING_FOLDER, os.path.basename(f.name))
 
-        f = tempfile.NamedTemporaryFile("w", dir = WORKING_FOLDER, suffix = "_test.cpp", delete = False)
-        f.write("#include <test/expressions/expression_test_helpers.hpp>\n\n")
-        f.write(cpp_code)
-        f.close()
+    object_path = cpp_path.replace(".cpp", ".o")
+    dependency_path = cpp_path.replace(".cpp", ".d")
+    stdout_path = cpp_path.replace(".cpp", ".stdout")
+    stderr_path = cpp_path.replace(".cpp", ".stderr")
 
-        cpp_path = os.path.join(WORKING_FOLDER, os.path.basename(f.name))
+    successful, stdout, stderr = run_command([make, object_path])
 
-        object_path = cpp_path.replace(".cpp", ".o")
-        dependency_path = cpp_path.replace(".cpp", ".d")
-        stdout_path = cpp_path.replace(".cpp", ".stdout")
-        stderr_path = cpp_path.replace(".cpp", ".stderr")
+    # Only clean up files if check succesful
+    if successful:
+        try:
+            os.remove(cpp_path)
+            os.remove(dependency_path)
+            os.remove(object_path)
+        except OSError:
+            pass
+    else:
+        with open(stdout_path, "w") as stdout_f:
+            stdout_f.write(stdout.decode("utf-8"))
 
-        successful, stdout, stderr = run_command([make, object_path])
-
-        # Only clean up files if check succesful
-        if successful:
-            try:
-                os.remove(cpp_path)
-                os.remove(dependency_path)
-                os.remove(object_path)
-            except OSError:
-                pass
-        else:
-            with open(stdout_path, "w") as stdout_f:
-                stdout_f.write(stdout.decode("utf-8"))
-
-            with open(stderr_path, "w") as stderr_f:
-                stderr_f.write(stderr.decode("utf-8"))
+        with open(stderr_path, "w") as stderr_f:
+            stderr_f.write(stderr.decode("utf-8"))
         
-    return successful, attempted
+    return successful
 
 def main(functions_or_sigs, results_file, cores):
     """
@@ -94,16 +85,16 @@ def main(functions_or_sigs, results_file, cores):
     is empty every signature the stanc3 compiler exposes.
 
     Results are written to a results json file. Individual signatures are classified
-    as either compatible, incompatible, or impossible
+    as either compatible, incompatible, or irrelevant.
 
     Compatible signatures can be compiled with varmat types in every argument that
     could possibly be a varmat (the matrix-like ones).
 
-    Incompatible signatures cannot all be built, and for impossible signatures it does
+    Incompatible signatures cannot all be built, and for irrelevant signatures it does
     not make sense to try to build them (there are no matrix arguments, or the function
-    does not support reverse mode autodiff, etc)
+    does not support reverse mode autodiff, etc).
 
-    Compilation is done in parallel using the number of specified cores
+    Compilation is done in parallel using the number of specified cores.
 
     :param functions_or_sigs: List of function names and/or signatures to benchmark
     :param results_file: File to use as a results cache
@@ -116,7 +107,7 @@ def main(functions_or_sigs, results_file, cores):
 
     compatible_signatures = set()
     incompatible_signatures = set()
-    impossible_signatures = set()
+    irrelevant_signatures = set()
 
     # Read the arguments and figure out the exact list of signatures to test
     signatures_to_check = set()
@@ -156,14 +147,15 @@ def main(functions_or_sigs, results_file, cores):
 
             cg.function_call_assign("stan::math::" + sp.function_name, *arg_list)
 
-            cpp_code += BENCHMARK_TEMPLATE.format(
-                benchmark_name = sp.function_name + repr(m),
+            cpp_code += TEST_TEMPLATE.format(
+                test_name = sp.function_name + repr(m),
                 code=cg.cpp(),
             )
 
         if any_overload_uses_varmat:
             work_queue.put((n, signature, cpp_code))
         else:
+            # Push an empty work item on the work queue just to get nice printing
             work_queue.put((n, signature, None))
 
     output_lock = threading.Lock()
@@ -180,8 +172,14 @@ def main(functions_or_sigs, results_file, cores):
             except Queue.Empty:
                 return # If queue is empty, worker quits
 
+            sp = SignatureParser(signature)
+
             # Test the signature
-            successful, attempted = build_signature(cpp_code)
+            if cpp_code is not None:
+                attempted = True
+                successful = build_signature(sp.function_name, cpp_code)
+            else:
+                attempted = False
 
             # Acquire a lock to do I/O
             with output_lock:
@@ -193,8 +191,8 @@ def main(functions_or_sigs, results_file, cores):
                         result_string = "Fail!"
                         incompatible_signatures.add(signature)
                 else:
-                    result_string = "Impossible!"
-                    impossible_signatures.add(signature)
+                    result_string = "Irrelevant!"
+                    irrelevant_signatures.add(signature)
 
                 print("Results of test {0} / {1}, {2} ... ".format(n, len(signatures_to_check), signature.strip()) + result_string)
 
@@ -203,7 +201,7 @@ def main(functions_or_sigs, results_file, cores):
                         json.dump({
                             "compatible_signatures" : list(compatible_signatures),
                             "incompatible_signatures" : list(incompatible_signatures),
-                            "impossible_signatures" : list(impossible_signatures)
+                            "irrelevant_signatures" : list(irrelevant_signatures)
                         }, f, indent = 4, sort_keys = True)
 
             work_queue.task_done()

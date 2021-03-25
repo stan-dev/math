@@ -19,33 +19,33 @@ class ProcessResultsTest(unittest.TestCase):
         self.results = {
             "compatible_signatures" : ["chicken(matrix) => real", "dog(matrix) => real"],
             "incompatible_signatures" : ["squirrel(vector) => real", "dog(vector) => real"],
-            "impossible_signatures" : ["chicken(array[] real) => real", "squirrel(array[] real) => real", "frog(array[] real) => real"]
+            "irrelevant_signatures" : ["chicken(array[] real) => real", "squirrel(array[] real) => real", "frog(array[] real) => real"]
         }
 
     def test_which(self):
         self.assertSetEqual(set(["chicken(matrix) => real", "dog(matrix) => real"]), process_results(self.results, functions = [], which = "compatible", fully = False, names = False))
         self.assertSetEqual(set(["squirrel(vector) => real", "dog(vector) => real"]), process_results(self.results, functions = [], which = "incompatible", fully = False, names = False))
-        self.assertSetEqual(set(["chicken(array[] real) => real", "squirrel(array[] real) => real", "frog(array[] real) => real"]), process_results(self.results, functions = [], which = "impossible", fully = False, names = False))
+        self.assertSetEqual(set(["chicken(array[] real) => real", "squirrel(array[] real) => real", "frog(array[] real) => real"]), process_results(self.results, functions = [], which = "irrelevant", fully = False, names = False))
 
     def test_fully(self):
         self.assertSetEqual(set(["chicken(matrix) => real"]), process_results(self.results, functions = [], which = "compatible", fully = True, names = False))
         self.assertSetEqual(set(["squirrel(vector) => real"]), process_results(self.results, functions = [], which = "incompatible", fully = True, names = False))
-        self.assertSetEqual(set(["frog(array[] real) => real"]), process_results(self.results, functions = [], which = "impossible", fully = True, names = False))
+        self.assertSetEqual(set(["frog(array[] real) => real"]), process_results(self.results, functions = [], which = "irrelevant", fully = True, names = False))
 
     def test_names(self):
         self.assertSetEqual(set(["chicken"]), process_results(self.results, functions = [], which = "compatible", fully = True, names = True))
         self.assertSetEqual(set(["squirrel"]), process_results(self.results, functions = [], which = "incompatible", fully = True, names = True))
-        self.assertSetEqual(set(["frog"]), process_results(self.results, functions = [], which = "impossible", fully = True, names = True))
+        self.assertSetEqual(set(["frog"]), process_results(self.results, functions = [], which = "irrelevant", fully = True, names = True))
 
     def test_functions(self):
         self.assertSetEqual(set(["chicken(matrix) => real"]), process_results(self.results, functions = ["chicken"], which = "compatible", fully = False, names = False))
         self.assertSetEqual(set(["squirrel(vector) => real"]), process_results(self.results, functions = ["squirrel"], which = "incompatible", fully = False, names = False))
-        self.assertSetEqual(set(["frog(array[] real) => real"]), process_results(self.results, functions = ["frog"], which = "impossible", fully = False, names = False))
+        self.assertSetEqual(set(["frog(array[] real) => real"]), process_results(self.results, functions = ["frog"], which = "irrelevant", fully = False, names = False))
 
     def test_functions_names(self):
         self.assertSetEqual(set(["chicken"]), process_results(self.results, functions = ["chicken"], which = "compatible", fully = False, names = True))
         self.assertSetEqual(set(["squirrel"]), process_results(self.results, functions = ["squirrel"], which = "incompatible", fully = False, names = True))
-        self.assertSetEqual(set(["frog"]), process_results(self.results, functions = ["frog"], which = "impossible", fully = False, names = True))
+        self.assertSetEqual(set(["frog"]), process_results(self.results, functions = ["frog"], which = "irrelevant", fully = False, names = True))
 
 if __name__ == '__main__':
     unittest.main()

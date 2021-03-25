@@ -60,30 +60,30 @@ def process_results(results, functions, which, fully, names):
 
     :param results: Results of varmat compatibility calculation
     :param functions: List of function names to check compatibility for
-    :param which: For which type of compatibility should functions be printed
-    :param fully: Only print fully compatible/incompatible signatures (no partial varmat support)
+    :param which: For which type of compatibility should functions be printed (possible values: compatible, incompatible, irrelevant)
+    :param fully: Only print functions/signatures for which all signatures with the same function name are fully compatible/incompatible signatures (no partial varmat support)
     :param names: Print function names, not signatures
     """
     compatible_signatures = set()
     incompatible_signatures = set()
-    impossible_signatures = set()
+    irrelevant_signatures = set()
     if "compatible_signatures" in results:
         compatible_signatures = set(results["compatible_signatures"])
     if "incompatible_signatures" in results:
         incompatible_signatures = set(results["incompatible_signatures"])
-    if "impossible_signatures" in results:
-        impossible_signatures = set(results["impossible_signatures"])
+    if "irrelevant_signatures" in results:
+        irrelevant_signatures = set(results["irrelevant_signatures"])
 
     requested_functions = set(functions)
 
     if len(requested_functions) > 0:
         compatible_signatures = select_signatures_matching_functions(compatible_signatures, requested_functions)
         incompatible_signatures = select_signatures_matching_functions(incompatible_signatures, requested_functions)
-        impossible_signatures = select_signatures_matching_functions(impossible_signatures, requested_functions)
+        irrelevant_signatures = select_signatures_matching_functions(irrelevant_signatures, requested_functions)
 
     compatible_functions = convert_signatures_list_to_functions(compatible_signatures)
     incompatible_functions = convert_signatures_list_to_functions(incompatible_signatures)
-    impossible_functions = convert_signatures_list_to_functions(impossible_signatures)
+    irrelevant_functions = convert_signatures_list_to_functions(irrelevant_signatures)
 
     if not names:
         if which == "compatible":
@@ -98,9 +98,9 @@ def process_results(results, functions, which, fully, names):
                 return incompatible_signatures
         else:
             if fully:
-                return remove_signatures_matching_functions(impossible_signatures, set(compatible_functions) | set(incompatible_functions))
+                return remove_signatures_matching_functions(irrelevant_signatures, set(compatible_functions) | set(incompatible_functions))
             else:
-                return impossible_signatures
+                return irrelevant_signatures
     else:
         if which == "compatible":
             if fully:
@@ -114,9 +114,9 @@ def process_results(results, functions, which, fully, names):
                 return incompatible_functions
         else:
             if fully:
-                return impossible_functions - compatible_functions - incompatible_functions
+                return irrelevant_functions - compatible_functions - incompatible_functions
             else:
-                return impossible_functions
+                return irrelevant_functions
 
 class FullErrorMsgParser(ArgumentParser):
     """
@@ -152,13 +152,13 @@ def processCLIArgs():
     parser.add_argument(
         "--which",
         default = "compatible",
-        choices = ["compatible", "incompatible", "impossible"],
+        choices = ["compatible", "incompatible", "irrelevant"],
         help = "Print by compatibility."
     )
     parser.add_argument(
         "--fully",
         default = False,
-        help = "When printing compatible or incompatible function names, print those that are fully compatible or incompatible, ignoring impossible functions. When printing impossible functions, print only those with no compatible or incompatible versions.",
+        help = "When printing compatible or incompatible function names, print those that are fully compatible or incompatible, ignoring irrelevant functions. When printing irrelevant functions, print only those with no compatible or incompatible versions.",
         action = "store_true"
     )
     parser.add_argument(
