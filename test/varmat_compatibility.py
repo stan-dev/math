@@ -196,20 +196,19 @@ def main(functions_or_sigs, results_file, cores):
 
                 print("Results of test {0} / {1}, {2} ... ".format(n, len(signatures_to_check), signature.strip()) + result_string)
 
-                if results_file:
-                    with open(results_file, "w") as f:
-                        json.dump({
-                            "compatible_signatures" : list(compatible_signatures),
-                            "incompatible_signatures" : list(incompatible_signatures),
-                            "irrelevant_signatures" : list(irrelevant_signatures)
-                        }, f, indent = 4, sort_keys = True)
-
             work_queue.task_done()
 
     for i in range(cores):
         threading.Thread(target = worker).start()
 
     work_queue.join()
+
+    with open(results_file, "w") as f:
+        json.dump({ "compatible_signatures" : list(compatible_signatures),
+                    "incompatible_signatures" : list(incompatible_signatures),
+                    "irrelevant_signatures" : list(irrelevant_signatures)
+        }, f, indent = 4, sort_keys = True)
+
 
 class FullErrorMsgParser(ArgumentParser):
     """
