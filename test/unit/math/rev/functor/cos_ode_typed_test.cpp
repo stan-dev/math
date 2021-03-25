@@ -9,7 +9,8 @@ using cos_arg_test_types
     = ::testing::Types<std::tuple<ode_rk45_functor, ode_rk45_functor>,
                        std::tuple<ode_ckrk_functor, ode_ckrk_functor>,
                        std::tuple<ode_bdf_functor, ode_bdf_functor>,
-                       std::tuple<ode_adams_functor, ode_adams_functor> >;
+                       std::tuple<ode_adams_functor, ode_adams_functor>,
+                       std::tuple<ode_adjoint_functor, ode_adjoint_functor>>;
 
 TYPED_TEST_SUITE_P(cos_arg_test);
 TYPED_TEST_P(cos_arg_test, y0_error) {

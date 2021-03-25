@@ -15,6 +15,8 @@ using harmonic_oscillator_test_types = ::testing::Types<
                double>,
     std::tuple<ode_adams_functor, ode_adams_functor, double, stan::math::var,
                double>,
+    std::tuple<ode_adjoint_functor, ode_adjoint_functor, double, stan::math::var,
+               double>,
     std::tuple<ode_rk45_functor, ode_rk45_functor, double, double,
                stan::math::var>,
     std::tuple<ode_ckrk_functor, ode_ckrk_functor, double, double,
@@ -23,11 +25,15 @@ using harmonic_oscillator_test_types = ::testing::Types<
                stan::math::var>,
     std::tuple<ode_adams_functor, ode_adams_functor, double, double,
                stan::math::var>,
+    std::tuple<ode_adjoint_functor, ode_adjoint_functor, double, double,
+               stan::math::var>,
     std::tuple<ode_ckrk_functor, ode_ckrk_functor, double, stan::math::var,
                stan::math::var>,
     std::tuple<ode_bdf_functor, ode_bdf_functor, double, stan::math::var,
                stan::math::var>,
     std::tuple<ode_adams_functor, ode_adams_functor, double, stan::math::var,
+               stan::math::var>,
+    std::tuple<ode_adjoint_functor, ode_adjoint_functor, double, stan::math::var,
                stan::math::var>,
     std::tuple<ode_rk45_functor, ode_rk45_functor, stan::math::var,
                stan::math::var, double>,
@@ -37,6 +43,8 @@ using harmonic_oscillator_test_types = ::testing::Types<
                stan::math::var, double>,
     std::tuple<ode_adams_functor, ode_adams_functor, stan::math::var,
                stan::math::var, double>,
+    std::tuple<ode_adjoint_functor, ode_adjoint_functor, stan::math::var,
+               stan::math::var, double>,
     std::tuple<ode_rk45_functor, ode_rk45_functor, stan::math::var, double,
                stan::math::var>,
     std::tuple<ode_ckrk_functor, ode_ckrk_functor, stan::math::var, double,
@@ -45,12 +53,17 @@ using harmonic_oscillator_test_types = ::testing::Types<
                stan::math::var>,
     std::tuple<ode_adams_functor, ode_adams_functor, stan::math::var, double,
                stan::math::var>,
+    std::tuple<ode_adjoint_functor, ode_adjoint_functor, stan::math::var, double,
+               stan::math::var>,
     std::tuple<ode_ckrk_functor, ode_ckrk_functor, stan::math::var,
                stan::math::var, stan::math::var>,
     std::tuple<ode_bdf_functor, ode_bdf_functor, stan::math::var,
                stan::math::var, stan::math::var>,
     std::tuple<ode_adams_functor, ode_adams_functor, stan::math::var,
-               stan::math::var, stan::math::var> >;
+               stan::math::var, stan::math::var>,
+    std::tuple<ode_adjoint_functor, ode_adjoint_functor, stan::math::var,
+               stan::math::var, stan::math::var>
+                                       >;
 TYPED_TEST_SUITE_P(harmonic_oscillator_test);
 TYPED_TEST_P(harmonic_oscillator_test, no_error) { this->test_good(); }
 TYPED_TEST_P(harmonic_oscillator_test, error_conditions) { this->test_bad(); }
