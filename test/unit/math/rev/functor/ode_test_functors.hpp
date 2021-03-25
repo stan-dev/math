@@ -43,7 +43,7 @@
                const std::vector<T_ts>& ts, const std::vector<T_param>& theta, \
                const std::vector<double>& x, const std::vector<int>& x_int,    \
                std::ostream* msgs = nullptr, double rtol = 1e-10,              \
-               double atol = 1e-10, size_t max_num_step = 1e8) {             \
+               double atol = 1e-10, size_t max_num_step = 1e8) {               \
       return solver_func(f, y0, t0, ts, theta, x, x_int, msgs, rtol, atol,     \
                          max_num_step);                                        \
     }                                                                          \
