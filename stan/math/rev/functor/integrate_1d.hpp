@@ -39,30 +39,21 @@ namespace math {
 template <typename F, typename... Args>
 inline double gradient_of_f(const F &f, const double &x, const double &xc,
                             size_t n, std::ostream *msgs,
-                            const Args &... args) {
+                            const std::tuple<Args...> &args_tuple,
+                            size_t num_var_args) {
   double gradient = 0.0;
 
   // Run nested autodiff in this scope
+  Eigen::VectorXd adjoints = Eigen::VectorXd::Zero(num_var_args);
   nested_rev_autodiff nested;
-
-  std::tuple<decltype(deep_copy_vars(args))...> args_tuple_local_copy(
-      deep_copy_vars(args)...);
-
-  Eigen::VectorXd adjoints = Eigen::VectorXd::Zero(count_vars(args...));
-
   var fx = apply(
       [&f, &x, &xc, msgs](auto &&... args) { return f(x, xc, msgs, args...); },
-      args_tuple_local_copy);
+      args_tuple);
 
   fx.grad();
 
-  apply(
-      [&](auto &&... args) {
-        accumulate_adjoints(adjoints.data(),
-                            std::forward<decltype(args)>(args)...);
-      },
-      std::move(args_tuple_local_copy));
-
+  apply([&](auto &&... args) { accumulate_adjoints(adjoints.data(), args...); },
+        args_tuple);
   gradient = adjoints.coeff(n);
   if (is_nan(gradient)) {
     if (fx.val() == 0) {
@@ -97,7 +88,7 @@ template <typename F, typename T_a, typename T_b, typename... Args,
 inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
     const F &f, const T_a &a, const T_b &b, double relative_tolerance,
     std::ostream *msgs, const Args &... args) {
-  static const char *function = "integrate_1d";
+  static constexpr const char* function = "integrate_1d";
   check_less_or_equal(function, "lower limit", a, b);
 
   double a_val = value_of(a);
@@ -110,7 +101,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
     }
     return var(0.0);
   } else {
-    std::tuple<decltype(value_of(args))...> args_val_tuple(value_of(args)...);
+    auto args_val_tuple = std::make_tuple(value_of(args)...);
 
     double integral = integrate(
         [&](const auto &x, const auto &xc) {
@@ -119,7 +110,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
         },
         a_val, b_val, relative_tolerance);
 
-    size_t num_vars_ab = count_vars(a, b);
+    constexpr size_t num_vars_ab = is_var<T_a>::value + is_var<T_b>::value;
     size_t num_vars_args = count_vars(args...);
     vari **varis = ChainableStack::instance_->memalloc_.alloc_array<vari *>(
         num_vars_ab + num_vars_args);
@@ -149,18 +140,29 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
                   args_val_tuple);
       partials_ptr++;
     }
-
-    for (size_t n = 0; n < num_vars_args; ++n) {
-      *partials_ptr = integrate(
-          [&](const auto &x, const auto &xc) {
-            return gradient_of_f<F, Args...>(f, x, xc, n, msgs, args...);
-          },
-          a_val, b_val, relative_tolerance);
-      partials_ptr++;
+    {
+      nested_rev_autodiff nested;
+      auto args_tuple_local_copy = std::make_tuple(deep_copy_vars(args)...);
+      for (size_t n = 0; n < num_vars_args; ++n) {
+        *partials_ptr = integrate(
+            [&](const auto &x, const auto &xc) {
+              auto blah = gradient_of_f(f, x, xc, n, msgs,
+                                        args_tuple_local_copy, num_vars_args);
+              nested.set_zero_all_adjoints();
+              return blah;
+            },
+            a_val, b_val, relative_tolerance);
+        partials_ptr++;
+      }
     }
 
-    return var(new precomputed_gradients_vari(
-        integral, num_vars_ab + num_vars_args, varis, partials));
+    return make_callback_var(
+        integral,
+        [total_vars = num_vars_ab + num_vars_args, varis, partials](auto &vi) {
+          for (size_t i = 0; i < total_vars; ++i) {
+            varis[i]->adj_ += partials[i] * vi.adj();
+          }
+        });
   }
 }
 
