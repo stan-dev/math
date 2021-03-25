@@ -27,7 +27,7 @@
                               Eigen::Dynamic, 1>>                              \
     operator()(const F& f, const T_y0& y0_arg, T_t0 t0,                        \
                const std::vector<T_ts>& ts, double rtol, double atol,          \
-               long int max_num_steps, std::ostream* msgs,                     \
+               size_t max_num_steps, std::ostream* msgs,                       \
                const Args&... args) {                                          \
       return solver_func##_tol(f, y0_arg, t0, ts, rtol, atol, max_num_steps,   \
                                msgs, args...);                                 \
@@ -43,7 +43,7 @@
                const std::vector<T_ts>& ts, const std::vector<T_param>& theta, \
                const std::vector<double>& x, const std::vector<int>& x_int,    \
                std::ostream* msgs = nullptr, double rtol = 1e-10,              \
-               double atol = 1e-10, long int max_num_step = 1e8) {             \
+               double atol = 1e-10, size_t max_num_step = 1e8) {             \
       return solver_func(f, y0, t0, ts, theta, x, x_int, msgs, rtol, atol,     \
                          max_num_step);                                        \
     }                                                                          \

@@ -3,7 +3,6 @@
 
 #include <stan/math/rev.hpp>
 #include <test/prob/utility.hpp>
-#include <stan/math/rev.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
 #include <type_traits>
@@ -25,7 +24,6 @@ struct ODETestFixture : public ::testing::Test {
 
   /**
    * test ODE solution against analytical solution
-   *
    *
    * @param ode_sol solver functor that takes a <code>vector</code>
    * parameter variable that returns solution <code>vector</code>.
