@@ -19,7 +19,7 @@ TEST_FOLDER = os.path.abspath(os.path.join(HERE, "..", "test"))
 sys.path.append(TEST_FOLDER)
 WORKING_FOLDER = "test/varmat-compatibility"
 
-BENCHMARK_TEMPLATE = """
+TEST_TEMPLATE = """
 static void {benchmark_name}() {{
 {code}
 }}
