@@ -20,7 +20,7 @@ sys.path.append(TEST_FOLDER)
 WORKING_FOLDER = "test/varmat-compatibility"
 
 TEST_TEMPLATE = """
-static void {benchmark_name}() {{
+static void {test_name}() {{
 {code}
 }}
 """
