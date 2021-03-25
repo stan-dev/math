@@ -100,6 +100,9 @@
 
 #include <stan/math/opencl/prim/add_diag.hpp>
 #include <stan/math/opencl/prim/append_array.hpp>
+#include <stan/math/opencl/prim/bernoulli_cdf.hpp>
+#include <stan/math/opencl/prim/bernoulli_lccdf.hpp>
+#include <stan/math/opencl/prim/bernoulli_lcdf.hpp>
 #include <stan/math/opencl/prim/bernoulli_lpmf.hpp>
 #include <stan/math/opencl/prim/bernoulli_logit_lpmf.hpp>
 #include <stan/math/opencl/prim/bernoulli_logit_glm_lpmf.hpp>
@@ -110,6 +113,9 @@
 #include <stan/math/opencl/prim/binomial_lpmf.hpp>
 #include <stan/math/opencl/prim/block.hpp>
 #include <stan/math/opencl/prim/categorical_logit_glm_lpmf.hpp>
+#include <stan/math/opencl/prim/cauchy_cdf.hpp>
+#include <stan/math/opencl/prim/cauchy_lccdf.hpp>
+#include <stan/math/opencl/prim/cauchy_lcdf.hpp>
 #include <stan/math/opencl/prim/cauchy_lpdf.hpp>
 #include <stan/math/opencl/prim/chi_square_lpdf.hpp>
 #include <stan/math/opencl/prim/cholesky_decompose.hpp>

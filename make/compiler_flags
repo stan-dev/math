@@ -90,6 +90,10 @@ CXX_MINOR := $(word 2,$(subst ., ,$(CXX_VERSION)))
 # LDFLAGS_MPI_FLTO: For adding flto options to MPI build
 ##
 
+ifdef STAN_NO_RANGE_CHECKS
+  CXXFLAGS_THREADS ?= -DSTAN_NO_RANGE_CHECKS
+endif
+
 ################################################################################
 # Set default compiler flags
 #
