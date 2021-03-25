@@ -58,7 +58,8 @@ inline double integrate(const F& f, double a, double b,
   bool used_two_integrals = false;
   size_t levels;
   double Q = 0.0;
-  // if a or b is infinite, set xc argument to NaN (see docs above for user function for xc info)
+  // if a or b is infinite, set xc argument to NaN (see docs above for user
+  // function for xc info)
   auto f_wrap = [&](double x) { return f(x, NOT_A_NUMBER); };
   if (std::isinf(a) && std::isinf(b)) {
     boost::math::quadrature::sinh_sinh<double> integrator;
@@ -160,9 +161,9 @@ inline double integrate_1d_impl(const F& f, double a, double b,
     }
     return 0.0;
   } else {
-    return integrate([&](const auto& x, const auto& xc) {
-	return f(x, xc, msgs, args...);
-      }, a, b, relative_tolerance);
+    return integrate(
+        [&](const auto& x, const auto& xc) { return f(x, xc, msgs, args...); },
+        a, b, relative_tolerance);
   }
 }
 
