@@ -104,7 +104,8 @@ TEST(ProbDistributionsDoubleExpModNormalCdf, opencl_matches_cpu_small) {
       sigma.transpose().eval(), lambda.transpose().eval());
 }
 
-TEST(ProbDistributionsDoubleExpModNormalCdf, opencl_matches_cpu_small_y_neg_inf) {
+TEST(ProbDistributionsDoubleExpModNormalCdf,
+     opencl_matches_cpu_small_y_neg_inf) {
   int N = 3;
   int M = 2;
 

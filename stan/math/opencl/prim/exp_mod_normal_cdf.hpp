@@ -119,7 +119,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl> exp_mod_normal_cdf(
           calc_if<!is_constant<T_scale_cl>::value>(sigma_deriv1),
           calc_if<!is_constant<T_inv_scale_cl>::value>(lambda_deriv1));
 
-  if(from_matrix_cl(any_y_neg_inf_cl).maxCoeff()){
+  if (from_matrix_cl(any_y_neg_inf_cl).maxCoeff()) {
     return 0.0;
   }
 

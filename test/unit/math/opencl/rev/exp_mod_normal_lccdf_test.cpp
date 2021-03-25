@@ -104,7 +104,8 @@ TEST(ProbDistributionsDoubleExpModNormalLccdf, opencl_matches_cpu_small) {
       sigma.transpose().eval(), lambda.transpose().eval());
 }
 
-TEST(ProbDistributionsDoubleExpModNormalLccdf, opencl_matches_cpu_small_y_pos_inf) {
+TEST(ProbDistributionsDoubleExpModNormalLccdf,
+     opencl_matches_cpu_small_y_pos_inf) {
   int N = 3;
   int M = 2;
 
@@ -124,7 +125,8 @@ TEST(ProbDistributionsDoubleExpModNormalLccdf, opencl_matches_cpu_small_y_pos_in
       sigma.transpose().eval(), lambda.transpose().eval());
 }
 
-TEST(ProbDistributionsDoubleExpModNormalLccdf, opencl_matches_cpu_small_y_neg_inf) {
+TEST(ProbDistributionsDoubleExpModNormalLccdf,
+     opencl_matches_cpu_small_y_neg_inf) {
   int N = 3;
   int M = 2;
 
