@@ -126,7 +126,7 @@ ifeq (clang,$(CXX_TYPE))
 endif
 ifeq (gcc,$(CXX_TYPE))
   TBB_CC ?= $(subst g++,gcc,$(CXX))
-  TBB_CXXFLAGS ?= -Wno-unknown-warning-option -Wno-missing-attributes -Wno-class-memaccess -Wno-sized-deallocation $(CXXFLAGS_OPTIM_TBB) $(CXXFLAGS_FLTO_TBB)
+  TBB_CXXFLAGS ?= -Wno-unknown-warning-option -Wno-deprecated-copy -Wno-missing-attributes -Wno-class-memaccess -Wno-sized-deallocation $(CXXFLAGS_OPTIM_TBB) $(CXXFLAGS_FLTO_TBB)
 endif
 TBB_CC ?= $(CC)
 
