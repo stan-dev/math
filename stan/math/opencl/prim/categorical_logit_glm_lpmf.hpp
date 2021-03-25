@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/prim/size.hpp>
+#include <stan/math/opencl/rev/arena_matrix_cl.hpp>
 #include <stan/math/opencl/rev/operands_and_partials.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/copy.hpp>
@@ -150,8 +151,9 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
     try {
       opencl_kernels::categorical_logit_glm_beta_derivative(
           cl::NDRange(local_size * N_attributes), cl::NDRange(local_size),
-          forward_as<matrix_cl<double>>(ops_partials.edge3_.partials_), temp,
-          y_val_cl, x_val, N_instances, N_attributes, N_classes, is_y_vector);
+          forward_as<arena_matrix_cl<double>>(ops_partials.edge3_.partials_),
+          temp, y_val_cl, x_val, N_instances, N_attributes, N_classes,
+          is_y_vector);
     } catch (const cl::Error& e) {
       check_opencl_error(function, e);
     }
