@@ -112,14 +112,11 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
   } else {
     std::tuple<decltype(value_of(args))...> args_val_tuple(value_of(args)...);
 
-    double integral = integrate(apply(
-                                    [&f, msgs](auto &&... args) {
-                                      return std::bind<double>(
-                                          f, std::placeholders::_1,
-                                          std::placeholders::_2, msgs, args...);
-                                    },
-                                    args_val_tuple),
-                                a_val, b_val, relative_tolerance);
+    double integral = integrate([&](const auto& x, const auto& xc) {
+      return apply([&](auto &&... args) {
+	  return f(x, xc, msgs, args...);
+	}, args_val_tuple);
+      }, a_val, b_val, relative_tolerance);
 
     size_t num_vars_ab = count_vars(a, b);
     size_t num_vars_args = count_vars(args...);
@@ -153,10 +150,9 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
     }
 
     for (size_t n = 0; n < num_vars_args; ++n) {
-      *partials_ptr = integrate(
-          std::bind<double>(gradient_of_f<F, Args...>, f, std::placeholders::_1,
-                            std::placeholders::_2, n, msgs, args...),
-          a_val, b_val, relative_tolerance);
+      *partials_ptr = integrate([&](const auto& x, const auto& xc) {
+	  return gradient_of_f<F, Args...>(f, x, xc, n, msgs, args...);
+	}, a_val, b_val, relative_tolerance);
       partials_ptr++;
     }
 
