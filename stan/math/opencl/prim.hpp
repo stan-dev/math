@@ -136,6 +136,9 @@
 #include <stan/math/opencl/prim/dot_self.hpp>
 #include <stan/math/opencl/prim/double_exponential_lpdf.hpp>
 #include <stan/math/opencl/prim/exp_mod_normal_lpdf.hpp>
+#include <stan/math/opencl/prim/exponential_cdf.hpp>
+#include <stan/math/opencl/prim/exponential_lccdf.hpp>
+#include <stan/math/opencl/prim/exponential_lcdf.hpp>
 #include <stan/math/opencl/prim/exponential_lpdf.hpp>
 #include <stan/math/opencl/prim/frechet_lpdf.hpp>
 #include <stan/math/opencl/prim/gamma_lpdf.hpp>
