@@ -20,9 +20,11 @@ namespace math {
  * @tparam T_y_cl type of scalar outcome
  * @tparam T_loc_cl type of location
  * @tparam T_scale_cl type of scale
+ * @tparam T_inv_scale_cl type of inverse scale
  * @param y (Sequence of) scalar(s).
  * @param mu (Sequence of) location(s).
  * @param sigma (Sequence of) scale(s).
+ * @param lambda (Sequence of) inverse scale(s).
  * @return The log of the product of densities.
  */
 template <typename T_y_cl, typename T_loc_cl, typename T_scale_cl,

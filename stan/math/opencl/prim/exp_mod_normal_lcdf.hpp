@@ -25,7 +25,7 @@ namespace math {
  * @param y (Sequence of) scalar(s).
  * @param mu (Sequence of) location(s).
  * @param sigma (Sequence of) scale(s).
- * @param sigma (Sequence of) inverse scale(s).
+ * @param lambda (Sequence of) inverse scale(s).
  * @return The log of the product of densities.
  */
 template <typename T_y_cl, typename T_loc_cl, typename T_scale_cl,
