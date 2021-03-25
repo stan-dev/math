@@ -526,7 +526,7 @@ struct cos_arg_test : public cos_arg_ode_base,
     EXPECT_NEAR(res[0][0], 0.4165982112, 1e-5);
     EXPECT_NEAR(res[1][0], 0.66457668563, 1e-5);
 
-    std::vector<int> ts_i = {1, 2};
+    std::vector<double> ts_i = {1, 2};
     std::tuple_element_t<0, T> sol;
     res = sol(stan::test::CosArg1(), y0, t0, ts_i, nullptr, a);
     EXPECT_NEAR(res[0][0], 0.6649966577, 1e-5);
@@ -948,7 +948,7 @@ struct cos_arg_test : public cos_arg_ode_base,
 
     Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
     double t0 = 0.0;
-    std::vector<int> ts = {1, 2};
+    std::vector<double> ts = {1, 2};
 
     double a = 1.5;
 
