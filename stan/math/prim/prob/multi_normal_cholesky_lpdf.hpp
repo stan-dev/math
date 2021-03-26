@@ -132,7 +132,8 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
       y_val_minus_mu_val.col(i) = y_val - mu_val;
     }
 
-    matrix_partials_t half, scaled_diff;
+    matrix_partials_t half;
+    matrix_partials_t scaled_diff;
 
     // If the covariance is not autodiff, we can avoid computing a matrix
     // inverse
