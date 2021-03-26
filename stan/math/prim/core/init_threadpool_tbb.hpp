@@ -5,11 +5,13 @@
 
 #include <boost/lexical_cast.hpp>
 
+#ifndef TBB_INTERFACE_NEW
 #include <tbb/tbb_stddef.h>
 
 #if TBB_VERSION_MAJOR >= 2020
 #ifndef TBB_INTERFACE_NEW
 #define TBB_INTERFACE_NEW
+#endif
 #endif
 #endif
 
