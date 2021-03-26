@@ -5,6 +5,14 @@
 
 #include <boost/lexical_cast.hpp>
 
+#include <tbb/tbb_stddef.h>
+
+#if TBB_VERSION_MAJOR >= 2020
+#ifndef TBB_INTERFACE_NEW
+#define TBB_INTERFACE_NEW
+#endif
+#endif
+
 #ifdef TBB_INTERFACE_NEW
 #include <tbb/global_control.h>
 #include <tbb/task_arena.h>
@@ -86,12 +94,10 @@ inline int get_num_threads() {
  */
 inline tbb::task_arena& init_threadpool_tbb() {
   int tbb_max_threads = internal::get_num_threads();
-
   static tbb::global_control tbb_gc(
       tbb::global_control::max_allowed_parallelism, tbb_max_threads);
 
-  static tbb::task_arena tbb_arena(tbb_max_threads, 1,
-                                   tbb::task_arena::priority::normal);
+  static tbb::task_arena tbb_arena(tbb_max_threads, 1);
   tbb_arena.initialize();
 
   return tbb_arena;
