@@ -78,8 +78,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> gumbel_lcdf(
   results(check_y_not_nan, check_mu_finite, check_beta_positive, lcdf_cl,
           y_deriv_cl, mu_deriv_cl, beta_deriv_cl)
       = expressions(y_not_nan_expr, mu_finite_expr, beta_positive_expr,
-                    lcdf_expr,
-                    calc_if<!is_constant<T_y_cl>::value>(y_deriv),
+                    lcdf_expr, calc_if<!is_constant<T_y_cl>::value>(y_deriv),
                     calc_if<!is_constant<T_loc_cl>::value>(mu_deriv),
                     calc_if<!is_constant<T_scale_cl>::value>(beta_deriv));
 

@@ -68,7 +68,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> gumbel_lccdf(
   auto ccdf_n = 1.0 - exp(-exp_m_scaled_diff);
   auto lccdf_expr = colwise_sum(log(ccdf_n));
   auto mu_deriv = elt_divide(exp(-scaled_diff - exp_m_scaled_diff),
-                              elt_multiply(beta_val, ccdf_n));
+                             elt_multiply(beta_val, ccdf_n));
   auto y_deriv = -mu_deriv;
   auto beta_deriv = elt_multiply(mu_deriv, scaled_diff);
 

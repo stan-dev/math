@@ -67,11 +67,9 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> logistic_cdf(
       = colwise_max(constant(0, N, 1) + (y_val == NEGATIVE_INFTY));
   auto cond = y_val == INFTY;
   auto inv_sigma = elt_divide(1.0, sigma_val);
-  auto mu_minus_y_div_sigma
-      = elt_multiply(mu_val - y_val, inv_sigma);
+  auto mu_minus_y_div_sigma = elt_multiply(mu_val - y_val, inv_sigma);
   auto exp_scaled_diff = exp(mu_minus_y_div_sigma);
-  auto Pn
-      = elt_divide(1.0, 1.0 + exp_scaled_diff);
+  auto Pn = elt_divide(1.0, 1.0 + exp_scaled_diff);
   auto P_expr = colwise_prod(select(cond, 1.0, Pn));
 
   auto y_deriv_tmp = select(cond, 0.0,

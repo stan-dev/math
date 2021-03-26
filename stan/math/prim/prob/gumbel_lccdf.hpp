@@ -69,9 +69,8 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lccdf(const T_y& y, const T_loc& mu,
       = to_ref_if<!is_constant_all<T_y, T_loc, T_scale>::value>(
           exp(-scaled_diff));
   const auto& cdf_log_n_tmp = exp(-exp_m_scaled_diff);
-  const auto& ccdf_n
-      = to_ref_if<!is_constant_all<T_y, T_loc, T_scale>::value>(
-          1.0 - cdf_log_n_tmp);
+  const auto& ccdf_n = to_ref_if<!is_constant_all<T_y, T_loc, T_scale>::value>(
+      1.0 - cdf_log_n_tmp);
   T_partials_return ccdf_log = sum(log(ccdf_n));
 
   if (!is_constant_all<T_y, T_loc, T_scale>::value) {

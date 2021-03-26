@@ -85,8 +85,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> logistic_lcdf(
   matrix_cl<double> sigma_deriv_cl;
 
   results(check_y_not_nan, check_mu_finite, check_sigma_positive_finite,
-          any_y_neg_inf_cl, P_cl, y_deriv_cl, mu_deriv_cl,
-          sigma_deriv_cl)
+          any_y_neg_inf_cl, P_cl, y_deriv_cl, mu_deriv_cl, sigma_deriv_cl)
       = expressions(y_not_nan_expr, mu_finite_expr, sigma_positive_finite_expr,
                     any_y_neg_inf, P_expr,
                     calc_if<!is_constant<T_y_cl>::value>(y_deriv),

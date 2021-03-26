@@ -56,9 +56,10 @@ TEST(ProbDistributionsGumbelLcdf, error_checking) {
                std::domain_error);
 }
 
-auto gumbel_lcdf_functor = [](const auto& y, const auto& mu, const auto& sigma) {
-  return stan::math::gumbel_lcdf(y, mu, sigma);
-};
+auto gumbel_lcdf_functor
+    = [](const auto& y, const auto& mu, const auto& sigma) {
+        return stan::math::gumbel_lcdf(y, mu, sigma);
+      };
 
 TEST(ProbDistributionsGumbelLcdf, opencl_matches_cpu_small) {
   int N = 3;

@@ -56,9 +56,10 @@ TEST(ProbDistributionsLogisticLcdf, error_checking) {
                std::domain_error);
 }
 
-auto logistic_lcdf_functor = [](const auto& y, const auto& mu, const auto& sigma) {
-  return stan::math::logistic_lcdf(y, mu, sigma);
-};
+auto logistic_lcdf_functor
+    = [](const auto& y, const auto& mu, const auto& sigma) {
+        return stan::math::logistic_lcdf(y, mu, sigma);
+      };
 
 TEST(ProbDistributionsLogisticLcdf, opencl_matches_cpu_small) {
   int N = 3;
@@ -120,8 +121,8 @@ TEST(ProbDistributionsLogisticLcdf, opencl_broadcast_mu) {
   Eigen::VectorXd sigma(N);
   sigma << 0.3, 0.8, 1.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(logistic_lcdf_functor, y,
-                                                         mu_scal, sigma);
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(logistic_lcdf_functor,
+                                                         y, mu_scal, sigma);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       logistic_lcdf_functor, y.transpose().eval(), mu_scal, sigma);
 }
@@ -135,8 +136,8 @@ TEST(ProbDistributionsLogisticLcdf, opencl_broadcast_sigma) {
   mu << 0.3, 0.8, 1.0;
   double sigma_scal = 12.3;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<2>(logistic_lcdf_functor, y,
-                                                         mu, sigma_scal);
+  stan::math::test::test_opencl_broadcasting_prim_rev<2>(logistic_lcdf_functor,
+                                                         y, mu, sigma_scal);
   stan::math::test::test_opencl_broadcasting_prim_rev<2>(
       logistic_lcdf_functor, y.transpose().eval(), mu, sigma_scal);
 }
