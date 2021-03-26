@@ -6,40 +6,37 @@
 #include <test/unit/math/rev/functor/test_fixture_ode_sho.hpp>
 #include <test/unit/math/rev/functor/ode_test_functors.hpp>
 
+#include <boost/preprocessor/seq/for_each_product.hpp>
+#include <boost/preprocessor/seq/to_tuple.hpp>
+#include <boost/preprocessor/tuple/to_seq.hpp>
+#include <boost/preprocessor/tuple/enum.hpp>
+#include <boost/preprocessor/tuple/elem.hpp>
+#include <boost/preprocessor/seq/for_each.hpp>
+#include <boost/preprocessor/seq/enum.hpp>
+#include <boost/preprocessor/seq/elem.hpp>
+
+#define TEST_TYPE(R,SEQ_X) \
+  std::tuple<BOOST_PP_TUPLE_ELEM(3,0,BOOST_PP_SEQ_TO_TUPLE(SEQ_X)),     \
+             BOOST_PP_TUPLE_ELEM(3,0,BOOST_PP_SEQ_TO_TUPLE(SEQ_X)),     \
+             double,                                                    \
+             BOOST_PP_TUPLE_ELEM(3, 1, BOOST_PP_SEQ_TO_TUPLE(SEQ_X)),   \
+             BOOST_PP_TUPLE_ELEM(3, 2, BOOST_PP_SEQ_TO_TUPLE(SEQ_X))>,
+   
+#define TEST_TYPE_PRODUCT(TUP_SOLVER,TUP_TY,TUP_TP)             \
+  BOOST_PP_SEQ_FOR_EACH_PRODUCT (  \
+    TEST_TYPE, \
+     (BOOST_PP_TUPLE_TO_SEQ(TUP_SOLVER)) \
+     (BOOST_PP_TUPLE_TO_SEQ(TUP_TY)) \
+     (BOOST_PP_TUPLE_TO_SEQ(TUP_TP)) \
+   )
+
+#define FUNCTOR_TYPES (ode_ckrk_functor, ode_rk45_functor, ode_bdf_functor, ode_adams_functor)
+#define TY_TYPES (double, stan::math::var, stan::math::var_value<double>)
+#define TP_TYPES (double, stan::math::var, stan::math::var_value<double>)
+
 using harmonic_oscillator_test_types = ::testing::Types<
-    std::tuple<ode_rk45_functor, ode_rk45_functor, double, double, double>,
-    std::tuple<ode_ckrk_functor, ode_ckrk_functor, double, double, double>,
-    std::tuple<ode_bdf_functor, ode_bdf_functor, double, double, double>,
-    std::tuple<ode_adams_functor, ode_adams_functor, double, double, double>,
-  std::tuple<ode_adjoint_functor, ode_adjoint_functor, double, double, double>,
-    std::tuple<ode_rk45_functor, ode_rk45_functor, double,  stan::math::var_value<double, void>,
-               double>,
-    std::tuple<ode_ckrk_functor, ode_ckrk_functor, double,  stan::math::var_value<double, void>,
-               double>,
-    std::tuple<ode_bdf_functor, ode_bdf_functor, double,  stan::math::var_value<double, void>,
-               double>,
-    std::tuple<ode_adams_functor, ode_adams_functor, double,  stan::math::var_value<double, void>,
-               double>,
-    std::tuple<ode_adjoint_functor, ode_adjoint_functor, double,  stan::math::var_value<double, void>,
-               double>,
-    std::tuple<ode_rk45_functor, ode_rk45_functor, double, double,
-                stan::math::var_value<double, void>>,
-    std::tuple<ode_ckrk_functor, ode_ckrk_functor, double, double,
-                stan::math::var_value<double, void>>,
-    std::tuple<ode_bdf_functor, ode_bdf_functor, double, double,
-                stan::math::var_value<double, void>>,
-    std::tuple<ode_adams_functor, ode_adams_functor, double, double,
-                stan::math::var_value<double, void>>,
-    std::tuple<ode_adjoint_functor, ode_adjoint_functor, double, double,
-                stan::math::var_value<double, void>>,
-    std::tuple<ode_rk45_functor, ode_rk45_functor, double,  stan::math::var_value<double, void>,
-                stan::math::var_value<double, void>>,
-    std::tuple<ode_ckrk_functor, ode_ckrk_functor, double,  stan::math::var_value<double, void>,
-                stan::math::var_value<double, void>>,
-    std::tuple<ode_bdf_functor, ode_bdf_functor, double,  stan::math::var_value<double, void>, stan::math::var_value<double, void>>,
-    std::tuple<ode_adams_functor, ode_adams_functor, double, stan::math::var_value<double, void>, stan::math::var_value<double, void>>,
-  std::tuple<ode_adjoint_functor, ode_adjoint_functor, double, stan::math::var,
-               stan::math::var>>;
+  TEST_TYPE_PRODUCT(FUNCTOR_TYPES, TY_TYPES, TP_TYPES)
+  std::tuple<ode_rk45_functor, ode_rk45_functor, double, stan::math::var_value<double>, stan::math::var_value<double>>>;
 
 TYPED_TEST_SUITE_P(harmonic_oscillator_analytical_test);
 TYPED_TEST_P(harmonic_oscillator_analytical_test, dv) {
