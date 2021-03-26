@@ -55,10 +55,10 @@ return_type_t<T_y_cl, T_shape_cl, T_scale_cl> frechet_cdf(
 
   auto check_y_positive
       = check_cl(function, "Random variable", y_val, "positive");
-  auto y_positive = y_val>0;
+  auto y_positive = y_val > 0;
   auto check_alpha_positive_finite
       = check_cl(function, "Shape parameter", alpha_val, "positive finite");
-  auto alpha_positive_finite_expr = alpha_val>0 && isfinite(alpha_val);
+  auto alpha_positive_finite_expr = alpha_val > 0 && isfinite(alpha_val);
   auto check_sigma_positive_finite
       = check_cl(function, "Scale parameter", sigma_val, "positive finite");
   auto sigma_positive_finite_expr = 0 < sigma_val && isfinite(sigma_val);
@@ -67,8 +67,8 @@ return_type_t<T_y_cl, T_shape_cl, T_scale_cl> frechet_cdf(
   auto cdf_n = exp(-pow_n);
   auto cdf_expr = colwise_prod(cdf_n);
 
-  auto pow_n_alpha =elt_multiply(pow_n, alpha_val);
-  auto y_deriv_tmp =elt_divide(pow_n_alpha, y_val);
+  auto pow_n_alpha = elt_multiply(pow_n, alpha_val);
+  auto y_deriv_tmp = elt_divide(pow_n_alpha, y_val);
   auto alpha_deriv_tmp = elt_multiply(pow_n, log(elt_divide(y_val, sigma_val)));
   auto sigma_deriv_tmp = elt_divide(pow_n_alpha, -sigma_val);
 
@@ -77,14 +77,14 @@ return_type_t<T_y_cl, T_shape_cl, T_scale_cl> frechet_cdf(
   matrix_cl<double> alpha_deriv_cl;
   matrix_cl<double> sigma_deriv_cl;
 
-  results(check_y_positive, check_alpha_positive_finite, check_sigma_positive_finite,
-          cdf_cl, y_deriv_cl, alpha_deriv_cl, sigma_deriv_cl)
-      = expressions(
-          y_positive, alpha_positive_finite_expr, sigma_positive_finite_expr,
-          cdf_expr,
-        calc_if<!is_constant<T_y_cl>::value>(y_deriv_tmp),
-        calc_if<!is_constant<T_shape_cl>::value>(alpha_deriv_tmp),
-          calc_if<!is_constant<T_scale_cl>::value>(sigma_deriv_tmp));
+  results(check_y_positive, check_alpha_positive_finite,
+          check_sigma_positive_finite, cdf_cl, y_deriv_cl, alpha_deriv_cl,
+          sigma_deriv_cl)
+      = expressions(y_positive, alpha_positive_finite_expr,
+                    sigma_positive_finite_expr, cdf_expr,
+                    calc_if<!is_constant<T_y_cl>::value>(y_deriv_tmp),
+                    calc_if<!is_constant<T_shape_cl>::value>(alpha_deriv_tmp),
+                    calc_if<!is_constant<T_scale_cl>::value>(sigma_deriv_tmp));
 
   T_partials_return cdf = (from_matrix_cl(cdf_cl)).prod();
 
@@ -97,7 +97,8 @@ return_type_t<T_y_cl, T_shape_cl, T_scale_cl> frechet_cdf(
                     calc_if<!is_constant<T_y_cl>::value>(y_deriv),
                     calc_if<!is_constant<T_scale_cl>::value>(sigma_deriv));
 
-  operands_and_partials<decltype(y_col), decltype(alpha_col), decltype(sigma_col)>
+  operands_and_partials<decltype(y_col), decltype(alpha_col),
+                        decltype(sigma_col)>
       ops_partials(y_col, alpha_col, sigma_col);
 
   if (!is_constant<T_y_cl>::value) {

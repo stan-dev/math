@@ -56,9 +56,10 @@ TEST(ProbDistributionsFrechetCdf, error_checking) {
                std::domain_error);
 }
 
-auto frechet_cdf_functor = [](const auto& y, const auto& alpha, const auto& sigma) {
-  return stan::math::frechet_cdf(y, alpha, sigma);
-};
+auto frechet_cdf_functor
+    = [](const auto& y, const auto& alpha, const auto& sigma) {
+        return stan::math::frechet_cdf(y, alpha, sigma);
+      };
 
 TEST(ProbDistributionsFrechetCdf, opencl_matches_cpu_small) {
   int N = 3;

@@ -56,9 +56,10 @@ TEST(ProbDistributionsFrechetLcdf, error_checking) {
                std::domain_error);
 }
 
-auto frechet_lcdf_functor = [](const auto& y, const auto& alpha, const auto& sigma) {
-  return stan::math::frechet_lcdf(y, alpha, sigma);
-};
+auto frechet_lcdf_functor
+    = [](const auto& y, const auto& alpha, const auto& sigma) {
+        return stan::math::frechet_lcdf(y, alpha, sigma);
+      };
 
 TEST(ProbDistributionsFrechetLcdf, opencl_matches_cpu_small) {
   int N = 3;
@@ -102,8 +103,8 @@ TEST(ProbDistributionsFrechetLcdf, opencl_broadcast_alpha) {
   Eigen::VectorXd sigma(N);
   sigma << 0.3, 0.8, 1.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(frechet_lcdf_functor, y,
-                                                         alpha_scal, sigma);
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(frechet_lcdf_functor,
+                                                         y, alpha_scal, sigma);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       frechet_lcdf_functor, y.transpose().eval(), alpha_scal, sigma);
 }
@@ -117,8 +118,8 @@ TEST(ProbDistributionsFrechetLcdf, opencl_broadcast_sigma) {
   alpha << 0.3, 0.8, 1.0;
   double sigma_scal = 12.3;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<2>(frechet_lcdf_functor, y,
-                                                         alpha, sigma_scal);
+  stan::math::test::test_opencl_broadcasting_prim_rev<2>(frechet_lcdf_functor,
+                                                         y, alpha, sigma_scal);
   stan::math::test::test_opencl_broadcasting_prim_rev<2>(
       frechet_lcdf_functor, y.transpose().eval(), alpha, sigma_scal);
 }

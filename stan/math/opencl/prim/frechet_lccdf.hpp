@@ -69,7 +69,8 @@ return_type_t<T_y_cl, T_shape_cl, T_scale_cl> frechet_lccdf(
 
   auto rep_deriv = elt_divide(pow_n, elt_divide(1.0, exp_n - 1.0));
   auto y_deriv = elt_multiply(elt_divide(-alpha_val, y_val), rep_deriv);
-  auto alpha_deriv = elt_multiply(-log(elt_divide(y_val, sigma_val)), rep_deriv);
+  auto alpha_deriv
+      = elt_multiply(-log(elt_divide(y_val, sigma_val)), rep_deriv);
   auto sigma_deriv = elt_multiply(elt_divide(alpha_val, sigma_val), rep_deriv);
 
   matrix_cl<double> lccdf_cl;
