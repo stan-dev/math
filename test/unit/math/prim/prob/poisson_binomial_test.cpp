@@ -5,6 +5,27 @@
 #include <limits>
 #include <vector>
 
+TEST(ProbDistributionsPoissonBinomial, lpmf_length_0_length_1) {
+  Eigen::VectorXd v0(0);
+  Eigen::VectorXd v1(1);
+  v1 << 0.4;
+
+  EXPECT_FLOAT_EQ(stan::math::poisson_binomial_lpmf(0, v0), 0.0);
+  EXPECT_FLOAT_EQ(stan::math::poisson_binomial_lpmf(1, v1), std::log(0.4));
+}
+
+TEST(ProbDistributionsPoissonBinomial, lpmf_length_0_length_1_vectorial_y) {
+  Eigen::VectorXd v0(0);
+  Eigen::VectorXd v1(1);
+  v1 << 0.4;
+
+  std::vector<int> y0{0, 0};
+  std::vector<int> y1{1, 1};
+
+  EXPECT_FLOAT_EQ(stan::math::poisson_binomial_lpmf(y0, v0), 0.0);
+  EXPECT_FLOAT_EQ(stan::math::poisson_binomial_lpmf(y1, v1), std::log(0.4) * 2);
+}
+
 TEST(ProbDistributionsPoissonBinomial, lpmf_works_on_scalar_arguments) {
   using stan::math::poisson_binomial_lpmf;
   using vec = Eigen::Matrix<double, Eigen::Dynamic, 1>;
@@ -12,10 +33,10 @@ TEST(ProbDistributionsPoissonBinomial, lpmf_works_on_scalar_arguments) {
   vec p(3, 1);
   p << 0.5, 0.2, 0.7;
 
-  EXPECT_NEAR(-2.12026, poisson_binomial_lpmf(0, p), 0.001);
-  EXPECT_NEAR(-0.84397, poisson_binomial_lpmf(1, p), 0.001);
-  EXPECT_NEAR(-0.967584, poisson_binomial_lpmf(2, p), 0.001);
-  EXPECT_NEAR(-2.65926, poisson_binomial_lpmf(3, p), 0.001);
+  EXPECT_NEAR(-2.12026, poisson_binomial_lpmf(0, p), 1e-5);
+  EXPECT_NEAR(-0.84397, poisson_binomial_lpmf(1, p), 1e-5);
+  EXPECT_NEAR(-0.967584, poisson_binomial_lpmf(2, p), 1e-6);
+  EXPECT_NEAR(-2.65926, poisson_binomial_lpmf(3, p), 1e-5);
 }
 
 TEST(ProbDistributionsPoissonBinomial, lpmf_works_on_vectorial_y) {
@@ -26,7 +47,7 @@ TEST(ProbDistributionsPoissonBinomial, lpmf_works_on_vectorial_y) {
   p << 0.5, 0.2, 0.7;
   std::vector<int> y{2, 2};
 
-  EXPECT_NEAR(-0.967584 * 2, poisson_binomial_lpmf(y, p), 0.001);
+  EXPECT_NEAR(-0.967584 * 2, poisson_binomial_lpmf(y, p), 1e-6);
 }
 
 TEST(ProbDistributionsPoissonBinomial, lpmf_works_on_vectorial_y_and_theta) {
@@ -38,7 +59,33 @@ TEST(ProbDistributionsPoissonBinomial, lpmf_works_on_vectorial_y_and_theta) {
   std::vector<int> y{2, 0};
   std::vector<vec> ps{p, p};
 
-  EXPECT_NEAR(-0.967584 - 2.12026, poisson_binomial_lpmf(y, ps), 0.001);
+  EXPECT_NEAR(-0.967584 - 2.12026, poisson_binomial_lpmf(y, ps), 1e-5);
+}
+
+TEST(ProbDistributionsPoissonBinomial,
+     lpmf_works_on_scalar_y_and_vectorial_theta) {
+  using stan::math::poisson_binomial_lpmf;
+  using vec = Eigen::Matrix<double, Eigen::Dynamic, 1>;
+
+  vec p(3, 1);
+  p << 0.5, 0.2, 0.7;
+  int y = 2;
+  std::vector<vec> ps{p};
+
+  EXPECT_NEAR(-0.967584, poisson_binomial_lpmf(y, ps), 1e-6);
+}
+
+TEST(ProbDistributionsPoissonBinomial,
+     lpmf_works_on_scalar_y_and_vectorial_theta2) {
+  using stan::math::poisson_binomial_lpmf;
+  using vec = Eigen::Matrix<double, Eigen::Dynamic, 1>;
+
+  vec p(3, 1);
+  p << 0.5, 0.2, 0.7;
+  int y = 2;
+  std::vector<vec> ps{p, p};
+
+  EXPECT_NEAR(-0.967584 * 2.0, poisson_binomial_lpmf(y, ps), 1e-6);
 }
 
 TEST(ProbDistributionsPoissonBinomial, lpmf_check_error_scalar_y_oob) {

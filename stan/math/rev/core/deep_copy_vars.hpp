@@ -20,7 +20,7 @@ namespace math {
  *  Otherwise it will be moved.
  */
 template <typename Arith, typename = require_arithmetic_t<scalar_type_t<Arith>>>
-inline decltype(auto) deep_copy_vars(Arith&& arg) {
+inline Arith deep_copy_vars(Arith&& arg) {
   return std::forward<Arith>(arg);
 }
 

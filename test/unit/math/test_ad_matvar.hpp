@@ -86,6 +86,13 @@ void expect_near_rel_matvar(const std::string& message, T1&& x, T2&& y,
                   stan::math::value_of(y), tols.gradient_val_);
 }
 
+namespace internal {
+template <size_t... Idx>
+inline constexpr auto make_tuple_seq(std::index_sequence<Idx...> idxs) {
+  return std::make_tuple(Idx...);
+}
+}  // namespace internal
+
 /**
  * Overload for tuples of arguments. This recursively calls
  * `expect_near_rel_matvar` on each input pair
@@ -105,7 +112,8 @@ void expect_near_rel_matvar(const std::string& message,
   if (!(sizeof...(T1) == sizeof...(T2))) {
     FAIL() << "The number of arguments in each tuple must match";
   }
-
+  constexpr auto idxs = internal::make_tuple_seq(
+      std::make_index_sequence<std::tuple_size<std::tuple<T1...>>::value>{});
   stan::math::for_each(
       [&message, &tols](const auto& x, const auto& y, const auto& i) {
         expect_near_rel_matvar(
@@ -113,7 +121,7 @@ void expect_near_rel_matvar(const std::string& message,
                 + std::to_string(i + stan::error_index::value),
             x, y, tols);
       },
-      x, y);
+      x, y, idxs);
 }
 ///@}
 
@@ -251,129 +259,114 @@ inline void test_matvar_gradient(const ad_tolerances& tols, ResultMV& A_mv_ret,
   }
 }
 
-/**
- * Check that if at least one of the input types is a var with inner
- * Eigen type that the output is not an Eigen matrix of vars.
- *
- * Similarly check that if none of the inputs are vars with inner type
- * Eigen that the output is not a var with inner Eigen type.
- *
- * @tparam ReturnType Type of result of calculation
- * @tparam Types Types of input arguments
- * @param ret not used, only types are used.
- * @param x not used, only types are used.
+/** @name make_matvar_compatible
+ * Make the input be matvar compatible with the
+ * same scalar type as T.
  */
-template <typename ReturnType, typename... Types,
-          require_all_not_std_vector_t<ReturnType, Types...>* = nullptr,
-          require_any_matrix_t<Types...>* = nullptr>
-void check_return_type(const ReturnType& ret, const Types&... x) {
-  using stan::is_eigen;
-  using stan::is_var_matrix;
-  using stan::math::var_value;
-  using stan::math::test::type_name;
-  if (stan::math::conjunction<is_eigen<Types>...>::value
-      && !(is_eigen<ReturnType>::value
-           || std::is_same<ReturnType, var_value<double>>::value)) {
-    FAIL() << "All the arguments are `Eigen::Matrix<T, R, C>` types, but the "
-              "return type is neither an `Eigen::Matrix<T, R2, C2>` or a `var`";
-  } else if (stan::math::disjunction<is_var_matrix<Types>...>::value
-             && !(is_var_matrix<ReturnType>::value
-                  || std::is_same<ReturnType, var_value<double>>::value)) {
-    FAIL() << "One of the arguments is a `var_value<Eigen::Matrix<double, R, "
-              "C>>`, but the return type is not a `var_value<T>`";
-  }
+///@{
+/**
+ * The scalar type of T is artithmetic, so just pass the input through.
+ *
+ * @tparam T Target type
+ * @tparam S Argument type
+ * @param x argument
+ * @return x
+ */
+template <typename T, typename S, require_all_st_arithmetic<T, S>* = nullptr>
+auto make_matvar_compatible(const S& x) {
+  return x;
 }
 
 /**
- * Check that if the input type is a `std::vector` of vars with inner
- * Eigen type that the output is not a `std::vector` of Eigen matrices of vars.
+ * The scalar type of T is var here, so make a copy of
+ * x with scalar type promoted to var.
  *
- * Similarly check that if the input is a `std::vector` of Eigen matrices of
- * vars that the output is not a `std::vector` of vars with inner Eigen type.
- *
- * @tparam ReturnType Element types of result of calculation
- * @tparam Types Element types of calculation input
- * @param ret not used, only types are used.
- * @param x not used, only types are used.
+ * @tparam T Target type
+ * @tparam S Argument type
+ * @param x argument
+ * @return x with scalars promoted to var
  */
-template <typename ReturnType, typename Type, require_matrix_t<Type>* = nullptr>
-void check_return_type(const std::vector<ReturnType>& ret,
-                       const std::vector<Type>& x) {
-  check_return_type(ReturnType(), Type());
+template <typename T, typename S, require_st_var<T>* = nullptr,
+          require_st_arithmetic<S>* = nullptr>
+auto make_matvar_compatible(const S& x) {
+  return stan::math::promote_scalar_t<stan::math::var, S>(x);
 }
 
 /**
- * For a function that accepts a `std::vector` of matrices,
- * check that calculations with Eigen matrices of vars and vars with
- * inner Eigen type return the same values and adjoints.
+ * The scalar type of T is var here, so make a copy of
+ * x with scalar type promoted to var.
  *
- * Functions are expected to either both throw, or both not throw for a given
- * input. The exception types are not checked.
- *
- * Functions must not return Eigen matrices of vars if the input arguments
- * contain vars with inner Eigen type. Similarly they must not return vars with
- * inner type Eigen if the input contains no vars with inner Eigen type.
- *
- * @tparam F Type of function to test
- * @tparam EigMats Types of input values
- * @param tols Test tolerance
- * @param f Function to test
- * @param x Input values to test function at
+ * @tparam T Target type
+ * @tparam S Argument type
+ * @param x argument
+ * @return x with scalars promoted to var
  */
-template <typename F, typename EigMat, require_eigen_t<EigMat>* = nullptr>
-void expect_ad_matvar_v(const ad_tolerances& tols, const F& f,
-                        const std::vector<EigMat>& x) {
-  using stan::plain_type_t;
-  using stan::math::promote_scalar_t;
-  using stan::math::var;
-  using stan::math::var_value;
-  using stan::math::test::type_name;
-  using vec_mat_var = std::vector<promote_scalar_t<var, EigMat>>;
-  using vec_var_mat = std::vector<var_value<plain_type_t<EigMat>>>;
+template <typename T, typename S, require_st_var<T>* = nullptr,
+          require_st_arithmetic<S>* = nullptr>
+auto make_matvar_compatible(const std::vector<S>& x) {
+  using vec_mat_var
+      = std::vector<stan::math::promote_scalar_t<stan::math::var, S>>;
   vec_mat_var A_vec_mv;
   for (auto xi : x) {
     A_vec_mv.push_back(xi);
   }
-  plain_type_t<decltype(f(A_vec_mv))> A_mv_ret;
+  return A_vec_mv;
+}
+///@}
+
+/** @name make_matvar_compatible
+ * Make input to varmat compatible if T is a varmat
+ * type, otherwise make it be matvar compatible.
+ */
+///@{
+/**
+ * T is not a varmat, so just pass the input through to
+ * convert to matvar.
+ *
+ * @tparam T Target type
+ * @tparam S Argument type
+ * @param x argument
+ * @return x
+ */
+template <typename T, typename S, require_not_var_matrix_t<T>* = nullptr,
+          require_st_arithmetic<S>* = nullptr>
+auto make_varmat_compatible(const S& x) {
+  return make_matvar_compatible<T>(x);
+}
+
+/**
+ * T is a varmat, so convert x to be a varmat.
+ *
+ * @tparam T Target type
+ * @tparam S Argument type
+ * @param x argument
+ * @return x as a varmat
+ */
+template <typename T, typename S, require_var_matrix_t<T>* = nullptr,
+          require_st_arithmetic<S>* = nullptr>
+auto make_varmat_compatible(const S& x) {
+  return stan::math::var_value<plain_type_t<S>>(x);
+}
+
+/**
+ * T is a varmat, so convert x to be a varmat.
+ *
+ * @tparam T Target type
+ * @tparam S Argument type
+ * @param x argument
+ * @return x as a varmat
+ */
+template <typename T, typename S, require_var_matrix_t<T>* = nullptr,
+          require_st_arithmetic<S>* = nullptr>
+auto make_varmat_compatible(const std::vector<S>& x) {
+  using vec_var_mat = std::vector<stan::math::var_value<plain_type_t<S>>>;
   vec_var_mat A_vec_vm;
   for (auto xi : x) {
     A_vec_vm.push_back(xi);
   }
-  plain_type_t<decltype(f(A_vec_vm))> A_vm_ret;
-  // Check return type is correct
-  check_return_type(A_mv_ret, A_vec_mv);
-  check_return_type(A_vm_ret, A_vec_vm);
-  // If one throws, the other should throw as well
-  try {
-    A_mv_ret = f(A_vec_mv);
-  } catch (...) {
-    try {
-      f(A_vec_vm);
-      FAIL() << type_name<vec_mat_var>() << " throws, expected "
-             << type_name<vec_var_mat>() << " version to throw";
-    } catch (...) {
-      SUCCEED();
-      return;
-    }
-  }
-  try {
-    A_vm_ret = f(A_vec_vm);
-  } catch (...) {
-    try {
-      f(A_vec_mv);
-      FAIL() << type_name<vec_var_mat>() << " throws, expected "
-             << type_name<vec_mat_var>() << " version to throw";
-    } catch (...) {
-      SUCCEED();
-      return;
-    }
-  }
-
-  test_matvar_gradient(tols, A_mv_ret, A_vm_ret, std::make_tuple(A_vec_mv),
-                       std::make_tuple(A_vec_vm));
-
-  stan::math::recover_memory();
+  return A_vec_vm;
 }
+///@}
 
 /**
  * For a function that accepts between any number of scalar or matrix arguments,
@@ -397,28 +390,61 @@ void expect_ad_matvar_v(const ad_tolerances& tols, const F& f,
 template <typename... Types, typename F, typename... EigMats>
 void expect_ad_matvar_impl(const ad_tolerances& tols, const F& f,
                            const EigMats&... x) {
+  using stan::is_eigen;
   using stan::is_var;
+  using stan::is_var_matrix;
   using stan::plain_type_t;
   using stan::math::promote_scalar_t;
   using stan::math::var;
   using stan::math::var_value;
   using stan::math::test::type_name;
 
-  auto A_mv_tuple
-      = std::make_tuple(promote_scalar_t<scalar_type_t<Types>, EigMats>(x)...);
-  auto A_vm_tuple = std::make_tuple(
-      std::conditional_t<is_var<Types>::value,
-                         return_var_matrix_t<EigMats, Types>, EigMats>(x)...);
+  if (!stan::math::disjunction<is_var_matrix<Types>...>::value) {
+    FAIL() << "expect_ad_matvar requires at least one varmat input!"
+           << std::endl;
+  }
 
-  plain_type_t<decltype(stan::math::apply(f, A_mv_tuple))> A_mv_ret;
-  plain_type_t<decltype(stan::math::apply(f, A_vm_tuple))> A_vm_ret;
+  if (!stan::math::disjunction<is_var<scalar_type_t<Types>>...>::value) {
+    FAIL() << "expect_ad_matvar requires at least one autodiff input!"
+           << std::endl;
+  }
 
-  stan::math::apply(
-      [&](auto&&... args) { check_return_type(A_mv_ret, args...); },
-      A_mv_tuple);
-  stan::math::apply(
-      [&](auto&&... args) { check_return_type(A_vm_ret, args...); },
+  auto A_mv_tuple = std::make_tuple(make_matvar_compatible<Types>(x)...);
+  auto A_vm_tuple = std::make_tuple(make_varmat_compatible<Types>(x)...);
+
+  bool any_varmat = stan::math::apply(
+      [](const auto&... args) {
+        return stan::math::disjunction<is_var_matrix<decltype(args)>...>::value
+               || stan::math::disjunction<stan::math::conjunction<
+                      is_std_vector<decltype(args)>,
+                      is_var_matrix<value_type_t<decltype(args)>>>...>::value;
+      },
       A_vm_tuple);
+
+  if (!any_varmat) {
+    SUCCEED();  // If no varmats are created, skip this test
+    return;
+  }
+
+  using T_mv_ret = plain_type_t<decltype(stan::math::apply(f, A_mv_tuple))>;
+  using T_vm_ret = plain_type_t<decltype(stan::math::apply(f, A_vm_tuple))>;
+
+  T_mv_ret A_mv_ret;
+  T_vm_ret A_vm_ret;
+
+  if (is_var_matrix<T_mv_ret>::value
+      || (is_std_vector<T_mv_ret>::value
+          && is_var_matrix<value_type_t<T_mv_ret>>::value)) {
+    FAIL() << "A function with matvar inputs should not return "
+           << type_name<T_mv_ret>() << std::endl;
+  }
+
+  if (is_eigen<T_vm_ret>::value
+      || (is_std_vector<T_vm_ret>::value
+          && is_eigen<value_type_t<T_vm_ret>>::value)) {
+    FAIL() << "A function with varmat inputs should not return "
+           << type_name<T_vm_ret>() << std::endl;
+  }
 
   // If one throws, the other should throw as well
   try {
@@ -451,45 +477,9 @@ void expect_ad_matvar_impl(const ad_tolerances& tols, const F& f,
   stan::math::recover_memory();
 }
 
-/** @name expect_ad_matvar_std_vector
- * For a function that accepts a `std::vector` of matrix types, check
- * that calculations with Eigen matrices of vars and vars with
- * inner Eigen type return the same values and adjoints
- */
-///@{
-/**
- * Overload with manually specified tolerances
- *
- * @tparam F Type of function to test
- * @tparam EigVec Test input type
- * @param tols Test tolerances
- * @param f Function to test
- * @param x Test input
- */
-template <typename F, typename EigMat>
-void expect_ad_matvar(const ad_tolerances& tols, const F& f,
-                      const std::vector<EigMat>& x) {
-  expect_ad_matvar_v(tols, f, x);
-}
-
-/**
- * Overload with default tolerances
- *
- * @tparam F Type of function to test
- * @tparam EigVec Test input type
- * @param tols Test tolerances
- * @param f Function to test
- * @param x Test input
- */
-template <typename F, typename EigMat>
-void expect_ad_matvar(const F& f, const std::vector<EigMat>& x) {
-  ad_tolerances tols;
-  expect_ad_matvar(tols, f, x);
-}
-///@}
-
 /** @name expect_ad_matvar
- * For a function that accepts between one and three scalar or matrix arguments,
+ * For a function that accepts between one and four scalar, matrix, or
+ * `std::vector` arguments (the `std::vector` can contain scalars or matrices),
  * check that calculations with Eigen matrices of vars and vars with
  * inner Eigen type return the same values and adjoints.
  *

@@ -140,23 +140,19 @@ template <typename T, typename = require_arithmetic_t<T>>
 inline var pow(const var& base, T exponent) {
   if (exponent == 0.5) {
     return sqrt(base);
-  }
-  if (exponent == 1.0) {
+  } else if (exponent == 1.0) {
     return base;
-  }
-  if (exponent == 2.0) {
+  } else if (exponent == 2.0) {
     return square(base);
-  }
-  if (exponent == -2.0) {
+  } else if (exponent == -2.0) {
     return inv_square(base);
-  }
-  if (exponent == -1.0) {
+  } else if (exponent == -1.0) {
     return inv(base);
-  }
-  if (exponent == -0.5) {
+  } else if (exponent == -0.5) {
     return inv_sqrt(base);
+  } else {
+    return {new internal::pow_vd_vari(base.vi_, exponent)};
   }
-  return {new internal::pow_vd_vari(base.vi_, exponent)};
 }
 
 /**

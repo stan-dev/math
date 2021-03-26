@@ -8,7 +8,7 @@
 #include <test/unit/math/expect_near_rel.hpp>
 #include <string>
 
-static const std::string test_kernel_code = STRINGIFY(__kernel void test(
+static const std::string test_lbeta_kernel_code = STRINGIFY(__kernel void test(
     __global double *C, __global double *B, __global double *A) {
   const int i = get_global_id(0);
   C[i] = lbeta(A[i], B[i]);
@@ -22,7 +22,7 @@ const stan::math::opencl_kernels::kernel_cl<
           {stan::math::opencl_kernels::lgamma_stirling_device_function,
            stan::math::opencl_kernels::lgamma_stirling_diff_device_function,
            stan::math::opencl_kernels::lbeta_device_function,
-           test_kernel_code});
+           test_lbeta_kernel_code});
 
 TEST(MathMatrixCL, lbeta) {
   Eigen::VectorXd a = Eigen::VectorXd::Random(1000).array() * 15 + 30;
@@ -32,7 +32,7 @@ TEST(MathMatrixCL, lbeta) {
   stan::math::matrix_cl<double> b_cl(b);
   stan::math::matrix_cl<double> res_cl(1000, 1);
   lbeta(cl::NDRange(1000), res_cl, a_cl, b_cl);
-  Eigen::VectorXd res = stan::math::from_matrix_cl<-1, 1>(res_cl);
+  Eigen::VectorXd res = stan::math::from_matrix_cl<Eigen::VectorXd>(res_cl);
 
   EXPECT_NEAR_REL(res, stan::math::lbeta(a, b));
 }
@@ -48,7 +48,7 @@ TEST(MathMatrixCL, lbeta_edge_cases) {
   stan::math::matrix_cl<double> b_cl(b);
   stan::math::matrix_cl<double> res_cl(3, 1);
   lbeta(cl::NDRange(3), res_cl, a_cl, b_cl);
-  Eigen::VectorXd res = stan::math::from_matrix_cl<-1, 1>(res_cl);
+  Eigen::VectorXd res = stan::math::from_matrix_cl<Eigen::VectorXd>(res_cl);
 
   EXPECT_NEAR_REL(res, stan::math::lbeta(a, b));
 }

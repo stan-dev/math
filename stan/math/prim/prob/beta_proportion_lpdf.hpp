@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
@@ -68,23 +69,14 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
   T_mu_ref mu_ref = mu;
   T_kappa_ref kappa_ref = kappa;
 
-  const auto& y_col = as_column_vector_or_scalar(y_ref);
-  const auto& mu_col = as_column_vector_or_scalar(mu_ref);
-  const auto& kappa_col = as_column_vector_or_scalar(kappa_ref);
-
-  const auto& y_arr = as_array_or_scalar(y_col);
-  const auto& mu_arr = as_array_or_scalar(mu_col);
-  const auto& kappa_arr
-      = promote_scalar<T_partials_return_kappa>(as_array_or_scalar(kappa_col));
-
-  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
-  ref_type_t<decltype(value_of(mu_arr))> mu_val = value_of(mu_arr);
-  ref_type_t<decltype(value_of(kappa_arr))> kappa_val = value_of(kappa_arr);
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  decltype(auto) mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
+  decltype(auto) kappa_val = to_ref(as_value_column_array_or_scalar(kappa_ref));
 
   check_positive(function, "Location parameter", mu_val);
   check_less(function, "Location parameter", mu_val, 1.0);
   check_positive_finite(function, "Precision parameter", kappa_val);
-  check_bounded(function, "Random variable", y_val, 0, 1);
+  check_bounded(function, "Random variable", value_of(y_val), 0, 1);
 
   if (!include_summand<propto, T_y, T_loc, T_prec>::value) {
     return 0;

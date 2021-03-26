@@ -44,12 +44,30 @@ namespace math {
  * @return The corresponding unit normal cdf approximation.
  */
 inline var Phi_approx(const var& a) {
-  double av = a.vi_->val_;
-  double av_squared = av * av;
-  double av_cubed = av * av_squared;
-  double f = inv_logit(0.07056 * av_cubed + 1.5976 * av);
+  double av_squared = a.val() * a.val();
+  double f = inv_logit(0.07056 * a.val() * av_squared + 1.5976 * a.val());
   double da = f * (1 - f) * (3.0 * 0.07056 * av_squared + 1.5976);
-  return var(new precomp_v_vari(f, a.vi_, da));
+  return make_callback_var(
+      f, [a, da](auto& vi) mutable { a.adj() += vi.adj() * da; });
+}
+
+template <typename T, require_var_matrix_t<T>* = nullptr>
+inline auto Phi_approx(const T& a) {
+  arena_t<value_type_t<T>> f(a.rows(), a.cols());
+  arena_t<value_type_t<T>> da(a.rows(), a.cols());
+  for (Eigen::Index j = 0; j < a.cols(); ++j) {
+    for (Eigen::Index i = 0; i < a.rows(); ++i) {
+      const auto a_val = a.val().coeff(i, j);
+      const auto av_squared = a_val * a_val;
+      f.coeffRef(i, j) = inv_logit(0.07056 * a_val * av_squared
+                                   + 1.5976 * a.val().coeff(i, j));
+      da.coeffRef(i, j) = f.coeff(i, j) * (1 - f.coeff(i, j))
+                          * (3.0 * 0.07056 * av_squared + 1.5976);
+    }
+  }
+  return make_callback_var(f, [a, da](auto& vi) mutable {
+    a.adj().array() += vi.adj().array() * da.array();
+  });
 }
 
 }  // namespace math

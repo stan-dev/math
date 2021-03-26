@@ -8,6 +8,10 @@
 #include <string>
 #include <typeinfo>
 
+#ifdef STAN_OPENCL
+#include <stan/math/opencl/value_type.hpp>
+#endif
+
 namespace stan {
 namespace math {
 
@@ -27,6 +31,7 @@ template <typename Mat,
                         is_prim_or_rev_kernel_expression<Mat>>* = nullptr>
 inline void check_vector(const char* function, const char* name, const Mat& x) {
   if (!(x.rows() == 1 || x.cols() == 1)) {
+    STAN_NO_RANGE_CHECKS_RETURN;
     [&]() STAN_COLD_PATH {
       std::ostringstream msg;
       msg << ") has " << x.rows() << " rows and " << x.cols()

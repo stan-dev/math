@@ -100,6 +100,12 @@ TEST(ProbDistributionsBetaBinomial, opencl_matches_cpu_small) {
                                                 N, alpha, beta);
   stan::math::test::compare_cpu_opencl_prim_rev(
       beta_binomial_lpmf_functor_propto, n, N, alpha, beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(beta_binomial_lpmf_functor, n,
+                                                N, alpha.transpose().eval(),
+                                                beta.transpose().eval());
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      beta_binomial_lpmf_functor_propto, n, N, alpha.transpose().eval(),
+      beta.transpose().eval());
 }
 
 TEST(ProbDistributionsBetaBinomial, opencl_broadcast_n) {
@@ -116,6 +122,12 @@ TEST(ProbDistributionsBetaBinomial, opencl_broadcast_n) {
       beta_binomial_lpmf_functor, n, N, alpha, beta);
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       beta_binomial_lpmf_functor_propto, n, N, alpha, beta);
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
+      beta_binomial_lpmf_functor, n, N, alpha.transpose().eval(),
+      beta.transpose().eval());
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
+      beta_binomial_lpmf_functor_propto, n, N, alpha.transpose().eval(),
+      beta.transpose().eval());
 }
 
 TEST(ProbDistributionsBetaBinomial, opencl_broadcast_N) {
@@ -132,6 +144,12 @@ TEST(ProbDistributionsBetaBinomial, opencl_broadcast_N) {
       beta_binomial_lpmf_functor, n, N, alpha, beta);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       beta_binomial_lpmf_functor_propto, n, N, alpha, beta);
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
+      beta_binomial_lpmf_functor, n, N, alpha.transpose().eval(),
+      beta.transpose().eval());
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
+      beta_binomial_lpmf_functor_propto, n, N, alpha.transpose().eval(),
+      beta.transpose().eval());
 }
 
 TEST(ProbDistributionsBetaBinomial, opencl_broadcast_alpha) {
@@ -147,6 +165,10 @@ TEST(ProbDistributionsBetaBinomial, opencl_broadcast_alpha) {
       beta_binomial_lpmf_functor, n, N, alpha, beta);
   stan::math::test::test_opencl_broadcasting_prim_rev<2>(
       beta_binomial_lpmf_functor_propto, n, N, alpha, beta);
+  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
+      beta_binomial_lpmf_functor, n, N, alpha, beta.transpose().eval());
+  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
+      beta_binomial_lpmf_functor_propto, n, N, alpha, beta.transpose().eval());
 }
 
 TEST(ProbDistributionsBetaBinomial, opencl_broadcast_beta) {
@@ -161,6 +183,10 @@ TEST(ProbDistributionsBetaBinomial, opencl_broadcast_beta) {
       beta_binomial_lpmf_functor, n, N, alpha, beta);
   stan::math::test::test_opencl_broadcasting_prim_rev<3>(
       beta_binomial_lpmf_functor_propto, n, N, alpha, beta);
+  stan::math::test::test_opencl_broadcasting_prim_rev<3>(
+      beta_binomial_lpmf_functor, n, N, alpha.transpose().eval(), beta);
+  stan::math::test::test_opencl_broadcasting_prim_rev<3>(
+      beta_binomial_lpmf_functor_propto, n, N, alpha.transpose().eval(), beta);
 }
 
 TEST(ProbDistributionsBetaBinomial, opencl_matches_cpu_big) {
@@ -182,6 +208,12 @@ TEST(ProbDistributionsBetaBinomial, opencl_matches_cpu_big) {
                                                 N, alpha, beta);
   stan::math::test::compare_cpu_opencl_prim_rev(
       beta_binomial_lpmf_functor_propto, n, N, alpha, beta);
+  stan::math::test::compare_cpu_opencl_prim_rev(beta_binomial_lpmf_functor, n,
+                                                N, alpha.transpose().eval(),
+                                                beta.transpose().eval());
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      beta_binomial_lpmf_functor_propto, n, N, alpha.transpose().eval(),
+      beta.transpose().eval());
 }
 
 #endif

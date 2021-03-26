@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
@@ -30,14 +31,8 @@ return_type_t<T_y, T_scale> rayleigh_lcdf(const T_y& y, const T_scale& sigma) {
   T_y_ref y_ref = y;
   T_sigma_ref sigma_ref = sigma;
 
-  const auto& y_col = as_column_vector_or_scalar(y_ref);
-  const auto& sigma_col = as_column_vector_or_scalar(sigma_ref);
-
-  const auto& y_arr = as_array_or_scalar(y_col);
-  const auto& sigma_arr = as_array_or_scalar(sigma_col);
-
-  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
-  ref_type_t<decltype(value_of(sigma_arr))> sigma_val = value_of(sigma_arr);
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  decltype(auto) sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
 
   check_nonnegative(function, "Random variable", y_val);
   check_positive(function, "Scale parameter", sigma_val);
@@ -59,7 +54,7 @@ return_type_t<T_y, T_scale> rayleigh_lcdf(const T_y& y, const T_scale& sigma) {
   T_partials_return cdf_log = sum(log1m(exp_val));
 
   if (!is_constant_all<T_y, T_scale>::value) {
-    const auto& common_deriv = y_div_sigma_square * exp_val / (1 - exp_val);
+    auto common_deriv = y_div_sigma_square * exp_val / (1 - exp_val);
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge2_.partials_ = -y_val * inv_sigma * common_deriv;
     }

@@ -39,7 +39,8 @@ namespace math {
  * @param[in] x vector to transform
  * @return log unit simplex result of the softmax transform of the vector.
  */
-template <typename Container, require_st_arithmetic<Container>* = nullptr>
+template <typename Container, require_st_arithmetic<Container>* = nullptr,
+          require_container_t<Container>* = nullptr>
 inline auto log_softmax(const Container& x) {
   check_nonzero_size("log_softmax", "v", x);
   return make_holder(

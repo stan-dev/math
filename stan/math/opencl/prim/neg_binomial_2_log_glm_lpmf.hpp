@@ -149,7 +149,7 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
     check_opencl_error(function, e);
   }
 
-  T_partials_return logp = sum(from_matrix_cl<Dynamic, 1>(logp_cl));
+  T_partials_return logp = sum(from_matrix_cl(logp_cl));
   if (!std::isfinite(logp)) {
     results(
         check_cl(function, "Vector of dependent variables", y_val,
@@ -188,14 +188,13 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
     // transposition of a vector can be done without copying
     const matrix_cl<double> theta_derivative_transpose_cl(
         theta_derivative_cl.buffer(), 1, theta_derivative_cl.rows());
-    matrix_cl<double>& edge3_partials
-        = forward_as<matrix_cl<double>&>(ops_partials.edge3_.partials_);
     matrix_cl<double> edge3_partials_transpose_cl
         = theta_derivative_transpose_cl * x_val;
-    edge3_partials = matrix_cl<double>(edge3_partials_transpose_cl.buffer(),
-                                       edge3_partials_transpose_cl.cols(), 1);
+    ops_partials.edge3_.partials_
+        = matrix_cl<double>(edge3_partials_transpose_cl.buffer(),
+                            edge3_partials_transpose_cl.cols(), 1);
     if (beta_val.rows() != 0) {
-      edge3_partials.add_write_event(
+      ops_partials.edge3_.partials_.add_write_event(
           edge3_partials_transpose_cl.write_events().back());
     }
   }
@@ -205,7 +204,7 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
     } else {
       forward_as<internal::broadcast_array<double>>(
           ops_partials.edge2_.partials_)[0]
-          = sum(from_matrix_cl<Dynamic, 1>(theta_derivative_sum_cl));
+          = sum(from_matrix_cl(theta_derivative_sum_cl));
     }
   }
   if (!is_constant_all<T_phi_cl>::value) {
@@ -214,7 +213,7 @@ neg_binomial_2_log_glm_lpmf(const T_y_cl& y, const T_x_cl& x,
     } else {
       forward_as<internal::broadcast_array<double>>(
           ops_partials.edge4_.partials_)[0]
-          = sum(from_matrix_cl<Dynamic, 1>(phi_derivative_cl));
+          = sum(from_matrix_cl(phi_derivative_cl));
     }
   }
   return ops_partials.build(logp);
