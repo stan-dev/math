@@ -140,6 +140,9 @@
 #include <stan/math/opencl/prim/exponential_lccdf.hpp>
 #include <stan/math/opencl/prim/exponential_lcdf.hpp>
 #include <stan/math/opencl/prim/exponential_lpdf.hpp>
+#include <stan/math/opencl/prim/frechet_cdf.hpp>
+#include <stan/math/opencl/prim/frechet_lccdf.hpp>
+#include <stan/math/opencl/prim/frechet_lcdf.hpp>
 #include <stan/math/opencl/prim/frechet_lpdf.hpp>
 #include <stan/math/opencl/prim/gamma_lpdf.hpp>
 #include <stan/math/opencl/prim/gp_exp_quad_cov.hpp>
