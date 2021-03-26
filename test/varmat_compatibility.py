@@ -6,6 +6,7 @@ from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 import os
 import Queue
 import subprocess
+import re
 import sys
 import tempfile
 import threading
@@ -47,7 +48,7 @@ def build_signature(prefix, cpp_code):
     :param prefix: Prefix to give file names so easier to debug
     :param cpp_code: Code to build
     """
-    f = tempfile.NamedTemporaryFile("w", dir = WORKING_FOLDER, prefix = prefix, suffix = "_test.cpp", delete = False)
+    f = tempfile.NamedTemporaryFile("w", dir = WORKING_FOLDER, prefix = prefix + "_", suffix = "_test.cpp", delete = False)
     f.write("#include <test/expressions/expression_test_helpers.hpp>\n\n")
     f.write(cpp_code)
     f.close()
@@ -122,7 +123,7 @@ def main(functions_or_sigs, results_file, cores):
     work_queue = Queue.Queue()
 
     # For each signature, generate cpp code to test
-    for n, signature in enumerate(signatures_to_check):
+    for signature in signatures_to_check:
         sp = SignatureParser(signature)
 
         if sp.is_high_order():
@@ -153,15 +154,17 @@ def main(functions_or_sigs, results_file, cores):
             )
 
         if any_overload_uses_varmat:
-            work_queue.put((n, signature, cpp_code))
+            work_queue.put((work_queue.qsize(), signature, cpp_code))
         else:
-            # Push an empty work item on the work queue just to get nice printing
-            work_queue.put((n, signature, None))
+            print("{0} ... Irrelevant".format(signature.strip()))
+            irrelevant_signatures.add(signature)
 
     output_lock = threading.Lock()
 
     if not os.path.exists(WORKING_FOLDER):
         os.mkdir(WORKING_FOLDER)
+
+    work_queue_original_length = work_queue.qsize()
 
     # Test if each cpp file builds and update the output file
     # This part is done in parallel
@@ -172,29 +175,22 @@ def main(functions_or_sigs, results_file, cores):
             except Queue.Empty:
                 return # If queue is empty, worker quits
 
-            sp = SignatureParser(signature)
+            # Use signature as filename prefix to make it easier to find
+            prefix = re.sub('[^0-9a-zA-Z]+', '_', signature.strip())
 
             # Test the signature
-            if cpp_code is not None:
-                attempted = True
-                successful = build_signature(sp.function_name, cpp_code)
-            else:
-                attempted = False
+            successful = build_signature(prefix, cpp_code)
 
             # Acquire a lock to do I/O
             with output_lock:
-                if attempted:
-                    if successful:
-                        result_string = "Success!"
-                        compatible_signatures.add(signature)
-                    else:
-                        result_string = "Fail!"
-                        incompatible_signatures.add(signature)
+                if successful:
+                    result_string = "Success"
+                    compatible_signatures.add(signature)
                 else:
-                    result_string = "Irrelevant!"
-                    irrelevant_signatures.add(signature)
+                    result_string = "Fail"
+                    incompatible_signatures.add(signature)
 
-                print("Results of test {0} / {1}, {2} ... ".format(n, len(signatures_to_check), signature.strip()) + result_string)
+                print("Results of test {0} / {1}, {2} ... ".format(n, work_queue_original_length, signature.strip()) + result_string)
 
             work_queue.task_done()
 
