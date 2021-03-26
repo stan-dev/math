@@ -39,14 +39,15 @@ def run_command(command):
     else:
         return (False, stdout, stderr)
 
-def build_signature(prefix, cpp_code):
+def build_signature(prefix, cpp_code, debug):
     """
     Try to build the given cpp code
 
-    Return a true is the code was successfully built
+    Return true if the code was successfully built
 
     :param prefix: Prefix to give file names so easier to debug
     :param cpp_code: Code to build
+    :param debug: If true, don't delete temporary files
     """
     f = tempfile.NamedTemporaryFile("w", dir = WORKING_FOLDER, prefix = prefix + "_", suffix = "_test.cpp", delete = False)
     f.write("#include <test/expressions/expression_test_helpers.hpp>\n\n")
@@ -62,24 +63,32 @@ def build_signature(prefix, cpp_code):
 
     successful, stdout, stderr = run_command([make, object_path])
 
-    # Only clean up files if check succesful
-    if successful:
+    if successful or not debug:
         try:
             os.remove(cpp_path)
+        except OSError:
+            pass
+
+        try:
             os.remove(dependency_path)
+        except OSError:
+            pass
+
+        try:
             os.remove(object_path)
         except OSError:
             pass
     else:
-        with open(stdout_path, "w") as stdout_f:
-            stdout_f.write(stdout.decode("utf-8"))
+        if debug:
+            with open(stdout_path, "w") as stdout_f:
+                stdout_f.write(stdout.decode("utf-8"))
 
-        with open(stderr_path, "w") as stderr_f:
-            stderr_f.write(stderr.decode("utf-8"))
+            with open(stderr_path, "w") as stderr_f:
+                stderr_f.write(stderr.decode("utf-8"))
         
     return successful
 
-def main(functions_or_sigs, results_file, cores):
+def main(functions_or_sigs, results_file, cores, debug):
     """
     Attempt to build all the signatures in functions_or_sigs, or all the signatures
     associated with all the functions in functions_or_sigs, or if functions_or_sigs
@@ -100,6 +109,7 @@ def main(functions_or_sigs, results_file, cores):
     :param functions_or_sigs: List of function names and/or signatures to benchmark
     :param results_file: File to use as a results cache
     :param cores: Number of cores to use for compiling
+    :param debug: If true, don't delete temporary files
     """
     all_signatures = get_signatures()
     functions, signatures = handle_function_list(functions_or_sigs)
@@ -179,7 +189,7 @@ def main(functions_or_sigs, results_file, cores):
             prefix = re.sub('[^0-9a-zA-Z]+', '_', signature.strip())
 
             # Test the signature
-            successful = build_signature(prefix, cpp_code)
+            successful = build_signature(prefix, cpp_code, debug)
 
             # Acquire a lock to do I/O
             with output_lock:
@@ -239,6 +249,11 @@ def processCLIArgs():
         help="Number of parallel cores to use.",
     )
     parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Keep cpp, stdout, and stderr for incompatible functions.",
+    )
+    parser.add_argument(
         "results_file",
         type=str,
         default=None,
@@ -246,8 +261,7 @@ def processCLIArgs():
     )
     args = parser.parse_args()
 
-    main(functions_or_sigs=args.functions, results_file = args.results_file, cores = args.j)
-
+    main(functions_or_sigs=args.functions, results_file = args.results_file, cores = args.j, debug = args.debug)
 
 if __name__ == "__main__":
     processCLIArgs()
