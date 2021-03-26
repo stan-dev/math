@@ -172,7 +172,7 @@ TEST(ProbDistributionsDoubleExpModNormalLcdf, opencl_matches_cpu_big) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> mu
       = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
   Eigen::Matrix<double, Eigen::Dynamic, 1> sigma
-      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
+      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs().array() + 0.1;
   Eigen::Matrix<double, Eigen::Dynamic, 1> lambda
       = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
 
