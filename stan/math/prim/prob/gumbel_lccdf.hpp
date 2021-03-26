@@ -33,7 +33,9 @@ namespace math {
  * @throw std::domain_error if y is nan, mu is infinite, or beta is nonpositive
  * @throw std::invalid_argument if container sizes mismatch
  */
-template <typename T_y, typename T_loc, typename T_scale>
+template <typename T_y, typename T_loc, typename T_scale,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_loc, T_scale>* = nullptr>
 return_type_t<T_y, T_loc, T_scale> gumbel_lccdf(const T_y& y, const T_loc& mu,
                                                 const T_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
@@ -51,7 +53,6 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lccdf(const T_y& y, const T_loc& mu,
 
   check_not_nan(function, "Random variable", y_val);
   check_finite(function, "Location parameter", mu_val);
-  check_not_nan(function, "Scale parameter", beta_val);
   check_positive(function, "Scale parameter", beta_val);
 
   if (size_zero(y, mu, beta)) {
@@ -68,10 +69,10 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lccdf(const T_y& y, const T_loc& mu,
       = to_ref_if<!is_constant_all<T_y, T_loc, T_scale>::value>(
           exp(-scaled_diff));
   const auto& cdf_log_n_tmp = exp(-exp_m_scaled_diff);
-  const auto& ccdf_log_n
+  const auto& ccdf_n
       = to_ref_if<!is_constant_all<T_y, T_loc, T_scale>::value>(
           1.0 - cdf_log_n_tmp);
-  T_partials_return ccdf_log = sum(log(ccdf_log_n));
+  T_partials_return ccdf_log = sum(log(ccdf_n));
 
   if (!is_constant_all<T_y, T_loc, T_scale>::value) {
     const auto& rep_deriv_tmp = exp(-scaled_diff - exp_m_scaled_diff);
@@ -79,7 +80,7 @@ return_type_t<T_y, T_loc, T_scale> gumbel_lccdf(const T_y& y, const T_loc& mu,
         = to_ref_if<!is_constant_all<T_loc>::value
                         + !is_constant_all<T_scale>::value
                         + !is_constant_all<T_y>::value
-                    >= 2>(rep_deriv_tmp / (beta_val * ccdf_log_n));
+                    >= 2>(rep_deriv_tmp / (beta_val * ccdf_n));
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_ = -rep_deriv;
     }
