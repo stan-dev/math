@@ -56,7 +56,7 @@ Within each of those folders you will find any one of the following folders
   - Ex: in `prim` this is operators for complex numbers and the setup for threading, `rev`'s core is the scalar and it's base operators for reverse mode and the stack allocator, and `fwd` has the scalar for forward mode autodiff and it's operators.
 - err: Functions that perform a check and if true throw an error.
 - fun: The math functions exposed to the Stan language.
-- functor: Functions that take in other functions and data as input such as `reduce_sum`
+- functor: Functions that take in other functions and data as input such as `reduce_sum()`
 - meta: Type traits for compile time deduction on types.
 
 Any function callable from the math library, excluding those in the `internal` namespace, should be compatible with Stan's reverse and forward mode autodiff types. Any new function introduced to the Math library is expected to support higher order automatic differentiation. Though exceptions to supporting higher order autodiff have been made in the past such as the differential equations solvers only supporting reverse mode autodiff.
@@ -92,7 +92,7 @@ inline double dot_self(const EigVec& x) {
 
 This is pretty standard C++ besides (1) and (2) which I'll go over here.
 
-#### (1) `to_ref` for safe elementwise access
+#### (1) Safe elementwise access for Eigen expressions
 
 TL;DR: Before accessing individual coefficients of an Eigen type, use `to_ref()` to make sure it's a type that's safe to access by coefficient.
 
@@ -108,7 +108,7 @@ Actually delays evaluation when making `x` and produces an object of type
 Eigen::Product<Eigen::Add<Matrix, Eigen::Product<Matrix, Matrix>>, Eigen::Add<Matrix, Matrix>>
 ```
 
-Using lazily evaluated expressions allows Eigen to avoid redundant copies, reads, and writes to our data. However, this comes at a cost. In (2), when we access the coefficients of `x`, if it's type is similar to the wacky expression above we can get incorrect results as Eigen does not gurantee any safety of results when performing coefficient level access on a expression type that transforms it's inputs. So `to_ref()` looks at it's input type, and if the input type is an Eigen expression that does a transform it evaluates the input and returns it.
+Using lazily evaluated expressions allows Eigen to avoid redundant copies, reads, and writes to our data. However, this comes at a cost. In (2), when we access the coefficients of `x`, if it's type is similar to the wacky expression above we can get incorrect results as Eigen does not gurantee any safety of results when performing coefficient level access on a expression type that transforms it's inputs. So `to_ref()` looks at it's input type, and if the input type is an Eigen expression that it evaluates the expression so that all the computations are performed and the return object is then safe to access.
 
 But! Say our input as something like
 
@@ -117,9 +117,9 @@ Eigen::Matrix<var, Dynamic, 1> A = Eigen::VectorXd::Random(20);
 var b = dot_self(A.segment(1, 5));
 ```
 
-Here, we will have an expression (an `Eigen::Block<Matrix>`) as the input type. But an expression that is only a view into an object is safe to read coefficent-wise. In this case `to_ref()` knows this and, as long as you used `auto` as the object type returned from `to_ref(x)`, then `to_ref(x)` will deduce the correct type `Block` view type instead of casting to an evaluated vector.
+Here, we will have an expression (an `Eigen::Block<Eigen::MatrixXd>`) as the input type. But an expression that is only a view into an object is safe to read coefficent-wise. In this case `to_ref()` knows this and, as long as you used `auto` as the object type returned from `to_ref(x)`, then `to_ref(x)` will deduce the correct type `Block` view type instead of casting to an evaluated vector.
 
-From there you can use the unit test suite for automatic differentiation (need to link to that on docs site) to verify your code produces the correct gradients and higher order derivatives and your done!
+From there you can use the unit [test suite for automatic differentiation](@ref autodiff_test_guide) to verify your code produces the correct gradients and higher order derivatives and your done!
 
 ```cpp
 // Example tests in test/unit/math/mix/fun/dot_self_test.cpp
@@ -142,17 +142,17 @@ TEST(MathMixMatFun, dotSelf) {
 
 That's it, your done! Make a PR, add some docs, have a cup of tea all is well.
 
-But, while your function will work for all of our types, it probably won't be as fast as it could be. Indeed, since the above is using Stan's basic scalar reverse mode, for a vector of size N there will be N individual callback functions on the reverse pass callback stack. This is not the worst, Stan's base scalar operations are as efficient as they can be, but by writing a specialization for reverse mode we can just have one callback with much more efficient memory access. The next section may seem a bit advanced, but those who enjoy adventure, Let's talk about how to make this function go faster.
+But, while your function will work for all of our types, it probably won't be as fast as it could be. Indeed, since the above is using Stan's basic scalar reverse mode, for a vector of size N there will be N individual callback functions on the reverse pass callback stack. This is not the worst, Stan's base scalar operations are as efficient as they can be, but by writing a specialization for reverse mode we can just have one callback with much more efficient memory access. The next section may seem a bit advanced, but those who enjoy adventure, let's talk about how to make this function go faster.
 
 ## Specializing for Reverse Mode
 
-For reverse mode we know the adjoint method for a self dot product is
+For reverse mode we can do the math by hand or use a site like [matrixcalculus.org](http://www.matrixcalculus.org/) to find the adjoint method for a self dot product is
 
 ```cpp
-x.adj() += 2.0 * sum.adj() * x.val()
+x.adj() += sum.adj() * 2.0 * x.val()
 ```
 
-and so we want to add a specialization in `stan/math/rev/fun` that calculates reverse mode's adjoint directly. First we need to stop our current function from compiling for reverse mod autodiff. This can be done using the [requires]() (ADD LINK HERE) type traits in stan. The only thing that has changed in the function above and below is the new non-type template parameter (NTTP) that is now in the template definition.
+and so we want to add a specialization in `stan/math/rev/fun` that calculates reverse mode's adjoint directly. First we need to stop our current function from compiling for reverse mod autodiff. This can be done using the [requires](@ref require_meta) type traits in stan. The only thing that has changed in the function above and below is the new non-type template parameter (NTTP) that is now in the template definition.
 
 ```cpp
 template <typename EigVec, require_not_st_var_t<EigVec>* = nullptr> // (1)
@@ -168,7 +168,7 @@ inline double dot_self(const EigVec& x) {
 
 TL;DR: Use Stan's `require` type trait library for limiting a function's scope to certain types.
 
-Reading from left to right, `require_not_st_var_t` requires that a signature's template does _not_ have a _scalar type_ that is Stan's `var` autodiff type. This line is exactly the same as
+Reading from left to right, `require_not_st_var_t` requires that a signature's template does _not have a scalar type_ that is Stan's `var` autodiff type. This line is exactly the same as
 
 ```cpp
 template <typename EigVec, std::enable_if_t<is_var<scalar_type_t<EigVec>>::value>* = nullptr>
@@ -221,21 +221,21 @@ Remember from [Thinking About Automatic Differentiation in Fun New Ways](https:/
 2. Storing the input and output into a memory arena
 3. Adding a callback to a callback stack that calculates the derivative of the function
 
-This process lets us call `stan::math::grad(z)` that goes up and calls all
+This process lets us call `grad()` that goes up and calls all
 the callbacks in the callback stack and accumulates the gradients through
 all the outputs and inputs. (reverse pass)
 
 Reverse mode autodiff in Math requires a huge number of temporaries and
 intermediates to be computed and saved for the reverse pass. There are
-so many allocations that the overhead of `malloc` becomes noticable. To
+so many allocations that the overhead of `malloc()` becomes noticable. To
 avoid this, Math provides its own memory arena. The assumptions of
 the Math arena are:
 
-1. Individual objects allocated in the arena do not need their destructors
+1. Objects allocated in the arena are [TriviallyCopyable](https://en.cppreference.com/w/cpp/named_req/TriviallyCopyable) and [TriviallyDestructable](https://en.cppreference.com/w/cpp/language/destructor#Trivial_destructor). These objects do not need their destructors
 called (although there are ways to destruct something allocated in the arena,
-it just isn't automatic)
+it just isn't automatic).
 2. All objects allocated on the arena have the same lifetime (that is the
-lifetime of the stack - until `recover_memory` is called)
+lifetime of the stack - until `recover_memory()` is called).
 
 The arena memory pattern fits nicely into automatic differentiation for MCMC
 as we will most commonly be calling gradients with data of the same size over
@@ -246,15 +246,15 @@ need to the arena. Objects saved here will be available during the reverse
 pass.
 
 There is a utility for saving objects into the arena that do need their
-destructors called. This is discussed under `make_callback_ptr`. Arena types
+destructors called. This is discussed under `make_callback_ptr()`. Arena types
 are helper functions and types for easily saving variables to the arena.
 
-`arena_t<T>` defines, for a given type `T`, the type of a lightweight
+`arena_t` defines, for a given type `T`, the type of a lightweight
 object pointing to memory in the arena that can store a `T`. Memory for
 `arena_t<T>` objects is only recovered when `recover_memory` is called.
-No destructors are called for objects stored with `arena_t<T>`.
+No destructors are called for objects stored with `arena_t<T>()`.
 
-Copying a variable `x` to the arena can be done with either `to_arena` or
+Copying a variable `x` to the arena can be done with either `to_arena()` or
 `arena_t<T>`:
 
 ```cpp
@@ -277,7 +277,7 @@ auto myfunc(const T& x) {
 
 Once we have stored the data we need to for the reverse pass we need to actually write that reverse pass! We need to take our adjoint calculation and put it onto a callback stack so that when the users call `grad()` the adjoints are propogated upwards properly.
 
-For this we have a function called `reverse_pass_callback`. Calling `reverse_pass_callback` with a functor `f` creates an object on the callback stack that will call `f`.
+For this we have a function called `reverse_pass_callback()`. Calling `reverse_pass_callback()` with a functor `f` creates an object on the callback stack that will call `f`.
 
 ```cpp
 reverse_pass_callback([res, arena_v]() mutable { // (2)
@@ -285,7 +285,7 @@ reverse_pass_callback([res, arena_v]() mutable { // (2)
 });
 ```
 
-Notice that the lambda we create *copies* the objects `res` and `arena_v`. The trick here is that, because anything allocated with Stan's arena using `arena_t` or `to_arena` are [trivially copyable](https://en.cppreference.com/w/cpp/named_req/TriviallyCopyable) (as are arithmetic scalars). Besides the pointer pointing to these objects the memory is safe and sound within our arena and so these are safe to copy.
+Notice that the lambda we create *copies* the objects `res` and `arena_v`. The trick here is that, because anything allocated with Stan's arena using `arena_t` or `to_arena()` are [TriviallyCopyable](https://en.cppreference.com/w/cpp/named_req/TriviallyCopyable) (as are arithmetic scalars). Besides the pointer pointing to these objects the memory is safe and sound within our arena and so these are safe to copy.
 
 An alternative approach to the above function could also have been
 
@@ -299,9 +299,10 @@ inline var dot_self(const EigVec& v) {
 }
 ```
 
-`make_callback_var(x, f)` is similar to `reverse_pass_callback`, but it constructs
+`make_callback_var(x, f)` is similar to `reverse_pass_callback()`, but it constructs
 an autodiff type from the argument `x`. The function `f` is called on the
-reverse pass similarly to `reverse_pass_callback`.
+reverse pass similarly to `reverse_pass_callback()`. `make_callback_var()` should
+only be used when returning back a `var<double>` or `var<Matrix>`.
 
 ## Argument Types
 
@@ -326,7 +327,7 @@ map to `std::vector<C>` types where `C` is the C++ equivalent of `T`.
 
 ### Unary Functions Working Over Arrays
 
-The Stan function `sin()` expects the has the following signatures available.
+The Stan function `sin()` expects the math library has the following signatures available.
 
 ```cpp
 real sin(real);
@@ -334,7 +335,7 @@ vector sin(vector);
 array vector sin(array vector)
 ```
 
-where `array` can actually be multiply arrays within one another. The above translates to the following C++ signatures
+where `array` can actually be multiple arrays within one another. The above translates to the following C++ signatures
 
 ```cpp
 // reals
@@ -395,7 +396,7 @@ inline auto sin(const Container& x) {
 }
 ```
 
-In Stan math, a `container` type is an `std::vector` that holds either other `std::vector`s or `Eigen::Matrix` types. So in the first function we use `apply_scalar_unary` to apply `sin()` to either `Scalar`s, `std::vector`s holding scalars, or  `Eigen::Matrix` types. The second function which uses `apply_vector_unary` will apply it's _lambda_ to the container's whose elements are also containers or Eigen matrices.
+In Stan math, a `container` type is an `std::vector` that holds either other `std::vector`s or `Eigen::Matrix` types. So in the first function we use `apply_scalar_unary` to apply `sin()` to either `Scalar`s, `std::vector`s holding scalars, or  `Eigen::Matrix` types. The second function which uses `apply_vector_unary()` will apply it's lambda to the container's whose elements are also containers or Eigen matrices.
 
 
 ### Binary Functions (and least-upper-bound return type semantics)
@@ -498,7 +499,7 @@ This should include tests that:
 1. Check that every exception is throwing in the right way at least once
 and that all edge cases are handled correctly.
 
-  For instance, if there is a `check_size_match` function, then there
+  For instance, if there is a `check_size_match()` function, then there
   should be a test that makes sure that if the sizes don't match, this
   error gets thrown. It is not necessary to check the error message in
   the tests, just check that an exception is thrown and the exception
@@ -517,11 +518,11 @@ values. The second set of tests should be in `stan/math/mix/fun` with
 the same name `foo_test.cpp`. These tests will be used to test all
 forms of the autodiff.
 
-The tests in `mix/fun` should use the `expect_ad` function to test
-all forms of autodiff. `expect_ad` takes as its first argument a
+The tests in `mix/fun` should use the `expect_ad()` function to test
+all forms of autodiff. `expect_ad()` takes as its first argument a
 function to test and then up to three other arguments, all with
 arithmetic scalar types. For a given function `f`, and two arguments
-`a` and `b`, `expect_ad` tests that:
+`a` and `b`, `expect_ad()` tests that:
 
 1. For every combination of `a` and `b`, the returned value of `f`
 matches the returned value with non-autodiff types.
@@ -540,7 +541,7 @@ with autodiff arguments.
 autodiff type, it simply forwards `x` along. The values of `x` have
 the same shape as `x`. For reverse mode autodiff, values are `double`
 variables. For higher order autodiff (`fvar<var>`, etc.) this is not
-always the case. See `value_of_rec` for a different behavior.
+always the case. See `value_of_rec()` for a different behavior.
 
 ### Values and adjoint extensions to Eigen
 
