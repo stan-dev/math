@@ -9,7 +9,7 @@ class VarmatCompatibilityMainTest(unittest.TestCase):
         f = tempfile.NamedTemporaryFile("w", suffix = "_test.json", delete = False)
         f.close()
 
-        varmat_compatibility.main(["sum"], f.name, 1)
+        varmat_compatibility.main(["sum"], f.name, 1, False)
 
         with open(f.name) as f:
             results = json.load(f)
