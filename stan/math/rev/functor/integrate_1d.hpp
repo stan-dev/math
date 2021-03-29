@@ -132,7 +132,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
       partials[i] = 0.0;
     }
 
-    if (!is_inf(a) && is_var<T_a>::value) {
+    if (is_var<T_a>::value && !is_inf(a)) {
       *partials_ptr = apply(
           [&f, a_val, msgs](auto &&... args) {
             return -f(a_val, 0.0, msgs, args...);
