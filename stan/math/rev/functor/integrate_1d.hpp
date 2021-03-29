@@ -99,8 +99,8 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
       // do it once in a separate nest for efficiency
       auto args_tuple_local_copy = std::make_tuple(deep_copy_vars(args)...);
       for (size_t n = 0; n < num_vars_args; ++n) {
-        
-        // This computes the integral of the gradient of f with respect to the nth
+        // This computes the integral of the gradient of f with respect to the
+        // nth
         //  parameter in args. Uses nested reverse mode autodiff
         *partials_ptr = integrate(
             [&](const auto &x, const auto &xc) {
@@ -111,25 +111,30 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
               nested_rev_autodiff gradient_nest;
 
               var fx = apply(
-                  [&f, &x, &xc, msgs](auto &&... args) { return f(x, xc, msgs, args...); },
+                  [&f, &x, &xc, msgs](auto &&... args) {
+                    return f(x, xc, msgs, args...);
+                  },
                   args_tuple_local_copy);
 
               fx.grad();
 
-              apply([&](auto &&... args) { accumulate_adjoints(adjoints.data(), args...); },
-                    args_tuple_local_copy);
+              apply(
+                  [&](auto &&... args) {
+                    accumulate_adjoints(adjoints.data(), args...);
+                  },
+                  args_tuple_local_copy);
 
               double gradient = adjoints.coeff(n);
 
-              // Gradients that evaluate to NaN are set to zero if the function itself
-              // evaluates to zero. If the function is not zero and the gradient evaluates to
-              // NaN, a std::domain_error is thrown
+              // Gradients that evaluate to NaN are set to zero if the function
+              // itself evaluates to zero. If the function is not zero and the
+              // gradient evaluates to NaN, a std::domain_error is thrown
               if (is_nan(gradient)) {
                 if (fx.val() == 0) {
                   gradient = 0;
                 } else {
                   throw_domain_error("gradient_of_f", "The gradient of f", n,
-                                    "is nan for parameter ", "");
+                                     "is nan for parameter ", "");
                 }
               }
 

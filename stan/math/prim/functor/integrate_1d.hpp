@@ -70,18 +70,18 @@ inline double integrate(const F& f, double a, double b,
   auto two_integral_convergence_check = [&]() {
     if (error1 > relative_tolerance * L1) {
       throw_domain_error(function, "error estimate of integral below zero",
-                        error1, "",
-                        " exceeds the given relative tolerance times norm of "
-                        "integral below zero");
+                         error1, "",
+                         " exceeds the given relative tolerance times norm of "
+                         "integral below zero");
     }
     if (error2 > relative_tolerance * L2) {
       throw_domain_error(function, "error estimate of integral above zero",
-                        error2, "",
-                        " exceeds the given relative tolerance times norm of "
-                        "integral above zero");
+                         error2, "",
+                         " exceeds the given relative tolerance times norm of "
+                         "integral above zero");
     }
   };
-  
+
   // if a or b is infinite, set xc argument to NaN (see docs above for user
   // function for xc info)
   auto f_wrap = [&](double x) { return f(x, NOT_A_NUMBER); };
