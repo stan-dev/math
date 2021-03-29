@@ -131,7 +131,7 @@ TEST(ProbDistributionsGumbelCdf, opencl_matches_cpu_big) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> mu
       = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
   Eigen::Matrix<double, Eigen::Dynamic, 1> sigma
-      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
+      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs() + 0.1;
 
   stan::math::test::compare_cpu_opencl_prim_rev(gumbel_cdf_functor, y, mu,
                                                 sigma);
