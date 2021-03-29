@@ -11,7 +11,7 @@ MATH ?=
 BOOST ?= $(MATH)lib/boost_1.75.0
 EIGEN ?= $(MATH)lib/eigen_3.3.9
 OPENCL ?= $(MATH)lib/opencl_2.2.0
-TBB ?= $(MATH)lib/tbb_2019_U8
+TBB ?= $(MATH)lib/tbb_2020.3
 SUNDIALS ?= $(MATH)lib/sundials_5.7.0
 BENCHMARK ?= $(MATH)lib/benchmark_1.5.1
 GTEST ?= $(BENCHMARK)/googletest/googletest
@@ -126,7 +126,7 @@ ifeq (clang,$(CXX_TYPE))
 endif
 ifeq (gcc,$(CXX_TYPE))
   TBB_CC ?= $(subst g++,gcc,$(CXX))
-  TBB_CXXFLAGS ?= -Wno-unknown-warning-option -Wno-missing-attributes -Wno-class-memaccess -Wno-sized-deallocation $(CXXFLAGS_OPTIM_TBB) $(CXXFLAGS_FLTO_TBB)
+  TBB_CXXFLAGS ?= -Wno-unknown-warning-option -Wno-deprecated-copy -Wno-missing-attributes -Wno-class-memaccess -Wno-sized-deallocation $(CXXFLAGS_OPTIM_TBB) $(CXXFLAGS_FLTO_TBB)
 endif
 TBB_CC ?= $(CC)
 
