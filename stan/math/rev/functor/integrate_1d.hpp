@@ -96,7 +96,7 @@ template <typename F, typename T_a, typename T_b, typename... Args,
 inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
     const F &f, const T_a &a, const T_b &b, double relative_tolerance,
     std::ostream *msgs, const Args &... args) {
-  static const char *function = "integrate_1d";
+  static constexpr const char *function = "integrate_1d";
   check_less_or_equal(function, "lower limit", a, b);
 
   double a_val = value_of(a);
