@@ -8,6 +8,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/get.hpp>
 #include <stan/math/prim/functor/integrate_1d.hpp>
 #include <cmath>
 #include <functional>
@@ -46,7 +47,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
   double a_val = value_of(a);
   double b_val = value_of(b);
 
-  if (a_val == b_val) {
+  if (unlikely(a_val == b_val)) {
     if (is_inf(a_val)) {
       throw_domain_error(function, "Integration endpoints are both", a_val, "",
                          "");
@@ -57,8 +58,9 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
 
     double integral = integrate(
         [&](const auto &x, const auto &xc) {
-          return apply([&](auto &&... args) { return f(x, xc, msgs, args...); },
-                       args_val_tuple);
+          return apply(
+              [&](auto &&... val_args) { return f(x, xc, msgs, val_args...); },
+              args_val_tuple);
         },
         a_val, b_val, relative_tolerance);
 
@@ -68,6 +70,7 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
         num_vars_ab + num_vars_args);
     double *partials = ChainableStack::instance_->memalloc_.alloc_array<double>(
         num_vars_ab + num_vars_args);
+    // We move this pointer up based on whether we a or b is a var type.
     double *partials_ptr = partials;
 
     save_varis(varis, a, b, args...);
@@ -78,18 +81,19 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
 
     if (is_var<T_a>::value && !is_inf(a)) {
       *partials_ptr = apply(
-          [&f, a_val, msgs](auto &&... args) {
-            return -f(a_val, 0.0, msgs, args...);
+          [&f, a_val, msgs](auto &&... val_args) {
+            return -f(a_val, 0.0, msgs, val_args...);
           },
           args_val_tuple);
       partials_ptr++;
     }
 
     if (!is_inf(b) && is_var<T_b>::value) {
-      *partials_ptr
-          = apply([&f, b_val, msgs](
-                      auto &&... args) { return f(b_val, 0.0, msgs, args...); },
-                  args_val_tuple);
+      *partials_ptr = apply(
+          [&f, b_val, msgs](auto &&... val_args) {
+            return f(b_val, 0.0, msgs, val_args...);
+          },
+          args_val_tuple);
       partials_ptr++;
     }
 
@@ -100,32 +104,41 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
       auto args_tuple_local_copy = std::make_tuple(deep_copy_vars(args)...);
       for (size_t n = 0; n < num_vars_args; ++n) {
         // This computes the integral of the gradient of f with respect to the
-        // nth
-        //  parameter in args. Uses nested reverse mode autodiff
+        // nth parameter in args using a nested nested reverse mode autodiff
         *partials_ptr = integrate(
             [&](const auto &x, const auto &xc) {
               argument_nest.set_zero_all_adjoints();
-
-              Eigen::VectorXd adjoints = Eigen::VectorXd::Zero(num_vars_args);
-
               nested_rev_autodiff gradient_nest;
-
               var fx = apply(
-                  [&f, &x, &xc, msgs](auto &&... args) {
-                    return f(x, xc, msgs, args...);
+                  [&f, &x, &xc, msgs](auto &&... local_args) {
+                    return f(x, xc, msgs, local_args...);
                   },
                   args_tuple_local_copy);
-
               fx.grad();
-
-              apply(
-                  [&](auto &&... args) {
-                    accumulate_adjoints(adjoints.data(), args...);
+              size_t adjoint_count = 0;
+              double gradient = 0;
+              bool not_found = true;
+              // for_each is guaranteed to go off from left to right.
+              // So for var argument we count the number of previous vars
+              // until we go past n, then index into that argument to get
+              // the correct adjoint.
+              stan::math::for_each(
+                  [&](auto &arg) {
+                    using arg_t = decltype(arg);
+                    using scalar_arg_t = scalar_type_t<arg_t>;
+                    if (is_var<scalar_arg_t>::value) {
+                      size_t var_count = count_vars(arg);
+                      if (((adjoint_count + var_count) < n) && not_found) {
+                        adjoint_count += var_count;
+                      } else if (not_found) {
+                        not_found = false;
+                        gradient
+                            = forward_as<var>(stan::get(arg, n - adjoint_count))
+                                  .adj();
+                      }
+                    }
                   },
                   args_tuple_local_copy);
-
-              double gradient = adjoints.coeff(n);
-
               // Gradients that evaluate to NaN are set to zero if the function
               // itself evaluates to zero. If the function is not zero and the
               // gradient evaluates to NaN, a std::domain_error is thrown
@@ -137,7 +150,6 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
                                      "is nan for parameter ", "");
                 }
               }
-
               return gradient;
             },
             a_val, b_val, relative_tolerance);
