@@ -20,8 +20,8 @@ namespace stan {
 namespace math {
 
 /**
- * Calculate first derivative of f(x, param, std::ostream&)
- * with respect to the nth parameter. Uses nested reverse mode autodiff
+ * Calculate first derivative of f(x, xc, msgs, args...)
+ * with respect to the nth parameter in args. Uses nested reverse mode autodiff
  *
  * Gradients that evaluate to NaN are set to zero if the function itself
  * evaluates to zero. If the function is not zero and the gradient evaluates to
@@ -78,10 +78,10 @@ inline double gradient_of_f(const F &f, const double &x, const double &xc,
 /**
  * Return the integral of f from a to b to the given relative tolerance
  *
+ * @tparam F Type of f
  * @tparam T_a type of first limit
  * @tparam T_b type of second limit
- * @tparam T_theta type of parameters
- * @tparam T Type of f
+ * @tparam Args types of parameter pack arguments
  *
  * @param f the functor to integrate
  * @param a lower limit of integration
