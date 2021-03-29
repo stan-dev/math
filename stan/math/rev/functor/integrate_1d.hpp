@@ -45,8 +45,7 @@ inline double gradient_of_f(const F &f, const double &x, const double &xc,
   // Run nested autodiff in this scope
   nested_rev_autodiff nested;
 
-  std::tuple<decltype(deep_copy_vars(args))...> args_tuple_local_copy(
-      deep_copy_vars(args)...);
+  auto args_tuple_local_copy = std::make_tuple(deep_copy_vars(args)...);
 
   Eigen::VectorXd adjoints = Eigen::VectorXd::Zero(count_vars(args...));
 
