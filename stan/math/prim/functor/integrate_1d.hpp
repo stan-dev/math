@@ -51,19 +51,44 @@ namespace math {
 template <typename F>
 inline double integrate(const F& f, double a, double b,
                         double relative_tolerance) {
+  static constexpr const char* function = "integrate";
   double error1 = 0.0;
   double error2 = 0.0;
   double L1 = 0.0;
   double L2 = 0.0;
-  bool used_two_integrals = false;
   size_t levels;
   double Q = 0.0;
+
+  auto one_integral_convergence_check = [&]() {
+    if (error1 > relative_tolerance * L1) {
+      throw_domain_error(
+          function, "error estimate of integral", error1, "",
+          " exceeds the given relative tolerance times norm of integral");
+    }
+  };
+
+  auto two_integral_convergence_check = [&]() {
+    if (error1 > relative_tolerance * L1) {
+      throw_domain_error(function, "error estimate of integral below zero",
+                        error1, "",
+                        " exceeds the given relative tolerance times norm of "
+                        "integral below zero");
+    }
+    if (error2 > relative_tolerance * L2) {
+      throw_domain_error(function, "error estimate of integral above zero",
+                        error2, "",
+                        " exceeds the given relative tolerance times norm of "
+                        "integral above zero");
+    }
+  };
+  
   // if a or b is infinite, set xc argument to NaN (see docs above for user
   // function for xc info)
   auto f_wrap = [&](double x) { return f(x, NOT_A_NUMBER); };
   if (std::isinf(a) && std::isinf(b)) {
     boost::math::quadrature::sinh_sinh<double> integrator;
     Q = integrator.integrate(f_wrap, relative_tolerance, &error1, &L1, &levels);
+    one_integral_convergence_check();
   } else if (std::isinf(a)) {
     boost::math::quadrature::exp_sinh<double> integrator;
     /**
@@ -74,26 +99,28 @@ inline double integrate(const F& f, double a, double b,
     if (b <= 0.0) {
       Q = integrator.integrate(f_wrap, a, b, relative_tolerance, &error1, &L1,
                                &levels);
+      one_integral_convergence_check();
     } else {
       boost::math::quadrature::tanh_sinh<double> integrator_right;
       Q = integrator.integrate(f_wrap, a, 0.0, relative_tolerance, &error1, &L1,
                                &levels)
           + integrator_right.integrate(f_wrap, 0.0, b, relative_tolerance,
                                        &error2, &L2, &levels);
-      used_two_integrals = true;
+      two_integral_convergence_check();
     }
   } else if (std::isinf(b)) {
     boost::math::quadrature::exp_sinh<double> integrator;
     if (a >= 0.0) {
       Q = integrator.integrate(f_wrap, a, b, relative_tolerance, &error1, &L1,
                                &levels);
+      one_integral_convergence_check();
     } else {
       boost::math::quadrature::tanh_sinh<double> integrator_left;
       Q = integrator_left.integrate(f_wrap, a, 0, relative_tolerance, &error1,
                                     &L1, &levels)
           + integrator.integrate(f_wrap, relative_tolerance, &error2, &L2,
                                  &levels);
-      used_two_integrals = true;
+      two_integral_convergence_check();
     }
   } else {
     auto f_wrap = [&](double x, double xc) { return f(x, xc); };
@@ -103,34 +130,14 @@ inline double integrate(const F& f, double a, double b,
                                &levels)
           + integrator.integrate(f_wrap, 0.0, b, relative_tolerance, &error2,
                                  &L2, &levels);
-      used_two_integrals = true;
+      two_integral_convergence_check();
     } else {
       Q = integrator.integrate(f_wrap, a, b, relative_tolerance, &error1, &L1,
                                &levels);
+      one_integral_convergence_check();
     }
   }
 
-  static const char* function = "integrate";
-  if (used_two_integrals) {
-    if (error1 > relative_tolerance * L1) {
-      throw_domain_error(function, "error estimate of integral below zero",
-                         error1, "",
-                         " exceeds the given relative tolerance times norm of "
-                         "integral below zero");
-    }
-    if (error2 > relative_tolerance * L2) {
-      throw_domain_error(function, "error estimate of integral above zero",
-                         error2, "",
-                         " exceeds the given relative tolerance times norm of "
-                         "integral above zero");
-    }
-  } else {
-    if (error1 > relative_tolerance * L1) {
-      throw_domain_error(
-          function, "error estimate of integral", error1, "",
-          " exceeds the given relative tolerance times norm of integral");
-    }
-  }
   return Q;
 }
 
