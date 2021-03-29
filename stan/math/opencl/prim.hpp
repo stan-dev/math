@@ -100,6 +100,9 @@
 
 #include <stan/math/opencl/prim/add_diag.hpp>
 #include <stan/math/opencl/prim/append_array.hpp>
+#include <stan/math/opencl/prim/bernoulli_cdf.hpp>
+#include <stan/math/opencl/prim/bernoulli_lccdf.hpp>
+#include <stan/math/opencl/prim/bernoulli_lcdf.hpp>
 #include <stan/math/opencl/prim/bernoulli_lpmf.hpp>
 #include <stan/math/opencl/prim/bernoulli_logit_lpmf.hpp>
 #include <stan/math/opencl/prim/bernoulli_logit_glm_lpmf.hpp>
@@ -110,6 +113,9 @@
 #include <stan/math/opencl/prim/binomial_lpmf.hpp>
 #include <stan/math/opencl/prim/block.hpp>
 #include <stan/math/opencl/prim/categorical_logit_glm_lpmf.hpp>
+#include <stan/math/opencl/prim/cauchy_cdf.hpp>
+#include <stan/math/opencl/prim/cauchy_lccdf.hpp>
+#include <stan/math/opencl/prim/cauchy_lcdf.hpp>
 #include <stan/math/opencl/prim/cauchy_lpdf.hpp>
 #include <stan/math/opencl/prim/chi_square_lpdf.hpp>
 #include <stan/math/opencl/prim/cholesky_decompose.hpp>
@@ -128,9 +134,21 @@
 #include <stan/math/opencl/prim/divide_columns.hpp>
 #include <stan/math/opencl/prim/dot_product.hpp>
 #include <stan/math/opencl/prim/dot_self.hpp>
+#include <stan/math/opencl/prim/double_exponential_cdf.hpp>
+#include <stan/math/opencl/prim/double_exponential_lccdf.hpp>
+#include <stan/math/opencl/prim/double_exponential_lcdf.hpp>
 #include <stan/math/opencl/prim/double_exponential_lpdf.hpp>
+#include <stan/math/opencl/prim/exp_mod_normal_cdf.hpp>
+#include <stan/math/opencl/prim/exp_mod_normal_lccdf.hpp>
+#include <stan/math/opencl/prim/exp_mod_normal_lcdf.hpp>
 #include <stan/math/opencl/prim/exp_mod_normal_lpdf.hpp>
+#include <stan/math/opencl/prim/exponential_cdf.hpp>
+#include <stan/math/opencl/prim/exponential_lccdf.hpp>
+#include <stan/math/opencl/prim/exponential_lcdf.hpp>
 #include <stan/math/opencl/prim/exponential_lpdf.hpp>
+#include <stan/math/opencl/prim/frechet_cdf.hpp>
+#include <stan/math/opencl/prim/frechet_lccdf.hpp>
+#include <stan/math/opencl/prim/frechet_lcdf.hpp>
 #include <stan/math/opencl/prim/frechet_lpdf.hpp>
 #include <stan/math/opencl/prim/gamma_lpdf.hpp>
 #include <stan/math/opencl/prim/gp_exp_quad_cov.hpp>
