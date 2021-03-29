@@ -152,6 +152,9 @@
 #include <stan/math/opencl/prim/log_softmax.hpp>
 #include <stan/math/opencl/prim/logistic_lpdf.hpp>
 #include <stan/math/opencl/prim/log_sum_exp.hpp>
+#include <stan/math/opencl/prim/lognormal_cdf.hpp>
+#include <stan/math/opencl/prim/lognormal_lccdf.hpp>
+#include <stan/math/opencl/prim/lognormal_lcdf.hpp>
 #include <stan/math/opencl/prim/lognormal_lpdf.hpp>
 #include <stan/math/opencl/prim/lub_constrain.hpp>
 #include <stan/math/opencl/prim/matrix_power.hpp>
