@@ -152,7 +152,7 @@ template <typename F, typename... Args,
 inline double integrate_1d_impl(const F& f, double a, double b,
                                 double relative_tolerance, std::ostream* msgs,
                                 const Args&... args) {
-  static const char* function = "integrate_1d";
+  static constexpr const char* function = "integrate_1d";
   check_less_or_equal(function, "lower limit", a, b);
 
   if (a == b) {
