@@ -101,14 +101,25 @@ protected:
     using stan::math::value_of;
     using stan::math::gp_exp_quad_cov;
 
-    n_obs = 6;
-    Eigen::VectorXd x_vec(n_obs);
-    x_vec << 2.4, 2.6, 3.2, 3.6, 4.0, 6.2;
-    x.resize(n_obs);
-    for (int i = 0; i < n_obs; i++) x[i] = x_vec(i);
-    y.resize(n_obs);
-    // y << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
-    y << 0.0, -1.3, -2.7,  0.0, -2.7, -2.7;
+    if (FALSE) {
+      n_obs = 6;
+      Eigen::VectorXd x_vec(n_obs);
+      x_vec << 2.4, 2.6, 3.2, 3.6, 4.0, 6.2;
+      x.resize(n_obs);
+      for (int i = 0; i < n_obs; i++) x[i] = x_vec(i);
+      y.resize(n_obs);
+      y << 0.0, -1.3, -2.7,  0.0, -2.7, -2.7;
+    }
+
+    if (TRUE) {
+      n_obs = 133;
+      read_data(n_obs, "test/unit/math/laplace/motorcycle_gp/",
+                   x, y);
+      std::cout << "x: ";
+      for (int i = 0; i < 5; i++) std::cout << x[i] << " ";
+      std::cout << " ..." << std::endl;
+      std::cout << "y: " << y.transpose().head(5) << " ..." << std::endl;
+    }
 
     length_scale_f = 0.3;
     length_scale_g = 0.5;
@@ -132,8 +143,9 @@ protected:
     Eigen::VectorXd mu_hat
       = K_plus_I.colPivHouseholderQr().solve(y);
 
+    // Remark: finds optimal point with or without informed initial guess.
     for (int i = 0; i < n_obs; i++) {
-      theta0(2 * i) = mu_hat(i);
+      theta0(2 * i) = 0;  // mu_hat(i);
       theta0(2 * i + 1) = 0;
     }
 

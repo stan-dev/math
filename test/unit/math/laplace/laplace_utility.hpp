@@ -303,3 +303,34 @@ void read_in_data(int dim_theta,
     lambda[m] = buffer;
   }
 }
+
+// TODO: write a more general data reader, rather than overload.
+// Overload function to read in gp motorcycle data.
+void read_data(int dim_observations,
+               std::string data_directory,
+               std::vector<double>& x,
+               Eigen::VectorXd& y) {
+  std::ifstream input_data;
+  std::string file_y = data_directory + "y_vec.csv";
+  std::string file_x = data_directory + "x_vec.csv";
+
+  // std::cout << "file_y: " << file_y << std::cout;
+  // printf(file_y.c_str());
+
+  input_data.open(file_y);
+  double buffer = 0.0;
+  y.resize(dim_observations);
+  for (int i = 0; i < dim_observations; ++i) {
+    input_data >> buffer;
+    y(i) = buffer;
+  }
+  input_data.close();
+
+  input_data.open(file_x);
+  buffer = 0.0;
+  x.resize(dim_observations);
+  for (int i = 0; i < dim_observations; ++i) {
+    input_data >> buffer;
+    x[i] = buffer;
+  }
+}
