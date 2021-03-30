@@ -30,7 +30,7 @@
      (BOOST_PP_TUPLE_TO_SEQ(TUP_TP)) \
    )
 
-#define FUNCTOR_TYPES (ode_ckrk_functor, ode_rk45_functor, ode_bdf_functor, ode_adams_functor)
+#define FUNCTOR_TYPES (ode_ckrk_functor, ode_rk45_functor, ode_bdf_functor, ode_adams_functor, ode_adjoint_functor)
 #define TY_TYPES (double, stan::math::var, stan::math::var_value<double>)
 #define TP_TYPES (double, stan::math::var, stan::math::var_value<double>)
 
