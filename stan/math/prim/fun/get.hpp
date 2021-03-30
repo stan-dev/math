@@ -25,6 +25,18 @@ inline T get(const T& x, size_t n) {
 }
 
 /** \ingroup type_trait
+ * Returns the n-th element of the provided std::vector.
+ *
+ * @param x input vector
+ * @param n index of the element to return
+ * @return n-th element of the input vector
+ */
+template <typename T>
+inline T get(const std::vector<T>& x, size_t n) {
+  return x[n];
+}
+
+/** \ingroup type_trait
  * Returns the n-th element of the provided Eigen matrix.
  *
  * @param m input \c Eigen \c Matrix or expression
@@ -33,19 +45,7 @@ inline T get(const T& x, size_t n) {
  */
 template <typename T, typename = require_eigen_t<T>>
 inline scalar_type_t<T> get(const T& m, size_t n) {
-  return m(static_cast<Eigen::Index>(n));
-}
-
-/** \ingroup type_trait
- * Returns the n-th element of the provided std::vector.
- *
- * @param x input vector
- * @param n index of the element to return
- * @return n-th element of the input vector
- */
-template <typename T>
-inline auto get(const std::vector<T>& x, size_t n) {
-  return get(x[n], n - x.size());
+  return m(static_cast<int>(n));
 }
 
 }  // namespace stan
