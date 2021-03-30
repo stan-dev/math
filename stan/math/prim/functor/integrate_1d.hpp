@@ -58,41 +58,44 @@ inline double integrate(const F& f, double a, double b,
   double L2 = 0.0;
   size_t levels;
 
-  auto one_integral_convergence_check = [](auto& error1, auto& rel_tol, auto& L1) {
+  auto one_integral_convergence_check = [](auto& error1, auto& rel_tol,
+                                           auto& L1) {
     if (error1 > rel_tol * L1) {
       [error1]() STAN_COLD_PATH {
-      throw_domain_error(
-          function, "error estimate of integral", error1, "",
-          " exceeds the given relative tolerance times norm of integral");
+        throw_domain_error(
+            function, "error estimate of integral", error1, "",
+            " exceeds the given relative tolerance times norm of integral");
       }();
     }
   };
 
-  auto two_integral_convergence_check = [](auto& error1, auto& error2, auto& rel_tol, auto& L1, auto& L2) {
-    if (error1 > rel_tol * L1) {
-      [error1]() STAN_COLD_PATH {
-        throw_domain_error(function, "error estimate of integral below zero",
-                           error1, "",
-                           " exceeds the given relative tolerance times norm of "
-                           "integral below zero");
-      }();
-    }
-    if (error2 > rel_tol * L2) {
-      [error2]() STAN_COLD_PATH {
-        throw_domain_error(function, "error estimate of integral above zero",
-                           error2, "",
-                           " exceeds the given relative tolerance times norm of "
-                           "integral above zero");
-      }();
-    }
-  };
+  auto two_integral_convergence_check
+      = [](auto& error1, auto& error2, auto& rel_tol, auto& L1, auto& L2) {
+          if (error1 > rel_tol * L1) {
+            [error1]() STAN_COLD_PATH {
+              throw_domain_error(
+                  function, "error estimate of integral below zero", error1, "",
+                  " exceeds the given relative tolerance times norm of "
+                  "integral below zero");
+            }();
+          }
+          if (error2 > rel_tol * L2) {
+            [error2]() STAN_COLD_PATH {
+              throw_domain_error(
+                  function, "error estimate of integral above zero", error2, "",
+                  " exceeds the given relative tolerance times norm of "
+                  "integral above zero");
+            }();
+          }
+        };
 
   // if a or b is infinite, set xc argument to NaN (see docs above for user
   // function for xc info)
   auto f_wrap = [&f](double x) { return f(x, NOT_A_NUMBER); };
   if (std::isinf(a) && std::isinf(b)) {
     boost::math::quadrature::sinh_sinh<double> integrator;
-    double Q = integrator.integrate(f_wrap, relative_tolerance, &error1, &L1, &levels);
+    double Q = integrator.integrate(f_wrap, relative_tolerance, &error1, &L1,
+                                    &levels);
     one_integral_convergence_check(error1, relative_tolerance, L1);
     return Q;
   } else if (std::isinf(a)) {
@@ -103,48 +106,52 @@ inline double integrate(const F& f, double a, double b,
      * https://www.boost.org/doc/libs/1_66_0/libs/math/doc/html/math_toolkit/double_exponential/de_caveats.html)
      */
     if (b <= 0.0) {
-      double Q = integrator.integrate(f_wrap, a, b, relative_tolerance, &error1, &L1,
-                               &levels);
+      double Q = integrator.integrate(f_wrap, a, b, relative_tolerance, &error1,
+                                      &L1, &levels);
       one_integral_convergence_check(error1, relative_tolerance, L1);
       return Q;
     } else {
       boost::math::quadrature::tanh_sinh<double> integrator_right;
-      double Q = integrator.integrate(f_wrap, a, 0.0, relative_tolerance, &error1, &L1,
-                               &levels)
-          + integrator_right.integrate(f_wrap, 0.0, b, relative_tolerance,
-                                       &error2, &L2, &levels);
-      two_integral_convergence_check(error1, error2, relative_tolerance, L1, L2);
+      double Q
+          = integrator.integrate(f_wrap, a, 0.0, relative_tolerance, &error1,
+                                 &L1, &levels)
+            + integrator_right.integrate(f_wrap, 0.0, b, relative_tolerance,
+                                         &error2, &L2, &levels);
+      two_integral_convergence_check(error1, error2, relative_tolerance, L1,
+                                     L2);
       return Q;
     }
   } else if (std::isinf(b)) {
     boost::math::quadrature::exp_sinh<double> integrator;
     if (a >= 0.0) {
-      double Q = integrator.integrate(f_wrap, a, b, relative_tolerance, &error1, &L1,
-                               &levels);
+      double Q = integrator.integrate(f_wrap, a, b, relative_tolerance, &error1,
+                                      &L1, &levels);
       one_integral_convergence_check(error1, relative_tolerance, L1);
       return Q;
     } else {
       boost::math::quadrature::tanh_sinh<double> integrator_left;
-      double Q = integrator_left.integrate(f_wrap, a, 0, relative_tolerance, &error1,
-                                    &L1, &levels)
-          + integrator.integrate(f_wrap, relative_tolerance, &error2, &L2,
-                                 &levels);
-      two_integral_convergence_check(error1, error2, relative_tolerance, L1, L2);
+      double Q = integrator_left.integrate(f_wrap, a, 0, relative_tolerance,
+                                           &error1, &L1, &levels)
+                 + integrator.integrate(f_wrap, relative_tolerance, &error2,
+                                        &L2, &levels);
+      two_integral_convergence_check(error1, error2, relative_tolerance, L1,
+                                     L2);
       return Q;
     }
   } else {
     auto f_wrap = [&f](double x, double xc) { return f(x, xc); };
     boost::math::quadrature::tanh_sinh<double> integrator;
     if (a < 0.0 && b > 0.0) {
-      double Q = integrator.integrate(f_wrap, a, 0.0, relative_tolerance, &error1, &L1,
-                               &levels)
-          + integrator.integrate(f_wrap, 0.0, b, relative_tolerance, &error2,
-                                 &L2, &levels);
-      two_integral_convergence_check(error1, error2, relative_tolerance, L1, L2);
+      double Q = integrator.integrate(f_wrap, a, 0.0, relative_tolerance,
+                                      &error1, &L1, &levels)
+                 + integrator.integrate(f_wrap, 0.0, b, relative_tolerance,
+                                        &error2, &L2, &levels);
+      two_integral_convergence_check(error1, error2, relative_tolerance, L1,
+                                     L2);
       return Q;
     } else {
-      double Q = integrator.integrate(f_wrap, a, b, relative_tolerance, &error1, &L1,
-                               &levels);
+      double Q = integrator.integrate(f_wrap, a, b, relative_tolerance, &error1,
+                                      &L1, &levels);
       one_integral_convergence_check(error1, relative_tolerance, L1);
       return Q;
     }

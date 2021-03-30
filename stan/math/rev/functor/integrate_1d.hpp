@@ -104,10 +104,12 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
       auto args_tuple_local_copy = std::make_tuple(deep_copy_vars(args)...);
 
       // Save the varis so it's easy to efficiently access the nth adjoint
-      std::vector<vari*> local_varis(num_vars_args);
-      apply([&](const auto&... args) {
-        save_varis(local_varis.data(), args...);
-      }, args_tuple_local_copy);
+      std::vector<vari *> local_varis(num_vars_args);
+      apply(
+          [&](const auto &... args) {
+            save_varis(local_varis.data(), args...);
+          },
+          args_tuple_local_copy);
 
       for (size_t n = 0; n < num_vars_args; ++n) {
         // This computes the integral of the gradient of f with respect to the
