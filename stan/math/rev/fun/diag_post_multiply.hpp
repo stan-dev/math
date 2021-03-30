@@ -25,13 +25,14 @@ template <typename T1, typename T2, require_matrix_t<T1>* = nullptr,
           require_any_st_var<T1, T2>* = nullptr>
 auto diag_post_multiply(const T1& m1, const T2& m2) {
   check_size_match("diag_post_multiply", "m2.size()", m2.size(), "m1.cols()",
-                   m2.cols());
+                   m1.cols());
   using inner_ret_type = decltype(value_of(m1) * value_of(m2).asDiagonal());
   using ret_type = return_var_matrix_t<inner_ret_type, T1, T2>;
+
   if (!is_constant<T1>::value && !is_constant<T2>::value) {
     arena_t<promote_scalar_t<var, T1>> arena_m1 = m1;
     arena_t<promote_scalar_t<var, T2>> arena_m2 = m2;
-    arena_t<ret_type> ret(arena_m2.val() * arena_m1.val().asDiagonal());
+    arena_t<ret_type> ret(arena_m1.val() * arena_m2.val().asDiagonal());
     reverse_pass_callback([ret, arena_m1, arena_m2]() mutable {
       arena_m2.adj() += arena_m1.val().cwiseProduct(ret.adj()).colwise().sum();
       arena_m1.adj() += ret.adj() * arena_m2.val().asDiagonal();
@@ -40,7 +41,7 @@ auto diag_post_multiply(const T1& m1, const T2& m2) {
   } else if (!is_constant<T1>::value) {
     arena_t<promote_scalar_t<var, T1>> arena_m1 = m1;
     arena_t<promote_scalar_t<double, T2>> arena_m2 = value_of(m2);
-    arena_t<ret_type> ret(arena_m1.val().asDiagonal() * arena_m2);
+    arena_t<ret_type> ret(arena_m1.val() * arena_m2.asDiagonal());
     reverse_pass_callback([ret, arena_m1, arena_m2]() mutable {
       arena_m1.adj() += ret.adj() * arena_m2.val().asDiagonal();
     });
@@ -48,7 +49,7 @@ auto diag_post_multiply(const T1& m1, const T2& m2) {
   } else if (!is_constant<T2>::value) {
     arena_t<promote_scalar_t<double, T1>> arena_m1 = value_of(m1);
     arena_t<promote_scalar_t<var, T2>> arena_m2 = m2;
-    arena_t<ret_type> ret(arena_m1.asDiagonal() * arena_m2.val());
+    arena_t<ret_type> ret(arena_m1 * arena_m2.val().asDiagonal());
     reverse_pass_callback([ret, arena_m1, arena_m2]() mutable {
       arena_m2.adj() += arena_m1.val().cwiseProduct(ret.adj()).colwise().sum();
     });

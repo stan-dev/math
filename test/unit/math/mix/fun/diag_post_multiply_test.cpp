@@ -13,6 +13,7 @@ void expect_diag_post_multiply(const Eigen::MatrixXd& a,
 }
 TEST(MathMixMatFun, diagPostMultiply) {
   using stan::test::relative_tolerance;
+
   // 0 x 0
   Eigen::MatrixXd a00(0, 0);
   Eigen::VectorXd u0(0);
