@@ -79,5 +79,5 @@ TEST(MathMixMatFun, diagPostMultiply) {
   expect_diag_post_multiply(b31, u1);
 
   // non-square error: mismatched sizes
-  expect_diag_pre_multiply(b23, u2);
+  expect_diag_post_multiply(b23, u2);
 }
