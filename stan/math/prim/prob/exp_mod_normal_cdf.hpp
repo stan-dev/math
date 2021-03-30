@@ -23,7 +23,9 @@
 namespace stan {
 namespace math {
 
-template <typename T_y, typename T_loc, typename T_scale, typename T_inv_scale>
+template <typename T_y, typename T_loc, typename T_scale, typename T_inv_scale,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_loc, T_scale, T_inv_scale>* = nullptr>
 return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_cdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma,
     const T_inv_scale& lambda) {
