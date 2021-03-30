@@ -270,6 +270,7 @@ template <typename T>
 struct harmonic_oscillator_t0_ad_test
     : public harmonic_oscillator_ode_base<T>,
       public ODETestFixture<harmonic_oscillator_t0_ad_test<T>> {
+  stan::math::nested_rev_autodiff nested;
   stan::math::var t0v;
 
   harmonic_oscillator_t0_ad_test()
@@ -287,17 +288,16 @@ struct harmonic_oscillator_t0_ad_test
     auto res = apply_solver();
     res[0][0].grad();
     EXPECT_NEAR(t0v.adj(), -0.66360742442816977871, tol);
-    stan::math::set_zero_all_adjoints();
+    nested.set_zero_all_adjoints();
     res[0][1].grad();
     EXPECT_NEAR(t0v.adj(), 0.23542843380353062344, tol);
-    stan::math::set_zero_all_adjoints();
+    nested.set_zero_all_adjoints();
     res[1][0].grad();
     EXPECT_NEAR(t0v.adj(), -0.2464078910913158893, tol);
-    stan::math::set_zero_all_adjoints();
+    nested.set_zero_all_adjoints();
     res[1][1].grad();
     EXPECT_NEAR(t0v.adj(), -0.38494826636037426937, tol);
-    stan::math::set_zero_all_adjoints();
-    stan::math::recover_memory();
+    nested.set_zero_all_adjoints();
   }
 };
 
