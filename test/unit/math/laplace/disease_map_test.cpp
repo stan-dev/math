@@ -1,7 +1,7 @@
 #include <stan/math.hpp>
 #include <stan/math/laplace/laplace.hpp>
 #include <stan/math/laplace/laplace_likelihood_general.hpp>
-#include <stan/math/laplace/laplace_likelihood_poisson_log.hpp>
+#include <stan/math/laplace/laplace_likelihood_poisson_log_lpmf.hpp>
 #include <stan/math/laplace/prob/laplace_rng.hpp>
 #include <stan/math/laplace/prob/laplace_poisson_log_rng.hpp>
 

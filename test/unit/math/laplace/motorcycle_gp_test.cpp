@@ -1,6 +1,7 @@
 #include <stan/math.hpp>
 #include <stan/math/laplace/laplace.hpp>
 #include <stan/math/laplace/laplace_likelihood_general.hpp>
+#include <stan/math/laplace/laplace_marginal_lpdf.hpp>
 
 #include <test/unit/math/laplace/laplace_utility.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
@@ -115,10 +116,10 @@ protected:
       n_obs = 133;
       read_data(n_obs, "test/unit/math/laplace/motorcycle_gp/",
                    x, y);
-      std::cout << "x: ";
-      for (int i = 0; i < 5; i++) std::cout << x[i] << " ";
-      std::cout << " ..." << std::endl;
-      std::cout << "y: " << y.transpose().head(5) << " ..." << std::endl;
+      // std::cout << "x: ";
+      // for (int i = 0; i < 5; i++) std::cout << x[i] << " ";
+      // std::cout << " ..." << std::endl;
+      // std::cout << "y: " << y.transpose().head(5) << " ..." << std::endl;
     }
 
     length_scale_f = 0.3;
@@ -211,6 +212,7 @@ TEST_F(laplace_motorcyle_gp_test, lk_autodiff) {
   phi_u0(0) += eps;
   phi_l0(0) -= eps;
 
+  // TODO: test all the gradients in code (rather than doing it manually)
   double target_u0
     = laplace_marginal_density(diff_functor,
                                covariance_motorcycle_functor(),
@@ -268,6 +270,7 @@ TEST_F(laplace_motorcyle_gp_test, lk_autodiff_eta) {
     << std::endl;
 
   // finite diff benchmark
+  // TODO: test all the gradients in code (rather than doing it manually)
   double eps = 1e-7;
   Eigen::VectorXd eta_dbl = value_of(eta);
   Eigen::VectorXd eta_u = eta_dbl, eta_l = eta_dbl;
@@ -291,4 +294,30 @@ TEST_F(laplace_motorcyle_gp_test, lk_autodiff_eta) {
                              compute_W_root);
 
   std::cout << "gf[4]: " << (target_u - target_l) / (2 * eps) << std::endl;
+}
+
+TEST_F(laplace_motorcyle_gp_test, wrapper_function) {
+  using stan::math::var;
+  using stan::math::laplace_marginal_lpdf;
+
+  // TODO: move this to the class test.
+  Eigen::Matrix<var, -1, 1> eta(1);
+  eta(0) = 1;
+  int hessian_block_size = 2;
+
+  var marginal_density
+    = laplace_marginal_lpdf(y, normal_likelihood2(), eta, delta_int,
+                            covariance_motorcycle_functor(), phi,
+                            x, delta_dummy, delta_int, theta0,
+                            0, 0, 1e-8, 100, hessian_block_size,
+                            compute_W_root);
+
+  std::cout << "density: " << marginal_density << std::endl;
+
+  VEC g;
+  AVEC parm_vec = createAVEC(phi(0), phi(1), phi(2), phi(3), eta(0));
+  marginal_density.grad(parm_vec, g);
+  std::cout << "grad: "
+  << g[0] << " " << g[1] << " " << g[2] << " " << g[3] << " " << g[4]
+  << std::endl;
 }

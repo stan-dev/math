@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_LAPLACE_LAPLACE_MARGINAL_POISSON_LOG_HPP
-#define STAN_MATH_LAPLACE_LAPLACE_MARGINAL_POISSON_LOG_HPP
+#ifndef STAN_MATH_LAPLACE_LAPLACE_MARGINAL_POISSON_LOG_LPMF_HPP
+#define STAN_MATH_LAPLACE_LAPLACE_MARGINAL_POISSON_LOG_LPMF_HPP
 
 #include <stan/math/laplace/laplace_marginal.hpp>
 #include <stan/math/laplace/laplace_likelihood_poisson_log.hpp>
