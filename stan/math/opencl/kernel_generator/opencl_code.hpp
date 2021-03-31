@@ -62,9 +62,7 @@ class opencl_code_output
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
    * @param view_handled whether whether caller already handled matrix view
-   * @param var_name_condition variable name of the condition expression
-   * @param var_name_else variable name of the then expression
-   * @param var_name_then variable name of the else expression
+   * @param dummy_var_name_code variable name of the code operation (unused)
    * @return part of kernel with code for this expression
    */
   inline kernel_parts generate(const std::string& row_index_name,
@@ -102,9 +100,9 @@ class opencl_code_impl
 
   /**
    * Constructor
-   * @param condition condition expression
-   * @param then then expression
-   * @param els else expression
+   * @param names tuple of names of the input variables (that hold values of
+   * argument expressions)
+   * @param arguments arguments to this operation
    */
   explicit opencl_code_impl(names_tuple names, T_arguments&&... arguments)
       : base(std::forward<T_arguments>(arguments)...), names_(names) {}
@@ -115,10 +113,7 @@ class opencl_code_impl
    * @param col_index_name column index variable name
    * @param view_handled whether whether caller already handled matrix
    * view
-   * @param var_name_condition variable name of the condition
-   * expression
-   * @param var_name_else variable name of the then expression
-   * @param var_name_then variable name of the else expression
+   * @param var_names variable names of the argument expressions
    * @return part of kernel with code for this expression
    */
   inline kernel_parts generate(
