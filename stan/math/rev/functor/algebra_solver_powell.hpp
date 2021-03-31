@@ -18,82 +18,6 @@ namespace stan {
 namespace math {
 
 /**
- * The vari class for the algebraic solver. We compute the  Jacobian of
- * the solutions with respect to the parameters using the implicit
- * function theorem. The call to Jacobian() occurs outside the call to
- * chain() -- this prevents malloc issues.
- */
-template <typename Fy, typename T, typename Fx>
-struct algebra_solver_vari : public vari {
-  /** number of parameters */
-  int y_size_;
-  /** value of parameters */
-  arena_t<Eigen::Matrix<T, Eigen::Dynamic, 1>> y_val_;
-  /** System functor (f_) w.r.t. inputs (y_) */
-  Fy fy_;
-  /** array of parameters */
-  vari** y_;
-  /** number of unknowns */
-  int x_size_;
-  /** value of unknowns */
-  arena_t<Eigen::VectorXd&> x_val_;
-  /** array of unknowns */
-  vari** x_;
-  /** Jacobian of f w.r.t. outputs (x_) */
-  const Eigen::MatrixXd Jf_x_;
-
-  algebra_solver_vari(Fy& fy, const Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
-                      Fx& fx, const Eigen::VectorXd& x)
-      : vari(x(0)),
-        y_size_(y.size()),
-        y_val_(y),
-        fy_(fy),
-        y_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(y_size_)),
-        x_size_(x.size()),
-        x_val_(x),
-        Jf_x_(fx.get_jacobian(x_val_)),
-        x_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(x_size_)) {
-    using Eigen::Map;
-    using Eigen::MatrixXd;
-
-    for (int i = 0; i < y_size_; ++i) {
-      y_[i] = y(i).vi_;
-    }
-
-    x_[0] = this;
-    for (int i = 1; i < x_size_; ++i) {
-      x_[i] = new vari(x(i), false);
-    }
-  }
-
-  void chain() {
-    using Eigen::Dynamic;
-    using Eigen::Matrix;
-    using Eigen::MatrixXd;
-    using Eigen::VectorXd;
-
-    // Compute (transpose of) specificities with respect to x.
-    VectorXd x_bar_(x_size_);
-    for (int i = 0; i < x_size_; ++i) {
-      x_bar_[i] = x_[i]->adj_;
-    }
-
-    // Contract specificities with inverse Jacobian of f with respect to x.
-    VectorXd eta_ = -Jf_x_.transpose().fullPivLu().solve(x_bar_);
-
-    // Contract with Jacobian of f with respect to y using a nested reverse
-    // autodiff pass.
-    {
-      stan::math::nested_rev_autodiff rev;
-      Matrix<var, Eigen::Dynamic, 1> y_nrad_ = y_val_;
-      auto x_nrad_ = stan::math::eval(fy_(y_nrad_));
-      x_nrad_.adj() = eta_;
-      stan::math::grad();
-    }
-  }
-};  // namespace math
-
-/**
  * Return the solution to the specified system of algebraic
  * equations given an initial guess, and parameters and data,
  * which get passed into the algebraic system.
@@ -232,15 +156,10 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
   check_nonnegative("alegbra_solver", "relative_tolerance", relative_tolerance);
 
   // Construct the Powell solver
-
-<<<<<<< HEAD
   auto myfunc = [&](const auto& x) {
     return apply([&](const auto&... args) { return f(x, msgs, args...); },
                  args_vals_tuple);
   };
-=======
-  auto myfunc = [&](const auto& x) { return f(x, y_val, dat, dat_int, msgs); };
->>>>>>> 4848150b454d421fba117d6e25ae8d1df8f48ea8
 
   hybrj_functor_solver<decltype(myfunc)> fx(myfunc);
   Eigen::HybridNonLinearSolver<decltype(fx)> solver(fx);
@@ -291,6 +210,26 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
   return ret_type(ret);
 }
 
+/**
+ * Adapt the non-variadic algebra solver arguments to the variadic
+ * algebra_solver_powell_impl or algebra_solver_newton_impl interface.
+ *
+ * @param F Type of function to adapt.
+ */
+template <typename F>
+struct algebra_solver_adapter {
+  const F& f_;
+
+  explicit algebra_solver_adapter(const F& f) : f_(f) {}
+
+  template <typename T1, typename T2>
+  auto operator()(const T1& x, std::ostream* msgs, const T2& y,
+                  const std::vector<double>& dat,
+                  const std::vector<int>& dat_int) const {
+    return f_(x, y, dat, dat_int, msgs);
+  }
+};
+
 template <typename F, typename T1, typename T2,
           require_all_eigen_vector_t<T1, T2>* = nullptr>
 Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_powell(
@@ -298,9 +237,9 @@ Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_powell(
     const std::vector<int>& dat_int, std::ostream* msgs = nullptr,
     double relative_tolerance = 1e-10, double function_tolerance = 1e-6,
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
-  return algebra_solver_powell_impl(f, x, y, dat, dat_int, msgs,
+  return algebra_solver_powell_impl(algebra_solver_adapter<F>(f), x, msgs,
                                     relative_tolerance, function_tolerance,
-                                    max_num_steps);
+                                    max_num_steps, y, dat, dat_int);
 }
 
 /**
