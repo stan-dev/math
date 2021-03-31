@@ -32,7 +32,9 @@ namespace math {
  * @throw std::domain_error if y is nan, mu is infinite, or sigma is nonpositive
  * @throw std::invalid_argument if container sizes mismatch
  */
-template <typename T_y, typename T_loc, typename T_scale>
+template <typename T_y, typename T_loc, typename T_scale,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_loc, T_scale>* = nullptr>
 return_type_t<T_y, T_loc, T_scale> double_exponential_lccdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
