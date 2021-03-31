@@ -311,6 +311,7 @@ def reference_vector_argument(arg):
 overload_scalar = {
     "Prim": "double",
     "Rev": "stan::math::var",
+    "RevVarmat": "stan::math::var",
     "Fwd": "stan::math::fvar<double>",
     "Mix": "stan::math::fvar<stan::math::var>",
 }
