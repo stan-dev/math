@@ -47,7 +47,7 @@ struct simple_eq_functor {
 struct simple_eq_functor_nopara {
   template <typename T1, typename T2, typename T3, typename T4>
   inline Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1>
-  operator()(const T1&x, const T2&y, const T3& dat, const T4& dat_int,
+  operator()(const T1& x, const T2& y, const T3& dat, const T4& dat_int,
              std::ostream* pstream__) const {
     Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1> z(2);
     z(0) = x(0) - dat[0] * dat[1];
@@ -59,7 +59,7 @@ struct simple_eq_functor_nopara {
 struct non_linear_eq_functor {
   template <typename T1, typename T2, typename T3, typename T4>
   inline Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1>
-  operator()(const T1&x, const T2&y, const T3& dat, const T4& dat_int,
+  operator()(const T1& x, const T2& y, const T3& dat, const T4& dat_int,
              std::ostream* pstream__) const {
     Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1> z(3);
     z(0) = x(2) - y(2);
@@ -72,7 +72,7 @@ struct non_linear_eq_functor {
 struct non_square_eq_functor {
   template <typename T1, typename T2, typename T3, typename T4>
   inline Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1>
-  operator()(const T1&x, const T2&y, const T3& dat, const T4& dat_int,
+  operator()(const T1& x, const T2& y, const T3& dat, const T4& dat_int,
              std::ostream* pstream__) const {
     Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1> z(2);
     z(0) = x(0) - y(0);
