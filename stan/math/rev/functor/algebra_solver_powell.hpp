@@ -18,6 +18,25 @@ namespace stan {
 namespace math {
 
 /**
+ * Adapt the non-variadic algebra solver arguments to the variadic
+ * algebra_solver_powell_impl or algebra_solver_newton_impl interface.
+ *
+ * @param F Type of function to adapt.
+ */
+template <typename F>
+struct algebra_solver_adapter {
+  const F& f_;
+
+  explicit algebra_solver_adapter(const F& f) : f_(f) {}
+
+  template <typename T1, typename T2, typename T3, typename T4>
+  auto operator()(const T1& x, std::ostream* msgs, const T2& y,
+                  const T3& dat, const T4& dat_int) const {
+    return f_(x, y, dat, dat_int, msgs);
+  }
+};
+
+/**
  * Return the solution to the specified system of algebraic
  * equations given an initial guess, and parameters and data,
  * which get passed into the algebraic system.
@@ -69,26 +88,40 @@ Eigen::VectorXd algebra_solver_powell(
     std::ostream* msgs = nullptr, double relative_tolerance = 1e-10,
     double function_tolerance = 1e-6,
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
-  /*const auto& x_eval = x.eval();
+  return algebra_solver_powell_impl(algebra_solver_adapter<F>(f), x, msgs,
+                                    relative_tolerance, function_tolerance,
+                                    max_num_steps, y, dat, dat_int);
+}
+
+template <typename F, typename T1, typename... T_Args,
+          require_all_eigen_vector_t<T1>* = nullptr,
+          require_any_st_var<T_Args...>* = nullptr>
+Eigen::VectorXd algebra_solver_powell_impl(
+    const F& f, const T1& x, std::ostream* msgs, double relative_tolerance,
+    double function_tolerance, long int max_num_steps, const Eigen::VectorXd& y,
+    const T_Args&... args) {  // NOLINT(runtime/int)
+  const auto& x_eval = x.eval();
   const auto& x_val = (value_of(x_eval)).eval();
-  algebra_solver_check(x_val, y, dat, dat_int, function_tolerance,
-                       max_num_steps);
+  auto args_vals_tuple = std::make_tuple(eval(value_of(args))...);
+
   check_nonnegative("alegbra_solver", "relative_tolerance", relative_tolerance);
 
-  // Create functor for algebraic system
-  using Fs = system_functor<F, double, double, true>;
-  using Fx = hybrj_functor_solver<Fs, F, double, double>;
-  Fx fx(Fs(), f, x_val, y, dat, dat_int, msgs);
-  Eigen::HybridNonLinearSolver<Fx> solver(fx);
+  // Construct the Powell solver
+  auto myfunc = [&](const auto& x) {
+    return apply([&](const auto&... args) { return f(x, msgs, y, args...); },
+                 args_vals_tuple);
+  };
+
+  hybrj_functor_solver<decltype(myfunc)> fx(myfunc);
+  Eigen::HybridNonLinearSolver<decltype(fx)> solver(fx);
 
   // Check dimension unknowns equals dimension of system output
   check_matching_sizes("algebra_solver", "the algebraic system's output",
                        fx.get_value(x_val), "the vector of unknowns, x,", x);
 
   // Solve the system
-  return algebra_solver_powell_(solver, fx, x, y, dat, dat_int, msgs,
-                                relative_tolerance, function_tolerance,
-                                max_num_steps);*/
+  return algebra_solver_powell_(solver, fx, x_eval, 0, relative_tolerance,
+                               function_tolerance, max_num_steps);
 }
 
 /**
@@ -210,24 +243,6 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
   return ret_type(ret);
 }
 
-/**
- * Adapt the non-variadic algebra solver arguments to the variadic
- * algebra_solver_powell_impl or algebra_solver_newton_impl interface.
- *
- * @param F Type of function to adapt.
- */
-template <typename F>
-struct algebra_solver_adapter {
-  const F& f_;
-
-  explicit algebra_solver_adapter(const F& f) : f_(f) {}
-
-  template <typename T1, typename T2, typename T3, typename T4>
-  auto operator()(const T1& x, std::ostream* msgs, const T2& y,
-                  const T3& dat, const T4& dat_int) const {
-    return f_(x, y, dat, dat_int, msgs);
-  }
-};
 
 template <typename F, typename T1, typename T2,
           require_all_eigen_vector_t<T1, T2>* = nullptr>
