@@ -98,9 +98,9 @@ inline int get_num_threads() {
 inline tbb::task_arena& init_threadpool_tbb(size_t n_threads = 0) {
   int tbb_max_threads;
   if (n_threads == 0) {
-   tbb_max_threads = internal::get_num_threads();
+    tbb_max_threads = internal::get_num_threads();
   } else {
-   tbb_max_threads = n_threads;
+    tbb_max_threads = n_threads;
   }
   static tbb::global_control tbb_gc(
       tbb::global_control::max_allowed_parallelism, tbb_max_threads);
@@ -136,9 +136,9 @@ inline tbb::task_arena& init_threadpool_tbb(size_t n_threads = 0) {
 inline tbb::task_scheduler_init& init_threadpool_tbb(size_t n_threads = 0) {
   int tbb_max_threads;
   if (n_threads == 0) {
-   tbb_max_threads = internal::get_num_threads();
+    tbb_max_threads = internal::get_num_threads();
   } else {
-   tbb_max_threads = n_threads;
+    tbb_max_threads = n_threads;
   }
   static tbb::task_scheduler_init tbb_scheduler(tbb_max_threads, 0);
   return tbb_scheduler;
