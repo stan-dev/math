@@ -9,8 +9,8 @@ namespace stan {
 namespace math {
 
 /**
- * Return the product of the diagonal matrix formed from the vector
- * or row_vector and a matrix.
+ * Return the product of the matrix and a diagonal matrix formed from the vector
+ * or row_vector.
  *
  * @tparam T1 type of the matrix
  * @tparam T2 type of the vector/row_vector
