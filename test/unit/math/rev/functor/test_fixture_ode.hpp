@@ -339,7 +339,7 @@ struct ODETestFixture : public ::testing::Test {
             EXPECT_FLOAT_EQ(ode.ts[k].adj(), ts_ad);
           }
         }
-	stan::math::set_zero_all_adjoints();
+        stan::math::set_zero_all_adjoints();
       }
     }
   }
