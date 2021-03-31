@@ -84,7 +84,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> gumbel_cdf(const T_y_cl& y,
               rep_deriv),
           calc_if<!is_constant<T_scale_cl>::value>(scaled_diff));
 
-  T_partials_return cdf = sum(from_matrix_cl(cdf_cl));
+  T_partials_return cdf = (from_matrix_cl(cdf_cl)).prod();
 
   auto y_deriv = elt_multiply(cdf, mu_deriv_cl);
   auto mu_deriv = -y_deriv;
