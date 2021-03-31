@@ -78,65 +78,65 @@ TEST(ProbDistributionsNormalLcdf, opencl_matches_cpu_small) {
       sigma.transpose().eval());
 }
 
-//TEST(ProbDistributionsNormalLcdf, opencl_broadcast_y) {
-//  int N = 3;
+TEST(ProbDistributionsNormalLcdf, opencl_broadcast_y) {
+  int N = 3;
 
-//  double y_scal = 12.3;
-//  Eigen::VectorXd mu(N);
-//  mu << 0.5, 1.2, 1.0;
-//  Eigen::VectorXd sigma(N);
-//  sigma << 0.3, 0.8, 1.0;
+  double y_scal = 12.3;
+  Eigen::VectorXd mu(N);
+  mu << 0.5, 1.2, 1.0;
+  Eigen::VectorXd sigma(N);
+  sigma << 0.3, 0.8, 1.0;
 
-//  stan::math::test::test_opencl_broadcasting_prim_rev<0>(normal_lcdf_functor,
-//                                                         y_scal, mu, sigma);
-//  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
-//      normal_lcdf_functor, y_scal, mu.transpose().eval(), sigma);
-//}
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(normal_lcdf_functor,
+                                                         y_scal, mu, sigma);
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
+      normal_lcdf_functor, y_scal, mu.transpose().eval(), sigma);
+}
 
-//TEST(ProbDistributionsNormalLcdf, opencl_broadcast_mu) {
-//  int N = 3;
+TEST(ProbDistributionsNormalLcdf, opencl_broadcast_mu) {
+  int N = 3;
 
-//  Eigen::VectorXd y(N);
-//  y << 0.3, 0.8, 1.0;
-//  double mu_scal = 12.3;
-//  Eigen::VectorXd sigma(N);
-//  sigma << 0.3, 0.8, 1.0;
+  Eigen::VectorXd y(N);
+  y << 0.3, 0.8, 1.0;
+  double mu_scal = 12.3;
+  Eigen::VectorXd sigma(N);
+  sigma << 0.3, 0.8, 1.0;
 
-//  stan::math::test::test_opencl_broadcasting_prim_rev<1>(normal_lcdf_functor, y,
-//                                                         mu_scal, sigma);
-//  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
-//      normal_lcdf_functor, y.transpose().eval(), mu_scal, sigma);
-//}
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(normal_lcdf_functor, y,
+                                                         mu_scal, sigma);
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
+      normal_lcdf_functor, y.transpose().eval(), mu_scal, sigma);
+}
 
-//TEST(ProbDistributionsNormalLcdf, opencl_broadcast_sigma) {
-//  int N = 3;
+TEST(ProbDistributionsNormalLcdf, opencl_broadcast_sigma) {
+  int N = 3;
 
-//  Eigen::VectorXd y(N);
-//  y << 0.3, 0.8, 1.0;
-//  Eigen::VectorXd mu(N);
-//  mu << 0.3, 0.8, 1.0;
-//  double sigma_scal = 12.3;
+  Eigen::VectorXd y(N);
+  y << 0.3, 0.8, 1.0;
+  Eigen::VectorXd mu(N);
+  mu << 0.3, 0.8, 1.0;
+  double sigma_scal = 12.3;
 
-//  stan::math::test::test_opencl_broadcasting_prim_rev<2>(normal_lcdf_functor, y,
-//                                                         mu, sigma_scal);
-//  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
-//      normal_lcdf_functor, y.transpose().eval(), mu, sigma_scal);
-//}
+  stan::math::test::test_opencl_broadcasting_prim_rev<2>(normal_lcdf_functor, y,
+                                                         mu, sigma_scal);
+  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
+      normal_lcdf_functor, y.transpose().eval(), mu, sigma_scal);
+}
 
-//TEST(ProbDistributionsNormalLcdf, opencl_matches_cpu_big) {
-//  int N = 15379;
+TEST(ProbDistributionsNormalLcdf, opencl_matches_cpu_big) {
+  int N = 15379;
 
-//  Eigen::Matrix<double, Eigen::Dynamic, 1> y
-//      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
-//  Eigen::Matrix<double, Eigen::Dynamic, 1> mu
-//      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
-//  Eigen::Matrix<double, Eigen::Dynamic, 1> sigma
-//      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs()+0.01;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> y
+      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
+  Eigen::Matrix<double, Eigen::Dynamic, 1> mu
+      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
+  Eigen::Matrix<double, Eigen::Dynamic, 1> sigma
+      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs()*2+0.01;
 
-//  stan::math::test::compare_cpu_opencl_prim_rev(normal_lcdf_functor, y, mu,
-//                                                sigma);
-//  stan::math::test::compare_cpu_opencl_prim_rev(
-//      normal_lcdf_functor, y.transpose().eval(), mu.transpose().eval(),
-//      sigma.transpose().eval());
-//}
+  stan::math::test::compare_cpu_opencl_prim_rev(normal_lcdf_functor, y, mu,
+                                                sigma);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      normal_lcdf_functor, y.transpose().eval(), mu.transpose().eval(),
+      sigma.transpose().eval());
+}
 #endif
