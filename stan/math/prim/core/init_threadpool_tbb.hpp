@@ -92,8 +92,8 @@ inline int get_num_threads() {
  *  set will search for the environment variable `STAN_NUM_THREADS`. A value of
  *  -1 will assume all detectable threads are available for the process.
  * @return reference to the static tbb::global_control
- * @throws std::runtime_error if n_threads (defaults to zero) is not provided and
- * the value of STAN_NUM_THREADS environment variable is invalid.
+ * @throws std::runtime_error if n_threads (defaults to zero) is not provided
+ * and the value of STAN_NUM_THREADS environment variable is invalid.
  */
 inline tbb::task_arena& init_threadpool_tbb(int n_threads = 0) {
   int tbb_max_threads;
@@ -104,8 +104,7 @@ inline tbb::task_arena& init_threadpool_tbb(int n_threads = 0) {
   } else if (n_threads == -1) {
     tbb_max_threads = std::thread::hardware_concurrency();
   } else {
-    invalid_argument("init_threadpool_tbb(int)", "n_threads",
-                     n_threads,
+    invalid_argument("init_threadpool_tbb(int)", "n_threads", n_threads,
                      "The number of threads is '",
                      "' but it must be positive or -1");
   }
@@ -136,8 +135,8 @@ inline tbb::task_arena& init_threadpool_tbb(int n_threads = 0) {
  *  set will search for the environment variable `STAN_NUM_THREADS`. A value of
  *  will assume all detectable threads are available for the process.
  * @return reference to the static tbb::task_scheduler_init
- * @throws std::runtime_error if n_threads (defaults to zero) is not provided and
- * the value of STAN_NUM_THREADS environment variable is invalid.
+ * @throws std::runtime_error if n_threads (defaults to zero) is not provided
+ * and the value of STAN_NUM_THREADS environment variable is invalid.
  */
 inline tbb::task_scheduler_init& init_threadpool_tbb(int n_threads = 0) {
   int tbb_max_threads;
@@ -148,8 +147,7 @@ inline tbb::task_scheduler_init& init_threadpool_tbb(int n_threads = 0) {
   } else if (n_threads == -1) {
     tbb_max_threads = std::thread::hardware_concurrency();
   } else {
-    invalid_argument("init_threadpool_tbb(int)", "n_threads",
-                     n_threads,
+    invalid_argument("init_threadpool_tbb(int)", "n_threads", n_threads,
                      "The number of threads is '",
                      "' but it must be positive or -1");
   }
