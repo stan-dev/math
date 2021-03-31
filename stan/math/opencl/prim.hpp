@@ -100,6 +100,9 @@
 
 #include <stan/math/opencl/prim/add_diag.hpp>
 #include <stan/math/opencl/prim/append_array.hpp>
+#include <stan/math/opencl/prim/bernoulli_cdf.hpp>
+#include <stan/math/opencl/prim/bernoulli_lccdf.hpp>
+#include <stan/math/opencl/prim/bernoulli_lcdf.hpp>
 #include <stan/math/opencl/prim/bernoulli_lpmf.hpp>
 #include <stan/math/opencl/prim/bernoulli_logit_lpmf.hpp>
 #include <stan/math/opencl/prim/bernoulli_logit_glm_lpmf.hpp>
@@ -110,6 +113,9 @@
 #include <stan/math/opencl/prim/binomial_lpmf.hpp>
 #include <stan/math/opencl/prim/block.hpp>
 #include <stan/math/opencl/prim/categorical_logit_glm_lpmf.hpp>
+#include <stan/math/opencl/prim/cauchy_cdf.hpp>
+#include <stan/math/opencl/prim/cauchy_lccdf.hpp>
+#include <stan/math/opencl/prim/cauchy_lcdf.hpp>
 #include <stan/math/opencl/prim/cauchy_lpdf.hpp>
 #include <stan/math/opencl/prim/chi_square_lpdf.hpp>
 #include <stan/math/opencl/prim/cholesky_decompose.hpp>
@@ -128,9 +134,21 @@
 #include <stan/math/opencl/prim/divide_columns.hpp>
 #include <stan/math/opencl/prim/dot_product.hpp>
 #include <stan/math/opencl/prim/dot_self.hpp>
+#include <stan/math/opencl/prim/double_exponential_cdf.hpp>
+#include <stan/math/opencl/prim/double_exponential_lccdf.hpp>
+#include <stan/math/opencl/prim/double_exponential_lcdf.hpp>
 #include <stan/math/opencl/prim/double_exponential_lpdf.hpp>
+#include <stan/math/opencl/prim/exp_mod_normal_cdf.hpp>
+#include <stan/math/opencl/prim/exp_mod_normal_lccdf.hpp>
+#include <stan/math/opencl/prim/exp_mod_normal_lcdf.hpp>
 #include <stan/math/opencl/prim/exp_mod_normal_lpdf.hpp>
+#include <stan/math/opencl/prim/exponential_cdf.hpp>
+#include <stan/math/opencl/prim/exponential_lccdf.hpp>
+#include <stan/math/opencl/prim/exponential_lcdf.hpp>
 #include <stan/math/opencl/prim/exponential_lpdf.hpp>
+#include <stan/math/opencl/prim/frechet_cdf.hpp>
+#include <stan/math/opencl/prim/frechet_lccdf.hpp>
+#include <stan/math/opencl/prim/frechet_lcdf.hpp>
 #include <stan/math/opencl/prim/frechet_lpdf.hpp>
 #include <stan/math/opencl/prim/gamma_lpdf.hpp>
 #include <stan/math/opencl/prim/gp_exp_quad_cov.hpp>
@@ -141,8 +159,13 @@
 #include <stan/math/opencl/prim/inv_cloglog.hpp>
 #include <stan/math/opencl/prim/inv_gamma_lpdf.hpp>
 #include <stan/math/opencl/prim/inv_sqrt.hpp>
+#include <stan/math/opencl/prim/lb_constrain.hpp>
+#include <stan/math/opencl/prim/log_mix.hpp>
+#include <stan/math/opencl/prim/log_softmax.hpp>
 #include <stan/math/opencl/prim/logistic_lpdf.hpp>
+#include <stan/math/opencl/prim/log_sum_exp.hpp>
 #include <stan/math/opencl/prim/lognormal_lpdf.hpp>
+#include <stan/math/opencl/prim/lub_constrain.hpp>
 #include <stan/math/opencl/prim/matrix_power.hpp>
 #include <stan/math/opencl/prim/mdivide_left_tri_low.hpp>
 #include <stan/math/opencl/prim/mdivide_right_tri_low.hpp>
@@ -156,6 +179,7 @@
 #include <stan/math/opencl/prim/normal_id_glm_lpdf.hpp>
 #include <stan/math/opencl/prim/normal_lpdf.hpp>
 #include <stan/math/opencl/prim/num_elements.hpp>
+#include <stan/math/opencl/prim/offset_multiplier_constrain.hpp>
 #include <stan/math/opencl/prim/ordered_logistic_glm_lpmf.hpp>
 #include <stan/math/opencl/prim/ordered_logistic_lpmf.hpp>
 #include <stan/math/opencl/prim/pareto_lpdf.hpp>
@@ -163,6 +187,8 @@
 #include <stan/math/opencl/prim/poisson_log_glm_lpmf.hpp>
 #include <stan/math/opencl/prim/poisson_log_lpmf.hpp>
 #include <stan/math/opencl/prim/poisson_lpmf.hpp>
+#include <stan/math/opencl/prim/prod.hpp>
+#include <stan/math/opencl/prim/rank.hpp>
 #include <stan/math/opencl/prim/rayleigh_lpdf.hpp>
 #include <stan/math/opencl/prim/rep_array.hpp>
 #include <stan/math/opencl/prim/rep_matrix.hpp>
@@ -174,9 +200,11 @@
 #include <stan/math/opencl/prim/rows_dot_product.hpp>
 #include <stan/math/opencl/prim/rows_dot_self.hpp>
 #include <stan/math/opencl/prim/scaled_inv_chi_square_lpdf.hpp>
+#include <stan/math/opencl/prim/sd.hpp>
 #include <stan/math/opencl/prim/segment.hpp>
 #include <stan/math/opencl/prim/sign.hpp>
 #include <stan/math/opencl/prim/size.hpp>
+#include <stan/math/opencl/prim/softmax.hpp>
 #include <stan/math/opencl/prim/squared_distance.hpp>
 #include <stan/math/opencl/prim/sub_col.hpp>
 #include <stan/math/opencl/prim/sub_row.hpp>
@@ -194,7 +222,10 @@
 #include <stan/math/opencl/prim/to_row_vector.hpp>
 #include <stan/math/opencl/prim/to_vector.hpp>
 #include <stan/math/opencl/prim/trace.hpp>
+#include <stan/math/opencl/prim/ub_constrain.hpp>
 #include <stan/math/opencl/prim/uniform_lpdf.hpp>
+#include <stan/math/opencl/prim/unit_vector_constrain.hpp>
+#include <stan/math/opencl/prim/variance.hpp>
 #include <stan/math/opencl/prim/weibull_lpdf.hpp>
 
 #include <stan/math/opencl/err.hpp>

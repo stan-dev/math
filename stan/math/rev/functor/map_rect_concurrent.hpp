@@ -45,10 +45,18 @@ map_rect_concurrent(
   };
 
 #ifdef STAN_THREADS
-  tbb::parallel_for(tbb::blocked_range<std::size_t>(0, num_jobs),
-                    [&](const tbb::blocked_range<size_t>& r) {
-                      execute_chunk(r.begin(), r.end());
-                    });
+  // we must use task isolation as described here:
+  // https://software.intel.com/content/www/us/en/develop/documentation/tbb-documentation/top/intel-threading-building-blocks-developer-guide/task-isolation.html
+  // this is to ensure that the thread local AD tape ressource is
+  // not being modified from a different task which may happen
+  // whenever this function is being used itself in a parallel
+  // context (like running multiple chains for Stan)
+  tbb::this_task_arena::isolate([&] {
+    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, num_jobs),
+                      [&](const tbb::blocked_range<size_t>& r) {
+                        execute_chunk(r.begin(), r.end());
+                      });
+  });
 #else
   execute_chunk(0, num_jobs);
 #endif

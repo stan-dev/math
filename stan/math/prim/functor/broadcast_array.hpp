@@ -47,6 +47,8 @@ class empty_broadcast_array {
    */
   template <typename Y>
   void operator=(const Y& /*A*/);
+  template <typename Y>
+  void add_write_event(Y&& /* event */);
 };
 
 template <typename ViewElt, typename T>

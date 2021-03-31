@@ -135,15 +135,15 @@ void expect_eq(const std::vector<T>& a, const std::vector<T>& b,
 }
 
 template <typename T, require_not_st_var<T>* = nullptr>
-void expect_adj_eq(const T& a, const T& b, const char* msg) {}
+void expect_adj_eq(const T& a, const T& b, const char* msg = "expect_ad_eq") {}
 
-void expect_adj_eq(math::var a, math::var b, const char* msg) {
+void expect_adj_eq(math::var a, math::var b, const char* msg = "expect_ad_eq") {
   EXPECT_EQ(a.adj(), b.adj()) << msg;
 }
 
 template <typename T1, typename T2, require_all_eigen_t<T1, T2>* = nullptr,
           require_vt_same<T1, T2>* = nullptr>
-void expect_adj_eq(const T1& a, const T2& b, const char* msg) {
+void expect_adj_eq(const T1& a, const T2& b, const char* msg = "expect_ad_eq") {
   EXPECT_EQ(a.rows(), b.rows()) << msg;
   EXPECT_EQ(a.cols(), b.cols()) << msg;
   const auto& a_ref = math::to_ref(a);
@@ -157,12 +157,14 @@ void expect_adj_eq(const T1& a, const T2& b, const char* msg) {
 
 template <typename T>
 void expect_adj_eq(const std::vector<T>& a, const std::vector<T>& b,
-                   const char* msg) {
+                   const char* msg = "expect_ad_eq") {
   EXPECT_EQ(a.size(), b.size()) << msg;
   for (int i = 0; i < a.size(); i++) {
     expect_adj_eq(a[i], b[i], msg);
   }
 }
+
+void grad(stan::math::var& a) { a.grad(); }
 
 #define TO_STRING_(x) #x
 #define TO_STRING(x) TO_STRING_(x)
@@ -268,17 +270,21 @@ auto bad_multiple_evaluations(const T& a) {
   return a + a;
 }
 
+/**
+ * The bad_* functions are meant to be used when generating a failure
+ */
 template <typename T>
 auto bad_wrong_value(const T& a) {
   if (std::is_same<T, plain_type_t<T>>::value) {
     return a(0, 0);
   }
+
   return a(0, 0) + 1;
 }
 
 template <typename T>
 auto bad_wrong_derivatives(const T& a) {
-  operands_and_partials<T> ops(a);
+  operands_and_partials<ref_type_t<T>> ops(a);
   if (!is_constant<T>::value && std::is_same<T, plain_type_t<T>>::value) {
     ops.edge1_.partials_[0] = 1234;
   }

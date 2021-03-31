@@ -30,6 +30,7 @@ def runTestsWin(String testPath, boolean buildLibs = true, boolean jumbo = false
     }
 }
 
+
 def deleteDirWin() {
     bat "attrib -r -s /s /d"
     deleteDir()
@@ -228,39 +229,39 @@ pipeline {
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
-                // stage('OpenCL CPU tests') {
-                //     when {
-                //         expression {
-                //             !skipOpenCL
-                //         }
-                //     }
-                //     agent { label "gelman-group-win2 || linux-gpu" }
-                //     steps {
-                //         script {
-                //             if (isUnix()) {
-                //                 deleteDir()
-                //                 unstash 'MathSetup'
-                //                 sh "echo CXX=${env.CXX} -Werror > make/local"
-                //                 sh "echo STAN_OPENCL=true>> make/local"
-                //                 sh "echo OPENCL_PLATFORM_ID=${env.OPENCL_PLATFORM_ID_CPU}>> make/local"
-                //                 sh "echo OPENCL_DEVICE_ID=${env.OPENCL_DEVICE_ID_CPU}>> make/local"
-                //                 runTests("test/unit/math/opencl", false)
-                //                 runTests("test/unit/multiple_translation_units_test.cpp")
-                //             } else {
-                //                 deleteDirWin()
-                //                 unstash 'MathSetup'
-                //                 bat "echo CXX=${env.CXX} -Werror > make/local"
-                //                 bat "echo STAN_OPENCL=true >> make/local"
-                //                 bat "echo OPENCL_PLATFORM_ID=${env.OPENCL_PLATFORM_ID_CPU} >> make/local"
-                //                 bat "echo OPENCL_DEVICE_ID=${env.OPENCL_DEVICE_ID_CPU} >> make/local"
-                //                 bat 'echo LDFLAGS_OPENCL= -L"C:\\Program Files (x86)\\IntelSWTools\\system_studio_2020\\OpenCL\\sdk\\lib\\x64" -lOpenCL >> make/local'
-                //                 bat "mingw32-make.exe -f make/standalone math-libs"
-                //                 runTestsWin("test/unit/math/opencl", false, false)
-                //                 runTestsWin("test/unit/multiple_translation_units_test.cpp", false, false)
-                //             }
-                //         }
-                //     }
-                // }
+                stage('OpenCL CPU tests') {
+                    when {
+                        expression {
+                            !skipOpenCL
+                        }
+                    }
+                    agent { label "gelman-group-win2 || linux-gpu" }
+                    steps {
+                        script {
+                            if (isUnix()) {
+                                deleteDir()
+                                unstash 'MathSetup'
+                                sh "echo CXX=${env.CXX} -Werror > make/local"
+                                sh "echo STAN_OPENCL=true>> make/local"
+                                sh "echo OPENCL_PLATFORM_ID=${env.OPENCL_PLATFORM_ID_CPU}>> make/local"
+                                sh "echo OPENCL_DEVICE_ID=${env.OPENCL_DEVICE_ID_CPU}>> make/local"
+                                runTests("test/unit/math/opencl", false)
+                                runTests("test/unit/multiple_translation_units_test.cpp")
+                            } else {
+                                deleteDirWin()
+                                unstash 'MathSetup'
+                                bat "echo CXX=${env.CXX} -Werror > make/local"
+                                bat "echo STAN_OPENCL=true >> make/local"
+                                bat "echo OPENCL_PLATFORM_ID=${env.OPENCL_PLATFORM_ID_CPU} >> make/local"
+                                bat "echo OPENCL_DEVICE_ID=${env.OPENCL_DEVICE_ID_CPU} >> make/local"
+                                bat 'echo LDFLAGS_OPENCL= -L"C:\\Program Files (x86)\\IntelSWTools\\system_studio_2020\\OpenCL\\sdk\\lib\\x64" -lOpenCL >> make/local'
+                                bat "mingw32-make.exe -f make/standalone math-libs"
+                                runTestsWin("test/unit/math/opencl", false, false)
+                                runTestsWin("test/unit/multiple_translation_units_test.cpp", false, false)
+                            }
+                        }
+                    }
+                }
                 stage('OpenCL GPU tests') {
                     agent { label "gelman-group-win2 || linux-gpu" }
                     steps {
@@ -317,6 +318,36 @@ pipeline {
                             echo "Distribution tests failed. Check out dist.log.zip artifact for test logs."
                             }
                     }
+                }
+	            stage('Expressions test') {
+                    agent any
+                    steps {
+                        unstash 'MathSetup'
+                        script {
+                            sh "echo O=0 > make/local"
+                            sh "python ./test/code_generator_test.py"
+                            sh "python ./test/signature_parser_test.py"
+                            sh "python ./test/statement_types_test.py"
+                            sh "python ./test/varmat_compatibility_summary_test.py"
+                            sh "python ./test/varmat_compatibility_test.py"
+                            withEnv(['PATH+TBB=./lib/tbb']) {
+                                sh "python ./test/expressions/test_expression_testing_framework.py"
+                            }
+                            withEnv(['PATH+TBB=./lib/tbb']) {
+                                try { sh "./runTests.py -j${env.PARALLEL} test/expressions" }
+                                finally { junit 'test/**/*.xml' }
+                            }
+                            sh "make clean-all"
+                            sh "echo STAN_THREADS=true >> make/local"
+                            withEnv(['PATH+TBB=./lib/tbb']) {
+                                try {
+                                    sh "./runTests.py -j${env.PARALLEL} test/expressions --only-functions reduce_sum map_rect"
+				                }
+                                finally { junit 'test/**/*.xml' }
+                            }
+                        }
+                    }
+                    post { always { deleteDir() } }
                 }
                 stage('Threading tests') {
                     agent any
