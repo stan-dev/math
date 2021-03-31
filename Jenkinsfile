@@ -328,6 +328,8 @@ pipeline {
                             sh "python ./test/code_generator_test.py"
                             sh "python ./test/signature_parser_test.py"
                             sh "python ./test/statement_types_test.py"
+                            sh "python ./test/varmat_compatibility_summary_test.py"
+                            sh "python ./test/varmat_compatibility_test.py"
                             withEnv(['PATH+TBB=./lib/tbb']) {
                                 sh "python ./test/expressions/test_expression_testing_framework.py"
                             }

@@ -89,7 +89,7 @@ git commit -m "upgrading to TBB version ${tbb_version}; modifying with new versi
 fi
 # 3. Unpack the new TBB version.
 tar xvzf $tbb_filename
-mv tbb-${tbb_version} tbb_${tbb_version}
+mv oneTBB-${tbb_version} tbb_${tbb_version}
 git add tbb_${tbb_version}
 git commit -m "upgrading to TBB version ${tbb_version}; adding unmodified TBB library"
 
