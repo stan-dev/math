@@ -88,12 +88,20 @@ inline int get_num_threads() {
  * The function returns a reference to the static
  * tbb::global_control instance.
  *
+ * @param n_threads The maximum number of threads available to the tbb. If not
+ *  set will search for the environment variable `STAN_NUM_THREADS`. A value of
+ *  will assume all detectable threads are available for the process.
  * @return reference to the static tbb::global_control
  * @throws std::runtime_error if the value of STAN_NUM_THREADS env. variable
  * is invalid
  */
-inline tbb::task_arena& init_threadpool_tbb() {
-  int tbb_max_threads = internal::get_num_threads();
+inline tbb::task_arena& init_threadpool_tbb(size_t n_threads = 0) {
+  int tbb_max_threads;
+  if (n_threads == 0) {
+   tbb_max_threads = internal::get_num_threads();
+  } else {
+   tbb_max_threads = n_threads;
+  }
   static tbb::global_control tbb_gc(
       tbb::global_control::max_allowed_parallelism, tbb_max_threads);
 
@@ -118,18 +126,21 @@ inline tbb::task_arena& init_threadpool_tbb() {
  * The function returns a reference to the static
  * tbb::task_scheduler_init instance.
  *
- * @param stack_size sets the stack size of each thread; the default 0
- * let's the TBB choose the stack size
+ * @param n_threads The maximum number of threads available to the tbb. If not
+ *  set will search for the environment variable `STAN_NUM_THREADS`. A value of
+ *  will assume all detectable threads are available for the process.
  * @return reference to the static tbb::task_scheduler_init
  * @throws std::runtime_error if the value of STAN_NUM_THREADS env. variable
  * is invalid
  */
-inline tbb::task_scheduler_init& init_threadpool_tbb(
-    tbb::stack_size_type stack_size = 0) {
-  int tbb_max_threads = internal::get_num_threads();
-
-  static tbb::task_scheduler_init tbb_scheduler(tbb_max_threads, stack_size);
-
+inline tbb::task_scheduler_init& init_threadpool_tbb(size_t n_threads = 0) {
+  int tbb_max_threads;
+  if (n_threads == 0) {
+   tbb_max_threads = internal::get_num_threads();
+  } else {
+   tbb_max_threads = n_threads;
+  }
+  static tbb::task_scheduler_init tbb_scheduler(tbb_max_threads, 0);
   return tbb_scheduler;
 }
 #endif
