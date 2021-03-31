@@ -30,8 +30,8 @@ struct algebra_solver_adapter {
   explicit algebra_solver_adapter(const F& f) : f_(f) {}
 
   template <typename T1, typename T2, typename T3, typename T4>
-  auto operator()(const T1& x, std::ostream* msgs, const T2& y,
-                  const T3& dat, const T4& dat_int) const {
+  auto operator()(const T1& x, std::ostream* msgs, const T2& y, const T3& dat,
+                  const T4& dat_int) const {
     return f_(x, y, dat, dat_int, msgs);
   }
 };
@@ -121,7 +121,7 @@ Eigen::VectorXd algebra_solver_powell_impl(
 
   // Solve the system
   return algebra_solver_powell_(solver, fx, x_eval, 0, relative_tolerance,
-                               function_tolerance, max_num_steps);
+                                function_tolerance, max_num_steps);
 }
 
 /**
@@ -242,7 +242,6 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
 
   return ret_type(ret);
 }
-
 
 template <typename F, typename T1, typename T2,
           require_all_eigen_vector_t<T1, T2>* = nullptr>
