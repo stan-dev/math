@@ -44,7 +44,7 @@ class algebra_solver_simple_eq_test : public ::testing::Test {
   Eigen::MatrixXd J;
 };
 
-/*class algebra_solver_simple_eq_nopara_test : public ::testing::Test {
+class algebra_solver_simple_eq_nopara_test : public ::testing::Test {
  protected:
   void SetUp() override { x = stan::math::to_vector({1, 1}); }
 
@@ -71,6 +71,7 @@ class algebra_solver_non_linear_eq_test : public ::testing::Test {
   Eigen::MatrixXd J;
 };
 
+/*
 class error_message_test : public ::testing::Test {
  protected:
   void SetUp() override {
@@ -81,6 +82,7 @@ class error_message_test : public ::testing::Test {
   Eigen::VectorXd y_2;
   Eigen::VectorXd y_3;
 };
+*/
 
 class max_steps_test : public ::testing::Test {
  protected:
@@ -122,7 +124,7 @@ class degenerate_eq_test : public ::testing::Test {
   Eigen::MatrixXd J2;
   std::vector<double> dat;
   std::vector<int> dat_int;
-};*/
+};
 
 //////////////////////////////////////////////////////////////////////////
 // Tests for powell solver.
@@ -147,7 +149,7 @@ TEST_F(algebra_solver_simple_eq_test, powell) {
   }
 }
 
-/*TEST_F(algebra_solver_simple_eq_test, powell_tuned) {
+TEST_F(algebra_solver_simple_eq_test, powell_tuned) {
   using stan::math::var;
   bool is_newton = false;
   for (int k = 0; k < n_x; k++) {
@@ -223,6 +225,7 @@ TEST_F(algebra_solver_non_linear_eq_test, powell_dbl) {
   EXPECT_FLOAT_EQ(y_dbl(2), theta(2));
 }
 
+/*
 TEST_F(error_message_test, powell) {
   using stan::math::var;
   bool is_newton = false;
@@ -234,6 +237,7 @@ TEST_F(error_message_test, powell_dbl) {
   bool is_newton = false;
   error_conditions_test(non_linear_eq_functor(), y_3, is_newton);
 }
+*/
 
 TEST(unsolvable_test, powell) {
   using stan::math::var;
@@ -368,6 +372,7 @@ TEST(MathMatrixRevMat, system_functor_constructor) {
 //////////////////////////////////////////////////////////////////////////
 // Tests for newton solver.
 
+/*
 TEST_F(algebra_solver_simple_eq_test, newton) {
   using stan::math::var;
   bool is_newton = true;

@@ -45,13 +45,11 @@ struct simple_eq_functor {
 };
 
 struct simple_eq_functor_nopara {
-  template <typename T0, typename T1>
-  inline Eigen::Matrix<stan::return_type_t<T0, T1>, Eigen::Dynamic, 1>
-  operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
-             const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
-             const std::vector<double>& dat, const std::vector<int>& dat_int,
+  template <typename T1, typename T2, typename T3, typename T4>
+  inline Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1>
+  operator()(const T1&x, const T2&y, const T3& dat, const T4& dat_int,
              std::ostream* pstream__) const {
-    Eigen::Matrix<stan::return_type_t<T0, T1>, Eigen::Dynamic, 1> z(2);
+    Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1> z(2);
     z(0) = x(0) - dat[0] * dat[1];
     z(1) = x(1) - dat[2];
     return z;
@@ -59,13 +57,11 @@ struct simple_eq_functor_nopara {
 };
 
 struct non_linear_eq_functor {
-  template <typename T0, typename T1>
-  inline Eigen::Matrix<stan::return_type_t<T0, T1>, Eigen::Dynamic, 1>
-  operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
-             const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
-             const std::vector<double>& dat, const std::vector<int>& dat_int,
+  template <typename T1, typename T2, typename T3, typename T4>
+  inline Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1>
+  operator()(const T1&x, const T2&y, const T3& dat, const T4& dat_int,
              std::ostream* pstream__) const {
-    Eigen::Matrix<stan::return_type_t<T0, T1>, Eigen::Dynamic, 1> z(3);
+    Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1> z(3);
     z(0) = x(2) - y(2);
     z(1) = x(0) * x(1) - y(0) * y(1);
     z(2) = x(2) / x(0) + y(2) / y(0);
@@ -74,13 +70,11 @@ struct non_linear_eq_functor {
 };
 
 struct non_square_eq_functor {
-  template <typename T0, typename T1>
-  inline Eigen::Matrix<stan::return_type_t<T0, T1>, Eigen::Dynamic, 1>
-  operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
-             const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
-             const std::vector<double>& dat, const std::vector<int>& dat_int,
+  template <typename T1, typename T2, typename T3, typename T4>
+  inline Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1>
+  operator()(const T1&x, const T2&y, const T3& dat, const T4& dat_int,
              std::ostream* pstream__) const {
-    Eigen::Matrix<stan::return_type_t<T0, T1>, Eigen::Dynamic, 1> z(2);
+    Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1> z(2);
     z(0) = x(0) - y(0);
     z(1) = x(1) * x(2) - y(1);
     return z;
@@ -88,13 +82,11 @@ struct non_square_eq_functor {
 };
 
 struct unsolvable_eq_functor {
-  template <typename T0, typename T1>
-  inline Eigen::Matrix<stan::return_type_t<T0, T1>, Eigen::Dynamic, 1>
-  operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
-             const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
-             const std::vector<double>& dat, const std::vector<int>& dat_int,
+  template <typename T1, typename T2, typename T3, typename T4>
+  inline Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1>
+  operator()(const T1& x, const T2& y, const T3& dat, const T4& dat_int,
              std::ostream* pstream__) const {
-    Eigen::Matrix<stan::return_type_t<T0, T1>, Eigen::Dynamic, 1> z(2);
+    Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1> z(2);
     z(0) = x(0) * x(0) + y(0);
     z(1) = x(1) * x(1) + y(1);
     return z;
@@ -103,13 +95,11 @@ struct unsolvable_eq_functor {
 
 // Degenerate roots: each solution can either be y(0) or y(1).
 struct degenerate_eq_functor {
-  template <typename T0, typename T1>
-  inline Eigen::Matrix<stan::return_type_t<T0, T1>, Eigen::Dynamic, 1>
-  operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
-             const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
-             const std::vector<double>& dat, const std::vector<int>& dat_int,
+  template <typename T1, typename T2, typename T3, typename T4>
+  inline Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1>
+  operator()(const T1& x, const T2& y, const T3& dat, const T4& dat_int,
              std::ostream* pstream__) const {
-    Eigen::Matrix<stan::return_type_t<T0, T1>, Eigen::Dynamic, 1> z(2);
+    Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1> z(2);
     z(0) = (x(0) - y(0)) * (x(1) - y(1));
     z(1) = (x(0) - y(1)) * (x(1) - y(0));
     return z;

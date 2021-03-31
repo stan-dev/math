@@ -94,21 +94,20 @@ Eigen::VectorXd algebra_solver_powell(
 }
 
 template <typename F, typename T1, typename... T_Args,
-          require_all_eigen_vector_t<T1>* = nullptr,
-          require_any_st_var<T_Args...>* = nullptr>
+          require_all_eigen_vector_t<T1>* = nullptr>
 Eigen::VectorXd algebra_solver_powell_impl(
     const F& f, const T1& x, std::ostream* msgs, double relative_tolerance,
     double function_tolerance, long int max_num_steps, const Eigen::VectorXd& y,
     const T_Args&... args) {  // NOLINT(runtime/int)
   const auto& x_eval = x.eval();
   const auto& x_val = (value_of(x_eval)).eval();
-  auto args_vals_tuple = std::make_tuple(eval(value_of(args))...);
+  auto args_vals_tuple = std::make_tuple(y, eval(value_of(args))...);
 
   check_nonnegative("alegbra_solver", "relative_tolerance", relative_tolerance);
 
   // Construct the Powell solver
   auto myfunc = [&](const auto& x) {
-    return apply([&](const auto&... args) { return f(x, msgs, y, args...); },
+    return apply([&](const auto&... args) { return f(x, msgs, args...); },
                  args_vals_tuple);
   };
 
