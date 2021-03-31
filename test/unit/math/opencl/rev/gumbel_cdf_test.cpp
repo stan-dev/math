@@ -67,7 +67,7 @@ TEST(ProbDistributionsGumbelCdf, opencl_matches_cpu_small) {
   Eigen::VectorXd y(N);
   y << 0.3, 0.8, 1.0;
   Eigen::VectorXd mu(N);
-  mu << 0.3, 0.8, 1.0;
+  mu << 0.4, -0.8, 1.4;
   Eigen::VectorXd sigma(N);
   sigma << 0.3, 0.8, 1.0;
 
