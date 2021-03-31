@@ -12,6 +12,29 @@
 #include <limits>
 #include <string>
 
+
+inline void print_stack(std::ostream& o) {
+  o << "STACK, size=" << stan::math::ChainableStack::instance_->var_stack_.size()
+    << std::endl;
+  // TODO(carpenter): this shouldn't need to be cast any more
+  for (size_t i = 0; i < stan::math::ChainableStack::instance_->var_stack_.size(); ++i)
+    o << i << "  " << stan::math::ChainableStack::instance_->var_stack_[i] << "  "
+      << (static_cast<stan::math::vari*>(stan::math::ChainableStack::instance_->var_stack_[i]))->val_
+      << " : "
+      << (static_cast<stan::math::vari*>(stan::math::ChainableStack::instance_->var_stack_[i]))->adj_
+      << std::endl;
+  o << "STACK NOCHAIN, size=" << stan::math::ChainableStack::instance_->var_nochain_stack_.size()
+    << std::endl;
+  // TODO(carpenter): this shouldn't need to be cast any more
+  for (size_t i = 0; i < stan::math::ChainableStack::instance_->var_nochain_stack_.size(); ++i)
+    o << i << "  " << stan::math::ChainableStack::instance_->var_nochain_stack_[i] << "  "
+      << (static_cast<stan::math::vari*>(stan::math::ChainableStack::instance_->var_nochain_stack_[i]))->val_
+      << " : "
+      << (static_cast<stan::math::vari*>(stan::math::ChainableStack::instance_->var_nochain_stack_[i]))->adj_
+      << std::endl;
+}
+
+
 template <class ode_problem_type>
 struct ODETestFixture : public ::testing::Test {
   /**
@@ -166,9 +189,7 @@ struct ODETestFixture : public ::testing::Test {
     std::stringstream msgs;
     ode_problem_type& ode = static_cast<ode_problem_type&>(*this);
 
-    stan::math::nested_rev_autodiff nested;
-    auto theta_v = stan::math::to_var(ode.param());
-    int n = theta_v.size();
+    int n = ode.param().size();
     std::cout << "finite diff..." << std::endl;
     std::vector<std::vector<Eigen::VectorXd>> fd_res(n);
     for (size_t i = 0; i < n; ++i) {
@@ -176,6 +197,9 @@ struct ODETestFixture : public ::testing::Test {
     }
     std::cout << "finite diff...done" << std::endl;
     std::vector<double> grads_eff;
+
+    stan::math::nested_rev_autodiff nested;
+    auto theta_v = stan::math::to_var(ode.param());
 
     std::cout << "AD..." << std::endl;
     std::vector<Eigen::Matrix<stan::math::var, -1, 1>> ode_res
@@ -186,7 +210,10 @@ struct ODETestFixture : public ::testing::Test {
         std::cout << "i = " << i << ": j = " << j << std::endl;
         grads_eff.clear();
         //ode_res[i][j].grad(theta_v, grads_eff);
-        ode_res[i][j].grad();
+        //ode_res[i][j].grad();
+        //print_stack(std::cout);
+        stan::math::grad(ode_res[i][j].vi_);
+        print_stack(std::cout);
         std::cout << "i = " << i << ": j = " << j << " grad done." << std::endl;
 
         /*
