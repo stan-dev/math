@@ -1,7 +1,7 @@
 #include <stan/math.hpp>
 #include <stan/math/laplace/laplace.hpp>
 #include <stan/math/laplace/laplace_likelihood_general.hpp>
-#include <stan/math/laplace/laplace_likelihood_poisson_log_lpmf.hpp>
+#include <stan/math/laplace/laplace_likelihood_poisson_log.hpp>
 #include <stan/math/laplace/prob/laplace_rng.hpp>
 #include <stan/math/laplace/prob/laplace_poisson_log_rng.hpp>
 
@@ -304,5 +304,28 @@ TEST_F(laplace_disease_map_test, rng_autodiff) {
   std::chrono::duration<double> elapsed_time = end - start;
   std::cout << "LAPLACE_APPROX_RNG" << std::endl
             << "total time: " << elapsed_time.count() << std::endl
+            << std::endl;
+}
+
+TEST_F(laplace_disease_map_test, lpmf_wrapper) {
+  using stan::math::var;
+  using stan::math::laplace_marginal_lpmf;
+
+  int hessian_block_size = 0;
+  int compute_W_root = 1;
+
+  var marginal_density
+    = laplace_marginal_lpmf(n_samples, poisson_log_likelihood(),
+                            eta_dummy, delta_lk,
+                            sqr_exp_kernel_functor(),
+                            phi, x, delta, delta_int, theta_0);
+
+  VEC g;
+  AVEC parm_vec = createAVEC(phi(0), phi(1));
+  marginal_density.grad(parm_vec, g);
+
+  std::cout << "LAPLACE MARGINAL LPMF AND VARI CLASS" << std::endl
+            << "density: " << value_of(marginal_density) << std::endl
+            << "autodiff grad: " << g[0] << " " << g[1] << std::endl
             << std::endl;
 }
