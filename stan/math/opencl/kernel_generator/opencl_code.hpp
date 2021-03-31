@@ -106,7 +106,7 @@ class opencl_code_impl
    * @param then then expression
    * @param els else expression
    */
-  opencl_code_impl(names_tuple names, T_arguments&&... arguments)
+  explicit opencl_code_impl(names_tuple names, T_arguments&&... arguments)
       : base(std::forward<T_arguments>(arguments)...), names_(names) {}
 
   /**
@@ -161,10 +161,10 @@ class opencl_code_ : public operation_cl_base {
    * argument expressions)
    * @param arguments arguments to this operation
    */
-  opencl_code_(const names_tuple& names, T_arguments&&... arguments)
+  explicit opencl_code_(const names_tuple& names, T_arguments&&... arguments)
       : impl_(
-            std::make_shared<internal::opencl_code_impl<Code, T_arguments...>>(
-                names, std::forward<T_arguments>(arguments)...)),
+          std::make_shared<internal::opencl_code_impl<Code, T_arguments...>>(
+              names, std::forward<T_arguments>(arguments)...)),
         var_name_(impl_->var_name_) {}
 
   /**
@@ -337,11 +337,12 @@ class opencl_code_ : public operation_cl_base {
  */
 template <const char* Code, typename... T_arguments,
           require_all_kernel_expressions_t<T_arguments...>* = nullptr>
-inline opencl_code_<Code, as_operation_cl_t<T_arguments>...> opencl_code(
+inline auto opencl_code(
     std::tuple<typename std::pair<const char*, T_arguments>::first_type...>
         names,
     T_arguments&&... arguments) {
-  return {names, as_operation_cl(std::forward<T_arguments>(arguments))...};
+  return opencl_code_<Code, as_operation_cl_t<T_arguments>...>(
+      names, as_operation_cl(std::forward<T_arguments>(arguments))...);
 }
 
 /** @}*/
