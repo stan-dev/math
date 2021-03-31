@@ -72,7 +72,7 @@ struct ode_adjoint_functor {
     operator()(const F& f, const T_y0& y0, T_t0 t0,
                const std::vector<T_ts>& ts, std::ostream* msgs,
                const Args&... args) {
-      return stan::math::ode_adjoint_tol(f, y0, t0, ts, 1E-10, 1E-10, 100000, msgs, args...);
+      return stan::math::ode_adjoint_tol(f, y0, t0, ts, 1E-10, 1E-8, 100000000, msgs, args...);
     }
 
     template <typename F, typename T_y0, typename T_t0, typename T_ts,
