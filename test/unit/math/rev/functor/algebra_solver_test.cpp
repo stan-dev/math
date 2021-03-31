@@ -141,11 +141,7 @@ TEST_F(algebra_solver_simple_eq_test, powell) {
     VEC g;
     theta(k).grad(y_vec, g);
 
-    std::cout << "Solution: " << theta.val() << std::endl;
-
     for (int i = 0; i < n_y; i++) {
-      std::cout << "i: " << i << ", k: " << k << std::endl;
-      std::cout << "J: " << J(k, i) << ", g: " << g[i] << std::endl;
       EXPECT_EQ(J(k, i), g[i]);
     }
   }
