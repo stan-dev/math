@@ -73,6 +73,8 @@ struct ODETestFixture : public ::testing::Test {
                        const T_args&... args) {
     ode_problem_type& ode = static_cast<ode_problem_type&>(*this);
 
+    stan::math::nested_rev_autodiff nested;
+
     auto sol_0 = analy_sol(t, args...);
     Eigen::Matrix<var, -1, 1> x_var(stan::math::to_var(x));
     Eigen::Matrix<stan::math::var, -1, 1> sol = ode_sol(x_var);
@@ -84,7 +86,7 @@ struct ODETestFixture : public ::testing::Test {
 
     Eigen::Matrix<double, -1, -1> grad_0(analy_grad_sol(t, args...));
     for (auto i = 0; i < sol.size(); ++i) {
-      stan::math::set_zero_all_adjoints();
+      nested.set_zero_all_adjoints();
       sol[i].grad();
       for (auto j = 0; j < x.size(); ++j) {
         EXPECT_NEAR(x_var[j].adj(), grad_0(j, i), tol)
@@ -166,6 +168,8 @@ struct ODETestFixture : public ::testing::Test {
     std::stringstream msgs;
     ode_problem_type& ode = static_cast<ode_problem_type&>(*this);
 
+    stan::math::nested_rev_autodiff nested;
+
     auto theta_v = stan::math::to_var(ode.param());
     int n = theta_v.size();
     std::vector<std::vector<Eigen::VectorXd>> fd_res(n);
@@ -188,7 +192,7 @@ struct ODETestFixture : public ::testing::Test {
               << " known and parameters unknown at time index " << i
               << ", equation index " << j << ", and parameter index: " << k;
 
-        stan::math::set_zero_all_adjoints();
+        nested.set_zero_all_adjoints();
       }
     }
   }
@@ -207,6 +211,8 @@ struct ODETestFixture : public ::testing::Test {
   void test_fd_vd(double diff, double tol) {
     std::stringstream msgs;
     ode_problem_type& ode = static_cast<ode_problem_type&>(*this);
+
+    stan::math::nested_rev_autodiff nested;
 
     Eigen::Matrix<stan::math::var, -1, 1> y0_v = stan::math::to_var(ode.init());
     int n = y0_v.size();
@@ -232,7 +238,7 @@ struct ODETestFixture : public ::testing::Test {
               << " unknown and parameters known at time index " << i
               << ", equation index " << j << ", and parameter index: " << k;
 
-        stan::math::set_zero_all_adjoints();
+        nested.set_zero_all_adjoints();
       }
     }
   }
@@ -251,6 +257,8 @@ struct ODETestFixture : public ::testing::Test {
   void test_fd_vv(double diff, double tol) {
     std::stringstream msgs;
     ode_problem_type& ode = static_cast<ode_problem_type&>(*this);
+
+    stan::math::nested_rev_autodiff nested;
 
     int n = ode.dim();
     int m = ode.param_size();
@@ -300,7 +308,7 @@ struct ODETestFixture : public ::testing::Test {
               << ", and parameter index: " << k;
         }
 
-        stan::math::set_zero_all_adjoints();
+        nested.set_zero_all_adjoints();
       }
     }
   }
@@ -331,7 +339,7 @@ struct ODETestFixture : public ::testing::Test {
             EXPECT_FLOAT_EQ(ode.ts[k].adj(), ts_ad);
           }
         }
-        stan::math::set_zero_all_adjoints();
+	stan::math::set_zero_all_adjoints();
       }
     }
   }
