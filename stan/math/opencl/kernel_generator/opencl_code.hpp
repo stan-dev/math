@@ -163,8 +163,8 @@ class opencl_code_ : public operation_cl_base {
    */
   opencl_code_(const names_tuple& names, T_arguments&&... arguments)
       : impl_(
-          std::make_shared<internal::opencl_code_impl<Code, T_arguments...>>(
-              names, std::forward<T_arguments>(arguments)...)),
+            std::make_shared<internal::opencl_code_impl<Code, T_arguments...>>(
+                names, std::forward<T_arguments>(arguments)...)),
         var_name_(impl_->var_name_) {}
 
   /**
