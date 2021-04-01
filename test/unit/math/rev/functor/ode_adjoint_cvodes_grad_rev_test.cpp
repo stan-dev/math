@@ -72,6 +72,7 @@ class test_functor_double_var {
   }
 };
 
+/*
 TEST(StanMathOdeIntegrateODEGradMat, double_var) {
   double omega = 0.5;
   double chi = 1.25;
@@ -113,7 +114,7 @@ TEST(StanMathOdeIntegrateODEGradMat, double_var) {
     EXPECT_NEAR(dy2_domega(t, omega, chi), grad(0), 1e-7);
   }
 }
-
+*/
 template <int state>
 class test_functor_var_double {
   int lmm_;
@@ -142,7 +143,7 @@ class test_functor_var_double {
     return ys[0](state);
   }
 };
-
+/*
 TEST(StanMathOdeIntegrateODEGradMat, var_double) {
   double omega = 0.5;
   double chi = 1.25;
@@ -183,6 +184,7 @@ TEST(StanMathOdeIntegrateODEGradMat, var_double) {
     EXPECT_NEAR(dy2_dchi(t, omega, chi), grad(0), 1e-7);
   }
 }
+*/
 
 template <int state>
 class test_functor_var_var {
@@ -242,7 +244,7 @@ TEST(StanMathOdeIntegrateODEGradMat, var_var) {
     EXPECT_NEAR(dy2_domega(t, omega, chi), grad(0), 1e-6);
     EXPECT_NEAR(dy2_dchi(t, omega, chi), grad(1), 1e-7);
   }
-
+  /*
   {
     stan::math::nested_rev_autodiff nested;
 
@@ -260,6 +262,7 @@ TEST(StanMathOdeIntegrateODEGradMat, var_var) {
     EXPECT_NEAR(dy2_domega(t, omega, chi), grad(0), 1e-6);
     EXPECT_NEAR(dy2_dchi(t, omega, chi), grad(1), 1e-7);
   }
+  */
 }
 
 template <int state>
@@ -293,7 +296,7 @@ class test_functor_sum_var_var {
     return stan::math::sum(ys[0](state) + ys[1](state));
   }
 };
-
+/*
 TEST(StanMathOdeIntegrateODEGradMat, sum_var_var) {
   double omega = 0.5;
   double chi = 1.25;
@@ -351,3 +354,4 @@ TEST(StanMathOdeIntegrateODEGradMat, sum_var_var) {
                 1e-7);
   }
 }
+*/

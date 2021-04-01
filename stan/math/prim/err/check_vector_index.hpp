@@ -26,6 +26,7 @@ template <typename T,
                         is_prim_or_rev_kernel_expression<T>>* = nullptr>
 inline void check_vector_index(const char* function, const char* name,
                                const T& y, size_t i) {
+  STAN_NO_RANGE_CHECKS_RETURN;
   if (!(i >= stan::error_index::value
         && i < static_cast<size_t>(y.size()) + stan::error_index::value)) {
     [&]() STAN_COLD_PATH {

@@ -86,6 +86,13 @@ void expect_near_rel_matvar(const std::string& message, T1&& x, T2&& y,
                   stan::math::value_of(y), tols.gradient_val_);
 }
 
+namespace internal {
+template <size_t... Idx>
+inline constexpr auto make_tuple_seq(std::index_sequence<Idx...> idxs) {
+  return std::make_tuple(Idx...);
+}
+}  // namespace internal
+
 /**
  * Overload for tuples of arguments. This recursively calls
  * `expect_near_rel_matvar` on each input pair
@@ -105,7 +112,8 @@ void expect_near_rel_matvar(const std::string& message,
   if (!(sizeof...(T1) == sizeof...(T2))) {
     FAIL() << "The number of arguments in each tuple must match";
   }
-
+  constexpr auto idxs = internal::make_tuple_seq(
+      std::make_index_sequence<std::tuple_size<std::tuple<T1...>>::value>{});
   stan::math::for_each(
       [&message, &tols](const auto& x, const auto& y, const auto& i) {
         expect_near_rel_matvar(
@@ -113,7 +121,7 @@ void expect_near_rel_matvar(const std::string& message,
                 + std::to_string(i + stan::error_index::value),
             x, y, tols);
       },
-      x, y);
+      x, y, idxs);
 }
 ///@}
 
