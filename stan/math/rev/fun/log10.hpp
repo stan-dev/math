@@ -15,16 +15,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class log10_vari : public op_v_vari {
- public:
-  const double exp_val_;
-  explicit log10_vari(vari* avi)
-      : op_v_vari(std::log10(avi->val_), avi), exp_val_(avi->val_) {}
-  void chain() { avi_->adj_ += adj_ / (LOG_TEN * exp_val_); }
-};
-}  // namespace internal
-
 /**
  * Return the base 10 log of the specified variable (cmath).
  *
@@ -54,7 +44,11 @@ class log10_vari : public op_v_vari {
  * @param a Variable whose log is taken.
  * @return Base 10 log of variable.
  */
-inline var log10(const var& a) { return var(new internal::log10_vari(a.vi_)); }
+inline var log10(const var& a) {
+  return make_callback_var(std::log10(a.val()), [a](auto& vi) mutable {
+    a.adj() += vi.adj() / (LOG_TEN * a.val());
+  });
+}
 
 /**
  * Return the base 10 logarithm of the specified complex number.

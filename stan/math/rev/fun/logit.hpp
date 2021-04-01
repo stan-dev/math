@@ -15,8 +15,10 @@ namespace math {
  * @return log odds of argument
  */
 inline var logit(const var& u) {
-  return var(new precomp_v_vari(logit(u.val()), u.vi_,
-                                1 / (u.val() - u.val() * u.val())));
+  auto denom = (1.0 / (u.val() - u.val() * u.val()));
+  return make_callback_var(logit(u.val()), [u, denom](auto& vi) mutable {
+    u.adj() += vi.adj() * denom;
+  });
 }
 
 }  // namespace math

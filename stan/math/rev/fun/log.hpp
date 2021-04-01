@@ -16,14 +16,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class log_vari final : public op_v_vari {
- public:
-  explicit log_vari(vari* avi) : op_v_vari(std::log(avi->val_), avi) {}
-  void chain() { avi_->adj_ += adj_ / avi_->val_; }
-};
-}  // namespace internal
-
 /**
  * Return the natural log of the specified variable (cmath).
  *
@@ -52,7 +44,11 @@ class log_vari final : public op_v_vari {
  * @param a Variable whose log is taken.
  * @return Natural log of variable.
  */
-inline var log(const var& a) { return var(new internal::log_vari(a.vi_)); }
+inline var log(const var& a) {
+  return make_callback_var(std::log(a.val()), [a](auto& vi) mutable {
+    a.adj() += vi.adj() / a.val();
+  });
+}
 
 /**
  * Return the natural logarithm (base e) of the specified complex argument.

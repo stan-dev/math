@@ -51,11 +51,12 @@ inline var fabs(const var& a) {
   if (a.val() > 0.0) {
     return a;
   } else if (a.val() < 0.0) {
-    return var(new internal::neg_vari(a.vi_));
+    return -a;
   } else if (a.val() == 0) {
     return var(new vari(0));
   } else {
-    return var(new precomp_v_vari(NOT_A_NUMBER, a.vi_, NOT_A_NUMBER));
+    return make_callback_var(NOT_A_NUMBER,
+                             [a](auto& vi) mutable { a.adj() = NOT_A_NUMBER; });
   }
 }
 
