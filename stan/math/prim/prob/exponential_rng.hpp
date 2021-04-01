@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <boost/random/exponential_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -29,9 +30,11 @@ inline typename VectorBuilder<true, double, T_inv>::type exponential_rng(
   using boost::exponential_distribution;
   using boost::variate_generator;
   static const char* function = "exponential_rng";
-  check_positive_finite(function, "Inverse scale parameter", beta);
+  using T_beta_ref = ref_type_t<T_inv>;
+  T_beta_ref beta_ref = beta;
+  check_positive_finite(function, "Inverse scale parameter", beta_ref);
 
-  scalar_seq_view<T_inv> beta_vec(beta);
+  scalar_seq_view<T_beta_ref> beta_vec(beta_ref);
   size_t N = stan::math::size(beta);
   VectorBuilder<true, double, T_inv> output(N);
 

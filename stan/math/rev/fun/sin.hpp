@@ -16,14 +16,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class sin_vari : public op_v_vari {
- public:
-  explicit sin_vari(vari* avi) : op_v_vari(std::sin(avi->val_), avi) {}
-  void chain() { avi_->adj_ += adj_ * std::cos(avi_->val_); }
-};
-}  // namespace internal
-
 /**
  * Return the sine of a radian-scaled variable (cmath).
  *
@@ -51,7 +43,26 @@ class sin_vari : public op_v_vari {
  * @param a Variable for radians of angle.
  * @return Sine of variable.
  */
-inline var sin(const var& a) { return var(new internal::sin_vari(a.vi_)); }
+inline var sin(const var& a) {
+  return make_callback_var(std::sin(a.val()), [a](const auto& vi) mutable {
+    a.adj() += vi.adj() * std::cos(a.val());
+  });
+}
+
+/**
+ * Return the sine of a radian-scaled variable (cmath).
+ *
+ * @tparam Varmat a `var_value` with inner Eigen type
+ * @param a Variable for radians of angle.
+ * @return Sine of variable.
+ */
+template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
+inline auto sin(const VarMat& a) {
+  return make_callback_var(
+      a.val().array().sin().matrix(), [a](const auto& vi) mutable {
+        a.adj() += vi.adj().cwiseProduct(a.val().array().cos().matrix());
+      });
+}
 
 /**
  * Return the sine of the complex argument.

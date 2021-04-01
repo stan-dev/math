@@ -4,10 +4,9 @@
 #include <boost/math/distributions.hpp>
 #include <vector>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-
 TEST(ProbDistributionsMultinomial, fvar_double) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::fvar;
   std::vector<int> ns;
   ns.push_back(1);
@@ -23,6 +22,8 @@ TEST(ProbDistributionsMultinomial, fvar_double) {
 }
 
 TEST(ProbDistributionsMultinomial, fvar_fvar_double) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::fvar;
   std::vector<int> ns;
   ns.push_back(1);

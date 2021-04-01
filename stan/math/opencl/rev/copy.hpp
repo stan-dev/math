@@ -2,10 +2,15 @@
 #define STAN_MATH_OPENCL_REV_COPY_HPP
 #ifdef STAN_OPENCL
 
+#include <stan/math/opencl/rev/vari.hpp>
+#include <stan/math/opencl/rev/arena_type.hpp>
+#include <stan/math/opencl/rev/to_arena.hpp>
+#include <stan/math/opencl/copy.hpp>
+#include <stan/math/rev/core.hpp>
+#include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/vec_concat.hpp>
-#include <stan/math/opencl/rev/opencl.hpp>
 
 #include <CL/cl2.hpp>
 #include <iostream>
@@ -17,6 +22,38 @@ namespace stan {
 namespace math {
 
 /** \ingroup opencl
+ * Copies the source var containing Eigen matrices to destination var that has
+ * data stored on the OpenCL device.
+ *
+ * @tparam T type of the Eigen matrix
+ * @param a source Eigen matrix
+ * @return var with a copy of the data on the OpenCL device
+ */
+template <typename T>
+inline var_value<matrix_cl<value_type_t<T>>> to_matrix_cl(
+    const var_value<T>& a) {
+  return make_callback_var(to_matrix_cl(a.val()), [a](auto& res_vari) mutable {
+    a.adj() += from_matrix_cl<plain_type_t<T>>(res_vari.adj());
+  });
+}
+
+/** \ingroup opencl
+ * Copies the source std::vector of vars to a destination var that has
+ * data stored on the OpenCL device.
+ *
+ * @tparam T type of the std::vector
+ * @param a source Eigen matrix
+ * @return var with a copy of the data on the OpenCL device
+ */
+template <typename T, require_stan_scalar_t<T>* = nullptr>
+inline var_value<matrix_cl<value_type_t<T>>> to_matrix_cl(
+    const std::vector<var_value<T>>& a) {
+  return to_matrix_cl(
+      Eigen::Map<const Eigen::Matrix<var_value<T>, Eigen::Dynamic, 1>>(
+          a.data(), a.size()));
+}
+
+/** \ingroup opencl
  * Copies the source Eigen matrix of vars to
  * the destination matrix that is stored
  * on the OpenCL device.
@@ -26,123 +63,151 @@ namespace math {
  * @param src source Eigen matrix
  * @return matrix_cl with a copy of the data in the source matrix
  */
-template <typename T, int R, int C, require_var_t<T>* = nullptr>
-inline matrix_cl<T> to_matrix_cl(const Eigen::Matrix<T, R, C>& src) try {
-  matrix_cl<T> dst(src.rows(), src.cols());
-  if (src.size() == 0) {
-    return dst;
-  }
-  dst.val() = to_matrix_cl(src.val().eval());
-  dst.adj() = to_matrix_cl(src.adj().eval());
-  return dst;
-} catch (const cl::Error& e) {
-  check_opencl_error("copy var Eigen->(OpenCL)", e);
-  matrix_cl<T> dst(src.rows(), src.cols());
-  return dst;
+template <typename T, require_eigen_vt<is_var, T>* = nullptr>
+inline var_value<matrix_cl<value_type_t<value_type_t<T>>>> to_matrix_cl(
+    const T& src) {
+  arena_t<T> src_stacked = src;
+
+  return make_callback_var(
+      to_matrix_cl(src_stacked.val()), [src_stacked](auto& res_vari) mutable {
+        src_stacked.adj() += from_matrix_cl<
+            Eigen::Matrix<double, T::RowsAtCompileTime, T::ColsAtCompileTime>>(
+            res_vari.adj());
+      });
 }
 
 /** \ingroup opencl
- * Copies the adjoint of the source matrix of vars that is stored
- * on the OpenCL device to the destination Eigen
- * matrix.
+ * Copies the source vector of Eigen matrices of vars to
+ * the destination matrix that is stored
+ * on the OpenCL device. Each element of the vector is stored into one column of
+ * the returned matrix_cl.
  *
- * @param src source matrix of vars on the OpenCL device
- * @return Eigen matrix with a copy of the adjoints in the source matrix
+ * @param src source vector of Eigen matrices
+ * @return matrix_cl with a copy of the data in the source matrix
  */
-template <int R = Eigen::Dynamic, int C = Eigen::Dynamic, typename T,
-          require_var_t<T>* = nullptr>
-inline Eigen::Matrix<double, R, C> from_matrix_cl(const matrix_cl<T>& src) try {
-  Eigen::Matrix<double, R, C> dst(src.rows(), src.cols());
-  if (src.size() == 0) {
-    return dst;
-  }
-  dst = from_matrix_cl(src.adj());
-  return dst;
-} catch (const cl::Error& e) {
-  check_opencl_error("copy var (OpenCL)->Eigen", e);
-  Eigen::Matrix<double, R, C> dst(src.rows(), src.cols());
-  return dst;
+template <typename T, require_eigen_vt<is_var, T>* = nullptr>
+inline var_value<matrix_cl<value_type_t<value_type_t<T>>>> to_matrix_cl(
+    const std::vector<T>& src) {
+  auto src_stacked = to_arena(src);
+
+  return make_callback_var(
+      to_matrix_cl(value_of(src_stacked)),
+      [src_stacked](auto& res_vari) mutable {
+        Eigen::MatrixXd adj = from_matrix_cl(res_vari.adj());
+        for (int i = 0; i < src_stacked.size(); i++) {
+          src_stacked[i].adj()
+              += Eigen::Map<plain_type_t<decltype(src_stacked[i].adj())>>(
+                  adj.data() + adj.rows() * i, src_stacked[i].rows(),
+                  src_stacked[i].cols());
+        }
+      });
 }
 
 /** \ingroup opencl
- * Packs the flat triangular matrix on the OpenCL device and
- * copies the adjoint values to the std::vector.
+ * Copies the source var that has data stored on the OpenCL device to
+ * destination var containing Eigen matrix.
  *
- * @param src the flat triangular source matrix on the OpenCL device
- * @return the packed std::vector of adjoint values.
- * @throw <code>std::invalid_argument</code> if the matrix is not triangular
+ * @tparam T_dst destination type
+ * @tparam T type of the matrix or expression on the OpenCL device
+ * @param a source matrix_cl or expression
+ * @return var with a copy of the data on the host
  */
-template <typename T, typename = require_var_t<T>>
-inline std::vector<double> packed_copy(const matrix_cl<T>& src) try {
-  check_triangular("var packed_copy", "src", src);
-  const int packed_size = src.rows() * (src.rows() + 1) / 2;
-  std::vector<double> dst(packed_size);
-  if (dst.size() == 0) {
-    return dst;
-  }
-  dst = packed_copy(src.adj());
-  return dst;
-} catch (const cl::Error& e) {
-  check_opencl_error("packed_copy var (OpenCL->std::vector)", e);
-  std::vector<double> dst(0);
-  return dst;
+template <typename T_dst, typename T,
+          require_var_vt<is_eigen, T_dst>* = nullptr,
+          require_all_kernel_expressions_t<T>* = nullptr>
+inline T_dst from_matrix_cl(const var_value<T>& a) {
+  return make_callback_var(
+      from_matrix_cl<Eigen::Matrix<double, T_dst::RowsAtCompileTime,
+                                   T_dst::ColsAtCompileTime>>(a.val()),
+      [a](auto& res_vari) mutable { a.adj() += to_matrix_cl(res_vari.adj()); });
 }
 
 /** \ingroup opencl
- * Copies the packed triangular matrix from
- * the source std::vector to an OpenCL buffer and
- * unpacks it to a flat matrix on the OpenCL device.
+ * Copies the source var that has data stored on the OpenCL device to
+ * destination Eigen matrix containing vars.
  *
- * @tparam matrix_view the triangularity of the source matrix
- * @param src the packed source std::vector
- * @param rows the number of rows in the flat matrix
- * @return the destination flat matrix on the OpenCL device
- * @throw <code>std::invalid_argument</code> if the
- * size of the vector does not match the expected size
- * for the packed triangular matrix
+ * @tparam T_dst destination type
+ * @tparam T type of the matrix or expression on the OpenCL device
+ * @param a source matrix_cl or expression
+ * @return var with a copy of the data on the host
  */
-template <matrix_cl_view matrix_view>
-inline matrix_cl<var> packed_copy(vari** src, int rows) try {
-  matrix_cl<var> dst(rows, rows, matrix_view);
-  if (dst.size() == 0) {
-    return dst;
-  }
-  const Eigen::Matrix<vari*, -1, 1> foo
-      = Eigen::Map<const Eigen::Matrix<vari*, -1, 1>>(src,
-                                                      rows * (rows + 1) / 2, 1);
-  dst.val() = packed_copy<matrix_view>(foo.val().eval(), rows);
-  dst.adj() = packed_copy<matrix_view>(foo.adj().eval(), rows);
-  return dst;
-} catch (const cl::Error& e) {
-  check_opencl_error("packed_copy var (std::vector->OpenCL)", e);
-  matrix_cl<var> dst(rows, rows, matrix_view);
-  return dst;
+template <typename T_dst, typename T,
+          require_eigen_vt<is_var, T_dst>* = nullptr,
+          require_all_kernel_expressions_t<T>* = nullptr>
+inline T_dst from_matrix_cl(const var_value<T>& a) {
+  arena_t<T_dst> res
+      = from_matrix_cl<Eigen::Matrix<double, T_dst::RowsAtCompileTime,
+                                     T_dst::ColsAtCompileTime>>(a.val());
+  reverse_pass_callback(
+      [a, res]() mutable { a.adj() += to_matrix_cl(res.adj()); });
+  return res;
 }
 
 /** \ingroup opencl
- * Copies the source matrix to the
- * destination matrix. Both matrices
- * are stored on the OpenCL device.
+ * Copies the source var that has data stored on the OpenCL device to
+ * destination `std::vector` containing vars.
  *
- * @tparam T An arithmetic type to pass the value from the OpenCL matrix to.
- * @param src the source matrix
- * @return matrix_cl with copies of values in the source matrix
- * @throw <code>std::invalid_argument</code> if the
- * matrices do not have matching dimensions
+ * @tparam T_dst destination type
+ * @tparam T type of the matrix or expression on the OpenCL device
+ * @param a source matrix_cl or expression
+ * @return var with a copy of the data on the host
  */
-template <typename T, require_var_t<T>* = nullptr>
-inline matrix_cl<T> copy_cl(const matrix_cl<T>& src) {
-  matrix_cl<T> dst(src.rows(), src.cols(), src.view());
-  if (src.size() == 0) {
-    return dst;
+template <typename T_dst, typename T,
+          require_std_vector_vt<is_var, T_dst>* = nullptr,
+          require_all_stan_scalar_t<value_type_t<T_dst>>* = nullptr,
+          require_all_kernel_expressions_t<T>* = nullptr>
+inline T_dst from_matrix_cl(const var_value<T>& a) {
+  check_size_match("from_matrix_cl<std::vector<var>>", "src.cols()", a.cols(),
+                   "dst.cols()", 1);
+  std::vector<double> val = from_matrix_cl<std::vector<double>>(a.val());
+  arena_t<T_dst> res(val.begin(), val.end());
+  reverse_pass_callback([a, res]() mutable {
+    a.adj() += to_matrix_cl(as_column_vector_or_scalar(res).adj());
+  });
+  return {res.begin(), res.end()};
+}
+
+/** \ingroup opencl
+ * Copies the source var that has data stored on the OpenCL device to
+ * destination std::vector containing either Eigen vectors of vars or vars
+ * containing Eigen vectors.
+ *
+ * @tparam T_dst destination type
+ * @tparam T type of the matrix or expression on the OpenCL device
+ * @param a source matrix_cl or expression
+ * @return var with a copy of the data on the host
+ */
+template <typename T_dst, typename T, require_std_vector_t<T_dst>* = nullptr,
+          require_rev_vector_t<value_type_t<T_dst>>* = nullptr,
+          require_all_kernel_expressions_t<T>* = nullptr>
+inline T_dst from_matrix_cl(const var_value<T>& a) {
+  Eigen::MatrixXd val = from_matrix_cl(a.val());
+  arena_t<T_dst> res;
+  res.reserve(a.cols());
+  for (int i = 0; i < a.cols(); i++) {
+    res.emplace_back(val.col(i));
   }
-  try {
-    dst.val() = copy_cl(src.val());
-    dst.adj() = copy_cl(src.adj());
-  } catch (const cl::Error& e) {
-    check_opencl_error("copy_cl var (OpenCL)->(OpenCL)", e);
-  }
-  return dst;
+  reverse_pass_callback([a, res]() mutable {
+    Eigen::MatrixXd adj(a.rows(), a.cols());
+    for (int i = 0; i < a.cols(); i++) {
+      adj.col(i) = res[i].adj();
+    }
+    a.adj() += to_matrix_cl(adj);
+  });
+  return {res.begin(), res.end()};
+}
+
+/** \ingroup opencl
+ * Copies the source var that has data stored on the OpenCL device to
+ * destination Eigen matrix containing vars.
+ *
+ * @tparam T type of the matrix or expression on the OpenCL device
+ * @param src source matrix_cl or expression
+ * @return var with a copy of the data on the host
+ */
+template <typename T, require_all_kernel_expressions_t<T>* = nullptr>
+auto from_matrix_cl(const var_value<T>& src) {
+  return from_matrix_cl<var_value<Eigen::MatrixXd>>(src);
 }
 
 }  // namespace math

@@ -64,3 +64,40 @@ TEST(MathMixMatFun, quadFormSym) {
   v << 100, 10, 0, 1, -3, -3, 5, 2;
   stan::test::expect_ad(g, u, v);
 }
+
+TEST(MathMixMatFun, quad_form_sym_2095) {
+  Eigen::Matrix<stan::math::var, -1, -1> av(2, 2);
+  Eigen::Matrix<stan::math::var, -1, -1> bv(2, 2);
+
+  av << 1.25882993696386514, -0.03325949401909023, -0.03325949605426004,
+      1.85523447220884385;
+
+  bv << 2.55474619740069508, 0.66362927717720988, -1.92917223922387349,
+      2.01853255256721731;
+
+  Eigen::Matrix<stan::math::var, -1, -1> cv = stan::math::quad_form_sym(av, bv);
+  EXPECT_FLOAT_EQ(0, cv(1, 0).val() - cv(0, 1).val());
+
+  stan::math::recover_memory();
+
+  //--------------------
+
+  Eigen::MatrixXd ad(2, 2);
+  Eigen::MatrixXd bd(2, 2);
+
+  ad << 1.25882993696386514, -0.03325949401909023, -0.03325949605426004,
+      1.85523447220884385;
+
+  bd << 2.55474619740069508, 0.66362927717720988, -1.92917223922387349,
+      2.01853255256721731;
+
+  stan::math::quad_form_sym(ad, bd);
+
+  auto f = [](const auto& x, const auto& y) {
+    // symmetrize the input matrix;
+    // expect_ad will perturb elements and cause it not to be symmetric
+    auto x_sym = ((x + x.transpose()) * 0.5).eval();
+    return stan::math::quad_form_sym(x_sym, y);
+  };
+  stan::test::expect_ad(f, ad, bd);
+}

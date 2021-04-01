@@ -8,14 +8,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class log1p_vari : public op_v_vari {
- public:
-  explicit log1p_vari(vari* avi) : op_v_vari(log1p(avi->val_), avi) {}
-  void chain() { avi_->adj_ += adj_ / (1 + avi_->val_); }
-};
-}  // namespace internal
-
 /**
  * The log (1 + x) function for variables (C99).
  *
@@ -26,7 +18,27 @@ class log1p_vari : public op_v_vari {
  * @param a The variable.
  * @return The log of 1 plus the variable.
  */
-inline var log1p(const var& a) { return var(new internal::log1p_vari(a.vi_)); }
+inline var log1p(const var& a) {
+  return make_callback_var(log1p(a.val()), [a](auto& vi) mutable {
+    a.adj() += vi.adj() / (1 + a.val());
+  });
+}
+
+/**
+ * Return the elementwise log of (1 + x)
+ *
+ * @tparam T type of input
+ * @param x input
+ * @return Elementwise log(1 + x)
+ */
+template <typename T, require_var_matrix_t<T>* = nullptr>
+inline auto log1p(const T& x) {
+  check_greater_or_equal("log1p", "x", x.val(), -1.0);
+  return make_callback_var(
+      x.val().array().log1p().matrix(), [x](const auto& vi) {
+        x.adj().array() += vi.adj().array() / (1 + x.val().array());
+      });
+}
 
 }  // namespace math
 }  // namespace stan

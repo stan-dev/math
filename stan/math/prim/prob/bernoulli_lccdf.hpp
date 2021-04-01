@@ -7,6 +7,7 @@
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -28,7 +29,9 @@ namespace math {
  * @throw std::domain_error if theta is not a valid probability
  * @throw std::invalid_argument if container sizes mismatch.
  */
-template <typename T_n, typename T_prob>
+template <typename T_n, typename T_prob,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_n, T_prob>* = nullptr>
 return_type_t<T_prob> bernoulli_lccdf(const T_n& n, const T_prob& theta) {
   using T_partials_return = partials_return_t<T_n, T_prob>;
   using T_theta_ref = ref_type_t<T_prob>;
@@ -37,7 +40,8 @@ return_type_t<T_prob> bernoulli_lccdf(const T_n& n, const T_prob& theta) {
   check_consistent_sizes(function, "Random variable", n,
                          "Probability parameter", theta);
   T_theta_ref theta_ref = theta;
-  check_bounded(function, "Probability parameter", theta_ref, 0.0, 1.0);
+  check_bounded(function, "Probability parameter", value_of(theta_ref), 0.0,
+                1.0);
 
   if (size_zero(n, theta)) {
     return 0.0;
@@ -53,7 +57,7 @@ return_type_t<T_prob> bernoulli_lccdf(const T_n& n, const T_prob& theta) {
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::math::size(n); i++) {
-    const double n_dbl = value_of(n_vec[i]);
+    const double n_dbl = n_vec.val(i);
     if (n_dbl < 0) {
       return ops_partials.build(0.0);
     }
@@ -63,7 +67,7 @@ return_type_t<T_prob> bernoulli_lccdf(const T_n& n, const T_prob& theta) {
   }
 
   for (size_t i = 0; i < max_size_seq_view; i++) {
-    const T_partials_return Pi = value_of(theta_vec[i]);
+    const T_partials_return Pi = theta_vec.val(i);
 
     P += log(Pi);
 

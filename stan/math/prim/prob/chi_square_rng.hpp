@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <boost/random/chi_squared_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -28,10 +29,12 @@ inline typename VectorBuilder<true, double, T_deg>::type chi_square_rng(
     const T_deg& nu, RNG& rng) {
   using boost::variate_generator;
   using boost::random::chi_squared_distribution;
+  using T_nu_ref = ref_type_t<T_deg>;
   static const char* function = "chi_square_rng";
-  check_positive_finite(function, "Degrees of freedom parameter", nu);
+  T_nu_ref nu_ref = nu;
+  check_positive_finite(function, "Degrees of freedom parameter", nu_ref);
 
-  scalar_seq_view<T_deg> nu_vec(nu);
+  scalar_seq_view<T_nu_ref> nu_vec(nu_ref);
   size_t N = stan::math::size(nu);
   VectorBuilder<true, double, T_deg> output(N);
 

@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/size.hpp>
@@ -133,7 +135,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   operands_and_partials<T_y_ref, T_x_ref, T_alpha_ref, T_beta_ref, T_sigma_ref>
       ops_partials(y_ref, x_ref, alpha_ref, beta_ref, sigma_ref);
 
-  if (!(is_constant_all<T_y, T_x, T_beta, T_alpha>::value)) {
+  if (!(is_constant_all<T_y, T_x, T_beta, T_alpha, T_scale>::value)) {
     Matrix<T_partials_return, Dynamic, 1> mu_derivative = inv_sigma * y_scaled;
     if (!is_constant_all<T_y>::value) {
       if (is_vector<T_y>::value) {

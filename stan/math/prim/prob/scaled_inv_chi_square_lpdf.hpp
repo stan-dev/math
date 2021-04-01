@@ -9,6 +9,7 @@
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -32,6 +33,7 @@ namespace math {
  *
  * @tparam T_y type of scalar
  * @tparam T_dof type of degrees of freedom
+ * @tparam T_Scale type of scale
  * @param y A scalar variable.
  * @param nu Degrees of freedom.
  * @param s Scale parameter.
@@ -39,18 +41,26 @@ namespace math {
  * @throw std::domain_error if s is not greater than 0.
  * @throw std::domain_error if y is not greater than 0.
  */
-template <bool propto, typename T_y, typename T_dof, typename T_scale>
+template <bool propto, typename T_y, typename T_dof, typename T_scale,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_dof, T_scale>* = nullptr>
 return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
     const T_y& y, const T_dof& nu, const T_scale& s) {
   using T_partials_return = partials_return_t<T_y, T_dof, T_scale>;
   using std::log;
+  using T_y_ref = ref_type_t<T_y>;
+  using T_nu_ref = ref_type_t<T_dof>;
+  using T_s_ref = ref_type_t<T_scale>;
   static const char* function = "scaled_inv_chi_square_lpdf";
-  check_not_nan(function, "Random variable", y);
-  check_positive_finite(function, "Degrees of freedom parameter", nu);
-  check_positive_finite(function, "Scale parameter", s);
   check_consistent_sizes(function, "Random variable", y,
                          "Degrees of freedom parameter", nu, "Scale parameter",
                          s);
+  T_y_ref y_ref = y;
+  T_nu_ref nu_ref = nu;
+  T_s_ref s_ref = s;
+  check_not_nan(function, "Random variable", y_ref);
+  check_positive_finite(function, "Degrees of freedom parameter", nu_ref);
+  check_positive_finite(function, "Scale parameter", s_ref);
 
   if (size_zero(y, nu, s)) {
     return 0;
@@ -60,15 +70,16 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
   }
 
   T_partials_return logp(0);
-  operands_and_partials<T_y, T_dof, T_scale> ops_partials(y, nu, s);
+  operands_and_partials<T_y_ref, T_nu_ref, T_s_ref> ops_partials(y_ref, nu_ref,
+                                                                 s_ref);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_dof> nu_vec(nu);
-  scalar_seq_view<T_scale> s_vec(s);
+  scalar_seq_view<T_y_ref> y_vec(y_ref);
+  scalar_seq_view<T_nu_ref> nu_vec(nu_ref);
+  scalar_seq_view<T_s_ref> s_vec(s_ref);
   size_t N = max_size(y, nu, s);
 
   for (size_t n = 0; n < N; n++) {
-    if (value_of(y_vec[n]) <= 0) {
+    if (y_vec.val(n) <= 0) {
       return LOG_ZERO;
     }
   }
@@ -78,7 +89,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
       half_nu(size(nu));
   for (size_t i = 0; i < stan::math::size(nu); i++) {
     if (include_summand<propto, T_dof, T_y, T_scale>::value) {
-      half_nu[i] = 0.5 * value_of(nu_vec[i]);
+      half_nu[i] = 0.5 * nu_vec.val(i);
     }
   }
 
@@ -87,7 +98,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
       log_y(size(y));
   for (size_t i = 0; i < stan::math::size(y); i++) {
     if (include_summand<propto, T_dof, T_y>::value) {
-      log_y[i] = log(value_of(y_vec[i]));
+      log_y[i] = log(y_vec.val(i));
     }
   }
 
@@ -96,7 +107,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
       inv_y(size(y));
   for (size_t i = 0; i < stan::math::size(y); i++) {
     if (include_summand<propto, T_dof, T_y, T_scale>::value) {
-      inv_y[i] = 1.0 / value_of(y_vec[i]);
+      inv_y[i] = 1.0 / y_vec.val(i);
     }
   }
 
@@ -105,7 +116,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
       log_s(size(s));
   for (size_t i = 0; i < stan::math::size(s); i++) {
     if (include_summand<propto, T_dof, T_scale>::value) {
-      log_s[i] = log(value_of(s_vec[i]));
+      log_s[i] = log(s_vec.val(i));
     }
   }
 
@@ -128,8 +139,8 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lpdf(
   }
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return s_dbl = value_of(s_vec[n]);
-    const T_partials_return nu_dbl = value_of(nu_vec[n]);
+    const T_partials_return s_dbl = s_vec.val(n);
+    const T_partials_return nu_dbl = nu_vec.val(n);
     if (include_summand<propto, T_dof>::value) {
       logp += half_nu[n] * log_half_nu[n] - lgamma_half_nu[n];
     }

@@ -85,13 +85,13 @@ struct normal_likelihood2 {
     int n_obs = delta_int[0];
     Eigen::Matrix<T_theta, -1, 1> mu(n_obs);
     Eigen::Matrix<T_theta, -1, 1> sigma(n_obs);
+    T_eta sigma_global = eta(0);
     for (int i = 0; i < n_obs; i++) {
       mu(i) = theta(2 * i);
-      sigma(i) = exp(0.5 * theta(2 * i + 1));
+      sigma(i) = exp(0.5 * theta(2 * i + 1));  // * sigma_global;
     }
 
-    T_eta sigma_global = eta(0);
-
+    // return stan::math::normal_lpdf(y, mu, sigma);
     return stan::math::normal_lpdf(y, mu, multiply(sigma_global, sigma));
   }
 };

@@ -3,7 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/kernel_generator.hpp>
+#include <stan/math/opencl/prim/block.hpp>
 
 namespace stan {
 namespace math {
@@ -19,9 +19,9 @@ namespace math {
  * @throw std::out_of_range if j is out of range.
  */
 template <typename T_x,
-          typename = require_all_kernel_expressions_and_none_scalar_t<T_x>>
+          typename = require_nonscalar_prim_or_rev_kernel_expression_t<T_x>>
 inline auto row(T_x&& x, size_t j) {  // NOLINT
-  return block(std::forward<T_x>(x), j - 1, 0, 1, x.cols());
+  return block(std::forward<T_x>(x), j, 1, 1, x.cols());
 }
 }  // namespace math
 }  // namespace stan

@@ -3,6 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
@@ -42,7 +45,9 @@ namespace math {
  * @param kappa (Sequence of) precision parameter(s)
  * @return The log of the product of densities.
  */
-template <bool propto, typename T_y, typename T_loc, typename T_prec>
+template <bool propto, typename T_y, typename T_loc, typename T_prec,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_loc, T_prec>* = nullptr>
 return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
                                                        const T_loc& mu,
                                                        const T_prec& kappa) {
@@ -64,23 +69,14 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
   T_mu_ref mu_ref = mu;
   T_kappa_ref kappa_ref = kappa;
 
-  const auto& y_col = as_column_vector_or_scalar(y_ref);
-  const auto& mu_col = as_column_vector_or_scalar(mu_ref);
-  const auto& kappa_col = as_column_vector_or_scalar(kappa_ref);
-
-  const auto& y_arr = as_array_or_scalar(y_col);
-  const auto& mu_arr = as_array_or_scalar(mu_col);
-  const auto& kappa_arr
-      = promote_scalar<T_partials_return_kappa>(as_array_or_scalar(kappa_col));
-
-  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
-  ref_type_t<decltype(value_of(mu_arr))> mu_val = value_of(mu_arr);
-  ref_type_t<decltype(value_of(kappa_arr))> kappa_val = value_of(kappa_arr);
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  decltype(auto) mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
+  decltype(auto) kappa_val = to_ref(as_value_column_array_or_scalar(kappa_ref));
 
   check_positive(function, "Location parameter", mu_val);
   check_less(function, "Location parameter", mu_val, 1.0);
   check_positive_finite(function, "Precision parameter", kappa_val);
-  check_bounded(function, "Random variable", y_val, 0, 1);
+  check_bounded(function, "Random variable", value_of(y_val), 0, 1);
 
   if (!include_summand<propto, T_y, T_loc, T_prec>::value) {
     return 0;
@@ -106,42 +102,25 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
   operands_and_partials<T_y_ref, T_mu_ref, T_kappa_ref> ops_partials(
       y_ref, mu_ref, kappa_ref);
   if (!is_constant_all<T_y>::value) {
-    if (is_vector<T_y>::value) {
-      ops_partials.edge1_.partials_ = forward_as<T_partials_array>(
-          (mukappa - 1) / y_val + (kappa_val - mukappa - 1) / (y_val - 1));
-    } else {
-      ops_partials.edge1_.partials_[0] = sum(
-          (mukappa - 1) / y_val + (kappa_val - mukappa - 1) / (y_val - 1));
-    }
+    ops_partials.edge1_.partials_
+        = (mukappa - 1) / y_val + (kappa_val - mukappa - 1) / (y_val - 1);
   }
   if (!is_constant_all<T_loc, T_prec>::value) {
     auto digamma_mukappa
-        = to_ref_if < !is_constant_all<T_loc>::value
-          && !is_constant_all<T_prec>::value > (digamma(mukappa));
-    auto digamma_kappa_mukappa
-        = to_ref_if < !is_constant_all<T_loc>::value
-          && !is_constant_all<T_prec>::value > (digamma(kappa_val - mukappa));
+        = to_ref_if<(!is_constant_all<T_loc>::value
+                     && !is_constant_all<T_prec>::value)>(digamma(mukappa));
+    auto digamma_kappa_mukappa = to_ref_if<(
+        !is_constant_all<T_loc>::value && !is_constant_all<T_prec>::value)>(
+        digamma(kappa_val - mukappa));
     if (!is_constant_all<T_loc>::value) {
-      if (is_vector<T_loc>::value) {
-        ops_partials.edge2_.partials_ = forward_as<T_partials_array>(
-            kappa_val
-            * (digamma_kappa_mukappa - digamma_mukappa + log_y - log1m_y));
-      } else {
-        ops_partials.edge2_.partials_[0] = sum(
-            kappa_val
-            * (digamma_kappa_mukappa - digamma_mukappa + log_y - log1m_y));
-      }
+      ops_partials.edge2_.partials_
+          = kappa_val
+            * (digamma_kappa_mukappa - digamma_mukappa + log_y - log1m_y);
     }
     if (!is_constant_all<T_prec>::value) {
-      if (is_vector<T_prec>::value) {
-        ops_partials.edge3_.partials_ = forward_as<T_partials_array>(
-            digamma(kappa_val) + mu_val * (log_y - digamma_mukappa)
-            + (1 - mu_val) * (log1m_y - digamma_kappa_mukappa));
-      } else {
-        ops_partials.edge3_.partials_[0]
-            = sum(digamma(kappa_val) + mu_val * (log_y - digamma_mukappa)
-                  + (1 - mu_val) * (log1m_y - digamma_kappa_mukappa));
-      }
+      ops_partials.edge3_.partials_
+          = digamma(kappa_val) + mu_val * (log_y - digamma_mukappa)
+            + (1 - mu_val) * (log1m_y - digamma_kappa_mukappa);
     }
   }
   return ops_partials.build(logp);

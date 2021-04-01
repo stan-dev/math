@@ -21,18 +21,21 @@ namespace math {
  * @param i row index to check
  * @throw <code>std::out_of_range</code> if the index is out of range.
  */
-template <typename T, typename = require_eigen_vector_t<T>>
+template <typename T,
+          require_any_t<is_eigen_vector<T>,
+                        is_prim_or_rev_kernel_expression<T>>* = nullptr>
 inline void check_vector_index(const char* function, const char* name,
                                const T& y, size_t i) {
-  if (i >= stan::error_index::value
-      && i < static_cast<size_t>(y.size()) + stan::error_index::value) {
-    return;
+  STAN_NO_RANGE_CHECKS_RETURN;
+  if (!(i >= stan::error_index::value
+        && i < static_cast<size_t>(y.size()) + stan::error_index::value)) {
+    [&]() STAN_COLD_PATH {
+      std::stringstream msg;
+      msg << " for size of " << name;
+      std::string msg_str(msg.str());
+      out_of_range(function, y.rows(), i, msg_str.c_str());
+    }();
   }
-
-  std::stringstream msg;
-  msg << " for size of " << name;
-  std::string msg_str(msg.str());
-  out_of_range(function, y.rows(), i, msg_str.c_str());
 }
 
 }  // namespace math

@@ -9,6 +9,7 @@
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
@@ -24,30 +25,36 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lccdf(const T_y& y,
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
   using std::exp;
   using std::log;
+  using T_y_ref = ref_type_t<T_y>;
+  using T_mu_ref = ref_type_t<T_loc>;
+  using T_sigma_ref = ref_type_t<T_scale>;
   static const char* function = "normal_lccdf";
-  check_not_nan(function, "Random variable", y);
-  check_finite(function, "Location parameter", mu);
-  check_not_nan(function, "Scale parameter", sigma);
-  check_positive(function, "Scale parameter", sigma);
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Scale parameter", sigma);
+  T_y_ref y_ref = y;
+  T_mu_ref mu_ref = mu;
+  T_sigma_ref sigma_ref = sigma;
+  check_not_nan(function, "Random variable", y_ref);
+  check_finite(function, "Location parameter", mu_ref);
+  check_positive(function, "Scale parameter", sigma_ref);
 
   if (size_zero(y, mu, sigma)) {
     return 0;
   }
 
   T_partials_return ccdf_log(0.0);
-  operands_and_partials<T_y, T_loc, T_scale> ops_partials(y, mu, sigma);
+  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref> ops_partials(
+      y_ref, mu_ref, sigma_ref);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_scale> sigma_vec(sigma);
+  scalar_seq_view<T_y_ref> y_vec(y_ref);
+  scalar_seq_view<T_mu_ref> mu_vec(mu_ref);
+  scalar_seq_view<T_sigma_ref> sigma_vec(sigma_ref);
   size_t N = max_size(y, mu, sigma);
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return mu_dbl = value_of(mu_vec[n]);
-    const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
+    const T_partials_return y_dbl = y_vec.val(n);
+    const T_partials_return mu_dbl = mu_vec.val(n);
+    const T_partials_return sigma_dbl = sigma_vec.val(n);
 
     const T_partials_return scaled_diff
         = (y_dbl - mu_dbl) / (sigma_dbl * SQRT_TWO);

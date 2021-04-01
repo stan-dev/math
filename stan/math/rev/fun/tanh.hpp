@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_FUN_TANH_HPP
 
 #include <stan/math/prim/fun/tanh.hpp>
+#include <stan/math/prim/fun/cosh.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/exp.hpp>
@@ -10,17 +11,6 @@
 
 namespace stan {
 namespace math {
-
-namespace internal {
-class tanh_vari : public op_v_vari {
- public:
-  explicit tanh_vari(vari* avi) : op_v_vari(std::tanh(avi->val_), avi) {}
-  void chain() {
-    double cosh = std::cosh(avi_->val_);
-    avi_->adj_ += adj_ / (cosh * cosh);
-  }
-};
-}  // namespace internal
 
 /**
  * Return the hyperbolic tangent of the specified variable (cmath).
@@ -49,7 +39,27 @@ class tanh_vari : public op_v_vari {
  * @param a Variable.
  * @return Hyperbolic tangent of variable.
  */
-inline var tanh(const var& a) { return var(new internal::tanh_vari(a.vi_)); }
+inline var tanh(const var& a) {
+  return make_callback_var(std::tanh(a.val()), [a](const auto& vi) mutable {
+    const auto a_cosh = std::cosh(a.val());
+    a.adj() += vi.adj_ / (a_cosh * a_cosh);
+  });
+}
+
+/**
+ * Return the hyperbolic tangent of elements of a
+ *
+ * @tparam T type of a
+ * @param a argument
+ * @return elementwise hyperbolic tangent of a
+ */
+template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
+inline auto tanh(const VarMat& a) {
+  return make_callback_var(
+      a.val().array().tanh().matrix(), [a](const auto& vi) mutable {
+        a.adj().array() += vi.adj_.array() / (a.val().array().cosh().square());
+      });
+}
 
 /**
  * Return the hyperbolic tangent of the complex argument.

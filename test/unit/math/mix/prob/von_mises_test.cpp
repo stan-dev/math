@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-std::vector<double> test_fun(double y, double mu, double kappa) {
+std::vector<double> test_von_mises_lpdf(double y, double mu, double kappa) {
   using stan::math::var;
   using stan::math::von_mises_lpdf;
 
@@ -26,7 +26,7 @@ TEST(ProbAgradDistributionsVonMises, derivatives) {
   using stan::math::fvar;
   using stan::math::von_mises_lpdf;
 
-  std::vector<double> grad = test_fun(0, 1, 0);
+  std::vector<double> grad = test_von_mises_lpdf(0, 1, 0);
 
   fvar<double> lp = von_mises_lpdf<false>(0, 1, fvar<double>(0, 1));
   EXPECT_FLOAT_EQ(grad[2], lp.tangent());
@@ -87,4 +87,17 @@ TEST(ProbAgradDistributionsVonMises, FvarVar_2ndDeriv2) {
   logp.d_.grad(y, g);
   // Fails: g[0] is -nan
   // EXPECT_FLOAT_EQ(0, g[0]);
+}
+
+// This test once failed sanitizer checks -- nothing explicitly tested in the
+// code itself
+TEST(ProbAgradDistributionsVonMises, sanitizer_error_fixed) {
+  using stan::math::var;
+  double y = boost::math::constants::third_pi<double>();
+  double mu = boost::math::constants::sixth_pi<double>();
+  std::vector<var> kappa = {0.5};
+
+  auto lp = stan::math::von_mises_lpdf(y, mu, kappa);
+
+  lp.grad();
 }

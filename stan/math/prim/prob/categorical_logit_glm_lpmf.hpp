@@ -3,14 +3,17 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
-#include <Eigen/Core>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <cmath>
 
 namespace stan {
@@ -39,7 +42,7 @@ namespace math {
 template <bool propto, typename T_y, typename T_x, typename T_alpha,
           typename T_beta, require_eigen_t<T_x>* = nullptr,
           require_eigen_col_vector_t<T_alpha>* = nullptr,
-          require_eigen_matrix_t<T_beta>* = nullptr>
+          require_eigen_matrix_dynamic_t<T_beta>* = nullptr>
 return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
     const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta) {
   using T_partials_return = partials_return_t<T_x, T_alpha, T_beta>;

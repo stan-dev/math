@@ -10,7 +10,7 @@ namespace math {
 /**
  * Return a vector of linearly spaced elements.
  *
- * This produces a vector from low to high (included) with elements spaced
+ * This produces a vector from low to high (inclusive) with elements spaced
  * as (high - low) / (K - 1). For K=1, the vector will contain the high value;
  * for K=0 it returns an empty vector.
  *
@@ -22,7 +22,7 @@ namespace math {
  * @throw std::domain_error if K is negative, if low is nan or infinite,
  * if high is nan or infinite, or if high is less than low.
  */
-inline Eigen::VectorXd linspaced_vector(int K, double low, double high) {
+inline auto linspaced_vector(int K, double low, double high) {
   static const char* function = "linspaced_vector";
   check_nonnegative(function, "size", K);
   check_finite(function, "low", low);

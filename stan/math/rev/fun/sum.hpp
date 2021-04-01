@@ -1,11 +1,14 @@
 #ifndef STAN_MATH_REV_FUN_SUM_HPP
 #define STAN_MATH_REV_FUN_SUM_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/core/arena_matrix.hpp>
+#include <stan/math/rev/core/reverse_pass_callback.hpp>
 #include <stan/math/rev/fun/sum.hpp>
-#include <stan/math/rev/fun/typedefs.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/rev/fun/value_of.hpp>
+#include <stan/math/rev/core/typedefs.hpp>
 #include <vector>
 
 namespace stan {
@@ -63,39 +66,20 @@ inline var sum(const std::vector<var>& m) {
 }
 
 /**
- * Class for representing sums with constructors for Eigen.
- * The <code>chain()</code> method and member variables are
- * managed by the superclass <code>sum_v_vari</code>.
- */
-class sum_eigen_v_vari : public sum_v_vari {
- public:
-  template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
-  explicit sum_eigen_v_vari(const EigMat& v1)
-      : sum_v_vari(
-            v1.val().sum(),
-            reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
-                v1.size() * sizeof(vari*))),
-            v1.size()) {
-    Eigen::Map<matrix_vi>(v_, v1.rows(), v1.cols()) = v1.vi();
-  }
-};
-
-/**
  * Returns the sum of the coefficients of the specified
- * matrix, column vector or row vector.
+ * matrix.
  *
- * @tparam T type of the matrix of vector (Must be derived from \c
- * Eigen::MatrixBase and contain \c var scalars)
- * @param m Specified matrix or vector.
+ * @tparam T type of the matrix of vector. Can be either a var matrix or
+ *  matrix of vars.
+ * @param x Specified var_value containing a matrix or vector.
  * @return Sum of coefficients of matrix.
  */
-template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
-inline var sum(const EigMat& m) {
-  if (m.size() == 0) {
-    return 0.0;
-  }
-  const Eigen::Ref<const plain_type_t<EigMat>>& m_ref = m;
-  return var(new sum_eigen_v_vari(m_ref));
+template <typename T, require_rev_matrix_t<T>* = nullptr>
+inline var sum(const T& x) {
+  arena_t<T> x_arena = x;
+  return make_callback_var(sum(x_arena.val()), [x_arena](auto& vi) mutable {
+    x_arena.adj().array() += vi.adj();
+  });
 }
 
 }  // namespace math

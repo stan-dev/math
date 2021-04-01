@@ -2,7 +2,7 @@
 #define STAN_MATH_PRIM_FUNCTOR_APPLY_VECTOR_UNARY_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/meta/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/meta/is_stan_scalar.hpp>
 #include <stan/math/prim/meta/is_container.hpp>
 #include <stan/math/prim/meta/is_eigen_matrix_base.hpp>
@@ -12,7 +12,6 @@
 
 namespace stan {
 namespace math {
-
 // Forward declaration to allow specialisations
 template <typename T, typename Enable = void>
 struct apply_vector_unary {};
@@ -33,11 +32,7 @@ template <typename T>
 struct apply_vector_unary<T, require_eigen_t<T>> {
   /**
    * Member function for applying a functor to a vector and subsequently
-   * returning a vector. The returned objects are evaluated so that
-   * expression templates are not propagated.
-   *
-   * TODO(Andrew) Remove .eval() when rest of Stan library can take
-   * expressions as inputs.
+   * returning a vector.
    *
    * @tparam T Type of argument to which functor is applied.
    * @tparam F Type of functor to apply.
@@ -48,13 +43,38 @@ struct apply_vector_unary<T, require_eigen_t<T>> {
   template <typename F, typename T2 = T,
             require_t<is_eigen_matrix_base<plain_type_t<T2>>>* = nullptr>
   static inline auto apply(const T& x, const F& f) {
-    return f(x).matrix().eval();
+    return make_holder([](const auto& a) { return a.matrix().derived(); },
+                       f(x));
   }
 
   template <typename F, typename T2 = T,
             require_t<is_eigen_array<plain_type_t<T2>>>* = nullptr>
   static inline auto apply(const T& x, const F& f) {
-    return f(x).array().eval();
+    return make_holder([](const auto& a) { return a.array().derived(); }, f(x));
+  }
+
+  /**
+   * Member function for applying a functor to a vector and subsequently
+   * returning a vector. This is a variant of `apply` that does not construct
+   * `holder`, so it is up to the caller to ensure the returned expression is
+   * evaluated before `x` is destructed.
+   *
+   * @tparam T Type of argument to which functor is applied.
+   * @tparam F Type of functor to apply.
+   * @param x Eigen input to which operation is applied.
+   * @param f functor to apply to Eigen input.
+   * @return Eigen object with result of applying functor to input
+   */
+  template <typename F, typename T2 = T,
+            require_t<is_eigen_matrix_base<plain_type_t<T2>>>* = nullptr>
+  static inline auto apply_no_holder(const T& x, const F& f) {
+    return f(x).matrix().derived();
+  }
+
+  template <typename F, typename T2 = T,
+            require_t<is_eigen_array<plain_type_t<T2>>>* = nullptr>
+  static inline auto apply_no_holder(const T& x, const F& f) {
+    return f(x).array().derived();
   }
 
   /**
@@ -108,6 +128,22 @@ struct apply_vector_unary<T, require_std_vector_vt<is_stan_scalar, T>> {
   }
 
   /**
+   * Member function for applying a functor to each container in an std::vector
+   * and subsequently returning an std::vector of containers.
+   *
+   * @tparam T Type of argument to which functor is applied.
+   * @tparam F Type of functor to apply.
+   * @param x std::vector of containers to which operation is applied.
+   * @param f functor to apply to vector input.
+   * @return std::vector of containers with result of applying functor to
+   *         input.
+   */
+  template <typename F>
+  static inline auto apply_no_holder(const T& x, const F& f) {
+    return apply(x, f);
+  }
+
+  /**
    * Member function for applying a functor to a vector and subsequently
    * returning a scalar.
    *
@@ -123,6 +159,12 @@ struct apply_vector_unary<T, require_std_vector_vt<is_stan_scalar, T>> {
   }
 };
 
+namespace internal {
+template <typename T>
+using is_container_or_var_matrix
+    = disjunction<is_container<T>, is_var_matrix<T>>;
+}
+
 /**
  * Specialisation for use with nested containers (std::vectors).
  * For each of the member functions, an std::vector with the appropriate
@@ -134,7 +176,8 @@ struct apply_vector_unary<T, require_std_vector_vt<is_stan_scalar, T>> {
  *
  */
 template <typename T>
-struct apply_vector_unary<T, require_std_vector_vt<is_container, T>> {
+struct apply_vector_unary<
+    T, require_std_vector_vt<internal::is_container_or_var_matrix, T>> {
   using T_vt = value_type_t<T>;
 
   /**
@@ -151,11 +194,28 @@ struct apply_vector_unary<T, require_std_vector_vt<is_container, T>> {
   template <typename F>
   static inline auto apply(const T& x, const F& f) {
     size_t x_size = x.size();
-    using T_return = decltype(apply_vector_unary<T_vt>::apply(x[0], f));
+    using T_return
+        = plain_type_t<decltype(apply_vector_unary<T_vt>::apply(x[0], f))>;
     std::vector<T_return> result(x_size);
     for (size_t i = 0; i < x_size; ++i)
-      result[i] = apply_vector_unary<T_vt>::apply(x[i], f);
+      result[i] = apply_vector_unary<T_vt>::apply_no_holder(x[i], f);
     return result;
+  }
+
+  /**
+   * Member function for applying a functor to each container in an std::vector
+   * and subsequently returning an std::vector of containers.
+   *
+   * @tparam T Type of argument to which functor is applied.
+   * @tparam F Type of functor to apply.
+   * @param x std::vector of containers to which operation is applied.
+   * @param f functor to apply to vector input.
+   * @return std::vector of containers with result of applying functor to
+   *         input.
+   */
+  template <typename F>
+  static inline auto apply_no_holder(const T& x, const F& f) {
+    return apply(x, f);
   }
 
   /**

@@ -151,7 +151,8 @@ namespace math {
             a = b - W_r
               * mdivide_left_tri<Eigen::Upper>(transpose(L),
                  mdivide_left_tri<Eigen::Lower>(L,
-                 diag_pre_multiply(W_r.diagonal(), multiply(covariance, b))));
+                   W_r.diagonal().cwiseProduct(covariance * b)));
+                 // diag_pre_multiply(W_r.diagonal(), multiply(covariance, b))));
           } else {
             b = W * theta + l_grad.head(theta_size);
             a = b - W_r

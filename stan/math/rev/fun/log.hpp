@@ -16,14 +16,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class log_vari : public op_v_vari {
- public:
-  explicit log_vari(vari* avi) : op_v_vari(std::log(avi->val_), avi) {}
-  void chain() { avi_->adj_ += adj_ / avi_->val_; }
-};
-}  // namespace internal
-
 /**
  * Return the natural log of the specified variable (cmath).
  *
@@ -52,7 +44,11 @@ class log_vari : public op_v_vari {
  * @param a Variable whose log is taken.
  * @return Natural log of variable.
  */
-inline var log(const var& a) { return var(new internal::log_vari(a.vi_)); }
+inline var log(const var& a) {
+  return make_callback_var(std::log(a.val()), [a](auto& vi) mutable {
+    a.adj() += vi.adj() / a.val();
+  });
+}
 
 /**
  * Return the natural logarithm (base e) of the specified complex argument.
@@ -62,6 +58,21 @@ inline var log(const var& a) { return var(new internal::log_vari(a.vi_)); }
  */
 inline std::complex<var> log(const std::complex<var>& z) {
   return internal::complex_log(z);
+}
+
+/**
+ * Return the natural log of the elements of x
+ *
+ * @tparam T type of x
+ * @param x argument
+ * @return elementwise natural log of x
+ */
+template <typename T, require_var_matrix_t<T>* = nullptr>
+inline auto log(const T& x) {
+  return make_callback_var(
+      x.val().array().log().matrix(), [x](const auto& vi) mutable {
+        x.adj() += (vi.adj().array() / x.val().array()).matrix();
+      });
 }
 
 }  // namespace math

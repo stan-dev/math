@@ -14,7 +14,7 @@ namespace math {
  * @return A vector of size K with all elements initialised to 1.
  * @throw std::domain_error if K is negative.
  */
-inline Eigen::VectorXd ones_vector(int K) {
+inline auto ones_vector(int K) {
   check_nonnegative("ones_vector", "size", K);
   return Eigen::VectorXd::Constant(K, 1);
 }

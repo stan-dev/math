@@ -390,37 +390,44 @@ TEST(StanMathRev_reduce_sum, slice_group_gradient) {
   stan::math::recover_memory();
 }
 
-#ifdef STAN_THREADS
-std::vector<int> threading_test_global;
-struct threading_test_lpdf {
-  template <typename T1>
-  inline auto operator()(const std::vector<T1>&, std::size_t start,
-                         std::size_t end, std::ostream* msgs) const {
-    threading_test_global[start] = tbb::this_task_arena::current_thread_index();
+// reduce_sum needs still work fine whenever multiple arguments point
+// to the same vari internally
+TEST(StanMathRev_reduce_sum, linked_args) {
+  using stan::math::test::arg_start_end_lpdf;
+  using stan::math::test::get_new_msg;
+  auto start_end_rs = [](auto&& arg1, auto&& arg2) {
+    return stan::math::reduce_sum_static<arg_start_end_lpdf>(
+        arg1, 1, get_new_msg(), arg2, arg2);
+  };
 
-    return stan::return_type_t<T1>(0);
-  }
-};
+  auto start_end = [](auto&& arg1, auto&& arg2) {
+    arg_start_end_lpdf worker;
+    return worker(arg1, 0, arg1.size() - 1, get_new_msg(), arg2, arg2);
+  };
 
-TEST(StanMathRev_reduce_sum, threading) {
-  threading_test_global = std::vector<int>(10000, 0);
-  std::vector<stan::math::var> data(threading_test_global.size(), 0);
-  stan::math::reduce_sum_static<threading_test_lpdf>(data, 1, nullptr);
+  std::vector<double> data(5, 1.0);
 
-  auto uniques = std::set<int>(threading_test_global.begin(),
-                               threading_test_global.end());
+  stan::math::set_zero_all_adjoints();
 
-  EXPECT_GT(uniques.size(), 1);
+  std::vector<stan::math::var> param2(data.begin(), data.end());
+  std::vector<std::vector<stan::math::var>> param1(5, param2);
 
-  threading_test_global = std::vector<int>(10000, 0);
+  stan::math::var res = start_end(param1, param2);
 
-  stan::math::reduce_sum<threading_test_lpdf>(data, 1, nullptr);
+  stan::math::grad(res.vi_);
 
-  uniques = std::set<int>(threading_test_global.begin(),
-                          threading_test_global.end());
+  double param2_adj = param2[0].adj();
 
-  EXPECT_GT(uniques.size(), 1);
+  stan::math::set_zero_all_adjoints();
+
+  std::vector<stan::math::var> param2_rs(data.begin(), data.end());
+  std::vector<std::vector<stan::math::var>> param1_rs(5, param2_rs);
+
+  stan::math::var res_rs = start_end_rs(param1_rs, param2_rs);
+
+  stan::math::grad(res_rs.vi_);
+
+  EXPECT_FLOAT_EQ(param2_rs[0].adj(), param2_adj);
 
   stan::math::recover_memory();
 }
-#endif

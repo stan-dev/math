@@ -37,6 +37,7 @@
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -77,6 +78,11 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
     const T_y& y, const T_alpha& alpha, const T_tau& tau, const T_beta& beta,
     const T_delta& delta) {
   using T_return_type = return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta>;
+  using T_y_ref = ref_type_t<T_y>;
+  using T_alpha_ref = ref_type_t<T_alpha>;
+  using T_tau_ref = ref_type_t<T_tau>;
+  using T_beta_ref = ref_type_t<T_beta>;
+  using T_delta_ref = ref_type_t<T_delta>;
   using std::ceil;
   using std::exp;
   using std::floor;
@@ -84,22 +90,21 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
   using std::sin;
   using std::sqrt;
   static const char* function = "wiener_lpdf";
-  check_not_nan(function, "Random variable", y);
-  check_not_nan(function, "Boundary separation", alpha);
-  check_not_nan(function, "A-priori bias", beta);
-  check_not_nan(function, "Nondecision time", tau);
-  check_not_nan(function, "Drift rate", delta);
-  check_finite(function, "Boundary separation", alpha);
-  check_finite(function, "A-priori bias", beta);
-  check_finite(function, "Nondecision time", tau);
-  check_finite(function, "Drift rate", delta);
-  check_positive(function, "Random variable", y);
-  check_positive(function, "Boundary separation", alpha);
-  check_positive(function, "Nondecision time", tau);
-  check_bounded(function, "A-priori bias", beta, 0, 1);
   check_consistent_sizes(function, "Random variable", y, "Boundary separation",
                          alpha, "A-priori bias", beta, "Nondecision time", tau,
                          "Drift rate", delta);
+
+  T_y_ref y_ref = y;
+  T_alpha_ref alpha_ref = alpha;
+  T_tau_ref tau_ref = tau;
+  T_beta_ref beta_ref = beta;
+  T_delta_ref delta_ref = delta;
+
+  check_positive(function, "Random variable", value_of(y_ref));
+  check_positive_finite(function, "Boundary separation", value_of(alpha_ref));
+  check_positive_finite(function, "Nondecision time", value_of(tau_ref));
+  check_bounded(function, "A-priori bias", value_of(beta_ref), 0, 1);
+  check_finite(function, "Drift rate", value_of(delta_ref));
 
   if (size_zero(y, alpha, beta, tau, delta)) {
     return 0;
@@ -107,16 +112,16 @@ return_type_t<T_y, T_alpha, T_tau, T_beta, T_delta> wiener_lpdf(
 
   T_return_type lp(0.0);
 
-  size_t N = std::max(max_size(y, alpha, beta), max_size(tau, delta));
+  size_t N = max_size(y, alpha, beta, tau, delta);
   if (!N) {
     return 0.0;
   }
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_alpha> alpha_vec(alpha);
-  scalar_seq_view<T_beta> beta_vec(beta);
-  scalar_seq_view<T_tau> tau_vec(tau);
-  scalar_seq_view<T_delta> delta_vec(delta);
+  scalar_seq_view<T_y_ref> y_vec(y_ref);
+  scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
+  scalar_seq_view<T_beta_ref> beta_vec(beta_ref);
+  scalar_seq_view<T_tau_ref> tau_vec(tau_ref);
+  scalar_seq_view<T_delta_ref> delta_vec(delta_ref);
   size_t N_y_tau = max_size(y, tau);
 
   for (size_t i = 0; i < N_y_tau; ++i) {

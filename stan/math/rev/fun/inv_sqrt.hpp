@@ -9,16 +9,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class inv_sqrt_vari : public op_v_vari {
- public:
-  explicit inv_sqrt_vari(vari* avi) : op_v_vari(inv_sqrt(avi->val_), avi) {}
-  void chain() {
-    avi_->adj_ -= 0.5 * adj_ / (avi_->val_ * std::sqrt(avi_->val_));
-  }
-};
-}  // namespace internal
-
 /**
  *
    \f[
@@ -39,7 +29,10 @@ class inv_sqrt_vari : public op_v_vari {
  *
  */
 inline var inv_sqrt(const var& a) {
-  return var(new internal::inv_sqrt_vari(a.vi_));
+  auto denom = a.val() * std::sqrt(a.val());
+  return make_callback_var(inv_sqrt(a.val()), [a, denom](auto& vi) mutable {
+    a.adj() -= 0.5 * vi.adj() / denom;
+  });
 }
 
 }  // namespace math

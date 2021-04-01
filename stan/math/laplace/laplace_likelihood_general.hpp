@@ -124,7 +124,11 @@ struct diff_likelihood {
     for (int i = 0; i < theta_size; i++)
       theta_fvar(i) = fvar<var>(theta_var(i), v(i));
 
-    fvar<var> f_fvar = f_(theta_fvar, eta_var, delta_, delta_int_, pstream_);
+    // CHECK -- After merging develop branch, needed to do this.
+    Matrix<fvar<var>, Dynamic, 1> eta_fvar(eta_size);
+    for (int i = 0; i < eta_size; i++) eta_fvar(i) = fvar<var>(eta_var(i), 0);
+
+    fvar<var> f_fvar = f_(theta_fvar, eta_fvar, delta_, delta_int_, pstream_);
     grad(f_fvar.d_.vi_);
 
     VectorXd diff_eta(eta_size);

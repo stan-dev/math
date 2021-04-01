@@ -29,7 +29,7 @@ namespace internal {
  * @param t The type that will be returned.
  * @return the input t.
  */
-template <typename T, typename K = double>
+template <typename T, require_not_matrix_cl_t<T>* = nullptr>
 inline const T& get_kernel_args(const T& t) {
   return t;
 }
@@ -41,8 +41,8 @@ inline const T& get_kernel_args(const T& t) {
  * @param m The \c matrix with an OpenCL Buffer.
  * @return The OpenCL Buffer.
  */
-template <typename K>
-inline const cl::Buffer& get_kernel_args(const stan::math::matrix_cl<K>& m) {
+template <typename K, require_matrix_cl_t<K>* = nullptr>
+inline const cl::Buffer& get_kernel_args(const K& m) {
   return m.buffer();
 }
 
@@ -61,31 +61,25 @@ struct assign_event_helper {
    * @param e the event to be assigned.
    * @param m The \c matrix_cl to be assigned to.
    */
-  inline void set(const cl::Event& e, const stan::math::matrix_cl<K>& m) {}
+  inline void set(const cl::Event& e, const K& m) {}
 };
 
 // Specialization for \c in_buffer
 template <typename K>
 struct assign_event_helper<in_buffer, K> {
-  inline void set(const cl::Event& e, const stan::math::matrix_cl<K>& m) {
-    m.add_read_event(e);
-  }
+  inline void set(const cl::Event& e, const K& m) { m.add_read_event(e); }
 };
 
 // Specialization for \c out_buffer
 template <typename K>
 struct assign_event_helper<out_buffer, K> {
-  inline void set(const cl::Event& e, const stan::math::matrix_cl<K>& m) {
-    m.add_write_event(e);
-  }
+  inline void set(const cl::Event& e, const K& m) { m.add_write_event(e); }
 };
 
 // Specialization for \c in_out_buffer
 template <typename K>
 struct assign_event_helper<in_out_buffer, K> {
-  inline void set(const cl::Event& e, const stan::math::matrix_cl<K>& m) {
-    m.add_read_write_event(e);
-  }
+  inline void set(const cl::Event& e, const K& m) { m.add_read_write_event(e); }
 };
 
 /** \ingroup kernel_executor_opencl
@@ -105,9 +99,8 @@ inline void assign_event(const cl::Event& e, const T&) {}
  * @param e The event to be assigned.
  * @param m The \c matrix_cl to be assigned
  */
-template <typename T, typename K>
-inline void assign_event(const cl::Event& e,
-                         const stan::math::matrix_cl<K>& m) {
+template <typename T, typename K, require_matrix_cl_t<K>* = nullptr>
+inline void assign_event(const cl::Event& e, const K& m) {
   assign_event_helper<T, K> helper;
   helper.set(e, m);
 }
@@ -159,7 +152,7 @@ struct select_event_helper {
 // Specialization for in_buffer
 template <typename K>
 struct select_event_helper<in_buffer, K> {
-  inline const std::vector<cl::Event> get(const stan::math::matrix_cl<K>& m) {
+  inline const std::vector<cl::Event> get(const K& m) {
     return m.write_events();
   }
 };
@@ -167,7 +160,7 @@ struct select_event_helper<in_buffer, K> {
 // Specialization for out_buffer
 template <typename K>
 struct select_event_helper<out_buffer, K> {
-  inline const std::vector<cl::Event> get(const stan::math::matrix_cl<K>& m) {
+  inline const std::vector<cl::Event> get(const K& m) {
     return m.read_write_events();
   }
 };
@@ -175,7 +168,7 @@ struct select_event_helper<out_buffer, K> {
 // Specialization for in_out_buffer
 template <typename K>
 struct select_event_helper<in_out_buffer, K> {
-  inline const std::vector<cl::Event> get(const stan::math::matrix_cl<K>& m) {
+  inline const std::vector<cl::Event> get(const K& m) {
     return m.read_write_events();
   }
 };
@@ -196,9 +189,8 @@ inline const std::vector<cl::Event> select_events(const T& m) {
 }
 
 // Specialization for \c matrix_cl
-template <typename T, typename K>
-inline const std::vector<cl::Event> select_events(
-    const stan::math::matrix_cl<K>& m) {
+template <typename T, typename K, require_matrix_cl_t<K>* = nullptr>
+inline const std::vector<cl::Event> select_events(const K& m) {
   select_event_helper<T, K> helper;
   return helper.get(m);
 }
@@ -214,9 +206,15 @@ inline const std::vector<cl::Event> select_events(
  */
 inline auto compile_kernel(const char* name,
                            const std::vector<std::string>& sources,
-                           std::map<std::string, int>& options) {
+                           const std::map<std::string, int>& options) {
+  auto base_opts = opencl_context.base_opts();
+  for (auto& it : options) {
+    if (base_opts[it.first] > it.second) {
+      base_opts[it.first] = it.second;
+    }
+  }
   std::string kernel_opts = "";
-  for (auto&& comp_opts : options) {
+  for (auto&& comp_opts : base_opts) {
     kernel_opts += std::string(" -D") + comp_opts.first + "="
                    + std::to_string(comp_opts.second);
   }
@@ -239,52 +237,19 @@ inline auto compile_kernel(const char* name,
 }
 
 /** \ingroup kernel_executor_opencl
- * Functor used for compiling kernels.
- *
- * @tparam Args Parameter pack of all kernel argument types.
- */
-template <typename... Args>
-class kernel_functor {
- private:
-  cl::Kernel kernel_;
-  std::map<std::string, int> opts_;
-
- public:
-  /** \ingroup kernel_executor_opencl
-   * functor to access the kernel compiler.
-   * @param name The name for the kernel.
-   * @param sources A std::vector of strings containing the code for the kernel.
-   * @param options The values of macros to be passed at compile time.
-   */
-  kernel_functor(const char* name, const std::vector<std::string>& sources,
-                 const std::map<std::string, int>& options) {
-    auto base_opts = opencl_context.base_opts();
-    for (auto& it : options) {
-      if (base_opts[it.first] > it.second) {
-        base_opts[it.first] = it.second;
-      }
-    }
-    kernel_ = compile_kernel(name, sources, base_opts);
-    opts_ = base_opts;
-  }
-
-  auto operator()() const { return cl::KernelFunctor<Args...>(kernel_); }
-
-  /** \ingroup kernel_executor_opencl
-   * @return The options that the kernel was compiled with.
-   */
-  inline const std::map<std::string, int>& get_opts() const { return opts_; }
-};
-
-/** \ingroup kernel_executor_opencl
  * Creates functor for kernels
  *
  * @tparam Args Parameter pack of all kernel argument types.
  */
 template <typename... Args>
 struct kernel_cl {
-  const kernel_functor<internal::to_const_buffer_t<Args>&...> make_functor;
+ private:
+  const char* name_;
+  std::vector<std::string> sources_;
+  std::map<std::string, int> opts_;
+  mutable cl::Kernel kernel_;
 
+ public:
   /** \ingroup kernel_executor_opencl
    * Creates functor for kernels that only need access to defining
    *  the global work size.
@@ -292,9 +257,10 @@ struct kernel_cl {
    * @param sources A std::vector of strings containing the code for the kernel.
    * @param options The values of macros to be passed at compile time.
    */
-  kernel_cl(const char* name, const std::vector<std::string>& sources,
-            const std::map<std::string, int>& options = {})
-      : make_functor(name, sources, options) {}
+  kernel_cl(const char* name, std::vector<std::string> sources,
+            std::map<std::string, int> options = {})
+      : name_(name), sources_(std::move(sources)), opts_(std::move(options)) {}
+
   /** \ingroup kernel_executor_opencl
    * Executes a kernel
    * @tparam CallArgs The types of the callee arguments.
@@ -306,12 +272,17 @@ struct kernel_cl {
   template <typename... CallArgs>
   auto operator()(cl::NDRange global_thread_size,
                   const CallArgs&... args) const {
-    auto f = make_functor();
-    const std::vector<cl::Event> kernel_events
-        = vec_concat(internal::select_events<Args>(args)...);
-    cl::EnqueueArgs eargs(opencl_context.queue(), kernel_events,
+    if (kernel_() == NULL) {
+      kernel_ = compile_kernel(name_, sources_, opts_);
+      opencl_context.register_kernel_cache(&kernel_);
+    }
+    cl::EnqueueArgs eargs(opencl_context.queue(),
+                          vec_concat(internal::select_events<Args>(args)...),
                           global_thread_size);
-    cl::Event kern_event = f(eargs, internal::get_kernel_args(args)...);
+    cl::KernelFunctor<internal::to_const_buffer_t<Args>&...> kernel_functor(
+        kernel_);
+    cl::Event kern_event
+        = kernel_functor(eargs, internal::get_kernel_args(args)...);
     internal::assign_events<Args...>(kern_event, args...);
     return kern_event;
   }
@@ -328,12 +299,17 @@ struct kernel_cl {
   template <typename... CallArgs>
   auto operator()(cl::NDRange global_thread_size, cl::NDRange thread_block_size,
                   const CallArgs&... args) const {
-    auto f = make_functor();
-    const std::vector<cl::Event> kernel_events
-        = vec_concat(internal::select_events<Args>(args)...);
-    cl::EnqueueArgs eargs(opencl_context.queue(), kernel_events,
+    if (kernel_() == NULL) {
+      kernel_ = compile_kernel(name_, sources_, opts_);
+      opencl_context.register_kernel_cache(&kernel_);
+    }
+    cl::EnqueueArgs eargs(opencl_context.queue(),
+                          vec_concat(internal::select_events<Args>(args)...),
                           global_thread_size, thread_block_size);
-    cl::Event kern_event = f(eargs, internal::get_kernel_args(args)...);
+    cl::KernelFunctor<internal::to_const_buffer_t<Args>&...> kernel_functor(
+        kernel_);
+    cl::Event kern_event
+        = kernel_functor(eargs, internal::get_kernel_args(args)...);
     internal::assign_events<Args...>(kern_event, args...);
     return kern_event;
   }
@@ -344,7 +320,8 @@ struct kernel_cl {
    * @return option value
    */
   int get_option(const std::string option_name) const {
-    return make_functor.get_opts().at(option_name);
+    return std::min(opts_.at(option_name),
+                    opencl_context.base_opts().at(option_name));
   }
 };
 

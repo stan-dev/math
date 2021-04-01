@@ -16,14 +16,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class exp_vari : public op_v_vari {
- public:
-  explicit exp_vari(vari* avi) : op_v_vari(std::exp(avi->val_), avi) {}
-  void chain() { avi_->adj_ += adj_ * val_; }
-};
-}  // namespace internal
-
 /**
  * Return the exponentiation of the specified variable (cmath).
  *
@@ -46,7 +38,11 @@ class exp_vari : public op_v_vari {
  * @param a Variable to exponentiate.
  * @return Exponentiated variable.
  */
-inline var exp(const var& a) { return var(new internal::exp_vari(a.vi_)); }
+inline var exp(const var& a) {
+  return make_callback_var(std::exp(a.val()), [a](auto& vi) mutable {
+    a.adj() += vi.adj() * vi.val();
+  });
+}
 
 /**
  * Return the exponentiation (base e) of the specified complex number.
@@ -55,6 +51,21 @@ inline var exp(const var& a) { return var(new internal::exp_vari(a.vi_)); }
  */
 inline std::complex<var> exp(const std::complex<var>& z) {
   return internal::complex_exp(z);
+}
+
+/**
+ * Return the exponentiation of the elements of x
+ *
+ * @tparam T type of x
+ * @param x argument
+ * @return elementwise exponentiation of x
+ */
+template <typename T, require_var_matrix_t<T>* = nullptr>
+inline auto exp(const T& x) {
+  return make_callback_var(
+      x.val().array().exp().matrix(), [x](const auto& vi) mutable {
+        x.adj() += (vi.val().array() * vi.adj().array()).matrix();
+      });
 }
 
 }  // namespace math

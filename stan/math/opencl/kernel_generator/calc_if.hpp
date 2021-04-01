@@ -8,10 +8,9 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <string>
 #include <type_traits>
-#include <set>
+#include <map>
 #include <utility>
 
 namespace stan {
@@ -53,7 +52,10 @@ class calc_if_
 
   /**
    * Generates kernel code for assigning this expression into result expression.
-   * @param[in,out] generated set of (pointer to) already generated operations
+   * @param[in,out] generated map from (pointer to) already generated local
+   * operations to variable names
+   * @param[in,out] generated_all map from (pointer to) already generated all
+   * operations to variable names
    * @param ng name generator for this kernel
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
@@ -64,12 +66,13 @@ class calc_if_
    */
   template <typename T_result>
   kernel_parts get_whole_kernel_parts(
-      std::set<const operation_cl_base*>& generated, name_generator& ng,
+      std::map<const void*, const char*>& generated,
+      std::map<const void*, const char*>& generated_all, name_generator& ng,
       const std::string& row_index_name, const std::string& col_index_name,
       const T_result& result) const {
     if (Do_Calculate) {
       return this->template get_arg<0>().get_whole_kernel_parts(
-          generated, ng, row_index_name, col_index_name, result);
+          generated, generated_all, ng, row_index_name, col_index_name, result);
     } else {
       return {};
     }
@@ -77,16 +80,20 @@ class calc_if_
 
   /**
    * Sets kernel arguments for nested expressions.
-   * @param[in,out] generated set of expressions that already set their kernel
-   * arguments
+   * @param[in,out] generated map from (pointer to) already generated local
+   * operations to variable names
+   * @param[in,out] generated_all map from (pointer to) already generated all
+   * operations to variable names
    * @param kernel kernel to set arguments on
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::set<const operation_cl_base*>& generated,
+  inline void set_args(std::map<const void*, const char*>& generated,
+                       std::map<const void*, const char*>& generated_all,
                        cl::Kernel& kernel, int& arg_num) const {
     if (Do_Calculate) {
-      this->template get_arg<0>().set_args(generated, kernel, arg_num);
+      this->template get_arg<0>().set_args(generated, generated_all, kernel,
+                                           arg_num);
     }
   }
 
@@ -108,10 +115,17 @@ class calc_if_
 };
 
 template <bool Do_Calculate, typename T,
-          typename = require_all_kernel_expressions_and_none_scalar_t<T>>
-inline calc_if_<Do_Calculate, as_operation_cl_t<T>> calc_if(T&& a) {
-  return calc_if_<Do_Calculate, as_operation_cl_t<T>>(
+          require_all_kernel_expressions_t<T>* = nullptr,
+          std::enable_if_t<Do_Calculate>* = nullptr>
+inline calc_if_<true, as_operation_cl_t<T>> calc_if(T&& a) {
+  return calc_if_<true, as_operation_cl_t<T>>(
       as_operation_cl(std::forward<T>(a)));
+}
+
+template <bool Do_Calculate, typename T,
+          std::enable_if_t<!Do_Calculate>* = nullptr>
+inline calc_if_<false, scalar_<double>> calc_if(T&& a) {
+  return calc_if_<false, scalar_<double>>(scalar_<double>(0.0));
 }
 
 namespace internal {

@@ -5,13 +5,6 @@
 #include <test/unit/math/rev/prob/expect_eq_diffs.hpp>
 #include <vector>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-using std::vector;
-
-using stan::math::to_var;
-using stan::math::var;
-
 struct multi_normal_cholesky_fun {
   const int K_;
 
@@ -95,6 +88,9 @@ struct vectorized_multi_normal_cholesky_fun {
   stan::promote_args_t<T_y, T_mu, T_sigma> operator()(
       const std::vector<T_y>& y_vec, const std::vector<T_mu>& mu_vec,
       const std::vector<T_sigma>& sigma_vec) const {
+    using Eigen::Dynamic;
+    using Eigen::Matrix;
+    using std::vector;
     vector<Matrix<T_y, is_row_vec_y, is_row_vec_y * -1> > y(
         L_, Matrix<T_y, is_row_vec_y, is_row_vec_y * -1>(K_));
     vector<Matrix<T_mu, is_row_vec_mu, is_row_vec_mu * -1> > mu(
@@ -133,8 +129,11 @@ struct vectorized_multi_normal_cholesky_fun {
 };
 
 template <int is_row_vec_y, int is_row_vec_mu>
-void test_all() {
+void test_all_multi_normal_cholesky() {
   {
+    using Eigen::Dynamic;
+    using Eigen::Matrix;
+    using std::vector;
     vector<double> y_(3), mu_(3), sigma_(6);
     // y
     y_[0] = 1.0;
@@ -189,6 +188,9 @@ void test_all() {
   }
 
   {
+    using Eigen::Dynamic;
+    using Eigen::Matrix;
+    using std::vector;
     vector<double> y_(6), mu_(6), sigma_(6);
     // y[1]
     y_[0] = 1.0;
@@ -242,6 +244,9 @@ void test_all() {
         get_vvar(y_), get_vvar(mu_), get_vvar(sigma_));
   }
   {
+    using Eigen::Dynamic;
+    using Eigen::Matrix;
+    using std::vector;
     vector<double> y_(1), mu_(1), sigma_(1);
     y_[0] = 1.9;
     mu_[0] = -2.7;
@@ -275,8 +280,8 @@ void test_all() {
 }
 
 TEST(ProbDistributionsMultiNormalCholesky2, TestGradFunctionalVectorized) {
-  test_all<1, 1>();
-  test_all<1, -1>();
-  test_all<-1, 1>();
-  test_all<-1, -1>();
+  test_all_multi_normal_cholesky<1, 1>();
+  test_all_multi_normal_cholesky<1, -1>();
+  test_all_multi_normal_cholesky<-1, 1>();
+  test_all_multi_normal_cholesky<-1, -1>();
 }

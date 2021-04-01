@@ -11,6 +11,7 @@
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/square.hpp>
@@ -29,22 +30,29 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lcdf(
   using std::exp;
   using std::log;
   using std::pow;
+  using T_n_ref = ref_type_t<T_n>;
+  using T_alpha_ref = ref_type_t<T_shape>;
+  using T_beta_ref = ref_type_t<T_inv_scale>;
   static const char* function = "neg_binomial_lcdf";
-  check_positive_finite(function, "Shape parameter", alpha);
-  check_positive_finite(function, "Inverse scale parameter", beta_param);
   check_consistent_sizes(function, "Failures variable", n, "Shape parameter",
                          alpha, "Inverse scale parameter", beta_param);
+  T_n_ref n_ref = n;
+  T_alpha_ref alpha_ref = alpha;
+  T_beta_ref beta_ref = beta_param;
+  check_positive_finite(function, "Shape parameter", alpha_ref);
+  check_positive_finite(function, "Inverse scale parameter", beta_ref);
 
   if (size_zero(n, alpha, beta_param)) {
     return 0;
   }
 
   T_partials_return P(0.0);
-  operands_and_partials<T_shape, T_inv_scale> ops_partials(alpha, beta_param);
+  operands_and_partials<T_alpha_ref, T_beta_ref> ops_partials(alpha_ref,
+                                                              beta_ref);
 
-  scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_shape> alpha_vec(alpha);
-  scalar_seq_view<T_inv_scale> beta_vec(beta_param);
+  scalar_seq_view<T_n_ref> n_vec(n_ref);
+  scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
+  scalar_seq_view<T_beta_ref> beta_vec(beta_ref);
   size_t size_n = stan::math::size(n);
   size_t size_alpha = stan::math::size(alpha);
   size_t size_n_alpha = max_size(n, alpha);
@@ -53,7 +61,7 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lcdf(
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < size_n; i++) {
-    if (value_of(n_vec[i]) < 0) {
+    if (n_vec.val(i) < 0) {
       return ops_partials.build(negative_infinity());
     }
   }
@@ -68,14 +76,14 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lcdf(
 
   if (!is_constant_all<T_shape>::value) {
     for (size_t i = 0; i < size_n; i++) {
-      digammaN_vec[i] = digamma(value_of(n_vec[i]) + 1);
+      digammaN_vec[i] = digamma(n_vec.val(i) + 1);
     }
     for (size_t i = 0; i < size_alpha; i++) {
-      digammaAlpha_vec[i] = digamma(value_of(alpha_vec[i]));
+      digammaAlpha_vec[i] = digamma(alpha_vec.val(i));
     }
     for (size_t i = 0; i < size_n_alpha; i++) {
-      const T_partials_return n_dbl = value_of(n_vec[i]);
-      const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
+      const T_partials_return n_dbl = n_vec.val(i);
+      const T_partials_return alpha_dbl = alpha_vec.val(i);
       digammaSum_vec[i] = digamma(n_dbl + alpha_dbl + 1);
     }
   }
@@ -83,13 +91,13 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lcdf(
   for (size_t i = 0; i < max_size_seq_view; i++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
-    if (value_of(n_vec[i]) == std::numeric_limits<int>::max()) {
+    if (n_vec.val(i) == std::numeric_limits<int>::max()) {
       return ops_partials.build(0.0);
     }
 
-    const T_partials_return n_dbl = value_of(n_vec[i]);
-    const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
-    const T_partials_return beta_dbl = value_of(beta_vec[i]);
+    const T_partials_return n_dbl = n_vec.val(i);
+    const T_partials_return alpha_dbl = alpha_vec.val(i);
+    const T_partials_return beta_dbl = beta_vec.val(i);
     const T_partials_return inv_beta_p1 = inv(beta_dbl + 1);
     const T_partials_return p_dbl = beta_dbl * inv_beta_p1;
     const T_partials_return d_dbl = square(inv_beta_p1);

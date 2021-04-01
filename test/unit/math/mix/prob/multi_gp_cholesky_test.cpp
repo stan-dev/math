@@ -1,10 +1,9 @@
 #include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-
 TEST(ProbDistributionsMultiGPCholesky, fvar_var) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::fvar;
   using stan::math::var;
   Matrix<fvar<var>, Dynamic, 1> mu(5, 1);
@@ -45,9 +44,13 @@ TEST(ProbDistributionsMultiGPCholesky, fvar_var) {
                   stan::math::multi_gp_cholesky_log(y, L, w).val_.val());
   EXPECT_FLOAT_EQ(-74.572952,
                   stan::math::multi_gp_cholesky_log(y, L, w).d_.val());
+
+  stan::math::recover_memory();
 }
 
 TEST(ProbDistributionsMultiGPCholesky, fvar_fvar_var) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::fvar;
   using stan::math::var;
   Matrix<fvar<fvar<var> >, Dynamic, 1> mu(5, 1);
@@ -88,4 +91,6 @@ TEST(ProbDistributionsMultiGPCholesky, fvar_fvar_var) {
                   stan::math::multi_gp_cholesky_log(y, L, w).val_.val_.val());
   EXPECT_FLOAT_EQ(-74.572952,
                   stan::math::multi_gp_cholesky_log(y, L, w).d_.val_.val());
+
+  stan::math::recover_memory();
 }

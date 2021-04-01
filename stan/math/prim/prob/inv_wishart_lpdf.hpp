@@ -42,63 +42,56 @@ namespace math {
  * semi-positive definite.
  */
 template <bool propto, typename T_y, typename T_dof, typename T_scale>
-return_type_t<T_y, T_dof, T_scale> inv_wishart_lpdf(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& W,
-    const T_dof& nu,
-    const Eigen::Matrix<T_scale, Eigen::Dynamic, Eigen::Dynamic>& S) {
+return_type_t<T_y, T_dof, T_scale> inv_wishart_lpdf(const T_y& W,
+                                                    const T_dof& nu,
+                                                    const T_scale& S) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using T_W_ref = ref_type_t<T_y>;
+  using T_nu_ref = ref_type_t<T_dof>;
+  using T_S_ref = ref_type_t<T_scale>;
   static const char* function = "inv_wishart_lpdf";
-  index_type_t<Matrix<T_scale, Dynamic, Dynamic>> k = S.rows();
-  check_greater(function, "Degrees of freedom parameter", nu, k - 1);
-  check_square(function, "random variable", W);
-  check_square(function, "scale parameter", S);
   check_size_match(function, "Rows of random variable", W.rows(),
                    "columns of scale parameter", S.rows());
+  check_square(function, "random variable", W);
+  check_square(function, "scale parameter", S);
+  Eigen::Index k = S.rows();
+  T_nu_ref nu_ref = nu;
+  T_S_ref S_ref = S;
+  T_W_ref W_ref = W;
+  check_greater(function, "Degrees of freedom parameter", nu_ref, k - 1);
+  check_symmetric(function, "random variable", W_ref);
+  check_symmetric(function, "scale parameter", S_ref);
 
-  LDLT_factor<T_y, Eigen::Dynamic, Eigen::Dynamic> ldlt_W(W);
+  auto ldlt_W = make_ldlt_factor(W_ref);
   check_ldlt_factor(function, "LDLT_Factor of random variable", ldlt_W);
-  LDLT_factor<T_scale, Eigen::Dynamic, Eigen::Dynamic> ldlt_S(S);
+  auto ldlt_S = make_ldlt_factor(S_ref);
   check_ldlt_factor(function, "LDLT_Factor of scale parameter", ldlt_S);
 
   return_type_t<T_y, T_dof, T_scale> lp(0.0);
 
   if (include_summand<propto, T_dof>::value) {
-    lp -= lmgamma(k, 0.5 * nu);
+    lp -= lmgamma(k, 0.5 * nu_ref);
   }
   if (include_summand<propto, T_dof, T_scale>::value) {
-    lp += 0.5 * nu * log_determinant_ldlt(ldlt_S);
+    lp += 0.5 * nu_ref * log_determinant_ldlt(ldlt_S);
   }
   if (include_summand<propto, T_y, T_dof, T_scale>::value) {
-    lp -= 0.5 * (nu + k + 1.0) * log_determinant_ldlt(ldlt_W);
+    lp -= 0.5 * (nu_ref + k + 1.0) * log_determinant_ldlt(ldlt_W);
   }
   if (include_summand<propto, T_y, T_scale>::value) {
-    //    L = crossprod(mdivide_left_tri_low(L));
-    //    Eigen::Matrix<T_y, Eigen::Dynamic, 1> W_inv_vec = Eigen::Map<
-    //      const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic> >(
-    //      &L(0), L.size(), 1);
-    //    Eigen::Matrix<T_scale, Eigen::Dynamic, 1> S_vec = Eigen::Map<
-    //      const Eigen::Matrix<T_scale, Eigen::Dynamic, Eigen::Dynamic> >(
-    //      &S(0), S.size(), 1);
-    //    lp -= 0.5 * dot_product(S_vec, W_inv_vec); // trace(S * W^-1)
-    Eigen::Matrix<return_type_t<T_y, T_scale>, Eigen::Dynamic, Eigen::Dynamic>
-        Winv_S(mdivide_left_ldlt(
-            ldlt_W,
-            static_cast<Eigen::Matrix<T_scale, Eigen::Dynamic, Eigen::Dynamic>>(
-                S.template selfadjointView<Eigen::Lower>())));
-    lp -= 0.5 * trace(Winv_S);
+    lp -= 0.5 * trace(mdivide_left_ldlt(ldlt_W, S_ref));
   }
   if (include_summand<propto, T_dof, T_scale>::value) {
-    lp -= nu * k * HALF_LOG_TWO;
+    lp -= nu_ref * k * HALF_LOG_TWO;
   }
   return lp;
 }
 
 template <typename T_y, typename T_dof, typename T_scale>
-inline return_type_t<T_y, T_dof, T_scale> inv_wishart_lpdf(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& W,
-    const T_dof& nu,
-    const Eigen::Matrix<T_scale, Eigen::Dynamic, Eigen::Dynamic>& S) {
+inline return_type_t<T_y, T_dof, T_scale> inv_wishart_lpdf(const T_y& W,
+                                                           const T_dof& nu,
+                                                           const T_scale& S) {
   return inv_wishart_lpdf<false>(W, nu, S);
 }
 
