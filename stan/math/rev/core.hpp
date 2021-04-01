@@ -46,7 +46,6 @@
 #include <stan/math/rev/core/operator_unary_negative.hpp>
 #include <stan/math/rev/core/operator_unary_not.hpp>
 #include <stan/math/rev/core/operator_unary_plus.hpp>
-#include <stan/math/rev/core/precomp_v_vari.hpp>
 #include <stan/math/rev/core/precomp_vv_vari.hpp>
 #include <stan/math/rev/core/precomp_vvv_vari.hpp>
 #include <stan/math/rev/core/precomputed_gradients.hpp>
@@ -65,7 +64,6 @@
 #include <stan/math/rev/core/std_numeric_limits.hpp>
 #include <stan/math/rev/core/stored_gradient_vari.hpp>
 #include <stan/math/rev/core/typedefs.hpp>
-#include <stan/math/rev/core/v_vari.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/vari.hpp>
 #include <stan/math/rev/core/vd_vari.hpp>

@@ -9,14 +9,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class exp2_vari : public op_v_vari {
- public:
-  explicit exp2_vari(vari* avi) : op_v_vari(std::exp2(avi->val_), avi) {}
-  void chain() { avi_->adj_ += adj_ * val_ * LOG_TWO; }
-};
-}  // namespace internal
-
 /**
  * Exponentiation base 2 function for variables (C99).
  *
@@ -43,7 +35,11 @@ class exp2_vari : public op_v_vari {
  * @param a The variable.
  * @return Two to the power of the specified variable.
  */
-inline var exp2(const var& a) { return var(new internal::exp2_vari(a.vi_)); }
+inline var exp2(const var& a) {
+  return make_callback_var(std::exp2(a.val()), [a](auto& vi) mutable {
+    a.adj() += vi.adj() * vi.val() * LOG_TWO;
+  });
+}
 
 }  // namespace math
 }  // namespace stan

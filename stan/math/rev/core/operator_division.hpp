@@ -29,13 +29,8 @@ class divide_vv_vari final : public op_vv_vari {
       : op_vv_vari(dividend_vi->val_ / divisor_vi->val_, dividend_vi,
                    divisor_vi) {}
   void chain() {
-    if (unlikely(is_any_nan(avi_->val_, bvi_->val_))) {
-      avi_->adj_ = NOT_A_NUMBER;
-      bvi_->adj_ = NOT_A_NUMBER;
-    } else {
-      avi_->adj_ += adj_ / bvi_->val_;
-      bvi_->adj_ -= adj_ * avi_->val_ / (bvi_->val_ * bvi_->val_);
-    }
+    avi_->adj_ += adj_ / bvi_->val_;
+    bvi_->adj_ -= adj_ * avi_->val_ / (bvi_->val_ * bvi_->val_);
   }
 };
 
@@ -43,13 +38,7 @@ class divide_vd_vari final : public op_vd_vari {
  public:
   divide_vd_vari(vari* dividend_vi, double divisor)
       : op_vd_vari(dividend_vi->val_ / divisor, dividend_vi, divisor) {}
-  void chain() {
-    if (unlikely(is_any_nan(avi_->val_, bd_))) {
-      avi_->adj_ = NOT_A_NUMBER;
-    } else {
-      avi_->adj_ += adj_ / bd_;
-    }
-  }
+  void chain() { avi_->adj_ += adj_ / bd_; }
 };
 
 class divide_dv_vari final : public op_dv_vari {
