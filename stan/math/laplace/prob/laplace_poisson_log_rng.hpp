@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_LAPLACE_LAPLACE_APPROX_POISSON_RNG_HPP
 #define STAN_MATH_LAPLACE_LAPLACE_APPROX_POISSON_RNG_HPP
 
-#include <stan/math/laplace/prob/laplace_rng.hpp>
+#include <stan/math/laplace/prob/laplace_base_rng.hpp>
 
 namespace stan {
 namespace math {
@@ -16,7 +16,7 @@ namespace math {
  * from the gaussian approximation of p(theta | y, phi)
  * where the likelihood is a Poisson with a log link.
  */
-template <typename K, typename T0, typename T1, typename T2, typename T3,
+template <typename K, typename T0, typename T1, typename T2,  // typename T3,
           typename RNG>
 inline Eigen::VectorXd
   laplace_poisson_log_rng
@@ -25,7 +25,7 @@ inline Eigen::VectorXd
    const K& covariance_function,
    const Eigen::Matrix<T0, Eigen::Dynamic, 1>& phi,
    const T2& x,
-   const T3& x_pred,
+   // const T3& x_pred,
    const std::vector<double>& delta,
    const std::vector<int>& delta_int,
    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta_0,
@@ -37,17 +37,17 @@ inline Eigen::VectorXd
    int compute_W_root = 1) {
      Eigen::VectorXd eta_dummy;
      return
-       laplace_rng(diff_poisson_log(to_vector(n_samples), to_vector(y)),
-                   covariance_function, phi, eta_dummy,
-                   x, x_pred, delta, delta_int, theta_0,
-                   rng, msgs, tolerance, max_num_steps,
-                   hessian_block_size, compute_W_root);
+       laplace_base_rng(diff_poisson_log(to_vector(n_samples), to_vector(y)),
+                        covariance_function, phi, eta_dummy,
+                        x, x, delta, delta_int, theta_0,
+                        rng, msgs, tolerance, max_num_steps,
+                        hessian_block_size, compute_W_root);
   }
 
 /**
  * Overload for case where user passes exposure.
  */
-template <typename K, typename T0, typename T1, typename T2, typename T3,
+template <typename K, typename T0, typename T1, typename T2,  // typename T3,
           class RNG>
 inline Eigen::VectorXd  // CHECK -- right return type
   laplace_poisson_log_rng
@@ -57,7 +57,7 @@ inline Eigen::VectorXd  // CHECK -- right return type
    const K& covariance_function,
    const Eigen::Matrix<T0, Eigen::Dynamic, 1>& phi,
    const T2& x,
-   const T3& x_pred,
+   // const T3& x_pred,
    const std::vector<double>& delta,
    const std::vector<int>& delta_int,
    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta_0,
@@ -69,9 +69,9 @@ inline Eigen::VectorXd  // CHECK -- right return type
    int compute_W_root = 1) {
      Eigen::VectorXd eta_dummy;
      return
-     laplace_rng(diff_poisson_log(to_vector(n_samples), to_vector(y),
+     laplace_base_rng(diff_poisson_log(to_vector(n_samples), to_vector(y),
                                   log(exposure)),
-                        covariance_function, phi, eta_dummy, x, x_pred, delta,
+                        covariance_function, phi, eta_dummy, x, x, delta,
                         delta_int, theta_0,
                         rng, msgs, tolerance, max_num_steps,
                         hessian_block_size, compute_W_root);

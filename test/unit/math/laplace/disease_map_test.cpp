@@ -2,7 +2,7 @@
 #include <stan/math/laplace/laplace.hpp>
 #include <stan/math/laplace/laplace_likelihood_general.hpp>
 #include <stan/math/laplace/laplace_likelihood_poisson_log.hpp>
-#include <stan/math/laplace/prob/laplace_rng.hpp>
+#include <stan/math/laplace/prob/laplace_base_rng.hpp>
 #include <stan/math/laplace/prob/laplace_poisson_log_rng.hpp>
 
 #include <boost/random/mersenne_twister.hpp>
@@ -143,7 +143,7 @@ TEST_F(laplace_disease_map_test, lk_analytical) {
 
   using stan::math::diff_poisson_log;
   using stan::math::to_vector;
-  using stan::math::laplace_rng;
+  using stan::math::laplace_base_rng;
   using stan::math::laplace_poisson_log_rng;
 
   diff_poisson_log diff_likelihood(to_vector(n_samples),
@@ -152,10 +152,10 @@ TEST_F(laplace_disease_map_test, lk_analytical) {
   boost::random::mt19937 rng;
   start = std::chrono::system_clock::now();
   Eigen::VectorXd
-    theta_pred = laplace_rng(diff_likelihood,
-                            sqr_exp_kernel_functor(),
-                            phi, eta_dummy, x, x, delta, delta_int,
-                            theta_0, rng);
+    theta_pred = laplace_base_rng(diff_likelihood,
+                                  sqr_exp_kernel_functor(),
+                                  phi, eta_dummy, x, x, delta, delta_int,
+                                  theta_0, rng);
 
   end = std::chrono::system_clock::now();
   elapsed_time = end - start;
@@ -170,7 +170,7 @@ TEST_F(laplace_disease_map_test, lk_analytical) {
   start = std::chrono::system_clock::now();
   theta_pred = laplace_poisson_log_rng(y, n_samples, ye,
                                        sqr_exp_kernel_functor(),
-                                       phi, x, x, delta, delta_int,
+                                       phi, x, delta, delta_int,
                                        theta_0, rng);
   end = std::chrono::system_clock::now();
   elapsed_time = end - start;
@@ -284,7 +284,7 @@ TEST_F(laplace_disease_map_test, finite_diff_benchmark) {
 
 TEST_F(laplace_disease_map_test, rng_autodiff) {
   using stan::math::var;
-  using stan::math::laplace_rng;
+  using stan::math::laplace_base_rng;
   using stan::math::diff_likelihood;
 
   diff_likelihood<poisson_log_likelihood> diff_functor(f, delta_lk, n_samples);
@@ -295,11 +295,12 @@ TEST_F(laplace_disease_map_test, rng_autodiff) {
 
   auto start = std::chrono::system_clock::now();
   Eigen::VectorXd
-    theta_pred = laplace_rng(diff_functor,
-                             sqr_exp_kernel_functor(),
-                             phi, eta_dummy,
-                             x, x, delta, delta_int, theta_0, rng,
-                             0, 1e-6, 100, hessian_block_size, compute_W_root);
+    theta_pred = laplace_base_rng(diff_functor,
+                                  sqr_exp_kernel_functor(),
+                                  phi, eta_dummy,
+                                  x, x, delta, delta_int, theta_0, rng,
+                                  0, 1e-6, 100, hessian_block_size,
+                                  compute_W_root);
   auto end = std::chrono::system_clock::now();
   std::chrono::duration<double> elapsed_time = end - start;
   std::cout << "LAPLACE_APPROX_RNG" << std::endl
@@ -328,4 +329,23 @@ TEST_F(laplace_disease_map_test, lpmf_wrapper) {
             << "density: " << value_of(marginal_density) << std::endl
             << "autodiff grad: " << g[0] << " " << g[1] << std::endl
             << std::endl;
+}
+
+TEST_F(laplace_disease_map_test, rng_wrapper) {
+  using stan::math::var;
+  using stan::math::laplace_rng;
+
+  // TODO: put these variables in the test class.
+  boost::random::mt19937 rng;
+  int hessian_block_size = 0;
+  int compute_W_root = 1;
+
+  Eigen::VectorXd
+    theta_pred = laplace_rng(poisson_log_likelihood(),
+                             eta_dummy, delta_lk, n_samples,
+                             sqr_exp_kernel_functor(),
+                             phi, x, delta, delta_int, theta_0, rng);
+
+  // std::cout << "theta_pred: " << theta_pred.transpose().head(5) << std::endl;
+
 }
