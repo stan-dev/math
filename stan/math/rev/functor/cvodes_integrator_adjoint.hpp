@@ -19,10 +19,12 @@
 namespace stan {
 namespace math {
 
+using std_vec_arena_t = arena_t<std::vector<arena_t<Eigen::VectorXd>, arena_allocator<arena_t<Eigen::VectorXd>>>>;
+
 template <typename T_Return>
 inline std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> build_varis(
     vari* ode_vari, arena_t<Eigen::Matrix<var, -1, 1>>& non_chaining_vars,
-    const std::vector<Eigen::VectorXd>& y);
+    const std_vec_arena_t& y);
 
 /**
  * Why is ode_vari here?
@@ -30,7 +32,7 @@ inline std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> build_varis(
 template <>
 inline std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> build_varis<var>(
     vari* ode_vari, arena_t<Eigen::Matrix<var, -1, 1>>& non_chaining_vars,
-    const std::vector<Eigen::VectorXd>& y) {
+    const std_vec_arena_t& y) {
 
   if (y.size() == 0) {
     return std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>>(0);
@@ -60,8 +62,8 @@ inline std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> build_varis<var>(
 template <>
 inline std::vector<Eigen::VectorXd> build_varis<double>(
     vari* ode_vari, arena_t<Eigen::Matrix<var, -1, 1>>& non_chaining_vars,
-    const std::vector<Eigen::VectorXd>& y) {
-  return y;
+    const std_vec_arena_t& y) {
+  return std::vector<Eigen::Matrix<double, Eigen::Dynamic, 1>>(y.begin(), y.end());
 }
 
 namespace internal {
@@ -70,24 +72,23 @@ namespace internal {
 
     // std::tuple<T_Args...> args_tuple_;
     size_t N_;
-    std::vector<Eigen::VectorXd> y_;
     N_Vector nv_state_;
     N_Vector nv_abs_tol_f_;
     N_Vector nv_abs_tol_b_;
     SUNMatrix A_f_;
     SUNLinearSolver LS_f_;
     void* cvodes_mem_;
-    cvodes_integrator_adjoint_memory(size_t y0_size, size_t ts_size,
+    cvodes_integrator_adjoint_memory(size_t y0_size,
        int lmm_f,
        arena_t<Eigen::VectorXd>& state,
        arena_t<Eigen::VectorXd>& abs_tol_f,
        arena_t<Eigen::VectorXd>& abs_tol_b)
-        : N_(y0_size), y_(ts_size),
+        : N_(y0_size),
           nv_state_(N_VMake_Serial(y0_size, state.data())),
           nv_abs_tol_f_(N_VMake_Serial(y0_size, abs_tol_f.data())),
           nv_abs_tol_b_(N_VMake_Serial(y0_size, abs_tol_b.data())),
           A_f_(SUNDenseMatrix(y0_size, y0_size)),
-          LS_f_(SUNDenseLinearSolver(nv_state_, A_f_)),
+          LS_f_(SUNLinSol_Dense(nv_state_, A_f_)),
           cvodes_mem_(CVodeCreate(lmm_f)) {
       if (y0_size > 0) {
         if (cvodes_mem_ == nullptr) {
@@ -96,19 +97,17 @@ namespace internal {
       }
     }
 
-    ~cvodes_integrator_adjoint_memory() {
-      if (N_ > 0) {
+    virtual ~cvodes_integrator_adjoint_memory() {
         SUNLinSolFree(LS_f_);
         SUNMatDestroy(A_f_);
-        // from the cvodes docs, do you need these?
         N_VDestroy_Serial(nv_state_);
+        // from the cvodes docs, do you need these?
         N_VDestroy_Serial(nv_abs_tol_f_);
         N_VDestroy_Serial(nv_abs_tol_b_);
 
         if (cvodes_mem_) {
           CVodeFree(&cvodes_mem_);
         }
-      }
     }
   };
 
@@ -173,6 +172,7 @@ class cvodes_integrator_adjoint_vari : public vari {
   arena_t<std::vector<T_ts>> ts_;
   arena_t<Eigen::Matrix<T_y0_t0, Eigen::Dynamic, 1>> y0_;
   arena_t<Eigen::VectorXd> state_;
+  arena_t<std::vector<arena_t<Eigen::VectorXd>, arena_allocator<arena_t<Eigen::VectorXd>>>> y_;
 
   arena_t<Eigen::Matrix<var, -1, 1>> non_chaining_vars_;
   size_t args_vars_total_;
@@ -229,9 +229,10 @@ public:
       int interpolation_polynomial, int solver_f, int solver_b,
       std::ostream* msgs, const T_Args&... args)
       : vari(NOT_A_NUMBER),
-        function_name_(function_name),
+      function_name_(function_name),
         f_(f),
         N_(y0.size()),
+        y_(ts.size(), Eigen::VectorXd(y0.size())),
         msgs_(msgs),
         rel_tol_f_(rel_tol_f),
         rel_tol_b_(rel_tol_b),
@@ -257,7 +258,7 @@ public:
       value_of_args_tuple_(to_arena(value_of(args))...),
       local_args_tuple_(to_arena(deep_copy_vars(args))...),
       memory(new internal::cvodes_integrator_adjoint_memory(
-            y0.size(), ts.size(), lmm_f_, state_, abs_tol_f_, abs_tol_b_)) {
+            y0.size() > 0 ? y0.size() : 1, lmm_f_, state_, abs_tol_f_, abs_tol_b_)) {
     constexpr const char* fun = "cvodes_integrator::integrate";
     save_varis(args_varis_, args...);
 
@@ -306,6 +307,9 @@ private:
     return apply([this, &y, &msgs, &t](auto&&... args) { return f_(t, y, msgs, args...); },
                  args_tuple);
   }
+
+  int indexB{0};
+  bool cvodes_backward_initialized_{false};
 
   /**
    * Implements the function of type CVRhsFn which is the user-defined
@@ -597,7 +601,7 @@ private:
         }
       }
 
-      memory->y_[n] = this->state_;
+      this->y_[n] = this->state_;
 
       t_init = t_final;
     }
@@ -605,7 +609,7 @@ private:
     returned_ = true;
     std::cout << "forward integrate...done" << std::endl;
 
-    return build_varis<T_Return>(this, non_chaining_vars_, memory->y_);
+    return build_varis<T_Return>(this, non_chaining_vars_, this->y_);
   }
 
   virtual void chain() {
@@ -661,19 +665,16 @@ private:
 
     try {
       int indexB;
+        // This is all boilerplate CVODES setting up the adjoint ODE to solve
+        check_flag_sundials(CVodeCreateB(memory->cvodes_mem_, lmm_b_, &indexB),
+                            "CVodeCreateB");
 
-      // This is all boilerplate CVODES setting up the adjoint ODE to solve
-      check_flag_sundials(CVodeCreateB(memory->cvodes_mem_, lmm_b_, &indexB),
-                          "CVodeCreateB");
+        std::cout << "backward integrate: indexB = " << indexB << std::endl;
 
-      std::cout << "backward integrate: indexB = " << indexB << std::endl;
-
-      check_flag_sundials(CVodeSetUserDataB(memory->cvodes_mem_, indexB,
-                                            reinterpret_cast<void*>(this)),
-                          "CVodeSetUserDataB");
-
+        check_flag_sundials(CVodeSetUserDataB(memory->cvodes_mem_, indexB,
+                                              reinterpret_cast<void*>(this)),
+                            "CVodeSetUserDataB");
       bool cvodes_backward_initialized = false;
-
       // At every time step, collect the adjoints from the output
       // variables and re-initialize the solver
       double t_init = value_of(this->ts_.back());
@@ -689,7 +690,7 @@ private:
 
         if (is_var<T_ts>::value) {
           forward_as<arena_t<std::vector<var>>>(ts_)[i].adj() += step_sens.dot(this->rhs(
-              t_init, memory->y_[i], msgs_, this->value_of_args_tuple_));
+              t_init, this->y_[i], msgs_, this->value_of_args_tuple_));
         }
         double t_final = value_of((i > 0) ? this->ts_[i - 1] : this->t0_);
         std::cout << "backward: time-point " << i << "; t_init = " << t_init << "; t_final = " << t_final << std::endl;

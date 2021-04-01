@@ -6,10 +6,7 @@
 #include <test/unit/math/rev/functor/ode_test_functors.hpp>
 
 using cos_arg_test_types
-    = ::testing::Types<std::tuple<ode_rk45_functor, ode_rk45_functor>,
-                       std::tuple<ode_ckrk_functor, ode_ckrk_functor>,
-                       std::tuple<ode_bdf_functor, ode_bdf_functor>,
-                       std::tuple<ode_adams_functor, ode_adams_functor>,
+    = ::testing::Types<
                        std::tuple<ode_adjoint_functor, ode_adjoint_functor>>;
 
 TYPED_TEST_SUITE_P(cos_arg_test);
@@ -48,6 +45,7 @@ TYPED_TEST_P(cos_arg_test, tol_error) {
   this->test_too_much_work();
 }
 TYPED_TEST_P(cos_arg_test, value) { this->test_value(); }
+
 TYPED_TEST_P(cos_arg_test, grad) {
   this->test_grad_t0();
   this->test_grad_ts();
