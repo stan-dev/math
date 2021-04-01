@@ -8,16 +8,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class inv_square_vari : public op_v_vari {
- public:
-  explicit inv_square_vari(vari* avi) : op_v_vari(inv_square(avi->val_), avi) {}
-  void chain() {
-    avi_->adj_ -= 2 * adj_ / (avi_->val_ * avi_->val_ * avi_->val_);
-  }
-};
-}  // namespace internal
-
 /**
  *
    \f[
@@ -38,7 +28,10 @@ class inv_square_vari : public op_v_vari {
  *
  */
 inline var inv_square(const var& a) {
-  return var(new internal::inv_square_vari(a.vi_));
+  auto a_cube = a.val() * a.val() * a.val();
+  return make_callback_var(inv_square(a.val()), [a, a_cube](auto& vi) mutable {
+    a.adj() -= 2 * vi.adj() / a_cube;
+  });
 }
 
 }  // namespace math

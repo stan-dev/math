@@ -9,22 +9,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class binary_log_loss_1_vari : public op_v_vari {
- public:
-  explicit binary_log_loss_1_vari(vari* avi)
-      : op_v_vari(-std::log(avi->val_), avi) {}
-  void chain() { avi_->adj_ -= adj_ / avi_->val_; }
-};
-
-class binary_log_loss_0_vari : public op_v_vari {
- public:
-  explicit binary_log_loss_0_vari(vari* avi)
-      : op_v_vari(-log1p(-avi->val_), avi) {}
-  void chain() { avi_->adj_ += adj_ / (1.0 - avi_->val_); }
-};
-}  // namespace internal
-
 /**
  * The log loss function for variables (stan).
  *
@@ -61,9 +45,13 @@ class binary_log_loss_0_vari : public op_v_vari {
  */
 inline var binary_log_loss(int y, const var& y_hat) {
   if (y == 0) {
-    return var(new internal::binary_log_loss_0_vari(y_hat.vi_));
+    return make_callback_var(-log1p(-y_hat.val()), [y_hat](auto& vi) mutable {
+      y_hat.adj() += vi.adj() / (1.0 - y_hat.val());
+    });
   } else {
-    return var(new internal::binary_log_loss_1_vari(y_hat.vi_));
+    return make_callback_var(-std::log(y_hat.val()), [y_hat](auto& vi) mutable {
+      y_hat.adj() -= vi.adj() / y_hat.val();
+    });
   }
 }
 
