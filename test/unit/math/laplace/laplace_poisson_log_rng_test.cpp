@@ -77,16 +77,18 @@ TEST(laplace, basic_rng) {
     = algebra_solver(stationary_point(),
                      theta_0, sigma, d0, di0);
 
-  Eigen::VectorXd gradient, W;
-  diff_likelihood.diff(theta_root, gradient, W);
-  W = -W;
+  Eigen::VectorXd gradient;
+  Eigen::SparseMatrix<double> W_sparse;
+  Eigen::VectorXd eta_dummy;
+  diff_likelihood.diff(theta_root, eta_dummy, gradient, W_sparse);
+  Eigen::MatrixXd W = - W_sparse;
   diagonal_kernel_functor covariance_function;
   std::vector<Eigen::VectorXd> x_dummy;
   Eigen::MatrixXd K = covariance_function(sigma, x_dummy, d0, di0, 0);
 
   std::cout << "K (brute force): "
             << std::endl
-            << (K.inverse() + diag_matrix(W)).inverse()
+            << (K.inverse() + W).inverse()
             << std::endl << std::endl;
 
   // Method 2: Vectorized R&W method
@@ -96,21 +98,25 @@ TEST(laplace, basic_rng) {
   // First find the mode using the custom Newton step
   Eigen::MatrixXd covariance;
   Eigen::VectorXd theta;
-  Eigen::VectorXd W_root;
+  Eigen::SparseMatrix<double> W_r;
   Eigen::MatrixXd L;
   {
     Eigen::VectorXd a;
     Eigen::VectorXd l_grad;
+    Eigen::PartialPivLU<Eigen::MatrixXd> LU_dummy;
     double marginal_density
       = laplace_marginal_density(diff_likelihood,
                                  covariance_function,
-                                 sigma, x_dummy, d0, di0,
-                                 covariance, theta, W_root, L, a, l_grad,
+                                 sigma, eta_dummy, x_dummy, d0, di0,
+                                 covariance, theta, W_r, L, a, l_grad,
+                                 LU_dummy,
                                  value_of(theta_0), 0,
                                  tolerance, max_num_steps);
   }
 
   Eigen::MatrixXd V;
+  Eigen::VectorXd W_root(theta.size());
+  for (int i = 0; i < theta.size(); i++) W_root(i) = W_r.coeff(i, i);
   V = mdivide_left_tri<Eigen::Lower>(L,
         diag_pre_multiply(W_root, covariance));
   std::cout << "K (method 1): " << std::endl
@@ -129,9 +135,6 @@ TEST(laplace, basic_rng) {
   // Call to rng function
   boost::random::mt19937 rng;
   Eigen::MatrixXd theta_pred
-   = laplace_rng(diff_likelihood, covariance_function,
-                 sigma, x_dummy, d0, di0, theta_0, rng);
-
-  theta_pred = laplace_poisson_log_rng(sums, n_samples, covariance_function,
-                                       sigma, x_dummy, d0, di0, theta_0, rng);
+    = laplace_poisson_log_rng(sums, n_samples, covariance_function,
+                              sigma, x_dummy, d0, di0, theta_0, rng);
 }

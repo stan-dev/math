@@ -1,9 +1,8 @@
 #include <stan/math.hpp>
-#include <stan/math/laplace/laplace_likelihood.hpp>
+#include <stan/math/laplace/laplace_likelihood_bernoulli_logit.hpp>
 #include <stan/math/laplace/laplace_marginal_bernoulli_logit_lpmf.hpp>
 #include <test/unit/math/laplace/laplace_utility.hpp>
 
-// #include <test/unit/math/rev/laplace/laplace_utility.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 
 #include <gtest/gtest.h>
@@ -13,7 +12,7 @@
 #include <vector>
 
 TEST(laplace, likelihood_differentiation) {
-  using stan::math::diff_logistic_log;
+  using stan::math::diff_bernoulli_logit;
   using stan::math::var;
 
   double test_tolerance = 2e-4;
@@ -26,9 +25,10 @@ TEST(laplace, likelihood_differentiation) {
   Eigen::Matrix<var, Eigen::Dynamic, 1> theta_v = theta;
   Eigen::VectorXd eta_dummy;
 
-  diff_logistic_log diff_functor(n_samples, y);
+  diff_bernoulli_logit diff_functor(n_samples, y);
   double log_density = diff_functor.log_likelihood(theta, eta_dummy);
-  Eigen::VectorXd gradient, hessian;
+  Eigen::VectorXd gradient;
+  Eigen::SparseMatrix<double> hessian;
   diff_functor.diff(theta, eta_dummy, gradient, hessian);
   Eigen::VectorXd third_tensor = diff_functor.third_diff(theta, eta_dummy);
 
@@ -55,8 +55,8 @@ TEST(laplace, likelihood_differentiation) {
   EXPECT_NEAR(diff_2, gradient(1), test_tolerance);
 
   // finite diff calculation for second-order derivatives
-  Eigen::VectorXd gradient_1u, gradient_1l, hessian_1u, hessian_1l,
-  gradient_2u, gradient_2l, hessian_2u, hessian_2l;
+  Eigen::VectorXd gradient_1u, gradient_1l, gradient_2u, gradient_2l;
+  Eigen::SparseMatrix<double> hessian_1u, hessian_1l, hessian_2u, hessian_2l;
   diff_functor.diff(theta_1u, eta_dummy, gradient_1u, hessian_1u);
   diff_functor.diff(theta_1l, eta_dummy, gradient_1l, hessian_1l);
   diff_functor.diff(theta_2u, eta_dummy, gradient_2u, hessian_2u);
@@ -65,12 +65,14 @@ TEST(laplace, likelihood_differentiation) {
   double diff_grad_1 = (gradient_1u(0) - gradient_1l(0)) / (2 * diff);
   double diff_grad_2 = (gradient_2u(1) - gradient_2l(1)) / (2 * diff);
 
-  EXPECT_NEAR(diff_grad_1, hessian(0), test_tolerance);
-  EXPECT_NEAR(diff_grad_2, hessian(1), test_tolerance);
+  EXPECT_NEAR(diff_grad_1, hessian.coeff(0, 0), test_tolerance);
+  EXPECT_NEAR(diff_grad_2, hessian.coeff(1, 1), test_tolerance);
 
   // finite diff calculation for third-order derivatives
-  double diff_hess_1 = (hessian_1u(0) - hessian_1l(0)) / (2 * diff);
-  double diff_hess_2 = (hessian_2u(1) - hessian_2l(1)) / (2 * diff);
+  double diff_hess_1 = (hessian_1u.coeff(0, 0) - hessian_1l.coeff(0, 0))
+                         / (2 * diff);
+  double diff_hess_2 = (hessian_2u.coeff(1, 1) - hessian_2l.coeff(1, 1))
+                         / (2 * diff);
 
   EXPECT_NEAR(diff_hess_1, third_tensor(0), test_tolerance);
   EXPECT_NEAR(diff_hess_2, third_tensor(1), test_tolerance);
@@ -79,8 +81,7 @@ TEST(laplace, likelihood_differentiation) {
 TEST(laplace, logistic_lgm_dim500) {
   using stan::math::var;
   using stan::math::to_vector;
-  using stan::math::diff_logistic_log;
-  using stan::math::sqr_exp_kernel_functor;
+  using stan::math::diff_bernoulli_logit;
 
   int dim_theta = 500;
   int n_observations = 500;
@@ -105,7 +106,8 @@ TEST(laplace, logistic_lgm_dim500) {
 
   Eigen::VectorXd theta_0 = Eigen::VectorXd::Zero(dim_theta);
 
-  Eigen::VectorXd theta_laplace, W_root, a, l_grad;
+  Eigen::VectorXd theta_laplace, a, l_grad;
+  Eigen::SparseMatrix<double> W_root;
   Eigen::MatrixXd L, covariance;
   std::vector<double> delta;
   std::vector<int> delta_int;
@@ -114,15 +116,17 @@ TEST(laplace, logistic_lgm_dim500) {
   Eigen::VectorXd phi(2);
   phi << 1.6, 1;  // standard deviation, length scale
   Eigen::VectorXd eta_dummy;
+  Eigen::PartialPivLU<Eigen::MatrixXd> LU_dummy;
 
   auto start_optimization = std::chrono::system_clock::now();
 
   double marginal_density
     = laplace_marginal_density(
-      diff_logistic_log(to_vector(n_samples), to_vector(y)),
+      diff_bernoulli_logit(to_vector(n_samples), to_vector(y)),
       sqr_exp_kernel_functor(),
       phi, eta_dummy, x, delta, delta_int,
       covariance, theta_laplace, W_root, L, a, l_grad,
+      LU_dummy,
       theta_0, 0, 1e-3, 100);
 
   auto end_optimization = std::chrono::system_clock::now();
@@ -145,7 +149,7 @@ TEST(laplace, logistic_lgm_dim500) {
   start_optimization = std::chrono::system_clock::now();
   var marginal_density_v
     = laplace_marginal_density(
-        diff_logistic_log(to_vector(n_samples), to_vector(y)),
+        diff_bernoulli_logit(to_vector(n_samples), to_vector(y)),
         sqr_exp_kernel_functor(),
         phi_v2, eta_dummy_v, x, delta, delta_int,
         theta_0, 0, 1e-3, 100);
@@ -175,14 +179,8 @@ TEST(laplace, logistic_lgm_dim500) {
   using stan::math::laplace_marginal_bernoulli_logit_lpmf;
   using stan::math::value_of;
 
+
   double marginal_density_v2
-    = laplace_marginal_bernoulli_logit_lpmf(y, n_samples,
-                                       phi, x, delta, delta_int,
-                                       theta_0, 0, 1e-3, 100);
-
-  EXPECT_FLOAT_EQ(marginal_density, marginal_density_v2);
-
-  marginal_density_v2
     = laplace_marginal_bernoulli_logit_lpmf(y, n_samples,
                                        sqr_exp_kernel_functor(),
                                        phi, x, delta, delta_int,

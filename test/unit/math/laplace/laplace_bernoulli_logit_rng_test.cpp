@@ -1,6 +1,8 @@
 #include <stan/math.hpp>
 #include <stan/math/laplace/laplace.hpp>
 
+#include <Eigen/Sparse>
+
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
 
@@ -80,9 +82,10 @@ TEST(laplace, basic_rng) {
     = algebra_solver(stationary_point(),
                      theta_0, sigma, d0, di0);
 
-  Eigen::VectorXd gradient, W;
-  diff_likelihood.diff(theta_root, gradient, W);
-  W = -W;
+  Eigen::VectorXd gradient, eta_dummy;
+  Eigen::SparseMatrix<double> W_sparse;
+  diff_likelihood.diff(theta_root, eta_dummy, gradient, W_sparse);
+  Eigen::MatrixXd W = - W_sparse;
   diagonal_kernel_functor covariance_function;
   std::vector<Eigen::VectorXd> x_dummy;
   Eigen::MatrixXd x_dummay_mat;
@@ -90,7 +93,7 @@ TEST(laplace, basic_rng) {
 
   std::cout << "K (brute force): "
             << std::endl
-            << (K.inverse() + diag_matrix(W)).inverse()
+            << (K.inverse() + W).inverse()
             << std::endl << std::endl;
 
   // Method 2: Vectorized R&W method
@@ -100,20 +103,25 @@ TEST(laplace, basic_rng) {
   // First find the mode using the custom Newton step
   Eigen::MatrixXd covariance;
   Eigen::VectorXd theta;
-  Eigen::VectorXd W_root;
+  // Eigen::VectorXd W_root;
+  Eigen::SparseMatrix<double> W_r;
   Eigen::MatrixXd L;
   {
     Eigen::VectorXd a;
     Eigen::VectorXd l_grad;
+    Eigen::PartialPivLU<Eigen::MatrixXd> LU_dummy;
     double marginal_density
       = laplace_marginal_density(diff_likelihood,
                                  covariance_function,
-                                 sigma, x_dummy, d0, di0,
-                                 covariance, theta, W_root, L, a, l_grad,
+                                 sigma, eta_dummy, x_dummy, d0, di0,
+                                 covariance, theta, W_r, L, a, l_grad,
+                                 LU_dummy,
                                  value_of(theta_0), 0,
                                  tolerance, max_num_steps);
   }
 
+  Eigen::VectorXd W_root(theta.size());
+  for (int i = 0; i < theta.size(); i++) W_root(i) = W_r.coeff(i, i);
   Eigen::MatrixXd V;
   V = mdivide_left_tri<Eigen::Lower>(L,
         diag_pre_multiply(W_root, covariance));
@@ -132,13 +140,14 @@ TEST(laplace, basic_rng) {
   // Check calls to rng functions compile
   boost::random::mt19937 rng;
   Eigen::MatrixXd theta_pred
-   = laplace_rng(diff_likelihood, covariance_function,
-                        sigma, x_dummy, d0, di0, theta_0,
-                        rng);
+   = laplace_base_rng(diff_likelihood, covariance_function,
+                      sigma, eta_dummy, x_dummy, x_dummy, d0, di0, theta_0,
+                      rng);
 
   theta_pred
     = laplace_bernoulli_logit_rng(sums, n_samples, covariance_function,
-                                  sigma, x_dummay_mat, d0, di0, theta_0, rng);
+                                  sigma, x_dummay_mat,
+                                  d0, di0, theta_0, rng);
 
   // Bonus: make the distribution with a poisson rng also runs.
   theta_pred

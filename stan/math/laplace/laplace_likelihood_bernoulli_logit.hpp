@@ -53,8 +53,7 @@ struct diff_bernoulli_logit {
              const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy,
              Eigen::Matrix<T1, Eigen::Dynamic, 1>& gradient,
              Eigen::SparseMatrix<double>& hessian,
-             // Eigen::Matrix<T1, Eigen::Dynamic, 1>& hessian,
-             int block_size_dummy) const {
+             int block_size_dummy = 0) const {
     Eigen::Matrix<T1, Eigen::Dynamic, 1> exp_theta = exp(theta);
     int theta_size = theta.size();
     Eigen::VectorXd one = rep_vector(1, theta_size);

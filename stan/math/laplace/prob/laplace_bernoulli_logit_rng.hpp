@@ -32,9 +32,11 @@ inline Eigen::VectorXd  // CHECK -- right return type
    std::ostream* msgs = nullptr,
    double tolerance = 1e-6,
    long int max_num_steps = 100) {
+    Eigen::VectorXd eta_dummy;
     return
     laplace_base_rng(diff_bernoulli_logit(to_vector(n_samples), to_vector(y)),
-                     covariance_function, phi, x, x, delta, delta_int, theta_0,
+                     covariance_function, phi, eta_dummy,
+                     x, x, delta, delta_int, theta_0,
                      rng, msgs, tolerance, max_num_steps);
   }
 
