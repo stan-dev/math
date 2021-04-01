@@ -182,7 +182,8 @@ TEST(ProbDistributionsParetoType2Cdf, opencl_matches_cpu_big) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> mu
       = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
   Eigen::Matrix<double, Eigen::Dynamic, 1> y
-      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs() + mu.array();
+      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs()
+        + mu.array();
   Eigen::Matrix<double, Eigen::Dynamic, 1> lambda
       = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs().array()
         + 0.1;

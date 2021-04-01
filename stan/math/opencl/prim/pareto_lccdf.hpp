@@ -35,8 +35,8 @@ return_type_t<T_y_cl, T_scale_cl, T_shape_cl> pareto_lccdf(
   static const char* function = "pareto_lccdf(OpenCL)";
   using T_partials_return = partials_return_t<T_y_cl, T_scale_cl, T_shape_cl>;
   using std::isfinite;
-  using std::isnan;
   using std::isinf;
+  using std::isnan;
 
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          y_min, "Scale parameter", alpha);

@@ -71,8 +71,8 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> pareto_type_2_lcdf(
   auto alpha_positive_finite_expr = 0 < alpha_val && isfinite(alpha_val);
   auto diff = y_val - mu_val;
   auto check_diff_nonnegative
-      = check_cl(function, "Random variable minus location parameter",
-                 diff, "nonnegative");
+      = check_cl(function, "Random variable minus location parameter", diff,
+                 "nonnegative");
   auto diff_nonnegative_expr = 0 <= diff;
 
   auto temp = 1.0 + elt_divide(diff, lambda_val);

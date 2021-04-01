@@ -71,8 +71,8 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> pareto_type_2_lccdf(
   auto alpha_positive_finite_expr = 0 < alpha_val && isfinite(alpha_val);
   auto diff = y_val - mu_val;
   auto check_diff_nonnegative
-      = check_cl(function, "Random variable minus location parameter",
-                 diff, "nonnegative");
+      = check_cl(function, "Random variable minus location parameter", diff,
+                 "nonnegative");
   auto diff_nonnegative_expr = 0 <= diff;
 
   auto log_temp = log1p(elt_divide(diff, lambda_val));
@@ -105,7 +105,6 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl> pareto_type_2_lccdf(
                         decltype(alpha_col)>
       ops_partials(y_col, mu_col, lambda_col, alpha_col);
   if (!is_constant_all<T_y_cl, T_loc_cl, T_scale_cl, T_shape_cl>::value) {
-
     if (!is_constant<T_y_cl>::value) {
       ops_partials.edge1_.partials_ = std::move(y_deriv_cl);
     }

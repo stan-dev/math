@@ -86,16 +86,15 @@ return_type_t<T_y_cl, T_scale_cl, T_shape_cl> pareto_cdf(
   matrix_cl<double> alpha_deriv_cl;
 
   results(check_y_nonnegative, check_y_min_positive_finite,
-          check_alpha_positive_finite, any_y_lower_than_y_min_cl,
-          cdf_cl, y_deriv_cl, y_min_deriv_cl,
-          alpha_deriv_cl)
+          check_alpha_positive_finite, any_y_lower_than_y_min_cl, cdf_cl,
+          y_deriv_cl, y_min_deriv_cl, alpha_deriv_cl)
       = expressions(y_not_nonnegative_expr, y_min_positive_finite_expr,
-                    alpha_positive_finite_expr, any_y_lower_than_y_min, cdf_expr,
-                    calc_if<!is_constant<T_y_cl>::value>(y_deriv),
+                    alpha_positive_finite_expr, any_y_lower_than_y_min,
+                    cdf_expr, calc_if<!is_constant<T_y_cl>::value>(y_deriv),
                     calc_if<!is_constant<T_scale_cl>::value>(y_min_deriv),
                     calc_if<!is_constant<T_shape_cl>::value>(alpha_deriv));
 
-  if(from_matrix_cl(any_y_lower_than_y_min_cl).maxCoeff()){
+  if (from_matrix_cl(any_y_lower_than_y_min_cl).maxCoeff()) {
     return 0;
   }
 

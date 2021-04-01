@@ -56,9 +56,10 @@ TEST(ProbDistributionsParetoLcdf, error_checking) {
                std::domain_error);
 }
 
-auto pareto_lcdf_functor = [](const auto& y, const auto& y_min, const auto& alpha) {
-  return stan::math::pareto_lcdf(y, y_min, alpha);
-};
+auto pareto_lcdf_functor
+    = [](const auto& y, const auto& y_min, const auto& alpha) {
+        return stan::math::pareto_lcdf(y, y_min, alpha);
+      };
 
 TEST(ProbDistributionsParetoLcdf, opencl_matches_cpu_small) {
   int N = 3;
@@ -147,7 +148,8 @@ TEST(ProbDistributionsParetoLcdf, opencl_matches_cpu_big) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> y_min
       = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
   Eigen::Matrix<double, Eigen::Dynamic, 1> y
-      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs() + y_min.array();
+      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs()
+        + y_min.array();
   Eigen::Matrix<double, Eigen::Dynamic, 1> alpha
       = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
 

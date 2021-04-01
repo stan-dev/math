@@ -56,9 +56,10 @@ TEST(ProbDistributionsParetoLccdf, error_checking) {
                std::domain_error);
 }
 
-auto pareto_lccdf_functor = [](const auto& y, const auto& y_min, const auto& alpha) {
-  return stan::math::pareto_lccdf(y, y_min, alpha);
-};
+auto pareto_lccdf_functor
+    = [](const auto& y, const auto& y_min, const auto& alpha) {
+        return stan::math::pareto_lccdf(y, y_min, alpha);
+      };
 
 TEST(ProbDistributionsParetoLccdf, opencl_matches_cpu_small) {
   int N = 3;
@@ -78,7 +79,8 @@ TEST(ProbDistributionsParetoLccdf, opencl_matches_cpu_small) {
       alpha.transpose().eval());
 }
 
-TEST(ProbDistributionsParetoLccdf, opencl_matches_cpu_small_y_lower_than_y_min) {
+TEST(ProbDistributionsParetoLccdf,
+     opencl_matches_cpu_small_y_lower_than_y_min) {
   int N = 3;
   int M = 2;
 
@@ -120,8 +122,8 @@ TEST(ProbDistributionsParetoLccdf, opencl_broadcast_y_min) {
   Eigen::VectorXd alpha(N);
   alpha << 0.3, 0.8, 1.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(pareto_lccdf_functor, y,
-                                                         y_min_scal, alpha);
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(pareto_lccdf_functor,
+                                                         y, y_min_scal, alpha);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       pareto_lccdf_functor, y.transpose().eval(), y_min_scal, alpha);
 }
@@ -135,8 +137,8 @@ TEST(ProbDistributionsParetoLccdf, opencl_broadcast_alpha) {
   y_min << 0.3, 0.8, 1.0;
   double alpha_scal = 12.3;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<2>(pareto_lccdf_functor, y,
-                                                         y_min, alpha_scal);
+  stan::math::test::test_opencl_broadcasting_prim_rev<2>(pareto_lccdf_functor,
+                                                         y, y_min, alpha_scal);
   stan::math::test::test_opencl_broadcasting_prim_rev<2>(
       pareto_lccdf_functor, y.transpose().eval(), y_min, alpha_scal);
 }
@@ -147,7 +149,8 @@ TEST(ProbDistributionsParetoLccdf, opencl_matches_cpu_big) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> y_min
       = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
   Eigen::Matrix<double, Eigen::Dynamic, 1> y
-      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs() + y_min.array();
+      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs()
+        + y_min.array();
   Eigen::Matrix<double, Eigen::Dynamic, 1> alpha
       = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
 
