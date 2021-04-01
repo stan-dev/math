@@ -10,6 +10,7 @@
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -26,18 +27,26 @@ constexpr double neg_binomial_alpha_cutoff = 1e10;
 }  // namespace internal
 
 // NegBinomial(n|alpha, beta)  [alpha > 0;  beta > 0;  n >= 0]
-template <bool propto, typename T_n, typename T_shape, typename T_inv_scale>
+template <bool propto, typename T_n, typename T_shape, typename T_inv_scale,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_n, T_shape, T_inv_scale>* = nullptr>
 return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
                                                       const T_shape& alpha,
                                                       const T_inv_scale& beta) {
   using T_partials_return = partials_return_t<T_n, T_shape, T_inv_scale>;
   using std::log;
+  using T_n_ref = ref_type_t<T_n>;
+  using T_alpha_ref = ref_type_t<T_shape>;
+  using T_beta_ref = ref_type_t<T_inv_scale>;
   static const char* function = "neg_binomial_lpmf";
-  check_nonnegative(function, "Failures variable", n);
-  check_positive_finite(function, "Shape parameter", alpha);
-  check_positive_finite(function, "Inverse scale parameter", beta);
   check_consistent_sizes(function, "Failures variable", n, "Shape parameter",
                          alpha, "Inverse scale parameter", beta);
+  T_n_ref n_ref = n;
+  T_alpha_ref alpha_ref = alpha;
+  T_beta_ref beta_ref = beta;
+  check_nonnegative(function, "Failures variable", n_ref);
+  check_positive_finite(function, "Shape parameter", alpha_ref);
+  check_positive_finite(function, "Inverse scale parameter", beta_ref);
 
   if (size_zero(n, alpha, beta)) {
     return 0.0;
@@ -47,11 +56,12 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
   }
 
   T_partials_return logp(0.0);
-  operands_and_partials<T_shape, T_inv_scale> ops_partials(alpha, beta);
+  operands_and_partials<T_alpha_ref, T_beta_ref> ops_partials(alpha_ref,
+                                                              beta_ref);
 
-  scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_shape> alpha_vec(alpha);
-  scalar_seq_view<T_inv_scale> beta_vec(beta);
+  scalar_seq_view<T_n_ref> n_vec(n_ref);
+  scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
+  scalar_seq_view<T_beta_ref> beta_vec(beta_ref);
   size_t size_alpha = stan::math::size(alpha);
   size_t size_beta = stan::math::size(beta);
   size_t size_alpha_beta = max_size(alpha, beta);
@@ -61,73 +71,50 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
       digamma_alpha(size_alpha);
   if (!is_constant_all<T_shape>::value) {
     for (size_t i = 0; i < size_alpha; ++i) {
-      digamma_alpha[i] = digamma(value_of(alpha_vec[i]));
+      digamma_alpha[i] = digamma(alpha_vec.val(i));
     }
   }
 
-  VectorBuilder<true, T_partials_return, T_inv_scale> log_beta(size_beta);
+  VectorBuilder<true, T_partials_return, T_inv_scale> log1p_inv_beta(size_beta);
   VectorBuilder<true, T_partials_return, T_inv_scale> log1p_beta(size_beta);
-  VectorBuilder<true, T_partials_return, T_inv_scale> log_beta_m_log1p_beta(
-      size_beta);
   for (size_t i = 0; i < size_beta; ++i) {
-    const T_partials_return beta_dbl = value_of(beta_vec[i]);
-    log_beta[i] = log(beta_dbl);
+    const T_partials_return beta_dbl = beta_vec.val(i);
+    log1p_inv_beta[i] = log1p(inv(beta_dbl));
     log1p_beta[i] = log1p(beta_dbl);
-    log_beta_m_log1p_beta[i] = log_beta[i] - log1p_beta[i];
   }
 
-  VectorBuilder<true, T_partials_return, T_shape, T_inv_scale> lambda(
-      size_alpha_beta);
-  VectorBuilder<true, T_partials_return, T_shape, T_inv_scale>
-      alpha_log_beta_over_1p_beta(size_alpha_beta);
   VectorBuilder<!is_constant_all<T_inv_scale>::value, T_partials_return,
                 T_shape, T_inv_scale>
       lambda_m_alpha_over_1p_beta(size_alpha_beta);
-  for (size_t i = 0; i < size_alpha_beta; ++i) {
-    const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
-    const T_partials_return beta_dbl = value_of(beta_vec[i]);
-    lambda[i] = alpha_dbl / beta_dbl;
-    alpha_log_beta_over_1p_beta[i] = alpha_dbl * log_beta_m_log1p_beta[i];
-    if (!is_constant_all<T_inv_scale>::value) {
-      lambda_m_alpha_over_1p_beta[i] = lambda[i] - alpha_dbl / (1 + beta_dbl);
+  if (!is_constant_all<T_inv_scale>::value) {
+    for (size_t i = 0; i < size_alpha_beta; ++i) {
+      const T_partials_return alpha_dbl = alpha_vec.val(i);
+      const T_partials_return beta_dbl = beta_vec.val(i);
+      lambda_m_alpha_over_1p_beta[i]
+          = alpha_dbl / beta_dbl - alpha_dbl / (1 + beta_dbl);
     }
   }
 
   for (size_t i = 0; i < max_size_seq_view; i++) {
-    if (alpha_vec[i] > internal::neg_binomial_alpha_cutoff) {
-      // reduces numerically to Poisson
-      if (include_summand<propto>::value) {
-        logp -= lgamma(n_vec[i] + 1.0);
-      }
-      logp += multiply_log(n_vec[i], lambda[i]) - lambda[i];
+    const T_partials_return alpha_dbl = alpha_vec.val(i);
+    const T_partials_return beta_dbl = beta_vec.val(i);
 
-      if (!is_constant_all<T_shape>::value) {
-        ops_partials.edge1_.partials_[i]
-            += n_vec[i] / value_of(alpha_vec[i]) - 1.0 / value_of(beta_vec[i]);
+    if (include_summand<propto, T_shape>::value) {
+      if (n_vec[i] != 0) {
+        logp += binomial_coefficient_log(n_vec[i] + alpha_dbl - 1.0,
+                                         alpha_dbl - 1.0);
       }
-      if (!is_constant_all<T_inv_scale>::value) {
-        ops_partials.edge2_.partials_[i]
-            += (lambda[i] - n_vec[i]) / value_of(beta_vec[i]);
-      }
-    } else {  // standard density definition
-      if (include_summand<propto, T_shape>::value) {
-        if (n_vec[i] != 0) {
-          logp += binomial_coefficient_log(
-              n_vec[i] + value_of(alpha_vec[i]) - 1.0, n_vec[i]);
-        }
-      }
-      logp += alpha_log_beta_over_1p_beta[i] - n_vec[i] * log1p_beta[i];
+    }
+    logp -= alpha_dbl * log1p_inv_beta[i] + n_vec[i] * log1p_beta[i];
 
-      if (!is_constant_all<T_shape>::value) {
-        ops_partials.edge1_.partials_[i]
-            += digamma(value_of(alpha_vec[i]) + n_vec[i]) - digamma_alpha[i]
-               + log_beta_m_log1p_beta[i];
-      }
-      if (!is_constant_all<T_inv_scale>::value) {
-        ops_partials.edge2_.partials_[i]
-            += lambda_m_alpha_over_1p_beta[i]
-               - n_vec[i] / (value_of(beta_vec[i]) + 1.0);
-      }
+    if (!is_constant_all<T_shape>::value) {
+      ops_partials.edge1_.partials_[i] += digamma(alpha_dbl + n_vec[i])
+                                          - digamma_alpha[i]
+                                          - log1p_inv_beta[i];
+    }
+    if (!is_constant_all<T_inv_scale>::value) {
+      ops_partials.edge2_.partials_[i]
+          += lambda_m_alpha_over_1p_beta[i] - n_vec[i] / (beta_dbl + 1.0);
     }
   }
 

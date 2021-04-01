@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/LDLT_factor.hpp>
 #include <stan/math/prim/fun/lmgamma.hpp>
 #include <stan/math/prim/fun/trace.hpp>
 #include <stan/math/prim/fun/log_determinant_ldlt.hpp>
@@ -31,7 +32,7 @@ namespace math {
  -\frac{\nu}{2} \log(\det(S)) + \frac{\nu-k-1}{2}\log (\det(W)) - \frac{1}{2}
  \mbox{tr} (S^{-1}W) \f}
  *
- * @tparam T_y type of scalar
+ * @tparam T_y type of matrix
  * @tparam T_dof type of degrees of freedom
  * @tparam T_scale type of scale
  * @param W A scalar matrix
@@ -42,60 +43,65 @@ namespace math {
  * @throw std::domain_error if S is not square, not symmetric, or not
  * semi-positive definite.
  */
-template <bool propto, typename T_y, typename T_dof, typename T_scale>
-return_type_t<T_y, T_dof, T_scale> wishart_lpdf(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& W,
-    const T_dof& nu,
-    const Eigen::Matrix<T_scale, Eigen::Dynamic, Eigen::Dynamic>& S) {
+template <bool propto, typename T_y, typename T_dof, typename T_scale,
+          require_stan_scalar_t<T_dof>* = nullptr,
+          require_all_matrix_t<T_y, T_scale>* = nullptr>
+return_type_t<T_y, T_dof, T_scale> wishart_lpdf(const T_y& W, const T_dof& nu,
+                                                const T_scale& S) {
   using Eigen::Dynamic;
   using Eigen::Lower;
   using Eigen::Matrix;
+  using T_W_ref = ref_type_t<T_y>;
+  using T_nu_ref = ref_type_t<T_dof>;
+  using T_S_ref = ref_type_t<T_scale>;
   static const char* function = "wishart_lpdf";
-  index_type_t<Matrix<T_scale, Dynamic, Dynamic>> k = W.rows();
-  check_greater(function, "Degrees of freedom parameter", nu, k - 1);
-  check_square(function, "random variable", W);
-  check_square(function, "scale parameter", S);
+  Eigen::Index k = W.rows();
   check_size_match(function, "Rows of random variable", W.rows(),
                    "columns of scale parameter", S.rows());
 
-  LDLT_factor<T_y, Eigen::Dynamic, Eigen::Dynamic> ldlt_W(W);
-  check_ldlt_factor(function, "LDLT_Factor of random variable", ldlt_W);
+  T_W_ref W_ref = W;
+  T_nu_ref nu_ref = nu;
+  T_S_ref S_ref = S;
 
-  LDLT_factor<T_scale, Eigen::Dynamic, Eigen::Dynamic> ldlt_S(S);
+  check_greater(function, "Degrees of freedom parameter", nu_ref, k - 1);
+  check_square(function, "random variable", W_ref);
+  check_square(function, "scale parameter", S_ref);
+  check_symmetric(function, "random variable", W_ref);
+  check_symmetric(function, "scale parameter", S_ref);
+
+  auto ldlt_W = make_ldlt_factor(W_ref);
+  check_ldlt_factor(function, "LDLT_Factor of random variable", ldlt_W);
+  auto ldlt_S = make_ldlt_factor(S_ref);
   check_ldlt_factor(function, "LDLT_Factor of scale parameter", ldlt_S);
 
   return_type_t<T_y, T_dof, T_scale> lp(0.0);
 
   if (include_summand<propto, T_dof>::value) {
-    lp -= nu * k * HALF_LOG_TWO;
+    lp -= nu_ref * k * HALF_LOG_TWO;
   }
 
   if (include_summand<propto, T_dof>::value) {
-    lp -= lmgamma(k, 0.5 * nu);
+    lp -= lmgamma(k, 0.5 * nu_ref);
   }
 
   if (include_summand<propto, T_dof, T_scale>::value) {
-    lp -= 0.5 * nu * log_determinant_ldlt(ldlt_S);
+    lp -= 0.5 * nu_ref * log_determinant_ldlt(ldlt_S);
   }
 
   if (include_summand<propto, T_scale, T_y>::value) {
-    Matrix<return_type_t<T_y, T_scale>, Dynamic, Dynamic> Sinv_W(
-        mdivide_left_ldlt(ldlt_S, static_cast<Matrix<T_y, Dynamic, Dynamic>>(
-                                      W.template selfadjointView<Lower>())));
-    lp -= 0.5 * trace(Sinv_W);
+    lp -= 0.5 * trace(mdivide_left_ldlt(ldlt_S, W_ref));
   }
 
-  if (include_summand<propto, T_y, T_dof>::value && nu != (k + 1)) {
-    lp += 0.5 * (nu - k - 1.0) * log_determinant_ldlt(ldlt_W);
+  if (include_summand<propto, T_y, T_dof>::value && nu_ref != (k + 1)) {
+    lp += 0.5 * (nu_ref - k - 1.0) * log_determinant_ldlt(ldlt_W);
   }
   return lp;
 }
 
 template <typename T_y, typename T_dof, typename T_scale>
-inline return_type_t<T_y, T_dof, T_scale> wishart_lpdf(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& W,
-    const T_dof& nu,
-    const Eigen::Matrix<T_scale, Eigen::Dynamic, Eigen::Dynamic>& S) {
+inline return_type_t<T_y, T_dof, T_scale> wishart_lpdf(const T_y& W,
+                                                       const T_dof& nu,
+                                                       const T_scale& S) {
   return wishart_lpdf<false>(W, nu, S);
 }
 

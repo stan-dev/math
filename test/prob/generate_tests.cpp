@@ -23,11 +23,21 @@ int ROW_VECTORS = 0;
 #endif
 
 void push_args(vector<string>& args, const string& type) {
-  args.push_back(type);
-  args.push_back("std::vector<" + type + ">");
-  args.push_back("Eigen::Matrix<" + type + ", Eigen::Dynamic, 1>");
-  if (ROW_VECTORS == 1)
-    args.push_back("Eigen::Matrix<" + type + ", 1, Eigen::Dynamic>");
+  if (type.compare("varmat") == 0) {
+    args.push_back("var");
+    args.push_back("std::vector<var>");
+    args.push_back(
+        "stan::math::var_value<Eigen::Matrix<double, Eigen::Dynamic, 1>>");
+    if (ROW_VECTORS == 1)
+      args.push_back(
+          "stan::math::var_value<Eigen::Matrix<double, 1, Eigen::Dynamic>>");
+  } else {
+    args.push_back(type);
+    args.push_back("std::vector<" + type + ">");
+    args.push_back("Eigen::Matrix<" + type + ", Eigen::Dynamic, 1>");
+    if (ROW_VECTORS == 1)
+      args.push_back("Eigen::Matrix<" + type + ", 1, Eigen::Dynamic>");
+  }
 }
 
 vector<string> lookup_argument(const string& argument, const int& ind) {
@@ -52,6 +62,8 @@ vector<string> lookup_argument(const string& argument, const int& ind) {
       push_args(args, "fvar<fvar<double> >");
     } else if (ind == 5) {
       push_args(args, "fvar<fvar<var> >");
+    } else if (ind == 6) {
+      push_args(args, "varmat");
     }
   }
   return args;
@@ -75,7 +87,7 @@ void write_includes(vector<std::ostream*>& outs, const string& include) {
   for (size_t n = 0; n < outs.size(); n++) {
     std::ostream* out = outs[n];
     *out << "#include <gtest/gtest.h>" << endl;
-    *out << "#include <boost/mpl/vector.hpp>" << endl;
+    *out << "#include <tuple>" << endl;
     *out << "#include <test/prob/test_fixture_distr.hpp>" << endl;
     *out << "#include <test/prob/test_fixture_cdf.hpp>" << endl;
     *out << "#include <test/prob/test_fixture_cdf_log.hpp>" << endl;
@@ -250,15 +262,14 @@ void write_types_typedef(vector<std::ostream*>& outs, string base, size_t& N,
     for (size_t n = 0; n < args.size(); n++) {
       std::ostream* out = outs[int(N / N_TESTS)];
       if (index == 1) {
-        *out << "typedef boost::mpl::vector<" << base << args[n] << extra_args;
+        *out << "typedef std::tuple<" << base << args[n] << extra_args;
         if (extra_args.size() == 0)
           *out << " ";
         *out << "> type_v_" << N << ";" << endl;
         N++;
       } else {
         if (check_all_double(base, args[n]) == false) {
-          *out << "typedef boost::mpl::vector<" << base << args[n]
-               << extra_args;
+          *out << "typedef std::tuple<" << base << args[n] << extra_args;
           if (extra_args.size() == 0)
             *out << " ";
           else if (index == 2)
@@ -269,6 +280,8 @@ void write_types_typedef(vector<std::ostream*>& outs, string base, size_t& N,
             *out << "> type_ffd_" << N << ";" << endl;
           else if (index == 5)
             *out << "> type_ffv_" << N << ";" << endl;
+          else if (index == 6)
+            *out << "> type_vv_" << N << ";" << endl;
           N++;
         }
       }
@@ -293,20 +306,23 @@ void write_test(vector<std::ostream*>& outs, const string& test_name,
   for (size_t n = 0; n < N; n++) {
     std::ostream* out = outs[int(n / N_TESTS)];
     if (index == 1)
-      *out << "typedef boost::mpl::vector<" << test_name << ", type_v_" << n
-           << "> " << test_name << "_v_" << n << ";" << endl;
+      *out << "typedef std::tuple<" << test_name << ", type_v_" << n << "> "
+           << test_name << "_v_" << n << ";" << endl;
     else if (index == 2)
-      *out << "typedef boost::mpl::vector<" << test_name << ", type_fd_" << n
-           << "> " << test_name << "_fd_" << n << ";" << endl;
+      *out << "typedef std::tuple<" << test_name << ", type_fd_" << n << "> "
+           << test_name << "_fd_" << n << ";" << endl;
     else if (index == 3)
-      *out << "typedef boost::mpl::vector<" << test_name << ", type_fv_" << n
-           << "> " << test_name << "_fv_" << n << ";" << endl;
+      *out << "typedef std::tuple<" << test_name << ", type_fv_" << n << "> "
+           << test_name << "_fv_" << n << ";" << endl;
     else if (index == 4)
-      *out << "typedef boost::mpl::vector<" << test_name << ", type_ffd_" << n
-           << "> " << test_name << "_ffd_" << n << ";" << endl;
+      *out << "typedef std::tuple<" << test_name << ", type_ffd_" << n << "> "
+           << test_name << "_ffd_" << n << ";" << endl;
     else if (index == 5)
-      *out << "typedef boost::mpl::vector<" << test_name << ", type_ffv_" << n
-           << "> " << test_name << "_ffv_" << n << ";" << endl;
+      *out << "typedef std::tuple<" << test_name << ", type_ffv_" << n << "> "
+           << test_name << "_ffv_" << n << ";" << endl;
+    else if (index == 6)
+      *out << "typedef std::tuple<" << test_name << ", type_vv_" << n << "> "
+           << test_name << "_vv_" << n << ";" << endl;
   }
   for (size_t i = 0; i < outs.size(); i++) {
     *outs[i] << endl;
@@ -314,24 +330,28 @@ void write_test(vector<std::ostream*>& outs, const string& test_name,
   for (size_t n = 0; n < N; n++) {
     std::ostream* out = outs[int(n / N_TESTS)];
     if (index == 1)
-      *out << "INSTANTIATE_TYPED_TEST_CASE_P(" << test_name << "_v_" << n
+      *out << "INSTANTIATE_TYPED_TEST_SUITE_P(" << test_name << "_v_" << n
            << ", " << fixture_name << ", " << test_name << "_v_" << n << ");"
            << endl;
     else if (index == 2)
-      *out << "INSTANTIATE_TYPED_TEST_CASE_P(" << test_name << "_fd_" << n
+      *out << "INSTANTIATE_TYPED_TEST_SUITE_P(" << test_name << "_fd_" << n
            << ", " << fixture_name << ", " << test_name << "_fd_" << n << ");"
            << endl;
     else if (index == 3)
-      *out << "INSTANTIATE_TYPED_TEST_CASE_P(" << test_name << "_fv_" << n
+      *out << "INSTANTIATE_TYPED_TEST_SUITE_P(" << test_name << "_fv_" << n
            << ", " << fixture_name << ", " << test_name << "_fv_" << n << ");"
            << endl;
     else if (index == 4)
-      *out << "INSTANTIATE_TYPED_TEST_CASE_P(" << test_name << "_ffd_" << n
+      *out << "INSTANTIATE_TYPED_TEST_SUITE_P(" << test_name << "_ffd_" << n
            << ", " << fixture_name << ", " << test_name << "_ffd_" << n << ");"
            << endl;
     else if (index == 5)
-      *out << "INSTANTIATE_TYPED_TEST_CASE_P(" << test_name << "_ffv_" << n
+      *out << "INSTANTIATE_TYPED_TEST_SUITE_P(" << test_name << "_ffv_" << n
            << ", " << fixture_name << ", " << test_name << "_ffv_" << n << ");"
+           << endl;
+    else if (index == 6)
+      *out << "INSTANTIATE_TYPED_TEST_SUITE_P(" << test_name << "_vv_" << n
+           << ", " << fixture_name << ", " << test_name << "_vv_" << n << ");"
            << endl;
   }
   for (size_t i = 0; i < outs.size(); i++) {
@@ -392,6 +412,8 @@ int create_files(const int& argc, const char* argv[], const int& index,
       out_name << "_generated_ffd_test.cpp";
     else if (index == 5)
       out_name << "_generated_ffv_test.cpp";
+    else if (index == 6)
+      out_name << "_generated_vv_test.cpp";
     std::string tmp(out_name.str());
     outs.push_back(new std::ofstream(tmp.c_str()));
   }
@@ -408,7 +430,6 @@ int create_files(const int& argc, const char* argv[], const int& index,
     delete (outs[n]);
   }
   outs.clear();
-
   return start + BATCHES;
 }
 
@@ -423,11 +444,15 @@ int create_files(const int& argc, const char* argv[], const int& index,
  */
 int main(int argc, const char* argv[]) {
   int N_TESTS = atoi(argv[2]);
+
   create_files(argc, argv, 1, -1, N_TESTS);  // create var tests
+  create_files(argc, argv, 5, -1, N_TESTS);  // create ffv tests
+  create_files(argc, argv, 6, -1, N_TESTS);  // create varmat tests
+#ifdef STAN_PROB_TEST_ALL
   create_files(argc, argv, 2, -1, N_TESTS);  // create fd tests
   create_files(argc, argv, 3, -1, N_TESTS);  // create fv tests
   create_files(argc, argv, 4, -1, N_TESTS);  // create ffd tests
-  create_files(argc, argv, 5, -1, N_TESTS);  // create ffv tests
+#endif
 
   return 0;
 }

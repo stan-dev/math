@@ -47,7 +47,7 @@ namespace math {
 inline double log1m_exp(double a) {
   using std::exp;
   using std::log;
-  if (a >= 0) {
+  if (a > 0) {
     return NOT_A_NUMBER;
   } else if (a > -0.693147) {
     return log(-expm1(a));  // 0.693147 ~= log(2)
@@ -77,7 +77,8 @@ struct log1m_exp_fun {
  * @param x container
  * @return Natural log of (1 - exp()) applied to each value in x.
  */
-template <typename T>
+template <typename T, require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+                          T>* = nullptr>
 inline auto log1m_exp(const T& x) {
   return apply_scalar_unary<log1m_exp_fun, T>::apply(x);
 }

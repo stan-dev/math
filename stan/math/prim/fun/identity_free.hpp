@@ -8,18 +8,19 @@ namespace math {
 
 /**
  * Returns the result of applying the inverse of the identity
- * constraint transform to the input.
+ * constraint transform to the input. This promotes the input to the least upper
+ * bound of the input types.
  *
- * <p>This function is a no-op and mainly useful as a placeholder
- * in auto-generated code.
  *
- * @tparam T type of value
- * @param[in] y value
+ * @tparam T type of value to promote
+ * @tparam Types Other types.
+ * @param[in] x value to promote
  * @return value
  */
-template <typename T>
-inline T identity_free(const T& y) {
-  return y;
+template <typename T, typename... Types,
+          require_all_not_var_matrix_t<T, Types...>* = nullptr>
+inline auto identity_free(T&& x, Types&&... /* args */) {
+  return promote_scalar_t<return_type_t<T, Types...>, T>(x);
 }
 
 }  // namespace math

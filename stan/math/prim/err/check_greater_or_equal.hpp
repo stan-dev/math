@@ -5,7 +5,9 @@
 #include <stan/math/prim/err/throw_domain_error_vec.hpp>
 #include <stan/math/prim/err/throw_domain_error.hpp>
 #include <stan/math/prim/fun/get.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <string>
 
 namespace stan {
@@ -19,11 +21,13 @@ struct greater_or_equal {
     scalar_seq_view<T_low> low_vec(low);
     for (size_t n = 0; n < stan::math::size(low); n++) {
       if (!(y >= low_vec[n])) {
-        std::stringstream msg;
-        msg << ", but must be greater than or equal to ";
-        msg << low_vec[n];
-        std::string msg_str(msg.str());
-        throw_domain_error(function, name, y, "is ", msg_str.c_str());
+        [&]() STAN_COLD_PATH {
+          std::stringstream msg;
+          msg << ", but must be greater than or equal to ";
+          msg << low_vec[n];
+          std::string msg_str(msg.str());
+          throw_domain_error(function, name, y, "is ", msg_str.c_str());
+        }();
       }
     }
   }
@@ -34,13 +38,17 @@ struct greater_or_equal<T_y, T_low, true> {
   static void check(const char* function, const char* name, const T_y& y,
                     const T_low& low) {
     scalar_seq_view<T_low> low_vec(low);
-    for (size_t n = 0; n < stan::math::size(y); n++) {
-      if (!(stan::get(y, n) >= low_vec[n])) {
-        std::stringstream msg;
-        msg << ", but must be greater than or equal to ";
-        msg << low_vec[n];
-        std::string msg_str(msg.str());
-        throw_domain_error_vec(function, name, y, n, "is ", msg_str.c_str());
+    const auto& y_ref = to_ref(y);
+    for (size_t n = 0; n < stan::math::size(y_ref); n++) {
+      if (!(stan::get(y_ref, n) >= low_vec[n])) {
+        [&]() STAN_COLD_PATH {
+          std::stringstream msg;
+          msg << ", but must be greater than or equal to ";
+          msg << low_vec[n];
+          std::string msg_str(msg.str());
+          throw_domain_error_vec(function, name, y_ref, n, "is ",
+                                 msg_str.c_str());
+        }();
       }
     }
   }

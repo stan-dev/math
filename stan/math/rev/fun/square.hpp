@@ -7,14 +7,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class square_vari : public op_v_vari {
- public:
-  explicit square_vari(vari* avi) : op_v_vari(avi->val_ * avi->val_, avi) {}
-  void chain() { avi_->adj_ += adj_ * 2.0 * avi_->val_; }
-};
-}  // namespace internal
-
 /**
  * Return the square of the input variable.
  *
@@ -41,7 +33,24 @@ class square_vari : public op_v_vari {
  * @return Square of variable.
  */
 inline var square(const var& x) {
-  return var(new internal::square_vari(x.vi_));
+  return make_callback_var(square(x.val()), [x](auto& vi) mutable {
+    x.adj() += vi.adj() * 2.0 * x.val();
+  });
+}
+
+/**
+ * Return the elementwise square of x
+ *
+ * @tparam T type of x
+ * @param x argument
+ * @return elementwise square of x
+ */
+template <typename T, require_var_matrix_t<T>* = nullptr>
+inline auto square(const T& x) {
+  return make_callback_var(
+      (x.val().array().square()).matrix(), [x](const auto& vi) mutable {
+        x.adj() += (2.0 * x.val().array() * vi.adj().array()).matrix();
+      });
 }
 
 }  // namespace math

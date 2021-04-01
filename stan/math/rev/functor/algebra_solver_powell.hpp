@@ -122,14 +122,17 @@ struct algebra_solver_vari : public vari {
  * @throw <code>std::domain_error</code> if the norm of the solution exceeds
  * the function tolerance.
  */
-template <typename F, typename T>
+template <typename F, typename T, require_eigen_vector_t<T>* = nullptr>
 Eigen::VectorXd algebra_solver_powell(
-    const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
-    const Eigen::VectorXd& y, const std::vector<double>& dat,
-    const std::vector<int>& dat_int, std::ostream* msgs = nullptr,
-    double relative_tolerance = 1e-10, double function_tolerance = 1e-6,
+    const F& f, const T& x, const Eigen::VectorXd& y,
+    const std::vector<double>& dat, const std::vector<int>& dat_int,
+    std::ostream* msgs = nullptr, double relative_tolerance = 1e-10,
+    double function_tolerance = 1e-6,
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
-  algebra_solver_check(x, y, dat, dat_int, function_tolerance, max_num_steps);
+  const auto& x_eval = x.eval();
+  const auto& x_val = (value_of(x_eval)).eval();
+  algebra_solver_check(x_val, y, dat, dat_int, function_tolerance,
+                       max_num_steps);
   check_nonnegative("alegbra_solver", "relative_tolerance", relative_tolerance);
   // if (relative_tolerance < 0)
   //   invalid_argument("algebra_solver", "relative_tolerance,",
@@ -139,16 +142,15 @@ Eigen::VectorXd algebra_solver_powell(
   // Create functor for algebraic system
   using Fs = system_functor<F, double, double, true>;
   using Fx = hybrj_functor_solver<Fs, F, double, double>;
-  Fx fx(Fs(), f, value_of(x), y, dat, dat_int, msgs);
+  Fx fx(Fs(), f, x_val, y, dat, dat_int, msgs);
   Eigen::HybridNonLinearSolver<Fx> solver(fx);
 
   // Check dimension unknowns equals dimension of system output
   check_matching_sizes("algebra_solver", "the algebraic system's output",
-                       fx.get_value(value_of(x)), "the vector of unknowns, x,",
-                       x);
+                       fx.get_value(x_val), "the vector of unknowns, x,", x);
 
   // Compute theta_dbl
-  Eigen::VectorXd theta_dbl = value_of(x);
+  Eigen::VectorXd theta_dbl = x_val;
   solver.parameters.xtol = relative_tolerance;
   solver.parameters.maxfev = max_num_steps;
   solver.solve(theta_dbl);
@@ -220,17 +222,21 @@ Eigen::VectorXd algebra_solver_powell(
  * @throw <code>std::domain_error</code> if the norm of the solution exceeds
  * the function tolerance.
  */
-template <typename F, typename T1, typename T2>
-Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver_powell(
-    const F& f, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
-    const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
-    const std::vector<double>& dat, const std::vector<int>& dat_int,
-    std::ostream* msgs = nullptr, double relative_tolerance = 1e-10,
-    double function_tolerance = 1e-6,
+template <typename F, typename T1, typename T2,
+          require_all_eigen_vector_t<T1, T2>* = nullptr,
+          require_st_var<T2>* = nullptr>
+Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_powell(
+    const F& f, const T1& x, const T2& y, const std::vector<double>& dat,
+    const std::vector<int>& dat_int, std::ostream* msgs = nullptr,
+    double relative_tolerance = 1e-10, double function_tolerance = 1e-6,
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
+  const auto& x_eval = x.eval();
+  const auto& y_eval = y.eval();
+  const auto& x_val = (value_of(x_eval)).eval();
+  const auto& y_val = (value_of(y_eval)).eval();
   Eigen::VectorXd theta_dbl = algebra_solver_powell(
-      f, x, value_of(y), dat, dat_int, 0, relative_tolerance,
-      function_tolerance, max_num_steps);
+      f, x_eval, y_val, dat, dat_int, 0, relative_tolerance, function_tolerance,
+      max_num_steps);
 
   using Fy = system_functor<F, double, double, false>;
 
@@ -239,12 +245,12 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver_powell(
   // and use it here (if possible).
   using Fs = system_functor<F, double, double, true>;
   using Fx = hybrj_functor_solver<Fs, F, double, double>;
-  Fx fx(Fs(), f, value_of(x), value_of(y), dat, dat_int, msgs);
+  Fx fx(Fs(), f, x_val, y_val, dat, dat_int, msgs);
 
   // Construct vari
-  algebra_solver_vari<Fy, F, T2, Fx>* vi0
-      = new algebra_solver_vari<Fy, F, T2, Fx>(Fy(), f, value_of(x), y, dat,
-                                               dat_int, theta_dbl, fx, msgs);
+  algebra_solver_vari<Fy, F, value_type_t<T2>, Fx>* vi0
+      = new algebra_solver_vari<Fy, F, value_type_t<T2>, Fx>(
+          Fy(), f, x_val, y_eval, dat, dat_int, theta_dbl, fx, msgs);
   Eigen::Matrix<var, Eigen::Dynamic, 1> theta(x.size());
   theta(0) = var(vi0->theta_[0]);
   for (int i = 1; i < x.size(); ++i) {
@@ -299,13 +305,12 @@ Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver_powell(
  * <code>std::domain_error</code>) if the norm of the solution exceeds the
  * function tolerance.
  */
-template <typename F, typename T1, typename T2>
-Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver(
-    const F& f, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
-    const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
-    const std::vector<double>& dat, const std::vector<int>& dat_int,
-    std::ostream* msgs = nullptr, double relative_tolerance = 1e-10,
-    double function_tolerance = 1e-6,
+template <typename F, typename T1, typename T2,
+          require_all_eigen_vector_t<T1, T2>* = nullptr>
+Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, 1> algebra_solver(
+    const F& f, const T1& x, const T2& y, const std::vector<double>& dat,
+    const std::vector<int>& dat_int, std::ostream* msgs = nullptr,
+    double relative_tolerance = 1e-10, double function_tolerance = 1e-6,
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
   return algebra_solver_powell(f, x, y, dat, dat_int, msgs, relative_tolerance,
                                function_tolerance, max_num_steps);

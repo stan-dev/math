@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/inc_beta.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -37,41 +38,49 @@ template <typename T_n, typename T_N, typename T_prob>
 return_type_t<T_prob> binomial_lccdf(const T_n& n, const T_N& N,
                                      const T_prob& theta) {
   using T_partials_return = partials_return_t<T_n, T_N, T_prob>;
+  using T_n_ref = ref_type_t<T_n>;
+  using T_N_ref = ref_type_t<T_N>;
+  using T_theta_ref = ref_type_t<T_prob>;
   using std::exp;
   using std::log;
   using std::pow;
   static const char* function = "binomial_lccdf";
-  check_nonnegative(function, "Population size parameter", N);
-  check_finite(function, "Probability parameter", theta);
-  check_bounded(function, "Probability parameter", theta, 0.0, 1.0);
   check_consistent_sizes(function, "Successes variable", n,
                          "Population size parameter", N,
                          "Probability parameter", theta);
+
+  T_n_ref n_ref = n;
+  T_N_ref N_ref = N;
+  T_theta_ref theta_ref = theta;
+
+  check_nonnegative(function, "Population size parameter", N_ref);
+  check_bounded(function, "Probability parameter", value_of(theta_ref), 0.0,
+                1.0);
 
   if (size_zero(n, N, theta)) {
     return 0;
   }
 
   T_partials_return P(0.0);
-  operands_and_partials<T_prob> ops_partials(theta);
+  operands_and_partials<T_theta_ref> ops_partials(theta_ref);
 
-  scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_N> N_vec(N);
-  scalar_seq_view<T_prob> theta_vec(theta);
+  scalar_seq_view<T_n_ref> n_vec(n_ref);
+  scalar_seq_view<T_N_ref> N_vec(N_ref);
+  scalar_seq_view<T_theta_ref> theta_vec(theta_ref);
   size_t max_size_seq_view = max_size(n, N, theta);
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined,
   // but treated as negative infinity
   for (size_t i = 0; i < stan::math::size(n); i++) {
-    if (value_of(n_vec[i]) < 0) {
+    if (n_vec.val(i) < 0) {
       return ops_partials.build(0.0);
     }
   }
 
   for (size_t i = 0; i < max_size_seq_view; i++) {
-    const T_partials_return n_dbl = value_of(n_vec[i]);
-    const T_partials_return N_dbl = value_of(N_vec[i]);
+    const T_partials_return n_dbl = n_vec.val(i);
+    const T_partials_return N_dbl = N_vec.val(i);
 
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
@@ -79,7 +88,7 @@ return_type_t<T_prob> binomial_lccdf(const T_n& n, const T_N& N,
       return ops_partials.build(NEGATIVE_INFTY);
     }
 
-    const T_partials_return theta_dbl = value_of(theta_vec[i]);
+    const T_partials_return theta_dbl = theta_vec.val(i);
     const T_partials_return Pi
         = 1.0 - inc_beta(N_dbl - n_dbl, n_dbl + 1, 1 - theta_dbl);
 

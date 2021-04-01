@@ -23,7 +23,7 @@ inline auto head(const T& v, size_t n) {
   if (n != 0) {
     check_vector_index("head", "n", v, n);
   }
-  return v.head(n).eval();
+  return v.head(n);
 }
 
 /**

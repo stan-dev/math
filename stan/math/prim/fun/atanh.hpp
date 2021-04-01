@@ -72,7 +72,9 @@ struct atanh_fun {
  * @param x container
  * @return Elementwise atanh of members of container.
  */
-template <typename T>
+template <
+    typename T, require_not_var_matrix_t<T>* = nullptr,
+    require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
 inline auto atanh(const T& x) {
   return apply_scalar_unary<atanh_fun, T>::apply(x);
 }

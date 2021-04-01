@@ -23,36 +23,25 @@ namespace math {
 namespace internal {
 // (dividend/divisor)' = dividend' * (1 / divisor) - divisor' * (dividend /
 // [divisor * divisor])
-class divide_vv_vari : public op_vv_vari {
+class divide_vv_vari final : public op_vv_vari {
  public:
   divide_vv_vari(vari* dividend_vi, vari* divisor_vi)
       : op_vv_vari(dividend_vi->val_ / divisor_vi->val_, dividend_vi,
                    divisor_vi) {}
   void chain() {
-    if (unlikely(is_any_nan(avi_->val_, bvi_->val_))) {
-      avi_->adj_ = NOT_A_NUMBER;
-      bvi_->adj_ = NOT_A_NUMBER;
-    } else {
-      avi_->adj_ += adj_ / bvi_->val_;
-      bvi_->adj_ -= adj_ * avi_->val_ / (bvi_->val_ * bvi_->val_);
-    }
+    avi_->adj_ += adj_ / bvi_->val_;
+    bvi_->adj_ -= adj_ * avi_->val_ / (bvi_->val_ * bvi_->val_);
   }
 };
 
-class divide_vd_vari : public op_vd_vari {
+class divide_vd_vari final : public op_vd_vari {
  public:
   divide_vd_vari(vari* dividend_vi, double divisor)
       : op_vd_vari(dividend_vi->val_ / divisor, dividend_vi, divisor) {}
-  void chain() {
-    if (unlikely(is_any_nan(avi_->val_, bd_))) {
-      avi_->adj_ = NOT_A_NUMBER;
-    } else {
-      avi_->adj_ += adj_ / bd_;
-    }
-  }
+  void chain() { avi_->adj_ += adj_ / bd_; }
 };
 
-class divide_dv_vari : public op_dv_vari {
+class divide_dv_vari final : public op_dv_vari {
  public:
   divide_dv_vari(double dividend, vari* divisor_vi)
       : op_dv_vari(dividend / divisor_vi->val_, dividend, divisor_vi) {}
@@ -98,7 +87,7 @@ class divide_dv_vari : public op_dv_vari {
  * @return Variable result of dividing the first variable by the
  * second.
  */
-inline var operator/(var dividend, var divisor) {
+inline var operator/(const var& dividend, const var& divisor) {
   return {new internal::divide_vv_vari(dividend.vi_, divisor.vi_)};
 }
 
@@ -116,7 +105,7 @@ inline var operator/(var dividend, var divisor) {
  * @return Variable result of dividing the variable by the scalar.
  */
 template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
-inline var operator/(var dividend, Arith divisor) {
+inline var operator/(const var& dividend, Arith divisor) {
   if (divisor == 1.0) {
     return dividend;
   }
@@ -136,7 +125,7 @@ inline var operator/(var dividend, Arith divisor) {
  * @return Quotient of the dividend and divisor.
  */
 template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
-inline var operator/(Arith dividend, var divisor) {
+inline var operator/(Arith dividend, const var& divisor) {
   return {new internal::divide_dv_vari(dividend, divisor.vi_)};
 }
 

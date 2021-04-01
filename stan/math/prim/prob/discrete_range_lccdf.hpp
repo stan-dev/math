@@ -7,6 +7,7 @@
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <cmath>
 
@@ -52,10 +53,7 @@ double discrete_range_lccdf(const T_y& y, const T_lower& lower,
 
   for (size_t n = 0; n < N; ++n) {
     const int y_dbl = y_vec[n];
-    if (y_dbl < lower_vec[n]) {
-      return 0;
-    }
-    if (y_dbl > upper_vec[n]) {
+    if (y_dbl >= upper_vec[n]) {
       return LOG_ZERO;
     }
   }
@@ -63,9 +61,11 @@ double discrete_range_lccdf(const T_y& y, const T_lower& lower,
   double ccdf(0.0);
   for (size_t n = 0; n < N; n++) {
     const int y_dbl = y_vec[n];
-    const int lower_dbl = lower_vec[n];
-    const int upper_dbl = upper_vec[n];
-    ccdf += log(upper_dbl - y_dbl) - log(upper_dbl - lower_dbl + 1);
+    if (y_dbl >= lower_vec[n]) {
+      const int lower_dbl = lower_vec[n];
+      const int upper_dbl = upper_vec[n];
+      ccdf += log(upper_dbl - y_dbl) - log(upper_dbl - lower_dbl + 1);
+    }
   }
   return ccdf;
 }

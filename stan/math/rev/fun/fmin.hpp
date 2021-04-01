@@ -85,7 +85,8 @@ inline var fmin(const var& a, const var& b) {
 inline var fmin(const var& a, double b) {
   if (unlikely(is_nan(a))) {
     if (unlikely(is_nan(b))) {
-      return var(new precomp_v_vari(NOT_A_NUMBER, a.vi_, NOT_A_NUMBER));
+      return make_callback_var(
+          NOT_A_NUMBER, [a](auto& vi) mutable { a.adj() = NOT_A_NUMBER; });
     }
     return var(b);
   }
@@ -112,7 +113,8 @@ inline var fmin(const var& a, double b) {
 inline var fmin(double a, const var& b) {
   if (unlikely(is_nan(b))) {
     if (unlikely(is_nan(a))) {
-      return var(new precomp_v_vari(NOT_A_NUMBER, b.vi_, NOT_A_NUMBER));
+      return make_callback_var(
+          NOT_A_NUMBER, [b](auto& vi) mutable { b.adj() = NOT_A_NUMBER; });
     }
     return var(a);
   }

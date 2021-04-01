@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/erfc.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -22,21 +23,23 @@ inline return_type_t<T_y> std_normal_lccdf(const T_y& y) {
   using T_partials_return = partials_return_t<T_y>;
   using std::exp;
   using std::log;
+  using T_y_ref = ref_type_t<T_y>;
   static const char* function = "std_normal_lccdf";
-  check_not_nan(function, "Random variable", y);
+  T_y_ref y_ref = y;
+  check_not_nan(function, "Random variable", y_ref);
 
   if (size_zero(y)) {
     return 0;
   }
 
   T_partials_return lccdf(0.0);
-  operands_and_partials<T_y> ops_partials(y);
+  operands_and_partials<T_y_ref> ops_partials(y_ref);
 
-  scalar_seq_view<T_y> y_vec(y);
+  scalar_seq_view<T_y_ref> y_vec(y_ref);
   size_t N = stan::math::size(y);
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
+    const T_partials_return y_dbl = y_vec.val(n);
     const T_partials_return scaled_y = y_dbl * INV_SQRT_TWO;
 
     T_partials_return one_m_erf;

@@ -9,17 +9,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class inv_cloglog_vari : public op_v_vari {
- public:
-  explicit inv_cloglog_vari(vari* avi)
-      : op_v_vari(inv_cloglog(avi->val_), avi) {}
-  void chain() {
-    avi_->adj_ += adj_ * std::exp(avi_->val_ - std::exp(avi_->val_));
-  }
-};
-}  // namespace internal
-
 /**
  * Return the inverse complementary log-log function applied
  * specified variable (stan).
@@ -35,7 +24,11 @@ class inv_cloglog_vari : public op_v_vari {
  * argument.
  */
 inline var inv_cloglog(const var& a) {
-  return var(new internal::inv_cloglog_vari(a.vi_));
+  auto precomp_exp = std::exp(a.val() - std::exp(a.val()));
+  return make_callback_var(inv_cloglog(a.val()),
+                           [a, precomp_exp](auto& vi) mutable {
+                             a.adj() += vi.adj() * precomp_exp;
+                           });
 }
 
 }  // namespace math

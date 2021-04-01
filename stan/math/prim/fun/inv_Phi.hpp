@@ -101,7 +101,10 @@ struct inv_Phi_fun {
  * @return Inverse unit normal CDF of each value in x.
  * @throw std::domain_error if any value is not between 0 and 1.
  */
-template <typename T>
+template <
+    typename T,
+    require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
+    require_not_var_matrix_t<T>* = nullptr>
 inline auto inv_Phi(const T& x) {
   return apply_scalar_unary<inv_Phi_fun, T>::apply(x);
 }

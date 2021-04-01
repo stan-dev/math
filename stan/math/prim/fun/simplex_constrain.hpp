@@ -24,16 +24,15 @@ namespace math {
  * @param y Free vector input of dimensionality K - 1.
  * @return Simplex of dimensionality K.
  */
-template <typename ColVec, require_eigen_col_vector_t<ColVec>* = nullptr>
-auto simplex_constrain(const ColVec& y) {
+template <typename Vec, require_eigen_col_vector_t<Vec>* = nullptr,
+          require_not_st_var<Vec>* = nullptr>
+auto simplex_constrain(const Vec& y) {
   // cut & paste simplex_constrain(Eigen::Matrix, T) w/o Jacobian
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
   using std::log;
-  using T = value_type_t<ColVec>;
+  using T = value_type_t<Vec>;
 
   int Km1 = y.size();
-  Matrix<T, Dynamic, 1> x(Km1 + 1);
+  plain_type_t<Vec> x(Km1 + 1);
   T stick_len(1.0);
   for (Eigen::Index k = 0; k < Km1; ++k) {
     T z_k = inv_logit(y.coeff(k) - log(Km1 - k));
@@ -57,15 +56,16 @@ auto simplex_constrain(const ColVec& y) {
  * @param lp Log probability reference to increment.
  * @return Simplex of dimensionality K.
  */
-template <typename ColVec, require_eigen_col_vector_t<ColVec>* = nullptr>
-auto simplex_constrain(const ColVec& y, value_type_t<ColVec>& lp) {
+template <typename Vec, require_eigen_col_vector_t<Vec>* = nullptr,
+          require_not_st_var<Vec>* = nullptr>
+auto simplex_constrain(const Vec& y, value_type_t<Vec>& lp) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::log;
-  using T = value_type_t<ColVec>;
+  using T = value_type_t<Vec>;
 
   int Km1 = y.size();  // K = Km1 + 1
-  Matrix<T, Dynamic, 1> x(Km1 + 1);
+  plain_type_t<Vec> x(Km1 + 1);
   T stick_len(1.0);
   for (Eigen::Index k = 0; k < Km1; ++k) {
     double eq_share = -log(Km1 - k);  // = logit(1.0/(Km1 + 1 - k));

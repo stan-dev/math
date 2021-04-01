@@ -6,7 +6,6 @@
 #include <stan/math/opencl/kernel_generator/load.hpp>
 #include <stan/math/opencl/kernel_generator/scalar.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/is_matrix_cl.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <type_traits>
 
@@ -60,7 +59,9 @@ inline scalar_<char> as_operation_cl(const bool a) { return scalar_<char>(a); }
  * @param a \c matrix_cl
  * @return \c load_ wrapping the input
  */
-template <typename T_matrix_cl, typename = require_matrix_cl_t<T_matrix_cl>>
+template <typename T_matrix_cl,
+          typename = require_any_t<is_matrix_cl<T_matrix_cl>,
+                                   is_arena_matrix_cl<T_matrix_cl>>>
 inline load_<T_matrix_cl> as_operation_cl(T_matrix_cl&& a) {
   return load_<T_matrix_cl>(std::forward<T_matrix_cl>(a));
 }

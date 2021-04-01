@@ -17,7 +17,7 @@ namespace math {
  */
 template <typename T, typename = require_eigen_t<T>>
 inline auto diagonal(const T& m) {
-  return m.diagonal().eval();
+  return m.diagonal();
 }
 
 }  // namespace math

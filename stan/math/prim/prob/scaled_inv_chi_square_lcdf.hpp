@@ -10,6 +10,7 @@
 #include <stan/math/prim/fun/grad_reg_inc_gamma.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/tgamma.hpp>
@@ -27,31 +28,37 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lcdf(
   using std::exp;
   using std::log;
   using std::pow;
+  using T_y_ref = ref_type_t<T_y>;
+  using T_nu_ref = ref_type_t<T_dof>;
+  using T_s_ref = ref_type_t<T_scale>;
   static const char* function = "scaled_inv_chi_square_lcdf";
-  check_not_nan(function, "Random variable", y);
-  check_nonnegative(function, "Random variable", y);
-  check_positive_finite(function, "Degrees of freedom parameter", nu);
-  check_positive_finite(function, "Scale parameter", s);
   check_consistent_sizes(function, "Random variable", y,
                          "Degrees of freedom parameter", nu, "Scale parameter",
                          s);
+  T_y_ref y_ref = y;
+  T_nu_ref nu_ref = nu;
+  T_s_ref s_ref = s;
+  check_nonnegative(function, "Random variable", y_ref);
+  check_positive_finite(function, "Degrees of freedom parameter", nu_ref);
+  check_positive_finite(function, "Scale parameter", s_ref);
 
   if (size_zero(y, nu, s)) {
     return 0;
   }
 
   T_partials_return P(0.0);
-  operands_and_partials<T_y, T_dof, T_scale> ops_partials(y, nu, s);
+  operands_and_partials<T_y_ref, T_nu_ref, T_s_ref> ops_partials(y_ref, nu_ref,
+                                                                 s_ref);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_dof> nu_vec(nu);
-  scalar_seq_view<T_scale> s_vec(s);
+  scalar_seq_view<T_y_ref> y_vec(y_ref);
+  scalar_seq_view<T_nu_ref> nu_vec(nu_ref);
+  scalar_seq_view<T_s_ref> s_vec(s_ref);
   size_t N = max_size(y, nu, s);
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::math::size(y); i++) {
-    if (value_of(y_vec[i]) == 0) {
+    if (y_vec.val(i) == 0) {
       return ops_partials.build(negative_infinity());
     }
   }
@@ -63,7 +70,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lcdf(
 
   if (!is_constant_all<T_dof>::value) {
     for (size_t i = 0; i < stan::math::size(nu); i++) {
-      const T_partials_return half_nu_dbl = 0.5 * value_of(nu_vec[i]);
+      const T_partials_return half_nu_dbl = 0.5 * nu_vec.val(i);
       gamma_vec[i] = tgamma(half_nu_dbl);
       digamma_vec[i] = digamma(half_nu_dbl);
     }
@@ -72,14 +79,14 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lcdf(
   for (size_t n = 0; n < N; n++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
-    if (value_of(y_vec[n]) == INFTY) {
+    if (y_vec.val(n) == INFTY) {
       continue;
     }
 
-    const T_partials_return y_dbl = value_of(y_vec[n]);
+    const T_partials_return y_dbl = y_vec.val(n);
     const T_partials_return y_inv_dbl = 1.0 / y_dbl;
-    const T_partials_return half_nu_dbl = 0.5 * value_of(nu_vec[n]);
-    const T_partials_return s_dbl = value_of(s_vec[n]);
+    const T_partials_return half_nu_dbl = 0.5 * nu_vec.val(n);
+    const T_partials_return s_dbl = s_vec.val(n);
     const T_partials_return half_s2_overx_dbl = 0.5 * s_dbl * s_dbl * y_inv_dbl;
     const T_partials_return half_nu_s2_overx_dbl
         = 2.0 * half_nu_dbl * half_s2_overx_dbl;

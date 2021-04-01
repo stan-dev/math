@@ -3,12 +3,15 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
@@ -156,9 +159,9 @@ return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
   T_partials_return logp(0);
   if (include_summand<propto>::value) {
     if (is_vector<T_y>::value) {
-      logp -= sum(lgamma(y_arr + 1));
+      logp -= sum(lgamma(y_arr + 1.0));
     } else {
-      logp -= sum(lgamma(y_arr + 1)) * N_instances;
+      logp -= sum(lgamma(y_arr + 1.0)) * N_instances;
     }
   }
   if (include_summand<propto, T_precision>::value) {

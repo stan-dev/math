@@ -14,16 +14,17 @@ namespace math {
  * @param L Matrix to multiply.
  * @return The lower triangular values in L times their own
  * transpose.
- * @throw std::domain_error If the input matrix is not square.
  */
-inline matrix_d multiply_lower_tri_self_transpose(const matrix_d& L) {
+template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr,
+          require_not_st_autodiff<EigMat>* = nullptr>
+inline matrix_d multiply_lower_tri_self_transpose(const EigMat& L) {
   int K = L.rows();
   if (K == 0) {
     return L;
   }
   if (K == 1) {
     matrix_d result(1, 1);
-    result(0) = square(L(0));  // first elt, so don't need double idx
+    result.coeffRef(0) = square(L.coeff(0, 0));
     return result;
   }
   int J = L.cols();

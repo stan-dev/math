@@ -23,7 +23,6 @@
 #include <stan/math/prim/err/check_matching_dims.hpp>
 #include <stan/math/prim/err/check_matching_sizes.hpp>
 #include <stan/math/prim/err/check_multiplicable.hpp>
-#include <stan/math/prim/err/check_nonempty.hpp>
 #include <stan/math/prim/err/check_nonnegative.hpp>
 #include <stan/math/prim/err/check_nonzero_size.hpp>
 #include <stan/math/prim/err/check_not_nan.hpp>
@@ -76,5 +75,7 @@
 #include <stan/math/prim/err/throw_domain_error.hpp>
 #include <stan/math/prim/err/throw_domain_error_vec.hpp>
 #include <stan/math/prim/err/validate_non_negative_index.hpp>
+#include <stan/math/prim/err/validate_positive_index.hpp>
+#include <stan/math/prim/err/validate_unit_vector_index.hpp>
 
 #endif
