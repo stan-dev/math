@@ -45,26 +45,19 @@ inline double quantile(const T& xs, const double p) {
   using boost::accumulators::tag::tail_quantile;
 
   check_not_nan("quantile", "container argument", xs);
-  check_bounded("quantile", "p", p, 0, 1);
+  check_bounded("sort_asc", "p", p, 0, 1);
+  size_t n_sample = xs.size();
+  if (n_sample == 1)
+    return xs[0];
+  if (p == 0.)
+    return *std::min_element(xs.begin(), xs.end());
+  if (p == 1.)
+    return *std::max_element(xs.begin(), xs.end());
+  size_t loc = std::floor(xs.size() * p);
 
-  const auto& x = as_array_or_scalar(xs);
-
-  double M = x.rows();
-
-  size_t cache_size = M;
-
-  if (p < 0.5) {
-    accumulator_set<double, stats<tail_quantile<left> > > acc(
-        tail<left>::cache_size = cache_size);
-    for (int i = 0; i < M; i++)
-      acc(x(i));
-    return quantile(acc, quantile_probability = p);
-  }
-  accumulator_set<double, stats<tail_quantile<right> > > acc(
-      tail<right>::cache_size = cache_size);
-  for (int i = 0; i < M; i++)
-    acc(x(i));
-  return quantile(acc, quantile_probability = p);
+  std::vector<T> sorted(loc + 1);
+  std::partial_sort_copy(xs.begin(), xs.end(), sorted.begin(), sorted.end());
+  return sorted[loc];
 }
 
 }  // namespace math
