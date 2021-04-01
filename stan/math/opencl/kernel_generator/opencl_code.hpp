@@ -227,11 +227,11 @@ class opencl_code_ : public operation_cl_base {
    * expression. Some subclasses may need to override this.
    * @return number of rows
    */
-  template <std::enable_if_t<(sizeof...(T_arguments) > 0)>* = nullptr>
+  template <int N = sizeof...(T_arguments), std::enable_if_t<(N > 0)>* = nullptr>
   auto rows() const {
     return impl_->rows();
   }
-  template <std::enable_if_t<(sizeof...(T_arguments) == 0)>* = nullptr>
+  template <int N = sizeof...(T_arguments), std::enable_if_t<(N == 0)>* = nullptr>
   auto rows() const {
     return -1;
   }
@@ -241,11 +241,11 @@ class opencl_code_ : public operation_cl_base {
    * expression. Some subclasses may need to override this.
    * @return number of columns
    */
-  template <std::enable_if_t<(sizeof...(T_arguments) > 0)>* = nullptr>
+  template <int N = sizeof...(T_arguments), std::enable_if_t<(N > 0)>* = nullptr>
   auto cols() const {
     return impl_->cols();
   }
-  template <std::enable_if_t<(sizeof...(T_arguments) == 0)>* = nullptr>
+  template <int N = sizeof...(T_arguments), std::enable_if_t<(N == 0)>* = nullptr>
   auto cols() const {
     return -1;
   }
@@ -255,11 +255,11 @@ class opencl_code_ : public operation_cl_base {
    * equals number of rows of the result.
    * @return number of rows
    */
-  template <std::enable_if_t<(sizeof...(T_arguments) > 0)>* = nullptr>
+  template <int N = sizeof...(T_arguments), std::enable_if_t<(N > 0)>* = nullptr>
   auto thread_rows() const {
     return impl_->thread_rows();
   }
-  template <std::enable_if_t<(sizeof...(T_arguments) == 0)>* = nullptr>
+  template <int N = sizeof...(T_arguments), std::enable_if_t<(N == 0)>* = nullptr>
   auto thread_rows() const {
     return -1;
   }
@@ -269,11 +269,11 @@ class opencl_code_ : public operation_cl_base {
    * this equals number of cols of the result.
    * @return number of columns
    */
-  template <std::enable_if_t<(sizeof...(T_arguments) > 0)>* = nullptr>
+  template <int N = sizeof...(T_arguments), std::enable_if_t<(N > 0)>* = nullptr>
   auto thread_cols() const {
     return impl_->thread_cols();
   }
-  template <std::enable_if_t<(sizeof...(T_arguments) == 0)>* = nullptr>
+  template <int N = sizeof...(T_arguments), std::enable_if_t<(N == 0)>* = nullptr>
   auto thread_cols() const {
     return -1;
   }
