@@ -31,7 +31,7 @@ inline double quantile(const T& xs, const double p) {
   check_bounded("quantile", "p", p, 0, 1);
   size_t n_sample = xs.size();
 
-  auto& x = as_array_or_scalar(xs);
+  Eigen::VectorXd x = as_array_or_scalar(xs);
 
   if (n_sample == 1)
     return x[0];
