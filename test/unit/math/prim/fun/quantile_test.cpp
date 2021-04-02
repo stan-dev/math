@@ -39,7 +39,7 @@ void test_quantile_double() {
 }
 
 TEST(MathFunctions, quantileStdVecDouble) {
-  test_quantile_double<std::vector<double> >();
+  test_quantile_double<std::vector<double>>();
 }
 
 TEST(MathFunctions, quantileEigenVectorXd) {
@@ -69,4 +69,66 @@ TEST(MathFunctions, quantileStdVecInt) {
   EXPECT_FLOAT_EQ(quantile(v, 0.8), 3.8);
   EXPECT_FLOAT_EQ(quantile(v, 0.9), 4.4);
   EXPECT_FLOAT_EQ(quantile(v, 1), 5.0);
+}
+
+template <typename T, typename Tp, stan::require_all_vector_t<T, Tp>* = nullptr>
+void test_quantile_double() {
+  using stan::math::index_type_t;
+  using stan::math::quantile;
+
+  T v(5);
+  v[0] = -0.07;
+  v[1] = 0.35;
+  v[2] = 2.65;
+  v[3] = -0.28;
+  v[4] = 1.23;
+
+  Tp p(4);
+  p[0] = 0;
+  p[1] = 0.1;
+  p[2] = 0.2;
+  p[3] = 1;
+
+  Eigen::ArrayXd ret = quantile(v, p);
+
+  EXPECT_FLOAT_EQ(ret[0], -0.28);
+  EXPECT_FLOAT_EQ(ret[1], -0.196);
+  EXPECT_FLOAT_EQ(ret[2], -0.112);
+  EXPECT_FLOAT_EQ(ret[3], 2.65);
+}
+
+TEST(MathFunctions, quantileStdVecDoubleStdVecDouble) {
+  test_quantile_double<std::vector<double>, std::vector<double>>();
+}
+
+TEST(MathFunctions, quantileEigenVectorXdStdVecDouble) {
+  test_quantile_double<Eigen::VectorXd, std::vector<double>>();
+}
+
+TEST(MathFunctions, quantileEigenRowVectorXdStdVecDouble) {
+  test_quantile_double<Eigen::RowVectorXd, std::vector<double>>();
+}
+
+TEST(MathFunctions, quantileStdVecDoubleVectorXd) {
+  test_quantile_double<std::vector<double>, Eigen::VectorXd>();
+}
+
+TEST(MathFunctions, quantileEigenVectorXdVectorXd) {
+  test_quantile_double<Eigen::VectorXd, Eigen::VectorXd>();
+}
+
+TEST(MathFunctions, quantileEigenRowVectorXdVectorXd) {
+  test_quantile_double<Eigen::RowVectorXd, Eigen::VectorXd>();
+}
+
+TEST(MathFunctions, quantileStdVecDoubleRowVectorXd) {
+  test_quantile_double<std::vector<double>, Eigen::RowVectorXd>();
+}
+
+TEST(MathFunctions, quantileEigenVectorXdRowVectorXd) {
+  test_quantile_double<Eigen::VectorXd, Eigen::RowVectorXd>();
+}
+
+TEST(MathFunctions, quantileEigenRowVectorXdRowVectorXd) {
+  test_quantile_double<Eigen::RowVectorXd, Eigen::RowVectorXd>();
 }
