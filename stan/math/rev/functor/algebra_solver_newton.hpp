@@ -81,15 +81,9 @@ Eigen::VectorXd algebra_solver_newton(
                        value_of(f(x_eval, y, dat, dat_int, msgs)),
                        "the vector of unknowns, x,", x);
 
-  return kinsol_solve(algebra_solver_adapter2<F>(f),
-    value_of(x_eval),
-    scaling_step_size,
-    function_tolerance,
-    max_num_steps,
-    1,
-    10,
-    KIN_LINESEARCH,
-    msgs, y, dat, dat_int);
+  return kinsol_solve(algebra_solver_adapter2<F>(f), value_of(x_eval),
+                      scaling_step_size, function_tolerance, max_num_steps, 1,
+                      10, KIN_LINESEARCH, msgs, y, dat, dat_int);
 }
 
 /**

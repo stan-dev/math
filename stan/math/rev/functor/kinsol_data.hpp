@@ -40,7 +40,8 @@ class kinsol_system_data {
   void* kinsol_memory_;
 
   /* Constructor */
-  kinsol_system_data(const F1& f, const Eigen::VectorXd& x, std::ostream* msgs, const Args&... args)
+  kinsol_system_data(const F1& f, const Eigen::VectorXd& x, std::ostream* msgs,
+                     const Args&... args)
       : f_(f),
         x_(x),
         N_(x.size()),
@@ -63,13 +64,17 @@ class kinsol_system_data {
     const system_data* explicit_system
         = static_cast<const system_data*>(user_data);
 
-    Eigen::VectorXd x_eigen(Eigen::Map<Eigen::VectorXd>(NV_DATA_S(x), explicit_system->N_));
+    Eigen::VectorXd x_eigen(
+        Eigen::Map<Eigen::VectorXd>(NV_DATA_S(x), explicit_system->N_));
 
-    Eigen::Map<Eigen::VectorXd> f_eval_map(N_VGetArrayPointer(f_eval), explicit_system->N_);
+    Eigen::Map<Eigen::VectorXd> f_eval_map(N_VGetArrayPointer(f_eval),
+                                           explicit_system->N_);
 
-    f_eval_map = apply([&](const auto&... args) {
+    f_eval_map = apply(
+        [&](const auto&... args) {
           return explicit_system->f_(x_eigen, explicit_system->msgs_, args...);
-        }, explicit_system->args_tuple);
+        },
+        explicit_system->args_tuple);
 
     return 0;
   }
@@ -91,13 +96,17 @@ class kinsol_system_data {
     const system_data* explicit_system
         = static_cast<const system_data*>(user_data);
 
-    Eigen::VectorXd x_eigen(Eigen::Map<Eigen::VectorXd>(NV_DATA_S(x), explicit_system->N_));
-    Eigen::Map<Eigen::VectorXd> f_eval_map(N_VGetArrayPointer(f_eval), explicit_system->N_);
+    Eigen::VectorXd x_eigen(
+        Eigen::Map<Eigen::VectorXd>(NV_DATA_S(x), explicit_system->N_));
+    Eigen::Map<Eigen::VectorXd> f_eval_map(N_VGetArrayPointer(f_eval),
+                                           explicit_system->N_);
 
     auto myfunc = [&](const auto& x) {
-      return apply([&](const auto&... args) {
-        return explicit_system->f_(x, explicit_system->msgs_, args...);
-      }, explicit_system->args_tuple);
+      return apply(
+          [&](const auto&... args) {
+            return explicit_system->f_(x, explicit_system->msgs_, args...);
+          },
+          explicit_system->args_tuple);
     };
 
     Eigen::MatrixXd Jf_x;
