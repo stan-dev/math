@@ -62,9 +62,7 @@ class opencl_code_output
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
    * @param view_handled whether whether caller already handled matrix view
-   * @param var_name_condition variable name of the condition expression
-   * @param var_name_else variable name of the then expression
-   * @param var_name_then variable name of the else expression
+   * @param dummy_var_name_code variable name of the code operation (unused)
    * @return part of kernel with code for this expression
    */
   inline kernel_parts generate(const std::string& row_index_name,
@@ -102,11 +100,11 @@ class opencl_code_impl
 
   /**
    * Constructor
-   * @param condition condition expression
-   * @param then then expression
-   * @param els else expression
+   * @param names tuple of names of the input variables (that hold values of
+   * argument expressions)
+   * @param arguments arguments to this operation
    */
-  opencl_code_impl(names_tuple names, T_arguments&&... arguments)
+  explicit opencl_code_impl(names_tuple names, T_arguments&&... arguments)
       : base(std::forward<T_arguments>(arguments)...), names_(names) {}
 
   /**
@@ -115,10 +113,7 @@ class opencl_code_impl
    * @param col_index_name column index variable name
    * @param view_handled whether whether caller already handled matrix
    * view
-   * @param var_name_condition variable name of the condition
-   * expression
-   * @param var_name_else variable name of the then expression
-   * @param var_name_then variable name of the else expression
+   * @param var_names variable names of the argument expressions
    * @return part of kernel with code for this expression
    */
   inline kernel_parts generate(
@@ -161,10 +156,10 @@ class opencl_code_ : public operation_cl_base {
    * argument expressions)
    * @param arguments arguments to this operation
    */
-  opencl_code_(const names_tuple& names, T_arguments&&... arguments)
+  explicit opencl_code_(const names_tuple& names, T_arguments&&... arguments)
       : impl_(
-          std::make_shared<internal::opencl_code_impl<Code, T_arguments...>>(
-              names, std::forward<T_arguments>(arguments)...)),
+            std::make_shared<internal::opencl_code_impl<Code, T_arguments...>>(
+                names, std::forward<T_arguments>(arguments)...)),
         var_name_(impl_->var_name_) {}
 
   /**
@@ -232,11 +227,13 @@ class opencl_code_ : public operation_cl_base {
    * expression. Some subclasses may need to override this.
    * @return number of rows
    */
-  template <std::enable_if_t<(sizeof...(T_arguments) > 0)>* = nullptr>
+  template <int N = sizeof...(T_arguments),
+            std::enable_if_t<(N > 0)>* = nullptr>
   auto rows() const {
     return impl_->rows();
   }
-  template <std::enable_if_t<(sizeof...(T_arguments) == 0)>* = nullptr>
+  template <int N = sizeof...(T_arguments),
+            std::enable_if_t<(N == 0)>* = nullptr>
   auto rows() const {
     return -1;
   }
@@ -246,11 +243,13 @@ class opencl_code_ : public operation_cl_base {
    * expression. Some subclasses may need to override this.
    * @return number of columns
    */
-  template <std::enable_if_t<(sizeof...(T_arguments) > 0)>* = nullptr>
+  template <int N = sizeof...(T_arguments),
+            std::enable_if_t<(N > 0)>* = nullptr>
   auto cols() const {
     return impl_->cols();
   }
-  template <std::enable_if_t<(sizeof...(T_arguments) == 0)>* = nullptr>
+  template <int N = sizeof...(T_arguments),
+            std::enable_if_t<(N == 0)>* = nullptr>
   auto cols() const {
     return -1;
   }
@@ -260,11 +259,13 @@ class opencl_code_ : public operation_cl_base {
    * equals number of rows of the result.
    * @return number of rows
    */
-  template <std::enable_if_t<(sizeof...(T_arguments) > 0)>* = nullptr>
+  template <int N = sizeof...(T_arguments),
+            std::enable_if_t<(N > 0)>* = nullptr>
   auto thread_rows() const {
     return impl_->thread_rows();
   }
-  template <std::enable_if_t<(sizeof...(T_arguments) == 0)>* = nullptr>
+  template <int N = sizeof...(T_arguments),
+            std::enable_if_t<(N == 0)>* = nullptr>
   auto thread_rows() const {
     return -1;
   }
@@ -274,11 +275,13 @@ class opencl_code_ : public operation_cl_base {
    * this equals number of cols of the result.
    * @return number of columns
    */
-  template <std::enable_if_t<(sizeof...(T_arguments) > 0)>* = nullptr>
+  template <int N = sizeof...(T_arguments),
+            std::enable_if_t<(N > 0)>* = nullptr>
   auto thread_cols() const {
     return impl_->thread_cols();
   }
-  template <std::enable_if_t<(sizeof...(T_arguments) == 0)>* = nullptr>
+  template <int N = sizeof...(T_arguments),
+            std::enable_if_t<(N == 0)>* = nullptr>
   auto thread_cols() const {
     return -1;
   }
@@ -337,11 +340,12 @@ class opencl_code_ : public operation_cl_base {
  */
 template <const char* Code, typename... T_arguments,
           require_all_kernel_expressions_t<T_arguments...>* = nullptr>
-inline opencl_code_<Code, as_operation_cl_t<T_arguments>...> opencl_code(
+inline auto opencl_code(
     std::tuple<typename std::pair<const char*, T_arguments>::first_type...>
         names,
     T_arguments&&... arguments) {
-  return {names, as_operation_cl(std::forward<T_arguments>(arguments))...};
+  return opencl_code_<Code, as_operation_cl_t<T_arguments>...>(
+      names, as_operation_cl(std::forward<T_arguments>(arguments))...);
 }
 
 /** @}*/

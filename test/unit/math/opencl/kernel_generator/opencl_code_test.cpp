@@ -35,26 +35,23 @@ TEST(KernelGenerator, opencl_code_test) {
 
   MatrixXd res1 = stan::math::from_matrix_cl(res1_cl);
   MatrixXd res2 = stan::math::from_matrix_cl(res2_cl);
-  EXPECT_MATRIX_NEAR(m1+m2, res1, 1e-9);
-  EXPECT_MATRIX_NEAR(m1-m2, res2, 1e-9);
+  EXPECT_MATRIX_NEAR(m1 + m2, res1, 1e-9);
+  EXPECT_MATRIX_NEAR(m1 - m2, res2, 1e-9);
 }
 
-const char opencl_code_constant[] = STRINGIFY(
-      int res = 123450;
-      );
+const char opencl_code_constant[] = STRINGIFY(int res = 123450;);
 
 TEST(KernelGenerator, opencl_code_no_inputs_test) {
   using Eigen::MatrixXi;
   using Eigen::VectorXi;
   using stan::math::matrix_cl;
   VectorXi m(6, 1);
-  m << 1,2,3,4,5,6;
+  m << 1, 2, 3, 4, 5, 6;
   VectorXi correct = m.array() + 123450;
 
   matrix_cl<int> m_cl(m);
 
-  auto code = stan::math::opencl_code<opencl_code_constant>(
-      std::make_tuple());
+  auto code = stan::math::opencl_code<opencl_code_constant>(std::make_tuple());
 
   matrix_cl<int> res_cl = m_cl + code.output<int>("res");
 
