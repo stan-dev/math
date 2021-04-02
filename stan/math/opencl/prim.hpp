@@ -213,6 +213,9 @@
 #include <stan/math/opencl/prim/sub_row.hpp>
 #include <stan/math/opencl/prim/std_normal_lpdf.hpp>
 #include <stan/math/opencl/prim/student_t_lpdf.hpp>
+#include <stan/math/opencl/prim/skew_double_exponential_cdf.hpp>
+#include <stan/math/opencl/prim/skew_double_exponential_lcdf.hpp>
+#include <stan/math/opencl/prim/skew_double_exponential_lccdf.hpp>
 #include <stan/math/opencl/prim/skew_normal_lpdf.hpp>
 #include <stan/math/opencl/prim/sum.hpp>
 #include <stan/math/opencl/prim/symmetrize_from_lower_tri.hpp>
