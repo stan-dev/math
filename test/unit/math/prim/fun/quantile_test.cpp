@@ -46,3 +46,21 @@ TEST(MathFunctions, quantileEigenVectorXd) {
 TEST(MathFunctions, quantileEigenRowVectorXd) {
   test_quantile_double<Eigen::RowVectorXd>();
 }
+
+TEST(MathFunctions, quantileStdVecInt) {
+  using stan::math::quantile;
+
+  std::vector<int> v{-1, 3, 5, -10};
+
+  EXPECT_FLOAT_EQ(quantile(v, 0), -10.0);
+  EXPECT_FLOAT_EQ(quantile(v, 0.1), -7.3);
+  EXPECT_FLOAT_EQ(quantile(v, 0.2), -4.6);
+  EXPECT_FLOAT_EQ(quantile(v, 0.3), -1.9);
+  EXPECT_FLOAT_EQ(quantile(v, 0.4), -0.2);
+  EXPECT_FLOAT_EQ(quantile(v, 0.5), 1.0);
+  EXPECT_FLOAT_EQ(quantile(v, 0.6), 2.2);
+  EXPECT_FLOAT_EQ(quantile(v, 0.7), 3.2);
+  EXPECT_FLOAT_EQ(quantile(v, 0.8), 3.8);
+  EXPECT_FLOAT_EQ(quantile(v, 0.9), 4.4);
+  EXPECT_FLOAT_EQ(quantile(v, 1), 5.0);
+}
