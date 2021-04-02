@@ -15,7 +15,18 @@
 
 namespace stan {
 namespace math {
+template <typename F>
+struct algebra_solver_adapter2 {
+  const F& f_;
 
+  explicit algebra_solver_adapter2(const F& f) : f_(f) {}
+
+  template <typename T1, typename T2, typename T3, typename T4>
+  auto operator()(const T1& x, std::ostream* msgs, const T2& y, const T3& dat,
+                  const T4& dat_int) const {
+    return f_(x, y, dat, dat_int, msgs);
+  }
+};
 /**
  * Return the solution to the specified system of algebraic
  * equations given an initial guess, and parameters and data,
@@ -70,8 +81,15 @@ Eigen::VectorXd algebra_solver_newton(
                        value_of(f(x_eval, y, dat, dat_int, msgs)),
                        "the vector of unknowns, x,", x);
 
-  return kinsol_solve(f, value_of(x_eval), y, dat, dat_int, 0,
-                      scaling_step_size, function_tolerance, max_num_steps);
+  return kinsol_solve(algebra_solver_adapter2<F>(f),
+    value_of(x_eval),
+    scaling_step_size,
+    function_tolerance,
+    max_num_steps,
+    1,
+    10,
+    KIN_LINESEARCH,
+    msgs, y, dat, dat_int);
 }
 
 /**
