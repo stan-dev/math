@@ -9,6 +9,9 @@ void test_quantile_double() {
   using stan::math::index_type_t;
   using stan::math::quantile;
 
+  T c0(0);
+  EXPECT_THROW(quantile(c0, 0.3), std::invalid_argument);
+
   T c(1);
   c[0] = 1.7;
   EXPECT_EQ(quantile(c, 0), 1.7);
@@ -49,6 +52,9 @@ TEST(MathFunctions, quantileEigenRowVectorXd) {
 
 TEST(MathFunctions, quantileStdVecInt) {
   using stan::math::quantile;
+
+  std::vector<int> y0;
+  EXPECT_THROW(quantile(y0, 0.7), std::invalid_argument);
 
   std::vector<int> v{-1, 3, 5, -10};
 

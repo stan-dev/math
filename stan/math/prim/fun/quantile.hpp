@@ -29,6 +29,7 @@ template <typename T, require_vector_t<T>* = nullptr>
 inline double quantile(const T& xs, const double p) {
   check_not_nan("quantile", "container argument", xs);
   check_bounded("quantile", "p", p, 0, 1);
+  check_nonzero_size("quantile", "xs", xs);
   size_t n_sample = xs.size();
 
   Eigen::VectorXd x = as_array_or_scalar(xs);
