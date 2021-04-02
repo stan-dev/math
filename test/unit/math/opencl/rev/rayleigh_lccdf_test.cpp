@@ -36,8 +36,10 @@ TEST(ProbDistributionsRayleighLccdf, error_checking) {
   EXPECT_THROW(stan::math::rayleigh_lccdf(y_cl, mu_size_cl),
                std::invalid_argument);
 
-  EXPECT_THROW(stan::math::rayleigh_lccdf(y_value_cl, mu_cl), std::domain_error);
-  EXPECT_THROW(stan::math::rayleigh_lccdf(y_cl, mu_value_cl), std::domain_error);
+  EXPECT_THROW(stan::math::rayleigh_lccdf(y_value_cl, mu_cl),
+               std::domain_error);
+  EXPECT_THROW(stan::math::rayleigh_lccdf(y_cl, mu_value_cl),
+               std::domain_error);
 }
 
 auto rayleigh_lccdf_functor = [](const auto& y, const auto& mu) {

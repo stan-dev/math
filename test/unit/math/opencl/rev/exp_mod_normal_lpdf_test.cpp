@@ -124,8 +124,7 @@ TEST(ProbDistributionsExpModNormal, opencl_matches_cpu_small) {
       sigma.transpose().eval(), tau.transpose().eval());
   stan::math::test::compare_cpu_opencl_prim_rev(
       exp_mod_normal_lpdf_functor_propto, y.transpose().eval(),
-      mu.transpose().eval(), sigma.transpose().eval(),
-      tau.transpose().eval());
+      mu.transpose().eval(), sigma.transpose().eval(), tau.transpose().eval());
 }
 
 TEST(ProbDistributionsExpModNormal, opencl_broadcast_y) {
@@ -242,8 +241,7 @@ TEST(ProbDistributionsExpModNormal, opencl_matches_cpu_big) {
       sigma.transpose().eval(), tau.transpose().eval());
   stan::math::test::compare_cpu_opencl_prim_rev(
       exp_mod_normal_lpdf_functor_propto, y.transpose().eval(),
-      mu.transpose().eval(), sigma.transpose().eval(),
-      tau.transpose().eval());
+      mu.transpose().eval(), sigma.transpose().eval(), tau.transpose().eval());
 }
 
 #endif

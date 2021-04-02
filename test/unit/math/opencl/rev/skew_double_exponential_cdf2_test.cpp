@@ -5,7 +5,6 @@
 #include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
-
 auto skew_double_exponential_cdf_functor
     = [](const auto& y, const auto& mu, const auto& sigma, const auto& tau) {
         return stan::math::skew_double_exponential_cdf(y, mu, sigma, tau);

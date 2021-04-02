@@ -95,8 +95,9 @@ skew_double_exponential_cdf(const T_y_cl& y, const T_loc_cl& mu,
         * select(cond, elt_multiply(inv_sigma, tau_minus_1),
                  elt_multiply(elt_multiply(tau_minus_1, tau_val),
                               elt_multiply(inv_sigma, inv_exp_2_expo_tau)));
-  auto sigma_deriv1 = select(cond, 2.0 * elt_multiply(inv_sigma, expo),
-                            elt_divide(elt_multiply(-y_deriv1, expo), tau_val));
+  auto sigma_deriv1
+      = select(cond, 2.0 * elt_multiply(inv_sigma, expo),
+               elt_divide(elt_multiply(-y_deriv1, expo), tau_val));
   auto tau_deriv1 = select(
       cond,
       elt_divide(1.0, tau_val)
@@ -111,8 +112,7 @@ skew_double_exponential_cdf(const T_y_cl& y, const T_loc_cl& mu,
   matrix_cl<double> tau_deriv_cl;
 
   results(check_y_not_nan, check_mu_finite, check_sigma_positive_finite,
-          check_tau_bounded, cdf_cl, mu_deriv_cl,
-          sigma_deriv_cl, tau_deriv_cl)
+          check_tau_bounded, cdf_cl, mu_deriv_cl, sigma_deriv_cl, tau_deriv_cl)
       = expressions(
           y_not_nan_expr, mu_finite_expr, sigma_positive_finite_expr,
           tau_bounded_expr, cdf_expr,

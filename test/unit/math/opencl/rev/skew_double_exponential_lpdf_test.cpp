@@ -61,47 +61,47 @@ TEST(ProbDistributionsSkewDoubleExponential, error_checking) {
   EXPECT_NO_THROW(
       stan::math::skew_double_exponential_lpdf(y_cl, mu_cl, sigma_cl, tau_cl));
 
-  EXPECT_THROW(
-      stan::math::skew_double_exponential_lpdf(y_size_cl, mu_cl, sigma_cl, tau_cl),
-      std::invalid_argument);
-  EXPECT_THROW(
-      stan::math::skew_double_exponential_lpdf(y_cl, mu_size_cl, sigma_cl, tau_cl),
-      std::invalid_argument);
-  EXPECT_THROW(
-      stan::math::skew_double_exponential_lpdf(y_cl, mu_cl, sigma_size_cl, tau_cl),
-      std::invalid_argument);
-  EXPECT_THROW(
-      stan::math::skew_double_exponential_lpdf(y_cl, mu_cl, sigma_cl, tau_size_cl),
-      std::invalid_argument);
+  EXPECT_THROW(stan::math::skew_double_exponential_lpdf(y_size_cl, mu_cl,
+                                                        sigma_cl, tau_cl),
+               std::invalid_argument);
+  EXPECT_THROW(stan::math::skew_double_exponential_lpdf(y_cl, mu_size_cl,
+                                                        sigma_cl, tau_cl),
+               std::invalid_argument);
+  EXPECT_THROW(stan::math::skew_double_exponential_lpdf(y_cl, mu_cl,
+                                                        sigma_size_cl, tau_cl),
+               std::invalid_argument);
+  EXPECT_THROW(stan::math::skew_double_exponential_lpdf(y_cl, mu_cl, sigma_cl,
+                                                        tau_size_cl),
+               std::invalid_argument);
 
-  EXPECT_THROW(
-      stan::math::skew_double_exponential_lpdf(y_value_cl, mu_cl, sigma_cl, tau_cl),
-      std::domain_error);
-  EXPECT_THROW(
-      stan::math::skew_double_exponential_lpdf(y_cl, mu_value_cl, sigma_cl, tau_cl),
-      std::domain_error);
-  EXPECT_THROW(
-      stan::math::skew_double_exponential_lpdf(y_cl, mu_cl, sigma_value1_cl, tau_cl),
-      std::domain_error);
-  EXPECT_THROW(
-      stan::math::skew_double_exponential_lpdf(y_cl, mu_cl, sigma_cl, tau_value1_cl),
-      std::domain_error);
-  EXPECT_THROW(
-      stan::math::skew_double_exponential_lpdf(y_cl, mu_cl, sigma_value2_cl, tau_cl),
-      std::domain_error);
-  EXPECT_THROW(
-      stan::math::skew_double_exponential_lpdf(y_cl, mu_cl, sigma_cl, tau_value2_cl),
-      std::domain_error);
+  EXPECT_THROW(stan::math::skew_double_exponential_lpdf(y_value_cl, mu_cl,
+                                                        sigma_cl, tau_cl),
+               std::domain_error);
+  EXPECT_THROW(stan::math::skew_double_exponential_lpdf(y_cl, mu_value_cl,
+                                                        sigma_cl, tau_cl),
+               std::domain_error);
+  EXPECT_THROW(stan::math::skew_double_exponential_lpdf(
+                   y_cl, mu_cl, sigma_value1_cl, tau_cl),
+               std::domain_error);
+  EXPECT_THROW(stan::math::skew_double_exponential_lpdf(y_cl, mu_cl, sigma_cl,
+                                                        tau_value1_cl),
+               std::domain_error);
+  EXPECT_THROW(stan::math::skew_double_exponential_lpdf(
+                   y_cl, mu_cl, sigma_value2_cl, tau_cl),
+               std::domain_error);
+  EXPECT_THROW(stan::math::skew_double_exponential_lpdf(y_cl, mu_cl, sigma_cl,
+                                                        tau_value2_cl),
+               std::domain_error);
 }
 
 auto skew_double_exponential_lpdf_functor
     = [](const auto& y, const auto& mu, const auto& sigma, const auto& tau) {
         return stan::math::skew_double_exponential_lpdf(y, mu, sigma, tau);
       };
-auto skew_double_exponential_lpdf_functor_propto
-    = [](const auto& y, const auto& mu, const auto& sigma, const auto& tau) {
-        return stan::math::skew_double_exponential_lpdf<true>(y, mu, sigma, tau);
-      };
+auto skew_double_exponential_lpdf_functor_propto =
+    [](const auto& y, const auto& mu, const auto& sigma, const auto& tau) {
+      return stan::math::skew_double_exponential_lpdf<true>(y, mu, sigma, tau);
+    };
 
 TEST(ProbDistributionsSkewDoubleExponential, opencl_matches_cpu_small) {
   int N = 3;
@@ -115,17 +115,16 @@ TEST(ProbDistributionsSkewDoubleExponential, opencl_matches_cpu_small) {
   Eigen::VectorXd tau(N);
   tau << 0.3, 0.8, 0.9;
 
-  stan::math::test::compare_cpu_opencl_prim_rev(skew_double_exponential_lpdf_functor, y,
-                                                mu, sigma, tau);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      skew_double_exponential_lpdf_functor, y, mu, sigma, tau);
   stan::math::test::compare_cpu_opencl_prim_rev(
       skew_double_exponential_lpdf_functor_propto, y, mu, sigma, tau);
   stan::math::test::compare_cpu_opencl_prim_rev(
-      skew_double_exponential_lpdf_functor, y.transpose().eval(), mu.transpose().eval(),
-      sigma.transpose().eval(), tau.transpose().eval());
+      skew_double_exponential_lpdf_functor, y.transpose().eval(),
+      mu.transpose().eval(), sigma.transpose().eval(), tau.transpose().eval());
   stan::math::test::compare_cpu_opencl_prim_rev(
       skew_double_exponential_lpdf_functor_propto, y.transpose().eval(),
-      mu.transpose().eval(), sigma.transpose().eval(),
-      tau.transpose().eval());
+      mu.transpose().eval(), sigma.transpose().eval(), tau.transpose().eval());
 }
 
 TEST(ProbDistributionsSkewDoubleExponential, opencl_broadcast_y) {
@@ -147,8 +146,8 @@ TEST(ProbDistributionsSkewDoubleExponential, opencl_broadcast_y) {
       skew_double_exponential_lpdf_functor, y, mu.transpose().eval(),
       sigma.transpose().eval(), tau);
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
-      skew_double_exponential_lpdf_functor_propto, y, mu, sigma.transpose().eval(),
-      tau.transpose().eval());
+      skew_double_exponential_lpdf_functor_propto, y, mu,
+      sigma.transpose().eval(), tau.transpose().eval());
 }
 
 TEST(ProbDistributionsSkewDoubleExponential, opencl_broadcast_mu) {
@@ -170,8 +169,8 @@ TEST(ProbDistributionsSkewDoubleExponential, opencl_broadcast_mu) {
       skew_double_exponential_lpdf_functor, y, mu, sigma.transpose().eval(),
       tau.transpose().eval());
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
-      skew_double_exponential_lpdf_functor_propto, y.transpose().eval(), mu, sigma,
-      tau.transpose().eval());
+      skew_double_exponential_lpdf_functor_propto, y.transpose().eval(), mu,
+      sigma, tau.transpose().eval());
 }
 
 TEST(ProbDistributionsSkewDoubleExponential, opencl_broadcast_sigma) {
@@ -213,8 +212,8 @@ TEST(ProbDistributionsSkewDoubleExponential, opencl_broadcast_tau) {
   stan::math::test::test_opencl_broadcasting_prim_rev<3>(
       skew_double_exponential_lpdf_functor_propto, y, mu, sigma, tau);
   stan::math::test::test_opencl_broadcasting_prim_rev<3>(
-      skew_double_exponential_lpdf_functor, y.transpose().eval(), mu.transpose().eval(),
-      sigma, tau);
+      skew_double_exponential_lpdf_functor, y.transpose().eval(),
+      mu.transpose().eval(), sigma, tau);
   stan::math::test::test_opencl_broadcasting_prim_rev<3>(
       skew_double_exponential_lpdf_functor_propto, y, mu.transpose().eval(),
       sigma.transpose().eval(), tau);
@@ -233,17 +232,16 @@ TEST(ProbDistributionsSkewDoubleExponential, opencl_matches_cpu_big) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> tau
       = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
 
-  stan::math::test::compare_cpu_opencl_prim_rev(skew_double_exponential_lpdf_functor, y,
-                                                mu, sigma, tau);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      skew_double_exponential_lpdf_functor, y, mu, sigma, tau);
   stan::math::test::compare_cpu_opencl_prim_rev(
       skew_double_exponential_lpdf_functor_propto, y, mu, sigma, tau);
   stan::math::test::compare_cpu_opencl_prim_rev(
-      skew_double_exponential_lpdf_functor, y.transpose().eval(), mu.transpose().eval(),
-      sigma.transpose().eval(), tau.transpose().eval());
+      skew_double_exponential_lpdf_functor, y.transpose().eval(),
+      mu.transpose().eval(), sigma.transpose().eval(), tau.transpose().eval());
   stan::math::test::compare_cpu_opencl_prim_rev(
       skew_double_exponential_lpdf_functor_propto, y.transpose().eval(),
-      mu.transpose().eval(), sigma.transpose().eval(),
-      tau.transpose().eval());
+      mu.transpose().eval(), sigma.transpose().eval(), tau.transpose().eval());
 }
 
 #endif

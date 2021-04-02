@@ -36,9 +36,10 @@ template <bool propto, typename T_y_cl, typename T_loc_cl, typename T_scale_cl,
               T_y_cl, T_loc_cl, T_scale_cl, T_skewness_cl>* = nullptr,
           require_any_not_stan_scalar_t<T_y_cl, T_loc_cl, T_scale_cl,
                                         T_skewness_cl>* = nullptr>
-return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_skewness_cl> skew_double_exponential_lpdf(
-    const T_y_cl& y, const T_loc_cl& mu, const T_scale_cl& sigma,
-    const T_skewness_cl& tau) {
+return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_skewness_cl>
+skew_double_exponential_lpdf(const T_y_cl& y, const T_loc_cl& mu,
+                             const T_scale_cl& sigma,
+                             const T_skewness_cl& tau) {
   static const char* function = "skew_double_exponential_lpdf(OpenCL)";
   using T_partials_return
       = partials_return_t<T_y_cl, T_loc_cl, T_scale_cl, T_skewness_cl>;
@@ -111,13 +112,12 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_skewness_cl> skew_double_exponenti
   results(check_y_not_nan, check_mu_finite, check_sigma_positive_finite,
           check_tau_bounded, logp_cl, y_deriv_cl, mu_deriv_cl, sigma_deriv_cl,
           tau_deriv_cl)
-      = expressions(
-          y_not_nan_expr, mu_finite_expr, sigma_positive_finite_expr,
-          tau_bounded_expr, logp_expr,
-          calc_if<!is_constant<T_y_cl>::value>(y_deriv),
-          calc_if<!is_constant<T_loc_cl>::value>(mu_deriv),
-          calc_if<!is_constant<T_scale_cl>::value>(sigma_deriv),
-          calc_if<!is_constant<T_skewness_cl>::value>(tau_deriv));
+      = expressions(y_not_nan_expr, mu_finite_expr, sigma_positive_finite_expr,
+                    tau_bounded_expr, logp_expr,
+                    calc_if<!is_constant<T_y_cl>::value>(y_deriv),
+                    calc_if<!is_constant<T_loc_cl>::value>(mu_deriv),
+                    calc_if<!is_constant<T_scale_cl>::value>(sigma_deriv),
+                    calc_if<!is_constant<T_skewness_cl>::value>(tau_deriv));
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 

@@ -49,8 +49,8 @@ TEST(ProbDistributionsSkewDoubleExponentialCdf, error_checking) {
   stan::math::matrix_cl<double> tau_size_cl(tau_size);
   stan::math::matrix_cl<double> tau_value_cl(tau_value);
 
-  EXPECT_NO_THROW(stan::math::skew_double_exponential_cdf(y_cl, mu_cl, sigma_cl,
-                                                          tau_cl));
+  EXPECT_NO_THROW(
+      stan::math::skew_double_exponential_cdf(y_cl, mu_cl, sigma_cl, tau_cl));
 
   EXPECT_THROW(stan::math::skew_double_exponential_cdf(y_size_cl, mu_cl,
                                                        sigma_cl, tau_cl),
@@ -58,8 +58,8 @@ TEST(ProbDistributionsSkewDoubleExponentialCdf, error_checking) {
   EXPECT_THROW(stan::math::skew_double_exponential_cdf(y_cl, mu_size_cl,
                                                        sigma_cl, tau_cl),
                std::invalid_argument);
-  EXPECT_THROW(stan::math::skew_double_exponential_cdf(
-                   y_cl, mu_cl, sigma_size_cl, tau_cl),
+  EXPECT_THROW(stan::math::skew_double_exponential_cdf(y_cl, mu_cl,
+                                                       sigma_size_cl, tau_cl),
                std::invalid_argument);
   EXPECT_THROW(stan::math::skew_double_exponential_cdf(y_cl, mu_cl, sigma_cl,
                                                        tau_size_cl),
@@ -71,8 +71,8 @@ TEST(ProbDistributionsSkewDoubleExponentialCdf, error_checking) {
   EXPECT_THROW(stan::math::skew_double_exponential_cdf(y_cl, mu_value_cl,
                                                        sigma_cl, tau_cl),
                std::domain_error);
-  EXPECT_THROW(stan::math::skew_double_exponential_cdf(
-                   y_cl, mu_cl, sigma_value_cl, tau_cl),
+  EXPECT_THROW(stan::math::skew_double_exponential_cdf(y_cl, mu_cl,
+                                                       sigma_value_cl, tau_cl),
                std::domain_error);
   EXPECT_THROW(stan::math::skew_double_exponential_cdf(y_cl, mu_cl, sigma_cl,
                                                        tau_value_cl),
@@ -101,8 +101,7 @@ TEST(ProbDistributionsSkewDoubleExponentialCdf, opencl_matches_cpu_small) {
       skew_double_exponential_cdf_functor, y, mu, sigma, tau);
   stan::math::test::compare_cpu_opencl_prim_rev(
       skew_double_exponential_cdf_functor, y.transpose().eval(),
-      mu.transpose().eval(), sigma.transpose().eval(),
-      tau.transpose().eval());
+      mu.transpose().eval(), sigma.transpose().eval(), tau.transpose().eval());
 }
 
 TEST(ProbDistributionsSkewDoubleExponentialCdf,
@@ -123,8 +122,7 @@ TEST(ProbDistributionsSkewDoubleExponentialCdf,
       skew_double_exponential_cdf_functor, y, mu, sigma, tau);
   stan::math::test::compare_cpu_opencl_prim_rev(
       skew_double_exponential_cdf_functor, y.transpose().eval(),
-      mu.transpose().eval(), sigma.transpose().eval(),
-      tau.transpose().eval());
+      mu.transpose().eval(), sigma.transpose().eval(), tau.transpose().eval());
 }
 
 TEST(ProbDistributionsSkewDoubleExponentialCdf, opencl_broadcast_y) {
@@ -180,8 +178,7 @@ TEST(ProbDistributionsSkewDoubleExponentialCdf, opencl_matches_cpu_big) {
       skew_double_exponential_cdf_functor, y, mu, sigma, tau);
   stan::math::test::compare_cpu_opencl_prim_rev(
       skew_double_exponential_cdf_functor, y.transpose().eval(),
-      mu.transpose().eval(), sigma.transpose().eval(),
-      tau.transpose().eval());
+      mu.transpose().eval(), sigma.transpose().eval(), tau.transpose().eval());
 }
 
 #endif

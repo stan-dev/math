@@ -86,9 +86,9 @@ skew_double_exponential_lcdf(const T_y_cl& y, const T_loc_cl& mu,
   auto tau_minus_1 = tau_val - 1.0;
   auto inv_exp_2_expo_tau = elt_divide(1.0, exp(2.0 * expo) + tau_minus_1);
 
-  auto lcdf_expr = colwise_sum(
-      select(y_val <= mu_val, log(tau_val) - 2.0 * expo,
-             log1m_exp(log1m(tau_val) - 2.0 * expo)));
+  auto lcdf_expr
+      = colwise_sum(select(y_val <= mu_val, log(tau_val) - 2.0 * expo,
+                           log1m_exp(log1m(tau_val) - 2.0 * expo)));
 
   auto cond = y_val < mu_val;
   auto y_deriv

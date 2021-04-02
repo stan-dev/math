@@ -24,8 +24,8 @@ TEST(ProbDistributionsSkewDoubleExponentialLcdf, opencl_broadcast_sigma) {
   stan::math::test::test_opencl_broadcasting_prim_rev<2>(
       skew_double_exponential_lcdf_functor, y, mu, sigma_scal, tau);
   stan::math::test::test_opencl_broadcasting_prim_rev<2>(
-      skew_double_exponential_lcdf_functor, y.transpose().eval(), mu, sigma_scal,
-      tau.transpose().eval());
+      skew_double_exponential_lcdf_functor, y.transpose().eval(), mu,
+      sigma_scal, tau.transpose().eval());
 }
 
 TEST(ProbDistributionsSkewDoubleExponentialLcdf, opencl_broadcast_tau) {
@@ -45,6 +45,5 @@ TEST(ProbDistributionsSkewDoubleExponentialLcdf, opencl_broadcast_tau) {
       skew_double_exponential_lcdf_functor, y.transpose().eval(), mu,
       sigma.transpose().eval(), tau_scal);
 }
-
 
 #endif
