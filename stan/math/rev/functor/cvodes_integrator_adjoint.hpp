@@ -75,14 +75,14 @@ class cvodes_integrator_adjoint_memory : public chainable_alloc {
   using T_Return = return_type_t<T_y0, T_t0, T_ts, T_Args...>;
   using T_y0_t0 = return_type_t<T_y0, T_t0>;
 
-  const size_t N_;
+  size_t N_;
   Eigen::VectorXd abs_tol_f_;
   Eigen::VectorXd abs_tol_b_;
-  const int lmm_f_;
-  const F f_;
-  const Eigen::Matrix<T_y0_t0, Eigen::Dynamic, 1> y0_;
-  const T_t0 t0_;
-  const std::vector<T_ts> ts_;
+  int lmm_f_;
+  F f_;
+  Eigen::Matrix<T_y0_t0, Eigen::Dynamic, 1> y0_;
+  T_t0 t0_;
+  std::vector<T_ts> ts_;
   // std::tuple<T_Args...> args_tuple_;
   std::tuple<
       plain_type_t<decltype(deep_copy_vars(std::declval<const T_Args&>()))>...>
@@ -174,14 +174,14 @@ class cvodes_integrator_adjoint_vari : public vari {
 
   const char* function_name_;
 
-  const size_t N_;
+  size_t N_;
   bool returned_;
   std::size_t chain_count_;
   std::ostream* msgs_;
   double rel_tol_f_;
-  Eigen::VectorXd abs_tol_f_;
+  arena_t<Eigen::VectorXd> abs_tol_f_;
   double rel_tol_b_;
-  Eigen::VectorXd abs_tol_b_;
+  arena_t<Eigen::VectorXd> abs_tol_b_;
   double rel_tol_q_;
   double abs_tol_q_;
   long int max_num_steps_;
@@ -192,10 +192,10 @@ class cvodes_integrator_adjoint_vari : public vari {
   int lmm_f_;
   int lmm_b_;
 
-  const size_t t0_vars_;
-  const size_t ts_vars_;
-  const size_t y0_vars_;
-  const size_t args_vars_;
+  size_t t0_vars_;
+  size_t ts_vars_;
+  size_t y0_vars_;
+  size_t args_vars_;
 
   vari** non_chaining_varis_;
 
@@ -205,9 +205,8 @@ class cvodes_integrator_adjoint_vari : public vari {
   vari** args_varis_;
 
   cvodes_integrator_adjoint_memory<F, T_y0, T_t0, T_ts, T_Args...>* memory;
+  int indexB_{0};
 
-  int indexB_;
-  bool cvodes_backward_initialized_;
 
   /**
    * Implements the function of type CVRhsFn which is the user-defined
@@ -363,7 +362,7 @@ class cvodes_integrator_adjoint_vari : public vari {
     apply([&](auto&&... args) { accumulate_adjoints(mu_dot.data(), args...); },
           memory->local_args_tuple_);
   }
-  
+
   /**
    * Calculates the jacobian of the ODE RHS wrt to its states y at the
    * given time-point t and state y.
@@ -469,7 +468,6 @@ class cvodes_integrator_adjoint_vari : public vari {
         lmm_f_(solver_f_ % 2 ? CV_ADAMS : CV_BDF),
         lmm_b_(solver_b_ % 2 ? CV_ADAMS : CV_BDF),
         msgs_(msgs),
-        cvodes_backward_initialized_(false),
         t0_vars_(count_vars(t0)),
         ts_vars_(count_vars(ts)),
         y0_vars_(count_vars(y0)),
@@ -639,7 +637,7 @@ class cvodes_integrator_adjoint_vari : public vari {
     std::cout << "forward integrate...done" << std::endl;
     return build_varis<T_Return>(this, non_chaining_varis_, memory->y_);
   }
-  
+
   virtual void chain() {
     std::cout << "backward v2 integrate..." << std::endl;
     std::cout << "backward v2 chain_count_ = " << chain_count_++ << std::endl;
@@ -664,6 +662,7 @@ class cvodes_integrator_adjoint_vari : public vari {
       std::cout << "backward v2 integrate no sensitivities" << std::endl;
       return;
     }
+    bool cvodes_backward_initialized_ = false;
 
     Eigen::VectorXd state_sens(N_);
     Eigen::VectorXd quad(args_vars_);
@@ -689,7 +688,6 @@ class cvodes_integrator_adjoint_vari : public vari {
       flag = CVodeSetStabLimDetB(cvode_mem, which, stldetB); ** MAYBE? **
       flag = CVodeSetConstraintsB(cvode_mem, which, constraintsB);
      */
-
     try {
       if(!cvodes_backward_initialized_) {
         // This is all boilerplate CVODES setting up the adjoint ODE to solve
@@ -827,7 +825,7 @@ class cvodes_integrator_adjoint_vari : public vari {
                 CVodeGetQuadB(memory->cvodes_mem_, indexB_, &t_init, nv_quad),
                 "CVodeGetQuadB");
             std::cout << "backward: (4) time-point " << i << "; t_init = " << t_init << "; t_final = " << t_final << std::endl;
-                      
+
           }
         }
       }
@@ -874,13 +872,13 @@ class cvodes_integrator_adjoint_vari : public vari {
       throw;
     }
 
-    //SUNLinSolFree(LS_b);
-    //SUNMatDestroy(A_b);
-    //N_VDestroy_Serial(nv_state_sens);
-    //N_VDestroy_Serial(nv_quad);
+    SUNLinSolFree(LS_b);
+    SUNMatDestroy(A_b);
+    N_VDestroy_Serial(nv_state_sens);
+    N_VDestroy_Serial(nv_quad);
     std::cout << "backward v2 integrate...done" << std::endl;
   }
-  
+
 };  // cvodes integrator
 
 }  // namespace math

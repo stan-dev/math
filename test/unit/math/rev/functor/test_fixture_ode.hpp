@@ -44,6 +44,8 @@ struct ODETestFixture : public ::testing::Test {
     ode_problem_type& ode = static_cast<ode_problem_type&>(*this);
     ASSERT_NO_THROW(ode.apply_solver());
   }
+  void SetUp() override { stan::math::recover_memory(); }
+  void TearDown() override { stan::math::recover_memory(); }
 
   /**
    * test ODE solution against analytical solution
