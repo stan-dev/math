@@ -188,7 +188,13 @@
 #include <stan/math/opencl/prim/offset_multiplier_constrain.hpp>
 #include <stan/math/opencl/prim/ordered_logistic_glm_lpmf.hpp>
 #include <stan/math/opencl/prim/ordered_logistic_lpmf.hpp>
+#include <stan/math/opencl/prim/pareto_cdf.hpp>
+#include <stan/math/opencl/prim/pareto_lccdf.hpp>
+#include <stan/math/opencl/prim/pareto_lcdf.hpp>
 #include <stan/math/opencl/prim/pareto_lpdf.hpp>
+#include <stan/math/opencl/prim/pareto_type_2_cdf.hpp>
+#include <stan/math/opencl/prim/pareto_type_2_lccdf.hpp>
+#include <stan/math/opencl/prim/pareto_type_2_lcdf.hpp>
 #include <stan/math/opencl/prim/pareto_type_2_lpdf.hpp>
 #include <stan/math/opencl/prim/poisson_log_glm_lpmf.hpp>
 #include <stan/math/opencl/prim/poisson_log_lpmf.hpp>
