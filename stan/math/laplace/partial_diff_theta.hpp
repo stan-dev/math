@@ -17,7 +17,7 @@ namespace math {
    // TODO: address case where eta / theta are doubles and we don't
    // want full derivatives.
    template <typename F>
-   Eigen::VectorXd partial_diff_theta(const F& f,
+   inline Eigen::VectorXd partial_diff_theta(const F& f,
                                       const Eigen::VectorXd& theta,
                                       const Eigen::VectorXd& eta,
                                       const Eigen::VectorXd& delta,

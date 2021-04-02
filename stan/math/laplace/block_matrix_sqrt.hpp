@@ -14,7 +14,7 @@ namespace math {
  * Return the matrix square-root for a block diagonal matrix.
  */
  Eigen::SparseMatrix<double>
- block_matrix_sqrt(Eigen::SparseMatrix<double> W,
+ inline block_matrix_sqrt(Eigen::SparseMatrix<double> W,
                    int block_size) {
   int n_block = W.cols() / block_size;
   Eigen::MatrixXd local_block(block_size, block_size);

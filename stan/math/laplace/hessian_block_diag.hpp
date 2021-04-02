@@ -16,7 +16,7 @@ namespace math {
    * hessian_times_vector, that is m forward sweeps and m reverse sweeps.
    */
    template <typename F>
-   void hessian_block_diag(const F& f,
+   inline void hessian_block_diag(const F& f,
                            const Eigen::VectorXd& x,
                            const Eigen::VectorXd& eta,
                            const Eigen::VectorXd& delta,
@@ -49,7 +49,7 @@ namespace math {
    * Overload for case where hessian is stored as a sparse matrix.
    */
    template <typename F>
-   void hessian_block_diag(const F& f,
+   inline void hessian_block_diag(const F& f,
                            const Eigen::VectorXd& x,
                            const Eigen::VectorXd& eta,
                            const Eigen::VectorXd& delta,

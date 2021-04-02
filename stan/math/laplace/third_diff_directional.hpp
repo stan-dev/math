@@ -13,7 +13,7 @@ namespace math {
    * to do two directions: v and w.
    */
   template <typename F>
-  void third_diff_directional(
+  inline void third_diff_directional(
     const F& f, const Eigen::VectorXd& x,
     const Eigen::VectorXd& eta,
     const Eigen::VectorXd& delta,

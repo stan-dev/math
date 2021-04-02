@@ -13,7 +13,7 @@ namespace math {
    * and pstream.
    */
   template <typename F>
-  void hessian_times_vector(const F& f,
+  inline void hessian_times_vector(const F& f,
                             const Eigen::VectorXd& x,
                             const Eigen::VectorXd& eta,
                             const Eigen::VectorXd& delta,
