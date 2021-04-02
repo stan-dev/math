@@ -220,6 +220,9 @@
 #include <stan/math/opencl/prim/squared_distance.hpp>
 #include <stan/math/opencl/prim/sub_col.hpp>
 #include <stan/math/opencl/prim/sub_row.hpp>
+#include <stan/math/opencl/prim/std_normal_cdf.hpp>
+#include <stan/math/opencl/prim/std_normal_lccdf.hpp>
+#include <stan/math/opencl/prim/std_normal_lcdf.hpp>
 #include <stan/math/opencl/prim/std_normal_lpdf.hpp>
 #include <stan/math/opencl/prim/student_t_lpdf.hpp>
 #include <stan/math/opencl/prim/skew_normal_lpdf.hpp>
