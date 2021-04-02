@@ -152,6 +152,9 @@
 #include <stan/math/opencl/prim/frechet_lpdf.hpp>
 #include <stan/math/opencl/prim/gamma_lpdf.hpp>
 #include <stan/math/opencl/prim/gp_exp_quad_cov.hpp>
+#include <stan/math/opencl/prim/gumbel_cdf.hpp>
+#include <stan/math/opencl/prim/gumbel_lccdf.hpp>
+#include <stan/math/opencl/prim/gumbel_lcdf.hpp>
 #include <stan/math/opencl/prim/gumbel_lpdf.hpp>
 #include <stan/math/opencl/prim/head.hpp>
 #include <stan/math/opencl/prim/inv.hpp>
@@ -162,6 +165,9 @@
 #include <stan/math/opencl/prim/lb_constrain.hpp>
 #include <stan/math/opencl/prim/log_mix.hpp>
 #include <stan/math/opencl/prim/log_softmax.hpp>
+#include <stan/math/opencl/prim/logistic_cdf.hpp>
+#include <stan/math/opencl/prim/logistic_lccdf.hpp>
+#include <stan/math/opencl/prim/logistic_lcdf.hpp>
 #include <stan/math/opencl/prim/logistic_lpdf.hpp>
 #include <stan/math/opencl/prim/log_sum_exp.hpp>
 #include <stan/math/opencl/prim/lognormal_lpdf.hpp>
