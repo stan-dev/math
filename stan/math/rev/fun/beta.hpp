@@ -9,39 +9,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class beta_vv_vari : public op_vv_vari {
- public:
-  beta_vv_vari(vari* avi, vari* bvi)
-      : op_vv_vari(beta(avi->val_, bvi->val_), avi, bvi) {}
-  void chain() {
-    const double adj_val = this->adj_ * this->val_;
-    const double digamma_ab = digamma(avi_->val_ + bvi_->val_);
-    avi_->adj_ += adj_val * (digamma(avi_->val_) - digamma_ab);
-
-    bvi_->adj_ += adj_val * (digamma(bvi_->val_) - digamma_ab);
-  }
-};
-
-class beta_vd_vari : public op_vd_vari {
- public:
-  beta_vd_vari(vari* avi, double b) : op_vd_vari(beta(avi->val_, b), avi, b) {}
-  void chain() {
-    avi_->adj_ += adj_ * (digamma(avi_->val_) - digamma(avi_->val_ + bd_))
-                  * this->val_;
-  }
-};
-
-class beta_dv_vari : public op_dv_vari {
- public:
-  beta_dv_vari(double a, vari* bvi) : op_dv_vari(beta(a, bvi->val_), a, bvi) {}
-  void chain() {
-    bvi_->adj_ += adj_ * (digamma(bvi_->val_) - digamma(ad_ + bvi_->val_))
-                  * this->val_;
-  }
-};
-}  // namespace internal
-
 /**
  * Returns the beta function and gradients for two var inputs.
  *
@@ -68,7 +35,15 @@ class beta_dv_vari : public op_dv_vari {
  * @return Result of beta function
  */
 inline var beta(const var& a, const var& b) {
-  return var(new internal::beta_vv_vari(a.vi_, b.vi_));
+  double digamma_ab = digamma(a.val() + b.val());
+  double digamma_a = digamma(a.val()) - digamma_ab;
+  double digamma_b = digamma(b.val()) - digamma_ab;
+  return make_callback_var(beta(a.val(), b.val()),
+                           [a, b, digamma_a, digamma_b](auto& vi) mutable {
+                             const double adj_val = vi.adj() * vi.val();
+                             a.adj() += adj_val * digamma_a;
+                             b.adj() += adj_val * digamma_b;
+                           });
 }
 
 /**
@@ -90,7 +65,11 @@ inline var beta(const var& a, const var& b) {
  * @return Result of beta function
  */
 inline var beta(const var& a, double b) {
-  return var(new internal::beta_vd_vari(a.vi_, b));
+  auto digamma_ab = digamma(a.val()) - digamma(a.val() + b);
+  return make_callback_var(beta(a.val(), b),
+                           [a, b, digamma_ab](auto& vi) mutable {
+                             a.adj() += vi.adj() * digamma_ab * vi.val();
+                           });
 }
 
 /**
@@ -112,7 +91,11 @@ inline var beta(const var& a, double b) {
  * @return Result of beta function
  */
 inline var beta(double a, const var& b) {
-  return var(new internal::beta_dv_vari(a, b.vi_));
+  auto beta_val = beta(a, b.val());
+  auto digamma_ab = (digamma(b.val()) - digamma(a + b.val())) * beta_val;
+  return make_callback_var(beta_val, [a, b, digamma_ab](auto& vi) mutable {
+    b.adj() += vi.adj() * digamma_ab;
+  });
 }
 
 }  // namespace math

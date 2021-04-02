@@ -10,18 +10,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class ceil_vari : public op_v_vari {
- public:
-  explicit ceil_vari(vari* avi) : op_v_vari(std::ceil(avi->val_), avi) {}
-  void chain() {
-    if (unlikely(is_nan(avi_->val_))) {
-      avi_->adj_ = NOT_A_NUMBER;
-    }
-  }
-};
-}  // namespace internal
-
 /**
  * Return the ceiling of the specified variable (cmath).
  *
@@ -56,7 +44,7 @@ class ceil_vari : public op_v_vari {
  * @param a Input variable.
  * @return Ceiling of the variable.
  */
-inline var ceil(const var& a) { return var(new internal::ceil_vari(a.vi_)); }
+inline var ceil(const var& a) { return var(std::ceil(a.val())); }
 
 }  // namespace math
 }  // namespace stan

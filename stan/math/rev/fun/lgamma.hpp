@@ -9,14 +9,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class lgamma_vari : public op_v_vari {
- public:
-  lgamma_vari(double value, vari* avi) : op_v_vari(value, avi) {}
-  void chain() { avi_->adj_ += adj_ * digamma(avi_->val_); }
-};
-}  // namespace internal
-
 /**
  * The log gamma function for variables (C99).
  *
@@ -28,7 +20,9 @@ class lgamma_vari : public op_v_vari {
  * @return Log gamma of the variable.
  */
 inline var lgamma(const var& a) {
-  return var(new internal::lgamma_vari(lgamma(a.val()), a.vi_));
+  return make_callback_var(lgamma(a.val()), [a](auto& vi) mutable {
+    a.adj() += vi.adj() * digamma(a.val());
+  });
 }
 
 }  // namespace math
