@@ -71,9 +71,9 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> normal_cdf(
                     0.5 * (1.0 + erf(scaled_diff)))));
   auto cdf_expr = colwise_prod(cdf_n);
   auto mu_deriv_tmp = select(scaled_diff < -37.5 * INV_SQRT_TWO, 0.0,
-                         INV_SQRT_TWO_PI
-                             * elt_divide(exp(-square(scaled_diff)),
-                                          elt_multiply(cdf_n, sigma_val)));
+                             INV_SQRT_TWO_PI
+                                 * elt_divide(exp(-square(scaled_diff)),
+                                              elt_multiply(cdf_n, sigma_val)));
   auto sigma_deriv_tmp = elt_multiply(mu_deriv_tmp, scaled_diff);
 
   matrix_cl<double> cdf_cl;
@@ -81,11 +81,10 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> normal_cdf(
   matrix_cl<double> y_deriv_cl;
   matrix_cl<double> sigma_deriv_cl;
 
-  results(check_y_not_nan, check_mu_finite, check_sigma_positive,
-          cdf_cl, mu_deriv_cl, sigma_deriv_cl)
+  results(check_y_not_nan, check_mu_finite, check_sigma_positive, cdf_cl,
+          mu_deriv_cl, sigma_deriv_cl)
       = expressions(
-          y_not_nan_expr, mu_finite_expr, sigma_positive_expr,
-          cdf_expr,
+          y_not_nan_expr, mu_finite_expr, sigma_positive_expr, cdf_expr,
           calc_if<!is_constant_all<T_y_cl, T_loc_cl>::value>(mu_deriv_tmp),
           calc_if<!is_constant<T_scale_cl>::value>(sigma_deriv_tmp));
 

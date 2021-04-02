@@ -56,9 +56,10 @@ TEST(ProbDistributionsLognormalCdf, error_checking) {
                std::domain_error);
 }
 
-auto lognormal_cdf_functor = [](const auto& y, const auto& mu, const auto& sigma) {
-  return stan::math::lognormal_cdf(y, mu, sigma);
-};
+auto lognormal_cdf_functor
+    = [](const auto& y, const auto& mu, const auto& sigma) {
+        return stan::math::lognormal_cdf(y, mu, sigma);
+      };
 
 TEST(ProbDistributionsLognormalCdf, opencl_matches_cpu_small) {
   int N = 3;
@@ -120,8 +121,8 @@ TEST(ProbDistributionsLognormalCdf, opencl_broadcast_mu) {
   Eigen::VectorXd sigma(N);
   sigma << 0.3, 0.8, 1.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(lognormal_cdf_functor, y,
-                                                         mu_scal, sigma);
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(lognormal_cdf_functor,
+                                                         y, mu_scal, sigma);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       lognormal_cdf_functor, y.transpose().eval(), mu_scal, sigma);
 }
@@ -135,8 +136,8 @@ TEST(ProbDistributionsLognormalCdf, opencl_broadcast_sigma) {
   mu << 0.3, 0.8, 1.0;
   double sigma_scal = 12.3;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<2>(lognormal_cdf_functor, y,
-                                                         mu, sigma_scal);
+  stan::math::test::test_opencl_broadcasting_prim_rev<2>(lognormal_cdf_functor,
+                                                         y, mu, sigma_scal);
   stan::math::test::test_opencl_broadcasting_prim_rev<2>(
       lognormal_cdf_functor, y.transpose().eval(), mu, sigma_scal);
 }

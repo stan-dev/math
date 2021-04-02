@@ -69,8 +69,8 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> lognormal_lccdf(
   auto erfc_calc = erfc(scaled_diff);
   auto lccdf_expr = colwise_sum(log(erfc_calc));
   auto mu_deriv = elt_divide(SQRT_TWO_OVER_SQRT_PI * exp(-square(scaled_diff)),
-                              elt_multiply(sigma_val, erfc_calc));
-  auto y_deriv= elt_divide(mu_deriv, -y_val);
+                             elt_multiply(sigma_val, erfc_calc));
+  auto y_deriv = elt_divide(mu_deriv, -y_val);
   auto sigma_deriv = elt_multiply(mu_deriv, scaled_diff * SQRT_TWO);
 
   matrix_cl<double> any_y_zero_cl;
@@ -82,7 +82,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> lognormal_lccdf(
   results(check_y_nonnegative, check_mu_finite, check_sigma_positive_finite,
           any_y_zero_cl, lccdf_cl, y_deriv_cl, mu_deriv_cl, sigma_deriv_cl)
       = expressions(y_nonnegative, mu_finite_expr, sigma_positive_finite_expr,
-                    any_y_zero,lccdf_expr,
+                    any_y_zero, lccdf_expr,
                     calc_if<!is_constant<T_y_cl>::value>(y_deriv),
                     calc_if<!is_constant<T_loc_cl>::value>(mu_deriv),
                     calc_if<!is_constant<T_scale_cl>::value>(sigma_deriv));

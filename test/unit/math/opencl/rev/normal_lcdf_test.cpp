@@ -56,9 +56,10 @@ TEST(ProbDistributionsNormalLcdf, error_checking) {
                std::domain_error);
 }
 
-auto normal_lcdf_functor = [](const auto& y, const auto& mu, const auto& sigma) {
-  return stan::math::normal_lcdf(y, mu, sigma);
-};
+auto normal_lcdf_functor
+    = [](const auto& y, const auto& mu, const auto& sigma) {
+        return stan::math::normal_lcdf(y, mu, sigma);
+      };
 
 TEST(ProbDistributionsNormalLcdf, opencl_matches_cpu_small) {
   int N = 3;
@@ -131,7 +132,7 @@ TEST(ProbDistributionsNormalLcdf, opencl_matches_cpu_big) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> mu
       = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
   Eigen::Matrix<double, Eigen::Dynamic, 1> sigma
-      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs()*2+0.01;
+      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs() * 2 + 0.01;
 
   stan::math::test::compare_cpu_opencl_prim_rev(normal_lcdf_functor, y, mu,
                                                 sigma);

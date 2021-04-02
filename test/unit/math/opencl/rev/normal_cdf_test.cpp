@@ -72,9 +72,9 @@ TEST(ProbDistributionsNormalCdf, opencl_matches_cpu_small) {
 
   stan::math::test::compare_cpu_opencl_prim_rev(normal_cdf_functor, y, mu,
                                                 sigma);
-//  stan::math::test::compare_cpu_opencl_prim_rev(
-//      normal_cdf_functor, y.transpose().eval(), mu.transpose().eval(),
-//      sigma.transpose().eval());
+  //  stan::math::test::compare_cpu_opencl_prim_rev(
+  //      normal_cdf_functor, y.transpose().eval(), mu.transpose().eval(),
+  //      sigma.transpose().eval());
 }
 
 TEST(ProbDistributionsNormalCdf, opencl_broadcast_y) {
@@ -130,7 +130,7 @@ TEST(ProbDistributionsNormalCdf, opencl_matches_cpu_big) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> mu
       = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
   Eigen::Matrix<double, Eigen::Dynamic, 1> sigma
-      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs()+0.01;
+      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs() + 0.01;
 
   stan::math::test::compare_cpu_opencl_prim_rev(normal_cdf_functor, y, mu,
                                                 sigma);
