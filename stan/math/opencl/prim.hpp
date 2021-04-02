@@ -152,6 +152,9 @@
 #include <stan/math/opencl/prim/frechet_lpdf.hpp>
 #include <stan/math/opencl/prim/gamma_lpdf.hpp>
 #include <stan/math/opencl/prim/gp_exp_quad_cov.hpp>
+#include <stan/math/opencl/prim/gumbel_cdf.hpp>
+#include <stan/math/opencl/prim/gumbel_lccdf.hpp>
+#include <stan/math/opencl/prim/gumbel_lcdf.hpp>
 #include <stan/math/opencl/prim/gumbel_lpdf.hpp>
 #include <stan/math/opencl/prim/head.hpp>
 #include <stan/math/opencl/prim/inv.hpp>
@@ -162,6 +165,9 @@
 #include <stan/math/opencl/prim/lb_constrain.hpp>
 #include <stan/math/opencl/prim/log_mix.hpp>
 #include <stan/math/opencl/prim/log_softmax.hpp>
+#include <stan/math/opencl/prim/logistic_cdf.hpp>
+#include <stan/math/opencl/prim/logistic_lccdf.hpp>
+#include <stan/math/opencl/prim/logistic_lcdf.hpp>
 #include <stan/math/opencl/prim/logistic_lpdf.hpp>
 #include <stan/math/opencl/prim/log_sum_exp.hpp>
 #include <stan/math/opencl/prim/lognormal_lpdf.hpp>
@@ -182,7 +188,13 @@
 #include <stan/math/opencl/prim/offset_multiplier_constrain.hpp>
 #include <stan/math/opencl/prim/ordered_logistic_glm_lpmf.hpp>
 #include <stan/math/opencl/prim/ordered_logistic_lpmf.hpp>
+#include <stan/math/opencl/prim/pareto_cdf.hpp>
+#include <stan/math/opencl/prim/pareto_lccdf.hpp>
+#include <stan/math/opencl/prim/pareto_lcdf.hpp>
 #include <stan/math/opencl/prim/pareto_lpdf.hpp>
+#include <stan/math/opencl/prim/pareto_type_2_cdf.hpp>
+#include <stan/math/opencl/prim/pareto_type_2_lccdf.hpp>
+#include <stan/math/opencl/prim/pareto_type_2_lcdf.hpp>
 #include <stan/math/opencl/prim/pareto_type_2_lpdf.hpp>
 #include <stan/math/opencl/prim/poisson_log_glm_lpmf.hpp>
 #include <stan/math/opencl/prim/poisson_log_lpmf.hpp>
