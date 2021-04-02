@@ -43,3 +43,12 @@ TEST(MathMatrixPrimMat, diagPostMultiplyException) {
   v << 1, 2, 3;
   EXPECT_THROW(diag_post_multiply(m, v), std::invalid_argument);
 }
+
+TEST(MathMatrixPrimMat, diagPostMultiplyZero) {
+  Eigen::VectorXd in1(0);
+  Eigen::MatrixXd in2(0, 0);
+  Eigen::MatrixXd in3;
+  Eigen::MatrixXd in4(0, 0);
+  in3 = diag_post_multiply(in2, in1);
+  EXPECT_EQ(in4, in3);
+}
