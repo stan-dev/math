@@ -80,10 +80,9 @@ inline Eigen::ArrayXd quantile(const T& xs, const Tp& ps) {
     size_t lo = std::floor(index[i]);
     size_t hi = std::ceil(index[i]);
 
-    double q = x[lo];
     double h = index[i] - lo;
 
-    ret[i] = (1 - h) * q + h * x[hi];
+    ret[i] = (1 - h) * x.coeff(lo) + h * x.coeff(hi);
   }
   return ret;
 }
