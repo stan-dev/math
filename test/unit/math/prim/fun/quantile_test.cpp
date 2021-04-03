@@ -89,7 +89,7 @@ void test_quantile_double() {
   p[2] = 0.2;
   p[3] = 1;
 
-  Eigen::ArrayXd ret = quantile(v, p);
+  std::vector<double> ret = quantile(v, p);
 
   EXPECT_FLOAT_EQ(ret[0], -0.28);
   EXPECT_FLOAT_EQ(ret[1], -0.196);
