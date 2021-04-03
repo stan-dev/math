@@ -9,9 +9,11 @@ void test_quantile_double() {
   using stan::math::index_type_t;
   using stan::math::quantile;
 
+  // check size 0 argument throws
   T c0(0);
   EXPECT_THROW(quantile(c0, 0.3), std::invalid_argument);
 
+  // check size 1 argument works
   T c(1);
   c[0] = 1.7;
   EXPECT_EQ(quantile(c, 0), 1.7);
@@ -19,13 +21,17 @@ void test_quantile_double() {
   EXPECT_EQ(quantile(c, 0.33), 1.7);
   EXPECT_EQ(quantile(c, 0.68), 1.7);
 
+  // check outside-of-[0,1] throws
   EXPECT_THROW(quantile(c, 1.1), std::domain_error);
   EXPECT_THROW(quantile(c, -0.1), std::domain_error);
+
+  // check nan argument throws
   EXPECT_THROW(quantile(c, std::numeric_limits<double>::quiet_NaN()),
                std::domain_error);
   EXPECT_THROW(quantile(std::numeric_limits<T>::quiet_NaN(), 0.5),
                std::invalid_argument);
 
+  // check quantile results against R
   T v(5);
   v[0] = -0.07;
   v[1] = 0.35;
@@ -83,6 +89,7 @@ void test_quantile_double() {
   using stan::math::index_type_t;
   using stan::math::quantile;
 
+  // check quantile results against R
   T v(5);
   v[0] = -0.07;
   v[1] = 0.35;
@@ -97,11 +104,43 @@ void test_quantile_double() {
   p[3] = 1;
 
   std::vector<double> ret = quantile(v, p);
-
   EXPECT_FLOAT_EQ(ret[0], -0.28);
   EXPECT_FLOAT_EQ(ret[1], -0.196);
   EXPECT_FLOAT_EQ(ret[2], -0.112);
   EXPECT_FLOAT_EQ(ret[3], 2.65);
+
+  // check outside-of-[0,1] throws
+  Tp p2(2);
+  p2[0] = 0.5;
+  p2[1] = 1.1;
+
+  Tp p3(2);
+  p3[0] = 0.5;
+  p3[1] = -0.1;
+
+  EXPECT_THROW(quantile(v, p2), std::domain_error);
+  EXPECT_THROW(quantile(v, p3), std::domain_error);
+
+  // check nan argument throws
+  EXPECT_THROW(quantile(v, std::numeric_limits<Tp>::quiet_NaN()),
+               std::invalid_argument);
+  EXPECT_THROW(quantile(std::numeric_limits<T>::quiet_NaN(), p),
+               std::invalid_argument);
+
+  // check size 0 in both arguments throws
+  T v0(0);
+  Tp p0(0);
+  EXPECT_THROW(quantile(v0, p), std::invalid_argument);
+  EXPECT_THROW(quantile(v, p0), std::invalid_argument);
+
+  // check size 1 first argument works
+  T v1(1);
+  v1[0] = -0.07;
+  Tp ret1 = quantile(v1, p);
+  EXPECT_FLOAT_EQ(ret1[0], -0.07);
+  EXPECT_FLOAT_EQ(ret1[1], -0.07);
+  EXPECT_FLOAT_EQ(ret1[2], -0.07);
+  EXPECT_FLOAT_EQ(ret1[3], -0.07);
 }
 
 TEST(MathFunctions, quantileStdVecDoubleStdVecDouble) {

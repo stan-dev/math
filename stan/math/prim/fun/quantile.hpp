@@ -27,9 +27,12 @@ namespace math {
  */
 template <typename T, require_vector_t<T>* = nullptr>
 inline double quantile(const T& xs, const double p) {
-  check_not_nan("quantile", "container argument", xs);
-  check_bounded("quantile", "p", p, 0, 1);
+  check_not_nan("quantile", "xs", xs);
   check_nonzero_size("quantile", "xs", xs);
+
+  check_not_nan("quantile", "p", p);
+  check_bounded("quantile", "p", p, 0, 1);
+
   size_t n_sample = xs.size();
 
   Eigen::VectorXd x = as_array_or_scalar(xs);
@@ -53,10 +56,15 @@ inline double quantile(const T& xs, const double p) {
 
 template <typename T, typename Tp, require_all_vector_t<T, Tp>* = nullptr>
 inline std::vector<double> quantile(const T& xs, const Tp& ps) {
-  check_not_nan("quantile", "container argument", xs);
-  check_bounded("quantile", "ps", ps, 0, 1);
+  check_not_nan("quantile", "xs", xs);
+  check_not_nan("quantile", "ps", ps);
+
   check_nonzero_size("quantile", "xs", xs);
+  check_nonzero_size("quantile", "xs", ps);
+
+  check_bounded("quantile", "ps", ps, 0, 1);
   check_nonzero_size("quantile", "ps", ps);
+
   size_t n_sample = xs.size();
   size_t n_ps = ps.size();
 
