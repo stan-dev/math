@@ -108,27 +108,3 @@ TEST(MathFunctions, quantileEigenVectorXdStdVecDouble) {
 TEST(MathFunctions, quantileEigenRowVectorXdStdVecDouble) {
   test_quantile_double<Eigen::RowVectorXd, std::vector<double>>();
 }
-
-TEST(MathFunctions, quantileStdVecDoubleVectorXd) {
-  test_quantile_double<std::vector<double>, Eigen::VectorXd>();
-}
-
-TEST(MathFunctions, quantileEigenVectorXdVectorXd) {
-  test_quantile_double<Eigen::VectorXd, Eigen::VectorXd>();
-}
-
-TEST(MathFunctions, quantileEigenRowVectorXdVectorXd) {
-  test_quantile_double<Eigen::RowVectorXd, Eigen::VectorXd>();
-}
-
-TEST(MathFunctions, quantileStdVecDoubleRowVectorXd) {
-  test_quantile_double<std::vector<double>, Eigen::RowVectorXd>();
-}
-
-TEST(MathFunctions, quantileEigenVectorXdRowVectorXd) {
-  test_quantile_double<Eigen::VectorXd, Eigen::RowVectorXd>();
-}
-
-TEST(MathFunctions, quantileEigenRowVectorXdRowVectorXd) {
-  test_quantile_double<Eigen::RowVectorXd, Eigen::RowVectorXd>();
-}
