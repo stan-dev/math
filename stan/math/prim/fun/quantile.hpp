@@ -23,7 +23,8 @@ namespace math {
  * @param xs Numeric vector whose sample quantiles are wanted
  * @param p Probability with value between 0 and 1.
  * @return Sample quantile.
- * @throw std::domain_error If any of the values are NaN.
+ * @throw std::invalid_argument If any of the values are NaN or size 0.
+ * @throw std::domain_error If p<0 or p>1.
  */
 template <typename T, require_vector_t<T>* = nullptr>
 inline double quantile(const T& xs, const double p) {
@@ -54,16 +55,30 @@ inline double quantile(const T& xs, const double p) {
   return (1 - h) * x.coeff(lo) + h * x.coeff(hi);
 }
 
+/**
+ * Return sample quantiles corresponding to the given probabilities.
+ * The smallest observation corresponds to a probability of 0 and the largest to
+ * a probability of 1.
+ *
+ * Implementation follows the default R behavior, as defined here:
+ * https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/quantile
+ *
+ * @tparam T Type of elements contained in vector.
+ * @param xs Numeric vector whose sample quantiles are wanted
+ * @param ps Vector of probability with value between 0 and 1.
+ * @return Sample quantiles, one for each p in ps.
+ * @throw std::invalid_argument If any of the values are NaN or size 0.
+ * @throw std::domain_error If p<0 or p>1 for any p in ps.
+ */
 template <typename T, typename Tp, require_all_vector_t<T, Tp>* = nullptr>
 inline std::vector<double> quantile(const T& xs, const Tp& ps) {
   check_not_nan("quantile", "xs", xs);
   check_not_nan("quantile", "ps", ps);
 
   check_nonzero_size("quantile", "xs", xs);
-  check_nonzero_size("quantile", "xs", ps);
+  check_nonzero_size("quantile", "ps", ps);
 
   check_bounded("quantile", "ps", ps, 0, 1);
-  check_nonzero_size("quantile", "ps", ps);
 
   size_t n_sample = xs.size();
   size_t n_ps = ps.size();
