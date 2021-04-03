@@ -19,6 +19,13 @@ void test_quantile_double() {
   EXPECT_EQ(quantile(c, 0.33), 1.7);
   EXPECT_EQ(quantile(c, 0.68), 1.7);
 
+  EXPECT_THROW(quantile(c, 1.1), std::domain_error);
+  EXPECT_THROW(quantile(c, -0.1), std::domain_error);
+  EXPECT_THROW(quantile(c, std::numeric_limits<double>::quiet_NaN()),
+               std::domain_error);
+  EXPECT_THROW(quantile(std::numeric_limits<T>::quiet_NaN(), 0.5),
+               std::invalid_argument);
+
   T v(5);
   v[0] = -0.07;
   v[1] = 0.35;
