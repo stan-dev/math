@@ -136,7 +136,7 @@ void test_quantile_double() {
   // check size 1 first argument works
   T v1(1);
   v1[0] = -0.07;
-  Tp ret1 = quantile(v1, p);
+  std::vector<double> ret1 = quantile(v1, p);
   EXPECT_FLOAT_EQ(ret1[0], -0.07);
   EXPECT_FLOAT_EQ(ret1[1], -0.07);
   EXPECT_FLOAT_EQ(ret1[2], -0.07);
@@ -153,4 +153,28 @@ TEST(MathFunctions, quantileEigenVectorXdStdVecDouble) {
 
 TEST(MathFunctions, quantileEigenRowVectorXdStdVecDouble) {
   test_quantile_double<Eigen::RowVectorXd, std::vector<double>>();
+}
+
+TEST(MathFunctions, quantileStdVecDoubleVectorXd) {
+  test_quantile_double<std::vector<double>, Eigen::VectorXd>();
+}
+
+TEST(MathFunctions, quantileEigenVectorXdVectorXd) {
+  test_quantile_double<Eigen::VectorXd, Eigen::VectorXd>();
+}
+
+TEST(MathFunctions, quantileEigenRowVectorXdVectorXd) {
+  test_quantile_double<Eigen::RowVectorXd, Eigen::VectorXd>();
+}
+
+TEST(MathFunctions, quantileStdVecDoubleRowVectorXd) {
+  test_quantile_double<std::vector<double>, Eigen::RowVectorXd>();
+}
+
+TEST(MathFunctions, quantileEigenVectorXdRowVectorXd) {
+  test_quantile_double<Eigen::VectorXd, Eigen::RowVectorXd>();
+}
+
+TEST(MathFunctions, quantileEigenRowVectorXdRowVectorXd) {
+  test_quantile_double<Eigen::RowVectorXd, Eigen::RowVectorXd>();
 }

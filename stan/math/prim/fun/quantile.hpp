@@ -16,14 +16,14 @@ namespace math {
  * The smallest observation corresponds to a probability of 0 and the largest to
  * a probability of 1.
  *
- * Implementation follows the default R behavior, as defined here:
- * https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/quantile
+ * Implements algorithm 7 from Hyndman, R. J. and Fan, Y.,
+ * Sample quantiles in Statistical Packages (R's default quantile function)
  *
- * @tparam T Type of elements contained in vector.
+ * @tparam T Type of input vector
  * @param xs Numeric vector whose sample quantiles are wanted
  * @param p Probability with value between 0 and 1.
  * @return Sample quantile.
- * @throw std::invalid_argument If any of the values are NaN or size 0.
+ * @throw std::invalid_argument If any element of xs is NaN, or size 0.
  * @throw std::domain_error If p<0 or p>1.
  */
 template <typename T, require_vector_t<T>* = nullptr>
@@ -39,7 +39,7 @@ inline double quantile(const T& xs, const double p) {
   Eigen::VectorXd x = as_array_or_scalar(xs);
 
   if (n_sample == 1)
-    return x[0];
+    return x.coeff(0);
   if (p == 0.)
     return *std::min_element(x.data(), x.data() + n_sample);
   if (p == 1.)
@@ -60,10 +60,11 @@ inline double quantile(const T& xs, const double p) {
  * The smallest observation corresponds to a probability of 0 and the largest to
  * a probability of 1.
  *
- * Implementation follows the default R behavior, as defined here:
- * https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/quantile
+ * Implements algorithm 7 from Hyndman, R. J. and Fan, Y.,
+ * Sample quantiles in Statistical Packages (R's default quantile function)
  *
- * @tparam T Type of elements contained in vector.
+ * @tparam T Type of input vector
+ * @tparam Tp Type of probabilities vector
  * @param xs Numeric vector whose sample quantiles are wanted
  * @param ps Vector of probability with value between 0 and 1.
  * @return Sample quantiles, one for each p in ps.
@@ -84,7 +85,7 @@ inline std::vector<double> quantile(const T& xs, const Tp& ps) {
   size_t n_ps = ps.size();
 
   Eigen::VectorXd x = as_array_or_scalar(xs);
-  Eigen::ArrayXd p = as_array_or_scalar(ps);
+  const auto& p = as_array_or_scalar(ps);
   std::vector<double> ret(n_ps, 0.0);
 
   std::sort(x.data(), x.data() + n_sample);
