@@ -189,7 +189,8 @@ struct ODETestFixture : public ::testing::Test {
     std::stringstream msgs;
     ode_problem_type& ode = static_cast<ode_problem_type&>(*this);
 
-    int n = ode.param().size();
+    //int n = ode.param().size();
+    int n = ode.param_size();
     std::cout << "finite diff..." << std::endl;
     std::vector<std::vector<Eigen::VectorXd>> fd_res(n);
     for (size_t i = 0; i < n; ++i) {
@@ -209,28 +210,20 @@ struct ODETestFixture : public ::testing::Test {
       for (size_t j = 0; j < ode_res[0].size(); j++) {
         std::cout << "i = " << i << ": j = " << j << std::endl;
         grads_eff.clear();
-        //ode_res[i][j].grad(theta_v, grads_eff);
+        ode_res[i][j].grad(theta_v, grads_eff);
         //ode_res[i][j].grad();
         //print_stack(std::cout);
-        stan::math::grad(ode_res[i][j].vi_);
-        print_stack(std::cout);
-        std::cout << "i = " << i << ": j = " << j << " grad done." << std::endl;
+        //stan::math::grad(ode_res[i][j].vi_);
+        //print_stack(std::cout);
+        //std::cout << "i = " << i << ": j = " << j << " grad done." << std::endl;
 
-        /*
         for (size_t k = 0; k < n; k++)
           EXPECT_NEAR(grads_eff[k], fd_res[k][i][j], tol)
               << "Gradient of ODE solver failed with initial positions"
               << " known and parameters unknown at time index " << i
               << ", equation index " << j << ", and parameter index: "
           << k;
-        */
-        for (size_t k = 0; k < n; k++)
-          EXPECT_NEAR(theta_v[k].adj(), fd_res[k][i][j], tol)
-              << "Gradient of ODE solver failed with initial positions"
-              << " known and parameters unknown at time index " << i
-              << ", equation index " << j << ", and parameter index: " << k;
 
-        //stan::math::set_zero_all_adjoints();
         nested.set_zero_all_adjoints();
       }
     }

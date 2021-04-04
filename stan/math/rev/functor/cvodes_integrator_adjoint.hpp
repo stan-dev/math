@@ -91,12 +91,20 @@ class cvodes_integrator_adjoint_memory : public chainable_alloc {
       value_of_args_tuple_;
   std::vector<Eigen::VectorXd> y_;
   void* cvodes_mem_;
-  Eigen::VectorXd state;
+  Eigen::VectorXd state_;
+  Eigen::VectorXd state_sens_;
+  Eigen::VectorXd quad_;
   N_Vector nv_state_;
+  N_Vector nv_state_sens_;
+  N_Vector nv_quad_;
   N_Vector nv_abs_tol_f_;
   N_Vector nv_abs_tol_b_;
   SUNMatrix A_f_;
   SUNLinearSolver LS_f_;
+  SUNMatrix A_b_;
+  SUNLinearSolver LS_b_;
+  int index_b_;
+  bool backward_is_initialized_;
 
   template <require_eigen_col_vector_t<T_y0>* = nullptr>
   cvodes_integrator_adjoint_memory(Eigen::VectorXd abs_tol_f,
@@ -117,15 +125,24 @@ class cvodes_integrator_adjoint_memory : public chainable_alloc {
         value_of_args_tuple_(value_of(args)...),
         y_(ts_.size()),
         cvodes_mem_(nullptr),
-        state(value_of(y0)) {
+        state_(value_of(y0)),
+        state_sens_(Eigen::VectorXd::Zero(N_)),
+        quad_(Eigen::VectorXd::Zero(count_vars(args...))),
+        backward_is_initialized_(false)
+  {
     if (N_ > 0) {
-      nv_state_ = N_VMake_Serial(N_, state.data());
-      nv_abs_tol_f_ = N_VMake_Serial(N_, &abs_tol_f_(0));
-      nv_abs_tol_b_ = N_VMake_Serial(N_, &abs_tol_b_(0));
+      nv_state_ = N_VMake_Serial(N_, state_.data());
+      nv_state_sens_ = N_VMake_Serial(N_, state_sens_.data());
+      nv_quad_ = N_VMake_Serial(quad_.size(), quad_.data());
+      nv_abs_tol_f_ = N_VMake_Serial(N_, abs_tol_f_.data());
+      nv_abs_tol_b_ = N_VMake_Serial(N_, abs_tol_b_.data());
       A_f_ = SUNDenseMatrix(N_, N_);
       LS_f_ = SUNDenseLinearSolver(nv_state_, A_f_);
+      A_b_ = SUNDenseMatrix(N_, N_);
+      LS_b_ = SUNDenseLinearSolver(nv_state_sens_, A_b_);
 
       cvodes_mem_ = CVodeCreate(lmm_f_);
+
       if (cvodes_mem_ == nullptr) {
         throw std::runtime_error("CVodeCreate failed to allocate memory");
       }
@@ -136,8 +153,12 @@ class cvodes_integrator_adjoint_memory : public chainable_alloc {
     if (N_ > 0) {
       SUNLinSolFree(LS_f_);
       SUNMatDestroy(A_f_);
+      SUNLinSolFree(LS_b_);
+      SUNMatDestroy(A_b_);
 
       N_VDestroy_Serial(nv_state_);
+      N_VDestroy_Serial(nv_state_sens_);
+      N_VDestroy_Serial(nv_quad_);
       N_VDestroy_Serial(nv_abs_tol_f_);
       N_VDestroy_Serial(nv_abs_tol_b_);
 
@@ -525,11 +546,13 @@ class cvodes_integrator_adjoint_vari : public vari {
     check_range(fun, "solver_f", 2, solver_f_);
     check_range(fun, "solver_b", 2, solver_b_);
 
+    /*
     std::cout << "ts = ";
     for(std::size_t i=0; i != ts.size(); i++)
       std::cout << value_of(ts[i]) << ", ";
     std::cout << std::endl;
-
+    */
+    
     /*
     std::cout << "relative_tolerance = " << relative_tolerance << std::endl;
     std::cout << "absolute_tolerance = " << absolute_tolerance << std::endl;
@@ -538,6 +561,47 @@ class cvodes_integrator_adjoint_vari : public vari {
     std::endl; std::cout << "max_num_steps = " << max_num_steps << std::endl;
     std::cout << "steps_checkpoint = " << steps_checkpoint << std::endl;
     */
+
+
+    // initializes CVODES solver
+    
+    check_flag_sundials(
+        CVodeInit(memory->cvodes_mem_, &cvodes_integrator_adjoint_vari::cv_rhs,
+                  value_of(memory->t0_), memory->nv_state_),
+        "CVodeInit");
+
+    // Assign pointer to this as user data
+    check_flag_sundials(
+        CVodeSetUserData(memory->cvodes_mem_, reinterpret_cast<void*>(this)),
+        "CVodeSetUserData");
+
+    cvodes_set_options(memory->cvodes_mem_, rel_tol_f_, abs_tol_f_(0),
+                       max_num_steps_);
+
+    check_flag_sundials(CVodeSVtolerances(memory->cvodes_mem_, rel_tol_f_,
+                                          memory->nv_abs_tol_f_),
+                        "CVodeSVtolerances");
+    
+    // for the stiff solvers we need to reserve additional memory
+    // and provide a Jacobian function call. new API since 3.0.0:
+    // create matrix object and linear solver object; resource
+    // (de-)allocation is handled in the cvodes_ode_data
+    check_flag_sundials(
+        CVodeSetLinearSolver(memory->cvodes_mem_, memory->LS_f_, memory->A_f_),
+        "CVodeSetLinearSolver");
+
+    check_flag_sundials(
+        CVodeSetJacFn(memory->cvodes_mem_,
+                      &cvodes_integrator_adjoint_vari::cv_jacobian_states),
+        "CVodeSetJacFn");
+
+    // initialize backward sensitivity system of CVODES as needed
+    if (t0_vars_ + ts_vars_ + y0_vars_ + args_vars_ > 0) {
+      check_flag_sundials(CVodeAdjInit(memory->cvodes_mem_, num_checkpoints_,
+                                       interpolation_polynomial_),
+                          "CVodeAdjInit");
+    }
+
   }
 
   ~cvodes_integrator_adjoint_vari() {}
@@ -554,43 +618,6 @@ class cvodes_integrator_adjoint_vari : public vari {
     std::cout << "forward integrate..." << std::endl;
     const double t0_dbl = value_of(memory->t0_);
     const std::vector<double> ts_dbl = value_of(memory->ts_);
-
-    check_flag_sundials(
-        CVodeInit(memory->cvodes_mem_, &cvodes_integrator_adjoint_vari::cv_rhs,
-                  t0_dbl, memory->nv_state_),
-        "CVodeInit");
-
-    // Assign pointer to this as user data
-    check_flag_sundials(
-        CVodeSetUserData(memory->cvodes_mem_, reinterpret_cast<void*>(this)),
-        "CVodeSetUserData");
-
-    cvodes_set_options(memory->cvodes_mem_, rel_tol_f_, abs_tol_f_(0),
-                       max_num_steps_);
-
-    check_flag_sundials(CVodeSVtolerances(memory->cvodes_mem_, rel_tol_f_,
-                                          memory->nv_abs_tol_f_),
-                        "CVodeSVtolerances");
-
-    // for the stiff solvers we need to reserve additional memory
-    // and provide a Jacobian function call. new API since 3.0.0:
-    // create matrix object and linear solver object; resource
-    // (de-)allocation is handled in the cvodes_ode_data
-    check_flag_sundials(
-        CVodeSetLinearSolver(memory->cvodes_mem_, memory->LS_f_, memory->A_f_),
-        "CVodeSetLinearSolver");
-
-    check_flag_sundials(
-        CVodeSetJacFn(memory->cvodes_mem_,
-                      &cvodes_integrator_adjoint_vari::cv_jacobian_states),
-        "CVodeSetJacFn");
-
-    // initialize forward sensitivity system of CVODES as needed
-    if (t0_vars_ + ts_vars_ + y0_vars_ + args_vars_ > 0) {
-      check_flag_sundials(CVodeAdjInit(memory->cvodes_mem_, num_checkpoints_,
-                                       interpolation_polynomial_),
-                          "CVodeAdjInit");
-    }
 
     double t_init = t0_dbl;
     for (size_t n = 0; n < ts_dbl.size(); ++n) {
@@ -627,7 +654,7 @@ class cvodes_integrator_adjoint_vari : public vari {
         }
       }
 
-      memory->y_[n] = memory->state;
+      memory->y_[n] = memory->state_;
 
       t_init = t_final;
     }
@@ -643,37 +670,27 @@ class cvodes_integrator_adjoint_vari : public vari {
     // std::cout << "chain" << std::endl; //<-- Good way to verify it's only
     //  being called once
     if (memory == NULL) {
-      std::cout << "backward v2 integrate memory is NULL" << std::endl;
       return;
     }
 
     if (memory->cvodes_mem_ == NULL) {
-      std::cout << "backward v2 integrate cvodes_mem is NULL" << std::endl;
       return;
     }
 
     if (returned_ == false) {
-      std::cout << "backward v2 integrate returned is false" << std::endl;
       return;
     }
 
     if (t0_vars_ + ts_vars_ + y0_vars_ + args_vars_ == 0) {
-      std::cout << "backward v2 integrate no sensitivities" << std::endl;
       return;
     }
 
-    Eigen::VectorXd state_sens(N_);
-    Eigen::VectorXd quad(args_vars_);
-    N_Vector nv_state_sens
-        = N_VMake_Serial(state_sens.size(), state_sens.data());
-    N_Vector nv_quad = N_VMake_Serial(quad.size(), quad.data());
-    N_VConst(0.0, nv_state_sens);
-    N_VConst(0.0, nv_quad);
-
-    SUNMatrix A_b;
-    SUNLinearSolver LS_b;
-    A_b = SUNDenseMatrix(N_, N_);
-    LS_b = SUNDenseLinearSolver(nv_state_sens, A_b);
+    Eigen::VectorXd& state_sens = memory->state_sens_;
+    Eigen::VectorXd& quad = memory->quad_;
+    state_sens.setZero();
+    quad.setZero();
+    //N_VConst(0.0, memory->nv_state_sens_);
+    //N_VConst(0.0, memory->nv_quad_);
 
     /* check these if needed
       flag = CVodeSetUserDataB(cvode_mem, which, user_dataB);
@@ -687,196 +704,171 @@ class cvodes_integrator_adjoint_vari : public vari {
       flag = CVodeSetConstraintsB(cvode_mem, which, constraintsB);
      */
 
-    try {
-      int indexB;
+    std::cout << "backward integrate: index_b_ = " << memory->index_b_ << std::endl;
 
-      // This is all boilerplate CVODES setting up the adjoint ODE to solve
-      check_flag_sundials(CVodeCreateB(memory->cvodes_mem_, lmm_b_, &indexB),
-                          "CVodeCreateB");
-
-      std::cout << "backward integrate: indexB = " << indexB << std::endl;
-
-      check_flag_sundials(CVodeSetUserDataB(memory->cvodes_mem_, indexB,
-                                            reinterpret_cast<void*>(this)),
-                          "CVodeSetUserDataB");
-
-      bool cvodes_backward_initialized = false;
-
-      // At every time step, collect the adjoints from the output
-      // variables and re-initialize the solver
-      double t_init = value_of(memory->ts_.back());
-      for (int i = memory->ts_.size() - 1; i >= 0; --i) {
-        // Take in the adjoints from all the output variables at this point
-        // in time
-        Eigen::VectorXd step_sens = Eigen::VectorXd::Zero(N_);
-        for (int j = 0; j < N_; j++) {
-          // std::cout << "i: " << i << ", j: " << j << std::endl;
-          state_sens(j) += non_chaining_varis_[i * N_ + j]->adj_;
-          step_sens(j) += non_chaining_varis_[i * N_ + j]->adj_;
-        }
-
-        if (ts_vars_ > 0 && i >= 0) {
-          ts_varis_[i]->adj_ += step_sens.dot(memory->rhs(
-              t_init, memory->y_[i], msgs_, memory->value_of_args_tuple_));
-          /*
-            apply(
-            [&](auto&&... args) {
-            double adj = step_sens.dot(
-            memory->f_(t_init, memory->y_[i], msgs_, args...));
-            // std::cout << "adj: " << adj << ", i: " << i << std::endl;
-            return adj;
-            },
-            memory->value_of_args_tuple_);
-          */
-        }
-
-        double t_final = value_of((i > 0) ? memory->ts_[i - 1] : memory->t0_);
-        std::cout << "backward: time-point " << i << "; t_init = " << t_init << "; t_final = " << t_final << std::endl;
-        if (t_final != t_init) {
-          if (!cvodes_backward_initialized) {
-            // initialize CVODES backward machinery.
-            // the states of the backward problem *are* the adjoints
-            // of the ode states
-            check_flag_sundials(
-                CVodeInitB(memory->cvodes_mem_, indexB,
-                           &cvodes_integrator_adjoint_vari::cv_rhs_adj_sens,
-                           t_init, nv_state_sens),
-                "CVodeInitB");
-
-            check_flag_sundials(
-                CVodeSVtolerancesB(memory->cvodes_mem_, indexB, rel_tol_b_,
-                                   memory->nv_abs_tol_b_),
-                "CVodeSVtolerancesB");
-
-            check_flag_sundials(CVodeSetMaxNumStepsB(memory->cvodes_mem_,
-                                                     indexB, max_num_steps_),
-                                "CVodeSetMaxNumStepsB");
-
-            check_flag_sundials(
-                CVodeSetLinearSolverB(memory->cvodes_mem_, indexB, LS_b, A_b),
-                "CVodeSetLinearSolverB");
-
-            check_flag_sundials(
-                CVodeSetJacFnB(
-                    memory->cvodes_mem_, indexB,
-                    &cvodes_integrator_adjoint_vari::cv_jacobian_adj),
-                "CVodeSetJacFnB");
-
-            // Allocate space for backwards quadrature needed when
-            // parameters vary.
-            if (args_vars_ > 0) {
-              check_flag_sundials(
-                  CVodeQuadInitB(
-                      memory->cvodes_mem_, indexB,
-                      &cvodes_integrator_adjoint_vari::cv_quad_rhs_adj,
-                      nv_quad),
-                  "CVodeQuadInitB");
-
-              check_flag_sundials(
-                  CVodeQuadSStolerancesB(memory->cvodes_mem_, indexB,
-                                         rel_tol_q_, abs_tol_q_),
-                  "CVodeQuadSStolerancesB");
-
-              check_flag_sundials(
-                  CVodeSetQuadErrConB(memory->cvodes_mem_, indexB, SUNTRUE),
-                  "CVodeSetQuadErrConB");
-            }
-
-            cvodes_backward_initialized = true;
-          } else {
-            std::cout << "backward: time-point " << i << "; reinit solver; t_init = " << t_init << std::endl;
-            // just re-initialize the solver
-            check_flag_sundials(CVodeReInitB(memory->cvodes_mem_, indexB,
-                                             t_init, nv_state_sens),
-                                "CVodeReInitB");
-
-            if (args_vars_ > 0) {
-              std::cout << "backward: time-point " << i << "; reinit quadratures." << std::endl;
-              check_flag_sundials(
-                  CVodeQuadReInitB(memory->cvodes_mem_, indexB, nv_quad),
-                  "CVodeQuadReInitB");
-            }
-          }
-
-          std::cout << "backward: time-point " << i << "; running solver." << std::endl;
-          int error_code = CVodeB(memory->cvodes_mem_, t_final, CV_NORMAL);
-          std::cout << "backward: (2) time-point " << i << "; t_init = " << t_init << "; t_final = " << t_final << std::endl;
-
-          if (error_code == CV_TOO_MUCH_WORK) {
-            throw_domain_error(function_name_, "", t_final,
-                               "Failed to integrate backward to output time (",
-                               ") in less than max_num_steps steps");
-          } else {
-            check_flag_sundials(error_code, "CVodeB");
-          }
-
-          // check_flag_sundials(CVodeB(memory->cvodes_mem_, t_final,
-          // CV_NORMAL),
-          //                    "CVodeB");
-
-          // obtain adjoint states and update t_init to time point
-          // reached of t_final
-          check_flag_sundials(
-              CVodeGetB(memory->cvodes_mem_, indexB, &t_init, nv_state_sens),
-              "CVodeGetB");
-          std::cout << "backward: (3) time-point " << i << "; t_init = " << t_init << "; t_final = " << t_final << std::endl;
-
-          if (args_vars_ > 0) {
-            check_flag_sundials(
-                CVodeGetQuadB(memory->cvodes_mem_, indexB, &t_init, nv_quad),
-                "CVodeGetQuadB");
-            std::cout << "backward: (4) time-point " << i << "; t_init = " << t_init << "; t_final = " << t_final << std::endl;
-                      
-          }
-        }
+    // At every time step, collect the adjoints from the output
+    // variables and re-initialize the solver
+    double t_init = value_of(memory->ts_.back());
+    for (int i = memory->ts_.size() - 1; i >= 0; --i) {
+      // Take in the adjoints from all the output variables at this point
+      // in time
+      Eigen::VectorXd step_sens = Eigen::VectorXd::Zero(N_);
+      for (int j = 0; j < N_; j++) {
+        // std::cout << "i: " << i << ", j: " << j << std::endl;
+        state_sens(j) += non_chaining_varis_[i * N_ + j]->adj_;
+        step_sens(j) += non_chaining_varis_[i * N_ + j]->adj_;
       }
 
-      if (t0_vars_ > 0) {
-        Eigen::VectorXd y0d = value_of(memory->y0_);
-        t0_varis_[0]->adj_ += -state_sens.dot(
-            memory->rhs(t_init, y0d, msgs_, memory->value_of_args_tuple_));
+      if (ts_vars_ > 0 && i >= 0) {
+        ts_varis_[i]->adj_ += step_sens.dot(memory->rhs(
+            t_init, memory->y_[i], msgs_, memory->value_of_args_tuple_));
         /*
           apply(
-            [&](auto&&... args) {
-              return -state_sens.dot(memory->f_(t_init, y0d, msgs_, args...));
-            },
-            memory->value_of_args_tuple_);
+          [&](auto&&... args) {
+          double adj = step_sens.dot(
+          memory->f_(t_init, memory->y_[i], msgs_, args...));
+          // std::cout << "adj: " << adj << ", i: " << i << std::endl;
+          return adj;
+          },
+          memory->value_of_args_tuple_);
         */
       }
 
-      // do we need this a 2nd time? Don't think so.
-      /*
-      if (args_vars_ > 0) {
+      double t_final = value_of((i > 0) ? memory->ts_[i - 1] : memory->t0_);
+      //std::cout << "backward: time-point " << i << "; t_init = " << t_init << "; t_final = " << t_final << std::endl;
+      if (t_final != t_init) {
+        if (!memory->backward_is_initialized_) {
+          check_flag_sundials(CVodeCreateB(memory->cvodes_mem_, lmm_b_, &memory->index_b_),
+                              "CVodeCreateB");
+
+          check_flag_sundials(CVodeSetUserDataB(memory->cvodes_mem_, memory->index_b_,
+                                                reinterpret_cast<void*>(this)),
+                              "CVodeSetUserDataB");
+
+          // initialize CVODES backward machinery.
+          // the states of the backward problem *are* the adjoints
+          // of the ode states
+          check_flag_sundials(
+              CVodeInitB(memory->cvodes_mem_, memory->index_b_,
+                         &cvodes_integrator_adjoint_vari::cv_rhs_adj_sens,
+                         t_init, memory->nv_state_sens_),
+              "CVodeInitB");
+
+          check_flag_sundials(
+              CVodeSVtolerancesB(memory->cvodes_mem_, memory->index_b_, rel_tol_b_,
+                                 memory->nv_abs_tol_b_),
+              "CVodeSVtolerancesB");
+
+          check_flag_sundials(CVodeSetMaxNumStepsB(memory->cvodes_mem_,
+                                                   memory->index_b_, max_num_steps_),
+                              "CVodeSetMaxNumStepsB");
+
+          check_flag_sundials(
+              CVodeSetLinearSolverB(memory->cvodes_mem_, memory->index_b_, memory->LS_b_, memory->A_b_),
+              "CVodeSetLinearSolverB");
+          
+          check_flag_sundials(
+              CVodeSetJacFnB(
+                  memory->cvodes_mem_, memory->index_b_,
+                  &cvodes_integrator_adjoint_vari::cv_jacobian_adj),
+              "CVodeSetJacFnB");
+
+          // Allocate space for backwards quadrature needed when
+          // parameters vary.
+          if (args_vars_ > 0) {
+            check_flag_sundials(
+                CVodeQuadInitB(
+                    memory->cvodes_mem_, memory->index_b_,
+                    &cvodes_integrator_adjoint_vari::cv_quad_rhs_adj,
+                    memory->nv_quad_),
+                "CVodeQuadInitB");
+            
+            check_flag_sundials(
+                CVodeQuadSStolerancesB(memory->cvodes_mem_, memory->index_b_,
+                                       rel_tol_q_, abs_tol_q_),
+                "CVodeQuadSStolerancesB");
+            
+            check_flag_sundials(
+                CVodeSetQuadErrConB(memory->cvodes_mem_, memory->index_b_, SUNTRUE),
+                "CVodeSetQuadErrConB");
+          }
+
+          memory->backward_is_initialized_ = true;
+        } else {
+          // just re-initialize the solver
+          check_flag_sundials(CVodeReInitB(memory->cvodes_mem_, memory->index_b_,
+                                           t_init, memory->nv_state_sens_),
+                              "CVodeReInitB");
+
+          if (args_vars_ > 0) {
+            check_flag_sundials(
+                CVodeQuadReInitB(memory->cvodes_mem_, memory->index_b_, memory->nv_quad_),
+                "CVodeQuadReInitB");
+          }
+        }
+
+        int error_code = CVodeB(memory->cvodes_mem_, t_final, CV_NORMAL);
+        
+        if (error_code == CV_TOO_MUCH_WORK) {
+          throw_domain_error(function_name_, "", t_final,
+                             "Failed to integrate backward to output time (",
+                             ") in less than max_num_steps steps");
+        } else {
+          check_flag_sundials(error_code, "CVodeB");
+        }
+
+        // check_flag_sundials(CVodeB(memory->cvodes_mem_, t_final,
+        // CV_NORMAL),
+        //                    "CVodeB");
+        
+        // obtain adjoint states and update t_init to time point
+        // reached of t_final
         check_flag_sundials(
-            CVodeGetQuadB(memory->cvodes_mem_, indexB, &t_init, nv_quad),
-            "CVodeGetQuadB");
-      }
-      */
+            CVodeGetB(memory->cvodes_mem_, memory->index_b_, &t_init, memory->nv_state_sens_),
+            "CVodeGetB");
 
-      // After integrating all the way back to t0, we finally have the
-      // the adjoints we wanted
-      // These are the dlog_density / d(initial_conditions[s]) adjoints
-      for (size_t s = 0; s < y0_vars_; s++) {
-        y0_varis_[s]->adj_ += state_sens.coeff(s);
+        if (args_vars_ > 0) {
+          check_flag_sundials(
+              CVodeGetQuadB(memory->cvodes_mem_, memory->index_b_, &t_init, memory->nv_quad_),
+              "CVodeGetQuadB");
+        }
       }
-
-      // These are the dlog_density / d(parameters[s]) adjoints
-      for (size_t s = 0; s < args_vars_; s++) {
-        args_varis_[s]->adj_ += quad.coeff(s);
-      }
-
-    } catch (const std::exception& e) {
-      SUNLinSolFree(LS_b);
-      SUNMatDestroy(A_b);
-      N_VDestroy_Serial(nv_state_sens);
-      N_VDestroy_Serial(nv_quad);
-      throw;
     }
 
-    SUNLinSolFree(LS_b);
-    SUNMatDestroy(A_b);
-    N_VDestroy_Serial(nv_state_sens);
-    N_VDestroy_Serial(nv_quad);
+    if (t0_vars_ > 0) {
+      Eigen::VectorXd y0d = value_of(memory->y0_);
+      t0_varis_[0]->adj_ += -state_sens.dot(
+          memory->rhs(t_init, y0d, msgs_, memory->value_of_args_tuple_));
+      /*
+        apply(
+        [&](auto&&... args) {
+        return -state_sens.dot(memory->f_(t_init, y0d, msgs_, args...));
+        },
+        memory->value_of_args_tuple_);
+      */
+    }
+    
+    // do we need this a 2nd time? Don't think so.
+    /*
+      if (args_vars_ > 0) {
+      check_flag_sundials(
+      CVodeGetQuadB(memory->cvodes_mem_, indexB, &t_init, nv_quad),
+      "CVodeGetQuadB");
+      }
+    */
+
+    // After integrating all the way back to t0, we finally have the
+    // the adjoints we wanted
+    // These are the dlog_density / d(initial_conditions[s]) adjoints
+    for (size_t s = 0; s < y0_vars_; s++) {
+      y0_varis_[s]->adj_ += state_sens.coeff(s);
+    }
+    
+    // These are the dlog_density / d(parameters[s]) adjoints
+    for (size_t s = 0; s < args_vars_; s++) {
+      args_varis_[s]->adj_ += quad.coeff(s);
+    }
+
     std::cout << "backward v2 integrate...done" << std::endl;
   }
   

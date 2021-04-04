@@ -20,10 +20,9 @@ TYPED_TEST_P(harmonic_oscillator_test, param_and_data_finite_diff) {
   for (size_t i = 0; i < this->ts.size(); ++i) {
     this->ts[i] = this->t0 + 0.1 * (i + 1);
   }
-  //this->test_fd_vd(1.e-8, 1e-4);
+  this->test_fd_vd(1.e-8, 1e-4);
   this->test_fd_dv(1.e-8, 1e-4);
-  //this->test_fd_vv(1.e-8, 1e-4);
-  /*
+  this->test_fd_vv(1.e-8, 1e-4);
   this->t0 = 1.0;
   for (size_t i = 0; i < this->ts.size(); ++i) {
     this->ts[i] = this->t0 + 0.1 * (i + 1);
@@ -39,13 +38,12 @@ TYPED_TEST_P(harmonic_oscillator_test, param_and_data_finite_diff) {
   this->test_fd_vd(1.e-8, 1e-4);
   this->test_fd_dv(1.e-8, 1e-4);
   this->test_fd_vv(1.e-8, 1e-4);
-  */
 }
 REGISTER_TYPED_TEST_SUITE_P(harmonic_oscillator_test,
                             param_and_data_finite_diff);
 INSTANTIATE_TYPED_TEST_SUITE_P(StanOde, harmonic_oscillator_test,
                                harmonic_oscillator_fd_test_types);
-/*
+
 TYPED_TEST_SUITE_P(harmonic_oscillator_data_test);
 TYPED_TEST_P(harmonic_oscillator_data_test, param_and_data_finite_diff) {
   this->t0 = 0;
@@ -76,7 +74,7 @@ REGISTER_TYPED_TEST_SUITE_P(harmonic_oscillator_data_test,
                             param_and_data_finite_diff);
 INSTANTIATE_TYPED_TEST_SUITE_P(StanOde, harmonic_oscillator_data_test,
                                harmonic_oscillator_fd_test_types);
-*/
+
 using harmonic_oscillator_test_types = ::testing::Types<
                                        /*
     std::tuple<ode_rk45_functor, ode_rk45_functor, double, double, double>,
@@ -108,17 +106,15 @@ using harmonic_oscillator_test_types = ::testing::Types<
     std::tuple<ode_adams_functor, ode_adams_functor, double, stan::math::var,
                stan::math::var>,
                                        */
-  std::tuple<ode_adjoint_functor, ode_adjoint_functor, double, double, double>//,
-  /*
+  std::tuple<ode_adjoint_functor, ode_adjoint_functor, double, double, double>,
     std::tuple<ode_adjoint_functor, ode_adjoint_functor, double, stan::math::var,
                double>,
     std::tuple<ode_adjoint_functor, ode_adjoint_functor, double, double,
                stan::math::var>,
   std::tuple<ode_adjoint_functor, ode_adjoint_functor, double, stan::math::var,
                stan::math::var>
-  */
   >;
-/*
+
 TYPED_TEST_SUITE_P(harmonic_oscillator_t0_ad_test);
 TYPED_TEST_P(harmonic_oscillator_t0_ad_test, t0_ad) {
   if (std::is_same<std::tuple_element_t<0, TypeParam>,
@@ -182,4 +178,4 @@ TYPED_TEST_P(harmonic_oscillator_analytical_test, vv) {
 REGISTER_TYPED_TEST_SUITE_P(harmonic_oscillator_analytical_test, dv, vd, vv);
 INSTANTIATE_TYPED_TEST_SUITE_P(StanOde, harmonic_oscillator_analytical_test,
                                harmonic_oscillator_test_types);
-*/
+
