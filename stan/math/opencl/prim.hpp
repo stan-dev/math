@@ -201,6 +201,9 @@
 #include <stan/math/opencl/prim/poisson_lpmf.hpp>
 #include <stan/math/opencl/prim/prod.hpp>
 #include <stan/math/opencl/prim/rank.hpp>
+#include <stan/math/opencl/prim/rayleigh_cdf.hpp>
+#include <stan/math/opencl/prim/rayleigh_lccdf.hpp>
+#include <stan/math/opencl/prim/rayleigh_lcdf.hpp>
 #include <stan/math/opencl/prim/rayleigh_lpdf.hpp>
 #include <stan/math/opencl/prim/rep_array.hpp>
 #include <stan/math/opencl/prim/rep_matrix.hpp>
@@ -225,6 +228,10 @@
 #include <stan/math/opencl/prim/std_normal_lcdf.hpp>
 #include <stan/math/opencl/prim/std_normal_lpdf.hpp>
 #include <stan/math/opencl/prim/student_t_lpdf.hpp>
+#include <stan/math/opencl/prim/skew_double_exponential_cdf.hpp>
+#include <stan/math/opencl/prim/skew_double_exponential_lcdf.hpp>
+#include <stan/math/opencl/prim/skew_double_exponential_lccdf.hpp>
+#include <stan/math/opencl/prim/skew_double_exponential_lpdf.hpp>
 #include <stan/math/opencl/prim/skew_normal_lpdf.hpp>
 #include <stan/math/opencl/prim/sum.hpp>
 #include <stan/math/opencl/prim/symmetrize_from_lower_tri.hpp>

@@ -35,7 +35,9 @@ namespace math {
  *  not bound between 0.0 and 1.0
  * @throw std::invalid_argument if container sizes mismatch
  */
-template <typename T_y, typename T_loc, typename T_scale, typename T_skewness>
+template <typename T_y, typename T_loc, typename T_scale, typename T_skewness,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_loc, T_scale, T_skewness>* = nullptr>
 return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lcdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma,
     const T_skewness& tau) {
