@@ -238,6 +238,9 @@
 #include <stan/math/opencl/prim/to_vector.hpp>
 #include <stan/math/opencl/prim/trace.hpp>
 #include <stan/math/opencl/prim/ub_constrain.hpp>
+#include <stan/math/opencl/prim/uniform_cdf.hpp>
+#include <stan/math/opencl/prim/uniform_lccdf.hpp>
+#include <stan/math/opencl/prim/uniform_lcdf.hpp>
 #include <stan/math/opencl/prim/uniform_lpdf.hpp>
 #include <stan/math/opencl/prim/unit_vector_constrain.hpp>
 #include <stan/math/opencl/prim/variance.hpp>
