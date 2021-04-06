@@ -56,9 +56,10 @@ TEST(ProbDistributionsUniformCdf, error_checking) {
                std::domain_error);
 }
 
-auto uniform_cdf_functor = [](const auto& y, const auto& alpha, const auto& beta) {
-  return stan::math::uniform_cdf(y, alpha, beta);
-};
+auto uniform_cdf_functor
+    = [](const auto& y, const auto& alpha, const auto& beta) {
+        return stan::math::uniform_cdf(y, alpha, beta);
+      };
 
 TEST(ProbDistributionsUniformCdf, opencl_matches_cpu_small) {
   int N = 3;
@@ -149,7 +150,8 @@ TEST(ProbDistributionsUniformCdf, opencl_matches_cpu_big) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> alpha
       = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1);
   Eigen::Matrix<double, Eigen::Dynamic, 1> beta
-      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs() + alpha.array();
+      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs()
+        + alpha.array();
 
   stan::math::test::compare_cpu_opencl_prim_rev(uniform_cdf_functor, y, alpha,
                                                 beta);

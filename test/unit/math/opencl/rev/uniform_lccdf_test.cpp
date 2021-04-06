@@ -56,9 +56,10 @@ TEST(ProbDistributionsUniformLccdf, error_checking) {
                std::domain_error);
 }
 
-auto uniform_lccdf_functor = [](const auto& y, const auto& alpha, const auto& beta) {
-  return stan::math::uniform_lccdf(y, alpha, beta);
-};
+auto uniform_lccdf_functor
+    = [](const auto& y, const auto& alpha, const auto& beta) {
+        return stan::math::uniform_lccdf(y, alpha, beta);
+      };
 
 TEST(ProbDistributionsUniformLccdf, opencl_matches_cpu_small) {
   int N = 3;
@@ -120,8 +121,8 @@ TEST(ProbDistributionsUniformLccdf, opencl_broadcast_alpha) {
   Eigen::VectorXd beta(N);
   beta << 0.3, 0.8, 1.0;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<1>(uniform_lccdf_functor, y,
-                                                         alpha_scal, beta);
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(uniform_lccdf_functor,
+                                                         y, alpha_scal, beta);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       uniform_lccdf_functor, y.transpose().eval(), alpha_scal, beta);
 }
@@ -135,8 +136,8 @@ TEST(ProbDistributionsUniformLccdf, opencl_broadcast_beta) {
   alpha << 0.1, 0.5, -1.0;
   double beta_scal = 12.3;
 
-  stan::math::test::test_opencl_broadcasting_prim_rev<2>(uniform_lccdf_functor, y,
-                                                         alpha, beta_scal);
+  stan::math::test::test_opencl_broadcasting_prim_rev<2>(uniform_lccdf_functor,
+                                                         y, alpha, beta_scal);
   stan::math::test::test_opencl_broadcasting_prim_rev<2>(
       uniform_lccdf_functor, y.transpose().eval(), alpha, beta_scal);
 }
@@ -149,7 +150,8 @@ TEST(ProbDistributionsUniformLccdf, opencl_matches_cpu_big) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> alpha
       = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1);
   Eigen::Matrix<double, Eigen::Dynamic, 1> beta
-      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs() + alpha.array();
+      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs()
+        + alpha.array();
 
   stan::math::test::compare_cpu_opencl_prim_rev(uniform_lccdf_functor, y, alpha,
                                                 beta);
