@@ -56,9 +56,10 @@ TEST(ProbDistributionsWeibullCdf, error_checking) {
                std::domain_error);
 }
 
-auto weibull_cdf_functor = [](const auto& y, const auto& alpha, const auto& sigma) {
-  return stan::math::weibull_cdf(y, alpha, sigma);
-};
+auto weibull_cdf_functor
+    = [](const auto& y, const auto& alpha, const auto& sigma) {
+        return stan::math::weibull_cdf(y, alpha, sigma);
+      };
 
 TEST(ProbDistributionsWeibullCdf, opencl_matches_cpu_small) {
   int N = 3;

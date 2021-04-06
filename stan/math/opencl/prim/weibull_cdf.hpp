@@ -72,21 +72,22 @@ return_type_t<T_y_cl, T_shape_cl, T_scale_cl> weibull_cdf(
   auto deriv_y_sigma = elt_multiply(rep_deriv, alpha_val);
   auto y_deriv_tmp = elt_divide(deriv_y_sigma, y_val);
   auto sigma_deriv_tmp = elt_divide(deriv_y_sigma, -sigma_val);
-  auto alpha_deriv_tmp = elt_multiply(rep_deriv, log(elt_divide(y_val, sigma_val)));
+  auto alpha_deriv_tmp
+      = elt_multiply(rep_deriv, log(elt_divide(y_val, sigma_val)));
 
   matrix_cl<double> cdf_cl;
   matrix_cl<double> alpha_deriv_cl;
   matrix_cl<double> y_deriv_cl;
   matrix_cl<double> sigma_deriv_cl;
 
-  results(check_y_nonnegative, check_alpha_positive_finite, check_sigma_positive_finite,
-          cdf_cl, y_deriv_cl, alpha_deriv_cl, sigma_deriv_cl)
-      = expressions(
-          y_nonnegative, alpha_positive_finite_expr, sigma_positive_finite_expr,
-          cdf_expr,
-        calc_if<!is_constant<T_y_cl>::value>(y_deriv_tmp),
-        calc_if<!is_constant<T_shape_cl>::value>(alpha_deriv_tmp),
-          calc_if<!is_constant<T_scale_cl>::value>(sigma_deriv_tmp));
+  results(check_y_nonnegative, check_alpha_positive_finite,
+          check_sigma_positive_finite, cdf_cl, y_deriv_cl, alpha_deriv_cl,
+          sigma_deriv_cl)
+      = expressions(y_nonnegative, alpha_positive_finite_expr,
+                    sigma_positive_finite_expr, cdf_expr,
+                    calc_if<!is_constant<T_y_cl>::value>(y_deriv_tmp),
+                    calc_if<!is_constant<T_shape_cl>::value>(alpha_deriv_tmp),
+                    calc_if<!is_constant<T_scale_cl>::value>(sigma_deriv_tmp));
 
   T_partials_return cdf = (from_matrix_cl(cdf_cl)).prod();
 
