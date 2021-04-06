@@ -146,7 +146,7 @@ TEST(ProbDistributionsLognormalLcdf, opencl_matches_cpu_big) {
   int N = 153;
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> y
-      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
+      = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs() + 0.1;
   Eigen::Matrix<double, Eigen::Dynamic, 1> mu
       = Eigen::Array<double, Eigen::Dynamic, 1>::Random(N, 1).abs();
   Eigen::Matrix<double, Eigen::Dynamic, 1> sigma
