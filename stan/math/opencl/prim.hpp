@@ -245,6 +245,9 @@
 #include <stan/math/opencl/prim/uniform_lpdf.hpp>
 #include <stan/math/opencl/prim/unit_vector_constrain.hpp>
 #include <stan/math/opencl/prim/variance.hpp>
+#include <stan/math/opencl/prim/weibull_cdf.hpp>
+#include <stan/math/opencl/prim/weibull_lccdf.hpp>
+#include <stan/math/opencl/prim/weibull_lcdf.hpp>
 #include <stan/math/opencl/prim/weibull_lpdf.hpp>
 
 #include <stan/math/opencl/err.hpp>
