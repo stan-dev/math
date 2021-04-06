@@ -229,6 +229,9 @@
 #include <stan/math/opencl/prim/squared_distance.hpp>
 #include <stan/math/opencl/prim/sub_col.hpp>
 #include <stan/math/opencl/prim/sub_row.hpp>
+#include <stan/math/opencl/prim/std_normal_cdf.hpp>
+#include <stan/math/opencl/prim/std_normal_lccdf.hpp>
+#include <stan/math/opencl/prim/std_normal_lcdf.hpp>
 #include <stan/math/opencl/prim/std_normal_lpdf.hpp>
 #include <stan/math/opencl/prim/student_t_lpdf.hpp>
 #include <stan/math/opencl/prim/skew_double_exponential_cdf.hpp>
@@ -248,6 +251,9 @@
 #include <stan/math/opencl/prim/to_vector.hpp>
 #include <stan/math/opencl/prim/trace.hpp>
 #include <stan/math/opencl/prim/ub_constrain.hpp>
+#include <stan/math/opencl/prim/uniform_cdf.hpp>
+#include <stan/math/opencl/prim/uniform_lccdf.hpp>
+#include <stan/math/opencl/prim/uniform_lcdf.hpp>
 #include <stan/math/opencl/prim/uniform_lpdf.hpp>
 #include <stan/math/opencl/prim/unit_vector_constrain.hpp>
 #include <stan/math/opencl/prim/variance.hpp>
