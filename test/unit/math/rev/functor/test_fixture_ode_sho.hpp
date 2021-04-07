@@ -68,8 +68,7 @@ struct harmonic_oscillator_ode_base {
     }
   }
 
-  int dim() { return 2; }
-  int param_size() { return 1; }
+  std::vector<T_t>& times() { return ts; }
   Eigen::VectorXd init() { return y0; }
   std::vector<double> param() { return theta; }
 };

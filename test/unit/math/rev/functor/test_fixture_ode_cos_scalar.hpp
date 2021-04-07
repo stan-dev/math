@@ -47,8 +47,6 @@ struct cos_arg_test : public cos_arg_ode_base,
                       public ODETestFixture<cos_arg_test<T>> {
   cos_arg_test() : cos_arg_ode_base() {}
 
-  int dim() { return 1; }
-  int param_size() { return 99; }
   Eigen::VectorXd init() { return y0; }
   std::vector<double> param() { return {a}; }
 

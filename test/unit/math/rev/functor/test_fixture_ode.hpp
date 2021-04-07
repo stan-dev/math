@@ -12,10 +12,107 @@
 #include <limits>
 #include <string>
 
+/** 
+ * The parent test fixture for ODEs, with CRTP dependence on child
+ * fixtures. The goal is to provide basic tests for various integrator
+ * setups without losing flexibility in adding dedicated tests in the future.
+ * In order to focus on actual tests, future maintenance
+ * should avoid overengineer this fixture.
+ *
+ * In order to test various ODE input types, child fixture can use
+ * tuple pattern + googletest's typed tests
+ * 
+ * https://github.com/google/googletest/blob/master/googletest/samples/sample6_unittest.cc
+ *
+ * -------------------------
+ * Write child test fixtures
+ * -------------------------
+ *
+ * template<class tuple_type>
+ * struct foo_ode_test : public ODETestFixture<foo_ode_test<T>> {
+ *   using ode_solver_type = std::tuple_element_t<0, T>;
+ *   using T_1 = std::tuple_element_t<1, T>;
+ *   using T_2 = std::tuple_element_t<2, T>;
+ *   using T_3 = std::tuple_element_t<3, T>;
+ * ...
+ * };
+ *
+ * Functor wrappers for Math's ODE solvers can be found in
+ * "ode_test_functors.hpp". Currently we have
+ *
+ * - ode_adams_functor
+ * - ode_ckrk_functor
+ * - ode_bdf_functor
+ * - ode_rk45_functor
+ * - integrate_ode_adams_functor
+ * - integrate_ode_bdf_functor
+ * - integrate_ode_rk45_functor
+ *
+ * corresponding to existing integrator functions, with same calling
+ * signatures that supports w & w/o tolerance controls.
+ *
+ * This fixture provides the following test methods:
+ *
+ *  | Method          | What's being tested                                 |
+ *  |-----------------+-----------------------------------------------------|
+ *  | test_good       | Passes without throwing exceptions                  |
+ *  | test_analytical | matches analytical soln                             |
+ *  | test_fd_dv      | matches finite difference soln (theta is var)       |
+ *  | test_fd_vd      | matches finite difference soln (y0 is var)          |
+ *  | test_fd_vv      | matches finite difference soln (y0 & theta are var) |
+ *  | test_ts_ad      | matches finite difference soln (time is var)        |
+ * 
+ * See each method's description for functions required in the child
+ * fixture, and note that child fixture only need to provide required
+ * methods should it use a particular test.
+ *
+ * Since ODE tests require specific compile instructions, the test
+ * files should be consistently named as follow:
+ *
+ * | child fixture            | tests                         |
+ * |--------------------------+-------------------------------|
+ * | test_fixture_ode_foo.hpp | foo_ode_typed_bar_test.cpp    |
+ * | e.g.                     | e.g.                          |
+ * | test_fixture_ode_sho.hpp | sho_ode_typed_test.cpp,       |
+ * |                          | sho_ode_typed_error_test.cpp, |
+ * |                          | sho_ode_typed_...             |
+ *
+ *
+ * ----------------------------
+ * Use fixtures in tests
+ * ----------------------------
+ * Follow googletest manual, first we need to declare the test fixture
+ * 
+ *  TYPED_TEST_SUITE_P(foo_test);
+ *
+ * then we add test items
+ *
+ *  TYPED_TEST_P(foo_test, this) { this->test_this(); }
+ *  TYPED_TEST_P(foo_test, that) { this->test_that(); }
+ *  TYPED_TEST_P(foo_test, another) { this->test_another(); }
+ *
+ * and register test items
+ *
+ *  REGISTER_TYPED_TEST_SUITE_P(foo_test, this, that, another);
+ *
+ * To run actual tests, we need to declare types to be tested and
+ *  apply it to the tests
+ *
+ * using foot_test_types = ::testing::Types<std::tuple<T1, T2, T3>,
+ *                                          std::tuple<T4, T5, T6>,
+ *                                          ... >
+ *  INSTANTIATE_TYPED_TEST_SUITE_P(StanOde, foo_test, foo_test_types);
+ *
+ *
+ * For a simple exmaple, see googletest link above & "fho_ode_typed_ts_test.cpp".
+ */
 template <class ode_problem_type>
 struct ODETestFixture : public ::testing::Test {
   /**
    * test ODE solver pass
+   *
+   * Require method in child fixture:
+   * - apply_solver(): call ODE solver
    */
   void test_good() {
     ode_problem_type& ode = static_cast<ode_problem_type&>(*this);
@@ -24,6 +121,11 @@ struct ODETestFixture : public ::testing::Test {
 
   /**
    * test ODE solution against analytical solution
+   *
+   * Require functors in args:
+   * - Matrix<T, -1, 1> F_ode(VectorXd): return ODE solution given
+   *   parameter vector
+   * - Matrix<double, -1, 1> F_sol(double t, ...): return analytical solution at t
    *
    * @param ode_sol solver functor that takes a <code>vector</code>
    * parameter variable that returns solution <code>vector</code>.
@@ -51,6 +153,11 @@ struct ODETestFixture : public ::testing::Test {
    * test ODE solution as well as sensitivity solution
    * against analytical solution.
    *
+   *
+   * Require functors in child fixture:
+   * - Matrix<T, -1, 1> F_ode(vector): return ODE solution given parameter
+   * - Matrix<double, -1, 1> F_sol(double t, ...): return analytical ODE solution at t
+   * - Matrix<double, -1, -1> F_grad_sol(double t, ...): return analytical ODE sensivity at t
    *
    * @param ode_sol solver functor that takes a <code>vector</code>
    * parameter variable that returns solution <code>vector</code>.
@@ -117,9 +224,9 @@ struct ODETestFixture : public ::testing::Test {
     param[param_index] -= 2 * h;
     std::vector<Eigen::VectorXd> res_lb = ode.apply_solver(init, param);
 
-    std::vector<Eigen::VectorXd> results(ode.ts.size());
+    std::vector<Eigen::VectorXd> results(ode.times().size());
 
-    for (size_t i = 0; i < ode.ts.size(); ++i) {
+    for (size_t i = 0; i < ode.times().size(); ++i) {
       results[i] = (res_ub[i] - res_lb[i]) / (2.0 * h);
     }
     return results;
@@ -145,9 +252,9 @@ struct ODETestFixture : public ::testing::Test {
     init[param_index] -= 2 * h;
     std::vector<Eigen::VectorXd> res_lb = ode.apply_solver(init, param);
 
-    std::vector<Eigen::VectorXd> results(ode.ts.size());
+    std::vector<Eigen::VectorXd> results(ode.times().size());
 
-    for (size_t i = 0; i < ode.ts.size(); ++i) {
+    for (size_t i = 0; i < ode.times().size(); ++i) {
       results[i] = (res_ub[i] - res_lb[i]) / (2.0 * h);
     }
     return results;
@@ -157,9 +264,12 @@ struct ODETestFixture : public ::testing::Test {
    * Test AD against finite diff when param
    * is <code>var</code>.
    *
-   * Require <code>apply_solver(T1&& init, T2&& param)</code> from child fixture
-   * for finite diff grad calculation. The call should return ODE data results
-   * with when <code>T1</code> and <code>T2</code> are data.
+   * Require methods in child fixture:
+   * - param(): return to ODE vector-like parameters
+   * - init(): return ODE vector-like init condition
+   * - times(): return ODE vector time step
+   * - apply_solver(init, param) solve ode given vector-like init & param.
+   *   It must return data results when both init & param are data.
    *
    * @param diff finite diff stepsize
    * @param tol double value test tolerance
@@ -181,7 +291,7 @@ struct ODETestFixture : public ::testing::Test {
     std::vector<Eigen::Matrix<stan::math::var, -1, 1>> ode_res
         = ode.apply_solver(ode.init(), theta_v);
 
-    for (size_t i = 0; i < ode.ts.size(); i++) {
+    for (size_t i = 0; i < ode.times().size(); i++) {
       for (size_t j = 0; j < ode_res[0].size(); j++) {
         grads_eff.clear();
         ode_res[i][j].grad(theta_v, grads_eff);
@@ -201,9 +311,12 @@ struct ODETestFixture : public ::testing::Test {
    * Test AD against finite diff when initial condition
    * is <code>var</code>.
    *
-   * Require <code>apply_solver(T1&& init, T2&& param)</code> from child fixture
-   * for finite diff grad calculation. The call should return ODE data results
-   * with when <code>T1</code> and <code>T2</code> are data.
+   * Require methods in child fixture:
+   * - param(): return to ODE vector-like parameters
+   * - init(): return ODE vector-like init condition
+   * - times(): return ODE vector time step
+   * - apply_solver(init, param) solve ode given vector-like init & param.
+   *   It must return data results when both init & param are data.
    *
    * @param diff finite diff stepsize
    * @param tol double value test tolerance
@@ -227,7 +340,7 @@ struct ODETestFixture : public ::testing::Test {
 
     std::vector<stan::math::var> y_vec(to_array_1d(y0_v));
 
-    for (size_t i = 0; i < ode.ts.size(); i++) {
+    for (size_t i = 0; i < ode.times().size(); i++) {
       for (size_t j = 0; j < n; j++) {
         grads_eff.clear();
         ode_res[i][j].grad(y_vec, grads_eff);
@@ -247,9 +360,12 @@ struct ODETestFixture : public ::testing::Test {
    * Test AD against finite diff when both initial condition & param
    * are <code>var</code>.
    *
-   * Require <code>apply_solver(T1&& init, T2&& param)</code> from child fixture
-   * for finite diff grad calculation. The call should return ODE data results
-   * with when <code>T1</code> and <code>T2</code> are data.
+   * Require methods in child fixture:
+   * - param(): return to ODE vector-like parameters
+   * - init(): return ODE vector-like init condition
+   * - times(): return ODE vector time step
+   * - apply_solver(init, param) solve ode given vector-like init & param.
+   *   It must return data results when both init & param are data.
    *
    * @param diff finite diff stepsize
    * @param tol double value test tolerance
@@ -260,8 +376,8 @@ struct ODETestFixture : public ::testing::Test {
 
     stan::math::nested_rev_autodiff nested;
 
-    int n = ode.dim();
-    int m = ode.param_size();
+    int n = ode.init().size();
+    int m = ode.param().size();
     std::vector<std::vector<Eigen::VectorXd>> fd_res_y(n);
     for (size_t i = 0; i < n; ++i) {
       fd_res_y[i] = fd_init(i, diff);
@@ -288,7 +404,7 @@ struct ODETestFixture : public ::testing::Test {
         = ode.apply_solver(yv, theta_v);
 
     std::vector<double> grads_eff;
-    for (size_t i = 0; i < ode.ts.size(); i++) {
+    for (size_t i = 0; i < ode.times().size(); i++) {
       for (size_t j = 0; j < n; j++) {
         grads_eff.clear();
         ode_res[i][j].grad(vars, grads_eff);
@@ -314,11 +430,13 @@ struct ODETestFixture : public ::testing::Test {
   }
 
   /**
-   * Test AD when <code>ts</code> is <code>var</code>.
+   * Test gradient w.r.t times.
    *
-   * require <code>apply_solver()</code> from child fixture for ODE
-   * solution when time step is <code>var</code>, and <code>eval_rhs</code>
-   * to calculate RHS.
+   * Require methods in child fixture:
+   * - times(): return ODE var vector time steps
+   * - apply_solver(): solve ODE assuming var time step
+   * - eval_rhs(double t, VectorXd x): eval ODE right-hand-side at
+   *   time t and independent variable x.
    */
   void test_ts_ad() {
     ode_problem_type& ode = static_cast<ode_problem_type&>(*this);
@@ -327,16 +445,16 @@ struct ODETestFixture : public ::testing::Test {
     size_t nt = res.size();
     for (auto i = 0; i < nt; ++i) {
       Eigen::VectorXd res_d = stan::math::value_of(res[i]);
-      for (auto j = 0; j < ode.dim(); ++j) {
+      for (auto j = 0; j < ode.init().size(); ++j) {
         g.clear();
         res[i][j].grad();
         for (auto k = 0; k < nt; ++k) {
           if (k != i) {
-            EXPECT_FLOAT_EQ(ode.ts[k].adj(), 0.0);
+            EXPECT_FLOAT_EQ(ode.times()[k].adj(), 0.0);
           } else {
             double ts_ad
-                = stan::math::value_of(ode.eval_rhs(ode.ts[i].val(), res_d)[j]);
-            EXPECT_FLOAT_EQ(ode.ts[k].adj(), ts_ad);
+                = stan::math::value_of(ode.eval_rhs(ode.times()[i].val(), res_d)[j]);
+            EXPECT_FLOAT_EQ(ode.times()[k].adj(), ts_ad);
           }
         }
         stan::math::set_zero_all_adjoints();

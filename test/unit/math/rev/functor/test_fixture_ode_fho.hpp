@@ -59,8 +59,7 @@ struct forced_harm_osc_base {
     }
   }
 
-  int dim() { return 2; }
-  int param_size() { return 2; }
+  std::vector<T_t>& times() { return ts; }
   Eigen::Matrix<T_y, -1, 1> init() { return y0; }
   std::vector<T_p> param() { return theta; }
 };

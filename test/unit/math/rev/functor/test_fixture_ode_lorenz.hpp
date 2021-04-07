@@ -50,8 +50,7 @@ struct lorenz_ode_base {
       ts[i] = t0 + (0.1 * (i + 1));
   }
 
-  int dim() { return 3; }
-  int param_size() { return 3; }
+  std::vector<double>& times() { return ts; }
   Eigen::VectorXd init() { return y0; }
   std::vector<double> param() { return theta; }
 };
