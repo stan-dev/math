@@ -206,7 +206,7 @@ class cvodes_integrator_adjoint_vari : public vari {
   double relative_tolerance_quadrature_;
   double absolute_tolerance_quadrature_;
   long int max_num_steps_;
-  long int num_checkpoints_;
+  long int num_steps_between_checkpoints_;
   int interpolation_polynomial_;
   int solver_forward_;
   int solver_backward_;
@@ -446,7 +446,7 @@ class cvodes_integrator_adjoint_vari : public vari {
    * @param absolute_tolerance_quadrature Absolute tolerance for quadrature problem passed to CVODES
    * @param max_num_steps Upper limit on the number of integration steps to
    *   take between each output (error if exceeded)
-   * @param num_checkpoints Number of integrator steps after which a checkpoint
+   * @param num_steps_between_checkpoints Number of integrator steps after which a checkpoint
    * is stored for the backward pass
    * @param interpolation_polynomial type of polynomial used for interpolation
    * @param solver_forward solver used for forward pass
@@ -464,7 +464,7 @@ class cvodes_integrator_adjoint_vari : public vari {
       const char* function_name, const F& f, const T_y0& y0, const T_t0& t0,
       const std::vector<T_ts>& ts, double relative_tolerance_forward, Eigen::VectorXd absolute_tolerance_forward,
       double relative_tolerance_backward, Eigen::VectorXd absolute_tolerance_backward, double relative_tolerance_quadrature,
-      double absolute_tolerance_quadrature, long int max_num_steps, long int num_checkpoints,
+      double absolute_tolerance_quadrature, long int max_num_steps, long int num_steps_between_checkpoints,
       int interpolation_polynomial, int solver_forward, int solver_backward,
       std::ostream* msgs, const T_Args&... args)
       : function_name_(function_name),
@@ -480,7 +480,7 @@ class cvodes_integrator_adjoint_vari : public vari {
         relative_tolerance_quadrature_(relative_tolerance_quadrature),
         absolute_tolerance_quadrature_(absolute_tolerance_quadrature),
         max_num_steps_(max_num_steps),
-        num_checkpoints_(num_checkpoints),
+        num_steps_between_checkpoints_(num_steps_between_checkpoints),
         interpolation_polynomial_(interpolation_polynomial),
         solver_forward_(solver_forward),
         solver_backward_(solver_backward),
@@ -539,7 +539,7 @@ class cvodes_integrator_adjoint_vari : public vari {
     check_positive_finite(fun, "absolute_tolerance_quadrature", absolute_tolerance_quadrature_);
     check_positive(fun, "max_num_steps", max_num_steps_);
     // TODO (SW): rename according to design
-    check_positive(fun, "num_checkpoints", num_checkpoints_);
+    check_positive(fun, "num_steps_between_checkpoints", num_steps_between_checkpoints_);
     // for polynomial: 1=CV_HERMITE / 2=CV_POLYNOMIAL
     check_range(fun, "interpolation_polynomial", 2, interpolation_polynomial_);
     // 1=Adams, 2=BDF
@@ -597,7 +597,7 @@ class cvodes_integrator_adjoint_vari : public vari {
 
     // initialize backward sensitivity system of CVODES as needed
     if (t0_vars_ + ts_vars_ + y0_vars_ + args_vars_ > 0) {
-      check_flag_sundials(CVodeAdjInit(memory->cvodes_mem_, num_checkpoints_,
+      check_flag_sundials(CVodeAdjInit(memory->cvodes_mem_, num_steps_between_checkpoints_,
                                        interpolation_polynomial_),
                           "CVodeAdjInit");
     }
