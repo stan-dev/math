@@ -538,7 +538,7 @@ void expect_ad_matvar(const F& f, const EigMat& x) {
  * @param x Value of first argument
  * @param y Value of second argument
  */
-template <typename F, typename EigMat1, typename EigMat2>
+ template <typename F, typename EigMat1, typename EigMat2, require_all_not_st_integral<EigMat1, EigMat2>* = nullptr>
 void expect_ad_matvar(const ad_tolerances& tols, const F& f, const EigMat1& x,
                       const EigMat2& y) {
   using stan::math::var;
@@ -549,6 +549,28 @@ void expect_ad_matvar(const ad_tolerances& tols, const F& f, const EigMat1& x,
   expect_ad_matvar_impl<varmat, double>(tols, f, x, y);
   expect_ad_matvar_impl<varmat, var>(tols, f, x, y);
   expect_ad_matvar_impl<varmat, varmat>(tols, f, x, y);
+}
+
+template <typename F, typename EigMat1, typename EigMat2,
+ require_st_integral<EigMat1>* = nullptr,
+ require_not_st_integral<EigMat2>* = nullptr>
+void expect_ad_matvar(const ad_tolerances& tols, const F& f, const EigMat1& x,
+                      const EigMat2& y) {
+  using stan::math::var;
+  using varmat = stan::math::var_value<Eigen::MatrixXd>;
+
+  expect_ad_matvar_impl<int, varmat>(tols, f, x, y);
+}
+
+template <typename F, typename EigMat1, typename EigMat2,
+ require_not_st_integral<EigMat1>* = nullptr,
+ require_st_integral<EigMat2>* = nullptr>
+void expect_ad_matvar(const ad_tolerances& tols, const F& f, const EigMat1& x,
+                      const EigMat2& y) {
+  using stan::math::var;
+  using varmat = stan::math::var_value<Eigen::MatrixXd>;
+
+  expect_ad_matvar_impl<varmat, int>(tols, f, x, y);
 }
 
 /**

@@ -55,6 +55,39 @@ inline var binary_log_loss(int y, const var& y_hat) {
   }
 }
 
+template <typename Mat, require_eigen_t<Mat>* = nullptr>
+inline auto binary_log_loss(int y, const var_value<Mat>& y_hat) {
+  if (y == 0) {
+    return make_callback_var(-(-y_hat.val().array()).log1p(), [y_hat](auto& vi) mutable {
+      y_hat.adj().array() += vi.adj().array() / (1.0 - y_hat.val().array());
+    });
+  } else {
+    return make_callback_var(-y_hat.val().array().log(), [y_hat](auto& vi) mutable {
+      y_hat.adj().array() -= vi.adj().array() / y_hat.val().array();
+    });
+  }
+}
+
+template <typename Mat, require_eigen_t<Mat>* = nullptr>
+inline auto binary_log_loss(const std::vector<int>& y, const var_value<Mat>& y_hat) {
+  arena_t<Eigen::Array<bool, -1, 1>> arena_y = Eigen::Map<const Eigen::Array<int, -1, 1>>(y.data(), y.size()).cast<bool>();
+  auto ret_val = -(arena_y == 0).select((-y_hat.val().array()).log1p(), y_hat.val().array().log());
+  return make_callback_var(ret_val, [y_hat, arena_y](auto& vi) mutable {
+    y_hat.adj().array() += vi.adj().array() / (arena_y == 0).select((1.0 - y_hat.val().array()), -y_hat.val().array());
+  });
+  /*
+  if (y == 0) {
+    return make_callback_var(-log1p(-y_hat.val()), [y_hat](auto& vi) mutable {
+      y_hat.adj().array() += vi.adj().array() / (1.0 - y_hat.val().array());
+    });
+  } else {
+    return make_callback_var(-std::log(y_hat.val()), [y_hat](auto& vi) mutable {
+      y_hat.adj().array() -= vi.adj().array() / y_hat.val().array();
+    });
+  }
+  */
+}
+
 }  // namespace math
 }  // namespace stan
 #endif

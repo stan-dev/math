@@ -33,7 +33,8 @@ struct erfc_fun {
  * @return Complementary error function applied to each value in x.
  */
 template <typename T, require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
-                          T>* = nullptr>
+                          T>* = nullptr,
+                          require_not_var_matrix_t<T>* = nullptr>
 inline auto erfc(const T& x) {
   return apply_scalar_unary<erfc_fun, T>::apply(x);
 }

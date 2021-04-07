@@ -32,7 +32,8 @@ struct erf_fun {
  * @return Error function applied to each value in x.
  */
 template <typename T, require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
-                          T>* = nullptr>
+                          T>* = nullptr,
+                          require_not_var_matrix_t<T>* = nullptr>
 inline auto erf(const T& x) {
   return apply_scalar_unary<erf_fun, T>::apply(x);
 }

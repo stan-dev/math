@@ -52,6 +52,14 @@ inline var erf(const var& a) {
   });
 }
 
+template <typename T, require_matrix_t<T>* = nullptr>
+inline auto erf(const var_value<T>& a) {
+  auto precomp_erf = to_arena(TWO_OVER_SQRT_PI * (-a.val().array().square()).exp());
+  return make_callback_var(erf(a.val()), [a, precomp_erf](auto& vi) mutable {
+    a.adj().array() += vi.adj().array() * precomp_erf;
+  });
+}
+
 }  // namespace math
 }  // namespace stan
 #endif

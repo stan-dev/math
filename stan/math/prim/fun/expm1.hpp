@@ -33,7 +33,8 @@ struct expm1_fun {
  * @return Natural exponential of each value in x minus one.
  */
 template <typename T, require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
-                          T>* = nullptr>
+                          T>* = nullptr,
+                          require_not_var_matrix_t<T>* = nullptr>
 inline auto expm1(const T& x) {
   return apply_scalar_unary<expm1_fun, T>::apply(x);
 }

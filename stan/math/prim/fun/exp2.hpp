@@ -36,7 +36,8 @@ struct exp2_fun {
  * @return Elementwise exp2 of members of container.
  */
 template <typename T, require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
-                          T>* = nullptr>
+                          T>* = nullptr,
+                          require_not_var_matrix_t<T>* = nullptr>
 inline auto exp2(const T& x) {
   return apply_scalar_unary<exp2_fun, T>::apply(x);
 }

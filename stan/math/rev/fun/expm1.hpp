@@ -41,6 +41,13 @@ inline var expm1(const var& a) {
   });
 }
 
+template <typename T, require_matrix_t<T>* = nullptr>
+inline var expm1(const var_value<T>& a) {
+  return make_callback_var(expm1(a.val()), [a](auto& vi) mutable {
+    a.adj().array() += vi.adj().array() * (vi.val().array() + 1.0);
+  });
+}
+
 }  // namespace math
 }  // namespace stan
 #endif
