@@ -12,7 +12,7 @@
 #include <limits>
 #include <string>
 
-/** 
+/**
  * The parent test fixture for ODEs, with CRTP dependence on child
  * fixtures. The goal is to provide basic tests for various integrator
  * setups without losing flexibility in adding dedicated tests in the future.
@@ -21,7 +21,7 @@
  *
  * In order to test various ODE input types, child fixture can use
  * tuple pattern + googletest's typed tests
- * 
+ *
  * https://github.com/google/googletest/blob/master/googletest/samples/sample6_unittest.cc
  *
  * -------------------------
@@ -61,7 +61,7 @@
  *  | test_fd_vd      | matches finite difference soln (y0 is var)          |
  *  | test_fd_vv      | matches finite difference soln (y0 & theta are var) |
  *  | test_ts_ad      | matches finite difference soln (time is var)        |
- * 
+ *
  * See each method's description for functions required in the child
  * fixture, and note that child fixture only need to provide required
  * methods should it use a particular test.
@@ -82,7 +82,7 @@
  * Use fixtures in tests
  * ----------------------------
  * Follow googletest manual, first we need to declare the test fixture
- * 
+ *
  *  TYPED_TEST_SUITE_P(foo_test);
  *
  * then we add test items
@@ -104,7 +104,8 @@
  *  INSTANTIATE_TYPED_TEST_SUITE_P(StanOde, foo_test, foo_test_types);
  *
  *
- * For a simple exmaple, see googletest link above & "fho_ode_typed_ts_test.cpp".
+ * For a simple exmaple, see googletest link above &
+ * "fho_ode_typed_ts_test.cpp".
  */
 template <class ode_problem_type>
 struct ODETestFixture : public ::testing::Test {
@@ -125,7 +126,8 @@ struct ODETestFixture : public ::testing::Test {
    * Require functors in args:
    * - Matrix<T, -1, 1> F_ode(VectorXd): return ODE solution given
    *   parameter vector
-   * - Matrix<double, -1, 1> F_sol(double t, ...): return analytical solution at t
+   * - Matrix<double, -1, 1> F_sol(double t, ...): return analytical solution at
+   * t
    *
    * @param ode_sol solver functor that takes a <code>vector</code>
    * parameter variable that returns solution <code>vector</code>.
@@ -156,8 +158,10 @@ struct ODETestFixture : public ::testing::Test {
    *
    * Require functors in child fixture:
    * - Matrix<T, -1, 1> F_ode(vector): return ODE solution given parameter
-   * - Matrix<double, -1, 1> F_sol(double t, ...): return analytical ODE solution at t
-   * - Matrix<double, -1, -1> F_grad_sol(double t, ...): return analytical ODE sensivity at t
+   * - Matrix<double, -1, 1> F_sol(double t, ...): return analytical ODE
+   * solution at t
+   * - Matrix<double, -1, -1> F_grad_sol(double t, ...): return analytical ODE
+   * sensivity at t
    *
    * @param ode_sol solver functor that takes a <code>vector</code>
    * parameter variable that returns solution <code>vector</code>.
@@ -452,8 +456,8 @@ struct ODETestFixture : public ::testing::Test {
           if (k != i) {
             EXPECT_FLOAT_EQ(ode.times()[k].adj(), 0.0);
           } else {
-            double ts_ad
-                = stan::math::value_of(ode.eval_rhs(ode.times()[i].val(), res_d)[j]);
+            double ts_ad = stan::math::value_of(
+                ode.eval_rhs(ode.times()[i].val(), res_d)[j]);
             EXPECT_FLOAT_EQ(ode.times()[k].adj(), ts_ad);
           }
         }

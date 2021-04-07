@@ -6,23 +6,24 @@
 #include <test/unit/math/rev/functor/test_fixture_ode_sho.hpp>
 #include <test/unit/math/rev/functor/ode_test_functors.hpp>
 
-/** 
- * 
+/**
+ *
  * Use same solver functor type for both w & w/o tolerance control
  */
-template<typename solve_type, typename... Ts>
+template <typename solve_type, typename... Ts>
 using ode_test_tuple = std::tuple<solve_type, solve_type, Ts...>;
 
-/** 
+/**
  * Outer product of test types
  */
 using harmonic_oscillator_fd_test_types = boost::mp11::mp_product<
-  ode_test_tuple,
-  ::testing::Types<ode_adams_functor, ode_bdf_functor, ode_ckrk_functor, ode_rk45_functor>,
-  ::testing::Types<double>,     // t
-  ::testing::Types<double>,     // y0
-  ::testing::Types<double>      // theta
-  >;
+    ode_test_tuple,
+    ::testing::Types<ode_adams_functor, ode_bdf_functor, ode_ckrk_functor,
+                     ode_rk45_functor>,
+    ::testing::Types<double>,  // t
+    ::testing::Types<double>,  // y0
+    ::testing::Types<double>   // theta
+    >;
 
 TYPED_TEST_SUITE_P(harmonic_oscillator_test);
 TYPED_TEST_P(harmonic_oscillator_test, param_and_data_finite_diff) {
@@ -87,12 +88,13 @@ INSTANTIATE_TYPED_TEST_SUITE_P(StanOde, harmonic_oscillator_data_test,
                                harmonic_oscillator_fd_test_types);
 
 using harmonic_oscillator_test_types = boost::mp11::mp_product<
-  ode_test_tuple,
-  ::testing::Types<ode_adams_functor, ode_bdf_functor, ode_ckrk_functor, ode_rk45_functor>,
-  ::testing::Types<double>,                                 // t
-  ::testing::Types<double, stan::math::var_value<double> >,     // y0
-  ::testing::Types<double, stan::math::var_value<double> >      // theta
-  >;
+    ode_test_tuple,
+    ::testing::Types<ode_adams_functor, ode_bdf_functor, ode_ckrk_functor,
+                     ode_rk45_functor>,
+    ::testing::Types<double>,                                  // t
+    ::testing::Types<double, stan::math::var_value<double> >,  // y0
+    ::testing::Types<double, stan::math::var_value<double> >   // theta
+    >;
 
 TYPED_TEST_SUITE_P(harmonic_oscillator_t0_ad_test);
 TYPED_TEST_P(harmonic_oscillator_t0_ad_test, t0_ad) {
