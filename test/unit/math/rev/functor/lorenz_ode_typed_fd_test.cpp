@@ -1,15 +1,24 @@
 #include <stan/math/rev.hpp>
-#include <boost/numeric/odeint.hpp>
+#include <boost/mp11.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/functor/test_fixture_ode.hpp>
 #include <test/unit/math/rev/functor/test_fixture_ode_lorenz.hpp>
 #include <test/unit/math/rev/functor/ode_test_functors.hpp>
 
-using lorenz_test_types
-    = ::testing::Types<std::tuple<ode_rk45_functor, ode_rk45_functor>,
-                       std::tuple<ode_ckrk_functor, ode_ckrk_functor>,
-                       std::tuple<ode_bdf_functor, ode_bdf_functor>,
-                       std::tuple<ode_adams_functor, ode_adams_functor>>;
+/** 
+ * 
+ * Use same solver functor type for both w & w/o tolerance control
+ */
+template<typename solve_type, typename... Ts>
+using ode_test_tuple = std::tuple<solve_type, solve_type, Ts...>;
+
+/** 
+ * Outer product of test types
+ */
+using lorenz_test_types = boost::mp11::mp_product<
+  ode_test_tuple,
+  ::testing::Types<ode_adams_functor, ode_bdf_functor, ode_ckrk_functor, ode_rk45_functor>
+  >;
 
 TYPED_TEST_SUITE_P(lorenz_test);
 TYPED_TEST_P(lorenz_test, param_and_data_finite_diff) {
