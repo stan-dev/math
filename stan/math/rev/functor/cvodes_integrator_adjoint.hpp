@@ -76,8 +76,8 @@ class cvodes_integrator_adjoint_memory : public chainable_alloc {
   using T_y0_t0 = return_type_t<T_y0, T_t0>;
 
   const size_t N_;
-  Eigen::VectorXd abs_tol_f_;
-  Eigen::VectorXd abs_tol_b_;
+  Eigen::VectorXd absolute_tolerance_forward_;
+  Eigen::VectorXd absolute_tolerance_backward_;
   const int lmm_f_;
   const F f_;
   const Eigen::Matrix<T_y0_t0, Eigen::Dynamic, 1> y0_;
@@ -97,8 +97,8 @@ class cvodes_integrator_adjoint_memory : public chainable_alloc {
   N_Vector nv_state_;
   N_Vector nv_state_sens_;
   N_Vector nv_quad_;
-  N_Vector nv_abs_tol_f_;
-  N_Vector nv_abs_tol_b_;
+  N_Vector nv_absolute_tolerance_forward_;
+  N_Vector nv_absolute_tolerance_backward_;
   SUNMatrix A_f_;
   SUNLinearSolver LS_f_;
   SUNMatrix A_b_;
@@ -107,14 +107,14 @@ class cvodes_integrator_adjoint_memory : public chainable_alloc {
   bool backward_is_initialized_;
 
   template <require_eigen_col_vector_t<T_y0>* = nullptr>
-  cvodes_integrator_adjoint_memory(Eigen::VectorXd abs_tol_f,
-                                   Eigen::VectorXd abs_tol_b, int lmm_f,
+  cvodes_integrator_adjoint_memory(Eigen::VectorXd absolute_tolerance_forward,
+                                   Eigen::VectorXd absolute_tolerance_backward, int lmm_f,
                                    const F& f, const T_y0& y0, const T_t0& t0,
                                    const std::vector<T_ts>& ts,
                                    const T_Args&... args)
       : N_(y0.size()),
-        abs_tol_f_(abs_tol_f),
-        abs_tol_b_(abs_tol_b),
+        absolute_tolerance_forward_(absolute_tolerance_forward),
+        absolute_tolerance_backward_(absolute_tolerance_backward),
         lmm_f_(lmm_f),
         f_(f),
         y0_(y0),
@@ -134,8 +134,8 @@ class cvodes_integrator_adjoint_memory : public chainable_alloc {
       nv_state_ = N_VMake_Serial(N_, state_.data());
       nv_state_sens_ = N_VMake_Serial(N_, state_sens_.data());
       nv_quad_ = N_VMake_Serial(quad_.size(), quad_.data());
-      nv_abs_tol_f_ = N_VMake_Serial(N_, abs_tol_f_.data());
-      nv_abs_tol_b_ = N_VMake_Serial(N_, abs_tol_b_.data());
+      nv_absolute_tolerance_forward_ = N_VMake_Serial(N_, absolute_tolerance_forward_.data());
+      nv_absolute_tolerance_backward_ = N_VMake_Serial(N_, absolute_tolerance_backward_.data());
       A_f_ = SUNDenseMatrix(N_, N_);
       LS_f_ = SUNDenseLinearSolver(nv_state_, A_f_);
       A_b_ = SUNDenseMatrix(N_, N_);
@@ -159,8 +159,8 @@ class cvodes_integrator_adjoint_memory : public chainable_alloc {
       N_VDestroy_Serial(nv_state_);
       N_VDestroy_Serial(nv_state_sens_);
       N_VDestroy_Serial(nv_quad_);
-      N_VDestroy_Serial(nv_abs_tol_f_);
-      N_VDestroy_Serial(nv_abs_tol_b_);
+      N_VDestroy_Serial(nv_absolute_tolerance_forward_);
+      N_VDestroy_Serial(nv_absolute_tolerance_backward_);
 
       if (cvodes_mem_) {
         CVodeFree(&cvodes_mem_);
@@ -199,17 +199,17 @@ class cvodes_integrator_adjoint_vari : public vari {
   bool returned_;
   std::size_t chain_count_;
   std::ostream* msgs_;
-  double rel_tol_f_;
-  Eigen::VectorXd abs_tol_f_;
-  double rel_tol_b_;
-  Eigen::VectorXd abs_tol_b_;
-  double rel_tol_q_;
-  double abs_tol_q_;
+  double relative_tolerance_forward_;
+  Eigen::VectorXd absolute_tolerance_forward_;
+  double relative_tolerance_backward_;
+  Eigen::VectorXd absolute_tolerance_backward_;
+  double relative_tolerance_quadrature_;
+  double absolute_tolerance_quadrature_;
   long int max_num_steps_;
   long int num_checkpoints_;
   int interpolation_polynomial_;
-  int solver_f_;
-  int solver_b_;
+  int solver_forward_;
+  int solver_backward_;
   int lmm_f_;
   int lmm_b_;
 
@@ -438,19 +438,19 @@ class cvodes_integrator_adjoint_vari : public vari {
    * @param t0 Initial time
    * @param ts Times at which to solve the ODE at. All values must be sorted and
    *   not less than t0.
-   * @param rel_tol_f Relative tolerance for forward problem passed to CVODES
-   * @param abs_tol_f Absolute tolerance for forward problem passed to CVODES
-   * @param rel_tol_b Relative tolerance for backward problem passed to CVODES
-   * @param abs_tol_b Absolute tolerance for backward problem passed to CVODES
-   * @param rel_tol_q Relative tolerance for quadrature problem passed to CVODES
-   * @param abs_tol_q Absolute tolerance for quadrature problem passed to CVODES
+   * @param relative_tolerance_forward Relative tolerance for forward problem passed to CVODES
+   * @param absolute_tolerance_forward Absolute tolerance for forward problem passed to CVODES
+   * @param relative_tolerance_backward Relative tolerance for backward problem passed to CVODES
+   * @param absolute_tolerance_backward Absolute tolerance for backward problem passed to CVODES
+   * @param relative_tolerance_quadrature Relative tolerance for quadrature problem passed to CVODES
+   * @param absolute_tolerance_quadrature Absolute tolerance for quadrature problem passed to CVODES
    * @param max_num_steps Upper limit on the number of integration steps to
    *   take between each output (error if exceeded)
    * @param num_checkpoints Number of integrator steps after which a checkpoint
    * is stored for the backward pass
    * @param interpolation_polynomial type of polynomial used for interpolation
-   * @param solver_f solver used for forward pass
-   * @param solver_b solver used for backward pass
+   * @param solver_forward solver used for forward pass
+   * @param solver_backward solver used for backward pass
    *   take between each output (error if exceeded)
    * @param[in, out] msgs the print stream for warning messages
    * @param args Extra arguments passed unmodified through to ODE right hand
@@ -462,10 +462,10 @@ class cvodes_integrator_adjoint_vari : public vari {
   template <require_eigen_col_vector_t<T_y0>* = nullptr>
   cvodes_integrator_adjoint_vari(
       const char* function_name, const F& f, const T_y0& y0, const T_t0& t0,
-      const std::vector<T_ts>& ts, double rel_tol_f, Eigen::VectorXd abs_tol_f,
-      double rel_tol_b, Eigen::VectorXd abs_tol_b, double rel_tol_q,
-      double abs_tol_q, long int max_num_steps, long int num_checkpoints,
-      int interpolation_polynomial, int solver_f, int solver_b,
+      const std::vector<T_ts>& ts, double relative_tolerance_forward, Eigen::VectorXd absolute_tolerance_forward,
+      double relative_tolerance_backward, Eigen::VectorXd absolute_tolerance_backward, double relative_tolerance_quadrature,
+      double absolute_tolerance_quadrature, long int max_num_steps, long int num_checkpoints,
+      int interpolation_polynomial, int solver_forward, int solver_backward,
       std::ostream* msgs, const T_Args&... args)
       : function_name_(function_name),
         vari(NOT_A_NUMBER),
@@ -473,19 +473,19 @@ class cvodes_integrator_adjoint_vari : public vari {
         returned_(false),
         chain_count_(0),
         memory(NULL),
-        rel_tol_f_(rel_tol_f),
-        abs_tol_f_(abs_tol_f),
-        rel_tol_b_(rel_tol_b),
-        abs_tol_b_(abs_tol_b),
-        rel_tol_q_(rel_tol_q),
-        abs_tol_q_(abs_tol_q),
+        relative_tolerance_forward_(relative_tolerance_forward),
+        absolute_tolerance_forward_(absolute_tolerance_forward),
+        relative_tolerance_backward_(relative_tolerance_backward),
+        absolute_tolerance_backward_(absolute_tolerance_backward),
+        relative_tolerance_quadrature_(relative_tolerance_quadrature),
+        absolute_tolerance_quadrature_(absolute_tolerance_quadrature),
         max_num_steps_(max_num_steps),
         num_checkpoints_(num_checkpoints),
         interpolation_polynomial_(interpolation_polynomial),
-        solver_f_(solver_f),
-        solver_b_(solver_b),
-        lmm_f_(solver_f_ % 2 ? CV_ADAMS : CV_BDF),
-        lmm_b_(solver_b_ % 2 ? CV_ADAMS : CV_BDF),
+        solver_forward_(solver_forward),
+        solver_backward_(solver_backward),
+        lmm_f_(solver_forward_ % 2 ? CV_ADAMS : CV_BDF),
+        lmm_b_(solver_backward_ % 2 ? CV_ADAMS : CV_BDF),
         msgs_(msgs),
 
         t0_vars_(count_vars(t0)),
@@ -504,7 +504,7 @@ class cvodes_integrator_adjoint_vari : public vari {
 
     memory
         = new cvodes_integrator_adjoint_memory<F, T_y0, T_t0, T_ts, T_Args...>(
-            abs_tol_f_, abs_tol_b_, lmm_f_, f, y0, t0, ts, args...);
+            absolute_tolerance_forward_, absolute_tolerance_backward_, lmm_f_, f, y0, t0, ts, args...);
 
     save_varis(t0_varis_, t0);
     save_varis(ts_varis_, ts);
@@ -529,22 +529,22 @@ class cvodes_integrator_adjoint_vari : public vari {
     check_sorted(fun, "times", ts);
     check_less(fun, "initial time", t0, ts[0]);
     // TODO (SW): make names verbose
-    check_positive_finite(fun, "relative_tolerance_f", rel_tol_f_);
-    check_positive_finite(fun, "absolute_tolerance_f", abs_tol_f_);
-    check_size_match(fun, "abs_tol_f", abs_tol_f_.size(), "states", N_);
-    check_positive_finite(fun, "rel_tol_b", rel_tol_b_);
-    check_positive_finite(fun, "abs_tol_b", abs_tol_b_);
-    check_size_match(fun, "abs_tol_b", abs_tol_b_.size(), "states", N_);
-    check_positive_finite(fun, "rel_tol_q", rel_tol_q_);
-    check_positive_finite(fun, "abs_tol_q", abs_tol_q_);
+    check_positive_finite(fun, "relative_tolerance_f", relative_tolerance_forward_);
+    check_positive_finite(fun, "absolute_tolerance_f", absolute_tolerance_forward_);
+    check_size_match(fun, "absolute_tolerance_forward", absolute_tolerance_forward_.size(), "states", N_);
+    check_positive_finite(fun, "relative_tolerance_backward", relative_tolerance_backward_);
+    check_positive_finite(fun, "absolute_tolerance_backward", absolute_tolerance_backward_);
+    check_size_match(fun, "absolute_tolerance_backward", absolute_tolerance_backward_.size(), "states", N_);
+    check_positive_finite(fun, "relative_tolerance_quadrature", relative_tolerance_quadrature_);
+    check_positive_finite(fun, "absolute_tolerance_quadrature", absolute_tolerance_quadrature_);
     check_positive(fun, "max_num_steps", max_num_steps_);
     // TODO (SW): rename according to design
     check_positive(fun, "num_checkpoints", num_checkpoints_);
     // for polynomial: 1=CV_HERMITE / 2=CV_POLYNOMIAL
     check_range(fun, "interpolation_polynomial", 2, interpolation_polynomial_);
     // 1=Adams, 2=BDF
-    check_range(fun, "solver_f", 2, solver_f_);
-    check_range(fun, "solver_b", 2, solver_b_);
+    check_range(fun, "solver_forward", 2, solver_forward_);
+    check_range(fun, "solver_backward", 2, solver_backward_);
 
     /*
     std::cout << "ts = ";
@@ -575,11 +575,11 @@ class cvodes_integrator_adjoint_vari : public vari {
         CVodeSetUserData(memory->cvodes_mem_, reinterpret_cast<void*>(this)),
         "CVodeSetUserData");
 
-    cvodes_set_options(memory->cvodes_mem_, rel_tol_f_, abs_tol_f_(0),
+    cvodes_set_options(memory->cvodes_mem_, relative_tolerance_forward_, absolute_tolerance_forward_(0),
                        max_num_steps_);
 
-    check_flag_sundials(CVodeSVtolerances(memory->cvodes_mem_, rel_tol_f_,
-                                          memory->nv_abs_tol_f_),
+    check_flag_sundials(CVodeSVtolerances(memory->cvodes_mem_, relative_tolerance_forward_,
+                                          memory->nv_absolute_tolerance_forward_),
                         "CVodeSVtolerances");
     
     // for the stiff solvers we need to reserve additional memory
@@ -755,8 +755,8 @@ class cvodes_integrator_adjoint_vari : public vari {
               "CVodeInitB");
 
           check_flag_sundials(
-              CVodeSVtolerancesB(memory->cvodes_mem_, memory->index_b_, rel_tol_b_,
-                                 memory->nv_abs_tol_b_),
+              CVodeSVtolerancesB(memory->cvodes_mem_, memory->index_b_, relative_tolerance_backward_,
+                                 memory->nv_absolute_tolerance_backward_),
               "CVodeSVtolerancesB");
 
           check_flag_sundials(CVodeSetMaxNumStepsB(memory->cvodes_mem_,
@@ -785,7 +785,7 @@ class cvodes_integrator_adjoint_vari : public vari {
             
             check_flag_sundials(
                 CVodeQuadSStolerancesB(memory->cvodes_mem_, memory->index_b_,
-                                       rel_tol_q_, abs_tol_q_),
+                                       relative_tolerance_quadrature_, absolute_tolerance_quadrature_),
                 "CVodeQuadSStolerancesB");
             
             check_flag_sundials(
