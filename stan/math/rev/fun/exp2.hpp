@@ -43,10 +43,11 @@ inline var exp2(const var& a) {
 
 template <typename T>
 inline auto exp2(const var_value<T>& a) {
-  return make_callback_var(a.val().unaryExpr([](auto&& x) { return std::exp2(x); }),
-   [a](auto& vi) mutable {
-    a.adj().array() += vi.adj().array() * vi.val().array() * LOG_TWO;
-  });
+  return make_callback_var(
+      a.val().unaryExpr([](auto&& x) { return std::exp2(x); }),
+      [a](auto& vi) mutable {
+        a.adj().array() += vi.adj().array() * vi.val().array() * LOG_TWO;
+      });
 }
 
 }  // namespace math

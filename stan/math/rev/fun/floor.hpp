@@ -48,8 +48,8 @@ inline var floor(const var& a) { return var(std::floor(a.val())); }
 
 template <typename T, require_eigen_t<T>* = nullptr>
 inline auto floor(const var_value<T>& a) {
-   return var_value<T>(a.val().array().floor().matrix()); 
- }
+  return var_value<T>(a.val().array().floor().matrix());
+}
 
 }  // namespace math
 }  // namespace stan

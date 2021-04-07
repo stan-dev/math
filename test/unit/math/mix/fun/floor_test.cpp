@@ -10,9 +10,9 @@ TEST(mathMixMatFun, floor) {
 }
 
 TEST(mathMixMatFun, floormatvar) {
-  using stan::test::internal::common_args;
-  using stan::test::expect_ad_vector_matvar;
   using stan::math::vec_concat;
+  using stan::test::expect_ad_vector_matvar;
+  using stan::test::internal::common_args;
   auto f = [](const auto& x1) { return stan::math::floor(x1); };
   std::vector<double> com_args = common_args();
   std::vector<double> args{-2.6, -2.1 - 0.5, -0.2, 1.1, 1.5, 179.2};
@@ -22,5 +22,4 @@ TEST(mathMixMatFun, floormatvar) {
     A(i) = all_args[i];
   }
   expect_ad_vector_matvar(f, A);
-
 }

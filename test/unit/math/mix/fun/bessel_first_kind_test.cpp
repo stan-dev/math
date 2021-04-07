@@ -42,5 +42,4 @@ TEST(mathMixScalFun, besselFirstKind_matvec) {
   stan::test::expect_ad_matvar(f, std_in1, in2);
 
   stan::test::expect_ad_matvar(f, std_in1[0], in2);
-
 }

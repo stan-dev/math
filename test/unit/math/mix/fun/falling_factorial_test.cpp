@@ -48,5 +48,4 @@ TEST(mathMixScalFun, fallingFactorial_matvar) {
   std::vector<int> std_in2{3, 1};
   stan::test::expect_ad_matvar(f, in1, std_in2);
   stan::test::expect_ad_matvar(f, in1, std_in2[0]);
-
 }

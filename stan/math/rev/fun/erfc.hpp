@@ -54,7 +54,8 @@ inline var erfc(const var& a) {
 
 template <typename T, require_matrix_t<T>* = nullptr>
 inline auto erfc(const var_value<T>& a) {
-  auto precomp_erf = to_arena(TWO_OVER_SQRT_PI * (-a.val().array().square()).exp());
+  auto precomp_erf
+      = to_arena(TWO_OVER_SQRT_PI * (-a.val().array().square()).exp());
   return make_callback_var(erfc(a.val()), [a, precomp_erf](auto& vi) mutable {
     a.adj().array() -= vi.adj().array() * precomp_erf;
   });
