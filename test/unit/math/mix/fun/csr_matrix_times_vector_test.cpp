@@ -6,7 +6,7 @@ TEST(MathMixMatFun, csr_matrix_times_vector) {
     using stan::math::csr_matrix_times_vector;
     std::vector<int> v{1, 2, 0, 2, 4, 2, 1, 4};
     std::vector<int> u{0, 2, 4, 5, 6, 8};
-     return csr_matrix_times_vector(5, 5, w, v, u, b);
+    return csr_matrix_times_vector(5, 5, w, v, u, b);
   };
 
   Eigen::VectorXd w(8);

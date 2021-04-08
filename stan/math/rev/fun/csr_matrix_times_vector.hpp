@@ -41,9 +41,10 @@ namespace math {
  * @throw std::out_of_range if any of the indexes are out of range.
  */
 template <typename T1, typename T2, require_st_arithmetic<T1>* = nullptr,
- require_st_var<T2>* = nullptr>
-inline auto csr_matrix_times_vector(int m, int n, const T1& w, const std::vector<int>& v,
-                        const std::vector<int>& u, const T2& b) {
+          require_st_var<T2>* = nullptr>
+inline auto csr_matrix_times_vector(int m, int n, const T1& w,
+                                    const std::vector<int>& v,
+                                    const std::vector<int>& u, const T2& b) {
   check_positive("csr_matrix_times_vector", "m", m);
   check_positive("csr_matrix_times_vector", "n", n);
   check_size_match("csr_matrix_times_vector", "n", n, "b", b.size());
@@ -58,12 +59,16 @@ inline auto csr_matrix_times_vector(int m, int n, const T1& w, const std::vector
   std::vector<int, arena_allocator<int>> arena_u(u.begin(), u.end());
   auto arena_w = to_arena(w);
   auto arena_b = to_arena(b);
-  Eigen::Map<Eigen::SparseMatrix<scalar_type_t<T1>>> arena_sp_map(m, n, arena_b.size(), arena_v.data(), arena_u.data(), arena_w.data());
-  using sparse_dense_mul_type = decltype((arena_sp_map * value_of(arena_b)).eval());
+  Eigen::Map<Eigen::SparseMatrix<scalar_type_t<T1>>> arena_sp_map(
+      m, n, arena_b.size(), arena_v.data(), arena_u.data(), arena_w.data());
+  using sparse_dense_mul_type
+      = decltype((arena_sp_map * value_of(arena_b)).eval());
   using return_t = return_var_matrix_t<sparse_dense_mul_type, T1, T2>;
   arena_t<return_t> result = arena_sp_map * arena_b.val();
-  reverse_pass_callback([arena_v, arena_u, arena_w, arena_b, result, m, n]() mutable {
-    Eigen::Map<Eigen::SparseMatrix<scalar_type_t<T1>>> arena_sp_map(m, n, arena_b.size(), arena_v.data(), arena_u.data(), arena_w.data());
+  reverse_pass_callback([arena_v, arena_u, arena_w, arena_b, result, m,
+                         n]() mutable {
+    Eigen::Map<Eigen::SparseMatrix<scalar_type_t<T1>>> arena_sp_map(
+        m, n, arena_b.size(), arena_v.data(), arena_u.data(), arena_w.data());
     arena_b.adj() += arena_sp_map.transpose() * result.adj();
   });
 
