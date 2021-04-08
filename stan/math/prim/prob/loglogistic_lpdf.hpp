@@ -49,15 +49,6 @@ return_type_t<T_y, T_loc, T_scale> loglogistic_lpdf(const T_y& y, const T_loc& m
   decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
   decltype(auto) mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
   decltype(auto) sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
-  // Eigen::Matrix<double, 1, 4> tmppow;
-  // tmppow = pow(y_val / mu_val, sigma_val);
-  // T_partials_return logp = sum(tmppow);
-  // std::cout << std::endl;
-  // std::cout << typeid(y_val).name() << std::endl;
-  // std::cout << std::endl;
-  // std::cout << type_name<decltype(y_val)>() << '\n';
-  // std::cout << std::endl;
-
 
   check_finite(function, "Random variable", y_val);
   check_finite(function, "Location parameter", mu_val);
@@ -80,25 +71,9 @@ return_type_t<T_y, T_loc, T_scale> loglogistic_lpdf(const T_y& y, const T_loc& m
       = to_ref_if<!is_constant_all<T_scale>::value>(y_val - mu_val);
   const auto& y_minus_mu_div_sigma = to_ref(y_minus_mu * inv_sigma);
 
-  const auto& y_div_mu = to_ref(y_val / mu_val);
-
   size_t N = max_size(y, mu, sigma);
-  // The propto part I guess.
-  //T_partials_return logp = (log(sigma_val) - log(mu_val) + (sigma_val - 1) * (log(y_val) - log(mu_val))) - 2 * log1p(std::pow((y_val / mu_val), sigma_val));
-  // T_partials_return logp = - 2 * std::log1p(std::pow((y_val / mu_val), sigma_val));
-  // T_partials_return logp = std::pow((y_val / mu_val), sigma_val);
-  // T_partials_return logp = std::pow((1 / 2), 3);
-  // T_partials_return logp = std::pow((y_val / (double)mu_val), sigma_val); // Something like this. Is it OK?
-  // T_partials_return logp = sum(std::pow((y_val / mu_val), sigma_val));
-  // T_partials_return logp = sum(pow((y_val / mu_val), sigma_val));
-  // T_partials_return logp = sum(exp((y_val / mu_val)));
-  // T_partials_return logp = sum(pow(y_div_mu, sigma_val));
-  // T_partials_return logp = pow(((double)y_val / (double)mu_val), (double)sigma_val);
-  // T_partials_return logp = 2;
-  // T_partials_return logp = sum(pow((y_val / mu_val), sigma_val));
-  // T_partials_return logp = sum(pow(y_div_mu, sigma_val));
 
-  //T_partials_return logp = pow((1 / 2), 3);
+
   T_partials_return logp = sum((log(sigma_val) - log(mu_val) + (sigma_val - 1) *
     (log(y_val) - log(mu_val))) -
     2 * log1p(pow((y_val / mu_val), sigma_val)));
@@ -106,18 +81,7 @@ return_type_t<T_y, T_loc, T_scale> loglogistic_lpdf(const T_y& y, const T_loc& m
   // OK this works. I guess I can add the derivatives and later see,
   // which parts would make sense to save as separate computations.
   // Also TODO: dividing integers!
-
-
-
-
-  // real lalpha = log(alpha);
-// real numerator = log(beta) - lalpha + (beta - 1) * (log(y) - lalpha);
-// return numerator - 2 * (log1p( (y/alpha)^beta ));
-  // T_partials_return logp = -sum(y_minus_mu_div_sigma)
-  //                          - 2.0 * sum(log1p(exp(-y_minus_mu_div_sigma)));
-  // if (include_summand<propto, T_scale>::value) { // Do we include normalization? Is this it?
-  //   logp -= sum(log(sigma_val)) * N / size(sigma);
-  // }
+  // TODO: Separate normalization constant.
 
   // Here come the derivatives I think. We divide everything up by
   // being constant or not.
@@ -127,6 +91,7 @@ return_type_t<T_y, T_loc, T_scale> loglogistic_lpdf(const T_y& y, const T_loc& m
                                      && !is_constant_all<T_y>::value)>(
         (2 / (1 + exp_y_minus_mu_div_sigma) - 1) * inv_sigma);
     if (!is_constant_all<T_y>::value) {
+      std::cout << std::endl << "Partial y: " << y_deriv << std::endl;
       ops_partials.edge1_.partials_ = y_deriv;
     }
     if (!is_constant_all<T_scale>::value) {
@@ -140,7 +105,11 @@ return_type_t<T_y, T_loc, T_scale> loglogistic_lpdf(const T_y& y, const T_loc& m
            - 2 * exp_mu_div_sigma / (exp_mu_div_sigma + exp(y_val * inv_sigma)))
           * inv_sigma;
   }
+  // std::cout << ops_partials.edge1_.partials_ << std::endl;
+  // std::cout << ops_partials.edge2_.partials_ << std::endl;
+  // std::cout << ops_partials.edge3_.partials_ << std::endl;
   return ops_partials.build(logp);
+  // return ops_partials;
 }
 
 // Ahaa, this is just the default call of loglogistic with the
