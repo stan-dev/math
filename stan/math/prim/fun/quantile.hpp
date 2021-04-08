@@ -26,7 +26,8 @@ namespace math {
  * @throw std::invalid_argument If any element of xs is NaN, or size 0.
  * @throw std::domain_error If p<0 or p>1.
  */
-template <typename T, require_vector_t<T>* = nullptr>
+template <typename T, require_vector_t<T>* = nullptr,
+          require_vector_vt<std::is_arithmetic, T>* = nullptr>
 inline double quantile(const T& xs, const double p) {
   check_not_nan("quantile", "xs", xs);
   check_nonzero_size("quantile", "xs", xs);
@@ -71,7 +72,9 @@ inline double quantile(const T& xs, const double p) {
  * @throw std::invalid_argument If any of the values are NaN or size 0.
  * @throw std::domain_error If p<0 or p>1 for any p in ps.
  */
-template <typename T, typename Tp, require_all_vector_t<T, Tp>* = nullptr>
+template <typename T, typename Tp, require_all_vector_t<T, Tp>* = nullptr,
+          require_vector_vt<std::is_arithmetic, T>* = nullptr,
+          require_vector_vt<std::is_arithmetic, Tp>* = nullptr>
 inline std::vector<double> quantile(const T& xs, const Tp& ps) {
   check_not_nan("quantile", "xs", xs);
   check_not_nan("quantile", "ps", ps);
