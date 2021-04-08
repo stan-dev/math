@@ -235,23 +235,85 @@ The implementation is in
 
 ### Returning arena types
 
-### `.val()` vs. `.val_op()`
+Suppose we have a function such as
 
-### Returning expressions
+```cpp
+/**
+ * Returns the dot product of a vector of var with itself.
+ *
+ * @tparam EigVec An Eigen type with compile time rows or columns equal to 1 and a scalar var type.
+ * @param[in] v Vector.
+ * @return Dot product of the vector with itself.
+ */
+template <typename EigVec, require_eigen_vt<is_var, EigVec>* = nullptr>
+inline var cool_fun(const EigVec& v) {
+  arena_t<EigVec> arena_v(v);
+  arena_t<EigVec> res = arena_v.val().array() * arena_v.val().array();
+  reverse_pass_callback([res, arena_v]() mutable {
+    arena_v.adj().array() += (2.0 * res.adj().array()) * arena_v.val().array();
+  });
+  return res;
+}
+```
+
+There's a deceptive problem in this return! We are returning back an `arena_matrix<EigVec>`, which is an Eigen matrix completely existing on our arena allocator. The problem here is that we've also passed `res` to our callback, and now suppose a user does something like the following.
+
+```cpp
+Eigen::Matrix<var, -1, 1> x = Eigen::Matrix<double, -1, 1>::Random(5);
+auto innocent_return = cool_fun(x);
+innocent_return.coeffRef(3) = var(3.0);
+auto other_return = cool_fun2(innocent_return);
+grad();
+```
+
+Now `res` is `innocent_return` and we've changed one of the elements of `innocent_return`, but that is also going to change the element of `res` which is being used in our reverse pass callback! The answer for this is simple but sadly requires a copy.
+
+```cpp
+template <typename EigVec, require_eigen_vt<is_var, EigVec>* = nullptr>
+inline var cool_fun(const EigVec& v) {
+  arena_t<EigVec> arena_v(v);
+  arena_t<EigVec> res = arena_v.val().array() * arena_v.val().array();
+  reverse_pass_callback([res, arena_v]() mutable {
+    arena_v.adj().array() += (2.0 * res.adj().array()) * arena_v.val().array();
+  });
+  return plain_type_t<EigVec>(res);
+}
+```
+
+we make a deep copy of the return whose inner `vari` will not be the same but the `var` will produce a new copy of the pointer to the `vari`. Now the user code above will be protected and it is safe for them to assign to individual elements of the `auto` returned matrix.
 
 ### Const correctness, reverse mode autodiff, and arena types
+
+In general, it's good to have arithmetic and integral types as `const`, for instance pulling out the size of a vector to reuse later such as `const size_t x_size = x.size();`. However vars, and anything that can contain a var should not be `const`. This is because in reverse mode we want to update the value of the `adj_` inside of the var, which requires that it is non-const.
+
 
 ## Handy tricks
 
 ### `forward_as`
 
-### Nested Stacks
+In functions such as [Stan's distributions](https://github.com/stan-dev/math/blob/1bf96579de5ca3d06eafbc2eccffb228565b4607/stan/math/prim/prob/exponential_cdf.hpp#L64) you will see code which uses a little function called `forward_as<>` inside of if statements whose values are known at compile time. In the following code, `one_m_exp` can be either an Eigen vector type or a scalar.
 
-### Scoped Stacks
+```cpp
+T_partials_return cdf(1.0);
+if (is_vector<T_y>::value || is_vector<T_inv_scale>::value) {
+  cdf = forward_as<T_partials_array>(one_m_exp).prod();
+} else {
+  cdf = forward_as<T_partials_return>(one_m_exp);
+}
+```
 
-As an aside, in order to get the actual vector result, Eigen defines the
-`.eval()` operator, so `c.eval()` would return an actual `Eigen::VectorXd`.
-Similarly, Math defines the `eval` function which will evaluate an Eigen
-expression and forward anything that is not an Eigen expression.
+Do note that in the above, since the if statements values are known at compile time, the compiler will always remove the unused side of the `if` during the dead code elimination pass. But the dead code elimination pass does not happen until all the code is instantiated and verified as compilable. So `forward_as()` exists to trick the compiler into believing both sides of the `if` will compile. If we used C++17, the above would become
 
-### `value_of_rec`
+```cpp
+T_partials_return cdf(1.0);
+if constexpr (is_vector<T_y>::value || is_vector<T_inv_scale>::value) {
+  cdf = one_m_exp.prod();
+} else {
+  cdf = one_m_exp;
+}
+```
+
+
+Where [`if constexpr`](https://en.cppreference.com/w/cpp/language/if) is run before any tests are done to verify the code can be compiled.
+
+Using `forward_as<TheTypeIWant>(the_obj)` will, when `the_obj` matches the type the user passes, simply pass back a reference to `the_obj`. But when `TheTypeIWant` and `the_obj` have different types it will throw a runtime error. This function should only be used inside of `if` statements like the above where the conditionals of the `if` are known at compile time.
