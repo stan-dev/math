@@ -33,7 +33,7 @@ inline matrix_cl<double> cholesky_decompose(const matrix_cl<double>& A) {
   check_cl("cholesky_decompose (OpenCL)", "A", res, "not NaN") = !isnan(res);
   check_cl("cholesky_decompose (OpenCL)", "diagonal of A", diagonal(res),
            "nonzero")
-      = diagonal(res) == 0.0;
+      = diagonal(res) != 0.0;
 
   res.template zeros_strict_tri<matrix_cl_view::Upper>();
   return res;
