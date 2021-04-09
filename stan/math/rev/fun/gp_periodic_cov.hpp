@@ -114,19 +114,26 @@ class gp_periodic_cov_vari : public vari {
     double pi_div_p = pi() / p_d_;
 
     size_t pos = 0;
-    for (size_t j = 0; j < size_; ++j) {
-      for (size_t i = j + 1; i < size_; ++i) {
-        double dist = distance(x[i], x[j]);
-        double sin_dist = sin(pi_div_p * dist);
-        double sin_dist_sq = square(sin_dist);
-        dist_[pos] = dist;
-        sin_2_dist_[pos] = sin(2.0 * pi_div_p * dist);
-        sin_dist_sq_[pos] = sin_dist_sq;
-        cov_lower_[pos] = new vari(
-            sigma_sq_d_ * std::exp(sin_dist_sq * neg_two_inv_l_sq), false);
-        ++pos;
+    size_t block_size = 10;
+
+    for (size_t ib = 0; ib < size_; ib += block_size) {
+      for (size_t jb = 0; jb < size_; jb += block_size) {
+        for (size_t j = jb; j < std::min(size_, jb + block_size); ++j) {
+          for (size_t i = std::max(ib, j + 1);
+               i < std::min(size_, ib + block_size); ++i) {
+            double dist = distance(x[i], x[j]);
+            double sin_dist = sin(pi_div_p * dist);
+            double sin_dist_sq = square(sin_dist);
+            dist_[pos] = dist;
+            sin_2_dist_[pos] = sin(2.0 * pi_div_p * dist);
+            sin_dist_sq_[pos] = sin_dist_sq;
+            cov_lower_[pos] = new vari(
+                sigma_sq_d_ * std::exp(sin_dist_sq * neg_two_inv_l_sq), false);
+            ++pos;
+          }
+          cov_diag_[j] = new vari(sigma_sq_d_, false);
+        }
       }
-      cov_diag_[j] = new vari(sigma_sq_d_, false);
     }
   }
 
@@ -248,19 +255,26 @@ class gp_periodic_cov_vari<T_x, double, T_l, T_p> : public vari {
     double pi_div_p = pi() / p_d_;
 
     size_t pos = 0;
-    for (size_t j = 0; j < size_; ++j) {
-      for (size_t i = j + 1; i < size_; ++i) {
-        double dist = distance(x[i], x[j]);
-        double sin_dist = sin(pi_div_p * dist);
-        double sin_dist_sq = square(sin_dist);
-        dist_[pos] = dist;
-        sin_2_dist_[pos] = sin(2.0 * pi_div_p * dist);
-        sin_dist_sq_[pos] = sin_dist_sq;
-        cov_lower_[pos] = new vari(
-            sigma_sq_d_ * std::exp(sin_dist_sq * neg_two_inv_l_sq), false);
-        ++pos;
+    size_t block_size = 10;
+
+    for (size_t ib = 0; ib < size_; ib += block_size) {
+      for (size_t jb = 0; jb < size_; jb += block_size) {
+        for (size_t j = jb; j < std::min(size_, jb + block_size); ++j) {
+          for (size_t i = std::max(ib, j + 1);
+               i < std::min(size_, ib + block_size); ++i) {
+            double dist = distance(x[i], x[j]);
+            double sin_dist = sin(pi_div_p * dist);
+            double sin_dist_sq = square(sin_dist);
+            dist_[pos] = dist;
+            sin_2_dist_[pos] = sin(2.0 * pi_div_p * dist);
+            sin_dist_sq_[pos] = sin_dist_sq;
+            cov_lower_[pos] = new vari(
+                sigma_sq_d_ * std::exp(sin_dist_sq * neg_two_inv_l_sq), false);
+            ++pos;
+          }
+          cov_diag_[j] = new vari(sigma_sq_d_, false);
+        }
       }
-      cov_diag_[j] = new vari(sigma_sq_d_, false);
     }
   }
 
