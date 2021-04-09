@@ -41,40 +41,17 @@ gp_exp_quad_cov(const std::vector<T_x> &x, const T_sigma &sigma_sq,
                 Eigen::Dynamic>
       cov(x_size, x_size);
   cov.diagonal().array() = sigma_sq;
-  for (size_t j = 0; j < x_size; ++j) {
-    for (size_t i = j + 1; i < x_size; ++i) {
-      cov.coeffRef(i, j)
-          = sigma_sq * exp(squared_distance(x[i], x[j]) * neg_half_inv_l_sq);
-    }
-  }
-  cov.template triangularView<Eigen::Upper>() = cov.transpose();
-  return cov;
-}
-
-/**
- * Returns a squared exponential kernel.
- *
- * @tparam T_x type for each scalar
- * @tparam T_sigma type of parameter sigma
- *
- * @param x std::vector of Eigen vectors of scalars.
- * @param sigma_sq square root of the marginal standard deviation or magnitude
- * @return squared distance
- *   x is nan or infinite
- */
-template <typename T_x, typename T_sigma>
-inline typename Eigen::Matrix<return_type_t<T_x, T_sigma>, Eigen::Dynamic,
-                              Eigen::Dynamic>
-gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
-                const T_sigma &sigma_sq) {
-  using std::exp;
-  const auto x_size = x.size();
-  Eigen::Matrix<return_type_t<T_x, T_sigma>, Eigen::Dynamic, Eigen::Dynamic>
-      cov(x_size, x_size);
-  cov.diagonal().array() = sigma_sq;
-  for (size_t j = 0; j < x_size; ++j) {
-    for (size_t i = j + 1; i < x_size; ++i) {
-      cov.coeffRef(i, j) = sigma_sq * exp(-0.5 * (x[i] - x[j]).squaredNorm());
+  size_t block_size = 10;
+  for (size_t ib = 0; ib < x.size(); ib += block_size) {
+    for (size_t jb = 0; jb < x.size(); jb += block_size) {
+      for (size_t j = jb; j < std::min(x.size(), jb + block_size); ++j) {
+        for (size_t i = std::max(ib, j + 1);
+             i < std::min(x.size(), ib + block_size); ++i) {
+          cov.coeffRef(i, j)
+              = sigma_sq
+                * exp(squared_distance(x[i], x[j]) * neg_half_inv_l_sq);
+        }
+      }
     }
   }
   cov.template triangularView<Eigen::Upper>() = cov.transpose();
@@ -108,7 +85,7 @@ gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   Eigen::Matrix<return_type_t<T_x1, T_x2, T_sigma, T_l>, Eigen::Dynamic,
                 Eigen::Dynamic>
       cov(x1.size(), x2.size());
-  Eigen::Index block_size = 10;
+  size_t block_size = 10;
 
   for (size_t ib = 0; ib < x1.size(); ib += block_size) {
     for (size_t jb = 0; jb < x2.size(); jb += block_size) {
@@ -119,38 +96,6 @@ gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
                 * exp(squared_distance(x1[i], x2[j]) * neg_half_inv_l_sq);
         }
       }
-    }
-  }
-  return cov;
-}
-
-/**
- * Returns a squared exponential kernel.
- *
- * This function is for the cross covariance
- * matrix needed to compute the posterior predictive density.
- *
- * @tparam T_x1 type of first std::vector of elements
- * @tparam T_x2 type of second std::vector of elements
- * @tparam T_s type of sigma
- *
- * @param x1 std::vector of Eigen vectors of scalars.
- * @param x2 std::vector of Eigen vectors of scalars.
- * @param sigma_sq square root of the marginal standard deviation or magnitude
- * @return squared distance
- */
-template <typename T_x1, typename T_x2, typename T_s>
-inline typename Eigen::Matrix<return_type_t<T_x1, T_x2, T_s>, Eigen::Dynamic,
-                              Eigen::Dynamic>
-gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
-                const std::vector<Eigen::Matrix<T_x2, -1, 1>> &x2,
-                const T_s &sigma_sq) {
-  using std::exp;
-  Eigen::Matrix<return_type_t<T_x1, T_x2, T_s>, Eigen::Dynamic, Eigen::Dynamic>
-      cov(x1.size(), x2.size());
-  for (size_t i = 0; i < x1.size(); ++i) {
-    for (size_t j = 0; j < x2.size(); ++j) {
-      cov.coeffRef(i, j) = sigma_sq * exp(-0.5 * (x1[i] - x2[j]).squaredNorm());
     }
   }
   return cov;
@@ -231,7 +176,7 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
   check_size_match("gp_exp_quad_cov", "x dimension", x[0].size(),
                    "number of length scales", length_scale.size());
   cov = internal::gp_exp_quad_cov(divide_columns(x, length_scale),
-                                  square(sigma));
+                                  square(sigma), -0.5);
   return cov;
 }
 
@@ -337,7 +282,7 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
                    "number of length scales", l_size);
   cov = internal::gp_exp_quad_cov(divide_columns(x1, length_scale),
                                   divide_columns(x2, length_scale),
-                                  square(sigma));
+                                  square(sigma), -0.5);
   return cov;
 }
 
