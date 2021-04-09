@@ -108,26 +108,16 @@ gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   Eigen::Matrix<return_type_t<T_x1, T_x2, T_sigma, T_l>, Eigen::Dynamic,
                 Eigen::Dynamic>
       cov(x1.size(), x2.size());
-  for (size_t j = 0; j < x2.size(); j += 2) {
-    for (size_t i = 0; i < x1.size(); i += 2) {
-      cov.coeffRef(i, j)
-          = sigma_sq * exp(squared_distance(x1[i], x2[j]) * neg_half_inv_l_sq);
-      if (i + 1 < x1.size()) {
-        cov.coeffRef(i + 1, j)
-            = sigma_sq
-              * exp(squared_distance(x1[i + 1], x2[j]) * neg_half_inv_l_sq);
-      }
+  Eigen::Index block_size = 10;
 
-      if (j + 1 < x2.size()) {
-        cov.coeffRef(i, j + 1)
-            = sigma_sq
-              * exp(squared_distance(x1[i], x2[j + 1]) * neg_half_inv_l_sq);
-      }
-
-      if (i + 1 < x1.size() && j + 1 < x2.size()) {
-        cov.coeffRef(i + 1, j + 1)
-            = sigma_sq
-              * exp(squared_distance(x1[i + 1], x2[j + 1]) * neg_half_inv_l_sq);
+  for (size_t ib = 0; ib < x1.size(); ib += block_size) {
+    for (size_t jb = 0; jb < x2.size(); jb += block_size) {
+      for (size_t j = jb; j < std::min(x2.size(), jb + block_size); ++j) {
+        for (size_t i = ib; i < std::min(x1.size(), ib + block_size); ++i) {
+          cov.coeffRef(i, j)
+              = sigma_sq
+                * exp(squared_distance(x1[i], x2[j]) * neg_half_inv_l_sq);
+        }
       }
     }
   }
