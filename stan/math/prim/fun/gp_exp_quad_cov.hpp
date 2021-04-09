@@ -43,7 +43,7 @@ gp_exp_quad_cov(const std::vector<T_x> &x, const T_sigma &sigma_sq,
   cov.diagonal().array() = sigma_sq;
   for (size_t j = 0; j < x_size; ++j) {
     for (size_t i = j + 1; i < x_size; ++i) {
-      cov(i, j)
+      cov.coeffRef(i, j)
           = sigma_sq * exp(squared_distance(x[i], x[j]) * neg_half_inv_l_sq);
     }
   }
@@ -74,7 +74,7 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
   cov.diagonal().array() = sigma_sq;
   for (size_t j = 0; j < x_size; ++j) {
     for (size_t i = j + 1; i < x_size; ++i) {
-      cov(i, j) = sigma_sq * exp(-0.5 * (x[i] - x[j]).squaredNorm());
+      cov.coeffRef(i, j) = sigma_sq * exp(-0.5 * (x[i] - x[j]).squaredNorm());
     }
   }
   cov.template triangularView<Eigen::Upper>() = cov.transpose();
@@ -108,10 +108,27 @@ gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   Eigen::Matrix<return_type_t<T_x1, T_x2, T_sigma, T_l>, Eigen::Dynamic,
                 Eigen::Dynamic>
       cov(x1.size(), x2.size());
-  for (size_t j = 0; j < x2.size(); ++j) {
-    for (size_t i = 0; i < x1.size(); ++i) {
+  for (size_t j = 0; j < x2.size(); j += 2) {
+    for (size_t i = 0; i < x1.size(); i += 2) {
       cov.coeffRef(i, j)
           = sigma_sq * exp(squared_distance(x1[i], x2[j]) * neg_half_inv_l_sq);
+      if (i + 1 < x1.size()) {
+        cov.coeffRef(i + 1, j)
+            = sigma_sq
+              * exp(squared_distance(x1[i + 1], x2[j]) * neg_half_inv_l_sq);
+      }
+
+      if (j + 1 < x2.size()) {
+        cov.coeffRef(i, j + 1)
+            = sigma_sq
+              * exp(squared_distance(x1[i], x2[j + 1]) * neg_half_inv_l_sq);
+      }
+
+      if (i + 1 < x1.size() && j + 1 < x2.size()) {
+        cov.coeffRef(i + 1, j + 1)
+            = sigma_sq
+              * exp(squared_distance(x1[i + 1], x2[j + 1]) * neg_half_inv_l_sq);
+      }
     }
   }
   return cov;
@@ -143,7 +160,7 @@ gp_exp_quad_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
       cov(x1.size(), x2.size());
   for (size_t i = 0; i < x1.size(); ++i) {
     for (size_t j = 0; j < x2.size(); ++j) {
-      cov(i, j) = sigma_sq * exp(-0.5 * (x1[i] - x2[j]).squaredNorm());
+      cov.coeffRef(i, j) = sigma_sq * exp(-0.5 * (x1[i] - x2[j]).squaredNorm());
     }
   }
   return cov;
