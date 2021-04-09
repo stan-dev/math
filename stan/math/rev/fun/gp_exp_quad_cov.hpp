@@ -78,13 +78,20 @@ class gp_exp_quad_cov_vari : public vari {
             ChainableStack::instance_->memalloc_.alloc_array<vari *>(size_)) {
     double inv_half_sq_l_d = 0.5 / (l_d_ * l_d_);
     size_t pos = 0;
-    for (size_t j = 0; j < size_ - 1; ++j) {
-      for (size_t i = j + 1; i < size_; ++i) {
-        double dist_sq = squared_distance(x[i], x[j]);
-        dist_[pos] = dist_sq;
-        cov_lower_[pos] = new vari(
-            sigma_sq_d_ * std::exp(-dist_sq * inv_half_sq_l_d), false);
-        ++pos;
+    size_t block_size = 10;
+
+    for (size_t ib = 0; ib < size_; ib += block_size) {
+      for (size_t jb = 0; jb < size_; jb += block_size) {
+        for (size_t j = jb; j < std::min(size_, jb + block_size); ++j) {
+          for (size_t i = std::max(ib, j + 1);
+               i < std::min(size_, ib + block_size); ++i) {
+            double dist_sq = squared_distance(x[i], x[j]);
+            dist_[pos] = dist_sq;
+            cov_lower_[pos] = new vari(
+                sigma_sq_d_ * std::exp(-dist_sq * inv_half_sq_l_d), false);
+            ++pos;
+          }
+        }
       }
     }
     for (size_t i = 0; i < size_; ++i) {
