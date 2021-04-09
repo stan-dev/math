@@ -46,6 +46,7 @@ return_type_t<T_y, T_loc, T_scale> loglogistic_lpdf(const T_y& y, const T_loc& m
   T_mu_ref mu_ref = mu;
   T_sigma_ref sigma_ref = sigma;
 
+  // Tukaj moram uporabit ta partials_return_t? Namesto auto? Hm...
   decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
   decltype(auto) mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
   decltype(auto) sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
@@ -85,26 +86,48 @@ return_type_t<T_y, T_loc, T_scale> loglogistic_lpdf(const T_y& y, const T_loc& m
 
   // Here come the derivatives I think. We divide everything up by
   // being constant or not.
-  if (!is_constant_all<T_y, T_scale>::value) {
-    const auto& exp_y_minus_mu_div_sigma = exp(y_minus_mu_div_sigma);
-    const auto& y_deriv = to_ref_if<(!is_constant_all<T_scale>::value
-                                     && !is_constant_all<T_y>::value)>(
-        (2 / (1 + exp_y_minus_mu_div_sigma) - 1) * inv_sigma);
-    if (!is_constant_all<T_y>::value) {
-      std::cout << std::endl << "Partial y: " << y_deriv << std::endl;
+  if (!is_constant_all<T_y>::value) { // Could I have is_constant only?
+    const auto& y_deriv = (sigma_val - 1) / y_val -
+      (2 / (1 + pow(y_val / mu_val, sigma_val))) *
+      (sigma_val / pow(mu_val, sigma_val)) * pow(y_val, sigma_val - 1);
       ops_partials.edge1_.partials_ = y_deriv;
-    }
-    if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_ = (-y_deriv * y_minus_mu - 1) * inv_sigma;
-    }
+      std::cout << std::endl << "Partial y: " << y_deriv << std::endl;
   }
   if (!is_constant_all<T_loc>::value) {
-    const auto& exp_mu_div_sigma = to_ref(exp(mu_val * inv_sigma));
-    ops_partials.edge2_.partials_
-        = (1
-           - 2 * exp_mu_div_sigma / (exp_mu_div_sigma + exp(y_val * inv_sigma)))
-          * inv_sigma;
+    const auto& mu_deriv = - sigma_val / mu_val -
+      (2 / (1 + pow(y_val / mu_val, sigma_val))) *
+      pow(y_val, sigma_val) * (-sigma_val) * pow(mu_val, -sigma_val - 1);
+    ops_partials.edge2_.partials_ = mu_deriv;
+    std::cout << std::endl << "Partial mu: " << mu_deriv << std::endl;
   }
+  if (!is_constant_all<T_scale>::value) {
+    const auto& sigma_deriv = (1 / sigma_val) + log(y_val) - log(mu_val) -
+      (2 / (1 + pow(y_val / mu_val, sigma_val))) *
+      pow((y_val / mu_val), sigma_val) * log(y_val / mu_val);
+    ops_partials.edge3_.partials_ = sigma_deriv;
+    std::cout << std::endl << "Partial sigma: " << sigma_deriv << std::endl;
+  }
+
+  // if (!is_constant_all<T_y, T_scale>::value) {
+  //   const auto& exp_y_minus_mu_div_sigma = exp(y_minus_mu_div_sigma);
+  //   const auto& y_deriv = to_ref_if<(!is_constant_all<T_scale>::value
+  //                                    && !is_constant_all<T_y>::value)>(
+  //       (2 / (1 + exp_y_minus_mu_div_sigma) - 1) * inv_sigma);
+  //   if (!is_constant_all<T_y>::value) {
+  //     std::cout << std::endl << "Partial y: " << y_deriv << std::endl;
+  //     ops_partials.edge1_.partials_ = y_deriv;
+  //   }
+  //   if (!is_constant_all<T_scale>::value) {
+  //     ops_partials.edge3_.partials_ = (-y_deriv * y_minus_mu - 1) * inv_sigma;
+  //   }
+  // }
+  // if (!is_constant_all<T_loc>::value) {
+  //   const auto& exp_mu_div_sigma = to_ref(exp(mu_val * inv_sigma));
+  //   ops_partials.edge2_.partials_
+  //       = (1
+  //          - 2 * exp_mu_div_sigma / (exp_mu_div_sigma + exp(y_val * inv_sigma)))
+  //         * inv_sigma;
+  // }
   // std::cout << ops_partials.edge1_.partials_ << std::endl;
   // std::cout << ops_partials.edge2_.partials_ << std::endl;
   // std::cout << ops_partials.edge3_.partials_ << std::endl;
