@@ -108,9 +108,9 @@ gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   Eigen::Matrix<return_type_t<T_x1, T_x2, T_sigma, T_l>, Eigen::Dynamic,
                 Eigen::Dynamic>
       cov(x1.size(), x2.size());
-  for (size_t i = 0; i < x1.size(); ++i) {
-    for (size_t j = 0; j < x2.size(); ++j) {
-      cov(i, j)
+  for (size_t j = 0; j < x2.size(); ++j) {
+    for (size_t i = 0; i < x1.size(); ++i) {
+      cov.coeffRef(i, j)
           = sigma_sq * exp(squared_distance(x1[i], x2[j]) * neg_half_inv_l_sq);
     }
   }
