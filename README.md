@@ -119,7 +119,7 @@ To build the development version of `math` with [`oneTBB`](https://github.com/on
 
 For example, installing [`oneTBB`](https://github.com/oneapi-src/oneTBB) on Linux 64-bit (`x86_64`) to `$HOME` directory (change if needed!):
 ```bash
-TBB_VERSION="2021.1.1"
+TBB_VERSION="2021.2.0"
 
 wget https://github.com/oneapi-src/oneTBB/releases/download/v${TBB_VERSION}/oneapi-tbb-${TBB_VERSION}-lin.tgz
 tar zxvf oneapi-tbb-$TBB_VERSION-lin.tgz -C $HOME
