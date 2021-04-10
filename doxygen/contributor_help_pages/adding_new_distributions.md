@@ -29,7 +29,7 @@ $$
 to get the log probabiloity density function we log the above to get
 
 $$
-\text{Normal}(y|\mu,\sigma)=-\frac{1}{2} \left(\frac{y-\mu}{\sigma}\right)^2 - \log(\sigma) - \frac{1}{2}\log(2\pi)
+\text{ln}\left(\text{Normal}(y|\mu,\sigma)\right)=-\frac{1}{2} \left(\frac{y-\mu}{\sigma}\right)^2 - \log(\sigma) - \frac{1}{2}\log(2\pi)
 $$
 
 Now we can directly plug this into Stan as a custom lpdf function
@@ -55,8 +55,9 @@ In that case then [matrixcalculus.org](http://www.matrixcalculus.org/) or [wolfr
 There we can plug in the lpdf and get back each of the partials.
 
 Note that for univariate distributions wolfram handles things a bit simpler,
-though for multivariate distributions you'll have to use matrixcalculus. One
-other nice thing about the matrixcalculus site is that it can generate latex
+though for multivariate distributions you'll have to use matrixcalculus. Though
+for both you'll have a much nicer time if you plug in the log'd version of the
+function. One other nice thing about the matrixcalculus site is that it can generate latex
 which is nice for documentation.
 
 
@@ -91,7 +92,8 @@ $$
 
 
 So now let's add the lpdf function in `stan/math/prim/dist/new_normal_lpdf.hpp`.
-First we'll go over what we have to do before we start doing any math.
+First we'll go over what we have to do before we start doing any math. We'll be
+breaking down Stan's current `normal_lpdf` function which you can find [here](https://github.com/stan-dev/math/blob/develop/stan/math/prim/prob/normal_lpdf.hpp).
 
 
 #### Distribution Signature
