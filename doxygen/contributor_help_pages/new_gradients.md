@@ -1,5 +1,14 @@
 ## Adding A New Function With Known Gradients {#new_grad}
 
+-----------------------------------------------------
+
+### NOTE:
+
+These docs are a bit outdated. For the most up to date guide on contributing to Stan Math see the [Getting Started Guide](@ref getting_started), [Common Pitfalls](@ref common_pitfalls), and [Adding New Distributions Guide](@ref new_distribution).
+
+
+------------------------------------------------------
+
 If you have a function f and you know the gradients for it, it is straightforward to add the function to Stan's math library.
 
 
@@ -34,7 +43,7 @@ Suppose have a code to calculate a univariate function and its derivative:
 ```cpp
 namespace bar {
   double foo(double x);
-  double d_foo(double x);  
+  double d_foo(double x);
 }
 ```
 
@@ -143,7 +152,7 @@ namespace stan {
     vector<var> foo(const vector<var>& x) {
       vector<double> a = value_of(x);
       double fa = bar::foo(a);
-      vector<double> grad_fa = bar::grad_foo(a);  
+      vector<double> grad_fa = bar::grad_foo(a);
       return precomputed_gradients(fa, x, grad_fa);
     }
   }
