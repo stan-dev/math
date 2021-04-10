@@ -54,7 +54,7 @@ each of it's partials with respect to the distributions inputs. This is easy for
 In that case then [matrixcalculus.org](http://www.matrixcalculus.org/) or [wolframalpha](https://www.wolframalpha.com/) is your friend.
 There we can plug in the lpdf and get back each of the partials.
 
-Note that for univariate distributions wolfram is handles things a bit simpler,
+Note that for univariate distributions wolfram handles things a bit simpler,
 though for multivariate distributions you'll have to use matrixcalculus. One
 other nice thing about the matrixcalculus site is that it can generate latex
 which is nice for documentation.
@@ -70,7 +70,7 @@ f = \text{Normal}(y|\mu,\sigma) &= -\frac{1}{2} \left(\frac{y-\mu}{\sigma}\right
 $$
 
 It's a little early, but once we get the `lpdf` function working with the above we will want to get out a pen and paper to simplify and find common subexpressions we only need to calculate once.
-For instance in the normal we can compute $y - \mu$ and $1/\sigma$
+For instance in the normal we can compute `y - mu` and `1/sigma`
 
 $$
 \begin{aligned}
@@ -92,7 +92,7 @@ $$
 
 So now let's add the lpdf function in `stan/math/prim/dist/new_normal_lpdf.hpp`.
 First we'll go over what we have to do before we start doing any math.
-The below is
+
 
 #### Distribution Signature
 
@@ -112,8 +112,11 @@ must work for all of Stan's scalar types
 `double`, `var`, and `fvar<T>` while accepting mixtures of scalars and vectors.
 The return of the function is the joint log probability accumulated over all
 of the inputs which is a scalar of the least upper bound of all the
-parameters scalar types. See the [Common pitfalls](@ref common_pitfalls) for an
-explenation of `return_type_t`.
+parameters scalar types. That's a lot of big words, but in essense means that
+if one of the inputs is a `var` and the others are double the return type needs to be
+a `double`. If the input signature contained `fvar<var>`, `var`, `double` then the
+return type would be `fvar<var>`. See the [Common pitfalls](@ref common_pitfalls) for an
+explanation of `return_type_t`.
 
 Notice the `bool propto` template parameter, this is used by the function to
 decide whether or not the function needs to propogate constants to the joint
@@ -191,7 +194,7 @@ the evaluated inputs and pass them to the `operands_and_partials` class
       y_ref, mu_ref, sigma_ref);
 ```
 
-This sets up each of the input operands partials so that we only store and calculate
+This sets up each of the input operand's partials so that we only store and calculate
 the ones we need.
 
 -------------------------------------
@@ -231,13 +234,13 @@ and scalars can both be iterated over in the loop.
 ```
 
 For vectors, `scalar_seq_view` simply holds a reference to the vector it's passed
-and then calling it's method `.val(i)` will return element i in the vector
+and calling `scalar_seq_view`'s method `.val(i)` will return element i in the vector
 after calling `value_of()` on the element. The actual element can be acessed
 with `operator[]`. For scalars, `scalar_seq_view`'s `.val(i)` and `operator[]`
 will just return the scalar no matter what index is passed.
 
 But with that now we can get the maximum size of the input arguments and run a
-loop calculating the partials for each input argument.
+loop calculating the partials for each input argument's values.
 
 ```cpp
 size_t N = max_size(y, mu, sigma);
