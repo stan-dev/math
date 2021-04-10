@@ -309,18 +309,18 @@ them into operands adjoint.
 The for loop version is nice and simple, but there's a few things for performance
 that we can do better. For instance, in the for loop version we are constantly
 reading and writing to memory from a bunch of different places. We can fix that by
-rewriting the above to use multiple looks, but unless we have seperate loops
+rewriting the above to use multiple loops, but unless we have seperate loops
 that turn on and off for when combinations of partials need to be calculated
-then we lose places where we can  share calculations between partials.
+then we lose places where we can share calculations between partials.
 
-For a more efficient version we can do that math for the partials with no loop
+For a more efficient version we can do the math for the partials with no loop
 and _possibly_ sharing computation.
 
 
 #### Doing The Math With Eigen
 
 The below code replaces the loop above with Eigen. It uses most of the same tricks
-we've used previously
+we've used previously.
 
 ```cpp
   // Only evaluate inv_sigma here if it's going to be used more than once
