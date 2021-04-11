@@ -97,11 +97,11 @@ inline std::vector<double> quantile(const T& samples_vec, const Tp& ps) {
   Eigen::ArrayXd index = (n_sample - 1) * p;
 
   for (size_t i = 0; i < n_ps; ++i) {
-    if (p[i] == 0.)
+    if (p[i] == 0.) {
       ret[i] = x.coeff(0);
-    else if (p[i] == 1.)
+    } else if (p[i] == 1.) {
       ret[i] = x.coeff(n_sample - 1);
-    else {
+    } else {
       size_t lo = std::floor(index[i]);
       size_t hi = std::ceil(index[i]);
 
