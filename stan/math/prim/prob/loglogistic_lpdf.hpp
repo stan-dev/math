@@ -58,9 +58,9 @@ return_type_t<T_y, T_loc, T_scale> loglogistic_lpdf(const T_y& y, const T_loc& m
   if (size_zero(y, mu, sigma)) {
     return 0.0;
   }
-  // if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
-  //   return 0.0;
-  // }
+  if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
+    return 0.0;
+  }
 
   // Here we create some class that will be put onto the stack I guess.
   operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref> ops_partials(
