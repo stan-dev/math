@@ -17,6 +17,8 @@ From within the Math library:
 
 ```
 
+For development on windows, add `GENERATE_DISTRIBUTION_TESTS=true` to the make/local file.
+
 This will take hours, perhaps many hours. Most of the time is spent compiling. You might want to add the parallel flag to the python script.
 
 
