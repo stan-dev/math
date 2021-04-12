@@ -75,7 +75,7 @@ class AgradDistributionsLoglogistic : public AgradDistributionTest {
       const T5&) {
     using stan::math::log1p;
     return log(sigma) - log(mu) + (sigma - 1) * (log(y) - log(mu)) -
-      2.0 * log1p(pow((y / mu), sigma));
+      2.0 * log1p(pow((y * stan::math::inv(mu)), sigma));
     // T_partials_return logp = sum((log(sigma_val) - log(mu_val) + (sigma_val - 1) *
     //   (log(y_val) - log(mu_val)) -
     //   2 * log1p(pow((y_val / mu_val), sigma_val)));
