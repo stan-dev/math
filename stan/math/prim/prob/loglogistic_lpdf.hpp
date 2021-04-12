@@ -75,9 +75,18 @@ return_type_t<T_y, T_loc, T_scale> loglogistic_lpdf(const T_y& y, const T_loc& m
   size_t N = max_size(y, mu, sigma);
 
 
-  T_partials_return logp = sum((log(sigma_val) - log(mu_val) + (sigma_val - 1) *
-    (log(y_val) - log(mu_val))) -
+  // T_partials_return logp = sum((log(sigma_val) - log(mu_val) + (sigma_val - 1) *
+  //   (log(y_val) - log(mu_val))) -
+  //   2 * log1p(pow((y_val / mu_val), sigma_val)));
+
+  T_partials_return logp = sum((sigma_val - 1) *
+    log(y_val)) -
     2 * log1p(pow((y_val / mu_val), sigma_val)));
+
+
+  if (include_summand<propto>::value) {
+    logp += sum(log(sigma_val) - log(mu_val) + (sigma_val - 1) * log(mu_val));
+  }
 
   // OK this works. I guess I can add the derivatives and later see,
   // which parts would make sense to save as separate computations.
@@ -108,31 +117,7 @@ return_type_t<T_y, T_loc, T_scale> loglogistic_lpdf(const T_y& y, const T_loc& m
     // std::cout << std::endl << "Partial sigma: " << sigma_deriv << std::endl;
   }
 
-  // if (!is_constant_all<T_y, T_scale>::value) {
-  //   const auto& exp_y_minus_mu_div_sigma = exp(y_minus_mu_div_sigma);
-  //   const auto& y_deriv = to_ref_if<(!is_constant_all<T_scale>::value
-  //                                    && !is_constant_all<T_y>::value)>(
-  //       (2 / (1 + exp_y_minus_mu_div_sigma) - 1) * inv_sigma);
-  //   if (!is_constant_all<T_y>::value) {
-  //     std::cout << std::endl << "Partial y: " << y_deriv << std::endl;
-  //     ops_partials.edge1_.partials_ = y_deriv;
-  //   }
-  //   if (!is_constant_all<T_scale>::value) {
-  //     ops_partials.edge3_.partials_ = (-y_deriv * y_minus_mu - 1) * inv_sigma;
-  //   }
-  // }
-  // if (!is_constant_all<T_loc>::value) {
-  //   const auto& exp_mu_div_sigma = to_ref(exp(mu_val * inv_sigma));
-  //   ops_partials.edge2_.partials_
-  //       = (1
-  //          - 2 * exp_mu_div_sigma / (exp_mu_div_sigma + exp(y_val * inv_sigma)))
-  //         * inv_sigma;
-  // }
-  // std::cout << ops_partials.edge1_.partials_ << std::endl;
-  // std::cout << ops_partials.edge2_.partials_ << std::endl;
-  // std::cout << ops_partials.edge3_.partials_ << std::endl;
   return ops_partials.build(logp);
-  // return ops_partials;
 }
 
 // Ahaa, this is just the default call of loglogistic with the
