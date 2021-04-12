@@ -65,8 +65,8 @@ gp_exponential_cov(const std::vector<T_x> &x, const T_s &sigma,
   T_l neg_inv_l = -1.0 / length_scale;
 
   size_t block_size = 10;
-    for (size_t jb = 0; jb < x_size; jb += block_size) {
-      for (size_t ib = jb; ib < x_size; ib += block_size) {
+  for (size_t jb = 0; jb < x_size; jb += block_size) {
+    for (size_t ib = jb; ib < x_size; ib += block_size) {
       for (size_t j = jb; j < std::min(x_size, jb + block_size); ++j) {
         cov(j, j) = sigma_sq;
         for (size_t i = std::max(ib, j + 1);
@@ -128,8 +128,8 @@ gp_exponential_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
 
   T_s sigma_sq = square(sigma);
   size_t block_size = 10;
-    for (size_t jb = 0; jb < x_size; jb += block_size) {
-      for (size_t ib = jb; ib < x_size; ib += block_size) {
+  for (size_t jb = 0; jb < x_size; jb += block_size) {
+    for (size_t ib = jb; ib < x_size; ib += block_size) {
       for (size_t j = jb; j < std::min(x_size, jb + block_size); ++j) {
         cov(j, j) = sigma_sq;
         for (size_t i = std::max(ib, j + 1);
