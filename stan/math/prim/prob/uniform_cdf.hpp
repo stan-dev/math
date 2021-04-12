@@ -17,7 +17,9 @@
 namespace stan {
 namespace math {
 
-template <typename T_y, typename T_low, typename T_high>
+template <typename T_y, typename T_low, typename T_high,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_low, T_high>* = nullptr>
 return_type_t<T_y, T_low, T_high> uniform_cdf(const T_y& y, const T_low& alpha,
                                               const T_high& beta) {
   using T_partials_return = partials_return_t<T_y, T_low, T_high>;
