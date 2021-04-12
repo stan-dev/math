@@ -42,8 +42,8 @@ gp_exp_quad_cov(const std::vector<T_x> &x, const T_sigma &sigma_sq,
       cov(x_size, x_size);
   cov.diagonal().array() = sigma_sq;
   size_t block_size = 10;
-  for (size_t ib = 0; ib < x.size(); ib += block_size) {
-    for (size_t jb = 0; jb < x.size(); jb += block_size) {
+  for (size_t jb = 0; jb < x.size(); jb += block_size) {
+    for (size_t ib = jb; ib < x.size(); ib += block_size) {
       for (size_t j = jb; j < std::min(x.size(), jb + block_size); ++j) {
         for (size_t i = std::max(ib, j + 1);
              i < std::min(x.size(), ib + block_size); ++i) {

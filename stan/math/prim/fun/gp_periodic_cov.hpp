@@ -70,8 +70,8 @@ gp_periodic_cov(const std::vector<T_x> &x, const T_sigma &sigma, const T_l &l,
   T_p pi_div_p = pi() / p;
   size_t block_size = 10;
 
-  for (size_t ib = 0; ib < x_size; ib += block_size) {
     for (size_t jb = 0; jb < x_size; jb += block_size) {
+      for (size_t ib = jb; ib < x_size; ib += block_size) {
       for (size_t j = jb; j < std::min(x_size, jb + block_size); ++j) {
         cov.coeffRef(j, j) = sigma_sq;
         for (size_t i = std::max(ib, j + 1);

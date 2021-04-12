@@ -63,8 +63,8 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
   T_l inv_l_sq_5_3 = 5.0 / (3.0 * square(length_scale));
 
   size_t block_size = 10;
-  for (size_t ib = 0; ib < x_size; ib += block_size) {
-    for (size_t jb = 0; jb < x_size; jb += block_size) {
+  for (size_t jb = 0; jb < x_size; jb += block_size) {
+    for (size_t ib = jb; ib < x_size; ib += block_size) {
       for (size_t j = jb; j < std::min(x_size, jb + block_size); ++j) {
         cov.coeffRef(j, j) = sigma_sq;
         for (size_t i = std::max(ib, j + 1);
@@ -137,8 +137,8 @@ gp_matern52_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
       = divide_columns(x, length_scale);
   size_t block_size = 10;
 
-  for (size_t ib = 0; ib < x_size; ib += block_size) {
-    for (size_t jb = 0; jb < x_size; jb += block_size) {
+  for (size_t jb = 0; jb < x_size; jb += block_size) {
+    for (size_t ib = jb; ib < x_size; ib += block_size) {
       for (size_t j = jb; j < std::min(x_size, jb + block_size); ++j) {
         cov.coeffRef(j, j) = sigma_sq;
         for (size_t i = std::max(ib, j + 1);

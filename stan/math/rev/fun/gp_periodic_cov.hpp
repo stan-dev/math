@@ -116,8 +116,8 @@ class gp_periodic_cov_vari : public vari {
     size_t pos = 0;
     size_t block_size = 10;
 
-    for (size_t ib = 0; ib < size_; ib += block_size) {
       for (size_t jb = 0; jb < size_; jb += block_size) {
+        for (size_t ib = jb; ib < size_; ib += block_size) {
         for (size_t j = jb; j < std::min(size_, jb + block_size); ++j) {
           for (size_t i = std::max(ib, j + 1);
                i < std::min(size_, ib + block_size); ++i) {
@@ -257,8 +257,8 @@ class gp_periodic_cov_vari<T_x, double, T_l, T_p> : public vari {
     size_t pos = 0;
     size_t block_size = 10;
 
-    for (size_t ib = 0; ib < size_; ib += block_size) {
       for (size_t jb = 0; jb < size_; jb += block_size) {
+        for (size_t ib = jb; ib < size_; ib += block_size) {
         for (size_t j = jb; j < std::min(size_, jb + block_size); ++j) {
           for (size_t i = std::max(ib, j + 1);
                i < std::min(size_, ib + block_size); ++i) {
@@ -340,8 +340,8 @@ gp_periodic_cov(const std::vector<T_x> &x, const var &sigma, const var &l,
   size_t pos = 0;
   size_t block_size = 10;
 
-  for (size_t ib = 0; ib < x_size; ib += block_size) {
     for (size_t jb = 0; jb < x_size; jb += block_size) {
+      for (size_t ib = jb; ib < x_size; ib += block_size) {
       for (size_t j = jb; j < std::min(x_size, jb + block_size); ++j) {
         for (size_t i = std::max(ib, j + 1);
              i < std::min(x_size, ib + block_size); ++i) {
@@ -401,8 +401,8 @@ gp_periodic_cov(const std::vector<T_x> &x, double sigma, const var &l,
 
   size_t pos = 0;
   size_t block_size = 10;
-  for (size_t ib = 0; ib < x_size; ib += block_size) {
     for (size_t jb = 0; jb < x_size; jb += block_size) {
+      for (size_t ib = jb; ib < x_size; ib += block_size) {
       for (size_t j = jb; j < std::min(x_size, jb + block_size); ++j) {
         for (size_t i = std::max(ib, j + 1);
              i < std::min(x_size, ib + block_size); ++i) {
