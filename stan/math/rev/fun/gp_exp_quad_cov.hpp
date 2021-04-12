@@ -243,13 +243,19 @@ inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x> &x,
       = new gp_exp_quad_cov_vari<T_x, var, var>(x, sigma, length_scale);
 
   size_t pos = 0;
-  for (size_t j = 0; j < x_size - 1; ++j) {
-    for (size_t i = (j + 1); i < x_size; ++i) {
-      cov.coeffRef(i, j).vi_ = baseVari->cov_lower_[pos];
-      cov.coeffRef(j, i).vi_ = cov.coeffRef(i, j).vi_;
-      ++pos;
+  size_t block_size = 10;
+  for (size_t ib = 0; ib < x_size; ib += block_size) {
+    for (size_t jb = 0; jb < x_size; jb += block_size) {
+      for (size_t j = jb; j < std::min(x_size, jb + block_size); ++j) {
+        for (size_t i = std::max(ib, j + 1);
+             i < std::min(x_size, ib + block_size); ++i) {
+          cov.coeffRef(i, j).vi_ = baseVari->cov_lower_[pos];
+          cov.coeffRef(j, i).vi_ = cov.coeffRef(i, j).vi_;
+          ++pos;
+        }
+        cov.coeffRef(j, j).vi_ = baseVari->cov_diag_[j];
+      }
     }
-    cov.coeffRef(j, j).vi_ = baseVari->cov_diag_[j];
   }
   cov.coeffRef(x_size - 1, x_size - 1).vi_ = baseVari->cov_diag_[x_size - 1];
   return cov;
@@ -288,13 +294,19 @@ inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x> &x,
       = new gp_exp_quad_cov_vari<T_x, double, var>(x, sigma, length_scale);
 
   size_t pos = 0;
-  for (size_t j = 0; j < x_size - 1; ++j) {
-    for (size_t i = (j + 1); i < x_size; ++i) {
-      cov.coeffRef(i, j).vi_ = baseVari->cov_lower_[pos];
-      cov.coeffRef(j, i).vi_ = cov.coeffRef(i, j).vi_;
-      ++pos;
+  size_t block_size = 10;
+  for (size_t ib = 0; ib < x_size; ib += block_size) {
+    for (size_t jb = 0; jb < x_size; jb += block_size) {
+      for (size_t j = jb; j < std::min(x_size, jb + block_size); ++j) {
+        for (size_t i = std::max(ib, j + 1);
+             i < std::min(x_size, ib + block_size); ++i) {
+          cov.coeffRef(i, j).vi_ = baseVari->cov_lower_[pos];
+          cov.coeffRef(j, i).vi_ = cov.coeffRef(i, j).vi_;
+          ++pos;
+        }
+        cov.coeffRef(j, j).vi_ = baseVari->cov_diag_[j];
+      }
     }
-    cov.coeffRef(j, j).vi_ = baseVari->cov_diag_[j];
   }
   cov.coeffRef(x_size - 1, x_size - 1).vi_ = baseVari->cov_diag_[x_size - 1];
   return cov;
