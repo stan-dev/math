@@ -58,9 +58,9 @@ return_type_t<T_y, T_loc, T_scale> loglogistic_lpdf(const T_y& y, const T_loc& m
   if (size_zero(y, mu, sigma)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
-    return 0.0;
-  }
+  // if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
+  //   return 0.0;
+  // }
 
   // Here we create some class that will be put onto the stack I guess.
   operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref> ops_partials(
@@ -79,13 +79,12 @@ return_type_t<T_y, T_loc, T_scale> loglogistic_lpdf(const T_y& y, const T_loc& m
   //   (log(y_val) - log(mu_val))) -
   //   2 * log1p(pow((y_val / mu_val), sigma_val)));
 
-  T_partials_return logp = sum((sigma_val - 1) *
-    log(y_val)) -
-    2 * log1p(pow((y_val / mu_val), sigma_val)));
+  T_partials_return logp = sum((sigma_val - 1) * log(y_val) -
+    2 * log1p(pow((y_val * inv(mu_val)), sigma_val)));
 
-
-  if (include_summand<propto>::value) {
-    logp += sum(log(sigma_val) - log(mu_val) + (sigma_val - 1) * log(mu_val));
+  // logp += sum(log(sigma_val) - log(mu_val) - (sigma_val - 1) * log(mu_val));
+  if (!include_summand<propto, T_loc, T_scale>::value) {
+    logp += sum(log(sigma_val) - log(mu_val) - (sigma_val - 1) * log(mu_val));
   }
 
   // OK this works. I guess I can add the derivatives and later see,
@@ -96,23 +95,23 @@ return_type_t<T_y, T_loc, T_scale> loglogistic_lpdf(const T_y& y, const T_loc& m
   // Here come the derivatives I think. We divide everything up by
   // being constant or not.
   if (!is_constant_all<T_y>::value) { // Could I have is_constant only?
-    const auto& y_deriv = (sigma_val - 1) / y_val -
-      (2 / (1 + pow(y_val / mu_val, sigma_val))) *
-      (sigma_val / pow(mu_val, sigma_val)) * pow(y_val, sigma_val - 1);
+    const auto& y_deriv = (sigma_val - 1.0) * inv(y_val) -
+      (2.0 / (1.0 + pow(y_val * inv(mu_val), sigma_val))) *
+      (sigma_val * inv(pow(mu_val, sigma_val))) * pow(y_val, sigma_val - 1);
       ops_partials.edge1_.partials_ = y_deriv;
       // std::cout << std::endl << "Partial y: " << y_deriv << std::endl;
   }
   if (!is_constant_all<T_loc>::value) {
-    const auto& mu_deriv = - sigma_val / mu_val -
-      (2 / (1 + pow(y_val / mu_val, sigma_val))) *
+    const auto& mu_deriv = - sigma_val * inv(mu_val) -
+      (2.0 / (1.0 + pow(y_val * inv(mu_val), sigma_val))) *
       pow(y_val, sigma_val) * (-sigma_val) * pow(mu_val, -sigma_val - 1);
     ops_partials.edge2_.partials_ = mu_deriv;
     // std::cout << std::endl << "Partial mu: " << mu_deriv << std::endl;
   }
   if (!is_constant_all<T_scale>::value) {
-    const auto& sigma_deriv = (1 / sigma_val) + log(y_val) - log(mu_val) -
-      (2 / (1 + pow(y_val / mu_val, sigma_val))) *
-      pow((y_val / mu_val), sigma_val) * log(y_val / mu_val);
+    const auto& sigma_deriv = (1.0 * inv(sigma_val)) + log(y_val) - log(mu_val) -
+      (2.0 / (1 + pow(y_val * inv(mu_val), sigma_val))) *
+      pow((y_val * inv(mu_val)), sigma_val) * log(y_val * inv(mu_val));
     ops_partials.edge3_.partials_ = sigma_deriv;
     // std::cout << std::endl << "Partial sigma: " << sigma_deriv << std::endl;
   }
