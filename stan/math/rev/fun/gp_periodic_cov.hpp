@@ -4,6 +4,7 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
+#include <stan/math/rev/fun/adjoint_of.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/constants.hpp>
@@ -42,6 +43,7 @@ inline Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
 gp_periodic_cov(const std::vector<T_x> &x, const T_sigma sigma, const var l,
                 const var p) {
   using std::exp;
+  using std::sin;
   const char *fun = "gp_periodic_cov";
   check_positive(fun, "signal standard deviation", sigma);
   check_positive(fun, "length-scale", l);
