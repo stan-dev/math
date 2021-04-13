@@ -59,7 +59,7 @@ inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x>& x,
     size_t j_end = std::min(x_size, jb + block_size);
     size_t j_size = j_end - jb;
     cov.diagonal().segment(jb, j_size)
-              = Eigen::VectorXd::Constant(j_size, sigma_sq);
+        = Eigen::VectorXd::Constant(j_size, sigma_sq);
     if (!is_constant<T_sigma>::value) {
       cov_diag.segment(jb, j_size) = cov.diagonal().segment(jb, j_size);
     }
@@ -76,26 +76,26 @@ inline Eigen::Matrix<var, -1, -1> gp_exp_quad_cov(const std::vector<T_x>& x,
     }
   }
 
-  reverse_pass_callback([cov_l_tri_lin, cov_diag, sq_dists_lin, sigma,
-                         length_scale, x_size]() {
-    size_t l_tri_size = x_size * (x_size - 1) / 2;
-    double adjl = 0;
-    double adjsigma = 0;
-    for (Eigen::Index pos = 0; pos < l_tri_size; pos++) {
-      double prod_add
-          = cov_l_tri_lin.coeff(pos).val() * cov_l_tri_lin.coeff(pos).adj();
-      adjl += prod_add * sq_dists_lin.coeff(pos);
-      if (!is_constant<T_sigma>::value) {
-        adjsigma += prod_add;
-      }
-    }
-    if (!is_constant<T_sigma>::value) {
-      adjsigma += (cov_diag.val().array() * cov_diag.adj().array()).sum();
-      adjoint_of(sigma) += adjsigma * 2 / value_of(sigma);
-    }
-    double l_val = value_of(length_scale);
-    length_scale.adj() += adjl / (l_val * l_val * l_val);
-  });
+  reverse_pass_callback(
+      [cov_l_tri_lin, cov_diag, sq_dists_lin, sigma, length_scale, x_size]() {
+        size_t l_tri_size = x_size * (x_size - 1) / 2;
+        double adjl = 0;
+        double adjsigma = 0;
+        for (Eigen::Index pos = 0; pos < l_tri_size; pos++) {
+          double prod_add
+              = cov_l_tri_lin.coeff(pos).val() * cov_l_tri_lin.coeff(pos).adj();
+          adjl += prod_add * sq_dists_lin.coeff(pos);
+          if (!is_constant<T_sigma>::value) {
+            adjsigma += prod_add;
+          }
+        }
+        if (!is_constant<T_sigma>::value) {
+          adjsigma += (cov_diag.val().array() * cov_diag.adj().array()).sum();
+          adjoint_of(sigma) += adjsigma * 2 / value_of(sigma);
+        }
+        double l_val = value_of(length_scale);
+        length_scale.adj() += adjl / (l_val * l_val * l_val);
+      });
 
   return cov;
 }

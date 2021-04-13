@@ -38,11 +38,10 @@ namespace math {
  */
 template <typename T_x, typename T_sigma, require_st_arithmetic<T_x>* = nullptr,
           require_stan_scalar_t<T_sigma>* = nullptr>
-inline Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>
-gp_periodic_cov(const std::vector<T_x> &x, const T_sigma sigma, const var l,
-                const var p) {
+inline Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> gp_periodic_cov(
+    const std::vector<T_x>& x, const T_sigma sigma, const var l, const var p) {
   using std::exp;
-  const char *fun = "gp_periodic_cov";
+  const char* fun = "gp_periodic_cov";
   check_positive(fun, "signal standard deviation", sigma);
   check_positive(fun, "length-scale", l);
   check_positive(fun, "period", p);
