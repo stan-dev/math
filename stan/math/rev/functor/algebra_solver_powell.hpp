@@ -232,7 +232,6 @@ Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_powell(
                                     max_num_steps, y, dat, dat_int);
 }
 
-
 /**
  * Return the solution to the specified system of algebraic
  * equations given an initial guess, and parameters and data,

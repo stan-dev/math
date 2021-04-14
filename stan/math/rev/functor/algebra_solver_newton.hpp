@@ -23,7 +23,7 @@ template <typename F, typename T, typename... T_Args,
 Eigen::VectorXd algebra_solver_newton_impl(
     const F& f, const T& x, std::ostream* msgs, double scaling_step_size,
     double function_tolerance, long int max_num_steps, const Eigen::VectorXd& y,
-    const T_Args&... args) { // NOLINT(runtime/int)
+    const T_Args&... args) {  // NOLINT(runtime/int)
   const auto& x_eval = x.eval();
   const auto& x_val = (value_of(x_eval)).eval();
   auto args_vals_tuple = std::make_tuple(y, eval(value_of(args))...);
@@ -98,11 +98,13 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_newton_impl(
   auto args_vals_tuple = std::make_tuple(eval(value_of(args))...);
 
   // Solve the system
-  Eigen::VectorXd theta_dbl = apply([&](const auto&... vals) {
-      return kinsol_solve(
-        f, value_of(x_eval), scaling_step_size, function_tolerance, max_num_steps,
-        1, 10, KIN_LINESEARCH, msgs, vals...);
-      }, args_vals_tuple);
+  Eigen::VectorXd theta_dbl = apply(
+      [&](const auto&... vals) {
+        return kinsol_solve(f, value_of(x_eval), scaling_step_size,
+                            function_tolerance, max_num_steps, 1, 10,
+                            KIN_LINESEARCH, msgs, vals...);
+      },
+      args_vals_tuple);
 
   // Evaluate and store the Jacobian.
   auto myfunc = [&](const auto& x) {
