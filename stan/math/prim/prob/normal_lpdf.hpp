@@ -94,12 +94,15 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
                                      + !is_constant_all<T_loc>::value
                                  >= 2>(inv_sigma * y_scaled);
     if (!is_constant_all<T_y>::value) {
+      std::cout << "y partial: " << -scaled_diff << std::endl;
       ops_partials.edge1_.partials_ = -scaled_diff;
     }
     if (!is_constant_all<T_scale>::value) {
+      std::cout << "mu partial: " << inv_sigma * y_scaled_sq - inv_sigma << std::endl;
       ops_partials.edge3_.partials_ = inv_sigma * y_scaled_sq - inv_sigma;
     }
     if (!is_constant_all<T_loc>::value) {
+      std::cout << "mu partial: " << scaled_diff << std::endl;
       ops_partials.edge2_.partials_ = std::move(scaled_diff);
     }
   }
