@@ -18,7 +18,9 @@
 namespace stan {
 namespace math {
 
-template <typename T_y>
+template <
+    typename T_y,
+    require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T_y>* = nullptr>
 inline return_type_t<T_y> std_normal_lccdf(const T_y& y) {
   using T_partials_return = partials_return_t<T_y>;
   using std::exp;

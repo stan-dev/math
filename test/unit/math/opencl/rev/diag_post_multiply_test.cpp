@@ -37,8 +37,8 @@ TEST(OpenCL_diag_post_multiply, zero) {
 TEST(OpenCL_diag_post_multiply, prim_rev_values_large) {
   int N = 71;
 
-  Eigen::RowVectorXd a = Eigen::VectorXd::Random(N);
-  Eigen::RowVectorXd b = Eigen::VectorXd::Random(N);
+  Eigen::MatrixXd a = Eigen::MatrixXd::Random(N, N);
+  Eigen::RowVectorXd b = Eigen::RowVectorXd::Random(N);
   stan::math::test::compare_cpu_opencl_prim_rev(diag_post_multiply_functor, a,
                                                 b);
 }
