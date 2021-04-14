@@ -55,6 +55,9 @@ return_type_t<T_y, T_loc, T_scale> loglogistic_lpdf(const T_y& y, const T_loc& m
   check_finite(function, "Location parameter", mu_val);
   check_positive_finite(function, "Scale parameter", sigma_val);
 
+
+
+
   if (size_zero(y, mu, sigma)) {
     return 0.0;
   }
@@ -73,7 +76,7 @@ return_type_t<T_y, T_loc, T_scale> loglogistic_lpdf(const T_y& y, const T_loc& m
   const auto& y_minus_mu_div_sigma = to_ref(y_minus_mu * inv_sigma);
 
   size_t N = max_size(y, mu, sigma);
-
+  size_t N_mu_sigma = max_size(mu, sigma);
 
   // T_partials_return logp = sum((log(sigma_val) - log(mu_val) + (sigma_val - 1) *
   //   (log(y_val) - log(mu_val))) -
@@ -83,9 +86,20 @@ return_type_t<T_y, T_loc, T_scale> loglogistic_lpdf(const T_y& y, const T_loc& m
     2 * log1p(pow((y_val * inv(mu_val)), sigma_val)));
 
   // logp += sum(log(sigma_val) - log(mu_val) - (sigma_val - 1) * log(mu_val));
-  if (!include_summand<propto, T_loc, T_scale>::value) {
-    logp += sum(log(sigma_val) - log(mu_val) - (sigma_val - 1) * log(mu_val));
+  // if (!include_summand<propto, T_loc, T_scale>::value) {
+  //   logp += sum(log(sigma_val) - log(mu_val) - (sigma_val - 1) * log(mu_val));
+  // }
+  if (include_summand<propto, T_loc, T_scale>::value) {
+    logp += sum(N * (log(sigma_val) - log(mu_val) -
+      (sigma_val - 1) * log(mu_val)) / N_mu_sigma);
   }
+
+  std::cout << "------------" << std::endl;
+  std::cout << "In y: " << y_val << std::endl;
+  std::cout << "In mu: " << mu_val << std::endl;
+  std::cout << "In sigma: " << sigma_val << std::endl;
+  std::cout << "logp: " << logp << std::endl;
+  std::cout << "------------" << std::endl;
 
   // OK this works. I guess I can add the derivatives and later see,
   // which parts would make sense to save as separate computations.
