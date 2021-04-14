@@ -8,6 +8,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/mdivide_left.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/functor/algebra_solver_adapter.hpp>
 #include <unsupported/Eigen/NonLinearOptimization>
 #include <iostream>
 #include <string>
@@ -15,18 +16,23 @@
 
 namespace stan {
 namespace math {
-template <typename F>
-struct algebra_solver_adapter2 {
-  const F& f_;
 
-  explicit algebra_solver_adapter2(const F& f) : f_(f) {}
+/** Implementation of ordinary newton solver. */
+template <typename F, typename T, typename... T_Args,
+          require_all_eigen_vector_t<T>* = nullptr>
+Eigen::VectorXd algebra_solver_newton_impl(
+    const F& f, const T& x, std::ostream* msgs, double scaling_step_size,
+    double function_tolerance, long int max_num_steps, const Eigen::VectorXd& y,
+    const T_Args&... args) { // NOLINT(runtime/int)
+  const auto& x_eval = x.eval();
+  const auto& x_val = (value_of(x_eval)).eval();
+  auto args_vals_tuple = std::make_tuple(y, eval(value_of(args))...);
 
-  template <typename T1, typename T2, typename T3, typename T4>
-  auto operator()(const T1& x, std::ostream* msgs, const T2& y, const T3& dat,
-                  const T4& dat_int) const {
-    return f_(x, y, dat, dat_int, msgs);
-  }
-};
+  return kinsol_solve(f, value_of(x_eval), scaling_step_size,
+                      function_tolerance, max_num_steps, 1, 10, KIN_LINESEARCH,
+                      msgs, y, args...);
+}
+
 /**
  * Return the solution to the specified system of algebraic
  * equations given an initial guess, and parameters and data,
@@ -73,17 +79,72 @@ Eigen::VectorXd algebra_solver_newton(
     double function_tolerance = 1e-6,
     long int max_num_steps = 200) {  // NOLINT(runtime/int)
   const auto& x_eval = x.eval();
-  algebra_solver_check(x_eval, y, dat, dat_int, function_tolerance,
-                       max_num_steps);
-  check_nonnegative("algebra_solver", "scaling_step_size", scaling_step_size);
+  return algebra_solver_newton_impl(algebra_solver_adapter<F>(f), x, msgs,
+                                    scaling_step_size, function_tolerance,
+                                    max_num_steps, y, dat, dat_int);
+}
 
-  check_matching_sizes("algebra_solver", "the algebraic system's output",
-                       value_of(f(x_eval, y, dat, dat_int, msgs)),
-                       "the vector of unknowns, x,", x);
+/** Implementation of autodiff newton solver. */
+template <typename F, typename T, typename... T_Args,
+          require_all_eigen_vector_t<T>* = nullptr,
+          require_any_st_var<T_Args...>* = nullptr>
+Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_newton_impl(
+    const F& f, const T& x, std::ostream* msgs, double scaling_step_size,
+    double function_tolerance, long int max_num_steps,
+    const T_Args&... args) {  // NOLINT(runtime/int)
+  const auto& x_eval = x.eval();
+  auto arena_args_tuple = std::make_tuple(to_arena(args)...);
+  const auto& x_val = (value_of(x_eval)).eval();
+  auto args_vals_tuple = std::make_tuple(eval(value_of(args))...);
 
-  return kinsol_solve(algebra_solver_adapter2<F>(f), value_of(x_eval),
-                      scaling_step_size, function_tolerance, max_num_steps, 1,
-                      10, KIN_LINESEARCH, msgs, y, dat, dat_int);
+  // Solve the system
+  Eigen::VectorXd theta_dbl = apply([&](const auto&... vals) {
+      return kinsol_solve(
+        f, value_of(x_eval), scaling_step_size, function_tolerance, max_num_steps,
+        1, 10, KIN_LINESEARCH, msgs, vals...);
+      }, args_vals_tuple);
+
+  // Evaluate and store the Jacobian.
+  auto myfunc = [&](const auto& x) {
+    return apply([&](const auto&... args) { return f(x, msgs, args...); },
+                 args_vals_tuple);
+  };
+
+  Eigen::MatrixXd Jf_x;
+  Eigen::VectorXd f_x;
+
+  jacobian(myfunc, theta_dbl, f_x, Jf_x);
+
+  using ret_type = Eigen::Matrix<var, Eigen::Dynamic, -1>;
+  auto arena_Jf_x = to_arena(Jf_x);
+
+  arena_t<ret_type> ret = theta_dbl;
+
+  reverse_pass_callback([f, ret, arena_args_tuple, arena_Jf_x, msgs]() mutable {
+    using Eigen::Dynamic;
+    using Eigen::Matrix;
+    using Eigen::MatrixXd;
+    using Eigen::VectorXd;
+
+    // Contract specificities with inverse Jacobian of f with respect to x.
+    VectorXd ret_adj = ret.adj();
+    VectorXd eta = -arena_Jf_x.transpose().fullPivLu().solve(ret_adj);
+
+    // Contract with Jacobian of f with respect to y using a nested reverse
+    // autodiff pass.
+    {
+      nested_rev_autodiff rev;
+
+      VectorXd ret_val = ret.val();
+      auto x_nrad_ = apply(
+          [&](const auto&... args) { return eval(f(ret_val, msgs, args...)); },
+          arena_args_tuple);
+      x_nrad_.adj() = eta;
+      grad();
+    }
+  });
+
+  return ret_type(ret);
 }
 
 /**
@@ -138,34 +199,9 @@ Eigen::Matrix<scalar_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_newton(
     const std::vector<int>& dat_int, std::ostream* msgs = nullptr,
     double scaling_step_size = 1e-3, double function_tolerance = 1e-6,
     long int max_num_steps = 200) {  // NOLINT(runtime/int)
-  /*
-    const auto& x_eval = x.eval();
-    const auto& y_eval = y.eval();
-    const auto& x_val = (value_of(x_eval)).eval();
-    const auto& y_val = (value_of(y_eval)).eval();
-    Eigen::VectorXd theta_dbl = algebra_solver_newton(
-        f, x_eval, value_of(y_eval), dat, dat_int, msgs, scaling_step_size,
-        function_tolerance, max_num_steps);
-
-    typedef system_functor<F, double, double, true> Fsx;
-    typedef hybrj_functor_solver<Fsx, F, double, double> Fx;
-    Fx fx(Fsx(), f, x_val, y_val, dat, dat_int, msgs);
-
-    typedef system_functor<F, double, double, false> Fsy;
-    typedef hybrj_functor_solver<Fsy, F, double, double> Fy;
-    Fsy fy(f, value_of(x_eval), value_of(y_eval), dat, dat_int, msgs);
-
-    // Construct vari
-    algebra_solver_vari<Fsy, value_type_t<T2>, Fx>* vi0
-        = new algebra_solver_vari<Fsy, value_type_t<T2>, Fx>(fy, y_eval, fx,
-                                                             theta_dbl);
-    Eigen::Matrix<var, Eigen::Dynamic, 1> theta(x.size());
-    theta(0) = var(vi0->x_[0]);
-    for (int i = 1; i < x.size(); ++i) {
-      theta(i) = var(vi0->x_[i]);
-    }
-
-    return theta;*/
+  return algebra_solver_newton_impl(algebra_solver_adapter<F>(f), x, msgs,
+                                    scaling_step_size, function_tolerance,
+                                    max_num_steps, y, dat, dat_int);
 }
 
 }  // namespace math

@@ -71,7 +71,6 @@ class algebra_solver_non_linear_eq_test : public ::testing::Test {
   Eigen::MatrixXd J;
 };
 
-/*
 class error_message_test : public ::testing::Test {
  protected:
   void SetUp() override {
@@ -82,7 +81,6 @@ class error_message_test : public ::testing::Test {
   Eigen::VectorXd y_2;
   Eigen::VectorXd y_3;
 };
-*/
 
 class max_steps_test : public ::testing::Test {
  protected:
@@ -129,7 +127,7 @@ class degenerate_eq_test : public ::testing::Test {
 //////////////////////////////////////////////////////////////////////////
 // Tests for powell solver.
 
-/*TEST_F(algebra_solver_simple_eq_test, powell) {
+TEST_F(algebra_solver_simple_eq_test, powell) {
   using stan::math::var;
   bool is_newton = false;
   for (int k = 0; k < n_x; k++) {
@@ -223,7 +221,7 @@ TEST_F(algebra_solver_non_linear_eq_test, powell_dbl) {
   EXPECT_FLOAT_EQ(-y_dbl(0), theta(0));
   EXPECT_FLOAT_EQ(-y_dbl(1), theta(1));
   EXPECT_FLOAT_EQ(y_dbl(2), theta(2));
-}*/
+}
 
 /*
 TEST_F(error_message_test, powell) {
@@ -239,7 +237,7 @@ TEST_F(error_message_test, powell_dbl) {
 }
 */
 
-/*TEST(unsolvable_test, powell) {
+TEST(unsolvable_test, powell) {
   using stan::math::var;
   Eigen::Matrix<var, Eigen::Dynamic, 1> y(2);
   y << 1, 1;
@@ -368,11 +366,10 @@ TEST(MathMatrixRevMat, system_functor_constructor) {
   system_functor<int, double, double, true> fs(f, x, y, dat, dat_int, msgs);
 
   EXPECT_EQ(fs.f_, f);
-}*/
+}
 //////////////////////////////////////////////////////////////////////////
 // Tests for newton solver.
 
-/*
 TEST_F(algebra_solver_simple_eq_test, newton) {
   using stan::math::var;
   bool is_newton = true;
@@ -408,14 +405,14 @@ TEST_F(algebra_solver_simple_eq_test, newton_tuned) {
     for (int i = 0; i < n_y; i++)
       EXPECT_EQ(J(k, i), g[i]);
   }
-}*/
+}
 
 TEST_F(algebra_solver_simple_eq_test, newton_dbl) {
   bool is_newton = true;
   Eigen::VectorXd theta = simple_eq_test(simple_eq_functor(), y_dbl, is_newton);
 }
 
-/*TEST_F(algebra_solver_simple_eq_test, newton_tuned_dbl) {
+TEST_F(algebra_solver_simple_eq_test, newton_tuned_dbl) {
   bool is_newton = true;
   Eigen::VectorXd theta = simple_eq_test(simple_eq_functor(), y_dbl, is_newton,
                                          true, scale_step, xtol, ftol, maxfev);
@@ -467,6 +464,7 @@ TEST_F(algebra_solver_non_linear_eq_test, newton_dbl) {
   EXPECT_FLOAT_EQ(y_dbl(2), theta(2));
 }
 
+/*
 TEST_F(error_message_test, newton) {
   using stan::math::var;
   bool is_newton = true;
@@ -478,6 +476,7 @@ TEST_F(error_message_test, newton_dbl) {
   bool is_newton = true;
   error_conditions_test(non_linear_eq_functor(), y_3, is_newton);
 }
+*/
 
 TEST_F(max_steps_test, newton) {
   bool is_newton = true;
@@ -596,4 +595,3 @@ TEST_F(degenerate_eq_test, newton_guess_saddle_point_dbl) {
                                          y_scale, dat, dat_int),
                    std::runtime_error, msg);
 }
-*/
