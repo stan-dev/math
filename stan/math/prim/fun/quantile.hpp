@@ -82,12 +82,12 @@ inline std::vector<double> quantile(const T& samples_vec, const Tp& ps) {
   check_not_nan("quantile", "ps", ps);
 
   check_nonzero_size("quantile", "samples_vec", samples_vec);
-  check_nonzero_size("quantile", "ps", ps);
-
   check_bounded("quantile", "ps", ps, 0, 1);
 
   const size_t n_sample = samples_vec.size();
   const size_t n_ps = ps.size();
+  if (n_ps == 0)
+    return {};
 
   Eigen::VectorXd x = as_array_or_scalar(samples_vec);
   const auto& p = as_array_or_scalar(ps);
