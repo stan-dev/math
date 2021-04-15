@@ -36,16 +36,22 @@ namespace math {
  * @param t0 Initial time
  * @param ts Times at which to solve the ODE at. All values must be sorted and
  *   not less than t0.
- * @param relative_tolerance_forward Relative tolerance for forward problem passed to CVODES
- * @param absolute_tolerance_forward Absolute tolerance for forward problem passed to CVODES
- * @param relative_tolerance_backward Relative tolerance for backward problem passed to CVODES
- * @param absolute_tolerance_backward Absolute tolerance for backward problem passed to CVODES
- * @param relative_tolerance_quadrature Relative tolerance for quadrature problem passed to CVODES
- * @param absolute_tolerance_quadrature Absolute tolerance for quadrature problem passed to CVODES
+ * @param relative_tolerance_forward Relative tolerance for forward problem
+ * passed to CVODES
+ * @param absolute_tolerance_forward Absolute tolerance for forward problem
+ * passed to CVODES
+ * @param relative_tolerance_backward Relative tolerance for backward problem
+ * passed to CVODES
+ * @param absolute_tolerance_backward Absolute tolerance for backward problem
+ * passed to CVODES
+ * @param relative_tolerance_quadrature Relative tolerance for quadrature
+ * problem passed to CVODES
+ * @param absolute_tolerance_quadrature Absolute tolerance for quadrature
+ * problem passed to CVODES
  * @param max_num_steps Upper limit on the number of integration steps to
  *   take between each output (error if exceeded)
- * @param num_steps_between_checkpoints Number of integrator steps after which a checkpoint is
- * stored for the backward pass
+ * @param num_steps_between_checkpoints Number of integrator steps after which a
+ * checkpoint is stored for the backward pass
  * @param interpolation_polynomial type of polynomial used for interpolation
  * @param solver_forward solver used for forward pass
  * @param solver_backward solver used for backward pass
@@ -58,12 +64,17 @@ template <typename F, typename T_y0, typename T_t0, typename T_ts,
 std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, T_Args...>,
                           Eigen::Dynamic, 1>>
 ode_adjoint_impl(const char* function_name, const F& f, const T_y0& y0,
-                 const T_t0& t0, const std::vector<T_ts>& ts, double relative_tolerance_forward,
-                 Eigen::VectorXd absolute_tolerance_forward, double relative_tolerance_backward,
-                 Eigen::VectorXd absolute_tolerance_backward, double relative_tolerance_quadrature, double absolute_tolerance_quadrature,
-                 long int max_num_steps, long int num_steps_between_checkpoints,
-                 int interpolation_polynomial, int solver_forward, int solver_backward,
-                 std::ostream* msgs, const T_Args&... args) {
+                 const T_t0& t0, const std::vector<T_ts>& ts,
+                 double relative_tolerance_forward,
+                 Eigen::VectorXd absolute_tolerance_forward,
+                 double relative_tolerance_backward,
+                 Eigen::VectorXd absolute_tolerance_backward,
+                 double relative_tolerance_quadrature,
+                 double absolute_tolerance_quadrature, long int max_num_steps,
+                 long int num_steps_between_checkpoints,
+                 int interpolation_polynomial, int solver_forward,
+                 int solver_backward, std::ostream* msgs,
+                 const T_Args&... args) {
   /*
   const auto& args_ref_tuple = std::make_tuple(to_ref(args)...);
   return apply(
@@ -99,9 +110,12 @@ ode_adjoint_impl(const char* function_name, const F& f, const T_y0& y0,
   */
   auto integrator = new stan::math::cvodes_integrator_adjoint_vari<
       F, plain_type_t<T_y0>, T_t0, T_ts, ref_type_t<T_Args>...>(
-      function_name, f, eval(y0), t0, ts, relative_tolerance_forward, absolute_tolerance_forward, relative_tolerance_backward,
-      absolute_tolerance_backward, relative_tolerance_quadrature, absolute_tolerance_quadrature, max_num_steps, num_steps_between_checkpoints,
-      interpolation_polynomial, solver_forward, solver_backward, msgs, to_ref(args)...);
+      function_name, f, eval(y0), t0, ts, relative_tolerance_forward,
+      absolute_tolerance_forward, relative_tolerance_backward,
+      absolute_tolerance_backward, relative_tolerance_quadrature,
+      absolute_tolerance_quadrature, max_num_steps,
+      num_steps_between_checkpoints, interpolation_polynomial, solver_forward,
+      solver_backward, msgs, to_ref(args)...);
   return (*integrator)();
 }
 
@@ -142,18 +156,23 @@ template <typename F, typename T_y0, typename T_t0, typename T_ts,
           typename... T_Args, require_eigen_col_vector_t<T_y0>* = nullptr>
 std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, T_Args...>,
                           Eigen::Dynamic, 1>>
-ode_adjoint_tol_ctl(const F& f, const T_y0& y0, const T_t0& t0,
-                    const std::vector<T_ts>& ts, double relative_tolerance_forward,
-                    Eigen::VectorXd absolute_tolerance_forward, double relative_tolerance_backward,
-                    Eigen::VectorXd absolute_tolerance_backward, double relative_tolerance_quadrature,
-                    double absolute_tolerance_quadrature, long int max_num_steps,
-                    long int num_steps_between_checkpoints, int interpolation_polynomial,
-                    int solver_forward, int solver_backward, std::ostream* msgs,
-                    const T_Args&... args) {
+ode_adjoint_tol_ctl(
+    const F& f, const T_y0& y0, const T_t0& t0, const std::vector<T_ts>& ts,
+    double relative_tolerance_forward,
+    Eigen::VectorXd absolute_tolerance_forward,
+    double relative_tolerance_backward,
+    Eigen::VectorXd absolute_tolerance_backward,
+    double relative_tolerance_quadrature, double absolute_tolerance_quadrature,
+    long int max_num_steps, long int num_steps_between_checkpoints,
+    int interpolation_polynomial, int solver_forward, int solver_backward,
+    std::ostream* msgs, const T_Args&... args) {
   return ode_adjoint_impl(
-      "ode_adjoint_tol_ctl", f, y0, t0, ts, relative_tolerance_forward, absolute_tolerance_forward, relative_tolerance_backward,
-      absolute_tolerance_backward, relative_tolerance_quadrature, absolute_tolerance_quadrature, max_num_steps, num_steps_between_checkpoints,
-      interpolation_polynomial, solver_forward, solver_backward, msgs, args...);
+      "ode_adjoint_tol_ctl", f, y0, t0, ts, relative_tolerance_forward,
+      absolute_tolerance_forward, relative_tolerance_backward,
+      absolute_tolerance_backward, relative_tolerance_quadrature,
+      absolute_tolerance_quadrature, max_num_steps,
+      num_steps_between_checkpoints, interpolation_polynomial, solver_forward,
+      solver_backward, msgs, args...);
 }
 
 template <typename F, typename T_y0, typename T_t0, typename T_ts,
@@ -161,9 +180,9 @@ template <typename F, typename T_y0, typename T_t0, typename T_ts,
 std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, T_Args...>,
                           Eigen::Dynamic, 1>>
 ode_adjoint_tol(const F& f, const T_y0& y0, const T_t0& t0,
-                const std::vector<T_ts>& ts, double relative_tolerance, double absolute_tolerance,
-                long int max_num_steps, std::ostream* msgs,
-                const T_Args&... args) {
+                const std::vector<T_ts>& ts, double relative_tolerance,
+                double absolute_tolerance, long int max_num_steps,
+                std::ostream* msgs, const T_Args&... args) {
   const int N = y0.size();
   const Eigen::VectorXd absolute_tolerance_forward
       = Eigen::VectorXd::Constant(N, absolute_tolerance / 100.0);
@@ -173,10 +192,12 @@ ode_adjoint_tol(const F& f, const T_y0& y0, const T_t0& t0,
   const int interpolation_polynomial = CV_HERMITE;
   const int solver_forward = CV_BDF;
   const int solver_backward = CV_BDF;
-  return ode_adjoint_impl("ode_adjoint_tol", f, y0, t0, ts, relative_tolerance, absolute_tolerance_forward,
-                          relative_tolerance, absolute_tolerance_backward, relative_tolerance, absolute_tolerance, max_num_steps,
-                          num_steps_between_checkpoints, interpolation_polynomial, solver_forward,
-                          solver_backward, msgs, args...);
+  return ode_adjoint_impl(
+      "ode_adjoint_tol", f, y0, t0, ts, relative_tolerance,
+      absolute_tolerance_forward, relative_tolerance,
+      absolute_tolerance_backward, relative_tolerance, absolute_tolerance,
+      max_num_steps, num_steps_between_checkpoints, interpolation_polynomial,
+      solver_forward, solver_backward, msgs, args...);
 }
 
 }  // namespace math
