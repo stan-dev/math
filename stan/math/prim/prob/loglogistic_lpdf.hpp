@@ -17,129 +17,91 @@
 #include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <cmath>
 
-#include <iostream>
-#include <typeinfo>
-
 namespace stan {
 namespace math {
 
-  // Kako testiramo? Ali se testi nekje drugje pokličejo?
-  // Izgleda, kot da se kliče tisti class nekje.
-
-
-// Logistic(y|mu, sigma)    [sigma > 0]
-template <bool propto, typename T_y, typename T_loc, typename T_scale,
+// Loglogistic(y | alpha, beta)    [y > 0, alpha > 0, beta > 0]
+template <bool propto, typename T_y, typename T_scale, typename T_shape,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
-              T_y, T_loc, T_scale>* = nullptr>
-return_type_t<T_y, T_loc, T_scale> loglogistic_lpdf(const T_y& y, const T_loc& mu,
-                                                 const T_scale& sigma) {
-  using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
+              T_y, T_scale, T_shape>* = nullptr>
+return_type_t<T_y, T_scale, T_shape> loglogistic_lpdf(const T_y& y,
+                                                      const T_scale& alpha,
+                                                      const T_shape& beta) {
+  using T_partials_return = partials_return_t<T_y, T_scale, T_shape>;
   using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
-  using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
+  using T_scale_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
+  using T_shape_ref = ref_type_if_t<!is_constant<T_shape>::value, T_shape>;
   using std::pow;
   static const char* function = "loglogistic_lpdf";
-  check_consistent_sizes(function, "Random variable", y, "Location parameter",
-                         mu, "Scale parameter", sigma);
+  check_consistent_sizes(function, "Random variable", y, "Scale parameter",
+                         alpha, "Shape parameter", beta);
 
   T_y_ref y_ref = y;
-  T_mu_ref mu_ref = mu;
-  T_sigma_ref sigma_ref = sigma;
+  T_scale_ref alpha_ref = alpha;
+  T_shape_ref beta_ref = beta;
 
   // Tukaj moram uporabit ta partials_return_t? Namesto auto? Hm...
   decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
-  decltype(auto) mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
-  decltype(auto) sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
+  decltype(auto) alpha_val = to_ref(as_value_column_array_or_scalar(alpha_ref));
+  decltype(auto) beta_val = to_ref(as_value_column_array_or_scalar(beta_ref));
 
-  check_finite(function, "Random variable", y_val);
-  check_finite(function, "Location parameter", mu_val);
-  check_positive_finite(function, "Scale parameter", sigma_val);
+  check_positive_finite(function, "Random variable", y_val);
+  check_positive_finite(function, "Scale parameter", alpha_val);
+  check_positive_finite(function, "Shape parameter", beta_val);
 
-
-
-
-  if (size_zero(y, mu, sigma)) {
+  if (size_zero(y, alpha, beta)) {
     return 0.0;
   }
-  if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
+  if (!include_summand<propto, T_y, T_scale, T_shape>::value) {
     return 0.0;
   }
 
-  // Here we create some class that will be put onto the stack I guess.
-  operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref> ops_partials(
-      y_ref, mu_ref, sigma_ref);
+  operands_and_partials<T_y_ref, T_scale_ref, T_shape_ref> ops_partials(
+      y_ref, alpha_ref, beta_ref);
 
-  const auto& inv_sigma
-      = to_ref_if<!is_constant_all<T_y, T_loc, T_scale>::value>(inv(sigma_val));
-  const auto& y_minus_mu
-      = to_ref_if<!is_constant_all<T_scale>::value>(y_val - mu_val);
-  const auto& y_minus_mu_div_sigma = to_ref(y_minus_mu * inv_sigma);
+  // const auto& inv_sigma
+  //     = to_ref_if<!is_constant_all<T_y, T_scale, T_shape>::value>(inv(beta_val));
+  // const auto& y_minus_mu
+  //     = to_ref_if<!is_constant_all<T_shape>::value>(y_val - alpha_val);
+  // const auto& y_minus_mu_div_sigma = to_ref(y_minus_mu * inv_sigma);
 
-  size_t N = max_size(y, mu, sigma);
-  size_t N_mu_sigma = max_size(mu, sigma);
+  size_t N = max_size(y, alpha, beta);
+  size_t N_alpha_beta = max_size(alpha, beta);
 
-  // T_partials_return logp = sum((log(sigma_val) - log(mu_val) + (sigma_val - 1) *
-  //   (log(y_val) - log(mu_val))) -
-  //   2 * log1p(pow((y_val / mu_val), sigma_val)));
+  T_partials_return logp = sum((beta_val - 1) * log(y_val) -
+    2 * log1p(pow((y_val * inv(alpha_val)), beta_val)));
 
-  T_partials_return logp = sum((sigma_val - 1) * log(y_val) -
-    2 * log1p(pow((y_val * inv(mu_val)), sigma_val)));
-
-  // logp += sum(log(sigma_val) - log(mu_val) - (sigma_val - 1) * log(mu_val));
-  // if (!include_summand<propto, T_loc, T_scale>::value) {
-  //   logp += sum(log(sigma_val) - log(mu_val) - (sigma_val - 1) * log(mu_val));
-  // }
-  if (include_summand<propto, T_loc, T_scale>::value) {
-    logp += sum(N * (log(sigma_val) - log(mu_val) -
-      (sigma_val - 1) * log(mu_val)) / N_mu_sigma);
+  if (include_summand<propto, T_scale, T_shape>::value) {
+    logp += sum(N * (log(beta_val) - log(alpha_val) -
+      (beta_val - 1) * log(alpha_val)) / N_alpha_beta);
   }
 
-  std::cout << "------------" << std::endl;
-  std::cout << "In y: " << y_val << std::endl;
-  std::cout << "In mu: " << mu_val << std::endl;
-  std::cout << "In sigma: " << sigma_val << std::endl;
-  std::cout << "logp: " << logp << std::endl;
-  std::cout << "------------" << std::endl;
-
-  // OK this works. I guess I can add the derivatives and later see,
-  // which parts would make sense to save as separate computations.
-  // Also TODO: dividing integers!
-  // TODO: Separate normalization constant.
-
-  // Here come the derivatives I think. We divide everything up by
-  // being constant or not.
-  if (!is_constant_all<T_y>::value) { // Could I have is_constant only?
-    const auto& y_deriv = (sigma_val - 1.0) * inv(y_val) -
-      (2.0 / (1.0 + pow(y_val * inv(mu_val), sigma_val))) *
-      (sigma_val * inv(pow(mu_val, sigma_val))) * pow(y_val, sigma_val - 1);
+  if (!is_constant_all<T_y>::value) {
+    const auto& y_deriv = (beta_val - 1.0) * inv(y_val) -
+      (2.0 / (1.0 + pow(y_val * inv(alpha_val), beta_val))) *
+      (beta_val * inv(pow(alpha_val, beta_val))) * pow(y_val, beta_val - 1);
       ops_partials.edge1_.partials_ = y_deriv;
-      std::cout << std::endl << "Partial y: " << y_deriv << std::endl;
-  }
-  if (!is_constant_all<T_loc>::value) {
-    const auto& mu_deriv = - sigma_val * inv(mu_val) -
-      (2.0 / (1.0 + pow(y_val * inv(mu_val), sigma_val))) *
-      pow(y_val, sigma_val) * (-sigma_val) * pow(mu_val, -sigma_val - 1);
-    ops_partials.edge2_.partials_ = mu_deriv;
-    std::cout << std::endl << "Partial mu: " << mu_deriv << std::endl;
   }
   if (!is_constant_all<T_scale>::value) {
-    const auto& sigma_deriv = (1.0 * inv(sigma_val)) + log(y_val) - log(mu_val) -
-      (2.0 / (1 + pow(y_val * inv(mu_val), sigma_val))) *
-      pow((y_val * inv(mu_val)), sigma_val) * log(y_val * inv(mu_val));
-    ops_partials.edge3_.partials_ = sigma_deriv;
-    std::cout << std::endl << "Partial sigma: " << sigma_deriv << std::endl;
+    const auto& alpha_deriv = - beta_val * inv(alpha_val) -
+      (2.0 / (1.0 + pow(y_val * inv(alpha_val), beta_val))) *
+      pow(y_val, beta_val) * (-beta_val) * pow(alpha_val, -beta_val - 1);
+    ops_partials.edge2_.partials_ = alpha_deriv;
   }
-
+  if (!is_constant_all<T_shape>::value) {
+    const auto& beta_deriv = (1.0 * inv(beta_val)) + log(y_val) - log(alpha_val) -
+      (2.0 / (1 + pow(y_val * inv(alpha_val), beta_val))) *
+      pow((y_val * inv(alpha_val)), beta_val) * log(y_val * inv(alpha_val));
+    ops_partials.edge3_.partials_ = beta_deriv;
+  }
   return ops_partials.build(logp);
 }
 
-// Ahaa, this is just the default call of loglogistic with the
-// normalization constant.
-template <typename T_y, typename T_loc, typename T_scale>
-inline return_type_t<T_y, T_loc, T_scale> loglogistic_lpdf(const T_y& y,
-                                                        const T_loc& mu,
-                                                        const T_scale& sigma) {
-  return loglogistic_lpdf<false>(y, mu, sigma);
+template <typename T_y, typename T_scale, typename T_shape>
+inline return_type_t<T_y, T_scale, T_shape> loglogistic_lpdf(const T_y& y,
+                                                        const T_scale& alpha,
+                                                        const T_shape& beta) {
+  return loglogistic_lpdf<false>(y, alpha, beta);
 }
 
 }  // namespace math
