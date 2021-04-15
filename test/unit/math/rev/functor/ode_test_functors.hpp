@@ -5,6 +5,7 @@
 #include <stan/math/prim/functor/ode_rk45.hpp>
 #include <stan/math/rev/functor/ode_bdf.hpp>
 #include <stan/math/rev/functor/ode_adams.hpp>
+#include <stan/math/rev/functor/ode_adjoint.hpp>
 #include <stan/math/prim/functor/integrate_ode_rk45.hpp>
 
 #define STAN_DEF_ODE_SOLVER_FUNCTOR(solver_name, solver_func)                  \
@@ -60,5 +61,32 @@ STAN_DEF_STD_ODE_SOLVER_FUNCTOR(integrate_ode_bdf,
                                 stan::math::integrate_ode_bdf);
 STAN_DEF_STD_ODE_SOLVER_FUNCTOR(integrate_ode_rk45,
                                 stan::math::integrate_ode_rk45);
+
+struct ode_adjoint_functor {
+    const std::string functor_name = "ode_adjoint";
+
+    template <typename F, typename T_y0, typename T_t0, typename T_ts,
+              typename... Args, stan::require_eigen_vector_t<T_y0>* = nullptr>
+    std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, Args...>,
+                              Eigen::Dynamic, 1>>
+    operator()(const F& f, const T_y0& y0, T_t0 t0,
+               const std::vector<T_ts>& ts, std::ostream* msgs,
+               const Args&... args) {
+      return stan::math::ode_adjoint_tol(f, y0, t0, ts, 1E-13, 1E-13, 1000000, msgs, args...);
+    }
+
+    template <typename F, typename T_y0, typename T_t0, typename T_ts,
+              typename... Args, stan::require_eigen_vector_t<T_y0>* = nullptr>
+    std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, Args...>,
+                              Eigen::Dynamic, 1>>
+    operator()(const F& f, const T_y0& y0_arg, T_t0 t0,
+               const std::vector<T_ts>& ts, double rtol, double atol,
+               size_t max_num_steps, std::ostream* msgs,
+               const Args&... args) {
+      return stan::math::ode_adjoint_tol(f, y0_arg, t0, ts, rtol, atol, max_num_steps,
+                               msgs, args...);
+    }
+};
+
 
 #endif
