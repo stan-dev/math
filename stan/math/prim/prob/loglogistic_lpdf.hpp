@@ -72,7 +72,7 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_lpdf(const T_y& y,
   size_t N = max_size(y, alpha, beta);
   size_t N_alpha_beta = max_size(alpha, beta);
 
-  T_partials_return logp = sum((beta_val - 1) * log_y - 2 * log1_arg;
+  T_partials_return logp = sum((beta_val - 1) * log_y - 2 * log1_arg);
   // T_partials_return logp = sum((beta_val - 1) * log(y_val) -
   //   2 * log1p(pow((y_val * inv(alpha_val)), beta_val)));
 
