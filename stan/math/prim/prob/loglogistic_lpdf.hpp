@@ -113,21 +113,21 @@ return_type_t<T_y, T_loc, T_scale> loglogistic_lpdf(const T_y& y, const T_loc& m
       (2.0 / (1.0 + pow(y_val * inv(mu_val), sigma_val))) *
       (sigma_val * inv(pow(mu_val, sigma_val))) * pow(y_val, sigma_val - 1);
       ops_partials.edge1_.partials_ = y_deriv;
-      // std::cout << std::endl << "Partial y: " << y_deriv << std::endl;
+      std::cout << std::endl << "Partial y: " << y_deriv << std::endl;
   }
   if (!is_constant_all<T_loc>::value) {
     const auto& mu_deriv = - sigma_val * inv(mu_val) -
       (2.0 / (1.0 + pow(y_val * inv(mu_val), sigma_val))) *
       pow(y_val, sigma_val) * (-sigma_val) * pow(mu_val, -sigma_val - 1);
     ops_partials.edge2_.partials_ = mu_deriv;
-    // std::cout << std::endl << "Partial mu: " << mu_deriv << std::endl;
+    std::cout << std::endl << "Partial mu: " << mu_deriv << std::endl;
   }
   if (!is_constant_all<T_scale>::value) {
     const auto& sigma_deriv = (1.0 * inv(sigma_val)) + log(y_val) - log(mu_val) -
       (2.0 / (1 + pow(y_val * inv(mu_val), sigma_val))) *
       pow((y_val * inv(mu_val)), sigma_val) * log(y_val * inv(mu_val));
     ops_partials.edge3_.partials_ = sigma_deriv;
-    // std::cout << std::endl << "Partial sigma: " << sigma_deriv << std::endl;
+    std::cout << std::endl << "Partial sigma: " << sigma_deriv << std::endl;
   }
 
   return ops_partials.build(logp);
