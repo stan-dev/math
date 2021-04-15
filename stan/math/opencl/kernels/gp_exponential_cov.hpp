@@ -21,10 +21,9 @@ static const std::string gp_exponential_cov_kernel_code = STRINGIFY(
      * @param size number of elements in x
      * @param element_size the number of doubles that make one element of x
      */
-    __kernel void gp_exponential_cov(const __global double* x,
-                                  __global double* res, const double sigma_sq,
-                                  const double neg_inv_l,
-                                  const int size, const int element_size) {
+    __kernel void gp_exponential_cov(
+        const __global double* x, __global double* res, const double sigma_sq,
+        const double neg_inv_l, const int size, const int element_size) {
       const int i = get_global_id(0);
       const int j = get_global_id(1);
       if (i < size && j < size) {
@@ -47,7 +46,8 @@ static const std::string gp_exponential_cov_kernel_code = STRINGIFY(
 // \endcond
 
 /** \ingroup opencl_kernels
- * See the docs for \link kernels/gp_exponential_cov.hpp gp_exponential_cov() \endlink
+ * See the docs for \link kernels/gp_exponential_cov.hpp gp_exponential_cov()
+ * \endlink
  */
 const kernel_cl<in_buffer, out_buffer, double, double, int, int>
     gp_exponential_cov("gp_exponential_cov", {gp_exponential_cov_kernel_code});
@@ -73,9 +73,8 @@ static const std::string gp_exponential_cov_cross_kernel_code = STRINGIFY(
      */
     __kernel void gp_exponential_cov_cross(
         const __global double* x1, const __global double* x2,
-        __global double* res, const double sigma_sq,
-        const double neg_inv_l, const int size1, const int size2,
-        const int element_size) {
+        __global double* res, const double sigma_sq, const double neg_inv_l,
+        const int size1, const int size2, const int element_size) {
       const int i = get_global_id(0);
       const int j = get_global_id(1);
       if (i < size1 && j < size2) {
@@ -92,12 +91,12 @@ static const std::string gp_exponential_cov_cross_kernel_code = STRINGIFY(
 // \endcond
 
 /** \ingroup opencl_kernels
- * See the docs for \link kernels/gp_exponential_cov.hpp gp_exponential_cov_cross()
- * \endlink
+ * See the docs for \link kernels/gp_exponential_cov.hpp
+ * gp_exponential_cov_cross() \endlink
  */
 const kernel_cl<in_buffer, in_buffer, out_buffer, double, double, int, int, int>
     gp_exponential_cov_cross("gp_exponential_cov_cross",
-                          {gp_exponential_cov_cross_kernel_code});
+                             {gp_exponential_cov_cross_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math

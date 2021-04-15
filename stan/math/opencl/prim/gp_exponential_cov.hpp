@@ -34,10 +34,10 @@ inline matrix_cl<return_type_t<T1, T2, T3>> gp_exponential_cov(
   int n_blocks = (x.cols() + block_size - 1) / block_size;
   int blocked_size = block_size * n_blocks;
   try {
-    opencl_kernels::gp_exponential_cov(
-        cl::NDRange(blocked_size, blocked_size),
-        cl::NDRange(block_size, block_size), x_eval, res, sigma * sigma,
-        -1.0 / length_scale, x.cols(), x.rows());
+    opencl_kernels::gp_exponential_cov(cl::NDRange(blocked_size, blocked_size),
+                                       cl::NDRange(block_size, block_size),
+                                       x_eval, res, sigma * sigma,
+                                       -1.0 / length_scale, x.cols(), x.rows());
   } catch (const cl::Error& e) {
     check_opencl_error("gp_exponential_cov", e);
   }
@@ -110,9 +110,9 @@ inline matrix_cl<return_type_t<T1, T2, T3>> gp_exponential_cov(
   int blocked_size = block_size * n_blocks;
   try {
     opencl_kernels::gp_exponential_cov(cl::NDRange(blocked_size, blocked_size),
-                                    cl::NDRange(block_size, block_size), x_eval,
-                                    res, sigma * sigma, -1.0, x.cols(),
-                                    x.rows());
+                                       cl::NDRange(block_size, block_size),
+                                       x_eval, res, sigma * sigma, -1.0,
+                                       x.cols(), x.rows());
   } catch (const cl::Error& e) {
     check_opencl_error("gp_exponential_cov", e);
   }

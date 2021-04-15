@@ -111,8 +111,8 @@ inline matrix_cl<return_type_t<T1, T2, T3>> gp_matern32_cov(
   try {
     opencl_kernels::gp_matern32_cov(cl::NDRange(blocked_size, blocked_size),
                                     cl::NDRange(block_size, block_size), x_eval,
-                                    res, sigma * sigma, std::sqrt(3.0), x.cols(),
-                                    x.rows());
+                                    res, sigma * sigma, std::sqrt(3.0),
+                                    x.cols(), x.rows());
   } catch (const cl::Error& e) {
     check_opencl_error("gp_matern32_cov", e);
   }

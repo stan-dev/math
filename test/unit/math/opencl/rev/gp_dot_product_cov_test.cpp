@@ -21,18 +21,17 @@ TEST(OpenCLRevGpDotProdCov, exceptions) {
   stan::math::var sigma_val = -1.3;
 
   EXPECT_NO_THROW(stan::math::gp_dot_prod_cov(x_cl, sigma));
-  EXPECT_THROW(stan::math::gp_dot_prod_cov(x_val_cl, sigma),
-               std::domain_error);
-  EXPECT_THROW(stan::math::gp_dot_prod_cov(x_cl, sigma_val),
-               std::domain_error);
+  EXPECT_THROW(stan::math::gp_dot_prod_cov(x_val_cl, sigma), std::domain_error);
+  EXPECT_THROW(stan::math::gp_dot_prod_cov(x_cl, sigma_val), std::domain_error);
 }
 
 auto gp_dot_prod_cov_functor = [](const auto& x, const auto sigma) {
   return stan::math::gp_dot_prod_cov(x, sigma);
 };
-auto gp_dot_prod_cov_functor2 = [](const auto& x, const auto& y, const auto sigma) {
-  return stan::math::gp_dot_prod_cov(x, y, sigma);
-};
+auto gp_dot_prod_cov_functor2
+    = [](const auto& x, const auto& y, const auto sigma) {
+        return stan::math::gp_dot_prod_cov(x, y, sigma);
+      };
 
 TEST(OpenCLRevGpDotProdCov, small) {
   Eigen::VectorXd a(3);

@@ -24,8 +24,7 @@ namespace math {
 template <typename T_x, typename T_sigma,
           require_all_prim_or_rev_kernel_expression_t<T_x>* = nullptr,
           require_stan_scalar_t<T_sigma>* = nullptr>
-inline auto gp_dot_prod_cov(const T_x& x,
-                               const T_sigma sigma) {
+inline auto gp_dot_prod_cov(const T_x& x, const T_sigma sigma) {
   const char* fun = "gp_dot_prod_cov(OpenCL)";
   check_nonnegative(fun, "sigma", sigma);
   check_finite(fun, "sigma", sigma);
@@ -48,8 +47,7 @@ inline auto gp_dot_prod_cov(const T_x& x,
 template <typename T_x, typename T_y, typename T_sigma,
           require_all_prim_or_rev_kernel_expression_t<T_x, T_y>* = nullptr,
           require_stan_scalar_t<T_sigma>* = nullptr>
-inline auto gp_dot_prod_cov(const T_x& x, const T_y& y,
-                               const T_sigma sigma) {
+inline auto gp_dot_prod_cov(const T_x& x, const T_y& y, const T_sigma sigma) {
   const char* fun = "gp_dot_prod_cov(OpenCL)";
   check_nonnegative(fun, "sigma", sigma);
   check_finite(fun, "sigma", sigma);
