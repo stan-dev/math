@@ -4,7 +4,7 @@
 
 #include <stan/math/opencl/prim/cholesky_decompose.hpp>
 #include <stan/math/opencl/prim/symmetrize_from_lower_tri.hpp>
-#include <stan/math/opencl/err/check_nan.hpp>
+#include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 
@@ -24,7 +24,8 @@ namespace math {
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
 inline var_value<matrix_cl<double>> cholesky_decompose(const var_value<T>& A) {
-  check_nan("cholesky_decompose", "A", A.val());
+  check_cl("cholesky_decompose (OpenCL)", "A", A.val(), "not NaN")
+      = !isnan(A.val());
 
   return make_callback_var(
       cholesky_decompose(A.val()),

@@ -2,8 +2,8 @@
 #define STAN_MATH_REV_CORE_OPERATOR_UNARY_PLUS_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/rev/core/precomp_v_vari.hpp>
 #include <stan/math/rev/core/var.hpp>
+#include <stan/math/rev/core/callback_vari.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
 
@@ -41,12 +41,7 @@ namespace math {
  * @param a Argument variable.
  * @return The input reference.
  */
-inline var operator+(const var& a) {
-  if (unlikely(is_nan(a.vi_->val_))) {
-    return {new precomp_v_vari(NOT_A_NUMBER, a.vi_, NOT_A_NUMBER)};
-  }
-  return a;
-}
+inline var operator+(const var& a) { return a; }
 
 }  // namespace math
 }  // namespace stan
