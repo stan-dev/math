@@ -20,10 +20,9 @@ namespace math {
 template <typename F, typename T>
 struct apply_scalar_unary<F, fvar<T> > {
   /**
-   * Function return type, which is same as the argument type for
-   * the function, <code>fvar&lt;T&gt;</code>.
+   * Function return type.
    */
-  using return_t = fvar<T>;
+  using return_t = decltype(F::fun(var()));
 
   /**
    * Apply the function specified by F to the specified argument.

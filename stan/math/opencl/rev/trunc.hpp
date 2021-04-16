@@ -18,8 +18,8 @@ namespace math {
  */
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
-inline var_value<matrix_cl<double>> trunc(const var_value<T>& A) {
-  return var_value<matrix_cl<double>>(trunc(A.val()));
+inline auto trunc(const var_value<T>& A) {
+  return trunc(A.val());
 }
 
 }  // namespace math

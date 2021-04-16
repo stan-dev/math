@@ -18,7 +18,6 @@
 #include <stan/math/fwd/fun/beta.hpp>
 #include <stan/math/fwd/fun/binary_log_loss.hpp>
 #include <stan/math/fwd/fun/cbrt.hpp>
-#include <stan/math/fwd/fun/ceil.hpp>
 #include <stan/math/fwd/fun/conj.hpp>
 #include <stan/math/fwd/fun/cos.hpp>
 #include <stan/math/fwd/fun/cosh.hpp>
@@ -32,7 +31,6 @@
 #include <stan/math/fwd/fun/fabs.hpp>
 #include <stan/math/fwd/fun/falling_factorial.hpp>
 #include <stan/math/fwd/fun/fdim.hpp>
-#include <stan/math/fwd/fun/floor.hpp>
 #include <stan/math/fwd/fun/fma.hpp>
 #include <stan/math/fwd/fun/fmax.hpp>
 #include <stan/math/fwd/fun/fmin.hpp>
@@ -96,7 +94,6 @@
 #include <stan/math/fwd/fun/quad_form_sym.hpp>
 #include <stan/math/fwd/fun/read_fvar.hpp>
 #include <stan/math/fwd/fun/rising_factorial.hpp>
-#include <stan/math/fwd/fun/round.hpp>
 #include <stan/math/fwd/fun/sin.hpp>
 #include <stan/math/fwd/fun/sinh.hpp>
 #include <stan/math/fwd/fun/softmax.hpp>
@@ -110,7 +107,6 @@
 #include <stan/math/fwd/fun/to_fvar.hpp>
 #include <stan/math/fwd/fun/trace_quad_form.hpp>
 #include <stan/math/fwd/fun/trigamma.hpp>
-#include <stan/math/fwd/fun/trunc.hpp>
 #include <stan/math/fwd/fun/typedefs.hpp>
 #include <stan/math/fwd/fun/unit_vector_constrain.hpp>
 #include <stan/math/fwd/fun/value_of.hpp>

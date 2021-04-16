@@ -3,7 +3,6 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/floor.hpp>
 #include <stan/math/rev/fun/sin.hpp>
 #include <stan/math/rev/fun/square.hpp>
 #include <stan/math/rev/fun/inv_square.hpp>

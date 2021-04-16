@@ -19,8 +19,8 @@ namespace math {
  */
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
-inline var_value<matrix_cl<double>> round(const var_value<T>& A) {
-  return var_value<matrix_cl<double>>(round(A.val()));
+inline auto round(const var_value<T>& A) {
+  return round(A.val());
 }
 
 }  // namespace math

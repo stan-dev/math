@@ -28,7 +28,6 @@
 #include <stan/math/rev/fun/beta.hpp>
 #include <stan/math/rev/fun/binary_log_loss.hpp>
 #include <stan/math/rev/fun/cbrt.hpp>
-#include <stan/math/rev/fun/ceil.hpp>
 #include <stan/math/rev/fun/cholesky_decompose.hpp>
 #include <stan/math/rev/fun/cholesky_corr_constrain.hpp>
 #include <stan/math/rev/fun/cholesky_factor_constrain.hpp>
@@ -62,7 +61,6 @@
 #include <stan/math/rev/fun/falling_factorial.hpp>
 #include <stan/math/rev/fun/fdim.hpp>
 #include <stan/math/rev/fun/fill.hpp>
-#include <stan/math/rev/fun/floor.hpp>
 #include <stan/math/rev/fun/fma.hpp>
 #include <stan/math/rev/fun/fmax.hpp>
 #include <stan/math/rev/fun/fmin.hpp>
@@ -145,7 +143,6 @@
 #include <stan/math/rev/fun/read_cov_matrix.hpp>
 #include <stan/math/rev/fun/rep_matrix.hpp>
 #include <stan/math/rev/fun/rising_factorial.hpp>
-#include <stan/math/rev/fun/round.hpp>
 #include <stan/math/rev/fun/rows_dot_product.hpp>
 #include <stan/math/rev/fun/rows_dot_self.hpp>
 #include <stan/math/rev/fun/sd.hpp>
@@ -175,7 +172,6 @@
 #include <stan/math/rev/fun/trace_inv_quad_form_ldlt.hpp>
 #include <stan/math/rev/fun/trace_quad_form.hpp>
 #include <stan/math/rev/fun/trigamma.hpp>
-#include <stan/math/rev/fun/trunc.hpp>
 #include <stan/math/rev/fun/unit_vector_constrain.hpp>
 #include <stan/math/rev/fun/ub_constrain.hpp>
 #include <stan/math/rev/fun/value_of.hpp>

@@ -17,8 +17,8 @@ namespace math {
  */
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
-inline var_value<matrix_cl<double>> ceil(const var_value<T>& A) {
-  return var_value<matrix_cl<double>>(ceil(A.val()));
+inline auto ceil(const var_value<T>& A) {
+  return ceil(A.val());
 }
 
 }  // namespace math

@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>
@@ -19,9 +20,9 @@ namespace math {
  */
 struct round_fun {
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline double fun(const T& x) {
     using std::round;
-    return round(x);
+    return round(value_of_rec(x));
   }
 };
 

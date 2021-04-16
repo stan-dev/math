@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_TRUNC_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <cmath>
 
@@ -21,9 +22,9 @@ struct trunc_fun {
    * @return truncation of the argument
    */
   template <typename T>
-  static inline T fun(const T& x) {
+  static inline double fun(const T& x) {
     using std::trunc;
-    return trunc(x);
+    return trunc(value_of_rec(x));
   }
 };
 

@@ -6,7 +6,6 @@
 #include <stan/math/rev/fun/beta.hpp>
 #include <stan/math/rev/fun/exp.hpp>
 #include <stan/math/rev/fun/fabs.hpp>
-#include <stan/math/rev/fun/floor.hpp>
 #include <stan/math/rev/fun/value_of_rec.hpp>
 #include <stan/math/rev/fun/inc_beta.hpp>
 #include <stan/math/rev/fun/lgamma.hpp>

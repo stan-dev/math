@@ -18,8 +18,8 @@ namespace math {
  */
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
-inline var_value<matrix_cl<double>> floor(const var_value<T>& A) {
-  return var_value<matrix_cl<double>>(floor(A.val()));
+inline auto floor(const var_value<T>& A) {
+  return floor(A.val());
 }
 
 }  // namespace math
