@@ -68,8 +68,8 @@ return_type_t<T_y_cl, T_low_cl, T_high_cl> uniform_cdf(const T_y_cl& y,
       "positive");
   auto diff_positive_expr = b_minus_a > 0.0;
 
-  auto any_y_out_of_bounds = colwise_max(
-      cast<char>(y_val < alpha_val || y_val > beta_val));
+  auto any_y_out_of_bounds
+      = colwise_max(cast<char>(y_val < alpha_val || y_val > beta_val));
   auto cdf_n = elt_divide(y_val - alpha_val, b_minus_a);
   auto cdf_expr = colwise_prod(cdf_n);
 
