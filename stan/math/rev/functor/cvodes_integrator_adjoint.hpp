@@ -9,6 +9,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <cvodes/cvodes.h>
+#include <nvector/nvector_serial.h>
 #include <sunmatrix/sunmatrix_dense.h>
 #include <sunlinsol/sunlinsol_dense.h>
 #include <algorithm>
@@ -205,8 +206,8 @@ class cvodes_integrator_adjoint_vari : public vari {
   Eigen::VectorXd absolute_tolerance_backward_;
   double relative_tolerance_quadrature_;
   double absolute_tolerance_quadrature_;
-  long int max_num_steps_;
-  long int num_steps_between_checkpoints_;
+  long int max_num_steps_; // NOLINT(runtime/int)
+  long int num_steps_between_checkpoints_; // NOLINT(runtime/int)
   int interpolation_polynomial_;
   int solver_forward_;
   int solver_backward_;
@@ -464,7 +465,9 @@ class cvodes_integrator_adjoint_vari : public vari {
       const char* function_name, const F& f, const T_y0& y0, const T_t0& t0,
       const std::vector<T_ts>& ts, double relative_tolerance_forward, Eigen::VectorXd absolute_tolerance_forward,
       double relative_tolerance_backward, Eigen::VectorXd absolute_tolerance_backward, double relative_tolerance_quadrature,
-      double absolute_tolerance_quadrature, long int max_num_steps, long int num_steps_between_checkpoints,
+      double absolute_tolerance_quadrature,
+      long int max_num_steps, // NOLINT(runtime/int)
+      long int num_steps_between_checkpoints, // NOLINT(runtime/int)
       int interpolation_polynomial, int solver_forward, int solver_backward,
       std::ostream* msgs, const T_Args&... args)
       : function_name_(function_name),
@@ -528,7 +531,7 @@ class cvodes_integrator_adjoint_vari : public vari {
     check_nonzero_size(fun, "initial state", y0);
     check_sorted(fun, "times", ts);
     check_less(fun, "initial time", t0, ts[0]);
-    // TODO (SW): make names verbose
+    //TODO(wds15): make names verbose
     check_positive_finite(fun, "relative_tolerance_f", relative_tolerance_forward_);
     check_positive_finite(fun, "absolute_tolerance_f", absolute_tolerance_forward_);
     check_size_match(fun, "absolute_tolerance_forward", absolute_tolerance_forward_.size(), "states", N_);
@@ -538,7 +541,7 @@ class cvodes_integrator_adjoint_vari : public vari {
     check_positive_finite(fun, "relative_tolerance_quadrature", relative_tolerance_quadrature_);
     check_positive_finite(fun, "absolute_tolerance_quadrature", absolute_tolerance_quadrature_);
     check_positive(fun, "max_num_steps", max_num_steps_);
-    // TODO (SW): rename according to design
+    // TODO(wds15): rename according to design
     check_positive(fun, "num_steps_between_checkpoints", num_steps_between_checkpoints_);
     // for polynomial: 1=CV_HERMITE / 2=CV_POLYNOMIAL
     check_range(fun, "interpolation_polynomial", 2, interpolation_polynomial_);
@@ -877,7 +880,6 @@ class cvodes_integrator_adjoint_vari : public vari {
 
     //std::cout << "backward v2 integrate...done" << std::endl;
   }
-  
 };  // cvodes integrator
 
 }  // namespace math

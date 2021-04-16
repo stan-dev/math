@@ -61,7 +61,8 @@ ode_adjoint_impl(const char* function_name, const F& f, const T_y0& y0,
                  const T_t0& t0, const std::vector<T_ts>& ts, double relative_tolerance_forward,
                  Eigen::VectorXd absolute_tolerance_forward, double relative_tolerance_backward,
                  Eigen::VectorXd absolute_tolerance_backward, double relative_tolerance_quadrature, double absolute_tolerance_quadrature,
-                 long int max_num_steps, long int num_steps_between_checkpoints,
+                 long int max_num_steps, // NOLINT(runtime/int)
+                 long int num_steps_between_checkpoints, // NOLINT(runtime/int)
                  int interpolation_polynomial, int solver_forward, int solver_backward,
                  std::ostream* msgs, const T_Args&... args) {
   /*
@@ -146,8 +147,10 @@ ode_adjoint_tol_ctl(const F& f, const T_y0& y0, const T_t0& t0,
                     const std::vector<T_ts>& ts, double relative_tolerance_forward,
                     Eigen::VectorXd absolute_tolerance_forward, double relative_tolerance_backward,
                     Eigen::VectorXd absolute_tolerance_backward, double relative_tolerance_quadrature,
-                    double absolute_tolerance_quadrature, long int max_num_steps,
-                    long int num_steps_between_checkpoints, int interpolation_polynomial,
+                    double absolute_tolerance_quadrature,
+                    long int max_num_steps, // NOLINT(runtime/int)
+                    long int num_steps_between_checkpoints, // NOLINT(runtime/int)
+                    int interpolation_polynomial,
                     int solver_forward, int solver_backward, std::ostream* msgs,
                     const T_Args&... args) {
   return ode_adjoint_impl(
@@ -162,7 +165,8 @@ std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, T_Args...>,
                           Eigen::Dynamic, 1>>
 ode_adjoint_tol(const F& f, const T_y0& y0, const T_t0& t0,
                 const std::vector<T_ts>& ts, double relative_tolerance, double absolute_tolerance,
-                long int max_num_steps, std::ostream* msgs,
+                long int max_num_steps, // NOLINT(runtime/int)
+                std::ostream* msgs,
                 const T_Args&... args) {
   const int N = y0.size();
   const Eigen::VectorXd absolute_tolerance_forward
