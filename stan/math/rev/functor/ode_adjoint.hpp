@@ -191,7 +191,7 @@ ode_adjoint_tol(const F& f, const T_y0& y0, const T_t0& t0,
       = Eigen::VectorXd::Constant(N, absolute_tolerance / 100.0);
   const Eigen::VectorXd absolute_tolerance_backward
       = Eigen::VectorXd::Constant(N, absolute_tolerance / 10.0);
-  const long int num_steps_between_checkpoints = 250;
+  const long int num_steps_between_checkpoints = 250; // NOLINT(runtime/int)
   const int interpolation_polynomial = CV_HERMITE;
   const int solver_forward = CV_BDF;
   const int solver_backward = CV_BDF;
