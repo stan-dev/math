@@ -69,7 +69,8 @@ laplace_base_rng
   // Modified R&W method
   MatrixXd covariance_pred = covariance_function(phi_dbl, x_pred,
                                                  delta, delta_int, msgs);
-  VectorXd pred_mean = covariance_pred * l_grad;
+
+  VectorXd pred_mean = covariance_pred * l_grad.head(theta_0.rows());
 
   Eigen::MatrixXd Sigma;
   if (compute_W_root) {

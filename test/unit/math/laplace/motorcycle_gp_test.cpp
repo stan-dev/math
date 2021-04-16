@@ -36,6 +36,12 @@ struct covariance_motorcycle_functor {
     Matrix<T1, -1, -1> kernel_f = gp_exp_quad_cov(x, sigma_f, length_scale_f);
     Matrix<T1, -1, -1> kernel_g = gp_exp_quad_cov(x, sigma_g, length_scale_g);
 
+   // std::cout << "kernel_f: " << kernel_f.row(0).head(5) << std::endl;
+   // std::cout << "kernel_g: " << kernel_g.row(0).head(5) << std::endl;
+   // std::cout << "x: ";
+   // for (int i = 0; i < 5; i++) std::cout << x[i] << " ";
+   // std::cout << std::endl;
+
     Matrix<T1, -1, -1> kernel_all
      = Eigen::MatrixXd::Zero(2 * n_obs, 2 * n_obs);
     for (int i = 0; i < n_obs; i++) {
@@ -117,15 +123,16 @@ protected:
       read_data(n_obs, "test/unit/math/laplace/motorcycle_gp/",
                    x, y);
       // std::cout << "x: ";
-      // for (int i = 0; i < 5; i++) std::cout << x[i] << " ";
+      // for (int i = 0; i < n_obs; i++) std::cout << x[i] << " ";
       // std::cout << " ..." << std::endl;
-      // std::cout << "y: " << y.transpose().head(5) << " ..." << std::endl;
+      // std::cout << "y: " << y.transpose().head(n_obs) << " ..." << std::endl;
     }
 
-    length_scale_f = 0.3;
-    length_scale_g = 0.5;
-    sigma_f = 0.25;
-    sigma_g = 0.25;
+    // [0.335852,0.433641,0.335354,0.323559]
+    length_scale_f = 0.335852;  // 0.3;
+    length_scale_g = 0.433641;  // 0.5;
+    sigma_f = 0.335354;  // 0.25;
+    sigma_g = 0.323559;  // 0.25;
 
     phi.resize(4);
     phi << length_scale_f, length_scale_g, sigma_f, sigma_g;
@@ -175,6 +182,12 @@ TEST_F(laplace_motorcyle_gp_test, lk_autodiff) {
   using stan::math::value_of;
   using stan::math::laplace_marginal_density;
   using stan::math::diff_likelihood;
+
+  covariance_motorcycle_functor K_f;
+  Eigen::VectorXd phi_dbl_ = value_of(phi);
+  Eigen::MatrixXd K_eval
+    = K_f(phi_dbl_, x, delta_dummy, delta_int, 0);
+  std::cout << "K_eval: " << K_eval.row(0).head(5) << std::endl;
 
   normal_likelihood f;
   diff_likelihood<normal_likelihood> diff_functor(f, y, delta_int);
@@ -306,11 +319,11 @@ TEST_F(laplace_motorcyle_gp_test, wrapper_function) {
   int hessian_block_size = 2;
 
   var marginal_density
-    = laplace_marginal_lpdf(y, normal_likelihood2(), eta, delta_int,
+    = laplace_marginal_lpdf<FALSE>(y, normal_likelihood2(), eta, delta_int,
                             covariance_motorcycle_functor(), phi,
                             x, delta_dummy, delta_int, theta0,
-                            0, 0, 1e-8, 100, hessian_block_size,
-                            compute_W_root);
+                            1e-8, 100, hessian_block_size,
+                            compute_W_root, 0);
 
   std::cout << "density: " << marginal_density << std::endl;
 

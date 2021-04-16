@@ -59,8 +59,33 @@ namespace math {
      const std::vector<double>& delta_K,
      const std::vector<int>& delta_int_K,
      const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
-     // std::ostream* msgs_L = nullptr,
-     // std::ostream* msgs_K = nullptr,
+     std::ostream* msgs_L = nullptr,
+     std::ostream* msgs_K = nullptr,
+     double tolerance = 1e-6,
+     long int max_num_steps = 100,
+     int hessian_block_size = 0,
+     int compute_W_root = 1) {
+
+    return laplace_marginal_density(
+      diff_likelihood<L>(L_f, y, delta_int_L, msgs_L),
+      K_f, phi, eta, x, delta_K, delta_int_K,
+      theta_0, msgs_K, tolerance, max_num_steps,
+      hessian_block_size, compute_W_root);
+  }
+
+  template <bool propto, typename T0, typename T1, typename T2,
+            typename Tx, typename K, typename L>
+  stan::return_type_t<T1, T2> laplace_marginal_lpdf
+    (const Eigen::VectorXd& y,
+     const L& L_f,
+     const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta,
+     const std::vector<int>& delta_int_L,
+     const K& K_f,
+     const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
+     const Tx& x,
+     const std::vector<double>& delta_K,
+     const std::vector<int>& delta_int_K,
+     const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
      double tolerance = 1e-6,
      long int max_num_steps = 100,
      int hessian_block_size = 0,
@@ -73,12 +98,6 @@ namespace math {
       K_f, phi, eta, x, delta_K, delta_int_K,
       theta_0, msgs, tolerance, max_num_steps,
       hessian_block_size, compute_W_root);
-
-    // return laplace_marginal_density(
-    //   diff_likelihood<L>(L_f, y, delta_int_L, msgs_L),
-    //   K_f, phi, eta, x, delta_K, delta_int_K,
-    //   theta_0, msgs_K, tolerance, max_num_steps,
-    //   hessian_block_size, compute_W_root);
   }
 
   /**

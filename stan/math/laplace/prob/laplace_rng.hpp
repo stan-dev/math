@@ -30,19 +30,18 @@ inline Eigen::VectorXd
    const std::vector<double>& delta_K,
    const std::vector<int>& delta_int_K,
    const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta_0,
-   RNG& rng,
-   std::ostream* msgs_L = nullptr,
-   std::ostream* msgs_K = nullptr,
    double tolerance = 1e-6,
    long int max_num_steps = 100,
    int hessian_block_size = 0,
-   int compute_W_root = 1) {
+   int compute_W_root = 1,
+   RNG& rng = boost::random::mt19937(),
+   std::ostream* msgs = nullptr) {
      return
        laplace_base_rng(
-         diff_likelihood<L>(L_f, delta_L, delta_int_L, msgs_L),
+         diff_likelihood<L>(L_f, delta_L, delta_int_L, msgs),
          K_f, phi, eta,
          x, x, delta_K, delta_int_K, theta_0,
-         rng, msgs_K, tolerance, max_num_steps,
+         rng, msgs, tolerance, max_num_steps,
          hessian_block_size, compute_W_root);
   }
 
