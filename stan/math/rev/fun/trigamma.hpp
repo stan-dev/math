@@ -6,6 +6,7 @@
 #include <stan/math/rev/fun/sin.hpp>
 #include <stan/math/rev/fun/square.hpp>
 #include <stan/math/rev/fun/inv_square.hpp>
+#include <stan/math/rev/fun/value_of_rec.hpp>
 #include <stan/math/prim/fun/trigamma.hpp>
 
 namespace stan {
