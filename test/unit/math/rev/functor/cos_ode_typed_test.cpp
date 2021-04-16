@@ -16,9 +16,9 @@ using ode_test_tuple = std::tuple<solve_type, solve_type, Ts...>;
  * Outer product of test types
  */
 using cos_arg_test_types = boost::mp11::mp_product<
-    ode_test_tuple, ::testing::Types<ode_adams_functor, ode_bdf_functor,
-                                     ode_ckrk_functor, ode_rk45_functor,
-                                     ode_adjoint_functor> >;
+    ode_test_tuple,
+    ::testing::Types<ode_adams_functor, ode_bdf_functor, ode_ckrk_functor,
+                     ode_rk45_functor, ode_adjoint_functor> >;
 
 TYPED_TEST_SUITE_P(cos_arg_test);
 TYPED_TEST_P(cos_arg_test, y0_error) {
