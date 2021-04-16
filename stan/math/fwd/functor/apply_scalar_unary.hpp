@@ -22,7 +22,7 @@ struct apply_scalar_unary<F, fvar<T> > {
   /**
    * Function return type.
    */
-  using return_t = decltype(F::fun(var()));
+  using return_t = decltype(F::fun(fvar<T>()));
 
   /**
    * Apply the function specified by F to the specified argument.
