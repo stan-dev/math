@@ -131,6 +131,7 @@
 #include <stan/math/opencl/kernel_generator/index.hpp>
 #include <stan/math/opencl/kernel_generator/indexing.hpp>
 #include <stan/math/opencl/kernel_generator/opencl_code.hpp>
+#include <stan/math/opencl/kernel_generator/cast.hpp>
 
 #include <stan/math/opencl/kernel_generator/multi_result_kernel.hpp>
 #include <stan/math/opencl/kernel_generator/get_kernel_source_for_evaluating_into.hpp>

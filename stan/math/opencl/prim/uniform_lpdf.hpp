@@ -81,8 +81,7 @@ inline return_type_t<T_y_cl, T_low_cl, T_high_cl> uniform_lpdf(
       function, "Difference between upper and lower bound", diff, "positive");
   auto diff_positive = diff > 0;
 
-  auto y_out_of_bounds = colwise_max(constant(0, N, 1)
-                                     + (y_val < alpha_val || beta_val < y_val));
+  auto y_out_of_bounds = colwise_max(cast<char>(y_val < alpha_val || beta_val < y_val));
 
   auto logp_expr = colwise_sum(
       static_select<include_summand<propto, T_low_cl, T_high_cl>::value>(
@@ -90,7 +89,7 @@ inline return_type_t<T_y_cl, T_low_cl, T_high_cl> uniform_lpdf(
 
   auto inv_beta_minus_alpha = elt_divide(1.0, diff);
 
-  matrix_cl<int> y_out_of_bounds_cl;
+  matrix_cl<char> y_out_of_bounds_cl;
   matrix_cl<double> logp_cl;
   matrix_cl<double> alpha_deriv_cl;
   matrix_cl<double> beta_deriv_cl;

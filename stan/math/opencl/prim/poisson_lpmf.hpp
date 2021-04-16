@@ -60,7 +60,7 @@ return_type_t<T_rate_cl> poisson_lpmf(const T_n_cl& n,
   auto lambda_nonnegative = 0.0 <= lambda_val;
 
   auto return_log_zero = colwise_max(
-      constant(0, N, 1) + (isinf(lambda_val) || (lambda_val == 0 && n != 0)));
+      cast<char> (isinf(lambda_val) || (lambda_val == 0 && n != 0)));
 
   auto logp1 = multiply_log(n, lambda_val);
   auto logp2 = static_select<include_summand<propto, T_rate_cl>::value>(
@@ -70,7 +70,7 @@ return_type_t<T_rate_cl> poisson_lpmf(const T_n_cl& n,
 
   auto deriv = elt_divide(n, lambda_val) - 1.0;
 
-  matrix_cl<int> return_log_zero_cl;
+  matrix_cl<char> return_log_zero_cl;
   matrix_cl<double> logp_cl;
   matrix_cl<double> deriv_cl;
 

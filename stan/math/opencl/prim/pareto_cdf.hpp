@@ -63,7 +63,7 @@ return_type_t<T_y_cl, T_scale_cl, T_shape_cl> pareto_cdf(
   auto alpha_positive_finite_expr = 0 < alpha_val && isfinite(alpha_val);
 
   auto any_y_lower_than_y_min
-      = colwise_max(constant(0, N, 1) + (y_val < y_min_val));
+      = colwise_max(cast<char>(y_val < y_min_val));
   auto cond = y_val == INFTY;
   auto log_dbl = log(elt_divide(y_min_val, y_val));
   auto y_min_inv = elt_divide(1.0, y_min_val);
@@ -80,7 +80,7 @@ return_type_t<T_y_cl, T_scale_cl, T_shape_cl> pareto_cdf(
   auto alpha_deriv = elt_multiply(y_min_alpha_deriv, -log_dbl);
 
   matrix_cl<double> cdf_cl;
-  matrix_cl<double> any_y_lower_than_y_min_cl;
+  matrix_cl<char> any_y_lower_than_y_min_cl;
   matrix_cl<double> y_min_deriv_cl;
   matrix_cl<double> y_deriv_cl;
   matrix_cl<double> alpha_deriv_cl;

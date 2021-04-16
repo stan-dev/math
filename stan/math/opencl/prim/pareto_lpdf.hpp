@@ -70,7 +70,7 @@ return_type_t<T_y_cl, T_scale_cl, T_shape_cl> pareto_lpdf(
       = check_cl(function, "Shape parameter", alpha_val, "positive finite");
   auto alpha_positive_finite = 0 < alpha_val && isfinite(alpha_val);
 
-  auto y_less_than_y_min = colwise_max(constant(0, N, 1) + (y_val < y_min_val));
+  auto y_less_than_y_min = colwise_max(cast<char>(y_val < y_min_val));
   auto log_y = log(y_val);
   auto inv_y = elt_divide(1.0, y_val);
   auto log_y_min = log(y_min_val);
@@ -87,7 +87,7 @@ return_type_t<T_y_cl, T_scale_cl, T_shape_cl> pareto_lpdf(
   auto y_min_deriv = elt_divide(alpha_val, y_min_val);
   auto alpha_deriv = elt_divide(1.0, alpha_val) + log_y_min - log_y;
 
-  matrix_cl<int> y_less_than_y_min_cl;
+  matrix_cl<char> y_less_than_y_min_cl;
   matrix_cl<double> logp_cl;
   matrix_cl<double> y_min_deriv_cl;
   matrix_cl<double> y_deriv_cl;

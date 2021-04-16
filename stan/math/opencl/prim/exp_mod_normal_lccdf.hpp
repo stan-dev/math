@@ -74,8 +74,8 @@ exp_mod_normal_lccdf(const T_y_cl& y, const T_loc_cl& mu,
   auto lambda_positive_finite_expr = 0 < lambda_val && isfinite(lambda_val);
 
   auto any_y_neg_inf
-      = colwise_max(constant(0, N, 1) + (y_val == NEGATIVE_INFTY));
-  auto any_y_pos_inf = colwise_max(constant(0, N, 1) + (y_val == INFTY));
+      = colwise_max(cast<char>(y_val == NEGATIVE_INFTY));
+  auto any_y_pos_inf = colwise_max(cast<char>(y_val == INFTY));
   auto inv_sigma = elt_divide(1.0, sigma_val);
   auto diff = y_val - mu_val;
   auto scaled_diff = elt_multiply(diff, inv_sigma * INV_SQRT_TWO);
@@ -104,8 +104,8 @@ exp_mod_normal_lccdf(const T_y_cl& y, const T_loc_cl& mu,
                        - INV_SQRT_TWO_PI * elt_multiply(sigma_val, exp_term_2)),
       ccdf_n);
 
-  matrix_cl<double> any_y_neg_inf_cl;
-  matrix_cl<double> any_y_pos_inf_cl;
+  matrix_cl<char> any_y_neg_inf_cl;
+  matrix_cl<char> any_y_pos_inf_cl;
   matrix_cl<double> ccdf_log_cl;
   matrix_cl<double> mu_deriv_cl;
   matrix_cl<double> y_deriv_cl;

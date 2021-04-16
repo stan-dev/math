@@ -49,13 +49,13 @@ return_type_t<T_prob_cl> bernoulli_cdf(const T_n_cl& n,
                                       theta_val, "in the interval [0, 1]");
   auto theta_bounded_expr = 0.0 <= theta_val && theta_val <= 1.0;
 
-  auto any_n_negative = colwise_max(constant(0, N, 1) + (n < 0));
+  auto any_n_negative = colwise_max(cast<char>(n < 0));
   auto cond = n >= 1;
   auto Pi_uncond = 1.0 - theta_val;
   auto Pi = select(cond, INFTY, Pi_uncond);
   auto P_expr = colwise_prod(select(cond, 1.0, Pi_uncond));
 
-  matrix_cl<double> any_n_negative_cl;
+  matrix_cl<char> any_n_negative_cl;
   matrix_cl<double> Pi_cl;
   matrix_cl<double> P_cl;
 

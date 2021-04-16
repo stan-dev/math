@@ -61,7 +61,7 @@ return_type_t<T_log_rate_cl> poisson_log_lpmf(const T_n_cl& n,
   auto alpha_not_nan = !isnan(alpha_val);
 
   auto return_log_zero = colwise_max(
-      constant(0, N, 1) + (isinf(alpha_val) && (alpha_val > 0 || n != 0)));
+      cast<char>(isinf(alpha_val) && (alpha_val > 0 || n != 0)));
   auto exp_alpha = exp(alpha_val);
 
   auto logp1 = elt_multiply(n, alpha_val);
@@ -72,7 +72,7 @@ return_type_t<T_log_rate_cl> poisson_log_lpmf(const T_n_cl& n,
 
   auto deriv = n - exp_alpha;
 
-  matrix_cl<int> return_log_zero_cl;
+  matrix_cl<char> return_log_zero_cl;
   matrix_cl<double> logp_cl;
   matrix_cl<double> deriv_cl;
 

@@ -73,7 +73,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl> exp_mod_normal_cdf(
   auto lambda_positive_finite_expr = 0 < lambda_val && isfinite(lambda_val);
 
   auto any_y_neg_inf
-      = colwise_max(constant(0, N, 1) + (y_val == NEGATIVE_INFTY));
+      = colwise_max(cast<char>(y_val == NEGATIVE_INFTY));
   auto inv_sigma = elt_divide(1.0, sigma_val);
   auto diff = y_val - mu_val;
   auto v = elt_multiply(lambda_val, sigma_val);
@@ -102,7 +102,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl> exp_mod_normal_cdf(
               - elt_multiply(elt_multiply(v, sigma_val) - diff, erf_calc)),
       cdf_n);
 
-  matrix_cl<double> any_y_neg_inf_cl;
+  matrix_cl<char> any_y_neg_inf_cl;
   matrix_cl<double> cdf_cl;
   matrix_cl<double> y_deriv_cl;
   matrix_cl<double> mu_deriv_cl;

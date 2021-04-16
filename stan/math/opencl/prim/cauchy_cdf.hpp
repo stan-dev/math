@@ -64,7 +64,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> cauchy_cdf(
   auto sigma_positive_finite_expr = 0 < sigma_val && isfinite(sigma_val);
 
   auto any_y_neg_inf
-      = colwise_max(constant(0, N, 1) + (y_val == NEGATIVE_INFTY));
+      = colwise_max(cast<char>(y_val == NEGATIVE_INFTY));
   auto cond = y_val == INFTY;
   auto sigma_inv = elt_divide(1.0, sigma_val);
   auto z = elt_multiply(y_val - mu_val, sigma_inv);
@@ -76,7 +76,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> cauchy_cdf(
       elt_divide(sigma_inv, -pi() * elt_multiply(1.0 + square(z), Pn)));
   auto sigma_deriv_tmp = elt_multiply(z, mu_deriv_tmp);
 
-  matrix_cl<double> any_y_neg_inf_cl;
+  matrix_cl<char> any_y_neg_inf_cl;
   matrix_cl<double> P_cl;
   matrix_cl<double> mu_deriv_cl;
   matrix_cl<double> y_deriv_cl;

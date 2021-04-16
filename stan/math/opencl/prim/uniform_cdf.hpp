@@ -69,7 +69,7 @@ return_type_t<T_y_cl, T_low_cl, T_high_cl> uniform_cdf(const T_y_cl& y,
   auto diff_positive_expr = b_minus_a > 0.0;
 
   auto any_y_out_of_bounds = colwise_max(
-      constant(0, N, 1) + (y_val < alpha_val || y_val > beta_val));
+      cast<char>(y_val < alpha_val || y_val > beta_val));
   auto cdf_n = elt_divide(y_val - alpha_val, b_minus_a);
   auto cdf_expr = colwise_prod(cdf_n);
 
@@ -78,7 +78,7 @@ return_type_t<T_y_cl, T_low_cl, T_high_cl> uniform_cdf(const T_y_cl& y,
   auto low_deriv1
       = elt_multiply(y_val - beta_val, elt_divide(y_deriv1, b_minus_a));
 
-  matrix_cl<double> any_y_out_of_bounds_cl;
+  matrix_cl<char> any_y_out_of_bounds_cl;
   matrix_cl<double> cdf_cl;
   matrix_cl<double> alpha_deriv_cl;
   matrix_cl<double> y_deriv_cl;

@@ -74,7 +74,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> lognormal_lpdf(
       = check_cl(function, "Scale parameter", sigma_val, "positive finite");
   auto sigma_pos_finite = sigma_val > 0 && isfinite(sigma_val);
 
-  auto any_y_zero = colwise_max(constant(0, N, 1) + (y_val == 0.0));
+  auto any_y_zero = colwise_max(cast<char>(y_val == 0.0));
   auto inv_sigma = elt_divide(1.0, sigma_val);
   auto inv_sigma_sq = elt_multiply(inv_sigma, inv_sigma);
   auto log_y = log(y_val);
@@ -93,7 +93,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> lognormal_lpdf(
   auto sigma_deriv_expr = elt_multiply(
       elt_multiply(logy_m_mu_div_sigma, logy_m_mu) - 1.0, inv_sigma);
 
-  matrix_cl<int> any_y_zero_cl;
+  matrix_cl<char> any_y_zero_cl;
   matrix_cl<double> logp_cl;
   matrix_cl<double> y_deriv_cl;
   matrix_cl<double> mu_deriv_cl;
