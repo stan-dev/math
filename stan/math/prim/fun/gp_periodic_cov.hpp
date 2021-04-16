@@ -72,10 +72,11 @@ gp_periodic_cov(const std::vector<T_x> &x, const T_sigma &sigma, const T_l &l,
 
   for (size_t jb = 0; jb < x_size; jb += block_size) {
     for (size_t ib = jb; ib < x_size; ib += block_size) {
-      for (size_t j = jb; j < std::min(x_size, jb + block_size); ++j) {
+      size_t j_end = std::min(x_size, jb + block_size);
+      for (size_t j = jb; j < j_end; ++j) {
         cov.coeffRef(j, j) = sigma_sq;
-        for (size_t i = std::max(ib, j + 1);
-             i < std::min(x_size, ib + block_size); ++i) {
+        size_t i_end = std::min(x_size, ib + block_size);
+        for (size_t i = std::max(ib, j + 1); i < i_end; ++i) {
           cov.coeffRef(j, i) = cov.coeffRef(i, j)
               = sigma_sq
                 * exp(square(sin(pi_div_p * distance(x[i], x[j])))
@@ -152,8 +153,10 @@ gp_periodic_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   for (size_t ib = 0; ib < x1.size(); ib += block_size) {
     for (size_t jb = 0; jb < x2.size(); jb += block_size) {
-      for (size_t j = jb; j < std::min(x2.size(), jb + block_size); ++j) {
-        for (size_t i = ib; i < std::min(x1.size(), ib + block_size); ++i) {
+      size_t j_end = std::min(x2.size(), jb + block_size);
+      for (size_t j = jb; j < j_end; ++j) {
+        size_t i_end = std::min(x1.size(), ib + block_size);
+        for (size_t i = ib; i < i_end; ++i) {
           cov.coeffRef(i, j)
               = sigma_sq
                 * exp(square(sin(pi_div_p * distance(x1[i], x2[j])))

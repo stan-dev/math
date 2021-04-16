@@ -65,10 +65,12 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
   size_t block_size = 10;
   for (size_t jb = 0; jb < x_size; jb += block_size) {
     for (size_t ib = jb; ib < x_size; ib += block_size) {
-      for (size_t j = jb; j < std::min(x_size, jb + block_size); ++j) {
+      size_t j_end = std::min(x_size, jb + block_size);
+      for (size_t j = jb; j < j_end; ++j) {
         cov.coeffRef(j, j) = sigma_sq;
+        size_t i_end = std::min(x_size, ib + block_size);
         for (size_t i = std::max(ib, j + 1);
-             i < std::min(x_size, ib + block_size); ++i) {
+             i < i_end; ++i) {
           return_type_t<T_x> sq_distance = squared_distance(x[i], x[j]);
           return_type_t<T_x> dist = sqrt(sq_distance);
           cov.coeffRef(j, i) = cov.coeffRef(i, j)
@@ -139,10 +141,12 @@ gp_matern52_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
 
   for (size_t jb = 0; jb < x_size; jb += block_size) {
     for (size_t ib = jb; ib < x_size; ib += block_size) {
-      for (size_t j = jb; j < std::min(x_size, jb + block_size); ++j) {
+      size_t j_end = std::min(x_size, jb + block_size);
+      for (size_t j = jb; j < j_end; ++j) {
         cov.coeffRef(j, j) = sigma_sq;
+        size_t i_end = std::min(x_size, ib + block_size);
         for (size_t i = std::max(ib, j + 1);
-             i < std::min(x_size, ib + block_size); ++i) {
+             i < i_end; ++i) {
           return_type_t<T_x, T_l> sq_distance
               = squared_distance(x_new[i], x_new[j]);
           return_type_t<T_x, T_l> dist = sqrt(sq_distance);
@@ -215,8 +219,10 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   for (size_t ib = 0; ib < x1_size; ib += block_size) {
     for (size_t jb = 0; jb < x2_size; jb += block_size) {
-      for (size_t j = jb; j < std::min(x2_size, jb + block_size); ++j) {
-        for (size_t i = ib; i < std::min(x1_size, ib + block_size); ++i) {
+      size_t j_end = std::min(x2_size, jb + block_size);
+      for (size_t j = jb; j < j_end; ++j) {
+        size_t i_end = std::min(x1_size, ib + block_size);
+        for (size_t i = ib; i < i_end; ++i) {
           return_type_t<T_x1, T_x2> sq_distance
               = squared_distance(x1[i], x2[j]);
           return_type_t<T_x1, T_x2> dist = sqrt(sq_distance);
@@ -307,8 +313,10 @@ gp_matern52_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
 
   for (size_t ib = 0; ib < x1_size; ib += block_size) {
     for (size_t jb = 0; jb < x2_size; jb += block_size) {
-      for (size_t j = jb; j < std::min(x2_size, jb + block_size); ++j) {
-        for (size_t i = ib; i < std::min(x1_size, ib + block_size); ++i) {
+      size_t j_end = std::min(x2_size, jb + block_size);
+      for (size_t j = jb; j < j_end; ++j) {
+        size_t i_end = std::min(x1_size, ib + block_size);
+        for (size_t i = ib; i < i_end; ++i) {
           return_type_t<T_x1, T_x2, T_l> sq_distance
               = squared_distance(x1_new[i], x2_new[j]);
           return_type_t<T_x1, T_x2, T_l> dist = sqrt(sq_distance);

@@ -69,10 +69,12 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
   size_t block_size = 10;
   for (size_t jb = 0; jb < x_size; jb += block_size) {
     for (size_t ib = jb; ib < x_size; ib += block_size) {
-      for (size_t j = jb; j < std::min(x_size, jb + block_size); ++j) {
+      size_t j_end = std::min(x_size, jb + block_size);
+      for (size_t j = jb; j < j_end; ++j) {
         cov.coeffRef(j, j) = sigma_sq;
+        size_t i_end = std::min(x_size, ib + block_size);
         for (size_t i = std::max(ib, j + 1);
-             i < std::min(x_size, ib + block_size); ++i) {
+             i < i_end; ++i) {
           return_type_t<T_x> dist = distance(x[i], x[j]);
           cov.coeffRef(j, i) = cov.coeffRef(i, j)
               = sigma_sq * (1.0 + root_3_inv_l * dist)
@@ -141,8 +143,10 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
   size_t block_size = 10;
   for (size_t jb = 0; jb < x_size; jb += block_size) {
     for (size_t ib = jb; ib < x_size; ib += block_size) {
-      for (size_t j = jb; j < std::min(x_size, jb + block_size); ++j) {
-        for (size_t i = std::max(ib, j); i < std::min(x_size, ib + block_size);
+      size_t j_end = std::min(x_size, jb + block_size);
+      for (size_t j = jb; j < j_end; ++j) {
+        size_t i_end = std::min(x_size, ib + block_size);
+        for (size_t i = std::max(ib, j); i < i_end;
              ++i) {
           return_type_t<T_x, T_l> dist = distance(x_new[i], x_new[j]);
           cov.coeffRef(j, i) = cov.coeffRef(i, j)
@@ -222,8 +226,10 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   size_t block_size = 10;
   for (size_t ib = 0; ib < x1.size(); ib += block_size) {
     for (size_t jb = 0; jb < x2.size(); jb += block_size) {
-      for (size_t j = jb; j < std::min(x2.size(), jb + block_size); ++j) {
-        for (size_t i = ib; i < std::min(x1.size(), ib + block_size); ++i) {
+      size_t j_end = std::min(x2_size, jb + block_size);
+      for (size_t j = jb; j < j_end; ++j) {
+        size_t i_end = std::min(x1_size, ib + block_size);
+        for (size_t i = ib; i < i_end; ++i) {
           return_type_t<T_x1, T_x2> dist = distance(x1[i], x2[j]);
           cov(i, j) = sigma_sq * (1.0 + root_3_inv_l_sq * dist)
                       * exp(-root_3_inv_l_sq * dist);
@@ -313,8 +319,10 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
 
   for (size_t ib = 0; ib < x1.size(); ib += block_size) {
     for (size_t jb = 0; jb < x2.size(); jb += block_size) {
-      for (size_t j = jb; j < std::min(x2.size(), jb + block_size); ++j) {
-        for (size_t i = ib; i < std::min(x1.size(), ib + block_size); ++i) {
+      size_t j_end = std::min(x2_size, jb + block_size);
+      for (size_t j = jb; j < j_end; ++j) {
+        size_t i_end = std::min(x1_size, ib + block_size);
+        for (size_t i = ib; i < i_end; ++i) {
           return_type_t<T_x1, T_x2, T_l> dist = distance(x1_new[i], x2_new[j]);
           cov(i, j) = sigma_sq * (1.0 + root_3 * dist) * exp(-root_3 * dist);
         }

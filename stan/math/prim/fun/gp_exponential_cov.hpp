@@ -67,10 +67,11 @@ gp_exponential_cov(const std::vector<T_x> &x, const T_s &sigma,
   size_t block_size = 10;
   for (size_t jb = 0; jb < x_size; jb += block_size) {
     for (size_t ib = jb; ib < x_size; ib += block_size) {
-      for (size_t j = jb; j < std::min(x_size, jb + block_size); ++j) {
+      size_t j_end = std::min(x_size, jb + block_size);
+      for (size_t j = jb; j < j_end; ++j) {
         cov(j, j) = sigma_sq;
-        for (size_t i = std::max(ib, j + 1);
-             i < std::min(x_size, ib + block_size); ++i) {
+        size_t i_end = std::min(x_size, ib + block_size);
+        for (size_t i = std::max(ib, j + 1); i<i_end; ++i) {
           cov.coeffRef(j, i) = cov.coeffRef(i, j)
               = sigma_sq * exp(neg_inv_l * distance(x[i], x[j]));
         }
@@ -130,10 +131,11 @@ gp_exponential_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
   size_t block_size = 10;
   for (size_t jb = 0; jb < x_size; jb += block_size) {
     for (size_t ib = jb; ib < x_size; ib += block_size) {
-      for (size_t j = jb; j < std::min(x_size, jb + block_size); ++j) {
+      size_t j_end = std::min(x_size, jb + block_size);
+      for (size_t j = jb; j < j_end; ++j) {
         cov(j, j) = sigma_sq;
-        for (size_t i = std::max(ib, j + 1);
-             i < std::min(x_size, ib + block_size); ++i) {
+        size_t i_end = std::min(x_size, ib + block_size);
+        for (size_t i = std::max(ib, j + 1); i < i_end; ++i) {
           return_type_t<T_x, T_l> dist = distance(x_new[i], x_new[j]);
           cov.coeffRef(j, i) = cov.coeffRef(i, j) = sigma_sq * exp(-dist);
         }
@@ -207,8 +209,10 @@ gp_exponential_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   for (size_t ib = 0; ib < x1_size; ib += block_size) {
     for (size_t jb = 0; jb < x2_size; jb += block_size) {
-      for (size_t j = jb; j < std::min(x2_size, jb + block_size); ++j) {
-        for (size_t i = ib; i < std::min(x1_size, ib + block_size); ++i) {
+      size_t j_end = std::min(x2_size, jb + block_size);
+      for (size_t j = jb; j < j_end; ++j) {
+        size_t i_end = std::min(x1_size, ib + block_size);
+        for (size_t i = ib; i < i_end; ++i) {
           cov(i, j) = sigma_sq * exp(neg_inv_l * distance(x1[i], x2[j]));
         }
       }
@@ -289,8 +293,10 @@ gp_exponential_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
 
   for (size_t ib = 0; ib < x1_size; ib += block_size) {
     for (size_t jb = 0; jb < x2_size; jb += block_size) {
-      for (size_t j = jb; j < std::min(x2_size, jb + block_size); ++j) {
-        for (size_t i = ib; i < std::min(x1_size, ib + block_size); ++i) {
+      size_t j_end = std::min(x2_size, jb + block_size);
+      for (size_t j = jb; j < j_end; ++j) {
+        size_t i_end = std::min(x1_size, ib + block_size);
+        for (size_t i = ib; i < i_end; ++i) {
           cov(i, j) = sigma_sq * exp(-distance(x1_new[i], x2_new[j]));
         }
       }

@@ -44,9 +44,10 @@ gp_exp_quad_cov(const std::vector<T_x> &x, const T_sigma &sigma_sq,
   size_t block_size = 10;
   for (size_t jb = 0; jb < x.size(); jb += block_size) {
     for (size_t ib = jb; ib < x.size(); ib += block_size) {
-      for (size_t j = jb; j < std::min(x.size(), jb + block_size); ++j) {
-        for (size_t i = std::max(ib, j + 1);
-             i < std::min(x.size(), ib + block_size); ++i) {
+      size_t j_end = std::min(x_size, jb + block_size);
+      for (size_t j = jb; j < j_end; ++j) {
+        size_t i_end = std::min(x_size, ib + block_size);
+        for (size_t i = std::max(ib, j + 1); i < i_end; ++i) {
           cov.coeffRef(i, j)
               = sigma_sq
                 * exp(squared_distance(x[i], x[j]) * neg_half_inv_l_sq);
@@ -89,8 +90,10 @@ gp_exp_quad_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
 
   for (size_t ib = 0; ib < x1.size(); ib += block_size) {
     for (size_t jb = 0; jb < x2.size(); jb += block_size) {
-      for (size_t j = jb; j < std::min(x2.size(), jb + block_size); ++j) {
-        for (size_t i = ib; i < std::min(x1.size(), ib + block_size); ++i) {
+      size_t j_end = std::min(x2.size(), jb + block_size);
+      for (size_t j = jb; j < j_end; ++j) {
+        size_t i_end = std::min(x1.size(), ib + block_size);
+        for (size_t i = ib; i < i_end; ++i) {
           cov.coeffRef(i, j)
               = sigma_sq
                 * exp(squared_distance(x1[i], x2[j]) * neg_half_inv_l_sq);
