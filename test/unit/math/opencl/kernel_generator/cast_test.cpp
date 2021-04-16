@@ -35,7 +35,7 @@ TEST(KernelGenerator, cast_test) {
   EXPECT_MATRIX_NEAR(res, correct, 1e-9);
 }
 
-TEST(KernelGenerator, multiple_operations) {
+TEST(KernelGenerator, cast_multiple_operations) {
   using stan::math::cast;
   MatrixXd m1(2, 3);
   m1 << 1, 2.5, 3.4, 4.7, 5.9, 6.3;
@@ -50,7 +50,7 @@ TEST(KernelGenerator, multiple_operations) {
   EXPECT_MATRIX_NEAR(res, correct, 1e-9);
 }
 
-TEST(KernelGenerator, multiple_operations_lvalue) {
+TEST(KernelGenerator, cast_multiple_operations_lvalue) {
   using stan::math::cast;
   MatrixXd m1(2, 3);
   m1 << 1, 2.5, 3.4, 4.7, 5.9, 6.3;

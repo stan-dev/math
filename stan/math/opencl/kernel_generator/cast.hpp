@@ -39,7 +39,7 @@ class cast_ : public operation_cl<cast_<Scal, T>, Scal, T> {
    * Constructor
    * @param args argument expression(s)
    */
-  cast_(T&& arg) : base(std::forward<T>(arg)) {}
+  explicit cast_(T&& arg) : base(std::forward<T>(arg)) {}
 
   /**
    * Generates kernel code for this expression.
