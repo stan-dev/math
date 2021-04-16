@@ -63,8 +63,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> logistic_lcdf(
       = check_cl(function, "Scale parameter", sigma_val, "positive finite");
   auto sigma_positive_finite_expr = 0 < sigma_val && isfinite(sigma_val);
 
-  auto any_y_neg_inf
-      = colwise_max(cast<char>(y_val == NEGATIVE_INFTY));
+  auto any_y_neg_inf = colwise_max(cast<char>(y_val == NEGATIVE_INFTY));
   auto cond = y_val == INFTY;
   auto inv_sigma = elt_divide(1.0, sigma_val);
   auto mu_minus_y_div_sigma = elt_multiply(mu_val - y_val, inv_sigma);

@@ -63,8 +63,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> cauchy_cdf(
       = check_cl(function, "Scale parameter", sigma_val, "positive finite");
   auto sigma_positive_finite_expr = 0 < sigma_val && isfinite(sigma_val);
 
-  auto any_y_neg_inf
-      = colwise_max(cast<char>(y_val == NEGATIVE_INFTY));
+  auto any_y_neg_inf = colwise_max(cast<char>(y_val == NEGATIVE_INFTY));
   auto cond = y_val == INFTY;
   auto sigma_inv = elt_divide(1.0, sigma_val);
   auto z = elt_multiply(y_val - mu_val, sigma_inv);

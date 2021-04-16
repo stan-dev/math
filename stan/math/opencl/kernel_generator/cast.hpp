@@ -89,8 +89,7 @@ inline auto cast(T&& a) {
  * @param a input argument
  * @return Typecast of given expression
  */
-template <typename Scalar, typename T,
-          require_stan_scalar_t<T>* = nullptr>
+template <typename Scalar, typename T, require_stan_scalar_t<T>* = nullptr>
 inline Scalar cast(T a) {
   return a;
 }

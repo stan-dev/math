@@ -81,7 +81,8 @@ inline return_type_t<T_y_cl, T_low_cl, T_high_cl> uniform_lpdf(
       function, "Difference between upper and lower bound", diff, "positive");
   auto diff_positive = diff > 0;
 
-  auto y_out_of_bounds = colwise_max(cast<char>(y_val < alpha_val || beta_val < y_val));
+  auto y_out_of_bounds
+      = colwise_max(cast<char>(y_val < alpha_val || beta_val < y_val));
 
   auto logp_expr = colwise_sum(
       static_select<include_summand<propto, T_low_cl, T_high_cl>::value>(

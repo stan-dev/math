@@ -67,8 +67,8 @@ return_type_t<T_y_cl, T_low_cl, T_high_cl> uniform_lccdf(
       "positive");
   auto diff_positive_expr = b_minus_a > 0.0;
 
-  auto any_y_out_of_bounds = colwise_max(
-      cast<char>(y_val < alpha_val || y_val > beta_val));
+  auto any_y_out_of_bounds
+      = colwise_max(cast<char>(y_val < alpha_val || y_val > beta_val));
   auto y_minus_alpha = y_val - alpha_val;
   auto ccdf_n = 1.0 - elt_divide(y_minus_alpha, b_minus_a);
   auto lccdf_expr = colwise_sum(log(ccdf_n));

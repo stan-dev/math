@@ -63,8 +63,7 @@ return_type_t<T_y_cl, T_scale_cl, T_shape_cl> pareto_lcdf(
       = check_cl(function, "Shape parameter", alpha_val, "positive finite");
   auto alpha_positive_finite_expr = 0 < alpha_val && isfinite(alpha_val);
 
-  auto any_y_lower_than_y_min
-      = colwise_max(cast<char>(y_val < y_min_val));
+  auto any_y_lower_than_y_min = colwise_max(cast<char>(y_val < y_min_val));
   auto any_y_inf = colwise_max(cast<char>(isinf(y_val)));
 
   auto log_quot = log(elt_divide(y_min_val, y_val));

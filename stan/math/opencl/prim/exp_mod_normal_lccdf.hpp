@@ -73,8 +73,7 @@ exp_mod_normal_lccdf(const T_y_cl& y, const T_loc_cl& mu,
       = check_cl(function, "Inv_cale parameter", lambda_val, "positive finite");
   auto lambda_positive_finite_expr = 0 < lambda_val && isfinite(lambda_val);
 
-  auto any_y_neg_inf
-      = colwise_max(cast<char>(y_val == NEGATIVE_INFTY));
+  auto any_y_neg_inf = colwise_max(cast<char>(y_val == NEGATIVE_INFTY));
   auto any_y_pos_inf = colwise_max(cast<char>(y_val == INFTY));
   auto inv_sigma = elt_divide(1.0, sigma_val);
   auto diff = y_val - mu_val;

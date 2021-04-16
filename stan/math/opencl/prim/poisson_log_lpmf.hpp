@@ -60,8 +60,8 @@ return_type_t<T_log_rate_cl> poisson_log_lpmf(const T_n_cl& n,
       = check_cl(function, "Log rate parameter", alpha_val, "not nan");
   auto alpha_not_nan = !isnan(alpha_val);
 
-  auto return_log_zero = colwise_max(
-      cast<char>(isinf(alpha_val) && (alpha_val > 0 || n != 0)));
+  auto return_log_zero
+      = colwise_max(cast<char>(isinf(alpha_val) && (alpha_val > 0 || n != 0)));
   auto exp_alpha = exp(alpha_val);
 
   auto logp1 = elt_multiply(n, alpha_val);

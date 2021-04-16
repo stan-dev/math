@@ -65,6 +65,4 @@ TEST(KernelGenerator, cast_multiple_operations_lvalue) {
   EXPECT_MATRIX_NEAR(res, correct, 1e-9);
 }
 
-
-
 #endif

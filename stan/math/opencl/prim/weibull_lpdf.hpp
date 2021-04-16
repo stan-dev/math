@@ -66,7 +66,7 @@ inline return_type_t<T_y_cl, T_shape_cl, T_scale_cl> weibull_lpdf(
       = check_cl(function, "Scale parameter", sigma_val, "positive finite");
   auto sigma_positive_finite = isfinite(sigma_val) && 0 < sigma_val;
 
-  auto any_y_negative = colwise_max(cast<char> (y_val < 0));
+  auto any_y_negative = colwise_max(cast<char>(y_val < 0));
   auto log_y = log(y_val);
   auto log_sigma = log(sigma_val);
   auto inv_sigma = elt_divide(1., sigma_val);
