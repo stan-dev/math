@@ -69,8 +69,7 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
       for (size_t j = jb; j < j_end; ++j) {
         cov.coeffRef(j, j) = sigma_sq;
         size_t i_end = std::min(x_size, ib + block_size);
-        for (size_t i = std::max(ib, j + 1);
-             i < i_end; ++i) {
+        for (size_t i = std::max(ib, j + 1); i < i_end; ++i) {
           return_type_t<T_x> sq_distance = squared_distance(x[i], x[j]);
           return_type_t<T_x> dist = sqrt(sq_distance);
           cov.coeffRef(j, i) = cov.coeffRef(i, j)
@@ -145,8 +144,7 @@ gp_matern52_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
       for (size_t j = jb; j < j_end; ++j) {
         cov.coeffRef(j, j) = sigma_sq;
         size_t i_end = std::min(x_size, ib + block_size);
-        for (size_t i = std::max(ib, j + 1);
-             i < i_end; ++i) {
+        for (size_t i = std::max(ib, j + 1); i < i_end; ++i) {
           return_type_t<T_x, T_l> sq_distance
               = squared_distance(x_new[i], x_new[j]);
           return_type_t<T_x, T_l> dist = sqrt(sq_distance);

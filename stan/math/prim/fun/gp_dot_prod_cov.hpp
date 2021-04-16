@@ -119,8 +119,7 @@ gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
       for (size_t j = jb; j < j_end; ++j) {
         cov.coeffRef(j, j) = sigma_sq + x[j] * x[j];
         size_t i_end = std::min(x_size, ib + block_size);
-        for (size_t i = std::max(ib, j + 1);
-             i < i_end; ++i) {
+        for (size_t i = std::max(ib, j + 1); i < i_end; ++i) {
           cov.coeffRef(j, i) = cov.coeffRef(i, j) = sigma_sq + x[i] * x[j];
         }
       }
