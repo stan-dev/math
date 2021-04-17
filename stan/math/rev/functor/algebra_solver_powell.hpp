@@ -32,8 +32,10 @@ Eigen::VectorXd algebra_solver_powell_impl(
 
   check_nonzero_size("algebra_solver_powell", "initial guess", x);
   check_finite("algebra_solver_powell", "initial guess", x);
-  check_nonnegative("alegbra_solver_powell", "relative_tolerance", relative_tolerance);
-  check_nonnegative("algebra_solver_powell", "function_tolerance", function_tolerance);
+  check_nonnegative("alegbra_solver_powell", "relative_tolerance",
+                    relative_tolerance);
+  check_nonnegative("algebra_solver_powell", "function_tolerance",
+                    function_tolerance);
   check_positive("algebra_solver_powell", "max_num_steps", max_num_steps);
 
   // Construct the Powell solver
@@ -126,8 +128,10 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
 
   check_nonzero_size("algebra_solver_powell", "initial guess", x);
   check_finite("algebra_solver_powell", "initial guess", x);
-  check_nonnegative("alegbra_solver_powell", "relative_tolerance", relative_tolerance);
-  check_nonnegative("algebra_solver_powell", "function_tolerance", function_tolerance);
+  check_nonnegative("alegbra_solver_powell", "relative_tolerance",
+                    relative_tolerance);
+  check_nonnegative("algebra_solver_powell", "function_tolerance",
+                    function_tolerance);
   check_positive("algebra_solver_powell", "max_num_steps", max_num_steps);
 
   // Construct the Powell solver

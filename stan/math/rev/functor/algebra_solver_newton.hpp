@@ -31,8 +31,10 @@ Eigen::VectorXd algebra_solver_newton_impl(
 
   check_nonzero_size("algebra_solver_newton", "initial guess", x);
   check_finite("algebra_solver_newton", "initial guess", x);
-  check_nonnegative("algebra_solver_newton", "scaling_step_size", scaling_step_size);
-  check_nonnegative("algebra_solver_newton", "function_tolerance", function_tolerance);
+  check_nonnegative("algebra_solver_newton", "scaling_step_size",
+                    scaling_step_size);
+  check_nonnegative("algebra_solver_newton", "function_tolerance",
+                    function_tolerance);
   check_positive("algebra_solver_newton", "max_num_steps", max_num_steps);
 
   return kinsol_solve(f, value_of(x_eval), scaling_step_size,
@@ -106,8 +108,10 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_newton_impl(
 
   check_nonzero_size("algebra_solver_newton", "initial guess", x);
   check_finite("algebra_solver_newton", "initial guess", x);
-  check_nonnegative("algebra_solver_newton", "scaling_step_size", scaling_step_size);
-  check_nonnegative("algebra_solver_newton", "function_tolerance", function_tolerance);
+  check_nonnegative("algebra_solver_newton", "scaling_step_size",
+                    scaling_step_size);
+  check_nonnegative("algebra_solver_newton", "function_tolerance",
+                    function_tolerance);
   check_positive("algebra_solver_newton", "max_num_steps", max_num_steps);
 
   // Solve the system
