@@ -172,7 +172,7 @@ inline void error_conditions_test(const F& f,
           << "and size of the vector of unknowns, x, (3) must match in size";
   std::string msg = err_msg.str();
   EXPECT_THROW_MSG(
-    // CHECK: Should this test run on the Newton solver too?
+      // CHECK: Should this test run on the Newton solver too?
       algebra_solver_powell(non_square_eq_functor(), x, y, dat, dat_int),
       std::invalid_argument, msg);
 
@@ -189,8 +189,7 @@ inline void error_conditions_test(const F& f,
   x_bad_inf << inf, 1, 1;
   EXPECT_THROW_MSG(
       general_algebra_solver(is_newton, f, x_bad_inf, y, dat, dat_int),
-      std::domain_error,
-      "initial guess[1] is inf, but must be finite!");
+      std::domain_error, "initial guess[1] is inf, but must be finite!");
 
   if (!is_newton) {
     EXPECT_THROW_MSG(general_algebra_solver(is_newton, f, x, y, dat, dat_int, 0,
