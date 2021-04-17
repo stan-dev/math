@@ -26,12 +26,11 @@ Eigen::VectorXd algebra_solver_powell_impl(
     const F& f, const T& x, std::ostream* msgs, double relative_tolerance,
     double function_tolerance, long int max_num_steps, const Eigen::VectorXd& y,
     const T_Args&... args) {  // NOLINT(runtime/int)
-  const auto& x_eval = x.eval();
-  const auto& x_val = (value_of(x_eval)).eval();
+  const auto& x_val = to_ref(value_of(x));
   auto args_vals_tuple = std::make_tuple(y, eval(value_of(args))...);
 
-  check_nonzero_size("algebra_solver_powell", "initial guess", x);
-  check_finite("algebra_solver_powell", "initial guess", x);
+  check_nonzero_size("algebra_solver_powell", "initial guess", x_val);
+  check_finite("algebra_solver_powell", "initial guess", x_val);
   check_nonnegative("alegbra_solver_powell", "relative_tolerance", relative_tolerance);
   check_nonnegative("algebra_solver_powell", "function_tolerance", function_tolerance);
   check_positive("algebra_solver_powell", "max_num_steps", max_num_steps);
@@ -50,65 +49,8 @@ Eigen::VectorXd algebra_solver_powell_impl(
                        fx.get_value(x_val), "the vector of unknowns, x,", x);
 
   // Solve the system
-  return algebra_solver_powell_(solver, fx, x_eval, 0, relative_tolerance,
+  return algebra_solver_powell_(solver, fx, x_val, 0, relative_tolerance,
                                 function_tolerance, max_num_steps);
-}
-
-/**
- * Return the solution to the specified system of algebraic
- * equations given an initial guess, and parameters and data,
- * which get passed into the algebraic system.
- * Use Powell's dogleg solver.
- *
- * The user can also specify the relative tolerance
- * (xtol in Eigen's code), the function tolerance,
- * and the maximum number of steps (maxfev in Eigen's code).
- *
- * Throw an exception if the norm of f(x), where f is the
- * output of the algebraic system and x the proposed solution,
- * is greater than the function tolerance. We here use the
- * norm as a metric to measure how far we are from the origin (0).
- *
- * @tparam F type of equation system function.
- * @tparam T type of initial guess vector.
- *
- * @param[in] f Functor that evaluates the system of equations.
- * @param[in] x Vector of starting values.
- * @param[in] y parameter vector for the equation system. The function
- *            is overloaded to treat y as a vector of doubles or as a
- *            a template type T.
- * @param[in] dat continuous data vector for the equation system.
- * @param[in] dat_int integer data vector for the equation system.
- * @param[in, out] msgs the print stream for warning messages.
- * @param[in] relative_tolerance determines the convergence criteria
- *            for the solution.
- * @param[in] function_tolerance determines whether roots are acceptable.
- * @param[in] max_num_steps  maximum number of function evaluations.
- * @return theta Vector of solutions to the system of equations.
- * @throw <code>std::invalid_argument</code> if x has size zero.
- * @throw <code>std::invalid_argument</code> if x has non-finite elements.
- * @throw <code>std::invalid_argument</code> if y has non-finite elements.
- * @throw <code>std::invalid_argument</code> if dat has non-finite elements.
- * @throw <code>std::invalid_argument</code> if dat_int has non-finite elements.
- * @throw <code>std::invalid_argument</code> if relative_tolerance is strictly
- * negative.
- * @throw <code>std::invalid_argument</code> if function_tolerance is strictly
- * negative.
- * @throw <code>std::invalid_argument</code> if max_num_steps is not positive.
- * @throw <code>std::domain_error</code> solver exceeds max_num_steps.
- * @throw <code>std::domain_error</code> if the norm of the solution exceeds
- * the function tolerance.
- */
-template <typename F, typename T, require_eigen_vector_t<T>* = nullptr>
-Eigen::VectorXd algebra_solver_powell(
-    const F& f, const T& x, const Eigen::VectorXd& y,
-    const std::vector<double>& dat, const std::vector<int>& dat_int,
-    std::ostream* msgs = nullptr, double relative_tolerance = 1e-10,
-    double function_tolerance = 1e-6,
-    long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
-  return algebra_solver_powell_impl(algebra_solver_adapter<F>(f), x, msgs,
-                                    relative_tolerance, function_tolerance,
-                                    max_num_steps, y, dat, dat_int);
 }
 
 /** Implementation of autodiff powell solver. */
@@ -119,13 +61,12 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
     const F& f, const T& x, std::ostream* msgs, double relative_tolerance,
     double function_tolerance, long int max_num_steps,
     const T_Args&... args) {  // NOLINT(runtime/int)
-  const auto& x_eval = x.eval();
+  const auto& x_val = to_ref(value_of(x));
   auto arena_args_tuple = std::make_tuple(to_arena(args)...);
-  const auto& x_val = (value_of(x_eval)).eval();
   auto args_vals_tuple = std::make_tuple(eval(value_of(args))...);
 
-  check_nonzero_size("algebra_solver_powell", "initial guess", x);
-  check_finite("algebra_solver_powell", "initial guess", x);
+  check_nonzero_size("algebra_solver_powell", "initial guess", x_val);
+  check_finite("algebra_solver_powell", "initial guess", x_val);
   check_nonnegative("alegbra_solver_powell", "relative_tolerance", relative_tolerance);
   check_nonnegative("algebra_solver_powell", "function_tolerance", function_tolerance);
   check_positive("algebra_solver_powell", "max_num_steps", max_num_steps);
@@ -145,7 +86,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
 
   // Solve the system
   Eigen::VectorXd theta_dbl
-      = algebra_solver_powell_(solver, fx, x_eval, 0, relative_tolerance,
+      = algebra_solver_powell_(solver, fx, x_val, 0, relative_tolerance,
                                function_tolerance, max_num_steps);
 
   Eigen::MatrixXd Jf_x;
@@ -303,11 +244,8 @@ Eigen::VectorXd algebra_solver_powell_(
     S& solver, const F& fx, const T& x, std::ostream* msgs,
     double relative_tolerance, double function_tolerance,
     long int max_num_steps) {  // NOLINT(runtime/int)
-  const auto& x_eval = x.eval();
-  const auto& x_val = (value_of(x_eval)).eval();
-
   // Compute theta_dbl
-  Eigen::VectorXd theta_dbl = x_val;
+  Eigen::VectorXd theta_dbl = x;
   solver.parameters.xtol = relative_tolerance;
   solver.parameters.maxfev = max_num_steps;
   solver.solve(theta_dbl);
