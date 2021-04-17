@@ -19,7 +19,8 @@ namespace math {
 
 /** Implementation of ordinary newton solver. */
 template <typename F, typename T, typename... T_Args,
-          require_all_eigen_vector_t<T>* = nullptr>
+          require_eigen_vector_t<T>* = nullptr,
+          require_all_st_arithmetic<T_Args...>* = nullptr>
 Eigen::VectorXd algebra_solver_newton_impl(
     const F& f, const T& x, std::ostream* msgs, double scaling_step_size,
     double function_tolerance, long int max_num_steps, const Eigen::VectorXd& y,
@@ -27,6 +28,12 @@ Eigen::VectorXd algebra_solver_newton_impl(
   const auto& x_eval = x.eval();
   const auto& x_val = (value_of(x_eval)).eval();
   auto args_vals_tuple = std::make_tuple(y, eval(value_of(args))...);
+
+  check_nonzero_size("algebra_solver_newton", "initial guess", x);
+  check_finite("algebra_solver_newton", "initial guess", x);
+  check_nonnegative("algebra_solver_newton", "scaling_step_size", scaling_step_size);
+  check_nonnegative("algebra_solver_newton", "function_tolerance", function_tolerance);
+  check_positive("algebra_solver_newton", "max_num_steps", max_num_steps);
 
   return kinsol_solve(f, value_of(x_eval), scaling_step_size,
                       function_tolerance, max_num_steps, 1, 10, KIN_LINESEARCH,
@@ -86,7 +93,7 @@ Eigen::VectorXd algebra_solver_newton(
 
 /** Implementation of autodiff newton solver. */
 template <typename F, typename T, typename... T_Args,
-          require_all_eigen_vector_t<T>* = nullptr,
+          require_eigen_vector_t<T>* = nullptr,
           require_any_st_var<T_Args...>* = nullptr>
 Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_newton_impl(
     const F& f, const T& x, std::ostream* msgs, double scaling_step_size,
@@ -96,6 +103,12 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_newton_impl(
   auto arena_args_tuple = std::make_tuple(to_arena(args)...);
   const auto& x_val = (value_of(x_eval)).eval();
   auto args_vals_tuple = std::make_tuple(eval(value_of(args))...);
+
+  check_nonzero_size("algebra_solver_newton", "initial guess", x);
+  check_finite("algebra_solver_newton", "initial guess", x);
+  check_nonnegative("algebra_solver_newton", "scaling_step_size", scaling_step_size);
+  check_nonnegative("algebra_solver_newton", "function_tolerance", function_tolerance);
+  check_positive("algebra_solver_newton", "max_num_steps", max_num_steps);
 
   // Solve the system
   Eigen::VectorXd theta_dbl = apply(

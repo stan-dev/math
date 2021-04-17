@@ -223,7 +223,6 @@ TEST_F(algebra_solver_non_linear_eq_test, powell_dbl) {
   EXPECT_FLOAT_EQ(y_dbl(2), theta(2));
 }
 
-/*
 TEST_F(error_message_test, powell) {
   using stan::math::var;
   bool is_newton = false;
@@ -235,7 +234,6 @@ TEST_F(error_message_test, powell_dbl) {
   bool is_newton = false;
   error_conditions_test(non_linear_eq_functor(), y_3, is_newton);
 }
-*/
 
 TEST(unsolvable_test, powell) {
   using stan::math::var;
@@ -464,7 +462,6 @@ TEST_F(algebra_solver_non_linear_eq_test, newton_dbl) {
   EXPECT_FLOAT_EQ(y_dbl(2), theta(2));
 }
 
-/*
 TEST_F(error_message_test, newton) {
   using stan::math::var;
   bool is_newton = true;
@@ -476,7 +473,6 @@ TEST_F(error_message_test, newton_dbl) {
   bool is_newton = true;
   error_conditions_test(non_linear_eq_functor(), y_3, is_newton);
 }
-*/
 
 TEST_F(max_steps_test, newton) {
   bool is_newton = true;

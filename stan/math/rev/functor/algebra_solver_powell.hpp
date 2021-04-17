@@ -20,7 +20,8 @@ namespace math {
 
 /** Implementation of ordinary powell solver. */
 template <typename F, typename T, typename... T_Args,
-          require_all_eigen_vector_t<T>* = nullptr>
+          require_eigen_vector_t<T>* = nullptr,
+          require_all_st_arithmetic<T_Args...>* = nullptr>
 Eigen::VectorXd algebra_solver_powell_impl(
     const F& f, const T& x, std::ostream* msgs, double relative_tolerance,
     double function_tolerance, long int max_num_steps, const Eigen::VectorXd& y,
@@ -29,7 +30,11 @@ Eigen::VectorXd algebra_solver_powell_impl(
   const auto& x_val = (value_of(x_eval)).eval();
   auto args_vals_tuple = std::make_tuple(y, eval(value_of(args))...);
 
-  check_nonnegative("alegbra_solver", "relative_tolerance", relative_tolerance);
+  check_nonzero_size("algebra_solver_powell", "initial guess", x);
+  check_finite("algebra_solver_powell", "initial guess", x);
+  check_nonnegative("alegbra_solver_powell", "relative_tolerance", relative_tolerance);
+  check_nonnegative("algebra_solver_powell", "function_tolerance", function_tolerance);
+  check_positive("algebra_solver_powell", "max_num_steps", max_num_steps);
 
   // Construct the Powell solver
   auto myfunc = [&](const auto& x) {
@@ -108,7 +113,7 @@ Eigen::VectorXd algebra_solver_powell(
 
 /** Implementation of autodiff powell solver. */
 template <typename F, typename T, typename... T_Args,
-          require_all_eigen_vector_t<T>* = nullptr,
+          require_eigen_vector_t<T>* = nullptr,
           require_any_st_var<T_Args...>* = nullptr>
 Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
     const F& f, const T& x, std::ostream* msgs, double relative_tolerance,
@@ -119,7 +124,11 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
   const auto& x_val = (value_of(x_eval)).eval();
   auto args_vals_tuple = std::make_tuple(eval(value_of(args))...);
 
-  check_nonnegative("alegbra_solver", "relative_tolerance", relative_tolerance);
+  check_nonzero_size("algebra_solver_powell", "initial guess", x);
+  check_finite("algebra_solver_powell", "initial guess", x);
+  check_nonnegative("alegbra_solver_powell", "relative_tolerance", relative_tolerance);
+  check_nonnegative("algebra_solver_powell", "function_tolerance", function_tolerance);
+  check_positive("algebra_solver_powell", "max_num_steps", max_num_steps);
 
   // Construct the Powell solver
   auto myfunc = [&](const auto& x) {
