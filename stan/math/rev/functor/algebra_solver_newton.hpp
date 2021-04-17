@@ -30,13 +30,14 @@ Eigen::VectorXd algebra_solver_newton_impl(
 
   check_nonzero_size("algebra_solver_newton", "initial guess", x_val);
   check_finite("algebra_solver_newton", "initial guess", x_val);
-  check_nonnegative("algebra_solver_newton", "scaling_step_size", scaling_step_size);
-  check_nonnegative("algebra_solver_newton", "function_tolerance", function_tolerance);
+  check_nonnegative("algebra_solver_newton", "scaling_step_size",
+                    scaling_step_size);
+  check_nonnegative("algebra_solver_newton", "function_tolerance",
+                    function_tolerance);
   check_positive("algebra_solver_newton", "max_num_steps", max_num_steps);
 
-  return kinsol_solve(f, x_val, scaling_step_size,
-                      function_tolerance, max_num_steps, 1, 10, KIN_LINESEARCH,
-                      msgs, y, args...);
+  return kinsol_solve(f, x_val, scaling_step_size, function_tolerance,
+                      max_num_steps, 1, 10, KIN_LINESEARCH, msgs, y, args...);
 }
 
 /** Implementation of autodiff newton solver. */
@@ -53,16 +54,18 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_newton_impl(
 
   check_nonzero_size("algebra_solver_newton", "initial guess", x_val);
   check_finite("algebra_solver_newton", "initial guess", x_val);
-  check_nonnegative("algebra_solver_newton", "scaling_step_size", scaling_step_size);
-  check_nonnegative("algebra_solver_newton", "function_tolerance", function_tolerance);
+  check_nonnegative("algebra_solver_newton", "scaling_step_size",
+                    scaling_step_size);
+  check_nonnegative("algebra_solver_newton", "function_tolerance",
+                    function_tolerance);
   check_positive("algebra_solver_newton", "max_num_steps", max_num_steps);
 
   // Solve the system
   Eigen::VectorXd theta_dbl = apply(
       [&](const auto&... vals) {
-        return kinsol_solve(f, x_val, scaling_step_size,
-                            function_tolerance, max_num_steps, 1, 10,
-                            KIN_LINESEARCH, msgs, vals...);
+        return kinsol_solve(f, x_val, scaling_step_size, function_tolerance,
+                            max_num_steps, 1, 10, KIN_LINESEARCH, msgs,
+                            vals...);
       },
       args_vals_tuple);
 
