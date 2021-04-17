@@ -13,59 +13,6 @@ namespace stan {
 namespace math {
 
 /**
- * A functor that allows us to treat either x or y as
- * the independent variable. If x_is_iv = true, than the
- * Jacobian is computed w.r.t x, else it is computed
- * w.r.t y.
- *
- * @tparam F type for algebraic system functor
- * @tparam T0 type for unknowns
- * @tparam T1 type for auxiliary parameters
- * @tparam x_is_iv true if x is the independent variable
- */
-template <typename F, typename T0, typename T1, bool x_is_iv>
-struct system_functor {
-  /** algebraic system functor */
-  F f_;
-  /** unknowns */
-  Eigen::Matrix<T0, Eigen::Dynamic, 1> x_;
-  /** auxiliary parameters */
-  Eigen::Matrix<T1, Eigen::Dynamic, 1> y_;
-  /** real data */
-  std::vector<double> dat_;
-  /** integer data */
-  std::vector<int> dat_int_;
-  /** stream message */
-  std::ostream* msgs_;
-
-  system_functor() {}
-
-  system_functor(const F& f, const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
-                 const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
-                 const std::vector<double>& dat,
-                 const std::vector<int>& dat_int, std::ostream* msgs)
-      : f_(f), x_(x), y_(y), dat_(dat), dat_int_(dat_int), msgs_(msgs) {}
-
-  /**
-   * An operator that takes in an independent variable. The
-   * independent variable is either passed as the unknown x,
-   * or the auxiliary parameter y. The x_is_iv template parameter
-   * allows us to determine whether the jacobian is computed
-   * with respect to x or y.
-   * @tparam T the scalar type of the independent variable
-   */
-  template <typename T>
-  inline Eigen::Matrix<T, Eigen::Dynamic, 1> operator()(
-      const Eigen::Matrix<T, Eigen::Dynamic, 1>& iv) const {
-    if (x_is_iv) {
-      return f_(iv, y_, dat_, dat_int_, msgs_);
-    } else {
-      return f_(x_, iv, dat_, dat_int_, msgs_);
-    }
-  }
-};
-
-/**
  * A structure which gets passed to Eigen's dogleg
  * algebraic solver.
  *
