@@ -31,12 +31,12 @@ template <typename T, require_vector_t<T>* = nullptr,
           require_vector_vt<std::is_arithmetic, T>* = nullptr>
 inline double quantile(const T& samples_vec, const double p) {
   check_not_nan("quantile", "samples_vec", samples_vec);
-  check_nonzero_size("quantile", "samples_vec", samples_vec);
-
   check_not_nan("quantile", "p", p);
   check_bounded("quantile", "p", p, 0, 1);
-
   const size_t n_sample = samples_vec.size();
+  if (n_sample == 0) {
+    return {};
+  }
 
   Eigen::VectorXd x = as_array_or_scalar(samples_vec);
 
@@ -81,13 +81,13 @@ inline std::vector<double> quantile(const T& samples_vec, const Tp& ps) {
   check_not_nan("quantile", "samples_vec", samples_vec);
   check_not_nan("quantile", "ps", ps);
 
-  check_nonzero_size("quantile", "samples_vec", samples_vec);
-  check_nonzero_size("quantile", "ps", ps);
-
   check_bounded("quantile", "ps", ps, 0, 1);
 
   const size_t n_sample = samples_vec.size();
   const size_t n_ps = ps.size();
+  if (n_ps == 0 || n_sample == 0) {
+    return {};
+  }
 
   Eigen::VectorXd x = as_array_or_scalar(samples_vec);
   const auto& p = as_array_or_scalar(ps);

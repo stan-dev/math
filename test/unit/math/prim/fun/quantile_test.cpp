@@ -11,7 +11,7 @@ void test_quantile_double() {
 
   // check size 0 argument throws
   T c0(0);
-  EXPECT_THROW(quantile(c0, 0.3), std::invalid_argument);
+  EXPECT_NO_THROW(quantile(c0, 0.3));
 
   // check size 1 argument works
   T c(1);
@@ -28,8 +28,9 @@ void test_quantile_double() {
   // check nan argument throws
   EXPECT_THROW(quantile(c, std::numeric_limits<double>::quiet_NaN()),
                std::domain_error);
-  EXPECT_THROW(quantile(std::numeric_limits<T>::quiet_NaN(), 0.5),
-               std::invalid_argument);
+ std::decay_t<T> qt_vec(5);
+ stan::math::fill(qt_vec, std::numeric_limits<stan::scalar_type_t<T>>::quiet_NaN());
+  EXPECT_THROW(quantile(qt_vec, 0.5), std::domain_error);
 
   // check quantile results against R
   T v(5);
@@ -67,7 +68,7 @@ TEST(MathFunctions, quantileStdVecInt) {
   using stan::math::quantile;
 
   std::vector<int> y0;
-  EXPECT_THROW(quantile(y0, 0.7), std::invalid_argument);
+  EXPECT_NO_THROW(quantile(y0, 0.7));
 
   std::vector<int> v{-1, 3, 5, -10};
 
@@ -121,17 +122,21 @@ void test_quantile_double() {
   EXPECT_THROW(quantile(v, p2), std::domain_error);
   EXPECT_THROW(quantile(v, p3), std::domain_error);
 
+  std::decay_t<T> qt_vec(5);
+  stan::math::fill(qt_vec, std::numeric_limits<stan::scalar_type_t<T>>::quiet_NaN());
+  std::decay_t<Tp> pt_vec(4);
+  stan::math::fill(pt_vec, std::numeric_limits<stan::scalar_type_t<Tp>>::quiet_NaN());
+
   // check nan argument throws
-  EXPECT_THROW(quantile(v, std::numeric_limits<Tp>::quiet_NaN()),
-               std::invalid_argument);
-  EXPECT_THROW(quantile(std::numeric_limits<T>::quiet_NaN(), p),
-               std::invalid_argument);
+  EXPECT_THROW(quantile(v, std::numeric_limits<stan::scalar_type_t<Tp>>::quiet_NaN()),
+               std::domain_error);
+  EXPECT_THROW(quantile(qt_vec, p), std::domain_error);
 
   // check size 0 in both arguments throws
   T v0(0);
   Tp p0(0);
-  EXPECT_THROW(quantile(v0, p), std::invalid_argument);
-  EXPECT_THROW(quantile(v, p0), std::invalid_argument);
+  EXPECT_NO_THROW(quantile(v0, p));
+  EXPECT_NO_THROW(quantile(v, p0));
 
   // check size 1 first argument works
   T v1(1);
