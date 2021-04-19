@@ -98,7 +98,6 @@ void run_benchmark(std::size_t system_size, int adjoint_integrator) {
         target += stan::math::sum(y[k]);
 
       target.grad();
-
     } catch (std::exception& exc) {
       std::cout << "oops, keep going please!" << std::endl;
       std::cerr << exc.what() << std::endl;
