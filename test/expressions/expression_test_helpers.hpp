@@ -164,7 +164,7 @@ void expect_adj_eq(const std::vector<T>& a, const std::vector<T>& b,
   }
 }
 
-void grad(stan::math::var& a) { a.grad(); }
+void grad(stan::math::var a) { a.grad(); }
 
 #define TO_STRING_(x) #x
 #define TO_STRING(x) TO_STRING_(x)
