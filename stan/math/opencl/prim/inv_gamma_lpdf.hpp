@@ -105,13 +105,15 @@ return_type_t<T_y_cl, T_shape_cl, T_scale_cl> inv_gamma_lpdf(
   matrix_cl<double> beta_deriv_cl;
 
   results(check_alpha_pos_finite, check_beta_pos_finite, check_y_not_nan,
-          logp_cl, y_deriv_cl, alpha_deriv_cl, beta_deriv_cl)
-      = expressions(alpha_pos_finite, beta_pos_finite, y_not_nan, logp_expr,
+          any_y_nonpositive_cl, logp_cl, y_deriv_cl, alpha_deriv_cl,
+          beta_deriv_cl)
+      = expressions(alpha_pos_finite, beta_pos_finite, y_not_nan,
+                    any_y_nonpositive, logp_expr,
                     calc_if<!is_constant<T_y_cl>::value>(y_deriv),
                     calc_if<!is_constant<T_shape_cl>::value>(alpha_deriv),
                     calc_if<!is_constant<T_scale_cl>::value>(beta_deriv));
 
-  if (from_matrix_cl(any_y_nonpositive).any()) {
+  if (from_matrix_cl(any_y_nonpositive_cl).any()) {
     return LOG_ZERO;
   }
 
