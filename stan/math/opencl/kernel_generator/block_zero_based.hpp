@@ -272,9 +272,19 @@ class block_
   inline void set_view(int bottom_diagonal, int top_diagonal,
                        int bottom_zero_diagonal, int top_zero_diagonal) const {
     int change = start_col_ - start_row_;
-    this->template get_arg<0>().set_view(
+    auto& a = this->template get_arg<0>();
+    a.set_view(
         bottom_diagonal + change, top_diagonal + change,
-        bottom_zero_diagonal + change, top_zero_diagonal + change);
+        (start_col_ == 0 && start_row_ <= 1 && start_row_ + rows_ == a.rows()
+                 && start_col_ + cols_ >= std::min(a.rows() - 1, a.cols())
+             ? bottom_zero_diagonal
+             : bottom_diagonal)
+            + change,
+        (start_row_ == 0 && start_col_ <= 1 && start_col_ + cols_ == a.cols()
+                 && start_row_ + rows_ >= std::min(a.rows(), a.cols() - 1)
+             ? top_zero_diagonal
+             : top_diagonal)
+            + change);
   }
 
   /**
