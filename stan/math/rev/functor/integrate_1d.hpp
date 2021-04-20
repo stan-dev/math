@@ -20,69 +20,12 @@ namespace stan {
 namespace math {
 
 /**
- * Calculate first derivative of f(x, param, std::ostream&)
- * with respect to the nth parameter. Uses nested reverse mode autodiff
- *
- * Gradients that evaluate to NaN are set to zero if the function itself
- * evaluates to zero. If the function is not zero and the gradient evaluates to
- * NaN, a std::domain_error is thrown
- *
- * @tparam F type of f
- * @tparam Args types of arguments to f
- * @param f function to compute gradients of
- * @param x location at which to evaluate gradients
- * @param xc complement of location (if bounded domain of integration)
- * @param n compute gradient with respect to nth parameter
- * @param msgs stream for messages
- * @param args other arguments to pass to f
- */
-template <typename F, typename... Args>
-inline double gradient_of_f(const F &f, const double &x, const double &xc,
-                            size_t n, std::ostream *msgs,
-                            const Args &... args) {
-  double gradient = 0.0;
-
-  // Run nested autodiff in this scope
-  nested_rev_autodiff nested;
-
-  std::tuple<decltype(deep_copy_vars(args))...> args_tuple_local_copy(
-      deep_copy_vars(args)...);
-
-  Eigen::VectorXd adjoints = Eigen::VectorXd::Zero(count_vars(args...));
-
-  var fx = apply(
-      [&f, &x, &xc, msgs](auto &&... args) { return f(x, xc, msgs, args...); },
-      args_tuple_local_copy);
-
-  fx.grad();
-
-  apply(
-      [&](auto &&... args) {
-        accumulate_adjoints(adjoints.data(),
-                            std::forward<decltype(args)>(args)...);
-      },
-      std::move(args_tuple_local_copy));
-
-  gradient = adjoints.coeff(n);
-  if (is_nan(gradient)) {
-    if (fx.val() == 0) {
-      gradient = 0;
-    } else {
-      throw_domain_error("gradient_of_f", "The gradient of f", n,
-                         "is nan for parameter ", "");
-    }
-  }
-
-  return gradient;
-}
-
-/**
  * Return the integral of f from a to b to the given relative tolerance
  *
+ * @tparam F Type of f
  * @tparam T_a type of first limit
  * @tparam T_b type of second limit
- * @tparam T_theta type of parameters
- * @tparam T Type of f
+ * @tparam Args types of parameter pack arguments
  *
  * @param f the functor to integrate
  * @param a lower limit of integration
@@ -97,36 +40,36 @@ template <typename F, typename T_a, typename T_b, typename... Args,
 inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
     const F &f, const T_a &a, const T_b &b, double relative_tolerance,
     std::ostream *msgs, const Args &... args) {
-  static const char *function = "integrate_1d";
+  static constexpr const char *function = "integrate_1d";
   check_less_or_equal(function, "lower limit", a, b);
 
   double a_val = value_of(a);
   double b_val = value_of(b);
 
-  if (a_val == b_val) {
+  if (unlikely(a_val == b_val)) {
     if (is_inf(a_val)) {
       throw_domain_error(function, "Integration endpoints are both", a_val, "",
                          "");
     }
     return var(0.0);
   } else {
-    std::tuple<decltype(value_of(args))...> args_val_tuple(value_of(args)...);
+    auto args_val_tuple = std::make_tuple(value_of(args)...);
 
-    double integral = integrate(apply(
-                                    [&f, msgs](auto &&... args) {
-                                      return std::bind<double>(
-                                          f, std::placeholders::_1,
-                                          std::placeholders::_2, msgs, args...);
-                                    },
-                                    args_val_tuple),
-                                a_val, b_val, relative_tolerance);
+    double integral = integrate(
+        [&](const auto &x, const auto &xc) {
+          return apply(
+              [&](auto &&... val_args) { return f(x, xc, msgs, val_args...); },
+              args_val_tuple);
+        },
+        a_val, b_val, relative_tolerance);
 
-    size_t num_vars_ab = count_vars(a, b);
+    constexpr size_t num_vars_ab = is_var<T_a>::value + is_var<T_b>::value;
     size_t num_vars_args = count_vars(args...);
     vari **varis = ChainableStack::instance_->memalloc_.alloc_array<vari *>(
         num_vars_ab + num_vars_args);
     double *partials = ChainableStack::instance_->memalloc_.alloc_array<double>(
         num_vars_ab + num_vars_args);
+    // We move this pointer up based on whether we a or b is a var type.
     double *partials_ptr = partials;
 
     save_varis(varis, a, b, args...);
@@ -135,33 +78,80 @@ inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
       partials[i] = 0.0;
     }
 
-    if (!is_inf(a) && is_var<T_a>::value) {
+    if (is_var<T_a>::value && !is_inf(a)) {
       *partials_ptr = apply(
-          [&f, a_val, msgs](auto &&... args) {
-            return -f(a_val, 0.0, msgs, args...);
+          [&f, a_val, msgs](auto &&... val_args) {
+            return -f(a_val, 0.0, msgs, val_args...);
           },
           args_val_tuple);
       partials_ptr++;
     }
 
     if (!is_inf(b) && is_var<T_b>::value) {
-      *partials_ptr
-          = apply([&f, b_val, msgs](
-                      auto &&... args) { return f(b_val, 0.0, msgs, args...); },
-                  args_val_tuple);
+      *partials_ptr = apply(
+          [&f, b_val, msgs](auto &&... val_args) {
+            return f(b_val, 0.0, msgs, val_args...);
+          },
+          args_val_tuple);
       partials_ptr++;
     }
 
-    for (size_t n = 0; n < num_vars_args; ++n) {
-      *partials_ptr = integrate(
-          std::bind<double>(gradient_of_f<F, Args...>, f, std::placeholders::_1,
-                            std::placeholders::_2, n, msgs, args...),
-          a_val, b_val, relative_tolerance);
-      partials_ptr++;
+    {
+      nested_rev_autodiff argument_nest;
+      // The arguments copy is used multiple times in the following nests, so
+      // do it once in a separate nest for efficiency
+      auto args_tuple_local_copy = std::make_tuple(deep_copy_vars(args)...);
+
+      // Save the varis so it's easy to efficiently access the nth adjoint
+      std::vector<vari *> local_varis(num_vars_args);
+      apply(
+          [&](const auto &... args) {
+            save_varis(local_varis.data(), args...);
+          },
+          args_tuple_local_copy);
+
+      for (size_t n = 0; n < num_vars_args; ++n) {
+        // This computes the integral of the gradient of f with respect to the
+        // nth parameter in args using a nested nested reverse mode autodiff
+        *partials_ptr = integrate(
+            [&](const auto &x, const auto &xc) {
+              argument_nest.set_zero_all_adjoints();
+
+              nested_rev_autodiff gradient_nest;
+              var fx = apply(
+                  [&f, &x, &xc, msgs](auto &&... local_args) {
+                    return f(x, xc, msgs, local_args...);
+                  },
+                  args_tuple_local_copy);
+              fx.grad();
+
+              double gradient = local_varis[n]->adj();
+
+              // Gradients that evaluate to NaN are set to zero if the function
+              // itself evaluates to zero. If the function is not zero and the
+              // gradient evaluates to NaN, a std::domain_error is thrown
+              if (is_nan(gradient)) {
+                if (fx.val() == 0) {
+                  gradient = 0;
+                } else {
+                  throw_domain_error("gradient_of_f", "The gradient of f", n,
+                                     "is nan for parameter ", "");
+                }
+              }
+              return gradient;
+            },
+            a_val, b_val, relative_tolerance);
+        partials_ptr++;
+      }
     }
 
-    return var(new precomputed_gradients_vari(
-        integral, num_vars_ab + num_vars_args, varis, partials));
+    return make_callback_var(
+        integral,
+        [total_vars = num_vars_ab + num_vars_args, varis, partials](auto &vi) {
+          for (size_t i = 0; i < total_vars; ++i) {
+            varis[i]->adj_ += partials[i] * vi.adj();
+          }
+        });
   }
 }
 

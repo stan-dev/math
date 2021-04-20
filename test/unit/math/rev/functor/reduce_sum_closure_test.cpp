@@ -39,7 +39,7 @@ TEST(StanMathRev_reduce_sum, grouped_gradient_closure) {
         const std::size_t num_terms = end - start + 1;
         std::decay_t<decltype(lambda)> lambda_slice(num_terms);
         for (std::size_t i = 0; i != num_terms; ++i)
-          lambda_slice[i] = lambda[gidx[start + i]];
+          lambda_slice[i] = lambda[gidx[start - 1 + i]];
         return stan::math::poisson_lpmf(slice, lambda_slice);
       },
       vlambda_v);
@@ -77,7 +77,5 @@ TEST(StanMathRev_reduce_sum, grouped_gradient_closure) {
   stan::math::grad(poisson_lpdf_static.vi_);
   const double lambda_adj_static = lambda_v.adj();
   EXPECT_FLOAT_EQ(lambda_adj_static, lambda_ref_adj);
-  stan::math::recover_memory();
-
   stan::math::recover_memory();
 }

@@ -56,13 +56,8 @@ namespace math {
 inline var operator-(const var& a, const var& b) {
   return make_callback_vari(a.vi_->val_ - b.vi_->val_,
                             [avi = a.vi_, bvi = b.vi_](const auto& vi) mutable {
-                              if (unlikely(is_nan(vi.val_))) {
-                                avi->adj_ = NOT_A_NUMBER;
-                                bvi->adj_ = NOT_A_NUMBER;
-                              } else {
-                                avi->adj_ += vi.adj_;
-                                bvi->adj_ -= vi.adj_;
-                              }
+                              avi->adj_ += vi.adj_;
+                              bvi->adj_ -= vi.adj_;
                             });
 }
 
@@ -84,14 +79,9 @@ inline var operator-(const var& a, Arith b) {
   if (unlikely(b == 0.0)) {
     return a;
   }
-  return make_callback_vari(a.vi_->val_ - b,
-                            [avi = a.vi_, b](const auto& vi) mutable {
-                              if (unlikely(is_nan(vi.val_))) {
-                                avi->adj_ = NOT_A_NUMBER;
-                              } else {
-                                avi->adj_ += vi.adj_;
-                              }
-                            });
+  return make_callback_vari(
+      a.vi_->val_ - b,
+      [avi = a.vi_, b](const auto& vi) mutable { avi->adj_ += vi.adj_; });
 }
 
 /**
@@ -109,14 +99,9 @@ inline var operator-(const var& a, Arith b) {
  */
 template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
 inline var operator-(Arith a, const var& b) {
-  return make_callback_vari(a - b.vi_->val_,
-                            [bvi = b.vi_, a](const auto& vi) mutable {
-                              if (unlikely(is_nan(vi.val_))) {
-                                bvi->adj_ = NOT_A_NUMBER;
-                              } else {
-                                bvi->adj_ -= vi.adj_;
-                              }
-                            });
+  return make_callback_vari(
+      a - b.vi_->val_,
+      [bvi = b.vi_, a](const auto& vi) mutable { bvi->adj_ -= vi.adj_; });
 }
 
 /**

@@ -9,20 +9,16 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class log1p_exp_v_vari : public op_v_vari {
- public:
-  explicit log1p_exp_v_vari(vari* avi) : op_v_vari(log1p_exp(avi->val_), avi) {}
-  void chain() { avi_->adj_ += adj_ * inv_logit(avi_->val_); }
-};
-}  // namespace internal
-
 /**
  * Return the log of 1 plus the exponential of the specified
  * variable.
  */
 inline var log1p_exp(const var& a) {
-  return var(new internal::log1p_exp_v_vari(a.vi_));
+  auto precomp_inv_logit = inv_logit(a.val());
+  return make_callback_var(log1p_exp(a.val()),
+                           [a, precomp_inv_logit](auto& vi) mutable {
+                             a.adj() += vi.adj() * precomp_inv_logit;
+                           });
 }
 
 /**

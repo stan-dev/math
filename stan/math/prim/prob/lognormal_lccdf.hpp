@@ -22,7 +22,9 @@
 namespace stan {
 namespace math {
 
-template <typename T_y, typename T_loc, typename T_scale>
+template <typename T_y, typename T_loc, typename T_scale,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_loc, T_scale>* = nullptr>
 return_type_t<T_y, T_loc, T_scale> lognormal_lccdf(const T_y& y,
                                                    const T_loc& mu,
                                                    const T_scale& sigma) {
@@ -40,7 +42,6 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lccdf(const T_y& y,
   decltype(auto) mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
   decltype(auto) sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
 
-  check_not_nan(function, "Random variable", y_val);
   check_nonnegative(function, "Random variable", y_val);
   check_finite(function, "Location parameter", mu_val);
   check_positive_finite(function, "Scale parameter", sigma_val);
