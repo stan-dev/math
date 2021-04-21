@@ -182,8 +182,10 @@ namespace math {
 
       if (i != 0) objective_old = objective_new;
 
+      if (std::isfinite(theta.sum())) {
       objective_new = -0.5 * a.dot(theta)
         + diff_likelihood.log_likelihood(theta, eta);
+      }
 
       // linesearch
       int do_line_search = 1;
@@ -193,11 +195,15 @@ namespace math {
         // CHECK -- no line search at first step?
         // CHECK -- which convergence criterion should we use here?
         // CHECK -- what do we do when theta has non-finite elements?
-        while (j < max_steps_line_search && objective_new < objective_old) {
+        while (j < max_steps_line_search
+          && (objective_new < objective_old || !std::isfinite(theta.sum()))) {
           a = (a + a_old) * 0.5;  // CHECK -- generalize this for any reduction?
           theta = covariance * a;
-          objective_new = - 0.5 * a.dot(theta)
-            + diff_likelihood.log_likelihood(theta, eta);
+
+          if (std::isfinite(theta.sum())) {
+            objective_new = - 0.5 * a.dot(theta)
+              + diff_likelihood.log_likelihood(theta, eta);
+          }
 
           j++;
 
