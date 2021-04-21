@@ -17,6 +17,7 @@ namespace math {
 /**
  * Return the eigenvalues of the specified symmetric matrix.
  * <p>See <code>eigen_decompose()</code> for more information.
+ * @tparam T type of input matrix.
  * @param m Specified matrix.
  * @return Eigenvalues of matrix.
  */
@@ -33,10 +34,11 @@ inline auto eigenvalues_sym(const T& m) {
   auto eigenvecs = to_arena(solver.eigenvectors());
   auto eigenvals_adj = eigenvals.adj();
 
-  reverse_pass_callback([eigenvals, arena_m, eigenvecs, eigenvals_adj]() mutable {
-    arena_m.adj() +=
-        eigenvecs * eigenvals_adj.asDiagonal() * eigenvecs.transpose();
-  });
+  reverse_pass_callback(
+      [eigenvals, arena_m, eigenvecs, eigenvals_adj]() mutable {
+        arena_m.adj()
+            += eigenvecs * eigenvals_adj.asDiagonal() * eigenvecs.transpose();
+      });
 
   return return_t(eigenvals);
 }
@@ -44,5 +46,3 @@ inline auto eigenvalues_sym(const T& m) {
 }  // namespace math
 }  // namespace stan
 #endif
-
-

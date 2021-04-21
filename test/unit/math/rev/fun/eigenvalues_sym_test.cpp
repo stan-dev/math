@@ -22,10 +22,6 @@ TEST(AgradRev, eigenvaluesSymLogDet) {
 
   stan::math::set_zero_all_adjoints();
   logdet.grad();
-
-  std::cout << "asdasdasd\n";
-  std::cout << a_inv.val() << "\n";
-  std::cout << "\n";
-  std::cout << a_v.adj() << "\n";
+  
   ASSERT_TRUE(a_inv.val().isApprox(a_v.adj()));
 }
