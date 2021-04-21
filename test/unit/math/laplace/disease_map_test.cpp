@@ -316,10 +316,10 @@ TEST_F(laplace_disease_map_test, lpmf_wrapper) {
   int compute_W_root = 1;
 
   var marginal_density
-    = laplace_marginal_lpmf(n_samples, poisson_log_likelihood(),
-                            eta_dummy, delta_lk,
-                            sqr_exp_kernel_functor(),
-                            phi, x, delta, delta_int, theta_0);
+    = laplace_marginal_lpmf<false>(n_samples, poisson_log_likelihood(),
+                                   eta_dummy, delta_lk,
+                                   sqr_exp_kernel_functor(),
+                                   phi, x, delta, delta_int, theta_0);
 
   VEC g;
   AVEC parm_vec = createAVEC(phi(0), phi(1));
@@ -344,7 +344,9 @@ TEST_F(laplace_disease_map_test, rng_wrapper) {
     theta_pred = laplace_rng(poisson_log_likelihood(),
                              eta_dummy, delta_lk, n_samples,
                              sqr_exp_kernel_functor(),
-                             phi, x, delta, delta_int, theta_0, rng);
+                             phi, x, delta, delta_int, theta_0,
+                             1e-6, 100, hessian_block_size,
+                             compute_W_root, rng);
 
   // std::cout << "theta_pred: " << theta_pred.transpose().head(5) << std::endl;
 

@@ -102,8 +102,11 @@ namespace math {
     covariance = covariance_function(phi, x, delta, delta_int, msgs);
     theta = theta_0;
     double objective_old = - 1e+10;  // CHECK -- what value to use?
+    double objective_inter = - 1e+10;
     double objective_new;
     double B_log_determinant;
+    Eigen::VectorXd a_old;
+    int j;
 
     if (hessian_block_size == 0 && compute_W_root == 0) {
       std::ostringstream message;
@@ -152,7 +155,6 @@ namespace math {
               * mdivide_left_tri<Eigen::Upper>(transpose(L),
                  mdivide_left_tri<Eigen::Lower>(L,
                    W_r.diagonal().cwiseProduct(covariance * b)));
-                 // diag_pre_multiply(W_r.diagonal(), multiply(covariance, b))));
           } else {
             b = W * theta + l_grad.head(theta_size);
             a = b - W_r
@@ -176,10 +178,34 @@ namespace math {
       // Simple Newton step
       theta = covariance * a;
 
-      // Check for convergence.
       if (i != 0) objective_old = objective_new;
       objective_new = -0.5 * a.dot(theta)
         + diff_likelihood.log_likelihood(theta, eta);
+
+      // linesearch method
+      int do_line_search = 0;
+      int max_steps_line_search = 10;
+      if (do_line_search && i != 0) {  // CHECK -- no line search at first step?
+        j = 0;
+
+        // CHECK -- should we use a different convergence criterion?
+        // while (j <= max_steps_line_search || objective_new < objective_old) {
+        while (j <= max_steps_line_search || objective_new < objective_inter) {
+
+          a = (a + a_old) * 0.5;  // CHECK -- generalize this for any reduction?
+          theta = covariance * a;
+
+          objective_inter = objective_new;
+          objective_new = - 0.5 * a.dot(theta)
+            + diff_likelihood.log_likelihood(theta, eta);
+
+          j += 1;
+        }
+      }
+
+      a_old = a;
+
+      // Check for convergence.
       double objective_diff = abs(objective_new - objective_old);
       if (objective_diff < tolerance) break;
     }

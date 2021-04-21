@@ -46,6 +46,7 @@ namespace math {
    *              efficient computation. Else, a more general but slower solver
    *              is used.
    */
+  /*
   template <bool propto, typename T0, typename T1, typename T2,
             typename Tx, typename K, typename L>
   stan::return_type_t<T1, T2> laplace_marginal_lpdf
@@ -71,7 +72,7 @@ namespace math {
       K_f, phi, eta, x, delta_K, delta_int_K,
       theta_0, msgs_K, tolerance, max_num_steps,
       hessian_block_size, compute_W_root);
-  }
+  }  */
 
   template <bool propto, typename T0, typename T1, typename T2,
             typename Tx, typename K, typename L>
@@ -105,9 +106,8 @@ namespace math {
    * is now a std::vector of interger and an Eigen::VectorXd
    * of double is passed as data.
    */
-   /*
-   template <typename T0, typename T1, typename T2, typename Tx,
-             typename K, typename L>
+   template <bool propto, typename T0, typename T1, typename T2,
+             typename Tx, typename K, typename L>
    stan::return_type_t<T1, T2> laplace_marginal_lpmf
      (const std::vector<int>& y,
       const L& L_f,
@@ -119,23 +119,19 @@ namespace math {
       const std::vector<double>& delta_K,
       const std::vector<int>& delta_int_K,
       const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
-      std::ostream* msgs_L = nullptr,
-      std::ostream* msgs_K = nullptr,
       double tolerance = 1e-6,
       long int max_num_steps = 100,
       int hessian_block_size = 0,
-      int compute_W_root = 1) {
+      int compute_W_root = 1,
+      std::ostream* msgs = nullptr) {
 
-    return laplace_marginal_lpdf(delta_L, L_f, eta, y,
+    return laplace_marginal_lpdf<propto>(delta_L, L_f, eta, y,
                                  K_f, phi, x, delta_K, delta_int_K,
-                                 theta_0, msgs_L, msgs_K,
-                                 tolerance,
+                                 theta_0, tolerance,
                                  max_num_steps,
                                  hessian_block_size,
-                                 compute_W_root);
+                                 compute_W_root, msgs);
   }
-  */
-
 }  // namespace math
 }  // namespace stan
 
