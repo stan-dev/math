@@ -15,6 +15,7 @@
 #include <Eigen/LU>
 #include <unsupported/Eigen/MatrixFunctions>
 
+#include <cmath>
 #include <iostream>
 #include <istream>  // CHECK -- do we need this?
 #include <fstream>  // CHECK -- do we need this?
@@ -180,30 +181,32 @@ namespace math {
       theta = covariance * a;
 
       if (i != 0) objective_old = objective_new;
+
       objective_new = -0.5 * a.dot(theta)
         + diff_likelihood.log_likelihood(theta, eta);
 
-      // linesearch method
+      // linesearch
       int do_line_search = 1;
       int max_steps_line_search = 10;
+      int j = 0;
       if (do_line_search && i != 0) {
         // CHECK -- no line search at first step?
         // CHECK -- which convergence criterion should we use here?
-        for (int j = 0; j < max_steps_line_search; j++) {
-          a_new = (a + a_old) * 0.5;  // CHECK -- generalize this for any reduction?
-          theta_new = covariance * a_new;
+        // CHECK -- what do we do when theta has non-finite elements?
+        while (j < max_steps_line_search && objective_new < objective_old) {
+          a = (a + a_old) * 0.5;  // CHECK -- generalize this for any reduction?
+          theta = covariance * a;
+          objective_new = - 0.5 * a.dot(theta)
+            + diff_likelihood.log_likelihood(theta, eta);
 
-          objective_inter = objective_new;
-          objective_new = - 0.5 * a_new.dot(theta_new)
-            + diff_likelihood.log_likelihood(theta_new, eta);
+          j++;
 
           // NOTE -- if objective function doesn't increase, break.
-          bool break_linesearch = (objective_new <= objective_inter);
-          if (break_linesearch) objective_new = objective_inter;
-          if (break_linesearch) break;
-
-          theta = theta_new;
-          a = a_new;
+          // bool break_linesearch = (objective_new <= objective_inter);
+          // if (break_linesearch) objective_new = objective_inter;
+          // if (break_linesearch) break;
+          // theta = theta_new;
+          // a = a_new;
         }
       }
 
