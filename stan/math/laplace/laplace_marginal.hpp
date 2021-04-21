@@ -106,7 +106,8 @@ namespace math {
     double objective_new;
     double B_log_determinant;
     Eigen::VectorXd a_old;
-    int j;
+    Eigen::VectorXd a_new;
+    Eigen::VectorXd theta_new;
 
     if (hessian_block_size == 0 && compute_W_root == 0) {
       std::ostringstream message;
@@ -185,21 +186,24 @@ namespace math {
       // linesearch method
       int do_line_search = 1;
       int max_steps_line_search = 10;
-      if (do_line_search && i != 0) {  // CHECK -- no line search at first step?
-        j = 0;
-
-        // CHECK -- should we use a different convergence criterion?
-        // while (j <= max_steps_line_search || objective_new < objective_old) {
-        while (j <= max_steps_line_search || objective_new > objective_inter) {
-
-          a = (a + a_old) * 0.5;  // CHECK -- generalize this for any reduction?
-          theta = covariance * a;
+      if (do_line_search && i != 0) {
+        // CHECK -- no line search at first step?
+        // CHECK -- which convergence criterion should we use here?
+        for (int j = 0; j < max_steps_line_search; j++) {
+          a_new = (a + a_old) * 0.5;  // CHECK -- generalize this for any reduction?
+          theta_new = covariance * a_new;
 
           objective_inter = objective_new;
-          objective_new = - 0.5 * a.dot(theta)
-            + diff_likelihood.log_likelihood(theta, eta);
+          objective_new = - 0.5 * a_new.dot(theta_new)
+            + diff_likelihood.log_likelihood(theta_new, eta);
 
-          j += 1;
+          // NOTE -- if objective function doesn't increase, break.
+          bool break_linesearch = (objective_new <= objective_inter);
+          if (break_linesearch) objective_new = objective_inter;
+          if (break_linesearch) break;
+
+          theta = theta_new;
+          a = a_new;
         }
       }
 
@@ -208,9 +212,9 @@ namespace math {
       // Check for convergence.
       double objective_diff = abs(objective_new - objective_old);
 
-       if (i % 500 == 0) std::cout << "obj: " << objective_new << std::endl;
-
+      // if (i % 500 == 0) std::cout << "obj: " << objective_new << std::endl;
       // if (objective_diff < tolerance) std::cout << "iter: " << i << std::endl;
+
       if (objective_diff < tolerance) break;
     }
 
