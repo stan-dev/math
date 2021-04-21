@@ -89,7 +89,7 @@ for subsequent compilations.
 
 The standalone makefile ensures that all the required `-I` include
 statements are given to the compiler and the necessary libraries are
-linked: `~/stan-dev/math` and `~/stan-dev/math/lib/eigen_3.3.9` and
+linked: `~/stan-dev/math` and `~/stan-dev/math/lib/eigen_3.4_rc1` and
 `~/stan-dev/math/lib/boost_1.75.0` and
 `~/stan-dev/math/lib/sundials_5.7.0/include` and
 `~/stan-dev/math/lib/tbb_2020.3/include`. The
