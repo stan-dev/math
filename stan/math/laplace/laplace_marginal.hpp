@@ -183,14 +183,14 @@ namespace math {
         + diff_likelihood.log_likelihood(theta, eta);
 
       // linesearch method
-      int do_line_search = 0;
+      int do_line_search = 1;
       int max_steps_line_search = 10;
       if (do_line_search && i != 0) {  // CHECK -- no line search at first step?
         j = 0;
 
         // CHECK -- should we use a different convergence criterion?
         // while (j <= max_steps_line_search || objective_new < objective_old) {
-        while (j <= max_steps_line_search || objective_new < objective_inter) {
+        while (j <= max_steps_line_search || objective_new > objective_inter) {
 
           a = (a + a_old) * 0.5;  // CHECK -- generalize this for any reduction?
           theta = covariance * a;
@@ -207,6 +207,10 @@ namespace math {
 
       // Check for convergence.
       double objective_diff = abs(objective_new - objective_old);
+
+       if (i % 500 == 0) std::cout << "obj: " << objective_new << std::endl;
+
+      // if (objective_diff < tolerance) std::cout << "iter: " << i << std::endl;
       if (objective_diff < tolerance) break;
     }
 

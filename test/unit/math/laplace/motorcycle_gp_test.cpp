@@ -153,7 +153,7 @@ protected:
 
     // Remark: finds optimal point with or without informed initial guess.
     for (int i = 0; i < n_obs; i++) {
-      theta0(2 * i) = 0;  // mu_hat(i);
+      theta0(2 * i) = mu_hat(i);  // 0
       theta0(2 * i + 1) = 0;
     }
 
@@ -198,17 +198,18 @@ TEST_F(laplace_motorcyle_gp_test, lk_autodiff) {
                                covariance_motorcycle_functor(),
                                value_of(phi), eta_dummy_dbl,
                                x, delta_dummy, delta_int, theta0,
-                               0, 1e-8, 100, hessian_block_size,
+                               0, 1e-2, 20000, hessian_block_size,
                                compute_W_root);
 
   std::cout << "density: " << marginal_density_dbl << std::endl;
 
+/*
   var marginal_density
     = laplace_marginal_density(diff_functor,
                                covariance_motorcycle_functor(),
                                phi, eta_dummy,
                                x, delta_dummy, delta_int, theta0,
-                               0, 1e-8, 100, hessian_block_size,
+                               0, 1e-8, 1000, hessian_block_size,
                                compute_W_root);
 
   VEC g;
@@ -244,8 +245,10 @@ TEST_F(laplace_motorcyle_gp_test, lk_autodiff) {
                                compute_W_root);
 
   std::cout << "g[0]: " << (target_u0 - target_l0) / (2 * eps) << std::endl;
+  */
 }
 
+/*
 TEST_F(laplace_motorcyle_gp_test, lk_autodiff_eta) {
   using stan::math::var;
   using stan::math::value_of;
@@ -307,8 +310,9 @@ TEST_F(laplace_motorcyle_gp_test, lk_autodiff_eta) {
                              compute_W_root);
 
   std::cout << "gf[4]: " << (target_u - target_l) / (2 * eps) << std::endl;
-}
 
+} */
+/*
 TEST_F(laplace_motorcyle_gp_test, wrapper_function) {
   using stan::math::var;
   using stan::math::laplace_marginal_lpdf;
@@ -333,4 +337,4 @@ TEST_F(laplace_motorcyle_gp_test, wrapper_function) {
   std::cout << "grad: "
   << g[0] << " " << g[1] << " " << g[2] << " " << g[3] << " " << g[4]
   << std::endl;
-}
+}  */
