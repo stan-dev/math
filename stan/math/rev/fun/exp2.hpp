@@ -41,7 +41,7 @@ inline var exp2(const var& a) {
   });
 }
 
-template <typename T>
+template <typename T, require_eigen_t<T>* = nullptr>
 inline auto exp2(const var_value<T>& a) {
   return make_callback_var(
       a.val().unaryExpr([](auto&& x) { return std::exp2(x); }),
