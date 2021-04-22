@@ -6,16 +6,16 @@
 #include <vector>
 
 struct harm_osc_ode_fun {
-  template <typename T0, typename T1, typename T2>
-  inline std::vector<stan::return_type_t<T1, T2>>
   // initial time
   // initial positions
   // parameters
   // double data
   // integer data
-  operator()(const T0& t_in, const std::vector<T1>& y_in,
-             const std::vector<T2>& theta, const std::vector<double>& x,
-             const std::vector<int>& x_int, std::ostream* msgs) const {
+  template <typename T0, typename T1, typename T2, typename T3, typename T4>
+  inline std::vector<stan::return_type_t<T1, T2>>
+  operator()(const T0& t_in, const T1& y_in,
+             const T2& theta, const T3& x,
+             const T4& x_int, std::ostream* msgs) const {
     if (y_in.size() != 2)
       throw std::domain_error(
           "this function was called with inconsistent state");
@@ -29,12 +29,12 @@ struct harm_osc_ode_fun {
 };
 
 struct harm_osc_ode_fun_eigen {
-  template <typename T0, typename T1, typename T2>
+  template <typename T0, typename T1, typename T2, typename T3, typename T4>
   inline auto operator()(const T0& t_in,
-                         const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y_in,
-                         std::ostream* msgs, const std::vector<T2>& theta,
-                         const std::vector<double>& x,
-                         const std::vector<int>& x_int) const {
+                         const T1& y_in,
+                         std::ostream* msgs, const T2& theta,
+                         const T3& x,
+                         const T4& x_int) const {
     if (y_in.size() != 2)
       throw std::domain_error(
           "this function was called with inconsistent state");
@@ -48,16 +48,16 @@ struct harm_osc_ode_fun_eigen {
 };
 
 struct harm_osc_ode_data_fun {
-  template <typename T0, typename T1, typename T2>
-  inline std::vector<stan::return_type_t<T1, T2>>
   // initial time
   // initial positions
   // parameters
   // double data
   // integer data
-  operator()(const T0& t_in, const std::vector<T1>& y_in,
-             const std::vector<T2>& theta, const std::vector<double>& x,
-             const std::vector<int>& x_int, std::ostream* msgs) const {
+  template <typename T0, typename T1, typename T2, typename T3, typename T4>
+  inline std::vector<stan::return_type_t<T1, T2>>
+  operator()(const T0& t_in, const T1& y_in,
+             const T2& theta, const T3& x,
+             const T4& x_int, std::ostream* msgs) const {
     if (y_in.size() != 2)
       throw std::domain_error(
           "this function was called with inconsistent state");
@@ -72,17 +72,17 @@ struct harm_osc_ode_data_fun {
 };
 
 struct harm_osc_ode_data_fun_eigen {
-  template <typename T0, typename T1, typename T2>
+  template <typename T0, typename T1, typename T2, typename T3, typename T4>
   inline auto operator()(const T0& t_in,
-                         const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y_in,
-                         std::ostream* msgs, const std::vector<T2>& theta,
-                         const std::vector<double>& x,
-                         const std::vector<int>& x_int) const {
+                         const T1& y_in,
+                         std::ostream* msgs, const T2& theta,
+                         const T3& x,
+                         const T4& x_int) const {
     if (y_in.size() != 2)
       throw std::domain_error(
           "this function was called with inconsistent state");
 
-    const T2& p = theta.at(0);
+    const auto& p = theta.at(0);
 
     Eigen::Matrix<stan::return_type_t<T1, T2>, -1, 1> res(2);
     res << (x.at(0) * y_in(1) + x_int.at(0)),
@@ -93,16 +93,16 @@ struct harm_osc_ode_data_fun_eigen {
 };
 
 struct harm_osc_ode_wrong_size_1_fun {
-  template <typename T0, typename T1, typename T2>
-  inline std::vector<stan::return_type_t<T1, T2>>
   // initial time
   // initial positions
   // parameters
   // double data
   // integer data
-  operator()(const T0& t_in, const std::vector<T1>& y_in,
-             const std::vector<T2>& theta, const std::vector<double>& x,
-             const std::vector<int>& x_int, std::ostream* msgs) const {
+  template <typename T0, typename T1, typename T2, typename T3, typename T4>
+  inline std::vector<stan::return_type_t<T1, T2>>
+  operator()(const T0& t_in, const T1& y_in,
+             const T2& theta, const T3& x,
+             const T4& x_int, std::ostream* msgs) const {
     if (y_in.size() != 2)
       throw std::domain_error(
           "this function was called with inconsistent state");
@@ -117,16 +117,16 @@ struct harm_osc_ode_wrong_size_1_fun {
 };
 
 struct harm_osc_ode_wrong_size_2_fun {
-  template <typename T0, typename T1, typename T2>
-  inline std::vector<stan::return_type_t<T1, T2>>
   // initial time
   // initial positions
   // parameters
   // double data
   // integer data
-  operator()(const T0& t_in, const std::vector<T1>& y_in,
-             const std::vector<T2>& theta, const std::vector<double>& x,
-             const std::vector<int>& x_int, std::ostream* msgs) const {
+  template <typename T0, typename T1, typename T2, typename T3, typename T4>
+  inline std::vector<stan::return_type_t<T1, T2>>
+  operator()(const T0& t_in, const T1& y_in,
+             const T2& theta, const T3& x,
+             const T4& x_int, std::ostream* msgs) const {
     if (y_in.size() != 2)
       throw std::domain_error(
           "this function was called with inconsistent state");

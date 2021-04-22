@@ -14,12 +14,11 @@ using stan::math::var;
 struct scaling_rhs {
   template <typename T0, typename T1, typename T2, typename T3, typename T4,
             typename T5>
-  inline Eigen::Matrix<stan::return_type_t<T1, T2, T3, T4, T5>, Eigen::Dynamic,
-                       1>
-  operator()(const T0& t, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
-             std::ostream* msgs, const std::vector<T2>& kt,
-             const std::vector<T3>& e50, const std::vector<T4>& k12,
-             const std::vector<T5>& k21) const {
+  inline auto
+  operator()(const T0& t, const T1& y,
+             std::ostream* msgs, const T2& kt,
+             const T3& e50, const T4& k12,
+             const T5& k21) const {
     std::size_t num_main_states = kt.size();
     std::size_t num_states = 2 * num_main_states;
 

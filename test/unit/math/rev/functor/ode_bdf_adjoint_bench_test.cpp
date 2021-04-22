@@ -13,9 +13,8 @@ using stan::math::var;
 struct pkpd_rhs {
   template <typename T0, typename T1, typename T2, typename T3, typename T4,
             typename T5, typename T6, typename T7, typename T8>
-  inline Eigen::Matrix<stan::return_type_t<T1, T2, T3, T4, T5, T6, T7, T8>,
-                       Eigen::Dynamic, 1>
-  operator()(const T0& t, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
+  inline auto
+  operator()(const T0& t, const T1& y,
              std::ostream* msgs, const T2& ka, const T3& ke, const T4& k12,
              const T5& k21, const T6& kin, const T7& kout,
              const T8& ea50) const {

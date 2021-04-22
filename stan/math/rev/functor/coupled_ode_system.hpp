@@ -138,7 +138,9 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
       y_adjoints_ = y_vars.adj();
 
       // memset was faster than Eigen setZero
-      memset(args_adjoints_.data(), 0, sizeof(double) * num_args_vars);
+      if (num_args_vars > 0) {
+        memset(args_adjoints_.data(), 0, sizeof(double) * num_args_vars);        
+      }
 
       apply(
           [&](auto&&... args) {
@@ -148,7 +150,7 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
 
       // The vars here do not live on the nested stack so must be zero'd
       // separately
-      apply([&](auto&&... args) { zero_adjoints(args...); }, local_args_tuple_);
+      stan::math::for_each([](auto&& arg) { zero_adjoints(arg); }, local_args_tuple_);
 
       // No need to zero adjoints after last sweep
       if (i + 1 < N_) {

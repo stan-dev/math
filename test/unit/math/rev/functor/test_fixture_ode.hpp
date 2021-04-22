@@ -109,6 +109,11 @@
  */
 template <class ode_problem_type>
 struct ODETestFixture : public ::testing::Test {
+
+virtual void TearDown() {
+  stan::math::recover_memory();
+}
+
   /**
    * test ODE solver pass
    *
