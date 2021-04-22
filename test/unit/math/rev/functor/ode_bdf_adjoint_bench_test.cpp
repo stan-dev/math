@@ -83,13 +83,11 @@ void run_benchmark(int adjoint_integrator) {
       if (adjoint_integrator) {
         const int N = y0.size();
         std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> y
-            = ode_adjoint_tol_ctl(ode, y0, t0, ts,
-                                  rel_tol, Eigen::VectorXd::Constant(N, abs_tol),
-                                  rel_tol, Eigen::VectorXd::Constant(N, abs_tol_B),
-                                  rel_tol, abs_tol_QB,
-                                  max_num_steps, steps_checkpoint, 1, 2, 2,
-                                  nullptr, ka, ke, k12, k21, kin, kout,
-                                  ea50);
+            = ode_adjoint_tol_ctl(
+                ode, y0, t0, ts, rel_tol, Eigen::VectorXd::Constant(N, abs_tol),
+                rel_tol, Eigen::VectorXd::Constant(N, abs_tol_B), rel_tol,
+                abs_tol_QB, max_num_steps, steps_checkpoint, 1, 2, 2, nullptr,
+                ka, ke, k12, k21, kin, kout, ea50);
 
         stan::math::grad();
       } else {
