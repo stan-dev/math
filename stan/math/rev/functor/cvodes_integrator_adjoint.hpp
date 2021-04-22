@@ -44,7 +44,6 @@ public:
     AbsTolFwd& absolute_tolerance_forward,
     AbsTolBwd& absolute_tolerance_backward) : chainable_alloc(), N_(N),
     function_name_(function_name) {
-    if (N > 0) {
       nv_state_forward_ = N_VMake_Serial(N, state_forward.data());
       nv_state_backward_ = N_VMake_Serial(N, state_backward.data());
       nv_quad_ = N_VMake_Serial(num_args_vars, quad.data());
@@ -54,25 +53,24 @@ public:
           = N_VMake_Serial(N, absolute_tolerance_backward.data());
 
       A_forward_ = SUNDenseMatrix(N, N);
-      LS_forward_ = SUNDenseLinearSolver(nv_state_forward_, A_forward_);
-
       A_backward_ = SUNDenseMatrix(N, N);
-      LS_backward_ = SUNDenseLinearSolver(nv_state_backward_, A_backward_);
-
+      if (N > 0 ) {
+        LS_forward_ = SUNDenseLinearSolver(nv_state_forward_, A_forward_);
+        LS_backward_ = SUNDenseLinearSolver(nv_state_backward_, A_backward_);
+      }
       cvodes_mem_ = CVodeCreate(solver_forward);
 
       if (cvodes_mem_ == nullptr) {
         throw std::runtime_error("CVodeCreate failed to allocate memory");
       }
-    }
   }
   virtual ~cvodes_integrator_adjoint_mem() {
-    if (N_ > 0) {
-      SUNLinSolFree(LS_forward_);
       SUNMatDestroy(A_forward_);
-      SUNLinSolFree(LS_backward_);
       SUNMatDestroy(A_backward_);
-
+      if (N_ > 0) {
+        SUNLinSolFree(LS_forward_);
+        SUNLinSolFree(LS_backward_);
+      }
       N_VDestroy_Serial(nv_state_forward_);
       N_VDestroy_Serial(nv_state_backward_);
       N_VDestroy_Serial(nv_quad_);
@@ -82,7 +80,6 @@ public:
       if (cvodes_mem_) {
         CVodeFree(&cvodes_mem_);
       }
-    }
   }
 };
 
@@ -609,7 +606,7 @@ class cvodes_integrator_adjoint_vari : public vari {
       if (non_chaining_varis_) {
         store_state(non_chaining_varis_ + N_ * n, state_forward_, y_return[n]);
       } else {
-        store_state(non_chaining_varis_, state_forward_, y_return[n]);        
+        store_state(non_chaining_varis_, state_forward_, y_return[n]);
       }
       y_[n] = state_forward_;
 
