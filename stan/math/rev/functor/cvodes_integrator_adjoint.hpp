@@ -307,10 +307,11 @@ class cvodes_integrator_adjoint_vari : public vari {
   }
 
   /**
-   * Overloads which setup the states returned from the forward solve. In case the return type is a double only, then no autodiff is needed. In case of autodiff non-chaining varis are setup accordingly.
+   * Overloads which setup the states returned from the forward solve. In case
+   * the return type is a double only, then no autodiff is needed. In case of
+   * autodiff non-chaining varis are setup accordingly.
    */
-  void store_state(vari** non_chaining_varis,
-                   const Eigen::VectorXd& state,
+  void store_state(vari** non_chaining_varis, const Eigen::VectorXd& state,
                    Eigen::Matrix<var, Eigen::Dynamic, 1>& state_return) {
     state_return.resize(N_);
     for (size_t i = 0; i < N_; i++) {
@@ -319,8 +320,7 @@ class cvodes_integrator_adjoint_vari : public vari {
     }
   }
 
-  void store_state(vari** non_chaining_varis,
-                   const Eigen::VectorXd& state,
+  void store_state(vari** non_chaining_varis, const Eigen::VectorXd& state,
                    Eigen::Matrix<double, Eigen::Dynamic, 1>& state_return) {
     state_return = state;
   }
@@ -416,9 +416,11 @@ class cvodes_integrator_adjoint_vari : public vari {
 
         y_(ts_.size()),
 
-        non_chaining_varis_(num_vars_ == 0 ?
-                            nullptr :
-                            ChainableStack::instance_->memalloc_.alloc_array<vari*>(ts_.size() * N_)),
+        non_chaining_varis_(
+            num_vars_ == 0
+                ? nullptr
+                : ChainableStack::instance_->memalloc_.alloc_array<vari*>(
+                      ts_.size() * N_)),
         t0_varis_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
             num_t0_vars_)),
         ts_varis_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
@@ -577,7 +579,8 @@ class cvodes_integrator_adjoint_vari : public vari {
     const double t0_dbl = value_of(t0_);
     const std::vector<double> ts_dbl = value_of(ts_);
 
-    std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> y_return(ts_.size());
+    std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> y_return(
+        ts_.size());
 
     double t_init = t0_dbl;
     for (size_t n = 0; n < ts_dbl.size(); ++n) {
@@ -622,7 +625,7 @@ class cvodes_integrator_adjoint_vari : public vari {
 
     forward_returned_ = true;
     // std::cout << "forward integrate...done" << std::endl;
-    //return internal::build_varis<T_Return>(non_chaining_varis_, y_);
+    // return internal::build_varis<T_Return>(non_chaining_varis_, y_);
     return y_return;
   }
 
