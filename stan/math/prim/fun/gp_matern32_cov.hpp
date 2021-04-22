@@ -66,13 +66,20 @@ gp_matern32_cov(const std::vector<T_x> &x, const T_s &sigma,
   T_s sigma_sq = square(sigma);
   T_l root_3_inv_l = std::sqrt(3.0) / length_scale;
 
-  for (size_t i = 0; i < x_size; ++i) {
-    cov(i, i) = sigma_sq;
-    for (size_t j = i + 1; j < x_size; ++j) {
-      return_type_t<T_x> dist = distance(x[i], x[j]);
-      cov(i, j)
-          = sigma_sq * (1.0 + root_3_inv_l * dist) * exp(-root_3_inv_l * dist);
-      cov(j, i) = cov(i, j);
+  size_t block_size = 10;
+  for (size_t jb = 0; jb < x_size; jb += block_size) {
+    for (size_t ib = jb; ib < x_size; ib += block_size) {
+      size_t j_end = std::min(x_size, jb + block_size);
+      for (size_t j = jb; j < j_end; ++j) {
+        cov.coeffRef(j, j) = sigma_sq;
+        size_t i_end = std::min(x_size, ib + block_size);
+        for (size_t i = std::max(ib, j + 1); i < i_end; ++i) {
+          return_type_t<T_x> dist = distance(x[i], x[j]);
+          cov.coeffRef(j, i) = cov.coeffRef(i, j)
+              = sigma_sq * (1.0 + root_3_inv_l * dist)
+                * exp(-root_3_inv_l * dist);
+        }
+      }
     }
   }
   return cov;
@@ -132,11 +139,18 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x, -1, 1>> &x,
   std::vector<Eigen::Matrix<return_type_t<T_x, T_l>, -1, 1>> x_new
       = divide_columns(x, length_scale);
 
-  for (size_t i = 0; i < x_size; ++i) {
-    for (size_t j = i; j < x_size; ++j) {
-      return_type_t<T_x, T_l> dist = distance(x_new[i], x_new[j]);
-      cov(i, j) = sigma_sq * (1.0 + root_3 * dist) * exp(-root_3 * dist);
-      cov(j, i) = cov(i, j);
+  size_t block_size = 10;
+  for (size_t jb = 0; jb < x_size; jb += block_size) {
+    for (size_t ib = jb; ib < x_size; ib += block_size) {
+      size_t j_end = std::min(x_size, jb + block_size);
+      for (size_t j = jb; j < j_end; ++j) {
+        size_t i_end = std::min(x_size, ib + block_size);
+        for (size_t i = std::max(ib, j); i < i_end; ++i) {
+          return_type_t<T_x, T_l> dist = distance(x_new[i], x_new[j]);
+          cov.coeffRef(j, i) = cov.coeffRef(i, j)
+              = sigma_sq * (1.0 + root_3 * dist) * exp(-root_3 * dist);
+        }
+      }
     }
   }
   return cov;
@@ -207,11 +221,18 @@ gp_matern32_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   T_s sigma_sq = square(sigma);
   T_l root_3_inv_l_sq = std::sqrt(3.0) / length_scale;
 
-  for (size_t i = 0; i < x1_size; ++i) {
-    for (size_t j = 0; j < x2_size; ++j) {
-      return_type_t<T_x1, T_x2> dist = distance(x1[i], x2[j]);
-      cov(i, j) = sigma_sq * (1.0 + root_3_inv_l_sq * dist)
-                  * exp(-root_3_inv_l_sq * dist);
+  size_t block_size = 10;
+  for (size_t ib = 0; ib < x1.size(); ib += block_size) {
+    for (size_t jb = 0; jb < x2.size(); jb += block_size) {
+      size_t j_end = std::min(x2_size, jb + block_size);
+      for (size_t j = jb; j < j_end; ++j) {
+        size_t i_end = std::min(x1_size, ib + block_size);
+        for (size_t i = ib; i < i_end; ++i) {
+          return_type_t<T_x1, T_x2> dist = distance(x1[i], x2[j]);
+          cov(i, j) = sigma_sq * (1.0 + root_3_inv_l_sq * dist)
+                      * exp(-root_3_inv_l_sq * dist);
+        }
+      }
     }
   }
   return cov;
@@ -292,10 +313,18 @@ gp_matern32_cov(const std::vector<Eigen::Matrix<T_x1, -1, 1>> &x1,
   std::vector<Eigen::Matrix<return_type_t<T_x2, T_l>, -1, 1>> x2_new
       = divide_columns(x2, length_scale);
 
-  for (size_t i = 0; i < x1_size; ++i) {
-    for (size_t j = 0; j < x2_size; ++j) {
-      return_type_t<T_x1, T_x2, T_l> dist = distance(x1_new[i], x2_new[j]);
-      cov(i, j) = sigma_sq * (1.0 + root_3 * dist) * exp(-root_3 * dist);
+  size_t block_size = 10;
+
+  for (size_t ib = 0; ib < x1.size(); ib += block_size) {
+    for (size_t jb = 0; jb < x2.size(); jb += block_size) {
+      size_t j_end = std::min(x2_size, jb + block_size);
+      for (size_t j = jb; j < j_end; ++j) {
+        size_t i_end = std::min(x1_size, ib + block_size);
+        for (size_t i = ib; i < i_end; ++i) {
+          return_type_t<T_x1, T_x2, T_l> dist = distance(x1_new[i], x2_new[j]);
+          cov(i, j) = sigma_sq * (1.0 + root_3 * dist) * exp(-root_3 * dist);
+        }
+      }
     }
   }
   return cov;
