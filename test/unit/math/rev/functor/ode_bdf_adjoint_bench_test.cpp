@@ -54,9 +54,9 @@ void run_benchmark(int adjoint_integrator) {
   double abs_tol_QB = abs_tol_B * 10.0;
   double rel_tol = 1e-6;
   int steps_checkpoint = 100;
-  int max_num_steps = 100000;
+  int max_num_steps = 1000000;
 
-  for (std::size_t i = 0; i != 200; i++) {
+  for (std::size_t i = 0; i != 2; i++) {
     stan::math::nested_rev_autodiff nested;
 
     var CL = lognormal_rng(true_CL, log_sigma, base_rng);
@@ -81,10 +81,14 @@ void run_benchmark(int adjoint_integrator) {
 
     try {
       if (adjoint_integrator) {
+        const int N = y0.size();
         std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> y
-            = ode_bdf_adjoint_tol(ode, y0, t0, ts, rel_tol, abs_tol,
-                                  max_num_steps, nullptr, abs_tol_B, abs_tol_QB,
-                                  steps_checkpoint, ka, ke, k12, k21, kin, kout,
+            = ode_adjoint_tol_ctl(ode, y0, t0, ts,
+                                  rel_tol, Eigen::VectorXd::Constant(N, abs_tol),
+                                  rel_tol, Eigen::VectorXd::Constant(N, abs_tol_B),
+                                  rel_tol, abs_tol_QB,
+                                  max_num_steps, steps_checkpoint, 1, 2, 2,
+                                  nullptr, ka, ke, k12, k21, kin, kout,
                                   ea50);
 
         stan::math::grad();
