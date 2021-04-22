@@ -32,15 +32,9 @@ struct covariance_motorcycle_functor {
     T1 sigma_g = phi(3);
     int n_obs = delta_int[0];
 
-    double jitter = 1e-8;
+    double jitter = 1e-6;
     Matrix<T1, -1, -1> kernel_f = gp_exp_quad_cov(x, sigma_f, length_scale_f);
     Matrix<T1, -1, -1> kernel_g = gp_exp_quad_cov(x, sigma_g, length_scale_g);
-
-   // std::cout << "kernel_f: " << kernel_f.row(0).head(5) << std::endl;
-   // std::cout << "kernel_g: " << kernel_g.row(0).head(5) << std::endl;
-   // std::cout << "x: ";
-   // for (int i = 0; i < 5; i++) std::cout << x[i] << " ";
-   // std::cout << std::endl;
 
     Matrix<T1, -1, -1> kernel_all
      = Eigen::MatrixXd::Zero(2 * n_obs, 2 * n_obs);
@@ -54,6 +48,9 @@ struct covariance_motorcycle_functor {
         }
       }
     }
+
+    for (int i = 0; i < 2 * n_obs; i++) kernel_all(i, i) += jitter;
+
     return kernel_all;
   }
 };
@@ -157,7 +154,7 @@ protected:
       theta0(2 * i + 1) = 0;
     }
 
-    compute_W_root = 0;
+    solver = 2;
   }
 
   int n_obs;
@@ -174,7 +171,7 @@ protected:
   Eigen::VectorXd theta0;
   Eigen::VectorXd eta_dummy_dbl;
   Eigen::Matrix<stan::math::var, -1, 1> eta_dummy;
-  int compute_W_root;
+  int solver;
 };
 
 TEST_F(laplace_motorcyle_gp_test, lk_autodiff) {
@@ -193,13 +190,17 @@ TEST_F(laplace_motorcyle_gp_test, lk_autodiff) {
   diff_likelihood<normal_likelihood> diff_functor(f, y, delta_int);
 
   int hessian_block_size = 2;
+  solver = 2;
+  int do_line_search = 1;
+  int max_steps_line_search = 100;
   double marginal_density_dbl
     = laplace_marginal_density(diff_functor,
                                covariance_motorcycle_functor(),
                                value_of(phi), eta_dummy_dbl,
                                x, delta_dummy, delta_int, theta0,
                                0, 1e-2, 20000, hessian_block_size,
-                               compute_W_root);
+                               solver, do_line_search,
+                               max_steps_line_search);
 
   std::cout << "density: " << marginal_density_dbl << std::endl;
 

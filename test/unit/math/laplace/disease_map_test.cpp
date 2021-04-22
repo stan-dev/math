@@ -189,14 +189,13 @@ TEST_F(laplace_disease_map_test, lk_autodiff) {
 
   auto start = std::chrono::system_clock::now();
   int hessian_block_size = 0;  // 0, 1, 911
-  int compute_W_root = 1;
+  int solver = 1;  // options: 1, 2, or 3.
   double marginal_density_dbl
     = laplace_marginal_density(diff_functor,
                                sqr_exp_kernel_functor(),
                                value_of(phi), value_of(eta_dummy),
                                x, delta, delta_int, theta_0,
-                               0, 1e-6, 100, hessian_block_size,
-                               compute_W_root);
+                               0, 1e-6, 100, hessian_block_size, solver);
 
   auto end = std::chrono::system_clock::now();
   std::chrono::duration<double> elapsed_time = end - start;
@@ -208,11 +207,13 @@ TEST_F(laplace_disease_map_test, lk_autodiff) {
 
   start = std::chrono::system_clock::now();
 
+  hessian_block_size = 0;
+  solver = 1;
   var marginal_density
     = laplace_marginal_density(diff_functor,
                                sqr_exp_kernel_functor(), phi, eta_dummy,
                                x, delta, delta_int, theta_0,
-                               0, 1e-6, 100, hessian_block_size);
+                               0, 1e-6, 100, hessian_block_size, solver);
 
   end = std::chrono::system_clock::now();
   elapsed_time = end - start;
@@ -291,7 +292,7 @@ TEST_F(laplace_disease_map_test, rng_autodiff) {
 
   boost::random::mt19937 rng;
   int hessian_block_size = 0;
-  int compute_W_root = 1;
+  int solver = 1;
 
   auto start = std::chrono::system_clock::now();
   Eigen::VectorXd
@@ -300,7 +301,7 @@ TEST_F(laplace_disease_map_test, rng_autodiff) {
                                   phi, eta_dummy,
                                   x, x, delta, delta_int, theta_0, rng,
                                   0, 1e-6, 100, hessian_block_size,
-                                  compute_W_root);
+                                  solver);
   auto end = std::chrono::system_clock::now();
   std::chrono::duration<double> elapsed_time = end - start;
   std::cout << "LAPLACE_APPROX_RNG" << std::endl
@@ -313,7 +314,7 @@ TEST_F(laplace_disease_map_test, lpmf_wrapper) {
   using stan::math::laplace_marginal_lpmf;
 
   int hessian_block_size = 0;
-  int compute_W_root = 1;
+  int solver = 1;
 
   var marginal_density
     = laplace_marginal_lpmf<false>(n_samples, poisson_log_likelihood(),
@@ -338,7 +339,7 @@ TEST_F(laplace_disease_map_test, rng_wrapper) {
   // TODO: put these variables in the test class.
   boost::random::mt19937 rng;
   int hessian_block_size = 0;
-  int compute_W_root = 1;
+  int solver = 1;
 
   Eigen::VectorXd
     theta_pred = laplace_rng(poisson_log_likelihood(),
@@ -346,8 +347,7 @@ TEST_F(laplace_disease_map_test, rng_wrapper) {
                              sqr_exp_kernel_functor(),
                              phi, x, delta, delta_int, theta_0,
                              1e-6, 100, hessian_block_size,
-                             compute_W_root, rng);
-
+                             solver, rng);
   // std::cout << "theta_pred: " << theta_pred.transpose().head(5) << std::endl;
 
 }

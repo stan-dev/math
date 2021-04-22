@@ -90,7 +90,9 @@ namespace math {
      double tolerance = 1e-6,
      long int max_num_steps = 100,
      int hessian_block_size = 0,
-     int compute_W_root = 1,
+     int solver = 1,
+     int do_line_search = 1,
+     int max_steps_line_search = 10,
      std::ostream* msgs = nullptr) {
     // TEST: provisional signature to agree with parser.
 
@@ -98,7 +100,8 @@ namespace math {
       diff_likelihood<L>(L_f, y, delta_int_L, msgs),
       K_f, phi, eta, x, delta_K, delta_int_K,
       theta_0, msgs, tolerance, max_num_steps,
-      hessian_block_size, compute_W_root);
+      hessian_block_size, solver,
+      do_line_search, max_steps_line_search);
   }
 
   /**
@@ -122,7 +125,9 @@ namespace math {
       double tolerance = 1e-6,
       long int max_num_steps = 100,
       int hessian_block_size = 0,
-      int compute_W_root = 1,
+      int solver = 1,
+      int do_line_search = 1,
+      int max_steps_line_search = 10,
       std::ostream* msgs = nullptr) {
 
     return laplace_marginal_lpdf<propto>(delta_L, L_f, eta, y,
@@ -130,7 +135,8 @@ namespace math {
                                  theta_0, tolerance,
                                  max_num_steps,
                                  hessian_block_size,
-                                 compute_W_root, msgs);
+                                 solver, do_line_search,
+                                 max_steps_line_search, msgs);
   }
 }  // namespace math
 }  // namespace stan

@@ -23,6 +23,9 @@
 // Reference for calculations of marginal and its gradients:
 // Margossian et al, 2020, https://arxiv.org/abs/2004.12550
 
+// TODO -- either use Eigen's .solve() or mdivide_left_tri.
+// The code needs to be more consistent.
+
 
 namespace stan {
 namespace math {
@@ -63,14 +66,22 @@ namespace math {
    * @param[in, out] covariance the evaluated covariance function for the
    *                 latent gaussian variable.
    * @param[in, out] theta a vector to store the mode.
-   * @param[in, out] W_root a vector to store the square root of the
-   *                 diagonal negative Hessian.
+   * @param[in, out] W_r a vector to store the square root of the
+   *                 negative Hessian or the negative Hessian, depending
+   *                 on which solver we use.
    * @param[in, out] L cholesky decomposition of stabilized inverse covariance.
    * @param[in, out] a element in the Newton step
    * @param[in, out] l_grad the log density of the likelihood.
    * @param[in] theta_0 the initial guess for the mode.
    * @param[in] tolerance the convergence criterion for the Newton solver.
    * @param[in] max_num_steps maximum number of steps for the Newton solver.
+   * @param[in] hessian_block_size the size of the block, where we assume
+   *              the Hessian is block-diagonal.
+   * @param[in] solver which Newton solver to use:
+   *                     (1) method using the root of W.
+   *                     (2) method using the root of the covariance.
+   *                     (3) method using an LU decomposition.
+   *
    * @return the log marginal density, p(y | phi).
    */
   template <typename D, typename K, typename Tx>
@@ -89,12 +100,15 @@ namespace math {
                             Eigen::VectorXd& a,
                             Eigen::VectorXd& l_grad,
                             Eigen::PartialPivLU<Eigen::MatrixXd>& LU,
+                            Eigen::MatrixXd& K_root,
                             const Eigen::VectorXd& theta_0,
                             std::ostream* msgs = nullptr,
                             double tolerance = 1e-6,
                             long int max_num_steps = 100,
                             int hessian_block_size = 0,
-                            int compute_W_root = 1) {
+                            int solver = 1,
+                            int do_line_search = 0,
+                            int max_steps_line_search = 10) {
     using Eigen::MatrixXd;
     using Eigen::VectorXd;
     using Eigen::SparseMatrix;
@@ -110,7 +124,7 @@ namespace math {
     Eigen::VectorXd a_new;
     Eigen::VectorXd theta_new;
 
-    if (hessian_block_size == 0 && compute_W_root == 0) {
+    if (hessian_block_size == 0 && solver != 1) {
       std::ostringstream message;
       message << "laplace_marginal_density: if treating the Hessian as diagonal"
         << " we assume its matrix square-root can be computed."
@@ -137,7 +151,7 @@ namespace math {
       VectorXd b;
       {
         MatrixXd B;
-        if (compute_W_root) {
+        if (solver == 1) {
           if (hessian_block_size == 0) {
             W_r = W.cwiseSqrt();
             B = MatrixXd::Identity(theta_size, theta_size)
@@ -164,6 +178,18 @@ namespace math {
                   mdivide_left_tri<Eigen::Lower>(L,
                   W_r * (covariance * b)));
           }
+        } else if (solver == 2) {
+          // TODO -- use triangularView for K_root.
+          W_r = W;
+          K_root = cholesky_decompose(covariance);
+          B = MatrixXd::Identity(theta_size, theta_size)
+                + K_root.transpose() * W * K_root;
+          L = cholesky_decompose(B);
+          B_log_determinant = 2 * sum(L.diagonal().array().log());
+          b = W * theta + l_grad.head(theta_size);
+          a = mdivide_left_tri<Eigen::Upper>(K_root.transpose(),
+                mdivide_left_tri<Eigen::Upper>(L.transpose(),
+                  mdivide_left_tri<Eigen::Lower>(L, K_root.transpose() * b)));
         } else {
           W_r = W;
           B = MatrixXd::Identity(theta_size, theta_size) + covariance * W;
@@ -188,16 +214,12 @@ namespace math {
       }
 
       // linesearch
-      int do_line_search = 1;
-      int max_steps_line_search = 10;
+      // CHECK -- does linesearch work for solver 2?
       int j = 0;
       if (do_line_search && i != 0) {
-        // CHECK -- no line search at first step?
-        // CHECK -- which convergence criterion should we use here?
-        // CHECK -- what do we do when theta has non-finite elements?
         while (j < max_steps_line_search
           && (objective_new < objective_old || !std::isfinite(theta.sum()))) {
-          a = (a + a_old) * 0.5;  // CHECK -- generalize this for any reduction?
+          a = (a + a_old) * 0.5;  // TODO -- generalize for any factor.
           theta = covariance * a;
 
           if (std::isfinite(theta.sum())) {
@@ -206,13 +228,6 @@ namespace math {
           }
 
           j++;
-
-          // NOTE -- if objective function doesn't increase, break.
-          // bool break_linesearch = (objective_new <= objective_inter);
-          // if (break_linesearch) objective_new = objective_inter;
-          // if (break_linesearch) break;
-          // theta = theta_new;
-          // a = a_new;
         }
       }
 
@@ -279,19 +294,22 @@ namespace math {
                             double tolerance = 1e-6,
                             long int max_num_steps = 100,
                             int hessian_block_size = 0,
-                            int compute_W_root = 1) {
+                            int solver = 1,
+                            int do_line_search = 0,
+                            int max_steps_line_search = 10) {
     Eigen::VectorXd theta, a, l_grad;
-    Eigen::MatrixXd L, covariance;
+    Eigen::MatrixXd L, covariance, K_root;
     Eigen::SparseMatrix<double> W_r;
     Eigen::PartialPivLU<Eigen::MatrixXd> LU;
     return laplace_marginal_density(diff_likelihood, covariance_function,
                                     phi, eta, x, delta, delta_int,
                                     covariance,
-                                    theta, W_r, L, a, l_grad, LU,
+                                    theta, W_r, L, a, l_grad, LU, K_root,
                                     value_of(theta_0), msgs,
                                     tolerance, max_num_steps,
                                     hessian_block_size,
-                                    compute_W_root);
+                                    solver, do_line_search,
+                                    max_steps_line_search);
   }
 
   /**
@@ -336,15 +354,15 @@ namespace math {
        double marginal_density,
        const Eigen::MatrixXd& covariance,
        const Eigen::VectorXd& theta,
-       // const Eigen::MatrixXd& W_root,
        const Eigen::SparseMatrix<double>& W_r,
        const Eigen::MatrixXd& L,
        const Eigen::VectorXd& a,
        const Eigen::VectorXd& l_grad,
        const Eigen::PartialPivLU<Eigen::MatrixXd> LU,
+       const Eigen::MatrixXd& K_root,
        std::ostream* msgs = nullptr,
        int hessian_block_size = 0,
-       int compute_W_root = 1)
+       int solver = 1)
       : vari(marginal_density),
         phi_size_(phi.size()),
         phi_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
@@ -374,7 +392,7 @@ namespace math {
       Eigen::VectorXd partial_parm;
       Eigen::VectorXd s2;
 
-      if (compute_W_root == 1) {
+      if (solver == 1) {
         MatrixXd W_root_diag = W_r;
         R = W_r * L.transpose().triangularView<Eigen::Upper>()
                                       .solve(L.triangularView<Eigen::Lower>()
@@ -393,7 +411,19 @@ namespace math {
             = diff_likelihood.compute_s2(theta, eta_dbl, A, block_size);
           s2 = partial_parm.head(theta_size);
         }
-      } else {  // we have not computed W_root.
+      } else if (solver == 2) {
+        // TODO -- use triangularView for K_root.
+        R = W_r - W_r * K_root * L.transpose().triangularView<Eigen::Upper>()
+                    .solve(L.triangularView<Eigen::Lower>()
+                      .solve(K_root.transpose() * W_r));
+
+        Eigen::MatrixXd C = L.triangularView<Eigen::Lower>()
+                              .solve(K_root.transpose());
+        Eigen::MatrixXd A = C.transpose() * C;
+        partial_parm
+          = diff_likelihood.compute_s2(theta, eta_dbl, A, hessian_block_size);
+        s2 = partial_parm.head(theta_size);
+      } else {  // solver with LU decomposition
         LU_solve_covariance = LU.solve(covariance);
         R = W_r - W_r * LU_solve_covariance * W_r;
 
@@ -429,14 +459,11 @@ namespace math {
       VectorXd diff_eta = l_grad.tail(eta_size_);
 
       Eigen::VectorXd v;
-      if (compute_W_root == 1) {
-        Eigen::MatrixXd W = W_r * W_r;  // NOTE: store W from Newton step?
-        v = covariance * s2
-          - covariance * R * covariance * s2;
-          // - covariance * W
-          // * L.transpose().triangularView<Eigen::Upper>()
-          //     . solve(L.triangularView<Eigen::Lower>()
-          //       .solve(covariance * (covariance * s2)));
+      if (solver == 1) {
+        Eigen::MatrixXd W = W_r * W_r;  // CHECK -- store W from Newton step?
+        v = covariance * s2 - covariance * R * covariance * s2;
+      } else if (solver == 2) {
+        v = covariance * s2 - covariance * R * covariance * s2;
       } else {
         v = LU_solve_covariance * s2;
       }
@@ -502,26 +529,27 @@ namespace math {
        double tolerance = 1e-6,
        long int max_num_steps = 100,
        int hessian_block_size = 0,
-       int compute_W_root = 1) {
+       int solver = 1,
+       int do_line_search = 0,
+       int max_steps_line_search = 10) {
     Eigen::VectorXd theta, a, l_grad;
     Eigen::SparseMatrix<double> W_root;
-    Eigen::MatrixXd L;
+    Eigen::MatrixXd L, K_root;
     double marginal_density_dbl;
     Eigen::MatrixXd covariance;
     Eigen::PartialPivLU<Eigen::MatrixXd> LU;
-
 
     marginal_density_dbl
       = laplace_marginal_density(diff_likelihood,
                                  covariance_function,
                                  value_of(phi), value_of(eta),
                                  x, delta, delta_int, covariance,
-                                 theta, W_root, L, a, l_grad, LU,
+                                 theta, W_root, L, a, l_grad, LU, K_root,
                                  value_of(theta_0),
                                  msgs,
                                  tolerance, max_num_steps,
                                  hessian_block_size,
-                                 compute_W_root);
+                                 solver);
 
     // construct vari
     laplace_marginal_density_vari* vi0
@@ -531,8 +559,9 @@ namespace math {
                                           marginal_density_dbl,
                                           covariance,
                                           theta, W_root, L, a, l_grad, LU,
+                                          K_root,
                                           msgs, hessian_block_size,
-                                          compute_W_root);
+                                          solver);
 
     var marginal_density = var(vi0->marginal_density_[0]);
 

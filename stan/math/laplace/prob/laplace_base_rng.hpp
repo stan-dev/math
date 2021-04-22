@@ -49,7 +49,7 @@ laplace_base_rng
   VectorXd phi_dbl = value_of(phi);
   VectorXd eta_dbl = value_of(eta);
   Eigen::SparseMatrix<double> W_r;
-  MatrixXd L;
+  MatrixXd L, K_root;
   Eigen::PartialPivLU<MatrixXd> LU;
   VectorXd l_grad;
   MatrixXd covariance;
@@ -61,7 +61,7 @@ laplace_base_rng
                                  phi_dbl, eta_dbl,
                                  x, delta, delta_int,
                                  covariance, theta, W_r, L, a, l_grad,
-                                 LU, value_of(theta_0), msgs,
+                                 LU, K_root, value_of(theta_0), msgs,
                                  tolerance, max_num_steps,
                                  hessian_block_size, compute_W_root);
   }
