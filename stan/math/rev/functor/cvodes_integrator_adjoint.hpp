@@ -547,6 +547,10 @@ class cvodes_integrator_adjoint_vari : public vari {
 
   ~cvodes_integrator_adjoint_vari() {
     if (N_ > 0) {
+      if (cvodes_mem_) {
+        CVodeFree(&cvodes_mem_);
+      }
+
       SUNLinSolFree(LS_forward_);
       SUNMatDestroy(A_forward_);
       SUNLinSolFree(LS_backward_);
@@ -557,10 +561,6 @@ class cvodes_integrator_adjoint_vari : public vari {
       N_VDestroy_Serial(nv_quad_);
       N_VDestroy_Serial(nv_absolute_tolerance_forward_);
       N_VDestroy_Serial(nv_absolute_tolerance_backward_);
-
-      if (cvodes_mem_) {
-        CVodeFree(&cvodes_mem_);
-      }
     }
   }
 
