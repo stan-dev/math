@@ -85,13 +85,11 @@ void run_benchmark(std::size_t system_size, int adjoint_integrator) {
       std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> y;
       if (adjoint_integrator) {
         const int N = y0.size();
-        y = ode_adjoint_tol_ctl(ode, y0, t0, ts,
-                                rel_tol, Eigen::VectorXd::Constant(N, abs_tol),
-                                rel_tol, Eigen::VectorXd::Constant(N, abs_tol_B),
-                                rel_tol, abs_tol_QB,
-                                max_num_steps, steps_checkpoint, 1, 2, 2,
-                                nullptr, 
-                                kt, e50, k12, k21);
+        y = ode_adjoint_tol_ctl(
+            ode, y0, t0, ts, rel_tol, Eigen::VectorXd::Constant(N, abs_tol),
+            rel_tol, Eigen::VectorXd::Constant(N, abs_tol_B), rel_tol,
+            abs_tol_QB, max_num_steps, steps_checkpoint, 1, 2, 2, nullptr, kt,
+            e50, k12, k21);
       } else {
         y = ode_bdf_tol(ode, y0, t0, ts, rel_tol, abs_tol_QB, max_num_steps,
                         nullptr, kt, e50, k12, k21);
