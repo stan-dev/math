@@ -169,38 +169,13 @@ ode_adjoint_tol_ctl(
     int interpolation_polynomial, int solver_forward, int solver_backward,
     std::ostream* msgs, const T_Args&... args) {
   return ode_adjoint_impl(
-      "ode_adjoint_tol_ctl", f, y0, t0, ts, relative_tolerance_forward,
-      absolute_tolerance_forward, relative_tolerance_backward,
-      absolute_tolerance_backward, relative_tolerance_quadrature,
-      absolute_tolerance_quadrature, max_num_steps,
+      "ode_adjoint_tol_ctl", f, y0, t0, ts,
+      relative_tolerance_forward, absolute_tolerance_forward,
+      relative_tolerance_backward, absolute_tolerance_backward,
+      relative_tolerance_quadrature, absolute_tolerance_quadrature,
+      max_num_steps,
       num_steps_between_checkpoints, interpolation_polynomial, solver_forward,
       solver_backward, msgs, args...);
-}
-
-template <typename F, typename T_y0, typename T_t0, typename T_ts,
-          typename... T_Args, require_eigen_col_vector_t<T_y0>* = nullptr>
-std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, T_Args...>,
-                          Eigen::Dynamic, 1>>
-ode_adjoint_tol(const F& f, const T_y0& y0, const T_t0& t0,
-                const std::vector<T_ts>& ts, double relative_tolerance,
-                double absolute_tolerance,
-                long int max_num_steps,  // NOLINT(runtime/int)
-                std::ostream* msgs, const T_Args&... args) {
-  const int N = y0.size();
-  const Eigen::VectorXd absolute_tolerance_forward
-      = Eigen::VectorXd::Constant(N, absolute_tolerance / 100.0);
-  const Eigen::VectorXd absolute_tolerance_backward
-      = Eigen::VectorXd::Constant(N, absolute_tolerance / 10.0);
-  const long int num_steps_between_checkpoints = 250;  // NOLINT(runtime/int)
-  const int interpolation_polynomial = CV_HERMITE;
-  const int solver_forward = CV_BDF;
-  const int solver_backward = CV_BDF;
-  return ode_adjoint_impl(
-      "ode_adjoint_tol", f, y0, t0, ts, relative_tolerance,
-      absolute_tolerance_forward, relative_tolerance,
-      absolute_tolerance_backward, relative_tolerance, absolute_tolerance,
-      max_num_steps, num_steps_between_checkpoints, interpolation_polynomial,
-      solver_forward, solver_backward, msgs, args...);
 }
 
 }  // namespace math

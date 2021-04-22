@@ -16,7 +16,7 @@
               typename... Args, stan::require_eigen_vector_t<T_y0>* = nullptr> \
     std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, Args...>,  \
                               Eigen::Dynamic, 1>>                              \
-    operator()(const F& f, const T_y0& y0, T_t0 t0,                            \
+    operator()(const F& f, const T_y0& y0, const T_t0& t0,                            \
                const std::vector<T_ts>& ts, std::ostream* msgs,                \
                const Args&... args) {                                          \
       return solver_func(f, y0, t0, ts, msgs, args...);                        \
@@ -26,7 +26,7 @@
               typename... Args, stan::require_eigen_vector_t<T_y0>* = nullptr> \
     std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, Args...>,  \
                               Eigen::Dynamic, 1>>                              \
-    operator()(const F& f, const T_y0& y0_arg, T_t0 t0,                        \
+    operator()(const F& f, const T_y0& y0_arg, const T_t0& t0,                        \
                const std::vector<T_ts>& ts, double rtol, double atol,          \
                size_t max_num_steps, std::ostream* msgs,                       \
                const Args&... args) {                                          \
@@ -69,21 +69,41 @@ struct ode_adjoint_functor {
             typename... Args, stan::require_eigen_vector_t<T_y0>* = nullptr>
   std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, Args...>,
                             Eigen::Dynamic, 1>>
-  operator()(const F& f, const T_y0& y0, T_t0 t0, const std::vector<T_ts>& ts,
+  operator()(const F& f, const T_y0& y0, const T_t0& t0, const std::vector<T_ts>& ts,
              std::ostream* msgs, const Args&... args) {
-    return stan::math::ode_adjoint_tol(f, y0, t0, ts, 1E-11, 1E-10, 1000000,
-                                       msgs, args...);
+    return (*this)(f, y0, t0, ts, 1E-10, 1E-10, 1000000,
+                   msgs, args...);
   }
 
   template <typename F, typename T_y0, typename T_t0, typename T_ts,
             typename... Args, stan::require_eigen_vector_t<T_y0>* = nullptr>
   std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, Args...>,
                             Eigen::Dynamic, 1>>
-  operator()(const F& f, const T_y0& y0_arg, T_t0 t0,
-             const std::vector<T_ts>& ts, double rtol, double atol,
+  operator()(const F& f, const T_y0& y0_arg, const T_t0& t0,
+             const std::vector<T_ts>& ts,
+             double relative_tolerance, double absolute_tolerance,
              size_t max_num_steps, std::ostream* msgs, const Args&... args) {
-    return stan::math::ode_adjoint_tol(f, y0_arg, t0, ts, rtol, atol,
-                                       max_num_steps, msgs, args...);
+    const int N = y0_arg.size();
+    const double relative_tolerance_forward = relative_tolerance / 8.0;
+    const double relative_tolerance_backward = relative_tolerance / 4.0;
+    const double relative_tolerance_quadrature = relative_tolerance;
+    const Eigen::VectorXd absolute_tolerance_forward
+        = Eigen::VectorXd::Constant(N, absolute_tolerance / 6.0);
+    const Eigen::VectorXd absolute_tolerance_backward
+        = Eigen::VectorXd::Constant(N, absolute_tolerance / 3.0);
+    const double absolute_tolerance_quadrature = absolute_tolerance;
+    const long int num_steps_between_checkpoints = 150;  // NOLINT(runtime/int)
+    const int interpolation_polynomial = CV_HERMITE;
+    const int solver_forward = CV_BDF;
+    const int solver_backward = CV_ADAMS;
+
+    return stan::math::ode_adjoint_tol_ctl(
+        f, y0_arg, t0, ts,
+        relative_tolerance_forward, absolute_tolerance_forward,
+        relative_tolerance_backward, absolute_tolerance_backward,
+        relative_tolerance_quadrature, absolute_tolerance_quadrature,
+        max_num_steps, num_steps_between_checkpoints, interpolation_polynomial,
+        solver_forward, solver_backward, msgs, args...);
   }
 };
 
