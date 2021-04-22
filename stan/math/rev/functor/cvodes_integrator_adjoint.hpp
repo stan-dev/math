@@ -23,13 +23,11 @@ namespace math {
 namespace internal {
 template <typename T_Return>
 inline std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> build_varis(
-    vari* ode_vari, vari**& non_chaining_varis,
-    const std::vector<Eigen::VectorXd>& y);
+    vari**& non_chaining_varis, const std::vector<Eigen::VectorXd>& y);
 
 template <>
 inline std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> build_varis<var>(
-    vari* ode_vari, vari**& non_chaining_varis,
-    const std::vector<Eigen::VectorXd>& y) {
+    vari**& non_chaining_varis, const std::vector<Eigen::VectorXd>& y) {
   std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> y_return(y.size());
 
   if (y.size() == 0) {
@@ -49,14 +47,6 @@ inline std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> build_varis<var>(
     }
   }
 
-  /*
-  for (size_t i = 0; i < y.size(); ++i) {
-    y_return[i].resize(N);
-    for (size_t j = 0; j < N; j++)
-      y_return[i][j] = var(non_chaining_varis[i * N + j]);
-  }
-  */
-
   return y_return;
 }
 
@@ -66,8 +56,7 @@ inline std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> build_varis<var>(
  */
 template <>
 inline std::vector<Eigen::VectorXd> build_varis<double>(
-    vari* ode_vari, vari**& non_chaining_varis,
-    const std::vector<Eigen::VectorXd>& y) {
+    vari**& non_chaining_varis, const std::vector<Eigen::VectorXd>& y) {
   return y;
 }
 
@@ -90,6 +79,7 @@ class cvodes_integrator_adjoint_vari : public vari {
   using T_Return = return_type_t<T_y0, T_t0, T_ts, T_Args...>;
   using T_y0_t0 = return_type_t<T_y0, T_t0>;
 
+  const std::string function_name_string_;
   const char* function_name_;
 
   const F f_;
@@ -420,7 +410,8 @@ class cvodes_integrator_adjoint_vari : public vari {
       int interpolation_polynomial, int solver_forward, int solver_backward,
       std::ostream* msgs, const T_Args&... args)
   : vari(NOT_A_NUMBER),
-    function_name_(function_name),
+    function_name_string_(function_name),
+    function_name_(function_name_string_.c_str()),
     f_(f),
     y0_(y0),
     t0_(t0),
@@ -522,7 +513,7 @@ class cvodes_integrator_adjoint_vari : public vari {
     std::cout << "steps_checkpoint = " << steps_checkpoint << std::endl;
     */
 
-    // initializes CVODES solver
+    // initialize CVODES solver
 
     if (N_ > 0) {
       nv_state_forward_ = N_VMake_Serial(N_, state_forward_.data());
@@ -564,10 +555,6 @@ class cvodes_integrator_adjoint_vari : public vari {
                           nv_absolute_tolerance_forward_),
         "CVodeSVtolerances");
 
-    // for the stiff solvers we need to reserve additional memory
-    // and provide a Jacobian function call. new API since 3.0.0:
-    // create matrix object and linear solver object; resource
-    // (de-)allocation is handled in the cvodes_ode_data
     check_flag_sundials(
         CVodeSetLinearSolver(cvodes_mem_, LS_forward_, A_forward_),
         "CVodeSetLinearSolver");
@@ -660,7 +647,7 @@ class cvodes_integrator_adjoint_vari : public vari {
 
     forward_returned_ = true;
     //std::cout << "forward integrate...done" << std::endl;
-    return internal::build_varis<T_Return>(this, non_chaining_varis_, y_);
+    return internal::build_varis<T_Return>(non_chaining_varis_, y_);
   }
 
   virtual void chain() {

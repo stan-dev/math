@@ -66,9 +66,9 @@ std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, T_Args...>,
 ode_adjoint_impl(const char* function_name, const F& f, const T_y0& y0,
                  const T_t0& t0, const std::vector<T_ts>& ts,
                  double relative_tolerance_forward,
-                 Eigen::VectorXd absolute_tolerance_forward,
+                 const Eigen::VectorXd& absolute_tolerance_forward,
                  double relative_tolerance_backward,
-                 Eigen::VectorXd absolute_tolerance_backward,
+                 const Eigen::VectorXd& absolute_tolerance_backward,
                  double relative_tolerance_quadrature,
                  double absolute_tolerance_quadrature,
                  long int max_num_steps,                  // NOLINT(runtime/int)
@@ -76,39 +76,6 @@ ode_adjoint_impl(const char* function_name, const F& f, const T_y0& y0,
                  int interpolation_polynomial, int solver_forward,
                  int solver_backward, std::ostream* msgs,
                  const T_Args&... args) {
-  /*
-  const auto& args_ref_tuple = std::make_tuple(to_ref(args)...);
-  return apply(
-      [&](const auto&... args_refs) {
-        auto integrator
-            = new stan::math::cvodes_integrator_adjoint_vari<CV_BDF, F, T_y0,
-  T_t0, T_ts, T_Args...>( function_name, f, y0, t0, ts, relative_tolerance,
-                          absolute_tolerance, absolute_tolerance_B,
-  absolute_tolerance_QB, steps_checkpoint, max_num_steps, msgs, args_refs...);
-        return (*integrator)();
-      }, args_ref_tuple);
-      */
-  /*
-  const auto& args_eval_tuple = std::make_tuple(eval(args)...);
-  return apply(
-      [&](const auto&... args_eval) {
-        auto integrator
-            = new stan::math::cvodes_integrator_adjoint_vari<CV_BDF, F, T_y0,
-  T_t0, T_ts, T_Args...>( function_name, f, y0, t0, ts, relative_tolerance,
-                          absolute_tolerance, absolute_tolerance_B,
-  absolute_tolerance_QB, steps_checkpoint, max_num_steps, msgs, args_eval...);
-        return (*integrator)();
-      }, args_eval_tuple);
-      */
-  /*
-  auto integrator
-      = new stan::math::cvodes_integrator_adjoint_vari<CV_BDF, F, T_y0, T_t0,
-                                                       T_ts, T_Args...>(
-          function_name, f, y0, t0, ts, relative_tolerance, absolute_tolerance,
-          absolute_tolerance_B, absolute_tolerance_QB, steps_checkpoint,
-          max_num_steps, msgs, eval(args)...);
-  return (*integrator)();
-  */
   auto integrator = new stan::math::cvodes_integrator_adjoint_vari<
       F, plain_type_t<T_y0>, T_t0, T_ts, ref_type_t<T_Args>...>(
       function_name, f, eval(y0), t0, ts, relative_tolerance_forward,
@@ -160,9 +127,9 @@ std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, T_Args...>,
 ode_adjoint_tol_ctl(
     const F& f, const T_y0& y0, const T_t0& t0, const std::vector<T_ts>& ts,
     double relative_tolerance_forward,
-    Eigen::VectorXd absolute_tolerance_forward,
+    const Eigen::VectorXd& absolute_tolerance_forward,
     double relative_tolerance_backward,
-    Eigen::VectorXd absolute_tolerance_backward,
+    const Eigen::VectorXd& absolute_tolerance_backward,
     double relative_tolerance_quadrature, double absolute_tolerance_quadrature,
     long int max_num_steps,                  // NOLINT(runtime/int)
     long int num_steps_between_checkpoints,  // NOLINT(runtime/int)
