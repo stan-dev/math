@@ -18,9 +18,9 @@ using ode_test_tuple = std::tuple<solve_type, solve_type, Ts...>;
  */
 using harmonic_oscillator_fd_test_types = boost::mp11::mp_product<
     ode_test_tuple,
-  ::testing::Types<//ode_adams_functor, ode_bdf_functor, ode_ckrk_functor,
-                     //ode_rk45_functor,
-                     ode_adjoint_functor>,
+    ::testing::Types<  // ode_adams_functor, ode_bdf_functor, ode_ckrk_functor,
+                       // ode_rk45_functor,
+        ode_adjoint_functor>,
     ::testing::Types<double>,  // t
     ::testing::Types<double>,  // y0
     ::testing::Types<double>   // theta
@@ -90,9 +90,9 @@ INSTANTIATE_TYPED_TEST_SUITE_P(StanOde, harmonic_oscillator_data_test,
 
 using harmonic_oscillator_test_types = boost::mp11::mp_product<
     ode_test_tuple,
-  ::testing::Types<//ode_adams_functor, ode_bdf_functor, ode_ckrk_functor,
-    //ode_rk45_functor,
-                     ode_adjoint_functor>,
+    ::testing::Types<  // ode_adams_functor, ode_bdf_functor, ode_ckrk_functor,
+                       // ode_rk45_functor,
+        ode_adjoint_functor>,
     ::testing::Types<double>,                                  // t
     ::testing::Types<double, stan::math::var_value<double> >,  // y0
     ::testing::Types<double, stan::math::var_value<double> >   // theta
