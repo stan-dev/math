@@ -21,7 +21,7 @@ namespace stan {
 namespace math {
 
 namespace internal {
-/*
+
 template <typename T_Return>
 inline std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> build_varis(
     vari**& non_chaining_varis, const std::vector<Eigen::VectorXd>& y);
@@ -50,18 +50,17 @@ inline std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> build_varis<var>(
 
   return y_return;
 }
-*/
+
 /*
  * If theta and y are both doubles, just pass the values through (there's
  * no autodiff to handle here).
  */
-/*
 template <>
 inline std::vector<Eigen::VectorXd> build_varis<double>(
     vari**& non_chaining_varis, const std::vector<Eigen::VectorXd>& y) {
   return y;
 }
-*/
+
 
 }
 
@@ -358,41 +357,6 @@ class cvodes_integrator_adjoint_vari : public vari {
     J_adj_y.array() *= -1.0;
   }
 
-template <typename T_ReturnArg>
-inline std::vector<Eigen::Matrix<T_ReturnArg, Eigen::Dynamic, 1>> build_varis(
-    vari**& non_chaining_varis, const std::vector<Eigen::VectorXd>& y);
-
-template <>
-inline std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> build_varis<var>(
-    vari**& non_chaining_varis, const std::vector<Eigen::VectorXd>& y) {
-  std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> y_return(y.size());
-
-  if (y.size() == 0) {
-    return y_return;
-  }
-
-  const int N = y[0].size();
-
-  non_chaining_varis
-      = ChainableStack::instance_->memalloc_.alloc_array<vari*>(y.size() * N);
-
-  for (size_t i = 0; i < y.size(); ++i) {
-    y_return[i].resize(N);
-    for (size_t j = 0; j < N; j++) {
-      non_chaining_varis[i * N + j] = new vari(y[i].coeff(j), false);
-      y_return[i].coeffRef(j) = var(non_chaining_varis[i * N + j]);
-    }
-  }
-
-  return y_return;
-}
-
-template <>
-inline std::vector<Eigen::VectorXd> build_varis<double>(
-    vari**& non_chaining_varis, const std::vector<Eigen::VectorXd>& y) {
-  return y;
-}  
-
  public:
   /**
    * Construct cvodes_integrator object. Note: All arguments must be stored as
@@ -685,7 +649,7 @@ inline std::vector<Eigen::VectorXd> build_varis<double>(
 
     forward_returned_ = true;
     //std::cout << "forward integrate...done" << std::endl;
-    return build_varis<T_Return>(non_chaining_varis_, y_);
+    return internal::build_varis<T_Return>(non_chaining_varis_, y_);
   }
 
   virtual void chain() {
