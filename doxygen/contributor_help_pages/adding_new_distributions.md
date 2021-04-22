@@ -63,10 +63,10 @@ which is nice for documentation.
 
 $$
 \begin{aligned}
-f = \text{Normal}(y|\mu,\sigma) &= -\frac{1}{2} \left(\frac{y-\mu}{\sigma}\right)^2 - \log(\sigma) - \frac{1}{2}\log(2\pi) \cr
+f = \text{ln}\left(\text{Normal}(y|\mu,\sigma)\right) &= -\frac{1}{2} \left(\frac{y-\mu}{\sigma}\right)^2 - \log(\sigma) - \frac{1}{2}\log(2\pi) \cr
 \frac{\partial f}{\partial y} &= -\frac{y-\mu}{\sigma^{2}} \cr
 \frac{\partial f}{\partial \mu} &= \frac{y-\mu}{\sigma^{2}} \cr
-\frac{\partial f}{\partial \sigma} &= -\frac{1}{\sigma} - \frac{(y-\mu)^{2}}{\sigma^{3}}
+\frac{\partial f}{\partial \sigma} &= -\frac{1}{\sigma} + \frac{(y-\mu)^{2}}{\sigma^{3}}
 \end{aligned}
 $$
 
@@ -75,10 +75,10 @@ For instance in the normal we can compute `y - mu` and `1/sigma`
 
 $$
 \begin{aligned}
-f(y|\mu,\sigma) = \text{Normal}(y|\mu,\sigma) &= -\frac{1}{2} \left(\frac{y-\mu}{\sigma}\right)^2 - \log(\sigma) - \frac{1}{2}\log(2\pi) \cr
+f(y|\mu,\sigma) = \text{ln}\left(\text{Normal}(y|\mu,\sigma)\right) &= -\frac{1}{2} \left(\frac{y-\mu}{\sigma}\right)^2 - \log(\sigma) - \frac{1}{2}\log(2\pi) \cr
 \frac{\partial f}{\partial y} &= -t_3 \cr
 \frac{\partial f}{\partial \mu} &= t_3 \cr
-\frac{\partial f}{\partial \sigma} &= t_3 \cdot t_0 - t_0 \cr
+\frac{\partial f}{\partial \sigma} &= \frac{t_{2}^2}{t_1} \cdot t_0 - t_0 \cr
 \text{Where} \cr
 t_0 &= \frac{1}{\sigma} \cr
 t_1 &= t_{0}^2 \cr
@@ -116,7 +116,7 @@ The return of the function is the joint log probability accumulated over all
 of the inputs which is a scalar of the least upper bound of all the
 parameters scalar types. That's a lot of big words, but in essense means that
 if one of the inputs is a `var` and the others are double the return type needs to be
-a `double`. If the input signature contained `fvar<var>`, `var`, `double` then the
+a `var`. If the input signature contained `fvar<var>`, `var`, `double` then the
 return type would be `fvar<var>`. See the [Common pitfalls](@ref common_pitfalls) for an
 explanation of `return_type_t`.
 
