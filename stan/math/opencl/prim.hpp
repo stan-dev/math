@@ -151,7 +151,11 @@
 #include <stan/math/opencl/prim/frechet_lcdf.hpp>
 #include <stan/math/opencl/prim/frechet_lpdf.hpp>
 #include <stan/math/opencl/prim/gamma_lpdf.hpp>
+#include <stan/math/opencl/prim/gp_dot_prod_cov.hpp>
+#include <stan/math/opencl/prim/gp_exponential_cov.hpp>
 #include <stan/math/opencl/prim/gp_exp_quad_cov.hpp>
+#include <stan/math/opencl/prim/gp_matern32_cov.hpp>
+#include <stan/math/opencl/prim/gp_matern52_cov.hpp>
 #include <stan/math/opencl/prim/gumbel_cdf.hpp>
 #include <stan/math/opencl/prim/gumbel_lccdf.hpp>
 #include <stan/math/opencl/prim/gumbel_lcdf.hpp>

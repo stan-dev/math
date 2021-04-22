@@ -136,11 +136,10 @@ ode_adjoint_tol_ctl(
     int interpolation_polynomial, int solver_forward, int solver_backward,
     std::ostream* msgs, const T_Args&... args) {
   return ode_adjoint_impl(
-      "ode_adjoint_tol_ctl", f, y0, t0, ts,
-      relative_tolerance_forward, absolute_tolerance_forward,
-      relative_tolerance_backward, absolute_tolerance_backward,
-      relative_tolerance_quadrature, absolute_tolerance_quadrature,
-      max_num_steps,
+      "ode_adjoint_tol_ctl", f, y0, t0, ts, relative_tolerance_forward,
+      absolute_tolerance_forward, relative_tolerance_backward,
+      absolute_tolerance_backward, relative_tolerance_quadrature,
+      absolute_tolerance_quadrature, max_num_steps,
       num_steps_between_checkpoints, interpolation_polynomial, solver_forward,
       solver_backward, msgs, args...);
 }
