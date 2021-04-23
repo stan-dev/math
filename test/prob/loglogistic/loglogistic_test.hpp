@@ -18,8 +18,8 @@ class AgradDistributionsLoglogistic : public AgradDistributionTest {
     log_prob.push_back(-1.21639532432449293253);  // expected log_prob
 
     param[0] = 1.4;  // y
-    param[1] = 1.6;   // alpha
-    param[2] = 2.4;   // beta
+    param[1] = 1.6;  // alpha
+    param[2] = 2.4;  // beta
     parameters.push_back(param);
     log_prob.push_back(-0.87286484103664152556);  // expected log_prob
   }
@@ -74,7 +74,7 @@ class AgradDistributionsLoglogistic : public AgradDistributionTest {
       const T_y& y, const T_scale& alpha, const T_shape& beta, const T3&,
       const T4&, const T5&) {
     using stan::math::log1p;
-    return log(beta) - log(alpha) + (beta - 1) * (log(y) - log(alpha)) -
-      2.0 * log1p(pow((y * stan::math::inv(alpha)), beta));
+    return log(beta) - log(alpha) + (beta - 1) * (log(y) - log(alpha))
+           - 2.0 * log1p(pow((y * stan::math::inv(alpha)), beta));
   }
 };

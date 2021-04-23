@@ -80,16 +80,18 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_lpdf(const T_y& y,
   const auto& inv_alpha
       = to_ref_if<!is_constant_all<T_y, T_scale>::value>(inv(alpha_val));
   const auto& y_div_alpha = to_ref(y_val * inv_alpha);
-  const auto& y_div_alpha_pow_beta =
-      to_ref_if<!is_constant_all<T_shape>::value>(pow(y_div_alpha, beta_val));
-  const auto& log1_arg =
-      to_ref_if<!is_constant_all<T_y, T_scale, T_shape>::value>(1 +
-      y_div_alpha_pow_beta);
+  const auto& y_div_alpha_pow_beta
+      = to_ref_if<!is_constant_all<T_shape>::value>(pow(y_div_alpha, beta_val));
+  const auto& log1_arg
+      = to_ref_if<!is_constant_all<T_y, T_scale, T_shape>::value>(
+          1 + y_div_alpha_pow_beta);
   const auto& log_y = to_ref_if<!is_constant_all<T_shape>::value>(log(y_val));
-  const auto& log_alpha = to_ref_if<include_summand<propto, T_scale,
-    T_shape>::value>(log(alpha_val));
-  const auto& beta_minus_one = to_ref_if<include_summand<propto, T_scale,
-    T_shape>::value || !is_constant_all<T_y>::value>(beta_val - 1.0);
+  const auto& log_alpha
+      = to_ref_if<include_summand<propto, T_scale, T_shape>::value>(
+          log(alpha_val));
+  const auto& beta_minus_one
+      = to_ref_if < include_summand<propto, T_scale, T_shape>::value
+        || !is_constant_all<T_y>::value > (beta_val - 1.0);
 
   size_t N = max_size(y, alpha, beta);
   size_t N_alpha_beta = max_size(alpha, beta);
@@ -97,37 +99,39 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_lpdf(const T_y& y,
   T_partials_return logp = sum(beta_minus_one * log_y - 2.0 * log(log1_arg));
 
   if (include_summand<propto, T_scale, T_shape>::value) {
-    logp += sum(N * (log(beta_val) - log_alpha -
-      beta_minus_one * log_alpha) / N_alpha_beta);
+    logp += sum(N * (log(beta_val) - log_alpha - beta_minus_one * log_alpha)
+                / N_alpha_beta);
   }
 
   if (!is_constant_all<T_y, T_scale, T_shape>::value) {
-    const auto& two_inv_log1_arg = to_ref_if<!is_constant_all<T_y>::value
-                                             + !is_constant_all<T_scale>::value
-                                             + !is_constant_all<T_shape>::value
-                                             >= 2>(2.0 * inv(log1_arg));
-    const auto& y_pow_beta =
-        to_ref_if<!is_constant_all<T_y, T_scale>::value>(pow(y_val, beta_val));
-    const auto& inv_alpha_pow_beta = to_ref_if<!is_constant_all<T_y,
-        T_scale>::value>(pow(inv_alpha, beta_val));
+    const auto& two_inv_log1_arg
+        = to_ref_if<!is_constant_all<T_y>::value
+                        + !is_constant_all<T_scale>::value
+                        + !is_constant_all<T_shape>::value
+                    >= 2>(2.0 * inv(log1_arg));
+    const auto& y_pow_beta = to_ref_if<!is_constant_all<T_y, T_scale>::value>(
+        pow(y_val, beta_val));
+    const auto& inv_alpha_pow_beta
+        = to_ref_if<!is_constant_all<T_y, T_scale>::value>(
+            pow(inv_alpha, beta_val));
 
     if (!is_constant_all<T_y>::value) {
       const auto& inv_y = inv(y_val);
-      const auto& y_deriv = beta_minus_one * inv_y -
-        two_inv_log1_arg *
-        (beta_val * inv_alpha_pow_beta) * y_pow_beta * inv_y;
-        ops_partials.edge1_.partials_ = y_deriv;
+      const auto& y_deriv = beta_minus_one * inv_y
+                            - two_inv_log1_arg * (beta_val * inv_alpha_pow_beta)
+                                  * y_pow_beta * inv_y;
+      ops_partials.edge1_.partials_ = y_deriv;
     }
     if (!is_constant_all<T_scale>::value) {
-      const auto& alpha_deriv = - beta_val * inv_alpha -
-        two_inv_log1_arg *
-        y_pow_beta * (-beta_val) * inv_alpha_pow_beta * inv_alpha;
+      const auto& alpha_deriv = -beta_val * inv_alpha
+                                - two_inv_log1_arg * y_pow_beta * (-beta_val)
+                                      * inv_alpha_pow_beta * inv_alpha;
       ops_partials.edge2_.partials_ = alpha_deriv;
     }
     if (!is_constant_all<T_shape>::value) {
-      const auto& beta_deriv = (1.0 * inv(beta_val)) + log_y - log_alpha -
-        two_inv_log1_arg *
-        y_div_alpha_pow_beta * log(y_div_alpha);
+      const auto& beta_deriv
+          = (1.0 * inv(beta_val)) + log_y - log_alpha
+            - two_inv_log1_arg * y_div_alpha_pow_beta * log(y_div_alpha);
       ops_partials.edge3_.partials_ = beta_deriv;
     }
   }
@@ -135,9 +139,8 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_lpdf(const T_y& y,
 }
 
 template <typename T_y, typename T_scale, typename T_shape>
-inline return_type_t<T_y, T_scale, T_shape> loglogistic_lpdf(const T_y& y,
-                                                        const T_scale& alpha,
-                                                        const T_shape& beta) {
+inline return_type_t<T_y, T_scale, T_shape> loglogistic_lpdf(
+    const T_y& y, const T_scale& alpha, const T_shape& beta) {
   return loglogistic_lpdf<false>(y, alpha, beta);
 }
 
