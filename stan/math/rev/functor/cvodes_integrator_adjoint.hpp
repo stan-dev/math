@@ -138,7 +138,8 @@ class cvodes_integrator_adjoint_vari : public vari {
   arena_t<Eigen::VectorXd> state_backward_;
   arena_t<Eigen::VectorXd> quad_;
 
-  std::vector<arena_t<Eigen::VectorXd>, arena_allocator<arena_t<Eigen::VectorXd>>> y_;
+  //std::vector<arena_t<Eigen::VectorXd>, arena_allocator<arena_t<Eigen::VectorXd>>> y_;
+  std::vector<Eigen::VectorXd> y_;
 
   vari** non_chaining_varis_;
 
@@ -566,8 +567,8 @@ class cvodes_integrator_adjoint_vari : public vari {
    */
   std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> operator()() {
     // std::cout << "forward integrate..." << std::endl;
-    auto t0_dbl = value_of(t0_);
-    auto ts_dbl = value_of(ts_);
+    const double t0_dbl = value_of(t0_);
+    const std::vector<double> ts_dbl = value_of(ts_);
     std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> y_return(ts_.size());
 
     double t_init = t0_dbl;
