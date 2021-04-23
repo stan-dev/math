@@ -85,17 +85,6 @@ inline auto binary_log_loss(const std::vector<int>& y,
            / (arena_y == 0)
                  .select((1.0 - y_hat.val().array()), -y_hat.val().array());
   });
-  /*
-  if (y == 0) {
-    return make_callback_var(-log1p(-y_hat.val()), [y_hat](auto& vi) mutable {
-      y_hat.adj().array() += vi.adj().array() / (1.0 - y_hat.val().array());
-    });
-  } else {
-    return make_callback_var(-std::log(y_hat.val()), [y_hat](auto& vi) mutable {
-      y_hat.adj().array() -= vi.adj().array() / y_hat.val().array();
-    });
-  }
-  */
 }
 
 }  // namespace math
