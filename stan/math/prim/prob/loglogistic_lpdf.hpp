@@ -40,7 +40,6 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_lpdf(const T_y& y,
   T_scale_ref alpha_ref = alpha;
   T_shape_ref beta_ref = beta;
 
-  // Tukaj moram uporabit ta partials_return_t? Namesto auto? Hm...
   decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
   decltype(auto) alpha_val = to_ref(as_value_column_array_or_scalar(alpha_ref));
   decltype(auto) beta_val = to_ref(as_value_column_array_or_scalar(beta_ref));
@@ -68,20 +67,19 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_lpdf(const T_y& y,
       to_ref_if<!is_constant_all<T_y, T_scale, T_shape>::value>(1 +
       y_div_alpha_pow_beta);
   const auto& log_y = to_ref_if<!is_constant_all<T_shape>::value>(log(y_val));
+  const auto& log_alpha = to_ref_if<include_summand<propto, T_scale,
+    T_shape>::value>(log(alpha_val));
+  const auto& beta_minus_one = to_ref_if<include_summand<propto, T_scale,
+    T_shape>::value || !is_constant_all<T_y>::value>(beta_val - 1.0);
 
   size_t N = max_size(y, alpha, beta);
   size_t N_alpha_beta = max_size(alpha, beta);
 
-  // Another to_ref_if for include_summand where I can compute log(beta)
-  // and log(alpha)?
-
-  T_partials_return logp = sum((beta_val - 1) * log_y - 2 * log(log1_arg));
-  // T_partials_return logp = sum((beta_val - 1) * log(y_val) -
-  //   2 * log1p(pow((y_val * inv(alpha_val)), beta_val)));
+  T_partials_return logp = sum(beta_minus_one * log_y - 2.0 * log(log1_arg));
 
   if (include_summand<propto, T_scale, T_shape>::value) {
-    logp += sum(N * (log(beta_val) - log(alpha_val) -
-      (beta_val - 1) * log(alpha_val)) / N_alpha_beta);
+    logp += sum(N * (log(beta_val) - log_alpha -
+      beta_minus_one * log_alpha) / N_alpha_beta);
   }
 
   if (!is_constant_all<T_y, T_scale, T_shape>::value) {
@@ -91,26 +89,26 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_lpdf(const T_y& y,
                                              >= 2>(2 * inv(log1_arg));
     const auto& y_pow_beta =
         to_ref_if<!is_constant_all<T_y, T_scale>::value>(pow(y_val, beta_val));
+    const auto& inv_alpha_pow_beta = to_ref_if<!is_constant_all<T_y,
+        T_scale>::value>(pow(inv_alpha, beta_val));
 
     if (!is_constant_all<T_y>::value) {
-      // Inverse y_val should be precomputed.
-      const auto& y_deriv = (beta_val - 1.0) * inv(y_val) -
+      const auto& inv_y = inv(y_val);
+      const auto& y_deriv = beta_minus_one * inv_y -
         two_inv_log1_arg *
-        (beta_val * inv(pow(alpha_val, beta_val))) * y_pow_beta * inv(y_val);
+        (beta_val * inv_alpha_pow_beta) * y_pow_beta * inv_y;
         ops_partials.edge1_.partials_ = y_deriv;
     }
     if (!is_constant_all<T_scale>::value) {
-      const auto& alpha_deriv = - beta_val * inv(alpha_val) -
+      const auto& alpha_deriv = - beta_val * inv_alpha -
         two_inv_log1_arg *
-        y_pow_beta * (-beta_val) * pow(alpha_val, -beta_val - 1);
+        y_pow_beta * (-beta_val) * inv_alpha_pow_beta * inv_alpha;
       ops_partials.edge2_.partials_ = alpha_deriv;
     }
     if (!is_constant_all<T_shape>::value) {
-      // Inverse alpha_val should be precomputed.
-      // It already is!
-      const auto& beta_deriv = (1.0 * inv(beta_val)) + log(y_val) - log(alpha_val) -
+      const auto& beta_deriv = (1.0 * inv(beta_val)) + log_y - log_alpha -
         two_inv_log1_arg *
-        pow((y_val * inv(alpha_val)), beta_val) * log(y_val * inv(alpha_val));
+        y_div_alpha_pow_beta * log(y_div_alpha);
       ops_partials.edge3_.partials_ = beta_deriv;
     }
   }
