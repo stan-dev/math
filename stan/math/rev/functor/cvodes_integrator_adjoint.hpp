@@ -23,6 +23,8 @@ namespace math {
 class cvodes_integrator_adjoint_mem : public chainable_alloc {
 public:
   size_t N_;
+  std::vector<Eigen::VectorXd> y_;
+  const char* function_name_;
   void* cvodes_mem_;
   N_Vector nv_state_forward_;
   N_Vector nv_state_backward_;
@@ -35,14 +37,13 @@ public:
 
   SUNMatrix A_backward_;
   SUNLinearSolver LS_backward_;
-  const char* function_name_;
   template <typename StateFwd, typename StateBwd, typename Quad,
   typename AbsTolFwd, typename AbsTolBwd>
   cvodes_integrator_adjoint_mem(const char* function_name, size_t N,
-    size_t num_args_vars, int solver_forward, StateFwd& state_forward,
+    size_t num_args_vars, size_t ts_size, int solver_forward, StateFwd& state_forward,
     StateBwd& state_backward, Quad& quad,
     AbsTolFwd& absolute_tolerance_forward,
-    AbsTolBwd& absolute_tolerance_backward) : chainable_alloc(), N_(N),
+    AbsTolBwd& absolute_tolerance_backward) : chainable_alloc(), N_(N), y_(ts_size),
     function_name_(function_name) {
       nv_state_forward_ = N_VMake_Serial(N, state_forward.data());
       nv_state_backward_ = N_VMake_Serial(N, state_backward.data());
@@ -139,7 +140,7 @@ class cvodes_integrator_adjoint_vari : public vari {
   arena_t<Eigen::VectorXd> quad_;
 
   //std::vector<arena_t<Eigen::VectorXd>, arena_allocator<arena_t<Eigen::VectorXd>>> y_;
-  std::vector<Eigen::VectorXd> y_;
+
 
   vari** non_chaining_varis_;
 
@@ -453,8 +454,6 @@ class cvodes_integrator_adjoint_vari : public vari {
         state_backward_(N_),
         quad_(num_args_vars_),
 
-        y_(ts_.size()),
-
         non_chaining_varis_(num_vars_ == 0 ?
                             nullptr :
                             ChainableStack::instance_->memalloc_.alloc_array<vari*>(ts_.size() * N_)),
@@ -467,7 +466,7 @@ class cvodes_integrator_adjoint_vari : public vari {
         args_varis_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
             num_args_vars_)),
         mem(new cvodes_integrator_adjoint_mem(function_name, N_,
-            num_args_vars_, solver_forward_, state_forward_,
+            num_args_vars_, ts_.size(), solver_forward_, state_forward_,
             state_backward_, quad_,
             absolute_tolerance_forward_,
             absolute_tolerance_backward_)) {
@@ -568,7 +567,7 @@ class cvodes_integrator_adjoint_vari : public vari {
   std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> operator()() {
     // std::cout << "forward integrate..." << std::endl;
     const double t0_dbl = value_of(t0_);
-    const std::vector<double> ts_dbl = value_of(ts_);
+    const auto ts_dbl = value_of(ts_);
     std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> y_return(ts_.size());
 
     double t_init = t0_dbl;
@@ -609,7 +608,7 @@ class cvodes_integrator_adjoint_vari : public vari {
       } else {
         store_state(non_chaining_varis_, state_forward_, y_return[n]);
       }
-      y_[n] = state_forward_;
+      mem->y_[n] = state_forward_;
 
       t_init = t_final;
     }
@@ -678,7 +677,7 @@ class cvodes_integrator_adjoint_vari : public vari {
 
       if (num_ts_vars_ > 0 && i >= 0) {
         ts_varis_[i]->adj_
-            += step_sens.dot(rhs(t_init, y_[i], value_of_args_tuple_));
+            += step_sens.dot(rhs(t_init, mem->y_[i], value_of_args_tuple_));
         /*
           apply(
           [&](auto&&... args) {
