@@ -8,7 +8,6 @@
 #include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
