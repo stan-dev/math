@@ -72,6 +72,9 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_lpdf(const T_y& y,
   size_t N = max_size(y, alpha, beta);
   size_t N_alpha_beta = max_size(alpha, beta);
 
+  // Another to_ref_if for include_summand where I can compute log(beta)
+  // and log(alpha)?
+
   T_partials_return logp = sum((beta_val - 1) * log_y - 2 * log(log1_arg));
   // T_partials_return logp = sum((beta_val - 1) * log(y_val) -
   //   2 * log1p(pow((y_val * inv(alpha_val)), beta_val)));
@@ -90,6 +93,7 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_lpdf(const T_y& y,
         to_ref_if<!is_constant_all<T_y, T_scale>::value>(pow(y_val, beta_val));
 
     if (!is_constant_all<T_y>::value) {
+      // Inverse y_val should be precomputed.
       const auto& y_deriv = (beta_val - 1.0) * inv(y_val) -
         two_inv_log1_arg *
         (beta_val * inv(pow(alpha_val, beta_val))) * y_pow_beta * inv(y_val);
@@ -102,6 +106,8 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_lpdf(const T_y& y,
       ops_partials.edge2_.partials_ = alpha_deriv;
     }
     if (!is_constant_all<T_shape>::value) {
+      // Inverse alpha_val should be precomputed.
+      // It already is!
       const auto& beta_deriv = (1.0 * inv(beta_val)) + log(y_val) - log(alpha_val) -
         two_inv_log1_arg *
         pow((y_val * inv(alpha_val)), beta_val) * log(y_val * inv(alpha_val));
