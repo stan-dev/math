@@ -54,15 +54,22 @@ gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
   }
 
   T_sigma sigma_sq = square(sigma);
+  size_t block_size = 10;
 
-  for (size_t i = 0; i < (x_size - 1); ++i) {
-    cov(i, i) = sigma_sq + dot_self(x[i]);
-    for (size_t j = i + 1; j < x_size; ++j) {
-      cov(i, j) = sigma_sq + dot_product(x[i], x[j]);
-      cov(j, i) = cov(i, j);
+  for (size_t jb = 0; jb < x_size; jb += block_size) {
+    for (size_t ib = jb; ib < x_size; ib += block_size) {
+      size_t j_end = std::min(x_size, jb + block_size);
+      for (size_t j = jb; j < j_end; ++j) {
+        cov.coeffRef(j, j) = sigma_sq + dot_self(x[j]);
+        size_t i_end = std::min(x_size, ib + block_size);
+        for (size_t i = std::max(ib, j + 1); i < i_end; ++i) {
+          cov.coeffRef(j, i) = cov.coeffRef(i, j)
+              = sigma_sq + dot_product(x[i], x[j]);
+        }
+      }
     }
   }
-  cov(x_size - 1, x_size - 1) = sigma_sq + dot_self(x[x_size - 1]);
+  cov.coeffRef(x_size - 1, x_size - 1) = sigma_sq + dot_self(x[x_size - 1]);
   return cov;
 }
 
@@ -91,12 +98,10 @@ gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
 template <typename T_x, typename T_sigma>
 Eigen::Matrix<return_type_t<T_x, T_sigma>, Eigen::Dynamic, Eigen::Dynamic>
 gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
-  check_not_nan("gp_dot_prod_cov", "sigma", sigma);
   check_nonnegative("gp_dot_prod_cov", "sigma", sigma);
   check_finite("gp_dot_prod_cov", "sigma", sigma);
 
   size_t x_size = x.size();
-  check_not_nan("gp_dot_prod_cov", "x", x);
   check_finite("gp_dot_prod_cov", "x", x);
 
   Eigen::Matrix<return_type_t<T_x, T_sigma>, Eigen::Dynamic, Eigen::Dynamic>
@@ -106,12 +111,18 @@ gp_dot_prod_cov(const std::vector<T_x> &x, const T_sigma &sigma) {
   }
 
   T_sigma sigma_sq = square(sigma);
+  size_t block_size = 10;
 
-  for (size_t i = 0; i < (x_size - 1); ++i) {
-    cov(i, i) = sigma_sq + x[i] * x[i];
-    for (size_t j = i + 1; j < x_size; ++j) {
-      cov(i, j) = sigma_sq + x[i] * x[j];
-      cov(j, i) = cov(i, j);
+  for (size_t jb = 0; jb < x_size; jb += block_size) {
+    for (size_t ib = jb; ib < x_size; ib += block_size) {
+      size_t j_end = std::min(x_size, jb + block_size);
+      for (size_t j = jb; j < j_end; ++j) {
+        cov.coeffRef(j, j) = sigma_sq + x[j] * x[j];
+        size_t i_end = std::min(x_size, ib + block_size);
+        for (size_t i = std::max(ib, j + 1); i < i_end; ++i) {
+          cov.coeffRef(j, i) = cov.coeffRef(i, j) = sigma_sq + x[i] * x[j];
+        }
+      }
     }
   }
   cov(x_size - 1, x_size - 1) = sigma_sq + x[x_size - 1] * x[x_size - 1];
@@ -146,18 +157,15 @@ Eigen::Matrix<return_type_t<T_x1, T_x2, T_sigma>, Eigen::Dynamic,
 gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
                 const std::vector<Eigen::Matrix<T_x2, Eigen::Dynamic, 1>> &x2,
                 const T_sigma &sigma) {
-  check_not_nan("gp_dot_prod_cov", "sigma", sigma);
   check_nonnegative("gp_dot_prod_cov", "sigma", sigma);
   check_finite("gp_dot_prod_cov", "sigma", sigma);
 
   size_t x1_size = x1.size();
   size_t x2_size = x2.size();
   for (size_t i = 0; i < x1_size; ++i) {
-    check_not_nan("gp_dot_prod_cov", "x1", x1[i]);
     check_finite("gp_dot_prod_cov", "x1", x1[i]);
   }
   for (size_t i = 0; i < x2_size; ++i) {
-    check_not_nan("gp_dot_prod_cov", "x2", x2[i]);
     check_finite("gp_dot_prod_cov", "x2", x2[i]);
   }
   Eigen::Matrix<return_type_t<T_x1, T_x2, T_sigma>, Eigen::Dynamic,
@@ -169,10 +177,17 @@ gp_dot_prod_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
   }
 
   T_sigma sigma_sq = square(sigma);
+  size_t block_size = 10;
 
-  for (size_t i = 0; i < x1_size; ++i) {
-    for (size_t j = 0; j < x2_size; ++j) {
-      cov(i, j) = sigma_sq + dot_product(x1[i], x2[j]);
+  for (size_t ib = 0; ib < x1_size; ib += block_size) {
+    for (size_t jb = 0; jb < x2_size; jb += block_size) {
+      size_t j_end = std::min(x2_size, jb + block_size);
+      for (size_t j = jb; j < j_end; ++j) {
+        size_t i_end = std::min(x1_size, ib + block_size);
+        for (size_t i = ib; i < i_end; ++i) {
+          cov(i, j) = sigma_sq + dot_product(x1[i], x2[j]);
+        }
+      }
     }
   }
   return cov;
@@ -205,15 +220,12 @@ Eigen::Matrix<return_type_t<T_x1, T_x2, T_sigma>, Eigen::Dynamic,
               Eigen::Dynamic>
 gp_dot_prod_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
                 const T_sigma &sigma) {
-  check_not_nan("gp_dot_prod_cov", "sigma", sigma);
   check_nonnegative("gp_dot_prod_cov", "sigma", sigma);
   check_finite("gp_dot_prod_cov", "sigma", sigma);
 
   size_t x1_size = x1.size();
   size_t x2_size = x2.size();
-  check_not_nan("gp_dot_prod_cov", "x1", x1);
   check_finite("gp_dot_prod_cov", "x1", x1);
-  check_not_nan("gp_dot_prod_cov", "x2", x2);
   check_finite("gp_dot_prod_cov", "x2", x2);
 
   Eigen::Matrix<return_type_t<T_x1, T_x2, T_sigma>, Eigen::Dynamic,

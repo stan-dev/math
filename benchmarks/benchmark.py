@@ -351,7 +351,7 @@ def benchmark(
             if "matrix" in arg:
                 arg_dimm = 2
             if "[" in arg:
-                arg_dimm += len(arg.split("[")[1])
+                arg_dimm += len(arg.split("]")[0].split("[")[1])
             if arg_dimm == dimm:
                 args_with_max_dimm += 1
             elif arg_dimm > dimm:
@@ -480,11 +480,12 @@ def benchmark(
                     code += "stan::math::to_var_value({}), ".format(var_name)
                 else:
                     code += var_name + ", "
-            if opencl == "base":
-                var_conversions += "  stan::math::opencl_context.queue().finish();\n"
             code = code[:-2] + "));\n"
             if "Rev" in arg_overloads:
                 code += "    stan::math::grad();\n"
+            if opencl == "base":
+              code += "    stan::math::opencl_context.queue().finish();\n"
+              var_conversions += "    stan::math::opencl_context.queue().finish();\n"
             result += BENCHMARK_TEMPLATE.format(
                 benchmark_name=benchmark_name,
                 setup=setup,

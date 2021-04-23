@@ -9,7 +9,6 @@
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/value_type.hpp>
 #include <stan/math/opencl/scalar_type.hpp>
-#include <stan/math/opencl/kernels/copy.hpp>
 #include <stan/math/opencl/kernels/pack.hpp>
 #include <stan/math/opencl/kernels/unpack.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
