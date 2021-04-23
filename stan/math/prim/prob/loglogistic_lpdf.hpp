@@ -20,7 +20,26 @@
 namespace stan {
 namespace math {
 
-// Loglogistic(y | alpha, beta)    [y > 0, alpha > 0, beta > 0]
+/** \ingroup prob_dists
+ * The log of the loglogistic density for the specified scalar(s)
+ * given the specified scales(s) and shape(s). y, alpha, or beta
+ * can each be either a scalar or a vector. Any vector inputs
+ * must be the same length.
+ *
+ * <p>The result log probability is defined to be the sum of the
+ * log probabilities for each observation/scale/shape triple.
+ *
+ * @tparam T_y type of scalar.
+ * @tparam T_scale type of scale parameter.
+ * @tparam T_shape type of shape parameter.
+ * @param y (Sequence of) scalar(s).
+ * @param alpha (Sequence of) scale parameter(s)
+ * for the loglogistic distribution.
+ * @param beta (Sequence of) shape parameter(s) for the
+ * loglogistic distribution.
+ * @return The log of the product of the densities.
+ * @throw std::domain_error if any of the inputs are not positive and finite.
+ */
 template <bool propto, typename T_y, typename T_scale, typename T_shape,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_scale, T_shape>* = nullptr>
