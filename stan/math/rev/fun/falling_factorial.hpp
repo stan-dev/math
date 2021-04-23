@@ -23,10 +23,10 @@ inline auto falling_factorial(const var_value<T1>& a, const T2& b) {
   auto b_map = as_array_or_scalar(b);
   auto digamma_ab = to_arena(digamma(a.val().array() + 1)
                              - digamma(a.val().array() - b_map + 1));
- return make_callback_var(
-     falling_factorial(a.val(), b), [a, digamma_ab](auto& vi) mutable {
-       a.adj().array() += vi.adj().array() * vi.val().array() * digamma_ab;
-     });
+  return make_callback_var(
+      falling_factorial(a.val(), b), [a, digamma_ab](auto& vi) mutable {
+        a.adj().array() += vi.adj().array() * vi.val().array() * digamma_ab;
+      });
 }
 
 }  // namespace math
