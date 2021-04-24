@@ -25,7 +25,7 @@ static constexpr double e() { return boost::math::constants::e<double>(); }
  * @return Euler's Gamma.
  */
 static constexpr double egamma() {
-    return boost::math::constants::euler<double>();
+  return boost::math::constants::euler<double>();
 }
 
 /**
@@ -132,7 +132,7 @@ static constexpr double SQRT_PI = boost::math::constants::root_pi<double>();
  * \f$ \sqrt{2\pi} \f$.
  */
 static constexpr double SQRT_TWO_PI
-  = boost::math::constants::root_two_pi<double>();
+    = boost::math::constants::root_two_pi<double>();
 
 /**
  * The square root of 2 divided by the square root of \f$ \pi \f$,
@@ -145,28 +145,28 @@ static constexpr double SQRT_TWO_OVER_SQRT_PI = SQRT_TWO / SQRT_PI;
  * \f$ 1 / \sqrt{2} \f$.
  */
 static constexpr double INV_SQRT_TWO
-  = boost::math::constants::one_div_root_two<double>();
+    = boost::math::constants::one_div_root_two<double>();
 
 /**
  * The value of 1 over the square root of \f$ \pi \f$,
  * \f$ 1 / \sqrt{\pi} \f$.
  */
 static constexpr double INV_SQRT_PI
-  = boost::math::constants::one_div_root_pi<double>();
+    = boost::math::constants::one_div_root_pi<double>();
 
 /**
  * The value of 1 over the square root of \f$ 2\pi \f$,
  * \f$ 1 / \sqrt{2\pi} \f$.
  */
 static constexpr double INV_SQRT_TWO_PI
-  = boost::math::constants::one_div_root_two_pi<double>();
+    = boost::math::constants::one_div_root_two_pi<double>();
 
 /**
  * The value of 2 over the square root of \f$ \pi \f$,
  * \f$ 2 / \sqrt{\pi} \f$.
  */
 static constexpr double TWO_OVER_SQRT_PI
-  = boost::math::constants::two_div_root_pi <double>();
+    = boost::math::constants::two_div_root_pi<double>();
 
 /**
  * The value of half the natural logarithm 2,
