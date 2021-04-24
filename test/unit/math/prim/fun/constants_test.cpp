@@ -54,3 +54,6 @@ TEST(MathsConstants, two_over_sqrt_pi) {
 TEST(MathsConstants, inv_sqrt_two_pi) {
   EXPECT_FLOAT_EQ(.39894228040, stan::math::INV_SQRT_TWO_PI);
 }
+TEST(MathsConstants, egamma) {
+  EXPECT_FLOAT_EQ(-stan::math::digamma(1), stan::math::egamma());
+}
