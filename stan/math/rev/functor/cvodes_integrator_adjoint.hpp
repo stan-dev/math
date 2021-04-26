@@ -165,8 +165,8 @@ class cvodes_integrator_adjoint_vari : public vari {
    * ODE RHS passed to CVODES.
    */
   static int cv_rhs(realtype t, N_Vector y, N_Vector ydot, void* user_data) {
-    cvodes_integrator_adjoint_vari* integrator
-        = static_cast<cvodes_integrator_adjoint_vari*>(user_data);
+    const cvodes_integrator_adjoint_vari* integrator
+        = static_cast<const cvodes_integrator_adjoint_vari*>(user_data);
     integrator->rhs(t, NV_DATA_S(y), NV_DATA_S(ydot));
     return 0;
   }
@@ -176,8 +176,8 @@ class cvodes_integrator_adjoint_vari : public vari {
    * RHS of the backward ODE system.
    */
   static int cv_rhs_adj_sens(realtype t, N_Vector y, N_Vector yB, N_Vector yBdot, void* user_data) {
-    cvodes_integrator_adjoint_vari* integrator
-        = static_cast<cvodes_integrator_adjoint_vari*>(user_data);
+    const cvodes_integrator_adjoint_vari* integrator
+        = static_cast<const cvodes_integrator_adjoint_vari*>(user_data);
     integrator->rhs_adj_sens(t, y, yB, yBdot);
     return 0;
   }
@@ -200,8 +200,8 @@ class cvodes_integrator_adjoint_vari : public vari {
    * major format.
    */
   static int cv_jacobian_states(realtype t, N_Vector y, N_Vector fy, SUNMatrix J, void* user_data, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3) {
-    cvodes_integrator_adjoint_vari* integrator
-        = static_cast<cvodes_integrator_adjoint_vari*>(user_data);
+    const cvodes_integrator_adjoint_vari* integrator
+        = static_cast<const cvodes_integrator_adjoint_vari*>(user_data);
     integrator->jacobian_states(t, y, J);
     return 0;
   }
@@ -211,8 +211,8 @@ class cvodes_integrator_adjoint_vari : public vari {
    * the adjoint problem.
    */
   static int cv_jacobian_adj(realtype t, N_Vector y, N_Vector yB, N_Vector fyB, SUNMatrix J, void* user_data, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3) {
-    cvodes_integrator_adjoint_vari* integrator
-        = static_cast<cvodes_integrator_adjoint_vari*>(user_data);
+    const cvodes_integrator_adjoint_vari* integrator
+        = static_cast<const cvodes_integrator_adjoint_vari*>(user_data);
     integrator->jacobian_adj(t, y, J);
     return 0;
   }
@@ -221,7 +221,7 @@ class cvodes_integrator_adjoint_vari : public vari {
    * Calculates the ODE RHS, dy_dt, using the user-supplied functor at
    * the given time t and state y.
    */
-  inline void rhs(double t, const double y[], double dy_dt[]) {
+  inline void rhs(double t, const double y[], double dy_dt[]) const {
     const Eigen::VectorXd y_vec = Eigen::Map<const Eigen::VectorXd>(y, N_);
 
     const Eigen::VectorXd dy_dt_vec = rhs(t, y_vec, value_of_args_tuple_);
@@ -244,7 +244,7 @@ class cvodes_integrator_adjoint_vari : public vari {
    * @param[in] yB state of the adjoint ODE system
    * @param[out] yBdot evaluation of adjoint ODE RHS
    */
-  void rhs_adj_sens(double t, N_Vector y, N_Vector yB, N_Vector yBdot) {
+  void rhs_adj_sens(double t, N_Vector y, N_Vector yB, N_Vector yBdot) const {
     Eigen::Map<Eigen::VectorXd> y_vec(NV_DATA_S(y), N_);
     Eigen::Map<Eigen::VectorXd> mu(NV_DATA_S(yB), N_);
     Eigen::Map<Eigen::VectorXd> mu_dot(NV_DATA_S(yBdot), N_);
@@ -308,7 +308,7 @@ class cvodes_integrator_adjoint_vari : public vari {
    * Calculates the jacobian of the ODE RHS wrt to its states y at the
    * given time-point t and state y.
    */
-  inline void jacobian_states(double t, N_Vector y, SUNMatrix J) {
+  inline void jacobian_states(double t, N_Vector y, SUNMatrix J) const {
     Eigen::Map<Eigen::MatrixXd> Jfy(SM_DATA_D(J), N_, N_);
     Eigen::Map<const Eigen::VectorXd> x(NV_DATA_S(y), N_);
 
@@ -338,7 +338,7 @@ class cvodes_integrator_adjoint_vari : public vari {
    * @param[in] t Time
    * @param[out] J CVode structure where output is to be stored
    */
-  inline void jacobian_adj(double t, N_Vector y, SUNMatrix J) {
+  inline void jacobian_adj(double t, N_Vector y, SUNMatrix J) const {
     Eigen::Map<Eigen::MatrixXd> J_adj_y(SM_DATA_D(J), N_, N_);
 
     // J_adj_y = -1 * transpose(J_y)
