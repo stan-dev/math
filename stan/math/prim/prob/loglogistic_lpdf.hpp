@@ -91,7 +91,7 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_lpdf(const T_y& y,
           log(alpha_val));
   const auto& beta_minus_one
       = to_ref_if<(include_summand<propto, T_scale, T_shape>::value
-        || !is_constant_all<T_y>::value)>(beta_val - 1.0);
+                   || !is_constant_all<T_y>::value)>(beta_val - 1.0);
 
   size_t N = max_size(y, alpha, beta);
   size_t N_alpha_beta = max_size(alpha, beta);
@@ -109,7 +109,7 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_lpdf(const T_y& y,
                         + !is_constant_all<T_scale>::value
                         + !is_constant_all<T_shape>::value
                     >= 2>(2.0 * inv(log1_arg));
-    if(!is_constant_all<T_y, T_scale>::value){
+    if (!is_constant_all<T_y, T_scale>::value){
       const auto& y_pow_beta = to_ref_if<!is_constant_all<T_y, T_scale>::value>(
           pow(y_val, beta_val));
       const auto& inv_alpha_pow_beta
@@ -120,9 +120,9 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_lpdf(const T_y& y,
       if (!is_constant_all<T_y>::value) {
         const auto& inv_y = inv(y_val);
         const auto& y_deriv = beta_minus_one * inv_y
-                              - two_inv_log1_arg *
-                              (beta_val * inv_alpha_pow_beta)
-                              * y_pow_beta * inv_y;
+                              - two_inv_log1_arg
+                                    * (beta_val * inv_alpha_pow_beta)
+                                    * y_pow_beta * inv_y;
         ops_partials.edge1_.partials_ = y_deriv;
       }
       if (!is_constant_all<T_scale>::value) {
