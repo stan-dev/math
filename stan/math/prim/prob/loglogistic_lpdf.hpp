@@ -89,8 +89,8 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_lpdf(const T_y& y,
       = to_ref_if<include_summand<propto, T_scale, T_shape>::value>(
           log(alpha_val));
   const auto& beta_minus_one
-      = to_ref_if < include_summand<propto, T_scale, T_shape>::value
-        || !is_constant_all<T_y>::value > (beta_val - 1.0);
+      = to_ref_if<(include_summand<propto, T_scale, T_shape>::value
+        || !is_constant_all<T_y>::value)>(beta_val - 1.0);
 
   size_t N = max_size(y, alpha, beta);
   size_t N_alpha_beta = max_size(alpha, beta);
