@@ -244,7 +244,7 @@ def get_signatures():
         stanc3 = ".\\test\\expressions\\stanc.exe"
     else:
         stanc3 = "./test/expressions/stanc"
-    p = subprocess.Popen((make, stanc3))
+    p = subprocess.Popen((make, stanc3.replace("\\", "/")))
     if p.wait() != 0:
         sys.stderr.write("Error in making stanc3!")
         sys.exit(-1)
