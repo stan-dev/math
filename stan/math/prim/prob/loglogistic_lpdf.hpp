@@ -112,7 +112,7 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_lpdf(const T_y& y,
     const auto& y_pow_beta = to_ref_if<!is_constant_all<T_y, T_scale>::value>(
         pow(y_val, beta_val));
     const auto& inv_alpha_pow_beta
-        = to_ref_if<!is_constant_all<T_y, T_scale>::value>(
+        = to_ref_if<!is_constant_all<T_y>::value && !is_constant_all<T_scale>::value>(
             pow(inv_alpha, beta_val));
 
     if (!is_constant_all<T_y>::value) {
