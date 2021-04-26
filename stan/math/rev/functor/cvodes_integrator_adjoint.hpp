@@ -20,69 +20,6 @@
 namespace stan {
 namespace math {
 
-class cvodes_integrator_adjoint_mem : public chainable_alloc {
-public:
-  size_t N_;
-  std::vector<Eigen::VectorXd> y_;
-  const char* function_name_;
-  void* cvodes_mem_;
-  N_Vector nv_state_forward_;
-  N_Vector nv_state_backward_;
-  N_Vector nv_quad_;
-  N_Vector nv_absolute_tolerance_forward_;
-  N_Vector nv_absolute_tolerance_backward_;
-
-  SUNMatrix A_forward_;
-  SUNLinearSolver LS_forward_;
-
-  SUNMatrix A_backward_;
-  SUNLinearSolver LS_backward_;
-  template <typename StateFwd, typename StateBwd, typename Quad,
-  typename AbsTolFwd, typename AbsTolBwd>
-  cvodes_integrator_adjoint_mem(const char* function_name, size_t N,
-    size_t num_args_vars, size_t ts_size, int solver_forward, StateFwd& state_forward,
-    StateBwd& state_backward, Quad& quad,
-    AbsTolFwd& absolute_tolerance_forward,
-    AbsTolBwd& absolute_tolerance_backward) : chainable_alloc(), N_(N), y_(ts_size),
-    function_name_(function_name) {
-      nv_state_forward_ = N_VMake_Serial(N, state_forward.data());
-      nv_state_backward_ = N_VMake_Serial(N, state_backward.data());
-      nv_quad_ = N_VMake_Serial(num_args_vars, quad.data());
-      nv_absolute_tolerance_forward_
-          = N_VMake_Serial(N, absolute_tolerance_forward.data());
-      nv_absolute_tolerance_backward_
-          = N_VMake_Serial(N, absolute_tolerance_backward.data());
-
-      A_forward_ = SUNDenseMatrix(N, N);
-      A_backward_ = SUNDenseMatrix(N, N);
-      if (N > 0 ) {
-        LS_forward_ = SUNDenseLinearSolver(nv_state_forward_, A_forward_);
-        LS_backward_ = SUNDenseLinearSolver(nv_state_backward_, A_backward_);
-      }
-      cvodes_mem_ = CVodeCreate(solver_forward);
-
-      if (cvodes_mem_ == nullptr) {
-        throw std::runtime_error("CVodeCreate failed to allocate memory");
-      }
-  }
-  virtual ~cvodes_integrator_adjoint_mem() {
-      SUNMatDestroy(A_forward_);
-      SUNMatDestroy(A_backward_);
-      if (N_ > 0) {
-        SUNLinSolFree(LS_forward_);
-        SUNLinSolFree(LS_backward_);
-      }
-      N_VDestroy_Serial(nv_state_forward_);
-      N_VDestroy_Serial(nv_state_backward_);
-      N_VDestroy_Serial(nv_quad_);
-      N_VDestroy_Serial(nv_absolute_tolerance_forward_);
-      N_VDestroy_Serial(nv_absolute_tolerance_backward_);
-
-      if (cvodes_mem_) {
-        CVodeFree(&cvodes_mem_);
-      }
-  }
-};
 
 /**
  * Integrator interface for CVODES' ODE solvers (Adams & BDF
@@ -139,9 +76,6 @@ class cvodes_integrator_adjoint_vari : public vari {
   arena_t<Eigen::VectorXd> state_backward_;
   arena_t<Eigen::VectorXd> quad_;
 
-  //std::vector<arena_t<Eigen::VectorXd>, arena_allocator<arena_t<Eigen::VectorXd>>> y_;
-
-
   vari** non_chaining_varis_;
 
   vari** t0_varis_;
@@ -150,7 +84,17 @@ class cvodes_integrator_adjoint_vari : public vari {
   vari** args_varis_;
 
   int index_backward_;
-  cvodes_integrator_adjoint_mem* mem;
+  
+  struct cvodes_solver;
+  cvodes_solver* solver_;
+
+  static constexpr bool is_var_ts{is_var<T_ts>::value};
+  static constexpr bool is_var_t0{is_var<T_t0>::value};
+  static constexpr bool is_var_y0{is_var<T_y0_t0>::value};
+  //static constexpr std::array<bool, sizeof...(T_Args)> is_var_args{is_var<scalar_type_t<T_Args>>::value...};
+  static constexpr bool is_any_var_args{disjunction<is_var<scalar_type_t<T_Args>>...>::value};
+  static constexpr bool is_var_return{is_var<T_Return>::value};
+  
   /**
    * Call the ODE RHS with given tuple.
    */
@@ -226,7 +170,7 @@ class cvodes_integrator_adjoint_vari : public vari {
 
     const Eigen::VectorXd dy_dt_vec = rhs(t, y_vec, value_of_args_tuple_);
 
-    check_size_match(mem->function_name_, "dy_dt", dy_dt_vec.size(), "states", N_);
+    check_size_match(solver_->function_name_, "dy_dt", dy_dt_vec.size(), "states", N_);
 
     Eigen::Map<Eigen::VectorXd>(dy_dt, N_) = dy_dt_vec;
   }
@@ -257,7 +201,7 @@ class cvodes_integrator_adjoint_vari : public vari {
     Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars
         = rhs(t, y_vars, value_of_args_tuple_);
 
-    check_size_match(mem->function_name_, "dy_dt", f_y_t_vars.size(), "states", N_);
+    check_size_match(solver_->function_name_, "dy_dt", f_y_t_vars.size(), "states", N_);
 
     f_y_t_vars.adj() = -mu;
 
@@ -289,12 +233,12 @@ class cvodes_integrator_adjoint_vari : public vari {
 
     // The vars here do not live on the nested stack so must be zero'd
     // separately
-    apply([&](auto&&... args) { zero_adjoints(args...); }, local_args_tuple_);
+    stan::math::for_each([](auto&& arg) { zero_adjoints(arg); }, local_args_tuple_);
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars
         = rhs(t, y_vec, local_args_tuple_);
 
-    check_size_match(mem->function_name_, "dy_dt", f_y_t_vars.size(), "states", N_);
+    check_size_match(solver_->function_name_, "dy_dt", f_y_t_vars.size(), "states", N_);
 
     f_y_t_vars.adj() = -mu;
 
@@ -318,7 +262,7 @@ class cvodes_integrator_adjoint_vari : public vari {
     Eigen::Matrix<var, Eigen::Dynamic, 1> fy_var
         = rhs(t, y_var, value_of_args_tuple_);
 
-    check_size_match(mem->function_name_, "dy_dt", fy_var.size(), "states", N_);
+    check_size_match(solver_->function_name_, "dy_dt", fy_var.size(), "states", N_);
 
     grad(fy_var.coeffRef(0).vi_);
     Jfy.col(0) = y_var.adj();
@@ -351,21 +295,94 @@ class cvodes_integrator_adjoint_vari : public vari {
   /**
    * Overloads which setup the states returned from the forward solve. In case the return type is a double only, then no autodiff is needed. In case of autodiff non-chaining varis are setup accordingly.
    */
-  void store_state(vari** non_chaining_varis,
+  void store_state(std::size_t n,
                    const Eigen::VectorXd& state,
                    Eigen::Matrix<var, Eigen::Dynamic, 1>& state_return) {
+    solver_->y_[n] = state;
     state_return.resize(N_);
     for (size_t i = 0; i < N_; i++) {
-      non_chaining_varis[i] = new vari(state.coeff(i), false);
-      state_return.coeffRef(i) = var(non_chaining_varis[i]);
+      non_chaining_varis_[N_ * n + i] = new vari(state.coeff(i), false);
+      state_return.coeffRef(i) = var(non_chaining_varis_[N_ * n + i]);
     }
   }
 
-  void store_state(vari** non_chaining_varis,
+  void store_state(std::size_t n,
                    const Eigen::VectorXd& state,
                    Eigen::Matrix<double, Eigen::Dynamic, 1>& state_return) {
+    solver_->y_[n] = state;
     state_return = state;
   }
+
+  /**
+   * Since the CVODES solver manages memory with malloc calls, these resources must be freed using a destructor call (which is not being called for the vari class).
+   */
+  struct cvodes_solver : public chainable_alloc {
+    size_t N_;
+    std::vector<Eigen::VectorXd> y_;
+    const std::string function_name_str_;
+    const char* function_name_;
+    void* cvodes_mem_;
+    N_Vector nv_state_forward_;
+    N_Vector nv_state_backward_;
+    N_Vector nv_quad_;
+    N_Vector nv_absolute_tolerance_forward_;
+    N_Vector nv_absolute_tolerance_backward_;
+
+    SUNMatrix A_forward_;
+    SUNLinearSolver LS_forward_;
+
+    SUNMatrix A_backward_;
+    SUNLinearSolver LS_backward_;
+    template <typename StateFwd, typename StateBwd, typename Quad,
+              typename AbsTolFwd, typename AbsTolBwd>
+    cvodes_solver(const char* function_name, size_t N,
+                  size_t num_args_vars, size_t ts_size, int solver_forward, StateFwd& state_forward,
+                  StateBwd& state_backward, Quad& quad,
+                  AbsTolFwd& absolute_tolerance_forward,
+                  AbsTolBwd& absolute_tolerance_backward) :
+        chainable_alloc(), N_(N), y_(ts_size),
+        function_name_str_(function_name),
+        function_name_(function_name_str_.c_str()) {
+      nv_state_forward_ = N_VMake_Serial(N, state_forward.data());
+      nv_state_backward_ = N_VMake_Serial(N, state_backward.data());
+      nv_quad_ = N_VMake_Serial(num_args_vars, quad.data());
+      nv_absolute_tolerance_forward_
+          = N_VMake_Serial(N, absolute_tolerance_forward.data());
+      nv_absolute_tolerance_backward_
+          = N_VMake_Serial(N, absolute_tolerance_backward.data());
+      
+      A_forward_ = SUNDenseMatrix(N, N);
+      A_backward_ = SUNDenseMatrix(N, N);
+      if (N > 0 ) {
+        LS_forward_ = SUNDenseLinearSolver(nv_state_forward_, A_forward_);
+        LS_backward_ = SUNDenseLinearSolver(nv_state_backward_, A_backward_);
+      }
+      cvodes_mem_ = CVodeCreate(solver_forward);
+      
+      if (cvodes_mem_ == nullptr) {
+        throw std::runtime_error("CVodeCreate failed to allocate memory");
+      }
+    }
+    
+    virtual ~cvodes_solver() {
+      SUNMatDestroy(A_forward_);
+      SUNMatDestroy(A_backward_);
+      if (N_ > 0) {
+        SUNLinSolFree(LS_forward_);
+        SUNLinSolFree(LS_backward_);
+      }
+      N_VDestroy_Serial(nv_state_forward_);
+      N_VDestroy_Serial(nv_state_backward_);
+      N_VDestroy_Serial(nv_quad_);
+      N_VDestroy_Serial(nv_absolute_tolerance_forward_);
+      N_VDestroy_Serial(nv_absolute_tolerance_backward_);
+      
+      if (cvodes_mem_) {
+        CVodeFree(&cvodes_mem_);
+      }
+    }
+  };
+
 
  public:
   /**
@@ -465,7 +482,7 @@ class cvodes_integrator_adjoint_vari : public vari {
             num_y0_vars_)),
         args_varis_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
             num_args_vars_)),
-        mem(new cvodes_integrator_adjoint_mem(function_name, N_,
+        solver_(new cvodes_solver(function_name, N_,
             num_args_vars_, ts_.size(), solver_forward_, state_forward_,
             state_backward_, quad_,
             absolute_tolerance_forward_,
@@ -475,82 +492,82 @@ class cvodes_integrator_adjoint_vari : public vari {
     save_varis(y0_varis_, y0);
     save_varis(args_varis_, args...);
 
-    check_finite(mem->function_name_, "initial state", y0);
-    check_finite(mem->function_name_, "initial time", t0);
-    check_finite(mem->function_name_, "times", ts);
+    check_finite(solver_->function_name_, "initial state", y0);
+    check_finite(solver_->function_name_, "initial time", t0);
+    check_finite(solver_->function_name_, "times", ts);
 
     // Code from: https://stackoverflow.com/a/17340003 . Should probably do
     // something better
     apply(
         [&](auto&&... args) {
           std::vector<int> unused_temp{
-              0, (check_finite(mem->function_name_, "ode parameters and data", args),
+              0, (check_finite(solver_->function_name_, "ode parameters and data", args),
                   0)...};
         },
         local_args_tuple_);
 
-    check_nonzero_size(mem->function_name_, "times", ts);
-    check_nonzero_size(mem->function_name_, "initial state", y0);
-    check_sorted(mem->function_name_, "times", ts);
-    check_less(mem->function_name_, "initial time", t0, ts[0]);
-    check_positive_finite(mem->function_name_, "relative_tolerance_forward",
+    check_nonzero_size(solver_->function_name_, "times", ts);
+    check_nonzero_size(solver_->function_name_, "initial state", y0);
+    check_sorted(solver_->function_name_, "times", ts);
+    check_less(solver_->function_name_, "initial time", t0, ts[0]);
+    check_positive_finite(solver_->function_name_, "relative_tolerance_forward",
                           relative_tolerance_forward_);
-    check_positive_finite(mem->function_name_, "absolute_tolerance_forward",
+    check_positive_finite(solver_->function_name_, "absolute_tolerance_forward",
                           absolute_tolerance_forward_);
-    check_size_match(mem->function_name_, "absolute_tolerance_forward",
+    check_size_match(solver_->function_name_, "absolute_tolerance_forward",
                      absolute_tolerance_forward_.size(), "states", N_);
-    check_positive_finite(mem->function_name_, "relative_tolerance_backward",
+    check_positive_finite(solver_->function_name_, "relative_tolerance_backward",
                           relative_tolerance_backward_);
-    check_positive_finite(mem->function_name_, "absolute_tolerance_backward",
+    check_positive_finite(solver_->function_name_, "absolute_tolerance_backward",
                           absolute_tolerance_backward_);
-    check_size_match(mem->function_name_, "absolute_tolerance_backward",
+    check_size_match(solver_->function_name_, "absolute_tolerance_backward",
                      absolute_tolerance_backward_.size(), "states", N_);
-    check_positive_finite(mem->function_name_, "relative_tolerance_quadrature",
+    check_positive_finite(solver_->function_name_, "relative_tolerance_quadrature",
                           relative_tolerance_quadrature_);
-    check_positive_finite(mem->function_name_, "absolute_tolerance_quadrature",
+    check_positive_finite(solver_->function_name_, "absolute_tolerance_quadrature",
                           absolute_tolerance_quadrature_);
-    check_positive(mem->function_name_, "max_num_steps", max_num_steps_);
-    check_positive(mem->function_name_, "num_steps_between_checkpoints",
+    check_positive(solver_->function_name_, "max_num_steps", max_num_steps_);
+    check_positive(solver_->function_name_, "num_steps_between_checkpoints",
                    num_steps_between_checkpoints_);
     // for polynomial: 1=CV_HERMITE / 2=CV_POLYNOMIAL
-    check_range(mem->function_name_, "interpolation_polynomial", 2,
+    check_range(solver_->function_name_, "interpolation_polynomial", 2,
                 interpolation_polynomial_);
     // 1=Adams=CV_ADAMS, 2=BDF=CV_BDF
-    check_range(mem->function_name_, "solver_forward", 2, solver_forward_);
-    check_range(mem->function_name_, "solver_backward", 2, solver_backward_);
+    check_range(solver_->function_name_, "solver_forward", 2, solver_forward_);
+    check_range(solver_->function_name_, "solver_backward", 2, solver_backward_);
 
 
     check_flag_sundials(
-        CVodeInit(mem->cvodes_mem_, &cvodes_integrator_adjoint_vari::cv_rhs,
-                  value_of(t0_), mem->nv_state_forward_),
+        CVodeInit(solver_->cvodes_mem_, &cvodes_integrator_adjoint_vari::cv_rhs,
+                  value_of(t0_), solver_->nv_state_forward_),
         "CVodeInit");
 
     // Assign pointer to this as user data
     check_flag_sundials(
-        CVodeSetUserData(mem->cvodes_mem_, reinterpret_cast<void*>(this)),
+        CVodeSetUserData(solver_->cvodes_mem_, reinterpret_cast<void*>(this)),
         "CVodeSetUserData");
 
-    cvodes_set_options(mem->cvodes_mem_, relative_tolerance_forward_,
+    cvodes_set_options(solver_->cvodes_mem_, relative_tolerance_forward_,
                        absolute_tolerance_forward_(0), max_num_steps_);
 
     check_flag_sundials(
-        CVodeSVtolerances(mem->cvodes_mem_, relative_tolerance_forward_,
-                          mem->nv_absolute_tolerance_forward_),
+        CVodeSVtolerances(solver_->cvodes_mem_, relative_tolerance_forward_,
+                          solver_->nv_absolute_tolerance_forward_),
         "CVodeSVtolerances");
 
     check_flag_sundials(
-        CVodeSetLinearSolver(mem->cvodes_mem_, mem->LS_forward_, mem->A_forward_),
+        CVodeSetLinearSolver(solver_->cvodes_mem_, solver_->LS_forward_, solver_->A_forward_),
         "CVodeSetLinearSolver");
 
     check_flag_sundials(
-        CVodeSetJacFn(mem->cvodes_mem_,
+        CVodeSetJacFn(solver_->cvodes_mem_,
                       &cvodes_integrator_adjoint_vari::cv_jacobian_states),
         "CVodeSetJacFn");
 
     // initialize backward sensitivity system of CVODES as needed
     if (num_vars_ != 0) {
       check_flag_sundials(
-          CVodeAdjInit(mem->cvodes_mem_, num_steps_between_checkpoints_,
+          CVodeAdjInit(solver_->cvodes_mem_, num_steps_between_checkpoints_,
                        interpolation_polynomial_),
           "CVodeAdjInit");
     }
@@ -579,11 +596,11 @@ class cvodes_integrator_adjoint_vari : public vari {
         if (num_vars_ != 0) {
           int ncheck;
 
-          int error_code = CVodeF(mem->cvodes_mem_, t_final, mem->nv_state_forward_,
+          int error_code = CVodeF(solver_->cvodes_mem_, t_final, solver_->nv_state_forward_,
                                   &t_init, CV_NORMAL, &ncheck);
 
           if (error_code == CV_TOO_MUCH_WORK) {
-            throw_domain_error(mem->function_name_, "", t_final,
+            throw_domain_error(solver_->function_name_, "", t_final,
                                "Failed to integrate to next output time (",
                                ") in less than max_num_steps steps");
           } else {
@@ -591,11 +608,11 @@ class cvodes_integrator_adjoint_vari : public vari {
           }
 
         } else {
-          int error_code = CVode(mem->cvodes_mem_, t_final, mem->nv_state_forward_,
+          int error_code = CVode(solver_->cvodes_mem_, t_final, solver_->nv_state_forward_,
                                  &t_init, CV_NORMAL);
 
           if (error_code == CV_TOO_MUCH_WORK) {
-            throw_domain_error(mem->function_name_, "", t_final,
+            throw_domain_error(solver_->function_name_, "", t_final,
                                "Failed to integrate to next output time (",
                                ") in less than max_num_steps steps");
           } else {
@@ -603,12 +620,7 @@ class cvodes_integrator_adjoint_vari : public vari {
           }
         }
       }
-      if (non_chaining_varis_) {
-        store_state(non_chaining_varis_ + N_ * n, state_forward_, y_return[n]);
-      } else {
-        store_state(non_chaining_varis_, state_forward_, y_return[n]);
-      }
-      mem->y_[n] = state_forward_;
+      store_state(n, state_forward_, y_return[n]);
 
       t_init = t_final;
     }
@@ -625,7 +637,7 @@ class cvodes_integrator_adjoint_vari : public vari {
     // std::cout << "chain" << std::endl; //<-- Good way to verify it's only
     //  being called once
 
-    if (mem->cvodes_mem_ == nullptr) {
+    if (solver_->cvodes_mem_ == nullptr) {
       return;
     }
 
@@ -677,7 +689,7 @@ class cvodes_integrator_adjoint_vari : public vari {
 
       if (num_ts_vars_ > 0 && i >= 0) {
         ts_varis_[i]->adj_
-            += step_sens.dot(rhs(t_init, mem->y_[i], value_of_args_tuple_));
+            += step_sens.dot(rhs(t_init, solver_->y_[i], value_of_args_tuple_));
         /*
           apply(
           [&](auto&&... args) {
@@ -696,10 +708,10 @@ class cvodes_integrator_adjoint_vari : public vari {
       if (t_final != t_init) {
         if (!backward_is_initialized_) {
           check_flag_sundials(
-              CVodeCreateB(mem->cvodes_mem_, solver_backward_, &index_backward_),
+              CVodeCreateB(solver_->cvodes_mem_, solver_backward_, &index_backward_),
               "CVodeCreateB");
 
-          check_flag_sundials(CVodeSetUserDataB(mem->cvodes_mem_, index_backward_,
+          check_flag_sundials(CVodeSetUserDataB(solver_->cvodes_mem_, index_backward_,
                                                 reinterpret_cast<void*>(this)),
                               "CVodeSetUserDataB");
 
@@ -707,28 +719,28 @@ class cvodes_integrator_adjoint_vari : public vari {
           // the states of the backward problem *are* the adjoints
           // of the ode states
           check_flag_sundials(
-              CVodeInitB(mem->cvodes_mem_, index_backward_,
+              CVodeInitB(solver_->cvodes_mem_, index_backward_,
                          &cvodes_integrator_adjoint_vari::cv_rhs_adj_sens,
-                         t_init, mem->nv_state_backward_),
+                         t_init, solver_->nv_state_backward_),
               "CVodeInitB");
 
           check_flag_sundials(
-              CVodeSVtolerancesB(mem->cvodes_mem_, index_backward_,
+              CVodeSVtolerancesB(solver_->cvodes_mem_, index_backward_,
                                  relative_tolerance_backward_,
-                                 mem->nv_absolute_tolerance_backward_),
+                                 solver_->nv_absolute_tolerance_backward_),
               "CVodeSVtolerancesB");
 
-          check_flag_sundials(CVodeSetMaxNumStepsB(mem->cvodes_mem_, index_backward_,
+          check_flag_sundials(CVodeSetMaxNumStepsB(solver_->cvodes_mem_, index_backward_,
                                                    max_num_steps_),
                               "CVodeSetMaxNumStepsB");
 
           check_flag_sundials(
-              CVodeSetLinearSolverB(mem->cvodes_mem_, index_backward_, mem->LS_backward_,
-                                    mem->A_backward_),
+              CVodeSetLinearSolverB(solver_->cvodes_mem_, index_backward_, solver_->LS_backward_,
+                                    solver_->A_backward_),
               "CVodeSetLinearSolverB");
 
           check_flag_sundials(
-              CVodeSetJacFnB(mem->cvodes_mem_, index_backward_,
+              CVodeSetJacFnB(solver_->cvodes_mem_, index_backward_,
                              &cvodes_integrator_adjoint_vari::cv_jacobian_adj),
               "CVodeSetJacFnB");
 
@@ -736,40 +748,40 @@ class cvodes_integrator_adjoint_vari : public vari {
           // parameters vary.
           if (num_args_vars_ > 0) {
             check_flag_sundials(
-                CVodeQuadInitB(mem->cvodes_mem_, index_backward_,
+                CVodeQuadInitB(solver_->cvodes_mem_, index_backward_,
                                &cvodes_integrator_adjoint_vari::cv_quad_rhs_adj,
-                               mem->nv_quad_),
+                               solver_->nv_quad_),
                 "CVodeQuadInitB");
 
             check_flag_sundials(
-                CVodeQuadSStolerancesB(mem->cvodes_mem_, index_backward_,
+                CVodeQuadSStolerancesB(solver_->cvodes_mem_, index_backward_,
                                        relative_tolerance_quadrature_,
                                        absolute_tolerance_quadrature_),
                 "CVodeQuadSStolerancesB");
 
             check_flag_sundials(
-                CVodeSetQuadErrConB(mem->cvodes_mem_, index_backward_, SUNTRUE),
+                CVodeSetQuadErrConB(solver_->cvodes_mem_, index_backward_, SUNTRUE),
                 "CVodeSetQuadErrConB");
           }
 
           backward_is_initialized_ = true;
         } else {
           // just re-initialize the solver
-          check_flag_sundials(CVodeReInitB(mem->cvodes_mem_, index_backward_, t_init,
-                                           mem->nv_state_backward_),
+          check_flag_sundials(CVodeReInitB(solver_->cvodes_mem_, index_backward_, t_init,
+                                           solver_->nv_state_backward_),
                               "CVodeReInitB");
 
           if (num_args_vars_ > 0) {
             check_flag_sundials(
-                CVodeQuadReInitB(mem->cvodes_mem_, index_backward_, mem->nv_quad_),
+                CVodeQuadReInitB(solver_->cvodes_mem_, index_backward_, solver_->nv_quad_),
                 "CVodeQuadReInitB");
           }
         }
 
-        int error_code = CVodeB(mem->cvodes_mem_, t_final, CV_NORMAL);
+        int error_code = CVodeB(solver_->cvodes_mem_, t_final, CV_NORMAL);
 
         if (error_code == CV_TOO_MUCH_WORK) {
-          throw_domain_error(mem->function_name_, "", t_final,
+          throw_domain_error(solver_->function_name_, "", t_final,
                              "Failed to integrate backward to output time (",
                              ") in less than max_num_steps steps");
         } else {
@@ -782,13 +794,13 @@ class cvodes_integrator_adjoint_vari : public vari {
 
         // obtain adjoint states and update t_init to time point
         // reached of t_final
-        check_flag_sundials(CVodeGetB(mem->cvodes_mem_, index_backward_, &t_init,
-                                      mem->nv_state_backward_),
+        check_flag_sundials(CVodeGetB(solver_->cvodes_mem_, index_backward_, &t_init,
+                                      solver_->nv_state_backward_),
                             "CVodeGetB");
 
         if (num_args_vars_ > 0) {
           check_flag_sundials(
-              CVodeGetQuadB(mem->cvodes_mem_, index_backward_, &t_init, mem->nv_quad_),
+              CVodeGetQuadB(solver_->cvodes_mem_, index_backward_, &t_init, solver_->nv_quad_),
               "CVodeGetQuadB");
         }
       }
