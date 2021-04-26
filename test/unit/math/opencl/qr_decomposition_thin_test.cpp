@@ -8,7 +8,7 @@
 
 using stan::math::matrix_cl;
 
-TEST(MathMatrixGPU, qr_decomposition_prim_small) {
+TEST(MathMatrixGPU, qr_decomposition_thin_prim_small) {
   double eps = 1e-10;
   int rows = 4;
   int cols = 3;
@@ -48,7 +48,7 @@ TEST(MathMatrixGPU, qr_decomposition_prim_small) {
   }
 }
 
-TEST(MathMatrixGPU, qr_decomposition_prim_big) {
+TEST(MathMatrixGPU, qr_decomposition_thin_prim_big) {
   double eps = 1e-10;
   int rows_opts[] = {1, 1, 317, 317, 411};
   int cols_opts[] = {1, 317, 1, 411, 317};
