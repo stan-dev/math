@@ -25,8 +25,10 @@ inline matrix_cl<double> qr_Q(T_m&& m) {
 
   qr_decomposition_cl(m, Q, R);
 
-  auto Q_left = block_zero_based(Q, 0, 0, Q.rows(), std::min(m.rows(), m.cols()));
-  Q_left = select(colwise_broadcast(transpose(diagonal(R) < 0.0)), -Q_left, Q_left);
+  auto Q_left
+      = block_zero_based(Q, 0, 0, Q.rows(), std::min(m.rows(), m.cols()));
+  Q_left = select(colwise_broadcast(transpose(diagonal(R) < 0.0)), -Q_left,
+                  Q_left);
   return Q;
 }
 }  // namespace math

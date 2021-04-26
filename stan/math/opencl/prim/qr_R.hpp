@@ -26,7 +26,8 @@ inline matrix_cl<double> qr_R(T_m&& m) {
   qr_decomposition_cl<false>(m, Q, R);
 
   matrix_cl<double> R_diag = diagonal(R);
-  auto R_top = block_zero_based(R, 0, 0, std::min(m.rows(), m.cols()), R.cols());
+  auto R_top
+      = block_zero_based(R, 0, 0, std::min(m.rows(), m.cols()), R.cols());
   R_top = select(rowwise_broadcast(R_diag < 0.0), -R_top, R_top);
   return R;
 }

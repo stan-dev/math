@@ -196,7 +196,7 @@ TEST(KernelGenerator, block_lhs_view_test) {
   EXPECT_EQ(m.view(), stan::math::matrix_cl_view::Lower);
 
   matrix_cl<double> b(7, 7, stan::math::matrix_cl_view::Diagonal);
-  m = matrix_cl<double>(4,5);
+  m = matrix_cl<double>(4, 5);
   m.view(stan::math::matrix_cl_view::Entire);
   block_zero_based(m, 0, 0, 3, 5) = block_zero_based(b, 0, 0, 3, 5);
   EXPECT_EQ(m.view(), stan::math::matrix_cl_view::Entire);
@@ -209,7 +209,6 @@ TEST(KernelGenerator, block_lhs_view_test) {
   m.view(stan::math::matrix_cl_view::Entire);
   block_zero_based(m, 0, 1, 4, 4) = block_zero_based(b, 0, 1, 4, 4);
   EXPECT_EQ(m.view(), stan::math::matrix_cl_view::Lower);
-
 
   m = matrix_cl<double>(7, 3);
   m.view(stan::math::matrix_cl_view::Entire);

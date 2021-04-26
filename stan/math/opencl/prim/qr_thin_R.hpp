@@ -25,7 +25,8 @@ inline matrix_cl<double> qr_thin_R(T_m&& m) {
 
   qr_decomposition_cl(m, Q, R);
 
-  auto R_block = block_zero_based(R, 0, 0, std::min(m.rows(), m.cols()), m.cols());
+  auto R_block
+      = block_zero_based(R, 0, 0, std::min(m.rows(), m.cols()), m.cols());
   R = select(rowwise_broadcast(diagonal(R) < 0.0), -R_block, R_block).eval();
   return R;
 }

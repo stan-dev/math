@@ -68,15 +68,13 @@ void qr_decomposition_cl(const matrix_cl<double>& A, matrix_cl<double>& Q,
 
       V_cpu.col(j).tail(V.rows() - j) = householder;
 
-      Eigen::VectorXd::AlignedMapType temp_map(temporary.data(),
-                                               actual_r - j);
+      Eigen::VectorXd::AlignedMapType temp_map(temporary.data(), actual_r - j);
       temp_map.noalias()
-          = R_cpu_block.block(j, j, rows - k - j, actual_r - j)
-                .transpose()
+          = R_cpu_block.block(j, j, rows - k - j, actual_r - j).transpose()
             * householder;
       R_cpu_block.block(j, j + 1, rows - k - j, actual_r - j - 1).noalias()
           -= householder * temp_map.tail(actual_r - j - 1).transpose();
-      R_cpu_block.coeffRef(j,j) -= householder.coeff(0) * temp_map.coeff(0);
+      R_cpu_block.coeffRef(j, j) -= householder.coeff(0) * temp_map.coeff(0);
     }
 
     matrix_cl<double> R_back_block = to_matrix_cl(R_cpu_block);
