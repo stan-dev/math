@@ -128,6 +128,7 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_lpdf(const T_y& y,
                                       * inv_alpha_pow_beta * inv_alpha;
       ops_partials.edge2_.partials_ = alpha_deriv;
     }
+    }
     if (!is_constant_all<T_shape>::value) {
       const auto& beta_deriv
           = (1.0 * inv(beta_val)) + log_y - log_alpha
