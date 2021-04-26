@@ -94,6 +94,7 @@ class cvodes_integrator_adjoint_vari : public vari {
   //static constexpr std::array<bool, sizeof...(T_Args)> is_var_args{is_var<scalar_type_t<T_Args>>::value...};
   static constexpr bool is_any_var_args{disjunction<is_var<scalar_type_t<T_Args>>...>::value};
   static constexpr bool is_var_return{is_var<T_Return>::value};
+  static constexpr bool is_var_only_ts{is_var_ts && !(is_var_t0 || is_var_y0 || is_any_var_args)};
   
   /**
    * Call the ODE RHS with given tuple.
@@ -471,9 +472,9 @@ class cvodes_integrator_adjoint_vari : public vari {
         state_backward_(N_),
         quad_(num_args_vars_),
 
-        non_chaining_varis_(num_vars_ == 0 ?
-                            nullptr :
-                            ChainableStack::instance_->memalloc_.alloc_array<vari*>(ts_.size() * N_)),
+        non_chaining_varis_(is_var_return ?
+                            ChainableStack::instance_->memalloc_.alloc_array<vari*>(ts_.size() * N_) :
+                            nullptr),
         t0_varis_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
             num_t0_vars_)),
         ts_varis_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
@@ -565,7 +566,7 @@ class cvodes_integrator_adjoint_vari : public vari {
         "CVodeSetJacFn");
 
     // initialize backward sensitivity system of CVODES as needed
-    if (num_vars_ != 0) {
+    if (is_var_return) {
       check_flag_sundials(
           CVodeAdjInit(solver_->cvodes_mem_, num_steps_between_checkpoints_,
                        interpolation_polynomial_),
@@ -593,7 +594,7 @@ class cvodes_integrator_adjoint_vari : public vari {
       // std::cout << "n = " << n << ": t_init = " << t_init << ", t_final = "
       // << t_final << std::endl;
       if (t_final != t_init) {
-        if (num_vars_ != 0) {
+        if (is_var_return) {
           int ncheck;
 
           int error_code = CVodeF(solver_->cvodes_mem_, t_final, solver_->nv_state_forward_,
@@ -645,8 +646,37 @@ class cvodes_integrator_adjoint_vari : public vari {
       return;
     }
 
-    if (num_vars_ == 0) {
+    if (!is_var_return) {
       return;
+    }
+
+    // for sensitivities wrt to ts we do not need to run the backward
+    // integration
+    if (is_var_ts) {
+      for (int i = 0; i < ts_.size(); ++i) {
+        Eigen::VectorXd step_sens = Eigen::VectorXd::Zero(N_);
+        for (int j = 0; j < N_; j++) {
+          // std::cout << "i: " << i << ", j: " << j << std::endl;
+          step_sens.coeffRef(j) += non_chaining_varis_[i * N_ + j]->adj_;
+        }
+
+        ts_varis_[i]->adj_
+            += step_sens.dot(rhs(value_of(ts_[i]), solver_->y_[i], value_of_args_tuple_));
+        /*
+          apply(
+          [&](auto&&... args) {
+          double adj = step_sens.dot(
+          memory->f_(t_init, memory->y_[i], msgs_, args...));
+          // std::cout << "adj: " << adj << ", i: " << i << std::endl;
+          return adj;
+            },
+            memory->value_of_args_tuple_);
+        */
+      }
+
+      if (is_var_only_ts) {
+        return;
+      }
     }
 
     state_backward_.setZero();
@@ -680,29 +710,14 @@ class cvodes_integrator_adjoint_vari : public vari {
     for (int i = ts_.size() - 1; i >= 0; --i) {
       // Take in the adjoints from all the output variables at this point
       // in time
-      Eigen::VectorXd step_sens = Eigen::VectorXd::Zero(N_);
+      //Eigen::VectorXd step_sens = Eigen::VectorXd::Zero(N_);
       for (int j = 0; j < N_; j++) {
         // std::cout << "i: " << i << ", j: " << j << std::endl;
         state_backward_.coeffRef(j) += non_chaining_varis_[i * N_ + j]->adj_;
-        step_sens.coeffRef(j) += non_chaining_varis_[i * N_ + j]->adj_;
+        //step_sens.coeffRef(j) += non_chaining_varis_[i * N_ + j]->adj_;
       }
 
-      if (num_ts_vars_ > 0 && i >= 0) {
-        ts_varis_[i]->adj_
-            += step_sens.dot(rhs(t_init, solver_->y_[i], value_of_args_tuple_));
-        /*
-          apply(
-          [&](auto&&... args) {
-          double adj = step_sens.dot(
-          memory->f_(t_init, memory->y_[i], msgs_, args...));
-          // std::cout << "adj: " << adj << ", i: " << i << std::endl;
-          return adj;
-          },
-          memory->value_of_args_tuple_);
-        */
-      }
-
-      double t_final = value_of((i > 0) ? ts_[i - 1] : t0_);
+     double t_final = value_of((i > 0) ? ts_[i - 1] : t0_);
       // std::cout << "backward: time-point " << i << "; t_init = " << t_init <<
       // "; t_final = " << t_final << std::endl;
       if (t_final != t_init) {
@@ -806,7 +821,7 @@ class cvodes_integrator_adjoint_vari : public vari {
       }
     }
 
-    if (num_t0_vars_ > 0) {
+    if (is_var_t0) {
       Eigen::VectorXd y0d = value_of(y0_);
       t0_varis_[0]->adj_
           += -state_backward_.dot(rhs(t_init, y0d, value_of_args_tuple_));
