@@ -36,9 +36,7 @@ inline void zero_adjoints(T& x) noexcept {}
  * @param x current argument
  * @param args rest of arguments to zero
  */
-inline void zero_adjoints(var& x) {
-  x.adj() = 0;
-}
+inline void zero_adjoints(var& x) { x.adj() = 0; }
 
 /**
  * Zero the adjoints of the varis of every var in an Eigen::Matrix
@@ -66,10 +64,11 @@ inline void zero_adjoints(EigMat& x) {
  * @param x current argument
  * @param args rest of arguments to zero
  */
-template <typename StdVec, require_std_vector_st<is_autodiff, StdVec>* = nullptr>
+template <typename StdVec,
+          require_std_vector_st<is_autodiff, StdVec>* = nullptr>
 inline void zero_adjoints(StdVec& x) {
   for (size_t i = 0; i < x.size(); ++i) {
-    zero_adjoints(x[i]);    
+    zero_adjoints(x[i]);
   }
 }
 

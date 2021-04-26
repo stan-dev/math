@@ -19,8 +19,7 @@ struct harmonic_oscillator_ode_base {
   struct sho_square_fun {
     template <typename T0, typename T1, typename T2, typename T3, typename T4>
     inline Eigen::Matrix<stan::return_type_t<T1, T2>, -1, 1> operator()(
-        const T0& t_in, const T1& y_in,
-        std::ostream* msgs, const T2& theta,
+        const T0& t_in, const T1& y_in, std::ostream* msgs, const T2& theta,
         const T3& x, const T4& x_int) const {
       if (y_in.size() != 2)
         throw std::domain_error("Functor called with inconsistent state");
