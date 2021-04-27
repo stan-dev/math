@@ -17,8 +17,8 @@ struct lorenz_ode_base {
   struct lorenz_rhs {
     template <typename T0, typename T1, typename T2>
     inline Eigen::Matrix<stan::return_type_t<T1, T2>, -1, 1> operator()(
-        const T0& t_in, const T1& y_in,
-        std::ostream* msgs, const T2& theta) const {
+        const T0& t_in, const T1& y_in, std::ostream* msgs,
+        const T2& theta) const {
       Eigen::Matrix<stan::return_type_t<T1, T2>, -1, 1> res(3);
       res << theta.at(0) * (y_in(1) - y_in(0)),
           theta.at(1) * y_in(0) - y_in(1) - y_in(0) * y_in(2),

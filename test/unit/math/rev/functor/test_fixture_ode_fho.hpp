@@ -17,8 +17,8 @@ struct forced_harm_osc_base {
   struct forced_harm_osc {
     template <typename T0, typename T1, typename T2>
     inline Eigen::Matrix<stan::return_type_t<T0, T1, T2>, -1, 1> operator()(
-        const T0& t_in, const T1& y_in,
-        std::ostream* msgs, const T2& theta) const {
+        const T0& t_in, const T1& y_in, std::ostream* msgs,
+        const T2& theta) const {
       if (y_in.size() != 2)
         throw std::domain_error(
             "this function was called with inconsistent state");

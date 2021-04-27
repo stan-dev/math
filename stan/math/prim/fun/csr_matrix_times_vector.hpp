@@ -69,7 +69,9 @@ namespace math {
  *   for a given sparse matrix.
  * @throw std::out_of_range if any of the indexes are out of range.
  */
-template <typename T1, typename T2>
+template <typename T1, typename T2,
+          require_not_t<conjunction<std::is_arithmetic<scalar_type_t<T1>>,
+                                    is_var<scalar_type_t<T2>>>>* = nullptr>
 inline Eigen::Matrix<return_type_t<T1, T2>, Eigen::Dynamic, 1>
 csr_matrix_times_vector(int m, int n, const T1& w, const std::vector<int>& v,
                         const std::vector<int>& u, const T2& b) {
