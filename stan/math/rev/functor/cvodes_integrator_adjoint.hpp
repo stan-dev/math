@@ -4,10 +4,10 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/save_varis.hpp>
 #include <stan/math/rev/functor/cvodes_utils.hpp>
-#include <stan/math/rev/functor/coupled_ode_system.hpp>
 #include <stan/math/rev/functor/ode_store_sensitivities.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/functor/for_each.hpp>
 #include <cvodes/cvodes.h>
 #include <nvector/nvector_serial.h>
 #include <sunmatrix/sunmatrix_dense.h>
@@ -91,7 +91,6 @@ class cvodes_integrator_adjoint_vari : public vari {
   static constexpr bool is_var_ts{is_var<T_ts>::value};
   static constexpr bool is_var_t0{is_var<T_t0>::value};
   static constexpr bool is_var_y0{is_var<T_y0_t0>::value};
-  //static constexpr std::array<bool, sizeof...(T_Args)> is_var_args{is_var<scalar_type_t<T_Args>>::value...};
   static constexpr bool is_any_var_args{disjunction<is_var<scalar_type_t<T_Args>>...>::value};
   static constexpr bool is_var_return{is_var<T_Return>::value};
   static constexpr bool is_var_only_ts{is_var_ts && !(is_var_t0 || is_var_y0 || is_any_var_args)};
