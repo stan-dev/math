@@ -175,6 +175,7 @@
 #include <stan/math/prim/prob/logistic_log.hpp>
 #include <stan/math/prim/prob/logistic_lpdf.hpp>
 #include <stan/math/prim/prob/logistic_rng.hpp>
+#include <stan/math/prim/prob/loglogistic_lpdf.hpp>
 #include <stan/math/prim/prob/lognormal_ccdf_log.hpp>
 #include <stan/math/prim/prob/lognormal_cdf.hpp>
 #include <stan/math/prim/prob/lognormal_cdf_log.hpp>
