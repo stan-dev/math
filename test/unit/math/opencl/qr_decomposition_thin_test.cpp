@@ -1,5 +1,3 @@
-#ifndef TEST_UNIT_MATH_OPENCL_QR_DECOMPOSITION_HPP
-#define TEST_UNIT_MATH_OPENCL_QR_DECOMPOSITION_CPP
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/prim.hpp>
@@ -92,4 +90,3 @@ TEST(MathMatrixGPU, qr_decomposition_thin_prim_big) {
 }
 
 #endif
-#endif  // TEST_UNIT_MATH_OPENCL_QR_DECOMPOSITION_HPP
