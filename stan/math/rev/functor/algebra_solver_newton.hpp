@@ -93,7 +93,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_newton_impl(
 
     // Contract specificities with inverse Jacobian of f with respect to x.
     VectorXd ret_adj = ret.adj();
-    VectorXd eta = -arena_Jf_x.transpose().llt().solve(ret_adj);
+    VectorXd eta = -arena_Jf_x.transpose().lu().solve(ret_adj);
 
     // Contract with Jacobian of f with respect to y using a nested reverse
     // autodiff pass.
