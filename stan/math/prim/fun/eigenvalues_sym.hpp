@@ -20,7 +20,7 @@ namespace math {
  * @return Eigenvalues of matrix.
  */
 template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr,
-    require_not_st_var<EigMat>* = nullptr>
+          require_not_st_var<EigMat>* = nullptr>
 Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, 1> eigenvalues_sym(
     const EigMat& m) {
   using PlainMat = plain_type_t<EigMat>;
