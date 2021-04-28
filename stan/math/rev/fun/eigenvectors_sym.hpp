@@ -25,9 +25,9 @@ template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto eigenvectors_sym(const T& m) {
   using return_t = return_var_matrix_t<T>;
   if (unlikely(m.size() == 0)) {
-    return m;
+    return return_t(m);
   }
-  check_symmetric("eigenvalues_sym", "m", m);
+  check_symmetric("eigenvectors_sym", "m", m);
 
   auto arena_m = to_arena(m);
   Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> solver(arena_m.val());
