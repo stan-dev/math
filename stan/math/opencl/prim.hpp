@@ -162,6 +162,7 @@
 #include <stan/math/opencl/prim/gumbel_lcdf.hpp>
 #include <stan/math/opencl/prim/gumbel_lpdf.hpp>
 #include <stan/math/opencl/prim/head.hpp>
+#include <stan/math/opencl/prim/identity_matrix.hpp>
 #include <stan/math/opencl/prim/inv.hpp>
 #include <stan/math/opencl/prim/inv_chi_square_lpdf.hpp>
 #include <stan/math/opencl/prim/inv_cloglog.hpp>
