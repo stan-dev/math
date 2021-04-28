@@ -114,7 +114,7 @@ namespace math {
     using Eigen::SparseMatrix;
 
     // TEST
-    // int diagonal_covariance = 1;
+    int diagonal_covariance = 0;
     // solver = 1;
     // hessian_block_size = 1;
 
