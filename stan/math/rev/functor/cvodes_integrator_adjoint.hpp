@@ -103,9 +103,8 @@ class cvodes_integrator_adjoint_vari : public vari {
   template <typename yT, typename... ArgsT>
   constexpr auto rhs(double t, const yT& y,
                      const std::tuple<ArgsT...>& args_tuple) const {
-    return apply(
-        [&](auto&&... args) { return f_(t, y, msgs_, args...); },
-        args_tuple);
+    return apply([&](auto&&... args) { return f_(t, y, msgs_, args...); },
+                 args_tuple);
   }
 
   /**
@@ -357,9 +356,9 @@ class cvodes_integrator_adjoint_vari : public vari {
 
     template <typename StateFwd, typename StateBwd, typename Quad,
               typename AbsTolFwd, typename AbsTolBwd>
-    cvodes_solver(const char* function_name, size_t N,
-                  size_t num_args_vars, size_t ts_size, int solver_forward,
-                  StateFwd& state_forward, StateBwd& state_backward, Quad& quad,
+    cvodes_solver(const char* function_name, size_t N, size_t num_args_vars,
+                  size_t ts_size, int solver_forward, StateFwd& state_forward,
+                  StateBwd& state_backward, Quad& quad,
                   AbsTolFwd& absolute_tolerance_forward,
                   AbsTolBwd& absolute_tolerance_backward)
         : chainable_alloc(),
