@@ -102,15 +102,17 @@ class cvodes_integrator_adjoint_vari : public vari {
   template <typename yT, typename... ArgsT>
   constexpr auto rhs(double t, const yT& y,
                      const std::tuple<ArgsT...>& args_tuple) const {
-    return apply([&](auto&&... args) { return solver_->f_(t, y, msgs_, args...); },
-                 args_tuple);
+    return apply(
+        [&](auto&&... args) { return solver_->f_(t, y, msgs_, args...); },
+        args_tuple);
   }
 
   /**
    * Implements the function of type CVRhsFn which is the user-defined
    * ODE RHS passed to CVODES.
    */
-  constexpr static int cv_rhs(realtype t, N_Vector y, N_Vector ydot, void* user_data) {
+  constexpr static int cv_rhs(realtype t, N_Vector y, N_Vector ydot,
+                              void* user_data) {
     const cvodes_integrator_adjoint_vari* integrator
         = static_cast<const cvodes_integrator_adjoint_vari*>(user_data);
     integrator->rhs(t, NV_DATA_S(y), NV_DATA_S(ydot));
@@ -148,8 +150,9 @@ class cvodes_integrator_adjoint_vari : public vari {
    * major format.
    */
   constexpr static int cv_jacobian_states(realtype t, N_Vector y, N_Vector fy,
-                                          SUNMatrix J, void* user_data, N_Vector tmp1,
-                                          N_Vector tmp2, N_Vector tmp3) {
+                                          SUNMatrix J, void* user_data,
+                                          N_Vector tmp1, N_Vector tmp2,
+                                          N_Vector tmp3) {
     const cvodes_integrator_adjoint_vari* integrator
         = static_cast<const cvodes_integrator_adjoint_vari*>(user_data);
     integrator->jacobian_states(t, y, J);
@@ -160,8 +163,9 @@ class cvodes_integrator_adjoint_vari : public vari {
    * Implements the CVLsJacFnB function for evaluating the jacobian of
    * the adjoint problem.
    */
-  constexpr static int cv_jacobian_adj(realtype t, N_Vector y, N_Vector yB, N_Vector fyB,
-                                       SUNMatrix J, void* user_data, N_Vector tmp1,
+  constexpr static int cv_jacobian_adj(realtype t, N_Vector y, N_Vector yB,
+                                       N_Vector fyB, SUNMatrix J,
+                                       void* user_data, N_Vector tmp1,
                                        N_Vector tmp2, N_Vector tmp3) {
     const cvodes_integrator_adjoint_vari* integrator
         = static_cast<const cvodes_integrator_adjoint_vari*>(user_data);
@@ -197,7 +201,8 @@ class cvodes_integrator_adjoint_vari : public vari {
    * @param[in] yB state of the adjoint ODE system
    * @param[out] yBdot evaluation of adjoint ODE RHS
    */
-  inline void rhs_adj_sens(double t, N_Vector y, N_Vector yB, N_Vector yBdot) const {
+  inline void rhs_adj_sens(double t, N_Vector y, N_Vector yB,
+                           N_Vector yBdot) const {
     Eigen::Map<Eigen::VectorXd> y_vec(NV_DATA_S(y), N_);
     Eigen::Map<Eigen::VectorXd> mu(NV_DATA_S(yB), N_);
     Eigen::Map<Eigen::VectorXd> mu_dot(NV_DATA_S(yBdot), N_);
@@ -352,9 +357,9 @@ class cvodes_integrator_adjoint_vari : public vari {
 
     template <typename FF, typename StateFwd, typename StateBwd, typename Quad,
               typename AbsTolFwd, typename AbsTolBwd>
-    cvodes_solver(const char* function_name, FF&& f, size_t N, size_t num_args_vars,
-                  size_t ts_size, int solver_forward, StateFwd& state_forward,
-                  StateBwd& state_backward, Quad& quad,
+    cvodes_solver(const char* function_name, FF&& f, size_t N,
+                  size_t num_args_vars, size_t ts_size, int solver_forward,
+                  StateFwd& state_forward, StateBwd& state_backward, Quad& quad,
                   AbsTolFwd& absolute_tolerance_forward,
                   AbsTolBwd& absolute_tolerance_backward)
         : chainable_alloc(),
@@ -803,8 +808,8 @@ class cvodes_integrator_adjoint_vari : public vari {
 
     if (is_var_t0) {
       Eigen::VectorXd value_of_y0 = value_of(y0_);
-      t0_varis_[0]->adj_
-          += -state_backward_.dot(rhs(t_init, value_of_y0, value_of_args_tuple_));
+      t0_varis_[0]->adj_ += -state_backward_.dot(
+          rhs(t_init, value_of_y0, value_of_args_tuple_));
     }
 
     // After integrating all the way back to t0, we finally have the
