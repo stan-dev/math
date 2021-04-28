@@ -36,6 +36,7 @@ class cvodes_integrator_adjoint_vari : public vari {
   using T_Return = return_type_t<T_y0, T_t0, T_ts, T_Args...>;
   using T_y0_t0 = return_type_t<T_y0, T_t0>;
 
+  const std::decay_t<F> f_;
   arena_t<Eigen::Matrix<T_y0_t0, Eigen::Dynamic, 1>> y0_;
   arena_t<T_t0> t0_;
   std::vector<arena_t<T_ts>, arena_allocator<arena_t<T_ts>>> ts_;
@@ -103,7 +104,7 @@ class cvodes_integrator_adjoint_vari : public vari {
   constexpr auto rhs(double t, const yT& y,
                      const std::tuple<ArgsT...>& args_tuple) const {
     return apply(
-        [&](auto&&... args) { return solver_->f_(t, y, msgs_, args...); },
+        [&](auto&&... args) { return f_(t, y, msgs_, args...); },
         args_tuple);
   }
 
@@ -337,7 +338,6 @@ class cvodes_integrator_adjoint_vari : public vari {
    * vari class).
    */
   struct cvodes_solver : public chainable_alloc {
-    const std::decay_t<F> f_;
     const size_t N_;
     std::vector<Eigen::VectorXd> y_;
     const std::string function_name_str_;
@@ -355,15 +355,14 @@ class cvodes_integrator_adjoint_vari : public vari {
     SUNMatrix A_backward_;
     SUNLinearSolver LS_backward_;
 
-    template <typename FF, typename StateFwd, typename StateBwd, typename Quad,
+    template <typename StateFwd, typename StateBwd, typename Quad,
               typename AbsTolFwd, typename AbsTolBwd>
-    cvodes_solver(const char* function_name, FF&& f, size_t N,
+    cvodes_solver(const char* function_name, size_t N,
                   size_t num_args_vars, size_t ts_size, int solver_forward,
                   StateFwd& state_forward, StateBwd& state_backward, Quad& quad,
                   AbsTolFwd& absolute_tolerance_forward,
                   AbsTolBwd& absolute_tolerance_backward)
         : chainable_alloc(),
-          f_(f),
           N_(N),
           y_(ts_size),
           function_name_str_(function_name),
@@ -462,6 +461,7 @@ class cvodes_integrator_adjoint_vari : public vari {
       int interpolation_polynomial, int solver_forward, int solver_backward,
       std::ostream* msgs, const T_Args&... args)
       : vari(NOT_A_NUMBER),
+        f_(f),
         y0_(y0),
         t0_(t0),
         ts_(ts.begin(), ts.end()),
@@ -508,7 +508,7 @@ class cvodes_integrator_adjoint_vari : public vari {
         args_varis_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
             num_args_vars_)),
         solver_(new cvodes_solver(
-            function_name, f, N_, num_args_vars_, ts_.size(), solver_forward_,
+            function_name, N_, num_args_vars_, ts_.size(), solver_forward_,
             state_forward_, state_backward_, quad_, absolute_tolerance_forward_,
             absolute_tolerance_backward_)) {
     save_varis(t0_varis_, t0);
