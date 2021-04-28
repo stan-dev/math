@@ -301,7 +301,20 @@ the dead code elimination phase of optimization.
 
 We collect the partials for each of our inputs via their respective `edge*_`
 in the `operands_and_partials` class. The first argument will have `edge1_`, the
-second `edge2_` and so on.
+second `edge2_` and so on. One important question to ask here is, what if the edge is a
+scalar? It seems odd that we are able to call `partials_[n]` when the operand can be
+either a vector or scalar. Under the hood, `operands_and_partials` wraps the partials for `Scalar` types
+in what's called a [`broadcast_array`](https://github.com/stan-dev/math/blob/develop/stan/math/prim/functor/broadcast_array.hpp)
+which has an overloaded `operator[]` for scalars such that it just simply returns back the partials scalar.
+Similarly, `broadcast_array` has an overloaded `operator=` which when assigning a vector to the partial the overloaded `operator=`
+will sum the vector before assigning it to the partial.
+
+```cpp
+if (!is_constant<T_loc>::value) {
+  // pretend partials_ is a scalar and scaled_diff is a vector
+  ops_partials.edge2_.partials_ = scaled_diff;
+}
+```
 
 Finally once the loop is finished we call `ops_partials.build()` passing it
 the joint log probability value. For reverse mode this will place a callback
