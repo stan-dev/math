@@ -131,7 +131,7 @@ TEST_F(laplace_disease_map_test, lk_analytical) {
             << "autodiff grad: " << g[0] << " " << g[1] << std::endl
             << "total time: " << elapsed_time.count() << std::endl
             << std::endl;
-}
+
   // Expected result
   // density: -2866.88
   // autodiff grad: 266.501 -0.425901
@@ -178,9 +178,9 @@ TEST_F(laplace_disease_map_test, lk_analytical) {
 
   std::cout << "LAPLACE_APPROX_POISSON_RNG" << std::endl
             << "total time: " << elapsed_time.count() << std::endl
-            << std::endl;
+            << std::endl; */
 }
-
+/*
 TEST_F(laplace_disease_map_test, lk_autodiff) {
   using stan::math::var;
   using stan::math::laplace_marginal_density;
@@ -231,7 +231,7 @@ TEST_F(laplace_disease_map_test, lk_autodiff) {
   // Should return consistent evaluation of density and gradient as
   // previous iteration.
   // Expected run time: 0.39 s
-}
+} */
 
 TEST_F(laplace_disease_map_test, finite_diff_benchmark) {
   ///////////////////////////////////////////////////////////////////
@@ -253,6 +253,12 @@ TEST_F(laplace_disease_map_test, finite_diff_benchmark) {
   phi_u1(1) += eps;
   phi_l0(0) -= eps;
   phi_l1(1) -= eps;
+
+  double target = laplace_marginal_density(diff_functor,
+                                 sqr_exp_kernel_functor(),
+                                 phi_dbl, value_of(eta_dummy),
+                                 x, delta, delta_int, theta_0,
+                                 0, 1e-6, 100, hessian_block_size);
 
   double target_u0 = laplace_marginal_density(diff_functor,
                                  sqr_exp_kernel_functor(),
@@ -279,11 +285,12 @@ TEST_F(laplace_disease_map_test, finite_diff_benchmark) {
                                        0, 1e-6, 100, hessian_block_size);
 
   std::cout << "Finite_diff benchmark: " << std::endl
+            << "Value: " << target << std::endl
             << "grad: " << (target_u0 - target_l0) / (2 * eps)
             << " " << (target_u1 - target_l1) / (2 * eps)
             << std::endl;
 }
-
+/*
 TEST_F(laplace_disease_map_test, rng_autodiff) {
   using stan::math::var;
   using stan::math::laplace_base_rng;

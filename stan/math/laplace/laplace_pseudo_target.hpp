@@ -67,11 +67,9 @@ namespace math {
         pseudo_target_[0] = new vari(pseudo_target, false);
 
         if (diagonal_covariance_) {
-          std::cout << "Running diagonal covariance case." << std::endl;
+          Eigen::VectorXd K_diag = value_of(K).diagonal();
           K_adj_ = 0.5 * a.cwiseProduct(a) - 0.5 * R.diagonal()
-            + l.cwiseProduct(s2 + R *
-                 (value_of(K).diagonal().asDiagonal() * s2));
-          std::cout << "Marker A" << std::endl;
+            + l.cwiseProduct(s2 + R * K_diag.cwiseProduct(s2));
         } else {
           K_adj_ = 0.5 * a * a.transpose() - 0.5 * R
              + s2 * l.transpose()

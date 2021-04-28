@@ -114,9 +114,9 @@ namespace math {
     using Eigen::SparseMatrix;
 
     // TEST
-    int diagonal_covariance = 1;
-    solver = 1;
-    hessian_block_size = 1;
+    // int diagonal_covariance = 1;
+    // solver = 1;
+    // hessian_block_size = 1;
 
     covariance = covariance_function(phi, x, delta, delta_int, msgs);
 
