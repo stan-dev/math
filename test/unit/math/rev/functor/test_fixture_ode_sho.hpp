@@ -516,7 +516,7 @@ struct harmonic_oscillator_ctl_test
   Eigen::VectorXd atol_f;
   Eigen::VectorXd atol_b;
   double atol_q;
-  long int num_steps_check;
+  int num_steps_check;
   int inter_poly;
   int solv_f;
   int solv_b;
