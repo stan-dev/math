@@ -203,10 +203,10 @@ class cvodes_integrator_adjoint_vari : public vari {
    */
   inline void rhs_adj_sens(double t, N_Vector y, N_Vector yB,
                            N_Vector yBdot) const {
-    Eigen::Map<Eigen::VectorXd> y_vec(NV_DATA_S(y), N_);
+    Eigen::Map<const Eigen::VectorXd> y_vec(NV_DATA_S(y), N_);
     Eigen::Map<Eigen::VectorXd> mu(NV_DATA_S(yB), N_);
     Eigen::Map<Eigen::VectorXd> mu_dot(NV_DATA_S(yBdot), N_);
-    mu_dot = Eigen::VectorXd::Zero(N_);
+    mu_dot.setZero();
 
     const nested_rev_autodiff nested;
 
@@ -239,10 +239,11 @@ class cvodes_integrator_adjoint_vari : public vari {
    * @param[out] qBdot evaluation of adjoint ODE quadrature RHS
    */
   inline void quad_rhs_adj(double t, N_Vector y, N_Vector yB, N_Vector qBdot) {
-    const Eigen::VectorXd y_vec = Eigen::Map<Eigen::VectorXd>(NV_DATA_S(y), N_);
+    //const Eigen::VectorXd y_vec = Eigen::Map<Eigen::VectorXd>(NV_DATA_S(y), N_);
+    Eigen::Map<const Eigen::VectorXd> y_vec(NV_DATA_S(y), N_);
     Eigen::Map<Eigen::VectorXd> mu(NV_DATA_S(yB), N_);
     Eigen::Map<Eigen::VectorXd> mu_dot(NV_DATA_S(qBdot), num_args_vars_);
-    mu_dot = Eigen::VectorXd::Zero(num_args_vars_);
+    mu_dot.setZero();
 
     const nested_rev_autodiff nested;
 
