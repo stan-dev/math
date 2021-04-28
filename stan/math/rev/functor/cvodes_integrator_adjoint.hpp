@@ -239,7 +239,6 @@ class cvodes_integrator_adjoint_vari : public vari {
    * @param[out] qBdot evaluation of adjoint ODE quadrature RHS
    */
   inline void quad_rhs_adj(double t, N_Vector y, N_Vector yB, N_Vector qBdot) {
-    //const Eigen::VectorXd y_vec = Eigen::Map<Eigen::VectorXd>(NV_DATA_S(y), N_);
     Eigen::Map<const Eigen::VectorXd> y_vec(NV_DATA_S(y), N_);
     Eigen::Map<Eigen::VectorXd> mu(NV_DATA_S(yB), N_);
     Eigen::Map<Eigen::VectorXd> mu_dot(NV_DATA_S(qBdot), num_args_vars_);
@@ -677,7 +676,7 @@ class cvodes_integrator_adjoint_vari : public vari {
     if (is_var_ts) {
       for (int i = 0; i < ts_.size(); ++i) {
         Eigen::VectorXd step_sens = Eigen::VectorXd::Zero(N_);
-        for (int j = 0; j < N_; j++) {
+        for (int j = 0; j < N_; ++j) {
           step_sens.coeffRef(j) += non_chaining_varis_[i * N_ + j]->adj_;
         }
 
@@ -699,7 +698,7 @@ class cvodes_integrator_adjoint_vari : public vari {
     for (int i = ts_.size() - 1; i >= 0; --i) {
       // Take in the adjoints from all the output variables at this point
       // in time
-      for (int j = 0; j < N_; j++) {
+      for (int j = 0; j < N_; ++j) {
         state_backward_.coeffRef(j) += non_chaining_varis_[i * N_ + j]->adj_;
       }
 
@@ -807,9 +806,8 @@ class cvodes_integrator_adjoint_vari : public vari {
     }
 
     if (is_var_t0) {
-      Eigen::VectorXd value_of_y0 = value_of(y0_);
       t0_varis_[0]->adj_ += -state_backward_.dot(
-          rhs(t_init, value_of_y0, value_of_args_tuple_));
+          rhs(t_init, value_of(y0_), value_of_args_tuple_));
     }
 
     // After integrating all the way back to t0, we finally have the
