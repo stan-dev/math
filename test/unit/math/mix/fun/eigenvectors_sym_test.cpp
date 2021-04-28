@@ -59,7 +59,7 @@ TEST(MathMixMatFun, eigenvectorsSym_varmat) {
   a23 << 1, 2, 3, 4, 5, 6;
   stan::test::expect_ad(f, a23);
   stan::test::expect_ad_matvar(tols, f, a23);
-  
+
   tols.hessian_fvar_hessian_ = 1e-2;
   tols.hessian_hessian_ = 1e-2;
   Eigen::MatrixXd a33(3, 3);
