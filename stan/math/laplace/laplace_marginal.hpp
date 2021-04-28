@@ -113,8 +113,21 @@ namespace math {
     using Eigen::VectorXd;
     using Eigen::SparseMatrix;
 
-    int theta_size = theta_0.size();
+    // TEST
+    int diagonal_covariance = 1;
+    solver = 1;
+    hessian_block_size = 1;
+
     covariance = covariance_function(phi, x, delta, delta_int, msgs);
+
+    if (diagonal_covariance) {
+      Eigen::MatrixXd K_dummy = covariance.diagonal().asDiagonal();
+      covariance = K_dummy;
+      // covariance = covariance.diagonal().asDiagonal();
+      // CHECK -- above line doesn't work, not sure why...
+    }
+
+    int theta_size = theta_0.size();
     theta = theta_0;
     double objective_old = - 1e+10;  // CHECK -- what value to use?
     double objective_inter = - 1e+10;
@@ -181,7 +194,16 @@ namespace math {
         } else if (solver == 2) {
           // TODO -- use triangularView for K_root.
           W_r = W;
-          K_root = cholesky_decompose(covariance);
+
+          if (diagonal_covariance) {
+            K_root = covariance.cwiseSqrt();
+          } else {
+            K_root = cholesky_decompose(covariance);
+          }
+
+          std::cout << "Cov: " << covariance.row(0).head(5) << std::endl;
+          std::cout << "K: " << K_root.row(0).head(5) << std::endl;
+
           B = MatrixXd::Identity(theta_size, theta_size)
                 + K_root.transpose() * W * K_root;
           L = cholesky_decompose(B);

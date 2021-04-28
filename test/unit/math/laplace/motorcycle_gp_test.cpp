@@ -32,9 +32,16 @@ struct covariance_motorcycle_functor {
     T1 sigma_g = phi(3);
     int n_obs = delta_int[0];
 
+    std::cout << "x: ";
+    for (int i = 0; i < 5; i++) std::cout << x[i] << " ";
+    std::cout << std::endl;
+
     double jitter = 1e-6;
     Matrix<T1, -1, -1> kernel_f = gp_exp_quad_cov(x, sigma_f, length_scale_f);
     Matrix<T1, -1, -1> kernel_g = gp_exp_quad_cov(x, sigma_g, length_scale_g);
+
+    std::cout << "K_f: " << kernel_f.row(0).head(5) << std::endl;
+    std::cout << "K_g: " << kernel_g.row(0).head(5) << std::endl;
 
     Matrix<T1, -1, -1> kernel_all
      = Eigen::MatrixXd::Zero(2 * n_obs, 2 * n_obs);
@@ -126,10 +133,10 @@ protected:
     }
 
     // [0.335852,0.433641,0.335354,0.323559]
-    length_scale_f = 0.335852;  // 0.3;
-    length_scale_g = 0.433641;  // 0.5;
-    sigma_f = 0.335354;  // 0.25;
-    sigma_g = 0.323559;  // 0.25;
+    length_scale_f = 0.3;  // 0.335852;  // 0.3;
+    length_scale_g = 0.5;  // 0.433641;  // 0.5;
+    sigma_f = 0.25;  // 0.335354;  // 0.25;
+    sigma_g = 0.25;  // 0.323559;  // 0.25;
 
     phi.resize(4);
     phi << length_scale_f, length_scale_g, sigma_f, sigma_g;
@@ -190,28 +197,28 @@ TEST_F(laplace_motorcyle_gp_test, lk_autodiff) {
   diff_likelihood<normal_likelihood> diff_functor(f, y, delta_int);
 
   int hessian_block_size = 2;
-  solver = 2;
-  int do_line_search = 1;
-  int max_steps_line_search = 100;
-  double marginal_density_dbl
+  solver = 3;
+  int do_line_search = 0;
+  int max_steps_line_search = 10;
+  /*double marginal_density_dbl
     = laplace_marginal_density(diff_functor,
                                covariance_motorcycle_functor(),
                                value_of(phi), eta_dummy_dbl,
                                x, delta_dummy, delta_int, theta0,
-                               0, 1e-2, 20000, hessian_block_size,
+                               0, 1e-6, 20000, hessian_block_size,
                                solver, do_line_search,
                                max_steps_line_search);
 
   std::cout << "density: " << marginal_density_dbl << std::endl;
 
-/*
   var marginal_density
     = laplace_marginal_density(diff_functor,
                                covariance_motorcycle_functor(),
                                phi, eta_dummy,
                                x, delta_dummy, delta_int, theta0,
                                0, 1e-8, 1000, hessian_block_size,
-                               compute_W_root);
+                               solver, do_line_search,
+                               max_steps_line_search);
 
   VEC g;
   AVEC parm_vec = createAVEC(phi(0), phi(1), phi(2), phi(3));
@@ -234,7 +241,8 @@ TEST_F(laplace_motorcyle_gp_test, lk_autodiff) {
                                phi_u0, eta_dummy_dbl,
                                x, delta_dummy, delta_int, theta0,
                                0, 1e-6, 100, hessian_block_size,
-                               compute_W_root);
+                               solver, do_line_search,
+                               max_steps_line_search);
 
 
   double target_l0
@@ -243,10 +251,10 @@ TEST_F(laplace_motorcyle_gp_test, lk_autodiff) {
                                phi_l0, eta_dummy_dbl,
                                x, delta_dummy, delta_int, theta0,
                                0, 1e-6, 100, hessian_block_size,
-                               compute_W_root);
+                               solver, do_line_search,
+                               max_steps_line_search);
 
-  std::cout << "g[0]: " << (target_u0 - target_l0) / (2 * eps) << std::endl;
-  */
+  std::cout << "g[0]: " << (target_u0 - target_l0) / (2 * eps) << std::endl; */
 }
 
 /*

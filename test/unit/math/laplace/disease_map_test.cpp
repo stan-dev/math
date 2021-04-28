@@ -131,7 +131,7 @@ TEST_F(laplace_disease_map_test, lk_analytical) {
             << "autodiff grad: " << g[0] << " " << g[1] << std::endl
             << "total time: " << elapsed_time.count() << std::endl
             << std::endl;
-
+}
   // Expected result
   // density: -2866.88
   // autodiff grad: 266.501 -0.425901
@@ -141,6 +141,7 @@ TEST_F(laplace_disease_map_test, lk_analytical) {
   ////////////////////////////////////////////////////////////////////////
   // Let's now generate a sample theta from the estimated posterior
 
+/*
   using stan::math::diff_poisson_log;
   using stan::math::to_vector;
   using stan::math::laplace_base_rng;
@@ -350,4 +351,4 @@ TEST_F(laplace_disease_map_test, rng_wrapper) {
                              solver, rng);
   // std::cout << "theta_pred: " << theta_pred.transpose().head(5) << std::endl;
 
-}
+} */
