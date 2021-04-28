@@ -44,6 +44,7 @@
  * - ode_ckrk_functor
  * - ode_bdf_functor
  * - ode_rk45_functor
+ * - ode_adjoint_functor
  * - integrate_ode_adams_functor
  * - integrate_ode_bdf_functor
  * - integrate_ode_rk45_functor

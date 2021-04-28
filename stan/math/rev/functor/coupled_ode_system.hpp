@@ -138,8 +138,9 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
 
       y_adjoints_ = y_vars.adj();
 
-      // memset was faster than Eigen setZero
-      memset(args_adjoints_.data(), 0, sizeof(double) * num_args_vars);
+      if (args_adjoints_.size() > 0) {
+        memset(args_adjoints_.data(), 0, sizeof(double) * num_args_vars);
+      }
 
       apply(
           [&](auto&&... args) {
