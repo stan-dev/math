@@ -23,30 +23,28 @@ namespace math {
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto eigenvectors_sym(const T& m) {
-  check_nonzero_size("eigenvalues_sym", "m", m);
+  using return_t = return_var_matrix_t<T>;
+  if (unlikely(m.size() == 0)) {
+    return m;
+  }
   check_symmetric("eigenvalues_sym", "m", m);
 
-  using return_t = return_var_matrix_t<T>;
   auto arena_m = to_arena(m);
-
   Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> solver(arena_m.val());
   arena_t<return_t> eigenvecs = solver.eigenvectors();
   auto eigenvals = to_arena(solver.eigenvalues());
 
   reverse_pass_callback([arena_m, eigenvals, eigenvecs]() mutable {
     const int p = arena_m.val().cols();
-    auto eigenvecs_a = to_arena(eigenvecs.val());
-    auto eigenvecs_a_adj = to_arena(eigenvecs.adj());
-
-    matrix_d f(p, p);
-    for (int i = 0; i < p; ++i)
-      for (int j = 0; j < p; ++j)
-        f.coeffRef(j, i)
-            = (i != j ? 1 / (eigenvals.coeff(i) - eigenvals.coeff(j)) : 0);
-
-    arena_m.adj() += eigenvecs_a
-                     * f.cwiseProduct(eigenvecs_a.transpose() * eigenvecs_a_adj)
-                     * eigenvecs_a.transpose();
+    Eigen::MatrixXd f = (1
+                         / (eigenvals.rowwise().replicate(p).transpose()
+                            - eigenvals.rowwise().replicate(p))
+                               .array());
+    f.diagonal().setZero();
+    arena_m.adj()
+        += eigenvecs.val_op()
+           * f.cwiseProduct(eigenvecs.val_op().transpose() * eigenvecs.adj_op())
+           * eigenvecs.val_op().transpose();
   });
 
   return return_t(eigenvecs);

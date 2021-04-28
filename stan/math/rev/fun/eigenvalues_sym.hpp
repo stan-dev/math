@@ -23,22 +23,21 @@ namespace math {
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto eigenvalues_sym(const T& m) {
-  check_nonzero_size("eigenvalues_sym", "m", m);
+  using return_t = return_var_matrix_t<T>;
+  if (unlikely(m.size() == 0)) {
+    return m;
+  }
   check_symmetric("eigenvalues_sym", "m", m);
 
-  using return_t = return_var_matrix_t<T>;
   auto arena_m = to_arena(m);
-
   Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> solver(arena_m.val());
   arena_t<return_t> eigenvals = solver.eigenvalues();
   auto eigenvecs = to_arena(solver.eigenvectors());
-  auto eigenvals_adj = eigenvals.adj();
 
-  reverse_pass_callback(
-      [eigenvals, arena_m, eigenvecs, eigenvals_adj]() mutable {
-        arena_m.adj()
-            += eigenvecs * eigenvals_adj.asDiagonal() * eigenvecs.transpose();
-      });
+  reverse_pass_callback([eigenvals, arena_m, eigenvecs]() mutable {
+    arena_m.adj()
+        += eigenvecs * eigenvals.adj().asDiagonal() * eigenvecs.transpose();
+  });
 
   return return_t(eigenvals);
 }
