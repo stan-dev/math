@@ -10,16 +10,15 @@ namespace stan {
 namespace math {
 
 /**
- * Returns a Matrix with values added along the main diagonal
+ * Return the cumulative sum of the specified vector.
  *
- * @tparam T_m type of input kernel generator expression for the input matrix
- * @tparam T_a type of input kernel generator expression to add along the
- * diagonal
+ * The cumulative sum of a vector of values \code{x} is the
  *
- * @param mat input kernel generator expression
- * @param to_add scalar value or input kernel generator expression to add along
- * the diagonal
- * @return a kernel generator expressio with to_add added along main diagonal
+ * \code x[0], x[1] + x[2], ..., x[1] + , ..., + x[x.size()-1] @endcode
+ *
+ * @tparam T type of elements in the vector
+ * @param x Vector of values.
+ * @return Cumulative sum of values.
  */
 template <typename T_vec,
           require_all_kernel_expressions_and_none_scalar_t<T_vec>* = nullptr>
@@ -27,19 +26,32 @@ inline auto cumulative_sum(T_vec&& v) {
   check_vector("cumulative_sum(OpenCL)", "v", v);
   const int local_size
       = opencl_kernels::scan_double_sum.get_option("LOCAL_SIZE_");
-  int work_groups
-      = opencl_context.device()[0].getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>() * 16;
+  int work_groups = std::min(
+      (v.size() + local_size - 1) / local_size,
+      static_cast<int>(
+          opencl_context.device()[0].getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>())
+          * 16);
+  const int local_size2
+      = opencl_kernels::scan2_double_sum.get_option("LOCAL_SIZE_");
   matrix_cl<double> tmp_threads(local_size * work_groups, 1);
   matrix_cl<double> tmp_wgs(work_groups, 1);
+  matrix_cl<double> res(v.rows(), v.cols());
   try {
     opencl_kernels::scan_double_sum(cl::NDRange(local_size * work_groups),
                                     cl::NDRange(local_size), tmp_wgs,
                                     tmp_threads, v, v.size());
+    opencl_kernels::scan2_double_sum(cl::NDRange(local_size2),
+                                     cl::NDRange(local_size2), tmp_wgs,
+                                     work_groups);
+    opencl_kernels::scan3_double_sum(cl::NDRange(local_size * work_groups),
+                                     cl::NDRange(local_size), res, v,
+                                     tmp_threads, tmp_wgs, v.size());
   } catch (const cl::Error& e) {
     check_opencl_error("cumulative_sum", e);
   }
-  return tmp_wgs;
+  return res;
 }
+
 }  // namespace math
 }  // namespace stan
 
