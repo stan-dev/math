@@ -275,7 +275,7 @@ class cvodes_integrator_adjoint_vari : public vari {
 
     nested_rev_autodiff nested;
 
-    const Eigen::Matrix<var, Eigen::Dynamic, 1> y_var(x);
+    Eigen::Matrix<var, Eigen::Dynamic, 1> y_var(x);
     Eigen::Matrix<var, Eigen::Dynamic, 1> fy_var
         = rhs(t, y_var, value_of_args_tuple_);
 
