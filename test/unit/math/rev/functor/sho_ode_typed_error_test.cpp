@@ -68,13 +68,11 @@ REGISTER_TYPED_TEST_SUITE_P(harmonic_oscillator_bad_ode_test, bad_ode_error);
 INSTANTIATE_TYPED_TEST_SUITE_P(StanOde, harmonic_oscillator_bad_ode_test,
                                harmonic_oscillator_integrate_ode_test_types);
 
-
 /**
  * Outer product of test types
  */
 using harmonic_oscillator_ctl_test_types = boost::mp11::mp_product<
-    ode_test_tuple,
-    ::testing::Types<ode_adjoint_functor>,
+    ode_test_tuple, ::testing::Types<ode_adjoint_functor>,
     ::testing::Types<double, stan::math::var_value<double>>,  // t
     ::testing::Types<double, stan::math::var_value<double>>,  // y0
     ::testing::Types<double, stan::math::var_value<double>>   // theta
@@ -82,7 +80,9 @@ using harmonic_oscillator_ctl_test_types = boost::mp11::mp_product<
 
 TYPED_TEST_SUITE_P(harmonic_oscillator_ctl_test);
 TYPED_TEST_P(harmonic_oscillator_ctl_test, no_error) { this->test_good(); }
-TYPED_TEST_P(harmonic_oscillator_ctl_test, error_conditions) { this->test_bad(); }
+TYPED_TEST_P(harmonic_oscillator_ctl_test, error_conditions) {
+  this->test_bad();
+}
 TYPED_TEST_P(harmonic_oscillator_ctl_test, value) {
   this->test_value(0.0);
   this->test_value(1.0);
@@ -92,4 +92,3 @@ REGISTER_TYPED_TEST_SUITE_P(harmonic_oscillator_ctl_test, no_error,
                             error_conditions, value);
 INSTANTIATE_TYPED_TEST_SUITE_P(StanOde, harmonic_oscillator_ctl_test,
                                harmonic_oscillator_ctl_test_types);
-

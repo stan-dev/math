@@ -510,32 +510,29 @@ template <typename T>
 struct harmonic_oscillator_ctl_test
     : public harmonic_oscillator_ode_base<T>,
       public ODETestFixture<harmonic_oscillator_test<T>> {
-
   double rtol_f;
   double rtol_b;
   double rtol_q;
   Eigen::VectorXd atol_f;
   Eigen::VectorXd atol_b;
   double atol_q;
-  long int num_steps_check;
+  int num_steps_check;
   int inter_poly;
   int solv_f;
   int solv_b;
-  
-  
-  harmonic_oscillator_ctl_test() :
-      harmonic_oscillator_ode_base<T>(),
-      rtol_f(this->rtol / 8.0),
-      rtol_b(this->rtol / 4.0),
-      rtol_q(this->rtol),
-      atol_f(Eigen::VectorXd::Constant(this->y0.size(), this->atol / 6.0)),
-      atol_b(Eigen::VectorXd::Constant(this->y0.size(), this->atol / 3.0)),
-      atol_q(this->atol),
-      num_steps_check(100),
-      inter_poly(CV_HERMITE),
-      solv_f(CV_BDF),
-      solv_b(CV_ADAMS)
-  {}
+
+  harmonic_oscillator_ctl_test()
+      : harmonic_oscillator_ode_base<T>(),
+        rtol_f(this->rtol / 8.0),
+        rtol_b(this->rtol / 4.0),
+        rtol_q(this->rtol),
+        atol_f(Eigen::VectorXd::Constant(this->y0.size(), this->atol / 6.0)),
+        atol_b(Eigen::VectorXd::Constant(this->y0.size(), this->atol / 3.0)),
+        atol_q(this->atol),
+        num_steps_check(100),
+        inter_poly(CV_HERMITE),
+        solv_f(CV_BDF),
+        solv_b(CV_ADAMS) {}
 
   auto apply_solver() {
     std::tuple_element_t<0, T> sol;
@@ -559,14 +556,11 @@ struct harmonic_oscillator_ctl_test
 
   auto apply_solver_tol_ctl() {
     std::tuple_element_t<0, T> sol;
-    return sol(this->f_eigen, this->y0, this->t0, this->ts,
-               this->rtol_f, this->atol_f,
-               this->rtol_b, this->atol_b,
-               this->rtol_q, this->atol_q,
-               this->max_num_step, this->num_steps_check,
-               this->inter_poly, this->solv_f, this->solv_b,
-               nullptr, this->theta, this->x_r,
-               this->x_i);
+    return sol(this->f_eigen, this->y0, this->t0, this->ts, this->rtol_f,
+               this->atol_f, this->rtol_b, this->atol_b, this->rtol_q,
+               this->atol_q, this->max_num_step, this->num_steps_check,
+               this->inter_poly, this->solv_f, this->solv_b, nullptr,
+               this->theta, this->x_r, this->x_i);
   }
 
   void test_bad() {
@@ -728,6 +722,5 @@ struct harmonic_oscillator_ctl_test
     EXPECT_NEAR(0.246407, stan::math::value_of(res[99][1]), 1e-5);
   }
 };
-
 
 #endif
