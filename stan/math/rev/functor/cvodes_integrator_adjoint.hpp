@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_REV_FUNCTOR_INTEGRATE_ODE_CVODES_ADJOINT_HPP
-#define STAN_MATH_REV_FUNCTOR_INTEGRATE_ODE_CVODES_ADJOINT_HPP
+#ifndef STAN_MATH_REV_FUNCTOR_CVODES_INTEGRATOR_ADJOINT_HPP
+#define STAN_MATH_REV_FUNCTOR_CVODES_INTEGRATOR_ADJOINT_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/save_varis.hpp>
@@ -63,7 +63,6 @@ class cvodes_integrator_adjoint_vari : public vari {
       value_of_args_tuple_;
 
   size_t N_;
-  bool forward_returned_;
   bool backward_is_initialized_;
 
   size_t num_t0_vars_;
@@ -88,14 +87,14 @@ class cvodes_integrator_adjoint_vari : public vari {
   struct cvodes_solver;
   cvodes_solver* solver_;
 
-  static constexpr bool is_var_ts{is_var<T_ts>::value};
-  static constexpr bool is_var_t0{is_var<T_t0>::value};
-  static constexpr bool is_var_y0{is_var<T_y0_t0>::value};
-  static constexpr bool is_any_var_args{
+  static constexpr bool is_var_ts_{is_var<T_ts>::value};
+  static constexpr bool is_var_t0_{is_var<T_t0>::value};
+  static constexpr bool is_var_y0_{is_var<T_y0_t0>::value};
+  static constexpr bool is_any_var_args_{
       disjunction<is_var<scalar_type_t<T_Args>>...>::value};
-  static constexpr bool is_var_return{is_var<T_Return>::value};
-  static constexpr bool is_var_only_ts{
-      is_var_ts && !(is_var_t0 || is_var_y0 || is_any_var_args)};
+  static constexpr bool is_var_return_{is_var<T_Return>::value};
+  static constexpr bool is_var_only_ts_{
+      is_var_ts_ && !(is_var_t0_ || is_var_y0_ || is_any_var_args_)};
 
   /**
    * Call the ODE RHS with given tuple.
@@ -108,14 +107,19 @@ class cvodes_integrator_adjoint_vari : public vari {
   }
 
   /**
+   * Utility to cast user memory pointer passed in from CVODES to actual typed object pointer.
+   */
+  constexpr static cvodes_integrator_adjoint_vari* cast_to_self(void* mem) {
+    return static_cast<cvodes_integrator_adjoint_vari*>(mem);
+  }
+
+  /**
    * Implements the function of type CVRhsFn which is the user-defined
    * ODE RHS passed to CVODES.
    */
   constexpr static int cv_rhs(realtype t, N_Vector y, N_Vector ydot,
                               void* user_data) {
-    const cvodes_integrator_adjoint_vari* integrator
-        = static_cast<const cvodes_integrator_adjoint_vari*>(user_data);
-    integrator->rhs(t, NV_DATA_S(y), NV_DATA_S(ydot));
+    cast_to_self(user_data)->rhs(t, NV_DATA_S(y), NV_DATA_S(ydot));
     return 0;
   }
 
@@ -123,11 +127,9 @@ class cvodes_integrator_adjoint_vari : public vari {
    * Implements the function of type CVRhsFnB which is the
    * RHS of the backward ODE system.
    */
-  constexpr static int cv_rhs_adj_sens(realtype t, N_Vector y, N_Vector yB,
+  constexpr static int cv_rhs_adj(realtype t, N_Vector y, N_Vector yB,
                                        N_Vector yBdot, void* user_data) {
-    const cvodes_integrator_adjoint_vari* integrator
-        = static_cast<const cvodes_integrator_adjoint_vari*>(user_data);
-    integrator->rhs_adj_sens(t, y, yB, yBdot);
+    cast_to_self(user_data)->rhs_adj(t, y, yB, yBdot);
     return 0;
   }
 
@@ -137,9 +139,7 @@ class cvodes_integrator_adjoint_vari : public vari {
    */
   constexpr static int cv_quad_rhs_adj(realtype t, N_Vector y, N_Vector yB,
                                        N_Vector qBdot, void* user_data) {
-    cvodes_integrator_adjoint_vari* integrator
-        = static_cast<cvodes_integrator_adjoint_vari*>(user_data);
-    integrator->quad_rhs_adj(t, y, yB, qBdot);
+    cast_to_self(user_data)->quad_rhs_adj(t, y, yB, qBdot);
     return 0;
   }
 
@@ -149,27 +149,23 @@ class cvodes_integrator_adjoint_vari : public vari {
    * ode_rhs wrt to the states y. The jacobian is stored in column
    * major format.
    */
-  constexpr static int cv_jacobian_states(realtype t, N_Vector y, N_Vector fy,
-                                          SUNMatrix J, void* user_data,
-                                          N_Vector tmp1, N_Vector tmp2,
-                                          N_Vector tmp3) {
-    const cvodes_integrator_adjoint_vari* integrator
-        = static_cast<const cvodes_integrator_adjoint_vari*>(user_data);
-    integrator->jacobian_states(t, y, J);
+  constexpr static int cv_jacobian_rhs_states(realtype t, N_Vector y, N_Vector fy,
+                                              SUNMatrix J, void* user_data,
+                                              N_Vector tmp1, N_Vector tmp2,
+                                              N_Vector tmp3) {
+    cast_to_self(user_data)->jacobian_rhs_states(t, y, J);
     return 0;
   }
 
   /**
    * Implements the CVLsJacFnB function for evaluating the jacobian of
-   * the adjoint problem.
+   * the adjoint problem wrt to the backward states.
    */
-  constexpr static int cv_jacobian_adj(realtype t, N_Vector y, N_Vector yB,
-                                       N_Vector fyB, SUNMatrix J,
-                                       void* user_data, N_Vector tmp1,
-                                       N_Vector tmp2, N_Vector tmp3) {
-    const cvodes_integrator_adjoint_vari* integrator
-        = static_cast<const cvodes_integrator_adjoint_vari*>(user_data);
-    integrator->jacobian_adj(t, y, J);
+  constexpr static int cv_jacobian_rhs_adj_states(realtype t, N_Vector y, N_Vector yB,
+                                                  N_Vector fyB, SUNMatrix J,
+                                                  void* user_data, N_Vector tmp1,
+                                                  N_Vector tmp2, N_Vector tmp3) {
+    cast_to_self(user_data)->jacobian_rhs_adj_states(t, y, J);
     return 0;
   }
 
@@ -201,8 +197,8 @@ class cvodes_integrator_adjoint_vari : public vari {
    * @param[in] yB state of the adjoint ODE system
    * @param[out] yBdot evaluation of adjoint ODE RHS
    */
-  inline void rhs_adj_sens(double t, N_Vector y, N_Vector yB,
-                           N_Vector yBdot) const {
+  inline void rhs_adj(double t, N_Vector y, N_Vector yB,
+                      N_Vector yBdot) const {
     Eigen::Map<const Eigen::VectorXd> y_vec(NV_DATA_S(y), N_);
     Eigen::Map<Eigen::VectorXd> mu(NV_DATA_S(yB), N_);
     Eigen::Map<Eigen::VectorXd> mu_dot(NV_DATA_S(yBdot), N_);
@@ -269,7 +265,7 @@ class cvodes_integrator_adjoint_vari : public vari {
    * Calculates the jacobian of the ODE RHS wrt to its states y at the
    * given time-point t and state y.
    */
-  inline void jacobian_states(double t, N_Vector y, SUNMatrix J) const {
+  inline void jacobian_rhs_states(double t, N_Vector y, SUNMatrix J) const {
     Eigen::Map<Eigen::MatrixXd> Jfy(SM_DATA_D(J), N_, N_);
     Eigen::Map<const Eigen::VectorXd> x(NV_DATA_S(y), N_);
 
@@ -293,18 +289,18 @@ class cvodes_integrator_adjoint_vari : public vari {
   }
 
   /*
-   * Calculate the Jacobian of the RHS of the adjoint ODE (see rhs_adj_sens
+   * Calculate the Jacobian of the RHS of the adjoint ODE (see rhs_adj
    * below for citation for how this is done)
    *
    * @param[in] y State of system
    * @param[in] t Time
    * @param[out] J CVode structure where output is to be stored
    */
-  inline void jacobian_adj(double t, N_Vector y, SUNMatrix J) const {
+  inline void jacobian_rhs_adj_states(double t, N_Vector y, SUNMatrix J) const {
     Eigen::Map<Eigen::MatrixXd> J_adj_y(SM_DATA_D(J), N_, N_);
 
     // J_adj_y = -1 * transpose(J_y)
-    jacobian_states(t, y, J);
+    jacobian_rhs_states(t, y, J);
 
     J_adj_y.transposeInPlace();
     J_adj_y.array() *= -1.0;
@@ -339,6 +335,7 @@ class cvodes_integrator_adjoint_vari : public vari {
   struct cvodes_solver : public chainable_alloc {
     const size_t N_;
     std::vector<Eigen::VectorXd> y_;
+    std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> y_return_;
     const std::string function_name_str_;
     const char* function_name_;
     void* cvodes_mem_;
@@ -364,24 +361,21 @@ class cvodes_integrator_adjoint_vari : public vari {
         : chainable_alloc(),
           N_(N),
           y_(ts_size),
+          y_return_(ts_size),
           function_name_str_(function_name),
-          function_name_(function_name_str_.c_str()) {
-      nv_state_forward_ = N_VMake_Serial(N, state_forward.data());
-      nv_state_backward_ = N_VMake_Serial(N, state_backward.data());
-      nv_quad_ = N_VMake_Serial(num_args_vars, quad.data());
-      nv_absolute_tolerance_forward_
-          = N_VMake_Serial(N, absolute_tolerance_forward.data());
-      nv_absolute_tolerance_backward_
-          = N_VMake_Serial(N, absolute_tolerance_backward.data());
-
-      A_forward_ = SUNDenseMatrix(N, N);
-      A_backward_ = SUNDenseMatrix(N, N);
-      if (N > 0) {
-        LS_forward_ = SUNDenseLinearSolver(nv_state_forward_, A_forward_);
-        LS_backward_ = SUNDenseLinearSolver(nv_state_backward_, A_backward_);
-      }
-      cvodes_mem_ = CVodeCreate(solver_forward);
-
+          function_name_(function_name_str_.c_str()),
+          nv_state_forward_(N_VMake_Serial(N, state_forward.data())),
+          nv_state_backward_(N_VMake_Serial(N, state_backward.data())),
+          nv_quad_(N_VMake_Serial(num_args_vars, quad.data())),
+          nv_absolute_tolerance_forward_(N_VMake_Serial(N, absolute_tolerance_forward.data())),
+          nv_absolute_tolerance_backward_(N_VMake_Serial(N, absolute_tolerance_backward.data())),
+      
+          A_forward_(SUNDenseMatrix(N, N)),
+          A_backward_(SUNDenseMatrix(N, N)),
+          LS_forward_(N == 0 ? nullptr : SUNDenseLinearSolver(nv_state_forward_, A_forward_)),
+          LS_backward_(N == 0 ? nullptr : SUNDenseLinearSolver(nv_state_backward_, A_backward_)),
+          cvodes_mem_(CVodeCreate(solver_forward))
+    {
       if (cvodes_mem_ == nullptr) {
         throw std::runtime_error("CVodeCreate failed to allocate memory");
       }
@@ -400,9 +394,7 @@ class cvodes_integrator_adjoint_vari : public vari {
       N_VDestroy_Serial(nv_absolute_tolerance_forward_);
       N_VDestroy_Serial(nv_absolute_tolerance_backward_);
 
-      if (cvodes_mem_) {
-        CVodeFree(&cvodes_mem_);
-      }
+      CVodeFree(&cvodes_mem_);
     }
   };
 
@@ -480,7 +472,6 @@ class cvodes_integrator_adjoint_vari : public vari {
         value_of_args_tuple_(to_arena(value_of(args))...),
 
         N_(y0.size()),
-        forward_returned_(false),
         backward_is_initialized_(false),
 
         num_t0_vars_(count_vars(t0)),
@@ -494,7 +485,7 @@ class cvodes_integrator_adjoint_vari : public vari {
         quad_(num_args_vars_),
 
         non_chaining_varis_(
-            is_var_return
+            is_var_return_
                 ? ChainableStack::instance_->memalloc_.alloc_array<vari*>(
                       ts_.size() * N_)
                 : nullptr),
@@ -519,13 +510,11 @@ class cvodes_integrator_adjoint_vari : public vari {
     check_finite(solver_->function_name_, "initial time", t0);
     check_finite(solver_->function_name_, "times", ts);
 
-    // Code from: https://stackoverflow.com/a/17340003 . Should probably do
-    // something better
     stan::math::for_each(
-        [func_name = this->function_name_](auto&& arg) {
+        [func_name = solver_->function_name_](auto&& arg) {
           check_finite(func_name, "ode parameters and data", arg);
         },
-        local_args_tuple);
+        local_args_tuple_);
 
     check_nonzero_size(solver_->function_name_, "times", ts);
     check_nonzero_size(solver_->function_name_, "initial state", y0);
@@ -587,37 +576,28 @@ class cvodes_integrator_adjoint_vari : public vari {
 
     check_flag_sundials(
         CVodeSetJacFn(solver_->cvodes_mem_,
-                      &cvodes_integrator_adjoint_vari::cv_jacobian_states),
+                      &cvodes_integrator_adjoint_vari::cv_jacobian_rhs_states),
         "CVodeSetJacFn");
 
     // initialize backward sensitivity system of CVODES as needed
-    if (is_var_return) {
+    if (is_var_return_) {
       check_flag_sundials(
           CVodeAdjInit(solver_->cvodes_mem_, num_steps_between_checkpoints_,
                        interpolation_polynomial_),
           "CVodeAdjInit");
     }
-  }
 
-  /**
-   * Solve the ODE initial value problem y' = f(t, y), y(t0) = y0 at a set of
-   * times, { t1, t2, t3, ... } using the stiff backward differentiation formula
-   * (BDF) solver in CVODES.
-   *
-   * @return std::vector of Eigen::Matrix of the states of the ODE, one for each
-   *   solution time (excluding the initial state)
-   */
-  std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> operator()() {
-    const double t0_dbl = value_of(t0_);
+    /**
+     * Solve the ODE initial value problem y' = f(t, y), y(t0) = y0 at a set of
+     * times, { t1, t2, t3, ... } using the requested forward solver of CVODES.
+     */
     const auto ts_dbl = value_of(ts_);
-    std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> y_return(
-        ts_.size());
-
-    double t_init = t0_dbl;
+    
+    double t_init = value_of(t0_);
     for (size_t n = 0; n < ts_dbl.size(); ++n) {
       double t_final = ts_dbl[n];
       if (t_final != t_init) {
-        if (is_var_return) {
+        if (is_var_return_) {
           int ncheck;
 
           int error_code
@@ -646,31 +626,31 @@ class cvodes_integrator_adjoint_vari : public vari {
           }
         }
       }
-      store_state(n, state_forward_, y_return[n]);
+      store_state(n, state_forward_, solver_->y_return_[n]);
 
       t_init = t_final;
     }
+    
+  }
 
-    forward_returned_ = true;
-    return y_return;
+  /**
+   * Obtain solution of ODE.
+   *
+   * @return std::vector of Eigen::Matrix of the states of the ODE, one for each
+   *   solution time (excluding the initial state)
+   */
+  std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> solution() {
+    return solver_->y_return_;
   }
 
   virtual void chain() {
-    if (solver_->cvodes_mem_ == nullptr) {
-      return;
-    }
-
-    if (!forward_returned_) {
-      return;
-    }
-
-    if (!is_var_return) {
+    if (!is_var_return_) {
       return;
     }
 
     // for sensitivities wrt to ts we do not need to run the backward
     // integration
-    if (is_var_ts) {
+    if (is_var_ts_) {
       for (int i = 0; i < ts_.size(); ++i) {
         Eigen::VectorXd step_sens = Eigen::VectorXd::Zero(N_);
         for (int j = 0; j < N_; ++j) {
@@ -681,7 +661,7 @@ class cvodes_integrator_adjoint_vari : public vari {
             rhs(value_of(ts_[i]), solver_->y_[i], value_of_args_tuple_));
       }
 
-      if (is_var_only_ts) {
+      if (is_var_only_ts_) {
         return;
       }
     }
@@ -716,7 +696,7 @@ class cvodes_integrator_adjoint_vari : public vari {
           // of the ode states
           check_flag_sundials(
               CVodeInitB(solver_->cvodes_mem_, index_backward_,
-                         &cvodes_integrator_adjoint_vari::cv_rhs_adj_sens,
+                         &cvodes_integrator_adjoint_vari::cv_rhs_adj,
                          t_init, solver_->nv_state_backward_),
               "CVodeInitB");
 
@@ -738,7 +718,7 @@ class cvodes_integrator_adjoint_vari : public vari {
 
           check_flag_sundials(
               CVodeSetJacFnB(solver_->cvodes_mem_, index_backward_,
-                             &cvodes_integrator_adjoint_vari::cv_jacobian_adj),
+                             &cvodes_integrator_adjoint_vari::cv_jacobian_rhs_adj_states),
               "CVodeSetJacFnB");
 
           // Allocate space for backwards quadrature needed when
@@ -802,7 +782,7 @@ class cvodes_integrator_adjoint_vari : public vari {
       }
     }
 
-    if (is_var_t0) {
+    if (is_var_t0_) {
       t0_varis_[0]->adj_ += -state_backward_.dot(
           rhs(t_init, value_of(y0_), value_of_args_tuple_));
     }

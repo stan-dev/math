@@ -84,7 +84,7 @@ ode_adjoint_impl(const char* function_name, const F& f, const T_y0& y0,
       absolute_tolerance_quadrature, max_num_steps,
       num_steps_between_checkpoints, interpolation_polynomial, solver_forward,
       solver_backward, msgs, to_ref(args)...);
-  return (*integrator)();
+  return integrator->solution();
 }
 
 /**
