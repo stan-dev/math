@@ -521,14 +521,9 @@ class cvodes_integrator_adjoint_vari : public vari {
 
     // Code from: https://stackoverflow.com/a/17340003 . Should probably do
     // something better
-    apply(
-        [&](auto&&... args) {
-          std::vector<int> unused_temp{
-              0, (check_finite(solver_->function_name_,
-                               "ode parameters and data", args),
-                  0)...};
-        },
-        local_args_tuple_);
+    stan::math::for_each([func_name = this->function_name_](auto&& arg) {
+      check_finite(func_name, "ode parameters and data", arg);
+    }, local_args_tuple);
 
     check_nonzero_size(solver_->function_name_, "times", ts);
     check_nonzero_size(solver_->function_name_, "initial state", y0);
