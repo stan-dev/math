@@ -16,7 +16,7 @@ namespace math {
  *
  * \code x[0], x[1] + x[2], ..., x[1] + , ..., + x[x.size()-1] @endcode
  *
- * @tparam T type of elements in the vector
+ * @tparam T type of the vector
  * @param x Vector of values.
  * @return Cumulative sum of values.
  */
