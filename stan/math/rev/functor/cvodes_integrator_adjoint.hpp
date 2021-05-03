@@ -474,11 +474,6 @@ class cvodes_integrator_adjoint_vari : public vari {
         state_forward_(value_of(y0)),
         state_backward_(N_),
         quad_(num_args_vars_),
-        non_chaining_varis_(
-            is_var_return_
-                ? ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-                      ts_.size() * N_)
-                : nullptr),
         args_varis_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
             num_args_vars_)),
         solver_(new cvodes_solver(
