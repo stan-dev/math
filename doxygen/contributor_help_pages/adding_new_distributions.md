@@ -16,21 +16,21 @@ in the below we'll cover each of the general steps needed to add a new distribut
 
 We will use the normal distribution as an example and adding the lpdf
 function, though note for acceptance into Stan math a function must have
-it's respective `lpdf`, `lcdf`, `cdf`, `lccdf` and `rng` implimented.
+its respective `lpdf`, `lcdf`, `cdf`, `lccdf` and `rng` implemented.
 Though we will only be doing the `lpdf` in the below all of the notes here will apply
 to the other functions.
 
 So for the normal distribution probability density function
 
-$$
+\f[
 \text{Normal}(y|\mu,\sigma)=\frac{1}{\sigma \sqrt{2\pi}} e^{-\frac{1}{2}\left(\frac{y-\mu}{\sigma}\right)^2}
-$$
+\f]
 
-to get the log probabiloity density function we log the above to get
+to get the log probability density function we log the above to get
 
-$$
-\text{ln}\left(\text{Normal}(y|\mu,\sigma)\right)=-\frac{1}{2} \left(\frac{y-\mu}{\sigma}\right)^2 - \log(\sigma) - \frac{1}{2}\log(2\pi)
-$$
+\f[
+\ln{\left(\text{Normal}(y|\mu,\sigma)\right)}=-\frac{1}{2} \left(\frac{y-\mu}{\sigma}\right)^2 - \ln{\left(\sigma\right)} - \frac{1}{2}\ln{\left(2\pi\right)}
+\f]
 
 Now we can directly plug this into Stan as a custom lpdf function
 
@@ -40,7 +40,7 @@ real new_normal_lpdf (real y, real mu, real sigma){
 }
 ```
 
-This is nice because now we can test this function against another implimentations
+This is nice because now we can test this function against another implementations
 to verify its correctness. At this point it is a good idea to post something on
 [discourse](https://discourse.mc-stan.org/) or file an
 [issue](https://github.com/stan-dev/math/issues) to let folks know you would like
@@ -50,7 +50,7 @@ to add this distribution.
 ### Writing out the Partials
 
 For an efficient implimentation of the distribution we want to calculate
-each of it's partials with respect to the distributions inputs. This is easy for normal but can be rough for other distributions.
+each of its partials with respect to the distributions inputs. This is easy for normal but can be rough for other distributions.
 In that case then [matrixcalculus.org](http://www.matrixcalculus.org/) or [wolframalpha](https://www.wolframalpha.com/) is your friend.
 There we can plug in the lpdf and get back each of the partials.
 
@@ -61,21 +61,18 @@ function. One other nice thing about the matrixcalculus site is that it can gene
 which is nice for documentation.
 
 
-$$
-\begin{aligned}
-f = \text{ln}\left(\text{Normal}(y|\mu,\sigma)\right) &= -\frac{1}{2} \left(\frac{y-\mu}{\sigma}\right)^2 - \log(\sigma) - \frac{1}{2}\log(2\pi) \cr
+\f{aligned}{
+f = \text{ln}\left(\text{Normal}(y|\mu,\sigma)\right) &= -\frac{1}{2} \left(\frac{y-\mu}{\sigma}\right)^2 - \ln\left(\sigma\right) - \frac{1}{2}\ln{\left(2\pi\right)} \cr
 \frac{\partial f}{\partial y} &= -\frac{y-\mu}{\sigma^{2}} \cr
 \frac{\partial f}{\partial \mu} &= \frac{y-\mu}{\sigma^{2}} \cr
 \frac{\partial f}{\partial \sigma} &= -\frac{1}{\sigma} + \frac{(y-\mu)^{2}}{\sigma^{3}}
-\end{aligned}
-$$
+\f}
 
 It's a little early, but once we get the `lpdf` function working with the above we will want to get out a pen and paper to simplify and find common subexpressions we only need to calculate once.
 For instance in the normal we can compute `y - mu` and `1/sigma`
 
-$$
-\begin{aligned}
-f(y|\mu,\sigma) = \text{ln}\left(\text{Normal}(y|\mu,\sigma)\right) &= -\frac{1}{2} \left(\frac{y-\mu}{\sigma}\right)^2 - \log(\sigma) - \frac{1}{2}\log(2\pi) \cr
+\f{aligned}{
+f(y|\mu,\sigma) = \text{ln}\left(\text{Normal}(y|\mu,\sigma)\right) &= -\frac{1}{2} \left(\frac{y-\mu}{\sigma}\right)^2 - \ln{\left(\sigma\right)} - \frac{1}{2}\ln{\left(2\pi\right)} \cr
 \frac{\partial f}{\partial y} &= -t_3 \cr
 \frac{\partial f}{\partial \mu} &= t_3 \cr
 \frac{\partial f}{\partial \sigma} &= \frac{t_{2}^2}{t_1} \cdot t_0 - t_0 \cr
@@ -84,8 +81,7 @@ t_0 &= \frac{1}{\sigma} \cr
 t_1 &= t_{0}^2 \cr
 t_2 &= y - \mu \cr
 t_3 &= \frac{t_2}{t_1}
-\end{aligned}
-$$
+\f}
 
 
 ### Writing the function
@@ -114,14 +110,14 @@ must work for all of Stan's scalar types
 `double`, `var`, and `fvar<T>` while accepting mixtures of scalars and vectors.
 The return of the function is the joint log probability accumulated over all
 of the inputs which is a scalar of the least upper bound of all the
-parameters scalar types. That's a lot of big words, but in essense means that
+parameters scalar types. That's a lot of big words, but in essence means that
 if one of the inputs is a `var` and the others are double the return type needs to be
 a `var`. If the input signature contained `fvar<var>`, `var`, `double` then the
 return type would be `fvar<var>`. See the [Common pitfalls](@ref common_pitfalls) for an
 explanation of `return_type_t`.
 
 Notice the `bool propto` template parameter, this is used by the function to
-decide whether or not the function needs to propogate constants to the joint
+decide whether or not the function needs to propagate constants to the joint
 log probability we'll be calculating.
 
 #### Preparing the Parameters
@@ -176,7 +172,7 @@ if (!include_summand<propto, T_y, T_loc, T_scale>::value) {
 The `if` statements here are checking if
 
 1. Any of the inputs are length zero
-2. Either the function drops constants `propto=false` or all of the inputs are constant (aka if they are all of type `double`).
+2. Either the function drops constants `propto=true` and all of the inputs are constant (aka if they are all of type `double`).
 
 If either of the two conditions are met then there's no need to calculate the
 rest of the lpdf function and we can return back zero.
@@ -237,7 +233,7 @@ and scalars can both be iterated over in the loop.
 
 For vectors, `scalar_seq_view` simply holds a reference to the vector it's passed
 and calling `scalar_seq_view`'s method `.val(i)` will return element i in the vector
-after calling `value_of()` on the element. The actual element can be acessed
+after calling `value_of()` on the element. The actual element can be accessed
 with `operator[]`. For scalars, `scalar_seq_view`'s `.val(i)` and `operator[]`
 will just return the scalar no matter what index is passed.
 
@@ -283,7 +279,7 @@ for (size_t n = 0; n < N; n++) {
         += -inv_sigma + inv_sigma * y_minus_mu_over_sigma_squared;
   }
 }
-// return `logp` and handle rules for propogating partials for each autodiff type.
+// return `logp` and handle rules for propagating partials for each autodiff type.
 return ops_partials.build(logp);
 ```
 
@@ -291,8 +287,8 @@ The `logp` is used to accumulate the log probability density function's value,
 where `propto` is used to decide whether or not that value should have constants
 added or dropped.
 
-The odd bits here are mostly the `if`s that are of the form
-`include_summand<propto>::value` and `!is_constant_all<T_loc>::value`. We want to
+The odd bits here are mostly the `if`s that include
+`include_summand<propto>` and `!is_constant_all<T_loc>`. We want to
 only compute the partials and accumulate the constants if those values are not
 constant (`double`), so we have an if statement here, which since the conditional
 is a type trait whose value is known at compile time we won't pay for any of these
@@ -324,7 +320,7 @@ them into operands adjoint.
 The for loop version is nice and simple, but there's a few things for performance
 that we can do better. For instance, in the for loop version we are constantly
 reading and writing to memory from a bunch of different places. We can fix that by
-rewriting the above to use multiple loops, but unless we have seperate loops
+rewriting the above to use multiple loops, but unless we have separate loops
 that turn on and off for when combinations of partials need to be calculated
 then we lose places where we can share calculations between partials.
 
@@ -381,7 +377,7 @@ For instance, when calculating `inv_sigma`, if that expression is used for
 calculating multiple partials then we want to evaluate it once on that line
 and reuse the precomputed operation multiple times in the preceding code. However
 if it's not used multiple times then we just want an expression that will then
-later be evaluated at it's final destination. The same happens for `y_scaled_sq`
+later be evaluated at its final destination. The same happens for `y_scaled_sq`
 and `scaled_diff`.
 
 One odd piece of code here is
@@ -424,7 +420,7 @@ let the compiler see we are doing division by 1 and will remove the operation.
 But that's it, you can see the full `normal_lpdf` function [here](https://github.com/stan-dev/math/blob/develop/stan/math/prim/prob/normal_lpdf.hpp) in Stan that uses the Eigen version.
 
 One other little piece you'll want to do is add a `normal_lpdf` function with the exact same signature
-but without the `propto` paremeter. Unless told otherwise we don't assume users want the proportional constants
+but without the `propto` parameter. Unless told otherwise we don't assume users want the proportional constants
 added so we have a default signature that does not require setting the `propto` parameter.
 
 ```cpp

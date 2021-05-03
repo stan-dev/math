@@ -203,7 +203,7 @@ class my_big_type {
 
 We can see in the above that the standard style of a move (the constructor taking an rvalue reference) is to copy the pointer and then null out the original pointer. But in Stan, particularly for reverse mode, we need to keep memory around even if  it's only a temporary for when we call the gradient calculations in the reverse pass. And since memory for reverse mode is stored in our arena allocator no copying happens in the first place.
 
-When working with arithmetic types, keep in mind that moving Scalars is often less optimal than simply taking their copy. For instance, Stan's `var` type is a PIMPL implimentation, so it simply holds a pointer of size 8 bytes. A `double` is also 8 bytes which just so happens to fit exactly in a [word](https://en.wikipedia.org/wiki/Word_(computer_architecture)) of most modern CPUs. While a reference to a double is also 8 bytes, unless the function is inlined by the compiler, the computer will have to place the reference into cache, then go fetch the value that is being referenced which now takes up two words instead of one!
+When working with arithmetic types, keep in mind that moving Scalars is often less optimal than simply taking their copy. For instance, Stan's `var` type is a PIMPL implementation, so it simply holds a pointer of size 8 bytes. A `double` is also 8 bytes which just so happens to fit exactly in a [word](https://en.wikipedia.org/wiki/Word_(computer_architecture)) of most modern CPUs. While a reference to a double is also 8 bytes, unless the function is inlined by the compiler, the computer will have to place the reference into cache, then go fetch the value that is being referenced which now takes up two words instead of one!
 
 The general rules to follow for passing values to a function are:
 
@@ -227,7 +227,7 @@ The pointer is cheap to copy around and is safe to copy into lambdas for
 
 As an example, see the implementation of `mdivide_left`
 [here](https://github.com/stan-dev/math/blob/develop/stan/math/rev/fun/mdivide_left.hpp)
-where `make_callback_ptr` is used to save the result of an Eigen
+where `make_callback_ptr()` is used to save the result of an Eigen
 Householder QR decomposition for use in the reverse pass.
 
 The implementation is in

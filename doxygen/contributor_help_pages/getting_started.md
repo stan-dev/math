@@ -6,15 +6,15 @@ automatic differentiation (autodiff) library behind the Stan language, and
 the vast majority of the functions exposed at the Stan language level are
 implemented here in C++.
 
-In the course of the Math library's existance, C++ has changed substantially.
+In the course of the Math library's existence, C++ has changed substantially.
 Math was originally written before C++11. It currently targets C++14. In the near
 future it will transition to C++17. With this in mind, there are many different
 ways to write Math functions. This guide tries to document best practices,
 conventions which not all functions in Math follow, but should be followed for
-new code to keep the code from getting unweildy (the old patterns will be
+new code to keep the code from getting unwieldy (the old patterns will be
 updated eventually).
 
-The title contans "Current State" to emphasize that if any information here is
+The title contains "Current State" to emphasize that if any information here is
 out of date or any advice does not work, it should be reported as a bug (the
 [example-models](https://github.com/stan-dev/example-models)).
 
@@ -46,14 +46,14 @@ The Stan Math library is spit into 4 main source folders that hold functions, ty
 
 - prim: General `Scalar`, `Matrix`, and `std::vector<T>` types
 - rev: Specializations for reverse mode automatic differentiation
-- fwd: Specializtions for forward mode automatic differentiation.
+- fwd: Specializations for forward mode automatic differentiation.
 - mix: Sources to allow mixes of forward and reverse mode.
 - opencl: Sources for doing reverse mode automatic differentiation on GPUs.
 
 Within each of those folders you will find any one of the following folders
 
-- core: Base implimentations of custom scalars or backend setup.
-  - Ex: in `prim` this is operators for complex numbers and the setup for threading, `rev`'s core is the scalar and it's base operators for reverse mode and the stack allocator, and `fwd` has the scalar for forward mode autodiff and it's operators.
+- core: Base implementations of custom scalars or backend setup.
+  - Ex: in `prim` this is operators for complex numbers and the setup for threading, `rev`'s core is the scalar and its base operators for reverse mode and the stack allocator, and `fwd` has the scalar for forward mode autodiff and its operators.
 - err: Functions that perform a check and if true throw an error.
 - fun: The math functions exposed to the Stan language.
 - functor: Functions that take in other functions and data as input such as `reduce_sum()`
@@ -97,7 +97,7 @@ This is pretty standard C++ besides (1), (2), and (3) which I'll go over here.
 TL;DR: Before accessing individual coefficients of an Eigen type, use `to_ref()` to make sure it's a type that's safe to access by coefficient.
 
 
-In the Stan math library we allow functions to accept eigen expressions. This is rather nice as for instance the code
+In the Stan math library we allow functions to accept Eigen expressions. This is rather nice as for instance the code
 
 ```cpp
 Eigen::MatrixXd x = multiply(add(A, multiply(B, C)), add(D, E));
@@ -110,7 +110,7 @@ Eigen::Product<Eigen::Add<Matrix, Eigen::Product<Matrix, Matrix>>, Eigen::Add<Ma
 
 Using lazily evaluated expressions allows Eigen to avoid redundant copies, reads, and writes to our data. However, this comes at a cost.
 
-In (2), when we access the coefficients of `x`, if it's type is similar to the wacky expression above we can get incorrect results as Eigen does not gurantee any safety of results when performing coefficient level access on a expression type that transforms it's inputs. So `to_ref()` looks at it's input type, and if the input type is an Eigen expression that it evaluates the expression so that all the computations are performed and the return object is then safe to access.
+In (2), when we access the coefficients of `x`, if its type is similar to the wacky expression above we can get incorrect results as Eigen does not guarantee any safety of results when performing coefficient level access on a expression type that transforms its inputs. So `to_ref()` looks at its input type, and if the input type is an Eigen expression that it evaluates the expression so that all the computations are performed and the return object is then safe to access.
 
 But! Suppose our input is something like
 
@@ -128,13 +128,13 @@ If we used `auto` here then if the return type of `to_ref()` was an `Eigen::Matr
 
 #### (2) Using `value_type_t<>` and Friends
 
-The [type trait](@ref type_traits) `value_type_t` is one of several type traits we use in the library to query information about types. `value_type_t` will return the inner type of a container,
-so `value_type_t<Eigen::Matrix<double, -1, -1>>` will return `double`, `std::vector<std::vector<double>>` will return a `std::vector<double>` and `value_type_t<double>` will simply return a double.
-See the module on type traits for a
+The type trait `value_type_t` is one of several type traits we use in the library to query information about types. `value_type_t` will return the inner type of a container,
+so `value_type_t<Eigen::Matrix<double, -1, -1>>` will return `double`, `value_type_t<std::vector<std::vector<double>>>` will return a `std::vector<double>` and `value_type_t<double>` will simply return a double.
+See the module on type traits for a guide on Stan's specific type traits.
 
 #### (3) Accessing Eigen matrices though `.coeff()` and `.coeffRef()`
 
-This is a small bit, but Eigen performs bounds checks by default when using `[]` or `()` to access elements. However `.coeff()` and `.coeffRef()` do not. Because Stan model's perform bounds checking at a higher level it's safe to remove the bounds checks here.
+This is a small bit, but Eigen performs bounds checks by default when using `[]` or `()` to access elements. However `.coeff()` and `.coeffRef()` do not. Because Stan model's perform bounds checking at a higher level its safe to remove the bounds checks here.
 
 #### Testing
 
@@ -182,7 +182,7 @@ struct DenseStorage {
 }
 ```
 
-It's very common for us to want to access just the `val_` or `adj_` of the `vari`'s inside of the `var`'s and so we have written custom methods `.adj()` and `.val()` using Eigen's plugin system which returns an expression of an `Eigen::Matrix<double, Rows, Cols>` representing the `var`'s values and adjoints, respectivly.
+It's very common for us to want to access just the `val_` or `adj_` of the `vari`'s inside of the `var`'s and so we have written custom methods `.adj()` and `.val()` using Eigen's plugin system which returns an expression of an `Eigen::Matrix<double, Rows, Cols>` representing the `var`'s values and adjoints, respectively.
 
 #### Using type traits to Expose Our New Function
 
@@ -264,7 +264,7 @@ all the outputs and inputs. (reverse pass)
 
 Reverse mode autodiff in Math requires a huge number of temporaries and
 intermediates to be computed and saved for the reverse pass. There are
-so many allocations that the overhead of `malloc()` becomes noticable. To
+so many allocations that the overhead of `malloc()` becomes noticeable. To
 avoid this, Math provides its own memory arena. The assumptions of
 the Math arena are:
 
@@ -312,7 +312,7 @@ auto myfunc(const T& x) {
 
 ## (2) Setting up the Reverse Pass
 
-Once we have stored the data we need for the reverse pass we need to actually write that reverse pass! We need to take our adjoint calculation and put it onto the callback stack so that when the users call `grad()` the adjoints are propogated upwards properly.
+Once we have stored the data we need for the reverse pass we need to actually write that reverse pass! We need to take our adjoint calculation and put it onto the callback stack so that when the users call `grad()` the adjoints are propagated upwards properly.
 
 For this we have a function called `reverse_pass_callback()`. Calling `reverse_pass_callback()` with a functor `f` creates an object on the callback stack that will call `f`.
 
@@ -433,7 +433,7 @@ inline auto sin(const Container& x) {
 }
 ```
 
-In Stan math, a `container` type is an `std::vector` that holds either other `std::vector`s or `Eigen::Matrix` types. So in the first function we use `apply_scalar_unary` to apply `sin()` to either `Scalar`s, `std::vector`s holding scalars, or  `Eigen::Matrix` types. The second function which uses `apply_vector_unary()` will apply it's lambda to the container's whose elements are also containers or Eigen matrices.
+In Stan math, a `container` type is an `std::vector` that holds either other `std::vector`s or `Eigen::Matrix` types. So in the first function we use `apply_scalar_unary` to apply `sin()` to either `Scalar`s, `std::vector`s holding scalars, or  `Eigen::Matrix` types. The second function which uses `apply_vector_unary()` will apply its lambda to the container's whose elements are also containers or Eigen matrices.
 
 
 ### Binary Functions (and least-upper-bound return type semantics)
