@@ -22,7 +22,7 @@ TEST(OpenCLPrim, cumulative_sum_int_small) {
 
 TEST(OpenCLPrim, cumulative_sum_double_size0) {
   Eigen::VectorXd d(0);
-  stan::math::test::compare_cpu_opencl_prim(cumulative_sum_functor, d);
+  stan::math::test::compare_cpu_opencl_prim_rev(cumulative_sum_functor, d);
 }
 
 TEST(OpenCLPrim, cumulative_sum_int_size0) {
@@ -33,7 +33,7 @@ TEST(OpenCLPrim, cumulative_sum_int_size0) {
 TEST(OpenCLPrim, cumulative_sum_double_size1) {
   Eigen::VectorXd d(1);
   d << 12;
-  stan::math::test::compare_cpu_opencl_prim(cumulative_sum_functor, d);
+  stan::math::test::compare_cpu_opencl_prim_rev(cumulative_sum_functor, d);
 }
 
 TEST(OpenCLPrim, cumulative_sum_int_size1) {
@@ -44,7 +44,7 @@ TEST(OpenCLPrim, cumulative_sum_int_size1) {
 
 TEST(OpenCLPrim, cumulative_sum_double_large) {
   Eigen::VectorXd d = Eigen::VectorXd::Random(500000);
-  stan::math::test::compare_cpu_opencl_prim(cumulative_sum_functor, d);
+  stan::math::test::compare_cpu_opencl_prim_rev(cumulative_sum_functor, d);
 }
 
 TEST(OpenCLPrim, cumulative_sum_int_large) {
