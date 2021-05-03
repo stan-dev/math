@@ -23,33 +23,36 @@ namespace math {
 template <typename T_vec,
           require_all_kernel_expressions_and_none_scalar_t<T_vec>* = nullptr>
 inline auto cumulative_sum(T_vec&& v) {
+  using T_scal = scalar_type_t<T_vec>;
   check_vector("cumulative_sum(OpenCL)", "v", v);
   const int local_size
-      = opencl_kernels::cumulative_sum1_double_sum.get_option("LOCAL_SIZE_");
+      = opencl_kernels::cumulative_sum<T_scal>::kernel1.get_option(
+          "LOCAL_SIZE_");
   int work_groups = std::min(
       (v.size() + local_size - 1) / local_size,
       static_cast<int>(
           opencl_context.device()[0].getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>())
           * 16);
   const int local_size2
-      = opencl_kernels::cumulative_sum2_double_sum.get_option("LOCAL_SIZE_");
-  matrix_cl<double> tmp_threads(local_size * work_groups, 1);
-  matrix_cl<double> tmp_wgs(work_groups, 1);
-  matrix_cl<double> res(v.rows(), v.cols());
+      = opencl_kernels::cumulative_sum<T_scal>::kernel2.get_option(
+          "LOCAL_SIZE_");
+  matrix_cl<T_scal> tmp_threads(local_size * work_groups, 1);
+  matrix_cl<T_scal> tmp_wgs(work_groups, 1);
+  matrix_cl<T_scal> res(v.rows(), v.cols());
   if (!is_matrix_cl<T_vec>::value) {
     res = v;
   }
-  const matrix_cl<double>& in
+  const matrix_cl<T_scal>& in
       = static_select<is_matrix_cl<T_vec>::value>(v, res);
 
   try {
-    opencl_kernels::cumulative_sum1_double_sum(
+    opencl_kernels::cumulative_sum<T_scal>::kernel1(
         cl::NDRange(local_size * work_groups), cl::NDRange(local_size), tmp_wgs,
         tmp_threads, in, v.size());
-    opencl_kernels::cumulative_sum2_double_sum(cl::NDRange(local_size2),
-                                               cl::NDRange(local_size2),
-                                               tmp_wgs, work_groups);
-    opencl_kernels::cumulative_sum3_double_sum(
+    opencl_kernels::cumulative_sum<T_scal>::kernel2(cl::NDRange(local_size2),
+                                                    cl::NDRange(local_size2),
+                                                    tmp_wgs, work_groups);
+    opencl_kernels::cumulative_sum<T_scal>::kernel3(
         cl::NDRange(local_size * work_groups), cl::NDRange(local_size), res, in,
         tmp_threads, tmp_wgs, v.size());
   } catch (const cl::Error& e) {
