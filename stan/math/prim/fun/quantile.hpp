@@ -30,15 +30,16 @@ namespace math {
 template <typename T, require_vector_t<T>* = nullptr,
           require_vector_vt<std::is_arithmetic, T>* = nullptr>
 inline double quantile(const T& samples_vec, const double p) {
-  check_not_nan("quantile", "samples_vec", samples_vec);
   check_not_nan("quantile", "p", p);
   check_bounded("quantile", "p", p, 0, 1);
+
   const size_t n_sample = samples_vec.size();
   if (n_sample == 0) {
     return {};
   }
 
   Eigen::VectorXd x = as_array_or_scalar(samples_vec);
+  check_not_nan("quantile", "samples_vec", x);
 
   if (n_sample == 1)
     return x.coeff(0);
@@ -76,11 +77,9 @@ inline double quantile(const T& samples_vec, const double p) {
  */
 template <typename T, typename Tp, require_all_vector_t<T, Tp>* = nullptr,
           require_vector_vt<std::is_arithmetic, T>* = nullptr,
-          require_vector_vt<std::is_arithmetic, Tp>* = nullptr>
+          require_std_vector_vt<std::is_arithmetic, Tp>* = nullptr>
 inline std::vector<double> quantile(const T& samples_vec, const Tp& ps) {
-  check_not_nan("quantile", "samples_vec", samples_vec);
   check_not_nan("quantile", "ps", ps);
-
   check_bounded("quantile", "ps", ps, 0, 1);
 
   const size_t n_sample = samples_vec.size();
@@ -90,6 +89,8 @@ inline std::vector<double> quantile(const T& samples_vec, const Tp& ps) {
   }
 
   Eigen::VectorXd x = as_array_or_scalar(samples_vec);
+  check_not_nan("quantile", "samples_vec", x);
+
   const auto& p = as_array_or_scalar(ps);
   std::vector<double> ret(n_ps, 0.0);
 
