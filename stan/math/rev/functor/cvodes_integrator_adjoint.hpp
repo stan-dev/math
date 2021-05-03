@@ -67,7 +67,6 @@ class cvodes_integrator_adjoint_vari : public vari {
   bool backward_is_initialized_;
 
   size_t num_args_vars_;
-  size_t num_vars_;
 
   arena_t<Eigen::VectorXd> state_forward_;
   arena_t<Eigen::VectorXd> state_backward_;
@@ -472,7 +471,6 @@ class cvodes_integrator_adjoint_vari : public vari {
         N_(y0.size()),
         backward_is_initialized_(false),
         num_args_vars_(count_vars(args...)),
-        num_vars_(count_vars(t0) + count_vars(ts) + count_vars(y0) + num_args_vars_),
         state_forward_(value_of(y0)),
         state_backward_(N_),
         quad_(num_args_vars_),
