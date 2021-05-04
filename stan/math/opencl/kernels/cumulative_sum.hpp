@@ -181,11 +181,9 @@ const kernel_cl<out_buffer, out_buffer, in_buffer, int>
                                      {"LOCAL_SIZE_", 16}});
 template <>
 const kernel_cl<out_buffer, out_buffer, in_buffer, int>
-    cumulative_sum<int>::kernel1("cumulative_sum1",
-                                    {"#define SCAL int\n",
-                                     cumulative_sum1_kernel_code},
-                                    {{"REDUCTION_STEP_SIZE", 4},
-                                     {"LOCAL_SIZE_", 16}});
+    cumulative_sum<int>::kernel1(
+        "cumulative_sum1", {"#define SCAL int\n", cumulative_sum1_kernel_code},
+        {{"REDUCTION_STEP_SIZE", 4}, {"LOCAL_SIZE_", 16}});
 
 template <>
 const kernel_cl<in_out_buffer, int> cumulative_sum<double>::kernel2(
@@ -205,11 +203,9 @@ const kernel_cl<out_buffer, in_buffer, in_buffer, in_buffer, int>
                                      {"LOCAL_SIZE_", 16}});
 template <>
 const kernel_cl<out_buffer, in_buffer, in_buffer, in_buffer, int>
-    cumulative_sum<int>::kernel3("cumulative_sum3",
-                                    {"#define SCAL int\n",
-                                     cumulative_sum3_kernel_code},
-                                    {{"REDUCTION_STEP_SIZE", 4},
-                                     {"LOCAL_SIZE_", 16}});
+    cumulative_sum<int>::kernel3(
+        "cumulative_sum3", {"#define SCAL int\n", cumulative_sum3_kernel_code},
+        {{"REDUCTION_STEP_SIZE", 4}, {"LOCAL_SIZE_", 16}});
 
 }  // namespace opencl_kernels
 }  // namespace math
