@@ -601,6 +601,73 @@ struct harmonic_oscillator_ctl_test
                      "absolute_tolerance_forward");
     this->atol_f(0) = atol_f_;
 
+    this->atol_f.resize(1);
+    EXPECT_THROW_MSG(apply_solver_tol_ctl(), std::invalid_argument,
+                     "absolute_tolerance_forward");
+    this->atol_f.resize(2);
+    this->atol_f(1) = atol_f_;
+
+    const double rtol_b_ = this->rtol_b;
+    this->rtol_b = -1;
+    EXPECT_THROW_MSG(apply_solver_tol_ctl(), std::domain_error,
+                     "relative_tolerance_backward");
+    this->rtol_b = rtol_b_;
+
+    const double atol_b_ = this->atol_b(0);
+    this->atol_b(0) = -1;
+    EXPECT_THROW_MSG(apply_solver_tol_ctl(), std::domain_error,
+                     "absolute_tolerance_backward");
+    this->atol_b(0) = atol_b_;
+
+    this->atol_b.resize(1);
+    EXPECT_THROW_MSG(apply_solver_tol_ctl(), std::invalid_argument,
+                     "absolute_tolerance_backward");
+    this->atol_b.resize(2);
+    this->atol_b(0) = atol_b_;
+    this->atol_b(1) = atol_b_;
+
+    const double rtol_q_ = this->rtol_q;
+    this->rtol_q = -1;
+    EXPECT_THROW_MSG(apply_solver_tol_ctl(), std::domain_error,
+                     "relative_tolerance_quadrature");
+    this->rtol_q = rtol_q_;
+
+    const double atol_q_ = this->atol_q;
+    this->atol_q = -1;
+    EXPECT_THROW_MSG(apply_solver_tol_ctl(), std::domain_error,
+                     "absolute_tolerance_quadrature");
+    this->atol_q = atol_q_;
+
+    const int max_num_step_ = this->max_num_step;
+    this->max_num_step = -1;
+    EXPECT_THROW_MSG(apply_solver_tol_ctl(), std::domain_error,
+                     "max_num_steps");
+    this->max_num_step = max_num_step_;
+
+    const int num_steps_check_ = this->num_steps_check;
+    this->num_steps_check = -1;
+    EXPECT_THROW_MSG(apply_solver_tol_ctl(), std::domain_error,
+                     "num_steps_between_checkpoints");
+    this->num_steps_check = num_steps_check_;
+
+    const int inter_poly_ = this->inter_poly;
+    this->inter_poly = 0;
+    EXPECT_THROW_MSG(apply_solver_tol_ctl(), std::domain_error,
+                     "interpolation_polynomial");
+    this->inter_poly = inter_poly_;
+
+    const int solv_f_ = this->solv_f;
+    this->solv_f = 0;
+    EXPECT_THROW_MSG(apply_solver_tol_ctl(), std::domain_error,
+                     "solver_forward");
+    this->solv_f = solv_f_;
+
+    const int solv_b_ = this->solv_b;
+    this->solv_b = 0;
+    EXPECT_THROW_MSG(apply_solver_tol_ctl(), std::domain_error,
+                     "solver_backward");
+    this->solv_b = solv_b_;
+
     const auto theta_ = this->theta;
     const auto x_r_ = this->x_r;
     const auto x_i_ = this->x_i;
