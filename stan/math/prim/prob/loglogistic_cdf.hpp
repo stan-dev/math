@@ -63,7 +63,7 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_cdf(const T_y& y,
   decltype(auto) beta_val = to_ref(as_value_column_array_or_scalar(beta_ref));
 
 
-  check_positive(function, "Random variable", y_val);
+  check_nonnegative(function, "Random variable", y_val);
   check_positive_finite(function, "Scale parameter", alpha_val);
   check_positive_finite(function, "Shape parameter", beta_val);
 
@@ -74,19 +74,22 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_cdf(const T_y& y,
   operands_and_partials<T_y_ref, T_alpha_ref, T_beta_ref> ops_partials(
       y_ref, alpha_ref, beta_ref);
 
+  const auto& cdf_elementwise = to_ref_if<!is_constant_all<T_y, T_scale,
+    T_shape>::value>(1 / (1 + pow(alpha_val / y_val, beta_val)));
+
   T_partials_return cdf(1.0);
-  cdf *= prod(1 / (1 + pow(alpha_val / y_val, beta_val)));
+  cdf *= prod(cdf_elementwise);
 
   if (!is_constant_all<T_y>::value) {
     const auto& y_deriv = (pow(alpha_val, beta_val) * beta_val *
       pow(y_val, -beta_val - 1)) / pow(1 + pow(alpha_val / y_val, beta_val), 2);
-    ops_partials.edge1_.partials_ = y_deriv;
+    ops_partials.edge1_.partials_ = (y_deriv / cdf_elementwise) * cdf;
     // std::cout << "Partial 1: " << y_deriv << std::endl;
   }
   if (!is_constant_all<T_scale>::value) {
     const auto& alpha_deriv = (-pow(y_val, -beta_val) * beta_val *
       pow(alpha_val, beta_val - 1)) / pow(1 + pow(alpha_val / y_val, beta_val), 2);
-    ops_partials.edge2_.partials_ = alpha_deriv;
+    ops_partials.edge2_.partials_ = (alpha_deriv / cdf_elementwise) * cdf;
     // std::cout << "Partial 2: " << alpha_deriv << std::endl;
     // std::cout << "Partial 2: " << (alpha_deriv == 0) << std::endl;
   }
@@ -94,7 +97,7 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_cdf(const T_y& y,
     const auto& beta_deriv = (-pow(alpha_val / y_val, beta_val) *
       log(alpha_val / y_val)) /
       pow(1 + pow(alpha_val / y_val, beta_val), 2);
-    ops_partials.edge3_.partials_ = beta_deriv;
+    ops_partials.edge3_.partials_ = (beta_deriv / cdf_elementwise) * cdf;
     // Is it the product here, rather than sum, if it is a scalar???
 
 
