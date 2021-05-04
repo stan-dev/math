@@ -1,11 +1,11 @@
 // Arguments: Ints, Ints, Ints, Ints
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
 using std::vector;
 
-class AgradDistributionsNegBinomial : public AgradDistributionTest {
+class AgradDistributionsHypergeometric : public AgradDistributionTest {
  public:
   void valid_values(vector<vector<double> >& parameters,
                     vector<double>& log_prob) {
@@ -13,6 +13,14 @@ class AgradDistributionsNegBinomial : public AgradDistributionTest {
 
     param[0] = 5;   // n
     param[1] = 15;  // N
+    param[2] = 10;  // a
+    param[3] = 10;  // b
+    parameters.push_back(param);
+    log_prob.push_back(-4.119424246619123763935);  // expected log_prob
+
+    // case for n == N
+    param[0] = 5;   // n
+    param[1] = 5;   // N
     param[2] = 10;  // a
     param[3] = 10;  // b
     parameters.push_back(param);
@@ -39,9 +47,9 @@ class AgradDistributionsNegBinomial : public AgradDistributionTest {
 
   template <class T_n, class T_N, class T_a, class T_b, typename T4,
             typename T5>
-  typename stan::return_type<T_n, T_N, T_a, T_b>::type log_prob(
-      const T_n& n, const T_N& N, const T_a& a, const T_b& b, const T4&,
-      const T5&) {
+  stan::return_type_t<T_n, T_N, T_a, T_b> log_prob(const T_n& n, const T_N& N,
+                                                   const T_a& a, const T_b& b,
+                                                   const T4&, const T5&) {
     return stan::math::hypergeometric_log(n, N, a, b);
   }
 

@@ -3,14 +3,16 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_cl.hpp>
+#include <stan/math/opencl/buffer_types.hpp>
+#include <string>
 
 namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const char* neg_rect_lower_tri_multiply_kernel_code = STRINGIFY(
+static const std::string neg_rect_lower_tri_multiply_kernel_code = STRINGIFY(
     // \endcond
-    /**
+    /** \ingroup opencl_kernels
      * Calculates C = -B * A where B is rectangular and A is a lower
      * triangular.
      *  For a full guide to the inverse lower triangular kernels see the link
@@ -32,7 +34,7 @@ static const char* neg_rect_lower_tri_multiply_kernel_code = STRINGIFY(
      * @param rows The number of rows in a single matrix of the batch
      * @note Code is a <code>const char*</code> held in
      *  neg_rect_lower_tri_multiply_kernel_code
-     *  Used in math/opencl/lower_tri_inverse.hpp.
+     *  Used in math/opencl/tri_inverse.hpp.
      *  This kernel uses the helper macros available in helpers.cl.
      */
     __kernel void neg_rect_lower_tri_multiply(
@@ -113,16 +115,15 @@ static const char* neg_rect_lower_tri_multiply_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/**
+/** \ingroup opencl_kernels
  * See the docs
  * for \link kernels/neg_rect_lower_tri_multiply.hpp
  * neg_rect_lower_tri_multiply() \endlink
  */
-const local_range_kernel<cl::Buffer, cl::Buffer, int, int>
-    neg_rect_lower_tri_multiply("neg_rect_lower_tri_multiply",
-                                neg_rect_lower_tri_multiply_kernel_code,
-                                {{"THREAD_BLOCK_SIZE", 32},
-                                 {"WORK_PER_THREAD", 8}});
+const kernel_cl<in_out_buffer, in_buffer, int, int> neg_rect_lower_tri_multiply(
+    "neg_rect_lower_tri_multiply",
+    {thread_block_helpers, neg_rect_lower_tri_multiply_kernel_code},
+    {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 8}});
 }  // namespace opencl_kernels
 }  // namespace math
 }  // namespace stan

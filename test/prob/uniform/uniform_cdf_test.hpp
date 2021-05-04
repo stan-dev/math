@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -46,21 +46,21 @@ class AgradCdfUniform : public AgradCdfTest {
 
   template <class T_y, class T_low, class T_high, typename T3, typename T4,
             typename T5>
-  typename stan::return_type<T_y, T_low, T_high>::type cdf(const T_y& y,
-                                                           const T_low& alpha,
-                                                           const T_high& beta,
-                                                           const T3&, const T4&,
-                                                           const T5&) {
+  stan::return_type_t<T_y, T_low, T_high> cdf(const T_y& y, const T_low& alpha,
+                                              const T_high& beta, const T3&,
+                                              const T4&, const T5&) {
     return stan::math::uniform_cdf(y, alpha, beta);
   }
 
   template <class T_y, class T_low, class T_high, typename T3, typename T4,
             typename T5>
-  typename stan::return_type<T_y, T_low, T_high>::type cdf_function(
-      const T_y& y, const T_low& alpha, const T_high& beta, const T3&,
-      const T4&, const T5&) {
-    using stan::math::LOG_ZERO;
+  stan::return_type_t<T_y, T_low, T_high> cdf_function(const T_y& y,
+                                                       const T_low& alpha,
+                                                       const T_high& beta,
+                                                       const T3&, const T4&,
+                                                       const T5&) {
     using stan::math::include_summand;
+    using stan::math::LOG_ZERO;
 
     if (y < alpha || y > beta)
       return 0.0;

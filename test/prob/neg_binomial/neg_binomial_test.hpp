@@ -1,5 +1,5 @@
 // Arguments: Ints, Doubles, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 #include <stdexcept>
 
 using stan::math::var;
@@ -24,11 +24,11 @@ class AgradDistributionsNegBinomial : public AgradDistributionTest {
     parameters.push_back(param);
     log_prob.push_back(-142.6147368129045105434);  // expected log_prob
 
-    param[0] = 13;
-    param[1] = 1e11;  // alpha > 1e10, causes redux to Poisson
-    param[2] = 1e10;  // equiv to Poisson(1e11/1e10) = Poisson(10)
+    param[0] = 10;
+    param[1] = 1e6;
+    param[2] = 1e5;
     parameters.push_back(param);
-    log_prob.push_back(-2.6185576442008289933);  // log poisson(13|10)
+    log_prob.push_back(-2.0785666431081630812);  // expected log_prob
   }
 
   void invalid_values(vector<size_t>& index, vector<double>& value) {
@@ -47,23 +47,27 @@ class AgradDistributionsNegBinomial : public AgradDistributionTest {
 
   template <class T_n, class T_shape, class T_inv_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_shape, T_inv_scale>::type log_prob(
-      const T_n& n, const T_shape& alpha, const T_inv_scale& beta, const T3&,
-      const T4&, const T5&) {
+  stan::return_type_t<T_shape, T_inv_scale> log_prob(const T_n& n,
+                                                     const T_shape& alpha,
+                                                     const T_inv_scale& beta,
+                                                     const T3&, const T4&,
+                                                     const T5&) {
     return stan::math::neg_binomial_log(n, alpha, beta);
   }
 
   template <bool propto, class T_n, class T_shape, class T_inv_scale,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_shape, T_inv_scale>::type log_prob(
-      const T_n& n, const T_shape& alpha, const T_inv_scale& beta, const T3&,
-      const T4&, const T5) {
+  stan::return_type_t<T_shape, T_inv_scale> log_prob(const T_n& n,
+                                                     const T_shape& alpha,
+                                                     const T_inv_scale& beta,
+                                                     const T3&, const T4&,
+                                                     const T5) {
     return stan::math::neg_binomial_log<propto>(n, alpha, beta);
   }
 
   template <class T_n, class T_shape, class T_inv_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_shape, T_inv_scale>::type log_prob_function(
+  stan::return_type_t<T_shape, T_inv_scale> log_prob_function(
       const T_n& n, const T_shape& alpha, const T_inv_scale& beta, const T3&,
       const T4&, const T5&) {
     using stan::math::binomial_coefficient_log;
@@ -71,8 +75,6 @@ class AgradDistributionsNegBinomial : public AgradDistributionTest {
     using stan::math::multiply_log;
     using std::log;
 
-    if (alpha > 1e10)
-      return -lgamma(n + 1.0) + multiply_log(n, alpha / beta) - alpha / beta;
     if (n != 0)
       return binomial_coefficient_log<
                  typename stan::scalar_type<T_shape>::type>(n + alpha - 1.0, n)

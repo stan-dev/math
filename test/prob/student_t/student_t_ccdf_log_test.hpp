@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -63,7 +63,7 @@ class AgradCcdfLogStudentT : public AgradCcdfLogTest {
 
   template <typename T_y, typename T_dof, typename T_loc, typename T_scale,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_dof, T_loc, T_scale>::type ccdf_log(
+  stan::return_type_t<T_y, T_dof, T_loc, T_scale> ccdf_log(
       const T_y& y, const T_dof& nu, const T_loc& mu, const T_scale& sigma,
       const T4&, const T5&) {
     return stan::math::student_t_ccdf_log(y, nu, mu, sigma);
@@ -71,9 +71,9 @@ class AgradCcdfLogStudentT : public AgradCcdfLogTest {
 
   template <typename T_y, typename T_dof, typename T_loc, typename T_scale,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_dof, T_loc, T_scale>::type
-  ccdf_log_function(const T_y& y, const T_dof& nu, const T_loc& mu,
-                    const T_scale& sigma, const T4&, const T5&) {
+  stan::return_type_t<T_y, T_dof, T_loc, T_scale> ccdf_log_function(
+      const T_y& y, const T_dof& nu, const T_loc& mu, const T_scale& sigma,
+      const T4&, const T5&) {
     return stan::math::student_t_ccdf_log(y, nu, mu, sigma);
   }
 };

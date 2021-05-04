@@ -3,13 +3,28 @@ N_TESTS ?= 100
 # to group the probability tests into
 
 ##
+# Any targets in test/benchmark (.d, .o, executable) needs the Google benchmark flags
+##
+benchmarks/%$(EXE) : CXXFLAGS += -I $(BENCHMARK)/include $(CXXFLAGS_GTEST) $(BENCHMARK_CXXFLAGS)
+benchmarks/%$(EXE) : LDFLAGS += -L $(BENCHMARK)/build/src $(BENCHMARK_LDFLAGS)
+benchmarks/%$(EXE) : LDLIBS += -lbenchmark
+benchmarks/%$(EXE) : CPPFLAGS += $(CPPFLAGS_GTEST) $(BENCHMARK_CPPFLAGS)
+benchmarks/%$(EXE) : INC += $(INC_GTEST)
+ifeq ($(OS),Windows_NT)
+  benchmarks/%$(EXE) : LDLIBS += -lshlwapi
+endif
+
+benchmarks/%$(EXE) : benchmarks/%.cpp $(GTEST)/src/gtest-all.o $(MPI_TARGETS) $(TBB_TARGETS)
+	$(LINK.cpp) $^ $(LDLIBS) $(OUTPUT_OPTION)
+
+##
 # Any targets in test/ (.d, .o, executable) needs the GTEST flags
 ##
 test/% : CXXFLAGS += $(CXXFLAGS_GTEST)
 test/% : CPPFLAGS += $(CPPFLAGS_GTEST)
 test/% : INC += $(INC_GTEST)
 
-test/%$(EXE) : test/%.o $(GTEST)/src/gtest_main.cc $(GTEST)/src/gtest-all.o $(MPI_TARGETS)
+test/%$(EXE) : test/%.o $(GTEST)/src/gtest_main.cc $(GTEST)/src/gtest-all.o $(MPI_TARGETS) $(TBB_TARGETS)
 	$(LINK.cpp) $^ $(LDLIBS) $(OUTPUT_OPTION)
 
 ##
@@ -30,17 +45,26 @@ endif
 test/unit/multiple_translation_units%.o : CXXFLAGS += -pipe
 test/unit/libmultiple.so : LDFLAGS += -shared
 
-test/unit/libmultiple.so : test/unit/multiple_translation_units1.o test/unit/multiple_translation_units2.o $(MPI_TARGETS)
+test/unit/libmultiple.so : test/unit/multiple_translation_units1.o test/unit/multiple_translation_units2.o $(MPI_TARGETS) $(TBB_TARGETS)
 	$(LINK.cpp) $^ $(LDLIBS) $(OUTPUT_OPTION)
 
 test/unit/multiple_translation_units_test$(EXE): test/unit/libmultiple.so
 
 ############################################################
 #
+# Expression tests
+##
+
+EXPRESSION_TESTS := $(subst .cpp,$(EXE),$(call findfiles,test/expressions,*_test.cpp))
+$(EXPRESSION_TESTS) : $(LIBSUNDIALS)
+
+
+############################################################
+#
 # CVODES tests
 ##
 
-CVODES_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *cvodes*_test.cpp) $(shell find test -name *_bdf_*_test.cpp) $(shell find test -name *_adams_*_test.cpp))
+CVODES_TESTS := $(subst .cpp,$(EXE),$(call findfiles,test,*cvodes*_test.cpp) $(call findfiles,test,*_bdf_*_test.cpp) $(call findfiles,test,*_adams_*_test.cpp) $(call findfiles,test,*_ode_typed_*test.cpp))
 $(CVODES_TESTS) : $(LIBSUNDIALS)
 
 
@@ -49,8 +73,17 @@ $(CVODES_TESTS) : $(LIBSUNDIALS)
 # IDAS tests
 ##
 
-IDAS_TESTS := $(subst .cpp,$(EXE),$(shell find test -name *idas*_test.cpp) $(shell find test -name *_dae*_test.cpp))
+IDAS_TESTS := $(subst .cpp,$(EXE),$(call findfiles,test,*idas*_test.cpp) $(call findfiles,test,*_dae*_test.cpp))
 $(IDAS_TESTS) : $(LIBSUNDIALS)
+
+
+############################################################
+#
+# KINSOL tests
+##
+
+ALGEBRA_SOLVER_TESTS := $(subst .cpp,$(EXE),$(call findfiles,test,*algebra_solver*_test.cpp))
+$(ALGEBRA_SOLVER_TESTS) : $(LIBSUNDIALS)
 
 
 ############################################################
@@ -58,7 +91,7 @@ $(IDAS_TESTS) : $(LIBSUNDIALS)
 # Target to verify header files within Stan has
 # enough include calls
 ##
-HEADER_TESTS := $(addsuffix -test,$(shell find stan -name '*.hpp' -type f))
+HEADER_TESTS := $(addsuffix -test,$(call findfiles,stan,*.hpp))
 
 ifeq ($(OS),Windows_NT)
   DEV_NULL = nul
@@ -77,6 +110,7 @@ test/dummy.cpp:
 .PHONY: test-headers
 test-headers: $(HEADER_TESTS)
 
+ifdef GENERATE_DISTRIBUTION_TESTS
 ############################################################
 ##
 # Test generator for distribution tests
@@ -87,20 +121,73 @@ test/prob/generate_tests$(EXE) : test/prob/generate_tests.cpp
 
 
 ## FIXME: think about how to do this generally using test_types
-# test_types := v fd fv ffd ffv
+# test_types := v fd fv ffd ffv vv
 
 test_name = $(shell echo $(1) | sed 's,_[0-9]\{5\},_test.hpp,g')
 
 .SECONDEXPANSION:
-test/prob/%_generated_v_test.cpp test/prob/%_generated_fd_test.cpp test/prob/%_generated_fv_test.cpp test/prob/%_generated_ffd_test.cpp test/prob/%_generated_ffv_test.cpp: test/prob/$$(call test_name,$$*) test/prob/generate_tests$(EXE)
+test/prob/%_generated_v_test.cpp test/prob/%_generated_fd_test.cpp test/prob/%_generated_fv_test.cpp test/prob/%_generated_ffd_test.cpp test/prob/%_generated_ffv_test.cpp test/prob/%_generated_vv_test.cpp: test/prob/$$(call test_name,$$*) test/prob/generate_tests$(EXE)
 	$(WINE) test/prob/generate_tests$(EXE) $< $(N_TESTS)
 
-LIST_OF_GENERATED_TESTS := $(shell find test/prob -type f -name '*_test.hpp' | sed 's,_test.hpp,_00000_generated_v_test.cpp,g') $(shell find test/prob -type f -name '*_test.hpp' | sed 's,_test.hpp,_00000_generated_fd_test.cpp,g') $(shell find test/prob -type f -name '*_test.hpp' | sed 's,_test.hpp,_00000_generated_fv_test.cpp,g') $(shell find test/prob -type f -name '*_test.hpp' | sed 's,_test.hpp,_00000_generated_ffd_test.cpp,g') $(shell find test/prob -type f -name '*_test.hpp' | sed 's,_test.hpp,_00000_generated_ffv_test.cpp,g')
+LIST_OF_GENERATED_TESTS := $(shell find test/prob -type f -name '*_test.hpp' | sed 's,_test.hpp,_00000_generated_v_test.cpp,g') $(shell find test/prob -type f -name '*_test.hpp' | sed 's,_test.hpp,_00000_generated_fd_test.cpp,g') $(shell find test/prob -type f -name '*_test.hpp' | sed 's,_test.hpp,_00000_generated_fv_test.cpp,g') $(shell find test/prob -type f -name '*_test.hpp' | sed 's,_test.hpp,_00000_generated_ffd_test.cpp,g') $(shell find test/prob -type f -name '*_test.hpp' | sed 's,_test.hpp,_00000_generated_ffv_test.cpp,g') $(shell find test/prob -type f -name '*_test.hpp' | sed 's,_test.hpp,_00000_generated_vv_test.cpp,g')
 
 .PHONY: generate-tests
 generate-tests: $(LIST_OF_GENERATED_TESTS)
+endif
+
 
 ##
-# Include the test dependencies
+# Building stanc3 binary used for expressions tests
 ##
-include make/test-math-dependencies
+
+STANC_DL_RETRY = 5
+STANC_DL_DELAY = 10
+
+ifeq ($(OS),Windows_NT)
+ OS_TAG := windows
+else ifeq ($(OS),Darwin)
+ OS_TAG := mac
+else ifeq ($(OS),Linux)
+ OS_TAG := linux
+endif
+
+ifeq ($(OS),Windows_NT)
+TEST_STANC = test/expressions/stanc$(EXE) test\expressions\stanc$(EXE)
+else
+TEST_STANC = test/expressions/stanc$(EXE)
+endif
+
+ifneq ($(STANC3),)
+
+  # build stanc3 from local installation
+  $(TEST_STANC) : $(call findfiles,$(STANC3)/src/,*.ml*) $(STANC#)
+	@mkdir -p $(dir $@)
+	cd $(STANC3) && echo "--- Rebuilding stanc ---\n" && dune build @install
+	cp $(STANC3)/_build/default/src/stanc/stanc.exe $@
+
+else ifneq ($(STANC3_TEST_BIN_URL),)
+
+# download stanc3 build from specific branch
+ifeq ($(OS_TAG),windows)
+    $(TEST_STANC) :
+	@mkdir -p $(dir $@)
+	$(shell echo "curl -L $(STANC3_TEST_BIN_URL)/bin/$(OS_TAG)-stanc -o $@ --retry $(STANC_DL_RETRY) --retry-delay $(STANC_DL_DELAY)")
+else
+    $(TEST_STANC) :
+	@mkdir -p $(dir $@)
+	curl -L $(STANC3_TEST_BIN_URL)/bin/$(OS_TAG)-stanc -o $@ --retry $(STANC_DL_RETRY) --retry-delay $(STANC_DL_DELAY)
+	chmod +x $@
+endif # end download if/else
+
+else ifeq ($(OS_TAG),windows)
+# get latest stanc3 - Windows
+    $(TEST_STANC) :
+	@mkdir -p $(dir $@)
+	$(shell echo "curl -L https://github.com/stan-dev/stanc3/releases/download/nightly/$(OS_TAG)-stanc -o $@ --retry $(STANC_DL_RETRY) --retry-delay $(STANC_DL_DELAY)")
+else
+# get latest stanc3 - Linux & MacOS
+    $(TEST_STANC) :
+	@mkdir -p $(dir $@)
+	curl -L https://github.com/stan-dev/stanc3/releases/download/nightly/$(OS_TAG)-stanc -o $@ --retry $(STANC_DL_RETRY) --retry-delay $(STANC_DL_DELAY)
+	chmod +x $@
+endif

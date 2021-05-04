@@ -1,11 +1,11 @@
-#include <gtest/gtest.h>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim.hpp>
+#include <gtest/gtest.h>
 #include <limits>
 
 TEST(AgradFwdNumericLimits, All_Fvar) {
-  using stan::math::INFTY;
   using stan::math::fvar;
+  using stan::math::INFTY;
   using std::isnan;
 
   EXPECT_TRUE(std::numeric_limits<fvar<double> >::is_specialized);

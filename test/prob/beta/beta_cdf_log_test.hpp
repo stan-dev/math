@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -13,7 +13,7 @@ class AgradCdfLogBeta : public AgradCdfLogTest {
 
     param[0] = 0.5;  // y
     param[1] = 2.0;  // alpha (Success Scale)
-    param[2] = 5.0;  // beta  (Faiulre Scale)
+    param[2] = 5.0;  // beta  (Failure Scale)
     parameters.push_back(param);
     log_cdf.push_back(std::log(0.890625));  // expected Log_CDF
   }
@@ -57,7 +57,7 @@ class AgradCdfLogBeta : public AgradCdfLogTest {
 
   template <typename T_y, typename T_scale_succ, typename T_scale_fail,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_scale_succ, T_scale_fail>::type cdf_log(
+  stan::return_type_t<T_y, T_scale_succ, T_scale_fail> cdf_log(
       const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta,
       const T3&, const T4&, const T5&) {
     return stan::math::beta_cdf_log(y, alpha, beta);
@@ -65,9 +65,9 @@ class AgradCdfLogBeta : public AgradCdfLogTest {
 
   template <typename T_y, typename T_scale_succ, typename T_scale_fail,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_scale_succ, T_scale_fail>::type
-  cdf_log_function(const T_y& y, const T_scale_succ& alpha,
-                   const T_scale_fail& beta, const T3&, const T4&, const T5&) {
+  stan::return_type_t<T_y, T_scale_succ, T_scale_fail> cdf_log_function(
+      const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta,
+      const T3&, const T4&, const T5&) {
     return stan::math::beta_cdf_log(y, alpha, beta);
   }
 };

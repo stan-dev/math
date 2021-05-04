@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -19,9 +19,9 @@ class AgradDistributionsLogistic : public AgradDistributionTest {
 
     param[0] = -1.0;  // y
     param[1] = 0.2;   // mu
-    param[2] = 0.25;  // sigma
+    param[2] = 0.5;   // sigma
     parameters.push_back(param);
-    log_prob.push_back(-3.430097773556644469295);  // expected log_prob
+    log_prob.push_back(-1.8805251237479538862);  // expected log_prob
   }
 
   void invalid_values(vector<size_t>& index, vector<double>& value) {
@@ -50,23 +50,27 @@ class AgradDistributionsLogistic : public AgradDistributionTest {
 
   template <typename T_y, typename T_loc, typename T_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale>::type log_prob(
-      const T_y& y, const T_loc& mu, const T_scale& sigma, const T3&, const T4&,
-      const T5&) {
+  stan::return_type_t<T_y, T_loc, T_scale> log_prob(const T_y& y,
+                                                    const T_loc& mu,
+                                                    const T_scale& sigma,
+                                                    const T3&, const T4&,
+                                                    const T5&) {
     return stan::math::logistic_log(y, mu, sigma);
   }
 
   template <bool propto, typename T_y, typename T_loc, typename T_scale,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale>::type log_prob(
-      const T_y& y, const T_loc& mu, const T_scale& sigma, const T3&, const T4&,
-      const T5&) {
+  stan::return_type_t<T_y, T_loc, T_scale> log_prob(const T_y& y,
+                                                    const T_loc& mu,
+                                                    const T_scale& sigma,
+                                                    const T3&, const T4&,
+                                                    const T5&) {
     return stan::math::logistic_log<propto>(y, mu, sigma);
   }
 
   template <typename T_y, typename T_loc, typename T_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale>::type log_prob_function(
+  stan::return_type_t<T_y, T_loc, T_scale> log_prob_function(
       const T_y& y, const T_loc& mu, const T_scale& sigma, const T3&, const T4&,
       const T5&) {
     using stan::math::log1p;

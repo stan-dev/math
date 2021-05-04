@@ -1,21 +1,27 @@
 #ifndef STAN_MATH_REV_CORE_OPERATOR_PLUS_EQUAL_HPP
 #define STAN_MATH_REV_CORE_OPERATOR_PLUS_EQUAL_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/operator_addition.hpp>
 
 namespace stan {
 namespace math {
 
-inline var& var::operator+=(const var& b) {
-  vi_ = new internal::add_vv_vari(vi_, b.vi_);
+template <typename T>
+inline var_value<T>& var_value<T, require_floating_point_t<T>>::operator+=(
+    const var_value<T>& b) {
+  vi_ = (*this + b).vi_;
   return *this;
 }
 
-inline var& var::operator+=(double b) {
-  if (b == 0.0)
+template <typename T>
+inline var_value<T>& var_value<T, require_floating_point_t<T>>::operator+=(
+    T b) {
+  if (b == 0.0) {
     return *this;
-  vi_ = new internal::add_vd_vari(vi_, b);
+  }
+  vi_ = (*this + b).vi_;
   return *this;
 }
 

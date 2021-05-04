@@ -21,12 +21,22 @@
 /test/**/*.xml
 /test/dummy.cpp
 /test/**/*.so
+/test/expressions/*.cpp
+
+# benchmarks
+/benchmarks/*
+!/benchmarks/*.*
+benchmarks/*.cpp
+benchmarks/*.csv
 
 # other binary
 *.o
 *.o-*
 *.exe
 *.a
+
+# Intel template building blocks (TBB)
+lib/tbb
 
 # /doc/
 /doc/api
@@ -72,4 +82,22 @@ lib/boost_*/project-config.jam
 lib/boost_*/project-config.jam.1
 lib/boost_*/stage/
 lib/boost_*/tools/build/*
+!lib/boost_*/tools/build/src*
+lib/boost_*/tools/build/src/engine/b2
+lib/boost_*/tools/build/src/engine/bjam
 lib/boost_*/user-config.jam
+
+# clang-tidy output
+.clang-fixes.log
+
+# Clang compilation database
+compile_commands.json
+
+# Visual Studio Project Setup
+.vscode/*
+
+# Ignore things made with tbb
+lib/tbb/**
+
+# gdb debug history
+.gdb_history

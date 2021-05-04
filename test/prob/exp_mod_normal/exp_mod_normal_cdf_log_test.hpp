@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -66,7 +66,7 @@ class AgradCdfLogExpModNormal : public AgradCdfLogTest {
 
   template <typename T_y, typename T_loc, typename T_scale,
             typename T_inv_scale, typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale, T_inv_scale>::type cdf_log(
+  stan::return_type_t<T_y, T_loc, T_scale, T_inv_scale> cdf_log(
       const T_y& y, const T_loc& mu, const T_scale& sigma,
       const T_inv_scale& lambda, const T4&, const T5&) {
     return stan::math::exp_mod_normal_cdf_log(y, mu, sigma, lambda);
@@ -74,9 +74,9 @@ class AgradCdfLogExpModNormal : public AgradCdfLogTest {
 
   template <typename T_y, typename T_loc, typename T_scale,
             typename T_inv_scale, typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale, T_inv_scale>::type
-  cdf_log_function(const T_y& y, const T_loc& mu, const T_scale& sigma,
-                   const T_inv_scale& lambda, const T4&, const T5&) {
+  stan::return_type_t<T_y, T_loc, T_scale, T_inv_scale> cdf_log_function(
+      const T_y& y, const T_loc& mu, const T_scale& sigma,
+      const T_inv_scale& lambda, const T4&, const T5&) {
     return log(0.5 * (1 + erf((y - mu) / (sqrt(2.0) * sigma)))
                - exp(-lambda * (y - mu) + lambda * sigma * lambda * sigma / 2.0)
                      * 0.5

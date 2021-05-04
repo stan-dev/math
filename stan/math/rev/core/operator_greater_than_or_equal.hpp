@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_CORE_OPERATOR_GREATER_THAN_OR_EQUAL_HPP
 
 #include <stan/math/rev/core/var.hpp>
+#include <stan/math/prim/meta.hpp>
 
 namespace stan {
 namespace math {
@@ -32,23 +33,31 @@ inline bool operator>=(const var& a, const var& b) {
  * Greater than or equal operator comparing variable's value and
  * double (C++).
  *
+ * @tparam Arith An arithmetic type
  * @param a First variable.
  * @param b Second value.
  * @return True if first variable's value is greater than or equal
  * to second value.
  */
-inline bool operator>=(const var& a, double b) { return a.val() >= b; }
+template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
+inline bool operator>=(const var& a, Arith b) {
+  return a.val() >= b;
+}
 
 /**
  * Greater than or equal operator comparing double and variable's
  * value (C++).
  *
+ * @tparam Arith An arithmetic type
  * @param a First value.
  * @param b Second variable.
  * @return True if the first value is greater than or equal to the
  * second variable's value.
  */
-inline bool operator>=(double a, const var& b) { return a >= b.val(); }
+template <typename Arith, typename Var, require_arithmetic_t<Arith>* = nullptr>
+inline bool operator>=(Arith a, const var& b) {
+  return a >= b.val();
+}
 
 }  // namespace math
 }  // namespace stan

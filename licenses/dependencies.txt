@@ -43,7 +43,7 @@ home:    http://eigen.tuxfamily.org
 license: LGPL3+
          http://www.gnu.org/licenses/lgpl.html
 unpack:  lib/Eigen/{Array,...}
-version  3.2.4
+version  3.3.3
 
 
 4. boost
@@ -52,7 +52,15 @@ home:    http://www.boost.org/
 license: Boost
          http://www.boost.org/users/license.html
 unpack:  lib/boost/{accumulators,algorithm,...}
-version: 1.58.0
+version: 1.69.0
+
+5. Intel TBB
+----------------------------------------
+home:    https://www.threadingbuildingblocks.org/
+license: Apache 2.0
+         http://www.apache.org/licenses/LICENSE-2.0
+unpack:  lib/tbb/*
+version: 2019_U5
 
 
 DEVELOPMENT LIBS

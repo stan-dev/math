@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -75,7 +75,7 @@ class AgradCdfLogSkewNormal : public AgradCdfLogTest {
 
   template <typename T_y, typename T_loc, typename T_scale, typename T_shape,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale, T_shape>::type cdf_log(
+  stan::return_type_t<T_y, T_loc, T_scale, T_shape> cdf_log(
       const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha,
       const T4&, const T5&) {
     return stan::math::skew_normal_cdf_log(y, mu, sigma, alpha);
@@ -83,9 +83,9 @@ class AgradCdfLogSkewNormal : public AgradCdfLogTest {
 
   template <typename T_y, typename T_loc, typename T_scale, typename T_shape,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale, T_shape>::type
-  cdf_log_function(const T_y& y, const T_loc& mu, const T_scale& sigma,
-                   const T_shape& alpha, const T4&, const T5&) {
+  stan::return_type_t<T_y, T_loc, T_scale, T_shape> cdf_log_function(
+      const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha,
+      const T4&, const T5&) {
     using stan::math::owens_t;
     return log(0.5 * erfc(-(y - mu) / (sqrt(2.0) * sigma))
                - 2.0 * owens_t((y - mu) / sigma, alpha));

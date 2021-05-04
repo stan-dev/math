@@ -10,7 +10,7 @@ void test_logical_and(double x, double y) {
   EXPECT_EQ(x && y, var(x) && y);
 }
 
-TEST(AgradRev, unaryNot) {
+TEST(AgradRev, logical_and) {
   std::vector<double> xs;
   xs.push_back(6.1);
   xs.push_back(6.1);

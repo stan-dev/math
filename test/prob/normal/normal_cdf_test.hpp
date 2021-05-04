@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -62,18 +62,20 @@ class AgradCdfNormal : public AgradCdfTest {
 
   template <typename T_y, typename T_loc, typename T_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale>::type cdf(
-      const T_y& y, const T_loc& mu, const T_scale& sigma, const T3&, const T4&,
-      const T5&) {
+  stan::return_type_t<T_y, T_loc, T_scale> cdf(const T_y& y, const T_loc& mu,
+                                               const T_scale& sigma, const T3&,
+                                               const T4&, const T5&) {
     return stan::math::normal_cdf(y, mu, sigma);
   }
 
   template <typename T_y, typename T_loc, typename T_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale>::type cdf_function(
-      const T_y& y, const T_loc& mu, const T_scale& sigma, const T3&, const T4&,
-      const T5&) {
-    using stan::math::SQRT_2;
-    return (0.5 + 0.5 * erf((y - mu) / (sigma * SQRT_2)));
+  stan::return_type_t<T_y, T_loc, T_scale> cdf_function(const T_y& y,
+                                                        const T_loc& mu,
+                                                        const T_scale& sigma,
+                                                        const T3&, const T4&,
+                                                        const T5&) {
+    using stan::math::SQRT_TWO;
+    return (0.5 + 0.5 * erf((y - mu) / (sigma * SQRT_TWO)));
   }
 };

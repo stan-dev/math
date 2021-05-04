@@ -3,18 +3,23 @@
 
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/operator_division.hpp>
+#include <stan/math/prim/meta.hpp>
 
 namespace stan {
 namespace math {
-
-inline var& var::operator/=(const var& b) {
+template <typename T>
+inline var_value<T>& var_value<T, require_floating_point_t<T>>::operator/=(
+    const var_value<T>& b) {
   vi_ = new internal::divide_vv_vari(vi_, b.vi_);
   return *this;
 }
 
-inline var& var::operator/=(double b) {
-  if (b == 1.0)
+template <typename T>
+inline var_value<T>& var_value<T, require_floating_point_t<T>>::operator/=(
+    T b) {
+  if (b == 1.0) {
     return *this;
+  }
   vi_ = new internal::divide_vd_vari(vi_, b);
   return *this;
 }

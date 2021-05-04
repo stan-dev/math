@@ -1,3 +1,11 @@
+# Find files subroutine for different operating system
+# This is recursive version of the makefiles wildcard function
+findfiles = $(strip $(subst \n,,$(foreach d,$(wildcard $(addsuffix *,$(1))),$(call findfiles,$(d)/,$(2)) $(wildcard $(d)/$(2)))))
+
+ifneq ($(OS),Windows_NT)
+GENERATE_DISTRIBUTION_TESTS=true
+endif
+
 # Detect operating system, set default compiler, and detect compiler type
 # The defaults are configured for the compilers we test:
 # https://github.com/stan-dev/stan/wiki/Supported-C---Compilers-and-Language-Features
@@ -5,6 +13,19 @@
 ## Detect operating system
 ifneq ($(OS),Windows_NT)
   OS := $(shell uname -s)
+endif
+
+## Set OS specific library filename extensions
+ifeq ($(OS),Windows_NT)
+  LIBRARY_SUFFIX ?= .dll
+endif
+
+ifeq ($(OS),Darwin)
+  LIBRARY_SUFFIX ?= .dylib
+endif
+
+ifeq ($(OS),Linux)
+  LIBRARY_SUFFIX ?= .so
 endif
 
 ## Set default compiler
@@ -37,8 +58,41 @@ ifneq (,$(findstring g++,$(CXX)))
   CXX_TYPE ?= gcc
 endif
 CXX_TYPE ?= other
-CXX_MAJOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f1)
-CXX_MINOR := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f2)
+CXX_VERSION :=  $(shell $(CXX) -dumpversion 2>&1)
+CXX_MAJOR := $(word 1,$(subst ., ,$(CXX_VERSION)))
+CXX_MINOR := $(word 2,$(subst ., ,$(CXX_VERSION)))
+
+
+################################################################################
+# Set optional compiler flags for performance
+#
+# These flags are compiler and compiler version specific optimization flags.
+#
+# Because clang-6 and clang-7's -dumpversion reports version 4.2.1
+# and clang-6 needs either the llvm-ar or ar gold plugin to use link time
+# optimization (flto), flto is only turned on for clang versions greater than 8.
+# For gcc all versions after 4.9 can use the system `ar` and other utilities
+# when compiling with flto.
+#
+# FLAGS:
+# CXXFLAGS_OPTIM: Additional flags to CXXFLAGS
+# CPPFLAGS_OPTIM: Additional flags to CXXFLAGS
+# CXXFLAGS_OPTIM_TBB: Additional flags to TBB_CXXFLAGS
+# CXXFLAGS_OPTIM_SUNDIALS: Additional flags to CXXFLAGS_SUNDIALS
+# CPPFLAGS_OPTIM_SUNDIALS: Additional flags to CPPFLAGS_SUNDIALS
+# CXXFLAGS_FLTO: Additional flags for compiling with FLTO
+# CPPFLAGS_FLTO: Additional flags for compiling with FLTO
+# CXXFLAGS_FLTO_TBB: Additional flags for compiling tbb with flto
+# CXXFLAGS_FLTO_SUNDIALS: Additional flags for compiling c++ sundials with flto
+# CPPFLAGS_FLTO_SUNDIALS: Additional flags for compiling c sundials with flto
+# LDFLAGS_OPTIM: Adding optimization flags to LDFLAGS
+# LDFLAGS_FLTO: Adding flto options to LDFLAGS
+# LDFLAGS_MPI_FLTO: For adding flto options to MPI build
+##
+
+ifdef STAN_NO_RANGE_CHECKS
+  CXXFLAGS_THREADS ?= -DSTAN_NO_RANGE_CHECKS
+endif
 
 ################################################################################
 # Set default compiler flags
@@ -56,15 +110,15 @@ INC_SUNDIALS ?= -I $(SUNDIALS)/include
 INC_GTEST ?= -I $(GTEST)/include -I $(GTEST)
 
 ## setup precompiler options
-CPPFLAGS_BOOST ?= -DBOOST_RESULT_OF_USE_TR1 -DBOOST_NO_DECLTYPE -DBOOST_DISABLE_ASSERTS -DBOOST_PHOENIX_NO_VARIADIC_EXPRESSION
-CPPFLAGS_SUNDIALS ?= -DNO_FPRINTF_OUTPUT
-CPPFLAGS_GTEST ?= -DGTEST_USE_OWN_TR1_TUPLE
+CPPFLAGS_BOOST ?= -DBOOST_DISABLE_ASSERTS
+CPPFLAGS_SUNDIALS ?= -DNO_FPRINTF_OUTPUT $(CPPFLAGS_OPTIM_SUNDIALS) $(CXXFLAGS_FLTO_SUNDIALS)
+#CPPFLAGS_GTEST ?=
 
 
 ## setup compiler flags
 CXXFLAGS_LANG ?= -std=c++1y
-#CXXFLAGS_BOOST
-CXXFLAGS_SUNDIALS ?= -pipe
+#CXXFLAGS_BOOST ?=
+CXXFLAGS_SUNDIALS ?= -pipe $(CXXFLAGS_OPTIM_SUNDIALS) $(CPPFLAGS_FLTO_SUNDIALS)
 #CXXFLAGS_GTEST
 
 
@@ -82,6 +136,11 @@ CXXFLAGS_SUNDIALS ?= -pipe
 # LDFLAGS_OPENCL
 # LDLIBS_OPENCL
 
+## TBB specific flags
+# CXXFLAGS_TBB
+# LDFLAGS_TBB
+# LDLIBS_TBB
+
 ## MPI specific flags
 # CXXFLAGS_MPI
 # LDFLAGS_MPI
@@ -91,7 +150,7 @@ CXXFLAGS_SUNDIALS ?= -pipe
 # Update compiler flags with operating system specific modifications
 ##
 ifeq ($(OS),Windows_NT)
-  CXXFLAGS_WARNINGS ?= -Wall -Wno-unused-function -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-variable -Wno-sign-compare -Wno-unused-local-typedefs
+  CXXFLAGS_WARNINGS ?= -Wall -Wno-unused-function -Wno-uninitialized -Wno-unused-but-set-variable -Wno-unused-variable -Wno-sign-compare -Wno-unused-local-typedefs -Wno-int-in-bool-context -Wno-attributes
   CPPFLAGS_GTEST ?= -DGTEST_HAS_PTHREAD=0
   CPPFLAGS_OS ?= -D_USE_MATH_DEFINES
   ## Detecting Process Bitness:
@@ -133,6 +192,11 @@ ifeq ($(OS),Linux)
   endif
 endif
 
+## makes reentrant version lgamma_r available from cmath
+CXXFLAGS_OS += -D_REENTRANT
+
+## silence warnings occuring due to the TBB and Eigen libraries
+CXXFLAGS_WARNINGS += -Wno-ignored-attributes
 
 ################################################################################
 # Setup OpenCL
@@ -151,8 +215,76 @@ ifdef STAN_OPENCL
   OPENCL_DEVICE_ID ?= 0
   OPENCL_PLATFORM_ID ?= 0
 
-  CPPFLAGS_OPENCL ?= -DSTAN_OPENCL -DOPENCL_DEVICE_ID=$(OPENCL_DEVICE_ID) -DOPENCL_PLATFORM_ID=$(OPENCL_PLATFORM_ID) -DCL_USE_DEPRECATED_OPENCL_1_2_APIS
+  CPPFLAGS_OPENCL ?= -DSTAN_OPENCL -DOPENCL_DEVICE_ID=$(OPENCL_DEVICE_ID) -DOPENCL_PLATFORM_ID=$(OPENCL_PLATFORM_ID)
+  CPPFLAGS_OPENCL += -DCL_HPP_TARGET_OPENCL_VERSION=120 -DCL_HPP_MINIMUM_OPENCL_VERSION=120
+  CPPFLAGS_OPENCL += -DCL_HPP_ENABLE_EXCEPTIONS -Wno-ignored-attributes
   CXXFLAGS_OPENCL ?= -I $(OPENCL)
+endif
+
+################################################################################
+# Setup Intel TBB
+#
+# Sets up TBB CXXFLAGS_TBB and LDFLAGS_TBB to compile and link to TBB
+#
+# The tbbmalloc and tbbmalloc_proxy libraries are optionally included
+# as targets. By default these are included on MacOS only. This behavior
+# can be altered by explicitly setting the TBB_LIBRARIES variable which
+# should contain "tbb" or "tbb tbbmalloc tbbmalloc_proxy". Setting the
+# TBB_LIBRARIES variable overrides the default.
+
+TBB_BIN ?= $(MATH)lib/tbb
+TBB_RELATIVE_PATH ?= ../$(notdir $(TBB))
+TBB_BIN_ABSOLUTE_PATH = $(abspath $(TBB_BIN))
+TBB_ABSOLUTE_PATH = $(abspath $(TBB))
+
+ifeq ($(OS),Darwin)
+  TBB_LIBRARIES ?= tbb tbbmalloc tbbmalloc_proxy
+else
+  TBB_LIBRARIES ?= tbb
+endif
+
+ifdef TBB_LIB
+
+ifdef TBB_INC
+CXXFLAGS_TBB ?= -I $(TBB_INC)
+else
+CXXFLAGS_TBB ?= -I $(TBB)/include
+endif
+
+LDFLAGS_TBB ?= -Wl,-L,"$(TBB_LIB)" -Wl,-rpath,"$(TBB_LIB)" -ltbb
+LDLIBS_TBB ?= $(LDFLAGS_TBB)
+
+else
+
+ifeq ($(OS),Windows_NT)
+  TBB_TARGETS ?= $(addprefix $(TBB_BIN)/,$(addsuffix $(LIBRARY_SUFFIX),$(TBB_LIBRARIES)))
+endif
+ifeq ($(OS),Darwin)
+  TBB_TARGETS ?= $(addprefix $(TBB_BIN)/lib,$(addsuffix $(LIBRARY_SUFFIX), $(TBB_LIBRARIES)))
+endif
+ifeq ($(OS),Linux)
+  # Update the suffix with the internal TBB source code!
+  # The new version of TBB library is 12+ (e.g., libtbb.so.12.1 not libtbb.so.2)
+  TBB_TARGETS ?= $(addprefix $(TBB_BIN)/lib,$(addsuffix $(LIBRARY_SUFFIX).2,$(TBB_LIBRARIES)))
+endif
+
+CXXFLAGS_TBB ?= -I $(TBB)/include
+LDFLAGS_TBB ?= -Wl,-L,"$(TBB_BIN_ABSOLUTE_PATH)" -Wl,-rpath,"$(TBB_BIN_ABSOLUTE_PATH)" $(LDFLAGS_FLTO_FLTO) $(LDFLAGS_OPTIM_TBB)
+LDLIBS_TBB ?= $(LDFLAGS_TBB)
+
+endif
+
+ifdef TBB_INTERFACE_NEW
+CPPFLAGS_TBB ?= -DTBB_INTERFACE_NEW
+endif
+
+################################################################################
+# Setup STAN_THREADS
+#
+# Sets up CXXFLAGS_THREADS to use threading
+
+ifdef STAN_THREADS
+  CXXFLAGS_THREADS ?= -DSTAN_THREADS
 endif
 
 ################################################################################
@@ -165,29 +297,19 @@ ifdef STAN_MPI
     $(error MPI is not supported on Windows.)
   endif
 
-  ifeq ($(OS),Darwin)
-    BOOST_LIBRARY_SUFFIX := .dylib
-  endif
-
-  ifeq ($(OS),Linux)
-    BOOST_LIBRARY_SUFFIX := .so
-  endif
-
-  MPI_TARGETS ?= $(addsuffix $(BOOST_LIBRARY_SUFFIX),$(BOOST)/stage/lib/libboost_serialization $(BOOST)/stage/lib/libboost_mpi) $(MPI_TEMPLATE_INSTANTIATION)
+  MPI_TARGETS ?= $(addsuffix $(LIBRARY_SUFFIX),$(BOOST)/stage/lib/libboost_serialization $(BOOST)/stage/lib/libboost_mpi) $(MPI_TEMPLATE_INSTANTIATION)
   CPPFLAGS_MPI ?= -DSTAN_MPI
 
   BOOST_LIBRARY_ABSOLUTE_PATH = $(abspath $(BOOST)/stage/lib)
 
-  LDFLAGS_MPI ?= -Wl,-L,"$(BOOST_LIBRARY_ABSOLUTE_PATH)" -Wl,-rpath,"$(BOOST_LIBRARY_ABSOLUTE_PATH)"
+  LDFLAGS_MPI ?= -Wl,-L,"$(BOOST_LIBRARY_ABSOLUTE_PATH)" -Wl,-rpath,"$(BOOST_LIBRARY_ABSOLUTE_PATH)" $(LDFLAGS_MPI_FLTO) $(MPI_OPTIM)
   CXXFLAGS_MPI ?= -Wno-delete-non-virtual-dtor
 endif
 
-
-
-CXXFLAGS += $(CXXFLAGS_LANG) $(CXXFLAGS_OS) $(CXXFLAGS_WARNINGS) $(CXXFLAGS_BOOST) $(CXXFLAGS_EIGEN) $(CXXFLAGS_OPENCL) $(CXXFLAGS_MPI) -O$(O) $(INC)
-CPPFLAGS += $(CPPFLAGS_LANG) $(CPPFLAGS_OS) $(CPPFLAGS_WARNINGS) $(CPPFLAGS_BOOST) $(CPPFLAGS_EIGEN) $(CPPFLAGS_OPENCL) $(CPPFLAGS_MPI)
-LDFLAGS += $(LDFLAGS_LANG) $(LDFLAGS_OS) $(LDFLAGS_WARNINGS) $(LDFLAGS_BOOST) $(LDFLAGS_EIGEN) $(LDFLAGS_OPENCL) $(LDFLAGS_MPI)
-LDLIBS += $(LDLIBS_LANG) $(LDLIBS_OS) $(LDLIBS_WARNINGS) $(LDLIBS_BOOST) $(LDLIBS_EIGEN) $(LDLIBS_OPENCL) $(LDLIBS_MPI)
+CXXFLAGS += $(CXXFLAGS_LANG) $(CXXFLAGS_OS) $(CXXFLAGS_WARNINGS) $(CXXFLAGS_BOOST) $(CXXFLAGS_EIGEN) $(CXXFLAGS_OPENCL) $(CXXFLAGS_MPI) $(CXXFLAGS_THREADS) $(CXXFLAGS_TBB) $(CXXFLAGS_FLTO) $(CXXFLAGS_OPTIM) -O$(O) $(INC)
+CPPFLAGS += $(CPPFLAGS_LANG) $(CPPFLAGS_OS) $(CPPFLAGS_WARNINGS) $(CPPFLAGS_BOOST) $(CPPFLAGS_EIGEN) $(CPPFLAGS_OPENCL) $(CPPFLAGS_TBB) $(CPPFLAGS_MPI) $(CPPFLAGS_TBB) $(CPPFLAGS_FLTO) $(CPPFLAGS_OPTIM)
+LDFLAGS += $(LDFLAGS_LANG) $(LDFLAGS_OS) $(LDFLAGS_WARNINGS) $(LDFLAGS_BOOST) $(LDFLAGS_EIGEN) $(LDFLAGS_OPENCL) $(LDFLAGS_MPI) $(LDFLAGS_TBB) $(LDFLAGS_FLTO) $(LDFLAGS_OPTIM)
+LDLIBS += $(LDLIBS_LANG) $(LDLIBS_OS) $(LDLIBS_WARNINGS) $(LDLIBS_BOOST) $(LDLIBS_EIGEN) $(LDLIBS_OPENCL) $(LDLIBS_MPI) $(LDLIBS_TBB)
 
 .PHONY: print-compiler-flags
 print-compiler-flags:
@@ -201,19 +323,28 @@ print-compiler-flags:
 	@echo '  - EIGEN                       ' $(EIGEN)
 	@echo '  - BOOST                       ' $(BOOST)
 	@echo '  - SUNDIALS                    ' $(SUNDIALS)
+	@echo '  - TBB                         ' $(TBB)
 	@echo '  - GTEST                       ' $(GTEST)
+	@echo '  - STAN_THREADS                ' $(STAN_THREADS)
 	@echo '  - STAN_OPENCL                 ' $(STAN_OPENCL)
 	@echo '  - STAN_MPI                    ' $(STAN_MPI)
 	@echo '  Compiler flags (each can be overriden separately):'
 	@echo '  - CXXFLAGS_LANG               ' $(CXXFLAGS_LANG)
 	@echo '  - CXXFLAGS_WARNINGS           ' $(CXXFLAGS_WARNINGS)
+	@echo '  - CXXFLAGS_OPTIM              ' $(CXXFLAGS_OPTIM)
+	@echo '  - CXXFLAGS_FLTO               ' $(CXXFLAGS_FLTO)
 	@echo '  - CXXFLAGS_BOOST              ' $(CXXFLAGS_BOOST)
 	@echo '  - CXXFLAGS_EIGEN              ' $(CXXFLAGS_EIGEN)
 	@echo '  - CXXFLAGS_OS                 ' $(CXXFLAGS_OS)
 	@echo '  - CXXFLAGS_GTEST              ' $(CXXFLAGS_GTEST)
+	@echo '  - CXXFLAGS_THREADS            ' $(CXXFLAGS_THREADS)
 	@echo '  - CXXFLAGS_OPENCL             ' $(CXXFLAGS_OPENCL)
+	@echo '  - CXXFLAGS_TBB                ' $(CXXFLAGS_TBB)
+	@echo '  - CXXFLAGS_OPTIM_TBB          ' $(CXXFLAGS_OPTIM_TBB)
 	@echo '  - CXXFLAGS_MPI                ' $(CXXFLAGS_MPI)
 	@echo '  - CFLAGS_SUNDIALS             ' $(CFLAGS_SUNDIALS)
+	@echo '  - CXXFLAGS_SUNDIALS           ' $(CXXFLAGS_SUNDIALS)
+	@echo '  - CXXFLAGS_OPTIM_SUNDIALS     ' $(CXXFLAGS_OPTIM_SUNDIALS)
 	@echo '  LDLIBS:'
 	@echo '  - LDLIBS_LANG                 ' $(LDLIBS_LANG)
 	@echo '  - LDLIBS_WARNINGS             ' $(LDLIBS_WARNINGS)
@@ -222,6 +353,7 @@ print-compiler-flags:
 	@echo '  - LDLIBS_OS                   ' $(LDLIBS_OS)
 	@echo '  - LDLIBS_GTEST                ' $(LDLIBS_GTEST)
 	@echo '  - LDLIBS_OPENCL               ' $(LDLIBS_OPENCL)
+	@echo '  - LDLIBS_TBB                  ' $(LDLIBS_TBB)
 	@echo '  - LDLIBS_MPI                  ' $(LDLIBS_MPI)
 	@echo '  LDFLAGS:'
 	@echo '  - LDFLAGS_LANG                ' $(LDFLAGS_LANG)
@@ -231,5 +363,6 @@ print-compiler-flags:
 	@echo '  - LDFLAGS_OS                  ' $(LDFLAGS_OS)
 	@echo '  - LDFLAGS_GTEST               ' $(LDFLAGS_GTEST)
 	@echo '  - LDFLAGS_OPENCL              ' $(LDFLAGS_OPENCL)
+	@echo '  - LDFLAGS_TBB                 ' $(LDFLAGS_TBB)
 	@echo '  - LDFLAGS_MPI                 ' $(LDFLAGS_MPI)
 	@echo ''

@@ -1,5 +1,6 @@
-#include <stan/math/rev/arr.hpp>
+#include <stan/math/rev.hpp>
 #include <gtest/gtest.h>
+#include <test/unit/util.hpp>
 #include <vector>
 
 TEST(StanAgradRevInternal, precomputed_gradients) {
@@ -97,6 +98,86 @@ TEST(StanAgradRevInternal, precomputed_gradients_mismatched_sizes) {
   gradients[1] = 3;
 
   EXPECT_THROW(stan::math::precomputed_gradients(value, vars, gradients),
+               std::invalid_argument);
+  stan::math::recover_memory();
+}
+
+TEST(StanAgradRevInternal, precomputed_gradients_containers) {
+  double value = 1;
+  std::vector<stan::math::var> vars;
+  std::vector<double> gradients;
+  stan::math::var_value<Eigen::MatrixXd> a(Eigen::MatrixXd::Constant(3, 3, 2));
+  std::vector<stan::math::var_value<Eigen::MatrixXd>> b{
+      Eigen::MatrixXd::Constant(3, 3, 4), Eigen::MatrixXd::Constant(3, 3, 5)};
+  std::tuple<stan::math::var_value<Eigen::MatrixXd>&,
+             std::vector<stan::math::var_value<Eigen::MatrixXd>>&>
+      ops{a, b};
+  Eigen::MatrixXd grad_a = Eigen::MatrixXd::Constant(3, 3, -1);
+  std::vector<Eigen::MatrixXd> grad_b{Eigen::MatrixXd::Constant(3, 3, -2),
+                                      Eigen::MatrixXd::Constant(3, 3, -3)};
+  std::tuple<Eigen::MatrixXd&&, std::vector<Eigen::MatrixXd>&> grads(
+      std::move(grad_a), grad_b);
+
+  stan::math::var lp
+      = stan::math::precomputed_gradients(value, vars, gradients, ops, grads);
+  (2 * lp).grad();
+  EXPECT_MATRIX_EQ(a.adj(), Eigen::MatrixXd::Constant(3, 3, -2));
+  EXPECT_MATRIX_EQ(b[0].adj(), Eigen::MatrixXd::Constant(3, 3, -4));
+  EXPECT_MATRIX_EQ(b[1].adj(), Eigen::MatrixXd::Constant(3, 3, -6));
+
+  stan::math::recover_memory();
+}
+
+TEST(StanAgradRevInternal,
+     precomputed_gradients_containers_direct_construction) {
+  double value = 1;
+  std::vector<stan::math::var> vars;
+  std::vector<double> gradients;
+  stan::math::var_value<Eigen::MatrixXd> a(Eigen::MatrixXd::Constant(3, 3, 2));
+  std::vector<stan::math::var_value<Eigen::MatrixXd>> b{
+      Eigen::MatrixXd::Constant(3, 3, 4), Eigen::MatrixXd::Constant(3, 3, 5)};
+  std::tuple<stan::math::var_value<Eigen::MatrixXd>&,
+             std::vector<stan::math::var_value<Eigen::MatrixXd>>&>
+      ops{a, b};
+  Eigen::MatrixXd grad_a = Eigen::MatrixXd::Constant(3, 3, -1);
+  std::vector<Eigen::MatrixXd> grad_b{Eigen::MatrixXd::Constant(3, 3, -2),
+                                      Eigen::MatrixXd::Constant(3, 3, -3)};
+  std::tuple<Eigen::MatrixXd&&, std::vector<Eigen::MatrixXd>&> grads(
+      std::move(grad_a), grad_b);
+
+  stan::math::var lp = new stan::math::precomputed_gradients_vari_template<
+      std::tuple<
+          stan::arena_t<stan::math::var_value<Eigen::MatrixXd>>,
+          stan::arena_t<std::vector<stan::math::var_value<Eigen::MatrixXd>>>>,
+      std::tuple<stan::arena_t<Eigen::MatrixXd>,
+                 stan::arena_t<std::vector<Eigen::MatrixXd>>>>(
+      value, 0, nullptr, nullptr, ops, grads);
+  (2 * lp).grad();
+  EXPECT_MATRIX_EQ(a.adj(), Eigen::MatrixXd::Constant(3, 3, -2));
+  EXPECT_MATRIX_EQ(b[0].adj(), Eigen::MatrixXd::Constant(3, 3, -4));
+  EXPECT_MATRIX_EQ(b[1].adj(), Eigen::MatrixXd::Constant(3, 3, -6));
+
+  stan::math::recover_memory();
+}
+
+TEST(StanAgradRevInternal, precomputed_gradients_mismatched_containers) {
+  double value = 1;
+  std::vector<stan::math::var> vars;
+  std::vector<double> gradients;
+  stan::math::var_value<Eigen::MatrixXd> a(Eigen::MatrixXd::Constant(3, 3, 2));
+  std::vector<stan::math::var_value<Eigen::MatrixXd>> b{
+      Eigen::MatrixXd::Constant(3, 3, 4), Eigen::MatrixXd::Constant(3, 3, 5)};
+  Eigen::MatrixXd grad_a = Eigen::MatrixXd::Constant(3, 2, -1);
+  std::vector<Eigen::MatrixXd> grad_b{Eigen::MatrixXd::Constant(3, 2, -2),
+                                      Eigen::MatrixXd::Constant(3, 2, -3)};
+
+  EXPECT_THROW(stan::math::precomputed_gradients(value, vars, gradients,
+                                                 std::forward_as_tuple(a),
+                                                 std::forward_as_tuple(grad_a)),
+               std::invalid_argument);
+  EXPECT_THROW(stan::math::precomputed_gradients(value, vars, gradients,
+                                                 std::forward_as_tuple(b),
+                                                 std::forward_as_tuple(grad_b)),
                std::invalid_argument);
   stan::math::recover_memory();
 }

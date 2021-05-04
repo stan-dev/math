@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -54,7 +54,7 @@ class AgradCcdfLogParetoType2 : public AgradCcdfLogTest {
 
   template <typename T_y, typename T_loc, typename T_scale, typename T_shape,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale, T_shape>::type ccdf_log(
+  stan::return_type_t<T_y, T_loc, T_scale, T_shape> ccdf_log(
       const T_y& y, const T_loc& mu, const T_scale& lambda,
       const T_shape& alpha, const T4&, const T5&) {
     return stan::math::pareto_type_2_ccdf_log(y, mu, lambda, alpha);
@@ -62,9 +62,9 @@ class AgradCcdfLogParetoType2 : public AgradCcdfLogTest {
 
   template <typename T_y, typename T_loc, typename T_scale, typename T_shape,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale, T_shape>::type
-  ccdf_log_function(const T_y& y, const T_loc& mu, const T_scale& lambda,
-                    const T_shape& alpha, const T4&, const T5&) {
+  stan::return_type_t<T_y, T_loc, T_scale, T_shape> ccdf_log_function(
+      const T_y& y, const T_loc& mu, const T_scale& lambda,
+      const T_shape& alpha, const T4&, const T5&) {
     using std::log;
     using std::pow;
     return log(pow(1.0 + (y - mu) / lambda, -alpha));

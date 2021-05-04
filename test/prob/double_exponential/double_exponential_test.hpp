@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -83,30 +83,34 @@ class AgradDistributionsDoubleExponential : public AgradDistributionTest {
 
   template <typename T_y, typename T_loc, typename T_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale>::type log_prob(
-      const T_y& y, const T_loc& mu, const T_scale& sigma, const T3&, const T4&,
-      const T5&) {
+  stan::return_type_t<T_y, T_loc, T_scale> log_prob(const T_y& y,
+                                                    const T_loc& mu,
+                                                    const T_scale& sigma,
+                                                    const T3&, const T4&,
+                                                    const T5&) {
     return stan::math::double_exponential_log(y, mu, sigma);
   }
 
   template <bool propto, typename T_y, typename T_loc, typename T_scale,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale>::type log_prob(
-      const T_y& y, const T_loc& mu, const T_scale& sigma, const T3&, const T4&,
-      const T5&) {
+  stan::return_type_t<T_y, T_loc, T_scale> log_prob(const T_y& y,
+                                                    const T_loc& mu,
+                                                    const T_scale& sigma,
+                                                    const T3&, const T4&,
+                                                    const T5&) {
     return stan::math::double_exponential_log<propto>(y, mu, sigma);
   }
 
   template <typename T_y, typename T_loc, typename T_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale>::type log_prob_function(
+  stan::return_type_t<T_y, T_loc, T_scale> log_prob_function(
       const T_y& y, const T_loc& mu, const T_scale& sigma, const T3&, const T4&,
       const T5&) {
-    using stan::math::NEG_LOG_TWO;
+    using stan::math::LOG_TWO;
     using std::fabs;
     using std::log;
 
-    return NEG_LOG_TWO - log(sigma) - fabs(y - mu) / sigma;
+    return -LOG_TWO - log(sigma) - fabs(y - mu) / sigma;
   }
 };
 

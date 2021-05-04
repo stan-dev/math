@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_OPENCL_OPENCL_CONTEXT_HPP
 #define STAN_MATH_OPENCL_OPENCL_CONTEXT_HPP
 #ifdef STAN_OPENCL
-#define __CL_ENABLE_EXCEPTIONS
 
 #define DEVICE_FILTER CL_DEVICE_TYPE_ALL
 #ifndef OPENCL_DEVICE_ID
@@ -11,11 +10,10 @@
 #error OPENCL_PLATFORM_ID_NOT_SET
 #endif
 
-#include <stan/math/prim/arr/err/check_opencl.hpp>
-#include <stan/math/opencl/constants.hpp>
-#include <stan/math/prim/scal/err/system_error.hpp>
+#include <stan/math/opencl/matrix_cl_view.hpp>
+#include <stan/math/opencl/err/check_opencl.hpp>
 
-#include <CL/cl.hpp>
+#include <CL/cl2.hpp>
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -23,9 +21,10 @@
 #include <vector>
 #include <cmath>
 #include <cerrno>
-/**
- *  @file stan/math/opencl/opencl_context.hpp
- *  @brief Initialization for OpenCL:
+
+/** \ingroup opencl
+ *  \defgroup opencl_context_group OpenCL Context
+ *  Initialization for OpenCL Context:
  *    1. create context
  *    2. Find OpenCL platforms and devices available
  *    3. set up command queue
@@ -34,7 +33,7 @@
 namespace stan {
 namespace math {
 
-/**
+/** \ingroup opencl_context_group
  * The <code>opencl_context_base</code> class represents an OpenCL context
  * in the standard Meyers singleton design pattern.
  *
@@ -47,64 +46,94 @@ namespace math {
  *
  * Some design decisions that may need to be addressed later:
  * - we are assuming a single OpenCL platform. We may want to run on multiple
- * platforms simulatenously
+ * platforms simultaneously
  * - we are assuming a single OpenCL device. We may want to run on multiple
- * devices simulatenously
+ * devices simultaneously
  */
 class opencl_context_base {
   friend class opencl_context;
 
  private:
-  /**
+  /** \ingroup opencl_context_group
    * Construct the opencl_context by initializing the
    * OpenCL context, devices, command queues, and kernel
    * groups.
    *
    * This constructor does the following:
    * 1. Gets the available platforms and selects the platform
-   *  with id OPENCL_PLATFORM_ID.
-   * 2. Gets the available devices and selects the device with id
-   *  OPENCL_DEVICE_ID.
+   *  with given id.
+   * 2. Gets the available devices and selects the device with given id.
    * 3. Creates the OpenCL context with the device.
    * 4. Creates the OpenCL command queue for the selected device.
    * 5. Sets OpenCL device dependent kernel parameters
+   *
+   * @param platform_id id of the OpenCL platform to use
+   * @param device_id id of the OpenCL device to use
    * @throw std::system_error if an OpenCL error occurs.
    */
-  opencl_context_base() {
+  opencl_context_base(int platform_id = OPENCL_PLATFORM_ID,
+                      int device_id = OPENCL_DEVICE_ID) {
     try {
       // platform
       cl::Platform::get(&platforms_);
-      if (OPENCL_PLATFORM_ID >= platforms_.size()) {
+      if (platform_id >= platforms_.size()) {
         system_error("OpenCL Initialization", "[Platform]", -1,
                      "CL_INVALID_PLATFORM");
       }
-      platform_ = platforms_[OPENCL_PLATFORM_ID];
-      platform_name_ = platform_.getInfo<CL_PLATFORM_NAME>();
-      platform_.getDevices(DEVICE_FILTER, &devices_);
+      platform_.push_back(platforms_[platform_id]);
+      platform_name_ = platform_[0].getInfo<CL_PLATFORM_NAME>();
+      platform_[0].getDevices(DEVICE_FILTER, &devices_);
       if (devices_.size() == 0) {
         system_error("OpenCL Initialization", "[Device]", -1,
                      "CL_DEVICE_NOT_FOUND");
       }
-      if (OPENCL_DEVICE_ID >= devices_.size()) {
+      if (device_id >= devices_.size()) {
         system_error("OpenCL Initialization", "[Device]", -1,
                      "CL_INVALID_DEVICE");
       }
-      device_ = devices_[OPENCL_DEVICE_ID];
+      device_.push_back(devices_[device_id]);
       // context and queue
-      context_ = cl::Context(device_);
-      command_queue_ = cl::CommandQueue(context_, device_,
-                                        CL_QUEUE_PROFILING_ENABLE, nullptr);
-      device_.getInfo<size_t>(CL_DEVICE_MAX_WORK_GROUP_SIZE,
-                              &max_thread_block_size_);
-      int thread_block_size_sqrt
-          = static_cast<int>(sqrt(static_cast<double>(max_thread_block_size_)));
+      cl_command_queue_properties device_properties;
+      device_[0].getInfo<cl_command_queue_properties>(
+          CL_DEVICE_QUEUE_PROPERTIES, &device_properties);
+      device_[0].getInfo<size_t>(CL_DEVICE_MAX_WORK_GROUP_SIZE,
+                                 &max_thread_block_size_);
+      std::vector<size_t> max_wg_sizes
+          = device_[0].getInfo<CL_DEVICE_MAX_WORK_ITEM_SIZES>();
+      if (max_wg_sizes.size() < 3) {
+        system_error("OpenCL Initialization", "[Device]", -1,
+                     "The device does not support 3D work groups!");
+      }
+
+      context_ = cl::Context(device_[0]);
+      if (device_properties & CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE) {
+        command_queue_
+            = cl::CommandQueue(context_, device_[0],
+                               CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE, nullptr);
+        in_order_ = CL_FALSE;
+      } else {
+        command_queue_ = cl::CommandQueue(context_, device_[0], 0, nullptr);
+        in_order_ = CL_TRUE;
+      }
+      int max_square_block_size
+          = std::min({max_wg_sizes[0], max_wg_sizes[1],
+                      static_cast<size_t>(std::sqrt(max_thread_block_size_))});
+
       // Does a compile time check of the maximum allowed
       // dimension of a square thread block size
       // WG size of (32,32) works on all recent GPUs but would fail on some
       // older integrated GPUs or CPUs
-      if (thread_block_size_sqrt < base_opts_["THREAD_BLOCK_SIZE"]) {
-        base_opts_["THREAD_BLOCK_SIZE"] = thread_block_size_sqrt;
+      if (max_square_block_size < base_opts_["THREAD_BLOCK_SIZE"]) {
+        base_opts_["THREAD_BLOCK_SIZE"] = max_square_block_size;
         base_opts_["WORK_PER_THREAD"] = 1;
+      }
+      if (std::min(max_thread_block_size_, max_wg_sizes[0])
+          < base_opts_["LOCAL_SIZE_"]) {
+        // must be a power of base_opts_["REDUCTION_STEP_SIZE"]
+        const int p = std::log(max_thread_block_size_)
+                      / std::log(base_opts_["REDUCTION_STEP_SIZE"]);
+        base_opts_["LOCAL_SIZE_"]
+            = std::pow(base_opts_["REDUCTION_STEP_SIZE"], p);
       }
       // Thread block size for the Cholesky
       // TODO(Steve): This should be tuned in a higher part of the stan language
@@ -119,58 +148,74 @@ class opencl_context_base {
   }
 
  protected:
-  cl::Context context_;  // Manages the the device, queue, platform, memory,etc.
+  cl::Context context_;  // Manages the the device, queue, platform, memory, etc
   cl::CommandQueue command_queue_;       // job queue for device, one per device
   std::vector<cl::Platform> platforms_;  // Vector of available platforms
-  cl::Platform platform_;                // The platform for compiling kernels
+  std::vector<cl::Platform> platform_;   // The platform for compiling kernels
   std::string platform_name_;  // The platform such as NVIDIA OpenCL or AMD SDK
+  std::vector<cl::Device> device_;   // The selected OpenCL device
   std::vector<cl::Device> devices_;  // All available OpenCL devices
-  cl::Device device_;                // The selected OpenCL device
   std::string device_name_;          // The name of OpenCL device
   size_t max_thread_block_size_;  // The maximum size of a block of workers on
                                   // the device
-
+  bool in_order_;                 // Whether to use out of order execution.
   // Holds Default parameter values for each Kernel.
-  typedef std::map<const char*, int> map_base_opts;
+  using map_base_opts = std::map<std::string, int>;
   map_base_opts base_opts_
-      = {{"LOWER", static_cast<int>(TriangularViewCL::Lower)},
-         {"UPPER", static_cast<int>(TriangularViewCL::Upper)},
-         {"ENTIRE", static_cast<int>(TriangularViewCL::Entire)},
-         {"UPPER_TO_LOWER", static_cast<int>(TriangularMapCL::UpperToLower)},
-         {"LOWER_TO_UPPER", static_cast<int>(TriangularMapCL::LowerToUpper)},
+      = {{"LOWER", static_cast<int>(matrix_cl_view::Lower)},
+         {"UPPER", static_cast<int>(matrix_cl_view::Upper)},
+         {"ENTIRE", static_cast<int>(matrix_cl_view::Entire)},
+         {"DIAGONAL", static_cast<int>(matrix_cl_view::Diagonal)},
          {"THREAD_BLOCK_SIZE", 32},
-         {"WORK_PER_THREAD", 8}};
+         {"WORK_PER_THREAD", 8},
+         {"REDUCTION_STEP_SIZE", 4},
+         {"LOCAL_SIZE_", 64}};
   // TODO(Steve): Make these tunable during warmup
   struct tuning_struct {
-    // Used in stan/math/opencl/cholesky_decompose
+    // Used in math/opencl/cholesky_decompose
     int cholesky_min_L11_size = 256;
     int cholesky_partition = 4;
     int cholesky_size_worth_transfer = 1250;
-    // Used in math/rev/mat/fun/cholesky_decompose
+    // Used in math/rev/fun/cholesky_decompose
     int cholesky_rev_min_block_size = 512;
     int cholesky_rev_block_partition = 8;
+    // used in math/opencl/multiply
+    int multiply_wgs_per_compute_unit = 5;
+    // used in math/prim/fun/gp_exp_quad_cov
+    double gp_exp_quad_cov_complex = 1'000'000;
+    double gp_exp_quad_cov_simple = 1'250;
+    // used in math/prim/fun/multiply
+    // and math/rev/fun/multiply
+    int multiply_dim_prod_worth_transfer = 2000000;
+    // used in math/prim/fun/mdivide_left_tri
+    // and math/rev/fun/mdivide_left_tri
+    int tri_inverse_size_worth_transfer = 100;
   } tuning_opts_;
 
+ protected:
   static opencl_context_base& getInstance() {
     static opencl_context_base instance_;
     return instance_;
   }
 
-  opencl_context_base(opencl_context_base const&) = delete;
-  void operator=(opencl_context_base const&) = delete;
+  static void select_device(int platform_id, int device_id) {
+    getInstance() = opencl_context_base(platform_id, device_id);
+  }
 };
 
-/**
+/** \ingroup opencl_context_group
  * The API to access the methods and values in opencl_context_base
  */
 class opencl_context {
+  std::vector<cl::Kernel*> kernel_caches_;
+
  public:
   opencl_context() = default;
 
-  /**
+  /** \ingroup opencl_context_group
    * Returns the description of the OpenCL platform and device that is used.
-   * Devices will be an OpenCL and Platforms are a specific OpenCL implimenation
-   * such as AMD SDK's or Nvidia's OpenCL implimentation.
+   * Devices will be an OpenCL and Platforms are a specific OpenCL
+   * implementation such as AMD SDK's or Nvidia's OpenCL implementation.
    */
   inline std::string description() const {
     std::ostringstream msg;
@@ -178,55 +223,68 @@ class opencl_context {
     msg << "Platform ID: " << OPENCL_DEVICE_ID << "\n";
     msg << "Platform Name: "
         << opencl_context_base::getInstance()
-               .platform_.getInfo<CL_PLATFORM_NAME>()
+               .platform_[0]
+               .getInfo<CL_PLATFORM_NAME>()
         << "\n";
     msg << "Platform Vendor: "
         << opencl_context_base::getInstance()
-               .platform_.getInfo<CL_PLATFORM_VENDOR>()
+               .platform_[0]
+               .getInfo<CL_PLATFORM_VENDOR>()
         << "\n";
     msg << "\tDevice " << OPENCL_DEVICE_ID << ": "
         << "\n";
     msg << "\t\tDevice Name: "
-        << opencl_context_base::getInstance().device_.getInfo<CL_DEVICE_NAME>()
+        << opencl_context_base::getInstance()
+               .device_[0]
+               .getInfo<CL_DEVICE_NAME>()
         << "\n";
     msg << "\t\tDevice Type: "
-        << opencl_context_base::getInstance().device_.getInfo<CL_DEVICE_TYPE>()
+        << opencl_context_base::getInstance()
+               .device_[0]
+               .getInfo<CL_DEVICE_TYPE>()
         << "\n";
     msg << "\t\tDevice Vendor: "
         << opencl_context_base::getInstance()
-               .device_.getInfo<CL_DEVICE_VENDOR>()
+               .device_[0]
+               .getInfo<CL_DEVICE_VENDOR>()
         << "\n";
     msg << "\t\tDevice Max Compute Units: "
         << opencl_context_base::getInstance()
-               .device_.getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>()
+               .device_[0]
+               .getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>()
         << "\n";
     msg << "\t\tDevice Global Memory: "
         << opencl_context_base::getInstance()
-               .device_.getInfo<CL_DEVICE_GLOBAL_MEM_SIZE>()
+               .device_[0]
+               .getInfo<CL_DEVICE_GLOBAL_MEM_SIZE>()
         << "\n";
     msg << "\t\tDevice Max Clock Frequency: "
         << opencl_context_base::getInstance()
-               .device_.getInfo<CL_DEVICE_MAX_CLOCK_FREQUENCY>()
+               .device_[0]
+               .getInfo<CL_DEVICE_MAX_CLOCK_FREQUENCY>()
         << "\n";
     msg << "\t\tDevice Max Allocateable Memory: "
         << opencl_context_base::getInstance()
-               .device_.getInfo<CL_DEVICE_MAX_MEM_ALLOC_SIZE>()
+               .device_[0]
+               .getInfo<CL_DEVICE_MAX_MEM_ALLOC_SIZE>()
         << "\n";
     msg << "\t\tDevice Local Memory: "
         << opencl_context_base::getInstance()
-               .device_.getInfo<CL_DEVICE_LOCAL_MEM_SIZE>()
+               .device_[0]
+               .getInfo<CL_DEVICE_LOCAL_MEM_SIZE>()
         << "\n";
     msg << "\t\tDevice Available: "
         << opencl_context_base::getInstance()
-               .device_.getInfo<CL_DEVICE_AVAILABLE>()
+               .device_[0]
+               .getInfo<CL_DEVICE_AVAILABLE>()
         << "\n";
     return msg.str();
   }
 
-  /**
+  /** \ingroup opencl_context_group
    * Returns the description of the OpenCL platforms and devices that
    * are available. Devices will be an OpenCL and Platforms are a specific
-   * OpenCL implimenation such as AMD SDK's or Nvidia's OpenCL implimentation.
+   * OpenCL implementation such as AMD SDK's or Nvidia's OpenCL implementation.
    */
   inline std::string capabilities() const {
     std::vector<cl::Platform> all_platforms;
@@ -287,7 +345,7 @@ class opencl_context {
     return msg.str();
   }
 
-  /**
+  /** \ingroup opencl_context_group
    * Returns the reference to the OpenCL context. The OpenCL context manages
    * objects such as the device, memory, command queue, program, and kernel
    * objects. For stan, there should only be one context, queue, device, and
@@ -296,7 +354,7 @@ class opencl_context {
   inline cl::Context& context() {
     return opencl_context_base::getInstance().context_;
   }
-  /**
+  /** \ingroup opencl_context_group
    * Returns the reference to the active OpenCL command queue for the device.
    * One command queue will exist per device where
    * kernels are placed on the command queue and by default executed in order.
@@ -304,42 +362,74 @@ class opencl_context {
   inline cl::CommandQueue& queue() {
     return opencl_context_base::getInstance().command_queue_;
   }
-  /**
+  /** \ingroup opencl_context_group
    * Returns a copy of the map of kernel defines
    */
-  inline opencl_context_base::map_base_opts base_opts() {
+  inline opencl_context_base::map_base_opts& base_opts() {
     return opencl_context_base::getInstance().base_opts_;
   }
-  /**
+  /** \ingroup opencl_context_group
    * Returns the maximum thread block size defined by
    * CL_DEVICE_MAX_WORK_GROUP_SIZE for the device in the context. This is the
    * maximum product of thread block dimensions for a particular device. IE a
-   * max workgoup of 256 would allow thread blocks of sizes (16,16), (128,2),
+   * max workgroup of 256 would allow thread blocks of sizes (16,16), (128,2),
    * (8, 32), etc.
    */
   inline int max_thread_block_size() {
     return opencl_context_base::getInstance().max_thread_block_size_;
   }
 
-  /**
+  /** \ingroup opencl_context_group
    * Returns the thread block size for the Cholesky Decompositions L_11.
    */
   inline opencl_context_base::tuning_struct& tuning_opts() {
     return opencl_context_base::getInstance().tuning_opts_;
   }
 
-  /**
+  /** \ingroup opencl_context_group
    * Returns a vector containing the OpenCL device used to create the context
    */
-  inline std::vector<cl::Device> device() {
-    return {opencl_context_base::getInstance().device_};
+  inline std::vector<cl::Device>& device() {
+    return opencl_context_base::getInstance().device_;
+  }
+
+  /** \ingroup opencl_context_group
+   * Returns a vector containing the OpenCL platform used to create the context
+   */
+  inline std::vector<cl::Platform>& platform() {
+    return opencl_context_base::getInstance().platform_;
+  }
+  /** \ingroup opencl_context_group
+   * Return a bool representing whether the write to the OpenCL device are
+   * blocking
+   */
+  inline bool& in_order() {
+    return opencl_context_base::getInstance().in_order_;
   }
 
   /**
-   * Returns a vector containing the OpenCL platform used to create the context
+   * Selects the OpenCL device to use from now on.
+   *
+   * No `matrix_cl` objects or created before this call should be used after the
+   * call (including any that might be on the AD stack)!
+   * @param platform_id id of the platform the device is part of
+   * @param instance_id if of the device
    */
-  inline std::vector<cl::Platform> platform() {
-    return {opencl_context_base::getInstance().platform_};
+  inline void select_device(int platform_id, int instance_id) {
+    for (cl::Kernel* cache : kernel_caches_) {
+      *cache = cl::Kernel();
+    }
+    kernel_caches_.clear();
+    opencl_context_base::select_device(platform_id, instance_id);
+  }
+
+  /**
+   * Registers a cached kernel. The cache will be invalidated if a new OpenCL
+   * device is selected.
+   * @param cache pointer to a cached kernel.
+   */
+  inline void register_kernel_cache(cl::Kernel* cache) {
+    kernel_caches_.push_back(cache);
   }
 };
 static opencl_context opencl_context;

@@ -17,6 +17,8 @@
 #include <stan/math/fwd/core/operator_unary_minus.hpp>
 #include <stan/math/fwd/core/operator_unary_not.hpp>
 #include <stan/math/fwd/core/operator_unary_plus.hpp>
+#include <stan/math/fwd/core/std_complex.hpp>
 #include <stan/math/fwd/core/std_numeric_limits.hpp>
+#include <stan/math/fwd/core/std_iterator_traits.hpp>
 
 #endif

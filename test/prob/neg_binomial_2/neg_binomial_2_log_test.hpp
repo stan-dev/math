@@ -1,5 +1,5 @@
 // Arguments: Ints, Doubles, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -48,7 +48,7 @@ class AgradDistributionsNegBinomial2Log : public AgradDistributionTest {
 
   template <class T_n, class T_log_location, class T_inv_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_log_location, T_inv_scale>::type log_prob(
+  stan::return_type_t<T_log_location, T_inv_scale> log_prob(
       const T_n& n, const T_log_location& eta, const T_inv_scale& phi,
       const T3&, const T4&, const T5&) {
     return stan::math::neg_binomial_2_log_log(n, eta, phi);
@@ -56,7 +56,7 @@ class AgradDistributionsNegBinomial2Log : public AgradDistributionTest {
 
   template <bool propto, class T_n, class T_log_location, class T_inv_scale,
             typename T3, typename T4, typename T5>
-  typename stan::return_type<T_log_location, T_inv_scale>::type log_prob(
+  stan::return_type_t<T_log_location, T_inv_scale> log_prob(
       const T_n& n, const T_log_location& eta, const T_inv_scale& phi,
       const T3&, const T4&, const T5&) {
     return stan::math::neg_binomial_2_log_log<propto>(n, eta, phi);
@@ -64,9 +64,9 @@ class AgradDistributionsNegBinomial2Log : public AgradDistributionTest {
 
   template <class T_n, class T_log_location, class T_inv_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_log_location, T_inv_scale>::type
-  log_prob_function(const T_n& n, const T_log_location& eta,
-                    const T_inv_scale& phi, const T3&, const T4&, const T5&) {
+  stan::return_type_t<T_log_location, T_inv_scale> log_prob_function(
+      const T_n& n, const T_log_location& eta, const T_inv_scale& phi,
+      const T3&, const T4&, const T5&) {
     using stan::math::binomial_coefficient_log;
     using stan::math::log_sum_exp;
     using stan::math::multiply_log;

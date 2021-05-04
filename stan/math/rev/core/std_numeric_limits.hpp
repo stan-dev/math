@@ -10,57 +10,73 @@ namespace std {
  * Specialization of numeric limits for var objects.
  *
  * This implementation of std::numeric_limits<stan::math::var>
- * is used to treat var objects like doubles.
+ * is used to treat var objects like value_types.
  */
-template <>
-struct numeric_limits<stan::math::var> {
-  static const bool is_specialized = true;
-  static stan::math::var min() { return numeric_limits<double>::min(); }
-  static stan::math::var max() { return numeric_limits<double>::max(); }
-  static const int digits = numeric_limits<double>::digits;
-  static const int digits10 = numeric_limits<double>::digits10;
-  static const bool is_signed = numeric_limits<double>::is_signed;
-  static const bool is_integer = numeric_limits<double>::is_integer;
-  static const bool is_exact = numeric_limits<double>::is_exact;
-  static const int radix = numeric_limits<double>::radix;
-  static stan::math::var epsilon() { return numeric_limits<double>::epsilon(); }
-  static stan::math::var round_error() {
-    return numeric_limits<double>::round_error();
+template <typename T>
+struct numeric_limits<stan::math::var_value<T>> {
+  typedef stan::promote_args_t<T> value_type;
+  static constexpr bool is_specialized = true;
+  static constexpr stan::math::var_value<T> min() noexcept {
+    return numeric_limits<value_type>::min();
+  }
+  static constexpr stan::math::var_value<T> max() noexcept {
+    return numeric_limits<value_type>::max();
+  }
+  static constexpr int digits = numeric_limits<value_type>::digits;
+  static constexpr int digits10 = numeric_limits<value_type>::digits10;
+  static constexpr int max_digits10 = numeric_limits<value_type>::max_digits10;
+  static constexpr bool is_signed = numeric_limits<value_type>::is_signed;
+  static constexpr bool is_integer = numeric_limits<value_type>::is_integer;
+  static constexpr bool is_exact = numeric_limits<value_type>::is_exact;
+  static constexpr int radix = numeric_limits<value_type>::radix;
+  static constexpr stan::math::var_value<T> epsilon() noexcept {
+    return numeric_limits<value_type>::epsilon();
+  }
+  static constexpr stan::math::var_value<T> round_error() noexcept {
+    return numeric_limits<value_type>::round_error();
+  }
+  static constexpr T lowest() noexcept {
+    return numeric_limits<value_type>::lowest();
+  };
+
+  static constexpr int min_exponent = numeric_limits<value_type>::min_exponent;
+  static constexpr int min_exponent10
+      = numeric_limits<value_type>::min_exponent10;
+  static constexpr int max_exponent = numeric_limits<value_type>::max_exponent;
+  static constexpr int max_exponent10
+      = numeric_limits<value_type>::max_exponent10;
+
+  static constexpr bool has_infinity = numeric_limits<value_type>::has_infinity;
+  static constexpr bool has_quiet_NaN
+      = numeric_limits<value_type>::has_quiet_NaN;
+  static constexpr bool has_signaling_NaN
+      = numeric_limits<value_type>::has_signaling_NaN;
+  static constexpr float_denorm_style has_denorm
+      = numeric_limits<value_type>::has_denorm;
+  static constexpr bool has_denorm_loss
+      = numeric_limits<value_type>::has_denorm_loss;
+  static constexpr stan::math::var_value<T> infinity() noexcept {
+    return numeric_limits<value_type>::infinity();
+  }
+  static constexpr stan::math::var_value<T> quiet_NaN() noexcept {
+    return numeric_limits<value_type>::quiet_NaN();
+  }
+  static constexpr stan::math::var_value<T> signaling_NaN() noexcept {
+    return numeric_limits<value_type>::signaling_NaN();
+  }
+  static constexpr stan::math::var_value<T> denorm_min() noexcept {
+    return numeric_limits<value_type>::denorm_min();
   }
 
-  static const int min_exponent = numeric_limits<double>::min_exponent;
-  static const int min_exponent10 = numeric_limits<double>::min_exponent10;
-  static const int max_exponent = numeric_limits<double>::max_exponent;
-  static const int max_exponent10 = numeric_limits<double>::max_exponent10;
+  static constexpr bool is_iec559 = numeric_limits<value_type>::is_iec559;
+  static constexpr bool is_bounded = numeric_limits<value_type>::is_bounded;
+  static constexpr bool is_modulo = numeric_limits<value_type>::is_modulo;
 
-  static const bool has_infinity = numeric_limits<double>::has_infinity;
-  static const bool has_quiet_NaN = numeric_limits<double>::has_quiet_NaN;
-  static const bool has_signaling_NaN
-      = numeric_limits<double>::has_signaling_NaN;
-  static const float_denorm_style has_denorm
-      = numeric_limits<double>::has_denorm;
-  static const bool has_denorm_loss = numeric_limits<double>::has_denorm_loss;
-  static stan::math::var infinity() {
-    return numeric_limits<double>::infinity();
-  }
-  static stan::math::var quiet_NaN() {
-    return numeric_limits<double>::quiet_NaN();
-  }
-  static stan::math::var signaling_NaN() {
-    return numeric_limits<double>::signaling_NaN();
-  }
-  static stan::math::var denorm_min() {
-    return numeric_limits<double>::denorm_min();
-  }
-
-  static const bool is_iec559 = numeric_limits<double>::is_iec559;
-  static const bool is_bounded = numeric_limits<double>::is_bounded;
-  static const bool is_modulo = numeric_limits<double>::is_modulo;
-
-  static const bool traps = numeric_limits<double>::traps;
-  static const bool tinyness_before = numeric_limits<double>::tinyness_before;
-  static const float_round_style round_style
-      = numeric_limits<double>::round_style;
+  static constexpr bool traps = numeric_limits<value_type>::traps;
+  static constexpr bool tinyness_before
+      = numeric_limits<value_type>::tinyness_before;
+  static constexpr float_round_style round_style
+      = numeric_limits<value_type>::round_style;
 };
 
 }  // namespace std

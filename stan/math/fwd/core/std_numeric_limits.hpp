@@ -27,7 +27,7 @@ struct numeric_limits<stan::math::fvar<T> > {
   static constexpr stan::math::fvar<T> round_error() {
     return numeric_limits<double>::round_error();
   }
-
+  static constexpr int max_digits10{numeric_limits<T>::max_digits10};
   static const int min_exponent;
   static const int min_exponent10;
   static const int max_exponent;

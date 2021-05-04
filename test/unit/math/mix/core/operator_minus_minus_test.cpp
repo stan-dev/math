@@ -1,26 +1,40 @@
-#include <test/unit/math/mix/mat/util/autodiff_tester.hpp>
+#include <test/unit/math/test_ad.hpp>
 
-struct op_minus_minus_pre_f {
-  template <typename T1, typename T2>
-  static typename boost::math::tools::promote_args<T1, T2>::type apply(
-      const T1& x1, const T2& x2) {
-    typename boost::math::tools::promote_args<T1, T2>::type y = x1;
-    return --y;
-  }
-};
-
-struct op_minus_minus_post_f {
-  template <typename T1, typename T2>
-  static typename boost::math::tools::promote_args<T1, T2>::type apply(
-      const T1& x1, const T2& x2) {
-    typename boost::math::tools::promote_args<T1, T2>::type y = x1;
-    return y--;
-  }
-};
-
-TEST(mathMixCore, operatorMinusMinusPre) {
-  stan::math::test::test_common_args<op_minus_minus_pre_f, false>();
+TEST(mathMixCore, operatorMinusMinusPre1) {
+  // this functor tests that y is right value after operator
+  auto f = [](const auto& x1) {
+    auto y = x1;
+    auto z = --y;
+    return y;
+  };
+  stan::test::expect_common_unary(f);
 }
-TEST(mathMixCore, operatorMinusMinusPost) {
-  stan::math::test::test_common_args<op_minus_minus_post_f, false>();
+TEST(mathMixCore, operatorMinusMinusPre2) {
+  // this functor tests that value of expression has right value
+  auto f = [](const auto& x1) {
+    auto y = x1;
+    auto z = --y;
+    return z;
+  };
+  stan::test::expect_common_unary(f);
+}
+
+TEST(mathMixCore, operatorMinusMinusPost1) {
+  // this functor tests that y is right value after operator
+  auto f = [](const auto& x1) {
+    auto y = x1;
+    auto z = y--;
+    return y;
+  };
+  stan::test::expect_common_unary(f);
+}
+
+TEST(mathMixCore, operatorMinusMinusPost2) {
+  // this functor tests that value of expression has right value
+  auto f = [](const auto& x1) {
+    auto y = x1;
+    auto z = y--;
+    return z;
+  };
+  stan::test::expect_common_unary(f);
 }

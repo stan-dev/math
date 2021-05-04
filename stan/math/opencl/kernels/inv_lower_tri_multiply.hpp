@@ -3,14 +3,16 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_cl.hpp>
+#include <stan/math/opencl/buffer_types.hpp>
+#include <string>
 
 namespace stan {
 namespace math {
 namespace opencl_kernels {
 // \cond
-static const char* inv_lower_tri_multiply_kernel_code = STRINGIFY(
+static const std::string inv_lower_tri_multiply_kernel_code = STRINGIFY(
     // \endcond
-    /**
+    /** \ingroup opencl_kernels
      * Calculates B = C * A. C is an inverse matrix and A is lower triangular.
      *
      * This kernel is used in the final iteration of the batched lower
@@ -24,7 +26,7 @@ static const char* inv_lower_tri_multiply_kernel_code = STRINGIFY(
      * upper left lower and A3 is the original lower triangulars lower left
      * rectangular. This kernel takes the output from
      * <code>neg_rect_lower_tri_multiply</code> and applies
-     * the submatrix multiplcation to get the final output for C3.
+     * the submatrix multiplication to get the final output for C3.
      * ![Inverse Calculation](https://goo.gl/6jBjEG)
      *
      * Graphically, this kernel calculates the C2 * A3.
@@ -38,7 +40,7 @@ static const char* inv_lower_tri_multiply_kernel_code = STRINGIFY(
      * @param rows The number of rows in a single matrix of the batch
      * @note Code is a <code>const char*</code> held in
      * <code>inv_lower_tri_multiply_kernel_code.</code>
-     *  Used in math/opencl/lower_tri_inverse.hpp.
+     *  Used in math/opencl/tri_inverse.hpp.
      *  This kernel uses the helper macros available in helpers.cl.
      */
     __kernel void inv_lower_tri_multiply(__global double* A,
@@ -121,13 +123,13 @@ static const char* inv_lower_tri_multiply_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/**
+/** \ingroup opencl_kernels
  * See the docs for \link kernels/inv_lower_tri_multiply.hpp add() \endlink
  */
-const local_range_kernel<cl::Buffer, cl::Buffer, int, int>
-    inv_lower_tri_multiply("inv_lower_tri_multiply",
-                           inv_lower_tri_multiply_kernel_code,
-                           {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 8}});
+const kernel_cl<in_buffer, out_buffer, int, int> inv_lower_tri_multiply(
+    "inv_lower_tri_multiply",
+    {thread_block_helpers, inv_lower_tri_multiply_kernel_code},
+    {{"THREAD_BLOCK_SIZE", 32}, {"WORK_PER_THREAD", 8}});
 
 }  // namespace opencl_kernels
 }  // namespace math

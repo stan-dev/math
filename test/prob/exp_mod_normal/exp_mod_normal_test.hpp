@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -73,7 +73,7 @@ class AgradDistributionExpModNormal : public AgradDistributionTest {
 
   template <typename T_y, typename T_loc, typename T_scale,
             typename T_inv_scale, typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale, T_inv_scale>::type log_prob(
+  stan::return_type_t<T_y, T_loc, T_scale, T_inv_scale> log_prob(
       const T_y& y, const T_loc& mu, const T_scale& sigma,
       const T_inv_scale& lambda, const T4&, const T5&) {
     return stan::math::exp_mod_normal_log(y, mu, sigma, lambda);
@@ -81,7 +81,7 @@ class AgradDistributionExpModNormal : public AgradDistributionTest {
 
   template <bool propto, typename T_y, typename T_loc, typename T_scale,
             typename T_inv_scale, typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale, T_inv_scale>::type log_prob(
+  stan::return_type_t<T_y, T_loc, T_scale, T_inv_scale> log_prob(
       const T_y& y, const T_loc& mu, const T_scale& sigma,
       const T_inv_scale& lambda, const T4&, const T5&) {
     return stan::math::exp_mod_normal_log<propto>(y, mu, sigma, lambda);
@@ -89,9 +89,9 @@ class AgradDistributionExpModNormal : public AgradDistributionTest {
 
   template <typename T_y, typename T_loc, typename T_scale,
             typename T_inv_scale, typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale, T_inv_scale>::type
-  log_prob_function(const T_y& y, const T_loc& mu, const T_scale& sigma,
-                    const T_inv_scale& lambda, const T4&, const T5&) {
+  stan::return_type_t<T_y, T_loc, T_scale, T_inv_scale> log_prob_function(
+      const T_y& y, const T_loc& mu, const T_scale& sigma,
+      const T_inv_scale& lambda, const T4&, const T5&) {
     return log(2) + log(lambda)
            + lambda * (mu + 0.5 * lambda * sigma * sigma - y)
            + log(erfc((mu + lambda * sigma * sigma - y) / (sqrt(2.0) * sigma)));

@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -63,15 +63,17 @@ class AgradCcdfLogWeibull : public AgradCcdfLogTest {
 
   template <typename T_y, typename T_shape, typename T_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_shape, T_scale>::type ccdf_log(
-      const T_y& y, const T_shape& alpha, const T_scale& sigma, const T3&,
-      const T4&, const T5&) {
+  stan::return_type_t<T_y, T_shape, T_scale> ccdf_log(const T_y& y,
+                                                      const T_shape& alpha,
+                                                      const T_scale& sigma,
+                                                      const T3&, const T4&,
+                                                      const T5&) {
     return stan::math::weibull_ccdf_log(y, alpha, sigma);
   }
 
   template <typename T_y, typename T_shape, typename T_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_shape, T_scale>::type ccdf_log_function(
+  stan::return_type_t<T_y, T_shape, T_scale> ccdf_log_function(
       const T_y& y, const T_shape& alpha, const T_scale& sigma, const T3&,
       const T4&, const T5&) {
     using std::log;

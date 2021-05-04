@@ -96,7 +96,7 @@ git commit -m "upgrading to sundials v${sundials_version}; removing old sundials
 sed -i -e "s|lib/sundials_${sundials_old_version}|lib/sundials_${sundials_version}|g" ../README.md ../make/*
 sed -i -e "s|SUNDIALS (version ${sundials_old_version})|SUNDIALS (version ${sundials_version})|g" ../README.md
 rm -f ../README.md*-e ../make/*-e
-git add ../README.md ../make/*
+git add -u ../README.md ../make/*
 git commit -m "upgrading to sundials v${sundials_version}; modifying with new version number"
 
 # 3. Unpack the new Sundials version.
@@ -114,12 +114,16 @@ cd build
 cmake ..
 cd ..
 
-git rm -rf INSTALL_GUIDE.pdf config/ doc/ examples/ test/ */cvode */ida */arkode */kinsol
+git rm -rf cmake/ doc/ examples/ test/ */cvode */ida */arkode src/sundials/sundials_xbraid.c
 find . -name CMakeLists.txt -exec git rm {} \;
 git commit -m "upgrading to sundials v${sundials_version}; pruning files"
 
 # 5. Add cmake-generated config files to Sundials.
 cp build/include/sundials/*config.h include/sundials/
+cp build/include/sundials/*export.h include/sundials/
+# ... and  further files needed for compilation
+cp -v ./src/sundials/sundials_debug.h include/
+
 rm -rf build
 git add include
 git commit -m "upgrading to sundials v${sundials_version}; adding config files"
@@ -146,10 +150,6 @@ find src -name "*.c_orig" -exec rm {} \;
 git add src include/stan_sundials_printf_override.hpp
 git commit -m "upgrading to sundials v${sundials_version}; removing printf and fprintf for CRAN"
 
-# 7. Get rid of troublesome c files not needed
-git rm src/sundials/sundials_spfgmr.c src/sundials/sundials_spgmr.c
-git commit -m "upgrading to sundials v${sundials_version}; removing troublesome and not needed sundials c modules"
-
 cat <<EOF
 
 
@@ -160,6 +160,6 @@ cat <<EOF
 
     Please check the upgrade worked by running a test with CVODES linked.
     Example (from Math home directory):
-      ./runTests.py test/unit/math/rev/mat/functor/cvodes_ode_data_prim_test.cpp
+      ./runTests.py test/unit/math/rev/functor/ode_bdf_rev_test.cpp
 
 EOF

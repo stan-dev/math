@@ -1,40 +1,33 @@
 #ifndef STAN_MATH_REV_CORE_OPERATOR_MULTIPLICATION_HPP
 #define STAN_MATH_REV_CORE_OPERATOR_MULTIPLICATION_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/vv_vari.hpp>
 #include <stan/math/rev/core/vd_vari.hpp>
-#include <stan/math/prim/scal/fun/is_nan.hpp>
-#include <limits>
+#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/is_any_nan.hpp>
+#include <stan/math/prim/fun/isinf.hpp>
+#include <stan/math/prim/fun/isnan.hpp>
 
 namespace stan {
 namespace math {
 
 namespace internal {
-class multiply_vv_vari : public op_vv_vari {
+class multiply_vv_vari final : public op_vv_vari {
  public:
   multiply_vv_vari(vari* avi, vari* bvi)
       : op_vv_vari(avi->val_ * bvi->val_, avi, bvi) {}
   void chain() {
-    if (unlikely(is_nan(avi_->val_) || is_nan(bvi_->val_))) {
-      avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
-      bvi_->adj_ = std::numeric_limits<double>::quiet_NaN();
-    } else {
-      avi_->adj_ += bvi_->val_ * adj_;
-      bvi_->adj_ += avi_->val_ * adj_;
-    }
+    avi_->adj_ += bvi_->val_ * adj_;
+    bvi_->adj_ += avi_->val_ * adj_;
   }
 };
 
-class multiply_vd_vari : public op_vd_vari {
+class multiply_vd_vari final : public op_vd_vari {
  public:
   multiply_vd_vari(vari* avi, double b) : op_vd_vari(avi->val_ * b, avi, b) {}
-  void chain() {
-    if (unlikely(is_nan(avi_->val_) || is_nan(bd_)))
-      avi_->adj_ = std::numeric_limits<double>::quiet_NaN();
-    else
-      avi_->adj_ += adj_ * bd_;
-  }
+  void chain() { avi_->adj_ += adj_ * bd_; }
 };
 }  // namespace internal
 
@@ -76,7 +69,7 @@ class multiply_vd_vari : public op_vd_vari {
  * @return Variable result of multiplying operands.
  */
 inline var operator*(const var& a, const var& b) {
-  return var(new internal::multiply_vv_vari(a.vi_, b.vi_));
+  return {new internal::multiply_vv_vari(a.vi_, b.vi_)};
 }
 
 /**
@@ -86,14 +79,17 @@ inline var operator*(const var& a, const var& b) {
  *
  * \f$\frac{\partial}{\partial x} (x * c) = c\f$, and
  *
+ * @tparam Arith An arithmetic type
  * @param a Variable operand.
  * @param b Scalar operand.
  * @return Variable result of multiplying operands.
  */
-inline var operator*(const var& a, double b) {
-  if (b == 1.0)
+template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
+inline var operator*(const var& a, Arith b) {
+  if (b == 1.0) {
     return a;
-  return var(new internal::multiply_vd_vari(a.vi_, b));
+  }
+  return {new internal::multiply_vd_vari(a.vi_, b)};
 }
 
 /**
@@ -103,14 +99,17 @@ inline var operator*(const var& a, double b) {
  *
  * \f$\frac{\partial}{\partial y} (c * y) = c\f$.
  *
+ * @tparam Arith An arithmetic type
  * @param a Scalar operand.
  * @param b Variable operand.
  * @return Variable result of multiplying the operands.
  */
-inline var operator*(double a, const var& b) {
-  if (a == 1.0)
+template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
+inline var operator*(Arith a, const var& b) {
+  if (a == 1.0) {
     return b;
-  return var(new internal::multiply_vd_vari(b.vi_, a));  // by symmetry
+  }
+  return {new internal::multiply_vd_vari(b.vi_, a)};  // by symmetry
 }
 
 }  // namespace math

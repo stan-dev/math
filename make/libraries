@@ -1,14 +1,21 @@
+# used to create breaks in error messages
+define n
+
+
+endef
+
 ###############################################################################
 # Library locations
 
 MATH ?=
-BOOST ?= $(MATH)lib/boost_1.69.0
-EIGEN ?= $(MATH)lib/eigen_3.3.3
-OPENCL ?= $(MATH)lib/opencl_1.2.8
-SUNDIALS ?= $(MATH)lib/sundials_4.1.0
-
-GTEST ?= $(MATH)lib/gtest_1.8.1
-CPPLINT ?= $(MATH)lib/cpplint_4.45
+BOOST ?= $(MATH)lib/boost_1.75.0
+EIGEN ?= $(MATH)lib/eigen_3.3.9
+OPENCL ?= $(MATH)lib/opencl_2.2.0
+TBB ?= $(MATH)lib/tbb_2020.3
+SUNDIALS ?= $(MATH)lib/sundials_5.7.0
+BENCHMARK ?= $(MATH)lib/benchmark_1.5.1
+GTEST ?= $(BENCHMARK)/googletest/googletest
+CPPLINT ?= $(MATH)lib/cpplint_1.4.5
 
 ################################################################################
 # SUNDIALS build rules
@@ -37,12 +44,22 @@ SUNDIALS_IDAS := $(patsubst %.c,%.o,\
   $(wildcard $(SUNDIALS)/src/sunnonlinsol/newton/[^f]*.c) \
   $(wildcard $(SUNDIALS)/src/sunnonlinsol/fixedpoint/[^f]*.c))
 
+SUNDIALS_KINSOL := $(patsubst %.c,%.o, \
+  $(wildcard $(SUNDIALS)/src/kinsol/*.c) \
+  $(wildcard $(SUNDIALS)/src/sundials/*.c) \
+  $(wildcard $(SUNDIALS)/src/sunmatrix/band/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunmatrix/dense/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunlinsol/band/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunlinsol/dense/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunnonlinsol/newton/[^f]*.c) \
+  $(wildcard $(SUNDIALS)/src/sunnonlinsol/fixedpoint/[^f]*.c))
+
 SUNDIALS_NVECSERIAL := $(patsubst %.c,%.o,\
   $(addprefix $(SUNDIALS)/src/, nvector/serial/nvector_serial.c sundials/sundials_math.c))
 
-$(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_NVECSERIAL)) : CXXFLAGS = $(CXXFLAGS_SUNDIALS) $(CXXFLAGS_OS) -O$(O) $(INC_SUNDIALS)
-$(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_NVECSERIAL)) : CPPFLAGS = $(CPPFLAGS_SUNDIALS) $(CPPFLAGS_OS)
-$(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_NVECSERIAL)) : %.o : %.c
+$(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_NVECSERIAL)) : CXXFLAGS = $(CXXFLAGS_SUNDIALS) $(CXXFLAGS_OS) $(CXXFLAGS_OPTIM_SUNDIALS) -O$(O) $(INC_SUNDIALS)
+$(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_NVECSERIAL)) : CPPFLAGS = $(CPPFLAGS_SUNDIALS) $(CPPFLAGS_OS) $(CPPFLAGS_OPTIM_SUNDIALS) -O$(O)
+$(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_NVECSERIAL)) : %.o : %.c
 	@mkdir -p $(dir $@)
 	$(COMPILE.cpp) -x c -include $(SUNDIALS)/include/stan_sundials_printf_override.hpp $< $(OUTPUT_OPTION)
 
@@ -54,19 +71,124 @@ $(SUNDIALS)/lib/libsundials_idas.a: $(SUNDIALS_IDAS)
 	@mkdir -p $(dir $@)
 	$(AR) -rs $@ $^
 
+$(SUNDIALS)/lib/libsundials_kinsol.a: $(SUNDIALS_KINSOL)
+	@mkdir -p $(dir $@)
+	$(AR) -rs $@ $^
+
 $(SUNDIALS)/lib/libsundials_nvecserial.a: $(SUNDIALS_NVECSERIAL)
 	@mkdir -p $(dir $@)
 	$(AR) -rs $@ $^
 
-LIBSUNDIALS := $(SUNDIALS)/lib/libsundials_nvecserial.a $(SUNDIALS)/lib/libsundials_cvodes.a $(SUNDIALS)/lib/libsundials_idas.a
+LIBSUNDIALS := $(SUNDIALS)/lib/libsundials_nvecserial.a $(SUNDIALS)/lib/libsundials_cvodes.a $(SUNDIALS)/lib/libsundials_idas.a $(SUNDIALS)/lib/libsundials_kinsol.a
 
-STAN_SUNDIALS_HEADERS := $(shell find $(MATH)stan -name *cvodes*.hpp) $(shell find $(MATH)stan -name *idas*.hpp)
+STAN_SUNDIALS_HEADERS :=  $(call findfiles,$(MATH)stan,*cvodes*.hpp) $(call findfiles,$(MATH)stan,*idas*.hpp) $(call findfiles,$(MATH)stan,*kinsol*.hpp)
 $(STAN_SUNDIALS_HEADERS) : $(LIBSUNDIALS)
 
 clean-sundials:
 	@echo '  cleaning sundials targets'
-	$(RM) $(wildcard $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_NVECSERIAL) $(LIBSUNDIALS)))
+	$(RM) $(wildcard $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_NVECSERIAL) $(LIBSUNDIALS)))
 
+
+############################################################
+# TBB build rules
+#
+# TBB_CXX_TYPE can be icl, icc, gcc or clang; See tbb documentation for more info.
+# For gcc and clang this is derived from stan makefile defaults automatically.
+#
+# TBB_CC is the C compiler to be used, which is by default derived here from the
+# defined C++ compiler type. In case neither clang or gcc is used, then the CC
+# variable is used if defined.
+#
+# Note that the tbb targets must not be build in parallel (so no concurrent
+# build of tbb and tbbmalloc, for example). This is ensured here with proper
+# dependencies.
+#
+# On windows the mingw32-make (part of RTools, for example) is required to build
+# the TBB as this make has proper POSIX extensions needed by the used downstream
+# TBB makefiles.
+
+ifndef TBB_LIB
+
+ifeq ($(CXX_TYPE),mingw32-gcc)
+  TBB_CXX_TYPE ?= gcc
+endif
+ifeq ($(CXX_TYPE),other)
+  ifeq (,$(TBB_CXX_TYPE))
+    $(error "Need to set TBB_CXX_TYPE for non-standard compiler other than gcc or clang.")
+  endif
+endif
+TBB_CXX_TYPE ?= $(CXX_TYPE)
+
+# Set c compiler used for the TBB
+ifeq (clang,$(CXX_TYPE))
+  TBB_CC ?= $(subst clang++,clang,$(CXX))
+  TBB_CXXFLAGS ?= -Wno-unknown-warning-option -Wno-deprecated-copy $(CXXFLAGS_OPTIM_TBB) $(CXXFLAGS_FLTO_TBB)
+endif
+ifeq (gcc,$(CXX_TYPE))
+  TBB_CC ?= $(subst g++,gcc,$(CXX))
+  TBB_CXXFLAGS ?= -Wno-unknown-warning-option -Wno-deprecated-copy -Wno-missing-attributes -Wno-class-memaccess -Wno-sized-deallocation $(CXXFLAGS_OPTIM_TBB) $(CXXFLAGS_FLTO_TBB)
+endif
+TBB_CC ?= $(CC)
+
+ifeq (,$(TBB_CC))
+  $(error "Need to set TBB_CC to C compiler command for non-standard compiler other than gcc or clang.")
+endif
+
+# Set shell in order to use string matching for tbb-make-check
+ifeq (Linux, $(OS))
+  SHELL = /usr/bin/env bash
+endif
+
+# If brackets or spaces are found in MAKE on Windows
+# we error, as those characters cause issues when building.
+ifeq (Windows_NT, $(OS))
+MAKE_ESCAPED := ${subst ),,${subst (,,$(lastword $(MAKE))}}
+else
+MAKE_ESCAPED := $(MAKE)
+endif
+
+$(TBB_BIN)/tbb-make-check:
+ifeq ($(OS),Windows_NT)
+ifneq ($(MAKE),$(MAKE_ESCAPED))
+$(error '$nError:$n$nThe RTools toolchain is installed in a path with spaces or brackets.$nPlease reinstall the toolchain.$n$n')
+else
+	if ! [[ $(MAKE) =~ mingw32 ]]; then \
+		echo "ERROR: Please use mingw32-make on Windows to build the Intel TBB library."; \
+		echo "This is packaged with RTools, for example."; \
+		exit 1; \
+	fi
+endif
+endif
+	@mkdir -p $(TBB_BIN)
+	touch $(TBB_BIN)/tbb-make-check
+
+
+$(TBB_BIN)/tbb.def: $(TBB_BIN)/tbb-make-check $(TBB_BIN)/tbbmalloc.def
+	@mkdir -p $(TBB_BIN)
+	touch $(TBB_BIN)/version_$(notdir $(TBB))
+	tbb_root="$(TBB_RELATIVE_PATH)" CXX="$(CXX)" CC="$(TBB_CC)" LDFLAGS='$(LDFLAGS_TBB)' '$(MAKE)' -C "$(TBB_BIN)" -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbb" compiler=$(TBB_CXX_TYPE) cfg=release stdver=c++1y  CXXFLAGS="$(TBB_CXXFLAGS)"
+
+$(TBB_BIN)/tbbmalloc.def: $(TBB_BIN)/tbb-make-check
+	@mkdir -p $(TBB_BIN)
+	tbb_root="$(TBB_RELATIVE_PATH)" CXX="$(CXX)" CC="$(TBB_CC)" LDFLAGS='$(LDFLAGS_TBB)' '$(MAKE)' -C "$(TBB_BIN)" -r -f "$(TBB_ABSOLUTE_PATH)/build/Makefile.tbbmalloc" compiler=$(TBB_CXX_TYPE) cfg=release stdver=c++1y malloc CXXFLAGS="$(TBB_CXXFLAGS)"
+
+$(TBB_BIN)/libtbb.dylib: $(TBB_BIN)/tbb.def
+$(TBB_BIN)/libtbbmalloc.dylib: $(TBB_BIN)/tbbmalloc.def
+$(TBB_BIN)/libtbbmalloc_proxy.dylib: $(TBB_BIN)/tbbmalloc.def
+
+$(TBB_BIN)/libtbb.so.2: $(TBB_BIN)/tbb.def
+$(TBB_BIN)/libtbbmalloc.so.2: $(TBB_BIN)/tbbmalloc.def
+$(TBB_BIN)/libtbbmalloc_proxy.so.2: $(TBB_BIN)/tbbmalloc.def
+
+$(TBB_BIN)/tbb.dll: $(TBB_BIN)/tbb.def
+$(TBB_BIN)/tbbmalloc.dll: $(TBB_BIN)/tbbmalloc.def
+$(TBB_BIN)/tbbmalloc_proxy.dll: $(TBB_BIN)/tbbmalloc.def
+
+clean-tbb:
+	@echo '  cleaning Intel TBB targets'
+	$(RM) -rf $(TBB_BIN)
+
+endif
 
 ############################################################
 # MPI build rules
@@ -88,24 +210,24 @@ $(BOOST)/user-config.jam:
 	echo "#using mpi : /path/to/mpicxx ;" >> $(BOOST)/user-config.jam
 	echo "using mpi ;" >> $(BOOST)/user-config.jam
 
-$(BOOST)/stage/lib/mpi.so: $(BOOST)/user-config.jam
+$(BOOST)/stage/lib/libboost_serialization.so: $(BOOST)/stage/lib/libboost_mpi.so
+$(BOOST)/stage/lib/libboost_mpi.so: $(BOOST)/user-config.jam
 	@mkdir -p $(dir $@)
 	cd $(BOOST); ./bootstrap.sh
-	cd $(BOOST); ./b2 --user-config=user-config.jam --layout=system --with-mpi --with-serialization -j$(BOOST_PARALLEL_JOBS) variant=release link=shared threading=multi runtime-link=shared hardcode-dll-paths=true dll-path="$(BOOST_LIBRARY_ABSOLUTE_PATH)"
+	cd $(BOOST); ./b2 --user-config=user-config.jam --layout=system --with-mpi --with-serialization -j$(BOOST_PARALLEL_JOBS) variant=release link=shared threading=multi runtime-link=shared hardcode-dll-paths=true dll-path="$(BOOST_LIBRARY_ABSOLUTE_PATH)" cxxstd=11
 
-$(BOOST)/stage/lib/libboost_serialization.so: $(BOOST)/stage/lib/mpi.so
-$(BOOST)/stage/lib/libboost_mpi.so: $(BOOST)/stage/lib/mpi.so
-
-
-$(BOOST)/stage/lib/libboost_serialization.dylib: $(BOOST)/stage/lib/mpi.so
+$(BOOST)/stage/lib/libboost_serialization.dylib: $(BOOST)/stage/lib/libboost_mpi.dylib
+$(BOOST)/stage/lib/libboost_mpi.dylib: $(BOOST)/user-config.jam
+	@mkdir -p $(dir $@)
+	cd $(BOOST); ./bootstrap.sh
+	cd $(BOOST); ./b2 --user-config=user-config.jam --layout=system --with-mpi --with-serialization -j$(BOOST_PARALLEL_JOBS) variant=release link=shared threading=multi runtime-link=shared hardcode-dll-paths=true dll-path="$(BOOST_LIBRARY_ABSOLUTE_PATH)" cxxstd=11
 	install_name_tool -add_rpath "$(BOOST_LIBRARY_ABSOLUTE_PATH)" "$(BOOST)/stage/lib/libboost_serialization.dylib"
 	install_name_tool -id @rpath/libboost_serialization.dylib "$(BOOST)/stage/lib/libboost_serialization.dylib"
-$(BOOST)/stage/lib/libboost_mpi.dylib: $(BOOST)/stage/lib/mpi.so $(BOOST)/stage/lib/libboost_serialization.dylib
 	install_name_tool -add_rpath "$(BOOST_LIBRARY_ABSOLUTE_PATH)" "$(BOOST)/stage/lib/libboost_mpi.dylib"
 	install_name_tool -change libboost_serialization.dylib @rpath/libboost_serialization.dylib "$(BOOST)/stage/lib/libboost_mpi.dylib"
 	install_name_tool -id @rpath/libboost_mpi.dylib "$(BOOST)/stage/lib/libboost_mpi.dylib"
 
-MPI_TEMPLATE_INSTANTIATION_CPP := $(shell find $(MATH)stan -type f -name 'mpi_*_inst.cpp') $(shell find $(MATH)stan -type f -name 'mpi_*_def.cpp')
+MPI_TEMPLATE_INSTANTIATION_CPP := $(call findfiles,$(MATH)stan,mpi_*_inst.cpp) $(call findfiles,$(MATH)stan,mpi_*_def.cpp)
 MPI_TEMPLATE_INSTANTIATION := $(MPI_TEMPLATE_INSTANTIATION_CPP:%.cpp=%.o)
 
 $(MPI_TEMPLATE_INSTANTIATION) : CXXFLAGS += -fPIC
@@ -129,5 +251,5 @@ $(GTEST)/src/gtest-all.o: INC += $(INC_GTEST)
 ############################################################
 # Clean all libraries
 
-.PHONY: clean-libraries clean-sundials clean-mpi
-clean-libraries: clean-sundials clean-mpi
+.PHONY: clean-libraries clean-sundials clean-mpi clean-tbb
+clean-libraries: clean-sundials clean-mpi clean-tbb

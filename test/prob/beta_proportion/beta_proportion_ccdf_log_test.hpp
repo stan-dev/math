@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -41,6 +41,9 @@ class AgradCcdfLogBetaProportion : public AgradCcdfLogTest {
     value.push_back(0.0);
 
     index.push_back(1U);
+    value.push_back(1.0);
+
+    index.push_back(1U);
     value.push_back(numeric_limits<double>::infinity());
 
     // kappa
@@ -64,15 +67,17 @@ class AgradCcdfLogBetaProportion : public AgradCcdfLogTest {
 
   template <typename T_y, typename T_loc, typename T_prec, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_prec>::type ccdf_log(
-      const T_y& y, const T_loc& mu, const T_prec& kappa, const T3&, const T4&,
-      const T5&) {
+  stan::return_type_t<T_y, T_loc, T_prec> ccdf_log(const T_y& y,
+                                                   const T_loc& mu,
+                                                   const T_prec& kappa,
+                                                   const T3&, const T4&,
+                                                   const T5&) {
     return stan::math::beta_proportion_lccdf(y, mu, kappa);
   }
 
   template <typename T_y, typename T_loc, typename T_prec, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_prec>::type ccdf_log_function(
+  stan::return_type_t<T_y, T_loc, T_prec> ccdf_log_function(
       const T_y& y, const T_loc& mu, const T_prec& kappa, const T3&, const T4&,
       const T5&) {
     return stan::math::beta_proportion_lccdf(y, mu, kappa);

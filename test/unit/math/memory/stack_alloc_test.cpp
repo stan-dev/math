@@ -25,7 +25,7 @@ TEST(MemoryStackAlloc, allocArrayBigger) {
   stan::math::stack_alloc allocator;
   biggy* x = allocator.alloc_array<biggy>(N);
   for (size_t i = 0; i < N; ++i)
-    for (size_t k = 1; k < K; ++k)
+    for (size_t k = 0; k < K; ++k)
       x[i].r[k] = k * i;
   for (size_t i = 0; i < N; ++i)
     for (size_t k = 0; k < K; ++k)

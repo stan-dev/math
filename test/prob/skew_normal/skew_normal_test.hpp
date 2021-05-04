@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -70,7 +70,7 @@ class AgradDistributionSkewNormal : public AgradDistributionTest {
 
   template <typename T_y, typename T_loc, typename T_scale, typename T_shape,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale, T_shape>::type log_prob(
+  stan::return_type_t<T_y, T_loc, T_scale, T_shape> log_prob(
       const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha,
       const T4&, const T5&) {
     return stan::math::skew_normal_log(y, mu, sigma, alpha);
@@ -78,7 +78,7 @@ class AgradDistributionSkewNormal : public AgradDistributionTest {
 
   template <bool propto, typename T_y, typename T_loc, typename T_scale,
             typename T_shape, typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale, T_shape>::type log_prob(
+  stan::return_type_t<T_y, T_loc, T_scale, T_shape> log_prob(
       const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha,
       const T4&, const T5&) {
     return stan::math::skew_normal_log<propto>(y, mu, sigma, alpha);
@@ -86,9 +86,9 @@ class AgradDistributionSkewNormal : public AgradDistributionTest {
 
   template <typename T_y, typename T_loc, typename T_scale, typename T_shape,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale, T_shape>::type
-  log_prob_function(const T_y& y, const T_loc& mu, const T_scale& sigma,
-                    const T_shape& alpha, const T4&, const T5&) {
+  stan::return_type_t<T_y, T_loc, T_scale, T_shape> log_prob_function(
+      const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha,
+      const T4&, const T5&) {
     return -0.5 * log(2.0 * stan::math::pi()) - log(sigma)
            - (y - mu) / sigma * (y - mu) / sigma * 0.5
            + log(erfc(-alpha * (y - mu) / (sigma * std::sqrt(2.0))));

@@ -20,6 +20,10 @@ For new features there should be at least one test showing the expected behavior
 
 Are there any side effects that we should be aware of?
 
+## Release notes
+
+Replace this text with a short note on what will change if this pull request is merged in which case this will be included in the release notes.
+
 ## Checklist
 
 - [ ] Math issue #(issue number)
@@ -34,6 +38,7 @@ Are there any side effects that we should be aware of?
 
     - unit tests pass (to run, use: `./runTests.py test/unit`)
     - header checks pass, (`make test-headers`)
+    - dependencies checks pass, (`make test-math-dependencies`)
     - docs build, (`make doxygen`)
     - code passes the built in [C++ standards](https://github.com/stan-dev/stan/wiki/Code-Quality) checks (`make cpplint`)
 

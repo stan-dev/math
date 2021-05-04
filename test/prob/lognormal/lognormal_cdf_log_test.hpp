@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -61,15 +61,17 @@ class AgradCdfLogLognormal : public AgradCdfLogTest {
 
   template <typename T_y, typename T_loc, typename T_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale>::type cdf_log(
-      const T_y& y, const T_loc& mu, const T_scale& sigma, const T3&, const T4&,
-      const T5&) {
+  stan::return_type_t<T_y, T_loc, T_scale> cdf_log(const T_y& y,
+                                                   const T_loc& mu,
+                                                   const T_scale& sigma,
+                                                   const T3&, const T4&,
+                                                   const T5&) {
     return stan::math::lognormal_cdf_log(y, mu, sigma);
   }
 
   template <typename T_y, typename T_loc, typename T_scale, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_loc, T_scale>::type cdf_log_function(
+  stan::return_type_t<T_y, T_loc, T_scale> cdf_log_function(
       const T_y& y, const T_loc& mu, const T_scale& sigma, const T3&, const T4&,
       const T5&) {
     return log(0.5 * erfc(-(log(y) - mu) / (std::sqrt(2) * sigma)));

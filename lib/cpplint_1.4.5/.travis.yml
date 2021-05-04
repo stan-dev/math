@@ -1,0 +1,19 @@
+language: python
+
+python:
+  - "3.8"
+  - "3.7"
+  - "3.6"
+  - "3.5"
+  - "2.7"
+  - "pypy"
+  - "pypy3"
+
+install:
+  - pip install --upgrade pip
+  - pip install --upgrade setuptools
+  - pip install -e .[dev]
+  - pip install tox-travis
+
+script:
+  - tox

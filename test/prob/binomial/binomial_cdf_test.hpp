@@ -1,5 +1,5 @@
 // Arguments: Ints, Ints, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 #include <boost/math/special_functions/binomial.hpp>
 
 using stan::math::var;
@@ -37,27 +37,25 @@ class AgradCdfBinomial : public AgradCdfTest {
 
   template <typename T_n, typename T_N, typename T_prob, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_prob>::type cdf(const T_n& n, const T_N& N,
-                                               const T_prob& theta, const T3&,
-                                               const T4&, const T5&) {
+  stan::return_type_t<T_prob> cdf(const T_n& n, const T_N& N,
+                                  const T_prob& theta, const T3&, const T4&,
+                                  const T5&) {
     return stan::math::binomial_cdf(n, N, theta);
   }
 
   template <typename T_n, typename T_N, typename T_prob, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_prob>::type cdf_function(const T_n& n,
-                                                        const T_N& N,
-                                                        const T_prob& theta,
-                                                        const T3&, const T4&,
-                                                        const T5&) {
+  stan::return_type_t<T_prob> cdf_function(const T_n& n, const T_N& N,
+                                           const T_prob& theta, const T3&,
+                                           const T4&, const T5&) {
     using boost::math::binomial_coefficient;
     using std::exp;
     using std::log;
 
-    typename stan::return_type<T_prob>::type cdf(1);
+    stan::return_type_t<T_prob> cdf(0);
 
     for (int i = 0; i <= n; i++) {
-      cdf *= binomial_coefficient<double>(N, i)
+      cdf += binomial_coefficient<double>(N, i)
              * exp(i * log(theta) + (N - i) * log(1 - theta));
     }
 

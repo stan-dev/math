@@ -1,225 +1,637 @@
 #ifndef STAN_MATH_OPENCL_MATRIX_CL_HPP
 #define STAN_MATH_OPENCL_MATRIX_CL_HPP
 #ifdef STAN_OPENCL
+
+#include <stan/math/opencl/prim/size.hpp>
+#include <stan/math/opencl/err/check_opencl.hpp>
+#include <stan/math/prim/err/check_size_match.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
-#include <stan/math/opencl/kernel_cl.hpp>
-#include <stan/math/opencl/constants.hpp>
-#include <stan/math/prim/mat/fun/Eigen.hpp>
-#include <stan/math/prim/scal/err/check_size_match.hpp>
-#include <stan/math/prim/scal/err/domain_error.hpp>
-#include <stan/math/opencl/kernels/copy.hpp>
-#include <stan/math/opencl/kernels/sub_block.hpp>
-#include <stan/math/opencl/kernels/triangular_transpose.hpp>
-#include <stan/math/opencl/kernels/zeros.hpp>
-#include <CL/cl.hpp>
+#include <stan/math/opencl/ref_type_for_opencl.hpp>
+#include <stan/math/opencl/matrix_cl_view.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/vec_concat.hpp>
+#include <CL/cl2.hpp>
+#include <algorithm>
 #include <iostream>
 #include <string>
+#include <type_traits>
 #include <vector>
-#include <algorithm>
 
-/**
- *  @file stan/math/opencl/matrix_cl.hpp
- *  @brief The matrix_cl class - allocates memory space on the OpenCL device,
- *    functions for transfering matrices to and from OpenCL devices
+/** \ingroup opencl
+ *  \defgroup matrix_cl_group Matrix
+ * The matrix_cl class - allocates memory space on the OpenCL device. Operations
+ * on `matrix_cl` types are executed lazily via the kernel generator
+ * and async routines.
  */
 namespace stan {
 namespace math {
-/**
- * Represents a matrix on the OpenCL device.
- *
- * The matrix data is stored in the oclBuffer_.
+
+/** \addtogroup matrix_cl_group
+ *  @{
  */
-class matrix_cl {
+
+template <typename, typename = void>
+class matrix_cl;
+
+/**
+ * Represents an arithmetic matrix on the OpenCL device.
+ * @tparam T an arithmetic type for the type stored in the OpenCL buffer.
+ */
+template <typename T>
+class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
  private:
-  /**
-   * cl::Buffer provides functionality for working with the OpenCL buffer.
-   * An OpenCL buffer allocates the memory in the device that
-   * is provided by the context.
-   */
-  cl::Buffer oclBuffer_;
-  const int rows_;
-  const int cols_;
+  cl::Buffer buffer_cl_;  // Holds the allocated memory on the device
+  int rows_{0};           // Number of rows.
+  int cols_{0};           // Number of columns.
+  // Holds info on if matrix is a special type
+  matrix_cl_view view_{matrix_cl_view::Entire};
+  mutable std::vector<cl::Event> write_events_;  // Tracks write jobs
+  mutable std::vector<cl::Event> read_events_;   // Tracks reads
 
  public:
+  using Scalar = T;  // Underlying type of the matrix
+  using type = T;    // Underlying type of the matrix
+  // Forward declare the methods that work in place on the matrix
+  template <matrix_cl_view matrix_view = matrix_cl_view::Entire>
+  inline void zeros_strict_tri();
+
   int rows() const { return rows_; }
 
   int cols() const { return cols_; }
 
   int size() const { return rows_ * cols_; }
 
-  const cl::Buffer& buffer() const { return oclBuffer_; }
+  const matrix_cl_view& view() const { return view_; }
 
-  matrix_cl() : rows_(0), cols_(0) {}
+  void view(const matrix_cl_view& view) { view_ = view; }
 
-  matrix_cl(const matrix_cl& A) : rows_(A.rows()), cols_(A.cols()) {
-    if (A.size() == 0)
-      return;
-    // the context is needed to create the buffer object
-    cl::Context& ctx = opencl_context.context();
-    try {
-      // creates a read&write object for "size" double values
-      // in the provided context
-      oclBuffer_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * size());
-
-      opencl_kernels::copy(cl::NDRange(rows_, cols_), A.buffer(),
-                           this->buffer(), rows_, cols_);
-    } catch (const cl::Error& e) {
-      check_opencl_error("copy (OpenCL)->(OpenCL)", e);
-    }
+  /**
+   * Clear the write events from the event stacks.
+   */
+  inline void clear_write_events() const {
+    write_events_.clear();
+    return;
   }
+
+  /**
+   * Clear the read events from the event stacks.
+   */
+  inline void clear_read_events() const {
+    read_events_.clear();
+    return;
+  }
+
+  /**
+   * Clear the write events from the event stacks.
+   */
+  inline void clear_read_write_events() const {
+    read_events_.clear();
+    write_events_.clear();
+    return;
+  }
+
+  /**
+   * Get the events from the event stacks.
+   * @return The write event stack.
+   */
+  inline const std::vector<cl::Event>& write_events() const {
+    return write_events_;
+  }
+
+  /**
+   * Get the events from the event stacks.
+   * @return The read/write event stack.
+   */
+  inline const std::vector<cl::Event>& read_events() const {
+    return read_events_;
+  }
+
+  /**
+   * Get the events from the event stacks.
+   * @return The read/write event stack.
+   */
+  inline const std::vector<cl::Event> read_write_events() const {
+    return vec_concat(this->read_events(), this->write_events());
+  }
+
+  /**
+   * Add an event to the read event stack.
+   * @param new_event The event to be pushed on the event stack.
+   */
+  inline void add_read_event(cl::Event new_event) const {
+    this->read_events_.push_back(new_event);
+  }
+
+  /**
+   * Add an event to the write event stack.
+   * @param new_event The event to be pushed on the event stack.
+   */
+  inline void add_write_event(cl::Event new_event) const {
+    this->write_events_.push_back(new_event);
+  }
+
+  /**
+   * Add an event to the read/write event stack.
+   * @param new_event The event to be pushed on the event stack.
+   */
+  inline void add_read_write_event(cl::Event new_event) const {
+    this->read_events_.push_back(new_event);
+    this->write_events_.push_back(new_event);
+  }
+
+  /**
+   * Waits for the write events and clears the read event stack.
+   */
+  inline void wait_for_write_events() const {
+    for (cl::Event e : write_events_) {
+      e.wait();
+    }
+    write_events_.clear();
+  }
+
+  /**
+   * Waits for the read events and clears the read event stack.
+   */
+  inline void wait_for_read_events() const {
+    for (cl::Event e : read_events_) {
+      e.wait();
+    }
+    read_events_.clear();
+  }
+
+  /**
+   * Waits for read and write events to finish and clears the read, write, and
+   * read/write event stacks.
+   */
+  inline void wait_for_read_write_events() const {
+    wait_for_read_events();
+    wait_for_write_events();
+  }
+
+  const cl::Buffer& buffer() const { return buffer_cl_; }
+  cl::Buffer& buffer() { return buffer_cl_; }
+
+  matrix_cl() {}
+  /**
+   * Construct a matrix_cl<T> from an existing cl::Buffer object. The matrix
+   * directly uses given buffer - no copying is done.
+   *
+   * @param A the cl::Buffer object to construct the matrix from
+   * @param R number of rows
+   * @param C number of columns
+   * @param partial_view view of the matrix
+   */
+  matrix_cl(const cl::Buffer& A, const int R, const int C,
+            matrix_cl_view partial_view = matrix_cl_view::Entire)
+      : buffer_cl_(A), rows_(R), cols_(C), view_(partial_view) {}
+
+  /**
+   * Copy constructor.
+   * @param A matrix_cl to copy
+   */
+  matrix_cl(const matrix_cl<T>& A)
+      : rows_(A.rows()), cols_(A.cols()), view_(A.view()) {
+    if (A.size() == 0) {
+      return;
+    }
+    buffer_cl_ = cl::Buffer(opencl_context.context(), CL_MEM_READ_WRITE,
+                            sizeof(T) * this->size());
+    initialize_buffer_cl(A);
+  }
+
+  /**
+   * Move constructor.
+   * @param A matrix_cl to move
+   */
+  matrix_cl(matrix_cl<T>&& A)
+      : buffer_cl_(std::move(A.buffer_cl_)),
+        rows_(A.rows_),
+        cols_(A.cols_),
+        view_(A.view_),
+        write_events_(std::move(A.write_events_)),
+        read_events_(std::move(A.read_events_)) {}
+
+  /**
+   * Constructor for the matrix_cl that creates a copy of a std::vector of Eigen
+   * matrices on the OpenCL device. Each matrix is flattened into one column
+   * of the resulting matrix_cl. If a lvalue is passed to this constructor the
+   * caller must make sure that the vector does not go out of scope before
+   * copying is complete.
+   *
+   * That means `.wait()` must be called on the event associated on copying or
+   * any other event that requires completion of this event. This can be done by
+   * calling `.wait_for_write_events()` or `.wait_for_read_write_events()` on
+   * this matrix or any matrix that is calculated from this one.
+   *
+   * @param A the vector of Eigen matrices
+   *
+   * @throw <code>std::invalid_argument</code> if the
+   * matrices do not have matching dimensions
+   * @throw <code>std::system_error</code> if the memory on the device could not
+   * be allocated
+   */
+  template <typename Vec, require_std_vector_vt<is_eigen, Vec>* = nullptr,
+            require_st_same<Vec, T>* = nullptr>
+  explicit matrix_cl(Vec&& A) try : rows_(A.empty() ? 0 : A[0].size()),
+                                    cols_(A.size()) {
+    if (this->size() == 0) {
+      return;
+    }
+    cl::Context& ctx = opencl_context.context();
+    cl::CommandQueue& queue = opencl_context.queue();
+    buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * size());
+    for (int i = 0, offset_size = 0; i < cols_; i++, offset_size += rows_) {
+      check_size_match("matrix constructor", "input rows", A[i].size(),
+                       "matrix_cl rows", rows_);
+      cl::Event write_event;
+      queue.enqueueWriteBuffer(
+          buffer_cl_,
+          opencl_context.in_order() || std::is_rvalue_reference<Vec&&>::value,
+          sizeof(T) * offset_size, sizeof(T) * rows_, A[i].data(), nullptr,
+          &write_event);
+      this->add_write_event(write_event);
+    }
+  } catch (const cl::Error& e) {
+    check_opencl_error("matrix constructor", e);
+  }
+
   /**
    * Constructor for the matrix_cl that
    * only allocates the buffer on the OpenCL device.
+   * Regardless of `partial_view`, whole matrix is stored.
    *
    * @param rows number of matrix rows, must be greater or equal to 0
    * @param cols number of matrix columns, must be greater or equal to 0
+   * @param partial_view which part of the matrix is used
    *
-   * @throw <code>std::system_error</code> if the
-   * matrices do not have matching dimensions
+   * @throw <code>std::system_error</code> if the memory on the device could not
+   * be allocated
    *
    */
-  matrix_cl(int rows, int cols) : rows_(rows), cols_(cols) {
-    if (size() > 0) {
-      cl::Context& ctx = opencl_context.context();
-      try {
-        // creates the OpenCL buffer of the provided size
-        oclBuffer_ = cl::Buffer(ctx, CL_MEM_READ_WRITE,
-                                sizeof(double) * rows_ * cols_);
-      } catch (const cl::Error& e) {
-        check_opencl_error("matrix constructor", e);
-      }
+  matrix_cl(const int rows, const int cols,
+            matrix_cl_view partial_view = matrix_cl_view::Entire)
+      : rows_(rows), cols_(cols), view_(partial_view) {
+    if (size() == 0) {
+      return;
     }
-  }
-  /**
-   * Constructor for the matrix_cl that
-   * creates a copy of the Eigen matrix on the OpenCL device.
-   *
-   *
-   * @tparam T type of data in the Eigen matrix
-   * @param A the Eigen matrix
-   *
-   * @throw <code>std::system_error</code> if the
-   * matrices do not have matching dimensions
-   */
-  template <int R, int C>
-  explicit matrix_cl(const Eigen::Matrix<double, R, C>& A)
-      : rows_(A.rows()), cols_(A.cols()) {
-    if (size() > 0) {
-      cl::Context& ctx = opencl_context.context();
-      cl::CommandQueue& queue = opencl_context.queue();
-      try {
-        // creates the OpenCL buffer to copy the Eigen
-        // matrix to the OpenCL device
-        oclBuffer_
-            = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(double) * A.size());
-        /**
-         * Writes the contents of A to the OpenCL buffer
-         * starting at the offset 0.
-         * CL_TRUE denotes that the call is blocking as
-         * we do not want to execute any further kernels
-         * on the device until we are sure that the data
-         * is finished transfering)
-         */
-        queue.enqueueWriteBuffer(oclBuffer_, CL_TRUE, 0,
-                                 sizeof(double) * A.size(), A.data());
-      } catch (const cl::Error& e) {
-        check_opencl_error("matrix constructor", e);
+    cl::Context& ctx = opencl_context.context();
+    try {
+      int flags = CL_MEM_READ_WRITE;
+      if (opencl_context.device()[0].getInfo<CL_DEVICE_HOST_UNIFIED_MEMORY>()) {
+        flags |= CL_MEM_ALLOC_HOST_PTR;
       }
+      buffer_cl_ = cl::Buffer(ctx, flags, sizeof(T) * rows_ * cols_);
+    } catch (const cl::Error& e) {
+      check_opencl_error("matrix constructor", e);
     }
   }
 
-  matrix_cl& operator=(const matrix_cl& a) {
-    check_size_match("assignment of (OpenCL) matrices", "source.rows()",
-                     a.rows(), "destination.rows()", rows());
-    check_size_match("assignment of (OpenCL) matrices", "source.cols()",
-                     a.cols(), "destination.cols()", cols());
-    oclBuffer_ = a.buffer();
+  /**
+   * Constructor for the matrix_cl that creates a copy of the Eigen matrix or
+   * Eigen expression on the OpenCL device. Regardless of `partial_view`, whole
+   * matrix is stored.
+   *
+   * If a lvalue matrix or a map is passed to this constructor, it might be
+   * directly used by the device. The caller must make sure that the matrix (map
+   * data) does not go out of scope as long as this `matrix_cl` is in use
+   * (`std::move`-ing it or using raw `buffer()` also counts as in use).
+   *
+   * @tparam Mat type of \c Eigen \c Matrix or expression
+   * @param A the \c Eigen \c Matrix or expression
+   * @param partial_view which part of the matrix is used
+   *
+   * @throw <code>std::system_error</code> if the memory on the device could not
+   * be allocated
+   */
+  template <typename Mat, require_eigen_t<Mat>* = nullptr,
+            require_vt_same<Mat, T>* = nullptr>
+  explicit matrix_cl(Mat&& A,
+                     matrix_cl_view partial_view = matrix_cl_view::Entire)
+      : rows_(A.rows()), cols_(A.cols()), view_(partial_view) {
+    using Mat_type = std::decay_t<ref_type_for_opencl_t<Mat>>;
+    if (size() == 0) {
+      return;
+    }
+    initialize_buffer_no_heap_if<
+        std::is_same<std::decay_t<Mat>, Mat_type>::value
+        && (std::is_lvalue_reference<Mat>::value
+            || is_eigen_contiguous_map<Mat>::value)>(A);
+  }
+
+  /**
+   * Constructor for the matrix_cl that creates a copy of a scalar on the OpenCL
+   * device. Regardless of `partial_view`, whole matrix is stored.
+   *
+   * If a lvalue is passed to this constructor, it might be directly used by the
+   * device. The caller must make sure that it does not go out of scope as long
+   * as this `matrix_cl` is in use
+   * (`std::move`-ing it or using raw `buffer()` also counts as in use).
+   *
+   * @param A the scalar
+   * @param partial_view which part of the matrix is used
+   *
+   * @throw <code>std::system_error</code> if the memory on the device could not
+   * be allocated
+   */
+  template <typename Scal,
+            typename = require_same_t<T, std::remove_reference_t<Scal>>>
+  explicit matrix_cl(Scal&& A,
+                     matrix_cl_view partial_view = matrix_cl_view::Diagonal)
+      : rows_(1), cols_(1), view_(partial_view) {
+    initialize_buffer<std::is_rvalue_reference<Scal&&>::value>(
+        const_cast<const std::decay_t<Scal>*>(&A));
+  }
+
+  /**
+   * Construct a matrix_cl of size Nx1 from \c std::vector.
+   *
+   * If a lvalue is passed to this constructor, it might be directly used by the
+   * device. The caller must make sure that it does not go out of scope as long
+   * as this `matrix_cl` is in use
+   * (`std::move`-ing it or using raw `buffer()` also counts as in use).
+   *
+   * @param A Standard vector
+   * @param partial_view which part of the matrix is used
+   *
+   * @throw <code>std::system_error</code> if the memory on the device could not
+   * be allocated
+   */
+  template <typename Vec, require_std_vector_t<Vec>* = nullptr,
+            require_vt_same<Vec, T>* = nullptr>
+  explicit matrix_cl(Vec&& A,
+                     matrix_cl_view partial_view = matrix_cl_view::Entire)
+      : matrix_cl(std::forward<Vec>(A), A.size(), 1) {}
+
+  /**
+   * Construct from \c std::vector with given rows and columns.
+   *
+   * If a lvalue is passed to this constructor, it might be directly used by the
+   * device. The caller must make sure that it does not go out of scope as long
+   * as this `matrix_cl` is in use `std::move`-ing it or using raw `buffer()`
+   * also counts as in use).
+   *
+   * @param A Standard vector
+   * @param R Number of rows the matrix should have.
+   * @param C Number of columns the matrix should have.
+   * @param partial_view which part of the matrix is used
+   *
+   * @throw <code>std::system_error</code> if the memory on the device could not
+   * be allocated
+   */
+  template <typename Vec, require_std_vector_t<Vec>* = nullptr,
+            require_vt_same<Vec, T>* = nullptr>
+  explicit matrix_cl(Vec&& A, const int& R, const int& C,
+                     matrix_cl_view partial_view = matrix_cl_view::Entire)
+      : rows_(R), cols_(C), view_(partial_view) {
+    initialize_buffer_no_heap_if<std::is_lvalue_reference<Vec>::value>(A);
+  }
+
+  /**
+   * Construct from \c array with given rows and columns.
+   *
+   * The memory might be directly used by the device. The caller must make sure
+   * that it does not go out of scope as long as this `matrix_cl` is in use
+   * (`std::move`-ing it or using raw `buffer()` also counts as in use).
+   *
+   * @param A array of doubles
+   * @param R Number of rows the matrix should have.
+   * @param C Number of columns the matrix should have.
+   * @param partial_view which part of the matrix is used
+   *
+   * @throw <code>std::system_error</code> if the memory on the device could not
+   * be allocated
+   */
+  template <typename U, require_same_t<T, U>* = nullptr>
+  explicit matrix_cl(const U* A, const int& R, const int& C,
+                     matrix_cl_view partial_view = matrix_cl_view::Entire)
+      : rows_(R), cols_(C), view_(partial_view) {
+    initialize_buffer(A);
+  }
+
+  /**
+   * Construct from a kernel generator expression. It evaluates the expression
+   * into \c this.
+   * @tparam Expr type of the expression
+   * @param expression expression
+   */
+  template <typename Expr,
+            require_all_kernel_expressions_and_none_scalar_t<Expr>* = nullptr>
+  matrix_cl(const Expr& expression);  // NOLINT(runtime/explicit)
+
+  /**
+   * Move assignment operator.
+   */
+  matrix_cl<T>& operator=(matrix_cl<T>&& a) {
+    view_ = a.view();
+    rows_ = a.rows();
+    cols_ = a.cols();
+    this->wait_for_read_write_events();
+    buffer_cl_ = std::move(a.buffer_cl_);
+    write_events_ = std::move(a.write_events_);
+    read_events_ = std::move(a.read_events_);
     return *this;
   }
 
   /**
-   * Stores zeros in the matrix on the OpenCL device.
-   * Supports writing zeroes to the lower and upper triangular or
-   * the whole matrix.
-   *
-   * @tparam triangular_view Specifies if zeros are assigned to
-   * the entire matrix, lower triangular or upper triangular. The
-   * value must be of type TriangularViewCL
+   * Copy assignment operator.
    */
-  template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
-  void zeros() {
-    if (size() == 0)
-      return;
-    cl::CommandQueue cmdQueue = opencl_context.queue();
+  matrix_cl<T>& operator=(const matrix_cl<T>& a) {
+    this->view_ = a.view();
+    if (a.size() == 0) {
+      this->rows_ = a.rows();
+      this->cols_ = a.cols();
+      return *this;
+    }
+    this->wait_for_read_write_events();
+    if (size() != a.size()) {
+      buffer_cl_ = cl::Buffer(opencl_context.context(), CL_MEM_READ_WRITE,
+                              sizeof(T) * a.size());
+    }
+    this->rows_ = a.rows();
+    this->cols_ = a.cols();
+    initialize_buffer_cl(a);
+    return *this;
+  }
+
+  /**
+   * Assignment of a kernel generator expression evaluates the expression into
+   * \c this.
+   * @tparam Expr type of the expression
+   * @param expression expression
+   */
+  template <typename Expr,
+            require_all_kernel_expressions_and_none_scalar_t<Expr>* = nullptr>
+  matrix_cl<T>& operator=(const Expr& expression);
+
+  /**
+   * Evaluates `this`. This is a no-op.
+   * @return `*this`
+   */
+  const matrix_cl<T>& eval() const& { return *this; }
+  matrix_cl<T> eval() && { return std::move(*this); }
+
+  /**
+   * Destructor waits for write events to prevent any kernels from writing
+   * memory that has already been reused.
+   */
+  ~matrix_cl() { wait_for_read_write_events(); }
+
+ private:
+  /**
+   * Initializes the OpenCL buffer of this matrix by copying the data from given
+   * buffer. Assumes that size of \c this is already set and matches the
+   * buffer size.
+   *
+   * The caller must make sure that data is not deleted as long as
+   * this `matrix_cl` is in use (`std::move`-ing it or using raw `buffer()` also
+   * counts as in use).
+   *
+   * @tparam in_order whether copying must be done in order
+   * efficiently use it directly
+   * @param A pointer to buffer
+   * @return event for the copy
+   */
+  template <bool in_order = false>
+  cl::Event initialize_buffer(const T* A) {
+    cl::Event transfer_event;
+    if (size() == 0) {
+      return transfer_event;
+    }
+    cl::Context& ctx = opencl_context.context();
+    cl::CommandQueue& queue = opencl_context.queue();
     try {
-      opencl_kernels::zeros(cl::NDRange(this->rows(), this->cols()),
-                            this->buffer(), this->rows(), this->cols(),
-                            triangular_view);
+      buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * size());
+      queue.enqueueWriteBuffer(buffer_cl_,
+                               opencl_context.in_order() || in_order, 0,
+                               sizeof(T) * size(), A, nullptr, &transfer_event);
+      this->add_write_event(transfer_event);
     } catch (const cl::Error& e) {
-      check_opencl_error("zeros", e);
+      check_opencl_error("initialize_buffer", e);
+    }
+    return transfer_event;
+  }
+
+  template <bool in_order = false>
+  cl::Event initialize_buffer(T* A) {
+    cl::Event transfer_event;
+    if (size() == 0) {
+      return transfer_event;
+    }
+    cl::Context& ctx = opencl_context.context();
+    cl::CommandQueue& queue = opencl_context.queue();
+    try {
+      if (opencl_context.device()[0].getInfo<CL_DEVICE_HOST_UNIFIED_MEMORY>()) {
+        buffer_cl_
+            = cl::Buffer(ctx, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR,
+                         sizeof(T) * size(), A);  // this is always synchronous
+      } else {
+        buffer_cl_ = cl::Buffer(ctx, CL_MEM_READ_WRITE, sizeof(T) * size());
+        queue.enqueueWriteBuffer(
+            buffer_cl_, opencl_context.in_order() || in_order, 0,
+            sizeof(T) * size(), A, nullptr, &transfer_event);
+        this->add_write_event(transfer_event);
+      }
+    } catch (const cl::Error& e) {
+      check_opencl_error("initialize_buffer", e);
+    }
+    return transfer_event;
+  }
+
+  /**
+   * Initializes the OpenCL buffer of this matrix by copying the data from given
+   * object. Assumes that size of \c this is already set and matches the
+   * buffer size. If No_heap is false the object is first moved to heap
+   * and callback is set to delete it after copying to OpenCL device is
+   * complete. Otherwise the caller must make sure that input object is not
+   * deleted as long as this `matrix_cl` is in use (`std::move`-ing it or using
+   * raw `buffer()` also counts).
+   *
+   * @tparam No_heap whether to move the object to heap first
+   * @tparam U type of object
+   * @param obj object
+   * @return event for the copy
+   */
+  template <bool No_heap, typename U, std::enable_if_t<No_heap>* = nullptr>
+  void initialize_buffer_no_heap_if(U&& obj) {
+    if (size() == 0) {
+      return;
+    }
+    initialize_buffer(obj.data());
+  }
+  // we need separate overloads as obj.data() might not be available when second
+  // overload is called.
+  template <bool No_heap, typename U, std::enable_if_t<!No_heap>* = nullptr>
+  void initialize_buffer_no_heap_if(U&& obj) {
+    using U_val = std::decay_t<ref_type_for_opencl_t<U>>;
+    if (size() == 0) {
+      return;
+    }
+    auto* obj_heap = new U_val(std::move(obj));
+    try {
+      cl::Event e = initialize_buffer(obj_heap->data());
+      if (opencl_context.device()[0].getInfo<CL_DEVICE_HOST_UNIFIED_MEMORY>()) {
+        buffer_cl_.setDestructorCallback(&delete_it_destructor<U_val>,
+                                         obj_heap);
+      } else {
+        e.setCallback(CL_COMPLETE, &delete_it_event<U_val>, obj_heap);
+      }
+    } catch (...) {
+      delete obj_heap;
+      throw;
     }
   }
 
   /**
-   * Copies a lower/upper triangular of a matrix to it's upper/lower.
-   *
-   * @tparam triangular_map Specifies if the copy is
-   * lower-to-upper or upper-to-lower triangular. The value
-   * must be of type TriangularMap
-   *
-   * @throw <code>std::invalid_argument</code> if the matrix is not square.
-   *
+   * Initializes the OpenCL buffer of this matrix by copying the data from given
+   * matrix_cl. Assumes that size of \c this is already set and matches the
+   * size of given matrix.
+   * @param A matrix_cl
    */
-  template <TriangularMapCL triangular_map = TriangularMapCL::LowerToUpper>
-  void triangular_transpose() {
-    if (size() == 0 || size() == 1) {
-      return;
-    }
-    check_size_match("triangular_transpose ((OpenCL))",
-                     "Expecting a square matrix; rows of ", "A", rows(),
-                     "columns of ", "A", cols());
-
-    cl::CommandQueue cmdQueue = opencl_context.queue();
+  void initialize_buffer_cl(const matrix_cl<T>& A) {
     try {
-      opencl_kernels::triangular_transpose(
-          cl::NDRange(this->rows(), this->cols()), this->buffer(), this->rows(),
-          this->cols(), triangular_map);
+      cl::Event cstr_event;
+      opencl_context.queue().enqueueCopyBuffer(A.buffer(), this->buffer(), 0, 0,
+                                               A.size() * sizeof(T),
+                                               &A.write_events(), &cstr_event);
+      this->add_write_event(cstr_event);
+      A.add_read_event(cstr_event);
     } catch (const cl::Error& e) {
-      check_opencl_error("triangular_transpose", e);
+      check_opencl_error("copy (OpenCL)->(OpenCL)", e);
     }
   }
+
   /**
-   * Write the context of A into
-   * <code>this</code> starting at the top left of <code>this</code>
-   * @param A input matrix
-   * @param A_i the offset row in A
-   * @param A_j the offset column in A
-   * @param this_i the offset row for the matrix to be subset into
-   * @param this_j the offset col for the matrix to be subset into
-   * @param nrows the number of rows in the submatrix
-   * @param ncols the number of columns in the submatrix
+   * Deletes the container. Used as a callback for OpenCL event.
+   * @tparam U type of container
+   * @param e cl_event handle
+   * @param status status of event
+   * @param container container to delete
    */
-  template <TriangularViewCL triangular_view = TriangularViewCL::Entire>
-  void sub_block(const matrix_cl& A, int A_i, int A_j, int this_i, int this_j,
-                 int nrows, int ncols) {
-    if (nrows == 0 || ncols == 0) {
-      return;
-    }
-    if ((A_i + nrows) > A.rows() || (A_j + ncols) > A.cols()
-        || (this_i + nrows) > this->rows() || (this_j + ncols) > this->cols()) {
-      domain_error("sub_block", "submatrix in *this", " is out of bounds", "");
-    }
-    cl::CommandQueue cmdQueue = opencl_context.queue();
-    try {
-      opencl_kernels::sub_block(cl::NDRange(nrows, ncols), A.buffer(),
-                                this->buffer(), A_i, A_j, this_i, this_j, nrows,
-                                ncols, A.rows(), A.cols(), this->rows(),
-                                this->cols(), triangular_view);
-    } catch (const cl::Error& e) {
-      check_opencl_error("copy_submatrix", e);
-    }
+  template <typename U>
+  static void delete_it_event(cl_event e, cl_int status, void* container) {
+    delete static_cast<U*>(container);
+  }
+
+  /**
+   * Deletes the container. Used as a callback for destruction of `cl::Buffer`.
+   * @tparam U type of container
+   * @param buff buffer that is being destructed
+   * @param container container to delete
+   */
+  template <typename U>
+  static void delete_it_destructor(cl_mem buff, void* container) {
+    delete static_cast<U*>(container);
   }
 };
+
+template <typename T>
+using matrix_cl_prim = matrix_cl<T, require_arithmetic_t<T>>;
+
+template <typename T>
+using matrix_cl_fp = matrix_cl<T, require_floating_point_t<T>>;
+
+/** @}*/
 
 }  // namespace math
 }  // namespace stan

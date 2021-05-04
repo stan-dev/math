@@ -23,29 +23,29 @@ TEST(AgradRev, build_vari_array) {
   vari **vdv = build_vari_array(mdv);
   vari **vvv = build_vari_array(mvv);
 
-  EXPECT_TRUE(stan::math::ChainableStack::instance().memalloc_.in_stack(vdd));
-  EXPECT_TRUE(stan::math::ChainableStack::instance().memalloc_.in_stack(vvd));
-  EXPECT_TRUE(stan::math::ChainableStack::instance().memalloc_.in_stack(vdv));
-  EXPECT_TRUE(stan::math::ChainableStack::instance().memalloc_.in_stack(vvv));
+  EXPECT_TRUE(stan::math::ChainableStack::instance_->memalloc_.in_stack(vdd));
+  EXPECT_TRUE(stan::math::ChainableStack::instance_->memalloc_.in_stack(vvd));
+  EXPECT_TRUE(stan::math::ChainableStack::instance_->memalloc_.in_stack(vdv));
+  EXPECT_TRUE(stan::math::ChainableStack::instance_->memalloc_.in_stack(vvv));
 
   for (int i = 0; i < mdd.size(); ++i) {
     EXPECT_EQ(mdd.data()[i].vi_, vdd[i]);
     EXPECT_TRUE(
-        stan::math::ChainableStack::instance().memalloc_.in_stack(vdd[i]));
+        stan::math::ChainableStack::instance_->memalloc_.in_stack(vdd[i]));
   }
   for (int i = 0; i < mvd.size(); ++i) {
     EXPECT_EQ(mvd.data()[i].vi_, vvd[i]);
     EXPECT_TRUE(
-        stan::math::ChainableStack::instance().memalloc_.in_stack(vvd[i]));
+        stan::math::ChainableStack::instance_->memalloc_.in_stack(vvd[i]));
   }
   for (int i = 0; i < mdv.size(); ++i) {
     EXPECT_EQ(mdv.data()[i].vi_, vdv[i]);
     EXPECT_TRUE(
-        stan::math::ChainableStack::instance().memalloc_.in_stack(vdv[i]));
+        stan::math::ChainableStack::instance_->memalloc_.in_stack(vdv[i]));
   }
   for (int i = 0; i < mvv.size(); ++i) {
     EXPECT_EQ(mvv.data()[i].vi_, vvv[i]);
     EXPECT_TRUE(
-        stan::math::ChainableStack::instance().memalloc_.in_stack(vvv[i]));
+        stan::math::ChainableStack::instance_->memalloc_.in_stack(vvv[i]));
   }
 }

@@ -1,0 +1,152 @@
+name: Windows RTools 3.5
+
+on:
+  pull_request:
+    branches: [ develop, master ]
+  push:
+    branches: [ develop ]
+    paths-ignore:
+      - 'doygen/**'
+      - 'hooks/**'
+      - 'licenses/**'
+      - 'LICENSE.md'
+      - 'README.md'
+      - 'RELEASE-NOTES.txt'
+jobs:
+  prim-rev:
+    name: prim and rev tests
+    runs-on: windows-latest
+
+    steps:
+    - uses: n1hility/cancel-previous-runs@v2
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+      if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/master' && github.ref != 'refs/heads/develop'"
+  
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '2.x'
+    - name: Download RTools
+      run: Invoke-WebRequest -Uri https://cran.rstudio.com/bin/windows/Rtools/Rtools35.exe -OutFile ./R35.exe
+    - name: Install RTools
+      shell: powershell
+      run: Start-Process -FilePath ./R35.exe -ArgumentList /VERYSILENT -NoNewWindow -Wait
+    - name: PATH Setup
+      shell: powershell
+      run: echo "C:/Rtools/bin;C:/Rtools/mingw_64/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+    - name: Print g++ & make version and path
+      shell: powershell
+      run: |
+        g++ --version
+        Get-Command g++ | Select-Object -ExpandProperty Definition
+        mingw32-make --version
+        Get-Command mingw32-make | Select-Object -ExpandProperty Definition
+    - name: Build Math libs
+      shell: powershell
+      run: mingw32-make -f make/standalone math-libs
+    - name: Add TBB to PATH
+      shell: powershell
+      run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+    - name: Run prim and rev unit tests
+      shell: powershell
+      run: |
+        python.exe runTests.py -j2 test/unit/*_test.cpp
+        python.exe runTests.py -j2 test/unit/math/*_test.cpp
+        python.exe runTests.py -j2 test/unit/math/prim
+        python.exe runTests.py -j2 test/unit/math/rev
+        python.exe runTests.py -j2 test/unit/math/memory
+        
+    - name: Upload gtest_output xml
+      uses: actions/upload-artifact@v2
+      if: failure()
+      with:
+        name: gtest_outputs_xml
+        path: '**/*_test.xml'
+  fwd-non-fun-mix:
+    name: fwd tests and non-fun mix tests
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '2.x'
+    - name: Download RTools
+      run: Invoke-WebRequest -Uri https://cran.rstudio.com/bin/windows/Rtools/Rtools35.exe -OutFile ./R35.exe
+    - name: Install RTools
+      shell: powershell
+      run: Start-Process -FilePath ./R35.exe -ArgumentList /VERYSILENT -NoNewWindow -Wait
+    - name: PATH Setup
+      shell: powershell
+      run: echo "C:/Rtools/bin;C:/Rtools/mingw_64/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+    - name: Print g++ & make version and path
+      shell: powershell
+      run: |
+        g++ --version
+        Get-Command g++ | Select-Object -ExpandProperty Definition
+        mingw32-make --version
+        Get-Command mingw32-make | Select-Object -ExpandProperty Definition
+    - name: Build Math libs
+      shell: powershell
+      run: mingw32-make -f make/standalone math-libs
+    - name: Add TBB to PATH
+      shell: powershell
+      run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+    - name: Run fwd unit tests and all the mix tests except those in mix/fun
+      shell: powershell
+      run: |
+        python.exe runTests.py test/unit/math/fwd
+        python.exe runTests.py test/unit/math/mix/core
+        python.exe runTests.py test/unit/math/mix/functor
+        python.exe runTests.py test/unit/math/mix/meta
+        python.exe runTests.py test/unit/math/mix/prob
+        python.exe runTests.py test/unit/math/mix/*_test.cpp
+
+    - name: Upload gtest_output xml
+      uses: actions/upload-artifact@v2
+      if: failure()
+      with:
+        name: gtest_outputs_xml
+        path: '**/*_test.xml'
+  mix-fun:
+    name: mix/fun tests
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '2.x'
+    - name: Download RTools
+      run: Invoke-WebRequest -Uri https://cran.rstudio.com/bin/windows/Rtools/Rtools35.exe -OutFile ./R35.exe
+    - name: Install RTools
+      shell: powershell
+      run: Start-Process -FilePath ./R35.exe -ArgumentList /VERYSILENT -NoNewWindow -Wait
+    - name: PATH Setup
+      shell: powershell
+      run: echo "C:/Rtools/bin;C:/Rtools/mingw_64/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+    - name: Print g++ & make version and path
+      shell: powershell
+      run: |
+        g++ --version
+        Get-Command g++ | Select-Object -ExpandProperty Definition
+        mingw32-make --version
+        Get-Command mingw32-make | Select-Object -ExpandProperty Definition
+    - name: Build Math libs
+      shell: powershell
+      run: mingw32-make -f make/standalone math-libs
+    - name: Add TBB to PATH
+      shell: powershell
+      run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+    - name: Run mix/fun unit tests
+      shell: powershell
+      run: |
+        python.exe runTests.py test/unit/math/mix/fun
+        
+    - name: Upload gtest_output xml
+      uses: actions/upload-artifact@v2
+      if: failure()
+      with:
+        name: gtest_outputs_xml
+        path: '**/*_test.xml'

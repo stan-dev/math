@@ -1,5 +1,5 @@
 #include <stan/math/rev/core.hpp>
-#include <test/unit/math/rev/mat/fun/util.hpp>
+#include <test/unit/math/rev/fun/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 #include <limits>
@@ -10,7 +10,7 @@ void test_logical_or(double x, double y) {
   EXPECT_EQ(x || y, x_v || y_v);
 }
 
-TEST(AgradRev, unaryNot) {
+TEST(AgradRev, logical_or) {
   std::vector<double> xs;
   xs.push_back(6.1);
   xs.push_back(6.1);

@@ -10,7 +10,7 @@ namespace math {
  * A var implementation that stores the daughter variable
  * implementation pointers and the partial derivative with respect
  * to the result explicitly in arrays constructed on the
- * auto-diff memory stack.
+ * autodiff memory stack.
  *
  * Like a simplified version of OperandsAndPartials.
  */
@@ -39,8 +39,9 @@ class stored_gradient_vari : public vari {
    * derivatives given for the daughter vari by the stored partials.
    */
   void chain() {
-    for (size_t i = 0; i < size_; ++i)
+    for (size_t i = 0; i < size_; ++i) {
       dtrs_[i]->adj_ += adj_ * partials_[i];
+    }
   }
 };
 

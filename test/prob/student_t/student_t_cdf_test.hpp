@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -60,15 +60,17 @@ class AgradCdfStudentT : public AgradCdfTest {
 
   template <typename T_y, typename T_dof, typename T_loc, typename T_scale,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_dof, T_loc, T_scale>::type cdf(
-      const T_y& y, const T_dof& nu, const T_loc& mu, const T_scale& sigma,
-      const T4&, const T5&) {
+  stan::return_type_t<T_y, T_dof, T_loc, T_scale> cdf(const T_y& y,
+                                                      const T_dof& nu,
+                                                      const T_loc& mu,
+                                                      const T_scale& sigma,
+                                                      const T4&, const T5&) {
     return stan::math::student_t_cdf(y, nu, mu, sigma);
   }
 
   template <typename T_y, typename T_dof, typename T_loc, typename T_scale,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_dof, T_loc, T_scale>::type cdf_function(
+  stan::return_type_t<T_y, T_dof, T_loc, T_scale> cdf_function(
       const T_y& y, const T_dof& nu, const T_loc& mu, const T_scale& sigma,
       const T4&, const T5&) {
     return stan::math::student_t_cdf(y, nu, mu, sigma);

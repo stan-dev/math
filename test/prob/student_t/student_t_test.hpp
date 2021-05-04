@@ -1,5 +1,5 @@
 // Arguments: Doubles, Doubles, Doubles, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -65,7 +65,7 @@ class AgradDistributionsStudentT : public AgradDistributionTest {
 
   template <class T_y, class T_dof, class T_loc, class T_scale, typename T4,
             typename T5>
-  typename stan::return_type<T_y, T_dof, T_loc, T_scale>::type log_prob(
+  stan::return_type_t<T_y, T_dof, T_loc, T_scale> log_prob(
       const T_y& y, const T_dof& nu, const T_loc& mu, const T_scale& sigma,
       const T4&, const T5&) {
     return stan::math::student_t_log(y, nu, mu, sigma);
@@ -73,7 +73,7 @@ class AgradDistributionsStudentT : public AgradDistributionTest {
 
   template <bool propto, class T_y, class T_dof, class T_loc, class T_scale,
             typename T4, typename T5>
-  typename stan::return_type<T_y, T_dof, T_loc, T_scale>::type log_prob(
+  stan::return_type_t<T_y, T_dof, T_loc, T_scale> log_prob(
       const T_y& y, const T_dof& nu, const T_loc& mu, const T_scale& sigma,
       const T4&, const T5&) {
     return stan::math::student_t_log<propto>(y, nu, mu, sigma);
@@ -81,16 +81,16 @@ class AgradDistributionsStudentT : public AgradDistributionTest {
 
   template <class T_y, class T_dof, class T_loc, class T_scale, typename T4,
             typename T5>
-  typename stan::return_type<T_y, T_dof, T_loc, T_scale>::type
-  log_prob_function(const T_y& y, const T_dof& nu, const T_loc& mu,
-                    const T_scale& sigma, const T4&, const T5&) {
+  stan::return_type_t<T_y, T_dof, T_loc, T_scale> log_prob_function(
+      const T_y& y, const T_dof& nu, const T_loc& mu, const T_scale& sigma,
+      const T4&, const T5&) {
     using boost::math::lgamma;
-    using stan::math::NEG_LOG_SQRT_PI;
     using stan::math::log1p;
+    using stan::math::LOG_SQRT_PI;
     using stan::math::square;
     using std::log;
 
-    return lgamma((nu + 1.0) / 2.0) - lgamma(nu / 2.0) + NEG_LOG_SQRT_PI
+    return lgamma((nu + 1.0) / 2.0) - lgamma(nu / 2.0) - LOG_SQRT_PI
            - 0.5 * log(nu) - log(sigma)
            - ((nu + 1.0) / 2.0) * log1p(square(((y - mu) / sigma)) / nu);
   }

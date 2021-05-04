@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_CORE_OPERATOR_UNARY_NOT_HPP
 
 #include <stan/math/rev/core/var.hpp>
+#include <stan/math/prim/meta.hpp>
 
 namespace stan {
 namespace math {

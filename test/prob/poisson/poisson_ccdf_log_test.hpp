@@ -1,5 +1,5 @@
 // Arguments: Ints, Doubles
-#include <stan/math/prim/scal.hpp>
+#include <stan/math/prim.hpp>
 
 using stan::math::var;
 using std::numeric_limits;
@@ -45,18 +45,18 @@ class AgradCcdfLogPoisson : public AgradCcdfLogTest {
 
   template <typename T_n, typename T_rate, typename T2, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_rate>::type ccdf_log(const T_n& n,
-                                                    const T_rate& lambda,
-                                                    const T2&, const T3&,
-                                                    const T4&, const T5&) {
+  stan::return_type_t<T_rate> ccdf_log(const T_n& n, const T_rate& lambda,
+                                       const T2&, const T3&, const T4&,
+                                       const T5&) {
     return stan::math::poisson_ccdf_log(n, lambda);
   }
 
   template <typename T_n, typename T_rate, typename T2, typename T3,
             typename T4, typename T5>
-  typename stan::return_type<T_rate>::type ccdf_log_function(
-      const T_n& n, const T_rate& lambda, const T2&, const T3&, const T4&,
-      const T5&) {
+  stan::return_type_t<T_rate> ccdf_log_function(const T_n& n,
+                                                const T_rate& lambda, const T2&,
+                                                const T3&, const T4&,
+                                                const T5&) {
     using boost::math::lgamma;
     using stan::math::exp;
     using stan::math::lgamma;
@@ -65,7 +65,7 @@ class AgradCcdfLogPoisson : public AgradCcdfLogTest {
     using std::log;
     using std::pow;
 
-    typename stan::return_type<T_rate>::type cdf(0);
+    stan::return_type_t<T_rate> cdf(0);
     for (int i = 0; i <= n; i++) {
       cdf += exp(i * log(lambda) - lgamma(i + 1));
     }
