@@ -24,6 +24,11 @@ inline T& get(T& x, size_t n) {
   return x;
 }
 
+template <typename T, typename = require_stan_scalar_t<T>>
+inline T get(const T& x, size_t n) {
+  return x;
+}
+
 /** \ingroup type_trait
  * Returns the n-th element of the provided std::vector.
  *
