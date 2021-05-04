@@ -40,12 +40,12 @@ namespace math {
  *   not less than t0.
  * @param relative_tolerance_forward Relative tolerance for forward problem
  * passed to CVODES
- * @param absolute_tolerance_forward Absolute tolerance per ODE state for forward problem
- * passed to CVODES
+ * @param absolute_tolerance_forward Absolute tolerance per ODE state for
+ * forward problem passed to CVODES
  * @param relative_tolerance_backward Relative tolerance for backward problem
  * passed to CVODES
- * @param absolute_tolerance_backward Absolute tolerance per ODE state for backward problem
- * passed to CVODES
+ * @param absolute_tolerance_backward Absolute tolerance per ODE state for
+ * backward problem passed to CVODES
  * @param relative_tolerance_quadrature Relative tolerance for quadrature
  * problem passed to CVODES
  * @param absolute_tolerance_quadrature Absolute tolerance for quadrature
@@ -118,12 +118,12 @@ ode_adjoint_impl(const char* function_name, const F& f, const T_y0& y0,
  *   not less than t0.
  * @param relative_tolerance_forward Relative tolerance for forward problem
  * passed to CVODES
- * @param absolute_tolerance_forward Absolute tolerance per ODE state for forward problem
- * passed to CVODES
+ * @param absolute_tolerance_forward Absolute tolerance per ODE state for
+ * forward problem passed to CVODES
  * @param relative_tolerance_backward Relative tolerance for backward problem
  * passed to CVODES
- * @param absolute_tolerance_backward Absolute tolerance per ODE state for backward problem
- * passed to CVODES
+ * @param absolute_tolerance_backward Absolute tolerance per ODE state for
+ * backward problem passed to CVODES
  * @param relative_tolerance_quadrature Relative tolerance for quadrature
  * problem passed to CVODES
  * @param absolute_tolerance_quadrature Absolute tolerance for quadrature
