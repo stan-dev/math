@@ -16,7 +16,8 @@ inline auto rep_row_vector(const T& x, int n) {
 }
 template <typename T, require_stan_scalar_t<T>* = nullptr>
 inline auto rep_row_vector(const T& x, int n) {
-  return rep_row_vector<Eigen::Matrix<return_type_t<T>, 1, Eigen::Dynamic>>(x, n);
+  return rep_row_vector<Eigen::Matrix<return_type_t<T>, 1, Eigen::Dynamic>>(x,
+                                                                            n);
 }
 
 }  // namespace math
