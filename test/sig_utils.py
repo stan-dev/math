@@ -154,7 +154,7 @@ non_differentiable_args = {
 }
 
 # lists of functions that do not support fwd or rev autodiff
-no_rev_overload = ["hmm_hidden_state_prob"]
+no_rev_overload = ["hmm_hidden_state_prob", "quantile"]
 no_fwd_overload = [
     "algebra_solver",
     "algebra_solver_newton",
@@ -165,7 +165,8 @@ no_fwd_overload = [
     "ode_bdf",
     "ode_bdf_tol",
     "ode_rk45",
-    "ode_rk45_tol"
+    "ode_rk45_tol",
+    "quantile"
 ]
 
 internal_signatures = [

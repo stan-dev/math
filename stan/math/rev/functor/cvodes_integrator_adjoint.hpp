@@ -6,6 +6,7 @@
 #include <stan/math/rev/functor/cvodes_utils.hpp>
 #include <stan/math/rev/functor/ode_store_sensitivities.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/get.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/for_each.hpp>
 #include <cvodes/cvodes.h>
@@ -65,11 +66,7 @@ class cvodes_integrator_adjoint_vari : public vari {
   size_t N_;
   bool backward_is_initialized_;
 
-  size_t num_t0_vars_;
-  size_t num_ts_vars_;
-  size_t num_y0_vars_;
   size_t num_args_vars_;
-  size_t num_vars_;
 
   arena_t<Eigen::VectorXd> state_forward_;
   arena_t<Eigen::VectorXd> state_backward_;
@@ -77,9 +74,6 @@ class cvodes_integrator_adjoint_vari : public vari {
 
   vari** non_chaining_varis_;
 
-  vari** t0_varis_;
-  vari** ts_varis_;
-  vari** y0_varis_;
   vari** args_varis_;
 
   int index_backward_;
@@ -100,8 +94,7 @@ class cvodes_integrator_adjoint_vari : public vari {
    * Call the ODE RHS with given tuple.
    */
   template <typename yT, typename... ArgsT>
-  constexpr auto rhs(double t, const yT& y,
-                     const std::tuple<ArgsT...>& args_tuple) const {
+  constexpr auto rhs(double t, const yT& y, const std::tuple<ArgsT...>& args_tuple) const {
     return apply([&](auto&&... args) { return f_(t, y, msgs_, args...); },
                  args_tuple);
   }
@@ -317,8 +310,7 @@ class cvodes_integrator_adjoint_vari : public vari {
     solver_->y_[n] = state;
     state_return.resize(N_);
     for (size_t i = 0; i < N_; i++) {
-      non_chaining_varis_[N_ * n + i] = new vari(state.coeff(i), false);
-      state_return.coeffRef(i) = var(non_chaining_varis_[N_ * n + i]);
+      state_return.coeffRef(i) = var(new vari(state.coeff(i), false));
     }
   }
 
@@ -476,37 +468,15 @@ class cvodes_integrator_adjoint_vari : public vari {
         msgs_(msgs),
         local_args_tuple_(to_arena(deep_copy_vars(args))...),
         value_of_args_tuple_(to_arena(value_of(args))...),
-
         N_(y0.size()),
         backward_is_initialized_(false),
-
-        num_t0_vars_(count_vars(t0)),
-        num_ts_vars_(count_vars(ts)),
-        num_y0_vars_(count_vars(y0)),
         num_args_vars_(count_vars(args...)),
-        num_vars_(num_t0_vars_ + num_ts_vars_ + num_y0_vars_ + num_args_vars_),
-
         state_forward_(value_of(y0)),
         state_backward_(N_),
         quad_(num_args_vars_),
-
-        non_chaining_varis_(
-            is_var_return_
-                ? ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-                      ts_.size() * N_)
-                : nullptr),
-        t0_varis_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-            num_t0_vars_)),
-        ts_varis_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-            num_ts_vars_)),
-        y0_varis_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-            num_y0_vars_)),
         args_varis_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
             num_args_vars_)),
         solver_(nullptr) {
-    save_varis(t0_varis_, t0);
-    save_varis(ts_varis_, ts);
-    save_varis(y0_varis_, y0);
     save_varis(args_varis_, args...);
 
     check_finite(function_name, "initial state", y0);
@@ -646,7 +616,7 @@ class cvodes_integrator_adjoint_vari : public vari {
    * @return std::vector of Eigen::Matrix of the states of the ODE, one for each
    *   solution time (excluding the initial state)
    */
-  std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> solution() {
+  std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>>& solution() noexcept {
     return solver_->y_return_;
   }
 
@@ -658,14 +628,15 @@ class cvodes_integrator_adjoint_vari : public vari {
     // for sensitivities wrt to ts we do not need to run the backward
     // integration
     if (is_var_ts_) {
+      Eigen::VectorXd step_sens = Eigen::VectorXd::Zero(N_);
       for (int i = 0; i < ts_.size(); ++i) {
-        Eigen::VectorXd step_sens = Eigen::VectorXd::Zero(N_);
         for (int j = 0; j < N_; ++j) {
-          step_sens.coeffRef(j) += non_chaining_varis_[i * N_ + j]->adj_;
+          step_sens.coeffRef(j) += forward_as<var>(solver_->y_return_[i][j]).adj();
         }
 
-        ts_varis_[i]->adj_ += step_sens.dot(
+        forward_as<var>(stan::get(ts_, i))->adj_ += step_sens.dot(
             rhs(value_of(ts_[i]), solver_->y_[i], value_of_args_tuple_));
+        step_sens.setZero();
       }
 
       if (is_var_only_ts_) {
@@ -683,7 +654,7 @@ class cvodes_integrator_adjoint_vari : public vari {
       // Take in the adjoints from all the output variables at this point
       // in time
       for (int j = 0; j < N_; ++j) {
-        state_backward_.coeffRef(j) += non_chaining_varis_[i * N_ + j]->adj_;
+        state_backward_.coeffRef(j) += forward_as<var>(solver_->y_return_[i][j]).adj();
       }
 
       double t_final = value_of((i > 0) ? ts_[i - 1] : t0_);
@@ -731,7 +702,7 @@ class cvodes_integrator_adjoint_vari : public vari {
 
           // Allocate space for backwards quadrature needed when
           // parameters vary.
-          if (num_args_vars_ > 0) {
+          if (is_any_var_args_) {
             check_flag_sundials(
                 CVodeQuadInitB(solver_->cvodes_mem_, index_backward_,
                                &cvodes_integrator_adjoint_vari::cv_quad_rhs_adj,
@@ -757,7 +728,7 @@ class cvodes_integrator_adjoint_vari : public vari {
                            solver_->nv_state_backward_),
               "CVodeReInitB");
 
-          if (num_args_vars_ > 0) {
+          if (is_any_var_args_) {
             check_flag_sundials(
                 CVodeQuadReInitB(solver_->cvodes_mem_, index_backward_,
                                  solver_->nv_quad_),
@@ -781,7 +752,7 @@ class cvodes_integrator_adjoint_vari : public vari {
                                       &t_init, solver_->nv_state_backward_),
                             "CVodeGetB");
 
-        if (num_args_vars_ > 0) {
+        if (is_any_var_args_) {
           check_flag_sundials(
               CVodeGetQuadB(solver_->cvodes_mem_, index_backward_, &t_init,
                             solver_->nv_quad_),
@@ -791,20 +762,24 @@ class cvodes_integrator_adjoint_vari : public vari {
     }
 
     if (is_var_t0_) {
-      t0_varis_[0]->adj_ += -state_backward_.dot(
+      forward_as<var>(stan::get(t0_, 0))->adj_ += -state_backward_.dot(
           rhs(t_init, value_of(y0_), value_of_args_tuple_));
     }
 
     // After integrating all the way back to t0, we finally have the
     // the adjoints we wanted
     // These are the dlog_density / d(initial_conditions[s]) adjoints
-    for (size_t s = 0; s < num_y0_vars_; ++s) {
-      y0_varis_[s]->adj_ += state_backward_.coeff(s);
+    if (is_var_y0_) {
+      for (size_t i = 0; i < N_; ++i) {
+        forward_as<var>(stan::get(y0_, i))->adj_ += state_backward_.coeff(i);
+      }
     }
 
     // These are the dlog_density / d(parameters[s]) adjoints
-    for (size_t s = 0; s < num_args_vars_; ++s) {
-      args_varis_[s]->adj_ += quad_.coeff(s);
+    if (is_any_var_args_) {
+      for (size_t s = 0; s < num_args_vars_; ++s) {
+        args_varis_[s]->adj_ += quad_.coeff(s);
+      }
     }
   }
 };  // cvodes integrator adjoint vari
