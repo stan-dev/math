@@ -503,59 +503,61 @@ class cvodes_integrator_adjoint_vari : public vari {
             num_y0_vars_)),
         args_varis_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
             num_args_vars_)),
-        solver_(new cvodes_solver(
-            function_name, N_, num_args_vars_, ts_.size(), solver_forward_,
-            state_forward_, state_backward_, quad_, absolute_tolerance_forward_,
-            absolute_tolerance_backward_)) {
+        solver_(nullptr) {
     save_varis(t0_varis_, t0);
     save_varis(ts_varis_, ts);
     save_varis(y0_varis_, y0);
     save_varis(args_varis_, args...);
 
-    check_finite(solver_->function_name_, "initial state", y0);
-    check_finite(solver_->function_name_, "initial time", t0);
-    check_finite(solver_->function_name_, "times", ts);
+    check_finite(function_name, "initial state", y0);
+    check_finite(function_name, "initial time", t0);
+    check_finite(function_name, "times", ts);
 
     stan::math::for_each(
-        [func_name = solver_->function_name_](auto&& arg) {
+        [func_name = function_name](auto&& arg) {
           check_finite(func_name, "ode parameters and data", arg);
         },
         local_args_tuple_);
 
-    check_nonzero_size(solver_->function_name_, "times", ts);
-    check_nonzero_size(solver_->function_name_, "initial state", y0);
-    check_sorted(solver_->function_name_, "times", ts);
-    check_less(solver_->function_name_, "initial time", t0, ts[0]);
-    check_positive_finite(solver_->function_name_, "relative_tolerance_forward",
+    check_nonzero_size(function_name, "times", ts);
+    check_nonzero_size(function_name, "initial state", y0);
+    check_sorted(function_name, "times", ts);
+    check_less(function_name, "initial time", t0, ts[0]);
+    check_positive_finite(function_name, "relative_tolerance_forward",
                           relative_tolerance_forward_);
-    check_positive_finite(solver_->function_name_, "absolute_tolerance_forward",
+    check_positive_finite(function_name, "absolute_tolerance_forward",
                           absolute_tolerance_forward_);
-    check_size_match(solver_->function_name_, "absolute_tolerance_forward",
+    check_size_match(function_name, "absolute_tolerance_forward",
                      absolute_tolerance_forward_.size(), "states", N_);
-    check_positive_finite(solver_->function_name_,
+    check_positive_finite(function_name,
                           "relative_tolerance_backward",
                           relative_tolerance_backward_);
-    check_positive_finite(solver_->function_name_,
+    check_positive_finite(function_name,
                           "absolute_tolerance_backward",
                           absolute_tolerance_backward_);
-    check_size_match(solver_->function_name_, "absolute_tolerance_backward",
+    check_size_match(function_name, "absolute_tolerance_backward",
                      absolute_tolerance_backward_.size(), "states", N_);
-    check_positive_finite(solver_->function_name_,
+    check_positive_finite(function_name,
                           "relative_tolerance_quadrature",
                           relative_tolerance_quadrature_);
-    check_positive_finite(solver_->function_name_,
+    check_positive_finite(function_name,
                           "absolute_tolerance_quadrature",
                           absolute_tolerance_quadrature_);
-    check_positive(solver_->function_name_, "max_num_steps", max_num_steps_);
-    check_positive(solver_->function_name_, "num_steps_between_checkpoints",
+    check_positive(function_name, "max_num_steps", max_num_steps_);
+    check_positive(function_name, "num_steps_between_checkpoints",
                    num_steps_between_checkpoints_);
     // for polynomial: 1=CV_HERMITE / 2=CV_POLYNOMIAL
-    check_range(solver_->function_name_, "interpolation_polynomial", 2,
-                interpolation_polynomial_);
+    check_bounded(function_name, "interpolation_polynomial", 
+                  interpolation_polynomial_, 1, 2);
     // 1=Adams=CV_ADAMS, 2=BDF=CV_BDF
-    check_range(solver_->function_name_, "solver_forward", 2, solver_forward_);
-    check_range(solver_->function_name_, "solver_backward", 2,
-                solver_backward_);
+    check_bounded(function_name, "solver_forward", solver_forward_, 1, 2);
+    check_bounded(function_name, "solver_backward",
+                  solver_backward_, 1, 2);
+
+    solver_ = new cvodes_solver(
+        function_name, N_, num_args_vars_, ts_.size(), solver_forward_,
+        state_forward_, state_backward_, quad_, absolute_tolerance_forward_,
+        absolute_tolerance_backward_);
 
     check_flag_sundials(
         CVodeInit(solver_->cvodes_mem_, &cvodes_integrator_adjoint_vari::cv_rhs,
