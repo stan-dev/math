@@ -54,8 +54,8 @@ inline scalar_type_t<T>& get(T& m, size_t n) {
 }
 
 template <typename T, typename = require_eigen_t<T>>
-inline const scalar_type_t<T>& get(const T& m, size_t n) {
-  return m.coeffRef(static_cast<int>(n));
+inline scalar_type_t<T> get(const T& m, size_t n) {
+  return m.coeff(static_cast<int>(n));
 }
 
 }  // namespace stan
