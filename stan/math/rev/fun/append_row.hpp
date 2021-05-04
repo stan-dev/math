@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_FUN_APPEND_ROW_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/append_row.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
@@ -21,8 +22,8 @@ namespace math {
  * (row_vector, row_vector) -> matrix,
  * (vector, vector) -> vector.
  *
- * @tparam T1 type of the first matrix
- * @tparam T2 type of the second matrix
+ * @tparam T1 A `var_value` with inner matrix type
+ * @tparam T1 A `var_value` with inner matrix type
  *
  * @param A First matrix.
  * @param B Second matrix.
@@ -35,20 +36,20 @@ inline auto append_row(const T1& A, const T2& B) {
     arena_t<promote_scalar_t<var, T1>> arena_A = A;
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
     return make_callback_var(append_row(value_of(arena_A), value_of(arena_B)), [arena_A, arena_B](auto& vi) mutable {
-      arena_A.adj() = vi.adj().topRows(arena_A.rows());
-      arena_B.adj() = vi.adj().bottomRows(arena_B.rows());
+      arena_A.adj() += vi.adj().topRows(arena_A.rows());
+      arena_B.adj() += vi.adj().bottomRows(arena_B.rows());
     });
   } else if (!is_constant<T1>::value) {
     arena_t<promote_scalar_t<var, T1>> arena_A = A;
     arena_t<promote_scalar_t<double, T2>> arena_B = value_of(B);
     return make_callback_var(append_row(value_of(arena_A), arena_B), [arena_A](auto& vi) mutable {
-      arena_A.adj() = vi.adj().topRows(arena_A.rows());
+      arena_A.adj() += vi.adj().topRows(arena_A.rows());
     });
   } else {
     arena_t<promote_scalar_t<double, T1>> arena_A = value_of(A);
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
     return make_callback_var(append_row(arena_A, value_of(arena_B)), [arena_B](auto& vi) mutable {
-      arena_B.adj() = vi.adj().bottomRows(arena_B.rows());
+      arena_B.adj() += vi.adj().bottomRows(arena_B.rows());
     });
   }
 }
@@ -60,7 +61,7 @@ inline auto append_row(const T1& A, const T2& B) {
  * This function applies to (scalar, vector) and returns a vector.
  *
  * @tparam Scal type of the scalar
- * @tparam ColVec type of the vector
+ * @tparam ColVec A `var_value` with inner column vector type.
  *
  * @param A scalar.
  * @param B vector.
@@ -74,20 +75,20 @@ inline auto append_row(const Scal& A, const var_value<ColVec>& B) {
     arena_t<promote_scalar_t<var, Scal>> arena_A = A;
     arena_t<promote_scalar_t<var, ColVec>> arena_B = B;
     return make_callback_var(append_row(value_of(arena_A), value_of(arena_B)), [arena_A, arena_B](auto& vi) mutable {
-      arena_A.adj() = vi.adj().coeff(0);
-      arena_B.adj() = vi.adj().tail(arena_B.size());
+      arena_A.adj() += vi.adj().coeff(0);
+      arena_B.adj() += vi.adj().tail(arena_B.size());
     });
   } else if (!is_constant<Scal>::value) {
     arena_t<promote_scalar_t<var, Scal>> arena_A = A;
     arena_t<promote_scalar_t<double, ColVec>> arena_B = value_of(B);
     return make_callback_var(append_row(value_of(arena_A), arena_B), [arena_A](auto& vi) mutable {
-      arena_A.adj() = vi.adj().coeff(0);
+      arena_A.adj() += vi.adj().coeff(0);
     });
   } else {
     arena_t<promote_scalar_t<double, Scal>> arena_A = value_of(A);
     arena_t<promote_scalar_t<var, ColVec>> arena_B = B;
     return make_callback_var(append_row(arena_A, value_of(arena_B)), [arena_B](auto& vi) mutable {
-      arena_B.adj() = vi.adj().tail(arena_B.size());
+      arena_B.adj() += vi.adj().tail(arena_B.size());
     });
   }
 }
@@ -98,7 +99,7 @@ inline auto append_row(const Scal& A, const var_value<ColVec>& B) {
  *
  * This function applies to (vector, scalar) and returns a vector.
  *
- * @tparam ColVec type of the vector
+ * @tparam ColVec a `var_value` with inner column vector type.
  * @tparam Scal type of the scalar
  *
  * @param A vector.
@@ -113,20 +114,20 @@ inline auto append_row(const var_value<ColVec>& A, const Scal& B) {
     arena_t<promote_scalar_t<var, ColVec>> arena_A = A;
     arena_t<promote_scalar_t<var, Scal>> arena_B = B;
     return make_callback_var(append_row(value_of(arena_A), value_of(arena_B)), [arena_A, arena_B](auto& vi) mutable {
-      arena_A.adj() = vi.adj().head(arena_A.size());
-      arena_B.adj() = vi.adj().coeff(vi.adj().size() - 1);
+      arena_A.adj() += vi.adj().head(arena_A.size());
+      arena_B.adj() += vi.adj().coeff(vi.adj().size() - 1);
     });
   } else if (!is_constant<ColVec>::value) {
     arena_t<promote_scalar_t<var, ColVec>> arena_A = A;
     arena_t<promote_scalar_t<double, Scal>> arena_B = value_of(B);
     return make_callback_var(append_row(value_of(arena_A), arena_B), [arena_A](auto& vi) mutable {
-      arena_A.adj() = vi.adj().head(arena_A.size());
+      arena_A.adj() += vi.adj().head(arena_A.size());
     });
   } else {
     arena_t<promote_scalar_t<double, ColVec>> arena_A = value_of(A);
     arena_t<promote_scalar_t<var, Scal>> arena_B = B;
     return make_callback_var(append_row(arena_A, value_of(arena_B)), [arena_B](auto& vi) mutable {
-      arena_B.adj() = vi.adj().coeff(vi.adj().size() - 1);
+      arena_B.adj() += vi.adj().coeff(vi.adj().size() - 1);
     });
   }
 }
