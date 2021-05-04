@@ -60,5 +60,4 @@ TEST(MathMixMatFun, appendCol) {
   stan::test::expect_ad_matvar(f, v0, m00);
   stan::test::expect_ad_matvar(f, v0, v0);
   stan::test::expect_ad_matvar(f, rv0, rv0);
-
 }
