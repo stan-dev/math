@@ -16,17 +16,35 @@ class AgradCdfLogistic : public AgradCdfTest {
     param[2] = 2.0;  // Shape
     parameters.push_back(param);
     cdf.push_back(0.30769230769230765388);  // expected cdf
+
+
+    param[0] = 20.0;  // y
+    param[1] = 11.5;  // Scale
+    param[2] = 15.0;  // Shape
+    parameters.push_back(param);
+    cdf.push_back(0.99975173823523311167);  // expected cdf
   }
 
   void invalid_values(vector<size_t>& index, vector<double>& value) {
-    // mu
-    index.push_back(1U);
+    // y
+    index.push_back(0U);
+    value.push_back(-1.0);
+
+    index.push_back(0U);
     value.push_back(-numeric_limits<double>::infinity());
+
+
+    // alpha
+    index.push_back(1U);
+    value.push_back(-1);
+
+    index.push_back(1U);
+    value.push_back(0);
 
     index.push_back(1U);
     value.push_back(numeric_limits<double>::infinity());
 
-    // sigma
+    // beta
     index.push_back(2U);
     value.push_back(-1.0);
 
@@ -37,7 +55,9 @@ class AgradCdfLogistic : public AgradCdfTest {
     value.push_back(numeric_limits<double>::infinity());
   }
 
-  bool has_lower_bound() { return false; }
+  bool has_lower_bound() { return true; }
+
+  double lower_bound() { return 0.0; }
 
   bool has_upper_bound() { return false; }
 
