@@ -33,8 +33,8 @@ static const std::string cumulative_sum1_kernel_code = STRINGIFY(
       const int wg_id = get_group_id(0);
       const int gsize = get_global_size(0);
 
-      int start = (int)((long)gid * size / gsize);
-      int end = (int)((long)(gid + 1) * size / gsize);
+      int start = (int)((long)gid * size / gsize);  // NOLINT
+      int end = (int)((long)(gid + 1) * size / gsize);  // NOLINT
       __local SCAL local_storage[LOCAL_SIZE_];
 
       SCAL acc = 0;
@@ -76,8 +76,8 @@ static const std::string cumulative_sum2_kernel_code = STRINGIFY(
       const int gid = get_global_id(0);
       const int gsize = get_global_size(0);
 
-      int start = (int)((long)gid * size / gsize);
-      int end = (int)((long)(gid + 1) * size / gsize);
+      int start = (int)((long)gid * size / gsize);  // NOLINT
+      int end = (int)((long)(gid + 1) * size / gsize);  // NOLINT
       __local SCAL local_storage[LOCAL_SIZE_];
 
       SCAL acc;
@@ -141,8 +141,8 @@ static const std::string cumulative_sum3_kernel_code = STRINGIFY(
       const int wg_id = get_group_id(0);
       const int gsize = get_global_size(0);
 
-      int start = (int)((long)gid * size / gsize);
-      int end = (int)((long)(gid + 1) * size / gsize);
+      int start = (int)((long)gid * size / gsize);  // NOLINT
+      int end = (int)((long)(gid + 1) * size / gsize);  // NOLINT
       __local SCAL local_storage[LOCAL_SIZE_];
 
       SCAL acc = 0;
@@ -166,9 +166,9 @@ static const std::string cumulative_sum3_kernel_code = STRINGIFY(
  */
 template <typename Scalar>
 struct cumulative_sum {
-  const static kernel_cl<out_buffer, out_buffer, in_buffer, int> kernel1;
-  const static kernel_cl<in_out_buffer, int> kernel2;
-  const static kernel_cl<out_buffer, in_buffer, in_buffer, in_buffer, int>
+  static const kernel_cl<out_buffer, out_buffer, in_buffer, int> kernel1;
+  static const kernel_cl<in_out_buffer, int> kernel2;
+  static const kernel_cl<out_buffer, in_buffer, in_buffer, in_buffer, int>
       kernel3;
 };
 
@@ -181,11 +181,9 @@ const kernel_cl<out_buffer, out_buffer, in_buffer, int>
                                      {"LOCAL_SIZE_", 16}});
 template <>
 const kernel_cl<out_buffer, out_buffer, in_buffer, int>
-    cumulative_sum<int>::kernel1("cumulative_sum1",
-                                    {"#define SCAL int\n",
-                                     cumulative_sum1_kernel_code},
-                                    {{"REDUCTION_STEP_SIZE", 4},
-                                     {"LOCAL_SIZE_", 16}});
+    cumulative_sum<int>::kernel1(
+        "cumulative_sum1", {"#define SCAL int\n", cumulative_sum1_kernel_code},
+        {{"REDUCTION_STEP_SIZE", 4}, {"LOCAL_SIZE_", 16}});
 
 template <>
 const kernel_cl<in_out_buffer, int> cumulative_sum<double>::kernel2(
@@ -205,11 +203,9 @@ const kernel_cl<out_buffer, in_buffer, in_buffer, in_buffer, int>
                                      {"LOCAL_SIZE_", 16}});
 template <>
 const kernel_cl<out_buffer, in_buffer, in_buffer, in_buffer, int>
-    cumulative_sum<int>::kernel3("cumulative_sum3",
-                                    {"#define SCAL int\n",
-                                     cumulative_sum3_kernel_code},
-                                    {{"REDUCTION_STEP_SIZE", 4},
-                                     {"LOCAL_SIZE_", 16}});
+    cumulative_sum<int>::kernel3(
+        "cumulative_sum3", {"#define SCAL int\n", cumulative_sum3_kernel_code},
+        {{"REDUCTION_STEP_SIZE", 4}, {"LOCAL_SIZE_", 16}});
 
 }  // namespace opencl_kernels
 }  // namespace math
