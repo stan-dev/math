@@ -180,12 +180,12 @@ class cvodes_integrator_adjoint_vari : public vari {
    *   not less than t0.
    * @param relative_tolerance_forward Relative tolerance for forward problem
    * passed to CVODES
-   * @param absolute_tolerance_forward Absolute tolerance per ODE state for forward problem
-   * passed to CVODES
+   * @param absolute_tolerance_forward Absolute tolerance per ODE state for
+   * forward problem passed to CVODES
    * @param relative_tolerance_backward Relative tolerance for backward problem
    * passed to CVODES
-   * @param absolute_tolerance_backward Absolute tolerance per ODE state for backward problem
-   * passed to CVODES
+   * @param absolute_tolerance_backward Absolute tolerance per ODE state for
+   * backward problem passed to CVODES
    * @param relative_tolerance_quadrature Relative tolerance for quadrature
    * problem passed to CVODES
    * @param absolute_tolerance_quadrature Absolute tolerance for quadrature
@@ -267,30 +267,25 @@ class cvodes_integrator_adjoint_vari : public vari {
                           absolute_tolerance_forward_);
     check_size_match(function_name, "absolute_tolerance_forward",
                      absolute_tolerance_forward_.size(), "states", N_);
-    check_positive_finite(function_name,
-                          "relative_tolerance_backward",
+    check_positive_finite(function_name, "relative_tolerance_backward",
                           relative_tolerance_backward_);
-    check_positive_finite(function_name,
-                          "absolute_tolerance_backward",
+    check_positive_finite(function_name, "absolute_tolerance_backward",
                           absolute_tolerance_backward_);
     check_size_match(function_name, "absolute_tolerance_backward",
                      absolute_tolerance_backward_.size(), "states", N_);
-    check_positive_finite(function_name,
-                          "relative_tolerance_quadrature",
+    check_positive_finite(function_name, "relative_tolerance_quadrature",
                           relative_tolerance_quadrature_);
-    check_positive_finite(function_name,
-                          "absolute_tolerance_quadrature",
+    check_positive_finite(function_name, "absolute_tolerance_quadrature",
                           absolute_tolerance_quadrature_);
     check_positive(function_name, "max_num_steps", max_num_steps_);
     check_positive(function_name, "num_steps_between_checkpoints",
                    num_steps_between_checkpoints_);
     // for polynomial: 1=CV_HERMITE / 2=CV_POLYNOMIAL
-    check_bounded(function_name, "interpolation_polynomial", 
+    check_bounded(function_name, "interpolation_polynomial",
                   interpolation_polynomial_, 1, 2);
     // 1=Adams=CV_ADAMS, 2=BDF=CV_BDF
     check_bounded(function_name, "solver_forward", solver_forward_, 1, 2);
-    check_bounded(function_name, "solver_backward",
-                  solver_backward_, 1, 2);
+    check_bounded(function_name, "solver_backward", solver_backward_, 1, 2);
 
     solver_ = new cvodes_solver(
         function_name, f, N_, num_args_vars_, ts_.size(), solver_forward_,
@@ -399,7 +394,8 @@ class cvodes_integrator_adjoint_vari : public vari {
       Eigen::VectorXd step_sens = Eigen::VectorXd::Zero(N_);
       for (int i = 0; i < ts_.size(); ++i) {
         for (int j = 0; j < N_; ++j) {
-          step_sens.coeffRef(j) += forward_as<var>(solver_->y_return_[i].coeff(j)).adj();
+          step_sens.coeffRef(j)
+              += forward_as<var>(solver_->y_return_[i].coeff(j)).adj();
         }
 
         forward_as<var>(stan::get(ts_, i))->adj_ += step_sens.dot(
@@ -422,7 +418,8 @@ class cvodes_integrator_adjoint_vari : public vari {
       // Take in the adjoints from all the output variables at this point
       // in time
       for (int j = 0; j < N_; ++j) {
-        state_backward_.coeffRef(j) += forward_as<var>(solver_->y_return_[i].coeff(j)).adj();
+        state_backward_.coeffRef(j)
+            += forward_as<var>(solver_->y_return_[i].coeff(j)).adj();
       }
 
       double t_final = value_of((i > 0) ? ts_[i - 1] : t0_);
@@ -552,7 +549,6 @@ class cvodes_integrator_adjoint_vari : public vari {
   }
 
  private:
-  
   /**
    * Call the ODE RHS with given tuple.
    */
