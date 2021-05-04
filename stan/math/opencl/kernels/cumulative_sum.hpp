@@ -33,7 +33,7 @@ static const std::string cumulative_sum1_kernel_code = STRINGIFY(
       const int wg_id = get_group_id(0);
       const int gsize = get_global_size(0);
 
-      int start = (int)((long)gid * size / gsize);  // NOLINT
+      int start = (int)((long)gid * size / gsize);      // NOLINT
       int end = (int)((long)(gid + 1) * size / gsize);  // NOLINT
       __local SCAL local_storage[LOCAL_SIZE_];
 
@@ -76,7 +76,7 @@ static const std::string cumulative_sum2_kernel_code = STRINGIFY(
       const int gid = get_global_id(0);
       const int gsize = get_global_size(0);
 
-      int start = (int)((long)gid * size / gsize);  // NOLINT
+      int start = (int)((long)gid * size / gsize);      // NOLINT
       int end = (int)((long)(gid + 1) * size / gsize);  // NOLINT
       __local SCAL local_storage[LOCAL_SIZE_];
 
@@ -141,7 +141,7 @@ static const std::string cumulative_sum3_kernel_code = STRINGIFY(
       const int wg_id = get_group_id(0);
       const int gsize = get_global_size(0);
 
-      int start = (int)((long)gid * size / gsize);  // NOLINT
+      int start = (int)((long)gid * size / gsize);      // NOLINT
       int end = (int)((long)(gid + 1) * size / gsize);  // NOLINT
       __local SCAL local_storage[LOCAL_SIZE_];
 
