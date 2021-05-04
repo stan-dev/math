@@ -50,12 +50,12 @@ inline const T& get(const std::vector<T, Alloc>& x, size_t n) {
  */
 template <typename T, typename = require_eigen_t<T>>
 inline scalar_type_t<T>& get(T& m, size_t n) {
-  return m(static_cast<int>(n));
+  return m.coeffRef(static_cast<int>(n));
 }
 
 template <typename T, typename = require_eigen_t<T>>
 inline const scalar_type_t<T>& get(const T& m, size_t n) {
-  return m(static_cast<int>(n));
+  return m.coeffRef(static_cast<int>(n));
 }
 
 }  // namespace stan
