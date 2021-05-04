@@ -94,7 +94,8 @@ class cvodes_integrator_adjoint_vari : public vari {
    * Call the ODE RHS with given tuple.
    */
   template <typename yT, typename... ArgsT>
-  constexpr auto rhs(double t, const yT& y, const std::tuple<ArgsT...>& args_tuple) const {
+  constexpr auto rhs(double t, const yT& y,
+                     const std::tuple<ArgsT...>& args_tuple) const {
     return apply([&](auto&&... args) { return f_(t, y, msgs_, args...); },
                  args_tuple);
   }
@@ -629,7 +630,8 @@ class cvodes_integrator_adjoint_vari : public vari {
       Eigen::VectorXd step_sens = Eigen::VectorXd::Zero(N_);
       for (int i = 0; i < ts_.size(); ++i) {
         for (int j = 0; j < N_; ++j) {
-          step_sens.coeffRef(j) += forward_as<var>(solver_->y_return_[i][j]).adj();
+          step_sens.coeffRef(j)
+              += forward_as<var>(solver_->y_return_[i][j]).adj();
         }
 
         forward_as<var>(stan::get(ts_, i))->adj_ += step_sens.dot(
@@ -652,7 +654,8 @@ class cvodes_integrator_adjoint_vari : public vari {
       // Take in the adjoints from all the output variables at this point
       // in time
       for (int j = 0; j < N_; ++j) {
-        state_backward_.coeffRef(j) += forward_as<var>(solver_->y_return_[i][j]).adj();
+        state_backward_.coeffRef(j)
+            += forward_as<var>(solver_->y_return_[i][j]).adj();
       }
 
       double t_final = value_of((i > 0) ? ts_[i - 1] : t0_);
