@@ -13,7 +13,8 @@ namespace math {
 /**
  * Solve the ODE initial value problem y' = f(t, y), y(t0) = y0 at a set of
  * times, { t1, t2, t3, ... } using the stiff backward differentiation formula
- * BDF solver from CVODES.
+ * BDF solver or the non-stiff Adams solver from CVODES. The ODE system is
+ * integrated using the adjoint sensitivity approach of CVODES.
  *
  * \p f must define an operator() with the signature as:
  *   template<typename T_t, typename T_y, typename... T_Args>
@@ -26,7 +27,8 @@ namespace math {
  * through to \p f without modification).
  *
  * @tparam F Type of ODE right hand side
- * @tparam T_0 Type of initial time
+ * @tparam T_y0 Type of initial state
+ * @tparam T_t0 Type of initial time
  * @tparam T_ts Type of output times
  * @tparam T_Args Types of pass-through parameters
  *
@@ -38,11 +40,11 @@ namespace math {
  *   not less than t0.
  * @param relative_tolerance_forward Relative tolerance for forward problem
  * passed to CVODES
- * @param absolute_tolerance_forward Absolute tolerance for forward problem
+ * @param absolute_tolerance_forward Absolute tolerance per ODE state for forward problem
  * passed to CVODES
  * @param relative_tolerance_backward Relative tolerance for backward problem
  * passed to CVODES
- * @param absolute_tolerance_backward Absolute tolerance for backward problem
+ * @param absolute_tolerance_backward Absolute tolerance per ODE state for backward problem
  * passed to CVODES
  * @param relative_tolerance_quadrature Relative tolerance for quadrature
  * problem passed to CVODES
@@ -90,7 +92,8 @@ ode_adjoint_impl(const char* function_name, const F& f, const T_y0& y0,
 /**
  * Solve the ODE initial value problem y' = f(t, y), y(t0) = y0 at a set of
  * times, { t1, t2, t3, ... } using the stiff backward differentiation formula
- * BDF solver from CVODES.
+ * BDF solver or the non-stiff Adams solver from CVODES. The ODE system is
+ * integrated using the adjoint sensitivity approach of CVODES.
  *
  * \p f must define an operator() with the signature as:
  *   template<typename T_t, typename T_y, typename... T_Args>
@@ -103,7 +106,8 @@ ode_adjoint_impl(const char* function_name, const F& f, const T_y0& y0,
  * through to \p f without modification).
  *
  * @tparam F Type of ODE right hand side
- * @tparam T_0 Type of initial time
+ * @tparam T_y0 Type of initial state
+ * @tparam T_t0 Type of initial time
  * @tparam T_ts Type of output times
  * @tparam T_Args Types of pass-through parameters
  *
@@ -112,10 +116,25 @@ ode_adjoint_impl(const char* function_name, const F& f, const T_y0& y0,
  * @param t0 Initial time
  * @param ts Times at which to solve the ODE at. All values must be sorted and
  *   not less than t0.
- * @param relative_tolerance Relative tolerance passed to CVODES
- * @param absolute_tolerance Absolute tolerance passed to CVODES
+ * @param relative_tolerance_forward Relative tolerance for forward problem
+ * passed to CVODES
+ * @param absolute_tolerance_forward Absolute tolerance per ODE state for forward problem
+ * passed to CVODES
+ * @param relative_tolerance_backward Relative tolerance for backward problem
+ * passed to CVODES
+ * @param absolute_tolerance_backward Absolute tolerance per ODE state for backward problem
+ * passed to CVODES
+ * @param relative_tolerance_quadrature Relative tolerance for quadrature
+ * problem passed to CVODES
+ * @param absolute_tolerance_quadrature Absolute tolerance for quadrature
+ * problem passed to CVODES
  * @param max_num_steps Upper limit on the number of integration steps to
  *   take between each output (error if exceeded)
+ * @param num_steps_between_checkpoints Number of integrator steps after which a
+ * checkpoint is stored for the backward pass
+ * @param interpolation_polynomial type of polynomial used for interpolation
+ * @param solver_forward solver used for forward pass
+ * @param solver_backward solver used for backward pass
  * @param[in, out] msgs the print stream for warning messages
  * @param args Extra arguments passed unmodified through to ODE right hand side
  * @return Solution to ODE at times \p ts
