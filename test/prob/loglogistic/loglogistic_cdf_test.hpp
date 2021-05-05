@@ -23,6 +23,12 @@ class AgradCdfLogistic : public AgradCdfTest {
     param[2] = 15.0;  // Shape
     parameters.push_back(param);
     cdf.push_back(0.99975173823523311167);  // expected cdf
+
+    param[0] = 0.0001;  // y
+    param[1] = 1.2;  // Scale
+    param[2] = 1.0;  // Shape
+    parameters.push_back(param);
+    cdf.push_back(0.00008332638946754438);  // expected cdf
   }
 
   void invalid_values(vector<size_t>& index, vector<double>& value) {
