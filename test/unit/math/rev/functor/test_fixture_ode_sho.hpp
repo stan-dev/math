@@ -602,9 +602,11 @@ struct harmonic_oscillator_ctl_test
     this->atol_f(0) = atol_f_;
 
     this->atol_f.resize(1);
+    this->atol_f(0) = atol_f_;
     EXPECT_THROW_MSG(apply_solver_tol_ctl(), std::invalid_argument,
                      "absolute_tolerance_forward");
     this->atol_f.resize(2);
+    this->atol_f(0) = atol_f_;
     this->atol_f(1) = atol_f_;
 
     const double rtol_b_ = this->rtol_b;
@@ -620,6 +622,7 @@ struct harmonic_oscillator_ctl_test
     this->atol_b(0) = atol_b_;
 
     this->atol_b.resize(1);
+    this->atol_b(0) = atol_b_;
     EXPECT_THROW_MSG(apply_solver_tol_ctl(), std::invalid_argument,
                      "absolute_tolerance_backward");
     this->atol_b.resize(2);
