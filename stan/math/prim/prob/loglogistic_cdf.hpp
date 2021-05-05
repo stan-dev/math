@@ -14,6 +14,7 @@
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
+#include <stan/math/prim/fun/promote_scalar.hpp>
 #include <cmath>
 #include <iostream>
 
@@ -74,68 +75,50 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_cdf(const T_y& y,
   operands_and_partials<T_y_ref, T_alpha_ref, T_beta_ref> ops_partials(
       y_ref, alpha_ref, beta_ref);
 
-  const auto& cdf_elementwise = to_ref_if<!is_constant_all<T_y, T_scale,
-    T_shape>::value>(1 / (1 + pow(alpha_val / y_val, beta_val)));
+  if (sum(promote_scalar<int>(y_val == 0))) {
+    return ops_partials.build(0.0);
+  }
+
+  const auto& alpha_div_y = to_ref_if<!is_constant_all<T_shape>::value>(
+    alpha_val / y_val);
+  const auto& alpha_div_y_pow_beta = to_ref_if<!is_constant_all<T_y, T_scale,
+    T_shape>::value>(pow(alpha_div_y, beta_val));
+  const auto& prod_all = to_ref_if<!is_constant_all<T_y, T_scale,
+    T_shape>::value>(1 / (1 + alpha_div_y_pow_beta));
 
   T_partials_return cdf(1.0);
-  cdf *= prod(cdf_elementwise);
+  cdf *= prod(prod_all);
 
-  if (!is_constant_all<T_y>::value) {
-    std::cout << "Partial 1: " << ops_partials.edge1_.partials_[0] << std::endl;
-    const auto& y_deriv = (pow(alpha_val, beta_val) * beta_val *
-      pow(y_val, -beta_val - 1)) / pow(1 + pow(alpha_val / y_val, beta_val), 2);
-    ops_partials.edge1_.partials_ = (y_deriv / cdf_elementwise) * cdf;
-    std::cout << "Partial 1: " << (y_deriv / cdf_elementwise) * cdf << std::endl;
-  }
-  if (!is_constant_all<T_scale>::value) {
-    const auto& alpha_deriv = (-pow(y_val, -beta_val) * beta_val *
-      pow(alpha_val, beta_val - 1)) / pow(1 + pow(alpha_val / y_val, beta_val), 2);
-    ops_partials.edge2_.partials_ = (alpha_deriv / cdf_elementwise) * cdf;
-    std::cout << "Partial 2: " << (alpha_deriv / cdf_elementwise) * cdf << std::endl;
-    // std::cout << "Partial 2: " << (alpha_deriv == 0) << std::endl;
-  }
-  if (!is_constant_all<T_shape>::value) {
-    const auto& beta_deriv = multiply_log(-pow(alpha_val / y_val, beta_val),
-      (alpha_val / y_val)) /
-      pow(1 + pow(alpha_val / y_val, beta_val), 2);
-    // const auto& beta_deriv = (-pow(alpha_val / y_val, beta_val) *
-    //   log(alpha_val / y_val)) /
-    //   pow(1 + pow(alpha_val / y_val, beta_val), 2);
-    ops_partials.edge3_.partials_ = (beta_deriv / cdf_elementwise) * cdf;
-    // Is it the product here, rather than sum, if it is a scalar???
-
-
-    std::cout << "Partial 3: " << (beta_deriv / cdf_elementwise) * cdf << std::endl;
-  }
-  std::cout << "Partial edge y 1: " << ops_partials.edge1_.partials_[0] << std::endl;
-  std::cout << "Partial edge y 2: " << ops_partials.edge1_.partials_[1] << std::endl;
-
-  if (!is_constant_all<T_shape>::value) {
-      // std::cout << "Partial edge y 1: " << ops_partials.edge1_.partials_[0] << std::endl;
-      // std::cout << "Partial edge y 2: " << ops_partials.edge1_.partials_[1] << std::endl;
-      std::cout << "Partial edge alpha 1 " << ops_partials.edge2_.partials_[0] << std::endl;
-      std::cout << "Partial edge beta 1 " << ops_partials.edge3_.partials_[0] << std::endl;
-      std::cout << "Partial edge beta 2 " << ops_partials.edge3_.partials_[1] << std::endl;
+  if (!is_constant_all<T_y, T_scale, T_shape>::value) {
+    const auto& prod_all_sq = to_ref_if<!is_constant_all<T_y>::value
+                    + !is_constant_all<T_scale>::value
+                    + !is_constant_all<T_shape>::value
+                >= 2>(prod_all * prod_all);
+    const auto& cdf_div_elt = to_ref_if<!is_constant_all<T_y>::value
+                    + !is_constant_all<T_scale>::value
+                    + !is_constant_all<T_shape>::value
+                >= 2>(cdf / prod_all);
+    if (!is_constant_all<T_y, T_scale>::value) {
+      const auto& alpha_div_times_beta =
+        to_ref_if<!is_constant_all<T_y>::value +
+        !is_constant_all<T_scale>::value == 2>(alpha_div_y_pow_beta * beta_val);
+      if (!is_constant_all<T_y>::value) {
+        const auto& y_deriv = alpha_div_times_beta * inv(y_val) * prod_all_sq;
+        ops_partials.edge1_.partials_ = y_deriv * cdf_div_elt;
+      }
+      if (!is_constant_all<T_scale>::value) {
+        const auto& alpha_deriv = - alpha_div_times_beta * inv(alpha_val) *
+          prod_all_sq;
+        ops_partials.edge2_.partials_ = alpha_deriv * cdf_div_elt;
+      }
+    }
+    if (!is_constant_all<T_shape>::value) {
+      const auto& beta_deriv = -multiply_log(alpha_div_y_pow_beta,
+        alpha_div_y) * prod_all_sq;
+      ops_partials.edge3_.partials_ = beta_deriv * cdf_div_elt;
+    }
   }
 
-  // We could move this to above if? Probably. Above ops_partials, so that
-  // we don't have to access ops_partials.
-  // if (!is_constant_all<T_shape>::value) {
-  //   for (size_t n = 0; n < stan::math::size(beta); ++n) { // Beta is not right here?
-  //     // We should have something of larger size?
-  //     // std::cout << "ii1" << std::endl;
-  //     std::cout << n << std::endl;
-  //     std::cout << "Partial edge: " << ops_partials.edge1_.partials_[n] << std::endl;
-  //     std::cout << "Partial edge: " << ops_partials.edge2_.partials_[n] << std::endl;
-  //     std::cout << "Partial edge: " << ops_partials.edge3_.partials_[n] << std::endl;
-  //     // if (ops_partials.edge3_.partials_[n] != ops_partials.edge3_.partials_[n]) {
-  //     //   ops_partials.edge3_.partials_[n] = 0;
-  //     //   // std::cout << "ii2" << std::endl;
-  //     // }
-  //     // ops_partials.edge3_.partials_[n] *= cdf;
-  //   }
-    // std::cout << "Partial 3: " << ops_partials.edge3_.partials_ << std::endl;
-  // }
   return ops_partials.build(cdf);
 }
 
