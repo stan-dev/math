@@ -24,6 +24,11 @@ inline T& get(T& x, size_t n) {
   return x;
 }
 
+template <typename T, typename = require_stan_scalar_t<T>>
+inline T get(const T& x, size_t n) {
+  return x;
+}
+
 /** \ingroup type_trait
  * Returns the n-th element of the provided std::vector.
  *
@@ -50,12 +55,12 @@ inline const T& get(const std::vector<T, Alloc>& x, size_t n) {
  */
 template <typename T, typename = require_eigen_t<T>>
 inline scalar_type_t<T>& get(T& m, size_t n) {
-  return m(static_cast<int>(n));
+  return m.coeffRef(static_cast<int>(n));
 }
 
 template <typename T, typename = require_eigen_t<T>>
-inline const scalar_type_t<T>& get(const T& m, size_t n) {
-  return m(static_cast<int>(n));
+inline scalar_type_t<T> get(const T& m, size_t n) {
+  return m.coeff(static_cast<int>(n));
 }
 
 }  // namespace stan
