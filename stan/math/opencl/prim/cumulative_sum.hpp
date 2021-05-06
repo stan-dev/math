@@ -27,7 +27,7 @@ inline auto cumulative_sum(T_vec&& v) {
   check_vector("cumulative_sum(OpenCL)", "v", v);
 
   matrix_cl<T_scal> res(v.rows(), v.cols());
-  if(v.size()==0){
+  if (v.size() == 0) {
     return res;
   }
 
