@@ -80,7 +80,7 @@ return_type_t<T_y_cl, T_shape_cl, T_inv_scale_cl> gamma_lpdf(
                                         beta_val, "positive finite");
   auto beta_pos_finite_expr = beta_val > 0 && isfinite(beta_val);
 
-  auto any_y_negative_expr = colwise_max(constant(0, N, 1) + (y_val < 0));
+  auto any_y_negative_expr = colwise_max(cast<char>(y_val < 0));
   auto log_y_expr = log(y_val);
   auto log_beta_expr = log(beta_val);
   auto logp1_expr = static_select<include_summand<propto, T_shape_cl>::value>(
@@ -99,7 +99,7 @@ return_type_t<T_y_cl, T_shape_cl, T_inv_scale_cl> gamma_lpdf(
   auto alpha_deriv_expr = log_beta_expr + log_y_expr - digamma(alpha_val);
   auto beta_deriv_expr = elt_divide(alpha_val, beta_val) - y_val;
 
-  matrix_cl<int> any_y_negative_cl;
+  matrix_cl<char> any_y_negative_cl;
   matrix_cl<double> logp_cl;
   matrix_cl<double> y_deriv_cl;
   matrix_cl<double> alpha_deriv_cl;
