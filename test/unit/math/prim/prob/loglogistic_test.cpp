@@ -21,7 +21,8 @@ class LoglogisticTestRig : public VectorRNGTestRig {
                          {-3, -2, -1, 0}) {}
 
   template <typename T1, typename T2, typename T3, typename T_rng>
-  auto generate_samples(const T1& alpha, const T2& beta) const {
+  auto generate_samples(const T1& alpha, const T2& beta,
+    const T3& unused, T_rng& rng) const {
     return stan::math::loglogistic_rng(alpha, beta, rng);
   }
 };
