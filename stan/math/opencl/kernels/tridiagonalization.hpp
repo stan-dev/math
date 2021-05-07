@@ -169,7 +169,7 @@ const char* tridiagonalization_v2_kernel_code = STRINGIFY(
     /**
      * Second part in constructing vector v: v = Pb * u + V * Uu + U * Vu. Pb is
      * a block of packed matrix and U is householder vector. Pb is symmetric
-     * with only lower triangel having values. That is why two columns of V are
+     * with only lower triangle having values. That is why two columns of V are
      * written that must be added to obtain the vector v. Must be run with 64
      * threads per work group and total number of threads equal or greater than
      * size of result vector.
@@ -342,7 +342,7 @@ const kernel_cl<in_out_buffer, in_out_buffer, out_buffer, int, int, int, int>
     tridiagonalization_v3("tridiagonalization_v3",
                           {tridiagonalization_v3_kernel_code});
 
-const kernel_cl<out_buffer, in_buffer, int, int, int> subtract_twice(
+const kernel_cl<in_out_buffer, in_buffer, int, int, int> subtract_twice(
     "subtract_twice", {subtract_twice_kernel_code});
 
 }  // namespace opencl_kernels

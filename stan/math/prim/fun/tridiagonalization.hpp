@@ -1,7 +1,7 @@
 #ifndef STAN_MATH_PRIM_MAT_FUN_TRIDIAGONALIZATION_HPP
 #define STAN_MATH_PRIM_MAT_FUN_TRIDIAGONALIZATION_HPP
 
-#include <stan/math/prim/scal/fun/constants.hpp>
+#include <stan/math/prim/fun/constants.hpp>
 #include <Eigen/Dense>
 #include <algorithm>
 #include <cmath>
@@ -45,7 +45,7 @@ void block_householder_tridiag(const Eigen::MatrixXd& A,
       q += householder[0] * householder[0];
       q = sqrt(q);
       if (q != 0) {
-        householder *= SQRT_2 / q;
+        householder *= SQRT_TWO / q;
       }
 
       auto& u = householder;
@@ -59,12 +59,12 @@ void block_householder_tridiag(const Eigen::MatrixXd& A,
                   * (V.bottomLeftCorner(u.size(), j).transpose() * u)
             - V.bottomLeftCorner(u.size(), j)
                   * (packed.block(k + j + 1, k, u.size(), j).transpose() * u);
-      v[0] = q / SQRT_2;
+      v[0] = q / SQRT_TWO;
       const double cnst = v.tail(householder.size()).transpose() * u;
       v.tail(householder.size()) -= 0.5 * cnst * u;
 
       packed(k + j, k + j + 1)
-          = packed(k + j + 1, k + j) * q / SQRT_2 + alpha - v[0] * u[0];
+          = packed(k + j + 1, k + j) * q / SQRT_TWO + alpha - v[0] * u[0];
       V.col(j).tail(V.rows() - j) = v.tail(V.rows() - j);
     }
     Eigen::MatrixXd partial_update

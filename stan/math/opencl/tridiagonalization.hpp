@@ -33,8 +33,8 @@ void block_householder_tridiag_cl(const Eigen::MatrixXd& A,
     const int actual_r = std::min({r, static_cast<int>(A.rows() - k - 2)});
     matrix_cl<double> V_gpu(A.rows() - k - 1, actual_r + 1);
 
+    matrix_cl<double> Uu(actual_r, 1), Vu(actual_r, 1), q_gpu(1, 1);
     for (size_t j = 0; j < actual_r; j++) {
-      matrix_cl<double> Uu(j, 1), Vu(j, 1), q_gpu(1, 1);
       try {
         opencl_kernels::tridiagonalization_householder(
             cl::NDRange(1024), cl::NDRange(1024), packed_gpu, V_gpu, q_gpu,
@@ -63,17 +63,21 @@ void block_householder_tridiag_cl(const Eigen::MatrixXd& A,
     //    matrix_cl<double> V_block_gpu(V_gpu.rows() - actual_r + 1, actual_r);
     //    V_block_gpu.sub_block(V_gpu, actual_r - 1, 0, 0, 0, V_gpu.rows() -
     //    actual_r + 1, actual_r);
-    matrix_cl<double> V_block_gpu = block_zero_based(V_gpu, actual_r - 1, 0,
-                                   V_gpu.rows() - actual_r + 1, actual_r);
+    matrix_cl<double> V_block_gpu = block_zero_based(
+        V_gpu, actual_r - 1, 0, V_gpu.rows() - actual_r + 1, actual_r);
     matrix_cl<double> partial_update_gpu = U_gpu * transpose(V_block_gpu);
-    try {
-      opencl_kernels::subtract_twice(
-          cl::NDRange(partial_update_gpu.rows(), partial_update_gpu.cols()),
-          packed_gpu, partial_update_gpu, packed_gpu.rows(),
-          partial_update_gpu.rows(), k + actual_r);
-    } catch (cl::Error& e) {
-      check_opencl_error("block_householder_tridiag_cl", e);
-    }
+//    try {
+//      opencl_kernels::subtract_twice(
+//          cl::NDRange(partial_update_gpu.rows(), partial_update_gpu.cols()),
+//          packed_gpu, partial_update_gpu, packed_gpu.rows(),
+//          partial_update_gpu.rows(), k + actual_r);
+//    } catch (cl::Error& e) {
+//      check_opencl_error("block_householder_tridiag_cl", e);
+//    }
+    auto block
+        = block_zero_based(packed_gpu, k + actual_r, k + actual_r,
+                           partial_update_gpu.rows(), partial_update_gpu.cols());
+    block = block - partial_update_gpu - transpose(partial_update_gpu);
   }
   //  packed.resize(A.rows(), A.cols());
   //  copy(packed, packed_gpu);
@@ -81,7 +85,6 @@ void block_householder_tridiag_cl(const Eigen::MatrixXd& A,
   packed(packed.rows() - 2, packed.cols() - 1)
       = packed(packed.rows() - 1, packed.cols() - 2);
 }
-
 
 /**
  * Calculates Q*A in place. To construct Q pass an appropriate identity matrix
@@ -120,8 +123,8 @@ void block_apply_packed_Q_cl(const Eigen::MatrixXd& packed, Eigen::MatrixXd& A,
     //    matrix_cl<double> A_bottom_gpu(A.rows() - k - 1, A.cols());
     //    A_bottom_gpu.sub_block(A_gpu, k + 1, 0, 0, 0, A_bottom_gpu.rows(),
     //    A_bottom_gpu.cols());
-    matrix_cl<double> A_bottom_gpu = block_zero_based(
-        A_gpu, k + 1, 0, A.rows() - k - 1, A.cols());
+    matrix_cl<double> A_bottom_gpu
+        = block_zero_based(A_gpu, k + 1, 0, A.rows() - k - 1, A.cols());
     matrix_cl<double> W_gpu(W);
     A_bottom_gpu = A_bottom_gpu
                    - W_gpu * (packed_block_transpose_triang_gpu * A_bottom_gpu);
