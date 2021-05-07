@@ -30,17 +30,16 @@ namespace math {
  * sizes
  */
 template <typename T_scale, typename T_shape, class RNG>
-inline typename VectorBuilder<true, double, T_scale,
-  T_shape>::type loglogistic_rng(
-    const T_scale& alpha, const T_shape& beta, RNG& rng) {
+inline typename VectorBuilder<true, double, T_scale, T_shape>::type
+loglogistic_rng(const T_scale& alpha, const T_shape& beta, RNG& rng) {
   using boost::uniform_01;
   using boost::variate_generator;
   using std::pow;
   using T_alpha_ref = ref_type_t<T_scale>;
   using T_beta_ref = ref_type_t<T_shape>;
   static const char* function = "loglogistic_rng";
-  check_consistent_sizes(function, "Scale parameter", alpha,
-                         "Shape Parameter", beta);
+  check_consistent_sizes(function, "Scale parameter", alpha, "Shape Parameter",
+                         beta);
   T_alpha_ref alpha_ref = alpha;
   T_beta_ref beta_ref = beta;
   check_positive_finite(function, "Scale parameter", alpha_ref);
@@ -52,11 +51,9 @@ inline typename VectorBuilder<true, double, T_scale,
   VectorBuilder<true, double, T_scale, T_shape> output(N);
 
   for (size_t n = 0; n < N; ++n) {
-    variate_generator<RNG&, uniform_01<> > uniform01_rng(
-        rng, uniform_01<>());
+    variate_generator<RNG&, uniform_01<> > uniform01_rng(rng, uniform_01<>());
     const double tmp = uniform01_rng();
-    output[n] = alpha_vec[n] * pow(tmp / (1 - tmp),
-      1 / beta_vec[n]);
+    output[n] = alpha_vec[n] * pow(tmp / (1 - tmp), 1 / beta_vec[n]);
   }
   return output.data();
 }

@@ -10,19 +10,15 @@
 class LoglogisticTestRig : public VectorRNGTestRig {
  public:
   LoglogisticTestRig()
-      : VectorRNGTestRig(10000, 10,
-                         {2.5, 1.7, 0.2, 0.1, 2.0},
-                         {3, 2, 1, 5, 10, 6},
-                         {-2.5, -1.7, -0.2, -0.1, 0.0},
-                         {-3, -2, -1, -4, -10, 0},
-                         {0.1, 1.0, 2.5, 4.0},
-                         {1, 2, 3, 4},
-                         {-2.7, -1.5, -0.5, 0.0},
+      : VectorRNGTestRig(10000, 10, {2.5, 1.7, 0.2, 0.1, 2.0},
+                         {3, 2, 1, 5, 10, 6}, {-2.5, -1.7, -0.2, -0.1, 0.0},
+                         {-3, -2, -1, -4, -10, 0}, {0.1, 1.0, 2.5, 4.0},
+                         {1, 2, 3, 4}, {-2.7, -1.5, -0.5, 0.0},
                          {-3, -2, -1, 0}) {}
 
   template <typename T1, typename T2, typename T3, typename T_rng>
-  auto generate_samples(const T1& alpha, const T2& beta,
-    const T3& unused, T_rng& rng) const {
+  auto generate_samples(const T1& alpha, const T2& beta, const T3& unused,
+                        T_rng& rng) const {
     return stan::math::loglogistic_rng(alpha, beta, rng);
   }
 };
@@ -39,16 +35,14 @@ TEST(ProbDistributionsLoglogistic, error_check) {
   boost::random::mt19937 rng;
   EXPECT_NO_THROW(stan::math::loglogistic_rng(10.0, 2.0, rng));
 
-  EXPECT_THROW(stan::math::loglogistic_rng(2.0, -1.0, rng),
-               std::domain_error);
-  EXPECT_THROW(stan::math::loglogistic_rng(-2.0, 1.0, rng),
-               std::domain_error);
-  EXPECT_THROW(stan::math::loglogistic_rng(
-                   10, stan::math::positive_infinity(), rng),
-               std::domain_error);
-  EXPECT_THROW(stan::math::loglogistic_rng(
-                   stan::math::positive_infinity(), 2, rng),
-               std::domain_error);
+  EXPECT_THROW(stan::math::loglogistic_rng(2.0, -1.0, rng), std::domain_error);
+  EXPECT_THROW(stan::math::loglogistic_rng(-2.0, 1.0, rng), std::domain_error);
+  EXPECT_THROW(
+      stan::math::loglogistic_rng(10, stan::math::positive_infinity(), rng),
+      std::domain_error);
+  EXPECT_THROW(
+      stan::math::loglogistic_rng(stan::math::positive_infinity(), 2, rng),
+      std::domain_error);
 }
 
 TEST(ProbDistributionsLoglogistic, test_sampling_icdf) {
@@ -69,8 +63,7 @@ TEST(ProbDistributionsLoglogistic, chiSquareGoodnessFitTest) {
 
   std::vector<double> samples;
   for (int i = 0; i < N; ++i) {
-    samples.push_back(
-        stan::math::loglogistic_rng(1.2, 2.0, rng));
+    samples.push_back(stan::math::loglogistic_rng(1.2, 2.0, rng));
   }
   std::vector<double> quantiles;
   for (int i = 1; i < K; ++i) {
