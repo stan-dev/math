@@ -12,19 +12,19 @@ namespace stan {
 namespace math {
 
 /** \ingroup prob_dists
- * Return a gamma random variate for the given shape and inverse
- * scale parameters using the specified random number generator.
+ * Return a loglogistic random variate for the given scale and
+ * shape parameters using the specified random number generator.
  *
  * alpha and beta can each be a scalar or a one-dimensional container. Any
  * non-scalar inputs must be the same size.
  *
+ * @tparam T_scale type of scale parameter
  * @tparam T_shape type of shape parameter
- * @tparam T_inv type of inverse scale parameter
  * @tparam RNG type of random number generator
- * @param alpha (Sequence of) positive shape parameter(s)
- * @param beta (Sequence of) positive inverse scale parameter(s)
+ * @param alpha (Sequence of) positive scale parameter(s)
+ * @param beta (Sequence of) positive shape parameter(s)
  * @param rng random number generator
- * @return (Sequence of) gamma random variate(s)
+ * @return (Sequence of) loglogistic random variate(s)
  * @throw std::domain_error if alpha or beta are nonpositive
  * @throw std::invalid_argument if non-scalar arguments are of different
  * sizes
@@ -51,11 +51,10 @@ inline typename VectorBuilder<true, double, T_scale,
   size_t N = max_size(alpha, beta);
   VectorBuilder<true, double, T_scale, T_shape> output(N);
 
-  float tmp;
   for (size_t n = 0; n < N; ++n) {
     variate_generator<RNG&, uniform_01<> > uniform01_rng(
         rng, uniform_01<>());
-    tmp = uniform01_rng();
+    const double tmp = uniform01_rng();
     output[n] = alpha_vec[n] * pow(tmp / (1 - tmp),
       1 / beta_vec[n]);
   }
