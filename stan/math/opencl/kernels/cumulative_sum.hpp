@@ -164,46 +164,56 @@ static const std::string cumulative_sum3_kernel_code = STRINGIFY(
 /**
  * struct containing cumulative_sum kernels, grouped by scalar type.
  */
-template <typename Scalar>
-struct cumulative_sum {
+template <typename Scalar, typename = void>
+struct cumulative_sum {};
+
+template <typename T>
+struct cumulative_sum<double, T> {
+  static const kernel_cl<out_buffer, out_buffer, in_buffer, int> kernel1;
+  static const kernel_cl<in_out_buffer, int> kernel2;
+  static const kernel_cl<out_buffer, in_buffer, in_buffer, in_buffer, int>
+      kernel3;
+};
+template <typename T>
+struct cumulative_sum<int, T> {
   static const kernel_cl<out_buffer, out_buffer, in_buffer, int> kernel1;
   static const kernel_cl<in_out_buffer, int> kernel2;
   static const kernel_cl<out_buffer, in_buffer, in_buffer, in_buffer, int>
       kernel3;
 };
 
-template <>
+template <typename T>
 const kernel_cl<out_buffer, out_buffer, in_buffer, int>
-    cumulative_sum<double>::kernel1("cumulative_sum1",
-                                    {"#define SCAL double\n",
-                                     cumulative_sum1_kernel_code},
-                                    {{"REDUCTION_STEP_SIZE", 4},
-                                     {"LOCAL_SIZE_", 16}});
-template <>
+    cumulative_sum<double, T>::kernel1("cumulative_sum1",
+                                       {"#define SCAL double\n",
+                                        cumulative_sum1_kernel_code},
+                                       {{"REDUCTION_STEP_SIZE", 4},
+                                        {"LOCAL_SIZE_", 16}});
+template <typename T>
 const kernel_cl<out_buffer, out_buffer, in_buffer, int>
-    cumulative_sum<int>::kernel1(
+    cumulative_sum<int, T>::kernel1(
         "cumulative_sum1", {"#define SCAL int\n", cumulative_sum1_kernel_code},
         {{"REDUCTION_STEP_SIZE", 4}, {"LOCAL_SIZE_", 16}});
 
-template <>
-const kernel_cl<in_out_buffer, int> cumulative_sum<double>::kernel2(
+template <typename T>
+const kernel_cl<in_out_buffer, int> cumulative_sum<double, T>::kernel2(
     "cumulative_sum2", {"#define SCAL double\n", cumulative_sum2_kernel_code},
     {{"REDUCTION_STEP_SIZE", 4}, {"LOCAL_SIZE_", 1024}});
-template <>
-const kernel_cl<in_out_buffer, int> cumulative_sum<int>::kernel2(
+template <typename T>
+const kernel_cl<in_out_buffer, int> cumulative_sum<int, T>::kernel2(
     "cumulative_sum2", {"#define SCAL int\n", cumulative_sum2_kernel_code},
     {{"REDUCTION_STEP_SIZE", 4}, {"LOCAL_SIZE_", 1024}});
 
-template <>
+template <typename T>
 const kernel_cl<out_buffer, in_buffer, in_buffer, in_buffer, int>
-    cumulative_sum<double>::kernel3("cumulative_sum3",
-                                    {"#define SCAL double\n",
-                                     cumulative_sum3_kernel_code},
-                                    {{"REDUCTION_STEP_SIZE", 4},
-                                     {"LOCAL_SIZE_", 16}});
-template <>
+    cumulative_sum<double, T>::kernel3("cumulative_sum3",
+                                       {"#define SCAL double\n",
+                                        cumulative_sum3_kernel_code},
+                                       {{"REDUCTION_STEP_SIZE", 4},
+                                        {"LOCAL_SIZE_", 16}});
+template <typename T>
 const kernel_cl<out_buffer, in_buffer, in_buffer, in_buffer, int>
-    cumulative_sum<int>::kernel3(
+    cumulative_sum<int, T>::kernel3(
         "cumulative_sum3", {"#define SCAL int\n", cumulative_sum3_kernel_code},
         {{"REDUCTION_STEP_SIZE", 4}, {"LOCAL_SIZE_", 16}});
 
