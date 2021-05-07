@@ -50,7 +50,8 @@ inline auto ceil(const Container& x) {
  * @return Least integer >= each value in x.
  */
 template <typename Container,
-          require_container_st<std::is_arithmetic, Container>* = nullptr>
+          require_container_st<std::is_arithmetic, Container>* = nullptr,
+          require_not_var_matrix_t<Container>* = nullptr>
 inline auto ceil(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().ceil(); });
