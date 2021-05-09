@@ -46,7 +46,8 @@ class cvodes_integrator_adjoint_vari : public vari_base {
       is_var_ts_ && !(is_var_t0_ || is_var_y0_ || is_any_var_args_)};
 
   std::tuple<arena_t<T_Args>...> local_args_tuple_;
-  std::tuple<arena_t<promote_scalar_t<partials_type_t<scalar_type_t<T_Args>>, T_Args>>...>
+  std::tuple<arena_t<
+      promote_scalar_t<partials_type_t<scalar_type_t<T_Args>>, T_Args>>...>
       value_of_args_tuple_;
 
   arena_t<std::vector<Eigen::VectorXd>> y_;
@@ -222,7 +223,9 @@ class cvodes_integrator_adjoint_vari : public vari_base {
         N_(y0.size()),
         msgs_(msgs),
         args_varis_([&args..., num_vars = this->num_args_vars_]() {
-          vari** vari_mem = ChainableStack::instance_->memalloc_.alloc_array<vari*>(num_vars);
+          vari** vari_mem
+              = ChainableStack::instance_->memalloc_.alloc_array<vari*>(
+                  num_vars);
           save_varis(vari_mem, args...);
           return vari_mem;
         }()),
@@ -231,7 +234,6 @@ class cvodes_integrator_adjoint_vari : public vari_base {
         solver_backward_(solver_backward),
         backward_is_initialized_(false),
         solver_(nullptr) {
-
     check_finite(function_name, "initial state", y0);
     check_finite(function_name, "initial time", t0);
     check_finite(function_name, "times", ts);
@@ -359,7 +361,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     ChainableStack::instance_->var_stack_.push_back(this);
   }
 
-private:
+ private:
   /**
    * Overloads which setup the states returned from the forward solve. In case
    * the return type is a double only, then no autodiff is needed. In case of
@@ -380,8 +382,7 @@ private:
     state_return = state;
   }
 
-public:
-
+ public:
   /**
    * Obtain solution of ODE.
    *
@@ -395,7 +396,7 @@ public:
   /**
    * No-op for setting adjoints since this class does not own any adjoints.
    */
-  void set_zero_adjoint() final {};
+  void set_zero_adjoint() final{};
 
   void chain() final {
     if (!is_var_return_) {
@@ -549,7 +550,8 @@ public:
     // the adjoints we wanted
     // These are the dlog_density / d(initial_conditions[s]) adjoints
     if (is_var_y0_) {
-      forward_as<arena_t<Eigen::Matrix<var, Eigen::Dynamic, 1>>>(y0_).adj() += state_backward_;
+      forward_as<arena_t<Eigen::Matrix<var, Eigen::Dynamic, 1>>>(y0_).adj()
+          += state_backward_;
     }
 
     // These are the dlog_density / d(parameters[s]) adjoints
@@ -618,7 +620,8 @@ public:
   inline int rhs_adj(double t, N_Vector y, N_Vector yB, N_Vector yBdot) const {
     const nested_rev_autodiff nested;
 
-    Eigen::Matrix<var, Eigen::Dynamic, 1> y_vars(Eigen::Map<const Eigen::VectorXd>(NV_DATA_S(y), N_));
+    Eigen::Matrix<var, Eigen::Dynamic, 1> y_vars(
+        Eigen::Map<const Eigen::VectorXd>(NV_DATA_S(y), N_));
     Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars
         = rhs(t, y_vars, value_of_args_tuple_);
     check_size_match(solver_->function_name_, "dy_dt", f_y_t_vars.size(),
@@ -665,8 +668,11 @@ public:
                      "states", N_);
     f_y_t_vars.adj() = -Eigen::Map<Eigen::VectorXd>(NV_DATA_S(yB), N_);
     grad();
-    apply([&qBdot](auto&&... args) { accumulate_adjoints(NV_DATA_S(qBdot), args...); },
-          local_args_tuple_);
+    apply(
+        [&qBdot](auto&&... args) {
+          accumulate_adjoints(NV_DATA_S(qBdot), args...);
+        },
+        local_args_tuple_);
     return 0;
   }
 
@@ -688,7 +694,8 @@ public:
 
     nested_rev_autodiff nested;
 
-    Eigen::Matrix<var, Eigen::Dynamic, 1> y_var(Eigen::Map<const Eigen::VectorXd>(NV_DATA_S(y), N_));
+    Eigen::Matrix<var, Eigen::Dynamic, 1> y_var(
+        Eigen::Map<const Eigen::VectorXd>(NV_DATA_S(y), N_));
     Eigen::Matrix<var, Eigen::Dynamic, 1> fy_var
         = rhs(t, y_var, value_of_args_tuple_);
 
@@ -728,7 +735,6 @@ public:
    * @param[out] J CVode structure where output is to be stored
    */
   inline int jacobian_rhs_adj_states(double t, N_Vector y, SUNMatrix J) const {
-
     // J_adj_y = -1 * transpose(J_y)
     int error_code = jacobian_rhs_states(t, y, J);
 
@@ -749,7 +755,6 @@ public:
                                                   N_Vector tmp3) {
     return cast_to_self(user_data)->jacobian_rhs_adj_states(t, y, J);
   }
-
 
 };  // cvodes integrator adjoint vari
 
