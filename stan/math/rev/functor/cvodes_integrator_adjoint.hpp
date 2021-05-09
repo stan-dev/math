@@ -755,7 +755,6 @@ class cvodes_integrator_adjoint_vari : public vari_base {
                                                   N_Vector tmp3) {
     return cast_to_self(user_data)->jacobian_rhs_adj_states(t, y, J);
   }
-
 };  // cvodes integrator adjoint vari
 
 }  // namespace math
