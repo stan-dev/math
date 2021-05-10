@@ -32,7 +32,7 @@ namespace math {
  */
 template <typename F, typename T_y0, typename T_t0, typename T_ts,
           typename... T_Args>
-class cvodes_integrator_adjoint_vari : public vari_base {
+class cvodes_integrator_adjoint {
   using T_Return = return_type_t<T_y0, T_t0, T_ts, T_Args...>;
   using T_y0_t0 = return_type_t<T_y0, T_t0>;
 
@@ -45,43 +45,37 @@ class cvodes_integrator_adjoint_vari : public vari_base {
   static constexpr bool is_var_only_ts_{
       is_var_ts_ && !(is_var_t0_ || is_var_y0_t0_ || is_any_var_args_)};
 
-  std::tuple<arena_t<T_Args>...> local_args_tuple_;
-  std::tuple<arena_t<
-      promote_scalar_t<partials_type_t<scalar_type_t<T_Args>>, T_Args>>...>
-      value_of_args_tuple_;
+  struct adjoint_ode_problem {
+    std::tuple<T_Args...> local_args_tuple_;
+    std::tuple<promote_scalar_t<partials_type_t<scalar_type_t<T_Args>>, T_Args>...>
+    value_of_args_tuple_;
 
-  arena_t<std::vector<Eigen::VectorXd>> y_;
-  arena_t<std::vector<T_ts>> ts_;
-  arena_t<Eigen::Matrix<T_y0_t0, Eigen::Dynamic, 1>> y0_;
-  arena_t<Eigen::VectorXd> absolute_tolerance_forward_;
-  arena_t<Eigen::VectorXd> absolute_tolerance_backward_;
-  arena_t<Eigen::VectorXd> state_forward_;
-  arena_t<Eigen::VectorXd> state_backward_;
-  size_t num_args_vars_;
-  arena_t<Eigen::VectorXd> quad_;
-  arena_t<T_t0> t0_;
+    std::vector<Eigen::VectorXd> y_;
+    std::vector<T_ts> ts_;
+    Eigen::Matrix<T_y0_t0, Eigen::Dynamic, 1> y0_;
+    Eigen::VectorXd absolute_tolerance_forward_;
+    Eigen::VectorXd absolute_tolerance_backward_;
+    Eigen::VectorXd state_forward_;
+    Eigen::VectorXd state_backward_;
+    size_t num_args_vars_;
+    Eigen::VectorXd> quad_;
+    T_t0 t0_;
+    
+    double relative_tolerance_forward_;
+    double relative_tolerance_backward_;
+    double relative_tolerance_quadrature_;
+    double absolute_tolerance_quadrature_;
+    long int max_num_steps_;                  // NOLINT(runtime/int)
+    long int num_steps_between_checkpoints_;  // NOLINT(runtime/int)
+    size_t N_;
+    std::ostream* msgs_;
+    vari** args_varis_;
+    int interpolation_polynomial_;
+    int solver_forward_;
+    int solver_backward_;
+    int index_backward_;
+    bool backward_is_initialized_{false};
 
-  double relative_tolerance_forward_;
-  double relative_tolerance_backward_;
-  double relative_tolerance_quadrature_;
-  double absolute_tolerance_quadrature_;
-  long int max_num_steps_;                  // NOLINT(runtime/int)
-  long int num_steps_between_checkpoints_;  // NOLINT(runtime/int)
-  size_t N_;
-  std::ostream* msgs_;
-  vari** args_varis_;
-  int interpolation_polynomial_;
-  int solver_forward_;
-  int solver_backward_;
-  int index_backward_;
-  bool backward_is_initialized_{false};
-
-  /**
-   * Since the CVODES solver manages memory with malloc calls, these resources
-   * must be freed using a destructor call (which is not being called for the
-   * vari class).
-   */
-  struct cvodes_solver : public chainable_alloc {
     std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> y_return_;
     N_Vector nv_state_forward_;
     N_Vector nv_state_backward_;
@@ -99,7 +93,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
 
     template <typename FF, typename StateFwd, typename StateBwd, typename Quad,
               typename AbsTolFwd, typename AbsTolBwd>
-    cvodes_solver(const char* function_name, FF&& f, size_t N,
+    adjoint_ode_problem(const char* function_name, FF&& f, size_t N,
                   size_t num_args_vars, size_t ts_size, int solver_forward,
                   StateFwd& state_forward, StateBwd& state_backward, Quad& quad,
                   AbsTolFwd& absolute_tolerance_forward,
@@ -189,7 +183,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
    * same size as the state variable, corresponding to a time in ts.
    */
   template <typename FF, require_eigen_col_vector_t<T_y0>* = nullptr>
-  cvodes_integrator_adjoint_vari(
+  cvodes_integrator_adjoint(
       const char* function_name, FF&& f, const T_y0& y0, const T_t0& t0,
       const std::vector<T_ts>& ts, double relative_tolerance_forward,
       const Eigen::VectorXd& absolute_tolerance_forward,
@@ -201,8 +195,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
       long int num_steps_between_checkpoints,  // NOLINT(runtime/int)
       int interpolation_polynomial, int solver_forward, int solver_backward,
       std::ostream* msgs, const T_Args&... args)
-      : vari_base(),
-        local_args_tuple_(to_arena(deep_copy_vars(args))...),
+      : local_args_tuple_(to_arena(deep_copy_vars(args))...),
         value_of_args_tuple_(to_arena(value_of(args))...),
         y_(ts.size()),
         ts_(ts.begin(), ts.end()),
@@ -234,6 +227,10 @@ class cvodes_integrator_adjoint_vari : public vari_base {
         solver_backward_(solver_backward),
         backward_is_initialized_(false),
         solver_(nullptr) {
+
+    // 1. create adjoint_ode_problem on stack via new and solve forward
+    //    problem
+    
     check_finite(function_name, "initial state", y0);
     check_finite(function_name, "initial time", t0);
     check_finite(function_name, "times", ts);
@@ -358,7 +355,19 @@ class cvodes_integrator_adjoint_vari : public vari_base {
       t_init = t_final;
     }
     if (is_var_return_) {
-      ChainableStack::instance_->var_stack_.push_back(this);
+      // 2. setup a reverse_pass_callback here which is a lambda
+      // executing the chain method from below. The lifetime of the
+      // adjoint_ode_problem object is being managed via the
+      // chainable_object thing to be aligned with the lifetime of the
+      // chainable stacke
+      //reverse_pass_callback();
+    }
+  }
+
+  ~adjoint_integrator() {
+    // whenever the return is only a double we will de-allocate all ressources
+    if (is_var_return_) {
+      // delete adjoint_ode_problem object
     }
   }
 
