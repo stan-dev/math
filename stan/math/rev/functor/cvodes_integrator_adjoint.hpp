@@ -38,12 +38,12 @@ class cvodes_integrator_adjoint_vari : public vari_base {
 
   static constexpr bool is_var_ts_{is_var<T_ts>::value};
   static constexpr bool is_var_t0_{is_var<T_t0>::value};
-  static constexpr bool is_var_y0_{is_var<T_y0_t0>::value};
+  static constexpr bool is_var_y0_t0_{is_var<T_y0_t0>::value};
   static constexpr bool is_any_var_args_{
       disjunction<is_var<scalar_type_t<T_Args>>...>::value};
   static constexpr bool is_var_return_{is_var<T_Return>::value};
   static constexpr bool is_var_only_ts_{
-      is_var_ts_ && !(is_var_t0_ || is_var_y0_ || is_any_var_args_)};
+      is_var_ts_ && !(is_var_t0_ || is_var_y0_t0_ || is_any_var_args_)};
 
   std::tuple<arena_t<T_Args>...> local_args_tuple_;
   std::tuple<arena_t<
@@ -93,7 +93,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     SUNMatrix A_backward_;
     SUNLinearSolver LS_backward_;
     const size_t N_;
-    const char* function_name_;
+    const std::string function_name_str_;
     void* cvodes_mem_;
     const std::decay_t<F> f_;
 
@@ -122,7 +122,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
               N == 0 ? nullptr
                      : SUNDenseLinearSolver(nv_state_backward_, A_backward_)),
           N_(N),
-          function_name_(function_name),
+          function_name_str_(function_name),
           cvodes_mem_(CVodeCreate(solver_forward)),
           f_(std::forward<FF>(f)) {
       if (cvodes_mem_ == nullptr) {
@@ -332,7 +332,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
                        solver_->nv_state_forward_, &t_init, CV_NORMAL, &ncheck);
 
           if (unlikely(error_code == CV_TOO_MUCH_WORK)) {
-            throw_domain_error(solver_->function_name_, "", t_final,
+            throw_domain_error(solver_->function_name_str_.c_str(), "", t_final,
                                "Failed to integrate to next output time (",
                                ") in less than max_num_steps steps");
           } else {
@@ -345,7 +345,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
                       &t_init, CV_NORMAL);
 
           if (error_code == CV_TOO_MUCH_WORK) {
-            throw_domain_error(solver_->function_name_, "", t_final,
+            throw_domain_error(solver_->function_name_str_.c_str(), "", t_final,
                                "Failed to integrate to next output time (",
                                ") in less than max_num_steps steps");
           } else {
@@ -518,7 +518,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
         int error_code = CVodeB(solver_->cvodes_mem_, t_final, CV_NORMAL);
 
         if (unlikely(error_code == CV_TOO_MUCH_WORK)) {
-          throw_domain_error(solver_->function_name_, "", t_final,
+          throw_domain_error(solver_->function_name_str_.c_str(), "", t_final,
                              "Failed to integrate backward to output time (",
                              ") in less than max_num_steps steps");
         } else {
@@ -548,7 +548,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     // After integrating all the way back to t0, we finally have the
     // the adjoints we wanted
     // These are the dlog_density / d(initial_conditions[s]) adjoints
-    if (is_var_y0_) {
+    if (is_var_y0_t0_) {
       forward_as<arena_t<Eigen::Matrix<var, Eigen::Dynamic, 1>>>(y0_).adj()
           += state_backward_;
     }
@@ -588,7 +588,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
   inline int rhs(double t, const double* y, double*& dy_dt) const {
     const Eigen::VectorXd y_vec = Eigen::Map<const Eigen::VectorXd>(y, N_);
     const Eigen::VectorXd dy_dt_vec = rhs(t, y_vec, value_of_args_tuple_);
-    check_size_match(solver_->function_name_, "dy_dt", dy_dt_vec.size(),
+    check_size_match(solver_->function_name_str_.c_str(), "dy_dt", dy_dt_vec.size(),
                      "states", N_);
     Eigen::Map<Eigen::VectorXd>(dy_dt, N_) = dy_dt_vec;
     return 0;
@@ -623,7 +623,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
         Eigen::Map<const Eigen::VectorXd>(NV_DATA_S(y), N_));
     Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars
         = rhs(t, y_vars, value_of_args_tuple_);
-    check_size_match(solver_->function_name_, "dy_dt", f_y_t_vars.size(),
+    check_size_match(solver_->function_name_str_.c_str(), "dy_dt", f_y_t_vars.size(),
                      "states", N_);
     f_y_t_vars.adj() = -Eigen::Map<Eigen::VectorXd>(NV_DATA_S(yB), N_);
     grad();
@@ -663,7 +663,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
                          local_args_tuple_);
     Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars
         = rhs(t, y_vec, local_args_tuple_);
-    check_size_match(solver_->function_name_, "dy_dt", f_y_t_vars.size(),
+    check_size_match(solver_->function_name_str_.c_str(), "dy_dt", f_y_t_vars.size(),
                      "states", N_);
     f_y_t_vars.adj() = -Eigen::Map<Eigen::VectorXd>(NV_DATA_S(yB), N_);
     grad();
@@ -698,7 +698,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     Eigen::Matrix<var, Eigen::Dynamic, 1> fy_var
         = rhs(t, y_var, value_of_args_tuple_);
 
-    check_size_match(solver_->function_name_, "dy_dt", fy_var.size(), "states",
+    check_size_match(solver_->function_name_str_.c_str(), "dy_dt", fy_var.size(), "states",
                      N_);
 
     grad(fy_var.coeffRef(0).vi_);
