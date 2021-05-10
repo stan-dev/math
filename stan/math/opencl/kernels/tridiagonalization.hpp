@@ -51,33 +51,22 @@ const char* tridiagonalization_householder_kernel_code = STRINGIFY(
           q += tmp * tmp;
         }
       }
-      __local double q_local[1024];
+      __local double q_local[LOCAL_SIZE_];
       q_local[lid] = q;
       barrier(CLK_LOCAL_MEM_FENCE);
+      for (int step = lsize / REDUCTION_STEP_SIZE; step > 0;
+           step /= REDUCTION_STEP_SIZE) {
+        if (lid < step) {
+          for (int i = 1; i < REDUCTION_STEP_SIZE; i++) {
+            q_local[lid] += q_local[lid + step * i];
+          }
+        }
+        barrier(CLK_LOCAL_MEM_FENCE);
+      }
+
       double alpha;
-      // efficient parallel reduction
-      if (lid < 256) {
-        q_local[lid]
-            += q_local[lid + 256] + q_local[lid + 512] + q_local[lid + 768];
-      }
-      barrier(CLK_LOCAL_MEM_FENCE);
-      if (lid < 64) {
-        q_local[lid]
-            += q_local[lid + 64] + q_local[lid + 128] + q_local[lid + 192];
-      }
-      barrier(CLK_LOCAL_MEM_FENCE);
-      if (lid < 16) {
-        q_local[lid]
-            += q_local[lid + 16] + q_local[lid + 32] + q_local[lid + 48];
-      }
-      barrier(CLK_LOCAL_MEM_FENCE);
-      if (lid < 4) {
-        q_local[lid] += q_local[lid + 4] + q_local[lid + 8] + q_local[lid + 12];
-      }
-      barrier(CLK_LOCAL_MEM_FENCE);
       if (lid == 0) {
-        q = q_local[lid] + q_local[lid + 1] + q_local[lid + 2]
-            + q_local[lid + 3];
+        q = q_local[0];
         double p1 = P[P_start + 1];
         alpha = -copysign(sqrt(q), P[P_start]);
         q -= p1 * p1;
@@ -133,8 +122,8 @@ const char* tridiagonalization_v1_kernel_code = STRINGIFY(
       const int ngroups = get_num_groups(0);
       const int wgid = get_group_id(0);
 
-      __local double res_loc1[64];
-      __local double res_loc2[64];
+      __local double res_loc1[LOCAL_SIZE_];
+      __local double res_loc2[LOCAL_SIZE_];
       double acc1 = 0;
       double acc2 = 0;
 
@@ -142,7 +131,7 @@ const char* tridiagonalization_v1_kernel_code = STRINGIFY(
       const __global double* M1 = P + P_rows * (k + wgid) + k + ngroups + 1;
       const __global double* M2 = V + V_rows * wgid + ngroups;
       for (int i = lid; i < P_rows - k - ngroups - 1;
-           i += 64) {  // go over column of the matrix in steps of 64
+           i += LOCAL_SIZE_) {  // go over column of the matrix in steps of 64
         double v = vec[i];
         acc1 += M1[i] * v;
         acc2 += M2[i] * v;
@@ -150,13 +139,20 @@ const char* tridiagonalization_v1_kernel_code = STRINGIFY(
       res_loc1[lid] = acc1;
       res_loc2[lid] = acc2;
       barrier(CLK_LOCAL_MEM_FENCE);
-      if (lid == 0) {
-        for (int i = 1; i < lsize; i++) {
-          acc1 += res_loc1[i];
-          acc2 += res_loc2[i];
+
+      for (int step = lsize / REDUCTION_STEP_SIZE; step > 0;
+           step /= REDUCTION_STEP_SIZE) {
+        if (lid < step) {
+          for (int i = 1; i < REDUCTION_STEP_SIZE; i++) {
+            res_loc1[lid] += res_loc1[lid + step * i];
+            res_loc2[lid] += res_loc2[lid + step * i];
+          }
         }
-        Uu[wgid] = acc1;
-        Vu[wgid] = acc2;
+        barrier(CLK_LOCAL_MEM_FENCE);
+      }
+      if (lid == 0) {
+        Uu[wgid] = res_loc1[0];
+        Vu[wgid] = res_loc2[0];
       }
     }
     // \cond
@@ -215,26 +211,24 @@ const char* tridiagonalization_v2_kernel_code = STRINGIFY(
       int start = work_per_group * wgid;
       int end = work_per_group * (wgid + 1);
       for (int i = start; i < end; i += 1) {
-        __local double res_loc[64];
+        __local double res_loc[LOCAL_SIZE_];
         acc = 0;
-        for (int l = i + 1 + lid; l < work; l += 64) {
+        for (int l = i + 1 + lid; l < work; l += LOCAL_SIZE_) {
           acc += M1[P_rows * i + l] * vec[l];
         }
         res_loc[lid] = acc;
         barrier(CLK_LOCAL_MEM_FENCE);
-        if (lid < 16) {  // efficient parallel reduction
-          res_loc[lid]
-              += res_loc[lid + 16] + res_loc[lid + 32] + res_loc[lid + 48];
+        for (int step = lsize / REDUCTION_STEP_SIZE; step > 0;
+             step /= REDUCTION_STEP_SIZE) {
+          if (lid < step) {
+            for (int i = 1; i < REDUCTION_STEP_SIZE; i++) {
+              res_loc[lid] += res_loc[lid + step * i];
+            }
+          }
+          barrier(CLK_LOCAL_MEM_FENCE);
         }
-        barrier(CLK_LOCAL_MEM_FENCE);
-        if (lid < 4) {
-          res_loc[lid]
-              += res_loc[lid + 4] + res_loc[lid + 8] + res_loc[lid + 12];
-        }
-        barrier(CLK_LOCAL_MEM_FENCE);
         if (lid == 0) {
-          V[V_rows * (j + 1) + i + j] = res_loc[lid] + res_loc[lid + 1]
-                                        + res_loc[lid + 2] + res_loc[lid + 3];
+          V[V_rows * (j + 1) + i + j] = res_loc[lid];
         }
         barrier(CLK_LOCAL_MEM_FENCE);
       }
@@ -271,23 +265,25 @@ const char* tridiagonalization_v3_kernel_code = STRINGIFY(
       __global double* v = V + V_rows * j + j;
       double acc = 0;
 
-      for (int i = lid; i < P_rows - k - j - 1; i += 128) {
+      for (int i = lid; i < P_rows - k - j - 1; i += LOCAL_SIZE_) {
         double vi = v[i] + v[i + V_rows];
         v[i] = vi;
         acc += u[i] * vi;
       }
-      __local double res_loc[128];
+      __local double res_loc[LOCAL_SIZE_];
       res_loc[lid] = acc;
       barrier(CLK_LOCAL_MEM_FENCE);
-      if (lid == 0) {
-        for (int i = 1; i < 128; i++) {
-          acc += res_loc[i];
+      for (int step = lsize / REDUCTION_STEP_SIZE; step > 0;
+           step /= REDUCTION_STEP_SIZE) {
+        if (lid < step) {
+          for (int i = 1; i < REDUCTION_STEP_SIZE; i++) {
+            res_loc[lid] += res_loc[lid + step * i];
+          }
         }
-        res_loc[0] = acc;
+        barrier(CLK_LOCAL_MEM_FENCE);
       }
-      barrier(CLK_LOCAL_MEM_FENCE);
       acc = res_loc[0] * 0.5;
-      for (int i = lid; i < P_rows - k - j - 1; i += 128) {
+      for (int i = lid; i < P_rows - k - j - 1; i += LOCAL_SIZE_) {
         v[i] -= acc * u[i];
       }
       if (gid == 0) {
@@ -298,52 +294,26 @@ const char* tridiagonalization_v3_kernel_code = STRINGIFY(
 );
 // \endcond
 
-// \cond
-const char* subtract_twice_kernel_code = STRINGIFY(
-    // \endcond
-    /**
-     * Calculates A -= B + B ^ T, for lower triangular part of bottom right
-     * corner of A.
-     * @param[in,out] A First matrix.
-     * @param B Second matrix.
-     * @param A_rows Number of rows of A.
-     * @param B_rows Number of rows of B.
-     * @param start At which row and column of A to start.
-     */
-    __kernel void subtract_twice(__global double* A, const __global double* B,
-                                 const int A_rows, const int B_rows,
-                                 const int start) {
-      const int y = get_global_id(0);
-      const int x = get_global_id(1);
-      if (y >= x) {
-        A[A_rows * (start + x) + start + y]
-            -= B[B_rows * x + y] + B[B_rows * y + x];
-      }
-    }
-    // \cond
-);
-// \endcond
-
 const kernel_cl<in_out_buffer, in_out_buffer, out_buffer, int, int, int, int>
-    tridiagonalization_householder(
-        "tridiagonalization_householder",
-        {tridiagonalization_householder_kernel_code});
+    tridiagonalization_householder("tridiagonalization_householder",
+                                   {tridiagonalization_householder_kernel_code},
+                                   {{"REDUCTION_STEP_SIZE", 4},
+                                    {"LOCAL_SIZE_", 1024}});
 
 const kernel_cl<in_buffer, in_buffer, out_buffer, out_buffer, int, int, int>
     tridiagonalization_v1("tridiagonalization_v1",
-                          {tridiagonalization_v1_kernel_code});
+                          {tridiagonalization_v1_kernel_code},
+                          {{"REDUCTION_STEP_SIZE", 4}, {"LOCAL_SIZE_", 64}});
 
-const kernel_cl<in_buffer, out_buffer, in_buffer, in_buffer, int, int, int,
-                int>
+const kernel_cl<in_buffer, out_buffer, in_buffer, in_buffer, int, int, int, int>
     tridiagonalization_v2("tridiagonalization_v2",
-                          {tridiagonalization_v2_kernel_code});
+                          {tridiagonalization_v2_kernel_code},
+                          {{"REDUCTION_STEP_SIZE", 4}, {"LOCAL_SIZE_", 64}});
 
 const kernel_cl<in_out_buffer, in_out_buffer, out_buffer, int, int, int, int>
     tridiagonalization_v3("tridiagonalization_v3",
-                          {tridiagonalization_v3_kernel_code});
-
-const kernel_cl<in_out_buffer, in_buffer, int, int, int> subtract_twice(
-    "subtract_twice", {subtract_twice_kernel_code});
+                          {tridiagonalization_v3_kernel_code},
+                          {{"REDUCTION_STEP_SIZE", 4}, {"LOCAL_SIZE_", 1024}});
 
 }  // namespace opencl_kernels
 }  // namespace math
