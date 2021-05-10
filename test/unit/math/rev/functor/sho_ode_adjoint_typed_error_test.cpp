@@ -25,19 +25,18 @@ using harmonic_oscillator_ctl_test_types = boost::mp11::mp_product<
 TYPED_TEST_SUITE_P(harmonic_oscillator_ctl_test);
 TYPED_TEST_P(harmonic_oscillator_ctl_test, no_error) { this->test_good(); }
 TYPED_TEST_P(harmonic_oscillator_ctl_test, error_conditions) {
-  this->test_bad(); 
+  this->test_bad();
 }
 TYPED_TEST_P(harmonic_oscillator_ctl_test, value) {
   stan::math::nested_rev_autodiff nested;
-  
+
   this->test_value(0.0);
   this->test_value(1.0);
   this->test_value(-1.0);
 
-  if(std::is_same<std::tuple_element_t<2, TypeParam>, double>::value &&
-     std::is_same<std::tuple_element_t<3, TypeParam>, double>::value &&
-     std::is_same<std::tuple_element_t<4, TypeParam>, double>::value
-     ) {
+  if (std::is_same<std::tuple_element_t<2, TypeParam>, double>::value
+      && std::is_same<std::tuple_element_t<3, TypeParam>, double>::value
+      && std::is_same<std::tuple_element_t<4, TypeParam>, double>::value) {
     EXPECT_EQ(stan::math::nested_size(), 0);
   } else {
     EXPECT_GT(stan::math::nested_size(), 0);

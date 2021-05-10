@@ -15,9 +15,11 @@
 #include <limits>
 #include <string>
 
-
 /**
- * Inheriting base type, various fixtures differs by the type of ODE functor used in <code>apply_solver</code> calls, intended for different kind of tests. This harmonic oscillator test class is intended for use with the adjoint ODE solver which has additional control parameters.
+ * Inheriting base type, various fixtures differs by the type of ODE functor
+ * used in <code>apply_solver</code> calls, intended for different kind of
+ * tests. This harmonic oscillator test class is intended for use with the
+ * adjoint ODE solver which has additional control parameters.
  *
  */
 template <typename T>
@@ -306,6 +308,5 @@ struct harmonic_oscillator_ctl_test
     EXPECT_NEAR(0.246407, stan::math::value_of(res[99][1]), 1e-5);
   }
 };
-
 
 #endif

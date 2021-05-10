@@ -590,8 +590,8 @@ class cvodes_integrator_adjoint_vari : public vari_base {
   inline int rhs(double t, const double* y, double*& dy_dt) const {
     const Eigen::VectorXd y_vec = Eigen::Map<const Eigen::VectorXd>(y, N_);
     const Eigen::VectorXd dy_dt_vec = rhs(t, y_vec, value_of_args_tuple_);
-    check_size_match(solver_->function_name_str_.c_str(), "dy_dt", dy_dt_vec.size(),
-                     "states", N_);
+    check_size_match(solver_->function_name_str_.c_str(), "dy_dt",
+                     dy_dt_vec.size(), "states", N_);
     Eigen::Map<Eigen::VectorXd>(dy_dt, N_) = dy_dt_vec;
     return 0;
   }
@@ -625,8 +625,8 @@ class cvodes_integrator_adjoint_vari : public vari_base {
         Eigen::Map<const Eigen::VectorXd>(NV_DATA_S(y), N_));
     Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars
         = rhs(t, y_vars, value_of_args_tuple_);
-    check_size_match(solver_->function_name_str_.c_str(), "dy_dt", f_y_t_vars.size(),
-                     "states", N_);
+    check_size_match(solver_->function_name_str_.c_str(), "dy_dt",
+                     f_y_t_vars.size(), "states", N_);
     f_y_t_vars.adj() = -Eigen::Map<Eigen::VectorXd>(NV_DATA_S(yB), N_);
     grad();
     Eigen::Map<Eigen::VectorXd>(NV_DATA_S(yBdot), N_) = y_vars.adj();
@@ -665,8 +665,8 @@ class cvodes_integrator_adjoint_vari : public vari_base {
                          local_args_tuple_);
     Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars
         = rhs(t, y_vec, local_args_tuple_);
-    check_size_match(solver_->function_name_str_.c_str(), "dy_dt", f_y_t_vars.size(),
-                     "states", N_);
+    check_size_match(solver_->function_name_str_.c_str(), "dy_dt",
+                     f_y_t_vars.size(), "states", N_);
     f_y_t_vars.adj() = -Eigen::Map<Eigen::VectorXd>(NV_DATA_S(yB), N_);
     grad();
     apply(
@@ -700,8 +700,8 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     Eigen::Matrix<var, Eigen::Dynamic, 1> fy_var
         = rhs(t, y_var, value_of_args_tuple_);
 
-    check_size_match(solver_->function_name_str_.c_str(), "dy_dt", fy_var.size(), "states",
-                     N_);
+    check_size_match(solver_->function_name_str_.c_str(), "dy_dt",
+                     fy_var.size(), "states", N_);
 
     grad(fy_var.coeffRef(0).vi_);
     Jfy.col(0) = y_var.adj();
