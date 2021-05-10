@@ -307,7 +307,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
         "CVodeSetJacFn");
 
     // initialize backward sensitivity system of CVODES as needed
-    if (is_var_return_) {
+    if (is_var_return_ && !is_var_only_ts_) {
       check_flag_sundials(
           CVodeAdjInit(solver_->cvodes_mem_, num_steps_between_checkpoints_,
                        interpolation_polynomial_),
@@ -324,7 +324,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     for (size_t n = 0; n < ts_dbl.size(); ++n) {
       double t_final = ts_dbl[n];
       if (t_final != t_init) {
-        if (is_var_return_) {
+        if (is_var_return_ && !is_var_only_ts_) {
           int ncheck;
 
           int error_code

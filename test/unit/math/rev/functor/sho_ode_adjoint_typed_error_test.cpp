@@ -38,7 +38,6 @@ TYPED_TEST_P(harmonic_oscillator_ctl_test, value) {
      std::is_same<std::tuple_element_t<3, TypeParam>, double>::value &&
      std::is_same<std::tuple_element_t<4, TypeParam>, double>::value
      ) {
-    std::cout << "testing all doubles!!!" << std::endl;
     EXPECT_EQ(stan::math::nested_size(), 0);
   } else {
     EXPECT_GT(stan::math::nested_size(), 0);
