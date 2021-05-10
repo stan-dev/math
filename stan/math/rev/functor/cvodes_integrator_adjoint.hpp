@@ -289,8 +289,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
         CVodeSetUserData(solver_->cvodes_mem_, reinterpret_cast<void*>(this)),
         "CVodeSetUserData");
 
-    cvodes_set_options(solver_->cvodes_mem_, relative_tolerance_forward_,
-                       absolute_tolerance_forward_(0), max_num_steps_);
+    cvodes_set_options(solver_->cvodes_mem_, max_num_steps_);
 
     check_flag_sundials(
         CVodeSVtolerances(solver_->cvodes_mem_, relative_tolerance_forward_,
