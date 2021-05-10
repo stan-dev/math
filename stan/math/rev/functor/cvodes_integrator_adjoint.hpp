@@ -357,7 +357,9 @@ class cvodes_integrator_adjoint_vari : public vari_base {
 
       t_init = t_final;
     }
-    ChainableStack::instance_->var_stack_.push_back(this);
+    if (is_var_return_) {
+      ChainableStack::instance_->var_stack_.push_back(this);
+    }
   }
 
  private:
