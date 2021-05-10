@@ -139,7 +139,8 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
       y_adjoints_ = y_vars.adj();
 
       if (args_adjoints_.size() > 0) {
-        memset(args_adjoints_.data(), 0, sizeof(double) * num_args_vars);
+        memset(args_adjoints_.data(), 0,
+               sizeof(double) * args_adjoints_.size());
       }
 
       apply(
