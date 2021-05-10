@@ -281,7 +281,8 @@ class cvodes_integrator {
 
       cvodes_set_options(cvodes_mem, max_num_steps_);
 
-      check_flag_sundials(CVodeSStolerances(cvodes_mem, relative_tolerance_, absolute_tolerance_),
+      check_flag_sundials(CVodeSStolerances(cvodes_mem, relative_tolerance_,
+                                            absolute_tolerance_),
                           "CVodeSStolerances");
 
       check_flag_sundials(CVodeSetLinearSolver(cvodes_mem, LS_, A_),
