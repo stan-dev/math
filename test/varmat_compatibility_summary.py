@@ -174,9 +174,9 @@ def processCLIArgs():
 
     names_to_print = process_results(
         results, args.functions,
-        print_which = args.which,
-        print_fully = args.fully,
-        print_names = args.names
+        which = args.which,
+        fully = args.fully,
+        names = args.names
     )
 
     for name in sorted(names_to_print):

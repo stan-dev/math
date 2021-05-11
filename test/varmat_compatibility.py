@@ -33,7 +33,7 @@ def run_command(command):
     """
     proc = subprocess.Popen(command, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     stdout, stderr = proc.communicate()
-    
+
     if proc.poll() == 0:
         return (True, stdout, stderr)
     else:
@@ -85,7 +85,7 @@ def build_signature(prefix, cpp_code, debug):
 
             with open(stderr_path, "w") as stderr_f:
                 stderr_f.write(stderr.decode("utf-8"))
-        
+
     return successful
 
 def main(functions_or_sigs, results_file, cores, debug):
@@ -127,7 +127,7 @@ def main(functions_or_sigs, results_file, cores, debug):
 
         if len(requested_functions) > 0 and sp.function_name not in requested_functions:
             continue
-        
+
         signatures_to_check.add(signature)
 
     work_queue = Queue.Queue()
@@ -137,12 +137,12 @@ def main(functions_or_sigs, results_file, cores, debug):
         sp = SignatureParser(signature)
 
         if sp.is_high_order():
-            work_queue.put((n, signature, None))
+            work_queue.put((signature, True, None))
             continue
 
         cpp_code = ""
         any_overload_uses_varmat = False
-        
+
         for m, overloads in enumerate(itertools.product(("Prim", "Rev", "RevVarmat"), repeat = sp.number_arguments())):
             cg = CodeGenerator()
 
@@ -153,7 +153,7 @@ def main(functions_or_sigs, results_file, cores, debug):
                 if arg.is_reverse_mode() and arg.is_varmat_compatible() and overload.endswith("Varmat"):
                     any_overload_uses_varmat = True
                     arg = cg.to_var_value(arg)
-                
+
                 arg_list.append(arg)
 
             cg.function_call_assign("stan::math::" + sp.function_name, *arg_list)
@@ -185,12 +185,23 @@ def main(functions_or_sigs, results_file, cores, debug):
             except Queue.Empty:
                 return # If queue is empty, worker quits
 
-            # Use signature as filename prefix to make it easier to find
-            prefix = re.sub('[^0-9a-zA-Z]+', '_', signature.strip())
+            # Need to figure out why signature can be bool sometimes?
+            try:
+                # Use signature as filename prefix to make it easier to find
+                prefix = re.sub('[^0-9a-zA-Z]+', '_', signature.strip())
+            except:
+                work_queue.task_done()
+                return 0
+            # Why does this also fail?
+            try:
+                # Test the signature
+                successful = build_signature(prefix, cpp_code, debug)
+            except:
+                work_queue.task_done()
+                return 0
 
-            # Test the signature
-            successful = build_signature(prefix, cpp_code, debug)
-
+            if isinstance(signature, bool):
+                work_queue.task_done()
             # Acquire a lock to do I/O
             with output_lock:
                 if successful:
@@ -199,8 +210,11 @@ def main(functions_or_sigs, results_file, cores, debug):
                 else:
                     result_string = "Fail"
                     incompatible_signatures.add(signature)
-
-                print("Results of test {0} / {1}, {2} ... ".format(n, work_queue_original_length, signature.strip()) + result_string)
+                try:
+                    print("Results of test {0} / {1}, {2} ... ".format(n, work_queue_original_length, signature.strip()) + result_string)
+                except:
+                    work_queue.task_done()
+                    return 0
 
             work_queue.task_done()
 
