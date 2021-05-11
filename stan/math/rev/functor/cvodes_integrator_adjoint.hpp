@@ -38,6 +38,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
 
   static constexpr bool is_var_ts_{is_var<T_ts>::value};
   static constexpr bool is_var_t0_{is_var<T_t0>::value};
+  static constexpr bool is_var_y0_{is_var<T_y0>::value};
   static constexpr bool is_var_y0_t0_{is_var<T_y0_t0>::value};
   static constexpr bool is_any_var_args_{
       disjunction<is_var<scalar_type_t<T_Args>>...>::value};
@@ -547,7 +548,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     // After integrating all the way back to t0, we finally have the
     // the adjoints we wanted
     // These are the dlog_density / d(initial_conditions[s]) adjoints
-    if (is_var_y0_t0_) {
+    if (is_var_y0_) {
       adjoint_of(y0_) += state_backward_;
     }
 
