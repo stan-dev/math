@@ -93,7 +93,12 @@ auto ode_adjoint_impl(
 }
 
 /**
- * Solve the ODE initial value problem y' = f(t, y), y(t0) = y0 at a set of times, { t1, t2, t3, ... } using the stiff backward differentiation formula BDF solver or the non-stiff Adams solver from CVODES. The ODE system is integrated using the adjoint sensitivity approach of CVODES. This implementation handles the case of a double return type which ensures that no resources are left on the AD stack.
+ * Solve the ODE initial value problem y' = f(t, y), y(t0) = y0 at a set of
+ * times, { t1, t2, t3, ... } using the stiff backward differentiation formula
+ * BDF solver or the non-stiff Adams solver from CVODES. The ODE system is
+ * integrated using the adjoint sensitivity approach of CVODES. This
+ * implementation handles the case of a double return type which ensures that no
+ * resources are left on the AD stack.
  *
  * \p f must define an operator() with the signature as:
  *   template<typename T_t, typename T_y, typename... T_Args>
@@ -143,9 +148,10 @@ auto ode_adjoint_impl(
  *  This represents the solution to ODE at times \p ts
  */
 template <typename F, typename T_y0, typename T_t0, typename T_ts,
-  typename T_abs_tol_fwd, typename T_abs_tol_bwd, typename... T_Args,
-  require_all_eigen_col_vector_t<T_y0, T_abs_tol_fwd, T_abs_tol_bwd>* = nullptr,
-  require_all_st_arithmetic<T_y0, T_t0, T_ts, T_Args...>* = nullptr>
+          typename T_abs_tol_fwd, typename T_abs_tol_bwd, typename... T_Args,
+          require_all_eigen_col_vector_t<T_y0, T_abs_tol_fwd,
+                                         T_abs_tol_bwd>* = nullptr,
+          require_all_st_arithmetic<T_y0, T_t0, T_ts, T_Args...>* = nullptr>
 std::vector<Eigen::VectorXd> ode_adjoint_impl(
     const char* function_name, F&& f, const T_y0& y0, const T_t0& t0,
     const std::vector<T_ts>& ts, double relative_tolerance_forward,
@@ -163,16 +169,16 @@ std::vector<Eigen::VectorXd> ode_adjoint_impl(
 
     using integrator_vari
         = cvodes_integrator_adjoint_vari<F, plain_type_t<T_y0>, T_t0, T_ts,
-                                       plain_type_t<T_Args>...>;
+                                         plain_type_t<T_Args>...>;
 
     auto integrator = new integrator_vari(
-        function_name, std::forward<F>(f), y0, t0, ts, relative_tolerance_forward,
-        absolute_tolerance_forward, relative_tolerance_backward,
-        absolute_tolerance_backward, relative_tolerance_quadrature,
-        absolute_tolerance_quadrature, max_num_steps,
-        num_steps_between_checkpoints, interpolation_polynomial, solver_forward,
-        solver_backward, msgs, args...);
-    
+        function_name, std::forward<F>(f), y0, t0, ts,
+        relative_tolerance_forward, absolute_tolerance_forward,
+        relative_tolerance_backward, absolute_tolerance_backward,
+        relative_tolerance_quadrature, absolute_tolerance_quadrature,
+        max_num_steps, num_steps_between_checkpoints, interpolation_polynomial,
+        solver_forward, solver_backward, msgs, args...);
+
     ode_solution = integrator->solution();
   }
   return ode_solution;
