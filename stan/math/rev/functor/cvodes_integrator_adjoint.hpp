@@ -338,13 +338,12 @@ class cvodes_integrator_adjoint_vari : public vari_base {
           } else {
             check_flag_sundials(error_code, "CVodeF");
           }
-
         } else {
           int error_code
               = CVode(solver_->cvodes_mem_, t_final, solver_->nv_state_forward_,
                       &t_init, CV_NORMAL);
 
-          if (error_code == CV_TOO_MUCH_WORK) {
+          if (unlikely(error_code == CV_TOO_MUCH_WORK)) {
             throw_domain_error(solver_->function_name_str_.c_str(), "", t_final,
                                "Failed to integrate to next output time (",
                                ") in less than max_num_steps steps");
@@ -411,8 +410,8 @@ class cvodes_integrator_adjoint_vari : public vari_base {
           step_sens.coeffRef(j)
               += forward_as<var>(solver_->y_return_[i].coeff(j)).adj();
         }
-
-        forward_as<var>(ts_[i])->adj_ += step_sens.dot(
+        
+        adjoint_of(ts_[i]) += step_sens.dot(
             rhs(value_of(ts_[i]), y_[i], value_of_args_tuple_));
         step_sens.setZero();
       }
@@ -435,7 +434,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
         state_backward_.coeffRef(j)
             += forward_as<var>(solver_->y_return_[i].coeff(j)).adj();
       }
-
+      
       double t_final = value_of((i > 0) ? ts_[i - 1] : t0_);
       if (t_final != t_init) {
         if (unlikely(!backward_is_initialized_)) {
@@ -541,7 +540,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     }
 
     if (is_var_t0_) {
-      forward_as<var>(t0_)->adj_ += -state_backward_.dot(
+      adjoint_of(t0_) += -state_backward_.dot(
           rhs(t_init, value_of(y0_), value_of_args_tuple_));
     }
 
@@ -549,8 +548,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     // the adjoints we wanted
     // These are the dlog_density / d(initial_conditions[s]) adjoints
     if (is_var_y0_t0_) {
-      forward_as<arena_t<Eigen::Matrix<var, Eigen::Dynamic, 1>>>(y0_).adj()
-          += state_backward_;
+      adjoint_of(y0_) += state_backward_;
     }
 
     // These are the dlog_density / d(parameters[s]) adjoints
