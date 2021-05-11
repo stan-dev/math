@@ -410,7 +410,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
           step_sens.coeffRef(j)
               += forward_as<var>(solver_->y_return_[i].coeff(j)).adj();
         }
-        
+
         adjoint_of(ts_[i]) += step_sens.dot(
             rhs(value_of(ts_[i]), y_[i], value_of_args_tuple_));
         step_sens.setZero();
@@ -434,7 +434,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
         state_backward_.coeffRef(j)
             += forward_as<var>(solver_->y_return_[i].coeff(j)).adj();
       }
-      
+
       double t_final = value_of((i > 0) ? ts_[i - 1] : t0_);
       if (t_final != t_init) {
         if (unlikely(!backward_is_initialized_)) {
