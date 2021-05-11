@@ -548,8 +548,9 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     // After integrating all the way back to t0, we finally have the
     // the adjoints we wanted
     // These are the dlog_density / d(initial_conditions[s]) adjoints
-    if (is_var_y0_) {
-      adjoint_of(y0_) += state_backward_;
+    if (is_var_y0_t0_) {
+      forward_as<arena_t<Eigen::Matrix<var, Eigen::Dynamic, 1>>>(y0_).adj()
+          += state_backward_;
     }
 
     // These are the dlog_density / d(parameters[s]) adjoints
