@@ -34,14 +34,23 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
              const Eigen::VectorXd& subdiagonal,
              Eigen::Ref<Eigen::VectorXd> eigenvalues,
              Eigen::Ref<Eigen::MatrixXd> eigenvectors,
-             const double min_rel_sep = 1e-1, const double max_ele_growth = 2) {
+             const double min_rel_sep = 1e-1, const double maximum_ele_growth = 8) {
   using std::copysign;
   const double shift_error = 1e-14;
+  const double shift_abs_error = 1e-308;
   const int n = diagonal.size();
   Eigen::VectorXd high(n), low(n);
   double min_eigval;
   double max_eigval;
   get_gresgorin(diagonal, subdiagonal, min_eigval, max_eigval);
+  min_eigval = min_eigval * (1 - copysign(1e-1, min_eigval))
+               - 1e-2;
+  max_eigval = max_eigval * (1 + copysign(1e-1, max_eigval))
+               + 1e-2;
+  double max_ele_growth = maximum_ele_growth * (max_eigval - min_eigval);
+//  std::cout << "gg" << min_eigval << " " << max_eigval << std::endl;
+//  min_eigval -= 10;
+//  max_eigval += 10;
   Eigen::VectorXd l(n - 1), d(n), l0(n - 1), d0(n);
   const double shift0 = find_initial_shift(
       diagonal, subdiagonal, l0, d0, min_eigval, max_eigval, max_ele_growth);
@@ -57,11 +66,11 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
   matrix_cl<double> low_gpu(n, 1);
   matrix_cl<double> high_gpu(n, 1);
   try {
-    opencl_kernels::eigenvals_bisect(
-        cl::NDRange(n), l_gpu, d_gpu, low_gpu,
-        high_gpu, min_eigval - shift0, max_eigval - shift0, n);
+    opencl_kernels::eigenvals_bisect(cl::NDRange(n), l_gpu, d_gpu, low_gpu,
+                                     high_gpu, min_eigval - shift0,
+                                     max_eigval - shift0, n);
   } catch (cl::Error& e) {
-    check_opencl_error("block_apply_packed_Q_cl3", e);
+    check_opencl_error("eigenvals_bisect", e);
   }
   low = from_matrix_cl(low_gpu);
   high = from_matrix_cl(high_gpu);
@@ -139,17 +148,15 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
   matrix_cl<double> eigenvectors_t_gpu(n, n);
   try {
     opencl_kernels::get_eigenvectors(
-        cl::NDRange(n), subdiagonal_gpu, l_big_t_gpu,
-        d_big_t_gpu, low_gpu, high_gpu,
-        min_gap_gpu, temp1, temp2, temp3,
-        temp4, temp5, eigenvectors_t_gpu,
-        min_rel_sep, max_ele_growth);
+        cl::NDRange(n), subdiagonal_gpu, l_big_t_gpu, d_big_t_gpu, low_gpu,
+        high_gpu, min_gap_gpu, temp1, temp2, temp3, temp4, temp5,
+        eigenvectors_t_gpu, min_rel_sep, max_ele_growth);
   } catch (cl::Error& e) {
     check_opencl_error("block_apply_packed_Q_cl3", e);
   }
   matrix_cl<double> eigenvectors_gpu = transpose(eigenvectors_t_gpu);
-//  Eigen::MatrixXd eigenvectors_tmp(n, n);
-//  copy(eigenvectors_tmp, eigenvectors_gpu);
+  //  Eigen::MatrixXd eigenvectors_tmp(n, n);
+  //  copy(eigenvectors_tmp, eigenvectors_gpu);
   eigenvectors = from_matrix_cl(eigenvectors_gpu);
 }
 

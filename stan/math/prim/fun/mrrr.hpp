@@ -31,7 +31,7 @@ inline double get_random_perturbation_multiplier() {
  * Calculates LDL decomposition of a shifted triagonal matrix T. D is diagonal,
  * L is lower unit triangular (diagonal elements are 1, all elements except
  * diagonal and subdiagonal are 0),T - shift * I = L * D * L^T. Also calculates
- * element growth of D: sum(abs(D)) / abs(sum(D)).
+ * element growth of D: max(abs(D)).
  * @param diagonal Diagonal of T
  * @param subdiagonal Subdiagonal of T.
  * @param shift Shift.
@@ -46,17 +46,15 @@ double get_ldl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
   using std::fabs;
   d_plus[0] = diagonal[0] - shift;
   double element_growth = fabs(d_plus[0]);
-  double element_growth_denominator = d_plus[0];
   for (int i = 0; i < subdiagonal.size(); i++) {
     l[i] = subdiagonal[i] / d_plus[i];
     d_plus[i] *= get_random_perturbation_multiplier();
     d_plus[i + 1] = diagonal[i + 1] - shift - l[i] * subdiagonal[i];
     l[i] *= get_random_perturbation_multiplier();
-    element_growth += fabs(d_plus[i + 1]);
-    element_growth_denominator += d_plus[i + 1];
+    element_growth = std::max(element_growth, fabs(d_plus[i + 1]));
   }
   d_plus[subdiagonal.size()] *= get_random_perturbation_multiplier();
-  return element_growth / fabs(element_growth_denominator);
+  return element_growth;
 }
 
 /**
@@ -64,7 +62,7 @@ double get_ldl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
  * quotients-differences with shifts (stqds). D and D+ are diagonal, L and L+
  * are lower unit triangular (diagonal elements are 1, all elements except
  * diagonal and subdiagonal are 0). L * D * L^T - shift * I = L+ * D * L+^T.
- * Also calculates element growth of D+: sum(abs(D+)) / abs(sum(D+)).
+ * Also calculates element growth of D+: max(abs(D+)).
  * @param l Subdiagonal of L.
  * @param d Diagonal of D.
  * @param shift Shift.
@@ -80,11 +78,9 @@ double get_shifted_ldl(const Eigen::VectorXd& l, const Eigen::VectorXd& d,
   const int n = l.size();
   double s = -shift;
   double element_growth = 0;
-  double element_growth_denominator = 0;
   for (int i = 0; i < n; i++) {
     d_plus[i] = s + d[i];
-    element_growth += fabs(d_plus[i]);
-    element_growth_denominator += d_plus[i];
+    element_growth = std::max(element_growth, fabs(d_plus[i]));
     l_plus[i] = l[i] * (d[i] / d_plus[i]);
     if (isinf(d_plus[i]) && isinf(s)) {  // this happens if d_plus[i]==0 -> in
                                          // next iteration d_plus==inf and
@@ -95,8 +91,8 @@ double get_shifted_ldl(const Eigen::VectorXd& l, const Eigen::VectorXd& d,
     }
   }
   d_plus[n] = s + d[n];
-  element_growth += fabs(d_plus[n]);
-  return element_growth / fabs(element_growth_denominator);
+  element_growth = std::max(element_growth, fabs(d_plus[n]));
+  return element_growth;
 }
 
 /**
@@ -546,7 +542,7 @@ void mrrr(const Eigen::Ref<const Eigen::VectorXd> diagonal,
           const Eigen::Ref<const Eigen::VectorXd> subdiagonal,
           Eigen::Ref<Eigen::VectorXd> eigenvalues,
           Eigen::Ref<Eigen::MatrixXd> eigenvectors,
-          const double min_rel_sep = 1e-1, const double max_ele_growth = 2) {
+          const double min_rel_sep = 1e-1, const double maximum_ele_growth = 8) {
   using std::copysign;
   using std::fabs;
   const double shift_error = 1e-14;
@@ -556,6 +552,7 @@ void mrrr(const Eigen::Ref<const Eigen::VectorXd> diagonal,
   double max_eigval;
   get_gresgorin(diagonal, subdiagonal, min_eigval, max_eigval);
   Eigen::VectorXd l(n - 1), d(n), l0(n - 1), d0(n);
+  double max_ele_growth = maximum_ele_growth * (max_eigval - min_eigval);
   const double shift0 = find_initial_shift(
       diagonal, subdiagonal, l0, d0, min_eigval, max_eigval, max_ele_growth);
   for (int i = 0; i < n; i++) {
@@ -583,6 +580,7 @@ void mrrr(const Eigen::Ref<const Eigen::VectorXd> diagonal,
   d.resize(n);
   while (!block_queue.empty()) {
     const mrrr_task block = block_queue.front();
+    std::cout << block.level << std::endl;
     block_queue.pop();
     double shift = std::numeric_limits<double>::infinity();
     double min_element_growth = std::numeric_limits<double>::infinity();
