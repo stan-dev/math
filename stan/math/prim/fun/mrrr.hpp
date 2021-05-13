@@ -14,7 +14,7 @@ namespace stan {
 namespace math {
 namespace internal {
 
-const double perturbation_range = 1e-15;
+const double perturbation_range = 4e-16;
 
 /**
  * Generates a random number for perturbing a relatively robust representation
@@ -48,12 +48,12 @@ double get_ldl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
   double element_growth = fabs(d_plus[0]);
   for (int i = 0; i < subdiagonal.size(); i++) {
     l[i] = subdiagonal[i] / d_plus[i];
-    d_plus[i] *= get_random_perturbation_multiplier();
+    //    d_plus[i] *= get_random_perturbation_multiplier();
     d_plus[i + 1] = diagonal[i + 1] - shift - l[i] * subdiagonal[i];
-    l[i] *= get_random_perturbation_multiplier();
+    //    l[i] *= get_random_perturbation_multiplier();
     element_growth = std::max(element_growth, fabs(d_plus[i + 1]));
   }
-  d_plus[subdiagonal.size()] *= get_random_perturbation_multiplier();
+  //  d_plus[subdiagonal.size()] *= get_random_perturbation_multiplier();
   return element_growth;
 }
 
@@ -80,8 +80,10 @@ double get_shifted_ldl(const Eigen::VectorXd& l, const Eigen::VectorXd& d,
   double element_growth = 0;
   for (int i = 0; i < n; i++) {
     d_plus[i] = s + d[i];
+    //    d_plus[i] *= get_random_perturbation_multiplier()
     element_growth = std::max(element_growth, fabs(d_plus[i]));
     l_plus[i] = l[i] * (d[i] / d_plus[i]);
+    //    l_plus[i] *=get_random_perturbation_multiplier()
     if (isinf(d_plus[i]) && isinf(s)) {  // this happens if d_plus[i]==0 -> in
                                          // next iteration d_plus==inf and
                                          // s==inf
@@ -456,6 +458,14 @@ void find_shift(const Eigen::VectorXd& l, const Eigen::VectorXd& d,
   Eigen::VectorXd l3(l2.size()), d3(d2.size());
   const std::vector<double> shifts = {
       low,
+      high - max_shift * 0.001,
+      low + max_shift * 0.001,
+      high - max_shift * 0.05,
+      low + max_shift * 0.05,
+      high - max_shift * 0.01,
+      low + max_shift * 0.01,
+      high - max_shift * 0.05,
+      low + max_shift * 0.05,
       high - max_shift * 0.1,
       low + max_shift * 0.1,
       high - max_shift * 0.25,
@@ -480,6 +490,10 @@ void find_shift(const Eigen::VectorXd& l, const Eigen::VectorXd& d,
       }
     }
   }
+//  if (min_element_growth > max_ele_growth) {
+//    std::cout << "ele growth " << min_element_growth << " " << max_ele_growth
+//              << std::endl;
+//  }
 }
 
 /**
@@ -499,14 +513,18 @@ double find_initial_shift(const Eigen::Ref<const Eigen::VectorXd> diagonal,
                           Eigen::VectorXd& l0, Eigen::VectorXd& d0,
                           const double min_eigval, const double max_eigval,
                           const double max_ele_growth) {
-  double shift = 0;
-  if (min_eigval > 0) {
-    shift = 0.9 * min_eigval;
-  } else if (max_eigval <= 0) {
-    shift = 0.9 * max_eigval;
-  }
+//  double shift = (max_eigval + min_eigval) * 0.5;
+    double shift = 0;
+  //  if (min_eigval > 0) {
+  //    shift = 0.9 * min_eigval;
+  //  } else if (max_eigval <= 0) {
+  //    shift = 0.9 * max_eigval;
+  //  }
   double element_growth = get_ldl(diagonal, subdiagonal, shift, l0, d0);
+  std::cout << "gresgorin " << min_eigval << " " << max_eigval << std::endl;
   if (element_growth < max_ele_growth) {
+    std::cout << "init i ele growth " << element_growth << " " << max_ele_growth
+              << " shift " << shift << std::endl;
     return shift;
   }
   double plus = (max_eigval - min_eigval) * 1e-15;
@@ -514,8 +532,11 @@ double find_initial_shift(const Eigen::Ref<const Eigen::VectorXd> diagonal,
                                                 // would be wrong for the case
                                                 // where element_growth is nan
     plus *= -2;
+    std::cout << element_growth << " ";
     element_growth = get_ldl(diagonal, subdiagonal, shift + plus, l0, d0);
   }
+  std::cout << "\ninit ele growth " << element_growth << " " << max_ele_growth
+            << " shift " << shift + plus << std::endl;
   return shift + plus;
 }
 
@@ -542,7 +563,8 @@ void mrrr(const Eigen::Ref<const Eigen::VectorXd> diagonal,
           const Eigen::Ref<const Eigen::VectorXd> subdiagonal,
           Eigen::Ref<Eigen::VectorXd> eigenvalues,
           Eigen::Ref<Eigen::MatrixXd> eigenvectors,
-          const double min_rel_sep = 1e-1, const double maximum_ele_growth = 8) {
+          const double min_rel_sep = 1e-1,
+          const double maximum_ele_growth = 8) {
   using std::copysign;
   using std::fabs;
   const double shift_error = 1e-14;
@@ -580,7 +602,7 @@ void mrrr(const Eigen::Ref<const Eigen::VectorXd> diagonal,
   d.resize(n);
   while (!block_queue.empty()) {
     const mrrr_task block = block_queue.front();
-    std::cout << block.level << std::endl;
+    //    std::cout << block.level << std::endl;
     block_queue.pop();
     double shift = std::numeric_limits<double>::infinity();
     double min_element_growth = std::numeric_limits<double>::infinity();
