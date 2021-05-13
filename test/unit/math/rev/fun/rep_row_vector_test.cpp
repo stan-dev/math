@@ -9,7 +9,8 @@ TEST(MathMixMatFun, repRowVectorVar) {
   using stan::math::var;
   var x_var = var(1.0);
   Eigen::Matrix<var, 1, -1> x1 = rep_row_vector(x_var, 3);
-  Eigen::Matrix<var, 1, -1> x2 = rep_row_vector<Eigen::Matrix<var, 1, -1>>(x_var, 3);
+  Eigen::Matrix<var, 1, -1> x2
+      = rep_row_vector<Eigen::Matrix<var, 1, -1>>(x_var, 3);
   EXPECT_TRUE(stan::is_eigen<decltype(x1)>::value);
   EXPECT_TRUE(stan::is_eigen<decltype(x2)>::value);
 
@@ -25,7 +26,8 @@ TEST(MathMixMatFun, repRowVarVector) {
   using stan::math::var;
   using stan::math::var_value;
   var x_var = var(1.0);
-  var_value<Eigen::RowVectorXd> x = rep_row_vector<var_value<Eigen::RowVectorXd>>(x_var, 5);
+  var_value<Eigen::RowVectorXd> x
+      = rep_row_vector<var_value<Eigen::RowVectorXd>>(x_var, 5);
   EXPECT_TRUE(stan::is_var_matrix<decltype(x)>::value);
   auto x_sum = sum(x);
   x_sum.grad();
