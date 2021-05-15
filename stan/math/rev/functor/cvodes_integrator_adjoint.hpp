@@ -269,13 +269,18 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     check_positive(function_name, "num_steps_between_checkpoints",
                    num_steps_between_checkpoints_);
     // for polynomial: 1=CV_HERMITE / 2=CV_POLYNOMIAL
-    if(interpolation_polynomial_ != 1 && interpolation_polynomial_ != 2)
-      invalid_argument(function_name, "interpolation_polynomial", interpolation_polynomial_, "", ", must be 1 for Hermite or 2 for polynomial interpolation of ODE solution");
+    if (interpolation_polynomial_ != 1 && interpolation_polynomial_ != 2)
+      invalid_argument(function_name, "interpolation_polynomial",
+                       interpolation_polynomial_, "",
+                       ", must be 1 for Hermite or 2 for polynomial "
+                       "interpolation of ODE solution");
     // 1=Adams=CV_ADAMS, 2=BDF=CV_BDF
-    if(solver_forward_ != 1 && solver_forward_ != 2)
-      invalid_argument(function_name, "solver_forward", solver_forward_, "", ", must be 1 for Adams or 2 for BDF forward solver");
-    if(solver_backward_ != 1 && solver_backward_ != 2)
-      invalid_argument(function_name, "solver_backward", solver_backward_, "", ", must be 1 for Adams or 2 for BDF backward solver");
+    if (solver_forward_ != 1 && solver_forward_ != 2)
+      invalid_argument(function_name, "solver_forward", solver_forward_, "",
+                       ", must be 1 for Adams or 2 for BDF forward solver");
+    if (solver_backward_ != 1 && solver_backward_ != 2)
+      invalid_argument(function_name, "solver_backward", solver_backward_, "",
+                       ", must be 1 for Adams or 2 for BDF backward solver");
 
     solver_ = new cvodes_solver(
         function_name, f, N_, num_args_vars_, ts_.size(), solver_forward_,
