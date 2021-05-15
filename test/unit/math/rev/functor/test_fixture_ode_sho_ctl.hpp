@@ -171,19 +171,19 @@ struct harmonic_oscillator_ctl_test
 
     const int inter_poly_ = this->inter_poly;
     this->inter_poly = 0;
-    EXPECT_THROW_MSG(apply_solver_tol_ctl(), std::domain_error,
+    EXPECT_THROW_MSG(apply_solver_tol_ctl(), std::invalid_argument,
                      "interpolation_polynomial");
     this->inter_poly = inter_poly_;
 
     const int solv_f_ = this->solv_f;
     this->solv_f = 0;
-    EXPECT_THROW_MSG(apply_solver_tol_ctl(), std::domain_error,
+    EXPECT_THROW_MSG(apply_solver_tol_ctl(), std::invalid_argument,
                      "solver_forward");
     this->solv_f = solv_f_;
 
     const int solv_b_ = this->solv_b;
     this->solv_b = 0;
-    EXPECT_THROW_MSG(apply_solver_tol_ctl(), std::domain_error,
+    EXPECT_THROW_MSG(apply_solver_tol_ctl(), std::invalid_argument,
                      "solver_backward");
     this->solv_b = solv_b_;
 
