@@ -21,7 +21,7 @@ namespace stan {
 namespace math {
 
 /**
- * Integrator interface for CVODES' ODE solvers (Adams & BDF
+ * Integrator interface for CVODES' adjoint ODE solvers (Adams & BDF
  * methods).
  *
  * @tparam F Type of ODE right hand side
@@ -204,8 +204,6 @@ class cvodes_integrator_adjoint_vari : public vari_base {
       int interpolation_polynomial, int solver_forward, int solver_backward,
       std::ostream* msgs, const T_Args&... args)
       : vari_base(),
-        // local_args_tuple_(deep_copy_vars(args)...),
-        // value_of_args_tuple_(value_of(args)...),
         y_(ts.size()),
         ts_(ts.begin(), ts.end()),
         y0_(y0),
@@ -403,7 +401,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
   /**
    * No-op for setting adjoints since this class does not own any adjoints.
    */
-  void set_zero_adjoint() final{};
+  void set_zero_adjoint() final {};
 
   void chain() final {
     if (!is_var_return_) {
@@ -618,8 +616,6 @@ class cvodes_integrator_adjoint_vari : public vari_base {
    *
    * Equation 2.23 in the cvs_guide.
    *
-   * @param[in] initial var vector
-   * @param[in] param var vector
    * @param[in] t time
    * @param[in] y state of the base ODE system
    * @param[in] yB state of the adjoint ODE system
@@ -655,8 +651,6 @@ class cvodes_integrator_adjoint_vari : public vari_base {
    *
    * This is the integrand of equation 2.22 in the cvs_guide.
    *
-   * @param[in] initial var vector
-   * @param[in] param var vector
    * @param[in] t time
    * @param[in] y state of the base ODE system
    * @param[in] yB state of the adjoint ODE system
@@ -738,8 +732,8 @@ class cvodes_integrator_adjoint_vari : public vari_base {
    * Calculate the Jacobian of the RHS of the adjoint ODE (see rhs_adj
    * below for citation for how this is done)
    *
-   * @param[in] y State of system
    * @param[in] t Time
+   * @param[in] y State of system
    * @param[out] J CVode structure where output is to be stored
    */
   inline int jacobian_rhs_adj_states(double t, N_Vector y, SUNMatrix J) const {
