@@ -401,7 +401,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
   /**
    * No-op for setting adjoints since this class does not own any adjoints.
    */
-  void set_zero_adjoint() final {};
+  void set_zero_adjoint() final{};
 
   void chain() final {
     if (!is_var_return_) {
