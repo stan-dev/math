@@ -94,9 +94,8 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> y_return_;
     std::tuple<T_Args...> local_args_tuple_;
     const std::tuple<
-      promote_scalar_t<partials_type_t<scalar_type_t<T_Args>>, T_Args>...>
-    value_of_args_tuple_;
-
+        promote_scalar_t<partials_type_t<scalar_type_t<T_Args>>, T_Args>...>
+        value_of_args_tuple_;
 
     template <typename FF, typename StateFwd, typename StateBwd, typename Quad,
               typename AbsTolFwd, typename AbsTolBwd>
@@ -104,8 +103,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
                   size_t num_args_vars, size_t ts_size, int solver_forward,
                   StateFwd& state_forward, StateBwd& state_backward, Quad& quad,
                   AbsTolFwd& absolute_tolerance_forward,
-                  AbsTolBwd& absolute_tolerance_backward,
-                  const T_Args&... args)
+                  AbsTolBwd& absolute_tolerance_backward, const T_Args&... args)
         : chainable_alloc(),
           f_(std::forward<FF>(f)),
           function_name_str_(function_name),
@@ -192,7 +190,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
    * @return a vector of states, each state being a vector of the
    * same size as the state variable, corresponding to a time in ts.
    */
-template <typename FF, require_eigen_col_vector_t<T_y0>* = nullptr>
+  template <typename FF, require_eigen_col_vector_t<T_y0>* = nullptr>
   cvodes_integrator_adjoint_vari(
       const char* function_name, FF&& f, const T_y0& y0, const T_t0& t0,
       const std::vector<T_ts>& ts, double relative_tolerance_forward,
@@ -206,8 +204,8 @@ template <typename FF, require_eigen_col_vector_t<T_y0>* = nullptr>
       int interpolation_polynomial, int solver_forward, int solver_backward,
       std::ostream* msgs, const T_Args&... args)
       : vari_base(),
-        //local_args_tuple_(deep_copy_vars(args)...),
-        //value_of_args_tuple_(value_of(args)...),
+        // local_args_tuple_(deep_copy_vars(args)...),
+        // value_of_args_tuple_(value_of(args)...),
         y_(ts.size()),
         ts_(ts.begin(), ts.end()),
         y0_(y0),
@@ -597,7 +595,8 @@ template <typename FF, require_eigen_col_vector_t<T_y0>* = nullptr>
    */
   inline int rhs(double t, const double* y, double*& dy_dt) const {
     const Eigen::VectorXd y_vec = Eigen::Map<const Eigen::VectorXd>(y, N_);
-    const Eigen::VectorXd dy_dt_vec = rhs(t, y_vec, solver_->value_of_args_tuple_);
+    const Eigen::VectorXd dy_dt_vec
+        = rhs(t, y_vec, solver_->value_of_args_tuple_);
     check_size_match(solver_->function_name_str_.c_str(), "dy_dt",
                      dy_dt_vec.size(), "states", N_);
     Eigen::Map<Eigen::VectorXd>(dy_dt, N_) = dy_dt_vec;
