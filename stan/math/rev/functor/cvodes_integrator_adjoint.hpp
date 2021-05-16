@@ -79,7 +79,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
    */
   struct cvodes_solver : public chainable_alloc {
     const std::string function_name_str_;
-    const F f_;
+    const std::decay_t<F> f_;
     const size_t N_;
     N_Vector nv_state_forward_;
     N_Vector nv_state_backward_;
