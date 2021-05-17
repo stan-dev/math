@@ -92,7 +92,7 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_cdf(const T_y& y,
     const auto& prod_all_sq = to_ref_if<!is_constant_all<T_y>::value
                                             + !is_constant_all<T_scale>::value
                                             + !is_constant_all<T_shape>::value
-                                        >= 2>(prod_all * prod_all);
+                                        >= 2>(square(prod_all));
     const auto& cdf_div_elt = to_ref_if<!is_constant_all<T_y>::value
                                             + !is_constant_all<T_scale>::value
                                             + !is_constant_all<T_shape>::value
