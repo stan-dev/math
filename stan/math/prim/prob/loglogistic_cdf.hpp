@@ -86,8 +86,7 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_cdf(const T_y& y,
       = to_ref_if<!is_constant_all<T_y, T_scale, T_shape>::value>(
           1 / (1 + alpha_div_y_pow_beta));
 
-  T_partials_return cdf(1.0);
-  cdf *= prod(prod_all);
+  T_partials_return cdf = prod(prod_all);
 
   if (!is_constant_all<T_y, T_scale, T_shape>::value) {
     const auto& prod_all_sq = to_ref_if<!is_constant_all<T_y>::value
