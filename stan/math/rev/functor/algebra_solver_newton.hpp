@@ -23,7 +23,7 @@ template <typename F, typename T, typename... T_Args,
           require_all_st_arithmetic<T_Args...>* = nullptr>
 Eigen::VectorXd algebra_solver_newton_impl(
     const F& f, const T& x, std::ostream* msgs, double scaling_step_size,
-    double function_tolerance, long int max_num_steps, const Eigen::VectorXd& y,
+    double function_tolerance, int64_t max_num_steps, const Eigen::VectorXd& y,
     const T_Args&... args) {  // NOLINT(runtime/int)
   const auto& x_ref = to_ref(value_of(x));
   auto args_vals_tuple = std::make_tuple(y, to_ref(args)...);
@@ -46,7 +46,7 @@ template <typename F, typename T, typename... T_Args,
           require_any_st_var<T_Args...>* = nullptr>
 Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_newton_impl(
     const F& f, const T& x, std::ostream* msgs, double scaling_step_size,
-    double function_tolerance, long int max_num_steps,
+    double function_tolerance, int64_t max_num_steps,
     const T_Args&... args) {  // NOLINT(runtime/int)
   const auto& x_ref = to_ref(value_of(x));
   auto arena_args_tuple = std::make_tuple(to_arena(args)...);
