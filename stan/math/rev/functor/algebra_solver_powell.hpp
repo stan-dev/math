@@ -18,6 +18,41 @@
 namespace stan {
 namespace math {
 
+/** Function for internal use that actually calls the powell solver. */
+template <typename S, typename F, typename T,
+          require_eigen_vector_t<T>* = nullptr>
+Eigen::VectorXd algebra_solver_powell_call_solver_(
+    S& solver, const F& fx, const T& x, std::ostream* msgs,
+    double relative_tolerance, double function_tolerance,
+    long int max_num_steps) {  // NOLINT(runtime/int)
+  // Compute theta_dbl
+  Eigen::VectorXd theta_dbl = x;
+  solver.parameters.xtol = relative_tolerance;
+  solver.parameters.maxfev = max_num_steps;
+  solver.solve(theta_dbl);
+
+  // Check if the max number of steps has been exceeded
+  if (solver.nfev >= max_num_steps) {
+    throw_domain_error("algebra_solver", "maximum number of iterations",
+                       max_num_steps, "(", ") was exceeded in the solve.");
+  }
+
+  // Check solution is a root
+  double system_norm = fx.get_value(theta_dbl).stableNorm();
+  if (system_norm > function_tolerance) {
+    std::ostringstream message;
+    message << "the norm of the algebraic function is " << system_norm
+            << " but should be lower than the function "
+            << "tolerance:";
+    throw_domain_error("algebra_solver", message.str().c_str(),
+                       function_tolerance, "",
+                       ". Consider decreasing the relative tolerance and "
+                       "increasing max_num_steps.");
+  }
+
+  return theta_dbl;
+}
+
 /** Implementation of ordinary powell solver. */
 template <typename F, typename T, typename... T_Args,
           require_eigen_vector_t<T>* = nullptr,
@@ -38,12 +73,12 @@ Eigen::VectorXd algebra_solver_powell_impl(
   check_positive("algebra_solver_powell", "max_num_steps", max_num_steps);
 
   // Construct the Powell solver
-  auto myfunc = [&](const auto& x) {
+  auto f_wrt_x = [&](const auto& x) {
     return apply([&](const auto&... args) { return f(x, msgs, args...); },
                  args_vals_tuple);
   };
 
-  hybrj_functor_solver<decltype(myfunc)> fx(myfunc);
+  hybrj_functor_solver<decltype(f_wrt_x)> fx(f_wrt_x);
   Eigen::HybridNonLinearSolver<decltype(fx)> solver(fx);
 
   // Check dimension unknowns equals dimension of system output
@@ -51,8 +86,9 @@ Eigen::VectorXd algebra_solver_powell_impl(
                        fx.get_value(x_val), "the vector of unknowns, x,", x);
 
   // Solve the system
-  return algebra_solver_powell_(solver, fx, x_val, 0, relative_tolerance,
-                                function_tolerance, max_num_steps);
+  return algebra_solver_powell_call_solver_(
+      solver, fx, x_val, 0, relative_tolerance, function_tolerance,
+      max_num_steps);
 }
 
 /** Implementation of autodiff powell solver. */
@@ -76,12 +112,12 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
   check_positive("algebra_solver_powell", "max_num_steps", max_num_steps);
 
   // Construct the Powell solver
-  auto myfunc = [&](const auto& x) {
+  auto f_wrt_x = [&](const auto& x) {
     return apply([&](const auto&... args) { return f(x, msgs, args...); },
                  args_vals_tuple);
   };
 
-  hybrj_functor_solver<decltype(myfunc)> fx(myfunc);
+  hybrj_functor_solver<decltype(f_wrt_x)> fx(f_wrt_x);
   Eigen::HybridNonLinearSolver<decltype(fx)> solver(fx);
 
   // Check dimension unknowns equals dimension of system output
@@ -90,13 +126,14 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
 
   // Solve the system
   Eigen::VectorXd theta_dbl
-      = algebra_solver_powell_(solver, fx, x_val, 0, relative_tolerance,
-                               function_tolerance, max_num_steps);
+      = algebra_solver_powell_call_solver_(
+          solver, fx, x_val, 0, relative_tolerance, function_tolerance,
+          max_num_steps);
 
   Eigen::MatrixXd Jf_x;
   Eigen::VectorXd f_x;
 
-  jacobian(myfunc, theta_dbl, f_x, Jf_x);
+  jacobian(f_wrt_x, theta_dbl, f_x, Jf_x);
 
   using ret_type = Eigen::Matrix<var, Eigen::Dynamic, -1>;
   auto arena_Jf_x = to_arena(Jf_x);
@@ -240,40 +277,6 @@ Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, 1> algebra_solver(
     long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
   return algebra_solver_powell(f, x, y, dat, dat_int, msgs, relative_tolerance,
                                function_tolerance, max_num_steps);
-}
-
-template <typename S, typename F, typename T,
-          require_eigen_vector_t<T>* = nullptr>
-Eigen::VectorXd algebra_solver_powell_(
-    S& solver, const F& fx, const T& x, std::ostream* msgs,
-    double relative_tolerance, double function_tolerance,
-    long int max_num_steps) {  // NOLINT(runtime/int)
-  // Compute theta_dbl
-  Eigen::VectorXd theta_dbl = x;
-  solver.parameters.xtol = relative_tolerance;
-  solver.parameters.maxfev = max_num_steps;
-  solver.solve(theta_dbl);
-
-  // Check if the max number of steps has been exceeded
-  if (solver.nfev >= max_num_steps) {
-    throw_domain_error("algebra_solver", "maximum number of iterations",
-                       max_num_steps, "(", ") was exceeded in the solve.");
-  }
-
-  // Check solution is a root
-  double system_norm = fx.get_value(theta_dbl).stableNorm();
-  if (system_norm > function_tolerance) {
-    std::ostringstream message;
-    message << "the norm of the algebraic function is " << system_norm
-            << " but should be lower than the function "
-            << "tolerance:";
-    throw_domain_error("algebra_solver", message.str().c_str(),
-                       function_tolerance, "",
-                       ". Consider decreasing the relative tolerance and "
-                       "increasing max_num_steps.");
-  }
-
-  return theta_dbl;
 }
 
 }  // namespace math

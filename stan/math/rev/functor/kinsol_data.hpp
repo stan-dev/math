@@ -101,7 +101,7 @@ class kinsol_system_data {
     Eigen::Map<Eigen::VectorXd> f_eval_map(N_VGetArrayPointer(f_eval),
                                            explicit_system->N_);
 
-    auto myfunc = [&](const auto& x) {
+    auto f_wrt_x = [&](const auto& x) {
       return apply(
           [&](const auto&... args) {
             return explicit_system->f_(x, explicit_system->msgs_, args...);
@@ -112,7 +112,7 @@ class kinsol_system_data {
     Eigen::MatrixXd Jf_x;
     Eigen::VectorXd f_x;
 
-    jacobian(myfunc, x_eigen, f_x, Jf_x);
+    jacobian(f_wrt_x, x_eigen, f_x, Jf_x);
 
     f_eval_map = f_x;
 

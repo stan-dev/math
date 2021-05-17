@@ -25,18 +25,18 @@ Eigen::VectorXd algebra_solver_newton_impl(
     const F& f, const T& x, std::ostream* msgs, double scaling_step_size,
     double function_tolerance, long int max_num_steps, const Eigen::VectorXd& y,
     const T_Args&... args) {  // NOLINT(runtime/int)
-  const auto& x_val = to_ref(value_of(x));
+  const auto& x_ref = to_ref(value_of(x));
   auto args_vals_tuple = std::make_tuple(y, to_ref(args)...);
 
-  check_nonzero_size("algebra_solver_newton", "initial guess", x_val);
-  check_finite("algebra_solver_newton", "initial guess", x_val);
+  check_nonzero_size("algebra_solver_newton", "initial guess", x_ref);
+  check_finite("algebra_solver_newton", "initial guess", x_ref);
   check_nonnegative("algebra_solver_newton", "scaling_step_size",
                     scaling_step_size);
   check_nonnegative("algebra_solver_newton", "function_tolerance",
                     function_tolerance);
   check_positive("algebra_solver_newton", "max_num_steps", max_num_steps);
 
-  return kinsol_solve(f, x_val, scaling_step_size, function_tolerance,
+  return kinsol_solve(f, x_ref, scaling_step_size, function_tolerance,
                       max_num_steps, 1, 10, KIN_LINESEARCH, msgs, y, args...);
 }
 
@@ -48,12 +48,12 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_newton_impl(
     const F& f, const T& x, std::ostream* msgs, double scaling_step_size,
     double function_tolerance, long int max_num_steps,
     const T_Args&... args) {  // NOLINT(runtime/int)
-  const auto& x_val = to_ref(value_of(x));
+  const auto& x_ref = to_ref(value_of(x));
   auto arena_args_tuple = std::make_tuple(to_arena(args)...);
   auto args_vals_tuple = std::make_tuple(to_ref(value_of(args))...);
 
-  check_nonzero_size("algebra_solver_newton", "initial guess", x_val);
-  check_finite("algebra_solver_newton", "initial guess", x_val);
+  check_nonzero_size("algebra_solver_newton", "initial guess", x_ref);
+  check_finite("algebra_solver_newton", "initial guess", x_ref);
   check_nonnegative("algebra_solver_newton", "scaling_step_size",
                     scaling_step_size);
   check_nonnegative("algebra_solver_newton", "function_tolerance",
@@ -63,14 +63,14 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_newton_impl(
   // Solve the system
   Eigen::VectorXd theta_dbl = apply(
       [&](const auto&... vals) {
-        return kinsol_solve(f, x_val, scaling_step_size, function_tolerance,
+        return kinsol_solve(f, x_ref, scaling_step_size, function_tolerance,
                             max_num_steps, 1, 10, KIN_LINESEARCH, msgs,
                             vals...);
       },
       args_vals_tuple);
 
   // Evaluate and store the Jacobian.
-  auto myfunc = [&](const auto& x) {
+  auto f_wrt_x = [&](const auto& x) {
     return apply([&](const auto&... args) { return f(x, msgs, args...); },
                  args_vals_tuple);
   };
@@ -78,7 +78,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_newton_impl(
   Eigen::MatrixXd Jf_x;
   Eigen::VectorXd f_x;
 
-  jacobian(myfunc, theta_dbl, f_x, Jf_x);
+  jacobian(f_wrt_x, theta_dbl, f_x, Jf_x);
 
   using ret_type = Eigen::Matrix<var, Eigen::Dynamic, -1>;
   auto arena_Jf_x = to_arena(Jf_x);
