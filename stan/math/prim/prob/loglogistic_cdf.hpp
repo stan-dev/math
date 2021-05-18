@@ -102,7 +102,7 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_cdf(const T_y& y,
           !is_constant_all<T_y>::value + !is_constant_all<T_scale>::value == 2>(
           alpha_div_y_pow_beta * beta_val);
       if (!is_constant_all<T_y>::value) {
-        const auto& y_deriv = alpha_div_times_beta * inv(y_val) * prod_all_sq;
+        const auto& y_deriv = alpha_div_times_beta / y_val * prod_all_sq;
         ops_partials.edge1_.partials_ = y_deriv * cdf_div_elt;
       }
       if (!is_constant_all<T_scale>::value) {
