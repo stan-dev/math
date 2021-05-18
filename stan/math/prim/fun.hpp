@@ -264,6 +264,7 @@
 #include <stan/math/prim/fun/quad_form.hpp>
 #include <stan/math/prim/fun/quad_form_diag.hpp>
 #include <stan/math/prim/fun/quad_form_sym.hpp>
+#include <stan/math/prim/fun/quantile.hpp>
 #include <stan/math/prim/fun/rank.hpp>
 #include <stan/math/prim/fun/read_corr_L.hpp>
 #include <stan/math/prim/fun/read_corr_matrix.hpp>

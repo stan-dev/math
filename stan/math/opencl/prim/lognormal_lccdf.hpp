@@ -63,7 +63,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> lognormal_lccdf(
       = check_cl(function, "Scale parameter", sigma_val, "positive finite");
   auto sigma_positive_finite_expr = 0 < sigma_val && isfinite(sigma_val);
 
-  auto any_y_zero = colwise_max(constant(0, N, 1) + (y_val == 0.0));
+  auto any_y_zero = colwise_max(cast<char>(y_val == 0.0));
   auto log_y = log(y_val);
   auto scaled_diff = elt_divide(log_y - mu_val, sigma_val * SQRT_TWO);
   auto erfc_calc = erfc(scaled_diff);
@@ -73,7 +73,7 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> lognormal_lccdf(
   auto y_deriv = elt_divide(mu_deriv, -y_val);
   auto sigma_deriv = elt_multiply(mu_deriv, scaled_diff * SQRT_TWO);
 
-  matrix_cl<double> any_y_zero_cl;
+  matrix_cl<char> any_y_zero_cl;
   matrix_cl<double> lccdf_cl;
   matrix_cl<double> y_deriv_cl;
   matrix_cl<double> mu_deriv_cl;
