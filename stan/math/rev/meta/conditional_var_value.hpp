@@ -16,8 +16,9 @@ namespace stan {
 template <typename T_scalar, typename T_container, typename = void>
 struct conditional_var_value {
   using type = std::conditional_t<is_var<scalar_type_t<T_scalar>>::value,
-    math::var_value<math::promote_scalar_t<double, plain_type_t<T_container>>>,
-    plain_type_t<T_container>>;
+                                  math::var_value<math::promote_scalar_t<
+                                      double, plain_type_t<T_container>>>,
+                                  plain_type_t<T_container>>;
 };
 template <typename T_scalar, typename T_container>
 struct conditional_var_value<T_scalar, T_container,
