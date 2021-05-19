@@ -10,25 +10,25 @@
 
 #include <cmath>
 
-#include <quadmath.h>
+#include <stan/math/opencl/double_d.hpp>
 
 namespace stan {
 namespace math {
 namespace internal {
 
-const __float128 perturbation_range = 4e-23;
+const double_d perturbation_range = 4e-23;
 
-using VectorXq = Eigen::Matrix<__float128, -1,1>;
-using MatrixXq = Eigen::Matrix<__float128, -1,-1>;
+using VectorXdd = Eigen::Matrix<double_d, -1, 1>;
+using MatrixXdd = Eigen::Matrix<double_d, -1, -1>;
 
 /**
  * Generates a random number for perturbing a relatively robust representation
  * @return A uniformly distributed random number between `1 - perturbation_range
  * / 2` and `1 + perturbation_range / 2`.
  */
-inline __float128 get_random_perturbation_multiplier() {
-  static const __float128 rand_norm = perturbation_range / RAND_MAX;
-  static const __float128 almost_one = 1 - perturbation_range * 0.5;
+inline double_d get_random_perturbation_multiplier() {
+  static const double_d rand_norm = perturbation_range / RAND_MAX;
+  static const double_d almost_one = 1 - perturbation_range * 0.5;
   return almost_one + std::rand() * rand_norm;
 }
 
@@ -46,20 +46,19 @@ inline __float128 get_random_perturbation_multiplier() {
  */
 double get_ldl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
                const Eigen::Ref<const Eigen::VectorXd> subdiagonal,
-               const __float128 shift, VectorXq& l,
-               VectorXq& d_plus) {
+               const double shift, VectorXdd& l, VectorXdd& d_plus) {
   using std::fabs;
   d_plus[0] = diagonal[0] - shift;
-  __float128 element_growth = fabsq(d_plus[0]);
+  double_d element_growth = fabs(d_plus[0]);
   for (int i = 0; i < subdiagonal.size(); i++) {
     l[i] = subdiagonal[i] / d_plus[i];
     //    d_plus[i] *= get_random_perturbation_multiplier();
     d_plus[i + 1] = diagonal[i + 1] - shift - l[i] * subdiagonal[i];
     //    l[i] *= get_random_perturbation_multiplier();
-    element_growth = std::max(element_growth, fabsq(d_plus[i + 1]));
+    element_growth = std::max(element_growth, fabs(d_plus[i + 1]));
   }
   //  d_plus[subdiagonal.size()] *= get_random_perturbation_multiplier();
-  return element_growth;
+  return element_growth.high;
 }
 
 /**
@@ -75,21 +74,21 @@ double get_ldl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
  * @param[out] d_plus Diagonal of D+.
  * @return Element growth.
  */
-__float128 get_shifted_ldl(const VectorXq& l, const VectorXq& d,
-                       const __float128 shift, VectorXq& l_plus,
-                       VectorXq& d_plus) {
+double get_shifted_ldl(const VectorXdd& l, const VectorXdd& d,
+                       const double_d shift, VectorXdd& l_plus,
+                       VectorXdd& d_plus) {
   using std::fabs;
   using std::isinf;
   const int n = l.size();
-  __float128 s = -shift;
-  __float128 element_growth = 0;
+  double_d s = -shift;
+  double element_growth = 0;
   for (int i = 0; i < n; i++) {
     d_plus[i] = s + d[i];
     //    d_plus[i] *= get_random_perturbation_multiplier()
-    element_growth = std::max(element_growth, fabsq(d_plus[i]));
+    element_growth = std::max(element_growth, fabs(d_plus[i].high));
     l_plus[i] = l[i] * (d[i] / d_plus[i]);
     //    l_plus[i] *=get_random_perturbation_multiplier()
-    if (isinfq(d_plus[i]) && isinfq(s)) {  // this happens if d_plus[i]==0 -> in
+    if (isinf(d_plus[i]) && isinf(s)) {  // this happens if d_plus[i]==0 -> in
                                          // next iteration d_plus==inf and
                                          // s==inf
       s = l[i] * l[i] * d[i] - shift;
@@ -98,7 +97,7 @@ __float128 get_shifted_ldl(const VectorXq& l, const VectorXq& d,
     }
   }
   d_plus[n] = s + d[n];
-  element_growth = std::max(element_growth, fabsq(d_plus[n]));
+  element_growth = std::max(element_growth, fabs(d_plus[n].high));
   return element_growth;
 }
 
@@ -118,70 +117,70 @@ __float128 get_shifted_ldl(const VectorXq& l, const VectorXq& d,
  * @param[out] u_minus Superdiagonal of U-.
  * @return Twist index.
  */
-int get_twisted_factorization(const VectorXq& l,
-                              const VectorXq& d, const __float128 shift,
-                              VectorXq& l_plus,
-                              VectorXq& u_minus) {
+int get_twisted_factorization(const VectorXdd& l, const VectorXdd& d,
+                              const double_d shift, VectorXdd& l_plus,
+                              VectorXdd& u_minus) {
   using std::copysign;
   using std::fabs;
   using std::isnan;
   const int n = l.size();
   // calculate shifted ldl
-  VectorXq s(n + 1);
+  VectorXdd s(n + 1);
   s[0] = -shift;
   for (int i = 0; i < n; i++) {
-    __float128 d_plus = s[i] + d[i];
+    double_d d_plus = s[i] + d[i];
     l_plus[i] = l[i] * (d[i] / d_plus);
-    if (isnanq(l_plus[i])) {  // d_plus==0
-      if (fabsq(l[i])
-          < fabsq(d[i])) {  // one (or both) of d[i], l[i] is very close to 0
-        l_plus[i] = d[i] * copysignq(__float128(1), l[i]) * copysignq(__float128(1), d_plus);
+    if (isnan(l_plus[i])) {  // d_plus==0
+      if (fabs(l[i])
+          < fabs(d[i])) {  // one (or both) of d[i], l[i] is very close to 0
+        l_plus[i] = d[i] * copysign(1.0, l[i]) * copysign(1.0, d_plus);
       } else {
-        l_plus[i] = l[i] * copysignq(__float128(1), d[i]) * copysignq(__float128(1), d_plus);
+        l_plus[i] = l[i] * copysign(1.0, d[i]) * copysign(1.0, d_plus);
       }
     }
     s[i + 1] = l_plus[i] * l[i] * s[i] - shift;
-    if (isnanq(s[i + 1])) {
-      if (fabsq(l_plus[i]) > fabsq(s[i])) {  // l_plus[i]==inf
-        if (fabsq(s[i]) > fabsq(l[i])) {     // l[i]==0
+    if (isnan(s[i + 1])) {
+      if (fabs(l_plus[i]) > fabs(s[i])) {  // l_plus[i]==inf
+        if (fabs(s[i]) > fabs(l[i])) {     // l[i]==0
           s[i + 1]
-              = s[i] * copysignq(__float128(1), l[i]) * copysignq(__float128(1), l_plus[i]) - shift;
+              = s[i] * copysign(1.0, l[i]) * copysign(1.0, l_plus[i]) - shift;
         } else {  // s[i]==0
           s[i + 1]
-              = l[i] * copysignq(__float128(1), s[i]) * copysignq(__float128(1), l_plus[i]) - shift;
+              = l[i] * copysign(1.0, s[i]) * copysign(1.0, l_plus[i]) - shift;
         }
       } else {                               // s[i]==inf
-        if (fabsq(l_plus[i]) > fabsq(l[i])) {  // l[i]==0
+        if (fabs(l_plus[i]) > fabs(l[i])) {  // l[i]==0
           s[i + 1]
-              = l_plus[i] * copysignq(__float128(1), l[i]) * copysignq(__float128(1), s[i]) - shift;
+              = l_plus[i] * copysign(1.0, l[i]) * copysign(1.0, s[i]) - shift;
         } else {  // l_plus[i]==0
           s[i + 1]
-              = l[i] * copysignq(__float128(1), s[i]) * copysignq(__float128(1), l_plus[i]) - shift;
+              = l[i] * copysign(1.0, s[i]) * copysign(1.0, l_plus[i]) - shift;
         }
       }
     }
   }
   // calculate shifted udu and twist index
-  __float128 p = d[n] - shift;
-  __float128 min_gamma = fabsq(s[n] + d[n]);
+  double_d p = d[n] - shift;
+  double_d min_gamma = fabs(s[n] + d[n]);
   int twist_index = n;
 
   for (int i = n - 1; i >= 0; i--) {
-    __float128 d_minus = d[i] * l[i] * l[i] + p;
-    __float128 t = d[i] / d_minus;
+    double_d d_minus = d[i] * l[i] * l[i] + p;
+    double_d t = d[i] / d_minus;
     u_minus[i] = l[i] * t;
-    if (isnanq(u_minus[i])) {
-      if (isnanq(t)) {
-        t = copysignq(__float128(1), d[i]) * copysignq(__float128(1), d_minus);
+    if (isnan(u_minus[i])) {
+      if (isnan(t)) {
+        t.high = copysign(1.0, d[i]) * copysign(1.0, d_minus);
+        t.low = 0;
         u_minus[i] = l[i] * t;
       } else {  // t==inf, l[i]==0
-        u_minus[i] = d[i] * copysignq(__float128(1), l[i]) * copysignq(__float128(1), t);
+        u_minus[i] = d[i] * copysign(1.0, l[i]) * copysign(1.0, t);
       }
     }
-    __float128 gamma = fabsq(s[i] + t * p);
-    if (isnanq(gamma)) {  // t==inf, p==0 OR t==0, p==inf
-      __float128 d_sign = d[i] * copysignq(__float128(1), d_minus) * copysignq(__float128(1), t);
-      gamma = fabsq(s[i] + d_sign);
+    double_d gamma = fabs(s[i] + t * p);
+    if (isnan(gamma)) {  // t==inf, p==0 OR t==0, p==inf
+      double_d d_sign = d[i] * copysign(1.0, d_minus) * copysign(1.0, t);
+      gamma = fabs(s[i] + d_sign);
       p = d_sign - shift;
     } else {  // general case
       p = p * t - shift;
@@ -204,17 +203,17 @@ int get_twisted_factorization(const VectorXq& l,
  * @param shift Shift.
  * @return Sturm count.
  */
-int get_sturm_count_ldl(const VectorXq& l, const VectorXq& d,
-                        const __float128 shift) {
+int get_sturm_count_ldl(const VectorXdd& l, const VectorXdd& d,
+                        const double_d shift) {
   using std::isinf;
   const int n = l.size();
-  __float128 s = -shift;
-  __float128 d_plus;
+  double_d s = -shift;
+  double_d d_plus;
   int count = 0;
   for (int i = 0; i < n; i++) {
     d_plus = s + d[i];
     count += d_plus >= 0;
-    if (isinfq(d_plus) && isinfq(s)) {  // this happens if d_plus==0 -> in next
+    if (isinf(d_plus) && isinf(s)) {  // this happens if d_plus==0 -> in next
                                       // iteration d_plus==inf and s==inf
       s = l[i] * l[i] * d[i] - shift;
     } else {
@@ -235,17 +234,18 @@ int get_sturm_count_ldl(const VectorXq& l, const VectorXq& d,
  * @param[in,out] high High bound on the eigenvalue.
  * @param i i-th eigenvalue
  */
-void eigenval_bisect_refine(const VectorXq& l, const VectorXq& d,
-                            __float128& low, __float128& high, const int i) {
+void eigenval_bisect_refine(const VectorXdd& l, const VectorXdd& d,
+                            double_d& low, double_d& high, const int i) {
   using std::fabs;
-  const __float128 eps = 3e-30;
-  while (fabsq((high - low) / (high + low)) > eps
-         && fabsq(high - low)
-                > std::numeric_limits<__float128>::min()) {  // second term is for
-                                                         // the case where the
-                                                         // eigenvalue is 0 and
-                                                         // division yields NaN
-    __float128 mid = (high + low) * 0.5;
+  const double_d eps = {3e-30, 0};
+  while (
+      fabs((high - low) / (high + low)) > eps
+      && fabs(high - low)
+             > std::numeric_limits<double_d>::min()) {  // second term is for
+                                                        // the case where the
+                                                        // eigenvalue is 0 and
+                                                        // division yields NaN
+    double_d mid = (high + low) * 0.5;
     if (get_sturm_count_ldl(l, d, mid) > i) {
       low = mid;
     } else {
@@ -352,7 +352,7 @@ void eigenvals_bisect(const Eigen::Ref<const Eigen::VectorXd> diagonal,
         diagonal, subdiagonal_squared, shifts, BISECT_K);
     for (int i = 0; i < n_valid; i++) {
       if (counts[i] >= t[i].start + 1) {
-        if ((t[i].high - shifts[i]) / fabsq(shifts[i]) > eps
+        if ((t[i].high - shifts[i]) / fabs(shifts[i]) > eps
             && shifts[i] - t[i].low > std::numeric_limits<double>::min()) {
           task_queue.push({t[i].start, counts[i], t[i].low, shifts[i]});
         } else {
@@ -376,7 +376,7 @@ void eigenvals_bisect(const Eigen::Ref<const Eigen::VectorXd> diagonal,
         my_high = shifts[i + n_valid];
       }
       if (counts[i] <= my_end - 1) {
-        if ((my_high - shifts[i]) / fabsq(shifts[i]) > eps
+        if ((my_high - shifts[i]) / fabs(shifts[i]) > eps
             && my_high - shifts[i] > std::numeric_limits<double>::min()) {
           task_queue.push({counts[i], my_end, shifts[i], my_high});
         } else {
@@ -407,8 +407,7 @@ void eigenvals_bisect(const Eigen::Ref<const Eigen::VectorXd> diagonal,
  * @param twist_idx Twist index.
  * @param[out] eigenvectors Matrix in which to store resulting vector.
  */
-void calculate_eigenvector(const VectorXq& l_plus,
-                           const VectorXq& u_minus,
+void calculate_eigenvector(const VectorXdd& l_plus, const VectorXdd& u_minus,
                            const Eigen::Ref<const Eigen::VectorXd>& subdiagonal,
                            const int i, const int twist_idx,
                            Eigen::Ref<Eigen::MatrixXd>& eigenvectors) {
@@ -419,20 +418,20 @@ void calculate_eigenvector(const VectorXq& l_plus,
   vec[twist_idx] = 1;
   for (int j = twist_idx + 1; j < n; j++) {
     if (vec[j - 1] != 0) {
-      vec[j] = -u_minus[j - 1] * vec[j - 1];
+      vec[j] = (-u_minus[j - 1] * vec[j - 1]).high;
     } else {
       vec[j] = -subdiagonal[j - 2] * vec[j - 2] / subdiagonal[j - 1];
-      if (isnanq(vec[j]) || isinfq(vec[j])) {  // subdiagonal[j - 1]==0
+      if (isnan(vec[j]) || isinf(vec[j])) {  // subdiagonal[j - 1]==0
         vec[j] = 0;
       }
     }
   }
   for (int j = twist_idx - 1; j >= 0; j--) {
     if (vec[j + 1] != 0) {
-      vec[j] = -l_plus[j] * vec[j + 1];
+      vec[j] = (-l_plus[j] * vec[j + 1]).high;
     } else {
       vec[j] = -subdiagonal[j + 1] * vec[j + 2] / subdiagonal[j];
-      if (isnanq(vec[j]) || isinfq(vec[j])) {  // subdiagonal[j]==0
+      if (isnan(vec[j]) || isinf(vec[j])) {  // subdiagonal[j]==0
         vec[j] = 0;
       }
     }
@@ -455,13 +454,12 @@ void calculate_eigenvector(const VectorXq& l_plus,
  * @param[out] shift Shift.
  * @param[out] min_element_growth Element growth achieved with resulting shift.
  */
-void find_shift(const VectorXq& l, const VectorXq& d,
-                const __float128 low, const __float128 high,
-                const double max_ele_growth, const double max_shift,
-                VectorXq& l2, VectorXq& d2, __float128& shift,
-                __float128& min_element_growth) {
-  VectorXq l3(l2.size()), d3(d2.size());
-  const std::vector<__float128> shifts = {
+void find_shift(const VectorXdd& l, const VectorXdd& d, const double_d low,
+                const double_d high, const double max_ele_growth,
+                const double_d max_shift, VectorXdd& l2, VectorXdd& d2,
+                double_d& shift, double& min_element_growth) {
+  VectorXdd l3(l2.size()), d3(d2.size());
+  const std::vector<double_d> shifts = {
       low,
       high - max_shift * 0.001,
       low + max_shift * 0.001,
@@ -483,8 +481,8 @@ void find_shift(const VectorXq& l, const VectorXq& d,
       low + max_shift,
   };
   min_element_growth = std::numeric_limits<double>::infinity();
-  for (__float128 sh : shifts) {
-    const __float128 element_growth = get_shifted_ldl(l, d, sh, l3, d3);
+  for (double_d sh : shifts) {
+    const double element_growth = get_shifted_ldl(l, d, sh, l3, d3);
     if (element_growth < min_element_growth) {
       l2.swap(l3);
       d2.swap(d3);
@@ -495,11 +493,11 @@ void find_shift(const VectorXq& l, const VectorXq& d,
       }
     }
   }
-//  if (min_element_growth > max_ele_growth) {
+  //  if (min_element_growth > max_ele_growth) {
   //    std::cout << "ele growth " << min_element_growth << " " <<
   //    max_ele_growth
-//              << std::endl;
-//  }
+  //              << std::endl;
+  //  }
 }
 
 /**
@@ -516,21 +514,22 @@ void find_shift(const VectorXq& l, const VectorXq& d,
  */
 double find_initial_shift(const Eigen::Ref<const Eigen::VectorXd> diagonal,
                           const Eigen::Ref<const Eigen::VectorXd> subdiagonal,
-                          VectorXq& l0, VectorXq& d0,
-                          const double min_eigval, const double max_eigval,
+                          VectorXdd& l0, VectorXdd& d0, const double min_eigval,
+                          const double max_eigval,
                           const double max_ele_growth) {
   double shift = (max_eigval + min_eigval) * 0.5;
-//    double shift = 0;
+  //    double shift = 0;
   //  if (min_eigval > 0) {
   //    shift = 0.9 * min_eigval;
   //  } else if (max_eigval <= 0) {
   //    shift = 0.9 * max_eigval;
   //  }
-  __float128 element_growth = get_ldl(diagonal, subdiagonal, shift, l0, d0);
-//  std::cout << "gresgorin " << min_eigval << " " << max_eigval << std::endl;
+  double element_growth = get_ldl(diagonal, subdiagonal, shift, l0, d0);
+  //  std::cout << "gresgorin " << min_eigval << " " << max_eigval << std::endl;
   if (element_growth < max_ele_growth) {
-//    std::cout << "init i ele growth " << (double)element_growth << " " << (double)max_ele_growth
-//              << " shift " << shift << std::endl;
+    //    std::cout << "init i ele growth " << (double)element_growth << " " <<
+    //    (double)max_ele_growth
+    //              << " shift " << shift << std::endl;
     return shift;
   }
   double plus = (max_eigval - min_eigval) * 1e-15;
@@ -538,18 +537,19 @@ double find_initial_shift(const Eigen::Ref<const Eigen::VectorXd> diagonal,
                                                 // would be wrong for the case
                                                 // where element_growth is nan
     plus *= -2;
-//    std::cout << (double)element_growth << " ";
+    //    std::cout << (double)element_growth << " ";
     element_growth = get_ldl(diagonal, subdiagonal, shift + plus, l0, d0);
   }
-//  std::cout << "\ninit ele growth " << (double)element_growth << " " << (double)max_ele_growth
-//            << " shift " << shift + plus << std::endl;
+  //  std::cout << "\ninit ele growth " << (double)element_growth << " " <<
+  //  (double)max_ele_growth
+  //            << " shift " << shift + plus << std::endl;
   return shift + plus;
 }
 
 struct mrrr_task {
   int start, end;
-  __float128 shift;  // total shift, not just the last one
-  VectorXq l, d;
+  double_d shift;  // total shift, not just the last one
+  VectorXdd l, d;
   int level;
 };
 
@@ -578,7 +578,7 @@ void mrrr(const Eigen::Ref<const Eigen::VectorXd> diagonal,
   double min_eigval;
   double max_eigval;
   get_gresgorin(diagonal, subdiagonal, min_eigval, max_eigval);
-  VectorXq l(n - 1), d(n), l0(n - 1), d0(n);
+  VectorXdd l(n - 1), d(n), l0(n - 1), d0(n);
   double max_ele_growth = maximum_ele_growth * (max_eigval - min_eigval);
   const double shift0 = find_initial_shift(
       diagonal, subdiagonal, l0, d0, min_eigval, max_eigval, max_ele_growth);
@@ -594,32 +594,32 @@ void mrrr(const Eigen::Ref<const Eigen::VectorXd> diagonal,
   Eigen::VectorXd high_d(n), low_d(n);
   eigenvals_bisect(diagonal, subdiagonal_squared, min_eigval, max_eigval, low_d,
                    high_d);
-  VectorXq high(n), low(n);
+  VectorXdd high(n), low(n);
   eigenvalues = (low_d + low_d) * 0.5;
-  low.array() = (low_d.array() - shift0).template cast<__float128>();
-  high.array() = (high_d.array() - shift0).template cast<__float128>();
+  low.array() = (low_d.array() - shift0).template cast<double_d>();
+  high.array() = (high_d.array() - shift0).template cast<double_d>();
   for (int i = 0; i < n; i++) {
-    low[i] = low[i] * (1 - copysignq(1e-14 * n, low[i]));
-    high[i] = high[i] * (1 + copysignq(1e-14 * n, high[i]));
+    low[i] = low[i] * (1 - copysign(1e-14 * n, low[i]));
+    high[i] = high[i] * (1 + copysign(1e-14 * n, high[i]));
     eigenval_bisect_refine(l, d, low[i], high[i], i);
   }
   std::queue<mrrr_task> block_queue;
-  block_queue.push(mrrr_task{0, n, shift0, std::move(l), std::move(d), 0});
+  block_queue.push(mrrr_task{0, n, {shift0, 0}, std::move(l), std::move(d), 0});
   l.resize(n - 1);  // after move out
   d.resize(n);
   while (!block_queue.empty()) {
     const mrrr_task block = block_queue.front();
     //    std::cout << block.level << std::endl;
     block_queue.pop();
-    __float128 shift = std::numeric_limits<double>::infinity();
-    __float128 min_element_growth = std::numeric_limits<double>::infinity();
-    VectorXq l2(n - 1), d2(n), l_plus(n - 1), u_minus(n - 1);
+    double_d shift = std::numeric_limits<double>::infinity();
+    double min_element_growth = std::numeric_limits<double>::infinity();
+    VectorXdd l2(n - 1), d2(n), l_plus(n - 1), u_minus(n - 1);
     for (int i = block.start; i < block.end; i++) {
       int cluster_end;
       for (cluster_end = i + 1; cluster_end < block.end; cluster_end++) {
         const int prev = cluster_end - 1;
-        const __float128 end_threshold
-            = low[prev] * (1 - copysignq(shift_error, low[prev]));
+        const double_d end_threshold
+            = low[prev] * (1 - copysign(shift_error, low[prev]));
         if (high[cluster_end] < end_threshold) {
           break;
         }
@@ -627,13 +627,14 @@ void mrrr(const Eigen::Ref<const Eigen::VectorXd> diagonal,
       cluster_end--;  // now this is the index of the last element of the
                       // cluster
       if (cluster_end - i > 0) {  // cluster
-        const __float128 max_shift = (high[i] - low[cluster_end]) * 10;
-        __float128 next_shift, min_ele_growth;
+        const double_d max_shift = (high[i] - low[cluster_end]) * 10;
+        double_d next_shift;
+        double min_ele_growth;
         find_shift(block.l, block.d, low[cluster_end], high[i], max_ele_growth,
                    max_shift, l, d, next_shift, min_ele_growth);
         for (int j = i; j <= cluster_end; j++) {
-          low[j] = low[j] * (1 - copysignq(shift_error, low[j])) - next_shift;
-          high[j] = high[j] * (1 + copysignq(shift_error, high[j])) - next_shift;
+          low[j] = low[j] * (1 - copysign(shift_error, low[j])) - next_shift;
+          high[j] = high[j] * (1 + copysign(shift_error, high[j])) - next_shift;
           eigenval_bisect_refine(l, d, low[j], high[j], j);
         }
         block_queue.push(mrrr_task{i, cluster_end + 1, block.shift + next_shift,
@@ -644,34 +645,41 @@ void mrrr(const Eigen::Ref<const Eigen::VectorXd> diagonal,
 
         i = cluster_end;
       } else {  // isolated eigenvalue
-//        std::cout << "i " << i << std::endl;
-//        std::cout << block.l.cast<double>() << std::endl << std::endl;
-//        std::cout << block.d.cast<double>() << std::endl << std::endl;
+                //        std::cout << "i " << i << std::endl;
+        //        std::cout << block.l.cast<double>() << std::endl << std::endl;
+        //        std::cout << block.d.cast<double>() << std::endl << std::endl;
         int twist_idx;
-        const __float128 low_gap = i == block.start
-                                   ? std::numeric_limits<double>::infinity()
-                                   : low[i - 1] - high[i];
-        const __float128 high_gap = i == block.end - 1
-                                    ? std::numeric_limits<double>::infinity()
-                                    : low[i] - high[i + 1];
-        const __float128 min_gap = std::min(low_gap, high_gap);
-//        std::cout << (double)min_gap << " " << (double)(high[i] + low[i]) * 0.5
-//                  << " " << (double)min_rel_sep << " " << (double)shift << " "
-//                  << (double)min_element_growth << " " << (double)max_ele_growth
-//                  << std::endl;
-        const VectorXq *l_ptr, *d_ptr;
-        if (!(fabsq(min_gap / ((high[i] + low[i]) * 0.5)) > min_rel_sep)) {
-          if (!(fabsq(min_gap / ((high[i] + low[i]) * 0.5 - shift)) > min_rel_sep
+        const double_d low_gap
+            = i == block.start
+                  ? double_d(std::numeric_limits<double>::infinity())
+                  : low[i - 1] - high[i];
+        const double_d high_gap
+            = i == block.end - 1
+                  ? double_d(std::numeric_limits<double>::infinity())
+                  : low[i] - high[i + 1];
+        const double_d min_gap = std::min(low_gap, high_gap);
+        //        std::cout << (double)min_gap << " " << (double)(high[i] +
+        //        low[i]) * 0.5
+        //                  << " " << (double)min_rel_sep << " " <<
+        //                  (double)shift
+        //                  << " "
+        //                  << (double)min_element_growth << " " <<
+        //                  (double)max_ele_growth
+        //                  << std::endl;
+        const VectorXdd *l_ptr, *d_ptr;
+        if (!(fabs(min_gap / ((high[i] + low[i]) * 0.5)) > min_rel_sep)) {
+          if (!(fabs(min_gap / ((high[i] + low[i]) * 0.5 - shift)) > min_rel_sep
                 && min_element_growth < max_ele_growth)) {
-            const __float128 max_shift = min_gap / min_rel_sep;
+            const double_d max_shift = min_gap / min_rel_sep;
             find_shift(block.l, block.d, low[i], high[i], max_ele_growth,
                        max_shift, l2, d2, shift, min_element_growth);
-//            std::cout << "shift_inner" << std::endl;
-//            std::cout << l2.cast<double>() << std::endl << std::endl;
-//            std::cout << d2.cast<double>() << std::endl << std::endl;
+            //            std::cout << "shift_inner" << std::endl;
+            //            std::cout << l2.cast<double>() << std::endl <<
+            //            std::endl; std::cout << d2.cast<double>() << std::endl
+            //            << std::endl;
           }
-          low[i] = low[i] * (1 - copysignq(shift_error, low[i])) - shift;
-          high[i] = high[i] * (1 + copysignq(shift_error, high[i])) - shift;
+          low[i] = low[i] * (1 - copysign(shift_error, low[i])) - shift;
+          high[i] = high[i] * (1 + copysign(shift_error, high[i])) - shift;
           eigenval_bisect_refine(l2, d2, low[i], high[i], i);
           l_ptr = &l2;
           d_ptr = &d2;
@@ -679,9 +687,9 @@ void mrrr(const Eigen::Ref<const Eigen::VectorXd> diagonal,
           l_ptr = &block.l;
           d_ptr = &block.d;
         }
-//        std::cout << " twist " << twist_idx << std::endl;
-//        std::cout << l_ptr->cast<double>() << std::endl << std::endl;
-//        std::cout << d_ptr->cast<double>() << std::endl << std::endl;
+        //        std::cout << " twist " << twist_idx << std::endl;
+        //        std::cout << l_ptr->cast<double>() << std::endl << std::endl;
+        //        std::cout << d_ptr->cast<double>() << std::endl << std::endl;
         twist_idx = get_twisted_factorization(
             *l_ptr, *d_ptr, (low[i] + high[i]) * 0.5, l_plus, u_minus);
         //        std::cout << l_plus.cast<double>() << std::endl << std::endl;
@@ -691,7 +699,7 @@ void mrrr(const Eigen::Ref<const Eigen::VectorXd> diagonal,
       }
     }
   }
-}
+}  // namespace internal
 
 /**
  * Calculates eigenvalues and eigenvectors of a tridiagonal matrix T using MRRR
