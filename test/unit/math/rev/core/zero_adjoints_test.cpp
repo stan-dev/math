@@ -1,8 +1,9 @@
-#include <gtest/gtest.h>
-#include <test/unit/math/rev/fun/util.hpp>
 #include <stan/math/rev/core.hpp>
+#include <test/unit/math/rev/fun/util.hpp>
 #include <stan/math/rev/fun/sin.hpp>
 #include <vector>
+#include <tuple>
+#include <gtest/gtest.h>
 
 TEST(AgradRev, zero_arithmetic) {
   int a = 1.0;
@@ -30,8 +31,9 @@ TEST(AgradRev, zero_arithmetic) {
   stan::math::zero_adjoints(vc);
   stan::math::zero_adjoints(vd);
   stan::math::zero_adjoints(ve);
-
-  stan::math::zero_adjoints(a, b, va, vb, c, d, e, vva, vvb, vc, vd, ve);
+  stan::math::for_each(
+      [](auto&& x) { stan::math::zero_adjoints(x); },
+      std::forward_as_tuple(a, b, va, vb, c, d, e, vva, vvb, vc, vd, ve));
 }
 
 TEST(AgradRev, zero_var) {
@@ -214,7 +216,8 @@ TEST(AgradRev, zero_multi) {
   std::vector<int> e(5, 1);
   std::vector<double> f(5, 1.0);
 
-  stan::math::zero_adjoints(a, b, c, d, e, f);
+  stan::math::for_each([](auto&& x) { stan::math::zero_adjoints(x); },
+                       std::forward_as_tuple(a, b, c, d, e, f));
   EXPECT_FLOAT_EQ(c.vi_->adj_, 0.0);
   for (size_t i = 0; i < d.size(); ++i)
     EXPECT_FLOAT_EQ(d[i].vi_->adj_, 0.0);

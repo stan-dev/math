@@ -21,16 +21,13 @@ extern "C" inline void cvodes_err_handler(int error_code, const char* module,
   }
 }
 
-inline void cvodes_set_options(void* cvodes_mem, double rel_tol, double abs_tol,
+inline void cvodes_set_options(void* cvodes_mem,
                                // NOLINTNEXTLINE(runtime/int)
                                long int max_num_steps) {
   // forward CVode errors to noop error handler
   CVodeSetErrHandlerFn(cvodes_mem, cvodes_err_handler, nullptr);
 
   // Initialize solver parameters
-  check_flag_sundials(CVodeSStolerances(cvodes_mem, rel_tol, abs_tol),
-                      "CVodeSStolerances");
-
   check_flag_sundials(CVodeSetMaxNumSteps(cvodes_mem, max_num_steps),
                       "CVodeSetMaxNumSteps");
 
