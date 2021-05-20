@@ -11,7 +11,7 @@ namespace stan {
 namespace math {
 namespace internal {
 // \cond
-const char* double_d_src = STRINGIFY2(
+//const char* double_d_src = STRINGIFY2(
     // \endcond
     typedef struct double_d {
       double high, low;
@@ -297,7 +297,7 @@ const char* double_d_src = STRINGIFY2(
     } inline bool ge_dd_d(double_d a, double b) { return !lt_dd_d(a, b); }
 
     // \cond
-);
+//);
 // \endcond
 
 inline double_d operator+(double_d a, double b) { return add_dd_d(a, b); }
@@ -313,7 +313,7 @@ inline double_d operator*(double a, double_d b) { return mul_dd_d(b, a); }
 inline double_d operator*(double_d a, double_d b) { return mul_dd_dd(a, b); }
 
 inline double_d operator/(double_d a, double b) { return div_dd_d(a, b); }
-inline double_d operator/(double a, double_d b) { return div_dd_d(b, a); }
+inline double_d operator/(double a, double_d b) { return div_d_dd(a, b); }
 inline double_d operator/(double_d a, double_d b) { return div_dd_dd(a, b); }
 
 inline double_d operator-(double_d a) { return neg(a); }
