@@ -10,7 +10,7 @@ namespace stan {
 /**
  * Conditionally construct a var_value container based on a scalar type. For
  * var types as the scalar, the `var_value<Matrix>`'s inner type will have a
- *  scalar of a double.  
+ *  scalar of a double.
  * @tparam T_scalar Determines the scalar (var/double) of the type.
  * @tparam T_container Determines the container (matrix/vector/matrix_cl ...) of
  * the type. This must be a prim type.
