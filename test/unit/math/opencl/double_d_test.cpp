@@ -71,7 +71,7 @@ TEST(double_d, div_dd_dd_test) {
   double h_eps = eps * 0.5;
   double_d a{1.0, h_eps};
   double_d b{1.0, h_eps*(1-eps)};
-  double_d c{1.0, h_eps};
+  double_d c{0.0, 0.0};
   double_d d{1.0, -h_eps};
 
   // simple
@@ -84,6 +84,11 @@ TEST(double_d, div_dd_dd_test) {
   EXPECT_NORMALIZED(res);
   EXPECT_TRUE(res.high == 1.0);
   EXPECT_TRUE(res.low == h_eps*eps);
+
+  //div by zero
+  res = div_dd_dd(a, c);
+  EXPECT_TRUE(res.high == std::numeric_limits<double>::infinity());
+  EXPECT_TRUE(res.low == 0);
 }
 
 #ifdef STAN_OPENCL
