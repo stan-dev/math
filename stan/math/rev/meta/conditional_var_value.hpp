@@ -13,7 +13,7 @@ namespace stan {
  *  scalar of a double.
  * @tparam T_scalar Determines the scalar (var/double) of the type.
  * @tparam T_container Determines the container (matrix/vector/matrix_cl ...) of
- * the type. This must be a prim type.
+ * the type.
  */
 template <typename T_scalar, typename T_container, typename = void>
 struct conditional_var_value {
