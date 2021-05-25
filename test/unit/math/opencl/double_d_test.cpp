@@ -96,15 +96,15 @@ TEST(double_d, div_dd_dd_test) {
 #include <quadmath.h>
 
 #define EXPECT_DD_F128_EQ(dd, f128) \
-  tmp = (dd);              \
-  EXPECT_NEAR((__float128)tmp.high + tmp.low, (f128), 1e-30*1e30)
+  tmp = (dd);                       \
+  EXPECT_NEAR((__float128)tmp.high + tmp.low, (f128), 1e-30 * 1e30)
 
 TEST(double_d, all) {
   using stan::math::internal::double_d;
   for (int i = 0; i < 10000000; i++) {
     double_d tmp;
-    double high = Eigen::MatrixXd::Random(0, 0).coeff(0, 0)*1e30;
-    double low = Eigen::MatrixXd::Random(0, 0).coeff(0, 0) * 1e-20*1e30;
+    double high = Eigen::MatrixXd::Random(0, 0).coeff(0, 0) * 1e30;
+    double low = Eigen::MatrixXd::Random(0, 0).coeff(0, 0) * 1e-20 * 1e30;
     double_d dd = high;
     dd.low = low;
     __float128 f128 = high;
@@ -126,13 +126,50 @@ TEST(double_d, all) {
 
     __float128 f1283 = high;
     __float128 f1284 = high2;
-    EXPECT_DD_F128_EQ(stan::math::internal::mul_d_d(high, high2), f1283 * f1284);
+    EXPECT_DD_F128_EQ(stan::math::internal::mul_d_d(high, high2),
+                      f1283 * f1284);
   }
 }
 
-
-
-
 #ifdef STAN_OPENCL
+
+#include <stan/math/opencl/prim.hpp>
+static const std::string double_d_test_kernel_code
+    = STRINGIFY(__kernel void double_d_test_kernel(__global double_d *C,
+                                                   const __global double_d *A,
+                                                   const __global double *B) {
+        const int i = get_global_id(0);
+        C[i] = mul_dd_d(A[i], B[i]);
+      });
+
+const stan::math::opencl_kernels::kernel_cl<
+    stan::math::opencl_kernels::out_buffer,
+    stan::math::opencl_kernels::in_buffer,
+    stan::math::opencl_kernels::in_buffer>
+    double_d_test_kernel("double_d_test_kernel",
+                         {stan::math::internal::double_d_src,
+                          double_d_test_kernel_code});
+
+TEST(double_d, opencl) {
+  using stan::math::internal::double_d;
+  using VectorXdd = Eigen::Matrix<double_d, -1, 1>;
+  int n = 10;
+  VectorXdd a(n);
+  Eigen::VectorXd b = Eigen::VectorXd::Random(n);
+  for (int i = 0; i < n; i++) {
+    a[i].high = Eigen::VectorXd::Random(1)[0];
+    a[i].low = Eigen::VectorXd::Random(1)[0] * 1e-17;
+  }
+  stan::math::matrix_cl<double_d> a_cl(a);
+  stan::math::matrix_cl<double> b_cl(b);
+  stan::math::matrix_cl<double_d> c_cl(n, 1);
+  double_d_test_kernel(cl::NDRange(n), c_cl, a_cl, b_cl);
+  VectorXdd c = stan::math::from_matrix_cl(c_cl);
+  for (int i = 0; i < n; i++) {
+    double_d correct = a[i] * b[i];
+    EXPECT_EQ(c[i].high, correct.high);
+    EXPECT_EQ(c[i].low, correct.low);
+  }
+}
 
 #endif
