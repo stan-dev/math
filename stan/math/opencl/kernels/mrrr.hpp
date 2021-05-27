@@ -4,6 +4,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/kernel_cl.hpp>
+#include <stan/math/opencl/double_d.hpp>
 
 namespace stan {
 namespace math {
@@ -12,36 +13,25 @@ namespace opencl_kernels {
 // \cond
 const char* eigenvals_bisect_kernel_code = STRINGIFY(
     // \endcond
+
     /**
-     * Calculates Sturm count of a LDL decomposition of a tridiagonal matrix -
-     * number of eigenvalues larger or equal to shift. Uses stqds - calculation
-     * of shifted LDL decomposition algorithm and counts number of positive
-     * elements in D.
-     * @param l Subdiagonal of L.
-     * @param d Diagonal of D.
-     * @param shift Shift.
-     * @return Sturm count.
-     * @param n Length of L.
+     * Calculates lower Sturm count of a tridiagonal matrix T - number of
+     * eigenvalues lower than shift.
+     * @param diagonal Diagonal of T.
+     * @param subdiagonal_squared Squared elements of subdiagonal of T.
+     * @param shift
+     * @param n Size of T.
+     * @return Sturm count
      */
-    int get_sturm_count_ldl(__global double* l, const __global double* d,
-                            double shift, int n) {
-      double s = -shift;
-      double l_plus;
-      double d_plus;
-      int count = 0;
-      for (int i = 0; i < n; i++) {
-        d_plus = s + d[i];
-        count += d_plus >= 0;
-        if (isinf(d_plus)
-            && isinf(s)) {  // this happens if d_plus==0 -> in next iteration
-                            // d_plus==inf and s==inf
-          s = l[i] * l[i] * d[i] - shift;
-        } else {
-          s = l[i] * l[i] * s * (d[i] / d_plus) - shift;
-        }
+    int get_sturm_count_tri(const __global double* diagonal,
+                            const __global double* subdiagonal_squared,
+                            const double shift, const int n) {
+      double d = diagonal[0] - shift;
+      int count = d >= 0.0;
+      for (int j = 1; j < n; j++) {
+        d = diagonal[j] - shift - subdiagonal_squared[j - 1] / d;
+        count += d >= 0.0;
       }
-      d_plus = s + d[n];
-      count += d_plus >= 0;
       return count;
     }
 
@@ -55,29 +45,85 @@ const char* eigenvals_bisect_kernel_code = STRINGIFY(
      * @param min_eigval Lower bound on all eigenvalues.
      * @param max_eigval Upper bound on all eigenvalues.
      * @param n Length of D.
+     * @param i calculate i-th eigenvalue
      */
-    __kernel void eigenvals_bisect(
-        __global double* l, const __global double* d, __global double* low_res,
-        __global double* high_res, const double min_eigval,
-        const double max_eigval, const int n) {
-      const int lid = get_local_id(0);
-      const int gid = get_global_id(0);
-      const int gsize = get_global_size(0);
-      const int lsize = get_local_size(0);
-      const int ngroups = get_num_groups(0);
-      const int wgid = get_group_id(0);
-
-      double eps = 3e-16;
-      double min_norm
+    void eigenvals_bisect(
+        __global double* diagonal, const __global double* subdiagonal_squared,
+        double* low_res, double* high_res, const double min_eigval,
+        const double max_eigval, const int n, const int i) {
+      const double eps = 3e-16;
+      const double min_norm
           = 3e-308;  //(approximately) smallest normalized double, larger than 0
 
-      int i = gid;
       double low = min_eigval;
       double high = max_eigval;
 
       while (fabs((high - low) / (high + low)) > eps
              && fabs(high - low) > min_norm) {
         double mid = (high + low) * 0.5;
+        int count = get_sturm_count_tri(diagonal, subdiagonal_squared, mid, n);
+        //        printf("%d shift %lf count %d\n", i, mid, count);
+        if (count > i) {
+          low = mid;
+        } else {
+          high = mid;
+        }
+      }
+      *low_res = low;
+      *high_res = high;
+    }
+
+    /**
+     * Calculates Sturm count of a LDL decomposition of a tridiagonal matrix -
+     * number of eigenvalues larger or equal to shift. Uses stqds - calculation
+     * of shifted LDL decomposition algorithm and counts number of positive
+     * elements in D.
+     * @param l Subdiagonal of L.
+     * @param d Diagonal of D.
+     * @param shift Shift.
+     * @return Sturm count.
+     * @param n Length of L.
+     */
+    int get_sturm_count_ldl(__global double_d* l, const __global double_d* d,
+                            double_d shift, int n) {
+      double_d s = neg(shift);
+      double_d l_plus;
+      double_d d_plus;
+      int count = 0;
+      for (int i = 0; i < n; i++) {
+        d_plus = add_dd_dd(s, d[i]);
+        count += ge_dd_d(d_plus, 0);
+        if (isinf_dd(d_plus)
+            && isinf_dd(s)) {  // this happens if d_plus==0 -> in next iteration
+                               // d_plus==inf and s==inf
+          s = sub_dd_dd(mul_dd_dd(mul_dd_dd(l[i], l[i]), d[i]), shift);
+        } else {
+          s = sub_dd_dd(mul_dd_dd(mul_dd_dd(mul_dd_dd(l[i], l[i]), s),
+                                  div_dd_dd(d[i], d_plus)),
+                        shift);
+        }
+      }
+      d_plus = add_dd_dd(s, d[n]);
+      count += ge_dd_d(d_plus, 0);
+      return count;
+    }
+
+    void eigenvals_bisect_refine(__global double_d* l,
+                                 const __global double_d* d, double_d* low_res,
+                                 double_d* high_res, const int n, const int i) {
+      double_d eps = (double_d){3e-16, 0};
+      double_d min_norm = (double_d){
+          3e-308,
+          0};  //(approximately) smallest normalized double, larger than 0
+
+      double_d low = *low_res;
+      double_d high = *high_res;
+
+      while (gt_dd_dd(
+                 abs_dd(div_dd_dd(sub_dd_dd(high, low), add_dd_dd(high, low))),
+                 eps)
+             && gt_dd_dd(abs_dd(sub_dd_dd(high, low)), min_norm)) {
+        double_d mid = mul_dd_d(add_dd_dd(high, low), 0.5);
         int count = get_sturm_count_ldl(l, d, mid, n - 1);
         if (count > i) {
           low = mid;
@@ -85,12 +131,44 @@ const char* eigenvals_bisect_kernel_code = STRINGIFY(
           high = mid;
         }
       }
-      low_res[i] = low;
-      high_res[i] = high;
+      *low_res = low;
+      *high_res = high;
+    }
+
+    __kernel void eigenvals(
+        __global double* diagonal, const __global double* subdiagonal_squared,
+        __global double_d* l, const __global double_d* d,
+        __global double* eigval_low_global, __global double* eigval_high_global,
+        __global double_d* shifted_low_global,
+        __global double_d* shifted_high_global, const double min_eigval,
+        const double max_eigval, const double shift) {
+      const int i = get_global_id(0);
+      const int n = get_global_size(0);
+
+      double low_eig, high_eig;
+      eigenvals_bisect(diagonal, subdiagonal_squared, &low_eig, &high_eig,
+                       min_eigval, max_eigval, n, i);
+      //      printf("%d: %lf %lf\n", i, low_eig, high_eig);
+      eigval_low_global[i] = low_eig;
+      eigval_high_global[i] = high_eig;
+      double_d low_shifted = (double_d){low_eig - shift, 0};
+      double_d high_shifted = (double_d){high_eig - shift, 0};
+      low_shifted = mul_dd_d(low_shifted, (1 - copysign_d_dd(1e-14 * n, low_shifted)));
+      high_shifted
+          = mul_dd_d(high_shifted, (1 + copysign_d_dd(1e-14 * n, high_shifted)));
+      eigenvals_bisect_refine(l, d, &low_shifted, &high_shifted, n, i);
+      shifted_low_global[i] = low_shifted;
+      shifted_high_global[i] = high_shifted;
     }
     // \cond
 );
 // \endcond
+
+const kernel_cl<in_buffer, in_buffer, in_buffer, in_buffer, out_buffer,
+                out_buffer, out_buffer, out_buffer, double, double, double>
+    eigenvals("eigenvals", {stan::math::internal::double_d_src,
+                            eigenvals_bisect_kernel_code});
+
 
 // \cond
 const char* get_eigenvectors_kernel_code = STRINGIFY(
@@ -482,10 +560,6 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
     // \cond
 );
 // \endcond
-
-const kernel_cl<in_buffer, in_buffer, out_buffer, out_buffer, double, double,
-                int>
-    eigenvals_bisect("eigenvals_bisect", {eigenvals_bisect_kernel_code});
 
 const kernel_cl<in_buffer, in_buffer, in_buffer, in_buffer, in_buffer,
                 in_buffer, in_out_buffer, in_out_buffer, in_out_buffer,

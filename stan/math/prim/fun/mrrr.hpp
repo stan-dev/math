@@ -817,7 +817,7 @@ void tridiagonal_eigensolver(const Eigen::VectorXd& diagonal,
                              const Eigen::VectorXd& subdiagonal,
                              Eigen::VectorXd& eigenvalues,
                              Eigen::MatrixXd& eigenvectors,
-                             const double split_threshold = 1e-15) {
+                             const double split_threshold = 1e-16) {
   using std::fabs;
   const int n = diagonal.size();
   eigenvectors.resize(n, n);

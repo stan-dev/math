@@ -15,8 +15,8 @@
 //  EXPECT_TRUE(eigenvecs.isApprox(Eigen::MatrixXd::Identity(3, 3)));
 //}
 
-
 TEST(MathMatrix, tridiag_eigensolver_small) {
+  std::cout << stan::math::internal::double_d_src <<stan::math::opencl_kernels::eigenvals_bisect_kernel_code << std::endl;
   int size = 3;
   srand(0);  // ensure test repeatability
              //  Eigen::VectorXd diag = Eigen::VectorXd::Random(size);
@@ -27,7 +27,7 @@ TEST(MathMatrix, tridiag_eigensolver_small) {
 
   Eigen::VectorXd eigenvals;
   Eigen::MatrixXd eigenvecs;
-  stan::math::internal::tridiagonal_eigensolver(diag, subdiag, eigenvals,
+  stan::math::internal::tridiagonal_eigensolver_cl(diag, subdiag, eigenvals,
                                                 eigenvecs);
 
   std::cout << "eigenvals\n" << eigenvals << std::endl << std::endl;
@@ -43,7 +43,7 @@ TEST(MathMatrix, tridiag_eigensolver_small) {
   EXPECT_TRUE((t * eigenvecs).isApprox(eigenvecs * eigenvals.asDiagonal()));
 }
 
- TEST(MathMatrix, tridiag_eigensolver_large) {
+TEST(MathMatrix, tridiag_eigensolver_large) {
   int size = 2000;
   srand(time(0));  // ensure test repeatability
   Eigen::VectorXd diag = Eigen::VectorXd::Random(size);
@@ -56,11 +56,10 @@ TEST(MathMatrix, tridiag_eigensolver_small) {
 
   Eigen::VectorXd eigenvals;
   Eigen::MatrixXd eigenvecs;
-  //  stan::math::internal::tridiagonal_eigensolver_cl(diag, subdiag,
-  //eigenvals,
-  //                                                   eigenvecs);
-  stan::math::internal::tridiagonal_eigensolver(diag, subdiag, eigenvals,
-                                                eigenvecs);
+  stan::math::internal::tridiagonal_eigensolver_cl(diag, subdiag, eigenvals,
+                                                   eigenvecs);
+  //  stan::math::internal::tridiagonal_eigensolver(diag, subdiag, eigenvals,
+  //                                                eigenvecs);
   //  Eigen::EigenSolver
 
   Eigen::MatrixXd t = Eigen::MatrixXd::Constant(size, size, 0);
@@ -99,7 +98,6 @@ TEST(MathMatrix, tridiag_eigensolver_small) {
       << std::endl;
 }
 
-
 TEST(MathMatrix, tridiag_eigensolver_large_fixed) {
   int size = 2000;
   srand(time(0));  // ensure test repeatability
@@ -114,11 +112,11 @@ TEST(MathMatrix, tridiag_eigensolver_large_fixed) {
   for (int i = 0; i < 1; i++) {
     Eigen::VectorXd eigenvals;
     Eigen::MatrixXd eigenvecs;
-    //  stan::math::internal::tridiagonal_eigensolver_cl(diag, subdiag,
-    //  eigenvals,
-    //                                                   eigenvecs);
-    stan::math::internal::tridiagonal_eigensolver(diag, subdiag, eigenvals,
-                                                  eigenvecs);
+    stan::math::internal::tridiagonal_eigensolver_cl(diag, subdiag, eigenvals,
+                                                     eigenvecs);
+    //    stan::math::internal::tridiagonal_eigensolver(diag, subdiag,
+    //    eigenvals,
+    //                                                  eigenvecs);
     //  Eigen::EigenSolver
 
     Eigen::MatrixXd t = Eigen::MatrixXd::Constant(size, size, 0);
@@ -202,20 +200,20 @@ TEST(MathMatrix, tridiag_eigensolver_large_wilkinson) {
   //  subdiag[121] = 0;
   Eigen::VectorXd diag;
   Eigen::VectorXd subdiag;
-  get_glued_wilkinson(m, n, 1e-14, diag, subdiag);
-//  std::cout << "subdiag\n" << subdiag << std::endl;
-//  std::cout << "diag\n" << diag << std::endl;
+  get_glued_wilkinson(m, n, 1e-13, diag, subdiag);
+  //  std::cout << "subdiag\n" << subdiag << std::endl;
+  //  std::cout << "diag\n" << diag << std::endl;
 
   for (int i = 0; i < 3; i++) {
     Eigen::VectorXd eigenvals;
     Eigen::MatrixXd eigenvecs;
-    //  stan::math::internal::tridiagonal_eigensolver_cl(diag, subdiag,
-    //  eigenvals,
-    //                                                   eigenvecs);
-//    std::cout << "diag " << diag.array().abs().maxCoeff() << " subdiag "
-//              << subdiag.array().abs().maxCoeff() << std::endl;
-    stan::math::internal::tridiagonal_eigensolver(diag, subdiag, eigenvals,
-                                                  eigenvecs);
+    stan::math::internal::tridiagonal_eigensolver_cl(diag, subdiag, eigenvals,
+                                                     eigenvecs);
+    //    std::cout << "diag " << diag.array().abs().maxCoeff() << " subdiag "
+    //              << subdiag.array().abs().maxCoeff() << std::endl;
+    //    stan::math::internal::tridiagonal_eigensolver(diag, subdiag,
+    //    eigenvals,
+    //                                                  eigenvecs);
     //  Eigen::EigenSolver
 
     Eigen::MatrixXd t = Eigen::MatrixXd::Constant(size, size, 0);
@@ -255,3 +253,5 @@ TEST(MathMatrix, tridiag_eigensolver_large_wilkinson) {
         << std::endl;
   }
 }
+
+
