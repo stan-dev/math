@@ -16,6 +16,18 @@ namespace math {
 template <typename T, typename = void>
 class vari_value;
 
+namespace internal {
+struct vtable_zeroing{
+    void(*set_zero_adjoint)(void*ptr);
+};
+/* Can be constexpr in C++17*/
+template<typename Concrete>
+vtable_zeroing vtable_for_zeroing {
+    [](void*ptr){ reinterpret_cast<Concrete*>(ptr)->set_zero_adjoint();},
+};
+
+}
+
 /**
  * Abstract base class that all `vari_value` and it's derived classes inherit.
  *
@@ -32,7 +44,6 @@ class vari_base {
    * on which it depends.
    */
   virtual void chain() = 0;
-  virtual void set_zero_adjoint() = 0;
 
   /**
    * Allocate memory from the underlying memory pool.  This memory is
@@ -62,6 +73,25 @@ class vari_base {
   static inline void operator delete(
       void* /* ignore arg */) noexcept { /* no op */
   }
+};
+
+struct nada {
+  void set_zero_adjoint() {};
+};
+
+struct vari_zeroing {
+    void* concrete_;
+    internal::vtable_zeroing const* vtable_;
+    template <typename T, require_not_same_t<vari_zeroing, T>* = nullptr>
+    explicit vari_zeroing (T* t) noexcept :
+        concrete_(reinterpret_cast<void*>(t)),
+        vtable_(&internal::vtable_for_zeroing<T>) {}
+
+    vari_zeroing() :
+      concrete_(),
+      vtable_(&internal::vtable_for_zeroing<nada>) {}
+
+    void set_zero_adjoint() {vtable_->set_zero_adjoint(concrete_);}
 };
 
 /**
@@ -105,6 +135,7 @@ class vari_value<T, require_t<std::is_floating_point<T>>> : public vari_base {
   template <typename S, require_convertible_t<S&, T>* = nullptr>
   vari_value(S x) noexcept : val_(x) {  // NOLINT
     ChainableStack::instance_->var_stack_.push_back(this);
+    ChainableStack::instance_->var_nochain_stack_.push_back(vari_zeroing(this));
   }
 
   /**
@@ -124,11 +155,8 @@ class vari_value<T, require_t<std::is_floating_point<T>>> : public vari_base {
    */
   template <typename S, require_convertible_t<S&, T>* = nullptr>
   vari_value(S x, bool stacked) noexcept : val_(x) {
-    if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);
-    } else {
-      ChainableStack::instance_->var_nochain_stack_.push_back(this);
-    }
+      ChainableStack::instance_->var_nochain_stack_.push_back(vari_zeroing(this));
   }
 
   /**
@@ -173,7 +201,7 @@ class vari_value<T, require_t<std::is_floating_point<T>>> : public vari_base {
    * reset adjoints before propagating derivatives again (for
    * example in a Jacobian calculation).
    */
-  inline void set_zero_adjoint() noexcept final { adj_ = 0.0; }
+  inline void set_zero_adjoint() noexcept { adj_ = 0.0; }
 
   /**
    * Insertion operator for vari. Prints the current value and
@@ -662,6 +690,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
   explicit vari_value(const S& x) : val_(x), adj_(x.rows(), x.cols()) {
     adj_.setZero();
     ChainableStack::instance_->var_stack_.push_back(this);
+    ChainableStack::instance_->var_nochain_stack_.push_back(vari_zeroing(this));
   }
 
   /**
@@ -682,11 +711,8 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
   template <typename S, require_assignable_t<T, S>* = nullptr>
   vari_value(const S& x, bool stacked) : val_(x), adj_(x.rows(), x.cols()) {
     adj_.setZero();
-    if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);
-    } else {
-      ChainableStack::instance_->var_nochain_stack_.push_back(this);
-    }
+      ChainableStack::instance_->var_nochain_stack_.push_back(vari_zeroing(this));
   }
 
   /**
@@ -723,7 +749,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * reset adjoints before propagating derivatives again (for
    * example in a Jacobian calculation).
    */
-  inline void set_zero_adjoint() final { adj_.setZero(); }
+  inline void set_zero_adjoint() { adj_.setZero(); }
 
   /**
    * Insertion operator for vari. Prints the current value and
@@ -799,6 +825,8 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
       : adj_(x), val_(std::forward<S>(x)), chainable_alloc() {
     this->set_zero_adjoint();
     ChainableStack::instance_->var_stack_.push_back(this);
+    ChainableStack::instance_->var_nochain_stack_.push_back(vari_zeroing(this));
+
   }
   /**
    * Construct an sparse Eigen variable implementation from a value. The
@@ -821,11 +849,8 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
   vari_value(S&& x, bool stacked)
       : adj_(x), val_(std::forward<S>(x)), chainable_alloc() {
     this->set_zero_adjoint();
-    if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);
-    } else {
-      ChainableStack::instance_->var_nochain_stack_.push_back(this);
-    }
+      ChainableStack::instance_->var_nochain_stack_.push_back(vari_zeroing(this));
   }
 
   /**
@@ -881,7 +906,7 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
    * reset adjoints before propagating derivatives again (for
    * example in a Jacobian calculation).
    */
-  inline void set_zero_adjoint() noexcept final {
+  inline void set_zero_adjoint() noexcept {
     for (int k = 0; k < adj_.outerSize(); ++k) {
       for (typename PlainObject::InnerIterator it(adj_, k); it; ++it) {
         it.valueRef() = 0.0;

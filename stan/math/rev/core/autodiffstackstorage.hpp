@@ -24,6 +24,8 @@ namespace math {
 #define STAN_THREADS_DEF
 #endif
 
+struct vari_zeroing;
+struct vari_chain;
 /**
  * This struct always provides access to the autodiff stack using
  * the singleton pattern. Read warnings below!
@@ -102,7 +104,7 @@ struct AutodiffStackSingleton {
     AutodiffStackStorage &operator=(const AutodiffStackStorage &) = delete;
 
     std::vector<ChainableT *> var_stack_;
-    std::vector<ChainableT *> var_nochain_stack_;
+    std::vector<vari_zeroing> var_nochain_stack_;
     std::vector<ChainableAllocT *> var_alloc_stack_;
     stack_alloc memalloc_;
 

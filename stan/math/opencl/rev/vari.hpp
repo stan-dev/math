@@ -139,7 +139,7 @@ class vari_view<T, require_kernel_expression_lhs_t<T>>
 
   using value_type = T;
   using vari_cl_base<T>::vari_cl_base;
-  inline void set_zero_adjoint() final {}
+  inline void set_zero_adjoint() {}
 };
 
 /**
@@ -231,11 +231,8 @@ class vari_value<T, require_matrix_cl_t<T>> : public chainable_alloc,
   vari_value(S&& x, bool stacked)
       : chainable_alloc(),
         vari_cl_base<T>(std::forward<S>(x), constant(0, x.rows(), x.cols())) {
-    if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);
-    } else {
-      ChainableStack::instance_->var_nochain_stack_.push_back(this);
-    }
+      ChainableStack::instance_->var_nochain_stack_.push_back(vari_zeroing(this));
   }
 
   /**
@@ -243,7 +240,7 @@ class vari_value<T, require_matrix_cl_t<T>> : public chainable_alloc,
    * reset adjoints before propagating derivatives again (for
    * example in a Jacobian calculation).
    */
-  inline void set_zero_adjoint() final {
+  inline void set_zero_adjoint() {
     this->adj_ = constant(0, this->rows(), this->cols());
   }
 

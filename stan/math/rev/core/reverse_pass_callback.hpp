@@ -17,7 +17,7 @@ struct reverse_pass_callback_vari : public vari_base {
   }
 
   inline void chain() final { rev_functor_(); }
-  inline void set_zero_adjoint() final {}
+  inline void set_zero_adjoint() {}
   inline void init_dependent() {}
 };
 
