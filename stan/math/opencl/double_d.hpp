@@ -379,9 +379,9 @@ inline bool operator>(double_d a, double b) { return gt_dd_d(a, b); }
 inline bool operator>=(double_d a, double b) { return ge_dd_d(a, b); }
 
 inline double_d fabs(double_d a) { return abs_dd(a); }
-inline bool isnan(double_d a) { return isnan(a.high); }
-inline bool isinf(double_d a) { return isinf(a.high); }
-inline double copysign(double a, double_d b) { return copysign(a, b.high); }
+inline bool isnan(double_d a) { return isnan_dd(a); }
+inline bool isinf(double_d a) { return isinf_dd(a); }
+inline double copysign(double a, double_d b) { return copysign_d_dd(a, b); }
 
 }  // namespace internal
 }  // namespace math

@@ -16,8 +16,8 @@
 //}
 
 TEST(MathMatrix, tridiag_eigensolver_small) {
-  std::cout << stan::math::internal::double_d_src <<stan::math::opencl_kernels::eigenvals_bisect_kernel_code << std::endl;
-  int size = 3;
+  std::cout << stan::math::internal::double_d_src <<stan::math::opencl_kernels::get_eigenvectors_kernel_code << std::endl;
+  int size = 7;
   srand(0);  // ensure test repeatability
              //  Eigen::VectorXd diag = Eigen::VectorXd::Random(size);
              //  Eigen::VectorXd subdiag = Eigen::VectorXd::Random(size - 1);
@@ -44,7 +44,7 @@ TEST(MathMatrix, tridiag_eigensolver_small) {
 }
 
 TEST(MathMatrix, tridiag_eigensolver_large) {
-  int size = 2000;
+  int size = 300;
   srand(time(0));  // ensure test repeatability
   Eigen::VectorXd diag = Eigen::VectorXd::Random(size);
   Eigen::VectorXd subdiag = Eigen::VectorXd::Random(size - 1);

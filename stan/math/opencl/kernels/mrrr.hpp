@@ -153,9 +153,10 @@ const char* eigenvals_bisect_kernel_code = STRINGIFY(
       eigval_high_global[i] = high_eig;
       double_d low_shifted = (double_d){low_eig - shift, 0};
       double_d high_shifted = (double_d){high_eig - shift, 0};
-      low_shifted = mul_dd_d(low_shifted, (1 - copysign_d_dd(1e-14 * n, low_shifted)));
-      high_shifted
-          = mul_dd_d(high_shifted, (1 + copysign_d_dd(1e-14 * n, high_shifted)));
+      low_shifted
+          = mul_dd_d(low_shifted, (1 - copysign_d_dd(1e-14 * n, low_shifted)));
+      high_shifted = mul_dd_d(high_shifted,
+                              (1 + copysign_d_dd(1e-14 * n, high_shifted)));
       eigenvals_bisect_refine(l, d, &low_shifted, &high_shifted, n, i);
       shifted_low_global[i] = low_shifted;
       shifted_high_global[i] = high_shifted;
@@ -168,7 +169,6 @@ const kernel_cl<in_buffer, in_buffer, in_buffer, in_buffer, out_buffer,
                 out_buffer, out_buffer, out_buffer, double, double, double>
     eigenvals("eigenvals", {stan::math::internal::double_d_src,
                             eigenvals_bisect_kernel_code});
-
 
 // \cond
 const char* get_eigenvectors_kernel_code = STRINGIFY(
@@ -226,117 +226,126 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
       *b = c;
     }
 
-    /**
-     * Finds good shift and shifts a LDL decomposition so as to keep element
-     * growth low. L * D * L^T - shift * I = L2 * D2 * L2^T.
-     * @param l Subdiagonal of L.
-     * @param d Diagonal of D.
-     * @param low Low bound on wanted shift.
-     * @param high High bound on wanted shift.
-     * @param max_ele_growth Maximum desired element growth. If no better
-     * options are found it might be exceeded.
-     * @param max_shift Maximal difference of shhift from wanted bounds.
-     * @param[out] l2 Subdiagonal of L2.
-     * @param[out] d2 Diagonal of D2.
-     * @param l3 Temporary array of the same size as d.
-     * @param d3 Temporary array of the same size as d
-     * @param[out] shift Shift.
-     * @param[out] min_element_growth Element growth achieved with resulting
-     * shift.
-     */
-    void find_shift(
-        const __global double* l, const __global double* d, double low,
-        double high, double max_ele_growth, double max_shift,
-        __global double** l2, __global double** d2, __global double** l3,
-        __global double** d3, double* shift, double* min_element_growth) {
-      double shifts[11];
-      shifts[0] = low;
-      shifts[1] = high - max_shift * 0.1;
-      shifts[2] = low + max_shift * 0.1;
-      shifts[3] = high - max_shift * 0.25;
-      shifts[4] = low + max_shift * 0.25;
-      shifts[5] = high - max_shift * 0.5;
-      shifts[6] = low + max_shift * 0.5;
-      shifts[7] = high - max_shift * 0.75;
-      shifts[8] = low + max_shift * 0.75;
-      shifts[9] = high - max_shift;
-      shifts[10] = low + max_shift;
+    //    /**
+    //     * Finds good shift and shifts a LDL decomposition so as to keep
+    //     element
+    //     * growth low. L * D * L^T - shift * I = L2 * D2 * L2^T.
+    //     * @param l Subdiagonal of L.
+    //     * @param d Diagonal of D.
+    //     * @param low Low bound on wanted shift.
+    //     * @param high High bound on wanted shift.
+    //     * @param max_ele_growth Maximum desired element growth. If no better
+    //     * options are found it might be exceeded.
+    //     * @param max_shift Maximal difference of shhift from wanted bounds.
+    //     * @param[out] l2 Subdiagonal of L2.
+    //     * @param[out] d2 Diagonal of D2.
+    //     * @param l3 Temporary array of the same size as d.
+    //     * @param d3 Temporary array of the same size as d
+    //     * @param[out] shift Shift.
+    //     * @param[out] min_element_growth Element growth achieved with
+    //     resulting
+    //     * shift.
+    //     */
+    //    void find_shift(
+    //        const __global double* l, const __global double* d, double low,
+    //        double high, double max_ele_growth, double max_shift,
+    //        __global double** l2, __global double** d2, __global double** l3,
+    //        __global double** d3, double* shift, double* min_element_growth) {
+    //      double shifts[11];
+    //      shifts[0] = low;
+    //      shifts[1] = high - max_shift * 0.1;
+    //      shifts[2] = low + max_shift * 0.1;
+    //      shifts[3] = high - max_shift * 0.25;
+    //      shifts[4] = low + max_shift * 0.25;
+    //      shifts[5] = high - max_shift * 0.5;
+    //      shifts[6] = low + max_shift * 0.5;
+    //      shifts[7] = high - max_shift * 0.75;
+    //      shifts[8] = low + max_shift * 0.75;
+    //      shifts[9] = high - max_shift;
+    //      shifts[10] = low + max_shift;
 
-      *min_element_growth = INFINITY;
-      for (int i = 0; i < sizeof(shifts) / (sizeof(shifts[0])); i++) {
-        double element_growth = get_shifted_ldl(l, d, shifts[i], *l3, *d3);
-        if (element_growth < *min_element_growth) {
-          swap(l2, l3);
-          swap(d2, d3);
-          *shift = shifts[i];
-          *min_element_growth = element_growth;
-          if (element_growth <= max_ele_growth) {
-            break;
-          }
-        }
-      }
-    }
+    //      *min_element_growth = INFINITY;
+    //      for (int i = 0; i < sizeof(shifts) / (sizeof(shifts[0])); i++) {
+    //        double element_growth = get_shifted_ldl(l, d, shifts[i], *l3,
+    //        *d3); if (element_growth < *min_element_growth) {
+    //          swap(l2, l3);
+    //          swap(d2, d3);
+    //          *shift = shifts[i];
+    //          *min_element_growth = element_growth;
+    //          if (element_growth <= max_ele_growth) {
+    //            break;
+    //          }
+    //        }
+    //      }
+    //    }
 
-    /**
-     * Calculates Sturm count of a LDL decomposition of a tridiagonal matrix -
-     * number of eigenvalues larger or equal to shift. Uses stqds - calculation
-     * of shifted LDL decomposition algorithm and counts number of positive
-     * elements in D.
-     * @param l Subdiagonal of L.
-     * @param d Diagonal of D.
-     * @param shift Shift.
-     * @return Sturm count.
-     */
-    int get_sturm_count_ldl(const __global double* l, const __global double* d,
-                            double shift) {
-      int gid = get_global_id(0);
-      int n = get_global_size(0);
-      int m = n - 1;
-      double s = -shift;
-      double d_plus;
-      int count = 0;
-      for (int i = 0; i < m; i++) {
-        d_plus = s + d[i * n + gid];
-        count += d_plus >= 0;
-        if (isinf(d_plus)
-            && isinf(s)) {  // this happens if d_plus==0 -> in next iteration
-                            // d_plus==inf and s==inf
-          s = l[i * n + gid] * l[i * n + gid] * d[i * n + gid] - shift;
-        } else {
-          s = l[i * n + gid] * l[i * n + gid] * s * (d[i * n + gid] / d_plus)
-              - shift;
-        }
-      }
-      d_plus = s + d[m * n + gid];
-      count += d_plus >= 0;
-      return count;
-    }
+    //    /**
+    //     * Calculates Sturm count of a LDL decomposition of a tridiagonal
+    //     matrix -
+    //     * number of eigenvalues larger or equal to shift. Uses stqds -
+    //     calculation
+    //     * of shifted LDL decomposition algorithm and counts number of
+    //     positive
+    //     * elements in D.
+    //     * @param l Subdiagonal of L.
+    //     * @param d Diagonal of D.
+    //     * @param shift Shift.
+    //     * @return Sturm count.
+    //     */
+    //    int get_sturm_count_ldl(const __global double* l, const __global
+    //    double* d,
+    //                            double shift) {
+    //      int gid = get_global_id(0);
+    //      int n = get_global_size(0);
+    //      int m = n - 1;
+    //      double s = -shift;
+    //      double d_plus;
+    //      int count = 0;
+    //      for (int i = 0; i < m; i++) {
+    //        d_plus = s + d[i * n + gid];
+    //        count += d_plus >= 0;
+    //        if (isinf(d_plus)
+    //            && isinf(s)) {  // this happens if d_plus==0 -> in next
+    //                            // iteration d_plus==inf and s==inf
+    //          s = l[i * n + gid] * l[i * n + gid] * d[i * n + gid] - shift;
+    //        } else {
+    //          s = l[i * n + gid] * l[i * n + gid] * s * (d[i * n + gid] /
+    //          d_plus)
+    //              - shift;
+    //        }
+    //      }
+    //      d_plus = s + d[m * n + gid];
+    //      count += d_plus >= 0;
+    //      return count;
+    //    }
 
-    /**
-     * Refines bounds on eigenvalues of LDL decomposition of a matrix using
-     * bisection.
-     * @param l Subdiagonal of L.
-     * @param d Diagonal of D.
-     * @param[in,out] low Low bound on the eigenvalue.
-     * @param[in,out] high High bound on the eigenvalue.
-     */
-    void eigenval_bisect_refine(const __global double* l,
-                                const __global double* d, double* low,
-                                double* high) {
-      int i = get_global_id(0);
-      double eps = 3e-16;
-      while (fabs((*high - *low) / (*high + *low)) > eps
-             && fabs(*high - *low)
-                    > DBL_MIN) {  // second term is for the case where the
-                                  // eigenvalue is 0 and division yields NaN
-        double mid = (*high + *low) * 0.5;
-        if (get_sturm_count_ldl(l, d, mid) > i) {
-          *low = mid;
-        } else {
-          *high = mid;
-        }
-      }
-    }
+    //    /**
+    //     * Refines bounds on eigenvalues of LDL decomposition of a matrix
+    //     using
+    //     * bisection.
+    //     * @param l Subdiagonal of L.
+    //     * @param d Diagonal of D.
+    //     * @param[in,out] low Low bound on the eigenvalue.
+    //     * @param[in,out] high High bound on the eigenvalue.
+    //     */
+    //    void eigenval_bisect_refine(const __global double* l,
+    //                                const __global double* d, double* low,
+    //                                double* high) {
+    //      int i = get_global_id(0);
+    //      double eps = 3e-16;
+    //      while (fabs((*high - *low) / (*high + *low)) > eps
+    //             && fabs(*high - *low)
+    //                    > DBL_MIN) {  // second term is for the case where the
+    //                                  // eigenvalue is 0 and division yields
+    //                                  NaN
+    //        double mid = (*high + *low) * 0.5;
+    //        if (get_sturm_count_ldl(l, d, mid) > i) {
+    //          *low = mid;
+    //        } else {
+    //          *high = mid;
+    //        }
+    //      }
+    //    }
 
     /**
      * Calculates shifted LDL and UDU factorizations. Combined with twist index
@@ -357,136 +366,166 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
      * @return Twist index.
      */
     int get_twisted_factorization(
-        const __global double* l, const __global double* d, double shift,
-        __global double* l_plus, __global double* u_minus, __global double* s) {
+        const __global double_d* l, const __global double_d* d, double_d shift,
+        __global double_d* l_plus, __global double_d* u_minus,
+        __global double_d* s) {
       int n = get_global_size(0);
       int gid = get_global_id(0);
       int m = n - 1;
       // calculate shifted ldl
-      s[gid] = -shift;
+      s[gid] = neg(shift);
       for (int i = 0; i < m; i++) {
-        double d_plus = s[i * n + gid] + d[i * n + gid];
-        l_plus[i * n + gid] = l[i * n + gid] * (d[i * n + gid] / d_plus);
-        if (isnan(l_plus[i * n + gid])) {  // d_plus==0
-          // one (or both) of d[i], l[i] is very close to 0
-          if (fabs(l[i * n + gid]) < fabs(d[i * n + gid])) {
-            l_plus[i * n + gid] = d[i * n + gid] * copysign(1., l[i * n + gid])
-                                  * copysign(1., d_plus);
-          } else {
-            l_plus[i * n + gid] = l[i * n + gid] * copysign(1., d[i * n + gid])
-                                  * copysign(1., d_plus);
-          }
-        }
-        s[(i + 1) * n + gid]
-            = l_plus[i * n + gid] * l[i * n + gid] * s[i * n + gid] - shift;
-        if (isnan(s[(i + 1) * n + gid])) {
-          if (fabs(l_plus[i * n + gid])
-              > fabs(s[i * n + gid])) {  // l_plus[i*n+gid]==inf
-            if (fabs(s[i * n + gid]) > fabs(l[i * n + gid])) {  // l[i*n+gid]==0
-              s[(i + 1) * n + gid] = s[i * n + gid]
-                                         * copysign(1., l[i * n + gid])
-                                         * copysign(1., l_plus[i * n + gid])
-                                     - shift;
-            } else {  // s[i*n+gid]==0
-              s[(i + 1) * n + gid] = l[i * n + gid]
-                                         * copysign(1., s[i * n + gid])
-                                         * copysign(1., l_plus[i * n + gid])
-                                     - shift;
-            }
-          } else {  // s[i*n+gid]==inf
-            if (fabs(l_plus[i * n + gid]) > fabs(l[i * n + gid])) {  // l[i]==0
-              s[(i + 1) * n + gid] = l_plus[i * n + gid]
-                                         * copysign(1., l[i * n + gid])
-                                         * copysign(1., s[i * n + gid])
-                                     - shift;
-            } else {  // l_plus[i]==0
-              s[(i + 1) * n + gid] = l[i * n + gid]
-                                         * copysign(1., s[i * n + gid])
-                                         * copysign(1., l_plus[i * n + gid])
-                                     - shift;
-            }
-          }
-        }
+        double_d d_plus = add_dd_dd(s[i * n + gid], d[i * n + gid]);
+        l_plus[i * n + gid]
+            = mul_dd_dd(l[i * n + gid], div_dd_dd(d[i * n + gid], d_plus));
+//        if (isnan_dd(l_plus[i * n + gid])) {  // d_plus==0
+//          // one (or both) of d[i], l[i] is very close to 0
+//          if (lt_dd_dd(abs_dd(l[i * n + gid]), abs_dd(d[i * n + gid]))) {
+//            l_plus[i * n + gid]
+//                = mul_dd_d(d[i * n + gid], copysign_d_dd(1., l[i * n + gid])
+//                                               * copysign_d_dd(1., d_plus));
+//          } else {
+//            l_plus[i * n + gid]
+//                = mul_dd_d(l[i * n + gid], copysign_d_dd(1., d[i * n + gid])
+//                                               * copysign_d_dd(1., d_plus));
+//          }
+//        }
+        s[(i + 1) * n + gid] = sub_dd_dd(
+            mul_dd_dd(mul_dd_dd(l_plus[i * n + gid], l[i * n + gid]),
+                      s[i * n + gid]),
+            shift);
+//        if (isnan_dd(s[(i + 1) * n + gid])) {
+//          if (gt_dd_dd(abs_dd(l_plus[i * n + gid]),
+//                       abs_dd(s[i * n + gid]))) {  // l_plus[i*n+gid]==inf
+//            if (gt_dd_dd(abs_dd(s[i * n + gid]),
+//                         abs_dd(l[i * n + gid]))) {  // l[i*n+gid]==0
+//              s[(i + 1) * n + gid] = sub_dd_dd(
+//                  mul_dd_d(s[i * n + gid],
+//                           copysign_d_dd(1., l[i * n + gid])
+//                               * copysign_d_dd(1., l_plus[i * n + gid])),
+//                  shift);
+//            } else {  // s[i*n+gid]==0
+//              s[(i + 1) * n + gid] = sub_dd_dd(
+//                  mul_dd_d(l[i * n + gid],
+//                           copysign_d_dd(1., s[i * n + gid])
+//                               * copysign_d_dd(1., l_plus[i * n + gid])),
+//                  shift);
+//            }
+//          } else {  // s[i*n+gid]==inf
+//            if (gt_dd_dd(abs_dd(l_plus[i * n + gid]),
+//                         abs_dd(l[i * n + gid]))) {  // l[i]==0
+//              s[(i + 1) * n + gid]
+//                  = sub_dd_dd(mul_dd_d(l_plus[i * n + gid],
+//                                       copysign_d_dd(1., l[i * n + gid])
+//                                           * copysign_d_dd(1., s[i * n + gid])),
+//                              shift);
+//            } else {  // l_plus[i]==0
+//              s[(i + 1) * n + gid] = sub_dd_dd(
+//                  mul_dd_d(l[i * n + gid],
+//                           copysign_d_dd(1., s[i * n + gid])
+//                               * copysign_d_dd(1., l_plus[i * n + gid])),
+//                  shift);
+//            }
+//          }
+//        }
       }
       // calculate shifted udu and twist index
-      double p = d[m * n + gid] - shift;
-      double min_gamma = fabs(s[m * n + gid] + d[m * n + gid]);
+      double_d p = sub_dd_dd(d[m * n + gid], shift);
+      double_d min_gamma = abs_dd(add_dd_dd(s[m * n + gid], d[m * n + gid]));
+//      printf("GPU %d gamma %le\n", gid, min_gamma.high);
       int twist_index = m;
 
       for (int i = m - 1; i >= 0; i--) {
-        double d_minus = d[i * n + gid] * l[i * n + gid] * l[i * n + gid] + p;
-        double t = d[i * n + gid] / d_minus;
-        u_minus[i * n + gid] = l[i * n + gid] * t;
-        if (isnan(u_minus[i * n + gid])) {
-          if (isnan(t)) {
-            t = copysign(1., d[i * n + gid]) * copysign(1., d_minus);
-            u_minus[i * n + gid] = l[i * n + gid] * t;
-          } else {  // t==inf, l[i*n+gid]==0
-            u_minus[i * n + gid] = d[i * n + gid] * copysign(1., l[i * n + gid])
-                                   * copysign(1., t);
-          }
-        }
-        double gamma = fabs(s[i * n + gid] + t * p);
-        if (isnan(gamma)) {  // t==inf, p==0 OR t==0, p==inf
-          double d_sign
-              = d[i * n + gid] * copysign(1., d_minus) * copysign(1., t);
-          gamma = fabs(s[i * n + gid] + d_sign);
-          p = d_sign - shift;
+        double_d d_minus
+            = add_dd_dd(mul_dd_dd(mul_dd_dd(d[i * n + gid], l[i * n + gid]),
+                                  l[i * n + gid]),
+                        p);
+        double_d t = div_dd_dd(d[i * n + gid], d_minus);
+        u_minus[i * n + gid] = mul_dd_dd(l[i * n + gid], t);
+//        if (isnan_dd(u_minus[i * n + gid])) {
+//          if (isnan_dd(t)) {
+//            double t_high = copysign_d_dd(1., d[i * n + gid])
+//                            * copysign_d_dd(1., d_minus);
+//            t.high = t_high;
+//            t.low = 0;
+//            u_minus[i * n + gid] = mul_dd_d(l[i * n + gid], t_high);
+//          } else {  // t==inf, l[i*n+gid]==0
+//            u_minus[i * n + gid]
+//                = mul_dd_d(d[i * n + gid], copysign_d_dd(1., l[i * n + gid])
+//                                               * copysign_d_dd(1., t));
+//          }
+//        }
+                    printf("GPU %d u- %le\n", gid, u_minus[i * n + gid].high);
+        double_d gamma = abs_dd(add_dd_dd(s[i * n + gid], mul_dd_dd(t, p)));
+        if (isnan_dd(gamma)) {  // t==inf, p==0 OR t==0, p==inf
+          double_d d_sign
+              = mul_dd_d(d[i * n + gid],
+                         copysign_d_dd(1., d_minus) * copysign_d_dd(1., t));
+          gamma = abs_dd(add_dd_dd(s[i * n + gid], d_sign));
+          p = sub_dd_dd(d_sign, shift);
         } else {  // usual case
-          p = p * t - shift;
+          p = sub_dd_dd(mul_dd_dd(p, t), shift);
         }
-        if (gamma < min_gamma) {
+//        printf("GPU %d gamma %le\n", gid, gamma.high);
+        if (lt_dd_dd(gamma, min_gamma)) {
           min_gamma = gamma;
           twist_index = i;
         }
       }
+      //                if(gid==0) printf("GPU %d %d\n", twist_index);
       return twist_index;
     }
 
     /**
-     * Calculates eigenvectors from twisted factorization T - shift * I = L+ *
-     * D+ * L+^T = U- * D- * U-^T.
+     * Calculates eigenvectors from twisted factorization T - shift * I = L+
+     * * D+ * L+^T = U- * D- * U-^T.
      * @param l_plus Subdiagonal of the L+.
      * @param u_minus Superdiagonal of the U-.
      * @param subdiag Subdiagonal of T
      * @param twist_idx Twist index.
      * @param[out] eigenvectors Matrix in which to store resulting vectors.
      */
-    void calculate_eigenvector(const __global double* l_plus,
-                               const __global double* u_minus,
+    void calculate_eigenvector(const __global double_d* l_plus,
+                               const __global double_d* u_minus,
                                const __global double* subdiag, int twist_idx,
                                __global double* eigenvectors) {
       int n = get_global_size(0);
       int gid = get_global_id(0);
       int i = gid;
       eigenvectors[twist_idx * n + gid] = 1;
+      double_d last = (double_d){1, 0};
+      double_d last2 = (double_d){1, 0};
       double norm = 1;
       for (int j = twist_idx + 1; j < n; j++) {
-        if (eigenvectors[(j - 1) * n + gid] != 0) {
-          eigenvectors[j * n + gid]
-              = -u_minus[(j - 1) * n + gid] * eigenvectors[(j - 1) * n + gid];
+        if (last.high != 0 || last.low != 0) {
+          last2 = last;
+          last = neg(mul_dd_dd(u_minus[(j - 1) * n + gid], last));
+          eigenvectors[j * n + gid] = last.high;
         } else {
-          eigenvectors[j * n + gid] = -subdiag[j - 2]
-                                      * eigenvectors[(j - 2) * n + gid]
-                                      / subdiag[j - 1];
-          if (isnan(eigenvectors[j * n + gid])
-              || isinf(eigenvectors[j * n + gid])) {  // subdiag[j - 1]==0
-            eigenvectors[j * n + gid] = 0;
+          double_d tmp = last;
+          last = mul_dd_d(last2, -subdiag[j - 2] / subdiag[j - 1]);
+          last2 = tmp;
+          if (isnan(last.high) || isinf(last.high)) {  // subdiag[j - 1]==0
+            last = (double_d){0, 0};
           }
+          eigenvectors[j * n + gid] = last.high;
         }
         norm += eigenvectors[j * n + gid] * eigenvectors[j * n + gid];
       }
+      last = (double_d){eigenvectors[twist_idx * n + gid], 0};
+      last2 = (double_d){1, 0};
       for (int j = twist_idx - 1; j >= 0; j--) {
-        if (eigenvectors[(j + 1) * n + gid] != 0) {
-          eigenvectors[j * n + gid]
-              = -l_plus[j * n + gid] * eigenvectors[(j + 1) * n + gid];
+        if (last.high != 0 || last.low != 0) {
+          last2 = last;
+          last = neg(mul_dd_dd(l_plus[j * n + gid], last));
+          eigenvectors[j * n + gid] = last.high;
         } else {
-          eigenvectors[j * n + gid]
-              = -subdiag[j + 1] * eigenvectors[(j + 2) * n + gid] / subdiag[j];
-          if (isnan(eigenvectors[j * n + gid])
-              || isinf(eigenvectors[j * n + gid])) {  // subdiag[j]==0
-            eigenvectors[j * n + gid] = 0;
+          double_d tmp = last;
+          last = mul_dd_d(last2, -subdiag[j + 1] / subdiag[j]);
+          if (isnan(last.high) || isinf(last.high)) {  // subdiag[j]==0
+            last = (double_d){0, 0};
           }
+          eigenvectors[j * n + gid] = last.high;
         }
         norm += eigenvectors[j * n + gid] * eigenvectors[j * n + gid];
       }
@@ -498,73 +537,40 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
 
     /**
      * Calculates eigenvectors for distinct (shifted) eigenvalues.
+     * @param l Each row is a subdiagonal of the matrix L from LDL
+     * decomposition for one eigenvalue.
+     * @param d Each row is a diagonal of the matrix D from LDL
+     * decomposition for one eigenvalue.
      * @param subdiag Subdiagonal of the tridiagonal matrix.
-     * @param l Each row is a subdiagonal of the matrix L from LDL decomposition
-     * for one eigenvalue.
-     * @param d Each row is a diagonal of the matrix D from LDL decomposition
-     * for one eigenvalue.
-     * @param low_glob Lower bounds on shifted eigenvalues
-     * @param high_glob High bounds on shifted eigenvalues.
-     * @param min_gap_glob Minimal absolute gap of each eigenvalue to the
-     * closest eigenvalue
-     * @param l2 Temporary array of the same size as d
-     * @param d2 Temporary array of the same size as d
-     * @param temp1 Temporary array of the same size as d
-     * @param temp2 Temporary array of the same size as d
-     * @param temp3 Temporary array of the same size as d
+     * @param shifted_eigvals shifted eigenvalues
+     * @param temp Temporary array of the same size as d
      * @param eigenvectors Each row is one eigenvector.
-     * @param min_rel_sep Minimal relative separation of eigenvalues before
-     * computing eigenvectors.
-     * @param max_ele_growth Maximal desired element growth of LDL
      * decompositions.
      */
     __kernel void get_eigenvectors(
-        const __global double* subdiag, const __global double* l,
-        const __global double* d, const __global double* low_glob,
-        const __global double* high_glob, const __global double* min_gap_glob,
-        __global double* l2, __global double* d2, __global double* temp1,
-        __global double* temp2, __global double* temp3,
-        __global double* eigenvectors, double min_rel_sep,
-        double max_ele_growth) {
-      const int gid = get_global_id(0);
-      const int n = get_global_size(0);
-
-      double shift_error = 1e-14;
-      double min_gap = min_gap_glob[gid];
-      double high = high_glob[gid];
-      double low = low_glob[gid];
-
-      const __global double* l_ptr;
-      const __global double* d_ptr;
-      if (!(fabs(min_gap / ((high + low) * 0.5)) > min_rel_sep)) {
-        double max_shift = min_gap / min_rel_sep;
-        double shift;
-        double min_element_growth;
-        find_shift(l, d, low, high, max_ele_growth, max_shift, &l2, &d2, &temp1,
-                   &temp2, &shift, &min_element_growth);
-        low = low * (1 - copysign(shift_error, low)) - shift;
-        high = high * (1 + copysign(shift_error, high)) - shift;
-        eigenval_bisect_refine(l2, d2, &low, &high);
-        l_ptr = l2;
-        d_ptr = d2;
-      } else {
-        l_ptr = l;
-        d_ptr = d;
-      }
-      __global double* l_plus = temp1;
-      __global double* u_minus = temp2;
+        const __global double_d* l, const __global double_d* d,
+        const __global double* subdiag,
+        const __global double_d* shifted_eigvals, __global double_d* l_plus,
+        __global double_d* u_minus, __global double_d* temp,
+        __global double* eigenvectors) {
       int twist_idx = get_twisted_factorization(
-          l_ptr, d_ptr, (low + high) * 0.5, l_plus, u_minus, temp3);
+          l, d, shifted_eigvals[get_global_id(0)], l_plus, u_minus, temp);
+      printf("GPU %d %d\n", (int)get_global_id(0), twist_idx);
+      //      for (int i = 0; i < get_global_size(0) - 1; i++) {
+      //        printf("%d %le %le\n", (int)get_global_id(0),
+      //               l_plus[i * get_global_size(0) + get_global_id(0)].high,
+      //               u_minus[i * get_global_size(0) + get_global_id(0)].high);
+      //      }
       calculate_eigenvector(l_plus, u_minus, subdiag, twist_idx, eigenvectors);
     }
     // \cond
 );
 // \endcond
 
-const kernel_cl<in_buffer, in_buffer, in_buffer, in_buffer, in_buffer,
-                in_buffer, in_out_buffer, in_out_buffer, in_out_buffer,
-                in_out_buffer, in_out_buffer, out_buffer, double, double>
-    get_eigenvectors("get_eigenvectors", {get_eigenvectors_kernel_code});
+const kernel_cl<in_buffer, in_buffer, in_buffer, in_buffer, in_out_buffer,
+                in_out_buffer, in_out_buffer, out_buffer>
+    get_eigenvectors("get_eigenvectors", {stan::math::internal::double_d_src,
+                                          get_eigenvectors_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math
