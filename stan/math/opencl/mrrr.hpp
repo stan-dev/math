@@ -190,7 +190,6 @@ int get_twisted_factorization(const VectorXdd& l, const VectorXdd& d,
     double_d d_minus = d[i] * l[i] * l[i] + p;
     double_d t = d[i] / d_minus;
     u_minus[i] = l[i] * t;
-    std::cout << "CPU u- " << u_minus[i].high << std::endl;
 //    if (isnan(u_minus[i])) {
 //      if (isnan(t)) {
 //        t.high = copysign(1.0, d[i]) * copysign(1.0, d_minus);
@@ -208,13 +207,14 @@ int get_twisted_factorization(const VectorXdd& l, const VectorXdd& d,
     } else {  // general case
       p = p * t - shift;
     }
+//    std::cout << "CPU " << s[i + 1].high << std::endl;
 //    std::cout << "CPU gamma " << gamma.high << std::endl;
     if (gamma < min_gamma) {
       min_gamma = gamma;
       twist_index = i;
     }
   }
-  std::cout << "CPU " << twist_index << std::endl;
+//  std::cout << "CPU " << twist_index << std::endl;
   return twist_index;
 }
 
@@ -671,17 +671,17 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
         l_big.col(i) = *l_ptr;
         d_big.col(i) = *d_ptr;
 
-        if (i == 0) {
-          pri = true;
-        }
+//        if (i == 0) {
+//          pri = true;
+//        }
 
-        twist_idx = get_twisted_factorization(
-            *l_ptr, *d_ptr, (low[i] + high[i]) * 0.5, l_plus, u_minus);
-        pri = false;
+//        twist_idx = get_twisted_factorization(
+//            *l_ptr, *d_ptr, (low[i] + high[i]) * 0.5, l_plus, u_minus);
+//        pri = false;
 
-        l_plus_big.col(i) = l_plus.unaryExpr([](double_d x) { return x.high; });
-        u_minus_big.col(i)
-            = u_minus.unaryExpr([](double_d x) { return x.high; });
+//        l_plus_big.col(i) = l_plus.unaryExpr([](double_d x) { return x.high; });
+//        u_minus_big.col(i)
+//            = u_minus.unaryExpr([](double_d x) { return x.high; });
 
         //        std::cout
         //            << "twist growth "
@@ -710,16 +710,17 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
         //                  << std::endl
         //                  << std::endl;
 
-        calculate_eigenvector(l_plus, u_minus, subdiagonal, i, twist_idx,
-                              eigenvectors);
+//        calculate_eigenvector(l_plus, u_minus, subdiagonal, i, twist_idx,
+//                              eigenvectors);
       }
     }
   }
+//  std::cout << d_big.unaryExpr([](double_d x) { return x.high; }) << std::endl;
   matrix_cl<double_d> l_big_cl(l_big.transpose());
   matrix_cl<double_d> d_big_cl(d_big.transpose());
   matrix_cl<double> subdiag_cl(subdiagonal);
   matrix_cl<double_d> shifted_eigvals_cl((low + high) * 0.5);
-  matrix_cl<double_d> l_plus_cl(n - 1, n), u_minus_cl(n - 1, n), temp_cl(n, 1);
+  matrix_cl<double_d> l_plus_cl(n - 1, n), u_minus_cl(n - 1, n), temp_cl(n, n);
   matrix_cl<double> eigenvectors_cl(n, n);
   opencl_kernels::get_eigenvectors(cl::NDRange(n), l_big_cl, d_big_cl,
                                    subdiag_cl, shifted_eigvals_cl, l_plus_cl,
@@ -727,17 +728,17 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
 
   Eigen::MatrixXd eigenvectors2 = from_matrix_cl(transpose((eigenvectors_cl)));
 
-  Eigen::MatrixXd l_plus_big2
-      = from_matrix_cl(l_plus_cl).unaryExpr([](double_d x) { return x.high; });
-  Eigen::MatrixXd u_minus_big2
-      = from_matrix_cl(u_minus_cl).unaryExpr([](double_d x) { return x.high; });
-  Eigen::MatrixXd dif = l_plus_big2 - l_plus_big;
-  Eigen::Index a, b;
-  double val = dif.maxCoeff(&a, &b);
-  std::cout << "l_plus " << val << " " << a << " " << b << std::endl;
-  Eigen::MatrixXd dif2 = u_minus_big2 - u_minus_big;
-  double val2 = dif2.maxCoeff(&a, &b);
-  std::cout << "u_minus " << val2 << " " << a << " " << b << std::endl;
+//  Eigen::MatrixXd l_plus_big2
+//      = from_matrix_cl(l_plus_cl).unaryExpr([](double_d x) { return x.high; });
+//  Eigen::MatrixXd u_minus_big2
+//      = from_matrix_cl(u_minus_cl).unaryExpr([](double_d x) { return x.high; });
+//  Eigen::MatrixXd dif = l_plus_big2 - l_plus_big;
+//  Eigen::Index a, b;
+//  double val = dif.maxCoeff(&a, &b);
+//  std::cout << "l_plus " << val << " " << a << " " << b << std::endl;
+//  Eigen::MatrixXd dif2 = u_minus_big2 - u_minus_big;
+//  double val2 = dif2.maxCoeff(&a, &b);
+//  std::cout << "u_minus " << val2 << " " << a << " " << b << std::endl;
 
   eigenvectors = eigenvectors2;
 }

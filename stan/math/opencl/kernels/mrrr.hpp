@@ -455,7 +455,6 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
 //                                               * copysign_d_dd(1., t));
 //          }
 //        }
-                    printf("GPU %d u- %le\n", gid, u_minus[i * n + gid].high);
         double_d gamma = abs_dd(add_dd_dd(s[i * n + gid], mul_dd_dd(t, p)));
         if (isnan_dd(gamma)) {  // t==inf, p==0 OR t==0, p==inf
           double_d d_sign
@@ -466,6 +465,7 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
         } else {  // usual case
           p = sub_dd_dd(mul_dd_dd(p, t), shift);
         }
+//                    printf("GPU %d %le\n", gid, s[(i + 1) * n + gid].high);
 //        printf("GPU %d gamma %le\n", gid, gamma.high);
         if (lt_dd_dd(gamma, min_gamma)) {
           min_gamma = gamma;
@@ -555,7 +555,7 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
         __global double* eigenvectors) {
       int twist_idx = get_twisted_factorization(
           l, d, shifted_eigvals[get_global_id(0)], l_plus, u_minus, temp);
-      printf("GPU %d %d\n", (int)get_global_id(0), twist_idx);
+//      printf("GPU %d %d\n", (int)get_global_id(0), twist_idx);
       //      for (int i = 0; i < get_global_size(0) - 1; i++) {
       //        printf("%d %le %le\n", (int)get_global_id(0),
       //               l_plus[i * get_global_size(0) + get_global_id(0)].high,
