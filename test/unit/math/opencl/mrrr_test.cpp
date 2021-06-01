@@ -3,35 +3,28 @@
 #include <stan/math/opencl/mrrr.hpp>
 #include <gtest/gtest.h>
 
-// TEST(MathMatrix, tridiag_eigensolver_trivial) {
-//  Eigen::VectorXd diag(3), subdiag(2), eigenvals;
-//  diag << 1.5, 1.2, -2;
-//  subdiag << 0, 0;
+ TEST(MathMatrix, tridiag_eigensolver_trivial) {
+  Eigen::VectorXd diag(3), subdiag(2), eigenvals;
+  diag << 1.5, 1.2, -2;
+  subdiag << 0, 0;
 
-//  Eigen::MatrixXd eigenvecs(3, 3);
-//  stan::math::internal::tridiagonal_eigensolver_cl(diag, subdiag, eigenvals,
-//                                                   eigenvecs);
-//  EXPECT_TRUE(eigenvals.isApprox(diag));
-//  EXPECT_TRUE(eigenvecs.isApprox(Eigen::MatrixXd::Identity(3, 3)));
-//}
+  Eigen::MatrixXd eigenvecs(3, 3);
+  stan::math::internal::tridiagonal_eigensolver_cl(diag, subdiag, eigenvals,
+                                                   eigenvecs);
+  EXPECT_TRUE(eigenvals.isApprox(diag));
+  EXPECT_TRUE(eigenvecs.isApprox(Eigen::MatrixXd::Identity(3, 3)));
+}
 
 TEST(MathMatrix, tridiag_eigensolver_small) {
   std::cout << stan::math::internal::double_d_src <<stan::math::opencl_kernels::get_eigenvectors_kernel_code << std::endl;
   int size = 7;
-  srand(0);  // ensure test repeatability
-             //  Eigen::VectorXd diag = Eigen::VectorXd::Random(size);
-             //  Eigen::VectorXd subdiag = Eigen::VectorXd::Random(size - 1);
   Eigen::VectorXd diag = Eigen::VectorXd::Constant(size, 1);
   Eigen::VectorXd subdiag = Eigen::VectorXd::Constant(size - 1, 0.5);
-  //  subdiag[2] = 0;
 
   Eigen::VectorXd eigenvals;
   Eigen::MatrixXd eigenvecs;
   stan::math::internal::tridiagonal_eigensolver_cl(diag, subdiag, eigenvals,
                                                 eigenvecs);
-
-  std::cout << "eigenvals\n" << eigenvals << std::endl << std::endl;
-  std::cout << "eigenvecs\n" << eigenvecs << std::endl << std::endl;
 
   Eigen::MatrixXd t = Eigen::MatrixXd::Constant(size, size, 0);
   t.diagonal() = diag;
@@ -51,16 +44,11 @@ TEST(MathMatrix, tridiag_eigensolver_large) {
   subdiag[12] = 0;
   subdiag[120] = 0;
   subdiag[121] = 0;
-  //  Eigen::VectorXd diag = Eigen::VectorXd::Constant(size, 0.4);
-  //  Eigen::VectorXd subdiag = Eigen::VectorXd::Constant(size - 1, 0.4);
 
   Eigen::VectorXd eigenvals;
   Eigen::MatrixXd eigenvecs;
   stan::math::internal::tridiagonal_eigensolver_cl(diag, subdiag, eigenvals,
                                                    eigenvecs);
-  //  stan::math::internal::tridiagonal_eigensolver(diag, subdiag, eigenvals,
-  //                                                eigenvecs);
-  //  Eigen::EigenSolver
 
   Eigen::MatrixXd t = Eigen::MatrixXd::Constant(size, size, 0);
   t.diagonal() = diag;
@@ -71,15 +59,6 @@ TEST(MathMatrix, tridiag_eigensolver_large) {
                   .isApprox(Eigen::MatrixXd::Identity(size, size), 1e-9));
   EXPECT_TRUE(
       (t * eigenvecs).isApprox(eigenvecs * eigenvals.asDiagonal(), 1e-9));
-  //  std::cout << diag << std::endl << std::endl;
-  //  std::cout << subdiag << std::endl << std::endl;
-  //  std::cout << eigenvecs << std::endl << std::endl;
-  //  std::cout << eigenvals << std::endl << std::endl;
-  //  std::cout << eigenvecs * eigenvecs.transpose() << std::endl << std::endl;
-  //  std::cout << t * eigenvecs  << std::endl << std::endl;
-  //  std::cout << eigenvecs * eigenvals.asDiagonal() << std::endl << std::endl;
-  //  std::cout << t * eigenvecs - eigenvecs * eigenvals.asDiagonal() <<
-  //  std::endl << std::endl;
   std::cout << "trace rel err: " << abs(diag.sum() - eigenvals.sum())
             << std::endl;
   std::cout << "vec ortho err: "
@@ -100,12 +79,6 @@ TEST(MathMatrix, tridiag_eigensolver_large) {
 
 TEST(MathMatrix, tridiag_eigensolver_large_fixed) {
   int size = 2000;
-  srand(time(0));  // ensure test repeatability
-                   //  Eigen::VectorXd diag = Eigen::VectorXd::Random(size);
-  //  Eigen::VectorXd subdiag = Eigen::VectorXd::Random(size - 1);
-  //  subdiag[12] = 0;
-  //  subdiag[120] = 0;
-  //  subdiag[121] = 0;
   Eigen::VectorXd diag = Eigen::VectorXd::Constant(size, 0.4);
   Eigen::VectorXd subdiag = Eigen::VectorXd::Constant(size - 1, 0.4);
 
@@ -114,10 +87,6 @@ TEST(MathMatrix, tridiag_eigensolver_large_fixed) {
     Eigen::MatrixXd eigenvecs;
     stan::math::internal::tridiagonal_eigensolver_cl(diag, subdiag, eigenvals,
                                                      eigenvecs);
-    //    stan::math::internal::tridiagonal_eigensolver(diag, subdiag,
-    //    eigenvals,
-    //                                                  eigenvecs);
-    //  Eigen::EigenSolver
 
     Eigen::MatrixXd t = Eigen::MatrixXd::Constant(size, size, 0);
     t.diagonal() = diag;
@@ -128,15 +97,6 @@ TEST(MathMatrix, tridiag_eigensolver_large_fixed) {
                     .isApprox(Eigen::MatrixXd::Identity(size, size), 1e-9));
     EXPECT_TRUE(
         (t * eigenvecs).isApprox(eigenvecs * eigenvals.asDiagonal(), 1e-9));
-    //  std::cout << diag << std::endl << std::endl;
-    //  std::cout << subdiag << std::endl << std::endl;
-    //  std::cout << eigenvecs << std::endl << std::endl;
-    //  std::cout << eigenvals << std::endl << std::endl;
-    //  std::cout << eigenvecs * eigenvecs.transpose() << std::endl <<
-    //  std::endl; std::cout << t * eigenvecs  << std::endl << std::endl;
-    //  std::cout << eigenvecs * eigenvals.asDiagonal() << std::endl <<
-    //  std::endl; std::cout << t * eigenvecs - eigenvecs *
-    //  eigenvals.asDiagonal() << std::endl << std::endl;
     std::cout << "trace rel err: " << abs(diag.sum() - eigenvals.sum())
               << std::endl;
     std::cout << "vec ortho err: "
@@ -191,30 +151,15 @@ TEST(MathMatrix, tridiag_eigensolver_large_wilkinson) {
   int n = 5;
   int m = 100;
   int size = (2 * m + 1) * n;
-  srand(time(0));  // ensure test repeatability
-                   //  srand(0);  // ensure test repeatability
-                   //  Eigen::VectorXd diag = Eigen::VectorXd::Random(size);
-  //  Eigen::VectorXd subdiag = Eigen::VectorXd::Random(size - 1);
-  //  subdiag[12] = 0;
-  //  subdiag[120] = 0;
-  //  subdiag[121] = 0;
   Eigen::VectorXd diag;
   Eigen::VectorXd subdiag;
   get_glued_wilkinson(m, n, 1e-13, diag, subdiag);
-  //  std::cout << "subdiag\n" << subdiag << std::endl;
-  //  std::cout << "diag\n" << diag << std::endl;
 
   for (int i = 0; i < 3; i++) {
     Eigen::VectorXd eigenvals;
     Eigen::MatrixXd eigenvecs;
     stan::math::internal::tridiagonal_eigensolver_cl(diag, subdiag, eigenvals,
                                                      eigenvecs);
-    //    std::cout << "diag " << diag.array().abs().maxCoeff() << " subdiag "
-    //              << subdiag.array().abs().maxCoeff() << std::endl;
-    //    stan::math::internal::tridiagonal_eigensolver(diag, subdiag,
-    //    eigenvals,
-    //                                                  eigenvecs);
-    //  Eigen::EigenSolver
 
     Eigen::MatrixXd t = Eigen::MatrixXd::Constant(size, size, 0);
     t.diagonal() = diag;
@@ -225,15 +170,6 @@ TEST(MathMatrix, tridiag_eigensolver_large_wilkinson) {
                     .isApprox(Eigen::MatrixXd::Identity(size, size), 1e-9));
     EXPECT_TRUE(
         (t * eigenvecs).isApprox(eigenvecs * eigenvals.asDiagonal(), 1e-9));
-    //  std::cout << diag << std::endl << std::endl;
-    //  std::cout << subdiag << std::endl << std::endl;
-    //  std::cout << eigenvecs << std::endl << std::endl;
-    //  std::cout << eigenvals << std::endl << std::endl;
-    //  std::cout << eigenvecs * eigenvecs.transpose() << std::endl <<
-    //  std::endl; std::cout << t * eigenvecs  << std::endl << std::endl;
-    //  std::cout << eigenvecs * eigenvals.asDiagonal() << std::endl <<
-    //  std::endl; std::cout << t * eigenvecs - eigenvecs *
-    //  eigenvals.asDiagonal() << std::endl << std::endl;
     std::cout << "trace rel err: "
               << abs(diag.sum() - eigenvals.sum()) / abs(diag.sum())
               << std::endl;

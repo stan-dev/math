@@ -6,8 +6,6 @@
 #include <cmath>
 #include <queue>
 
-//#include <stan/math/prim/fun/mrrr.hpp>
-
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/prim/multiply.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
@@ -20,7 +18,7 @@ namespace stan {
 namespace math {
 namespace internal {
 
-const double_d perturbation_range = 1e-21;
+const double_d perturbation_range = 1e-20;
 
 using VectorXdd = Eigen::Matrix<double_d, -1, 1>;
 using MatrixXdd = Eigen::Matrix<double_d, -1, -1>;
@@ -61,20 +59,13 @@ double get_ldl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
                const Eigen::Ref<const Eigen::VectorXd> subdiagonal,
                const double shift, VectorXdd& l, VectorXdd& d_plus) {
   using std::fabs;
-  //  std::cout << "diag " << diagonal[0] << std::endl;
   d_plus[0] = diagonal[0] - shift;
   double element_growth = fabs(d_plus[0].high);
   for (int i = 0; i < subdiagonal.size(); i++) {
-    //    std::cout << "diag " << diagonal[i+1] << " subdiagonal " <<
-    //    subdiagonal[i] << std::endl;
     l[i] = subdiagonal[i] / d_plus[i];
-    //    d_plus[i] = d_plus[i] * get_random_perturbation_multiplier();
     d_plus[i + 1] = diagonal[i + 1] - shift - l[i] * subdiagonal[i];
-    //    l[i] = l[i] * get_random_perturbation_multiplier();
     element_growth = max_nan(element_growth, fabs(d_plus[i + 1].high));
   }
-  //  d_plus[subdiagonal.size()]
-  //      = d_plus[subdiagonal.size()] * get_random_perturbation_multiplier();
   return element_growth;
 }
 
@@ -101,10 +92,8 @@ double get_shifted_ldl(const VectorXdd& l, const VectorXdd& d,
   double element_growth = 0;
   for (int i = 0; i < n; i++) {
     d_plus[i] = s + d[i];
-    //        d_plus[i] = d_plus[i] * get_random_perturbation_multiplier();
     element_growth = max_nan(element_growth, fabs(d_plus[i].high));
     l_plus[i] = l[i] * (d[i] / d_plus[i]);
-    //        l_plus[i] = l_plus[i] * get_random_perturbation_multiplier();
     if (isinf(d_plus[i]) && isinf(s)) {  // this happens if d_plus[i]==0 -> in
                                          // next iteration d_plus==inf and
                                          // s==inf
@@ -114,113 +103,8 @@ double get_shifted_ldl(const VectorXdd& l, const VectorXdd& d,
     }
   }
   d_plus[n] = s + d[n];
-  //  d_plus[n] = d_plus[n] * get_random_perturbation_multiplier();
   element_growth = max_nan(element_growth, fabs(d_plus[n].high));
   return element_growth;
-}
-
-bool pri = false;
-
-/**
- * Calculates shifted LDL and UDU factorizations. Combined with twist index they
- * form twisted factorization for calculation of an eigenvector corresponding to
- * eigenvalue that is equal to the shift. Tha algorithm is sometimes called
- * diferential twisted quotient-differences with shifts (dtwqds). L * D * L^T -
- * shift * I = L+ * D+ * L+^T = U- * D- * U-^T D, D+ and D- are diagonal, L and
- * L+ are lower unit triangular (diagonal elements are 1, all elements except
- * diagonal and subdiagonal are 0), U- is upper unit triangular (diagonal
- * elements are 1, all elements except diagonal and superdiagonal are 0)
- * @param l Subdiagonal of L.
- * @param d Diagonal of D.
- * @param shift Shift.
- * @param[out] l_plus Subdiagonal of L+.
- * @param[out] u_minus Superdiagonal of U-.
- * @return Twist index.
- */
-int get_twisted_factorization(const VectorXdd& l, const VectorXdd& d,
-                              const double_d shift, VectorXdd& l_plus,
-                              VectorXdd& u_minus) {
-  using std::copysign;
-  using std::fabs;
-  using std::isnan;
-  const int n = l.size();
-  // calculate shifted ldl
-  VectorXdd s(n + 1);
-  s[0] = -shift;
-  for (int i = 0; i < n; i++) {
-    double_d d_plus = s[i] + d[i];
-    l_plus[i] = l[i] * (d[i] / d_plus);
-    //    if (isnan(l_plus[i])) {  // d_plus==0
-    //      if (fabs(l[i])
-    //          < fabs(d[i])) {  // one (or both) of d[i], l[i] is very close to
-    //          0
-    //        l_plus[i] = d[i] * copysign(1.0, l[i]) * copysign(1.0, d_plus);
-    //      } else {
-    //        l_plus[i] = l[i] * copysign(1.0, d[i]) * copysign(1.0, d_plus);
-    //      }
-    //    }
-
-    s[i + 1] = l_plus[i] * l[i] * s[i] - shift;
-    //    if (isnan(s[i + 1])) {
-    //      if (fabs(l_plus[i]) > fabs(s[i])) {  // l_plus[i]==inf
-    //        if (fabs(s[i]) > fabs(l[i])) {     // l[i]==0
-    //          s[i + 1]
-    //              = s[i] * copysign(1.0, l[i]) * copysign(1.0, l_plus[i]) -
-    //              shift;
-    //        } else {  // s[i]==0
-    //          s[i + 1]
-    //              = l[i] * copysign(1.0, s[i]) * copysign(1.0, l_plus[i]) -
-    //              shift;
-    //        }
-    //      } else {                               // s[i]==inf
-    //        if (fabs(l_plus[i]) > fabs(l[i])) {  // l[i]==0
-    //          s[i + 1]
-    //              = l_plus[i] * copysign(1.0, l[i]) * copysign(1.0, s[i]) -
-    //              shift;
-    //        } else {  // l_plus[i]==0
-    //          s[i + 1]
-    //              = l[i] * copysign(1.0, s[i]) * copysign(1.0, l_plus[i]) -
-    //              shift;
-    //        }
-    //      }
-    //    }
-  }
-  // calculate shifted udu and twist index
-  double_d p = d[n] - shift;
-  double_d min_gamma = fabs(s[n] + d[n]);
-  //  std::cout << "CPU gamma " << min_gamma.high << std::endl;
-  int twist_index = n;
-
-  for (int i = n - 1; i >= 0; i--) {
-    double_d d_minus = d[i] * l[i] * l[i] + p;
-    double_d t = d[i] / d_minus;
-    u_minus[i] = l[i] * t;
-    //    if (isnan(u_minus[i])) {
-    //      if (isnan(t)) {
-    //        t.high = copysign(1.0, d[i]) * copysign(1.0, d_minus);
-    //        t.low = 0;
-    //        u_minus[i] = l[i] * t;
-    //      } else {  // t==inf, l[i]==0
-    //        u_minus[i] = d[i] * copysign(1.0, l[i]) * copysign(1.0, t);
-    //      }
-    //    }
-    double_d gamma = fabs(s[i] + t * p);
-    if (isnan(gamma)) {  // t==inf, p==0 OR t==0, p==inf
-      double_d d_sign = d[i] * copysign(1.0, d_minus) * copysign(1.0, t);
-      gamma = fabs(s[i] + d_sign);
-      p = d_sign - shift;
-    } else {  // general case
-      p = p * t - shift;
-    }
-    //    std::cout << "CPU " << s[i + 1].high << std::endl;
-    //    std::cout << "CPU gamma " << gamma.high << std::endl;
-    if (gamma < min_gamma) {
-      min_gamma = gamma;
-      twist_index = i;
-    }
-  }
-  //  std::cout << "CPU " << twist_index << std::endl;
-  return twist_index;
 }
 
 /**
@@ -256,8 +140,8 @@ int get_sturm_count_ldl(const VectorXdd& l, const VectorXdd& d,
 }
 
 /**
- * Refines bounds on the i-th largest eigenvalue of LDL decomposition of a
- * matrix using bisection.
+ * Refines bounds on the i-th largest eigenvalue of LDL decomposition using
+ * bisection.
  * @param l Subdiagonal of L.
  * @param d Diagonal of D.
  * @param[in,out] low Low bound on the eigenvalue.
@@ -309,62 +193,6 @@ void get_gresgorin(const Eigen::Ref<const Eigen::VectorXd> diagonal,
 }
 
 /**
- * Calculates an eigenvector from twisted factorization T - shift * I = L+ * D+
- * * L+^T = U- * D- * U-^T.
- * @param l_plus Subdiagonal of the L+.
- * @param u_minus Superdiagonal of the U-.
- * @param subdiagonal Subdiagonal of T
- * @param i At which column of `eigenvecs` to store resulting vector.
- * @param twist_idx Twist index.
- * @param[out] eigenvectors Matrix in which to store resulting vector.
- */
-void calculate_eigenvector(const VectorXdd& l_plus, const VectorXdd& u_minus,
-                           const Eigen::Ref<const Eigen::VectorXd>& subdiagonal,
-                           const int i, const int twist_idx,
-                           Eigen::Ref<Eigen::MatrixXd>& eigenvectors) {
-  using std::isinf;
-  using std::isnan;
-  auto vec = eigenvectors.col(i);
-  const int n = vec.size();
-  double_d last = 1;
-  double_d last2 = 1;
-  vec[twist_idx] = 1;
-  for (int j = twist_idx + 1; j < n; j++) {
-    if (last.high != 0 || last.low != 0) {
-      last2 = last;
-      last = -u_minus[j - 1] * last;
-      vec[j] = last.high;
-    } else {
-      double_d tmp = last;
-      last = -subdiagonal[j - 2] / subdiagonal[j - 1] * last2;
-      last2 = tmp;
-      if (isnan(last.high) || isinf(last.high)) {  // subdiagonal[j - 1]==0
-        last = 0;
-      }
-      vec[j] = last.high;
-    }
-  }
-  last = vec[twist_idx];
-  last2 = 1;
-  for (int j = twist_idx - 1; j >= 0; j--) {
-    if (last.high != 0 || last.low != 0) {
-      last2 = last;
-      last = -l_plus[j] * last;
-      vec[j] = last.high;
-    } else {
-      double_d tmp = last;
-      last = -subdiagonal[j + 1] / subdiagonal[j] * last2;
-      last2 = tmp;
-      if (isnan(last.high) || isinf(last.high)) {  // subdiagonal[j]==0
-        last = 0;
-      }
-      vec[j] = last.high;
-    }
-  }
-  vec *= 1. / vec.norm();
-}
-
-/**
  * Finds good shift and shifts a LDL decomposition so as to keep element growth
  * low. L * D * L^T - shift * I = L2 * D2 * L2^T.
  * @param l Subdiagonal of L.
@@ -386,14 +214,6 @@ void find_shift(const VectorXdd& l, const VectorXdd& d, const double_d low,
   VectorXdd l3(l2.size()), d3(d2.size());
   const std::vector<double_d> shifts = {
       low,
-//      high - max_shift * 0.001,
-//      low + max_shift * 0.001,
-//      high - max_shift * 0.05,
-//      low + max_shift * 0.05,
-//      high - max_shift * 0.01,
-//      low + max_shift * 0.01,
-//      high - max_shift * 0.05,
-//      low + max_shift * 0.05,
       high - max_shift * 0.1,
       low + max_shift * 0.1,
       high - max_shift * 0.25,
@@ -418,11 +238,6 @@ void find_shift(const VectorXdd& l, const VectorXdd& d, const double_d low,
       }
     }
   }
-  //  if (min_element_growth > max_ele_growth) {
-  //    std::cout << "ele growth " << min_element_growth << " " <<
-  //    max_ele_growth
-  //              << std::endl;
-  //  }
 }
 
 /**
@@ -443,31 +258,17 @@ double find_initial_shift(const Eigen::Ref<const Eigen::VectorXd> diagonal,
                           const double max_eigval,
                           const double max_ele_growth) {
   double shift = (max_eigval + min_eigval) * 0.5;
-  //    double shift = 0;
-  //  if (min_eigval > 0) {
-  //    shift = 0.9 * min_eigval;
-  //  } else if (max_eigval <= 0) {
-  //    shift = 0.9 * max_eigval;
-  //  }
   double element_growth = get_ldl(diagonal, subdiagonal, shift, l0, d0);
-  //  std::cout << "gresgorin " << min_eigval << " " << max_eigval << std::endl;
   if (element_growth < max_ele_growth) {
-    //    std::cout << "init i ele growth " << (double)element_growth << " "
-    //              << (double)max_ele_growth << " shift " << shift <<
-    //              std::endl;
     return shift;
   }
   double plus = (max_eigval - min_eigval) * 1e-15;
-  while (!(element_growth < max_ele_growth)) {  // if condition is flipped it
+  while (!(element_growth < max_ele_growth)) {  // if condition was flipped it
                                                 // would be wrong for the case
                                                 // where element_growth is nan
     plus *= -2;
-    //    std::cout << (double)element_growth << " ";
     element_growth = get_ldl(diagonal, subdiagonal, shift + plus, l0, d0);
   }
-  //  std::cout << "\ninit ele growth " << (double)element_growth << " "
-  //            << (double)max_ele_growth << " shift " << shift + plus <<
-  //            std::endl;
   return shift + plus;
 }
 
@@ -503,35 +304,24 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
   double min_eigval;
   double max_eigval;
   get_gresgorin(diagonal, subdiagonal, min_eigval, max_eigval);
-  VectorXdd l(n - 1), d(n), l0(n - 1), d0(n);
+  VectorXdd l(n - 1), d(n);
   const double max_ele_growth = maximum_ele_growth * (max_eigval - min_eigval);
-  //  std::cout << "diagonal " << diagonal.array().abs().maxCoeff() << "
-  //  subdiagonal "
-  //            << subdiagonal.array().abs().maxCoeff() << std::endl;
-  //  std::cout << "max_ele_growth " << max_ele_growth << " min " << min_eigval
-  //            << " max " << max_eigval << " maximum_ele_growth "
-  //            << maximum_ele_growth << std::endl;
   const double shift0 = find_initial_shift(
-      diagonal, subdiagonal, l0, d0, min_eigval, max_eigval, max_ele_growth);
-  //  std::cout << "initial" << std::endl;
-  //  std::cout << l0.unaryExpr([](double_d x){return x.high;}) << std::endl <<
-  //  std::endl; std::cout << d0.unaryExpr([](double_d x){return x.high;}) <<
-  //  std::endl << std::endl;
+      diagonal, subdiagonal, l, d, min_eigval, max_eigval, max_ele_growth);
   for (int i = 0; i < n; i++) {
     if (i != n - 1) {
-      l[i] = l0[i] * get_random_perturbation_multiplier();
+      l[i] = l[i] * get_random_perturbation_multiplier();
     }
-    d[i] = d0[i] * get_random_perturbation_multiplier();
+    d[i] = d[i] * get_random_perturbation_multiplier();
   }
   const Eigen::VectorXd subdiagonal_squared
       = subdiagonal.array() * subdiagonal.array();
-  Eigen::VectorXd high_d(n), low_d(n);
   VectorXdd high(n), low(n);
 
   matrix_cl<double> diagonal_cl(diagonal);
   matrix_cl<double> subdiagonal_squared_cl(subdiagonal_squared);
-  matrix_cl<double_d> l_cl(l0);
-  matrix_cl<double_d> d_cl(d0);
+  matrix_cl<double_d> l_cl(l);
+  matrix_cl<double_d> d_cl(d);
   matrix_cl<double> eigenvalues_cl(n, 1);
   matrix_cl<double_d> high_cl(n, 1);
   matrix_cl<double_d> low_cl(n, 1);
@@ -541,27 +331,8 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
   eigenvalues = from_matrix_cl(eigenvalues_cl);
   high = from_matrix_cl(high_cl);
   low = from_matrix_cl(low_cl);
-  //  eigenvals_bisect(diagonal, subdiagonal_squared, min_eigval, max_eigval,
-  //  low_d,
-  //                   high_d);
-  //  low = low_d.template cast<double_d>();
-  //  high = high_d.template cast<double_d>();
-  //  eigenvalues = (high + low).unaryExpr([](double_d x) { return x.high; }) *
-  //  0.5; low.array() = (low_d.array() - shift0).template cast<double_d>();
-  //  high.array() = (high_d.array() - shift0).template cast<double_d>();
-  //  for (int i = 0; i < n; i++) {
-  //    low[i] = low[i] - shift0;
-  //    high[i] = high[i] - shift0;
-  //    low[i] = low[i] * (1 - copysign(1e-14 * n, low[i]));
-  //    high[i] = high[i] * (1 + copysign(1e-14 * n, high[i]));
-  //    //    low[i] = min_eigval - shift0;
-  //    //    high[i] = max_eigval - shift0;
-  //    eigenval_bisect_refine(l, d, low[i], high[i], i);
-  //  }
 
   MatrixXdd l_big(n - 1, n), d_big(n, n);
-
-  Eigen::MatrixXd l_plus_big(n - 1, n), u_minus_big(n - 1, n);
 
   std::queue<mrrr_task> block_queue;
   block_queue.push(mrrr_task{0, n, {shift0, 0}, std::move(l), std::move(d), 0});
@@ -569,7 +340,6 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
   d.resize(n);
   while (!block_queue.empty()) {
     const mrrr_task block = block_queue.front();
-    //    std::cout << block.level << std::endl;
     block_queue.pop();
     double_d shift = std::numeric_limits<double>::infinity();
     double min_element_growth = std::numeric_limits<double>::infinity();
@@ -590,22 +360,16 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
         double_d a = high[cluster_end - 1], b = low[cluster_end];
         double_d max_shift
             = (high[cluster_end - 1] - low[cluster_end]) / min_rel_sep;
-        //        if(max_shift==0){
-        //          max_shift = low[cluster_end] / min_rel_sep;
-        //          if(max_shift==0){
-        //            max_shift = high[cluster_end-1] / min_rel_sep;
-        //          }
-        //        }
         double_d next_shift;
         double min_ele_growth;
         find_shift(block.l, block.d, low[cluster_end], high[i], max_ele_growth,
                    max_shift, l, d, next_shift, min_ele_growth);
         for (int j = i; j <= cluster_end; j++) {
           low[j] = low[j] * (double_d{1.0, 0.0} - copysign(shift_error, low[j]))
-                   - next_shift - 1e-100;
+                   - next_shift - 1e-200;
           high[j]
               = high[j] * (double_d{1.0, 0.0} + copysign(shift_error, high[j]))
-                - next_shift + 1e-100;
+                - next_shift + 1e-200;
           eigenval_bisect_refine(l, d, low[j], high[j], j);
         }
         block_queue.push(mrrr_task{i, cluster_end + 1, block.shift + next_shift,
@@ -616,11 +380,6 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
 
         i = cluster_end;
       } else {  // isolated eigenvalue
-                //        std::cout << "i " << i << std::endl;
-        //        std::cout << block.l.unaryExpr([](double_d x){return x.high;})
-        //        << std::endl << std::endl; std::cout <<
-        //        block.d.unaryExpr([](double_d x){return x.high;}) << std::endl
-        //        << std::endl;
         int twist_idx;
         const double_d low_gap
             = i == block.start
@@ -631,11 +390,6 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
                   ? double_d(std::numeric_limits<double>::infinity())
                   : low[i] - high[i + 1];
         const double_d min_gap = std::min(low_gap, high_gap);
-        //        std::cout << min_gap.high << " " << (high[i] + low[i]).high *
-        //        0.5
-        //                  << " " << min_rel_sep << " " << shift.high << " "
-        //                  << min_element_growth << " " << max_ele_growth
-        //                  << std::endl;
         const VectorXdd *l_ptr, *d_ptr;
         if (!(fabs(min_gap / ((high[i] + low[i]) * 0.5)) > min_rel_sep)) {
           if (!(fabs(min_gap / ((high[i] + low[i]) * 0.5 - shift)) > min_rel_sep
@@ -643,19 +397,6 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
             const double_d max_shift = min_gap / min_rel_sep;
             find_shift(block.l, block.d, low[i], high[i], max_ele_growth,
                        max_shift, l2, d2, shift, min_element_growth);
-
-            //            std::cout << "shift_inner" << std::endl;
-            //            std::cout << l2.unaryExpr([](double_d x) { return
-            //            x.high; })
-            //                      << std::endl
-            //                      << std::endl;
-            //            std::cout << d2.unaryExpr([](double_d x) { return
-            //            x.high; })
-            //                      << std::endl
-            //                      << std::endl;
-            //            std::cout << "last max_ele_growth " << max_ele_growth
-            //            << " "
-            //                      << min_element_growth << std::endl;
           }
           low[i] = low[i] * (1 - copysign(shift_error, low[i])) - shift;
           high[i] = high[i] * (1 + copysign(shift_error, high[i])) - shift;
@@ -666,62 +407,11 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
           l_ptr = &block.l;
           d_ptr = &block.d;
         }
-        //        std::cout << " twist " << twist_idx << std::endl;
-        //        std::cout << l_ptr->unaryExpr([](double_d x){return x.high;})
-        //        << std::endl << std::endl; std::cout <<
-        //        d_ptr->unaryExpr([](double_d x){return x.high;}) << std::endl
-        //        << std::endl;
         l_big.col(i) = *l_ptr;
         d_big.col(i) = *d_ptr;
-
-        //        if (i == 0) {
-        //          pri = true;
-        //        }
-
-        //        twist_idx = get_twisted_factorization(
-        //            *l_ptr, *d_ptr, (low[i] + high[i]) * 0.5, l_plus,
-        //            u_minus);
-        //        pri = false;
-
-        //        l_plus_big.col(i) = l_plus.unaryExpr([](double_d x) { return
-        //        x.high; }); u_minus_big.col(i)
-        //            = u_minus.unaryExpr([](double_d x) { return x.high; });
-
-        //        std::cout
-        //            << "twist growth "
-        //            << (twist_idx == 0
-        //                    ? 0.0
-        //                    :
-        //                    l_plus.head(twist_idx).array().abs().maxCoeff().high)
-        //            << " "
-        //            << (twist_idx == n - 1 ? 0.0
-        //                                   : u_minus.tail(n - 1 - twist_idx)
-        //                                         .array()
-        //                                         .abs()
-        //                                         .maxCoeff()
-        //                                         .high)
-        //            << std::endl;
-
-        //        std::cout << "CPU " << i << " " << twist_idx
-        //                  << std::endl
-        //                  << std::endl;
-        //        std::cout << l_plus.unaryExpr([](double_d x) { return x.high;
-        //        })
-        //                  << std::endl
-        //                  << std::endl;
-        //        std::cout << u_minus.unaryExpr([](double_d x) { return x.high;
-        //        })
-        //                  << std::endl
-        //                  << std::endl;
-
-        //        calculate_eigenvector(l_plus, u_minus, subdiagonal, i,
-        //        twist_idx,
-        //                              eigenvectors);
       }
     }
   }
-  //  std::cout << d_big.unaryExpr([](double_d x) { return x.high; }) <<
-  //  std::endl;
   matrix_cl<double_d> l_big_cl(l_big.transpose());
   matrix_cl<double_d> d_big_cl(d_big.transpose());
   matrix_cl<double> subdiag_cl(subdiagonal);
@@ -731,24 +421,7 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
   opencl_kernels::get_eigenvectors(cl::NDRange(n), l_big_cl, d_big_cl,
                                    subdiag_cl, shifted_eigvals_cl, l_plus_cl,
                                    u_minus_cl, temp_cl, eigenvectors_cl);
-
-  Eigen::MatrixXd eigenvectors2 = from_matrix_cl(transpose((eigenvectors_cl)));
-
-  //  Eigen::MatrixXd l_plus_big2
-  //      = from_matrix_cl(l_plus_cl).unaryExpr([](double_d x) { return x.high;
-  //      });
-  //  Eigen::MatrixXd u_minus_big2
-  //      = from_matrix_cl(u_minus_cl).unaryExpr([](double_d x) { return x.high;
-  //      });
-  //  Eigen::MatrixXd dif = l_plus_big2 - l_plus_big;
-  //  Eigen::Index a, b;
-  //  double val = dif.maxCoeff(&a, &b);
-  //  std::cout << "l_plus " << val << " " << a << " " << b << std::endl;
-  //  Eigen::MatrixXd dif2 = u_minus_big2 - u_minus_big;
-  //  double val2 = dif2.maxCoeff(&a, &b);
-  //  std::cout << "u_minus " << val2 << " " << a << " " << b << std::endl;
-
-  eigenvectors = eigenvectors2;
+  eigenvectors = from_matrix_cl(transpose((eigenvectors_cl)));
 }
 
 /**
@@ -765,7 +438,7 @@ void tridiagonal_eigensolver_cl(const Eigen::VectorXd& diagonal,
                                 const Eigen::VectorXd& subdiagonal,
                                 Eigen::VectorXd& eigenvalues,
                                 Eigen::MatrixXd& eigenvectors,
-                                const double split_threshold = 1e-16) {
+                                const double split_threshold = 1e-15) {
   using std::fabs;
   const int n = diagonal.size();
   eigenvectors.resize(n, n);
