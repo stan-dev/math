@@ -44,7 +44,7 @@ TEST(MathMatrix, tridiag_eigensolver_small) {
 }
 
 TEST(MathMatrix, tridiag_eigensolver_large) {
-  int size = 300;
+  int size = 2000;
   srand(time(0));  // ensure test repeatability
   Eigen::VectorXd diag = Eigen::VectorXd::Random(size);
   Eigen::VectorXd subdiag = Eigen::VectorXd::Random(size - 1);
