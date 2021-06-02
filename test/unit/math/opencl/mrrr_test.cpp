@@ -1,4 +1,4 @@
-
+#ifdef STAN_OPENCL
 #include <iostream>
 #include <stan/math/opencl/mrrr.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
@@ -47,7 +47,6 @@ TEST(MathMatrix, tridiag_eigensolver_small) {
 
 TEST(MathMatrix, tridiag_eigensolver_large) {
   int size = 2000;
-  srand(time(0));  // ensure test repeatability
   Eigen::VectorXd diag = Eigen::VectorXd::Random(size);
   Eigen::VectorXd subdiag = Eigen::VectorXd::Random(size - 1);
   subdiag[12] = 0;
@@ -208,3 +207,5 @@ TEST(MathMatrix, tridiag_eigensolver_large_wilkinson) {
              .maxCoeff()
       << std::endl;
 }
+
+#endif
