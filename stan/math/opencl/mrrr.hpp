@@ -281,8 +281,9 @@ struct mrrr_task {
 
 /**
  * Calculates eigenvalues and eigenvectors of a irreducible tridiagonal matrix T
- * using MRRR algorithm. Use `tridiagonal_eigensolver` if any subdiagonal
- * element might be (very close to) zero.
+ * using multiple relatively robust representations (MRRR) algorithm. Use
+ * `tridiagonal_eigensolver` if any subdiagonal element might be (very close to)
+ * zero.
  * @param diagonal Diagonal of of T.
  * @param subdiagonal Subdiagonal of T.
  * @param[out] eigenvalues Eigenvlues.
@@ -291,6 +292,7 @@ struct mrrr_task {
  * computing eigenvectors.
  * @param max_ele_growth Maximal desired element growth of LDL decompositions.
  */
+template <bool need_eigenvectors = true>
 void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
              const Eigen::Ref<const Eigen::VectorXd> subdiagonal,
              Eigen::Ref<Eigen::VectorXd> eigenvalues,
@@ -303,6 +305,20 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
   const int n = diagonal.size();
   double min_eigval;
   double max_eigval;
+  const Eigen::VectorXd subdiagonal_squared
+      = subdiagonal.array() * subdiagonal.array();
+  if (!need_eigenvectors) {
+    matrix_cl<double> diagonal_cl(diagonal);
+    matrix_cl<double> subdiagonal_squared_cl(subdiagonal_squared);
+    matrix_cl<double> eigenvalues_cl(n, 1);
+    matrix_cl<double_d> l_cl, d_cl, high_cl, low_cl(n, 1);
+    opencl_kernels::eigenvals(cl::NDRange(n), diagonal_cl,
+                              subdiagonal_squared_cl, l_cl, d_cl,
+                              eigenvalues_cl, low_cl, high_cl, min_eigval,
+                              max_eigval, 0, need_eigenvectors);
+    eigenvalues = from_matrix_cl(eigenvalues_cl);
+    return;
+  }
   get_gresgorin(diagonal, subdiagonal, min_eigval, max_eigval);
   VectorXdd l(n - 1), d(n);
   const double max_ele_growth = maximum_ele_growth * (max_eigval - min_eigval);
@@ -314,8 +330,6 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
     }
     d[i] = d[i] * get_random_perturbation_multiplier();
   }
-  const Eigen::VectorXd subdiagonal_squared
-      = subdiagonal.array() * subdiagonal.array();
   VectorXdd high(n), low(n);
 
   matrix_cl<double> diagonal_cl(diagonal);
@@ -327,7 +341,7 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
   matrix_cl<double_d> low_cl(n, 1);
   opencl_kernels::eigenvals(cl::NDRange(n), diagonal_cl, subdiagonal_squared_cl,
                             l_cl, d_cl, eigenvalues_cl, low_cl, high_cl,
-                            min_eigval, max_eigval, shift0);
+                            min_eigval, max_eigval, shift0, need_eigenvectors);
   eigenvalues = from_matrix_cl(eigenvalues_cl);
   high = from_matrix_cl(high_cl);
   low = from_matrix_cl(low_cl);
@@ -434,6 +448,7 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
  * @param[out] eigenvectors Eigenvectors.
  * @param split_threshold Threshold for splitting the problem
  */
+template <bool need_eigenvectors = true>
 void tridiagonal_eigensolver_cl(const Eigen::VectorXd& diagonal,
                                 const Eigen::VectorXd& subdiagonal,
                                 Eigen::VectorXd& eigenvalues,
@@ -441,37 +456,61 @@ void tridiagonal_eigensolver_cl(const Eigen::VectorXd& diagonal,
                                 const double split_threshold = 1e-15) {
   using std::fabs;
   const int n = diagonal.size();
-  eigenvectors.resize(n, n);
+  if (need_eigenvectors) {
+    eigenvectors.resize(n, n);
+  }
   eigenvalues.resize(n);
   int last = 0;
   for (int i = 0; i < subdiagonal.size(); i++) {
     if (fabs(subdiagonal[i] / diagonal[i]) < split_threshold
         && fabs(subdiagonal[i] / diagonal[i + 1]) < split_threshold) {
-      eigenvectors.block(last, i + 1, i + 1 - last, n - i - 1)
-          = Eigen::MatrixXd::Constant(i + 1 - last, n - i - 1, 0);
-      eigenvectors.block(i + 1, last, n - i - 1, i + 1 - last)
-          = Eigen::MatrixXd::Constant(n - i - 1, i + 1 - last, 0);
-      if (last == i) {
-        eigenvectors(last, last) = 1;
-        eigenvalues[last] = diagonal[last];
+      if (need_eigenvectors) {
+        eigenvectors.block(last, i + 1, i + 1 - last, n - i - 1)
+            = Eigen::MatrixXd::Constant(i + 1 - last, n - i - 1, 0);
+        eigenvectors.block(i + 1, last, n - i - 1, i + 1 - last)
+            = Eigen::MatrixXd::Constant(n - i - 1, i + 1 - last, 0);
+        if (last == i) {
+          eigenvectors(last, last) = 1;
+          eigenvalues[last] = diagonal[last];
+        } else {
+          mrrr_cl<need_eigenvectors>(
+              diagonal.segment(last, i + 1 - last),
+              subdiagonal.segment(last, i - last),
+              eigenvalues.segment(last, i + 1 - last),
+              eigenvectors.block(last, last, i + 1 - last, i + 1 - last));
+        }
       } else {
-        mrrr_cl(diagonal.segment(last, i + 1 - last),
-                subdiagonal.segment(last, i - last),
-                eigenvalues.segment(last, i + 1 - last),
-                eigenvectors.block(last, last, i + 1 - last, i + 1 - last));
+        if (last == i) {
+          eigenvalues[last] = diagonal[last];
+        } else {
+          mrrr_cl<need_eigenvectors>(diagonal.segment(last, i + 1 - last),
+                                     subdiagonal.segment(last, i - last),
+                                     eigenvalues.segment(last, i + 1 - last),
+                                     eigenvectors);
+        }
       }
 
       last = i + 1;
     }
   }
   if (last == n - 1) {
-    eigenvectors(last, last) = 1;
+    if (need_eigenvectors) {
+      eigenvectors(last, last) = 1;
+    }
     eigenvalues[last] = diagonal[last];
   } else {
-    mrrr_cl(diagonal.segment(last, n - last),
-            subdiagonal.segment(last, subdiagonal.size() - last),
-            eigenvalues.segment(last, n - last),
-            eigenvectors.block(last, last, n - last, n - last));
+    if (need_eigenvectors) {
+      mrrr_cl<need_eigenvectors>(
+          diagonal.segment(last, n - last),
+          subdiagonal.segment(last, subdiagonal.size() - last),
+          eigenvalues.segment(last, n - last),
+          eigenvectors.block(last, last, n - last, n - last));
+    } else {
+      mrrr_cl<need_eigenvectors>(
+          diagonal.segment(last, n - last),
+          subdiagonal.segment(last, subdiagonal.size() - last),
+          eigenvalues.segment(last, n - last), eigenvectors);
+    }
   }
 }
 
