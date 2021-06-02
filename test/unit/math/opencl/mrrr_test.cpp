@@ -1,39 +1,48 @@
 
 #include <iostream>
 #include <stan/math/opencl/mrrr.hpp>
+#include <test/unit/math/expect_near_rel.hpp>
+#include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
- TEST(MathMatrix, tridiag_eigensolver_trivial) {
+TEST(MathMatrix, tridiag_eigensolver_trivial) {
   Eigen::VectorXd diag(3), subdiag(2), eigenvals;
   diag << 1.5, 1.2, -2;
   subdiag << 0, 0;
+  stan::math::matrix_cl<double> diag_cl(diag);
+  stan::math::matrix_cl<double> subdiag_cl(subdiag);
+  stan::math::matrix_cl<double> eigenvals_cl;
+  stan::math::matrix_cl<double> eigenvecs_cl;
 
-  Eigen::MatrixXd eigenvecs(3, 3);
-  stan::math::internal::tridiagonal_eigensolver_cl(diag, subdiag, eigenvals,
-                                                   eigenvecs);
-  EXPECT_TRUE(eigenvals.isApprox(diag));
-  EXPECT_TRUE(eigenvecs.isApprox(Eigen::MatrixXd::Identity(3, 3)));
+  stan::math::internal::tridiagonal_eigensolver_cl(diag_cl, subdiag_cl,
+                                                   eigenvals_cl, eigenvecs_cl);
+  EXPECT_NEAR_REL(stan::math::from_matrix_cl(eigenvals_cl), diag);
+  EXPECT_NEAR_REL(stan::math::from_matrix_cl(eigenvecs_cl),
+                  Eigen::MatrixXd::Identity(3, 3));
 }
 
 TEST(MathMatrix, tridiag_eigensolver_small) {
-  std::cout << stan::math::internal::double_d_src <<stan::math::opencl_kernels::get_eigenvectors_kernel_code << std::endl;
   int size = 7;
   Eigen::VectorXd diag = Eigen::VectorXd::Constant(size, 1);
   Eigen::VectorXd subdiag = Eigen::VectorXd::Constant(size - 1, 0.5);
+  stan::math::matrix_cl<double> diag_cl(diag);
+  stan::math::matrix_cl<double> subdiag_cl(subdiag);
+  stan::math::matrix_cl<double> eigenvals_cl;
+  stan::math::matrix_cl<double> eigenvecs_cl;
 
-  Eigen::VectorXd eigenvals;
-  Eigen::MatrixXd eigenvecs;
-  stan::math::internal::tridiagonal_eigensolver_cl(diag, subdiag, eigenvals,
-                                                eigenvecs);
+  stan::math::internal::tridiagonal_eigensolver_cl(diag_cl, subdiag_cl,
+                                                   eigenvals_cl, eigenvecs_cl);
 
+  Eigen::VectorXd eigenvals
+      = stan::math::from_matrix_cl<Eigen::VectorXd>(eigenvals_cl);
+  Eigen::MatrixXd eigenvecs = stan::math::from_matrix_cl(eigenvecs_cl);
   Eigen::MatrixXd t = Eigen::MatrixXd::Constant(size, size, 0);
   t.diagonal() = diag;
   t.diagonal(1) = subdiag;
   t.diagonal(-1) = subdiag;
-  EXPECT_NEAR(diag.sum(), eigenvals.sum(), 1e-11);
-  EXPECT_TRUE((eigenvecs * eigenvecs.transpose())
-                  .isApprox(Eigen::MatrixXd::Identity(size, size)));
-  EXPECT_TRUE((t * eigenvecs).isApprox(eigenvecs * eigenvals.asDiagonal()));
+  EXPECT_NEAR_REL(diag.sum(), eigenvals.sum());
+  EXPECT_MATRIX_NEAR(eigenvecs * eigenvecs.transpose(), Eigen::MatrixXd::Identity(size, size), 1e-12);
+  EXPECT_MATRIX_NEAR(t * eigenvecs, eigenvecs * eigenvals.asDiagonal(), 1e-12);
 }
 
 TEST(MathMatrix, tridiag_eigensolver_large) {
@@ -45,20 +54,25 @@ TEST(MathMatrix, tridiag_eigensolver_large) {
   subdiag[120] = 0;
   subdiag[121] = 0;
 
-  Eigen::VectorXd eigenvals;
-  Eigen::MatrixXd eigenvecs;
-  stan::math::internal::tridiagonal_eigensolver_cl(diag, subdiag, eigenvals,
-                                                   eigenvecs);
+  stan::math::matrix_cl<double> diag_cl(diag);
+  stan::math::matrix_cl<double> subdiag_cl(subdiag);
+  stan::math::matrix_cl<double> eigenvals_cl;
+  stan::math::matrix_cl<double> eigenvecs_cl;
+
+  stan::math::internal::tridiagonal_eigensolver_cl(diag_cl, subdiag_cl,
+                                                   eigenvals_cl, eigenvecs_cl);
+
+  Eigen::VectorXd eigenvals
+      = stan::math::from_matrix_cl<Eigen::VectorXd>(eigenvals_cl);
+  Eigen::MatrixXd eigenvecs = stan::math::from_matrix_cl(eigenvecs_cl);
 
   Eigen::MatrixXd t = Eigen::MatrixXd::Constant(size, size, 0);
   t.diagonal() = diag;
   t.diagonal(1) = subdiag;
   t.diagonal(-1) = subdiag;
-  EXPECT_NEAR(diag.sum(), eigenvals.sum(), 1e-9);
-  EXPECT_TRUE((eigenvecs * eigenvecs.transpose())
-                  .isApprox(Eigen::MatrixXd::Identity(size, size), 1e-9));
-  EXPECT_TRUE(
-      (t * eigenvecs).isApprox(eigenvecs * eigenvals.asDiagonal(), 1e-9));
+  EXPECT_NEAR_REL(diag.sum(), eigenvals.sum());
+  EXPECT_MATRIX_NEAR(eigenvecs * eigenvecs.transpose(), Eigen::MatrixXd::Identity(size, size), 1e-12);
+  EXPECT_MATRIX_NEAR(t * eigenvecs, eigenvecs * eigenvals.asDiagonal(), 1e-12);
   std::cout << "trace rel err: " << abs(diag.sum() - eigenvals.sum())
             << std::endl;
   std::cout << "vec ortho err: "
@@ -82,38 +96,41 @@ TEST(MathMatrix, tridiag_eigensolver_large_fixed) {
   Eigen::VectorXd diag = Eigen::VectorXd::Constant(size, 0.4);
   Eigen::VectorXd subdiag = Eigen::VectorXd::Constant(size - 1, 0.4);
 
-  for (int i = 0; i < 1; i++) {
-    Eigen::VectorXd eigenvals;
-    Eigen::MatrixXd eigenvecs;
-    stan::math::internal::tridiagonal_eigensolver_cl(diag, subdiag, eigenvals,
-                                                     eigenvecs);
+  stan::math::matrix_cl<double> diag_cl(diag);
+  stan::math::matrix_cl<double> subdiag_cl(subdiag);
+  stan::math::matrix_cl<double> eigenvals_cl;
+  stan::math::matrix_cl<double> eigenvecs_cl;
 
-    Eigen::MatrixXd t = Eigen::MatrixXd::Constant(size, size, 0);
-    t.diagonal() = diag;
-    t.diagonal(1) = subdiag;
-    t.diagonal(-1) = subdiag;
-    EXPECT_NEAR(diag.sum(), eigenvals.sum(), 1e-9);
-    EXPECT_TRUE((eigenvecs * eigenvecs.transpose())
-                    .isApprox(Eigen::MatrixXd::Identity(size, size), 1e-9));
-    EXPECT_TRUE(
-        (t * eigenvecs).isApprox(eigenvecs * eigenvals.asDiagonal(), 1e-9));
-    std::cout << "trace rel err: " << abs(diag.sum() - eigenvals.sum())
-              << std::endl;
-    std::cout << "vec ortho err: "
-              << ((eigenvecs * eigenvecs.transpose())
-                  - Eigen::MatrixXd::Identity(size, size))
-                     .array()
-                     .abs()
-                     .maxCoeff()
-              << std::endl;
-    std::cout
-        << "eigen eq err: "
-        << ((t * eigenvecs - eigenvecs * eigenvals.asDiagonal()).array().abs())
-               .array()
-               .abs()
-               .maxCoeff()
-        << std::endl;
-  }
+  stan::math::internal::tridiagonal_eigensolver_cl(diag_cl, subdiag_cl,
+                                                   eigenvals_cl, eigenvecs_cl);
+
+  Eigen::VectorXd eigenvals
+      = stan::math::from_matrix_cl<Eigen::VectorXd>(eigenvals_cl);
+  Eigen::MatrixXd eigenvecs = stan::math::from_matrix_cl(eigenvecs_cl);
+
+  Eigen::MatrixXd t = Eigen::MatrixXd::Constant(size, size, 0);
+  t.diagonal() = diag;
+  t.diagonal(1) = subdiag;
+  t.diagonal(-1) = subdiag;
+  EXPECT_NEAR_REL(diag.sum(), eigenvals.sum());
+  EXPECT_MATRIX_NEAR(eigenvecs * eigenvecs.transpose(), Eigen::MatrixXd::Identity(size, size), 1e-12);
+  EXPECT_MATRIX_NEAR(t * eigenvecs, eigenvecs * eigenvals.asDiagonal(), 1e-12);
+  std::cout << "trace rel err: " << abs(diag.sum() - eigenvals.sum())
+            << std::endl;
+  std::cout << "vec ortho err: "
+            << ((eigenvecs * eigenvecs.transpose())
+                - Eigen::MatrixXd::Identity(size, size))
+                   .array()
+                   .abs()
+                   .maxCoeff()
+            << std::endl;
+  std::cout
+      << "eigen eq err: "
+      << ((t * eigenvecs - eigenvecs * eigenvals.asDiagonal()).array().abs())
+             .array()
+             .abs()
+             .maxCoeff()
+      << std::endl;
 }
 
 /**
@@ -155,39 +172,39 @@ TEST(MathMatrix, tridiag_eigensolver_large_wilkinson) {
   Eigen::VectorXd subdiag;
   get_glued_wilkinson(m, n, 1e-13, diag, subdiag);
 
-  for (int i = 0; i < 3; i++) {
-    Eigen::VectorXd eigenvals;
-    Eigen::MatrixXd eigenvecs;
-    stan::math::internal::tridiagonal_eigensolver_cl(diag, subdiag, eigenvals,
-                                                     eigenvecs);
+  stan::math::matrix_cl<double> diag_cl(diag);
+  stan::math::matrix_cl<double> subdiag_cl(subdiag);
+  stan::math::matrix_cl<double> eigenvals_cl;
+  stan::math::matrix_cl<double> eigenvecs_cl;
 
-    Eigen::MatrixXd t = Eigen::MatrixXd::Constant(size, size, 0);
-    t.diagonal() = diag;
-    t.diagonal(1) = subdiag;
-    t.diagonal(-1) = subdiag;
-    EXPECT_NEAR(diag.sum(), eigenvals.sum(), 1e-9);
-    EXPECT_TRUE((eigenvecs * eigenvecs.transpose())
-                    .isApprox(Eigen::MatrixXd::Identity(size, size), 1e-9));
-    EXPECT_TRUE(
-        (t * eigenvecs).isApprox(eigenvecs * eigenvals.asDiagonal(), 1e-9));
-    std::cout << "trace rel err: "
-              << abs(diag.sum() - eigenvals.sum()) / abs(diag.sum())
-              << std::endl;
-    std::cout << "vec ortho err: "
-              << ((eigenvecs * eigenvecs.transpose())
-                  - Eigen::MatrixXd::Identity(size, size))
-                     .array()
-                     .abs()
-                     .maxCoeff()
-              << std::endl;
-    std::cout
-        << "eigen eq err: "
-        << ((t * eigenvecs - eigenvecs * eigenvals.asDiagonal()).array().abs())
-               .array()
-               .abs()
-               .maxCoeff()
-        << std::endl;
-  }
+  stan::math::internal::tridiagonal_eigensolver_cl(diag_cl, subdiag_cl,
+                                                   eigenvals_cl, eigenvecs_cl);
+
+  Eigen::VectorXd eigenvals
+      = stan::math::from_matrix_cl<Eigen::VectorXd>(eigenvals_cl);
+  Eigen::MatrixXd eigenvecs = stan::math::from_matrix_cl(eigenvecs_cl);
+
+  Eigen::MatrixXd t = Eigen::MatrixXd::Constant(size, size, 0);
+  t.diagonal() = diag;
+  t.diagonal(1) = subdiag;
+  t.diagonal(-1) = subdiag;
+  EXPECT_NEAR_REL(diag.sum(), eigenvals.sum());
+  EXPECT_MATRIX_NEAR(eigenvecs * eigenvecs.transpose(), Eigen::MatrixXd::Identity(size, size), 1e-12);
+  EXPECT_MATRIX_NEAR(t * eigenvecs, eigenvecs * eigenvals.asDiagonal(), 1e-12);
+  std::cout << "trace rel err: "
+            << abs(diag.sum() - eigenvals.sum()) / abs(diag.sum()) << std::endl;
+  std::cout << "vec ortho err: "
+            << ((eigenvecs * eigenvecs.transpose())
+                - Eigen::MatrixXd::Identity(size, size))
+                   .array()
+                   .abs()
+                   .maxCoeff()
+            << std::endl;
+  std::cout
+      << "eigen eq err: "
+      << ((t * eigenvecs - eigenvecs * eigenvals.asDiagonal()).array().abs())
+             .array()
+             .abs()
+             .maxCoeff()
+      << std::endl;
 }
-
-

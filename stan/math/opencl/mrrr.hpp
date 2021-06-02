@@ -449,17 +449,20 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
  * @param split_threshold Threshold for splitting the problem
  */
 template <bool need_eigenvectors = true>
-void tridiagonal_eigensolver_cl(const Eigen::VectorXd& diagonal,
-                                const Eigen::VectorXd& subdiagonal,
-                                Eigen::VectorXd& eigenvalues,
-                                Eigen::MatrixXd& eigenvectors,
+void tridiagonal_eigensolver_cl(const matrix_cl<double>& diagonal_cl,
+                                const matrix_cl<double>& subdiagonal_cl,
+                                matrix_cl<double>& eigenvalues_cl,
+                                matrix_cl<double>& eigenvectors_cl,
                                 const double split_threshold = 1e-15) {
   using std::fabs;
-  const int n = diagonal.size();
+  const int n = diagonal_cl.rows();
+  Eigen::MatrixXd eigenvectors;
   if (need_eigenvectors) {
     eigenvectors.resize(n, n);
   }
-  eigenvalues.resize(n);
+  Eigen::VectorXd eigenvalues(n);
+  Eigen::VectorXd diagonal = from_matrix_cl<Eigen::VectorXd>(diagonal_cl);
+  Eigen::VectorXd subdiagonal = from_matrix_cl<Eigen::VectorXd>(subdiagonal_cl);
   int last = 0;
   for (int i = 0; i < subdiagonal.size(); i++) {
     if (fabs(subdiagonal[i] / diagonal[i]) < split_threshold
@@ -489,7 +492,6 @@ void tridiagonal_eigensolver_cl(const Eigen::VectorXd& diagonal,
                                      eigenvectors);
         }
       }
-
       last = i + 1;
     }
   }
@@ -511,6 +513,10 @@ void tridiagonal_eigensolver_cl(const Eigen::VectorXd& diagonal,
           subdiagonal.segment(last, subdiagonal.size() - last),
           eigenvalues.segment(last, n - last), eigenvectors);
     }
+  }
+  eigenvalues_cl = to_matrix_cl(eigenvalues);
+  if (need_eigenvectors) {
+    eigenvectors_cl = to_matrix_cl(eigenvectors);
   }
 }
 
