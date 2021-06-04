@@ -8,14 +8,26 @@ endef
 # Library locations
 
 MATH ?=
-BOOST ?= $(MATH)lib/boost_1.75.0
-EIGEN ?= $(MATH)lib/eigen_3.3.9
-OPENCL ?= $(MATH)lib/opencl_2.2.0
-TBB ?= $(MATH)lib/tbb_2020.3
-SUNDIALS ?= $(MATH)lib/sundials_5.7.0
-BENCHMARK ?= $(MATH)lib/benchmark_1.5.1
-GTEST ?= $(BENCHMARK)/googletest/googletest
-CPPLINT ?= $(MATH)lib/cpplint_1.4.5
+
+ifndef SYS_LIBS
+	BOOST ?= $(MATH)lib/boost_1.75.0
+	EIGEN ?= $(MATH)lib/eigen_3.3.9
+	OPENCL ?= $(MATH)lib/opencl_2.2.0
+	TBB ?= $(MATH)lib/tbb_2020.3
+	SUNDIALS ?= $(MATH)lib/sundials_5.7.0
+	BENCHMARK ?= $(MATH)lib/benchmark_1.5.1
+	GTEST ?= $(BENCHMARK)/googletest/googletest
+	CPPLINT ?= $(MATH)lib/cpplint_1.4.5
+else
+	BOOST ?= /usr/include
+	EIGEN ?= /usr/include/eigen3
+	OPENCL ?= $(MATH)lib/opencl_2.2.0
+	TBB ?= /usr/include
+	SUNDIALS ?= $(MATH)lib/sundials_5.7.0
+	BENCHMARK ?= $(MATH)lib/benchmark_1.5.1
+	GTEST ?= $(BENCHMARK)/googletest/googletest
+	CPPLINT ?= $(MATH)lib/cpplint_1.4.5
+endif
 
 ################################################################################
 # SUNDIALS build rules
@@ -24,6 +36,8 @@ CPPLINT ?= $(MATH)lib/cpplint_1.4.5
 #       are ignored here. This convention was introduced with 4.0.
 ##
 
+
+ifndef SYS_LIBS
 SUNDIALS_CVODES := $(patsubst %.c,%.o,\
   $(wildcard $(SUNDIALS)/src/cvodes/*.c) \
   $(wildcard $(SUNDIALS)/src/sundials/*.c) \
@@ -79,14 +93,17 @@ $(SUNDIALS)/lib/libsundials_nvecserial.a: $(SUNDIALS_NVECSERIAL)
 	@mkdir -p $(dir $@)
 	$(AR) -rs $@ $^
 
-LIBSUNDIALS := $(SUNDIALS)/lib/libsundials_nvecserial.a $(SUNDIALS)/lib/libsundials_cvodes.a $(SUNDIALS)/lib/libsundials_idas.a $(SUNDIALS)/lib/libsundials_kinsol.a
+LIBSUNDIALS := /usr/lib/$(DEB_MULTIARCH)/libsundials_nvecserial.a /usr/lib/$(DEB_MULTIARCH)/libsundials_cvodes.a /usr/lib/$(DEB_MULTIARCH)/libsundials_idas.a /usr/lib/$(DEB_MULTIARCH)/libsundials_kinsol.a
+
+endif
+LIBSUNDIALS := /usr/lib/$(DEB_MULTIARCH)/libsundials_nvecserial.a /usr/lib/$(DEB_MULTIARCH)/libsundials_cvodes.a /usr/lib/$(DEB_MULTIARCH)/libsundials_idas.a /usr/lib/$(DEB_MULTIARCH)/libsundials_kinsol.a
 
 STAN_SUNDIALS_HEADERS :=  $(call findfiles,$(MATH)stan,*cvodes*.hpp) $(call findfiles,$(MATH)stan,*idas*.hpp) $(call findfiles,$(MATH)stan,*kinsol*.hpp)
 $(STAN_SUNDIALS_HEADERS) : $(LIBSUNDIALS)
 
 clean-sundials:
 	@echo '  cleaning sundials targets'
-	$(RM) $(wildcard $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_NVECSERIAL) $(LIBSUNDIALS)))
+	$(RM) $(wildcard $(sort $(SUNDIALS_CVODES) $(SUNDIALS_IDAS) $(SUNDIALS_KINSOL) $(SUNDIALS_NVECSERIAL)))
 
 
 ############################################################
@@ -108,6 +125,7 @@ clean-sundials:
 # TBB makefiles.
 
 ifndef TBB_LIB
+ifndef SYS_LIBS
 
 ifeq ($(CXX_TYPE),mingw32-gcc)
   TBB_CXX_TYPE ?= gcc
@@ -188,6 +206,7 @@ clean-tbb:
 	@echo '  cleaning Intel TBB targets'
 	$(RM) -rf $(TBB_BIN)
 
+endif
 endif
 
 ############################################################
