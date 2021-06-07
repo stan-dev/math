@@ -12,11 +12,8 @@
 
 namespace stan {
 namespace math {
-bool is_first = true;
 namespace internal {
 
-matrix_cl<double> A_glob_cl;
-std::vector<matrix_cl<double>> packed_globs;
 /**
  * Tridiagonalize a symmetric matrix using block Housholder algorithm. A = Q * T
  * * Q^T, where T is tridiagonal and Q is orthonormal.
@@ -32,33 +29,9 @@ std::vector<matrix_cl<double>> packed_globs;
 void block_householder_tridiag_cl(const matrix_cl<double>& A,
                                   matrix_cl<double>& packed, const int r = 60) {
   packed = A;
-  int p_i = 0;
-  int p_i_max = 100;
   for (size_t k = 0; k < A.rows() - 2; k += r) {
     const int actual_r = std::min({r, static_cast<int>(A.rows() - k - 2)});
     matrix_cl<double> V_cl = constant(0.0,A.rows() - k - 1, actual_r + 1);
-
-    if (p_i < p_i_max) {
-      if (is_first) {
-        A_glob_cl = A;
-        packed_globs.push_back(packed);
-        std::cout << "tri: A diff: "
-                  << stan::math::from_matrix_cl(max_2d(fabs(A - A_glob_cl)))
-                         .maxCoeff()
-                  << std::endl;
-      } else {
-        std::cout << "tri: packed0 " << p_i << " diff: "
-                  << stan::math::from_matrix_cl(
-                         max_2d(fabs(packed - packed_globs[p_i])))
-                         .maxCoeff()
-                  << std::endl;
-        std::cout << "tri: A diff: "
-                  << stan::math::from_matrix_cl(max_2d(fabs(A - A_glob_cl)))
-                         .maxCoeff()
-                  << std::endl;
-      }
-      p_i++;
-    }
 
     matrix_cl<double> Uu(actual_r, 1), Vu(actual_r, 1), q_cl(1, 1);
     for (size_t j = 0; j < actual_r; j++) {
@@ -69,56 +42,12 @@ void block_householder_tridiag_cl(const matrix_cl<double>& A,
         opencl_kernels::tridiagonalization_householder(
             cl::NDRange(hh_local), cl::NDRange(hh_local), packed, V_cl, q_cl,
             packed.rows(), V_cl.rows(), j, k);
-        if (p_i < p_i_max) {
-          if (is_first) {
-            packed_globs.push_back(packed);
-            std::cout << "tri: A diff: "
-                      << stan::math::from_matrix_cl(max_2d(fabs(A - A_glob_cl)))
-                             .maxCoeff()
-                      << std::endl;
-          } else {
-            std::cout << "tri: packed1 " << p_i << " diff: "
-                      << stan::math::from_matrix_cl(
-                             max_2d(fabs(packed - packed_globs[p_i])))
-                             .maxCoeff()
-                      << std::endl;
-            std::cout << "tri: A diff: "
-                      << stan::math::from_matrix_cl(max_2d(fabs(A - A_glob_cl)))
-                             .maxCoeff()
-                      << std::endl;
-          }
-          p_i++;
-        }
-
         if (j != 0) {
           int v1_local
               = opencl_kernels::tridiagonalization_v1.get_option("LOCAL_SIZE_");
           opencl_kernels::tridiagonalization_v1(
               cl::NDRange(v1_local * j), cl::NDRange(v1_local), packed, V_cl,
               Uu, Vu, packed.rows(), V_cl.rows(), k);
-
-          if (p_i < p_i_max) {
-            if (is_first) {
-              packed_globs.push_back(packed);
-              std::cout << "tri: A diff: "
-                        << stan::math::from_matrix_cl(
-                               max_2d(fabs(A - A_glob_cl)))
-                               .maxCoeff()
-                        << std::endl;
-            } else {
-              std::cout << "tri: packed2 " << p_i << " diff: "
-                        << stan::math::from_matrix_cl(
-                               max_2d(fabs(packed - packed_globs[p_i])))
-                               .maxCoeff()
-                        << std::endl;
-              std::cout << "tri: A diff: "
-                        << stan::math::from_matrix_cl(
-                               max_2d(fabs(A - A_glob_cl)))
-                               .maxCoeff()
-                        << std::endl;
-            }
-            p_i++;
-          }
         }
         int v2_local
             = opencl_kernels::tridiagonalization_v2.get_option("LOCAL_SIZE_");
@@ -127,78 +56,14 @@ void block_householder_tridiag_cl(const matrix_cl<double>& A,
                         * v2_local),
             cl::NDRange(v2_local), packed, V_cl, Uu, Vu, packed.rows(),
             V_cl.rows(), k, j);
-
-        if (p_i < p_i_max) {
-          if (is_first) {
-            packed_globs.push_back(packed);
-            std::cout << "tri: A diff: "
-                      << stan::math::from_matrix_cl(max_2d(fabs(A - A_glob_cl)))
-                             .maxCoeff()
-                      << std::endl;
-          } else {
-            std::cout << "tri: packed3 " << p_i << " diff: "
-                      << stan::math::from_matrix_cl(
-                             max_2d(fabs(packed - packed_globs[p_i])))
-                             .maxCoeff()
-                      << std::endl;
-            std::cout << "tri: A diff: "
-                      << stan::math::from_matrix_cl(max_2d(fabs(A - A_glob_cl)))
-                             .maxCoeff()
-                      << std::endl;
-          }
-          p_i++;
-        }
-
         int v3_local
             = opencl_kernels::tridiagonalization_v3.get_option("LOCAL_SIZE_");
         opencl_kernels::tridiagonalization_v3(
             cl::NDRange(v3_local), cl::NDRange(v3_local), packed, V_cl, q_cl,
             packed.rows(), V_cl.rows(), k, j);
-
-        if (p_i < p_i_max) {
-          if (is_first) {
-            packed_globs.push_back(packed);
-            std::cout << "tri: A diff: "
-                      << stan::math::from_matrix_cl(max_2d(fabs(A - A_glob_cl)))
-                             .maxCoeff()
-                      << std::endl;
-          } else {
-            std::cout << "tri: packed4 " << p_i << " diff: "
-                      << stan::math::from_matrix_cl(
-                             max_2d(fabs(packed - packed_globs[p_i])))
-                             .maxCoeff()
-                      << std::endl;
-            std::cout << "tri: A diff: "
-                      << stan::math::from_matrix_cl(max_2d(fabs(A - A_glob_cl)))
-                             .maxCoeff()
-                      << std::endl;
-          }
-          p_i++;
-        }
       } catch (cl::Error& e) {
         check_opencl_error("block_householder_tridiag_cl", e);
       }
-    }
-
-    if (p_i < p_i_max) {
-      if (is_first) {
-        packed_globs.push_back(packed);
-        std::cout << "tri: A diff: "
-                  << stan::math::from_matrix_cl(max_2d(fabs(A - A_glob_cl)))
-                         .maxCoeff()
-                  << std::endl;
-      } else {
-        std::cout << "tri: packed5 " << p_i << " diff: "
-                  << stan::math::from_matrix_cl(
-                         max_2d(fabs(packed - packed_globs[p_i])))
-                         .maxCoeff()
-                  << std::endl;
-        std::cout << "tri: A diff: "
-                  << stan::math::from_matrix_cl(max_2d(fabs(A - A_glob_cl)))
-                         .maxCoeff()
-                  << std::endl;
-      }
-      p_i++;
     }
     matrix_cl<double> U_cl = block_zero_based(
         packed, k + actual_r, k, A.rows() - k - actual_r, actual_r);

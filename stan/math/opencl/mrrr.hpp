@@ -188,9 +188,8 @@ void get_gresgorin(const Eigen::Ref<const Eigen::VectorXd> diagonal,
     max_eigval = std::max(max_eigval, diagonal[i] + fabs(subdiagonal[i])
                                           + fabs(subdiagonal[i - 1]));
   }
-  min_eigval = std::min(min_eigval, diagonal[n - 1] - fabs(subdiagonal[n - 2]))-100;
-  max_eigval = std::max(max_eigval, diagonal[n - 1] + fabs(subdiagonal[n - 2]))+100;
-  std::cout << "minmax eigval "<< min_eigval << " " << max_eigval << std::endl;
+  min_eigval = std::min(min_eigval, diagonal[n - 1] - fabs(subdiagonal[n - 2]));
+  max_eigval = std::max(max_eigval, diagonal[n - 1] + fabs(subdiagonal[n - 2]));
 }
 
 /**

@@ -14,7 +14,7 @@ eigenvalues_sym(const matrix_cl<double>& m) {
   check_symmetric("eigenvalues_sym", "m", m);
 
   matrix_cl<double> eigenvalues, eigenvectors;
-  symmetric_eigensolver<true>(m,eigenvalues, eigenvectors);
+  symmetric_eigensolver<false>(m,eigenvalues, eigenvectors);
   return eigenvalues;
 }
 

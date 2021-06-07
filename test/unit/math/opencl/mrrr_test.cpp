@@ -61,23 +61,6 @@ TEST(MathMatrix, tridiag_eigensolver_large) {
   stan::math::internal::tridiagonal_eigensolver_cl(diag_cl, subdiag_cl,
                                                    eigenvals_cl, eigenvecs_cl);
 
-
-  stan::math::matrix_cl<double> eigenvals2_cl;
-  stan::math::matrix_cl<double> eigenvecs2_cl;
-  stan::math::internal::tridiagonal_eigensolver_cl<false>(diag_cl, subdiag_cl,
-                                                   eigenvals2_cl, eigenvecs2_cl);
-  std::cout << "eigenval diff: " << stan::math::from_matrix_cl(max_2d(fabs(eigenvals_cl - eigenvals2_cl))).maxCoeff()
-            << std::endl;
-  EXPECT_MATRIX_NEAR(stan::math::from_matrix_cl(eigenvals_cl),
-                     stan::math::from_matrix_cl(eigenvals2_cl), 1e-12);
-  stan::math::internal::tridiagonal_eigensolver_cl<true>(diag_cl, subdiag_cl,
-                                                   eigenvals2_cl, eigenvecs2_cl);
-  std::cout << "eigenvec diff: " << stan::math::from_matrix_cl(max_2d(fabs(eigenvecs_cl - eigenvecs2_cl))).maxCoeff()
-            << std::endl;
-  EXPECT_MATRIX_NEAR(stan::math::from_matrix_cl(eigenvecs_cl),
-                     stan::math::from_matrix_cl(eigenvecs2_cl), 1e-12);
-
-
   Eigen::VectorXd eigenvals
       = stan::math::from_matrix_cl<Eigen::VectorXd>(eigenvals_cl);
   Eigen::MatrixXd eigenvecs = stan::math::from_matrix_cl(eigenvecs_cl);
