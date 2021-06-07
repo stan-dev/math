@@ -40,7 +40,7 @@ inline double max_nan(double a, double b) { return isnan(a) || a > b ? a : b; }
 inline double_d get_random_perturbation_multiplier() {
   static const double_d rand_norm = perturbation_range / RAND_MAX;
   static const double_d almost_one = 1 - perturbation_range * 0.5;
-  return almost_one /*+ std::rand() * rand_norm*/;
+  return almost_one + std::rand() * rand_norm;
 }
 
 /**
@@ -324,12 +324,12 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
   const double max_ele_growth = maximum_ele_growth * (max_eigval - min_eigval);
   const double shift0 = find_initial_shift(
       diagonal, subdiagonal, l, d, min_eigval, max_eigval, max_ele_growth);
-//  for (int i = 0; i < n; i++) {
-//    if (i != n - 1) {
-//      l[i] = l[i] * get_random_perturbation_multiplier();
-//    }
-//    d[i] = d[i] * get_random_perturbation_multiplier();
-//  }
+  for (int i = 0; i < n; i++) {
+    if (i != n - 1) {
+      l[i] = l[i] * get_random_perturbation_multiplier();
+    }
+    d[i] = d[i] * get_random_perturbation_multiplier();
+  }
   VectorXdd high(n), low(n);
 
   matrix_cl<double> diagonal_cl(diagonal);
@@ -454,7 +454,8 @@ void tridiagonal_eigensolver_cl(const matrix_cl<double>& diagonal_cl,
                                 matrix_cl<double>& eigenvalues_cl,
                                 matrix_cl<double>& eigenvectors_cl,
                                 const double split_threshold = 1e-15) {
-  using std::fabs;
+    using std::fabs;
+    using std::sqrt;
   const int n = diagonal_cl.rows();
   Eigen::MatrixXd eigenvectors;
   if (need_eigenvectors) {
@@ -465,8 +466,8 @@ void tridiagonal_eigensolver_cl(const matrix_cl<double>& diagonal_cl,
   Eigen::VectorXd subdiagonal = from_matrix_cl<Eigen::VectorXd>(subdiagonal_cl);
   int last = 0;
   for (int i = 0; i < subdiagonal.size(); i++) {
-    if (fabs(subdiagonal[i] / diagonal[i]) < split_threshold
-        && fabs(subdiagonal[i] / diagonal[i + 1]) < split_threshold) {
+    if (fabs(subdiagonal[i]) < split_threshold * sqrt(fabs(diagonal[i]))
+                                   * sqrt(fabs(diagonal[i + 1]))) {
       if (need_eigenvectors) {
         eigenvectors.block(last, i + 1, i + 1 - last, n - i - 1)
             = Eigen::MatrixXd::Constant(i + 1 - last, n - i - 1, 0);
