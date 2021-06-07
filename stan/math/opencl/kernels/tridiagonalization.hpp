@@ -210,8 +210,8 @@ const char* tridiagonalization_v2_kernel_code = STRINGIFY(
       float work_per_group = (float)work / ngroups;
       int start = work_per_group * wgid;
       int end = work_per_group * (wgid + 1);
+      __local double res_loc[LOCAL_SIZE_];
       for (int i = start; i < end; i += 1) {
-        __local double res_loc[LOCAL_SIZE_];
         acc = 0;
         for (int l = i + 1 + lid; l < work; l += LOCAL_SIZE_) {
           acc += M1[P_rows * i + l] * vec[l];
