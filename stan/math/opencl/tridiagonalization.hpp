@@ -31,7 +31,7 @@ void block_householder_tridiag_cl(const matrix_cl<double>& A,
   packed = A;
   for (size_t k = 0; k < A.rows() - 2; k += r) {
     const int actual_r = std::min({r, static_cast<int>(A.rows() - k - 2)});
-    matrix_cl<double> V_cl = constant(0.0,A.rows() - k - 1, actual_r + 1);
+    matrix_cl<double> V_cl = constant(0.0, A.rows() - k - 1, actual_r + 1);
 
     matrix_cl<double> Uu(actual_r, 1), Vu(actual_r, 1), q_cl(1, 1);
     for (size_t j = 0; j < actual_r; j++) {
