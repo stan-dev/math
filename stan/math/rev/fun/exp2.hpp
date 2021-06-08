@@ -3,6 +3,7 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/fun/exp2.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <cmath>
 
@@ -38,6 +39,13 @@ namespace math {
 inline var exp2(const var& a) {
   return make_callback_var(std::exp2(a.val()), [a](auto& vi) mutable {
     a.adj() += vi.adj() * vi.val() * LOG_TWO;
+  });
+}
+
+template <typename T, require_eigen_t<T>* = nullptr>
+inline auto exp2(const var_value<T>& a) {
+  return make_callback_var(exp2(a.val()), [a](auto& vi) mutable {
+    a.adj().array() += vi.adj().array() * vi.val().array() * LOG_TWO;
   });
 }
 

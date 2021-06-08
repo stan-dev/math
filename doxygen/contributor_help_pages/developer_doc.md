@@ -2,6 +2,8 @@
 
 Thanks for checking out these docs. This is where you'll find information on contributing to the [Math library](https://github.com/stan-dev/math), how the source code is laid out, and other technical details that could help. This wiki focuses on things relevant to the Math library. There's also a separate [Stan wiki](https://github.com/stan-dev/stan/wiki) for things related to the language, services, algorithms.
 
+For the most up to date guide on contributing to Stan Math see the [Getting Started Guide](@ref getting_started), [Common Pitfalls](@ref common_pitfalls), and [Adding New Distributions Guide](@ref new_distribution).
+
 This wiki is a work in progress. If you have suggestions, please update the wiki or mention it on our forums on [this thread](https://discourse.mc-stan.org/t/what-doc-would-help-developers-of-the-math-library/).
 
 -----------------

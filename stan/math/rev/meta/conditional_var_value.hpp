@@ -3,19 +3,23 @@
 
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/meta/plain_type.hpp>
+#include <stan/math/prim/meta/promote_scalar_type.hpp>
 
 namespace stan {
 
 /**
- * Constructs a prim type or var_value from a scalar and a container.
+ * Conditionally construct a var_value container based on a scalar type. For
+ * var types as the scalar, the `var_value<Matrix>`'s inner type will have a
+ *  scalar of a double.
  * @tparam T_scalar Determines the scalar (var/double) of the type.
  * @tparam T_container Determines the container (matrix/vector/matrix_cl ...) of
- * the type. This must be a prim type.
+ * the type.
  */
 template <typename T_scalar, typename T_container, typename = void>
 struct conditional_var_value {
   using type = std::conditional_t<is_var<scalar_type_t<T_scalar>>::value,
-                                  math::var_value<plain_type_t<T_container>>,
+                                  math::var_value<math::promote_scalar_t<
+                                      double, plain_type_t<T_container>>>,
                                   plain_type_t<T_container>>;
 };
 template <typename T_scalar, typename T_container>

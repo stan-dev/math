@@ -28,8 +28,8 @@ auto sum_(Vec&& arg) {
 struct CosArg1 {
   template <typename T0, typename T1, typename... T_Args>
   inline Eigen::Matrix<stan::return_type_t<T1, T_Args...>, Eigen::Dynamic, 1>
-  operator()(const T0& t, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
-             std::ostream* msgs, const T_Args&... a) const {
+  operator()(const T0& t, const T1& y, std::ostream* msgs,
+             const T_Args&... a) const {
     std::vector<typename stan::return_type<T0, T_Args...>::type> vec
         = {sum_(a)...};
     Eigen::Matrix<stan::return_type_t<T1, T_Args...>, Eigen::Dynamic, 1> out(1);
@@ -41,8 +41,8 @@ struct CosArg1 {
 struct Cos2Arg {
   template <typename T0, typename T1, typename T2, typename T3>
   inline Eigen::Matrix<stan::return_type_t<T1, T2, T3>, Eigen::Dynamic, 1>
-  operator()(const T0& t, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
-             std::ostream* msgs, const T2& a, const T3& b) const {
+  operator()(const T0& t, const T1& y, std::ostream* msgs, const T2& a,
+             const T3& b) const {
     Eigen::Matrix<stan::return_type_t<T1, T2, T3>, Eigen::Dynamic, 1> out(1);
     out << stan::math::cos((sum_(a) + sum_(b)) * t);
     return out;
@@ -52,8 +52,8 @@ struct Cos2Arg {
 struct CosArgWrongSize {
   template <typename T0, typename T1, typename... T_Args>
   inline Eigen::Matrix<stan::return_type_t<T1, T_Args...>, Eigen::Dynamic, 1>
-  operator()(const T0& t, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
-             std::ostream* msgs, const T_Args&... a) const {
+  operator()(const T0& t, const T1& y, std::ostream* msgs,
+             const T_Args&... a) const {
     std::vector<typename stan::return_type<T0, T_Args...>::type> vec
         = {sum_(a)...};
     Eigen::Matrix<stan::return_type_t<T1, T_Args...>, Eigen::Dynamic, 1> out(2);
