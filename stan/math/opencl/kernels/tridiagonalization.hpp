@@ -210,7 +210,7 @@ const char* tridiagonalization_v2_kernel_code = STRINGIFY(
         }
         V[V_rows * j + gid + j] = acc;
       }
-      float work_per_group = (float)work / ngroups;
+      float work_per_group = (float)work / ngroups;  // NOLINT(readability/casting)
       int start = work_per_group * wgid;
       int end = work_per_group * (wgid + 1);
       __local double res_loc[LOCAL_SIZE_];
