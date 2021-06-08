@@ -279,8 +279,11 @@ class cvodes_integrator {
           CVodeSetUserData(cvodes_mem, reinterpret_cast<void*>(this)),
           "CVodeSetUserData");
 
-      cvodes_set_options(cvodes_mem, relative_tolerance_, absolute_tolerance_,
-                         max_num_steps_);
+      cvodes_set_options(cvodes_mem, max_num_steps_);
+
+      check_flag_sundials(CVodeSStolerances(cvodes_mem, relative_tolerance_,
+                                            absolute_tolerance_),
+                          "CVodeSStolerances");
 
       check_flag_sundials(CVodeSetLinearSolver(cvodes_mem, LS_, A_),
                           "CVodeSetLinearSolver");

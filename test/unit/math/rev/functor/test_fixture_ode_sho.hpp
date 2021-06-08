@@ -17,11 +17,10 @@
 template <typename T>
 struct harmonic_oscillator_ode_base {
   struct sho_square_fun {
-    template <typename T0, typename T1, typename T2>
+    template <typename T0, typename T1, typename T2, typename T3, typename T4>
     inline Eigen::Matrix<stan::return_type_t<T1, T2>, -1, 1> operator()(
-        const T0& t_in, const Eigen::Matrix<T1, -1, 1>& y_in,
-        std::ostream* msgs, const std::vector<T2>& theta,
-        const std::vector<double>& x, const std::vector<int>& x_int) const {
+        const T0& t_in, const T1& y_in, std::ostream* msgs, const T2& theta,
+        const T3& x, const T4& x_int) const {
       if (y_in.size() != 2)
         throw std::domain_error("Functor called with inconsistent state");
 
@@ -269,7 +268,6 @@ template <typename T>
 struct harmonic_oscillator_t0_ad_test
     : public harmonic_oscillator_ode_base<T>,
       public ODETestFixture<harmonic_oscillator_t0_ad_test<T>> {
-  stan::math::nested_rev_autodiff nested;
   stan::math::var t0v;
 
   harmonic_oscillator_t0_ad_test()
@@ -284,19 +282,24 @@ struct harmonic_oscillator_t0_ad_test
   }
 
   void test_t0_ad(double tol) {
+    stan::math::nested_rev_autodiff nested;
     auto res = apply_solver();
     res[0][0].grad();
     EXPECT_NEAR(t0v.adj(), -0.66360742442816977871, tol);
     nested.set_zero_all_adjoints();
+    t0v.adj() = 0.0;
     res[0][1].grad();
     EXPECT_NEAR(t0v.adj(), 0.23542843380353062344, tol);
     nested.set_zero_all_adjoints();
+    t0v.adj() = 0.0;
     res[1][0].grad();
     EXPECT_NEAR(t0v.adj(), -0.2464078910913158893, tol);
     nested.set_zero_all_adjoints();
+    t0v.adj() = 0.0;
     res[1][1].grad();
     EXPECT_NEAR(t0v.adj(), -0.38494826636037426937, tol);
     nested.set_zero_all_adjoints();
+    t0v.adj() = 0.0;
   }
 };
 
