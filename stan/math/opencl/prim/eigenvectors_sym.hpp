@@ -3,7 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/err/check_symmetric.hpp>
-#include <stan/math/opencl/symmetrc_eigensolver_cl.hpp>
+#include <stan/math/opencl/symmetric_eigensolver.hpp>
 
 namespace stan {
 namespace math {
