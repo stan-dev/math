@@ -107,8 +107,8 @@ const char* eigenvals_bisect_kernel_code = STRINGIFY(
     }
 
     /**
-     * Refines bounds on the i-th largest eigenvalue of LDL decomposition using
-     * bisection.
+     * Refines bounds on the i-th largest eigenvalue of a LDL decomposition
+     * using bisection.
      * @param l Subdiagonal of L.
      * @param d Diagonal of D.
      * @param[in,out] low_res Low bound on the eigenvalue.
@@ -322,7 +322,7 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
     }
 
     /**
-     * Calculates eigenvectors from twisted factorization T - shift * I = L+
+     * Calculates an eigenvector from twisted factorization T - shift * I = L+
      * * D+ * L+^T = U- * D- * U-^T.
      * @param l_plus Subdiagonal of the L+.
      * @param u_minus Superdiagonal of the U-.
@@ -341,6 +341,7 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
       double_d last = (double_d){1, 0};
       double_d last2 = (double_d){1, 0};
       double norm = 1;
+      // part of the eigenvector after the twist index
       for (int j = twist_idx + 1; j < n; j++) {
         if (last.high != 0 || last.low != 0) {
           last2 = last;
@@ -359,6 +360,7 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
       }
       last = (double_d){eigenvectors[twist_idx * n + gid], 0};
       last2 = (double_d){1, 0};
+      // part of the eigenvector before the twist index
       for (int j = twist_idx - 1; j >= 0; j--) {
         if (last.high != 0 || last.low != 0) {
           last2 = last;
@@ -375,6 +377,7 @@ const char* get_eigenvectors_kernel_code = STRINGIFY(
         norm += eigenvectors[j * n + gid] * eigenvectors[j * n + gid];
       }
       norm = 1 / sqrt(norm);
+      // normalize the eigenvector
       for (int j = 0; j < n; j++) {
         eigenvectors[j * n + gid] *= norm;
       }

@@ -18,19 +18,10 @@ namespace stan {
 namespace math {
 namespace internal {
 
-const double_d perturbation_range = 1e-20;
-
 using VectorXdd = Eigen::Matrix<double_d, -1, 1>;
 using MatrixXdd = Eigen::Matrix<double_d, -1, -1>;
 
-/**
- * NaN-favouring max. If either of arguments is NaN, returns NaN. Otherwise
- * returns larger of the arguments.
- * @param a first argument
- * @param b second argument
- * @return NaN or larger argument
- */
-inline double max_nan(double a, double b) { return isnan(a) || a > b ? a : b; }
+const double_d perturbation_range = 1e-20;
 
 /**
  * Generates a random number for perturbing a relatively robust representation
@@ -42,6 +33,40 @@ inline double_d get_random_perturbation_multiplier() {
   static const double_d almost_one = 1 - perturbation_range * 0.5;
   return almost_one + std::rand() * rand_norm;
 }
+
+/**
+ * Calculates bounds on eigenvalues of a symmetric tridiagonal matrix T using
+ * Gresgorin discs.
+ * @param diagonal Diagonal of T
+ * @param subdiagonal Subdiagonal of T
+ * @param[out] min_eigval Lower bound on eigenvalues.
+ * @param[out] max_eigval Upper bound on eigenvalues.
+ */
+void get_gresgorin(const Eigen::Ref<const Eigen::VectorXd> diagonal,
+                   const Eigen::Ref<const Eigen::VectorXd> subdiagonal,
+                   double& min_eigval, double& max_eigval) {
+  using std::fabs;
+  const int n = diagonal.size();
+  min_eigval = diagonal[0] - fabs(subdiagonal[0]);
+  max_eigval = diagonal[0] + fabs(subdiagonal[0]);
+  for (int i = 1; i < n - 1; i++) {
+    min_eigval = std::min(min_eigval, diagonal[i] - fabs(subdiagonal[i])
+                                          - fabs(subdiagonal[i - 1]));
+    max_eigval = std::max(max_eigval, diagonal[i] + fabs(subdiagonal[i])
+                                          + fabs(subdiagonal[i - 1]));
+  }
+  min_eigval = std::min(min_eigval, diagonal[n - 1] - fabs(subdiagonal[n - 2]));
+  max_eigval = std::max(max_eigval, diagonal[n - 1] + fabs(subdiagonal[n - 2]));
+}
+
+/**
+ * NaN-favouring max. If either of arguments is NaN, returns NaN. Otherwise
+ * returns larger of the arguments.
+ * @param a first argument
+ * @param b second argument
+ * @return NaN or larger argument
+ */
+inline double max_nan(double a, double b) { return isnan(a) || a > b ? a : b; }
 
 /**
  * Calculates LDL decomposition of a shifted triagonal matrix T. D is diagonal,
@@ -70,41 +95,35 @@ double get_ldl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
 }
 
 /**
- * Shifts a LDL decomposition. The algorithm is sometimes called stationary
- * quotients-differences with shifts (stqds). D and D+ are diagonal, L and L+
- * are lower unit triangular (diagonal elements are 1, all elements except
- * diagonal and subdiagonal are 0). L * D * L^T - shift * I = L+ * D * L+^T.
- * Also calculates element growth of D+: max(abs(D+)).
- * @param l Subdiagonal of L.
- * @param d Diagonal of D.
- * @param shift Shift.
- * @param[out] l_plus Subdiagonal of L+.
- * @param[out] d_plus Diagonal of D+.
- * @return Element growth.
+ * Finds a good value for shift of the initial LDL factorization T - shift * I =
+ * L * D * L^T.
+ * @param diagonal Diagonal of T.
+ * @param subdiagonal Subdiagonal of T.
+ * @param l0 Subdiagonal of L.
+ * @param d0 Diagonal of D.
+ * @param min_eigval Lower bound on eigenvalues of T.
+ * @param max_eigval High bound on eigenvalues of T
+ * @param max_ele_growth Maximum desired element growth.
+ * @return
  */
-double get_shifted_ldl(const VectorXdd& l, const VectorXdd& d,
-                       const double_d shift, VectorXdd& l_plus,
-                       VectorXdd& d_plus) {
-  using std::fabs;
-  using std::isinf;
-  const int n = l.size();
-  double_d s = -shift;
-  double element_growth = 0;
-  for (int i = 0; i < n; i++) {
-    d_plus[i] = s + d[i];
-    element_growth = max_nan(element_growth, fabs(d_plus[i].high));
-    l_plus[i] = l[i] * (d[i] / d_plus[i]);
-    if (isinf(d_plus[i]) && isinf(s)) {  // this happens if d_plus[i]==0 -> in
-                                         // next iteration d_plus==inf and
-                                         // s==inf
-      s = l[i] * l[i] * d[i] - shift;
-    } else {
-      s = l_plus[i] * l[i] * s - shift;
-    }
+double find_initial_shift(const Eigen::Ref<const Eigen::VectorXd> diagonal,
+                          const Eigen::Ref<const Eigen::VectorXd> subdiagonal,
+                          VectorXdd& l0, VectorXdd& d0, const double min_eigval,
+                          const double max_eigval,
+                          const double max_ele_growth) {
+  double shift = (max_eigval + min_eigval) * 0.5;
+  double element_growth = get_ldl(diagonal, subdiagonal, shift, l0, d0);
+  if (element_growth < max_ele_growth) {
+    return shift;
   }
-  d_plus[n] = s + d[n];
-  element_growth = max_nan(element_growth, fabs(d_plus[n].high));
-  return element_growth;
+  double plus = (max_eigval - min_eigval) * 1e-15;
+  while (!(element_growth < max_ele_growth)) {  // if condition was flipped it
+                                                // would be wrong for the case
+                                                // where element_growth is nan
+    plus *= -2;
+    element_growth = get_ldl(diagonal, subdiagonal, shift + plus, l0, d0);
+  }
+  return shift + plus;
 }
 
 /**
@@ -168,28 +187,41 @@ void eigenval_bisect_refine(const VectorXdd& l, const VectorXdd& d,
 }
 
 /**
- * Calculates bounds on eigenvalues of a symmetric tridiagonal matrix T using
- * Gresgorin discs.
- * @param diagonal Diagonal of T
- * @param subdiagonal Subdiagonal of T
- * @param[out] min_eigval Lower bound on eigenvalues.
- * @param[out] max_eigval Upper bound on eigenvalues.
+ * Shifts a LDL decomposition. The algorithm is sometimes called stationary
+ * quotients-differences with shifts (stqds). D and D+ are diagonal, L and L+
+ * are lower unit triangular (diagonal elements are 1, all elements except
+ * diagonal and subdiagonal are 0). L * D * L^T - shift * I = L+ * D * L+^T.
+ * Also calculates element growth of D+: max(abs(D+)).
+ * @param l Subdiagonal of L.
+ * @param d Diagonal of D.
+ * @param shift Shift.
+ * @param[out] l_plus Subdiagonal of L+.
+ * @param[out] d_plus Diagonal of D+.
+ * @return Element growth.
  */
-void get_gresgorin(const Eigen::Ref<const Eigen::VectorXd> diagonal,
-                   const Eigen::Ref<const Eigen::VectorXd> subdiagonal,
-                   double& min_eigval, double& max_eigval) {
+double get_shifted_ldl(const VectorXdd& l, const VectorXdd& d,
+                       const double_d shift, VectorXdd& l_plus,
+                       VectorXdd& d_plus) {
   using std::fabs;
-  const int n = diagonal.size();
-  min_eigval = diagonal[0] - fabs(subdiagonal[0]);
-  max_eigval = diagonal[0] + fabs(subdiagonal[0]);
-  for (int i = 1; i < n - 1; i++) {
-    min_eigval = std::min(min_eigval, diagonal[i] - fabs(subdiagonal[i])
-                                          - fabs(subdiagonal[i - 1]));
-    max_eigval = std::max(max_eigval, diagonal[i] + fabs(subdiagonal[i])
-                                          + fabs(subdiagonal[i - 1]));
+  using std::isinf;
+  const int n = l.size();
+  double_d s = -shift;
+  double element_growth = 0;
+  for (int i = 0; i < n; i++) {
+    d_plus[i] = s + d[i];
+    element_growth = max_nan(element_growth, fabs(d_plus[i].high));
+    l_plus[i] = l[i] * (d[i] / d_plus[i]);
+    if (isinf(d_plus[i]) && isinf(s)) {  // this happens if d_plus[i]==0 -> in
+                                         // next iteration d_plus==inf and
+                                         // s==inf
+      s = l[i] * l[i] * d[i] - shift;
+    } else {
+      s = l_plus[i] * l[i] * s - shift;
+    }
   }
-  min_eigval = std::min(min_eigval, diagonal[n - 1] - fabs(subdiagonal[n - 2]));
-  max_eigval = std::max(max_eigval, diagonal[n - 1] + fabs(subdiagonal[n - 2]));
+  d_plus[n] = s + d[n];
+  element_growth = max_nan(element_growth, fabs(d_plus[n].high));
+  return element_growth;
 }
 
 /**
@@ -200,8 +232,8 @@ void get_gresgorin(const Eigen::Ref<const Eigen::VectorXd> diagonal,
  * @param low Low bound on wanted shift.
  * @param high High bound on wanted shift.
  * @param max_ele_growth Maximum desired element growth. If no better options
- * are found it might be exceeded.
- * @param max_shift Maximal difference of shhift from wanted bounds.
+ * are found, it might be exceeded.
+ * @param max_shift Maximal difference of shift from wanted bounds.
  * @param[out] l2 Subdiagonal of L2.
  * @param[out] d2 Diagonal of D2.
  * @param[out] shift Shift.
@@ -238,38 +270,6 @@ void find_shift(const VectorXdd& l, const VectorXdd& d, const double_d low,
       }
     }
   }
-}
-
-/**
- * Finds a good value for shift of the initial LDL factorization T - shift * I =
- * L * D * L^T.
- * @param diagonal Diagonal of T.
- * @param subdiagonal Subdiagonal of T.
- * @param l0 Subdiagonal of L.
- * @param d0 Diagonal of D.
- * @param min_eigval Lower bound on eigenvalues of T.
- * @param max_eigval High bound on eigenvalues of T
- * @param max_ele_growth Maximum desired element growth.
- * @return
- */
-double find_initial_shift(const Eigen::Ref<const Eigen::VectorXd> diagonal,
-                          const Eigen::Ref<const Eigen::VectorXd> subdiagonal,
-                          VectorXdd& l0, VectorXdd& d0, const double min_eigval,
-                          const double max_eigval,
-                          const double max_ele_growth) {
-  double shift = (max_eigval + min_eigval) * 0.5;
-  double element_growth = get_ldl(diagonal, subdiagonal, shift, l0, d0);
-  if (element_growth < max_ele_growth) {
-    return shift;
-  }
-  double plus = (max_eigval - min_eigval) * 1e-15;
-  while (!(element_growth < max_ele_growth)) {  // if condition was flipped it
-                                                // would be wrong for the case
-                                                // where element_growth is nan
-    plus *= -2;
-    element_growth = get_ldl(diagonal, subdiagonal, shift + plus, l0, d0);
-  }
-  return shift + plus;
 }
 
 struct mrrr_task {

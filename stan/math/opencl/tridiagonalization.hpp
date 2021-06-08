@@ -90,7 +90,7 @@ void block_householder_tridiag_cl(const matrix_cl<double>& A,
  * Q*A.
  * @param r Block size. Affects only performance of the algorithm. Optimal value
  * depends on the size of A and cache of the processor. For larger matrices or
- * larger cache sizes larger value is optimal.
+ * larger cache sizes a larger value is optimal.
  */
 void block_apply_packed_Q_cl(const matrix_cl<double>& packed_cl,
                              matrix_cl<double>& A, const int r = 200) {

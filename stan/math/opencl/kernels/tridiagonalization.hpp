@@ -39,11 +39,11 @@ const char* tridiagonalization_householder_kernel_code = STRINGIFY(
       const int P_span = P_rows * (k + j + 1) - P_start;
       for (int i = lid; i < P_span; i += lsize) {
         double acc = 0;
-        if (j != 0) {
-          for (int l = 0; l < j; l++) {
-            acc += P[P_rows * (k + l) + k + j + i] * V[V_rows * l + j - 1]
-                   + V[V_rows * l + j - 1 + i] * P[P_rows * (k + l) + k + j];
-          }
+        // apply previous householder reflections from current block to the
+        // column we are making the Householder vector from
+        for (int l = 0; l < j; l++) {
+          acc += P[P_rows * (k + l) + k + j + i] * V[V_rows * l + j - 1]
+                 + V[V_rows * l + j - 1 + i] * P[P_rows * (k + l) + k + j];
         }
         double tmp = P[P_start + i] - acc;
         P[P_start + i] = tmp;
@@ -51,6 +51,7 @@ const char* tridiagonalization_householder_kernel_code = STRINGIFY(
           q += tmp * tmp;
         }
       }
+      // calculate column norm between threads
       __local double q_local[LOCAL_SIZE_];
       q_local[lid] = q;
       barrier(CLK_LOCAL_MEM_FENCE);
@@ -68,6 +69,7 @@ const char* tridiagonalization_householder_kernel_code = STRINGIFY(
       if (lid == 0) {
         q = q_local[0];
         double p1 = P[P_start + 1];
+        // make Householder vector
         alpha = -copysign(sqrt(q), P[P_start]);
         q -= p1 * p1;
         p1 -= alpha;
@@ -83,6 +85,7 @@ const char* tridiagonalization_householder_kernel_code = STRINGIFY(
       alpha = q_local[1];
       if (q != 0) {
         double multi = sqrt(2.) / q;
+        // normalize the Householder vector
         for (int i = lid + 1; i < P_span; i += lsize) {
           P[P_start + i] *= multi;
         }
@@ -241,7 +244,7 @@ const char* tridiagonalization_v2_kernel_code = STRINGIFY(
 const char* tridiagonalization_v3_kernel_code = STRINGIFY(
     // \endcond
     /**
-     * Third part in constructing vector v: v-=0.5*(v^T*u)*u, where u is
+     * Third part in constructing vector v: v-=0.5*(v^T*u)*u, where u is the
      * householder vector.
      * @param[in,out] P packed matrix being constructed
      * @param[in,out] V matrix V
