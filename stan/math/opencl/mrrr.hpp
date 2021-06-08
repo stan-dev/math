@@ -441,7 +441,7 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
 /**
  * Calculates eigenvalues and eigenvectors of a tridiagonal matrix T using MRRR
  * algorithm. If a subdiagonal element is close to zero compared to neighbors on
- * diagonal the problem can be split into smaller ones.
+ * diagonal, the problem can be split into smaller ones.
  * @param diagonal Diagonal of of T.
  * @param subdiagonal Subdiagonal of T.
  * @param[out] eigenvalues Eigenvlues.
