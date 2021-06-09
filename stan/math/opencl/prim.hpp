@@ -97,6 +97,7 @@
 #include <stan/math/opencl/to_ref_for_opencl.hpp>
 #include <stan/math/opencl/value_type.hpp>
 #include <stan/math/opencl/zeros_strict_tri.hpp>
+#include <stan/math/opencl/qr_decomposition.hpp>
 
 #include <stan/math/opencl/prim/add_diag.hpp>
 #include <stan/math/opencl/prim/append_array.hpp>
@@ -161,6 +162,7 @@
 #include <stan/math/opencl/prim/gumbel_lcdf.hpp>
 #include <stan/math/opencl/prim/gumbel_lpdf.hpp>
 #include <stan/math/opencl/prim/head.hpp>
+#include <stan/math/opencl/prim/identity_matrix.hpp>
 #include <stan/math/opencl/prim/inv.hpp>
 #include <stan/math/opencl/prim/inv_chi_square_lpdf.hpp>
 #include <stan/math/opencl/prim/inv_cloglog.hpp>
@@ -210,6 +212,10 @@
 #include <stan/math/opencl/prim/poisson_log_lpmf.hpp>
 #include <stan/math/opencl/prim/poisson_lpmf.hpp>
 #include <stan/math/opencl/prim/prod.hpp>
+#include <stan/math/opencl/prim/qr_Q.hpp>
+#include <stan/math/opencl/prim/qr_R.hpp>
+#include <stan/math/opencl/prim/qr_thin_Q.hpp>
+#include <stan/math/opencl/prim/qr_thin_R.hpp>
 #include <stan/math/opencl/prim/rank.hpp>
 #include <stan/math/opencl/prim/rayleigh_cdf.hpp>
 #include <stan/math/opencl/prim/rayleigh_lccdf.hpp>

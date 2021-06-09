@@ -164,7 +164,7 @@ TEST(KernelGenerator, two_blocks_of_same_expression) {
   EXPECT_MATRIX_NEAR(res, correct, 1e-9);
 }
 
-TEST(MathMatrixCL, block_view_test) {
+TEST(KernelGenerator, block_view_test) {
   using stan::math::block_zero_based;
   matrix_cl<double> m(4, 4, stan::math::matrix_cl_view::Diagonal);
   matrix_cl<double> res = block_zero_based(m, 0, 0, 2, 2);
@@ -180,6 +180,49 @@ TEST(MathMatrixCL, block_view_test) {
 
   res = block_zero_based(cos(m), 1, 0, 2, 2);
   EXPECT_EQ(res.view(), stan::math::matrix_cl_view::Entire);
+}
+
+TEST(KernelGenerator, block_lhs_view_test) {
+  using stan::math::block_zero_based;
+  matrix_cl<double> m(4, 4, stan::math::matrix_cl_view::Diagonal);
+  matrix_cl<double> l(2, 2, stan::math::matrix_cl_view::Lower);
+  block_zero_based(m, 1, 0, 2, 2) = l;
+  EXPECT_EQ(m.view(), stan::math::matrix_cl_view::Lower);
+  m.view(stan::math::matrix_cl_view::Diagonal);
+  block_zero_based(m, 0, 1, 2, 2) = l;
+  EXPECT_EQ(m.view(), stan::math::matrix_cl_view::Upper);
+  m.view(stan::math::matrix_cl_view::Diagonal);
+  block_zero_based(m, 0, 0, 2, 2) = l;
+  EXPECT_EQ(m.view(), stan::math::matrix_cl_view::Lower);
+
+  matrix_cl<double> b(7, 7, stan::math::matrix_cl_view::Diagonal);
+  m = matrix_cl<double>(4, 5);
+  m.view(stan::math::matrix_cl_view::Entire);
+  block_zero_based(m, 0, 0, 3, 5) = block_zero_based(b, 0, 0, 3, 5);
+  EXPECT_EQ(m.view(), stan::math::matrix_cl_view::Entire);
+  m.view(stan::math::matrix_cl_view::Entire);
+  block_zero_based(m, 0, 0, 4, 4) = block_zero_based(b, 0, 0, 4, 4);
+  EXPECT_EQ(m.view(), stan::math::matrix_cl_view::Upper);
+  m.view(stan::math::matrix_cl_view::Entire);
+  block_zero_based(m, 1, 0, 3, 5) = block_zero_based(b, 1, 0, 3, 5);
+  EXPECT_EQ(m.view(), stan::math::matrix_cl_view::Upper);
+  m.view(stan::math::matrix_cl_view::Entire);
+  block_zero_based(m, 0, 1, 4, 4) = block_zero_based(b, 0, 1, 4, 4);
+  EXPECT_EQ(m.view(), stan::math::matrix_cl_view::Lower);
+
+  m = matrix_cl<double>(7, 3);
+  m.view(stan::math::matrix_cl_view::Entire);
+  block_zero_based(m, 0, 0, 6, 3) = block_zero_based(b, 0, 0, 6, 3);
+  EXPECT_EQ(m.view(), stan::math::matrix_cl_view::Lower);
+  m.view(stan::math::matrix_cl_view::Entire);
+  block_zero_based(m, 0, 0, 7, 2) = block_zero_based(b, 0, 0, 7, 2);
+  EXPECT_EQ(m.view(), stan::math::matrix_cl_view::Entire);
+  m.view(stan::math::matrix_cl_view::Entire);
+  block_zero_based(m, 1, 0, 6, 3) = block_zero_based(b, 1, 0, 6, 3);
+  EXPECT_EQ(m.view(), stan::math::matrix_cl_view::Upper);
+  m.view(stan::math::matrix_cl_view::Entire);
+  block_zero_based(m, 0, 1, 7, 2) = block_zero_based(b, 0, 1, 7, 2);
+  EXPECT_EQ(m.view(), stan::math::matrix_cl_view::Lower);
 }
 
 #endif
