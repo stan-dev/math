@@ -274,7 +274,6 @@ const char* double_d_src = STRINGIFY(
         } inline bool ge_d_dd(double a, double_d b) {
           return !lt_d_dd(a, b);
         } inline bool ge_dd_d(double_d a, double b) { return !lt_dd_d(a, b); }
-
         // \cond
     );
 // \endcond
