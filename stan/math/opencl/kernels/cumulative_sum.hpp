@@ -11,111 +11,108 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 
-static const char* cumulative_sum1_kernel_code = STRINGIFY(
-    __kernel void cumulative_sum1(__global SCAL *out_wgs,
-                                  __global SCAL *out_threads, __global SCAL *in,
-                                  int size) {
-      const int gid = get_global_id(0);
-      const int lid = get_local_id(0);
-      const int lsize = get_local_size(0);
-      const int wg_id = get_group_id(0);
-      const int gsize = get_global_size(0);
+static const char *cumulative_sum1_kernel_code
+    = STRINGIFY(__kernel void cumulative_sum1(__global SCAL *out_wgs,
+                                              __global SCAL *out_threads,
+                                              __global SCAL *in, int size) {
+        const int gid = get_global_id(0);
+        const int lid = get_local_id(0);
+        const int lsize = get_local_size(0);
+        const int wg_id = get_group_id(0);
+        const int gsize = get_global_size(0);
 
-      int start = (int)((long)gid * size / gsize);
-      int end = (int)((long)(gid + 1) * size / gsize);
-      __local SCAL local_storage[LOCAL_SIZE_];
+        int start = (int)((long)gid * size / gsize);
+        int end = (int)((long)(gid + 1) * size / gsize);
+        __local SCAL local_storage[LOCAL_SIZE_];
 
-      SCAL acc = 0;
-      if (start != end) {
-        acc = in[start];
-        for (int i = start + 1; i < end; i++) {
-          acc += in[i];
+        SCAL acc = 0;
+        if (start != end) {
+          acc = in[start];
+          for (int i = start + 1; i < end; i++) {
+            acc += in[i];
+          }
         }
-      }
-      for (int step = 1; step < lsize; step *= REDUCTION_STEP_SIZE) {
-        local_storage[lid] = acc;
-        barrier(CLK_LOCAL_MEM_FENCE);
-        for (int i = 1; i < REDUCTION_STEP_SIZE && step * i <= lid; i++) {
-          acc += local_storage[lid - step * i];
+        for (int step = 1; step < lsize; step *= REDUCTION_STEP_SIZE) {
+          local_storage[lid] = acc;
+          barrier(CLK_LOCAL_MEM_FENCE);
+          for (int i = 1; i < REDUCTION_STEP_SIZE && step * i <= lid; i++) {
+            acc += local_storage[lid - step * i];
+          }
+          barrier(CLK_LOCAL_MEM_FENCE);
         }
-        barrier(CLK_LOCAL_MEM_FENCE);
-      }
-      out_threads[gid] = acc;
-      if (lid == LOCAL_SIZE_ - 1) {
-        out_wgs[wg_id] = acc;
-      }
-    }
-);
-
-static const char* cumulative_sum2_kernel_code = STRINGIFY(
-    __kernel void cumulative_sum2(__global SCAL *data, int size) {
-      const int gid = get_global_id(0);
-      const int gsize = get_global_size(0);
-
-      int start = (int)((long)gid * size / gsize);
-      int end = (int)((long)(gid + 1) * size / gsize);
-      __local SCAL local_storage[LOCAL_SIZE_];
-
-      SCAL acc;
-      if (start == end) {
-        acc = 0;
-      } else {
-        acc = data[start];
-        for (int i = start + 1; i < end; i++) {
-          acc += data[i];
+        out_threads[gid] = acc;
+        if (lid == LOCAL_SIZE_ - 1) {
+          out_wgs[wg_id] = acc;
         }
-      }
-      local_storage[gid] = acc;
-      barrier(CLK_LOCAL_MEM_FENCE);
-      for (int step = 1; step < gsize; step *= REDUCTION_STEP_SIZE) {
-        for (int i = 1; i < REDUCTION_STEP_SIZE && step * i <= gid; i++) {
-          acc += local_storage[gid - step * i];
-        }
-        barrier(CLK_LOCAL_MEM_FENCE);
-        local_storage[gid] = acc;
-        barrier(CLK_LOCAL_MEM_FENCE);
-      }
-      if (start != end) {
-        if (gid == 0) {
+      });
+
+static const char *cumulative_sum2_kernel_code
+    = STRINGIFY(__kernel void cumulative_sum2(__global SCAL *data, int size) {
+        const int gid = get_global_id(0);
+        const int gsize = get_global_size(0);
+
+        int start = (int)((long)gid * size / gsize);
+        int end = (int)((long)(gid + 1) * size / gsize);
+        __local SCAL local_storage[LOCAL_SIZE_];
+
+        SCAL acc;
+        if (start == end) {
           acc = 0;
         } else {
-          acc = local_storage[gid - 1];
+          acc = data[start];
+          for (int i = start + 1; i < end; i++) {
+            acc += data[i];
+          }
+        }
+        local_storage[gid] = acc;
+        barrier(CLK_LOCAL_MEM_FENCE);
+        for (int step = 1; step < gsize; step *= REDUCTION_STEP_SIZE) {
+          for (int i = 1; i < REDUCTION_STEP_SIZE && step * i <= gid; i++) {
+            acc += local_storage[gid - step * i];
+          }
+          barrier(CLK_LOCAL_MEM_FENCE);
+          local_storage[gid] = acc;
+          barrier(CLK_LOCAL_MEM_FENCE);
+        }
+        if (start != end) {
+          if (gid == 0) {
+            acc = 0;
+          } else {
+            acc = local_storage[gid - 1];
+          }
+          for (int i = start; i < end; i++) {
+            acc += data[i];
+            data[i] = acc;
+          }
+        }
+      });
+
+static const char *cumulative_sum3_kernel_code
+    = STRINGIFY(__kernel void cumulative_sum3(
+        __global SCAL *out, __global SCAL *in_data, __global SCAL *in_threads,
+        __global SCAL *in_wgs, int size) {
+        const int gid = get_global_id(0);
+        const int lid = get_local_id(0);
+        const int lsize = get_local_size(0);
+        const int wg_id = get_group_id(0);
+        const int gsize = get_global_size(0);
+
+        int start = (int)((long)gid * size / gsize);
+        int end = (int)((long)(gid + 1) * size / gsize);
+        __local SCAL local_storage[LOCAL_SIZE_];
+
+        SCAL acc = 0;
+        if (wg_id != 0) {
+          acc = in_wgs[wg_id - 1];
+        }
+        if (lid != 0) {
+          acc += in_threads[gid - 1];
         }
         for (int i = start; i < end; i++) {
-          acc += data[i];
-          data[i] = acc;
+          acc += in_data[i];
+          out[i] = acc;
         }
-      }
-    }
-);
-
-static const char* cumulative_sum3_kernel_code = STRINGIFY(
-    __kernel void cumulative_sum3(__global SCAL *out, __global SCAL *in_data,
-                                  __global SCAL *in_threads,
-                                  __global SCAL *in_wgs, int size) {
-      const int gid = get_global_id(0);
-      const int lid = get_local_id(0);
-      const int lsize = get_local_size(0);
-      const int wg_id = get_group_id(0);
-      const int gsize = get_global_size(0);
-
-      int start = (int)((long)gid * size / gsize);
-      int end = (int)((long)(gid + 1) * size / gsize);
-      __local SCAL local_storage[LOCAL_SIZE_];
-
-      SCAL acc = 0;
-      if (wg_id != 0) {
-        acc = in_wgs[wg_id - 1];
-      }
-      if (lid != 0) {
-        acc += in_threads[gid - 1];
-      }
-      for (int i = start; i < end; i++) {
-        acc += in_data[i];
-        out[i] = acc;
-      }
-    }
-);
+      });
 
 /**
  * struct containing cumulative_sum kernels, grouped by scalar type.
