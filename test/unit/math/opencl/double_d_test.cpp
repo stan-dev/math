@@ -19,20 +19,20 @@ TEST(double_d, add_dd_dd_test) {
   // simple
   double_d res = add_dd_dd(a, a);
   EXPECT_NORMALIZED(res);
-  EXPECT_TRUE(res.high, 2.0);
-  EXPECT_TRUE(res.low, eps);
+  EXPECT_EQ(res.high, 2.0);
+  EXPECT_EQ(res.low, eps);
 
   // carry
   res = add_dd_dd(a, c);
   EXPECT_NORMALIZED(res);
-  EXPECT_TRUE(res.high, 1.0 + eps);
-  EXPECT_TRUE(res.low, 0.0);
+  EXPECT_EQ(res.high, 1.0 + eps);
+  EXPECT_EQ(res.low, 0.0);
 
   // cancelation
   res = add_dd_dd(a, d);
   EXPECT_NORMALIZED(res);
-  EXPECT_TRUE(res.high, eps * h_eps);
-  EXPECT_TRUE(res.low, 0.0);
+  EXPECT_EQ(res.high, eps * h_eps);
+  EXPECT_EQ(res.low, 0.0);
 }
 
 TEST(double_d, mul_dd_dd_test) {
@@ -48,20 +48,20 @@ TEST(double_d, mul_dd_dd_test) {
   // simple
   double_d res = mul_dd_dd(a, b);
   EXPECT_NORMALIZED(res);
-  EXPECT_TRUE(res.high, h_eps);
-  EXPECT_TRUE(res.low, h_eps * h_eps * 0.001);
+  EXPECT_EQ(res.high, h_eps);
+  EXPECT_EQ(res.low, h_eps * h_eps * 0.001);
 
   // carry
   res = mul_dd_dd(c, c);
   EXPECT_NORMALIZED(res);
-  EXPECT_TRUE(res.high, 1.0 + eps);
-  EXPECT_TRUE(res.low, 0.0);
+  EXPECT_EQ(res.high, 1.0 + eps);
+  EXPECT_EQ(res.low, 0.0);
 
   // cancelation
   res = mul_dd_dd(c, d);
   EXPECT_NORMALIZED(res);
-  EXPECT_TRUE(res.high, 1.0);
-  EXPECT_TRUE(res.low, 0.0);
+  EXPECT_EQ(res.high, 1.0);
+  EXPECT_EQ(res.low, 0.0);
 }
 
 TEST(double_d, div_dd_dd_test) {
@@ -77,18 +77,18 @@ TEST(double_d, div_dd_dd_test) {
   // simple
   double_d res = div_dd_dd(a, a);
   EXPECT_NORMALIZED(res);
-  EXPECT_TRUE(res.high, 1.0);
-  EXPECT_TRUE(res.low, 0.0);
+  EXPECT_EQ(res.high, 1.0);
+  EXPECT_EQ(res.low, 0.0);
 
   res = div_dd_dd(a, b);
   EXPECT_NORMALIZED(res);
-  EXPECT_TRUE(res.high, 1.0);
-  EXPECT_TRUE(res.low, h_eps * eps);
+  EXPECT_EQ(res.high, 1.0);
+  EXPECT_EQ(res.low, h_eps * eps);
 
   // div by zero
   res = div_dd_dd(a, c);
-  EXPECT_TRUE(res.high, std::numeric_limits<double>::infinity());
-  EXPECT_TRUE(res.low, 0);
+  EXPECT_EQ(res.high, std::numeric_limits<double>::infinity());
+  EXPECT_EQ(res.low, 0);
 }
 
 // this is the best test we have, but it relies on the nonstandard gcc extension
