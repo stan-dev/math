@@ -11,19 +11,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 
-// \cond
-static const std::string cumulative_sum1_kernel_code = STRINGIFY(
-    // \endcond
-    /** \ingroup opencl_kernels
-     * First kernel of the cumulative sum implementation. Each thread sums the
-     * assigned elements and threads within same work group add their results
-     * together.
-     *
-     * @param[out] out_wgs results from each work group
-     * @param[out] out_threads results for each thread
-     * @param[in] in input data
-     * @param size size number of elements in the input
-     */
+static const char* cumulative_sum1_kernel_code = STRINGIFY(
     __kernel void cumulative_sum1(__global SCAL *out_wgs,
                                   __global SCAL *out_threads, __global SCAL *in,
                                   int size) {
@@ -33,8 +21,8 @@ static const std::string cumulative_sum1_kernel_code = STRINGIFY(
       const int wg_id = get_group_id(0);
       const int gsize = get_global_size(0);
 
-      int start = (int)((long)gid * size / gsize);      // NOLINT
-      int end = (int)((long)(gid + 1) * size / gsize);  // NOLINT
+      int start = (int)((long)gid * size / gsize);
+      int end = (int)((long)(gid + 1) * size / gsize);
       __local SCAL local_storage[LOCAL_SIZE_];
 
       SCAL acc = 0;
@@ -57,27 +45,15 @@ static const std::string cumulative_sum1_kernel_code = STRINGIFY(
         out_wgs[wg_id] = acc;
       }
     }
-    // \cond
 );
-// \endcond
 
-// \cond
-static const std::string cumulative_sum2_kernel_code = STRINGIFY(
-    // \endcond
-    /** \ingroup opencl_kernels
-     * Second kernel of the cumulative sum implementation. Calculates prefix sum
-     * of given data in place using a single work group (must be run with a
-     * single work group).
-     *
-     * @param[in, out] data data to calculate cumulative sum of
-     * @param size size number of elements in the input
-     */
+static const char* cumulative_sum2_kernel_code = STRINGIFY(
     __kernel void cumulative_sum2(__global SCAL *data, int size) {
       const int gid = get_global_id(0);
       const int gsize = get_global_size(0);
 
-      int start = (int)((long)gid * size / gsize);      // NOLINT
-      int end = (int)((long)(gid + 1) * size / gsize);  // NOLINT
+      int start = (int)((long)gid * size / gsize);
+      int end = (int)((long)(gid + 1) * size / gsize);
       __local SCAL local_storage[LOCAL_SIZE_];
 
       SCAL acc;
@@ -111,27 +87,9 @@ static const std::string cumulative_sum2_kernel_code = STRINGIFY(
         }
       }
     }
-    // \cond
 );
-// \endcond
 
-// \cond
-static const std::string cumulative_sum3_kernel_code = STRINGIFY(
-    // \endcond
-    /** \ingroup opencl_kernels
-     * Third kernel of the cumulative sum implementation. Given sums of threads
-     * and cumulative sum of those calculates cumulative sum of given array.
-     * Must be run with the same number of threads and work groups as the first
-     * cumulative sum kernel.
-     *
-     * @param[out] out cumulatively summed input
-     * @param[out] in_data input data
-     * @param[in] in_threads summed results from each thread from the first
-     * kernel
-     * @param[in] in_wgs cumulatively summed results from each work group
-     * (calculated by previous two kernels)
-     * @param size size number of elements in the input
-     */
+static const char* cumulative_sum3_kernel_code = STRINGIFY(
     __kernel void cumulative_sum3(__global SCAL *out, __global SCAL *in_data,
                                   __global SCAL *in_threads,
                                   __global SCAL *in_wgs, int size) {
@@ -141,8 +99,8 @@ static const std::string cumulative_sum3_kernel_code = STRINGIFY(
       const int wg_id = get_group_id(0);
       const int gsize = get_global_size(0);
 
-      int start = (int)((long)gid * size / gsize);      // NOLINT
-      int end = (int)((long)(gid + 1) * size / gsize);  // NOLINT
+      int start = (int)((long)gid * size / gsize);
+      int end = (int)((long)(gid + 1) * size / gsize);
       __local SCAL local_storage[LOCAL_SIZE_];
 
       SCAL acc = 0;
@@ -157,9 +115,7 @@ static const std::string cumulative_sum3_kernel_code = STRINGIFY(
         out[i] = acc;
       }
     }
-    // \cond
 );
-// \endcond
 
 /**
  * struct containing cumulative_sum kernels, grouped by scalar type.
