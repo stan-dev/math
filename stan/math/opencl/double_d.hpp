@@ -275,7 +275,7 @@ const char* double_d_src = STRINGIFY(
           return !lt_d_dd(a, b);
         } inline bool ge_dd_d(double_d a, double b) { return !lt_dd_d(a, b); }
         // \cond
-    ); //NOLINT(whitespace/parens)
+    );  // NOLINT(whitespace/parens)
 // \endcond
 
 inline double_d operator+(double_d a, double b) { return add_dd_d(a, b); }
