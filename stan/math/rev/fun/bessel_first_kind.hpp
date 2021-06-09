@@ -18,6 +18,9 @@ inline var bessel_first_kind(int v, const var& a) {
                            });
 }
 
+/**
+ * Overload with `var_value<Matrix>` for `int` and `std::vector<int>`
+ */
 template <typename T1, typename T2, require_st_integral<T1>* = nullptr,
           require_eigen_t<T2>* = nullptr>
 inline auto bessel_first_kind(const T1& v, const var_value<T2>& a) {
@@ -31,6 +34,7 @@ inline auto bessel_first_kind(const T1& v, const var_value<T2>& a) {
         a.adj().array() += vi.adj().array() * precomp_bessel;
       });
 }
+
 
 }  // namespace math
 }  // namespace stan
