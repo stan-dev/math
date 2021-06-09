@@ -35,7 +35,6 @@ inline auto bessel_first_kind(const T1& v, const var_value<T2>& a) {
       });
 }
 
-
 }  // namespace math
 }  // namespace stan
 #endif

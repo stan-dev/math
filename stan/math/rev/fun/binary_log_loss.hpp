@@ -73,9 +73,9 @@ inline auto binary_log_loss(int y, const var_value<Mat>& y_hat) {
 /**
  * Overload for std::vector<int> and `var_value<Vector>`
  */
-template <typename StdVec, typename Mat, require_eigen_t<Mat>* = nullptr, require_st_integral<StdVec>* = nullptr>
-inline auto binary_log_loss(const StdVec& y,
-                            const var_value<Mat>& y_hat) {
+template <typename StdVec, typename Mat, require_eigen_t<Mat>* = nullptr,
+          require_st_integral<StdVec>* = nullptr>
+inline auto binary_log_loss(const StdVec& y, const var_value<Mat>& y_hat) {
   auto arena_y = to_arena(as_array_or_scalar(y).template cast<bool>());
   auto ret_val
       = -(arena_y == 0)
@@ -87,7 +87,6 @@ inline auto binary_log_loss(const StdVec& y,
                  .select((1.0 - y_hat.val().array()), -y_hat.val().array());
   });
 }
-
 
 }  // namespace math
 }  // namespace stan

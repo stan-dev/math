@@ -11,7 +11,6 @@
 namespace stan {
 namespace math {
 
-
 /**
  * Specialisation for use with two Eigen inputs. Eigen's binaryExpr framework
  * is used for more efficient indexing of both row- and column-major inputs
@@ -131,7 +130,8 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
  * Note: The return expresssion needs to be evaluated, otherwise the captured
  *         function and scalar fall out of scope.
  */
-template <typename T1, typename T2, typename F, require_var_matrix_t<T1>* = nullptr,
+template <typename T1, typename T2, typename F,
+          require_var_matrix_t<T1>* = nullptr,
           require_stan_scalar_t<T2>* = nullptr>
 inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
   return f(x, y);
@@ -156,11 +156,11 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
  *         function and scalar fall out of scope.
  */
 template <typename T1, typename T2, typename F,
-          require_stan_scalar_t<T1>* = nullptr, require_var_matrix_t<T2>* = nullptr>
+          require_stan_scalar_t<T1>* = nullptr,
+          require_var_matrix_t<T2>* = nullptr>
 inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
   return f(x, y);
 }
-
 
 /**
  * Specialisation for use when the first input is a nested std::vector and the
@@ -233,8 +233,9 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
  * @return std::vector with result of applying functor to inputs.
  */
 template <typename T1, typename T2, typename F,
-          require_any_var_matrix_t<T1, T2>* =nullptr>
-inline auto apply_scalar_binary(const std::vector<T1>& x, const std::vector<T2>& y, const F& f) {
+          require_any_var_matrix_t<T1, T2>* = nullptr>
+inline auto apply_scalar_binary(const std::vector<T1>& x,
+                                const std::vector<T2>& y, const F& f) {
   check_matching_sizes("Binary function", "x", x, "y", y);
   using T_return = plain_type_t<decltype(apply_scalar_binary(x[0], y[0], f))>;
   size_t y_size = y.size();

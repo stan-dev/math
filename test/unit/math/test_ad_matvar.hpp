@@ -31,9 +31,10 @@ namespace test {
  * @param y Second argument to compare
  * @param tols Tolerances for comparison
  */
-template <typename T1, typename T2,
-  require_all_not_std_vector_t<value_type_t<T1>, value_type_t<T2>>* = nullptr,
-          require_all_std_vector_st<is_var, T1, T2>* = nullptr>
+template <
+    typename T1, typename T2,
+    require_all_not_std_vector_t<value_type_t<T1>, value_type_t<T2>>* = nullptr,
+    require_all_std_vector_st<is_var, T1, T2>* = nullptr>
 void expect_near_rel_matvar(const std::string& message, T1&& x, T2&& y,
                             const ad_tolerances& tols) {
   stan::math::check_size_match("expect_near_rel_var", "x", x.size(), "y",
@@ -49,7 +50,7 @@ void expect_near_rel_matvar(const std::string& message, T1&& x, T2&& y,
 }
 
 template <typename T1, typename T2,
-require_all_std_vector_vt<is_std_vector, T1, T2>* = nullptr,
+          require_all_std_vector_vt<is_std_vector, T1, T2>* = nullptr,
           require_all_std_vector_st<is_var, T1, T2>* = nullptr>
 void expect_near_rel_matvar(const std::string& message, T1&& x, T2&& y,
                             const ad_tolerances& tols) {
@@ -57,8 +58,8 @@ void expect_near_rel_matvar(const std::string& message, T1&& x, T2&& y,
                                y.size());
   for (size_t i = 0; i < x.size(); ++i) {
     expect_near_rel_matvar(
-        message + std::string(" elements at i = ") + std::to_string(i),
-        x[i], y[i], tols);
+        message + std::string(" elements at i = ") + std::to_string(i), x[i],
+        y[i], tols);
   }
 }
 
@@ -384,7 +385,8 @@ auto make_varmat_compatible(const std::vector<S>& x) {
 template <typename T, typename S, require_var_matrix_t<T>* = nullptr,
           require_st_arithmetic<S>* = nullptr>
 auto make_varmat_compatible(const std::vector<std::vector<S>>& x) {
-  using vec_var_mat = std::vector<std::vector<stan::math::var_value<plain_type_t<S>>>>;
+  using vec_var_mat
+      = std::vector<std::vector<stan::math::var_value<plain_type_t<S>>>>;
   vec_var_mat A_vec_vm;
   for (auto&& xi : x) {
     A_vec_vm.push_back(make_varmat_compatible<T>(xi));
@@ -860,9 +862,11 @@ void expect_ad_vector_matvar(const F& f, const EigVec& x) {
  * @param f Function to test
  * @param x Test input
  */
-template <typename F, typename T1, typename T2, require_all_eigen_t<T1, T2>* = nullptr, require_all_not_st_integral<T1, T2>* = nullptr>
+template <typename F, typename T1, typename T2,
+          require_all_eigen_t<T1, T2>* = nullptr,
+          require_all_not_st_integral<T1, T2>* = nullptr>
 void expect_ad_vectorized_matvar(const ad_tolerances& tols, const F& f,
-                             const T1& x, const T2& y) {
+                                 const T1& x, const T2& y) {
   auto x_scal = x.coeff(0, 0);
   auto y_scal = y.coeff(0, 0);
   auto x_vec = x.col(0).eval();
@@ -870,55 +874,73 @@ void expect_ad_vectorized_matvar(const ad_tolerances& tols, const F& f,
   auto x_rowvec = x.col(0).eval();
   auto y_rowvec = y.col(0).eval();
 
-
-  std::vector<value_type_t<T1>> x_scal_stdvec {x_scal, x_scal};
-  std::vector<value_type_t<T2>> y_scal_stdvec {y_scal, y_scal};
-  std::vector<std::vector<value_type_t<T1>>> x_scal_stdvec_stdvec {x_scal_stdvec, x_scal_stdvec};
-  std::vector<std::vector<value_type_t<T2>>> y_scal_stdvec_stdvec {x_scal_stdvec, x_scal_stdvec};
+  std::vector<value_type_t<T1>> x_scal_stdvec{x_scal, x_scal};
+  std::vector<value_type_t<T2>> y_scal_stdvec{y_scal, y_scal};
+  std::vector<std::vector<value_type_t<T1>>> x_scal_stdvec_stdvec{
+      x_scal_stdvec, x_scal_stdvec};
+  std::vector<std::vector<value_type_t<T2>>> y_scal_stdvec_stdvec{
+      x_scal_stdvec, x_scal_stdvec};
   std::vector<Eigen::MatrixXd> x_mat_stdvec{x, x};
   std::vector<Eigen::MatrixXd> y_mat_stdvec{y, y};
-  std::vector<std::vector<Eigen::MatrixXd>> x_mat_stdvec_stdvec{x_mat_stdvec, x_mat_stdvec};
-  std::vector<std::vector<Eigen::MatrixXd>> y_mat_stdvec_stdvec{y_mat_stdvec, y_mat_stdvec};
-  expect_ad_matvar(tols, f, x_scal, y); // scal, mat
-  expect_ad_matvar(tols, f, x, y_scal); // mat, scal
-  expect_ad_matvar(tols, f, x, y); // mat, mat
-  expect_ad_matvar(tols, f, x_mat_stdvec, y_mat_stdvec); // nest<mat>, nest<mat>
-  expect_ad_matvar(tols, f, x_mat_stdvec, y_scal); // nest<mat>, scal
-  expect_ad_matvar(tols, f, x_scal, y_mat_stdvec); // scal, nest<mat>
-  expect_ad_matvar(tols, f, x_mat_stdvec_stdvec, y_mat_stdvec_stdvec); // nest<nest<mat>>, nest<nest<mat>>
-  expect_ad_matvar(tols, f, x_mat_stdvec_stdvec, y_scal); // nest<nest<mat>, scal
-  expect_ad_matvar(tols, f, x_scal, y_mat_stdvec_stdvec); // scal, nest<nest<mat>
+  std::vector<std::vector<Eigen::MatrixXd>> x_mat_stdvec_stdvec{x_mat_stdvec,
+                                                                x_mat_stdvec};
+  std::vector<std::vector<Eigen::MatrixXd>> y_mat_stdvec_stdvec{y_mat_stdvec,
+                                                                y_mat_stdvec};
+  expect_ad_matvar(tols, f, x_scal, y);  // scal, mat
+  expect_ad_matvar(tols, f, x, y_scal);  // mat, scal
+  expect_ad_matvar(tols, f, x, y);       // mat, mat
+  expect_ad_matvar(tols, f, x_mat_stdvec,
+                   y_mat_stdvec);                   // nest<mat>, nest<mat>
+  expect_ad_matvar(tols, f, x_mat_stdvec, y_scal);  // nest<mat>, scal
+  expect_ad_matvar(tols, f, x_scal, y_mat_stdvec);  // scal, nest<mat>
+  expect_ad_matvar(tols, f, x_mat_stdvec_stdvec,
+                   y_mat_stdvec_stdvec);  // nest<nest<mat>>, nest<nest<mat>>
+  expect_ad_matvar(tols, f, x_mat_stdvec_stdvec,
+                   y_scal);  // nest<nest<mat>, scal
+  expect_ad_matvar(tols, f, x_scal,
+                   y_mat_stdvec_stdvec);  // scal, nest<nest<mat>
 
   std::vector<Eigen::VectorXd> x_vec_stdvec{x_vec, x_vec};
   std::vector<Eigen::VectorXd> y_vec_stdvec{y_vec, y_vec};
-  std::vector<std::vector<Eigen::VectorXd>> x_vec_stdvec_stdvec{x_vec_stdvec, x_vec_stdvec};
-  std::vector<std::vector<Eigen::VectorXd>> y_vec_stdvec_stdvec{y_vec_stdvec, y_vec_stdvec};
+  std::vector<std::vector<Eigen::VectorXd>> x_vec_stdvec_stdvec{x_vec_stdvec,
+                                                                x_vec_stdvec};
+  std::vector<std::vector<Eigen::VectorXd>> y_vec_stdvec_stdvec{y_vec_stdvec,
+                                                                y_vec_stdvec};
 
-  expect_ad_matvar(tols, f, x_vec, y_scal); // vec, scal
-  expect_ad_matvar(tols, f, x_scal, y_vec); // scal, vec
-  expect_ad_matvar(tols, f, x_vec, y_vec); // vec, vec
-  expect_ad_matvar(tols, f, x_vec_stdvec, y_vec_stdvec); // nest<vec>, nest<vec>
-  expect_ad_matvar(tols, f, x_vec_stdvec, y_scal); // nest<vec>, scal
-  expect_ad_matvar(tols, f, x_scal, y_vec_stdvec); // scal, nest<vec>
-  expect_ad_matvar(tols, f, x_vec_stdvec_stdvec, y_vec_stdvec_stdvec); // nest<nest<vec>>, nest<nest<vec>>
-  expect_ad_matvar(tols, f, x_vec_stdvec_stdvec, y_scal); // nest<nest<vec>, scal
-  expect_ad_matvar(tols, f, x_scal, y_vec_stdvec_stdvec); // scal, nest<nest<vec>
+  expect_ad_matvar(tols, f, x_vec, y_scal);  // vec, scal
+  expect_ad_matvar(tols, f, x_scal, y_vec);  // scal, vec
+  expect_ad_matvar(tols, f, x_vec, y_vec);   // vec, vec
+  expect_ad_matvar(tols, f, x_vec_stdvec,
+                   y_vec_stdvec);                   // nest<vec>, nest<vec>
+  expect_ad_matvar(tols, f, x_vec_stdvec, y_scal);  // nest<vec>, scal
+  expect_ad_matvar(tols, f, x_scal, y_vec_stdvec);  // scal, nest<vec>
+  expect_ad_matvar(tols, f, x_vec_stdvec_stdvec,
+                   y_vec_stdvec_stdvec);  // nest<nest<vec>>, nest<nest<vec>>
+  expect_ad_matvar(tols, f, x_vec_stdvec_stdvec,
+                   y_scal);  // nest<nest<vec>, scal
+  expect_ad_matvar(tols, f, x_scal,
+                   y_vec_stdvec_stdvec);  // scal, nest<nest<vec>
 
   std::vector<Eigen::RowVectorXd> x_rowvec_stdvec{x_rowvec, x_rowvec};
   std::vector<Eigen::RowVectorXd> y_rowvec_stdvec{y_rowvec, y_rowvec};
-  std::vector<std::vector<Eigen::RowVectorXd>> x_rowvec_stdvec_stdvec{x_rowvec_stdvec, x_rowvec_stdvec};
-  std::vector<std::vector<Eigen::RowVectorXd>> y_rowvec_stdvec_stdvec{y_rowvec_stdvec, y_rowvec_stdvec};
+  std::vector<std::vector<Eigen::RowVectorXd>> x_rowvec_stdvec_stdvec{
+      x_rowvec_stdvec, x_rowvec_stdvec};
+  std::vector<std::vector<Eigen::RowVectorXd>> y_rowvec_stdvec_stdvec{
+      y_rowvec_stdvec, y_rowvec_stdvec};
 
-  expect_ad_matvar(tols, f, x_scal, y_rowvec); // scal, rowvec
-  expect_ad_matvar(tols, f, x_rowvec, y_scal); // rowvec, scal
-  expect_ad_matvar(tols, f, x_rowvec, y_rowvec); // rowvec, rowvec
-  expect_ad_matvar(tols, f, x_rowvec_stdvec, y_rowvec_stdvec); // nest<vec>, nest<vec>
-  expect_ad_matvar(tols, f, x_rowvec_stdvec, y_scal); // nest<vec>, scal
-  expect_ad_matvar(tols, f, x_scal, y_rowvec_stdvec); // scal, nest<vec>
-  expect_ad_matvar(tols, f, x_rowvec_stdvec_stdvec, y_rowvec_stdvec_stdvec); // nest<nest<vec>>, nest<nest<vec>>
-  expect_ad_matvar(tols, f, x_rowvec_stdvec_stdvec, y_scal); // nest<nest<vec>, scal
-  expect_ad_matvar(tols, f, x_scal, y_rowvec_stdvec_stdvec); // scal, nest<nest<vec>
-
+  expect_ad_matvar(tols, f, x_scal, y_rowvec);    // scal, rowvec
+  expect_ad_matvar(tols, f, x_rowvec, y_scal);    // rowvec, scal
+  expect_ad_matvar(tols, f, x_rowvec, y_rowvec);  // rowvec, rowvec
+  expect_ad_matvar(tols, f, x_rowvec_stdvec,
+                   y_rowvec_stdvec);                   // nest<vec>, nest<vec>
+  expect_ad_matvar(tols, f, x_rowvec_stdvec, y_scal);  // nest<vec>, scal
+  expect_ad_matvar(tols, f, x_scal, y_rowvec_stdvec);  // scal, nest<vec>
+  expect_ad_matvar(tols, f, x_rowvec_stdvec_stdvec,
+                   y_rowvec_stdvec_stdvec);  // nest<nest<vec>>, nest<nest<vec>>
+  expect_ad_matvar(tols, f, x_rowvec_stdvec_stdvec,
+                   y_scal);  // nest<nest<vec>, scal
+  expect_ad_matvar(tols, f, x_scal,
+                   y_rowvec_stdvec_stdvec);  // scal, nest<nest<vec>
 }
 
 /**
@@ -937,7 +959,7 @@ template <typename F, typename T1, typename T2,
           require_std_vector_vt<std::is_integral, T1>* = nullptr,
           require_eigen_t<T2>* = nullptr>
 void expect_ad_vectorized_matvar(const ad_tolerances& tols, const F& f,
-                                      const T1& x, const T2& y) {
+                                 const T1& x, const T2& y) {
   auto x_scal = x[0];
   auto y_vec = y.col(0).eval();
 
@@ -946,13 +968,14 @@ void expect_ad_vectorized_matvar(const ad_tolerances& tols, const F& f,
   std::vector<decltype(y_vec)> y_stdvec_vec{y_vec, y_vec};
   std::vector<std::vector<T1>> x_stdvec_stdvec{x_stdvec, x_stdvec};
   std::vector<std::vector<T2>> y_stdvec_stdvec{y_stdvec, y_stdvec};
-  expect_ad_matvar(tols, f, x[0], y); // scal, mat
-  expect_ad_matvar(tols, f, x[0], y_vec); // scal, mat
-  expect_ad_matvar(tols, f, x[0], y_stdvec); // scal, nest<mat>
-  expect_ad_matvar(tols, f, x, y_vec); // stdvec, vec
-  expect_ad_matvar(tols, f, x_stdvec, y_stdvec_vec); // nest<stdvec>, nest<vec>
-  expect_ad_matvar(tols, f, x_stdvec, y); // nest<stdvec>, mat
-  expect_ad_matvar(tols, f, x_stdvec_stdvec, y_stdvec); // nest<nest<stdvec>>, nest<mat>
+  expect_ad_matvar(tols, f, x[0], y);                 // scal, mat
+  expect_ad_matvar(tols, f, x[0], y_vec);             // scal, mat
+  expect_ad_matvar(tols, f, x[0], y_stdvec);          // scal, nest<mat>
+  expect_ad_matvar(tols, f, x, y_vec);                // stdvec, vec
+  expect_ad_matvar(tols, f, x_stdvec, y_stdvec_vec);  // nest<stdvec>, nest<vec>
+  expect_ad_matvar(tols, f, x_stdvec, y);             // nest<stdvec>, mat
+  expect_ad_matvar(tols, f, x_stdvec_stdvec,
+                   y_stdvec);  // nest<nest<stdvec>>, nest<mat>
 }
 
 /**
@@ -971,17 +994,13 @@ void expect_ad_vectorized_matvar(const ad_tolerances& tols, const F& f,
  * @param x argument to test
  * @param y argument to test
  */
-template <typename F, typename T1, typename T2,
-          require_eigen_t<T1>* = nullptr,
+template <typename F, typename T1, typename T2, require_eigen_t<T1>* = nullptr,
           require_std_vector_vt<std::is_integral, T2>* = nullptr>
 void expect_ad_vectorized_matvar(const ad_tolerances& tols, const F& f,
-                                      const T1& x, const T2& y) {
-    auto g = [&f](const auto& x, const auto& y) {
-      return f(y, x);
-    };
-    expect_ad_vectorized_matvar(g, y, x);
+                                 const T1& x, const T2& y) {
+  auto g = [&f](const auto& x, const auto& y) { return f(y, x); };
+  expect_ad_vectorized_matvar(g, y, x);
 }
-
 
 /**
  * Overload with default tolerances

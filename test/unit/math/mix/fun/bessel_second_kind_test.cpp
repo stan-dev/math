@@ -41,5 +41,4 @@ TEST(mathMixScalFun, besselSecondKind_matvec) {
   Eigen::MatrixXd in2(2, 2);
   in2 << 0.5, 3.4, 0.5, 3.4;
   stan::test::expect_ad_vectorized_matvar(f, std_in1, in2);
-
 }
