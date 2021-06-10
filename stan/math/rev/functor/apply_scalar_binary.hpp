@@ -14,7 +14,8 @@ namespace math {
 /**
  * Specialisation for use with combinations of
  * `Eigen::Matrix` and `var_value<Eigen::Matrix>` inputs.
- * Eigen's binaryExpr framework is used for more efficient indexing of both row- and column-major inputs  without separate loops.
+ * Eigen's binaryExpr framework is used for more efficient indexing of both row-
+ * and column-major inputs  without separate loops.
  *
  * @tparam T1 Type of first argument to which functor is applied.
  * @tparam T2 Type of second argument to which functor is applied.
@@ -100,7 +101,8 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
  * @tparam T2 Type of second argument to which functor is applied.
  * @tparam F Type of functor to apply.
  * @param x Nested integer std::vector input to which operation is applied.
- * @param y var value with inner Eigen matrix input to which operation is applied.
+ * @param y var value with inner Eigen matrix input to which operation is
+ * applied.
  * @param f functor to apply to inputs.
  * @return Eigen object with result of applying functor to inputs.
  */
@@ -113,8 +115,8 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
 }
 
 /**
- * Specialisation for use when the first input is an `var_value<Eigen> type and the second
- * is a scalar.
+ * Specialisation for use when the first input is an `var_value<Eigen> type and
+ * the second is a scalar.
  *
  * @tparam T1 Type of `var_value<Matrix>` object to which functor is applied.
  * @tparam T2 Type of scalar to which functor is applied.
@@ -144,7 +146,8 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
  * @param x Scalar input to which operation is applied.
  * @param y var matrix input to which operation is applied.
  * @param f functor to apply to Eigen and scalar inputs.
- * @return var value with inner Eigen type with result of applying functor to inputs.
+ * @return var value with inner Eigen type with result of applying functor to
+ * inputs.
  *
  * Note: The return expresssion needs to be evaluated, otherwise the captured
  *         function and scalar fall out of scope.
