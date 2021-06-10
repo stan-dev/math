@@ -999,7 +999,7 @@ template <typename F, typename T1, typename T2, require_eigen_t<T1>* = nullptr,
 void expect_ad_vectorized_matvar(const ad_tolerances& tols, const F& f,
                                  const T1& x, const T2& y) {
   auto g = [&f](const auto& x, const auto& y) { return f(y, x); };
-  expect_ad_vectorized_matvar(g, y, x);
+  expect_ad_vectorized_matvar(tols, g, y, x);
 }
 
 /**
