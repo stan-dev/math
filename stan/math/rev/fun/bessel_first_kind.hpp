@@ -19,7 +19,7 @@ inline var bessel_first_kind(int v, const var& a) {
 }
 
 /**
- * Overload with `var_value<Matrix>` for `int` and `std::vector<int>`
+ * Overload with `var_value<Matrix>` for `int`, `std::vector<int>`, and `std::vector<std::vector<int>>`
  */
 template <typename T1, typename T2, require_st_integral<T1>* = nullptr,
           require_eigen_t<T2>* = nullptr>

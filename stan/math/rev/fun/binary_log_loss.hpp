@@ -55,6 +55,9 @@ inline var binary_log_loss(int y, const var& y_hat) {
   }
 }
 
+/**
+ * Overload with `int` and `var_value<Matrix>`
+ */
 template <typename Mat, require_eigen_t<Mat>* = nullptr>
 inline auto binary_log_loss(int y, const var_value<Mat>& y_hat) {
   if (y == 0) {
@@ -71,7 +74,7 @@ inline auto binary_log_loss(int y, const var_value<Mat>& y_hat) {
 }
 
 /**
- * Overload for std::vector<int> and `var_value<Vector>`
+ * Overload with `var_value<Matrix>` for `std::vector<int>` and `std::vector<std::vector<int>>`
  */
 template <typename StdVec, typename Mat, require_eigen_t<Mat>* = nullptr,
           require_st_integral<StdVec>* = nullptr>
