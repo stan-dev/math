@@ -50,13 +50,13 @@ return_type_t<T_prob_cl> bernoulli_lcdf(const T_n_cl& n,
                                       theta_val, "in the interval [0, 1]");
   auto theta_bounded_expr = 0.0 <= theta_val && theta_val <= 1.0;
 
-  auto any_n_negative = colwise_max(0 + (n < 0));
+  auto any_n_negative = colwise_max(cast<char>(n < 0));
   auto Pi = 1.0 - theta_val;
   auto cond = n >= 1;
   auto P_expr = colwise_sum(select(cond, 0.0, log(Pi)));
   auto deriv = select(cond, 0.0, elt_divide(-1.0, Pi));
 
-  matrix_cl<double> any_n_negative_cl;
+  matrix_cl<char> any_n_negative_cl;
   matrix_cl<double> P_cl;
   matrix_cl<double> deriv_cl;
 
