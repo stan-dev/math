@@ -44,7 +44,8 @@ TEST(AgradRevMatrix, diagonal_varmat) {
   m << 0, 1, 2, 3, 4, 5;
 
   var_value<Eigen::MatrixXd> m_v(m);
-  EXPECT_MATRIX_FLOAT_EQ(stan::math::diagonal(m_v).val(), stan::math::diagonal(m));
+  EXPECT_MATRIX_FLOAT_EQ(stan::math::diagonal(m_v).val(),
+                         stan::math::diagonal(m));
 }
 
 TEST(AgradRevMatrix, subsets_varmat) {
@@ -53,8 +54,10 @@ TEST(AgradRevMatrix, subsets_varmat) {
   m << 0, 1, 2, 3, 4, 5;
 
   var_value<Eigen::MatrixXd> m_v(m);
-  EXPECT_MATRIX_FLOAT_EQ(stan::math::sub_row(m_v, 1, 1, 2).val(), stan::math::sub_row(m, 1, 1, 2));
-  EXPECT_MATRIX_FLOAT_EQ(stan::math::sub_col(m_v, 1, 1, 2).val(), stan::math::sub_col(m, 1, 1, 2));
+  EXPECT_MATRIX_FLOAT_EQ(stan::math::sub_row(m_v, 1, 1, 2).val(),
+                         stan::math::sub_row(m, 1, 1, 2));
+  EXPECT_MATRIX_FLOAT_EQ(stan::math::sub_col(m_v, 1, 1, 2).val(),
+                         stan::math::sub_col(m, 1, 1, 2));
 }
 
 TEST(AgradRevMatrix, transpose_varmat) {
@@ -63,7 +66,8 @@ TEST(AgradRevMatrix, transpose_varmat) {
   m << 0, 1, 2, 3, 4, 5;
 
   var_value<Eigen::MatrixXd> m_v(m);
-  EXPECT_MATRIX_FLOAT_EQ(stan::math::transpose(m_v).val(), stan::math::transpose(m));
+  EXPECT_MATRIX_FLOAT_EQ(stan::math::transpose(m_v).val(),
+                         stan::math::transpose(m));
 }
 
 TEST(AgradRevMatrix, head_varmat) {
@@ -72,7 +76,8 @@ TEST(AgradRevMatrix, head_varmat) {
   vec << 0, 1, 2, 3, 4, 5;
 
   var_value<Eigen::VectorXd> vec_v(vec);
-  EXPECT_MATRIX_FLOAT_EQ(stan::math::head(vec_v, 2).val(), stan::math::head(vec, 2));
+  EXPECT_MATRIX_FLOAT_EQ(stan::math::head(vec_v, 2).val(),
+                         stan::math::head(vec, 2));
 }
 
 TEST(AgradRevMatrix, tail_varmat) {
@@ -81,7 +86,8 @@ TEST(AgradRevMatrix, tail_varmat) {
   vec << 0, 1, 2, 3, 4, 5;
 
   var_value<Eigen::VectorXd> vec_v(vec);
-  EXPECT_MATRIX_FLOAT_EQ(stan::math::tail(vec_v, 2).val(), stan::math::tail(vec, 2));
+  EXPECT_MATRIX_FLOAT_EQ(stan::math::tail(vec_v, 2).val(),
+                         stan::math::tail(vec, 2));
 }
 
 TEST(AgradRevMatrix, reverse_varmat) {
@@ -90,7 +96,8 @@ TEST(AgradRevMatrix, reverse_varmat) {
   vec << 0, 1, 2, 3, 4, 5;
 
   var_value<Eigen::VectorXd> vec_v(vec);
-  EXPECT_MATRIX_FLOAT_EQ(stan::math::reverse(vec_v).val(), stan::math::reverse(vec));
+  EXPECT_MATRIX_FLOAT_EQ(stan::math::reverse(vec_v).val(),
+                         stan::math::reverse(vec));
 }
 
 TEST(AgradRevMatrix, segment_varmat) {
@@ -99,5 +106,6 @@ TEST(AgradRevMatrix, segment_varmat) {
   vec << 0, 1, 2, 3, 4, 5;
 
   var_value<Eigen::VectorXd> vec_v(vec);
-  EXPECT_MATRIX_FLOAT_EQ(stan::math::segment(vec_v, 2, 2).val(), stan::math::segment(vec, 2, 2));
+  EXPECT_MATRIX_FLOAT_EQ(stan::math::segment(vec_v, 2, 2).val(),
+                         stan::math::segment(vec, 2, 2));
 }

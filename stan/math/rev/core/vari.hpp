@@ -350,11 +350,13 @@ class vari_view_eigen {
    */
   inline auto diagonal() const {
     using inner_type = decltype(derived().val_.diagonal());
-    return vari_view<inner_type>(derived().val_.diagonal(), derived().adj_.diagonal());
+    return vari_view<inner_type>(derived().val_.diagonal(),
+                                 derived().adj_.diagonal());
   }
   inline auto diagonal() {
     using inner_type = decltype(derived().val_.diagonal());
-    return vari_view<inner_type>(derived().val_.diagonal(), derived().adj_.diagonal());
+    return vari_view<inner_type>(derived().val_.diagonal(),
+                                 derived().adj_.diagonal());
   }
 
   /**
@@ -588,7 +590,8 @@ class vari_view<
   template <typename S, typename K,
             require_assignable_t<value_type, S>* = nullptr,
             require_assignable_t<value_type, K>* = nullptr>
-  vari_view(S&& val, K&& adj) noexcept : val_(std::forward<S>(val)), adj_(std::forward<K>(adj)) {}
+  vari_view(S&& val, K&& adj) noexcept
+      : val_(std::forward<S>(val)), adj_(std::forward<K>(adj)) {}
 
   /**
    * Return a constant reference to the value of this vari.

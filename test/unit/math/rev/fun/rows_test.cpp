@@ -5,8 +5,8 @@
 TEST(AgradRevMatrix, rows_vector) {
   using stan::math::row_vector_v;
   using stan::math::rows;
-  using stan::math::vector_v;
   using stan::math::var_value;
+  using stan::math::vector_v;
   Eigen::VectorXd vec(5);
   vec << 0, 1, 2, 3, 4;
   vector_v vec_v(5);
