@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_TEST_FIXTURE_ODE_COS_SCALAR_HPP
-#define STAN_MATH_TEST_FIXTURE_ODE_COS_SCALAR_HPP
+#ifndef STAN_MATH_TEST_FIXTURE_ODE_CLOSURE_HPP
+#define STAN_MATH_TEST_FIXTURE_ODE_CLOSURE_HPP
 
 #include <stan/math/rev.hpp>
 #include <gtest/gtest.h>
@@ -12,10 +12,7 @@
 #include <limits>
 #include <string>
 
-struct cos_arg_ode_base {
-  stan::test::CosArg1 f1;
-  stan::test::Cos2Arg f2;
-
+struct closure_ode_base {
   Eigen::VectorXd y0;
   double t0;
   std::vector<double> ts;
@@ -24,7 +21,7 @@ struct cos_arg_ode_base {
   double atol;
   int max_num_step;
 
-  cos_arg_ode_base()
+  closure_ode_base()
       : y0(1),
         t0(0.0),
         ts{0.45, 1.1},
@@ -43,54 +40,118 @@ struct cos_arg_ode_base {
  *
  */
 template <typename T>
-struct cos_arg_test : public cos_arg_ode_base,
-                      public ODETestFixture<cos_arg_test<T>> {
-  cos_arg_test() : cos_arg_ode_base() {}
+struct closure_test : public closure_ode_base,
+                      public ODETestFixture<closure_test<T>> {
+  closure_test() : closure_ode_base() {}
 
   Eigen::VectorXd init() { return y0; }
   std::vector<double> param() { return {a}; }
 
   auto apply_solver() {
     std::tuple_element_t<0, T> sol;
-    return sol(stan::test::CosArg1(), y0, t0, ts, nullptr, a);
+    return sol(stan::math::ode_closure_adapter(), y0, t0, ts, nullptr,
+               stan::math::from_lambda([](auto& a_, auto& t, auto& y, std::ostream* msgs) {
+                 return stan::test::CosArg1()(t, y, msgs, a_);
+               }, a));
   }
 
   template <typename T1, typename T2>
   auto apply_solver(Eigen::Matrix<T1, -1, 1>& init, std::vector<T2>& va) {
     std::tuple_element_t<0, T> sol;
-    return sol(stan::test::CosArg1(), init, t0, ts, nullptr, va);
+    return sol(stan::math::ode_closure_adapter(), init, t0, ts, nullptr,
+               stan::math::from_lambda([](auto& a, auto& t, auto& y, std::ostream* msgs) {
+                 return stan::test::CosArg1()(t, y, msgs, a);
+               }, va));
+  }
+
+  template <typename Ts>
+  auto apply_solver_ts(const std::vector<Ts>& ts_) {
+    std::tuple_element_t<0, T> sol;
+    return sol(stan::math::ode_closure_adapter(), y0, t0, ts_, nullptr,
+               stan::math::from_lambda([](auto& a_, auto& t, auto& y, std::ostream* msgs) {
+                 return stan::test::CosArg1()(t, y, msgs, a_);
+               }, a));
+  }
+
+  template <typename Ts, typename a_type>
+  auto apply_solver_ts(const std::vector<Ts>& ts_, const a_type& arg) {
+    std::tuple_element_t<0, T> sol;
+    return sol(stan::math::ode_closure_adapter(), y0, t0, ts_, nullptr,
+               stan::math::from_lambda([](auto& a_, auto& t, auto& y, std::ostream* msgs) {
+                 return stan::test::CosArg1()(t, y, msgs, a_);
+               }, arg));
+  }
+
+  template <typename Ts, typename a_type>
+  auto apply_solver_ts_tol(const std::vector<Ts>& ts_, double rtol, double atol, int max_num_steps, const a_type& a_) {
+    std::tuple_element_t<1, T> sol;
+    return sol(stan::math::ode_closure_adapter(), y0, t0, ts_, rtol, atol, max_num_steps, nullptr,
+               stan::math::from_lambda([](auto& a, auto& t, auto& y, std::ostream* msgs) {
+                 return stan::test::CosArg1()(t, y, msgs, a);
+               }, a_));
+  }
+
+  template <typename T0>
+  auto apply_solver_t0(const T0& t0_) {
+    std::tuple_element_t<0, T> sol;
+    return sol(stan::math::ode_closure_adapter(), y0, t0_, ts, nullptr,
+               stan::math::from_lambda([](auto& a_, auto& t, auto& y, std::ostream* msgs) {
+                 return stan::test::CosArg1()(t, y, msgs, a_);
+               }, a));
+  }
+
+  template <typename T0, typename a_type>
+  auto apply_solver_t0_tol(const T0& t0_, double rtol, double atol, int max_num_steps, const a_type& a_) {
+    std::tuple_element_t<1, T> sol;
+    return sol(stan::math::ode_closure_adapter(), y0, t0_, ts, rtol, atol, max_num_steps, nullptr,
+               stan::math::from_lambda([](auto& a, auto& t, auto& y, std::ostream* msgs) {
+                 return stan::test::CosArg1()(t, y, msgs, a);
+               }, a_));
   }
 
   auto apply_solver_tol() {
     std::tuple_element_t<1, T> sol;
-    return sol(stan::test::CosArg1(), y0, t0, ts, rtol, atol, max_num_step,
-               nullptr, a);
+    return sol(stan::math::ode_closure_adapter(), y0, t0, ts, rtol, atol, max_num_step,
+               nullptr,
+               stan::math::from_lambda([](auto& a_, auto& t, auto& y, std::ostream* msgs) {
+                 return stan::test::CosArg1()(t, y, msgs, a_);
+               }, a));
   }
 
   template <typename a_type>
   auto apply_solver_arg(a_type const& a_) {
     std::tuple_element_t<0, T> sol;
-    return sol(stan::test::CosArg1(), y0, t0, ts, nullptr, a_);
+    return sol(stan::math::ode_closure_adapter(), y0, t0, ts, nullptr,
+               stan::math::from_lambda([](auto& a, auto& t, auto& y, std::ostream* msgs) {
+                 return stan::test::CosArg1()(t, y, msgs, a);
+               }, a_));
   }
 
   template <typename a_type>
   auto apply_solver_arg_tol(a_type const& a_) {
     std::tuple_element_t<1, T> sol;
-    return sol(stan::test::CosArg1(), y0, t0, ts, rtol, atol, max_num_step,
-               nullptr, a_);
+    return sol(stan::math::ode_closure_adapter(), y0, t0, ts, rtol, atol, max_num_step, nullptr,
+               stan::math::from_lambda([](auto& a, auto& t, auto& y, std::ostream* msgs) {
+                 return stan::test::CosArg1()(t, y, msgs, a);
+               }, a_));
   }
 
   template <typename a_type, typename b_type>
   auto apply_solver_arg(a_type const& a_, b_type const& b_) {
     std::tuple_element_t<0, T> sol;
-    return sol(stan::test::CosArg1(), y0, t0, ts, nullptr, a_, b_);
+    return sol(stan::math::ode_closure_adapter(), y0, t0, ts, nullptr,
+               stan::math::from_lambda([](auto& a, auto& t, auto& y, auto& b, std::ostream* msgs) {
+                 return stan::test::Cos2Arg()(t, y, msgs, a, b);
+               }, a_), b_);
   }
 
   template <typename a_type, typename b_type>
   auto apply_solver_arg_tol(a_type const& a_, b_type const& b_) {
     std::tuple_element_t<1, T> sol;
-    return sol(stan::test::CosArg1(), y0, t0, ts, rtol, atol, max_num_step,
-               nullptr, a_, b_);
+    return sol(stan::math::ode_closure_adapter(), y0, t0, ts, rtol, atol, max_num_step, nullptr,
+               stan::math::from_lambda([](auto& a, auto& t, auto& y, auto& b, std::ostream* msgs) {
+                 return stan::test::Cos2Arg()(t, y, msgs, a, b);
+               }, a_), b_);
   }
 
   void test_y0_error() {
@@ -217,102 +278,6 @@ struct cos_arg_test : public cos_arg_ode_base,
     ts = {0.45, 1.1};
   }
 
-  void test_one_arg_error() {
-    a = 1.5;
-    double ainf = stan::math::INFTY;
-    double aNaN = stan::math::NOT_A_NUMBER;
-    std::vector<double> va = {a};
-    std::vector<double> vainf = {ainf};
-    std::vector<double> vaNaN = {aNaN};
-
-    Eigen::VectorXd ea(1);
-    ea << a;
-    Eigen::VectorXd eainf(1);
-    eainf << ainf;
-    Eigen::VectorXd eaNaN(1);
-    eaNaN << aNaN;
-
-    std::vector<std::vector<double>> vva = {va};
-    std::vector<std::vector<double>> vvainf = {vainf};
-    std::vector<std::vector<double>> vvaNaN = {vaNaN};
-
-    std::vector<Eigen::VectorXd> vea = {ea};
-    std::vector<Eigen::VectorXd> veainf = {eainf};
-    std::vector<Eigen::VectorXd> veaNaN = {eaNaN};
-
-    EXPECT_NO_THROW(apply_solver());
-
-    a = ainf;
-    EXPECT_THROW(apply_solver(), std::domain_error);
-
-    a = aNaN;
-    EXPECT_THROW(apply_solver(), std::domain_error);
-
-    EXPECT_NO_THROW(apply_solver_arg(va));
-    EXPECT_THROW(apply_solver_arg(vainf), std::domain_error);
-    EXPECT_THROW(apply_solver_arg(vaNaN), std::domain_error);
-
-    EXPECT_NO_THROW(apply_solver_arg(ea));
-    EXPECT_THROW(apply_solver_arg(eainf), std::domain_error);
-    EXPECT_THROW(apply_solver_arg(eaNaN), std::domain_error);
-
-    EXPECT_NO_THROW(apply_solver_arg(vva));
-    EXPECT_THROW(apply_solver_arg(vvainf), std::domain_error);
-    EXPECT_THROW(apply_solver_arg(vvaNaN), std::domain_error);
-
-    EXPECT_NO_THROW(apply_solver_arg(vea));
-    EXPECT_THROW(apply_solver_arg(veainf), std::domain_error);
-    EXPECT_THROW(apply_solver_arg(veaNaN), std::domain_error);
-  }
-
-  void test_one_arg_error_with_tol() {
-    a = 1.5;
-    double ainf = stan::math::INFTY;
-    double aNaN = stan::math::NOT_A_NUMBER;
-    std::vector<double> va = {a};
-    std::vector<double> vainf = {ainf};
-    std::vector<double> vaNaN = {aNaN};
-
-    Eigen::VectorXd ea(1);
-    ea << a;
-    Eigen::VectorXd eainf(1);
-    eainf << ainf;
-    Eigen::VectorXd eaNaN(1);
-    eaNaN << aNaN;
-
-    std::vector<std::vector<double>> vva = {va};
-    std::vector<std::vector<double>> vvainf = {vainf};
-    std::vector<std::vector<double>> vvaNaN = {vaNaN};
-
-    std::vector<Eigen::VectorXd> vea = {ea};
-    std::vector<Eigen::VectorXd> veainf = {eainf};
-    std::vector<Eigen::VectorXd> veaNaN = {eaNaN};
-
-    EXPECT_NO_THROW(apply_solver_tol());
-
-    a = ainf;
-    EXPECT_THROW(apply_solver_tol(), std::domain_error);
-
-    a = aNaN;
-    EXPECT_THROW(apply_solver_tol(), std::domain_error);
-
-    EXPECT_NO_THROW(apply_solver_arg_tol(va));
-    EXPECT_THROW(apply_solver_arg_tol(vainf), std::domain_error);
-    EXPECT_THROW(apply_solver_arg_tol(vaNaN), std::domain_error);
-
-    EXPECT_NO_THROW(apply_solver_arg_tol(ea));
-    EXPECT_THROW(apply_solver_arg_tol(eainf), std::domain_error);
-    EXPECT_THROW(apply_solver_arg_tol(eaNaN), std::domain_error);
-
-    EXPECT_NO_THROW(apply_solver_arg_tol(vva));
-    EXPECT_THROW(apply_solver_arg_tol(vvainf), std::domain_error);
-    EXPECT_THROW(apply_solver_arg_tol(vvaNaN), std::domain_error);
-
-    EXPECT_NO_THROW(apply_solver_arg_tol(vea));
-    EXPECT_THROW(apply_solver_arg_tol(veainf), std::domain_error);
-    EXPECT_THROW(apply_solver_arg_tol(veaNaN), std::domain_error);
-  }
-
   void test_two_arg_error() {
     a = 1.5;
     double ainf = stan::math::INFTY;
@@ -423,31 +388,6 @@ struct cos_arg_test : public cos_arg_ode_base,
     EXPECT_THROW(apply_solver_arg_tol(a, veaNaN), std::domain_error);
   }
 
-  void test_rhs_wrong_size_error() {
-    std::tuple_element_t<0, T> sol;
-    EXPECT_THROW(sol(stan::test::CosArgWrongSize(), y0, t0, ts, nullptr, a),
-                 std::invalid_argument);
-  }
-
-  void test_rhs_wrong_size_error_with_tol() {
-    std::tuple_element_t<1, T> sol;
-    EXPECT_THROW(sol(stan::test::CosArgWrongSize(), y0, t0, ts, rtol, atol,
-                     max_num_step, nullptr, a),
-                 std::invalid_argument);
-  }
-
-  void test_error_name() {
-    a = stan::math::INFTY;
-    std::tuple_element_t<0, T> sol;
-    EXPECT_THROW_MSG(apply_solver(), std::domain_error, sol.functor_name);
-  }
-
-  void test_error_name_with_tol() {
-    a = stan::math::INFTY;
-    std::tuple_element_t<1, T> sol;
-    EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, sol.functor_name);
-  }
-
   void test_rtol_error() {
     y0 = Eigen::VectorXd::Zero(1);
     t0 = 0;
@@ -526,12 +466,12 @@ struct cos_arg_test : public cos_arg_ode_base,
 
     std::vector<double> ts_i = {1, 2};
     std::tuple_element_t<0, T> sol;
-    res = sol(stan::test::CosArg1(), y0, t0, ts_i, nullptr, a);
+    res = apply_solver_ts(ts_i);
     EXPECT_NEAR(res[0][0], 0.6649966577, 1e-5);
     EXPECT_NEAR(res[1][0], 0.09408000537, 1e-5);
 
     int t0_i = 0;
-    res = sol(stan::test::CosArg1(), y0, t0_i, ts, nullptr, a);
+    res = apply_solver_t0(t0_i);
     EXPECT_NEAR(res[0][0], 0.4165982112, 1e-5);
     EXPECT_NEAR(res[1][0], 0.66457668563, 1e-5);
   }
@@ -540,7 +480,7 @@ struct cos_arg_test : public cos_arg_ode_base,
     stan::math::nested_rev_autodiff nested;
     std::tuple_element_t<0, T> sol;
     stan::math::var t0v = 0.0;
-    auto res = sol(stan::test::CosArg1(), y0, t0v, ts, nullptr, a);
+    auto res = apply_solver_t0(t0v);
 
     res[0][0].grad();
 
@@ -559,7 +499,7 @@ struct cos_arg_test : public cos_arg_ode_base,
     stan::math::nested_rev_autodiff nested;
     std::tuple_element_t<0, T> sol;
     std::vector<var> tsv = {0.45, 1.1};
-    auto res = sol(stan::test::CosArg1(), y0, t0, tsv, nullptr, a);
+    auto res = apply_solver_ts(tsv);
 
     res[0][0].grad();
 
@@ -577,7 +517,7 @@ struct cos_arg_test : public cos_arg_ode_base,
     stan::math::nested_rev_autodiff nested;
     std::tuple_element_t<0, T> sol;
     std::vector<var> tsv = {0.45, 0.45, 1.1, 1.1};
-    auto output = sol(stan::test::CosArg1(), y0, t0, tsv, nullptr, a);
+    auto output = apply_solver_ts(tsv);
 
     EXPECT_EQ(output.size(), tsv.size());
 
@@ -611,7 +551,7 @@ struct cos_arg_test : public cos_arg_ode_base,
 
     {
       std::vector<double> ts1{1.1};
-      auto output = sol(stan::test::CosArg1(), y0, t0, ts1, nullptr, av)[0][0];
+      auto output = apply_solver_ts(ts1, av)[0][0];
 
       output.grad();
 
@@ -621,7 +561,7 @@ struct cos_arg_test : public cos_arg_ode_base,
     }
 
     {
-      auto output = sol(stan::test::CosArg1(), y0, t0, ts, nullptr, av);
+      auto output = apply_solver_arg(av);
 
       output[0](0).grad();
 
@@ -641,7 +581,7 @@ struct cos_arg_test : public cos_arg_ode_base,
     stan::math::nested_rev_autodiff nested;
     std::tuple_element_t<0, T> sol;
     std::vector<var> av = {1.5};
-    var output = sol(stan::test::CosArg1(), y0, t0, ts, nullptr, av)[1][0];
+    var output = apply_solver_arg(av)[1][0];
 
     output.grad();
 
@@ -655,7 +595,7 @@ struct cos_arg_test : public cos_arg_ode_base,
     Eigen::Matrix<var, Eigen::Dynamic, 1> av(1);
     av << 1.5;
 
-    var output = sol(stan::test::CosArg1(), y0, t0, ts, nullptr, av)[1][0];
+    var output = apply_solver_arg(av)[1][0];
 
     output.grad();
 
@@ -669,7 +609,7 @@ struct cos_arg_test : public cos_arg_ode_base,
     Eigen::Matrix<var, 1, -1> av(1);
     av << 1.5;
 
-    var output = sol(stan::test::CosArg1(), y0, t0, ts, nullptr, av)[1][0];
+    var output = apply_solver_arg(av)[1][0];
 
     output.grad();
 
@@ -683,7 +623,7 @@ struct cos_arg_test : public cos_arg_ode_base,
     Eigen::Matrix<var, -1, -1> av(1, 1);
     av << 1.5;
 
-    var output = sol(stan::test::CosArg1(), y0, t0, ts, nullptr, av)[1][0];
+    var output = apply_solver_arg(av)[1][0];
 
     output.grad();
 
@@ -697,7 +637,7 @@ struct cos_arg_test : public cos_arg_ode_base,
     var a0 = 0.75;
     std::vector<var> a1 = {0.75};
 
-    var output = sol(stan::test::Cos2Arg(), y0, t0, ts, nullptr, a0, a1)[1][0];
+    var output = apply_solver_arg(a0, a1)[1][0];
 
     output.grad();
 
@@ -713,7 +653,7 @@ struct cos_arg_test : public cos_arg_ode_base,
     std::vector<var> a1(1, a0);
     std::vector<std::vector<var>> a2(1, a1);
 
-    var output = sol(stan::test::CosArg1(), y0, t0, ts, nullptr, a2)[1][0];
+    var output = apply_solver_arg(a2)[1][0];
 
     output.grad();
 
@@ -729,7 +669,7 @@ struct cos_arg_test : public cos_arg_ode_base,
     a1 << a0;
     std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> a2(1, a1);
 
-    var output = sol(stan::test::CosArg1(), y0, t0, ts, nullptr, a2)[1][0];
+    var output = apply_solver_arg(a2)[1][0];
 
     output.grad();
 
@@ -744,7 +684,7 @@ struct cos_arg_test : public cos_arg_ode_base,
     Eigen::Matrix<var, 1, Eigen::Dynamic> a1(1);
     a1 << a0;
     std::vector<Eigen::Matrix<var, 1, Eigen::Dynamic>> a2(1, a1);
-    var output = sol(stan::test::CosArg1(), y0, t0, ts, nullptr, a2)[1][0];
+    var output = apply_solver_arg(a2)[1][0];
 
     output.grad();
 
@@ -760,7 +700,7 @@ struct cos_arg_test : public cos_arg_ode_base,
     a1 << a0;
     std::vector<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> a2(1, a1);
 
-    var output = sol(stan::test::CosArg1(), y0, t0, ts, nullptr, a2)[1][0];
+    var output = apply_solver_arg(a2)[1][0];
 
     output.grad();
 
@@ -926,34 +866,13 @@ struct cos_arg_test : public cos_arg_ode_base,
     check_a(a);
   }
 
-  void test_tol_int_t0() {
-    using stan::math::var;
-
-    Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
-    int t0 = 0;
-    std::vector<double> ts = {0.45, 1.1};
-
-    double a = 1.5;
-
-    std::vector<Eigen::Matrix<double, Eigen::Dynamic, 1>> output
-        = stan::math::ode_adams_tol(stan::test::CosArg1(), y0, t0, ts, 1e-10,
-                                    1e-10, 1e6, nullptr, a);
-
-    EXPECT_FLOAT_EQ(output[0][0], 0.4165982112);
-    EXPECT_FLOAT_EQ(output[1][0], 0.66457668563);
-  }
-
   void test_tol_int_ts() {
-    std::tuple_element_t<1, T> sol;
-
-    Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
-    double t0 = 0.0;
     std::vector<double> ts = {1, 2};
 
     double a = 1.5;
 
     std::vector<Eigen::Matrix<double, Eigen::Dynamic, 1>> output
-        = sol(stan::test::CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6, nullptr, a);
+        = apply_solver_ts_tol(ts, 1e-10, 1e-10, 1e6, a);
 
     EXPECT_FLOAT_EQ(output[0][0], 0.6649966577);
     EXPECT_FLOAT_EQ(output[1][0], 0.09408000537);
@@ -961,16 +880,13 @@ struct cos_arg_test : public cos_arg_ode_base,
 
   void test_tol_t0() {
     stan::math::nested_rev_autodiff nested;
-    std::tuple_element_t<1, T> sol;
 
-    Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
     var t0 = 0.0;
-    std::vector<double> ts = {0.45, 1.1};
 
     double a = 1.5;
 
     std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> output
-        = sol(stan::test::CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6, nullptr, a);
+        = apply_solver_t0_tol(t0, 1e-10, 1e-10, 1e6, a);
 
     output[0][0].grad();
 
@@ -987,16 +903,13 @@ struct cos_arg_test : public cos_arg_ode_base,
 
   void test_tol_ts() {
     stan::math::nested_rev_autodiff nested;
-    std::tuple_element_t<1, T> sol;
 
-    Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
-    double t0 = 0.0;
     std::vector<var> ts = {0.45, 1.1};
 
     double a = 1.5;
 
     std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> output
-        = sol(stan::test::CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6, nullptr, a);
+        = apply_solver_ts_tol(ts, 1e-10, 1e-10, 1e6, a);
 
     output[0][0].grad();
 
@@ -1013,16 +926,13 @@ struct cos_arg_test : public cos_arg_ode_base,
 
   void test_tol_ts_repeat() {
     stan::math::nested_rev_autodiff nested;
-    std::tuple_element_t<1, T> sol;
 
-    Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
-    double t0 = 0.0;
     std::vector<var> ts = {0.45, 0.45, 1.1, 1.1};
 
     double a = 1.5;
 
     std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> output
-        = sol(stan::test::CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6, nullptr, a);
+        = apply_solver_ts_tol(ts, 1e-10, 1e-10, 1e6, a);
 
     EXPECT_EQ(output.size(), ts.size());
 
@@ -1055,16 +965,12 @@ struct cos_arg_test : public cos_arg_ode_base,
 
   void test_tol_scalar_arg() {
     stan::math::nested_rev_autodiff nested;
-    std::tuple_element_t<1, T> sol;
 
-    Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
-    double t0 = 0.0;
     std::vector<double> ts = {1.1};
 
     var a = 1.5;
 
-    var output = sol(stan::test::CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
-                     nullptr, a)[0][0];
+    var output = apply_solver_ts_tol(ts, 1e-8, 1e-10, 1e6, a)[0][0];
 
     output.grad();
 
@@ -1074,16 +980,13 @@ struct cos_arg_test : public cos_arg_ode_base,
 
   void test_tol_scalar_arg_multi_time() {
     stan::math::nested_rev_autodiff nested;
-    std::tuple_element_t<1, T> sol;
 
-    Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
-    double t0 = 0.0;
     std::vector<double> ts = {0.45, 1.1};
 
     var a = 1.5;
 
     std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> output
-        = sol(stan::test::CosArg1(), y0, t0, ts, 1e-10, 1e-10, 1e6, nullptr, a);
+        = apply_solver_ts_tol(ts, 1e-10, 1e-10, 1e6, a);
 
     output[0](0).grad();
 
@@ -1100,16 +1003,12 @@ struct cos_arg_test : public cos_arg_ode_base,
 
   void test_tol_std_vector_arg() {
     stan::math::nested_rev_autodiff nested;
-    std::tuple_element_t<1, T> sol;
 
-    Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
-    double t0 = 0.0;
     std::vector<double> ts = {1.1};
 
     std::vector<var> a = {1.5};
 
-    var output = sol(stan::test::CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
-                     nullptr, a)[0][0];
+    var output = apply_solver_ts_tol(ts, 1e-8, 1e-10, 1e6, a)[0][0];
 
     output.grad();
 
@@ -1119,17 +1018,13 @@ struct cos_arg_test : public cos_arg_ode_base,
 
   void test_tol_vector_arg() {
     stan::math::nested_rev_autodiff nested;
-    std::tuple_element_t<1, T> sol;
 
-    Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
-    double t0 = 0.0;
     std::vector<double> ts = {1.1};
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> a(1);
     a << 1.5;
 
-    var output = sol(stan::test::CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
-                     nullptr, a)[0][0];
+    var output = apply_solver_t0_tol(t0, 1e-8, 1e-10, 1e6, a)[1][0];
 
     output.grad();
 
@@ -1139,17 +1034,13 @@ struct cos_arg_test : public cos_arg_ode_base,
 
   void test_tol_row_vector_arg() {
     stan::math::nested_rev_autodiff nested;
-    std::tuple_element_t<1, T> sol;
 
-    Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
-    double t0 = 0.0;
     std::vector<double> ts = {1.1};
 
     Eigen::Matrix<var, 1, Eigen::Dynamic> a(1);
     a << 1.5;
 
-    var output = sol(stan::test::CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
-                     nullptr, a)[0][0];
+    var output = apply_solver_ts_tol(ts, 1e-8, 1e-10, 1e6, a)[0][0];
 
     output.grad();
 
@@ -1161,15 +1052,12 @@ struct cos_arg_test : public cos_arg_ode_base,
     stan::math::nested_rev_autodiff nested;
     std::tuple_element_t<1, T> sol;
 
-    Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
-    double t0 = 0.0;
     std::vector<double> ts = {1.1};
 
     Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> a(1, 1);
     a << 1.5;
 
-    var output = sol(stan::test::CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
-                     nullptr, a)[0][0];
+    var output = apply_solver_ts_tol(ts, 1e-8, 1e-10, 1e6, a)[0][0];
 
     output.grad();
 
@@ -1181,15 +1069,16 @@ struct cos_arg_test : public cos_arg_ode_base,
     stan::math::nested_rev_autodiff nested;
     std::tuple_element_t<1, T> sol;
 
-    Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
-    double t0 = 0.0;
     std::vector<double> ts = {1.1};
 
     var a0 = 0.75;
     std::vector<var> a1 = {0.75};
 
-    var output = sol(stan::test::Cos2Arg(), y0, t0, ts, 1e-8, 1e-10, 1e6,
-                     nullptr, a0, a1)[0][0];
+    var output = sol(stan::math::ode_closure_adapter(), y0, t0, ts, 1e-8, 1e-10, 1e6,
+                     nullptr,
+                     stan::math::from_lambda([](auto& a, auto& t, auto& y, auto& b, std::ostream* msgs) {
+                       return stan::test::Cos2Arg()(t, y, msgs, a, b);
+                     }, a0), a1)[0][0];
 
     output.grad();
 
@@ -1200,18 +1089,14 @@ struct cos_arg_test : public cos_arg_ode_base,
 
   void test_tol_std_vector_std_vector_args() {
     stan::math::nested_rev_autodiff nested;
-    std::tuple_element_t<1, T> sol;
 
-    Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
-    double t0 = 0.0;
     std::vector<double> ts = {1.1};
 
     var a0 = 1.5;
     std::vector<var> a1(1, a0);
     std::vector<std::vector<var>> a2(1, a1);
 
-    var output = sol(stan::test::CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
-                     nullptr, a2)[0][0];
+    var output = apply_solver_ts_tol(ts, 1e-8, 1e-10, 1e6, a2)[0][0];
 
     output.grad();
 
@@ -1221,10 +1106,7 @@ struct cos_arg_test : public cos_arg_ode_base,
 
   void test_tol_std_vector_vector_args() {
     stan::math::nested_rev_autodiff nested;
-    std::tuple_element_t<1, T> sol;
 
-    Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
-    double t0 = 0.0;
     std::vector<double> ts = {1.1};
 
     var a0 = 1.5;
@@ -1232,8 +1114,7 @@ struct cos_arg_test : public cos_arg_ode_base,
     a1 << a0;
     std::vector<Eigen::Matrix<var, Eigen::Dynamic, 1>> a2(1, a1);
 
-    var output = sol(stan::test::CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
-                     nullptr, a2)[0][0];
+    var output = apply_solver_ts_tol(ts, 1e-8, 1e-10, 1e6, a2)[0][0];
 
     output.grad();
 
@@ -1243,10 +1124,7 @@ struct cos_arg_test : public cos_arg_ode_base,
 
   void test_tol_std_vector_row_vector_args() {
     stan::math::nested_rev_autodiff nested;
-    std::tuple_element_t<1, T> sol;
 
-    Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
-    double t0 = 0.0;
     std::vector<double> ts = {1.1};
 
     var a0 = 1.5;
@@ -1254,8 +1132,7 @@ struct cos_arg_test : public cos_arg_ode_base,
     a1 << a0;
     std::vector<Eigen::Matrix<var, 1, Eigen::Dynamic>> a2(1, a1);
 
-    var output = sol(stan::test::CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
-                     nullptr, a2)[0][0];
+    var output = apply_solver_ts_tol(ts, 1e-8, 1e-10, 1e6, a2)[0][0];
 
     output.grad();
 
@@ -1265,10 +1142,7 @@ struct cos_arg_test : public cos_arg_ode_base,
 
   void test_tol_std_vector_matrix_args() {
     stan::math::nested_rev_autodiff nested;
-    std::tuple_element_t<1, T> sol;
 
-    Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
-    double t0 = 0.0;
     std::vector<double> ts = {1.1};
 
     var a0 = 1.5;
@@ -1276,183 +1150,12 @@ struct cos_arg_test : public cos_arg_ode_base,
     a1 << a0;
     std::vector<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> a2(1, a1);
 
-    var output = sol(stan::test::CosArg1(), y0, t0, ts, 1e-8, 1e-10, 1e6,
-                     nullptr, a2)[0][0];
+    var output = apply_solver_ts_tol(ts, 1e-8, 1e-10, 1e6, a2)[0][0];
 
     output.grad();
 
     EXPECT_FLOAT_EQ(output.val(), 0.66457668563);
     EXPECT_FLOAT_EQ(a2[0](0).adj(), -0.50107310888);
-  }
-
-  void test_tol_arg_combos_test() {
-    stan::math::nested_rev_autodiff nested;
-    std::tuple_element_t<1, T> sol;
-
-    var t0 = 0.5;
-    var a = 0.2;
-    std::vector<var> ts = {1.25};
-    Eigen::Matrix<var, Eigen::Dynamic, 1> y0(1);
-    y0 << 0.75;
-
-    double t0d = stan::math::value_of(t0);
-    double ad = stan::math::value_of(a);
-    std::vector<double> tsd = stan::math::value_of(ts);
-    Eigen::VectorXd y0d = stan::math::value_of(y0);
-
-    auto check_yT = [&](auto yT) {
-      EXPECT_FLOAT_EQ(stan::math::value_of(yT),
-                      y0d(0) * exp(-0.5 * ad * (tsd[0] * tsd[0] - t0d * t0d)));
-    };
-
-    auto check_t0 = [&](var t0) {
-      EXPECT_FLOAT_EQ(
-          t0.adj(),
-          ad * t0d * y0d(0) * exp(-0.5 * ad * (tsd[0] * tsd[0] - t0d * t0d)));
-    };
-
-    auto check_a = [&](var a) {
-      EXPECT_FLOAT_EQ(a.adj(),
-                      -0.5 * (tsd[0] * tsd[0] - t0d * t0d) * y0d(0)
-                          * exp(-0.5 * ad * (tsd[0] * tsd[0] - t0d * t0d)));
-    };
-
-    auto check_ts = [&](std::vector<var> ts) {
-      EXPECT_FLOAT_EQ(ts[0].adj(),
-                      -ad * tsd[0] * y0d(0)
-                          * exp(-0.5 * ad * (tsd[0] * tsd[0] - t0d * t0d)));
-    };
-
-    auto check_y0 = [&](Eigen::Matrix<var, Eigen::Dynamic, 1> y0) {
-      EXPECT_FLOAT_EQ(y0(0).adj(),
-                      exp(-0.5 * ad * (tsd[0] * tsd[0] - t0d * t0d)));
-    };
-
-    double yT1 = sol(stan::test::ayt(), y0d, t0d, tsd, 1e-10, 1e-10, 1e6,
-                     nullptr, ad)[0](0);
-    check_yT(yT1);
-
-    var yT2 = sol(stan::test::ayt(), y0d, t0d, tsd, 1e-10, 1e-10, 1e6, nullptr,
-                  a)[0](0);
-    nested.set_zero_all_adjoints();
-    yT2.grad();
-    check_yT(yT2);
-    check_a(a);
-
-    var yT3 = sol(stan::test::ayt(), y0d, t0d, ts, 1e-10, 1e-10, 1e6, nullptr,
-                  ad)[0](0);
-    nested.set_zero_all_adjoints();
-    yT3.grad();
-    check_yT(yT3);
-    check_ts(ts);
-
-    var yT4 = sol(stan::test::ayt(), y0d, t0d, ts, 1e-10, 1e-10, 1e6, nullptr,
-                  a)[0](0);
-    nested.set_zero_all_adjoints();
-    yT4.grad();
-    check_yT(yT4);
-    check_ts(ts);
-    check_a(a);
-
-    var yT5 = sol(stan::test::ayt(), y0d, t0, tsd, 1e-10, 1e-10, 1e6, nullptr,
-                  ad)[0](0);
-    nested.set_zero_all_adjoints();
-    yT5.grad();
-    check_yT(yT5);
-    check_t0(t0);
-
-    var yT6 = sol(stan::test::ayt(), y0d, t0, tsd, 1e-10, 1e-10, 1e6, nullptr,
-                  a)[0](0);
-    nested.set_zero_all_adjoints();
-    yT6.grad();
-    check_yT(yT6);
-    check_t0(t0);
-    check_a(a);
-
-    var yT7 = sol(stan::test::ayt(), y0d, t0, ts, 1e-10, 1e-10, 1e6, nullptr,
-                  ad)[0](0);
-    nested.set_zero_all_adjoints();
-    yT7.grad();
-    check_yT(yT7);
-    check_t0(t0);
-    check_ts(ts);
-
-    var yT8 = sol(stan::test::ayt(), y0d, t0, ts, 1e-10, 1e-10, 1e6, nullptr,
-                  a)[0](0);
-    nested.set_zero_all_adjoints();
-    yT8.grad();
-    check_yT(yT8);
-    check_t0(t0);
-    check_ts(ts);
-    check_a(a);
-
-    var yT9 = sol(stan::test::ayt(), y0, t0d, tsd, 1e-10, 1e-10, 1e6, nullptr,
-                  ad)[0](0);
-    nested.set_zero_all_adjoints();
-    yT9.grad();
-    check_yT(yT9);
-    check_y0(y0);
-
-    var yT10 = sol(stan::test::ayt(), y0, t0d, tsd, 1e-10, 1e-10, 1e6, nullptr,
-                   a)[0](0);
-    nested.set_zero_all_adjoints();
-    yT10.grad();
-    check_yT(yT10);
-    check_y0(y0);
-    check_a(a);
-
-    var yT11 = sol(stan::test::ayt(), y0, t0d, ts, 1e-10, 1e-10, 1e6, nullptr,
-                   ad)[0](0);
-    nested.set_zero_all_adjoints();
-    yT11.grad();
-    check_yT(yT11);
-    check_y0(y0);
-    check_ts(ts);
-
-    var yT12 = sol(stan::test::ayt(), y0, t0d, ts, 1e-10, 1e-10, 1e6, nullptr,
-                   a)[0](0);
-    nested.set_zero_all_adjoints();
-    yT12.grad();
-    check_yT(yT12);
-    check_y0(y0);
-    check_ts(ts);
-    check_a(a);
-
-    var yT13 = sol(stan::test::ayt(), y0, t0, tsd, 1e-10, 1e-10, 1e6, nullptr,
-                   ad)[0](0);
-    nested.set_zero_all_adjoints();
-    yT13.grad();
-    check_yT(yT13);
-    check_y0(y0);
-    check_t0(t0);
-
-    var yT14 = sol(stan::test::ayt(), y0, t0, tsd, 1e-10, 1e-10, 1e6, nullptr,
-                   a)[0](0);
-    nested.set_zero_all_adjoints();
-    yT14.grad();
-    check_yT(yT14);
-    check_y0(y0);
-    check_t0(t0);
-    check_a(a);
-
-    var yT15 = sol(stan::test::ayt(), y0, t0, ts, 1e-10, 1e-10, 1e6, nullptr,
-                   ad)[0](0);
-    nested.set_zero_all_adjoints();
-    yT15.grad();
-    check_yT(yT15);
-    check_y0(y0);
-    check_t0(t0);
-    check_ts(ts);
-
-    var yT16 = sol(stan::test::ayt(), y0, t0, ts, 1e-10, 1e-10, 1e6, nullptr,
-                   a)[0](0);
-    nested.set_zero_all_adjoints();
-    yT16.grad();
-    check_yT(yT16);
-    check_y0(y0);
-    check_t0(t0);
-    check_ts(ts);
-    check_a(a);
   }
 };
 

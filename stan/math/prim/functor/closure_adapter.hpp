@@ -45,7 +45,7 @@ template <bool Ref, typename F, typename T>
 struct one_arg_closure {
   using captured_scalar_t__ = return_type_t<T>;
   using ValueOf__
-      = one_arg_closure<false, F, decltype(value_of(std::declval<T>()))>;
+      = one_arg_closure<false, F, decltype(eval(value_of(std::declval<T>())))>;
   using CopyOf__ = one_arg_closure<false, F, T>;
   F f_;
   capture_type_t<T, Ref> s_;
@@ -57,9 +57,9 @@ struct one_arg_closure {
     return f_(s_, args..., msgs);
   }
   size_t count_vars__() const { return count_vars(s_); }
-  auto value_of__() const { return ValueOf__(f_, value_of(s_)); }
+  auto value_of__() const { return ValueOf__(f_, eval(value_of(s_))); }
   auto copy_of__() const { return CopyOf__(f_, s_); }
-  auto deep_copy_vars__() const { return CopyOf__(f_, deep_copy_vars(s_)); }
+  auto deep_copy_vars__() const { return CopyOf__(f_, eval(deep_copy_vars(s_))); }
   void zero_adjoints__() { zero_adjoints(s_); }
   double* accumulate_adjoints__(double* dest) const {
     return accumulate_adjoints(dest, s_);
