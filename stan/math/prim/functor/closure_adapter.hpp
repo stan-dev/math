@@ -156,6 +156,8 @@ struct empty_closure_lp {
   }
 };
 
+}  // namespace internal
+
 /**
  * Higher-order functor suitable for calling a closure inside variadic ODE
  * solvers.
@@ -167,8 +169,6 @@ struct ode_closure_adapter {
     return f(msgs, t, y, args...);
   }
 };
-
-}  // namespace internal
 
 /**
  * Create a closure object from a callable.

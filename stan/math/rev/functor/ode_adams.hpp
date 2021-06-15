@@ -67,22 +67,6 @@ ode_adams_tol_impl(const char* function_name, const F& f, const T_y0& y0,
       args_ref_tuple);
 }
 
-template <typename F, typename T_y0, typename T_t0, typename T_ts,
-          typename... T_Args, require_eigen_col_vector_t<T_y0>* = nullptr,
-          require_stan_closure_t<F>* = nullptr>
-std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, T_Args...>,
-                          Eigen::Dynamic, 1>>
-ode_adams_tol_impl(const char* function_name, const F& f, const T_y0& y0,
-                   const T_t0& t0, const std::vector<T_ts>& ts,
-                   double relative_tolerance, double absolute_tolerance,
-                   long int max_num_steps,  // NOLINT(runtime/int)
-                   std::ostream* msgs, const T_Args&... args) {
-  internal::ode_closure_adapter f_adapter;
-  return ode_adams_tol_impl(function_name, f_adapter, y0, t0, ts,
-                            relative_tolerance, absolute_tolerance,
-                            max_num_steps, msgs, f, args...);
-}
-
 /**
  * Solve the ODE initial value problem y' = f(t, y), y(t0) = y0 at a set of
  * times, { t1, t2, t3, ... } using the non-stiff Adams-Moulton solver from

@@ -25,16 +25,33 @@ struct integrate_ode_std_vector_interface_adapter_impl;
 
 template <typename F, bool Ref>
 struct integrate_ode_std_vector_interface_adapter_impl<false, F, Ref> {
+  using captured_scalar_t__ = double;
+  using ValueOf__ = integrate_ode_std_vector_interface_adapter_impl<
+      false, F, false>;
+  using CopyOf__ = integrate_ode_std_vector_interface_adapter_impl<
+      false, F, false>;
   const F& f_;
   explicit integrate_ode_std_vector_interface_adapter_impl(const F& f)
       : f_(f) {}
 
   template <typename T0, typename T1, typename T2>
-  auto operator()(const T0& t, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
-                  std::ostream* msgs, const std::vector<T2>& theta,
+  auto operator()(std::ostream* msgs, const T0& t,
+                  const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
+                  const std::vector<T2>& theta,
                   const std::vector<double>& x,
                   const std::vector<int>& x_int) const {
     return to_vector(f_(t, to_array_1d(y), theta, x, x_int, msgs));
+  }
+  size_t count_vars__() const { }
+  auto value_of__() const { return ValueOf__(f_); }
+  auto deep_copy_vars__() const { return CopyOf__(f_); }
+  void zero_adjoints__() { }
+  double* accumulate_adjoints__(double* dest) const {
+    return dest;
+  }
+  template <typename Vari>
+  Vari** save_varis__(Vari** dest) const {
+    return dest;
   }
 };
 
