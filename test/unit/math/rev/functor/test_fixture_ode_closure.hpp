@@ -50,108 +50,140 @@ struct closure_test : public closure_ode_base,
   auto apply_solver() {
     std::tuple_element_t<0, T> sol;
     return sol(stan::math::ode_closure_adapter(), y0, t0, ts, nullptr,
-               stan::math::from_lambda([](auto& a_, auto& t, auto& y, std::ostream* msgs) {
-                 return stan::test::CosArg1()(t, y, msgs, a_);
-               }, a));
+               stan::math::from_lambda(
+                   [](auto& a_, auto& t, auto& y, std::ostream* msgs) {
+                     return stan::test::CosArg1()(t, y, msgs, a_);
+                   },
+                   a));
   }
 
   template <typename T1, typename T2>
   auto apply_solver(Eigen::Matrix<T1, -1, 1>& init, std::vector<T2>& va) {
     std::tuple_element_t<0, T> sol;
     return sol(stan::math::ode_closure_adapter(), init, t0, ts, nullptr,
-               stan::math::from_lambda([](auto& a, auto& t, auto& y, std::ostream* msgs) {
-                 return stan::test::CosArg1()(t, y, msgs, a);
-               }, va));
+               stan::math::from_lambda(
+                   [](auto& a, auto& t, auto& y, std::ostream* msgs) {
+                     return stan::test::CosArg1()(t, y, msgs, a);
+                   },
+                   va));
   }
 
   template <typename Ts>
   auto apply_solver_ts(const std::vector<Ts>& ts_) {
     std::tuple_element_t<0, T> sol;
     return sol(stan::math::ode_closure_adapter(), y0, t0, ts_, nullptr,
-               stan::math::from_lambda([](auto& a_, auto& t, auto& y, std::ostream* msgs) {
-                 return stan::test::CosArg1()(t, y, msgs, a_);
-               }, a));
+               stan::math::from_lambda(
+                   [](auto& a_, auto& t, auto& y, std::ostream* msgs) {
+                     return stan::test::CosArg1()(t, y, msgs, a_);
+                   },
+                   a));
   }
 
   template <typename Ts, typename a_type>
   auto apply_solver_ts(const std::vector<Ts>& ts_, const a_type& arg) {
     std::tuple_element_t<0, T> sol;
     return sol(stan::math::ode_closure_adapter(), y0, t0, ts_, nullptr,
-               stan::math::from_lambda([](auto& a_, auto& t, auto& y, std::ostream* msgs) {
-                 return stan::test::CosArg1()(t, y, msgs, a_);
-               }, arg));
+               stan::math::from_lambda(
+                   [](auto& a_, auto& t, auto& y, std::ostream* msgs) {
+                     return stan::test::CosArg1()(t, y, msgs, a_);
+                   },
+                   arg));
   }
 
   template <typename Ts, typename a_type>
-  auto apply_solver_ts_tol(const std::vector<Ts>& ts_, double rtol, double atol, int max_num_steps, const a_type& a_) {
+  auto apply_solver_ts_tol(const std::vector<Ts>& ts_, double rtol, double atol,
+                           int max_num_steps, const a_type& a_) {
     std::tuple_element_t<1, T> sol;
-    return sol(stan::math::ode_closure_adapter(), y0, t0, ts_, rtol, atol, max_num_steps, nullptr,
-               stan::math::from_lambda([](auto& a, auto& t, auto& y, std::ostream* msgs) {
-                 return stan::test::CosArg1()(t, y, msgs, a);
-               }, a_));
+    return sol(stan::math::ode_closure_adapter(), y0, t0, ts_, rtol, atol,
+               max_num_steps, nullptr,
+               stan::math::from_lambda(
+                   [](auto& a, auto& t, auto& y, std::ostream* msgs) {
+                     return stan::test::CosArg1()(t, y, msgs, a);
+                   },
+                   a_));
   }
 
   template <typename T0>
   auto apply_solver_t0(const T0& t0_) {
     std::tuple_element_t<0, T> sol;
     return sol(stan::math::ode_closure_adapter(), y0, t0_, ts, nullptr,
-               stan::math::from_lambda([](auto& a_, auto& t, auto& y, std::ostream* msgs) {
-                 return stan::test::CosArg1()(t, y, msgs, a_);
-               }, a));
+               stan::math::from_lambda(
+                   [](auto& a_, auto& t, auto& y, std::ostream* msgs) {
+                     return stan::test::CosArg1()(t, y, msgs, a_);
+                   },
+                   a));
   }
 
   template <typename T0, typename a_type>
-  auto apply_solver_t0_tol(const T0& t0_, double rtol, double atol, int max_num_steps, const a_type& a_) {
+  auto apply_solver_t0_tol(const T0& t0_, double rtol, double atol,
+                           int max_num_steps, const a_type& a_) {
     std::tuple_element_t<1, T> sol;
-    return sol(stan::math::ode_closure_adapter(), y0, t0_, ts, rtol, atol, max_num_steps, nullptr,
-               stan::math::from_lambda([](auto& a, auto& t, auto& y, std::ostream* msgs) {
-                 return stan::test::CosArg1()(t, y, msgs, a);
-               }, a_));
+    return sol(stan::math::ode_closure_adapter(), y0, t0_, ts, rtol, atol,
+               max_num_steps, nullptr,
+               stan::math::from_lambda(
+                   [](auto& a, auto& t, auto& y, std::ostream* msgs) {
+                     return stan::test::CosArg1()(t, y, msgs, a);
+                   },
+                   a_));
   }
 
   auto apply_solver_tol() {
     std::tuple_element_t<1, T> sol;
-    return sol(stan::math::ode_closure_adapter(), y0, t0, ts, rtol, atol, max_num_step,
-               nullptr,
-               stan::math::from_lambda([](auto& a_, auto& t, auto& y, std::ostream* msgs) {
-                 return stan::test::CosArg1()(t, y, msgs, a_);
-               }, a));
+    return sol(stan::math::ode_closure_adapter(), y0, t0, ts, rtol, atol,
+               max_num_step, nullptr,
+               stan::math::from_lambda(
+                   [](auto& a_, auto& t, auto& y, std::ostream* msgs) {
+                     return stan::test::CosArg1()(t, y, msgs, a_);
+                   },
+                   a));
   }
 
   template <typename a_type>
   auto apply_solver_arg(a_type const& a_) {
     std::tuple_element_t<0, T> sol;
     return sol(stan::math::ode_closure_adapter(), y0, t0, ts, nullptr,
-               stan::math::from_lambda([](auto& a, auto& t, auto& y, std::ostream* msgs) {
-                 return stan::test::CosArg1()(t, y, msgs, a);
-               }, a_));
+               stan::math::from_lambda(
+                   [](auto& a, auto& t, auto& y, std::ostream* msgs) {
+                     return stan::test::CosArg1()(t, y, msgs, a);
+                   },
+                   a_));
   }
 
   template <typename a_type>
   auto apply_solver_arg_tol(a_type const& a_) {
     std::tuple_element_t<1, T> sol;
-    return sol(stan::math::ode_closure_adapter(), y0, t0, ts, rtol, atol, max_num_step, nullptr,
-               stan::math::from_lambda([](auto& a, auto& t, auto& y, std::ostream* msgs) {
-                 return stan::test::CosArg1()(t, y, msgs, a);
-               }, a_));
+    return sol(stan::math::ode_closure_adapter(), y0, t0, ts, rtol, atol,
+               max_num_step, nullptr,
+               stan::math::from_lambda(
+                   [](auto& a, auto& t, auto& y, std::ostream* msgs) {
+                     return stan::test::CosArg1()(t, y, msgs, a);
+                   },
+                   a_));
   }
 
   template <typename a_type, typename b_type>
   auto apply_solver_arg(a_type const& a_, b_type const& b_) {
     std::tuple_element_t<0, T> sol;
     return sol(stan::math::ode_closure_adapter(), y0, t0, ts, nullptr,
-               stan::math::from_lambda([](auto& a, auto& t, auto& y, auto& b, std::ostream* msgs) {
-                 return stan::test::Cos2Arg()(t, y, msgs, a, b);
-               }, a_), b_);
+               stan::math::from_lambda(
+                   [](auto& a, auto& t, auto& y, auto& b, std::ostream* msgs) {
+                     return stan::test::Cos2Arg()(t, y, msgs, a, b);
+                   },
+                   a_),
+               b_);
   }
 
   template <typename a_type, typename b_type>
   auto apply_solver_arg_tol(a_type const& a_, b_type const& b_) {
     std::tuple_element_t<1, T> sol;
-    return sol(stan::math::ode_closure_adapter(), y0, t0, ts, rtol, atol, max_num_step, nullptr,
-               stan::math::from_lambda([](auto& a, auto& t, auto& y, auto& b, std::ostream* msgs) {
-                 return stan::test::Cos2Arg()(t, y, msgs, a, b);
-               }, a_), b_);
+    return sol(stan::math::ode_closure_adapter(), y0, t0, ts, rtol, atol,
+               max_num_step, nullptr,
+               stan::math::from_lambda(
+                   [](auto& a, auto& t, auto& y, auto& b, std::ostream* msgs) {
+                     return stan::test::Cos2Arg()(t, y, msgs, a, b);
+                   },
+                   a_),
+               b_);
   }
 
   void test_y0_error() {
@@ -1074,11 +1106,15 @@ struct closure_test : public closure_ode_base,
     var a0 = 0.75;
     std::vector<var> a1 = {0.75};
 
-    var output = sol(stan::math::ode_closure_adapter(), y0, t0, ts, 1e-8, 1e-10, 1e6,
-                     nullptr,
-                     stan::math::from_lambda([](auto& a, auto& t, auto& y, auto& b, std::ostream* msgs) {
-                       return stan::test::Cos2Arg()(t, y, msgs, a, b);
-                     }, a0), a1)[0][0];
+    var output
+        = sol(stan::math::ode_closure_adapter(), y0, t0, ts, 1e-8, 1e-10, 1e6,
+              nullptr,
+              stan::math::from_lambda(
+                  [](auto& a, auto& t, auto& y, auto& b, std::ostream* msgs) {
+                    return stan::test::Cos2Arg()(t, y, msgs, a, b);
+                  },
+                  a0),
+              a1)[0][0];
 
     output.grad();
 
