@@ -166,8 +166,8 @@ struct empty_closure_lp {
  */
 struct ode_closure_adapter {
   template <typename F, typename T0, typename T1, typename... Args>
-  auto operator()(const T0& t, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
-                  std::ostream* msgs, const F& f, Args... args) const {
+  auto operator()(const T0& t, const T1& y, std::ostream* msgs, const F& f,
+                  Args... args) const {
     return f(msgs, t, y, args...);
   }
 };

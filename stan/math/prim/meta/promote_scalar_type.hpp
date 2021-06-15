@@ -4,6 +4,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/is_var.hpp>
+#include <stan/math/prim/meta/is_stan_closure.hpp>
 #include <vector>
 
 namespace stan {
@@ -91,6 +92,23 @@ struct promote_scalar_type<T, S, require_eigen_t<S>> {
                     S::RowsAtCompileTime, S::ColsAtCompileTime>,
       Eigen::Array<typename promote_scalar_type<T, typename S::Scalar>::type,
                    S::RowsAtCompileTime, S::ColsAtCompileTime>>::type;
+};
+
+/**
+ * Template metaprogram to calculate a type for a closure whose
+ * underlying scalar is converted from the second template
+ * parameter type to the first.
+ *
+ * @tparam T result scalar type.
+ * @tparam S input closure type
+ */
+template <typename T, typename F>
+struct promote_scalar_type<T, F, require_stan_closure_t<F>> {
+  /**
+   * The promoted type.
+   */
+  using type = typename std::conditional<is_var<T>::value, F,
+                                         typename F::ValueOf__>::type;
 };
 
 template <typename T, typename S>
