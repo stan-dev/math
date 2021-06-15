@@ -41,7 +41,7 @@ struct integrate_ode_std_vector_interface_adapter_impl<false, F, Ref> {
                   const std::vector<int>& x_int) const {
     return to_vector(f_(t, to_array_1d(y), theta, x, x_int, msgs));
   }
-  size_t count_vars__() const {}
+  size_t count_vars__() const { return 0; }
   auto value_of__() const { return ValueOf__(f_); }
   auto deep_copy_vars__() const { return CopyOf__(f_); }
   void zero_adjoints__() {}
