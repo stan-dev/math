@@ -21,7 +21,7 @@ TEST(StanMath, check_values) {
   Eigen::VectorXd out1
       = stan::math::to_vector(harm_osc(t, y, theta, x, x_int, nullptr));
   Eigen::VectorXd out2
-      = harm_osc_adapted(t, stan::math::to_vector(y), nullptr, theta, x, x_int);
+      = harm_osc_adapted(nullptr, t, stan::math::to_vector(y), theta, x, x_int);
 
   EXPECT_MATRIX_FLOAT_EQ(out1, out2);
 }
