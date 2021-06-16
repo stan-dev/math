@@ -588,7 +588,7 @@ class vari_view<
   template <typename S, typename K,
             require_assignable_t<value_type, S>* = nullptr,
             require_assignable_t<value_type, K>* = nullptr>
-  vari_view(S&& val, K&& adj) noexcept : val_(std::forward<S>(val)), adj_(std::forward<K>(adj)) {}
+  vari_view(const S& val, const K& adj) noexcept : val_(val), adj_(adj) {}
 
   /**
    * Return a constant reference to the value of this vari.
