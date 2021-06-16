@@ -350,11 +350,13 @@ class vari_view_eigen {
    */
   inline auto diagonal() const {
     using inner_type = decltype(derived().val_.diagonal());
-    return vari_view<inner_type>(derived().val_.diagonal(), derived().adj_.diagonal());
+    return vari_view<inner_type>(derived().val_.diagonal(),
+                                 derived().adj_.diagonal());
   }
   inline auto diagonal() {
     using inner_type = decltype(derived().val_.diagonal());
-    return vari_view<inner_type>(derived().val_.diagonal(), derived().adj_.diagonal());
+    return vari_view<inner_type>(derived().val_.diagonal(),
+                                 derived().adj_.diagonal());
   }
 
   /**
