@@ -7,11 +7,13 @@
 namespace stan {
 namespace math {
 
-double hypergeometric_pFq(const Eigen::VectorXd& p, const Eigen::VectorXd& q, double z) {
+double hypergeometric_pFq(const Eigen::VectorXd& p, const Eigen::VectorXd& q,
+                          double z) {
 
-  return boost::math::hypergeometric_pFq(std::vector<double>(p.data(),p.data()+p.size()),
-                                         std::vector<double>(q.data(),q.data()+q.size()),
-                                         z);
+  return boost::math::hypergeometric_pFq(
+                std::vector<double>(p.data(), p.data() + p.size()),
+                std::vector<double>(q.data(), q.data() + q.size()),
+                z);
 }
 }  // namespace math
 }  // namespace stan
