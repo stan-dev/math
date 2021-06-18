@@ -19,7 +19,9 @@ namespace math {
 template <typename Tp, typename Tq, typename Tz,
           require_stan_scalar_t<Tz>* = nullptr,
           require_all_eigen_vector_t<Tp, Tq>* = nullptr>
-auto grad_pFq(const Tp& p, const Tq& q, const Tz& z,
+void grad_pFq(plain_type_t<Tp>& grad_p, plain_type_t<Tq>& grad_q,
+              Tz& grad_z,
+              const Tp& p, const Tq& q, const Tz& z,
               double precision = 1e-14, int max_steps = 1e6) {
     using std::max;
     using scalar_t = scalar_type_t<return_type_t<Tp, Tq, Tz>>;
@@ -71,11 +73,9 @@ auto grad_pFq(const Tp& p, const Tq& q, const Tz& z,
     Tp_plain pre_mult_p = (log_z + ind_vector.unaryExpr([&log_p, &sum_log_p](int i){ return sum_log_p - log_p[i]; }).array() - sum_log_q).matrix();
     Tq_plain pre_mult_q = (log_z + sum_log_p) - (log_q.array() + sum_log_q);
   
-    Tp_plain d_p = exp(pre_mult_p.array() + dp_infsum.array()).matrix();
-    Tq_plain d_q = -exp(pre_mult_q.array() + dq_infsum.array()).matrix();
-    scalar_t d_z = (prod(p) / prod(q)) * hypergeometric_pFq((p.array() + 1).matrix(), (q.array() + 1).matrix(), z);
-
-    return std::make_tuple(d_p, d_q, d_z);
+    grad_p = exp(pre_mult_p.array() + dp_infsum.array()).matrix();
+    grad_q = -exp(pre_mult_q.array() + dq_infsum.array()).matrix();
+    grad_z = (prod(p) / prod(q)) * hypergeometric_pFq((p.array() + 1).matrix(), (q.array() + 1).matrix(), z);
 }
 }  // namespace math
 }  // namespace stan
