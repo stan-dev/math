@@ -120,3 +120,25 @@ TEST(primScalFun, grad_4F3) {
 
   EXPECT_FLOAT_EQ(0.1800529055890911, grad_z);
 }
+
+TEST(primScalFun, grad_2F1_derivs_match) {
+  using stan::math::grad_pFq_pq;
+  using stan::math::grad_2F1;
+
+  Eigen::VectorXd p(2);
+  p << 1, 1;
+  Eigen::VectorXd q(1);
+  q << 1;
+  double z = 0.6;
+
+  Eigen::VectorXd grad_p(2);
+  Eigen::VectorXd grad_q(1);
+  double g_a1;
+  double g_b1;
+
+  grad_2F1(g_a1, g_b1, p[0], p[1], q[0], z);
+  grad_pFq_pq(grad_p, grad_q, p, q, z);
+
+  EXPECT_FLOAT_EQ(g_a1, grad_p[0]);
+  EXPECT_FLOAT_EQ(g_b1, grad_q[0]);
+}

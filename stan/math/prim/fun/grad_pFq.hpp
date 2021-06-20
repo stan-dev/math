@@ -111,6 +111,11 @@ void grad_pFq(TupleT&& grad_tuple, const Tp& p, const Tq& q, const Tz& z,
       outer_diff = log_sum_exp(log_sum_exp(dp_iter_m), log_sum_exp(dq_iter_m));
       m += 1;
     }
+    if(m == max_steps) {
+      throw_domain_error("grad_pFq", "k (internal counter)", max_steps, "exceeded ",
+                        " iterations, hypergeometric function gradient "
+                        "did not converge.");
+    }
 
     if(calc_p) {
       // Workaround to construct vector where each element is the product of

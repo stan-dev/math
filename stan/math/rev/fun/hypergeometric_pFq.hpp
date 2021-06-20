@@ -14,8 +14,8 @@ template <typename Tp, typename Tq, typename Tz,
           require_all_eigen_vector_vt<is_var, Tp, Tq>* = nullptr,
           require_var_t<Tz>* = nullptr>
 inline var hypergeometric_pFq(const Tp& p, const Tq& q, const Tz& z) {
-    arena_t<promote_scalar_t<var, Tp>> arena_p = p;
-    arena_t<promote_scalar_t<var, Tq>> arena_q = q;
+  arena_t<promote_scalar_t<var, Tp>> arena_p = p;
+  arena_t<promote_scalar_t<var, Tq>> arena_q = q;
   return make_callback_var(hypergeometric_pFq(arena_p.val(), arena_q.val(), z.val()),
                            [arena_p, arena_q, z](auto& vi) mutable {
                              vector_d grad_p(arena_p.size());
