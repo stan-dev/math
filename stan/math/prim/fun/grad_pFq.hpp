@@ -39,9 +39,9 @@ void grad_pFq(TupleT&& grad_tuple, const Tp& p, const Tq& q, const Tz& z,
   scalar_type_t<Tq> sum_log_q = sum(log_q);
 
   // Only need the infinite sum for partials wrt p & q
-  if(calc_p || calc_q) {
+  if (calc_p || calc_q) {
     double log_precision = log(precision);
-  
+
     int m = 0;
     scalar_t outer_diff = 0;
 
@@ -50,7 +50,7 @@ void grad_pFq(TupleT&& grad_tuple, const Tp& p, const Tq& q, const Tz& z,
      T_vec dp_infsum =  T_vec::Constant(p.size(), NEGATIVE_INFTY);
      T_vec dq_infsum =  T_vec::Constant(q.size(), NEGATIVE_INFTY);
 
-    while((outer_diff > log_precision) & (m < max_steps)) {
+    while ((outer_diff > log_precision) && (m < max_steps)) {
       // Vectors to accumulate outer sum into
       T_vec dp_iter_m =  T_vec::Constant(p.size(), NEGATIVE_INFTY);
       T_vec dp_mn =  T_vec::Constant(p.size(), NEGATIVE_INFTY);
@@ -63,16 +63,16 @@ void grad_pFq(TupleT&& grad_tuple, const Tp& p, const Tq& q, const Tz& z,
       int n = 0;
       scalar_t inner_diff = 0;
 
-      while((inner_diff > log_precision) & (n < max_steps)) {
+      while ((inner_diff > log_precision) & (n < max_steps)) {
         // Numerator term
         scalar_t term1_mn = (m + n) * log_z
-                            + sum(log_rising_factorial(pp1, m + n)) 
-                            + log_phammer_1m + log_rising_factorial(1,n);
+                            + sum(log_rising_factorial(pp1, m + n))
+                            + log_phammer_1m + log_rising_factorial(1, n);
         // Denominator term
         scalar_t term2_mn = lgamma_mp1 + lgamma(n + 1)
                             + sum(log_rising_factorial(qp1, m + n))
                             + log_rising_factorial(2, m + n);
-        if(calc_p) {
+        if (calc_p) {
           // Division (on log scale) for the p & q partials
           dp_mn = (term1_mn + log_rising_factorial(p, n).array())
                             - (term2_mn + log_rising_factorial(pp1, n).array());
@@ -82,7 +82,7 @@ void grad_pFq(TupleT&& grad_tuple, const Tp& p, const Tq& q, const Tz& z,
                                             return log_sum_exp(a, b);
                                           });
         }
-        if(calc_q) {
+        if (calc_q) {
           dq_mn = (term1_mn + log_rising_factorial(q, n).array())
                             - (term2_mn + log_rising_factorial(qp1, n).array());
           dq_iter_m = dq_iter_m.binaryExpr(dq_mn, [&](auto& a, auto& b) {
@@ -90,18 +90,19 @@ void grad_pFq(TupleT&& grad_tuple, const Tp& p, const Tq& q, const Tz& z,
                                           });
         }
 
-        // Series convergenced assessed by whether the sum of all terms is smaller
-        //   than the specified criteria (precision)
+        // Series convergenced assessed by whether the sum of all terms is
+        //   smallerthan the specified criteria (precision)
         inner_diff = log_sum_exp(log_sum_exp(dp_mn), log_sum_exp(dq_mn));
         n += 1;
       }
-      if(calc_p) {
-        // Accumulate sums once the inner loop for the current iteration has converged
+      if (calc_p) {
+        // Accumulate sums once the inner loop for the current iteration has
+        //   converged
         dp_infsum = dp_infsum.binaryExpr(dp_iter_m, [&](auto& a, auto& b) {
                                           return log_sum_exp(a, b);
                                         });
       }
-      if(calc_q) {
+      if (calc_q) {
         dq_infsum = dq_infsum.binaryExpr(dq_iter_m, [&](auto& a, auto& b) {
                                         return log_sum_exp(a, b);
                                       });
@@ -111,18 +112,19 @@ void grad_pFq(TupleT&& grad_tuple, const Tp& p, const Tq& q, const Tz& z,
       outer_diff = log_sum_exp(log_sum_exp(dp_iter_m), log_sum_exp(dq_iter_m));
       m += 1;
     }
-    if(m == max_steps) {
-      throw_domain_error("grad_pFq", "k (internal counter)", max_steps, "exceeded ",
-                        " iterations, hypergeometric function gradient "
-                        "did not converge.");
+    if (m == max_steps) {
+      throw_domain_error("grad_pFq", "k (internal counter)", max_steps,
+                         "exceeded ",
+                         " iterations, hypergeometric function gradient "
+                         "did not converge.");
     }
 
-    if(calc_p) {
+    if (calc_p) {
       // Workaround to construct vector where each element is the product of
       //   all other elements
       Eigen::VectorXi ind_vector = Eigen::VectorXi::LinSpaced(p.size(), 0,
                                                               p.size() - 1);
-                                                              
+
       Tp_plain prod_excl_curr = ind_vector.unaryExpr([&log_p,
                                                       &sum_log_p] (int i) {
                                                   return sum_log_p - log_p[i];
@@ -133,13 +135,13 @@ void grad_pFq(TupleT&& grad_tuple, const Tp& p, const Tq& q, const Tz& z,
       std::get<0>(grad_tuple) = exp(pre_mult_p + dp_infsum);
     }
 
-    if(calc_q) {
+    if (calc_q) {
       T_vec pre_mult_q = (log_z + sum_log_p) - (log_q.array() + sum_log_q);
       std::get<1>(grad_tuple) = -exp(pre_mult_q + dq_infsum);
     }
   }
 
-  if(calc_z) {
+  if (calc_z) {
     std::get<2>(grad_tuple) = exp(sum_log_p - sum_log_q)
                                 * hypergeometric_pFq(pp1, qp1, z);
   }
@@ -176,7 +178,8 @@ void grad_pFq_q(plain_type_t<Tq>& grad_q, const Tp& p, const Tq& q,
                 int max_steps = 1e6) {
   using scalar_t = scalar_type_t<Tq>;
   grad_pFq<false, true, false>(std::forward_as_tuple(plain_type_t<Tq>{},
-                                                     grad_q, scalar_type_t<Tq>{}),
+                                                     grad_q,
+                                                     scalar_type_t<Tq>{}),
                                p, q, z, precision, max_steps);
 }
 
@@ -185,8 +188,8 @@ template <typename Tp, typename Tq, typename Tz,
           require_all_eigen_vector_t<Tp, Tq>* = nullptr>
 void grad_pFq_z(plain_type_t<Tz>& grad_z, const Tp& p, const Tq& q,
                 const Tz& z, double precision = 1e-14, int max_steps = 1e6) {
-  grad_pFq<false, false, true>(std::forward_as_tuple(Eigen::Matrix<Tz,-1,1>{},
-                                                     Eigen::Matrix<Tz,-1,1>{},
+  grad_pFq<false, false, true>(std::forward_as_tuple(Eigen::Matrix<Tz, -1, 1>{},
+                                                     Eigen::Matrix<Tz, -1, 1>{},
                                                      grad_z),
                                p, q, z, precision, max_steps);
 }
@@ -198,7 +201,8 @@ void grad_pFq_pq(plain_type_t<Tp>& grad_p, plain_type_t<Tq>& grad_q,
                  const Tp& p, const Tq& q, const Tz& z,
                  double precision = 1e-14, int max_steps = 1e6) {
   using scalar_t = scalar_type_t<Tp>;
-  grad_pFq<true, true, false>(std::forward_as_tuple(grad_p, grad_q, scalar_type_t<Tp>{}),
+  grad_pFq<true, true, false>(std::forward_as_tuple(grad_p, grad_q,
+                                                    scalar_type_t<Tp>{}),
                               p, q, z, precision, max_steps);
 }
 

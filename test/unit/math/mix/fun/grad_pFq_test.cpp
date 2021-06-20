@@ -21,7 +21,7 @@ TEST(ProbInternalMath, grad_2F2_vvv) {
 
   EXPECT_FLOAT_EQ(3.924636646666071, grad_p[0].val());
   EXPECT_FLOAT_EQ(6.897245961898751, grad_p[1].val());
-  
+
   EXPECT_FLOAT_EQ(-2.775051002566842, grad_q[0].val());
   EXPECT_FLOAT_EQ(-4.980095849781222, grad_q[1].val());
 

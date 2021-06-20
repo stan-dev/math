@@ -29,7 +29,7 @@ TEST(primScalFun, grad_2F2_fd) {
   double adj = 3.924636646666071 + 6.897245961898751
                  -2.775051002566842 - 4.980095849781222
                  + 4.916522138006060;
-  
+
   EXPECT_FLOAT_EQ(result.d_, adj);
 
   // fvar, fvar, double
@@ -37,14 +37,14 @@ TEST(primScalFun, grad_2F2_fd) {
 
   adj = 3.924636646666071 + 6.897245961898751
           -2.775051002566842 - 4.980095849781222;
-  
+
   EXPECT_FLOAT_EQ(result.d_, adj);
 
   // fvar, double, double
   result = hypergeometric_pFq(fd_p, d_q, d_z);
 
   adj = 3.924636646666071 + 6.897245961898751;
-  
+
   EXPECT_FLOAT_EQ(result.d_, adj);
 
   // fvar, double, fvar
@@ -52,7 +52,7 @@ TEST(primScalFun, grad_2F2_fd) {
 
   adj = 3.924636646666071 + 6.897245961898751
                  + 4.916522138006060;
-  
+
   EXPECT_FLOAT_EQ(result.d_, adj);
 
   // double, fvar, fvar
@@ -60,7 +60,7 @@ TEST(primScalFun, grad_2F2_fd) {
 
   adj = -2.775051002566842 - 4.980095849781222
                  + 4.916522138006060;
-  
+
   EXPECT_FLOAT_EQ(result.d_, adj);
 
 
@@ -68,7 +68,7 @@ TEST(primScalFun, grad_2F2_fd) {
   result = hypergeometric_pFq(d_p, d_q, fd_z);
 
   adj = 4.916522138006060;
-  
+
   EXPECT_FLOAT_EQ(result.d_, adj);
 }
 
@@ -91,7 +91,7 @@ TEST(primScalFun, grad_2F2_ffd) {
   fd_q.val().d() << 1, 1;
 
   fvar<fvar<double>> ffd_z;;
-  ffd_z.val_.val_= 4;
+  ffd_z.val_.val_ = 4;
   ffd_z.val_.d_ = 1;
   double d_z = 4;
 
@@ -101,45 +101,6 @@ TEST(primScalFun, grad_2F2_ffd) {
   double adj = 3.924636646666071 + 6.897245961898751
                  -2.775051002566842 - 4.980095849781222
                  + 4.916522138006060;
-  
+
   EXPECT_FLOAT_EQ(result.val_.d_, adj);
-/*
-  // fvar, fvar, double
-  result = hypergeometric_pFq(fd_p, fd_q, d_z);
-
-  adj = 3.924636646666071 + 6.897245961898751
-          -2.775051002566842 - 4.980095849781222;
-  
-  EXPECT_FLOAT_EQ(result.d_, adj);
-
-  // fvar, double, double
-  result = hypergeometric_pFq(fd_p, d_q, d_z);
-
-  adj = 3.924636646666071 + 6.897245961898751;
-  
-  EXPECT_FLOAT_EQ(result.d_, adj);
-
-  // fvar, double, fvar
-  result = hypergeometric_pFq(fd_p, d_q, fd_z);
-
-  adj = 3.924636646666071 + 6.897245961898751
-                 + 4.916522138006060;
-  
-  EXPECT_FLOAT_EQ(result.d_, adj);
-
-  // double, fvar, fvar
-  result = hypergeometric_pFq(d_p, fd_q, fd_z);
-
-  adj = -2.775051002566842 - 4.980095849781222
-                 + 4.916522138006060;
-  
-  EXPECT_FLOAT_EQ(result.d_, adj);
-
-
-  // double, double, fvar
-  result = hypergeometric_pFq(d_p, d_q, fd_z);
-
-  adj = 4.916522138006060;
-  
-  EXPECT_FLOAT_EQ(result.d_, adj);*/
 }
