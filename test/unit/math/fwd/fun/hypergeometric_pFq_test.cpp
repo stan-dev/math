@@ -23,53 +23,35 @@ TEST(primScalFun, grad_2F2_fd) {
   fvar<double> fd_z = fvar<double>(4, 1);
   double d_z = 4;
 
+  double p_adj = 3.924636646666071 + 6.897245961898751;
+  double q_adj = -2.775051002566842 - 4.980095849781222;
+  double z_adj = 4.916522138006060;
+
   // fvar, fvar, fvar
-  fvar<double> result = hypergeometric_pFq(fd_p, fd_q, fd_z);
-
-  double adj = 3.924636646666071 + 6.897245961898751
-                 -2.775051002566842 - 4.980095849781222
-                 + 4.916522138006060;
-
-  EXPECT_FLOAT_EQ(result.d_, adj);
+  EXPECT_FLOAT_EQ(hypergeometric_pFq(fd_p, fd_q, fd_z).d_,
+                  p_adj + q_adj + z_adj);
 
   // fvar, fvar, double
-  result = hypergeometric_pFq(fd_p, fd_q, d_z);
-
-  adj = 3.924636646666071 + 6.897245961898751
-          -2.775051002566842 - 4.980095849781222;
-
-  EXPECT_FLOAT_EQ(result.d_, adj);
+  EXPECT_FLOAT_EQ(hypergeometric_pFq(fd_p, fd_q, d_z).d_,
+                  p_adj + q_adj);
 
   // fvar, double, double
-  result = hypergeometric_pFq(fd_p, d_q, d_z);
-
-  adj = 3.924636646666071 + 6.897245961898751;
-
-  EXPECT_FLOAT_EQ(result.d_, adj);
+  EXPECT_FLOAT_EQ(hypergeometric_pFq(fd_p, d_q, d_z).d_,
+                  p_adj);
 
   // fvar, double, fvar
-  result = hypergeometric_pFq(fd_p, d_q, fd_z);
-
-  adj = 3.924636646666071 + 6.897245961898751
-                 + 4.916522138006060;
-
-  EXPECT_FLOAT_EQ(result.d_, adj);
+  EXPECT_FLOAT_EQ(hypergeometric_pFq(fd_p, d_q, fd_z).d_,
+                  p_adj + z_adj);
 
   // double, fvar, fvar
-  result = hypergeometric_pFq(d_p, fd_q, fd_z);
+  EXPECT_FLOAT_EQ(hypergeometric_pFq(d_p, fd_q, fd_z).d_,
+                  q_adj + z_adj);
 
-  adj = -2.775051002566842 - 4.980095849781222
-                 + 4.916522138006060;
-
-  EXPECT_FLOAT_EQ(result.d_, adj);
-
+  // double, fvar, double
+  EXPECT_FLOAT_EQ(hypergeometric_pFq(d_p, fd_q, d_z).d_, q_adj);
 
   // double, double, fvar
-  result = hypergeometric_pFq(d_p, d_q, fd_z);
-
-  adj = 4.916522138006060;
-
-  EXPECT_FLOAT_EQ(result.d_, adj);
+  EXPECT_FLOAT_EQ(hypergeometric_pFq(d_p, d_q, fd_z).d_, z_adj);
 }
 
 TEST(primScalFun, grad_2F2_ffd) {
