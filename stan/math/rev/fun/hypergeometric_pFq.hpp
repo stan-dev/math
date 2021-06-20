@@ -9,8 +9,9 @@
 namespace stan {
 namespace math {
 
+// var, var, var
 template <typename Tp, typename Tq, typename Tz,
-          require_all_eigen_vector_st<is_var, Tp, Tq>* = nullptr,
+          require_all_eigen_vector_vt<is_var, Tp, Tq>* = nullptr,
           require_var_t<Tz>* = nullptr>
 inline var hypergeometric_pFq(const Tp& p, const Tq& q, const Tz& z) {
     arena_t<promote_scalar_t<var, Tp>> arena_p = p;
@@ -29,9 +30,10 @@ inline var hypergeometric_pFq(const Tp& p, const Tq& q, const Tz& z) {
                            });
 }
 
+// var, double, var
 template <typename Tp, typename Tq, typename Tz,
-          require_eigen_vector_st<is_var, Tp>* = nullptr,
-          require_eigen_vector_st<std::is_arithmetic, Tq>* = nullptr,
+          require_eigen_vector_vt<is_var, Tp>* = nullptr,
+          require_eigen_vector_vt<std::is_arithmetic, Tq>* = nullptr,
           require_var_t<Tz>* = nullptr>
 inline var hypergeometric_pFq(const Tp& p, const Tq& q, const Tz& z) {
     arena_t<promote_scalar_t<var, Tp>> arena_p = p;
@@ -48,9 +50,10 @@ inline var hypergeometric_pFq(const Tp& p, const Tq& q, const Tz& z) {
                            });
 }
 
+// var, double, double
 template <typename Tp, typename Tq, typename Tz,
-          require_eigen_vector_st<is_var, Tp>* = nullptr,
-          require_eigen_vector_st<std::is_arithmetic, Tq>* = nullptr,
+          require_eigen_vector_vt<is_var, Tp>* = nullptr,
+          require_eigen_vector_vt<std::is_arithmetic, Tq>* = nullptr,
           require_arithmetic_t<Tz>* = nullptr>
 inline var hypergeometric_pFq(const Tp& p, const Tq& q, const Tz& z) {
     arena_t<promote_scalar_t<var, Tp>> arena_p = p;
@@ -65,9 +68,10 @@ inline var hypergeometric_pFq(const Tp& p, const Tq& q, const Tz& z) {
                            });
 }
 
+// double, var, var
 template <typename Tp, typename Tq, typename Tz,
-          require_eigen_vector_st<std::is_arithmetic, Tp>* = nullptr,
-          require_eigen_vector_st<is_var, Tq>* = nullptr,
+          require_eigen_vector_vt<std::is_arithmetic, Tp>* = nullptr,
+          require_eigen_vector_vt<is_var, Tq>* = nullptr,
           require_var_t<Tz>* = nullptr>
 inline var hypergeometric_pFq(const Tp& p, const Tq& q, const Tz& z) {
     arena_t<promote_scalar_t<double, Tp>> arena_p = p;
@@ -84,8 +88,27 @@ inline var hypergeometric_pFq(const Tp& p, const Tq& q, const Tz& z) {
                            });
 }
 
+// double, var, double
 template <typename Tp, typename Tq, typename Tz,
-          require_all_eigen_vector_st<std::is_arithmetic, Tp, Tq>* = nullptr,
+          require_eigen_vector_vt<std::is_arithmetic, Tp>* = nullptr,
+          require_eigen_vector_vt<is_var, Tq>* = nullptr,
+          require_arithmetic_t<Tz>* = nullptr>
+inline var hypergeometric_pFq(const Tp& p, const Tq& q, const Tz& z) {
+    arena_t<promote_scalar_t<double, Tp>> arena_p = p;
+    arena_t<promote_scalar_t<var, Tq>> arena_q = q;
+  return make_callback_var(hypergeometric_pFq(arena_p, arena_q.val(), z),
+                           [arena_p, arena_q, z](auto& vi) mutable {
+                             vector_d grad_q(arena_q.size());
+
+                             grad_pFq_q(grad_q, arena_p, arena_q.val(), z);
+
+                             arena_q.adj() += vi.adj() * grad_q;
+                           });
+}
+
+// double, double, var
+template <typename Tp, typename Tq, typename Tz,
+          require_all_eigen_vector_vt<std::is_arithmetic, Tp, Tq>* = nullptr,
           require_var_t<Tz>* = nullptr>
 inline var hypergeometric_pFq(const Tp& p, const Tq& q, const Tz& z) {
     arena_t<promote_scalar_t<double, Tp>> arena_p = p;
@@ -100,8 +123,9 @@ inline var hypergeometric_pFq(const Tp& p, const Tq& q, const Tz& z) {
                            });
 }
 
+// var, var, double
 template <typename Tp, typename Tq, typename Tz,
-          require_all_eigen_vector_st<is_var, Tp, Tq>* = nullptr,
+          require_all_eigen_vector_vt<is_var, Tp, Tq>* = nullptr,
           require_arithmetic_t<Tz>* = nullptr>
 inline var hypergeometric_pFq(const Tp& p, const Tq& q, const Tz& z) {
     arena_t<promote_scalar_t<var, Tp>> arena_p = p;
