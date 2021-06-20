@@ -29,7 +29,7 @@ class kinsol_system_data {
   const Eigen::VectorXd& x_;
   const size_t N_;
   std::ostream* msgs_;
-  std::tuple<const Args&...> args_tuple;
+  std::tuple<const Args&...> args_tuple_;
 
   typedef kinsol_system_data<F1, Args...> system_data;
 
@@ -46,7 +46,7 @@ class kinsol_system_data {
         x_(x),
         N_(x.size()),
         msgs_(msgs),
-        args_tuple(args...),
+        args_tuple_(args...),
         nv_x_(N_VMake_Serial(N_, &to_array_1d(x_)[0])),
         J_(SUNDenseMatrix(N_, N_)),
         LS_(SUNLinSol_Dense(nv_x_, J_)),
@@ -74,7 +74,7 @@ class kinsol_system_data {
         [&](const auto&... args) {
           return explicit_system->f_(x_eigen, explicit_system->msgs_, args...);
         },
-        explicit_system->args_tuple);
+        explicit_system->args_tuple_);
 
     return 0;
   }
@@ -106,7 +106,7 @@ class kinsol_system_data {
           [&](const auto&... args) {
             return explicit_system->f_(x, explicit_system->msgs_, args...);
           },
-          explicit_system->args_tuple);
+          explicit_system->args_tuple_);
     };
 
     Eigen::MatrixXd Jf_x;
