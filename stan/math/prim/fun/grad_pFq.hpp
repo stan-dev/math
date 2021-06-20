@@ -4,27 +4,63 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/divide.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log_rising_factorial.hpp>
 #include <stan/math/prim/fun/hypergeometric_pFq.hpp>
 #include <stan/math/prim/fun/max.hpp>
-#include <stan/math/prim/fun/prod.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <cmath>
 
 namespace stan {
 namespace math {
+namespace internal {
 
+/**
+ * Returns the gradient of generalised hypergeometric function wrt to the
+ * input arguments:
+ * \f$ _pF_q(a_1,...,a_p;b_1,...,b_q;z) \f$
+ * 
+ * The derivatives wrt p and q are defined using a Kampé de Fériet function,
+ *   (https://en.wikipedia.org/wiki/Kamp%C3%A9_de_F%C3%A9riet_function).
+ *   This is implemented below as an infinite sum (on the log scale) until
+ *   convergence.
+ * 
+ * \f$ \frac{\partial}{\partial a_1} = 
+ *     \frac{z\prod_{j=2}^pa_j}{\prod_{j=1}^qb_j}
+ *     F_{q+1\:0\;1}^{p\:1\:2}\left(\begin{array}&a_1+1,...,a_p+1;1;1,a_1\\
+ *        2, b_1+1,...,b_1+1;;a_1+1\end{array};z,z\right) \f$
+ * 
+ * \f$ \frac{\partial}{\partial b_1}= 
+ *     -\frac{z\prod_{j=1}^pa_j}{b_1\prod_{j=1}^qb_j}
+ *     F_{q+1\:0\;1}^{p\:1\:2}\left(\begin{array}&a_1+1,...,a_p+1;1;1,b_1\\
+ *        2, b_1+1,...,b_1+1;;b_1+1\end{array};z,z\right) \f$
+ *
+ * \f$ \frac{\partial}{\partial z}= \frac{\prod_{j=1}^pa_j}{\prod_{j=1}^qb_j}
+ *      {}_pF_q(a_1 + 1,...,a_p + 1; b_1 +1,...,b_q+1;z) \f$
+ *
+ * @tparam calc_p Boolean for whether to calculate derivatives wrt to 'p'
+ * @tparam calc_q Boolean for whether to calculate derivatives wrt to 'q'
+ * @tparam calc_z Boolean for whether to calculate derivatives wrt to 'z'
+ * @tparam TupleT TType of tuple containing references
+ * @tparam Tp Type of p
+ * @tparam Tq Type of q
+ * @tparam Tz Type of z
+ * @param[in] grad_tuple Tuple of references to evaluate gradients into
+ * @param[in] p Vector of 'p' arguments to function
+ * @param[in] q Vector of 'q' arguments to function
+ * @param[in] z Scalar z argument
+ * @param[in] precision Convergence criteria for infinite sum
+ * @param[in] max_steps Maximum number of iterations for infinite sum
+ * @return Generalised hypergeometric function
+ */
 template <bool calc_p, bool calc_q, bool calc_z,
           typename TupleT, typename Tp, typename Tq, typename Tz,
-          require_stan_scalar_t<Tz>* = nullptr,
-          require_all_eigen_vector_t<Tp, Tq>* = nullptr>
-void grad_pFq(TupleT&& grad_tuple, const Tp& p, const Tq& q, const Tz& z,
+          require_all_eigen_vector_t<Tp, Tq>* = nullptr,
+          require_stan_scalar_t<Tz>* = nullptr>
+void grad_pFq_impl(TupleT&& grad_tuple, const Tp& p, const Tq& q, const Tz& z,
               double precision = 1e-14, int max_steps = 1e6) {
   using std::max;
-  using vec_scalar_t = return_type_t<Tp, Tq>;
   using scalar_t = return_type_t<Tp, Tq, Tz>;
   using Tp_plain = plain_type_t<Tp>;
   using Tq_plain = plain_type_t<Tq>;
@@ -75,7 +111,7 @@ void grad_pFq(TupleT&& grad_tuple, const Tp& p, const Tq& q, const Tz& z,
         if (calc_p) {
           // Division (on log scale) for the p & q partials
           dp_mn = (term1_mn + log_rising_factorial(p, n).array())
-                            - (term2_mn + log_rising_factorial(pp1, n).array());
+                    - (term2_mn + log_rising_factorial(pp1, n).array());
 
           // Perform a row-wise log_sum_exp to accumulate current iteration
           dp_iter_m = dp_iter_m.binaryExpr(dp_mn, [&](auto& a, auto& b) {
@@ -84,15 +120,15 @@ void grad_pFq(TupleT&& grad_tuple, const Tp& p, const Tq& q, const Tz& z,
         }
         if (calc_q) {
           dq_mn = (term1_mn + log_rising_factorial(q, n).array())
-                            - (term2_mn + log_rising_factorial(qp1, n).array());
+                    - (term2_mn + log_rising_factorial(qp1, n).array());
           dq_iter_m = dq_iter_m.binaryExpr(dq_mn, [&](auto& a, auto& b) {
                                             return log_sum_exp(a, b);
                                           });
         }
 
-        // Series convergenced assessed by whether the sum of all terms is
-        //   smallerthan the specified criteria (precision)
-        inner_diff = log_sum_exp(log_sum_exp(dp_mn), log_sum_exp(dq_mn));
+        // Series convergence assessed by whether the sum of all terms is
+        //   smaller than the specified criteria (precision)
+        inner_diff = max(log_sum_exp(dp_mn), log_sum_exp(dq_mn));
         n += 1;
       }
       if (calc_p) {
@@ -109,7 +145,7 @@ void grad_pFq(TupleT&& grad_tuple, const Tp& p, const Tq& q, const Tz& z,
       }
 
       // Assess convergence of outer loop
-      outer_diff = log_sum_exp(log_sum_exp(dp_iter_m), log_sum_exp(dq_iter_m));
+      outer_diff = max(log_sum_exp(dp_iter_m), log_sum_exp(dq_iter_m));
       m += 1;
     }
     if (m == max_steps) {
@@ -146,17 +182,43 @@ void grad_pFq(TupleT&& grad_tuple, const Tp& p, const Tq& q, const Tz& z,
                                 * hypergeometric_pFq(pp1, qp1, z);
   }
 }
+}  // namespace internal
 
+/**
+ * Wrapper function for calculating gradients wrt all parameters
+ * 
+ * @tparam Tp Type of p
+ * @tparam Tq Type of q
+ * @tparam Tz Type of z
+ * @param[in] grad_p Vector to evaluate gradients wrt p into
+ * @param[in] grad_q Vector to evaluate gradients wrt q into
+ * @param[in] grad_z Scalar to evaluate gradient wrt z into
+ * @param[in] p Vector of 'p' arguments to function
+ * @param[in] q Vector of 'q' arguments to function
+ * @param[in] z Scalar z argument
+ */
 template <typename Tp, typename Tq, typename Tz,
           require_stan_scalar_t<Tz>* = nullptr,
           require_all_eigen_vector_t<Tp, Tq>* = nullptr>
 void grad_pFq(plain_type_t<Tp>& grad_p, plain_type_t<Tq>& grad_q,
               plain_type_t<Tz>& grad_z, const Tp& p, const Tq& q, const Tz& z,
               double precision = 1e-14, int max_steps = 1e6) {
-  grad_pFq<true, true, true>(std::forward_as_tuple(grad_p, grad_q, grad_z),
-                             p, q, z, precision, max_steps);
+  internal::grad_pFq_impl<true, true, true>(
+    std::forward_as_tuple(grad_p, grad_q, grad_z),
+    p, q, z, precision, max_steps);
 }
 
+/**
+ * Wrapper function for calculating gradients wrt only p
+ * 
+ * @tparam Tp Type of p
+ * @tparam Tq Type of q
+ * @tparam Tz Type of z
+ * @param[in] grad_p Vector to evaluate gradients wrt p into
+ * @param[in] p Vector of 'p' arguments to function
+ * @param[in] q Vector of 'q' arguments to function
+ * @param[in] z Scalar z argument
+ */
 template <typename Tp, typename Tq, typename Tz,
           require_stan_scalar_t<Tz>* = nullptr,
           require_all_eigen_vector_t<Tp, Tq>* = nullptr>
@@ -164,12 +226,23 @@ void grad_pFq_p(plain_type_t<Tp>& grad_p, const Tp& p, const Tq& q,
                 const Tz& z, double precision = 1e-14,
                 int max_steps = 1e6) {
   using scalar_t = scalar_type_t<Tp>;
-  grad_pFq<true, false, false>(std::forward_as_tuple(grad_p,
+  internal::grad_pFq_impl<true, false, false>(std::forward_as_tuple(grad_p,
                                                      plain_type_t<Tp>{},
                                                      scalar_type_t<Tp>{}),
                                p, q, z, precision, max_steps);
 }
 
+/**
+ * Wrapper function for calculating gradients wrt only q
+ * 
+ * @tparam Tp Type of p
+ * @tparam Tq Type of q
+ * @tparam Tz Type of z
+ * @param[in] grad_q Vector to evaluate gradients wrt q into
+ * @param[in] p Vector of 'p' arguments to function
+ * @param[in] q Vector of 'q' arguments to function
+ * @param[in] z Scalar z argument
+ */
 template <typename Tp, typename Tq, typename Tz,
           require_stan_scalar_t<Tz>* = nullptr,
           require_all_eigen_vector_t<Tp, Tq>* = nullptr>
@@ -177,23 +250,45 @@ void grad_pFq_q(plain_type_t<Tq>& grad_q, const Tp& p, const Tq& q,
                 const Tz& z, double precision = 1e-14,
                 int max_steps = 1e6) {
   using scalar_t = scalar_type_t<Tq>;
-  grad_pFq<false, true, false>(std::forward_as_tuple(plain_type_t<Tq>{},
-                                                     grad_q,
-                                                     scalar_type_t<Tq>{}),
-                               p, q, z, precision, max_steps);
+  internal::grad_pFq_impl<false, true, false>(
+    std::forward_as_tuple(plain_type_t<Tq>{}, grad_q, scalar_type_t<Tq>{}),
+    p, q, z, precision, max_steps);
 }
 
+/**
+ * Wrapper function for calculating gradients wrt only z
+ * 
+ * @tparam Tp Type of p
+ * @tparam Tq Type of q
+ * @tparam Tz Type of z
+ * @param[in] grad_z Scalar to evaluate gradient wrt z into
+ * @param[in] p Vector of 'p' arguments to function
+ * @param[in] q Vector of 'q' arguments to function
+ * @param[in] z Scalar z argument
+ */
 template <typename Tp, typename Tq, typename Tz,
           require_stan_scalar_t<Tz>* = nullptr,
           require_all_eigen_vector_t<Tp, Tq>* = nullptr>
 void grad_pFq_z(plain_type_t<Tz>& grad_z, const Tp& p, const Tq& q,
                 const Tz& z, double precision = 1e-14, int max_steps = 1e6) {
-  grad_pFq<false, false, true>(std::forward_as_tuple(Eigen::Matrix<Tz, -1, 1>{},
-                                                     Eigen::Matrix<Tz, -1, 1>{},
-                                                     grad_z),
-                               p, q, z, precision, max_steps);
+  internal::grad_pFq_impl<false, false, true>(
+    std::forward_as_tuple(Eigen::Matrix<Tz, -1, 1>{},
+                          Eigen::Matrix<Tz, -1, 1>{}, grad_z),
+    p, q, z, precision, max_steps);
 }
 
+/**
+ * Wrapper function for calculating gradients wrt p and q
+ * 
+ * @tparam Tp Type of p
+ * @tparam Tq Type of q
+ * @tparam Tz Type of z
+ * @param[in] grad_p Vector to evaluate gradients wrt p into
+ * @param[in] grad_q Vector to evaluate gradients wrt q into
+ * @param[in] p Vector of 'p' arguments to function
+ * @param[in] q Vector of 'q' arguments to function
+ * @param[in] z Scalar z argument
+ */
 template <typename Tp, typename Tq, typename Tz,
           require_stan_scalar_t<Tz>* = nullptr,
           require_all_eigen_vector_t<Tp, Tq>* = nullptr>
@@ -201,11 +296,23 @@ void grad_pFq_pq(plain_type_t<Tp>& grad_p, plain_type_t<Tq>& grad_q,
                  const Tp& p, const Tq& q, const Tz& z,
                  double precision = 1e-14, int max_steps = 1e6) {
   using scalar_t = scalar_type_t<Tp>;
-  grad_pFq<true, true, false>(std::forward_as_tuple(grad_p, grad_q,
-                                                    scalar_type_t<Tp>{}),
-                              p, q, z, precision, max_steps);
+  internal::grad_pFq_impl<true, true, false>(
+    std::forward_as_tuple(grad_p, grad_q,  scalar_type_t<Tp>{}),
+    p, q, z, precision, max_steps);
 }
 
+/**
+ * Wrapper function for calculating gradients wrt p and z
+ * 
+ * @tparam Tp Type of p
+ * @tparam Tq Type of q
+ * @tparam Tz Type of z
+ * @param[in] grad_p Vector to evaluate gradients wrt p into
+ * @param[in] grad_z Scalar to evaluate gradient wrt z into
+ * @param[in] p Vector of 'p' arguments to function
+ * @param[in] q Vector of 'q' arguments to function
+ * @param[in] z Scalar z argument
+ */
 template <typename Tp, typename Tq, typename Tz,
           require_stan_scalar_t<Tz>* = nullptr,
           require_all_eigen_vector_t<Tp, Tq>* = nullptr>
@@ -213,11 +320,23 @@ void grad_pFq_pz(plain_type_t<Tp>& grad_p, plain_type_t<Tz>& grad_z,
                  const Tp& p, const Tq& q, const Tz& z,
                  double precision = 1e-14, int max_steps = 1e6) {
   using scalar_t = scalar_type_t<Tp>;
-  grad_pFq<true, false, true>(std::forward_as_tuple(grad_p, plain_type_t<Tp>{},
-                                                    grad_z),
-                              p, q, z, precision, max_steps);
+  internal::grad_pFq_impl<true, false, true>(
+    std::forward_as_tuple(grad_p, plain_type_t<Tp>{}, grad_z),
+    p, q, z, precision, max_steps);
 }
 
+/**
+ * Wrapper function for calculating gradients wrt q and z
+ * 
+ * @tparam Tp Type of p
+ * @tparam Tq Type of q
+ * @tparam Tz Type of z
+ * @param[in] grad_q Vector to evaluate gradients wrt q into
+ * @param[in] grad_z Scalar to evaluate gradient wrt z into
+ * @param[in] p Vector of 'p' arguments to function
+ * @param[in] q Vector of 'q' arguments to function
+ * @param[in] z Scalar z argument
+ */
 template <typename Tp, typename Tq, typename Tz,
           require_stan_scalar_t<Tz>* = nullptr,
           require_all_eigen_vector_t<Tp, Tq>* = nullptr>
@@ -225,9 +344,9 @@ void grad_pFq_qz(plain_type_t<Tq>& grad_q, plain_type_t<Tz>& grad_z,
                  const Tp& p, const Tq& q, const Tz& z,
                  double precision = 1e-14, int max_steps = 1e6) {
   using scalar_t = scalar_type_t<Tq>;
-  grad_pFq<false, true, true>(std::forward_as_tuple(plain_type_t<Tq>{}, grad_q,
-                                                    grad_z),
-                              p, q, z, precision, max_steps);
+  internal::grad_pFq_impl<false, true, true>(
+    std::forward_as_tuple(plain_type_t<Tq>{}, grad_q, grad_z),
+    p, q, z, precision, max_steps);
 }
 
 }  // namespace math
