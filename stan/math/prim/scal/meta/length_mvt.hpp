@@ -25,4 +25,3 @@ size_t length_mvt(const T& /* unused */) {
 
 }  // namespace stan
 #endif
-

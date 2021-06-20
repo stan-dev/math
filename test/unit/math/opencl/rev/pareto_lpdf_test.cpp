@@ -90,6 +90,12 @@ TEST(ProbDistributionsPareto, opencl_matches_cpu_small) {
                                                 alpha);
   stan::math::test::compare_cpu_opencl_prim_rev(pareto_lpdf_functor_propto, y,
                                                 y_min, alpha);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      pareto_lpdf_functor, y.transpose().eval(), y_min.transpose().eval(),
+      alpha.transpose().eval());
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      pareto_lpdf_functor_propto, y.transpose().eval(),
+      y_min.transpose().eval(), alpha.transpose().eval());
 }
 
 TEST(ProbDistributionsPareto, opencl_broadcast_y) {
@@ -105,6 +111,11 @@ TEST(ProbDistributionsPareto, opencl_broadcast_y) {
                                                          y_scal, y_min, alpha);
   stan::math::test::test_opencl_broadcasting_prim_rev<0>(
       pareto_lpdf_functor_propto, y_scal, y_min, alpha);
+
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
+      pareto_lpdf_functor, y_scal, y_min.transpose().eval(), alpha);
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
+      pareto_lpdf_functor_propto, y_scal, y_min, alpha.transpose().eval());
 }
 
 TEST(ProbDistributionsPareto, opencl_broadcast_y_min) {
@@ -120,6 +131,10 @@ TEST(ProbDistributionsPareto, opencl_broadcast_y_min) {
                                                          y_min_scal, alpha);
   stan::math::test::test_opencl_broadcasting_prim_rev<1>(
       pareto_lpdf_functor_propto, y, y_min_scal, alpha);
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
+      pareto_lpdf_functor, y.transpose().eval(), y_min_scal, alpha);
+  stan::math::test::test_opencl_broadcasting_prim_rev<1>(
+      pareto_lpdf_functor_propto, y, y_min_scal, alpha.transpose().eval());
 }
 
 TEST(ProbDistributionsPareto, opencl_broadcast_alpha) {
@@ -135,6 +150,10 @@ TEST(ProbDistributionsPareto, opencl_broadcast_alpha) {
                                                          y_min, alpha_scal);
   stan::math::test::test_opencl_broadcasting_prim_rev<2>(
       pareto_lpdf_functor_propto, y, y_min, alpha_scal);
+  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
+      pareto_lpdf_functor, y.transpose().eval(), y_min, alpha_scal);
+  stan::math::test::test_opencl_broadcasting_prim_rev<2>(
+      pareto_lpdf_functor_propto, y, y_min.transpose().eval(), alpha_scal);
 }
 
 TEST(ProbDistributionsPareto, opencl_matches_cpu_big) {
@@ -151,6 +170,12 @@ TEST(ProbDistributionsPareto, opencl_matches_cpu_big) {
                                                 alpha);
   stan::math::test::compare_cpu_opencl_prim_rev(pareto_lpdf_functor_propto, y,
                                                 y_min, alpha);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      pareto_lpdf_functor, y.transpose().eval(), y_min.transpose().eval(),
+      alpha.transpose().eval());
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      pareto_lpdf_functor_propto, y.transpose().eval(),
+      y_min.transpose().eval(), alpha.transpose().eval());
 }
 
 #endif
