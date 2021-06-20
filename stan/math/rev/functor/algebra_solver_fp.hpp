@@ -309,14 +309,13 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_fp_impl(
  * @throw <code>boost::math::evaluation_error</code> (which is a subclass of
  * <code>std::runtime_error</code>) if solver exceeds max_num_steps.
  */
-template <typename F, typename T1, typename T2, typename T_u, typename T_f>
+template <typename F, typename T1, typename T2, typename T_u, typename T_f,
+          require_all_eigen_vector_t<T1, T2>* = nullptr>
 Eigen::Matrix<T2, -1, 1> algebra_solver_fp(
-    const F& f, const Eigen::Matrix<T1, -1, 1>& x,
-    const Eigen::Matrix<T2, -1, 1>& y, const std::vector<double>& dat,
+    const F& f, const T1& x, const T2& y, const std::vector<double>& dat,
     const std::vector<int>& dat_int, const std::vector<T_u>& u_scale,
     const std::vector<T_f>& f_scale, std::ostream* msgs = nullptr,
-    double function_tolerance = 1e-8,
-    int max_num_steps = 200) {  // NOLINT(runtime/int)
+    double function_tolerance = 1e-8, int max_num_steps = 200) {
   return algebra_solver_fp_impl(algebra_solver_adapter<F>(f), x, function_tolerance,
                            max_num_steps, u_scale, f_scale, msgs, y, dat,
                            dat_int);
