@@ -5,7 +5,6 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/functor/algebra_system.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/mdivide_left.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/eval.hpp>
 #include <stan/math/prim/functor/apply.hpp>
