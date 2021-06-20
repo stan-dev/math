@@ -218,7 +218,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_fp_impl(
 
   jacobian(f_wrt_x, theta_dbl, f_x, Jf_x);
   int N = x.size();
-  Jf_x -= Eigen::MatrixXd::Identity(x.size(), x.size());
+  Jf_x = Eigen::MatrixXd::Identity(x.size(), x.size()) - Jf_x;
 
   using ret_type = Eigen::Matrix<var, Eigen::Dynamic, -1>;
   auto arena_Jf_x = to_arena(Jf_x);
@@ -233,7 +233,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_fp_impl(
 
     // Contract specificities with inverse Jacobian of f with respect to x.
     VectorXd ret_adj = ret.adj();
-    VectorXd eta = -arena_Jf_x.transpose().lu().solve(ret_adj);
+    VectorXd eta = arena_Jf_x.transpose().lu().solve(ret_adj);
 
     // Contract with Jacobian of f with respect to y using a nested reverse
     // autodiff pass.

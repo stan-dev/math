@@ -601,7 +601,7 @@ TEST_F(FP_2d_func_test, exception_handling) {
 
   {
     std::stringstream err_msg;
-    err_msg << "algebra_solver: size of the algebraic system's output";
+    err_msg << "algebra_solver_fp: size of the algebraic system's output";
     std::string msg = err_msg.str();
     x = Eigen::VectorXd::Zero(4);
     EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0,
