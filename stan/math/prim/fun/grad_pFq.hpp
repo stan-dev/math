@@ -24,17 +24,19 @@ template <bool calc_p, bool calc_q, bool calc_z,
 void grad_pFq(TupleT&& grad_tuple, const Tp& p, const Tq& q, const Tz& z,
               double precision = 1e-14, int max_steps = 1e6) {
   using std::max;
-  using scalar_t = scalar_type_t<return_type_t<Tp, Tq, Tz>>;
+  using vec_scalar_t = return_type_t<Tp, Tq>;
+  using scalar_t = return_type_t<Tp, Tq, Tz>;
   using Tp_plain = plain_type_t<Tp>;
   using Tq_plain = plain_type_t<Tq>;
+  using T_vec = Eigen::Matrix<scalar_t, -1, 1>;
 
   Tp_plain pp1 = (p.array() + 1).matrix();
   Tq_plain qp1 = (q.array() + 1).matrix();
   Tp_plain log_p = log(p);
   Tq_plain log_q = log(q);
-  scalar_t log_z = log(z);
-  scalar_t sum_log_p = sum(log_p);
-  scalar_t sum_log_q = sum(log_q);
+  scalar_type_t<Tz> log_z = log(z);
+  scalar_type_t<Tp> sum_log_p = sum(log_p);
+  scalar_type_t<Tq> sum_log_q = sum(log_q);
 
   // Only need the infinite sum for partials wrt p & q
   if(calc_p || calc_q) {
@@ -45,22 +47,22 @@ void grad_pFq(TupleT&& grad_tuple, const Tp& p, const Tq& q, const Tz& z,
 
     // Declare vectors to accumulate sums into
     // where NEGATIVE_INFTY is zero on the log scale
-    Tp_plain dp_infsum = Tp_plain::Constant(p.size(), NEGATIVE_INFTY);
-    Tq_plain dq_infsum = Tq_plain::Constant(q.size(), NEGATIVE_INFTY);
+     T_vec dp_infsum =  T_vec::Constant(p.size(), NEGATIVE_INFTY);
+     T_vec dq_infsum =  T_vec::Constant(q.size(), NEGATIVE_INFTY);
 
     while((outer_diff > log_precision) & (m < max_steps)) {
       // Vectors to accumulate outer sum into
-      Tp_plain dp_iter_m = Tp_plain::Constant(p.size(), NEGATIVE_INFTY);
-      Tp_plain dp_mn = Tp_plain::Constant(p.size(), NEGATIVE_INFTY);
-      Tq_plain dq_iter_m = Tq_plain::Constant(q.size(), NEGATIVE_INFTY);
-      Tq_plain dq_mn = Tq_plain::Constant(q.size(), NEGATIVE_INFTY);
+      T_vec dp_iter_m =  T_vec::Constant(p.size(), NEGATIVE_INFTY);
+      T_vec dp_mn =  T_vec::Constant(p.size(), NEGATIVE_INFTY);
+      T_vec dq_iter_m = T_vec::Constant(q.size(), NEGATIVE_INFTY);
+      T_vec dq_mn = T_vec::Constant(q.size(), NEGATIVE_INFTY);
 
-      scalar_t log_phammer_1m = log_rising_factorial(1, m);
-      scalar_t lgamma_mp1 = lgamma(m + 1);
+      double log_phammer_1m = log_rising_factorial(1, m);
+      double lgamma_mp1 = lgamma(m + 1);
 
       int n = 0;
       scalar_t inner_diff = 0;
-  
+
       while((inner_diff > log_precision) & (n < max_steps)) {
         // Numerator term
         scalar_t term1_mn = (m + n) * log_z
@@ -115,18 +117,19 @@ void grad_pFq(TupleT&& grad_tuple, const Tp& p, const Tq& q, const Tz& z,
       //   all other elements
       Eigen::VectorXi ind_vector = Eigen::VectorXi::LinSpaced(p.size(), 0,
                                                               p.size() - 1);
+                                                              
       Tp_plain prod_excl_curr = ind_vector.unaryExpr([&log_p,
                                                       &sum_log_p] (int i) {
                                                   return sum_log_p - log_p[i];
                                                 });
-      Tp_plain pre_mult_p = (log_z + prod_excl_curr.array() - sum_log_q).matrix();
+      T_vec pre_mult_p = (log_z + prod_excl_curr.array() - sum_log_q).matrix();
 
       // Evaluate gradients into provided containers
       std::get<0>(grad_tuple) = exp(pre_mult_p + dp_infsum);
     }
 
     if(calc_q) {
-      Tq_plain pre_mult_q = (log_z + sum_log_p) - (log_q.array() + sum_log_q);
+      T_vec pre_mult_q = (log_z + sum_log_p) - (log_q.array() + sum_log_q);
       std::get<1>(grad_tuple) = -exp(pre_mult_q + dq_infsum);
     }
   }
@@ -153,8 +156,10 @@ template <typename Tp, typename Tq, typename Tz,
 void grad_pFq_p(plain_type_t<Tp>& grad_p, const Tp& p, const Tq& q,
                 const Tz& z, double precision = 1e-14,
                 int max_steps = 1e6) {
+  using scalar_t = scalar_type_t<Tp>;
   grad_pFq<true, false, false>(std::forward_as_tuple(grad_p,
-                                                     plain_type_t<Tq>{}, Tz{}),
+                                                     plain_type_t<Tp>{},
+                                                     scalar_type_t<Tp>{}),
                                p, q, z, precision, max_steps);
 }
 
@@ -164,8 +169,9 @@ template <typename Tp, typename Tq, typename Tz,
 void grad_pFq_q(plain_type_t<Tq>& grad_q, const Tp& p, const Tq& q,
                 const Tz& z, double precision = 1e-14,
                 int max_steps = 1e6) {
-  grad_pFq<false, true, false>(std::forward_as_tuple(plain_type_t<Tp>{},
-                                                     grad_q, Tz{}),
+  using scalar_t = scalar_type_t<Tq>;
+  grad_pFq<false, true, false>(std::forward_as_tuple(plain_type_t<Tq>{},
+                                                     grad_q, scalar_type_t<Tq>{}),
                                p, q, z, precision, max_steps);
 }
 
@@ -174,8 +180,8 @@ template <typename Tp, typename Tq, typename Tz,
           require_all_eigen_vector_t<Tp, Tq>* = nullptr>
 void grad_pFq_z(plain_type_t<Tz>& grad_z, const Tp& p, const Tq& q,
                 const Tz& z, double precision = 1e-14, int max_steps = 1e6) {
-  grad_pFq<false, false, true>(std::forward_as_tuple(plain_type_t<Tp>{},
-                                                     plain_type_t<Tq>{},
+  grad_pFq<false, false, true>(std::forward_as_tuple(Eigen::Matrix<Tz,-1,1>{},
+                                                     Eigen::Matrix<Tz,-1,1>{},
                                                      grad_z),
                                p, q, z, precision, max_steps);
 }
@@ -186,7 +192,8 @@ template <typename Tp, typename Tq, typename Tz,
 void grad_pFq_pq(plain_type_t<Tp>& grad_p, plain_type_t<Tq>& grad_q,
                  const Tp& p, const Tq& q, const Tz& z,
                  double precision = 1e-14, int max_steps = 1e6) {
-  grad_pFq<true, true, false>(std::forward_as_tuple(grad_p, grad_q, Tz{}),
+  using scalar_t = scalar_type_t<Tp>;
+  grad_pFq<true, true, false>(std::forward_as_tuple(grad_p, grad_q, scalar_type_t<Tp>{}),
                               p, q, z, precision, max_steps);
 }
 
@@ -196,7 +203,8 @@ template <typename Tp, typename Tq, typename Tz,
 void grad_pFq_pz(plain_type_t<Tp>& grad_p, plain_type_t<Tz>& grad_z,
                  const Tp& p, const Tq& q, const Tz& z,
                  double precision = 1e-14, int max_steps = 1e6) {
-  grad_pFq<true, false, true>(std::forward_as_tuple(grad_p, plain_type_t<Tq>{},
+  using scalar_t = scalar_type_t<Tp>;
+  grad_pFq<true, false, true>(std::forward_as_tuple(grad_p, plain_type_t<Tp>{},
                                                     grad_z),
                               p, q, z, precision, max_steps);
 }
@@ -204,10 +212,11 @@ void grad_pFq_pz(plain_type_t<Tp>& grad_p, plain_type_t<Tz>& grad_z,
 template <typename Tp, typename Tq, typename Tz,
           require_stan_scalar_t<Tz>* = nullptr,
           require_all_eigen_vector_t<Tp, Tq>* = nullptr>
-void grad_pFq_qz(plain_type_t<Tp>& grad_q, plain_type_t<Tz>& grad_z,
+void grad_pFq_qz(plain_type_t<Tq>& grad_q, plain_type_t<Tz>& grad_z,
                  const Tp& p, const Tq& q, const Tz& z,
                  double precision = 1e-14, int max_steps = 1e6) {
-  grad_pFq<false, true, true>(std::forward_as_tuple(plain_type_t<Tp>{}, grad_q,
+  using scalar_t = scalar_type_t<Tq>;
+  grad_pFq<false, true, true>(std::forward_as_tuple(plain_type_t<Tq>{}, grad_q,
                                                     grad_z),
                               p, q, z, precision, max_steps);
 }
