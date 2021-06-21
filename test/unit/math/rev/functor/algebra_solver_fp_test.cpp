@@ -317,10 +317,11 @@ TEST_F(FP_2d_func_test, solve) {
 TEST_F(FP_exp_func_test, gradient) {
   double function_tolerance = 1.e-12;
   int max_num_steps = 100;
-  Eigen::Matrix<var, -1, 1> yp(to_var(y));
 
   x(0) = 0.1;
   y(0) = 0.8;
+  Eigen::Matrix<var, -1, 1> yp(to_var(y));
+
   Eigen::Matrix<var, -1, 1> x_sol
       = algebra_solver_fp(f, x, yp, dat, dat_int, u_scale, f_scale, msgs,
                           function_tolerance, max_num_steps);
