@@ -3,7 +3,7 @@
 #include <test/unit/math/rev/fun/util.hpp>
 #include <limits>
 
-TEST(primScalFun, grad_2F2) {
+TEST(RevMath, hypergeometric_pFq) {
   using stan::math::hypergeometric_pFq;
   using stan::math::var;
   using stan::math::vector_d;
