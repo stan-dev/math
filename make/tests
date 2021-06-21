@@ -100,7 +100,7 @@ else
 endif
 
 %.hpp-test : %.hpp test/dummy.cpp
-	$(COMPILE.cpp) $(CXXFLAGS) -O0 -include $^ -o $(DEV_NULL)
+	$(COMPILE.cpp) $(CXXFLAGS) -O0 -include $^ -o $(DEV_NULL) -Wunused-local-typedefs
 
 test/dummy.cpp:
 	@mkdir -p test

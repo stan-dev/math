@@ -59,7 +59,6 @@ template <bool propto, typename T_prob, typename T_prior_size,
 return_type_t<T_prob, T_prior_size> dirichlet_lpdf(const T_prob& theta,
                                                    const T_prior_size& alpha) {
   using T_partials_return = partials_return_t<T_prob, T_prior_size>;
-  using T_partials_vec = typename Eigen::Matrix<T_partials_return, -1, 1>;
   using T_partials_array = typename Eigen::Array<T_partials_return, -1, -1>;
   using T_theta_ref = ref_type_t<T_prob>;
   using T_alpha_ref = ref_type_t<T_prior_size>;

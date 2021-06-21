@@ -31,8 +31,6 @@ template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
 inline Eigen::Matrix<value_type_t<EigMat>, EigMat::ColsAtCompileTime,
                      EigMat::RowsAtCompileTime>
 generalized_inverse(const EigMat& G) {
-  using value_t = value_type_t<EigMat>;
-
   if (G.size() == 0)
     return {};
 
