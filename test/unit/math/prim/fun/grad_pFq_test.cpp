@@ -122,8 +122,8 @@ TEST(primScalFun, grad_4F3) {
 }
 
 TEST(primScalFun, grad_2F1_derivs_match) {
-  using stan::math::grad_pFq_pq;
   using stan::math::grad_2F1;
+  using stan::math::grad_pFq_pq;
 
   Eigen::VectorXd a(2);
   a << 1, 1;

@@ -4,10 +4,10 @@
 #include <limits>
 
 TEST(primScalFun, grad_2F2) {
-  using stan::math::vector_v;
-  using stan::math::vector_d;
-  using stan::math::var;
   using stan::math::hypergeometric_pFq;
+  using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_v;
 
   vector_v a(2);
   a << 4, 2;

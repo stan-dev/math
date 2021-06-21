@@ -13,7 +13,7 @@ namespace math {
  * Returns the generalised hypergeometric function applied to the
  * input arguments:
  * \f$_pF_q(a_1,...,a_p;b_1,...,b_q;z)\f$
- * 
+ *
  * See 'grad_pFq.hpp' for the derivatives wrt each parameter
  *
  * @param[in] a Vector of 'a' arguments to function
@@ -44,9 +44,8 @@ double hypergeometric_pFq(const Eigen::VectorXd& a, const Eigen::VectorXd& b,
   }
 
   return boost::math::hypergeometric_pFq(
-                std::vector<double>(a.data(), a.data() + a.size()),
-                std::vector<double>(b.data(), b.data() + b.size()),
-                z);
+      std::vector<double>(a.data(), a.data() + a.size()),
+      std::vector<double>(b.data(), b.data() + b.size()), z);
 }
 }  // namespace math
 }  // namespace stan

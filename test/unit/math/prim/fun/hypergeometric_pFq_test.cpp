@@ -2,8 +2,8 @@
 #include <gtest/gtest.h>
 
 TEST(MathFunctions, hypergeometric_pFq_values) {
-  using stan::math::hypergeometric_pFq;
   using Eigen::VectorXd;
+  using stan::math::hypergeometric_pFq;
 
   VectorXd a(2);
   VectorXd b(2);
@@ -21,10 +21,10 @@ TEST(MathFunctions, hypergeometric_pFq_values) {
 }
 
 TEST(MathFunctions, hypergeometric_pFq_errors) {
+  using Eigen::VectorXd;
   using stan::math::hypergeometric_pFq;
   using stan::math::INFTY;
   using stan::math::NOT_A_NUMBER;
-  using Eigen::VectorXd;
 
   VectorXd a(2);
   VectorXd b(2);

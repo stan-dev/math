@@ -20,18 +20,18 @@ namespace internal {
  * Returns the gradient of generalised hypergeometric function wrt to the
  * input arguments:
  * \f$ _pF_q(a_1,...,a_p;b_1,...,b_q;z) \f$
- * 
+ *
  * The derivatives wrt a and b are defined using a Kampé de Fériet function,
  *   (https://en.wikipedia.org/wiki/Kamp%C3%A9_de_F%C3%A9riet_function).
  *   This is implemented below as an infinite sum (on the log scale) until
  *   convergence.
- * 
- * \f$ \frac{\partial}{\partial a_1} = 
+ *
+ * \f$ \frac{\partial}{\partial a_1} =
  *     \frac{z\prod_{j=2}^pa_j}{\prod_{j=1}^qb_j}
  *     F_{q+1\:0\;1}^{p\:1\:2}\left(\begin{array}&a_1+1,...,a_p+1;1;1,a_1\\
  *        2, b_1+1,...,b_1+1;;a_1+1\end{array};z,z\right) \f$
- * 
- * \f$ \frac{\partial}{\partial b_1}= 
+ *
+ * \f$ \frac{\partial}{\partial b_1}=
  *     -\frac{z\prod_{j=1}^pa_j}{b_1\prod_{j=1}^qb_j}
  *     F_{q+1\:0\;1}^{p\:1\:2}\left(\begin{array}&a_1+1,...,a_p+1;1;1,b_1\\
  *        2, b_1+1,...,b_1+1;;b_1+1\end{array};z,z\right) \f$
@@ -54,12 +54,12 @@ namespace internal {
  * @param[in] max_steps Maximum number of iterations for infinite sum
  * @return Generalised hypergeometric function
  */
-template <bool calc_a, bool calc_b, bool calc_z,
-          typename TupleT, typename Ta, typename Tb, typename Tz,
+template <bool calc_a, bool calc_b, bool calc_z, typename TupleT, typename Ta,
+          typename Tb, typename Tz,
           require_all_eigen_vector_t<Ta, Tb>* = nullptr,
           require_stan_scalar_t<Tz>* = nullptr>
 void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
-              double precision = 1e-14, int max_steps = 1e6) {
+                   double precision = 1e-14, int max_steps = 1e6) {
   using std::max;
   using scalar_t = return_type_t<Ta, Tb, Tz>;
   using Ta_plain = plain_type_t<Ta>;
@@ -83,8 +83,8 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
 
     // Declare vectors to accumulate sums into
     // where NEGATIVE_INFTY is zero on the log scale
-     T_vec da_infsum = T_vec::Constant(a.size(), NEGATIVE_INFTY);
-     T_vec db_infsum = T_vec::Constant(b.size(), NEGATIVE_INFTY);
+    T_vec da_infsum = T_vec::Constant(a.size(), NEGATIVE_INFTY);
+    T_vec db_infsum = T_vec::Constant(b.size(), NEGATIVE_INFTY);
 
     while ((outer_diff > log_precision) && (m < max_steps)) {
       // Vectors to accumulate outer sum into
@@ -111,19 +111,17 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
         if (calc_a) {
           // Division (on log scale) for the a & b partials
           da_mn = (term1_mn + log_rising_factorial(a, n).array())
-                    - (term2_mn + log_rising_factorial(ap1, n).array());
+                  - (term2_mn + log_rising_factorial(ap1, n).array());
 
           // Perform a row-wise log_sum_exp to accumulate current iteration
-          da_iter_m = da_iter_m.binaryExpr(da_mn, [&](auto& a, auto& b) {
-                                            return log_sum_exp(a, b);
-                                          });
+          da_iter_m = da_iter_m.binaryExpr(
+              da_mn, [&](auto& a, auto& b) { return log_sum_exp(a, b); });
         }
         if (calc_b) {
           db_mn = (term1_mn + log_rising_factorial(b, n).array())
-                    - (term2_mn + log_rising_factorial(bp1, n).array());
-          db_iter_m = db_iter_m.binaryExpr(db_mn, [&](auto& a, auto& b) {
-                                            return log_sum_exp(a, b);
-                                          });
+                  - (term2_mn + log_rising_factorial(bp1, n).array());
+          db_iter_m = db_iter_m.binaryExpr(
+              db_mn, [&](auto& a, auto& b) { return log_sum_exp(a, b); });
         }
 
         // Series convergence assessed by whether the sum of all terms is
@@ -134,14 +132,12 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
       if (calc_a) {
         // Accumulate sums once the inner loop for the current iteration has
         //   converged
-        da_infsum = da_infsum.binaryExpr(da_iter_m, [&](auto& a, auto& b) {
-                                          return log_sum_exp(a, b);
-                                        });
+        da_infsum = da_infsum.binaryExpr(
+            da_iter_m, [&](auto& a, auto& b) { return log_sum_exp(a, b); });
       }
       if (calc_b) {
-        db_infsum = db_infsum.binaryExpr(db_iter_m, [&](auto& a, auto& b) {
-                                        return log_sum_exp(a, b);
-                                      });
+        db_infsum = db_infsum.binaryExpr(
+            db_iter_m, [&](auto& a, auto& b) { return log_sum_exp(a, b); });
       }
 
       // Assess convergence of outer loop
@@ -158,13 +154,11 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
     if (calc_a) {
       // Workaround to construct vector where each element is the product of
       //   all other elements
-      Eigen::VectorXi ind_vector = Eigen::VectorXi::LinSpaced(a.size(), 0,
-                                                              a.size() - 1);
+      Eigen::VectorXi ind_vector
+          = Eigen::VectorXi::LinSpaced(a.size(), 0, a.size() - 1);
 
-      Ta_plain prod_excl_curr = ind_vector.unaryExpr([&log_a,
-                                                      &sum_log_a] (int i) {
-                                                  return sum_log_a - log_a[i];
-                                                });
+      Ta_plain prod_excl_curr = ind_vector.unaryExpr(
+          [&log_a, &sum_log_a](int i) { return sum_log_a - log_a[i]; });
       T_vec pre_mult_a = (log_z + prod_excl_curr.array() - sum_log_b).matrix();
 
       // Evaluate gradients into provided containers
@@ -178,15 +172,15 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
   }
 
   if (calc_z) {
-    std::get<2>(grad_tuple) = exp(sum_log_a - sum_log_b)
-                                * hypergeometric_pFq(ap1, bp1, z);
+    std::get<2>(grad_tuple)
+        = exp(sum_log_a - sum_log_b) * hypergeometric_pFq(ap1, bp1, z);
   }
 }
 }  // namespace internal
 
 /**
  * Wrapper function for calculating gradients wrt all parameters
- * 
+ *
  * @tparam Ta Type of a
  * @tparam Tb Type of b
  * @tparam Tz Type of z
@@ -204,13 +198,13 @@ void grad_pFq(plain_type_t<Ta>& grad_a, plain_type_t<Tb>& grad_b,
               plain_type_t<Tz>& grad_z, const Ta& a, const Tb& b, const Tz& z,
               double precision = 1e-14, int max_steps = 1e6) {
   internal::grad_pFq_impl<true, true, true>(
-    std::forward_as_tuple(grad_a, grad_b, grad_z),
-    a, b, z, precision, max_steps);
+      std::forward_as_tuple(grad_a, grad_b, grad_z), a, b, z, precision,
+      max_steps);
 }
 
 /**
  * Wrapper function for calculating gradients wrt only a
- * 
+ *
  * @tparam Ta Type of a
  * @tparam Tb Type of b
  * @tparam Tz Type of z
@@ -222,17 +216,16 @@ void grad_pFq(plain_type_t<Ta>& grad_a, plain_type_t<Tb>& grad_b,
 template <typename Ta, typename Tb, typename Tz,
           require_stan_scalar_t<Tz>* = nullptr,
           require_all_eigen_vector_t<Ta, Tb>* = nullptr>
-void grad_pFq_p(plain_type_t<Ta>& grad_a, const Ta& a, const Tb& b,
-                const Tz& z, double precision = 1e-14,
-                int max_steps = 1e6) {
+void grad_pFq_p(plain_type_t<Ta>& grad_a, const Ta& a, const Tb& b, const Tz& z,
+                double precision = 1e-14, int max_steps = 1e6) {
   internal::grad_pFq_impl<true, false, false>(
-    std::forward_as_tuple(grad_a, plain_type_t<Ta>{}, scalar_type_t<Ta>{}),
-    a, b, z, precision, max_steps);
+      std::forward_as_tuple(grad_a, plain_type_t<Ta>{}, scalar_type_t<Ta>{}), a,
+      b, z, precision, max_steps);
 }
 
 /**
  * Wrapper function for calculating gradients wrt only b
- * 
+ *
  * @tparam Ta Type of a
  * @tparam Tb Type of b
  * @tparam Tz Type of z
@@ -244,17 +237,16 @@ void grad_pFq_p(plain_type_t<Ta>& grad_a, const Ta& a, const Tb& b,
 template <typename Ta, typename Tb, typename Tz,
           require_stan_scalar_t<Tz>* = nullptr,
           require_all_eigen_vector_t<Ta, Tb>* = nullptr>
-void grad_pFq_q(plain_type_t<Tb>& grad_b, const Ta& a, const Tb& b,
-                const Tz& z, double precision = 1e-14,
-                int max_steps = 1e6) {
+void grad_pFq_q(plain_type_t<Tb>& grad_b, const Ta& a, const Tb& b, const Tz& z,
+                double precision = 1e-14, int max_steps = 1e6) {
   internal::grad_pFq_impl<false, true, false>(
-    std::forward_as_tuple(plain_type_t<Tb>{}, grad_b, scalar_type_t<Tb>{}),
-    a, b, z, precision, max_steps);
+      std::forward_as_tuple(plain_type_t<Tb>{}, grad_b, scalar_type_t<Tb>{}), a,
+      b, z, precision, max_steps);
 }
 
 /**
  * Wrapper function for calculating gradients wrt only z
- * 
+ *
  * @tparam Ta Type of a
  * @tparam Tb Type of b
  * @tparam Tz Type of z
@@ -266,17 +258,17 @@ void grad_pFq_q(plain_type_t<Tb>& grad_b, const Ta& a, const Tb& b,
 template <typename Ta, typename Tb, typename Tz,
           require_stan_scalar_t<Tz>* = nullptr,
           require_all_eigen_vector_t<Ta, Tb>* = nullptr>
-void grad_pFq_z(plain_type_t<Tz>& grad_z, const Ta& a, const Tb& b,
-                const Tz& z, double precision = 1e-14, int max_steps = 1e6) {
+void grad_pFq_z(plain_type_t<Tz>& grad_z, const Ta& a, const Tb& b, const Tz& z,
+                double precision = 1e-14, int max_steps = 1e6) {
   internal::grad_pFq_impl<false, false, true>(
-    std::forward_as_tuple(Eigen::Matrix<Tz, -1, 1>{},
-                          Eigen::Matrix<Tz, -1, 1>{}, grad_z),
-    a, b, z, precision, max_steps);
+      std::forward_as_tuple(Eigen::Matrix<Tz, -1, 1>{},
+                            Eigen::Matrix<Tz, -1, 1>{}, grad_z),
+      a, b, z, precision, max_steps);
 }
 
 /**
  * Wrapper function for calculating gradients wrt a and b
- * 
+ *
  * @tparam Ta Type of a
  * @tparam Tb Type of b
  * @tparam Tz Type of z
@@ -293,13 +285,13 @@ void grad_pFq_pq(plain_type_t<Ta>& grad_a, plain_type_t<Tb>& grad_b,
                  const Ta& a, const Tb& b, const Tz& z,
                  double precision = 1e-14, int max_steps = 1e6) {
   internal::grad_pFq_impl<true, true, false>(
-    std::forward_as_tuple(grad_a, grad_b, scalar_type_t<Ta>{}),
-    a, b, z, precision, max_steps);
+      std::forward_as_tuple(grad_a, grad_b, scalar_type_t<Ta>{}), a, b, z,
+      precision, max_steps);
 }
 
 /**
  * Wrapper function for calculating gradients wrt a and z
- * 
+ *
  * @tparam Ta Type of a
  * @tparam Tb Type of b
  * @tparam Tz Type of z
@@ -316,13 +308,13 @@ void grad_pFq_pz(plain_type_t<Ta>& grad_a, plain_type_t<Tz>& grad_z,
                  const Ta& a, const Tb& b, const Tz& z,
                  double precision = 1e-14, int max_steps = 1e6) {
   internal::grad_pFq_impl<true, false, true>(
-    std::forward_as_tuple(grad_a, plain_type_t<Ta>{}, grad_z),
-    a, b, z, precision, max_steps);
+      std::forward_as_tuple(grad_a, plain_type_t<Ta>{}, grad_z), a, b, z,
+      precision, max_steps);
 }
 
 /**
  * Wrapper function for calculating gradients wrt b and z
- * 
+ *
  * @tparam Ta Type of a
  * @tparam Tb Type of b
  * @tparam Tz Type of z
@@ -339,8 +331,8 @@ void grad_pFq_qz(plain_type_t<Tb>& grad_b, plain_type_t<Tz>& grad_z,
                  const Ta& a, const Tb& b, const Tz& z,
                  double precision = 1e-14, int max_steps = 1e6) {
   internal::grad_pFq_impl<false, true, true>(
-    std::forward_as_tuple(plain_type_t<Tb>{}, grad_b, grad_z),
-    a, b, z, precision, max_steps);
+      std::forward_as_tuple(plain_type_t<Tb>{}, grad_b, grad_z), a, b, z,
+      precision, max_steps);
 }
 
 }  // namespace math

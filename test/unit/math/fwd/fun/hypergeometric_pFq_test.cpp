@@ -3,10 +3,10 @@
 #include <limits>
 
 TEST(primScalFun, grad_2F2_fd) {
-  using stan::math::vector_fd;
-  using stan::math::vector_d;
   using stan::math::fvar;
   using stan::math::hypergeometric_pFq;
+  using stan::math::vector_d;
+  using stan::math::vector_fd;
 
   vector_fd fd_a(2);
   vector_d d_a(2);
@@ -32,20 +32,16 @@ TEST(primScalFun, grad_2F2_fd) {
                   a_adj + b_adj + z_adj);
 
   // fvar, fvar, double
-  EXPECT_FLOAT_EQ(hypergeometric_pFq(fd_a, fd_b, d_z).d_,
-                  a_adj + b_adj);
+  EXPECT_FLOAT_EQ(hypergeometric_pFq(fd_a, fd_b, d_z).d_, a_adj + b_adj);
 
   // fvar, double, double
-  EXPECT_FLOAT_EQ(hypergeometric_pFq(fd_a, d_b, d_z).d_,
-                  a_adj);
+  EXPECT_FLOAT_EQ(hypergeometric_pFq(fd_a, d_b, d_z).d_, a_adj);
 
   // fvar, double, fvar
-  EXPECT_FLOAT_EQ(hypergeometric_pFq(fd_a, d_b, fd_z).d_,
-                  a_adj + z_adj);
+  EXPECT_FLOAT_EQ(hypergeometric_pFq(fd_a, d_b, fd_z).d_, a_adj + z_adj);
 
   // double, fvar, fvar
-  EXPECT_FLOAT_EQ(hypergeometric_pFq(d_a, fd_b, fd_z).d_,
-                  b_adj + z_adj);
+  EXPECT_FLOAT_EQ(hypergeometric_pFq(d_a, fd_b, fd_z).d_, b_adj + z_adj);
 
   // double, fvar, double
   EXPECT_FLOAT_EQ(hypergeometric_pFq(d_a, fd_b, d_z).d_, b_adj);
@@ -55,10 +51,10 @@ TEST(primScalFun, grad_2F2_fd) {
 }
 
 TEST(primScalFun, grad_2F2_ffd) {
-  using stan::math::vector_ffd;
-  using stan::math::vector_d;
   using stan::math::fvar;
   using stan::math::hypergeometric_pFq;
+  using stan::math::vector_d;
+  using stan::math::vector_ffd;
 
   vector_ffd ffd_a(2);
   vector_d d_a(2);
@@ -81,25 +77,21 @@ TEST(primScalFun, grad_2F2_ffd) {
   double b_adj = -2.775051002566842 - 4.980095849781222;
   double z_adj = 4.916522138006060;
 
-// fvar, fvar, fvar
+  // fvar, fvar, fvar
   EXPECT_FLOAT_EQ(hypergeometric_pFq(ffd_a, ffd_b, ffd_z).val_.d_,
                   a_adj + b_adj + z_adj);
 
   // fvar, fvar, double
-  EXPECT_FLOAT_EQ(hypergeometric_pFq(ffd_a, ffd_b, d_z).val_.d_,
-                  a_adj + b_adj);
+  EXPECT_FLOAT_EQ(hypergeometric_pFq(ffd_a, ffd_b, d_z).val_.d_, a_adj + b_adj);
 
   // fvar, double, double
-  EXPECT_FLOAT_EQ(hypergeometric_pFq(ffd_a, d_b, d_z).val_.d_,
-                  a_adj);
+  EXPECT_FLOAT_EQ(hypergeometric_pFq(ffd_a, d_b, d_z).val_.d_, a_adj);
 
   // fvar, double, fvar
-  EXPECT_FLOAT_EQ(hypergeometric_pFq(ffd_a, d_b, ffd_z).val_.d_,
-                  a_adj + z_adj);
+  EXPECT_FLOAT_EQ(hypergeometric_pFq(ffd_a, d_b, ffd_z).val_.d_, a_adj + z_adj);
 
   // double, fvar, fvar
-  EXPECT_FLOAT_EQ(hypergeometric_pFq(d_a, ffd_b, ffd_z).val_.d_,
-                  b_adj + z_adj);
+  EXPECT_FLOAT_EQ(hypergeometric_pFq(d_a, ffd_b, ffd_z).val_.d_, b_adj + z_adj);
 
   // double, fvar, double
   EXPECT_FLOAT_EQ(hypergeometric_pFq(d_a, ffd_b, d_z).val_.d_, b_adj);

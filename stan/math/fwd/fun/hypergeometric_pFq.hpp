@@ -12,7 +12,7 @@ namespace math {
 /**
  * Returns the generalised hypergeometric function applied to the
  * input arguments.
- * 
+ *
  * Specialization for hypergeometric_pFq(vector_f, vector_f, fvar<T>)
  * where vector_f = Eigen::Matrix<fvar<T>, -1, 1>
  *
@@ -36,14 +36,14 @@ inline return_type_t<Ta, Tb, Tz> hypergeometric_pFq(const Ta& a, const Tb& b,
   fvar_inner_t grad_z;
   grad_pFq(grad_a, grad_b, grad_z, a.val(), b.val(), z.val());
   return fvar<fvar_inner_t>(
-    hypergeometric_pFq(a.val(), b.val(), z.val()),
-    dot_product(a.d(), grad_a) + dot_product(b.d(), grad_b) + z.d_ * grad_z);
+      hypergeometric_pFq(a.val(), b.val(), z.val()),
+      dot_product(a.d(), grad_a) + dot_product(b.d(), grad_b) + z.d_ * grad_z);
 }
 
 /**
  * Returns the generalised hypergeometric function applied to the
  * input arguments.
- * 
+ *
  * Specialization for hypergeometric_pFq(vector_f, vector_f, double)
  * where vector_f = Eigen::Matrix<fvar<T>, -1, 1>
  *
@@ -66,14 +66,14 @@ inline return_type_t<Ta, Tb, Tz> hypergeometric_pFq(const Ta& a, const Tb& b,
   promote_scalar_t<fvar_inner_t, Tb> grad_b(b.size());
   grad_pFq_pq(grad_a, grad_b, a.val(), b.val(), z);
   return fvar<fvar_inner_t>(
-    hypergeometric_pFq(a.val(), b.val(), z),
-    dot_product(a.d(), grad_a) + dot_product(b.d(), grad_b));
+      hypergeometric_pFq(a.val(), b.val(), z),
+      dot_product(a.d(), grad_a) + dot_product(b.d(), grad_b));
 }
 
 /**
  * Returns the generalised hypergeometric function applied to the
  * input arguments.
- * 
+ *
  * Specialization for hypergeometric_pFq(vector_f, vector_d, double)
  * where vector_f = Eigen::Matrix<fvar<T>, -1, 1>
  *
@@ -95,15 +95,14 @@ inline return_type_t<Ta, Tb, Tz> hypergeometric_pFq(const Ta& a, const Tb& b,
   using fvar_inner_t = typename fvar_t::Scalar;
   promote_scalar_t<fvar_inner_t, plain_type_t<Ta>> grad_a(a.size());
   grad_pFq_p(grad_a, a.val(), b, z);
-  return fvar<fvar_inner_t>(
-    hypergeometric_pFq(a.val(), b, z),
-    dot_product(a.d(), grad_a));
+  return fvar<fvar_inner_t>(hypergeometric_pFq(a.val(), b, z),
+                            dot_product(a.d(), grad_a));
 }
 
 /**
  * Returns the generalised hypergeometric function applied to the
  * input arguments.
- * 
+ *
  * Specialization for hypergeometric_pFq(vector_f, vector_d, fvar<T>)
  * where vector_f = Eigen::Matrix<fvar<T>, -1, 1>
  *
@@ -126,15 +125,14 @@ inline return_type_t<Ta, Tb, Tz> hypergeometric_pFq(const Ta& a, const Tb& b,
   promote_scalar_t<fvar_inner_t, Ta> grad_a(a.size());
   fvar_inner_t grad_z;
   grad_pFq_pz(grad_a, grad_z, a.val(), b, z.val());
-  return fvar<fvar_inner_t>(
-    hypergeometric_pFq(a.val(), b, z.val()),
-    dot_product(a.d(), grad_a) + z.d_ * grad_z);
+  return fvar<fvar_inner_t>(hypergeometric_pFq(a.val(), b, z.val()),
+                            dot_product(a.d(), grad_a) + z.d_ * grad_z);
 }
 
 /**
  * Returns the generalised hypergeometric function applied to the
  * input arguments.
- * 
+ *
  * Specialization for hypergeometric_pFq(vector_d, vector_d, fvar<T>)
  *
  * @tparam Ta Type of a argument
@@ -154,15 +152,13 @@ inline return_type_t<Ta, Tb, Tz> hypergeometric_pFq(const Ta& a, const Tb& b,
   using fvar_inner_t = typename fvar_t::Scalar;
   fvar_inner_t grad_z;
   grad_pFq_z(grad_z, a, b, z.val());
-  return fvar<fvar_inner_t>(
-    hypergeometric_pFq(a, b, z.val()),
-    z.d_ * grad_z);
+  return fvar<fvar_inner_t>(hypergeometric_pFq(a, b, z.val()), z.d_ * grad_z);
 }
 
 /**
  * Returns the generalised hypergeometric function applied to the
  * input arguments.
- * 
+ *
  * Specialization for hypergeometric_pFq(vector_d, vector_f, fvar<T>)
  * where vector_f = Eigen::Matrix<fvar<T>, -1, 1>
  *
@@ -185,15 +181,14 @@ inline return_type_t<Ta, Tb, Tz> hypergeometric_pFq(const Ta& a, const Tb& b,
   promote_scalar_t<fvar_inner_t, plain_type_t<Tb>> grad_b(b.size());
   fvar_inner_t grad_z;
   grad_pFq_qz(grad_b, grad_z, a, b.val(), z.val());
-  return fvar<fvar_inner_t>(
-    hypergeometric_pFq(a, b.val(), z.val()),
-    dot_product(b.d(), grad_b) + z.d_ * grad_z);
+  return fvar<fvar_inner_t>(hypergeometric_pFq(a, b.val(), z.val()),
+                            dot_product(b.d(), grad_b) + z.d_ * grad_z);
 }
 
 /**
  * Returns the generalised hypergeometric function applied to the
  * input arguments.
- * 
+ *
  * Specialization for hypergeometric_pFq(vector_d, vector_f, double)
  * where vector_f = Eigen::Matrix<fvar<T>, -1, 1>
  *
@@ -215,9 +210,8 @@ inline return_type_t<Ta, Tb, Tz> hypergeometric_pFq(const Ta& a, const Tb& b,
   using fvar_inner_t = typename fvar_t::Scalar;
   promote_scalar_t<fvar_inner_t, plain_type_t<Tb>> grad_b(b.size());
   grad_pFq_q(grad_b, a, b.val(), z);
-  return fvar<fvar_inner_t>(
-    hypergeometric_pFq(a, b.val(), z),
-    dot_product(b.d(), grad_b));
+  return fvar<fvar_inner_t>(hypergeometric_pFq(a, b.val(), z),
+                            dot_product(b.d(), grad_b));
 }
 
 }  // namespace math

@@ -2,11 +2,11 @@
 #include <limits>
 
 TEST(primScalFun, grad_2F2_ffv) {
-  using stan::math::vector_ffv;
-  using stan::math::vector_d;
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::hypergeometric_pFq;
+  using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_ffv;
 
   vector_ffv ffv_a(2);
   vector_d d_a(2);

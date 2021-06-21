@@ -12,7 +12,7 @@ namespace math {
 /**
  * Returns the generalised hypergeometric function applied to the
  * input arguments.
- * 
+ *
  * Specialization for hypergeometric_pFq(vector_v, vector_v, var)
  *
  * @tparam Ta Type of a argument
@@ -30,24 +30,24 @@ inline var hypergeometric_pFq(const Ta& a, const Tb& b, const Tz& z) {
   arena_t<promote_scalar_t<var, Ta>> arena_a = a;
   arena_t<promote_scalar_t<var, Tb>> arena_b = b;
   return make_callback_var(
-    hypergeometric_pFq(arena_a.val(), arena_b.val(), z.val()),
-    [arena_a, arena_b, z](auto& vi) mutable {
-      vector_d grad_a(arena_a.size());
-      vector_d grad_b(arena_b.size());
-      double grad_z;
+      hypergeometric_pFq(arena_a.val(), arena_b.val(), z.val()),
+      [arena_a, arena_b, z](auto& vi) mutable {
+        vector_d grad_a(arena_a.size());
+        vector_d grad_b(arena_b.size());
+        double grad_z;
 
-      grad_pFq(grad_a, grad_b, grad_z, arena_a.val(), arena_b.val(), z.val());
+        grad_pFq(grad_a, grad_b, grad_z, arena_a.val(), arena_b.val(), z.val());
 
-      arena_a.adj() += vi.adj() * grad_a;
-      arena_b.adj() += vi.adj() * grad_b;
-      z.adj() += vi.adj() * grad_z;
-    });
+        arena_a.adj() += vi.adj() * grad_a;
+        arena_b.adj() += vi.adj() * grad_b;
+        z.adj() += vi.adj() * grad_z;
+      });
 }
 
 /**
  * Returns the generalised hypergeometric function applied to the
  * input arguments.
- * 
+ *
  * Specialization for hypergeometric_pFq(vector_v, vector_d, var)
  *
  * @tparam Ta Type of a argument
@@ -65,23 +65,23 @@ template <typename Ta, typename Tb, typename Tz,
 inline var hypergeometric_pFq(const Ta& a, const Tb& b, const Tz& z) {
   arena_t<promote_scalar_t<var, Ta>> arena_a = a;
   arena_t<promote_scalar_t<double, Tb>> arena_b = b;
-  return make_callback_var(
-    hypergeometric_pFq(arena_a.val(), arena_b, z.val()),
-    [arena_a, arena_b, z](auto& vi) mutable {
-      vector_d grad_a(arena_a.size());
-      double grad_z;
+  return make_callback_var(hypergeometric_pFq(arena_a.val(), arena_b, z.val()),
+                           [arena_a, arena_b, z](auto& vi) mutable {
+                             vector_d grad_a(arena_a.size());
+                             double grad_z;
 
-      grad_pFq_pz(grad_a, grad_z, arena_a.val(), arena_b, z.val());
+                             grad_pFq_pz(grad_a, grad_z, arena_a.val(), arena_b,
+                                         z.val());
 
-      arena_a.adj() += vi.adj() * grad_a;
-      z.adj() += vi.adj() * grad_z;
-    });
+                             arena_a.adj() += vi.adj() * grad_a;
+                             z.adj() += vi.adj() * grad_z;
+                           });
 }
 
 /**
  * Returns the generalised hypergeometric function applied to the
  * input arguments.
- * 
+ *
  * Specialization for hypergeometric_pFq(vector_v, vector_d, double)
  *
  * @tparam Ta Type of a argument
@@ -99,21 +99,20 @@ template <typename Ta, typename Tb, typename Tz,
 inline var hypergeometric_pFq(const Ta& a, const Tb& b, const Tz& z) {
   arena_t<promote_scalar_t<var, Ta>> arena_a = a;
   arena_t<promote_scalar_t<double, Tb>> arena_b = b;
-  return make_callback_var(
-    hypergeometric_pFq(arena_a.val(), arena_b, z),
-    [arena_a, arena_b, z](auto& vi) mutable {
-      vector_d grad_a(arena_a.size());
+  return make_callback_var(hypergeometric_pFq(arena_a.val(), arena_b, z),
+                           [arena_a, arena_b, z](auto& vi) mutable {
+                             vector_d grad_a(arena_a.size());
 
-      grad_pFq_p(grad_a, arena_a.val(), arena_b, z);
+                             grad_pFq_p(grad_a, arena_a.val(), arena_b, z);
 
-      arena_a.adj() += vi.adj() * grad_a;
-    });
+                             arena_a.adj() += vi.adj() * grad_a;
+                           });
 }
 
 /**
  * Returns the generalised hypergeometric function applied to the
  * input arguments.
- * 
+ *
  * Specialization for hypergeometric_pFq(vector_d, vector_v, var)
  *
  * @tparam Ta Type of a argument
@@ -131,23 +130,23 @@ template <typename Ta, typename Tb, typename Tz,
 inline var hypergeometric_pFq(const Ta& a, const Tb& b, const Tz& z) {
   arena_t<promote_scalar_t<double, Ta>> arena_a = a;
   arena_t<promote_scalar_t<var, Tb>> arena_b = b;
-  return make_callback_var(
-    hypergeometric_pFq(arena_a, arena_b.val(), z.val()),
-    [arena_a, arena_b, z](auto& vi) mutable {
-      vector_d grad_b(arena_b.size());
-      double grad_z;
+  return make_callback_var(hypergeometric_pFq(arena_a, arena_b.val(), z.val()),
+                           [arena_a, arena_b, z](auto& vi) mutable {
+                             vector_d grad_b(arena_b.size());
+                             double grad_z;
 
-      grad_pFq_qz(grad_b, grad_z, arena_a, arena_b.val(), z.val());
+                             grad_pFq_qz(grad_b, grad_z, arena_a, arena_b.val(),
+                                         z.val());
 
-      arena_b.adj() += vi.adj() * grad_b;
-      z.adj() += vi.adj() * grad_z;
-    });
+                             arena_b.adj() += vi.adj() * grad_b;
+                             z.adj() += vi.adj() * grad_z;
+                           });
 }
 
 /**
  * Returns the generalised hypergeometric function applied to the
  * input arguments.
- * 
+ *
  * Specialization for hypergeometric_pFq(vector_d, vector_v, double)
  *
  * @tparam Ta Type of a argument
@@ -165,21 +164,20 @@ template <typename Ta, typename Tb, typename Tz,
 inline var hypergeometric_pFq(const Ta& a, const Tb& b, const Tz& z) {
   arena_t<promote_scalar_t<double, Ta>> arena_a = a;
   arena_t<promote_scalar_t<var, Tb>> arena_b = b;
-  return make_callback_var(
-    hypergeometric_pFq(arena_a, arena_b.val(), z),
-    [arena_a, arena_b, z](auto& vi) mutable {
-      vector_d grad_b(arena_b.size());
+  return make_callback_var(hypergeometric_pFq(arena_a, arena_b.val(), z),
+                           [arena_a, arena_b, z](auto& vi) mutable {
+                             vector_d grad_b(arena_b.size());
 
-      grad_pFq_q(grad_b, arena_a, arena_b.val(), z);
+                             grad_pFq_q(grad_b, arena_a, arena_b.val(), z);
 
-      arena_b.adj() += vi.adj() * grad_b;
-    });
+                             arena_b.adj() += vi.adj() * grad_b;
+                           });
 }
 
 /**
  * Returns the generalised hypergeometric function applied to the
  * input arguments.
- * 
+ *
  * Specialization for hypergeometric_pFq(vector_d, vector_d, var)
  *
  * @tparam Ta Type of a argument
@@ -197,19 +195,19 @@ inline var hypergeometric_pFq(const Ta& a, const Tb& b, const Tz& z) {
   arena_t<promote_scalar_t<double, Ta>> arena_a = a;
   arena_t<promote_scalar_t<double, Tb>> arena_b = b;
   return make_callback_var(hypergeometric_pFq(arena_a, arena_b, z.val()),
-                          [arena_a, arena_b, z](auto& vi) mutable {
-                            double grad_z;
+                           [arena_a, arena_b, z](auto& vi) mutable {
+                             double grad_z;
 
-                            grad_pFq_z(grad_z, arena_a, arena_b, z.val());
+                             grad_pFq_z(grad_z, arena_a, arena_b, z.val());
 
-                            z.adj() += vi.adj() * grad_z;
-                          });
+                             z.adj() += vi.adj() * grad_z;
+                           });
 }
 
 /**
  * Returns the generalised hypergeometric function applied to the
  * input arguments.
- * 
+ *
  * Specialization for hypergeometric_pFq(vector_v, vector_v, double)
  *
  * @tparam Ta Type of a argument
@@ -226,17 +224,17 @@ template <typename Ta, typename Tb, typename Tz,
 inline var hypergeometric_pFq(const Ta& a, const Tb& b, const Tz& z) {
   arena_t<promote_scalar_t<var, Ta>> arena_a = a;
   arena_t<promote_scalar_t<var, Tb>> arena_b = b;
-  return make_callback_var(
-    hypergeometric_pFq(arena_a.val(), arena_b.val(), z),
-    [arena_a, arena_b, z](auto& vi) mutable {
-      vector_d grad_a(arena_a.size());
-      vector_d grad_b(arena_b.size());
+  return make_callback_var(hypergeometric_pFq(arena_a.val(), arena_b.val(), z),
+                           [arena_a, arena_b, z](auto& vi) mutable {
+                             vector_d grad_a(arena_a.size());
+                             vector_d grad_b(arena_b.size());
 
-      grad_pFq_pq(grad_a, grad_b, arena_a.val(), arena_b.val(), z);
+                             grad_pFq_pq(grad_a, grad_b, arena_a.val(),
+                                         arena_b.val(), z);
 
-      arena_a.adj() += vi.adj() * grad_a;
-      arena_b.adj() += vi.adj() * grad_b;
-    });
+                             arena_a.adj() += vi.adj() * grad_a;
+                             arena_b.adj() += vi.adj() * grad_b;
+                           });
 }
 
 }  // namespace math
