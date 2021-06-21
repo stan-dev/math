@@ -46,6 +46,11 @@ namespace math {
  */
 inline var ceil(const var& a) { return var(std::ceil(a.val())); }
 
+template <typename T, require_matrix_t<T>* = nullptr>
+inline auto ceil(const var_value<T>& a) {
+  return var_value<T>(a.val().array().ceil());
+}
+
 }  // namespace math
 }  // namespace stan
 #endif

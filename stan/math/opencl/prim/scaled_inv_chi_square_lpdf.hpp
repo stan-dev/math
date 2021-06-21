@@ -76,7 +76,7 @@ inline return_type_t<T_y_cl, T_dof_cl, T_scale_cl> scaled_inv_chi_square_lpdf(
       = check_cl(function, "Scale parameter", s_val, "positive finite");
   auto s_positive_finite = isfinite(s_val) && 0 < s_val;
 
-  auto any_y_nonpositive = colwise_max(constant(0, N, 1) + (y_val <= 0.0));
+  auto any_y_nonpositive = colwise_max(cast<char>(y_val <= 0.0));
   auto half_nu = 0.5 * nu_val;
   auto log_y = log(y_val);
   auto inv_y = elt_divide(1.0, y_val);
@@ -106,7 +106,7 @@ inline return_type_t<T_y_cl, T_dof_cl, T_scale_cl> scaled_inv_chi_square_lpdf(
   auto s_deriv = elt_divide(nu_val, s_val)
                  - elt_multiply(elt_multiply(nu_val, inv_y), s_val);
 
-  matrix_cl<int> any_y_nonpositive_cl;
+  matrix_cl<char> any_y_nonpositive_cl;
   matrix_cl<double> logp_cl;
   matrix_cl<double> nu_deriv_cl;
   matrix_cl<double> y_deriv_cl;

@@ -85,9 +85,9 @@ Eigen::VectorXd algebra_solver_powell_impl(
                        fx.get_value(x_val), "the vector of unknowns, x,", x);
 
   // Solve the system
-  return algebra_solver_powell_call_solver_(
-      solver, fx, x_val, 0, relative_tolerance, function_tolerance,
-      max_num_steps);
+  return algebra_solver_powell_call_solver_(solver, fx, x_val, 0,
+                                            relative_tolerance,
+                                            function_tolerance, max_num_steps);
 }
 
 /** Implementation of autodiff powell solver. */
@@ -124,10 +124,9 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
                        fx.get_value(x_val), "the vector of unknowns, x,", x);
 
   // Solve the system
-  Eigen::VectorXd theta_dbl
-      = algebra_solver_powell_call_solver_(
-          solver, fx, x_val, 0, relative_tolerance, function_tolerance,
-          max_num_steps);
+  Eigen::VectorXd theta_dbl = algebra_solver_powell_call_solver_(
+      solver, fx, x_val, 0, relative_tolerance, function_tolerance,
+      max_num_steps);
 
   Eigen::MatrixXd Jf_x;
   Eigen::VectorXd f_x;
