@@ -225,7 +225,6 @@ template <typename Ta, typename Tb, typename Tz,
 void grad_pFq_p(plain_type_t<Ta>& grad_a, const Ta& a, const Tb& b,
                 const Tz& z, double precision = 1e-14,
                 int max_steps = 1e6) {
-  using scalar_t = scalar_type_t<Ta>;
   internal::grad_pFq_impl<true, false, false>(
     std::forward_as_tuple(grad_a, plain_type_t<Ta>{}, scalar_type_t<Ta>{}),
     a, b, z, precision, max_steps);
@@ -248,7 +247,6 @@ template <typename Ta, typename Tb, typename Tz,
 void grad_pFq_q(plain_type_t<Tb>& grad_b, const Ta& a, const Tb& b,
                 const Tz& z, double precision = 1e-14,
                 int max_steps = 1e6) {
-  using scalar_t = scalar_type_t<Tb>;
   internal::grad_pFq_impl<false, true, false>(
     std::forward_as_tuple(plain_type_t<Tb>{}, grad_b, scalar_type_t<Tb>{}),
     a, b, z, precision, max_steps);
@@ -294,7 +292,6 @@ template <typename Ta, typename Tb, typename Tz,
 void grad_pFq_pq(plain_type_t<Ta>& grad_a, plain_type_t<Tb>& grad_b,
                  const Ta& a, const Tb& b, const Tz& z,
                  double precision = 1e-14, int max_steps = 1e6) {
-  using scalar_t = scalar_type_t<Ta>;
   internal::grad_pFq_impl<true, true, false>(
     std::forward_as_tuple(grad_a, grad_b, scalar_type_t<Ta>{}),
     a, b, z, precision, max_steps);
@@ -318,7 +315,6 @@ template <typename Ta, typename Tb, typename Tz,
 void grad_pFq_pz(plain_type_t<Ta>& grad_a, plain_type_t<Tz>& grad_z,
                  const Ta& a, const Tb& b, const Tz& z,
                  double precision = 1e-14, int max_steps = 1e6) {
-  using scalar_t = scalar_type_t<Ta>;
   internal::grad_pFq_impl<true, false, true>(
     std::forward_as_tuple(grad_a, plain_type_t<Ta>{}, grad_z),
     a, b, z, precision, max_steps);
@@ -342,7 +338,6 @@ template <typename Ta, typename Tb, typename Tz,
 void grad_pFq_qz(plain_type_t<Tb>& grad_b, plain_type_t<Tz>& grad_z,
                  const Ta& a, const Tb& b, const Tz& z,
                  double precision = 1e-14, int max_steps = 1e6) {
-  using scalar_t = scalar_type_t<Tb>;
   internal::grad_pFq_impl<false, true, true>(
     std::forward_as_tuple(plain_type_t<Tb>{}, grad_b, grad_z),
     a, b, z, precision, max_steps);

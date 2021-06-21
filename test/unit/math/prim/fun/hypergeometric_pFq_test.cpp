@@ -10,7 +10,7 @@ TEST(MathFunctions, hypergeometric_pFq_values) {
   a << 4, 4;
   b << 5, 5;
   double z = 2;
-  
+
   EXPECT_FLOAT_EQ(3.8420514314107791, hypergeometric_pFq(a, b, z));
 
   a << 6, 4;
@@ -31,12 +31,11 @@ TEST(MathFunctions, hypergeometric_pFq_errors) {
   a << 4, INFTY;
   b << 5, 5;
   double z = 2;
-  
+
   EXPECT_THROW(hypergeometric_pFq(a, b, z), std::domain_error);
 
   a << 6, 4;
   b << NOT_A_NUMBER, 1;
-  z = 2;
 
   EXPECT_THROW(hypergeometric_pFq(a, b, z), std::domain_error);
 }
