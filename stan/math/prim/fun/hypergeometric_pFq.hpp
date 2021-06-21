@@ -21,31 +21,35 @@ namespace math {
  * @param[in] z Scalar z argument
  * @return Generalised hypergeometric function
  */
-double hypergeometric_pFq(const Eigen::VectorXd& a, const Eigen::VectorXd& b,
-                          double z) {
-  check_finite("hypergeometric_pFq", "a", a);
-  check_finite("hypergeometric_pFq", "b", b);
+template <typename Ta, typename Tb, typename Tz,
+          require_all_eigen_st<std::is_arithmetic, Ta, Tb>* = nullptr,
+          require_arithmetic_t<Tz>* = nullptr>
+double hypergeometric_pFq(const Ta& a, const Tb& b, const Tz& z) {
+  ref_type_t<Ta> a_ref = a;
+  ref_type_t<Tb> b_ref = b;
+  check_finite("hypergeometric_pFq", "a", a_ref);
+  check_finite("hypergeometric_pFq", "b", b_ref);
   check_finite("hypergeometric_pFq", "z", z);
 
-  check_not_nan("hypergeometric_pFq", "a", a);
-  check_not_nan("hypergeometric_pFq", "b", b);
+  check_not_nan("hypergeometric_pFq", "a", a_ref);
+  check_not_nan("hypergeometric_pFq", "b", b_ref);
   check_not_nan("hypergeometric_pFq", "z", z);
 
-  bool condition_1 = (a.size() > (b.size() + 1)) && (z != 0);
-  bool condition_2 = (a.size() == (b.size() + 1)) && (std::fabs(z) > 1);
+  bool condition_1 = (a_ref.size() > (b_ref.size() + 1)) && (z != 0);
+  bool condition_2 = (a_ref.size() == (b_ref.size() + 1)) && (std::fabs(z) > 1);
 
   if (condition_1 || condition_2) {
     std::stringstream msg;
     msg << "hypergeometric function pFq does not meet convergence "
         << "conditions with given arguments. "
-        << "a: " << a << ", b: " << b << ", "
+        << "a: " << a_ref << ", b: " << b_ref << ", "
         << ", z: " << z;
     throw std::domain_error(msg.str());
   }
 
   return boost::math::hypergeometric_pFq(
-      std::vector<double>(a.data(), a.data() + a.size()),
-      std::vector<double>(b.data(), b.data() + b.size()), z);
+      std::vector<double>(a_ref.data(), a_ref.data() + a_ref.size()),
+      std::vector<double>(b_ref.data(), b_ref.data() + b_ref.size()), z);
 }
 }  // namespace math
 }  // namespace stan
