@@ -1,6 +1,4 @@
-
 #include <stan/math/opencl/double_d.hpp>
-//#include <test/unit/math/expect_near_rel.hpp>
 #include <gtest/gtest.h>
 #include <limits>
 #include <Eigen/Core>
@@ -21,20 +19,20 @@ TEST(double_d, add_dd_dd_test) {
   // simple
   double_d res = add_dd_dd(a, a);
   EXPECT_NORMALIZED(res);
-  EXPECT_TRUE(res.high == 2.0);
-  EXPECT_TRUE(res.low == eps);
+  EXPECT_EQ(res.high, 2.0);
+  EXPECT_EQ(res.low, eps);
 
   // carry
   res = add_dd_dd(a, c);
   EXPECT_NORMALIZED(res);
-  EXPECT_TRUE(res.high == 1.0 + eps);
-  EXPECT_TRUE(res.low == 0.0);
+  EXPECT_EQ(res.high, 1.0 + eps);
+  EXPECT_EQ(res.low, 0.0);
 
   // cancelation
   res = add_dd_dd(a, d);
   EXPECT_NORMALIZED(res);
-  EXPECT_TRUE(res.high == eps * h_eps);
-  EXPECT_TRUE(res.low == 0.0);
+  EXPECT_EQ(res.high, eps * h_eps);
+  EXPECT_EQ(res.low, 0.0);
 }
 
 TEST(double_d, mul_dd_dd_test) {
@@ -50,20 +48,20 @@ TEST(double_d, mul_dd_dd_test) {
   // simple
   double_d res = mul_dd_dd(a, b);
   EXPECT_NORMALIZED(res);
-  EXPECT_TRUE(res.high == h_eps);
-  EXPECT_TRUE(res.low == h_eps * h_eps * 0.001);
+  EXPECT_EQ(res.high, h_eps);
+  EXPECT_EQ(res.low, h_eps * h_eps * 0.001);
 
   // carry
   res = mul_dd_dd(c, c);
   EXPECT_NORMALIZED(res);
-  EXPECT_TRUE(res.high == 1.0 + eps);
-  EXPECT_TRUE(res.low == 0.0);
+  EXPECT_EQ(res.high, 1.0 + eps);
+  EXPECT_EQ(res.low, 0.0);
 
   // cancelation
   res = mul_dd_dd(c, d);
   EXPECT_NORMALIZED(res);
-  EXPECT_TRUE(res.high == 1.0);
-  EXPECT_TRUE(res.low == 0.0);
+  EXPECT_EQ(res.high, 1.0);
+  EXPECT_EQ(res.low, 0.0);
 }
 
 TEST(double_d, div_dd_dd_test) {
@@ -79,20 +77,23 @@ TEST(double_d, div_dd_dd_test) {
   // simple
   double_d res = div_dd_dd(a, a);
   EXPECT_NORMALIZED(res);
-  EXPECT_TRUE(res.high == 1.0);
-  EXPECT_TRUE(res.low == 0.0);
+  EXPECT_EQ(res.high, 1.0);
+  EXPECT_EQ(res.low, 0.0);
 
   res = div_dd_dd(a, b);
   EXPECT_NORMALIZED(res);
-  EXPECT_TRUE(res.high == 1.0);
-  EXPECT_TRUE(res.low == h_eps * eps);
+  EXPECT_EQ(res.high, 1.0);
+  EXPECT_EQ(res.low, h_eps * eps);
 
   // div by zero
   res = div_dd_dd(a, c);
-  EXPECT_TRUE(res.high == std::numeric_limits<double>::infinity());
-  EXPECT_TRUE(res.low == 0);
+  EXPECT_EQ(res.high, std::numeric_limits<double>::infinity());
+  EXPECT_EQ(res.low, 0);
 }
 
+// this is the best test we have, but it relies on the nonstandard gcc extension
+// quadmath, so it is not run by default
+#ifdef GCC_QUADMATH_TEST
 #include <quadmath.h>
 
 #define EXPECT_DD_F128_EQ(dd, f128) \
@@ -130,6 +131,7 @@ TEST(double_d, all) {
                       f1283 * f1284);
   }
 }
+#endif
 
 #ifdef STAN_OPENCL
 
@@ -168,7 +170,7 @@ TEST(double_d, opencl) {
   for (int i = 0; i < n; i++) {
     double_d correct = a[i] * b[i];
     EXPECT_EQ(c[i].high, correct.high);
-    EXPECT_EQ(c[i].low, correct.low);
+    EXPECT_NEAR(c[i].low, correct.low, 1e-30);
   }
 }
 

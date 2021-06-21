@@ -1,5 +1,5 @@
-#ifndef DOUBLE_D_HPP
-#define DOUBLE_D_HPP
+#ifndef STAN_MATH_OPENCL_DOUBLE_D_HPP
+#define STAN_MATH_OPENCL_DOUBLE_D_HPP
 
 #include <stan/math/opencl/stringify.hpp>
 
@@ -8,6 +8,9 @@
 #include <cfloat>
 #include <limits>
 
+/**
+ * Alternative stringify, that also exposes the code for use in C++ host code.
+ */
 #define STRINGIFY2(A) \
 #A;                 \
   A
@@ -15,6 +18,10 @@ namespace stan {
 namespace math {
 namespace internal {
 
+/**
+ * Double double - a 128 bit floating point number defined as an exact sum of 2
+ * doubles. `low` should be less than 1 ulp of `high`.
+ */
 typedef struct double_d {
   double high;
   double low;
@@ -49,55 +56,16 @@ const char* double_d_src = STRINGIFY(
     STRINGIFY2(
         // \endcond
 
-        inline double_d add_quick_d_d(double a, double b) {
+        inline double_d mul_d_d(double a, double b) {
           double_d res;
-          res.high = a + b;
-          res.low = b - (res.high - a);
-          return res;
-        }
-
-        inline double_d add_d_d(double a, double b) {
-          double_d res;
-          res.high = a + b;
+#ifdef __FMA__
+          res.high = a * b;
           if (isfinite(res.high)) {
-            double v = res.high - a;
-            res.low = (a - (res.high - v)) + (b - v);
+            res.low = fma(a, b, -res.high);
           } else {
             res.low = 0;
           }
-          return res;
-        }
-
-        inline void split(double a, double* hi, double* lo) {
-          const int QD_BITS = (FLT_MANT_DIG + 1) / 2;
-          const double QD_SPLITTER = ldexp(1.0, QD_BITS) + 1.0;
-          const double QD_SPLIT_THRESH = ldexp(DBL_MAX, -QD_BITS - 1);
-
-          double temp;
-
-          if (fabs(a) > QD_SPLIT_THRESH) {
-            a = ldexp(a, -QD_BITS - 1);
-            temp = QD_SPLITTER * a;
-            *hi = temp - (temp - a);
-            *lo = a - *hi;
-            *hi = ldexp(*hi, QD_BITS + 1);
-            *lo = ldexp(*lo, QD_BITS + 1);
-          } else {
-            temp = QD_SPLITTER * a;
-            *hi = temp - (temp - a);
-            *lo = a - *hi;
-          }
-        }
-
-        //    inline double_d mul_d_d(double a, double b) {
-        //      double_d res;
-        //      volatile double temp = a * b;
-        //      res.high = temp;
-        //      res.low = fma(a, b, -temp);
-        //      return res;
-        //    }
-        inline double_d mul_d_d(double a, double b) {
-          double_d res;
+#else
           const double C = (2 << 26) + 1;
           double p = a * C;
           if (!isfinite(p)) {
@@ -115,13 +83,6 @@ const char* double_d_src = STRINGIFY(
           }
           double hy = b - p + p;
           double ty = b - hy;
-
-          //  double hx, tx;
-          //  split(a, hx, tx);
-          //  double hy, ty;
-          //  split(a, hy, ty);
-          //  double p;
-
           p = hx * hy;
           double q = hx * ty + tx * hy;
           res.high = p + q;
@@ -130,6 +91,7 @@ const char* double_d_src = STRINGIFY(
           } else {
             res.low = 0;
           }
+#endif
           return res;
         }
 
@@ -141,22 +103,6 @@ const char* double_d_src = STRINGIFY(
         }
 
         inline double_d add_dd_dd(double_d a, double_d b) {
-          //      double_d high = add_d_d(a.high, b.high);
-          //      if (isfinite(high.high)) {
-          //        double_d low = add_d_d(a.low, b.low);
-          //        double_d mid = add_d_d(high.low, low.high);
-          //        mid.low += low.high;
-          //        double_d high2 = add_d_d(high.high, mid.high);
-          //        double_d mid2 = add_d_d(mid.low, high2.high);
-          //        double_d low2 = add_d_d(high2.low, mid2.low);
-          //        return { mid2.high, low2.high }
-
-          //        //        double_d v = add_quick_d_d(high.high, high.low +
-          //        low.high);
-          //        //        return add_quick_d_d(high.high, low.low + v.low);
-          //      } else {
-          //        return high;
-          //      }
           double_d res;
           double high = a.high + b.high;
           if (isfinite(high)) {
@@ -177,19 +123,6 @@ const char* double_d_src = STRINGIFY(
         }
 
         inline double_d add_dd_d(double_d a, double b) {
-          //      double_d high = add_d_d(a.high, b);
-          //      if (isfinite(high.high)) {
-          //        double_d low = add_d_d(a.low, b);
-          //        double_d high2 = add_d_d(high.high, low.high);
-          //        double_d mid2 = add_d_d(low.low, high2.high);
-          //        double_d low2 = add_d_d(high2.low, mid2.low);
-          //        return {mid2.high, low2.high};
-          //      } else {
-          //        return high;
-          //      }
-
-          //      //    double_d v = add_quick_d_d(high.high, high.low + a.low);
-          //      //    return add_quick_d_d(high.high, v.low);
           double_d res;
           double high = a.high + b;
           if (isfinite(high)) {
@@ -342,17 +275,16 @@ const char* double_d_src = STRINGIFY(
         } inline bool ge_d_dd(double a, double_d b) {
           return !lt_d_dd(a, b);
         } inline bool ge_dd_d(double_d a, double b) { return !lt_dd_d(a, b); }
-
         // \cond
-    );
+    );  // NOLINT(whitespace/parens)
 // \endcond
 
-// inline double_d operator+(double_d a, double b) { return add_dd_d(a, b); }
+inline double_d operator+(double_d a, double b) { return add_dd_d(a, b); }
 inline double_d operator+(double a, double_d b) { return add_dd_d(b, a); }
 inline double_d operator+(double_d a, double_d b) { return add_dd_dd(a, b); }
 
 inline double_d operator-(double a, double_d b) { return sub_d_dd(a, b); }
-// inline double_d operator-(double_d a, double b) { return sub_dd_d(a, b); }
+inline double_d operator-(double_d a, double b) { return sub_dd_d(a, b); }
 inline double_d operator-(double_d a, double_d b) { return sub_dd_dd(a, b); }
 
 inline double_d operator*(double_d a, double b) { return mul_dd_d(a, b); }
@@ -371,11 +303,11 @@ inline bool operator<(double_d a, double b) { return lt_dd_d(a, b); }
 inline bool operator>(double_d a, double_d b) { return gt_dd_dd(a, b); }
 inline bool operator>(double a, double_d b) { return gt_d_dd(a, b); }
 inline bool operator>(double_d a, double b) { return gt_dd_d(a, b); }
-// inline bool operator<=(double_d a, double_d b) { return le_dd_dd(a, b); }
-// inline bool operator<=(double a, double_d b) { return le_d_dd(a, b); }
-// inline bool operator<=(double_d a, double b) { return le_dd_d(a, b); }
-// inline bool operator>=(double_d a, double_d b) { return ge_dd_dd(a, b); }
-// inline bool operator>=(double a, double_d b) { return ge_d_dd(a, b); }
+inline bool operator<=(double_d a, double_d b) { return le_dd_dd(a, b); }
+inline bool operator<=(double a, double_d b) { return le_d_dd(a, b); }
+inline bool operator<=(double_d a, double b) { return le_dd_d(a, b); }
+inline bool operator>=(double_d a, double_d b) { return ge_dd_dd(a, b); }
+inline bool operator>=(double a, double_d b) { return ge_d_dd(a, b); }
 inline bool operator>=(double_d a, double b) { return ge_dd_d(a, b); }
 
 inline double_d fabs(double_d a) { return abs_dd(a); }
@@ -387,4 +319,4 @@ inline double copysign(double a, double_d b) { return copysign_d_dd(a, b); }
 }  // namespace math
 }  // namespace stan
 
-#endif  // DOUBLE_D_HPP
+#endif
