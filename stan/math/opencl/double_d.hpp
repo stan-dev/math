@@ -44,6 +44,47 @@ using std::isinf;
 using std::isnan;
 using std::ldexp;
 
+inline double_d mul_d_d(double a, double b) {
+  double_d res;
+  // for some reason the std::fma only gives accurate result if compiling for
+  // instruction set that includes a fma instruction
+#if defined(__FMA__)
+  res.high = a * b;
+  if (isfinite(res.high)) {
+    res.low = fma(a, b, -res.high);
+  } else {
+    res.low = 0;
+  }
+#else
+  const double C = (2 << 26) + 1;
+  double p = a * C;
+  if (!isfinite(p)) {
+    res.high = p;
+    res.low = 0;
+    return res;
+  }
+  double hx = a - p + p;
+  double tx = a - hx;
+  p = b * C;
+  if (!isfinite(p)) {
+    res.high = p;
+    res.low = 0;
+    return res;
+  }
+  double hy = b - p + p;
+  double ty = b - hy;
+  p = hx * hy;
+  double q = hx * ty + tx * hy;
+  res.high = p + q;
+  if (isfinite(res.high)) {
+    res.low = p - res.high + q + tx * ty;
+  } else {
+    res.low = 0;
+  }
+#endif
+  return res;
+}
+
 // \cond
 const char* double_d_src = STRINGIFY(
     // \endcond
@@ -51,48 +92,21 @@ const char* double_d_src = STRINGIFY(
       double high;
       double low;
     } double_d;
+
+    inline double_d mul_d_d(double a, double b) {
+      double_d res;
+      res.high = a * b;
+      if (isfinite(res.high)) {
+        res.low = fma(a, b, -res.high);
+      } else {
+        res.low = 0;
+      }
+      return res;
+    }
     // \cond
     )
     STRINGIFY2(
         // \endcond
-
-        //    inline double_d mul_d_d(double a, double b) {
-        //      double_d res;
-        //      volatile double temp = a * b;
-        //      res.high = temp;
-        //      res.low = fma(a, b, -temp);
-        //      return res;
-        //    }
-
-        inline double_d mul_d_d(double a, double b) {
-          double_d res;
-          const double C = (2 << 26) + 1;
-          double p = a * C;
-          if (!isfinite(p)) {
-            res.high = p;
-            res.low = 0;
-            return res;
-          }
-          double hx = a - p + p;
-          double tx = a - hx;
-          p = b * C;
-          if (!isfinite(p)) {
-            res.high = p;
-            res.low = 0;
-            return res;
-          }
-          double hy = b - p + p;
-          double ty = b - hy;
-          p = hx * hy;
-          double q = hx * ty + tx * hy;
-          res.high = p + q;
-          if (isfinite(res.high)) {
-            res.low = p - res.high + q + tx * ty;
-          } else {
-            res.low = 0;
-          }
-          return res;
-        }
 
         inline double_d neg(double_d a) {
           double_d res;
