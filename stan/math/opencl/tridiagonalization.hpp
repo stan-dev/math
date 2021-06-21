@@ -44,23 +44,26 @@ void block_householder_tridiag_cl(const matrix_cl<double>& A,
             packed.rows(), V_cl.rows(), j, k);
         if (j != 0) {
           int v_step_1_local
-              = opencl_kernels::tridiagonalization_v_step_1.get_option("LOCAL_SIZE_");
+              = opencl_kernels::tridiagonalization_v_step_1.get_option(
+                  "LOCAL_SIZE_");
           opencl_kernels::tridiagonalization_v_step_1(
-              cl::NDRange(v_step_1_local * j), cl::NDRange(v_step_1_local), packed, V_cl,
-              Uu, Vu, packed.rows(), V_cl.rows(), k);
+              cl::NDRange(v_step_1_local * j), cl::NDRange(v_step_1_local),
+              packed, V_cl, Uu, Vu, packed.rows(), V_cl.rows(), k);
         }
         int v_step_2_local
-            = opencl_kernels::tridiagonalization_v_step_2.get_option("LOCAL_SIZE_");
+            = opencl_kernels::tridiagonalization_v_step_2.get_option(
+                "LOCAL_SIZE_");
         opencl_kernels::tridiagonalization_v_step_2(
-            cl::NDRange((A.rows() - k - j - 1 + v_step_2_local - 1) / v_step_2_local
-                        * v_step_2_local),
+            cl::NDRange((A.rows() - k - j - 1 + v_step_2_local - 1)
+                        / v_step_2_local * v_step_2_local),
             cl::NDRange(v_step_2_local), packed, V_cl, Uu, Vu, packed.rows(),
             V_cl.rows(), k, j);
         int v_step_3_local
-            = opencl_kernels::tridiagonalization_v_step_3.get_option("LOCAL_SIZE_");
+            = opencl_kernels::tridiagonalization_v_step_3.get_option(
+                "LOCAL_SIZE_");
         opencl_kernels::tridiagonalization_v_step_3(
-            cl::NDRange(v_step_3_local), cl::NDRange(v_step_3_local), packed, V_cl, q_cl,
-            packed.rows(), V_cl.rows(), k, j);
+            cl::NDRange(v_step_3_local), cl::NDRange(v_step_3_local), packed,
+            V_cl, q_cl, packed.rows(), V_cl.rows(), k, j);
       } catch (cl::Error& e) {
         check_opencl_error("block_householder_tridiag_cl", e);
       }

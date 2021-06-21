@@ -306,18 +306,21 @@ const kernel_cl<in_out_buffer, in_out_buffer, out_buffer, int, int, int, int>
 
 const kernel_cl<in_buffer, in_buffer, out_buffer, out_buffer, int, int, int>
     tridiagonalization_v_step_1("tridiagonalization_v_step_1",
-                          {tridiagonalization_v_step_1_kernel_code},
-                          {{"REDUCTION_STEP_SIZE", 4}, {"LOCAL_SIZE_", 64}});
+                                {tridiagonalization_v_step_1_kernel_code},
+                                {{"REDUCTION_STEP_SIZE", 4},
+                                 {"LOCAL_SIZE_", 64}});
 
 const kernel_cl<in_buffer, out_buffer, in_buffer, in_buffer, int, int, int, int>
     tridiagonalization_v_step_2("tridiagonalization_v_step_2",
-                          {tridiagonalization_v_step_2_kernel_code},
-                          {{"REDUCTION_STEP_SIZE", 4}, {"LOCAL_SIZE_", 64}});
+                                {tridiagonalization_v_step_2_kernel_code},
+                                {{"REDUCTION_STEP_SIZE", 4},
+                                 {"LOCAL_SIZE_", 64}});
 
 const kernel_cl<in_out_buffer, in_out_buffer, out_buffer, int, int, int, int>
     tridiagonalization_v_step_3("tridiagonalization_v_step_3",
-                          {tridiagonalization_v_step_3_kernel_code},
-                          {{"REDUCTION_STEP_SIZE", 4}, {"LOCAL_SIZE_", 1024}});
+                                {tridiagonalization_v_step_3_kernel_code},
+                                {{"REDUCTION_STEP_SIZE", 4},
+                                 {"LOCAL_SIZE_", 1024}});
 
 }  // namespace opencl_kernels
 }  // namespace math
