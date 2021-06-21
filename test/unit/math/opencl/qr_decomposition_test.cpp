@@ -15,7 +15,7 @@ TEST(MathMatrixGPU, qr_decomposition_cl_small) {
 
   matrix_cl<double> m_cl(m);
 
-  matrix_cl<double> q_cl, r_cl(m);
+  matrix_cl<double> q_cl, r_cl;
 
   stan::math::qr_decomposition_cl(m_cl, q_cl, r_cl);
 
@@ -56,7 +56,7 @@ TEST(MathMatrixGPU, qr_decomposition_cl_big) {
 
     matrix_cl<double> m_cl(m);
 
-    matrix_cl<double> q_cl, r_cl(m);
+    matrix_cl<double> q_cl, r_cl;
 
     stan::math::qr_decomposition_cl(m_cl, q_cl, r_cl);
 

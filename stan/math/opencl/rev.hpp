@@ -28,6 +28,7 @@
 #include <stan/math/opencl/rev/cos.hpp>
 #include <stan/math/opencl/rev/cosh.hpp>
 #include <stan/math/opencl/rev/crossprod.hpp>
+#include <stan/math/opencl/rev/cumulative_sum.hpp>
 #include <stan/math/opencl/rev/diag_matrix.hpp>
 #include <stan/math/opencl/rev/diag_pre_multiply.hpp>
 #include <stan/math/opencl/rev/diag_post_multiply.hpp>
