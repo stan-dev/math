@@ -43,23 +43,23 @@ void block_householder_tridiag_cl(const matrix_cl<double>& A,
             cl::NDRange(hh_local), cl::NDRange(hh_local), packed, V_cl, q_cl,
             packed.rows(), V_cl.rows(), j, k);
         if (j != 0) {
-          int v1_local
-              = opencl_kernels::tridiagonalization_v1.get_option("LOCAL_SIZE_");
-          opencl_kernels::tridiagonalization_v1(
-              cl::NDRange(v1_local * j), cl::NDRange(v1_local), packed, V_cl,
+          int v_step_1_local
+              = opencl_kernels::tridiagonalization_v_step_1.get_option("LOCAL_SIZE_");
+          opencl_kernels::tridiagonalization_v_step_1(
+              cl::NDRange(v_step_1_local * j), cl::NDRange(v_step_1_local), packed, V_cl,
               Uu, Vu, packed.rows(), V_cl.rows(), k);
         }
-        int v2_local
-            = opencl_kernels::tridiagonalization_v2.get_option("LOCAL_SIZE_");
-        opencl_kernels::tridiagonalization_v2(
-            cl::NDRange((A.rows() - k - j - 1 + v2_local - 1) / v2_local
-                        * v2_local),
-            cl::NDRange(v2_local), packed, V_cl, Uu, Vu, packed.rows(),
+        int v_step_2_local
+            = opencl_kernels::tridiagonalization_v_step_2.get_option("LOCAL_SIZE_");
+        opencl_kernels::tridiagonalization_v_step_2(
+            cl::NDRange((A.rows() - k - j - 1 + v_step_2_local - 1) / v_step_2_local
+                        * v_step_2_local),
+            cl::NDRange(v_step_2_local), packed, V_cl, Uu, Vu, packed.rows(),
             V_cl.rows(), k, j);
-        int v3_local
-            = opencl_kernels::tridiagonalization_v3.get_option("LOCAL_SIZE_");
-        opencl_kernels::tridiagonalization_v3(
-            cl::NDRange(v3_local), cl::NDRange(v3_local), packed, V_cl, q_cl,
+        int v_step_3_local
+            = opencl_kernels::tridiagonalization_v_step_3.get_option("LOCAL_SIZE_");
+        opencl_kernels::tridiagonalization_v_step_3(
+            cl::NDRange(v_step_3_local), cl::NDRange(v_step_3_local), packed, V_cl, q_cl,
             packed.rows(), V_cl.rows(), k, j);
       } catch (cl::Error& e) {
         check_opencl_error("block_householder_tridiag_cl", e);
@@ -81,7 +81,7 @@ void block_householder_tridiag_cl(const matrix_cl<double>& A,
 }
 
 /**
- * Calculates Q*A in place. To construct Q pass an appropriate identity matrix
+ * Calculates Q*A in-place. To construct Q pass an appropriate identity matrix
  * as input A.
  * @param packed Packed result of tridiagonalization that contains householder
  * vectors that define Q in columns bellow the diagonal. Usually result of a

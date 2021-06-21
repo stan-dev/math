@@ -14,7 +14,7 @@ const char* tridiagonalization_householder_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Calculates householder vector and first element of the vector v.
-     * Must be run with 1 workgroup of 1024 threads.
+     * Must be run with 1 workgroup of LOCAL_SIZE_ threads.
      * @param[in,out] P packed matrix being constructed
      * @param[in,out] V matrix V
      * @param[out] q_glob q
@@ -100,7 +100,7 @@ const char* tridiagonalization_householder_kernel_code = STRINGIFY(
 // \endcond
 
 // \cond
-const char* tridiagonalization_v1_kernel_code = STRINGIFY(
+const char* tridiagonalization_v_step_1_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Calculates first part of constructing the vector v: Uu = Pb * u and Vu =
@@ -115,7 +115,7 @@ const char* tridiagonalization_v1_kernel_code = STRINGIFY(
      * @param V_rows Number of rows of the matrix V
      * @param k Index of the householder vector in the block we use as input
      */
-    __kernel void tridiagonalization_v1(
+    __kernel void tridiagonalization_v_step_1(
         const __global double* P, const __global double* V, __global double* Uu,
         __global double* Vu, const int P_rows, const int V_rows, const int k) {
       const int lid = get_local_id(0);
@@ -163,7 +163,7 @@ const char* tridiagonalization_v1_kernel_code = STRINGIFY(
 // \endcond
 
 // \cond
-const char* tridiagonalization_v2_kernel_code = STRINGIFY(
+const char* tridiagonalization_v_step_2_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Second part in constructing vector v: v = Pb * u + V * Uu + U * Vu. Pb is
@@ -181,7 +181,7 @@ const char* tridiagonalization_v2_kernel_code = STRINGIFY(
      * @param k Index of the householder vector in the block we use as input
      * @param j Start column of the block to work on
      */
-    __kernel void tridiagonalization_v2(
+    __kernel void tridiagonalization_v_step_2(
         const __global double* P, __global double* V, const __global double* Uu,
         const __global double* Vu, const int P_rows, const int V_rows,
         const int k, const int j) {
@@ -242,7 +242,7 @@ const char* tridiagonalization_v2_kernel_code = STRINGIFY(
 // \endcond
 
 // \cond
-const char* tridiagonalization_v3_kernel_code = STRINGIFY(
+const char* tridiagonalization_v_step_3_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Third part in constructing vector v: v-=0.5*(v^T*u)*u, where u is the
@@ -255,7 +255,7 @@ const char* tridiagonalization_v3_kernel_code = STRINGIFY(
      * @param k Index of the householder vector in the block to create
      * @param j Start column of the block to work on
      */
-    __kernel void tridiagonalization_v3(
+    __kernel void tridiagonalization_v_step_3(
         __global double* P, __global double* V, __global double* q,
         const int P_rows, const int V_rows, const int k, const int j) {
       const int lid = get_local_id(0);
@@ -305,18 +305,18 @@ const kernel_cl<in_out_buffer, in_out_buffer, out_buffer, int, int, int, int>
                                     {"LOCAL_SIZE_", 1024}});
 
 const kernel_cl<in_buffer, in_buffer, out_buffer, out_buffer, int, int, int>
-    tridiagonalization_v1("tridiagonalization_v1",
-                          {tridiagonalization_v1_kernel_code},
+    tridiagonalization_v_step_1("tridiagonalization_v_step_1",
+                          {tridiagonalization_v_step_1_kernel_code},
                           {{"REDUCTION_STEP_SIZE", 4}, {"LOCAL_SIZE_", 64}});
 
 const kernel_cl<in_buffer, out_buffer, in_buffer, in_buffer, int, int, int, int>
-    tridiagonalization_v2("tridiagonalization_v2",
-                          {tridiagonalization_v2_kernel_code},
+    tridiagonalization_v_step_2("tridiagonalization_v_step_2",
+                          {tridiagonalization_v_step_2_kernel_code},
                           {{"REDUCTION_STEP_SIZE", 4}, {"LOCAL_SIZE_", 64}});
 
 const kernel_cl<in_out_buffer, in_out_buffer, out_buffer, int, int, int, int>
-    tridiagonalization_v3("tridiagonalization_v3",
-                          {tridiagonalization_v3_kernel_code},
+    tridiagonalization_v_step_3("tridiagonalization_v_step_3",
+                          {tridiagonalization_v_step_3_kernel_code},
                           {{"REDUCTION_STEP_SIZE", 4}, {"LOCAL_SIZE_", 1024}});
 
 }  // namespace opencl_kernels
