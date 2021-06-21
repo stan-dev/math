@@ -17,6 +17,12 @@ static const std::string indexing_rev_global_atomic_kernel_code = STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
      *
+     * Increments adjoint of the indexing operation argument given the indices
+     * and adjoints of the indexing result.
+     *
+     * This kernel uses global atomics and is the fastest for large sizes of the
+     * indexed matrix.
+     *
      * @param[in,out] adj adjoint to increment
      * @param index
      * @param res adjoint of the result of indexing
@@ -48,6 +54,12 @@ const kernel_cl<in_out_buffer, in_buffer, in_buffer, int>
 static const std::string indexing_rev_local_atomic_kernel_code = STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
+     *
+     * Increments adjoint of the indexing operation argument given the indices
+     * and adjoints of the indexing result.
+     *
+     * This kernel uses local atomics and is the fastest for medium sizes of the
+     * indexed matrix (and will not work for large sizes).
      *
      * @param[in,out] adj adjoint to increment
      * @param index
@@ -93,6 +105,13 @@ const kernel_cl<in_out_buffer, in_buffer, in_buffer, cl::LocalSpaceArg, int,
 static const std::string indexing_rev_local_independent_kernel_code = STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
+     *
+     * Increments adjoint of the indexing operation argument given the indices
+     * and adjoints of the indexing result.
+     *
+     * This kernel makes each thread build its own copy of the adjoints before
+     * combining them. It is the fastest (and only works for) small size of the
+     * indexed matrix.
      *
      * @param[in,out] adj adjoint to increment
      * @param index

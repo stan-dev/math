@@ -10,6 +10,15 @@
 namespace stan {
 namespace math {
 
+/**
+ * Performs reverse pass for indexing operation on the OpenCL device. Depending
+ * on the size of indexed matrix and the amount of local memory available on the
+ * device selects the best kernel to use for the operation.
+ *
+ * @param[in,out] adj adjoint of the argument to indexing
+ * @param idx indices
+ * @param res adjoint of the result of the indexing operation
+ */
 void indexing_rev(matrix_cl<double>& adj, const matrix_cl<int>& idx,
                   const matrix_cl<double>& res) {
   int local_mem_size
