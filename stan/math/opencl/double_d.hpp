@@ -56,16 +56,16 @@ const char* double_d_src = STRINGIFY(
     STRINGIFY2(
         // \endcond
 
-        //    inline double_d mul_d_d(double a, double b) {
-        //      double_d res;
-        //      volatile double temp = a * b;
-        //      res.high = temp;
-        //      res.low = fma(a, b, -temp);
-        //      return res;
-        //    }
-
         inline double_d mul_d_d(double a, double b) {
           double_d res;
+#ifdef __FMA__
+          res.high = a * b;
+          if (isfinite(res.high)) {
+            res.low = fma(a, b, -res.high);
+          } else {
+            res.low = 0;
+          }
+#else
           const double C = (2 << 26) + 1;
           double p = a * C;
           if (!isfinite(p)) {
@@ -91,6 +91,7 @@ const char* double_d_src = STRINGIFY(
           } else {
             res.low = 0;
           }
+#endif
           return res;
         }
 
