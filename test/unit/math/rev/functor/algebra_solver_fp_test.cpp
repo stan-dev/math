@@ -340,8 +340,8 @@ TEST_F(FP_2d_func_test, gradient) {
   Eigen::Matrix<var, -1, 1> yp(to_var(y));
 
   Eigen::Matrix<var, -1, 1> x_sol
-      = value_of(algebra_solver_fp(f, x, yp, dat, dat_int, u_scale, f_scale, msgs,
-                          function_tolerance, max_num_steps));
+      = algebra_solver_fp(f, x, yp, dat, dat_int, u_scale, f_scale, msgs,
+                          function_tolerance, max_num_steps);
   EXPECT_FLOAT_EQ(value_of(x_sol(0)), 0.7861513777574);
   EXPECT_FLOAT_EQ(value_of(x_sol(1)), 0.6180339887499);
 
