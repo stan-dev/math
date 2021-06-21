@@ -345,6 +345,21 @@ class vari_view_eigen {
   }
 
   /**
+   * View diagonal of eigen matrices
+   * @param i Column index to slice
+   */
+  inline auto diagonal() const {
+    using inner_type = decltype(derived().val_.diagonal());
+    return vari_view<inner_type>(derived().val_.diagonal(),
+                                 derived().adj_.diagonal());
+  }
+  inline auto diagonal() {
+    using inner_type = decltype(derived().val_.diagonal());
+    return vari_view<inner_type>(derived().val_.diagonal(),
+                                 derived().adj_.diagonal());
+  }
+
+  /**
    * Get coefficient of eigen matrices
    * @param i Row index
    * @param j Column index
