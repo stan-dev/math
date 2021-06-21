@@ -44,6 +44,8 @@ TEST(MathMetaRev, conditional_var_value_matrix) {
                    conditional_var_value_t<double, Eigen::MatrixXd>);
   EXPECT_SAME_TYPE(var_value<Eigen::MatrixXd>,
                    conditional_var_value_t<var, Eigen::MatrixXd>);
+  EXPECT_SAME_TYPE(var_value<Eigen::MatrixXd>,
+                   conditional_var_value_t<var, Eigen::Matrix<var, -1, -1>>);
 }
 
 TEST(MathMetaRev, conditional_var_value_expression) {
