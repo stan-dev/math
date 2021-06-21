@@ -86,7 +86,7 @@ struct FP_2d_func_test : public ::testing::Test {
   struct FP_2d_func {
     template <typename T1, typename T2, typename T3, typename T4>
     inline Eigen::Matrix<stan::return_type_t<T1, T2>, -1, 1> operator()(
-        const T1& x, const T2&y, const T3& x_r, const T4& x_i,
+        const T1& x, const T2& y, const T3& x_r, const T4& x_i,
         std::ostream* pstream__) const {
       using scalar = stan::return_type_t<T1, T2>;
       Eigen::Matrix<scalar, Eigen::Dynamic, 1> z(2);
@@ -202,7 +202,7 @@ struct FP_direct_prod_func_test : public ::testing::Test {
   struct FP_direct_prod_func {
     template <typename T1, typename T2, typename T3, typename T4>
     inline Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1>
-    operator()(const T1&x, const T2& y, const T3& dat, const T4& dat_int,
+    operator()(const T1& x, const T2& y, const T3& dat, const T4& dat_int,
                std::ostream* pstream__) const {
       using scalar = stan::return_type_t<T1, T2>;
       const size_t n = x.size();
@@ -365,9 +365,9 @@ TEST_F(FP_2d_func_test, gradient_with_var_init_point) {
   Eigen::Matrix<var, -1, 1> yp(to_var(y));
   Eigen::Matrix<var, -1, 1> xp(to_var(x));
 
-  Eigen::Matrix<var, -1, 1> x_sol =
-    algebra_solver_fp(f, xp, yp, dat, dat_int, u_scale, f_scale, msgs,
-                      function_tolerance, max_num_steps);
+  Eigen::Matrix<var, -1, 1> x_sol
+      = algebra_solver_fp(f, xp, yp, dat, dat_int, u_scale, f_scale, msgs,
+                          function_tolerance, max_num_steps);
   EXPECT_FLOAT_EQ(value_of(x_sol(0)), 0.7861513777574);
   EXPECT_FLOAT_EQ(value_of(x_sol(1)), 0.6180339887499);
 
@@ -388,9 +388,9 @@ TEST_F(FP_2d_func_test, algebra_solver_fp) {
   double function_tolerance = 1.e-12;
   int max_num_steps = 100;
 
-  Eigen::Matrix<double, -1, 1> xd =
-    algebra_solver_fp(f, x, y, dat, dat_int, u_scale, f_scale, 0,
-                      function_tolerance, max_num_steps);
+  Eigen::Matrix<double, -1, 1> xd
+      = algebra_solver_fp(f, x, y, dat, dat_int, u_scale, f_scale, 0,
+                          function_tolerance, max_num_steps);
   EXPECT_FLOAT_EQ(xd(0), 0.7861513777574);
   EXPECT_FLOAT_EQ(xd(1), 0.6180339887499);
 
@@ -420,9 +420,9 @@ TEST_F(FP_degenerated_func_test, algebra_solver_fp) {
   double function_tolerance = 1.e-12;
   int max_num_steps = 100;
 
-  Eigen::Matrix<double, -1, 1> xd =
-    algebra_solver_fp(f, x, y, dat, dat_int, u_scale, f_scale, 0,
-                      function_tolerance, max_num_steps);
+  Eigen::Matrix<double, -1, 1> xd
+      = algebra_solver_fp(f, x, y, dat, dat_int, u_scale, f_scale, 0,
+                          function_tolerance, max_num_steps);
   EXPECT_FLOAT_EQ(xd(0), 5.0);
   EXPECT_FLOAT_EQ(xd(1), 5.0);
 
@@ -454,8 +454,9 @@ TEST_F(FP_degenerated_func_test, scaling_vector_as_params) {
 
   const std::vector<stan::math::var> u_scale_v(to_var(u_scale));
   const std::vector<stan::math::var> f_scale_v(to_var(f_scale));
-  Eigen::Matrix<double, -1, 1> xd = algebra_solver_fp(
-      f, x, y, dat, dat_int, u_scale, f_scale, 0, f_tol, max_num_steps);  // NOLINT
+  Eigen::Matrix<double, -1, 1> xd
+      = algebra_solver_fp(f, x, y, dat, dat_int, u_scale, f_scale, 0, f_tol,
+                          max_num_steps);  // NOLINT
   EXPECT_FLOAT_EQ(xd(0), 5.0);
   EXPECT_FLOAT_EQ(xd(1), 5.0);
 }

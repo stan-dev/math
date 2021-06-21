@@ -51,8 +51,8 @@ struct KinsolFixedPointEnv {
 
   KinsolFixedPointEnv(const F& f, const Eigen::MatrixXd x,
                       const std::vector<T_u>& u_scale,
-                      const std::vector<T_f>& f_scale,
-                      std::ostream* msgs, const Args&... args)
+                      const std::vector<T_f>& f_scale, std::ostream* msgs,
+                      const Args&... args)
       : f_(f),
         N_(x.size()),
         msgs_(msgs),
@@ -77,15 +77,13 @@ struct KinsolFixedPointEnv {
 
   /** Implements the user-defined function passed to KINSOL. */
   static int kinsol_f_system(N_Vector x, N_Vector f, void* user_data) {
-    auto g =
-      static_cast<const KinsolFixedPointEnv<F, T_u, T_f, Args...>*>(user_data);
+    auto g = static_cast<const KinsolFixedPointEnv<F, T_u, T_f, Args...>*>(
+        user_data);
     Eigen::VectorXd x_eigen(Eigen::Map<Eigen::VectorXd>(NV_DATA_S(x), g->N_));
     Eigen::Map<Eigen::VectorXd> f_map(N_VGetArrayPointer(f), g->N_);
 
     f_map = apply(
-        [&](const auto&... args) {
-          return g->f_(x_eigen, g->msgs_, args...);
-        },
+        [&](const auto&... args) { return g->f_(x_eigen, g->msgs_, args...); },
         g->args_tuple_);
     return 0;
   }
@@ -100,17 +98,13 @@ struct KinsolFixedPointEnv {
  * @param max_num_steps max nb. of iterations.
  */
 template <typename F, typename T_u, typename T_f, typename... Args>
-Eigen::VectorXd kinsol_solve_fp(
-    const F& f,
-    const Eigen::VectorXd& x,
-    double function_tolerance,
-    double max_num_steps,
-    const std::vector<T_u>& u_scale,
-    const std::vector<T_f>& f_scale,
-    std::ostream* msgs,
-    const Args&... args) {
-  KinsolFixedPointEnv<F, T_u, T_f, Args...> env(
-      f, x, u_scale, f_scale, msgs, args...);
+Eigen::VectorXd kinsol_solve_fp(const F& f, const Eigen::VectorXd& x,
+                                double function_tolerance, double max_num_steps,
+                                const std::vector<T_u>& u_scale,
+                                const std::vector<T_f>& f_scale,
+                                std::ostream* msgs, const Args&... args) {
+  KinsolFixedPointEnv<F, T_u, T_f, Args...> env(f, x, u_scale, f_scale, msgs,
+                                                args...);
   int N = env.N_;
   void* mem = env.mem_;
   const int default_anderson_depth = 4;
@@ -120,8 +114,7 @@ Eigen::VectorXd kinsol_solve_fp(
   check_flag_sundials(KINSetNumMaxIters(mem, max_num_steps),
                       "KINSetNumMaxIters");
   check_flag_sundials(KINSetMAA(mem, anderson_depth), "KINSetMAA");
-  check_flag_sundials(KINInit(mem, &env.kinsol_f_system, env.nv_x_),
-                      "KINInit");
+  check_flag_sundials(KINInit(mem, &env.kinsol_f_system, env.nv_x_), "KINInit");
   check_flag_sundials(KINSetFuncNormTol(mem, function_tolerance),
                       "KINSetFuncNormTol");
   check_flag_sundials(KINSetUserData(mem, static_cast<void*>(&env)),
@@ -138,8 +131,7 @@ Eigen::VectorXd kinsol_solve_fp(
 }
 
 /** Implementation of ordinary fixed point solver. */
-template <typename F, typename T, typename T_u, typename T_f,
-          typename... Args,
+template <typename F, typename T, typename T_u, typename T_f, typename... Args,
           require_eigen_vector_t<T>* = nullptr,
           require_all_st_arithmetic<Args...>* = nullptr>
 Eigen::VectorXd algebra_solver_fp_impl(
@@ -188,8 +180,7 @@ Eigen::VectorXd algebra_solver_fp_impl(
  * (This is virtually identical to the Powell and Newton solvers, except Jfx
  * has been replaced by I - Jfx.)
  */
-template <typename F, typename T, typename T_u, typename T_f,
-          typename... Args,
+template <typename F, typename T, typename T_u, typename T_f, typename... Args,
           require_eigen_vector_t<T>* = nullptr,
           require_any_st_var<Args...>* = nullptr>
 Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_fp_impl(
@@ -207,11 +198,11 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_fp_impl(
 
   // FP solution
   Eigen::VectorXd theta_dbl = apply(
-    [&](const auto&... vals) {
-      return kinsol_solve_fp(f, x_val, function_tolerance, max_num_steps,
-                             u_scale, f_scale, msgs, vals...);
-    },
-    args_vals_tuple);
+      [&](const auto&... vals) {
+        return kinsol_solve_fp(f, x_val, function_tolerance, max_num_steps,
+                               u_scale, f_scale, msgs, vals...);
+      },
+      args_vals_tuple);
 
   Eigen::MatrixXd Jf_x;
   Eigen::VectorXd f_x;
@@ -251,7 +242,6 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_fp_impl(
 
   return ret_type(ret);
 }
-
 
 /**
  * Return a fixed pointer to the specified system of algebraic
@@ -316,9 +306,9 @@ Eigen::Matrix<scalar_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_fp(
     const std::vector<int>& dat_int, const std::vector<T_u>& u_scale,
     const std::vector<T_f>& f_scale, std::ostream* msgs = nullptr,
     double function_tolerance = 1e-8, int max_num_steps = 200) {
-  return algebra_solver_fp_impl(algebra_solver_adapter<F>(f), x, function_tolerance,
-                           max_num_steps, u_scale, f_scale, msgs, y, dat,
-                           dat_int);
+  return algebra_solver_fp_impl(algebra_solver_adapter<F>(f), x,
+                                function_tolerance, max_num_steps, u_scale,
+                                f_scale, msgs, y, dat, dat_int);
 }
 
 }  // namespace math
