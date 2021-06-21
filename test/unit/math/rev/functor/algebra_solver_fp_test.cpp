@@ -454,9 +454,8 @@ TEST_F(FP_degenerated_func_test, scaling_vector_as_params) {
 
   const std::vector<stan::math::var> u_scale_v(to_var(u_scale));
   const std::vector<stan::math::var> f_scale_v(to_var(f_scale));
-  Eigen::Matrix<double, -1, 1> xd
-      = algebra_solver_fp(f, x, y, dat, dat_int, u_scale, f_scale, 0, f_tol,
-                          max_num_steps);
+  Eigen::Matrix<double, -1, 1> xd = algebra_solver_fp(
+      f, x, y, dat, dat_int, u_scale, f_scale, 0, f_tol, max_num_steps);
   EXPECT_FLOAT_EQ(xd(0), 5.0);
   EXPECT_FLOAT_EQ(xd(1), 5.0);
 }
