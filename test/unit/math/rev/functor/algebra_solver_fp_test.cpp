@@ -299,7 +299,7 @@ TEST_F(FP_exp_func_test, solve) {
     y(0) = 0.8;
     Eigen::Matrix<double, -1, 1> res
         = algebra_solver_fp(f, x, y, dat, dat_int, u_scale, f_scale, msgs,
-                            function_tolerance, max_num_steps);  // NOLINT
+                            function_tolerance, max_num_steps);
     EXPECT_FLOAT_EQ(res(0), 0.612584823501);
   }
 }
@@ -456,7 +456,7 @@ TEST_F(FP_degenerated_func_test, scaling_vector_as_params) {
   const std::vector<stan::math::var> f_scale_v(to_var(f_scale));
   Eigen::Matrix<double, -1, 1> xd
       = algebra_solver_fp(f, x, y, dat, dat_int, u_scale, f_scale, 0, f_tol,
-                          max_num_steps);  // NOLINT
+                          max_num_steps);
   EXPECT_FLOAT_EQ(xd(0), 5.0);
   EXPECT_FLOAT_EQ(xd(1), 5.0);
 }
@@ -497,7 +497,7 @@ TEST_F(FP_2d_func_test, exception_handling) {
                "in the solve.";
     std::string msg = err_msg.str();
     EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, dat, dat_int, u_scale, f_scale,
-                                       0, f_tol, max_num_steps),  // NOLINT
+                                       0, f_tol, max_num_steps),
                      std::domain_error, msg);
   }
 
@@ -507,7 +507,7 @@ TEST_F(FP_2d_func_test, exception_handling) {
     std::string msg = err_msg.str();
     x = Eigen::VectorXd();
     EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, dat, dat_int, u_scale, f_scale,
-                                       0, f_tol, max_num_steps),  // NOLINT
+                                       0, f_tol, max_num_steps),
                      std::invalid_argument, msg);
     x = Eigen::VectorXd(2);
     x << 0.1, 0.1;
@@ -519,7 +519,7 @@ TEST_F(FP_2d_func_test, exception_handling) {
     std::string msg = err_msg.str();
     u_scale[0] = -1.0;
     EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, dat, dat_int, u_scale, f_scale,
-                                       0, f_tol, max_num_steps),  // NOLINT
+                                       0, f_tol, max_num_steps),
                      std::domain_error, msg);
     u_scale[0] = 1.0;
   }
@@ -530,7 +530,7 @@ TEST_F(FP_2d_func_test, exception_handling) {
     std::string msg = err_msg.str();
     f_scale[0] = -1.0;
     EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, dat, dat_int, u_scale, f_scale,
-                                       0, f_tol, max_num_steps),  // NOLINT
+                                       0, f_tol, max_num_steps),
                      std::domain_error, msg);
     f_scale[0] = 1.0;
   }
@@ -541,7 +541,7 @@ TEST_F(FP_2d_func_test, exception_handling) {
     std::string msg = err_msg.str();
     f_tol = -0.1;
     EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, dat, dat_int, u_scale, f_scale,
-                                       0, f_tol, max_num_steps),  // NOLINT
+                                       0, f_tol, max_num_steps),
                      std::domain_error, msg);
     f_tol = 1.e-8;
   }
@@ -552,7 +552,7 @@ TEST_F(FP_2d_func_test, exception_handling) {
     std::string msg = err_msg.str();
     x = Eigen::VectorXd::Zero(4);
     EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, dat, dat_int, u_scale, f_scale,
-                                       0, f_tol, max_num_steps),  // NOLINT
+                                       0, f_tol, max_num_steps),
                      std::invalid_argument, msg);
     x = Eigen::VectorXd(2);
     x << 0.1, 0.1;
