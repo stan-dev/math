@@ -1,7 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 #include <limits>
 
-TEST(primScalFun, grad_2F2_ffv) {
+TEST(mixScalFun, grad_2F2_ffv) {
   using stan::math::fvar;
   using stan::math::hypergeometric_pFq;
   using stan::math::var;
@@ -10,13 +10,13 @@ TEST(primScalFun, grad_2F2_ffv) {
 
   vector_ffv ffv_a(2);
   vector_d d_a(2);
-  ffv_a.val() << 4, 2;
+  ffv_a.val().val() << 4, 2;
   d_a << 4, 2;
   ffv_a.val().d() << 1, 1;
 
   vector_ffv ffv_b(2);
   vector_d d_b(2);
-  ffv_b.val() << 6, 3;
+  ffv_b.val().val() << 6, 3;
   d_b << 6, 3;
   ffv_b.val().d() << 1, 1;
 
