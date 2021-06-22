@@ -195,12 +195,11 @@ struct test_functor {
 };
 
 struct simple_eq_functor {
-  template <typename T1, typename T2, typename T3, typename T4,
-            require_eigen_vector_t<T1>* = nullptr,
+  template <typename T1, typename T2, require_eigen_vector_t<T1>* = nullptr,
             require_all_eigen_vector_t<T1, T2>* = nullptr>
   inline Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1>
-  operator()(const T1& x, const T2& y, const T3& dat, const T4& dat_int,
-             std::ostream* pstream__) const {
+  operator()(const T1& x, const T2& y, const std::vector<double>& dat,
+             const std::vector<int>& dat_int, std::ostream* pstream__) const {
     Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1> z(1);
     z(0) = x(0) - y(0);
     return z;
