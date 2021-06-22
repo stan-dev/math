@@ -135,11 +135,13 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
 
   using ret_type = Eigen::Matrix<var, Eigen::Dynamic, -1>;
   using lu_type = Eigen::PartialPivLU<Eigen::Matrix<double, -1, -1, 1, -1, -1>>;
-  plain_type_t<lu_type>* Jf_x_lu_ptr = make_chainable_ptr((lu_type) Jf_x.transpose().lu());
+  plain_type_t<lu_type>* Jf_x_lu_ptr
+      = make_chainable_ptr((lu_type)Jf_x.transpose().lu());
 
   arena_t<ret_type> ret = theta_dbl;
 
-  reverse_pass_callback([f, ret, arena_args_tuple, Jf_x_lu_ptr, msgs]() mutable {
+  reverse_pass_callback([f, ret, arena_args_tuple, Jf_x_lu_ptr,
+                         msgs]() mutable {
     using Eigen::Dynamic;
     using Eigen::Matrix;
     using Eigen::MatrixXd;
