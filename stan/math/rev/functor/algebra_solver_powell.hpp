@@ -134,11 +134,12 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
   jacobian(f_wrt_x, theta_dbl, f_x, Jf_x);
 
   using ret_type = Eigen::Matrix<var, Eigen::Dynamic, -1>;
-  auto arena_Jf_x = to_arena(Jf_x);
+  using lu_type = Eigen::PartialPivLU<Eigen::Matrix<double, -1, -1, 1, -1, -1>>;
+  plain_type_t<lu_type>* Jf_x_lu_ptr = make_chainable_ptr((lu_type) Jf_x.transpose().lu());
 
   arena_t<ret_type> ret = theta_dbl;
 
-  reverse_pass_callback([f, ret, arena_args_tuple, arena_Jf_x, msgs]() mutable {
+  reverse_pass_callback([f, ret, arena_args_tuple, Jf_x_lu_ptr, msgs]() mutable {
     using Eigen::Dynamic;
     using Eigen::Matrix;
     using Eigen::MatrixXd;
@@ -146,7 +147,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
 
     // Contract specificities with inverse Jacobian of f with respect to x.
     VectorXd ret_adj = ret.adj();
-    VectorXd eta = -arena_Jf_x.transpose().lu().solve(ret_adj);
+    VectorXd eta = -Jf_x_lu_ptr->solve(ret_adj);
 
     // Contract with Jacobian of f with respect to y using a nested reverse
     // autodiff pass.
