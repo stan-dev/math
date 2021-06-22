@@ -11,8 +11,6 @@
 namespace stan {
 namespace math {
 
-
-
 /**
  * Specialisation for use with one `var_value<Eigen vector>` (row or column) and
  * a one-dimensional std::vector of integer types
@@ -134,8 +132,6 @@ template <typename T1, typename T2, typename F,
 inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
   return f(x, y);
 }
-
-
 
 }  // namespace math
 }  // namespace stan

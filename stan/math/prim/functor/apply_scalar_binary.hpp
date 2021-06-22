@@ -306,7 +306,6 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
   return result;
 }
 
-
 /**
  * Specialisation for use with two nested containers (std::vectors).
  * The returned scalar type is deduced to allow for cases where the input and
@@ -321,8 +320,9 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
  * @param f functor to apply to std::vector inputs.
  * @return std::vector with result of applying functor to inputs.
  */
-template <typename T1, typename T2, typename F,
-          require_all_std_vector_vt<is_container_or_var_matrix, T1, T2>* = nullptr>
+template <
+    typename T1, typename T2, typename F,
+    require_all_std_vector_vt<is_container_or_var_matrix, T1, T2>* = nullptr>
 inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
   check_matching_sizes("Binary function", "x", x, "y", y);
   using T_return = plain_type_t<decltype(apply_scalar_binary(x[0], y[0], f))>;
