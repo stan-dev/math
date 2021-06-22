@@ -155,7 +155,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
 
       VectorXd ret_val = ret.val();
       auto x_nrad_ = apply(
-          [&](const auto&... args) { return eval(f(ret_val, msgs, args...)); },
+          [&](const auto&... args) { return f(ret_val, msgs, args...); },
           arena_args_tuple);
       x_nrad_.adj() = eta;
       grad();
