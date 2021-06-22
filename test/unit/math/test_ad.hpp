@@ -1315,7 +1315,7 @@ void expect_ad_vectorized_binary_impl(const ad_tolerances& tols, const F& f,
   expect_ad(tols, f, nest_nest_x,
             nest_nest_y);                 // nest<nest<mat>>, nest<nest<mat>>
   expect_ad(tols, f, nest_nest_x, y[0]);  // nest<nest<mat>, scal
-  expect_ad(tols, f, x[0], nest_nest_y);  // scal, nest<nest<mat>
+  expect_ad(tols, f, x[0], nest_nest_y);  // scal, nest<nest<mat>>
 }
 
 /**
