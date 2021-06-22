@@ -1411,6 +1411,9 @@ template<> EIGEN_STRONG_INLINE Packet8bf pmax<Packet8bf>(const Packet8bf& a, con
 template<> EIGEN_STRONG_INLINE Packet8bf pcmp_lt(const Packet8bf& a, const Packet8bf& b) {
   BF16_TO_F32_BINARY_OP_WRAPPER_BOOL(pcmp_lt<Packet4f>, a, b);
 }
+template<> EIGEN_STRONG_INLINE Packet8bf pcmp_lt_or_nan(const Packet8bf& a, const Packet8bf& b) {
+  BF16_TO_F32_BINARY_OP_WRAPPER_BOOL(pcmp_lt_or_nan<Packet4f>, a, b);
+}
 template<> EIGEN_STRONG_INLINE Packet8bf pcmp_le(const Packet8bf& a, const Packet8bf& b) {
   BF16_TO_F32_BINARY_OP_WRAPPER_BOOL(pcmp_le<Packet4f>, a, b);
 }
@@ -2260,7 +2263,8 @@ static Packet2ul p2ul_SIGN = { 0x8000000000000000ull, 0x8000000000000000ull };
 static Packet2ul p2ul_PREV0DOT5 = { 0x3FDFFFFFFFFFFFFFull, 0x3FDFFFFFFFFFFFFFull };
 static Packet2d  p2d_ONE  = { 1.0, 1.0 };
 static Packet2d  p2d_ZERO = reinterpret_cast<Packet2d>(p4f_ZERO);
-static Packet2d  p2d_MZERO = { -0.0, -0.0 };
+static Packet2d  p2d_MZERO = { numext::bit_cast<double>(0x8000000000000000ull),
+                               numext::bit_cast<double>(0x8000000000000000ull) };
 
 #ifdef _BIG_ENDIAN
 static Packet2d p2d_COUNTDOWN = reinterpret_cast<Packet2d>(vec_sld(reinterpret_cast<Packet4f>(p2d_ZERO), reinterpret_cast<Packet4f>(p2d_ONE), 8));

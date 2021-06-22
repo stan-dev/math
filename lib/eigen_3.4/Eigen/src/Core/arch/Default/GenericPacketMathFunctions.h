@@ -19,12 +19,6 @@
 namespace Eigen {
 namespace internal {
 
-template<typename Packet, int N> EIGEN_DEVICE_FUNC inline Packet
-pset(const typename unpacket_traits<Packet>::type (&a)[N] /* a */) {
-  EIGEN_STATIC_ASSERT(unpacket_traits<Packet>::size == N, THE_ARRAY_SIZE_SHOULD_EQUAL_WITH_PACKET_SIZE);
-  return pload<Packet>(a);
-}
-
 // Creates a Scalar integer type with same bit-width.
 template<typename T> struct make_integer;
 template<> struct make_integer<float>    { typedef numext::int32_t type; };
@@ -839,7 +833,8 @@ Packet psqrt_complex(const Packet& a) {
 
   // Step 4. Compute solution for inputs with negative real part:
   //         [|eta0|, sign(y0)*rho0, |eta1|, sign(y1)*rho1]
-  const RealPacket cst_imag_sign_mask = pset1<Packet>(Scalar(RealScalar(0.0), RealScalar(-0.0))).v;
+  const RealScalar neg_zero = RealScalar(numext::bit_cast<float>(0x80000000u));
+  const RealPacket cst_imag_sign_mask = pset1<Packet>(Scalar(RealScalar(0.0), neg_zero)).v;
   RealPacket imag_signs = pand(a.v, cst_imag_sign_mask);
   Packet negative_real_result;
   // Notice that rho is positive, so taking it's absolute value is a noop.
