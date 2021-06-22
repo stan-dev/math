@@ -52,8 +52,6 @@ return_type_t<T_y, T_loc, T_prec> beta_proportion_lpdf(const T_y& y,
                                                        const T_loc& mu,
                                                        const T_prec& kappa) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_prec>;
-  using T_partials_return_kappa = return_type_t<T_prec>;
-  using T_partials_array = Eigen::Array<T_partials_return, Eigen::Dynamic, 1>;
   using std::log;
   using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
   using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;

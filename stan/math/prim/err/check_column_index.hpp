@@ -25,7 +25,7 @@ namespace math {
  * @throw <code>std::out_of_range</code> if index is an invalid column
  */
 template <typename T_y,
-          require_any_t<is_eigen<T_y>,
+          require_any_t<is_matrix<T_y>,
                         is_prim_or_rev_kernel_expression<T_y>>* = nullptr>
 inline void check_column_index(const char* function, const char* name,
                                const T_y& y, size_t i) {
