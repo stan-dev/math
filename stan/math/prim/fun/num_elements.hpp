@@ -15,7 +15,7 @@ namespace math {
  * @param x Argument of primitive type.
  * @return 1
  */
-template <typename T, typename = require_stan_scalar_t<T>>
+template <typename T, require_stan_scalar_t<T>* = nullptr>
 inline int num_elements(const T& x) {
   return 1;
 }
@@ -28,7 +28,7 @@ inline int num_elements(const T& x) {
  * @param m argument matrix
  * @return size of matrix
  */
-template <typename T, typename = require_eigen_t<T>, typename = void>
+template <typename T, require_matrix_t<T>* = nullptr>
 inline int num_elements(const T& m) {
   return m.size();
 }
