@@ -80,7 +80,6 @@ inline auto unblocked_cholesky_lambda(T1& L_A, T2& L, T3& A) {
 template <typename T1, typename T2, typename T3>
 inline auto cholesky_lambda(T1& L_A, T2& L, T3& A) {
   return [L_A, L, A]() mutable {
-    using Block_ = Eigen::Block<Eigen::MatrixXd>;
     using Eigen::Lower;
     using Eigen::StrictlyUpper;
     using Eigen::Upper;
