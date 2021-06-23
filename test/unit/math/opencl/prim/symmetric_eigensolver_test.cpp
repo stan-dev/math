@@ -27,9 +27,6 @@ TEST(MathMatrix, symmetric_eigensolver_small) {
 
 TEST(MathMatrix, symmetric_eigensolver_large) {
   int size = 2000;
-  double t_err = 0;
-  double o_err = 0;
-  double eq_err = 0;
   Eigen::MatrixXd A = Eigen::MatrixXd::Random(size, size);
   A += A.transpose().eval();
 
