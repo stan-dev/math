@@ -20,7 +20,11 @@ TEST(intel_tbb_new_late_init, check_status) {
 
       // STAN_NUM_THREADS is not being honored if we have first
       // initialized the TBB scheduler outside of init_threadpool_tbb
+#ifdef STAN_THREADS
       EXPECT_EQ(num_threads, tbb::this_task_arena::max_concurrency());
+#else
+      EXPECT_EQ(num_threads, 1);
+#endif
     });
   }
 }
@@ -41,7 +45,11 @@ TEST(intel_tbb_late_init, check_status) {
 
     // STAN_NUM_THREADS is not being honored if we have first
     // initialized the TBB scheduler outside of init_threadpool_tbb
+#ifdef STAN_THREADS
     EXPECT_EQ(num_threads, tbb::this_task_arena::max_concurrency());
+#else
+    EXPECT_EQ(num_threads, 1);
+#endif
   }
 }
 
