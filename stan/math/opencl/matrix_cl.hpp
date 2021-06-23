@@ -31,7 +31,7 @@ namespace math {
  *  @{
  */
 
-template <typename, typename = void>
+template <typename>
 class matrix_cl;
 
 /**
@@ -39,7 +39,7 @@ class matrix_cl;
  * @tparam T an arithmetic type for the type stored in the OpenCL buffer.
  */
 template <typename T>
-class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
+class matrix_cl : public matrix_cl_base {
  private:
   cl::Buffer buffer_cl_;  // Holds the allocated memory on the device
   int rows_{0};           // Number of rows.
@@ -624,13 +624,6 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
     delete static_cast<U*>(container);
   }
 };
-
-template <typename T>
-using matrix_cl_prim = matrix_cl<T, require_arithmetic_t<T>>;
-
-template <typename T>
-using matrix_cl_fp = matrix_cl<T, require_floating_point_t<T>>;
-
 /** @}*/
 
 }  // namespace math
