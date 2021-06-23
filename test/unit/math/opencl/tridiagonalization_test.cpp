@@ -1,7 +1,6 @@
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/tridiagonalization.hpp>
 #include <stan/math/opencl/prim/identity_matrix.hpp>
-//#include <test/unit/util.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
 #include <gtest/gtest.h>
 
@@ -64,18 +63,6 @@ TEST(MathMatrixGPU, tridiagonalization_large) {
   stan::math::matrix_cl<double> q1_2_cl(q_cl);
   stan::math::internal::block_apply_packed_Q_cl(packed_cl, q_cl);
   stan::math::internal::block_apply_packed_Q_cl(packed_cl, q2_cl);
-
-
-  stan::math::matrix_cl<double> packed2_cl;
-  stan::math::internal::block_householder_tridiag_cl(input_cl, packed2_cl);
-  stan::math::internal::block_apply_packed_Q_cl(packed_cl, q1_2_cl);
-  stan::math::internal::block_apply_packed_Q_cl(packed_cl, q2_2_cl);
-  std::cout << "packed diff: " << stan::math::from_matrix_cl(max_2d(fabs(packed_cl - packed2_cl))).maxCoeff()
-            << std::endl;
-  std::cout << "q diff: " << stan::math::from_matrix_cl(max_2d(fabs(q_cl - q1_2_cl))).maxCoeff()
-            << std::endl;
-  std::cout << "q2 diff: " << stan::math::from_matrix_cl(max_2d(fabs(q2_cl - q2_2_cl))).maxCoeff()
-            << std::endl;
 
   Eigen::MatrixXd packed = stan::math::from_matrix_cl(packed_cl);
   Eigen::MatrixXd q = stan::math::from_matrix_cl(q_cl);

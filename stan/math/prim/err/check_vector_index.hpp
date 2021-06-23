@@ -21,9 +21,9 @@ namespace math {
  * @param i row index to check
  * @throw <code>std::out_of_range</code> if the index is out of range.
  */
-template <typename T,
-          require_any_t<is_eigen_vector<T>,
-                        is_prim_or_rev_kernel_expression<T>>* = nullptr>
+template <
+    typename T,
+    require_any_t<is_vector<T>, is_prim_or_rev_kernel_expression<T>>* = nullptr>
 inline void check_vector_index(const char* function, const char* name,
                                const T& y, size_t i) {
   STAN_NO_RANGE_CHECKS_RETURN;

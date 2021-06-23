@@ -667,6 +667,21 @@ class var_value<
   }
 
   /**
+   * View diagonal of eigen matrices
+   * @param i Column index to slice
+   */
+  inline auto diagonal() const {
+    using vari_sub = decltype(vi_->diagonal());
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->diagonal()));
+  }
+  inline auto diagonal() {
+    using vari_sub = decltype(vi_->diagonal());
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->diagonal()));
+  }
+
+  /**
    * View a `matrix_cl` as a column vector.
    */
   inline auto as_column_vector_or_scalar() const {

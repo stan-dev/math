@@ -39,7 +39,6 @@ inline auto tail(const T& v, size_t n) {
  */
 template <typename T>
 std::vector<T> tail(const std::vector<T>& sv, size_t n) {
-  using idx_t = index_type_t<std::vector<T>>;
   if (n != 0) {
     check_std_vector_index("tail", "n", sv, n);
   }
