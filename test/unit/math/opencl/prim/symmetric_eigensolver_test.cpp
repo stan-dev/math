@@ -89,21 +89,21 @@ TEST(MathMatrix, symmetric_eigensolver_prim_large) {
   EXPECT_MATRIX_NEAR(A * eigenvecs, eigenvecs * eigenvals.asDiagonal(), 1e-12);
 }
 
-
 TEST(MathMatrix, symmetric_eigensolver_errors) {
-    stan::math::matrix_cl<double> empty;
-    EXPECT_THROW(stan::math::eigenvalues_sym(empty), std::invalid_argument);
-    EXPECT_THROW(stan::math::eigenvectors_sym(empty), std::invalid_argument);
+  stan::math::matrix_cl<double> empty;
+  EXPECT_THROW(stan::math::eigenvalues_sym(empty), std::invalid_argument);
+  EXPECT_THROW(stan::math::eigenvectors_sym(empty), std::invalid_argument);
 
-    stan::math::matrix_cl<double> nonsquare(2,3);
-    EXPECT_THROW(stan::math::eigenvalues_sym(nonsquare), std::invalid_argument);
-    EXPECT_THROW(stan::math::eigenvectors_sym(nonsquare), std::invalid_argument);
+  stan::math::matrix_cl<double> nonsquare(2, 3);
+  EXPECT_THROW(stan::math::eigenvalues_sym(nonsquare), std::invalid_argument);
+  EXPECT_THROW(stan::math::eigenvectors_sym(nonsquare), std::invalid_argument);
 
-    Eigen::MatrixXd nonsymmetric(2,2);
-    nonsymmetric << 1,2,3,4;
-    stan::math::matrix_cl<double> nonsymmetric_cl(nonsymmetric);
-    EXPECT_THROW(stan::math::eigenvalues_sym(nonsymmetric_cl), std::domain_error);
-    EXPECT_THROW(stan::math::eigenvectors_sym(nonsymmetric_cl), std::domain_error);
+  Eigen::MatrixXd nonsymmetric(2, 2);
+  nonsymmetric << 1, 2, 3, 4;
+  stan::math::matrix_cl<double> nonsymmetric_cl(nonsymmetric);
+  EXPECT_THROW(stan::math::eigenvalues_sym(nonsymmetric_cl), std::domain_error);
+  EXPECT_THROW(stan::math::eigenvectors_sym(nonsymmetric_cl),
+               std::domain_error);
 }
 
 #endif

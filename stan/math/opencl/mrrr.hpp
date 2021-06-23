@@ -454,8 +454,8 @@ void tridiagonal_eigensolver_cl(const matrix_cl<double>& diagonal_cl,
                                 matrix_cl<double>& eigenvalues_cl,
                                 matrix_cl<double>& eigenvectors_cl,
                                 const double split_threshold = 1e-15) {
-    using std::fabs;
-    using std::sqrt;
+  using std::fabs;
+  using std::sqrt;
   const int n = diagonal_cl.rows();
   Eigen::MatrixXd eigenvectors;
   if (need_eigenvectors) {
