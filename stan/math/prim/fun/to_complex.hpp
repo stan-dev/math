@@ -13,7 +13,7 @@ namespace math {
  *
  * @return a complex type with real and imaginary set to 0
  */
-std::complex<double> to_complex(){
+inline std::complex<double> to_complex(){
     return std::complex<double>(0, 0);
 } 
 
@@ -28,7 +28,7 @@ std::complex<double> to_complex(){
  *         set im or 0 if no second argument is supplied
  */
 template <typename T>
-std::complex<T> to_complex(const T& re, const T& im = 0){
+inline std::complex<T> to_complex(const T& re, const T& im = 0){
     return std::complex<T>(re, im);
 } 
 
