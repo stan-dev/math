@@ -42,10 +42,10 @@ namespace internal {
  * @tparam calc_a Boolean for whether to calculate derivatives wrt to 'a'
  * @tparam calc_b Boolean for whether to calculate derivatives wrt to 'b'
  * @tparam calc_z Boolean for whether to calculate derivatives wrt to 'z'
- * @tparam TupleT Type of tuple containing references
- * @tparam Ta Type of a
- * @tparam Tb Type of b
- * @tparam Tz Type of z
+ * @tparam TupleT Type of tuple containing objects to evaluate gradients into
+ * @tparam Ta Eigen type with either one row or column at compile time
+ * @tparam Tb Eigen type with either one row or column at compile time
+ * @tparam Tz Scalar type
  * @param[in] grad_tuple Tuple of references to evaluate gradients into
  * @param[in] a Vector of 'a' arguments to function
  * @param[in] b Vector of 'b' arguments to function
@@ -59,7 +59,7 @@ template <bool calc_a, bool calc_b, bool calc_z, typename TupleT, typename Ta,
           require_all_eigen_vector_t<Ta, Tb>* = nullptr,
           require_stan_scalar_t<Tz>* = nullptr>
 void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
-                   double precision = 1e-14, int max_steps = 1e6) {
+                   double precision, int max_steps) {
   using std::max;
   using scalar_t = return_type_t<Ta, Tb, Tz>;
   using Ta_plain = plain_type_t<Ta>;
@@ -74,6 +74,16 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
   scalar_type_t<Ta> sum_log_a = sum(log_a);
   scalar_type_t<Tb> sum_log_b = sum(log_b);
 
+  // Declare vectors to accumulate sums into
+  // where NEGATIVE_INFTY is zero on the log scale
+  T_vec da_infsum = T_vec::Constant(a.size(), NEGATIVE_INFTY);
+  T_vec db_infsum = T_vec::Constant(b.size(), NEGATIVE_INFTY);
+  // Vectors to accumulate outer sum into
+  T_vec da_iter_m = T_vec::Constant(a.size(), NEGATIVE_INFTY);
+  T_vec da_mn = T_vec::Constant(a.size(), NEGATIVE_INFTY);
+  T_vec db_iter_m = T_vec::Constant(b.size(), NEGATIVE_INFTY);
+  T_vec db_mn = T_vec::Constant(b.size(), NEGATIVE_INFTY);
+
   // Only need the infinite sum for partials wrt p & b
   if (calc_a || calc_b) {
     double log_precision = log(precision);
@@ -81,17 +91,15 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
     int m = 0;
     scalar_t outer_diff = 0;
 
-    // Declare vectors to accumulate sums into
-    // where NEGATIVE_INFTY is zero on the log scale
-    T_vec da_infsum = T_vec::Constant(a.size(), NEGATIVE_INFTY);
-    T_vec db_infsum = T_vec::Constant(b.size(), NEGATIVE_INFTY);
+    da_infsum.setConstant(NEGATIVE_INFTY);
+    db_infsum.setConstant(NEGATIVE_INFTY);
 
     while ((outer_diff > log_precision) && (m < max_steps)) {
       // Vectors to accumulate outer sum into
-      T_vec da_iter_m = T_vec::Constant(a.size(), NEGATIVE_INFTY);
-      T_vec da_mn = T_vec::Constant(a.size(), NEGATIVE_INFTY);
-      T_vec db_iter_m = T_vec::Constant(b.size(), NEGATIVE_INFTY);
-      T_vec db_mn = T_vec::Constant(b.size(), NEGATIVE_INFTY);
+      da_iter_m.setConstant(NEGATIVE_INFTY);
+      da_mn.setConstant(NEGATIVE_INFTY);
+      db_iter_m.setConstant(NEGATIVE_INFTY);
+      db_mn.setConstant(NEGATIVE_INFTY);
 
       double log_phammer_1m = log_rising_factorial(1, m);
       double lgamma_mp1 = lgamma(m + 1);
@@ -179,160 +187,34 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
 }  // namespace internal
 
 /**
- * Wrapper function for calculating gradients wrt all parameters
+ * Wrapper function for calculating gradients for the generalized
+ * hypergeometric function. The function always returns a tuple with
+ * three elements (gradients wrt a, b, and z, respectively), but the
+ * elements will only be defined/calculated when the respective parameter
+ * is not a primitive type.
  *
- * @tparam Ta Type of a
- * @tparam Tb Type of b
- * @tparam Tz Type of z
- * @param[in] grad_a Vector to evaluate gradients wrt a into
- * @param[in] grad_b Vector to evaluate gradients wrt b into
- * @param[in] grad_z Scalar to evaluate gradient wrt z into
+ * @tparam Ta Eigen type with either one row or column at compile time
+ * @tparam Tb Eigen type with either one row or column at compile time
+ * @tparam Tz Scalar type
  * @param[in] a Vector of 'a' arguments to function
  * @param[in] b Vector of 'b' arguments to function
  * @param[in] z Scalar z argument
+ * @param[in] precision Convergence criteria for infinite sum
+ * @param[in] max_steps Maximum number of iterations for infinite sum
+ * @return Tuple of gradients
  */
-template <typename Ta, typename Tb, typename Tz,
-          require_stan_scalar_t<Tz>* = nullptr,
-          require_all_eigen_vector_t<Ta, Tb>* = nullptr>
-void grad_pFq(plain_type_t<Ta>& grad_a, plain_type_t<Tb>& grad_b,
-              plain_type_t<Tz>& grad_z, const Ta& a, const Tb& b, const Tz& z,
+template <typename Ta, typename Tb, typename Tz>
+auto grad_pFq(const Ta& a, const Tb& b, const Tz& z,
               double precision = 1e-14, int max_steps = 1e6) {
-  internal::grad_pFq_impl<true, true, true>(
-      std::forward_as_tuple(grad_a, grad_b, grad_z), a, b, z, precision,
+                using partials_t = partials_return_t<Ta, Tb, Tz>;
+  std::tuple<promote_scalar_t<partials_t, plain_type_t<Ta>>,
+             promote_scalar_t<partials_t, plain_type_t<Tb>>,
+             promote_scalar_t<partials_t, plain_type_t<Tz>>> ret_tuple;
+  internal::grad_pFq_impl<!is_constant<Ta>::value, !is_constant<Tb>::value,
+                          !is_constant<Tz>::value>(
+      ret_tuple, value_of(a), value_of(b), value_of(z), precision,
       max_steps);
-}
-
-/**
- * Wrapper function for calculating gradients wrt only a
- *
- * @tparam Ta Type of a
- * @tparam Tb Type of b
- * @tparam Tz Type of z
- * @param[in] grad_a Vector to evaluate gradients wrt a into
- * @param[in] a Vector of 'a' arguments to function
- * @param[in] b Vector of 'b' arguments to function
- * @param[in] z Scalar z argument
- */
-template <typename Ta, typename Tb, typename Tz,
-          require_stan_scalar_t<Tz>* = nullptr,
-          require_all_eigen_vector_t<Ta, Tb>* = nullptr>
-void grad_pFq_p(plain_type_t<Ta>& grad_a, const Ta& a, const Tb& b, const Tz& z,
-                double precision = 1e-14, int max_steps = 1e6) {
-  internal::grad_pFq_impl<true, false, false>(
-      std::forward_as_tuple(grad_a, plain_type_t<Ta>{}, scalar_type_t<Ta>{}), a,
-      b, z, precision, max_steps);
-}
-
-/**
- * Wrapper function for calculating gradients wrt only b
- *
- * @tparam Ta Type of a
- * @tparam Tb Type of b
- * @tparam Tz Type of z
- * @param[in] grad_b Vector to evaluate gradients wrt b into
- * @param[in] a Vector of 'a' arguments to function
- * @param[in] b Vector of 'b' arguments to function
- * @param[in] z Scalar z argument
- */
-template <typename Ta, typename Tb, typename Tz,
-          require_stan_scalar_t<Tz>* = nullptr,
-          require_all_eigen_vector_t<Ta, Tb>* = nullptr>
-void grad_pFq_q(plain_type_t<Tb>& grad_b, const Ta& a, const Tb& b, const Tz& z,
-                double precision = 1e-14, int max_steps = 1e6) {
-  internal::grad_pFq_impl<false, true, false>(
-      std::forward_as_tuple(plain_type_t<Tb>{}, grad_b, scalar_type_t<Tb>{}), a,
-      b, z, precision, max_steps);
-}
-
-/**
- * Wrapper function for calculating gradients wrt only z
- *
- * @tparam Ta Type of a
- * @tparam Tb Type of b
- * @tparam Tz Type of z
- * @param[in] grad_z Scalar to evaluate gradient wrt z into
- * @param[in] a Vector of 'a' arguments to function
- * @param[in] b Vector of 'b' arguments to function
- * @param[in] z Scalar z argument
- */
-template <typename Ta, typename Tb, typename Tz,
-          require_stan_scalar_t<Tz>* = nullptr,
-          require_all_eigen_vector_t<Ta, Tb>* = nullptr>
-void grad_pFq_z(plain_type_t<Tz>& grad_z, const Ta& a, const Tb& b, const Tz& z,
-                double precision = 1e-14, int max_steps = 1e6) {
-  internal::grad_pFq_impl<false, false, true>(
-      std::forward_as_tuple(Eigen::Matrix<Tz, -1, 1>{},
-                            Eigen::Matrix<Tz, -1, 1>{}, grad_z),
-      a, b, z, precision, max_steps);
-}
-
-/**
- * Wrapper function for calculating gradients wrt a and b
- *
- * @tparam Ta Type of a
- * @tparam Tb Type of b
- * @tparam Tz Type of z
- * @param[in] grad_a Vector to evaluate gradients wrt a into
- * @param[in] grad_b Vector to evaluate gradients wrt b into
- * @param[in] a Vector of 'a' arguments to function
- * @param[in] b Vector of 'b' arguments to function
- * @param[in] z Scalar z argument
- */
-template <typename Ta, typename Tb, typename Tz,
-          require_stan_scalar_t<Tz>* = nullptr,
-          require_all_eigen_vector_t<Ta, Tb>* = nullptr>
-void grad_pFq_pq(plain_type_t<Ta>& grad_a, plain_type_t<Tb>& grad_b,
-                 const Ta& a, const Tb& b, const Tz& z,
-                 double precision = 1e-14, int max_steps = 1e6) {
-  internal::grad_pFq_impl<true, true, false>(
-      std::forward_as_tuple(grad_a, grad_b, scalar_type_t<Ta>{}), a, b, z,
-      precision, max_steps);
-}
-
-/**
- * Wrapper function for calculating gradients wrt a and z
- *
- * @tparam Ta Type of a
- * @tparam Tb Type of b
- * @tparam Tz Type of z
- * @param[in] grad_a Vector to evaluate gradients wrt a into
- * @param[in] grad_z Scalar to evaluate gradient wrt z into
- * @param[in] a Vector of 'a' arguments to function
- * @param[in] b Vector of 'b' arguments to function
- * @param[in] z Scalar z argument
- */
-template <typename Ta, typename Tb, typename Tz,
-          require_stan_scalar_t<Tz>* = nullptr,
-          require_all_eigen_vector_t<Ta, Tb>* = nullptr>
-void grad_pFq_pz(plain_type_t<Ta>& grad_a, plain_type_t<Tz>& grad_z,
-                 const Ta& a, const Tb& b, const Tz& z,
-                 double precision = 1e-14, int max_steps = 1e6) {
-  internal::grad_pFq_impl<true, false, true>(
-      std::forward_as_tuple(grad_a, plain_type_t<Ta>{}, grad_z), a, b, z,
-      precision, max_steps);
-}
-
-/**
- * Wrapper function for calculating gradients wrt b and z
- *
- * @tparam Ta Type of a
- * @tparam Tb Type of b
- * @tparam Tz Type of z
- * @param[in] grad_b Vector to evaluate gradients wrt b into
- * @param[in] grad_z Scalar to evaluate gradient wrt z into
- * @param[in] a Vector of 'a' arguments to function
- * @param[in] b Vector of 'b' arguments to function
- * @param[in] z Scalar z argument
- */
-template <typename Ta, typename Tb, typename Tz,
-          require_stan_scalar_t<Tz>* = nullptr,
-          require_all_eigen_vector_t<Ta, Tb>* = nullptr>
-void grad_pFq_qz(plain_type_t<Tb>& grad_b, plain_type_t<Tz>& grad_z,
-                 const Ta& a, const Tb& b, const Tz& z,
-                 double precision = 1e-14, int max_steps = 1e6) {
-  internal::grad_pFq_impl<false, true, true>(
-      std::forward_as_tuple(plain_type_t<Tb>{}, grad_b, grad_z), a, b, z,
-      precision, max_steps);
+  return ret_tuple;
 }
 
 }  // namespace math
