@@ -43,12 +43,11 @@ inline return_type_t<Ta, Tb, Tz> hypergeometric_pFq(const Ta& a, const Tb& b,
   }
   if (!is_constant<Tz>::value) {
     grad += forward_as<promote_scalar_t<fvar_t, Tz>>(z).d_
-           * std::get<2>(grad_tuple);
+            * std::get<2>(grad_tuple);
   }
 
-  return fvar_t(hypergeometric_pFq(value_of(a_ref), value_of(b_ref),
-                                   value_of(z)),
-                grad);
+  return fvar_t(
+      hypergeometric_pFq(value_of(a_ref), value_of(b_ref), value_of(z)), grad);
 }
 
 }  // namespace math

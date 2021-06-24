@@ -204,16 +204,16 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
  * @return Tuple of gradients
  */
 template <typename Ta, typename Tb, typename Tz>
-auto grad_pFq(const Ta& a, const Tb& b, const Tz& z,
-              double precision = 1e-14, int max_steps = 1e6) {
-                using partials_t = partials_return_t<Ta, Tb, Tz>;
+auto grad_pFq(const Ta& a, const Tb& b, const Tz& z, double precision = 1e-14,
+              int max_steps = 1e6) {
+  using partials_t = partials_return_t<Ta, Tb, Tz>;
   std::tuple<promote_scalar_t<partials_t, plain_type_t<Ta>>,
              promote_scalar_t<partials_t, plain_type_t<Tb>>,
-             promote_scalar_t<partials_t, plain_type_t<Tz>>> ret_tuple;
+             promote_scalar_t<partials_t, plain_type_t<Tz>>>
+      ret_tuple;
   internal::grad_pFq_impl<!is_constant<Ta>::value, !is_constant<Tb>::value,
                           !is_constant<Tz>::value>(
-      ret_tuple, value_of(a), value_of(b), value_of(z), precision,
-      max_steps);
+      ret_tuple, value_of(a), value_of(b), value_of(z), precision, max_steps);
   return ret_tuple;
 }
 
