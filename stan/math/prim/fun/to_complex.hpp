@@ -8,12 +8,18 @@ namespace stan {
 namespace math {
 
 
+// Create a complex type, with both parts initialized to 0
+std::complex<double> to_complex(){
+    return std::complex<double>(0, 0);
+} 
 
-//Create a complex type from a real part and an imaginary part
+
+// Create a complex type from a real part and an imaginary part
 template <typename T>
 std::complex<T> to_complex(const T& re, const T& im = 0){
     return std::complex<T>(re, im);
 } 
+
 
 
 }  // namespace math
