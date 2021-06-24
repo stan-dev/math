@@ -379,10 +379,10 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
         find_shift(block.l, block.d, low[cluster_end], high[i], max_ele_growth,
                    max_shift, l, d, next_shift, min_ele_growth);
         for (int j = i; j <= cluster_end; j++) {
-          low[j] = low[j] * (double_d{1.0, 0.0} - copysign(shift_error, low[j]))
+          low[j] = low[j] * (double_d(1.0, 0.0) - copysign(shift_error, low[j]))
                    - next_shift - 1e-200;
           high[j]
-              = high[j] * (double_d{1.0, 0.0} + copysign(shift_error, high[j]))
+              = high[j] * (double_d(1.0, 0.0) + copysign(shift_error, high[j]))
                 - next_shift + 1e-200;
           eigenval_bisect_refine(l, d, low[j], high[j], j);
         }

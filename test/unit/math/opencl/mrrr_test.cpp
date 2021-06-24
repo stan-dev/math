@@ -74,22 +74,6 @@ TEST(MathMatrix, tridiag_eigensolver_large) {
   EXPECT_MATRIX_NEAR(eigenvecs * eigenvecs.transpose(),
                      Eigen::MatrixXd::Identity(size, size), 1e-12);
   EXPECT_MATRIX_NEAR(t * eigenvecs, eigenvecs * eigenvals.asDiagonal(), 1e-12);
-  std::cout << "trace rel err: " << abs(diag.sum() - eigenvals.sum())
-            << std::endl;
-  std::cout << "vec ortho err: "
-            << ((eigenvecs * eigenvecs.transpose())
-                - Eigen::MatrixXd::Identity(size, size))
-                   .array()
-                   .abs()
-                   .maxCoeff()
-            << std::endl;
-  std::cout
-      << "eigen eq err: "
-      << ((t * eigenvecs - eigenvecs * eigenvals.asDiagonal()).array().abs())
-             .array()
-             .abs()
-             .maxCoeff()
-      << std::endl;
 }
 
 TEST(MathMatrix, tridiag_eigensolver_large_fixed) {
@@ -117,22 +101,6 @@ TEST(MathMatrix, tridiag_eigensolver_large_fixed) {
   EXPECT_MATRIX_NEAR(eigenvecs * eigenvecs.transpose(),
                      Eigen::MatrixXd::Identity(size, size), 1e-12);
   EXPECT_MATRIX_NEAR(t * eigenvecs, eigenvecs * eigenvals.asDiagonal(), 1e-12);
-  std::cout << "trace rel err: " << abs(diag.sum() - eigenvals.sum())
-            << std::endl;
-  std::cout << "vec ortho err: "
-            << ((eigenvecs * eigenvecs.transpose())
-                - Eigen::MatrixXd::Identity(size, size))
-                   .array()
-                   .abs()
-                   .maxCoeff()
-            << std::endl;
-  std::cout
-      << "eigen eq err: "
-      << ((t * eigenvecs - eigenvecs * eigenvals.asDiagonal()).array().abs())
-             .array()
-             .abs()
-             .maxCoeff()
-      << std::endl;
 }
 
 /**
@@ -194,22 +162,6 @@ TEST(MathMatrix, tridiag_eigensolver_large_wilkinson) {
   EXPECT_MATRIX_NEAR(eigenvecs * eigenvecs.transpose(),
                      Eigen::MatrixXd::Identity(size, size), 1e-12);
   EXPECT_MATRIX_NEAR(t * eigenvecs, eigenvecs * eigenvals.asDiagonal(), 1e-12);
-  std::cout << "trace rel err: "
-            << abs(diag.sum() - eigenvals.sum()) / abs(diag.sum()) << std::endl;
-  std::cout << "vec ortho err: "
-            << ((eigenvecs * eigenvecs.transpose())
-                - Eigen::MatrixXd::Identity(size, size))
-                   .array()
-                   .abs()
-                   .maxCoeff()
-            << std::endl;
-  std::cout
-      << "eigen eq err: "
-      << ((t * eigenvecs - eigenvecs * eigenvals.asDiagonal()).array().abs())
-             .array()
-             .abs()
-             .maxCoeff()
-      << std::endl;
 }
 
 #endif
