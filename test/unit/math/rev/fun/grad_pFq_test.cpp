@@ -4,9 +4,9 @@
 
 TEST(RevMath, grad_2F2) {
   using stan::math::grad_pFq;
-  using stan::math::vector_v;
-  using stan::math::vector_d;
   using stan::math::var;
+  using stan::math::vector_d;
+  using stan::math::vector_v;
 
   vector_v a_v(2);
   vector_d a_d(2);
@@ -30,7 +30,6 @@ TEST(RevMath, grad_2F2) {
   EXPECT_FLOAT_EQ(-4.980095849781222, std::get<1>(grad_tuple)[1]);
 
   EXPECT_FLOAT_EQ(4.916522138006060, std::get<2>(grad_tuple));
-
 
   grad_tuple = grad_pFq(a_v, b_d, z_d);
 
@@ -67,8 +66,8 @@ TEST(RevMath, grad_2F2) {
 }
 TEST(RevMath, grad_2F3) {
   using stan::math::grad_pFq;
-  using stan::math::vector_v;
   using stan::math::var;
+  using stan::math::vector_v;
 
   vector_v a_v(2);
   a_v << 2, 3;
@@ -90,8 +89,8 @@ TEST(RevMath, grad_2F3) {
 
 TEST(RevMath, grad_4F3) {
   using stan::math::grad_pFq;
-  using stan::math::vector_v;
   using stan::math::var;
+  using stan::math::vector_v;
 
   vector_v a_v(4);
   a_v << 1, 2, 3, 4;
@@ -116,8 +115,8 @@ TEST(RevMath, grad_4F3) {
 TEST(RevMath, grad_2F1_derivs_match) {
   using stan::math::grad_2F1;
   using stan::math::grad_pFq;
-  using stan::math::vector_v;
   using stan::math::var;
+  using stan::math::vector_v;
 
   vector_v a_v(2);
   a_v << 1, 1;
