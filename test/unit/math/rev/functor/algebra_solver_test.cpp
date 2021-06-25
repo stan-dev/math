@@ -30,6 +30,10 @@ class algebra_solver_simple_eq_test : public ::testing::Test {
     x_var = stan::math::to_vector({1, 1});
   }
 
+  void TearDown() override {
+    stan::math::recover_memory();
+  }
+
   int n_x;
   int n_y;
   Eigen::VectorXd y_dbl;
@@ -48,6 +52,10 @@ class algebra_solver_simple_eq_nopara_test : public ::testing::Test {
  protected:
   void SetUp() override { x = stan::math::to_vector({1, 1}); }
 
+  void TearDown() override {
+    stan::math::recover_memory();
+  }
+
   int n_x = 2;
   Eigen::VectorXd x;
   std::vector<double> dat = {5, 4, 2};
@@ -63,6 +71,11 @@ class algebra_solver_non_linear_eq_test : public ::testing::Test {
     J_ << -1, 0, 0, 0, -1, 0, 0, 0, 1;
     J = J_;
   }
+
+  void TearDown() override {
+    stan::math::recover_memory();
+  }
+
   int n_x = 3;
   int n_y = 3;
   double err = 1e-11;
@@ -78,6 +91,10 @@ class error_message_test : public ::testing::Test {
     y_3 = stan::math::to_vector({4, 6, 3});
   }
 
+  void TearDown() override {
+    stan::math::recover_memory();
+  }
+
   Eigen::VectorXd y_2;
   Eigen::VectorXd y_3;
 };
@@ -87,6 +104,10 @@ class max_steps_test : public ::testing::Test {
   void SetUp() override {
     y = stan::math::to_vector({1, 1, 1});
     y_var = stan::math::to_vector({1, 1, 1});
+  }
+
+  void TearDown() override {
+    stan::math::recover_memory();
   }
 
   Eigen::VectorXd y;
@@ -108,6 +129,10 @@ class degenerate_eq_test : public ::testing::Test {
     J1 = J_;
     J_ << 1, 0, 1, 0;
     J2 = J_;
+  }
+
+  void TearDown() override {
+    stan::math::recover_memory();
   }
 
   int n_x = 2;
