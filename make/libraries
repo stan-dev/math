@@ -15,19 +15,16 @@ ifndef SYS_LIBS
 	OPENCL ?= $(MATH)lib/opencl_2.2.0
 	TBB ?= $(MATH)lib/tbb_2020.3
 	SUNDIALS ?= $(MATH)lib/sundials_5.7.0
-	BENCHMARK ?= $(MATH)lib/benchmark_1.5.1
-	GTEST ?= $(BENCHMARK)/googletest/googletest
-	CPPLINT ?= $(MATH)lib/cpplint_1.4.5
 else
 	BOOST ?= /usr/include
 	EIGEN ?= /usr/include/eigen3
 	OPENCL ?= /usr/include
 	TBB ?= /usr/include
 	SUNDIALS ?= /usr
+endif
 	BENCHMARK ?= $(MATH)lib/benchmark_1.5.1
 	GTEST ?= $(BENCHMARK)/googletest/googletest
 	CPPLINT ?= $(MATH)lib/cpplint_1.4.5
-endif
 
 ################################################################################
 # SUNDIALS build rules
