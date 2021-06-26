@@ -401,7 +401,7 @@ class var_value<
    * @return The value of this variable.
    */
   inline const auto& val() const { return vi_->val(); }
-  inline auto& val_op() { return vi_->val(); }
+  inline auto& val_op() { return vi_->val_op(); }
 
   /**
    * Return a reference to the derivative of the root expression with
