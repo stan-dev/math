@@ -48,7 +48,9 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_newton_impl(
     const T_Args&... args) {  // NOLINT(runtime/int)
   const auto& x_ref = to_ref(value_of(x));
   auto arena_args_tuple = std::make_tuple(to_arena(args)...);
-  auto args_vals_tuple = std::make_tuple(to_ref(value_of(args))...);
+  auto args_vals_tuple = apply([&](const auto&... args) {
+      return std::make_tuple(eval(value_of(args))...);
+    }, arena_args_tuple);
 
   check_nonzero_size("algebra_solver_newton", "initial guess", x_ref);
   check_finite("algebra_solver_newton", "initial guess", x_ref);
