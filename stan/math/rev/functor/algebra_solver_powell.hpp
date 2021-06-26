@@ -100,9 +100,11 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
     const T_Args&... args) {  // NOLINT(runtime/int)
   const auto& x_val = to_ref(value_of(x));
   auto arena_args_tuple = std::make_tuple(to_arena(args)...);
-  auto args_vals_tuple = apply([&](const auto&... args) {
-      return std::make_tuple(eval(value_of(args))...);
-    }, arena_args_tuple);
+  auto args_vals_tuple = apply(
+      [&](const auto&... args) {
+        return std::make_tuple(eval(value_of(args))...);
+      },
+      arena_args_tuple);
 
   check_nonzero_size("algebra_solver_powell", "initial guess", x_val);
   check_finite("algebra_solver_powell", "initial guess", x_val);
@@ -136,33 +138,35 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
   jacobian(f_wrt_x, theta_dbl, f_x, Jf_x);
 
   using ret_type = Eigen::Matrix<var, Eigen::Dynamic, -1>;
-  auto Jf_xT_lu_ptr = make_chainable_ptr(Jf_x.transpose().fullPivHouseholderQr()); // Lu
-  
+  auto Jf_xT_lu_ptr
+      = make_chainable_ptr(Jf_x.transpose().fullPivHouseholderQr());  // Lu
+
   arena_t<ret_type> ret = theta_dbl;
 
-  reverse_pass_callback([f, ret, arena_args_tuple, Jf_xT_lu_ptr, msgs]() mutable {
-    using Eigen::Dynamic;
-    using Eigen::Matrix;
-    using Eigen::MatrixXd;
-    using Eigen::VectorXd;
+  reverse_pass_callback(
+      [f, ret, arena_args_tuple, Jf_xT_lu_ptr, msgs]() mutable {
+        using Eigen::Dynamic;
+        using Eigen::Matrix;
+        using Eigen::MatrixXd;
+        using Eigen::VectorXd;
 
-    // Contract specificities with inverse Jacobian of f with respect to x.
-    VectorXd ret_adj = ret.adj();
-    VectorXd eta = -Jf_xT_lu_ptr->solve(ret_adj);
+        // Contract specificities with inverse Jacobian of f with respect to x.
+        VectorXd ret_adj = ret.adj();
+        VectorXd eta = -Jf_xT_lu_ptr->solve(ret_adj);
 
-    // Contract with Jacobian of f with respect to y using a nested reverse
-    // autodiff pass.
-    {
-      nested_rev_autodiff rev;
+        // Contract with Jacobian of f with respect to y using a nested reverse
+        // autodiff pass.
+        {
+          nested_rev_autodiff rev;
 
-      VectorXd ret_val = ret.val();
-      auto x_nrad_ = apply(
-          [&](const auto&... args) { return f(ret_val, msgs, args...); },
-          arena_args_tuple);
-      x_nrad_.adj() = eta;
-      grad();
-    }
-  });
+          VectorXd ret_val = ret.val();
+          auto x_nrad_ = apply(
+              [&](const auto&... args) { return f(ret_val, msgs, args...); },
+              arena_args_tuple);
+          x_nrad_.adj() = eta;
+          grad();
+        }
+      });
 
   return ret_type(ret);
 }

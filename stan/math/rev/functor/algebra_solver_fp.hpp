@@ -189,9 +189,11 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_fp_impl(
     const std::vector<T_f>& f_scale, std::ostream* msgs, const Args&... args) {
   const auto& x_val = to_ref(value_of(x));
   auto arena_args_tuple = std::make_tuple(to_arena(args)...);
-  auto args_vals_tuple = apply([&](const auto&... args) {
-      return std::make_tuple(eval(value_of(args))...);
-    }, arena_args_tuple);
+  auto args_vals_tuple = apply(
+      [&](const auto&... args) {
+        return std::make_tuple(eval(value_of(args))...);
+      },
+      arena_args_tuple);
 
   auto f_wrt_x = [&](const auto& x) {
     return apply([&](const auto&... args) { return f(x, msgs, args...); },
