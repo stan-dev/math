@@ -15,11 +15,6 @@ ifneq ($(OS),Windows_NT)
   OS := $(shell uname -s)
 endif
 
-## Detect multiarch type for Debian
-ifeq ($(OS),Linux)
-  DEB_MULTIARCH := $(shell gcc -dumpmachine)
-endif
-
 ## Set OS specific library filename extensions
 ifeq ($(OS),Windows_NT)
   LIBRARY_SUFFIX ?= .dll
@@ -239,8 +234,6 @@ endif
 
 ifndef SYS_LIBS
   TBB_BIN ?= $(MATH)lib/tbb
-else
-  TBB_BIN ?= /usr/lib/$(DEB_MULTIARCH)
 endif
 TBB_RELATIVE_PATH ?= ../$(notdir $(TBB))
 TBB_BIN_ABSOLUTE_PATH = $(abspath $(TBB_BIN))
@@ -276,8 +269,6 @@ ifeq ($(OS),Linux)
     # Update the suffix with the internal TBB source code!
     # The new version of TBB library is 12+ (e.g., libtbb.so.12.1 not libtbb.so.2)
     TBB_TARGETS ?= $(addprefix $(TBB_BIN)/lib,$(addsuffix $(LIBRARY_SUFFIX).2,$(TBB_LIBRARIES)))
-  else
-    TBB_TARGETS ?= -ltbb
   endif
 endif
 
@@ -324,9 +315,20 @@ ifdef STAN_MPI
   CXXFLAGS_MPI ?= -Wno-delete-non-virtual-dtor
 endif
 
+################################################################################
+# Setup Sundials
+#
+# Add compiler flags to link to installed versions of Sundials
+
+ifdef SYS_LIBS
+LDFLAGS_SUNDIALS ?= -lsundials_nvecserial -lsundials_cvodes -lsundials_idas -lsundials_kinsol
+else
+LDFLAGS_SUNDIALS ?= 
+endif
+
 CXXFLAGS += $(CXXFLAGS_LANG) $(CXXFLAGS_OS) $(CXXFLAGS_WARNINGS) $(CXXFLAGS_BOOST) $(CXXFLAGS_EIGEN) $(CXXFLAGS_OPENCL) $(CXXFLAGS_MPI) $(CXXFLAGS_THREADS) $(CXXFLAGS_TBB) $(CXXFLAGS_FLTO) $(CXXFLAGS_OPTIM) -O$(O) $(INC)
 CPPFLAGS += $(CPPFLAGS_LANG) $(CPPFLAGS_OS) $(CPPFLAGS_WARNINGS) $(CPPFLAGS_BOOST) $(CPPFLAGS_EIGEN) $(CPPFLAGS_OPENCL) $(CPPFLAGS_TBB) $(CPPFLAGS_MPI) $(CPPFLAGS_TBB) $(CPPFLAGS_FLTO) $(CPPFLAGS_OPTIM)
-LDFLAGS += $(LDFLAGS_LANG) $(LDFLAGS_OS) $(LDFLAGS_WARNINGS) $(LDFLAGS_BOOST) $(LDFLAGS_EIGEN) $(LDFLAGS_OPENCL) $(LDFLAGS_MPI) $(LDFLAGS_TBB) $(LDFLAGS_FLTO) $(LDFLAGS_OPTIM)
+LDFLAGS += $(LDFLAGS_LANG) $(LDFLAGS_OS) $(LDFLAGS_WARNINGS) $(LDFLAGS_BOOST) $(LDFLAGS_EIGEN) $(LDFLAGS_OPENCL) $(LDFLAGS_MPI) $(LDFLAGS_TBB) $(LDFLAGS_FLTO) $(LDFLAGS_OPTIM) $(LDFLAGS_SUNDIALS)
 LDLIBS += $(LDLIBS_LANG) $(LDLIBS_OS) $(LDLIBS_WARNINGS) $(LDLIBS_BOOST) $(LDLIBS_EIGEN) $(LDLIBS_OPENCL) $(LDLIBS_MPI) $(LDLIBS_TBB)
 
 .PHONY: print-compiler-flags
