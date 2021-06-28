@@ -515,9 +515,9 @@ void tridiagonal_eigensolver_cl(const matrix_cl<double>& diagonal_cl,
           eigenvalues.segment(last, n - last), eigenvectors);
     }
   }
-  eigenvalues_cl = to_matrix_cl(eigenvalues);
+  eigenvalues_cl = to_matrix_cl(std::move(eigenvalues));
   if (need_eigenvectors) {
-    eigenvectors_cl = to_matrix_cl(eigenvectors);
+    eigenvectors_cl = to_matrix_cl(std::move(eigenvectors));
   }
 }
 
