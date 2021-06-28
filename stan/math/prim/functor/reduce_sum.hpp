@@ -201,20 +201,14 @@ inline auto reduce_sum(Vec&& vmapped, int grainsize, std::ostream* msgs,
   using return_type = return_type_t<Vec, Args...>;
 
   check_positive("reduce_sum", "grainsize", grainsize);
-
-#ifdef STAN_THREADS
-  return internal::reduce_sum_impl<ReduceFunction, void, return_type, Vec,
-                                   ref_type_t<Args&&>...>()(
-      std::forward<Vec>(vmapped), true, grainsize, msgs,
-      std::forward<Args>(args)...);
-#else
   if (vmapped.empty()) {
     return return_type(0.0);
   }
 
-  return ReduceFunction()(std::forward<Vec>(vmapped), 0, vmapped.size() - 1,
-                          msgs, std::forward<Args>(args)...);
-#endif
+  return internal::reduce_sum_impl<ReduceFunction, void, return_type, Vec,
+                                   ref_type_t<Args&&>...>()(
+      std::forward<Vec>(vmapped), true, grainsize, msgs,
+      std::forward<Args>(args)...);
 }
 
 }  // namespace math

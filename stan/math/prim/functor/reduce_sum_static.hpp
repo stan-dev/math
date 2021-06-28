@@ -48,19 +48,13 @@ auto reduce_sum_static(Vec&& vmapped, int grainsize, std::ostream* msgs,
 
   check_positive("reduce_sum", "grainsize", grainsize);
 
-#ifdef STAN_THREADS
+  if (vmapped.empty()) {
+    return return_type(0);
+  }
   return internal::reduce_sum_impl<ReduceFunction, void, return_type, Vec,
                                    Args...>()(std::forward<Vec>(vmapped), false,
                                               grainsize, msgs,
                                               std::forward<Args>(args)...);
-#else
-  if (vmapped.empty()) {
-    return return_type(0);
-  }
-
-  return ReduceFunction()(std::forward<Vec>(vmapped), 0, vmapped.size() - 1,
-                          msgs, std::forward<Args>(args)...);
-#endif
 }
 
 }  // namespace math

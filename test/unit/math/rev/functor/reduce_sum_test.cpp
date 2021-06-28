@@ -67,7 +67,7 @@ TEST(StanMathRev_reduce_sum, gradient) {
 
   std::vector<int> idata;
   std::vector<var> vlambda_v(1, lambda_v);
-
+  puts("got1");
   var poisson_lpdf = stan::math::reduce_sum<count_lpdf<var>>(
       data, 5, get_new_msg(), vlambda_v, idata);
 
@@ -76,10 +76,13 @@ TEST(StanMathRev_reduce_sum, gradient) {
 
   EXPECT_FLOAT_EQ(value_of(poisson_lpdf), value_of(poisson_lpdf_ref));
 
+  puts("got2");
   stan::math::grad(poisson_lpdf_ref.vi_);
   const double lambda_ref_adj = lambda_ref.adj();
 
+  puts("got3");
   stan::math::set_zero_all_adjoints();
+  puts("got4");
   stan::math::grad(poisson_lpdf.vi_);
   const double lambda_adj = lambda_v.adj();
 
@@ -89,11 +92,15 @@ TEST(StanMathRev_reduce_sum, gradient) {
       << "value of poisson lpdf : " << poisson_lpdf.val() << std::endl
       << "gradient wrt to lambda: " << lambda_adj << std::endl;
 
+      puts("got5");
   var poisson_lpdf_static = stan::math::reduce_sum_static<count_lpdf<var>>(
       data, 5, get_new_msg(), vlambda_v, idata);
+      puts("got6");
 
   stan::math::set_zero_all_adjoints();
+  puts("got7");
   stan::math::grad(poisson_lpdf_static.vi_);
+  puts("got8");
   const double lambda_adj_static = lambda_v.adj();
   EXPECT_FLOAT_EQ(lambda_adj_static, lambda_ref_adj);
   stan::math::recover_memory();

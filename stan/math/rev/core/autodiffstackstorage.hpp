@@ -7,9 +7,6 @@
 namespace stan {
 namespace math {
 
-// Internal macro used to modify global pointer definition to the
-// global AD instance.
-#ifdef STAN_THREADS
 // Whenever STAN_THREADS is set a TLS keyword is used. For reasons
 // explained below we use the GNU compiler extension __thread if
 // supported by the compiler while the generic thread_local C++11
@@ -18,10 +15,6 @@ namespace math {
 #define STAN_THREADS_DEF __thread
 #else
 #define STAN_THREADS_DEF thread_local
-#endif
-#else
-// In case STAN_THREADS is not set, then no modifier is needed.
-#define STAN_THREADS_DEF
 #endif
 
 /**
