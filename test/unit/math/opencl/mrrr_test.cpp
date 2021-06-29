@@ -160,7 +160,7 @@ TEST(MathMatrix, tridiag_eigensolver_large_wilkinson) {
   t.diagonal(-1) = subdiag;
   EXPECT_NEAR_REL(diag.sum(), eigenvals.sum());
   EXPECT_MATRIX_NEAR(eigenvecs * eigenvecs.transpose(),
-                     Eigen::MatrixXd::Identity(size, size), 1e-12);
+                     Eigen::MatrixXd::Identity(size, size), 1e-11);
   EXPECT_MATRIX_NEAR(t * eigenvecs, eigenvecs * eigenvals.asDiagonal(), 1e-12);
 }
 
