@@ -47,5 +47,5 @@ TEST(indexing_rev, indexing_rev_large) {
     EXPECT_NEAR_REL(stan::math::from_matrix_cl(adj_cl), correct);
   }
 }
-#endif // STAN_TEST_SKIP_REQUIRING_OPENCL_INT64_BASE_ATOMIC
+#endif  // STAN_TEST_SKIP_REQUIRING_OPENCL_INT64_BASE_ATOMIC
 #endif
