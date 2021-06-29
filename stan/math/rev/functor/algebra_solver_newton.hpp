@@ -21,10 +21,9 @@ template <typename F, typename T, typename... T_Args,
           require_all_st_arithmetic<T_Args...>* = nullptr>
 Eigen::VectorXd algebra_solver_newton_impl(
     const F& f, const T& x, std::ostream* msgs, double scaling_step_size,
-    double function_tolerance, int64_t max_num_steps, const Eigen::VectorXd& y,
+    double function_tolerance, int64_t max_num_steps,
     const T_Args&... args) {  // NOLINT(runtime/int)
   const auto& x_ref = to_ref(value_of(x));
-  auto args_vals_tuple = std::make_tuple(y, to_ref(args)...);
 
   check_nonzero_size("algebra_solver_newton", "initial guess", x_ref);
   check_finite("algebra_solver_newton", "initial guess", x_ref);
@@ -35,7 +34,7 @@ Eigen::VectorXd algebra_solver_newton_impl(
   check_positive("algebra_solver_newton", "max_num_steps", max_num_steps);
 
   return kinsol_solve(f, x_ref, scaling_step_size, function_tolerance,
-                      max_num_steps, 1, 10, KIN_LINESEARCH, msgs, y, args...);
+                      max_num_steps, 1, 10, KIN_LINESEARCH, msgs, args...);
 }
 
 /** Implementation of autodiff newton solver. */

@@ -58,10 +58,11 @@ template <typename F, typename T, typename... T_Args,
           require_all_st_arithmetic<T_Args...>* = nullptr>
 Eigen::VectorXd algebra_solver_powell_impl(
     const F& f, const T& x, std::ostream* msgs, double relative_tolerance,
-    double function_tolerance, int64_t max_num_steps, const Eigen::VectorXd& y,
+    double function_tolerance, int64_t max_num_steps,
     const T_Args&... args) {  // NOLINT(runtime/int)
   const auto& x_val = to_ref(value_of(x));
-  auto args_vals_tuple = std::make_tuple(y, eval(value_of(args))...);
+  auto arena_args_tuple = std::make_tuple(to_arena(args)...);
+  auto args_vals_tuple = std::make_tuple(eval(value_of(args))...);
 
   check_nonzero_size("algebra_solver_powell", "initial guess", x_val);
   check_finite("algebra_solver_powell", "initial guess", x_val);
@@ -155,7 +156,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
 
       VectorXd ret_val = ret.val();
       auto x_nrad_ = apply(
-          [&](const auto&... args) { return f(ret_val, msgs, args...); },
+          [&](const auto&... args) { return eval(f(ret_val, msgs, args...)); },
           arena_args_tuple);
       x_nrad_.adj() = eta;
       grad();
