@@ -37,6 +37,13 @@ vtable_chain vtable_for_chain {
 
 }
 
+struct nada_zero {
+  void set_zero_adjoint() {};
+};
+struct nada_chain {
+  void chain() {};
+};
+
 /**
  * Abstract base class that all `vari_value` and it's derived classes inherit.
  *
@@ -78,13 +85,7 @@ class vari_base {
   static inline void operator delete(
       void* /* ignore arg */) noexcept { /* no op */
   }
-};
-
-struct nada_zero {
-  void set_zero_adjoint() {};
-};
-struct nada_chain {
-  void chain() {};
+  inline void set_zero_adjoint() {}
 };
 
 struct vari_zeroing {
@@ -117,6 +118,7 @@ struct vari_chain {
 
     void chain() {vtable_->chain(concrete_);}
 };
+
 
 /**
  * The variable implementation for floating point types.

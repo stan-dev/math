@@ -88,6 +88,7 @@ class precomputed_gradients_vari_template : public vari {
               to_arena(std::get<Is>(container_gradients))...);
         })) {
     check_sizes(std::make_index_sequence<N_containers>());
+    ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
   }
 
   /**
@@ -137,6 +138,7 @@ class precomputed_gradients_vari_template : public vari {
       varis_[i] = vars[i].vi_;
     }
     std::copy(gradients.begin(), gradients.end(), gradients_);
+    ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
   }
 
   /**
