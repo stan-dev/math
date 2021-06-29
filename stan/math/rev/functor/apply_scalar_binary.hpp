@@ -74,83 +74,42 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
 }
 
 /**
- * Specialisation for use with one `var_value<Matrix>` and
- * a two-dimensional std::vector of integer types
- *
- * @tparam T1 Type of first argument to which functor is applied.
- * @tparam T2 Type of second argument to which functor is applied.
- * @tparam F Type of functor to apply.
- * @param x var with Eigen matrix inner type to which operation is applied.
- * @param y Nested integer std::vector input to which operation is applied.
- * @param f functor to apply to inputs.
- * @return Eigen object with result of applying functor to inputs.
- */
-template <typename T1, typename T2, typename F,
-          require_var_matrix_t<T1>* = nullptr,
-          require_std_vector_vt<is_std_vector, T2>* = nullptr,
-          require_std_vector_st<std::is_integral, T2>* = nullptr>
-inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
-  return f(x, y);
-}
-
-/**
  * Specialisation for use with a two-dimensional std::vector of integer types
  * and one `var_value<Matrix>`.
  *
  * @tparam T1 Type of first argument to which functor is applied.
  * @tparam T2 Type of second argument to which functor is applied.
  * @tparam F Type of functor to apply.
- * @param x Nested integer std::vector input to which operation is applied.
- * @param y var value with inner Eigen matrix input to which operation is
- * applied.
+ * @param x Either a var matrix or nested integer std::vector input to which operation is applied.
+ * @param x Either a var matrix or nested integer std::vector input to which operation is applied.
  * @param f functor to apply to inputs.
  * @return Eigen object with result of applying functor to inputs.
  */
 template <typename T1, typename T2, typename F,
-          require_std_vector_vt<is_std_vector, T1>* = nullptr,
-          require_std_vector_st<std::is_integral, T1>* = nullptr,
-          require_var_matrix_t<T2>* = nullptr>
+          require_any_std_vector_vt<is_std_vector, T1, T2>* = nullptr,
+          require_any_std_vector_st<std::is_integral, T1, T2>* = nullptr,
+          require_any_var_matrix_t<T1, T2>* = nullptr>
 inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
   return f(x, y);
 }
 
+
 /**
- * Specialisation for use when the first input is an `var_value<Eigen> type and
- * the second is a scalar.
+ * Specialisation for use when the one input is an `var_value<Eigen> type and
+ * the other is a scalar.
  *
- * @tparam T1 Type of `var_value<Matrix>` object to which functor is applied.
- * @tparam T2 Type of scalar to which functor is applied.
+ * @tparam T1 Type of either `var_value<Matrix>` or scalar object to which functor is applied.
+ * @tparam T2 Type of either `var_value<Matrix>` or scalar object to which functor is applied.
  * @tparam F Type of functor to apply.
- * @param x Matrix input to which operation is applied.
- * @param y Scalar input to which operation is applied.
+ * @param x Matrix or Scalar input to which operation is applied.
+ * @param x Matrix or Scalar input to which operation is applied.
  * @param f functor to apply to var matrix and scalar inputs.
  * @return `var_value<Matrix> object with result of applying functor to inputs.
  *
  */
-template <typename T1, typename T2, typename F,
-          require_var_matrix_t<T1>* = nullptr,
-          require_stan_scalar_t<T2>* = nullptr>
-inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
-  return f(x, y);
-}
-
-/**
- * Specialisation for use when the first input is an scalar and the second is
- * an `var_value<Eigen>`.
- *
- * @tparam T1 Type of scalar to which functor is applied.
- * @tparam T2 var value with inner Eigen type to which functor is applied.
- * @tparam F Type of functor to apply.
- * @param x Scalar input to which operation is applied.
- * @param y var matrix input to which operation is applied.
- * @param f functor to apply to Eigen and scalar inputs.
- * @return var value with inner Eigen type with result of applying functor to
- * inputs.
- *
- */
-template <typename T1, typename T2, typename F,
-          require_stan_scalar_t<T1>* = nullptr,
-          require_var_matrix_t<T2>* = nullptr>
+ template <typename T1, typename T2, typename F,
+          require_any_stan_scalar_t<T1, T2>* = nullptr,
+          require_any_var_matrix_t<T1, T2>* = nullptr>
 inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
   return f(x, y);
 }
