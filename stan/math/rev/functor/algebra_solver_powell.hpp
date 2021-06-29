@@ -18,12 +18,17 @@ namespace stan {
 namespace math {
 
 /** Function for internal use that actually calls the powell solver. */
-template <typename S, typename F, typename T,
+template <typename F, typename T, typename... Args,
           require_eigen_vector_t<T>* = nullptr>
 Eigen::VectorXd algebra_solver_powell_call_solver_(
-    S& solver, const F& fx, const T& x, std::ostream* msgs,
-    double relative_tolerance, double function_tolerance,
-    long int max_num_steps) {  // NOLINT(runtime/int)
+    const F& f, const T& x, std::ostream* msgs,
+    const double relative_tolerance, const double function_tolerance,
+    const long int max_num_steps, const Args&... args) {
+
+  // Constr
+  hybrj_functor_solver<decltype(f)> hfs(f);
+  Eigen::HybridNonLinearSolver<decltype(hfs)> solver(hfs);
+
   // Compute theta_dbl
   Eigen::VectorXd theta_dbl = x;
   solver.parameters.xtol = relative_tolerance;
@@ -37,7 +42,7 @@ Eigen::VectorXd algebra_solver_powell_call_solver_(
   }
 
   // Check solution is a root
-  double system_norm = fx.get_value(theta_dbl).stableNorm();
+  double system_norm = f(theta_dbl).stableNorm();
   if (system_norm > function_tolerance) {
     std::ostringstream message;
     message << "the norm of the algebraic function is " << system_norm
@@ -53,16 +58,19 @@ Eigen::VectorXd algebra_solver_powell_call_solver_(
 }
 
 /** Implementation of ordinary powell solver. */
-template <typename F, typename T, typename... T_Args,
+template <typename F, typename T, typename... Args,
           require_eigen_vector_t<T>* = nullptr,
-          require_all_st_arithmetic<T_Args...>* = nullptr>
+          require_all_st_arithmetic<Args...>* = nullptr>
 Eigen::VectorXd algebra_solver_powell_impl(
-    const F& f, const T& x, std::ostream* msgs, double relative_tolerance,
-    double function_tolerance, int64_t max_num_steps,
-    const T_Args&... args) {  // NOLINT(runtime/int)
+    const F& f, const T& x, std::ostream* msgs, const double relative_tolerance,
+    const double function_tolerance, const int64_t max_num_steps,
+    const Args&... args) {
   const auto& x_val = to_ref(value_of(x));
-  auto arena_args_tuple = std::make_tuple(to_arena(args)...);
-  auto args_vals_tuple = std::make_tuple(eval(value_of(args))...);
+
+  // Curry the input function w.r.t. y
+  auto f_wrt_x = [&](const auto& x) {
+    return f(x, msgs, args...);
+  };
 
   check_nonzero_size("algebra_solver_powell", "initial guess", x_val);
   check_finite("algebra_solver_powell", "initial guess", x_val);
@@ -71,24 +79,12 @@ Eigen::VectorXd algebra_solver_powell_impl(
   check_nonnegative("algebra_solver_powell", "function_tolerance",
                     function_tolerance);
   check_positive("algebra_solver_powell", "max_num_steps", max_num_steps);
-
-  // Construct the Powell solver
-  auto f_wrt_x = [&](const auto& x) {
-    return apply([&](const auto&... args) { return f(x, msgs, args...); },
-                 args_vals_tuple);
-  };
-
-  hybrj_functor_solver<decltype(f_wrt_x)> fx(f_wrt_x);
-  Eigen::HybridNonLinearSolver<decltype(fx)> solver(fx);
-
-  // Check dimension unknowns equals dimension of system output
   check_matching_sizes("algebra_solver", "the algebraic system's output",
-                       fx.get_value(x_val), "the vector of unknowns, x,", x);
+                       f_wrt_x(x), "the vector of unknowns, x,", x);
 
   // Solve the system
-  return algebra_solver_powell_call_solver_(solver, fx, x_val, 0,
-                                            relative_tolerance,
-                                            function_tolerance, max_num_steps);
+  return algebra_solver_powell_call_solver_(
+      f_wrt_x, x_val, msgs, relative_tolerance, function_tolerance, max_num_steps);
 }
 
 /** Implementation of autodiff powell solver. */
@@ -103,9 +99,15 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
   auto arena_args_tuple = std::make_tuple(to_arena(args)...);
   auto args_vals_tuple = apply(
       [&](const auto&... args) {
-        return std::make_tuple(eval(value_of(args))...);
+        return std::make_tuple(to_ref(value_of(args))...);
       },
       arena_args_tuple);
+
+  // Curry the input function w.r.t. y
+  auto f_wrt_x = [&](const auto& x) {
+    return apply([&](const auto&... args) { return f(x, msgs, args...); },
+                 args_vals_tuple);
+  };
 
   check_nonzero_size("algebra_solver_powell", "initial guess", x_val);
   check_finite("algebra_solver_powell", "initial guess", x_val);
@@ -114,23 +116,12 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
   check_nonnegative("algebra_solver_powell", "function_tolerance",
                     function_tolerance);
   check_positive("algebra_solver_powell", "max_num_steps", max_num_steps);
-
-  // Construct the Powell solver
-  auto f_wrt_x = [&](const auto& x) {
-    return apply([&](const auto&... args) { return f(x, msgs, args...); },
-                 args_vals_tuple);
-  };
-
-  hybrj_functor_solver<decltype(f_wrt_x)> fx(f_wrt_x);
-  Eigen::HybridNonLinearSolver<decltype(fx)> solver(fx);
-
-  // Check dimension unknowns equals dimension of system output
   check_matching_sizes("algebra_solver", "the algebraic system's output",
-                       fx.get_value(x_val), "the vector of unknowns, x,", x);
+                       f_wrt_x(x), "the vector of unknowns, x,", x);
 
   // Solve the system
   Eigen::VectorXd theta_dbl = algebra_solver_powell_call_solver_(
-      solver, fx, x_val, 0, relative_tolerance, function_tolerance,
+      f_wrt_x, x_val, msgs, relative_tolerance, function_tolerance,
       max_num_steps);
 
   Eigen::MatrixXd Jf_x;
@@ -146,22 +137,17 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
 
   reverse_pass_callback(
       [f, ret, arena_args_tuple, Jf_xT_lu_ptr, msgs]() mutable {
-        using Eigen::Dynamic;
-        using Eigen::Matrix;
-        using Eigen::MatrixXd;
-        using Eigen::VectorXd;
-
         // Contract specificities with inverse Jacobian of f with respect to x.
-        VectorXd ret_adj = ret.adj();
-        VectorXd eta = -Jf_xT_lu_ptr->solve(ret_adj);
+        Eigen::VectorXd ret_adj = ret.adj();
+        Eigen::VectorXd eta = -Jf_xT_lu_ptr->solve(ret_adj);
 
         // Contract with Jacobian of f with respect to y using a nested reverse
         // autodiff pass.
         {
           nested_rev_autodiff rev;
-          VectorXd ret_val = ret.val();
+          Eigen::VectorXd ret_val = ret.val();
           auto x_nrad_ = apply(
-              [&](const auto&... args) { return f(ret_val, msgs, args...); },
+              [&](const auto&... args) { return eval(f(ret_val, msgs, args...)); },
               arena_args_tuple);
           x_nrad_.adj() = eta;
           grad();
@@ -220,8 +206,8 @@ template <typename F, typename T1, typename T2,
 Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_powell(
     const F& f, const T1& x, const T2& y, const std::vector<double>& dat,
     const std::vector<int>& dat_int, std::ostream* msgs = nullptr,
-    double relative_tolerance = 1e-10, double function_tolerance = 1e-6,
-    long int max_num_steps = 1e+3) {  // NOLINT(runtime/int)
+    const double relative_tolerance = 1e-10, const double function_tolerance = 1e-6,
+    const long int max_num_steps = 1e+3) {
   return algebra_solver_powell_impl(algebra_solver_adapter<F>(f), x, msgs,
                                     relative_tolerance, function_tolerance,
                                     max_num_steps, y, dat, dat_int);

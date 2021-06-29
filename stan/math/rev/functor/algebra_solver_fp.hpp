@@ -191,7 +191,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_fp_impl(
   auto arena_args_tuple = std::make_tuple(to_arena(args)...);
   auto args_vals_tuple = apply(
       [&](const auto&... args) {
-        return std::make_tuple(eval(value_of(args))...);
+        return std::make_tuple(to_ref(value_of(args))...);
       },
       arena_args_tuple);
 
@@ -221,21 +221,16 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_fp_impl(
   arena_t<ret_type> ret = theta_dbl;
 
   reverse_pass_callback([f, ret, arena_args_tuple, arena_Jf_x, msgs]() mutable {
-    using Eigen::Dynamic;
-    using Eigen::Matrix;
-    using Eigen::MatrixXd;
-    using Eigen::VectorXd;
-
     // Contract specificities with inverse Jacobian of f with respect to x.
-    VectorXd ret_adj = ret.adj();
-    VectorXd eta = arena_Jf_x.transpose().lu().solve(ret_adj);
+    Eigen::VectorXd ret_adj = ret.adj();
+    Eigen::VectorXd eta = arena_Jf_x.transpose().lu().solve(ret_adj);
 
     // Contract with Jacobian of f with respect to y using a nested reverse
     // autodiff pass.
     {
       nested_rev_autodiff rev;
 
-      VectorXd ret_val = ret.val();
+      Eigen::VectorXd ret_val = ret.val();
       auto x_nrad_ = apply(
           [&](const auto&... args) { return eval(f(ret_val, msgs, args...)); },
           arena_args_tuple);
