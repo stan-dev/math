@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Cast a `var_value<Matrix>` to a `var_value<ColumnVector>`.
+ * Reshape a `var_value<Matrix>` to a `var_value<ColumnVector>`.
  * @tparam EigMat Inner type of the `var_value` that must inherit from
  *  `Eigen::EigenBase`.
  * @param x A var whose inner matrix type is to be cast to an Column matrix.
