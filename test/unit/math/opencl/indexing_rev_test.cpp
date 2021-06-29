@@ -1,4 +1,5 @@
 #ifdef STAN_OPENCL
+#ifndef STAN_TEST_SKIP_REQUIRING_OPENCL_INT64_BASE_ATOMIC
 #include <stan/math/opencl/indexing_rev.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <test/unit/util.hpp>
@@ -6,7 +7,6 @@
 #include <gtest/gtest.h>
 #include <algorithm>
 
-#ifndef STAN_TEST_SKIP_REQUIRING_OPENCL_INT64_BASE_ATOMIC
 TEST(indexing_rev, indexing_rev_small) {
   Eigen::MatrixXd res(3, 3);
   res << 1, 2, 3, 4, 5, 6, 7, 8, 9;
