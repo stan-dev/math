@@ -46,28 +46,8 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
  * @return var_value<Eigen> object with result of applying functor to inputs.
  */
 template <typename T1, typename T2, typename F,
-          require_var_matrix_t<T1>* = nullptr,
-          require_std_vector_vt<std::is_integral, T2>* = nullptr>
-inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
-  check_matching_sizes("Binary function", "x", x, "y", y);
-  return f(x, y);
-}
-
-/**
- * Specialisation for use with a one-dimensional std::vector of integer types
- * and one `var_value<Eigen vector>` (row or column).
- *
- * @tparam T1 Type of first argument to which functor is applied.
- * @tparam T2 Type of second argument to which functor is applied.
- * @tparam F Type of functor to apply.
- * @param x Integer std::vector input to which operation is applied.
- * @param y Eigen input to which operation is applied.
- * @param f functor to apply to inputs.
- * @return Eigen object with result of applying functor to inputs.
- */
-template <typename T1, typename T2, typename F,
-          require_std_vector_vt<std::is_integral, T1>* = nullptr,
-          require_var_matrix_t<T2>* = nullptr>
+          require_any_var_matrix_t<T1, T2>* = nullptr,
+          require_any_std_vector_vt<std::is_integral, T1, T2>* = nullptr>
 inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
   check_matching_sizes("Binary function", "x", x, "y", y);
   return f(x, y);
