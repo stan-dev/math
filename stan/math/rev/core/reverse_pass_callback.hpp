@@ -13,10 +13,10 @@ struct reverse_pass_callback_vari : public vari_base {
 
   explicit reverse_pass_callback_vari(F&& rev_functor)
       : rev_functor_(std::forward<F>(rev_functor)) {
-    ChainableStack::instance_->var_stack_.push_back(this);
+    ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
   }
 
-  inline void chain() final { rev_functor_(); }
+  inline void chain() { rev_functor_(); }
   inline void set_zero_adjoint() {}
   inline void init_dependent() {}
 };

@@ -27,7 +27,7 @@ static void grad() {
   size_t end = ChainableStack::instance_->var_stack_.size();
   size_t beginning = empty_nested() ? 0 : end - nested_size();
   for (size_t i = end; i-- > beginning;) {
-    ChainableStack::instance_->var_stack_[i]->chain();
+    ChainableStack::instance_->var_stack_[i].chain();
   }
 }
 

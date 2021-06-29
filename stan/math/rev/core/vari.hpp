@@ -26,6 +26,15 @@ vtable_zeroing vtable_for_zeroing {
     [](void*ptr){ reinterpret_cast<Concrete*>(ptr)->set_zero_adjoint();},
 };
 
+struct vtable_chain{
+    void(*chain)(void*ptr);
+};
+/* Can be constexpr in C++17*/
+template<typename Concrete>
+vtable_chain vtable_for_chain {
+    [](void*ptr){ reinterpret_cast<Concrete*>(ptr)->chain();},
+};
+
 }
 
 /**
@@ -39,11 +48,7 @@ vtable_zeroing vtable_for_zeroing {
  */
 class vari_base {
  public:
-  /**
-   * Apply the chain rule to this variable based on the variables
-   * on which it depends.
-   */
-  virtual void chain() = 0;
+
 
   /**
    * Allocate memory from the underlying memory pool.  This memory is
@@ -75,8 +80,11 @@ class vari_base {
   }
 };
 
-struct nada {
+struct nada_zero {
   void set_zero_adjoint() {};
+};
+struct nada_chain {
+  void chain() {};
 };
 
 struct vari_zeroing {
@@ -89,9 +97,25 @@ struct vari_zeroing {
 
     vari_zeroing() :
       concrete_(),
-      vtable_(&internal::vtable_for_zeroing<nada>) {}
+      vtable_(&internal::vtable_for_zeroing<nada_zero>) {}
 
     void set_zero_adjoint() {vtable_->set_zero_adjoint(concrete_);}
+};
+
+struct vari_chain {
+    void* concrete_;
+    internal::vtable_chain const* vtable_;
+
+    template <typename T, require_not_same_t<vari_chain, T>* = nullptr>
+    explicit vari_chain (T* t) noexcept :
+        concrete_(reinterpret_cast<void*>(t)),
+        vtable_(&internal::vtable_for_chain<T>) {}
+
+    vari_chain() :
+      concrete_(),
+      vtable_(&internal::vtable_for_chain<nada_chain>) {}
+
+    void chain() {vtable_->chain(concrete_);}
 };
 
 /**
@@ -134,7 +158,7 @@ class vari_value<T, require_t<std::is_floating_point<T>>> : public vari_base {
    */
   template <typename S, require_convertible_t<S&, T>* = nullptr>
   vari_value(S x) noexcept : val_(x) {  // NOLINT
-    ChainableStack::instance_->var_stack_.push_back(this);
+  //  ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
     ChainableStack::instance_->var_nochain_stack_.push_back(vari_zeroing(this));
   }
 
@@ -155,7 +179,7 @@ class vari_value<T, require_t<std::is_floating_point<T>>> : public vari_base {
    */
   template <typename S, require_convertible_t<S&, T>* = nullptr>
   vari_value(S x, bool stacked) noexcept : val_(x) {
-      ChainableStack::instance_->var_stack_.push_back(this);
+//      ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
       ChainableStack::instance_->var_nochain_stack_.push_back(vari_zeroing(this));
   }
 
@@ -185,8 +209,6 @@ class vari_value<T, require_t<std::is_floating_point<T>>> : public vari_base {
    * @return Adjoint for this vari.
    */
   inline auto& adj() { return adj_; }
-
-  inline void chain() {}
 
   /**
    * Initialize the adjoint for this (dependent) variable to 1.
@@ -626,7 +648,6 @@ class vari_view<
   inline auto& adj_op() { return adj_; }
 
   void set_zero_adjoint() {}
-  void chain() {}
 };
 
 /**
@@ -689,7 +710,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
   template <typename S, require_assignable_t<T, S>* = nullptr>
   explicit vari_value(const S& x) : val_(x), adj_(x.rows(), x.cols()) {
     adj_.setZero();
-    ChainableStack::instance_->var_stack_.push_back(this);
+//    ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
     ChainableStack::instance_->var_nochain_stack_.push_back(vari_zeroing(this));
   }
 
@@ -711,7 +732,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
   template <typename S, require_assignable_t<T, S>* = nullptr>
   vari_value(const S& x, bool stacked) : val_(x), adj_(x.rows(), x.cols()) {
     adj_.setZero();
-      ChainableStack::instance_->var_stack_.push_back(this);
+//      ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
       ChainableStack::instance_->var_nochain_stack_.push_back(vari_zeroing(this));
   }
 
@@ -824,7 +845,7 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
   explicit vari_value(S&& x)
       : adj_(x), val_(std::forward<S>(x)), chainable_alloc() {
     this->set_zero_adjoint();
-    ChainableStack::instance_->var_stack_.push_back(this);
+  //  ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
     ChainableStack::instance_->var_nochain_stack_.push_back(vari_zeroing(this));
 
   }
@@ -849,7 +870,7 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
   vari_value(S&& x, bool stacked)
       : adj_(x), val_(std::forward<S>(x)), chainable_alloc() {
     this->set_zero_adjoint();
-      ChainableStack::instance_->var_stack_.push_back(this);
+//      ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
       ChainableStack::instance_->var_nochain_stack_.push_back(vari_zeroing(this));
   }
 
@@ -886,7 +907,6 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
   inline auto& adj() const { return adj_; }
   inline auto& adj_op() { return adj_; }
 
-  void chain() {}
   /**
    * Initialize the adjoint for this (dependent) variable to 1.
    * This operation is applied to the dependent variable before

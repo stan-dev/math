@@ -403,7 +403,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
    */
   void set_zero_adjoint() {};
 
-  void chain() final {
+  void chain() {
     if (!is_var_return_) {
       return;
     }
