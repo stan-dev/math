@@ -12,7 +12,7 @@ namespace math {
  * Reshape a `var_value<Matrix>` to a `var_value<ColumnVector>`.
  * @tparam EigMat Inner type of the `var_value` that must inherit from
  *  `Eigen::EigenBase`.
- * @param x A var whose inner matrix type is to be cast to an Column matrix.
+ * @param x A var whose inner matrix type is to be reshaped to an Column matrix.
  * @return A view of the original `x` with inner value and adjoint matrices
  *  mapped to a column vector.
  */
