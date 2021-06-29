@@ -2,7 +2,6 @@
 #define STAN_MATH_REV_CORE_CALLBACK_VARI_HPP
 
 #include <stan/math/rev/core/vari.hpp>
-#include <stan/math/rev/core/reverse_pass_callback.hpp>
 #include <utility>
 
 namespace stan {
@@ -11,17 +10,17 @@ namespace internal {
 
 template <typename T, typename F>
 struct callback_vari : public vari_value<T> {
+  F rev_functor_;
 
   template <typename S,
             require_same_t<plain_type_t<T>, plain_type_t<S>>* = nullptr>
   explicit callback_vari(S&& value, F&& rev_functor)
-      : vari_value<T>(std::move(value)) {
-          reverse_pass_callback([vari_data = this, rev_func = std::forward<F>(rev_functor)]() mutable {
-            rev_func(*vari_data);
-          });
+      : vari_value<T>(std::move(value)),
+        rev_functor_(std::forward<F>(rev_functor)) {
+          ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
         }
 
-  inline void chain() {}
+  inline void chain() { rev_functor_(*this); }
 };
 
 }  // namespace internal
