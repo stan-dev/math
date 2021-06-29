@@ -60,8 +60,10 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
  * @tparam T1 Type of first argument to which functor is applied.
  * @tparam T2 Type of second argument to which functor is applied.
  * @tparam F Type of functor to apply.
- * @param x Either a var matrix or nested integer std::vector input to which operation is applied.
- * @param x Either a var matrix or nested integer std::vector input to which operation is applied.
+ * @param x Either a var matrix or nested integer std::vector input to which
+ * operation is applied.
+ * @param x Either a var matrix or nested integer std::vector input to which
+ * operation is applied.
  * @param f functor to apply to inputs.
  * @return Eigen object with result of applying functor to inputs.
  */
@@ -73,13 +75,14 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
   return f(x, y);
 }
 
-
 /**
  * Specialisation for use when the one input is an `var_value<Eigen> type and
  * the other is a scalar.
  *
- * @tparam T1 Type of either `var_value<Matrix>` or scalar object to which functor is applied.
- * @tparam T2 Type of either `var_value<Matrix>` or scalar object to which functor is applied.
+ * @tparam T1 Type of either `var_value<Matrix>` or scalar object to which
+ * functor is applied.
+ * @tparam T2 Type of either `var_value<Matrix>` or scalar object to which
+ * functor is applied.
  * @tparam F Type of functor to apply.
  * @param x Matrix or Scalar input to which operation is applied.
  * @param x Matrix or Scalar input to which operation is applied.
@@ -87,7 +90,7 @@ inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
  * @return `var_value<Matrix> object with result of applying functor to inputs.
  *
  */
- template <typename T1, typename T2, typename F,
+template <typename T1, typename T2, typename F,
           require_any_stan_scalar_t<T1, T2>* = nullptr,
           require_any_var_matrix_t<T1, T2>* = nullptr>
 inline auto apply_scalar_binary(const T1& x, const T2& y, const F& f) {
