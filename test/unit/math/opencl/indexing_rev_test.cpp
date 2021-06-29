@@ -5,7 +5,8 @@
 #include <test/unit/math/expect_near_rel.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
-
+ 
+#ifndef STAN_TEST_SKIP_REQUIRING_OPENCL_INT64_BASE_ATOMIC
 TEST(indexing_rev, indexing_rev_small) {
   Eigen::MatrixXd res(3, 3);
   res << 1, 2, 3, 4, 5, 6, 7, 8, 9;
@@ -46,5 +47,5 @@ TEST(indexing_rev, indexing_rev_large) {
     EXPECT_NEAR_REL(stan::math::from_matrix_cl(adj_cl), correct);
   }
 }
-
+#endif // STAN_TEST_SKIP_REQUIRING_OPENCL_INT64_BASE_ATOMIC
 #endif
