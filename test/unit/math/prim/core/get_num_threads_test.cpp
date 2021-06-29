@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 
 #ifdef STAN_THREADS
-TEST(get_num_threads, correct_values) {
+TEST(get_num_threads, correct_values_stan_threads) {
   set_n_threads("10");
   EXPECT_EQ(stan::math::internal::get_num_threads(), 10);
 
@@ -34,7 +34,7 @@ TEST(get_num_threads, incorrect_values) {
                    std::invalid_argument, "must be positive or -1");
 }
 #else
-TEST(get_num_threads, correct_values) {
+TEST(get_num_threads, correct_values_no_stan_threads) {
   set_n_threads("10");
   EXPECT_EQ(stan::math::internal::get_num_threads(), 1);
 
