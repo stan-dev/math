@@ -23,7 +23,8 @@ struct vtable_zeroing {
 /* Can be constexpr in C++17*/
 template <typename Concrete>
 inline constexpr auto vtable_for_zeroing() noexcept {
-    return vtable_zeroing{[](void* ptr) { reinterpret_cast<Concrete*>(ptr)->set_zero_adjoint(); }};
+  return vtable_zeroing{
+      [](void* ptr) { reinterpret_cast<Concrete*>(ptr)->set_zero_adjoint(); }};
 };
 
 struct vtable_chain {
@@ -32,16 +33,17 @@ struct vtable_chain {
 /* Can be constexpr in C++17*/
 template <typename Concrete>
 inline constexpr auto vtable_for_chain() noexcept {
-    return vtable_chain{[](void* ptr) { reinterpret_cast<Concrete*>(ptr)->chain(); }};
+  return vtable_chain{
+      [](void* ptr) { reinterpret_cast<Concrete*>(ptr)->chain(); }};
 };
 
 }  // namespace internal
 
 struct nada_zero {
-  void set_zero_adjoint(){}
+  void set_zero_adjoint() {}
 };
 struct nada_chain {
-  void chain(){}
+  void chain() {}
 };
 
 /**
