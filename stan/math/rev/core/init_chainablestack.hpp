@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_CORE_INIT_CHAINABLESTACK_HPP
 
 #include <stan/math/rev/core/chainablestack.hpp>
+#include <stan/math/prim/err/system_error.hpp>
 
 #include <tbb/task_scheduler_observer.h>
 
@@ -39,6 +40,15 @@ class ad_tape_observer final : public tbb::task_scheduler_observer {
   void on_scheduler_entry(bool worker) {
     std::lock_guard<std::mutex> thread_tape_map_lock(thread_tape_map_mutex_);
     const std::thread::id thread_id = std::this_thread::get_id();
+#ifndef STAN_THREADS
+    // in case STAN_THREADS is not defined, then we must never have
+    // more than 1 AD tape in use at the same time. Any attempt to use
+    // more is a program error.
+    if(thread_tape_map_.size() == 1 &&
+       thread_tape_map_.find(thread_id) == thread_tape_map_.end()) {
+      system_error("Chainablestack", "[Thread]", 1, "STAN_THREADS not defined during compilation");
+    }
+#endif
     if (thread_tape_map_.find(thread_id) == thread_tape_map_.end()) {
       ad_map::iterator insert_elem;
       bool status = false;

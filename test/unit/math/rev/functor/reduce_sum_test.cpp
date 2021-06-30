@@ -29,6 +29,10 @@ TEST(StanMathRev_reduce_sum, value) {
   const std::size_t elems = 10000;
   std::vector<int> data(elems);
 
+  // uncomment this will make things work again for the case
+  // when STAN_THREADS is not defined
+  //stan::math::init_threadpool_tbb();
+
   for (std::size_t i = 0; i != elems; ++i)
     data[i] = i;
 
