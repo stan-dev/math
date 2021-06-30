@@ -195,6 +195,10 @@ TEST_F(AgradRev, var_matrix_views) {
   auto A_rowwise_colwise_reverse = A_v.rowwise_reverse().colwise_reverse();
   EXPECT_MATRIX_FLOAT_EQ(A_rowwise_colwise_reverse.val(),
                          A.rowwise().reverse().colwise().reverse());
+
+  auto A_diagonal = A_v.diagonal();
+  EXPECT_MATRIX_FLOAT_EQ(A_diagonal.val(), A.diagonal());
+
   auto A_coeff1 = A_v(3);
   EXPECT_FLOAT_EQ(A(3), A_coeff1.val());
   auto A_coeff2 = A_v(3, 3);

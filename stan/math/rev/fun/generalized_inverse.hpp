@@ -61,7 +61,6 @@ inline auto generalized_inverse_lambda(T1& G_arena, T2& inv_G) {
  */
 template <typename VarMat, require_rev_matrix_t<VarMat>* = nullptr>
 inline auto generalized_inverse(const VarMat& G) {
-  using value_t = value_type_t<VarMat>;
   using ret_type = promote_var_matrix_t<VarMat, VarMat>;
 
   if (G.size() == 0)
