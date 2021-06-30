@@ -159,12 +159,6 @@ struct apply_vector_unary<T, require_std_vector_vt<is_stan_scalar, T>> {
   }
 };
 
-namespace internal {
-template <typename T>
-using is_container_or_var_matrix
-    = disjunction<is_container<T>, is_var_matrix<T>>;
-}
-
 /**
  * Specialisation for use with nested containers (std::vectors).
  * For each of the member functions, an std::vector with the appropriate
@@ -177,7 +171,7 @@ using is_container_or_var_matrix
  */
 template <typename T>
 struct apply_vector_unary<
-    T, require_std_vector_vt<internal::is_container_or_var_matrix, T>> {
+    T, require_std_vector_vt<is_container_or_var_matrix, T>> {
   using T_vt = value_type_t<T>;
 
   /**

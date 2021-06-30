@@ -29,7 +29,7 @@ TEST(mathMixScalFun, binaryLogLossvec) {
   stan::test::expect_ad_vectorized_binary(f, std_std_in1, mat_in2);
 }
 
-TEST(mathMixScalFun, binaryLogLossmatvar) {
+TEST(mathMixScalFun, binaryLogLossMatVar) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::binary_log_loss;
     return binary_log_loss(x1, x2);
@@ -40,4 +40,16 @@ TEST(mathMixScalFun, binaryLogLossmatvar) {
   in2 << 0.5, 3.4;
   stan::test::expect_ad_matvar(f, std_in1, in2);
   stan::test::expect_ad_matvar(f, std_in1[0], in2);
+}
+
+TEST(mathMixScalFun, binaryLogLossMatVarVec) {
+  auto f = [](const auto& x1, const auto& x2) {
+    using stan::math::binary_log_loss;
+    return binary_log_loss(x1, x2);
+  };
+
+  std::vector<int> std_in1{3, 1};
+  Eigen::MatrixXd in2(2, 2);
+  in2 << 0.5, 3.4, 0.5, 3.5;
+  stan::test::expect_ad_vectorized_matvar(f, std_in1, in2);
 }
