@@ -56,7 +56,7 @@ class mdivide_left_spd_vv_vari : public vari_base {
 
     Eigen::Map<matrix_vi>(variRefC_, M_, N_)
         = alloc_->C_.unaryExpr([](double x) { return new vari(x, false); });
-        ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
+    ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
   }
 
   virtual void chain() {

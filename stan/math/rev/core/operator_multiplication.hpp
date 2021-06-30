@@ -18,8 +18,8 @@ class multiply_vv_vari final : public op_vv_vari {
  public:
   multiply_vv_vari(vari* avi, vari* bvi)
       : op_vv_vari(avi->val_ * bvi->val_, avi, bvi) {
-        ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
-      }
+    ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
+  }
   void chain() {
     avi_->adj_ += bvi_->val_ * adj_;
     bvi_->adj_ += avi_->val_ * adj_;

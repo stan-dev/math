@@ -17,31 +17,31 @@ template <typename T, typename = void>
 class vari_value;
 
 namespace internal {
-struct vtable_zeroing{
-    void(*set_zero_adjoint)(void*ptr);
+struct vtable_zeroing {
+  void (*set_zero_adjoint)(void* ptr);
 };
 /* Can be constexpr in C++17*/
-template<typename Concrete>
-vtable_zeroing vtable_for_zeroing {
-    [](void*ptr){ reinterpret_cast<Concrete*>(ptr)->set_zero_adjoint();},
+template <typename Concrete>
+vtable_zeroing vtable_for_zeroing{
+    [](void* ptr) { reinterpret_cast<Concrete*>(ptr)->set_zero_adjoint(); },
 };
 
-struct vtable_chain{
-    void(*chain)(void*ptr);
+struct vtable_chain {
+  void (*chain)(void* ptr);
 };
 /* Can be constexpr in C++17*/
-template<typename Concrete>
-vtable_chain vtable_for_chain {
-    [](void*ptr){ reinterpret_cast<Concrete*>(ptr)->chain();},
+template <typename Concrete>
+vtable_chain vtable_for_chain{
+    [](void* ptr) { reinterpret_cast<Concrete*>(ptr)->chain(); },
 };
 
-}
+}  // namespace internal
 
 struct nada_zero {
-  void set_zero_adjoint() {};
+  void set_zero_adjoint(){};
 };
 struct nada_chain {
-  void chain() {};
+  void chain(){};
 };
 
 /**
@@ -55,8 +55,6 @@ struct nada_chain {
  */
 class vari_base {
  public:
-
-
   /**
    * Allocate memory from the underlying memory pool.  This memory is
    * is managed as a whole externally.
@@ -89,36 +87,33 @@ class vari_base {
 };
 
 struct vari_zeroing {
-    void* concrete_;
-    internal::vtable_zeroing const* vtable_;
-    template <typename T, require_not_same_t<vari_zeroing, T>* = nullptr>
-    explicit vari_zeroing (T* t) noexcept :
-        concrete_(reinterpret_cast<void*>(t)),
+  void* concrete_;
+  internal::vtable_zeroing const* vtable_;
+  template <typename T, require_not_same_t<vari_zeroing, T>* = nullptr>
+  explicit vari_zeroing(T* t) noexcept
+      : concrete_(reinterpret_cast<void*>(t)),
         vtable_(&internal::vtable_for_zeroing<T>) {}
 
-    vari_zeroing() :
-      concrete_(),
-      vtable_(&internal::vtable_for_zeroing<nada_zero>) {}
+  vari_zeroing()
+      : concrete_(), vtable_(&internal::vtable_for_zeroing<nada_zero>) {}
 
-    void set_zero_adjoint() {vtable_->set_zero_adjoint(concrete_);}
+  void set_zero_adjoint() { vtable_->set_zero_adjoint(concrete_); }
 };
 
 struct vari_chain {
-    void* concrete_;
-    internal::vtable_chain const* vtable_;
+  void* concrete_;
+  internal::vtable_chain const* vtable_;
 
-    template <typename T, require_not_same_t<vari_chain, T>* = nullptr>
-    explicit vari_chain (T* t) noexcept :
-        concrete_(reinterpret_cast<void*>(t)),
+  template <typename T, require_not_same_t<vari_chain, T>* = nullptr>
+  explicit vari_chain(T* t) noexcept
+      : concrete_(reinterpret_cast<void*>(t)),
         vtable_(&internal::vtable_for_chain<T>) {}
 
-    vari_chain() :
-      concrete_(),
-      vtable_(&internal::vtable_for_chain<nada_chain>) {}
+  vari_chain()
+      : concrete_(), vtable_(&internal::vtable_for_chain<nada_chain>) {}
 
-    void chain() {vtable_->chain(concrete_);}
+  void chain() { vtable_->chain(concrete_); }
 };
-
 
 /**
  * The variable implementation for floating point types.
@@ -160,7 +155,7 @@ class vari_value<T, require_t<std::is_floating_point<T>>> : public vari_base {
    */
   template <typename S, require_convertible_t<S&, T>* = nullptr>
   vari_value(S x) noexcept : val_(x) {  // NOLINT
-  //  ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
+    //  ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
     ChainableStack::instance_->var_nochain_stack_.push_back(vari_zeroing(this));
   }
 
@@ -181,8 +176,8 @@ class vari_value<T, require_t<std::is_floating_point<T>>> : public vari_base {
    */
   template <typename S, require_convertible_t<S&, T>* = nullptr>
   vari_value(S x, bool stacked) noexcept : val_(x) {
-//      ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
-      ChainableStack::instance_->var_nochain_stack_.push_back(vari_zeroing(this));
+    //      ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
+    ChainableStack::instance_->var_nochain_stack_.push_back(vari_zeroing(this));
   }
 
   /**
@@ -727,7 +722,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
   template <typename S, require_assignable_t<T, S>* = nullptr>
   explicit vari_value(const S& x) : val_(x), adj_(x.rows(), x.cols()) {
     adj_.setZero();
-//    ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
+    //    ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
     ChainableStack::instance_->var_nochain_stack_.push_back(vari_zeroing(this));
   }
 
@@ -749,8 +744,8 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
   template <typename S, require_assignable_t<T, S>* = nullptr>
   vari_value(const S& x, bool stacked) : val_(x), adj_(x.rows(), x.cols()) {
     adj_.setZero();
-//      ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
-      ChainableStack::instance_->var_nochain_stack_.push_back(vari_zeroing(this));
+    //      ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
+    ChainableStack::instance_->var_nochain_stack_.push_back(vari_zeroing(this));
   }
 
   /**
@@ -862,9 +857,8 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
   explicit vari_value(S&& x)
       : adj_(x), val_(std::forward<S>(x)), chainable_alloc() {
     this->set_zero_adjoint();
-  //  ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
+    //  ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
     ChainableStack::instance_->var_nochain_stack_.push_back(vari_zeroing(this));
-
   }
   /**
    * Construct an sparse Eigen variable implementation from a value. The
@@ -887,8 +881,8 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
   vari_value(S&& x, bool stacked)
       : adj_(x), val_(std::forward<S>(x)), chainable_alloc() {
     this->set_zero_adjoint();
-//      ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
-      ChainableStack::instance_->var_nochain_stack_.push_back(vari_zeroing(this));
+    //      ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
+    ChainableStack::instance_->var_nochain_stack_.push_back(vari_zeroing(this));
   }
 
   /**

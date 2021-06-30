@@ -81,8 +81,9 @@ class quad_form_vari : public vari_base {
  public:
   quad_form_vari(const Eigen::Matrix<Ta, Ra, Ca>& A,
                  const Eigen::Matrix<Tb, Rb, Cb>& B, bool symmetric = false)
-      : impl_(new quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>(A, B, symmetric)) {
-        ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
+      : impl_(
+            new quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>(A, B, symmetric)) {
+    ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
   }
 
   virtual void chain() {

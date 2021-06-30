@@ -31,7 +31,7 @@ class matrix_scalar_divide_dv_vari : public vari_base {
         invc_(1.0 / c.val()) {
     Eigen::Map<matrix_vi>(adjResultRef_, rows_, cols_)
         = (invc_ * m).unaryExpr([](double x) { return new vari(x, false); });
-        ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
+    ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
   }
 
   virtual void chain() {
@@ -64,7 +64,7 @@ class matrix_scalar_divide_vd_vari : public vari_base {
         = (invc_ * m.val()).unaryExpr([](double x) {
             return new vari(x, false);
           });
-          ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
+    ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
   }
 
   virtual void chain() {
@@ -99,7 +99,7 @@ class matrix_scalar_divide_vv_vari : public vari_base {
         = (invc_ * m.val()).unaryExpr([](double x) {
             return new vari(x, false);
           });
-          ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
+    ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
   }
 
   virtual void chain() {

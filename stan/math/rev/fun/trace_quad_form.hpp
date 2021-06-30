@@ -64,8 +64,8 @@ class trace_quad_form_vari : public vari {
   explicit trace_quad_form_vari(
       trace_quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>* impl)
       : vari(impl->compute()), impl_(impl) {
-        ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
-      }
+    ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
+  }
 
   virtual void chain() {
     chainAB(impl_->A_, impl_->B_, value_of(impl_->A_), value_of(impl_->B_),

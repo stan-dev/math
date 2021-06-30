@@ -17,8 +17,8 @@ struct callback_vari : public vari_value<T> {
   explicit callback_vari(S&& value, F&& rev_functor)
       : vari_value<T>(std::move(value)),
         rev_functor_(std::forward<F>(rev_functor)) {
-          ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
-        }
+    ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
+  }
 
   inline void chain() { rev_functor_(*this); }
 };
