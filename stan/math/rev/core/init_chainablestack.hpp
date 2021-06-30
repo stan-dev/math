@@ -11,6 +11,8 @@
 #include <thread>
 #include <tuple>
 
+#include <iostream>
+
 namespace stan {
 namespace math {
 
@@ -30,6 +32,7 @@ class ad_tape_observer final : public tbb::task_scheduler_observer {
 
  public:
   ad_tape_observer() : tbb::task_scheduler_observer(), thread_tape_map_() {
+    std::cout << "Initializing AD tape!" << std::endl;
     on_scheduler_entry(true);  // register current process
     observe(true);             // activates the observer
   }

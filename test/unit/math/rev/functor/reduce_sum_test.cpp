@@ -8,6 +8,7 @@
 #include <set>
 
 TEST(StanMathRev_reduce_sum, no_args) {
+  stan::math::init_threadpool_tbb();
   using stan::math::var;
   using stan::math::test::get_new_msg;
   using stan::math::test::sum_lpdf;
