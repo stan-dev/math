@@ -56,10 +56,12 @@ namespace math {
 template <typename F, typename T, typename... Args,
           require_eigen_vector_t<T>* = nullptr,
           require_all_st_arithmetic<Args...>* = nullptr>
-Eigen::VectorXd algebra_solver_newton_impl(
-    const F& f, const T& x, std::ostream* const msgs, const double scaling_step_size,
-    const double function_tolerance, const int64_t max_num_steps,
-    const Args&... args) {
+Eigen::VectorXd algebra_solver_newton_impl(const F& f, const T& x,
+                                           std::ostream* const msgs,
+                                           const double scaling_step_size,
+                                           const double function_tolerance,
+                                           const int64_t max_num_steps,
+                                           const Args&... args) {
   const auto& x_ref = to_ref(value_of(x));
 
   check_nonzero_size("algebra_solver_newton", "initial guess", x_ref);
@@ -139,9 +141,9 @@ template <typename F, typename T, typename... T_Args,
           require_eigen_vector_t<T>* = nullptr,
           require_any_st_var<T_Args...>* = nullptr>
 Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_newton_impl(
-    const F& f, const T& x, std::ostream* const msgs, const double scaling_step_size,
-    const double function_tolerance, const int64_t max_num_steps,
-    const T_Args&... args) {
+    const F& f, const T& x, std::ostream* const msgs,
+    const double scaling_step_size, const double function_tolerance,
+    const int64_t max_num_steps, const T_Args&... args) {
   const auto& x_ref = to_ref(value_of(x));
   auto arena_args_tuple = std::make_tuple(to_arena(args)...);
   auto args_vals_tuple = apply(
@@ -250,7 +252,8 @@ template <typename F, typename T1, typename T2,
 Eigen::Matrix<scalar_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_newton(
     const F& f, const T1& x, const T2& y, const std::vector<double>& dat,
     const std::vector<int>& dat_int, std::ostream* const msgs = nullptr,
-    const double scaling_step_size = 1e-3, const double function_tolerance = 1e-6,
+    const double scaling_step_size = 1e-3,
+    const double function_tolerance = 1e-6,
     const long int max_num_steps = 200) {  // NOLINT(runtime/int)
   return algebra_solver_newton_impl(algebra_solver_adapter<F>(f), x, msgs,
                                     scaling_step_size, function_tolerance,

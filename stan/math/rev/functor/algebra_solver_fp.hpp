@@ -85,7 +85,8 @@ struct KinsolFixedPointEnv {
   }
 
   /** Implements the user-defined function passed to KINSOL. */
-  static int kinsol_f_system(const N_Vector x, const N_Vector f, void* const user_data) {
+  static int kinsol_f_system(const N_Vector x, const N_Vector f,
+                             void* const user_data) {
     auto g = static_cast<const KinsolFixedPointEnv<F, T_u, T_f, Args...>*>(
         user_data);
     Eigen::VectorXd x_eigen(Eigen::Map<Eigen::VectorXd>(NV_DATA_S(x), g->N_));
@@ -102,7 +103,7 @@ struct KinsolFixedPointEnv {
  * Private interface for solving fixed point problems using KINSOL. Users should
  * call the KINSOL fixed point solver through `algebra_solver_fp` or
  * `algebra_solver_fp_impl`.
- * 
+ *
  * @tparam F type of the equation system functor f
  * @tparam T_u type of scaling vector for unknowns. We allow
  *             it to be @c var because scaling could be parameter
@@ -120,7 +121,8 @@ struct KinsolFixedPointEnv {
 template <typename F, typename T, typename T_u, typename T_f, typename... Args,
           require_eigen_vector_t<T>* = nullptr>
 Eigen::VectorXd kinsol_solve_fp(const F& f, const T& x,
-                                const double function_tolerance, const double max_num_steps,
+                                const double function_tolerance,
+                                const double max_num_steps,
                                 const std::vector<T_u>& u_scale,
                                 const std::vector<T_f>& f_scale,
                                 std::ostream* const msgs, const Args&... args) {
@@ -207,11 +209,13 @@ Eigen::VectorXd kinsol_solve_fp(const F& f, const T& x,
 template <typename F, typename T, typename T_u, typename T_f, typename... Args,
           require_eigen_vector_t<T>* = nullptr,
           require_all_st_arithmetic<Args...>* = nullptr>
-Eigen::VectorXd algebra_solver_fp_impl(
-    const F& f, const T& x, std::ostream* const msgs,
-    const std::vector<T_u>& u_scale, const std::vector<T_f>& f_scale,
-    const double function_tolerance, const int max_num_steps,
-    const Args&... args) {
+Eigen::VectorXd algebra_solver_fp_impl(const F& f, const T& x,
+                                       std::ostream* const msgs,
+                                       const std::vector<T_u>& u_scale,
+                                       const std::vector<T_f>& f_scale,
+                                       const double function_tolerance,
+                                       const int max_num_steps,
+                                       const Args&... args) {
   const auto& x_ref = to_ref(value_of(x));
 
   check_nonzero_size("algebra_solver_fp", "initial guess", x_ref);
@@ -310,9 +314,10 @@ template <typename F, typename T, typename T_u, typename T_f, typename... Args,
           require_eigen_vector_t<T>* = nullptr,
           require_any_st_var<Args...>* = nullptr>
 Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_fp_impl(
-    const F& f, const T& x, std::ostream* const msgs, const std::vector<T_u>& u_scale,
-    const std::vector<T_f>& f_scale, const double function_tolerance,
-    const int max_num_steps, const Args&... args) {
+    const F& f, const T& x, std::ostream* const msgs,
+    const std::vector<T_u>& u_scale, const std::vector<T_f>& f_scale,
+    const double function_tolerance, const int max_num_steps,
+    const Args&... args) {
   const auto& x_val = to_ref(value_of(x));
   auto arena_args_tuple = std::make_tuple(to_arena(args)...);
   auto args_vals_tuple = apply(
@@ -435,9 +440,9 @@ Eigen::Matrix<scalar_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_fp(
     const std::vector<int>& dat_int, const std::vector<T_u>& u_scale,
     const std::vector<T_f>& f_scale, std::ostream* const msgs = nullptr,
     double function_tolerance = 1e-8, int max_num_steps = 200) {
-  return algebra_solver_fp_impl(algebra_solver_adapter<F>(f), x, msgs,
-                                u_scale, f_scale, function_tolerance,
-                                max_num_steps, y, dat, dat_int);
+  return algebra_solver_fp_impl(algebra_solver_adapter<F>(f), x, msgs, u_scale,
+                                f_scale, function_tolerance, max_num_steps, y,
+                                dat, dat_int);
 }
 
 }  // namespace math

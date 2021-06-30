@@ -47,9 +47,9 @@ namespace math {
 template <typename F, typename T, typename... Args,
           require_eigen_vector_t<T>* = nullptr>
 Eigen::VectorXd algebra_solver_powell_call_solver_(
-    const F& f, const T& x, std::ostream* const msgs, const double relative_tolerance,
-    const double function_tolerance, const int64_t max_num_steps,
-    const Args&... args) {
+    const F& f, const T& x, std::ostream* const msgs,
+    const double relative_tolerance, const double function_tolerance,
+    const int64_t max_num_steps, const Args&... args) {
   // Construct the solver
   hybrj_functor_solver<decltype(f)> hfs(f);
   Eigen::HybridNonLinearSolver<decltype(hfs)> solver(hfs);
@@ -125,10 +125,12 @@ Eigen::VectorXd algebra_solver_powell_call_solver_(
 template <typename F, typename T, typename... Args,
           require_eigen_vector_t<T>* = nullptr,
           require_all_st_arithmetic<Args...>* = nullptr>
-Eigen::VectorXd algebra_solver_powell_impl(
-    const F& f, const T& x, std::ostream* const msgs, const double relative_tolerance,
-    const double function_tolerance, const int64_t max_num_steps,
-    const Args&...  args) {
+Eigen::VectorXd algebra_solver_powell_impl(const F& f, const T& x,
+                                           std::ostream* const msgs,
+                                           const double relative_tolerance,
+                                           const double function_tolerance,
+                                           const int64_t max_num_steps,
+                                           const Args&... args) {
   const auto& x_val = to_ref(value_of(x));
 
   // Curry the input function w.r.t. y
@@ -217,9 +219,9 @@ template <typename F, typename T, typename... T_Args,
           require_eigen_vector_t<T>* = nullptr,
           require_any_st_var<T_Args...>* = nullptr>
 Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
-    const F& f, const T& x, std::ostream* const msgs, const double relative_tolerance,
-    const double function_tolerance, const int64_t max_num_steps,
-    const T_Args&... args) {
+    const F& f, const T& x, std::ostream* const msgs,
+    const double relative_tolerance, const double function_tolerance,
+    const int64_t max_num_steps, const T_Args&... args) {
   const auto& x_val = to_ref(value_of(x));
   auto arena_args_tuple = std::make_tuple(to_arena(args)...);
   auto args_vals_tuple = apply(
@@ -390,7 +392,8 @@ template <typename F, typename T1, typename T2,
 Eigen::Matrix<value_type_t<T2>, Eigen::Dynamic, 1> algebra_solver(
     const F& f, const T1& x, const T2& y, const std::vector<double>& dat,
     const std::vector<int>& dat_int, std::ostream* msgs = nullptr,
-    const double relative_tolerance = 1e-10, const double function_tolerance = 1e-6,
+    const double relative_tolerance = 1e-10,
+    const double function_tolerance = 1e-6,
     const int64_t max_num_steps = 1e+3) {
   return algebra_solver_powell(f, x, y, dat, dat_int, msgs, relative_tolerance,
                                function_tolerance, max_num_steps);
