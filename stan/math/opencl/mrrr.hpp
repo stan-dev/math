@@ -43,8 +43,8 @@ inline double_d get_random_perturbation_multiplier() {
  * @param[out] max_eigval Upper bound on eigenvalues.
  */
 inline void get_gresgorin(const Eigen::Ref<const Eigen::VectorXd> diagonal,
-                   const Eigen::Ref<const Eigen::VectorXd> subdiagonal,
-                   double& min_eigval, double& max_eigval) {
+                          const Eigen::Ref<const Eigen::VectorXd> subdiagonal,
+                          double& min_eigval, double& max_eigval) {
   using std::fabs;
   const int n = diagonal.size();
   min_eigval = diagonal[0] - fabs(subdiagonal[0]);
@@ -81,8 +81,8 @@ inline double max_nan(double a, double b) { return isnan(a) || a > b ? a : b; }
  * @return Element growth.
  */
 inline double get_ldl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
-               const Eigen::Ref<const Eigen::VectorXd> subdiagonal,
-               const double shift, VectorXdd& l, VectorXdd& d_plus) {
+                      const Eigen::Ref<const Eigen::VectorXd> subdiagonal,
+                      const double shift, VectorXdd& l, VectorXdd& d_plus) {
   using std::fabs;
   d_plus[0] = diagonal[0] - shift;
   double element_growth = fabs(d_plus[0].high);
@@ -106,11 +106,11 @@ inline double get_ldl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
  * @param max_ele_growth Maximum desired element growth.
  * @return
  */
-inline double find_initial_shift(const Eigen::Ref<const Eigen::VectorXd> diagonal,
-                          const Eigen::Ref<const Eigen::VectorXd> subdiagonal,
-                          VectorXdd& l0, VectorXdd& d0, const double min_eigval,
-                          const double max_eigval,
-                          const double max_ele_growth) {
+inline double find_initial_shift(
+    const Eigen::Ref<const Eigen::VectorXd> diagonal,
+    const Eigen::Ref<const Eigen::VectorXd> subdiagonal, VectorXdd& l0,
+    VectorXdd& d0, const double min_eigval, const double max_eigval,
+    const double max_ele_growth) {
   double shift = (max_eigval + min_eigval) * 0.5;
   double element_growth = get_ldl(diagonal, subdiagonal, shift, l0, d0);
   if (element_growth < max_ele_growth) {
@@ -137,7 +137,7 @@ inline double find_initial_shift(const Eigen::Ref<const Eigen::VectorXd> diagona
  * @return Sturm count.
  */
 inline int get_sturm_count_ldl(const VectorXdd& l, const VectorXdd& d,
-                        const double_d shift) {
+                               const double_d shift) {
   using std::isinf;
   const int n = l.size();
   double_d s = -shift;
@@ -168,7 +168,7 @@ inline int get_sturm_count_ldl(const VectorXdd& l, const VectorXdd& d,
  * @param i i-th eigenvalue
  */
 inline void eigenval_bisect_refine(const VectorXdd& l, const VectorXdd& d,
-                            double_d& low, double_d& high, const int i) {
+                                   double_d& low, double_d& high, const int i) {
   using std::fabs;
   const double_d eps = 3e-20;
   while ((high - low) > eps * fabs(high + low)
@@ -200,8 +200,8 @@ inline void eigenval_bisect_refine(const VectorXdd& l, const VectorXdd& d,
  * @return Element growth.
  */
 inline double get_shifted_ldl(const VectorXdd& l, const VectorXdd& d,
-                       const double_d shift, VectorXdd& l_plus,
-                       VectorXdd& d_plus) {
+                              const double_d shift, VectorXdd& l_plus,
+                              VectorXdd& d_plus) {
   using std::fabs;
   using std::isinf;
   const int n = l.size();
@@ -239,10 +239,11 @@ inline double get_shifted_ldl(const VectorXdd& l, const VectorXdd& d,
  * @param[out] shift Shift.
  * @param[out] min_element_growth Element growth achieved with resulting shift.
  */
-inline void find_shift(const VectorXdd& l, const VectorXdd& d, const double_d low,
-                const double_d high, const double max_ele_growth,
-                const double_d max_shift, VectorXdd& l2, VectorXdd& d2,
-                double_d& shift, double& min_element_growth) {
+inline void find_shift(const VectorXdd& l, const VectorXdd& d,
+                       const double_d low, const double_d high,
+                       const double max_ele_growth, const double_d max_shift,
+                       VectorXdd& l2, VectorXdd& d2, double_d& shift,
+                       double& min_element_growth) {
   VectorXdd l3(l2.size()), d3(d2.size());
   const std::vector<double_d> shifts = {
       low,
@@ -294,11 +295,11 @@ struct mrrr_task {
  */
 template <bool need_eigenvectors = true>
 inline void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
-             const Eigen::Ref<const Eigen::VectorXd> subdiagonal,
-             Eigen::Ref<Eigen::VectorXd> eigenvalues,
-             Eigen::Ref<Eigen::MatrixXd> eigenvectors,
-             const double min_rel_sep = 1e-4,
-             const double maximum_ele_growth = 15) {
+                    const Eigen::Ref<const Eigen::VectorXd> subdiagonal,
+                    Eigen::Ref<Eigen::VectorXd> eigenvalues,
+                    Eigen::Ref<Eigen::MatrixXd> eigenvectors,
+                    const double min_rel_sep = 1e-4,
+                    const double maximum_ele_growth = 15) {
   using std::copysign;
   using std::fabs;
   const double shift_error = 1e-19;
@@ -450,10 +451,10 @@ inline void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
  */
 template <bool need_eigenvectors = true>
 inline void tridiagonal_eigensolver_cl(const matrix_cl<double>& diagonal_cl,
-                                const matrix_cl<double>& subdiagonal_cl,
-                                matrix_cl<double>& eigenvalues_cl,
-                                matrix_cl<double>& eigenvectors_cl,
-                                const double split_threshold = 1e-15) {
+                                       const matrix_cl<double>& subdiagonal_cl,
+                                       matrix_cl<double>& eigenvalues_cl,
+                                       matrix_cl<double>& eigenvectors_cl,
+                                       const double split_threshold = 1e-15) {
   using std::fabs;
   using std::sqrt;
   const int n = diagonal_cl.rows();
