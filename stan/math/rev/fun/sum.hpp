@@ -33,7 +33,9 @@ class sum_v_vari : public vari {
 
  public:
   explicit sum_v_vari(double value, vari** v, size_t length)
-      : vari(value), v_(v), length_(length) {}
+      : vari(value), v_(v), length_(length) {
+        ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
+      }
 
   explicit sum_v_vari(const std::vector<var>& v1)
       : vari(sum_of_val(v1)),
@@ -43,6 +45,7 @@ class sum_v_vari : public vari {
     for (size_t i = 0; i < length_; i++) {
       v_[i] = v1[i].vi_;
     }
+    ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
   }
 
   virtual void chain() {

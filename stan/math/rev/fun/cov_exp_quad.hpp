@@ -65,6 +65,7 @@ class cov_exp_quad_vari : public vari {
     for (size_t i = 0; i < size_; ++i) {
       cov_diag_[i] = new vari(sigma_sq_d_, false);
     }
+    ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
   }
 
   virtual void chain() {
@@ -133,6 +134,7 @@ class cov_exp_quad_vari<T_x, double, T_l> : public vari {
     for (size_t i = 0; i < size_; ++i) {
       cov_diag_[i] = new vari(sigma_sq_d_, false);
     }
+    ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
   }
 
   virtual void chain() {

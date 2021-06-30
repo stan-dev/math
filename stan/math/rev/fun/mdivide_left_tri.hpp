@@ -14,7 +14,7 @@ namespace math {
 namespace internal {
 
 template <Eigen::UpLoType TriView, int R1, int C1, int R2, int C2>
-class mdivide_left_tri_vv_vari : public vari {
+class mdivide_left_tri_vv_vari : public vari_base {
  public:
   int M_;  // A.rows() = A.cols() = B.rows()
   int N_;  // B.cols()
@@ -26,8 +26,7 @@ class mdivide_left_tri_vv_vari : public vari {
 
   mdivide_left_tri_vv_vari(const Eigen::Matrix<var, R1, C1> &A,
                            const Eigen::Matrix<var, R2, C2> &B)
-      : vari(0.0),
-        M_(A.rows()),
+      : M_(A.rows()),
         N_(B.cols()),
         A_(reinterpret_cast<double *>(
             ChainableStack::instance_->memalloc_.alloc(sizeof(double) * A.rows()
@@ -71,6 +70,7 @@ class mdivide_left_tri_vv_vari : public vari {
 
     Map<matrix_vi>(variRefC_, M_, N_)
         = c_map.unaryExpr([](double x) { return new vari(x, false); });
+    ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
   }
 
   virtual void chain() {
@@ -103,7 +103,7 @@ class mdivide_left_tri_vv_vari : public vari {
 };
 
 template <Eigen::UpLoType TriView, int R1, int C1, int R2, int C2>
-class mdivide_left_tri_dv_vari : public vari {
+class mdivide_left_tri_dv_vari : public vari_base {
  public:
   int M_;  // A.rows() = A.cols() = B.rows()
   int N_;  // B.cols()
@@ -114,8 +114,7 @@ class mdivide_left_tri_dv_vari : public vari {
 
   mdivide_left_tri_dv_vari(const Eigen::Matrix<double, R1, C1> &A,
                            const Eigen::Matrix<var, R2, C2> &B)
-      : vari(0.0),
-        M_(A.rows()),
+      : M_(A.rows()),
         N_(B.cols()),
         A_(reinterpret_cast<double *>(
             ChainableStack::instance_->memalloc_.alloc(sizeof(double) * A.rows()
@@ -142,6 +141,7 @@ class mdivide_left_tri_dv_vari : public vari {
 
     Map<matrix_vi>(variRefC_, M_, N_)
         = c_map.unaryExpr([](double x) { return new vari(x, false); });
+    ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
   }
 
   virtual void chain() {
@@ -156,7 +156,7 @@ class mdivide_left_tri_dv_vari : public vari {
 };
 
 template <Eigen::UpLoType TriView, int R1, int C1, int R2, int C2>
-class mdivide_left_tri_vd_vari : public vari {
+class mdivide_left_tri_vd_vari : public vari_base {
  public:
   int M_;  // A.rows() = A.cols() = B.rows()
   int N_;  // B.cols()
@@ -167,8 +167,7 @@ class mdivide_left_tri_vd_vari : public vari {
 
   mdivide_left_tri_vd_vari(const Eigen::Matrix<var, R1, C1> &A,
                            const Eigen::Matrix<double, R2, C2> &B)
-      : vari(0.0),
-        M_(A.rows()),
+      : M_(A.rows()),
         N_(B.cols()),
         A_(reinterpret_cast<double *>(
             ChainableStack::instance_->memalloc_.alloc(sizeof(double) * A.rows()
@@ -207,6 +206,7 @@ class mdivide_left_tri_vd_vari : public vari {
 
     Map<matrix_vi>(variRefC_, M_, N_)
         = Cd.unaryExpr([](double x) { return new vari(x, false); });
+    ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
   }
 
   virtual void chain() {

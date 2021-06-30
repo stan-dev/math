@@ -130,6 +130,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
       if (cvodes_mem_ == nullptr) {
         throw std::runtime_error("CVodeCreate failed to allocate memory");
       }
+      ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
     }
 
     virtual ~cvodes_solver() {

@@ -24,7 +24,7 @@ class mdivide_left_spd_alloc : public chainable_alloc {
 };
 
 template <int R1, int C1, int R2, int C2>
-class mdivide_left_spd_vv_vari : public vari {
+class mdivide_left_spd_vv_vari : public vari_base {
  public:
   int M_;  // A.rows() = A.cols() = B.rows()
   int N_;  // B.cols()
@@ -35,8 +35,7 @@ class mdivide_left_spd_vv_vari : public vari {
 
   mdivide_left_spd_vv_vari(const Eigen::Matrix<var, R1, C1> &A,
                            const Eigen::Matrix<var, R2, C2> &B)
-      : vari(0.0),
-        M_(A.rows()),
+      : M_(A.rows()),
         N_(B.cols()),
         variRefA_(reinterpret_cast<vari **>(
             ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * A.rows()
@@ -57,6 +56,7 @@ class mdivide_left_spd_vv_vari : public vari {
 
     Eigen::Map<matrix_vi>(variRefC_, M_, N_)
         = alloc_->C_.unaryExpr([](double x) { return new vari(x, false); });
+        ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
   }
 
   virtual void chain() {
@@ -69,7 +69,7 @@ class mdivide_left_spd_vv_vari : public vari {
 };
 
 template <int R1, int C1, int R2, int C2>
-class mdivide_left_spd_dv_vari : public vari {
+class mdivide_left_spd_dv_vari : public vari_base {
  public:
   int M_;  // A.rows() = A.cols() = B.rows()
   int N_;  // B.cols()
@@ -79,8 +79,7 @@ class mdivide_left_spd_dv_vari : public vari {
 
   mdivide_left_spd_dv_vari(const Eigen::Matrix<double, R1, C1> &A,
                            const Eigen::Matrix<var, R2, C2> &B)
-      : vari(0.0),
-        M_(A.rows()),
+      : M_(A.rows()),
         N_(B.cols()),
         variRefB_(reinterpret_cast<vari **>(
             ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * B.rows()
@@ -97,6 +96,7 @@ class mdivide_left_spd_dv_vari : public vari {
 
     Eigen::Map<matrix_vi>(variRefC_, M_, N_)
         = alloc_->C_.unaryExpr([](double x) { return new vari(x, false); });
+    ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
   }
 
   virtual void chain() {
@@ -107,7 +107,7 @@ class mdivide_left_spd_dv_vari : public vari {
 };
 
 template <int R1, int C1, int R2, int C2>
-class mdivide_left_spd_vd_vari : public vari {
+class mdivide_left_spd_vd_vari : public vari_base {
  public:
   int M_;  // A.rows() = A.cols() = B.rows()
   int N_;  // B.cols()
@@ -117,8 +117,7 @@ class mdivide_left_spd_vd_vari : public vari {
 
   mdivide_left_spd_vd_vari(const Eigen::Matrix<var, R1, C1> &A,
                            const Eigen::Matrix<double, R2, C2> &B)
-      : vari(0.0),
-        M_(A.rows()),
+      : M_(A.rows()),
         N_(B.cols()),
         variRefA_(reinterpret_cast<vari **>(
             ChainableStack::instance_->memalloc_.alloc(sizeof(vari *) * A.rows()
@@ -134,6 +133,7 @@ class mdivide_left_spd_vd_vari : public vari {
 
     Eigen::Map<matrix_vi>(variRefC_, M_, N_)
         = alloc_->C_.unaryExpr([](double x) { return new vari(x, false); });
+    ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
   }
 
   virtual void chain() {

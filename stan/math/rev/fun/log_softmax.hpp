@@ -32,7 +32,9 @@ class log_softmax_elt_vari : public vari {
         alpha_(alpha),
         softmax_alpha_(softmax_alpha),
         size_(size),
-        idx_(idx) {}
+        idx_(idx) {
+          ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
+        }
   void chain() {
     for (int m = 0; m < size_; ++m) {
       if (m == idx_) {

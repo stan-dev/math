@@ -47,7 +47,7 @@ class quad_form_vari_alloc : public chainable_alloc {
 };
 
 template <typename Ta, int Ra, int Ca, typename Tb, int Rb, int Cb>
-class quad_form_vari : public vari {
+class quad_form_vari : public vari_base {
  protected:
   inline void chainA(Eigen::Matrix<double, Ra, Ca>& A,
                      const Eigen::Matrix<double, Rb, Cb>& Bd,
@@ -81,8 +81,8 @@ class quad_form_vari : public vari {
  public:
   quad_form_vari(const Eigen::Matrix<Ta, Ra, Ca>& A,
                  const Eigen::Matrix<Tb, Rb, Cb>& B, bool symmetric = false)
-      : vari(0.0) {
-    impl_ = new quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>(A, B, symmetric);
+      : impl_(new quad_form_vari_alloc<Ta, Ra, Ca, Tb, Rb, Cb>(A, B, symmetric)) {
+        ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
   }
 
   virtual void chain() {

@@ -71,6 +71,8 @@ class squared_distance_vv_vari : public vari {
         ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(vari*)));
     Eigen::Map<vector_vi>(v1_, length_) = v1.vi();
     Eigen::Map<vector_vi>(v2_, length_) = v2.vi();
+    ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
+
   }
 
   virtual void chain() {
@@ -103,6 +105,8 @@ class squared_distance_vd_vari : public vari {
         ChainableStack::instance_->memalloc_.alloc(length_ * sizeof(double)));
     Eigen::Map<vector_vi>(v1_, length_) = v1.vi();
     Eigen::Map<vector_d>(v2_, length_) = v2;
+    ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
+
   }
 
   virtual void chain() {

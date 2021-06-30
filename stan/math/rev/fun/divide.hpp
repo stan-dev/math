@@ -13,7 +13,7 @@ namespace math {
 namespace internal {
 
 template <int R, int C>
-class matrix_scalar_divide_dv_vari : public vari {
+class matrix_scalar_divide_dv_vari : public vari_base {
  public:
   int rows_;
   int cols_;
@@ -23,8 +23,7 @@ class matrix_scalar_divide_dv_vari : public vari {
 
   explicit matrix_scalar_divide_dv_vari(const Eigen::Matrix<double, R, C>& m,
                                         const var& c)
-      : vari(0),
-        rows_(m.rows()),
+      : rows_(m.rows()),
         cols_(m.cols()),
         adjCRef_(c.vi_),
         adjResultRef_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
@@ -32,6 +31,7 @@ class matrix_scalar_divide_dv_vari : public vari {
         invc_(1.0 / c.val()) {
     Eigen::Map<matrix_vi>(adjResultRef_, rows_, cols_)
         = (invc_ * m).unaryExpr([](double x) { return new vari(x, false); });
+        ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
   }
 
   virtual void chain() {
@@ -42,7 +42,7 @@ class matrix_scalar_divide_dv_vari : public vari {
 };
 
 template <int R, int C>
-class matrix_scalar_divide_vd_vari : public vari {
+class matrix_scalar_divide_vd_vari : public vari_base {
  public:
   int rows_;
   int cols_;
@@ -52,8 +52,7 @@ class matrix_scalar_divide_vd_vari : public vari {
 
   explicit matrix_scalar_divide_vd_vari(const Eigen::Matrix<var, R, C>& m,
                                         const double& c)
-      : vari(0),
-        rows_(m.rows()),
+      : rows_(m.rows()),
         cols_(m.cols()),
         adjMRef_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
             m.rows() * m.cols())),
@@ -65,6 +64,7 @@ class matrix_scalar_divide_vd_vari : public vari {
         = (invc_ * m.val()).unaryExpr([](double x) {
             return new vari(x, false);
           });
+          ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
   }
 
   virtual void chain() {
@@ -75,7 +75,7 @@ class matrix_scalar_divide_vd_vari : public vari {
 };
 
 template <int R, int C>
-class matrix_scalar_divide_vv_vari : public vari {
+class matrix_scalar_divide_vv_vari : public vari_base {
  public:
   int rows_;
   int cols_;
@@ -86,8 +86,7 @@ class matrix_scalar_divide_vv_vari : public vari {
 
   explicit matrix_scalar_divide_vv_vari(const Eigen::Matrix<var, R, C>& m,
                                         const var& c)
-      : vari(0),
-        rows_(m.rows()),
+      : rows_(m.rows()),
         cols_(m.cols()),
         adjMRef_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
             m.rows() * m.cols())),
@@ -100,6 +99,7 @@ class matrix_scalar_divide_vv_vari : public vari {
         = (invc_ * m.val()).unaryExpr([](double x) {
             return new vari(x, false);
           });
+          ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
   }
 
   virtual void chain() {

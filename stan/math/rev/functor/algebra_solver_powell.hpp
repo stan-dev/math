@@ -22,7 +22,7 @@ namespace math {
  * chain() -- this prevents malloc issues.
  */
 template <typename Fs, typename F, typename T, typename Fx>
-struct algebra_solver_vari : public vari {
+struct algebra_solver_vari : public vari_base {
   /** vector of parameters */
   vari** y_;
   /** number of parameters */
@@ -40,8 +40,7 @@ struct algebra_solver_vari : public vari {
                       const std::vector<int>& dat_int,
                       const Eigen::VectorXd& theta_dbl, Fx& fx,
                       std::ostream* msgs)
-      : vari(theta_dbl(0)),
-        y_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(y.size())),
+      : y_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(y.size())),
         y_size_(y.size()),
         x_size_(x.size()),
         theta_(
@@ -66,6 +65,7 @@ struct algebra_solver_vari : public vari {
         = -mdivide_left(fx.get_jacobian(theta_dbl),
                         f_y(fs, f, theta_dbl, value_of(y), dat, dat_int, msgs)
                             .get_jacobian(value_of(y)));
+    ChainableStack::instance_->var_stack_.push_back(vari_chain(this));
   }
 
   void chain() {
