@@ -28,8 +28,8 @@ class kinsol_system_data {
   const F1& f_;
   const Eigen::VectorXd& x_;
   const size_t N_;
-  std::ostream* msgs_;
-  std::tuple<const Args&...> args_tuple_;
+  std::ostream* const msgs_;
+  const std::tuple<const Args&...> args_tuple_;
 
   typedef kinsol_system_data<F1, Args...> system_data;
 
@@ -40,7 +40,7 @@ class kinsol_system_data {
   void* kinsol_memory_;
 
   /* Constructor */
-  kinsol_system_data(const F1& f, const Eigen::VectorXd& x, std::ostream* msgs,
+  kinsol_system_data(const F1& f, const Eigen::VectorXd& x, std::ostream* const msgs,
                      const Args&... args)
       : f_(f),
         x_(x),
@@ -60,7 +60,7 @@ class kinsol_system_data {
   }
 
   /* Implements the user-defined function passed to KINSOL. */
-  static int kinsol_f_system(N_Vector x, N_Vector f_eval, void* user_data) {
+  static int kinsol_f_system(const N_Vector x, const N_Vector f_eval, void* const user_data) {
     const system_data* explicit_system
         = static_cast<const system_data*>(user_data);
 
@@ -91,8 +91,8 @@ class kinsol_system_data {
    * https://computation.llnl.gov/sites/default/files/public/kin_guide-dev.pdf,
    * page 55.
    */
-  static int kinsol_jacobian(N_Vector x, N_Vector f_eval, SUNMatrix J,
-                             void* user_data, N_Vector tmp1, N_Vector tmp2) {
+  static int kinsol_jacobian(const N_Vector x, const N_Vector f_eval, const SUNMatrix J,
+                             void* const user_data, const N_Vector tmp1, const N_Vector tmp2) {
     const system_data* explicit_system
         = static_cast<const system_data*>(user_data);
 

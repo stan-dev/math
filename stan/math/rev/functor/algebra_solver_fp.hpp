@@ -29,6 +29,15 @@ namespace math {
  * auxiliary data that will be used for functor evaluation.
  *
  * @tparam F functor type for system function.
+ * @tparam T_u type of scaling vector for unknowns. We allow
+ *             it to be @c var because scaling could be parameter
+ *             dependent. Internally these params are converted to data
+ *             because scaling is applied.
+ * @tparam T_f type of scaling vector for residual. We allow
+ *             it to be @c var because scaling could be parameter
+ *             dependent. Internally these params are converted to data
+ *             because scaling is applied.
+ * @tparam Args types of additional parameters to the equation system functor.
  */
 template <typename F, typename T_u, typename T_f, typename... Args>
 struct KinsolFixedPointEnv {
@@ -51,7 +60,7 @@ struct KinsolFixedPointEnv {
 
   KinsolFixedPointEnv(const F& f, const Eigen::MatrixXd x,
                       const std::vector<T_u>& u_scale,
-                      const std::vector<T_f>& f_scale, std::ostream* msgs,
+                      const std::vector<T_f>& f_scale, std::ostream* const msgs,
                       const Args&... args)
       : f_(f),
         N_(x.size()),
@@ -76,7 +85,7 @@ struct KinsolFixedPointEnv {
   }
 
   /** Implements the user-defined function passed to KINSOL. */
-  static int kinsol_f_system(N_Vector x, N_Vector f, void* user_data) {
+  static int kinsol_f_system(const N_Vector x, const N_Vector f, void* const user_data) {
     auto g = static_cast<const KinsolFixedPointEnv<F, T_u, T_f, Args...>*>(
         user_data);
     Eigen::VectorXd x_eigen(Eigen::Map<Eigen::VectorXd>(NV_DATA_S(x), g->N_));
@@ -90,19 +99,31 @@ struct KinsolFixedPointEnv {
 };
 
 /**
- * Solve FP using KINSOL
- *
+ * Private interface for solving fixed point problems using KINSOL. Users should
+ * call the KINSOL fixed point solver through `algebra_solver_fp` or
+ * `algebra_solver_fp_impl`.
+ * 
+ * @tparam F type of the equation system functor f
+ * @tparam T_u type of scaling vector for unknowns. We allow
+ *             it to be @c var because scaling could be parameter
+ *             dependent. Internally these params are converted to data
+ *             because scaling is applied.
+ * @tparam T_f type of scaling vector for residual. We allow
+ *             it to be @c var because scaling could be parameter
+ *             dependent. Internally these params are converted to data
+ *             because scaling is applied.
  * @param x initial point and final solution.
  * @param env KINSOL solution environment
  * @param f_tol Function tolerance
  * @param max_num_steps max nb. of iterations.
  */
-template <typename F, typename T_u, typename T_f, typename... Args>
-Eigen::VectorXd kinsol_solve_fp(const F& f, const Eigen::VectorXd& x,
-                                double function_tolerance, double max_num_steps,
+template <typename F, typename T, typename T_u, typename T_f, typename... Args,
+          require_eigen_vector_t<T>* = nullptr>
+Eigen::VectorXd kinsol_solve_fp(const F& f, const T& x,
+                                const double function_tolerance, const double max_num_steps,
                                 const std::vector<T_u>& u_scale,
                                 const std::vector<T_f>& f_scale,
-                                std::ostream* msgs, const Args&... args) {
+                                std::ostream* const msgs, const Args&... args) {
   KinsolFixedPointEnv<F, T_u, T_f, Args...> env(f, x, u_scale, f_scale, msgs,
                                                 args...);
   int N = env.N_;
@@ -130,14 +151,67 @@ Eigen::VectorXd kinsol_solve_fp(const F& f, const Eigen::VectorXd& x,
   return x_solution;
 }
 
-/** Implementation of ordinary fixed point solver. */
+/**
+ * Return a fixed pointer to the specified system of algebraic
+ * equations of form
+ * \[
+ *   x = F(x; theta)
+ * \]
+ * given an initial guess \(x\), and parameters \(theta\) and data. Use the
+ * KINSOL solver from the SUNDIALS suite.
+ *
+ * The user can also specify the scaling controls, the function
+ * tolerance, and the maximum number of steps.
+ *
+ * This function is overloaded to handle both constant and var-type parameters.
+ * This overload handles var parameters, and checks the input, calls the
+ * algebraic solver, and appropriately handles derivative propagation through
+ * the `reverse_pass_callback`.
+ *
+ * @tparam F type of equation system function.
+ * @tparam T type of initial guess vector.
+ * @tparam T_u type of scaling vector for unknowns. We allow
+ *             it to be @c var because scaling could be parameter
+ *             dependent. Internally these params are converted to data
+ *             because scaling is applied.
+ * @tparam T_f type of scaling vector for residual. We allow
+ *             it to be @c var because scaling could be parameter
+ *             dependent. Internally these params are converted to data
+ *             because scaling is applied.
+ *
+ * @param[in] f functor that evaluated the system of equations.
+ * @param[in] x vector of starting values.
+ * @param[in, out] msgs the print stream for warning messages.
+ * @param[in] u_scale diagonal scaling matrix elements \(Du\)
+ *                    such that \(Du x\) has all components roughly the same
+ *                    magnitude when \(x\) is close to a solution.
+ *                    (ref. KINSOL user guide chap.2 sec. "Scaling")
+ * @param[in] f_scale diagonal scaling matrix elements such
+ *                    that \(Df (x - f(x))\) has all components roughly the same
+ *                    magnitude when \(x\) is not too close to a solution.
+ *                    (ref. KINSOL user guide chap.2 sec. "Scaling")
+ * @param[in] function_tolerance Function-norm stopping tolerance.
+ * @param[in] max_num_steps maximum number of function evaluations.
+ * @param[in] args additional parameters to the equation system functor.
+ * @pre f returns finite values when passed any value of x and the given args.
+ * @throw <code>std::invalid_argument</code> if x has size zero.
+ * @throw <code>std::invalid_argument</code> if x has non-finite elements.
+ * @throw <code>std::invalid_argument</code> if scaled_step_size is strictly
+ * negative.
+ * @throw <code>std::invalid_argument</code> if function_tolerance is strictly
+ * negative.
+ * @throw <code>std::invalid_argument</code> if max_num_steps is not positive.
+ * @throw <code>boost::math::evaluation_error</code> (which is a subclass of
+ * <code>std::runtime_error</code>) if solver exceeds max_num_steps.
+ */
 template <typename F, typename T, typename T_u, typename T_f, typename... Args,
           require_eigen_vector_t<T>* = nullptr,
           require_all_st_arithmetic<Args...>* = nullptr>
 Eigen::VectorXd algebra_solver_fp_impl(
-    const F& f, const T& x, const double function_tolerance,
-    const int max_num_steps, const std::vector<T_u>& u_scale,
-    const std::vector<T_f>& f_scale, std::ostream* msgs, const Args&... args) {
+    const F& f, const T& x, std::ostream* const msgs,
+    const std::vector<T_u>& u_scale, const std::vector<T_f>& f_scale,
+    const double function_tolerance, const int max_num_steps,
+    const Args&... args) {
   const auto& x_ref = to_ref(value_of(x));
 
   check_nonzero_size("algebra_solver_fp", "initial guess", x_ref);
@@ -155,38 +229,90 @@ Eigen::VectorXd algebra_solver_fp_impl(
                          f_scale, msgs, args...);
 }
 
-/* Implementation of autodiff fixed point solver. The Jacobian Jxy(Jacobian of
- * unknown x w.r.t. the * param y) is calculated given the solution as follows.
- * Since
+/**
+ * Return a fixed pointer to the specified system of algebraic
+ * equations of form
+ * \[
+ *   x = F(x; theta)
+ * \]
+ * given an initial guess \(x\), and parameters \(theta\) and data. Use the
+ * KINSOL solver from the SUNDIALS suite.
  *
- *  x - f(x, y) = 0
+ * The user can also specify the scaling controls, the function
+ * tolerance, and the maximum number of steps.
  *
- * we have (Jpq being the Jacobian matrix dq/dq)
+ * This function is overloaded to handle both constant and var-type parameters.
+ * This overload handles var parameters, and checks the input, calls the
+ * algebraic solver, and appropriately handles derivative propagation through
+ * the `reverse_pass_callback`.
  *
- * Jxy - Jfx * Jxy = Jfy
- *
- * therefore Jxy can be solved from system
- *
- * (I - Jfx) * Jxy = Jfy
- *
- * Let eta be the adjoint with respect to x; then to calculate
- *
- * eta * Jxy
- *
+ * The Jacobian \(J_{xy}\) (i.e., Jacobian of unknown \(x\) w.r.t. the parameter
+ * \(y\)) is calculated given the solution as follows. Since
+ * \[
+ *   x - f(x, y) = 0,
+ * \]
+ * we have (\(J_{pq}\) being the Jacobian matrix \(\tfrac {dq} {dq}\))
+ * \[
+ *   J_{xy} - J_{fx} J_{xy} = J_{fy},
+ * \]
+ * and therefore \(J_{xy}\) can be solved from system
+ * \[
+ *   (I - J_{fx}) * J_{xy} = J_{fy}.
+ * \]
+ * Let \(eta\) be the adjoint with respect to \(x\); then to calculate
+ * \[
+ *   \eta J_{xy},
+ * \]
  * we solve
+ * \[
+ *   (\eta * (I - J_{fx})^{-1}) * J_{fy}.
+ * \]
+ * (This is virtually identical to the Powell and Newton solvers, except
+ * \(-J_{fx}\) has been replaced by \((I - J_{fx}\).)
  *
- * (eta * (I - Jfx)^(-1)) * Jfy
+ * @tparam F type of equation system function.
+ * @tparam T type of initial guess vector.
+ * @tparam T_u type of scaling vector for unknowns. We allow
+ *             it to be @c var because scaling could be parameter
+ *             dependent. Internally these params are converted to data
+ *             because scaling is applied.
+ * @tparam T_f type of scaling vector for residual. We allow
+ *             it to be @c var because scaling could be parameter
+ *             dependent. Internally these params are converted to data
+ *             because scaling is applied.
  *
- * (This is virtually identical to the Powell and Newton solvers, except Jfx
- * has been replaced by I - Jfx.)
+ * @param[in] f functor that evaluated the system of equations.
+ * @param[in] x vector of starting values.
+ * @param[in, out] msgs the print stream for warning messages.
+ * @param[in] u_scale diagonal scaling matrix elements \(Du\)
+ *                    such that \(Du x\) has all components roughly the same
+ *                    magnitude when \(x\) is close to a solution.
+ *                    (ref. KINSOL user guide chap.2 sec. "Scaling")
+ * @param[in] f_scale diagonal scaling matrix elements such
+ *                    that \(Df (x - f(x))\) has all components roughly the same
+ *                    magnitude when \(x\) is not too close to a solution.
+ *                    (ref. KINSOL user guide chap.2 sec. "Scaling")
+ * @param[in] function_tolerance Function-norm stopping tolerance.
+ * @param[in] max_num_steps maximum number of function evaluations.
+ * @param[in] args additional parameters to the equation system functor.
+ * @pre f returns finite values when passed any value of x and the given args.
+ * @throw <code>std::invalid_argument</code> if x has size zero.
+ * @throw <code>std::invalid_argument</code> if x has non-finite elements.
+ * @throw <code>std::invalid_argument</code> if scaled_step_size is strictly
+ * negative.
+ * @throw <code>std::invalid_argument</code> if function_tolerance is strictly
+ * negative.
+ * @throw <code>std::invalid_argument</code> if max_num_steps is not positive.
+ * @throw <code>boost::math::evaluation_error</code> (which is a subclass of
+ * <code>std::runtime_error</code>) if solver exceeds max_num_steps.
  */
 template <typename F, typename T, typename T_u, typename T_f, typename... Args,
           require_eigen_vector_t<T>* = nullptr,
           require_any_st_var<Args...>* = nullptr>
 Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_fp_impl(
-    const F& f, const T& x, const double function_tolerance,
-    const int max_num_steps, const std::vector<T_u>& u_scale,
-    const std::vector<T_f>& f_scale, std::ostream* msgs, const Args&... args) {
+    const F& f, const T& x, std::ostream* const msgs, const std::vector<T_u>& u_scale,
+    const std::vector<T_f>& f_scale, const double function_tolerance,
+    const int max_num_steps, const Args&... args) {
   const auto& x_val = to_ref(value_of(x));
   auto arena_args_tuple = std::make_tuple(to_arena(args)...);
   auto args_vals_tuple = apply(
@@ -254,6 +380,9 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_fp_impl(
  * The user can also specify the scaling controls, the function
  * tolerance, and the maximum number of steps.
  *
+ * Signature to maintain backward compatibility, will be removed
+ * in the future.
+ *
  * @tparam F type of equation system function.
  * @tparam T type of initial guess vector. The final solution
  *           type doesn't depend on initial guess type,
@@ -272,8 +401,8 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_fp_impl(
  * @param[in] y Parameter vector for the equation system. The function
  *            is overloaded to treat y as a vector of doubles or of a
  *            a template type T.
- * @param[in] x_r Continuous data vector for the equation system.
- * @param[in] x_i Integer data vector for the equation system.
+ * @param[in] dat Continuous data vector for the equation system.
+ * @param[in] dat_int Integer data vector for the equation system.
  * @param[in, out] msgs The print stream for warning messages.
  * @param[in] u_scale diagonal scaling matrix elements Du
  *                    such that Du*x has all components roughly the same
@@ -285,9 +414,10 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_fp_impl(
  *                    (ref. KINSOL user guide chap.2 sec. "Scaling")
  * @param[in] f_tol Function-norm stopping tolerance.
  * @param[in] max_num_steps maximum number of function evaluations.
+ * @pre f returns finite values when passed any value of x and the given y, dat,
+ *        and dat_int.
  * @throw <code>std::invalid_argument</code> if x has size zero.
  * @throw <code>std::invalid_argument</code> if x has non-finite elements.
- * @throw <code>std::invalid_argument</code> if y has non-finite elements.
  * @throw <code>std::invalid_argument</code> if dat has non-finite elements.
  * @throw <code>std::invalid_argument</code> if dat_int has non-finite elements.
  * @throw <code>std::invalid_argument</code> if scaled_step_size is strictly
@@ -303,11 +433,11 @@ Eigen::Matrix<scalar_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_fp(
     const F& f, const Eigen::Matrix<T1, -1, 1>& x,
     const Eigen::Matrix<T2, -1, 1>& y, const std::vector<double>& dat,
     const std::vector<int>& dat_int, const std::vector<T_u>& u_scale,
-    const std::vector<T_f>& f_scale, std::ostream* msgs = nullptr,
+    const std::vector<T_f>& f_scale, std::ostream* const msgs = nullptr,
     double function_tolerance = 1e-8, int max_num_steps = 200) {
-  return algebra_solver_fp_impl(algebra_solver_adapter<F>(f), x,
-                                function_tolerance, max_num_steps, u_scale,
-                                f_scale, msgs, y, dat, dat_int);
+  return algebra_solver_fp_impl(algebra_solver_adapter<F>(f), x, msgs,
+                                u_scale, f_scale, function_tolerance,
+                                max_num_steps, y, dat, dat_int);
 }
 
 }  // namespace math

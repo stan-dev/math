@@ -58,13 +58,13 @@ namespace math {
 template <typename F1, typename... Args>
 Eigen::VectorXd kinsol_solve(
     const F1& f, const Eigen::VectorXd& x,
-    double scaling_step_tol,    // = 1e-3
-    double function_tolerance,  //  = 1e-6
-    long int max_num_steps,     // NOLINT(runtime/int)  = 200
-    bool custom_jacobian,       // = 1
-    int steps_eval_jacobian,    // = 10
-    int global_line_search,     //  = KIN_LINESEARCH
-    std::ostream* msgs, const Args&... args) {
+    const double scaling_step_tol,    // = 1e-3
+    const double function_tolerance,  // = 1e-6
+    const long int max_num_steps,     // = 200
+    const bool custom_jacobian,       // = 1
+    const int steps_eval_jacobian,    // = 10
+    const int global_line_search,     //  = KIN_LINESEARCH
+    std::ostream* const msgs, const Args&... args) {
   int N = x.size();
   typedef kinsol_system_data<F1, Args...> system_data;
   system_data kinsol_data(f, x, msgs, args...);

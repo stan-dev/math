@@ -15,14 +15,51 @@
 namespace stan {
 namespace math {
 
-/** Implementation of ordinary newton solver. */
-template <typename F, typename T, typename... T_Args,
+/**
+ * Return the solution to the specified system of algebraic
+ * equations given an initial guess, and parameters and data,
+ * which get passed into the algebraic system. Use the
+ * KINSOL solver from the SUNDIALS suite.
+ *
+ * The user can also specify the scaled step size, the function
+ * tolerance, and the maximum number of steps.
+ *
+ * This function is overloaded to handle both constant and var-type parameters.
+ * This overload handles non-var parameters, and checks the input and calls the
+ * algebraic solver only.
+ *
+ * @tparam F type of equation system function.
+ * @tparam T type of initial guess vector.
+ * @tparam Args types of additional parameters to the equation system functor
+ *
+ * @param[in] f Functor that evaluated the system of equations.
+ * @param[in] x Vector of starting values.
+ * @param[in, out] msgs The print stream for warning messages.
+ * @param[in] scaling_step_size Scaled-step stopping tolerance. If
+ *            a Newton step is smaller than the scaling step
+ *            tolerance, the code breaks, assuming the solver is no
+ *            longer making significant progress (i.e. is stuck)
+ * @param[in] function_tolerance determines whether roots are acceptable.
+ * @param[in] max_num_steps  maximum number of function evaluations.
+ * @param[in] args Additional parameters to the equation system functor.
+ * @return theta Vector of solutions to the system of equations.
+ * @pre f returns finite values when passed any value of x and the given args.
+ * @throw <code>std::invalid_argument</code> if x has size zero.
+ * @throw <code>std::invalid_argument</code> if x has non-finite elements.
+ * @throw <code>std::invalid_argument</code> if scaled_step_size is strictly
+ * negative.
+ * @throw <code>std::invalid_argument</code> if function_tolerance is strictly
+ * negative.
+ * @throw <code>std::invalid_argument</code> if max_num_steps is not positive.
+ * @throw <code>std::domain_error if solver exceeds max_num_steps.
+ */
+template <typename F, typename T, typename... Args,
           require_eigen_vector_t<T>* = nullptr,
-          require_all_st_arithmetic<T_Args...>* = nullptr>
+          require_all_st_arithmetic<Args...>* = nullptr>
 Eigen::VectorXd algebra_solver_newton_impl(
-    const F& f, const T& x, std::ostream* msgs, double scaling_step_size,
-    double function_tolerance, int64_t max_num_steps,
-    const T_Args&... args) {  // NOLINT(runtime/int)
+    const F& f, const T& x, std::ostream* const msgs, const double scaling_step_size,
+    const double function_tolerance, const int64_t max_num_steps,
+    const Args&... args) {
   const auto& x_ref = to_ref(value_of(x));
 
   check_nonzero_size("algebra_solver_newton", "initial guess", x_ref);
@@ -37,14 +74,74 @@ Eigen::VectorXd algebra_solver_newton_impl(
                       max_num_steps, 1, 10, KIN_LINESEARCH, msgs, args...);
 }
 
-/** Implementation of autodiff newton solver. */
+/**
+ * Return the solution to the specified system of algebraic
+ * equations given an initial guess, and parameters and data,
+ * which get passed into the algebraic system. Use the
+ * KINSOL solver from the SUNDIALS suite.
+ *
+ * The user can also specify the scaled step size, the function
+ * tolerance, and the maximum number of steps.
+ *
+ * This function is overloaded to handle both constant and var-type parameters.
+ * This overload handles var parameters, and checks the input, calls the
+ * algebraic solver, and appropriately handles derivative propagation through
+ * the `reverse_pass_callback`.
+ *
+ * The Jacobian \(J_{xy}\) (i.e., Jacobian of unknown \(x\) w.r.t. the parameter
+ * \(y\)) is calculated given the solution as follows. Since
+ * \[
+ *   f(x, y) = 0,
+ * \]
+ * we have (\(J_{pq}\) being the Jacobian matrix \(\tfrac {dq} {dq}\))
+ * \[
+ *   - J_{fx} J_{xy} = J_{fy},
+ * \]
+ * and therefore \(J_{xy}\) can be solved from system
+ * \[
+ *  - J_{fx} J_{xy} = J_{fy}.
+ * \]
+ * Let \(eta\) be the adjoint with respect to \(x\); then to calculate
+ * \[
+ *   \eta J_{xy},
+ * \]
+ * we solve
+ * \[
+ *   - (\eta J_{fx}^{-1}) J_{fy}.
+ * \]
+ *
+ * @tparam F type of equation system function.
+ * @tparam T type of initial guess vector.
+ * @tparam Args types of additional parameters to the equation system functor
+ *
+ * @param[in] f Functor that evaluated the system of equations.
+ * @param[in] x Vector of starting values.
+ * @param[in, out] msgs The print stream for warning messages.
+ * @param[in] scaling_step_size Scaled-step stopping tolerance. If
+ *            a Newton step is smaller than the scaling step
+ *            tolerance, the code breaks, assuming the solver is no
+ *            longer making significant progress (i.e. is stuck)
+ * @param[in] function_tolerance determines whether roots are acceptable.
+ * @param[in] max_num_steps  maximum number of function evaluations.
+ * @param[in] args Additional parameters to the equation system functor.
+ * @return theta Vector of solutions to the system of equations.
+ * @pre f returns finite values when passed any value of x and the given args.
+ * @throw <code>std::invalid_argument</code> if x has size zero.
+ * @throw <code>std::invalid_argument</code> if x has non-finite elements.
+ * @throw <code>std::invalid_argument</code> if scaled_step_size is strictly
+ * negative.
+ * @throw <code>std::invalid_argument</code> if function_tolerance is strictly
+ * negative.
+ * @throw <code>std::invalid_argument</code> if max_num_steps is not positive.
+ * @throw <code>std::domain_error if solver exceeds max_num_steps.
+ */
 template <typename F, typename T, typename... T_Args,
           require_eigen_vector_t<T>* = nullptr,
           require_any_st_var<T_Args...>* = nullptr>
 Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_newton_impl(
-    const F& f, const T& x, std::ostream* msgs, double scaling_step_size,
-    double function_tolerance, int64_t max_num_steps,
-    const T_Args&... args) {  // NOLINT(runtime/int)
+    const F& f, const T& x, std::ostream* const msgs, const double scaling_step_size,
+    const double function_tolerance, const int64_t max_num_steps,
+    const T_Args&... args) {
   const auto& x_ref = to_ref(value_of(x));
   auto arena_args_tuple = std::make_tuple(to_arena(args)...);
   auto args_vals_tuple = apply(
@@ -117,19 +214,15 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_newton_impl(
  * The user can also specify the scaled step size, the function
  * tolerance, and the maximum number of steps.
  *
- * Overload the previous definition to handle the case where y
- * is a vector of parameters (var). The overload calls the
- * algebraic solver defined above and builds a vari object on
- * top, using the algebra_solver_vari class.
+ * Signature to maintain backward compatibility, will be removed
+ * in the future.
  *
  * @tparam F type of equation system function.
  * @tparam T type of initial guess vector.
  *
  * @param[in] f Functor that evaluated the system of equations.
  * @param[in] x Vector of starting values.
- * @param[in] y Parameter vector for the equation system. The function
- *            is overloaded to treat y as a vector of doubles or of a
- *            a template type T.
+ * @param[in] y Parameter vector for the equation system.
  * @param[in] dat Continuous data vector for the equation system.
  * @param[in] dat_int Integer data vector for the equation system.
  * @param[in, out] msgs The print stream for warning messages.
@@ -156,9 +249,9 @@ template <typename F, typename T1, typename T2,
           require_all_eigen_vector_t<T1, T2>* = nullptr>
 Eigen::Matrix<scalar_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_newton(
     const F& f, const T1& x, const T2& y, const std::vector<double>& dat,
-    const std::vector<int>& dat_int, std::ostream* msgs = nullptr,
-    double scaling_step_size = 1e-3, double function_tolerance = 1e-6,
-    long int max_num_steps = 200) {  // NOLINT(runtime/int)
+    const std::vector<int>& dat_int, std::ostream* const msgs = nullptr,
+    const double scaling_step_size = 1e-3, const double function_tolerance = 1e-6,
+    const long int max_num_steps = 200) {  // NOLINT(runtime/int)
   return algebra_solver_newton_impl(algebra_solver_adapter<F>(f), x, msgs,
                                     scaling_step_size, function_tolerance,
                                     max_num_steps, y, dat, dat_int);
