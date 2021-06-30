@@ -77,14 +77,19 @@ template <typename T>
 struct is_kernel_expression_lhs<T, require_matrix_cl_t<T>> : std::true_type {};
 
 /**
+ * Determines whether a type is a var containing a kernel generator expression.
+ */
+template <typename T>
+struct is_rev_kernel_expression
+    : math::conjunction<is_var<T>, is_kernel_expression<value_type_t<T>>> {};
+
+/**
  * Determines whether a type is either a kernel generator
  * expression or a var containing a kernel generator expression.
  */
 template <typename T>
 struct is_prim_or_rev_kernel_expression
-    : math::disjunction<
-          is_kernel_expression<T>,
-          math::conjunction<is_var<T>, is_kernel_expression<value_type_t<T>>>> {
+    : math::disjunction<is_kernel_expression<T>, is_rev_kernel_expression<T>> {
 };
 
 /**
@@ -100,6 +105,8 @@ struct is_nonscalar_prim_or_rev_kernel_expression
 
 /** @}*/
 STAN_ADD_REQUIRE_UNARY(kernel_expression_lhs, is_kernel_expression_lhs,
+                       opencl_kernel_generator);
+STAN_ADD_REQUIRE_UNARY(rev_kernel_expression, is_rev_kernel_expression,
                        opencl_kernel_generator);
 STAN_ADD_REQUIRE_UNARY(prim_or_rev_kernel_expression,
                        is_prim_or_rev_kernel_expression,
