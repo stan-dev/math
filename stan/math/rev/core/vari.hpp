@@ -22,8 +22,8 @@ struct vtable_zeroing {
 };
 /* Can be constexpr in C++17*/
 template <typename Concrete>
-vtable_zeroing vtable_for_zeroing{
-    [](void* ptr) { reinterpret_cast<Concrete*>(ptr)->set_zero_adjoint(); },
+inline constexpr auto vtable_for_zeroing() noexcept {
+    return vtable_zeroing{[](void* ptr) { reinterpret_cast<Concrete*>(ptr)->set_zero_adjoint(); }};
 };
 
 struct vtable_chain {
@@ -31,17 +31,17 @@ struct vtable_chain {
 };
 /* Can be constexpr in C++17*/
 template <typename Concrete>
-vtable_chain vtable_for_chain{
-    [](void* ptr) { reinterpret_cast<Concrete*>(ptr)->chain(); },
+inline constexpr auto vtable_for_chain() noexcept {
+    return vtable_chain{[](void* ptr) { reinterpret_cast<Concrete*>(ptr)->chain(); }};
 };
 
 }  // namespace internal
 
 struct nada_zero {
-  void set_zero_adjoint(){};
+  void set_zero_adjoint(){}
 };
 struct nada_chain {
-  void chain(){};
+  void chain(){}
 };
 
 /**
@@ -88,31 +88,31 @@ class vari_base {
 
 struct vari_zeroing {
   void* concrete_;
-  internal::vtable_zeroing const* vtable_;
+  internal::vtable_zeroing const vtable_;
   template <typename T, require_not_same_t<vari_zeroing, T>* = nullptr>
   explicit vari_zeroing(T* t) noexcept
       : concrete_(reinterpret_cast<void*>(t)),
-        vtable_(&internal::vtable_for_zeroing<T>) {}
+        vtable_(internal::vtable_for_zeroing<T>()) {}
 
-  vari_zeroing()
-      : concrete_(), vtable_(&internal::vtable_for_zeroing<nada_zero>) {}
+  vari_zeroing() noexcept
+      : concrete_(), vtable_(internal::vtable_for_zeroing<nada_zero>()) {}
 
-  void set_zero_adjoint() { vtable_->set_zero_adjoint(concrete_); }
+  inline void set_zero_adjoint() { vtable_.set_zero_adjoint(concrete_); }
 };
 
 struct vari_chain {
   void* concrete_;
-  internal::vtable_chain const* vtable_;
+  internal::vtable_chain const vtable_;
 
   template <typename T, require_not_same_t<vari_chain, T>* = nullptr>
   explicit vari_chain(T* t) noexcept
       : concrete_(reinterpret_cast<void*>(t)),
-        vtable_(&internal::vtable_for_chain<T>) {}
+        vtable_(internal::vtable_for_chain<T>()) {}
 
-  vari_chain()
-      : concrete_(), vtable_(&internal::vtable_for_chain<nada_chain>) {}
+  vari_chain() noexcept
+      : concrete_(), vtable_(internal::vtable_for_chain<nada_chain>()) {}
 
-  void chain() { vtable_->chain(concrete_); }
+  inline void chain() { vtable_.chain(concrete_); }
 };
 
 /**
