@@ -31,7 +31,7 @@ TEST(StanMathRev_reduce_sum, value) {
 
   // uncomment this will make things work again for the case
   // when STAN_THREADS is not defined
-  //stan::math::init_threadpool_tbb();
+  // stan::math::init_threadpool_tbb();
 
   for (std::size_t i = 0; i != elems; ++i)
     data[i] = i;
