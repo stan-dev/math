@@ -142,7 +142,6 @@ class vari_cl_base : public vari_base {
    */
   const Eigen::Index size() const { return rows() * cols(); }
 
-  virtual void chain() {}
 };
 
 template <typename T>
@@ -207,7 +206,7 @@ class vari_value<T, require_matrix_cl_t<T>> : public chainable_alloc,
   explicit vari_value(S&& x)
       : chainable_alloc(),
         vari_cl_base<T>(std::forward<S>(x), constant(0, x.rows(), x.cols())) {
-    ChainableStack::instance_->var_stack_.push_back(this);
+          ChainableStack::instance_->var_nochain_stack_.push_back(vari_zeroing(this));
   }
 
   /**
@@ -227,7 +226,7 @@ class vari_value<T, require_matrix_cl_t<T>> : public chainable_alloc,
             require_vt_same<T, S>* = nullptr>
   explicit vari_value(const S& x)
       : chainable_alloc(), vari_cl_base<T>(x, constant(0, x.rows(), x.cols())) {
-    ChainableStack::instance_->var_stack_.push_back(this);
+        ChainableStack::instance_->var_nochain_stack_.push_back(vari_zeroing(this));
   }
 
   /**
@@ -252,7 +251,6 @@ class vari_value<T, require_matrix_cl_t<T>> : public chainable_alloc,
   vari_value(S&& x, bool stacked)
       : chainable_alloc(),
         vari_cl_base<T>(std::forward<S>(x), constant(0, x.rows(), x.cols())) {
-    ChainableStack::instance_->var_stack_.push_back(this);
     ChainableStack::instance_->var_nochain_stack_.push_back(vari_zeroing(this));
   }
 
