@@ -8,7 +8,7 @@
 namespace stan {
 namespace math {
 
-matrix_cl<double> eigenvectors_sym(const matrix_cl<double>& m) {
+inline matrix_cl<double> eigenvectors_sym(const matrix_cl<double>& m) {
   check_nonzero_size("eigenvectors_sym", "m", m);
   check_symmetric("eigenvalues_sym", "m", m);
 

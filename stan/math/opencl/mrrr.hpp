@@ -42,7 +42,7 @@ inline double_d get_random_perturbation_multiplier() {
  * @param[out] min_eigval Lower bound on eigenvalues.
  * @param[out] max_eigval Upper bound on eigenvalues.
  */
-void get_gresgorin(const Eigen::Ref<const Eigen::VectorXd> diagonal,
+inline void get_gresgorin(const Eigen::Ref<const Eigen::VectorXd> diagonal,
                    const Eigen::Ref<const Eigen::VectorXd> subdiagonal,
                    double& min_eigval, double& max_eigval) {
   using std::fabs;
@@ -80,7 +80,7 @@ inline double max_nan(double a, double b) { return isnan(a) || a > b ? a : b; }
  * @param[out] d_plus Diagonal of D.
  * @return Element growth.
  */
-double get_ldl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
+inline double get_ldl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
                const Eigen::Ref<const Eigen::VectorXd> subdiagonal,
                const double shift, VectorXdd& l, VectorXdd& d_plus) {
   using std::fabs;
@@ -106,7 +106,7 @@ double get_ldl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
  * @param max_ele_growth Maximum desired element growth.
  * @return
  */
-double find_initial_shift(const Eigen::Ref<const Eigen::VectorXd> diagonal,
+inline double find_initial_shift(const Eigen::Ref<const Eigen::VectorXd> diagonal,
                           const Eigen::Ref<const Eigen::VectorXd> subdiagonal,
                           VectorXdd& l0, VectorXdd& d0, const double min_eigval,
                           const double max_eigval,
@@ -136,7 +136,7 @@ double find_initial_shift(const Eigen::Ref<const Eigen::VectorXd> diagonal,
  * @param shift Shift.
  * @return Sturm count.
  */
-int get_sturm_count_ldl(const VectorXdd& l, const VectorXdd& d,
+inline int get_sturm_count_ldl(const VectorXdd& l, const VectorXdd& d,
                         const double_d shift) {
   using std::isinf;
   const int n = l.size();
@@ -167,7 +167,7 @@ int get_sturm_count_ldl(const VectorXdd& l, const VectorXdd& d,
  * @param[in,out] high High bound on the eigenvalue.
  * @param i i-th eigenvalue
  */
-void eigenval_bisect_refine(const VectorXdd& l, const VectorXdd& d,
+inline void eigenval_bisect_refine(const VectorXdd& l, const VectorXdd& d,
                             double_d& low, double_d& high, const int i) {
   using std::fabs;
   const double_d eps = 3e-20;
@@ -199,7 +199,7 @@ void eigenval_bisect_refine(const VectorXdd& l, const VectorXdd& d,
  * @param[out] d_plus Diagonal of D+.
  * @return Element growth.
  */
-double get_shifted_ldl(const VectorXdd& l, const VectorXdd& d,
+inline double get_shifted_ldl(const VectorXdd& l, const VectorXdd& d,
                        const double_d shift, VectorXdd& l_plus,
                        VectorXdd& d_plus) {
   using std::fabs;
@@ -239,7 +239,7 @@ double get_shifted_ldl(const VectorXdd& l, const VectorXdd& d,
  * @param[out] shift Shift.
  * @param[out] min_element_growth Element growth achieved with resulting shift.
  */
-void find_shift(const VectorXdd& l, const VectorXdd& d, const double_d low,
+inline void find_shift(const VectorXdd& l, const VectorXdd& d, const double_d low,
                 const double_d high, const double max_ele_growth,
                 const double_d max_shift, VectorXdd& l2, VectorXdd& d2,
                 double_d& shift, double& min_element_growth) {
@@ -293,7 +293,7 @@ struct mrrr_task {
  * @param max_ele_growth Maximal desired element growth of LDL decompositions.
  */
 template <bool need_eigenvectors = true>
-void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
+inline void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
              const Eigen::Ref<const Eigen::VectorXd> subdiagonal,
              Eigen::Ref<Eigen::VectorXd> eigenvalues,
              Eigen::Ref<Eigen::MatrixXd> eigenvectors,
@@ -449,7 +449,7 @@ void mrrr_cl(const Eigen::Ref<const Eigen::VectorXd> diagonal,
  * @param split_threshold Threshold for splitting the problem
  */
 template <bool need_eigenvectors = true>
-void tridiagonal_eigensolver_cl(const matrix_cl<double>& diagonal_cl,
+inline void tridiagonal_eigensolver_cl(const matrix_cl<double>& diagonal_cl,
                                 const matrix_cl<double>& subdiagonal_cl,
                                 matrix_cl<double>& eigenvalues_cl,
                                 matrix_cl<double>& eigenvectors_cl,
