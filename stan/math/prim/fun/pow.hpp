@@ -38,13 +38,30 @@ inline complex_return_t<U, V> complex_pow(const U& x, const V& y) {
  * @param b Second input
  * @return pow function applied to the two inputs.
  */
-template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
+template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
+ require_any_not_matrix_t<T1, T2>* = nullptr,
+ require_all_not_matrix_st<is_autodiff, T1, T2>* = nullptr>
 inline auto pow(const T1& a, const T2& b) {
   return apply_scalar_binary(a, b, [&](const auto& c, const auto& d) {
     using std::pow;
     return pow(c, d);
   });
 }
+
+template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
+ require_any_matrix_st<is_fvar, T1, T2>* = nullptr>
+inline auto pow(const T1& a, const T2& b) {
+  return apply_scalar_binary(a, b, [&](const auto& c, const auto& d) {
+    using std::pow;
+    return pow(c, d);
+  });
+}
+
+template <typename T1, typename T2, require_all_matrix_vt<std::is_arithmetic, T1, T2>* = nullptr>
+inline auto pow(const T1& base, const T2& exponent) {
+  return base.val().array().pow(exponent.val().array()).matrix();
+}
+
 }  // namespace math
 }  // namespace stan
 #endif
