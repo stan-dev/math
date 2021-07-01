@@ -33,6 +33,14 @@ inline var inv(const var& a) {
   });
 }
 
+template <typename T, require_eigen_t<T>* = nullptr>
+inline auto inv(const var_value<T>& a) {
+  auto denom = to_arena(a.val().array().square());
+  return make_callback_var(inv(a.val()), [a, denom](auto& vi) mutable {
+    a.adj().array() -= vi.adj().array() / denom;
+  });
+}
+
 }  // namespace math
 }  // namespace stan
 #endif

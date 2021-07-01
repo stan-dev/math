@@ -24,6 +24,15 @@ inline var log1m_inv_logit(const var& u) {
                            });
 }
 
+template <typename T, require_eigen_t<T>* = nullptr>
+inline auto log1m_inv_logit(const var_value<T>& u) {
+  auto precomp_inv_logit = to_arena(-inv_logit(u.val()).array());
+  return make_callback_var(log1m_inv_logit(u.val()),
+                           [u, precomp_inv_logit](auto& vi) mutable {
+                             u.adj().array() += vi.adj().array() * precomp_inv_logit;
+                           });
+}
+
 }  // namespace math
 }  // namespace stan
 #endif

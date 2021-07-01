@@ -17,9 +17,13 @@ namespace math {
  * @return 1 / x.
  */
 struct inv_fun {
-  template <typename T>
+  template <typename T, require_not_var_matrix_t<T>* = nullptr>
   static inline T fun(const T& x) {
     return 1.0 / x;
+  }
+  template <typename T, require_var_matrix_t<T>* = nullptr>
+  static inline T fun(const T& x) {
+    return inv(x);
   }
 };
 

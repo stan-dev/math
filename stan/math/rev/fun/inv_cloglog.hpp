@@ -31,6 +31,15 @@ inline var inv_cloglog(const var& a) {
                            });
 }
 
+template <typename T, require_eigen_t<T>* = nullptr>
+inline auto inv_cloglog(const var_value<T>& a) {
+  auto precomp_exp = (a.val().array() - a.val().array().exp()).exp();
+  return make_callback_var(inv_cloglog(a.val()),
+                           [a, precomp_exp](auto& vi) mutable {
+                             a.adj().array() += vi.adj().array() * precomp_exp;
+                           });
+}
+
 }  // namespace math
 }  // namespace stan
 #endif

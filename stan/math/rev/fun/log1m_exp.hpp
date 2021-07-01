@@ -26,6 +26,13 @@ inline var log1m_exp(const var& x) {
   });
 }
 
+template <typename T, require_eigen_t<T>* = nullptr>
+inline auto log1m_exp(const var_value<T>& x) {
+  return make_callback_var(log1m_exp(x.val()), [x](auto& vi) mutable {
+    x.adj().array() -= vi.adj().array() / expm1(-x.val()).array();
+  });
+}
+
 }  // namespace math
 }  // namespace stan
 #endif

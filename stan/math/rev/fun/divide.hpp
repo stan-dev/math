@@ -121,87 +121,97 @@ class matrix_scalar_divide_vv_vari : public vari {
  * @param[in] c specified scalar
  * @return matrix divided by the scalar
  */
-template <typename Mat, typename = require_eigen_vt<std::is_arithmetic, Mat>>
+template <typename Mat, require_eigen_vt<std::is_arithmetic, Mat>* = nullptr>
 inline auto divide(const Mat& m, const var& c) {
-  auto* baseVari
-      = new internal::matrix_scalar_divide_dv_vari<Mat::RowsAtCompileTime,
-                                                   Mat::ColsAtCompileTime>(m,
-                                                                           c);
-  Eigen::Matrix<var, Mat::RowsAtCompileTime, Mat::ColsAtCompileTime> result(
-      m.rows(), m.cols());
-  result.vi()
-      = Eigen::Map<matrix_vi>(baseVari->adjResultRef_, m.rows(), m.cols());
-  return result;
-}
-
-/**
- * Return matrix divided by scalar.
- *
- * @tparam Mat type of the matrix or expression
- * @param[in] m specified matrix or expression
- * @param[in] c specified scalar
- * @return matrix divided by the scalar
- */
-template <typename Mat, typename = require_eigen_vt<is_var, Mat>>
-inline auto divide(const Mat& m, const double& c) {
-  auto* baseVari
-      = new internal::matrix_scalar_divide_vd_vari<Mat::RowsAtCompileTime,
-                                                   Mat::ColsAtCompileTime>(m,
-                                                                           c);
-  Eigen::Matrix<var, Mat::RowsAtCompileTime, Mat::ColsAtCompileTime> result(
-      m.rows(), m.cols());
-  result.vi()
-      = Eigen::Map<matrix_vi>(baseVari->adjResultRef_, m.rows(), m.cols());
-  return result;
-}
-
-/**
- * Return matrix divided by scalar.
- *
- * @tparam Mat type of the matrix or expression
- * @param[in] m specified matrix or expression
- * @param[in] c specified scalar
- * @return matrix divided by the scalar
- */
-template <typename Mat, typename = require_eigen_vt<is_var, Mat>,
-          typename = void>
-inline auto divide(const Mat& m, const var& c) {
-  auto* baseVari
-      = new internal::matrix_scalar_divide_vv_vari<Mat::RowsAtCompileTime,
-                                                   Mat::ColsAtCompileTime>(m,
-                                                                           c);
-  Eigen::Matrix<var, Mat::RowsAtCompileTime, Mat::ColsAtCompileTime> result(
-      m.rows(), m.cols());
-  result.vi()
-      = Eigen::Map<matrix_vi>(baseVari->adjResultRef_, m.rows(), m.cols());
-  return result;
-}
-
-/**
- * Return matrix divided by scalar.
- *
- * @tparam Mat type of the matrix
- * @tparam Scal type of the scalar
- * @param[in] m input matrix
- * @param[in] c input scalar
- * @return matrix divided by the scalar
- */
-template <typename Mat, typename Scal, require_var_matrix_t<Mat>* = nullptr,
-          require_stan_scalar_t<Scal>* = nullptr>
-inline auto divide(const Mat& m, const Scal& c) {
-  double invc = 1.0 / value_of(c);
-
-  plain_type_t<Mat> res = invc * m.val();
-
-  reverse_pass_callback([m, c, res, invc]() mutable {
-    m.adj() += invc * res.adj();
-    if (!is_constant<Scal>::value)
-      forward_as<var>(c).adj()
-          -= invc * (res.adj().array() * res.val().array()).sum();
+  auto inv_c = (1.0 / c.val());
+  arena_t<promote_scalar_t<var, Mat>> res = inv_c * m.array();
+  reverse_pass_callback([c, inv_c, res]() mutable {
+    c.adj() -= inv_c * (res.adj().array() * res.val().array()).sum();
   });
-
-  return res;
+  return promote_scalar_t<var, Mat>(res);
 }
+
+/**
+ * Return matrix divided by scalar.
+ *
+ * @tparam Mat type of the matrix or expression
+ * @param[in] m specified matrix or expression
+ * @param[in] c specified scalar
+ * @return matrix divided by the scalar
+ */
+template <typename Mat, require_matrix_st<is_var, Mat>* = nullptr>
+inline auto divide(const Mat& m, const double& c) {
+  arena_t<promote_scalar_t<var, Mat>> arena_m = m;
+  auto inv_c = (1.0 / c);
+  arena_t<promote_scalar_t<var, Mat>> res = inv_c * arena_m.val();
+  reverse_pass_callback([c, inv_c, arena_m, res]() mutable {
+    arena_m.adj() += inv_c * res.adj_op();
+  });
+  return promote_scalar_t<var, Mat>(res);
+}
+
+/**
+ * Return matrix divided by scalar.
+ *
+ * @tparam Mat type of the matrix or expression
+ * @param[in] m specified matrix or expression
+ * @param[in] c specified scalar
+ * @return matrix divided by the scalar
+ */
+template <typename Mat, require_matrix_st<is_var, Mat>* = nullptr>
+inline auto divide(const Mat& m, const var& c) {
+  arena_t<plain_type_t<Mat>> arena_m = m;
+  auto inv_c = (1.0 / c.val());
+  arena_t<plain_type_t<Mat>> res = inv_c * arena_m.val();
+  reverse_pass_callback([c, inv_c, arena_m, res]() mutable {
+    c.adj() -= inv_c * (res.adj().array() * res.val().array()).sum();
+    arena_m.adj() += inv_c * res.adj();
+  });
+  return plain_type_t<Mat>(res);
+}
+
+template <typename Mat1, typename Mat2, require_any_matrix_st<is_var, Mat1, Mat2>* = nullptr>
+inline auto divide(const Mat1& m1, const Mat2& m2) {
+  if (!is_constant<Mat1>::value && !is_constant<Mat2>::value) {
+    arena_t<promote_scalar_t<var, Mat1>> arena_m1 = m1;
+    arena_t<promote_scalar_t<var, Mat2>> arena_m2 = m2;
+    auto inv_m2 = to_arena(arena_m2.val().array().inverse());
+    using val_ret = decltype((inv_m2 * arena_m1.val().array()).matrix().eval());
+    using ret_type = return_var_matrix_t<val_ret, Mat1, Mat2>;
+    arena_t<ret_type> res = (inv_m2.array() * arena_m1.val().array()).matrix();
+    reverse_pass_callback([inv_m2, arena_m1, arena_m2, res]() mutable {
+      auto inv_times_res = (inv_m2 * res.adj().array()).eval();
+      arena_m1.adj().array() += inv_times_res;
+      arena_m2.adj().array() -= inv_times_res * res.val().array();
+    });
+    return ret_type(res);
+  } else if (!is_constant<Mat2>::value) {
+    arena_t<promote_scalar_t<double, Mat1>> arena_m1 = value_of(m1);
+    arena_t<promote_scalar_t<var, Mat2>> arena_m2 = m2;
+    auto inv_m2 = to_arena(arena_m2.val().array().inverse());
+    using val_ret = decltype((inv_m2 * arena_m1.array()).matrix().eval());
+    using ret_type = return_var_matrix_t<val_ret, Mat1, Mat2>;
+    arena_t<ret_type> res = (inv_m2.array() * arena_m1.array()).matrix();
+    reverse_pass_callback([inv_m2, arena_m1, arena_m2, res]() mutable {
+      arena_m2.adj().array() -= inv_m2 * res.adj().array() * res.val().array();
+    });
+    return ret_type(res);
+  } else {
+    arena_t<promote_scalar_t<var, Mat1>> arena_m1 = m1;
+    arena_t<promote_scalar_t<double, Mat2>> arena_m2 = value_of(m2);
+    auto inv_m2 = to_arena(arena_m2.array().inverse());
+    using val_ret = decltype((inv_m2 * arena_m1.val().array()).matrix().eval());
+    using ret_type = return_var_matrix_t<val_ret, Mat1, Mat2>;
+    arena_t<ret_type> res = (inv_m2.array() * arena_m1.val().array()).matrix();
+    reverse_pass_callback([inv_m2, arena_m1, arena_m2, res]() mutable {
+      arena_m1.adj().array() += inv_m2 * res.adj().array();
+    });
+    return ret_type(res);
+  }
+}
+
+
+
 
 }  // namespace math
 }  // namespace stan

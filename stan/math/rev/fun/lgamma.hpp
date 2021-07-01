@@ -25,6 +25,13 @@ inline var lgamma(const var& a) {
   });
 }
 
+template <typename T, require_eigen_t<T>* = nullptr>
+inline auto lgamma(const var_value<T>& a) {
+  return make_callback_var(lgamma(a.val()), [a](auto& vi) mutable {
+    a.adj().array() += vi.adj().array() * digamma(a.val()).array();
+  });
+}
+
 }  // namespace math
 }  // namespace stan
 #endif
