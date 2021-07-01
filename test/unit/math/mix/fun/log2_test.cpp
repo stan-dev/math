@@ -7,7 +7,6 @@ TEST(mathMixMatFun, log2) {
                                       1e6);
 }
 
-
 TEST(mathMixMatFun, log2_varmat) {
   using stan::math::vec_concat;
   using stan::test::expect_ad_vector_matvar;

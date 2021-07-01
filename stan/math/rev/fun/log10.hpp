@@ -52,9 +52,10 @@ inline var log10(const var& a) {
 
 template <typename T, require_eigen_t<T>* = nullptr>
 inline auto log10(const var_value<T>& a) {
-  return make_callback_var(a.val().array().log10().matrix(), [a](auto& vi) mutable {
-    a.adj().array() += vi.adj().array() / (LOG_TEN * a.val().array());
-  });
+  return make_callback_var(
+      a.val().array().log10().matrix(), [a](auto& vi) mutable {
+        a.adj().array() += vi.adj().array() / (LOG_TEN * a.val().array());
+      });
 }
 
 /**

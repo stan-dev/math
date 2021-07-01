@@ -57,8 +57,7 @@ inline auto inv_sqrt(const Container& x) {
  * @param x Container
  * @return inverse square root each variable in the container.
  */
-template <typename Container,
-          require_not_var_matrix_t<Container>* = nullptr,
+template <typename Container, require_not_var_matrix_t<Container>* = nullptr,
           require_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto inv_sqrt(const Container& x) {
   return apply_vector_unary<Container>::apply(

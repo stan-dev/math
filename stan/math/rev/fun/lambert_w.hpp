@@ -26,7 +26,8 @@ inline var lambert_w0(const var& a) {
 template <typename T, require_eigen_t<T>* = nullptr>
 inline auto lambert_w0(const var_value<T>& a) {
   return make_callback_var(lambert_w0(a.val()), [a](auto& vi) mutable {
-    a.adj().array() += (vi.adj().array() / (a.val().array() + vi.val().array().exp()));
+    a.adj().array()
+        += (vi.adj().array() / (a.val().array() + vi.val().array().exp()));
   });
 }
 
@@ -47,7 +48,8 @@ inline var lambert_wm1(const var& a) {
 template <typename T, require_eigen_t<T>* = nullptr>
 inline auto lambert_wm1(const var_value<T>& a) {
   return make_callback_var(lambert_wm1(a.val()), [a](auto& vi) mutable {
-    a.adj().array() += (vi.adj().array() / (a.val().array() + vi.val().array().exp()));
+    a.adj().array()
+        += (vi.adj().array() / (a.val().array() + vi.val().array().exp()));
   });
 }
 

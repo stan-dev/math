@@ -44,7 +44,6 @@ inline auto inv_sqrt(const var_value<T>& a) {
   });
 }
 
-
 }  // namespace math
 }  // namespace stan
 #endif

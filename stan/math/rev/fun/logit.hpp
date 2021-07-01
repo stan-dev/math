@@ -23,7 +23,8 @@ inline var logit(const var& u) {
 
 template <typename T, require_eigen_t<T>* = nullptr>
 inline auto logit(const var_value<T>& u) {
-  auto denom = to_arena(1.0 / (u.val().array() - u.val().array() * u.val().array()));
+  auto denom
+      = to_arena(1.0 / (u.val().array() - u.val().array() * u.val().array()));
   return make_callback_var(logit(u.val()), [u, denom](auto& vi) mutable {
     u.adj().array() += vi.adj().array() * denom;
   });

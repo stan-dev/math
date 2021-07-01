@@ -170,7 +170,8 @@ inline auto divide(const Mat& m, const var& c) {
   return plain_type_t<Mat>(res);
 }
 
-template <typename Mat1, typename Mat2, require_any_matrix_st<is_var, Mat1, Mat2>* = nullptr>
+template <typename Mat1, typename Mat2,
+          require_any_matrix_st<is_var, Mat1, Mat2>* = nullptr>
 inline auto divide(const Mat1& m1, const Mat2& m2) {
   if (!is_constant<Mat1>::value && !is_constant<Mat2>::value) {
     arena_t<promote_scalar_t<var, Mat1>> arena_m1 = m1;
@@ -209,9 +210,6 @@ inline auto divide(const Mat1& m1, const Mat2& m2) {
     return ret_type(res);
   }
 }
-
-
-
 
 }  // namespace math
 }  // namespace stan
