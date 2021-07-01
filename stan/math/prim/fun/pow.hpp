@@ -40,7 +40,17 @@ inline complex_return_t<U, V> complex_pow(const U& x, const V& y) {
  */
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
  require_any_not_matrix_t<T1, T2>* = nullptr,
- require_all_not_matrix_st<is_autodiff, T1, T2>* = nullptr>
+ require_all_not_matrix_st<is_autodiff, T1, T2>* = nullptr,
+ require_all_not_matrix_st<is_complex, T1, T2>* = nullptr>
+inline auto pow(const T1& a, const T2& b) {
+  return apply_scalar_binary(a, b, [&](const auto& c, const auto& d) {
+    using std::pow;
+    return pow(c, d);
+  });
+}
+
+template <typename T1, typename T2,
+ require_any_matrix_st<is_complex, T1, T2>* = nullptr>
 inline auto pow(const T1& a, const T2& b) {
   return apply_scalar_binary(a, b, [&](const auto& c, const auto& d) {
     using std::pow;
