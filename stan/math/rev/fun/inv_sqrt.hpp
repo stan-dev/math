@@ -4,6 +4,7 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/fun/inv_sqrt.hpp>
+#include <stan/math/rev/fun/to_arena.hpp>
 #include <cmath>
 
 namespace stan {
@@ -32,6 +33,14 @@ inline var inv_sqrt(const var& a) {
   auto denom = a.val() * std::sqrt(a.val());
   return make_callback_var(inv_sqrt(a.val()), [a, denom](auto& vi) mutable {
     a.adj() -= 0.5 * vi.adj() / denom;
+  });
+}
+
+template <typename T, require_eigen_t<T>* = nullptr>
+inline auto inv_sqrt(const var_value<T>& a) {
+  auto denom = to_arena(a.val().array() * a.val().array().sqrt());
+  return make_callback_var(inv_sqrt(a.val()), [a, denom](auto& vi) mutable {
+    a.adj().array() -= 0.5 * vi.adj().array() / denom;
   });
 }
 
