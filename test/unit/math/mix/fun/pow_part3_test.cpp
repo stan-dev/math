@@ -15,10 +15,10 @@ TEST(mathMixScalFun, pow_varmat) {
   mat2 << 0.5, 0.5, 1.0, 1.2, 5.0, 2.0, 4.0, -2.0;
   stan::test::expect_ad_matvar(f, mat1, mat2);
 
-  /*
   double nan = std::numeric_limits<double>::quiet_NaN();
   stan::test::expect_ad_matvar(f, mat1, nan);
   stan::test::expect_ad_matvar(f, nan, mat2);
+
 
   Eigen::VectorXd in1(3);
   in1 << 0.5, 3.4, 5.2;
@@ -27,6 +27,7 @@ TEST(mathMixScalFun, pow_varmat) {
   stan::test::expect_ad_matvar(f, in1, in2);
   stan::test::expect_ad_matvar(f, in1, 2.0);
   stan::test::expect_ad_matvar(f, 2.0, in1);
-  stan::test::expect_ad_vectorized_binary(f, in1, in2);
-*/
+
+  stan::test::expect_ad_vectorized_matvar(f, in1, in2);
+
 }
