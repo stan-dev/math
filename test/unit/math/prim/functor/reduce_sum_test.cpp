@@ -5,6 +5,8 @@
 #include <vector>
 #include <set>
 
+auto& tbb_setup = stan::math::init_threadpool_tbb();
+
 TEST(StanMathPrim_reduce_sum, value) {
   using stan::math::test::count_lpdf;
   using stan::math::test::get_new_msg;

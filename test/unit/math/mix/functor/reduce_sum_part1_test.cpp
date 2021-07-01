@@ -8,6 +8,8 @@
 // Reduce sum tests are broken up into four files to avoid windows compiler
 // error
 
+auto& tbb_setup = stan::math::init_threadpool_tbb();
+
 TEST(MathMix_reduce_sum, grainsize_static) {
   using stan::math::test::get_new_msg;
   using stan::math::test::sum_lpdf;

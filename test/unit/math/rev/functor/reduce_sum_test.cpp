@@ -7,6 +7,8 @@
 #include <vector>
 #include <set>
 
+auto& tbb_setup = stan::math::init_threadpool_tbb();
+
 TEST(StanMathRev_reduce_sum, no_args) {
   using stan::math::var;
   using stan::math::test::get_new_msg;
@@ -28,10 +30,6 @@ TEST(StanMathRev_reduce_sum, value) {
   double lambda_d = 10.0;
   const std::size_t elems = 10000;
   std::vector<int> data(elems);
-
-  // uncomment this will make things work again for the case
-  // when STAN_THREADS is not defined
-  // stan::math::init_threadpool_tbb();
 
   for (std::size_t i = 0; i != elems; ++i)
     data[i] = i;

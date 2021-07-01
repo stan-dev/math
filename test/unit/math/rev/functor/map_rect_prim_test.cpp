@@ -6,6 +6,8 @@
 #include <iostream>
 #include <vector>
 
+auto& tbb_setup = stan::math::init_threadpool_tbb();
+
 // the tests here check that map_rect refuses mal-formatted input as
 // such it does not matter if STAN_MPI is defined or not
 

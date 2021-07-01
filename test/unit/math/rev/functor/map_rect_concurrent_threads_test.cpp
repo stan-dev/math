@@ -18,6 +18,8 @@
 #include <vector>
 #include <string>
 
+auto& tbb_setup = stan::math::init_threadpool_tbb();
+
 STAN_REGISTER_MAP_RECT(0, hard_work)
 STAN_REGISTER_MAP_RECT(1, hard_work)
 
