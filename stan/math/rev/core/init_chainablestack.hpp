@@ -40,16 +40,15 @@ class ad_tape_observer final : public tbb::task_scheduler_observer {
   void on_scheduler_entry(bool worker) {
     std::lock_guard<std::mutex> thread_tape_map_lock(thread_tape_map_mutex_);
     const std::thread::id thread_id = std::this_thread::get_id();
-#ifndef STAN_THREADS
-    // in case STAN_THREADS is not defined, then we must never have
-    // more than 1 AD tape in use at the same time. Any attempt to use
-    // more is a program error.
-    if(thread_tape_map_.size() == 1 &&
-       thread_tape_map_.find(thread_id) == thread_tape_map_.end()) {
-      system_error("Chainablestack", "[Thread]", 1, "STAN_THREADS not defined during compilation");
-    }
-#endif
     if (thread_tape_map_.find(thread_id) == thread_tape_map_.end()) {
+#ifndef STAN_THREADS
+      // in case STAN_THREADS is not defined, then we must never have
+      // more than 1 AD tape in use at the same time. Any attempt to use
+      // more is a program error.
+      if(thread_tape_map_.size() == 1) {
+        system_error("Chainablestack", "[Thread]", 1, "STAN_THREADS not defined during compilation");
+      }
+#endif
       ad_map::iterator insert_elem;
       bool status = false;
       std::tie(insert_elem, status)
