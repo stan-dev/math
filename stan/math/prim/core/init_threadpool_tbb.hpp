@@ -45,6 +45,7 @@ namespace internal {
  */
 inline int get_num_threads() {
   int num_threads = 1;
+#ifdef STAN_THREADS
   const char* env_stan_num_threads = std::getenv("STAN_NUM_THREADS");
   if (env_stan_num_threads != nullptr) {
     try {
@@ -67,6 +68,7 @@ inline int get_num_threads() {
                        "' but it must be a positive number or -1");
     }
   }
+#endif
   return num_threads;
 }
 
@@ -96,7 +98,8 @@ inline int get_num_threads() {
  * and the value of STAN_NUM_THREADS environment variable is invalid.
  */
 inline tbb::task_arena& init_threadpool_tbb(int n_threads = 0) {
-  int tbb_max_threads;
+  int tbb_max_threads = 1;
+#ifdef STAN_THREADS
   if (n_threads == 0) {
     tbb_max_threads = internal::get_num_threads();
   } else if (n_threads > 0) {
@@ -108,6 +111,7 @@ inline tbb::task_arena& init_threadpool_tbb(int n_threads = 0) {
                      "The number of threads is '",
                      "' but it must be positive or -1");
   }
+#endif
   static tbb::global_control tbb_gc(
       tbb::global_control::max_allowed_parallelism, tbb_max_threads);
   static tbb::task_arena tbb_arena(tbb_max_threads, 1);
@@ -139,7 +143,8 @@ inline tbb::task_arena& init_threadpool_tbb(int n_threads = 0) {
  * and the value of STAN_NUM_THREADS environment variable is invalid.
  */
 inline tbb::task_scheduler_init& init_threadpool_tbb(int n_threads = 0) {
-  int tbb_max_threads;
+  int tbb_max_threads = 1;
+#ifdef STAN_THREADS
   if (n_threads == 0) {
     tbb_max_threads = internal::get_num_threads();
   } else if (n_threads > 0) {
@@ -151,6 +156,7 @@ inline tbb::task_scheduler_init& init_threadpool_tbb(int n_threads = 0) {
                      "The number of threads is '",
                      "' but it must be positive or -1");
   }
+#endif
   static tbb::task_scheduler_init tbb_scheduler(tbb_max_threads, 0);
   return tbb_scheduler;
 }

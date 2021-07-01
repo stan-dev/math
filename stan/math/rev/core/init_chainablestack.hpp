@@ -45,8 +45,9 @@ class ad_tape_observer final : public tbb::task_scheduler_observer {
       // in case STAN_THREADS is not defined, then we must never have
       // more than 1 AD tape in use at the same time. Any attempt to use
       // more is a program error.
-      if(!thread_tape_map_.empty()) {
-        system_error("Chainablestack", "[Thread]", 1, "STAN_THREADS not defined during compilation");
+      if (!thread_tape_map_.empty()) {
+        system_error("Chainablestack", "[Thread]", 1,
+                     "STAN_THREADS not defined during compilation");
       }
 #endif
       ad_map::iterator insert_elem;
