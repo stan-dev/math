@@ -62,8 +62,8 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
                    double precision, int max_steps) {
   using std::max;
   using scalar_t = return_type_t<Ta, Tb, Tz>;
-  using MapT = Eigen::Map<Eigen::Matrix<scalar_t, -1, 1>, 0,
-                          Eigen::InnerStride<>>;
+  using MapT
+      = Eigen::Map<Eigen::Matrix<scalar_t, -1, 1>, 0, Eigen::InnerStride<>>;
   using Ta_plain = plain_type_t<Ta>;
   using Tb_plain = plain_type_t<Tb>;
   using T_vec = Eigen::Matrix<scalar_t, -1, 1>;
@@ -172,15 +172,15 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
       }
       if (calc_a) {
         for (int i = 0; i < a.size(); i++) {
-          da_iter_m[i] = log_sum_exp(MapT(da_iter_mt.data() + i, n,
-                                          Eigen::InnerStride<>(a.size())));
+          da_iter_m[i] = log_sum_exp(
+              MapT(da_iter_mt.data() + i, n, Eigen::InnerStride<>(a.size())));
           da_infsumt.emplace_back(da_iter_m[i]);
         }
       }
       if (calc_b) {
         for (int i = 0; i < b.size(); i++) {
-          db_iter_m[i] = log_sum_exp(MapT(db_iter_mt.data() + i, n,
-                                          Eigen::InnerStride<>(b.size())));
+          db_iter_m[i] = log_sum_exp(
+              MapT(db_iter_mt.data() + i, n, Eigen::InnerStride<>(b.size())));
           db_infsumt.emplace_back(db_iter_m[i]);
         }
       }
@@ -206,8 +206,8 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
 
     if (calc_a) {
       for (int i = 0; i < a.size(); i++) {
-        da_infsum[i] = log_sum_exp(MapT(da_infsumt.data() + i, m,
-                                        Eigen::InnerStride<>(a.size())));
+        da_infsum[i] = log_sum_exp(
+            MapT(da_infsumt.data() + i, m, Eigen::InnerStride<>(a.size())));
       }
       // Workaround to construct vector where each element is the product of
       //   all other elements
@@ -224,8 +224,8 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
 
     if (calc_b) {
       for (int i = 0; i < b.size(); i++) {
-        db_infsum[i] = log_sum_exp(MapT(db_infsumt.data() + i, m,
-                                        Eigen::InnerStride<>(b.size())));
+        db_infsum[i] = log_sum_exp(
+            MapT(db_infsumt.data() + i, m, Eigen::InnerStride<>(b.size())));
       }
       T_vec pre_mult_b = (log_z + sum_log_a) - (log_b.array() + sum_log_b);
       std::get<1>(grad_tuple) = -exp(pre_mult_b + db_infsum);
