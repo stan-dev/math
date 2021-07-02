@@ -7,6 +7,7 @@
 #include <algorithm>
 
 #include <stan/math/opencl/copy.hpp>
+#include <stan/math/opencl/kernel_generator.hpp>
 
 namespace stan {
 namespace math {
@@ -21,18 +22,28 @@ inline auto sort_asc(T&& input) {
   matrix_cl<T_val> b(a.rows(), a.cols());
   matrix_cl<T_val>* in_ptr = &a;
   matrix_cl<T_val>* out_ptr = &b;
+  int compute_units
+      = opencl_context.device()[0].getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>();
+  int local = 64;
   for (int run_len = 1; run_len < input.size(); run_len *= 2) {
     //      int run_len =(input.size() + runs - 1) / runs;
     int runs = (input.size() + run_len - 1) / run_len;
     //    std::cout << "runs " << runs << std::endl;
-    opencl_kernels::merge_step(cl::NDRange(std::min((runs + 1) / 2, 32*15*16)), *out_ptr, *in_ptr,
-                               run_len, input.size(), (runs + 1) / 2);
-    //    std::cout << stan::math::from_matrix_cl(*out_ptr) << std::endl <<
-    //    std::endl;
+    opencl_kernels::merge_step(cl::NDRange(4 * compute_units * local),
+                               cl::NDRange(local), *out_ptr, *in_ptr, run_len,
+                               input.size(), (runs + 1) / 2);
+    //    std::cout << stan::math::from_matrix_cl(col_index(input.cols(),
+    //    input.rows()) + 100) << std::endl
+    //              << std::endl;
+    //    std::cout <<
+    //    stan::math::from_matrix_cl(*out_ptr).transpose().array().floor() <<
+    //    std::endl
+    //              << std::endl;
+    //    *in_ptr = constant(99999, input.rows(), input.cols());
     std::swap(in_ptr, out_ptr);
-//    if (run_len == 32*32) {
-//      break;
-//    }
+    //    if (run_len == 32*32) {
+    //      break;
+    //    }
   }
   return *in_ptr;
 }
