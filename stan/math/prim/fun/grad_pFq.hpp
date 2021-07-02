@@ -62,6 +62,8 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
                    double precision, int max_steps) {
   using std::max;
   using scalar_t = return_type_t<Ta, Tb, Tz>;
+  using MapT = Eigen::Map<Eigen::Matrix<scalar_t, -1, 1>, 0,
+                          Eigen::InnerStride<>>;
   using Ta_plain = plain_type_t<Ta>;
   using Tb_plain = plain_type_t<Tb>;
   using T_vec = Eigen::Matrix<scalar_t, -1, 1>;
@@ -76,12 +78,14 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
 
   // Declare vectors to accumulate sums into
   // where NEGATIVE_INFTY is zero on the log scale
-  T_vec da_infsum = T_vec::Constant(a.size(), NEGATIVE_INFTY);
-  T_vec db_infsum = T_vec::Constant(b.size(), NEGATIVE_INFTY);
+  T_vec da_infsum(a.size());
+  std::vector<scalar_t> da_infsumt(0);
+  T_vec db_infsum(b.size());
+  std::vector<scalar_t> db_infsumt(0);
   // Vectors to accumulate outer sum into
   T_vec da_iter_m = T_vec::Constant(a.size(), NEGATIVE_INFTY);
-  T_vec da_mn = T_vec::Constant(a.size(), NEGATIVE_INFTY);
   T_vec db_iter_m = T_vec::Constant(b.size(), NEGATIVE_INFTY);
+  T_vec da_mn = T_vec::Constant(a.size(), NEGATIVE_INFTY);
   T_vec db_mn = T_vec::Constant(b.size(), NEGATIVE_INFTY);
 
   // Only need the infinite sum for partials wrt p & b
@@ -91,9 +95,6 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
 
     int m = 0;
     scalar_t outer_diff = 0;
-
-    da_infsum.setConstant(NEGATIVE_INFTY);
-    db_infsum.setConstant(NEGATIVE_INFTY);
 
     double lgamma_mp1 = 0;
     double log_phammer_1m = 0;
@@ -113,10 +114,8 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
 
     while ((outer_diff > outer_precision) && (m < max_steps)) {
       // Vectors to accumulate outer sum into
-      da_iter_m.setConstant(NEGATIVE_INFTY);
-      da_mn.setConstant(NEGATIVE_INFTY);
-      db_iter_m.setConstant(NEGATIVE_INFTY);
-      db_mn.setConstant(NEGATIVE_INFTY);
+      std::vector<scalar_t> da_iter_mt(0);
+      std::vector<scalar_t> db_iter_mt(0);
 
       int n = 0;
       scalar_t inner_diff = 0;
@@ -144,19 +143,21 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
                   - (term2_mn + log_phammer_ap1_n.array());
 
           // Perform a row-wise log_sum_exp to accumulate current iteration
-          da_iter_m = da_iter_m.binaryExpr(
-              da_mn, [&](auto& a, auto& b) { return log_sum_exp(a, b); });
+          for (int i = 0; i < da_mn.size(); i++) {
+            da_iter_mt.emplace_back(da_mn[i]);
+          }
         }
         if (calc_b) {
           db_mn = (term1_mn + log_phammer_bn.array())
                   - (term2_mn + log_phammer_bp1_n.array());
-          db_iter_m = db_iter_m.binaryExpr(
-              db_mn, [&](auto& a, auto& b) { return log_sum_exp(a, b); });
+          for (int i = 0; i < db_mn.size(); i++) {
+            db_iter_mt.emplace_back(db_mn[i]);
+          }
         }
 
         // Series convergence assessed by whether the sum of all terms is
         //   smaller than the specified criteria (precision)
-        inner_diff = max(log_sum_exp(da_mn), log_sum_exp(db_mn));
+        inner_diff = std::max(da_mn.maxCoeff(), db_mn.maxCoeff());
 
         log_phammer_1n += log1p(n);
         log_phammer_2_mpn += log1p(1 + m + n);
@@ -170,18 +171,22 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
         lgamma_np1 += log(n);
       }
       if (calc_a) {
-        // Accumulate sums once the inner loop for the current iteration has
-        //   converged
-        da_infsum = da_infsum.binaryExpr(
-            da_iter_m, [&](auto& a, auto& b) { return log_sum_exp(a, b); });
+        for (int i = 0; i < a.size(); i++) {
+          da_iter_m[i] = log_sum_exp(MapT(da_iter_mt.data() + i, n,
+                                          Eigen::InnerStride<>(a.size())));
+          da_infsumt.emplace_back(da_iter_m[i]);
+        }
       }
       if (calc_b) {
-        db_infsum = db_infsum.binaryExpr(
-            db_iter_m, [&](auto& a, auto& b) { return log_sum_exp(a, b); });
+        for (int i = 0; i < b.size(); i++) {
+          db_iter_m[i] = log_sum_exp(MapT(db_iter_mt.data() + i, n,
+                                          Eigen::InnerStride<>(b.size())));
+          db_infsumt.emplace_back(db_iter_m[i]);
+        }
       }
 
       // Assess convergence of outer loop
-      outer_diff = max(log_sum_exp(da_iter_m), log_sum_exp(db_iter_m));
+      outer_diff = std::max(da_iter_m.maxCoeff(), db_iter_m.maxCoeff());
 
       log_phammer_1m += log1p(m);
       log_phammer_2m += log1p(1 + m);
@@ -200,6 +205,10 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
     }
 
     if (calc_a) {
+      for (int i = 0; i < a.size(); i++) {
+        da_infsum[i] = log_sum_exp(MapT(da_infsumt.data() + i, m,
+                                        Eigen::InnerStride<>(a.size())));
+      }
       // Workaround to construct vector where each element is the product of
       //   all other elements
       Eigen::VectorXi ind_vector
@@ -214,6 +223,10 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
     }
 
     if (calc_b) {
+      for (int i = 0; i < b.size(); i++) {
+        db_infsum[i] = log_sum_exp(MapT(db_infsumt.data() + i, m,
+                                        Eigen::InnerStride<>(b.size())));
+      }
       T_vec pre_mult_b = (log_z + sum_log_a) - (log_b.array() + sum_log_b);
       std::get<1>(grad_tuple) = -exp(pre_mult_b + db_infsum);
     }
