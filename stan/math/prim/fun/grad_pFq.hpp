@@ -86,7 +86,8 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
 
   // Only need the infinite sum for partials wrt p & b
   if (calc_a || calc_b) {
-    double log_precision = log(precision);
+    double outer_precision = log(precision);
+    double inner_precision = log(precision) - LOG_TWO;
 
     int m = 0;
     scalar_t outer_diff = 0;
@@ -94,40 +95,61 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
     da_infsum.setConstant(NEGATIVE_INFTY);
     db_infsum.setConstant(NEGATIVE_INFTY);
 
-    while ((outer_diff > log_precision) && (m < max_steps)) {
+    double lgamma_mp1 = 0;
+    double log_phammer_1m = 0;
+    double log_phammer_2m = 0;
+    Ta_plain log_phammer_ap1_m = Ta_plain::Zero(ap1.size());
+    Tb_plain log_phammer_bp1_m = Tb_plain::Zero(bp1.size());
+
+    double log_phammer_1n;
+    double log_phammer_2_mpn;
+    double lgamma_np1;
+    Ta_plain log_phammer_an(a.size());
+    Ta_plain log_phammer_ap1_n(a.size());
+    Ta_plain log_phammer_bp1_n(b.size());
+    Tb_plain log_phammer_bn(b.size());
+    Ta_plain log_phammer_ap1_mpn(a.size());
+    Tb_plain log_phammer_bp1_mpn(b.size());
+
+    while ((outer_diff > outer_precision) && (m < max_steps)) {
       // Vectors to accumulate outer sum into
       da_iter_m.setConstant(NEGATIVE_INFTY);
       da_mn.setConstant(NEGATIVE_INFTY);
       db_iter_m.setConstant(NEGATIVE_INFTY);
       db_mn.setConstant(NEGATIVE_INFTY);
 
-      double log_phammer_1m = log_rising_factorial(1, m);
-      double lgamma_mp1 = lgamma(m + 1);
-
       int n = 0;
       scalar_t inner_diff = 0;
+      lgamma_np1 = 0;
 
-      while ((inner_diff > log_precision) & (n < max_steps)) {
+      log_phammer_1n = 0;
+      log_phammer_an.setZero();
+      log_phammer_ap1_n.setZero();
+      log_phammer_bp1_n.setZero();
+      log_phammer_bn.setZero();
+      log_phammer_ap1_mpn = log_phammer_ap1_m;
+      log_phammer_bp1_mpn = log_phammer_bp1_m;
+      log_phammer_2_mpn = log_phammer_2m;
+
+      while ((inner_diff > inner_precision) & (n < (max_steps / 2))) {
         // Numerator term
-        scalar_t term1_mn = (m + n) * log_z
-                            + sum(log_rising_factorial(ap1, m + n))
-                            + log_phammer_1m + log_rising_factorial(1, n);
+        scalar_t term1_mn = (m + n) * log_z + sum(log_phammer_ap1_mpn)
+                            + log_phammer_1m + log_phammer_1n;
         // Denominator term
-        scalar_t term2_mn = lgamma_mp1 + lgamma(n + 1)
-                            + sum(log_rising_factorial(bp1, m + n))
-                            + log_rising_factorial(2, m + n);
+        scalar_t term2_mn = lgamma_mp1 + lgamma_np1 + sum(log_phammer_bp1_mpn)
+                            + log_phammer_2_mpn;
         if (calc_a) {
           // Division (on log scale) for the a & b partials
-          da_mn = (term1_mn + log_rising_factorial(a, n).array())
-                  - (term2_mn + log_rising_factorial(ap1, n).array());
+          da_mn = (term1_mn + log_phammer_an.array())
+                  - (term2_mn + log_phammer_ap1_n.array());
 
           // Perform a row-wise log_sum_exp to accumulate current iteration
           da_iter_m = da_iter_m.binaryExpr(
               da_mn, [&](auto& a, auto& b) { return log_sum_exp(a, b); });
         }
         if (calc_b) {
-          db_mn = (term1_mn + log_rising_factorial(b, n).array())
-                  - (term2_mn + log_rising_factorial(bp1, n).array());
+          db_mn = (term1_mn + log_phammer_bn.array())
+                  - (term2_mn + log_phammer_bp1_n.array());
           db_iter_m = db_iter_m.binaryExpr(
               db_mn, [&](auto& a, auto& b) { return log_sum_exp(a, b); });
         }
@@ -135,7 +157,17 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
         // Series convergence assessed by whether the sum of all terms is
         //   smaller than the specified criteria (precision)
         inner_diff = max(log_sum_exp(da_mn), log_sum_exp(db_mn));
+
+        log_phammer_1n += log1p(n);
+        log_phammer_2_mpn += log1p(1 + m + n);
+        log_phammer_ap1_n.array() += log(ap1.array() + n);
+        log_phammer_bp1_n.array() += log(bp1.array() + n);
+        log_phammer_an.array() += log(a.array() + n);
+        log_phammer_bn.array() += log(b.array() + n);
+        log_phammer_ap1_mpn.array() += log(ap1.array() + m + n);
+        log_phammer_bp1_mpn.array() += log(bp1.array() + m + n);
         n += 1;
+        lgamma_np1 += log(n);
       }
       if (calc_a) {
         // Accumulate sums once the inner loop for the current iteration has
@@ -150,7 +182,15 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
 
       // Assess convergence of outer loop
       outer_diff = max(log_sum_exp(da_iter_m), log_sum_exp(db_iter_m));
+
+      log_phammer_1m += log1p(m);
+      log_phammer_2m += log1p(1 + m);
+      log_phammer_ap1_m.array() += log(ap1.array() + m);
+      log_phammer_bp1_m.array() += log(bp1.array() + m);
+
       m += 1;
+
+      lgamma_mp1 += log(m);
     }
     if (m == max_steps) {
       throw_domain_error("grad_pFq", "k (internal counter)", max_steps,
@@ -204,7 +244,7 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
  * @return Tuple of gradients
  */
 template <typename Ta, typename Tb, typename Tz>
-auto grad_pFq(const Ta& a, const Tb& b, const Tz& z, double precision = 1e-14,
+auto grad_pFq(const Ta& a, const Tb& b, const Tz& z, double precision = 1e-10,
               int max_steps = 1e6) {
   using partials_t = partials_return_t<Ta, Tb, Tz>;
   std::tuple<promote_scalar_t<partials_t, plain_type_t<Ta>>,
