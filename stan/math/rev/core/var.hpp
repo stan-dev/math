@@ -296,10 +296,10 @@ class var_value<T, require_floating_point_t<T>> {
 };
 
 namespace internal {
-  template <typename T>
-  using require_matrix_var_value = require_t<bool_constant<
-         (is_eigen<T>::value || is_kernel_expression_and_not_scalar<T>::value)
-         && std::is_floating_point<value_type_t<T>>::value>>;
+template <typename T>
+using require_matrix_var_value = require_t<bool_constant<
+    (is_eigen<T>::value || is_kernel_expression_and_not_scalar<T>::value)
+    && std::is_floating_point<value_type_t<T>>::value>>;
 }
 
 /**

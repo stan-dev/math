@@ -22,7 +22,6 @@
 namespace stan {
 namespace math {
 
-
 /**
  * Division operator for two variables (C++).
  *
@@ -62,10 +61,12 @@ namespace math {
  * second.
  */
 inline var operator/(const var& dividend, const var& divisor) {
-  return make_callback_var(dividend.val() / divisor.val(), [dividend, divisor](auto&& vi) {
-    dividend.adj() += vi.adj() / divisor.val();
-    divisor.adj() -= vi.adj() * dividend.val() / (divisor.val() * divisor.val());
-  });
+  return make_callback_var(
+      dividend.val() / divisor.val(), [dividend, divisor](auto&& vi) {
+        dividend.adj() += vi.adj() / divisor.val();
+        divisor.adj()
+            -= vi.adj() * dividend.val() / (divisor.val() * divisor.val());
+      });
 }
 
 /**
@@ -86,9 +87,9 @@ inline var operator/(const var& dividend, Arith divisor) {
   if (divisor == 1.0) {
     return dividend;
   }
-  return make_callback_var(dividend.val() / divisor, [dividend, divisor](auto&& vi) {
-    dividend.adj() += vi.adj() / divisor;
-  });
+  return make_callback_var(
+      dividend.val() / divisor,
+      [dividend, divisor](auto&& vi) { dividend.adj() += vi.adj() / divisor; });
 }
 
 /**
@@ -105,9 +106,10 @@ inline var operator/(const var& dividend, Arith divisor) {
  */
 template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
 inline var operator/(Arith dividend, const var& divisor) {
-  return make_callback_var(dividend / divisor.val(), [dividend, divisor](auto&& vi) {
-    divisor.adj() -= vi.adj() * dividend / (divisor.val() * divisor.val());
-  });
+  return make_callback_var(
+      dividend / divisor.val(), [dividend, divisor](auto&& vi) {
+        divisor.adj() -= vi.adj() * dividend / (divisor.val() * divisor.val());
+      });
 }
 
 template <typename T1, typename T2, require_any_var_matrix_t<T1, T2>* = nullptr>

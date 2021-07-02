@@ -56,9 +56,10 @@ inline auto divide(const Mat& m, Scal c) {
  * @param[in] c specified matrix or expression
  * @return matrix divided elementwise by `c`
  */
-template <typename Mat1, typename Mat2,
-          require_all_eigen_t<Mat1, Mat2>* = nullptr,
-          require_t<bool_constant<std::is_arithmetic<scalar_type_t<Mat1>>::value || is_fvar<scalar_type_t<Mat2>>::value>>* = nullptr>
+template <
+    typename Mat1, typename Mat2, require_all_eigen_t<Mat1, Mat2>* = nullptr,
+    require_t<bool_constant<std::is_arithmetic<scalar_type_t<Mat1>>::value
+                            || is_fvar<scalar_type_t<Mat2>>::value>>* = nullptr>
 inline auto divide(const Mat1& m, const Mat2& c) {
   return (m.array() / c.array()).matrix();
 }
@@ -85,10 +86,10 @@ inline auto divide(double c, const Mat& m) {
  * @param[in] m specified matrix or expression
  * @return matrix divided elementwise by `c`
  */
-template <typename Scalar, typename Mat,
-  require_eigen_t<Mat>* = nullptr,
-  require_t<bool_constant<std::is_arithmetic<Scalar>::value || is_fvar<Scalar>::value>>* = nullptr,
-  require_any_st_fvar<Scalar, Mat>* = nullptr>
+template <typename Scalar, typename Mat, require_eigen_t<Mat>* = nullptr,
+          require_t<bool_constant<std::is_arithmetic<Scalar>::value
+                                  || is_fvar<Scalar>::value>>* = nullptr,
+          require_any_st_fvar<Scalar, Mat>* = nullptr>
 inline auto divide(Scalar c, const Mat& m) {
   return (c / m.array()).matrix();
 }

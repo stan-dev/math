@@ -47,7 +47,6 @@ TEST(MathMixMatFun, divide_vec_scal) {
   stan::test::expect_ad_matvar(f, x1, rv0);
   stan::test::expect_ad_matvar(f, x1, m00);
 
-
   Eigen::RowVectorXd rv4(4);
   rv4 << -5, 10, 7, 8.2;
   stan::test::expect_ad(f, x2, rv4);
@@ -64,5 +63,4 @@ TEST(MathMixMatFun, divide_vec_scal) {
     stan::test::expect_ad_matvar(f, value, rv4);
     stan::test::expect_ad_matvar(f, value, p);
   }
-
 }
