@@ -98,18 +98,18 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
     double lgamma_mp1 = 0;
     double log_phammer_1m = 0;
     double log_phammer_2m = 0;
-    Ta_plain log_phammer_ap1_m = Ta_plain::Zero(ap1.size());
-    Tb_plain log_phammer_bp1_m = Tb_plain::Zero(bp1.size());
+    T_vec log_phammer_ap1_m = T_vec::Zero(ap1.size());
+    T_vec log_phammer_bp1_m = T_vec::Zero(bp1.size());
 
     double log_phammer_1n;
     double log_phammer_2_mpn;
     double lgamma_np1;
-    Ta_plain log_phammer_an(a.size());
-    Ta_plain log_phammer_ap1_n(a.size());
-    Ta_plain log_phammer_bp1_n(b.size());
-    Tb_plain log_phammer_bn(b.size());
-    Ta_plain log_phammer_ap1_mpn(a.size());
-    Tb_plain log_phammer_bp1_mpn(b.size());
+    T_vec log_phammer_an(a.size());
+    T_vec log_phammer_ap1_n(a.size());
+    T_vec log_phammer_bp1_n(b.size());
+    T_vec log_phammer_bn(b.size());
+    T_vec log_phammer_ap1_mpn(a.size());
+    T_vec log_phammer_bp1_mpn(b.size());
 
     while ((outer_diff > outer_precision) && (m < max_steps)) {
       // Vectors to accumulate outer sum into
