@@ -31,36 +31,74 @@ namespace math {
  *  @{
  */
 
-template <typename>
+template <typename, int Rows_ = -1, int Cols_ = -1>
 class matrix_cl;
 
 /**
  * Represents an arithmetic matrix on the OpenCL device.
  * @tparam T an arithmetic type for the type stored in the OpenCL buffer.
  */
-template <typename T>
+template <typename T, int Rows_, int Cols_>
 class matrix_cl : public matrix_cl_base {
  private:
   cl::Buffer buffer_cl_;  // Holds the allocated memory on the device
-  int rows_{0};           // Number of rows.
-  int cols_{0};           // Number of columns.
+  int rows_{Rows_ == -1 ? 0 : Rows_};           // Number of rows.
+  int cols_{Cols_ == -1 ? 0 : Cols_};           // Number of columns.
   // Holds info on if matrix is a special type
   matrix_cl_view view_{matrix_cl_view::Entire};
   mutable std::vector<cl::Event> write_events_;  // Tracks write jobs
   mutable std::vector<cl::Event> read_events_;   // Tracks reads
 
+  inline constexpr auto check_constant_cols(int cols) {
+    if (ColsAtCompileTime != -1) {
+      if (ColsAtCompileTime != cols) {
+        throw std::domain_error("Write something good here");
+      } else {
+        return cols;
+      }
+    } else {
+      return cols;
+    }
+  }
+  inline constexpr auto check_constant_rows(int rows) {
+    if (RowsAtCompileTime != -1) {
+      if (RowsAtCompileTime != rows) {
+        throw std::domain_error("Write something good here");
+      } else {
+        return rows;
+      }
+    } else {
+      return rows;
+    }
+  }
+
+
  public:
   using Scalar = T;  // Underlying type of the matrix
   using type = T;    // Underlying type of the matrix
+
+  static constexpr int RowsAtCompileTime{Rows_};
+  static constexpr int ColsAtCompileTime{Cols_};
   // Forward declare the methods that work in place on the matrix
   template <matrix_cl_view matrix_view = matrix_cl_view::Entire>
   inline void zeros_strict_tri();
 
-  int rows() const { return rows_; }
+  inline constexpr int rows() const { return RowsAtCompileTime == -1 ? rows_ : RowsAtCompileTime; }
 
-  int cols() const { return cols_; }
+  inline constexpr int cols() const { return ColsAtCompileTime == -1 ? cols_ : ColsAtCompileTime; }
 
-  int size() const { return rows_ * cols_; }
+  inline constexpr int size() const {
+    if (RowsAtCompileTime == 1) {
+       return cols_;
+    } else if (ColsAtCompileTime == 1) {
+      return rows_;
+    } else if (RowsAtCompileTime != -1 && ColsAtCompileTime != -1) {
+      return RowsAtCompileTime * ColsAtCompileTime;
+    } else {
+      return rows_ * cols_;
+    }
+  }
+
 
   const matrix_cl_view& view() const { return view_; }
 
@@ -184,14 +222,14 @@ class matrix_cl : public matrix_cl_base {
    */
   matrix_cl(const cl::Buffer& A, const int R, const int C,
             matrix_cl_view partial_view = matrix_cl_view::Entire)
-      : buffer_cl_(A), rows_(R), cols_(C), view_(partial_view) {}
+      : buffer_cl_(A), rows_(check_constant_rows(R)), cols_(check_constant_cols(C)), view_(partial_view) {}
 
   /**
    * Copy constructor.
    * @param A matrix_cl to copy
    */
-  matrix_cl(const matrix_cl<T>& A)
-      : rows_(A.rows()), cols_(A.cols()), view_(A.view()) {
+  matrix_cl(const matrix_cl<T, Rows_, Cols_>& A)
+      : rows_(check_constant_rows(A.rows())), cols_(check_constant_cols(A.cols())), view_(A.view()) {
     if (A.size() == 0) {
       return;
     }
@@ -204,7 +242,7 @@ class matrix_cl : public matrix_cl_base {
    * Move constructor.
    * @param A matrix_cl to move
    */
-  matrix_cl(matrix_cl<T>&& A)
+  matrix_cl(matrix_cl<T, Rows_, Cols_>&& A)
       : buffer_cl_(std::move(A.buffer_cl_)),
         rows_(A.rows_),
         cols_(A.cols_),
@@ -233,8 +271,8 @@ class matrix_cl : public matrix_cl_base {
    */
   template <typename Vec, require_std_vector_vt<is_eigen, Vec>* = nullptr,
             require_st_same<Vec, T>* = nullptr>
-  explicit matrix_cl(Vec&& A) try : rows_(A.empty() ? 0 : A[0].size()),
-                                    cols_(A.size()) {
+  explicit matrix_cl(Vec&& A) try : rows_(check_constant_rows(A.empty() ? 0 : A[0].size())),
+                                    cols_(check_constant_cols(A.size())) {
     if (this->size() == 0) {
       return;
     }
@@ -248,7 +286,7 @@ class matrix_cl : public matrix_cl_base {
       queue.enqueueWriteBuffer(
           buffer_cl_,
           opencl_context.in_order() || std::is_rvalue_reference<Vec&&>::value,
-          sizeof(T) * offset_size, sizeof(T) * rows_, A[i].data(), nullptr,
+          sizeof(T) * offset_size, sizeof(T) * this->rows(), A[i].data(), nullptr,
           &write_event);
       this->add_write_event(write_event);
     }
@@ -272,7 +310,7 @@ class matrix_cl : public matrix_cl_base {
   matrix_cl(const int rows, const int cols,
             matrix_cl_view partial_view = matrix_cl_view::Entire)
       : rows_(rows), cols_(cols), view_(partial_view) {
-    if (size() == 0) {
+    if (this->size() == 0) {
       return;
     }
     cl::Context& ctx = opencl_context.context();
@@ -281,7 +319,7 @@ class matrix_cl : public matrix_cl_base {
       if (opencl_context.device()[0].getInfo<CL_DEVICE_HOST_UNIFIED_MEMORY>()) {
         flags |= CL_MEM_ALLOC_HOST_PTR;
       }
-      buffer_cl_ = cl::Buffer(ctx, flags, sizeof(T) * rows_ * cols_);
+      buffer_cl_ = cl::Buffer(ctx, flags, sizeof(T) * this->rows() * this->cols());
     } catch (const cl::Error& e) {
       check_opencl_error("matrix constructor", e);
     }
@@ -308,9 +346,9 @@ class matrix_cl : public matrix_cl_base {
             require_vt_same<Mat, T>* = nullptr>
   explicit matrix_cl(Mat&& A,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
-      : rows_(A.rows()), cols_(A.cols()), view_(partial_view) {
+      : rows_(check_constant_rows(A.rows())), cols_(check_constant_cols(A.cols())), view_(partial_view) {
     using Mat_type = std::decay_t<ref_type_for_opencl_t<Mat>>;
-    if (size() == 0) {
+    if (this->size() == 0) {
       return;
     }
     initialize_buffer_no_heap_if<
@@ -339,6 +377,8 @@ class matrix_cl : public matrix_cl_base {
   explicit matrix_cl(Scal&& A,
                      matrix_cl_view partial_view = matrix_cl_view::Diagonal)
       : rows_(1), cols_(1), view_(partial_view) {
+    //static_assert(Rows_ == 1, "Throw good error here");
+    //static_assert(Cols_ == 1, "Throw good error here");
     initialize_buffer<std::is_rvalue_reference<Scal&&>::value>(
         const_cast<const std::decay_t<Scal>*>(&A));
   }
@@ -383,7 +423,7 @@ class matrix_cl : public matrix_cl_base {
             require_vt_same<Vec, T>* = nullptr>
   explicit matrix_cl(Vec&& A, const int& R, const int& C,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
-      : rows_(R), cols_(C), view_(partial_view) {
+      : rows_(check_constant_rows(R)), cols_(check_constant_cols(C)), view_(partial_view) {
     initialize_buffer_no_heap_if<std::is_lvalue_reference<Vec>::value>(A);
   }
 
@@ -405,7 +445,7 @@ class matrix_cl : public matrix_cl_base {
   template <typename U, require_same_t<T, U>* = nullptr>
   explicit matrix_cl(const U* A, const int& R, const int& C,
                      matrix_cl_view partial_view = matrix_cl_view::Entire)
-      : rows_(R), cols_(C), view_(partial_view) {
+      : rows_(check_constant_rows(R)), cols_(check_constant_cols(C)), view_(partial_view) {
     initialize_buffer(A);
   }
 
@@ -422,7 +462,7 @@ class matrix_cl : public matrix_cl_base {
   /**
    * Move assignment operator.
    */
-  matrix_cl<T>& operator=(matrix_cl<T>&& a) {
+  matrix_cl<T, Rows_, Cols_>& operator=(matrix_cl<T, Rows_, Cols_>&& a) {
     view_ = a.view();
     rows_ = a.rows();
     cols_ = a.cols();
@@ -436,7 +476,7 @@ class matrix_cl : public matrix_cl_base {
   /**
    * Copy assignment operator.
    */
-  matrix_cl<T>& operator=(const matrix_cl<T>& a) {
+  matrix_cl<T, Rows_, Cols_>& operator=(const matrix_cl<T, Rows_, Cols_>& a) {
     this->view_ = a.view();
     if (a.size() == 0) {
       this->rows_ = a.rows();
@@ -462,14 +502,14 @@ class matrix_cl : public matrix_cl_base {
    */
   template <typename Expr,
             require_all_kernel_expressions_and_none_scalar_t<Expr>* = nullptr>
-  matrix_cl<T>& operator=(const Expr& expression);
+  matrix_cl<T, Rows_, Cols_>& operator=(const Expr& expression);
 
   /**
    * Evaluates `this`. This is a no-op.
    * @return `*this`
    */
-  const matrix_cl<T>& eval() const& { return *this; }
-  matrix_cl<T> eval() && { return std::move(*this); }
+  const matrix_cl<T, Rows_, Cols_>& eval() const& { return *this; }
+  matrix_cl<T, Rows_, Cols_> eval() && { return std::move(*this); }
 
   /**
    * Destructor waits for write events to prevent any kernels from writing

@@ -27,9 +27,9 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if the
  * matrix_view parameter is Entire.
  */
-template <typename T>
+template <typename T, int Rows_, int Cols_>
 template <matrix_cl_view matrix_view>
-inline void matrix_cl<T>::zeros_strict_tri() try {
+inline void matrix_cl<T, Rows_, Cols_>::zeros_strict_tri() try {
   if (matrix_view == matrix_cl_view::Entire) {
     invalid_argument(
         "zeros_strict_tri", "matrix_view",
