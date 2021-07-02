@@ -1,10 +1,12 @@
 #ifndef STAN_MATH_REV_CORE_OPERATOR_DIVISION_HPP
 #define STAN_MATH_REV_CORE_OPERATOR_DIVISION_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/core/operator_division.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/is_any_nan.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/rev/core/var.hpp>
 #include <stan/math/rev/core/std_complex.hpp>
 #include <stan/math/rev/core/vv_vari.hpp>
@@ -13,41 +15,13 @@
 #include <stan/math/rev/core/operator_addition.hpp>
 #include <stan/math/rev/core/operator_multiplication.hpp>
 #include <stan/math/rev/core/operator_subtraction.hpp>
-#include <stan/math/rev/functor/apply_scalar_unary.hpp>
+#include <stan/math/rev/fun/divide.hpp>
 #include <complex>
 #include <type_traits>
 
 namespace stan {
 namespace math {
 
-namespace internal {
-// (dividend/divisor)' = dividend' * (1 / divisor) - divisor' * (dividend /
-// [divisor * divisor])
-class divide_vv_vari final : public op_vv_vari {
- public:
-  divide_vv_vari(vari* dividend_vi, vari* divisor_vi)
-      : op_vv_vari(dividend_vi->val_ / divisor_vi->val_, dividend_vi,
-                   divisor_vi) {}
-  void chain() {
-    avi_->adj_ += adj_ / bvi_->val_;
-    bvi_->adj_ -= adj_ * avi_->val_ / (bvi_->val_ * bvi_->val_);
-  }
-};
-
-class divide_vd_vari final : public op_vd_vari {
- public:
-  divide_vd_vari(vari* dividend_vi, double divisor)
-      : op_vd_vari(dividend_vi->val_ / divisor, dividend_vi, divisor) {}
-  void chain() { avi_->adj_ += adj_ / bd_; }
-};
-
-class divide_dv_vari final : public op_dv_vari {
- public:
-  divide_dv_vari(double dividend, vari* divisor_vi)
-      : op_dv_vari(dividend / divisor_vi->val_, dividend, divisor_vi) {}
-  void chain() { bvi_->adj_ -= adj_ * ad_ / (bvi_->val_ * bvi_->val_); }
-};
-}  // namespace internal
 
 /**
  * Division operator for two variables (C++).
@@ -88,7 +62,10 @@ class divide_dv_vari final : public op_dv_vari {
  * second.
  */
 inline var operator/(const var& dividend, const var& divisor) {
-  return {new internal::divide_vv_vari(dividend.vi_, divisor.vi_)};
+  return make_callback_var(dividend.val() / divisor.val(), [dividend, divisor](auto&& vi) {
+    dividend.adj() += vi.adj() / divisor.val();
+    divisor.adj() -= vi.adj() * dividend.val() / (divisor.val() * divisor.val());
+  });
 }
 
 /**
@@ -109,7 +86,9 @@ inline var operator/(const var& dividend, Arith divisor) {
   if (divisor == 1.0) {
     return dividend;
   }
-  return {new internal::divide_vd_vari(dividend.vi_, divisor)};
+  return make_callback_var(dividend.val() / divisor, [dividend, divisor](auto&& vi) {
+    dividend.adj() += vi.adj() / divisor;
+  });
 }
 
 /**
@@ -126,7 +105,14 @@ inline var operator/(const var& dividend, Arith divisor) {
  */
 template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
 inline var operator/(Arith dividend, const var& divisor) {
-  return {new internal::divide_dv_vari(dividend, divisor.vi_)};
+  return make_callback_var(dividend / divisor.val(), [dividend, divisor](auto&& vi) {
+    divisor.adj() -= vi.adj() * dividend / (divisor.val() * divisor.val());
+  });
+}
+
+template <typename T1, typename T2, require_any_var_matrix_t<T1, T2>* = nullptr>
+inline auto operator/(const T1& dividend, const T2& divisor) {
+  return divide(dividend, divisor);
 }
 
 inline std::complex<var> operator/(const std::complex<var>& x1,
