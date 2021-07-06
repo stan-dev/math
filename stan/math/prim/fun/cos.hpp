@@ -14,6 +14,16 @@ namespace stan {
 namespace math {
 
 /**
+ * Arithmetic version of `cos()`
+ * @tparam T An `Arithmetic` type.
+ * @param x Arithmetic scalar.
+ */
+template <typename T, require_arithmetic_t<T>* = nullptr>
+inline auto cos(T x) {
+  return std::cos(x);
+}
+
+/**
  * Structure to wrap `cos()` so it can be vectorized.
  *
  * @tparam T type of variable
@@ -23,7 +33,6 @@ namespace math {
 struct cos_fun {
   template <typename T>
   static inline T fun(const T& x) {
-    using std::cos;
     return cos(x);
   }
 };
