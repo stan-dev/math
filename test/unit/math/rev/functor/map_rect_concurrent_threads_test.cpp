@@ -11,14 +11,13 @@
 #include <gtest/gtest.h>
 #include <stan/math/rev.hpp>
 
+#include <test/unit/math/prim/core/tbb_test_environment.hpp>
 #include <test/unit/math/prim/functor/hard_work.hpp>
 #include <test/unit/math/prim/functor/utils_threads.hpp>
 
 #include <iostream>
 #include <vector>
 #include <string>
-
-auto& tbb_setup = stan::math::init_threadpool_tbb();
 
 STAN_REGISTER_MAP_RECT(0, hard_work)
 STAN_REGISTER_MAP_RECT(1, hard_work)

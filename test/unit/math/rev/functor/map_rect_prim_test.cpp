@@ -1,12 +1,11 @@
 #include <stan/math/rev.hpp>
 #include <gtest/gtest.h>
 
+#include <test/unit/math/prim/core/tbb_test_environment.hpp>
 #include <test/unit/math/prim/functor/hard_work.hpp>
 
 #include <iostream>
 #include <vector>
-
-auto& tbb_setup = stan::math::init_threadpool_tbb();
 
 // the tests here check that map_rect refuses mal-formatted input as
 // such it does not matter if STAN_MPI is defined or not

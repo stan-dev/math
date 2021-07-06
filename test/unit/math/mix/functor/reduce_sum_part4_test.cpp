@@ -1,5 +1,6 @@
 #include <stan/math/prim/meta.hpp>
 #include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/prim/core/tbb_test_environment.hpp>
 #include <test/unit/math/mix/functor/reduce_sum_util.hpp>
 
 #include <limits>
@@ -7,8 +8,6 @@
 
 // Reduce sum tests are broken up into four files to avoid windows compiler
 // error
-
-auto& tbb_setup = stan::math::init_threadpool_tbb();
 
 TEST(MathMix_reduce_sum, eigen_three_args_with_ints3) {
   using stan::math::test::reduce_sum_int_sum_lpdf;

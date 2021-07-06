@@ -1,4 +1,5 @@
 #include <stan/math.hpp>
+#include <test/unit/math/prim/core/tbb_test_environment.hpp>
 #include <test/unit/math/prim/functor/reduce_sum_util.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
@@ -6,8 +7,6 @@
 #include <tuple>
 #include <vector>
 #include <set>
-
-auto& tbb_setup = stan::math::init_threadpool_tbb();
 
 TEST(StanMathRev_reduce_sum, no_args) {
   using stan::math::var;
