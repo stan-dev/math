@@ -8,13 +8,15 @@ TEST(Profiling, double_basic) {
   double a = 3.0, b = 2.0, c;
   {
     profile<double> p1("p1", profiles);
-    c = a + b;
+    c = log(exp(a)) * log(exp(b));
   }
   {
     profile<int> p1("p1", profiles);
-    c = a + b;
+    c = log(exp(a)) * log(exp(b));
   }
+
   stan::math::profile_key key = {"p1", std::this_thread::get_id()};
+  EXPECT_NEAR(c, 6.0, 1E-8);
   EXPECT_EQ(profiles[key].get_chain_stack_used(), 0);
   EXPECT_EQ(profiles[key].get_nochain_stack_used(), 0);
   EXPECT_FLOAT_EQ(profiles[key].get_rev_time(), 0.0);
