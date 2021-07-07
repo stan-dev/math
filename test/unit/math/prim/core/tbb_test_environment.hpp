@@ -10,6 +10,7 @@ class TBBEnvironment : public ::testing::Environment {
   virtual void SetUp() { stan::math::init_threadpool_tbb(); }
 };
 
-::testing::Environment* const tbb_env = ::testing::AddGlobalTestEnvironment(new TBBEnvironment);
+::testing::Environment* const tbb_env
+    = ::testing::AddGlobalTestEnvironment(new TBBEnvironment);
 
 #endif
