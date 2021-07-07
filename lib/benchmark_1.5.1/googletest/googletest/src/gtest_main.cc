@@ -30,6 +30,7 @@
 #include <cstdio>
 #include "gtest/gtest.h"
 #include <stan/math/prim/functor/mpi_cluster.hpp>
+#include <stan/math/prim/core/init_threadpool_tbb.hpp>
 
 #if GTEST_OS_ESP8266 || GTEST_OS_ESP32
 #if GTEST_OS_ESP8266
@@ -57,6 +58,8 @@ GTEST_API_ int main(int argc, char **argv) {
   if (cluster.rank_ != 0)
     return 0;
 #endif
+
+  stan::math::init_threadpool_tbb();
 
   printf("Running main() from %s\n", __FILE__);
   testing::InitGoogleTest(&argc, argv);

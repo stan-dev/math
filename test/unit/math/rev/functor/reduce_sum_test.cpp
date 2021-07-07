@@ -1,5 +1,4 @@
 #include <stan/math.hpp>
-#include <test/unit/math/prim/core/tbb_test_environment.hpp>
 #include <test/unit/math/prim/functor/reduce_sum_util.hpp>
 #include <gtest/gtest.h>
 #include <algorithm>
