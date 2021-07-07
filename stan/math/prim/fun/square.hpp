@@ -47,8 +47,7 @@ struct square_fun {
  * @return Each value in x squared.
  */
 template <
-    typename Container,
-    require_not_stan_scalar_t<Container>* = nullptr,
+    typename Container, require_not_stan_scalar_t<Container>* = nullptr,
     require_not_container_st<std::is_arithmetic, Container>* = nullptr,
     require_not_var_matrix_t<Container>* = nullptr,
     require_not_nonscalar_prim_or_rev_kernel_expression_t<Container>* = nullptr>

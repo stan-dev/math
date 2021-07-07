@@ -5,5 +5,4 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 
-
 #endif
