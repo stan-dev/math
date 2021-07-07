@@ -47,12 +47,6 @@ inline auto divide(const Mat& m, Scal c) {
   return m / c;
 }
 
-namespace internal {
-template <typename T>
-using is_fvar_or_arithmetic
-    = bool_constant<std::is_arithmetic<scalar_type_t<T>>::value
-                    || is_fvar<scalar_type_t<T>>::value>;
-}
 /**
  * Return matrix divided by matrix.
  *
@@ -64,8 +58,7 @@ using is_fvar_or_arithmetic
  */
 template <typename Mat1, typename Mat2,
           require_all_eigen_t<Mat1, Mat2>* = nullptr,
-          require_all_t<internal::is_fvar_or_arithmetic<Mat1>,
-                        internal::is_fvar_or_arithmetic<Mat2>>* = nullptr>
+          require_all_st_fvar_or_arithmetic<Mat1, Mat2>* = nullptr>
 inline auto divide(const Mat1& m, const Mat2& c) {
   return (m.array() / c.array()).matrix();
 }
