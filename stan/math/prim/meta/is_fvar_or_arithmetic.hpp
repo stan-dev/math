@@ -15,10 +15,10 @@ namespace stan {
  * Extends std::true_type if all the provided types are either fvar or
  * an arithmetic type, extends std::false_type otherwise.
  */
- template <typename T>
- using is_fvar_or_arithmetic
-     = bool_constant<std::is_arithmetic<std::decay_t<T>>::value
-                     || is_fvar<std::decay_t<T>>::value>;
+template <typename T>
+using is_fvar_or_arithmetic
+    = bool_constant<std::is_arithmetic<std::decay_t<T>>::value
+                    || is_fvar<std::decay_t<T>>::value>;
 
 STAN_ADD_REQUIRE_UNARY(fvar_or_arithmetic, is_fvar_or_arithmetic,
                        require_stan_scalar_real);

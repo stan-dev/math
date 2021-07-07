@@ -6,10 +6,11 @@
 
 namespace stan {
 namespace test {
-  template <typename... Types>
-  using check_fvar_or_arithmetic = math::conjunction<stan::is_fvar_or_arithmetic<Types>...>;
+template <typename... Types>
+using check_fvar_or_arithmetic
+    = math::conjunction<stan::is_fvar_or_arithmetic<Types>...>;
 }
-}
+}  // namespace stan
 
 TEST(MathMetaRevScal, is_fvar_or_arithmetic_simple) {
   using stan::is_fvar_or_arithmetic;
@@ -17,15 +18,17 @@ TEST(MathMetaRevScal, is_fvar_or_arithmetic_simple) {
   EXPECT_TRUE(stan::is_fvar_or_arithmetic<stan::math::fvar<double>&>::value);
   EXPECT_TRUE(stan::is_fvar_or_arithmetic<double>::value);
   EXPECT_TRUE(stan::is_fvar_or_arithmetic<double&>::value);
-  bool temp
-      = stan::test::check_fvar_or_arithmetic<stan::math::fvar<double>, std::vector<stan::math::fvar<double>>,
-                             stan::math::fvar<double>, stan::math::fvar<double>, stan::math::fvar<double>,
-                             stan::math::fvar<double>>::value;
+  bool temp = stan::test::check_fvar_or_arithmetic<
+      stan::math::fvar<double>, std::vector<stan::math::fvar<double>>,
+      stan::math::fvar<double>, stan::math::fvar<double>,
+      stan::math::fvar<double>, stan::math::fvar<double>>::value;
   EXPECT_FALSE(temp);
-  temp = stan::test::check_fvar_or_arithmetic<std::vector<stan::math::fvar<double>>, stan::math::fvar<double>,
-                              std::vector<stan::math::fvar<double> const*>>::value;
+  temp = stan::test::check_fvar_or_arithmetic<
+      std::vector<stan::math::fvar<double>>, stan::math::fvar<double>,
+      std::vector<stan::math::fvar<double> const*>>::value;
   EXPECT_FALSE(temp);
-  temp = stan::test::check_fvar_or_arithmetic<std::vector<stan::math::fvar<double>>, stan::math::fvar<double>,
-                              std::vector<stan::math::fvar<double>>>::value;
+  temp = stan::test::check_fvar_or_arithmetic<
+      std::vector<stan::math::fvar<double>>, stan::math::fvar<double>,
+      std::vector<stan::math::fvar<double>>>::value;
   EXPECT_FALSE(temp);
 }
