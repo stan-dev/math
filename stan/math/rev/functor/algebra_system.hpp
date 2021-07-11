@@ -33,10 +33,7 @@ struct nlo_functor {
 };
 
 /**
- * A functor with the required operators to call Eigen's
- * algebraic solver.
- * It is also used in the vari classes of the algebraic solvers
- * to compute the requisite sensitivities.
+ * A functor with the required operators to call Eigen's algebraic solver.
  *
  * @tparam S wrapper around the algebraic system functor. Has the
  * signature required for jacobian (i.e takes only one argument).
@@ -56,8 +53,8 @@ struct hybrj_functor_solver : nlo_functor<double> {
 
   /**
    * Computes the value the algebraic function, f, when pluging in the
-   * independent variables, and the Jacobian w.r.t unknowns. Required
-   * by Eigen.
+   * independent variables, and the Jacobian w.r.t unknowns.
+   *
    * @param [in] iv independent variables
    * @param [in, out] fvec value of algebraic function when plugging in iv.
    */
@@ -67,8 +64,8 @@ struct hybrj_functor_solver : nlo_functor<double> {
   }
 
   /**
-   * Assign the Jacobian to fjac (signature required by Eigen). Required
-   * by Eigen.
+   * Assign the Jacobian to fjac.
+   *
    * @param [in] iv independent variables.
    * @param [in, out] fjac matrix container for jacobian
    */

@@ -36,10 +36,7 @@ namespace math {
  * The user can also specify the scaling controls, the function
  * tolerance, and the maximum number of steps.
  *
- * This function is overloaded to handle both constant and var-type parameters.
- * This overload handles var parameters, and checks the input, calls the
- * algebraic solver, and appropriately handles derivative propagation through
- * the `reverse_pass_callback`.
+ * This overload handles var parameters.
  *
  * The Jacobian \(J_{xy}\) (i.e., Jacobian of unknown \(x\) w.r.t. the parameter
  * \(y\)) is calculated given the solution as follows. Since
@@ -139,7 +136,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_fp_impl(
   arena_t<ret_type> ret = theta_dbl;
 
   auto Jf_xT_lu_ptr
-      = make_unsafe_chainable_ptr((Eigen::MatrixXd::Identity(x.size(), x.size()) - Jf_x).transpose().eval().partialPivLu());  // Lu
+      = make_unsafe_chainable_ptr((Eigen::MatrixXd::Identity(x.size(), x.size()) - Jf_x).transpose().eval().partialPivLu());
 
   reverse_pass_callback([f, ret, arena_args_tuple, Jf_xT_lu_ptr, msgs]() mutable {
     // Contract specificities with inverse Jacobian of f with respect to x.

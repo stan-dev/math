@@ -28,10 +28,7 @@ namespace math {
  * (xtol in Eigen's code), the function tolerance,
  * and the maximum number of steps (maxfev in Eigen's code).
  *
- * This function is overloaded to handle both constant and var-type parameters.
- * This overload handles var parameters, and checks the input, calls the
- * algebraic solver, and appropriately handles derivative propagation through
- * the `reverse_pass_callback`.
+ * This overload handles var parameters.
  *
  * The Jacobian \(J_{xy}\) (i.e., Jacobian of unknown \(x\) w.r.t. the parameter
  * \(y\)) is calculated given the solution as follows. Since
@@ -97,7 +94,6 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
       },
       arena_args_tuple);
 
-  // Curry the input function w.r.t. y
   auto f_wrt_x = [&args_vals_tuple, &f, msgs](const auto& x) {
     return apply([&x, &f, msgs](const auto&... args) { return f(x, msgs, args...); },
                  args_vals_tuple);

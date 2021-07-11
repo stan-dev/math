@@ -99,9 +99,7 @@ struct KinsolFixedPointEnv {
 };
 
 /**
- * Private interface for solving fixed point problems using KINSOL. Users should
- * call the KINSOL fixed point solver through `algebra_solver_fp` or
- * `algebra_solver_fp_impl`.
+ * Solve algebraic equations using KINSOL fixed point solver
  *
  * @tparam F type of the equation system functor f
  * @tparam T_u type of scaling vector for unknowns. We allow

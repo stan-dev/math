@@ -18,15 +18,13 @@ namespace stan {
 namespace math {
 
 /**
- * Private interface for calling the Powell solver. Users should call the Powell
- * solver through `algebra_solver_powell` or `algebra_solver_powell_impl`.
+ * Solve algebraic equations using Powell solver
  *
- * @tparam F type of equation system function, curried with respect to inputs
+ * @tparam F type of equation system function
  * @tparam T type of elements in the x vector
  * @tparam Args types of additional parameters to the equation system functor
  *
- * @param[in] f Functor that evaluates the system of equations, curried with
- *            respect to its input (i.e., "y") values.
+ * @param[in] f Functor that evaluates the system of equations
  * @param[in] x Vector of starting values (initial guess).
  * @param[in, out] msgs the print stream for warning messages.
  * @param[in] relative_tolerance determines the convergence criteria
@@ -95,9 +93,7 @@ T& algebra_solver_powell_call_solver(
  * (xtol in Eigen's code), the function tolerance,
  * and the maximum number of steps (maxfev in Eigen's code).
  *
- * This function is overloaded to handle both constant and var-type parameters.
- * This overload handles non-var parameters, and checks the input and calls the
- * algebraic solver only.
+ * This overload handles non-autodiff parameters.
  *
  * @tparam F type of equation system function
  * @tparam T type of elements in the x vector
@@ -137,7 +133,6 @@ Eigen::VectorXd algebra_solver_powell_impl(const F& f, const T& x,
   const auto& x_ref = to_ref(x);
   auto x_val = to_ref(value_of(x_ref));
 
-  // Curry the input function w.r.t. y
   auto f_wrt_x = [&f, msgs, &args...](const auto& x) { return f(x, msgs, args...); };
 
   check_nonzero_size("algebra_solver_powell", "initial guess", x_val);
@@ -165,9 +160,6 @@ Eigen::VectorXd algebra_solver_powell_impl(const F& f, const T& x,
  * The user can also specify the relative tolerance
  * (xtol in Eigen's code), the function tolerance,
  * and the maximum number of steps (maxfev in Eigen's code).
- *
- * Signature to maintain backward compatibility, will be removed
- * in the future.
  *
  * @tparam F type of equation system function
  * @tparam T1 type of elements in the x vector

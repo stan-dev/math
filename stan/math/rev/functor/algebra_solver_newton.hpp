@@ -24,9 +24,7 @@ namespace math {
  * The user can also specify the scaled step size, the function
  * tolerance, and the maximum number of steps.
  *
- * This function is overloaded to handle both constant and var-type parameters.
- * This overload handles non-var parameters, and checks the input and calls the
- * algebraic solver only.
+ * This overload handles non-autodiff parameters.
  *
  * @tparam F type of equation system function.
  * @tparam T type of initial guess vector.
@@ -85,10 +83,7 @@ Eigen::VectorXd algebra_solver_newton_impl(const F& f, const T& x,
  * The user can also specify the scaled step size, the function
  * tolerance, and the maximum number of steps.
  *
- * This function is overloaded to handle both constant and var-type parameters.
- * This overload handles var parameters, and checks the input, calls the
- * algebraic solver, and appropriately handles derivative propagation through
- * the `reverse_pass_callback`.
+ * This overload handles var parameters.
  *
  * The Jacobian \(J_{xy}\) (i.e., Jacobian of unknown \(x\) w.r.t. the parameter
  * \(y\)) is calculated given the solution as follows. Since
@@ -169,7 +164,6 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_newton_impl(
       },
       args_vals_tuple);
 
-  // Evaluate and store the Jacobian.
   auto f_wrt_x = [&](const auto& x) {
     return apply([&](const auto&... args) { return f(x, msgs, args...); },
                  args_vals_tuple);

@@ -8,6 +8,133 @@
 #include <limits>
 #include <string>
 
+// Every test exists in four versions for the cases
+// where y (the auxiliary parameters) are passed as
+// data (double type) or parameters (var types),
+// and the cases where the solver is based on Powell's
+// or Newton's method.
+
+class algebra_solver_simple_eq_test : public ::testing::Test {
+ protected:
+  void SetUp() override {
+    n_x = 2;
+    n_y = 3;
+
+    y_dbl = stan::math::to_vector({5, 4, 2});
+    Eigen::MatrixXd J_(n_x, n_y);
+    J_ << 4, 5, 0, 0, 0, 1;
+    J = J_;
+
+    x_var = stan::math::to_vector({1, 1});
+  }
+
+  void TearDown() override { stan::math::recover_memory(); }
+
+  int n_x;
+  int n_y;
+  Eigen::VectorXd y_dbl;
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> x_var;
+  std::vector<double> dat;
+  std::vector<int> dat_int;
+  double scale_step = 1e-3;
+  double xtol = 1e-6;
+  double ftol = 1e-3;
+  int maxfev = 1e+2;
+
+  Eigen::MatrixXd J;
+};
+
+class algebra_solver_simple_eq_nopara_test : public ::testing::Test {
+ protected:
+  void SetUp() override { x = stan::math::to_vector({1, 1}); }
+
+  void TearDown() override { stan::math::recover_memory(); }
+
+  int n_x = 2;
+  Eigen::VectorXd x;
+  std::vector<double> dat = {5, 4, 2};
+  Eigen::VectorXd y_dummy;
+  std::vector<int> dummy_dat_int;
+};
+
+class algebra_solver_non_linear_eq_test : public ::testing::Test {
+ protected:
+  void SetUp() override {
+    y_dbl = stan::math::to_vector({4, 6, 3});
+    Eigen::MatrixXd J_(n_x, n_y);
+    J_ << -1, 0, 0, 0, -1, 0, 0, 0, 1;
+    J = J_;
+  }
+
+  void TearDown() override { stan::math::recover_memory(); }
+
+  int n_x = 3;
+  int n_y = 3;
+  double err = 1e-11;
+
+  Eigen::VectorXd y_dbl;
+  Eigen::MatrixXd J;
+};
+
+class error_message_test : public ::testing::Test {
+ protected:
+  void SetUp() override {
+    y_2 = stan::math::to_vector({4, 6});
+    y_3 = stan::math::to_vector({4, 6, 3});
+  }
+
+  void TearDown() override { stan::math::recover_memory(); }
+
+  Eigen::VectorXd y_2;
+  Eigen::VectorXd y_3;
+};
+
+class max_steps_test : public ::testing::Test {
+ protected:
+  void SetUp() override {
+    y = stan::math::to_vector({1, 1, 1});
+    y_var = stan::math::to_vector({1, 1, 1});
+  }
+
+  void TearDown() override { stan::math::recover_memory(); }
+
+  Eigen::VectorXd y;
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> y_var;
+};
+
+class degenerate_eq_test : public ::testing::Test {
+ protected:
+  void SetUp() override {
+    using stan::math::to_vector;
+    y_dbl = to_vector({5, 8});
+    y_scale = to_vector({5, 100});
+    x_guess_1 = to_vector({10, 1});
+    x_guess_2 = to_vector({1, 1});
+    x_guess_3 = to_vector({5, 100});  // 80, 80
+
+    Eigen::MatrixXd J_(n_x, n_y);
+    J_ << 0, 1, 0, 1;
+    J1 = J_;
+    J_ << 1, 0, 1, 0;
+    J2 = J_;
+  }
+
+  void TearDown() override { stan::math::recover_memory(); }
+
+  int n_x = 2;
+  int n_y = 2;
+  double tolerance = 1e-10;
+  Eigen::VectorXd y_dbl;
+  Eigen::VectorXd y_scale;
+  Eigen::VectorXd x_guess_1;
+  Eigen::VectorXd x_guess_2;
+  Eigen::VectorXd x_guess_3;
+  Eigen::MatrixXd J1;
+  Eigen::MatrixXd J2;
+  std::vector<double> dat;
+  std::vector<int> dat_int;
+};
+
 /* wrapper function that either calls the dogleg or the newton solver. */
 template <typename F, typename T1, typename T2>
 Eigen::Matrix<T2, Eigen::Dynamic, 1> general_algebra_solver(
@@ -172,8 +299,7 @@ inline void error_conditions_test(const F& f,
           << "and size of the vector of unknowns, x, (3) must match in size";
   std::string msg = err_msg.str();
   EXPECT_THROW_MSG(
-      // CHECK: Should this test run on the Newton solver too?
-      algebra_solver_powell(non_square_eq_functor(), x, y, dat, dat_int),
+      general_algebra_solver(is_newton, non_square_eq_functor(), x, y, dat, dat_int),
       std::invalid_argument, msg);
 
   Eigen::VectorXd x_bad(static_cast<Eigen::VectorXd::Index>(0));
