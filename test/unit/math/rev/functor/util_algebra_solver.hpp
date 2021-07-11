@@ -298,9 +298,9 @@ inline void error_conditions_test(const F& f,
   err_msg << "size of the algebraic system's output (2) "
           << "and size of the vector of unknowns, x, (3) must match in size";
   std::string msg = err_msg.str();
-  EXPECT_THROW_MSG(
-      general_algebra_solver(is_newton, non_square_eq_functor(), x, y, dat, dat_int),
-      std::invalid_argument, msg);
+  EXPECT_THROW_MSG(general_algebra_solver(is_newton, non_square_eq_functor(), x,
+                                          y, dat, dat_int),
+                   std::invalid_argument, msg);
 
   Eigen::VectorXd x_bad(static_cast<Eigen::VectorXd::Index>(0));
   std::stringstream err_msg2;
