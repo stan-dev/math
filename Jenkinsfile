@@ -248,7 +248,7 @@ pipeline {
                                 // skips tests that require specific support in OpenCL
                                 sh 'echo "ifdef NO_CPU_OPENCL_INT64_BASE_ATOMIC" >> make/local'
                                 sh 'echo "CXXFLAGS += -DSTAN_TEST_SKIP_REQUIRING_OPENCL_INT64_BASE_ATOMIC" >> make/local'
-                                sh "echo endif"
+                                sh 'echo "endif" >> make/local'
 
                                 runTests("test/unit/math/opencl", false)
                                 runTests("test/unit/multiple_translation_units_test.cpp")
