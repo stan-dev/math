@@ -179,7 +179,8 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_newton_impl(
   auto Jf_xT_lu_ptr
       = make_unsafe_chainable_ptr(Jf_x.transpose().partialPivLu());  // Lu
 
-  reverse_pass_callback([f, ret, arena_args_tuple, Jf_xT_lu_ptr, msgs]() mutable {
+  reverse_pass_callback([f, ret, arena_args_tuple, Jf_xT_lu_ptr,
+                         msgs]() mutable {
     // Contract specificities with inverse Jacobian of f with respect to x.
     Eigen::VectorXd eta = -Jf_xT_lu_ptr->solve(ret.adj().eval());
 

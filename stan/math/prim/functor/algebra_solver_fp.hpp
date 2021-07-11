@@ -91,7 +91,8 @@ struct KinsolFixedPointEnv {
         user_data);
     Eigen::Map<Eigen::VectorXd>(N_VGetArrayPointer(f), g->N_) = apply(
         [&x, &g](const auto&... args) {
-          return g->f_(Eigen::Map<Eigen::VectorXd>(NV_DATA_S(x), g->N_), g->msgs_, args...);
+          return g->f_(Eigen::Map<Eigen::VectorXd>(NV_DATA_S(x), g->N_),
+                       g->msgs_, args...);
         },
         g->args_tuple_);
     return 0;
@@ -294,9 +295,9 @@ Eigen::Matrix<scalar_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_fp(
     const std::vector<int>& dat_int, const std::vector<T_u>& u_scale,
     const std::vector<T_f>& f_scale, std::ostream* const msgs = nullptr,
     double function_tolerance = 1e-8, int max_num_steps = 200) {
-  return algebra_solver_fp_impl(algebra_solver_adapter<F>(f), to_ref(x), msgs, u_scale,
-                                f_scale, function_tolerance, max_num_steps, to_ref(y),
-                                dat, dat_int);
+  return algebra_solver_fp_impl(algebra_solver_adapter<F>(f), to_ref(x), msgs,
+                                u_scale, f_scale, function_tolerance,
+                                max_num_steps, to_ref(y), dat, dat_int);
 }
 
 }  // namespace math

@@ -95,8 +95,9 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
       arena_args_tuple);
 
   auto f_wrt_x = [&args_vals_tuple, &f, msgs](const auto& x) {
-    return apply([&x, &f, msgs](const auto&... args) { return f(x, msgs, args...); },
-                 args_vals_tuple);
+    return apply(
+        [&x, &f, msgs](const auto&... args) { return f(x, msgs, args...); },
+        args_vals_tuple);
   };
 
   check_nonzero_size("algebra_solver_powell", "initial guess", x_val);
@@ -110,9 +111,8 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
                        f_wrt_x(x_ref), "the vector of unknowns, x,", x_ref);
 
   // Solve the system
-  algebra_solver_powell_call_solver(
-      f_wrt_x, x_val, msgs, relative_tolerance, function_tolerance,
-      max_num_steps);
+  algebra_solver_powell_call_solver(f_wrt_x, x_val, msgs, relative_tolerance,
+                                    function_tolerance, max_num_steps);
 
   Eigen::MatrixXd Jf_x;
   Eigen::VectorXd f_x;

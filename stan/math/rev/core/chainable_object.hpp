@@ -117,7 +117,6 @@ auto make_unsafe_chainable_ptr(T&& obj) {
   return &ptr->get();
 }
 
-
 }  // namespace math
 }  // namespace stan
 #endif

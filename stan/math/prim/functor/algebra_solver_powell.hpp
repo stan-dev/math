@@ -44,10 +44,11 @@ namespace math {
  */
 template <typename F, typename T, typename... Args,
           require_eigen_vector_t<T>* = nullptr>
-T& algebra_solver_powell_call_solver(
-    const F& f, T& x, std::ostream* const msgs,
-    const double relative_tolerance, const double function_tolerance,
-    const int64_t max_num_steps, const Args&... args) {
+T& algebra_solver_powell_call_solver(const F& f, T& x, std::ostream* const msgs,
+                                     const double relative_tolerance,
+                                     const double function_tolerance,
+                                     const int64_t max_num_steps,
+                                     const Args&... args) {
   // Construct the solver
   hybrj_functor_solver<decltype(f)> hfs(f);
   Eigen::HybridNonLinearSolver<decltype(hfs)> solver(hfs);
@@ -60,8 +61,8 @@ T& algebra_solver_powell_call_solver(
   // Check if the max number of steps has been exceeded
   if (solver.nfev >= max_num_steps) {
     [&]() STAN_COLD_PATH {
-    throw_domain_error("algebra_solver", "maximum number of iterations",
-                       max_num_steps, "(", ") was exceeded in the solve.");
+      throw_domain_error("algebra_solver", "maximum number of iterations",
+                         max_num_steps, "(", ") was exceeded in the solve.");
     }();
   }
 
@@ -69,14 +70,14 @@ T& algebra_solver_powell_call_solver(
   double system_norm = f(x).stableNorm();
   if (system_norm > function_tolerance) {
     [&]() STAN_COLD_PATH {
-    std::ostringstream message;
-    message << "the norm of the algebraic function is " << system_norm
-            << " but should be lower than the function "
-            << "tolerance:";
-    throw_domain_error("algebra_solver", message.str().c_str(),
-                       function_tolerance, "",
-                       ". Consider decreasing the relative tolerance and "
-                       "increasing max_num_steps.");
+      std::ostringstream message;
+      message << "the norm of the algebraic function is " << system_norm
+              << " but should be lower than the function "
+              << "tolerance:";
+      throw_domain_error("algebra_solver", message.str().c_str(),
+                         function_tolerance, "",
+                         ". Consider decreasing the relative tolerance and "
+                         "increasing max_num_steps.");
     }();
   }
 
@@ -133,7 +134,8 @@ Eigen::VectorXd algebra_solver_powell_impl(const F& f, const T& x,
   const auto& x_ref = to_ref(x);
   auto x_val = to_ref(value_of(x_ref));
 
-  auto f_wrt_x = [&f, msgs, &args...](const auto& x) { return f(x, msgs, args...); };
+  auto f_wrt_x
+      = [&f, msgs, &args...](const auto& x) { return f(x, msgs, args...); };
 
   check_nonzero_size("algebra_solver_powell", "initial guess", x_val);
   check_finite("algebra_solver_powell", "initial guess", x_val);
@@ -147,8 +149,8 @@ Eigen::VectorXd algebra_solver_powell_impl(const F& f, const T& x,
 
   // Solve the system
   return algebra_solver_powell_call_solver(f_wrt_x, x_val, msgs,
-                                            relative_tolerance,
-                                            function_tolerance, max_num_steps);
+                                           relative_tolerance,
+                                           function_tolerance, max_num_steps);
 }
 
 /**
