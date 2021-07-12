@@ -499,7 +499,7 @@ class results_cl {
         kernel.setArg(arg_num++, n_rows);
         kernel.setArg(arg_num++, n_cols);
 
-        int local = opencl_context.base_opts().at("LOCAL_SIZE_");
+        int local = std::min(64, opencl_context.base_opts().at("LOCAL_SIZE_"));
 
         int wgs_rows = internal::colwise_reduction_wgs_rows(n_rows, n_cols);
         int wgs_cols = (n_cols + wgs_rows - 1) / wgs_rows;

@@ -10,7 +10,7 @@ namespace math {
 namespace opencl_kernels {
 
 // \cond
-const char* tridiagonalization_householder_kernel_code = STRINGIFY(
+static const char* tridiagonalization_householder_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Calculates householder vector and first element of the vector v.
@@ -100,7 +100,7 @@ const char* tridiagonalization_householder_kernel_code = STRINGIFY(
 // \endcond
 
 // \cond
-const char* tridiagonalization_v_step_1_kernel_code = STRINGIFY(
+static const char* tridiagonalization_v_step_1_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Calculates first part of constructing the vector v: Uu = Pb * u and Vu =
@@ -163,7 +163,7 @@ const char* tridiagonalization_v_step_1_kernel_code = STRINGIFY(
 // \endcond
 
 // \cond
-const char* tridiagonalization_v_step_2_kernel_code = STRINGIFY(
+static const char* tridiagonalization_v_step_2_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Second part in constructing vector v: v = Pb * u + V * Uu + U * Vu. Pb is
@@ -242,7 +242,7 @@ const char* tridiagonalization_v_step_2_kernel_code = STRINGIFY(
 // \endcond
 
 // \cond
-const char* tridiagonalization_v_step_3_kernel_code = STRINGIFY(
+static const char* tridiagonalization_v_step_3_kernel_code = STRINGIFY(
     // \endcond
     /**
      * Third part in constructing vector v: v-=0.5*(v^T*u)*u, where u is the
