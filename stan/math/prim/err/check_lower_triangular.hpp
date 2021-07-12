@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/err/throw_domain_error.hpp>
 #include <sstream>
 #include <string>
@@ -23,10 +25,10 @@ namespace math {
  *   lower triangular or if any element in the upper triangular
  *   portion is NaN
  */
-template <typename T_y, require_eigen_t<T_y>* = nullptr>
+template <typename T_y, require_matrix_t<T_y>* = nullptr>
 inline void check_lower_triangular(const char* function, const char* name,
                                    const T_y& y) {
-  const auto& y_ref = to_ref(y);
+  const auto& y_ref = to_ref(value_of(y));
   for (int n = 1; n < y.cols(); ++n) {
     for (int m = 0; m < n && m < y.rows(); ++m) {
       if (y_ref(m, n) != 0) {

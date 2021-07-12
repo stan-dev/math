@@ -20,7 +20,7 @@ namespace math {
  * Check if the specified matrix is symmetric.
  * The error message is either 0 or 1 indexed, specified by
  * <code>stan::error_index::value</code>.
- * @tparam EigMat Type of matrix
+ * @tparam Mat Type of matrix
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Matrix to test
@@ -28,9 +28,9 @@ namespace math {
  * @throw <code>std::domain_error</code> if any element not on the
  *   main diagonal is <code>NaN</code>
  */
-template <typename EigMat, require_matrix_t<EigMat>* = nullptr>
+template <typename Mat, require_matrix_t<Mat>* = nullptr>
 inline void check_symmetric(const char* function, const char* name,
-                            const EigMat& y) {
+                            const Mat& y) {
   check_square(function, name, y);
   using std::fabs;
 
@@ -38,11 +38,10 @@ inline void check_symmetric(const char* function, const char* name,
   if (k <= 1) {
     return;
   }
-  const auto& y_ref = to_ref(y);
+  const auto& y_ref = to_ref(value_of(y));
   for (Eigen::Index m = 0; m < k; ++m) {
     for (Eigen::Index n = m + 1; n < k; ++n) {
-      if (!(fabs(value_of(y_ref(m, n)) - value_of(y_ref(n, m)))
-            <= CONSTRAINT_TOLERANCE)) {
+      if (!(fabs(y_ref(m, n) - y_ref(n, m)) <= CONSTRAINT_TOLERANCE)) {
         [&]() STAN_COLD_PATH {
           std::ostringstream msg1;
           msg1 << "is not symmetric. " << name << "["

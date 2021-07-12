@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/err/check_positive.hpp>
 #include <stan/math/prim/err/check_less_or_equal.hpp>
 #include <stan/math/prim/err/check_lower_triangular.hpp>
@@ -31,7 +33,7 @@ inline void check_cholesky_factor(const char* function, const char* name,
   check_less_or_equal(function, "columns and rows of Cholesky factor", y.cols(),
                       y.rows());
   check_positive(function, "columns of Cholesky factor", y.cols());
-  const Eigen::Ref<const plain_type_t<EigMat>>& y_ref = y;
+  const auto& y_ref = to_ref(value_of(y));
   check_lower_triangular(function, name, y_ref);
   check_positive(function, name, y_ref.diagonal());
 }

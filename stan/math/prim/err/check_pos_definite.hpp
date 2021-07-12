@@ -10,6 +10,7 @@
 #include <stan/math/prim/err/check_positive.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 
 namespace stan {
 namespace math {
@@ -21,7 +22,7 @@ namespace math {
  * so it can be expensive. If an LDLT or LLT decomposition is available,
  * that should be tested instead.
  *
- * @tparam EigMat A type derived from `EigenBase` with dynamic rows and columns
+ * @tparam Mat A type derived from `EigenBase` with dynamic rows and columns
  * @param function function name (for error messages)
  * @param name variable name (for error messages)
  * @param y matrix to test
@@ -30,10 +31,10 @@ namespace math {
  * @throw std::domain_error if the matrix is not symmetric,
  * if it is not positive definite, or if any element is NaN
  */
-template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr>
+template <typename Mat, require_matrix_t<Mat>* = nullptr>
 inline void check_pos_definite(const char* function, const char* name,
-                               const EigMat& y) {
-  const auto& y_ref = to_ref(y);
+                               const Mat& y) {
+  const auto& y_ref = to_ref(value_of_rec(y));
   check_symmetric(function, name, y_ref);
   check_positive(function, name, "rows", y_ref.rows());
   check_not_nan(function, name, y_ref);
@@ -42,7 +43,7 @@ inline void check_pos_definite(const char* function, const char* name,
     throw_domain_error(function, name, "is not positive definite.", "");
   }
 
-  Eigen::LDLT<Eigen::MatrixXd> cholesky = value_of_rec(y_ref).ldlt();
+  Eigen::LDLT<Eigen::MatrixXd> cholesky = y_ref.ldlt();
   if (cholesky.info() != Eigen::Success || !cholesky.isPositive()
       || (cholesky.vectorD().array() <= 0.0).any()) {
     throw_domain_error(function, name, "is not positive definite.", "");

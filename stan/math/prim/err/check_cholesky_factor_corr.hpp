@@ -4,6 +4,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/err/check_positive.hpp>
 #include <stan/math/prim/err/check_lower_triangular.hpp>
 #include <stan/math/prim/err/check_square.hpp>
@@ -32,7 +33,7 @@ namespace math {
 template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr>
 void check_cholesky_factor_corr(const char* function, const char* name,
                                 const EigMat& y) {
-  const auto& y_ref = to_ref(y);
+  const auto& y_ref = to_ref(value_of(y));
   check_square(function, name, y_ref);
   check_lower_triangular(function, name, y_ref);
   check_positive(function, name, y_ref.diagonal());

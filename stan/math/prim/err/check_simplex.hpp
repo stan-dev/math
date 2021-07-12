@@ -1,10 +1,12 @@
 #ifndef STAN_MATH_PRIM_ERR_CHECK_SIMPLEX_HPP
 #define STAN_MATH_PRIM_ERR_CHECK_SIMPLEX_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/err/check_nonzero_size.hpp>
 #include <stan/math/prim/err/constraint_tolerance.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/err/throw_domain_error.hpp>
 #include <sstream>
 #include <string>
@@ -35,11 +37,11 @@ namespace math {
  * @throw <code>std::domain_error</code> if the vector is not a
  *   simplex or if any element is <code>NaN</code>.
  */
-template <typename T, require_eigen_t<T>* = nullptr>
+template <typename T, require_matrix_t<T>* = nullptr>
 void check_simplex(const char* function, const char* name, const T& theta) {
   using std::fabs;
   check_nonzero_size(function, name, theta);
-  ref_type_t<T> theta_ref = theta;
+  const auto& theta_ref = to_ref(value_of(theta));
   if (!(fabs(1.0 - theta_ref.sum()) <= CONSTRAINT_TOLERANCE)) {
     [&]() STAN_COLD_PATH {
       std::stringstream msg;

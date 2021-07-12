@@ -6,6 +6,7 @@
 #include <stan/math/prim/err/throw_domain_error.hpp>
 #include <stan/math/prim/err/check_ordered.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <sstream>
 #include <string>
 
@@ -15,7 +16,7 @@ namespace math {
 /**
  * Check if the specified vector contains non-negative values and is sorted into
  * strictly increasing order.
- * @tparam EigVec A type derived from `EigenBase` with 1 compile time row or
+ * @tparam Vec A type derived from `EigenBase` with 1 compile time row or
  * column
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -24,14 +25,14 @@ namespace math {
  *   values, if the values are not ordered, if there are duplicated
  *   values, or if any element is <code>NaN</code>.
  */
-template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
+template <typename Vec, require_vector_t<Vec>* = nullptr>
 void check_positive_ordered(const char* function, const char* name,
-                            const EigVec& y) {
+                            const Vec& y) {
   if (y.size() == 0) {
     return;
   }
 
-  const auto& y_ref = to_ref(y);
+  const auto& y_ref = to_ref(value_of(y));
   if (y_ref[0] < 0) {
     [&]() STAN_COLD_PATH {
       std::ostringstream msg;

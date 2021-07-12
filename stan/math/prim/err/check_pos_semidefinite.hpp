@@ -8,6 +8,7 @@
 #include <stan/math/prim/err/check_symmetric.hpp>
 #include <stan/math/prim/err/throw_domain_error.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <sstream>
 
@@ -16,7 +17,7 @@ namespace math {
 
 /**
  * Check if the specified matrix is positive definite
- * @tparam EigMat A type derived from `EigenBase` with dynamic rows and columns
+ * @tparam Mat A type derived from `EigenBase` with dynamic rows and columns
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Matrix to test
@@ -26,10 +27,10 @@ namespace math {
  *   or if it is not positive semi-definite,
  *   or if any element of the matrix is <code>NaN</code>.
  */
-template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr>
+template <typename Mat, require_matrix_t<Mat>* = nullptr>
 inline void check_pos_semidefinite(const char* function, const char* name,
-                                   const EigMat& y) {
-  const auto& y_ref = to_ref(y);
+                                   const Mat& y) {
+  const auto& y_ref = to_ref(value_of(y));
   check_symmetric(function, name, y_ref);
   check_positive(function, name, "rows", y_ref.rows());
   check_not_nan(function, name, y_ref);
