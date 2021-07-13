@@ -76,9 +76,8 @@ inline var sum(const std::vector<var>& m) {
  */
 template <typename T, require_eigen_t<T>* = nullptr>
 inline var sum(const var_value<T>& x) {
-  return make_callback_var(sum(x.val()), [x](auto& vi) mutable {
-    x.adj().array() += vi.adj();
-  });
+  return make_callback_var(
+      sum(x.val()), [x](auto& vi) mutable { x.adj().array() += vi.adj(); });
 }
 
 template <typename T, require_eigen_vt<is_var, T>* = nullptr>

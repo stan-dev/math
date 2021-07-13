@@ -78,10 +78,11 @@ inline void check_greater(const char* function, const char* name, const T_y& y,
   }
 }
 
-template <typename T_y, typename T_low, require_any_var_matrix_t<T_y, T_low>* = nullptr>
-inline void check_greater(const char* function, const char* name,
-                                const T_y& y, const T_low& low) {
-    check_greater(function, name, value_of(y), value_of(low));
+template <typename T_y, typename T_low,
+          require_any_var_matrix_t<T_y, T_low>* = nullptr>
+inline void check_greater(const char* function, const char* name, const T_y& y,
+                          const T_low& low) {
+  check_greater(function, name, value_of(y), value_of(low));
 }
 
 }  // namespace math

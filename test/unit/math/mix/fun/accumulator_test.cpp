@@ -13,7 +13,7 @@ TEST(AgradMixMatrixAccumulate, fvar_var) {
   using stan::math::fvar;
   using stan::math::var;
 
-  accumulator<fvar<var> > a;
+  accumulator<fvar<var>> a;
   test_sum(a, 0);
 
   a.add(1.0);
@@ -32,12 +32,12 @@ TEST(AgradMixMatrixAccumulate, collection_fvar_var) {
   using stan::math::vector_fv;
   using std::vector;
 
-  accumulator<fvar<var> > a;
+  accumulator<fvar<var>> a;
 
   int pos = 0;
   test_sum(a, 0);
 
-  vector<fvar<var> > v(10);
+  vector<fvar<var>> v(10);
   for (size_t i = 0; i < 10; ++i)
     v[i] = pos++;
   a.add(v);
@@ -50,9 +50,9 @@ TEST(AgradMixMatrixAccumulate, collection_fvar_var) {
   a.add(x);
   test_sum(a, pos - 1);
 
-  vector<vector<fvar<var> > > ww(10);
+  vector<vector<fvar<var>>> ww(10);
   for (size_t i = 0; i < 10; ++i) {
-    vector<fvar<var> > w(5);
+    vector<fvar<var>> w(5);
     for (size_t n = 0; n < 5; ++n)
       w[n] = pos++;
     ww[i] = w;
@@ -89,7 +89,7 @@ TEST(AgradMixMatrixAccumulate, fvar_fvar_var) {
   using stan::math::fvar;
   using stan::math::var;
 
-  accumulator<fvar<fvar<var> > > a;
+  accumulator<fvar<fvar<var>>> a;
   test_sum(a, 0);
 
   a.add(1.0);
@@ -108,12 +108,12 @@ TEST(AgradMixMatrixAccumulate, collection_fvar_fvar_var) {
   using stan::math::vector_ffv;
   using std::vector;
 
-  accumulator<fvar<fvar<var> > > a;
+  accumulator<fvar<fvar<var>>> a;
 
   int pos = 0;
   test_sum(a, 0);
 
-  vector<fvar<fvar<var> > > v(10);
+  vector<fvar<fvar<var>>> v(10);
   for (size_t i = 0; i < 10; ++i)
     v[i] = pos++;
   a.add(v);
@@ -126,9 +126,9 @@ TEST(AgradMixMatrixAccumulate, collection_fvar_fvar_var) {
   a.add(x);
   test_sum(a, pos - 1);
 
-  vector<vector<fvar<fvar<var> > > > ww(10);
+  vector<vector<fvar<fvar<var>>>> ww(10);
   for (size_t i = 0; i < 10; ++i) {
-    vector<fvar<fvar<var> > > w(5);
+    vector<fvar<fvar<var>>> w(5);
     for (size_t n = 0; n < 5; ++n)
       w[n] = pos++;
     ww[i] = w;
@@ -160,7 +160,6 @@ TEST(AgradMixMatrixAccumulate, collection_fvar_fvar_var) {
   test_sum(a, pos - 1);
 }
 
-
 TEST(AgradMixMatrixAccumulate, var_matrix) {
   auto f = [](const auto& x) {
     using x_t = decltype(x);
@@ -177,5 +176,4 @@ TEST(AgradMixMatrixAccumulate, var_matrix) {
   x_vec.push_back(x);
   stan::test::expect_ad(f, x_vec);
   stan::test::expect_ad_matvar(f, x_vec);
-
 }

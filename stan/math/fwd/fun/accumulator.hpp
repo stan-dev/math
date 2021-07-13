@@ -27,7 +27,6 @@ class accumulator<fvar<T>> {
   fvar<T> buf_{0.0};
 
  public:
-
   /**
    * Add the specified arithmetic type value to the buffer after
    * static casting it to the class type <code>T</code>.
@@ -81,9 +80,7 @@ class accumulator<fvar<T>> {
    *
    * @return Sum of accumulated values.
    */
-  inline fvar<T> sum() const noexcept {
-    return buf_;
-  }
+  inline fvar<T> sum() const noexcept { return buf_; }
 };
 
 }  // namespace math
