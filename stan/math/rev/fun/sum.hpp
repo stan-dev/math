@@ -2,11 +2,11 @@
 #define STAN_MATH_REV_FUN_SUM_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/arena_matrix.hpp>
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
-#include <stan/math/rev/fun/sum.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/core/typedefs.hpp>
 #include <vector>
@@ -74,7 +74,14 @@ inline var sum(const std::vector<var>& m) {
  * @param x Specified var_value containing a matrix or vector.
  * @return Sum of coefficients of matrix.
  */
-template <typename T, require_rev_matrix_t<T>* = nullptr>
+template <typename T, require_eigen_t<T>* = nullptr>
+inline var sum(const var_value<T>& x) {
+  return make_callback_var(sum(x.val()), [x](auto& vi) mutable {
+    x.adj().array() += vi.adj();
+  });
+}
+
+template <typename T, require_eigen_vt<is_var, T>* = nullptr>
 inline var sum(const T& x) {
   arena_t<T> x_arena = x;
   return make_callback_var(sum(x_arena.val()), [x_arena](auto& vi) mutable {

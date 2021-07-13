@@ -1,9 +1,10 @@
-#ifndef STAN_MATH_PRIM_FUN_ACCUMULATOR_HPP
-#define STAN_MATH_PRIM_FUN_ACCUMULATOR_HPP
+#ifndef STAN_MATH_FWD_FUN_ACCUMULATOR_HPP
+#define STAN_MATH_FWD_FUN_ACCUMULATOR_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/accumulator.hpp>
+#include <stan/math/fwd/meta.hpp>
+#include <stan/math/fwd/fun/sum.hpp>
 #include <vector>
 #include <type_traits>
 
@@ -21,15 +22,11 @@ namespace math {
  * @tparam T Type of scalar added
  */
 template <typename T>
-class accumulator {
+class accumulator<fvar<T>> {
  private:
-  T buf_{0.0};
+  fvar<T> buf_{0.0};
 
  public:
-  /**
-   * Construct an accumulator.
-   */
-  accumulator() : buf_(0.0) {}
 
   /**
    * Add the specified arithmetic type value to the buffer after
@@ -41,8 +38,8 @@ class accumulator {
    * @tparam S Type of argument
    * @param x Value to add
    */
-  template <typename S, typename = require_arithmetic_t<S>>
-  void add(S x) {
+  template <typename S, typename = require_stan_scalar_t<S>>
+  inline void add(S x) {
     buf_ += x;
   }
 
@@ -54,7 +51,7 @@ class accumulator {
    * @param m Matrix of values to add
    */
   template <typename S, require_matrix_t<S>* = nullptr>
-  void add(const S& m) {
+  inline void add(const S& m) {
     buf_ += stan::math::sum(m);
   }
 
@@ -68,14 +65,14 @@ class accumulator {
    * @param xs Vector of entries to add
    */
   template <typename S, require_container_t<S>* = nullptr>
-  void add(const std::vector<S>& xs) {
+  inline void add(const std::vector<S>& xs) {
     for (size_t i = 0; i < xs.size(); ++i) {
       this->add(xs[i]);
     }
   }
 
   template <typename S, require_not_container_t<S>* = nullptr>
-  void add(const std::vector<S>& xs) {
+  inline void add(const std::vector<S>& xs) {
     buf_ += stan::math::sum(xs);
   }
 
@@ -84,7 +81,7 @@ class accumulator {
    *
    * @return Sum of accumulated values.
    */
-  T sum() const {
+  inline fvar<T> sum() const noexcept {
     return buf_;
   }
 };

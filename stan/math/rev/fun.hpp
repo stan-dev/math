@@ -12,6 +12,7 @@
 #include <stan/math/rev/fun/Phi.hpp>
 #include <stan/math/rev/fun/Phi_approx.hpp>
 #include <stan/math/rev/fun/abs.hpp>
+#include <stan/math/rev/fun/accumulator.hpp>
 #include <stan/math/rev/fun/acos.hpp>
 #include <stan/math/rev/fun/acosh.hpp>
 #include <stan/math/rev/fun/as_bool.hpp>

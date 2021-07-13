@@ -26,7 +26,7 @@ namespace math {
  * @throw <code>std::domain_error</code> if y is not less than or equal
  *   to low or if any element of y or high is NaN
  */
-template <typename T_y, typename T_high, require_vector_t<T_y>* = nullptr>
+template <typename T_y, typename T_high, require_container_t<T_y>* = nullptr>
 inline void check_less_or_equal(const char* function, const char* name,
                                 const T_y& y, const T_high& high) {
     const auto& high_ref = to_ref(value_of(high));
@@ -59,7 +59,7 @@ inline void check_less_or_equal(const char* function, const char* name,
  * @throw <code>std::domain_error</code> if y is not less than or equal
  *   to low or if any element of y or high is NaN
  */
-template <typename T_y, typename T_high, require_not_vector_t<T_y>* = nullptr>
+template <typename T_y, typename T_high, require_not_container_t<T_y>* = nullptr>
 inline void check_less_or_equal(const char* function, const char* name,
                                 const T_y& y, const T_high& high) {
     const auto& high_ref = to_ref(value_of(high));
@@ -77,6 +77,11 @@ inline void check_less_or_equal(const char* function, const char* name,
     }
 }
 
+template <typename T_y, typename T_high, require_any_var_matrix_t<T_y>* = nullptr>
+inline void check_less_or_equal(const char* function, const char* name,
+                                const T_y& y, const T_high& high) {
+    check_less_or_equal(function, name, value_of(y), value_of(high));
+}
 }  // namespace math
 }  // namespace stan
 #endif
