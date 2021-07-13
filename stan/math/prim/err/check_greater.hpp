@@ -76,7 +76,6 @@ inline void check_greater(const char* function, const char* name, const T_y& y,
       }();
     }
   }
-
 }
 
 }  // namespace math

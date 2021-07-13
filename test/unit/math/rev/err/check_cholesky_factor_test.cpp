@@ -10,11 +10,13 @@ TEST(ErrorHandlingMatrix, checkCovCholeskyVarMatrix) {
 
   y.resize(1, 1);
   y << 1;
-  EXPECT_NO_THROW(check_cholesky_factor("checkCovCholeskyMatrix", "y", var_mat(y)));
+  EXPECT_NO_THROW(
+      check_cholesky_factor("checkCovCholeskyMatrix", "y", var_mat(y)));
 
   y.resize(3, 3);
   y << 1, 0, 0, 1, 1, 0, 1, 1, 1;
-  EXPECT_NO_THROW(check_cholesky_factor("checkCovCholeskyMatrix", "y", var_mat(y)));
+  EXPECT_NO_THROW(
+      check_cholesky_factor("checkCovCholeskyMatrix", "y", var_mat(y)));
 
   // not positive
   y.resize(1, 1);
@@ -41,7 +43,8 @@ TEST(ErrorHandlingMatrix, checkCovCholeskyVarMatrix) {
                std::domain_error);
   y.resize(3, 2);
   y << 1, 0, 2, 3, 4, 5;
-  EXPECT_NO_THROW(check_cholesky_factor("checkCovCholeskyMatrix", "y", var_mat(y)));
+  EXPECT_NO_THROW(
+      check_cholesky_factor("checkCovCholeskyMatrix", "y", var_mat(y)));
   y(0, 1) = 1.5;
   EXPECT_THROW(check_cholesky_factor("checkCovCholeskyMatrix", "y", var_mat(y)),
                std::domain_error);

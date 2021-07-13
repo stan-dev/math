@@ -45,13 +45,13 @@ inline void check_corr_matrix(const char* function, const char* name,
   for (Eigen::Index k = 0; k < y.rows(); ++k) {
     if (!(fabs(y_ref(k, k) - 1.0) <= CONSTRAINT_TOLERANCE)) {
       [&]() STAN_COLD_PATH {
-      std::ostringstream msg;
-      msg << "is not a valid correlation matrix. " << name << "("
-          << stan::error_index::value + k << "," << stan::error_index::value + k
-          << ") is ";
-      std::string msg_str(msg.str());
-      throw_domain_error(function, name, y_ref(k, k), msg_str.c_str(),
-                         ", but should be near 1.0");
+        std::ostringstream msg;
+        msg << "is not a valid correlation matrix. " << name << "("
+            << stan::error_index::value + k << ","
+            << stan::error_index::value + k << ") is ";
+        std::string msg_str(msg.str());
+        throw_domain_error(function, name, y_ref(k, k), msg_str.c_str(),
+                           ", but should be near 1.0");
       }();
     }
   }
