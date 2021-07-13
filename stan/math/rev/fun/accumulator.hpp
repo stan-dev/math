@@ -1,9 +1,10 @@
-#ifndef STAN_MATH_PRIM_FUN_ACCUMULATOR_HPP
-#define STAN_MATH_PRIM_FUN_ACCUMULATOR_HPP
+#ifndef STAN_MATH_REV_FUN_ACCUMULATOR_HPP
+#define STAN_MATH_REV_FUN_ACCUMULATOR_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/accumulator.hpp>
+#include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/fun/sum.hpp>
 #include <vector>
 #include <type_traits>
 
@@ -20,16 +21,12 @@ namespace math {
  *
  * @tparam T Type of scalar added
  */
-template <typename T>
-class accumulator {
+template <>
+class accumulator<var> {
  private:
-  T buf_{0.0};
+  var buf_{0.0};
 
  public:
-  /**
-   * Construct an accumulator.
-   */
-  accumulator() : buf_(0.0) {}
 
   /**
    * Add the specified arithmetic type value to the buffer after
@@ -41,7 +38,7 @@ class accumulator {
    * @tparam S Type of argument
    * @param x Value to add
    */
-  template <typename S, typename = require_arithmetic_t<S>>
+  template <typename S, require_stan_scalar_t<S>* = nullptr>
   inline void add(S x) {
     buf_ += x;
   }
@@ -64,19 +61,28 @@ class accumulator {
    * autodiff variables to be added; if the vector entries
    * are collections, their elements are recursively added.
    *
-   * @tparam S Type of value to recursively add.
+   * @tparam S A standard vector holding non-container elements
    * @param xs Vector of entries to add
    */
-  template <typename S, require_container_t<S>* = nullptr>
+  template <typename S, require_all_not_t<is_container<S>, is_var_matrix<S>>* = nullptr>
+  inline void add(const std::vector<S>& xs) {
+    buf_ += stan::math::sum(xs);
+  }
+
+  /**
+   * Recursively add each entry in the specified standard vector
+   * to the buffer.  This will allow vectors of primitives,
+   * autodiff variables to be added; if the vector entries
+   * are collections, their elements are recursively added.
+   *
+   * @tparam S A standard vector holding container elements
+   * @param xs Vector of entries to add
+   */
+  template <typename S, require_any_t<is_container<S>, is_var_matrix<S>>* = nullptr>
   inline void add(const std::vector<S>& xs) {
     for (size_t i = 0; i < xs.size(); ++i) {
       this->add(xs[i]);
     }
-  }
-
-  template <typename S, require_not_container_t<S>* = nullptr>
-  inline void add(const std::vector<S>& xs) {
-    buf_ += stan::math::sum(xs);
   }
 
   /**
@@ -84,7 +90,7 @@ class accumulator {
    *
    * @return Sum of accumulated values.
    */
-  inline T sum() const {
+  inline var sum() const noexcept {
     return buf_;
   }
 };

@@ -1,4 +1,6 @@
-#include <stan/math/mix.hpp>
+#include <stan/math/fwd/fun/sum.hpp>
+#include <stan/math/rev/fun/sum.hpp>
+#include <test/unit/math/test_ad.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
@@ -158,4 +160,24 @@ TEST(AgradMixMatrixAccumulate, collection_fvar_fvar_var) {
   }
   a.add(vvx);
   test_sum(a, pos - 1);
+}
+
+
+TEST(AgradMixMatrixAccumulate, var_matrix) {
+  auto f = [](const auto& x) {
+    using x_t = decltype(x);
+    stan::math::accumulator<stan::scalar_type_t<x_t>> acc;
+    acc.add(x);
+    return acc.sum();
+  };
+  Eigen::MatrixXd x = Eigen::MatrixXd::Random(2, 2);
+  stan::test::expect_ad(f, x);
+  stan::test::expect_ad_matvar(f, x);
+  std::vector<Eigen::MatrixXd> x_vec;
+  x_vec.push_back(x);
+  x_vec.push_back(x);
+  x_vec.push_back(x);
+  stan::test::expect_ad(f, x_vec);
+  stan::test::expect_ad_matvar(f, x_vec);
+
 }

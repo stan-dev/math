@@ -1,9 +1,10 @@
-#ifndef STAN_MATH_PRIM_FUN_ACCUMULATOR_HPP
-#define STAN_MATH_PRIM_FUN_ACCUMULATOR_HPP
+#ifndef STAN_MATH_FWD_FUN_ACCUMULATOR_HPP
+#define STAN_MATH_FWD_FUN_ACCUMULATOR_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/accumulator.hpp>
+#include <stan/math/fwd/meta.hpp>
+#include <stan/math/fwd/fun/sum.hpp>
 #include <vector>
 #include <type_traits>
 
@@ -21,15 +22,11 @@ namespace math {
  * @tparam T Type of scalar added
  */
 template <typename T>
-class accumulator {
+class accumulator<fvar<T>> {
  private:
-  T buf_{0.0};
+  fvar<T> buf_{0.0};
 
  public:
-  /**
-   * Construct an accumulator.
-   */
-  accumulator() : buf_(0.0) {}
 
   /**
    * Add the specified arithmetic type value to the buffer after
@@ -41,7 +38,7 @@ class accumulator {
    * @tparam S Type of argument
    * @param x Value to add
    */
-  template <typename S, typename = require_arithmetic_t<S>>
+  template <typename S, require_stan_scalar_t<S>* = nullptr>
   inline void add(S x) {
     buf_ += x;
   }
@@ -84,7 +81,7 @@ class accumulator {
    *
    * @return Sum of accumulated values.
    */
-  inline T sum() const {
+  inline fvar<T> sum() const noexcept {
     return buf_;
   }
 };
