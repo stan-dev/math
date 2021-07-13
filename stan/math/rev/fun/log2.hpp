@@ -43,8 +43,8 @@ namespace math {
 template <typename T>
 inline auto log2(const var_value<T>& a) {
   return make_callback_var(log2(a.val()), [a](auto& vi) mutable {
-    as_array_or_scalar(a.adj())
-        += as_array_or_scalar(vi.adj()) / (LOG_TWO * as_array_or_scalar(a.val()));
+    as_array_or_scalar(a.adj()) += as_array_or_scalar(vi.adj())
+                                   / (LOG_TWO * as_array_or_scalar(a.val()));
   });
 }
 
