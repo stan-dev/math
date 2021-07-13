@@ -21,36 +21,42 @@ TEST(ErrorHandlingMatrix, checkCorrCholeskyVarMatrix) {
   // not positive
   y.resize(1, 1);
   y << -1;
-  EXPECT_THROW(check_cholesky_factor_corr("checkCorrCholeskyMatrix", "y", var_mat(y)),
-               std::domain_error);
+  EXPECT_THROW(
+      check_cholesky_factor_corr("checkCorrCholeskyMatrix", "y", var_mat(y)),
+      std::domain_error);
 
   // not lower triangular
   y.resize(3, 3);
   y << 1, 2, 3, 0, 5, 6, 0, 0, 9;
-  EXPECT_THROW(check_cholesky_factor_corr("checkCorrCholeskyMatrix", "y", var_mat(y)),
-               std::domain_error);
+  EXPECT_THROW(
+      check_cholesky_factor_corr("checkCorrCholeskyMatrix", "y", var_mat(y)),
+      std::domain_error);
 
   // not positive
   y.resize(3, 3);
   y << 1, 0, 0, 2, -1, 0, 1, 2, 3;
-  EXPECT_THROW(check_cholesky_factor_corr("checkCorrCholeskyMatrix", "y", var_mat(y)),
-               std::domain_error);
+  EXPECT_THROW(
+      check_cholesky_factor_corr("checkCorrCholeskyMatrix", "y", var_mat(y)),
+      std::domain_error);
 
   // not rectangular
   y.resize(2, 3);
   y << 1, 2, 3, 4, 5, 6;
-  EXPECT_THROW(check_cholesky_factor_corr("checkCorrCholeskyMatrix", "y", var_mat(y)),
-               std::invalid_argument);
+  EXPECT_THROW(
+      check_cholesky_factor_corr("checkCorrCholeskyMatrix", "y", var_mat(y)),
+      std::invalid_argument);
   y.resize(3, 2);
   y << 1, 0, 2, 3, 4, 5;
-  EXPECT_THROW(check_cholesky_factor_corr("checkCorrCholeskyMatrix", "y", var_mat(y)),
-               std::invalid_argument);
+  EXPECT_THROW(
+      check_cholesky_factor_corr("checkCorrCholeskyMatrix", "y", var_mat(y)),
+      std::invalid_argument);
 
   // not unit vectors
   y.resize(3, 3);
   y << 1, 0, 0, 1, 1, 0, 1, 1, 1;
-  EXPECT_THROW(check_cholesky_factor_corr("checkCorrCholeskyMatrix", "y", var_mat(y)),
-               std::domain_error);
+  EXPECT_THROW(
+      check_cholesky_factor_corr("checkCorrCholeskyMatrix", "y", var_mat(y)),
+      std::domain_error);
 }
 
 TEST(ErrorHandlingMatrix, checkCorrCholeskyVarMatrix_nan) {
@@ -63,8 +69,9 @@ TEST(ErrorHandlingMatrix, checkCorrCholeskyVarMatrix_nan) {
 
   y.resize(1, 1);
   y << nan;
-  EXPECT_THROW(check_cholesky_factor_corr("checkCorrCholeskyMatrix", "y", var_mat(y)),
-               std::domain_error);
+  EXPECT_THROW(
+      check_cholesky_factor_corr("checkCorrCholeskyMatrix", "y", var_mat(y)),
+      std::domain_error);
 
   y.resize(3, 3);
   y << 1, 0, 0, sqrt(0.5), sqrt(0.5), 0, sqrt(0.25), sqrt(0.25), sqrt(0.5);
@@ -73,8 +80,9 @@ TEST(ErrorHandlingMatrix, checkCorrCholeskyVarMatrix_nan) {
 
   for (int i = 0; i < y.size(); i++) {
     y(i) = nan;
-    EXPECT_THROW(check_cholesky_factor_corr("checkCorrCholeskyMatrix", "y", var_mat(y)),
-                 std::domain_error);
+    EXPECT_THROW(
+        check_cholesky_factor_corr("checkCorrCholeskyMatrix", "y", var_mat(y)),
+        std::domain_error);
     y << 1, 0, 0, sqrt(0.5), sqrt(0.5), 0, sqrt(0.25), sqrt(0.25), sqrt(0.5);
   }
 }

@@ -91,7 +91,6 @@ TEST(AgradRevErrorHandlingScalar, CheckFiniteVarCheckUnivariate) {
   stan::math::recover_memory();
 }
 
-
 TEST(ErrorHandlingMat, CheckFinite_VarMatrix) {
   using stan::math::check_finite;
   const char* function = "check_finite";

@@ -29,21 +29,21 @@ namespace math {
 template <typename T_y, typename T_high, require_container_t<T_y>* = nullptr>
 inline void check_less_or_equal(const char* function, const char* name,
                                 const T_y& y, const T_high& high) {
-    const auto& high_ref = to_ref(value_of(high));
-    scalar_seq_view<decltype(high_ref)> high_vec(high_ref);
-    const auto& y_ref = to_ref(value_of(y));
-    for (size_t n = 0; n < stan::math::size(y_ref); n++) {
-      if (!(stan::get(y_ref, n) <= high_vec[n])) {
-        [&]() STAN_COLD_PATH {
-          std::stringstream msg;
-          msg << ", but must be less than or equal to ";
-          msg << high_vec[n];
-          std::string msg_str(msg.str());
-          throw_domain_error_vec(function, name, y_ref, n, "is ",
-                                 msg_str.c_str());
-        }();
-      }
+  const auto& high_ref = to_ref(value_of(high));
+  scalar_seq_view<decltype(high_ref)> high_vec(high_ref);
+  const auto& y_ref = to_ref(value_of(y));
+  for (size_t n = 0; n < stan::math::size(y_ref); n++) {
+    if (!(stan::get(y_ref, n) <= high_vec[n])) {
+      [&]() STAN_COLD_PATH {
+        std::stringstream msg;
+        msg << ", but must be less than or equal to ";
+        msg << high_vec[n];
+        std::string msg_str(msg.str());
+        throw_domain_error_vec(function, name, y_ref, n, "is ",
+                               msg_str.c_str());
+      }();
     }
+  }
 }
 
 /**
@@ -62,19 +62,19 @@ inline void check_less_or_equal(const char* function, const char* name,
 template <typename T_y, typename T_high, require_not_container_t<T_y>* = nullptr>
 inline void check_less_or_equal(const char* function, const char* name,
                                 const T_y& y, const T_high& high) {
-    const auto& high_ref = to_ref(value_of(high));
-    scalar_seq_view<decltype(high_ref)> high_vec(high_ref);
-    for (size_t n = 0; n < stan::math::size(high); n++) {
-      if (!(y <= high_vec[n])) {
-        [&]() STAN_COLD_PATH {
-          std::stringstream msg;
-          msg << ", but must be less than or equal to ";
-          msg << high_vec[n];
-          std::string msg_str(msg.str());
-          throw_domain_error(function, name, y, "is ", msg_str.c_str());
-        }();
-      }
+  const auto& high_ref = to_ref(value_of(high));
+  scalar_seq_view<decltype(high_ref)> high_vec(high_ref);
+  for (size_t n = 0; n < stan::math::size(high); n++) {
+    if (!(y <= high_vec[n])) {
+      [&]() STAN_COLD_PATH {
+        std::stringstream msg;
+        msg << ", but must be less than or equal to ";
+        msg << high_vec[n];
+        std::string msg_str(msg.str());
+        throw_domain_error(function, name, y, "is ", msg_str.c_str());
+      }();
     }
+  }
 }
 
 template <typename T_y, typename T_high, require_any_var_matrix_t<T_y>* = nullptr>

@@ -53,7 +53,7 @@ TEST(AgradRevErrorHandlingMatrix, checkPosDefiniteMatrix_nan_varmat) {
       if (i >= j)
         EXPECT_THROW(check_pos_definite("checkPosDefiniteMatrix", "y", y),
                      std::domain_error);
-     y.vi_->val_ = y_val;
+      y.vi_->val_ = y_val;
     }
 
   Matrix<double, Dynamic, Dynamic> y_val_zero(3, 3);
