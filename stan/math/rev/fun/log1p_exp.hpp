@@ -12,6 +12,8 @@ namespace math {
 /**
  * Return the log of 1 plus the exponential of the specified
  * variable.
+ * @tparam T Arithmetic or a type inheriting from `EigenBase`.
+ * @param a The variable.
  */
 template <typename T>
 inline auto log1p_exp(const var_value<T>& a) {
