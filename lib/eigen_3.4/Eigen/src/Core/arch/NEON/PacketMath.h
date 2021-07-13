@@ -24,10 +24,6 @@ namespace internal {
 #define EIGEN_HAS_SINGLE_INSTRUCTION_MADD
 #endif
 
-#ifndef EIGEN_HAS_SINGLE_INSTRUCTION_CJMADD
-#define EIGEN_HAS_SINGLE_INSTRUCTION_CJMADD
-#endif
-
 #ifndef EIGEN_ARCH_DEFAULT_NUMBER_OF_REGISTERS
 #if EIGEN_ARCH_ARM64
 #define EIGEN_ARCH_DEFAULT_NUMBER_OF_REGISTERS 32
@@ -36,7 +32,7 @@ namespace internal {
 #endif
 #endif
 
-#if EIGEN_COMP_MSVC
+#if EIGEN_COMP_MSVC_STRICT
 
 // In MSVC's arm_neon.h header file, all NEON vector types
 // are aliases to the same underlying type __n128.
@@ -82,7 +78,7 @@ typedef uint32x4_t                           Packet4ui;
 typedef int64x2_t                            Packet2l;
 typedef uint64x2_t                           Packet2ul;
 
-#endif // EIGEN_COMP_MSVC
+#endif // EIGEN_COMP_MSVC_STRICT
 
 EIGEN_STRONG_INLINE Packet4f shuffle1(const Packet4f& m, int mask){
   const float* a = reinterpret_cast<const float*>(&m);
