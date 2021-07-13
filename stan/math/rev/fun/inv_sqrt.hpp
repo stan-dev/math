@@ -32,7 +32,8 @@ namespace math {
  */
 template <typename T>
 inline auto inv_sqrt(const var_value<T>& a) {
-  auto denom = to_arena(as_array_or_scalar(a.val()) * as_array_or_scalar(sqrt(a.val())));
+  auto denom = to_arena(as_array_or_scalar(a.val())
+                        * as_array_or_scalar(sqrt(a.val())));
   return make_callback_var(inv_sqrt(a.val()), [a, denom](auto& vi) mutable {
     as_array_or_scalar(a.adj()) -= 0.5 * as_array_or_scalar(vi.adj()) / denom;
   });

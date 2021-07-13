@@ -41,13 +41,11 @@ inline int divide(int x, int y) {
  * @param[in] c specified scalar
  * @return matrix divided by the scalar
  */
-template <typename T1, typename T2,
-  require_any_eigen_t<T1, T2>* = nullptr,
-  require_all_not_st_var<T1, T2>* = nullptr>
+template <typename T1, typename T2, require_any_eigen_t<T1, T2>* = nullptr,
+          require_all_not_st_var<T1, T2>* = nullptr>
 inline auto divide(const T1& m, const T2& c) {
   return (as_array_or_scalar(m) / as_array_or_scalar(c)).matrix();
 }
-
 
 }  // namespace math
 }  // namespace stan

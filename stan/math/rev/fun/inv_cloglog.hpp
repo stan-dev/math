@@ -28,9 +28,10 @@ template <typename T>
 inline auto inv_cloglog(const var_value<T>& a) {
   auto precomp_exp = to_arena(as_array_or_scalar(exp(a.val() - exp(a.val()))));
   return make_callback_var(inv_cloglog(a.val()),
-   [a, precomp_exp](auto& vi) mutable {
-     as_array_or_scalar(a.adj()) += as_array_or_scalar(vi.adj()) * precomp_exp;
-   });
+                           [a, precomp_exp](auto& vi) mutable {
+                             as_array_or_scalar(a.adj())
+                                 += as_array_or_scalar(vi.adj()) * precomp_exp;
+                           });
 }
 
 }  // namespace math

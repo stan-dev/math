@@ -20,10 +20,11 @@ namespace math {
 template <typename T>
 inline auto log1m_inv_logit(const var_value<T>& u) {
   auto precomp_inv_logit = to_arena(as_array_or_scalar(-inv_logit(u.val())));
-  return make_callback_var(log1m_inv_logit(u.val()),
-   [u, precomp_inv_logit](auto& vi) mutable {
-     as_array_or_scalar(u.adj()) += as_array_or_scalar(vi.adj()) * precomp_inv_logit;
-   });
+  return make_callback_var(
+      log1m_inv_logit(u.val()), [u, precomp_inv_logit](auto& vi) mutable {
+        as_array_or_scalar(u.adj())
+            += as_array_or_scalar(vi.adj()) * precomp_inv_logit;
+      });
 }
 
 }  // namespace math

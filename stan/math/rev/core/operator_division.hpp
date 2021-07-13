@@ -119,11 +119,10 @@ inline var operator/(Arith dividend, const var& divisor) {
  * @param[in] c specified scalar
  * @return matrix divided by the scalar
  */
-template <typename Scalar, typename Mat,
- require_matrix_t<Mat>* = nullptr,
- require_stan_scalar_t<Scalar>* = nullptr,
- require_all_st_var_or_arithmetic<Scalar, Mat>* = nullptr,
- require_any_st_var<Scalar, Mat>* = nullptr>
+template <typename Scalar, typename Mat, require_matrix_t<Mat>* = nullptr,
+          require_stan_scalar_t<Scalar>* = nullptr,
+          require_all_st_var_or_arithmetic<Scalar, Mat>* = nullptr,
+          require_any_st_var<Scalar, Mat>* = nullptr>
 inline auto divide(const Mat& m, Scalar c) {
   if (!is_constant<Mat>::value && !is_constant<Scalar>::value) {
     arena_t<promote_scalar_t<var, Mat>> arena_m = m;
@@ -132,7 +131,7 @@ inline auto divide(const Mat& m, Scalar c) {
     arena_t<promote_scalar_t<var, Mat>> res = inv_c * arena_m.val();
     reverse_pass_callback([arena_c, inv_c, arena_m, res]() mutable {
       auto inv_times_adj = (inv_c * res.adj().array()).eval();
-      arena_c.adj() -=  (inv_times_adj * res.val().array()).sum();
+      arena_c.adj() -= (inv_times_adj * res.val().array()).sum();
       arena_m.adj().array() += inv_times_adj;
     });
     return promote_scalar_t<var, Mat>(res);
@@ -155,7 +154,6 @@ inline auto divide(const Mat& m, Scalar c) {
   }
 }
 
-
 /**
  * Return scalar divided by matrix.
  *
@@ -165,11 +163,10 @@ inline auto divide(const Mat& m, Scalar c) {
  * @param[in] c specified scalar
  * @return matrix divided by the scalar
  */
- template <typename Scalar, typename Mat,
-  require_matrix_t<Mat>* = nullptr,
-  require_stan_scalar_t<Scalar>* = nullptr,
-  require_all_st_var_or_arithmetic<Scalar, Mat>* = nullptr,
-  require_any_st_var<Scalar, Mat>* = nullptr>
+template <typename Scalar, typename Mat, require_matrix_t<Mat>* = nullptr,
+          require_stan_scalar_t<Scalar>* = nullptr,
+          require_all_st_var_or_arithmetic<Scalar, Mat>* = nullptr,
+          require_any_st_var<Scalar, Mat>* = nullptr>
 inline auto divide(Scalar c, const Mat& m) {
   if (!is_constant<Scalar>::value && !is_constant<Mat>::value) {
     arena_t<promote_scalar_t<var, Mat>> arena_m = m;
@@ -182,7 +179,7 @@ inline auto divide(Scalar c, const Mat& m) {
       arena_c.adj() += (inv_times_res).sum();
     });
     return promote_scalar_t<var, Mat>(res);
-  } else if(!is_constant<Mat>::value) {
+  } else if (!is_constant<Mat>::value) {
     arena_t<promote_scalar_t<var, Mat>> arena_m = m;
     auto inv_m = to_arena(arena_m.val().array().inverse());
     arena_t<promote_scalar_t<var, Mat>> res = value_of(c) * inv_m;
@@ -200,7 +197,6 @@ inline auto divide(Scalar c, const Mat& m) {
     return promote_scalar_t<var, Mat>(res);
   }
 }
-
 
 ///
 

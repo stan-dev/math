@@ -21,7 +21,9 @@ namespace math {
 template <typename T>
 inline auto lambert_w0(const var_value<T>& a) {
   return make_callback_var(lambert_w0(a.val()), [a](auto& vi) mutable {
-    as_array_or_scalar(a.adj()) += (as_array_or_scalar(vi.adj()) / as_array_or_scalar(a.val() + exp(vi.val())));
+    as_array_or_scalar(a.adj())
+        += (as_array_or_scalar(vi.adj())
+            / as_array_or_scalar(a.val() + exp(vi.val())));
   });
 }
 
@@ -37,7 +39,9 @@ inline auto lambert_w0(const var_value<T>& a) {
 template <typename T>
 inline auto lambert_wm1(const var_value<T>& a) {
   return make_callback_var(lambert_wm1(a.val()), [a](auto& vi) mutable {
-    as_array_or_scalar(a.adj()) += (as_array_or_scalar(vi.adj()) / as_array_or_scalar(a.val() + exp(vi.val())));
+    as_array_or_scalar(a.adj())
+        += (as_array_or_scalar(vi.adj())
+            / as_array_or_scalar(a.val() + exp(vi.val())));
   });
 }
 

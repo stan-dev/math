@@ -27,13 +27,13 @@ namespace math {
    \f]
  *
  */
- template <typename T>
- inline auto inv(const var_value<T>& a) {
-   auto denom = to_arena(as_array_or_scalar(square(a.val())));
-   return make_callback_var(inv(a.val()), [a, denom](auto& vi) mutable {
-     as_array_or_scalar(a.adj()) -= as_array_or_scalar(vi.adj()) / denom;
-   });
- }
+template <typename T>
+inline auto inv(const var_value<T>& a) {
+  auto denom = to_arena(as_array_or_scalar(square(a.val())));
+  return make_callback_var(inv(a.val()), [a, denom](auto& vi) mutable {
+    as_array_or_scalar(a.adj()) -= as_array_or_scalar(vi.adj()) / denom;
+  });
+}
 
 }  // namespace math
 }  // namespace stan

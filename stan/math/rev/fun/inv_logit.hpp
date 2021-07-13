@@ -25,7 +25,9 @@ namespace math {
 template <typename T>
 inline auto inv_logit(const var_value<T>& a) {
   return make_callback_var(inv_logit(a.val()), [a](auto& vi) mutable {
-    as_array_or_scalar(a).adj() += as_array_or_scalar(vi.adj()) * as_array_or_scalar(vi.val()) * (1.0 - as_array_or_scalar(vi.val()));
+    as_array_or_scalar(a).adj() += as_array_or_scalar(vi.adj())
+                                   * as_array_or_scalar(vi.val())
+                                   * (1.0 - as_array_or_scalar(vi.val()));
   });
 }
 

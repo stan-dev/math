@@ -24,7 +24,8 @@ namespace math {
 template <typename T>
 inline auto log1m_exp(const var_value<T>& x) {
   return make_callback_var(log1m_exp(x.val()), [x](auto& vi) mutable {
-    as_array_or_scalar(x.adj()) -= as_array_or_scalar(vi.adj()) / as_array_or_scalar(expm1(-x.val()));
+    as_array_or_scalar(x.adj())
+        -= as_array_or_scalar(vi.adj()) / as_array_or_scalar(expm1(-x.val()));
   });
 }
 
