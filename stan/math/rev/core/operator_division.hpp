@@ -119,56 +119,42 @@ inline var operator/(Arith dividend, const var& divisor) {
  * @param[in] c specified scalar
  * @return matrix divided by the scalar
  */
-template <typename Mat, require_eigen_vt<std::is_arithmetic, Mat>* = nullptr>
-inline auto divide(const Mat& m, var c) {
-  auto inv_c = (1.0 / c.val());
-  arena_t<promote_scalar_t<var, Mat>> res = inv_c * m.array();
-  reverse_pass_callback([c, inv_c, res]() mutable {
-    c.adj() -= inv_c * (res.adj().array() * res.val().array()).sum();
-  });
-  return promote_scalar_t<var, Mat>(res);
+template <typename Scalar, typename Mat,
+ require_matrix_t<Mat>* = nullptr,
+ require_stan_scalar_t<Scalar>* = nullptr,
+ require_all_st_var_or_arithmetic<Scalar, Mat>* = nullptr,
+ require_any_st_var<Scalar, Mat>* = nullptr>
+inline auto divide(const Mat& m, Scalar c) {
+  if (!is_constant<Mat>::value && !is_constant<Scalar>::value) {
+    arena_t<promote_scalar_t<var, Mat>> arena_m = m;
+    var arena_c = c;
+    auto inv_c = (1.0 / arena_c.val());
+    arena_t<promote_scalar_t<var, Mat>> res = inv_c * arena_m.val();
+    reverse_pass_callback([arena_c, inv_c, arena_m, res]() mutable {
+      auto inv_times_adj = (inv_c * res.adj().array()).eval();
+      arena_c.adj() -=  (inv_times_adj * res.val().array()).sum();
+      arena_m.adj().array() += inv_times_adj;
+    });
+    return promote_scalar_t<var, Mat>(res);
+  } else if (!is_constant<Mat>::value) {
+    arena_t<promote_scalar_t<var, Mat>> arena_m = m;
+    auto inv_c = (1.0 / value_of(c));
+    arena_t<promote_scalar_t<var, Mat>> res = inv_c * arena_m.val();
+    reverse_pass_callback([inv_c, arena_m, res]() mutable {
+      arena_m.adj().array() += inv_c * res.adj_op().array();
+    });
+    return promote_scalar_t<var, Mat>(res);
+  } else {
+    var arena_c = c;
+    auto inv_c = (1.0 / arena_c.val());
+    arena_t<promote_scalar_t<var, Mat>> res = inv_c * value_of(m).array();
+    reverse_pass_callback([arena_c, inv_c, res]() mutable {
+      arena_c.adj() -= inv_c * (res.adj().array() * res.val().array()).sum();
+    });
+    return promote_scalar_t<var, Mat>(res);
+  }
 }
 
-/**
- * Return matrix divided by scalar.
- *
- * @tparam Mat Either a type inheriting from `EigenBase` with a scalar type of
- * `var` or a `var_value<T>` with type `T` inheriting from `EigenBase`.
- * @param[in] m specified matrix or expression
- * @param[in] c specified scalar
- * @return matrix divided by the scalar
- */
-template <typename Mat, require_matrix_st<is_var, Mat>* = nullptr>
-inline auto divide(const Mat& m, double c) {
-  arena_t<promote_scalar_t<var, Mat>> arena_m = m;
-  auto inv_c = (1.0 / c);
-  arena_t<promote_scalar_t<var, Mat>> res = inv_c * arena_m.val();
-  reverse_pass_callback([c, inv_c, arena_m, res]() mutable {
-    arena_m.adj().array() += inv_c * res.adj_op().array();
-  });
-  return promote_scalar_t<var, Mat>(res);
-}
-
-/**
- * Return matrix divided by scalar.
- *
- * @tparam Mat Either a type inheriting from `EigenBase` with a scalar type of
- * `var` or a `var_value<T>` with type `T` inheriting from `EigenBase`.
- * @param[in] m specified matrix or expression
- * @param[in] c specified scalar
- * @return matrix divided by the scalar
- */
-template <typename Mat, require_matrix_st<is_var, Mat>* = nullptr>
-inline auto divide(const Mat& m, var c) {
-  arena_t<plain_type_t<Mat>> arena_m = m;
-  auto inv_c = (1.0 / c.val());
-  arena_t<plain_type_t<Mat>> res = inv_c * arena_m.val();
-  reverse_pass_callback([c, inv_c, arena_m, res]() mutable {
-    c.adj() -= inv_c * (res.adj().array() * res.val().array()).sum();
-    arena_m.adj().array() += inv_c * res.adj().array();
-  });
-  return plain_type_t<Mat>(res);
-}
 
 /**
  * Return scalar divided by matrix.
@@ -179,57 +165,42 @@ inline auto divide(const Mat& m, var c) {
  * @param[in] c specified scalar
  * @return matrix divided by the scalar
  */
-template <typename Mat, require_matrix_st<is_var, Mat>* = nullptr>
-inline auto divide(var c, const Mat& m) {
-  arena_t<plain_type_t<Mat>> arena_m = m;
-  auto inv_m = to_arena(1.0 / arena_m.val().array());
-  arena_t<plain_type_t<Mat>> res = c.val() * inv_m;
-  reverse_pass_callback([c, inv_m, arena_m, res]() mutable {
-    arena_m.adj().array() -= inv_m * res.adj().array() * res.val().array();
-    c.adj() += (inv_m * res.adj().array()).sum();
-  });
-  return plain_type_t<Mat>(res);
+ template <typename Scalar, typename Mat,
+  require_matrix_t<Mat>* = nullptr,
+  require_stan_scalar_t<Scalar>* = nullptr,
+  require_all_st_var_or_arithmetic<Scalar, Mat>* = nullptr,
+  require_any_st_var<Scalar, Mat>* = nullptr>
+inline auto divide(Scalar c, const Mat& m) {
+  if (!is_constant<Scalar>::value && !is_constant<Mat>::value) {
+    arena_t<promote_scalar_t<var, Mat>> arena_m = m;
+    auto inv_m = to_arena(arena_m.val().array().inverse());
+    var arena_c = c;
+    arena_t<promote_scalar_t<var, Mat>> res = arena_c.val() * inv_m;
+    reverse_pass_callback([arena_c, inv_m, arena_m, res]() mutable {
+      auto inv_times_res = (inv_m * res.adj().array()).eval();
+      arena_m.adj().array() -= inv_times_res * res.val().array();
+      arena_c.adj() += (inv_times_res).sum();
+    });
+    return promote_scalar_t<var, Mat>(res);
+  } else if(!is_constant<Mat>::value) {
+    arena_t<promote_scalar_t<var, Mat>> arena_m = m;
+    auto inv_m = to_arena(arena_m.val().array().inverse());
+    arena_t<promote_scalar_t<var, Mat>> res = value_of(c) * inv_m;
+    reverse_pass_callback([inv_m, arena_m, res]() mutable {
+      arena_m.adj().array() -= inv_m * res.adj().array() * res.val().array();
+    });
+    return promote_scalar_t<var, Mat>(res);
+  } else {
+    auto inv_m = to_arena(value_of(m).array().inverse());
+    var arena_c = c;
+    arena_t<promote_scalar_t<var, Mat>> res = arena_c.val() * inv_m;
+    reverse_pass_callback([arena_c, inv_m, res]() mutable {
+      arena_c.adj() += (inv_m * res.adj().array()).sum();
+    });
+    return promote_scalar_t<var, Mat>(res);
+  }
 }
 
-/**
- * Return scalar divided by matrix.
- *
- * @tparam Mat A type inheriting from `EigenBase` with an `Arithmetic` scalar
- * type.
- * @param[in] c specified scalar
- * @param[in] m specified matrix or expression
- * @return matrix divided by the scalar
- */
-template <typename Mat, require_eigen_vt<std::is_arithmetic, Mat>* = nullptr>
-inline auto divide(var c, const Mat& m) {
-  arena_t<Mat> arena_m = m;
-  auto inv_m = to_arena(1.0 / arena_m.val().array());
-  arena_t<promote_scalar_t<var, Mat>> res = c.val() * inv_m;
-  reverse_pass_callback([c, inv_m, res]() mutable {
-    c.adj() += (inv_m * res.adj().array()).sum();
-  });
-  return promote_scalar_t<var, Mat>(res);
-}
-
-/**
- * Return scalar divided by matrix.
- *
- * @tparam Mat Either a type inheriting from `EigenBase` with a scalar type of
- * `var` or a `var_value<T>` with type `T` inheriting from `EigenBase`.
- * @param[in] c specified scalar
- * @param[in] m specified matrix or expression
- * @return matrix divided by the scalar
- */
-template <typename Mat, require_matrix_st<is_var, Mat>* = nullptr>
-inline auto divide(double c, const Mat& m) {
-  arena_t<promote_scalar_t<var, Mat>> arena_m = m;
-  auto inv_m = to_arena(1.0 / arena_m.val().array());
-  arena_t<promote_scalar_t<var, Mat>> res = c * inv_m;
-  reverse_pass_callback([inv_m, arena_m, res]() mutable {
-    arena_m.adj().array() -= inv_m * res.adj().array() * res.val().array();
-  });
-  return promote_scalar_t<var, Mat>(res);
-}
 
 ///
 

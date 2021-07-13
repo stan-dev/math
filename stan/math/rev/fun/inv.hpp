@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- *
+ * @tparam T Arithmetic or a type inheriting from `EigenBase`.
    \f[
    \mbox{inv}(x) =
    \begin{cases}
@@ -27,19 +27,13 @@ namespace math {
    \f]
  *
  */
-inline var inv(const var& a) {
-  return make_callback_var(inv(a.val()), [a](auto& vi) mutable {
-    a.adj() -= vi.adj() / (a.val() * a.val());
-  });
-}
-
-template <typename T, require_eigen_t<T>* = nullptr>
-inline auto inv(const var_value<T>& a) {
-  auto denom = to_arena(a.val().array().square());
-  return make_callback_var(inv(a.val()), [a, denom](auto& vi) mutable {
-    a.adj().array() -= vi.adj().array() / denom;
-  });
-}
+ template <typename T>
+ inline auto inv(const var_value<T>& a) {
+   auto denom = to_arena(as_array_or_scalar(square(a.val())));
+   return make_callback_var(inv(a.val()), [a, denom](auto& vi) mutable {
+     as_array_or_scalar(a.adj()) -= as_array_or_scalar(vi.adj()) / denom;
+   });
+ }
 
 }  // namespace math
 }  // namespace stan

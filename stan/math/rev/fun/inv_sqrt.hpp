@@ -11,6 +11,7 @@ namespace stan {
 namespace math {
 
 /**
+ * @tparam T Arithmetic or a type inheriting from `EigenBase`.
  *
    \f[
    \mbox{inv\_sqrt}(x) =
@@ -29,18 +30,11 @@ namespace math {
    \f]
  *
  */
-inline var inv_sqrt(const var& a) {
-  auto denom = a.val() * std::sqrt(a.val());
-  return make_callback_var(inv_sqrt(a.val()), [a, denom](auto& vi) mutable {
-    a.adj() -= 0.5 * vi.adj() / denom;
-  });
-}
-
-template <typename T, require_eigen_t<T>* = nullptr>
+template <typename T>
 inline auto inv_sqrt(const var_value<T>& a) {
-  auto denom = to_arena(a.val().array() * a.val().array().sqrt());
+  auto denom = to_arena(as_array_or_scalar(a.val()) * as_array_or_scalar(sqrt(a.val())));
   return make_callback_var(inv_sqrt(a.val()), [a, denom](auto& vi) mutable {
-    a.adj().array() -= 0.5 * vi.adj().array() / denom;
+    as_array_or_scalar(a.adj()) -= 0.5 * as_array_or_scalar(vi.adj()) / denom;
   });
 }
 

@@ -41,21 +41,15 @@ namespace math {
    \end{cases}
    \f]
  *
+ * @tparam T Arithmetic or a type inheriting from `EigenBase`.
  * @param a Variable whose log is taken.
  * @return Base 10 log of variable.
  */
-inline var log10(const var& a) {
-  return make_callback_var(std::log10(a.val()), [a](auto& vi) mutable {
-    a.adj() += vi.adj() / (LOG_TEN * a.val());
-  });
-}
-
-template <typename T, require_eigen_t<T>* = nullptr>
+template <typename T>
 inline auto log10(const var_value<T>& a) {
-  return make_callback_var(
-      a.val().array().log10().matrix(), [a](auto& vi) mutable {
-        a.adj().array() += vi.adj().array() / (LOG_TEN * a.val().array());
-      });
+  return make_callback_var(log10(a.val()), [a](auto& vi) mutable {
+    as_array_or_scalar(a.adj()) += as_array_or_scalar(vi.adj()) / as_array_or_scalar(LOG_TEN * a.val());
+  });
 }
 
 /**

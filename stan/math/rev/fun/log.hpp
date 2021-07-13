@@ -41,12 +41,14 @@ namespace math {
    \end{cases}
    \f]
  *
+ * @tparam T Arithmetic or a type inheriting from `EigenBase`.
  * @param a Variable whose log is taken.
  * @return Natural log of variable.
  */
-inline var log(const var& a) {
+template <typename T>
+inline auto log(const var_value<T>& a) {
   return make_callback_var(std::log(a.val()), [a](auto& vi) mutable {
-    a.adj() += vi.adj() / a.val();
+    as_array_or_scalar(a.adj()) += as_array_or_scalar(vi.adj()) / as_array_or_scalar(a.val());
   });
 }
 
@@ -58,21 +60,6 @@ inline var log(const var& a) {
  */
 inline std::complex<var> log(const std::complex<var>& z) {
   return internal::complex_log(z);
-}
-
-/**
- * Return the natural log of the elements of x
- *
- * @tparam T type of x
- * @param x argument
- * @return elementwise natural log of x
- */
-template <typename T, require_var_matrix_t<T>* = nullptr>
-inline auto log(const T& x) {
-  return make_callback_var(
-      x.val().array().log().matrix(), [x](const auto& vi) mutable {
-        x.adj() += (vi.adj().array() / x.val().array()).matrix();
-      });
 }
 
 }  // namespace math

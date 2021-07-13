@@ -1,9 +1,10 @@
 #ifndef STAN_MATH_PRIM_FUN_DIVIDE_HPP
 #define STAN_MATH_PRIM_FUN_DIVIDE_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <cstddef>
 #include <cstdlib>
 #include <type_traits>
@@ -40,58 +41,13 @@ inline int divide(int x, int y) {
  * @param[in] c specified scalar
  * @return matrix divided by the scalar
  */
-template <typename Mat, typename Scal, require_eigen_t<Mat>* = nullptr,
-          require_stan_scalar_t<Scal>* = nullptr,
-          require_all_not_var_t<scalar_type_t<Mat>, Scal>* = nullptr>
-inline auto divide(const Mat& m, Scal c) {
-  return m / c;
+template <typename T1, typename T2,
+  require_any_eigen_t<T1, T2>* = nullptr,
+  require_all_not_st_var<T1, T2>* = nullptr>
+inline auto divide(const T1& m, const T2& c) {
+  return (as_array_or_scalar(m) / as_array_or_scalar(c)).matrix();
 }
 
-/**
- * Return matrix divided by matrix.
- *
- * @tparam Mat1 A type inheriting from `Eigen::EigenBase`
- * @tparam Mat2 A type inheriting from `Eigen::EigenBase`
- * @param[in] m specified matrix or expression
- * @param[in] c specified matrix or expression
- * @return matrix divided elementwise by `c`
- */
-template <typename Mat1, typename Mat2,
-          require_all_eigen_t<Mat1, Mat2>* = nullptr,
-          require_all_st_fvar_or_arithmetic<Mat1, Mat2>* = nullptr>
-inline auto divide(const Mat1& m, const Mat2& c) {
-  return (m.array() / c.array()).matrix();
-}
-
-/**
- * Return scalar divided by matrix.
- *
- * @tparam Mat A type inheriting from `Eigen::EigenBase`
- * @param[in] m specified matrix or expression
- * @param[in] c scalar double
- * @return matrix divided elementwise by `c`
- */
-template <typename Mat, require_eigen_vt<std::is_arithmetic, Mat>* = nullptr>
-inline auto divide(double c, const Mat& m) {
-  return (c / m.array()).matrix();
-}
-
-/**
- * Return scalar divided by matrix.
- *
- * @tparam Scalar A scalar of Arithmetic of `fvar` type.
- * @tparam Mat A type inheriting from `Eigen::EigenBase`
- * @param[in] c scalar
- * @param[in] m specified matrix or expression
- * @return matrix divided elementwise by `c`
- */
-template <typename Scalar, typename Mat, require_eigen_t<Mat>* = nullptr,
-          require_t<bool_constant<std::is_arithmetic<Scalar>::value
-                                  || is_fvar<Scalar>::value>>* = nullptr,
-          require_any_st_fvar<Scalar, Mat>* = nullptr>
-inline auto divide(Scalar c, const Mat& m) {
-  return (c / m.array()).matrix();
-}
 
 }  // namespace math
 }  // namespace stan
