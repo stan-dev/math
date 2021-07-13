@@ -23,7 +23,7 @@ template <typename T>
 inline auto log1m(const var_value<T>& a) {
   return make_callback_var(log1m(a.val()), [a](auto& vi) mutable {
     as_array_or_scalar(a.adj())
-        += as_array_or_scalar(vi.adj()) / as_array_or_scalar(a.val() - 1.0);
+        += as_array_or_scalar(vi.adj()) / (as_array_or_scalar(a.val()) - 1.0);
   });
 }
 
