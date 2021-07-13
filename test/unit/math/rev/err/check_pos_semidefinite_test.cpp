@@ -59,3 +59,33 @@ TEST(AgradRevErrorHandlingMatrix, checkPosSemiDefiniteMatrixVarCheck) {
 
   EXPECT_EQ(9U, stack_after_call);
 }
+
+TEST(AgradRevErrorHandlingMatrix, checkPosSemiDefiniteVarMatrix_nan) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var_value;
+
+  Matrix<double, Dynamic, Dynamic> y_val(3, 3);
+  y_val << 2, -1, 0, -1, 2, -1, 0, -1, 2;
+  var_value<Matrix<double, Dynamic, Dynamic>> y(y_val);
+  using stan::math::check_pos_semidefinite;
+
+  EXPECT_NO_THROW(check_pos_semidefinite("checkPosDefiniteMatrix", "y", y));
+
+  for (int i = 0; i < y.rows(); i++) {
+    for (int j = 0; j < y.cols(); j++) {
+      y.vi_->val_(i, j) = nan;
+      if (i >= j) {
+        EXPECT_THROW(check_pos_semidefinite("checkPosDefiniteMatrix", "y", y),
+                     std::domain_error);
+      }
+      y.vi_->val_ = y_val;
+    }
+  }
+
+  Matrix<double, Dynamic, Dynamic> y_val_zero(3, 3);
+  y_val_zero << 0, 0, 0, 0, 0, 0, 0, 0, 0;
+  var_value<Matrix<double, Dynamic, Dynamic>> y_zero(y_val_zero);
+  EXPECT_NO_THROW(check_pos_semidefinite("checkPosDefiniteMatrix", "y", y_zero));
+  stan::math::recover_memory();
+}

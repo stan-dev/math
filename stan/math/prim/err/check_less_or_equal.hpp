@@ -13,32 +13,25 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-template <typename T_y, typename T_high, bool is_vec>
-struct less_or_equal {
-  static void check(const char* function, const char* name, const T_y& y,
-                    const T_high& high) {
-    scalar_seq_view<T_high> high_vec(high);
-    for (size_t n = 0; n < stan::math::size(high); n++) {
-      if (!(y <= high_vec[n])) {
-        [&]() STAN_COLD_PATH {
-          std::stringstream msg;
-          msg << ", but must be less than or equal to ";
-          msg << high_vec[n];
-          std::string msg_str(msg.str());
-          throw_domain_error(function, name, y, "is ", msg_str.c_str());
-        }();
-      }
-    }
-  }
-};
-
-template <typename T_y, typename T_high>
-struct less_or_equal<T_y, T_high, true> {
-  static void check(const char* function, const char* name, const T_y& y,
-                    const T_high& high) {
-    scalar_seq_view<T_high> high_vec(high);
-    const auto& y_ref = to_ref(y);
+/**
+ * Check if <code>y</code> is less or equal to <code>high</code>.
+ * This function is vectorized and will check each element of
+ * <code>y</code> against each element of <code>high</code>.
+ * @tparam T_y Type of y
+ * @tparam T_high Type of upper bound
+ * @param function Function name (for error messages)
+ * @param name Variable name (for error messages)
+ * @param y Variable to check
+ * @param high Upper bound
+ * @throw <code>std::domain_error</code> if y is not less than or equal
+ *   to low or if any element of y or high is NaN
+ */
+template <typename T_y, typename T_high, require_vector_t<T_y>* = nullptr>
+inline void check_less_or_equal(const char* function, const char* name,
+                                const T_y& y, const T_high& high) {
+    const auto& high_ref = to_ref(value_of(high));
+    scalar_seq_view<decltype(high_ref)> high_vec(high_ref);
+    const auto& y_ref = to_ref(value_of(y));
     for (size_t n = 0; n < stan::math::size(y_ref); n++) {
       if (!(stan::get(y_ref, n) <= high_vec[n])) {
         [&]() STAN_COLD_PATH {
@@ -51,9 +44,7 @@ struct less_or_equal<T_y, T_high, true> {
         }();
       }
     }
-  }
-};
-}  // namespace internal
+}
 
 /**
  * Check if <code>y</code> is less or equal to <code>high</code>.
@@ -68,12 +59,24 @@ struct less_or_equal<T_y, T_high, true> {
  * @throw <code>std::domain_error</code> if y is not less than or equal
  *   to low or if any element of y or high is NaN
  */
-template <typename T_y, typename T_high>
+template <typename T_y, typename T_high, require_not_vector_t<T_y>* = nullptr>
 inline void check_less_or_equal(const char* function, const char* name,
                                 const T_y& y, const T_high& high) {
-  internal::less_or_equal<T_y, T_high, is_vector_like<T_y>::value>::check(
-      function, name, y, high);
+    const auto& high_ref = to_ref(value_of(high));
+    scalar_seq_view<decltype(high_ref)> high_vec(high_ref);
+    for (size_t n = 0; n < stan::math::size(high); n++) {
+      if (!(y <= high_vec[n])) {
+        [&]() STAN_COLD_PATH {
+          std::stringstream msg;
+          msg << ", but must be less than or equal to ";
+          msg << high_vec[n];
+          std::string msg_str(msg.str());
+          throw_domain_error(function, name, y, "is ", msg_str.c_str());
+        }();
+      }
+    }
 }
+
 }  // namespace math
 }  // namespace stan
 #endif

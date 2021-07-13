@@ -39,6 +39,26 @@ TEST(AgradRevErrorHandlingMatrix, CheckPositive) {
   stan::math::recover_memory();
 }
 
+TEST(AgradRevErrorHandlingMatrix, CheckPositiveVarMat) {
+  using stan::math::check_positive;
+  using stan::math::var_value;
+
+  const char* function = "check_positive";
+
+  Eigen::Matrix<double, Eigen::Dynamic, 1> x_mat_val(3);
+  x_mat_val << 1, 2, 3;
+  var_value<Eigen::Matrix<double, Eigen::Dynamic, 1>> x_mat(x_mat_val);
+  for (int i = 0; i < x_mat.size(); i++) {
+    EXPECT_NO_THROW(check_positive(function, "x", x_mat));
+  }
+
+  x_mat.vi->val_(0) = 0;
+
+  EXPECT_THROW(check_positive(function, "x", x_mat), std::domain_error);
+
+  stan::math::recover_memory();
+}
+
 TEST(AgradRevErrorHandlingScalar, CheckPositive) {
   using stan::math::check_positive;
   using stan::math::var;

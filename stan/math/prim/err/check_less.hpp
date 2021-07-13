@@ -146,6 +146,25 @@ inline void check_less(const char* function, const char* name, const T_y& y,
   }
 }
 
+/**
+ * Check if <code>y</code> is strictly less than <code>high</code>.
+ * This function is vectorized and will check each element of
+ * <code>y</code> against each element of <code>high</code>.
+ * @tparam T_y Either a scalar, container, or var_value<T> holding a container.
+ * @tparam T_high  Either a scalar, container, or var_value<T> holding a container.
+ * @param function Function name (for error messages)
+ * @param name Variable name (for error messages)
+ * @param y Variable to check
+ * @param high Upper bound
+ * @throw <code>domain_error</code> if y is not less than low
+ *   or if any element of y or high is NaN.
+ */
+template <typename T_y, typename T_high, require_any_var_matrix_t<T_y, T_high>* = nullptr>
+inline void check_less(const char* function, const char* name, const T_y& y,
+                       const T_high& high) {
+  check_less(function, name, value_of(y), value_of(high));
+}
+
 }  // namespace math
 }  // namespace stan
 #endif

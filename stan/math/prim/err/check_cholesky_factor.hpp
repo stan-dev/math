@@ -18,7 +18,7 @@ namespace math {
  * elements are all positive.  Note that Cholesky factors need not
  * be square, but require at least as many rows M as columns N
  * (i.e., M &gt;= N).
- * @tparam EigMat Type of the Cholesky factor (must be derived from \c
+ * @tparam Mat Type of the Cholesky factor (must be derived from \c
  * Eigen::MatrixBase)
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -27,9 +27,9 @@ namespace math {
  *   factor, if number of rows is less than the number of columns,
  *   if there are 0 columns, or if any element in matrix is NaN
  */
-template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
+template <typename Mat, require_matrix_t<Mat>* = nullptr>
 inline void check_cholesky_factor(const char* function, const char* name,
-                                  const EigMat& y) {
+                                  const Mat& y) {
   check_less_or_equal(function, "columns and rows of Cholesky factor", y.cols(),
                       y.rows());
   check_positive(function, "columns of Cholesky factor", y.cols());

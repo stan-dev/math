@@ -5,6 +5,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/throw_domain_error.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/fun/value_of.hpp>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -22,9 +23,9 @@ namespace math {
  *   not ordered, if there are duplicated
  *   values, or if any element is <code>NaN</code>.
  */
-template <typename T_y, require_eigen_vector_t<T_y>* = nullptr>
+template <typename T_y, require_vector_t<T_y>* = nullptr>
 void check_ordered(const char* function, const char* name, const T_y& y) {
-  const auto& y_ref = to_ref(y);
+  const auto& y_ref = to_ref(value_of(y));
   for (Eigen::Index n = 1; n < y_ref.size(); n++) {
     if (!(y_ref[n] > y_ref[n - 1])) {
       [&]() STAN_COLD_PATH {
