@@ -90,3 +90,37 @@ TEST(AgradRevErrorHandlingScalar, CheckFiniteVarCheckUnivariate) {
 
   stan::math::recover_memory();
 }
+
+
+TEST(ErrorHandlingMat, CheckFinite_VarMatrix) {
+  using stan::math::check_finite;
+  const char* function = "check_finite";
+  Eigen::Matrix<double, Eigen::Dynamic, 1> x;
+  using var_mat = stan::math::var_value<Eigen::MatrixXd>;
+
+  x.resize(3);
+  x << -1, 0, 1;
+  ASSERT_NO_THROW(check_finite(function, "x", var_mat(x)))
+      << "check_finite should be true with finite x";
+
+  ASSERT_NO_THROW(check_finite(function, "x", var_mat(x).array()))
+      << "check_finite should be true with finite x";
+
+  ASSERT_NO_THROW(check_finite(function, "x", var_mat(x).transpose()))
+      << "check_finite should be true with finite x";
+
+  x.resize(3);
+  x << -1, 0, std::numeric_limits<double>::infinity();
+  EXPECT_THROW(check_finite(function, "x", var_mat(x)), std::domain_error)
+      << "check_finite should throw exception on Inf";
+
+  x.resize(3);
+  x << -1, 0, -std::numeric_limits<double>::infinity();
+  EXPECT_THROW(check_finite(function, "x", var_mat(x)), std::domain_error)
+      << "check_finite should throw exception on -Inf";
+
+  x.resize(3);
+  x << -1, 0, std::numeric_limits<double>::quiet_NaN();
+  EXPECT_THROW(check_finite(function, "x", var_mat(x)), std::domain_error)
+      << "check_finite should throw exception on NaN";
+}
