@@ -84,9 +84,7 @@ class accumulator {
    *
    * @return Sum of accumulated values.
    */
-  inline T sum() const {
-    return buf_;
-  }
+  inline T sum() const { return buf_; }
 };
 
 }  // namespace math

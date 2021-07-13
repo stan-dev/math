@@ -27,7 +27,6 @@ class accumulator<var> {
   var buf_{0.0};
 
  public:
-
   /**
    * Add the specified arithmetic type value to the buffer after
    * static casting it to the class type <code>T</code>.
@@ -64,7 +63,8 @@ class accumulator<var> {
    * @tparam S A standard vector holding non-container elements
    * @param xs Vector of entries to add
    */
-  template <typename S, require_all_not_t<is_container<S>, is_var_matrix<S>>* = nullptr>
+  template <typename S,
+            require_all_not_t<is_container<S>, is_var_matrix<S>>* = nullptr>
   inline void add(const std::vector<S>& xs) {
     buf_ += stan::math::sum(xs);
   }
@@ -78,7 +78,8 @@ class accumulator<var> {
    * @tparam S A standard vector holding container elements
    * @param xs Vector of entries to add
    */
-  template <typename S, require_any_t<is_container<S>, is_var_matrix<S>>* = nullptr>
+  template <typename S,
+            require_any_t<is_container<S>, is_var_matrix<S>>* = nullptr>
   inline void add(const std::vector<S>& xs) {
     for (size_t i = 0; i < xs.size(); ++i) {
       this->add(xs[i]);
@@ -90,9 +91,7 @@ class accumulator<var> {
    *
    * @return Sum of accumulated values.
    */
-  inline var sum() const noexcept {
-    return buf_;
-  }
+  inline var sum() const noexcept { return buf_; }
 };
 
 }  // namespace math
