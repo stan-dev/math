@@ -27,7 +27,7 @@ namespace math {
  *   if any element of y or low is NaN.
  */
 template <typename T_y, typename T_low, require_container_t<T_y>* = nullptr,
-  require_not_var_matrix_t<T_low>* = nullptr>
+          require_not_var_matrix_t<T_low>* = nullptr>
 inline void check_greater_or_equal(const char* function, const char* name,
                                    const T_y& y, const T_low& low) {
   const auto& low_ref = to_ref(value_of(low));

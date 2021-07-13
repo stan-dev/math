@@ -27,7 +27,7 @@ namespace math {
  *   to low or if any element of y or high is NaN
  */
 template <typename T_y, typename T_high, require_container_t<T_y>* = nullptr,
- require_not_var_matrix_t<T_high>* = nullptr>
+          require_not_var_matrix_t<T_high>* = nullptr>
 inline void check_less_or_equal(const char* function, const char* name,
                                 const T_y& y, const T_high& high) {
   const auto& high_ref = to_ref(value_of(high));
@@ -60,9 +60,8 @@ inline void check_less_or_equal(const char* function, const char* name,
  * @throw <code>std::domain_error</code> if y is not less than or equal
  *   to low or if any element of y or high is NaN
  */
-template <typename T_y, typename T_high,
-  require_stan_scalar_t<T_y>* = nullptr,
-  require_not_var_matrix_t<T_high>* = nullptr>
+template <typename T_y, typename T_high, require_stan_scalar_t<T_y>* = nullptr,
+          require_not_var_matrix_t<T_high>* = nullptr>
 inline void check_less_or_equal(const char* function, const char* name,
                                 const T_y& y, const T_high& high) {
   const auto& high_ref = to_ref(value_of(high));
