@@ -27,7 +27,7 @@ namespace math {
    \f]
  *
  */
-template <typename T>
+template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
 inline auto inv(const var_value<T>& a) {
   auto denom = to_arena(as_array_or_scalar(square(a.val())));
   return make_callback_var(inv(a.val()), [a, denom](auto& vi) mutable {

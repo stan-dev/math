@@ -1,8 +1,9 @@
-#ifndef STAN_MATH_PRIM_META_IS_FVAR_OR_ARITHMETIC_HPP
-#define STAN_MATH_PRIM_META_IS_FVAR_OR_ARITHMETIC_HPP
+#ifndef STAN_MATH_PRIM_META_IS_STAN_SCALAR_OR_EIGEN_HPP
+#define STAN_MATH_PRIM_META_IS_STAN_SCALAR_OR_EIGEN_HPP
 
 #include <stan/math/prim/meta/bool_constant.hpp>
-#include <stan/math/prim/meta/is_fvar.hpp>
+#include <stan/math/prim/meta/is_stan_scalar.hpp>
+#include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/scalar_type.hpp>
 #include <stan/math/prim/meta/conjunction.hpp>
 #include <stan/math/prim/meta/require_helpers.hpp>
@@ -16,13 +17,13 @@ namespace stan {
  * an arithmetic type, extends std::false_type otherwise.
  */
 template <typename T>
-using is_fvar_or_arithmetic
-    = bool_constant<std::is_arithmetic<std::decay_t<T>>::value
-                    || is_fvar<std::decay_t<T>>::value>;
+using is_stan_scalar_or_eigen
+    = bool_constant<is_stan_scalar<std::decay_t<T>>::value
+                    || is_eigen<std::decay_t<T>>::value>;
 
-STAN_ADD_REQUIRE_UNARY(fvar_or_arithmetic, is_fvar_or_arithmetic,
+STAN_ADD_REQUIRE_UNARY(stan_scalar_or_eigen, is_stan_scalar_or_eigen,
                        require_stan_scalar_real);
-STAN_ADD_REQUIRE_UNARY_INNER(fvar_or_arithmetic, is_fvar_or_arithmetic,
+STAN_ADD_REQUIRE_UNARY_INNER(stan_scalar_or_eigen, is_stan_scalar_or_eigen,
                              require_stan_scalar_real);
 
 }  // namespace stan

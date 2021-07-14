@@ -200,7 +200,6 @@
 #include <stan/math/prim/meta/is_eigen_matrix_base.hpp>
 #include <stan/math/prim/meta/is_eigen_sparse_base.hpp>
 #include <stan/math/prim/meta/is_fvar.hpp>
-#include <stan/math/prim/meta/is_fvar_or_arithmetic.hpp>
 #include <stan/math/prim/meta/is_kernel_expression.hpp>
 #include <stan/math/prim/meta/is_matrix_cl.hpp>
 #include <stan/math/prim/meta/is_matrix.hpp>
@@ -216,6 +215,7 @@
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/is_vector_like.hpp>
 #include <stan/math/prim/meta/is_stan_scalar.hpp>
+#include <stan/math/prim/meta/is_stan_scalar_or_eigen.hpp>
 #include <stan/math/prim/meta/partials_return_type.hpp>
 #include <stan/math/prim/meta/partials_type.hpp>
 #include <stan/math/prim/meta/plain_type.hpp>

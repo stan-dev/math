@@ -19,7 +19,7 @@ namespace math {
  * @param a The variable.
  * @return The variable representing log of 1 minus the variable.
  */
-template <typename T>
+template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
 inline auto log1m(const var_value<T>& a) {
   return make_callback_var(log1m(a.val()), [a](auto& vi) mutable {
     as_array_or_scalar(a.adj())

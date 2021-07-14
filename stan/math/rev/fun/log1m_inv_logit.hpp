@@ -17,7 +17,7 @@ namespace math {
  * @param u argument
  * @return log of one minus the inverse logit of the argument
  */
-template <typename T>
+template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
 inline auto log1m_inv_logit(const var_value<T>& u) {
   auto precomp_inv_logit = to_arena(as_array_or_scalar(-inv_logit(u.val())));
   return make_callback_var(

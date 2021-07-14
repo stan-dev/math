@@ -18,7 +18,7 @@ namespace math {
  * @param a Variable argument.
  * @return the Lambert W function (W0 branch) applied to the specified argument.
  */
-template <typename T>
+template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
 inline auto lambert_w0(const var_value<T>& a) {
   return make_callback_var(lambert_w0(a.val()), [a](auto& vi) mutable {
     as_array_or_scalar(a.adj())
@@ -36,7 +36,7 @@ inline auto lambert_w0(const var_value<T>& a) {
  * @return the Lambert W function (W-1 branch) applied to the specified
  * argument.
  */
-template <typename T>
+template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
 inline auto lambert_wm1(const var_value<T>& a) {
   return make_callback_var(lambert_wm1(a.val()), [a](auto& vi) mutable {
     as_array_or_scalar(a.adj())

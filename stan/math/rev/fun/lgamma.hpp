@@ -20,7 +20,7 @@ namespace math {
  * @param a The variable.
  * @return Log gamma of the variable.
  */
-template <typename T>
+template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
 inline auto lgamma(const var_value<T>& a) {
   return make_callback_var(lgamma(a.val()), [a](auto& vi) mutable {
     as_array_or_scalar(a.adj())

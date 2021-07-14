@@ -22,7 +22,7 @@ namespace math {
  * @param a Argument variable.
  * @return Inverse logit of argument.
  */
-template <typename T>
+template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
 inline auto inv_logit(const var_value<T>& a) {
   return make_callback_var(inv_logit(a.val()), [a](auto& vi) mutable {
     as_array_or_scalar(a).adj() += as_array_or_scalar(vi.adj())
