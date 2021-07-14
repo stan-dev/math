@@ -30,7 +30,7 @@ namespace math {
    \f]
  *
  */
- template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
+template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
 inline auto inv_sqrt(const var_value<T>& a) {
   auto denom = to_arena(as_array_or_scalar(a.val())
                         * as_array_or_scalar(sqrt(a.val())));
