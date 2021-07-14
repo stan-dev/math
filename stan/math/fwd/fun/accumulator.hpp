@@ -24,9 +24,10 @@ namespace math {
 template <typename T>
 class accumulator<fvar<T>> {
  private:
-  fvar<T> buf_{0.0};
+  std::vector<fvar<T>> buf_;
 
  public:
+
   /**
    * Add the specified arithmetic type value to the buffer after
    * static casting it to the class type <code>T</code>.
@@ -39,7 +40,7 @@ class accumulator<fvar<T>> {
    */
   template <typename S, require_stan_scalar_t<S>* = nullptr>
   inline void add(S x) {
-    buf_ += x;
+    buf_.push_back(x);
   }
 
   /**
@@ -51,7 +52,7 @@ class accumulator<fvar<T>> {
    */
   template <typename S, require_matrix_t<S>* = nullptr>
   inline void add(const S& m) {
-    buf_ += stan::math::sum(m);
+    buf_.push_back(stan::math::sum(m));
   }
 
   /**
@@ -72,7 +73,7 @@ class accumulator<fvar<T>> {
 
   template <typename S, require_not_container_t<S>* = nullptr>
   inline void add(const std::vector<S>& xs) {
-    buf_ += stan::math::sum(xs);
+    buf_.push_back(stan::math::sum(xs));
   }
 
   /**
@@ -80,7 +81,9 @@ class accumulator<fvar<T>> {
    *
    * @return Sum of accumulated values.
    */
-  inline fvar<T> sum() const noexcept { return buf_; }
+  inline fvar<T> sum() const {
+    return stan::math::sum(buf_);
+  }
 };
 
 }  // namespace math

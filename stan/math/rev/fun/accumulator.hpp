@@ -4,7 +4,13 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/accumulator.hpp>
 #include <stan/math/rev/meta.hpp>
+#include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/sum.hpp>
+
+#ifdef STAN_OPENCL
+#include <stan/math/opencl/rev.hpp>
+#endif
+
 #include <vector>
 #include <type_traits>
 
@@ -24,7 +30,7 @@ namespace math {
 template <>
 class accumulator<var> {
  private:
-  var buf_{0.0};
+  std::vector<var> buf_;
 
  public:
   /**
@@ -39,7 +45,7 @@ class accumulator<var> {
    */
   template <typename S, require_stan_scalar_t<S>* = nullptr>
   inline void add(S x) {
-    buf_ += x;
+    buf_.push_back(x);
   }
 
   /**
@@ -51,7 +57,7 @@ class accumulator<var> {
    */
   template <typename S, require_matrix_t<S>* = nullptr>
   inline void add(const S& m) {
-    buf_ += stan::math::sum(m);
+    buf_.push_back(stan::math::sum(m));
   }
 
   /**
@@ -66,7 +72,7 @@ class accumulator<var> {
   template <typename S,
             require_all_not_t<is_container<S>, is_var_matrix<S>>* = nullptr>
   inline void add(const std::vector<S>& xs) {
-    buf_ += stan::math::sum(xs);
+    buf_.push_back(stan::math::sum(xs));
   }
 
   /**
@@ -86,12 +92,36 @@ class accumulator<var> {
     }
   }
 
+#ifdef STAN_OPENCL
+  /**
+   * Sum each entry and then push to the buffer.
+   * @tparam S A Type inheriting from `matrix_cl_base`
+   * @param x A `var_value` with inner type OpenCL matrix
+   */
+  template <typename S,
+            require_all_kernel_expressions_and_none_scalar_t<S>* = nullptr>
+  inline void add(const var_value<S>& x) {
+    buf_.push_back(stan::math::sum(x));
+  }
+  /**
+   * Sum each entry and then push to the buffer.
+   * @tparam S A Type inheriting from `matrix_cl_base`
+   * @param x An `std::vector` holding a `var_value` with inner type OpenCL matrix
+   */
+  template <typename S,
+            require_all_kernel_expressions_and_none_scalar_t<S>* = nullptr>
+  inline void add(const std::vector<var_value<S>>& xs) {
+    buf_.push_back(stan::math::sum(xs));
+  }
+
+#endif
+
   /**
    * Return the sum of the accumulated values.
    *
    * @return Sum of accumulated values.
    */
-  inline var sum() const noexcept { return buf_; }
+  inline var sum() const { return stan::math::sum(buf_); }
 };
 
 }  // namespace math

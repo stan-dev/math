@@ -4,6 +4,11 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/sum.hpp>
+
+#ifdef STAN_OPENCL
+#include <stan/math/opencl/prim.hpp>
+#endif
+
 #include <vector>
 #include <type_traits>
 
@@ -23,13 +28,9 @@ namespace math {
 template <typename T>
 class accumulator {
  private:
-  T buf_{0.0};
+  std::vector<T> buf_;
 
  public:
-  /**
-   * Construct an accumulator.
-   */
-  accumulator() : buf_(0.0) {}
 
   /**
    * Add the specified arithmetic type value to the buffer after
@@ -43,26 +44,24 @@ class accumulator {
    */
   template <typename S, typename = require_arithmetic_t<S>>
   inline void add(S x) {
-    buf_ += x;
+    buf_.push_back(x);
   }
 
   /**
-   * Add each entry in the specified matrix, vector, or row vector
-   * of values to the buffer.
+   * Sum each entry of the matrix and then add the sum to the buffer.
    *
    * @tparam S type of the matrix
    * @param m Matrix of values to add
    */
   template <typename S, require_matrix_t<S>* = nullptr>
   inline void add(const S& m) {
-    buf_ += stan::math::sum(m);
+    buf_.push_back(stan::math::sum(m));
   }
 
   /**
    * Recursively add each entry in the specified standard vector
    * to the buffer.  This will allow vectors of primitives,
-   * autodiff variables to be added; if the vector entries
-   * are collections, their elements are recursively added.
+   * autodiff variables to be added.
    *
    * @tparam S Type of value to recursively add.
    * @param xs Vector of entries to add
@@ -76,15 +75,39 @@ class accumulator {
 
   template <typename S, require_not_container_t<S>* = nullptr>
   inline void add(const std::vector<S>& xs) {
-    buf_ += stan::math::sum(xs);
+    buf_.push_back(stan::math::sum(xs));
   }
+
+
+#ifdef STAN_OPENCL
+  /**
+   * Sum each entry and then push to the buffer.
+   * @tparam S A Type inheriting from `matrix_cl_base`
+   * @param x An OpenCL matrix
+   */
+  template <typename S,
+            require_all_kernel_expressions_and_none_scalar_t<S>* = nullptr>
+  inline void add(const S& xs) {
+    buf_.push_back(stan::math::sum(xs));
+  }
+  /**
+   * Sum each entry and then push to the buffer.
+   * @tparam S A Type inheriting from `matrix_cl_base`
+   * @param x An `std::vector` with inner type OpenCL matrix
+   */
+  template <typename S,
+            require_all_kernel_expressions_and_none_scalar_t<S>* = nullptr>
+  inline void add(const std::vector<S>& xs) {
+    buf_.push_back(stan::math::sum(xs));
+  }
+#endif
 
   /**
    * Return the sum of the accumulated values.
    *
    * @return Sum of accumulated values.
    */
-  inline T sum() const { return buf_; }
+  inline T sum() const { return stan::math::sum(buf_); }
 };
 
 }  // namespace math
