@@ -31,7 +31,6 @@ class accumulator {
   std::vector<T> buf_;
 
  public:
-
   /**
    * Add the specified arithmetic type value to the buffer after
    * static casting it to the class type <code>T</code>.
@@ -77,7 +76,6 @@ class accumulator {
   inline void add(const std::vector<S>& xs) {
     buf_.push_back(stan::math::sum(xs));
   }
-
 
 #ifdef STAN_OPENCL
   /**

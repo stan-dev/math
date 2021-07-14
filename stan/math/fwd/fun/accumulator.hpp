@@ -27,7 +27,6 @@ class accumulator<fvar<T>> {
   std::vector<fvar<T>> buf_;
 
  public:
-
   /**
    * Add the specified arithmetic type value to the buffer after
    * static casting it to the class type <code>T</code>.
@@ -81,9 +80,7 @@ class accumulator<fvar<T>> {
    *
    * @return Sum of accumulated values.
    */
-  inline fvar<T> sum() const {
-    return stan::math::sum(buf_);
-  }
+  inline fvar<T> sum() const { return stan::math::sum(buf_); }
 };
 
 }  // namespace math
