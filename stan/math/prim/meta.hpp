@@ -192,6 +192,7 @@
 #include <stan/math/prim/meta/is_complex.hpp>
 #include <stan/math/prim/meta/is_constant.hpp>
 #include <stan/math/prim/meta/is_container.hpp>
+#include <stan/math/prim/meta/is_container_or_var_matrix.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/is_eigen_dense_base.hpp>
 #include <stan/math/prim/meta/is_eigen_dense_dynamic.hpp>

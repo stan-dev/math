@@ -1306,15 +1306,16 @@ void expect_ad_vectorized_binary_impl(const ad_tolerances& tols, const F& f,
   std::vector<T2> nest_y{y, y};
   std::vector<std::vector<T1>> nest_nest_x{nest_x, nest_x};
   std::vector<std::vector<T2>> nest_nest_y{nest_y, nest_y};
-  expect_ad(tols, f, x, y);
-  expect_ad(tols, f, x, y[0]);
-  expect_ad(tols, f, x[0], y);
-  expect_ad(tols, f, nest_x, nest_y);
-  expect_ad(tols, f, nest_x, y[0]);
-  expect_ad(tols, f, x[0], nest_y);
-  expect_ad(tols, f, nest_nest_x, nest_nest_y);
-  expect_ad(tols, f, nest_nest_x, y[0]);
-  expect_ad(tols, f, x[0], nest_nest_y);
+  expect_ad(tols, f, x, y);            // mat, mat
+  expect_ad(tols, f, x, y[0]);         // mat, scal
+  expect_ad(tols, f, x[0], y);         // scal, mat
+  expect_ad(tols, f, nest_x, nest_y);  // nest<mat>, nest<mat>
+  expect_ad(tols, f, nest_x, y[0]);    // nest<mat>, scal
+  expect_ad(tols, f, x[0], nest_y);    // scal, nest<mat>
+  expect_ad(tols, f, nest_nest_x,
+            nest_nest_y);                 // nest<nest<mat>>, nest<nest<mat>>
+  expect_ad(tols, f, nest_nest_x, y[0]);  // nest<nest<mat>, scal
+  expect_ad(tols, f, x[0], nest_nest_y);  // scal, nest<nest<mat>>
 }
 
 /**
