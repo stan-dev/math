@@ -95,8 +95,8 @@ class accumulator {
    * @tparam S A Type inheriting from `matrix_cl_base`
    * @param x An OpenCL matrix
    */
-  template <typename S,
-            require_all_kernel_expressions_and_none_scalar_t<value_type_t<S>>* = nullptr>
+  template <typename S, require_all_kernel_expressions_and_none_scalar_t<
+                            value_type_t<S>>* = nullptr>
   inline void add(const S& xs) {
     buf_.push_back(stan::math::sum(xs));
   }
