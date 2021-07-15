@@ -65,14 +65,16 @@ class accumulator {
    * @tparam S Type of value to recursively add.
    * @param xs Vector of entries to add
    */
-  template <typename S, require_any_t<is_container<S>, is_var_matrix<S>>* = nullptr>
+  template <typename S,
+            require_any_t<is_container<S>, is_var_matrix<S>>* = nullptr>
   inline void add(const std::vector<S>& xs) {
     for (size_t i = 0; i < xs.size(); ++i) {
       this->add(xs[i]);
     }
   }
 
-  template <typename S, require_all_not_t<is_container<S>, is_var_matrix<S>>* = nullptr>
+  template <typename S,
+            require_all_not_t<is_container<S>, is_var_matrix<S>>* = nullptr>
   inline void add(const std::vector<S>& xs) {
     buf_.push_back(stan::math::sum(xs));
   }

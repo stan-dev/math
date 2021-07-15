@@ -11,5 +11,4 @@
 #include <stan/math/opencl/rev.hpp>
 #endif
 
-
 #endif
