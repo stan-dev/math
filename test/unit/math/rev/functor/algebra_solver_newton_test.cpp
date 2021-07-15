@@ -12,7 +12,6 @@
 //////////////////////////////////////////////////////////////////////////
 // Tests for newton solver.
 
-
 TEST_F(error_message_test, newton_dbl) {
   bool is_newton = true;
   error_conditions_test(non_linear_eq_functor(), y_3, is_newton);
