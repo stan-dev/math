@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_FUN_ACCUMULATOR_HPP
 #define STAN_MATH_PRIM_FUN_ACCUMULATOR_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 
 #ifdef STAN_OPENCL
@@ -41,7 +41,7 @@ class accumulator {
    * @tparam S Type of argument
    * @param x Value to add
    */
-  template <typename S, typename = require_arithmetic_t<S>>
+  template <typename S, typename = require_stan_scalar_t<S>>
   inline void add(S x) {
     buf_.push_back(x);
   }
@@ -65,14 +65,14 @@ class accumulator {
    * @tparam S Type of value to recursively add.
    * @param xs Vector of entries to add
    */
-  template <typename S, require_container_t<S>* = nullptr>
+  template <typename S, require_any_t<is_container<S>, is_var_matrix<S>>* = nullptr>
   inline void add(const std::vector<S>& xs) {
     for (size_t i = 0; i < xs.size(); ++i) {
       this->add(xs[i]);
     }
   }
 
-  template <typename S, require_not_container_t<S>* = nullptr>
+  template <typename S, require_all_not_t<is_container<S>, is_var_matrix<S>>* = nullptr>
   inline void add(const std::vector<S>& xs) {
     buf_.push_back(stan::math::sum(xs));
   }
