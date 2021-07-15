@@ -12,33 +12,6 @@
 //////////////////////////////////////////////////////////////////////////
 // Tests for newton solver.
 
-TEST_F(algebra_solver_simple_eq_test, newton_dbl) {
-  bool is_newton = true;
-  Eigen::VectorXd theta = simple_eq_test(simple_eq_functor(), y_dbl, is_newton);
-}
-
-TEST_F(algebra_solver_simple_eq_test, newton_tuned_dbl) {
-  bool is_newton = true;
-  Eigen::VectorXd theta = simple_eq_test(simple_eq_functor(), y_dbl, is_newton,
-                                         true, scale_step, xtol, ftol, maxfev);
-}
-
-TEST_F(algebra_solver_simple_eq_nopara_test, newton_dbl) {
-  using stan::math::algebra_solver_newton;
-  Eigen::VectorXd theta = algebra_solver_newton(simple_eq_functor_nopara(), x,
-                                                y_dummy, dat, dummy_dat_int);
-  EXPECT_EQ(20, theta(0));
-  EXPECT_EQ(2, theta(1));
-}
-
-TEST_F(algebra_solver_non_linear_eq_test, newton_dbl) {
-  bool is_newton = true;
-  Eigen::VectorXd theta
-      = non_linear_eq_test(non_linear_eq_functor(), y_dbl, is_newton);
-  EXPECT_FLOAT_EQ(-y_dbl(0), theta(0));
-  EXPECT_FLOAT_EQ(-y_dbl(1), theta(1));
-  EXPECT_FLOAT_EQ(y_dbl(2), theta(2));
-}
 
 TEST_F(error_message_test, newton_dbl) {
   bool is_newton = true;

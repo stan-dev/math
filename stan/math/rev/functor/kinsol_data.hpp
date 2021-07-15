@@ -71,13 +71,11 @@ class kinsol_system_data {
 
     Eigen::Map<Eigen::VectorXd> f_eval_map(N_VGetArrayPointer(f_eval),
                                            explicit_system->N_);
-
-    f_eval_map = apply(
-        [&](const auto&... args) {
-          return explicit_system->f_(x_eigen, explicit_system->msgs_, args...);
-        },
-        explicit_system->args_tuple_);
-
+    auto result = apply([&](const auto&... args) {
+      return explicit_system->f_(x_eigen, explicit_system->msgs_, args...);
+    }, explicit_system->args_tuple_);
+    check_matching_sizes("", "the algebraic system's output", result, "the vector of unknowns, x,", f_eval_map);
+    f_eval_map = result;
     return 0;
   }
 
