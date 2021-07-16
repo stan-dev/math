@@ -55,6 +55,43 @@ inline var binary_log_loss(int y, const var& y_hat) {
   }
 }
 
+/**
+ * Overload with `int` and `var_value<Matrix>`
+ */
+template <typename Mat, require_eigen_t<Mat>* = nullptr>
+inline auto binary_log_loss(int y, const var_value<Mat>& y_hat) {
+  if (y == 0) {
+    return make_callback_var(
+        -(-y_hat.val().array()).log1p(), [y_hat](auto& vi) mutable {
+          y_hat.adj().array() += vi.adj().array() / (1.0 - y_hat.val().array());
+        });
+  } else {
+    return make_callback_var(
+        -y_hat.val().array().log(), [y_hat](auto& vi) mutable {
+          y_hat.adj().array() -= vi.adj().array() / y_hat.val().array();
+        });
+  }
+}
+
+/**
+ * Overload with `var_value<Matrix>` for `std::vector<int>` and
+ * `std::vector<std::vector<int>>`
+ */
+template <typename StdVec, typename Mat, require_eigen_t<Mat>* = nullptr,
+          require_st_integral<StdVec>* = nullptr>
+inline auto binary_log_loss(const StdVec& y, const var_value<Mat>& y_hat) {
+  auto arena_y = to_arena(as_array_or_scalar(y).template cast<bool>());
+  auto ret_val
+      = -(arena_y == 0)
+             .select((-y_hat.val().array()).log1p(), y_hat.val().array().log());
+  return make_callback_var(ret_val, [y_hat, arena_y](auto& vi) mutable {
+    y_hat.adj().array()
+        += vi.adj().array()
+           / (arena_y == 0)
+                 .select((1.0 - y_hat.val().array()), -y_hat.val().array());
+  });
+}
+
 }  // namespace math
 }  // namespace stan
 #endif

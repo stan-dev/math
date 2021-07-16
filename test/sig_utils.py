@@ -56,6 +56,11 @@ simplex = "simplex"
 pos_definite = "positive_definite_matrix"
 scalar_return_type = "scalar_return_type"
 
+make_special_arg_values = {
+    simplex : "make_simplex",
+    pos_definite : "make_pos_definite_matrix"
+}
+
 # list of function arguments that need special scalar values.
 # None means to use the default argument value.
 special_arg_values = {
@@ -154,7 +159,7 @@ non_differentiable_args = {
 }
 
 # lists of functions that do not support fwd or rev autodiff
-no_rev_overload = ["hmm_hidden_state_prob"]
+no_rev_overload = ["hmm_hidden_state_prob", "quantile"]
 no_fwd_overload = [
     "algebra_solver",
     "algebra_solver_newton",
@@ -165,7 +170,8 @@ no_fwd_overload = [
     "ode_bdf",
     "ode_bdf_tol",
     "ode_rk45",
-    "ode_rk45_tol"
+    "ode_rk45_tol",
+    "quantile"
 ]
 
 internal_signatures = [

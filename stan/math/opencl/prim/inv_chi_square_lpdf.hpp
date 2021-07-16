@@ -74,7 +74,7 @@ return_type_t<T_y_cl, T_dof_cl> inv_chi_square_lpdf(const T_y_cl& y,
       = check_cl(function, "Random variable", y_val, "not NaN");
   auto y_not_nan = !isnan(y_val);
 
-  auto any_y_nonpositive = colwise_max(constant(0, N, 1) + (y_val <= 0));
+  auto any_y_nonpositive = colwise_max(cast<char>(y_val <= 0));
   auto log_y = log(y_val);
   auto half_nu = nu_val * 0.5;
   auto two_over_y = elt_divide(0.5, y_val);
@@ -89,7 +89,7 @@ return_type_t<T_y_cl, T_dof_cl> inv_chi_square_lpdf(const T_y_cl& y,
   auto y_deriv = elt_divide(two_over_y - half_nu - 1.0, y_val);
   auto nu_deriv = -HALF_LOG_TWO - (digamma(half_nu) + log_y) * 0.5;
 
-  matrix_cl<int> any_y_nonpositive_cl;
+  matrix_cl<char> any_y_nonpositive_cl;
   matrix_cl<double> logp_cl;
   matrix_cl<double> y_deriv_cl;
   matrix_cl<double> nu_deriv_cl;

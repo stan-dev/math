@@ -36,3 +36,20 @@ TEST(mathMixScalFun, fallingFactorial_vec) {
   std::vector<std::vector<int>> std_std_in2{std_in2, std_in2};
   stan::test::expect_ad_vectorized_binary(f, mat_in1, std_std_in2);
 }
+
+TEST(mathMixScalFun, fallingFactorial_matvar) {
+  auto f = [](const auto& x1, const auto& x2) {
+    using stan::math::falling_factorial;
+    return falling_factorial(x1, x2);
+  };
+
+  std::vector<int> std_in2{3, 1};
+  Eigen::VectorXd in1(2);
+  in1 << 0.5, 3.4;
+  Eigen::MatrixXd mat(2, 2);
+  mat << 0.5, 3.4, 0.5, 3.4;
+
+  stan::test::expect_ad_matvar(f, in1, std_in2);
+  stan::test::expect_ad_matvar(f, in1, std_in2[0]);
+  stan::test::expect_ad_vectorized_matvar(f, mat, std_in2);
+}
