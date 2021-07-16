@@ -99,9 +99,7 @@ class accumulator<var> {
    *
    * @return Sum of accumulated values.
    */
-  inline var sum() const {
-    return stan::math::sum(buf_);
-  }
+  inline var sum() const { return stan::math::sum(buf_); }
 };
 
 }  // namespace math

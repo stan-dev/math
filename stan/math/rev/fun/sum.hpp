@@ -28,13 +28,11 @@ inline var sum(const std::vector<var, Alloc>& m) {
     return 0.0;
   } else {
     auto arena_m = to_arena(as_array_or_scalar(m));
-    return make_callback_var(arena_m.val().sum(),
-                             [arena_m](auto& vi) mutable {
-                               arena_m.adj() += vi.adj();
-                             });
+    return make_callback_var(arena_m.val().sum(), [arena_m](auto& vi) mutable {
+      arena_m.adj() += vi.adj();
+    });
   }
 }
-
 
 /**
  * Returns the sum of the coefficients of the specified
