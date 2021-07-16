@@ -65,8 +65,8 @@ class accumulator<var> {
    */
   template <typename S>
   inline void add(const std::vector<S>& xs) {
-    for (size_t i = 0; i < xs.size(); ++i) {
-      this->add(xs[i]);
+    for (auto&& x_i : xs) {
+      this->add(x_i);
     }
   }
 
@@ -100,8 +100,7 @@ class accumulator<var> {
    * @return Sum of accumulated values.
    */
   inline var sum() const {
-    return stan::math::sum(
-        std::vector<var, arena_allocator<var>>(buf_.begin(), buf_.end()));
+    return stan::math::sum(buf_);
   }
 };
 
