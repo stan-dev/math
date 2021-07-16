@@ -44,16 +44,18 @@ inline auto append_row(const T1& A, const T2& B) {
         });
   } else if (!is_constant<T1>::value) {
     arena_t<promote_scalar_t<var, T1>> arena_A = A;
-    return make_callback_var(
-        append_row(value_of(arena_A), value_of(B)), [arena_A](auto& vi) mutable {
-          arena_A.adj() += vi.adj().topRows(arena_A.rows());
-        });
+    return make_callback_var(append_row(value_of(arena_A), value_of(B)),
+                             [arena_A](auto& vi) mutable {
+                               arena_A.adj()
+                                   += vi.adj().topRows(arena_A.rows());
+                             });
   } else {
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
-    return make_callback_var(
-        append_row(value_of(A), value_of(arena_B)), [arena_B](auto& vi) mutable {
-          arena_B.adj() += vi.adj().bottomRows(arena_B.rows());
-        });
+    return make_callback_var(append_row(value_of(A), value_of(arena_B)),
+                             [arena_B](auto& vi) mutable {
+                               arena_B.adj()
+                                   += vi.adj().bottomRows(arena_B.rows());
+                             });
   }
 }
 
@@ -130,10 +132,11 @@ inline auto append_row(const var_value<ColVec>& A, const Scal& B) {
                              });
   } else {
     arena_t<promote_scalar_t<var, Scal>> arena_B = B;
-    return make_callback_var(
-        append_row(value_of(A), value_of(arena_B)), [arena_B](auto& vi) mutable {
-          arena_B.adj() += vi.adj().coeff(vi.adj().size() - 1);
-        });
+    return make_callback_var(append_row(value_of(A), value_of(arena_B)),
+                             [arena_B](auto& vi) mutable {
+                               arena_B.adj()
+                                   += vi.adj().coeff(vi.adj().size() - 1);
+                             });
   }
 }
 
