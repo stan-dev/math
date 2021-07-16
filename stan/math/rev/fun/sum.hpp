@@ -6,32 +6,34 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/arena_matrix.hpp>
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
+#include <stan/math/rev/fun/to_arena.hpp>
 #include <stan/math/rev/fun/sum.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/core/typedefs.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <vector>
 
 namespace stan {
 namespace math {
 
-  /**
-   * Returns the sum of the entries of the specified vector.
-   *
-   * @param m Vector.
-   * @return Sum of vector entries.
-   */
-  template <typename Alloc>
-  inline var sum(const std::vector<var, Alloc>& m) {
-    if (unlikely(m.empty())) {
-      return 0.0;
-    } else {
-      auto arena_m = to_arena(as_array_or_scalar(m));
-      return make_callback_var(arena_m.val().sum(),
-                               [arena_m](auto& vi) mutable {
-                                 arena_m.adj() += vi.adj();
-                               });
-    }
+/**
+ * Returns the sum of the entries of the specified vector.
+ *
+ * @param m Vector.
+ * @return Sum of vector entries.
+ */
+template <typename Alloc>
+inline var sum(const std::vector<var, Alloc>& m) {
+  if (unlikely(m.empty())) {
+    return 0.0;
+  } else {
+    auto arena_m = to_arena(as_array_or_scalar(m));
+    return make_callback_var(arena_m.val().sum(),
+                             [arena_m](auto& vi) mutable {
+                               arena_m.adj() += vi.adj();
+                             });
   }
+}
 
 
 /**
