@@ -13,8 +13,8 @@
 namespace stan {
 
 /** \ingroup type_trait
- * Extends std::true_type if all the provided types are either fvar or
- * an arithmetic type, extends std::false_type otherwise.
+ * Extends std::true_type if all the provided types are either a Stan Scalar
+ * type or a type inheriting from `EigenBase`.
  */
 template <typename T>
 using is_stan_scalar_or_eigen
