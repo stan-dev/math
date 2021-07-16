@@ -99,7 +99,9 @@ class accumulator<var> {
    *
    * @return Sum of accumulated values.
    */
-  inline var sum() const noexcept { return stan::math::sum(buf_); }
+  inline var sum() const {
+    return stan::math::sum(std::vector<var, arena_allocator<var>>(buf_.begin(), buf_.end()));
+  }
 };
 
 }  // namespace math
