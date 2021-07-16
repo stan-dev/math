@@ -19,10 +19,9 @@ namespace math {
 template <typename T_ret, require_var_matrix_t<T_ret>* = nullptr,
           require_eigen_row_vector_t<value_type_t<T_ret>>* = nullptr>
 inline auto rep_row_vector(var x, int n) {
-  return make_callback_var(rep_row_vector(x.val(), n),
-     [x](auto& vi) mutable {
-         forward_as<var>(x).adj() += vi.adj().sum();
-     });
+  return make_callback_var(rep_row_vector(x.val(), n), [x](auto& vi) mutable {
+    forward_as<var>(x).adj() += vi.adj().sum();
+  });
 }
 
 }  // namespace math
