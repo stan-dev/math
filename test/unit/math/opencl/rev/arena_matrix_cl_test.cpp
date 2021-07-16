@@ -7,7 +7,7 @@ TEST(AgradRev, arena_matrix_cl_shallow_copies) {
   stan::math::arena_matrix_cl<double> a(3, 2);
   stan::math::arena_matrix_cl<double> b(a);
   stan::math::arena_matrix_cl<double> c;
-  c=a;
+  c = a;
   EXPECT_EQ(a.buffer()(), b.buffer()());
   EXPECT_EQ(a.buffer()(), c.buffer()());
 }
