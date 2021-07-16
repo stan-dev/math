@@ -46,16 +46,14 @@ inline auto append_col(const T1& A, const T2& B) {
         });
   } else if (!is_constant<T1>::value) {
     arena_t<promote_scalar_t<var, T1>> arena_A = A;
-    arena_t<promote_scalar_t<double, T2>> arena_B = value_of(B);
     return make_callback_var(
-        append_col(value_of(arena_A), arena_B), [arena_A](auto& vi) mutable {
+        append_col(value_of(arena_A), value_of(B)), [arena_A](auto& vi) mutable {
           arena_A.adj() += vi.adj().leftCols(arena_A.cols());
         });
   } else {
-    arena_t<promote_scalar_t<double, T1>> arena_A = value_of(A);
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
     return make_callback_var(
-        append_col(arena_A, value_of(arena_B)), [arena_B](auto& vi) mutable {
+        append_col(value_of(A), value_of(arena_B)), [arena_B](auto& vi) mutable {
           arena_B.adj() += vi.adj().rightCols(arena_B.cols());
         });
   }
@@ -80,7 +78,7 @@ template <typename Scal, typename RowVec,
           require_t<is_eigen_row_vector<RowVec>>* = nullptr>
 inline auto append_col(const Scal& A, const var_value<RowVec>& B) {
   if (!is_constant<Scal>::value && !is_constant<RowVec>::value) {
-    arena_t<promote_scalar_t<var, Scal>> arena_A = A;
+    var arena_A = A;
     arena_t<promote_scalar_t<var, RowVec>> arena_B = B;
     return make_callback_var(append_col(value_of(arena_A), value_of(arena_B)),
                              [arena_A, arena_B](auto& vi) mutable {
@@ -88,15 +86,13 @@ inline auto append_col(const Scal& A, const var_value<RowVec>& B) {
                                arena_B.adj() += vi.adj().tail(arena_B.size());
                              });
   } else if (!is_constant<Scal>::value) {
-    arena_t<promote_scalar_t<var, Scal>> arena_A = A;
-    arena_t<promote_scalar_t<double, RowVec>> arena_B = value_of(B);
+    var arena_A = A;
     return make_callback_var(
-        append_col(value_of(arena_A), arena_B),
+        append_col(value_of(arena_A), value_of(B)),
         [arena_A](auto& vi) mutable { arena_A.adj() += vi.adj().coeff(0); });
   } else {
-    arena_t<promote_scalar_t<double, Scal>> arena_A = value_of(A);
     arena_t<promote_scalar_t<var, RowVec>> arena_B = B;
-    return make_callback_var(append_col(arena_A, value_of(arena_B)),
+    return make_callback_var(append_col(value_of(A), value_of(arena_B)),
                              [arena_B](auto& vi) mutable {
                                arena_B.adj() += vi.adj().tail(arena_B.size());
                              });
@@ -123,7 +119,7 @@ template <typename RowVec, typename Scal,
 inline auto append_col(const var_value<RowVec>& A, const Scal& B) {
   if (!is_constant<RowVec>::value && !is_constant<Scal>::value) {
     arena_t<promote_scalar_t<var, RowVec>> arena_A = A;
-    arena_t<promote_scalar_t<var, Scal>> arena_B = B;
+    var arena_B = B;
     return make_callback_var(append_col(value_of(arena_A), value_of(arena_B)),
                              [arena_A, arena_B](auto& vi) mutable {
                                arena_A.adj() += vi.adj().head(arena_A.size());
@@ -132,16 +128,14 @@ inline auto append_col(const var_value<RowVec>& A, const Scal& B) {
                              });
   } else if (!is_constant<RowVec>::value) {
     arena_t<promote_scalar_t<var, RowVec>> arena_A = A;
-    arena_t<promote_scalar_t<double, Scal>> arena_B = value_of(B);
-    return make_callback_var(append_col(value_of(arena_A), arena_B),
+    return make_callback_var(append_col(value_of(arena_A), value_of(B)),
                              [arena_A](auto& vi) mutable {
                                arena_A.adj() += vi.adj().head(arena_A.size());
                              });
   } else {
-    arena_t<promote_scalar_t<double, RowVec>> arena_A = value_of(A);
-    arena_t<promote_scalar_t<var, Scal>> arena_B = B;
+    var arena_B = B;
     return make_callback_var(
-        append_col(arena_A, value_of(arena_B)), [arena_B](auto& vi) mutable {
+        append_col(value_of(A), value_of(arena_B)), [arena_B](auto& vi) mutable {
           arena_B.adj() += vi.adj().coeff(vi.adj().size() - 1);
         });
   }

@@ -44,16 +44,14 @@ inline auto append_row(const T1& A, const T2& B) {
         });
   } else if (!is_constant<T1>::value) {
     arena_t<promote_scalar_t<var, T1>> arena_A = A;
-    arena_t<promote_scalar_t<double, T2>> arena_B = value_of(B);
     return make_callback_var(
-        append_row(value_of(arena_A), arena_B), [arena_A](auto& vi) mutable {
+        append_row(value_of(arena_A), value_of(B)), [arena_A](auto& vi) mutable {
           arena_A.adj() += vi.adj().topRows(arena_A.rows());
         });
   } else {
-    arena_t<promote_scalar_t<double, T1>> arena_A = value_of(A);
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
     return make_callback_var(
-        append_row(arena_A, value_of(arena_B)), [arena_B](auto& vi) mutable {
+        append_row(value_of(A), value_of(arena_B)), [arena_B](auto& vi) mutable {
           arena_B.adj() += vi.adj().bottomRows(arena_B.rows());
         });
   }
@@ -77,7 +75,7 @@ template <typename Scal, typename ColVec,
           require_t<is_eigen_col_vector<ColVec>>* = nullptr>
 inline auto append_row(const Scal& A, const var_value<ColVec>& B) {
   if (!is_constant<Scal>::value && !is_constant<ColVec>::value) {
-    arena_t<promote_scalar_t<var, Scal>> arena_A = A;
+    var arena_A = A;
     arena_t<promote_scalar_t<var, ColVec>> arena_B = B;
     return make_callback_var(append_row(value_of(arena_A), value_of(arena_B)),
                              [arena_A, arena_B](auto& vi) mutable {
@@ -85,15 +83,13 @@ inline auto append_row(const Scal& A, const var_value<ColVec>& B) {
                                arena_B.adj() += vi.adj().tail(arena_B.size());
                              });
   } else if (!is_constant<Scal>::value) {
-    arena_t<promote_scalar_t<var, Scal>> arena_A = A;
-    arena_t<promote_scalar_t<double, ColVec>> arena_B = value_of(B);
+    var arena_A = A;
     return make_callback_var(
-        append_row(value_of(arena_A), arena_B),
+        append_row(value_of(arena_A), value_of(B)),
         [arena_A](auto& vi) mutable { arena_A.adj() += vi.adj().coeff(0); });
   } else {
-    arena_t<promote_scalar_t<double, Scal>> arena_A = value_of(A);
     arena_t<promote_scalar_t<var, ColVec>> arena_B = B;
-    return make_callback_var(append_row(arena_A, value_of(arena_B)),
+    return make_callback_var(append_row(value_of(A), value_of(arena_B)),
                              [arena_B](auto& vi) mutable {
                                arena_B.adj() += vi.adj().tail(arena_B.size());
                              });
@@ -119,7 +115,7 @@ template <typename ColVec, typename Scal,
 inline auto append_row(const var_value<ColVec>& A, const Scal& B) {
   if (!is_constant<ColVec>::value && !is_constant<Scal>::value) {
     arena_t<promote_scalar_t<var, ColVec>> arena_A = A;
-    arena_t<promote_scalar_t<var, Scal>> arena_B = B;
+    var arena_B = B;
     return make_callback_var(append_row(value_of(arena_A), value_of(arena_B)),
                              [arena_A, arena_B](auto& vi) mutable {
                                arena_A.adj() += vi.adj().head(arena_A.size());
@@ -128,16 +124,14 @@ inline auto append_row(const var_value<ColVec>& A, const Scal& B) {
                              });
   } else if (!is_constant<ColVec>::value) {
     arena_t<promote_scalar_t<var, ColVec>> arena_A = A;
-    arena_t<promote_scalar_t<double, Scal>> arena_B = value_of(B);
-    return make_callback_var(append_row(value_of(arena_A), arena_B),
+    return make_callback_var(append_row(value_of(arena_A), value_of(B)),
                              [arena_A](auto& vi) mutable {
                                arena_A.adj() += vi.adj().head(arena_A.size());
                              });
   } else {
-    arena_t<promote_scalar_t<double, ColVec>> arena_A = value_of(A);
     arena_t<promote_scalar_t<var, Scal>> arena_B = B;
     return make_callback_var(
-        append_row(arena_A, value_of(arena_B)), [arena_B](auto& vi) mutable {
+        append_row(value_of(A), value_of(arena_B)), [arena_B](auto& vi) mutable {
           arena_B.adj() += vi.adj().coeff(vi.adj().size() - 1);
         });
   }
