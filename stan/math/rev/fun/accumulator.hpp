@@ -24,7 +24,7 @@ namespace math {
 template <>
 class accumulator<var> {
  private:
-  std::vector<var, arena_allocator<var>> buf_;
+  std::vector<var> buf_;
 
  public:
   /**

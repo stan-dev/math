@@ -15,44 +15,6 @@ namespace stan {
 namespace math {
 
 /**
- * Class for sums of variables constructed with standard vectors.
- * There's an extension for Eigen matrices.
- */
-class sum_v_vari : public vari {
- protected:
-  vari** v_;
-  size_t length_;
-
-  inline static double sum_of_val(const std::vector<var>& v) {
-    double result = 0;
-    for (auto x : v) {
-      result += x.val();
-    }
-    return result;
-  }
-
- public:
-  explicit sum_v_vari(double value, vari** v, size_t length)
-      : vari(value), v_(v), length_(length) {}
-
-  explicit sum_v_vari(const std::vector<var>& v1)
-      : vari(sum_of_val(v1)),
-        v_(reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
-            v1.size() * sizeof(vari*)))),
-        length_(v1.size()) {
-    for (size_t i = 0; i < length_; i++) {
-      v_[i] = v1[i].vi_;
-    }
-  }
-
-  virtual void chain() {
-    for (size_t i = 0; i < length_; i++) {
-      v_[i]->adj_ += adj_;
-    }
-  }
-};
-
-/**
  * Returns the sum of the entries of the specified vector.
  *
  * @param m Vector.
@@ -64,7 +26,7 @@ inline var sum(const std::vector<var, Alloc>& m) {
     return 0.0;
   } else {
     auto arena_m = to_arena(m);
-    return make_callback_var(stan::math::sum(as_array_or_scalar(arena_m).val()),
+    return make_callback_var(sum(as_array_or_scalar(arena_m).val()),
                              [arena_m](auto& vi) mutable {
                                for (auto& x_i : arena_m) {
                                  x_i.adj() += vi.adj();
