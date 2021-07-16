@@ -58,11 +58,19 @@ class sum_v_vari : public vari {
  * @param m Vector.
  * @return Sum of vector entries.
  */
-inline var sum(const std::vector<var>& m) {
-  if (m.empty()) {
+template <typename Alloc>
+inline var sum(const std::vector<var, Alloc>& m) {
+  if (unlikely(m.empty())) {
     return 0.0;
+  } else {
+    auto arena_m = to_arena(m);
+    return make_callback_var(stan::math::sum(as_array_or_scalar(arena_m).val()),
+    [arena_m](auto& vi) mutable {
+      for (auto& x_i : arena_m) {
+        x_i.adj() += vi.adj();
+      }
+    });
   }
-  return var(new sum_v_vari(m));
 }
 
 /**
