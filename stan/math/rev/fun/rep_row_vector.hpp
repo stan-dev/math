@@ -16,17 +16,13 @@ namespace math {
  * @param x The type to be propogated through the new vector.
  * @param n The size of the new vector.
  */
-template <typename T_ret, typename T, require_var_matrix_t<T_ret>* = nullptr,
-          require_eigen_row_vector_t<value_type_t<T_ret>>* = nullptr,
-          require_stan_scalar_t<T>* = nullptr>
-inline auto rep_row_vector(const T& x, int n) {
-  check_nonnegative("rep_vector", "n", n);
-  return make_callback_var(value_type_t<T_ret>::Constant(n, value_of(x)),
-                           [x](auto& vi) mutable {
-                             if (is_var<T>::value) {
-                               forward_as<var>(x).adj() += vi.adj().sum();
-                             }
-                           });
+template <typename T_ret, require_var_matrix_t<T_ret>* = nullptr,
+          require_eigen_row_vector_t<value_type_t<T_ret>>* = nullptr>
+inline auto rep_row_vector(var x, int n) {
+  return make_callback_var(rep_row_vector(x.val(), n),
+     [x](auto& vi) mutable {
+         forward_as<var>(x).adj() += vi.adj().sum();
+     });
 }
 
 }  // namespace math
