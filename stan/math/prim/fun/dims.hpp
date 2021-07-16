@@ -16,7 +16,7 @@ namespace math {
  * @param x argument
  * @param result result
  */
-template <typename T, typename = require_stan_scalar_t<T>>
+template <typename T, require_stan_scalar_t<T>* = nullptr>
 inline void dims(const T& x, std::vector<int>& result) {}
 
 /**
@@ -26,7 +26,7 @@ inline void dims(const T& x, std::vector<int>& result) {}
  * @param x argument
  * @param result result
  */
-template <typename T, typename = require_eigen_t<T>, typename = void>
+template <typename T, require_matrix_t<T>* = nullptr>
 inline void dims(const T& x, std::vector<int>& result) {
   result.push_back(x.rows());
   result.push_back(x.cols());

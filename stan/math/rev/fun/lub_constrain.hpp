@@ -482,7 +482,6 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
   auto lb_val = value_of(arena_lb).array();
   auto ub_val = value_of(arena_ub).array();
   check_less("lub_constrain", "lb", lb_val, ub_val);
-  using plain_x_array = plain_type_t<decltype(arena_x_val.array())>;
   auto inv_logit_x = to_arena(inv_logit(arena_x_val.array()));
   auto is_lb_inf = to_arena((lb_val == NEGATIVE_INFTY));
   auto is_ub_inf = to_arena((ub_val == INFTY));
@@ -562,7 +561,6 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub,
   auto lb_val = value_of(arena_lb).array();
   auto ub_val = value_of(arena_ub).array();
   check_less("lub_constrain", "lb", lb_val, ub_val);
-  using plain_x_array = plain_type_t<decltype(arena_x_val.array())>;
   auto inv_logit_x = to_arena(inv_logit(arena_x_val.array()));
   auto is_lb_inf = to_arena((lb_val == NEGATIVE_INFTY));
   auto is_ub_inf = to_arena((ub_val == INFTY));
