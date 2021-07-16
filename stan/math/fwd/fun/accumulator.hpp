@@ -9,11 +9,4 @@
 #include <vector>
 #include <type_traits>
 
-namespace stan {
-namespace math {
-
-
-}  // namespace math
-}  // namespace stan
-
 #endif
