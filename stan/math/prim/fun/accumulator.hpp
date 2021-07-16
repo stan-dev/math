@@ -26,7 +26,6 @@ class accumulator {
   std::vector<T> buf_;
 
  public:
-
   /**
    * Add the specified arithmetic type value to the buffer after
    * static casting it to the class type <code>T</code>.
@@ -70,20 +69,20 @@ class accumulator {
     }
   }
 
-  #ifdef STAN_OPENCL
+#ifdef STAN_OPENCL
 
-    /**
-     * Sum each entry and then push to the buffer.
-     * @tparam S A Type inheriting from `matrix_cl_base`
-     * @param x An OpenCL matrix
-     */
-    template <typename S,
-              require_all_kernel_expressions_and_none_scalar_t<S>* = nullptr>
-    inline void add(const S& xs) {
-      buf_.push_back(stan::math::sum(xs));
-    }
+  /**
+   * Sum each entry and then push to the buffer.
+   * @tparam S A Type inheriting from `matrix_cl_base`
+   * @param x An OpenCL matrix
+   */
+  template <typename S,
+            require_all_kernel_expressions_and_none_scalar_t<S>* = nullptr>
+  inline void add(const S& xs) {
+    buf_.push_back(stan::math::sum(xs));
+  }
 
-  #endif
+#endif
 
   /**
    * Return the sum of the accumulated values.

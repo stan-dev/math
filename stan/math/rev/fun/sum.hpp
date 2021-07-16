@@ -65,11 +65,11 @@ inline var sum(const std::vector<var, Alloc>& m) {
   } else {
     auto arena_m = to_arena(m);
     return make_callback_var(stan::math::sum(as_array_or_scalar(arena_m).val()),
-    [arena_m](auto& vi) mutable {
-      for (auto& x_i : arena_m) {
-        x_i.adj() += vi.adj();
-      }
-    });
+                             [arena_m](auto& vi) mutable {
+                               for (auto& x_i : arena_m) {
+                                 x_i.adj() += vi.adj();
+                               }
+                             });
   }
 }
 
