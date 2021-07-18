@@ -15,7 +15,8 @@
 namespace stan {
 namespace math {
 
-template <bool propto, typename T_y, typename T_loc, typename T_covar>
+template <bool propto, typename T_y, typename T_loc, typename T_covar,
+          require_all_vector_t<T_y, T_loc>* = nullptr>
 return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
                                                      const T_loc& mu,
                                                      const T_covar& Sigma) {
@@ -98,6 +99,24 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
       sum_lp_vec += trace_inv_quad_form_ldlt(ldlt_Sigma, y_col - mu_col);
     }
     lp -= 0.5 * sum_lp_vec;
+  }
+  return lp;
+}
+
+template <bool propto, typename T_y, typename T_loc, typename T_covar,
+          require_all_not_vector_t<T_y, T_loc>* = nullptr>
+return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
+                                                     const T_loc& mu,
+                                                     const T_covar& Sigma) {
+  using lp_type = return_type_t<T_y, T_loc, T_covar>;
+
+  const size_t N = y.rows();
+  lp_type lp(0.0);
+
+  for (size_t n = 0; n < N; ++n) {
+    auto current_y = y.row(n);
+    auto current_mu = mu.row(n);
+    lp += multi_normal_lpdf<false>(current_y, current_mu, Sigma);
   }
   return lp;
 }

@@ -29,7 +29,7 @@ namespace math {
  * std::invalid_argument if the length of (each) mu is not equal to the number
  * of rows and columns in S
  */
-template <typename T_loc, class RNG>
+template <typename T_loc, class RNG, require_vector_t<T_loc>* = nullptr>
 inline typename StdVectorBuilder<true, Eigen::VectorXd, T_loc>::type
 multi_normal_rng(const T_loc& mu,
                  const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& S,
@@ -78,6 +78,23 @@ multi_normal_rng(const T_loc& mu,
   }
 
   return output.data();
+}
+
+template <typename T_loc, class RNG, require_not_vector_t<T_loc>* = nullptr>
+inline typename Eigen::MatrixXd multi_normal_rng(
+    const T_loc& mu,
+    const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& S, RNG& rng) {
+  using Eigen::MatrixXd;
+
+  const size_t N = mu.rows();
+  const size_t M = mu.cols();
+
+  MatrixXd output(N, M);
+  for (int n = 0; n < N; ++n) {
+    auto current_mu = mu.row(n);
+    output.row(n) = multi_normal_rng(current_mu, S, rng);
+  }
+  return output;
 }
 
 }  // namespace math
