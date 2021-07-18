@@ -4,12 +4,14 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/fun/inv_sqrt.hpp>
+#include <stan/math/rev/fun/to_arena.hpp>
 #include <cmath>
 
 namespace stan {
 namespace math {
 
 /**
+ * @tparam T Arithmetic or a type inheriting from `EigenBase`.
  *
    \f[
    \mbox{inv\_sqrt}(x) =
@@ -28,10 +30,12 @@ namespace math {
    \f]
  *
  */
-inline var inv_sqrt(const var& a) {
-  auto denom = a.val() * std::sqrt(a.val());
+template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
+inline auto inv_sqrt(const var_value<T>& a) {
+  auto denom = to_arena(as_array_or_scalar(a.val())
+                        * as_array_or_scalar(sqrt(a.val())));
   return make_callback_var(inv_sqrt(a.val()), [a, denom](auto& vi) mutable {
-    a.adj() -= 0.5 * vi.adj() / denom;
+    as_array_or_scalar(a.adj()) -= 0.5 * as_array_or_scalar(vi.adj()) / denom;
   });
 }
 

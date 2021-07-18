@@ -36,12 +36,15 @@ namespace math {
    \end{cases}
    \f]
  *
- * @param a Specified variable.
+ * @tparam T Arithmetic or a type inheriting from `EigenBase`.
+ * @param a The variable.
  * @return Base 2 logarithm of the variable.
  */
-inline var log2(const var& a) {
+template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
+inline auto log2(const var_value<T>& a) {
   return make_callback_var(log2(a.val()), [a](auto& vi) mutable {
-    a.adj() += vi.adj() / (LOG_TWO * a.val());
+    as_array_or_scalar(a.adj()) += as_array_or_scalar(vi.adj())
+                                   / (LOG_TWO * as_array_or_scalar(a.val()));
   });
 }
 
