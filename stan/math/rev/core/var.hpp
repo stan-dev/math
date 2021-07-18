@@ -401,7 +401,7 @@ class var_value<
    * @return The value of this variable.
    */
   inline const auto& val() const { return vi_->val(); }
-  inline auto& val_op() { return vi_->val(); }
+  inline auto& val_op() { return vi_->val_op(); }
 
   /**
    * Return a reference to the derivative of the root expression with
@@ -664,6 +664,21 @@ class var_value<
     using vari_sub = decltype(vi_->col(i));
     using var_sub = var_value<value_type_t<vari_sub>>;
     return var_sub(new vari_sub(vi_->col(i)));
+  }
+
+  /**
+   * View diagonal of eigen matrices
+   * @param i Column index to slice
+   */
+  inline auto diagonal() const {
+    using vari_sub = decltype(vi_->diagonal());
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->diagonal()));
+  }
+  inline auto diagonal() {
+    using vari_sub = decltype(vi_->diagonal());
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->diagonal()));
   }
 
   /**

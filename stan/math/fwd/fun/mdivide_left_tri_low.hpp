@@ -55,7 +55,6 @@ template <typename T1, typename T2, require_eigen_t<T1>* = nullptr,
 inline Eigen::Matrix<value_type_t<T2>, T1::RowsAtCompileTime,
                      T2::ColsAtCompileTime>
 mdivide_left_tri_low(const T1& A, const T2& b) {
-  using T = typename value_type_t<T2>::Scalar;
   constexpr int S1 = T1::RowsAtCompileTime;
   constexpr int C2 = T2::ColsAtCompileTime;
 

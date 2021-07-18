@@ -419,18 +419,22 @@ def benchmark(
                 value = 0.4
                 if function_name in special_arg_values:
                     if isinstance(special_arg_values[function_name][n], str):
-                        make_arg_function = special_arg_values[function_name][n]
+                        make_arg_function = make_special_arg_values[special_arg_values[function_name][n]]
                     elif isinstance(
                             special_arg_values[function_name][n], numbers.Number
                     ):
                         value = special_arg_values[function_name][n]
-                if scalar == "double":
+                if not is_argument_autodiff or (
+                      not is_argument_scalar and (
+                          opencl == "base" or varmat == "base" or make_arg_function != "make_arg"
+                )):
+                    arg_type_prim = cpp_arg_template.replace("SCALAR", "double");
                     setup += (
                         "  {} {} = stan::test::{}<{}>({}, state.range(0));\n".format(
-                            arg_type,
+                            arg_type_prim,
                             var_name,
                             make_arg_function,
-                            arg_type,
+                            arg_type_prim,
                             value,
                         )
                     )
@@ -440,11 +444,22 @@ def benchmark(
                                 var_name + "_cl", var_name
                             )
                             var_name += "_cl"
+                            if is_argument_autodiff:
+                                var_conversions += (
+                                  "    stan::math::var_value<stan::math::matrix_cl<double>> {}({});\n".format(
+                                    var_name + "_var", var_name)
+                                )
+                                var_name += "_var"
                         elif varmat == "base" and arg_overload == "Rev":
-                            setup += "  auto {} = stan::math::to_var_value({});\n".format(
-                                var_name + "_varmat", var_name
+                            var_conversions += "      stan::math::var_value<{}> {}({});\n".format(
+                                arg_type_prim, var_name + "_varmat", var_name
                             )
                             var_name += "_varmat"
+                        elif is_argument_autodiff: #rev
+                            var_conversions += "    {} {} = {};\n".format(
+                                arg_type, var_name + "_var", var_name
+                            )
+                            var_name += "_var"
                 else:
                     var_conversions += (
                         "    {} {} = stan::test::{}<{}>({}, state.range(0));\n".format(
