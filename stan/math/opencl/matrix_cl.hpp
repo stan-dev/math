@@ -221,7 +221,7 @@ class matrix_cl : public matrix_cl_base {
    * @param A matrix_cl to move
    */
   // defined in rev/arena_matrix_cl.hpp
-  matrix_cl(const arena_matrix_cl<T>& A);
+  matrix_cl(const arena_matrix_cl<T>& A);  // NOLINT(runtime/explicit)
 
   /**
    * Constructor for the matrix_cl that creates a copy of a std::vector of Eigen
