@@ -4,6 +4,7 @@
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/functor/apply_scalar_unary.hpp>
 #include <stan/math/rev/fun/abs.hpp>
 #include <stan/math/rev/fun/arg.hpp>
 #include <stan/math/rev/fun/atan2.hpp>
