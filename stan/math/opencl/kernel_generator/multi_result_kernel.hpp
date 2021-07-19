@@ -267,7 +267,7 @@ class expressions_cl {
    */
   explicit expressions_cl(T_expressions&&... expressions)
       : expressions_(
-          T_expressions(std::forward<T_expressions>(expressions))...) {}
+            T_expressions(std::forward<T_expressions>(expressions))...) {}
 
  private:
   std::tuple<T_expressions...> expressions_;
@@ -506,7 +506,8 @@ class results_cl {
 
         std::cout << "max local "
                   << opencl_context.device()[0]
-                         .getInfo<CL_DEVICE_MAX_WORK_GROUP_SIZE>() << std::endl;
+                         .getInfo<CL_DEVICE_MAX_WORK_GROUP_SIZE>()
+                  << std::endl;
         std::cout << "default local "
                   << opencl_context.base_opts().at("LOCAL_SIZE_") << std::endl;
         std::cout << "local " << local << " global " << local * wgs_rows << ", "
