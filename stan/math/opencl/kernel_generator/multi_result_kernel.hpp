@@ -480,9 +480,7 @@ class results_cl {
       if (impl::kernel_cache_[uids]() == NULL) {
         std::string src = get_kernel_source_impl(assignment_pairs);
         auto opts = opencl_context.base_opts();
-        std::cout << "base opts local" << opts.at("LOCAL_SIZE_") << std::endl;
         opts["LOCAL_SIZE_"] = std::min(64, opts.at("LOCAL_SIZE_"));
-        std::cout << "opts local" << opts.at("LOCAL_SIZE_") << std::endl;
         impl::kernel_cache_[uids] = opencl_kernels::compile_kernel(
             "calculate", {view_kernel_helpers, src}, opts);
         opencl_context.register_kernel_cache(&impl::kernel_cache_[uids]);
@@ -507,14 +505,6 @@ class results_cl {
         int wgs_rows = internal::colwise_reduction_wgs_rows(n_rows, n_cols);
         int wgs_cols = (n_cols + wgs_rows - 1) / wgs_rows;
 
-        std::cout << "max local "
-                  << opencl_context.device()[0]
-                         .getInfo<CL_DEVICE_MAX_WORK_GROUP_SIZE>()
-                  << std::endl;
-        std::cout << "default local "
-                  << opencl_context.base_opts().at("LOCAL_SIZE_") << std::endl;
-        std::cout << "local " << local << " global " << local * wgs_rows << ", "
-                  << wgs_cols << std::endl;
         opencl_context.queue().enqueueNDRangeKernel(
             kernel, cl::NullRange, cl::NDRange(local * wgs_rows, wgs_cols),
             cl::NDRange(local, 1), &events, &e);
