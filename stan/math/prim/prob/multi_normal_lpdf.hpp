@@ -104,7 +104,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
 }
 
 template <bool propto, typename T_y, typename T_loc, typename T_covar,
-          require_all_not_vector_t<T_y, T_loc>* = nullptr>
+          require_all_dense_dynamic_t<T_y, T_loc, T_covar>* = nullptr>
 return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
                                                      const T_loc& mu,
                                                      const T_covar& Sigma) {
@@ -116,7 +116,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
   auto&& Sigma_ref = to_ref(Sigma);
   const Eigen::Index number_of_y = y.rows();
   const Eigen::Index number_of_mu = mu.rows();
-  if (number_of_y == 0 || number_of_mu == 0) {
+  if (unlikely(number_of_y == 0 || number_of_mu == 0)) {
     return 0.0;
   }
   check_size_match(function, "Rows of random variable", y.rows(),
@@ -125,21 +125,14 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
                   "columns of location parameter", mu.cols());
   check_size_match(function, "Columns of random variable", y.cols(),
                   "rows of covariance parameter", Sigma.rows());
-  if (unlikely(number_of_mu == 0 || number_of_y == 0)) {
-   return 0.0;
-  }
   lp_type lp(0.0);
-  auto&& y_vec = to_ref(y);
-  auto&& mu_vec = to_ref(mu);
-  const Eigen::Index size_y = y_vec.cols();
-  const Eigen::Index size_mu = mu_vec.cols();
-
-  const size_t size_vec = size_y;
-
-  check_finite(function, "Location parameter", mu_vec);
-  check_not_nan(function, "Random variable", y_vec);
+  auto&& y_ref = to_ref(y);
+  auto&& mu_ref = to_ref(mu);
+  const Eigen::Index size_y = y_ref.cols();
+  const Eigen::Index size_mu = mu_ref.cols();
+  check_finite(function, "Location parameter", mu_ref);
+  check_not_nan(function, "Random variable", y_ref);
   check_symmetric(function, "Covariance matrix", Sigma_ref);
-
   auto ldlt_Sigma = make_ldlt_factor(Sigma_ref);
   check_ldlt_factor(function, "LDLT_Factor of covariance parameter",
                    ldlt_Sigma);
@@ -154,7 +147,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
 
   if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
    lp_type sum_lp_vec(0.0);
-   lp -= 0.5 * trace_inv_quad_form_ldlt(ldlt_Sigma, (y_vec - mu_vec).transpose());
+   lp -= 0.5 * trace_inv_quad_form_ldlt(ldlt_Sigma, (y_ref - mu_ref).transpose());
   }
   return lp;
 }
