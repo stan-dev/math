@@ -109,8 +109,6 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
                                                      const T_loc& mu,
                                                      const T_covar& Sigma) {
   using T_covar_elem = typename scalar_type<T_covar>::type;
-  using lp_type = return_type_t<T_y, T_loc, T_covar>;
-  using Eigen::Dynamic;
   static const char* function = "multi_normal_lpdf";
   check_positive(function, "Covariance matrix rows", Sigma.rows());
   auto&& Sigma_ref = to_ref(Sigma);
@@ -125,7 +123,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
                   "columns of location parameter", mu.cols());
   check_size_match(function, "Columns of random variable", y.cols(),
                   "rows of covariance parameter", Sigma.rows());
-  lp_type lp(0.0);
+  return_type_t<T_y, T_loc, T_covar> lp(0.0);
   auto&& y_ref = to_ref(y);
   auto&& mu_ref = to_ref(mu);
   const Eigen::Index size_y = y_ref.cols();
@@ -146,7 +144,6 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
   }
 
   if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
-   lp_type sum_lp_vec(0.0);
    lp -= 0.5 * trace_inv_quad_form_ldlt(ldlt_Sigma, (y_ref - mu_ref).transpose());
   }
   return lp;

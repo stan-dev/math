@@ -47,6 +47,22 @@ TEST(ProbDistributionsMultiNormal, matvar) {
   stan::test::expect_ad_matvar(f, y1, mu1, Sigma00);
 }
 
+TEST(ProbDistributionsMultiNormal, matrix) {
+  auto f = [](const auto& y, const auto& mu, const auto& sigma) {
+    auto sigma_sym = stan::math::multiply(0.5, sigma + sigma.transpose());
+    return stan::math::multi_normal_lpdf(y, mu, sigma_sym);
+  };
+
+  Eigen::MatrixXd y(2, 3);
+  y << 2.0, -2.0, 11.0, 2.0, -2.0, 11.0;
+  Eigen::MatrixXd mu(2, 3);
+  mu << 1.0, -1.0, 3.0, 1.0, -1.0, 3.0;
+  Eigen::MatrixXd Sigma(3, 3);
+  Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
+  stan::test::expect_ad(f, y, mu, Sigma);
+  stan::test::expect_ad_matvar(f, y, mu, Sigma);
+}
+
 TEST(ProbDistributionsMultiNormal, fvar_var) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
