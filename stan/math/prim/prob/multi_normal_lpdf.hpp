@@ -149,7 +149,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
   }
 
   if (include_summand<propto, T_covar_elem>::value) {
-   lp -= 0.5 * log_determinant_ldlt(ldlt_Sigma) * y.cols();
+   lp -= 0.5 * log_determinant_ldlt(ldlt_Sigma) * y.rows();
   }
 
   if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
