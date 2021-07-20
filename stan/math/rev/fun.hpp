@@ -145,6 +145,8 @@
 #include <stan/math/rev/fun/read_cov_L.hpp>
 #include <stan/math/rev/fun/read_cov_matrix.hpp>
 #include <stan/math/rev/fun/rep_matrix.hpp>
+#include <stan/math/rev/fun/rep_row_vector.hpp>
+#include <stan/math/rev/fun/rep_vector.hpp>
 #include <stan/math/rev/fun/rising_factorial.hpp>
 #include <stan/math/rev/fun/round.hpp>
 #include <stan/math/rev/fun/rows_dot_product.hpp>
