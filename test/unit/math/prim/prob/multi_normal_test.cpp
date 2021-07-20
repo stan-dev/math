@@ -24,7 +24,6 @@ TEST(ProbDistributionsMultiNormal, NotVectorized) {
 TEST(ProbDistributionsMultiNormal, MatrixNotVectorized) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using std::vector;
 
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, Dynamic> y(2, 3);
@@ -33,7 +32,15 @@ TEST(ProbDistributionsMultiNormal, MatrixNotVectorized) {
   mu << 1.0, -1.0, 3.0, 1.0, -1.0, 3.0;
   Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
   Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
-  EXPECT_FLOAT_EQ(-23.47816, stan::math::multi_normal_lpdf(y, mu, Sigma));
+  std::vector<Eigen::VectorXd> test_y;
+  std::vector<Eigen::VectorXd> test_mu;
+  test_y.push_back(y.row(0).transpose());
+  test_y.push_back(y.row(1).transpose());
+  test_mu.push_back(mu.row(0).transpose());
+  test_mu.push_back(mu.row(1).transpose());
+  auto test_eval = stan::math::multi_normal_lpdf(y, mu, Sigma);
+  auto test_orig = stan::math::multi_normal_lpdf(test_y, test_mu, Sigma);
+  EXPECT_FLOAT_EQ(test_orig, test_eval);
   EXPECT_NO_THROW(stan::math::multi_normal_rng(mu, Sigma, rng));
 }
 

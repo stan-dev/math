@@ -108,15 +108,53 @@ template <bool propto, typename T_y, typename T_loc, typename T_covar,
 return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
                                                      const T_loc& mu,
                                                      const T_covar& Sigma) {
+  using T_covar_elem = typename scalar_type<T_covar>::type;
   using lp_type = return_type_t<T_y, T_loc, T_covar>;
-
-  const size_t N = y.rows();
+  using Eigen::Dynamic;
+  static const char* function = "multi_normal_lpdf";
+  check_positive(function, "Covariance matrix rows", Sigma.rows());
+  auto&& Sigma_ref = to_ref(Sigma);
+  const Eigen::Index number_of_y = y.rows();
+  const Eigen::Index number_of_mu = mu.rows();
+  if (number_of_y == 0 || number_of_mu == 0) {
+    return 0.0;
+  }
+  check_size_match(function, "Rows of random variable", y.rows(),
+                  "rows of location parameter", mu.rows());
+  check_size_match(function, "Columns of random variable", y.cols(),
+                  "columns of location parameter", mu.cols());
+  check_size_match(function, "Columns of random variable", y.cols(),
+                  "rows of covariance parameter", Sigma.rows());
+  if (unlikely(number_of_mu == 0 || number_of_y == 0)) {
+   return 0.0;
+  }
   lp_type lp(0.0);
+  auto&& y_vec = to_ref(y);
+  auto&& mu_vec = to_ref(mu);
+  const Eigen::Index size_y = y_vec.cols();
+  const Eigen::Index size_mu = mu_vec.cols();
 
-  for (size_t n = 0; n < N; ++n) {
-    auto current_y = y.row(n);
-    auto current_mu = mu.row(n);
-    lp += multi_normal_lpdf<false>(current_y, current_mu, Sigma);
+  const size_t size_vec = size_y;
+
+  check_finite(function, "Location parameter", mu_vec);
+  check_not_nan(function, "Random variable", y_vec);
+  check_symmetric(function, "Covariance matrix", Sigma_ref);
+
+  auto ldlt_Sigma = make_ldlt_factor(Sigma_ref);
+  check_ldlt_factor(function, "LDLT_Factor of covariance parameter",
+                   ldlt_Sigma);
+
+  if (include_summand<propto>::value) {
+   lp += NEG_LOG_SQRT_TWO_PI * y.rows() * y.cols();
+  }
+
+  if (include_summand<propto, T_covar_elem>::value) {
+   lp -= 0.5 * log_determinant_ldlt(ldlt_Sigma) * y.cols();
+  }
+
+  if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
+   lp_type sum_lp_vec(0.0);
+   lp -= 0.5 * trace_inv_quad_form_ldlt(ldlt_Sigma, (y_vec - mu_vec).transpose());
   }
   return lp;
 }
