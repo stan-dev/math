@@ -14,6 +14,8 @@
 #include <stan/math/rev/fun/abs.hpp>
 #include <stan/math/rev/fun/acos.hpp>
 #include <stan/math/rev/fun/acosh.hpp>
+#include <stan/math/rev/fun/append_col.hpp>
+#include <stan/math/rev/fun/append_row.hpp>
 #include <stan/math/rev/fun/as_bool.hpp>
 #include <stan/math/rev/fun/as_array_or_scalar.hpp>
 #include <stan/math/rev/fun/as_column_vector_or_scalar.hpp>
