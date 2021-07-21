@@ -20,7 +20,7 @@ namespace math {
  *
  * @tparam T Type of scalar added
  */
-template <typename T, typename=void>
+template <typename T, typename = void>
 class accumulator {
  private:
   T acc_;
