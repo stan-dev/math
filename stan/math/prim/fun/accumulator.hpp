@@ -20,10 +20,10 @@ namespace math {
  *
  * @tparam T Type of scalar added
  */
-template <typename T>
+template <typename T, typename=void>
 class accumulator {
  private:
-  std::vector<T> buf_;
+  T acc_;
 
  public:
   /**
@@ -38,7 +38,7 @@ class accumulator {
    */
   template <typename S, typename = require_stan_scalar_t<S>>
   inline void add(S x) {
-    buf_.push_back(x);
+    acc_ += x;
   }
 
   /**
@@ -50,7 +50,7 @@ class accumulator {
    */
   template <typename S, require_matrix_t<S>* = nullptr>
   inline void add(const S& m) {
-    buf_.push_back(stan::math::sum(m));
+    acc_ += stan::math::sum(m);
   }
 
   /**
@@ -79,7 +79,7 @@ class accumulator {
   template <typename S,
             require_all_kernel_expressions_and_none_scalar_t<S>* = nullptr>
   inline void add(const S& xs) {
-    buf_.push_back(stan::math::sum(xs));
+    acc_ += stan::math::sum(xs);
   }
 
 #endif
@@ -89,7 +89,7 @@ class accumulator {
    *
    * @return Sum of accumulated values.
    */
-  inline T sum() const { return stan::math::sum(buf_); }
+  inline T sum() const { return acc_; }
 };
 
 }  // namespace math
