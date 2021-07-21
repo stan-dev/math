@@ -15,29 +15,16 @@ namespace math {
  *
  * \f$\frac{d}{dx} \log (1 + x) = \frac{1}{1 + x}\f$.
  *
+ * @tparam T Arithmetic or a type inheriting from `EigenBase`.
  * @param a The variable.
  * @return The log of 1 plus the variable.
  */
-inline var log1p(const var& a) {
+template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
+inline auto log1p(const var_value<T>& a) {
   return make_callback_var(log1p(a.val()), [a](auto& vi) mutable {
-    a.adj() += vi.adj() / (1 + a.val());
+    as_array_or_scalar(a.adj())
+        += as_array_or_scalar(vi.adj()) / (1.0 + as_array_or_scalar(a.val()));
   });
-}
-
-/**
- * Return the elementwise log of (1 + x)
- *
- * @tparam T type of input
- * @param x input
- * @return Elementwise log(1 + x)
- */
-template <typename T, require_var_matrix_t<T>* = nullptr>
-inline auto log1p(const T& x) {
-  check_greater_or_equal("log1p", "x", x.val(), -1.0);
-  return make_callback_var(
-      x.val().array().log1p().matrix(), [x](const auto& vi) {
-        x.adj().array() += vi.adj().array() / (1 + x.val().array());
-      });
 }
 
 }  // namespace math

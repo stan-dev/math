@@ -4,6 +4,7 @@
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/functor/apply_scalar_unary.hpp>
 #include <stan/math/rev/fun/abs.hpp>
 #include <stan/math/rev/fun/arg.hpp>
 #include <stan/math/rev/fun/atan2.hpp>
@@ -41,12 +42,15 @@ namespace math {
    \end{cases}
    \f]
  *
+ * @tparam T Arithmetic or a type inheriting from `EigenBase`.
  * @param a Variable whose log is taken.
  * @return Natural log of variable.
  */
-inline var log(const var& a) {
-  return make_callback_var(std::log(a.val()), [a](auto& vi) mutable {
-    a.adj() += vi.adj() / a.val();
+template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
+inline auto log(const var_value<T>& a) {
+  return make_callback_var(log(a.val()), [a](auto& vi) mutable {
+    as_array_or_scalar(a.adj())
+        += as_array_or_scalar(vi.adj()) / as_array_or_scalar(a.val());
   });
 }
 
@@ -58,21 +62,6 @@ inline var log(const var& a) {
  */
 inline std::complex<var> log(const std::complex<var>& z) {
   return internal::complex_log(z);
-}
-
-/**
- * Return the natural log of the elements of x
- *
- * @tparam T type of x
- * @param x argument
- * @return elementwise natural log of x
- */
-template <typename T, require_var_matrix_t<T>* = nullptr>
-inline auto log(const T& x) {
-  return make_callback_var(
-      x.val().array().log().matrix(), [x](const auto& vi) mutable {
-        x.adj() += (vi.adj().array() / x.val().array()).matrix();
-      });
 }
 
 }  // namespace math
