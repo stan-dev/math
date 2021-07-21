@@ -26,7 +26,7 @@ class accumulator<
     T, require_any_t<is_var<T>,
                      conjunction<is_fvar<T>, is_var<value_type_t<T>>>>> {
  private:
-  static const int max_size_ = 100;
+  static const int max_size_ = 128;
   std::vector<var, arena_allocator<var>> buf_;
 
   /**
