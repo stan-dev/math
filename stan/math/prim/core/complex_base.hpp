@@ -204,7 +204,8 @@ class complex_base {
   template <typename U>
   complex_type& operator/=(const std::complex<U>& other) {
     using stan::math::square;
-    value_type sum_sq_im = square(other.real()) + square(other.imag());
+    value_type sum_sq_im
+        = (other.real() * other.real()) + (other.imag() * other.imag());
     value_type re_temp = (re_ * other.real() + im_ * other.imag()) / sum_sq_im;
     im_ = (im_ * other.real() - re_ * other.imag()) / sum_sq_im;
     re_ = re_temp;

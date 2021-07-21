@@ -12,27 +12,17 @@ namespace math {
 /**
  * Return the log of 1 plus the exponential of the specified
  * variable.
+ * @tparam T Arithmetic or a type inheriting from `EigenBase`.
+ * @param a The variable.
  */
-inline var log1p_exp(const var& a) {
-  auto precomp_inv_logit = inv_logit(a.val());
-  return make_callback_var(log1p_exp(a.val()),
-                           [a, precomp_inv_logit](auto& vi) mutable {
-                             a.adj() += vi.adj() * precomp_inv_logit;
-                           });
-}
-
-/**
- * Return the elementwise log(1 + exp(x))
- *
- * @tparam T type of input
- * @param x input
- * @return Elementwise log(1 + exp(x))
- */
-template <typename T, require_var_matrix_t<T>* = nullptr>
-inline auto log1p_exp(const T& x) {
-  return make_callback_var(log1p_exp(x.val()), [x](const auto& vi) {
-    x.adj().array() += vi.adj().array() * inv_logit(x.val().array());
-  });
+template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
+inline auto log1p_exp(const var_value<T>& a) {
+  auto precomp_inv_logit = to_arena(as_array_or_scalar(inv_logit(a.val())));
+  return make_callback_var(
+      log1p_exp(a.val()), [a, precomp_inv_logit](auto& vi) mutable {
+        as_array_or_scalar(a.adj())
+            += as_array_or_scalar(vi.adj()) * precomp_inv_logit;
+      });
 }
 
 }  // namespace math
