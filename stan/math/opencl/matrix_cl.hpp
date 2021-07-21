@@ -31,6 +31,10 @@ namespace math {
  *  @{
  */
 
+// forward declare
+template <typename T>
+class arena_matrix_cl;
+
 template <typename>
 class matrix_cl;
 
@@ -211,6 +215,13 @@ class matrix_cl : public matrix_cl_base {
         view_(A.view_),
         write_events_(std::move(A.write_events_)),
         read_events_(std::move(A.read_events_)) {}
+
+  /**
+   * Constructor from `arena_matrix_cl`.
+   * @param A matrix_cl to move
+   */
+  // defined in rev/arena_matrix_cl.hpp
+  matrix_cl(const arena_matrix_cl<T>& A);  // NOLINT(runtime/explicit)
 
   /**
    * Constructor for the matrix_cl that creates a copy of a std::vector of Eigen
@@ -415,8 +426,10 @@ class matrix_cl : public matrix_cl_base {
    * @tparam Expr type of the expression
    * @param expression expression
    */
+  // defined in kernel_generator/matrix_cl_conversion.hpp
   template <typename Expr,
-            require_all_kernel_expressions_and_none_scalar_t<Expr>* = nullptr>
+            require_all_kernel_expressions_and_none_scalar_t<Expr>* = nullptr,
+            require_not_matrix_cl_t<Expr>* = nullptr>
   matrix_cl(const Expr& expression);  // NOLINT(runtime/explicit)
 
   /**
@@ -460,9 +473,19 @@ class matrix_cl : public matrix_cl_base {
    * @tparam Expr type of the expression
    * @param expression expression
    */
+  // defined in kernel_generator/matrix_cl_conversion.hpp
   template <typename Expr,
-            require_all_kernel_expressions_and_none_scalar_t<Expr>* = nullptr>
+            require_all_kernel_expressions_and_none_scalar_t<Expr>* = nullptr,
+            require_not_matrix_cl_t<Expr>* = nullptr>
   matrix_cl<T>& operator=(const Expr& expression);
+
+  /**
+   * Assignment of `arena_matrix_cl<T>`.
+   * @tparam Expr type of the expression
+   * @param expression expression
+   */
+  // defined in rev/arena_matrix_cl.hpp
+  matrix_cl<T>& operator=(const arena_matrix_cl<T>& other);
 
   /**
    * Evaluates `this`. This is a no-op.
