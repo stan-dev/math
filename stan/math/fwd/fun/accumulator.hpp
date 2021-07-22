@@ -25,7 +25,7 @@ namespace math {
 template <typename T>
 class accumulator<T, require_fvar_t<T>> {
  private:
-  T acc_;
+  std::vector<T> buf_;
 
  public:
   /**
@@ -40,7 +40,7 @@ class accumulator<T, require_fvar_t<T>> {
    */
   template <typename S, typename = require_stan_scalar_t<S>>
   inline void add(S x) {
-    acc_ += x;
+    buf_.push_back(x);
   }
 
   /**
@@ -52,7 +52,7 @@ class accumulator<T, require_fvar_t<T>> {
    */
   template <typename S, require_matrix_t<S>* = nullptr>
   inline void add(const S& m) {
-    acc_ += stan::math::sum(m);
+    buf_.push_back(stan::math::sum(m));
   }
 
   /**
@@ -76,7 +76,7 @@ class accumulator<T, require_fvar_t<T>> {
    *
    * @return Sum of accumulated values.
    */
-  inline T sum() const { return acc_; }
+  inline T sum() const { return stan::math::sum(buf_); }
 };
 
 }  // namespace math
