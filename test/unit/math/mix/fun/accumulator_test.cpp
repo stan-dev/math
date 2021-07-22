@@ -169,7 +169,8 @@ TEST(AgradMixMatrixAccumulate, var_matrix) {
     acc.add(x);
     return acc.sum();
   };
-  Eigen::MatrixXd x = Eigen::MatrixXd::Random(2, 2);
+  Eigen::MatrixXd x(2, 2);
+  x << 1, -1, 10, 0;
   stan::test::expect_ad(f, x);
   stan::test::expect_ad_matvar(f, x);
   std::vector<Eigen::MatrixXd> x_vec;
