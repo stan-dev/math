@@ -1,0 +1,15 @@
+#include <test/unit/math/mix/fun/F32_test.cpp>
+#include <test/unit/math/mix/fun/Phi_approx_test.cpp>
+#include <test/unit/math/mix/fun/Phi_test.cpp>
+#include <test/unit/math/mix/fun/abs_test.cpp>
+#include <test/unit/math/mix/fun/accumulator_test.cpp>
+#include <test/unit/math/mix/fun/acos_test.cpp>
+#include <test/unit/math/mix/fun/acosh_test.cpp>
+#include <test/unit/math/mix/fun/add_diag_test.cpp>
+#include <test/unit/math/mix/fun/add_test.cpp>
+#include <test/unit/math/mix/fun/append_array_test.cpp>
+#include <test/unit/math/mix/fun/append_col_test.cpp>
+#include <test/unit/math/mix/fun/append_row_test.cpp>
+#include <test/unit/math/mix/fun/arg_test.cpp>
+#include <test/unit/math/mix/fun/array_builder_test.cpp>
+#include <test/unit/math/mix/fun/asin_test.cpp>
