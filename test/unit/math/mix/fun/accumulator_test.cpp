@@ -1,5 +1,3 @@
-#include <stan/math/fwd/fun/sum.hpp>
-#include <stan/math/rev/fun/sum.hpp>
 #include <test/unit/math/test_ad.hpp>
 #include <gtest/gtest.h>
 #include <vector>
