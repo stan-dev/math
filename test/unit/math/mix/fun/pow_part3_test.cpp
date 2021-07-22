@@ -28,6 +28,9 @@ TEST(mathMixScalFun, pow_varmat) {
   stan::test::expect_ad_matvar(f, in1, 2.0);
   stan::test::expect_ad_matvar(f, 2.0, in1);
 
-  stan::test::expect_ad_vectorized_matvar(f, in1, in2);
+  Eigen::MatrixXd mat_in1(2, 2);
+  mat_in1 << 0.5, 3.4, 0.5, 3.4;
+  std::vector<int> std_in2{3, 1};
+  stan::test::expect_ad_vectorized_matvar(f, mat_in1, std_in2);
 
 }
