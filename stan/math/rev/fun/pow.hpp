@@ -329,7 +329,7 @@ template <typename T, typename Mat, require_arithmetic_t<T>* = nullptr,
 inline auto pow(T base, const Mat& exponent) {
   using ret_type = plain_type_t<Mat>;
   arena_t<ret_type> arena_exponent = exponent;
-  arena_t<ret_type> ret = exponent.val().unaryExpr(
+  arena_t<ret_type> ret = arena_exponent.val().unaryExpr(
       [base](auto&& x) { return std::pow(base, x); });
   reverse_pass_callback([base, arena_exponent, ret]() mutable {
     if (base == 0.0) {
