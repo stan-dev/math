@@ -79,11 +79,11 @@ inline var pow(const var& base, const var& exponent) {
 /**
  * Return the base raised to the power of the exponent (cmath). For matrices
  * this is performed elementwise.
- * @tparam Mat1 An Eigen type deriving from Eigen::EigenBase, a standard vector, or
- *  a `var_value` with inner Eigen type as defined above. The `scalar_type`
+ * @tparam Mat1 An Eigen type deriving from Eigen::EigenBase, a standard vector,
+ * or a `var_value` with inner Eigen type as defined above. The `scalar_type`
  *  must be a `var`.
- * @tparam Mat2 An Eigen type deriving from Eigen::EigenBase, a standard vector, or
- *  a `var_value` with inner Eigen type as defined above. The `scalar_type`
+ * @tparam Mat2 An Eigen type deriving from Eigen::EigenBase, a standard vector,
+ * or a `var_value` with inner Eigen type as defined above. The `scalar_type`
  *  must be a `var`.
  * @param base Base variable.
  * @param exponent Exponent variable.
@@ -94,54 +94,53 @@ template <typename Mat1, typename Mat2,
           require_any_matrix_st<is_var, Mat1, Mat2>* = nullptr,
           require_all_not_stan_scalar_t<Mat1, Mat2>* = nullptr>
 inline auto pow(const Mat1& base, const Mat2& exponent) {
-  using val_type = decltype(
-      as_array_or_scalar(value_of(base)).pow(as_array_or_scalar(value_of(exponent))).matrix().eval());
+  using val_type = decltype(as_array_or_scalar(value_of(base))
+                                .pow(as_array_or_scalar(value_of(exponent)))
+                                .matrix()
+                                .eval());
   using ret_type = return_var_matrix_t<val_type, Mat1, Mat2>;
   if (!is_constant<Mat1>::value && !is_constant<Mat2>::value) {
     using base_t = decltype(as_array_or_scalar(base));
-    arena_t<promote_scalar_t<var, base_t>> arena_base = as_array_or_scalar(base);
+    arena_t<promote_scalar_t<var, base_t>> arena_base
+        = as_array_or_scalar(base);
     using exp_t = decltype(as_array_or_scalar(exponent));
-    arena_t<promote_scalar_t<var, exp_t>> arena_exponent = as_array_or_scalar(exponent);
-    arena_t<ret_type> ret
-        = arena_base.val().pow(arena_exponent.val()).matrix();
+    arena_t<promote_scalar_t<var, exp_t>> arena_exponent
+        = as_array_or_scalar(exponent);
+    arena_t<ret_type> ret = arena_base.val().pow(arena_exponent.val()).matrix();
     reverse_pass_callback([arena_base, arena_exponent, ret]() mutable {
       auto are_vals_zero = (arena_base.val() != 0.0).eval();
       auto ret_mul = (ret.adj().array() * ret.val().array()).eval();
       arena_base.adj()
           += (are_vals_zero)
-                 .select(ret_mul * arena_exponent.val()
-                             / arena_base.val(),
-                         0);
+                 .select(ret_mul * arena_exponent.val() / arena_base.val(), 0);
       arena_exponent.adj()
-          += (are_vals_zero)
-                 .select(ret_mul * arena_base.val().log(), 0);
+          += (are_vals_zero).select(ret_mul * arena_base.val().log(), 0);
     });
     return ret_type(ret);
   } else if (!is_constant<Mat2>::value) {
     auto arena_base = to_arena(as_array_or_scalar(value_of(base)));
     using exp_t = decltype(as_array_or_scalar(exponent));
-    arena_t<promote_scalar_t<var, exp_t>> arena_exponent = as_array_or_scalar(exponent);
-    arena_t<ret_type> ret
-        = arena_base.pow(arena_exponent.val()).matrix();
+    arena_t<promote_scalar_t<var, exp_t>> arena_exponent
+        = as_array_or_scalar(exponent);
+    arena_t<ret_type> ret = arena_base.pow(arena_exponent.val()).matrix();
     reverse_pass_callback([arena_base, arena_exponent, ret]() mutable {
-      arena_exponent.adj()
-          += (arena_base != 0)
-                 .select(ret.adj().array() * arena_base.log()
-                             * ret.val().array(),
-                         0);
+      arena_exponent.adj() += (arena_base != 0)
+                                  .select(ret.adj().array() * arena_base.log()
+                                              * ret.val().array(),
+                                          0);
     });
     return ret_type(ret);
   } else {
     using base_t = decltype(as_array_or_scalar(base));
-    arena_t<promote_scalar_t<var, base_t>> arena_base = as_array_or_scalar(base);
+    arena_t<promote_scalar_t<var, base_t>> arena_base
+        = as_array_or_scalar(base);
     auto arena_exponent = to_arena(as_array_or_scalar(value_of(exponent)));
-    arena_t<ret_type> ret
-        = arena_base.val().pow(arena_exponent).matrix();
+    arena_t<ret_type> ret = arena_base.val().pow(arena_exponent).matrix();
     reverse_pass_callback([arena_base, arena_exponent, ret]() mutable {
       arena_base.adj()
           += (arena_base.val() != 0)
-                 .select(ret.adj().array() * arena_exponent
-                             * ret.val().array() / arena_base.val(),
+                 .select(ret.adj().array() * arena_exponent * ret.val().array()
+                             / arena_base.val(),
                          0);
     });
     return ret_type(ret);

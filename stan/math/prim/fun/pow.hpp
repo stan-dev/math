@@ -39,7 +39,7 @@ inline complex_return_t<U, V> complex_pow(const U& x, const V& y) {
  * @return pow function applied to the two inputs.
  */
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
- require_all_not_matrix_t<T1, T2>* = nullptr>
+          require_all_not_matrix_t<T1, T2>* = nullptr>
 inline auto pow(const T1& a, const T2& b) {
   return apply_scalar_binary(a, b, [&](const auto& c, const auto& d) {
     using std::pow;
@@ -48,7 +48,8 @@ inline auto pow(const T1& a, const T2& b) {
 }
 
 /**
- * Specialization for Matrices, scalars, and Eigen matrices of mixed scalar types.
+ * Specialization for Matrices, scalars, and Eigen matrices of mixed scalar
+ * types.
  *
  * @tparam T1 A Scalar or type derived from EigenBase
  * @tparam T2 A Scalar or type derived from EigenBase
@@ -72,7 +73,8 @@ inline auto pow(const T1& a, const T2& b) {
  * @param a base.
  * @param b The exponent to raise the base to.
  */
-template <typename T1, typename T2, require_all_matrix_vt<std::is_arithmetic, T1, T2>* = nullptr>
+template <typename T1, typename T2,
+          require_all_matrix_vt<std::is_arithmetic, T1, T2>* = nullptr>
 inline auto pow(const T1& base, const T2& exponent) {
   return base.array().pow(exponent.array()).matrix();
 }

@@ -65,5 +65,4 @@ TEST(mathMixScalFun, pow) {
   stan::test::expect_ad(f, 2.0, in1);
 
   stan::test::expect_ad_vectorized_binary(f, in1, in2);
-
 }
