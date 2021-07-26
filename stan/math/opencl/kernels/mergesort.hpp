@@ -12,7 +12,7 @@ namespace math {
 namespace opencl_kernels {
 
 // \cond
-static const std::string mergesort_kernel_code = STRINGIFY(
+static const char * mergesort_kernel_code = STRINGIFY(
     // \endcond
     /** \ingroup opencl_kernels
      */
@@ -23,7 +23,7 @@ static const std::string mergesort_kernel_code = STRINGIFY(
       int gid = get_global_id(0);
       if (B_i < B_size && A_i < A_size) {
         while (1) {
-          if (A[A_i] < B[B_i]) {
+          if (A[A_i] CMP B[B_i]) {
             res[A_i + B_i] = A[A_i];
             //            printf("%d in1: %d\n", gid, A_i);
             A_i++;
@@ -57,7 +57,7 @@ static const std::string mergesort_kernel_code = STRINGIFY(
     int binary_search(__global SCAL* input, int start, int end, SCAL value) {
       while (end > start) {
         int mid = start + (end - start) / 2;
-        if (value < input[mid]) {
+        if (value CMP input[mid]) {
           end = mid;
         } else {
           start = mid + 1;
@@ -122,11 +122,51 @@ static const std::string mergesort_kernel_code = STRINGIFY(
 );
 // \endcond
 
-/** \ingroup opencl_kernels
- * See the docs for \link kernels/add.hpp add_batch() \endlink
+/**
+ * struct containing sort_asc kernels, grouped by scalar type.
  */
-const kernel_cl<out_buffer, in_buffer, int, int, int> merge_step(
-    "merge_step", {"#define SCAL double\n", mergesort_kernel_code});
+template <typename Scalar, typename = void>
+struct sort_asc {};
+
+template <typename T>
+struct sort_asc<double, T> {
+  static const kernel_cl<out_buffer, in_buffer, int, int, int> merge_step;
+};
+template <typename T>
+const kernel_cl<out_buffer, in_buffer, int, int, int> sort_asc<double, T>::merge_step(
+    "merge_step", {"#define SCAL double\n", "#define CMP <\n", mergesort_kernel_code});
+
+
+template <typename T>
+struct sort_asc<int, T> {
+  static const kernel_cl<out_buffer, in_buffer, int, int, int> merge_step;
+};
+template <typename T>
+const kernel_cl<out_buffer, in_buffer, int, int, int> sort_asc<int, T>::merge_step(
+    "merge_step", {"#define SCAL int\n", "#define CMP <\n", mergesort_kernel_code});
+
+/**
+ * struct containing sort_desc kernels, grouped by scalar type.
+ */
+template <typename Scalar, typename = void>
+struct sort_desc {};
+
+template <typename T>
+struct sort_desc<double, T> {
+  static const kernel_cl<out_buffer, in_buffer, int, int, int> merge_step;
+};
+template <typename T>
+const kernel_cl<out_buffer, in_buffer, int, int, int> sort_desc<double, T>::merge_step(
+    "merge_step", {"#define SCAL double\n", "#define CMP >\n", mergesort_kernel_code});
+
+
+template <typename T>
+struct sort_desc<int, T> {
+  static const kernel_cl<out_buffer, in_buffer, int, int, int> merge_step;
+};
+template <typename T>
+const kernel_cl<out_buffer, in_buffer, int, int, int> sort_desc<int, T>::merge_step(
+    "merge_step", {"#define SCAL int\n", "#define CMP >\n", mergesort_kernel_code});
 
 }  // namespace opencl_kernels
 }  // namespace math
