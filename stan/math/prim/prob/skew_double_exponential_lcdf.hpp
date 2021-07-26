@@ -44,18 +44,18 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lcdf(
   using std::exp;
   using std::log;
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_skewness>;
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
-  using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
-  using T_tau_ref = ref_type_if_t<!is_constant<T_skewness>::value, T_skewness>;
   static const char* function = "skew_double_exponential_lcdf";
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Shape parameter", sigma, "Skewness parameter",
                          tau);
-  T_y_ref y_ref = y;
-  T_mu_ref mu_ref = mu;
-  T_sigma_ref sigma_ref = sigma;
-  T_tau_ref tau_ref = tau;
+  auto&& y_ref = to_ref(y);
+  auto&& mu_ref = to_ref(mu);
+  auto&& sigma_ref = to_ref(sigma);
+  auto&& tau_ref = to_ref(tau);
+  using T_y_ref = decltype(y_ref);
+  using T_mu_ref = decltype(mu_ref);
+  using T_sigma_ref = decltype(sigma_ref);
+  using T_tau_ref = decltype(tau_ref);
 
   check_not_nan(function, "Random variable", value_of(y_ref));
   check_finite(function, "Location parameter", value_of(mu_ref));
