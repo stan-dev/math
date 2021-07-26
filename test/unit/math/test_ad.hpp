@@ -1242,12 +1242,16 @@ void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
   using Eigen::RowVectorXd;
   using Eigen::VectorXd;
   using std::vector;
+  using matrix_complex = Eigen::Matrix<std::complex<double>, -1, -1>;
+  using row_vector_complex = Eigen::Matrix<std::complex<double>, -1, 1>;
+  using vector_complex = Eigen::Matrix<std::complex<double>, 1, -1>;
   typedef vector<double> vector_dbl;
   typedef vector<vector<double>> vector2_dbl;
   typedef vector<vector<vector<double>>> vector3_dbl;
 
   expect_ad(tols, f, x1);
   expect_ad(tols, f, static_cast<double>(x1));
+  expect_ad(tols, f, std::complex<double>(x1));
   for (int i = 0; i < 4; ++i)
     expect_ad(tols, f, VectorXd::Constant(i, x1).eval());
   for (int i = 0; i < 4; ++i)
