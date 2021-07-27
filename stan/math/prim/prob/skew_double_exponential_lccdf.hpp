@@ -51,10 +51,10 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lccdf(
   auto&& mu_ref = to_ref(mu);
   auto&& sigma_ref = to_ref(sigma);
   auto&& tau_ref = to_ref(tau);
-  using T_y_ref = decltype(y_ref);
-  using T_mu_ref = decltype(mu_ref);
-  using T_sigma_ref = decltype(sigma_ref);
-  using T_tau_ref = decltype(tau_ref);
+  using T_y_ref = std::decay_t<decltype(y_ref)>;
+  using T_mu_ref = std::decay_t<decltype(mu_ref)>;
+  using T_sigma_ref = std::decay_t<decltype(sigma_ref)>;
+  using T_tau_ref = std::decay_t<decltype(tau_ref)>;
 
   check_not_nan(function, "Random variable", value_of(y_ref));
   check_finite(function, "Location parameter", value_of(mu_ref));

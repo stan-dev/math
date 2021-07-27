@@ -52,14 +52,18 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_cdf(
   auto&& mu_ref = to_ref(mu);
   auto&& sigma_ref = to_ref(sigma);
   auto&& tau_ref = to_ref(tau);
-  using T_y_ref = decltype(y_ref);
-  using T_mu_ref = decltype(mu_ref);
-  using T_sigma_ref = decltype(sigma_ref);
-  using T_tau_ref = decltype(tau_ref);
+  using T_y_ref = std::decay_t<decltype(y_ref)>;
+  using T_mu_ref = std::decay_t<decltype(mu_ref)>;
+  using T_sigma_ref = std::decay_t<decltype(sigma_ref)>;
+  using T_tau_ref = std::decay_t<decltype(tau_ref)>;
   auto&& y_ref_val = to_ref(as_value_column_array_or_scalar(y));
   auto&& mu_ref_val = to_ref(as_value_column_array_or_scalar(mu));
   auto&& sigma_ref_val = to_ref(as_value_column_array_or_scalar(sigma));
   auto&& tau_ref_val = to_ref(as_value_column_array_or_scalar(tau));
+  using T_y_ref_val = std::decay_t<decltype(y_ref)>;
+  using T_mu_ref_val = std::decay_t<decltype(mu_ref)>;
+  using T_sigma_ref_val = std::decay_t<decltype(sigma_ref)>;
+  using T_tau_ref_val = std::decay_t<decltype(tau_ref)>;
 
   check_not_nan(function, "Random variable", y_ref_val);
   check_finite(function, "Location parameter", mu_ref_val);
@@ -74,21 +78,21 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_cdf(
   operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref, T_tau_ref> ops_partials(
       y_ref, mu_ref, sigma_ref, tau_ref);
 
-  scalar_seq_view<T_y_ref> y_vec(y_ref_val);
-  scalar_seq_view<T_mu_ref> mu_vec(mu_ref_val);
-  scalar_seq_view<T_sigma_ref> sigma_vec(sigma_ref_val);
-  scalar_seq_view<T_tau_ref> tau_vec(tau_ref_val);
+  scalar_seq_view<T_y_ref_val> y_vec(y_ref_val);
+  scalar_seq_view<T_mu_ref_val> mu_vec(mu_ref_val);
+  scalar_seq_view<T_sigma_ref_val> sigma_vec(sigma_ref_val);
+  scalar_seq_view<T_tau_ref_val> tau_vec(tau_ref_val);
 
   int size_sigma = stan::math::size(sigma);
   int N = max_size(y, mu, sigma, tau);
-  auto&& inv_sigma_ref = to_ref(inv(sigma_ref_val));
+  auto inv_sigma_ref = eval(inv(sigma_ref_val));
   scalar_seq_view<decltype(inv_sigma_ref)> inv_sigma(inv_sigma_ref);
 
   for (int i = 0; i < N; ++i) {
-    const T_partials_return y_dbl = y_vec.val(i);
-    const T_partials_return mu_dbl = mu_vec.val(i);
-    const T_partials_return sigma_dbl = sigma_vec.val(i);
-    const T_partials_return tau_dbl = tau_vec.val(i);
+    const T_partials_return y_dbl = y_vec[i];
+    const T_partials_return mu_dbl = mu_vec[i];
+    const T_partials_return sigma_dbl = sigma_vec[i];
+    const T_partials_return tau_dbl = tau_vec[i];
 
     const T_partials_return y_m_mu = y_dbl - mu_dbl;
     const T_partials_return diff_sign = sign(y_m_mu);
@@ -101,19 +105,6 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_cdf(
     const T_partials_return inv_exp_2_expo_tau
         = inv(exp(2.0 * expo) + tau_dbl - 1.0);
 
-    const T_partials_return rep_deriv
-        = y_dbl < mu_dbl ? 2.0 * inv_sigma[i] * (1.0 - tau_dbl)
-                         : -2.0 * (tau_dbl - 1.0) * tau_dbl * inv_sigma[i]
-                               * inv_exp_2_expo_tau;
-    const T_partials_return sig_deriv = y_dbl < mu_dbl
-                                            ? 2.0 * inv_sigma[i] * expo
-                                            : -rep_deriv * expo / tau_dbl;
-    const T_partials_return skew_deriv
-        = y_dbl < mu_dbl
-              ? 1.0 / tau_dbl + 2.0 * inv_sigma[i] * y_m_mu * diff_sign
-              : (sigma_dbl - 2.0 * (tau_dbl - 1.0) * y_m_mu) * inv_sigma[i]
-                    * inv_exp_2_expo_tau;
-
     T_partials_return cdfn(1.0);
     if (y_dbl <= mu_dbl) {
       cdfn *= tau_dbl * exp(-2.0 * expo);
@@ -122,6 +113,11 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_cdf(
     }
     cdf *= cdfn;
 
+    const T_partials_return rep_deriv
+        = y_dbl < mu_dbl ? 2.0 * inv_sigma[i] * (1.0 - tau_dbl)
+                         : -2.0 * (tau_dbl - 1.0) * tau_dbl * inv_sigma[i]
+                               * inv_exp_2_expo_tau;
+
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[i] += rep_deriv;
     }
@@ -129,10 +125,15 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_cdf(
       ops_partials.edge2_.partials_[i] -= rep_deriv;
     }
     if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[i] += sig_deriv;
+      ops_partials.edge3_.partials_[i] += y_dbl < mu_dbl
+                                              ? 2.0 * inv_sigma[i] * expo
+                                              : -rep_deriv * expo / tau_dbl;
     }
     if (!is_constant_all<T_skewness>::value) {
-      ops_partials.edge4_.partials_[i] += skew_deriv;
+      ops_partials.edge4_.partials_[i] += y_dbl < mu_dbl
+            ? 1.0 / tau_dbl + 2.0 * inv_sigma[i] * y_m_mu * diff_sign
+            : (sigma_dbl - 2.0 * (tau_dbl - 1.0) * y_m_mu) * inv_sigma[i]
+                  * inv_exp_2_expo_tau;
     }
   }
 

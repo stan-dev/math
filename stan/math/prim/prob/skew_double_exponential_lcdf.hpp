@@ -52,15 +52,19 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lcdf(
   auto&& mu_ref = to_ref(mu);
   auto&& sigma_ref = to_ref(sigma);
   auto&& tau_ref = to_ref(tau);
-  using T_y_ref = decltype(y_ref);
-  using T_mu_ref = decltype(mu_ref);
-  using T_sigma_ref = decltype(sigma_ref);
-  using T_tau_ref = decltype(tau_ref);
+  using T_y_ref = std::decay_t<decltype(y_ref)>;
+  using T_mu_ref = std::decay_t<decltype(mu_ref)>;
+  using T_sigma_ref = std::decay_t<decltype(sigma_ref)>;
+  using T_tau_ref = std::decay_t<decltype(tau_ref)>;
+  auto&& y_ref_val = to_ref(as_value_column_array_or_scalar(y));
+  auto&& mu_ref_val = to_ref(as_value_column_array_or_scalar(mu));
+  auto&& sigma_ref_val = to_ref(as_value_column_array_or_scalar(sigma));
+  auto&& tau_ref_val = to_ref(as_value_column_array_or_scalar(tau));
 
-  check_not_nan(function, "Random variable", value_of(y_ref));
-  check_finite(function, "Location parameter", value_of(mu_ref));
-  check_positive_finite(function, "Scale parameter", value_of(sigma_ref));
-  check_bounded(function, "Skewness parameter", value_of(tau_ref), 0.0, 1.0);
+  check_not_nan(function, "Random variable", y_ref_val);
+  check_finite(function, "Location parameter", mu_ref_val);
+  check_positive_finite(function, "Scale parameter", sigma_ref_val);
+  check_bounded(function, "Skewness parameter", tau_ref_val, 0.0, 1.0);
 
   if (size_zero(y, mu, sigma, tau)) {
     return 0.0;
@@ -70,24 +74,25 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lcdf(
   operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref, T_tau_ref> ops_partials(
       y_ref, mu_ref, sigma_ref, tau_ref);
 
-  scalar_seq_view<T_y_ref> y_vec(y_ref);
-  scalar_seq_view<T_mu_ref> mu_vec(mu_ref);
-  scalar_seq_view<T_sigma_ref> sigma_vec(sigma_ref);
-  scalar_seq_view<T_tau_ref> tau_vec(tau_ref);
+  using T_y_ref_val = std::decay_t<decltype(y_ref_val)>;
+  using T_mu_ref_val = std::decay_t<decltype(mu_ref_val)>;
+  using T_sigma_ref_val = std::decay_t<decltype(sigma_ref_val)>;
+  using T_tau_ref_val = std::decay_t<decltype(tau_ref_val)>;
+  scalar_seq_view<T_y_ref_val> y_vec(y_ref_val);
+  scalar_seq_view<T_mu_ref_val> mu_vec(mu_ref_val);
+  scalar_seq_view<T_sigma_ref_val> sigma_vec(sigma_ref_val);
+  scalar_seq_view<T_tau_ref_val> tau_vec(tau_ref_val);
 
   int size_sigma = stan::math::size(sigma);
   int N = max_size(y, mu, sigma, tau);
-
-  VectorBuilder<true, T_partials_return, T_scale> inv_sigma(size_sigma);
-  for (int i = 0; i < size_sigma; ++i) {
-    inv_sigma[i] = inv(value_of(sigma_vec[i]));
-  }
+  auto&& inv_sigma_val = to_ref(inv(sigma_ref_val));
+  scalar_seq_view<plain_type_t<decltype(inv_sigma_val)>> inv_sigma(inv_sigma_val);
 
   for (int i = 0; i < N; ++i) {
-    const T_partials_return y_dbl = y_vec.val(i);
-    const T_partials_return mu_dbl = mu_vec.val(i);
-    const T_partials_return sigma_dbl = sigma_vec.val(i);
-    const T_partials_return tau_dbl = tau_vec.val(i);
+    const T_partials_return y_dbl = y_vec[i];
+    const T_partials_return mu_dbl = mu_vec[i];
+    const T_partials_return sigma_dbl = sigma_vec[i];
+    const T_partials_return tau_dbl = tau_vec[i];
 
     const T_partials_return y_m_mu = y_dbl - mu_dbl;
     const T_partials_return diff_sign = sign(y_m_mu);
