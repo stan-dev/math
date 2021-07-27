@@ -131,4 +131,21 @@ TEST(KernelGenerator, multi_result_kernel_reuse_kernel) {
   EXPECT_MATRIX_NEAR(res_diff, correct_diff, 1e-9);
 }
 
+TEST(KernelGenerator, multi_result_kernel_matrix_cl_move) {
+  MatrixXd m1(3, 3);
+  m1 << 1, 2, 3, 4, 5, 6, 7, 8, 9;
+  MatrixXd m2(3, 3);
+  m2 << 10, 100, 1000, 0, -10, -12, 2, 4, 8;
+
+  matrix_cl<double> m1_cl(m1);
+  matrix_cl<double> m2_cl(m2);
+
+  cl_mem m2_buf = m2_cl.buffer()();
+
+  stan::math::results(m1_cl) = stan::math::expressions(m2_cl);
+  EXPECT_NE(m1_cl.buffer()(), m2_buf);
+  stan::math::results(m1_cl) = stan::math::expressions(std::move(m2_cl));
+  EXPECT_EQ(m1_cl.buffer()(), m2_buf);
+}
+
 #endif

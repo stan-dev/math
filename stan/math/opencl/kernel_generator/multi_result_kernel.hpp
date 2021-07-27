@@ -267,7 +267,7 @@ class expressions_cl {
    */
   explicit expressions_cl(T_expressions&&... expressions)
       : expressions_(
-            T_expressions(std::forward<T_expressions>(expressions))...) {}
+          T_expressions(std::forward<T_expressions>(expressions))...) {}
 
  private:
   std::tuple<T_expressions...> expressions_;
@@ -319,6 +319,16 @@ class results_cl {
     index_apply<sizeof...(T_expressions)>([this, &exprs](auto... Is) {
       assignment_impl(std::tuple_cat(make_assignment_pair(
           std::get<Is>(results_), std::get<Is>(exprs.expressions_))...));
+    });
+  }
+  template <typename... T_expressions,
+            typename = std::enable_if_t<sizeof...(T_results)
+                                        == sizeof...(T_expressions)>>
+  void operator=(expressions_cl<T_expressions...>&& exprs) {
+    index_apply<sizeof...(T_expressions)>([this, &exprs](auto... Is) mutable {
+      assignment_impl(std::tuple_cat(make_assignment_pair(
+          std::get<Is>(results_), std::forward<T_expressions>(
+                                      std::get<Is>(exprs.expressions_)))...));
     });
   }
 
@@ -531,11 +541,16 @@ class results_cl {
    * @param expression expression
    * @return a tuple of pair of result and expression
    */
-  template <typename T_result, typename T_expression,
-            require_all_not_t<is_without_output<T_expression>,
-                              conjunction<internal::is_scalar_check<T_result>,
-                                          std::is_arithmetic<std::decay_t<
-                                              T_expression>>>>* = nullptr>
+  template <
+      typename T_result, typename T_expression,
+      require_all_not_t<
+          is_without_output<T_expression>,
+          conjunction<internal::is_scalar_check<T_result>,
+                      std::is_arithmetic<std::decay_t<T_expression>>>,
+          conjunction<
+              is_matrix_cl<T_result>, is_matrix_cl<T_expression>,
+              std::is_same<value_type_t<T_expression>, value_type_t<T_result>>,
+              std::is_rvalue_reference<T_expression&&>>>* = nullptr>
   static auto make_assignment_pair(T_result&& result,
                                    T_expression&& expression) {
     return std::make_tuple(
@@ -574,6 +589,22 @@ class results_cl {
         << result.arg_.a_ << ", but it must be " << result.must_be_ << "!";
       throw std::domain_error(s.str());
     }
+    return std::make_tuple();
+  }
+
+  /**
+   * Optimized move assignment of a `matrix_cl` into another `matrix_cl`.
+   * @param result result - check
+   * @param pass bool scalar
+   * @return an empty tuple
+   */
+  template <typename T_result, typename T_matrix,
+            require_all_matrix_cl_t<T_result, T_matrix>* = nullptr,
+            require_all_st_same<T_result, T_matrix>* = nullptr,
+            require_t<std::is_rvalue_reference<T_matrix&&>>* = nullptr>
+  static std::tuple<> make_assignment_pair(T_result&& result,
+                                           T_matrix&& matrix) {
+    result = std::move(matrix);
     return std::make_tuple();
   }
 };
