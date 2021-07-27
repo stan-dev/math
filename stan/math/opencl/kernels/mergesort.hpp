@@ -106,11 +106,11 @@ static const char* mergesort_kernel_code = STRINGIFY(
         int end = min(size, (2 * task_id + 2) * run_len);
 
         // divide a task between threads working on it
-        int my_start_a
-            = start_a
-              + (start_b - start_a) * (long)id_in_task / threads_with_task_id;
+        int my_start_a = start_a
+                         + (start_b - start_a) * (long)id_in_task  // NOLINT
+                               / threads_with_task_id;
         int my_end_a = start_a
-                       + (start_b - start_a) * (long)(id_in_task + 1)
+                       + (start_b - start_a) * (long)(id_in_task + 1)  // NOLINT
                              / threads_with_task_id;
         int my_start_b = id_in_task == 0 ? start_b
                                          : binary_search(input, start_b, end,
