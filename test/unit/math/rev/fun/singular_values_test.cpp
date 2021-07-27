@@ -1,3 +1,4 @@
+#include <stan/math/rev.hpp>
 #include <stan/math/prim.hpp>
 #include <stan/math/rev/fun/singular_values.hpp>
 #include <stan/math/rev/fun/sum.hpp>

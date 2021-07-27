@@ -3,17 +3,15 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun.hpp>
-#include <stan/math/prim/functor.hpp>
-#include <stan/math/prim/meta.hpp>
-
 #include <stan/math/rev/fun/LDLT_factor.hpp>
 #include <stan/math/rev/fun/Phi.hpp>
 #include <stan/math/rev/fun/Phi_approx.hpp>
 #include <stan/math/rev/fun/abs.hpp>
+#include <stan/math/rev/fun/accumulator.hpp>
 #include <stan/math/rev/fun/acos.hpp>
 #include <stan/math/rev/fun/acosh.hpp>
+#include <stan/math/rev/fun/append_col.hpp>
+#include <stan/math/rev/fun/append_row.hpp>
 #include <stan/math/rev/fun/as_bool.hpp>
 #include <stan/math/rev/fun/as_array_or_scalar.hpp>
 #include <stan/math/rev/fun/as_column_vector_or_scalar.hpp>
@@ -145,6 +143,8 @@
 #include <stan/math/rev/fun/read_cov_L.hpp>
 #include <stan/math/rev/fun/read_cov_matrix.hpp>
 #include <stan/math/rev/fun/rep_matrix.hpp>
+#include <stan/math/rev/fun/rep_row_vector.hpp>
+#include <stan/math/rev/fun/rep_vector.hpp>
 #include <stan/math/rev/fun/rising_factorial.hpp>
 #include <stan/math/rev/fun/round.hpp>
 #include <stan/math/rev/fun/rows_dot_product.hpp>
@@ -170,6 +170,7 @@
 #include <stan/math/rev/fun/to_var.hpp>
 #include <stan/math/rev/fun/to_arena.hpp>
 #include <stan/math/rev/fun/to_var_value.hpp>
+#include <stan/math/rev/fun/to_vector.hpp>
 #include <stan/math/rev/fun/trace.hpp>
 #include <stan/math/rev/fun/trace_gen_inv_quad_form_ldlt.hpp>
 #include <stan/math/rev/fun/trace_gen_quad_form.hpp>
@@ -182,5 +183,10 @@
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/fun/value_of_rec.hpp>
 #include <stan/math/rev/fun/variance.hpp>
+
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun.hpp>
+#include <stan/math/prim/functor.hpp>
+#include <stan/math/prim/meta.hpp>
 
 #endif

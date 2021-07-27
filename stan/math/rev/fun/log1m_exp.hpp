@@ -16,13 +16,16 @@ namespace math {
  * <p>The derivative of <code>log(1 - exp(x))</code> with respect
  * to <code>x</code> is <code>-1 / expm1(-x)</code>.
  *
+ * @tparam T Arithmetic or a type inheriting from `EigenBase`.
  * @param[in] x Argument.
  * @return Natural logarithm of one minus the exponential of the
  * argument.
  */
-inline var log1m_exp(const var& x) {
+template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
+inline auto log1m_exp(const var_value<T>& x) {
   return make_callback_var(log1m_exp(x.val()), [x](auto& vi) mutable {
-    x.adj() -= vi.adj() / expm1(-x.val());
+    as_array_or_scalar(x.adj())
+        -= as_array_or_scalar(vi.adj()) / as_array_or_scalar(expm1(-x.val()));
   });
 }
 
