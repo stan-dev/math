@@ -86,7 +86,8 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lcdf(
   int size_sigma = stan::math::size(sigma);
   int N = max_size(y, mu, sigma, tau);
   auto&& inv_sigma_val = to_ref(inv(sigma_ref_val));
-  scalar_seq_view<plain_type_t<decltype(inv_sigma_val)>> inv_sigma(inv_sigma_val);
+  scalar_seq_view<plain_type_t<decltype(inv_sigma_val)>> inv_sigma(
+      inv_sigma_val);
 
   for (int i = 0; i < N; ++i) {
     const T_partials_return y_dbl = y_vec[i];

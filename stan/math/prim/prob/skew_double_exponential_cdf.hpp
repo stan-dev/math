@@ -130,10 +130,11 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_cdf(
                                               : -rep_deriv * expo / tau_dbl;
     }
     if (!is_constant_all<T_skewness>::value) {
-      ops_partials.edge4_.partials_[i] += y_dbl < mu_dbl
-            ? 1.0 / tau_dbl + 2.0 * inv_sigma[i] * y_m_mu * diff_sign
-            : (sigma_dbl - 2.0 * (tau_dbl - 1.0) * y_m_mu) * inv_sigma[i]
-                  * inv_exp_2_expo_tau;
+      ops_partials.edge4_.partials_[i]
+          += y_dbl < mu_dbl
+                 ? 1.0 / tau_dbl + 2.0 * inv_sigma[i] * y_m_mu * diff_sign
+                 : (sigma_dbl - 2.0 * (tau_dbl - 1.0) * y_m_mu) * inv_sigma[i]
+                       * inv_exp_2_expo_tau;
     }
   }
 
