@@ -142,8 +142,10 @@ inline double* accumulate_adjoints(double* dest, EigT&& x, Pargs&&... args) {
 template <typename F, require_stan_closure_t<F>*, require_not_st_arithmetic<F>*,
           typename... Pargs>
 inline double* accumulate_adjoints(double* dest, F& f, Pargs&&... args) {
-  return accumulate_adjoints(f.accumulate_adjoints__(dest),
-                             std::forward<Pargs>(args)...);
+  return accumulate_adjoints(
+      apply([dest](auto... s) { return accumulate_adjoints(dest, s...); },
+            f.captures_),
+      std::forward<Pargs>(args)...);
 }
 
 /**

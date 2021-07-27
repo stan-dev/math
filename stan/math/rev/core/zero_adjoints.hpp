@@ -67,7 +67,8 @@ inline void zero_adjoints(EigMat& x) {
 template <typename F, typename... Pargs, require_stan_closure_t<F>* = nullptr,
           require_not_st_arithmetic<F>* = nullptr>
 inline void zero_adjoints(F& f, Pargs&... args) {
-  f.zero_adjoints__();
+  apply([](auto... s) { zero_adjoints(s...); }, f.captures_);
+  ;
   zero_adjoints(args...);
 }
 

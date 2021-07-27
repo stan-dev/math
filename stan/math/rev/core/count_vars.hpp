@@ -130,8 +130,10 @@ inline size_t count_vars_impl(size_t count, const var& x, Pargs&&... args) {
 template <typename F, require_stan_closure_t<F>*, require_not_st_arithmetic<F>*,
           typename... Pargs>
 inline size_t count_vars_impl(size_t count, const F& f, Pargs&&... args) {
-  return count_vars_impl(count + f.count_vars__(),
-                         std::forward<Pargs>(args)...);
+  return count_vars_impl(
+      apply([count](auto... s) { return count_vars_impl(count, s...); },
+            f.captures_),
+      std::forward<Pargs>(args)...);
 }
 
 /**

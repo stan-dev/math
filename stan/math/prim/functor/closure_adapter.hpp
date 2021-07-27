@@ -32,31 +32,6 @@ struct base_closure {
                      const auto&... s) { return f_(s..., args..., msgs); },
                  captures_);
   }
-  size_t count_vars__() const {
-    return apply([this](auto... s) { return count_vars(s...); }, captures_);
-  }
-  auto value_of__() const {
-    return apply(
-        [this](auto... s) { return ValueOf__(f_, eval(value_of(s))...); },
-        captures_);
-  }
-  auto deep_copy_vars__() const {
-    return apply(
-        [this](auto... s) { return CopyOf__(f_, eval(deep_copy_vars(s))...); },
-        captures_);
-  }
-  void zero_adjoints__() {
-    apply([](auto... s) { zero_adjoints(s...); }, captures_);
-  }
-  double* accumulate_adjoints__(double* dest) const {
-    return apply([dest](auto... s) { return accumulate_adjoints(dest, s...); },
-                 captures_);
-  }
-  template <typename Vari>
-  Vari** save_varis__(Vari** dest) const {
-    return apply([dest](auto... s) { return save_varis(dest, s...); },
-                 captures_);
-  }
 };
 
 /**
@@ -77,32 +52,6 @@ struct closure_rng {
   auto operator()(Rng& rng, std::ostream* msgs, const Args&... args) const {
     return apply([this, &rng, msgs, &args...](
                      const auto&... s) { return f_(s..., args..., rng, msgs); },
-                 captures_);
-  }
-
-  size_t count_vars__() const {
-    return apply([this](auto... s) { return count_vars(s...); }, captures_);
-  }
-  auto value_of__() const {
-    return apply(
-        [this](auto... s) { return ValueOf__(f_, eval(value_of(s))...); },
-        captures_);
-  }
-  auto deep_copy_vars__() const {
-    return apply(
-        [this](auto... s) { return CopyOf__(f_, eval(deep_copy_vars(s))...); },
-        captures_);
-  }
-  void zero_adjoints__() {
-    apply([](auto... s) { zero_adjoints(s...); }, captures_);
-  }
-  double* accumulate_adjoints__(double* dest) const {
-    return apply([dest](auto... s) { return accumulate_adjoints(dest, s...); },
-                 captures_);
-  }
-  template <typename Vari>
-  Vari** save_varis__(Vari** dest) const {
-    return apply([dest](auto... s) { return save_varis(dest, s...); },
                  captures_);
   }
 };
@@ -139,31 +88,6 @@ struct closure_lpdf {
         },
         captures_);
   }
-  size_t count_vars__() const {
-    return apply([this](auto... s) { return count_vars(s...); }, captures_);
-  }
-  auto value_of__() const {
-    return apply(
-        [this](auto... s) { return ValueOf__(f_, eval(value_of(s))...); },
-        captures_);
-  }
-  auto deep_copy_vars__() const {
-    return apply(
-        [this](auto... s) { return CopyOf__(f_, eval(deep_copy_vars(s))...); },
-        captures_);
-  }
-  void zero_adjoints__() {
-    apply([](auto... s) { zero_adjoints(s...); }, captures_);
-  }
-  double* accumulate_adjoints__(double* dest) const {
-    return apply([dest](auto... s) { return accumulate_adjoints(dest, s...); },
-                 captures_);
-  }
-  template <typename Vari>
-  Vari** save_varis__(Vari** dest) const {
-    return apply([dest](auto... s) { return save_varis(dest, s...); },
-                 captures_);
-  }
 };
 
 /**
@@ -191,31 +115,6 @@ struct closure_lp {
         },
         captures_);
   }
-  size_t count_vars__() const {
-    return apply([this](auto... s) { return count_vars(s...); }, captures_);
-  }
-  auto value_of__() const {
-    return apply(
-        [this](auto... s) { return ValueOf__(f_, eval(value_of(s))...); },
-        captures_);
-  }
-  auto deep_copy_vars__() const {
-    return apply(
-        [this](auto... s) { return CopyOf__(f_, eval(deep_copy_vars(s))...); },
-        captures_);
-  }
-  void zero_adjoints__() {
-    apply([](auto... s) { zero_adjoints(s...); }, captures_);
-  }
-  double* accumulate_adjoints__(double* dest) const {
-    return apply([dest](auto... s) { return accumulate_adjoints(dest, s...); },
-                 captures_);
-  }
-  template <typename Vari>
-  Vari** save_varis__(Vari** dest) const {
-    return apply([dest](auto... s) { return save_varis(dest, s...); },
-                 captures_);
-  }
 };
 
 }  // namespace internal
@@ -229,6 +128,23 @@ struct ode_closure_adapter {
   auto operator()(const T0& t, const T1& y, std::ostream* msgs, const F& f,
                   Args... args) const {
     return f(msgs, t, y, args...);
+  }
+};
+
+struct integrate_ode_closure_adapter {
+  template <typename F, typename T0, typename T1, typename... Args,
+            typename = require_stan_closure_t<F>>
+  auto operator()(const T0& t, const T1& y, std::ostream* msgs, const F& f,
+                  Args... args) const {
+    return to_vector(f(msgs, t, to_array_1d(y), args...));
+  }
+
+  template <typename F, typename T0, typename T1, typename T2,
+            typename = require_not_stan_closure_t<F>>
+  auto operator()(const T0& t, const T1& y, std::ostream* msgs, const F& f,
+                  const std::vector<T2>& theta, const std::vector<double>& x,
+                  const std::vector<int>& x_int) const {
+    return to_vector(f(t, to_array_1d(y), theta, x, x_int, msgs));
   }
 };
 

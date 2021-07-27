@@ -2,6 +2,7 @@
 #define STAN_MATH_REV_CORE_DEEP_COPY_VARS_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/eval.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
 
@@ -19,7 +20,8 @@ namespace math {
  * @param arg For lvalue references this will be passed by reference.
  *  Otherwise it will be moved.
  */
-template <typename Arith, typename = require_arithmetic_t<scalar_type_t<Arith>>>
+template <typename Arith, typename = require_arithmetic_t<scalar_type_t<Arith>>,
+          typename = require_not_stan_closure_t<Arith>>
 inline Arith deep_copy_vars(Arith&& arg) {
   return std::forward<Arith>(arg);
 }
@@ -88,10 +90,13 @@ inline auto deep_copy_vars(EigT&& arg) {
  * @param f A closure containing vars
  * @return A new closure containing vars
  */
-template <typename F, require_stan_closure_t<F>* = nullptr,
-          require_not_arithmetic_t<scalar_type_t<F>>* = nullptr>
-inline auto deep_copy_vars(F&& f) {
-  return f.deep_copy_vars__();
+template <typename F, require_stan_closure_t<F>* = nullptr>
+inline auto deep_copy_vars(const F& f) {
+  return apply(
+      [&f](const auto&... s) {
+        return typename F::CopyOf__(f.f_, eval(deep_copy_vars(s))...);
+      },
+      f.captures_);
 }
 
 }  // namespace math

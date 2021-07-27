@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/eval.hpp>
 #include <cstddef>
 #include <vector>
 
@@ -79,7 +80,11 @@ inline auto value_of(EigMat&& M) {
 template <typename F, require_stan_closure_t<F>* = nullptr,
           require_not_st_arithmetic<F>* = nullptr>
 inline auto value_of(const F& f) {
-  return f.value_of__();
+  return apply(
+      [&f](const auto&... s) {
+        return typename F::ValueOf__(f.f_, eval(value_of(s))...);
+      },
+      f.captures_);
 }
 
 }  // namespace math

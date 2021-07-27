@@ -138,7 +138,9 @@ inline vari** save_varis(vari** dest, EigT&& x, Pargs&&... args) {
 template <typename F, require_stan_closure_t<F>*, require_not_st_arithmetic<F>*,
           typename... Pargs>
 inline vari** save_varis(vari** dest, F& f, Pargs&&... args) {
-  return save_varis(f.save_varis__(dest), std::forward<Pargs>(args)...);
+  return save_varis(
+      apply([dest](auto... s) { return save_varis(dest, s...); }, f.captures_),
+      std::forward<Pargs>(args)...);
 }
 
 /**

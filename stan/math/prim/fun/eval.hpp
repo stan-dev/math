@@ -8,6 +8,18 @@ namespace stan {
 namespace math {
 
 /**
+ * Inputs which have a closure type are forwarded unmodified
+ *
+ * @tparam T Input type
+ * @param[in] arg Input argument
+ * @return Forwarded input argument
+ **/
+template <typename T, require_stan_closure_t<T>* = nullptr>
+inline T eval(T&& arg) {
+  return std::forward<T>(arg);
+}
+
+/**
  * Inputs which have a plain_type equal to the own time are forwarded
  * unmodified (for Eigen expressions these types are different)
  *
@@ -16,7 +28,8 @@ namespace math {
  * @return Forwarded input argument
  **/
 template <typename T,
-          require_same_t<std::decay_t<T>, plain_type_t<T>>* = nullptr>
+          require_same_t<std::decay_t<T>, plain_type_t<T>>* = nullptr,
+          require_not_stan_closure_t<T>* = nullptr>
 inline T eval(T&& arg) {
   return std::forward<T>(arg);
 }
@@ -30,7 +43,8 @@ inline T eval(T&& arg) {
  * @return Eval'd argument
  **/
 template <typename T,
-          require_not_same_t<std::decay_t<T>, plain_type_t<T>>* = nullptr>
+          require_not_same_t<std::decay_t<T>, plain_type_t<T>>* = nullptr,
+          require_not_stan_closure_t<T>* = nullptr>
 inline decltype(auto) eval(const T& arg) {
   return arg.eval();
 }

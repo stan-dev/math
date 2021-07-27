@@ -20,75 +20,19 @@ namespace internal {
  * state as an Eigen::Matrix. The adapter converts to and from these forms
  * so that the old ODE interfaces can work.
  */
-template <bool is_closure, typename F, bool Ref>
-struct integrate_ode_std_vector_interface_adapter_impl;
-
-template <typename F, bool Ref>
-struct integrate_ode_std_vector_interface_adapter_impl<false, F, Ref> {
-  using captured_scalar_t__ = double;
-  using ValueOf__
-      = integrate_ode_std_vector_interface_adapter_impl<false, F, false>;
-  using CopyOf__
-      = integrate_ode_std_vector_interface_adapter_impl<false, F, false>;
+template <typename F>
+struct integrate_ode_std_vector_interface_adapter {
   const F& f_;
-  explicit integrate_ode_std_vector_interface_adapter_impl(const F& f)
-      : f_(f) {}
+  explicit integrate_ode_std_vector_interface_adapter(const F& f) : f_(f) {}
 
   template <typename T0, typename T1, typename T2>
-  auto operator()(std::ostream* msgs, const T0& t,
-                  const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
-                  const std::vector<T2>& theta, const std::vector<double>& x,
+  auto operator()(const T0& t, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
+                  std::ostream* msgs, const std::vector<T2>& theta,
+                  const std::vector<double>& x,
                   const std::vector<int>& x_int) const {
     return to_vector(f_(t, to_array_1d(y), theta, x, x_int, msgs));
   }
-  size_t count_vars__() const { return 0; }
-  auto value_of__() const { return ValueOf__(f_); }
-  auto deep_copy_vars__() const { return CopyOf__(f_); }
-  void zero_adjoints__() {}
-  double* accumulate_adjoints__(double* dest) const { return dest; }
-  template <typename Vari>
-  Vari** save_varis__(Vari** dest) const {
-    return dest;
-  }
 };
-
-template <typename F, bool Ref>
-struct integrate_ode_std_vector_interface_adapter_impl<true, F, Ref> {
-  using captured_scalar_t__ = typename F::captured_scalar_t__;
-  using ValueOf__ = integrate_ode_std_vector_interface_adapter_impl<
-      true, typename F::ValueOf__, false>;
-  using CopyOf__ = integrate_ode_std_vector_interface_adapter_impl<
-      true, typename F::CopyOf__, false>;
-  capture_type_t<F, Ref> f_;
-
-  explicit integrate_ode_std_vector_interface_adapter_impl(const F& f)
-      : f_(f) {}
-
-  template <typename T0, typename T1, typename T2>
-  auto operator()(std::ostream* msgs, const T0& t,
-                  const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
-                  const std::vector<T2>& theta, const std::vector<double>& x,
-                  const std::vector<int>& x_int) const {
-    return to_vector(f_(msgs, t, to_array_1d(y), theta, x, x_int));
-  }
-
-  size_t count_vars__() const { return f_.count_vars__(); }
-  auto value_of__() const { return ValueOf__(f_.value_of__()); }
-  auto deep_copy_vars__() const { return CopyOf__(f_.deep_copy_vars__()); }
-  void zero_adjoints__() { f_.zero_adjoints__(); }
-  double* accumulate_adjoints__(double* dest) const {
-    return f_.accumulate_adjoints__(dest);
-  }
-  template <typename Vari>
-  Vari** save_varis__(Vari** dest) const {
-    return f_.save_varis__(dest);
-  }
-};
-
-template <typename F>
-using integrate_ode_std_vector_interface_adapter
-    = integrate_ode_std_vector_interface_adapter_impl<is_stan_closure<F>::value,
-                                                      F, true>;
 
 }  // namespace internal
 
