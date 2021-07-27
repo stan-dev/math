@@ -3,6 +3,13 @@
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
+TEST(OpenCLPrim, sort_asc_error) {
+    stan::math::matrix_cl<double> a(2,3);
+    stan::math::matrix_cl<int> b(2,3);
+
+  EXPECT_THROW(stan::math::sort_asc(a), std::invalid_argument);
+  EXPECT_THROW(stan::math::sort_asc(b), std::invalid_argument);
+}
 
 TEST(OpenCLPrim, sort_asc_double_simple) {
   Eigen::VectorXd a(9);

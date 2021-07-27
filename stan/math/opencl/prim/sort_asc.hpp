@@ -13,11 +13,14 @@ namespace stan {
 namespace math {
 
 /**
+ * Sort the (row)vector in ascending order.
+ * @param input vector of row vector to sort
  */
 template <typename T,
           require_all_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
 inline auto sort_asc(T&& input) {
   using T_val = value_type_t<T>;
+  check_vector("sort_asc(OpenCL)", "input", input);
   matrix_cl<T_val> a = std::forward<T>(input);
   matrix_cl<T_val> b(a.rows(), a.cols());
   matrix_cl<T_val>* in_ptr = &a;
@@ -27,9 +30,9 @@ inline auto sort_asc(T&& input) {
   int local = 64;
   for (int run_len = 1; run_len < input.size(); run_len *= 2) {
     int runs = (input.size() + run_len - 1) / run_len;
-    opencl_kernels::sort_asc<T_val>::merge_step(cl::NDRange(4 * compute_units * local),
-                               cl::NDRange(local), *out_ptr, *in_ptr, run_len,
-                               input.size(), (runs + 1) / 2);
+    opencl_kernels::sort_asc<T_val>::merge_step(
+        cl::NDRange(4 * compute_units * local), cl::NDRange(local), *out_ptr,
+        *in_ptr, run_len, input.size(), (runs + 1) / 2);
     std::swap(in_ptr, out_ptr);
   }
   return *in_ptr;
