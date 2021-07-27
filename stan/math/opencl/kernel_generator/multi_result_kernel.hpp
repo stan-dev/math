@@ -267,7 +267,7 @@ class expressions_cl {
    */
   explicit expressions_cl(T_expressions&&... expressions)
       : expressions_(
-          T_expressions(std::forward<T_expressions>(expressions))...) {}
+            T_expressions(std::forward<T_expressions>(expressions))...) {}
 
  private:
   std::tuple<T_expressions...> expressions_;
@@ -327,8 +327,8 @@ class results_cl {
   void operator=(expressions_cl<T_expressions...>&& exprs) {
     index_apply<sizeof...(T_expressions)>([this, &exprs](auto... Is) mutable {
       assignment_impl(std::tuple_cat(make_assignment_pair(
-          std::get<Is>(results_), std::forward<T_expressions>(
-                                      std::get<Is>(exprs.expressions_)))...));
+          std::get<Is>(results_),
+          std::forward<T_expressions>(std::get<Is>(exprs.expressions_)))...));
     });
   }
 
