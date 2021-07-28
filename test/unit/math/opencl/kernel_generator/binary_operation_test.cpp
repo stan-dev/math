@@ -65,7 +65,7 @@ TEST(KernelGenerator, addition_test) {
                                                                        \
     Matrix<res_type, -1, -1> correct                                   \
         = m1.array() operation m2.cast<double>().array();              \
-    EXPECT_TYPED_MATRIX_NEAR(res, correct, 1e-9, res_type);            \
+    EXPECT_MATRIX_NEAR(res, correct, 1e-9);            \
   }
 
 BINARY_OPERATION_TEST(subtraction_test, -, double);
