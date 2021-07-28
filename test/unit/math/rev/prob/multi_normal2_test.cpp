@@ -355,31 +355,31 @@ void test_all_multi_normal2() {
         test_grad_multi_normal(
             vectorized_multi_normal_fun<is_row_vec_y, is_row_vec_mu>(3, 1, ii,
                                                                      jj),
-            y_, mu_, get_vvar(sigma_));
+            y_, mu_, stan::math::to_var(sigma_));
         test_grad_multi_normal(
             vectorized_multi_normal_fun<is_row_vec_y, is_row_vec_mu>(3, 1, ii,
                                                                      jj),
-            y_, get_vvar(mu_), sigma_);
+            y_, stan::math::to_var(mu_), sigma_);
         test_grad_multi_normal(
             vectorized_multi_normal_fun<is_row_vec_y, is_row_vec_mu>(3, 1, ii,
                                                                      jj),
-            y_, get_vvar(mu_), get_vvar(sigma_));
+            y_, stan::math::to_var(mu_), stan::math::to_var(sigma_));
         test_grad_multi_normal(
             vectorized_multi_normal_fun<is_row_vec_y, is_row_vec_mu>(3, 1, ii,
                                                                      jj),
-            get_vvar(y_), mu_, sigma_);
+            stan::math::to_var(y_), mu_, sigma_);
         test_grad_multi_normal(
             vectorized_multi_normal_fun<is_row_vec_y, is_row_vec_mu>(3, 1, ii,
                                                                      jj),
-            get_vvar(y_), mu_, get_vvar(sigma_));
+            stan::math::to_var(y_), mu_, stan::math::to_var(sigma_));
         test_grad_multi_normal(
             vectorized_multi_normal_fun<is_row_vec_y, is_row_vec_mu>(3, 1, ii,
                                                                      jj),
-            get_vvar(y_), get_vvar(mu_), sigma_);
+            stan::math::to_var(y_), stan::math::to_var(mu_), sigma_);
         test_grad_multi_normal(
             vectorized_multi_normal_fun<is_row_vec_y, is_row_vec_mu>(3, 1, ii,
                                                                      jj),
-            get_vvar(y_), get_vvar(mu_), get_vvar(sigma_));
+            stan::math::to_var(y_), stan::math::to_var(mu_), stan::math::to_var(sigma_));
       }
   }
 
@@ -416,25 +416,25 @@ void test_all_multi_normal2() {
         sigma_);
     test_grad_multi_normal(
         vectorized_multi_normal_fun<is_row_vec_y, is_row_vec_mu>(3, 2), y_, mu_,
-        get_vvar(sigma_));
+        stan::math::to_var(sigma_));
     test_grad_multi_normal(
         vectorized_multi_normal_fun<is_row_vec_y, is_row_vec_mu>(3, 2), y_,
-        get_vvar(mu_), sigma_);
+        stan::math::to_var(mu_), sigma_);
     test_grad_multi_normal(
         vectorized_multi_normal_fun<is_row_vec_y, is_row_vec_mu>(3, 2), y_,
-        get_vvar(mu_), get_vvar(sigma_));
+        stan::math::to_var(mu_), stan::math::to_var(sigma_));
     test_grad_multi_normal(
         vectorized_multi_normal_fun<is_row_vec_y, is_row_vec_mu>(3, 2),
-        get_vvar(y_), mu_, sigma_);
+        stan::math::to_var(y_), mu_, sigma_);
     test_grad_multi_normal(
         vectorized_multi_normal_fun<is_row_vec_y, is_row_vec_mu>(3, 2),
-        get_vvar(y_), mu_, get_vvar(sigma_));
+        stan::math::to_var(y_), mu_, stan::math::to_var(sigma_));
     test_grad_multi_normal(
         vectorized_multi_normal_fun<is_row_vec_y, is_row_vec_mu>(3, 2),
-        get_vvar(y_), get_vvar(mu_), sigma_);
+        stan::math::to_var(y_), stan::math::to_var(mu_), sigma_);
     test_grad_multi_normal(
         vectorized_multi_normal_fun<is_row_vec_y, is_row_vec_mu>(3, 2),
-        get_vvar(y_), get_vvar(mu_), get_vvar(sigma_));
+        stan::math::to_var(y_), stan::math::to_var(mu_), stan::math::to_var(sigma_));
   }
   {
     std::vector<double> y_(1), mu_(1), sigma_(1);
@@ -447,25 +447,25 @@ void test_all_multi_normal2() {
         sigma_);
     test_grad_multi_normal(
         vectorized_multi_normal_fun<is_row_vec_y, is_row_vec_mu>(1, 1), y_, mu_,
-        get_vvar(sigma_));
+        stan::math::to_var(sigma_));
     test_grad_multi_normal(
         vectorized_multi_normal_fun<is_row_vec_y, is_row_vec_mu>(1, 1), y_,
-        get_vvar(mu_), sigma_);
+        stan::math::to_var(mu_), sigma_);
     test_grad_multi_normal(
         vectorized_multi_normal_fun<is_row_vec_y, is_row_vec_mu>(1, 1), y_,
-        get_vvar(mu_), get_vvar(sigma_));
+        stan::math::to_var(mu_), stan::math::to_var(sigma_));
     test_grad_multi_normal(
         vectorized_multi_normal_fun<is_row_vec_y, is_row_vec_mu>(1, 1),
-        get_vvar(y_), mu_, sigma_);
+        stan::math::to_var(y_), mu_, sigma_);
     test_grad_multi_normal(
         vectorized_multi_normal_fun<is_row_vec_y, is_row_vec_mu>(1, 1),
-        get_vvar(y_), mu_, get_vvar(sigma_));
+        stan::math::to_var(y_), mu_, stan::math::to_var(sigma_));
     test_grad_multi_normal(
         vectorized_multi_normal_fun<is_row_vec_y, is_row_vec_mu>(1, 1),
-        get_vvar(y_), get_vvar(mu_), sigma_);
+        stan::math::to_var(y_), stan::math::to_var(mu_), sigma_);
     test_grad_multi_normal(
         vectorized_multi_normal_fun<is_row_vec_y, is_row_vec_mu>(1, 1),
-        get_vvar(y_), get_vvar(mu_), get_vvar(sigma_));
+        stan::math::to_var(y_), stan::math::to_var(mu_), stan::math::to_var(sigma_));
   }
 }
 
