@@ -112,6 +112,14 @@
       << stan::math::test::type_name<__VA_ARGS__>();
 
 /**
+ * Tests if given value is of given type.
+ *
+ * @param type type
+ * @param value value (code for this one can contain commas)
+ **/
+#define EXPECT_TYPE(type, ...) EXPECT_SAME_TYPE(type, decltype(__VA_ARGS__))
+
+/**
  * Count the number of times a substring is found in
  * a supplied string.
  *
@@ -161,26 +169,8 @@ int count_matches(const std::string& target, const std::string& s) {
 #define EXPECT_THROW_MSG(expr, T_e, msg) \
   EXPECT_THROW_MSG_WITH_COUNT(expr, T_e, msg, 1)
 
-}  // namespace test
-
 namespace stan {
 namespace test {
-template <int R, int C>
-void expect_type_vector(const Eigen::Matrix<double, R, C>& x) {
-  EXPECT_EQ(Eigen::Dynamic, R);
-  EXPECT_EQ(1, C);
-}
-template <int R, int C>
-void expect_type_row_vector(const Eigen::Matrix<double, R, C>& x) {
-  EXPECT_EQ(Eigen::Dynamic, C);
-  EXPECT_EQ(1, R);
-}
-
-template <int R, int C>
-void expect_type_matrix(const Eigen::Matrix<double, R, C>& x) {
-  EXPECT_EQ(Eigen::Dynamic, C);
-  EXPECT_EQ(Eigen::Dynamic, R);
-}
 
 auto make_sparse_matrix_random(int rows, int cols) {
   using eigen_triplet = Eigen::Triplet<double>;
