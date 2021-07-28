@@ -2,7 +2,6 @@
 #define STAN_MATH_PRIM_FUNCTOR_CLOSURE_ADAPTER_HPP
 
 #include <stan/math/prim/meta/error_index.hpp>
-#include <stan/math/prim/meta/is_stan_closure.hpp>
 #include <stan/math/prim/meta/return_type.hpp>
 #include <stan/math/prim/functor/apply.hpp>
 #include <ostream>
@@ -132,19 +131,10 @@ struct ode_closure_adapter {
 };
 
 struct integrate_ode_closure_adapter {
-  template <typename F, typename T0, typename T1, typename... Args,
-            typename = require_stan_closure_t<F>>
+  template <typename F, typename T0, typename T1, typename... Args>
   auto operator()(const T0& t, const T1& y, std::ostream* msgs, const F& f,
                   Args... args) const {
     return to_vector(f(msgs, t, to_array_1d(y), args...));
-  }
-
-  template <typename F, typename T0, typename T1, typename T2,
-            typename = require_not_stan_closure_t<F>>
-  auto operator()(const T0& t, const T1& y, std::ostream* msgs, const F& f,
-                  const std::vector<T2>& theta, const std::vector<double>& x,
-                  const std::vector<int>& x_int) const {
-    return to_vector(f(t, to_array_1d(y), theta, x, x_int, msgs));
   }
 };
 

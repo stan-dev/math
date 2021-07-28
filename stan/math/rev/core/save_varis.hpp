@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_CORE_SAVE_VARIS_HPP
 #define STAN_MATH_REV_CORE_SAVE_VARIS_HPP
 
+#include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/meta.hpp>

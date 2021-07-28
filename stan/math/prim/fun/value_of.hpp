@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/eval.hpp>
+#include <stan/math/prim/functor/apply.hpp>
 #include <cstddef>
 #include <vector>
 
