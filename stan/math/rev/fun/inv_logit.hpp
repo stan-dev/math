@@ -18,27 +18,16 @@ namespace math {
  * \f$\frac{d}{dx} \mbox{logit}^{-1}(x) = \mbox{logit}^{-1}(x) (1 -
  * \mbox{logit}^{-1}(x))\f$.
  *
+ * @tparam T Arithmetic or a type inheriting from `EigenBase`.
  * @param a Argument variable.
  * @return Inverse logit of argument.
  */
-inline var inv_logit(const var& a) {
+template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
+inline auto inv_logit(const var_value<T>& a) {
   return make_callback_var(inv_logit(a.val()), [a](auto& vi) mutable {
-    a.adj() += vi.adj() * vi.val() * (1.0 - vi.val());
-  });
-}
-
-/**
- * Return the inverse logit of the elements of x
- *
- * @tparam T type of x
- * @param x argument
- * @return elementwise inverse logit of x
- */
-template <typename T, require_var_matrix_t<T>* = nullptr>
-inline auto inv_logit(const T& x) {
-  return make_callback_var(inv_logit(x.val()), [x](const auto& vi) mutable {
-    x.adj() += (vi.adj().array() * vi.val().array() * (1.0 - vi.val().array()))
-                   .matrix();
+    as_array_or_scalar(a).adj() += as_array_or_scalar(vi.adj())
+                                   * as_array_or_scalar(vi.val())
+                                   * (1.0 - as_array_or_scalar(vi.val()));
   });
 }
 
