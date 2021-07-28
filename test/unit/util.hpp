@@ -11,24 +11,6 @@
 #include <string>
 
 /**
- * Tests for exact elementwise equality of input matrices of
- * the supplied type with he EXPECT_EQ macro from GTest.
- *
- * @param A first input matrix to compare
- * @param B second input matrix to compare
- * @param type types of elements in matrices A and B
- */
-#define EXPECT_TYPED_MATRIX_EQ(A, B, type)         \
-  {                                                \
-    const Eigen::Matrix<type, -1, -1>& A_eval = A; \
-    const Eigen::Matrix<type, -1, -1>& B_eval = B; \
-    EXPECT_EQ(A_eval.rows(), B_eval.rows());       \
-    EXPECT_EQ(A_eval.cols(), B_eval.cols());       \
-    for (int i = 0; i < A_eval.size(); i++)        \
-      EXPECT_EQ(A_eval(i), B_eval(i));             \
-  }
-
-/**
  * Tests for  exact elementwise equality of the input matrices
  * with the EXPECT_EQ macro from GTest.
  *
