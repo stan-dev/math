@@ -48,7 +48,7 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch.
  */
 template <bool propto, typename T_y, typename T_x, typename T_alpha,
-          typename T_beta, require_eigen_t<T_x>* = nullptr>
+          typename T_beta, require_matrix_t<T_x>* = nullptr>
 return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
                                                          const T_x& x,
                                                          const T_alpha& alpha,
@@ -113,8 +113,8 @@ return_type_t<T_x, T_alpha, T_beta> poisson_log_glm_lpmf(const T_y& y,
       = as_array_or_scalar(y_val_vec) - exp(theta.array());
   double theta_derivative_sum = sum(theta_derivative);
   if (!std::isfinite(theta_derivative_sum)) {
-    check_finite(function, "Weight vector", beta);
-    check_finite(function, "Intercept", alpha);
+    check_finite(function, "Weight vector", beta_val);
+    check_finite(function, "Intercept", alpha_val);
     check_finite(function, "Matrix of independent variables", theta);
   }
 

@@ -40,9 +40,9 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch.
  */
 template <bool propto, typename T_y, typename T_x, typename T_alpha,
-          typename T_beta, require_eigen_t<T_x>* = nullptr,
-          require_eigen_col_vector_t<T_alpha>* = nullptr,
-          require_eigen_matrix_dynamic_t<T_beta>* = nullptr>
+          typename T_beta, require_matrix_t<T_x>* = nullptr,
+          require_col_vector_t<T_alpha>* = nullptr,
+          require_matrix_dynamic_t<T_beta>* = nullptr>
 return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
     const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta) {
   using T_partials_return = partials_return_t<T_x, T_alpha, T_beta>;
@@ -117,10 +117,10 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   // when we have newer Eigen  T_partials_return logp =
   // lin(Eigen::all,y-1).sum() + log(inv_sum_exp_lin).sum() - lin_max.sum();
 
-  if (!std::isfinite(logp)) {
-    check_finite(function, "Weight vector", beta_ref);
-    check_finite(function, "Intercept", alpha_ref);
-    check_finite(function, "Matrix of independent variables", x_ref);
+  if (unlikely(!std::isfinite(logp))) {
+    check_finite(function, "Weight vector", beta_val);
+    check_finite(function, "Intercept", alpha_val);
+    check_finite(function, "Matrix of independent variables", x_val);
   }
 
   // Compute the derivatives.

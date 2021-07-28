@@ -46,7 +46,7 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch.
  */
 template <bool propto, typename T_y, typename T_x, typename T_alpha,
-          typename T_beta, require_eigen_t<T_x>* = nullptr>
+          typename T_beta, require_matrix_t<T_x>* = nullptr>
 return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
     const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta) {
   using Eigen::Array;
@@ -76,7 +76,8 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   }
 
   const auto& y_ref = to_ref(y);
-  check_bounded(function, "Vector of dependent variables", y_ref, 0, 1);
+  const auto& y_val = value_of_rec(y_ref);
+  check_bounded(function, "Vector of dependent variables", y_val, 0, 1);
 
   if (!include_summand<propto, T_x, T_alpha, T_beta>::value) {
     return 0;
@@ -86,7 +87,6 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   T_alpha_ref alpha_ref = alpha;
   T_beta_ref beta_ref = beta;
 
-  const auto& y_val = value_of_rec(y_ref);
   const auto& x_val
       = to_ref_if<!is_constant<T_beta>::value>(value_of_rec(x_ref));
   const auto& alpha_val = value_of_rec(alpha_ref);
@@ -120,9 +120,9 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
           .select(-exp_m_ytheta,
                   (ytheta < -cutoff).select(ytheta, -log1p(exp_m_ytheta))));
 
-  if (!std::isfinite(logp)) {
-    check_finite(function, "Weight vector", beta);
-    check_finite(function, "Intercept", alpha);
+  if (unlikely(!std::isfinite(logp))) {
+    check_finite(function, "Weight vector", beta_val);
+    check_finite(function, "Intercept", alpha_val);
     check_finite(function, "Matrix of independent variables", ytheta);
   }
 
