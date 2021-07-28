@@ -9,36 +9,36 @@ TEST(AgradRevMatrix, initialize_fill) {
   using stan::math::initialize_fill;
   using std::vector;
 
-  AVAR x;
-  AVAR y = 10;
+  stan::math::var x;
+  stan::math::var y = 10;
   initialize_fill(x, y);
   EXPECT_FLOAT_EQ(10.0, x.val());
 
-  AVEC z(2);
-  AVAR a = 15;
+  std::vector<stan::math::var> z(2);
+  stan::math::var a = 15;
   initialize_fill(z, a);
   EXPECT_FLOAT_EQ(15.0, z[0].val());
   EXPECT_FLOAT_EQ(15.0, z[1].val());
   EXPECT_EQ(2U, z.size());
 
-  Matrix<AVAR, Dynamic, Dynamic> m(2, 3);
-  initialize_fill(m, AVAR(12));
+  Matrix<stan::math::var, Dynamic, Dynamic> m(2, 3);
+  initialize_fill(m, stan::math::var(12));
   for (int i = 0; i < 2; ++i)
     for (int j = 0; j < 3; ++j)
       EXPECT_FLOAT_EQ(12.0, m(i, j).val());
 
-  Matrix<AVAR, Dynamic, 1> rv(3);
-  initialize_fill(rv, AVAR(13));
+  Matrix<stan::math::var, Dynamic, 1> rv(3);
+  initialize_fill(rv, stan::math::var(13));
   for (int i = 0; i < 3; ++i)
     EXPECT_FLOAT_EQ(13.0, rv(i).val());
 
-  Matrix<AVAR, 1, Dynamic> v(4);
-  initialize_fill(v, AVAR(22));
+  Matrix<stan::math::var, 1, Dynamic> v(4);
+  initialize_fill(v, stan::math::var(22));
   for (int i = 0; i < 4; ++i)
     EXPECT_FLOAT_EQ(22.0, v(i).val());
 
-  vector<vector<AVAR>> d(3, vector<AVAR>(2));
-  initialize_fill(d, AVAR(54));
+  vector<vector<stan::math::var>> d(3, vector<stan::math::var>(2));
+  initialize_fill(d, stan::math::var(54));
   for (size_t i = 0; i < 3; ++i)
     for (size_t j = 0; j < 2; ++j)
       EXPECT_FLOAT_EQ(54, d[i][j].val());
