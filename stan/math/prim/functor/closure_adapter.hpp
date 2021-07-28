@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta/error_index.hpp>
 #include <stan/math/prim/meta/return_type.hpp>
+#include <stan/math/prim/meta/is_stan_closure.hpp>
 #include <stan/math/prim/functor/apply.hpp>
 #include <ostream>
 
