@@ -101,6 +101,35 @@
   }
 
 /**
+ * Tests if given types are the same type.
+ *
+ * @param a first type
+ * @param b second type (code for this one can contain commas)
+ **/
+#define EXPECT_SAME_TYPE(a, ...)                                           \
+  EXPECT_TRUE((std::is_same<a, __VA_ARGS__>::value))                       \
+      << "Type a is" << stan::math::test::type_name<a>() << ". Type b is " \
+      << stan::math::test::type_name<__VA_ARGS__>();
+
+/**
+ * Count the number of times a substring is found in
+ * a supplied string.
+ *
+ * @param target substring to match in s
+ * @param s string to match count occurrences
+ * @return number of found occurrences of target in s
+ */
+int count_matches(const std::string& target, const std::string& s) {
+  if (target.size() == 0)
+    return -1;  // error
+  int count = 0;
+  for (size_t pos = 0; (pos = s.find(target, pos)) != std::string::npos;
+       pos += target.size())
+    ++count;
+  return count;
+}
+
+/**
  * Tests if the expression throws the expected
  * exception with a specific number of occurrences of
  * the expected message in the throw message.
@@ -132,47 +161,6 @@
 #define EXPECT_THROW_MSG(expr, T_e, msg) \
   EXPECT_THROW_MSG_WITH_COUNT(expr, T_e, msg, 1)
 
-/**
- * Tests if given types are the same type.
- *
- * @param a first type
- * @param b second type (code for this one can contain commas)
- **/
-#define EXPECT_SAME_TYPE(a, ...)                                           \
-  EXPECT_TRUE((std::is_same<a, __VA_ARGS__>::value))                       \
-      << "Type a is" << stan::math::test::type_name<a>() << ". Type b is " \
-      << stan::math::test::type_name<__VA_ARGS__>();
-
-/**
- * Count the number of times a substring is found in
- * a supplied string.
- *
- * @param target substring to match in s
- * @param s string to match count occurrences
- * @return number of found occurrences of target in s
- */
-int count_matches(const std::string& target, const std::string& s) {
-  if (target.size() == 0)
-    return -1;  // error
-  int count = 0;
-  for (size_t pos = 0; (pos = s.find(target, pos)) != std::string::npos;
-       pos += target.size())
-    ++count;
-  return count;
-}
-
-/**
- * Test for equality of the supplied types
- *
- * @tparam T1 first tpye
- * @tparam T2 second type
- */
-namespace test {
-template <typename T1, typename T2>
-void expect_same_type() {
-  bool b = std::is_same<T1, T2>::value;
-  EXPECT_TRUE(b);
-}
 }  // namespace test
 
 namespace stan {

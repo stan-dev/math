@@ -1,7 +1,14 @@
 #include <stan/math/prim.hpp>
-#include <test/unit/math/prim/fun/promote_type_test_util.hpp>
 #include <gtest/gtest.h>
+#include <boost/typeof/typeof.hpp>
 #include <vector>
+
+template <typename T, typename S>
+void expect_type(S s) {
+  typedef BOOST_TYPEOF_TPL(stan::math::promote_scalar<T>(s)) result_t;
+  bool same = std::is_same<S, result_t>::value;
+  EXPECT_TRUE(same);
+}
 
 TEST(MathFunctionsPromoteScalar, Match) {
   using stan::math::promote_scalar;
