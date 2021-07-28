@@ -19,7 +19,7 @@ TEST(AgradRev, multiple_grads) {
   stan::math::var e = 3.0;
   stan::math::var f = d * e;
 
-  std::vector<stan::math::var> x {d, e};
+  std::vector<stan::math::var> x{d, e};
   std::vector<double> grad_f;
   f.grad(x, grad_f);
 

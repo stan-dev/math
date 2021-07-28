@@ -70,9 +70,8 @@ TEST(MathMetaPrim, ScalarTypeArrayConstConst) {
   using std::vector;
   // These ones work because pointers are always copied
   EXPECT_SAME_TYPE(double const*,
-                         scalar_type<const vector<double const*>>::type);
-  EXPECT_SAME_TYPE(int const*,
-                         scalar_type<const vector<int const*>>::type);
-  EXPECT_SAME_TYPE(
-      double const*, scalar_type<const vector<vector<double const*>>>::type);
+                   scalar_type<const vector<double const*>>::type);
+  EXPECT_SAME_TYPE(int const*, scalar_type<const vector<int const*>>::type);
+  EXPECT_SAME_TYPE(double const*,
+                   scalar_type<const vector<vector<double const*>>>::type);
 }

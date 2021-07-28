@@ -44,7 +44,7 @@ TEST(AgradRevMatrix, initializeVariable) {
     EXPECT_FLOAT_EQ(7.0, cc(m).val());
 
   Matrix<stan::math::var, Dynamic, Dynamic> init_val(3, 4);
-  vector<Matrix<stan::math::var, Dynamic, Dynamic> > dd(5, init_val);
+  vector<Matrix<stan::math::var, Dynamic, Dynamic>> dd(5, init_val);
   initialize_variable(dd, stan::math::var(11.0));
   for (size_t i = 0; i < dd.size(); ++i)
     for (int m = 0; m < dd[0].rows(); ++m)

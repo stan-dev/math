@@ -27,7 +27,7 @@ TEST(AgradRev, varStack) {
   stan::math::var f = a * b;
   EXPECT_FLOAT_EQ(-6.0, f.val());
 
-  std::vector<stan::math::var> x {a, b};
+  std::vector<stan::math::var> x{a, b};
   std::vector<double> grad_f;
   f.grad(x, grad_f);
   EXPECT_FLOAT_EQ(-3.0, grad_f[0]);

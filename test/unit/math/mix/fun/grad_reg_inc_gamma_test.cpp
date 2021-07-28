@@ -82,7 +82,7 @@ TEST(ProbInternalMath, gradRegIncGamma_fv_1stderiv) {
 
   fvar<var> z = stan::math::grad_reg_inc_gamma(a, b, g, dig);
 
-  std::vector<stan::math::var> y1 {a.val_};
+  std::vector<stan::math::var> y1{a.val_};
   std::vector<double> grad1;
   z.val_.grad(y1, grad1);
   EXPECT_NEAR(0.2134999674954450667, grad1[0], 1e-6);
@@ -103,7 +103,7 @@ TEST(ProbInternalMath, gradRegIncGamma_fv_2ndderiv) {
 
   fvar<var> z = stan::math::grad_reg_inc_gamma(a, b, g, dig);
 
-  std::vector<stan::math::var> y1 {a.val_};
+  std::vector<stan::math::var> y1{a.val_};
   std::vector<double> grad1;
   z.d_.grad(y1, grad1);
   EXPECT_NEAR(-0.546236927878295422, grad1[0], 1e-6);

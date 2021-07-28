@@ -14,8 +14,7 @@ TEST(MathMetaMix, PartialsReturnTypeFvarFvarVar) {
   using stan::partials_return_type;
   using stan::math::fvar;
   using stan::math::var;
-  EXPECT_SAME_TYPE(fvar<var>,
-                         partials_return_type<fvar<fvar<var> > >::type);
+  EXPECT_SAME_TYPE(fvar<var>, partials_return_type<fvar<fvar<var> > >::type);
 }
 
 TEST(MathMetaMix, PartialsReturnTypeFvarVarTenParams) {

@@ -435,7 +435,7 @@ TEST(StanMath_integrate_1d_rev, TestBeta) {
   var I = integrate_1d(pdf, 0.0, 1.0, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  std::vector<stan::math::var> x {alpha, beta};
+  std::vector<stan::math::var> x{alpha, beta};
   std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
@@ -459,7 +459,7 @@ TEST(StanMath_integrate_1d_rev, TestCauchy) {
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  std::vector<stan::math::var> x {mu, sigma};
+  std::vector<stan::math::var> x{mu, sigma};
   std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
@@ -507,7 +507,7 @@ TEST(StanMath_integrate_1d_rev, TestDoubleExponential) {
           + integrate_1d(pdf, b, -a, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  std::vector<stan::math::var> x {mu, sigma};
+  std::vector<stan::math::var> x{mu, sigma};
   std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
@@ -577,7 +577,7 @@ TEST(StanMath_integrate_1d_rev, TestGamma) {
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  std::vector<stan::math::var> x {alpha, beta};
+  std::vector<stan::math::var> x{alpha, beta};
   std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
@@ -601,7 +601,7 @@ TEST(StanMath_integrate_1d_rev, TestGumbel) {
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  std::vector<stan::math::var> x {mu, beta};
+  std::vector<stan::math::var> x{mu, beta};
   std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
@@ -647,7 +647,7 @@ TEST(StanMath_integrate_1d_rev, TestLogistic) {
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  std::vector<stan::math::var> x {mu, sigma};
+  std::vector<stan::math::var> x{mu, sigma};
   std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
@@ -671,7 +671,7 @@ TEST(StanMath_integrate_1d_rev, TestLogNormal) {
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  std::vector<stan::math::var> x {mu, sigma};
+  std::vector<stan::math::var> x{mu, sigma};
   std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
@@ -695,7 +695,7 @@ TEST(StanMath_integrate_1d_rev, TestNormal) {
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  std::vector<stan::math::var> x {mu, sigma};
+  std::vector<stan::math::var> x{mu, sigma};
   std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
@@ -719,7 +719,7 @@ TEST(StanMath_integrate_1d_rev, TestPareto) {
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  std::vector<stan::math::var> x {m, alpha};
+  std::vector<stan::math::var> x{m, alpha};
   std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
@@ -744,7 +744,7 @@ TEST(StanMath_integrate_1d_rev, TestPareto2) {
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  std::vector<stan::math::var> x {mu, lambda, alpha};
+  std::vector<stan::math::var> x{mu, lambda, alpha};
   std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
@@ -791,7 +791,7 @@ TEST(StanMath_integrate_1d_rev, TestScaledInvChiSquare) {
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  std::vector<stan::math::var> x {nu, s};
+  std::vector<stan::math::var> x{nu, s};
   std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
@@ -816,7 +816,7 @@ TEST(StanMath_integrate_1d_rev, TestStudentT) {
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  std::vector<stan::math::var> x {nu, mu, sigma};
+  std::vector<stan::math::var> x{nu, mu, sigma};
   std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
@@ -839,7 +839,7 @@ TEST(StanMath_integrate_1d_rev, TestUniform) {
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  std::vector<stan::math::var> x {a, b};
+  std::vector<stan::math::var> x{a, b};
   std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
@@ -863,7 +863,7 @@ TEST(StanMath_integrate_1d_rev, TestVonMises) {
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  std::vector<stan::math::var> x {mu, kappa};
+  std::vector<stan::math::var> x{mu, kappa};
   std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);
@@ -887,7 +887,7 @@ TEST(StanMath_integrate_1d_rev, TestWeibull) {
   var I = integrate_1d(pdf, a, b, theta, {}, {}, msgs, 1e-8);
   EXPECT_FLOAT_EQ(1, I.val());
 
-  std::vector<stan::math::var> x {alpha, sigma};
+  std::vector<stan::math::var> x{alpha, sigma};
   std::vector<double> g;
   I.grad(x, g);
   EXPECT_FLOAT_EQ(1, 1 + g[0]);

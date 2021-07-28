@@ -136,7 +136,7 @@ TEST_F(algebra_solver_simple_eq_test, powell) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta
         = simple_eq_test(simple_eq_functor(), y, is_newton);
 
-    std::vector<stan::math::var> y_vec {y(0), y(1), y(2)};
+    std::vector<stan::math::var> y_vec{y(0), y(1), y(2)};
     std::vector<double> g;
     theta(k).grad(y_vec, g);
 
@@ -155,7 +155,7 @@ TEST_F(algebra_solver_simple_eq_test, powell_tuned) {
         = simple_eq_test(simple_eq_functor(), y, is_newton, true, scale_step,
                          xtol, ftol, maxfev);
 
-    std::vector<stan::math::var> y_vec {y(0), y(1), y(2)};
+    std::vector<stan::math::var> y_vec{y(0), y(1), y(2)};
     std::vector<double> g;
     theta(k).grad(y_vec, g);
 
@@ -203,7 +203,7 @@ TEST_F(algebra_solver_non_linear_eq_test, powell) {
     EXPECT_FLOAT_EQ(-y(1).val(), theta(1).val());
     EXPECT_FLOAT_EQ(y(2).val(), theta(2).val());
 
-    std::vector<stan::math::var> y_vec {y(0), y(1), y(2)};
+    std::vector<stan::math::var> y_vec{y(0), y(1), y(2)};
     std::vector<double> g;
     theta(k).grad(y_vec, g);
 
@@ -269,7 +269,7 @@ TEST_F(degenerate_eq_test, powell_guess1) {
     EXPECT_FLOAT_EQ(8, theta(0).val());
     EXPECT_FLOAT_EQ(8, theta(1).val());
 
-    std::vector<stan::math::var> y_vec {y(0), y(1)};
+    std::vector<stan::math::var> y_vec{y(0), y(1)};
     std::vector<double> g;
     theta(k).grad(y_vec, g);
 
@@ -290,7 +290,7 @@ TEST_F(degenerate_eq_test, powell_guess2) {
     EXPECT_FLOAT_EQ(5, theta(0).val());
     EXPECT_FLOAT_EQ(5, theta(0).val());
 
-    std::vector<stan::math::var> y_vec {y(0), y(1)};
+    std::vector<stan::math::var> y_vec{y(0), y(1)};
     std::vector<double> g;
     theta(k).grad(y_vec, g);
 
@@ -375,7 +375,7 @@ TEST_F(algebra_solver_simple_eq_test, newton) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta
         = simple_eq_test(simple_eq_functor(), y, is_newton);
 
-    std::vector<stan::math::var> y_vec {y(0), y(1), y(2)};
+    std::vector<stan::math::var> y_vec{y(0), y(1), y(2)};
     std::vector<double> g;
     theta(k).grad(y_vec, g);
 
@@ -394,7 +394,7 @@ TEST_F(algebra_solver_simple_eq_test, newton_tuned) {
         = simple_eq_test(simple_eq_functor(), y, is_newton, true, scale_step,
                          xtol, ftol, maxfev);
 
-    std::vector<stan::math::var> y_vec {y(0), y(1), y(2)};
+    std::vector<stan::math::var> y_vec{y(0), y(1), y(2)};
     std::vector<double> g;
     theta(k).grad(y_vec, g);
 
@@ -442,7 +442,7 @@ TEST_F(algebra_solver_non_linear_eq_test, newton) {
     EXPECT_FLOAT_EQ(-y(1).val(), theta(1).val());
     EXPECT_FLOAT_EQ(y(2).val(), theta(2).val());
 
-    std::vector<stan::math::var> y_vec {y(0), y(1), y(2)};
+    std::vector<stan::math::var> y_vec{y(0), y(1), y(2)};
     std::vector<double> g;
     theta(k).grad(y_vec, g);
 
@@ -510,7 +510,7 @@ TEST_F(degenerate_eq_test, newton_guess1) {
     EXPECT_FLOAT_EQ(8, theta(0).val());
     EXPECT_FLOAT_EQ(8, theta(1).val());
 
-    std::vector<stan::math::var> y_vec {y(0), y(1)};
+    std::vector<stan::math::var> y_vec{y(0), y(1)};
     std::vector<double> g;
     theta(k).grad(y_vec, g);
 
@@ -531,7 +531,7 @@ TEST_F(degenerate_eq_test, newton_guess2) {
     EXPECT_FLOAT_EQ(5, theta(0).val());
     EXPECT_FLOAT_EQ(5, theta(0).val());
 
-    std::vector<stan::math::var> y_vec {y(0), y(1)};
+    std::vector<stan::math::var> y_vec{y(0), y(1)};
     std::vector<double> g;
     theta(k).grad(y_vec, g);
 

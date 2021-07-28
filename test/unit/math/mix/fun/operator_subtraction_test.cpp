@@ -35,8 +35,8 @@ TEST(AgradMixMatrixOperatorSubtraction, fv_scalar_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(1.0, result(1, 0).d_.val());
   EXPECT_FLOAT_EQ(1.0, result(1, 1).d_.val());
 
-  std::vector<stan::math::var> q
-      {v(0, 0).val(), v(0, 1).val(), v(1, 0).val(), v(1, 1).val()};
+  std::vector<stan::math::var> q{v(0, 0).val(), v(0, 1).val(), v(1, 0).val(),
+                                 v(1, 1).val()};
   std::vector<double> h;
   result(0, 0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(1, h[0]);
@@ -58,8 +58,8 @@ TEST(AgradMixMatrixOperatorSubtraction, fv_scalar_matrix_2ndDeriv) {
   matrix_fv result;
   result = subtract(v, 2.0);
 
-  std::vector<stan::math::var> q
-      {v(0, 0).val(), v(0, 1).val(), v(1, 0).val(), v(1, 1).val()};
+  std::vector<stan::math::var> q{v(0, 0).val(), v(0, 1).val(), v(1, 0).val(),
+                                 v(1, 1).val()};
   std::vector<double> h;
   result(0, 0).d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -100,7 +100,8 @@ TEST(AgradMixMatrixOperatorSubtraction, fv_scalar_vector_1stDeriv) {
   EXPECT_FLOAT_EQ(1.0, result(3).d_.val());
   EXPECT_FLOAT_EQ(1.0, result(3).d_.val());
 
-  std::vector<stan::math::var> q {v(0).val(), v(1).val(), v(2).val(), v(3).val()};
+  std::vector<stan::math::var> q{v(0).val(), v(1).val(), v(2).val(),
+                                 v(3).val()};
   std::vector<double> h;
   result(0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(1, h[0]);
@@ -122,7 +123,8 @@ TEST(AgradMixMatrixOperatorSubtraction, fv_scalar_vector_2ndDeriv) {
   vector_fv result;
   result = subtract(v, 2.0);
 
-  std::vector<stan::math::var> q {v(0).val(), v(1).val(), v(2).val(), v(3).val()};
+  std::vector<stan::math::var> q{v(0).val(), v(1).val(), v(2).val(),
+                                 v(3).val()};
   std::vector<double> h;
   result(0).d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -163,7 +165,8 @@ TEST(AgradMixMatrixOperatorSubtraction, fv_scalar_rowvector_1stDeriv) {
   EXPECT_FLOAT_EQ(1.0, result(3).d_.val());
   EXPECT_FLOAT_EQ(1.0, result(3).d_.val());
 
-  std::vector<stan::math::var> q {v(0).val(), v(1).val(), v(2).val(), v(3).val()};
+  std::vector<stan::math::var> q{v(0).val(), v(1).val(), v(2).val(),
+                                 v(3).val()};
   std::vector<double> h;
   result(0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(1, h[0]);
@@ -185,7 +188,8 @@ TEST(AgradMixMatrixOperatorSubtraction, fv_scalar_rowvector_2ndDeriv) {
   row_vector_fv result;
   result = subtract(v, 2.0);
 
-  std::vector<stan::math::var> q {v(0).val(), v(1).val(), v(2).val(), v(3).val()};
+  std::vector<stan::math::var> q{v(0).val(), v(1).val(), v(2).val(),
+                                 v(3).val()};
   std::vector<double> h;
   result(0).d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -265,8 +269,8 @@ TEST(AgradMixMatrixOperatorSubtraction, fv_vector_vector_1stDeriv) {
   EXPECT_FLOAT_EQ(0, output(3).d_.val());
   EXPECT_FLOAT_EQ(0, output(4).d_.val());
 
-  std::vector<stan::math::var> q
-      {vv_1(0).val(), vv_1(1).val(), vv_1(2).val(), vv_1(3).val()};
+  std::vector<stan::math::var> q{vv_1(0).val(), vv_1(1).val(), vv_1(2).val(),
+                                 vv_1(3).val()};
   std::vector<double> h;
   output(0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(1, h[0]);
@@ -302,8 +306,8 @@ TEST(AgradMixMatrixOperatorSubtraction, fv_vector_vector_2ndDeriv) {
   vv_2(4).d_ = 1.0;
   output = subtract(vv_1, vv_2);
 
-  std::vector<stan::math::var> q
-      {vv_1(0).val(), vv_1(1).val(), vv_1(2).val(), vv_1(3).val()};
+  std::vector<stan::math::var> q{vv_1(0).val(), vv_1(1).val(), vv_1(2).val(),
+                                 vv_1(3).val()};
   std::vector<double> h;
   output(0).d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -398,8 +402,8 @@ TEST(AgradMixMatrixOperatorSubtraction, fv_rowvector_rowvector_1stDeriv) {
   EXPECT_FLOAT_EQ(0, output(3).d_.val());
   EXPECT_FLOAT_EQ(0, output(4).d_.val());
 
-  std::vector<stan::math::var> q {rvv_1(0).val(), rvv_1(1).val(), rvv_1(2).val(),
-                      rvv_1(3).val()};
+  std::vector<stan::math::var> q{rvv_1(0).val(), rvv_1(1).val(), rvv_1(2).val(),
+                                 rvv_1(3).val()};
   std::vector<double> h;
   output(0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(1, h[0]);
@@ -435,8 +439,8 @@ TEST(AgradMixMatrixOperatorSubtraction, fv_rowvector_rowvector_2ndDeriv) {
   rvv_2(4).d_ = 1.0;
 
   output = subtract(rvv_1, rvv_2);
-  std::vector<stan::math::var> q {rvv_1(0).val(), rvv_1(1).val(), rvv_1(2).val(),
-                      rvv_1(3).val()};
+  std::vector<stan::math::var> q{rvv_1(0).val(), rvv_1(1).val(), rvv_1(2).val(),
+                                 rvv_1(3).val()};
   std::vector<double> h;
   output(0).d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -523,8 +527,8 @@ TEST(AgradMixMatrixOperatorSubtraction, fv_matrix_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(0, output(1, 0).d_.val());
   EXPECT_FLOAT_EQ(0, output(1, 1).d_.val());
 
-  std::vector<stan::math::var> q {mv_1(0, 0).val(), mv_1(0, 1).val(), mv_1(1, 0).val(),
-                      mv_1(1, 1).val()};
+  std::vector<stan::math::var> q{mv_1(0, 0).val(), mv_1(0, 1).val(),
+                                 mv_1(1, 0).val(), mv_1(1, 1).val()};
   std::vector<double> h;
   output(0, 0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(1, h[0]);
@@ -560,8 +564,8 @@ TEST(AgradMixMatrixOperatorSubtraction, fv_matrix_matrix_2ndDeriv) {
 
   output = subtract(mv_1, mv_2);
 
-  std::vector<stan::math::var> q {mv_1(0, 0).val(), mv_1(0, 1).val(), mv_1(1, 0).val(),
-                      mv_1(1, 1).val()};
+  std::vector<stan::math::var> q{mv_1(0, 0).val(), mv_1(0, 1).val(),
+                                 mv_1(1, 0).val(), mv_1(1, 1).val()};
   std::vector<double> h;
   output(0, 0).d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -616,8 +620,8 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_scalar_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(1.0, result(1, 0).d_.val().val());
   EXPECT_FLOAT_EQ(1.0, result(1, 1).d_.val().val());
 
-  std::vector<stan::math::var> q {v(0, 0).val().val(), v(0, 1).val().val(),
-                      v(1, 0).val().val(), v(1, 1).val().val()};
+  std::vector<stan::math::var> q{v(0, 0).val().val(), v(0, 1).val().val(),
+                                 v(1, 0).val().val(), v(1, 1).val().val()};
   std::vector<double> h;
   result(0, 0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(1, h[0]);
@@ -639,8 +643,8 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_scalar_matrix_2ndDeriv_1) {
   matrix_ffv result;
   result = subtract(v, 2.0);
 
-  std::vector<stan::math::var> q {v(0, 0).val().val(), v(0, 1).val().val(),
-                      v(1, 0).val().val(), v(1, 1).val().val()};
+  std::vector<stan::math::var> q{v(0, 0).val().val(), v(0, 1).val().val(),
+                                 v(1, 0).val().val(), v(1, 1).val().val()};
   std::vector<double> h;
   result(0, 0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -662,8 +666,8 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_scalar_matrix_2ndDeriv_2) {
   matrix_ffv result;
   result = subtract(v, 2.0);
 
-  std::vector<stan::math::var> q {v(0, 0).val().val(), v(0, 1).val().val(),
-                      v(1, 0).val().val(), v(1, 1).val().val()};
+  std::vector<stan::math::var> q{v(0, 0).val().val(), v(0, 1).val().val(),
+                                 v(1, 0).val().val(), v(1, 1).val().val()};
   std::vector<double> h;
   result(0, 0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -689,8 +693,8 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_scalar_matrix_3rdDeriv) {
   matrix_ffv result;
   result = subtract(v, 2.0);
 
-  std::vector<stan::math::var> q {v(0, 0).val().val(), v(0, 1).val().val(),
-                      v(1, 0).val().val(), v(1, 1).val().val()};
+  std::vector<stan::math::var> q{v(0, 0).val().val(), v(0, 1).val().val(),
+                                 v(1, 0).val().val(), v(1, 1).val().val()};
   std::vector<double> h;
   result(0, 0).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -731,8 +735,8 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_scalar_vector_1stDeriv) {
   EXPECT_FLOAT_EQ(1.0, result(3).d_.val().val());
   EXPECT_FLOAT_EQ(1.0, result(3).d_.val().val());
 
-  std::vector<stan::math::var> q {v(0).val().val(), v(1).val().val(), v(2).val().val(),
-                      v(3).val().val()};
+  std::vector<stan::math::var> q{v(0).val().val(), v(1).val().val(),
+                                 v(2).val().val(), v(3).val().val()};
   std::vector<double> h;
   result(0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(1, h[0]);
@@ -754,8 +758,8 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_scalar_vector_2ndDeriv_1) {
   vector_ffv result;
   result = subtract(v, 2.0);
 
-  std::vector<stan::math::var> q {v(0).val().val(), v(1).val().val(), v(2).val().val(),
-                      v(3).val().val()};
+  std::vector<stan::math::var> q{v(0).val().val(), v(1).val().val(),
+                                 v(2).val().val(), v(3).val().val()};
   std::vector<double> h;
   result(0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -777,8 +781,8 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_scalar_vector_2ndDeriv_2) {
   vector_ffv result;
   result = subtract(v, 2.0);
 
-  std::vector<stan::math::var> q {v(0).val().val(), v(1).val().val(), v(2).val().val(),
-                      v(3).val().val()};
+  std::vector<stan::math::var> q{v(0).val().val(), v(1).val().val(),
+                                 v(2).val().val(), v(3).val().val()};
   std::vector<double> h;
   result(0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -804,8 +808,8 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_scalar_vector_3rdDeriv) {
   vector_ffv result;
   result = subtract(v, 2.0);
 
-  std::vector<stan::math::var> q {v(0).val().val(), v(1).val().val(), v(2).val().val(),
-                      v(3).val().val()};
+  std::vector<stan::math::var> q{v(0).val().val(), v(1).val().val(),
+                                 v(2).val().val(), v(3).val().val()};
   std::vector<double> h;
   result(0).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -846,8 +850,8 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_scalar_rowvector_1stDeriv) {
   EXPECT_FLOAT_EQ(1.0, result(3).d_.val().val());
   EXPECT_FLOAT_EQ(1.0, result(3).d_.val().val());
 
-  std::vector<stan::math::var> q {v(0).val().val(), v(1).val().val(), v(2).val().val(),
-                      v(3).val().val()};
+  std::vector<stan::math::var> q{v(0).val().val(), v(1).val().val(),
+                                 v(2).val().val(), v(3).val().val()};
   std::vector<double> h;
   result(0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(1, h[0]);
@@ -869,8 +873,8 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_scalar_rowvector_2ndDeriv_1) {
   row_vector_ffv result;
   result = subtract(v, 2.0);
 
-  std::vector<stan::math::var> q {v(0).val().val(), v(1).val().val(), v(2).val().val(),
-                      v(3).val().val()};
+  std::vector<stan::math::var> q{v(0).val().val(), v(1).val().val(),
+                                 v(2).val().val(), v(3).val().val()};
   std::vector<double> h;
   result(0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -892,8 +896,8 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_scalar_rowvector_2ndDeriv_2) {
   row_vector_ffv result;
   result = subtract(v, 2.0);
 
-  std::vector<stan::math::var> q {v(0).val().val(), v(1).val().val(), v(2).val().val(),
-                      v(3).val().val()};
+  std::vector<stan::math::var> q{v(0).val().val(), v(1).val().val(),
+                                 v(2).val().val(), v(3).val().val()};
   std::vector<double> h;
   result(0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -919,8 +923,8 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_scalar_rowvector_3rdDeriv) {
   row_vector_ffv result;
   result = subtract(v, 2.0);
 
-  std::vector<stan::math::var> q {v(0).val().val(), v(1).val().val(), v(2).val().val(),
-                      v(3).val().val()};
+  std::vector<stan::math::var> q{v(0).val().val(), v(1).val().val(),
+                                 v(2).val().val(), v(3).val().val()};
   std::vector<double> h;
   result(0).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -1000,8 +1004,8 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_vector_vector_1stDeriv) {
   EXPECT_FLOAT_EQ(0, output(3).d_.val().val());
   EXPECT_FLOAT_EQ(0, output(4).d_.val().val());
 
-  std::vector<stan::math::var> q {vv_1(0).val().val(), vv_1(1).val().val(),
-                      vv_1(2).val().val(), vv_1(3).val().val()};
+  std::vector<stan::math::var> q{vv_1(0).val().val(), vv_1(1).val().val(),
+                                 vv_1(2).val().val(), vv_1(3).val().val()};
   std::vector<double> h;
   output(0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(1, h[0]);
@@ -1037,8 +1041,8 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_vector_vector_2ndDeriv_1) {
   vv_2(4).d_ = 1.0;
   output = subtract(vv_1, vv_2);
 
-  std::vector<stan::math::var> q {vv_1(0).val().val(), vv_1(1).val().val(),
-                      vv_1(2).val().val(), vv_1(3).val().val()};
+  std::vector<stan::math::var> q{vv_1(0).val().val(), vv_1(1).val().val(),
+                                 vv_1(2).val().val(), vv_1(3).val().val()};
   std::vector<double> h;
   output(0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -1074,8 +1078,8 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_vector_vector_2ndDeriv_2) {
   vv_2(4).d_ = 1.0;
   output = subtract(vv_1, vv_2);
 
-  std::vector<stan::math::var> q {vv_1(0).val().val(), vv_1(1).val().val(),
-                      vv_1(2).val().val(), vv_1(3).val().val()};
+  std::vector<stan::math::var> q{vv_1(0).val().val(), vv_1(1).val().val(),
+                                 vv_1(2).val().val(), vv_1(3).val().val()};
   std::vector<double> h;
   output(0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -1121,8 +1125,8 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_vector_vector_3rdDeriv) {
   vv_2(4).val_.d_ = 1.0;
   output = subtract(vv_1, vv_2);
 
-  std::vector<stan::math::var> q {vv_1(0).val().val(), vv_1(1).val().val(),
-                      vv_1(2).val().val(), vv_1(3).val().val()};
+  std::vector<stan::math::var> q{vv_1(0).val().val(), vv_1(1).val().val(),
+                                 vv_1(2).val().val(), vv_1(3).val().val()};
   std::vector<double> h;
   output(0).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -1217,8 +1221,8 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_rowvector_rowvector_1stDeriv) {
   EXPECT_FLOAT_EQ(0, output(3).d_.val().val());
   EXPECT_FLOAT_EQ(0, output(4).d_.val().val());
 
-  std::vector<stan::math::var> q {rvv_1(0).val().val(), rvv_1(1).val().val(),
-                      rvv_1(2).val().val(), rvv_1(3).val().val()};
+  std::vector<stan::math::var> q{rvv_1(0).val().val(), rvv_1(1).val().val(),
+                                 rvv_1(2).val().val(), rvv_1(3).val().val()};
   std::vector<double> h;
   output(0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(1, h[0]);
@@ -1254,8 +1258,8 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_rowvector_rowvector_2ndDeriv_1) {
   rvv_2(4).d_ = 1.0;
 
   output = subtract(rvv_1, rvv_2);
-  std::vector<stan::math::var> q {rvv_1(0).val().val(), rvv_1(1).val().val(),
-                      rvv_1(2).val().val(), rvv_1(3).val().val()};
+  std::vector<stan::math::var> q{rvv_1(0).val().val(), rvv_1(1).val().val(),
+                                 rvv_1(2).val().val(), rvv_1(3).val().val()};
   std::vector<double> h;
   output(0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -1291,8 +1295,8 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_rowvector_rowvector_2ndDeriv_2) {
   rvv_2(4).d_ = 1.0;
 
   output = subtract(rvv_1, rvv_2);
-  std::vector<stan::math::var> q {rvv_1(0).val().val(), rvv_1(1).val().val(),
-                      rvv_1(2).val().val(), rvv_1(3).val().val()};
+  std::vector<stan::math::var> q{rvv_1(0).val().val(), rvv_1(1).val().val(),
+                                 rvv_1(2).val().val(), rvv_1(3).val().val()};
   std::vector<double> h;
   output(0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -1338,8 +1342,8 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_rowvector_rowvector_3rdDeriv) {
   rvv_2(4).val_.d_ = 1.0;
 
   output = subtract(rvv_1, rvv_2);
-  std::vector<stan::math::var> q {rvv_1(0).val().val(), rvv_1(1).val().val(),
-                      rvv_1(2).val().val(), rvv_1(3).val().val()};
+  std::vector<stan::math::var> q{rvv_1(0).val().val(), rvv_1(1).val().val(),
+                                 rvv_1(2).val().val(), rvv_1(3).val().val()};
   std::vector<double> h;
   output(0).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -1426,8 +1430,9 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_matrix_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(0, output(1, 0).d_.val().val());
   EXPECT_FLOAT_EQ(0, output(1, 1).d_.val().val());
 
-  std::vector<stan::math::var> q {mv_1(0, 0).val().val(), mv_1(0, 1).val().val(),
-                      mv_1(1, 0).val().val(), mv_1(1, 1).val().val()};
+  std::vector<stan::math::var> q{mv_1(0, 0).val().val(), mv_1(0, 1).val().val(),
+                                 mv_1(1, 0).val().val(),
+                                 mv_1(1, 1).val().val()};
   std::vector<double> h;
   output(0, 0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(1, h[0]);
@@ -1463,8 +1468,9 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_matrix_matrix_2ndDeriv_1) {
 
   output = subtract(mv_1, mv_2);
 
-  std::vector<stan::math::var> q {mv_1(0, 0).val().val(), mv_1(0, 1).val().val(),
-                      mv_1(1, 0).val().val(), mv_1(1, 1).val().val()};
+  std::vector<stan::math::var> q{mv_1(0, 0).val().val(), mv_1(0, 1).val().val(),
+                                 mv_1(1, 0).val().val(),
+                                 mv_1(1, 1).val().val()};
   std::vector<double> h;
   output(0, 0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -1500,8 +1506,9 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_matrix_matrix_2ndDeriv_2) {
 
   output = subtract(mv_1, mv_2);
 
-  std::vector<stan::math::var> q {mv_1(0, 0).val().val(), mv_1(0, 1).val().val(),
-                      mv_1(1, 0).val().val(), mv_1(1, 1).val().val()};
+  std::vector<stan::math::var> q{mv_1(0, 0).val().val(), mv_1(0, 1).val().val(),
+                                 mv_1(1, 0).val().val(),
+                                 mv_1(1, 1).val().val()};
   std::vector<double> h;
   output(0, 0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
@@ -1545,8 +1552,9 @@ TEST(AgradMixMatrixOperatorSubtraction, ffv_matrix_matrix_3rdDeriv) {
 
   output = subtract(mv_1, mv_2);
 
-  std::vector<stan::math::var> q {mv_1(0, 0).val().val(), mv_1(0, 1).val().val(),
-                      mv_1(1, 0).val().val(), mv_1(1, 1).val().val()};
+  std::vector<stan::math::var> q{mv_1(0, 0).val().val(), mv_1(0, 1).val().val(),
+                                 mv_1(1, 0).val().val(),
+                                 mv_1(1, 1).val().val()};
   std::vector<double> h;
   output(0, 0).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);

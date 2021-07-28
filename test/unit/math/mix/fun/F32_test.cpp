@@ -48,7 +48,7 @@ TEST(ProbInternalMath, F32_fv_1stderiv1) {
       11.28915378492300834453857665243661995978358572684678329916652,
       z1.val_.val());
 
-  std::vector<stan::math::var> y1 {a.val_};
+  std::vector<stan::math::var> y1{a.val_};
   std::vector<double> grad1;
   z1.val_.grad(y1, grad1);
   EXPECT_NEAR(22.95829816018250585416491584581112223816561212219172212450836,
@@ -72,7 +72,7 @@ TEST(ProbInternalMath, F32_fv_1stderiv2) {
       11.28915378492300834453857665243661995978358572684678329916652,
       z1.val_.val());
 
-  std::vector<stan::math::var> y1 {b.val_};
+  std::vector<stan::math::var> y1{b.val_};
   std::vector<double> grad1;
   z1.val_.grad(y1, grad1);
   EXPECT_NEAR(1.740056451478897241488082512854205170874142224663970334770766,
@@ -96,7 +96,7 @@ TEST(ProbInternalMath, F32_fv_1stderiv3) {
       11.28915378492300834453857665243661995978358572684678329916652,
       z1.val_.val());
 
-  std::vector<stan::math::var> y1 {c.val_};
+  std::vector<stan::math::var> y1{c.val_};
   std::vector<double> grad1;
   z1.val_.grad(y1, grad1);
   EXPECT_NEAR(-2.6052400424887519, grad1[0], 1e-5);
@@ -168,7 +168,7 @@ TEST(ProbInternalMath, F32_fv_1stderiv6) {
       11.28915378492300834453857665243661995978358572684678329916652,
       z1.val_.val());
 
-  std::vector<stan::math::var> y1 {z.val_};
+  std::vector<stan::math::var> y1{z.val_};
   std::vector<double> grad1;
   z1.val_.grad(y1, grad1);
   EXPECT_NEAR(59.65791128638963495870649759618269069328482053152963195380560,
@@ -218,7 +218,7 @@ TEST(ProbInternalMath, F32_fv_2ndderiv2) {
       11.28915378492300834453857665243661995978358572684678329916652,
       z1.val_.val());
 
-  std::vector<stan::math::var> y1 {b.val_};
+  std::vector<stan::math::var> y1{b.val_};
   std::vector<double> grad1;
   z1.d_.grad(y1, grad1);
   EXPECT_NEAR(0.342454543339724329115552426438001592723143365030924900588111,
@@ -242,7 +242,7 @@ TEST(ProbInternalMath, F32_fv_2ndderiv3) {
       11.28915378492300834453857665243661995978358572684678329916652,
       z1.val_.val());
 
-  std::vector<stan::math::var> y1 {c.val_};
+  std::vector<stan::math::var> y1{c.val_};
   std::vector<double> grad1;
   z1.d_.grad(y1, grad1);
   EXPECT_NEAR(0.90986472078762437, grad1[0], 1e-5);
@@ -261,7 +261,7 @@ TEST(ProbInternalMath, F32_fv_2ndderiv4) {
 
   fvar<var> z1 = stan::math::F32(a, b, c, d, e, z);
 
-  std::vector<stan::math::var> y1 {d.val_};
+  std::vector<stan::math::var> y1{d.val_};
   std::vector<double> grad1;
   z1.d_.grad(y1, grad1);
   EXPECT_NEAR(1.047024959065504556655904003595645684444382378830047020988218,
@@ -281,7 +281,7 @@ TEST(ProbInternalMath, F32_fv_2ndderiv5) {
 
   fvar<var> z1 = stan::math::F32(a, b, c, d, e, z);
 
-  std::vector<stan::math::var> y1 {e.val_};
+  std::vector<stan::math::var> y1{e.val_};
   std::vector<double> grad1;
   z1.d_.grad(y1, grad1);
   EXPECT_NEAR(0.415359887777218792995404669803015764396172842233556866773418,
@@ -306,7 +306,7 @@ TEST(ProbInternalMath, F32_fv_2ndderiv6) {
       11.28915378492300834453857665243661995978358572684678329916652,
       z1.val_.val());
 
-  std::vector<stan::math::var> y1 {z.val_};
+  std::vector<stan::math::var> y1{z.val_};
   std::vector<double> grad1;
   z1.d_.grad(y1, grad1);
   EXPECT_NEAR(424.5724606148232594702100102534498155985480235827583548085963,
