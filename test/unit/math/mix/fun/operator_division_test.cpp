@@ -558,7 +558,7 @@ TEST(AgradMixMatrixOperatorDivision, ffv_scalar_2ndDeriv_1) {
   d2 = -2;
 
   std::vector<stan::math::var> q{v1.val().val()};
-  VEC h;
+  std::vector<int> h;
   divide(v1, d2).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
 }
