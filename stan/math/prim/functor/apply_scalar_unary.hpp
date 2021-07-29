@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/is_complex.hpp>
 #include <stan/math/prim/meta/require_generics.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/is_vector_like.hpp>
