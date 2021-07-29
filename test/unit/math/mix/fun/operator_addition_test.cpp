@@ -753,7 +753,7 @@ TEST(AgradMixMatrixOperatorAddition, ffv_scalar_vector_2ndDeriv_1) {
 
   std::vector<stan::math::var> q{v(0).val().val(), v(1).val().val(),
                                  v(2).val().val(), v(3).val().val()};
-  VEC h;
+  std::vector<double> h;
   result(0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -921,7 +921,7 @@ TEST(AgradMixMatrixOperatorAddition, ffv_scalar_rowvector_3rdDeriv) {
 
   std::vector<stan::math::var> q{v(0).val().val(), v(1).val().val(),
                                  v(2).val().val(), v(3).val().val()};
-  VEC h;
+  std::vector<double> h;
   result(0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
