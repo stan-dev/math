@@ -1,7 +1,6 @@
 #ifndef TEST_UNIT_MATH_SERIALIZER_HPP
 #define TEST_UNIT_MATH_SERIALIZER_HPP
 
-#include <test/unit/math/util.hpp>
 #include <stan/math.hpp>
 #include <complex>
 #include <string>
