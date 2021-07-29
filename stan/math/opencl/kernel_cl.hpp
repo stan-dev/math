@@ -120,8 +120,7 @@ inline const std::vector<cl::Event>& select_events(const K& m) {
 template <typename T, typename K, require_matrix_cl_t<K>* = nullptr,
           require_any_same_t<T, out_buffer, in_out_buffer>* = nullptr>
 inline std::vector<cl::Event> select_events(K& m) {
-  static_assert(!std::is_const<K>::value,
-                "Can not write to const matrix_cl!");
+  static_assert(!std::is_const<K>::value, "Can not write to const matrix_cl!");
   return m.read_write_events();
 }
 
