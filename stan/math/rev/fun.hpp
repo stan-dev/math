@@ -3,15 +3,11 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun.hpp>
-#include <stan/math/prim/functor.hpp>
-#include <stan/math/prim/meta.hpp>
-
 #include <stan/math/rev/fun/LDLT_factor.hpp>
 #include <stan/math/rev/fun/Phi.hpp>
 #include <stan/math/rev/fun/Phi_approx.hpp>
 #include <stan/math/rev/fun/abs.hpp>
+#include <stan/math/rev/fun/accumulator.hpp>
 #include <stan/math/rev/fun/acos.hpp>
 #include <stan/math/rev/fun/acosh.hpp>
 #include <stan/math/rev/fun/append_col.hpp>
@@ -187,5 +183,10 @@
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/rev/fun/value_of_rec.hpp>
 #include <stan/math/rev/fun/variance.hpp>
+
+#include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun.hpp>
+#include <stan/math/prim/functor.hpp>
+#include <stan/math/prim/meta.hpp>
 
 #endif

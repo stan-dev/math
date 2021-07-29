@@ -5,6 +5,7 @@
 #include <stan/math/fwd/fun/Eigen_NumTraits.hpp>
 
 #include <stan/math/fwd/fun/abs.hpp>
+#include <stan/math/fwd/fun/accumulator.hpp>
 #include <stan/math/fwd/fun/acos.hpp>
 #include <stan/math/fwd/fun/acosh.hpp>
 #include <stan/math/fwd/fun/asin.hpp>
