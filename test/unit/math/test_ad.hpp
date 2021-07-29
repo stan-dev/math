@@ -1676,7 +1676,6 @@ void expect_complex_common_comparison(const F& f) {
   }
 }
 
-
 /**
  * Test that the specified vectorized unary function produces the same
  * results and exceptions, and has 1st-, 2nd-, and 3rd-order
@@ -1977,7 +1976,6 @@ Eigen::VectorXd to_row_vector(const Eigen::Matrix<double, R, C>& x) {
     y(i) = x(i);
   return y;
 }
-
 
 /**
  * Return square test matrices (not symmetric) of dimensionality

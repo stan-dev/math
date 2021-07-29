@@ -16,7 +16,6 @@ TEST(mathMixFun, asinh) {
       stan::test::expect_ad(f, std::complex<double>{re, im});
     }
   }
-
 }
 
 TEST(mathMixMatFun, asinh_varmat) {
