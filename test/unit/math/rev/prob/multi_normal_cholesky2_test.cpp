@@ -183,7 +183,8 @@ void test_all_multi_normal_cholesky() {
         test_grad_multi_normal(
             vectorized_multi_normal_cholesky_fun<is_row_vec_y, is_row_vec_mu>(
                 3, 1, ii, jj),
-            stan::math::to_var(y_), stan::math::to_var(mu_), stan::math::to_var(sigma_));
+            stan::math::to_var(y_), stan::math::to_var(mu_),
+            stan::math::to_var(sigma_));
       }
   }
 
@@ -241,7 +242,8 @@ void test_all_multi_normal_cholesky() {
         stan::math::to_var(y_), stan::math::to_var(mu_), sigma_);
     test_grad_multi_normal(
         vectorized_multi_normal_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 2),
-        stan::math::to_var(y_), stan::math::to_var(mu_), stan::math::to_var(sigma_));
+        stan::math::to_var(y_), stan::math::to_var(mu_),
+        stan::math::to_var(sigma_));
   }
   {
     using Eigen::Dynamic;
@@ -275,7 +277,8 @@ void test_all_multi_normal_cholesky() {
         stan::math::to_var(y_), stan::math::to_var(mu_), sigma_);
     test_grad_multi_normal(
         vectorized_multi_normal_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1, 1),
-        stan::math::to_var(y_), stan::math::to_var(mu_), stan::math::to_var(sigma_));
+        stan::math::to_var(y_), stan::math::to_var(mu_),
+        stan::math::to_var(sigma_));
   }
 }
 

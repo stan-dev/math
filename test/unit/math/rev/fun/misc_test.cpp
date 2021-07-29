@@ -69,7 +69,7 @@ TEST(AgradRevMatrix, mv_lp_norm_inf) {
   EXPECT_FLOAT_EQ(5.0, s.val());
 
   std::vector<double> g;
-  s.grad(x,g);
+  s.grad(x, g);
   EXPECT_FLOAT_EQ(0.0, g[0]);
   EXPECT_FLOAT_EQ(0.0, g[1]);
   EXPECT_FLOAT_EQ(-1.0, g[2]);

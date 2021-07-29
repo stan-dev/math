@@ -23,12 +23,10 @@ TEST(MathMetaPrim, index_type_vector) {
 TEST(MathMetaPrim, index_type_matrices) {
   using stan::math::index_type;
 
-  EXPECT_SAME_TYPE(Eigen::MatrixXd::Index,
-                   index_type<Eigen::MatrixXd >::type);
+  EXPECT_SAME_TYPE(Eigen::MatrixXd::Index, index_type<Eigen::MatrixXd>::type);
 
-  EXPECT_SAME_TYPE(Eigen::VectorXd::Index,
-                   index_type<Eigen::VectorXd >::type);
+  EXPECT_SAME_TYPE(Eigen::VectorXd::Index, index_type<Eigen::VectorXd>::type);
 
   EXPECT_SAME_TYPE(Eigen::RowVectorXd::Index,
-                   index_type<Eigen::RowVectorXd >::type);
+                   index_type<Eigen::RowVectorXd>::type);
 }

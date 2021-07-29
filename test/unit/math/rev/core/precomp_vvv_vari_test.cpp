@@ -12,7 +12,7 @@ TEST(StanAgradRevInternal, precomp_vvv_vari) {
   gradient2 = 5;
   gradient3 = 3;
 
-  std::vector<stan::math::var> vars {x1, x2, x3};
+  std::vector<stan::math::var> vars{x1, x2, x3};
 
   EXPECT_NO_THROW(
       y = stan::math::var(new stan::math::precomp_vvv_vari(

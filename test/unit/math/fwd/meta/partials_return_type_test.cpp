@@ -12,7 +12,7 @@ TEST(MathMetaFwd, PartialsReturnTypeFvarDouble) {
 
 TEST(MathMetaFwd, PartialsReturnTypeFvarFvarDouble) {
   EXPECT_SAME_TYPE(fvar<double>,
-                         partials_return_type<fvar<fvar<double> > >::type);
+                   partials_return_type<fvar<fvar<double> > >::type);
 }
 
 TEST(MathMetaFwd, PartialsReturnTypeFvarDoubleTenParams) {
@@ -23,10 +23,10 @@ TEST(MathMetaFwd, PartialsReturnTypeFvarDoubleTenParams) {
 }
 
 TEST(MathMetaFwd, PartialsReturnTypeFvarFvarDoubleTenParams) {
-  EXPECT_SAME_TYPE(
-      fvar<double>, partials_return_type<double, fvar<fvar<double> >, double,
-                                         int, double, float, float, float,
-                                         fvar<fvar<double> >, int>::type);
+  EXPECT_SAME_TYPE(fvar<double>,
+                   partials_return_type<double, fvar<fvar<double> >, double,
+                                        int, double, float, float, float,
+                                        fvar<fvar<double> >, int>::type);
 }
 
 TEST(MathMetaFwd, partials_return_type) {
