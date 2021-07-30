@@ -1224,7 +1224,7 @@ void expect_ad(const F& f, const T1& x1, const T2& x2, const T3& x3) {
   expect_ad(tols, f, x1, x2, x3);
 }
 
-enum class PromoteToComplex {No, Yes};
+enum class PromoteToComplex { No, Yes };
 
 /**
  * Test that the specified vectorized polymorphic unary function
@@ -1238,8 +1238,10 @@ enum class PromoteToComplex {No, Yes};
  * @param f functor to test
  * @param x1 value to test
  */
-template <PromoteToComplex ComplexSupport = PromoteToComplex::Yes, typename F, typename T1,
- stan::require_t<stan::bool_constant<ComplexSupport == PromoteToComplex::Yes>>* = nullptr>
+template <PromoteToComplex ComplexSupport = PromoteToComplex::Yes, typename F,
+          typename T1,
+          stan::require_t<stan::bool_constant<
+              ComplexSupport == PromoteToComplex::Yes>>* = nullptr>
 void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
   using Scalar = std::conditional_t<std::is_integral<T1>::value, double, T1>;
   using matrix_t = Eigen::Matrix<Scalar, -1, -1>;
@@ -1278,15 +1280,23 @@ void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
   }
   for (size_t i = 0; i < 2; ++i) {
     expect_ad(tols, f, vector<vector_t>(i, vector_t::Constant(i, x1).eval()));
-    expect_ad(tols, f, vector<complex_vector_t>(i, complex_vector_t::Constant(i, x1).eval()));
+    expect_ad(
+        tols, f,
+        vector<complex_vector_t>(i, complex_vector_t::Constant(i, x1).eval()));
   }
   for (size_t i = 0; i < 2; ++i) {
-    expect_ad(tols, f, vector<row_vector_t>(i, row_vector_t::Constant(i, x1).eval()));
-    expect_ad(tols, f, vector<complex_row_vector_t>(i, complex_row_vector_t::Constant(i, x1).eval()));
+    expect_ad(tols, f,
+              vector<row_vector_t>(i, row_vector_t::Constant(i, x1).eval()));
+    expect_ad(tols, f,
+              vector<complex_row_vector_t>(
+                  i, complex_row_vector_t::Constant(i, x1).eval()));
   }
   for (size_t i = 0; i < 2; ++i) {
-    expect_ad(tols, f, vector<matrix_t>(i, matrix_t::Constant(i, i, x1).eval()));
-    expect_ad(tols, f, vector<complex_matrix_t>(i, complex_matrix_t::Constant(i, i, x1).eval()));
+    expect_ad(tols, f,
+              vector<matrix_t>(i, matrix_t::Constant(i, i, x1).eval()));
+    expect_ad(tols, f,
+              vector<complex_matrix_t>(
+                  i, complex_matrix_t::Constant(i, i, x1).eval()));
   }
   for (int i = 0; i < 2; ++i) {
     expect_ad(tols, f, vector2_dbl(i, vector_dbl(i, x1)));
@@ -1294,12 +1304,14 @@ void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
   }
   for (int i = 0; i < 2; ++i) {
     expect_ad(tols, f, vector3_dbl(i, vector2_dbl(i, vector_dbl(i, x1))));
-    expect_ad(tols, f, vector3_complex(i, vector2_complex(i, vector_complex(i, x1))));
+    expect_ad(tols, f,
+              vector3_complex(i, vector2_complex(i, vector_complex(i, x1))));
   }
 }
 
 template <PromoteToComplex ComplexSupport, typename F, typename T1,
- stan::require_t<stan::bool_constant<ComplexSupport == PromoteToComplex::No>>* = nullptr>
+          stan::require_t<stan::bool_constant<
+              ComplexSupport == PromoteToComplex::No>>* = nullptr>
 void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
   using Scalar = std::conditional_t<std::is_integral<T1>::value, double, T1>;
   using matrix_t = Eigen::Matrix<Scalar, -1, -1>;
@@ -1334,7 +1346,6 @@ void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
     expect_ad(tols, f, vector3_dbl(i, vector2_dbl(i, vector_dbl(i, x1))));
 }
 
-
 /**
  * Test that the specified function has value and 1st-, 2nd-, and
  * 3rd-order derivatives consistent with primitive values and finite
@@ -1345,7 +1356,8 @@ void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
  * @param f function to test
  * @param x argument to test
  */
-template <PromoteToComplex ComplexSupport = PromoteToComplex::No, typename F, typename T>
+template <PromoteToComplex ComplexSupport = PromoteToComplex::No, typename F,
+          typename T>
 void expect_ad_vectorized(const F& f, const T& x) {
   ad_tolerances tols;
   expect_ad_vectorized<ComplexSupport>(tols, f, x);
@@ -1750,7 +1762,8 @@ void expect_complex_common_comparison(const F& f) {
  * @param f functor to test
  */
 template <PromoteToComplex ComplexSupport = PromoteToComplex::Yes, typename F,
- require_t<bool_constant<ComplexSupport == PromoteToComplex::Yes>>* = nullptr>
+          require_t<bool_constant<ComplexSupport
+                                  == PromoteToComplex::Yes>>* = nullptr>
 void expect_common_unary_vectorized(const F& f) {
   ad_tolerances tols;
   auto args = internal::common_args();
@@ -1763,8 +1776,9 @@ void expect_common_unary_vectorized(const F& f) {
     stan::test::expect_ad_vectorized<PromoteToComplex::No>(tols, f, x1);
 }
 
-template <PromoteToComplex ComplexSupport, typename F,
- require_t<bool_constant<ComplexSupport == PromoteToComplex::No>>* = nullptr>
+template <
+    PromoteToComplex ComplexSupport, typename F,
+    require_t<bool_constant<ComplexSupport == PromoteToComplex::No>>* = nullptr>
 void expect_common_unary_vectorized(const F& f) {
   ad_tolerances tols;
   auto args = internal::common_args();
