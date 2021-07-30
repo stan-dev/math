@@ -1789,10 +1789,8 @@ void expect_common_unary_vectorized(const F& f) {
     stan::test::expect_ad_vectorized<PromoteToComplex::No>(tols, f, x1);
 }
 
-
 template <PromoteToComplex ComplexSupport = PromoteToComplex::Yes, typename F>
-void expect_unary_vectorized(const ad_tolerances& tols, const F& f) {
-}
+void expect_unary_vectorized(const ad_tolerances& tols, const F& f) {}
 
 /**
  * Test that the specified vectorized unary function has value and
@@ -1806,8 +1804,10 @@ void expect_unary_vectorized(const ad_tolerances& tols, const F& f) {
  * @param f function to test
  * @param xs arguments to test
  */
-template <PromoteToComplex ComplexSupport = PromoteToComplex::Yes, typename F, typename T, typename... Ts>
-void expect_unary_vectorized(const ad_tolerances& tols, const F& f, T x, Ts... xs) {
+template <PromoteToComplex ComplexSupport = PromoteToComplex::Yes, typename F,
+          typename T, typename... Ts>
+void expect_unary_vectorized(const ad_tolerances& tols, const F& f, T x,
+                             Ts... xs) {
   expect_ad_vectorized<ComplexSupport>(tols, f, x);
   expect_unary_vectorized<ComplexSupport>(tols, f, xs...);
 }
@@ -1822,7 +1822,8 @@ void expect_unary_vectorized(const ad_tolerances& tols, const F& f, T x, Ts... x
  * @param f function to test
  * @param xs arguments to test
  */
-template <PromoteToComplex ComplexSupport = PromoteToComplex::Yes, typename F, typename... Ts>
+template <PromoteToComplex ComplexSupport = PromoteToComplex::Yes, typename F,
+          typename... Ts>
 void expect_unary_vectorized(const F& f, Ts... xs) {
   ad_tolerances tols;  // default tolerances
   expect_unary_vectorized<ComplexSupport>(tols, f, xs...);
@@ -1839,8 +1840,8 @@ void expect_unary_vectorized(const F& f, Ts... xs) {
  * @param f functor to test
  */
 template <PromoteToComplex ComplexSupport = PromoteToComplex::Yes, typename F,
-stan::require_t<stan::bool_constant<
-    ComplexSupport == PromoteToComplex::Yes>>* = nullptr>
+          stan::require_t<stan::bool_constant<
+              ComplexSupport == PromoteToComplex::Yes>>* = nullptr>
 void expect_common_nonzero_unary_vectorized(const F& f) {
   ad_tolerances tols;
   for (double x : internal::common_nonzero_args())
@@ -1849,12 +1850,11 @@ void expect_common_nonzero_unary_vectorized(const F& f) {
     stan::test::expect_unary_vectorized<PromoteToComplex::No>(tols, f, x);
   for (auto x1 : common_complex())
     stan::test::expect_ad_vectorized<PromoteToComplex::No>(tols, f, x1);
-
 }
 
 template <PromoteToComplex ComplexSupport, typename F,
-stan::require_t<stan::bool_constant<
-    ComplexSupport == PromoteToComplex::No>>* = nullptr>
+          stan::require_t<stan::bool_constant<
+              ComplexSupport == PromoteToComplex::No>>* = nullptr>
 void expect_common_nonzero_unary_vectorized(const F& f) {
   ad_tolerances tols;
   for (double x : internal::common_nonzero_args())
@@ -1862,7 +1862,6 @@ void expect_common_nonzero_unary_vectorized(const F& f) {
   for (auto x : internal::common_nonzero_int_args())
     stan::test::expect_unary_vectorized<PromoteToComplex::No>(tols, f, x);
 }
-
 
 /**
  * For all pairs of common arguments, test that primitive and all
