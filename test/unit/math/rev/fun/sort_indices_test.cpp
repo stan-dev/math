@@ -49,8 +49,6 @@ template <typename T, int R, int C>
 void test_sort_indices_asc(Eigen::Matrix<T, R, C> val) {
   using stan::math::sort_indices_asc;
 
-  typedef Eigen::Matrix<stan::math::var, R, C> std::vector<stan::math::var>;
-
   const size_t val_size = val.size();
 
   std::vector<stan::math::var> x(val_size);
@@ -74,8 +72,6 @@ void test_sort_indices_asc(Eigen::Matrix<T, R, C> val) {
 template <typename T, int R, int C>
 void test_sort_indices_desc(Eigen::Matrix<T, R, C> val) {
   using stan::math::sort_indices_desc;
-
-  typedef Eigen::Matrix<stan::math::var, R, C> std::vector<stan::math::var>;
 
   const size_t val_size = val.size();
 
