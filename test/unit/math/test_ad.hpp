@@ -1789,37 +1789,10 @@ void expect_common_unary_vectorized(const F& f) {
     stan::test::expect_ad_vectorized<PromoteToComplex::No>(tols, f, x1);
 }
 
-namespace internal {
-/**
- * Base case no-op to test no arguments.
- *
- * @tparam F type of function
- * @param tols tolerances (ignored)
- * @param f function to test (ignored)
- */
-template <typename F>
-void expect_unary_vectorized_helper(const ad_tolerances& tols, const F& f) {}
 
-/**
- * Test that the specified function produces values and derivatives
- * consistent with the primitive version with finite for the specified
- * value and values.
- *
- * @tparam F type of function
- * @tparam T type of first argument
- * @tparam Ts types of remaining arguments
- * @param tols tolerances for tests
- * @param f function to test
- * @param x first value to test
- * @param xs remaining values to test
- */
-template <typename F, typename T, typename... Ts>
-void expect_unary_vectorized_helper(const ad_tolerances& tols, const F& f, T x,
-                                    Ts... xs) {
-  stan::test::expect_ad_vectorized(tols, f, x);
-  expect_unary_vectorized(tols, f, xs...);
+template <PromoteToComplex ComplexSupport = PromoteToComplex::Yes, typename F>
+void expect_unary_vectorized(const ad_tolerances& tols, const F& f) {
 }
-}  // namespace internal
 
 /**
  * Test that the specified vectorized unary function has value and
@@ -1833,9 +1806,10 @@ void expect_unary_vectorized_helper(const ad_tolerances& tols, const F& f, T x,
  * @param f function to test
  * @param xs arguments to test
  */
-template <typename F, typename... Ts>
-void expect_unary_vectorized(const ad_tolerances& tols, const F& f, Ts... xs) {
-  internal::expect_unary_vectorized_helper(tols, f, xs...);
+template <PromoteToComplex ComplexSupport = PromoteToComplex::Yes, typename F, typename T, typename... Ts>
+void expect_unary_vectorized(const ad_tolerances& tols, const F& f, T x, Ts... xs) {
+  expect_ad_vectorized<ComplexSupport>(tols, f, x);
+  expect_unary_vectorized<ComplexSupport>(tols, f, xs...);
 }
 
 /**
@@ -1848,10 +1822,10 @@ void expect_unary_vectorized(const ad_tolerances& tols, const F& f, Ts... xs) {
  * @param f function to test
  * @param xs arguments to test
  */
-template <typename F, typename... Ts>
+template <PromoteToComplex ComplexSupport = PromoteToComplex::Yes, typename F, typename... Ts>
 void expect_unary_vectorized(const F& f, Ts... xs) {
   ad_tolerances tols;  // default tolerances
-  expect_unary_vectorized(tols, f, xs...);
+  expect_unary_vectorized<ComplexSupport>(tols, f, xs...);
 }
 
 /**
@@ -1864,16 +1838,31 @@ void expect_unary_vectorized(const F& f, Ts... xs) {
  * @tparam F type of functor to test
  * @param f functor to test
  */
-template <typename F>
+template <PromoteToComplex ComplexSupport = PromoteToComplex::Yes, typename F,
+stan::require_t<stan::bool_constant<
+    ComplexSupport == PromoteToComplex::Yes>>* = nullptr>
 void expect_common_nonzero_unary_vectorized(const F& f) {
   ad_tolerances tols;
-  auto args = internal::common_nonzero_args();
-  for (double x : args)
-    stan::test::expect_unary_vectorized(tols, f, x);
-  auto int_args = internal::common_nonzero_int_args();
-  for (int x : int_args)
-    stan::test::expect_unary_vectorized(tols, f, x);
+  for (double x : internal::common_nonzero_args())
+    stan::test::expect_unary_vectorized<PromoteToComplex::No>(tols, f, x);
+  for (int x : internal::common_nonzero_int_args())
+    stan::test::expect_unary_vectorized<PromoteToComplex::No>(tols, f, x);
+  for (auto x1 : common_complex())
+    stan::test::expect_ad_vectorized<PromoteToComplex::No>(tols, f, x1);
+
 }
+
+template <PromoteToComplex ComplexSupport, typename F,
+stan::require_t<stan::bool_constant<
+    ComplexSupport == PromoteToComplex::No>>* = nullptr>
+void expect_common_nonzero_unary_vectorized(const F& f) {
+  ad_tolerances tols;
+  for (double x : internal::common_nonzero_args())
+    stan::test::expect_unary_vectorized<PromoteToComplex::No>(tols, f, x);
+  for (auto x : internal::common_nonzero_int_args())
+    stan::test::expect_unary_vectorized<PromoteToComplex::No>(tols, f, x);
+}
+
 
 /**
  * For all pairs of common arguments, test that primitive and all
