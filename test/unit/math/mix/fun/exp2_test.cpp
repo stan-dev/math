@@ -2,8 +2,10 @@
 
 TEST(mathMixMatFun, exp2) {
   auto f = [](const auto& x1) { return stan::math::exp2(x1); };
-  stan::test::expect_common_unary_vectorized<stan::test::PromoteToComplex::No>(f);
-  stan::test::expect_unary_vectorized<stan::test::PromoteToComplex::No>(f, -15.2, -10, 1, 1.3, 5, 10);
+  stan::test::expect_common_unary_vectorized<stan::test::PromoteToComplex::No>(
+      f);
+  stan::test::expect_unary_vectorized<stan::test::PromoteToComplex::No>(
+      f, -15.2, -10, 1, 1.3, 5, 10);
 }
 
 TEST(mathMixMatFun, exp2matvar) {

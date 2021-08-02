@@ -2,10 +2,12 @@
 
 TEST(mathMixMatFun, invPhi) {
   auto f = [](const auto& x1) { return stan::math::inv_Phi(x1); };
-  stan::test::expect_common_unary_vectorized<stan::test::PromoteToComplex::No>(f);
-  stan::test::expect_unary_vectorized<stan::test::PromoteToComplex::No>(f, 0.02425, 0.97575);  // breakpoints
-  stan::test::expect_unary_vectorized<stan::test::PromoteToComplex::No>(f, -100.25, -2, 0.01, 0.1, 0.98, 0.5,
-                                      2.0);
+  stan::test::expect_common_unary_vectorized<stan::test::PromoteToComplex::No>(
+      f);
+  stan::test::expect_unary_vectorized<stan::test::PromoteToComplex::No>(
+      f, 0.02425, 0.97575);  // breakpoints
+  stan::test::expect_unary_vectorized<stan::test::PromoteToComplex::No>(
+      f, -100.25, -2, 0.01, 0.1, 0.98, 0.5, 2.0);
 }
 
 TEST(mathMixMatFun, invPhi_varmat) {
