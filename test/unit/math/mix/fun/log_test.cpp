@@ -6,8 +6,8 @@ TEST(mathMixMatFun, log) {
     using stan::math::log;
     return log(x1);
   };
-  stan::test::expect_common_unary_vectorized(f);
-  stan::test::expect_unary_vectorized(f, -0.2, 1e-3, 1, 1.3, 3, 3.7, 10, 10.2,
+  stan::test::expect_common_unary_vectorized<stan::test::PromoteToComplex::No>(f);
+  stan::test::expect_unary_vectorized<stan::test::PromoteToComplex::No>(f, -0.2, 1e-3, 1, 1.3, 3, 3.7, 10, 10.2,
                                       1e6);
 
   // non-zero real and imaginary components

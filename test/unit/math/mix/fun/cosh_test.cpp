@@ -5,7 +5,7 @@ TEST(mathMixMatFun, cosh) {
     using stan::math::cosh;
     return cosh(x1);
   };
-  stan::test::expect_common_unary_vectorized(f);
+  stan::test::expect_common_unary_vectorized<stan::test::PromoteToComplex::No>(f);
   stan::test::expect_unary_vectorized(f, -2.6, -2, -1.2, -0.2, 0.5, 1, 1.3,
                                       1.5);
   stan::test::expect_complex_common(f);
