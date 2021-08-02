@@ -8,14 +8,14 @@ void expect_scalar_type() {
   using stan::scalar_type_t;
   static_assert(std::is_same<R, scalar_type_t<T>>::value, "NOT SAME");
   static_assert(std::is_same<R, scalar_type_t<T&>>::value, "NOT SAME");
-  test::expect_same_type<R, scalar_type_t<T>>();
-  test::expect_same_type<R, scalar_type_t<T>>();
-  test::expect_same_type<R, scalar_type_t<T&>>();
-  test::expect_same_type<R, scalar_type_t<T&>>();
-  test::expect_same_type<R, scalar_type_t<const T&>>();
-  test::expect_same_type<R, scalar_type_t<const T&>>();
-  test::expect_same_type<R, scalar_type_t<const T>>();
-  test::expect_same_type<R, scalar_type_t<const T>>();
+  EXPECT_SAME_TYPE(R, scalar_type_t<T>);
+  EXPECT_SAME_TYPE(R, scalar_type_t<T>);
+  EXPECT_SAME_TYPE(R, scalar_type_t<T&>);
+  EXPECT_SAME_TYPE(R, scalar_type_t<T&>);
+  EXPECT_SAME_TYPE(R, scalar_type_t<const T&>);
+  EXPECT_SAME_TYPE(R, scalar_type_t<const T&>);
+  EXPECT_SAME_TYPE(R, scalar_type_t<const T>);
+  EXPECT_SAME_TYPE(R, scalar_type_t<const T>);
 }
 
 template <typename T>
@@ -52,8 +52,8 @@ TEST(MathMetaPrim, scalarType) {
   using ffd_t = fvar<fd_t>;
   using fv_t = fvar<var>;
   using ffv_t = fvar<fv_t>;
-  test::expect_same_type<int, stan::scalar_type<int>::type>();
-  test::expect_same_type<int, stan::scalar_type<std::vector<int>>::type>();
+  EXPECT_SAME_TYPE(int, stan::scalar_type<int>::type);
+  EXPECT_SAME_TYPE(int, stan::scalar_type<std::vector<int>>::type);
 
   test_scalar_type<d_t>();
   test_scalar_type<d_t const*>();
@@ -69,10 +69,9 @@ TEST(MathMetaPrim, ScalarTypeArrayConstConst) {
   using stan::scalar_type;
   using std::vector;
   // These ones work because pointers are always copied
-  test::expect_same_type<double const*,
-                         scalar_type<const vector<double const*>>::type>();
-  test::expect_same_type<int const*,
-                         scalar_type<const vector<int const*>>::type>();
-  test::expect_same_type<
-      double const*, scalar_type<const vector<vector<double const*>>>::type>();
+  EXPECT_SAME_TYPE(double const*,
+                   scalar_type<const vector<double const*>>::type);
+  EXPECT_SAME_TYPE(int const*, scalar_type<const vector<int const*>>::type);
+  EXPECT_SAME_TYPE(double const*,
+                   scalar_type<const vector<vector<double const*>>>::type);
 }

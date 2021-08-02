@@ -22,24 +22,24 @@ TEST(AgradRev, varStackRecoverNestedSegFaultFix) {
 
 // just test basic autodiff;  no more free_memory operation
 TEST(AgradRev, varStack) {
-  AVAR a = 2.0;
-  AVAR b = -3.0;
-  AVAR f = a * b;
+  stan::math::var a = 2.0;
+  stan::math::var b = -3.0;
+  stan::math::var f = a * b;
   EXPECT_FLOAT_EQ(-6.0, f.val());
 
-  AVEC x = createAVEC(a, b);
-  VEC grad_f;
+  std::vector<stan::math::var> x{a, b};
+  std::vector<double> grad_f;
   f.grad(x, grad_f);
   EXPECT_FLOAT_EQ(-3.0, grad_f[0]);
   EXPECT_FLOAT_EQ(2.0, grad_f[1]);
 
-  AVAR aa = 2.0;
-  AVAR bb = -3.0;
-  AVAR ff = aa * bb;
+  stan::math::var aa = 2.0;
+  stan::math::var bb = -3.0;
+  stan::math::var ff = aa * bb;
   EXPECT_FLOAT_EQ(-6.0, ff.val());
 
-  AVEC xx = createAVEC(aa, bb);
-  VEC grad_ff;
+  std::vector<stan::math::var> xx = {aa, bb};
+  std::vector<double> grad_ff;
   ff.grad(xx, grad_ff);
   EXPECT_FLOAT_EQ(-3.0, grad_ff[0]);
   EXPECT_FLOAT_EQ(2.0, grad_ff[1]);

@@ -140,7 +140,7 @@ TEST(MathMatrixPrimMat, value_of_expression) {
   Eigen::VectorXi b = Eigen::VectorXi::Random(7);
   Eigen::VectorXi res_b = value_of(2 * b);
   Eigen::VectorXi correct_b = 2 * b;
-  EXPECT_TYPED_MATRIX_EQ(correct_b, res_b, int);
+  EXPECT_MATRIX_EQ(correct_b, res_b);
 
   Eigen::ArrayXXd c = a.array();
   Eigen::ArrayXXd res_c = value_of(2 * c);
