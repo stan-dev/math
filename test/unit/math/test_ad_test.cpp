@@ -259,7 +259,8 @@ stan::math::fvar<T> baz(const stan::math::fvar<T>& x) {
   return x / 2.0;
 }
 template <typename T>
-std::complex<stan::math::fvar<T>> baz(const std::complex<stan::math::fvar<T>>& x) {
+std::complex<stan::math::fvar<T>> baz(
+    const std::complex<stan::math::fvar<T>>& x) {
   ++baz_complex_fvar;
   return x / 2.0;
 }
