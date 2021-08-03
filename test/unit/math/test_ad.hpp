@@ -1824,7 +1824,7 @@ void expect_unary_vectorized(const ad_tolerances& tols, const F& f, T x,
  * @param xs arguments to test
  */
 template <PromoteToComplex ComplexSupport = PromoteToComplex::Yes, typename F,
-          typename... Ts>
+          require_not_same_t<F, ad_tolerances>* = nullptr, typename... Ts>
 void expect_unary_vectorized(const F& f, Ts... xs) {
   ad_tolerances tols;  // default tolerances
   expect_unary_vectorized<ComplexSupport>(tols, f, xs...);
