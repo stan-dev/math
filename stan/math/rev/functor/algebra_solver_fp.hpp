@@ -135,16 +135,15 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_fp_impl(
   using ret_type = Eigen::Matrix<var, Eigen::Dynamic, -1>;
   arena_t<ret_type> ret = theta_dbl;
 
-  auto Jf_xT_lu_ptr = make_unsafe_chainable_ptr(
+  auto Jf_x_T_lu_ptr = make_unsafe_chainable_ptr(
       (Eigen::MatrixXd::Identity(x.size(), x.size()) - Jf_x)
           .transpose()
           .eval()
           .partialPivLu());
 
   reverse_pass_callback(
-      [f, ret, arena_args_tuple, Jf_xT_lu_ptr, msgs]() mutable {
-        // Contract specificities with inverse Jacobian of f with respect to x.
-        Eigen::VectorXd eta = Jf_xT_lu_ptr->solve(ret.adj().eval());
+      [f, ret, arena_args_tuple, Jf_x_T_lu_ptr, msgs]() mutable {
+        Eigen::VectorXd eta = Jf_x_T_lu_ptr->solve(ret.adj().eval());
 
         // Contract with Jacobian of f with respect to y using a nested reverse
         // autodiff pass.

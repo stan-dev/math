@@ -68,11 +68,7 @@ struct KinsolFixedPointEnv {
         nv_f_scal_(N_VNew_Serial(N_)) {
     for (int i = 0; i < N_; ++i) {
       NV_Ith_S(nv_x_, i) = stan::math::value_of(x(i));
-    }
-    for (int i = 0; i < N_; ++i) {
       NV_Ith_S(nv_u_scal_, i) = stan::math::value_of(u_scale[i]);
-    }
-    for (int i = 0; i < N_; ++i) {
       NV_Ith_S(nv_f_scal_, i) = stan::math::value_of(f_scale[i]);
     }
   }
