@@ -70,7 +70,11 @@ auto elt_divide(Scal s, const Mat& m) {
 template <typename Scal, typename Mat, require_stan_scalar_t<Scal>* = nullptr,
           require_eigen_t<Mat>* = nullptr>
 auto elt_divide(Scal s, const Mat& m) {
+#ifdef USE_STANC3
   return (s / m.array()).matrix();
+#else
+  return (s / m.array()).matrix().eval();
+#endif
 }
 
 template <typename Scal1, typename Scal2,
@@ -78,6 +82,63 @@ template <typename Scal1, typename Scal2,
 auto elt_divide(Scal1 s1, Scal2 s2) {
   return s1 / s2;
 }
+
+#ifndef USE_STANC3
+/**
+ * Return the elementwise division of the specified matrices.
+ *
+ * @tparam T1 Type of scalars in first matrix.
+ * @tparam T2 Type of scalars in second matrix.
+ * @tparam R Row type of both matrices.
+ * @tparam C Column type of both matrices.
+ * @param m1 First matrix
+ * @param m2 Second matrix
+ * @return Elementwise division of matrices.
+ */
+template <typename T1, typename T2, int R, int C>
+Eigen::Matrix<return_type_t<T1, T2>, R, C> elt_divide(
+    const Eigen::Matrix<T1, R, C>& m1, const Eigen::Matrix<T2, R, C>& m2) {
+  check_matching_dims("elt_divide", "m1", m1, "m2", m2);
+
+  return m1.array() / m2.array();
+}
+
+/**
+ * Return the elementwise division of the specified matrix
+ * by the specified scalar.
+ *
+ * @tparam T1 Type of scalars in the matrix.
+ * @tparam T2 Type of the scalar.
+ * @tparam R Row type of the matrix.
+ * @tparam C Column type of the matrix.
+ * @param m matrix
+ * @param s scalar
+ * @return Elementwise division of a scalar by matrix.
+ */
+template <typename T1, typename T2, int R, int C>
+Eigen::Matrix<return_type_t<T1, T2>, R, C> elt_divide(
+    const Eigen::Matrix<T1, R, C>& m, T2 s) {
+  return m.array() / s;
+}
+
+/**
+ * Return the elementwise division of the specified scalar
+ * by the specified matrix.
+ *
+ * @tparam T1 Type of the scalar.
+ * @tparam T2 Type of scalars in the matrix.
+ * @tparam R Row type of the matrix.
+ * @tparam C Column type of the matrix.
+ * @param s scalar
+ * @param m matrix
+ * @return Elementwise division of a scalar by matrix.
+ */
+template <typename T1, typename T2, int R, int C>
+Eigen::Matrix<return_type_t<T1, T2>, R, C> elt_divide(
+    T1 s, const Eigen::Matrix<T2, R, C>& m) {
+  return s / m.array();
+}
+#endif
 
 }  // namespace math
 }  // namespace stan
