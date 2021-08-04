@@ -106,10 +106,10 @@ TEST_F(AgradLocalScoped, scoped_chainablestack_variadic) {
 
   scoped_stack.execute(
       [](double aval, double bval) {
-        AVAR a = aval;
-        AVAR b = bval;
-        AVEC x{a, b};
-        AVAR f = 2 * a * b;
+        stan::math::var a = aval;
+        stan::math::var b = bval;
+        std::vector<stan::math::var> x{a, b};
+        stan::math::var f = 2 * a * b;
         Eigen::Matrix<double, Eigen::Dynamic, 1> g_expected(2);
         g_expected << 2 * bval, 2 * aval;
         gradable g_out(x, f, g_expected);

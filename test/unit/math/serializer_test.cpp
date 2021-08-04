@@ -1,4 +1,3 @@
-#include <test/unit/math/util.hpp>
 #include <test/unit/math/serializer.hpp>
 #include <gtest/gtest.h>
 #include <complex>

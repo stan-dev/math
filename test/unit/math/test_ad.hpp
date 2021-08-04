@@ -1306,15 +1306,16 @@ void expect_ad_vectorized_binary_impl(const ad_tolerances& tols, const F& f,
   std::vector<T2> nest_y{y, y};
   std::vector<std::vector<T1>> nest_nest_x{nest_x, nest_x};
   std::vector<std::vector<T2>> nest_nest_y{nest_y, nest_y};
-  expect_ad(tols, f, x, y);
-  expect_ad(tols, f, x, y[0]);
-  expect_ad(tols, f, x[0], y);
-  expect_ad(tols, f, nest_x, nest_y);
-  expect_ad(tols, f, nest_x, y[0]);
-  expect_ad(tols, f, x[0], nest_y);
-  expect_ad(tols, f, nest_nest_x, nest_nest_y);
-  expect_ad(tols, f, nest_nest_x, y[0]);
-  expect_ad(tols, f, x[0], nest_nest_y);
+  expect_ad(tols, f, x, y);            // mat, mat
+  expect_ad(tols, f, x, y[0]);         // mat, scal
+  expect_ad(tols, f, x[0], y);         // scal, mat
+  expect_ad(tols, f, nest_x, nest_y);  // nest<mat>, nest<mat>
+  expect_ad(tols, f, nest_x, y[0]);    // nest<mat>, scal
+  expect_ad(tols, f, x[0], nest_y);    // scal, nest<mat>
+  expect_ad(tols, f, nest_nest_x,
+            nest_nest_y);                 // nest<nest<mat>>, nest<nest<mat>>
+  expect_ad(tols, f, nest_nest_x, y[0]);  // nest<nest<mat>, scal
+  expect_ad(tols, f, x[0], nest_nest_y);  // scal, nest<nest<mat>>
 }
 
 /**
@@ -1394,7 +1395,8 @@ template <typename F, typename T1, typename T2,
 void expect_ad_vectorized_binary(const ad_tolerances& tols, const F& f,
                                  const T1& x, const T2& y) {
   expect_ad_vectorized_binary_impl(tols, f, x, y);
-  expect_ad_vectorized_binary_impl(tols, f, to_std_vector(x), to_std_vector(y));
+  expect_ad_vectorized_binary_impl(tols, f, math::to_array_1d(x),
+                                   math::to_array_1d(y));
 }
 
 /**
@@ -1781,23 +1783,6 @@ std::vector<Eigen::MatrixXd> ar_test_cov_matrices(int N_min, int N_max,
     ys.push_back(y);
   }
   return ys;
-}
-
-/**
- * Return standard vector containing elements of the specified
- * Eigen vector, row vector, or matrix.
- *
- * @tparam R row type
- * @tparam C column type
- * @param x Eigen object
- * @return standard vector with elements of Eigen object
- */
-template <int R, int C>
-std::vector<double> to_std_vector(const Eigen::Matrix<double, R, C>& x) {
-  std::vector<double> y(x.size());
-  for (int i = 0; i < x.size(); ++i)
-    y[i] = x(i);
-  return y;
 }
 
 /**

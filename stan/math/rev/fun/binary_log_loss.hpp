@@ -55,6 +55,9 @@ inline var binary_log_loss(int y, const var& y_hat) {
   }
 }
 
+/**
+ * Overload with `int` and `var_value<Matrix>`
+ */
 template <typename Mat, require_eigen_t<Mat>* = nullptr>
 inline auto binary_log_loss(int y, const var_value<Mat>& y_hat) {
   if (y == 0) {
@@ -70,12 +73,14 @@ inline auto binary_log_loss(int y, const var_value<Mat>& y_hat) {
   }
 }
 
-template <typename Mat, require_eigen_t<Mat>* = nullptr>
-inline auto binary_log_loss(const std::vector<int>& y,
-                            const var_value<Mat>& y_hat) {
-  arena_t<Eigen::Array<bool, -1, 1>> arena_y
-      = Eigen::Map<const Eigen::Array<int, -1, 1>>(y.data(), y.size())
-            .cast<bool>();
+/**
+ * Overload with `var_value<Matrix>` for `std::vector<int>` and
+ * `std::vector<std::vector<int>>`
+ */
+template <typename StdVec, typename Mat, require_eigen_t<Mat>* = nullptr,
+          require_st_integral<StdVec>* = nullptr>
+inline auto binary_log_loss(const StdVec& y, const var_value<Mat>& y_hat) {
+  auto arena_y = to_arena(as_array_or_scalar(y).template cast<bool>());
   auto ret_val
       = -(arena_y == 0)
              .select((-y_hat.val().array()).log1p(), y_hat.val().array().log());

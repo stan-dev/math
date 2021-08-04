@@ -147,20 +147,20 @@ TEST(MathMatrixPrimMat, append_col) {
   EXPECT_THROW(append_col(m32, rv3), std::invalid_argument);
   EXPECT_THROW(append_col(v3, rv3), std::invalid_argument);
 
-  stan::test::expect_type_matrix(append_col(m32, m33));
-  stan::test::expect_type_matrix(append_col(m33, m32));
-  stan::test::expect_type_matrix(append_col(m23, m23b));
-  stan::test::expect_type_matrix(append_col(m23b, m23));
-  stan::test::expect_type_matrix(append_col(m33, v3));
-  stan::test::expect_type_matrix(append_col(v3, m33));
-  stan::test::expect_type_matrix(append_col(m32, v3));
-  stan::test::expect_type_matrix(append_col(v3, m32));
-  stan::test::expect_type_matrix(append_col(v3, v3b));
-  stan::test::expect_type_matrix(append_col(v3b, v3));
-  stan::test::expect_type_row_vector(append_col(rv3, rv3b));
-  stan::test::expect_type_row_vector(append_col(rv3b, rv3));
-  stan::test::expect_type_row_vector(append_col(rv3, -4.31));
-  stan::test::expect_type_row_vector(append_col(5.23, rv3));
+  EXPECT_TYPE(Eigen::MatrixXd, append_col(m32, m33));
+  EXPECT_TYPE(Eigen::MatrixXd, append_col(m33, m32));
+  EXPECT_TYPE(Eigen::MatrixXd, append_col(m23, m23b));
+  EXPECT_TYPE(Eigen::MatrixXd, append_col(m23b, m23));
+  EXPECT_TYPE(Eigen::MatrixXd, append_col(m33, v3));
+  EXPECT_TYPE(Eigen::MatrixXd, append_col(v3, m33));
+  EXPECT_TYPE(Eigen::MatrixXd, append_col(m32, v3));
+  EXPECT_TYPE(Eigen::MatrixXd, append_col(v3, m32));
+  EXPECT_TYPE(Eigen::MatrixXd, append_col(v3, v3b));
+  EXPECT_TYPE(Eigen::MatrixXd, append_col(v3b, v3));
+  EXPECT_TYPE(Eigen::RowVectorXd, append_col(rv3, rv3b));
+  EXPECT_TYPE(Eigen::RowVectorXd, append_col(rv3b, rv3));
+  EXPECT_TYPE(Eigen::RowVectorXd, append_col(rv3, -4.31));
+  EXPECT_TYPE(Eigen::RowVectorXd, append_col(5.23, rv3));
 }
 
 TEST(MathMatrixPrimMat, append_col_different_types) {
