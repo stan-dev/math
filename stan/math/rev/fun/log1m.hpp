@@ -15,28 +15,16 @@ namespace math {
  *
  * \f$\frac{d}{dx} \log (1 - x) = -\frac{1}{1 - x}\f$.
  *
+ * @tparam T Arithmetic or a type inheriting from `EigenBase`.
  * @param a The variable.
  * @return The variable representing log of 1 minus the variable.
  */
-inline var log1m(const var& a) {
+template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
+inline auto log1m(const var_value<T>& a) {
   return make_callback_var(log1m(a.val()), [a](auto& vi) mutable {
-    a.adj() += vi.adj() / (a.val() - 1);
+    as_array_or_scalar(a.adj())
+        += as_array_or_scalar(vi.adj()) / (as_array_or_scalar(a.val()) - 1.0);
   });
-}
-
-/**
- * Return the elementwise log of 1 - x
- *
- * @tparam T type of x
- * @param x argument
- * @return elementwise log of 1 - x
- */
-template <typename T, require_var_matrix_t<T>* = nullptr>
-inline auto log1m(const T& x) {
-  return make_callback_var(
-      stan::math::log1m(x.val()), [x](const auto& vi) mutable {
-        x.adj() += (vi.adj().array() / (x.val().array() - 1.0)).matrix();
-      });
 }
 
 }  // namespace math

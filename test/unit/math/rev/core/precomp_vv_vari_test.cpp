@@ -4,20 +4,20 @@
 
 TEST(StanAgradRevInternal, precomp_vv_vari) {
   double value, gradient1, gradient2;
-  AVAR x1(2), x2(3);
-  AVAR y;
+  stan::math::var x1(2), x2(3);
+  stan::math::var y;
 
   value = 1;
   gradient1 = 4;
   gradient2 = 5;
 
-  AVEC vars = createAVEC(x1, x2);
+  std::vector<stan::math::var> vars{x1, x2};
 
   EXPECT_NO_THROW(y = stan::math::var(new stan::math::precomp_vv_vari(
                       value, x1.vi_, x2.vi_, gradient1, gradient2)));
   EXPECT_FLOAT_EQ(value, y.val());
 
-  VEC g;
+  std::vector<double> g;
   EXPECT_NO_THROW(y.grad(vars, g));
   ASSERT_EQ(2U, g.size());
   EXPECT_FLOAT_EQ(gradient1, g[0]);

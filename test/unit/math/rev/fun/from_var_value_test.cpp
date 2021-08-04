@@ -42,18 +42,18 @@ TEST(AgradRevMatrix, from_var_value_types) {
   auto iv = from_var_value(i);
   auto jv = from_var_value(j);
 
-  test::expect_same_type<var, decltype(av)>();
-  test::expect_same_type<mat_var, decltype(bv)>();
-  test::expect_same_type<vec_var, decltype(cv)>();
-  test::expect_same_type<row_vec_var, decltype(dv)>();
+  EXPECT_SAME_TYPE(var, decltype(av));
+  EXPECT_SAME_TYPE(mat_var, decltype(bv));
+  EXPECT_SAME_TYPE(vec_var, decltype(cv));
+  EXPECT_SAME_TYPE(row_vec_var, decltype(dv));
 
-  test::expect_same_type<mat_var, decltype(ev)>();
-  test::expect_same_type<vec_var, decltype(fv)>();
-  test::expect_same_type<row_vec_var, decltype(gv)>();
+  EXPECT_SAME_TYPE(mat_var, decltype(ev));
+  EXPECT_SAME_TYPE(vec_var, decltype(fv));
+  EXPECT_SAME_TYPE(row_vec_var, decltype(gv));
 
-  test::expect_same_type<Eigen::MatrixXd, decltype(hv)>();
-  test::expect_same_type<Eigen::VectorXd, decltype(iv)>();
-  test::expect_same_type<Eigen::RowVectorXd, decltype(jv)>();
+  EXPECT_SAME_TYPE(Eigen::MatrixXd, decltype(hv));
+  EXPECT_SAME_TYPE(Eigen::VectorXd, decltype(iv));
+  EXPECT_SAME_TYPE(Eigen::RowVectorXd, decltype(jv));
 
   stan::math::recover_memory();
 }
@@ -92,14 +92,14 @@ TEST(AgradRevMatrix, from_var_value_vec_types) {
   auto fv = from_var_value(f);
   auto gv = from_var_value(g);
 
-  test::expect_same_type<var_svec, decltype(av)>();
-  test::expect_same_type<mat_var_svec, decltype(bv)>();
-  test::expect_same_type<vec_var_svec, decltype(cv)>();
-  test::expect_same_type<row_vec_var_svec, decltype(dv)>();
+  EXPECT_SAME_TYPE(var_svec, decltype(av));
+  EXPECT_SAME_TYPE(mat_var_svec, decltype(bv));
+  EXPECT_SAME_TYPE(vec_var_svec, decltype(cv));
+  EXPECT_SAME_TYPE(row_vec_var_svec, decltype(dv));
 
-  test::expect_same_type<mat_var_svec, decltype(ev)>();
-  test::expect_same_type<vec_var_svec, decltype(fv)>();
-  test::expect_same_type<row_vec_var_svec, decltype(gv)>();
+  EXPECT_SAME_TYPE(mat_var_svec, decltype(ev));
+  EXPECT_SAME_TYPE(vec_var_svec, decltype(fv));
+  EXPECT_SAME_TYPE(row_vec_var_svec, decltype(gv));
 
   stan::math::recover_memory();
 }
