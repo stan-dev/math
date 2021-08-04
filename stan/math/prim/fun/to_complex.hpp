@@ -8,8 +8,6 @@
 namespace stan {
 namespace math {
 
-
-
 /**
  * Return a complex type from a real part and an imaginary part.
  * Default values for both parts is 0.
@@ -20,8 +18,8 @@ namespace math {
  * @return Complex type
  */
 template <typename T = double, typename S = double>
-inline std::complex<T> to_complex(const T& re = 0, const S& im = 0){
-    return std::complex<T>(re, im);
+inline std::complex<T> to_complex(const T& re = 0, const S& im = 0) {
+  return std::complex<T>(re, im);
 }
 
 /**
@@ -36,8 +34,8 @@ inline std::complex<T> to_complex(const T& re = 0, const S& im = 0){
  * Otherwise arrays of complex don't work with ints.
  */
 template <typename S = double>
-inline std::complex<double> to_complex(const int& re, const S& im = 0){
-    return std::complex<double>(re, im);
+inline std::complex<double> to_complex(const int& re, const S& im = 0) {
+  return std::complex<double>(re, im);
 }
 
 }  // namespace math
