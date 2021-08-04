@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_FUN_IMAG_HPP
-#define STAN_MATH_PRIM_FUN_IMAG_HPP
+#ifndef STAN_MATH_PRIM_FUN_GET_IMAG_HPP
+#define STAN_MATH_PRIM_FUN_GET_IMAG_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <complex>
@@ -14,8 +14,8 @@ namespace math {
  * @param[in] z argument
  * @return imaginary part of argument
  */
-template <typename T, require_autodiff_t<T>>
-T imag(const std::complex<T>& z) {
+template <typename T>
+T get_imag(const std::complex<T>& z) {
   return z.imag();
 }
 
