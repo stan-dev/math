@@ -9,12 +9,12 @@ TEST(AgradRev, is_inf) {
   double infinity = std::numeric_limits<double>::infinity();
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  stan::math::var a(infinity);
+  AVAR a(infinity);
   EXPECT_TRUE(is_inf(a));
 
-  stan::math::var b(3.0);
+  AVAR b(3.0);
   EXPECT_FALSE(is_inf(b));
 
-  stan::math::var c(nan);
+  AVAR c(nan);
   EXPECT_FALSE(is_inf(c));
 }

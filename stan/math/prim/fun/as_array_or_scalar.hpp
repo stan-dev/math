@@ -21,18 +21,6 @@ inline T as_array_or_scalar(T&& v) {
 }
 
 /**
- * Returns a reference to rvalue specified input value.
- *
- * @tparam T Type of element.
- * @param v Specified value.
- * @return Same value.
- */
-template <typename T, require_stan_scalar_t<T>* = nullptr>
-inline T& as_array_or_scalar(T& v) {
-  return v;
-}
-
-/**
  * Returns specified input value.
  *
  * @tparam T Type of element.

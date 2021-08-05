@@ -21,7 +21,7 @@ TEST(KernelGenerator, logical_negation_test) {
   Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic> res
       = stan::math::from_matrix_cl(res_cl);
   Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic> correct = !m1.array();
-  EXPECT_MATRIX_EQ(correct, res);
+  EXPECT_TYPED_MATRIX_EQ(correct, res, bool);
 }
 
 TEST(KernelGenerator, unary_minus_test) {

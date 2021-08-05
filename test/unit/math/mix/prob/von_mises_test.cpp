@@ -50,8 +50,8 @@ TEST(ProbAgradDistributionsVonMises, FvarVar_1stDeriv) {
 
   fvar<var> logp = von_mises_lpdf(y_, mu, kappa);
 
-  std::vector<stan::math::var> y{y_.val_};
-  std::vector<double> g;
+  AVEC y = createAVEC(y_.val_);
+  VEC g;
   logp.val_.grad(y, g);
   EXPECT_FLOAT_EQ(0, g[0]);
 }
@@ -66,8 +66,8 @@ TEST(ProbAgradDistributionsVonMises, FvarVar_2ndDeriv1) {
   double kappa(0);
   fvar<var> logp = von_mises_lpdf(y_, mu, kappa);
 
-  std::vector<stan::math::var> y{mu.val_};
-  std::vector<double> g;
+  AVEC y = createAVEC(mu.val_);
+  VEC g;
   logp.d_.grad(y, g);
   EXPECT_FLOAT_EQ(0, g[0]);
 }
@@ -82,8 +82,8 @@ TEST(ProbAgradDistributionsVonMises, FvarVar_2ndDeriv2) {
   fvar<var> kappa(0, 1);
   fvar<var> logp = von_mises_lpdf(y_, mu, kappa);
 
-  std::vector<stan::math::var> y{kappa.val_};
-  std::vector<double> g;
+  AVEC y = createAVEC(kappa.val_);
+  VEC g;
   logp.d_.grad(y, g);
   // Fails: g[0] is -nan
   // EXPECT_FLOAT_EQ(0, g[0]);

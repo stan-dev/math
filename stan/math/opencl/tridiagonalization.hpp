@@ -26,9 +26,8 @@ namespace internal {
  * depends on the size of A and cache of the processor. For larger matrices or
  * larger cache sizes a larger value is optimal.
  */
-inline void block_householder_tridiag_cl(const matrix_cl<double>& A,
-                                         matrix_cl<double>& packed,
-                                         const int r = 60) {
+void block_householder_tridiag_cl(const matrix_cl<double>& A,
+                                  matrix_cl<double>& packed, const int r = 60) {
   packed = A;
   for (size_t k = 0; k < A.rows() - 2; k += r) {
     const int actual_r = std::min({r, static_cast<int>(A.rows() - k - 2)});
@@ -96,8 +95,8 @@ inline void block_householder_tridiag_cl(const matrix_cl<double>& A,
  * depends on the size of A and cache of the processor. For larger matrices or
  * larger cache sizes a larger value is optimal.
  */
-inline void block_apply_packed_Q_cl(const matrix_cl<double>& packed_cl,
-                                    matrix_cl<double>& A, const int r = 200) {
+void block_apply_packed_Q_cl(const matrix_cl<double>& packed_cl,
+                             matrix_cl<double>& A, const int r = 200) {
   Eigen::MatrixXd packed = from_matrix_cl(packed_cl);
   Eigen::MatrixXd scratch_space(A.rows(), r);
   for (int k = (packed.rows() - 3) / r * r; k >= 0; k -= r) {

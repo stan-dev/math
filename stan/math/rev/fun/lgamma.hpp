@@ -16,15 +16,12 @@ namespace math {
  *
  * \f$\frac{d}{dx} \Gamma(x) = \psi^{(0)}(x)\f$.
  *
- * @tparam T Arithmetic or a type inheriting from `EigenBase`.
  * @param a The variable.
  * @return Log gamma of the variable.
  */
-template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
-inline auto lgamma(const var_value<T>& a) {
+inline var lgamma(const var& a) {
   return make_callback_var(lgamma(a.val()), [a](auto& vi) mutable {
-    as_array_or_scalar(a.adj())
-        += as_array_or_scalar(vi.adj()) * as_array_or_scalar(digamma(a.val()));
+    a.adj() += vi.adj() * digamma(a.val());
   });
 }
 

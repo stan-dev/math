@@ -3,13 +3,13 @@
 #include <gtest/gtest.h>
 
 TEST(MathMetaPrim, PartialsTypeDouble) {
-  EXPECT_SAME_TYPE(double, stan::partials_type<double>::type);
+  test::expect_same_type<double, stan::partials_type<double>::type>();
 }
 
 TEST(MathMetaPrim, PartialsTypeFloat) {
-  EXPECT_SAME_TYPE(float, stan::partials_type<float>::type);
+  test::expect_same_type<float, stan::partials_type<float>::type>();
 }
 
 TEST(MathMetaPrim, PartialsTypeInt) {
-  EXPECT_SAME_TYPE(int, stan::partials_type<int>::type);
+  test::expect_same_type<int, stan::partials_type<int>::type>();
 }

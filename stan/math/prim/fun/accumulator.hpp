@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_PRIM_FUN_ACCUMULATOR_HPP
 #define STAN_MATH_PRIM_FUN_ACCUMULATOR_HPP
 
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <vector>
 #include <type_traits>
@@ -20,12 +20,22 @@ namespace math {
  *
  * @tparam T Type of scalar added
  */
-template <typename T, typename = void>
+template <typename T>
 class accumulator {
  private:
   std::vector<T> buf_;
 
  public:
+  /**
+   * Construct an accumulator.
+   */
+  accumulator() : buf_() {}
+
+  /**
+   * Destroy an accumulator.
+   */
+  ~accumulator() {}
+
   /**
    * Add the specified arithmetic type value to the buffer after
    * static casting it to the class type <code>T</code>.
@@ -36,8 +46,26 @@ class accumulator {
    * @tparam S Type of argument
    * @param x Value to add
    */
-  template <typename S, typename = require_stan_scalar_t<S>>
-  inline void add(S x) {
+  template <typename S, typename = require_arithmetic_t<S>>
+  void add(S x) {
+    buf_.push_back(static_cast<T>(x));
+  }
+
+  /**
+   * Add the specified non-arithmetic value to the buffer.
+   *
+   * <p>This function is disabled if the type <code>S</code> is
+   * arithmetic or if it's not the same as <code>T</code>.
+   *
+   * <p>See the std library doc for <code>std::is_arithmetic</code>
+   * for information on what counts as an arithmetic type.
+   *
+   * @tparam S Type of argument
+   * @param x Value to add
+   */
+  template <typename S, typename = require_not_arithmetic_t<S>,
+            typename = require_same_t<S, T>>
+  void add(const S& x) {
     buf_.push_back(x);
   }
 
@@ -48,9 +76,12 @@ class accumulator {
    * @tparam S type of the matrix
    * @param m Matrix of values to add
    */
-  template <typename S, require_matrix_t<S>* = nullptr>
-  inline void add(const S& m) {
-    buf_.push_back(stan::math::sum(m));
+  template <typename S, require_eigen_t<S>* = nullptr>
+  void add(const S& m) {
+    const auto& m_eval = m.eval();
+    for (int i = 0; i < m.size(); ++i) {
+      this->add(m_eval.coeff(i));
+    }
   }
 
   /**
@@ -63,33 +94,21 @@ class accumulator {
    * @param xs Vector of entries to add
    */
   template <typename S>
-  inline void add(const std::vector<S>& xs) {
+  void add(const std::vector<S>& xs) {
     for (size_t i = 0; i < xs.size(); ++i) {
       this->add(xs[i]);
     }
   }
-
-#ifdef STAN_OPENCL
-
-  /**
-   * Sum each entry and then push to the buffer.
-   * @tparam S A Type inheriting from `matrix_cl_base`
-   * @param x An OpenCL matrix
-   */
-  template <typename S,
-            require_all_kernel_expressions_and_none_scalar_t<S>* = nullptr>
-  inline void add(const S& xs) {
-    buf_.push_back(stan::math::sum(xs));
-  }
-
-#endif
 
   /**
    * Return the sum of the accumulated values.
    *
    * @return Sum of accumulated values.
    */
-  inline T sum() const { return stan::math::sum(buf_); }
+  T sum() const {
+    using math::sum;
+    return sum(buf_);
+  }
 };
 
 }  // namespace math

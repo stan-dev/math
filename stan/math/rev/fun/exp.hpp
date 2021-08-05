@@ -9,7 +9,6 @@
 #include <stan/math/prim/fun/isinf.hpp>
 #include <stan/math/prim/fun/isfinite.hpp>
 #include <stan/math/rev/fun/is_nan.hpp>
-#include <stan/math/rev/fun/cos.hpp>
 #include <stan/math/rev/fun/sin.hpp>
 #include <cmath>
 #include <complex>
