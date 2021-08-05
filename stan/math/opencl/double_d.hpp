@@ -86,7 +86,7 @@ inline double_d mul_d_d(double a, double b) {
 }
 
 // \cond
-const char* double_d_src = STRINGIFY(
+static const char* double_d_src = STRINGIFY(
     // \endcond
     typedef struct {
       double high;

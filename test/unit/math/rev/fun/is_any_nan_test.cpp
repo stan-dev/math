@@ -10,11 +10,11 @@ TEST(MathFunctions, is_any_nan_variadic_rev) {
   double dbl_inf = std::numeric_limits<double>::infinity();
   double dbl_nan = std::numeric_limits<double>::quiet_NaN();
 
-  AVAR var_nan(dbl_nan);
-  AVAR var_inf(dbl_inf);
+  stan::math::var var_nan(dbl_nan);
+  stan::math::var var_inf(dbl_inf);
 
-  AVAR a = 7.0;
-  AVAR b = 2.0;
+  stan::math::var a = 7.0;
+  stan::math::var b = 2.0;
 
   EXPECT_TRUE(is_any_nan(var_nan, b, 6, 5.0));
   EXPECT_TRUE(is_any_nan(var_nan, var_inf, 6, 5.0));
