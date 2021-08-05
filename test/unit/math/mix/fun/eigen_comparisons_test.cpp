@@ -1,4 +1,4 @@
-#include <test/unit/math/test_ad.hpp>
+#include <stan/math/mix.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 

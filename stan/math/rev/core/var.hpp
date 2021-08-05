@@ -295,13 +295,6 @@ class var_value<T, require_floating_point_t<T>> {
   }
 };
 
-namespace internal {
-template <typename T>
-using require_matrix_var_value = require_t<bool_constant<
-    (is_eigen<T>::value || is_kernel_expression_and_not_scalar<T>::value)
-    && std::is_floating_point<value_type_t<T>>::value>>;
-}
-
 /**
  * Independent (input) and dependent (output) variables for gradients.
  *
@@ -317,7 +310,10 @@ using require_matrix_var_value = require_t<bool_constant<
  * @tparam T An Floating point type.
  */
 template <typename T>
-class var_value<T, internal::require_matrix_var_value<T>> {
+class var_value<
+    T, require_t<bool_constant<
+           (is_eigen<T>::value || is_kernel_expression_and_not_scalar<T>::value)
+           && std::is_floating_point<value_type_t<T>>::value>>> {
  public:
   using value_type = T;  // type in vari_value.
   using vari_type = std::conditional_t<is_plain_type<value_type>::value,

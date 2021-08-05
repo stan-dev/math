@@ -1,16 +1,17 @@
 #ifndef TEST_UNIT_MATH_REV_CORE_GRADABLE_HPP
 #define TEST_UNIT_MATH_REV_CORE_GRADABLE_HPP
 
-#include <stan/math/rev.hpp>
+#include <stan/math.hpp>
+#include <stan/math/prim.hpp>
 #include <stan/math/rev/fun/quad_form.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <vector>
 
 struct gradable {
-  std::vector<stan::math::var> x_;
-  stan::math::var f_;
+  AVEC x_;
+  AVAR f_;
   Eigen::Matrix<double, Eigen::Dynamic, 1> g_expected_;
-  gradable(const std::vector<stan::math::var>& x, const stan::math::var& f,
+  gradable(const AVEC& x, const AVAR& f,
            const Eigen::Matrix<double, Eigen::Dynamic, 1>& g_expected)
       : x_(x), f_(f), g_expected_(g_expected) {}
   void test() {
@@ -52,12 +53,12 @@ gradable setup_quad_form() {
 }
 
 gradable setup_simple() {
-  stan::math::var a = 3;
-  stan::math::var b = 7;
-  std::vector<stan::math::var> x;
+  AVAR a = 3;
+  AVAR b = 7;
+  AVEC x;
   x.push_back(a);
   x.push_back(b);
-  stan::math::var f = 2 * a * b;
+  AVAR f = 2 * a * b;
   Eigen::Matrix<double, Eigen::Dynamic, 1> g_expected(2);
   g_expected << 14, 6;
   return gradable(x, f, g_expected);

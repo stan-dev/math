@@ -7,35 +7,32 @@
 namespace stan {
 namespace math {
 
-/**
- * Return a complex type from a real part and an imaginary part.
- * Default values for both parts is 0.
- *
- * @tparam T type of real and
- * @param re real element
- * @param im imaginary element
- * @return Complex type
- */
-template <typename T = double, typename S = double>
-inline std::complex<T> to_complex(const T& re = 0, const S& im = 0) {
-  return std::complex<T>(re, im);
-}
 
 /**
- * Return a complex type from a integer real part and an imaginary part.
+ * Return the real part of the complex argument.
  *
- * @tparam T type of real and
- * @param re real element
- * @param im imaginary element
- * @return Complex type
- *
- * Used for type casting from int to double for real component.
- * Otherwise arrays of complex don't work with ints.
+ * @return a complex type with real and imaginary set to 0
  */
-template <typename S = double>
-inline std::complex<double> to_complex(const int& re, const S& im = 0) {
-  return std::complex<double>(re, im);
-}
+inline std::complex<double> to_complex(){
+    return std::complex<double>(0, 0);
+} 
+
+
+/**
+ * Return the real part of the complex argument.
+ *
+ * @tparam T value type of argument
+ * @param[in] re real value argument
+ * @param[in] im imaginary value argument
+ * @return complex type with real value set to re and imaginary
+ *         set im or 0 if no second argument is supplied
+ */
+template <typename T>
+inline std::complex<T> to_complex(const T& re, const T& im = 0){
+    return std::complex<T>(re, im);
+} 
+
+
 
 }  // namespace math
 }  // namespace stan

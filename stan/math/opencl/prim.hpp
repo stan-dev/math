@@ -140,8 +140,6 @@
 #include <stan/math/opencl/prim/double_exponential_lccdf.hpp>
 #include <stan/math/opencl/prim/double_exponential_lcdf.hpp>
 #include <stan/math/opencl/prim/double_exponential_lpdf.hpp>
-#include <stan/math/opencl/prim/eigenvalues_sym.hpp>
-#include <stan/math/opencl/prim/eigenvectors_sym.hpp>
 #include <stan/math/opencl/prim/exp_mod_normal_cdf.hpp>
 #include <stan/math/opencl/prim/exp_mod_normal_lccdf.hpp>
 #include <stan/math/opencl/prim/exp_mod_normal_lcdf.hpp>
@@ -239,8 +237,6 @@
 #include <stan/math/opencl/prim/sign.hpp>
 #include <stan/math/opencl/prim/size.hpp>
 #include <stan/math/opencl/prim/softmax.hpp>
-#include <stan/math/opencl/prim/sort_asc.hpp>
-#include <stan/math/opencl/prim/sort_desc.hpp>
 #include <stan/math/opencl/prim/squared_distance.hpp>
 #include <stan/math/opencl/prim/sub_col.hpp>
 #include <stan/math/opencl/prim/sub_row.hpp>
