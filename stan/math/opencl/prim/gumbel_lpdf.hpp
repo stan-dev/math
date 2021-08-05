@@ -50,9 +50,13 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> gumbel_lpdf(
     return 0.0;
   }
 
-  const auto& y_val = value_of(y);
-  const auto& mu_val = value_of(mu);
-  const auto& beta_val = value_of(beta);
+  const auto& y_col = as_column_vector_or_scalar(y);
+  const auto& mu_col = as_column_vector_or_scalar(mu);
+  const auto& beta_col = as_column_vector_or_scalar(beta);
+
+  const auto& y_val = value_of(y_col);
+  const auto& mu_val = value_of(mu_col);
+  const auto& beta_val = value_of(beta_col);
 
   auto check_y_not_nan
       = check_cl(function, "Random variable", y_val, "not NaN");
@@ -94,7 +98,8 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl> gumbel_lpdf(
 
   T_partials_return logp = sum(from_matrix_cl(logp_cl));
 
-  operands_and_partials<T_y_cl, T_loc_cl, T_scale_cl> ops_partials(y, mu, beta);
+  operands_and_partials<decltype(y_col), decltype(mu_col), decltype(beta_col)>
+      ops_partials(y_col, mu_col, beta_col);
   if (!is_constant<T_y_cl>::value) {
     ops_partials.edge1_.partials_ = std::move(y_deriv_cl);
   }

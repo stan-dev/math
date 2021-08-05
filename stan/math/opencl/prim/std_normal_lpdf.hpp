@@ -43,7 +43,8 @@ inline return_type_t<T_y_cl> std_normal_lpdf(const T_y_cl& y) {
     return 0.0;
   }
 
-  const auto& y_val = value_of(y);
+  const auto& y_col = as_column_vector_or_scalar(y);
+  const auto& y_val = value_of(y_col);
 
   auto check_y_not_nan
       = check_cl(function, "Random variable", y_val, "not NaN");
@@ -65,7 +66,7 @@ inline return_type_t<T_y_cl> std_normal_lpdf(const T_y_cl& y) {
     logp += NEG_LOG_SQRT_TWO_PI * N;
   }
 
-  operands_and_partials<T_y_cl> ops_partials(y);
+  operands_and_partials<decltype(y_col)> ops_partials(y_col);
 
   if (!is_constant<T_y_cl>::value) {
     ops_partials.edge1_.partials_ = std::move(y_deriv_cl);
