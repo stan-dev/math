@@ -20,7 +20,7 @@ namespace math {
 namespace internal {
 /**
  * A modified sign function that returns 1 for 0 inputs
- * 
+ *
  * @tparam T Input type, can be either Eigen or scalar types
  * @param x Input argument to determine sign for
  * @return -1 for negative arguments otherwise 1
@@ -78,8 +78,7 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
   using scalar_t = return_type_t<Ta, Tb, Tz>;
   using MapT
       = Eigen::Map<Eigen::Matrix<scalar_t, -1, 1>, 0, Eigen::InnerStride<>>;
-  using MapSignT
-      = Eigen::Map<Eigen::VectorXi, 0, Eigen::InnerStride<>>;
+  using MapSignT = Eigen::Map<Eigen::VectorXi, 0, Eigen::InnerStride<>>;
   using Ta_plain = plain_type_t<Ta>;
   using Tb_plain = plain_type_t<Tb>;
   using T_vec = Eigen::Matrix<scalar_t, -1, 1>;
@@ -144,7 +143,7 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
     T_vec log_phammer_bn(b.size());
     T_vec log_phammer_ap1_mpn(a.size());
     T_vec log_phammer_bp1_mpn(b.size());
-  
+
     Eigen::VectorXi log_phammer_an_sign(a.size());
     Eigen::VectorXi log_phammer_ap1n_sign(a.size());
     Eigen::VectorXi log_phammer_bp1n_sign(b.size());
@@ -155,7 +154,6 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
     Eigen::VectorXi log_phammer_bp1m_sign = Eigen::VectorXi::Ones(b.size());
 
     while ((outer_diff > outer_precision) && (m < max_steps)) {
-
       // Vectors to append results of iteration to
       std::vector<scalar_t> da_iter_m_inter(0);
       std::vector<scalar_t> db_iter_m_inter(0);
@@ -199,9 +197,10 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
           da_mn = (term1_mn + log_phammer_an.array())
                   - (term2_mn + log_phammer_ap1_n.array());
           // Determine signs of each element
-          Eigen::VectorXi curr_signs_da =
-              (base_sign * log_phammer_an_sign.array()
-              * log_phammer_ap1n_sign.array()).matrix();
+          Eigen::VectorXi curr_signs_da
+              = (base_sign * log_phammer_an_sign.array()
+                 * log_phammer_ap1n_sign.array())
+                    .matrix();
 
           // Append results and signs for iteration
           for (int i = 0; i < da_mn.size(); i++) {
@@ -213,16 +212,16 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
         if (calc_b) {
           db_mn = (term1_mn + log_phammer_bn.array())
                   - (term2_mn + log_phammer_bp1_n.array());
-          Eigen::VectorXi curr_signs_db =
-              (base_sign * log_phammer_bn_sign.array()
-              * log_phammer_bp1n_sign.array()).matrix();
+          Eigen::VectorXi curr_signs_db
+              = (base_sign * log_phammer_bn_sign.array()
+                 * log_phammer_bp1n_sign.array())
+                    .matrix();
 
           for (int i = 0; i < db_mn.size(); i++) {
             db_iter_m_inter.emplace_back(db_mn[i]);
             db_m_signs_inter.emplace_back(curr_signs_db[i]);
           }
         }
-
 
         // Series convergence assessed by whether the maximum term is
         //   smaller than the specified criteria (precision)
@@ -318,7 +317,7 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
         da_infsum[i] = dot_product(iter_sign, exp(iter_val));
       }
 
-      auto prod_excl_curr = a_prod / a_ref.array(); 
+      auto prod_excl_curr = a_prod / a_ref.array();
       auto pre_mult_a = (z * prod_excl_curr.array() / b_prod).matrix();
 
       // Evaluate gradients into provided containers
@@ -330,8 +329,7 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
       for (int i = 0; i < b.size(); i++) {
         MapSignT iter_sign(db_infsum_signs.data() + i, m,
                            Eigen::InnerStride<>(b.size()));
-        MapT iter_val(db_infsumt.data() + i, m,
-                      Eigen::InnerStride<>(b.size()));
+        MapT iter_val(db_infsumt.data() + i, m, Eigen::InnerStride<>(b.size()));
         db_infsum[i] = dot_product(iter_sign, exp(iter_val));
       }
       auto pre_mult_b = ((z * a_prod) / (b.array() * b_prod)).matrix();
