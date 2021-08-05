@@ -5,7 +5,7 @@
 
 TEST(AgradRevMatrix, to_var_scalar) {
   double d = 5.0;
-  AVAR v = 5.0;
+  stan::math::var v = 5.0;
   stan::math::var var_x = stan::math::to_var(d);
   EXPECT_FLOAT_EQ(5.0, var_x.val());
 

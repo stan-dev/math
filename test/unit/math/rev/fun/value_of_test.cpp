@@ -75,13 +75,13 @@ TEST(AgradMatrix, value_of) {
   Eigen::MatrixXd d_v_a = value_of(v_a);
   Eigen::MatrixXd d_v_b = value_of(v_b);
 
-  for (size_type i = 0; i < 5; ++i) {
+  for (Eigen::Index i = 0; i < 5; ++i) {
     EXPECT_FLOAT_EQ(b(i), d_b(i));
     EXPECT_FLOAT_EQ(b(i), d_v_b(i));
   }
 
-  for (size_type i = 0; i < 2; ++i)
-    for (size_type j = 0; j < 5; ++j) {
+  for (Eigen::Index i = 0; i < 2; ++i)
+    for (Eigen::Index j = 0; j < 5; ++j) {
       EXPECT_FLOAT_EQ(a(i, j), d_a(i, j));
       EXPECT_FLOAT_EQ(a(i, j), d_v_a(i, j));
     }
