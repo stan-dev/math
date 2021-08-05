@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_FUN_GET_REAL_HPP
-#define STAN_MATH_PRIM_FUN_GET_REAL_HPP
+#ifndef STAN_MATH_PRIM_FUN_REAL_HPP
+#define STAN_MATH_PRIM_FUN_REAL_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <complex>
@@ -15,7 +15,7 @@ namespace math {
  * @return real component of argument
  */
 template <typename T>
-T get_real(const std::complex<T>& z) {
+T real(const std::complex<T>& z) {
   return z.real();
 }
 
