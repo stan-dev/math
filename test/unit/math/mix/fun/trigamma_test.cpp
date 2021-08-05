@@ -15,8 +15,7 @@ TEST(mathMixMatFun, trigamma) {
   tols.grad_hessian_hessian_ = relative_tolerance(1e-3, 1e-2);
   tols.grad_hessian_grad_hessian_ = relative_tolerance(1e-2, 1e-1);
 
-  expect_unary_vectorized<stan::test::PromoteToComplex::No>(
-      tols, f, -103.52, -0.9, -0.5, 0, 0.5, 1.3, 5.1, 19.2);
+  expect_unary_vectorized(tols, f, -103.52, -0.9, -0.5, 0, 0.5, 1.3, 5.1, 19.2);
 
   // reduce tol_min for first deriv tests one order, second derivs four orders,
   // and third derivs three orders
@@ -30,6 +29,5 @@ TEST(mathMixMatFun, trigamma) {
   tols2.grad_hessian_hessian_ = relative_tolerance(1, 1);
   tols2.grad_hessian_grad_hessian_ = relative_tolerance(1, 1);
 
-  expect_unary_vectorized<stan::test::PromoteToComplex::No>(tols2, f, -20, 1,
-                                                            5);
+  expect_unary_vectorized(tols2, f, -20, 1, 5);
 }
