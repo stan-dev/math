@@ -5,6 +5,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/throw_domain_error.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -24,7 +25,7 @@ namespace math {
  */
 template <typename T_y, require_eigen_vector_t<T_y>* = nullptr>
 void check_ordered(const char* function, const char* name, const T_y& y) {
-  const auto& y_ref = to_ref(y);
+  const auto& y_ref = to_ref(value_of_rec(y));
   for (Eigen::Index n = 1; n < y_ref.size(); n++) {
     if (!(y_ref[n] > y_ref[n - 1])) {
       [&]() STAN_COLD_PATH {
@@ -53,9 +54,8 @@ void check_ordered(const char* function, const char* name, const T_y& y) {
  *   not ordered, if there are duplicated values, or if any element
  *   is <code>NaN</code>.
  */
-template <typename T_y>
-void check_ordered(const char* function, const char* name,
-                   const std::vector<T_y>& y) {
+template <typename T_y, require_std_vector_vt<is_stan_scalar, T_y>* = nullptr>
+void check_ordered(const char* function, const char* name, const T_y& y) {
   for (size_t n = 1; n < y.size(); n++) {
     if (!(y[n] > y[n - 1])) {
       [&]() STAN_COLD_PATH {
@@ -71,6 +71,14 @@ void check_ordered(const char* function, const char* name,
                            msg2_str.c_str());
       }();
     }
+  }
+}
+
+template <typename T_y, require_std_vector_t<T_y>* = nullptr,
+ require_not_vt_stan_scalar<T_y>* = nullptr>
+void check_ordered(const char* function, const char* name, const T_y& y) {
+  for (auto&& y_i : y) {
+    check_ordered(function, name, y_i);
   }
 }
 

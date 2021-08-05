@@ -7,6 +7,8 @@
 #include <stan/math/prim/err/throw_domain_error.hpp>
 #include <stan/math/prim/err/constraint_tolerance.hpp>
 #include <stan/math/prim/fun/abs.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <sstream>
 #include <string>
 #include <cmath>
@@ -31,12 +33,13 @@ namespace math {
  * @throw <code>std::domain_error</code> if the vector is not a unit
  *   vector or if any element is <code>NaN</code>
  */
-template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
+template <typename Vec, require_vector_t<Vec>* = nullptr,
+ require_not_std_vector_t<Vec>* = nullptr>
 void check_unit_vector(const char* function, const char* name,
-                       const EigVec& theta) {
+                       const Vec& theta) {
   check_nonzero_size(function, name, theta);
   using std::fabs;
-  value_type_t<EigVec> ssq = theta.squaredNorm();
+  value_type_t<Vec> ssq = value_of_rec(theta).squaredNorm();
   if (!(fabs(1.0 - ssq) <= CONSTRAINT_TOLERANCE)) {
     [&]() STAN_COLD_PATH {
       std::stringstream msg;
@@ -45,6 +48,14 @@ void check_unit_vector(const char* function, const char* name,
       std::string msg_str(msg.str());
       throw_domain_error(function, name, ssq, msg_str.c_str());
     }();
+  }
+}
+
+template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
+void check_unit_vector(const char* function, const char* name,
+                       const StdVec& theta) {
+  for (auto&& theta_i : theta) {
+    check_unit_vector(function, name, theta_i);
   }
 }
 

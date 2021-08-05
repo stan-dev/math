@@ -6,6 +6,7 @@
 #include <stan/math/prim/err/throw_domain_error.hpp>
 #include <stan/math/prim/err/check_ordered.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <sstream>
 #include <string>
 
@@ -24,14 +25,13 @@ namespace math {
  *   values, if the values are not ordered, if there are duplicated
  *   values, or if any element is <code>NaN</code>.
  */
-template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
-void check_positive_ordered(const char* function, const char* name,
-                            const EigVec& y) {
+template <typename Vec, require_vector_t<Vec>* = nullptr,
+ require_not_std_vector_t<Vec>* = nullptr>
+void check_positive_ordered(const char* function, const char* name, const Vec& y) {
   if (y.size() == 0) {
     return;
   }
-
-  const auto& y_ref = to_ref(y);
+  const auto& y_ref = to_ref(value_of_rec(y));
   if (y_ref[0] < 0) {
     [&]() STAN_COLD_PATH {
       std::ostringstream msg;
@@ -43,6 +43,14 @@ void check_positive_ordered(const char* function, const char* name,
     }();
   }
   check_ordered(function, name, y_ref);
+}
+
+template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
+void check_positive_ordered(const char* function, const char* name,
+                            const StdVec& y) {
+  for (auto&& y_i : y) {
+    check_positive_ordered(function, name, y_i);
+  }
 }
 }  // namespace math
 }  // namespace stan

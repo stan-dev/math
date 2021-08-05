@@ -4,6 +4,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/prim/err/check_positive.hpp>
 #include <stan/math/prim/err/check_lower_triangular.hpp>
 #include <stan/math/prim/err/check_square.hpp>
@@ -29,10 +30,10 @@ namespace math {
  *   factor, if number of rows is less than the number of columns,
  *   if there are 0 columns, or if any element in matrix is NaN
  */
-template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr>
+template <typename EigMat, require_matrix_t<EigMat>* = nullptr>
 void check_cholesky_factor_corr(const char* function, const char* name,
                                 const EigMat& y) {
-  const auto& y_ref = to_ref(y);
+  const auto& y_ref = to_ref(value_of_rec(y));
   check_square(function, name, y_ref);
   check_lower_triangular(function, name, y_ref);
   check_positive(function, name, y_ref.diagonal());
@@ -41,6 +42,13 @@ void check_cholesky_factor_corr(const char* function, const char* name,
   }
 }
 
+template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
+void check_cholesky_factor_corr(const char* function, const char* name,
+                                const StdVec& y) {
+  for (auto&& y_i : y) {
+    check_cholesky_factor_corr(function, name, y_i);
+  }
+}
 }  // namespace math
 }  // namespace stan
 #endif

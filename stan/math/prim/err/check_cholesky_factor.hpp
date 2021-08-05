@@ -1,8 +1,10 @@
 #ifndef STAN_MATH_PRIM_ERR_CHECK_CHOLESKY_FACTOR_HPP
 #define STAN_MATH_PRIM_ERR_CHECK_CHOLESKY_FACTOR_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 #include <stan/math/prim/err/check_positive.hpp>
 #include <stan/math/prim/err/check_less_or_equal.hpp>
 #include <stan/math/prim/err/check_lower_triangular.hpp>
@@ -25,15 +27,24 @@ namespace math {
  *   factor, if number of rows is less than the number of columns,
  *   if there are 0 columns, or if any element in matrix is NaN
  */
-template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
+template <typename Mat, require_matrix_t<Mat>* = nullptr>
 inline void check_cholesky_factor(const char* function, const char* name,
-                                  const EigMat& y) {
+                                  const Mat& y) {
   check_less_or_equal(function, "columns and rows of Cholesky factor", y.cols(),
                       y.rows());
   check_positive(function, "columns of Cholesky factor", y.cols());
-  const Eigen::Ref<const plain_type_t<EigMat>>& y_ref = y;
+  auto&& y_ref = to_ref(value_of_rec(y));
   check_lower_triangular(function, name, y_ref);
   check_positive(function, name, y_ref.diagonal());
+}
+
+
+template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
+void check_cholesky_factor(const char* function, const char* name,
+                                const StdVec& y) {
+  for (auto&& y_i : y) {
+    check_cholesky_factor(function, name, y_i);
+  }
 }
 
 }  // namespace math
