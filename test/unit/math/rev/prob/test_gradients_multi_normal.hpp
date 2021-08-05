@@ -4,7 +4,7 @@
 #include <vector>
 #include <iomanip>
 #include <stdexcept>
-#include <test/unit/math/util.hpp>
+#include <stan/math.hpp>
 
 template <typename F, typename T_y, typename T_mu, typename T_sigma>
 std::vector<double> finite_diffs_multi_normal(
@@ -14,11 +14,11 @@ std::vector<double> finite_diffs_multi_normal(
   std::vector<double> diffs;
   diffs.reserve(vec_y.size() + vec_mu.size() + vec_sigma.size());
 
-  std::vector<double> vec_y_plus = vdouble_from_vvar(vec_y);
+  std::vector<double> vec_y_plus = stan::math::value_of(vec_y);
   std::vector<double> vec_y_minus = vec_y_plus;
-  std::vector<double> vec_mu_plus = vdouble_from_vvar(vec_mu);
+  std::vector<double> vec_mu_plus = stan::math::value_of(vec_mu);
   std::vector<double> vec_mu_minus = vec_mu_plus;
-  std::vector<double> vec_sigma_plus = vdouble_from_vvar(vec_sigma);
+  std::vector<double> vec_sigma_plus = stan::math::value_of(vec_sigma);
   std::vector<double> vec_sigma_minus = vec_sigma_plus;
 
   if (!stan::is_constant_all<T_y>::value) {

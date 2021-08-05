@@ -4,7 +4,7 @@
 #include <limits>
 
 void test_unary_not(double x) {
-  AVAR x_v = x;
+  stan::math::var x_v = x;
   EXPECT_EQ(!x, !x_v);
 }
 

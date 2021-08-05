@@ -19,15 +19,18 @@ namespace math {
  *
  * \f$\frac{d}{dx} \mbox{cloglog}^{-1}(x) = \exp (x - \exp (x))\f$.
  *
+ * @tparam T Arithmetic or a type inheriting from `EigenBase`.
  * @param a Variable argument.
  * @return The inverse complementary log-log of the specified
  * argument.
  */
-inline var inv_cloglog(const var& a) {
-  auto precomp_exp = std::exp(a.val() - std::exp(a.val()));
+template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
+inline auto inv_cloglog(const var_value<T>& a) {
+  auto precomp_exp = to_arena(as_array_or_scalar(exp(a.val() - exp(a.val()))));
   return make_callback_var(inv_cloglog(a.val()),
                            [a, precomp_exp](auto& vi) mutable {
-                             a.adj() += vi.adj() * precomp_exp;
+                             as_array_or_scalar(a.adj())
+                                 += as_array_or_scalar(vi.adj()) * precomp_exp;
                            });
 }
 
