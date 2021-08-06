@@ -3,8 +3,9 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/err/throw_domain_error.hpp>
 #include <stan/math/prim/err/check_ordered.hpp>
+#include <stan/math/prim/err/make_iter_name.hpp>
+#include <stan/math/prim/err/throw_domain_error.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
 #include <sstream>
@@ -16,7 +17,7 @@ namespace math {
 /**
  * Check if the specified vector contains non-negative values and is sorted into
  * strictly increasing order.
- * @tparam EigVec A type derived from `EigenBase` with 1 compile time row or
+ * @tparam Vec A type derived from `EigenBase` with 1 compile time row or
  * column
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -26,8 +27,9 @@ namespace math {
  *   values, or if any element is <code>NaN</code>.
  */
 template <typename Vec, require_vector_t<Vec>* = nullptr,
- require_not_std_vector_t<Vec>* = nullptr>
-void check_positive_ordered(const char* function, const char* name, const Vec& y) {
+          require_not_std_vector_t<Vec>* = nullptr>
+void check_positive_ordered(const char* function, const char* name,
+                            const Vec& y) {
   if (y.size() == 0) {
     return;
   }
@@ -45,11 +47,24 @@ void check_positive_ordered(const char* function, const char* name, const Vec& y
   check_ordered(function, name, y_ref);
 }
 
+/**
+ * Check if each of the vectors in a standard vector contains non-negative
+ * values and is sorted into strictly increasing order.
+ * @tparam StdVec A standard vector with an inner type inheriting from EigenBase
+ * with 1 compile time row or column.
+ * @param function Function name (for error messages)
+ * @param name Variable name (for error messages)
+ * @param y Vector to test
+ * @throw <code>std::domain_error</code> if the vector contains non-positive
+ *   values, if the values are not ordered, if there are duplicated
+ *   values, or if any element is <code>NaN</code>.
+ */
 template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
 void check_positive_ordered(const char* function, const char* name,
                             const StdVec& y) {
-  for (auto&& y_i : y) {
-    check_positive_ordered(function, name, y_i);
+  for (size_t i = 0; i < y.size(); ++i) {
+    check_positive_ordered(function, internal::make_iter_name(name, i).c_str(),
+                           y[i]);
   }
 }
 }  // namespace math

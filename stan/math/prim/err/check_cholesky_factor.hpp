@@ -8,6 +8,7 @@
 #include <stan/math/prim/err/check_positive.hpp>
 #include <stan/math/prim/err/check_less_or_equal.hpp>
 #include <stan/math/prim/err/check_lower_triangular.hpp>
+#include <stan/math/prim/err/make_iter_name.hpp>
 
 namespace stan {
 namespace math {
@@ -18,7 +19,7 @@ namespace math {
  * elements are all positive.  Note that Cholesky factors need not
  * be square, but require at least as many rows M as columns N
  * (i.e., M &gt;= N).
- * @tparam EigMat Type of the Cholesky factor (must be derived from \c
+ * @tparam Mat Type of the Cholesky factor (must be derived from \c
  * Eigen::MatrixBase)
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -38,12 +39,27 @@ inline void check_cholesky_factor(const char* function, const char* name,
   check_positive(function, name, y_ref.diagonal());
 }
 
-
+/**
+ * Check if the specified matrix is a valid Cholesky factor.
+ * A Cholesky factor is a lower triangular matrix whose diagonal
+ * elements are all positive.  Note that Cholesky factors need not
+ * be square, but require at least as many rows M as columns N
+ * (i.e., M &gt;= N).
+ * @tparam StdVec A standard vector with inner type inheriting from `MatrixBase`
+ * with dynamic rows and columns.
+ * @param function Function name (for error messages)
+ * @param name Variable name (for error messages)
+ * @param y Standard vector of matrices to test
+ * @throw <code>std::domain_error</code> if y is not a valid Cholesky
+ *   factor, if number of rows is less than the number of columns,
+ *   if there are 0 columns, or if any element in matrix is NaN
+ */
 template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
 void check_cholesky_factor(const char* function, const char* name,
-                                const StdVec& y) {
-  for (auto&& y_i : y) {
-    check_cholesky_factor(function, name, y_i);
+                           const StdVec& y) {
+  for (size_t i = 0; i < y.size(); ++i) {
+    check_cholesky_factor(function, internal::make_iter_name(name, i).c_str(),
+                          y[i]);
   }
 }
 

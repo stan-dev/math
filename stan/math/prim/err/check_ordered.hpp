@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err/make_iter_name.hpp>
 #include <stan/math/prim/err/throw_domain_error.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
@@ -15,7 +16,8 @@ namespace math {
 
 /**
  * Check if the specified vector is sorted into strictly increasing order.
- * @tparam T_y Type of scalar
+ * @tparam T_y A type inheriting from EigenBase with either 1 compile time row
+ * or column.
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Vector to test
@@ -46,7 +48,7 @@ void check_ordered(const char* function, const char* name, const T_y& y) {
 
 /**
  * Check if the specified vector is sorted into strictly increasing order.
- * @tparam T_y Type of scalar
+ * @tparam T_y A standard vector with inner Scalar type
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y <code>std::vector</code> to test
@@ -74,11 +76,22 @@ void check_ordered(const char* function, const char* name, const T_y& y) {
   }
 }
 
+/**
+ * Check if each vector in a standard vector is sorted into strictly increasing
+ * order.
+ * @tparam T_y A standard vector with an inner vector type.
+ * @param function Function name (for error messages)
+ * @param name Variable name (for error messages)
+ * @param y <code>std::vector</code> to test
+ * @throw <code>std::domain_error</code> if the vector elements are
+ *   not ordered, if there are duplicated values, or if any element
+ *   is <code>NaN</code>.
+ */
 template <typename T_y, require_std_vector_t<T_y>* = nullptr,
- require_not_vt_stan_scalar<T_y>* = nullptr>
+          require_not_vt_stan_scalar<T_y>* = nullptr>
 void check_ordered(const char* function, const char* name, const T_y& y) {
-  for (auto&& y_i : y) {
-    check_ordered(function, name, y_i);
+  for (size_t i = 0; i < y.size(); ++i) {
+    check_ordered(function, internal::make_iter_name(name, i).c_str(), y[i]);
   }
 }
 

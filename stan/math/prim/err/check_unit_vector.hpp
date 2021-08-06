@@ -4,8 +4,9 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/check_nonzero_size.hpp>
-#include <stan/math/prim/err/throw_domain_error.hpp>
 #include <stan/math/prim/err/constraint_tolerance.hpp>
+#include <stan/math/prim/err/make_iter_name.hpp>
+#include <stan/math/prim/err/throw_domain_error.hpp>
 #include <stan/math/prim/fun/abs.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
@@ -23,8 +24,8 @@ namespace math {
  * tolerance specified by <code>CONSTRAINT_TOLERANCE</code>. This
  * function only accepts Eigen vectors, statically typed vectors,
  * not general matrices with 1 column.
- * @tparam EigVec A type derived from `EigenBase` with either dynamic rows or
- * columns
+ * @tparam Vec A type derived from `EigenBase` with either dynamic rows or
+ * columns but not both.
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param theta Vector to test
@@ -34,7 +35,7 @@ namespace math {
  *   vector or if any element is <code>NaN</code>
  */
 template <typename Vec, require_vector_t<Vec>* = nullptr,
- require_not_std_vector_t<Vec>* = nullptr>
+          require_not_std_vector_t<Vec>* = nullptr>
 void check_unit_vector(const char* function, const char* name,
                        const Vec& theta) {
   check_nonzero_size(function, name, theta);
@@ -51,11 +52,23 @@ void check_unit_vector(const char* function, const char* name,
   }
 }
 
+/**
+ * Check if the each element in a standard vector is a unit vector.
+ * @tparam StdVec A standard vector with inner type inheriting from `EigenBase`
+ * @param function Function name (for error messages)
+ * @param name Variable name (for error messages)
+ * @param theta Vector to test
+ * @throw <code>std::invalid_argument</code> if <code>theta</code>
+ *   is a 0-vector
+ * @throw <code>std::domain_error</code> if the vector is not a unit
+ *   vector or if any element is <code>NaN</code>
+ */
 template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
 void check_unit_vector(const char* function, const char* name,
                        const StdVec& theta) {
-  for (auto&& theta_i : theta) {
-    check_unit_vector(function, name, theta_i);
+  for (size_t i = 0; i < theta.size(); ++i) {
+    check_unit_vector(function, internal::make_iter_name(name, i).c_str(),
+                      theta[i]);
   }
 }
 

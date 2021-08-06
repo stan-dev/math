@@ -47,8 +47,8 @@ inline void check_corr_matrix(const char* function, const char* name,
       [&y_ref, name, k, function]() STAN_COLD_PATH {
         std::ostringstream msg;
         msg << "is not a valid correlation matrix. " << name << "("
-            << stan::error_index::value + k << "," << stan::error_index::value + k
-            << ") is ";
+            << stan::error_index::value + k << ","
+            << stan::error_index::value + k << ") is ";
         std::string msg_str(msg.str());
         throw_domain_error(function, name, y_ref(k, k), msg_str.c_str(),
                            ", but should be near 1.0");
@@ -60,7 +60,7 @@ inline void check_corr_matrix(const char* function, const char* name,
 
 template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
 void check_corr_matrix(const char* function, const char* name,
-                                const StdVec& y) {
+                       const StdVec& y) {
   for (auto&& y_i : y) {
     check_corr_matrix(function, name, y_i);
   }

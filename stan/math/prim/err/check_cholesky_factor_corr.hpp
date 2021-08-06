@@ -9,6 +9,7 @@
 #include <stan/math/prim/err/check_lower_triangular.hpp>
 #include <stan/math/prim/err/check_square.hpp>
 #include <stan/math/prim/err/check_unit_vector.hpp>
+#include <stan/math/prim/err/make_iter_name.hpp>
 
 namespace stan {
 namespace math {
@@ -21,7 +22,7 @@ namespace math {
  * be square, but require at least as many rows M as columns N
  * (i.e., M &gt;= N).
  * Tolerance is specified by <code>math::CONSTRAINT_TOLERANCE</code>.
- * @tparam EigMat Type inheriting from `MatrixBase` with dynamic rows and
+ * @tparam Mat Type inheriting from `MatrixBase` with dynamic rows and
  * columns.
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -30,9 +31,9 @@ namespace math {
  *   factor, if number of rows is less than the number of columns,
  *   if there are 0 columns, or if any element in matrix is NaN
  */
-template <typename EigMat, require_matrix_t<EigMat>* = nullptr>
+template <typename Mat, require_matrix_t<Mat>* = nullptr>
 void check_cholesky_factor_corr(const char* function, const char* name,
-                                const EigMat& y) {
+                                const Mat& y) {
   const auto& y_ref = to_ref(value_of_rec(y));
   check_square(function, name, y_ref);
   check_lower_triangular(function, name, y_ref);
@@ -42,11 +43,29 @@ void check_cholesky_factor_corr(const char* function, const char* name,
   }
 }
 
+/**
+ * Check if the specified matrix is a valid Cholesky factor of a
+ * correlation matrix.
+ * A Cholesky factor is a lower triangular matrix whose diagonal
+ * elements are all positive.  Note that Cholesky factors need not
+ * be square, but require at least as many rows M as columns N
+ * (i.e., M &gt;= N).
+ * Tolerance is specified by <code>math::CONSTRAINT_TOLERANCE</code>.
+ * @tparam StdVec A standard vector with inner type inheriting from `MatrixBase`
+ * with dynamic rows and columns.
+ * @param function Function name (for error messages)
+ * @param name Variable name (for error messages)
+ * @param y Standard vector of matrics to test
+ * @throw <code>std::domain_error</code> if y[i] is not a valid Cholesky
+ *   factor, if number of rows is less than the number of columns,
+ *   if there are 0 columns, or if any element in matrix is NaN
+ */
 template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
 void check_cholesky_factor_corr(const char* function, const char* name,
                                 const StdVec& y) {
-  for (auto&& y_i : y) {
-    check_cholesky_factor_corr(function, name, y_i);
+  for (size_t i = 0; i < y.size(); ++i) {
+    check_cholesky_factor_corr(function,
+                               internal::make_iter_name(name, i).c_str(), y[i]);
   }
 }
 }  // namespace math

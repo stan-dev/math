@@ -5,6 +5,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/check_nonzero_size.hpp>
 #include <stan/math/prim/err/constraint_tolerance.hpp>
+#include <stan/math/prim/err/make_iter_name.hpp>
 #include <stan/math/prim/err/throw_domain_error.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
@@ -23,12 +24,7 @@ namespace math {
  * specified by <code>CONSTRAINT_TOLERANCE</code>. This function
  * only accepts Eigen vectors, statically typed vectors, not
  * general matrices with 1 column.
- * @tparam T Scalar type of the vector
- * @tparam R Eigen row type, either 1 if we have a row vector
- *         or -1 if we have a column vector.
- * @tparam C Eigen column type, either 1 if we have a column vector
- *         or -1 if we have a row vector. Moreover, we either have
- *         R = 1 and C = -1 or R = -1 and C = 1.
+ * @tparam T A type inheriting from EigenBase.
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param theta Vector to test.
@@ -68,10 +64,22 @@ void check_simplex(const char* function, const char* name, const T& theta) {
   }
 }
 
+/**
+ * Check if each vector in a standard vector is a simplex.
+ * @tparam T A standard vector with inner type inheriting from `EigenBase`.
+ * @param function Function name (for error messages)
+ * @param name Variable name (for error messages)
+ * @param theta Vector to test.
+ * @throw <code>std::invalid_argument</code> if <code>theta</code>
+ *   is a 0-vector.
+ * @throw <code>std::domain_error</code> if the vector is not a
+ *   simplex or if any element is <code>NaN</code>.
+ */
 template <typename T, require_std_vector_t<T>* = nullptr>
 void check_simplex(const char* function, const char* name, const T& theta) {
-  for (auto&& theta_i : theta) {
-    check_simplex(function, name, theta_i);
+  for (size_t i = 0; i < theta.size(); ++i) {
+    check_simplex(function, internal::make_iter_name(name, i).c_str(),
+                  theta[i]);
   }
 }
 
