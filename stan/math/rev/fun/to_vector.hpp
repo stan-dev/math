@@ -19,7 +19,7 @@ namespace math {
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
 inline auto to_vector(const var_value<EigMat>& x) {
   using view_type = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 1>>;
-  return var_value<vari_view<view_type>>(new vari_view<view_type>(
+  return var_value<view_type>(new vari_view<view_type>(
       view_type(x.vi_->val_.data(), x.rows() * x.cols()),
       view_type(x.vi_->adj_.data(), x.rows() * x.cols())));
 }
