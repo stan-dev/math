@@ -74,7 +74,6 @@ TEST(ErrorHandlingMatrix, checkSimplex_message_sum) {
     y_i[13] = 0.9;
   }
 
-
   try {
     stan::math::check_simplex("checkSimplex", "y", y);
     FAIL() << "should have thrown";

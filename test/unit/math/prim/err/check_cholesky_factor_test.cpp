@@ -65,9 +65,8 @@ TEST(ErrorHandlingMatrix, checkCovCholeskyMatrix) {
 
 TEST(ErrorHandlingMatrix, checkCovCholeskyMatrix_nan) {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> y_mat;
-  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> y_vec {
-    y_mat, y_mat, y_mat
-  };
+  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> y_vec{
+      y_mat, y_mat, y_mat};
   double nan = std::numeric_limits<double>::quiet_NaN();
 
   using stan::math::check_cholesky_factor;

@@ -21,7 +21,7 @@ TEST(ErrorHandling, checkOrdered) {
 
   for (auto& y_i : y) {
     y_i = {-std::numeric_limits<double>::infinity(), 1,
-       std::numeric_limits<double>::infinity()};
+           std::numeric_limits<double>::infinity()};
   }
   EXPECT_NO_THROW(check_ordered("check_ordered", "y", y));
 
@@ -32,7 +32,7 @@ TEST(ErrorHandling, checkOrdered) {
 
   for (auto& y_i : y) {
     y_i = {0, std::numeric_limits<double>::infinity(),
-       std::numeric_limits<double>::infinity()};
+           std::numeric_limits<double>::infinity()};
   }
   EXPECT_THROW(check_ordered("check_ordered", "y", y), std::domain_error);
 

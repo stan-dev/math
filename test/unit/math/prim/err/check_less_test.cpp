@@ -34,19 +34,22 @@ TEST(ErrorHandlingMat, CheckLess_Matrix) {
     x_vec[i].col(i) << -5, 0, 5;
     high_scalar_vec[i] = 5;
   }
-  EXPECT_THROW(check_less(function, "x", x_vec, high_scalar_vec), std::domain_error);
+  EXPECT_THROW(check_less(function, "x", x_vec, high_scalar_vec),
+               std::domain_error);
 
   for (int i = 0; i < x_vec.size(); ++i) {
     x_vec[i].col(i) << -5, 0, std::numeric_limits<double>::infinity();
     high_scalar_vec[i] = 5;
   }
-  EXPECT_THROW(check_less(function, "x", x_vec, high_scalar_vec), std::domain_error);
+  EXPECT_THROW(check_less(function, "x", x_vec, high_scalar_vec),
+               std::domain_error);
 
   for (int i = 0; i < x_vec.size(); ++i) {
     x_vec[i].col(i) << -5, 0, std::numeric_limits<double>::infinity();
     high_scalar_vec[i] = std::numeric_limits<double>::infinity();
   }
-  EXPECT_THROW(check_less(function, "x", x_vec, high_scalar_vec), std::domain_error);
+  EXPECT_THROW(check_less(function, "x", x_vec, high_scalar_vec),
+               std::domain_error);
 
   // x_vec, high_vec
   for (int i = 0; i < x_vec.size(); ++i) {
@@ -98,13 +101,15 @@ TEST(ErrorHandlingMat, CheckLess_Matrix) {
     x_scalar_vec[i] = 5;
     high_vec[i] << 100, 200, 5, 100, 200, 5, 100, 200, 5;
   }
-  EXPECT_THROW(check_less(function, "x", x_scalar_vec, high_vec), std::domain_error);
+  EXPECT_THROW(check_less(function, "x", x_scalar_vec, high_vec),
+               std::domain_error);
 
   for (int i = 0; i < x_vec.size(); ++i) {
     x_scalar_vec[i] = std::numeric_limits<double>::infinity();
     high_vec[i] << 10, 20, 30, 10, 20, 30, 10, 20, 30;
   }
-  EXPECT_THROW(check_less(function, "x", x_scalar_vec, high_vec), std::domain_error);
+  EXPECT_THROW(check_less(function, "x", x_scalar_vec, high_vec),
+               std::domain_error);
 
   constexpr auto inf_val = std::numeric_limits<double>::infinity();
   for (int i = 0; i < x_vec.size(); ++i) {
@@ -112,7 +117,8 @@ TEST(ErrorHandlingMat, CheckLess_Matrix) {
     high_vec[i] << inf_val, inf_val, inf_val, inf_val, inf_val, inf_val,
         inf_val, inf_val, inf_val;
   }
-  EXPECT_THROW(check_less(function, "x", x_scalar_vec, high_vec), std::domain_error);
+  EXPECT_THROW(check_less(function, "x", x_scalar_vec, high_vec),
+               std::domain_error);
 }
 
 TEST(ErrorHandlingMat, CheckLess_Matrix_one_indexed_message) {

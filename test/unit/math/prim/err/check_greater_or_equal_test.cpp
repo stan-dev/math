@@ -225,9 +225,8 @@ TEST(ErrorHandlingMat, CheckGreaterOrEqual_Matrix_one_indexed_message) {
     FAIL() << "threw the wrong error";
   }
 
-  EXPECT_EQ(25, message.find("["))
-      << "no index provided" << std::endl
-      << message;
+  EXPECT_EQ(25, message.find("[")) << "no index provided" << std::endl
+                                   << message;
 }
 
 TEST(ErrorHandlingMat, CheckGreaterOrEqual_nan) {
@@ -290,7 +289,7 @@ TEST(ErrorHandlingMat, CheckGreaterOrEqual_nan) {
     }
     for (int j = 0; j < low_vec.size(); j++) {
       for (int i = 0; i < x_vec.size(); ++i) {
-      low_vec[i].col(i)(i) = nan;
+        low_vec[i].col(i)(i) = nan;
       }
       EXPECT_THROW(check_greater_or_equal(function, "x", x_vec, low_vec),
                    std::domain_error);

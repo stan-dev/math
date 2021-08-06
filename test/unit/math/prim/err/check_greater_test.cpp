@@ -31,8 +31,6 @@ TEST(ErrorHandlingMat, CheckGreater_Matrix) {
   EXPECT_NO_THROW(check_greater(function, "x", x_vec, low_vec))
       << "check_greater: matrix<3, 1>, matrix<3, 1>";
 
-
-
   for (int i = 0; i < x_vec.size(); ++i) {
     x_vec[i].col(i) << -1, 0, std::numeric_limits<double>::infinity();
     low_vec[i].col(i) << -2, -1, 0;
@@ -40,32 +38,31 @@ TEST(ErrorHandlingMat, CheckGreater_Matrix) {
   EXPECT_NO_THROW(check_greater(function, "x", x_vec, low_vec))
       << "check_greater: matrix<3, 1>, matrix<3, 1>, y has infinity";
 
-
-      for (int i = 0; i < x_vec.size(); ++i) {
-        x_vec[i].col(i) << -1, 0, 1;
-        low_vec[i].col(i) << -2, 0, 0;
-      }
+  for (int i = 0; i < x_vec.size(); ++i) {
+    x_vec[i].col(i) << -1, 0, 1;
+    low_vec[i].col(i) << -2, 0, 0;
+  }
   EXPECT_THROW(check_greater(function, "x", x_vec, low_vec), std::domain_error)
       << "check_greater: matrix<3, 1>, matrix<3, 1>, should fail for index 1";
 
-      for (int i = 0; i < x_vec.size(); ++i) {
-        x_vec[i].col(i) << -1, 0, 1;
-        low_vec[i].col(i) << -2, -1, std::numeric_limits<double>::infinity();
-      }
+  for (int i = 0; i < x_vec.size(); ++i) {
+    x_vec[i].col(i) << -1, 0, 1;
+    low_vec[i].col(i) << -2, -1, std::numeric_limits<double>::infinity();
+  }
   EXPECT_THROW(check_greater(function, "x", x_vec, low_vec), std::domain_error)
       << "check_greater: matrix<3, 1>, matrix<3, 1>, should fail with infinity";
 
-      for (int i = 0; i < x_vec.size(); ++i) {
-        x_vec[i].col(i) << -1, 0, std::numeric_limits<double>::infinity();
-        low_vec[i].col(i) << -2, -1, std::numeric_limits<double>::infinity();
-      }
+  for (int i = 0; i < x_vec.size(); ++i) {
+    x_vec[i].col(i) << -1, 0, std::numeric_limits<double>::infinity();
+    low_vec[i].col(i) << -2, -1, std::numeric_limits<double>::infinity();
+  }
   EXPECT_THROW(check_greater(function, "x", x_vec, low_vec), std::domain_error)
       << "check_greater: matrix<3, 1>, matrix<3, 1>, should fail with infinity";
 
-      for (int i = 0; i < x_vec.size(); ++i) {
-        x_vec[i].col(i) << -1, 0, 1;
-        low_vec[i].col(i) << -2, -1, -std::numeric_limits<double>::infinity();
-      }
+  for (int i = 0; i < x_vec.size(); ++i) {
+    x_vec[i].col(i) << -1, 0, 1;
+    low_vec[i].col(i) << -2, -1, -std::numeric_limits<double>::infinity();
+  }
   EXPECT_NO_THROW(check_greater(function, "x", x_vec, low_vec))
       << "check_greater: matrix<3, 1>, matrix<3, 1>, should pass with "
          "-infinity";
@@ -78,26 +75,27 @@ TEST(ErrorHandlingMat, CheckGreater_Matrix) {
   EXPECT_NO_THROW(check_greater(function, "x", x_vec, low_scalar_vec))
       << "check_greater: matrix<3, 1>, double";
 
-      for (int i = 0; i < x_vec.size(); ++i) {
-        x_vec[i].col(i) << -1, 0, 1;
-        low_scalar_vec[i] = -std::numeric_limits<double>::infinity();
-      }
+  for (int i = 0; i < x_vec.size(); ++i) {
+    x_vec[i].col(i) << -1, 0, 1;
+    low_scalar_vec[i] = -std::numeric_limits<double>::infinity();
+  }
   EXPECT_NO_THROW(check_greater(function, "x", x_vec, low_scalar_vec))
       << "check_greater: matrix<3, 1>, double";
 
-
-        for (int i = 0; i < x_vec.size(); ++i) {
-          x_vec[i].col(i) << -1, 0, 1;
-          low_scalar_vec[i] = 0;
-        }
-  EXPECT_THROW(check_greater(function, "x", x_vec, low_scalar_vec), std::domain_error)
+  for (int i = 0; i < x_vec.size(); ++i) {
+    x_vec[i].col(i) << -1, 0, 1;
+    low_scalar_vec[i] = 0;
+  }
+  EXPECT_THROW(check_greater(function, "x", x_vec, low_scalar_vec),
+               std::domain_error)
       << "check_greater: matrix<3, 1>, double, should fail for index 1/2";
 
-      for (int i = 0; i < x_vec.size(); ++i) {
-        x_vec[i].col(i) << -1, 0, 1;
-        low_scalar_vec[i] = std::numeric_limits<double>::infinity();
-      }
-  EXPECT_THROW(check_greater(function, "x", x, low_scalar_vec), std::domain_error)
+  for (int i = 0; i < x_vec.size(); ++i) {
+    x_vec[i].col(i) << -1, 0, 1;
+    low_scalar_vec[i] = std::numeric_limits<double>::infinity();
+  }
+  EXPECT_THROW(check_greater(function, "x", x, low_scalar_vec),
+               std::domain_error)
       << "check_greater: matrix<3, 1>, double, should fail with infinity";
 
   // x, low_vec
@@ -108,46 +106,49 @@ TEST(ErrorHandlingMat, CheckGreater_Matrix) {
   EXPECT_NO_THROW(check_greater(function, "x", x_scalar_vec, low_vec))
       << "check_greater: double, matrix<3, 1>";
 
-      for (int i = 0; i < x_vec.size(); ++i) {
-        x_scalar_vec[i] = 10;
-        low_vec[i].col(i) << -1, 0, -std::numeric_limits<double>::infinity();
-      }
+  for (int i = 0; i < x_vec.size(); ++i) {
+    x_scalar_vec[i] = 10;
+    low_vec[i].col(i) << -1, 0, -std::numeric_limits<double>::infinity();
+  }
   EXPECT_NO_THROW(check_greater(function, "x", x_scalar_vec, low_vec))
       << "check_greater: double, matrix<3, 1>, low has -inf";
 
-      for (int i = 0; i < x_vec.size(); ++i) {
-        x_scalar_vec[i] = 10;
-        low_vec[i].col(i) << -1, 0, std::numeric_limits<double>::infinity();
-      }
-  EXPECT_THROW(check_greater(function, "x", x_scalar_vec, low_vec), std::domain_error)
+  for (int i = 0; i < x_vec.size(); ++i) {
+    x_scalar_vec[i] = 10;
+    low_vec[i].col(i) << -1, 0, std::numeric_limits<double>::infinity();
+  }
+  EXPECT_THROW(check_greater(function, "x", x_scalar_vec, low_vec),
+               std::domain_error)
       << "check_greater: double, matrix<3, 1>, low has inf";
 
-      for (int i = 0; i < x_vec.size(); ++i) {
-        x_scalar_vec[i] = std::numeric_limits<double>::infinity();
-        low_vec[i].col(i) << -1, 0, std::numeric_limits<double>::infinity();
-      }
-  EXPECT_THROW(check_greater(function, "x", x_scalar_vec, low_vec), std::domain_error)
+  for (int i = 0; i < x_vec.size(); ++i) {
+    x_scalar_vec[i] = std::numeric_limits<double>::infinity();
+    low_vec[i].col(i) << -1, 0, std::numeric_limits<double>::infinity();
+  }
+  EXPECT_THROW(check_greater(function, "x", x_scalar_vec, low_vec),
+               std::domain_error)
       << "check_greater: double, matrix<3, 1>, x is inf, low has inf";
 
-      for (int i = 0; i < x_vec.size(); ++i) {
-        x_scalar_vec[i] = std::numeric_limits<double>::infinity();
-        low_vec[i].col(i) << -1, 0, 1;
-      }
+  for (int i = 0; i < x_vec.size(); ++i) {
+    x_scalar_vec[i] = std::numeric_limits<double>::infinity();
+    low_vec[i].col(i) << -1, 0, 1;
+  }
   EXPECT_NO_THROW(check_greater(function, "x", x_scalar_vec, low_vec))
       << "check_greater: double, matrix<3, 1>, x is inf";
 
-      for (int i = 0; i < x_vec.size(); ++i) {
-        x_scalar_vec[i] = 1.1;
-        low_vec[i].col(i) << -1, 0, 1;
-      }
+  for (int i = 0; i < x_vec.size(); ++i) {
+    x_scalar_vec[i] = 1.1;
+    low_vec[i].col(i) << -1, 0, 1;
+  }
   EXPECT_NO_THROW(check_greater(function, "x", x_scalar_vec, low_vec))
       << "check_greater: double, matrix<3, 1>";
 
-      for (int i = 0; i < x_vec.size(); ++i) {
-        x_scalar_vec[i] = 0.9;
-        low_vec[i].col(i) << -1, 0, 1;
-      }
-  EXPECT_THROW(check_greater(function, "x", x_scalar_vec, low_vec), std::domain_error)
+  for (int i = 0; i < x_vec.size(); ++i) {
+    x_scalar_vec[i] = 0.9;
+    low_vec[i].col(i) << -1, 0, 1;
+  }
+  EXPECT_THROW(check_greater(function, "x", x_scalar_vec, low_vec),
+               std::domain_error)
       << "check_greater: double, matrix<3, 1>";
 }
 
