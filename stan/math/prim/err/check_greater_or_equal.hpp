@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/check_matching_dims.hpp>
 #include <stan/math/prim/err/throw_domain_error_vec.hpp>
+#include <stan/math/prim/err/throw_domain_error_mat.hpp>
 #include <stan/math/prim/err/throw_domain_error.hpp>
 #include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
@@ -26,109 +27,123 @@ namespace math {
  * @throw <code>domain_error</code> if y is not greater or equal to low or
  *   if any element of y or low is NaN.
  */
-template <typename T_y, typename T_low, require_all_stan_scalar_t<T_y, T_low>* = nullptr>
+template <typename T_y, typename T_low,
+          require_all_stan_scalar_t<T_y, T_low>* = nullptr>
 inline void check_greater_or_equal(const char* function, const char* name,
                                    const T_y& y, const T_low& low) {
-   check_not_nan(function, name, y);
-   check_not_nan(function, "lower", low);
-   if (!(y >= low)) {
-     [&]() STAN_COLD_PATH {
-       std::stringstream msg;
-       msg << ", but must be greater than or equal to ";
-       msg << low;
-       std::string msg_str(msg.str());
-       throw_domain_error(function, name, y, "is ", msg_str.c_str());
-     }();
-   }
+  check_not_nan(function, name, y);
+  check_not_nan(function, "lower", low);
+  if (!(y >= low)) {
+    [&]() STAN_COLD_PATH {
+      std::stringstream msg;
+      msg << ", but must be greater than or equal to ";
+      msg << low;
+      std::string msg_str(msg.str());
+      throw_domain_error(function, name, y, "is ", msg_str.c_str());
+    }();
+  }
 }
 
-template <typename T_y, typename T_low, require_stan_scalar_t<T_y>* = nullptr, require_matrix_t<T_low>* = nullptr>
+template <typename T_y, typename T_low, require_stan_scalar_t<T_y>* = nullptr,
+          require_matrix_t<T_low>* = nullptr>
 inline void check_greater_or_equal(const char* function, const char* name,
                                    const T_y& y, const T_low& low) {
-   auto&& low_arr = as_array_or_scalar(to_ref(value_of_rec(low)));
-   check_not_nan(function, name, y);
-   check_not_nan(function, "lower", low_arr);
-   for (Eigen::Index i = 0; i < low_arr.size(); ++i) {
-     if (!(y >= low_arr.coeffRef(i))) {
-       [&low_arr, y, name, function, i]() STAN_COLD_PATH {
-         std::stringstream msg;
-         msg << ", but must be greater than or equal to ";
-         msg << low_arr.coeff(i);
-         std::string msg_str(msg.str());
-         throw_domain_error(function, name, y, "is ", msg_str.c_str());
-       }();
-     }
-   }
+  auto&& low_arr = as_array_or_scalar(to_ref(value_of_rec(low)));
+  check_not_nan(function, name, y);
+  check_not_nan(function, "lower", low_arr);
+  for (Eigen::Index j = 0; j < low_arr.cols(); ++j) {
+    for (Eigen::Index i = 0; i < low_arr.rows(); ++i) {
+      if (!(y >= low_arr.coeffRef(i, j))) {
+        [&low_arr, y, name, function, i, j]() STAN_COLD_PATH {
+          std::stringstream msg;
+          msg << ", but must be greater than or equal to ";
+          msg << low_arr.coeff(i, j);
+          std::string msg_str(msg.str());
+          throw_domain_error(function, name, y, "is ", msg_str.c_str());
+        }();
+      }
+    }
+  }
 }
 
-template <typename T_y, typename T_low, require_matrix_t<T_y>* = nullptr, require_stan_scalar_t<T_low>* = nullptr>
+template <typename T_y, typename T_low, require_matrix_t<T_y>* = nullptr,
+          require_stan_scalar_t<T_low>* = nullptr>
 inline void check_greater_or_equal(const char* function, const char* name,
                                    const T_y& y, const T_low& low) {
-   auto&& y_arr = as_array_or_scalar(to_ref(value_of_rec(y)));
-   check_not_nan(function, name, y_arr);
-   check_not_nan(function, "lower", low);
-   for (Eigen::Index i = 0; i < y_arr.size(); ++i) {
-     if (!(y_arr.coeffRef(i) >= low)) {
-       [&y_arr, low, name, function, i]() STAN_COLD_PATH {
-         std::stringstream msg;
-         msg << ", but must be greater than or equal to ";
-         msg << low;
-         std::string msg_str(msg.str());
-         throw_domain_error_vec(function, name, y_arr, i, "is ",
-                                msg_str.c_str());
-       }();
-     }
-   }
+  auto&& y_arr = as_array_or_scalar(to_ref(value_of_rec(y)));
+  check_not_nan(function, name, y_arr);
+  check_not_nan(function, "lower", low);
+  for (Eigen::Index j = 0; j < y_arr.cols(); ++j) {
+    for (Eigen::Index i = 0; i < y_arr.rows(); ++i) {
+      if (!(y_arr.coeffRef(i, j) >= low)) {
+        [&y_arr, low, name, function, i, j]() STAN_COLD_PATH {
+          std::stringstream msg;
+          msg << ", but must be greater than or equal to ";
+          msg << low;
+          std::string msg_str(msg.str());
+          throw_domain_error_mat(function, name, y_arr, i, j, "is ",
+                                 msg_str.c_str());
+        }();
+      }
+    }
+  }
 }
 
-template <typename T_y, typename T_low, require_all_matrix_t<T_y, T_low>* = nullptr>
-inline void check_greater_or_equal(const char* function, const char* name,
-                                   const T_y& y, const T_low& low) {
-   check_matching_dims(function, name, y, "lower", low);
-   auto&& y_arr = as_array_or_scalar(to_ref(value_of_rec(y)));
-   auto&& low_arr = as_array_or_scalar(to_ref(value_of_rec(low)));
-   check_not_nan(function, name, y_arr);
-   check_not_nan(function, "lower", low_arr);
-   for (Eigen::Index i = 0; i < low_arr.size(); ++i) {
-     if (!(y_arr.coeffRef(i) >= low_arr.coeffRef(i))) {
-       [&y_arr, &low_arr, name, function, i]() STAN_COLD_PATH {
-         std::stringstream msg;
-         msg << ", but must be greater than or equal to ";
-         msg << low_arr.coeff(i);
-         std::string msg_str(msg.str());
-         throw_domain_error_vec(function, name, y_arr, i, "is ",
-                                msg_str.c_str());
-       }();
-     }
-   }
-}
-
-template <typename T_y, typename T_low, require_all_std_vector_t<T_y, T_low>* = nullptr>
+template <typename T_y, typename T_low,
+          require_all_matrix_t<T_y, T_low>* = nullptr>
 inline void check_greater_or_equal(const char* function, const char* name,
                                    const T_y& y, const T_low& low) {
   check_matching_dims(function, name, y, "lower", low);
+  auto&& y_arr = to_ref(as_array_or_scalar(value_of_rec(y)));
+  auto&& low_arr = to_ref(as_array_or_scalar(value_of_rec(low)));
+  check_not_nan(function, name, y_arr);
+  check_not_nan(function, "lower", low_arr);
+  for (Eigen::Index j = 0; j < low_arr.cols(); ++j) {
+    for (Eigen::Index i = 0; i < low_arr.rows(); ++i) {
+      if (!(y_arr.coeffRef(i, j) >= low_arr.coeffRef(i, j))) {
+        [&y_arr, &low_arr, name, function, i, j]() STAN_COLD_PATH {
+          std::stringstream msg;
+          msg << ", but must be greater than or equal to ";
+          msg << low_arr.coeff(i, j);
+          std::string msg_str(msg.str());
+          throw_domain_error_mat(function, name, y_arr, i, j, "is ",
+                                 msg_str.c_str());
+        }();
+      }
+    }
+  }
+}
+
+template <typename T_y, typename T_low,
+          require_all_std_vector_t<T_y, T_low>* = nullptr>
+inline void check_greater_or_equal(const char* function, const char* name,
+                                   const T_y& y, const T_low& low) {
+  check_matching_sizes(function, name, y, "lower", low);
+  std::string iter_name{name};
   for (size_t i = 0; i < y.size(); ++i) {
-    check_greater_or_equal(function, name, y[i], low[i]);
+    check_greater_or_equal(function, (iter_name + "[" + std::to_string(i + stan::error_index::value) + "]").c_str() , y[i], low[i]);
   }
 }
 
 template <typename T_y, typename T_low, require_std_vector_t<T_y>* = nullptr,
- require_not_std_vector_t<T_low>* = nullptr>
+          require_not_std_vector_t<T_low>* = nullptr>
 inline void check_greater_or_equal(const char* function, const char* name,
                                    const T_y& y, const T_low& low) {
+  std::string iter_name{name};
   for (size_t i = 0; i < y.size(); ++i) {
-    check_greater_or_equal(function, name, y[i], low);
+    check_greater_or_equal(function, (iter_name + "[" + std::to_string(i + stan::error_index::value) + "]").c_str(), y[i], low);
   }
 }
 
-template <typename T_y, typename T_low, require_not_std_vector_t<T_y>* = nullptr, require_std_vector_t<T_low>* = nullptr>
+template <typename T_y, typename T_low,
+          require_not_std_vector_t<T_y>* = nullptr,
+          require_std_vector_t<T_low>* = nullptr>
 inline void check_greater_or_equal(const char* function, const char* name,
                                    const T_y& y, const T_low& low) {
-  for (size_t i = 0; i < y.size(); ++i) {
+  for (size_t i = 0; i < low.size(); ++i) {
     check_greater_or_equal(function, name, y, low[i]);
   }
 }
-
 
 }  // namespace math
 }  // namespace stan

@@ -8,80 +8,114 @@ TEST(ErrorHandlingMat, CheckLessOrEqual_Matrix) {
   const char* function = "check_less_or_equal";
   double x;
   double high;
-  Eigen::Matrix<double, Eigen::Dynamic, 1> x_vec;
-  Eigen::Matrix<double, Eigen::Dynamic, 1> high_vec;
-  x_vec.resize(3);
-  high_vec.resize(3);
-
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> x_mat;
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> high_mat;
+  x_mat.resize(3, 3);
+  high_mat.resize(3, 3);
+  std::vector<double> x_scalar_vec{x, x, x};
+  std::vector<double> high_scalar_vec{high, high, high};
+  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> x_vec{
+      x_mat, x_mat, x_mat};
+  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> high_vec{
+      high_mat, high_mat, high_mat};
   // x_vec, high
-  x_vec << -5, 0, 5;
-  high = 10;
+  for (int i = 0; i < x_vec.size(); ++i) {
+    x_vec[i] << -5, 0, 5, -5, 0, 5, -5, 0, 5;
+    high_scalar_vec[i] = 10;
+  }
   EXPECT_NO_THROW(check_less_or_equal(function, "x", x_vec, high));
 
-  x_vec << -5, 0, 5;
-  high = std::numeric_limits<double>::infinity();
+  for (int i = 0; i < x_vec.size(); ++i) {
+    high_scalar_vec[i] = std::numeric_limits<double>::infinity();
+  }
   EXPECT_NO_THROW(check_less_or_equal(function, "x", x_vec, high));
 
+  for (int i = 0; i < x_vec.size(); ++i) {
   x_vec << -5, 0, 5;
   high = 5;
+}
   EXPECT_NO_THROW(check_less_or_equal(function, "x", x_vec, high));
 
+  for (int i = 0; i < x_vec.size(); ++i) {
   x_vec << -5, 0, std::numeric_limits<double>::infinity();
   high = 5;
+}
   EXPECT_THROW(check_less_or_equal(function, "x", x_vec, high),
                std::domain_error);
 
+               for (int i = 0; i < x_vec.size(); ++i) {
   x_vec << -5, 0, std::numeric_limits<double>::infinity();
   high = std::numeric_limits<double>::infinity();
+}
   EXPECT_NO_THROW(check_less_or_equal(function, "x", x_vec, high));
 
   // x_vec, high_vec
+  for (int i = 0; i < x_vec.size(); ++i) {
   x_vec << -5, 0, 5;
   high_vec << 0, 5, 10;
+}
   EXPECT_NO_THROW(check_less_or_equal(function, "x", x_vec, high_vec));
 
+  for (int i = 0; i < x_vec.size(); ++i) {
   x_vec << -5, 0, 5;
   high_vec << std::numeric_limits<double>::infinity(), 10, 10;
+}
   EXPECT_NO_THROW(check_less_or_equal(function, "x", x_vec, high_vec));
 
+  for (int i = 0; i < x_vec.size(); ++i) {
   x_vec << -5, 0, 5;
   high_vec << 10, 10, 5;
+}
   EXPECT_NO_THROW(check_less_or_equal(function, "x", x_vec, high_vec));
 
+  for (int i = 0; i < x_vec.size(); ++i) {
   x_vec << -5, 0, std::numeric_limits<double>::infinity();
   high_vec << 10, 10, 10;
+}
   EXPECT_THROW(check_less_or_equal(function, "x", x_vec, high_vec),
                std::domain_error);
 
+               for (int i = 0; i < x_vec.size(); ++i) {
   x_vec << -5, 0, std::numeric_limits<double>::infinity();
   high_vec << 10, 10, std::numeric_limits<double>::infinity();
+}
   EXPECT_NO_THROW(check_less_or_equal(function, "x", x_vec, high_vec));
 
   // x, high_vec
-  x = -100;
+  for (int i = 0; i < x_vec.size(); ++i) {
+  x_scalar_vec[i] = -100;
   high_vec << 0, 5, 10;
-  EXPECT_NO_THROW(check_less_or_equal(function, "x", x, high_vec));
+}
+  EXPECT_NO_THROW(check_less_or_equal(function, "x", x_scalar_vec[i], high_vec));
 
-  x = 10;
+  for (int i = 0; i < x_vec.size(); ++i) {
+  x_scalar_vec[i] = 10;
   high_vec << 100, 200, std::numeric_limits<double>::infinity();
-  EXPECT_NO_THROW(check_less_or_equal(function, "x", x, high_vec));
+}
+  EXPECT_NO_THROW(check_less_or_equal(function, "x", x_scalar_vec[i], high_vec));
 
-  x = 5;
+  for (int i = 0; i < x_vec.size(); ++i) {
+  x_scalar_vec[i] = 5;
   high_vec << 100, 200, 5;
-  EXPECT_NO_THROW(check_less_or_equal(function, "x", x, high_vec));
+}
+  EXPECT_NO_THROW(check_less_or_equal(function, "x", x_scalar_vec[i], high_vec));
 
-  x = std::numeric_limits<double>::infinity();
+  for (int i = 0; i < x_vec.size(); ++i) {
+  x_scalar_vec[i] = std::numeric_limits<double>::infinity();
   high_vec << 10, 20, 30;
-  EXPECT_THROW(check_less_or_equal(function, "x", x, high_vec),
+}
+  EXPECT_THROW(check_less_or_equal(function, "x", x_scalar_vec[i], high_vec),
                std::domain_error);
 
-  x = std::numeric_limits<double>::infinity();
+               for (int i = 0; i < x_vec.size(); ++i) {
+  x_scalar_vec[i] = std::numeric_limits<double>::infinity();
   high_vec << std::numeric_limits<double>::infinity(),
       std::numeric_limits<double>::infinity(),
       std::numeric_limits<double>::infinity();
-  EXPECT_NO_THROW(check_less_or_equal(function, "x", x, high_vec));
+    }
+  EXPECT_NO_THROW(check_less_or_equal(function, "x", x_scalar_vec, high_vec));
 }
-
+/*
 TEST(ErrorHandlingMat, CheckLessOrEqual_Matrix_one_indexed_message) {
   using stan::math::check_less_or_equal;
   const char* function = "check_less";
@@ -225,3 +259,4 @@ TEST(ErrorHandlingScalar, CheckLessOrEqual_nan) {
   EXPECT_THROW(check_less_or_equal(function, "x", x, nan), std::domain_error);
   EXPECT_THROW(check_less_or_equal(function, "x", nan, nan), std::domain_error);
 }
+*/
