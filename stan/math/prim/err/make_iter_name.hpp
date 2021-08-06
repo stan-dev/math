@@ -15,7 +15,7 @@ namespace internal {
  * @param i The index.
  */
 inline auto make_iter_name(const char* name, size_t i) {
-  return std::string{name} + "[" + std::to_string(i + stan::error_index::value)
+  return std::string(name) + "[" + std::to_string(i + stan::error_index::value)
          + "]";
 }
 }  // namespace internal
