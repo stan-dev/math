@@ -6,6 +6,7 @@
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>
+#include <complex>
 
 namespace stan {
 namespace math {
@@ -52,7 +53,7 @@ template <typename Container,
           require_container_st<std::is_arithmetic, Container>* = nullptr>
 inline auto abs(const Container& x) {
   return apply_vector_unary<Container>::apply(
-      x, [](const auto& v) { return v.array().abs(); });
+      x, [&](const auto& v) { return v.array().abs(); });
 }
 
 namespace internal {
