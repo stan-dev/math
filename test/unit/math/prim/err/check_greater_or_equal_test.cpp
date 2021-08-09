@@ -236,35 +236,25 @@ TEST(ErrorHandlingMat, CheckGreaterOrEqual_nan) {
 
   double x;
   double low;
-  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> x_mat;
-  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> low_mat;
-  x_mat.resize(3, 3);
-  low_mat.resize(3, 3);
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> x_mat(3, 3);
+  x_mat << -1, 0, 1, -1, 0, 1, -1, 0, 1;
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> low_mat(3, 3);
+  low_mat << -2, -1, 0, -2, -1, 0, -2, -1, 0;
   std::vector<double> x_scalar_vec{x, x, x};
   std::vector<double> low_scalar_vec{low, low, low};
-  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> x_vec{
-      x_mat, x_mat, x_mat};
-  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> low_vec{
-      low_mat, low_mat, low_mat};
-
-  for (int i = 0; i < x_vec.size(); ++i) {
-    x_vec[i].resize(3, 3);
-    low_vec[i].resize(3, 3);
-  }
+  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> x_vec;
+  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> low_vec;
 
   // x_vec, low_vec
-  for (int i = 0; i < x_vec.size(); ++i) {
-    x_vec[i] << -1, 0, 1, -1, 0, 1, -1, 0, 1;
-    low_vec[i] << -2, -1, 0, -2, -1, 0, -2, -1, 0;
+  for (int i = 0; i < 3; ++i) {
+    x_vec.push_back(x_mat);
+    low_vec.push_back(low_mat);
   }
   EXPECT_THROW(check_greater_or_equal(function, "x", x_vec, nan),
                std::domain_error);
 
   for (int i = 0; i < x_vec[i].size(); i++) {
-    for (int i = 0; i < x_vec.size(); ++i) {
-      x_vec[i].col(i) << -1, 0, 1;
-      x_vec[i].col(i)(i) = nan;
-    }
+    x_vec[i].col(i) << -1, nan, 1;
     EXPECT_THROW(check_greater_or_equal(function, "x", x_vec, low_vec),
                  std::domain_error);
   }
@@ -273,27 +263,17 @@ TEST(ErrorHandlingMat, CheckGreaterOrEqual_nan) {
     x_vec[i].col(i) << -1, 0, 1;
   }
   for (int i = 0; i < low_vec.size(); i++) {
-    for (int i = 0; i < x_vec.size(); ++i) {
-      low_vec[i].col(i) << -1, 0, 1;
-      low_vec[i].col(i)(i) = nan;
-    }
+      low_vec[i].col(i) << -1, nan, 1;
     EXPECT_THROW(check_greater_or_equal(function, "x", x_vec, low_vec),
                  std::domain_error);
   }
 
   for (int i = 0; i < x_vec.size(); i++) {
-    for (int i = 0; i < x_vec.size(); ++i) {
-      x_vec[i].col(i) << -1, 0, 1;
-      low_vec[i].col(i) << -2, -1, 0;
-      x_vec[i].col(i)(i) = nan;
-    }
-    for (int j = 0; j < low_vec.size(); j++) {
-      for (int i = 0; i < x_vec.size(); ++i) {
-        low_vec[i].col(i)(i) = nan;
-      }
+    x_vec[i].col(i) << -1, nan, 1;
+    low_vec[i].col(i) << -2, nan, 0;
+    x_vec[i].col(i)(i) = nan;
       EXPECT_THROW(check_greater_or_equal(function, "x", x_vec, low_vec),
                    std::domain_error);
-    }
   }
 }
 
