@@ -30,6 +30,5 @@ TEST(mathMixMatFun, trigamma) {
   tols2.grad_hessian_hessian_ = relative_tolerance(1, 1);
   tols2.grad_hessian_grad_hessian_ = relative_tolerance(1, 1);
 
-  expect_unary_vectorized<stan::test::PromoteToComplex::No>(tols2, f, -20, 1,
-                                                            5);
+  expect_unary_vectorized(tols2, f, -20, 1, 5);
 }

@@ -13,5 +13,5 @@ TEST(mathMixScalFun, sign) {
   stan::test::expect_ad(f, std::numeric_limits<double>::quiet_NaN());
 
   for (auto x : stan::test::internal::common_nonzero_args())
-    stan::test::expect_unary_vectorized<stan::test::PromoteToComplex::No>(f, x);
+    stan::test::expect_unary_vectorized(f, x);
 }

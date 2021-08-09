@@ -103,7 +103,7 @@ struct apply_scalar_unary<F, T, require_floating_point_t<T>> {
 
 /**
  * Template specialization for vectorized functions applying to
- * double arguments.
+ * complex arguments.
  *
  * @tparam F Type of function defining static apply function.
  */

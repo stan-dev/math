@@ -7,7 +7,7 @@ TEST(mathMixMatFun, lambert_w0) {
     using stan::math::lambert_w0;
     return lambert_w0(x1);
   };
-  stan::test::expect_unary_vectorized<stan::test::PromoteToComplex::No>(
+  stan::test::expect_unary_vectorized(
       f, -0.3, -0.1, 0.0, 1, 10, 20);
 
   // Test bounds
@@ -39,7 +39,7 @@ TEST(mathMixMatFun, lambert_wm1) {
     using stan::math::lambert_wm1;
     return lambert_wm1(x1);
   };
-  stan::test::expect_unary_vectorized<stan::test::PromoteToComplex::No>(
+  stan::test::expect_unary_vectorized(
       f, -0.35, -0.3, -0.1, -0.01);
 
   // Test bounds
