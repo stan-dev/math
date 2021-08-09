@@ -5,6 +5,5 @@ TEST(mathMixMatFun, trunc) {
   // can't diff trunc through integers
   for (auto x : stan::test::internal::common_nonzero_args())
     stan::test::expect_unary_vectorized(f, x);
-  stan::test::expect_unary_vectorized(
-      f, -15.2, 0.5, 1.3, 2.4);
+  stan::test::expect_unary_vectorized(f, -15.2, 0.5, 1.3, 2.4);
 }

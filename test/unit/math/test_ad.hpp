@@ -1248,7 +1248,8 @@ enum class PromoteToComplex { No, Yes };
  * @param f functor to test
  * @param x1 value to test
  */
-template <PromoteToComplex ComplexSupport = PromoteToComplex::No, typename F, typename T1,
+template <PromoteToComplex ComplexSupport = PromoteToComplex::No, typename F,
+          typename T1,
           stan::require_t<stan::bool_constant<
               ComplexSupport == PromoteToComplex::No>>* = nullptr>
 void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
@@ -1300,8 +1301,7 @@ void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
  * @param f functor to test
  * @param x1 value to test
  */
-template <PromoteToComplex ComplexSupport, typename F,
-          typename T1,
+template <PromoteToComplex ComplexSupport, typename F, typename T1,
           stan::require_t<stan::bool_constant<
               ComplexSupport == PromoteToComplex::Yes>>* = nullptr>
 void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
@@ -1370,7 +1370,6 @@ void expect_ad_vectorized(const ad_tolerances& tols, const F& f, const T1& x1) {
               vector3_complex(i, vector2_complex(i, vector_complex(i, x1))));
   }
 }
-
 
 /**
  * Test that the specified function has value and 1st-, 2nd-, and
@@ -1801,7 +1800,6 @@ void expect_common_unary_vectorized(const F& f) {
     stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
 }
 
-
 /**
  * Test that the specified vectorized unary function produces the same
  * results and exceptions, and has 1st-, 2nd-, and 3rd-order
@@ -1929,7 +1927,6 @@ void expect_common_nonzero_unary_vectorized(const F& f) {
   for (auto x1 : common_complex())
     stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
 }
-
 
 /**
  * For all pairs of common arguments, test that primitive and all

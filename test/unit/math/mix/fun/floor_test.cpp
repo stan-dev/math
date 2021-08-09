@@ -5,8 +5,8 @@ TEST(mathMixMatFun, floor) {
   // can't autodiff floor through integers
   for (auto x : stan::test::internal::common_nonzero_args())
     stan::test::expect_unary_vectorized(f, x);
-  stan::test::expect_unary_vectorized(
-      f, -2.6, -2.1 - 0.5, -0.2, 1.1, 1.5, 179.2);
+  stan::test::expect_unary_vectorized(f, -2.6, -2.1 - 0.5, -0.2, 1.1, 1.5,
+                                      179.2);
 }
 
 TEST(mathMixMatFun, floormatvar) {
