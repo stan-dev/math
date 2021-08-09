@@ -69,7 +69,7 @@ inline void check_greater_or_equal(const char* function, const char* name,
   check_not_nan(function, "lower", low_arr);
   for (Eigen::Index j = 0; j < low_arr.cols(); ++j) {
     for (Eigen::Index i = 0; i < low_arr.rows(); ++i) {
-      if (!(y >= low_arr.coeffRef(i, j))) {
+      if (!(y >= low_arr.coeff(i, j))) {
         [&low_arr, y, name, function, i, j]() STAN_COLD_PATH {
           std::stringstream msg;
           msg << ", but must be greater than or equal to ";
@@ -106,7 +106,7 @@ inline void check_greater_or_equal(const char* function, const char* name,
   check_not_nan(function, "lower", low);
   for (Eigen::Index j = 0; j < y_arr.cols(); ++j) {
     for (Eigen::Index i = 0; i < y_arr.rows(); ++i) {
-      if (!(y_arr.coeffRef(i, j) >= low)) {
+      if (!(y_arr.coeff(i, j) >= low)) {
         [&y_arr, low, name, function, i, j]() STAN_COLD_PATH {
           std::stringstream msg;
           msg << ", but must be greater than or equal to ";
@@ -142,22 +142,38 @@ template <typename T_y, typename T_low,
           require_all_matrix_t<T_y, T_low>* = nullptr>
 inline void check_greater_or_equal(const char* function, const char* name,
                                    const T_y& y, const T_low& low) {
-  check_matching_dims(function, name, y, "lower", low);
   auto&& y_arr = to_ref(as_array_or_scalar(value_of_rec(y)));
   auto&& low_arr = to_ref(as_array_or_scalar(value_of_rec(low)));
   check_not_nan(function, name, y_arr);
   check_not_nan(function, "lower", low_arr);
-  for (Eigen::Index j = 0; j < low_arr.cols(); ++j) {
-    for (Eigen::Index i = 0; i < low_arr.rows(); ++i) {
-      if (!(y_arr.coeffRef(i, j) >= low_arr.coeffRef(i, j))) {
-        [&y_arr, &low_arr, name, function, i, j]() STAN_COLD_PATH {
+  if (is_vector<T_y>::value && is_vector<T_low>::value) {
+    check_matching_sizes(function, name, y_arr, "lower", low_arr);
+    for (Eigen::Index i = 0; i < low_arr.size(); ++i) {
+      if (!(y_arr.coeff(i) >= low_arr.coeff(i))) {
+        [&y_arr, &low_arr, name, function, i]() STAN_COLD_PATH {
           std::stringstream msg;
           msg << ", but must be greater than or equal to ";
-          msg << low_arr.coeff(i, j);
+          msg << low_arr.coeff(i);
           std::string msg_str(msg.str());
-          throw_domain_error_mat(function, name, y_arr, i, j, "is ",
+          throw_domain_error_vec(function, name, y_arr, i, "is ",
                                  msg_str.c_str());
         }();
+      }
+    }
+  } else {
+    check_matching_dims(function, name, y_arr, "lower", low_arr);
+    for (Eigen::Index j = 0; j < low_arr.cols(); ++j) {
+      for (Eigen::Index i = 0; i < low_arr.rows(); ++i) {
+        if (!(y_arr.coeff(i, j) >= low_arr.coeff(i, j))) {
+          [&y_arr, &low_arr, name, function, i, j]() STAN_COLD_PATH {
+            std::stringstream msg;
+            msg << ", but must be greater than or equal to ";
+            msg << low_arr.coeff(i, j);
+            std::string msg_str(msg.str());
+            throw_domain_error_mat(function, name, y_arr, i, j, "is ",
+                                   msg_str.c_str());
+          }();
+        }
       }
     }
   }
