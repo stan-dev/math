@@ -235,3 +235,25 @@ TEST_F(degenerate_eq_test, newton_guess2) {
       EXPECT_NEAR(J2(k, l), g[l], tolerance);
   }
 }
+
+TEST_F(variadic_test, newton) {
+  using stan::math::var;
+  bool is_newton = true;
+  for (int k = 0; k < n_x; k++) {
+    var y_1 = y_1_dbl;
+    var y_2 = y_2_dbl;
+    var y_3 = y_3_dbl;
+
+    Eigen::Matrix<var, Eigen::Dynamic, 1> theta
+        = variadic_eq_test(variadic_eq_functor(), A, y_1, y_2, y_3, i,
+            is_newton, scaling_step_size, relative_tolerance,
+            function_tolerance, max_num_steps);
+
+    AVEC y_vec = createAVEC(y_1, y_2, y_3);
+    VEC g;
+    theta(k).grad(y_vec, g);
+
+    for (int i = 0; i < n_y; i++)
+      EXPECT_NEAR(J(k, i), g[i], 1e-6);
+  }
+}
