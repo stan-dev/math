@@ -13,14 +13,14 @@ namespace stan {
 namespace math {
 
 template <typename T, require_arithmetic_t<T>* = nullptr>
- auto abs(T x) {
-   return std::abs(x);
- }
+auto abs(T x) {
+  return std::abs(x);
+}
 
- template <typename T, require_complex_t<T>* = nullptr>
- auto abs(T x) {
-   return hypot(x.real(), x.imag());
- }
+template <typename T, require_complex_t<T>* = nullptr>
+auto abs(T x) {
+  return hypot(x.real(), x.imag());
+}
 
 /**
  * Structure to wrap `abs()` so it can be vectorized.
