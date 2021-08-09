@@ -253,19 +253,19 @@ TEST(ErrorHandlingMat, CheckGreaterOrEqual_nan) {
   EXPECT_THROW(check_greater_or_equal(function, "x", x_vec, nan),
                std::domain_error);
 
-   x_vec[0].col(0) << -1, nan, 1;
-    EXPECT_THROW(check_greater_or_equal(function, "x", x_vec, low_vec),
-                 std::domain_error);
+  x_vec[0].col(0) << -1, nan, 1;
+  EXPECT_THROW(check_greater_or_equal(function, "x", x_vec, low_vec),
+               std::domain_error);
 
   x_vec[0].col(0) << -1, 0, 1;
   low_vec[0].col(0) << -1, nan, 1;
   EXPECT_THROW(check_greater_or_equal(function, "x", x_vec, low_vec),
                std::domain_error);
 
-   x_vec[0].coeffRef(2) = nan;
-   low_vec[0].coeffRef(2) = nan;
-    EXPECT_THROW(check_greater_or_equal(function, "x", x_vec, low_vec),
-                 std::domain_error);
+  x_vec[0].coeffRef(2) = nan;
+  low_vec[0].coeffRef(2) = nan;
+  EXPECT_THROW(check_greater_or_equal(function, "x", x_vec, low_vec),
+               std::domain_error);
 }
 
 TEST(ErrorHandlingScalar, CheckGreaterOrEqual) {
