@@ -263,7 +263,7 @@ TEST(ErrorHandlingMat, CheckGreaterOrEqual_nan) {
     x_vec[i].col(i) << -1, 0, 1;
   }
   for (int i = 0; i < low_vec.size(); i++) {
-      low_vec[i].col(i) << -1, nan, 1;
+    low_vec[i].col(i) << -1, nan, 1;
     EXPECT_THROW(check_greater_or_equal(function, "x", x_vec, low_vec),
                  std::domain_error);
   }
@@ -272,8 +272,8 @@ TEST(ErrorHandlingMat, CheckGreaterOrEqual_nan) {
     x_vec[i].col(i) << -1, nan, 1;
     low_vec[i].col(i) << -2, nan, 0;
     x_vec[i].col(i)(i) = nan;
-      EXPECT_THROW(check_greater_or_equal(function, "x", x_vec, low_vec),
-                   std::domain_error);
+    EXPECT_THROW(check_greater_or_equal(function, "x", x_vec, low_vec),
+                 std::domain_error);
   }
 }
 
