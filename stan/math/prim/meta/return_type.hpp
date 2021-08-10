@@ -4,6 +4,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/promote_args.hpp>
 #include <stan/math/prim/meta/base_type.hpp>
+#include <stan/math/prim/meta/is_stan_scalar.hpp>
 #include <stan/math/prim/meta/scalar_type.hpp>
 #include <complex>
 #include <vector>
@@ -116,7 +117,10 @@ using row_vector_return_t = Eigen::Matrix<real_return_t<Ts...>, 1, -1>;
  */
 template <typename T1, typename T2>
 struct scalar_lub {
-  using type = promote_args_t<T1, T2>;
+  using type =
+  std::conditional_t<is_stan_scalar<T1>::value && is_stan_scalar<T2>::value,
+   promote_args_t<T1, T2>, std::conditional_t<is_stan_scalar<T1>::value, T1,
+    std::conditional_t<is_stan_scalar<T2>::value, T2, double>>>;
 };
 
 template <typename T1, typename T2>

@@ -58,7 +58,7 @@ inline auto integrate_ode_rk45(
                                              msgs, relative_tolerance,
                                              absolute_tolerance, max_num_steps);
 
-  std::vector<std::vector<fn_return_type_t<F, T_y0, T_param, T_t0, T_ts>>>
+  std::vector<std::vector<return_type_t<F, T_y0, T_param, T_t0, T_ts>>>
       y_converted;
   y_converted.reserve(y.size());
   for (size_t i = 0; i < y.size(); ++i)

@@ -28,30 +28,6 @@ struct scalar_type<T, require_stan_closure_t<T>> {
   using type = typename std::decay_t<T>::return_scalar_t_;
 };
 
-
-template <typename T, typename = void>
-struct fn_return_type {
-  using type = double;
-};
-
-template <typename T>
-struct fn_return_type<T, void_t<typename std::decay_t<T>::return_scalar_t_>> {
-  using type = typename std::decay_t<T>::return_scalar_t_;
-};
-
-/**
- * Convenience type for the return type of the specified template
- * parameters.
- *
- * @tparam F callable type
- * @tparam Ts sequence of types
- * @see return_type
- * @ingroup type_trait
- */
-template <typename F, typename... Args>
-using fn_return_type_t
-    = return_type_t<typename fn_return_type<F>::type, Args...>;
-
 template <typename T, bool Ref, typename = void>
 struct closure_return_type;
 
@@ -70,11 +46,6 @@ template <typename T>
 struct closure_return_type<T, false,
                     require_stan_closure_t<T>> {
   using type = typename std::remove_reference_t<T>::Base_;
-};
-
-template <typename T>
-struct scalar_type<T, is_stan_closure<T>> {
-  using type = typename std::decay_t<T>::return_scalar_t_;
 };
 
 /**
