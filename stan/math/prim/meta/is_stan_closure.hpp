@@ -18,15 +18,16 @@ template <typename T, typename = void>
 struct is_stan_closure : std::false_type {};
 
 template <typename T>
-struct is_stan_closure<T, void_t<typename T::captured_scalar_t__>>
+struct is_stan_closure<T, void_t<typename std::decay_t<T>::return_scalar_t_>>
     : std::true_type {};
 
+STAN_ADD_REQUIRE_UNARY(stan_closure, is_stan_closure, general_types);
+
 template <typename T>
-struct scalar_type<T, void_t<typename T::captured_scalar_t__>> {
-  using type = typename T::captured_scalar_t__;
+struct scalar_type<T, require_stan_closure_t<T>> {
+  using type = typename std::decay_t<T>::return_scalar_t_;
 };
 
-STAN_ADD_REQUIRE_UNARY(stan_closure, is_stan_closure, general_types);
 
 template <typename T, typename = void>
 struct fn_return_type {
@@ -34,8 +35,8 @@ struct fn_return_type {
 };
 
 template <typename T>
-struct fn_return_type<T, void_t<typename T::captured_scalar_t__>> {
-  using type = typename T::captured_scalar_t__;
+struct fn_return_type<T, void_t<typename std::decay_t<T>::return_scalar_t_>> {
+  using type = typename std::decay_t<T>::return_scalar_t_;
 };
 
 /**
@@ -52,23 +53,28 @@ using fn_return_type_t
     = return_type_t<typename fn_return_type<F>::type, Args...>;
 
 template <typename T, bool Ref, typename = void>
-struct capture_type;
+struct closure_return_type;
 
 template <typename T>
-struct capture_type<T, true> {
-  using type = const T&;
+struct closure_return_type<T, true> {
+  using type = const std::decay_t<T>&;
 };
 
 template <typename T>
-struct capture_type<T, false,
-                    require_not_stan_closure_t<std::remove_reference_t<T>>> {
+struct closure_return_type<T, false,
+                    require_not_stan_closure_t<T>> {
   using type = std::remove_reference_t<T>;
 };
 
 template <typename T>
-struct capture_type<T, false,
-                    require_stan_closure_t<std::remove_reference_t<T>>> {
-  using type = typename std::remove_reference_t<T>::CopyOf__;
+struct closure_return_type<T, false,
+                    require_stan_closure_t<T>> {
+  using type = typename std::remove_reference_t<T>::Base_;
+};
+
+template <typename T>
+struct scalar_type<T, is_stan_closure<T>> {
+  using type = typename std::decay_t<T>::return_scalar_t_;
 };
 
 /**
@@ -78,7 +84,7 @@ struct capture_type<T, false,
  * @tparam Ref true if reference, false if copy
  */
 template <typename T, bool Ref>
-using capture_type_t = typename capture_type<T, Ref>::type;
+using closure_return_type_t = typename closure_return_type<T, Ref>::type;
 
 }  // namespace stan
 

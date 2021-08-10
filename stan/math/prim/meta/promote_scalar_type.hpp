@@ -108,7 +108,7 @@ struct promote_scalar_type<T, F, require_stan_closure_t<F>> {
    * The promoted type.
    */
   using type = typename std::conditional<is_var<T>::value, F,
-                                         typename F::ValueOf__>::type;
+                                         typename F::partials_closure_t_>::type;
 };
 
 template <typename T, typename S>

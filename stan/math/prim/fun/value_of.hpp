@@ -83,7 +83,7 @@ template <typename F, require_stan_closure_t<F>* = nullptr,
 inline auto value_of(const F& f) {
   return apply(
       [&f](const auto&... s) {
-        return typename F::ValueOf__(f.f_, eval(value_of(s))...);
+        return typename F::partials_closure_t_(f.f_, eval(value_of(s))...);
       },
       f.captures_);
 }
