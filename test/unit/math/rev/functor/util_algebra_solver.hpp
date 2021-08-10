@@ -458,11 +458,12 @@ inline void max_num_steps_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
 
 template <typename F>
 Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> variadic_eq_test(
-    const F& f, const Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> A,
-    const stan::math::var& y_1, const stan::math::var& y_2, const
-    stan::math::var& y_3, const int i, bool is_newton = false, double
-    scaling_step_size = 1e-3, double relative_tolerance = 1e-10, double
-    function_tolerance = 1e-6, int32_t max_num_steps = 1e+3) {
+    const F& f,
+    const Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic> A,
+    const stan::math::var& y_1, const stan::math::var& y_2,
+    const stan::math::var& y_3, const int i, bool is_newton = false,
+    double scaling_step_size = 1e-3, double relative_tolerance = 1e-10,
+    double function_tolerance = 1e-6, int32_t max_num_steps = 1e+3) {
   using stan::math::algebra_solver_newton;
   using stan::math::algebra_solver_powell;
   using stan::math::var;
@@ -473,7 +474,7 @@ Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> variadic_eq_test(
 
   Eigen::Matrix<var, Eigen::Dynamic, 1> theta;
 
-  theta = is_newton ? 
+  theta = is_newton ?
     algebra_solver_newton_impl(variadic_eq_functor(), x, &std::cout,
                                scaling_step_size, function_tolerance,
                                max_num_steps, A, y_1, y_2, y_3, i) :
