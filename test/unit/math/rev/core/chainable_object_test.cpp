@@ -78,7 +78,8 @@ int UnsafeChainableObjectTest::counter = 0;
 
 TEST(AgradRev, unsafe_chainable_object_test) {
   {
-    auto ptr = new stan::math::unsafe_chainable_object<UnsafeChainableObjectTest>(
+    auto ptr
+      = new stan::math::unsafe_chainable_object<UnsafeChainableObjectTest>(
         UnsafeChainableObjectTest());
     UnsafeChainableObjectTest::counter = 0;
   }
@@ -92,7 +93,8 @@ TEST(AgradRev, unsafe_chainable_object_nested_test) {
   stan::math::start_nested();
 
   {
-    auto ptr = new stan::math::unsafe_chainable_object<UnsafeChainableObjectTest>(
+    auto ptr
+      = new stan::math::unsafe_chainable_object<UnsafeChainableObjectTest>(
         UnsafeChainableObjectTest());
     UnsafeChainableObjectTest::counter = 0;
   }
