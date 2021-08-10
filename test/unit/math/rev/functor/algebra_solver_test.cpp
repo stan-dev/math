@@ -12,7 +12,6 @@
 //////////////////////////////////////////////////////////////////////////
 // Tests for powell solver.
 
-
 TEST_F(algebra_solver_simple_eq_test, powell_dbl) {
   bool is_newton = false;
   Eigen::VectorXd theta = simple_eq_test(simple_eq_functor(), y_dbl, is_newton);
@@ -250,8 +249,8 @@ TEST_F(variadic_test, powell) {
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta
         = variadic_eq_test(variadic_eq_functor(), A, y_1, y_2, y_3, i,
-            is_newton, scaling_step_size, relative_tolerance,
-            function_tolerance, max_num_steps);
+                           is_newton, scaling_step_size, relative_tolerance,
+                           function_tolerance, max_num_steps);
 
     std::vector<var> y_vec{y_1, y_2, y_3};
     std::vector<double> g;

@@ -246,8 +246,8 @@ TEST_F(variadic_test, newton) {
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta
         = variadic_eq_test(variadic_eq_functor(), A, y_1, y_2, y_3, i,
-            is_newton, scaling_step_size, relative_tolerance,
-            function_tolerance, max_num_steps);
+                           is_newton, scaling_step_size, relative_tolerance,
+                           function_tolerance, max_num_steps);
 
     AVEC y_vec = createAVEC(y_1, y_2, y_3);
     VEC g;
