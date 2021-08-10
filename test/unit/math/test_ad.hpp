@@ -1387,7 +1387,7 @@ template <PromoteToComplex ComplexSupport = PromoteToComplex::No, typename F,
           typename T>
 void expect_ad_vectorized(const F& f, const T& x) {
   ad_tolerances tols;
-  expect_ad_vectorized(tols, f, x);
+  expect_ad_vectorized<ComplexSupport>(tols, f, x);
 }
 
 /**
@@ -1794,7 +1794,7 @@ void expect_common_unary_vectorized(const F& f) {
   ad_tolerances tols;
   auto args = internal::common_args();
   for (double x1 : args)
-    stan::test::expect_ad_vectorized(tols, f, x1);
+    stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
   auto int_args = internal::common_int_args();
   for (int x1 : args)
     stan::test::expect_ad_vectorized<ComplexSupport>(tols, f, x1);
@@ -1875,7 +1875,7 @@ template <PromoteToComplex ComplexSupport = PromoteToComplex::No, typename F,
           require_not_same_t<F, ad_tolerances>* = nullptr, typename... Ts>
 void expect_unary_vectorized(const F& f, Ts... xs) {
   ad_tolerances tols;  // default tolerances
-  expect_unary_vectorized(tols, f, xs...);
+  expect_unary_vectorized<ComplexSupport>(tols, f, xs...);
 }
 
 /**
@@ -2096,100 +2096,6 @@ Eigen::VectorXd to_row_vector(const Eigen::Matrix<double, R, C>& x) {
   for (int i = 0; i < x.size(); ++i)
     y(i) = x(i);
   return y;
-}
-
-std::vector<double> common_complex_parts() {
-  return {-4, -2.5, -1.5, -0.3, -0.0, 0.0, 1.3, 2.1, 3.9};
-}
-
-std::vector<std::complex<double>> common_complex() {
-  std::vector<std::complex<double>> zs;
-  for (double re : common_complex_parts())
-    for (double im : common_complex_parts())
-      zs.emplace_back(re, im);
-  return zs;
-}
-
-template <typename F>
-void expect_complex_common(const F& f) {
-  auto zs = common_complex();
-  for (auto z : zs) {
-    expect_ad(f, z);
-  }
-}
-
-template <typename F>
-void expect_complex_common_binary(const F& f) {
-  auto xs = common_complex_parts();
-  auto zs = common_complex();
-  // complex, complex
-  for (auto z1 : zs) {
-    for (auto z2 : zs) {
-      expect_ad(f, z1, z2);
-    }
-  }
-  // complex, real
-  for (auto z1 : zs) {
-    for (auto x2 : xs) {
-      expect_ad(f, z1, x2);
-    }
-  }
-  // real, complex
-  for (auto x1 : xs) {
-    for (auto z2 : zs) {
-      expect_ad(f, x1, z2);
-    }
-  }
-}
-
-template <typename T, typename F>
-void expect_complex_compare(const F& f, const std::complex<double>& z1,
-                            const std::complex<double>& z2) {
-  using c_t = std::complex<T>;
-  c_t cz1{z1};
-  c_t cz2{z2};
-  T z1r{z1.real()};
-  T z2r{z2.real()};
-
-  EXPECT_EQ(f(z1, z2), f(cz1, cz2));
-  EXPECT_EQ(f(z1, z2), f(cz1, z2));
-  EXPECT_EQ(f(z1, z2), f(z1, cz2));
-
-  EXPECT_EQ(f(z1.real(), z2), f(z1r, cz2));
-  EXPECT_EQ(f(z1.real(), z2), f(z1r, z2));
-
-  EXPECT_EQ(f(z1, z2.real()), f(cz1, z2r));
-  EXPECT_EQ(f(z1, z2.real()), f(z1, z2r));
-}
-
-template <typename F>
-void expect_complex_comparison(const F& f, const std::complex<double>& z1,
-                               const std::complex<double>& z2) {
-  using stan::math::fvar;
-  using stan::math::var;
-  using std::complex;
-  expect_complex_compare<double>(f, z1, z2);              // PASS
-  expect_complex_compare<var>(f, z1, z2);                 // FAIL
-  expect_complex_compare<fvar<double>>(f, z1, z2);        // PASS
-  expect_complex_compare<fvar<fvar<double>>>(f, z1, z2);  // PASS
-  expect_complex_compare<fvar<var>>(f, z1, z2);           // PASS
-  expect_complex_compare<fvar<fvar<var>>>(f, z1, z2);     // PASS
-}
-
-/**
- * Test the specified comparison operation provides results matching
- * those for the double version for all the common complex numbers.
- *
- * @tparam F type of function to test
- * @param f function to test
- */
-template <typename F>
-void expect_complex_common_comparison(const F& f) {
-  for (auto z1 : common_complex()) {
-    for (auto z2 : common_complex()) {
-      expect_complex_comparison(f, z1, z2);
-    }
-  }
 }
 
 /**
