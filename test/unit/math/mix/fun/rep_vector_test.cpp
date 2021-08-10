@@ -8,4 +8,8 @@ TEST(MathMixMatFun, repVector) {
   stan::test::expect_ad(f(0), y);
   stan::test::expect_ad(f(1), y);
   stan::test::expect_ad(f(4), y);
+
+  stan::test::expect_ad_matvar(f(0), y);
+  stan::test::expect_ad_matvar(f(1), y);
+  stan::test::expect_ad_matvar(f(4), y);
 }

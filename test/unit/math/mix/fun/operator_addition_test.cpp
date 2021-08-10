@@ -35,9 +35,9 @@ TEST(AgradMixMatrixOperatorAddition, fv_scalar_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(1.0, result(1, 0).d_.val());
   EXPECT_FLOAT_EQ(1.0, result(1, 1).d_.val());
 
-  AVEC q
-      = createAVEC(v(0, 0).val(), v(0, 1).val(), v(1, 0).val(), v(1, 1).val());
-  VEC h;
+  std::vector<stan::math::var> q{v(0, 0).val(), v(0, 1).val(), v(1, 0).val(),
+                                 v(1, 1).val()};
+  std::vector<double> h;
   result(0, 0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(1, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -58,9 +58,9 @@ TEST(AgradMixMatrixOperatorAddition, fv_scalar_matrix_2ndDeriv) {
   matrix_fv result;
   result = add(v, 2.0);
 
-  AVEC q
-      = createAVEC(v(0, 0).val(), v(0, 1).val(), v(1, 0).val(), v(1, 1).val());
-  VEC h;
+  std::vector<stan::math::var> q{v(0, 0).val(), v(0, 1).val(), v(1, 0).val(),
+                                 v(1, 1).val()};
+  std::vector<double> h;
   result(0, 0).d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -100,8 +100,9 @@ TEST(AgradMixMatrixOperatorAddition, fv_scalar_vector_1stDeriv) {
   EXPECT_FLOAT_EQ(1.0, result(2).d_.val());
   EXPECT_FLOAT_EQ(1.0, result(3).d_.val());
 
-  AVEC q = createAVEC(v(0).val(), v(1).val(), v(2).val(), v(3).val());
-  VEC h;
+  std::vector<stan::math::var> q{v(0).val(), v(1).val(), v(2).val(),
+                                 v(3).val()};
+  std::vector<double> h;
   result(0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(1, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -122,8 +123,9 @@ TEST(AgradMixMatrixOperatorAddition, fv_scalar_vector_2ndDeriv) {
   vector_fv result;
   result = add(v, 2.0);
 
-  AVEC q = createAVEC(v(0).val(), v(1).val(), v(2).val(), v(3).val());
-  VEC h;
+  std::vector<stan::math::var> q{v(0).val(), v(1).val(), v(2).val(),
+                                 v(3).val()};
+  std::vector<double> h;
   result(0).d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -163,8 +165,9 @@ TEST(AgradMixMatrixOperatorAddition, fv_scalar_rowvector_1stDeriv) {
   EXPECT_FLOAT_EQ(1.0, result(2).d_.val());
   EXPECT_FLOAT_EQ(1.0, result(3).d_.val());
 
-  AVEC q = createAVEC(v(0).val(), v(1).val(), v(2).val(), v(3).val());
-  VEC h;
+  std::vector<stan::math::var> q{v(0).val(), v(1).val(), v(2).val(),
+                                 v(3).val()};
+  std::vector<double> h;
   result(0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(1, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -186,8 +189,9 @@ TEST(AgradMixMatrixOperatorAddition, fv_scalar_rowvector_2ndDeriv) {
 
   result = add(v, 2.0);
 
-  AVEC q = createAVEC(v(0).val(), v(1).val(), v(2).val(), v(3).val());
-  VEC h;
+  std::vector<stan::math::var> q{v(0).val(), v(1).val(), v(2).val(),
+                                 v(3).val()};
+  std::vector<double> h;
   result(0).d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -267,9 +271,9 @@ TEST(AgradMixMatrixOperatorAddition, fv_vector_vector_1stDeriv) {
   EXPECT_FLOAT_EQ(2.0, output_v(3).d_.val());
   EXPECT_FLOAT_EQ(2.0, output_v(4).d_.val());
 
-  AVEC q
-      = createAVEC(vv_1(0).val(), vv_1(1).val(), vv_1(2).val(), vv_1(3).val());
-  VEC h;
+  std::vector<stan::math::var> q{vv_1(0).val(), vv_1(1).val(), vv_1(2).val(),
+                                 vv_1(3).val()};
+  std::vector<double> h;
   output_v(0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(1, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -305,9 +309,9 @@ TEST(AgradMixMatrixOperatorAddition, fv_vector_vector_2ndDeriv) {
   vector_fv output_v;
   output_v = add(vv_1, vv_2);
 
-  AVEC q
-      = createAVEC(vv_1(0).val(), vv_1(1).val(), vv_1(2).val(), vv_1(3).val());
-  VEC h;
+  std::vector<stan::math::var> q{vv_1(0).val(), vv_1(1).val(), vv_1(2).val(),
+                                 vv_1(3).val()};
+  std::vector<double> h;
   output_v(0).d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -398,9 +402,9 @@ TEST(AgradMixMatrixOperatorAddition, fv_rowvector_rowvector_1stDeriv) {
   EXPECT_FLOAT_EQ(2.0, output_v(3).d_.val());
   EXPECT_FLOAT_EQ(2.0, output_v(4).d_.val());
 
-  AVEC q = createAVEC(rvv_1(0).val(), rvv_1(1).val(), rvv_1(2).val(),
-                      rvv_1(3).val());
-  VEC h;
+  std::vector<stan::math::var> q{rvv_1(0).val(), rvv_1(1).val(), rvv_1(2).val(),
+                                 rvv_1(3).val()};
+  std::vector<double> h;
   output_v(0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(1, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -434,9 +438,9 @@ TEST(AgradMixMatrixOperatorAddition, fv_rowvector_rowvector_2ndDeriv) {
   row_vector_fv output_v = add(rvv_1, rvd_2);
   output_v = add(rvv_1, rvv_2);
 
-  AVEC q = createAVEC(rvv_1(0).val(), rvv_1(1).val(), rvv_1(2).val(),
-                      rvv_1(3).val());
-  VEC h;
+  std::vector<stan::math::var> q{rvv_1(0).val(), rvv_1(1).val(), rvv_1(2).val(),
+                                 rvv_1(3).val()};
+  std::vector<double> h;
   output_v(0).d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -519,9 +523,9 @@ TEST(AgradMixMatrixOperatorAddition, fv_matrix_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(2.0, output_v(1, 0).d_.val());
   EXPECT_FLOAT_EQ(2.0, output_v(1, 1).d_.val());
 
-  AVEC q = createAVEC(mv_1(0, 0).val(), mv_1(0, 1).val(), mv_1(1, 0).val(),
-                      mv_1(1, 1).val());
-  VEC h;
+  std::vector<stan::math::var> q{mv_1(0, 0).val(), mv_1(0, 1).val(),
+                                 mv_1(1, 0).val(), mv_1(1, 1).val()};
+  std::vector<double> h;
   output_v(0, 0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(1, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -553,9 +557,9 @@ TEST(AgradMixMatrixOperatorAddition, fv_matrix_matrix_2ndDeriv) {
   matrix_fv output_v = add(mv_1, md_2);
   output_v = add(mv_1, mv_2);
 
-  AVEC q = createAVEC(mv_1(0, 0).val(), mv_1(0, 1).val(), mv_1(1, 0).val(),
-                      mv_1(1, 1).val());
-  VEC h;
+  std::vector<stan::math::var> q{mv_1(0, 0).val(), mv_1(0, 1).val(),
+                                 mv_1(1, 0).val(), mv_1(1, 1).val()};
+  std::vector<double> h;
   output_v(0, 0).d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -609,9 +613,9 @@ TEST(AgradMixMatrixOperatorAddition, ffv_scalar_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(1.0, result(1, 0).d_.val().val());
   EXPECT_FLOAT_EQ(1.0, result(1, 1).d_.val().val());
 
-  AVEC q = createAVEC(v(0, 0).val().val(), v(0, 1).val().val(),
-                      v(1, 0).val().val(), v(1, 1).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{v(0, 0).val().val(), v(0, 1).val().val(),
+                                 v(1, 0).val().val(), v(1, 1).val().val()};
+  std::vector<double> h;
   result(0, 0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(1, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -632,9 +636,9 @@ TEST(AgradMixMatrixOperatorAddition, ffv_scalar_matrix_2ndDeriv_1) {
   matrix_ffv result;
   result = add(v, 2.0);
 
-  AVEC q = createAVEC(v(0, 0).val().val(), v(0, 1).val().val(),
-                      v(1, 0).val().val(), v(1, 1).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{v(0, 0).val().val(), v(0, 1).val().val(),
+                                 v(1, 0).val().val(), v(1, 1).val().val()};
+  std::vector<double> h;
   result(0, 0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -655,9 +659,9 @@ TEST(AgradMixMatrixOperatorAddition, ffv_scalar_matrix_2ndDeriv_2) {
   matrix_ffv result;
   result = add(v, 2.0);
 
-  AVEC q = createAVEC(v(0, 0).val().val(), v(0, 1).val().val(),
-                      v(1, 0).val().val(), v(1, 1).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{v(0, 0).val().val(), v(0, 1).val().val(),
+                                 v(1, 0).val().val(), v(1, 1).val().val()};
+  std::vector<double> h;
   result(0, 0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -682,9 +686,9 @@ TEST(AgradMixMatrixOperatorAddition, ffv_scalar_matrix_3rdDeriv) {
   matrix_ffv result;
   result = add(v, 2.0);
 
-  AVEC q = createAVEC(v(0, 0).val().val(), v(0, 1).val().val(),
-                      v(1, 0).val().val(), v(1, 1).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{v(0, 0).val().val(), v(0, 1).val().val(),
+                                 v(1, 0).val().val(), v(1, 1).val().val()};
+  std::vector<double> h;
   result(0, 0).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -724,9 +728,9 @@ TEST(AgradMixMatrixOperatorAddition, ffv_scalar_vector_1stDeriv) {
   EXPECT_FLOAT_EQ(1.0, result(2).d_.val().val());
   EXPECT_FLOAT_EQ(1.0, result(3).d_.val().val());
 
-  AVEC q = createAVEC(v(0).val().val(), v(1).val().val(), v(2).val().val(),
-                      v(3).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{v(0).val().val(), v(1).val().val(),
+                                 v(2).val().val(), v(3).val().val()};
+  std::vector<double> h;
   result(0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(1, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -747,9 +751,9 @@ TEST(AgradMixMatrixOperatorAddition, ffv_scalar_vector_2ndDeriv_1) {
   vector_ffv result;
   result = add(v, 2.0);
 
-  AVEC q = createAVEC(v(0).val().val(), v(1).val().val(), v(2).val().val(),
-                      v(3).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{v(0).val().val(), v(1).val().val(),
+                                 v(2).val().val(), v(3).val().val()};
+  std::vector<double> h;
   result(0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -770,9 +774,9 @@ TEST(AgradMixMatrixOperatorAddition, ffv_scalar_vector_2ndDeriv_2) {
   vector_ffv result;
   result = add(v, 2.0);
 
-  AVEC q = createAVEC(v(0).val().val(), v(1).val().val(), v(2).val().val(),
-                      v(3).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{v(0).val().val(), v(1).val().val(),
+                                 v(2).val().val(), v(3).val().val()};
+  std::vector<double> h;
   result(0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -797,9 +801,9 @@ TEST(AgradMixMatrixOperatorAddition, ffv_scalar_vector_3rdDeriv) {
   vector_ffv result;
   result = add(v, 2.0);
 
-  AVEC q = createAVEC(v(0).val().val(), v(1).val().val(), v(2).val().val(),
-                      v(3).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{v(0).val().val(), v(1).val().val(),
+                                 v(2).val().val(), v(3).val().val()};
+  std::vector<double> h;
   result(0).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -839,9 +843,9 @@ TEST(AgradMixMatrixOperatorAddition, ffv_scalar_rowvector_1stDeriv) {
   EXPECT_FLOAT_EQ(1.0, result(2).d_.val().val());
   EXPECT_FLOAT_EQ(1.0, result(3).d_.val().val());
 
-  AVEC q = createAVEC(v(0).val().val(), v(1).val().val(), v(2).val().val(),
-                      v(3).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{v(0).val().val(), v(1).val().val(),
+                                 v(2).val().val(), v(3).val().val()};
+  std::vector<double> h;
   result(0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(1, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -863,9 +867,9 @@ TEST(AgradMixMatrixOperatorAddition, ffv_scalar_rowvector_2ndDeriv_1) {
 
   result = add(v, 2.0);
 
-  AVEC q = createAVEC(v(0).val().val(), v(1).val().val(), v(2).val().val(),
-                      v(3).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{v(0).val().val(), v(1).val().val(),
+                                 v(2).val().val(), v(3).val().val()};
+  std::vector<double> h;
   result(0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -887,9 +891,9 @@ TEST(AgradMixMatrixOperatorAddition, ffv_scalar_rowvector_2ndDeriv_2) {
 
   result = add(v, 2.0);
 
-  AVEC q = createAVEC(v(0).val().val(), v(1).val().val(), v(2).val().val(),
-                      v(3).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{v(0).val().val(), v(1).val().val(),
+                                 v(2).val().val(), v(3).val().val()};
+  std::vector<double> h;
   result(0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -915,9 +919,9 @@ TEST(AgradMixMatrixOperatorAddition, ffv_scalar_rowvector_3rdDeriv) {
 
   result = add(v, 2.0);
 
-  AVEC q = createAVEC(v(0).val().val(), v(1).val().val(), v(2).val().val(),
-                      v(3).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{v(0).val().val(), v(1).val().val(),
+                                 v(2).val().val(), v(3).val().val()};
+  std::vector<double> h;
   result(0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -997,9 +1001,9 @@ TEST(AgradMixMatrixOperatorAddition, ffv_vector_vector_1stDeriv) {
   EXPECT_FLOAT_EQ(2.0, output_v(3).d_.val().val());
   EXPECT_FLOAT_EQ(2.0, output_v(4).d_.val().val());
 
-  AVEC q = createAVEC(vv_1(0).val().val(), vv_1(1).val().val(),
-                      vv_1(2).val().val(), vv_1(3).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{vv_1(0).val().val(), vv_1(1).val().val(),
+                                 vv_1(2).val().val(), vv_1(3).val().val()};
+  std::vector<double> h;
   output_v(0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(1, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -1035,9 +1039,9 @@ TEST(AgradMixMatrixOperatorAddition, ffv_vector_vector_2ndDeriv_1) {
   vector_ffv output_v;
   output_v = add(vv_1, vv_2);
 
-  AVEC q = createAVEC(vv_1(0).val().val(), vv_1(1).val().val(),
-                      vv_1(2).val().val(), vv_1(3).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{vv_1(0).val().val(), vv_1(1).val().val(),
+                                 vv_1(2).val().val(), vv_1(3).val().val()};
+  std::vector<double> h;
   output_v(0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -1073,9 +1077,9 @@ TEST(AgradMixMatrixOperatorAddition, ffv_vector_vector_2ndDeriv_2) {
   vector_ffv output_v;
   output_v = add(vv_1, vv_2);
 
-  AVEC q = createAVEC(vv_1(0).val().val(), vv_1(1).val().val(),
-                      vv_1(2).val().val(), vv_1(3).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{vv_1(0).val().val(), vv_1(1).val().val(),
+                                 vv_1(2).val().val(), vv_1(3).val().val()};
+  std::vector<double> h;
   output_v(0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -1121,9 +1125,9 @@ TEST(AgradMixMatrixOperatorAddition, ffv_vector_vector_3rdDeriv) {
   vector_ffv output_v;
   output_v = add(vv_1, vv_2);
 
-  AVEC q = createAVEC(vv_1(0).val().val(), vv_1(1).val().val(),
-                      vv_1(2).val().val(), vv_1(3).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{vv_1(0).val().val(), vv_1(1).val().val(),
+                                 vv_1(2).val().val(), vv_1(3).val().val()};
+  std::vector<double> h;
   output_v(0).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -1214,9 +1218,9 @@ TEST(AgradMixMatrixOperatorAddition, ffv_rowvector_rowvector_1stDeriv) {
   EXPECT_FLOAT_EQ(2.0, output_v(3).d_.val().val());
   EXPECT_FLOAT_EQ(2.0, output_v(4).d_.val().val());
 
-  AVEC q = createAVEC(rvv_1(0).val().val(), rvv_1(1).val().val(),
-                      rvv_1(2).val().val(), rvv_1(3).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{rvv_1(0).val().val(), rvv_1(1).val().val(),
+                                 rvv_1(2).val().val(), rvv_1(3).val().val()};
+  std::vector<double> h;
   output_v(0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(1, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -1250,9 +1254,9 @@ TEST(AgradMixMatrixOperatorAddition, ffv_rowvector_rowvector_2ndDeriv_1) {
   row_vector_ffv output_v = add(rvv_1, rvd_2);
   output_v = add(rvv_1, rvv_2);
 
-  AVEC q = createAVEC(rvv_1(0).val().val(), rvv_1(1).val().val(),
-                      rvv_1(2).val().val(), rvv_1(3).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{rvv_1(0).val().val(), rvv_1(1).val().val(),
+                                 rvv_1(2).val().val(), rvv_1(3).val().val()};
+  std::vector<double> h;
   output_v(0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -1286,9 +1290,9 @@ TEST(AgradMixMatrixOperatorAddition, ffv_rowvector_rowvector_2ndDeriv_2) {
   row_vector_ffv output_v = add(rvv_1, rvd_2);
   output_v = add(rvv_1, rvv_2);
 
-  AVEC q = createAVEC(rvv_1(0).val().val(), rvv_1(1).val().val(),
-                      rvv_1(2).val().val(), rvv_1(3).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{rvv_1(0).val().val(), rvv_1(1).val().val(),
+                                 rvv_1(2).val().val(), rvv_1(3).val().val()};
+  std::vector<double> h;
   output_v(0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -1332,9 +1336,9 @@ TEST(AgradMixMatrixOperatorAddition, ffv_rowvector_rowvector_3rdDeriv) {
   row_vector_ffv output_v = add(rvv_1, rvd_2);
   output_v = add(rvv_1, rvv_2);
 
-  AVEC q = createAVEC(rvv_1(0).val().val(), rvv_1(1).val().val(),
-                      rvv_1(2).val().val(), rvv_1(3).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{rvv_1(0).val().val(), rvv_1(1).val().val(),
+                                 rvv_1(2).val().val(), rvv_1(3).val().val()};
+  std::vector<double> h;
   output_v(0).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -1417,9 +1421,10 @@ TEST(AgradMixMatrixOperatorAddition, ffv_matrix_matrix_1stDeriv) {
   EXPECT_FLOAT_EQ(2.0, output_v(1, 0).d_.val().val());
   EXPECT_FLOAT_EQ(2.0, output_v(1, 1).d_.val().val());
 
-  AVEC q = createAVEC(mv_1(0, 0).val().val(), mv_1(0, 1).val().val(),
-                      mv_1(1, 0).val().val(), mv_1(1, 1).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{mv_1(0, 0).val().val(), mv_1(0, 1).val().val(),
+                                 mv_1(1, 0).val().val(),
+                                 mv_1(1, 1).val().val()};
+  std::vector<double> h;
   output_v(0, 0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(1, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -1451,9 +1456,10 @@ TEST(AgradMixMatrixOperatorAddition, ffv_matrix_matrix_2ndDeriv_1) {
   matrix_ffv output_v = add(mv_1, md_2);
   output_v = add(mv_1, mv_2);
 
-  AVEC q = createAVEC(mv_1(0, 0).val().val(), mv_1(0, 1).val().val(),
-                      mv_1(1, 0).val().val(), mv_1(1, 1).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{mv_1(0, 0).val().val(), mv_1(0, 1).val().val(),
+                                 mv_1(1, 0).val().val(),
+                                 mv_1(1, 1).val().val()};
+  std::vector<double> h;
   output_v(0, 0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -1485,9 +1491,10 @@ TEST(AgradMixMatrixOperatorAddition, ffv_matrix_matrix_2ndDeriv_2) {
   matrix_ffv output_v = add(mv_1, md_2);
   output_v = add(mv_1, mv_2);
 
-  AVEC q = createAVEC(mv_1(0, 0).val().val(), mv_1(0, 1).val().val(),
-                      mv_1(1, 0).val().val(), mv_1(1, 1).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{mv_1(0, 0).val().val(), mv_1(0, 1).val().val(),
+                                 mv_1(1, 0).val().val(),
+                                 mv_1(1, 1).val().val()};
+  std::vector<double> h;
   output_v(0, 0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -1527,9 +1534,10 @@ TEST(AgradMixMatrixOperatorAddition, ffv_matrix_matrix_3rdDeriv) {
   matrix_ffv output_v = add(mv_1, md_2);
   output_v = add(mv_1, mv_2);
 
-  AVEC q = createAVEC(mv_1(0, 0).val().val(), mv_1(0, 1).val().val(),
-                      mv_1(1, 0).val().val(), mv_1(1, 1).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{mv_1(0, 0).val().val(), mv_1(0, 1).val().val(),
+                                 mv_1(1, 0).val().val(),
+                                 mv_1(1, 1).val().val()};
+  std::vector<double> h;
   output_v(0, 0).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);

@@ -4,12 +4,10 @@
 #include <vector>
 
 TEST(MathMetaPrim, test_append_return_type) {
-  test::expect_same_type<int, stan::math::append_return_type<int, int>::type>();
-  test::expect_same_type<
-      double, stan::math::append_return_type<double, double>::type>();
-  test::expect_same_type<
-      Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>,
-      stan::math::append_return_type<
-          Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>,
-          Eigen::Matrix<int, Eigen::Dynamic, Eigen::Dynamic>>::type>();
+  EXPECT_SAME_TYPE(int, stan::math::append_return_type<int, int>::type);
+  EXPECT_SAME_TYPE(double,
+                   stan::math::append_return_type<double, double>::type);
+  EXPECT_SAME_TYPE(
+      Eigen::MatrixXd,
+      stan::math::append_return_type<Eigen::MatrixXd, Eigen::MatrixXi>::type);
 }

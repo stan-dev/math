@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/fun/norm.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/rev/fun/square.hpp>
 #include <complex>
 
 namespace stan {

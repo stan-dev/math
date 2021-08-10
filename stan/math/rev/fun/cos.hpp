@@ -43,7 +43,7 @@ namespace math {
  * @param a Variable for radians of angle.
  * @return Cosine of variable.
  */
-inline var cos(const var& a) {
+inline var cos(var a) {
   return make_callback_var(std::cos(a.val()), [a](const auto& vi) mutable {
     a.adj() -= vi.adj() * std::sin(a.val());
   });

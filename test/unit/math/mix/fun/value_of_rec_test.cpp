@@ -72,13 +72,13 @@ TEST(AgradMixMatrix, value_of_rec) {
   Eigen::MatrixXd d_ffv_a = value_of_rec(ffv_a);
   Eigen::MatrixXd d_ffv_b = value_of_rec(ffv_b);
 
-  for (size_type i = 0; i < 5; ++i) {
+  for (Eigen::Index i = 0; i < 5; ++i) {
     EXPECT_FLOAT_EQ(b_vals[i], d_fv_b(i));
     EXPECT_FLOAT_EQ(b_vals[i], d_ffv_b(i));
   }
 
-  for (size_type i = 0; i < 2; ++i)
-    for (size_type j = 0; j < 5; ++j) {
+  for (Eigen::Index i = 0; i < 2; ++i)
+    for (Eigen::Index j = 0; j < 5; ++j) {
       EXPECT_FLOAT_EQ(a_vals[j * 2 + i], d_fv_a(i, j));
       EXPECT_FLOAT_EQ(a_vals[j * 2 + i], d_ffv_a(i, j));
     }

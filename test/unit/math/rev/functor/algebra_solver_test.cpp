@@ -12,6 +12,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Tests for powell solver.
 
+
 TEST_F(algebra_solver_simple_eq_test, powell_dbl) {
   bool is_newton = false;
   Eigen::VectorXd theta = simple_eq_test(simple_eq_functor(), y_dbl, is_newton);
@@ -21,6 +22,14 @@ TEST_F(algebra_solver_simple_eq_test, powell_tuned_dbl) {
   bool is_newton = false;
   Eigen::VectorXd theta = simple_eq_test(simple_eq_functor(), y_dbl, is_newton,
                                          true, scale_step, xtol, ftol, maxfev);
+}
+
+TEST_F(algebra_solver_simple_eq_nopara_test, powell) {
+  using stan::math::algebra_solver_powell;
+  Eigen::VectorXd theta = algebra_solver_powell(simple_eq_functor_nopara(), x,
+                                                y_dummy, dat, dummy_dat_int);
+  EXPECT_EQ(20, theta(0));
+  EXPECT_EQ(2, theta(1));
 }
 
 TEST_F(algebra_solver_non_linear_eq_test, powell_dbl) {
@@ -111,9 +120,8 @@ TEST_F(algebra_solver_simple_eq_test, powell) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta
         = simple_eq_test(simple_eq_functor(), y, is_newton);
 
-    stan::math::set_zero_all_adjoints();
-    AVEC y_vec = createAVEC(y(0), y(1), y(2));
-    VEC g;
+    std::vector<stan::math::var> y_vec{y(0), y(1), y(2)};
+    std::vector<double> g;
     theta(k).grad(y_vec, g);
 
     for (int i = 0; i < n_y; i++) {
@@ -132,8 +140,8 @@ TEST_F(algebra_solver_simple_eq_test, powell_tuned) {
         = simple_eq_test(simple_eq_functor(), y, is_newton, true, scale_step,
                          xtol, ftol, maxfev);
 
-    AVEC y_vec = createAVEC(y(0), y(1), y(2));
-    VEC g;
+    std::vector<stan::math::var> y_vec{y(0), y(1), y(2)};
+    std::vector<double> g;
     theta(k).grad(y_vec, g);
 
     for (int i = 0; i < n_y; i++)
@@ -161,8 +169,8 @@ TEST_F(algebra_solver_non_linear_eq_test, powell) {
     EXPECT_FLOAT_EQ(-y(1).val(), theta(1).val());
     EXPECT_FLOAT_EQ(y(2).val(), theta(2).val());
 
-    AVEC y_vec = createAVEC(y(0), y(1), y(2));
-    VEC g;
+    std::vector<stan::math::var> y_vec{y(0), y(1), y(2)};
+    std::vector<double> g;
     theta(k).grad(y_vec, g);
 
     for (int i = 0; i < n_y; i++)
@@ -202,8 +210,8 @@ TEST_F(degenerate_eq_test, powell_guess1) {
     EXPECT_FLOAT_EQ(8, theta(0).val());
     EXPECT_FLOAT_EQ(8, theta(1).val());
 
-    AVEC y_vec = createAVEC(y(0), y(1));
-    VEC g;
+    std::vector<stan::math::var> y_vec{y(0), y(1)};
+    std::vector<double> g;
     theta(k).grad(y_vec, g);
 
     for (int l = 0; l < n_y; l++)
@@ -223,8 +231,8 @@ TEST_F(degenerate_eq_test, powell_guess2) {
     EXPECT_FLOAT_EQ(5, theta(0).val());
     EXPECT_FLOAT_EQ(5, theta(0).val());
 
-    AVEC y_vec = createAVEC(y(0), y(1));
-    VEC g;
+    std::vector<stan::math::var> y_vec{y(0), y(1)};
+    std::vector<double> g;
     theta(k).grad(y_vec, g);
 
     for (int l = 0; l < n_y; l++)
@@ -245,8 +253,8 @@ TEST_F(variadic_test, powell) {
             is_newton, scaling_step_size, relative_tolerance,
             function_tolerance, max_num_steps);
 
-    AVEC y_vec = createAVEC(y_1, y_2, y_3);
-    VEC g;
+    std::vector<var> y_vec{y_1, y_2, y_3};
+    std::vector<double> g;
     theta(k).grad(y_vec, g);
 
     for (int i = 0; i < n_y; i++)
