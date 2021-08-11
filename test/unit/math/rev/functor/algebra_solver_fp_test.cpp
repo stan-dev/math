@@ -511,6 +511,8 @@ TEST_F(FP_direct_prod_func_test, algebra_solver_fp) {
       EXPECT_NEAR(g_newton[j], g_fp[j], 1.e-8);
     }
   }
+  
+  stan::math::recover_memory();
 }
 
 TEST_F(FP_2d_func_test, exception_handling) {
