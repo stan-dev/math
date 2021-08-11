@@ -233,6 +233,7 @@ int baz_fvar = 0;
 int baz_complex = 0;
 int baz_complex_var = 0;
 int baz_complex_fvar = 0;
+
 double baz(int x) {
   ++baz_int;
   return x / 2.0;

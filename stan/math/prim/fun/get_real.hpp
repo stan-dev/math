@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_FUN_REAL_HPP
-#define STAN_MATH_PRIM_FUN_REAL_HPP
+#ifndef STAN_MATH_PRIM_FUN_GET_REAL_HPP
+#define STAN_MATH_PRIM_FUN_GET_REAL_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <complex>
@@ -14,8 +14,8 @@ namespace math {
  * @param[in] z complex value whose real component is extracted
  * @return real component of argument
  */
-template <typename T, require_autodiff_t<T>>
-T real(const std::complex<T>& z) {
+template <typename T>
+T get_real(const std::complex<T>& z) {
   return z.real();
 }
 
