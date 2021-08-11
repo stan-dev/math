@@ -135,11 +135,10 @@ Eigen::VectorXd algebra_solver_powell_impl(const F& f, const T& x,
   auto x_val = to_ref(value_of(x));
   auto args_vals_tuple = std::make_tuple(to_ref(args)...);
 
-  auto f_wrt_x
-      = [&args_vals_tuple, &f, msgs](const auto& x) {
-        return apply(
-            [&x, &f, msgs](const auto&... args) { return f(x, msgs, args...); },
-            args_vals_tuple);
+  auto f_wrt_x = [&args_vals_tuple, &f, msgs](const auto& x) {
+    return apply(
+        [&x, &f, msgs](const auto&... args) { return f(x, msgs, args...); },
+        args_vals_tuple);
   };
 
   check_nonzero_size("algebra_solver_powell", "initial guess", x_val);
