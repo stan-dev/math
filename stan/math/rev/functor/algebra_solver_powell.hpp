@@ -131,11 +131,15 @@ Eigen::VectorXd algebra_solver_powell_impl(const F& f, const T& x,
                                            const double function_tolerance,
                                            const int64_t max_num_steps,
                                            const Args&... args) {
-  const auto& x_ref = to_ref(x);
-  auto x_val = to_ref(value_of(x_ref));
+  auto x_val = to_ref(value_of(x));
+  auto args_vals_tuple = std::make_tuple(to_ref(args)...);
 
   auto f_wrt_x
-      = [&f, msgs, &args...](const auto& x) { return f(x, msgs, args...); };
+      = [&args_vals_tuple, &f, msgs](const auto& x) {
+        return apply(
+            [&x, &f, msgs](const auto&... args) { return f(x, msgs, args...); },
+            args_vals_tuple);
+  };
 
   check_nonzero_size("algebra_solver_powell", "initial guess", x_val);
   check_finite("algebra_solver_powell", "initial guess", x_val);
@@ -145,7 +149,7 @@ Eigen::VectorXd algebra_solver_powell_impl(const F& f, const T& x,
                     function_tolerance);
   check_positive("algebra_solver_powell", "max_num_steps", max_num_steps);
   check_matching_sizes("algebra_solver", "the algebraic system's output",
-                       f_wrt_x(x_ref), "the vector of unknowns, x,", x_ref);
+                       f_wrt_x(x_val), "the vector of unknowns, x,", x_val);
 
   // Solve the system
   return algebra_solver_powell_call_solver(f_wrt_x, x_val, msgs,
