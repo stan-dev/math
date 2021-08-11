@@ -116,8 +116,8 @@ TEST_F(algebra_solver_simple_eq_test, newton) {
     Eigen::Matrix<var, Eigen::Dynamic, 1> theta
         = simple_eq_test(simple_eq_functor(), y, is_newton);
 
-    AVEC y_vec = createAVEC(y(0), y(1), y(2));
-    VEC g;
+    std::vector<stan::math::var> y_vec {y(0), y(1), y(2)};
+    std::vector<double> g;
     theta(k).grad(y_vec, g);
 
     for (int i = 0; i < n_y; i++)
@@ -135,8 +135,8 @@ TEST_F(algebra_solver_simple_eq_test, newton_tuned) {
         = simple_eq_test(simple_eq_functor(), y, is_newton, true, scale_step,
                          xtol, ftol, maxfev);
 
-    AVEC y_vec = createAVEC(y(0), y(1), y(2));
-    VEC g;
+    std::vector<stan::math::var> y_vec {y(0), y(1), y(2)};
+    std::vector<double> g;
     theta(k).grad(y_vec, g);
 
     for (int i = 0; i < n_y; i++)
@@ -164,8 +164,8 @@ TEST_F(algebra_solver_non_linear_eq_test, newton) {
     EXPECT_FLOAT_EQ(-y(1).val(), theta(1).val());
     EXPECT_FLOAT_EQ(y(2).val(), theta(2).val());
 
-    AVEC y_vec = createAVEC(y(0), y(1), y(2));
-    VEC g;
+    std::vector<stan::math::var> y_vec {y(0), y(1), y(2)};
+    std::vector<double> g;
     theta(k).grad(y_vec, g);
 
     for (int i = 0; i < n_y; i++)
@@ -206,8 +206,8 @@ TEST_F(degenerate_eq_test, newton_guess1) {
     EXPECT_FLOAT_EQ(8, theta(0).val());
     EXPECT_FLOAT_EQ(8, theta(1).val());
 
-    AVEC y_vec = createAVEC(y(0), y(1));
-    VEC g;
+    std::vector<stan::math::var> y_vec {y(0), y(1)};
+    std::vector<double> g;
     theta(k).grad(y_vec, g);
 
     for (int l = 0; l < n_y; l++)
@@ -227,8 +227,8 @@ TEST_F(degenerate_eq_test, newton_guess2) {
     EXPECT_FLOAT_EQ(5, theta(0).val());
     EXPECT_FLOAT_EQ(5, theta(0).val());
 
-    AVEC y_vec = createAVEC(y(0), y(1));
-    VEC g;
+    std::vector<stan::math::var> y_vec {y(0), y(1)};
+    std::vector<double> g;
     theta(k).grad(y_vec, g);
 
     for (int l = 0; l < n_y; l++)
@@ -249,8 +249,8 @@ TEST_F(variadic_test, newton) {
                            is_newton, scaling_step_size, relative_tolerance,
                            function_tolerance, max_num_steps);
 
-    AVEC y_vec = createAVEC(y_1, y_2, y_3);
-    VEC g;
+    std::vector<stan::math::var> y_vec {y_1, y_2, y_3};
+    std::vector<double> g;
     theta(k).grad(y_vec, g);
 
     for (int i = 0; i < n_y; i++)
