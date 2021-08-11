@@ -31,6 +31,7 @@ namespace math {
  *            for the solution.
  * @param[in] function_tolerance determines whether roots are acceptable.
  * @param[in] max_num_steps  maximum number of function evaluations.
+ * @param[in] args additional parameters to the equation system functor.
  * @return theta_dbl Double vector of solutions to the system of equations.
  * @pre x has size greater than zero.
  * @pre x has only finite elements.
