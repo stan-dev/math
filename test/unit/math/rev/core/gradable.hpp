@@ -7,10 +7,10 @@
 #include <vector>
 
 struct gradable {
-  AVEC x_;
-  AVAR f_;
+  std::vector<stan::math::var> x_;
+  stan::math::var f_;
   Eigen::Matrix<double, Eigen::Dynamic, 1> g_expected_;
-  gradable(const AVEC& x, const AVAR& f,
+  gradable(const std::vector<stan::math::var>& x, const stan::math::var& f,
            const Eigen::Matrix<double, Eigen::Dynamic, 1>& g_expected)
       : x_(x), f_(f), g_expected_(g_expected) {}
   void test() {
@@ -52,12 +52,12 @@ gradable setup_quad_form() {
 }
 
 gradable setup_simple() {
-  AVAR a = 3;
-  AVAR b = 7;
-  AVEC x;
+  stan::math::var a = 3;
+  stan::math::var b = 7;
+  std::vector<stan::math::var> x;
   x.push_back(a);
   x.push_back(b);
-  AVAR f = 2 * a * b;
+  stan::math::var f = 2 * a * b;
   Eigen::Matrix<double, Eigen::Dynamic, 1> g_expected(2);
   g_expected << 14, 6;
   return gradable(x, f, g_expected);

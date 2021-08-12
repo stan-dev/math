@@ -9,12 +9,13 @@ TEST(AgradRevMatrix, mv_squaredNorm) {
   matrix_v a(2, 2);
   a << -1.0, 2.0, 5.0, 10.0;
 
-  AVEC x = createAVEC(a(0, 0), a(0, 1), a(1, 0), a(1, 1));
+  std::vector<stan::math::var> x{a(0, 0), a(0, 1), a(1, 0), a(1, 1)};
 
-  AVAR s = a.squaredNorm();
+  stan::math::var s = a.squaredNorm();
   EXPECT_FLOAT_EQ(130.0, s.val());
 
-  VEC g = cgradvec(s, x);
+  std::vector<double> g;
+  s.grad(x, g);
   EXPECT_FLOAT_EQ(-2.0, g[0]);
   EXPECT_FLOAT_EQ(4.0, g[1]);
   EXPECT_FLOAT_EQ(10.0, g[2]);
@@ -26,13 +27,14 @@ TEST(AgradRevMatrix, mv_norm) {
   matrix_v a(2, 1);
   a << -3.0, 4.0;
 
-  AVEC x = createAVEC(a(0, 0), a(1, 0));
+  std::vector<stan::math::var> x{a(0, 0), a(1, 0)};
 
-  AVAR s = a.norm();
+  stan::math::var s = a.norm();
   EXPECT_FLOAT_EQ(5.0, s.val());
 
   // (see hypot in special_functions_test)
-  VEC g = cgradvec(s, x);
+  std::vector<double> g;
+  s.grad(x, g);
   EXPECT_FLOAT_EQ(-3.0 / 5.0, g[0]);
   EXPECT_FLOAT_EQ(4.0 / 5.0, g[1]);
 }
@@ -42,12 +44,13 @@ TEST(AgradRevMatrix, mv_lp_norm) {
   matrix_v a(2, 2);
   a << -1.0, 2.0, 5.0, 0.0;
 
-  AVEC x = createAVEC(a(0, 0), a(0, 1), a(1, 0), a(1, 1));
+  std::vector<stan::math::var> x{a(0, 0), a(0, 1), a(1, 0), a(1, 1)};
 
-  AVAR s = a.lpNorm<1>();
+  stan::math::var s = a.lpNorm<1>();
   EXPECT_FLOAT_EQ(8.0, s.val());
 
-  VEC g = cgradvec(s, x);
+  std::vector<double> g;
+  s.grad(x, g);
   EXPECT_FLOAT_EQ(-1.0, g[0]);
   EXPECT_FLOAT_EQ(1.0, g[1]);
   EXPECT_FLOAT_EQ(1.0, g[2]);
@@ -60,12 +63,13 @@ TEST(AgradRevMatrix, mv_lp_norm_inf) {
   matrix_v a(2, 2);
   a << -1.0, 2.0, -5.0, 0.0;
 
-  AVEC x = createAVEC(a(0, 0), a(0, 1), a(1, 0), a(1, 1));
+  std::vector<stan::math::var> x = {a(0, 0), a(0, 1), a(1, 0), a(1, 1)};
 
-  AVAR s = a.lpNorm<Eigen::Infinity>();
+  stan::math::var s = a.lpNorm<Eigen::Infinity>();
   EXPECT_FLOAT_EQ(5.0, s.val());
 
-  VEC g = cgradvec(s, x);
+  std::vector<double> g;
+  s.grad(x, g);
   EXPECT_FLOAT_EQ(0.0, g[0]);
   EXPECT_FLOAT_EQ(0.0, g[1]);
   EXPECT_FLOAT_EQ(-1.0, g[2]);
@@ -106,7 +110,7 @@ TEST(AgradRevMatrix, UserCase1) {
     for (size_t k = 0; k < DpKm1; ++k)
       eta[h][k] = (h + 1) * (k + 10);
 
-  AVAR lp__ = 0.0;
+  stan::math::var lp__ = 0.0;
 
   for (size_t h = 1; h <= H; ++h) {
     assign(vk, multiply(transpose(L_etaprec),

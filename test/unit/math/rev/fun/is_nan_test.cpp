@@ -9,12 +9,12 @@ TEST(AgradRev, is_nan) {
   double infinity = std::numeric_limits<double>::infinity();
   double nan = std::numeric_limits<double>::quiet_NaN();
 
-  AVAR a(nan);
+  stan::math::var a(nan);
   EXPECT_TRUE(is_nan(a));
 
-  AVAR b(3.0);
+  stan::math::var b(3.0);
   EXPECT_FALSE(is_nan(b));
 
-  AVAR c(infinity);
+  stan::math::var c(infinity);
   EXPECT_FALSE(is_nan(c));
 }
