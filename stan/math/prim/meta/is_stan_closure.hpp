@@ -37,14 +37,12 @@ struct closure_return_type<T, true> {
 };
 
 template <typename T>
-struct closure_return_type<T, false,
-                    require_not_stan_closure_t<T>> {
+struct closure_return_type<T, false, require_not_stan_closure_t<T>> {
   using type = std::remove_reference_t<T>;
 };
 
 template <typename T>
-struct closure_return_type<T, false,
-                    require_stan_closure_t<T>> {
+struct closure_return_type<T, false, require_stan_closure_t<T>> {
   using type = typename std::remove_reference_t<T>::Base_;
 };
 

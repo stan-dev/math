@@ -52,9 +52,11 @@ struct closure_rng {
 
   template <typename Rng, typename... Args>
   auto operator()(Rng& rng, std::ostream* msgs, const Args&... args) const {
-    return apply([this, &rng, msgs, &args...](
-                     const auto&... s) { return this->f_(s..., args..., rng, msgs); },
-                 captures_);
+    return apply(
+        [this, &rng, msgs, &args...](const auto&... s) {
+          return this->f_(s..., args..., rng, msgs);
+        },
+        captures_);
   }
 };
 
@@ -139,7 +141,8 @@ struct integrate_ode_closure_adapter {
   template <typename F, typename T0, typename T1, typename... Args>
   auto operator()(const T0& t, const T1& y, std::ostream* msgs, F&& f,
                   Args&&... args) const {
-    return to_vector(std::forward<F>(f)(msgs, t, to_array_1d(y), std::forward<Args>(args)...));
+    return to_vector(std::forward<F>(f)(msgs, t, to_array_1d(y),
+                                        std::forward<Args>(args)...));
   }
 };
 
@@ -148,7 +151,8 @@ struct integrate_ode_closure_adapter {
  */
 template <typename F, typename... Args>
 auto from_lambda(F&& f, Args&&... args) {
-  return internal::base_closure<true, F, Args...>(std::forward<F>(f), std::forward<Args>(args)...);
+  return internal::base_closure<true, F, Args...>(std::forward<F>(f),
+                                                  std::forward<Args>(args)...);
 }
 
 /**
@@ -156,7 +160,8 @@ auto from_lambda(F&& f, Args&&... args) {
  */
 template <typename F, typename... Args>
 auto rng_from_lambda(F&& f, Args&&... args) {
-  return internal::closure_rng<true, F, Args...>(std::forward<F>(f), std::forward<Args>(args)...);
+  return internal::closure_rng<true, F, Args...>(std::forward<F>(f),
+                                                 std::forward<Args>(args)...);
 }
 
 /**
@@ -164,7 +169,8 @@ auto rng_from_lambda(F&& f, Args&&... args) {
  */
 template <bool propto, typename F, typename... Args>
 auto lpdf_from_lambda(F&& f, Args&&... args) {
-  return internal::closure_lpdf<propto, true, F, Args...>(std::forward<F>(f), std::forward<Args>(args)...);
+  return internal::closure_lpdf<propto, true, F, Args...>(
+      std::forward<F>(f), std::forward<Args>(args)...);
 }
 
 /**
@@ -172,7 +178,8 @@ auto lpdf_from_lambda(F&& f, Args&&... args) {
  */
 template <bool Propto, typename F, typename... Args>
 auto lp_from_lambda(F&& f, Args&&... args) {
-  return internal::closure_lp<Propto, true, F, Args...>(std::forward<F>(f), std::forward<Args>(args)...);
+  return internal::closure_lp<Propto, true, F, Args...>(
+      std::forward<F>(f), std::forward<Args>(args)...);
 }
 
 /**
@@ -184,7 +191,8 @@ struct reduce_sum_closure_adapter {
                   std::size_t end, std::ostream* msgs, F&& f,
                   Args&&... args) const {
     return std::forward<F>(f)(msgs, sub_slice, start + error_index::value,
-             end + error_index::value, std::forward<Args>(args)...);
+                              end + error_index::value,
+                              std::forward<Args>(args)...);
   }
 };
 
