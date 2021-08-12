@@ -132,7 +132,7 @@ Eigen::VectorXd algebra_solver_powell_impl(const F& f, const T& x,
                                            const double function_tolerance,
                                            const int64_t max_num_steps,
                                            const Args&... args) {
-  auto x_val = to_ref(value_of(x));
+  plain_type_t<decltype(to_ref(value_of(x)))> x_ref = to_ref(value_of(x));
   auto args_vals_tuple = std::make_tuple(to_ref(args)...);
 
   auto f_wrt_x = [&args_vals_tuple, &f, msgs](const auto& x) {
@@ -141,18 +141,18 @@ Eigen::VectorXd algebra_solver_powell_impl(const F& f, const T& x,
         args_vals_tuple);
   };
 
-  check_nonzero_size("algebra_solver_powell", "initial guess", x_val);
-  check_finite("algebra_solver_powell", "initial guess", x_val);
+  check_nonzero_size("algebra_solver_powell", "initial guess", x_ref);
+  check_finite("algebra_solver_powell", "initial guess", x_ref);
   check_nonnegative("alegbra_solver_powell", "relative_tolerance",
                     relative_tolerance);
   check_nonnegative("algebra_solver_powell", "function_tolerance",
                     function_tolerance);
   check_positive("algebra_solver_powell", "max_num_steps", max_num_steps);
   check_matching_sizes("algebra_solver", "the algebraic system's output",
-                       f_wrt_x(x_val), "the vector of unknowns, x,", x_val);
+                       f_wrt_x(x_ref), "the vector of unknowns, x,", x_ref);
 
   // Solve the system
-  return algebra_solver_powell_call_solver(f_wrt_x, x_val, msgs,
+  return algebra_solver_powell_call_solver(f_wrt_x, x_ref, msgs,
                                            relative_tolerance,
                                            function_tolerance, max_num_steps);
 }
@@ -336,8 +336,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
     const F& f, const T& x, std::ostream* const msgs,
     const double relative_tolerance, const double function_tolerance,
     const int64_t max_num_steps, const T_Args&... args) {
-  const auto& x_ref = to_ref(x);
-  auto x_val = to_ref(value_of(x_ref));
+  plain_type_t<decltype(to_ref(value_of(x)))> x_ref = to_ref(value_of(x));
   auto arena_args_tuple = std::make_tuple(to_arena(args)...);
   auto args_vals_tuple = apply(
       [&](const auto&... args) {
@@ -351,8 +350,8 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
         args_vals_tuple);
   };
 
-  check_nonzero_size("algebra_solver_powell", "initial guess", x_val);
-  check_finite("algebra_solver_powell", "initial guess", x_val);
+  check_nonzero_size("algebra_solver_powell", "initial guess", x_ref);
+  check_finite("algebra_solver_powell", "initial guess", x_ref);
   check_nonnegative("alegbra_solver_powell", "relative_tolerance",
                     relative_tolerance);
   check_nonnegative("algebra_solver_powell", "function_tolerance",
@@ -362,19 +361,19 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
                        f_wrt_x(x_ref), "the vector of unknowns, x,", x_ref);
 
   // Solve the system
-  algebra_solver_powell_call_solver(f_wrt_x, x_val, msgs, relative_tolerance,
+  algebra_solver_powell_call_solver(f_wrt_x, x_ref, msgs, relative_tolerance,
                                     function_tolerance, max_num_steps);
 
   Eigen::MatrixXd Jf_x;
   Eigen::VectorXd f_x;
 
-  jacobian(f_wrt_x, x_val, f_x, Jf_x);
+  jacobian(f_wrt_x, x_ref, f_x, Jf_x);
 
   using ret_type = Eigen::Matrix<var, Eigen::Dynamic, -1>;
   auto Jf_x_T_lu_ptr
       = make_unsafe_chainable_ptr(Jf_x.transpose().partialPivLu());  // Lu
 
-  arena_t<ret_type> ret = x_val;
+  arena_t<ret_type> ret = x_ref;
 
   reverse_pass_callback([f, ret, arena_args_tuple, Jf_x_T_lu_ptr,
                          msgs]() mutable {
