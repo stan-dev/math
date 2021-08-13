@@ -18,10 +18,10 @@ namespace stan {
 namespace math {
 
 /**
- * Check if the specified vector is unit vector.
+ * Throw an exception if the specified vector is unit vector.
  * A valid unit vector is one where the square of the elements
  * summed is equal to 1. This function tests that the sum is within the
- * tolerance specified by <code>CONSTRAINT_TOLERANCE</code>. This
+ * tolerance specified by `CONSTRAINT_TOLERANCE`. This
  * function only accepts Eigen vectors, statically typed vectors,
  * not general matrices with 1 column.
  * @tparam Vec A type derived from `EigenBase` with either dynamic rows or
@@ -29,10 +29,10 @@ namespace math {
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param theta Vector to test
- * @throw <code>std::invalid_argument</code> if <code>theta</code>
+ * @throw `std::invalid_argument` if `theta`
  *   is a 0-vector
- * @throw <code>std::domain_error</code> if the vector is not a unit
- *   vector or if any element is <code>NaN</code>
+ * @throw `std::domain_error` if the vector is not a unit
+ *   vector or if any element is `NaN`
  */
 template <typename Vec, require_vector_t<Vec>* = nullptr,
           require_not_std_vector_t<Vec>* = nullptr>
@@ -53,15 +53,14 @@ void check_unit_vector(const char* function, const char* name,
 }
 
 /**
- * Check if the each element in a standard vector is a unit vector.
+ * Throw an exception if the each element in a standard vector is a unit vector.
  * @tparam StdVec A standard vector with inner type inheriting from `EigenBase`
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param theta Vector to test
- * @throw <code>std::invalid_argument</code> if <code>theta</code>
+ * @throw `std::invalid_argument` if `theta`
  *   is a 0-vector
- * @throw <code>std::domain_error</code> if the vector is not a unit
- *   vector or if any element is <code>NaN</code>
+ * @throw `std::domain_error` if the vector is not a unit vector or if any element is `NaN`
  */
 template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
 void check_unit_vector(const char* function, const char* name,

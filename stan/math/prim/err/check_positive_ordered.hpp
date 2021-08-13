@@ -15,16 +15,12 @@ namespace stan {
 namespace math {
 
 /**
- * Check if the specified vector contains non-negative values and is sorted into
- * strictly increasing order.
- * @tparam Vec A type derived from `EigenBase` with 1 compile time row or
- * column
+ * Throw an exception if the specified vector contains non-negative values and is sorted into strictly increasing order.
+ * @tparam Vec A type derived from `EigenBase` with 1 compile time row or column.
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Vector to test
- * @throw <code>std::domain_error</code> if the vector contains non-positive
- *   values, if the values are not ordered, if there are duplicated
- *   values, or if any element is <code>NaN</code>.
+ * @throw <code>std::domain_error</code> if the vector contains non-positive values, if the values are not ordered, if there are duplicated values, or if any element is <code>NaN</code>.
  */
 template <typename Vec, require_vector_t<Vec>* = nullptr,
           require_not_std_vector_t<Vec>* = nullptr>
@@ -33,14 +29,13 @@ void check_positive_ordered(const char* function, const char* name,
   if (y.size() == 0) {
     return;
   }
-  const auto& y_ref = to_ref(value_of_rec(y));
-  if (y_ref[0] < 0) {
+  if (value_of_rec(to_ref(y).coeff(0)) < 0) {
     [&]() STAN_COLD_PATH {
       std::ostringstream msg;
       msg << "is not a valid positive_ordered vector."
           << " The element at " << stan::error_index::value << " is ";
       std::string msg_str(msg.str());
-      throw_domain_error(function, name, y_ref[0], msg_str.c_str(),
+      throw_domain_error(function, name, value_of_rec(to_ref(y).coeff(0)), msg_str.c_str(),
                          ", but should be postive.");
     }();
   }
@@ -48,16 +43,12 @@ void check_positive_ordered(const char* function, const char* name,
 }
 
 /**
- * Check if each of the vectors in a standard vector contains non-negative
- * values and is sorted into strictly increasing order.
- * @tparam StdVec A standard vector with an inner type inheriting from EigenBase
- * with 1 compile time row or column.
+ * Throw an exception if each of the vectors in a standard vector contains non-negative values and is sorted into strictly increasing order.
+ * @tparam StdVec A standard vector type with an `value_type` inheriting from `Eigen::EigenBase` with 1 compile time row or column.
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Vector to test
- * @throw <code>std::domain_error</code> if the vector contains non-positive
- *   values, if the values are not ordered, if there are duplicated
- *   values, or if any element is <code>NaN</code>.
+ * @throw <code>std::domain_error</code> if the vector contains non-positive values, if the values are not ordered, if there are duplicated values, or if any element is <code>NaN</code>.
  */
 template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
 void check_positive_ordered(const char* function, const char* name,

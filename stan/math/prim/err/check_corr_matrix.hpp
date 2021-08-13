@@ -16,21 +16,20 @@ namespace stan {
 namespace math {
 
 /**
- * Check if the specified matrix is a valid correlation matrix.
- * A valid correlation matrix is symmetric, has a unit diagonal
- * (all 1 values), and has all values between -1 and 1
- * (inclusive).
- * This function throws exceptions if the variable is not a valid
- * correlation matrix.
- * @tparam Mat Type inheriting from `MatrixBase` with dynamic rows and
- * columns.
+ * Throw an exception if the specified matrix is a valid correlation matrix.
+ * A valid correlation matrix is symmetric positive definite, has a unit
+ * diagonal (all 1 values), and has all values between -1 and 1 (inclusive).
+ * This function throws exceptions if the variable is not a valid correlation
+ * matrix.
+ * @tparam Mat Type inheriting from `MatrixBase` with neither rows or columns
+ * defined at compile time to be equal to 1 or a `var_value` with the var's
+ * inner type inheriting from `Eigen::MatrixBase` with neither rows or columns
+ * defined at compile time to be equal to 1.
  * @param function Name of the function this was called from
  * @param name Name of the variable
  * @param y Matrix to test
- * @throw <code>std::invalid_argument</code> if the matrix is not square
- * @throw <code>std::domain_error</code> if the matrix is non-symmetric,
- *   diagonals not near 1, not positive definite, or any of the
- *   elements nan
+ * @throw `std::invalid_argument` if the matrix is not square
+ * @throw `std::domain_error` if the matrix is non-symmetric, diagonals not near 1, not positive definite, or any of the elements are `nan`
  */
 template <typename Mat, require_matrix_t<Mat>* = nullptr>
 inline void check_corr_matrix(const char* function, const char* name,
@@ -58,6 +57,23 @@ inline void check_corr_matrix(const char* function, const char* name,
   check_pos_definite(function, name, y_ref);
 }
 
+/**
+ * Throw an exception if the specified matrix is a valid correlation matrix.
+ * A valid correlation matrix is symmetric positive definite, has a unit
+ * diagonal (all 1 values), and has all values between -1 and 1 (inclusive).
+ * This function throws exceptions if the variable is not a valid correlation
+ * matrix.
+ * @tparam StdVec A standard vector with inner type either inheriting from
+ * `MatrixBase` with neither rows or columns defined at compile time to be equal
+ * to 1 or a `var_value` with the var's inner type inheriting from
+ * `Eigen::MatrixBase` with neither rows or columns defined at compile time to
+ * be equal to 1.
+ * @param function Name of the function this was called from
+ * @param name Name of the variable
+ * @param y Matrix to test
+ * @throw `std::invalid_argument` if the matrix is not square
+ * @throw `std::domain_error` if the matrix is non-symmetric, diagonals not near 1, not positive definite, or any of the elements are `nan`
+ */
 template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
 void check_corr_matrix(const char* function, const char* name,
                        const StdVec& y) {

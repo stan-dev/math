@@ -48,7 +48,7 @@ void check_ordered(const char* function, const char* name, const T_y& y) {
 
 /**
  * Check if the specified vector is sorted into strictly increasing order.
- * @tparam T_y A standard vector with inner Scalar type
+ * @tparam T_y A standard vector with inner scalar type
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y <code>std::vector</code> to test
@@ -83,9 +83,7 @@ void check_ordered(const char* function, const char* name, const T_y& y) {
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y <code>std::vector</code> to test
- * @throw <code>std::domain_error</code> if the vector elements are
- *   not ordered, if there are duplicated values, or if any element
- *   is <code>NaN</code>.
+ * @throw <code>std::domain_error</code> if the vector elements are not ordered, if there are duplicated values, or if any element is <code>NaN</code>.
  */
 template <typename T_y, require_std_vector_t<T_y>* = nullptr,
           require_not_vt_stan_scalar<T_y>* = nullptr>
