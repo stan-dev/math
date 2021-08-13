@@ -16,14 +16,16 @@ namespace stan {
 namespace math {
 
 /**
- * Throw an exception if `y` is greater or equal than `low`. This function is vectorized and will check each element of `y` against each element of `low`.
+ * Throw an exception if `y` is greater or equal than `low`. This function is
+ * vectorized and will check each element of `y` against each element of `low`.
  * @tparam T_y A scalar type
  * @tparam T_low A scalar type
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param low Lower bound
- * @throw `std::domain_error` if y is not greater or equal to low or if any element of y or low is `NaN`.
+ * @throw `std::domain_error` if y is not greater or equal to low or if any
+ * element of y or low is `NaN`
  */
 template <typename T_y, typename T_low,
           require_all_stan_scalar_t<T_y, T_low>* = nullptr>
@@ -43,21 +45,24 @@ inline void check_greater_or_equal(const char* function, const char* name,
 }
 
 /**
- * Throw an exception if `y` is greater or equal than each element of `low`. This function is vectorized and will check each element of `y` against each element of `low`.
+ * Throw an exception if `y` is greater or equal than each element of `low`.
+ * This function is vectorized and will check each element of `y` against each
+ * element of `low`.
  * @tparam T_y A scalar type
- * @tparam T_low Type inheriting from `MatrixBase` or a `var_value` with the var's
- * inner type inheriting from `Eigen::MatrixBase`.
+ * @tparam T_low Type inheriting from `MatrixBase` or a `var_value` with the
+ * var's inner type inheriting from `Eigen::MatrixBase`
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param low Lower bound
- * @throw `std::domain_error` if y is not greater or equal to low or if any element of y or low is `NaN`.
+ * @throw `std::domain_error` if y is not greater or equal to low or if any
+ * element of y or low is `NaN`
  */
 template <typename T_y, typename T_low, require_stan_scalar_t<T_y>* = nullptr,
           require_matrix_t<T_low>* = nullptr>
 inline void check_greater_or_equal(const char* function, const char* name,
                                    const T_y& y, const T_low& low) {
-  auto&& low_arr = as_array_or_scalar(to_ref(value_of_rec(low)));
+  auto&& low_arr = to_ref(value_of_rec(low));
   check_not_nan(function, name, y);
   check_not_nan(function, "lower", low_arr);
   for (Eigen::Index j = 0; j < low_arr.cols(); ++j) {
@@ -76,21 +81,24 @@ inline void check_greater_or_equal(const char* function, const char* name,
 }
 
 /**
- * Throw an exception if each element of `y` is greater or equal than `low`. This function is vectorized and will check each element of `y` against each element of `low`.
+ * Throw an exception if each element of `y` is greater or equal than `low`.
+ * This function is vectorized and will check each element of `y` against each
+ * element of `low`.
  * @tparam T_y Type inheriting from `MatrixBase` or a `var_value` with the var's
- * inner type inheriting from `Eigen::MatrixBase`.
+ * inner type inheriting from `Eigen::MatrixBase`
  * @tparam T_low A scalar type
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param low Lower bound
- * @throw `std::domain_error` if y is not greater or equal to low or if any element of y or low is `NaN`.
+ * @throw `std::domain_error` if y is not greater or equal to low or if any
+ * element of y or low is `NaN`
  */
 template <typename T_y, typename T_low, require_matrix_t<T_y>* = nullptr,
           require_stan_scalar_t<T_low>* = nullptr>
 inline void check_greater_or_equal(const char* function, const char* name,
                                    const T_y& y, const T_low& low) {
-  auto&& y_arr = as_array_or_scalar(to_ref(value_of_rec(y)));
+  auto&& y_arr = to_ref(value_of_rec(y));
   check_not_nan(function, name, y_arr);
   check_not_nan(function, "lower", low);
   for (Eigen::Index j = 0; j < y_arr.cols(); ++j) {
@@ -110,21 +118,26 @@ inline void check_greater_or_equal(const char* function, const char* name,
 }
 
 /**
- * Throw an exception if each element of `y` is greater or equal than the associated element in `low`. This function is vectorized and will check each element of `y` against each element of `low`.
- * @tparam T_y Type inheriting from `MatrixBase` or a `var_value` with the var's inner type inheriting from `Eigen::MatrixBase`.
- * @tparam T_low Type inheriting from `MatrixBase` or a `var_value` with the var's inner type inheriting from `Eigen::MatrixBase`.
+ * Throw an exception if each element of `y` is greater or equal than the
+ * associated element in `low`. This function is vectorized and will check each
+ * element of `y` against each element of `low`.
+ * @tparam T_y Type inheriting from `MatrixBase` or a `var_value` with the var's
+ * inner type inheriting from `Eigen::MatrixBase`
+ * @tparam T_low Type inheriting from `MatrixBase` or a `var_value` with the
+ * var's inner type inheriting from `Eigen::MatrixBase`
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param low Lower bound
- * @throw `std::domain_error` if y is not greater or equal to low or if any element of y or low is `NaN`.
+ * @throw `std::domain_error` if y is not greater or equal to low or if any
+ * element of y or low is `NaN`
  */
 template <typename T_y, typename T_low,
           require_all_matrix_t<T_y, T_low>* = nullptr>
 inline void check_greater_or_equal(const char* function, const char* name,
                                    const T_y& y, const T_low& low) {
-  auto&& y_arr = to_ref(as_array_or_scalar(value_of_rec(y)));
-  auto&& low_arr = to_ref(as_array_or_scalar(value_of_rec(low)));
+  auto&& y_arr = to_ref(value_of_rec(y));
+  auto&& low_arr = to_ref(value_of_rec(low));
   check_not_nan(function, name, y_arr);
   check_not_nan(function, "lower", low_arr);
   if (is_vector<T_y>::value && is_vector<T_low>::value) {
@@ -161,14 +174,17 @@ inline void check_greater_or_equal(const char* function, const char* name,
 }
 
 /**
- * Throw an exception if each element of `y` is greater or equal than `low`. This function is vectorized and will check each element of `y` against each element of `low`.
+ * Throw an exception if each element of `y` is greater or equal than `low`.
+ * This function is vectorized and will check each element of `y` against each
+ * element of `low`.
  * @tparam T_y A standard vector type
  * @tparam T_low A standard vector type
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param low Lower bound
- * @throw `std::domain_error` if y is not greater or equal to low or if any element of y or low is `NaN`.
+ * @throw `std::domain_error` if y is not greater or equal to low or if any
+ * element of y or low is `NaN`
  */
 template <typename T_y, typename T_low,
           require_all_std_vector_t<T_y, T_low>* = nullptr>
@@ -182,14 +198,17 @@ inline void check_greater_or_equal(const char* function, const char* name,
 }
 
 /**
- * Throw an exception if each element of `y` is greater or equal than `low`. This function is vectorized and will check each element of `y` against each element of `low`.
+ * Throw an exception if each element of `y` is greater or equal than `low`.
+ * This function is vectorized and will check each element of `y` against each
+ * element of `low`.
  * @tparam T_y A standard vector type
  * @tparam T_low A scalar type or the same type as the underlying type in `T_y`
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param low Lower bound
- * @throw `std::domain_error` if y is not greater or equal to low or if any element of y or low is `NaN`.
+ * @throw `std::domain_error` if y is not greater or equal to low or if any
+ * element of y or low is `NaN`
  */
 template <typename T_y, typename T_low, require_std_vector_t<T_y>* = nullptr,
           require_not_std_vector_t<T_low>* = nullptr>
@@ -202,14 +221,17 @@ inline void check_greater_or_equal(const char* function, const char* name,
 }
 
 /**
- * Throw an exception if each element of `y` is greater or equal than `low`. This function is vectorized and will check each element of `y` against each element of `low`.
+ * Throw an exception if each element of `y` is greater or equal than `low`.
+ * This function is vectorized and will check each element of `y` against each
+ * element of `low`.
  * @tparam T_y A scalar type or the same type as the inner type of `T_low`
  * @tparam T_low A standard vector type
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param low Lower bound
- * @throw `std::domain_error` if y is not greater or equal to low or if any element of y or low is NaN.
+ * @throw `std::domain_error` if y is not greater or equal to low or if any
+ * element of y or low is NaN
  */
 template <typename T_y, typename T_low,
           require_not_std_vector_t<T_y>* = nullptr,

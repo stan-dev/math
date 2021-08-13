@@ -16,22 +16,19 @@ namespace stan {
 namespace math {
 
 /**
- * Check if the specified vector is simplex.
- * To be a simplex, all values must be greater than or equal to 0
- * and the values must sum to 1.
- * A valid simplex is one where the sum of the elements is equal
- * to 1.  This function tests that the sum is within the tolerance
- * specified by <code>CONSTRAINT_TOLERANCE</code>. This function
- * only accepts Eigen vectors, statically typed vectors, not
- * general matrices with 1 column.
- * @tparam T A type inheriting from EigenBase.
+ * Throw an exception if the specified vector is not a simplex. To be a simplex,
+ * all values must be greater than or equal to 0 and the values must sum to 1. A
+ * valid simplex is one where the sum of the elements is equal to 1.  This
+ * function tests that the sum is within the tolerance specified by
+ * `CONSTRAINT_TOLERANCE`. This function only accepts Eigen vectors, statically
+ * typed vectors, not general matrices with 1 column.
+ * @tparam T A type inheriting from `Eigen::EigenBase`
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
- * @param theta Vector to test.
- * @throw <code>std::invalid_argument</code> if <code>theta</code>
- *   is a 0-vector.
- * @throw <code>std::domain_error</code> if the vector is not a
- *   simplex or if any element is <code>NaN</code>.
+ * @param theta Vector to test
+ * @throw `std::invalid_argument` if `theta` is a 0-vector
+ * @throw `std::domain_error` if the vector is not a simplex or if any element
+ * is `NaN`
  */
 template <typename T, require_matrix_t<T>* = nullptr>
 void check_simplex(const char* function, const char* name, const T& theta) {
@@ -65,15 +62,20 @@ void check_simplex(const char* function, const char* name, const T& theta) {
 }
 
 /**
- * Check if each vector in a standard vector is a simplex.
- * @tparam T A standard vector with inner type inheriting from `EigenBase`.
+ * Throw an exception if each vector in a standard vector is not a simplex. To
+ * be a simplex, all values must be greater than or equal to 0 and the values
+ * must sum to 1. A valid simplex is one where the sum of the elements is equal
+ * to 1.  This function tests that the sum is within the tolerance specified by
+ * `CONSTRAINT_TOLERANCE`. This function only accepts Eigen vectors, statically
+ * typed vectors, not general matrices with 1 column.
+ * @tparam T A standard vector with inner type inheriting from
+ * `Eigen::EigenBase`
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param theta Vector to test.
- * @throw <code>std::invalid_argument</code> if <code>theta</code>
- *   is a 0-vector.
- * @throw <code>std::domain_error</code> if the vector is not a
- *   simplex or if any element is <code>NaN</code>.
+ * @throw `std::invalid_argument` if `theta` is a 0-vector
+ * @throw `std::domain_error` if the vector is not a simplex or if any element
+ * is `NaN`
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
 void check_simplex(const char* function, const char* name, const T& theta) {

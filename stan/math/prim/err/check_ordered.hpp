@@ -15,15 +15,15 @@ namespace stan {
 namespace math {
 
 /**
- * Check if the specified vector is sorted into strictly increasing order.
+ * Throw an exception if the specified vector is not sorted into strictly
+ * increasing order.
  * @tparam T_y A type inheriting from EigenBase with either 1 compile time row
- * or column.
+ * or column
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Vector to test
- * @throw <code>std::domain_error</code> if the vector elements are
- *   not ordered, if there are duplicated
- *   values, or if any element is <code>NaN</code>.
+ * @throw `std::domain_error` if the vector elements are not ordered, if there
+ * are duplicated values, or if any element is `NaN`
  */
 template <typename T_y, require_eigen_vector_t<T_y>* = nullptr>
 void check_ordered(const char* function, const char* name, const T_y& y) {
@@ -47,14 +47,14 @@ void check_ordered(const char* function, const char* name, const T_y& y) {
 }
 
 /**
- * Check if the specified vector is sorted into strictly increasing order.
+ * Throw an exception if the specified vector is not sorted into strictly
+ * increasing order.
  * @tparam T_y A standard vector with inner scalar type
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
- * @param y <code>std::vector</code> to test
- * @throw <code>std::domain_error</code> if the vector elements are
- *   not ordered, if there are duplicated values, or if any element
- *   is <code>NaN</code>.
+ * @param y `std::vector` to test
+ * @throw `std::domain_error` if the vector elements are not ordered, if there
+ * are duplicated values, or if any element is `NaN`
  */
 template <typename T_y, require_std_vector_vt<is_stan_scalar, T_y>* = nullptr>
 void check_ordered(const char* function, const char* name, const T_y& y) {
@@ -77,13 +77,14 @@ void check_ordered(const char* function, const char* name, const T_y& y) {
 }
 
 /**
- * Check if each vector in a standard vector is sorted into strictly increasing
- * order.
- * @tparam T_y A standard vector with an inner vector type.
+ * Throw an exception if each vector in a standard vector is not sorted into
+ * strictly increasing order.
+ * @tparam T_y A standard vector with an inner vector type
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
- * @param y <code>std::vector</code> to test
- * @throw <code>std::domain_error</code> if the vector elements are not ordered, if there are duplicated values, or if any element is <code>NaN</code>.
+ * @param y `std::vector` to test
+ * @throw `std::domain_error` if the vector elements are not ordered, if there
+ * are duplicated values, or if any element is `NaN`
  */
 template <typename T_y, require_std_vector_t<T_y>* = nullptr,
           require_not_vt_stan_scalar<T_y>* = nullptr>

@@ -17,14 +17,16 @@ namespace stan {
 namespace math {
 
 /**
- * Throw an exception if `y` is less than `high`. This function is vectorized and will check each element of `y` against each element of `high`.
+ * Throw an exception if `y` is less than `high`. This function is vectorized
+ * and will check each element of `y` against each element of `high`.
  * @tparam T_y A scalar type
  * @tparam T_high A scalar type
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param high Upper bound
- * @throw `std::domain_error` if y is not less than high or if any element of y or high is NaN.
+ * @throw `std::domain_error` if y is not less than high or if any element of y
+ * or high is `NaN`
  */
 template <typename T_y, typename T_high,
           require_all_stan_scalar_t<T_y, T_high>* = nullptr>
@@ -44,20 +46,24 @@ inline void check_less_or_equal(const char* function, const char* name,
 }
 
 /**
- * Throw an exception if `y` is less than each element of `high`. This function is vectorized and will check each element of `y` against each element of `high`.
+ * Throw an exception if `y` is less than each element of `high`. This function
+ * is vectorized and will check each element of `y` against each element of
+ * `high`.
  * @tparam T_y A scalar type
- * @tparam T_high Type inheriting from `MatrixBase` or a `var_value` with the var's inner type inheriting from `Eigen::MatrixBase`.
+ * @tparam T_high Type inheriting from `MatrixBase` or a `var_value` with the
+ * var's inner type inheriting from `Eigen::MatrixBase`
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param high Upper bound
- * @throw `std::domain_error` if y is not less than high or if any element of y or high is NaN.
+ * @throw `std::domain_error` if y is not less than high or if any element of y
+ * or high is `NaN`
  */
 template <typename T_y, typename T_high, require_stan_scalar_t<T_y>* = nullptr,
           require_matrix_t<T_high>* = nullptr>
 inline void check_less_or_equal(const char* function, const char* name,
                                 const T_y& y, const T_high& high) {
-  auto&& high_arr = as_array_or_scalar(to_ref(value_of_rec(high)));
+  auto&& high_arr = to_ref(value_of_rec(high));
   check_not_nan(function, name, y);
   check_not_nan(function, "higher", high_arr);
   for (Eigen::Index j = 0; j < high_arr.cols(); ++j) {
@@ -76,21 +82,24 @@ inline void check_less_or_equal(const char* function, const char* name,
 }
 
 /**
- * Throw an exception if each element of `y` is less than `high`. This function is vectorized and will check each element of `y` against each element of `high`.
+ * Throw an exception if each element of `y` is less than `high`. This function
+ * is vectorized and will check each element of `y` against each element of
+ * `high`.
  * @tparam T_y Type inheriting from `MatrixBase` or a `var_value` with the var's
- * inner type inheriting from `Eigen::MatrixBase`.
+ * inner type inheriting from `Eigen::MatrixBase`
  * @tparam T_high A scalar type
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param high Upper bound
- * @throw `std::domain_error` if y is not less than high or if any element of y or high is NaN.
+ * @throw `std::domain_error` if y is not less than high or if any element of y
+ * or high is `NaN`
  */
 template <typename T_y, typename T_high, require_matrix_t<T_y>* = nullptr,
           require_stan_scalar_t<T_high>* = nullptr>
 inline void check_less_or_equal(const char* function, const char* name,
                                 const T_y& y, const T_high& high) {
-  auto&& y_arr = as_array_or_scalar(to_ref(value_of_rec(y)));
+  auto&& y_arr = to_ref(value_of_rec(y));
   check_not_nan(function, name, y_arr);
   check_not_nan(function, "higher", high);
   for (Eigen::Index j = 0; j < y_arr.cols(); ++j) {
@@ -110,21 +119,26 @@ inline void check_less_or_equal(const char* function, const char* name,
 }
 
 /**
- * Throw an exception if each element of `y` is less than the associated element of `high`. This function is vectorized and will check each element of `y` against each element of `high`.
- * @tparam T_y Type inheriting from `MatrixBase` or a `var_value` with the var's inner type inheriting from `Eigen::MatrixBase`.
- * @tparam T_high Type inheriting from `EigenBase` or a `var_value` with the var's inner type inheriting from `Eigen::EigenBase`.
+ * Throw an exception if each element of `y` is less than the associated element
+ * of `high`. This function is vectorized and will check each element of `y`
+ * against each element of `high`.
+ * @tparam T_y Type inheriting from `MatrixBase` or a `var_value` with the var's
+ * inner type inheriting from `Eigen::MatrixBase`
+ * @tparam T_high Type inheriting from `EigenBase` or a `var_value` with the
+ * var's inner type inheriting from `Eigen::EigenBase`
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param high Upper bound
- * @throw `std::domain_error` if y is not less than high or if any element of y or high is NaN.
+ * @throw `std::domain_error` if y is not less than high or if any element of y
+ * or high is `NaN`
  */
 template <typename T_y, typename T_high,
           require_all_matrix_t<T_y, T_high>* = nullptr>
 inline void check_less_or_equal(const char* function, const char* name,
                                 const T_y& y, const T_high& high) {
-  auto&& y_arr = to_ref(as_array_or_scalar(value_of_rec(y)));
-  auto&& high_arr = to_ref(as_array_or_scalar(value_of_rec(high)));
+  auto&& y_arr = to_ref(value_of_rec(y));
+  auto&& high_arr = to_ref(value_of_rec(high));
   check_not_nan(function, name, y_arr);
   check_not_nan(function, "higher", high_arr);
   if (is_vector<T_y>::value && is_vector<T_high>::value) {
@@ -161,14 +175,19 @@ inline void check_less_or_equal(const char* function, const char* name,
 }
 
 /**
- * Throw an exception if each element of `y` is less than each associated element of `high`. This function is vectorized and will check each element of `y` against each element of `high`.
- * @tparam T_y A standard vector type whose `value_type` is a scalar, type inheriting from `Eigen::EigenBase`, or another standard vector.
- * @tparam T_high A standard vector type whose `value_type` is a scalar, type inheriting from `Eigen::EigenBase`, or another standard vector.
+ * Throw an exception if each element of `y` is less than each associated
+ * element of `high`. This function is vectorized and will check each element of
+ * `y` against each element of `high`.
+ * @tparam T_y A standard vector type whose `value_type` is a scalar, type
+ * inheriting from `Eigen::EigenBase`, or another standard vector
+ * @tparam T_high A standard vector type whose `value_type` is a scalar, type
+ * inheriting from `Eigen::EigenBase`, or another standard vector
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param high Upper bound
- * @throw `std::domain_error` if y is not less than high or if any element of y or high is NaN.
+ * @throw `std::domain_error` if y is not less than high or if any element of y
+ * or high is `NaN`
  */
 template <typename T_y, typename T_high,
           require_all_std_vector_t<T_y, T_high>* = nullptr>
@@ -182,14 +201,18 @@ inline void check_less_or_equal(const char* function, const char* name,
 }
 
 /**
- * Throw an exception if each element of `y` is less than `high`. This function is vectorized and will check each element of `y` against each element of `high`.
- * @tparam T_y A standard vector type whose `value_type` is a scalar, type inheriting from `Eigen::EigenBase`, or another standard vector
- * @tparam T_high A scalar or the same `value_type` of `T_y`.
+ * Throw an exception if each element of `y` is less than `high`. This function
+ * is vectorized and will check each element of `y` against each element of
+ * `high`.
+ * @tparam T_y A standard vector type whose `value_type` is a scalar, type
+ * inheriting from `Eigen::EigenBase`, or another standard vector
+ * @tparam T_high A scalar or the same `value_type` of `T_y`
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param high Upper bound
- * @throw `domaA standard vector type whose `value_type` is a scalar, type inheriting from `Eigen::EigenBase`, or another standard vectorless than high or if any element of y or high is NaN.
+ * @throw `std::domain_error` if y is not less than high or if any element of y
+ * or high is `NaN`
  */
 template <typename T_y, typename T_high, require_std_vector_t<T_y>* = nullptr,
           require_not_std_vector_t<T_high>* = nullptr>
@@ -203,14 +226,18 @@ inline void check_less_or_equal(const char* function, const char* name,
 }
 
 /**
- * Throw an exception if `y` is less than each element of `high`. This function is vectorized and will check each element of `y` against each element of `high`.
+ * Throw an exception if `y` is less than each element of `high`. This function
+ * is vectorized and will check each element of `y` against each element of
+ * `high`.
  * @tparam T_y A scalar type or the same `value_type` of `T_high`
- * @tparam T_high A standard vector type whose `value_type` is a scalar, type inheriting from `Eigen::EigenBase`, or another standard vector
+ * @tparam T_high A standard vector type whose `value_type` is a scalar, type
+ * inheriting from `Eigen::EigenBase`, or another standard vector
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param high Upper bound
- * @throw `std::domain_error` if y is not less than high or if any element of y or high is NaN.
+ * @throw `std::domain_error` if y is not less than high or if any element of y
+ * or high is `NaN`
  */
 template <typename T_y, typename T_high,
           require_not_std_vector_t<T_y>* = nullptr,

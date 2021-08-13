@@ -18,21 +18,19 @@ namespace stan {
 namespace math {
 
 /**
- * Throw an exception if the specified vector is unit vector.
- * A valid unit vector is one where the square of the elements
- * summed is equal to 1. This function tests that the sum is within the
- * tolerance specified by `CONSTRAINT_TOLERANCE`. This
- * function only accepts Eigen vectors, statically typed vectors,
- * not general matrices with 1 column.
- * @tparam Vec A type derived from `EigenBase` with either dynamic rows or
- * columns but not both.
+ * Throw an exception if the specified vector does not have unit Euclidiean
+ * length. A valid unit vector is one where the square of the elements summed is
+ * equal to 1. This function tests that the sum is within the tolerance
+ * specified by `CONSTRAINT_TOLERANCE`. This function only accepts Eigen
+ * vectors, statically typed vectors, not general matrices with 1 column.
+ * @tparam Vec A type derived from `Eigen::EigenBase` with either dynamic rows
+ * or columns but not both
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param theta Vector to test
- * @throw `std::invalid_argument` if `theta`
- *   is a 0-vector
- * @throw `std::domain_error` if the vector is not a unit
- *   vector or if any element is `NaN`
+ * @throw `std::invalid_argument` if `theta` is a 0-vector
+ * @throw `std::domain_error` if the vector is not a unit vector or if any
+ * element is `NaN`
  */
 template <typename Vec, require_vector_t<Vec>* = nullptr,
           require_not_std_vector_t<Vec>* = nullptr>
@@ -53,14 +51,17 @@ void check_unit_vector(const char* function, const char* name,
 }
 
 /**
- * Throw an exception if the each element in a standard vector is a unit vector.
- * @tparam StdVec A standard vector with inner type inheriting from `EigenBase`
+ * Throw an exception if the each element in a standard vector does not have
+ * unit Euclidiean length.
+ * @tparam StdVec A standard vector with inner type inheriting from
+ * `Eigen::EigenBase`
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param theta Vector to test
  * @throw `std::invalid_argument` if `theta`
  *   is a 0-vector
- * @throw `std::domain_error` if the vector is not a unit vector or if any element is `NaN`
+ * @throw `std::domain_error` if the vector is not a unit vector or if any
+ * element is `NaN`
  */
 template <typename StdVec, require_std_vector_t<StdVec>* = nullptr>
 void check_unit_vector(const char* function, const char* name,
