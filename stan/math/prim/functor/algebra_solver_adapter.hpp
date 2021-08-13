@@ -17,10 +17,9 @@ struct algebra_solver_adapter {
 
   explicit algebra_solver_adapter(const F& f) : f_(f) {}
 
-  template <typename T1, typename T2, typename T3, typename T4>
-  auto operator()(const T1& x, std::ostream* msgs, const T2& y, const T3& dat,
-                  const T4& dat_int) const {
-    return f_(x, y, dat, dat_int, msgs);
+  template <typename T1, typename... T2>
+  auto operator()(const T1& x, std::ostream* msgs, T2&&... args) const {
+    return f_(x, args..., msgs);
   }
 };
 

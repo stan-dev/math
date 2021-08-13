@@ -51,8 +51,8 @@ T& algebra_solver_powell_call_solver(const F& f, T& x, std::ostream* const msgs,
                                      const int64_t max_num_steps,
                                      const Args&... args) {
   // Construct the solver
-  hybrj_functor_solver<decltype(f)> hfs(f);
-  Eigen::HybridNonLinearSolver<decltype(hfs)> solver(hfs);
+  hybrj_functor_solver<F> hfs(f);
+  Eigen::HybridNonLinearSolver<hybrj_functor_solver<F>> solver(hfs);
 
   // Compute theta_dbl
   solver.parameters.xtol = relative_tolerance;
@@ -61,7 +61,7 @@ T& algebra_solver_powell_call_solver(const F& f, T& x, std::ostream* const msgs,
 
   // Check if the max number of steps has been exceeded
   if (solver.nfev >= max_num_steps) {
-    [&]() STAN_COLD_PATH {
+    [max_num_steps]() STAN_COLD_PATH {
       throw_domain_error("algebra_solver", "maximum number of iterations",
                          max_num_steps, "(", ") was exceeded in the solve.");
     }();
@@ -70,7 +70,7 @@ T& algebra_solver_powell_call_solver(const F& f, T& x, std::ostream* const msgs,
   // Check solution is a root
   double system_norm = f(x).stableNorm();
   if (system_norm > function_tolerance) {
-    [&]() STAN_COLD_PATH {
+    [function_tolerance, system_norm]() STAN_COLD_PATH {
       std::ostringstream message;
       message << "the norm of the algebraic function is " << system_norm
               << " but should be lower than the function "
@@ -132,7 +132,7 @@ Eigen::VectorXd algebra_solver_powell_impl(const F& f, const T& x,
                                            const double function_tolerance,
                                            const int64_t max_num_steps,
                                            const Args&... args) {
-  plain_type_t<decltype(to_ref(value_of(x)))> x_ref = to_ref(value_of(x));
+  auto x_ref = eval(value_of(x));
   auto args_vals_tuple = std::make_tuple(to_ref(args)...);
 
   auto f_wrt_x = [&args_vals_tuple, &f, msgs](const auto& x) {
@@ -336,13 +336,13 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
     const F& f, const T& x, std::ostream* const msgs,
     const double relative_tolerance, const double function_tolerance,
     const int64_t max_num_steps, const T_Args&... args) {
-  plain_type_t<decltype(to_ref(value_of(x)))> x_ref = to_ref(value_of(x));
-  auto arena_args_tuple = std::make_tuple(to_arena(args)...);
+  auto x_ref = eval(value_of(x));
+  auto arena_args_tuple = make_chainable_ptr(std::make_tuple(eval(args)...));
   auto args_vals_tuple = apply(
       [&](const auto&... args) {
         return std::make_tuple(to_ref(value_of(args))...);
       },
-      arena_args_tuple);
+      *arena_args_tuple);
 
   auto f_wrt_x = [&args_vals_tuple, &f, msgs](const auto& x) {
     return apply(
@@ -386,7 +386,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
       Eigen::VectorXd ret_val = ret.val();
       auto x_nrad_ = apply(
           [&](const auto&... args) { return eval(f(ret_val, msgs, args...)); },
-          arena_args_tuple);
+          *arena_args_tuple);
       x_nrad_.adj() = eta;
       grad();
     }
