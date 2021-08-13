@@ -12,15 +12,17 @@ namespace internal {
 /**
  * A closure that wraps a C++ lambda and captures values.
  */
-template <bool Ref, typename F, typename... Ts>
+template <typename F, typename... Ts>
 struct base_closure {
   using return_scalar_t_ = return_type_t<Ts...>;
   /*The base closure with `Ts` as the non-expression partials of `Ts`*/
   using partials_closure_t_
-      = base_closure<false, F, decltype(eval(value_of(std::declval<Ts>())))...>;
-  using Base_ = base_closure<false, F, Ts...>;
+      = base_closure<F, decltype(value_of(std::declval<Ts>()))...>;
+  using Base_ = base_closure<F, Ts...>;
+  /* The closure with captures_ as the plain object instead of a reference */
+  using PlainBase_ = base_closure<F, std::decay_t<plain_type_t<decltype(eval(std::declval<Ts>()))>>...>;
   std::decay_t<F> f_;
-  std::tuple<closure_return_type_t<Ts, Ref>...> captures_;
+  std::tuple<Ts...> captures_;
   template <typename FF, require_same_t<FF, F>* = nullptr, typename... Args>
   explicit base_closure(FF&& f, Args&&... args)
       : f_(std::forward<FF>(f)), captures_(std::forward<Args>(args)...) {}
@@ -36,13 +38,13 @@ struct base_closure {
 /**
  * A closure that takes rng argument.
  */
-template <bool Ref, typename F, typename... Ts>
+template <typename F, typename... Ts>
 struct closure_rng {
   using return_scalar_t_ = double;
-  using partials_closure_t_ = closure_rng<false, F, Ts...>;
-  using Base_ = closure_rng<false, F, Ts...>;
+  using partials_closure_t_ = closure_rng<F, Ts...>;
+  using Base_ = closure_rng<F, Ts...>;
   std::decay_t<F> f_;
-  std::tuple<closure_return_type_t<Ts, Ref>...> captures_;
+  std::tuple<Ts...> captures_;
 
   template <typename FF, require_same_t<FF, F>* = nullptr, typename... Args>
   explicit closure_rng(FF&& f, Args&&... args)
@@ -61,13 +63,13 @@ struct closure_rng {
 /**
  * A closure that can be called with `propto` template argument.
  */
-template <bool Propto, bool Ref, typename F, typename... Ts>
+template <bool Propto, typename F, typename... Ts>
 struct closure_lpdf {
   using return_scalar_t_ = return_type_t<Ts...>;
-  using partials_closure_t_ = closure_lpdf<Propto, false, F, Ts...>;
-  using Base_ = closure_lpdf<Propto, false, F, Ts...>;
+  using partials_closure_t_ = closure_lpdf<Propto, F, Ts...>;
+  using Base_ = closure_lpdf<Propto, F, Ts...>;
   std::decay_t<F> f_;
-  std::tuple<closure_return_type_t<Ts, Ref>...> captures_;
+  std::tuple<Ts...> captures_;
 
   template <typename FF, require_same_t<FF, F>* = nullptr, typename... Args>
   explicit closure_lpdf(FF&& f, Args&&... args)
@@ -77,8 +79,7 @@ struct closure_lpdf {
   auto with_propto() {
     return apply(
         [this](const auto&... args) {
-          return closure_lpdf < Propto && propto, true, F,
-                 Ts... > (this->f_, args...);
+          return closure_lpdf < Propto && propto, F, Ts...> (this->f_, args...);
         },
         captures_);
   }
@@ -96,13 +97,13 @@ struct closure_lpdf {
 /**
  * A closure that accesses logprob accumulator.
  */
-template <bool Propto, bool Ref, typename F, typename... Ts>
+template <bool Propto, typename F, typename... Ts>
 struct closure_lp {
   using return_scalar_t_ = return_type_t<Ts...>;
-  using partials_closure_t_ = closure_lp<Propto, true, F, Ts...>;
-  using Base_ = closure_lp<Propto, true, F, Ts...>;
+  using partials_closure_t_ = closure_lp<Propto, F, Ts...>;
+  using Base_ = closure_lp<Propto, F, Ts...>;
   std::decay_t<F> f_;
-  std::tuple<closure_return_type_t<Ts, Ref>...> captures_;
+  std::tuple<Ts...> captures_;
 
   template <typename FF, require_same_t<FF, F>* = nullptr, typename... Args>
   explicit closure_lp(FF&& f, Args&&... args)
@@ -149,7 +150,7 @@ struct integrate_ode_closure_adapter {
  */
 template <typename F, typename... Args>
 auto from_lambda(F&& f, Args&&... args) {
-  return internal::base_closure<true, F, Args...>(std::forward<F>(f),
+  return internal::base_closure<F, Args...>(std::forward<F>(f),
                                                   std::forward<Args>(args)...);
 }
 
@@ -158,7 +159,7 @@ auto from_lambda(F&& f, Args&&... args) {
  */
 template <typename F, typename... Args>
 auto rng_from_lambda(F&& f, Args&&... args) {
-  return internal::closure_rng<true, F, Args...>(std::forward<F>(f),
+  return internal::closure_rng<F, Args...>(std::forward<F>(f),
                                                  std::forward<Args>(args)...);
 }
 
@@ -167,7 +168,7 @@ auto rng_from_lambda(F&& f, Args&&... args) {
  */
 template <bool propto, typename F, typename... Args>
 auto lpdf_from_lambda(F&& f, Args&&... args) {
-  return internal::closure_lpdf<propto, true, F, Args...>(
+  return internal::closure_lpdf<propto, F, Args...>(
       std::forward<F>(f), std::forward<Args>(args)...);
 }
 
@@ -176,7 +177,7 @@ auto lpdf_from_lambda(F&& f, Args&&... args) {
  */
 template <bool Propto, typename F, typename... Args>
 auto lp_from_lambda(F&& f, Args&&... args) {
-  return internal::closure_lp<Propto, true, F, Args...>(
+  return internal::closure_lp<Propto, F, Args...>(
       std::forward<F>(f), std::forward<Args>(args)...);
 }
 

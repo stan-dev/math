@@ -95,7 +95,7 @@ template <typename F, require_stan_closure_t<F>* = nullptr>
 inline auto deep_copy_vars(const F& f) {
   return apply(
       [&f](const auto&... s) {
-        return typename F::Base_(f.f_, eval(deep_copy_vars(s))...);
+        return typename F::PlainBase_(f.f_, eval(deep_copy_vars(s))...);
       },
       f.captures_);
 }
