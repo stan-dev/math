@@ -16,7 +16,7 @@ namespace stan {
 namespace math {
 
 /**
- * Throw an exception if `y` is greater or equal than `low`. This function is
+ * Throw an exception if `y` is not greater or equal than `low`. This function is
  * vectorized and will check each element of `y` against each element of `low`.
  * @tparam T_y A scalar type
  * @tparam T_low A scalar type
@@ -45,7 +45,7 @@ inline void check_greater_or_equal(const char* function, const char* name,
 }
 
 /**
- * Throw an exception if `y` is greater or equal than each element of `low`.
+ * Throw an exception if `y` is not greater or equal than each element of `low`.
  * This function is vectorized and will check each element of `y` against each
  * element of `low`.
  * @tparam T_y A scalar type
@@ -81,7 +81,7 @@ inline void check_greater_or_equal(const char* function, const char* name,
 }
 
 /**
- * Throw an exception if each element of `y` is greater or equal than `low`.
+ * Throw an exception if each element of `y` is not greater or equal than `low`.
  * This function is vectorized and will check each element of `y` against each
  * element of `low`.
  * @tparam T_y Type inheriting from `MatrixBase` or a `var_value` with the var's
@@ -118,7 +118,7 @@ inline void check_greater_or_equal(const char* function, const char* name,
 }
 
 /**
- * Throw an exception if each element of `y` is greater or equal than the
+ * Throw an exception if each element of `y` is not greater or equal than the
  * associated element in `low`. This function is vectorized and will check each
  * element of `y` against each element of `low`.
  * @tparam T_y Type inheriting from `MatrixBase` or a `var_value` with the var's
@@ -174,7 +174,7 @@ inline void check_greater_or_equal(const char* function, const char* name,
 }
 
 /**
- * Throw an exception if each element of `y` is greater or equal than `low`.
+ * Throw an exception if each element of `y` is not greater or equal than `low`.
  * This function is vectorized and will check each element of `y` against each
  * element of `low`.
  * @tparam T_y A standard vector type
@@ -198,7 +198,7 @@ inline void check_greater_or_equal(const char* function, const char* name,
 }
 
 /**
- * Throw an exception if each element of `y` is greater or equal than `low`.
+ * Throw an exception if each element of `y` is not greater or equal than `low`.
  * This function is vectorized and will check each element of `y` against each
  * element of `low`.
  * @tparam T_y A standard vector type
@@ -221,7 +221,7 @@ inline void check_greater_or_equal(const char* function, const char* name,
 }
 
 /**
- * Throw an exception if each element of `y` is greater or equal than `low`.
+ * Throw an exception if each element of `y` is not greater or equal than `low`.
  * This function is vectorized and will check each element of `y` against each
  * element of `low`.
  * @tparam T_y A scalar type or the same type as the inner type of `T_low`

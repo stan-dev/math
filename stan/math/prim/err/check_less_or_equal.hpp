@@ -17,7 +17,7 @@ namespace stan {
 namespace math {
 
 /**
- * Throw an exception if `y` is less than `high`. This function is vectorized
+ * Throw an exception if `y` is not less than `high`. This function is vectorized
  * and will check each element of `y` against each element of `high`.
  * @tparam T_y A scalar type
  * @tparam T_high A scalar type
@@ -46,7 +46,7 @@ inline void check_less_or_equal(const char* function, const char* name,
 }
 
 /**
- * Throw an exception if `y` is less than each element of `high`. This function
+ * Throw an exception if `y` is not less than each element of `high`. This function
  * is vectorized and will check each element of `y` against each element of
  * `high`.
  * @tparam T_y A scalar type
@@ -82,7 +82,7 @@ inline void check_less_or_equal(const char* function, const char* name,
 }
 
 /**
- * Throw an exception if each element of `y` is less than `high`. This function
+ * Throw an exception if each element of `y` is not less than `high`. This function
  * is vectorized and will check each element of `y` against each element of
  * `high`.
  * @tparam T_y Type inheriting from `MatrixBase` or a `var_value` with the var's
@@ -119,7 +119,7 @@ inline void check_less_or_equal(const char* function, const char* name,
 }
 
 /**
- * Throw an exception if each element of `y` is less than the associated element
+ * Throw an exception if each element of `y` is not less than the associated element
  * of `high`. This function is vectorized and will check each element of `y`
  * against each element of `high`.
  * @tparam T_y Type inheriting from `MatrixBase` or a `var_value` with the var's
@@ -175,7 +175,7 @@ inline void check_less_or_equal(const char* function, const char* name,
 }
 
 /**
- * Throw an exception if each element of `y` is less than each associated
+ * Throw an exception if each element of `y` is not less than each associated
  * element of `high`. This function is vectorized and will check each element of
  * `y` against each element of `high`.
  * @tparam T_y A standard vector type whose `value_type` is a scalar, type
@@ -201,7 +201,7 @@ inline void check_less_or_equal(const char* function, const char* name,
 }
 
 /**
- * Throw an exception if each element of `y` is less than `high`. This function
+ * Throw an exception if each element of `y` is not less than `high`. This function
  * is vectorized and will check each element of `y` against each element of
  * `high`.
  * @tparam T_y A standard vector type whose `value_type` is a scalar, type
@@ -226,7 +226,7 @@ inline void check_less_or_equal(const char* function, const char* name,
 }
 
 /**
- * Throw an exception if `y` is less than each element of `high`. This function
+ * Throw an exception if `y` is not less than each element of `high`. This function
  * is vectorized and will check each element of `y` against each element of
  * `high`.
  * @tparam T_y A scalar type or the same `value_type` of `T_high`

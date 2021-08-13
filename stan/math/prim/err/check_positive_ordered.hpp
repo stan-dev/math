@@ -15,7 +15,7 @@ namespace stan {
 namespace math {
 
 /**
- * Throw an exception if the specified the vector contains negative values and
+ * Throw an exception if the specified the vector contains negative values or
  * is not sorted into strictly increasing order.
  * @tparam Vec A type derived from `Eigen::EigenBase` with 1 compile time row or
  * column
@@ -49,7 +49,7 @@ void check_positive_ordered(const char* function, const char* name,
 
 /**
  * Throw an exception if any of the vectors in a standard vector contains
- * negative values and is not sorted into strictly increasing order.
+ * negative values or is not sorted into strictly increasing order.
  * @tparam StdVec A standard vector type with an `value_type` inheriting from
  * `Eigen::EigenBase` with 1 compile time row or column
  * @param function Function name (for error messages)

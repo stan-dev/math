@@ -16,7 +16,7 @@ namespace stan {
 namespace math {
 
 /**
- * Check if `y` is strictly less than `high`. This function is vectorized and
+ * Throw an exception if `y` is not strictly less than `high`. This function is vectorized and
  * will check each element of `y` against each element of `high`.
  * @tparam T_y A scalar type
  * @tparam T_high A scalar type
@@ -45,7 +45,7 @@ inline void check_less(const char* function, const char* name, const T_y& y,
 }
 
 /**
- * Check if `y` is strictly less than each element of `high`. This function is
+ * Throw an exception if `y` is not strictly less than each element of `high`. This function is
  * vectorized and will check each element of `y` against each element of `high`.
  * @tparam T_y A scalar type
  * @tparam T_high Type inheriting from `MatrixBase` or a `var_value` with the
@@ -80,7 +80,7 @@ inline void check_less(const char* function, const char* name, const T_y& y,
 }
 
 /**
- * Check if each element of `y` is strictly less than `high`. This function is
+ * Throw an exception if each element of `y` is not strictly less than `high`. This function is
  * vectorized and will check each element of `y` against each element of `high`.
  * @tparam T_high Type inheriting from `MatrixBase` or a `var_value` with the
  * var's inner type inheriting from `Eigen::MatrixBase`
@@ -116,7 +116,7 @@ inline void check_less(const char* function, const char* name, const T_y& y,
 }
 
 /**
- * Check if each element of `y` is strictly less than each element of `high`.
+ * Throw an exception if each element of `y` is not strictly less than each element of `high`.
  * This function is vectorized and will check each element of `y` against each
  * element of `high`.
  * @tparam T_y Type inheriting from `Eigen::MatrixBase` or a `var_value` with
@@ -172,7 +172,7 @@ inline void check_less(const char* function, const char* name, const T_y& y,
 }
 
 /**
- * Check if each element of `y` is strictly less than each associated element of
+ * Throw an exception if each element of `y` is not strictly less than each associated element of
  * `high`. This function is vectorized and will check each element of `y`
  * against each element of `high`.
  * @tparam T_y A standard vector type whose `value_type` is a scalar, type
@@ -198,7 +198,7 @@ inline void check_less(const char* function, const char* name, const T_y& y,
 }
 
 /**
- * Check if each element of `y` is strictly less than `high`. This function is
+ * Throw an exception if each element of `y` is not strictly less than `high`. This function is
  * vectorized and will check each element of `y` against each element of `high`.
  * @tparam T_y A standard vector type whose `value_type` is a scalar, type
  * inheriting from `Eigen::EigenBase`, or another standard vector
@@ -220,7 +220,7 @@ inline void check_less(const char* function, const char* name, const T_y& y,
 }
 
 /**
- * Check if `y` is strictly less than each element of `high`. This function is
+ * Throw an exception if `y` is not strictly less than each element of `high`. This function is
  * vectorized and will check each element of `y` against each element of `high`.
  * @tparam T_y A scalar type or the same type as the inner type of `T_high`
  * @tparam T_high A standard vector type whose `value_type` is a scalar, type
