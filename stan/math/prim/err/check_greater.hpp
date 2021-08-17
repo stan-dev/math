@@ -16,8 +16,9 @@ namespace stan {
 namespace math {
 
 /**
- * Throw an exception if `y` is not strictly greater than `low`. This function is
- * vectorized and will check each element of `y` against each element of `low`.
+ * Throw an exception if `y` is not strictly greater than `low`. This function
+ * is vectorized and will check each element of `y` against each element of
+ * `low`.
  * @tparam T_y A scalar type type
  * @tparam T_low A scalar type
  * @param function Function name (for error messages)
@@ -47,8 +48,9 @@ inline void check_greater(const char* function, const char* name, const T_y& y,
  * This function is vectorized and will check each element of `y` against each
  * element of `low`.
  * @tparam T_y A scalar type
- * @tparam T_low A standard vector or type inheriting from `Eigen::DenseBase` with
- *  compile time rows or columns equal to one and `value_type` equal to a stan scalar.
+ * @tparam T_low A standard vector or type inheriting from `Eigen::DenseBase`
+ * with compile time rows or columns equal to one and `value_type` equal to a
+ * stan scalar.
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
@@ -79,8 +81,9 @@ inline void check_greater(const char* function, const char* name, const T_y& y,
  * This function is vectorized and will check each element of `y` against each
  * element of `low`.
  * @tparam T_y A scalar type
- * @tparam T_low Type inheriting from `Eigen::DenseBase` or a `var_value` with the var's
- * inner type inheriting from `Eigen::DenseBase` where the compile time number of rows or columns is not equal to one
+ * @tparam T_low Type inheriting from `Eigen::DenseBase` or a `var_value` with
+ * the var's inner type inheriting from `Eigen::DenseBase` where the compile
+ * time number of rows or columns is not equal to one
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
@@ -113,7 +116,8 @@ inline void check_greater(const char* function, const char* name, const T_y& y,
  * This function is vectorized and will check each element of `y` against each
  * element of `low`.
  * @tparam T_y A standard vector or type inheriting from `Eigen::DenseBase` with
- *  compile time rows or columns equal to one and `value_type` equal to a stan scalar
+ *  compile time rows or columns equal to one and `value_type` equal to a stan
+ * scalar
  * @tparam T_low A scalar type
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -122,7 +126,8 @@ inline void check_greater(const char* function, const char* name, const T_y& y,
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
-template <typename T_y, typename T_low, require_vector_vt<is_stan_scalar, T_y>* = nullptr,
+template <typename T_y, typename T_low,
+          require_vector_vt<is_stan_scalar, T_y>* = nullptr,
           require_stan_scalar_t<T_low>* = nullptr>
 inline void check_greater(const char* function, const char* name, const T_y& y,
                           const T_low& low) {
@@ -145,8 +150,9 @@ inline void check_greater(const char* function, const char* name, const T_y& y,
  * Throw an exception if each element of `y` is not strictly greater than `low`.
  * This function is vectorized and will check each element of `y` against each
  * element of `low`.
- * @tparam T_y Type inheriting from `Eigen::DenseBase` or a `var_value` with the var's
- * inner type inheriting from `Eigen::DenseBase` where the compile time number of rows or columns is not equal to one
+ * @tparam T_y Type inheriting from `Eigen::DenseBase` or a `var_value` with the
+ * var's inner type inheriting from `Eigen::DenseBase` where the compile time
+ * number of rows or columns is not equal to one
  * @tparam T_low A scalar type
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -181,9 +187,11 @@ inline void check_greater(const char* function, const char* name, const T_y& y,
  * associated element in `low`. This function is vectorized and will check each
  * element of `y` against each element of `low`.
  * @tparam T_y A standard vector or type inheriting from `Eigen::DenseBase` with
- *  compile time rows or columns equal to one and `value_type` equal to a stan scalar.
- * @tparam T_low A standard vector or type inheriting from `Eigen::DenseBase` with
- *  compile time rows or columns equal to one and `value_type` equal to a stan scalar.
+ *  compile time rows or columns equal to one and `value_type` equal to a stan
+ * scalar.
+ * @tparam T_low A standard vector or type inheriting from `Eigen::DenseBase`
+ * with compile time rows or columns equal to one and `value_type` equal to a
+ * stan scalar.
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
@@ -216,10 +224,12 @@ inline void check_greater(const char* function, const char* name, const T_y& y,
  * Throw an exception if each element of `y` is not strictly greater than the
  * associated element in `low`. This function is vectorized and will check each
  * element of `y` against each element of `low`.
- * @tparam T_y Type inheriting from `Eigen::DenseBase` or a `var_value` with the var's
- * inner type inheriting from `Eigen::DenseBase` where the compile time number of rows or columns is not equal to one
- * @tparam T_low Type inheriting from `Eigen::DenseBase` or a `var_value` with the var's
- * inner type inheriting from `Eigen::DenseBase` where the compile time number of rows or columns is not equal to one
+ * @tparam T_y Type inheriting from `Eigen::DenseBase` or a `var_value` with the
+ * var's inner type inheriting from `Eigen::DenseBase` where the compile time
+ * number of rows or columns is not equal to one
+ * @tparam T_low Type inheriting from `Eigen::DenseBase` or a `var_value` with
+ * the var's inner type inheriting from `Eigen::DenseBase` where the compile
+ * time number of rows or columns is not equal to one
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
@@ -281,7 +291,8 @@ inline void check_greater(const char* function, const char* name, const T_y& y,
  * Throw an exception if each element of `y` is not strictly greater than `low`.
  * This function is vectorized and will check each element of `y` against each
  * element of `low`.
- * @tparam T_y A standard vector type with a `value_type` of a standard vector or type inheriting from `Eigen::DenseBase`
+ * @tparam T_y A standard vector type with a `value_type` of a standard vector
+ * or type inheriting from `Eigen::DenseBase`
  * @tparam T_low A scalar type or the same type as the underlying type in `T_y`
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -290,7 +301,8 @@ inline void check_greater(const char* function, const char* name, const T_y& y,
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
-template <typename T_y, typename T_low, require_std_vector_vt<is_container, T_y>* = nullptr,
+template <typename T_y, typename T_low,
+          require_std_vector_vt<is_container, T_y>* = nullptr,
           require_not_std_vector_t<T_low>* = nullptr>
 inline void check_greater(const char* function, const char* name, const T_y& y,
                           const T_low& low) {
@@ -305,7 +317,8 @@ inline void check_greater(const char* function, const char* name, const T_y& y,
  * This function is vectorized and will check each element of `y` against each
  * element of `low`.
  * @tparam T_y A scalar type or the same type as the inner type of `T_low`
- * @tparam T_low A standard vector type with a `value_type` of a standard vector or type inheriting from `Eigen::DenseBase`
+ * @tparam T_low A standard vector type with a `value_type` of a standard vector
+ * or type inheriting from `Eigen::DenseBase`
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check

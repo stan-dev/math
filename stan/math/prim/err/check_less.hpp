@@ -16,8 +16,8 @@ namespace stan {
 namespace math {
 
 /**
- * Throw an exception if `y` is not strictly less than `high`. This function is vectorized and
- * will check each element of `y` against each element of `high`.
+ * Throw an exception if `y` is not strictly less than `high`. This function is
+ * vectorized and will check each element of `y` against each element of `high`.
  * @tparam T_y A scalar type
  * @tparam T_high A scalar type
  * @param function Function name (for error messages)
@@ -43,11 +43,13 @@ inline void check_less(const char* function, const char* name, const T_y& y,
 }
 
 /**
- * Throw an exception if `y` is not strictly less than each element of `high`. This function is
- * vectorized and will check each element of `y` against each element of `high`.
+ * Throw an exception if `y` is not strictly less than each element of `high`.
+ * This function is vectorized and will check each element of `y` against each
+ * element of `high`.
  * @tparam T_y A scalar type
- * @tparam T_high A standard vector or type inheriting from `Eigen::DenseBase` with
- *  compile time rows or columns equal to one and `value_type` equal to a stan scalar.
+ * @tparam T_high A standard vector or type inheriting from `Eigen::DenseBase`
+ * with compile time rows or columns equal to one and `value_type` equal to a
+ * stan scalar.
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
@@ -74,11 +76,13 @@ inline void check_less(const char* function, const char* name, const T_y& y,
 }
 
 /**
- * Throw an exception if `y` is not strictly less than each element of `high`. This function is
- * vectorized and will check each element of `y` against each element of `high`.
+ * Throw an exception if `y` is not strictly less than each element of `high`.
+ * This function is vectorized and will check each element of `y` against each
+ * element of `high`.
  * @tparam T_y A scalar type
- * @tparam T_high Type inheriting from `Eigen::DenseBase` or a `var_value` with the var's
- * inner type inheriting from `Eigen::DenseBase` where the compile time number of rows or columns is not equal to one
+ * @tparam T_high Type inheriting from `Eigen::DenseBase` or a `var_value` with
+ * the var's inner type inheriting from `Eigen::DenseBase` where the compile
+ * time number of rows or columns is not equal to one
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
@@ -107,10 +111,12 @@ inline void check_less(const char* function, const char* name, const T_y& y,
 }
 
 /**
- * Throw an exception if each element of `y` is not strictly less than `high`. This function is
- * vectorized and will check each element of `y` against each element of `high`.
+ * Throw an exception if each element of `y` is not strictly less than `high`.
+ * This function is vectorized and will check each element of `y` against each
+ * element of `high`.
  * @tparam T_y A standard vector or type inheriting from `Eigen::DenseBase` with
- *  compile time rows or columns equal to one and `value_type` equal to a stan scalar.
+ *  compile time rows or columns equal to one and `value_type` equal to a stan
+ * scalar.
  * @tparam T_high A scalar type
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -119,8 +125,9 @@ inline void check_less(const char* function, const char* name, const T_y& y,
  * @throw `domain_error` if y is not less than high or if any element of y or
  * high is `NaN`
  */
- template <typename T_y, typename T_high, require_vector_vt<is_stan_scalar, T_y>* = nullptr,
-           require_stan_scalar_t<T_high>* = nullptr>
+template <typename T_y, typename T_high,
+          require_vector_vt<is_stan_scalar, T_y>* = nullptr,
+          require_stan_scalar_t<T_high>* = nullptr>
 inline void check_less(const char* function, const char* name, const T_y& y,
                        const T_high& high) {
   auto&& y_arr = to_ref(value_of_rec(as_array_or_scalar(y)));
@@ -139,10 +146,12 @@ inline void check_less(const char* function, const char* name, const T_y& y,
 }
 
 /**
- * Throw an exception if each element of `y` is not strictly less than `high`. This function is
- * vectorized and will check each element of `y` against each element of `high`.
- * @tparam T_y Type inheriting from `Eigen::DenseBase` or a `var_value` with the var's
- * inner type inheriting from `Eigen::DenseBase` where the compile time number of rows or columns is not equal to one
+ * Throw an exception if each element of `y` is not strictly less than `high`.
+ * This function is vectorized and will check each element of `y` against each
+ * element of `high`.
+ * @tparam T_y Type inheriting from `Eigen::DenseBase` or a `var_value` with the
+ * var's inner type inheriting from `Eigen::DenseBase` where the compile time
+ * number of rows or columns is not equal to one
  * @tparam T_high A scalar type
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -151,8 +160,9 @@ inline void check_less(const char* function, const char* name, const T_y& y,
  * @throw `domain_error` if y is not less than high or if any element of y or
  * high is `NaN`
  */
- template <typename T_y, typename T_high, require_dense_dynamic_t<T_y>* = nullptr,
-           require_stan_scalar_t<T_high>* = nullptr>
+template <typename T_y, typename T_high,
+          require_dense_dynamic_t<T_y>* = nullptr,
+          require_stan_scalar_t<T_high>* = nullptr>
 inline void check_less(const char* function, const char* name, const T_y& y,
                        const T_high& high) {
   auto&& y_arr = to_ref(value_of_rec(y));
@@ -173,13 +183,15 @@ inline void check_less(const char* function, const char* name, const T_y& y,
 }
 
 /**
- * Throw an exception if each element of `y` is not strictly less than each element of `high`.
- * This function is vectorized and will check each element of `y` against each
- * element of `high`.
+ * Throw an exception if each element of `y` is not strictly less than each
+ * element of `high`. This function is vectorized and will check each element of
+ * `y` against each element of `high`.
  * @tparam T_y A standard vector or type inheriting from `Eigen::DenseBase` with
- *  compile time rows or columns equal to one and `value_type` equal to a stan scalar.
- * @tparam T_high A standard vector or type inheriting from `Eigen::DenseBase` with
- *  compile time rows or columns equal to one and `value_type` equal to a stan scalar.
+ *  compile time rows or columns equal to one and `value_type` equal to a stan
+ * scalar.
+ * @tparam T_high A standard vector or type inheriting from `Eigen::DenseBase`
+ * with compile time rows or columns equal to one and `value_type` equal to a
+ * stan scalar.
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
@@ -187,8 +199,8 @@ inline void check_less(const char* function, const char* name, const T_y& y,
  * @throw `domain_error` if y is not less than high or if any element of y or
  * high is `NaN`
  */
- template <typename T_y, typename T_high,
-           require_all_vector_vt<is_stan_scalar, T_y, T_high>* = nullptr>
+template <typename T_y, typename T_high,
+          require_all_vector_vt<is_stan_scalar, T_y, T_high>* = nullptr>
 inline void check_less(const char* function, const char* name, const T_y& y,
                        const T_high& high) {
   auto&& y_arr = to_ref(value_of_rec(y));
@@ -208,15 +220,16 @@ inline void check_less(const char* function, const char* name, const T_y& y,
   }
 }
 
-
 /**
- * Throw an exception if each element of `y` is not strictly less than each element of `high`.
- * This function is vectorized and will check each element of `y` against each
- * element of `high`.
- * @tparam T_y Type inheriting from `Eigen::DenseBase` or a `var_value` with the var's
- * inner type inheriting from `Eigen::DenseBase` where the compile time number of rows or columns is not equal to one
- * @tparam T_high Type inheriting from `Eigen::DenseBase` or a `var_value` with the var's
- * inner type inheriting from `Eigen::DenseBase` where the compile time number of rows or columns is not equal to one
+ * Throw an exception if each element of `y` is not strictly less than each
+ * element of `high`. This function is vectorized and will check each element of
+ * `y` against each element of `high`.
+ * @tparam T_y Type inheriting from `Eigen::DenseBase` or a `var_value` with the
+ * var's inner type inheriting from `Eigen::DenseBase` where the compile time
+ * number of rows or columns is not equal to one
+ * @tparam T_high Type inheriting from `Eigen::DenseBase` or a `var_value` with
+ * the var's inner type inheriting from `Eigen::DenseBase` where the compile
+ * time number of rows or columns is not equal to one
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
@@ -225,7 +238,7 @@ inline void check_less(const char* function, const char* name, const T_y& y,
  * high is `NaN`
  */
 template <typename T_y, typename T_high,
-         require_all_dense_dynamic_t<T_y, T_high>* = nullptr>
+          require_all_dense_dynamic_t<T_y, T_high>* = nullptr>
 inline void check_less(const char* function, const char* name, const T_y& y,
                        const T_high& high) {
   auto&& y_arr = to_ref(value_of_rec(y));
@@ -248,9 +261,9 @@ inline void check_less(const char* function, const char* name, const T_y& y,
 }
 
 /**
- * Throw an exception if each element of `y` is not strictly less than each associated element of
- * `high`. This function is vectorized and will check each element of `y`
- * against each element of `high`.
+ * Throw an exception if each element of `y` is not strictly less than each
+ * associated element of `high`. This function is vectorized and will check each
+ * element of `y` against each element of `high`.
  * @tparam T_y A standard vector type whose `value_type` is a scalar, type
  * inheriting from `Eigen::DenseBase`, or another standard vector
  * @tparam T_high A standard vector type whose `value_type` is a scalar, type
@@ -262,7 +275,7 @@ inline void check_less(const char* function, const char* name, const T_y& y,
  * @throw `domain_error` if y is not less than high or if any element of y or
  * high is `NaN`
  */
- template <typename T_y, typename T_high,
+template <typename T_y, typename T_high,
           require_any_std_vector_vt<is_container, T_y, T_high>* = nullptr,
           require_all_std_vector_t<T_y, T_high>* = nullptr>
 inline void check_less(const char* function, const char* name, const T_y& y,
@@ -275,9 +288,11 @@ inline void check_less(const char* function, const char* name, const T_y& y,
 }
 
 /**
- * Throw an exception if each element of `y` is not strictly less than `high`. This function is
- * vectorized and will check each element of `y` against each element of `high`.
- * @tparam T_y A standard vector type with a `value_type` of a standard vector or type inheriting from `Eigen::DenseBase`
+ * Throw an exception if each element of `y` is not strictly less than `high`.
+ * This function is vectorized and will check each element of `y` against each
+ * element of `high`.
+ * @tparam T_y A standard vector type with a `value_type` of a standard vector
+ * or type inheriting from `Eigen::DenseBase`
  * @tparam T_high A scalar type or the same type as the inner type of `T_high`
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -286,8 +301,9 @@ inline void check_less(const char* function, const char* name, const T_y& y,
  * @throw `domain_error` if y is not less than high or if any element of y or
  * high is `NaN`
  */
- template <typename T_y, typename T_high, require_std_vector_vt<is_container, T_y>* = nullptr,
-           require_not_std_vector_t<T_high>* = nullptr>
+template <typename T_y, typename T_high,
+          require_std_vector_vt<is_container, T_y>* = nullptr,
+          require_not_std_vector_t<T_high>* = nullptr>
 inline void check_less(const char* function, const char* name, const T_y& y,
                        const T_high& high) {
   for (size_t i = 0; i < y.size(); ++i) {
@@ -296,10 +312,12 @@ inline void check_less(const char* function, const char* name, const T_y& y,
 }
 
 /**
- * Throw an exception if `y` is not strictly less than each element of `high`. This function is
- * vectorized and will check each element of `y` against each element of `high`.
+ * Throw an exception if `y` is not strictly less than each element of `high`.
+ * This function is vectorized and will check each element of `y` against each
+ * element of `high`.
  * @tparam T_y A scalar type or the same type as the inner type of `T_high`
- * @tparam T_high A standard vector type with a `value_type` of a standard vector or type inheriting from `Eigen::DenseBase`
+ * @tparam T_high A standard vector type with a `value_type` of a standard
+ * vector or type inheriting from `Eigen::DenseBase`
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
@@ -307,9 +325,9 @@ inline void check_less(const char* function, const char* name, const T_y& y,
  * @throw `domain_error` if y is not less than high or if any element of y or
  * high is `NaN`
  */
- template <typename T_y, typename T_high,
-           require_not_std_vector_t<T_y>* = nullptr,
-           require_std_vector_vt<is_container, T_high>* = nullptr>
+template <typename T_y, typename T_high,
+          require_not_std_vector_t<T_y>* = nullptr,
+          require_std_vector_vt<is_container, T_high>* = nullptr>
 inline void check_less(const char* function, const char* name, const T_y& y,
                        const T_high& high) {
   for (size_t i = 0; i < high.size(); ++i) {
