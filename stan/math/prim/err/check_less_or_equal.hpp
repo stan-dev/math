@@ -32,7 +32,7 @@ template <typename T_y, typename T_high,
           require_all_stan_scalar_t<T_y, T_high>* = nullptr>
 inline void check_less_or_equal(const char* function, const char* name,
                                 const T_y& y, const T_high& high) {
-  if (!(y <= high)) {
+  if (unlikely(!(y <= high))) {
     [&]() STAN_COLD_PATH {
       std::stringstream msg;
       msg << ", but must be less than or equal to ";
@@ -63,7 +63,7 @@ inline void check_less_or_equal(const char* function, const char* name,
                                 const T_y& y, const T_high& high) {
   auto&& high_arr = to_ref(value_of_rec(as_array_or_scalar(high)));
   for (Eigen::Index i = 0; i < high_arr.size(); ++i) {
-    if (!(y <= high_arr.coeff(i))) {
+    if (unlikely(!(y <= high_arr.coeff(i)))) {
       [&high_arr, y, name, function, i]() STAN_COLD_PATH {
         std::stringstream msg;
         msg << ", but must be less than or equal to ";
@@ -96,12 +96,9 @@ inline void check_less_or_equal(const char* function, const char* name,
   auto&& high_arr = to_ref(value_of_rec(high));
   for (Eigen::Index j = 0; j < high_arr.cols(); ++j) {
     for (Eigen::Index i = 0; i < high_arr.rows(); ++i) {
-      if (!(y <= high_arr.coeff(i, j))) {
+      if (unlikely(!(y <= high_arr.coeff(i, j)))) {
         [&high_arr, y, name, function, i, j]() STAN_COLD_PATH {
-          std::stringstream msg;
-          msg << ", but must be less than or equal to ";
-          msg << high_arr.coeff(i, j);
-          std::string msg_str(msg.str());
+          std::string msg_str(", but must be less than or equal to " + std::to_string(high_arr.coeff(i, j)));
           throw_domain_error(function, name, y, "is ", msg_str.c_str());
         }();
       }
@@ -129,12 +126,9 @@ inline void check_less_or_equal(const char* function, const char* name,
                                 const T_y& y, const T_high& high) {
   auto&& y_arr = to_ref(value_of_rec(as_array_or_scalar(y)));
   for (Eigen::Index i = 0; i < y_arr.size(); ++i) {
-    if (!(y_arr.coeff(i) <= high)) {
+    if (unlikely(!(y_arr.coeff(i) <= high))) {
       [&y_arr, high, name, function, i]() STAN_COLD_PATH {
-        std::stringstream msg;
-        msg << ", but must be less than or equal to ";
-        msg << high;
-        std::string msg_str(msg.str());
+        std::string msg_str(", but must be less than or equal to " + std::to_string(high));
         throw_domain_error_vec(function, name, y_arr, i, "is ",
                                msg_str.c_str());
       }();
@@ -163,12 +157,9 @@ inline void check_less_or_equal(const char* function, const char* name,
   auto&& y_arr = to_ref(value_of_rec(y));
   for (Eigen::Index j = 0; j < y_arr.cols(); ++j) {
     for (Eigen::Index i = 0; i < y_arr.rows(); ++i) {
-      if (!(y_arr.coeff(i, j) <= high)) {
+      if (unlikely(!(y_arr.coeff(i, j) <= high))) {
         [&y_arr, high, name, function, i, j]() STAN_COLD_PATH {
-          std::stringstream msg;
-          msg << ", but must be less than or equal to ";
-          msg << high;
-          std::string msg_str(msg.str());
+          std::string msg_str(", but must be less than or equal to " + std::to_string(high));
           throw_domain_error_mat(function, name, y_arr, i, j, "is ",
                                  msg_str.c_str());
         }();
@@ -200,12 +191,9 @@ inline void check_less_or_equal(const char* function, const char* name,
   auto&& high_arr = to_ref(value_of_rec(as_array_or_scalar(high)));
   check_matching_sizes(function, name, y_arr, "higher", high_arr);
   for (Eigen::Index i = 0; i < y_arr.size(); ++i) {
-    if (!(y_arr.coeff(i) <= high_arr.coeff(i))) {
+    if (unlikely(!(y_arr.coeff(i) <= high_arr.coeff(i)))) {
       [&y_arr, &high_arr, name, function, i]() STAN_COLD_PATH {
-        std::stringstream msg;
-        msg << ", but must be less than or equal to ";
-        msg << high_arr.coeff(i);
-        std::string msg_str(msg.str());
+        std::string msg_str(", but must be less than or equal to " + std::to_string(high_arr.coeff(i)));
         throw_domain_error_vec(function, name, y_arr, i, "is ",
                                msg_str.c_str());
       }();
@@ -238,12 +226,9 @@ inline void check_less_or_equal(const char* function, const char* name,
   check_matching_dims(function, name, y_arr, "higher", high_arr);
   for (Eigen::Index j = 0; j < y_arr.cols(); ++j) {
     for (Eigen::Index i = 0; i < y_arr.rows(); ++i) {
-      if (!(y_arr.coeff(i, j) <= high_arr.coeff(i, j))) {
+      if (unlikely(!(y_arr.coeff(i, j) <= high_arr.coeff(i, j)))) {
         [&y_arr, &high_arr, name, function, i, j]() STAN_COLD_PATH {
-          std::stringstream msg;
-          msg << ", but must be less than or equal to ";
-          msg << high_arr.coeff(i, j);
-          std::string msg_str(msg.str());
+          std::string msg_str(", but must be less than or equal to " + std::to_string(high_arr.coeff(i, j)));
           throw_domain_error_mat(function, name, y_arr, i, j, "is ",
                                  msg_str.c_str());
         }();
