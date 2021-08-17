@@ -32,8 +32,6 @@ template <typename T_y, typename T_high,
           require_all_stan_scalar_t<T_y, T_high>* = nullptr>
 inline void check_less_or_equal(const char* function, const char* name,
                                 const T_y& y, const T_high& high) {
-  check_not_nan(function, name, y);
-  check_not_nan(function, "higher", high);
   if (!(y <= high)) {
     [&]() STAN_COLD_PATH {
       std::stringstream msg;
@@ -50,8 +48,8 @@ inline void check_less_or_equal(const char* function, const char* name,
  * is vectorized and will check each element of `y` against each element of
  * `high`.
  * @tparam T_y A scalar type
- * @tparam T_high Type inheriting from `MatrixBase` or a `var_value` with the
- * var's inner type inheriting from `Eigen::MatrixBase`
+ * @tparam T_high A standard vector or type inheriting from `Eigen::DenseBase` with
+ *  compile time rows or columns equal to one and `value_type` equal to a stan scalar.
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
@@ -60,12 +58,42 @@ inline void check_less_or_equal(const char* function, const char* name,
  * or high is `NaN`
  */
 template <typename T_y, typename T_high, require_stan_scalar_t<T_y>* = nullptr,
-          require_matrix_t<T_high>* = nullptr>
+          require_vector_vt<is_stan_scalar, T_high>* = nullptr>
+inline void check_less_or_equal(const char* function, const char* name,
+                                const T_y& y, const T_high& high) {
+  auto&& high_arr = to_ref(value_of_rec(as_array_or_scalar(high)));
+  for (Eigen::Index i = 0; i < high_arr.size(); ++i) {
+    if (!(y <= high_arr.coeff(i))) {
+      [&high_arr, y, name, function, i]() STAN_COLD_PATH {
+        std::stringstream msg;
+        msg << ", but must be less than or equal to ";
+        msg << high_arr.coeff(i);
+        std::string msg_str(msg.str());
+        throw_domain_error(function, name, y, "is ", msg_str.c_str());
+      }();
+    }
+  }
+}
+
+/**
+ * Throw an exception if `y` is not less than each element of `high`. This function
+ * is vectorized and will check each element of `y` against each element of
+ * `high`.
+ * @tparam T_y A scalar type
+ * @tparam T_high Type inheriting from `Eigen::DenseBase` or a `var_value` with the var's
+ * inner type inheriting from `Eigen::DenseBase` where the compile time number of rows or columns is not equal to one
+ * @param function Function name (for error messages)
+ * @param name Variable name (for error messages)
+ * @param y Variable to check
+ * @param high Upper bound
+ * @throw `std::domain_error` if y is not less than high or if any element of y
+ * or high is `NaN`
+ */
+template <typename T_y, typename T_high, require_stan_scalar_t<T_y>* = nullptr,
+          require_dense_dynamic_t<T_high>* = nullptr>
 inline void check_less_or_equal(const char* function, const char* name,
                                 const T_y& y, const T_high& high) {
   auto&& high_arr = to_ref(value_of_rec(high));
-  check_not_nan(function, name, y);
-  check_not_nan(function, "higher", high_arr);
   for (Eigen::Index j = 0; j < high_arr.cols(); ++j) {
     for (Eigen::Index i = 0; i < high_arr.rows(); ++i) {
       if (!(y <= high_arr.coeff(i, j))) {
@@ -85,8 +113,8 @@ inline void check_less_or_equal(const char* function, const char* name,
  * Throw an exception if each element of `y` is not less than `high`. This function
  * is vectorized and will check each element of `y` against each element of
  * `high`.
- * @tparam T_y Type inheriting from `MatrixBase` or a `var_value` with the var's
- * inner type inheriting from `Eigen::MatrixBase`
+ * @tparam T_y A standard vector or type inheriting from `Eigen::DenseBase` with
+ *  compile time rows or columns equal to one and `value_type` equal to a stan scalar.
  * @tparam T_high A scalar type
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -95,13 +123,44 @@ inline void check_less_or_equal(const char* function, const char* name,
  * @throw `std::domain_error` if y is not less than high or if any element of y
  * or high is `NaN`
  */
-template <typename T_y, typename T_high, require_matrix_t<T_y>* = nullptr,
+template <typename T_y, typename T_high, require_vector_vt<is_stan_scalar, T_y>* = nullptr,
+          require_stan_scalar_t<T_high>* = nullptr>
+inline void check_less_or_equal(const char* function, const char* name,
+                                const T_y& y, const T_high& high) {
+  auto&& y_arr = to_ref(value_of_rec(as_array_or_scalar(y)));
+  for (Eigen::Index i = 0; i < y_arr.size(); ++i) {
+    if (!(y_arr.coeff(i) <= high)) {
+      [&y_arr, high, name, function, i]() STAN_COLD_PATH {
+        std::stringstream msg;
+        msg << ", but must be less than or equal to ";
+        msg << high;
+        std::string msg_str(msg.str());
+        throw_domain_error_vec(function, name, y_arr, i, "is ",
+                               msg_str.c_str());
+      }();
+    }
+  }
+}
+
+/**
+ * Throw an exception if each element of `y` is not less than `high`. This function
+ * is vectorized and will check each element of `y` against each element of
+ * `high`.
+ * @tparam T_y Type inheriting from `Eigen::DenseBase` or a `var_value` with the var's
+ * inner type inheriting from `Eigen::DenseBase` where the compile time number of rows or columns is not equal to one
+ * @tparam T_high A scalar type
+ * @param function Function name (for error messages)
+ * @param name Variable name (for error messages)
+ * @param y Variable to check
+ * @param high Upper bound
+ * @throw `std::domain_error` if y is not less than high or if any element of y
+ * or high is `NaN`
+ */
+template <typename T_y, typename T_high, require_dense_dynamic_t<T_y>* = nullptr,
           require_stan_scalar_t<T_high>* = nullptr>
 inline void check_less_or_equal(const char* function, const char* name,
                                 const T_y& y, const T_high& high) {
   auto&& y_arr = to_ref(value_of_rec(y));
-  check_not_nan(function, name, y_arr);
-  check_not_nan(function, "higher", high);
   for (Eigen::Index j = 0; j < y_arr.cols(); ++j) {
     for (Eigen::Index i = 0; i < y_arr.rows(); ++i) {
       if (!(y_arr.coeff(i, j) <= high)) {
@@ -122,10 +181,10 @@ inline void check_less_or_equal(const char* function, const char* name,
  * Throw an exception if each element of `y` is not less than the associated element
  * of `high`. This function is vectorized and will check each element of `y`
  * against each element of `high`.
- * @tparam T_y Type inheriting from `MatrixBase` or a `var_value` with the var's
- * inner type inheriting from `Eigen::MatrixBase`
- * @tparam T_high Type inheriting from `EigenBase` or a `var_value` with the
- * var's inner type inheriting from `Eigen::EigenBase`
+ * @tparam T_y A standard vector or type inheriting from `Eigen::DenseBase` with
+ *  compile time rows or columns equal to one and `value_type` equal to a stan scalar.
+ * @tparam T_high A standard vector or type inheriting from `Eigen::DenseBase` with
+ *  compile time rows or columns equal to one and `value_type` equal to a stan scalar.
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
@@ -134,41 +193,60 @@ inline void check_less_or_equal(const char* function, const char* name,
  * or high is `NaN`
  */
 template <typename T_y, typename T_high,
-          require_all_matrix_t<T_y, T_high>* = nullptr>
+          require_all_vector_vt<is_stan_scalar, T_y, T_high>* = nullptr>
+inline void check_less_or_equal(const char* function, const char* name,
+                                const T_y& y, const T_high& high) {
+  auto&& y_arr = to_ref(value_of_rec(as_array_or_scalar(y)));
+  auto&& high_arr = to_ref(value_of_rec(as_array_or_scalar(high)));
+  check_matching_sizes(function, name, y_arr, "higher", high_arr);
+  for (Eigen::Index i = 0; i < y_arr.size(); ++i) {
+    if (!(y_arr.coeff(i) <= high_arr.coeff(i))) {
+      [&y_arr, &high_arr, name, function, i]() STAN_COLD_PATH {
+        std::stringstream msg;
+        msg << ", but must be less than or equal to ";
+        msg << high_arr.coeff(i);
+        std::string msg_str(msg.str());
+        throw_domain_error_vec(function, name, y_arr, i, "is ",
+                               msg_str.c_str());
+      }();
+    }
+  }
+}
+
+
+/**
+ * Throw an exception if each element of `y` is not less than the associated element
+ * of `high`. This function is vectorized and will check each element of `y`
+ * against each element of `high`.
+ * @tparam T_y Type inheriting from `Eigen::DenseBase` or a `var_value` with the var's
+ * inner type inheriting from `Eigen::DenseBase` where the compile time number of rows or columns is not equal to one
+ * @tparam T_high Type inheriting from `Eigen::DenseBase` or a `var_value` with the var's
+ * inner type inheriting from `Eigen::DenseBase` where the compile time number of rows or columns is not equal to one
+ * @param function Function name (for error messages)
+ * @param name Variable name (for error messages)
+ * @param y Variable to check
+ * @param high Upper bound
+ * @throw `std::domain_error` if y is not less than high or if any element of y
+ * or high is `NaN`
+ */
+template <typename T_y, typename T_high,
+          require_all_dense_dynamic_t<T_y, T_high>* = nullptr>
 inline void check_less_or_equal(const char* function, const char* name,
                                 const T_y& y, const T_high& high) {
   auto&& y_arr = to_ref(value_of_rec(y));
   auto&& high_arr = to_ref(value_of_rec(high));
-  check_not_nan(function, name, y_arr);
-  check_not_nan(function, "higher", high_arr);
-  if (is_vector<T_y>::value && is_vector<T_high>::value) {
-    check_matching_sizes(function, name, y_arr, "higher", high_arr);
-    for (Eigen::Index i = 0; i < y_arr.size(); ++i) {
-      if (!(y_arr.coeff(i) <= high_arr.coeff(i))) {
-        [&y_arr, &high_arr, name, function, i]() STAN_COLD_PATH {
+  check_matching_dims(function, name, y_arr, "higher", high_arr);
+  for (Eigen::Index j = 0; j < y_arr.cols(); ++j) {
+    for (Eigen::Index i = 0; i < y_arr.rows(); ++i) {
+      if (!(y_arr.coeff(i, j) <= high_arr.coeff(i, j))) {
+        [&y_arr, &high_arr, name, function, i, j]() STAN_COLD_PATH {
           std::stringstream msg;
-          msg << ", but must be less than or equal to";
-          msg << high_arr.coeff(i);
+          msg << ", but must be less than or equal to ";
+          msg << high_arr.coeff(i, j);
           std::string msg_str(msg.str());
-          throw_domain_error_vec(function, name, y_arr, i, "is ",
+          throw_domain_error_mat(function, name, y_arr, i, j, "is ",
                                  msg_str.c_str());
         }();
-      }
-    }
-  } else {
-    check_matching_dims(function, name, y_arr, "higher", high_arr);
-    for (Eigen::Index j = 0; j < y_arr.cols(); ++j) {
-      for (Eigen::Index i = 0; i < y_arr.rows(); ++i) {
-        if (!(y_arr.coeff(i, j) <= high_arr.coeff(i, j))) {
-          [&y_arr, &high_arr, name, function, i, j]() STAN_COLD_PATH {
-            std::stringstream msg;
-            msg << ", but must be less than or equal to ";
-            msg << high_arr.coeff(i, j);
-            std::string msg_str(msg.str());
-            throw_domain_error_mat(function, name, y_arr, i, j, "is ",
-                                   msg_str.c_str());
-          }();
-        }
       }
     }
   }
@@ -189,7 +267,8 @@ inline void check_less_or_equal(const char* function, const char* name,
  * @throw `std::domain_error` if y is not less than high or if any element of y
  * or high is `NaN`
  */
-template <typename T_y, typename T_high,
+ template <typename T_y, typename T_high,
+          require_any_std_vector_vt<is_container, T_y, T_high>* = nullptr,
           require_all_std_vector_t<T_y, T_high>* = nullptr>
 inline void check_less_or_equal(const char* function, const char* name,
                                 const T_y& y, const T_high& high) {
@@ -204,8 +283,7 @@ inline void check_less_or_equal(const char* function, const char* name,
  * Throw an exception if each element of `y` is not less than `high`. This function
  * is vectorized and will check each element of `y` against each element of
  * `high`.
- * @tparam T_y A standard vector type whose `value_type` is a scalar, type
- * inheriting from `Eigen::EigenBase`, or another standard vector
+ * @tparam T_y A standard vector type with a `value_type` of a standard vector or type inheriting from `Eigen::DenseBase`
  * @tparam T_high A scalar or the same `value_type` of `T_y`
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
@@ -214,8 +292,8 @@ inline void check_less_or_equal(const char* function, const char* name,
  * @throw `std::domain_error` if y is not less than high or if any element of y
  * or high is `NaN`
  */
-template <typename T_y, typename T_high, require_std_vector_t<T_y>* = nullptr,
-          require_not_std_vector_t<T_high>* = nullptr>
+ template <typename T_y, typename T_high, require_std_vector_vt<is_container, T_y>* = nullptr,
+           require_not_std_vector_t<T_high>* = nullptr>
 inline void check_less_or_equal(const char* function, const char* name,
                                 const T_y& y, const T_high& high) {
   std::string iter_name{name};
@@ -230,8 +308,7 @@ inline void check_less_or_equal(const char* function, const char* name,
  * is vectorized and will check each element of `y` against each element of
  * `high`.
  * @tparam T_y A scalar type or the same `value_type` of `T_high`
- * @tparam T_high A standard vector type whose `value_type` is a scalar, type
- * inheriting from `Eigen::EigenBase`, or another standard vector
+ * @tparam T_high A standard vector type with a `value_type` of a standard vector or type inheriting from `Eigen::DenseBase`
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
@@ -239,9 +316,9 @@ inline void check_less_or_equal(const char* function, const char* name,
  * @throw `std::domain_error` if y is not less than high or if any element of y
  * or high is `NaN`
  */
-template <typename T_y, typename T_high,
-          require_not_std_vector_t<T_y>* = nullptr,
-          require_std_vector_t<T_high>* = nullptr>
+ template <typename T_y, typename T_high,
+           require_not_std_vector_t<T_y>* = nullptr,
+           require_std_vector_vt<is_container, T_high>* = nullptr>
 inline void check_less_or_equal(const char* function, const char* name,
                                 const T_y& y, const T_high& high) {
   for (size_t i = 0; i < high.size(); ++i) {
