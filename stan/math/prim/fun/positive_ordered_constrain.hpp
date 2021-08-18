@@ -21,7 +21,7 @@ namespace math {
  */
 template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr,
           require_not_st_var<EigVec>* = nullptr>
-auto positive_ordered_constrain(const EigVec& x) {
+inline auto positive_ordered_constrain(const EigVec& x) {
   using std::exp;
   Eigen::Index k = x.size();
   plain_type_t<EigVec> y(k);
@@ -54,6 +54,29 @@ inline auto positive_ordered_constrain(const Vec& x, scalar_type_t<Vec>& lp) {
   lp += sum(x_ref);
   return positive_ordered_constrain(x_ref);
 }
+
+/**
+ * Return a positive valued, increasing positive ordered vector derived
+ * from the specified free vector and increment the specified log
+ * probability reference with the log absolute Jacobian determinant
+ * of the transform.  The returned constrained vector
+ * will have the same dimensionality as the specified free vector.
+ *
+ * @tparam Jacobian If true, incremented `lp` with the log Jacobian
+ * @tparam Vec A type inheriting from `Eigen::EigenBase`, a `var_value` with inner type inheriting from `Eigen::EigenBase`.
+ * @param x Free vector of scalars.
+ * @param lp Log probability reference.
+ * @return Positive, increasing ordered vector.
+ */
+template <bool Jacobian, typename Vec>
+inline auto positive_ordered_constrain(const Vec& x, scalar_type_t<Vec>& lp) {
+  if (Jacobian) {
+    return positive_ordered_constrain(x, lp);
+  } else {
+    return positive_ordered_constrain(x);
+  }
+}
+
 
 }  // namespace math
 }  // namespace stan

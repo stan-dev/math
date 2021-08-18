@@ -28,7 +28,7 @@ namespace math {
  * @throws std::invalid_argument if (x.size() != K + (K choose 2)).
  */
 template <typename T, require_eigen_col_vector_t<T>* = nullptr>
-Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
+inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
 cov_matrix_constrain(const T& x, Eigen::Index K) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -63,8 +63,8 @@ cov_matrix_constrain(const T& x, Eigen::Index K) {
  * @throws std::domain_error if (x.size() != K + (K choose 2)).
  */
 template <typename T, require_eigen_col_vector_t<T>* = nullptr>
-Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
-cov_matrix_constrain(const T& x, Eigen::Index K, value_type_t<T>& lp) {
+inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
+cov_matrix_constrain(const T& x, Eigen::Index K, scalar_type_t<T>& lp) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
@@ -87,6 +87,33 @@ cov_matrix_constrain(const T& x, Eigen::Index K, value_type_t<T>& lp) {
   }
   return multiply_lower_tri_self_transpose(L);
 }
+
+/**
+ * Return the symmetric, positive-definite matrix of dimensions K
+ * by K resulting from transforming the specified finite vector of
+ * size K plus (K choose 2).
+ *
+ * <p>See <code>cov_matrix_free()</code> for the inverse transform.
+ *
+ * @tparam Jacobian If true, incremented `lp` with the log Jacobian
+ * @tparam T A type inheriting from `Eigen::DenseBase` or a `var_value` with
+ *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
+ *  and 1 column.
+ * @param x The vector to convert to a covariance matrix.
+ * @param K The dimensions of the resulting covariance matrix.
+ * @param lp Reference
+ * @throws std::domain_error if (x.size() != K + (K choose 2)).
+ */
+template <bool Jacobian, typename T>
+inline auto
+cov_matrix_constrain(const T& x, Eigen::Index K, scalar_type_t<T>& lp) {
+  if (Jacobian) {
+    return cov_matrix_constrain(x, K, lp);
+  } else {
+    return cov_matrix_constrain(x, K);
+  }
+}
+
 
 }  // namespace math
 }  // namespace stan

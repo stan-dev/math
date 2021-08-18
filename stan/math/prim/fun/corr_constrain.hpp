@@ -24,7 +24,7 @@ namespace math {
  * @return tanh transform
  */
 template <typename T>
-inline auto corr_constrain(const T& x) {
+inline plain_type_t<T> corr_constrain(const T& x) {
   return tanh(x);
 }
 
@@ -48,6 +48,33 @@ inline auto corr_constrain(const T_x& x, T_lp& lp) {
   lp += sum(log1m(square(tanh_x)));
   return tanh_x;
 }
+
+/**
+ * Return the result of transforming the specified scalar or container of values
+ * to have a valid correlation value between -1 and 1 (inclusive).
+ *
+ * <p>The transform used is as specified for
+ * <code>corr_constrain(T)</code>.  The log absolute Jacobian
+ * determinant is
+ *
+ * <p>\f$\log | \frac{d}{dx} \tanh x  | = \log (1 - \tanh^2 x)\f$.
+ *
+ * @tparam Jacobian If true, incremented `lp` with the log Jacobian
+ * @tparam T_x Type of scalar or container
+ * @tparam T_lp A scalar
+ * @param[in] x value or container
+ * @param[in,out] lp log density accumulator
+ */
+template <bool Jacobian, typename T_x, typename T_lp>
+inline auto corr_constrain(const T_x& x, T_lp& lp) {
+  if (Jacobian) {
+    return corr_constrain(x, lp);
+  } else {
+    return corr_constrain(x);
+  }
+}
+
+
 
 }  // namespace math
 }  // namespace stan

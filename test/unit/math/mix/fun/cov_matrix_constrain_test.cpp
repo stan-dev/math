@@ -14,21 +14,21 @@ int inv_size(const T& x) {
 }
 
 template <typename T>
-typename Eigen::Matrix<typename stan::scalar_type<T>::type, -1, -1> g1(
-    const T& x) {
-  return stan::math::cov_matrix_constrain(x, inv_size(x));
+auto g1(const T& x) {
+  stan::scalar_type_t<T> lp = 0.0;
+  return stan::math::cov_matrix_constrain<false>(x, inv_size(x), lp);
 }
 template <typename T>
-typename Eigen::Matrix<typename stan::scalar_type<T>::type, -1, -1> g2(
+auto g2(
     const T& x) {
   typename stan::scalar_type<T>::type lp = 0;
-  auto a = stan::math::cov_matrix_constrain(x, inv_size(x), lp);
+  auto a = stan::math::cov_matrix_constrain<true>(x, inv_size(x), lp);
   return a;
 }
 template <typename T>
-typename stan::scalar_type<T>::type g3(const T& x) {
+auto g3(const T& x) {
   typename stan::scalar_type<T>::type lp = 0;
-  stan::math::cov_matrix_constrain(x, inv_size(x), lp);
+  stan::math::cov_matrix_constrain<true>(x, inv_size(x), lp);
   return lp;
 }
 
@@ -78,7 +78,10 @@ TEST(MathMixMatFun, cov_matrixTransform) {
 TEST(mathMixMatFun, cov_matrix_constrain) {
   auto f = [](int K) {
     return
-        [K](const auto& x1) { return stan::math::cov_matrix_constrain(x1, K); };
+        [K](const auto& x1) {
+          stan::scalar_type_t<std::decay_t<decltype(x1)>> lp = 0.0;
+          return stan::math::cov_matrix_constrain<false>(x1, K, lp);
+         };
   };
 
   Eigen::VectorXd x1(10);
@@ -95,14 +98,14 @@ TEST(mathMixMatFun, cov_matrix_constrain_lp) {
   auto f1 = [](int K) {
     return [K](const auto& x1) {
       stan::scalar_type_t<std::decay_t<decltype(x1)>> lp = 0.0;
-      return stan::math::cov_matrix_constrain(x1, K, lp);
+      return stan::math::cov_matrix_constrain<true>(x1, K, lp);
     };
   };
 
   auto f2 = [](int K) {
     return [K](const auto& x1) {
       stan::scalar_type_t<std::decay_t<decltype(x1)>> lp = 0.0;
-      stan::math::cov_matrix_constrain(x1, K, lp);
+      stan::math::cov_matrix_constrain<true>(x1, K, lp);
       return lp;
     };
   };

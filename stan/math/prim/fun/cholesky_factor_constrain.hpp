@@ -26,7 +26,7 @@ namespace math {
  * @return Cholesky factor
  */
 template <typename T, require_eigen_col_vector_t<T>* = nullptr>
-Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
+inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
 cholesky_factor_constrain(const T& x, int M, int N) {
   using std::exp;
   using T_scalar = value_type_t<T>;
@@ -71,8 +71,8 @@ cholesky_factor_constrain(const T& x, int M, int N) {
  * @return Cholesky factor
  */
 template <typename T, require_eigen_vector_t<T>* = nullptr>
-Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
-cholesky_factor_constrain(const T& x, int M, int N, value_type_t<T>& lp) {
+inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
+cholesky_factor_constrain(const T& x, int M, int N, scalar_type_t<T>& lp) {
   check_size_match("cholesky_factor_constrain", "x.size()", x.size(),
                    "((N * (N + 1)) / 2 + (M - N) * N)",
                    ((N * (N + 1)) / 2 + (M - N) * N));
@@ -83,6 +83,32 @@ cholesky_factor_constrain(const T& x, int M, int N, value_type_t<T>& lp) {
     lp += x_ref.coeff(pos++);
   }
   return cholesky_factor_constrain(x_ref, M, N);
+}
+
+/**
+ * Return the Cholesky factor of the specified size read from the
+ * specified vector and increment the specified log probability
+ * reference with the log Jacobian adjustment of the transform.  A total
+ * of (N choose 2) + N + N * (M - N) free parameters are required to read
+ * an M by N Cholesky factor.
+ *
+ * @tparam Jacobian If true, incremented `lp` with the log Jacobian
+ * @tparam T A type inheriting from `Eigen::DenseBase` or a `var_value` with
+ *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
+ *  and 1 column.
+ * @param x Vector of unconstrained values
+ * @param M number of rows
+ * @param N number of columns
+ * @param lp Log probability that is incremented with the log Jacobian
+ * @return Cholesky factor
+ */
+template <bool Jacobian, typename T>
+inline auto cholesky_factor_constrain(const T& x, int M, int N, scalar_type_t<T>& lp) {
+  if (Jacobian) {
+    return cholesky_factor_constrain(x, M, N, lp);
+  } else {
+    return cholesky_factor_constrain(x, M, N);
+  }
 }
 
 }  // namespace math

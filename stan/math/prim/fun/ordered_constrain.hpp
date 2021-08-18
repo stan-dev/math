@@ -22,7 +22,7 @@ namespace math {
  */
 template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr,
           require_not_st_var<EigVec>* = nullptr>
-plain_type_t<EigVec> ordered_constrain(const EigVec& x) {
+inline plain_type_t<EigVec> ordered_constrain(const EigVec& x) {
   using std::exp;
   Eigen::Index k = x.size();
   plain_type_t<EigVec> y(k);
@@ -50,12 +50,36 @@ plain_type_t<EigVec> ordered_constrain(const EigVec& x) {
  * @return Positive, increasing ordered vector.
  */
 template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
-auto ordered_constrain(const EigVec& x, value_type_t<EigVec>& lp) {
+inline auto ordered_constrain(const EigVec& x, value_type_t<EigVec>& lp) {
   const auto& x_ref = to_ref(x);
   if (likely(x.size() > 1)) {
     lp += x_ref.tail(x.size() - 1).sum();
   }
   return ordered_constrain(x_ref);
+}
+
+/**
+ * Return a positive valued, increasing ordered vector derived
+ * from the specified free vector and increment the specified log
+ * probability reference with the log absolute Jacobian determinant
+ * of the transform.  The returned constrained vector
+ * will have the same dimensionality as the specified free vector.
+ *
+ * @tparam Jacobian If true, incremented `lp` with the log Jacobian
+ * @tparam T A type inheriting from `Eigen::DenseBase` or a `var_value` with
+ *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
+ *  and 1 column.
+ * @param x Free vector of scalars.
+ * @param lp Log probability reference.
+ * @return Positive, increasing ordered vector.
+ */
+template <bool Jacobian, typename T>
+inline auto ordered_constrain(const T& x, scalar_type_t<T>& lp) {
+  if (Jacobian) {
+    return ordered_constrain(x, lp);
+  } else {
+    return ordered_constrain(x);
+  }
 }
 
 }  // namespace math

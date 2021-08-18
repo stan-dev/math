@@ -11,12 +11,13 @@ namespace math {
  * transform to the input. This promotes the input to the least upper
  * bound of the input types.
  *
+ * @tparam Jacobian Unused, only here for standardized API
  * @tparam T type of value to promote
  * @tparam Types Other types.
  * @param[in] x object
  * @return transformed input
  */
-template <typename T, typename... Types,
+template <bool Jacobian = false, typename T, typename... Types,
           require_all_not_var_matrix_t<T, Types...>* = nullptr>
 inline auto identity_constrain(T&& x, Types&&... /* args */) {
   return promote_scalar_t<return_type_t<T, Types...>, T>(x);

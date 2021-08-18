@@ -13,7 +13,7 @@ namespace stan {
 namespace math {
 
 template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
-Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, Eigen::Dynamic>
+inline Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, Eigen::Dynamic>
 cholesky_corr_constrain(const EigVec& y, int K) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -44,8 +44,8 @@ cholesky_corr_constrain(const EigVec& y, int K) {
 
 // FIXME to match above after debugged
 template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
-Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, Eigen::Dynamic>
-cholesky_corr_constrain(const EigVec& y, int K, value_type_t<EigVec>& lp) {
+inline Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, Eigen::Dynamic>
+cholesky_corr_constrain(const EigVec& y, int K, scalar_type_t<EigVec>& lp) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::sqrt;
@@ -74,6 +74,25 @@ cholesky_corr_constrain(const EigVec& y, int K, value_type_t<EigVec>& lp) {
   return x;
 }
 
+/**
+ * Return The cholesky of a `KxK` correlation matrix.
+ * @tparam Jacobian If true, incremented `lp` with the log Jacobian
+ * @tparam T A type inheriting from `Eigen::DenseBase` or a `var_value` with
+ *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
+ *  and 1 column.
+ * @param y Linearly Serialized vector of size `(K * (K - 1))/2` holding the
+ *  column major order elements of the lower triangurlar.
+ * @param K The size of the matrix to return.
+ * @param lp Log probability that is incremented with the log Jacobian
+ */
+template <bool Jacobian, typename T>
+inline auto cholesky_corr_constrain(const T& y, int K, scalar_type_t<T>& lp) {
+  if (Jacobian) {
+    return cholesky_corr_constrain(y, K, lp);
+  } else {
+    return cholesky_corr_constrain(y, K);
+  }
+}
 }  // namespace math
 }  // namespace stan
 #endif

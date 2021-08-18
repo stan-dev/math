@@ -14,21 +14,20 @@ int inv_size(const T& x) {
 }
 
 template <typename T>
-typename Eigen::Matrix<typename stan::scalar_type<T>::type, -1, -1> g1(
-    const T& x) {
-  return stan::math::cholesky_corr_constrain(x, inv_size(x));
+auto g1( const T& x) {
+  stan::scalar_type_t<T> lp = 0;
+  return stan::math::cholesky_corr_constrain<false>(x, inv_size(x), lp);
 }
 template <typename T>
-typename Eigen::Matrix<typename stan::scalar_type<T>::type, -1, -1> g2(
-    const T& x) {
-  typename stan::scalar_type<T>::type lp = 0;
-  auto a = stan::math::cholesky_corr_constrain(x, inv_size(x), lp);
+auto g2(const T& x) {
+  stan::scalar_type_t<T> lp = 0;
+  auto a = stan::math::cholesky_corr_constrain<true>(x, inv_size(x), lp);
   return a;
 }
 template <typename T>
-typename stan::scalar_type<T>::type g3(const T& x) {
-  typename stan::scalar_type<T>::type lp = 0;
-  stan::math::cholesky_corr_constrain(x, inv_size(x), lp);
+auto g3(const T& x) {
+  stan::scalar_type_t<T> lp = 0;
+  stan::math::cholesky_corr_constrain<true>(x, inv_size(x), lp);
   return lp;
 }
 

@@ -31,7 +31,7 @@ namespace math {
  * correlations and deviations.
  */
 template <typename T, require_eigen_vector_t<T>* = nullptr>
-Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
+inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
 cov_matrix_constrain_lkj(const T& x, size_t k) {
   size_t k_choose_2 = (k * (k - 1)) / 2;
   const auto& x_ref = to_ref(x);
@@ -65,13 +65,50 @@ cov_matrix_constrain_lkj(const T& x, size_t k) {
  * correlations and deviations.
  */
 template <typename T, require_eigen_vector_t<T>* = nullptr>
-Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
-cov_matrix_constrain_lkj(const T& x, size_t k, value_type_t<T>& lp) {
+inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
+cov_matrix_constrain_lkj(const T& x, size_t k, scalar_type_t<T>& lp) {
   size_t k_choose_2 = (k * (k - 1)) / 2;
   const auto& x_ref = x;
   return read_cov_matrix(corr_constrain(x_ref.head(k_choose_2)),
                          positive_constrain(x_ref.tail(k)), lp);
 }
+
+/**
+ * Return the covariance matrix of the specified dimensionality
+ * derived from constraining the specified vector of unconstrained
+ * values and increment the specified log probability reference
+ * with the log absolute Jacobian determinant.
+ *
+ * <p>The transform is defined as for
+ * <code>cov_matrix_constrain(Matrix, size_t)</code>.
+ *
+ * <p>The log absolute Jacobian determinant is derived by
+ * composing the log absolute Jacobian determinant for the
+ * underlying correlation matrix as defined in
+ * <code>cov_matrix_constrain(Matrix, size_t, T&)</code> with
+ * the Jacobian of the transform of the correlation matrix
+ * into a covariance matrix by scaling by standard deviations.
+ *
+ * @tparam Jacobian If true, incremented `lp` with the log Jacobian
+ * @tparam T A type inheriting from `Eigen::DenseBase` or a `var_value` with
+ *  inner type inheriting from `Eigen::DenseBase` with compile time rows or columns equal to 1.
+ * @param x Input vector of unconstrained partial correlations and
+ * standard deviations.
+ * @param k Dimensionality of returned covariance matrix.
+ * @param lp Log probability reference to increment.
+ * @return Covariance matrix derived from the unconstrained partial
+ * correlations and deviations.
+ */
+template <bool Jacobian, typename T>
+inline auto
+cov_matrix_constrain_lkj(const T& x, size_t k, scalar_type_t<T>& lp) {
+  if (Jacobian) {
+    return cov_matrix_constrain_lkj(x, k, lp);
+  } else {
+    return cov_matrix_constrain_lkj(x, k);
+  }
+}
+
 
 }  // namespace math
 }  // namespace stan

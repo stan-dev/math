@@ -272,6 +272,43 @@ inline auto offset_multiplier_constrain(const std::vector<T>& x,
   return ret;
 }
 
+/**
+ * Return the linearly transformed value for the specified unconstrained input
+ * and specified offset and multiplier.
+ *
+ * <p>The transform applied is
+ *
+ * <p>\f$f(x) = mu + sigma * x\f$
+ *
+ * <p>where mu is the offset and sigma is the multiplier.
+ *
+ * <p>If the offset is zero and the multiplier is one this
+ * reduces to <code>identity_constrain(x)</code>.
+ *
+ * @tparam Jacobian If true, incremented `lp` with the log Jacobian
+ * @tparam T A type inheriting from `Eigen::EigenBase`, a `var_value` with inner type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
+ * @tparam M A type inheriting from `Eigen::EigenBase`, a `var_value` with inner type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
+ * @tparam S A type inheriting from `Eigen::EigenBase`, a `var_value` with inner type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
+ * @param[in] x Unconstrained scalar input
+ * @param[in] mu offset of constrained output
+ * @param[in] sigma multiplier of constrained output
+ * @return linear transformed value corresponding to inputs
+ * @throw std::domain_error if sigma <= 0
+ * @throw std::domain_error if mu is not finite
+ */
+template <bool Jacobian, typename T, typename M, typename S>
+inline auto offset_multiplier_constrain(const T& x,
+                                        const M& mu,
+                                        const S& sigma,
+                                        return_type_t<T, M, S>& lp) {
+  if (Jacobian) {
+    return offset_multiplier_constrain(x, mu, sigma, lp);
+  } else {
+    return offset_multiplier_constrain(x, mu, sigma);
+  }
+}
+
+
 }  // namespace math
 }  // namespace stan
 

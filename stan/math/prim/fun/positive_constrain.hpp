@@ -46,6 +46,32 @@ inline auto positive_constrain(const T& x, S& lp) {
   return exp(x);
 }
 
+/**
+ * Return the positive value for the specified unconstrained input,
+ * incrementing the scalar reference with the log absolute
+ * Jacobian determinant.
+ *
+ * <p>See <code>positive_constrain(T)</code> for details
+ * of the transform.  The log absolute Jacobian determinant is
+ *
+ * <p>\f$\log | \frac{d}{dx} \mbox{exp}(x) |
+ *    = \log | \mbox{exp}(x) | =  x\f$.
+ *
+ * @tparam Jacobian If true, incremented `lp` with the log Jacobian
+ * @tparam T A type inheriting from `Eigen::EigenBase`, a `var_value` with inner type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
+ * @param x unconstrained value or container
+ * @param lp log density reference.
+ * @return positive constrained version of unconstrained value(s)
+ */
+template <bool Jacobian, typename T>
+inline auto positive_constrain(const T& x, scalar_type_t<T>& lp) {
+  if (Jacobian) {
+    return positive_constrain(x, lp);
+  } else {
+    return positive_constrain(x);
+  }
+}
+
 }  // namespace math
 }  // namespace stan
 

@@ -20,13 +20,13 @@ namespace math {
  *
  * The transform is based on a centered stick-breaking process.
  *
- * @tparam ColVec type of the vector
+ * @tparam Vec type of the vector
  * @param y Free vector input of dimensionality K - 1.
  * @return Simplex of dimensionality K.
  */
 template <typename Vec, require_eigen_col_vector_t<Vec>* = nullptr,
           require_not_st_var<Vec>* = nullptr>
-auto simplex_constrain(const Vec& y) {
+inline auto simplex_constrain(const Vec& y) {
   // cut & paste simplex_constrain(Eigen::Matrix, T) w/o Jacobian
   using std::log;
   using T = value_type_t<Vec>;
@@ -51,14 +51,14 @@ auto simplex_constrain(const Vec& y) {
  * The simplex transform is defined through a centered
  * stick-breaking process.
  *
- * @tparam ColVec type of the vector
+ * @tparam Vec type of the vector
  * @param y Free vector input of dimensionality K - 1.
  * @param lp Log probability reference to increment.
  * @return Simplex of dimensionality K.
  */
 template <typename Vec, require_eigen_col_vector_t<Vec>* = nullptr,
           require_not_st_var<Vec>* = nullptr>
-auto simplex_constrain(const Vec& y, value_type_t<Vec>& lp) {
+inline auto simplex_constrain(const Vec& y, value_type_t<Vec>& lp) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::log;
@@ -79,6 +79,31 @@ auto simplex_constrain(const Vec& y, value_type_t<Vec>& lp) {
   }
   x.coeffRef(Km1) = stick_len;  // no Jacobian contrib for last dim
   return x;
+}
+
+/**
+ * Return the simplex corresponding to the specified free vector
+ * and increment the specified log probability reference with
+ * the log absolute Jacobian determinant of the transform.
+ *
+ * The simplex transform is defined through a centered
+ * stick-breaking process.
+ *
+ * @tparam Jacobian If true, incremented `lp` with the log Jacobian
+ * @tparam Vec A type inheriting from `Eigen::DenseBase` or a `var_value` with
+ *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
+ *  and 1 column.
+ * @param y Free vector input of dimensionality K - 1.
+ * @param lp Log probability reference to increment.
+ * @return Simplex of dimensionality K.
+ */
+template <bool Jacobian, typename Vec>
+auto simplex_constrain(const Vec& y, scalar_type_t<Vec>& lp) {
+  if (Jacobian) {
+    return simplex_constrain(y, lp);
+  } else {
+    return simplex_constrain(y);
+  }
 }
 
 }  // namespace math

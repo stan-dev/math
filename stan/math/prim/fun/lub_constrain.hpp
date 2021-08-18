@@ -366,6 +366,36 @@ inline auto lub_constrain(const std::vector<T>& x, const std::vector<L>& lb,
   return ret;
 }
 
+/**
+ * Return the lower and upper-bounded scalar derived by
+ * transforming the specified free scalar given the specified
+ * lower and upper bounds.
+ *
+ * <p>The transform is the transformed and scaled inverse logit,
+ *
+ * <p>\f$f(x) = L + (U - L) \mbox{logit}^{-1}(x)\f$
+ *
+ * @tparam Jacobian If true, incremented `lp` with the log Jacobian
+ * @tparam T A type inheriting from `Eigen::EigenBase`, a `var_value` with inner type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
+ * @tparam L A type inheriting from `Eigen::EigenBase`, a `var_value` with inner type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
+ * @tparam U A type inheriting from `Eigen::EigenBase`, a `var_value` with inner type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
+ * @param[in] x Free scalar to transform.
+ * @param[in] lb Lower bound.
+ * @param[in] ub Upper bound.
+ * @return Lower- and upper-bounded scalar derived from transforming
+ *   the free scalar.
+ * @throw std::domain_error if ub <= lb
+ */
+template <bool Jacobian, typename T, typename L, typename U>
+inline auto lub_constrain(const T& x, const L& lb, const U& ub,
+                          return_type_t<T, L, U>& lp) {
+  if (Jacobian) {
+    return lub_constrain(x, lb, ub, lp);
+  } else {
+    return lub_constrain(x, lb, ub);
+  }
+}
+
 }  // namespace math
 }  // namespace stan
 
