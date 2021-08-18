@@ -35,7 +35,7 @@ inline void check_less(const char* function, const char* name, const T_y& y,
     [&]() STAN_COLD_PATH {
       throw_domain_error(
           function, name, y, "is ",
-          (", but must be less than " + std::to_string(high)).c_str());
+          (", but must be less than " + std::to_string(value_of_rec(high))).c_str());
     }();
   }
 }

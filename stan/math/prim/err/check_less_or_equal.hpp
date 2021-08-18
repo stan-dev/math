@@ -36,7 +36,7 @@ inline void check_less_or_equal(const char* function, const char* name,
     [&]() STAN_COLD_PATH {
       throw_domain_error(
           function, name, y, "is ",
-          (", but must be less than or equal to " + std::to_string(high))
+          (", but must be less than or equal to " + std::to_string(value_of_rec(high)))
               .c_str());
     }();
   }
