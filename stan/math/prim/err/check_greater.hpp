@@ -36,8 +36,7 @@ inline void check_greater(const char* function, const char* name, const T_y& y,
     [&]() STAN_COLD_PATH {
       throw_domain_error(
           function, name, y, "is ",
-          (", but must be greater than " + std::to_string(value_of_rec(low)))
-              .c_str());
+          (", but must be greater than " + std::to_string(value_of_rec(low))).c_str());
     }();
   }
 }
@@ -134,7 +133,7 @@ inline void check_greater(const char* function, const char* name, const T_y& y,
       [&y_arr, low, name, function, i]() STAN_COLD_PATH {
         throw_domain_error_vec(
             function, name, y_arr, i, "is ",
-            (", but must be greater than " + std::to_string(low)).c_str());
+            (", but must be greater than " + std::to_string(value_of_rec(low))).c_str());
       }();
     }
   }
@@ -166,7 +165,7 @@ inline void check_greater(const char* function, const char* name, const T_y& y,
         [&y_arr, low, name, function, i, j]() STAN_COLD_PATH {
           throw_domain_error_mat(
               function, name, y_arr, i, j, "is ",
-              (", but must be greater than " + std::to_string(low)).c_str());
+              (", but must be greater than " + std::to_string(value_of_rec(low))).c_str());
         }();
       }
     }

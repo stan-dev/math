@@ -34,10 +34,10 @@ inline void check_less_or_equal(const char* function, const char* name,
                                 const T_y& y, const T_high& high) {
   if (unlikely(!(y <= high))) {
     [&]() STAN_COLD_PATH {
-      throw_domain_error(function, name, y, "is ",
-                         (", but must be less than or equal to "
-                          + std::to_string(value_of_rec(high)))
-                             .c_str());
+      throw_domain_error(
+          function, name, y, "is ",
+          (", but must be less than or equal to " + std::to_string(value_of_rec(high)))
+              .c_str());
     }();
   }
 }
@@ -134,7 +134,7 @@ inline void check_less_or_equal(const char* function, const char* name,
       [&y_arr, high, name, function, i]() STAN_COLD_PATH {
         throw_domain_error_vec(
             function, name, y_arr, i, "is ",
-            (", but must be less than or equal to " + std::to_string(high))
+            (", but must be less than or equal to " + std::to_string(value_of_rec(high)))
                 .c_str());
       }();
     }
@@ -168,7 +168,7 @@ inline void check_less_or_equal(const char* function, const char* name,
         [&y_arr, high, name, function, i, j]() STAN_COLD_PATH {
           throw_domain_error_mat(
               function, name, y_arr, i, j, "is ",
-              (", but must be less than or equal to " + std::to_string(high))
+              (", but must be less than or equal to " + std::to_string(value_of_rec(high)))
                   .c_str());
         }();
       }
