@@ -34,10 +34,10 @@ inline void check_greater_or_equal(const char* function, const char* name,
                                    const T_y& y, const T_low& low) {
   if (unlikely(!(y >= low))) {
     [&]() STAN_COLD_PATH {
-      throw_domain_error(
-          function, name, y, "is ",
-          (", but must be greater than or equal to " + std::to_string(value_of_rec(low)))
-              .c_str());
+      throw_domain_error(function, name, y, "is ",
+                         (", but must be greater than or equal to "
+                          + std::to_string(value_of_rec(low)))
+                             .c_str());
     }();
   }
 }
