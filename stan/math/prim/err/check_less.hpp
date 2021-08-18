@@ -33,7 +33,9 @@ inline void check_less(const char* function, const char* name, const T_y& y,
                        const T_high& high) {
   if (!(y < high)) {
     [&]() STAN_COLD_PATH {
-      throw_domain_error(function, name, y, "is ", (", but must be less than " + std::to_string(high)).c_str());
+      throw_domain_error(
+          function, name, y, "is ",
+          (", but must be less than " + std::to_string(high)).c_str());
     }();
   }
 }
@@ -61,7 +63,10 @@ inline void check_less(const char* function, const char* name, const T_y& y,
   for (Eigen::Index i = 0; i < high_arr.size(); ++i) {
     if (unlikely(!(y < high_arr.coeff(i)))) {
       [&high_arr, y, name, function, i]() STAN_COLD_PATH {
-        throw_domain_error(function, name, y, "is ", (", but must be less than " + std::to_string(high_arr.coeff(i))).c_str());
+        throw_domain_error(
+            function, name, y, "is ",
+            (", but must be less than " + std::to_string(high_arr.coeff(i)))
+                .c_str());
       }();
     }
   }
@@ -91,7 +96,10 @@ inline void check_less(const char* function, const char* name, const T_y& y,
     for (Eigen::Index i = 0; i < high_arr.rows(); ++i) {
       if (unlikely(!(y < high_arr.coeff(i, j)))) {
         [&high_arr, y, name, function, i, j]() STAN_COLD_PATH {
-          throw_domain_error(function, name, y, "is ", (", but must be less than " + std::to_string(high_arr.coeff(i, j))).c_str());
+          throw_domain_error(function, name, y, "is ",
+                             (", but must be less than "
+                              + std::to_string(high_arr.coeff(i, j)))
+                                 .c_str());
         }();
       }
     }
@@ -122,8 +130,9 @@ inline void check_less(const char* function, const char* name, const T_y& y,
   for (Eigen::Index i = 0; i < y_arr.size(); ++i) {
     if (unlikely(!(y_arr.coeff(i) < high))) {
       [&y_arr, high, name, function, i]() STAN_COLD_PATH {
-        throw_domain_error_vec(function, name, y_arr, i, "is ",
-                               (", but must be less than " + std::to_string(high)).c_str());
+        throw_domain_error_vec(
+            function, name, y_arr, i, "is ",
+            (", but must be less than " + std::to_string(high)).c_str());
       }();
     }
   }
@@ -154,8 +163,9 @@ inline void check_less(const char* function, const char* name, const T_y& y,
     for (Eigen::Index i = 0; i < y_arr.rows(); ++i) {
       if (unlikely(!(y_arr.coeff(i, j) < high))) {
         [&y_arr, high, name, function, i, j]() STAN_COLD_PATH {
-          throw_domain_error_mat(function, name, y_arr, i, j, "is ",
-                                 (", but must be less than " + std::to_string(high)).c_str());
+          throw_domain_error_mat(
+              function, name, y_arr, i, j, "is ",
+              (", but must be less than " + std::to_string(high)).c_str());
         }();
       }
     }
@@ -189,8 +199,10 @@ inline void check_less(const char* function, const char* name, const T_y& y,
   for (Eigen::Index i = 0; i < y_arr.size(); ++i) {
     if (unlikely(!(y_arr.coeff(i) < high_arr.coeff(i)))) {
       [&y_arr, &high_arr, name, function, i]() STAN_COLD_PATH {
-        throw_domain_error_vec(function, name, y_arr, i, "is ",
-                               (", but must be less than " + std::to_string(high_arr.coeff(i))).c_str());
+        throw_domain_error_vec(
+            function, name, y_arr, i, "is ",
+            (", but must be less than " + std::to_string(high_arr.coeff(i)))
+                .c_str());
       }();
     }
   }
@@ -225,7 +237,9 @@ inline void check_less(const char* function, const char* name, const T_y& y,
       if (unlikely(!(y_arr.coeff(i, j) < high_arr.coeff(i, j)))) {
         [&y_arr, &high_arr, name, function, i, j]() STAN_COLD_PATH {
           throw_domain_error_mat(function, name, y_arr, i, j, "is ",
-                                 (", but must be less than " + std::to_string(high_arr.coeff(i, j))).c_str());
+                                 (", but must be less than "
+                                  + std::to_string(high_arr.coeff(i, j)))
+                                     .c_str());
         }();
       }
     }
