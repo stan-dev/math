@@ -21,10 +21,12 @@ namespace math {
  * `low`.
  * @tparam T_y A scalar type
  * @tparam T_low A scalar type
+ * @tparam Idxs A parameter pack of Integral types
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param low Lower bound
+ * @param idxs Pack of integral types to construct lazily construct the error message indices
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
@@ -50,10 +52,12 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * @tparam T_low A standard vector or type inheriting from `Eigen::DenseBase`
  * with compile time rows or columns equal to one and `value_type` equal to a
  * stan scalar
+ * @tparam Idxs A parameter pack of Integral types
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param low Lower bound
+ * @param idxs Pack of integral types to construct lazily construct the error message indices
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
@@ -82,10 +86,12 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * @tparam T_low Type inheriting from `Eigen::DenseBase` or a `var_value` with
  * the var's inner type inheriting from `Eigen::DenseBase` where the compile
  * time number of rows or columns is not equal to one
+ * @tparam Idxs A parameter pack of Integral types
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param low Lower bound
+ * @param idxs Pack of integral types to construct lazily construct the error message indices
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
@@ -116,10 +122,12 @@ inline void check_greater_or_equal(const char* function, const char* name,
  *  compile time rows or columns equal to one and `value_type` equal to a stan
  * scalar
  * @tparam T_low A scalar type
+ * @tparam Idxs A parameter pack of Integral types
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param low Lower bound
+ * @param idxs Pack of integral types to construct lazily construct the error message indices
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
@@ -149,10 +157,12 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * var's inner type inheriting from `Eigen::DenseBase` where the compile time
  * number of rows or columns is not equal to one
  * @tparam T_low A scalar type
+ * @tparam Idxs A parameter pack of Integral types
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param low Lower bound
+ * @param idxs Pack of integral types to construct lazily construct the error message indices
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
@@ -185,10 +195,12 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * @tparam T_low A standard vector or type inheriting from `Eigen::DenseBase`
  * with compile time rows or columns equal to one and `value_type` equal to a
  * stan scalar
+ * @tparam Idxs A parameter pack of Integral types
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param low Lower bound
+ * @param idxs Pack of integral types to construct lazily construct the error message indices
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
@@ -220,10 +232,12 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * @tparam T_low Type inheriting from `Eigen::DenseBase` or a `var_value` with
  * the var's inner type inheriting from `Eigen::DenseBase` where the compile
  * time number of rows or columns is not equal to one
+ * @tparam Idxs A parameter pack of Integral types
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param low Lower bound
+ * @param idxs Pack of integral types to construct lazily construct the error message indices
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
@@ -254,10 +268,12 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * @tparam T_y A standard vector type with a `value_type` of a standard vector
  * or type inheriting from `Eigen::DenseBase`
  * @tparam T_low A standard vector type
+ * @tparam Idxs A parameter pack of Integral types
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param low Lower bound
+ * @param idxs Pack of integral types to construct lazily construct the error message indices
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
@@ -277,11 +293,13 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * element of `low`.
  * @tparam T_y A standard vector
  * @tparam T_low  A standard vector type with a `value_type` of a standard
+ * @tparam Idxs A parameter pack of Integral types
  * vector or type inheriting from `Eigen::DenseBase`
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param low Lower bound
+ * @param idxs Pack of integral types to construct lazily construct the error message indices
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is NaN
  */
@@ -301,10 +319,12 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * element of `low`.
  * @tparam T_y A standard vector type
  * @tparam T_low A standard vector type
+ * @tparam Idxs A parameter pack of Integral types
  * @param function Function name (for error messages)
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param low Lower bound
+ * @param idxs Pack of integral types to construct lazily construct the error message indices
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
