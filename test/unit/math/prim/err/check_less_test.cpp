@@ -132,15 +132,18 @@ TEST(ErrorHandlingMat, CheckLess_Matrix_one_indexed_message) {
   high_mat.resize(3, 3);
   std::vector<double> x_scalar_vec{x, x, x};
   std::vector<double> high_scalar_vec{high, high, high};
-  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> x_vec{
+  using std_vec_mat = std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>;
+  std_vec_mat x_vec1{
       x_mat, x_mat, x_mat};
-  std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> high_vec{
+  std_vec_mat high_vec1{
       high_mat, high_mat, high_mat};
   // x_vec, high
-  for (int i = 0; i < x_vec.size(); ++i) {
-    x_vec[i] << -5, 0, 5, -5, 0, 5, -5, 0, 5;
+  for (int i = 0; i < x_vec1.size(); ++i) {
+    x_vec1[i] << -5, 0, 5, -5, 0, 5, -5, 0, 5;
     high_scalar_vec[i] = 5;
   }
+  std::vector<std_vec_mat> x_vec{x_vec1, x_vec1, x_vec1};
+  std::vector<std_vec_mat> high_vec{high_vec1, high_vec1, high_vec1};
   std::string message;
   try {
     check_less(function, "x", x_vec, high_scalar_vec);
@@ -151,12 +154,19 @@ TEST(ErrorHandlingMat, CheckLess_Matrix_one_indexed_message) {
     FAIL() << "threw the wrong error";
   }
 
-  EXPECT_NE(std::string::npos, message.find("[1][1, 3]")) << message;
+  EXPECT_NE(std::string::npos, message.find("[1, 1][1, 3]")) << message;
 
   // x_vec, high_vec
-  for (int i = 0; i < x_vec.size(); ++i) {
-    x_vec[i] << -5, 5, 0, -5, 5, 0, -5, 5, 0;
-    high_vec[i] << 10, 5, 10, 10, 5, 10, 10, 5, 10;
+  for (auto& x_vec_i : x_vec) {
+    for (auto& x_vec1_i : x_vec_i) {
+      x_vec1_i << -5, 5, 0, -5, 5, 0, -5, 5, 0;
+    }
+  }
+
+  for (auto& high_vec_i : high_vec) {
+    for (auto& high_vec1_i : high_vec_i) {
+      high_vec1_i << -5, 5, 0, -5, 5, 0, -5, 5, 0;
+    }
   }
 
   try {
@@ -167,13 +177,12 @@ TEST(ErrorHandlingMat, CheckLess_Matrix_one_indexed_message) {
   } catch (...) {
     FAIL() << "threw the wrong error";
   }
-
-  EXPECT_NE(std::string::npos, message.find("[1][1, 2]")) << message;
+  EXPECT_NE(std::string::npos, message.find("[1, 1][1, 1]")) << message;
 
   // x, high_vec
   for (int i = 0; i < x_vec.size(); ++i) {
     x_scalar_vec[i] = 30;
-    high_vec[i].col(i) << 10, 20, 30;
+    high_vec[i][i].col(i) << 10, 20, 30;
   }
   try {
     check_less(function, "x", x_scalar_vec, high_vec);

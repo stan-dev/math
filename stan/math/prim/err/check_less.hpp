@@ -28,13 +28,13 @@ namespace math {
  * high is `NaN`
  */
 template <typename T_y, typename T_high,
-          require_all_stan_scalar_t<T_y, T_high>* = nullptr>
+          require_all_stan_scalar_t<T_y, T_high>* = nullptr, typename... Idxs>
 inline void check_less(const char* function, const char* name, const T_y& y,
-                       const T_high& high) {
+                       const T_high& high, Idxs... idxs) {
   if (!(y < high)) {
     [&]() STAN_COLD_PATH {
       throw_domain_error(
-          function, name, y, "is ",
+          function, internal::make_iter_name(name, idxs...).c_str(), y, "is ",
           (", but must be less than " + std::to_string(value_of_rec(high)))
               .c_str());
     }();
@@ -57,15 +57,15 @@ inline void check_less(const char* function, const char* name, const T_y& y,
  * high is `NaN`
  */
 template <typename T_y, typename T_high, require_stan_scalar_t<T_y>* = nullptr,
-          require_vector_vt<is_stan_scalar, T_high>* = nullptr>
+          require_vector_vt<is_stan_scalar, T_high>* = nullptr, typename... Idxs>
 inline void check_less(const char* function, const char* name, const T_y& y,
-                       const T_high& high) {
-  auto&& high_arr = as_array_or_scalar(to_ref(value_of_rec(high)));
+                       const T_high& high, Idxs... idxs) {
+  auto&& high_arr = as_array_or_scalar(value_of_rec(to_ref(high)));
   for (Eigen::Index i = 0; i < high_arr.size(); ++i) {
     if (unlikely(!(y < high_arr.coeff(i)))) {
-      [&high_arr, y, name, function, i]() STAN_COLD_PATH {
+      [&high_arr, idxs..., y, name, function, i]() STAN_COLD_PATH {
         throw_domain_error(
-            function, name, y, "is ",
+            function, internal::make_iter_name(name, idxs...).c_str(), y, "is ",
             (", but must be less than " + std::to_string(high_arr.coeff(i)))
                 .c_str());
       }();
@@ -89,15 +89,15 @@ inline void check_less(const char* function, const char* name, const T_y& y,
  * high is `NaN`
  */
 template <typename T_y, typename T_high, require_stan_scalar_t<T_y>* = nullptr,
-          require_dense_dynamic_t<T_high>* = nullptr>
+          require_dense_dynamic_t<T_high>* = nullptr, typename... Idxs>
 inline void check_less(const char* function, const char* name, const T_y& y,
-                       const T_high& high) {
-  auto&& high_arr = to_ref(value_of_rec(high));
+                       const T_high& high, Idxs... idxs) {
+  auto&& high_arr = value_of_rec(to_ref(high));
   for (Eigen::Index j = 0; j < high_arr.cols(); ++j) {
     for (Eigen::Index i = 0; i < high_arr.rows(); ++i) {
       if (unlikely(!(y < high_arr.coeff(i, j)))) {
-        [&high_arr, y, name, function, i, j]() STAN_COLD_PATH {
-          throw_domain_error(function, name, y, "is ",
+        [&high_arr, idxs..., y, name, function, i, j]() STAN_COLD_PATH {
+          throw_domain_error(function, internal::make_iter_name(name, idxs...).c_str(), y, "is ",
                              (", but must be less than "
                               + std::to_string(high_arr.coeff(i, j)))
                                  .c_str());
@@ -124,15 +124,15 @@ inline void check_less(const char* function, const char* name, const T_y& y,
  */
 template <typename T_y, typename T_high,
           require_vector_vt<is_stan_scalar, T_y>* = nullptr,
-          require_stan_scalar_t<T_high>* = nullptr>
+          require_stan_scalar_t<T_high>* = nullptr, typename... Idxs>
 inline void check_less(const char* function, const char* name, const T_y& y,
-                       const T_high& high) {
-  auto&& y_arr = to_ref(value_of_rec(as_array_or_scalar(y)));
+                       const T_high& high, Idxs... idxs) {
+  auto&& y_arr = value_of_rec(as_array_or_scalar(to_ref(y)));
   for (Eigen::Index i = 0; i < y_arr.size(); ++i) {
     if (unlikely(!(y_arr.coeff(i) < high))) {
-      [&y_arr, high, name, function, i]() STAN_COLD_PATH {
+      [&y_arr, idxs..., high, name, function, i]() STAN_COLD_PATH {
         throw_domain_error_vec(
-            function, name, y_arr, i, "is ",
+            function, internal::make_iter_name(name, idxs...).c_str(), y_arr, i, "is ",
             (", but must be less than " + std::to_string(value_of_rec(high)))
                 .c_str());
       }();
@@ -157,16 +157,16 @@ inline void check_less(const char* function, const char* name, const T_y& y,
  */
 template <typename T_y, typename T_high,
           require_dense_dynamic_t<T_y>* = nullptr,
-          require_stan_scalar_t<T_high>* = nullptr>
+          require_stan_scalar_t<T_high>* = nullptr, typename... Idxs>
 inline void check_less(const char* function, const char* name, const T_y& y,
-                       const T_high& high) {
-  auto&& y_arr = to_ref(value_of_rec(y));
+                       const T_high& high, Idxs... idxs) {
+  auto&& y_arr = value_of_rec(to_ref(y));
   for (Eigen::Index j = 0; j < y_arr.cols(); ++j) {
     for (Eigen::Index i = 0; i < y_arr.rows(); ++i) {
       if (unlikely(!(y_arr.coeff(i, j) < high))) {
-        [&y_arr, high, name, function, i, j]() STAN_COLD_PATH {
+        [&y_arr, idxs..., high, name, function, i, j]() STAN_COLD_PATH {
           throw_domain_error_mat(
-              function, name, y_arr, i, j, "is ",
+              function, internal::make_iter_name(name, idxs...).c_str(), y_arr, i, j, "is ",
               (", but must be less than " + std::to_string(value_of_rec(high)))
                   .c_str());
         }();
@@ -193,17 +193,16 @@ inline void check_less(const char* function, const char* name, const T_y& y,
  * high is `NaN`
  */
 template <typename T_y, typename T_high,
-          require_all_vector_vt<is_stan_scalar, T_y, T_high>* = nullptr>
+          require_all_vector_vt<is_stan_scalar, T_y, T_high>* = nullptr, typename... Idxs>
 inline void check_less(const char* function, const char* name, const T_y& y,
-                       const T_high& high) {
-  auto&& y_arr = to_ref(value_of_rec(y));
-  auto&& high_arr = to_ref(value_of_rec(high));
-  check_matching_sizes(function, name, y_arr, "higher", high_arr);
+                       const T_high& high, Idxs... idxs) {
+  auto&& y_arr = value_of_rec(to_ref(y));
+  auto&& high_arr = value_of_rec(to_ref(high));
   for (Eigen::Index i = 0; i < y_arr.size(); ++i) {
     if (unlikely(!(y_arr.coeff(i) < high_arr.coeff(i)))) {
-      [&y_arr, &high_arr, name, function, i]() STAN_COLD_PATH {
+      [&y_arr, &high_arr, idxs..., name, function, i]() STAN_COLD_PATH {
         throw_domain_error_vec(
-            function, name, y_arr, i, "is ",
+            function, internal::make_iter_name(name, idxs...).c_str(), y_arr, i, "is ",
             (", but must be less than " + std::to_string(high_arr.coeff(i)))
                 .c_str());
       }();
@@ -229,23 +228,70 @@ inline void check_less(const char* function, const char* name, const T_y& y,
  * high is `NaN`
  */
 template <typename T_y, typename T_high,
-          require_all_dense_dynamic_t<T_y, T_high>* = nullptr>
+          require_all_dense_dynamic_t<T_y, T_high>* = nullptr, typename... Idxs>
 inline void check_less(const char* function, const char* name, const T_y& y,
-                       const T_high& high) {
-  auto&& y_arr = to_ref(value_of_rec(y));
-  auto&& high_arr = to_ref(value_of_rec(high));
-  check_matching_dims(function, name, y_arr, "higher", high_arr);
+                       const T_high& high, Idxs... idxs) {
+  auto&& y_arr = value_of_rec(to_ref(y));
+  auto&& high_arr = value_of_rec(to_ref(high));
   for (Eigen::Index j = 0; j < y_arr.cols(); ++j) {
     for (Eigen::Index i = 0; i < y_arr.rows(); ++i) {
       if (unlikely(!(y_arr.coeff(i, j) < high_arr.coeff(i, j)))) {
-        [&y_arr, &high_arr, name, function, i, j]() STAN_COLD_PATH {
-          throw_domain_error_mat(function, name, y_arr, i, j, "is ",
+        [&y_arr, &high_arr, idxs..., name, function, i, j]() STAN_COLD_PATH {
+          throw_domain_error_mat(function, internal::make_iter_name(name, idxs...).c_str(), y_arr, i, j, "is ",
                                  (", but must be less than "
                                   + std::to_string(high_arr.coeff(i, j)))
                                      .c_str());
         }();
       }
     }
+  }
+}
+
+/**
+ * Throw an exception if each element of `y` is not strictly less than `high`.
+ * This function is vectorized and will check each element of `y` against each
+ * element of `high`.
+ * @tparam T_y A standard vector type with a `value_type` of a standard vector
+ * or type inheriting from `Eigen::DenseBase`
+ * @tparam T_high A scalar type or the same type as the inner type of `T_high`
+ * @param function Function name (for error messages)
+ * @param name Variable name (for error messages)
+ * @param y Variable to check
+ * @param high Upper bound
+ * @throw `domain_error` if y is not less than high or if any element of y or
+ * high is `NaN`
+ */
+template <typename T_y, typename T_high,
+          require_std_vector_vt<is_container, T_y>* = nullptr,
+          require_not_std_vector_t<T_high>* = nullptr, typename... Idxs>
+inline void check_less(const char* function, const char* name, const T_y& y,
+                       const T_high& high, Idxs... idxs) {
+  for (size_t i = 0; i < y.size(); ++i) {
+    check_less(function, name, y[i], high, idxs..., i);
+  }
+}
+
+/**
+ * Throw an exception if `y` is not strictly less than each element of `high`.
+ * This function is vectorized and will check each element of `y` against each
+ * element of `high`.
+ * @tparam T_y A scalar type or the same type as the inner type of `T_high`
+ * @tparam T_high A standard vector type with a `value_type` of a standard
+ * vector or type inheriting from `Eigen::DenseBase`
+ * @param function Function name (for error messages)
+ * @param name Variable name (for error messages)
+ * @param y Variable to check
+ * @param high Upper bound
+ * @throw `domain_error` if y is not less than high or if any element of y or
+ * high is `NaN`
+ */
+template <typename T_y, typename T_high,
+          require_not_std_vector_t<T_y>* = nullptr,
+          require_std_vector_vt<is_container, T_high>* = nullptr, typename... Idxs>
+inline void check_less(const char* function, const char* name, const T_y& y,
+                       const T_high& high, Idxs... idxs) {
+  for (size_t i = 0; i < high.size(); ++i) {
+    check_less(function, name, y, high[i], idxs..., i);
   }
 }
 
@@ -266,63 +312,14 @@ inline void check_less(const char* function, const char* name, const T_y& y,
  */
 template <typename T_y, typename T_high,
           require_any_std_vector_vt<is_container, T_y, T_high>* = nullptr,
-          require_all_std_vector_t<T_y, T_high>* = nullptr>
+          require_all_std_vector_t<T_y, T_high>* = nullptr, typename... Idxs>
 inline void check_less(const char* function, const char* name, const T_y& y,
-                       const T_high& high) {
-  check_matching_sizes(function, name, y, "higher", high);
+                       const T_high& high, Idxs... idxs) {
   for (size_t i = 0; i < y.size(); ++i) {
-    check_less(function, internal::make_iter_name(name, i).c_str(), y[i],
-               high[i]);
+    check_less(function, name, y[i], high[i], idxs..., i);
   }
 }
 
-/**
- * Throw an exception if each element of `y` is not strictly less than `high`.
- * This function is vectorized and will check each element of `y` against each
- * element of `high`.
- * @tparam T_y A standard vector type with a `value_type` of a standard vector
- * or type inheriting from `Eigen::DenseBase`
- * @tparam T_high A scalar type or the same type as the inner type of `T_high`
- * @param function Function name (for error messages)
- * @param name Variable name (for error messages)
- * @param y Variable to check
- * @param high Upper bound
- * @throw `domain_error` if y is not less than high or if any element of y or
- * high is `NaN`
- */
-template <typename T_y, typename T_high,
-          require_std_vector_vt<is_container, T_y>* = nullptr,
-          require_not_std_vector_t<T_high>* = nullptr>
-inline void check_less(const char* function, const char* name, const T_y& y,
-                       const T_high& high) {
-  for (size_t i = 0; i < y.size(); ++i) {
-    check_less(function, internal::make_iter_name(name, i).c_str(), y[i], high);
-  }
-}
-
-/**
- * Throw an exception if `y` is not strictly less than each element of `high`.
- * This function is vectorized and will check each element of `y` against each
- * element of `high`.
- * @tparam T_y A scalar type or the same type as the inner type of `T_high`
- * @tparam T_high A standard vector type with a `value_type` of a standard
- * vector or type inheriting from `Eigen::DenseBase`
- * @param function Function name (for error messages)
- * @param name Variable name (for error messages)
- * @param y Variable to check
- * @param high Upper bound
- * @throw `domain_error` if y is not less than high or if any element of y or
- * high is `NaN`
- */
-template <typename T_y, typename T_high,
-          require_not_std_vector_t<T_y>* = nullptr,
-          require_std_vector_vt<is_container, T_high>* = nullptr>
-inline void check_less(const char* function, const char* name, const T_y& y,
-                       const T_high& high) {
-  for (size_t i = 0; i < high.size(); ++i) {
-    check_less(function, name, y, high[i]);
-  }
-}
 
 }  // namespace math
 }  // namespace stan

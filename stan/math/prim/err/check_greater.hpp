@@ -29,13 +29,13 @@ namespace math {
  * element of y or low is `NaN`
  */
 template <typename T_y, typename T_low,
-          require_all_stan_scalar_t<T_y, T_low>* = nullptr>
+          require_all_stan_scalar_t<T_y, T_low>* = nullptr, typename... Idxs>
 inline void check_greater(const char* function, const char* name, const T_y& y,
-                          const T_low& low) {
+                          const T_low& low, Idxs... idxs) {
   if (unlikely(!(y > low))) {
     [&]() STAN_COLD_PATH {
       throw_domain_error(
-          function, name, y, "is ",
+          function, internal::make_iter_name(name, idxs...).c_str(), y, "is ",
           (", but must be greater than " + std::to_string(value_of_rec(low)))
               .c_str());
     }();
@@ -58,15 +58,15 @@ inline void check_greater(const char* function, const char* name, const T_y& y,
  * element of y or low is `NaN`
  */
 template <typename T_y, typename T_low, require_stan_scalar_t<T_y>* = nullptr,
-          require_vector_vt<is_stan_scalar, T_low>* = nullptr>
+          require_vector_vt<is_stan_scalar, T_low>* = nullptr, typename... Idxs>
 inline void check_greater(const char* function, const char* name, const T_y& y,
-                          const T_low& low) {
-  auto&& low_arr = to_ref(value_of_rec(as_array_or_scalar(low)));
+                          const T_low& low, Idxs... idxs) {
+  auto&& low_arr = value_of_rec(as_array_or_scalar(to_ref(low)));
   for (Eigen::Index i = 0; i < low_arr.size(); ++i) {
     if (unlikely(!(y > low_arr.coeff(i)))) {
-      [&low_arr, y, name, function, i]() STAN_COLD_PATH {
+      [&low_arr, idxs..., y, name, function, i]() STAN_COLD_PATH {
         throw_domain_error(
-            function, name, y, "is ",
+            function, internal::make_iter_name(name, idxs...).c_str(), y, "is ",
             (", but must be greater than " + std::to_string(low_arr.coeff(i)))
                 .c_str());
       }();
@@ -90,15 +90,15 @@ inline void check_greater(const char* function, const char* name, const T_y& y,
  * element of y or low is `NaN`
  */
 template <typename T_y, typename T_low, require_stan_scalar_t<T_y>* = nullptr,
-          require_dense_dynamic_t<T_low>* = nullptr>
+          require_dense_dynamic_t<T_low>* = nullptr, typename... Idxs>
 inline void check_greater(const char* function, const char* name, const T_y& y,
-                          const T_low& low) {
-  auto&& low_arr = to_ref(value_of_rec(low));
+                          const T_low& low, Idxs... idxs) {
+  auto&& low_arr = value_of_rec(to_ref(low));
   for (Eigen::Index j = 0; j < low_arr.cols(); ++j) {
     for (Eigen::Index i = 0; i < low_arr.rows(); ++i) {
       if (unlikely(!(y > low_arr.coeff(i, j)))) {
-        [&low_arr, y, name, function, i, j]() STAN_COLD_PATH {
-          throw_domain_error(function, name, y, "is ",
+        [&low_arr, idxs..., y, name, function, i, j]() STAN_COLD_PATH {
+          throw_domain_error(function, internal::make_iter_name(name, idxs...).c_str(), y, "is ",
                              (", but must be greater than "
                               + std::to_string(low_arr.coeff(i, j)))
                                  .c_str());
@@ -125,15 +125,15 @@ inline void check_greater(const char* function, const char* name, const T_y& y,
  */
 template <typename T_y, typename T_low,
           require_vector_vt<is_stan_scalar, T_y>* = nullptr,
-          require_stan_scalar_t<T_low>* = nullptr>
+          require_stan_scalar_t<T_low>* = nullptr, typename... Idxs>
 inline void check_greater(const char* function, const char* name, const T_y& y,
-                          const T_low& low) {
-  auto&& y_arr = to_ref(value_of_rec(as_array_or_scalar(y)));
+                          const T_low& low, Idxs... idxs) {
+  auto&& y_arr = value_of_rec(as_array_or_scalar(to_ref(y)));
   for (Eigen::Index i = 0; i < y_arr.size(); ++i) {
     if (unlikely(!(y_arr.coeff(i) > low))) {
-      [&y_arr, low, name, function, i]() STAN_COLD_PATH {
+      [&y_arr, idxs..., low, name, function, i]() STAN_COLD_PATH {
         throw_domain_error_vec(
-            function, name, y_arr, i, "is ",
+            function, internal::make_iter_name(name, idxs...).c_str(), y_arr, i, "is ",
             (", but must be greater than " + std::to_string(value_of_rec(low)))
                 .c_str());
       }();
@@ -157,15 +157,15 @@ inline void check_greater(const char* function, const char* name, const T_y& y,
  * element of y or low is `NaN`
  */
 template <typename T_y, typename T_low, require_dense_dynamic_t<T_y>* = nullptr,
-          require_stan_scalar_t<T_low>* = nullptr>
+          require_stan_scalar_t<T_low>* = nullptr, typename... Idxs>
 inline void check_greater(const char* function, const char* name, const T_y& y,
-                          const T_low& low) {
-  auto&& y_arr = to_ref(value_of_rec(y));
+                          const T_low& low, Idxs... idxs) {
+  auto&& y_arr = value_of_rec(to_ref(y));
   for (Eigen::Index j = 0; j < y_arr.cols(); ++j) {
     for (Eigen::Index i = 0; i < y_arr.rows(); ++i) {
       if (unlikely(!(y_arr.coeff(i, j) > low))) {
-        [&y_arr, low, name, function, i, j]() STAN_COLD_PATH {
-          throw_domain_error_mat(function, name, y_arr, i, j, "is ",
+        [&y_arr, idxs..., low, name, function, i, j]() STAN_COLD_PATH {
+          throw_domain_error_mat(function, internal::make_iter_name(name, idxs...).c_str(), y_arr, i, j, "is ",
                                  (", but must be greater than "
                                   + std::to_string(value_of_rec(low)))
                                      .c_str());
@@ -193,17 +193,16 @@ inline void check_greater(const char* function, const char* name, const T_y& y,
  * element of y or low is `NaN`
  */
 template <typename T_y, typename T_low,
-          require_all_vector_vt<is_stan_scalar, T_y, T_low>* = nullptr>
+          require_all_vector_vt<is_stan_scalar, T_y, T_low>* = nullptr, typename... Idxs>
 inline void check_greater(const char* function, const char* name, const T_y& y,
-                          const T_low& low) {
-  auto&& y_arr = to_ref(value_of_rec(as_array_or_scalar(y)));
-  auto&& low_arr = to_ref(value_of_rec(as_array_or_scalar(low)));
-  check_matching_sizes(function, name, y_arr, "lower", low_arr);
+                          const T_low& low, Idxs... idxs) {
+  auto&& y_arr = value_of_rec(as_array_or_scalar(to_ref(y)));
+  auto&& low_arr = value_of_rec(as_array_or_scalar(to_ref(low)));
   for (Eigen::Index i = 0; i < low_arr.size(); ++i) {
     if (unlikely(!(y_arr.coeff(i) > low_arr.coeff(i)))) {
-      [&y_arr, &low_arr, name, function, i]() STAN_COLD_PATH {
+      [&y_arr, idxs..., &low_arr, name, function, i]() STAN_COLD_PATH {
         throw_domain_error_vec(
-            function, name, y_arr, i, "is ",
+            function, internal::make_iter_name(name, idxs...).c_str(), y_arr, i, "is ",
             (", but must be greater than " + std::to_string(low_arr.coeff(i)))
                 .c_str());
       }();
@@ -229,23 +228,70 @@ inline void check_greater(const char* function, const char* name, const T_y& y,
  * element of y or low is `NaN`
  */
 template <typename T_y, typename T_low,
-          require_all_dense_dynamic_t<T_y, T_low>* = nullptr>
+          require_all_dense_dynamic_t<T_y, T_low>* = nullptr, typename... Idxs>
 inline void check_greater(const char* function, const char* name, const T_y& y,
-                          const T_low& low) {
-  auto&& y_arr = to_ref(value_of_rec(y));
-  auto&& low_arr = to_ref(value_of_rec(low));
-  check_matching_dims(function, name, y_arr, "lower", low_arr);
+                          const T_low& low, Idxs... idxs) {
+  auto&& y_arr = value_of_rec(to_ref(y));
+  auto&& low_arr = value_of_rec(to_ref(low));
   for (Eigen::Index j = 0; j < low_arr.cols(); ++j) {
     for (Eigen::Index i = 0; i < low_arr.rows(); ++i) {
       if (unlikely(!(y_arr.coeff(i, j) > low_arr.coeff(i, j)))) {
-        [&y_arr, &low_arr, name, function, i, j]() STAN_COLD_PATH {
-          throw_domain_error_mat(function, name, y_arr, i, j, "is ",
+        [&y_arr, &low_arr, idxs..., name, function, i, j]() STAN_COLD_PATH {
+          throw_domain_error_mat(function, internal::make_iter_name(name, idxs...).c_str(), y_arr, i, j, "is ",
                                  (", but must be greater than "
                                   + std::to_string(low_arr.coeff(i, j)))
                                      .c_str());
         }();
       }
     }
+  }
+}
+
+/**
+ * Throw an exception if each element of `y` is not strictly greater than `low`.
+ * This function is vectorized and will check each element of `y` against each
+ * element of `low`.
+ * @tparam T_y A standard vector type with a `value_type` of a standard vector
+ * or type inheriting from `Eigen::DenseBase`
+ * @tparam T_low A scalar type or the same type as the underlying type in `T_y`
+ * @param function Function name (for error messages)
+ * @param name Variable name (for error messages)
+ * @param y Variable to check
+ * @param low Lower bound
+ * @throw `std::domain_error` if y is not greater or equal to low or if any
+ * element of y or low is `NaN`
+ */
+template <typename T_y, typename T_low,
+          require_std_vector_vt<is_container, T_y>* = nullptr,
+          require_not_std_vector_t<T_low>* = nullptr, typename... Idxs>
+inline void check_greater(const char* function, const char* name, const T_y& y,
+                          const T_low& low, Idxs... idxs) {
+  for (size_t i = 0; i < y.size(); ++i) {
+    check_greater(function, name, y[i], low, idxs..., i);
+  }
+}
+
+/**
+ * Throw an exception if each element of `y` is not strictly greater than `low`.
+ * This function is vectorized and will check each element of `y` against each
+ * element of `low`.
+ * @tparam T_y A scalar type or the same type as the inner type of `T_low`
+ * @tparam T_low A standard vector type with a `value_type` of a standard vector
+ * or type inheriting from `Eigen::DenseBase`
+ * @param function Function name (for error messages)
+ * @param name Variable name (for error messages)
+ * @param y Variable to check
+ * @param low Lower bound
+ * @throw `std::domain_error` if y is not greater or equal to low or if any
+ * element of y or low is `NaN`
+ */
+template <typename T_y, typename T_low,
+          require_not_std_vector_t<T_y>* = nullptr,
+          require_std_vector_vt<is_container, T_low>* = nullptr, typename... Idxs>
+inline void check_greater(const char* function, const char* name, const T_y& y,
+                          const T_low& low, Idxs... idxs) {
+  for (size_t i = 0; i < low.size(); ++i) {
+    check_greater(function, name, y, low[i], idxs..., i);
   }
 }
 
@@ -266,62 +312,11 @@ inline void check_greater(const char* function, const char* name, const T_y& y,
  */
 template <typename T_y, typename T_low,
           require_any_std_vector_vt<is_container, T_y, T_low>* = nullptr,
-          require_all_std_vector_t<T_y, T_low>* = nullptr>
+          require_all_std_vector_t<T_y, T_low>* = nullptr, typename... Idxs>
 inline void check_greater(const char* function, const char* name, const T_y& y,
-                          const T_low& low) {
-  check_matching_sizes(function, name, y, "lower", low);
+                          const T_low& low, Idxs... idxs) {
   for (size_t i = 0; i < y.size(); ++i) {
-    check_greater(function, internal::make_iter_name(name, i).c_str(), y[i],
-                  low[i]);
-  }
-}
-
-/**
- * Throw an exception if each element of `y` is not strictly greater than `low`.
- * This function is vectorized and will check each element of `y` against each
- * element of `low`.
- * @tparam T_y A standard vector type with a `value_type` of a standard vector
- * or type inheriting from `Eigen::DenseBase`
- * @tparam T_low A scalar type or the same type as the underlying type in `T_y`
- * @param function Function name (for error messages)
- * @param name Variable name (for error messages)
- * @param y Variable to check
- * @param low Lower bound
- * @throw `std::domain_error` if y is not greater or equal to low or if any
- * element of y or low is `NaN`
- */
-template <typename T_y, typename T_low,
-          require_std_vector_vt<is_container, T_y>* = nullptr,
-          require_not_std_vector_t<T_low>* = nullptr>
-inline void check_greater(const char* function, const char* name, const T_y& y,
-                          const T_low& low) {
-  for (size_t i = 0; i < y.size(); ++i) {
-    check_greater(function, internal::make_iter_name(name, i).c_str(), y[i],
-                  low);
-  }
-}
-
-/**
- * Throw an exception if each element of `y` is not strictly greater than `low`.
- * This function is vectorized and will check each element of `y` against each
- * element of `low`.
- * @tparam T_y A scalar type or the same type as the inner type of `T_low`
- * @tparam T_low A standard vector type with a `value_type` of a standard vector
- * or type inheriting from `Eigen::DenseBase`
- * @param function Function name (for error messages)
- * @param name Variable name (for error messages)
- * @param y Variable to check
- * @param low Lower bound
- * @throw `std::domain_error` if y is not greater or equal to low or if any
- * element of y or low is `NaN`
- */
-template <typename T_y, typename T_low,
-          require_not_std_vector_t<T_y>* = nullptr,
-          require_std_vector_vt<is_container, T_low>* = nullptr>
-inline void check_greater(const char* function, const char* name, const T_y& y,
-                          const T_low& low) {
-  for (size_t i = 0; i < low.size(); ++i) {
-    check_greater(function, name, y, low[i]);
+    check_greater(function, name, y[i], low[i], idxs..., i);
   }
 }
 
