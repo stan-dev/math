@@ -29,12 +29,12 @@ namespace math {
  * element of y or low is `NaN`
  */
 template <typename T_y, typename T_low,
-          require_all_stan_scalar_t<T_y, T_low>* = nullptr>
+          require_all_stan_scalar_t<T_y, T_low>* = nullptr, typename... Idxs>
 inline void check_greater_or_equal(const char* function, const char* name,
-                                   const T_y& y, const T_low& low) {
+                                   const T_y& y, const T_low& low, Idxs... idxs) {
   if (unlikely(!(y >= low))) {
     [&]() STAN_COLD_PATH {
-      throw_domain_error(function, name, y, "is ",
+      throw_domain_error(function, internal::make_iter_name(name, idxs...).c_str(), y, "is ",
                          (", but must be greater than or equal to "
                           + std::to_string(value_of_rec(low)))
                              .c_str());
@@ -58,14 +58,14 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * element of y or low is `NaN`
  */
 template <typename T_y, typename T_low, require_stan_scalar_t<T_y>* = nullptr,
-          require_vector_vt<is_stan_scalar, T_low>* = nullptr>
+          require_vector_vt<is_stan_scalar, T_low>* = nullptr, typename... Idxs>
 inline void check_greater_or_equal(const char* function, const char* name,
-                                   const T_y& y, const T_low& low) {
+                                   const T_y& y, const T_low& low, Idxs... idxs) {
   auto&& low_arr = to_ref(value_of_rec(as_array_or_scalar(low)));
   for (Eigen::Index i = 0; i < low_arr.size(); ++i) {
     if (unlikely(!(y >= low_arr.coeff(i)))) {
-      [&low_arr, y, name, function, i]() STAN_COLD_PATH {
-        throw_domain_error(function, name, y, "is ",
+      [&low_arr, &idxs..., y, name, function, i]() STAN_COLD_PATH {
+        throw_domain_error(function, internal::make_iter_name(name, idxs...).c_str(), y, "is ",
                            (", but must be greater than or equal to "
                             + std::to_string(low_arr.coeff(i)))
                                .c_str());
@@ -90,15 +90,15 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * element of y or low is `NaN`
  */
 template <typename T_y, typename T_low, require_stan_scalar_t<T_y>* = nullptr,
-          require_dense_dynamic_t<T_low>* = nullptr>
+          require_dense_dynamic_t<T_low>* = nullptr, typename... Idxs>
 inline void check_greater_or_equal(const char* function, const char* name,
-                                   const T_y& y, const T_low& low) {
+                                   const T_y& y, const T_low& low, Idxs... idxs) {
   auto&& low_arr = to_ref(value_of_rec(low));
   for (Eigen::Index j = 0; j < low_arr.cols(); ++j) {
     for (Eigen::Index i = 0; i < low_arr.rows(); ++i) {
       if (unlikely(!(y >= low_arr.coeff(i, j)))) {
-        [&low_arr, y, name, function, i, j]() STAN_COLD_PATH {
-          throw_domain_error(function, name, y, "is ",
+        [&low_arr, &idxs..., y, name, function, i, j]() STAN_COLD_PATH {
+          throw_domain_error(function, internal::make_iter_name(name, idxs...).c_str(), y, "is ",
                              (", but must be greater than or equal to "
                               + std::to_string(low_arr.coeff(i, j)))
                                  .c_str());
@@ -125,14 +125,14 @@ inline void check_greater_or_equal(const char* function, const char* name,
  */
 template <typename T_y, typename T_low,
           require_vector_vt<is_stan_scalar, T_y>* = nullptr,
-          require_stan_scalar_t<T_low>* = nullptr>
+          require_stan_scalar_t<T_low>* = nullptr, typename... Idxs>
 inline void check_greater_or_equal(const char* function, const char* name,
-                                   const T_y& y, const T_low& low) {
+                                   const T_y& y, const T_low& low, Idxs... idxs) {
   auto&& y_arr = to_ref(value_of_rec(as_array_or_scalar(y)));
   for (Eigen::Index i = 0; i < y_arr.size(); ++i) {
     if (unlikely(!(y_arr.coeff(i) >= low))) {
-      [&y_arr, low, name, function, i]() STAN_COLD_PATH {
-        throw_domain_error_vec(function, name, y_arr, i, "is ",
+      [&y_arr, &idxs..., low, name, function, i]() STAN_COLD_PATH {
+        throw_domain_error_vec(function, internal::make_iter_name(name, idxs...).c_str(), y_arr, i, "is ",
                                (", but must be greater than or equal to "
                                 + std::to_string(value_of_rec(low)))
                                    .c_str());
@@ -157,15 +157,15 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * element of y or low is `NaN`
  */
 template <typename T_y, typename T_low, require_dense_dynamic_t<T_y>* = nullptr,
-          require_stan_scalar_t<T_low>* = nullptr>
+          require_stan_scalar_t<T_low>* = nullptr, typename... Idxs>
 inline void check_greater_or_equal(const char* function, const char* name,
-                                   const T_y& y, const T_low& low) {
+                                   const T_y& y, const T_low& low, Idxs... idxs) {
   auto&& y_arr = to_ref(value_of_rec(y));
   for (Eigen::Index j = 0; j < y_arr.cols(); ++j) {
     for (Eigen::Index i = 0; i < y_arr.rows(); ++i) {
       if (unlikely(!(y_arr.coeff(i, j) >= low))) {
-        [&y_arr, low, name, function, i, j]() STAN_COLD_PATH {
-          throw_domain_error_mat(function, name, y_arr, i, j, "is ",
+        [&y_arr, &idxs..., low, name, function, i, j]() STAN_COLD_PATH {
+          throw_domain_error_mat(function, internal::make_iter_name(name, idxs...).c_str(), y_arr, i, j, "is ",
                                  (", but must be greater than or equal to "
                                   + std::to_string(value_of_rec(low)))
                                      .c_str());
@@ -193,16 +193,16 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * element of y or low is `NaN`
  */
 template <typename T_y, typename T_low,
-          require_all_vector_vt<is_stan_scalar, T_y, T_low>* = nullptr>
+          require_all_vector_vt<is_stan_scalar, T_y, T_low>* = nullptr, typename... Idxs>
 inline void check_greater_or_equal(const char* function, const char* name,
-                                   const T_y& y, const T_low& low) {
+                                   const T_y& y, const T_low& low, Idxs... idxs) {
   auto&& y_arr = to_ref(value_of_rec(as_array_or_scalar(y)));
   auto&& low_arr = to_ref(value_of_rec(as_array_or_scalar(low)));
   check_matching_sizes(function, name, y_arr, "lower", low_arr);
   for (Eigen::Index i = 0; i < low_arr.size(); ++i) {
     if (unlikely(!(y_arr.coeff(i) >= low_arr.coeff(i)))) {
-      [&y_arr, &low_arr, name, function, i]() STAN_COLD_PATH {
-        throw_domain_error_vec(function, name, y_arr, i, "is ",
+      [&y_arr, &low_arr, &idxs..., name, function, i]() STAN_COLD_PATH {
+        throw_domain_error_vec(function, internal::make_iter_name(name, idxs...).c_str(), y_arr, i, "is ",
                                (", but must be greater than or equal to "
                                 + std::to_string(low_arr.coeff(i)))
                                    .c_str());
@@ -229,17 +229,17 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * element of y or low is `NaN`
  */
 template <typename T_y, typename T_low,
-          require_all_dense_dynamic_t<T_y, T_low>* = nullptr>
+          require_all_dense_dynamic_t<T_y, T_low>* = nullptr, typename... Idxs>
 inline void check_greater_or_equal(const char* function, const char* name,
-                                   const T_y& y, const T_low& low) {
+                                   const T_y& y, const T_low& low, Idxs... idxs) {
   auto&& y_arr = to_ref(value_of_rec(y));
   auto&& low_arr = to_ref(value_of_rec(low));
   check_matching_dims(function, name, y_arr, "lower", low_arr);
   for (Eigen::Index j = 0; j < low_arr.cols(); ++j) {
     for (Eigen::Index i = 0; i < low_arr.rows(); ++i) {
       if (unlikely(!(y_arr.coeff(i, j) >= low_arr.coeff(i, j)))) {
-        [&y_arr, &low_arr, name, function, i, j]() STAN_COLD_PATH {
-          throw_domain_error_mat(function, name, y_arr, i, j, "is ",
+        [&y_arr, &low_arr, &idxs..., name, function, i, j]() STAN_COLD_PATH {
+          throw_domain_error_mat(function, internal::make_iter_name(name, idxs...).c_str(), y_arr, i, j, "is ",
                                  (", but must be greater than or equal to "
                                   + std::to_string(low_arr.coeff(i, j)))
                                      .c_str());
@@ -264,13 +264,12 @@ inline void check_greater_or_equal(const char* function, const char* name,
  */
 template <typename T_y, typename T_low,
           require_any_std_vector_vt<is_container, T_y, T_low>* = nullptr,
-          require_all_std_vector_t<T_y, T_low>* = nullptr>
+          require_all_std_vector_t<T_y, T_low>* = nullptr, typename... Idxs>
 inline void check_greater_or_equal(const char* function, const char* name,
-                                   const T_y& y, const T_low& low) {
+                                   const T_y& y, const T_low& low, Idxs... idxs) {
   check_matching_sizes(function, name, y, "lower", low);
   for (size_t i = 0; i < y.size(); ++i) {
-    check_greater_or_equal(function, internal::make_iter_name(name, i).c_str(),
-                           y[i], low[i]);
+    check_greater_or_equal(function, name, y[i], low[i], idxs..., i);
   }
 }
 
@@ -290,12 +289,11 @@ inline void check_greater_or_equal(const char* function, const char* name,
  */
 template <typename T_y, typename T_low,
           require_std_vector_vt<is_container, T_y>* = nullptr,
-          require_not_std_vector_t<T_low>* = nullptr>
+          require_not_std_vector_t<T_low>* = nullptr, typename... Idxs>
 inline void check_greater_or_equal(const char* function, const char* name,
-                                   const T_y& y, const T_low& low) {
+                                   const T_y& y, const T_low& low, Idxs... idxs) {
   for (size_t i = 0; i < y.size(); ++i) {
-    check_greater_or_equal(function, internal::make_iter_name(name, i).c_str(),
-                           y[i], low);
+    check_greater_or_equal(function, name, y[i], low, idxs..., i);
   }
 }
 
@@ -315,11 +313,11 @@ inline void check_greater_or_equal(const char* function, const char* name,
  */
 template <typename T_y, typename T_low,
           require_not_std_vector_t<T_y>* = nullptr,
-          require_std_vector_vt<is_container, T_low>* = nullptr>
+          require_std_vector_vt<is_container, T_low>* = nullptr, typename... Idxs>
 inline void check_greater_or_equal(const char* function, const char* name,
-                                   const T_y& y, const T_low& low) {
+                                   const T_y& y, const T_low& low, Idxs... idxs) {
   for (size_t i = 0; i < low.size(); ++i) {
-    check_greater_or_equal(function, name, y, low[i]);
+    check_greater_or_equal(function, name, y, low[i], idxs..., i);
   }
 }
 

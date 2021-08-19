@@ -272,8 +272,7 @@ inline void check_less_or_equal(const char* function, const char* name,
                                 const T_y& y, const T_high& high) {
   check_matching_sizes(function, name, y, "higher", high);
   for (size_t i = 0; i < y.size(); ++i) {
-    check_less_or_equal(function, internal::make_iter_name(name, i).c_str(),
-                        y[i], high[i]);
+    check_less_or_equal(function, name, y[i], high[i]);
   }
 }
 
@@ -298,8 +297,7 @@ inline void check_less_or_equal(const char* function, const char* name,
                                 const T_y& y, const T_high& high) {
   std::string iter_name{name};
   for (size_t i = 0; i < y.size(); ++i) {
-    check_less_or_equal(function, internal::make_iter_name(name, i).c_str(),
-                        y[i], high);
+    check_less_or_equal(function, name, y[i], high);
   }
 }
 
