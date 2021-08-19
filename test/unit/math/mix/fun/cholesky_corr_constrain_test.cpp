@@ -14,7 +14,7 @@ int inv_size(const T& x) {
 }
 
 template <typename T>
-auto g1( const T& x) {
+auto g1(const T& x) {
   stan::scalar_type_t<T> lp = 0;
   return stan::math::cholesky_corr_constrain<false>(x, inv_size(x), lp);
 }

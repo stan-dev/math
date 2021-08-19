@@ -63,7 +63,8 @@ inline auto positive_ordered_constrain(const Vec& x, scalar_type_t<Vec>& lp) {
  * will have the same dimensionality as the specified free vector.
  *
  * @tparam Jacobian If true, incremented `lp` with the log Jacobian
- * @tparam Vec A type inheriting from `Eigen::EigenBase`, a `var_value` with inner type inheriting from `Eigen::EigenBase`.
+ * @tparam Vec A type inheriting from `Eigen::EigenBase`, a `var_value` with
+ * inner type inheriting from `Eigen::EigenBase`.
  * @param x Free vector of scalars.
  * @param lp Log probability reference.
  * @return Positive, increasing ordered vector.
@@ -76,7 +77,6 @@ inline auto positive_ordered_constrain(const Vec& x, scalar_type_t<Vec>& lp) {
     return positive_ordered_constrain(x);
   }
 }
-
 
 }  // namespace math
 }  // namespace stan

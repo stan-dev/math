@@ -91,7 +91,8 @@ cov_matrix_constrain_lkj(const T& x, size_t k, scalar_type_t<T>& lp) {
  *
  * @tparam Jacobian If true, incremented `lp` with the log Jacobian
  * @tparam T A type inheriting from `Eigen::DenseBase` or a `var_value` with
- *  inner type inheriting from `Eigen::DenseBase` with compile time rows or columns equal to 1.
+ *  inner type inheriting from `Eigen::DenseBase` with compile time rows or
+ * columns equal to 1.
  * @param x Input vector of unconstrained partial correlations and
  * standard deviations.
  * @param k Dimensionality of returned covariance matrix.
@@ -100,15 +101,14 @@ cov_matrix_constrain_lkj(const T& x, size_t k, scalar_type_t<T>& lp) {
  * correlations and deviations.
  */
 template <bool Jacobian, typename T>
-inline auto
-cov_matrix_constrain_lkj(const T& x, size_t k, scalar_type_t<T>& lp) {
+inline auto cov_matrix_constrain_lkj(const T& x, size_t k,
+                                     scalar_type_t<T>& lp) {
   if (Jacobian) {
     return cov_matrix_constrain_lkj(x, k, lp);
   } else {
     return cov_matrix_constrain_lkj(x, k);
   }
 }
-
 
 }  // namespace math
 }  // namespace stan

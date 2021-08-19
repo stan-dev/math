@@ -105,15 +105,14 @@ cov_matrix_constrain(const T& x, Eigen::Index K, scalar_type_t<T>& lp) {
  * @throws std::domain_error if (x.size() != K + (K choose 2)).
  */
 template <bool Jacobian, typename T>
-inline auto
-cov_matrix_constrain(const T& x, Eigen::Index K, scalar_type_t<T>& lp) {
+inline auto cov_matrix_constrain(const T& x, Eigen::Index K,
+                                 scalar_type_t<T>& lp) {
   if (Jacobian) {
     return cov_matrix_constrain(x, K, lp);
   } else {
     return cov_matrix_constrain(x, K);
   }
 }
-
 
 }  // namespace math
 }  // namespace stan

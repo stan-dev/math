@@ -2,8 +2,8 @@
 
 TEST(mathMixMatFun, corr_constrain) {
   auto f = [](const auto& x1) {
-   stan::scalar_type_t<std::decay_t<decltype(x1)>> lp = 0.0;
-   return stan::math::corr_constrain<false>(x1, lp);
+    stan::scalar_type_t<std::decay_t<decltype(x1)>> lp = 0.0;
+    return stan::math::corr_constrain<false>(x1, lp);
   };
 
   std::vector<double> x0 = {-1.0, 2.0, 3.0};

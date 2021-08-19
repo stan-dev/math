@@ -236,8 +236,10 @@ inline auto ub_constrain(const std::vector<T>& x, const std::vector<U>& ub,
  * elementwise to each input element.
  *
  * @tparam Jacobian If true, incremented `lp` with the log Jacobian
- * @tparam T A type inheriting from `Eigen::EigenBase`, a `var_value` with inner type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
- * @tparam U A type inheriting from `Eigen::EigenBase`, a `var_value` with inner type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
+ * @tparam T A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
+ * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
+ * @tparam U A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
+ * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
  * @param[in] x unconstrained input
  * @param[in] ub upper bound on output
  * @param[in,out] lp reference to log probability to increment

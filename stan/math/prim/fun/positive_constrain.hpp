@@ -58,7 +58,8 @@ inline auto positive_constrain(const T& x, S& lp) {
  *    = \log | \mbox{exp}(x) | =  x\f$.
  *
  * @tparam Jacobian If true, incremented `lp` with the log Jacobian
- * @tparam T A type inheriting from `Eigen::EigenBase`, a `var_value` with inner type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
+ * @tparam T A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
+ * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
  * @param x unconstrained value or container
  * @param lp log density reference.
  * @return positive constrained version of unconstrained value(s)

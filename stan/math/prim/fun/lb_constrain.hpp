@@ -226,8 +226,10 @@ inline auto lb_constrain(const std::vector<T>& x, const std::vector<L>& lb,
  * elementwise to each input element.
  *
  * @tparam Jacobian If true, incremented `lp` with the log Jacobian
- * @tparam T A type inheriting from `Eigen::EigenBase`, a `var_value` with inner type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
- * @tparam L A type inheriting from `Eigen::EigenBase`, a `var_value` with inner type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
+ * @tparam T A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
+ * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
+ * @tparam L A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
+ * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
  * @param[in] x unconstrained input
  * @param[in] lb lower bound on output
  * @param[in,out] lp reference to log probability to increment
@@ -241,7 +243,6 @@ inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
     return lb_constrain(x, lb);
   }
 }
-
 
 }  // namespace math
 }  // namespace stan

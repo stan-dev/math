@@ -376,9 +376,12 @@ inline auto lub_constrain(const std::vector<T>& x, const std::vector<L>& lb,
  * <p>\f$f(x) = L + (U - L) \mbox{logit}^{-1}(x)\f$
  *
  * @tparam Jacobian If true, incremented `lp` with the log Jacobian
- * @tparam T A type inheriting from `Eigen::EigenBase`, a `var_value` with inner type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
- * @tparam L A type inheriting from `Eigen::EigenBase`, a `var_value` with inner type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
- * @tparam U A type inheriting from `Eigen::EigenBase`, a `var_value` with inner type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
+ * @tparam T A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
+ * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
+ * @tparam L A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
+ * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
+ * @tparam U A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
+ * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
  * @param[in] x Free scalar to transform.
  * @param[in] lb Lower bound.
  * @param[in] ub Upper bound.

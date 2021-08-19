@@ -97,7 +97,8 @@ corr_matrix_constrain(const T& x, Eigen::Index k, scalar_type_t<T>& lp) {
  * @param lp Log probability reference to increment.
  */
 template <bool Jacobian, typename T>
-inline auto corr_matrix_constrain(const T& x, Eigen::Index k, scalar_type_t<T>& lp) {
+inline auto corr_matrix_constrain(const T& x, Eigen::Index k,
+                                  scalar_type_t<T>& lp) {
   if (Jacobian) {
     return corr_matrix_constrain(x, k, lp);
   } else {

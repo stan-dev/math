@@ -74,8 +74,6 @@ inline auto corr_constrain(const T_x& x, T_lp& lp) {
   }
 }
 
-
-
 }  // namespace math
 }  // namespace stan
 #endif

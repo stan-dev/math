@@ -19,8 +19,7 @@ auto g1(const T& x) {
   return stan::math::cov_matrix_constrain<false>(x, inv_size(x), lp);
 }
 template <typename T>
-auto g2(
-    const T& x) {
+auto g2(const T& x) {
   typename stan::scalar_type<T>::type lp = 0;
   auto a = stan::math::cov_matrix_constrain<true>(x, inv_size(x), lp);
   return a;
@@ -77,11 +76,10 @@ TEST(MathMixMatFun, cov_matrixTransform) {
 
 TEST(mathMixMatFun, cov_matrix_constrain) {
   auto f = [](int K) {
-    return
-        [K](const auto& x1) {
-          stan::scalar_type_t<std::decay_t<decltype(x1)>> lp = 0.0;
-          return stan::math::cov_matrix_constrain<false>(x1, K, lp);
-         };
+    return [K](const auto& x1) {
+      stan::scalar_type_t<std::decay_t<decltype(x1)>> lp = 0.0;
+      return stan::math::cov_matrix_constrain<false>(x1, K, lp);
+    };
   };
 
   Eigen::VectorXd x1(10);

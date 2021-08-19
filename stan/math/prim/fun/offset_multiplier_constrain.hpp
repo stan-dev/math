@@ -286,9 +286,12 @@ inline auto offset_multiplier_constrain(const std::vector<T>& x,
  * reduces to <code>identity_constrain(x)</code>.
  *
  * @tparam Jacobian If true, incremented `lp` with the log Jacobian
- * @tparam T A type inheriting from `Eigen::EigenBase`, a `var_value` with inner type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
- * @tparam M A type inheriting from `Eigen::EigenBase`, a `var_value` with inner type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
- * @tparam S A type inheriting from `Eigen::EigenBase`, a `var_value` with inner type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
+ * @tparam T A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
+ * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
+ * @tparam M A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
+ * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
+ * @tparam S A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
+ * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
  * @param[in] x Unconstrained scalar input
  * @param[in] mu offset of constrained output
  * @param[in] sigma multiplier of constrained output
@@ -297,9 +300,7 @@ inline auto offset_multiplier_constrain(const std::vector<T>& x,
  * @throw std::domain_error if mu is not finite
  */
 template <bool Jacobian, typename T, typename M, typename S>
-inline auto offset_multiplier_constrain(const T& x,
-                                        const M& mu,
-                                        const S& sigma,
+inline auto offset_multiplier_constrain(const T& x, const M& mu, const S& sigma,
                                         return_type_t<T, M, S>& lp) {
   if (Jacobian) {
     return offset_multiplier_constrain(x, mu, sigma, lp);
@@ -307,7 +308,6 @@ inline auto offset_multiplier_constrain(const T& x,
     return offset_multiplier_constrain(x, mu, sigma);
   }
 }
-
 
 }  // namespace math
 }  // namespace stan
