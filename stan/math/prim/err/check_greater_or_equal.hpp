@@ -33,12 +33,12 @@ template <typename T_y, typename T_low,
 inline void check_greater_or_equal(const char* function, const char* name,
                                    const T_y& y, const T_low& low, Idxs... idxs) {
   if (unlikely(!(y >= low))) {
-    [&]() STAN_COLD_PATH {
+    [](auto y, auto low, auto function, auto name, auto... idxs) STAN_COLD_PATH {
       throw_domain_error(function, internal::make_iter_name(name, idxs...).c_str(), y, "is ",
                          (", but must be greater than or equal to "
                           + std::to_string(value_of_rec(low)))
                              .c_str());
-    }();
+    }(y, low, function, name, idxs...);
   }
 }
 
@@ -64,12 +64,12 @@ inline void check_greater_or_equal(const char* function, const char* name,
   auto&& low_arr = value_of_rec(as_array_or_scalar(to_ref(low)));
   for (Eigen::Index i = 0; i < low_arr.size(); ++i) {
     if (unlikely(!(y >= low_arr.coeff(i)))) {
-      [&low_arr, &idxs..., y, name, function, i]() STAN_COLD_PATH {
+      [](auto y, auto&& low_arr, auto name, auto function, auto i, auto... idxs) STAN_COLD_PATH {
         throw_domain_error(function, internal::make_iter_name(name, idxs...).c_str(), y, "is ",
                            (", but must be greater than or equal to "
                             + std::to_string(low_arr.coeff(i)))
                                .c_str());
-      }();
+      }(y, low_arr, name, function, i, idxs...);
     }
   }
 }
@@ -97,12 +97,12 @@ inline void check_greater_or_equal(const char* function, const char* name,
   for (Eigen::Index j = 0; j < low_arr.cols(); ++j) {
     for (Eigen::Index i = 0; i < low_arr.rows(); ++i) {
       if (unlikely(!(y >= low_arr.coeff(i, j)))) {
-        [&low_arr, &idxs..., y, name, function, i, j]() STAN_COLD_PATH {
+        [](auto y, auto&& low_arr, auto name, auto function, auto i, auto j, auto... idxs) STAN_COLD_PATH {
           throw_domain_error(function, internal::make_iter_name(name, idxs...).c_str(), y, "is ",
                              (", but must be greater than or equal to "
                               + std::to_string(low_arr.coeff(i, j)))
                                  .c_str());
-        }();
+        }(y, low_arr, name, function, i, j, idxs...);
       }
     }
   }
@@ -131,12 +131,12 @@ inline void check_greater_or_equal(const char* function, const char* name,
   auto&& y_arr = value_of_rec(as_array_or_scalar(to_ref(y)));
   for (Eigen::Index i = 0; i < y_arr.size(); ++i) {
     if (unlikely(!(y_arr.coeff(i) >= low))) {
-      [&y_arr, &idxs..., low, name, function, i]() STAN_COLD_PATH {
+      [](auto&& y_arr, auto low, auto name, auto function, auto i, auto... idxs) STAN_COLD_PATH {
         throw_domain_error_vec(function, internal::make_iter_name(name, idxs...).c_str(), y_arr, i, "is ",
                                (", but must be greater than or equal to "
                                 + std::to_string(value_of_rec(low)))
                                    .c_str());
-      }();
+      }(y_arr, low, name, function, i, idxs...);
     }
   }
 }
@@ -164,12 +164,12 @@ inline void check_greater_or_equal(const char* function, const char* name,
   for (Eigen::Index j = 0; j < y_arr.cols(); ++j) {
     for (Eigen::Index i = 0; i < y_arr.rows(); ++i) {
       if (unlikely(!(y_arr.coeff(i, j) >= low))) {
-        [&y_arr, &idxs..., low, name, function, i, j]() STAN_COLD_PATH {
+        [](auto&& y_arr, auto low, auto name, auto function, auto i, auto j, auto... idxs) STAN_COLD_PATH {
           throw_domain_error_mat(function, internal::make_iter_name(name, idxs...).c_str(), y_arr, i, j, "is ",
                                  (", but must be greater than or equal to "
                                   + std::to_string(value_of_rec(low)))
                                      .c_str());
-        }();
+        }(y_arr, low, name, function, i, j, idxs...);
       }
     }
   }
@@ -200,12 +200,12 @@ inline void check_greater_or_equal(const char* function, const char* name,
   auto&& low_arr = value_of_rec(as_array_or_scalar(to_ref(low)));
   for (Eigen::Index i = 0; i < low_arr.size(); ++i) {
     if (unlikely(!(y_arr.coeff(i) >= low_arr.coeff(i)))) {
-      [&y_arr, &low_arr, &idxs..., name, function, i]() STAN_COLD_PATH {
+      [](auto&& y_arr, auto&& low_arr, auto name, auto function, auto i, auto... idxs) STAN_COLD_PATH {
         throw_domain_error_vec(function, internal::make_iter_name(name, idxs...).c_str(), y_arr, i, "is ",
                                (", but must be greater than or equal to "
                                 + std::to_string(low_arr.coeff(i)))
                                    .c_str());
-      }();
+      }(y_arr, low_arr, name, function, i, idxs...);
     }
   }
 }
@@ -236,12 +236,12 @@ inline void check_greater_or_equal(const char* function, const char* name,
   for (Eigen::Index j = 0; j < low_arr.cols(); ++j) {
     for (Eigen::Index i = 0; i < low_arr.rows(); ++i) {
       if (unlikely(!(y_arr.coeff(i, j) >= low_arr.coeff(i, j)))) {
-        [&y_arr, &low_arr, &idxs..., name, function, i, j]() STAN_COLD_PATH {
+        [](auto&& y_arr, auto&& low_arr, auto name, auto function, auto i, auto j, auto... idxs) STAN_COLD_PATH {
           throw_domain_error_mat(function, internal::make_iter_name(name, idxs...).c_str(), y_arr, i, j, "is ",
                                  (", but must be greater than or equal to "
                                   + std::to_string(low_arr.coeff(i, j)))
                                      .c_str());
-        }();
+        }(y_arr, low_arr, name, function, i, j, idxs...);
       }
     }
   }
