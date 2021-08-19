@@ -32,12 +32,12 @@ template <typename T_y, typename T_high,
 inline void check_less(const char* function, const char* name, const T_y& y,
                        const T_high& high, Idxs... idxs) {
   if (!(y < high)) {
-    [&]() STAN_COLD_PATH {
+    [](auto y, auto high, auto function, auto name, auto... idxs) STAN_COLD_PATH {
       throw_domain_error(
           function, internal::make_iter_name(name, idxs...).c_str(), y, "is ",
           (", but must be less than " + std::to_string(value_of_rec(high)))
               .c_str());
-    }();
+    }(y, high, function, name, idxs...);
   }
 }
 
@@ -63,12 +63,12 @@ inline void check_less(const char* function, const char* name, const T_y& y,
   auto&& high_arr = as_array_or_scalar(value_of_rec(to_ref(high)));
   for (Eigen::Index i = 0; i < high_arr.size(); ++i) {
     if (unlikely(!(y < high_arr.coeff(i)))) {
-      [&high_arr, idxs..., y, name, function, i]() STAN_COLD_PATH {
+      [](auto y, auto&& high_arr, auto name, auto function, auto i, auto... idxs) STAN_COLD_PATH {
         throw_domain_error(
             function, internal::make_iter_name(name, idxs...).c_str(), y, "is ",
             (", but must be less than " + std::to_string(high_arr.coeff(i)))
                 .c_str());
-      }();
+      }(y, high_arr, name, function, i, idxs...);
     }
   }
 }
@@ -96,12 +96,12 @@ inline void check_less(const char* function, const char* name, const T_y& y,
   for (Eigen::Index j = 0; j < high_arr.cols(); ++j) {
     for (Eigen::Index i = 0; i < high_arr.rows(); ++i) {
       if (unlikely(!(y < high_arr.coeff(i, j)))) {
-        [&high_arr, idxs..., y, name, function, i, j]() STAN_COLD_PATH {
+        [](auto y, auto&& high_arr, auto name, auto function, auto i, auto j, auto... idxs) STAN_COLD_PATH {
           throw_domain_error(function, internal::make_iter_name(name, idxs...).c_str(), y, "is ",
                              (", but must be less than "
                               + std::to_string(high_arr.coeff(i, j)))
                                  .c_str());
-        }();
+        }(y, high_arr, name, function, i, j, idxs...);
       }
     }
   }
@@ -130,12 +130,12 @@ inline void check_less(const char* function, const char* name, const T_y& y,
   auto&& y_arr = value_of_rec(as_array_or_scalar(to_ref(y)));
   for (Eigen::Index i = 0; i < y_arr.size(); ++i) {
     if (unlikely(!(y_arr.coeff(i) < high))) {
-      [&y_arr, idxs..., high, name, function, i]() STAN_COLD_PATH {
+      [](auto&& y_arr, auto high, auto name, auto function, auto i, auto... idxs) STAN_COLD_PATH {
         throw_domain_error_vec(
             function, internal::make_iter_name(name, idxs...).c_str(), y_arr, i, "is ",
             (", but must be less than " + std::to_string(value_of_rec(high)))
                 .c_str());
-      }();
+      }(y_arr, high, name, function, i, idxs...);
     }
   }
 }
@@ -164,12 +164,12 @@ inline void check_less(const char* function, const char* name, const T_y& y,
   for (Eigen::Index j = 0; j < y_arr.cols(); ++j) {
     for (Eigen::Index i = 0; i < y_arr.rows(); ++i) {
       if (unlikely(!(y_arr.coeff(i, j) < high))) {
-        [&y_arr, idxs..., high, name, function, i, j]() STAN_COLD_PATH {
+        [](auto&& y_arr, auto high, auto name, auto function, auto i, auto j, auto... idxs) STAN_COLD_PATH {
           throw_domain_error_mat(
               function, internal::make_iter_name(name, idxs...).c_str(), y_arr, i, j, "is ",
               (", but must be less than " + std::to_string(value_of_rec(high)))
                   .c_str());
-        }();
+        }(y_arr, high, name, function, i, j, idxs...);
       }
     }
   }
@@ -200,12 +200,12 @@ inline void check_less(const char* function, const char* name, const T_y& y,
   auto&& high_arr = value_of_rec(to_ref(high));
   for (Eigen::Index i = 0; i < y_arr.size(); ++i) {
     if (unlikely(!(y_arr.coeff(i) < high_arr.coeff(i)))) {
-      [&y_arr, &high_arr, idxs..., name, function, i]() STAN_COLD_PATH {
+      [](auto&& y_arr, auto&& high_arr, auto name, auto function, auto i, auto... idxs) STAN_COLD_PATH {
         throw_domain_error_vec(
             function, internal::make_iter_name(name, idxs...).c_str(), y_arr, i, "is ",
             (", but must be less than " + std::to_string(high_arr.coeff(i)))
                 .c_str());
-      }();
+      }(y_arr, high_arr, name, function, i, idxs...);
     }
   }
 }
@@ -236,12 +236,12 @@ inline void check_less(const char* function, const char* name, const T_y& y,
   for (Eigen::Index j = 0; j < y_arr.cols(); ++j) {
     for (Eigen::Index i = 0; i < y_arr.rows(); ++i) {
       if (unlikely(!(y_arr.coeff(i, j) < high_arr.coeff(i, j)))) {
-        [&y_arr, &high_arr, idxs..., name, function, i, j]() STAN_COLD_PATH {
+        [](auto&& y_arr, auto&& high_arr, auto name, auto function, auto i, auto j, auto... idxs) STAN_COLD_PATH {
           throw_domain_error_mat(function, internal::make_iter_name(name, idxs...).c_str(), y_arr, i, j, "is ",
                                  (", but must be less than "
                                   + std::to_string(high_arr.coeff(i, j)))
                                      .c_str());
-        }();
+        }(y_arr, high_arr, name, function, i, j, idxs...);
       }
     }
   }
