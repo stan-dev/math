@@ -25,7 +25,8 @@ namespace math {
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param high Upper bound
- * @param idxs Pack of integral types to construct lazily construct the error message indices
+ * @param idxs Pack of integral types to construct lazily construct the error
+ * message indices
  * @throw `domain_error` if y is not less than high or if any element of y or
  * high is `NaN`
  */
@@ -34,7 +35,8 @@ template <typename T_y, typename T_high,
 inline void check_less(const char* function, const char* name, const T_y& y,
                        const T_high& high, Idxs... idxs) {
   if (!(y < high)) {
-    [](auto y, auto high, auto function, auto name, auto... idxs) STAN_COLD_PATH {
+    [](auto y, auto high, auto function, auto name,
+       auto... idxs) STAN_COLD_PATH {
       throw_domain_error(
           function, internal::make_iter_name(name, idxs...).c_str(), y, "is ",
           (", but must be less than " + std::to_string(value_of_rec(high)))
@@ -56,18 +58,21 @@ inline void check_less(const char* function, const char* name, const T_y& y,
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param high Upper bound
- * @param idxs Pack of integral types to construct lazily construct the error message indices
+ * @param idxs Pack of integral types to construct lazily construct the error
+ * message indices
  * @throw `domain_error` if y is not less than high or if any element of y or
  * high is `NaN`
  */
 template <typename T_y, typename T_high, require_stan_scalar_t<T_y>* = nullptr,
-          require_vector_vt<is_stan_scalar, T_high>* = nullptr, typename... Idxs>
+          require_vector_vt<is_stan_scalar, T_high>* = nullptr,
+          typename... Idxs>
 inline void check_less(const char* function, const char* name, const T_y& y,
                        const T_high& high, Idxs... idxs) {
   auto&& high_arr = as_array_or_scalar(value_of_rec(to_ref(high)));
   for (Eigen::Index i = 0; i < high_arr.size(); ++i) {
     if (unlikely(!(y < high_arr.coeff(i)))) {
-      [](auto y, auto&& high_arr, auto name, auto function, auto i, auto... idxs) STAN_COLD_PATH {
+      [](auto y, auto&& high_arr, auto name, auto function, auto i,
+         auto... idxs) STAN_COLD_PATH {
         throw_domain_error(
             function, internal::make_iter_name(name, idxs...).c_str(), y, "is ",
             (", but must be less than " + std::to_string(high_arr.coeff(i)))
@@ -90,7 +95,8 @@ inline void check_less(const char* function, const char* name, const T_y& y,
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param high Upper bound
- * @param idxs Pack of integral types to construct lazily construct the error message indices
+ * @param idxs Pack of integral types to construct lazily construct the error
+ * message indices
  * @throw `domain_error` if y is not less than high or if any element of y or
  * high is `NaN`
  */
@@ -102,8 +108,11 @@ inline void check_less(const char* function, const char* name, const T_y& y,
   for (Eigen::Index j = 0; j < high_arr.cols(); ++j) {
     for (Eigen::Index i = 0; i < high_arr.rows(); ++i) {
       if (unlikely(!(y < high_arr.coeff(i, j)))) {
-        [](auto y, auto&& high_arr, auto name, auto function, auto i, auto j, auto... idxs) STAN_COLD_PATH {
-          throw_domain_error(function, internal::make_iter_name(name, idxs...).c_str(), y, "is ",
+        [](auto y, auto&& high_arr, auto name, auto function, auto i, auto j,
+           auto... idxs) STAN_COLD_PATH {
+          throw_domain_error(function,
+                             internal::make_iter_name(name, idxs...).c_str(), y,
+                             "is ",
                              (", but must be less than "
                               + std::to_string(high_arr.coeff(i, j)))
                                  .c_str());
@@ -126,7 +135,8 @@ inline void check_less(const char* function, const char* name, const T_y& y,
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param high Upper bound
- * @param idxs Pack of integral types to construct lazily construct the error message indices
+ * @param idxs Pack of integral types to construct lazily construct the error
+ * message indices
  * @throw `domain_error` if y is not less than high or if any element of y or
  * high is `NaN`
  */
@@ -138,9 +148,11 @@ inline void check_less(const char* function, const char* name, const T_y& y,
   auto&& y_arr = value_of_rec(as_array_or_scalar(to_ref(y)));
   for (Eigen::Index i = 0; i < y_arr.size(); ++i) {
     if (unlikely(!(y_arr.coeff(i) < high))) {
-      [](auto&& y_arr, auto high, auto name, auto function, auto i, auto... idxs) STAN_COLD_PATH {
+      [](auto&& y_arr, auto high, auto name, auto function, auto i,
+         auto... idxs) STAN_COLD_PATH {
         throw_domain_error_vec(
-            function, internal::make_iter_name(name, idxs...).c_str(), y_arr, i, "is ",
+            function, internal::make_iter_name(name, idxs...).c_str(), y_arr, i,
+            "is ",
             (", but must be less than " + std::to_string(value_of_rec(high)))
                 .c_str());
       }(y_arr, high, name, function, i, idxs...);
@@ -161,7 +173,8 @@ inline void check_less(const char* function, const char* name, const T_y& y,
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param high Upper bound
- * @param idxs Pack of integral types to construct lazily construct the error message indices
+ * @param idxs Pack of integral types to construct lazily construct the error
+ * message indices
  * @throw `domain_error` if y is not less than high or if any element of y or
  * high is `NaN`
  */
@@ -174,9 +187,11 @@ inline void check_less(const char* function, const char* name, const T_y& y,
   for (Eigen::Index j = 0; j < y_arr.cols(); ++j) {
     for (Eigen::Index i = 0; i < y_arr.rows(); ++i) {
       if (unlikely(!(y_arr.coeff(i, j) < high))) {
-        [](auto&& y_arr, auto high, auto name, auto function, auto i, auto j, auto... idxs) STAN_COLD_PATH {
+        [](auto&& y_arr, auto high, auto name, auto function, auto i, auto j,
+           auto... idxs) STAN_COLD_PATH {
           throw_domain_error_mat(
-              function, internal::make_iter_name(name, idxs...).c_str(), y_arr, i, j, "is ",
+              function, internal::make_iter_name(name, idxs...).c_str(), y_arr,
+              i, j, "is ",
               (", but must be less than " + std::to_string(value_of_rec(high)))
                   .c_str());
         }(y_arr, high, name, function, i, j, idxs...);
@@ -200,21 +215,25 @@ inline void check_less(const char* function, const char* name, const T_y& y,
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param high Upper bound
- * @param idxs Pack of integral types to construct lazily construct the error message indices
+ * @param idxs Pack of integral types to construct lazily construct the error
+ * message indices
  * @throw `domain_error` if y is not less than high or if any element of y or
  * high is `NaN`
  */
 template <typename T_y, typename T_high,
-          require_all_vector_vt<is_stan_scalar, T_y, T_high>* = nullptr, typename... Idxs>
+          require_all_vector_vt<is_stan_scalar, T_y, T_high>* = nullptr,
+          typename... Idxs>
 inline void check_less(const char* function, const char* name, const T_y& y,
                        const T_high& high, Idxs... idxs) {
   auto&& y_arr = value_of_rec(to_ref(y));
   auto&& high_arr = value_of_rec(to_ref(high));
   for (Eigen::Index i = 0; i < y_arr.size(); ++i) {
     if (unlikely(!(y_arr.coeff(i) < high_arr.coeff(i)))) {
-      [](auto&& y_arr, auto&& high_arr, auto name, auto function, auto i, auto... idxs) STAN_COLD_PATH {
+      [](auto&& y_arr, auto&& high_arr, auto name, auto function, auto i,
+         auto... idxs) STAN_COLD_PATH {
         throw_domain_error_vec(
-            function, internal::make_iter_name(name, idxs...).c_str(), y_arr, i, "is ",
+            function, internal::make_iter_name(name, idxs...).c_str(), y_arr, i,
+            "is ",
             (", but must be less than " + std::to_string(high_arr.coeff(i)))
                 .c_str());
       }(y_arr, high_arr, name, function, i, idxs...);
@@ -237,7 +256,8 @@ inline void check_less(const char* function, const char* name, const T_y& y,
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param high Upper bound
- * @param idxs Pack of integral types to construct lazily construct the error message indices
+ * @param idxs Pack of integral types to construct lazily construct the error
+ * message indices
  * @throw `domain_error` if y is not less than high or if any element of y or
  * high is `NaN`
  */
@@ -250,11 +270,14 @@ inline void check_less(const char* function, const char* name, const T_y& y,
   for (Eigen::Index j = 0; j < y_arr.cols(); ++j) {
     for (Eigen::Index i = 0; i < y_arr.rows(); ++i) {
       if (unlikely(!(y_arr.coeff(i, j) < high_arr.coeff(i, j)))) {
-        [](auto&& y_arr, auto&& high_arr, auto name, auto function, auto i, auto j, auto... idxs) STAN_COLD_PATH {
-          throw_domain_error_mat(function, internal::make_iter_name(name, idxs...).c_str(), y_arr, i, j, "is ",
-                                 (", but must be less than "
-                                  + std::to_string(high_arr.coeff(i, j)))
-                                     .c_str());
+        [](auto&& y_arr, auto&& high_arr, auto name, auto function, auto i,
+           auto j, auto... idxs) STAN_COLD_PATH {
+          throw_domain_error_mat(
+              function, internal::make_iter_name(name, idxs...).c_str(), y_arr,
+              i, j, "is ",
+              (", but must be less than "
+               + std::to_string(high_arr.coeff(i, j)))
+                  .c_str());
         }(y_arr, high_arr, name, function, i, j, idxs...);
       }
     }
@@ -273,7 +296,8 @@ inline void check_less(const char* function, const char* name, const T_y& y,
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param high Upper bound
- * @param idxs Pack of integral types to construct lazily construct the error message indices
+ * @param idxs Pack of integral types to construct lazily construct the error
+ * message indices
  * @throw `domain_error` if y is not less than high or if any element of y or
  * high is `NaN`
  */
@@ -299,13 +323,14 @@ inline void check_less(const char* function, const char* name, const T_y& y,
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param high Upper bound
- * @param idxs Pack of integral types to construct lazily construct the error message indices
+ * @param idxs Pack of integral types to construct lazily construct the error
+ * message indices
  * @throw `domain_error` if y is not less than high or if any element of y or
  * high is `NaN`
  */
-template <typename T_y, typename T_high,
-          require_not_std_vector_t<T_y>* = nullptr,
-          require_std_vector_vt<is_container, T_high>* = nullptr, typename... Idxs>
+template <
+    typename T_y, typename T_high, require_not_std_vector_t<T_y>* = nullptr,
+    require_std_vector_vt<is_container, T_high>* = nullptr, typename... Idxs>
 inline void check_less(const char* function, const char* name, const T_y& y,
                        const T_high& high, Idxs... idxs) {
   for (size_t i = 0; i < high.size(); ++i) {
@@ -326,7 +351,8 @@ inline void check_less(const char* function, const char* name, const T_y& y,
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param high Upper bound
- * @param idxs Pack of integral types to construct lazily construct the error message indices
+ * @param idxs Pack of integral types to construct lazily construct the error
+ * message indices
  * @throw `domain_error` if y is not less than high or if any element of y or
  * high is `NaN`
  */
@@ -339,7 +365,6 @@ inline void check_less(const char* function, const char* name, const T_y& y,
     check_less(function, name, y[i], high[i], idxs..., i);
   }
 }
-
 
 }  // namespace math
 }  // namespace stan

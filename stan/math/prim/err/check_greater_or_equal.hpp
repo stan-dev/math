@@ -26,20 +26,24 @@ namespace math {
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param low Lower bound
- * @param idxs Pack of integral types to construct lazily construct the error message indices
+ * @param idxs Pack of integral types to construct lazily construct the error
+ * message indices
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
 template <typename T_y, typename T_low,
           require_all_stan_scalar_t<T_y, T_low>* = nullptr, typename... Idxs>
 inline void check_greater_or_equal(const char* function, const char* name,
-                                   const T_y& y, const T_low& low, Idxs... idxs) {
+                                   const T_y& y, const T_low& low,
+                                   Idxs... idxs) {
   if (unlikely(!(y >= low))) {
-    [](auto y, auto low, auto function, auto name, auto... idxs) STAN_COLD_PATH {
-      throw_domain_error(function, internal::make_iter_name(name, idxs...).c_str(), y, "is ",
-                         (", but must be greater than or equal to "
-                          + std::to_string(value_of_rec(low)))
-                             .c_str());
+    [](auto y, auto low, auto function, auto name,
+       auto... idxs) STAN_COLD_PATH {
+      throw_domain_error(
+          function, internal::make_iter_name(name, idxs...).c_str(), y, "is ",
+          (", but must be greater than or equal to "
+           + std::to_string(value_of_rec(low)))
+              .c_str());
     }(y, low, function, name, idxs...);
   }
 }
@@ -57,22 +61,26 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param low Lower bound
- * @param idxs Pack of integral types to construct lazily construct the error message indices
+ * @param idxs Pack of integral types to construct lazily construct the error
+ * message indices
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
 template <typename T_y, typename T_low, require_stan_scalar_t<T_y>* = nullptr,
           require_vector_vt<is_stan_scalar, T_low>* = nullptr, typename... Idxs>
 inline void check_greater_or_equal(const char* function, const char* name,
-                                   const T_y& y, const T_low& low, Idxs... idxs) {
+                                   const T_y& y, const T_low& low,
+                                   Idxs... idxs) {
   auto&& low_arr = value_of_rec(as_array_or_scalar(to_ref(low)));
   for (Eigen::Index i = 0; i < low_arr.size(); ++i) {
     if (unlikely(!(y >= low_arr.coeff(i)))) {
-      [](auto y, auto&& low_arr, auto name, auto function, auto i, auto... idxs) STAN_COLD_PATH {
-        throw_domain_error(function, internal::make_iter_name(name, idxs...).c_str(), y, "is ",
-                           (", but must be greater than or equal to "
-                            + std::to_string(low_arr.coeff(i)))
-                               .c_str());
+      [](auto y, auto&& low_arr, auto name, auto function, auto i,
+         auto... idxs) STAN_COLD_PATH {
+        throw_domain_error(
+            function, internal::make_iter_name(name, idxs...).c_str(), y, "is ",
+            (", but must be greater than or equal to "
+             + std::to_string(low_arr.coeff(i)))
+                .c_str());
       }(y, low_arr, name, function, i, idxs...);
     }
   }
@@ -91,20 +99,25 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param low Lower bound
- * @param idxs Pack of integral types to construct lazily construct the error message indices
+ * @param idxs Pack of integral types to construct lazily construct the error
+ * message indices
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
 template <typename T_y, typename T_low, require_stan_scalar_t<T_y>* = nullptr,
           require_dense_dynamic_t<T_low>* = nullptr, typename... Idxs>
 inline void check_greater_or_equal(const char* function, const char* name,
-                                   const T_y& y, const T_low& low, Idxs... idxs) {
+                                   const T_y& y, const T_low& low,
+                                   Idxs... idxs) {
   auto&& low_arr = value_of_rec(to_ref(low));
   for (Eigen::Index j = 0; j < low_arr.cols(); ++j) {
     for (Eigen::Index i = 0; i < low_arr.rows(); ++i) {
       if (unlikely(!(y >= low_arr.coeff(i, j)))) {
-        [](auto y, auto&& low_arr, auto name, auto function, auto i, auto j, auto... idxs) STAN_COLD_PATH {
-          throw_domain_error(function, internal::make_iter_name(name, idxs...).c_str(), y, "is ",
+        [](auto y, auto&& low_arr, auto name, auto function, auto i, auto j,
+           auto... idxs) STAN_COLD_PATH {
+          throw_domain_error(function,
+                             internal::make_iter_name(name, idxs...).c_str(), y,
+                             "is ",
                              (", but must be greater than or equal to "
                               + std::to_string(low_arr.coeff(i, j)))
                                  .c_str());
@@ -127,7 +140,8 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param low Lower bound
- * @param idxs Pack of integral types to construct lazily construct the error message indices
+ * @param idxs Pack of integral types to construct lazily construct the error
+ * message indices
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
@@ -135,16 +149,20 @@ template <typename T_y, typename T_low,
           require_vector_vt<is_stan_scalar, T_y>* = nullptr,
           require_stan_scalar_t<T_low>* = nullptr, typename... Idxs>
 inline void check_greater_or_equal(const char* function, const char* name,
-                                   const T_y& y, const T_low& low, Idxs... idxs) {
+                                   const T_y& y, const T_low& low,
+                                   Idxs... idxs) {
   auto&& y_arr = value_of_rec(as_array_or_scalar(to_ref(y)));
   for (Eigen::Index i = 0; i < y_arr.size(); ++i) {
     if (unlikely(!(y_arr.coeff(i) >= low))) {
-      [](auto&& y_arr, auto low, auto name, auto function, auto i, auto... idxs) STAN_COLD_PATH {
-        throw_domain_error_vec(function, internal::make_iter_name(name, idxs...).c_str(), y_arr, i, "is ",
-                               (", but must be greater than or equal to "
-                                + std::to_string(value_of_rec(low)))
-                                   .c_str());
-      }(y_arr, low, name, function, i, idxs...);
+      [](auto&& y_arr, auto low, auto name, auto function, auto i, auto... idxs)
+          STAN_COLD_PATH {
+            throw_domain_error_vec(
+                function, internal::make_iter_name(name, idxs...).c_str(),
+                y_arr, i, "is ",
+                (", but must be greater than or equal to "
+                 + std::to_string(value_of_rec(low)))
+                    .c_str());
+          }(y_arr, low, name, function, i, idxs...);
     }
   }
 }
@@ -162,23 +180,28 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param low Lower bound
- * @param idxs Pack of integral types to construct lazily construct the error message indices
+ * @param idxs Pack of integral types to construct lazily construct the error
+ * message indices
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
 template <typename T_y, typename T_low, require_dense_dynamic_t<T_y>* = nullptr,
           require_stan_scalar_t<T_low>* = nullptr, typename... Idxs>
 inline void check_greater_or_equal(const char* function, const char* name,
-                                   const T_y& y, const T_low& low, Idxs... idxs) {
+                                   const T_y& y, const T_low& low,
+                                   Idxs... idxs) {
   auto&& y_arr = value_of_rec(to_ref(y));
   for (Eigen::Index j = 0; j < y_arr.cols(); ++j) {
     for (Eigen::Index i = 0; i < y_arr.rows(); ++i) {
       if (unlikely(!(y_arr.coeff(i, j) >= low))) {
-        [](auto&& y_arr, auto low, auto name, auto function, auto i, auto j, auto... idxs) STAN_COLD_PATH {
-          throw_domain_error_mat(function, internal::make_iter_name(name, idxs...).c_str(), y_arr, i, j, "is ",
-                                 (", but must be greater than or equal to "
-                                  + std::to_string(value_of_rec(low)))
-                                     .c_str());
+        [](auto&& y_arr, auto low, auto name, auto function, auto i, auto j,
+           auto... idxs) STAN_COLD_PATH {
+          throw_domain_error_mat(
+              function, internal::make_iter_name(name, idxs...).c_str(), y_arr,
+              i, j, "is ",
+              (", but must be greater than or equal to "
+               + std::to_string(value_of_rec(low)))
+                  .c_str());
         }(y_arr, low, name, function, i, j, idxs...);
       }
     }
@@ -200,20 +223,26 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param low Lower bound
- * @param idxs Pack of integral types to construct lazily construct the error message indices
+ * @param idxs Pack of integral types to construct lazily construct the error
+ * message indices
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
 template <typename T_y, typename T_low,
-          require_all_vector_vt<is_stan_scalar, T_y, T_low>* = nullptr, typename... Idxs>
+          require_all_vector_vt<is_stan_scalar, T_y, T_low>* = nullptr,
+          typename... Idxs>
 inline void check_greater_or_equal(const char* function, const char* name,
-                                   const T_y& y, const T_low& low, Idxs... idxs) {
+                                   const T_y& y, const T_low& low,
+                                   Idxs... idxs) {
   auto&& y_arr = value_of_rec(as_array_or_scalar(to_ref(y)));
   auto&& low_arr = value_of_rec(as_array_or_scalar(to_ref(low)));
   for (Eigen::Index i = 0; i < low_arr.size(); ++i) {
     if (unlikely(!(y_arr.coeff(i) >= low_arr.coeff(i)))) {
-      [](auto&& y_arr, auto&& low_arr, auto name, auto function, auto i, auto... idxs) STAN_COLD_PATH {
-        throw_domain_error_vec(function, internal::make_iter_name(name, idxs...).c_str(), y_arr, i, "is ",
+      [](auto&& y_arr, auto&& low_arr, auto name, auto function, auto i,
+         auto... idxs) STAN_COLD_PATH {
+        throw_domain_error_vec(function,
+                               internal::make_iter_name(name, idxs...).c_str(),
+                               y_arr, i, "is ",
                                (", but must be greater than or equal to "
                                 + std::to_string(low_arr.coeff(i)))
                                    .c_str());
@@ -237,24 +266,29 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param low Lower bound
- * @param idxs Pack of integral types to construct lazily construct the error message indices
+ * @param idxs Pack of integral types to construct lazily construct the error
+ * message indices
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
 template <typename T_y, typename T_low,
           require_all_dense_dynamic_t<T_y, T_low>* = nullptr, typename... Idxs>
 inline void check_greater_or_equal(const char* function, const char* name,
-                                   const T_y& y, const T_low& low, Idxs... idxs) {
+                                   const T_y& y, const T_low& low,
+                                   Idxs... idxs) {
   auto&& y_arr = value_of_rec(to_ref(y));
   auto&& low_arr = value_of_rec(to_ref(low));
   for (Eigen::Index j = 0; j < low_arr.cols(); ++j) {
     for (Eigen::Index i = 0; i < low_arr.rows(); ++i) {
       if (unlikely(!(y_arr.coeff(i, j) >= low_arr.coeff(i, j)))) {
-        [](auto&& y_arr, auto&& low_arr, auto name, auto function, auto i, auto j, auto... idxs) STAN_COLD_PATH {
-          throw_domain_error_mat(function, internal::make_iter_name(name, idxs...).c_str(), y_arr, i, j, "is ",
-                                 (", but must be greater than or equal to "
-                                  + std::to_string(low_arr.coeff(i, j)))
-                                     .c_str());
+        [](auto&& y_arr, auto&& low_arr, auto name, auto function, auto i,
+           auto j, auto... idxs) STAN_COLD_PATH {
+          throw_domain_error_mat(
+              function, internal::make_iter_name(name, idxs...).c_str(), y_arr,
+              i, j, "is ",
+              (", but must be greater than or equal to "
+               + std::to_string(low_arr.coeff(i, j)))
+                  .c_str());
         }(y_arr, low_arr, name, function, i, j, idxs...);
       }
     }
@@ -273,7 +307,8 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param low Lower bound
- * @param idxs Pack of integral types to construct lazily construct the error message indices
+ * @param idxs Pack of integral types to construct lazily construct the error
+ * message indices
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
@@ -281,7 +316,8 @@ template <typename T_y, typename T_low,
           require_std_vector_vt<is_container, T_y>* = nullptr,
           require_not_std_vector_t<T_low>* = nullptr, typename... Idxs>
 inline void check_greater_or_equal(const char* function, const char* name,
-                                   const T_y& y, const T_low& low, Idxs... idxs) {
+                                   const T_y& y, const T_low& low,
+                                   Idxs... idxs) {
   for (size_t i = 0; i < y.size(); ++i) {
     check_greater_or_equal(function, name, y[i], low, idxs..., i);
   }
@@ -299,15 +335,17 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param low Lower bound
- * @param idxs Pack of integral types to construct lazily construct the error message indices
+ * @param idxs Pack of integral types to construct lazily construct the error
+ * message indices
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is NaN
  */
-template <typename T_y, typename T_low,
-          require_not_std_vector_t<T_y>* = nullptr,
-          require_std_vector_vt<is_container, T_low>* = nullptr, typename... Idxs>
+template <
+    typename T_y, typename T_low, require_not_std_vector_t<T_y>* = nullptr,
+    require_std_vector_vt<is_container, T_low>* = nullptr, typename... Idxs>
 inline void check_greater_or_equal(const char* function, const char* name,
-                                   const T_y& y, const T_low& low, Idxs... idxs) {
+                                   const T_y& y, const T_low& low,
+                                   Idxs... idxs) {
   for (size_t i = 0; i < low.size(); ++i) {
     check_greater_or_equal(function, name, y, low[i], idxs..., i);
   }
@@ -324,7 +362,8 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * @param name Variable name (for error messages)
  * @param y Variable to check
  * @param low Lower bound
- * @param idxs Pack of integral types to construct lazily construct the error message indices
+ * @param idxs Pack of integral types to construct lazily construct the error
+ * message indices
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
@@ -332,7 +371,8 @@ template <typename T_y, typename T_low,
           require_any_std_vector_vt<is_container, T_y, T_low>* = nullptr,
           require_all_std_vector_t<T_y, T_low>* = nullptr, typename... Idxs>
 inline void check_greater_or_equal(const char* function, const char* name,
-                                   const T_y& y, const T_low& low, Idxs... idxs) {
+                                   const T_y& y, const T_low& low,
+                                   Idxs... idxs) {
   for (size_t i = 0; i < y.size(); ++i) {
     check_greater_or_equal(function, name, y[i], low[i], idxs..., i);
   }

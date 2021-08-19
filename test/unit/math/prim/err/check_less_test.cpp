@@ -132,11 +132,10 @@ TEST(ErrorHandlingMat, CheckLess_Matrix_one_indexed_message) {
   high_mat.resize(3, 3);
   std::vector<double> x_scalar_vec{x, x, x};
   std::vector<double> high_scalar_vec{high, high, high};
-  using std_vec_mat = std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>;
-  std_vec_mat x_vec1{
-      x_mat, x_mat, x_mat};
-  std_vec_mat high_vec1{
-      high_mat, high_mat, high_mat};
+  using std_vec_mat
+      = std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>;
+  std_vec_mat x_vec1{x_mat, x_mat, x_mat};
+  std_vec_mat high_vec1{high_mat, high_mat, high_mat};
   // x_vec, high
   for (int i = 0; i < x_vec1.size(); ++i) {
     x_vec1[i] << -5, 0, 5, -5, 0, 5, -5, 0, 5;

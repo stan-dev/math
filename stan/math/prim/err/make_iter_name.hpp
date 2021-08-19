@@ -9,21 +9,19 @@ namespace stan {
 namespace math {
 namespace internal {
 
-inline constexpr auto construct_idx() noexcept {return "";}
+inline constexpr auto construct_idx() noexcept { return ""; }
 
 template <typename... Idxs>
 inline auto construct_idx(size_t i, Idxs... idxs) {
   if (sizeof...(Idxs) > 0) {
-    return std::to_string(i + stan::error_index::value) + ", " + construct_idx(idxs...);
+    return std::to_string(i + stan::error_index::value) + ", "
+           + construct_idx(idxs...);
   } else {
     return std::to_string(i + stan::error_index::value);
   }
 }
 
-
-inline auto make_iter_name(const char* name) {
-  return std::string(name);
-}
+inline auto make_iter_name(const char* name) { return std::string(name); }
 
 /**
  * Given a name and index, generate a new name with the index attached.
