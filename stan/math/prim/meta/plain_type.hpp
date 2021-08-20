@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta/is_eigen.hpp>
 #include <stan/math/prim/meta/is_detected.hpp>
+#include <stan/math/prim/meta/void_t.hpp>
 #include <type_traits>
 
 namespace stan {
@@ -40,13 +41,25 @@ struct eval_return_type {
 template <typename T>
 using eval_return_type_t = typename eval_return_type<T>::type;
 
+namespace internal {
+  // primary template handles types that have no nested ::type member:
+  template< class, class = void >
+  struct has_plain_object : std::false_type { };
+
+  // specialization recognizes types that do have a nested ::type member:
+  template< class T >
+  struct has_plain_object<T, void_t<typename std::decay_t<T>::PlainObject>> : std::true_type { };
+
+}  // namespace internal
+
+
 /**
  * Determines plain (non expression) type associated with \c T. For \c Eigen
  * expression it is a type the expression can be evaluated into.
  * @tparam T type to determine plain type of
  */
 template <typename T>
-struct plain_type<T, require_eigen_t<T>> {
+struct plain_type<T, require_t<internal::has_plain_object<T>>> {
   using type = typename std::decay_t<T>::PlainObject;
 };
 
