@@ -36,10 +36,14 @@ ifndef arch
      export arch:=ppc32
    endif
  else
-   ifeq ($(shell /usr/sbin/sysctl -n hw.optional.x86_64 2>/dev/null),1)
-     export arch:=intel64
+   ifeq ($(shell /usr/sbin/sysctl -n hw.machine),arm64)
+    export arch:=arm64
    else
-     export arch:=ia32
+    ifeq ($(shell /usr/sbin/sysctl -n hw.optional.x86_64 2>/dev/null),1)
+      export arch:=intel64
+    else
+      export arch:=ia32
+    endif
    endif
  endif
 endif

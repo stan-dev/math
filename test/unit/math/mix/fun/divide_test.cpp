@@ -34,10 +34,15 @@ TEST(MathMixMatFun, divide) {
   stan::test::expect_ad_matvar(f, m, x2);
 
   Eigen::VectorXd u(4);
-  u << 100, 0, -3, 4;
+  u << 100, 0.5, -3, 4;
   stan::test::expect_ad(f, u, x2);
   stan::test::expect_ad_matvar(f, m, x2);
 
+  Eigen::VectorXd u1(4);
+  u1 << 100, 0.5, -3, 4;
+  Eigen::VectorXd u2 = u1.reverse();
+  stan::test::expect_ad(f, u1, u2);
+  stan::test::expect_ad_matvar(f, u1, u2);
   Eigen::VectorXd v0(0);
   Eigen::RowVectorXd rv0(0);
   Eigen::MatrixXd m00(0, 0);

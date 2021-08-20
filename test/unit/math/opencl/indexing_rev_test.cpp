@@ -1,4 +1,5 @@
 #ifdef STAN_OPENCL
+#ifndef STAN_TEST_SKIP_REQUIRING_OPENCL_INT64_BASE_ATOMIC
 #include <stan/math/opencl/indexing_rev.hpp>
 #include <stan/math/opencl/copy.hpp>
 #include <test/unit/util.hpp>
@@ -46,5 +47,5 @@ TEST(indexing_rev, indexing_rev_large) {
     EXPECT_NEAR_REL(stan::math::from_matrix_cl(adj_cl), correct);
   }
 }
-
+#endif  // STAN_TEST_SKIP_REQUIRING_OPENCL_INT64_BASE_ATOMIC
 #endif
