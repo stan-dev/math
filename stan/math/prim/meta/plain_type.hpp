@@ -42,16 +42,16 @@ template <typename T>
 using eval_return_type_t = typename eval_return_type<T>::type;
 
 namespace internal {
-  // primary template handles types that have no nested ::type member:
-  template< class, class = void >
-  struct has_plain_object : std::false_type { };
+// primary template handles types that have no nested ::type member:
+template <class, class = void>
+struct has_plain_object : std::false_type {};
 
-  // specialization recognizes types that do have a nested ::type member:
-  template< class T >
-  struct has_plain_object<T, void_t<typename std::decay_t<T>::PlainObject>> : std::true_type { };
+// specialization recognizes types that do have a nested ::type member:
+template <class T>
+struct has_plain_object<T, void_t<typename std::decay_t<T>::PlainObject>>
+    : std::true_type {};
 
 }  // namespace internal
-
 
 /**
  * Determines plain (non expression) type associated with \c T. For \c Eigen
