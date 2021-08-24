@@ -107,8 +107,7 @@ cholesky_factor_constrain(const T& x, int M, int N, return_type_t<T>& lp) {
  * @return Cholesky factor
  */
 template <bool Jacobian, typename T>
-inline auto cholesky_factor_constrain(const T& x, int M, int N,
-                                      return_type_t<T>& lp) {
+inline auto cholesky_factor_constrain(const T& x, int M, int N, return_type_t<T>& lp) {
   if (Jacobian) {
     return cholesky_factor_constrain(x, M, N, lp);
   } else {

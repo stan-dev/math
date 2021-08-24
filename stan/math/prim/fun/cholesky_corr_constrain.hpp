@@ -91,8 +91,7 @@ cholesky_corr_constrain(const EigVec& y, int K, return_type_t<EigVec>& lp) {
  * @param[in,out] lp log density accumulator
  */
 template <bool Jacobian, typename T>
-inline auto cholesky_corr_constrain(const T& y, int K,
-                                    return_type_t<EigVec>& lp) {
+inline auto cholesky_corr_constrain(const T& y, int K, return_type_t<T>& lp) {
   if (Jacobian) {
     return cholesky_corr_constrain(y, K, lp);
   } else {
