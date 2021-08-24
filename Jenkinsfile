@@ -230,12 +230,12 @@ pipeline {
                     post { always { retry(3) { deleteDir() } } }
                 }
                 stage('OpenCL CPU tests') {
-                    when {
-                        expression {
-                            !skipOpenCL
-                        }
-                    }
-                    agent { label "gelman-group-win2 || linux-gpu" }
+                    // when {
+                    //     expression {
+                    //         !skipOpenCL
+                    //     }
+                    // }
+                    agent { label "linux-gpu" }
                     steps {
                         script {
                             if (isUnix()) {
