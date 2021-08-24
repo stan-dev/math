@@ -51,17 +51,16 @@ inline auto corr_constrain(const T_x& x, T_lp& lp) {
 
 /**
  * Return the result of transforming the specified scalar or container of values
- * to have a valid correlation value between -1 and 1 (inclusive).
+ * to have a valid correlation value between -1 and 1 (inclusive). If the
+ * `Jacobian` parameter is `true`, the log density accumulator is incremented
+ * with the log absolute Jacobian determinant of the transform.  All of the
+ * transforms are specified with their Jacobians in the *Stan Reference Manual*
+ * chapter Constraint Transforms.
  *
- * <p>The transform used is as specified for
- * <code>corr_constrain(T)</code>.  The log absolute Jacobian
- * determinant is
- *
- * <p>\f$\log | \frac{d}{dx} \tanh x  | = \log (1 - \tanh^2 x)\f$.
- *
- * @tparam Jacobian If true, incremented `lp` with the log Jacobian
+ * @tparam Jacobian if `true`, increment log density accumulator with log
+ * absolute Jacobian determinant of constraining transform
  * @tparam T_x Type of scalar or container
- * @tparam T_lp A scalar
+ * @tparam T_lp type of target log density accumulator
  * @param[in] x value or container
  * @param[in,out] lp log density accumulator
  */

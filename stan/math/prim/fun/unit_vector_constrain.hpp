@@ -57,19 +57,23 @@ inline plain_type_t<T1> unit_vector_constrain(const T1& y, T2& lp) {
 }
 
 /**
- * Return the unit length vector corresponding to the free vector y.
- * See https://en.wikipedia.org/wiki/N-sphere#Generating_random_points
+ * Return the unit length vector corresponding to the free vector y. If the
+ * `Jacobian` parameter is `true`, the log density accumulator is incremented
+ * with the log absolute Jacobian determinant of the transform.  All of the
+ * transforms are specified with their Jacobians in the *Stan Reference Manual*
+ * chapter Constraint Transforms.
  *
- * @tparam Jacobian If true, incremented `lp` with the log Jacobian
+ * @tparam Jacobian if `true`, increment log density accumulator with log
+ * absolute Jacobian determinant of constraining transform
  * @tparam T A type inheriting from `Eigen::DenseBase` or a `var_value` with
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
- *  and 1 column.
+ *  and 1 column
  * @param y vector of K unrestricted variables
+ * @param[in, out] lp log density accumulator
  * @return Unit length vector of dimension K
- * @param lp Log probability reference to increment.
  */
 template <bool Jacobian, typename T>
-inline auto unit_vector_constrain(const T& y, scalar_type_t<T>& lp) {
+inline auto unit_vector_constrain(const T& y, return_type_t<T>& lp) {
   if (Jacobian) {
     return unit_vector_constrain(y, lp);
   } else {

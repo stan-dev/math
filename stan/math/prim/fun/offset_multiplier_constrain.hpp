@@ -274,18 +274,13 @@ inline auto offset_multiplier_constrain(const std::vector<T>& x,
 
 /**
  * Return the linearly transformed value for the specified unconstrained input
- * and specified offset and multiplier.
+ * and specified offset and multiplier. If the `Jacobian` parameter is `true`,
+ * the log density accumulator is incremented with the log absolute Jacobian
+ * determinant of the transform.  All of the transforms are specified with their
+ * Jacobians in the *Stan Reference Manual* chapter Constraint Transforms.
  *
- * <p>The transform applied is
- *
- * <p>\f$f(x) = mu + sigma * x\f$
- *
- * <p>where mu is the offset and sigma is the multiplier.
- *
- * <p>If the offset is zero and the multiplier is one this
- * reduces to <code>identity_constrain(x)</code>.
- *
- * @tparam Jacobian If true, incremented `lp` with the log Jacobian
+ * @tparam Jacobian if `true`, increment log density accumulator with log
+ * absolute Jacobian determinant of constraining transform
  * @tparam T A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
  * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
  * @tparam M A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
@@ -295,6 +290,7 @@ inline auto offset_multiplier_constrain(const std::vector<T>& x,
  * @param[in] x Unconstrained scalar input
  * @param[in] mu offset of constrained output
  * @param[in] sigma multiplier of constrained output
+ * @param[in, out] lp log density accumulator
  * @return linear transformed value corresponding to inputs
  * @throw std::domain_error if sigma <= 0
  * @throw std::domain_error if mu is not finite

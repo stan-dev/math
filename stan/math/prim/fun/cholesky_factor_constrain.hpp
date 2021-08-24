@@ -33,7 +33,7 @@ cholesky_factor_constrain(const T& x, int M, int N) {
   check_greater_or_equal("cholesky_factor_constrain",
                          "num rows (must be greater or equal to num cols)", M,
                          N);
-  check_size_match("cholesky_factor_constrain", "x.size()", x.size(),
+  check_size_match("cholesky_factor_constrain", "constrain size", x.size(),
                    "((N * (N + 1)) / 2 + (M - N) * N)",
                    ((N * (N + 1)) / 2 + (M - N) * N));
   Eigen::Matrix<T_scalar, Eigen::Dynamic, Eigen::Dynamic> y(M, N);
@@ -58,21 +58,22 @@ cholesky_factor_constrain(const T& x, int M, int N) {
 /**
  * Return the Cholesky factor of the specified size read from the
  * specified vector and increment the specified log probability
- * reference with the log Jacobian adjustment of the transform.  A total
- * of (N choose 2) + N + N * (M - N) free parameters are required to read
- * an M by N Cholesky factor.
+ * reference with the log absolute Jacobian determinant adjustment of the
+ * transform.  A total of (N choose 2) + N + N * (M - N) free parameters are
+ * required to read an M by N Cholesky factor.
  *
  * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
  * have one compile-time dimension equal to 1)
  * @param x Vector of unconstrained values
  * @param M number of rows
  * @param N number of columns
- * @param lp Log probability that is incremented with the log Jacobian
+ * @param lp Log probability that is incremented with the log absolute Jacobian
+ * determinant
  * @return Cholesky factor
  */
 template <typename T, require_eigen_vector_t<T>* = nullptr>
 inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
-cholesky_factor_constrain(const T& x, int M, int N, scalar_type_t<T>& lp) {
+cholesky_factor_constrain(const T& x, int M, int N, return_type_t<T>& lp) {
   check_size_match("cholesky_factor_constrain", "x.size()", x.size(),
                    "((N * (N + 1)) / 2 + (M - N) * N)",
                    ((N * (N + 1)) / 2 + (M - N) * N));
@@ -86,25 +87,28 @@ cholesky_factor_constrain(const T& x, int M, int N, scalar_type_t<T>& lp) {
 }
 
 /**
- * Return the Cholesky factor of the specified size read from the
- * specified vector and increment the specified log probability
- * reference with the log Jacobian adjustment of the transform.  A total
- * of (N choose 2) + N + N * (M - N) free parameters are required to read
- * an M by N Cholesky factor.
+ * Return the Cholesky factor of the specified size read from the specified
+ * vector. A total of (N choose 2) + N + N * (M - N) free parameters are
+ * required to read an M by N Cholesky factor. If the `Jacobian` parameter is
+ * `true`, the log density accumulator is incremented with the log absolute
+ * Jacobian determinant of the transform.  All of the transforms are specified
+ * with their Jacobians in the *Stan Reference Manual* chapter Constraint
+ * Transforms.
  *
- * @tparam Jacobian If true, incremented `lp` with the log Jacobian
+ * @tparam Jacobian if `true`, increment log density accumulator with log
+ * absolute Jacobian determinant of constraining transform
  * @tparam T A type inheriting from `Eigen::DenseBase` or a `var_value` with
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
- *  and 1 column.
+ *  and 1 column
  * @param x Vector of unconstrained values
  * @param M number of rows
  * @param N number of columns
- * @param lp Log probability that is incremented with the log Jacobian
+ * @param[in,out] lp log density accumulator
  * @return Cholesky factor
  */
 template <bool Jacobian, typename T>
 inline auto cholesky_factor_constrain(const T& x, int M, int N,
-                                      scalar_type_t<T>& lp) {
+                                      return_type_t<T>& lp) {
   if (Jacobian) {
     return cholesky_factor_constrain(x, M, N, lp);
   } else {

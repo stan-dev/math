@@ -67,7 +67,7 @@ corr_matrix_constrain(const T& x, Eigen::Index k) {
  */
 template <typename T, require_eigen_col_vector_t<T>* = nullptr>
 inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
-corr_matrix_constrain(const T& x, Eigen::Index k, scalar_type_t<T>& lp) {
+corr_matrix_constrain(const T& x, Eigen::Index k, return_type_t<T>& lp) {
   Eigen::Index k_choose_2 = (k * (k - 1)) / 2;
   check_size_match("cov_matrix_constrain", "x.size()", x.size(), "k_choose_2",
                    k_choose_2);
@@ -75,30 +75,27 @@ corr_matrix_constrain(const T& x, Eigen::Index k, scalar_type_t<T>& lp) {
 }
 
 /**
- * Return the correlation matrix of the specified dimensionality
- * derived from the specified vector of unconstrained values.  The
- * input vector must be of length \f${k \choose 2} =
- * \frac{k(k-1)}{2}\f$.  The values in the input vector represent
- * unconstrained (partial) correlations among the dimensions.
+ * Return the correlation matrix of the specified dimensionality derived from
+ * the specified vector of unconstrained values. The input vector must be of
+ * length \f${k \choose 2} = \frac{k(k-1)}{2}\f$.  The values in the input
+ * vector represent unconstrained (partial) correlations among the dimensions.
+ * If the `Jacobian` parameter is `true`, the log density accumulator is
+ * incremented with the log absolute Jacobian determinant of the transform.  All
+ * of the transforms are specified with their Jacobians in the *Stan Reference
+ * Manual* chapter Constraint Transforms.
  *
- * <p>The transform is as specified for
- * <code>corr_matrix_constrain(Matrix, size_t)</code>; the
- * paper it cites also defines the Jacobians for correlation inputs,
- * which are composed with the correlation constrained Jacobians
- * defined in <code>corr_constrain(T, double)</code> for
- * this function.
- *
- * @tparam Jacobian If true, incremented `lp` with the log Jacobian
+ * @tparam Jacobian if `true`, increment log density accumulator with log
+ * absolute Jacobian determinant of constraining transform
  * @tparam T A type inheriting from `Eigen::DenseBase` or a `var_value` with
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
- *  and 1 column.
- * @param x Vector of unconstrained partial correlations.
- * @param k Dimensionality of returned correlation matrix.
- * @param lp Log probability reference to increment.
+ *  and 1 column
+ * @param x Vector of unconstrained partial correlations
+ * @param k Dimensionality of returned correlation matrix
+ * @param[in,out] lp log density accumulator
  */
 template <bool Jacobian, typename T>
 inline auto corr_matrix_constrain(const T& x, Eigen::Index k,
-                                  scalar_type_t<T>& lp) {
+                                  return_type_t<T>& lp) {
   if (Jacobian) {
     return corr_matrix_constrain(x, k, lp);
   } else {

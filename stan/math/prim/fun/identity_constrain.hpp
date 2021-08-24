@@ -11,7 +11,8 @@ namespace math {
  * transform to the input. This promotes the input to the least upper
  * bound of the input types.
  *
- * @tparam Jacobian Unused, only here for standardized API
+ * @tparam Jacobian if `true`, increment log density accumulator with log
+ * absolute Jacobian determinant of constraining transform
  * @tparam T type of value to promote
  * @tparam Types Other types.
  * @param[in] x object

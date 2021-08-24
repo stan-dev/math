@@ -82,23 +82,23 @@ inline auto simplex_constrain(const Vec& y, value_type_t<Vec>& lp) {
 }
 
 /**
- * Return the simplex corresponding to the specified free vector
- * and increment the specified log probability reference with
- * the log absolute Jacobian determinant of the transform.
+ * Return the simplex corresponding to the specified free vector. If the
+ * `Jacobian` parameter is `true`, the log density accumulator is incremented
+ * with the log absolute Jacobian determinant of the transform.  All of the
+ * transforms are specified with their Jacobians in the *Stan Reference Manual*
+ * chapter Constraint Transforms.
  *
- * The simplex transform is defined through a centered
- * stick-breaking process.
- *
- * @tparam Jacobian If true, incremented `lp` with the log Jacobian
+ * @tparam Jacobian if `true`, increment log density accumulator with log
+ * absolute Jacobian determinant of constraining transform
  * @tparam Vec A type inheriting from `Eigen::DenseBase` or a `var_value` with
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
- *  and 1 column.
- * @param y Free vector input of dimensionality K - 1.
- * @param lp Log probability reference to increment.
- * @return Simplex of dimensionality K.
+ *  and 1 column
+ * @param[in] y free vector
+ * @param[in, out] lp log density accumulator
+ * @return simplex of dimensionality one greater than `y`
  */
 template <bool Jacobian, typename Vec>
-auto simplex_constrain(const Vec& y, scalar_type_t<Vec>& lp) {
+auto simplex_constrain(const Vec& y, return_type_t<Vec>& lp) {
   if (Jacobian) {
     return simplex_constrain(y, lp);
   } else {

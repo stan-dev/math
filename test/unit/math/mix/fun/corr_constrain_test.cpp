@@ -2,7 +2,7 @@
 
 TEST(mathMixMatFun, corr_constrain) {
   auto f = [](const auto& x1) {
-    stan::scalar_type_t<std::decay_t<decltype(x1)>> lp = 0.0;
+    stan::scalar_type_t<decltype(x1)> lp = 0.0;
     return stan::math::corr_constrain<false>(x1, lp);
   };
 
@@ -31,12 +31,12 @@ TEST(mathMixMatFun, corr_constrain) {
 
 TEST(mathMixMatFun, corr_constrain_lp) {
   auto f1 = [](const auto& x1) {
-    stan::scalar_type_t<std::decay_t<decltype(x1)>> lp = 0.0;
+    stan::scalar_type_t<decltype(x1)> lp = 0.0;
     return stan::math::corr_constrain<true>(x1, lp);
   };
 
   auto f2 = [](const auto& x1) {
-    stan::scalar_type_t<std::decay_t<decltype(x1)>> lp = 0.0;
+    stan::scalar_type_t<decltype(x1)> lp = 0.0;
     stan::math::corr_constrain<true>(x1, lp);
     return lp;
   };

@@ -47,25 +47,22 @@ inline auto positive_constrain(const T& x, S& lp) {
 }
 
 /**
- * Return the positive value for the specified unconstrained input,
- * incrementing the scalar reference with the log absolute
- * Jacobian determinant.
+ * Return the positive value for the specified unconstrained input. If the
+ * `Jacobian` parameter is `true`, the log density accumulator is incremented
+ * with the log absolute Jacobian determinant of the transform.  All of the
+ * transforms are specified with their Jacobians in the *Stan Reference Manual*
+ * chapter Constraint Transforms.
  *
- * <p>See <code>positive_constrain(T)</code> for details
- * of the transform.  The log absolute Jacobian determinant is
- *
- * <p>\f$\log | \frac{d}{dx} \mbox{exp}(x) |
- *    = \log | \mbox{exp}(x) | =  x\f$.
- *
- * @tparam Jacobian If true, incremented `lp` with the log Jacobian
+ * @tparam Jacobian if `true`, increment log density accumulator with log
+ * absolute Jacobian determinant of constraining transform
  * @tparam T A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
  * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
  * @param x unconstrained value or container
- * @param lp log density reference.
+ * @param[in, out] lp log density accumulator
  * @return positive constrained version of unconstrained value(s)
  */
 template <bool Jacobian, typename T>
-inline auto positive_constrain(const T& x, scalar_type_t<T>& lp) {
+inline auto positive_constrain(const T& x, return_type_t<T>& lp) {
   if (Jacobian) {
     return positive_constrain(x, lp);
   } else {
