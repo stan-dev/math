@@ -268,7 +268,7 @@ pipeline {
                     }
                 }
                 stage('OpenCL GPU tests') {
-                    agent { label "gelman-group-win2 || linux-gpu" }
+                    agent { label "inux-gpu" }
                     steps {
                         script {
                             if (isUnix()) {
