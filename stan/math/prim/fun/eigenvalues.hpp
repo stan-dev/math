@@ -7,13 +7,11 @@
 namespace stan {
 namespace math {
 
-template <typename T>
-inline auto eigenvalues(const Eigen::Matrix<T, -1, -1>& m) {
+template <typename T, require_eigen_t<T>* = nullptr>
+inline auto eigenvalues(const T& m) {
   check_nonzero_size("eigenvalues", "m", m);
   check_square("eigenvalues", "m", m);
-
-  Eigen::EigenSolver<Eigen::Matrix<T, -1, -1>> solver(m);
-  return solver.eigenvalues().eval();
+  return Eigen::EigenSolver<plain_type_t<T>>(m).eigenvalues().eval();
 }
 
 }  // namespace math
