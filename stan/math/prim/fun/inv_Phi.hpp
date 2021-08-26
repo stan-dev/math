@@ -27,7 +27,7 @@ namespace math {
  * digits.
  *
  * @param p argument between 0 and 1 inclusive
- * @return real number
+ * @return Real value of the inverse cdf for the standard normal distribution.
  */
 inline double inv_Phi(double p) {
   check_bounded("inv_Phi", "Probability variable", p, 0, 1);
