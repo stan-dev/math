@@ -1,7 +1,6 @@
 #ifndef STAN_MATH_PRIM_FUN_INV_PHI_HPP
 #define STAN_MATH_PRIM_FUN_INV_PHI_HPP
 
-#include <stan/math/prim/fun/abs.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
@@ -24,11 +23,11 @@ namespace math {
  *
  * Algorithm described in Wichura, M. J. (1988)
  * Algorithm AS 241: The percentage points of the normal distribution. Applied
- * Statistics, 37, 477–484. which provides precise results up to about 16
+ * Statistics, 37, 477–484. The algorithm provides precise results up to about 16
  * digits.
  *
- * @param p Argument between 0 and 1.
- * @return Real number
+ * @param p argument between 0 and 1 inclusive
+ * @return real number
  */
 inline double inv_Phi(double p) {
   check_bounded("inv_Phi", "Probability variable", p, 0, 1);
@@ -75,7 +74,7 @@ inline double inv_Phi(double p) {
   double r;
   double val;
 
-  if (abs(q) <= .425) {
+  if (std::fabs(q) <= .425) {
     r = .180625 - square(q);
     return q
            * (((((((a[7] * r + a[6]) * r + a[5]) * r + a[4]) * r + a[3]) * r
@@ -91,10 +90,8 @@ inline double inv_Phi(double p) {
                   * r
               + 1.0);
   } else {
-    if (q < 0)
-      r = p;
-    else
-      r = 1.0 - p;
+    
+    r = q < 0 ? p : 1 - p;
 
     if (r <= 0)
       return 0;
