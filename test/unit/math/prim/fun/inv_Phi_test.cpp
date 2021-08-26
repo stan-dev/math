@@ -20,7 +20,7 @@ TEST(MathFunctions, inv_Phi) {
   EXPECT_FLOAT_EQ(p, Phi(inv_Phi(p)));
 }
 
-TEST(MathFunctions, Equal){
+TEST(MathFunctions, Equal) {
   using stan::math::inv_Phi;
   // test output generated with R using qnorm
   EXPECT_NEAR(-2.247626755795137, inv_Phi(0.0123), 1e-15);

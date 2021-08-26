@@ -23,8 +23,8 @@ namespace math {
  *
  * Algorithm described in Wichura, M. J. (1988)
  * Algorithm AS 241: The percentage points of the normal distribution. Applied
- * Statistics, 37, 477–484. The algorithm provides precise results up to about 16
- * digits.
+ * Statistics, 37, 477–484. The algorithm provides precise results up to about
+ * 16 digits.
  *
  * @param p argument between 0 and 1 inclusive
  * @return Real value of the inverse cdf for the standard normal distribution.
@@ -90,7 +90,6 @@ inline double inv_Phi(double p) {
                   * r
               + 1.0);
   } else {
-    
     r = q < 0 ? p : 1 - p;
 
     if (r <= 0)
