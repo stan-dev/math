@@ -9,7 +9,6 @@ void test_constructor(const T& re, const S& im) {
   EXPECT_EQ(z1, z2);
 }
 
-
 TEST(mathPrimFunToComplex, isconstexpr) {
   using stan::math::to_complex;
   // using in static assert tests that constexpr really is const
