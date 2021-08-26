@@ -22,6 +22,7 @@ TEST(MathFunctions, inv_Phi) {
 
 TEST(MathFunctions, Equal){
   using stan::math::inv_Phi;
+  // test output generated with R using qnorm
   EXPECT_NEAR(-2.247626755795137, inv_Phi(0.0123), 1e-15);
   EXPECT_NEAR(0.0582719627987081, inv_Phi(0.523234), 1e-15);
   EXPECT_NEAR(1.4284791211149008, inv_Phi(0.923423), 1e-15);
