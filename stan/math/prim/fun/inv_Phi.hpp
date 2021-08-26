@@ -133,6 +133,7 @@ inline double inv_Phi(double p) {
     if (q < 0.0)
       return -val;
   }
+  return val;
 }
 
 /**
