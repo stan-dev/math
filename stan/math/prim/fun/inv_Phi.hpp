@@ -99,7 +99,7 @@ inline double inv_Phi(double p) {
     if (r <= 0)
       return 0;
 
-    r = sqrt(-log(r));
+    r = std::sqrt(-std::log(r));
 
     if (r <= 5.0) {
       r += -1.6;
