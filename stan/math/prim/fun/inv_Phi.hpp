@@ -80,7 +80,7 @@ inline double inv_Phi(double p) {
            * (((((((a[7] * r + a[6]) * r + a[5]) * r + a[4]) * r + a[3]) * r
                 + a[2])
                    * r
-               + a[l])
+               + a[1])
                   * r
               + a[0])
            / (((((((b[6] * r + b[5]) * r + b[4]) * r + b[3]) * r + b[2]) * r
