@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_PRIM_FUN_INV_PHI_HPP
 #define STAN_MATH_PRIM_FUN_INV_PHI_HPP
 
+#include <stan/math/prim/fun/abs.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
@@ -74,7 +75,7 @@ inline double inv_Phi(double p) {
   double r;
   double val;
 
-  if (q.abs() <= .425) {
+  if (abs(q) <= .425) {
     r = .180625 - square(q);
     return q
            * (((((((a[7] * r + a[6]) * r + a[5]) * r + a[4]) * r + a[3]) * r
