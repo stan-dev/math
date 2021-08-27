@@ -231,6 +231,33 @@ inline auto ub_constrain(const std::vector<T>& x, const std::vector<U>& ub,
   return ret;
 }
 
+/**
+ * Specialization of `ub_constrain` to apply a container of upper bounds
+ * elementwise to each input element. If the `Jacobian` parameter is `true`, the
+ * log density accumulator is incremented with the log absolute Jacobian
+ * determinant of the transform.  All of the transforms are specified with their
+ * Jacobians in the *Stan Reference Manual* chapter Constraint Transforms.
+ *
+ * @tparam Jacobian if `true`, increment log density accumulator with log
+ * absolute Jacobian determinant of constraining transform
+ * @tparam T A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
+ * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
+ * @tparam U A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
+ * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
+ * @param[in] x unconstrained input
+ * @param[in] ub upper bound on output
+ * @param[in, out] lp log density accumulator
+ * @return lower-bound constrained value corresponding to inputs
+ */
+template <bool Jacobian, typename T, typename U>
+inline auto ub_constrain(const T& x, const U& ub, return_type_t<T, U>& lp) {
+  if (Jacobian) {
+    return ub_constrain(x, ub, lp);
+  } else {
+    return ub_constrain(x, ub);
+  }
+}
+
 }  // namespace math
 }  // namespace stan
 
