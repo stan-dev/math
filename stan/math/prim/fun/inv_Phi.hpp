@@ -146,8 +146,8 @@ inline double inv_Phi_lambda(double p) {
  * @return Real value of the inverse cdf for the standard normal distribution.
  */
 inline double inv_Phi(double p) {
-  return p >= 0.9999 ? -internal::inv_Phi_lambda((large_int - large_int * p)
-                                                 / large_int)
+  return p >= 0.9999 ? -internal::inv_Phi_lambda((math::large_int - math::large_int * p)
+                                                 / math::large_int)
                      : internal::inv_Phi_lambda(p);
 }
 
