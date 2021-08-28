@@ -13,8 +13,6 @@
 namespace stan {
 namespace math {
 
-static const int64 large_int = 10000000000;
-
 namespace internal {
 /**
  * The inverse of the unit normal cumulative distribution function.
@@ -147,8 +145,8 @@ inline double inv_Phi_lambda(double p) {
  */
 inline double inv_Phi(double p) {
   return p >= 0.9999
-             ? -internal::inv_Phi_lambda((math::large_int - math::large_int * p)
-                                         / math::large_int)
+             ? -internal::inv_Phi_lambda((BIGINT - BIGINT * p)
+                                         / BIGINT)
              : internal::inv_Phi_lambda(p);
 }
 

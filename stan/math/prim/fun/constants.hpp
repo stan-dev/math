@@ -27,6 +27,12 @@ inline double e() { return boost::math::constants::e<double>(); }
 inline double pi() { return boost::math::constants::pi<double>(); }
 
 /**
+ * The value of 10000000000, ie a big integer.
+ *
+ */
+inline int64_t BIGINT = 10000000000;
+
+/**
  * Smallest positive value.
  */
 constexpr double EPSILON = std::numeric_limits<double>::epsilon();
