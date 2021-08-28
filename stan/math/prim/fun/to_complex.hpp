@@ -19,8 +19,8 @@ namespace math {
  * @return complex value with specified real and imaginary components
  */
 template <typename T = double, typename S = double>
-inline std::complex<stan::real_return_t<T, S>> to_complex(const T& re = 0,
-                                                          const S& im = 0) {
+constexpr inline std::complex<stan::real_return_t<T, S>> to_complex(
+    const T& re = 0, const S& im = 0) {
   return std::complex<stan::real_return_t<T, S>>(re, im);
 }
 
