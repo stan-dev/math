@@ -30,7 +30,7 @@ inline double pi() { return boost::math::constants::pi<double>(); }
  * The value of 10000000000, ie a big integer.
  *
  */
-inline int64_t BIGINT = 10000000000;
+const int64_t BIGINT = 10000000000;
 
 /**
  * Smallest positive value.
