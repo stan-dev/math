@@ -13,7 +13,7 @@
 namespace stan {
 namespace math {
 
-static const long int large_int = 10000000000;
+static const int64 large_int = 10000000000;
 
 namespace internal {
 /**
