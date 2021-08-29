@@ -12,6 +12,7 @@
 #include <stan/math/prim/fun/trace_inv_quad_form_ldlt.hpp>
 #include <stan/math/prim/fun/vector_seq_view.hpp>
 #include <stan/math/prim/fun/cholesky_decompose.hpp>
+#include <stan/math/prim/functor/operands_and_partials.hpp>
 
 namespace stan {
 namespace math {
