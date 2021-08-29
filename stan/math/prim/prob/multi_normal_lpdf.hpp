@@ -76,6 +76,18 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
   check_symmetric(function, "Covariance matrix", Sigma_ref);
 
   auto L_Sigma = cholesky(Sigma_ref);
+
+    if (size_y == 0) {
+    return lp;
+  }
+
+    if (include_summand<propto>::value) {
+    lp += NEG_LOG_SQRT_TWO_PI * size_y * size_vec;
+  }
+
+  if (include_summand<propto, T_covar_elem>::value) {
+    lp -= 0.5 * log_determinant_ldlt(ldlt_Sigma) * size_vec;
+  }
   
   template <typename T_y, typename T_loc, typename T_covar>
 inline return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
