@@ -77,23 +77,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
 
   auto L_Sigma = cholesky(Sigma_ref);
 
-    if (size_y == 0) {
-    return lp;
-  }
-
-    if (include_summand<propto>::value) {
-    lp += NEG_LOG_SQRT_TWO_PI * size_y * size_vec;
-  }
-
-  if (include_summand<propto, T_covar_elem>::value) {
-    lp -= 0.5 * log_determinant_ldlt(ldlt_Sigma) * size_vec;
-  }
-  
-  template <typename T_y, typename T_loc, typename T_covar>
-inline return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
-    const T_y& y, const T_loc& mu, const T_covar& L) {
-  return multi_normal_cholesky_lpdf<false>(y, mu, L);
-}
+ 
 
   // auto ldlt_Sigma = make_ldlt_factor(Sigma_ref);
   // check_ldlt_factor(function, "LDLT_Factor of covariance parameter",
@@ -123,11 +107,11 @@ inline return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
 //   return lp;
 // }
 
-// template <typename T_y, typename T_loc, typename T_covar>
-// inline return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(
-//     const T_y& y, const T_loc& mu, const T_covar& Sigma) {
-//   return multi_normal_lpdf<false>(y, mu, Sigma);
-// }
+template <typename T_y, typename T_loc, typename T_covar>
+inline return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(
+    const T_y& y, const T_loc& mu, const T_covar& L_Sigma) {
+  return multi_normal_cholesky_lpdf<false>(y, mu, L_Sigma);
+}
 
 }  // namespace math
 }  // namespace stan
