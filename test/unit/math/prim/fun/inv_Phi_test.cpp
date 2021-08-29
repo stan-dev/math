@@ -48,7 +48,7 @@ TEST(MathFunctions, Equal) {
   int numValues = sizeof(p) / sizeof(double);
 
   for (int i = 0; i < numValues; ++i) {
-    EXPECT_NEAR(exact[i], inv_Phi(p[i]), 1e-13);
+    EXPECT_NEAR(exact[i], inv_Phi(p[i]), 1.5e-15);
   }
 }
 
