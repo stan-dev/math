@@ -41,7 +41,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(
 
   T_y_ref y_ref = y;
   T_mu_ref mu_ref = mu;
-  auto L = stan::math::cholesky_decompose(Sigma);
+  auto L = cholesky_decompose(Sigma);
   T_L_ref L_ref = L;
   vector_seq_view<T_y_ref> y_vec(y_ref);
   vector_seq_view<T_mu_ref> mu_vec(mu_ref);
