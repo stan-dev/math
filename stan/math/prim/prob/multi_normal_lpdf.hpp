@@ -11,7 +11,7 @@
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/trace_inv_quad_form_ldlt.hpp>
 #include <stan/math/prim/fun/vector_seq_view.hpp>
-#include <stan/math/prim/fun/cholesky.hpp>
+#include <stan/math/prim/fun/cholesky_decompose.hpp>
 
 namespace stan {
 namespace math {
