@@ -11,6 +11,7 @@
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/trace_inv_quad_form_ldlt.hpp>
 #include <stan/math/prim/fun/vector_seq_view.hpp>
+#include <stan/math/prim/fun/cholesky.hpp>
 
 namespace stan {
 namespace math {
@@ -74,39 +75,47 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
   const auto& Sigma_ref = to_ref(Sigma);
   check_symmetric(function, "Covariance matrix", Sigma_ref);
 
-  auto ldlt_Sigma = make_ldlt_factor(Sigma_ref);
-  check_ldlt_factor(function, "LDLT_Factor of covariance parameter",
-                    ldlt_Sigma);
-
-  if (size_y == 0) {
-    return lp;
-  }
-
-  if (include_summand<propto>::value) {
-    lp += NEG_LOG_SQRT_TWO_PI * size_y * size_vec;
-  }
-
-  if (include_summand<propto, T_covar_elem>::value) {
-    lp -= 0.5 * log_determinant_ldlt(ldlt_Sigma) * size_vec;
-  }
-
-  if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
-    lp_type sum_lp_vec(0.0);
-    for (size_t i = 0; i < size_vec; i++) {
-      const auto& y_col = as_column_vector_or_scalar(y_vec[i]);
-      const auto& mu_col = as_column_vector_or_scalar(mu_vec[i]);
-      sum_lp_vec += trace_inv_quad_form_ldlt(ldlt_Sigma, y_col - mu_col);
-    }
-    lp -= 0.5 * sum_lp_vec;
-  }
-  return lp;
+  auto L_Sigma = cholesky(Sigma_ref);
+  
+  template <typename T_y, typename T_loc, typename T_covar>
+inline return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
+    const T_y& y, const T_loc& mu, const T_covar& L) {
+  return multi_normal_cholesky_lpdf<false>(y, mu, L);
 }
 
-template <typename T_y, typename T_loc, typename T_covar>
-inline return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(
-    const T_y& y, const T_loc& mu, const T_covar& Sigma) {
-  return multi_normal_lpdf<false>(y, mu, Sigma);
-}
+  // auto ldlt_Sigma = make_ldlt_factor(Sigma_ref);
+  // check_ldlt_factor(function, "LDLT_Factor of covariance parameter",
+  //                   ldlt_Sigma);
+
+//   if (size_y == 0) {
+//     return lp;
+//   }
+
+//   if (include_summand<propto>::value) {
+//     lp += NEG_LOG_SQRT_TWO_PI * size_y * size_vec;
+//   }
+
+//   if (include_summand<propto, T_covar_elem>::value) {
+//     lp -= 0.5 * log_determinant_ldlt(ldlt_Sigma) * size_vec;
+//   }
+
+//   if (include_summand<propto, T_y, T_loc, T_covar_elem>::value) {
+//     lp_type sum_lp_vec(0.0);
+//     for (size_t i = 0; i < size_vec; i++) {
+//       const auto& y_col = as_column_vector_or_scalar(y_vec[i]);
+//       const auto& mu_col = as_column_vector_or_scalar(mu_vec[i]);
+//       sum_lp_vec += trace_inv_quad_form_ldlt(ldlt_Sigma, y_col - mu_col);
+//     }
+//     lp -= 0.5 * sum_lp_vec;
+//   }
+//   return lp;
+// }
+
+// template <typename T_y, typename T_loc, typename T_covar>
+// inline return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(
+//     const T_y& y, const T_loc& mu, const T_covar& Sigma) {
+//   return multi_normal_lpdf<false>(y, mu, Sigma);
+// }
 
 }  // namespace math
 }  // namespace stan
