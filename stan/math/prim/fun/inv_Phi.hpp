@@ -15,17 +15,15 @@ namespace math {
 
 namespace internal {
 /**
+ *  The largest integer that protects against floating point errors 
+ * for the inv_Phi function. The value was found by finding the largest
+ * integer that passed the unit tests for accuracy when the input into inv_Phi
+ * is near 1.
+ */
+const int BIGINT = 2000000000;
+
+/**
  * The inverse of the unit normal cumulative distribution function.
- *
- * The return value for a specified input probability, $p$, is
- * the unit normal variate, $x$, such that
- *
- * \f$\Phi(x) = \int_{-\infty}^x \mbox{\sf Norm}(x|0, 1) \ dx = p\f$
- *
- * Algorithm described in Wichura, M. J. (1988)
- * Algorithm AS 241: The percentage points of the normal distribution. Applied
- * Statistics, 37, 477–484. The algorithm provides precise results up to about
- * 16 digits.
  *
  * @param p argument between 0 and 1 inclusive
  * @return Real value of the inverse cdf for the standard normal distribution.
@@ -135,16 +133,18 @@ inline double inv_Phi_lambda(double p) {
 }  // namespace internal
 
 /**
- * The inverse of the unit normal cumulative distribution function.
- *
- * The ternary operation is to protect against floating point error
- * in values near 1.
+ * Return the value of the inverse standard normal cumulative distribution function at the specified argument.
+ * 
+ * The precision is at or better than 1.5e-15 for values between 0.0000001 he largest integer that protects against floating point errors 
+ * for the inv_Phi function. The value was found by finding the largest
+ * integer that passed the unit tests for accuracy when the input into inv_Phi
+ * is near 1.
  *
  * @param p argument between 0 and 1 inclusive
  * @return Real value of the inverse cdf for the standard normal distribution.
  */
 inline double inv_Phi(double p) {
-  return p >= 0.9999 ? -internal::inv_Phi_lambda((BIGINT - BIGINT * p) / BIGINT)
+  return p >= 0.9999 ? -internal::inv_Phi_lambda((internal::BIGINT - internal::BIGINT * p) / internal::BIGINT)
                      : internal::inv_Phi_lambda(p);
 }
 
