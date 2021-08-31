@@ -142,7 +142,7 @@ inline double inv_Phi_lambda(double p) {
  * unit tests for accuracy when the input into inv_Phi is near 1.
  *
  * @param p argument between 0 and 1 inclusive
- * @return Real value of the inverse cdf for the standard normal distribution.
+ * @return real value of the inverse cdf for the standard normal distribution
  */
 inline double inv_Phi(double p) {
   return p >= 0.9999
