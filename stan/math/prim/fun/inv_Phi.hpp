@@ -15,7 +15,7 @@ namespace math {
 
 namespace internal {
 /**
- *  The largest integer that protects against floating point errors 
+ *  The largest integer that protects against floating point errors
  * for the inv_Phi function. The value was found by finding the largest
  * integer that passed the unit tests for accuracy when the input into inv_Phi
  * is near 1.
@@ -133,19 +133,22 @@ inline double inv_Phi_lambda(double p) {
 }  // namespace internal
 
 /**
- * Return the value of the inverse standard normal cumulative distribution function at the specified argument.
- * 
- * The precision is at or better than 1.5e-15 for values between 0.0000001 he largest integer that protects against floating point errors 
- * for the inv_Phi function. The value was found by finding the largest
- * integer that passed the unit tests for accuracy when the input into inv_Phi
- * is near 1.
+ * Return the value of the inverse standard normal cumulative distribution
+ * function at the specified argument.
+ *
+ * The precision is at or better than 1.5e-15 for values between 0.0000001 he
+ * largest integer that protects against floating point errors for the inv_Phi
+ * function. The value was found by finding the largest integer that passed the
+ * unit tests for accuracy when the input into inv_Phi is near 1.
  *
  * @param p argument between 0 and 1 inclusive
  * @return Real value of the inverse cdf for the standard normal distribution.
  */
 inline double inv_Phi(double p) {
-  return p >= 0.9999 ? -internal::inv_Phi_lambda((internal::BIGINT - internal::BIGINT * p) / internal::BIGINT)
-                     : internal::inv_Phi_lambda(p);
+  return p >= 0.9999
+             ? -internal::inv_Phi_lambda(
+                   (internal::BIGINT - internal::BIGINT * p) / internal::BIGINT)
+             : internal::inv_Phi_lambda(p);
 }
 
 /**
