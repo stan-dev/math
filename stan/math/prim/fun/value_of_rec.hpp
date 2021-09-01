@@ -10,7 +10,6 @@
 namespace stan {
 namespace math {
 
-
 /**
  * Return the specified argument.
  *
@@ -66,7 +65,7 @@ inline T value_of_rec(T&& x) {
  * @return Specified matrix.
  */
 template <typename T, require_eigen_t<T>* = nullptr,
-  require_st_same<T, double>* = nullptr>
+          require_st_same<T, double>* = nullptr>
 inline T value_of_rec(T&& x) {
   return std::forward<T>(x);
 }
@@ -102,7 +101,8 @@ inline auto value_of_rec(T&& M) {
  * @param[in] x std::vector to be extract values from.
  * @return std::vector of values
  **/
-template <typename T, require_std_vector_t<T>* = nullptr, require_not_st_same<double, T>* = nullptr>
+template <typename T, require_std_vector_t<T>* = nullptr,
+          require_not_st_same<double, T>* = nullptr>
 inline auto value_of_rec(const T& x) {
   promote_scalar_t<double, T> result(x.size());
   std::transform(x.begin(), x.end(), result.begin(),
