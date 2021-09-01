@@ -69,7 +69,7 @@ template <typename T_y, typename T_high, require_stan_scalar_t<T_y>* = nullptr,
           typename... Idxs>
 inline void check_less(const char* function, const char* name, const T_y& y,
                        const T_high& high, Idxs... idxs) {
-  auto&& high_arr = as_array_or_scalar(value_of_rec(to_ref(high)));
+  auto&& high_arr = value_of_rec(as_array_or_scalar(to_ref(high)));
   for (Eigen::Index i = 0; i < high_arr.size(); ++i) {
     if (unlikely(!(y < high_arr.coeff(i)))) {
       [](auto y, auto&& high_arr, auto name, auto function, auto i,
@@ -146,7 +146,7 @@ template <typename T_y, typename T_high, require_vector_t<T_y>* = nullptr,
           require_stan_scalar_t<T_high>* = nullptr, typename... Idxs>
 inline void check_less(const char* function, const char* name, const T_y& y,
                        const T_high& high, Idxs... idxs) {
-  auto&& y_arr = value_of_rec(as_array_or_scalar(to_ref(y)));
+  auto&& y_arr = as_array_or_scalar(value_of_rec(to_ref(y)));
   for (Eigen::Index i = 0; i < y_arr.size(); ++i) {
     if (unlikely(!(y_arr.coeff(i) < high))) {
       [](auto&& y_arr, auto high, auto name, auto function, auto i,
@@ -227,8 +227,8 @@ template <typename T_y, typename T_high,
           typename... Idxs>
 inline void check_less(const char* function, const char* name, const T_y& y,
                        const T_high& high, Idxs... idxs) {
-  auto&& y_arr = value_of_rec(to_ref(y));
-  auto&& high_arr = value_of_rec(to_ref(high));
+  auto&& y_arr = as_array_or_scalar(value_of_rec(to_ref(y)));
+  auto&& high_arr = as_array_or_scalar(value_of_rec(to_ref(high)));
   for (Eigen::Index i = 0; i < y_arr.size(); ++i) {
     if (unlikely(!(y_arr.coeff(i) < high_arr.coeff(i)))) {
       [](auto&& y_arr, auto&& high_arr, auto name, auto function, auto i,

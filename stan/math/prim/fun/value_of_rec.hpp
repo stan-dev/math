@@ -10,25 +10,6 @@
 namespace stan {
 namespace math {
 
-/**
- * Return the value of the specified scalar argument
- * converted to a double value.
- *
- * <p>See the <code>primitive_value</code> function to
- * extract values without casting to <code>double</code>.
- *
- * <p>This function is meant to cover the primitive types. For
- * types requiring pass-by-reference, this template function
- * should be specialized.
- *
- * @tparam T Type of scalar.
- * @param x Scalar to convert to double.
- * @return Value of scalar cast to a double.
- */
-template <typename T, typename = require_stan_scalar_t<T>>
-inline double value_of_rec(const T x) {
-  return static_cast<double>(x);
-}
 
 /**
  * Return the specified argument.
@@ -67,29 +48,9 @@ inline std::complex<double> value_of_rec(const std::complex<T>& x) {
  * @return Specified std::vector.
  */
 template <typename T, require_std_vector_t<T>* = nullptr,
-          require_vt_same<double, T>* = nullptr>
+          require_st_same<double, T>* = nullptr>
 inline T value_of_rec(T&& x) {
   return std::forward<T>(x);
-}
-
-/**
- * Convert a matrix of type T to a matrix of doubles.
- *
- * T must implement value_of_rec. See
- * test/unit/math/fwd/fun/value_of_test.cpp for fvar and var usage.
- *
- * @tparam T Type of matrix
- * @param[in] M Matrix to be converted
- * @return Matrix of values
- **/
-template <typename T, typename = require_not_st_same<T, double>,
-          typename = require_eigen_t<T>>
-inline auto value_of_rec(T&& M) {
-  return make_holder(
-      [](auto& m) {
-        return m.unaryExpr([](auto x) { return value_of_rec(x); });
-      },
-      std::forward<T>(M));
 }
 
 /**
@@ -104,10 +65,30 @@ inline auto value_of_rec(T&& M) {
  * @param x Specified matrix.
  * @return Specified matrix.
  */
-template <typename T, typename = require_st_same<T, double>,
-          typename = require_eigen_t<T>>
+template <typename T, require_eigen_t<T>* = nullptr,
+  require_st_same<T, double>* = nullptr>
 inline T value_of_rec(T&& x) {
   return std::forward<T>(x);
+}
+
+/**
+ * Convert a matrix of type T to a matrix of doubles.
+ *
+ * T must implement value_of_rec. See
+ * test/unit/math/fwd/fun/value_of_test.cpp for fvar and var usage.
+ *
+ * @tparam T Type of matrix
+ * @param[in] M Matrix to be converted
+ * @return Matrix of values
+ **/
+template <typename T, require_not_st_same<T, double>* = nullptr,
+          require_eigen_t<T>* = nullptr>
+inline auto value_of_rec(T&& M) {
+  return make_holder(
+      [](auto& m) {
+        return m.unaryExpr([](auto x) { return value_of_rec(x); });
+      },
+      std::forward<T>(M));
 }
 
 /**
@@ -121,10 +102,9 @@ inline T value_of_rec(T&& x) {
  * @param[in] x std::vector to be extract values from.
  * @return std::vector of values
  **/
-template <typename T, require_not_same_t<double, T>* = nullptr>
-inline auto value_of_rec(const std::vector<T>& x) {
-  size_t x_size = x.size();
-  std::vector<promote_scalar_t<double, T>> result(x_size);
+template <typename T, require_std_vector_t<T>* = nullptr, require_not_st_same<double, T>* = nullptr>
+inline auto value_of_rec(const T& x) {
+  promote_scalar_t<double, T> result(x.size());
   std::transform(x.begin(), x.end(), result.begin(),
                  [](auto&& xx) { return value_of_rec(xx); });
   return result;

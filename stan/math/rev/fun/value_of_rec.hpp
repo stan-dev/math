@@ -3,6 +3,7 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
+#include <stan/math/prim/fun/value_of_rec.hpp>
 
 namespace stan {
 namespace math {
@@ -13,8 +14,8 @@ namespace math {
  * @param v Variable.
  * @return Value of variable.
  */
-template <typename T>
-inline auto value_of_rec(const var_value<T>& v) {
+template <typename T, require_var_t<T>* = nullptr>
+inline auto value_of_rec(const T& v) {
   return v.vi_->val_;
 }
 

@@ -147,7 +147,7 @@ template <typename T_y, typename T_low, require_vector_t<T_y>* = nullptr,
           require_stan_scalar_t<T_low>* = nullptr, typename... Idxs>
 inline void check_greater(const char* function, const char* name, const T_y& y,
                           const T_low& low, Idxs... idxs) {
-  auto&& y_arr = value_of_rec(as_array_or_scalar(to_ref(y)));
+  auto&& y_arr = as_array_or_scalar(value_of_rec(to_ref(y)));
   for (Eigen::Index i = 0; i < y_arr.size(); ++i) {
     if (unlikely(!(y_arr.coeff(i) > low))) {
       [](auto&& y_arr, auto low, auto name, auto function, auto i,
@@ -228,8 +228,8 @@ template <typename T_y, typename T_low,
           typename... Idxs>
 inline void check_greater(const char* function, const char* name, const T_y& y,
                           const T_low& low, Idxs... idxs) {
-  auto&& y_arr = value_of_rec(as_array_or_scalar(to_ref(y)));
-  auto&& low_arr = value_of_rec(as_array_or_scalar(to_ref(low)));
+  auto&& y_arr = as_array_or_scalar(value_of_rec(to_ref(y)));
+  auto&& low_arr = as_array_or_scalar(value_of_rec(to_ref(low)));
   for (Eigen::Index i = 0; i < low_arr.size(); ++i) {
     if (unlikely(!(y_arr.coeff(i) > low_arr.coeff(i)))) {
       [](auto&& y_arr, auto&& low_arr, auto name, auto function, auto i,

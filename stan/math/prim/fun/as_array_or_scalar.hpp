@@ -51,7 +51,7 @@ inline T as_array_or_scalar(T&& v) {
  * @param v Specified \c Eigen \c Matrix or expression.
  * @return Matrix converted to an array.
  */
-template <typename T, typename = require_eigen_t<T>,
+template <typename T, typename = require_matrix_t<T>,
           require_not_eigen_array_t<T>* = nullptr>
 inline auto as_array_or_scalar(T&& v) {
   return make_holder([](auto& x) { return x.array(); }, std::forward<T>(v));
