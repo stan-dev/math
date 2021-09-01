@@ -33,6 +33,15 @@ auto cholesky_corr_free(const T& x) {
   return z;
 }
 
+template <typename T, require_std_vector_t<T>* = nullptr>
+auto cholesky_corr_free(const T& x) {
+  std::vector<decltype(cholesky_corr_free(x[0]))> x_free(x.size());
+  std::transform(x.begin(), x.end(), x_free.begin(), [](auto&& xx) {
+    return cholesky_corr_free(xx);
+  });
+  return x_free;
+}
+
 }  // namespace math
 }  // namespace stan
 #endif

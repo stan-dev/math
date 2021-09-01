@@ -28,6 +28,15 @@ inline auto unit_vector_free(EigVec&& x) {
   return x_ref;
 }
 
+template <typename T, require_std_vector_t<T>* = nullptr>
+auto unit_vector_free(const T& x) {
+  std::vector<decltype(unit_vector_free(x[0]))> x_free(x.size());
+  std::transform(x.begin(), x.end(), x_free.begin(), [](auto&& xx) {
+    return unit_vector_free(xx);
+  });
+  return x_free;
+}
+
 }  // namespace math
 }  // namespace stan
 

@@ -20,6 +20,13 @@ TEST(ProbTransform, choleskyFactor) {
   EXPECT_EQ(x2.cols(), x.cols());
   for (int i = 0; i < 3; ++i)
     EXPECT_FLOAT_EQ(x(i), x2(i));
+
+  std::vector<Matrix<double, Dynamic, 1>> x_vec = stan::math::cholesky_factor_free(std::vector<Matrix<double, Dynamic, Dynamic>>{y, y, y});
+  for (int i = 0; i < x_vec.size(); ++i) {
+    EXPECT_EQ(x_vec[i].size(), x.size());
+    EXPECT_EQ(x_vec[i].rows(), x.rows());
+    EXPECT_EQ(x_vec[i].cols(), x.cols());
+  }
 }
 TEST(ProbTransform, choleskyFactorLogJacobian) {
   using Eigen::Dynamic;

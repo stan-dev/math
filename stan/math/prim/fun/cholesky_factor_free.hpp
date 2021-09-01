@@ -48,6 +48,15 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cholesky_factor_free(
   return x;
 }
 
+template <typename T, require_std_vector_t<T>* = nullptr>
+auto cholesky_factor_free(const T& x) {
+  std::vector<decltype(cholesky_factor_free(x[0]))> x_free(x.size());
+  std::transform(x.begin(), x.end(), x_free.begin(), [](auto&& xx) {
+    return cholesky_factor_free(xx);
+  });
+  return x_free;
+}
+
 }  // namespace math
 }  // namespace stan
 
