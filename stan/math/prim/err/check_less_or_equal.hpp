@@ -67,7 +67,8 @@ inline void check_less_or_equal(const char* function, const char* name,
  * or high is `NaN`
  */
 template <typename T_y, typename T_high, require_stan_scalar_t<T_y>* = nullptr,
-          require_vector_vt<is_stan_scalar, T_high>* = nullptr,
+          require_vector_t<T_high>* = nullptr,
+          require_not_std_vector_vt<is_container, T_high>* = nullptr,
           typename... Idxs>
 inline void check_less_or_equal(const char* function, const char* name,
                                 const T_y& y, const T_high& high,
@@ -147,7 +148,8 @@ inline void check_less_or_equal(const char* function, const char* name,
  * or high is `NaN`
  */
 template <typename T_y, typename T_high,
-          require_vector_vt<is_stan_scalar, T_y>* = nullptr,
+          require_vector_t<T_y>* = nullptr,
+          require_not_std_vector_vt<is_container, T_y>* = nullptr,
           require_stan_scalar_t<T_high>* = nullptr, typename... Idxs>
 inline void check_less_or_equal(const char* function, const char* name,
                                 const T_y& y, const T_high& high,
@@ -231,7 +233,8 @@ inline void check_less_or_equal(const char* function, const char* name,
  * or high is `NaN`
  */
 template <typename T_y, typename T_high,
-          require_all_vector_vt<is_stan_scalar, T_y, T_high>* = nullptr,
+          require_all_vector_t<T_y, T_high>* = nullptr,
+          require_all_not_std_vector_vt<is_container, T_y, T_high>* = nullptr,
           typename... Idxs>
 inline void check_less_or_equal(const char* function, const char* name,
                                 const T_y& y, const T_high& high,
