@@ -55,14 +55,15 @@ cov_matrix_constrain(const T& x, Eigen::Index K) {
  *
  * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
  * have one compile-time dimension equal to 1)
+ * @tparam T_lp A scalar type
  * @param x The vector to convert to a covariance matrix.
  * @param K The dimensions of the resulting covariance matrix.
- * @param lp Reference
+ * @param[in, out] lp log density accumulator
  * @throws std::domain_error if (x.size() != K + (K choose 2)).
  */
-template <typename T, require_eigen_col_vector_t<T>* = nullptr>
+template <typename T, typename T_lp, require_eigen_col_vector_t<T>* = nullptr>
 inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
-cov_matrix_constrain(const T& x, Eigen::Index K, return_type_t<T>& lp) {
+cov_matrix_constrain(const T& x, Eigen::Index K, T_lp& lp) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::exp;
@@ -99,14 +100,14 @@ cov_matrix_constrain(const T& x, Eigen::Index K, return_type_t<T>& lp) {
  * @tparam T A type inheriting from `Eigen::DenseBase` or a `var_value` with
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
  *  and 1 column
+ * @tparam T_lp A scalar type
  * @param x The vector to convert to a covariance matrix
  * @param K The dimensions of the resulting covariance matrix
  * @param[in, out] lp log density accumulator
  * @throws std::domain_error if (x.size() != K + (K choose 2)).
  */
-template <bool Jacobian, typename T>
-inline auto cov_matrix_constrain(const T& x, Eigen::Index K,
-                                 return_type_t<T>& lp) {
+template <bool Jacobian, typename T, typename T_lp>
+inline auto cov_matrix_constrain(const T& x, Eigen::Index K, T_lp& lp) {
   if (Jacobian) {
     return cov_matrix_constrain(x, K, lp);
   } else {

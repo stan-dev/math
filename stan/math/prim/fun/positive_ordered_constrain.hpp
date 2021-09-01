@@ -44,12 +44,13 @@ inline auto positive_ordered_constrain(const EigVec& x) {
  * will have the same dimensionality as the specified free vector.
  *
  * @tparam T type of elements in the vector
+ * @tparam T_lp A scalar type
  * @param x Free vector of scalars.
  * @param lp Log probability reference.
  * @return Positive, increasing ordered vector.
  */
-template <typename Vec, require_col_vector_t<Vec>* = nullptr>
-inline auto positive_ordered_constrain(const Vec& x, return_type_t<Vec>& lp) {
+template <typename Vec, typename T_lp, require_col_vector_t<Vec>* = nullptr>
+inline auto positive_ordered_constrain(const Vec& x, T_lp& lp) {
   const auto& x_ref = to_ref(x);
   lp += sum(x_ref);
   return positive_ordered_constrain(x_ref);
@@ -68,12 +69,13 @@ inline auto positive_ordered_constrain(const Vec& x, return_type_t<Vec>& lp) {
  * absolute Jacobian determinant of constraining transform
  * @tparam Vec A type inheriting from `Eigen::EigenBase`, a `var_value` with
  * inner type inheriting from `Eigen::EigenBase`
+ * @tparam T_lp A scalar type
  * @param x Free vector of scalars
  * @param[in, out] lp log density accumulato
  * @return Positive, increasing ordered vector
  */
-template <bool Jacobian, typename Vec>
-inline auto positive_ordered_constrain(const Vec& x, return_type_t<Vec>& lp) {
+template <bool Jacobian, typename Vec, typename T_lp>
+inline auto positive_ordered_constrain(const Vec& x, T_lp& lp) {
   if (Jacobian) {
     return positive_ordered_constrain(x, lp);
   } else {

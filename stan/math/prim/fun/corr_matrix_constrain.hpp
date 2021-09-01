@@ -61,13 +61,14 @@ corr_matrix_constrain(const T& x, Eigen::Index k) {
  *
  * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
  * have one compile-time dimension equal to 1)
+ * @tparam T_lp A scalar type
  * @param x Vector of unconstrained partial correlations.
  * @param k Dimensionality of returned correlation matrix.
  * @param lp Log probability reference to increment.
  */
-template <typename T, require_eigen_col_vector_t<T>* = nullptr>
+template <typename T, typename T_lp, require_eigen_col_vector_t<T>* = nullptr>
 inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
-corr_matrix_constrain(const T& x, Eigen::Index k, return_type_t<T>& lp) {
+corr_matrix_constrain(const T& x, Eigen::Index k, T_lp& lp) {
   Eigen::Index k_choose_2 = (k * (k - 1)) / 2;
   check_size_match("cov_matrix_constrain", "x.size()", x.size(), "k_choose_2",
                    k_choose_2);
@@ -89,13 +90,13 @@ corr_matrix_constrain(const T& x, Eigen::Index k, return_type_t<T>& lp) {
  * @tparam T A type inheriting from `Eigen::DenseBase` or a `var_value` with
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
  *  and 1 column
+ * @tparam T_lp A scalar type
  * @param x Vector of unconstrained partial correlations
  * @param k Dimensionality of returned correlation matrix
  * @param[in,out] lp log density accumulator
  */
-template <bool Jacobian, typename T>
-inline auto corr_matrix_constrain(const T& x, Eigen::Index k,
-                                  return_type_t<T>& lp) {
+template <bool Jacobian, typename T, typename T_lp>
+inline auto corr_matrix_constrain(const T& x, Eigen::Index k, T_lp& lp) {
   if (Jacobian) {
     return corr_matrix_constrain(x, k, lp);
   } else {

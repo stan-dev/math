@@ -56,26 +56,6 @@ inline std::complex<double> value_of_rec(const std::complex<T>& x) {
 }
 
 /**
- * Convert a std::vector of type T to a std::vector of doubles.
- *
- * T must implement value_of_rec. See
- * test/math/fwd/fun/value_of_rec.cpp for fvar and var usage.
- *
- * @tparam T Scalar type in std::vector
- * @param[in] x std::vector to be converted
- * @return std::vector of values
- **/
-template <typename T, require_not_same_t<double, T>* = nullptr>
-inline std::vector<double> value_of_rec(const std::vector<T>& x) {
-  size_t x_size = x.size();
-  std::vector<double> result(x_size);
-  for (size_t i = 0; i < x_size; i++) {
-    result[i] = value_of_rec(x[i]);
-  }
-  return result;
-}
-
-/**
  * Return the specified argument.
  *
  * <p>See <code>value_of_rec(T)</code> for a polymorphic
@@ -129,6 +109,27 @@ template <typename T, typename = require_st_same<T, double>,
 inline T value_of_rec(T&& x) {
   return std::forward<T>(x);
 }
+
+/**
+ * Convert a std::vector of type T to an std::vector of T with a double scalar type.
+ *
+ * T must implement value_of_rec. See
+ * test/math/fwd/fun/value_of_rec.cpp for fvar and var usage.
+ *
+ * @tparam T type in std::vector
+ * @param[in] x std::vector to be extract values from.
+ * @return std::vector of values
+ **/
+template <typename T, require_not_same_t<double, T>* = nullptr>
+inline auto value_of_rec(const std::vector<T>& x) {
+  size_t x_size = x.size();
+  std::vector<promote_scalar_t<double, T>> result(x_size);
+  std::transform(x.begin(), x.end(), result.begin(), [](auto&& xx) {
+    return value_of_rec(xx);
+  });
+  return result;
+}
+
 }  // namespace math
 }  // namespace stan
 

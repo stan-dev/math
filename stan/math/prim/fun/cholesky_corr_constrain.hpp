@@ -42,10 +42,9 @@ cholesky_corr_constrain(const EigVec& y, int K) {
   return x;
 }
 
-// FIXME to match above after debugged
-template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
+template <typename EigVec, typename T_lp, require_eigen_vector_t<EigVec>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, Eigen::Dynamic>
-cholesky_corr_constrain(const EigVec& y, int K, return_type_t<EigVec>& lp) {
+cholesky_corr_constrain(const EigVec& y, int K, T_lp& lp) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::sqrt;
@@ -85,13 +84,14 @@ cholesky_corr_constrain(const EigVec& y, int K, return_type_t<EigVec>& lp) {
  * @tparam T A type inheriting from `Eigen::DenseBase` or a `var_value` with
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
  *  and 1 column
+ * @tparam T_lp A scalar type
  * @param y Linearly Serialized vector of size `(K * (K - 1))/2` holding the
  *  column major order elements of the lower triangurlar
  * @param K The size of the matrix to return
  * @param[in,out] lp log density accumulator
  */
-template <bool Jacobian, typename T>
-inline auto cholesky_corr_constrain(const T& y, int K, return_type_t<T>& lp) {
+template <bool Jacobian, typename T, typename T_lp>
+inline auto cholesky_corr_constrain(const T& y, int K, T_lp& lp) {
   if (Jacobian) {
     return cholesky_corr_constrain(y, K, lp);
   } else {

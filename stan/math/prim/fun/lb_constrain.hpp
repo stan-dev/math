@@ -50,14 +50,15 @@ inline auto lb_constrain(const T& x, const L& lb) {
  *
  * @tparam T Scalar.
  * @tparam L Scalar.
+ * @tparam T_lp A scalar type
  * @param[in] x unconstrained input
  * @param[in] lb lower bound on output
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename L, require_all_stan_scalar_t<T, L>* = nullptr,
+template <typename T, typename L, typename T_lp, require_all_stan_scalar_t<T, L>* = nullptr,
           require_all_not_st_var<T, L>* = nullptr>
-inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
+inline auto lb_constrain(const T& x, const L& lb, T_lp& lp) {
   if (value_of_rec(lb) == NEGATIVE_INFTY) {
     return identity_constrain(x, lb);
   } else {
@@ -89,15 +90,16 @@ inline auto lb_constrain(T&& x, L&& lb) {
  *
  * @tparam T A type inheriting from `EigenBase`.
  * @tparam L Scalar.
+ * @tparam T_lp A scalar type
  * @param[in] x unconstrained input
  * @param[in] lb lower bound on output
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename L, require_eigen_t<T>* = nullptr,
+template <typename T, typename L, typename T_lp, require_eigen_t<T>* = nullptr,
           require_stan_scalar_t<L>* = nullptr,
           require_all_not_st_var<T, L>* = nullptr>
-inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
+inline auto lb_constrain(const T& x, const L& lb, T_lp& lp) {
   return eval(
       x.unaryExpr([lb, &lp](auto&& xx) { return lb_constrain(xx, lb, lp); }));
 }
@@ -126,14 +128,15 @@ inline auto lb_constrain(T&& x, L&& lb) {
  *
  * @tparam T A type inheriting from `EigenBase`.
  * @tparam L A type inheriting from `EigenBase`.
+ * @tparam T_lp A scalar type
  * @param[in] x unconstrained input
  * @param[in] lb lower bound on output
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename L, require_all_eigen_t<T, L>* = nullptr,
+template <typename T, typename L, typename T_lp, require_all_eigen_t<T, L>* = nullptr,
           require_all_not_st_var<T, L>* = nullptr>
-inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
+inline auto lb_constrain(const T& x, const L& lb, T_lp& lp) {
   check_matching_dims("lb_constrain", "x", x, "lb", lb);
   return eval(x.binaryExpr(
       lb, [&lp](auto&& xx, auto&& lbb) { return lb_constrain(xx, lbb, lp); }));
@@ -164,14 +167,14 @@ inline auto lb_constrain(const std::vector<T>& x, const L& lb) {
  *
  * @tparam T A Any type with a Scalar `scalar_type`.
  * @tparam L A type inheriting from `EigenBase` or a standard vector.
+ * @tparam T_lp A scalar type
  * @param[in] x unconstrained input
  * @param[in] lb lower bound on output
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename L, require_not_std_vector_t<L>* = nullptr>
-inline auto lb_constrain(const std::vector<T>& x, const L& lb,
-                         return_type_t<T, L>& lp) {
+template <typename T, typename L, typename T_lp, require_not_std_vector_t<L>* = nullptr>
+inline auto lb_constrain(const std::vector<T>& x, const L& lb, T_lp& lp) {
   std::vector<plain_type_t<decltype(lb_constrain(x[0], lb))>> ret(x.size());
   for (size_t i = 0; i < x.size(); ++i) {
     ret[i] = lb_constrain(x[i], lb, lp);
@@ -205,14 +208,15 @@ inline auto lb_constrain(const std::vector<T>& x, const std::vector<L>& lb) {
  *
  * @tparam T A Any type with a Scalar `scalar_type`.
  * @tparam L A type inheriting from `EigenBase` or a standard vector.
+ * @tparam T_lp A scalar type
  * @param[in] x unconstrained input
  * @param[in] lb lower bound on output
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename L>
+template <typename T, typename L, typename T_lp>
 inline auto lb_constrain(const std::vector<T>& x, const std::vector<L>& lb,
-                         return_type_t<T, L>& lp) {
+                         T_lp& lp) {
   check_matching_dims("lb_constrain", "x", x, "lb", lb);
   std::vector<plain_type_t<decltype(lb_constrain(x[0], lb[0]))>> ret(x.size());
   for (size_t i = 0; i < x.size(); ++i) {
@@ -234,13 +238,14 @@ inline auto lb_constrain(const std::vector<T>& x, const std::vector<L>& lb,
  * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
  * @tparam L A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
  * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
+ * @tparam T_lp A scalar type
  * @param[in] x unconstrained input
  * @param[in] lb lower bound on output
  * @param[in, out] lp log density accumulator
  * @return lower-bound constrained value corresponding to inputs
  */
-template <bool Jacobian, typename T, typename L>
-inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
+template <bool Jacobian, typename T, typename L, typename T_lp>
+inline auto lb_constrain(const T& x, const L& lb, T_lp& lp) {
   if (Jacobian) {
     return lb_constrain(x, lb, lp);
   } else {

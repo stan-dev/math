@@ -64,6 +64,7 @@ cholesky_factor_constrain(const T& x, int M, int N) {
  *
  * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
  * have one compile-time dimension equal to 1)
+ * @tparam T_lp A scalar type
  * @param x Vector of unconstrained values
  * @param M number of rows
  * @param N number of columns
@@ -71,9 +72,9 @@ cholesky_factor_constrain(const T& x, int M, int N) {
  * determinant
  * @return Cholesky factor
  */
-template <typename T, require_eigen_vector_t<T>* = nullptr>
+template <typename T, typename T_lp, require_eigen_vector_t<T>* = nullptr>
 inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
-cholesky_factor_constrain(const T& x, int M, int N, return_type_t<T>& lp) {
+cholesky_factor_constrain(const T& x, int M, int N, T_lp& lp) {
   check_size_match("cholesky_factor_constrain", "x.size()", x.size(),
                    "((N * (N + 1)) / 2 + (M - N) * N)",
                    ((N * (N + 1)) / 2 + (M - N) * N));
@@ -100,15 +101,15 @@ cholesky_factor_constrain(const T& x, int M, int N, return_type_t<T>& lp) {
  * @tparam T A type inheriting from `Eigen::DenseBase` or a `var_value` with
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
  *  and 1 column
+ * @tparam T_lp A scalar type
  * @param x Vector of unconstrained values
  * @param M number of rows
  * @param N number of columns
  * @param[in,out] lp log density accumulator
  * @return Cholesky factor
  */
-template <bool Jacobian, typename T>
-inline auto cholesky_factor_constrain(const T& x, int M, int N,
-                                      return_type_t<T>& lp) {
+template <bool Jacobian, typename T, typename T_lp>
+inline auto cholesky_factor_constrain(const T& x, int M, int N, T_lp& lp) {
   if (Jacobian) {
     return cholesky_factor_constrain(x, M, N, lp);
   } else {

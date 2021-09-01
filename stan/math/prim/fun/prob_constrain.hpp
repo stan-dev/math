@@ -43,12 +43,13 @@ inline T prob_constrain(const T& x) {
  * <p>\f$\log (\mbox{logit}^{-1}(x)) + \log (1 - \mbox{logit}^{-1}(x))\f$.
  *
  * @tparam T type of scalar
+ * @tparam T_lp A scalar type
  * @param[in] x unconstrained value
  * @param[in, out] lp log density
  * @return result constrained to fall in (0, 1)
  */
-template <typename T>
-inline T prob_constrain(const T& x, T& lp) {
+template <typename T, typename T_lp>
+inline T prob_constrain(const T& x, T_lp& lp) {
   using std::log;
   T inv_logit_x = inv_logit(x);
   lp += log(inv_logit_x) + log1m(inv_logit_x);
@@ -65,12 +66,13 @@ inline T prob_constrain(const T& x, T& lp) {
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
  * @tparam T type of scalar
+ * @tparam T_lp A scalar type
  * @param[in] x unconstrained value
  * @param[in, out] lp log density accumulator
  * @return result constrained to fall in (0, 1)
  */
-template <bool Jacobian, typename T>
-inline auto prob_constrain(const T& x, T& lp) {
+template <bool Jacobian, typename T, typename T_lp>
+inline auto prob_constrain(const T& x, T_lp& lp) {
   if (Jacobian) {
     return prob_constrain(x, lp);
   } else {

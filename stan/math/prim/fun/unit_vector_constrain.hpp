@@ -39,14 +39,15 @@ inline plain_type_t<T> unit_vector_constrain(const T& y) {
  *
  * @tparam T1 type inheriting from `EigenBase` that does not have an fvar
  *  scalar type.
+ * @tparam T_lp A scalar type
  *
  * @param y vector of K unrestricted variables
  * @return Unit length vector of dimension K
  * @param lp Log probability reference to increment.
  */
-template <typename T1, typename T2, require_eigen_col_vector_t<T1>* = nullptr,
-          require_all_not_vt_autodiff<T1, T2>* = nullptr>
-inline plain_type_t<T1> unit_vector_constrain(const T1& y, T2& lp) {
+template <typename T1, typename T_lp, require_eigen_col_vector_t<T1>* = nullptr,
+          require_all_not_vt_autodiff<T1, T_lp>* = nullptr>
+inline plain_type_t<T1> unit_vector_constrain(const T1& y, T_lp& lp) {
   using std::sqrt;
   check_nonzero_size("unit_vector_constrain", "y", y);
   auto&& y_ref = to_ref(y);
@@ -68,12 +69,13 @@ inline plain_type_t<T1> unit_vector_constrain(const T1& y, T2& lp) {
  * @tparam T A type inheriting from `Eigen::DenseBase` or a `var_value` with
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
  *  and 1 column
+ * @tparam T_lp A scalar type
  * @param y vector of K unrestricted variables
  * @param[in, out] lp log density accumulator
  * @return Unit length vector of dimension K
  */
-template <bool Jacobian, typename T>
-inline auto unit_vector_constrain(const T& y, return_type_t<T>& lp) {
+template <bool Jacobian, typename T, typename T_lp>
+inline auto unit_vector_constrain(const T& y, T_lp& lp) {
   if (Jacobian) {
     return unit_vector_constrain(y, lp);
   } else {

@@ -46,12 +46,13 @@ inline plain_type_t<EigVec> ordered_constrain(const EigVec& x) {
  * will have the same dimensionality as the specified free vector.
  *
  * @tparam T type of the vector
+ * @tparam T_lp A scalar type
  * @param x Free vector of scalars.
  * @param lp Log probability reference.
  * @return Positive, increasing ordered vector.
  */
-template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
-inline auto ordered_constrain(const EigVec& x, value_type_t<EigVec>& lp) {
+template <typename EigVec, typename T_lp, require_eigen_col_vector_t<EigVec>* = nullptr>
+inline auto ordered_constrain(const EigVec& x, T_lp& lp) {
   const auto& x_ref = to_ref(x);
   if (likely(x.size() > 1)) {
     lp += sum(x_ref.tail(x.size() - 1));
@@ -73,12 +74,13 @@ inline auto ordered_constrain(const EigVec& x, value_type_t<EigVec>& lp) {
  * @tparam T A type inheriting from `Eigen::DenseBase` or a `var_value` with
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
  *  and 1 column
+ * @tparam T_lp A scalar type
  * @param x Free vector of scalars
  * @param[in, out] lp log density accumulator
  * @return Positive, increasing ordered vector.
  */
-template <bool Jacobian, typename T>
-inline auto ordered_constrain(const T& x, return_type_t<T>& lp) {
+template <bool Jacobian, typename T, typename T_lp>
+inline auto ordered_constrain(const T& x, T_lp& lp) {
   if (Jacobian) {
     return ordered_constrain(x, lp);
   } else {

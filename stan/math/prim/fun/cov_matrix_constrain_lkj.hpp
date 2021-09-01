@@ -47,6 +47,7 @@ cov_matrix_constrain_lkj(const T& x, size_t k) {
  *
  * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase and
  * have one compile-time dimension equal to 1)
+ * @tparam T_lp A scalar type
  * @param x Input vector of unconstrained partial correlations and
  * standard deviations.
  * @param k Dimensionality of returned covariance matrix.
@@ -54,9 +55,9 @@ cov_matrix_constrain_lkj(const T& x, size_t k) {
  * @return Covariance matrix derived from the unconstrained partial
  * correlations and deviations.
  */
-template <typename T, require_eigen_vector_t<T>* = nullptr>
+template <typename T, typename T_lp, require_eigen_vector_t<T>* = nullptr>
 inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
-cov_matrix_constrain_lkj(const T& x, size_t k, return_type_t<T>& lp) {
+cov_matrix_constrain_lkj(const T& x, size_t k, T_lp& lp) {
   size_t k_choose_2 = (k * (k - 1)) / 2;
   const auto& x_ref = x;
   return read_cov_matrix(corr_constrain(x_ref.head(k_choose_2)),
@@ -76,6 +77,7 @@ cov_matrix_constrain_lkj(const T& x, size_t k, return_type_t<T>& lp) {
  * @tparam T A type inheriting from `Eigen::DenseBase` or a `var_value` with
  *  inner type inheriting from `Eigen::DenseBase` with compile time rows or
  * columns equal to 1
+ * @tparam T_lp A scalar type
  * @param x Input vector of unconstrained partial correlations and
  * standard deviations
  * @param k Dimensionality of returned covariance matrix
@@ -83,9 +85,9 @@ cov_matrix_constrain_lkj(const T& x, size_t k, return_type_t<T>& lp) {
  * @return Covariance matrix derived from the unconstrained partial
  * correlations and deviations.
  */
-template <bool Jacobian, typename T>
+template <bool Jacobian, typename T, typename T_lp>
 inline auto cov_matrix_constrain_lkj(const T& x, size_t k,
-                                     return_type_t<T>& lp) {
+                                     T_lp& lp) {
   if (Jacobian) {
     return cov_matrix_constrain_lkj(x, k, lp);
   } else {

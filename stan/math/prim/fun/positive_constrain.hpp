@@ -36,12 +36,13 @@ inline auto positive_constrain(const T& x) {
  *    = \log | \mbox{exp}(x) | =  x\f$.
  *
  * @tparam T type of unconstrained value
+ * @tparam T_lp A scalar type
  * @param x unconstrained value or container
  * @param lp log density reference.
  * @return positive constrained version of unconstrained value(s)
  */
-template <typename T, typename S>
-inline auto positive_constrain(const T& x, S& lp) {
+template <typename T, typename T_lp>
+inline auto positive_constrain(const T& x, T_lp& lp) {
   lp += sum(x);
   return exp(x);
 }
@@ -56,13 +57,14 @@ inline auto positive_constrain(const T& x, S& lp) {
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
  * @tparam T A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
+ * @tparam T_lp A scalar type
  * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
  * @param x unconstrained value or container
  * @param[in, out] lp log density accumulator
  * @return positive constrained version of unconstrained value(s)
  */
-template <bool Jacobian, typename T>
-inline auto positive_constrain(const T& x, return_type_t<T>& lp) {
+template <bool Jacobian, typename T, typename T_lp>
+inline auto positive_constrain(const T& x, T_lp& lp) {
   if (Jacobian) {
     return positive_constrain(x, lp);
   } else {

@@ -39,6 +39,7 @@ inline plain_type_t<T> corr_constrain(const T& x) {
  * <p>\f$\log | \frac{d}{dx} \tanh x  | = \log (1 - \tanh^2 x)\f$.
  *
  * @tparam T_x Type of scalar or container
+ * @tparam T_lp A scalar type
  * @param[in] x value or container
  * @param[in,out] lp log density accumulator
  */

@@ -52,13 +52,14 @@ inline auto simplex_constrain(const Vec& y) {
  * stick-breaking process.
  *
  * @tparam Vec type of the vector
+ * @tparam T_lp A scalar type
  * @param y Free vector input of dimensionality K - 1.
  * @param lp Log probability reference to increment.
  * @return Simplex of dimensionality K.
  */
-template <typename Vec, require_eigen_col_vector_t<Vec>* = nullptr,
+template <typename Vec, typename T_lp, require_eigen_col_vector_t<Vec>* = nullptr,
           require_not_st_var<Vec>* = nullptr>
-inline auto simplex_constrain(const Vec& y, value_type_t<Vec>& lp) {
+inline auto simplex_constrain(const Vec& y, T_lp& lp) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::log;
@@ -93,12 +94,13 @@ inline auto simplex_constrain(const Vec& y, value_type_t<Vec>& lp) {
  * @tparam Vec A type inheriting from `Eigen::DenseBase` or a `var_value` with
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
  *  and 1 column
+ * @tparam T_lp A scalar type
  * @param[in] y free vector
  * @param[in, out] lp log density accumulator
  * @return simplex of dimensionality one greater than `y`
  */
-template <bool Jacobian, typename Vec>
-auto simplex_constrain(const Vec& y, return_type_t<Vec>& lp) {
+template <bool Jacobian, typename Vec, typename T_lp>
+auto simplex_constrain(const Vec& y, T_lp& lp) {
   if (Jacobian) {
     return simplex_constrain(y, lp);
   } else {
