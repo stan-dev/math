@@ -141,8 +141,7 @@ inline void check_less(const char* function, const char* name, const T_y& y,
  * @throw `domain_error` if y is not less than high or if any element of y or
  * high is `NaN`
  */
-template <typename T_y, typename T_high,
-          require_vector_t<T_y>* = nullptr,
+template <typename T_y, typename T_high, require_vector_t<T_y>* = nullptr,
           require_not_std_vector_vt<is_container, T_y>* = nullptr,
           require_stan_scalar_t<T_high>* = nullptr, typename... Idxs>
 inline void check_less(const char* function, const char* name, const T_y& y,

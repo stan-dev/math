@@ -42,7 +42,8 @@ cholesky_corr_constrain(const EigVec& y, int K) {
   return x;
 }
 
-template <typename EigVec, typename T_lp, require_eigen_vector_t<EigVec>* = nullptr>
+template <typename EigVec, typename T_lp,
+          require_eigen_vector_t<EigVec>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, Eigen::Dynamic>
 cholesky_corr_constrain(const EigVec& y, int K, T_lp& lp) {
   using Eigen::Dynamic;

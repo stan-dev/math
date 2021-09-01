@@ -86,8 +86,7 @@ cov_matrix_constrain_lkj(const T& x, size_t k, T_lp& lp) {
  * correlations and deviations.
  */
 template <bool Jacobian, typename T, typename T_lp>
-inline auto cov_matrix_constrain_lkj(const T& x, size_t k,
-                                     T_lp& lp) {
+inline auto cov_matrix_constrain_lkj(const T& x, size_t k, T_lp& lp) {
   if (Jacobian) {
     return cov_matrix_constrain_lkj(x, k, lp);
   } else {

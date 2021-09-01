@@ -63,7 +63,8 @@ inline auto ub_constrain(const T& x, const U& ub) {
  * @param[in,out] lp log density
  * @return scalar constrained to have upper bound
  */
-template <typename T, typename U, typename T_lp, require_all_stan_scalar_t<T, U>* = nullptr,
+template <typename T, typename U, typename T_lp,
+          require_all_stan_scalar_t<T, U>* = nullptr,
           require_all_not_st_var<T, U>* = nullptr>
 inline auto ub_constrain(const T& x, const U& ub, T_lp& lp) {
   if (value_of_rec(ub) == INFTY) {
@@ -141,7 +142,8 @@ inline auto ub_constrain(const T& x, const U& ub) {
  * @param[in,out] lp reference to log probability to increment
  * @return upper-bound constrained value corresponding to inputs
  */
-template <typename T, typename U, typename T_lp, require_all_eigen_t<T, U>* = nullptr,
+template <typename T, typename U, typename T_lp,
+          require_all_eigen_t<T, U>* = nullptr,
           require_all_not_st_var<T, U>* = nullptr>
 inline auto ub_constrain(const T& x, const U& ub, T_lp& lp) {
   check_matching_dims("ub_constrain", "x", x, "ub", ub);
@@ -180,9 +182,9 @@ inline auto ub_constrain(const std::vector<T>& x, const U& ub) {
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename U, typename T_lp, require_not_std_vector_t<U>* = nullptr>
-inline auto ub_constrain(const std::vector<T>& x, const U& ub,
-                         T_lp& lp) {
+template <typename T, typename U, typename T_lp,
+          require_not_std_vector_t<U>* = nullptr>
+inline auto ub_constrain(const std::vector<T>& x, const U& ub, T_lp& lp) {
   std::vector<plain_type_t<decltype(ub_constrain(x[0], ub))>> ret(x.size());
   for (size_t i = 0; i < x.size(); ++i) {
     ret[i] = ub_constrain(x[i], ub, lp);

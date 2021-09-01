@@ -140,8 +140,7 @@ inline auto offset_multiplier_constrain(const std::vector<T>& x, const M& mu,
 template <typename T, typename M, typename S, typename T_lp,
           require_all_not_std_vector_t<M, S>* = nullptr>
 inline auto offset_multiplier_constrain(const std::vector<T>& x, const M& mu,
-                                        const S& sigma,
-                                        T_lp& lp) {
+                                        const S& sigma, T_lp& lp) {
   std::vector<
       plain_type_t<decltype(offset_multiplier_constrain(x[0], mu, sigma, lp))>>
       ret;
@@ -179,8 +178,7 @@ inline auto offset_multiplier_constrain(const std::vector<T>& x, const M& mu,
 template <typename T, typename M, typename S, typename T_lp,
           require_not_std_vector_t<M>* = nullptr>
 inline auto offset_multiplier_constrain(const std::vector<T>& x, const M& mu,
-                                        const std::vector<S>& sigma,
-                                        T_lp& lp) {
+                                        const std::vector<S>& sigma, T_lp& lp) {
   check_matching_dims("offset_multiplier_constrain", "x", x, "sigma", sigma);
   std::vector<plain_type_t<decltype(
       offset_multiplier_constrain(x[0], mu, sigma[0], lp))>>
@@ -220,8 +218,7 @@ template <typename T, typename M, typename S, typename T_lp,
           require_not_std_vector_t<S>* = nullptr>
 inline auto offset_multiplier_constrain(const std::vector<T>& x,
                                         const std::vector<M>& mu,
-                                        const S& sigma,
-                                        T_lp& lp) {
+                                        const S& sigma, T_lp& lp) {
   check_matching_dims("offset_multiplier_constrain", "x", x, "mu", mu);
   std::vector<plain_type_t<decltype(
       offset_multiplier_constrain(x[0], mu[0], sigma, lp))>>
@@ -259,8 +256,7 @@ inline auto offset_multiplier_constrain(const std::vector<T>& x,
 template <typename T, typename M, typename S, typename T_lp>
 inline auto offset_multiplier_constrain(const std::vector<T>& x,
                                         const std::vector<M>& mu,
-                                        const std::vector<S>& sigma,
-                                        T_lp& lp) {
+                                        const std::vector<S>& sigma, T_lp& lp) {
   check_matching_dims("offset_multiplier_constrain", "x", x, "mu", mu);
   check_matching_dims("offset_multiplier_constrain", "x", x, "sigma", sigma);
   std::vector<plain_type_t<decltype(

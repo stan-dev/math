@@ -56,7 +56,8 @@ inline auto lb_constrain(const T& x, const L& lb) {
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename L, typename T_lp, require_all_stan_scalar_t<T, L>* = nullptr,
+template <typename T, typename L, typename T_lp,
+          require_all_stan_scalar_t<T, L>* = nullptr,
           require_all_not_st_var<T, L>* = nullptr>
 inline auto lb_constrain(const T& x, const L& lb, T_lp& lp) {
   if (value_of_rec(lb) == NEGATIVE_INFTY) {
@@ -134,7 +135,8 @@ inline auto lb_constrain(T&& x, L&& lb) {
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename L, typename T_lp, require_all_eigen_t<T, L>* = nullptr,
+template <typename T, typename L, typename T_lp,
+          require_all_eigen_t<T, L>* = nullptr,
           require_all_not_st_var<T, L>* = nullptr>
 inline auto lb_constrain(const T& x, const L& lb, T_lp& lp) {
   check_matching_dims("lb_constrain", "x", x, "lb", lb);
@@ -173,7 +175,8 @@ inline auto lb_constrain(const std::vector<T>& x, const L& lb) {
  * @param[in,out] lp reference to log probability to increment
  * @return lower-bound constrained value corresponding to inputs
  */
-template <typename T, typename L, typename T_lp, require_not_std_vector_t<L>* = nullptr>
+template <typename T, typename L, typename T_lp,
+          require_not_std_vector_t<L>* = nullptr>
 inline auto lb_constrain(const std::vector<T>& x, const L& lb, T_lp& lp) {
   std::vector<plain_type_t<decltype(lb_constrain(x[0], lb))>> ret(x.size());
   for (size_t i = 0; i < x.size(); ++i) {

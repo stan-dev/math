@@ -64,10 +64,10 @@ inline void check_greater(const char* function, const char* name, const T_y& y,
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
- template <typename T_y, typename T_low, require_stan_scalar_t<T_y>* = nullptr,
-           require_vector_t<T_low>* = nullptr,
-           require_not_std_vector_vt<is_container, T_low>* = nullptr,
-           typename... Idxs>
+template <typename T_y, typename T_low, require_stan_scalar_t<T_y>* = nullptr,
+          require_vector_t<T_low>* = nullptr,
+          require_not_std_vector_vt<is_container, T_low>* = nullptr,
+          typename... Idxs>
 inline void check_greater(const char* function, const char* name, const T_y& y,
                           const T_low& low, Idxs... idxs) {
   auto&& low_arr = value_of_rec(as_array_or_scalar(to_ref(low)));
@@ -142,10 +142,9 @@ inline void check_greater(const char* function, const char* name, const T_y& y,
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
- template <typename T_y, typename T_low,
-           require_vector_t<T_y>* = nullptr,
-           require_not_std_vector_vt<is_container, T_y>* = nullptr,
-           require_stan_scalar_t<T_low>* = nullptr, typename... Idxs>
+template <typename T_y, typename T_low, require_vector_t<T_y>* = nullptr,
+          require_not_std_vector_vt<is_container, T_y>* = nullptr,
+          require_stan_scalar_t<T_low>* = nullptr, typename... Idxs>
 inline void check_greater(const char* function, const char* name, const T_y& y,
                           const T_low& low, Idxs... idxs) {
   auto&& y_arr = value_of_rec(as_array_or_scalar(to_ref(y)));
@@ -223,10 +222,10 @@ inline void check_greater(const char* function, const char* name, const T_y& y,
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
- template <typename T_y, typename T_low,
-           require_all_vector_t<T_y, T_low>* = nullptr,
-           require_all_not_std_vector_vt<is_container, T_y, T_low>* = nullptr,
-           typename... Idxs>
+template <typename T_y, typename T_low,
+          require_all_vector_t<T_y, T_low>* = nullptr,
+          require_all_not_std_vector_vt<is_container, T_y, T_low>* = nullptr,
+          typename... Idxs>
 inline void check_greater(const char* function, const char* name, const T_y& y,
                           const T_low& low, Idxs... idxs) {
   auto&& y_arr = value_of_rec(as_array_or_scalar(to_ref(y)));

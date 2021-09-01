@@ -111,7 +111,8 @@ inline T value_of_rec(T&& x) {
 }
 
 /**
- * Convert a std::vector of type T to an std::vector of T with a double scalar type.
+ * Convert a std::vector of type T to an std::vector of T with a double scalar
+ *type.
  *
  * T must implement value_of_rec. See
  * test/math/fwd/fun/value_of_rec.cpp for fvar and var usage.
@@ -124,9 +125,8 @@ template <typename T, require_not_same_t<double, T>* = nullptr>
 inline auto value_of_rec(const std::vector<T>& x) {
   size_t x_size = x.size();
   std::vector<promote_scalar_t<double, T>> result(x_size);
-  std::transform(x.begin(), x.end(), result.begin(), [](auto&& xx) {
-    return value_of_rec(xx);
-  });
+  std::transform(x.begin(), x.end(), result.begin(),
+                 [](auto&& xx) { return value_of_rec(xx); });
   return result;
 }
 

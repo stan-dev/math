@@ -51,7 +51,8 @@ inline plain_type_t<EigVec> ordered_constrain(const EigVec& x) {
  * @param lp Log probability reference.
  * @return Positive, increasing ordered vector.
  */
-template <typename EigVec, typename T_lp, require_eigen_col_vector_t<EigVec>* = nullptr>
+template <typename EigVec, typename T_lp,
+          require_eigen_col_vector_t<EigVec>* = nullptr>
 inline auto ordered_constrain(const EigVec& x, T_lp& lp) {
   const auto& x_ref = to_ref(x);
   if (likely(x.size() > 1)) {

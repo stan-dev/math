@@ -26,7 +26,7 @@ namespace math {
  * are duplicated values, or if any element is `NaN`
  */
 template <typename T_y, require_vector_t<T_y>* = nullptr,
- require_not_std_vector_t<T_y>* = nullptr>
+          require_not_std_vector_t<T_y>* = nullptr>
 void check_ordered(const char* function, const char* name, const T_y& y) {
   const auto& y_ref = to_ref(value_of_rec(y));
   for (Eigen::Index n = 1; n < y_ref.size(); n++) {

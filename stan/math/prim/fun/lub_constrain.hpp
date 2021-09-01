@@ -126,7 +126,8 @@ inline auto lub_constrain(const T& x, const L& lb, const U& ub) {
 /**
  * Overload for Eigen matrix and scalar bounds plus lp.
  */
-template <typename T, typename L, typename U, typename T_lp, require_eigen_t<T>* = nullptr,
+template <typename T, typename L, typename U, typename T_lp,
+          require_eigen_t<T>* = nullptr,
           require_all_stan_scalar_t<L, U>* = nullptr,
           require_not_var_t<return_type_t<T, L, U>>* = nullptr>
 inline auto lub_constrain(const T& x, const L& lb, const U& ub, T_lp& lp) {
