@@ -26,14 +26,8 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
                                                      const T_loc& mu,
                                                      const T_covar& Sigma) {
   static const char* function = "multi_normal_lpdf";
-  using T_covar_elem = typename scalar_type<T_covar>::type;
-  using T_return = return_type_t<T_y, T_loc, T_covar>;
-  using T_partials_return = partials_return_t<T_y, T_loc, T_covar>;
-  using matrix_partials_t
-      = Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic>;
   using T_y_ref = ref_type_t<T_y>;
   using T_mu_ref = ref_type_t<T_loc>;
-  using T_L_ref = ref_type_t<T_covar>;
 
   check_consistent_sizes_mvt(function, "y", y, "mu", mu);
   size_t number_of_y = size_mvt(y);
@@ -101,17 +95,8 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
                                                      const T_loc& mu,
                                                      const T_covar& Sigma) {
   static const char* function = "multi_normal_lpdf";
-  using T_covar_elem = typename scalar_type<T_covar>::type;
-  using T_return = return_type_t<T_y, T_loc, T_covar>;
-  using T_partials_return = partials_return_t<T_y, T_loc, T_covar>;
-  using matrix_partials_t
-      = Eigen::Matrix<T_partials_return, Eigen::Dynamic, Eigen::Dynamic>;
-  using vector_partials_t = Eigen::Matrix<T_partials_return, Eigen::Dynamic, 1>;
-  using row_vector_partials_t
-      = Eigen::Matrix<T_partials_return, 1, Eigen::Dynamic>;
   using T_y_ref = ref_type_t<T_y>;
   using T_mu_ref = ref_type_t<T_loc>;
-  using T_L_ref = ref_type_t<T_covar>;
 
   T_y_ref y_ref = y;
   T_mu_ref mu_ref = mu;
