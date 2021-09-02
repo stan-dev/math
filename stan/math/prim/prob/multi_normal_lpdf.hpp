@@ -26,6 +26,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
                                                      const T_loc& mu,
                                                      const T_covar& Sigma) {
   static const char* function = "multi_normal_lpdf";
+  using T_return = return_type_t<T_y, T_loc, T_covar>;
   using T_y_ref = ref_type_t<T_y>;
   using T_mu_ref = ref_type_t<T_loc>;
 
@@ -95,6 +96,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
                                                      const T_loc& mu,
                                                      const T_covar& Sigma) {
   static const char* function = "multi_normal_lpdf";
+  using T_return = return_type_t<T_y, T_loc, T_covar>;
   using T_y_ref = ref_type_t<T_y>;
   using T_mu_ref = ref_type_t<T_loc>;
 
