@@ -41,6 +41,13 @@ plain_type_t<EigVec> ordered_free(const EigVec& y) {
   return x;
 }
 
+/**
+ * Overload of `ordered_free()` to untransform each Eigen vector
+ * in a standard vector.
+ * @tparam T A standard vector with with a `value_type` which inherits from
+ *  `Eigen::MatrixBase` with compile time rows or columns equal to 1.
+ * @param x The standard vector to untransform.
+ */
 template <typename T, require_std_vector_t<T>* = nullptr>
 auto ordered_free(const T& x) {
   std::vector<decltype(ordered_free(x[0]))> x_free(x.size());

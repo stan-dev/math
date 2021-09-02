@@ -33,6 +33,13 @@ auto cholesky_corr_free(const T& x) {
   return z;
 }
 
+/**
+ * Overload of `cholesky_corr_free()` to untransform each matrix
+ * in a standard vector.
+ * @tparam T A standard vector with with a `value_type` which inherits from
+ *  `Eigen::MatrixBase`.
+ * @param x The standard vector to untransform.
+ */
 template <typename T, require_std_vector_t<T>* = nullptr>
 auto cholesky_corr_free(const T& x) {
   std::vector<decltype(cholesky_corr_free(x[0]))> x_free(x.size());
