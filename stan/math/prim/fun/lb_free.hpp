@@ -85,9 +85,7 @@ inline auto lb_free(const std::vector<T> y, const L& lb) {
   auto&& lb_ref = to_ref(lb);
   std::vector<decltype(lb_free(y[0], lb))> ret(y.size());
   std::transform(y.begin(), y.end(), ret.begin(),
-   [&lb](auto&& yy) {
-     return lb_free(yy, lb);
-   });
+                 [&lb](auto&& yy) { return lb_free(yy, lb); });
   return ret;
 }
 
@@ -109,9 +107,7 @@ template <typename T, typename L>
 inline auto lb_free(const std::vector<T> y, const std::vector<L>& lb) {
   std::vector<decltype(lb_free(y[0], lb[0]))> ret(y.size());
   std::transform(y.begin(), y.end(), lb.begin(), ret.begin(),
-   [](auto&& yy, auto&& lbb) {
-     return lb_free(yy, lbb);
-   });
+                 [](auto&& yy, auto&& lbb) { return lb_free(yy, lbb); });
   return ret;
 }
 

@@ -42,7 +42,6 @@ auto positive_ordered_free(const EigVec& y) {
   return x;
 }
 
-
 /**
  * Overload of `positive_ordered_free()` to untransform each Eigen vector
  * in a standard vector.
@@ -53,9 +52,8 @@ auto positive_ordered_free(const EigVec& y) {
 template <typename T, require_std_vector_t<T>* = nullptr>
 auto positive_ordered_free(const T& x) {
   std::vector<decltype(positive_ordered_free(x[0]))> x_free(x.size());
-  std::transform(x.begin(), x.end(), x_free.begin(), [](auto&& xx) {
-    return positive_ordered_free(xx);
-  });
+  std::transform(x.begin(), x.end(), x_free.begin(),
+                 [](auto&& xx) { return positive_ordered_free(xx); });
   return x_free;
 }
 

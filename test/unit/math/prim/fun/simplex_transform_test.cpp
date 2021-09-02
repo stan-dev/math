@@ -14,7 +14,8 @@ TEST(prob_transform, simplex_rt0) {
   EXPECT_FLOAT_EQ(1.0 / 5.0, y(3));
   EXPECT_FLOAT_EQ(1.0 / 5.0, y(4));
 
-  std::vector<Matrix<double, Dynamic, 1>> xrt = stan::math::simplex_free(std::vector<Matrix<double, Dynamic, 1>>{y, y, y});
+  std::vector<Matrix<double, Dynamic, 1>> xrt = stan::math::simplex_free(
+      std::vector<Matrix<double, Dynamic, 1>>{y, y, y});
   EXPECT_EQ(x.size() + 1, y.size());
   for (auto&& x_i : xrt) {
     EXPECT_EQ(x.size(), x_i.size());

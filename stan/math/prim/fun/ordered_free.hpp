@@ -51,9 +51,8 @@ plain_type_t<EigVec> ordered_free(const EigVec& y) {
 template <typename T, require_std_vector_t<T>* = nullptr>
 auto ordered_free(const T& x) {
   std::vector<decltype(ordered_free(x[0]))> x_free(x.size());
-  std::transform(x.begin(), x.end(), x_free.begin(), [](auto&& xx) {
-    return ordered_free(xx);
-  });
+  std::transform(x.begin(), x.end(), x_free.begin(),
+                 [](auto&& xx) { return ordered_free(xx); });
   return x_free;
 }
 

@@ -21,7 +21,9 @@ TEST(ProbTransform, choleskyFactor) {
   for (int i = 0; i < 3; ++i)
     EXPECT_FLOAT_EQ(x(i), x2(i));
 
-  std::vector<Matrix<double, Dynamic, 1>> x_vec = stan::math::cholesky_factor_free(std::vector<Matrix<double, Dynamic, Dynamic>>{y, y, y});
+  std::vector<Matrix<double, Dynamic, 1>> x_vec
+      = stan::math::cholesky_factor_free(
+          std::vector<Matrix<double, Dynamic, Dynamic>>{y, y, y});
   for (int i = 0; i < x_vec.size(); ++i) {
     EXPECT_EQ(x_vec[i].size(), x.size());
     EXPECT_EQ(x_vec[i].rows(), x.rows());

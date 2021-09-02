@@ -9,7 +9,8 @@ TEST(prob_transform, stdvec_corr_matrix_j) {
   x << -1.0, 2.0, 0.0, 1.0, 3.0, -1.5;
   double lp = -12.9;
   Eigen::MatrixXd y = stan::math::corr_matrix_constrain(x, K, lp);
-  std::vector<Eigen::VectorXd> xrt = stan::math::corr_matrix_free(std::vector<Eigen::MatrixXd>{y, y, y});
+  std::vector<Eigen::VectorXd> xrt
+      = stan::math::corr_matrix_free(std::vector<Eigen::MatrixXd>{y, y, y});
   for (auto&& x_i : xrt) {
     EXPECT_MATRIX_FLOAT_EQ(x, x_i);
   }
