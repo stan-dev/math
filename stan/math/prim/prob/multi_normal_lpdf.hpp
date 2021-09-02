@@ -22,8 +22,9 @@ template <bool propto, typename T_y, typename T_loc, typename T_covar,
           require_any_not_vector_vt<is_stan_scalar, T_y, T_loc>* = nullptr,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_loc, T_covar>* = nullptr>
-return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(
-    const T_y& y, const T_loc& mu, const T_covar& Sigma) {
+return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
+                                                     const T_loc& mu,
+                                                     const T_covar& Sigma) {
   static const char* function = "multi_normal_lpdf";
   using T_covar_elem = typename scalar_type<T_covar>::type;
   using T_return = return_type_t<T_y, T_loc, T_covar>;
@@ -43,7 +44,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(
 
   T_y_ref y_ref = y;
   T_mu_ref mu_ref = mu;
-  
+
   vector_seq_view<T_y_ref> y_vec(y_ref);
   vector_seq_view<T_mu_ref> mu_vec(mu_ref);
   const size_t size_vec = max_size_mvt(y, mu);
@@ -91,8 +92,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(
   auto L = cholesky_decompose(Sigma);
   T_L_ref L_ref = L;
 
-  
-operands_and_partials<T_y_ref, T_mu_ref, T_L_ref> ops_partials(y_ref, mu_ref,
+  operands_and_partials<T_y_ref, T_mu_ref, T_L_ref> ops_partials(y_ref, mu_ref,
                                                                  L_ref);
 
   T_partials_return logp(0);
@@ -159,8 +159,7 @@ operands_and_partials<T_y_ref, T_mu_ref, T_L_ref> ops_partials(y_ref, mu_ref,
   }
 
   return ops_partials.build(logp);
-  }
-
+}
 
 template <bool propto, typename T_y, typename T_loc, typename T_covar,
           require_all_vector_vt<is_stan_scalar, T_y, T_loc>* = nullptr,
@@ -184,7 +183,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
 
   T_y_ref y_ref = y;
   T_mu_ref mu_ref = mu;
-  
+
   decltype(auto) y_val = as_value_column_vector_or_scalar(y_ref);
   decltype(auto) mu_val = as_value_column_vector_or_scalar(mu_ref);
 
@@ -262,8 +261,9 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
 }
 
 template <typename T_y, typename T_loc, typename T_covar>
-inline return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(
-    const T_y& y, const T_loc& mu, const T_covar& L) {
+inline return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
+                                                            const T_loc& mu,
+                                                            const T_covar& L) {
   return multi_normal_lpdf<false>(y, mu, L);
 }
 
