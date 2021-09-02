@@ -101,3 +101,6 @@ lib/tbb/**
 
 # gdb debug history
 .gdb_history
+base_no_chol.csv
+faster.csv
+plot_base.png
