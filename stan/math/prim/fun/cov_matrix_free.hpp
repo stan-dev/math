@@ -67,10 +67,8 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cov_matrix_free(const T& y) {
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
 auto cov_matrix_free(const T& x) {
-  std::vector<decltype(cov_matrix_free(x[0]))> x_free(x.size());
-  std::transform(x.begin(), x.end(), x_free.begin(),
-                 [](auto&& xx) { return cov_matrix_free(xx); });
-  return x_free;
+  return apply_vector_unary<T>::apply(
+      x, [](auto&& v) { return cov_matrix_free(v); });
 }
 
 }  // namespace math

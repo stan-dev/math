@@ -36,9 +36,7 @@ auto positive_ordered_free(const EigVec& y) {
     return x;
   }
   x.coeffRef(0) = log(y_ref.coeff(0));
-  for (Eigen::Index i = 1; i < k; ++i) {
-    x.coeffRef(i) = log(y_ref.coeff(i) - y_ref.coeff(i - 1));
-  }
+  x.tail(k - 1) = (y_ref.tail(k - 1) - y_ref.head(k - 1)).array().log().matrix();
   return x;
 }
 
@@ -51,10 +49,8 @@ auto positive_ordered_free(const EigVec& y) {
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
 auto positive_ordered_free(const T& x) {
-  std::vector<decltype(positive_ordered_free(x[0]))> x_free(x.size());
-  std::transform(x.begin(), x.end(), x_free.begin(),
-                 [](auto&& xx) { return positive_ordered_free(xx); });
-  return x_free;
+  return apply_vector_unary<T>::apply(
+      x, [](auto&& v) { return positive_ordered_free(v); });
 }
 
 }  // namespace math

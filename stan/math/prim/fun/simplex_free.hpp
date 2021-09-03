@@ -54,10 +54,8 @@ auto simplex_free(const Vec& x) {
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
 auto simplex_free(const T& x) {
-  std::vector<decltype(simplex_free(x[0]))> x_free(x.size());
-  std::transform(x.begin(), x.end(), x_free.begin(),
-                 [](auto&& xx) { return simplex_free(xx); });
-  return x_free;
+  return apply_vector_unary<T>::apply(
+      x, [](auto&& v) { return simplex_free(v); });
 }
 
 }  // namespace math
