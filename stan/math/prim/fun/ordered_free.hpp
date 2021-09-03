@@ -50,8 +50,8 @@ plain_type_t<EigVec> ordered_free(const EigVec& y) {
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
 auto ordered_free(const T& x) {
-  return apply_vector_unary<T>::apply(
-      x, [](auto&& v) { return ordered_free(v); });
+  return apply_vector_unary<T>::apply(x,
+                                      [](auto&& v) { return ordered_free(v); });
 }
 
 }  // namespace math

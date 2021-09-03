@@ -190,10 +190,9 @@ struct apply_vector_unary<
     using T_return
         = plain_type_t<decltype(apply_vector_unary<T_vt>::apply(x[0], f))>;
     std::vector<T_return> result(x.size());
-    std::transform(x.begin(), x.end(), result.begin(),
-     [&f](auto&& xx) {
-       return apply_vector_unary<T_vt>::apply_no_holder(xx, f);
-     });
+    std::transform(x.begin(), x.end(), result.begin(), [&f](auto&& xx) {
+      return apply_vector_unary<T_vt>::apply_no_holder(xx, f);
+    });
     return result;
   }
 

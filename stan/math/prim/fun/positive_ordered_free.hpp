@@ -36,7 +36,8 @@ auto positive_ordered_free(const EigVec& y) {
     return x;
   }
   x.coeffRef(0) = log(y_ref.coeff(0));
-  x.tail(k - 1) = (y_ref.tail(k - 1) - y_ref.head(k - 1)).array().log().matrix();
+  x.tail(k - 1)
+      = (y_ref.tail(k - 1) - y_ref.head(k - 1)).array().log().matrix();
   return x;
 }
 
