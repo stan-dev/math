@@ -221,6 +221,33 @@ inline auto lb_constrain(const std::vector<T>& x, const std::vector<L>& lb,
   return ret;
 }
 
+/**
+ * Specialization of `lb_constrain` to apply a container of lower bounds
+ * elementwise to each input element. If the `Jacobian` parameter is `true`, the
+ * log density accumulator is incremented with the log absolute Jacobian
+ * determinant of the transform. All of the transforms are specified with their
+ * Jacobians in the *Stan Reference Manual* chapter Constraint Transforms.
+ *
+ * @tparam Jacobian if `true`, increment log density accumulator with log
+ * absolute Jacobian determinant of constraining transform
+ * @tparam T A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
+ * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
+ * @tparam L A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
+ * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
+ * @param[in] x unconstrained input
+ * @param[in] lb lower bound on output
+ * @param[in, out] lp log density accumulator
+ * @return lower-bound constrained value corresponding to inputs
+ */
+template <bool Jacobian, typename T, typename L>
+inline auto lb_constrain(const T& x, const L& lb, return_type_t<T, L>& lp) {
+  if (Jacobian) {
+    return lb_constrain(x, lb, lp);
+  } else {
+    return lb_constrain(x, lb);
+  }
+}
+
 }  // namespace math
 }  // namespace stan
 

@@ -111,7 +111,9 @@
 #include <stan/math/prim/fun/get.hpp>
 #include <stan/math/prim/fun/get_base1.hpp>
 #include <stan/math/prim/fun/get_base1_lhs.hpp>
+#include <stan/math/prim/fun/get_imag.hpp>
 #include <stan/math/prim/fun/get_lp.hpp>
+#include <stan/math/prim/fun/get_real.hpp>
 #include <stan/math/prim/fun/gp_dot_prod_cov.hpp>
 #include <stan/math/prim/fun/gp_exponential_cov.hpp>
 #include <stan/math/prim/fun/gp_matern32_cov.hpp>
@@ -327,6 +329,7 @@
 #include <stan/math/prim/fun/tgamma.hpp>
 #include <stan/math/prim/fun/to_array_1d.hpp>
 #include <stan/math/prim/fun/to_array_2d.hpp>
+#include <stan/math/prim/fun/to_complex.hpp>
 #include <stan/math/prim/fun/to_matrix.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/to_row_vector.hpp>
