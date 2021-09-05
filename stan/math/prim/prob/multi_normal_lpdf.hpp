@@ -130,8 +130,8 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
 template <typename T_y, typename T_loc, typename T_covar>
 inline return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
                                                             const T_loc& mu,
-                                                            const T_covar& L) {
-  return multi_normal_lpdf<false>(y, mu, L);
+                                                            const T_covar& Sigma) {
+  return multi_normal_lpdf<false>(y, mu, Sigma);
 }
 
 }  // namespace math

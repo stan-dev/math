@@ -104,3 +104,4 @@ lib/tbb/**
 base_no_chol.csv
 faster.csv
 plot_base.png
+test/tests0_test.cpp
