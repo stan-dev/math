@@ -11,6 +11,10 @@ namespace internal {
 
 /**
  * A closure that wraps a C++ lambda and captures values.
+ *
+ * @tparam Ref if true values are captured by reference
+ * @tparam F the lambda functor type
+ * @tparam Ts types of the captured values
  */
 template <bool Ref, typename F, typename... Ts>
 struct base_closure {
@@ -27,14 +31,20 @@ struct base_closure {
 
   template <typename... Args>
   auto operator()(std::ostream* msgs, const Args&... args) const {
-    return apply([this, msgs, &args...](
-                     const auto&... s) { return f_(s..., args..., msgs); },
-                 captures_);
+    return apply(
+        [this, msgs, &args...](const auto&... s) {
+          return this->f_(s..., args..., msgs);
+        },
+        captures_);
   }
 };
 
 /**
  * A closure that takes rng argument.
+ *
+ * @tparam Ref if true values are captured by reference
+ * @tparam F the lambda functor type
+ * @tparam Ts types of the captured values
  */
 template <bool Ref, typename F, typename... Ts>
 struct closure_rng {
@@ -59,7 +69,12 @@ struct closure_rng {
 };
 
 /**
- * A closure that can be called with `propto` template argument.
+ * A closure that may compute an unnormalized propability density.
+ *
+ * @tparam Propto if true the function is unnormalized
+ * @tparam Ref if true values are captured by reference
+ * @tparam F the lambda functor type
+ * @tparam Ts types of the captured values
  */
 template <bool Propto, bool Ref, typename F, typename... Ts>
 struct closure_lpdf {
@@ -95,6 +110,11 @@ struct closure_lpdf {
 
 /**
  * A closure that accesses logprob accumulator.
+ *
+ * @tparam Propto if true the logprob is unnormalized
+ * @tparam Ref if true values are captured by reference
+ * @tparam F the lambda functor type
+ * @tparam Ts types of the captured values
  */
 template <bool Propto, bool Ref, typename F, typename... Ts>
 struct closure_lp {
@@ -114,8 +134,8 @@ struct closure_lp {
                   const Args&... args) const {
     return apply(
         [this, &lp, &lp_accum, msgs, &args...](const auto&... s) {
-          return f_.template operator()<propto>(s..., args..., lp, lp_accum,
-                                                msgs);
+          return this->f_.template operator()<propto>(s..., args..., lp,
+                                                      lp_accum, msgs);
         },
         captures_);
   }
