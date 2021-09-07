@@ -12,10 +12,11 @@ TEST(prob_transform, cov_matrix_rt) {
   Matrix<double, Dynamic, 1> x(K_choose_2 + K);
   x << -1.0, 2.0, 0.0, 1.0, 3.0, -1.5, 1.0, 2.0, -1.5, 2.5;
   Matrix<double, Dynamic, Dynamic> y = stan::math::cov_matrix_constrain(x, K);
-  Matrix<double, Dynamic, 1> xrt = stan::math::cov_matrix_free(y);
-  EXPECT_EQ(x.size(), xrt.size());
-  for (int i = 0; i < x.size(); ++i) {
-    EXPECT_FLOAT_EQ(x[i], xrt[i]);
+  std::vector<Eigen::VectorXd> xrt
+      = stan::math::cov_matrix_free(std::vector<Eigen::MatrixXd>{y, y, y});
+  for (auto&& x_i : xrt) {
+    EXPECT_EQ(x.size(), x_i.size());
+    EXPECT_MATRIX_FLOAT_EQ(x, x_i);
   }
 }
 TEST(prob_transform, cov_matrix_constrain_exception) {

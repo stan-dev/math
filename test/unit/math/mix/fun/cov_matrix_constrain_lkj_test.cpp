@@ -3,7 +3,8 @@
 TEST(mathMixMatFun, cov_matrix_constrain_lkj) {
   auto f = [](int K) {
     return [K](const auto& x1) {
-      return stan::math::cov_matrix_constrain_lkj(x1, K);
+      stan::scalar_type_t<decltype(x1)> lp = 0.0;
+      return stan::math::cov_matrix_constrain_lkj<false>(x1, K, lp);
     };
   };
 
@@ -20,15 +21,15 @@ TEST(mathMixMatFun, cov_matrix_constrain_lkj) {
 TEST(mathMixMatFun, cov_matrix_constrain_lkj_lp) {
   auto f1 = [](int K) {
     return [K](const auto& x1) {
-      stan::scalar_type_t<std::decay_t<decltype(x1)>> lp = 0.0;
-      return stan::math::cov_matrix_constrain_lkj(x1, K, lp);
+      stan::scalar_type_t<decltype(x1)> lp = 0.0;
+      return stan::math::cov_matrix_constrain_lkj<true>(x1, K, lp);
     };
   };
 
   auto f2 = [](int K) {
     return [K](const auto& x1) {
-      stan::scalar_type_t<std::decay_t<decltype(x1)>> lp = 0.0;
-      stan::math::cov_matrix_constrain_lkj(x1, K, lp);
+      stan::scalar_type_t<decltype(x1)> lp = 0.0;
+      stan::math::cov_matrix_constrain_lkj<true>(x1, K, lp);
       return lp;
     };
   };
