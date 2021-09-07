@@ -260,7 +260,8 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_cholesky_lpdf(
     if (is_constant<T_covar_elem>::value) {
       matrix_partials_t L_val = value_of(L_ref);
 
-      half = mdivide_left_tri<Eigen::Lower>(L_val, y_val_minus_mu_val).transpose();
+      half = mdivide_left_tri<Eigen::Lower>(L_val, y_val_minus_mu_val)
+                 .transpose();
 
       scaled_diff = mdivide_right_tri<Eigen::Lower>(half, L_val).transpose();
 
