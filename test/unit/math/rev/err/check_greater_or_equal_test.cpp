@@ -361,7 +361,7 @@ TEST(AgradRevErrorHandlingMatrix, CheckGreaterOrEqualVarMatrix) {
   stan::math::recover_memory();
 }
 
-TEST(AgradRevErrorHandlingMatrix, CheckGreaterOrEqualVarMatrix2) {
+TEST(AgradRevErrorHandlingMatrix, CheckGreaterOrEqualStdVecVarMatrix) {
   using stan::math::var;
 std::vector<
   std::vector<
@@ -378,5 +378,5 @@ std::vector<
          Eigen::Matrix<var, -1, -1>>(
          Eigen::Matrix<double, -1, -1>::Constant(2, 3,
            std::numeric_limits<double>::quiet_NaN()))));
-stan::math::check_greater_or_equal("test_ge", "ar_mat", ar_mat, 0);
+EXPECT_THROW(stan::math::check_greater_or_equal("test_ge", "ar_mat", ar_mat, 0), std::domain_error);
 }
