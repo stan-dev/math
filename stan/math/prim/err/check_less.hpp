@@ -65,7 +65,7 @@ inline void check_less(const char* function, const char* name, const T_y& y,
  */
  template <typename T_y, typename T_high, require_stan_scalar_t<T_y>* = nullptr,
            require_vector_t<T_high>* = nullptr,
-           require_not_std_vector_vt<is_container, T_high>* = nullptr,
+           require_not_std_vector_vt<is_container_or_var_matrix, T_high>* = nullptr,
            typename... Idxs>
 inline void check_less(const char* function, const char* name, const T_y& y,
                        const T_high& high, Idxs... idxs) {
@@ -142,7 +142,7 @@ inline void check_less(const char* function, const char* name, const T_y& y,
  * high is `NaN`
  */
  template <typename T_y, typename T_high, require_vector_t<T_y>* = nullptr,
-           require_not_std_vector_vt<is_container, T_y>* = nullptr,
+           require_not_std_vector_vt<is_container_or_var_matrix, T_y>* = nullptr,
            require_stan_scalar_t<T_high>* = nullptr, typename... Idxs>
 inline void check_less(const char* function, const char* name, const T_y& y,
                        const T_high& high, Idxs... idxs) {
@@ -223,7 +223,7 @@ inline void check_less(const char* function, const char* name, const T_y& y,
  */
  template <typename T_y, typename T_high,
            require_all_vector_t<T_y, T_high>* = nullptr,
-           require_all_not_std_vector_vt<is_container, T_y, T_high>* = nullptr,
+           require_all_not_std_vector_vt<is_container_or_var_matrix, T_y, T_high>* = nullptr,
            typename... Idxs>
 inline void check_less(const char* function, const char* name, const T_y& y,
                        const T_high& high, Idxs... idxs) {
@@ -304,7 +304,7 @@ inline void check_less(const char* function, const char* name, const T_y& y,
  * high is `NaN`
  */
 template <typename T_y, typename T_high,
-          require_std_vector_vt<is_container, T_y>* = nullptr,
+          require_std_vector_vt<is_container_or_var_matrix, T_y>* = nullptr,
           require_not_std_vector_t<T_high>* = nullptr, typename... Idxs>
 inline void check_less(const char* function, const char* name, const T_y& y,
                        const T_high& high, Idxs... idxs) {
@@ -332,7 +332,7 @@ inline void check_less(const char* function, const char* name, const T_y& y,
  */
 template <
     typename T_y, typename T_high, require_not_std_vector_t<T_y>* = nullptr,
-    require_std_vector_vt<is_container, T_high>* = nullptr, typename... Idxs>
+    require_std_vector_vt<is_container_or_var_matrix, T_high>* = nullptr, typename... Idxs>
 inline void check_less(const char* function, const char* name, const T_y& y,
                        const T_high& high, Idxs... idxs) {
   for (size_t i = 0; i < high.size(); ++i) {
@@ -359,7 +359,7 @@ inline void check_less(const char* function, const char* name, const T_y& y,
  * high is `NaN`
  */
 template <typename T_y, typename T_high,
-          require_any_std_vector_vt<is_container, T_y, T_high>* = nullptr,
+          require_any_std_vector_vt<is_container_or_var_matrix, T_y, T_high>* = nullptr,
           require_all_std_vector_t<T_y, T_high>* = nullptr, typename... Idxs>
 inline void check_less(const char* function, const char* name, const T_y& y,
                        const T_high& high, Idxs... idxs) {

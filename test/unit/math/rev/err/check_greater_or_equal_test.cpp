@@ -360,3 +360,23 @@ TEST(AgradRevErrorHandlingMatrix, CheckGreaterOrEqualVarMatrix) {
       << "check_greater_or_equal: double, matrix<3, 1>";
   stan::math::recover_memory();
 }
+
+TEST(AgradRevErrorHandlingMatrix, CheckGreaterOrEqualVarMatrix2) {
+  using stan::math::var;
+std::vector<
+  std::vector<
+    stan::conditional_var_value_t<var,
+      Eigen::Matrix<var, -1, -1>>>> ar_mat =
+   std::vector<
+     std::vector<
+       stan::conditional_var_value_t<var,
+         Eigen::Matrix<var, -1, -1>>>>(4,
+     std::vector<
+       stan::conditional_var_value_t<var,
+         Eigen::Matrix<var, -1, -1>>>(5,
+       stan::conditional_var_value_t<var,
+         Eigen::Matrix<var, -1, -1>>(
+         Eigen::Matrix<double, -1, -1>::Constant(2, 3,
+           std::numeric_limits<double>::quiet_NaN()))));
+stan::math::check_greater_or_equal("test_ge", "ar_mat", ar_mat, 0);
+}
