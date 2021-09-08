@@ -35,19 +35,19 @@ generalized_inverse(const EigMat& G) {
   if (G.size() == 0)
     return {};
 
-   if (G.rows() == G.cols()) {
-    Eigen::FullPivLU<EigMat> lu(G); 
-    if(lu.isInvertible())
+  if (G.rows() == G.cols()) {
+    Eigen::FullPivLU<EigMat> lu(G);
+    if (lu.isInvertible())
       return G.inverse();
-    }
+  }
 
-    const auto& G_ref = to_ref(G);
+  const auto& G_ref = to_ref(G);
 
-    if (G.rows() < G.cols()) {
-      return (G_ref * G_ref.transpose()).ldlt().solve(G_ref).transpose();
-    } else {
-      return (G_ref.transpose() * G_ref).ldlt().solve(G_ref.transpose());
-    }
+  if (G.rows() < G.cols()) {
+    return (G_ref * G_ref.transpose()).ldlt().solve(G_ref).transpose();
+  } else {
+    return (G_ref.transpose() * G_ref).ldlt().solve(G_ref.transpose());
+  }
 }
 
 }  // namespace math
