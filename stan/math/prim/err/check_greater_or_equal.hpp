@@ -66,8 +66,10 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
-template <typename T_y, typename T_low, require_stan_scalar_t<T_y>* = nullptr,
-          require_vector_vt<is_stan_scalar, T_low>* = nullptr, typename... Idxs>
+ template <typename T_y, typename T_low, require_stan_scalar_t<T_y>* = nullptr,
+           require_vector_t<T_low>* = nullptr,
+           require_not_std_vector_vt<is_container, T_low>* = nullptr,
+           typename... Idxs>
 inline void check_greater_or_equal(const char* function, const char* name,
                                    const T_y& y, const T_low& low,
                                    Idxs... idxs) {
@@ -145,9 +147,9 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
-template <typename T_y, typename T_low,
-          require_vector_vt<is_stan_scalar, T_y>* = nullptr,
-          require_stan_scalar_t<T_low>* = nullptr, typename... Idxs>
+ template <typename T_y, typename T_low, require_vector_t<T_y>* = nullptr,
+           require_not_std_vector_vt<is_container, T_y>* = nullptr,
+           require_stan_scalar_t<T_low>* = nullptr, typename... Idxs>
 inline void check_greater_or_equal(const char* function, const char* name,
                                    const T_y& y, const T_low& low,
                                    Idxs... idxs) {
@@ -228,9 +230,10 @@ inline void check_greater_or_equal(const char* function, const char* name,
  * @throw `std::domain_error` if y is not greater or equal to low or if any
  * element of y or low is `NaN`
  */
-template <typename T_y, typename T_low,
-          require_all_vector_vt<is_stan_scalar, T_y, T_low>* = nullptr,
-          typename... Idxs>
+ template <typename T_y, typename T_low,
+           require_all_vector_t<T_y, T_low>* = nullptr,
+           require_all_not_std_vector_vt<is_container, T_y, T_low>* = nullptr,
+           typename... Idxs>
 inline void check_greater_or_equal(const char* function, const char* name,
                                    const T_y& y, const T_low& low,
                                    Idxs... idxs) {
