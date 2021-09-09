@@ -180,23 +180,25 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_newton_impl(
   auto Jf_x_T_lu_ptr
       = make_unsafe_chainable_ptr(Jf_x.transpose().partialPivLu());  // Lu
 
-  reverse_pass_callback([f, ret, arena_args_tuple, Jf_x_T_lu_ptr,
-                         msgs]() mutable {
-    Eigen::VectorXd eta = -Jf_x_T_lu_ptr->solve(ret.adj().eval());
+  reverse_pass_callback(
+      [f, ret, arena_args_tuple, Jf_x_T_lu_ptr, msgs]() mutable {
+        Eigen::VectorXd eta = -Jf_x_T_lu_ptr->solve(ret.adj().eval());
 
-    // Contract with Jacobian of f with respect to y using a nested reverse
-    // autodiff pass.
-    {
-      nested_rev_autodiff rev;
+        // Contract with Jacobian of f with respect to y using a nested reverse
+        // autodiff pass.
+        {
+          nested_rev_autodiff rev;
 
-      Eigen::VectorXd ret_val = ret.val();
-      auto x_nrad_ = apply(
-          [&ret_val, &f, msgs](const auto&... args) { return eval(f(ret_val, msgs, args...)); },
-          *arena_args_tuple);
-      x_nrad_.adj() = eta;
-      grad();
-    }
-  });
+          Eigen::VectorXd ret_val = ret.val();
+          auto x_nrad_ = apply(
+              [&ret_val, &f, msgs](const auto&... args) {
+                return eval(f(ret_val, msgs, args...));
+              },
+              *arena_args_tuple);
+          x_nrad_.adj() = eta;
+          grad();
+        }
+      });
 
   return ret_type(ret);
 }
