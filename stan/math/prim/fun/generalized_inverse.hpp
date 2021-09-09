@@ -37,13 +37,11 @@ generalized_inverse(const EigMat& G) {
   const auto& G_ref = to_ref(G);
 
   if (G.rows() == G.cols()) {
-    Eigen::LLT<Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
-                           EigMat::ColsAtCompileTime>>
-     ldlt_G = (G_ref.transpose() * G_ref).ldlt();
+    Eigen::LDLT<EigMat> ldlt_G = (G_ref.transpose() * G_ref).ldlt();
     if (!(ldlt_G.vectorD().array() <= 0).any())
       return inverse(G);
     else
-      return ldlt_G.solve(G_ref.transpose());
+      return ldlt_G.solve(G.transpose());
   }
 
   if (G.rows() < G.cols()) {
