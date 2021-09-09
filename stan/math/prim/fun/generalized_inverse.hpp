@@ -35,10 +35,11 @@ generalized_inverse(const EigMat& G) {
   if (G_ref.size() == 0)
     return {};
 
-   if (G_ref.rows() == G_ref.cols()) {
-    Eigen::CompleteOrthogonalDecomposition<Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
-                           EigMat::ColsAtCompileTime>>
-     complete_ortho_decomp_G = G_ref.completeOrthogonalDecomposition();
+  if (G_ref.rows() == G_ref.cols()) {
+    Eigen::CompleteOrthogonalDecomposition<
+        Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
+                      EigMat::ColsAtCompileTime>>
+        complete_ortho_decomp_G = G_ref.completeOrthogonalDecomposition();
     if (!(complete_ortho_decomp_G.rank() < G_ref.rows()))
       return inverse(G_ref);
     else

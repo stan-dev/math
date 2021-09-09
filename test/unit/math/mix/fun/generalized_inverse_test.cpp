@@ -42,7 +42,7 @@ TEST(mathMixMatFun, ad_tests4) {
   using stan::test::expect_ad_matvar;
 
   auto f = [](const auto& G) { return stan::math::generalized_inverse(G); };
-  
+
   Eigen::MatrixXd v(2, 3);
   v << 1.9, 1.3, 2.5, 0.4, 1.7, 0.1;
   expect_ad(f, v);
