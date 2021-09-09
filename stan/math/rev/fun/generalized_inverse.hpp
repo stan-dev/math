@@ -22,9 +22,9 @@ namespace internal {
 template <typename T1, typename T2>
 inline auto generalized_inverse_lambda(T1& G_arena, T2& inv_G) {
   return [G_arena, inv_G]() mutable {
-    Eigen::VectorXd ones1
+    auto ones1
         = Eigen::VectorXd::Constant(std::min(G_arena.rows(), inv_G.cols()), 1);
-    Eigen::VectorXd ones2
+    auto ones2
         = Eigen::VectorXd::Constant(std::min(inv_G.rows(), G_arena.cols()), 1);
     G_arena.adj()
         += -(inv_G.val_op().transpose() * inv_G.adj_op()
@@ -75,16 +75,14 @@ inline auto generalized_inverse(const VarMat& G) {
         complete_ortho_decomp_G
         = G_arena.val().completeOrthogonalDecomposition();
     if (!(complete_ortho_decomp_G.rank() < G.rows())) {
-      return ret_type(inverse(G));
+      return ret_type(inverse(G_arena));
     } else {
       arena_t<ret_type> inv_G(complete_ortho_decomp_G.pseudoInverse());
       reverse_pass_callback(
           internal::generalized_inverse_lambda(G_arena, inv_G));
       return ret_type(inv_G);
     }
-  }
-
-  if (G.rows() < G.cols()) {
+  } else if (G.rows() < G.cols()) {
     arena_t<VarMat> G_arena(G);
     arena_t<ret_type> inv_G((G_arena.val_op() * G_arena.val_op().transpose())
                                 .ldlt()
