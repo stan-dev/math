@@ -31,14 +31,14 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
   using T_mu_ref = ref_type_t<T_loc>;
 
   check_consistent_sizes_mvt(function, "y", y, "mu", mu);
-  size_t number_of_y = size_mvt(y);
-  size_t number_of_mu = size_mvt(mu);
+  T_y_ref y_ref = y;
+  T_mu_ref mu_ref = mu;
+
+  size_t number_of_y = size_mvt(y_ref);
+  size_t number_of_mu = size_mvt(mu_ref);
   if (number_of_y == 0 || number_of_mu == 0) {
     return 0;
   }
-
-  T_y_ref y_ref = y;
-  T_mu_ref mu_ref = mu;
 
   vector_seq_view<T_y_ref> y_vec(y_ref);
   vector_seq_view<T_mu_ref> mu_vec(mu_ref);
@@ -48,7 +48,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
   const int size_mu = mu_vec[0].size();
 
   // check size consistency of all random variables y
-  for (size_t i = 1, size_mvt_y = size_mvt(y); i < size_mvt_y; i++) {
+  for (size_t i = 1, size_mvt_y = size_mvt(y_ref); i < size_mvt_y; i++) {
     check_size_match(function,
                      "Size of one of the vectors of "
                      "the random variable",
@@ -84,8 +84,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
     return T_return(0);
   }
 
-  auto L = cholesky_decompose(Sigma);
-  return multi_normal_cholesky_lpdf<propto>(y, mu, L);
+  return multi_normal_cholesky_lpdf<propto>(y, mu, cholesky_decompose(Sigma));
 }
 
 template <bool propto, typename T_y, typename T_loc, typename T_covar,
@@ -123,8 +122,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
     return T_return(0);
   }
 
-  auto L = cholesky_decompose(Sigma);
-  return multi_normal_cholesky_lpdf<propto>(y, mu, L);
+  return multi_normal_cholesky_lpdf<propto>(y, mu, cholesky_decompose(Sigma));
 }
 
 template <typename T_y, typename T_loc, typename T_covar>
