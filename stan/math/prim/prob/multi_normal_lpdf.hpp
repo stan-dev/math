@@ -84,7 +84,8 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
     return T_return(0);
   }
 
-  return multi_normal_cholesky_lpdf<propto>(y_ref, mu_ref, cholesky_decompose(Sigma));
+  return multi_normal_cholesky_lpdf<propto>(y_ref, mu_ref,
+                                            cholesky_decompose(Sigma));
 }
 
 template <bool propto, typename T_y, typename T_loc, typename T_covar,
@@ -122,7 +123,8 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
     return T_return(0);
   }
 
-  return multi_normal_cholesky_lpdf<propto>(y_ref, mu_ref, cholesky_decompose(Sigma));
+  return multi_normal_cholesky_lpdf<propto>(y_ref, mu_ref,
+                                            cholesky_decompose(Sigma));
 }
 
 template <typename T_y, typename T_loc, typename T_covar>
