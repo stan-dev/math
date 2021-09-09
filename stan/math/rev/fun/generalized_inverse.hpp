@@ -29,12 +29,12 @@ inline auto generalized_inverse_lambda(T1& G_arena, T2& inv_G) {
     G_arena.adj()
         += -(inv_G.val_op().transpose() * inv_G.adj_op()
              * inv_G.val_op().transpose())
-           + (add_diag(-G_arena.val_op() * inv_G.val_op(), ones1))
+           + add_diag(-G_arena.val_op() * inv_G.val_op(), ones1)
                  * inv_G.adj_op().transpose() * inv_G.val_op()
                  * inv_G.val_op().transpose()
            + inv_G.val_op().transpose() * inv_G.val_op()
                  * inv_G.adj_op().transpose()
-                 * (add_diag(-inv_G.val_op() * G_arena.val_op(), ones2));
+                 * add_diag(-inv_G.val_op() * G_arena.val_op(), ones2);
   };
 }
 }  // namespace internal
