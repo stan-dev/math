@@ -38,7 +38,7 @@ void check_simplex(const char* function, const char* name, const T& theta) {
   if (!(fabs(1.0 - theta_ref.sum()) <= CONSTRAINT_TOLERANCE)) {
     [&]() STAN_COLD_PATH {
       std::stringstream msg;
-      value_type_t<T> sum = theta_ref.sum();
+      scalar_type_t<T> sum = theta_ref.sum();
       msg << "is not a valid simplex.";
       msg.precision(10);
       msg << " sum(" << name << ") = " << sum << ", but should be ";
