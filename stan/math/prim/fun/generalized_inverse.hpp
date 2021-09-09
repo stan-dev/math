@@ -38,8 +38,8 @@ generalized_inverse(const EigMat& G) {
 
   if (G.rows() == G.cols()) {
     Eigen::LLT<Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
-                           EigMat::ColsAtCompileTime>>
-     ldlt_G = (G_ref.transpose() * G_ref).ldlt();
+                             EigMat::ColsAtCompileTime>>
+        ldlt_G = (G_ref.transpose() * G_ref).ldlt();
     if (!(ldlt_G.vectorD().array() <= 0).any())
       return inverse(G);
     else
