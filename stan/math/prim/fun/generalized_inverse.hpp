@@ -31,22 +31,21 @@ template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
 inline Eigen::Matrix<value_type_t<EigMat>, EigMat::ColsAtCompileTime,
                      EigMat::RowsAtCompileTime>
 generalized_inverse(const EigMat& G) {
-  if (G.size() == 0)
+  const auto& G_ref = to_ref(G);
+  if (G_ref.size() == 0)
     return {};
 
-  const auto& G_ref = to_ref(G);
-
-  if (G.rows() == G.cols()) {
-    Eigen::LDLT<Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
-                              EigMat::ColsAtCompileTime>>
-        ldlt_G = (G_ref.transpose() * G_ref).ldlt();
-    if (!(ldlt_G.vectorD().array() <= 0).any())
-      return inverse(G);
+   if (G_ref.rows() == G_ref.cols()) {
+    Eigen::CompleteOrthogonalDecomposition<Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
+                           EigMat::ColsAtCompileTime>>
+     complete_ortho_decomp_G = G_ref.completeOrthogonalDecomposition();
+    if (!(complete_ortho_decomp_G.rank() < G_ref.rows()))
+      return inverse(G_ref);
     else
-      return ldlt_G.solve(G_ref.transpose());
+      return complete_ortho_decomp_G.pseudoInverse();
   }
 
-  if (G.rows() < G.cols()) {
+  if (G_ref.rows() < G_ref.cols()) {
     return (G_ref * G_ref.transpose()).ldlt().solve(G_ref).transpose();
   } else {
     return (G_ref.transpose() * G_ref).ldlt().solve(G_ref.transpose());
