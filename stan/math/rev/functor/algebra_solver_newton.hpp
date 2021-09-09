@@ -5,6 +5,7 @@
 #include <stan/math/rev/functor/algebra_system.hpp>
 #include <stan/math/rev/functor/kinsol_solve.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/eval.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/algebra_solver_adapter.hpp>
 #include <unsupported/Eigen/NonLinearOptimization>
@@ -140,12 +141,12 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_newton_impl(
     const double scaling_step_size, const double function_tolerance,
     const int64_t max_num_steps, const T_Args&... args) {
   const auto& x_ref = to_ref(value_of(x));
-  auto arena_args_tuple = std::make_tuple(to_arena(args)...);
+  auto arena_args_tuple = make_chainable_ptr(std::make_tuple(eval(args)...));
   auto args_vals_tuple = apply(
       [&](const auto&... args) {
         return std::make_tuple(to_ref(value_of(args))...);
       },
-      arena_args_tuple);
+      *arena_args_tuple);
 
   check_nonzero_size("algebra_solver_newton", "initial guess", x_ref);
   check_finite("algebra_solver_newton", "initial guess", x_ref);
@@ -190,8 +191,8 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_newton_impl(
 
       Eigen::VectorXd ret_val = ret.val();
       auto x_nrad_ = apply(
-          [&](const auto&... args) { return eval(f(ret_val, msgs, args...)); },
-          arena_args_tuple);
+          [&ret_val, &f, msgs](const auto&... args) { return eval(f(ret_val, msgs, args...)); },
+          *arena_args_tuple);
       x_nrad_.adj() = eta;
       grad();
     }
