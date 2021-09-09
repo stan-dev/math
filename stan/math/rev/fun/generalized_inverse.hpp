@@ -22,8 +22,10 @@ namespace internal {
 template <typename T1, typename T2>
 inline auto generalized_inverse_lambda(T1& G_arena, T2& inv_G) {
   return [G_arena, inv_G]() mutable {
-    Eigen::VectorXd ones1 =  Eigen::VectorXd::Constant(std::min(G_arena.rows(), inv_G.cols()), 1);
-    Eigen::VectorXd ones2 =  Eigen::VectorXd::Constant(std::min(inv_G.rows(), G_arena.cols()), 1);
+    Eigen::VectorXd ones1
+        = Eigen::VectorXd::Constant(std::min(G_arena.rows(), inv_G.cols()), 1);
+    Eigen::VectorXd ones2
+        = Eigen::VectorXd::Constant(std::min(inv_G.rows(), G_arena.cols()), 1);
     G_arena.adj()
         += -(inv_G.val_op().transpose() * inv_G.adj_op()
              * inv_G.val_op().transpose())
