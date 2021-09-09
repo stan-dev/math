@@ -74,9 +74,9 @@ inline auto generalized_inverse(const VarMat& G) {
     Eigen::CompleteOrthogonalDecomposition<Eigen::MatrixXd>
         complete_ortho_decomp_G
         = G_arena.val().completeOrthogonalDecomposition();
-    if (!(complete_ortho_decomp_G.rank() < G.rows()))
+    if (!(complete_ortho_decomp_G.rank() < G.rows())) {
       return ret_type(inverse(G));
-    else {
+      } else {
       arena_t<ret_type> inv_G(complete_ortho_decomp_G.pseudoInverse());
       reverse_pass_callback(
           internal::generalized_inverse_lambda(G_arena, inv_G));
