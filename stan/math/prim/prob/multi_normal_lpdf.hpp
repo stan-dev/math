@@ -58,7 +58,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
                      size_y);
   }
   // check size consistency of all means mu
-  for (size_t i = 1, size_mvt_mu = size_mvt(mu); i < size_mvt_mu; i++) {
+  for (size_t i = 1, size_mvt_mu = size_mvt(mu_ref); i < size_mvt_mu; i++) {
     check_size_match(function,
                      "Size of one of the vectors of "
                      "the location variable",
@@ -84,7 +84,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
     return T_return(0);
   }
 
-  return multi_normal_cholesky_lpdf<propto>(y, mu, cholesky_decompose(Sigma));
+  return multi_normal_cholesky_lpdf<propto>(y_ref, mu_ref, cholesky_decompose(Sigma));
 }
 
 template <bool propto, typename T_y, typename T_loc, typename T_covar,
@@ -122,7 +122,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
     return T_return(0);
   }
 
-  return multi_normal_cholesky_lpdf<propto>(y, mu, cholesky_decompose(Sigma));
+  return multi_normal_cholesky_lpdf<propto>(y_ref, mu_ref, cholesky_decompose(Sigma));
 }
 
 template <typename T_y, typename T_loc, typename T_covar>
