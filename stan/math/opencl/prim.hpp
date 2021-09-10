@@ -239,6 +239,8 @@
 #include <stan/math/opencl/prim/sign.hpp>
 #include <stan/math/opencl/prim/size.hpp>
 #include <stan/math/opencl/prim/softmax.hpp>
+#include <stan/math/opencl/prim/sort_asc.hpp>
+#include <stan/math/opencl/prim/sort_desc.hpp>
 #include <stan/math/opencl/prim/squared_distance.hpp>
 #include <stan/math/opencl/prim/sub_col.hpp>
 #include <stan/math/opencl/prim/sub_row.hpp>

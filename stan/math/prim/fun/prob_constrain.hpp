@@ -55,6 +55,28 @@ inline T prob_constrain(const T& x, T& lp) {
   return inv_logit_x;
 }
 
+/**
+ * Return a probability value constrained to fall between 0 and 1 (inclusive)
+ * for the specified free scalar. If the `Jacobian` parameter is `true`, the log
+ * density accumulator is incremented with the log absolute Jacobian determinant
+ * of the transform.  All of the transforms are specified with their Jacobians
+ * in the *Stan Reference Manual* chapter Constraint Transforms.
+ *
+ * @tparam Jacobian if `true`, increment log density accumulator with log
+ * absolute Jacobian determinant of constraining transform
+ * @tparam T type of scalar
+ * @param[in] x unconstrained value
+ * @param[in, out] lp log density accumulator
+ * @return result constrained to fall in (0, 1)
+ */
+template <bool Jacobian, typename T>
+inline auto prob_constrain(const T& x, T& lp) {
+  if (Jacobian) {
+    return prob_constrain(x, lp);
+  } else {
+    return prob_constrain(x);
+  }
+}
 }  // namespace math
 }  // namespace stan
 

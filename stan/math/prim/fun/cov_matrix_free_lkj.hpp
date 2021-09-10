@@ -49,6 +49,19 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cov_matrix_free_lkj(
   return x;
 }
 
+/**
+ * Overload of `cov_matrix_free_lkj()` to untransform each matrix
+ * in a standard vector.
+ * @tparam T A standard vector with with a `value_type` which inherits from
+ *  `Eigen::MatrixBase`.
+ * @param x The standard vector to untransform.
+ */
+template <typename T, require_std_vector_t<T>* = nullptr>
+auto cov_matrix_free_lkj(const T& x) {
+  return apply_vector_unary<T>::apply(
+      x, [](auto&& v) { return cov_matrix_free_lkj(v); });
+}
+
 }  // namespace math
 }  // namespace stan
 

@@ -7,13 +7,13 @@ using stan::partials_return_type;
 using stan::math::var;
 
 TEST(MetaTraitsRevScal, PartialsReturnTypeVar) {
-  test::expect_same_type<double, partials_return_type<var>::type>();
+  EXPECT_SAME_TYPE(double, partials_return_type<var>::type);
 }
 
 TEST(MetaTraitsRevScal, PartialsReturnTypeVarTenParams) {
-  test::expect_same_type<
-      double, partials_return_type<double, var, double, int, double, float,
-                                   float, float, var, int>::type>();
+  EXPECT_SAME_TYPE(double,
+                   partials_return_type<double, var, double, int, double, float,
+                                        float, float, var, int>::type);
 }
 
 TEST(MetaTraitsRevArr, partials_return_type) {

@@ -33,14 +33,14 @@ TEST(AgradRevMatrix, to_var_value_types) {
   auto fv = to_var_value(f);
   auto gv = to_var_value(g);
 
-  test::expect_same_type<var, decltype(av)>();
-  test::expect_same_type<var_mat, decltype(bv)>();
-  test::expect_same_type<var_vec, decltype(cv)>();
-  test::expect_same_type<var_row_vec, decltype(dv)>();
+  EXPECT_SAME_TYPE(var, decltype(av));
+  EXPECT_SAME_TYPE(var_mat, decltype(bv));
+  EXPECT_SAME_TYPE(var_vec, decltype(cv));
+  EXPECT_SAME_TYPE(var_row_vec, decltype(dv));
 
-  test::expect_same_type<var_mat, decltype(ev)>();
-  test::expect_same_type<var_vec, decltype(fv)>();
-  test::expect_same_type<var_row_vec, decltype(gv)>();
+  EXPECT_SAME_TYPE(var_mat, decltype(ev));
+  EXPECT_SAME_TYPE(var_vec, decltype(fv));
+  EXPECT_SAME_TYPE(var_row_vec, decltype(gv));
 
   stan::math::recover_memory();
 }
@@ -79,14 +79,14 @@ TEST(AgradRevMatrix, to_var_value_vec_types) {
   auto fv = to_var_value(f);
   auto gv = to_var_value(g);
 
-  test::expect_same_type<var_svec, decltype(av)>();
-  test::expect_same_type<var_mat_svec, decltype(bv)>();
-  test::expect_same_type<var_vec_svec, decltype(cv)>();
-  test::expect_same_type<var_row_vec_svec, decltype(dv)>();
+  EXPECT_SAME_TYPE(var_svec, decltype(av));
+  EXPECT_SAME_TYPE(var_mat_svec, decltype(bv));
+  EXPECT_SAME_TYPE(var_vec_svec, decltype(cv));
+  EXPECT_SAME_TYPE(var_row_vec_svec, decltype(dv));
 
-  test::expect_same_type<var_mat_svec, decltype(ev)>();
-  test::expect_same_type<var_vec_svec, decltype(fv)>();
-  test::expect_same_type<var_row_vec_svec, decltype(gv)>();
+  EXPECT_SAME_TYPE(var_mat_svec, decltype(ev));
+  EXPECT_SAME_TYPE(var_vec_svec, decltype(fv));
+  EXPECT_SAME_TYPE(var_row_vec_svec, decltype(gv));
 
   stan::math::recover_memory();
 }

@@ -6,8 +6,8 @@
 
 template <typename R, typename... Ts>
 void expect_return() {
-  test::expect_same_type<R, typename stan::return_type<Ts...>::type>();
-  test::expect_same_type<R, stan::return_type_t<Ts...>>();
+  EXPECT_SAME_TYPE(R, typename stan::return_type<Ts...>::type);
+  EXPECT_SAME_TYPE(R, stan::return_type_t<Ts...>);
 }
 
 template <typename T>

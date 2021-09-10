@@ -15,12 +15,14 @@ TEST(prob_transform, unit_vector_rt0) {
   EXPECT_NEAR(x(1), y(1), 1e-8);
   EXPECT_NEAR(x(2), y(2), 1e-8);
   EXPECT_NEAR(x(3), y(3), 1e-8);
-
-  Matrix<double, Dynamic, 1> xrt = stan::math::unit_vector_free(y);
+  std::vector<Matrix<double, Dynamic, 1>> xrt = stan::math::unit_vector_free(
+      std::vector<Matrix<double, Dynamic, 1>>{y, y, y});
   EXPECT_EQ(x.size(), y.size());
-  EXPECT_EQ(x.size(), xrt.size());
-  for (int i = 0; i < x.size(); ++i) {
-    EXPECT_NEAR(x[i], xrt[i], 1E-10);
+  for (auto&& x_i : xrt) {
+    EXPECT_EQ(x.size(), x_i.size());
+    for (int i = 0; i < x.size(); ++i) {
+      EXPECT_NEAR(x[i], x_i[i], 1E-10);
+    }
   }
 }
 TEST(prob_transform, unit_vector_rt) {

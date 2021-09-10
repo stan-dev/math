@@ -10,6 +10,16 @@
 namespace stan {
 namespace math {
 
+template <typename T, require_arithmetic_t<T>* = nullptr>
+auto fabs(T x) {
+  return std::abs(x);
+}
+
+template <typename T, require_complex_t<T>* = nullptr>
+auto fabs(T x) {
+  return hypot(x.real(), x.imag());
+}
+
 /**
  * Structure to wrap `fabs()` so that it can be vectorized.
  *
@@ -20,7 +30,6 @@ namespace math {
 struct fabs_fun {
   template <typename T>
   static inline T fun(const T& x) {
-    using std::fabs;
     return fabs(x);
   }
 };
@@ -37,7 +46,8 @@ template <typename Container,
           require_not_container_st<std::is_arithmetic, Container>* = nullptr,
           require_not_var_matrix_t<Container>* = nullptr,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
-              Container>* = nullptr>
+              Container>* = nullptr,
+          require_not_stan_scalar_t<Container>* = nullptr>
 inline auto fabs(const Container& x) {
   return apply_scalar_unary<fabs_fun, Container>::apply(x);
 }

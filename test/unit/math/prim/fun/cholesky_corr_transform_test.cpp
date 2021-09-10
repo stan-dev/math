@@ -39,6 +39,13 @@ void test_cholesky_correlation_values(
   Matrix<double, Dynamic, 1> y = stan::math::cholesky_corr_free(L);
   EXPECT_EQ(K_choose_2, y.size());
 
+  std::vector<Matrix<double, Dynamic, 1>> y_vec
+      = stan::math::cholesky_corr_free(
+          std::vector<Matrix<double, Dynamic, Dynamic>>{L, L, L});
+  for (int i = 0; i < y_vec.size(); ++i) {
+    EXPECT_EQ(K_choose_2, y_vec[i].size());
+  }
+
   // test transform roundtrip without Jacobian
   Matrix<double, Dynamic, Dynamic> x
       = stan::math::cholesky_corr_constrain(y, K);
