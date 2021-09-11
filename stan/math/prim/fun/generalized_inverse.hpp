@@ -76,6 +76,7 @@ generalized_inverse(const EigMat& G) {
   const bool transpose_bool = G.rows() == n ? true : false;
 
   auto A = transpose_bool ? tcrossprod(G) : crossprod(G);
+  // note: L may not be square. So L * M ops don't cancel.
   auto L = internal::cholesky_low_rank_decomposition(A);
   auto M = inverse(crossprod(L));
 
