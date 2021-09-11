@@ -3,12 +3,50 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/crossprod.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/inverse.hpp>
+#include <stan/math/prim/fun/tcrossprod.hpp>
 
 namespace stan {
 namespace math {
+
+namespace internal {
+  template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
+          require_not_vt_var<EigMat>* = nullptr>
+inline Eigen::Matrix<value_type_t<EigMat>, EigMat::ColsAtCompileTime,
+                     EigMat::RowsAtCompileTime>
+ cholesky_low_rank_decomposition(const EigMat& A) {
+    if (A.size() == 0)
+    return {};
+    
+    int n = A.rows();
+    auto dA = A.diagonal();
+    double tol = 1e-12;
+    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> L = Eigen::MatrixXd::Zero(n, n);
+    int r = 0;
+  
+    for (int i = 0; i < n; i++) {
+      if (r == 0) {
+        L.block(i, r, n - i, 1) = A.block(i, i, n - i, 1);
+      } else {
+        L.block(i, r , n - i, 1) = A.block(i, i, n - i, 1) - (L.block(i, 0, n - i, r) * L.block(i, 0, 1, r).transpose());
+      }
+
+      if (L(i, r) > tol ) {
+        L(i, r) = sqrt(L(i, r)) ;
+        if (i < n - 1) {
+             L.block(i + 1, r, n - (i + 1), 1) = (L.block(i + 1, r, n - (i + 1), 1).array() / L(i, r)).matrix(); 
+        }
+      }  else {
+        r -= 1;
+      }
+      r += 1;
+    }
+  return L.block(0, 0, n, r);
+ }
+} // namespace internal
 
 /**
  * Returns the Moore-Penrose generalized inverse of the specified matrix.
@@ -32,24 +70,19 @@ inline Eigen::Matrix<value_type_t<EigMat>, EigMat::ColsAtCompileTime,
                      EigMat::RowsAtCompileTime>
 generalized_inverse(const EigMat& G) {
   const auto& G_ref = to_ref(G);
-  if (G_ref.size() == 0)
+  if (G_ref.size() == 0) 
     return {};
+  const int n = std::min(G.rows(), G.cols());
+  const bool transpose_bool = G.rows() == n ? true : false;
 
-  if (G_ref.rows() == G_ref.cols()) {
-    Eigen::CompleteOrthogonalDecomposition<
-        Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
-                      EigMat::ColsAtCompileTime>>
-        complete_ortho_decomp_G = G_ref.completeOrthogonalDecomposition();
-    if (!(complete_ortho_decomp_G.rank() < G_ref.rows()))
-      return inverse(G_ref);
-    else
-      return complete_ortho_decomp_G.pseudoInverse();
-  }
+  auto A = transpose_bool ? tcrossprod(G) : crossprod(G);
+  auto L = internal::cholesky_low_rank_decomposition(A);
+  auto M = inverse(crossprod(L));
 
-  if (G_ref.rows() < G_ref.cols()) {
-    return (G_ref * G_ref.transpose()).ldlt().solve(G_ref).transpose();
+  if (transpose_bool) {
+    return G_ref.transpose() * L * M * M * L.transpose();
   } else {
-    return (G_ref.transpose() * G_ref).ldlt().solve(G_ref.transpose());
+    return L * M * M * L.transpose() * G_ref.transpose();
   }
 }
 
