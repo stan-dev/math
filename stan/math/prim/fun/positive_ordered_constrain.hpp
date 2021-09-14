@@ -72,7 +72,7 @@ inline auto positive_ordered_constrain(const Vec& x, return_type_t<Vec>& lp) {
  * @param[in, out] lp log density accumulato
  * @return Positive, increasing ordered vector
  */
-template <bool Jacobian, typename Vec>
+template <bool Jacobian, typename Vec, require_not_std_vector_t<Vec>* = nullptr>
 inline auto positive_ordered_constrain(const Vec& x, return_type_t<Vec>& lp) {
   if (Jacobian) {
     return positive_ordered_constrain(x, lp);
@@ -80,6 +80,14 @@ inline auto positive_ordered_constrain(const Vec& x, return_type_t<Vec>& lp) {
     return positive_ordered_constrain(x);
   }
 }
+
+template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
+inline auto positive_ordered_constrain(const T& x, return_type_t<T>& lp) {
+  return apply_vector_unary<T>::apply(x, [&lp](auto&& v) {
+     return positive_ordered_constrain<Jacobian>(v, lp);
+   });
+}
+
 
 }  // namespace math
 }  // namespace stan

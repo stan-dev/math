@@ -97,7 +97,7 @@ inline auto simplex_constrain(const Vec& y, value_type_t<Vec>& lp) {
  * @param[in, out] lp log density accumulator
  * @return simplex of dimensionality one greater than `y`
  */
-template <bool Jacobian, typename Vec>
+template <bool Jacobian, typename Vec, require_not_std_vector_t<Vec>* = nullptr>
 auto simplex_constrain(const Vec& y, return_type_t<Vec>& lp) {
   if (Jacobian) {
     return simplex_constrain(y, lp);
@@ -105,6 +105,14 @@ auto simplex_constrain(const Vec& y, return_type_t<Vec>& lp) {
     return simplex_constrain(y);
   }
 }
+
+template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
+inline auto simplex_constrain(const T& y, return_type_t<T>& lp) {
+  return apply_vector_unary<T>::apply(y, [&lp](auto&& v) {
+     return simplex_constrain<Jacobian>(v, lp);
+   });
+}
+
 
 }  // namespace math
 }  // namespace stan

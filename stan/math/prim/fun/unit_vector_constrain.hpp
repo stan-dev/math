@@ -72,13 +72,20 @@ inline plain_type_t<T1> unit_vector_constrain(const T1& y, T2& lp) {
  * @param[in, out] lp log density accumulator
  * @return Unit length vector of dimension K
  */
-template <bool Jacobian, typename T>
+template <bool Jacobian, typename T, require_not_std_vector_t<T>* = nullptr>
 inline auto unit_vector_constrain(const T& y, return_type_t<T>& lp) {
   if (Jacobian) {
     return unit_vector_constrain(y, lp);
   } else {
     return unit_vector_constrain(y);
   }
+}
+
+template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
+inline auto unit_vector_constrain(const T& y, return_type_t<T>& lp) {
+  return apply_vector_unary<T>::apply(y, [&lp](auto&& v) {
+     return unit_vector_constrain<Jacobian>(v, lp);
+   });
 }
 
 }  // namespace math

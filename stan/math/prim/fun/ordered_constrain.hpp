@@ -77,13 +77,20 @@ inline auto ordered_constrain(const EigVec& x, value_type_t<EigVec>& lp) {
  * @param[in, out] lp log density accumulator
  * @return Positive, increasing ordered vector.
  */
-template <bool Jacobian, typename T>
+template <bool Jacobian, typename T, require_not_std_vector_t<T>* = nullptr>
 inline auto ordered_constrain(const T& x, return_type_t<T>& lp) {
   if (Jacobian) {
     return ordered_constrain(x, lp);
   } else {
     return ordered_constrain(x);
   }
+}
+
+template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
+inline auto ordered_constrain(const T& x, return_type_t<T>& lp) {
+  return apply_vector_unary<T>::apply(x, [&lp](auto&& v) {
+     return ordered_constrain<Jacobian>(v, lp);
+   });
 }
 
 }  // namespace math

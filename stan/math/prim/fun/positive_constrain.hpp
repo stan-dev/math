@@ -61,13 +61,20 @@ inline auto positive_constrain(const T& x, S& lp) {
  * @param[in, out] lp log density accumulator
  * @return positive constrained version of unconstrained value(s)
  */
-template <bool Jacobian, typename T>
+template <bool Jacobian, typename T, require_not_std_vector_t<T>* = nullptr>
 inline auto positive_constrain(const T& x, return_type_t<T>& lp) {
   if (Jacobian) {
     return positive_constrain(x, lp);
   } else {
     return positive_constrain(x);
   }
+}
+
+template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
+inline auto positive_constrain(const T& x, return_type_t<T>& lp) {
+  return apply_vector_unary<T>::apply(x, [&lp](auto&& v) {
+     return positive_constrain<Jacobian>(v, lp);
+   });
 }
 
 }  // namespace math

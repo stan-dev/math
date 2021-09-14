@@ -83,14 +83,20 @@ cov_matrix_constrain_lkj(const T& x, size_t k, return_type_t<T>& lp) {
  * @return Covariance matrix derived from the unconstrained partial
  * correlations and deviations.
  */
-template <bool Jacobian, typename T>
-inline auto cov_matrix_constrain_lkj(const T& x, size_t k,
-                                     return_type_t<T>& lp) {
+template <bool Jacobian, typename T, require_not_std_vector_t<T>* = nullptr>
+inline auto cov_matrix_constrain_lkj(const T& x, size_t k, return_type_t<T>& lp) {
   if (Jacobian) {
     return cov_matrix_constrain_lkj(x, k, lp);
   } else {
     return cov_matrix_constrain_lkj(x, k);
   }
+}
+
+template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
+inline auto cov_matrix_constrain_lkj(const T& x, size_t k, return_type_t<T>& lp) {
+  return apply_vector_unary<T>::apply(x, [&lp, k](auto&& v) {
+     return cov_matrix_constrain_lkj<Jacobian>(v, k, lp); 
+   });
 }
 
 }  // namespace math

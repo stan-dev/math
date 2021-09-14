@@ -104,14 +104,20 @@ cov_matrix_constrain(const T& x, Eigen::Index K, return_type_t<T>& lp) {
  * @param[in, out] lp log density accumulator
  * @throws std::domain_error if (x.size() != K + (K choose 2)).
  */
-template <bool Jacobian, typename T>
-inline auto cov_matrix_constrain(const T& x, Eigen::Index K,
-                                 return_type_t<T>& lp) {
+template <bool Jacobian, typename T, require_not_std_vector_t<T>* = nullptr>
+inline auto cov_matrix_constrain(const T& x, Eigen::Index K, return_type_t<T>& lp) {
   if (Jacobian) {
     return cov_matrix_constrain(x, K, lp);
   } else {
     return cov_matrix_constrain(x, K);
   }
+}
+
+template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
+inline auto cov_matrix_constrain(const T& x, Eigen::Index K, return_type_t<T>& lp) {
+  return apply_vector_unary<T>::apply(x, [&lp, K](auto&& v) {
+     return cov_matrix_constrain<Jacobian>(v, K, lp);
+   });
 }
 
 }  // namespace math
