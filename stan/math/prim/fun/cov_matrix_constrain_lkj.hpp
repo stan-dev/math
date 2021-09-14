@@ -84,7 +84,8 @@ cov_matrix_constrain_lkj(const T& x, size_t k, return_type_t<T>& lp) {
  * correlations and deviations.
  */
 template <bool Jacobian, typename T, require_not_std_vector_t<T>* = nullptr>
-inline auto cov_matrix_constrain_lkj(const T& x, size_t k, return_type_t<T>& lp) {
+inline auto cov_matrix_constrain_lkj(const T& x, size_t k,
+                                     return_type_t<T>& lp) {
   if (Jacobian) {
     return cov_matrix_constrain_lkj(x, k, lp);
   } else {
@@ -102,9 +103,9 @@ inline auto cov_matrix_constrain_lkj(const T& x, size_t k, return_type_t<T>& lp)
  *
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
- * @tparam T A standard vector with inner type inheriting from `Eigen::DenseBase` or a `var_value` with
- *  inner type inheriting from `Eigen::DenseBase` with compile time rows or
- * columns equal to 1
+ * @tparam T A standard vector with inner type inheriting from
+ * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
+ * `Eigen::DenseBase` with compile time rows or columns equal to 1
  * @param x Input vector of unconstrained partial correlations and
  * standard deviations
  * @param k Dimensionality of returned covariance matrix
@@ -113,10 +114,11 @@ inline auto cov_matrix_constrain_lkj(const T& x, size_t k, return_type_t<T>& lp)
  * correlations and deviations.
  */
 template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
-inline auto cov_matrix_constrain_lkj(const T& x, size_t k, return_type_t<T>& lp) {
+inline auto cov_matrix_constrain_lkj(const T& x, size_t k,
+                                     return_type_t<T>& lp) {
   return apply_vector_unary<T>::apply(x, [&lp, k](auto&& v) {
-     return cov_matrix_constrain_lkj<Jacobian>(v, k, lp);
-   });
+    return cov_matrix_constrain_lkj<Jacobian>(v, k, lp);
+  });
 }
 
 }  // namespace math

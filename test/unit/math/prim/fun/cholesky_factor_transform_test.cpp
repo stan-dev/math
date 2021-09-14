@@ -11,7 +11,8 @@ TEST(ProbTransform, choleskyFactor) {
   Matrix<double, Dynamic, 1> x(3);
   x << 1, 2, 3;
   std::vector<Matrix<double, Dynamic, 1>> x_vec = {x, x, x};
-  std::vector<Matrix<double, Dynamic, Dynamic>> y_vec = cholesky_factor_constrain<false>(x_vec, 2, 2, lp);
+  std::vector<Matrix<double, Dynamic, Dynamic>> y_vec
+      = cholesky_factor_constrain<false>(x_vec, 2, 2, lp);
 
   std::vector<Matrix<double, Dynamic, 1>> x2_vec = cholesky_factor_free(y_vec);
 

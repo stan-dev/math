@@ -51,7 +51,8 @@ void test_cholesky_correlation_values(
   std::vector<Matrix<double, Dynamic, Dynamic>> x_vec
       = stan::math::cholesky_corr_constrain<false>(y_vec, K, lp);
 
-  std::vector<Matrix<double, Dynamic, 1>> yrt = stan::math::cholesky_corr_free(x_vec);
+  std::vector<Matrix<double, Dynamic, 1>> yrt
+      = stan::math::cholesky_corr_free(x_vec);
 
   EXPECT_EQ(y.size(), yrt[0].size());
   for (int i = 0; i < yrt.size(); ++i) {
@@ -71,7 +72,8 @@ void test_cholesky_correlation_values(
   std::vector<Matrix<double, Dynamic, Dynamic>> x2_vec
       = stan::math::cholesky_corr_constrain<true>(y_vec, K, lp);
 
-  std::vector<Matrix<double, Dynamic, 1>> yrt2 = stan::math::cholesky_corr_free(x2_vec);
+  std::vector<Matrix<double, Dynamic, 1>> yrt2
+      = stan::math::cholesky_corr_free(x2_vec);
 
   for (auto&& yrt_i : yrt2) {
     EXPECT_EQ(y.size(), yrt_i.size());

@@ -9,9 +9,10 @@ TEST(prob_transform, simplex_rt0) {
   Matrix<double, Dynamic, 1> x(4);
   x << 0.0, 0.0, 0.0, 0.0;
   std::vector<Matrix<double, Dynamic, 1>> x_vec{x, x, x};
-  std::vector<Matrix<double, Dynamic, 1>> y_vec = stan::math::simplex_constrain<false>(x_vec, lp);
+  std::vector<Matrix<double, Dynamic, 1>> y_vec
+      = stan::math::simplex_constrain<false>(x_vec, lp);
   for (auto&& y_i : y_vec) {
-    EXPECT_MATRIX_FLOAT_EQ(Eigen::VectorXd::Constant(5, 1.0/5.0), y_i);
+    EXPECT_MATRIX_FLOAT_EQ(Eigen::VectorXd::Constant(5, 1.0 / 5.0), y_i);
   }
   std::vector<Matrix<double, Dynamic, 1>> xrt = stan::math::simplex_free(y_vec);
   EXPECT_EQ(x.size() + 1, y_vec[2].size());

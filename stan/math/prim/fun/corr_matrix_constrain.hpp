@@ -115,17 +115,18 @@ inline auto corr_matrix_constrain(const T& x, Eigen::Index k,
  *
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
- * @tparam T A standard vector with inner type inheriting from `Eigen::DenseBase` or a `var_value` with
- *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
- *  and 1 column
+ * @tparam T A standard vector with inner type inheriting from
+ * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
+ * `Eigen::DenseBase` with compile time dynamic rows and 1 column
  * @param x Vector of unconstrained partial correlations
  * @param k Dimensionality of returned correlation matrix
  * @param[in,out] lp log density accumulator
  */
 template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
 inline auto corr_matrix_constrain(const T& y, int K, return_type_t<T>& lp) {
-  return apply_vector_unary<T>::apply(
-      y, [&lp, K](auto&& v) { return corr_matrix_constrain<Jacobian>(v, K, lp); });
+  return apply_vector_unary<T>::apply(y, [&lp, K](auto&& v) {
+    return corr_matrix_constrain<Jacobian>(v, K, lp);
+  });
 }
 
 }  // namespace math

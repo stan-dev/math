@@ -127,7 +127,9 @@ inline auto cholesky_factor_constrain(const T& x, int M, int N,
  *
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
- * @tparam T A standard vector with inner type inheriting from `Eigen::DenseBase` or a `var_value` with inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows and 1 column
+ * @tparam T A standard vector with inner type inheriting from
+ * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
+ * `Eigen::DenseBase` with compile time dynamic rows and 1 column
  * @param x Vector of unconstrained values
  * @param M number of rows
  * @param N number of columns
@@ -135,9 +137,11 @@ inline auto cholesky_factor_constrain(const T& x, int M, int N,
  * @return Cholesky factor
  */
 template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
-inline auto cholesky_factor_constrain(const T& x, int M, int N, return_type_t<T>& lp) {
-  return apply_vector_unary<T>::apply(
-      x, [&lp, M, N](auto&& v) { return cholesky_factor_constrain<Jacobian>(v, M, N, lp); });
+inline auto cholesky_factor_constrain(const T& x, int M, int N,
+                                      return_type_t<T>& lp) {
+  return apply_vector_unary<T>::apply(x, [&lp, M, N](auto&& v) {
+    return cholesky_factor_constrain<Jacobian>(v, M, N, lp);
+  });
 }
 
 }  // namespace math

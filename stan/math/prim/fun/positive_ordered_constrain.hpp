@@ -92,8 +92,9 @@ inline auto positive_ordered_constrain(const Vec& x, return_type_t<Vec>& lp) {
  *
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
- * @tparam Vec A standard vector with inner type inheriting from `Eigen::EigenBase`, a `var_value` with
- * inner type inheriting from `Eigen::EigenBase`
+ * @tparam Vec A standard vector with inner type inheriting from
+ * `Eigen::EigenBase`, a `var_value` with inner type inheriting from
+ * `Eigen::EigenBase`
  * @param x Free vector of scalars
  * @param[in, out] lp log density accumulato
  * @return Positive, increasing ordered vector
@@ -101,10 +102,9 @@ inline auto positive_ordered_constrain(const Vec& x, return_type_t<Vec>& lp) {
 template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
 inline auto positive_ordered_constrain(const T& x, return_type_t<T>& lp) {
   return apply_vector_unary<T>::apply(x, [&lp](auto&& v) {
-     return positive_ordered_constrain<Jacobian>(v, lp);
-   });
+    return positive_ordered_constrain<Jacobian>(v, lp);
+  });
 }
-
 
 }  // namespace math
 }  // namespace stan

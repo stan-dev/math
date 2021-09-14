@@ -13,7 +13,8 @@ TEST(prob_transform, cov_matrix_rt) {
   Matrix<double, Dynamic, 1> x(K_choose_2 + K);
   x << -1.0, 2.0, 0.0, 1.0, 3.0, -1.5, 1.0, 2.0, -1.5, 2.5;
   std::vector<Matrix<double, Dynamic, 1>> x_vec = {x, x, x};
-  std::vector<Matrix<double, Dynamic, Dynamic>> y_vec = stan::math::cov_matrix_constrain<false>(x_vec, K, lp);
+  std::vector<Matrix<double, Dynamic, Dynamic>> y_vec
+      = stan::math::cov_matrix_constrain<false>(x_vec, K, lp);
   std::vector<Eigen::VectorXd> xrt = stan::math::cov_matrix_free(y_vec);
   for (auto&& x_i : xrt) {
     EXPECT_EQ(x.size(), x_i.size());

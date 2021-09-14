@@ -11,18 +11,20 @@ TEST(prob_transform, unit_vector_rt0) {
   x << sqrt(0.1), -sqrt(0.2), -sqrt(0.3), sqrt(0.4);
   std::vector<Matrix<double, Dynamic, 1>> x_vec{x, x, x};
   using stan::math::unit_vector_constrain;
-  std::vector<Matrix<double, Dynamic, 1>> y_vec = unit_vector_constrain<false>(x_vec, lp);
+  std::vector<Matrix<double, Dynamic, 1>> y_vec
+      = unit_vector_constrain<false>(x_vec, lp);
   for (int i = 0; i < x_vec.size(); ++i) {
     EXPECT_EQ(x_vec[i].size(), y_vec[i].size());
     for (int j = 0; j < x_vec[i].size(); ++j) {
-        EXPECT_NEAR(x_vec[i](j), y_vec[i](j), 1e-8);
+      EXPECT_NEAR(x_vec[i](j), y_vec[i](j), 1e-8);
     }
   }
-  std::vector<Matrix<double, Dynamic, 1>> xrt = stan::math::unit_vector_free(y_vec);
+  std::vector<Matrix<double, Dynamic, 1>> xrt
+      = stan::math::unit_vector_free(y_vec);
   for (int i = 0; i < x_vec.size(); ++i) {
     EXPECT_EQ(x_vec[i].size(), xrt[i].size());
     for (int j = 0; j < x_vec[i].size(); ++j) {
-        EXPECT_NEAR(x_vec[i](j), xrt[i](j), 1e-10);
+      EXPECT_NEAR(x_vec[i](j), xrt[i](j), 1e-10);
     }
   }
   /*
