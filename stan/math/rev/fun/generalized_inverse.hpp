@@ -44,13 +44,13 @@ template <typename AMat>
 inline auto cholesky_low_rank_decomposition(const AMat& A) {
     // if (A.size() == 0)
     // return {};
-    
+
     int n = A.rows();
     auto dA = A.diagonal();
     double tol = 1e-12;
-    Eigen::MatrixXd L = Eigen::MatrixXd::Zero(A.rows(), A.cols());
+    plain_type_t<AMat> L = Eigen::MatrixXd::Zero(A.rows(), A.cols());
     int r = 0;
-  
+
     for (int i = 0; i < n; i++) {
       if (r == 0) {
         L.block(i, r, n - i, 1) = A.block(i, i, n - i, 1);
@@ -61,7 +61,7 @@ inline auto cholesky_low_rank_decomposition(const AMat& A) {
       if (L(i, r) > tol ) {
         L(i, r) = sqrt(L(i, r)) ;
         if (i < n - 1) {
-             L.block(i + 1, r, n - (i + 1), 1) = (L.block(i + 1, r, n - (i + 1), 1).array() / L(i, r)).matrix(); 
+             L.block(i + 1, r, n - (i + 1), 1) = (L.block(i + 1, r, n - (i + 1), 1).array() / L(i, r)).matrix();
         }
       }  else {
         r -= 1;
@@ -109,7 +109,7 @@ inline auto generalized_inverse(const VarMat& G) {
 // note: L may not be square. So L * M ops don't cancel.
   auto arena_L = to_arena(internal::cholesky_low_rank_decomposition(A));
   arena_t<VarMat> arena_M = inverse(crossprod(arena_L.val_op()));
- 
+
   if (transpose_bool) {
     arena_t<VarMat> G_arena(G);
     arena_t<ret_type> inv_G(G_arena.val_op().transpose() * arena_L.val_op() * arena_M.val_op() * arena_M.val_op() * arena_L.val_op().transpose());

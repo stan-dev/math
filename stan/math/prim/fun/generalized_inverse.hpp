@@ -20,13 +20,13 @@ inline Eigen::Matrix<value_type_t<EigMat>, EigMat::ColsAtCompileTime,
  cholesky_low_rank_decomposition(const EigMat& A) {
     if (A.size() == 0)
     return {};
-    
+
     int n = A.rows();
     auto dA = A.diagonal();
     double tol = 1e-12;
-    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> L = Eigen::MatrixXd::Zero(n, n);
+    plain_type_t<EigMat> L = Eigen::MatrixXd::Zero(n, n);
     int r = 0;
-  
+
     for (int i = 0; i < n; i++) {
       if (r == 0) {
         L.block(i, r, n - i, 1) = A.block(i, i, n - i, 1);
@@ -37,7 +37,7 @@ inline Eigen::Matrix<value_type_t<EigMat>, EigMat::ColsAtCompileTime,
       if (L(i, r) > tol ) {
         L(i, r) = sqrt(L(i, r)) ;
         if (i < n - 1) {
-             L.block(i + 1, r, n - (i + 1), 1) = (L.block(i + 1, r, n - (i + 1), 1).array() / L(i, r)).matrix(); 
+             L.block(i + 1, r, n - (i + 1), 1) = (L.block(i + 1, r, n - (i + 1), 1).array() / L(i, r)).matrix();
         }
       }  else {
         r -= 1;
@@ -70,7 +70,7 @@ inline Eigen::Matrix<value_type_t<EigMat>, EigMat::ColsAtCompileTime,
                      EigMat::RowsAtCompileTime>
 generalized_inverse(const EigMat& G) {
   const auto& G_ref = to_ref(G);
-  if (G_ref.size() == 0) 
+  if (G_ref.size() == 0)
     return {};
   const int n = std::min(G.rows(), G.cols());
   const bool transpose_bool = G.rows() == n ? true : false;
