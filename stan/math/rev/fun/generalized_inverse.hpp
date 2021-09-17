@@ -6,6 +6,8 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/fun/inverse.hpp>
+#include <stan/math/prim/fun/crossprod.hpp>
+#include <stan/math/prim/fun/tcrossprod.hpp>
 
 namespace stan {
 namespace math {
@@ -37,6 +39,37 @@ inline auto generalized_inverse_lambda(T1& G_arena, T2& inv_G) {
                  * add_diag(-inv_G.val_op() * G_arena.val_op(), ones2);
   };
 }
+
+template <typename AMat>
+inline auto cholesky_low_rank_decomposition(const AMat& A) {
+    // if (A.size() == 0)
+    // return {};
+    
+    int n = A.rows();
+    auto dA = A.diagonal();
+    double tol = 1e-12;
+    Eigen::MatrixXd L = Eigen::MatrixXd::Zero(A.rows(), A.cols());
+    int r = 0;
+  
+    for (int i = 0; i < n; i++) {
+      if (r == 0) {
+        L.block(i, r, n - i, 1) = A.block(i, i, n - i, 1);
+      } else {
+        L.block(i, r , n - i, 1) = A.block(i, i, n - i, 1) - (L.block(i, 0, n - i, r) * L.block(i, 0, 1, r).transpose());
+      }
+
+      if (L(i, r) > tol ) {
+        L(i, r) = sqrt(L(i, r)) ;
+        if (i < n - 1) {
+             L.block(i + 1, r, n - (i + 1), 1) = (L.block(i + 1, r, n - (i + 1), 1).array() / L(i, r)).matrix(); 
+        }
+      }  else {
+        r -= 1;
+      }
+      r += 1;
+    }
+  return L.block(0, 0, n, r);
+ }
 }  // namespace internal
 
 /*
@@ -69,35 +102,26 @@ inline auto generalized_inverse(const VarMat& G) {
   if (G.size() == 0)
     return ret_type(G);
 
-  if (G.rows() == G.cols()) {
+  const int n = std::min(G.rows(), G.cols());
+  const bool transpose_bool = G.rows() == n ? true : false;
+  auto A = transpose_bool ? tcrossprod(G) : crossprod(G);
+
+// note: L may not be square. So L * M ops don't cancel.
+  auto arena_L = to_arena(internal::cholesky_low_rank_decomposition(A));
+  arena_t<VarMat> arena_M = inverse(crossprod(arena_L.val_op()));
+ 
+  if (transpose_bool) {
     arena_t<VarMat> G_arena(G);
-    Eigen::CompleteOrthogonalDecomposition<Eigen::MatrixXd>
-        complete_ortho_decomp_G
-        = G_arena.val().completeOrthogonalDecomposition();
-    if (!(complete_ortho_decomp_G.rank() < G.rows())) {
-      return ret_type(inverse(G_arena));
-    } else {
-      arena_t<ret_type> inv_G(complete_ortho_decomp_G.pseudoInverse());
-      reverse_pass_callback(
-          internal::generalized_inverse_lambda(G_arena, inv_G));
-      return ret_type(inv_G);
-    }
-  } else if (G.rows() < G.cols()) {
-    arena_t<VarMat> G_arena(G);
-    arena_t<ret_type> inv_G((G_arena.val_op() * G_arena.val_op().transpose())
-                                .ldlt()
-                                .solve(G_arena.val_op())
-                                .transpose());
+    arena_t<ret_type> inv_G(G_arena.val_op().transpose() * arena_L.val_op() * arena_M.val_op() * arena_M.val_op() * arena_L.val_op().transpose());
     reverse_pass_callback(internal::generalized_inverse_lambda(G_arena, inv_G));
     return ret_type(inv_G);
   } else {
     arena_t<VarMat> G_arena(G);
-    arena_t<ret_type> inv_G((G_arena.val_op().transpose() * G_arena.val_op())
-                                .ldlt()
-                                .solve(G_arena.val_op().transpose()));
+     arena_t<ret_type> inv_G(arena_L.val_op() * arena_M.val_op() * arena_M.val_op() * arena_L.val_op().transpose() * G_arena.val_op().transpose());
     reverse_pass_callback(internal::generalized_inverse_lambda(G_arena, inv_G));
     return ret_type(inv_G);
   }
+
 }
 
 }  // namespace math
