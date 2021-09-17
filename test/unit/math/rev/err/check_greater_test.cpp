@@ -206,3 +206,19 @@ TEST(AgradRevErrorHandlingScalar, CheckGreaterVarCheckUnivariate) {
 
   stan::math::recover_memory();
 }
+
+TEST(AgradRevErrorHandlingMatrix, CheckGreaterStdVecVarMatrix) {
+  using stan::math::var;
+  std::vector<std::vector<
+      stan::conditional_var_value_t<var, Eigen::Matrix<var, -1, -1>>>>
+      ar_mat = std::vector<std::vector<
+          stan::conditional_var_value_t<var, Eigen::Matrix<var, -1, -1>>>>(
+          4,
+          std::vector<
+              stan::conditional_var_value_t<var, Eigen::Matrix<var, -1, -1>>>(
+              5, stan::conditional_var_value_t<var, Eigen::Matrix<var, -1, -1>>(
+                     Eigen::Matrix<double, -1, -1>::Constant(
+                         2, 3, std::numeric_limits<double>::quiet_NaN()))));
+  EXPECT_THROW(stan::math::check_greater("test_g", "ar_mat", ar_mat, 0),
+               std::domain_error);
+}
