@@ -18,7 +18,6 @@
 // delta -> v
 // Note: `response` and `sv` are not included in wiener_lpdf()
 
-
 // Check invalid arguments
 
 // rt
@@ -27,10 +26,8 @@ TEST(mathPrimScalProbDdmScal, invalid_rt) {
   using stan::math::INFTY;
   EXPECT_THROW(ddm_lpdf(0, 2, 1, -1, 0, 0.5, 0), std::domain_error);
   EXPECT_THROW(ddm_lpdf(-1, 2, 1, -1, 0, 0.5, 0), std::domain_error);
-  EXPECT_THROW(ddm_lpdf(INFTY, 2, 1, -1, 0, 0.5, 0),
-               std::domain_error);
-  EXPECT_THROW(ddm_lpdf(-INFTY, 2, 1, -1, 0, 0.5, 0),
-               std::domain_error);
+  EXPECT_THROW(ddm_lpdf(INFTY, 2, 1, -1, 0, 0.5, 0), std::domain_error);
+  EXPECT_THROW(ddm_lpdf(-INFTY, 2, 1, -1, 0, 0.5, 0), std::domain_error);
   EXPECT_THROW(ddm_lpdf(NAN, 2, 1, -1, 0, 0.5, 0), std::domain_error);
 }
 TEST(mathPrimScalProbDdmMat, invalid_rt) {
@@ -196,10 +193,10 @@ TEST(mathPrimScalProbDdmMat, invalid_sv) {
 }
 
 TEST(ProbDdm, ddm_lpdf_matches_wiener_lpdf) {
-  using std::vector;
-  using std::exp;
   using stan::math::ddm_lpdf;
   using stan::math::wiener_lpdf;
+  using std::exp;
+  using std::vector;
   // Notes:
   // 1. define error tolerance for PDF approximations, use double tolerance to
   // allow for convergence (of the truncated infinite sum) from above and below
@@ -208,13 +205,14 @@ TEST(ProbDdm, ddm_lpdf_matches_wiener_lpdf) {
   // parameter values defined below
   double err_tol = 2 * 0.000001;
   vector<double> rt{0.1, 1, 10.0};
-  int response = 2; // wiener_lpdf() always uses the "upper" threshold
+  int response = 2;  // wiener_lpdf() always uses the "upper" threshold
   vector<double> a{0.5, 1.0, 5.0};
   vector<double> v{-2.0, 0.0, 2.0};
-  double t0 = 0.0001; // t0 (i.e., tau) needs to be > 0 for wiener_lpdf()
+  double t0 = 0.0001;  // t0 (i.e., tau) needs to be > 0 for wiener_lpdf()
   vector<double> w{0.2, 0.5, 0.8};
-  double sv = 0.0; // sv is not included in wiener_lpdf(), and thus it must be 0
-  
+  double sv
+      = 0.0;  // sv is not included in wiener_lpdf(), and thus it must be 0
+
   int n_rt = rt.size();
   int n_a = a.size();
   int n_v = v.size();
@@ -225,7 +223,7 @@ TEST(ProbDdm, ddm_lpdf_matches_wiener_lpdf) {
   vector<double> v_vec(n_max);
   vector<double> t0_vec(n_max, t0);
   vector<double> w_vec(n_max);
-  
+
   for (int i = 0; i < n_rt; i++) {
     for (int j = i; j < n_max; j += n_rt) {
       rt_vec[j] = rt[i];
@@ -246,44 +244,42 @@ TEST(ProbDdm, ddm_lpdf_matches_wiener_lpdf) {
       w_vec[j] = w[i];
     }
   }
-  
+
   // The PDF approximation error tolerance is based on the non-log version of
   // the PDF. To account for this, we compare the exponentiated version of the
   // *_lpdf results.
   EXPECT_NEAR(exp(ddm_lpdf(rt, response, a, v, t0_vec, w, sv)),
-              exp(wiener_lpdf(rt_vec, a_vec, t0_vec, w_vec, v_vec)),
-              err_tol);
+              exp(wiener_lpdf(rt_vec, a_vec, t0_vec, w_vec, v_vec)), err_tol);
   EXPECT_NEAR(exp(ddm_lpdf<true>(rt, response, a, v, t0_vec, w, sv)),
               exp(wiener_lpdf<true>(rt_vec, a_vec, t0_vec, w_vec, v_vec)),
               err_tol);
   EXPECT_NEAR(exp(ddm_lpdf<false>(rt, response, a, v, t0_vec, w, sv)),
               exp(wiener_lpdf<false>(rt_vec, a_vec, t0_vec, w_vec, v_vec)),
               err_tol);
+  EXPECT_NEAR(exp(ddm_lpdf<vector<double>, int, vector<double>, vector<double>,
+                           vector<double>, vector<double>, double>(
+                  rt, response, a, v, t0_vec, w, sv)),
+              exp(wiener_lpdf<vector<double>, vector<double>, vector<double>,
+                              vector<double>, vector<double> >(
+                  rt_vec, a_vec, t0_vec, w_vec, v_vec)),
+              err_tol);
   EXPECT_NEAR(
-    exp(ddm_lpdf<vector<double>, int, vector<double>, vector<double>,
-        vector<double>, vector<double>, double>(
-            rt, response, a, v, t0_vec, w, sv)),
-            exp(wiener_lpdf<vector<double>, vector<double>, vector<double>,
-                vector<double>, vector<double> >(
-                    rt_vec, a_vec, t0_vec, w_vec, v_vec)),
-                    err_tol);
+      exp(ddm_lpdf<true, vector<double>, int, vector<double>, vector<double>,
+                   vector<double>, vector<double>, double>(rt, response, a, v,
+                                                           t0_vec, w, sv)),
+      exp(wiener_lpdf<true, vector<double>, vector<double>, vector<double>,
+                      vector<double>, vector<double> >(rt_vec, a_vec, t0_vec,
+                                                       w_vec, v_vec)),
+      err_tol);
   EXPECT_NEAR(
-    exp(ddm_lpdf<true, vector<double>, int, vector<double>, vector<double>,
-        vector<double>, vector<double>, double>(
-            rt, response, a, v, t0_vec, w, sv)),
-            exp(wiener_lpdf<true, vector<double>, vector<double>, vector<double>,
-                vector<double>, vector<double> >(
-                    rt_vec, a_vec, t0_vec, w_vec, v_vec)),
-                    err_tol);
-  EXPECT_NEAR(
-    exp(ddm_lpdf<false, vector<double>, int, vector<double>, vector<double>,
-        vector<double>, vector<double>, double>(
-            rt, response, a, v, t0_vec, w, sv)),
-            exp(wiener_lpdf<false, vector<double>, vector<double>, vector<double>,
-                vector<double>, vector<double> >(
-                    rt_vec, a_vec, t0_vec, w_vec, v_vec)),
-                    err_tol);
-  
+      exp(ddm_lpdf<false, vector<double>, int, vector<double>, vector<double>,
+                   vector<double>, vector<double>, double>(rt, response, a, v,
+                                                           t0_vec, w, sv)),
+      exp(wiener_lpdf<false, vector<double>, vector<double>, vector<double>,
+                      vector<double>, vector<double> >(rt_vec, a_vec, t0_vec,
+                                                       w_vec, v_vec)),
+      err_tol);
+
   // check with variable drift rate (against results from R package `fddm`)
   // Notes:
   // 1. We must redefine the error tolerance because we must check on the log
@@ -302,32 +298,27 @@ TEST(ProbDdm, ddm_lpdf_matches_wiener_lpdf) {
       sv_vec[j] = sv_vals[i];
     }
   }
-  
-  EXPECT_NEAR((ddm_lpdf(rt, response, a, v, t0_vec, w, sv_vec)),
-              dfddm_output,
+
+  EXPECT_NEAR((ddm_lpdf(rt, response, a, v, t0_vec, w, sv_vec)), dfddm_output,
               err_tol);
   EXPECT_NEAR((ddm_lpdf<true>(rt, response, a, v, t0_vec, w, sv_vec)),
-              0, // true makes ddm_lpdf() and wiener_lpdf() evaluate to 0
+              0,  // true makes ddm_lpdf() and wiener_lpdf() evaluate to 0
               err_tol);
   EXPECT_NEAR((ddm_lpdf<false>(rt, response, a, v, t0_vec, w, sv_vec)),
-              dfddm_output,
-              err_tol);
+              dfddm_output, err_tol);
+  EXPECT_NEAR((ddm_lpdf<vector<double>, int, vector<double>, vector<double>,
+                        vector<double>, vector<double>, vector<double> >(
+                  rt, response, a, v, t0_vec, w, sv_vec)),
+              dfddm_output, err_tol);
   EXPECT_NEAR(
-    (ddm_lpdf<vector<double>, int, vector<double>, vector<double>,
-     vector<double>, vector<double>, vector<double> >(
-         rt, response, a, v, t0_vec, w, sv_vec)),
-         dfddm_output,
-         err_tol);
+      (ddm_lpdf<true, vector<double>, int, vector<double>, vector<double>,
+                vector<double>, vector<double>, vector<double> >(
+          rt, response, a, v, t0_vec, w, sv_vec)),
+      0,  // true makes ddm_lpdf() and wiener_lpdf() evaluate to 0
+      err_tol);
   EXPECT_NEAR(
-    (ddm_lpdf<true, vector<double>, int, vector<double>, vector<double>,
-     vector<double>, vector<double>, vector<double> >(
-         rt, response, a, v, t0_vec, w, sv_vec)),
-         0, // true makes ddm_lpdf() and wiener_lpdf() evaluate to 0
-         err_tol);
-  EXPECT_NEAR(
-    (ddm_lpdf<false, vector<double>, int, vector<double>, vector<double>,
-     vector<double>, vector<double>, vector<double> >(
-         rt, response, a, v, t0_vec, w, sv_vec)),
-         dfddm_output,
-         err_tol);
+      (ddm_lpdf<false, vector<double>, int, vector<double>, vector<double>,
+                vector<double>, vector<double>, vector<double> >(
+          rt, response, a, v, t0_vec, w, sv_vec)),
+      dfddm_output, err_tol);
 }
