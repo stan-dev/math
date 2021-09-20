@@ -71,6 +71,8 @@
 #include <stan/math/prim/prob/chi_square_log.hpp>
 #include <stan/math/prim/prob/chi_square_lpdf.hpp>
 #include <stan/math/prim/prob/chi_square_rng.hpp>
+#include <stan/math/prim/prob/ddm_lcdf.hpp>
+#include <stan/math/prim/prob/ddm_lpdf.hpp>
 #include <stan/math/prim/prob/dirichlet_log.hpp>
 #include <stan/math/prim/prob/dirichlet_lpdf.hpp>
 #include <stan/math/prim/prob/dirichlet_lpmf.hpp>
