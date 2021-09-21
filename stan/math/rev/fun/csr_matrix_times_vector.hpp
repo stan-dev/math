@@ -79,7 +79,6 @@ template <typename T1, typename T2, require_any_rev_matrix_t<T1, T2>* = nullptr>
 inline auto csr_matrix_times_vector(int m, int n, const T1& w,
                                     const std::vector<int>& v,
                                     const std::vector<int>& u, const T2& b) {
-  using result_t = return_type_t<T1, T2>;
   using sparse_val_mat = Eigen::Map<const Eigen::SparseMatrix<double>>;
   using sparse_dense_mul_type
       = decltype((std::declval<sparse_val_mat>() * value_of(b)).eval());
