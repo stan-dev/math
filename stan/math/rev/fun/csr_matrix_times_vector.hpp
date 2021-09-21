@@ -13,8 +13,7 @@ namespace math {
 namespace internal {
 template <typename T1, typename T2, typename Res,
           require_eigen_t<T1>* = nullptr>
-void update_w(T1& w, int m, int n,
-              std::vector<int, arena_allocator<int>>& u,
+void update_w(T1& w, int m, int n, std::vector<int, arena_allocator<int>>& u,
               std::vector<int, arena_allocator<int>>& v, T2&& b, Res&& res) {
   Eigen::Map<Eigen::SparseMatrix<var>> w_mat(m, n, w.size(), v.data(), u.data(),
                                              w.data());
@@ -29,16 +28,14 @@ void update_w(T1& w, int m, int n,
 
 template <typename T1, typename T2, typename Res,
           require_var_matrix_t<T1>* = nullptr>
-void update_w(T1& w, int m, int n,
-              std::vector<int, arena_allocator<int>>& u,
+void update_w(T1& w, int m, int n, std::vector<int, arena_allocator<int>>& u,
               std::vector<int, arena_allocator<int>>& v, T2&& b, Res&& res) {
   Eigen::Map<Eigen::SparseMatrix<double>> w_mat(m, n, w.size(), v.data(),
                                                 u.data(), w.adj().data());
   for (int k = 0; k < w_mat.outerSize(); ++k) {
     for (Eigen::Map<Eigen::SparseMatrix<double>>::InnerIterator it(w_mat, k);
          it; ++it) {
-      it.valueRef()
-          += res.adj().coeff(it.row()) * value_of(b).coeff(it.col());
+      it.valueRef() += res.adj().coeff(it.row()) * value_of(b).coeff(it.col());
     }
   }
 }
@@ -114,13 +111,13 @@ inline auto csr_matrix_times_vector(int m, int n, const T1& w,
         m, n, w_val_arena.size(), v_arena.data(), u_arena.data(),
         w_val_arena.data());
     arena_t<return_t> res = w_val_mat * value_of(b_arena);
-    reverse_pass_callback([m, n, w_arena, w_val_arena, v_arena, u_arena, res,
-                           b_arena]() mutable {
-      sparse_val_mat w_val_mat(m, n, w_val_arena.size(), v_arena.data(),
-                               u_arena.data(), w_val_arena.data());
-      internal::update_w(w_arena, m, n, u_arena, v_arena, b_arena, res);
-      b_arena.adj() += w_val_mat.transpose() * res.adj();
-    });
+    reverse_pass_callback(
+        [m, n, w_arena, w_val_arena, v_arena, u_arena, res, b_arena]() mutable {
+          sparse_val_mat w_val_mat(m, n, w_val_arena.size(), v_arena.data(),
+                                   u_arena.data(), w_val_arena.data());
+          internal::update_w(w_arena, m, n, u_arena, v_arena, b_arena, res);
+          b_arena.adj() += w_val_mat.transpose() * res.adj();
+        });
     return return_t(res);
   } else if (!is_constant<T2>::value) {
     arena_t<promote_scalar_t<var, T2>> b_arena = b;
@@ -138,14 +135,14 @@ inline auto csr_matrix_times_vector(int m, int n, const T1& w,
   } else {
     arena_t<promote_scalar_t<var, T1>> w_arena = to_arena(w);
     auto&& w_val = eval(value_of(w_arena));
-    sparse_val_mat w_val_mat(m, n, w_val.size(), v_arena.data(),
-                             u_arena.data(), w_val.data());
+    sparse_val_mat w_val_mat(m, n, w_val.size(), v_arena.data(), u_arena.data(),
+                             w_val.data());
     auto&& b_arena = to_arena(value_of(b));
     arena_t<return_t> res = w_val_mat * b_arena;
-    reverse_pass_callback([m, n, w_arena, v_arena, u_arena, res,
-                           b_arena]() mutable {
-     internal::update_w(w_arena, m, n, u_arena, v_arena, b_arena, res);
-    });
+    reverse_pass_callback(
+        [m, n, w_arena, v_arena, u_arena, res, b_arena]() mutable {
+          internal::update_w(w_arena, m, n, u_arena, v_arena, b_arena, res);
+        });
     return return_t(res);
   }
 }
