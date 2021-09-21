@@ -74,8 +74,6 @@ template <typename T1, typename T2,
 inline Eigen::Matrix<return_type_t<T1, T2>, Eigen::Dynamic, 1>
 csr_matrix_times_vector(int m, int n, const T1& w, const std::vector<int>& v,
                         const std::vector<int>& u, const T2& b) {
-  using result_t = return_type_t<T1, T2>;
-
   check_positive("csr_matrix_times_vector", "m", m);
   check_positive("csr_matrix_times_vector", "n", n);
   check_positive("csr_matrix_times_vector", "v", v);
