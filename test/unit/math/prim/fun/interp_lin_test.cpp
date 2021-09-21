@@ -4,8 +4,8 @@
 
 double ABS_TOL = 1e-12;
 
-TEST(mathPrimLinInterp, throwing) {
-  using stan::math::lin_interp;
+TEST(mathPrimInterpLin, throwing) {
+  using stan::math::interp_lin;
   double nan = std::numeric_limits<double>::quiet_NaN();
   double x = 0.5;
   std::vector<double> xs, ys;
@@ -14,33 +14,33 @@ TEST(mathPrimLinInterp, throwing) {
   int n = 2;
   xs = {1, 1};
   ys = {0, 2};
-  EXPECT_THROW(lin_interp(xs, ys, x), std::domain_error);
+  EXPECT_THROW(interp_lin(xs, ys, x), std::domain_error);
 
   // check when xs contain a nan
   xs = {nan, 1};
   ys = {0, 2};
-  EXPECT_THROW(lin_interp(xs, ys, x), std::domain_error);
+  EXPECT_THROW(interp_lin(xs, ys, x), std::domain_error);
 
   // xs must contain at least two elements
   xs = {1};
   ys = {0, 2};
-  EXPECT_THROW(lin_interp(xs, ys, x), std::domain_error);
+  EXPECT_THROW(interp_lin(xs, ys, x), std::domain_error);
 
   // ys can't contain nan
   xs = {0, 1};
   ys = {0, nan};
   x = 0.5;
-  EXPECT_THROW(lin_interp(xs, ys, x), std::domain_error);
+  EXPECT_THROW(interp_lin(xs, ys, x), std::domain_error);
 
   // x can't be nan
   xs = {0, 1};
   ys = {0, 2};
   x = nan;
-  EXPECT_THROW(lin_interp(xs, ys, x), std::domain_error);
+  EXPECT_THROW(interp_lin(xs, ys, x), std::domain_error);
 }
 
-TEST(mathPrimLinInterp, interp_line) {
-  using stan::math::lin_interp;
+TEST(mathPrimInterpLin, interp_line) {
+  using stan::math::interp_lin;
 
   // check that interpolation of line returns the same function
   // generate function tabulation
@@ -64,7 +64,7 @@ TEST(mathPrimLinInterp, interp_line) {
   // interpolate
   std::vector<double> ys_new(n_interp);
   for (int i = 0; i < n_interp; i++) {
-    ys_new[i] = lin_interp(xs, ys, xs_new[i]);
+    ys_new[i] = interp_lin(xs, ys, xs_new[i]);
   }
 
   // test points
@@ -76,18 +76,18 @@ TEST(mathPrimLinInterp, interp_line) {
   }
 
   // check values outside of range of reference points
-  ASSERT_NEAR(lin_interp(xs, ys, -1), ys[0], ABS_TOL);
-  ASSERT_NEAR(lin_interp(xs, ys, 100), ys[1], ABS_TOL);
+  ASSERT_NEAR(interp_lin(xs, ys, -1), ys[0], ABS_TOL);
+  ASSERT_NEAR(interp_lin(xs, ys, 100), ys[1], ABS_TOL);
 
   // xs with more than 2 elements
   std::vector<double> xs2 = {0, 1, 2, 3, 4, 5, 6};
   std::vector<double> ys2 = {0, 2, 5, 2, 3, 2, 2};
   double x = 0.5;
-  ASSERT_NEAR(lin_interp(xs, ys, x), lin_interp(xs2, ys2, x), ABS_TOL);
+  ASSERT_NEAR(interp_lin(xs, ys, x), interp_lin(xs2, ys2, x), ABS_TOL);
 }
 
-TEST(mathPrimLinInterp, matching_reference_interp_pts) {
-  using stan::math::lin_interp;
+TEST(mathPrimInterpLin, matching_reference_interp_pts) {
+  using stan::math::interp_lin;
 
   // check that interpolation returns the same function
   // when interpolation points are the same as reference points
@@ -101,7 +101,7 @@ TEST(mathPrimLinInterp, matching_reference_interp_pts) {
   std::vector<double> xs_new = xs;
 
   // create interpolation
-  std::vector<double> ys_new = lin_interp(xs, ys, xs_new);
+  std::vector<double> ys_new = interp_lin(xs, ys, xs_new);
 
   // test points
   for (int i = 0; i < n; i++) {

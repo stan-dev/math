@@ -103,7 +103,6 @@
 #include <stan/math/prim/fun/fmod.hpp>
 #include <stan/math/prim/fun/gamma_p.hpp>
 #include <stan/math/prim/fun/gamma_q.hpp>
-#include <stan/math/prim/fun/gaus_interp.hpp>
 #include <stan/math/prim/fun/get.hpp>
 #include <stan/math/prim/fun/get_base1.hpp>
 #include <stan/math/prim/fun/get_base1_lhs.hpp>
@@ -130,6 +129,8 @@
 #include <stan/math/prim/fun/inc_beta.hpp>
 #include <stan/math/prim/fun/initialize.hpp>
 #include <stan/math/prim/fun/int_step.hpp>
+#include <stan/math/prim/fun/interp_gauss.hpp>
+#include <stan/math/prim/fun/interp_lin.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/inv_Phi.hpp>
 #include <stan/math/prim/fun/inv_cloglog.hpp>
@@ -155,7 +156,6 @@
 #include <stan/math/prim/fun/LDLT_factor.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/linspaced_array.hpp>
-#include <stan/math/prim/fun/lin_interp.hpp>
 #include <stan/math/prim/fun/linspaced_row_vector.hpp>
 #include <stan/math/prim/fun/linspaced_vector.hpp>
 #include <stan/math/prim/fun/lmgamma.hpp>

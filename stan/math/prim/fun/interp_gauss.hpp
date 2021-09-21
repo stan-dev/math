@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_FUN_GAUS_INTERP
-#define STAN_MATH_PRIM_FUN_GAUS_INTERP
+#ifndef STAN_MATH_PRIM_FUN_INTERP_GAUSS
+#define STAN_MATH_PRIM_FUN_INTERP_GAUSS
 
 #include <stan/math/prim/fun/conv_gaus_line.hpp>
 #include <stan/math/prim/fun/square.hpp>
@@ -32,7 +32,7 @@ inline double min_diff(const std::vector<Tx>& xs) {
 /**
  * Given a set of reference points \f$(xs_i, ys_i)\f$, create a mollifier
  * that intersects the reference points. This function requires as input
- * a vector, params, created by the function gaus_interp_precomp. The
+ * a vector, params, created by the function interp_gauss_precomp. The
  * algorithm used to create the mollifier is an iterative algorithm that
  * works as follows. First a linear interpolation is created through the 
  * reference points. Then, the
@@ -49,18 +49,18 @@ inline double min_diff(const std::vector<Tx>& xs) {
  * @tparam Tx type of x
  * @param xs vector of independent variable of reference points
  * @param ys vector of dependent variable of reference points
- * @param params a vector created by gaus_interp_precomp
+ * @param params a vector created by interp_gauss_precomp
  * @param x the point at which to evaluate the interpolation
  * @return value of the interpolation at x
  */
 template <typename Tx>
-inline return_type_t<Tx> gaus_interp(const std::vector<double>& xs,
-                                     const std::vector<double>& ys,
-                                     const std::vector<double>& params,
-                                     const Tx& x) {
+inline return_type_t<Tx> interp_gauss(const std::vector<double>& xs,
+				      const std::vector<double>& ys,
+				      const std::vector<double>& params,
+				      const Tx& x) {
   // enforce that interpolation point is between smallest and largest
   // reference point
-  static char const* function = "gaus_interp";
+  static char const* function = "interp_gauss";
   check_less_or_equal(function, "Interpolation point", x, xs.back());
   check_greater_or_equal(function, "Interpolation point", x, xs.front());
   check_ordered(function, "xs", xs);
@@ -103,7 +103,7 @@ inline return_type_t<Tx> gaus_interp(const std::vector<double>& xs,
 }
 
 /**
- * This function was written to be used with gaus_interp. This function
+ * This function was written to be used with interp_gauss. This function
  * computes the shifted y-values of the reference points of an interpolation
  * in such a way that when that piecewise linear function is convolved
  * with a Gaussian kernel, the resulting function coincides with the
@@ -118,9 +118,9 @@ inline return_type_t<Tx> gaus_interp(const std::vector<double>& xs,
  * @param ys vector of dependent variable of reference points
  * @return vector containing slopes, intercepts, and width of kernel
  */
-inline std::vector<double> gaus_interp_precomp(const std::vector<double>& xs,
-                                               const std::vector<double>& ys) {
-  static char const* function = "gaus_interp_precomp";
+inline std::vector<double> interp_gauss_precomp(const std::vector<double>& xs,
+						const std::vector<double>& ys) {
+  static char const* function = "interp_gauss_precomp";
   check_not_nan(function, "xs", xs);
   check_not_nan(function, "ys", ys);
   check_ordered(function, "xs", xs);
@@ -152,7 +152,7 @@ inline std::vector<double> gaus_interp_precomp(const std::vector<double>& xs,
 
     double dmax = 0;
     for (size_t i = 0; i < N; i++) {
-      dd = ys[i] - gaus_interp(xs, y2s, params, xs[i]);
+      dd = ys[i] - interp_gauss(xs, y2s, params, xs[i]);
       y2s[i] += dd;
       dmax = std::max(std::abs(dd), dmax);
     }
@@ -164,7 +164,7 @@ inline std::vector<double> gaus_interp_precomp(const std::vector<double>& xs,
 }
 
 /**
- * This function combines gaus_interp_precomp and gaus_interp.
+ * This function combines interp_gauss_precomp and interp_gauss.
  * It takes as input two vectors of reference points (xs and ys)
  * in addition to a vector, xs_new, of points at which this
  * function will evaluate the interpolation at those reference
@@ -177,16 +177,16 @@ inline std::vector<double> gaus_interp_precomp(const std::vector<double>& xs,
  * @return vector of interpolation values
  */
 template <typename Tx>
-inline std::vector<Tx> gaus_interp(const std::vector<double>& xs,
-                                   const std::vector<double>& ys,
-                                   const std::vector<Tx>& xs_new) {
+inline std::vector<Tx> interp_gauss(const std::vector<double>& xs,
+				    const std::vector<double>& ys,
+				    const std::vector<Tx>& xs_new) {
   int n_interp = xs_new.size();
   std::vector<Tx> ys_new(n_interp);
 
   // create interpolation
-  std::vector<double> params = gaus_interp_precomp(xs, ys);
+  std::vector<double> params = interp_gauss_precomp(xs, ys);
   for (int i = 0; i < n_interp; i++) {
-    ys_new[i] = gaus_interp(xs, ys, params, xs_new[i]);
+    ys_new[i] = interp_gauss(xs, ys, params, xs_new[i]);
   }
   return ys_new;
 }

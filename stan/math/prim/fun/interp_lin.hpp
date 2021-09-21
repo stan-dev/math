@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_FUN_LIN_INTERP
-#define STAN_MATH_PRIM_FUN_LIN_INTERP
+#ifndef STAN_MATH_PRIM_FUN_INTERP_LIN
+#define STAN_MATH_PRIM_FUN_INTERP_LIN
 
 #include <stan/math/prim/err.hpp>
 #include <cmath>
@@ -23,9 +23,9 @@ namespace math {
  * @param x the point at which to evaluate the interpolation
  * @return value of linear interpolation at x
  */
-inline double lin_interp(const std::vector<double>& xs,
+inline double interp_lin(const std::vector<double>& xs,
                          const std::vector<double>& ys, double x) {
-  static char const* function = "lin_interp";
+  static char const* function = "interp_lin";
   check_ordered(function, "xs", xs);
   check_not_nan(function, "xs", xs);
   check_not_nan(function, "ys", ys);
@@ -72,7 +72,7 @@ inline double lin_interp(const std::vector<double>& xs,
  */
 
 template <typename Tx>
-inline std::vector<Tx> lin_interp(const std::vector<double>& xs,
+inline std::vector<Tx> interp_lin(const std::vector<double>& xs,
                                   const std::vector<double>& ys,
                                   const std::vector<Tx>& xs_new) {
   int n_interp = xs_new.size();
@@ -80,7 +80,7 @@ inline std::vector<Tx> lin_interp(const std::vector<double>& xs,
 
   // create interpolation
   for (int i = 0; i < n_interp; i++) {
-    ys_new[i] = lin_interp(xs, ys, xs_new[i]);
+    ys_new[i] = interp_lin(xs, ys, xs_new[i]);
   }
   return ys_new;
 }
