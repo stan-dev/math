@@ -13,7 +13,7 @@
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 
-#include <CL/cl2.hpp>
+#include <CL/opencl.hpp>
 #include <string>
 #include <iostream>
 #include <fstream>
