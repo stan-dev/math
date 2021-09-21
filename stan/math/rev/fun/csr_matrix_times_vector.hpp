@@ -22,7 +22,7 @@ void update_w(T1& w, int m, int n,
     for (Eigen::Map<Eigen::SparseMatrix<var>>::InnerIterator it(w_mat, k); it;
          ++it) {
       it.valueRef().adj()
-          += res.adj_op().coeff(it.row()) * value_of(b).coeff(it.col());
+          += res.adj().coeff(it.row()) * value_of(b).coeff(it.col());
     }
   }
 }
@@ -38,7 +38,7 @@ void update_w(T1& w, int m, int n,
     for (Eigen::Map<Eigen::SparseMatrix<double>>::InnerIterator it(w_mat, k);
          it; ++it) {
       it.valueRef()
-          += res.adj_op().coeff(it.row()) * value_of(b).coeff(it.col());
+          += res.adj().coeff(it.row()) * value_of(b).coeff(it.col());
     }
   }
 }
@@ -119,7 +119,7 @@ inline auto csr_matrix_times_vector(int m, int n, const T1& w,
       sparse_val_mat w_val_mat(m, n, w_val_arena.size(), v_arena.data(),
                                u_arena.data(), w_val_arena.data());
       internal::update_w(w_arena, m, n, u_arena, v_arena, b_arena, res);
-      b_arena.adj() += w_val_mat.transpose() * res.adj_op();
+      b_arena.adj() += w_val_mat.transpose() * res.adj();
     });
     return return_t(res);
   } else if (!is_constant<T2>::value) {
@@ -132,7 +132,7 @@ inline auto csr_matrix_times_vector(int m, int n, const T1& w,
         [m, n, w_val_arena, v_arena, u_arena, res, b_arena]() mutable {
           sparse_val_mat w_val_mat(m, n, w_val_arena.size(), v_arena.data(),
                                    u_arena.data(), w_val_arena.data());
-          b_arena.adj() += w_val_mat.transpose() * res.adj_op();
+          b_arena.adj() += w_val_mat.transpose() * res.adj();
         });
     return return_t(res);
   } else {
