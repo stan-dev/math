@@ -15,11 +15,12 @@ template <typename T1, typename T2, typename Res,
           require_eigen_t<T1>* = nullptr>
 void update_w(T1& w, int m, int n, std::vector<int, arena_allocator<int>>& u,
               std::vector<int, arena_allocator<int>>& v, T2&& b, Res&& res) {
-  Eigen::Map<Eigen::SparseMatrix<var, Eigen::RowMajor>> w_mat(m, n, w.size(), u.data(), v.data(),
-                                             w.data());
+  Eigen::Map<Eigen::SparseMatrix<var, Eigen::RowMajor>> w_mat(
+      m, n, w.size(), u.data(), v.data(), w.data());
   for (int k = 0; k < w_mat.outerSize(); ++k) {
-    for (Eigen::Map<Eigen::SparseMatrix<var, Eigen::RowMajor>>::InnerIterator it(w_mat, k); it;
-         ++it) {
+    for (Eigen::Map<Eigen::SparseMatrix<var, Eigen::RowMajor>>::InnerIterator
+             it(w_mat, k);
+         it; ++it) {
       it.valueRef().adj()
           += res.adj().coeff(it.row()) * value_of(b).coeff(it.col());
     }
@@ -30,10 +31,11 @@ template <typename T1, typename T2, typename Res,
           require_var_matrix_t<T1>* = nullptr>
 void update_w(T1& w, int m, int n, std::vector<int, arena_allocator<int>>& u,
               std::vector<int, arena_allocator<int>>& v, T2&& b, Res&& res) {
-  Eigen::Map<Eigen::SparseMatrix<double, Eigen::RowMajor>> w_mat(m, n, w.size(), u.data(),
-                                                v.data(), w.adj().data());
+  Eigen::Map<Eigen::SparseMatrix<double, Eigen::RowMajor>> w_mat(
+      m, n, w.size(), u.data(), v.data(), w.adj().data());
   for (int k = 0; k < w_mat.outerSize(); ++k) {
-    for (Eigen::Map<Eigen::SparseMatrix<double, Eigen::RowMajor>>::InnerIterator it(w_mat, k);
+    for (Eigen::Map<Eigen::SparseMatrix<double, Eigen::RowMajor>>::InnerIterator
+             it(w_mat, k);
          it; ++it) {
       it.valueRef() += res.adj().coeff(it.row()) * value_of(b).coeff(it.col());
     }
@@ -76,7 +78,8 @@ template <typename T1, typename T2, require_any_rev_matrix_t<T1, T2>* = nullptr>
 inline auto csr_matrix_times_vector(int m, int n, const T1& w,
                                     const std::vector<int>& v,
                                     const std::vector<int>& u, const T2& b) {
-  using sparse_val_mat = Eigen::Map<const Eigen::SparseMatrix<double, Eigen::RowMajor>>;
+  using sparse_val_mat
+      = Eigen::Map<const Eigen::SparseMatrix<double, Eigen::RowMajor>>;
   using sparse_dense_mul_type
       = decltype((std::declval<sparse_val_mat>() * value_of(b)).eval());
   using return_t = return_var_matrix_t<sparse_dense_mul_type, T1, T2>;
@@ -102,8 +105,8 @@ inline auto csr_matrix_times_vector(int m, int n, const T1& w,
     arena_t<promote_scalar_t<var, T2>> b_arena = b;
     arena_t<promote_scalar_t<var, T1>> w_arena = to_arena(w);
     auto w_val_arena = to_arena(value_of(w_arena));
-    sparse_val_mat w_val_mat(m, n, w_val_arena.size(), u_arena.data(), v_arena.data(),
-        w_val_arena.data());
+    sparse_val_mat w_val_mat(m, n, w_val_arena.size(), u_arena.data(),
+                             v_arena.data(), w_val_arena.data());
     arena_t<return_t> res = w_val_mat * value_of(b_arena);
     reverse_pass_callback(
         [m, n, w_arena, w_val_arena, v_arena, u_arena, res, b_arena]() mutable {

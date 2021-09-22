@@ -91,10 +91,10 @@ csr_matrix_times_vector(int m, int n, const T1& w, const std::vector<int>& v,
   std::vector<int> u_zeroed(u.size());
   std::transform(u.begin(), u.end(), u_zeroed.begin(),
                  [](auto&& x) { return x - 1; });
-  //u_zeroed[u.size()] = w.size();
+  // u_zeroed[u.size()] = w.size();
   auto&& w_ref = to_ref(w);
-  Eigen::Map<const Eigen::SparseMatrix<scalar_type_t<T1>, Eigen::RowMajor>> w_mat(
-      m, n, w_ref.size(), u_zeroed.data(), v_zeroed.data(), w_ref.data());
+  Eigen::Map<const Eigen::SparseMatrix<scalar_type_t<T1>, Eigen::RowMajor>>
+      w_mat(m, n, w_ref.size(), u_zeroed.data(), v_zeroed.data(), w_ref.data());
   return w_mat * b;
 }
 
