@@ -11,7 +11,7 @@
 #include <stan/math/opencl/kernels/cholesky_decompose.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <CL/cl2.hpp>
+#include <CL/opencl.hpp>
 #include <algorithm>
 #include <cmath>
 
