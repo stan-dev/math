@@ -4,7 +4,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/system_error.hpp>
-#include <CL/cl2.hpp>
+#include <CL/opencl.hpp>
 #include <iostream>
 #include <stdexcept>
 #include <string>

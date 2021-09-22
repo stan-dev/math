@@ -4,7 +4,7 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
-#include <CL/cl2.hpp>
+#include <CL/opencl.hpp>
 
 namespace stan {
 namespace math {
