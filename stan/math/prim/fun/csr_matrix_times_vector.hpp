@@ -76,12 +76,8 @@ csr_matrix_times_vector(int m, int n, const T1& w, const std::vector<int>& v,
                         const std::vector<int>& u, const T2& b) {
   check_positive("csr_matrix_times_vector", "m", m);
   check_positive("csr_matrix_times_vector", "n", n);
-  check_positive("csr_matrix_times_vector", "v", v);
-  check_positive("csr_matrix_times_vector", "u", u);
   check_size_match("csr_matrix_times_vector", "n", n, "b", b.size());
   check_size_match("csr_matrix_times_vector", "w", w.size(), "v", v.size());
-  check_size_match("csr_matrix_times_vector", "v + 1", v.size() + 1, "u",
-                   u.size());
   check_size_match("csr_matrix_times_vector", "m", m, "u", u.size() - 1);
   check_size_match("csr_matrix_times_vector", "w", w.size(), "v", v.size());
   check_size_match("csr_matrix_times_vector", "u/z",
@@ -89,19 +85,17 @@ csr_matrix_times_vector(int m, int n, const T1& w, const std::vector<int>& v,
   for (int i : v) {
     check_range("csr_matrix_times_vector", "v[]", n, i);
   }
+  std::vector<int> v_zeroed(v.size());
+  std::transform(v.begin(), v.end(), v_zeroed.begin(),
+                 [](auto&& x) { return x - 1; });
   std::vector<int> u_zeroed(u.size());
   std::transform(u.begin(), u.end(), u_zeroed.begin(),
                  [](auto&& x) { return x - 1; });
-  std::vector<int> v_zeroed(u.size());
-  std::transform(v.begin(), v.end(), v_zeroed.begin(),
-                 [](auto&& x) { return x - 1; });
+  //u_zeroed[u.size()] = w.size();
   auto&& w_ref = to_ref(w);
-  Eigen::Map<const Eigen::SparseMatrix<scalar_type_t<T1>>> w_mat(
-      m, n, w_ref.size(), v_zeroed.data(), u_zeroed.data(), w_ref.data());
-  auto&& b_ref = to_ref(b);
-  Eigen::Map<const Eigen::Matrix<scalar_type_t<T2>, Eigen::Dynamic, 1>> b_vec(
-      b_ref.data(), b_ref.size());
-  return w_mat * b_vec;
+  Eigen::Map<const Eigen::SparseMatrix<scalar_type_t<T1>, Eigen::RowMajor>> w_mat(
+      m, n, w_ref.size(), u_zeroed.data(), v_zeroed.data(), w_ref.data());
+  return w_mat * b;
 }
 
 }  // namespace math

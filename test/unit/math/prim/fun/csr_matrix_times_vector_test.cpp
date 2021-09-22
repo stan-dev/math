@@ -15,7 +15,6 @@ TEST(SparseStuff, csr_matrix_times_vector_dense_multiply) {
 
   stan::math::vector_d b(3);
   b << 22, 33, 44;
-
   stan::math::vector_d result
       = stan::math::csr_matrix_times_vector(2, 3, X_w, X_v, X_u, b);
   EXPECT_FLOAT_EQ(440.0, result(0));
