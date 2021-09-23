@@ -68,7 +68,6 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_cdf(
   check_positive_finite(function, "Scale parameter", sigma_val);
   check_bounded(function, "Skewness parameter", tau_val, 0.0, 1.0);
 
-
   T_partials_return cdf(1.0);
   operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref, T_tau_ref> ops_partials(
       y_ref, mu_ref, sigma_ref, tau_ref);
