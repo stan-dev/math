@@ -89,7 +89,6 @@ inline auto csr_matrix_times_vector(int m, int n, const T1& w,
   check_size_match("csr_matrix_times_vector", "n", n, "b", b.size());
   check_size_match("csr_matrix_times_vector", "w", w.size(), "v", v.size());
   check_size_match("csr_matrix_times_vector", "m", m, "u", u.size() - 1);
-  check_size_match("csr_matrix_times_vector", "w", w.size(), "v", v.size());
   check_size_match("csr_matrix_times_vector", "u/z",
                    u[m - 1] + csr_u_to_z(u, m - 1) - 1, "v", v.size());
   for (int i : v) {

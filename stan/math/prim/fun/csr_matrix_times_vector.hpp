@@ -79,22 +79,21 @@ csr_matrix_times_vector(int m, int n, const T1& w, const std::vector<int>& v,
   check_size_match("csr_matrix_times_vector", "n", n, "b", b.size());
   check_size_match("csr_matrix_times_vector", "w", w.size(), "v", v.size());
   check_size_match("csr_matrix_times_vector", "m", m, "u", u.size() - 1);
-  check_size_match("csr_matrix_times_vector", "w", w.size(), "v", v.size());
   check_size_match("csr_matrix_times_vector", "u/z",
                    u[m - 1] + csr_u_to_z(u, m - 1) - 1, "v", v.size());
   for (int i : v) {
     check_range("csr_matrix_times_vector", "v[]", n, i);
   }
-  std::vector<int> v_zeroed(v.size());
-  std::transform(v.begin(), v.end(), v_zeroed.begin(),
+  std::vector<int> v_zero_based(v.size());
+  std::transform(v.begin(), v.end(), v_zero_based.begin(),
                  [](auto&& x) { return x - 1; });
-  std::vector<int> u_zeroed(u.size());
-  std::transform(u.begin(), u.end(), u_zeroed.begin(),
+  std::vector<int> u_zero_based(u.size());
+  std::transform(u.begin(), u.end(), u_zero_based.begin(),
                  [](auto&& x) { return x - 1; });
-  // u_zeroed[u.size()] = w.size();
+  // u_zero_based[u.size()] = w.size();
   auto&& w_ref = to_ref(w);
   Eigen::Map<const Eigen::SparseMatrix<scalar_type_t<T1>, Eigen::RowMajor>>
-      w_mat(m, n, w_ref.size(), u_zeroed.data(), v_zeroed.data(), w_ref.data());
+      w_mat(m, n, w_ref.size(), u_zero_based.data(), v_zero_based.data(), w_ref.data());
   return w_mat * b;
 }
 
