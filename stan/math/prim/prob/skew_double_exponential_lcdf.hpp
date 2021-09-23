@@ -71,7 +71,7 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lcdf(
   }
 
   operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref, T_tau_ref> ops_partials(
-     y_ref, mu_ref, sigma_ref, tau_ref);
+      y_ref, mu_ref, sigma_ref, tau_ref);
 
   scalar_seq_view<std::decay_t<decltype(y_val)>> y_vec(y_val);
   scalar_seq_view<std::decay_t<decltype(mu_val)>> mu_vec(mu_val);
