@@ -43,9 +43,6 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_cdf(
     const T_skewness& tau) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_skewness>;
   static const char* function = "skew_double_exponential_lcdf";
-  if (size_zero(y, mu, sigma, tau)) {
-    return 1.0;
-  }
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Shape parameter", sigma, "Skewness parameter",
                          tau);
@@ -67,6 +64,9 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_cdf(
   check_finite(function, "Location parameter", mu_val);
   check_positive_finite(function, "Scale parameter", sigma_val);
   check_bounded(function, "Skewness parameter", tau_val, 0.0, 1.0);
+  if (size_zero(y, mu, sigma, tau)) {
+    return 1.0;
+  }
 
   T_partials_return cdf(1.0);
   operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref, T_tau_ref> ops_partials(
@@ -83,30 +83,30 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_cdf(
   scalar_seq_view<decltype(inv_sigma_val)> inv_sigma(inv_sigma_val);
 
   for (int i = 0; i < N; ++i) {
-    auto y_dbl = y_vec.val(i);
-    auto mu_dbl = mu_vec.val(i);
-    auto sigma_dbl = sigma_vec.val(i);
-    auto tau_dbl = tau_vec.val(i);
+    const T_partials_return y_dbl = y_vec[i];
+    const T_partials_return mu_dbl = mu_vec[i];
+    const T_partials_return sigma_dbl = sigma_vec[i];
+    const T_partials_return tau_dbl = tau_vec[i];
 
-    auto y_m_mu = y_dbl - mu_dbl;
-    auto diff_sign = sign(y_m_mu);
-    auto diff_sign_smaller_0 = step(-diff_sign);
-    auto abs_diff_y_mu = fabs(y_m_mu);
-    auto abs_diff_y_mu_over_sigma
+    const T_partials_return y_m_mu = y_dbl - mu_dbl;
+    const T_partials_return diff_sign = sign(y_m_mu);
+    const T_partials_return diff_sign_smaller_0 = step(-diff_sign);
+    const T_partials_return abs_diff_y_mu = fabs(y_m_mu);
+    const T_partials_return abs_diff_y_mu_over_sigma
         = abs_diff_y_mu * inv_sigma[i];
-    auto expo = (diff_sign_smaller_0 + diff_sign * tau_dbl)
+    const T_partials_return expo = (diff_sign_smaller_0 + diff_sign * tau_dbl)
                                    * abs_diff_y_mu_over_sigma;
-    auto inv_exp_2_expo_tau
+    const T_partials_return inv_exp_2_expo_tau
         = inv(exp(2.0 * expo) + tau_dbl - 1.0);
 
-    auto rep_deriv
+    const T_partials_return rep_deriv
         = y_dbl < mu_dbl ? 2.0 * inv_sigma[i] * (1.0 - tau_dbl)
                          : -2.0 * (tau_dbl - 1.0) * tau_dbl * inv_sigma[i]
                                * inv_exp_2_expo_tau;
-    auto sig_deriv = y_dbl < mu_dbl
+    const T_partials_return sig_deriv = y_dbl < mu_dbl
                                             ? 2.0 * inv_sigma[i] * expo
                                             : -rep_deriv * expo / tau_dbl;
-    auto skew_deriv
+    const T_partials_return skew_deriv
         = y_dbl < mu_dbl
               ? 1.0 / tau_dbl + 2.0 * inv_sigma[i] * y_m_mu * diff_sign
               : (sigma_dbl - 2.0 * (tau_dbl - 1.0) * y_m_mu) * inv_sigma[i]

@@ -41,11 +41,10 @@ template <typename T_y, typename T_loc, typename T_scale, typename T_skewness,
 return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lcdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma,
     const T_skewness& tau) {
-  static const char* function = "skew_double_exponential_lcdf";
+  using std::exp;
+  using std::log;
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_skewness>;
-  if (size_zero(y, mu, sigma, tau)) {
-    return 1.0;
-  }
+  static const char* function = "skew_double_exponential_lcdf";
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Shape parameter", sigma, "Skewness parameter",
                          tau);
@@ -67,11 +66,12 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lcdf(
   check_finite(function, "Location parameter", mu_val);
   check_positive_finite(function, "Scale parameter", sigma_val);
   check_bounded(function, "Skewness parameter", tau_val, 0.0, 1.0);
+  if (size_zero(y, mu, sigma, tau)) {
+    return 0.0;
+  }
 
-
-  T_partials_return cdf(1.0);
   operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref, T_tau_ref> ops_partials(
-      y_ref, mu_ref, sigma_ref, tau_ref);
+     y_ref, mu_ref, sigma_ref, tau_ref);
 
   scalar_seq_view<std::decay_t<decltype(y_val)>> y_vec(y_val);
   scalar_seq_view<std::decay_t<decltype(mu_val)>> mu_vec(mu_val);
@@ -85,10 +85,10 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_lcdf(
 
   T_partials_return cdf_log(0.0);
   for (int i = 0; i < N; ++i) {
-    const T_partials_return y_dbl = y_vec.val(i);
-    const T_partials_return mu_dbl = mu_vec.val(i);
-    const T_partials_return sigma_dbl = sigma_vec.val(i);
-    const T_partials_return tau_dbl = tau_vec.val(i);
+    const T_partials_return y_dbl = y_vec[i];
+    const T_partials_return mu_dbl = mu_vec[i];
+    const T_partials_return sigma_dbl = sigma_vec[i];
+    const T_partials_return tau_dbl = tau_vec[i];
 
     const T_partials_return y_m_mu = y_dbl - mu_dbl;
     const T_partials_return diff_sign = sign(y_m_mu);
