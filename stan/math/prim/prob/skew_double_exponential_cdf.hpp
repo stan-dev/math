@@ -41,8 +41,6 @@ template <typename T_y, typename T_loc, typename T_scale, typename T_skewness,
 return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_cdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma,
     const T_skewness& tau) {
-  using std::exp;
-  using std::log;
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_skewness>;
   static const char* function = "skew_double_exponential_lcdf";
   if (size_zero(y, mu, sigma, tau)) {
@@ -86,30 +84,30 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_cdf(
   scalar_seq_view<decltype(inv_sigma_val)> inv_sigma(inv_sigma_val);
 
   for (int i = 0; i < N; ++i) {
-    const T_partials_return y_dbl = y_vec.val(i);
-    const T_partials_return mu_dbl = mu_vec.val(i);
-    const T_partials_return sigma_dbl = sigma_vec.val(i);
-    const T_partials_return tau_dbl = tau_vec.val(i);
+    auto y_dbl = y_vec.val(i);
+    auto mu_dbl = mu_vec.val(i);
+    auto sigma_dbl = sigma_vec.val(i);
+    auto tau_dbl = tau_vec.val(i);
 
-    const T_partials_return y_m_mu = y_dbl - mu_dbl;
-    const T_partials_return diff_sign = sign(y_m_mu);
-    const T_partials_return diff_sign_smaller_0 = step(-diff_sign);
-    const T_partials_return abs_diff_y_mu = fabs(y_m_mu);
-    const T_partials_return abs_diff_y_mu_over_sigma
+    auto y_m_mu = y_dbl - mu_dbl;
+    auto diff_sign = sign(y_m_mu);
+    auto diff_sign_smaller_0 = step(-diff_sign);
+    auto abs_diff_y_mu = fabs(y_m_mu);
+    auto abs_diff_y_mu_over_sigma
         = abs_diff_y_mu * inv_sigma[i];
-    const T_partials_return expo = (diff_sign_smaller_0 + diff_sign * tau_dbl)
+    auto expo = (diff_sign_smaller_0 + diff_sign * tau_dbl)
                                    * abs_diff_y_mu_over_sigma;
-    const T_partials_return inv_exp_2_expo_tau
+    auto inv_exp_2_expo_tau
         = inv(exp(2.0 * expo) + tau_dbl - 1.0);
 
-    const T_partials_return rep_deriv
+    auto rep_deriv
         = y_dbl < mu_dbl ? 2.0 * inv_sigma[i] * (1.0 - tau_dbl)
                          : -2.0 * (tau_dbl - 1.0) * tau_dbl * inv_sigma[i]
                                * inv_exp_2_expo_tau;
-    const T_partials_return sig_deriv = y_dbl < mu_dbl
+    auto sig_deriv = y_dbl < mu_dbl
                                             ? 2.0 * inv_sigma[i] * expo
                                             : -rep_deriv * expo / tau_dbl;
-    const T_partials_return skew_deriv
+    auto skew_deriv
         = y_dbl < mu_dbl
               ? 1.0 / tau_dbl + 2.0 * inv_sigma[i] * y_m_mu * diff_sign
               : (sigma_dbl - 2.0 * (tau_dbl - 1.0) * y_m_mu) * inv_sigma[i]
