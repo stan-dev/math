@@ -7,7 +7,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/gp_matern32_cov.hpp>
 #include <stan/math/opencl/err.hpp>
-#include <CL/cl2.hpp>
+#include <CL/opencl.hpp>
 
 namespace stan {
 namespace math {

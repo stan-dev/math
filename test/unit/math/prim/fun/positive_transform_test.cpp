@@ -24,3 +24,14 @@ TEST(prob_transform, positive_rt) {
   double xcfc = stan::math::positive_constrain(xcf);
   EXPECT_FLOAT_EQ(xc, xcfc);
 }
+TEST(prob_transform, positive_vectorized) {
+  double lp = 0;
+  Eigen::VectorXd x = Eigen::VectorXd::Random(4);
+  std::vector<Eigen::VectorXd> x_vec = {x, x, x};
+  std::vector<Eigen::VectorXd> y_vec
+      = stan::math::positive_constrain<false>(x_vec, lp);
+  std::vector<Eigen::VectorXd> x_free_vec = stan::math::positive_free(y_vec);
+  for (int i = 0; i < x_vec.size(); ++i) {
+    EXPECT_MATRIX_FLOAT_EQ(x_vec[i], x_free_vec[i]);
+  }
+}

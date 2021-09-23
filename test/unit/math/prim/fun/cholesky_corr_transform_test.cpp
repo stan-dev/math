@@ -32,6 +32,7 @@ void test_cholesky_correlation_values(
   using stan::math::cholesky_corr_constrain;
   using stan::math::cholesky_corr_free;
   using std::vector;
+  double lp = 0;
   int K = L.rows();
   int K_choose_2 = (K * (K - 1)) / 2;
 
@@ -47,33 +48,46 @@ void test_cholesky_correlation_values(
   }
 
   // test transform roundtrip without Jacobian
-  Matrix<double, Dynamic, Dynamic> x
-      = stan::math::cholesky_corr_constrain(y, K);
+  std::vector<Matrix<double, Dynamic, Dynamic>> x_vec
+      = stan::math::cholesky_corr_constrain<false>(y_vec, K, lp);
 
-  Matrix<double, Dynamic, 1> yrt = stan::math::cholesky_corr_free(x);
+  std::vector<Matrix<double, Dynamic, 1>> yrt
+      = stan::math::cholesky_corr_free(x_vec);
 
-  EXPECT_EQ(y.size(), yrt.size());
-  for (int i = 0; i < yrt.size(); ++i)
-    EXPECT_FLOAT_EQ(y(i), yrt(i));
-
-  for (int m = 0; m < K; ++m)
-    for (int n = 0; n < K; ++n)
-      EXPECT_FLOAT_EQ(L(m, n), x(m, n));
+  EXPECT_EQ(y.size(), yrt[0].size());
+  for (int i = 0; i < yrt.size(); ++i) {
+    for (int j = 0; j < yrt[i].size(); ++j) {
+      EXPECT_FLOAT_EQ(y_vec[i](j), yrt[i](j));
+    }
+  }
+  for (auto&& x_i : x_vec) {
+    for (int m = 0; m < K; ++m) {
+      for (int n = 0; n < K; ++n) {
+        EXPECT_FLOAT_EQ(L(m, n), x_i(m, n));
+      }
+    }
+  }
 
   // test transform roundtrip with Jacobian (Jacobian itself tested above)
-  double lp = 0;
-  Matrix<double, Dynamic, Dynamic> x2
-      = stan::math::cholesky_corr_constrain(y, K, lp);
+  std::vector<Matrix<double, Dynamic, Dynamic>> x2_vec
+      = stan::math::cholesky_corr_constrain<true>(y_vec, K, lp);
 
-  Matrix<double, Dynamic, 1> yrt2 = stan::math::cholesky_corr_free(x2);
+  std::vector<Matrix<double, Dynamic, 1>> yrt2
+      = stan::math::cholesky_corr_free(x2_vec);
 
-  EXPECT_EQ(y.size(), yrt2.size());
-  for (int i = 0; i < yrt2.size(); ++i)
-    EXPECT_FLOAT_EQ(y(i), yrt2(i));
-
-  for (int m = 0; m < K; ++m)
-    for (int n = 0; n < K; ++n)
-      EXPECT_FLOAT_EQ(L(m, n), x2(m, n));
+  for (auto&& yrt_i : yrt2) {
+    EXPECT_EQ(y.size(), yrt_i.size());
+    for (int i = 0; i < yrt_i.size(); ++i) {
+      EXPECT_FLOAT_EQ(y(i), yrt_i(i));
+    }
+  }
+  for (auto&& x2_i : x2_vec) {
+    for (int m = 0; m < K; ++m) {
+      for (int n = 0; n < K; ++n) {
+        EXPECT_FLOAT_EQ(L(m, n), x2_i(m, n));
+      }
+    }
+  }
 }
 
 TEST(ProbTransform, CholeskyCorrelationRoundTrips) {
