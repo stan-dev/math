@@ -51,8 +51,8 @@ auto elt_divide(const Mat& m, Scal s) {
 #else
 template <typename Scal, typename Mat, typename = require_stan_scalar_t<Scal>,
           typename = require_eigen_t<Mat> >
-auto elt_divide(Scal s, const Mat& m) {
-  return (s / m.array()).matrix().eval();
+auto elt_divide(const Mat& m, Scal s) {
+  return (m.array() / s).matrix().eval();
 }
 #endif
 
@@ -115,7 +115,8 @@ Eigen::Matrix<return_type_t<T1, T2>, R, C> elt_divide(
  * @param s scalar
  * @return Elementwise division of a scalar by matrix.
  */
-template <typename T1, typename T2, int R, int C>
+template <typename T1, typename T2, int R, int C,
+          require_all_stan_scalar_t<T1, T2>* = nullptr>
 Eigen::Matrix<return_type_t<T1, T2>, R, C> elt_divide(
     const Eigen::Matrix<T1, R, C>& m, T2 s) {
   return m.array() / s;
@@ -133,7 +134,8 @@ Eigen::Matrix<return_type_t<T1, T2>, R, C> elt_divide(
  * @param m matrix
  * @return Elementwise division of a scalar by matrix.
  */
-template <typename T1, typename T2, int R, int C>
+template <typename T1, typename T2, int R, int C,
+          require_all_stan_scalar_t<T1, T2>* = nullptr>
 Eigen::Matrix<return_type_t<T1, T2>, R, C> elt_divide(
     T1 s, const Eigen::Matrix<T2, R, C>& m) {
   return s / m.array();
