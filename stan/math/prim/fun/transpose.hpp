@@ -15,7 +15,11 @@ namespace math {
  */
 template <typename T, typename = require_eigen_t<T>>
 auto inline transpose(const T& m) {
+#ifdef USE_STANC3
   return m.transpose();
+#else
+  return m.transpose().eval();
+#endif
 }
 
 }  // namespace math
