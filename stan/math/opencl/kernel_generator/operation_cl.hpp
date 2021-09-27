@@ -9,7 +9,7 @@
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernel_cl.hpp>
-#include <CL/cl2.hpp>
+#include <CL/opencl.hpp>
 #include <algorithm>
 #include <string>
 #include <utility>

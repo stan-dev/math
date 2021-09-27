@@ -3,9 +3,10 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/matrix_cl.hpp>
+#include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/cholesky_decompose.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <CL/cl2.hpp>
+#include <CL/opencl.hpp>
 #include <algorithm>
 #include <cmath>
 
@@ -29,8 +30,11 @@ inline matrix_cl<double> cholesky_decompose(const matrix_cl<double>& A) {
   }
   opencl::cholesky_decompose(res);
   // check_pos_definite on matrix_cl is check_nan + check_diagonal_zeros
-  check_nan("cholesky_decompose (OpenCL)", "A", res);
-  check_diagonal_zeros("cholesky_decompose (OpenCL)", "A", res);
+  check_cl("cholesky_decompose (OpenCL)", "A", res, "not NaN") = !isnan(res);
+  check_cl("cholesky_decompose (OpenCL)", "diagonal of A", diagonal(res),
+           "nonzero")
+      = diagonal(res) != 0.0;
+
   res.template zeros_strict_tri<matrix_cl_view::Upper>();
   return res;
 }

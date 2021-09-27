@@ -295,6 +295,13 @@ class var_value<T, require_floating_point_t<T>> {
   }
 };
 
+namespace internal {
+template <typename T>
+using require_matrix_var_value = require_t<bool_constant<
+    (is_eigen<T>::value || is_kernel_expression_and_not_scalar<T>::value)
+    && std::is_floating_point<value_type_t<T>>::value>>;
+}
+
 /**
  * Independent (input) and dependent (output) variables for gradients.
  *
@@ -310,10 +317,7 @@ class var_value<T, require_floating_point_t<T>> {
  * @tparam T An Floating point type.
  */
 template <typename T>
-class var_value<
-    T, require_t<bool_constant<
-           (is_eigen<T>::value || is_kernel_expression_and_not_scalar<T>::value)
-           && std::is_floating_point<value_type_t<T>>::value>>> {
+class var_value<T, internal::require_matrix_var_value<T>> {
  public:
   using value_type = T;  // type in vari_value.
   using vari_type = std::conditional_t<is_plain_type<value_type>::value,
@@ -401,7 +405,7 @@ class var_value<
    * @return The value of this variable.
    */
   inline const auto& val() const { return vi_->val(); }
-  inline auto& val_op() { return vi_->val(); }
+  inline auto& val_op() { return vi_->val_op(); }
 
   /**
    * Return a reference to the derivative of the root expression with
@@ -664,6 +668,21 @@ class var_value<
     using vari_sub = decltype(vi_->col(i));
     using var_sub = var_value<value_type_t<vari_sub>>;
     return var_sub(new vari_sub(vi_->col(i)));
+  }
+
+  /**
+   * View diagonal of eigen matrices
+   * @param i Column index to slice
+   */
+  inline auto diagonal() const {
+    using vari_sub = decltype(vi_->diagonal());
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->diagonal()));
+  }
+  inline auto diagonal() {
+    using vari_sub = decltype(vi_->diagonal());
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->diagonal()));
   }
 
   /**

@@ -7,7 +7,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/divide_columns.hpp>
 #include <stan/math/opencl/err.hpp>
-#include <CL/cl2.hpp>
+#include <CL/opencl.hpp>
 
 namespace stan {
 namespace math {
@@ -27,7 +27,7 @@ namespace math {
  *
  */
 template <typename T1, typename T2, typename = require_all_arithmetic_t<T1, T2>>
-inline void divide_columns(const matrix_cl<T1>& A, const matrix_cl<T2>& B) {
+inline void divide_columns(matrix_cl<T1>& A, const matrix_cl<T2>& B) {
   if (A.size() == 0 || B.size() == 0) {
     return;
   }
@@ -53,7 +53,7 @@ inline void divide_columns(const matrix_cl<T1>& A, const matrix_cl<T2>& B) {
  *
  */
 template <typename T1, typename T2, typename = require_all_arithmetic_t<T1, T2>>
-inline void divide_columns(const matrix_cl<T1>& A, const T2& divisor) {
+inline void divide_columns(matrix_cl<T1>& A, const T2& divisor) {
   A = elt_divide(A, divisor);
 }
 

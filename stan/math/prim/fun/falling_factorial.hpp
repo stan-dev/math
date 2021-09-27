@@ -62,7 +62,7 @@ namespace math {
  */
 template <typename T, require_arithmetic_t<T>* = nullptr>
 inline return_type_t<T> falling_factorial(const T& x, int n) {
-  static const char* function = "falling_factorial";
+  constexpr const char* function = "falling_factorial";
   check_not_nan(function, "first argument", x);
   check_nonnegative(function, "second argument", n);
   return boost::math::falling_factorial(x, n, boost_policy_t<>());
@@ -78,7 +78,8 @@ inline return_type_t<T> falling_factorial(const T& x, int n) {
  * @param b Second input
  * @return Falling factorial function applied to the two inputs.
  */
-template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
+template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
+          require_all_not_var_matrix_t<T1, T2>* = nullptr>
 inline auto falling_factorial(const T1& a, const T2& b) {
   return apply_scalar_binary(a, b, [&](const auto& c, const auto& d) {
     return falling_factorial(c, d);

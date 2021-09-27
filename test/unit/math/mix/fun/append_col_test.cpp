@@ -23,19 +23,26 @@ TEST(MathMixMatFun, appendCol) {
   // (matrix, matrix)
   stan::test::expect_ad(f, m22, m22b);
   stan::test::expect_ad(f, m22, m23b);
+  stan::test::expect_ad_matvar(f, m22, m22b);
+  stan::test::expect_ad_matvar(f, m22, m23b);
 
   // (vector, matrix)
   stan::test::expect_ad(f, v2, m22);
+  stan::test::expect_ad_matvar(f, v2, m22);
 
   // (matrix, vector)
   stan::test::expect_ad(f, m22, v2);
+  stan::test::expect_ad_matvar(f, m22, v2);
 
   // (vector, vector)
   stan::test::expect_ad(f, v2, v2b);
+  stan::test::expect_ad_matvar(f, v2, v2b);
 
   // (row vector, row vector)
   stan::test::expect_ad(f, rv3, rv4);
   stan::test::expect_ad(f, rv4, rv3);
+  stan::test::expect_ad_matvar(f, rv3, rv4);
+  stan::test::expect_ad_matvar(f, rv4, rv3);
 
   Eigen::MatrixXd m00(0, 0);
   Eigen::MatrixXd m03(0, 3);
@@ -47,4 +54,10 @@ TEST(MathMixMatFun, appendCol) {
   stan::test::expect_ad(f, v0, m00);
   stan::test::expect_ad(f, v0, v0);
   stan::test::expect_ad(f, rv0, rv0);
+
+  stan::test::expect_ad_matvar(f, m00, m00);
+  stan::test::expect_ad_matvar(f, m00, m03);
+  stan::test::expect_ad_matvar(f, v0, m00);
+  stan::test::expect_ad_matvar(f, v0, v0);
+  stan::test::expect_ad_matvar(f, rv0, rv0);
 }

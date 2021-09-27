@@ -73,9 +73,9 @@
 #include <stan/math/prim/err/out_of_range.hpp>
 #include <stan/math/prim/err/system_error.hpp>
 #include <stan/math/prim/err/throw_domain_error.hpp>
+#include <stan/math/prim/err/throw_domain_error_mat.hpp>
 #include <stan/math/prim/err/throw_domain_error_vec.hpp>
 #include <stan/math/prim/err/validate_non_negative_index.hpp>
 #include <stan/math/prim/err/validate_positive_index.hpp>
 #include <stan/math/prim/err/validate_unit_vector_index.hpp>
-
 #endif

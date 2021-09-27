@@ -1,4 +1,4 @@
-#include <stan/math/rev/core.hpp>
+#include <stan/math/rev.hpp>
 #include <stan/math/prim.hpp>
 #include <boost/typeof/typeof.hpp>
 #include <gtest/gtest.h>

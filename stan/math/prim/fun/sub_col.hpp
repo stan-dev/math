@@ -18,7 +18,7 @@ namespace math {
  * @throw std::out_of_range if either index is out of range.
  */
 template <
-    typename T, require_eigen_t<T>* = nullptr,
+    typename T, require_matrix_t<T>* = nullptr,
     require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
 inline auto sub_col(const T& m, size_t i, size_t j, size_t nrows) {
   check_row_index("sub_col", "i", m, i);

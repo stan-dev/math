@@ -1,5 +1,7 @@
 #include <stan/math/rev.hpp>
 #include <gtest/gtest.h>
+#include <chrono>
+#include <thread>
 
 TEST(Profiling, double_basic) {
   using stan::math::profile;
@@ -8,13 +10,19 @@ TEST(Profiling, double_basic) {
   double a = 3.0, b = 2.0, c;
   {
     profile<double> p1("p1", profiles);
-    c = a + b;
+    c = log(exp(a)) * log(exp(b));
+    std::chrono::milliseconds timespan(10);
+    std::this_thread::sleep_for(timespan);
   }
   {
     profile<int> p1("p1", profiles);
-    c = a + b;
+    c = log(exp(a)) * log(exp(b));
+    std::chrono::milliseconds timespan(10);
+    std::this_thread::sleep_for(timespan);
   }
+
   stan::math::profile_key key = {"p1", std::this_thread::get_id()};
+  EXPECT_NEAR(c, 6.0, 1E-8);
   EXPECT_EQ(profiles[key].get_chain_stack_used(), 0);
   EXPECT_EQ(profiles[key].get_nochain_stack_used(), 0);
   EXPECT_FLOAT_EQ(profiles[key].get_rev_time(), 0.0);
@@ -35,6 +43,8 @@ TEST(Profiling, var_basic) {
     var a = 2.0;
     var b = 3.0;
     c = a + b;
+    std::chrono::milliseconds timespan(10);
+    std::this_thread::sleep_for(timespan);
   }
   c.grad();
   stan::math::recover_memory();
@@ -60,6 +70,8 @@ TEST(Profiling, var_exception) {
     var b = 3.0;
     c = a + b;
     throw std::domain_error("error");
+    std::chrono::milliseconds timespan(10);
+    std::this_thread::sleep_for(timespan);
     c.grad();
   } catch (const std::exception& e) {
   }
@@ -88,6 +100,8 @@ TEST(Profiling, var_loop) {
     var a = i;
     var b = 2.0;
     c = c + a;
+    std::chrono::milliseconds timespan(10);
+    std::this_thread::sleep_for(timespan);
   }
   c.grad();
   stan::math::recover_memory();

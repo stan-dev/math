@@ -1,12 +1,11 @@
+<div><a href="https://zenodo.org/badge/latestdoi/38388440"><img src="https://zenodo.org/badge/38388440.svg"/></a></div>
+
 The <b>Stan Math Library</b> is a C++, reverse-mode automatic
 differentiation library designed to be usable, extensive and
 extensible, efficient, scalable, stable, portable, and redistributable
 in order to facilitate the construction and utilization of algorithms
 that utilize derivatives.
 
-\htmlonly
- <div><a href="https://zenodo.org/badge/latestdoi/38388440"><img src="https://zenodo.org/badge/38388440.svg"/></a></div>
-\endhtmlonly
 
 Licensing
 ---------
@@ -37,6 +36,12 @@ Documentation
 ------------
 
 Documentation for Stan math is available at [mc-stan.org/math](https://mc-stan.org/math/)
+
+Contributing
+------------
+
+We love contributions from everyone in the form of good discussion, issues, and pull requests.
+If you are interested in contributing to Stan math please check the [Contributing Guide](http://mc-stan.org/math/contributing.html).
 
 Installation
 ------------
@@ -119,13 +124,16 @@ To build the development version of `math` with [`oneTBB`](https://github.com/on
 
 For example, installing [`oneTBB`](https://github.com/oneapi-src/oneTBB) on Linux 64-bit (`x86_64`) to `$HOME` directory (change if needed!):
 ```bash
-TBB_VERSION="2021.1.1"
+TBB_RELEASE="https://api.github.com/repos/oneapi-src/oneTBB/releases/latest"
+TBB_TAG=$(curl --silent $TBB_RELEASE | grep -Po '"tag_name": "\K.*?(?=")')
+TBB_VERSION=${TBB_TAG#?}
 
 wget https://github.com/oneapi-src/oneTBB/releases/download/v${TBB_VERSION}/oneapi-tbb-${TBB_VERSION}-lin.tgz
 tar zxvf oneapi-tbb-$TBB_VERSION-lin.tgz -C $HOME
 
 export TBB="$HOME/oneapi-tbb-$TBB_VERSION"
 ```
+Note that you may replace `TBB_VERSION=${TBB_TAG#?}` with a custom version number if needed ( check available releases [here](https://github.com/oneapi-src/oneTBB/releases) ).
 
 - Set the TBB environment variables (specifically: `TBB` for the installation prefix, `TBB_INC` for the directory that includes the header files, and `TBB_LIB` for the libraries directory).
 

@@ -11,7 +11,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/vec_concat.hpp>
-#include <CL/cl2.hpp>
+#include <CL/opencl.hpp>
 #include <algorithm>
 #include <iostream>
 #include <string>
@@ -31,7 +31,11 @@ namespace math {
  *  @{
  */
 
-template <typename, typename = void>
+// forward declare
+template <typename T>
+class arena_matrix_cl;
+
+template <typename>
 class matrix_cl;
 
 /**
@@ -39,7 +43,7 @@ class matrix_cl;
  * @tparam T an arithmetic type for the type stored in the OpenCL buffer.
  */
 template <typename T>
-class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
+class matrix_cl : public matrix_cl_base {
  private:
   cl::Buffer buffer_cl_;  // Holds the allocated memory on the device
   int rows_{0};           // Number of rows.
@@ -211,6 +215,13 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
         view_(A.view_),
         write_events_(std::move(A.write_events_)),
         read_events_(std::move(A.read_events_)) {}
+
+  /**
+   * Constructor from `arena_matrix_cl`.
+   * @param A matrix_cl to move
+   */
+  // defined in rev/arena_matrix_cl.hpp
+  matrix_cl(const arena_matrix_cl<T>& A);  // NOLINT(runtime/explicit)
 
   /**
    * Constructor for the matrix_cl that creates a copy of a std::vector of Eigen
@@ -415,8 +426,10 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
    * @tparam Expr type of the expression
    * @param expression expression
    */
+  // defined in kernel_generator/matrix_cl_conversion.hpp
   template <typename Expr,
-            require_all_kernel_expressions_and_none_scalar_t<Expr>* = nullptr>
+            require_all_kernel_expressions_and_none_scalar_t<Expr>* = nullptr,
+            require_not_matrix_cl_t<Expr>* = nullptr>
   matrix_cl(const Expr& expression);  // NOLINT(runtime/explicit)
 
   /**
@@ -460,9 +473,19 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
    * @tparam Expr type of the expression
    * @param expression expression
    */
+  // defined in kernel_generator/matrix_cl_conversion.hpp
   template <typename Expr,
-            require_all_kernel_expressions_and_none_scalar_t<Expr>* = nullptr>
+            require_all_kernel_expressions_and_none_scalar_t<Expr>* = nullptr,
+            require_not_matrix_cl_t<Expr>* = nullptr>
   matrix_cl<T>& operator=(const Expr& expression);
+
+  /**
+   * Assignment of `arena_matrix_cl<T>`.
+   * @tparam Expr type of the expression
+   * @param expression expression
+   */
+  // defined in rev/arena_matrix_cl.hpp
+  matrix_cl<T>& operator=(const arena_matrix_cl<T>& other);
 
   /**
    * Evaluates `this`. This is a no-op.
@@ -624,13 +647,6 @@ class matrix_cl<T, require_arithmetic_t<T>> : public matrix_cl_base {
     delete static_cast<U*>(container);
   }
 };
-
-template <typename T>
-using matrix_cl_prim = matrix_cl<T, require_arithmetic_t<T>>;
-
-template <typename T>
-using matrix_cl_fp = matrix_cl<T, require_floating_point_t<T>>;
-
 /** @}*/
 
 }  // namespace math

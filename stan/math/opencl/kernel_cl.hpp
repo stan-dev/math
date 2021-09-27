@@ -10,7 +10,7 @@
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/opencl/kernels/helpers.hpp>
 #include <stan/math/prim/fun/vec_concat.hpp>
-#include <CL/cl2.hpp>
+#include <CL/opencl.hpp>
 #include <algorithm>
 #include <map>
 #include <string>
@@ -21,6 +21,7 @@ namespace stan {
 namespace math {
 namespace opencl_kernels {
 namespace internal {
+
 /** \ingroup kernel_executor_opencl
  * Extracts the kernel's arguments, used in the global and local kernel
  * constructor.
@@ -47,66 +48,30 @@ inline const cl::Buffer& get_kernel_args(const K& m) {
 }
 
 /** \ingroup kernel_executor_opencl
- * Helper function for assigning events to a \c matrix_cl.
- *
- * @tparam T Whether the assignment is to an \c in_buffer, \c out_buffer, or \c
- * in_out_buffer.
- * @tparam K The type of the \c matrix_cl.
- *
- */
-template <typename T, typename K = double>
-struct assign_event_helper {
-  /** \ingroup kernel_executor_opencl
-   * Assigns the event to the \c matrix_cl.
-   * @param e the event to be assigned.
-   * @param m The \c matrix_cl to be assigned to.
-   */
-  inline void set(const cl::Event& e, const K& m) {}
-};
-
-// Specialization for \c in_buffer
-template <typename K>
-struct assign_event_helper<in_buffer, K> {
-  inline void set(const cl::Event& e, const K& m) { m.add_read_event(e); }
-};
-
-// Specialization for \c out_buffer
-template <typename K>
-struct assign_event_helper<out_buffer, K> {
-  inline void set(const cl::Event& e, const K& m) { m.add_write_event(e); }
-};
-
-// Specialization for \c in_out_buffer
-template <typename K>
-struct assign_event_helper<in_out_buffer, K> {
-  inline void set(const cl::Event& e, const K& m) { m.add_read_write_event(e); }
-};
-
-/** \ingroup kernel_executor_opencl
  * Assigns the event to a \c matrix_cl.
  * @tparam T The type to be assigned, if not a matrix_cl this function
  * will do nothing.
  * @tparam K The type of the \c matrix_cl.
  * @param e The event to be assigned.
  */
-template <typename T, typename K = double>
+template <typename T, require_not_matrix_cl_t<T>* = nullptr>
 inline void assign_event(const cl::Event& e, const T&) {}
 
-/** \ingroup kernel_executor_opencl
- * Assigns the event to a \c matrix_cl
- * @tparam T The type to be assigned, if not a matrix_cl will do nothing.
- * @tparam K The type of the \c matrix_cl.
- * @param e The event to be assigned.
- * @param m The \c matrix_cl to be assigned
- */
-template <typename T, typename K, require_matrix_cl_t<K>* = nullptr>
+template <typename T, typename K, require_matrix_cl_t<K>* = nullptr,
+          require_same_t<T, in_buffer>* = nullptr>
 inline void assign_event(const cl::Event& e, const K& m) {
-  assign_event_helper<T, K> helper;
-  helper.set(e, m);
+  m.add_read_event(e);
 }
-
-template <typename T, require_same_t<T, cl::Event>* = nullptr>
-inline void assign_events(const T&) {}
+template <typename T, typename K, require_matrix_cl_t<K>* = nullptr,
+          require_same_t<T, out_buffer>* = nullptr>
+inline void assign_event(const cl::Event& e, K& m) {
+  m.add_write_event(e);
+}
+template <typename T, typename K, require_matrix_cl_t<K>* = nullptr,
+          require_same_t<T, in_out_buffer>* = nullptr>
+inline void assign_event(const cl::Event& e, K& m) {
+  m.add_read_write_event(e);
+}
 
 /** \ingroup kernel_executor_opencl
  * Adds the event to any \c matrix_cls in the arguments depending on whether
@@ -123,6 +88,9 @@ inline void assign_events(const T&) {}
  * @param args Arguments to the kernel that may be matrices or not.
  * Non-matrices are ignored.
  */
+template <typename T, require_same_t<T, cl::Event>* = nullptr>
+inline void assign_events(const T&) {}
+
 template <typename Arg, typename... Args, typename CallArg,
           typename... CallArgs>
 inline void assign_events(const cl::Event& new_event, CallArg& m,
@@ -130,48 +98,6 @@ inline void assign_events(const cl::Event& new_event, CallArg& m,
   assign_event<Arg>(new_event, m);
   assign_events<Args...>(new_event, args...);
 }
-
-/** \ingroup kernel_executor_opencl
- * Helper function to select OpenCL event vectors from an \c matrix_cl
- * @tparam T For non \c matrix_cl types, the type of the first argument.
- * Otherwise this is the in/out/inout buffer type.
- * @tparam K For \c matrix_cl types, the type of the matrix_cl
- */
-template <typename T, typename K = double>
-struct select_event_helper {
-  /** \ingroup kernel_executor_opencl
-   * Get the events from a matrix_cl. For non \c matrix_cl types this will do
-   * nothing.
-   * @param m A type to extract the event from.
-   */
-  inline const std::vector<cl::Event> get(const T& m) {
-    return std::vector<cl::Event>();
-  }
-};
-
-// Specialization for in_buffer
-template <typename K>
-struct select_event_helper<in_buffer, K> {
-  inline const std::vector<cl::Event> get(const K& m) {
-    return m.write_events();
-  }
-};
-
-// Specialization for out_buffer
-template <typename K>
-struct select_event_helper<out_buffer, K> {
-  inline const std::vector<cl::Event> get(const K& m) {
-    return m.read_write_events();
-  }
-};
-
-// Specialization for in_out_buffer
-template <typename K>
-struct select_event_helper<in_out_buffer, K> {
-  inline const std::vector<cl::Event> get(const K& m) {
-    return m.read_write_events();
-  }
-};
 
 /** \ingroup kernel_executor_opencl
  * Select events from kernel arguments. Does nothing for non \c matrix_cl types.
@@ -182,17 +108,20 @@ struct select_event_helper<in_out_buffer, K> {
  * nothing.
  * @return A vector of OpenCL events.
  */
-template <typename T, typename K = double>
-inline const std::vector<cl::Event> select_events(const T& m) {
-  select_event_helper<T, K> helper;
-  return helper.get(m);
+template <typename T, require_not_matrix_cl_t<T>* = nullptr>
+inline std::vector<cl::Event> select_events(const T& m) {
+  return {};
 }
-
-// Specialization for \c matrix_cl
-template <typename T, typename K, require_matrix_cl_t<K>* = nullptr>
-inline const std::vector<cl::Event> select_events(const K& m) {
-  select_event_helper<T, K> helper;
-  return helper.get(m);
+template <typename T, typename K, require_matrix_cl_t<K>* = nullptr,
+          require_same_t<T, in_buffer>* = nullptr>
+inline const std::vector<cl::Event>& select_events(const K& m) {
+  return m.write_events();
+}
+template <typename T, typename K, require_matrix_cl_t<K>* = nullptr,
+          require_any_same_t<T, out_buffer, in_out_buffer>* = nullptr>
+inline std::vector<cl::Event> select_events(K& m) {
+  static_assert(!std::is_const<K>::value, "Can not write to const matrix_cl!");
+  return m.read_write_events();
 }
 
 }  // namespace internal
@@ -270,8 +199,7 @@ struct kernel_cl {
    * @return An Opencl event.
    */
   template <typename... CallArgs>
-  auto operator()(cl::NDRange global_thread_size,
-                  const CallArgs&... args) const {
+  auto operator()(cl::NDRange global_thread_size, CallArgs&&... args) const {
     if (kernel_() == NULL) {
       kernel_ = compile_kernel(name_, sources_, opts_);
       opencl_context.register_kernel_cache(&kernel_);
@@ -298,7 +226,7 @@ struct kernel_cl {
    */
   template <typename... CallArgs>
   auto operator()(cl::NDRange global_thread_size, cl::NDRange thread_block_size,
-                  const CallArgs&... args) const {
+                  CallArgs&&... args) const {
     if (kernel_() == NULL) {
       kernel_ = compile_kernel(name_, sources_, opts_);
       opencl_context.register_kernel_cache(&kernel_);
