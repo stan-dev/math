@@ -1,5 +1,6 @@
 #include <stan/math/rev.hpp>
 #include <stan/math/prim.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 #include <cmath>
@@ -58,12 +59,19 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_doubles_rand) {
         (stan::math::normal_id_glm_lpdf<true>(y, x, alpha, beta, phi[0])));
   }
 }
+
+namespace stan {
+namespace test {
+namespace normal_glm {
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
-TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars) {
+template <bool UseVarMat>
+void matches_normal_id_vars() {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
+  using stan::math::test::internal::cond_matrix;
+
   Matrix<var, Dynamic, 1> y(3, 1);
   y << 14, 32, 21;
   Matrix<var, Dynamic, Dynamic> x(3, 2);
@@ -96,34 +104,41 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars) {
 
   stan::math::recover_memory();
 
-  Matrix<var, Dynamic, 1> y2(3, 1);
-  y2 << 14, 32, 21;
-  Matrix<var, Dynamic, Dynamic> x2(3, 2);
-  x2 << -12, 46, -42, 24, 25, 27;
-  Matrix<var, Dynamic, 1> beta2(2, 1);
-  beta2 << 0.3, 2;
+  Matrix<double, Dynamic, 1> y2_val(3, 1);
+  y2_val << 14, 32, 21;
+  cond_matrix<UseVarMat, Matrix<double, Dynamic, 1>> y2 = y2_val;
+  Matrix<double, Dynamic, Dynamic> x2_val(3, 2);
+  x2_val << -12, 46, -42, 24, 25, 27;
+  cond_matrix<UseVarMat, Matrix<double, Dynamic, Dynamic>> x2 = x2_val;
+  Matrix<double, Dynamic, 1> beta2_val(2, 1);
+  beta2_val << 0.3, 2;
+  cond_matrix<UseVarMat, Matrix<double, Dynamic, 1>> beta2 = beta2_val;
   var alpha2 = 0.3;
   var sigma2 = 10;
   var lp2 = stan::math::normal_id_glm_lpdf(y2, x2, alpha2, beta2, sigma2);
   lp2.grad();
   EXPECT_FLOAT_EQ(lp_val, lp2.val());
   for (size_t i = 0; i < 2; i++) {
-    EXPECT_FLOAT_EQ(beta_adj[i], beta2[i].adj());
+    EXPECT_FLOAT_EQ(beta_adj[i], beta2.adj()[i]);
   }
   EXPECT_FLOAT_EQ(alpha_adj, alpha2.adj());
   EXPECT_FLOAT_EQ(sigma_adj, sigma2.adj());
   for (size_t j = 0; j < 3; j++) {
-    EXPECT_FLOAT_EQ(y_adj[j], y2[j].adj());
+    EXPECT_FLOAT_EQ(y_adj[j], y2.adj()[j]);
     for (size_t i = 0; i < 2; i++) {
-      EXPECT_FLOAT_EQ(x_adj(j, i), x2(j, i).adj());
+      EXPECT_FLOAT_EQ(x_adj(j, i), x2.adj()(j, i));
     }
   }
 }
 
-TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_simple) {
+
+template <bool UseVarMat>
+void matches_normal_id_simple() {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
+  using stan::math::test::internal::cond_matrix;
+
   double eps = 1e-9;
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 14, 32, 21;
@@ -131,42 +146,46 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_simple) {
   x << -12, 46, -42, 24, 25, 27;
   Matrix<double, Dynamic, 1> beta(2, 1);
   beta << 0.3, 2;
-  Matrix<var, Dynamic, 1> beta1 = beta;
-  Matrix<var, Dynamic, 1> beta2 = beta;
+  cond_matrix<UseVarMat, Matrix<double, Dynamic, 1>> beta1 = beta;
+  cond_matrix<UseVarMat, Matrix<double, Dynamic, 1>> beta2 = beta;
   var alpha1 = 0.3;
   var alpha2 = 0.3;
   double sigma = 10;
 
   var lp1 = stan::math::normal_id_glm_lpdf(y, x, alpha1, beta1, sigma);
   var lp2 = stan::math::normal_lpdf(
-      y, ((x * beta2).array() + alpha2).matrix().eval(), sigma);
+      y, ((stan::math::multiply(x, beta2)).array() + alpha2).eval(), sigma);
 
   EXPECT_NEAR(lp1.val(), lp2.val(), eps);
 
   (lp1 + lp2).grad();
 
   for (int i = 0; i < 2; i++) {
-    EXPECT_NEAR(beta1[i].adj(), beta2[i].adj(), eps);
+    EXPECT_NEAR(beta1.adj()[i], beta2.adj()[i], eps);
   }
   EXPECT_NEAR(alpha1.adj(), alpha2.adj(), eps);
 }
 
-TEST(ProbDistributionsNormalIdGLM, broadcast_x) {
+
+template <bool UseVarMat>
+void broadcast_x() {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
+  using stan::math::test::internal::cond_matrix;
+
   Matrix<double, Dynamic, 1> y(3, 1);
   y << 14, 32, 21;
-  Matrix<var, Dynamic, 1> y1 = y;
-  Matrix<var, Dynamic, 1> y2 = y;
+  cond_matrix<UseVarMat, Matrix<double, Dynamic, 1>> y1 = y;
+  cond_matrix<UseVarMat, Matrix<double, Dynamic, 1>> y2 = y;
   Matrix<double, 1, Dynamic> x(1, 2);
   x << -12, 46;
-  Matrix<var, 1, Dynamic> x1 = x;
-  Matrix<var, Dynamic, Dynamic> x_mat = x.replicate(3, 1);
+  cond_matrix<UseVarMat, Matrix<double, 1, Dynamic>>  x1 = x;
+  cond_matrix<UseVarMat, Matrix<double, Dynamic, Dynamic>> x_mat = x.replicate(3, 1);
   Matrix<double, Dynamic, 1> beta(2, 1);
   beta << 0.3, 2;
-  Matrix<var, Dynamic, 1> beta1 = beta;
-  Matrix<var, Dynamic, 1> beta2 = beta;
+  cond_matrix<UseVarMat, Matrix<double, Dynamic, 1>> beta1 = beta;
+  cond_matrix<UseVarMat, Matrix<double, Dynamic, 1>> beta2 = beta;
   var alpha1 = 0.3;
   var alpha2 = 0.3;
   var sigma1 = 10;
@@ -180,32 +199,36 @@ TEST(ProbDistributionsNormalIdGLM, broadcast_x) {
   (lp1 + lp2).grad();
 
   for (int i = 0; i < 3; i++) {
-    EXPECT_DOUBLE_EQ(y1[i].adj(), y1[i].adj());
+    EXPECT_DOUBLE_EQ(y1.adj()[i], y1.adj()[i]);
   }
 
   for (int i = 0; i < 2; i++) {
-    EXPECT_DOUBLE_EQ(x1[i].adj(), x_mat.col(i).adj().sum());
-    EXPECT_DOUBLE_EQ(beta1[i].adj(), beta2[i].adj());
+    EXPECT_DOUBLE_EQ(x1.adj()[i], x_mat.col(i).adj().sum());
+    EXPECT_DOUBLE_EQ(beta1.adj()[i], beta2.adj()[i]);
   }
   EXPECT_DOUBLE_EQ(alpha1.adj(), alpha2.adj());
   EXPECT_DOUBLE_EQ(sigma1.adj(), sigma2.adj());
 }
 
-TEST(ProbDistributionsNormalIdGLM, broadcast_y) {
+
+template <bool UseVarMat>
+void broadcast_y() {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
+  using stan::math::test::internal::cond_matrix;
+
   double y = 13;
   var y1 = y;
-  Matrix<var, Dynamic, 1> y_vec = Matrix<double, Dynamic, 1>::Constant(3, 1, y);
+  cond_matrix<UseVarMat, Matrix<double, Dynamic, 1>> y_vec = Matrix<double, Dynamic, 1>::Constant(3, 1, y);
   Matrix<double, Dynamic, Dynamic> x(3, 2);
   x << -12, 46, -42, 24, 25, 27;
-  Matrix<var, Dynamic, Dynamic> x1 = x;
-  Matrix<var, Dynamic, Dynamic> x2 = x;
+  cond_matrix<UseVarMat, Matrix<double, Dynamic, Dynamic>> x1 = x;
+  cond_matrix<UseVarMat, Matrix<double, Dynamic, Dynamic>> x2 = x;
   Matrix<double, Dynamic, 1> beta(2, 1);
   beta << 0.3, 2;
-  Matrix<var, Dynamic, 1> beta1 = beta;
-  Matrix<var, Dynamic, 1> beta2 = beta;
+  cond_matrix<UseVarMat, Matrix<double, Dynamic, 1>> beta1 = beta;
+  cond_matrix<UseVarMat, Matrix<double, Dynamic, 1>> beta2 = beta;
   var alpha1 = 0.3;
   var alpha2 = 0.3;
   var sigma1 = 10;
@@ -222,18 +245,22 @@ TEST(ProbDistributionsNormalIdGLM, broadcast_y) {
 
   for (int i = 0; i < 2; i++) {
     for (int j = 0; j < 2; j++) {
-      EXPECT_DOUBLE_EQ(x1(j, i).adj(), x2(j, i).adj());
+      EXPECT_DOUBLE_EQ(x1.adj()(j, i), x2.adj()(j, i));
     }
-    EXPECT_DOUBLE_EQ(beta1[i].adj(), beta2[i].adj());
+    EXPECT_DOUBLE_EQ(beta1.adj()[i], beta2.adj()[i]);
   }
   EXPECT_DOUBLE_EQ(alpha1.adj(), alpha2.adj());
   EXPECT_DOUBLE_EQ(sigma1.adj(), sigma2.adj());
 }
 
-TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_zero_instances) {
+
+template <bool UseVarMat>
+void matches_normal_id_vars_zero_instances() {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
+  using stan::math::test::internal::cond_matrix;
+
   Matrix<var, Dynamic, 1> y(0, 1);
   Matrix<var, Dynamic, Dynamic> x(0, 2);
   Matrix<var, Dynamic, 1> beta(2, 1);
@@ -254,26 +281,33 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_zero_instances) {
 
   stan::math::recover_memory();
 
-  Matrix<var, Dynamic, 1> y2(0, 1);
-  Matrix<var, Dynamic, Dynamic> x2(0, 2);
-  Matrix<var, Dynamic, 1> beta2(2, 1);
-  beta2 << 0.3, 2;
+  Matrix<double, Dynamic, 1> y2_val(0, 1);
+  cond_matrix<UseVarMat, Matrix<double, Dynamic, 1>> y2 = y2_val;
+  Matrix<double, Dynamic, Dynamic> x2_val(0, 2);
+  cond_matrix<UseVarMat, Matrix<double, Dynamic, Dynamic>> x2 = x2_val;
+  Matrix<double, Dynamic, 1> beta2_val(2, 1);
+  beta2_val << 0.3, 2;
+  cond_matrix<UseVarMat, Matrix<double, Dynamic, 1>> beta2 = beta2_val;
   var alpha2 = 0.3;
   var sigma2 = 10;
   var lp2 = stan::math::normal_id_glm_lpdf(y2, x2, alpha2, beta2, sigma2);
   lp2.grad();
   EXPECT_FLOAT_EQ(lp_val, lp2.val());
   for (size_t i = 0; i < 2; i++) {
-    EXPECT_FLOAT_EQ(beta_adj[i], beta2[i].adj());
+    EXPECT_FLOAT_EQ(beta_adj[i], beta2.adj()[i]);
   }
   EXPECT_FLOAT_EQ(alpha_adj, alpha2.adj());
   EXPECT_FLOAT_EQ(sigma_adj, sigma2.adj());
 }
 
-TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_zero_attributes) {
+
+template <bool UseVarMat>
+void matches_normal_id_vars_zero_attributes() {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
+  using stan::math::test::internal::cond_matrix;
+
   Matrix<var, Dynamic, 1> y(3, 1);
   y << 14, 32, 21;
   Matrix<var, Dynamic, Dynamic> x(3, 0);
@@ -296,10 +330,13 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_zero_attributes) {
 
   stan::math::recover_memory();
 
-  Matrix<var, Dynamic, 1> y2(3, 1);
-  y2 << 14, 32, 21;
-  Matrix<var, Dynamic, Dynamic> x2(3, 0);
-  Matrix<var, Dynamic, 1> beta2(0, 1);
+  Matrix<double, Dynamic, 1> y2_val(3, 1);
+  y2_val << 14, 32, 21;
+  cond_matrix<UseVarMat, Matrix<double, Dynamic, 1>> y2 = y2_val;
+  Matrix<double, Dynamic, Dynamic> x2_val(3, 0);
+  cond_matrix<UseVarMat, Matrix<double, Dynamic, Dynamic>> x2 = x2_val;
+  Matrix<double, Dynamic, 1> beta2_val(0, 1);
+  cond_matrix<UseVarMat, Matrix<double, Dynamic, 1>> beta2 = beta2_val;
   var alpha2 = 0.3;
   var sigma2 = 10;
   var lp2 = stan::math::normal_id_glm_lpdf(y2, x2, alpha2, beta2, sigma2);
@@ -308,16 +345,20 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_zero_attributes) {
   EXPECT_FLOAT_EQ(alpha_adj, alpha2.adj());
   EXPECT_FLOAT_EQ(sigma_adj, sigma2.adj());
   for (size_t j = 0; j < 3; j++) {
-    EXPECT_FLOAT_EQ(y_adj[j], y2[j].adj());
+    EXPECT_FLOAT_EQ(y_adj[j], y2.adj()[j]);
   }
 }
 
+
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
-TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand) {
+template <bool UseVarMat>
+void matches_normal_id_vars_rand() {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
+  using stan::math::test::internal::cond_matrix;
+
   for (size_t ii = 0; ii < 42; ii++) {
     Matrix<double, Dynamic, 1> yreal = Matrix<double, Dynamic, 1>::Random(3, 1);
     Matrix<double, Dynamic, Dynamic> xreal
@@ -355,34 +396,38 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand) {
 
     stan::math::recover_memory();
 
-    Matrix<var, Dynamic, 1> y2 = yreal;
-    Matrix<var, Dynamic, 1> beta2 = betareal;
-    Matrix<var, Dynamic, Dynamic> x2 = xreal;
+    cond_matrix<UseVarMat, Matrix<double, Dynamic, 1>> y2 = yreal;
+    cond_matrix<UseVarMat, Matrix<double, Dynamic, 1>> beta2 = betareal;
+    cond_matrix<UseVarMat, Matrix<double, Dynamic, Dynamic>> x2 = xreal;
     var alpha2 = alphareal[0];
     var phi2 = phireal;
     var lp2 = stan::math::normal_id_glm_lpdf(y2, x2, alpha2, beta2, phi2);
     lp2.grad();
     EXPECT_FLOAT_EQ(lp_val, lp2.val());
     for (size_t i = 0; i < 2; i++) {
-      EXPECT_FLOAT_EQ(beta_adj[i], beta2[i].adj());
+      EXPECT_FLOAT_EQ(beta_adj[i], beta2.adj()[i]);
     }
     EXPECT_FLOAT_EQ(alpha_adj, alpha2.adj());
     EXPECT_FLOAT_EQ(phi_adj, phi2.adj());
     for (size_t j = 0; j < 3; j++) {
-      EXPECT_FLOAT_EQ(y_adj[j], y2[j].adj());
+      EXPECT_FLOAT_EQ(y_adj[j], y2.adj()[j]);
       for (size_t i = 0; i < 2; i++) {
-        EXPECT_FLOAT_EQ(x_adj(j, i), x2(j, i).adj());
+        EXPECT_FLOAT_EQ(x_adj(j, i), x2.adj()(j, i));
       }
     }
   }
 }
 
+
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives, in case beta is a scalar.
-TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand_scal_beta) {
+template <bool UseVarMat>
+void matches_normal_id_vars_rand_scal_beta() {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
+  using stan::math::test::internal::cond_matrix;
+
   for (size_t ii = 0; ii < 42; ii++) {
     Matrix<double, Dynamic, 1> yreal = Matrix<double, Dynamic, 1>::Random(3, 1);
     Matrix<double, Dynamic, Dynamic> xreal
@@ -416,9 +461,9 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand_scal_beta) {
 
     stan::math::recover_memory();
 
-    Matrix<var, Dynamic, 1> y2 = yreal;
+    cond_matrix<UseVarMat, Matrix<double, Dynamic, 1>> y2 = yreal;
     var beta2 = betareal;
-    Matrix<var, Dynamic, Dynamic> x2 = xreal;
+    cond_matrix<UseVarMat, Matrix<double, Dynamic, Dynamic>> x2 = xreal;
     var alpha2 = alphareal[0];
     var phi2 = phireal;
     var lp2 = stan::math::normal_id_glm_lpdf(y2, x2, alpha2, beta2, phi2);
@@ -428,18 +473,22 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand_scal_beta) {
     EXPECT_FLOAT_EQ(alpha_adj, alpha2.adj());
     EXPECT_FLOAT_EQ(phi_adj, phi2.adj());
     for (size_t j = 0; j < 3; j++) {
-      EXPECT_FLOAT_EQ(y_adj[j], y2[j].adj());
-      EXPECT_FLOAT_EQ(x_adj(j, 0), x2(j, 0).adj());
+      EXPECT_FLOAT_EQ(y_adj[j], y2.adj()[j]);
+      EXPECT_FLOAT_EQ(x_adj(j, 0), x2.adj()(j, 0));
     }
   }
 }
 
+
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
-TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_varying_intercept) {
+template <bool UseVarMat>
+void matches_normal_id_varying_intercept() {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
+  using stan::math::test::internal::cond_matrix;
+
   for (size_t ii = 0; ii < 42; ii++) {
     Matrix<double, Dynamic, 1> yreal = Matrix<double, Dynamic, 1>::Random(3, 1);
     Matrix<double, Dynamic, Dynamic> xreal
@@ -478,35 +527,38 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_varying_intercept) {
 
     stan::math::recover_memory();
 
-    Matrix<var, Dynamic, 1> y2 = yreal;
-    Matrix<var, Dynamic, 1> beta2 = betareal;
-    Matrix<var, Dynamic, Dynamic> x2 = xreal;
-    Matrix<var, Dynamic, 1> alpha2 = alphareal;
+    cond_matrix<UseVarMat, Matrix<double, Dynamic, 1>> y2 = yreal;
+    cond_matrix<UseVarMat, Matrix<double, Dynamic, 1>> beta2 = betareal;
+    cond_matrix<UseVarMat, Matrix<double, Dynamic, Dynamic>> x2 = xreal;
+    cond_matrix<UseVarMat, Matrix<double, Dynamic, 1>> alpha2 = alphareal;
     var phi2 = phireal;
     var lp2 = stan::math::normal_id_glm_lpdf(y2, x2, alpha2, beta2, phi2);
     lp2.grad();
     EXPECT_FLOAT_EQ(lp_val, lp2.val());
     EXPECT_FLOAT_EQ(phi_adj, phi2.adj());
     for (size_t i = 0; i < 2; i++) {
-      EXPECT_FLOAT_EQ(beta_adj[i], beta2[i].adj());
+      EXPECT_FLOAT_EQ(beta_adj[i], beta2.adj()[i]);
     }
     for (size_t j = 0; j < 3; j++) {
-      EXPECT_FLOAT_EQ(alpha_adj[j], alpha2[j].adj());
-      EXPECT_FLOAT_EQ(y_adj[j], y2[j].adj());
+      EXPECT_FLOAT_EQ(alpha_adj[j], alpha2.adj()[j]);
+      EXPECT_FLOAT_EQ(y_adj[j], y2.adj()[j]);
       for (size_t i = 0; i < 2; i++) {
-        EXPECT_FLOAT_EQ(x_adj(j, i), x2(j, i).adj());
+        EXPECT_FLOAT_EQ(x_adj(j, i), x2.adj()(j, i));
       }
     }
   }
 }
 
+
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
-TEST(ProbDistributionsNormalIdGLM,
-     glm_matches_normal_id_varying_intercept_and_scale) {
+template <bool UseVarMat>
+void matches_normal_id_varying_intercept_and_scale() {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
+  using stan::math::test::internal::cond_matrix;
+
   for (size_t ii = 0; ii < 42; ii++) {
     Matrix<double, Dynamic, 1> yreal = Matrix<double, Dynamic, 1>::Random(3, 1);
     Matrix<double, Dynamic, Dynamic> xreal
@@ -548,33 +600,37 @@ TEST(ProbDistributionsNormalIdGLM,
 
     stan::math::recover_memory();
 
-    Matrix<var, Dynamic, 1> y2 = yreal;
-    Matrix<var, Dynamic, 1> beta2 = betareal;
-    Matrix<var, Dynamic, Dynamic> x2 = xreal;
-    Matrix<var, Dynamic, 1> alpha2 = alphareal;
-    Matrix<var, Dynamic, 1> phi2 = phireal;
+    cond_matrix<UseVarMat, Matrix<double, Dynamic, 1>> y2 = yreal;
+    cond_matrix<UseVarMat, Matrix<double, Dynamic, 1>> beta2 = betareal;
+    cond_matrix<UseVarMat, Matrix<double, Dynamic, Dynamic>> x2 = xreal;
+    cond_matrix<UseVarMat, Matrix<double, Dynamic, 1>> alpha2 = alphareal;
+    cond_matrix<UseVarMat, Matrix<double, Dynamic, 1>> phi2 = phireal;
     var lp2 = stan::math::normal_id_glm_lpdf(y2, x2, alpha2, beta2, phi2);
     lp2.grad();
     EXPECT_FLOAT_EQ(lp_val, lp2.val());
     for (size_t i = 0; i < 2; i++) {
-      EXPECT_FLOAT_EQ(beta_adj[i], beta2[i].adj());
+      EXPECT_FLOAT_EQ(beta_adj[i], beta2.adj()[i]);
     }
     for (size_t j = 0; j < 3; j++) {
-      EXPECT_FLOAT_EQ(alpha_adj[j], alpha2[j].adj());
-      EXPECT_FLOAT_EQ(y_adj[j], y2[j].adj());
-      EXPECT_FLOAT_EQ(phi_adj[j], phi2[j].adj());
+      EXPECT_FLOAT_EQ(alpha_adj[j], alpha2.adj()[j]);
+      EXPECT_FLOAT_EQ(y_adj[j], y2.adj()[j]);
+      EXPECT_FLOAT_EQ(phi_adj[j], phi2.adj()[j]);
       for (size_t i = 0; i < 2; i++) {
-        EXPECT_FLOAT_EQ(x_adj(j, i), x2(j, i).adj());
+        EXPECT_FLOAT_EQ(x_adj(j, i), x2.adj()(j, i));
       }
     }
   }
 }
 
+
 //  We check that we can instantiate all different interface types.
-TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_interface_types) {
+template <bool UseVarMat>
+void matches_normal_id_interface_types() {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
+  using stan::math::test::internal::cond_matrix;
+
   double value = 0;
   double value2 = 0;
 
@@ -596,14 +652,18 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_interface_types) {
 
   var v = 1.0;
   std::vector<var> vv = {{1.0, 2.0}};
-  Eigen::Matrix<var, -1, 1> evv(2);
-  Eigen::Matrix<var, 1, -1> rvv(2);
-  Eigen::Matrix<var, -1, -1> m1v(1, 1);
-  m1v << 1.0;
-  Eigen::Matrix<var, -1, -1> mv(2, 2);
-  evv << 1.0, 2.0;
-  rvv << 1.0, 2.0;
-  mv << 1.0, 2.0, 3.0, 4.0;
+  Eigen::Matrix<double, -1, 1> evv_val(2);
+  evv_val << 1.0, 2.0;
+  cond_matrix<UseVarMat, Eigen::Matrix<double, -1, 1>> evv = evv_val;
+  Eigen::Matrix<double, 1, -1> rvv_val(2);
+  rvv_val << 1.0, 2.0;
+  cond_matrix<UseVarMat, Eigen::Matrix<double, 1, -1>> rvv = rvv_val;
+  Eigen::Matrix<double, -1, -1> m1v_val(1, 1);
+  m1v_val << 1.0;
+  cond_matrix<UseVarMat, Eigen::Matrix<double, -1, -1>> m1v = m1v_val;
+  Eigen::Matrix<double, -1, -1> mv_val(2, 2);
+  mv_val << 1.0, 2.0, 3.0, 4.0;
+  cond_matrix<UseVarMat, Eigen::Matrix<double, -1, -1>> mv = mv_val;
 
   value2 += stan::math::normal_id_glm_lpdf(v, m1v, v, v, v).val();
   value2 += stan::math::normal_id_glm_lpdf(vv, mv, vv, vv, vv).val();
@@ -611,6 +671,70 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_interface_types) {
   value2 += stan::math::normal_id_glm_lpdf(rvv, mv, rvv, rvv, rvv).val();
 
   EXPECT_FLOAT_EQ(value, value2);
+}
+
+}
+}
+}
+
+TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars) {
+  stan::test::normal_glm::matches_normal_id_vars<true>();
+  stan::test::normal_glm::matches_normal_id_vars<false>();
+}
+
+TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_simple) {
+  stan::test::normal_glm::matches_normal_id_simple<true>();
+  stan::test::normal_glm::matches_normal_id_simple<false>();
+}
+
+
+TEST(ProbDistributionsNormalIdGLM, broadcast_x) {
+  stan::test::normal_glm::broadcast_x<true>();
+  stan::test::normal_glm::broadcast_x<false>();
+}
+
+
+TEST(ProbDistributionsNormalIdGLM, broadcast_y) {
+  stan::test::normal_glm::broadcast_y<true>();
+  stan::test::normal_glm::broadcast_y<false>();
+}
+
+
+TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_zero_instances) {
+ stan::test::normal_glm::matches_normal_id_vars_zero_instances<true>();
+ stan::test::normal_glm::matches_normal_id_vars_zero_instances<false>();
+}
+
+TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_zero_attributes) {
+stan::test::normal_glm::matches_normal_id_vars_zero_attributes<false>();
+stan::test::normal_glm::matches_normal_id_vars_zero_attributes<true>();
+}
+
+
+TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand) {
+  stan::test::normal_glm::matches_normal_id_vars_rand<true>();
+  stan::test::normal_glm::matches_normal_id_vars_rand<false>();
+}
+
+TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand_scal_beta) {
+  stan::test::normal_glm::matches_normal_id_vars_rand_scal_beta<true>();
+  stan::test::normal_glm::matches_normal_id_vars_rand_scal_beta<false>();
+}
+
+TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_varying_intercept) {
+  stan::test::normal_glm::matches_normal_id_varying_intercept<false>();
+  stan::test::normal_glm::matches_normal_id_varying_intercept<true>();
+}
+
+TEST(ProbDistributionsNormalIdGLM,
+     glm_matches_normal_id_varying_intercept_and_scale) {
+  stan::test::normal_glm::matches_normal_id_varying_intercept_and_scale<false>();
+  stan::test::normal_glm::matches_normal_id_varying_intercept_and_scale<true>();
+}
+
+TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_interface_types) {
+  stan::test::normal_glm::matches_normal_id_interface_types<false>();
+  stan::test::normal_glm::matches_normal_id_interface_types<true>();
 }
 
 //  We check that the right errors are thrown.

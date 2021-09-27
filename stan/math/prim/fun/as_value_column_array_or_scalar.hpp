@@ -19,9 +19,9 @@ namespace math {
  * @return the scalar.
  */
 template <typename T>
-inline auto as_value_column_array_or_scalar(T&& a) {
-  return value_of(
-      as_array_or_scalar(as_column_vector_or_scalar(std::forward<T>(a))));
+inline decltype(auto) as_value_column_array_or_scalar(T&& a) {
+  return
+      as_array_or_scalar(as_column_vector_or_scalar(value_of(std::forward<T>(a))));
 }
 
 }  // namespace math

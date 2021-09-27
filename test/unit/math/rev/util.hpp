@@ -5,6 +5,17 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+namespace stan {
+  namespace math {
+    namespace test {
+      namespace internal {
+        template <bool UseVarMat, typename Mat>
+        using cond_matrix = std::conditional_t<UseVarMat, var_value<Mat>, stan::math::promote_scalar_t<var, Mat>>;
+      }
+    }
+  }
+}
+
 namespace test {
 
 void check_varis_on_stack(const stan::math::var& x) {
