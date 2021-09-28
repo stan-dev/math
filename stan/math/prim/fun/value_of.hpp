@@ -22,6 +22,21 @@ inline T value_of(T&& x) {
   return std::forward<T>(x);
 }
 
+template <typename T, require_complex_t<T>* = nullptr,
+          require_t<std::is_arithmetic<
+              typename std::decay_t<T>::value_type>>* = nullptr>
+inline auto value_of(T&& x) {
+  return std::forward<T>(x);
+}
+
+template <
+    typename T, require_complex_t<T>* = nullptr,
+    require_not_arithmetic_t<typename std::decay_t<T>::value_type>* = nullptr>
+inline auto value_of(T&& x) {
+  using inner_t = partials_type_t<typename std::decay_t<T>::value_type>;
+  return std::complex<inner_t>{value_of(x.real()), value_of(x.imag())};
+}
+
 /**
  * For std::vectors of non-arithmetic types, return a std::vector composed
  * of value_of applied to each element.
@@ -30,9 +45,11 @@ inline T value_of(T&& x) {
  * @param[in] x Input std::vector
  * @return std::vector of values
  **/
-template <typename T, require_not_st_arithmetic<T>* = nullptr>
-inline auto value_of(const std::vector<T>& x) {
-  std::vector<plain_type_t<decltype(value_of(std::declval<T>()))>> out;
+template <typename T, require_std_vector_t<T>* = nullptr,
+          require_not_st_arithmetic<T>* = nullptr>
+inline auto value_of(const T& x) {
+  std::vector<plain_type_t<decltype(value_of(std::declval<value_type_t<T>>()))>>
+      out;
   out.reserve(x.size());
   for (auto&& x_elem : x) {
     out.emplace_back(value_of(x_elem));

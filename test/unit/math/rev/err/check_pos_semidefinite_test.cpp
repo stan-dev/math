@@ -15,8 +15,7 @@ TEST(AgradRevErrorHandlingMatrix, checkPosSemiDefiniteMatrix_nan) {
   y.resize(1, 1);
   y << nan;
   EXPECT_THROW_MSG(check_pos_semidefinite("checkPosDefiniteMatrix", "y", y),
-                   std::domain_error,
-                   "checkPosDefiniteMatrix: y[1] is nan, but must not be nan!");
+                   std::domain_error, "checkPosDefiniteMatrix: y[1, 1] is nan");
 
   y.resize(3, 3);
   y << 2, -1, 0, -1, 2, -1, 0, -1, 2;

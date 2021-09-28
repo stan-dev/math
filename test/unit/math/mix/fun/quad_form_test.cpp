@@ -40,13 +40,27 @@ TEST(MathMixMatFun, quadForm) {
   stan::test::expect_ad(f, a00, a02);
   stan::test::expect_ad(f, a02, a22);
 
+  stan::test::expect_ad_matvar(f, a00, a00);
+  stan::test::expect_ad_matvar(f, a00, a02);
+  stan::test::expect_ad_matvar(f, a02, a22);
+
   stan::test::expect_ad(f, a11, b11);
   stan::test::expect_ad(tols, f, a22, b22);
   stan::test::expect_ad(f, a22, b23);
   stan::test::expect_ad(tols, f, a44, b42);
 
+  stan::test::expect_ad_matvar(f, a11, b11);
+  stan::test::expect_ad_matvar(tols, f, a22, b22);
+  stan::test::expect_ad_matvar(f, a22, b23);
+  stan::test::expect_ad_matvar(tols, f, a44, b42);
+
   stan::test::expect_ad(f, a00, v0);
   stan::test::expect_ad(f, a11, v1);
   stan::test::expect_ad(f, a22, v2);
   stan::test::expect_ad(tols, f, a44, v4);
+
+  stan::test::expect_ad_matvar(f, a00, v0);
+  stan::test::expect_ad_matvar(f, a11, v1);
+  stan::test::expect_ad_matvar(f, a22, v2);
+  stan::test::expect_ad_matvar(tols, f, a44, v4);
 }

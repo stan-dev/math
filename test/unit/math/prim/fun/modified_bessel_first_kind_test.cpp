@@ -12,6 +12,12 @@ TEST(MathFunctions, modified_bessel_first_kind) {
                   modified_bessel_first_kind(1, -3.0));
   EXPECT_FLOAT_EQ(-3.953370217402609396478635740580581287584221595,
                   modified_bessel_first_kind(-1, -3.0));
+
+  // compare integer argument to double argument
+  EXPECT_FLOAT_EQ(modified_bessel_first_kind(0, 5),
+                  modified_bessel_first_kind(0, 5.0));
+  EXPECT_FLOAT_EQ(modified_bessel_first_kind(3, 1),
+                  modified_bessel_first_kind(3, 1.0));
 }
 
 TEST(MathFunctions, modified_bessel_first_kind_nan) {

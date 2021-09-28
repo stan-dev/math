@@ -10,6 +10,7 @@
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -26,7 +27,9 @@ constexpr double neg_binomial_alpha_cutoff = 1e10;
 }  // namespace internal
 
 // NegBinomial(n|alpha, beta)  [alpha > 0;  beta > 0;  n >= 0]
-template <bool propto, typename T_n, typename T_shape, typename T_inv_scale>
+template <bool propto, typename T_n, typename T_shape, typename T_inv_scale,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_n, T_shape, T_inv_scale>* = nullptr>
 return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
                                                       const T_shape& alpha,
                                                       const T_inv_scale& beta) {
@@ -68,14 +71,14 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
       digamma_alpha(size_alpha);
   if (!is_constant_all<T_shape>::value) {
     for (size_t i = 0; i < size_alpha; ++i) {
-      digamma_alpha[i] = digamma(value_of(alpha_vec[i]));
+      digamma_alpha[i] = digamma(alpha_vec.val(i));
     }
   }
 
   VectorBuilder<true, T_partials_return, T_inv_scale> log1p_inv_beta(size_beta);
   VectorBuilder<true, T_partials_return, T_inv_scale> log1p_beta(size_beta);
   for (size_t i = 0; i < size_beta; ++i) {
-    const T_partials_return beta_dbl = value_of(beta_vec[i]);
+    const T_partials_return beta_dbl = beta_vec.val(i);
     log1p_inv_beta[i] = log1p(inv(beta_dbl));
     log1p_beta[i] = log1p(beta_dbl);
   }
@@ -85,16 +88,16 @@ return_type_t<T_shape, T_inv_scale> neg_binomial_lpmf(const T_n& n,
       lambda_m_alpha_over_1p_beta(size_alpha_beta);
   if (!is_constant_all<T_inv_scale>::value) {
     for (size_t i = 0; i < size_alpha_beta; ++i) {
-      const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
-      const T_partials_return beta_dbl = value_of(beta_vec[i]);
+      const T_partials_return alpha_dbl = alpha_vec.val(i);
+      const T_partials_return beta_dbl = beta_vec.val(i);
       lambda_m_alpha_over_1p_beta[i]
           = alpha_dbl / beta_dbl - alpha_dbl / (1 + beta_dbl);
     }
   }
 
   for (size_t i = 0; i < max_size_seq_view; i++) {
-    const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
-    const T_partials_return beta_dbl = value_of(beta_vec[i]);
+    const T_partials_return alpha_dbl = alpha_vec.val(i);
+    const T_partials_return beta_dbl = beta_vec.val(i);
 
     if (include_summand<propto, T_shape>::value) {
       if (n_vec[i] != 0) {

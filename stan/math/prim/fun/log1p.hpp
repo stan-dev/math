@@ -5,7 +5,6 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
-#include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <cmath>
 
@@ -77,7 +76,9 @@ struct log1p_fun {
  * @param x container
  * @return Elementwise log1p of members of container.
  */
-template <typename T>
+template <typename T,
+          require_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
+          require_not_var_matrix_t<T>* = nullptr>
 inline auto log1p(const T& x) {
   return apply_scalar_unary<log1p_fun, T>::apply(x);
 }

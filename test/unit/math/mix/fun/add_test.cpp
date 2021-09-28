@@ -1,5 +1,23 @@
 #include <test/unit/math/test_ad.hpp>
 
+TEST(MathMixMatFun, add_transpose_test) {
+  auto f = [](const auto& x) { return x + x.transpose(); };
+
+  Eigen::MatrixXd x(2, 2);
+
+  stan::test::expect_ad_matvar(f, x);
+}
+
+TEST(MathMixMatFun, add_transpose_test_scalar) {
+  auto f = [](const auto& y, const auto& x) {
+    return stan::math::add(y, x.block(0, 0, 2, 2));
+  };
+
+  Eigen::MatrixXd x(3, 3);
+
+  stan::test::expect_ad_matvar(f, 1.0, x);
+}
+
 TEST(MathMixMatFun, add_1) {
   auto f = [](const auto& x, const auto& y) { return stan::math::add(x, y); };
 

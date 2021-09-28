@@ -19,12 +19,12 @@ namespace math {
  * @return The last n elements of v.
  * @throw std::out_of_range if n is out of range.
  */
-template <typename T>
+template <typename T, require_vector_t<T>* = nullptr>
 inline auto tail(const T& v, size_t n) {
   if (n != 0) {
     check_vector_index("tail", "n", v, n);
   }
-  return v.tail(n).eval();
+  return v.tail(n);
 }
 
 /**
@@ -39,7 +39,6 @@ inline auto tail(const T& v, size_t n) {
  */
 template <typename T>
 std::vector<T> tail(const std::vector<T>& sv, size_t n) {
-  using idx_t = index_type_t<std::vector<T>>;
   if (n != 0) {
     check_std_vector_index("tail", "n", sv, n);
   }

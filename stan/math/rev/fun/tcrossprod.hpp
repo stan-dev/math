@@ -3,8 +3,7 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/Eigen_NumTraits.hpp>
-#include <stan/math/rev/fun/typedefs.hpp>
+#include <stan/math/rev/core/typedefs.hpp>
 #include <stan/math/rev/fun/dot_product.hpp>
 #include <stan/math/rev/fun/dot_self.hpp>
 #include <stan/math/prim/meta.hpp>
@@ -23,7 +22,7 @@ namespace math {
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline auto tcrossprod(const T& M) {
-  using ret_type = promote_var_matrix_t<
+  using ret_type = return_var_matrix_t<
       Eigen::Matrix<double, T::RowsAtCompileTime, T::RowsAtCompileTime>, T>;
   arena_t<T> arena_M = M;
   arena_t<ret_type> res = arena_M.val_op() * arena_M.val_op().transpose();

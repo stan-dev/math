@@ -3,6 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
@@ -31,7 +34,9 @@ namespace math {
  * @return log probability density or log sum of probability densities
  * @throw std::domain_error if y is negative, alpha or sigma are nonpositive
  */
-template <bool propto, typename T_y, typename T_shape, typename T_scale>
+template <bool propto, typename T_y, typename T_shape, typename T_scale,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_shape, T_scale>* = nullptr>
 return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
                                                   const T_shape& alpha,
                                                   const T_scale& sigma) {
@@ -48,17 +53,9 @@ return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
   T_alpha_ref alpha_ref = alpha;
   T_sigma_ref sigma_ref = sigma;
 
-  const auto& y_col = as_column_vector_or_scalar(y_ref);
-  const auto& alpha_col = as_column_vector_or_scalar(alpha_ref);
-  const auto& sigma_col = as_column_vector_or_scalar(sigma_ref);
-
-  const auto& y_arr = as_array_or_scalar(y_col);
-  const auto& alpha_arr = as_array_or_scalar(alpha_col);
-  const auto& sigma_arr = as_array_or_scalar(sigma_col);
-
-  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
-  ref_type_t<decltype(value_of(alpha_arr))> alpha_val = value_of(alpha_arr);
-  ref_type_t<decltype(value_of(sigma_arr))> sigma_val = value_of(sigma_arr);
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  decltype(auto) alpha_val = to_ref(as_value_column_array_or_scalar(alpha_ref));
+  decltype(auto) sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
 
   check_finite(function, "Random variable", y_val);
   check_positive_finite(function, "Shape parameter", alpha_val);
@@ -107,7 +104,7 @@ return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
   }
   if (!is_constant_all<T_shape>::value) {
     ops_partials.edge2_.partials_
-        = 1.0 / alpha_val + (1.0 - y_div_sigma_pow_alpha) * (log_y - log_sigma);
+        = inv(alpha_val) + (1.0 - y_div_sigma_pow_alpha) * (log_y - log_sigma);
   }
   if (!is_constant_all<T_scale>::value) {
     ops_partials.edge3_.partials_

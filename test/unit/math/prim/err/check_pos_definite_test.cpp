@@ -146,10 +146,8 @@ TEST_F(ErrorHandlingMatrixPosDef, checkPosDefinite_nan) {
   y.resize(1, 1);
   y << nan;
 
-  std::stringstream expected_msg;
-  expected_msg << "function: y[1] is nan, but must not be nan!";
   EXPECT_THROW_MSG(check_pos_definite(function, "y", y), std::domain_error,
-                   expected_msg.str());
+                   "y[1, 1] is nan");
 
   Eigen::LLT<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> > llt_err1(
       y);
@@ -194,8 +192,6 @@ TEST_F(ErrorHandlingMatrixPosDef, checkPosDefinite_nan) {
   EXPECT_THROW(check_pos_definite(function, "y", ldlt_err2), std::domain_error);
 
   y << 0, 0, 0, 0, 0, 0, 0, 0, 0;
-  expected_msg.str("");
-  expected_msg << "function: y is not positive definite.";
   EXPECT_THROW_MSG(check_pos_definite(function, "y", y), std::domain_error,
-                   expected_msg.str());
+                   "function: y is not positive definite.");
 }

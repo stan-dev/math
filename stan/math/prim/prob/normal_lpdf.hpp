@@ -3,6 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
@@ -35,7 +38,9 @@ namespace math {
  * @return The log of the product of the densities.
  * @throw std::domain_error if the scale is not positive.
  */
-template <bool propto, typename T_y, typename T_loc, typename T_scale>
+template <bool propto, typename T_y, typename T_loc, typename T_scale,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_loc, T_scale>* = nullptr>
 inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
                                                       const T_loc& mu,
                                                       const T_scale& sigma) {
@@ -50,17 +55,9 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
   T_mu_ref mu_ref = mu;
   T_sigma_ref sigma_ref = sigma;
 
-  const auto& y_col = as_column_vector_or_scalar(y_ref);
-  const auto& mu_col = as_column_vector_or_scalar(mu_ref);
-  const auto& sigma_col = as_column_vector_or_scalar(sigma_ref);
-
-  const auto& y_arr = as_array_or_scalar(y_col);
-  const auto& mu_arr = as_array_or_scalar(mu_col);
-  const auto& sigma_arr = as_array_or_scalar(sigma_col);
-
-  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
-  ref_type_t<decltype(value_of(mu_arr))> mu_val = value_of(mu_arr);
-  ref_type_t<decltype(value_of(sigma_arr))> sigma_val = value_of(sigma_arr);
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  decltype(auto) mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
+  decltype(auto) sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
 
   check_not_nan(function, "Random variable", y_val);
   check_finite(function, "Location parameter", mu_val);
@@ -92,10 +89,10 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(const T_y& y,
   }
 
   if (!is_constant_all<T_y, T_scale, T_loc>::value) {
-    const auto& scaled_diff = to_ref_if<!is_constant_all<T_y>::value
-                                            + !is_constant_all<T_scale>::value
-                                            + !is_constant_all<T_loc>::value
-                                        >= 2>(inv_sigma * y_scaled);
+    auto scaled_diff = to_ref_if<!is_constant_all<T_y>::value
+                                     + !is_constant_all<T_scale>::value
+                                     + !is_constant_all<T_loc>::value
+                                 >= 2>(inv_sigma * y_scaled);
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_ = -scaled_diff;
     }

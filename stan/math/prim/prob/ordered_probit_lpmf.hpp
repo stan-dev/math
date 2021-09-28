@@ -5,9 +5,13 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/fun/Phi.hpp>
+#include <stan/math/prim/fun/log_diff_exp.hpp>
+#include <stan/math/prim/fun/log1m_exp.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size_mvt.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/prob/std_normal_lcdf.hpp>
+#include <stan/math/prim/fun/vector_seq_view.hpp>
 #include <vector>
 #include <cmath>
 
@@ -84,12 +88,13 @@ return_type_t<T_loc, T_cut> ordered_probit_lpmf(const T_y& y,
     int K = c_vec[i].size() + 1;
 
     if (y_vec[i] == 1) {
-      logp_n += log1m(Phi(lambda_vec[i] - c_vec[i].coeff(0)));
+      logp_n += std_normal_lcdf(c_vec[i].coeff(0) - lambda_vec[i]);
     } else if (y_vec[i] == K) {
-      logp_n += log(Phi(lambda_vec[i] - c_vec[i].coeff(K - 2)));
+      logp_n += std_normal_lcdf(lambda_vec[i] - c_vec[i].coeff(K - 2));
     } else {
-      logp_n += log(Phi(lambda_vec[i] - c_vec[i].coeff(y_vec[i] - 2))
-                    - Phi(lambda_vec[i] - c_vec[i].coeff(y_vec[i] - 1)));
+      logp_n += log_diff_exp(
+          std_normal_lcdf(c_vec[i].coeff(y_vec[i] - 1) - lambda_vec[i]),
+          std_normal_lcdf(c_vec[i].coeff(y_vec[i] - 2) - lambda_vec[i]));
     }
   }
   return logp_n;

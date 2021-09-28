@@ -1,5 +1,5 @@
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/fun/typedefs.hpp>
+#include <stan/math/rev/core/typedefs.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>

@@ -10,16 +10,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class erf_vari : public op_v_vari {
- public:
-  explicit erf_vari(vari* avi) : op_v_vari(erf(avi->val_), avi) {}
-  void chain() {
-    avi_->adj_ += adj_ * TWO_OVER_SQRT_PI * std::exp(-avi_->val_ * avi_->val_);
-  }
-};
-}  // namespace internal
-
 /**
  * The error function for variables (C99).
  *
@@ -55,7 +45,21 @@ class erf_vari : public op_v_vari {
  * @param a The variable.
  * @return Error function applied to the variable.
  */
-inline var erf(const var& a) { return var(new internal::erf_vari(a.vi_)); }
+inline var erf(const var& a) {
+  auto precomp_erf = TWO_OVER_SQRT_PI * std::exp(-a.val() * a.val());
+  return make_callback_var(erf(a.val()), [a, precomp_erf](auto& vi) mutable {
+    a.adj() += vi.adj() * precomp_erf;
+  });
+}
+
+template <typename T, require_matrix_t<T>* = nullptr>
+inline auto erf(const var_value<T>& a) {
+  auto precomp_erf
+      = to_arena(TWO_OVER_SQRT_PI * (-a.val().array().square()).exp());
+  return make_callback_var(erf(a.val()), [a, precomp_erf](auto& vi) mutable {
+    a.adj().array() += vi.adj().array() * precomp_erf;
+  });
+}
 
 }  // namespace math
 }  // namespace stan

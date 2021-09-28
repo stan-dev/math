@@ -8,11 +8,15 @@
 namespace stan {
 namespace math {
 
-template <typename In>
+template <typename T_ret, typename In, require_std_vector_t<T_ret>* = nullptr>
 inline std::vector<plain_type_t<In>> rep_array(const In& x, int n) {
   using T = plain_type_t<In>;
   check_nonnegative("rep_array", "n", n);
   return std::vector<T>(n, x);
+}
+template <typename In>
+inline std::vector<plain_type_t<In>> rep_array(const In& x, int n) {
+  return rep_array<std::vector<plain_type_t<In>>>(x, n);
 }
 
 template <typename In>

@@ -77,7 +77,7 @@ TEST_F(ErrorHandlingMatrixPosSemiDef, checkPosSemidefinite_nan) {
 
   y << 2, -1, 0, -1, nan, -1, 0, -1, 2;
   EXPECT_THROW_MSG(check_pos_semidefinite(function, "y", y), std::domain_error,
-                   "function: y[5] is nan, but must not be nan!");
+                   "function: y[2, 2] is nan");
 
   y << 2, -1, 0, -1, 2, nan, 0, nan, 2;
   EXPECT_THROW_MSG(

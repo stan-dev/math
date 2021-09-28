@@ -15,7 +15,8 @@ namespace stan {
  * @tparam type of the elements in the matrix_cl
  */
 template <typename T>
-struct is_constant<math::matrix_cl<T>> : is_constant<std::decay_t<T>> {};
+struct is_constant<T, require_all_kernel_expressions_and_none_scalar_t<T>>
+    : std::true_type {};
 
 }  // namespace stan
 

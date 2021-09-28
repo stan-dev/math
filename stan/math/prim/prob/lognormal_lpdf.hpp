@@ -3,6 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log.hpp>
@@ -19,7 +22,9 @@ namespace stan {
 namespace math {
 
 // LogNormal(y|mu, sigma)  [y >= 0;  sigma > 0]
-template <bool propto, typename T_y, typename T_loc, typename T_scale>
+template <bool propto, typename T_y, typename T_loc, typename T_scale,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_loc, T_scale>* = nullptr>
 return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
                                                   const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
@@ -34,19 +39,10 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
   T_mu_ref mu_ref = mu;
   T_sigma_ref sigma_ref = sigma;
 
-  const auto& y_col = as_column_vector_or_scalar(y_ref);
-  const auto& mu_col = as_column_vector_or_scalar(mu_ref);
-  const auto& sigma_col = as_column_vector_or_scalar(sigma_ref);
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  decltype(auto) mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
+  decltype(auto) sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
 
-  const auto& y_arr = as_array_or_scalar(y_col);
-  const auto& mu_arr = as_array_or_scalar(mu_col);
-  const auto& sigma_arr = as_array_or_scalar(sigma_col);
-
-  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
-  ref_type_t<decltype(value_of(mu_arr))> mu_val = value_of(mu_arr);
-  ref_type_t<decltype(value_of(sigma_arr))> sigma_val = value_of(sigma_arr);
-
-  check_not_nan(function, "Random variable", y_val);
   check_nonnegative(function, "Random variable", y_val);
   check_finite(function, "Location parameter", mu_val);
   check_positive_finite(function, "Scale parameter", sigma_val);
@@ -75,8 +71,8 @@ return_type_t<T_y, T_loc, T_scale> lognormal_lpdf(const T_y& y, const T_loc& mu,
   const auto& logy_m_mu = to_ref(log_y - mu_val);
 
   size_t N = max_size(y, mu, sigma);
-  T_partials_return logp = N * NEG_LOG_SQRT_TWO_PI
-                           - 0.5 * sum(logy_m_mu * logy_m_mu * inv_sigma_sq);
+  T_partials_return logp
+      = N * NEG_LOG_SQRT_TWO_PI - 0.5 * sum(square(logy_m_mu) * inv_sigma_sq);
   if (include_summand<propto, T_scale>::value) {
     logp -= sum(log(sigma_val)) * N / size(sigma);
   }

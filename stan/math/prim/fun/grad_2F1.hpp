@@ -25,23 +25,26 @@ namespace math {
  * under the same conditions as the 2F1 function itself.
  *
  * @tparam T type of arguments and result
- * @param[out] g_a1 g_a1 pointer to array of six values of type T, result.
- * @param[out] g_b1 g_b1 pointer to array of six values of type T, result.
+ * @param[out] g_a1 g_a1 reference to gradient of 2F1 w.r.t. a1, result.
+ * @param[out] g_b1 g_b1 reference to gradient of 2F1 w.r.t. b1, result.
  * @param[in] a1 a1 see generalized hypergeometric function definition.
  * @param[in] a2 a2 see generalized hypergeometric function definition.
  * @param[in] b1 b1 see generalized hypergeometric function definition.
  * @param[in] z z see generalized hypergeometric function definition.
- * @param[in] precision precision of the infinite sum.
+ * @param[in] precision magnitude of the increment of the infinite sum
+ *   to truncate the sum at.
  * @param[in] max_steps number of steps to take.
  */
 template <typename T>
 void grad_2F1(T& g_a1, T& g_b1, const T& a1, const T& a2, const T& b1,
-              const T& z, const T& precision = 1e-10, int max_steps = 1e5) {
+              const T& z, double precision = 1e-14, int max_steps = 1e6) {
   check_2F1_converges("grad_2F1", a1, a2, b1, z);
 
+  using stan::math::value_of_rec;
   using std::exp;
   using std::fabs;
   using std::log;
+  using std::max;
 
   g_a1 = 0.0;
   g_b1 = 0.0;
@@ -56,6 +59,7 @@ void grad_2F1(T& g_a1, T& g_b1, const T& a1, const T& a2, const T& b1,
 
   T log_z = log(z);
 
+  double log_precision = log(precision);
   double log_t_new_sign = 1.0;
   double log_t_old_sign = 1.0;
   double log_g_old_sign[2];
@@ -85,8 +89,13 @@ void grad_2F1(T& g_a1, T& g_b1, const T& a1, const T& a2, const T& b1,
     g_a1 += log_g_old_sign[0] > 0 ? exp(log_g_old[0]) : -exp(log_g_old[0]);
     g_b1 += log_g_old_sign[1] > 0 ? exp(log_g_old[1]) : -exp(log_g_old[1]);
 
-    if (log_t_new <= log(precision)) {
-      return;  // implicit abs
+    if (log_g_old[0]
+            <= std::max(std::log(std::abs(value_of_rec(g_a1))) + log_precision,
+                        log_precision)
+        && log_g_old[1] <= std::max(std::log(std::abs(value_of_rec(g_b1)))
+                                        + log_precision,
+                                    log_precision)) {
+      return;
     }
 
     log_t_old = log_t_new;

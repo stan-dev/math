@@ -18,6 +18,8 @@ struct is_matrix
     : bool_constant<math::disjunction<is_rev_matrix<T>, is_eigen<T>>::value> {};
 STAN_ADD_REQUIRE_UNARY(matrix, is_matrix, require_eigens_types);
 STAN_ADD_REQUIRE_UNARY_INNER(matrix, is_matrix, require_eigens_types);
+STAN_ADD_REQUIRE_CONTAINER(matrix, is_matrix, require_eigens_types);
+
 }  // namespace stan
 
 #endif

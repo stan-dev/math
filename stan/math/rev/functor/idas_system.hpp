@@ -2,7 +2,7 @@
 #define STAN_MATH_REV_FUNCTOR_IDAS_RESIDUAL_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/fun/typedefs.hpp>
+#include <stan/math/rev/core/typedefs.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/dot_self.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>

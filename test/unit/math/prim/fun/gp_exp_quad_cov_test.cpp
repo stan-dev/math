@@ -6,15 +6,7 @@
 #include <string>
 #include <vector>
 
-void set_tuning_opts_to_use_gpu() {
-#ifdef STAN_OPENCL
-  stan::math::opencl_context.tuning_opts().gp_exp_quad_cov_complex = 1000000000;
-  stan::math::opencl_context.tuning_opts().gp_exp_quad_cov_simple = 10000000000;
-#endif
-}
-
 TEST(MathPrimMat, ard_eigen_mat_double_gp_exp_quad_cov1) {
-  set_tuning_opts_to_use_gpu();
   double sigma = 0.2;
 
   std::vector<double> l(3);
@@ -48,7 +40,6 @@ TEST(MathPrimMat, ard_eigen_mat_double_gp_exp_quad_cov1) {
 }
 
 TEST(MathPrimMat, vec_double_gp_exp_quad_cov1) {
-  set_tuning_opts_to_use_gpu();
   double sigma = 0.2;
   double l = 5;
 
@@ -69,7 +60,6 @@ TEST(MathPrimMat, vec_double_gp_exp_quad_cov1) {
 }
 
 TEST(MathPrimMat, vec_eigen_gp_exp_quad_cov1) {
-  set_tuning_opts_to_use_gpu();
   using stan::math::squared_distance;
   using std::exp;
   double sigma = 0.2;
@@ -93,7 +83,6 @@ TEST(MathPrimMat, vec_eigen_gp_exp_quad_cov1) {
 }
 
 TEST(MathPrimMat, rvec_eigen_gp_exp_quad_cov1) {
-  set_tuning_opts_to_use_gpu();
   using stan::math::squared_distance;
   double sigma = 0.2;
   double l = 5;
@@ -116,7 +105,6 @@ TEST(MathPrimMat, rvec_eigen_gp_exp_quad_cov1) {
 }
 
 TEST(MathPrimMat, vec_double_gp_exp_quad_cov2) {
-  set_tuning_opts_to_use_gpu();
   double sigma = 0.2;
   double l = 5;
 
@@ -144,7 +132,6 @@ TEST(MathPrimMat, vec_double_gp_exp_quad_cov2) {
 }
 
 TEST(MathPrimMat, vec_eigen_vec_gp_exp_quad_cov2) {
-  set_tuning_opts_to_use_gpu();
   using stan::math::squared_distance;
   double sigma = 0.2;
   double l = 5;
@@ -188,7 +175,6 @@ TEST(MathPrimMat, vec_eigen_vec_gp_exp_quad_cov2) {
 }
 
 TEST(MathPrimMat, domain_error_training_sig_l_gp_cov_exp) {
-  set_tuning_opts_to_use_gpu();
   double sigma = 0.2;
   double l = 5;
 
@@ -233,7 +219,6 @@ TEST(MathPrimMat, domain_error_training_sig_l_gp_cov_exp) {
 }
 
 TEST(MathPrimMat, nan_error_training_sig_l_gp_cov_exp) {
-  set_tuning_opts_to_use_gpu();
   double sigma = 0.2;
   double l = 5;
 
@@ -315,7 +300,6 @@ TEST(MathPrimMat, nan_error_training_sig_l_gp_cov_exp) {
 }
 
 TEST(MathPrimMat, domain_error_gp_exp_quad_cov2) {
-  set_tuning_opts_to_use_gpu();
   double sigma = 0.2;
   double l = 5;
 
@@ -395,7 +379,6 @@ TEST(MathPrimMat, domain_error_gp_exp_quad_cov2) {
 }
 
 TEST(MathPrimMat, nan_domain_error_gp_exp_quad_cov2) {
-  set_tuning_opts_to_use_gpu();
   double sigma = 0.2;
   double l = 5;
 
@@ -525,7 +508,6 @@ TEST(MathPrimMat, nan_domain_error_gp_exp_quad_cov2) {
 }
 
 TEST(MathPrimMat, dim_mismatch_vec_eigen_vec_gp_exp_quad_cov2) {
-  set_tuning_opts_to_use_gpu();
   double sigma = 0.2;
   double l = 5;
 
@@ -545,7 +527,6 @@ TEST(MathPrimMat, dim_mismatch_vec_eigen_vec_gp_exp_quad_cov2) {
 }
 
 TEST(MathPrimMat, vec_length_scale_eigen_gp_exp_quad_cov1) {
-  set_tuning_opts_to_use_gpu();
   double sigma = 0.2;
 
   std::vector<double> l(3);
@@ -580,7 +561,6 @@ TEST(MathPrimMat, vec_length_scale_eigen_gp_exp_quad_cov1) {
 }
 
 TEST(MathPrimMat, vec_length_scale_vec_eigen_vec_gp_exp_quad_cov2) {
-  set_tuning_opts_to_use_gpu();
   using stan::math::squared_distance;
   double sigma = 0.2;
 
@@ -643,7 +623,6 @@ TEST(MathPrimMat, vec_length_scale_vec_eigen_vec_gp_exp_quad_cov2) {
 }
 
 TEST(MathPrimMat, domain_error_training_sig_vec_length_scale_gp_exp_quad_cov) {
-  set_tuning_opts_to_use_gpu();
   double sigma = 0.2;
 
   std::vector<double> l(3);
@@ -673,7 +652,6 @@ TEST(MathPrimMat, domain_error_training_sig_vec_length_scale_gp_exp_quad_cov) {
 }
 
 TEST(MathPrimMat, nan_error_training_sig_vec_length_scale_gp_exp_quad_cov) {
-  set_tuning_opts_to_use_gpu();
   double sigma = 0.2;
 
   std::vector<double> l(3);
@@ -707,7 +685,6 @@ TEST(MathPrimMat, nan_error_training_sig_vec_length_scale_gp_exp_quad_cov) {
 }
 
 TEST(MathPrimMat, nan_domain_error_gp_exp_quad_cov2_vec_length_scale) {
-  set_tuning_opts_to_use_gpu();
   double sigma = 0.2;
 
   std::vector<double> l(3);
@@ -763,7 +740,6 @@ TEST(MathPrimMat, nan_domain_error_gp_exp_quad_cov2_vec_length_scale) {
 }
 
 TEST(MathPrimMat, zero_size_gp_exp_quad_cov) {
-  set_tuning_opts_to_use_gpu();
   double sigma = 0.2;
 
   std::vector<double> l(0);
@@ -780,7 +756,6 @@ TEST(MathPrimMat, zero_size_gp_exp_quad_cov) {
 }
 
 TEST(MathPrimMat, numerical_accuracy_ard_gp_exp_quad_cov) {
-  set_tuning_opts_to_use_gpu();
   double sigma = 1.0;
 
   std::vector<double> l(2);

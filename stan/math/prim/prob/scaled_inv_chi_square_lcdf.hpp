@@ -10,6 +10,7 @@
 #include <stan/math/prim/fun/grad_reg_inc_gamma.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/tgamma.hpp>
@@ -57,7 +58,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lcdf(
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::math::size(y); i++) {
-    if (value_of(y_vec[i]) == 0) {
+    if (y_vec.val(i) == 0) {
       return ops_partials.build(negative_infinity());
     }
   }
@@ -69,7 +70,7 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lcdf(
 
   if (!is_constant_all<T_dof>::value) {
     for (size_t i = 0; i < stan::math::size(nu); i++) {
-      const T_partials_return half_nu_dbl = 0.5 * value_of(nu_vec[i]);
+      const T_partials_return half_nu_dbl = 0.5 * nu_vec.val(i);
       gamma_vec[i] = tgamma(half_nu_dbl);
       digamma_vec[i] = digamma(half_nu_dbl);
     }
@@ -78,14 +79,14 @@ return_type_t<T_y, T_dof, T_scale> scaled_inv_chi_square_lcdf(
   for (size_t n = 0; n < N; n++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
-    if (value_of(y_vec[n]) == INFTY) {
+    if (y_vec.val(n) == INFTY) {
       continue;
     }
 
-    const T_partials_return y_dbl = value_of(y_vec[n]);
+    const T_partials_return y_dbl = y_vec.val(n);
     const T_partials_return y_inv_dbl = 1.0 / y_dbl;
-    const T_partials_return half_nu_dbl = 0.5 * value_of(nu_vec[n]);
-    const T_partials_return s_dbl = value_of(s_vec[n]);
+    const T_partials_return half_nu_dbl = 0.5 * nu_vec.val(n);
+    const T_partials_return s_dbl = s_vec.val(n);
     const T_partials_return half_s2_overx_dbl = 0.5 * s_dbl * s_dbl * y_inv_dbl;
     const T_partials_return half_nu_s2_overx_dbl
         = 2.0 * half_nu_dbl * half_s2_overx_dbl;

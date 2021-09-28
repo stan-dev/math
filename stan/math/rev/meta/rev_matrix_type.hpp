@@ -1,12 +1,9 @@
 #ifndef STAN_MATH_REV_META_REV_MATRIX_TYPE_HPP
 #define STAN_MATH_REV_META_REV_MATRIX_TYPE_HPP
 
-#include <stan/math/prim/meta/disjunction.hpp>
-#include <stan/math/prim/meta/conjunction.hpp>
-#include <stan/math/prim/meta/require_generics.hpp>
-#include <stan/math/prim/meta/return_type.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/rev/core/var.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/rev/meta/is_var.hpp>
 
 namespace stan {
 

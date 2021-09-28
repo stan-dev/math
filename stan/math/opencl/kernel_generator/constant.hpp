@@ -8,7 +8,7 @@
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <limits>
-#include <set>
+#include <map>
 #include <string>
 #include <tuple>
 #include <type_traits>
@@ -33,7 +33,7 @@ class constant_ : public operation_cl<constant_<T>, T> {
 
  public:
   static_assert(std::is_arithmetic<T>::value,
-                "class scalar_<T>: std::is_arithmetic<T> must be true!");
+                "class constant_<T>: std::is_arithmetic<T> must be true!");
   using Scalar = T;
   using base = operation_cl<constant_<T>, T>;
   using base::var_name_;
@@ -72,15 +72,21 @@ class constant_ : public operation_cl<constant_<T>, T> {
 
   /**
    * Sets kernel arguments for this and nested expressions.
-   * @param[in,out] generated set of expressions that already set their kernel
-   * arguments
+   * @param[in,out] generated map from (pointer to) already generated local
+   * operations to variable names
+   * @param[in,out] generated_all map from (pointer to) already generated all
+   * operations to variable names
    * @param kernel kernel to set arguments on
    * @param[in,out] arg_num consecutive number of the first argument to set.
    * This is incremented for each argument set by this function.
    */
-  inline void set_args(std::set<const operation_cl_base*>& generated,
+  inline void set_args(std::map<const void*, const char*>& generated,
+                       std::map<const void*, const char*>& generated_all,
                        cl::Kernel& kernel, int& arg_num) const {
-    kernel.setArg(arg_num++, a_);
+    if (generated.count(this) == 0) {
+      generated[this] = "";
+      kernel.setArg(arg_num++, a_);
+    }
   }
 
   /**

@@ -6,13 +6,34 @@ void expect_sd(const T& m, const stan::test::ad_tolerances& tols
   auto f = [](const auto& x) { return stan::math::sd(x); };
   Eigen::VectorXd v(m.size());
   Eigen::RowVectorXd rv(m.size());
+  std::vector<double> st(m.size());
+
   for (int i = 0; i < m.size(); ++i) {
     v(i) = m(i);
     rv(i) = m(i);
+    st[i] = m(i);
   }
+
+  std::vector<std::vector<double>> stst = {st, st};
+  std::vector<Eigen::VectorXd> stv = {v, v};
+  std::vector<Eigen::RowVectorXd> strv = {rv, rv};
+  std::vector<Eigen::MatrixXd> stm = {m, m};
+
   stan::test::expect_ad(tols, f, v);
   stan::test::expect_ad(tols, f, rv);
   stan::test::expect_ad(tols, f, m);
+  stan::test::expect_ad(tols, f, st);
+  stan::test::expect_ad(tols, f, stv);
+  stan::test::expect_ad(tols, f, strv);
+  stan::test::expect_ad(tols, f, stm);
+  stan::test::expect_ad(tols, f, stst);
+
+  stan::test::expect_ad_matvar(tols, f, v);
+  stan::test::expect_ad_matvar(tols, f, rv);
+  stan::test::expect_ad_matvar(tols, f, m);
+  stan::test::expect_ad_matvar(tols, f, stv);
+  stan::test::expect_ad_matvar(tols, f, strv);
+  stan::test::expect_ad_matvar(tols, f, stm);
 }
 
 TEST(MathMixMatFun, sd) {

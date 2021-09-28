@@ -3,7 +3,7 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/functor/reverse_pass_callback.hpp>
+#include <stan/math/rev/core/reverse_pass_callback.hpp>
 #include <stan/math/rev/core/arena_matrix.hpp>
 #include <stan/math/rev/fun/dot_self.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
@@ -28,8 +28,7 @@ namespace math {
  **/
 template <typename T, require_rev_col_vector_t<T>* = nullptr>
 inline auto unit_vector_constrain(const T& y) {
-  using ret_type = plain_type_t<T>;
-
+  using ret_type = return_var_matrix_t<T>;
   check_nonzero_size("unit_vector", "y", y);
 
   arena_t<T> arena_y = y;

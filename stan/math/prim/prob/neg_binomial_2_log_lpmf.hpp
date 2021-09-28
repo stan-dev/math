@@ -10,6 +10,7 @@
 #include <stan/math/prim/fun/log1p_exp.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -21,7 +22,9 @@ namespace math {
 
 // NegBinomial(n|eta, phi)  [phi > 0;  n >= 0]
 template <bool propto, typename T_n, typename T_log_location,
-          typename T_precision>
+          typename T_precision,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_n, T_log_location, T_precision>* = nullptr>
 return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
     const T_n& n, const T_log_location& eta, const T_precision& phi) {
   using T_partials_return = partials_return_t<T_n, T_log_location, T_precision>;
@@ -64,13 +67,13 @@ return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
 
   VectorBuilder<true, T_partials_return, T_log_location> eta_val(size_eta);
   for (size_t i = 0; i < size_eta; ++i) {
-    eta_val[i] = value_of(eta_vec[i]);
+    eta_val[i] = eta_vec.val(i);
   }
 
   VectorBuilder<true, T_partials_return, T_precision> phi_val(size_phi);
   VectorBuilder<true, T_partials_return, T_precision> log_phi(size_phi);
   for (size_t i = 0; i < size_phi; ++i) {
-    phi_val[i] = value_of(phi_vec[i]);
+    phi_val[i] = phi_vec.val(i);
     log_phi[i] = log(phi_val[i]);
   }
 

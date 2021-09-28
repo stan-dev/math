@@ -5,7 +5,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <string>
-#include <set>
+#include <map>
 #include <array>
 #include <numeric>
 #include <vector>
@@ -37,26 +37,38 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...>,
   /**
    * Generates kernel code for this expression if it appears on the left hand
    * side of an assignment.
-   * @param[in,out] generated set of (pointer to) already generated operations
+   * @param[in,out] generated map from (pointer to) already generated local
+   * operations to variable names
+   * @param[in,out] generated_all map from (pointer to) already generated all
+   * operations to variable names
    * @param name_gen name generator for this kernel
    * @param row_index_name row index variable name
    * @param col_index_name column index variable name
    * @return part of kernel with code for this expressions
    */
   inline kernel_parts get_kernel_parts_lhs(
-      std::set<const operation_cl_base*>& generated, name_generator& name_gen,
-      const std::string& row_index_name,
+      std::map<const void*, const char*>& generated,
+      std::map<const void*, const char*>& generated_all,
+      name_generator& name_gen, const std::string& row_index_name,
       const std::string& col_index_name) const {
     if (generated.count(this) == 0) {
+      generated[this] = "";
       this->var_name_ = name_gen.generate();
     }
     std::string row_index_name_arg = row_index_name;
     std::string col_index_name_arg = col_index_name;
     derived().modify_argument_indices(row_index_name_arg, col_index_name_arg);
     std::array<kernel_parts, N> args_parts = index_apply<N>([&](auto... Is) {
+      std::map<const void*, const char*> generated2;
       return std::array<kernel_parts, N>{
           this->template get_arg<Is>().get_kernel_parts_lhs(
-              generated, name_gen, row_index_name_arg, col_index_name_arg)...};
+              &Derived::modify_argument_indices
+                      == &operation_cl<Derived, Scalar,
+                                       Args...>::modify_argument_indices
+                  ? generated
+                  : generated2,
+              generated_all, name_gen, row_index_name_arg,
+              col_index_name_arg)...};
     });
     kernel_parts res
         = std::accumulate(args_parts.begin(), args_parts.end(), kernel_parts{});
@@ -66,12 +78,27 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...>,
           this->template get_arg<Is>().var_name_...);
     });
     res += my_part;
-    if (generated.count(this) == 0) {
-      generated.insert(this);
+    if (generated_all.count(this) == 0) {
+      generated_all[this] = "";
     } else {
       res.args = "";
     }
     return res;
+  }
+
+  /**
+   * Generates kernel code for this and nested expressions if this expression
+   * appears on the left hand side of an assignment.
+   * @param row_index_name row index variable name
+   * @param col_index_name column index variable name
+   * @param var_name_arg name of the variable in kernel that holds argument to
+   * this expression
+   * @return part of kernel with code for this expression
+   */
+  inline kernel_parts generate_lhs(const std::string& row_index_name,
+                                   const std::string& col_index_name,
+                                   const std::string& var_name_arg) const {
+    return {};
   }
 
   /**
@@ -82,17 +109,17 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...>,
   template <typename T_expression,
             typename
             = require_all_kernel_expressions_and_none_scalar_t<T_expression>>
-  operation_cl_lhs<Derived, Scalar, Args...>& operator=(T_expression&& rhs) {
+  Derived& operator=(T_expression&& rhs) {
     auto expression
         = as_operation_cl(std::forward<T_expression>(rhs)).derived();
     int this_rows = derived().rows();
     int this_cols = derived().cols();
     if (this_rows == expression.rows() && this_cols == expression.cols()
         && this_rows * this_cols == 0) {
-      return *this;
+      return derived();
     }
     expression.evaluate_into(derived());
-    return *this;
+    return derived();
   }
   // Copy assignment delegates to general assignment operator. If we didn't
   // implement this, we would get ambiguities in overload resolution with
@@ -103,7 +130,8 @@ class operation_cl_lhs : public operation_cl<Derived, Scalar, Args...>,
   }
 
   /**
-   * Sets view of the underlying matrix depending on which part is written.
+   * Sets the view of the underlying matrix depending on which of its parts are
+   * written to.
    * @param bottom_diagonal Index of the top sub- or super- diagonal written
    * with nonzero elements.
    * @param top_diagonal Index of the top sub- or super- diagonal written with

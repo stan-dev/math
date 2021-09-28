@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -25,7 +26,9 @@ namespace math {
  * @return The log of the product of the densities.
  * @throw std::domain_error if any scalar is nan.
  */
-template <bool propto, typename T_y>
+template <
+    bool propto, typename T_y,
+    require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T_y>* = nullptr>
 return_type_t<T_y> std_normal_lpdf(const T_y& y) {
   using T_partials_return = partials_return_t<T_y>;
   using T_y_ref = ref_type_t<T_y>;
@@ -47,7 +50,7 @@ return_type_t<T_y> std_normal_lpdf(const T_y& y) {
   size_t N = stan::math::size(y);
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_val = value_of(y_vec[n]);
+    const T_partials_return y_val = y_vec.val(n);
     logp += y_val * y_val;
     if (!is_constant_all<T_y>::value) {
       ops_partials.edge1_.partials_[n] -= y_val;

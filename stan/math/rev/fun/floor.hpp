@@ -10,18 +10,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class floor_vari : public op_v_vari {
- public:
-  explicit floor_vari(vari* avi) : op_v_vari(std::floor(avi->val_), avi) {}
-  void chain() {
-    if (unlikely(is_nan(avi_->val_))) {
-      avi_->adj_ = NOT_A_NUMBER;
-    }
-  }
-};
-}  // namespace internal
-
 /**
  * Return the floor of the specified variable (cmath).
  *
@@ -56,7 +44,12 @@ class floor_vari : public op_v_vari {
  * @param a Input variable.
  * @return Floor of the variable.
  */
-inline var floor(const var& a) { return var(new internal::floor_vari(a.vi_)); }
+inline var floor(const var& a) { return var(std::floor(a.val())); }
+
+template <typename T, require_eigen_t<T>* = nullptr>
+inline auto floor(const var_value<T>& a) {
+  return var_value<T>(a.val().array().floor().matrix());
+}
 
 }  // namespace math
 }  // namespace stan

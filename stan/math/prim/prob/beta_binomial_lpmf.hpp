@@ -11,6 +11,7 @@
 #include <stan/math/prim/fun/lbeta.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -37,7 +38,9 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch
  */
 template <bool propto, typename T_n, typename T_N, typename T_size1,
-          typename T_size2>
+          typename T_size2,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_n, T_N, T_size1, T_size2>* = nullptr>
 return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
                                                    const T_size1& alpha,
                                                    const T_size2& beta) {
@@ -96,14 +99,14 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
   VectorBuilder<true, T_partials_return, T_size1, T_size2> lbeta_denominator(
       size_alpha_beta);
   for (size_t i = 0; i < size_alpha_beta; i++) {
-    lbeta_denominator[i] = lbeta(value_of(alpha_vec[i]), value_of(beta_vec[i]));
+    lbeta_denominator[i] = lbeta(alpha_vec.val(i), beta_vec.val(i));
   }
 
   VectorBuilder<true, T_partials_return, T_n, T_N, T_size1, T_size2> lbeta_diff(
       max_size_seq_view);
   for (size_t i = 0; i < max_size_seq_view; i++) {
-    lbeta_diff[i] = lbeta(n_vec[i] + value_of(alpha_vec[i]),
-                          N_vec[i] - n_vec[i] + value_of(beta_vec[i]))
+    lbeta_diff[i] = lbeta(n_vec[i] + alpha_vec.val(i),
+                          N_vec[i] - n_vec[i] + beta_vec.val(i))
                     - lbeta_denominator[i];
   }
 
@@ -112,7 +115,7 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
       digamma_n_plus_alpha(max_size(n, alpha));
   if (!is_constant_all<T_size1>::value) {
     for (size_t i = 0; i < max_size(n, alpha); i++) {
-      digamma_n_plus_alpha[i] = digamma(n_vec[i] + value_of(alpha_vec[i]));
+      digamma_n_plus_alpha[i] = digamma(n_vec.val(i) + alpha_vec.val(i));
     }
   }
 
@@ -121,8 +124,7 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
       digamma_alpha_plus_beta(size_alpha_beta);
   if (!is_constant_all<T_size1, T_size2>::value) {
     for (size_t i = 0; i < size_alpha_beta; i++) {
-      digamma_alpha_plus_beta[i]
-          = digamma(value_of(alpha_vec[i]) + value_of(beta_vec[i]));
+      digamma_alpha_plus_beta[i] = digamma(alpha_vec.val(i) + beta_vec.val(i));
     }
   }
 
@@ -131,9 +133,9 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
       digamma_diff(max_size(N, alpha, beta));
   if (!is_constant_all<T_size1, T_size2>::value) {
     for (size_t i = 0; i < max_size(N, alpha, beta); i++) {
-      digamma_diff[i] = digamma_alpha_plus_beta[i]
-                        - digamma(N_vec[i] + value_of(alpha_vec[i])
-                                  + value_of(beta_vec[i]));
+      digamma_diff[i]
+          = digamma_alpha_plus_beta[i]
+            - digamma(N_vec.val(i) + alpha_vec.val(i) + beta_vec.val(i));
     }
   }
 
@@ -141,13 +143,13 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
       digamma_alpha(size_alpha);
   for (size_t i = 0; i < size_alpha; i++)
     if (!is_constant_all<T_size1>::value)
-      digamma_alpha[i] = digamma(value_of(alpha_vec[i]));
+      digamma_alpha[i] = digamma(alpha_vec.val(i));
 
   VectorBuilder<!is_constant_all<T_size2>::value, T_partials_return, T_size2>
       digamma_beta(size_beta);
   for (size_t i = 0; i < size_beta; i++)
     if (!is_constant_all<T_size2>::value)
-      digamma_beta[i] = digamma(value_of(beta_vec[i]));
+      digamma_beta[i] = digamma(beta_vec.val(i));
 
   for (size_t i = 0; i < max_size_seq_view; i++) {
     if (include_summand<propto>::value)
@@ -159,7 +161,7 @@ return_type_t<T_size1, T_size2> beta_binomial_lpmf(const T_n& n, const T_N& N,
           += digamma_n_plus_alpha[i] + digamma_diff[i] - digamma_alpha[i];
     if (!is_constant_all<T_size2>::value)
       ops_partials.edge2_.partials_[i]
-          += digamma(value_of(N_vec[i] - n_vec[i] + beta_vec[i]))
+          += digamma(N_vec.val(i) - n_vec.val(i) + beta_vec.val(i))
              + digamma_diff[i] - digamma_beta[i];
   }
   return ops_partials.build(logp);

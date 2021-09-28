@@ -9,14 +9,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class lgamma_vari : public op_v_vari {
- public:
-  lgamma_vari(double value, vari* avi) : op_v_vari(value, avi) {}
-  void chain() { avi_->adj_ += adj_ * digamma(avi_->val_); }
-};
-}  // namespace internal
-
 /**
  * The log gamma function for variables (C99).
  *
@@ -24,11 +16,16 @@ class lgamma_vari : public op_v_vari {
  *
  * \f$\frac{d}{dx} \Gamma(x) = \psi^{(0)}(x)\f$.
  *
+ * @tparam T Arithmetic or a type inheriting from `EigenBase`.
  * @param a The variable.
  * @return Log gamma of the variable.
  */
-inline var lgamma(const var& a) {
-  return var(new internal::lgamma_vari(lgamma(a.val()), a.vi_));
+template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
+inline auto lgamma(const var_value<T>& a) {
+  return make_callback_var(lgamma(a.val()), [a](auto& vi) mutable {
+    as_array_or_scalar(a.adj())
+        += as_array_or_scalar(vi.adj()) * as_array_or_scalar(digamma(a.val()));
+  });
 }
 
 }  // namespace math

@@ -3,6 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/gamma_q.hpp>
@@ -40,7 +43,9 @@ namespace math {
  * @throw std::domain_error if nu is not greater than or equal to 0
  * @throw std::domain_error if y is not greater than or equal to 0.
  */
-template <bool propto, typename T_y, typename T_dof>
+template <bool propto, typename T_y, typename T_dof,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_dof>* = nullptr>
 return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
   using T_partials_return = partials_return_t<T_y, T_dof>;
   using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
@@ -52,14 +57,8 @@ return_type_t<T_y, T_dof> inv_chi_square_lpdf(const T_y& y, const T_dof& nu) {
   T_y_ref y_ref = y;
   T_nu_ref nu_ref = nu;
 
-  const auto& y_col = as_column_vector_or_scalar(y_ref);
-  const auto& nu_col = as_column_vector_or_scalar(nu_ref);
-
-  const auto& y_arr = as_array_or_scalar(y_col);
-  const auto& nu_arr = as_array_or_scalar(nu_col);
-
-  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
-  ref_type_t<decltype(value_of(nu_arr))> nu_val = value_of(nu_arr);
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  decltype(auto) nu_val = to_ref(as_value_column_array_or_scalar(nu_ref));
 
   check_positive_finite(function, "Degrees of freedom parameter", nu_val);
   check_not_nan(function, "Random variable", y_val);

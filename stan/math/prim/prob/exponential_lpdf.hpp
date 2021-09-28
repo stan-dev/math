@@ -3,6 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log.hpp>
@@ -43,7 +46,9 @@ namespace math {
  * @throw std::domain_error if beta is not greater than 0.
  * @throw std::domain_error if y is not greater than or equal to 0.
  */
-template <bool propto, typename T_y, typename T_inv_scale>
+template <bool propto, typename T_y, typename T_inv_scale,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_inv_scale>* = nullptr>
 return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
                                                  const T_inv_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_inv_scale>;
@@ -57,14 +62,8 @@ return_type_t<T_y, T_inv_scale> exponential_lpdf(const T_y& y,
   T_y_ref y_ref = y;
   T_beta_ref beta_ref = beta;
 
-  const auto& y_col = as_column_vector_or_scalar(y_ref);
-  const auto& beta_col = as_column_vector_or_scalar(beta_ref);
-
-  const auto& y_arr = as_array_or_scalar(y_col);
-  const auto& beta_arr = as_array_or_scalar(beta_col);
-
-  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
-  ref_type_t<decltype(value_of(beta_arr))> beta_val = value_of(beta_arr);
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  decltype(auto) beta_val = to_ref(as_value_column_array_or_scalar(beta_ref));
 
   check_nonnegative(function, "Random variable", y_val);
   check_positive_finite(function, "Inverse scale parameter", beta_val);

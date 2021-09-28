@@ -20,7 +20,7 @@ class AgradDistributionsWishart : public ::testing::Test {
  protected:
   virtual void SetUp() {
     Y1.resize(2, 2);
-    Y1 << 2.011108, -11.20661, -11.206611, 112.94139;
+    Y1 << 2.011108, -11.20661, -11.20661, 112.94139;
     Y2.resize(2, 2);
     Y2 << 13.4, 12.2, 12.2, 11.5;
 
@@ -92,7 +92,7 @@ TEST_F(AgradDistributionsWishart, ProptoSigma) {
 TEST(Wishart, check_varis_on_stack) {
   using stan::math::to_var;
   Eigen::MatrixXd W(2, 2);
-  W << 2.011108, -11.20661, -11.206611, 112.94139;
+  W << 2.011108, -11.20661, -11.20661, 112.94139;
 
   double nu = 3;
 

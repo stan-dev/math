@@ -3,6 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/gamma_q.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
@@ -33,14 +36,9 @@ return_type_t<T_rate> poisson_cdf(const T_n& n, const T_rate& lambda) {
   T_n_ref n_ref = n;
   T_lambda_ref lambda_ref = lambda;
 
-  const auto& n_col = as_column_vector_or_scalar(n_ref);
-  const auto& lambda_col = as_column_vector_or_scalar(lambda_ref);
-
-  const auto& n_arr = as_array_or_scalar(n_col);
-  const auto& lambda_arr = as_array_or_scalar(lambda_col);
-
-  ref_type_t<decltype(value_of(n_arr))> n_val = value_of(n_arr);
-  ref_type_t<decltype(value_of(lambda_arr))> lambda_val = value_of(lambda_arr);
+  decltype(auto) n_val = to_ref(as_value_column_array_or_scalar(n_ref));
+  decltype(auto) lambda_val
+      = to_ref(as_value_column_array_or_scalar(lambda_ref));
 
   check_nonnegative(function, "Rate parameter", lambda_val);
 

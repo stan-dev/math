@@ -33,47 +33,67 @@ auto recursive_sum(const std::vector<T>& a) {
 }
 
 template <typename T, require_integral_t<T>* = nullptr>
-T make_arg(double value = 0.4) {
+T make_arg(double value = 0.4, int size = 1) {
   return 1;
 }
 template <typename T, require_floating_point_t<T>* = nullptr>
-T make_arg(double value = 0.4) {
+T make_arg(double value = 0.4, int size = 1) {
   return value;
 }
 template <typename T, require_var_t<T>* = nullptr>
-T make_arg(T value = 0.4) {
+T make_arg(T value = 0.4, int size = 1) {
   return value;
 }
 template <typename T, require_fvar_t<T>* = nullptr>
-T make_arg(T value) {
+T make_arg(T value, int size = 1) {
   return value;
 }
 template <typename T, require_fvar_t<T>* = nullptr>
-T make_arg(double value = 0.4) {
+T make_arg(double value = 0.4, int size = 1) {
   return {value, 0.5};
 }
-template <typename T, typename T_scalar = double, require_eigen_t<T>* = nullptr>
-T make_arg(T_scalar value = 0.4) {
-  T res(1, 1);
-  res << make_arg<value_type_t<T>>(value);
+template <typename T, typename T_scalar = double,
+          require_eigen_matrix_dynamic_t<T>* = nullptr>
+T make_arg(T_scalar value = 0.4, int size = 1) {
+  T res = T::Constant(size, size, make_arg<value_type_t<T>>(value));
+  return res;
+}
+template <typename T, typename T_scalar = double,
+          require_eigen_vector_t<T>* = nullptr>
+T make_arg(T_scalar value = 0.4, int size = 1) {
+  T res = T::Constant(size, make_arg<value_type_t<T>>(value));
   return res;
 }
 template <typename T, typename T_scalar = double,
           require_std_vector_t<T>* = nullptr>
-T make_arg(T_scalar value = 0.4) {
+T make_arg(T_scalar value = 0.4, int size = 1) {
   using V = value_type_t<T>;
-  V tmp = make_arg<V>(value);
   T res;
-  res.push_back(tmp);
+  for (int i = 0; i < size; i++) {
+    res.push_back(make_arg<V>(value, size));
+  }
   return res;
 }
 template <typename T, require_same_t<T, std::minstd_rand>* = nullptr>
-T make_arg(double value = 0.4) {
+T make_arg(double value = 0.4, int size = 1) {
   return std::minstd_rand(0);
 }
 template <typename T, require_same_t<T, std::ostream*>* = nullptr>
-T make_arg(double value = 0.4) {
+T make_arg(double value = 0.4, int size = 1) {
   return nullptr;
+}
+
+template <typename T>
+T make_simplex(double value = 0.4, int size = 1) {
+  return make_arg<T>(1.0 / size, size);
+}
+
+template <typename T>
+T make_pos_definite_matrix(double value = 0.4, int size = 1) {
+  T m1 = make_arg<T>(value, size);
+  T m2 = m1 * stan::math::transpose(m1);
+  m2.diagonal().array() += value;
+  return m2;
 }
 
 template <typename T, require_arithmetic_t<T>* = nullptr>
@@ -115,15 +135,15 @@ void expect_eq(const std::vector<T>& a, const std::vector<T>& b,
 }
 
 template <typename T, require_not_st_var<T>* = nullptr>
-void expect_adj_eq(const T& a, const T& b, const char* msg) {}
+void expect_adj_eq(const T& a, const T& b, const char* msg = "expect_ad_eq") {}
 
-void expect_adj_eq(math::var a, math::var b, const char* msg) {
+void expect_adj_eq(math::var a, math::var b, const char* msg = "expect_ad_eq") {
   EXPECT_EQ(a.adj(), b.adj()) << msg;
 }
 
 template <typename T1, typename T2, require_all_eigen_t<T1, T2>* = nullptr,
           require_vt_same<T1, T2>* = nullptr>
-void expect_adj_eq(const T1& a, const T2& b, const char* msg) {
+void expect_adj_eq(const T1& a, const T2& b, const char* msg = "expect_ad_eq") {
   EXPECT_EQ(a.rows(), b.rows()) << msg;
   EXPECT_EQ(a.cols(), b.cols()) << msg;
   const auto& a_ref = math::to_ref(a);
@@ -137,12 +157,14 @@ void expect_adj_eq(const T1& a, const T2& b, const char* msg) {
 
 template <typename T>
 void expect_adj_eq(const std::vector<T>& a, const std::vector<T>& b,
-                   const char* msg) {
+                   const char* msg = "expect_ad_eq") {
   EXPECT_EQ(a.size(), b.size()) << msg;
   for (int i = 0; i < a.size(); i++) {
     expect_adj_eq(a[i], b[i], msg);
   }
 }
+
+void grad(stan::math::var& a) { a.grad(); }
 
 #define TO_STRING_(x) #x
 #define TO_STRING(x) TO_STRING_(x)
@@ -167,18 +189,19 @@ struct test_functor {
   auto operator()(T... args) const {
     using Ret_scal = return_type_t<T...>;
     return stan::test::make_arg<Eigen::Matrix<Ret_scal, Eigen::Dynamic, 1>>(
-        math::sum(std::vector<Ret_scal>{sum_if_number(args)...}));
+        math::sum(std::vector<Ret_scal>{
+            static_cast<Ret_scal>(sum_if_number(args))...}));
   }
 };
 
 struct simple_eq_functor {
-  template <typename T0, typename T1>
-  inline Eigen::Matrix<stan::return_type_t<T0, T1>, Eigen::Dynamic, 1>
-  operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
-             const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
-             const std::vector<double>& dat, const std::vector<int>& dat_int,
+  template <typename T1, typename T2, typename T3, typename T4,
+            require_eigen_vector_t<T1>* = nullptr,
+            require_all_eigen_vector_t<T1, T2>* = nullptr>
+  inline Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1>
+  operator()(const T1& x, const T2& y, const T3& dat, const T4& dat_int,
              std::ostream* pstream__) const {
-    Eigen::Matrix<stan::return_type_t<T0, T1>, Eigen::Dynamic, 1> z(1);
+    Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, 1> z(1);
     z(0) = x(0) - y(0);
     return z;
   }
@@ -247,17 +270,21 @@ auto bad_multiple_evaluations(const T& a) {
   return a + a;
 }
 
+/**
+ * The bad_* functions are meant to be used when generating a failure
+ */
 template <typename T>
 auto bad_wrong_value(const T& a) {
   if (std::is_same<T, plain_type_t<T>>::value) {
     return a(0, 0);
   }
+
   return a(0, 0) + 1;
 }
 
 template <typename T>
 auto bad_wrong_derivatives(const T& a) {
-  operands_and_partials<T> ops(a);
+  operands_and_partials<ref_type_t<T>> ops(a);
   if (!is_constant<T>::value && std::is_same<T, plain_type_t<T>>::value) {
     ops.edge1_.partials_[0] = 1234;
   }

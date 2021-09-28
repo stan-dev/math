@@ -3,6 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/erfc.hpp>
 #include <stan/math/prim/fun/exp.hpp>
@@ -20,7 +23,9 @@ namespace stan {
 namespace math {
 
 template <bool propto, typename T_y, typename T_loc, typename T_scale,
-          typename T_inv_scale>
+          typename T_inv_scale,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_loc, T_scale, T_inv_scale>* = nullptr>
 return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma,
     const T_inv_scale& lambda) {
@@ -39,20 +44,11 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
   T_sigma_ref sigma_ref = sigma;
   T_lambda_ref lambda_ref = lambda;
 
-  const auto& y_col = as_column_vector_or_scalar(y_ref);
-  const auto& mu_col = as_column_vector_or_scalar(mu_ref);
-  const auto& sigma_col = as_column_vector_or_scalar(sigma_ref);
-  const auto& lambda_col = as_column_vector_or_scalar(lambda_ref);
-
-  const auto& y_arr = as_array_or_scalar(y_col);
-  const auto& mu_arr = as_array_or_scalar(mu_col);
-  const auto& sigma_arr = as_array_or_scalar(sigma_col);
-  const auto& lambda_arr = as_array_or_scalar(lambda_col);
-
-  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
-  ref_type_t<decltype(value_of(mu_arr))> mu_val = value_of(mu_arr);
-  ref_type_t<decltype(value_of(sigma_arr))> sigma_val = value_of(sigma_arr);
-  ref_type_t<decltype(value_of(lambda_arr))> lambda_val = value_of(lambda_arr);
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  decltype(auto) mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
+  decltype(auto) sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
+  decltype(auto) lambda_val
+      = to_ref(as_value_column_array_or_scalar(lambda_ref));
 
   check_not_nan(function, "Random variable", y_val);
   check_finite(function, "Location parameter", mu_val);
@@ -111,7 +107,7 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lpdf(
     if (!is_constant_all<T_scale>::value) {
       ops_partials.edge3_.partials_
           = sigma_val * square(lambda_val)
-            + deriv_logerfc * (-mu_minus_y / sigma_sq + lambda_val);
+            + deriv_logerfc * (lambda_val - mu_minus_y / sigma_sq);
     }
     if (!is_constant_all<T_inv_scale>::value) {
       ops_partials.edge4_.partials_ = inv(lambda_val) + lambda_sigma_sq

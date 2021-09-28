@@ -3,7 +3,7 @@
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/copy.hpp>
-#include <stan/math/opencl/multiply.hpp>
+#include <stan/math/opencl/prim/multiply.hpp>
 #include <test/unit/math/opencl/kernel_generator/reference_kernel.hpp>
 #include <test/unit/util.hpp>
 #include <Eigen/Dense>
@@ -48,9 +48,16 @@ TEST(KernelGenerator, addition_test) {
     m1 << 1, 2.5, 3, 4, 5, 6.3, 7, -8, -9.5;                           \
     MatrixXi m2(3, 3);                                                 \
     m2 << 1, 100, 1000, 0, -10, -12, 2, -8, 8;                         \
+    MatrixXd m_size(3, 2);                                             \
+    m_size << 1, 100, 1000, 0, -10, -12;                               \
                                                                        \
     matrix_cl<double> m1_cl(m1);                                       \
     matrix_cl<int> m2_cl(m2);                                          \
+    matrix_cl<double> m_size_cl(m_size);                               \
+    matrix_cl<res_type> unused_res;                                    \
+                                                                       \
+    EXPECT_THROW(unused_res = m1_cl operation m_size_cl,               \
+                 std::invalid_argument);                               \
                                                                        \
     auto tmp = m1_cl operation m2_cl;                                  \
     matrix_cl<res_type> res_cl = tmp;                                  \
@@ -58,7 +65,7 @@ TEST(KernelGenerator, addition_test) {
                                                                        \
     Matrix<res_type, -1, -1> correct                                   \
         = m1.array() operation m2.cast<double>().array();              \
-    EXPECT_TYPED_MATRIX_NEAR(res, correct, 1e-9, res_type);            \
+    EXPECT_MATRIX_NEAR(res, correct, 1e-9);                            \
   }
 
 BINARY_OPERATION_TEST(subtraction_test, -, double);
@@ -118,7 +125,7 @@ TEST(KernelGenerator, logical_or_test) {
   Matrix<bool, -1, -1> res = stan::math::from_matrix_cl(res_cl);
 
   Matrix<bool, -1, -1> correct = m1 || m2;
-  EXPECT_TYPED_MATRIX_EQ(res, correct, bool);
+  EXPECT_MATRIX_EQ(res, correct);
 }
 
 TEST(KernelGenerator, logical_and_test) {
@@ -135,7 +142,7 @@ TEST(KernelGenerator, logical_and_test) {
   Matrix<bool, -1, -1> res = stan::math::from_matrix_cl(res_cl);
 
   Matrix<bool, -1, -1> correct = m1 && m2;
-  EXPECT_TYPED_MATRIX_EQ(res, correct, bool);
+  EXPECT_MATRIX_EQ(res, correct);
 }
 
 TEST(KernelGenerator, binary_operation_multiple_operations) {

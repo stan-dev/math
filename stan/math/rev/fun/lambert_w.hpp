@@ -11,48 +11,38 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-
-/**
- * Internal helper struct for Lambert W function on W0 branch.
- */
-class lambertw0_vari : public op_v_vari {
- public:
-  explicit lambertw0_vari(vari* avi) : op_v_vari(lambert_w0(avi->val_), avi) {}
-  void chain() { avi_->adj_ += (adj_ / (avi_->val_ + exp(val_))); }
-};
-
-/**
- * Internal helper struct for Lambert W function on W-1 branch.
- */
-class lambertwm1_vari : public op_v_vari {
- public:
-  explicit lambertwm1_vari(vari* avi)
-      : op_v_vari(lambert_wm1(avi->val_), avi) {}
-  void chain() { avi_->adj_ += (adj_ / (avi_->val_ + exp(val_))); }
-};
-}  // namespace internal
-
 /**
  * Return the Lambert W function on W0 branch applied to the specified variable.
  *
+ * @tparam T Arithmetic or a type inheriting from `EigenBase`.
  * @param a Variable argument.
  * @return the Lambert W function (W0 branch) applied to the specified argument.
  */
-inline var lambert_w0(const var& a) {
-  return var(new internal::lambertw0_vari(a.vi_));
+template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
+inline auto lambert_w0(const var_value<T>& a) {
+  return make_callback_var(lambert_w0(a.val()), [a](auto& vi) mutable {
+    as_array_or_scalar(a.adj())
+        += (as_array_or_scalar(vi.adj())
+            / as_array_or_scalar(a.val() + exp(vi.val())));
+  });
 }
 
 /**
  * Return the Lambert W function on W-1 branch applied to the specified
  * variable.
  *
+ * @tparam T Arithmetic or a type inheriting from `EigenBase`.
  * @param a Variable argument.
  * @return the Lambert W function (W-1 branch) applied to the specified
  * argument.
  */
-inline var lambert_wm1(const var& a) {
-  return var(new internal::lambertwm1_vari(a.vi_));
+template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
+inline auto lambert_wm1(const var_value<T>& a) {
+  return make_callback_var(lambert_wm1(a.val()), [a](auto& vi) mutable {
+    as_array_or_scalar(a.adj())
+        += (as_array_or_scalar(vi.adj())
+            / as_array_or_scalar(a.val() + exp(vi.val())));
+  });
 }
 
 }  // namespace math

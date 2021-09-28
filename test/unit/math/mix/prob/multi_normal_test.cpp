@@ -1,7 +1,51 @@
-#include <stan/math/mix.hpp>
-#include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/math/distributions.hpp>
+#include <test/unit/math/test_ad.hpp>
+
+TEST(ProbDistributionsMultiNormal, matvar) {
+  auto f = [](const auto& y, const auto& mu, const auto& sigma) {
+    auto sigma_sym = stan::math::multiply(0.5, sigma + sigma.transpose());
+    return stan::math::multi_normal_lpdf(y, mu, sigma_sym);
+  };
+
+  Eigen::VectorXd y1(1);
+  y1 << 1;
+  Eigen::VectorXd mu1(1);
+  mu1 << 3.4;
+  Eigen::MatrixXd Sigma11(1, 1);
+  Sigma11 << 1;
+  stan::test::expect_ad(f, y1, mu1, Sigma11);
+  stan::test::expect_ad_matvar(f, y1, mu1, Sigma11);
+
+  Eigen::VectorXd y0(0);
+  Eigen::VectorXd mu0(0);
+  Eigen::MatrixXd Sigma00(0, 0);
+  stan::test::expect_ad(f, y0, mu0, Sigma00);
+  stan::test::expect_ad_matvar(f, y0, mu0, Sigma00);
+
+  Eigen::VectorXd y2(2);
+  y2 << 1.0, 0.1;
+  Eigen::VectorXd mu2(2);
+  mu2 << 0.1, 2.0;
+  Eigen::MatrixXd Sigma22(2, 2);
+  Sigma22 << 2.0, 0.5, 0.5, 1.1;
+  stan::test::expect_ad(f, y2, mu2, Sigma22);
+  stan::test::expect_ad_matvar(f, y2, mu2, Sigma22);
+
+  Eigen::VectorXd y22(2);
+  y22 << 0.4, 0.3;
+  Eigen::VectorXd mu22(2);
+  mu22 << 2.1, 1.0;
+  std::vector<Eigen::VectorXd> y2s = {y2, y22};
+  std::vector<Eigen::VectorXd> mu2s = {mu2, mu22};
+  stan::test::expect_ad(f, y2, mu2s, Sigma22);
+  stan::test::expect_ad(f, y2s, mu2, Sigma22);
+  stan::test::expect_ad(f, y2s, mu2s, Sigma22);
+
+  // Error sizes
+  stan::test::expect_ad(f, y0, mu0, Sigma11);
+  stan::test::expect_ad(f, y1, mu1, Sigma00);
+  stan::test::expect_ad_matvar(f, y0, mu0, Sigma11);
+  stan::test::expect_ad_matvar(f, y1, mu1, Sigma00);
+}
 
 TEST(ProbDistributionsMultiNormal, fvar_var) {
   using Eigen::Dynamic;
@@ -26,6 +70,8 @@ TEST(ProbDistributionsMultiNormal, fvar_var) {
   fvar<var> res = stan::math::multi_normal_log(y, mu, Sigma);
   EXPECT_FLOAT_EQ(-11.73908, res.val_.val());
   EXPECT_FLOAT_EQ(0.54899865, res.d_.val());
+
+  stan::math::recover_memory();
 }
 
 TEST(ProbDistributionsMultiNormal, fvar_fvar_var) {
@@ -51,4 +97,6 @@ TEST(ProbDistributionsMultiNormal, fvar_fvar_var) {
   fvar<fvar<var> > res = stan::math::multi_normal_log(y, mu, Sigma);
   EXPECT_FLOAT_EQ(-11.73908, res.val_.val_.val());
   EXPECT_FLOAT_EQ(0.54899865, res.d_.val_.val());
+
+  stan::math::recover_memory();
 }

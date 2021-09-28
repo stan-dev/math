@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
@@ -30,7 +31,9 @@ namespace math {
  * @throw std::domain_error if y is nan, mu is infinite, or sigma is nonpositive
  * @throw std::invalid_argument if container sizes mismatch
  */
-template <typename T_y, typename T_loc, typename T_scale>
+template <typename T_y, typename T_loc, typename T_scale,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_loc, T_scale>* = nullptr>
 return_type_t<T_y, T_loc, T_scale> double_exponential_lcdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
@@ -65,12 +68,12 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lcdf(
 
   VectorBuilder<true, T_partials_return, T_scale> inv_sigma(size_sigma);
   for (size_t i = 0; i < size_sigma; i++) {
-    inv_sigma[i] = inv(value_of(sigma_vec[i]));
+    inv_sigma[i] = inv(sigma_vec.val(i));
   }
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return mu_dbl = value_of(mu_vec[n]);
+    const T_partials_return y_dbl = y_vec.val(n);
+    const T_partials_return mu_dbl = mu_vec.val(n);
     const T_partials_return scaled_diff = (y_dbl - mu_dbl) * inv_sigma[n];
 
     const T_partials_return rep_deriv

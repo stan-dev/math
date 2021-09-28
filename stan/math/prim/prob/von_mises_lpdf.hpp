@@ -3,6 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/cos.hpp>
 #include <stan/math/prim/fun/floor.hpp>
@@ -33,17 +36,9 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
   T_mu_ref mu_ref = mu;
   T_kappa_ref kappa_ref = kappa;
 
-  const auto& y_col = as_column_vector_or_scalar(y_ref);
-  const auto& mu_col = as_column_vector_or_scalar(mu_ref);
-  const auto& kappa_col = as_column_vector_or_scalar(kappa_ref);
-
-  const auto& y_arr = as_array_or_scalar(y_col);
-  const auto& mu_arr = as_array_or_scalar(mu_col);
-  const auto& kappa_arr = as_array_or_scalar(kappa_col);
-
-  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
-  ref_type_t<decltype(value_of(mu_arr))> mu_val = value_of(mu_arr);
-  ref_type_t<decltype(value_of(kappa_arr))> kappa_val = value_of(kappa_arr);
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  decltype(auto) mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
+  decltype(auto) kappa_val = to_ref(as_value_column_array_or_scalar(kappa_ref));
   check_finite(function, "Random variable", y_val);
   check_finite(function, "Location parameter", mu_val);
   check_nonnegative(function, "Scale parameter", kappa_val);
@@ -73,7 +68,7 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
 
   if (!is_constant_all<T_y, T_loc>::value) {
     const auto& sin_diff = sin(y_val - mu_val);
-    const auto& kappa_sin
+    auto kappa_sin
         = to_ref_if<(!is_constant_all<T_y>::value
                      && !is_constant_all<T_loc>::value)>(kappa_val * sin_diff);
     if (!is_constant_all<T_y>::value) {
@@ -84,9 +79,10 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
     }
   }
   if (!is_constant_all<T_scale>::value) {
-    const auto& bessel0 = modified_bessel_first_kind(0, kappa_val);
-    const auto& bessel1 = modified_bessel_first_kind(-1, kappa_val);
-    ops_partials.edge3_.partials_ = cos_mu_minus_y - bessel1 / bessel0;
+    ops_partials.edge3_.partials_
+        = cos_mu_minus_y
+          - modified_bessel_first_kind(-1, kappa_val)
+                / modified_bessel_first_kind(0, kappa_val);
   }
 
   return ops_partials.build(logp);

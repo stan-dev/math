@@ -3,6 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/erf.hpp>
 #include <stan/math/prim/fun/erfc.hpp>
@@ -25,33 +28,23 @@ template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
 return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lcdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma, const T_shape& alpha) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_shape>;
-  using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_shape>;
   using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
   using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
   using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
   using T_alpha_ref = ref_type_if_t<!is_constant<T_shape>::value, T_shape>;
   static const char* function = "skew_normal_lcdf";
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
-                         mu, "Scale parameter", sigma, "Shape paramter", alpha);
+                         mu, "Scale parameter", sigma, "Shape parameter",
+                         alpha);
   T_y_ref y_ref = y;
   T_mu_ref mu_ref = mu;
   T_sigma_ref sigma_ref = sigma;
   T_alpha_ref alpha_ref = alpha;
 
-  const auto& y_col = as_column_vector_or_scalar(y_ref);
-  const auto& mu_col = as_column_vector_or_scalar(mu_ref);
-  const auto& sigma_col = as_column_vector_or_scalar(sigma_ref);
-  const auto& alpha_col = as_column_vector_or_scalar(alpha_ref);
-
-  const auto& y_arr = as_array_or_scalar(y_col);
-  const auto& mu_arr = as_array_or_scalar(mu_col);
-  const auto& sigma_arr = as_array_or_scalar(sigma_col);
-  const auto& alpha_arr = as_array_or_scalar(alpha_col);
-
-  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
-  ref_type_t<decltype(value_of(mu_arr))> mu_val = value_of(mu_arr);
-  ref_type_t<decltype(value_of(sigma_arr))> sigma_val = value_of(sigma_arr);
-  ref_type_t<decltype(value_of(alpha_arr))> alpha_val = value_of(alpha_arr);
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  decltype(auto) mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
+  decltype(auto) sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
+  decltype(auto) alpha_val = to_ref(as_value_column_array_or_scalar(alpha_ref));
 
   check_not_nan(function, "Random variable", y_val);
   check_finite(function, "Location parameter", mu_val);
@@ -84,10 +77,10 @@ return_type_t<T_y, T_loc, T_scale, T_shape> skew_normal_lcdf(
     if (!is_constant_all<T_y, T_loc, T_scale>::value) {
       const auto& erf_alpha_scaled_diff = erf(alpha_val * scaled_diff);
       const auto& exp_m_scaled_diff_square = exp(-0.5 * diff_square);
-      const auto& rep_deriv = to_ref_if<!is_constant_all<T_y>::value
-                                            + !is_constant_all<T_loc>::value
-                                            + !is_constant_all<T_scale>::value
-                                        >= 2>(
+      auto rep_deriv = to_ref_if<!is_constant_all<T_y>::value
+                                     + !is_constant_all<T_loc>::value
+                                     + !is_constant_all<T_scale>::value
+                                 >= 2>(
           (erf_alpha_scaled_diff + 1) * INV_SQRT_TWO_PI
           * exp_m_scaled_diff_square / (sigma_val * cdf_log_));
       if (!is_constant_all<T_loc>::value) {

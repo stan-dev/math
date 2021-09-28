@@ -72,7 +72,8 @@ struct digamma_fun {
  * @throw std::domain_error if any value is a negative integer or 0
  */
 template <typename T,
-          require_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
+          require_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr,
+          require_not_var_matrix_t<T>* = nullptr>
 inline auto digamma(const T& x) {
   return apply_scalar_unary<digamma_fun, T>::apply(x);
 }

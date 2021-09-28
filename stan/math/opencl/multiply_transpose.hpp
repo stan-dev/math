@@ -5,7 +5,6 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/multiply_transpose.hpp>
 #include <stan/math/opencl/err.hpp>
-#include <stan/math/opencl/sub_block.hpp>
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>

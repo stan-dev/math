@@ -3,26 +3,12 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/rev/core/var.hpp>
-#include <stan/math/rev/core/v_vari.hpp>
+#include <stan/math/rev/core/callback_vari.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/is_nan.hpp>
 
 namespace stan {
 namespace math {
-
-namespace internal {
-class decrement_vari final : public op_v_vari {
- public:
-  explicit decrement_vari(vari* avi) : op_v_vari(avi->val_ - 1.0, avi) {}
-  void chain() {
-    if (unlikely(is_nan(avi_->val_))) {
-      avi_->adj_ = NOT_A_NUMBER;
-    } else {
-      avi_->adj_ += adj_;
-    }
-  }
-};
-}  // namespace internal
 
 /**
  * Prefix decrement operator for variables (C++).
@@ -38,7 +24,7 @@ class decrement_vari final : public op_v_vari {
  * @return Reference the result of decrementing this input variable.
  */
 inline var& operator--(var& a) {
-  a.vi_ = new internal::decrement_vari(a.vi_);
+  a = make_callback_var(a.val() - 1.0, [a](auto& vi) { a.adj() += vi.adj(); });
   return a;
 }
 
@@ -55,7 +41,7 @@ inline var& operator--(var& a) {
  */
 inline var operator--(var& a, int /*dummy*/) {
   var temp(a);
-  a.vi_ = new internal::decrement_vari(a.vi_);
+  a = make_callback_var(a.val() - 1.0, [a](auto& vi) { a.adj() += vi.adj(); });
   return temp;
 }
 

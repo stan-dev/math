@@ -3,6 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log.hpp>
@@ -18,7 +21,9 @@
 namespace stan {
 namespace math {
 
-template <typename T_y, typename T_scale, typename T_shape>
+template <typename T_y, typename T_scale, typename T_shape,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_scale, T_shape>* = nullptr>
 return_type_t<T_y, T_scale, T_shape> pareto_lcdf(const T_y& y,
                                                  const T_scale& y_min,
                                                  const T_shape& alpha) {
@@ -39,17 +44,9 @@ return_type_t<T_y, T_scale, T_shape> pareto_lcdf(const T_y& y,
   T_y_min_ref y_min_ref = y_min;
   T_alpha_ref alpha_ref = alpha;
 
-  const auto& y_col = as_column_vector_or_scalar(y_ref);
-  const auto& y_min_col = as_column_vector_or_scalar(y_min_ref);
-  const auto& alpha_col = as_column_vector_or_scalar(alpha_ref);
-
-  const auto& y_arr = as_array_or_scalar(y_col);
-  const auto& y_min_arr = as_array_or_scalar(y_min_col);
-  const auto& alpha_arr = as_array_or_scalar(alpha_col);
-
-  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
-  ref_type_t<decltype(value_of(y_min_arr))> y_min_val = value_of(y_min_arr);
-  ref_type_t<decltype(value_of(alpha_arr))> alpha_val = value_of(alpha_arr);
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  decltype(auto) y_min_val = to_ref(as_value_column_array_or_scalar(y_min_ref));
+  decltype(auto) alpha_val = to_ref(as_value_column_array_or_scalar(alpha_ref));
 
   check_nonnegative(function, "Random variable", y_val);
   check_positive_finite(function, "Scale parameter", y_min_val);
@@ -81,8 +78,8 @@ return_type_t<T_y, T_scale, T_shape> pareto_lcdf(const T_y& y,
         exp_prod / (1 - exp_prod));
     if (!is_constant_all<T_y, T_scale>::value) {
       const auto& y_min_inv = inv(y_min_val);
-      const auto& common_deriv2 = to_ref_if<(
-          !is_constant_all<T_y>::value && !is_constant_all<T_scale>::value)>(
+      auto common_deriv2 = to_ref_if<(!is_constant_all<T_y>::value
+                                      && !is_constant_all<T_scale>::value)>(
           -alpha_val * y_min_inv * common_deriv);
       if (!is_constant_all<T_y>::value) {
         ops_partials.edge1_.partials_ = -common_deriv2 * exp(log_quot);

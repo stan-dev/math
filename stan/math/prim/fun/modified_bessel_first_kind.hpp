@@ -29,9 +29,9 @@ namespace math {
      {I_v}(z) = \left(\frac{1}{2}z\right)^v\sum_{k=0}^\infty
  \frac{\left(\frac{1}{4}z^2\right)^k}{k!\Gamma(v+k+1)} \f]
 
-     \f[
-     \frac{\partial \, I_v(z)}{\partial z} = I_{v-1}(z)-\frac{v}{z}I_v(z)
-     \f]
+   \f[
+   \frac{\partial \, I_v(z)}{\partial z} = I_{v-1}(z)-\frac{v}{z}I_v(z)
+   \f]
  *
  */
 template <typename T2, require_arithmetic_t<T2>* = nullptr>
@@ -39,6 +39,17 @@ inline T2 modified_bessel_first_kind(int v, const T2 z) {
   check_not_nan("modified_bessel_first_kind", "z", z);
 
   return boost::math::cyl_bessel_i(v, z);
+}
+
+/**
+ * This function exists because when z is of type integer,
+ * cyl_bessel_i(v, z) returns an integer. This
+ * results in overflow when the function value is large.
+ */
+inline double modified_bessel_first_kind(int v, int z) {
+  check_not_nan("modified_bessel_first_kind", "z", z);
+
+  return boost::math::cyl_bessel_i(v, static_cast<double>(z));
 }
 
 /**

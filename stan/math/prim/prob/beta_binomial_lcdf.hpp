@@ -12,6 +12,7 @@
 #include <stan/math/prim/fun/lbeta.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -80,14 +81,14 @@ return_type_t<T_size1, T_size2> beta_binomial_lcdf(const T_n& n, const T_N& N,
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as neg infinity
   for (size_t i = 0; i < stan::math::size(n); i++) {
-    if (value_of(n_vec[i]) < 0) {
+    if (n_vec.val(i) < 0) {
       return ops_partials.build(negative_infinity());
     }
   }
 
   for (size_t i = 0; i < max_size_seq_view; i++) {
-    const T_partials_return n_dbl = value_of(n_vec[i]);
-    const T_partials_return N_dbl = value_of(N_vec[i]);
+    const T_partials_return n_dbl = n_vec.val(i);
+    const T_partials_return N_dbl = N_vec.val(i);
 
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
@@ -95,8 +96,8 @@ return_type_t<T_size1, T_size2> beta_binomial_lcdf(const T_n& n, const T_N& N,
       continue;
     }
 
-    const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
-    const T_partials_return beta_dbl = value_of(beta_vec[i]);
+    const T_partials_return alpha_dbl = alpha_vec.val(i);
+    const T_partials_return beta_dbl = beta_vec.val(i);
     const T_partials_return N_minus_n = N_dbl - n_dbl;
     const T_partials_return mu = alpha_dbl + n_dbl + 1;
     const T_partials_return nu = beta_dbl + N_minus_n - 1;

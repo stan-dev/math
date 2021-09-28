@@ -3,6 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
@@ -35,7 +38,9 @@ namespace math {
  * @tparam T_shape Type of shape.
  * @tparam T_scale Type of scale.
  */
-template <bool propto, typename T_y, typename T_shape, typename T_scale>
+template <bool propto, typename T_y, typename T_shape, typename T_scale,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_shape, T_scale>* = nullptr>
 return_type_t<T_y, T_shape, T_scale> inv_gamma_lpdf(const T_y& y,
                                                     const T_shape& alpha,
                                                     const T_scale& beta) {
@@ -51,17 +56,9 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_lpdf(const T_y& y,
   T_alpha_ref alpha_ref = alpha;
   T_beta_ref beta_ref = beta;
 
-  const auto& y_col = as_column_vector_or_scalar(y_ref);
-  const auto& alpha_col = as_column_vector_or_scalar(alpha_ref);
-  const auto& beta_col = as_column_vector_or_scalar(beta_ref);
-
-  const auto& y_arr = as_array_or_scalar(y_col);
-  const auto& alpha_arr = as_array_or_scalar(alpha_col);
-  const auto& beta_arr = as_array_or_scalar(beta_col);
-
-  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
-  ref_type_t<decltype(value_of(alpha_arr))> alpha_val = value_of(alpha_arr);
-  ref_type_t<decltype(value_of(beta_arr))> beta_val = value_of(beta_arr);
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  decltype(auto) alpha_val = to_ref(as_value_column_array_or_scalar(alpha_ref));
+  decltype(auto) beta_val = to_ref(as_value_column_array_or_scalar(beta_ref));
 
   check_not_nan(function, "Random variable", y_val);
   check_positive_finite(function, "Shape parameter", alpha_val);

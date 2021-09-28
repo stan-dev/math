@@ -18,6 +18,10 @@
     </tab>
     <tab type="examples" visible="yes" title="" intro=""/>
     <tab type="usergroup" visible="yes" title="Contributor Guide" url="@ref contributing" intro="">
+        <tab type="usergroup" visible="yes" title="Getting Started Guide" url="@ref getting_started" intro=""/>
+        <tab type="usergroup" visible="yes" title="Common Pitfalls" url="@ref common_pitfalls" intro=""/>
+        <tab type="usergroup" visible="yes" title="Reverse Mode Types" url="@ref reverse_mode_types" intro=""/>
+        <tab type="usergroup" visible="yes" title="Adding New Distributions" url="@ref new_distribution" intro=""/>
         <tab type="usergroup" visible="yes" title="Developer Guide" url="@ref developer_guide" intro=""/>
         <tab type="usergroup" visible="yes" title="Testing Automatic Differentiation Functions" url="@ref autodiff_test_guide" intro=""/>
         <tab type="usergroup" visible="yes" title="Testing New Distributions" url="@ref dist_tests" intro=""/>

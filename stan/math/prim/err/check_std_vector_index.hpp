@@ -25,15 +25,16 @@ namespace math {
 template <typename T>
 inline void check_std_vector_index(const char* function, const char* name,
                                    const std::vector<T>& y, int i) {
-  if (i >= static_cast<int>(stan::error_index::value)
-      && i < static_cast<int>(y.size() + stan::error_index::value)) {
-    return;
+  STAN_NO_RANGE_CHECKS_RETURN;
+  if (!(i >= static_cast<int>(stan::error_index::value)
+        && i < static_cast<int>(y.size() + stan::error_index::value))) {
+    [&]() STAN_COLD_PATH {
+      std::stringstream msg;
+      msg << " for " << name;
+      std::string msg_str(msg.str());
+      out_of_range(function, y.size(), i, msg_str.c_str());
+    }();
   }
-
-  std::stringstream msg;
-  msg << " for " << name;
-  std::string msg_str(msg.str());
-  out_of_range(function, y.size(), i, msg_str.c_str());
 }
 
 }  // namespace math

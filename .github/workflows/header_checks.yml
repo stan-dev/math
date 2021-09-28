@@ -1,0 +1,83 @@
+name: Header checks
+
+on:
+  pull_request:
+    branches: [ develop, master ]
+  push:
+    branches: [ develop, master ]
+    paths-ignore:
+      - 'doygen/**'
+      - 'hooks/**'
+      - 'licenses/**'
+      - 'LICENSE.md'
+      - 'README.md'
+      - 'RELEASE-NOTES.txt'
+
+jobs:
+  windows:
+    name: Windows
+    runs-on: windows-latest
+
+    steps:
+    - uses: n1hility/cancel-previous-runs@v2
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        workflow: c-cpp.yml
+      if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/master' && github.ref != 'refs/heads/develop'"
+
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '2.x'
+
+    - name: Print g++/mingw32-make version and path
+      run: |
+        g++ --version
+        Get-Command g++ | Select-Object -ExpandProperty Definition
+        mingw32-make --version
+        Get-Command mingw32-make | Select-Object -ExpandProperty Definition
+      shell: powershell
+
+    - name: Build Math libs
+      shell: powershell
+      run: mingw32-make -f make/standalone math-libs
+
+    - name: Run header tests
+      shell: powershell
+      run: make -j2 test-headers
+
+  opencl:
+    name: OpenCL
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: n1hility/cancel-previous-runs@v2
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        workflow: c-cpp.yml
+      if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/master' && github.ref != 'refs/heads/develop'"
+
+    - uses: actions/checkout@v2
+
+    - name: Run header tests
+      run: |
+        sudo apt install opencl-headers
+        echo "STAN_OPENCL=true" > make/local
+        make -j2 test-headers
+  no_range_checks:
+    name: NoRange
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: n1hility/cancel-previous-runs@v2
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        workflow: c-cpp.yml
+      if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/master' && github.ref != 'refs/heads/develop'"
+
+    - uses: actions/checkout@v2
+
+    - name: Run header tests
+      run: |
+        echo "STAN_NO_RANGE_CHECKS=true" > make/local
+        ./runTests.py -j2 ./test/unit/math/prim/err/

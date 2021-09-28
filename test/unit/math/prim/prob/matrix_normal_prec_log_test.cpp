@@ -23,18 +23,4 @@ TEST(ProbMatrixNormalPrec, log_matches_lpmf) {
                   (stan::math::matrix_normal_prec_log<true>(y, mu, Sigma, D)));
   EXPECT_FLOAT_EQ((stan::math::matrix_normal_prec_lpdf<false>(y, mu, Sigma, D)),
                   (stan::math::matrix_normal_prec_log<false>(y, mu, Sigma, D)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::matrix_normal_prec_lpdf<true, double, double, double>(
-          y, mu, Sigma, D)),
-      (stan::math::matrix_normal_prec_log<true, double, double, double>(
-          y, mu, Sigma, D)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::matrix_normal_prec_lpdf<false, double, double, double>(
-          y, mu, Sigma, D)),
-      (stan::math::matrix_normal_prec_log<false, double, double, double>(
-          y, mu, Sigma, D)));
-  EXPECT_FLOAT_EQ((stan::math::matrix_normal_prec_lpdf<double, double, double>(
-                      y, mu, Sigma, D)),
-                  (stan::math::matrix_normal_prec_log<double, double, double>(
-                      y, mu, Sigma, D)));
 }

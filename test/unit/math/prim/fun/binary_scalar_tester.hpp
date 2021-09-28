@@ -21,9 +21,9 @@ namespace test {
 template <typename F, typename T1, typename T2,
           require_all_not_vector_t<T1, T2>* = nullptr>
 void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
-  auto vec_vec = f(x, y);
-  auto vec_scal = f(x, y(0));
-  auto scal_vec = f(x(0), y);
+  auto vec_vec = math::eval(f(x, y));
+  auto vec_scal = math::eval(f(x, y(0)));
+  auto scal_vec = math::eval(f(x(0), y));
   for (int i = 0; i < x.size(); ++i) {
     EXPECT_FLOAT_EQ(f(x(i), y(i)), vec_vec(i));
     EXPECT_FLOAT_EQ(f(x(i), y(0)), vec_scal(i));
@@ -91,9 +91,9 @@ void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
 template <typename F, typename T1, typename T2,
           require_all_vector_t<T1, T2>* = nullptr>
 void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
-  auto vec_vec = f(x, y);
-  auto vec_scal = f(x, y[0]);
-  auto scal_vec = f(x[0], y);
+  auto vec_vec = math::eval(f(x, y));
+  auto vec_scal = math::eval(f(x, y[0]));
+  auto scal_vec = math::eval(f(x[0], y));
   for (int i = 0; i < x.size(); ++i) {
     EXPECT_FLOAT_EQ(f(x[i], y[i]), vec_vec[i]);
     EXPECT_FLOAT_EQ(f(x[i], y[0]), vec_scal[i]);
@@ -163,7 +163,7 @@ template <typename F, typename T1, typename T2,
           require_eigen_matrix_dynamic_t<T1>* = nullptr,
           require_std_vector_t<T2>* = nullptr>
 void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
-  auto vec_vec = f(x, y);
+  auto vec_vec = math::eval(f(x, y));
   for (int r = 0; r < x.rows(); ++r) {
     for (int c = 0; c < x.cols(); ++c) {
       EXPECT_FLOAT_EQ(f(x(r, c), y[r][c]), vec_vec(r, c));
@@ -216,7 +216,7 @@ template <typename F, typename T1, typename T2,
           require_std_vector_t<T1>* = nullptr,
           require_eigen_matrix_dynamic_t<T2>* = nullptr>
 void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
-  auto vec_vec = f(x, y);
+  auto vec_vec = math::eval(f(x, y));
   for (int r = 0; r < y.rows(); ++r) {
     for (int c = 0; c < y.cols(); ++c) {
       EXPECT_FLOAT_EQ(f(x[r][c], y(r, c)), vec_vec(r, c));

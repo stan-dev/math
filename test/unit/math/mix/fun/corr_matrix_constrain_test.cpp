@@ -14,21 +14,20 @@ int inv_size(const T& x) {
 }
 
 template <typename T>
-typename Eigen::Matrix<typename stan::scalar_type<T>::type, -1, -1> g1(
-    const T& x) {
-  return stan::math::corr_matrix_constrain(x, inv_size(x));
+auto g1(const T& x) {
+  stan::scalar_type_t<T> lp = 0;
+  return stan::math::corr_matrix_constrain<false>(x, inv_size(x), lp);
 }
 template <typename T>
-typename Eigen::Matrix<typename stan::scalar_type<T>::type, -1, -1> g2(
-    const T& x) {
-  typename stan::scalar_type<T>::type lp = 0;
-  auto a = stan::math::corr_matrix_constrain(x, inv_size(x), lp);
+auto g2(const T& x) {
+  stan::scalar_type_t<T> lp = 0;
+  auto a = stan::math::corr_matrix_constrain<true>(x, inv_size(x), lp);
   return a;
 }
 template <typename T>
-typename stan::scalar_type<T>::type g3(const T& x) {
-  typename stan::scalar_type<T>::type lp = 0;
-  stan::math::corr_matrix_constrain(x, inv_size(x), lp);
+auto g3(const T& x) {
+  stan::scalar_type_t<T> lp = 0;
+  stan::math::corr_matrix_constrain<true>(x, inv_size(x), lp);
   return lp;
 }
 
@@ -64,4 +63,57 @@ TEST(MathMixMatFun, corr_matrixTransform) {
   Eigen::VectorXd v6(6);
   v6 << 1, 2, -3, 1.5, 0.2, 2;
   corr_matrix_constrain_test::expect_corr_matrix_transform(v6);
+}
+
+TEST(mathMixMatFun, corr_matrix_constrain) {
+  auto f = [](int K) {
+    return [K](const auto& x1) {
+      stan::scalar_type_t<decltype(x1)> lp = 0.0;
+      return stan::math::corr_matrix_constrain<false>(x1, K, lp);
+    };
+  };
+
+  Eigen::VectorXd x1(6);
+  x1 << -0.9, 0.2, 0.99, 0.1, 0.2, 0.3;
+  Eigen::VectorXd x2(3);
+  x2 << -0.3, 0.2, -0.99;
+  stan::test::expect_ad(f(4), x1);
+  stan::test::expect_ad(f(3), x2);
+  stan::test::expect_ad_matvar(f(4), x1);
+  stan::test::expect_ad_matvar(f(3), x2);
+}
+
+TEST(mathMixMatFun, corr_matrix_constrain_lp) {
+  auto f1 = [](int K) {
+    return [K](const auto& x1) {
+      stan::scalar_type_t<decltype(x1)> lp = 0.0;
+      return stan::math::corr_matrix_constrain<true>(x1, K, lp);
+    };
+  };
+
+  auto f2 = [](int K) {
+    return [K](const auto& x1) {
+      stan::scalar_type_t<decltype(x1)> lp = 0.0;
+      stan::math::corr_matrix_constrain<true>(x1, K, lp);
+      return lp;
+    };
+  };
+
+  Eigen::VectorXd x1(6);
+  x1 << -0.9, 0.0, 0.99, 0.1, 0.2, 0.3;
+  Eigen::VectorXd x2(3);
+  x2 << -0.3, 0.2, -0.99;
+  Eigen::VectorXd x3(1);
+  x3 << 0.1;
+  stan::test::expect_ad(f1(4), x1);
+  stan::test::expect_ad(f1(3), x2);
+
+  stan::test::expect_ad_matvar(f1(4), x1);
+  stan::test::expect_ad_matvar(f1(3), x2);
+
+  stan::test::expect_ad(f2(4), x1);
+  stan::test::expect_ad(f2(3), x2);
+
+  stan::test::expect_ad_matvar(f2(4), x1);
+  stan::test::expect_ad_matvar(f2(3), x2);
 }

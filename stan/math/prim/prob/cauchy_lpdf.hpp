@@ -3,6 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
@@ -34,11 +37,12 @@ namespace math {
  * @param sigma (Sequence of) scale(s).
  * @return The log of the product of densities.
  */
-template <bool propto, typename T_y, typename T_loc, typename T_scale>
+template <bool propto, typename T_y, typename T_loc, typename T_scale,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_loc, T_scale>* = nullptr>
 return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
                                                const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
-  using T_partials_array = Eigen::Array<T_partials_return, Eigen::Dynamic, 1>;
   using std::log;
   using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
   using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
@@ -61,17 +65,9 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
   operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref> ops_partials(
       y_ref, mu_ref, sigma_ref);
 
-  const auto& y_col = as_column_vector_or_scalar(y_ref);
-  const auto& mu_col = as_column_vector_or_scalar(mu_ref);
-  const auto& sigma_col = as_column_vector_or_scalar(sigma_ref);
-
-  const auto& y_arr = as_array_or_scalar(y_col);
-  const auto& mu_arr = as_array_or_scalar(mu_col);
-  const auto& sigma_arr = as_array_or_scalar(sigma_col);
-
-  ref_type_t<decltype(value_of(y_arr))> y_val = value_of(y_arr);
-  ref_type_t<decltype(value_of(mu_arr))> mu_val = value_of(mu_arr);
-  ref_type_t<decltype(value_of(sigma_arr))> sigma_val = value_of(sigma_arr);
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  decltype(auto) mu_val = to_ref(as_value_column_array_or_scalar(mu_ref));
+  decltype(auto) sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
   check_not_nan(function, "Random variable", y_val);
   check_finite(function, "Location parameter", mu_val);
   check_positive_finite(function, "Scale parameter", sigma_val);
@@ -97,37 +93,24 @@ return_type_t<T_y, T_loc, T_scale> cauchy_lpdf(const T_y& y, const T_loc& mu,
     const auto& y_minus_mu_squared
         = to_ref_if<!is_constant_all<T_scale>::value>(square(y_minus_mu));
     if (!is_constant_all<T_y, T_loc>::value) {
-      const auto& mu_deriv
-          = to_ref_if < !is_constant_all<T_y>::value
-            && !is_constant_all<T_loc>::value
-                   > (2 * y_minus_mu / (sigma_squared + y_minus_mu_squared));
+      auto mu_deriv = to_ref_if<(!is_constant_all<T_y>::value
+                                 && !is_constant_all<T_loc>::value)>(
+          2 * y_minus_mu / (sigma_squared + y_minus_mu_squared));
       if (!is_constant_all<T_y>::value) {
         if (is_vector<T_y>::value) {
-          ops_partials.edge1_.partials_
-              = forward_as<T_partials_array>(-mu_deriv);
+          ops_partials.edge1_.partials_ = -mu_deriv;
         } else {
           ops_partials.edge1_.partials_[0] = -sum(mu_deriv);
         }
       }
       if (!is_constant_all<T_loc>::value) {
-        if (is_vector<T_loc>::value) {
-          ops_partials.edge2_.partials_
-              = std::move(forward_as<T_partials_array>(mu_deriv));
-        } else {
-          ops_partials.edge2_.partials_[0] = sum(mu_deriv);
-        }
+        ops_partials.edge2_.partials_ = std::move(mu_deriv);
       }
     }
     if (!is_constant_all<T_scale>::value) {
-      if (is_vector<T_scale>::value) {
-        ops_partials.edge3_.partials_ = forward_as<T_partials_array>(
-            (y_minus_mu_squared - sigma_squared) * inv_sigma
-            / (sigma_squared + y_minus_mu_squared));
-      } else {
-        ops_partials.edge3_.partials_[0]
-            = sum((y_minus_mu_squared - sigma_squared) * inv_sigma
-                  / (sigma_squared + y_minus_mu_squared));
-      }
+      ops_partials.edge3_.partials_ = (y_minus_mu_squared - sigma_squared)
+                                      * inv_sigma
+                                      / (sigma_squared + y_minus_mu_squared);
     }
   }
   return ops_partials.build(logp);

@@ -9,6 +9,7 @@
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/square.hpp>
@@ -20,7 +21,9 @@
 namespace stan {
 namespace math {
 
-template <typename T_y>
+template <
+    typename T_y,
+    require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T_y>* = nullptr>
 inline return_type_t<T_y> std_normal_lcdf(const T_y& y) {
   using T_partials_return = partials_return_t<T_y>;
   using std::exp;
@@ -43,7 +46,7 @@ inline return_type_t<T_y> std_normal_lcdf(const T_y& y) {
   size_t N = stan::math::size(y);
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
+    const T_partials_return y_dbl = y_vec.val(n);
     const T_partials_return scaled_y = y_dbl * INV_SQRT_TWO;
     const T_partials_return x2 = square(scaled_y);
 

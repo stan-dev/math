@@ -10,6 +10,7 @@
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -20,7 +21,9 @@
 namespace stan {
 namespace math {
 
-template <typename T_y, typename T_loc, typename T_scale>
+template <typename T_y, typename T_loc, typename T_scale,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_loc, T_scale>* = nullptr>
 inline return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y,
                                                       const T_loc& mu,
                                                       const T_scale& sigma) {
@@ -57,9 +60,9 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lcdf(const T_y& y,
   size_t N = max_size(y, mu, sigma);
 
   for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return mu_dbl = value_of(mu_vec[n]);
-    const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
+    const T_partials_return y_dbl = y_vec.val(n);
+    const T_partials_return mu_dbl = mu_vec.val(n);
+    const T_partials_return sigma_dbl = sigma_vec.val(n);
 
     const T_partials_return scaled_diff
         = (y_dbl - mu_dbl) / (sigma_dbl * SQRT_TWO);

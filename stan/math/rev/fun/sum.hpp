@@ -5,52 +5,16 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/arena_matrix.hpp>
-#include <stan/math/rev/functor/reverse_pass_callback.hpp>
+#include <stan/math/rev/core/reverse_pass_callback.hpp>
+#include <stan/math/rev/fun/to_arena.hpp>
 #include <stan/math/rev/fun/sum.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
-#include <stan/math/rev/fun/typedefs.hpp>
+#include <stan/math/rev/core/typedefs.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <vector>
 
 namespace stan {
 namespace math {
-
-/**
- * Class for sums of variables constructed with standard vectors.
- * There's an extension for Eigen matrices.
- */
-class sum_v_vari : public vari {
- protected:
-  vari** v_;
-  size_t length_;
-
-  inline static double sum_of_val(const std::vector<var>& v) {
-    double result = 0;
-    for (auto x : v) {
-      result += x.val();
-    }
-    return result;
-  }
-
- public:
-  explicit sum_v_vari(double value, vari** v, size_t length)
-      : vari(value), v_(v), length_(length) {}
-
-  explicit sum_v_vari(const std::vector<var>& v1)
-      : vari(sum_of_val(v1)),
-        v_(reinterpret_cast<vari**>(ChainableStack::instance_->memalloc_.alloc(
-            v1.size() * sizeof(vari*)))),
-        length_(v1.size()) {
-    for (size_t i = 0; i < length_; i++) {
-      v_[i] = v1[i].vi_;
-    }
-  }
-
-  virtual void chain() {
-    for (size_t i = 0; i < length_; i++) {
-      v_[i]->adj_ += adj_;
-    }
-  }
-};
 
 /**
  * Returns the sum of the entries of the specified vector.
@@ -58,11 +22,16 @@ class sum_v_vari : public vari {
  * @param m Vector.
  * @return Sum of vector entries.
  */
-inline var sum(const std::vector<var>& m) {
-  if (m.empty()) {
+template <typename Alloc>
+inline var sum(const std::vector<var, Alloc>& m) {
+  if (unlikely(m.empty())) {
     return 0.0;
+  } else {
+    auto arena_m = to_arena(as_array_or_scalar(m));
+    return make_callback_var(arena_m.val().sum(), [arena_m](auto& vi) mutable {
+      arena_m.adj() += vi.adj();
+    });
   }
-  return var(new sum_v_vari(m));
 }
 
 /**
@@ -77,10 +46,9 @@ inline var sum(const std::vector<var>& m) {
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline var sum(const T& x) {
   arena_t<T> x_arena = x;
-  var res(sum(value_of(x_arena)));
-  reverse_pass_callback(
-      [res, x_arena]() mutable { x_arena.adj().array() += res.adj(); });
-  return res;
+  return make_callback_var(sum(x_arena.val()), [x_arena](auto& vi) mutable {
+    x_arena.adj().array() += vi.adj();
+  });
 }
 
 }  // namespace math

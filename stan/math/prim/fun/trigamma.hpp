@@ -156,7 +156,8 @@ struct trigamma_fun {
  * @param x container
  * @return elementwise trigamma of container elements
  */
-template <typename T>
+template <typename T,
+          require_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
 inline auto trigamma(const T& x) {
   return apply_scalar_unary<trigamma_fun, T>::apply(x);
 }

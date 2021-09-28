@@ -7,14 +7,16 @@ Call script with '-h' as an option to see a helpful message.
 """
 
 from __future__ import print_function
-from argparse import ArgumentParser, RawTextHelpFormatter
+
+import glob
 import os
 import os.path
 import platform
+import re
 import subprocess
 import sys
 import time
-import re
+from argparse import ArgumentParser, RawTextHelpFormatter
 
 winsfx = ".exe"
 testsfx = "_test.cpp"
@@ -25,11 +27,12 @@ allowed_paths_with_jumbo = [
     "test/unit/math/rev/",
     "test/unit/math/fwd/",
     "test/unit/math/mix/",
+    "test/unit/math/opencl/",
     "test/unit/",
 ]
 
 jumbo_folders = [
-    "test/unit/math/prim/core",
+    #"test/unit/math/prim/core",
     "test/unit/math/prim/err",
     "test/unit/math/prim/fun",
     "test/unit/math/prim/functor",
@@ -38,19 +41,23 @@ jumbo_folders = [
     # "test/unit/math/rev/core",
     "test/unit/math/rev/err",
     "test/unit/math/rev/fun",
-    #"test/unit/math/rev/functor",
+    # "test/unit/math/rev/functor",
     "test/unit/math/rev/meta",
     "test/unit/math/rev/prob",
     # "test/unit/math/fwd/core",
     "test/unit/math/fwd/fun",
-    #"test/unit/math/fwd/functor",
+    # "test/unit/math/fwd/functor",
     "test/unit/math/fwd/meta",
     "test/unit/math/fwd/prob",
     # "test/unit/math/mix/core",
     "test/unit/math/mix/fun",
-    #"test/unit/math/mix/functor",
+    # "test/unit/math/mix/functor",
     "test/unit/math/mix/meta",
-    "test/unit/math/mix/prob"
+    "test/unit/math/mix/prob",
+    "test/unit/math/opencl/device_functions",
+    "test/unit/math/opencl/kernel_generator",
+    "test/unit/math/opencl/prim",
+    "test/unit/math/opencl/rev",
 ]
 
 
@@ -72,6 +79,13 @@ def processCLIArgs():
         "-j", metavar="N", type=int, default=1, help="number of cores for make to use"
     )
 
+    parser.add_argument(
+        "-e",
+        metavar="M",
+        type=int,
+        default=-1,
+        help="number of files to split expressions tests in",
+    )
     tests_help_msg = "The path(s) to the test case(s) to run.\n"
     tests_help_msg += "Example: 'test/unit', 'test/prob', and/or\n"
     tests_help_msg += "         'test/unit/math/prim/fun/abs_test.cpp'"
@@ -130,7 +144,7 @@ def isWin():
 
 
 batchSize = 20 if isWin() else 200
-
+jumboSize = 5 if isWin() else 15
 
 def mungeName(name):
     """Set up the makefile target name"""
@@ -140,7 +154,6 @@ def mungeName(name):
         if isWin():
             name += winsfx
             name = name.replace("\\", "/")
-
     return name
 
 
@@ -180,7 +193,7 @@ def generateJumboTests(paths):
             stopErr("The --jumbo flag is only allowed with top level folders.", 10)
     for jf in jumbo_files_to_create:
         tests_in_subfolder = sorted([x for x in os.listdir(jf) if x.endswith(testsfx)])
-        chunked_tests = divide_chunks(tests_in_subfolder, 15)
+        chunked_tests = divide_chunks(tests_in_subfolder, jumboSize)
         i = 0
         for tests in chunked_tests:
             i = i + 1
@@ -234,16 +247,28 @@ def runTest(name, run_all=False, mpi=False, j=1):
     doCommand(command, not run_all)
 
 
+def test_files_in_folder(folder):
+    """Returns a list of test files (*_test.cpp) in the folder and all
+    its subfolders recursively. The folder can be written with
+    wildcards as with the Unix find command.
+    """
+    files = []
+    for f in glob.glob(folder):
+        if os.path.isdir(f):
+            files.extend(test_files_in_folder(f + os.sep + "**"))
+        else:
+            if f.endswith(testsfx):
+                files.append(f)
+    return files
+
+
 def findTests(base_path, filter_names, do_jumbo=False):
-    folders = filter(os.path.isdir, base_path)
-    nonfolders = list(set(base_path) - set(folders))
-    tests = nonfolders + [
-        os.path.join(root, n)
-        for f in folders
-        for root, _, names in os.walk(f)
-        for n in names
-        if n.endswith(testsfx)
-    ]
+    tests = []
+    for path in base_path:
+        if (not os.path.isdir(path)) and path.endswith("_test"):
+            tests.append(path + ".cpp")
+        else:
+            tests.extend(test_files_in_folder(path))
     tests = map(mungeName, tests)
     tests = [
         test
@@ -269,20 +294,19 @@ def batched(tests):
     return [tests[i : i + batchSize] for i in range(0, len(tests), batchSize)]
 
 
-def handleExpressionTests(tests, only_functions, j):
-    # for debugging we want single file, otherwise a large number to
-    # better distribute the compiling workload
-    n_test_files = 1 if j == 1 else 2 * j
+def handleExpressionTests(tests, only_functions, n_test_files):
     expression_tests = False
     for n, i in list(enumerate(tests))[::-1]:
         if "test/expressions" in i or "test\\expressions" in i:
             del tests[n]
             expression_tests = True
     if expression_tests:
-        sys.path.append("test/expressions")
-        import generateExpressionTests
+        HERE = os.path.dirname(os.path.realpath(__file__))
+        sys.path.append(os.path.join(HERE, "test"))
+        sys.path.append(os.path.join(HERE, "test/expressions"))
+        import generate_expression_tests
 
-        generateExpressionTests.main(only_functions, n_test_files)
+        generate_expression_tests.main(only_functions, n_test_files)
         for i in range(n_test_files):
             tests.append("test/expressions/tests%d_test.cpp" % i)
     elif only_functions:
@@ -317,7 +341,6 @@ def main():
             stan_mpi = "STAN_MPI" in f.read()
     except IOError:
         stan_mpi = False
-
     # pass 0: generate all auto-generated tests
     if any(["test/prob" in arg for arg in inputs.tests]):
         generateTests(inputs.j)
@@ -326,8 +349,14 @@ def main():
     jumboFiles = []
     if inputs.do_jumbo:
         jumboFiles = generateJumboTests(tests)
-
-    handleExpressionTests(tests, inputs.only_functions, inputs.j)
+    if inputs.e == -1:
+        if inputs.j == 1:
+            num_expr_test_files = 1
+        else:
+            num_expr_test_files = inputs.j * 4
+    else:
+        num_expr_test_files = inputs.e
+    handleExpressionTests(tests, inputs.only_functions, num_expr_test_files)
 
     tests = findTests(inputs.tests, inputs.f, inputs.do_jumbo)
 
@@ -335,20 +364,17 @@ def main():
         stopErr("No matching tests found.", -1)
     if inputs.debug:
         print("Collected the following tests:\n", tests)
-
     # pass 1: make test executables
     for batch in batched(tests):
         if inputs.debug:
             print("Test batch: ", batch)
         makeTest(" ".join(batch), inputs.j)
-
     if not inputs.make_only:
         # pass 2: run test targets
         for t in tests:
             if inputs.debug:
                 print("run single test: %s" % testname)
             runTest(t, inputs.run_all, mpi=stan_mpi, j=inputs.j)
-
     cleanupJumboTests(jumboFiles)
 
 

@@ -6,7 +6,7 @@
 #include <stan/math/opencl/kernel_generator/operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/multi_result_kernel.hpp>
-#include <CL/cl2.hpp>
+#include <CL/opencl.hpp>
 #include <string>
 #include <set>
 

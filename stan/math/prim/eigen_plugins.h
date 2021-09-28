@@ -158,6 +158,7 @@ struct adj_Op {
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
     std::enable_if_t<!std::is_pointer<T>::value, reverse_return_t<T>>
       operator()(T &v) const { return v.vi_->adj_; }
+
 };
 
 /**

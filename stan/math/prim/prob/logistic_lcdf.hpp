@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
@@ -17,7 +18,9 @@
 namespace stan {
 namespace math {
 
-template <typename T_y, typename T_loc, typename T_scale>
+template <typename T_y, typename T_loc, typename T_scale,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_loc, T_scale>* = nullptr>
 return_type_t<T_y, T_loc, T_scale> logistic_lcdf(const T_y& y, const T_loc& mu,
                                                  const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale>;
@@ -52,7 +55,7 @@ return_type_t<T_y, T_loc, T_scale> logistic_lcdf(const T_y& y, const T_loc& mu,
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::math::size(y); i++) {
-    if (value_of(y_vec[i]) == NEGATIVE_INFTY) {
+    if (y_vec.val(i) == NEGATIVE_INFTY) {
       return ops_partials.build(NEGATIVE_INFTY);
     }
   }
@@ -60,14 +63,14 @@ return_type_t<T_y, T_loc, T_scale> logistic_lcdf(const T_y& y, const T_loc& mu,
   for (size_t n = 0; n < N; n++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
-    if (value_of(y_vec[n]) == INFTY) {
+    if (y_vec.val(n) == INFTY) {
       continue;
     }
 
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    const T_partials_return mu_dbl = value_of(mu_vec[n]);
-    const T_partials_return sigma_dbl = value_of(sigma_vec[n]);
-    const T_partials_return sigma_inv_vec = 1.0 / value_of(sigma_vec[n]);
+    const T_partials_return y_dbl = y_vec.val(n);
+    const T_partials_return mu_dbl = mu_vec.val(n);
+    const T_partials_return sigma_dbl = sigma_vec.val(n);
+    const T_partials_return sigma_inv_vec = 1.0 / sigma_vec.val(n);
 
     const T_partials_return Pn
         = 1.0 / (1.0 + exp(-(y_dbl - mu_dbl) * sigma_inv_vec));

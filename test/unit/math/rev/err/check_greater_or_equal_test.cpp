@@ -217,3 +217,165 @@ TEST(AgradRevErrorHandlingScalar, CheckGreaterOrEqualVarCheckUnivariate) {
 
   stan::math::recover_memory();
 }
+
+TEST(AgradRevErrorHandlingMatrix, CheckGreaterOrEqualVarMatrix) {
+  using stan::math::check_greater_or_equal;
+  using stan::math::var;
+  using stan::math::var_value;
+  const char* function = "check_greater_or_equal";
+  var x;
+  var low;
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> x_vec_val(3, 1);
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> low_vec_val(3, 1);
+  var_value<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> x_vec(
+      x_vec_val);
+  var_value<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>> low_vec(
+      low_vec_val);
+
+  // x_vec, low_vec
+  x_vec_val << -1, 0, 1;
+  low_vec_val << -2, -1, 0;
+  x_vec = x_vec_val;
+  low_vec = low_vec_val;
+  EXPECT_NO_THROW(check_greater_or_equal(function, "x", x_vec, low_vec))
+      << "check_greater_or_equal: matrix<3, 1>, matrix<3, 1>";
+
+  x_vec_val << -1, 0, 1;
+  low_vec_val << -1.1, -0.1, 0.9;
+  x_vec = x_vec_val;
+  low_vec = low_vec_val;
+  EXPECT_NO_THROW(check_greater_or_equal(function, "x", x_vec, low_vec))
+      << "check_greater_or_equal: matrix<3, 1>, matrix<3, 1>";
+
+  x_vec_val << -1, 0, std::numeric_limits<double>::infinity();
+  low_vec_val << -2, -1, 0;
+  x_vec = x_vec_val;
+  low_vec = low_vec_val;
+  EXPECT_NO_THROW(check_greater_or_equal(function, "x", x_vec, low_vec))
+      << "check_greater_or_equal: matrix<3, 1>, matrix<3, 1>, y has infinity";
+
+  x_vec_val << -1, 0, 1;
+  low_vec_val << -2, 0, 0;
+  x_vec = x_vec_val;
+  low_vec = low_vec_val;
+  EXPECT_NO_THROW(check_greater_or_equal(function, "x", x_vec, low_vec))
+      << "check_greater_or_equal: matrix<3, 1>, matrix<3, 1>, "
+      << "should pass for index 1";
+
+  x_vec_val << -1, 0, 1;
+  low_vec_val << -2, -1, std::numeric_limits<double>::infinity();
+  x_vec = x_vec_val;
+  low_vec = low_vec_val;
+  EXPECT_THROW(check_greater_or_equal(function, "x", x_vec, low_vec),
+               std::domain_error)
+      << "check_greater_or_equal: matrix<3, 1>, matrix<3, 1>, "
+      << "should fail with infinity";
+
+  x_vec_val << -1, 0, std::numeric_limits<double>::infinity();
+  low_vec_val << -2, -1, std::numeric_limits<double>::infinity();
+  x_vec = x_vec_val;
+  low_vec = low_vec_val;
+  EXPECT_NO_THROW(check_greater_or_equal(function, "x", x_vec, low_vec))
+      << "check_greater_or_equal: matrix<3, 1>, matrix<3, 1>, "
+      << "both bound and value infinity";
+
+  x_vec_val << -1, 0, 1;
+  low_vec_val << -2, -1, -std::numeric_limits<double>::infinity();
+  x_vec = x_vec_val;
+  low_vec = low_vec_val;
+  EXPECT_NO_THROW(check_greater_or_equal(function, "x", x_vec, low_vec))
+      << "check_greater_or_equal: matrix<3, 1>, matrix<3, 1>, "
+      << "should pass with -infinity";
+
+  // x_vec, low
+  x_vec_val << -1, 0, 1;
+  low = -2;
+  x_vec = x_vec_val;
+  EXPECT_NO_THROW(check_greater_or_equal(function, "x", x_vec, low))
+      << "check_greater_or_equal: matrix<3, 1>, double";
+
+  x_vec_val << -1, 0, 1;
+  low = -std::numeric_limits<double>::infinity();
+  x_vec = x_vec_val;
+  EXPECT_NO_THROW(check_greater_or_equal(function, "x", x_vec, low))
+      << "check_greater_or_equal: matrix<3, 1>, double";
+
+  x_vec_val << -1, 0, 1;
+  low = 0;
+  x_vec = x_vec_val;
+  EXPECT_THROW(check_greater_or_equal(function, "x", x_vec, low),
+               std::domain_error)
+      << "check_greater_or_equal: matrix<3, 1>, double, "
+      << "should fail for index 1/2";
+
+  x_vec_val << -1, 0, 1;
+  low = std::numeric_limits<double>::infinity();
+  x_vec = x_vec_val;
+  EXPECT_THROW(check_greater_or_equal(function, "x", x_vec, low),
+               std::domain_error)
+      << "check_greater_or_equal: matrix<3, 1>, double, "
+      << "should fail with infinity";
+
+  // x, low_vec
+  x = 2;
+  low_vec_val << -1, 0, 1;
+  low_vec = low_vec_val;
+  EXPECT_NO_THROW(check_greater_or_equal(function, "x", x, low_vec))
+      << "check_greater_or_equal: double, matrix<3, 1>";
+
+  x = 10;
+  low_vec_val << -1, 0, -std::numeric_limits<double>::infinity();
+  low_vec = low_vec_val;
+  EXPECT_NO_THROW(check_greater_or_equal(function, "x", x, low_vec))
+      << "check_greater_or_equal: double, matrix<3, 1>, low has -inf";
+
+  x = 10;
+  low_vec_val << -1, 0, std::numeric_limits<double>::infinity();
+  low_vec = low_vec_val;
+  EXPECT_THROW(check_greater_or_equal(function, "x", x, low_vec),
+               std::domain_error)
+      << "check_greater_or_equal: double, matrix<3, 1>, low has inf";
+
+  x = std::numeric_limits<double>::infinity();
+  low_vec_val << -1, 0, std::numeric_limits<double>::infinity();
+  low_vec = low_vec_val;
+  EXPECT_NO_THROW(check_greater_or_equal(function, "x", x, low_vec))
+      << "check_greater_or_equal: double, matrix<3, 1>, x is inf, low has inf";
+
+  x = std::numeric_limits<double>::infinity();
+  low_vec_val << -1, 0, 1;
+  low_vec = low_vec_val;
+  EXPECT_NO_THROW(check_greater_or_equal(function, "x", x, low_vec))
+      << "check_greater_or_equal: double, matrix<3, 1>, x is inf";
+
+  x = 1.1;
+  low_vec_val << -1, 0, 1;
+  low_vec = low_vec_val;
+  EXPECT_NO_THROW(check_greater_or_equal(function, "x", x, low_vec))
+      << "check_greater_or_equal: double, matrix<3, 1>";
+
+  x = 0.9;
+  low_vec_val << -1, 0, 1;
+  low_vec = low_vec_val;
+  EXPECT_THROW(check_greater_or_equal(function, "x", x, low_vec),
+               std::domain_error)
+      << "check_greater_or_equal: double, matrix<3, 1>";
+  stan::math::recover_memory();
+}
+
+TEST(AgradRevErrorHandlingMatrix, CheckGreaterOrEqualStdVecVarMatrix) {
+  using stan::math::var;
+  std::vector<std::vector<
+      stan::conditional_var_value_t<var, Eigen::Matrix<var, -1, -1>>>>
+      ar_mat = std::vector<std::vector<
+          stan::conditional_var_value_t<var, Eigen::Matrix<var, -1, -1>>>>(
+          4,
+          std::vector<
+              stan::conditional_var_value_t<var, Eigen::Matrix<var, -1, -1>>>(
+              5, stan::conditional_var_value_t<var, Eigen::Matrix<var, -1, -1>>(
+                     Eigen::Matrix<double, -1, -1>::Constant(
+                         2, 3, std::numeric_limits<double>::quiet_NaN()))));
+  EXPECT_THROW(
+      stan::math::check_greater_or_equal("test_ge", "ar_mat", ar_mat, 0),
+      std::domain_error);
+}

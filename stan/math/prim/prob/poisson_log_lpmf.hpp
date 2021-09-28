@@ -3,11 +3,15 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/promote_scalar.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
@@ -19,7 +23,9 @@ namespace stan {
 namespace math {
 
 // PoissonLog(n|alpha)  [n >= 0]   = Poisson(n|exp(alpha))
-template <bool propto, typename T_n, typename T_log_rate>
+template <bool propto, typename T_n, typename T_log_rate,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_n, T_log_rate>* = nullptr>
 return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
                                            const T_log_rate& alpha) {
   using T_partials_return = partials_return_t<T_n, T_log_rate>;
@@ -34,14 +40,8 @@ return_type_t<T_log_rate> poisson_log_lpmf(const T_n& n,
   T_n_ref n_ref = n;
   T_alpha_ref alpha_ref = alpha;
 
-  const auto& n_col = as_column_vector_or_scalar(n_ref);
-  const auto& alpha_col = as_column_vector_or_scalar(alpha_ref);
-
-  const auto& n_arr = as_array_or_scalar(n_col);
-  const auto& alpha_arr = as_array_or_scalar(alpha_col);
-
-  ref_type_t<decltype(value_of(n_arr))> n_val = value_of(n_arr);
-  ref_type_t<decltype(value_of(alpha_arr))> alpha_val = value_of(alpha_arr);
+  decltype(auto) n_val = to_ref(as_value_column_array_or_scalar(n_ref));
+  decltype(auto) alpha_val = to_ref(as_value_column_array_or_scalar(alpha_ref));
 
   check_nonnegative(function, "Random variable", n_val);
   check_not_nan(function, "Log rate parameter", alpha_val);

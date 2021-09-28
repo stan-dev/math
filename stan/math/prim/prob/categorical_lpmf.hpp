@@ -20,7 +20,7 @@ return_type_t<T_prob> categorical_lpmf(int n, const T_prob& theta) {
 
   check_bounded(function, "Number of categories", n, 1, theta.size());
   ref_type_t<T_prob> theta_ref = theta;
-  check_simplex(function, "Probabilities parameter", theta_ref);
+  check_simplex(function, "Probabilities parameter", value_of(theta_ref));
 
   if (include_summand<propto, T_prob>::value) {
     return log(theta_ref.coeff(n - 1));
@@ -36,7 +36,7 @@ return_type_t<T_prob> categorical_lpmf(const std::vector<int>& ns,
 
   check_bounded(function, "element of outcome array", ns, 1, theta.size());
   ref_type_t<T_prob> theta_ref = theta;
-  check_simplex(function, "Probabilities parameter", theta_ref);
+  check_simplex(function, "Probabilities parameter", value_of(theta_ref));
 
   if (!include_summand<propto, T_prob>::value) {
     return 0.0;

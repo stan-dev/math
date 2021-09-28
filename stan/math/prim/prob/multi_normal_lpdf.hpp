@@ -3,12 +3,14 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log_determinant_ldlt.hpp>
 #include <stan/math/prim/fun/max_size_mvt.hpp>
 #include <stan/math/prim/fun/size_mvt.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/trace_inv_quad_form_ldlt.hpp>
+#include <stan/math/prim/fun/vector_seq_view.hpp>
 
 namespace stan {
 namespace math {
@@ -72,7 +74,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
   const auto& Sigma_ref = to_ref(Sigma);
   check_symmetric(function, "Covariance matrix", Sigma_ref);
 
-  LDLT_factor<T_covar_elem, Dynamic, Dynamic> ldlt_Sigma(Sigma_ref);
+  auto ldlt_Sigma = make_ldlt_factor(Sigma_ref);
   check_ldlt_factor(function, "LDLT_Factor of covariance parameter",
                     ldlt_Sigma);
 

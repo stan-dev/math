@@ -31,24 +31,22 @@ namespace math {
  * or not semi-positive definite.
  */
 template <bool propto, typename T_y, typename T_Mu, typename T_Sigma,
-          typename T_D>
+          typename T_D,
+          require_all_matrix_t<T_y, T_Mu, T_Sigma, T_D>* = nullptr>
 return_type_t<T_y, T_Mu, T_Sigma, T_D> matrix_normal_prec_lpdf(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
-    const Eigen::Matrix<T_Mu, Eigen::Dynamic, Eigen::Dynamic>& Mu,
-    const Eigen::Matrix<T_Sigma, Eigen::Dynamic, Eigen::Dynamic>& Sigma,
-    const Eigen::Matrix<T_D, Eigen::Dynamic, Eigen::Dynamic>& D) {
+    const T_y& y, const T_Mu& Mu, const T_Sigma& Sigma, const T_D& D) {
   static const char* function = "matrix_normal_prec_lpdf";
   check_positive(function, "Sigma rows", Sigma.rows());
   check_finite(function, "Sigma", Sigma);
   check_symmetric(function, "Sigma", Sigma);
 
-  LDLT_factor<T_Sigma, Eigen::Dynamic, Eigen::Dynamic> ldlt_Sigma(Sigma);
+  auto ldlt_Sigma = make_ldlt_factor(Sigma);
   check_ldlt_factor(function, "LDLT_Factor of Sigma", ldlt_Sigma);
   check_positive(function, "D rows", D.rows());
   check_finite(function, "D", D);
   check_symmetric(function, "D", D);
 
-  LDLT_factor<T_D, Eigen::Dynamic, Eigen::Dynamic> ldlt_D(D);
+  auto ldlt_D = make_ldlt_factor(D);
   check_ldlt_factor(function, "LDLT_Factor of D", ldlt_D);
   check_size_match(function, "Rows of random variable", y.rows(),
                    "Rows of location parameter", Mu.rows());
@@ -81,12 +79,10 @@ return_type_t<T_y, T_Mu, T_Sigma, T_D> matrix_normal_prec_lpdf(
   return lp;
 }
 
-template <typename T_y, typename T_Mu, typename T_Sigma, typename T_D>
+template <typename T_y, typename T_Mu, typename T_Sigma, typename T_D,
+          require_all_matrix_t<T_y, T_Mu, T_Sigma, T_D>* = nullptr>
 return_type_t<T_y, T_Mu, T_Sigma, T_D> matrix_normal_prec_lpdf(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y,
-    const Eigen::Matrix<T_Mu, Eigen::Dynamic, Eigen::Dynamic>& Mu,
-    const Eigen::Matrix<T_Sigma, Eigen::Dynamic, Eigen::Dynamic>& Sigma,
-    const Eigen::Matrix<T_D, Eigen::Dynamic, Eigen::Dynamic>& D) {
+    const T_y& y, const T_Mu& Mu, const T_Sigma& Sigma, const T_D& D) {
   return matrix_normal_prec_lpdf<false>(y, Mu, Sigma, D);
 }
 

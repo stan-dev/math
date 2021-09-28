@@ -1,10 +1,12 @@
 #ifndef STAN_MATH_PRIM_PROB_BERNOULLI_LOGIT_GLM_LPMF_HPP
 #define STAN_MATH_PRIM_PROB_BERNOULLI_LOGIT_GLM_LPMF_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
@@ -54,10 +56,6 @@ return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
   using std::exp;
   constexpr int T_x_rows = T_x::RowsAtCompileTime;
   using T_partials_return = partials_return_t<T_y, T_x, T_alpha, T_beta>;
-  using T_y_val =
-      typename std::conditional_t<is_vector<T_y>::value,
-                                  Eigen::Matrix<partials_return_t<T_y>, -1, 1>,
-                                  partials_return_t<T_y>>;
   using T_ytheta_tmp =
       typename std::conditional_t<T_x_rows == 1, T_partials_return,
                                   Array<T_partials_return, Dynamic, 1>>;

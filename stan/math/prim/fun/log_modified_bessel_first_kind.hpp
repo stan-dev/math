@@ -18,6 +18,7 @@
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <stan/math/prim/fun/log1p.hpp>
 #include <stan/math/prim/fun/log1p_exp.hpp>
+#include <stan/math/prim/fun/multiply_log.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/fun/square.hpp>
 #include <stan/math/prim/functor/apply_scalar_binary.hpp>

@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -18,7 +19,9 @@ namespace stan {
 namespace math {
 
 // NegBinomial(n|mu, phi)  [mu >= 0; phi > 0;  n >= 0]
-template <bool propto, typename T_n, typename T_location, typename T_precision>
+template <bool propto, typename T_n, typename T_location, typename T_precision,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_n, T_location, T_precision>* = nullptr>
 return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
     const T_n& n, const T_location& mu, const T_precision& phi) {
   using T_partials_return = partials_return_t<T_n, T_location, T_precision>;
@@ -59,13 +62,13 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
 
   VectorBuilder<true, T_partials_return, T_location> mu_val(size_mu);
   for (size_t i = 0; i < size_mu; ++i) {
-    mu_val[i] = value_of(mu_vec[i]);
+    mu_val[i] = mu_vec.val(i);
   }
 
   VectorBuilder<true, T_partials_return, T_precision> phi_val(size_phi);
   VectorBuilder<true, T_partials_return, T_precision> log_phi(size_phi);
   for (size_t i = 0; i < size_phi; ++i) {
-    phi_val[i] = value_of(phi_vec[i]);
+    phi_val[i] = phi_vec.val(i);
     log_phi[i] = log(phi_val[i]);
   }
 
@@ -96,18 +99,18 @@ return_type_t<T_location, T_precision> neg_binomial_2_lpmf(
 
     if (!is_constant_all<T_location>::value) {
       ops_partials.edge1_.partials_[i]
-          += n_vec[i] / mu_val[i] - (n_vec[i] + phi_val[i]) / (mu_plus_phi[i]);
+          += n_vec[i] / mu_val[i] - (n_vec[i] + phi_val[i]) / mu_plus_phi[i];
     }
     if (!is_constant_all<T_precision>::value) {
       T_partials_return log_term;
       if (mu_val[i] < phi_val[i]) {
-        log_term = log1p(-mu_val[i] / (mu_plus_phi[i]));
+        log_term = log1p(-mu_val[i] / mu_plus_phi[i]);
       } else {
         log_term = log_phi[i] - log_mu_plus_phi[i];
       }
       ops_partials.edge2_.partials_[i]
-          += (mu_val[i] - n_vec[i]) / (mu_plus_phi[i]) + log_term
-             - (digamma(phi_val[i]) - digamma(n_plus_phi[i]));
+          += (mu_val[i] - n_vec[i]) / mu_plus_phi[i] + log_term
+             - digamma(phi_val[i]) + digamma(n_plus_phi[i]);
     }
   }
   return ops_partials.build(logp);

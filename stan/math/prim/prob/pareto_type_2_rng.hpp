@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/prob/exponential_rng.hpp>
 #include <stan/math/prim/prob/normal_rng.hpp>
 #include <boost/random/uniform_real_distribution.hpp>

@@ -5,7 +5,7 @@
 #include <stan/math/opencl/prim/sum.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
-#include <stan/math/rev/functor/reverse_pass_callback.hpp>
+#include <stan/math/rev/core/reverse_pass_callback.hpp>
 
 namespace stan {
 namespace math {
@@ -17,10 +17,11 @@ namespace math {
  * @param x Specified var_value containing a matrix.
  * @return Sum of coefficients of matrix.
  */
-inline var sum(const var_value<matrix_cl<double>>& x) {
-  var res = sum(value_of(x));
-  reverse_pass_callback([res, x]() mutable { x.adj() = x.adj() + res.adj(); });
-  return res;
+template <typename T,
+          require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
+inline var sum(const var_value<T>& x) {
+  return make_callback_var(sum(value_of(x)),
+                           [x](vari& res) mutable { x.adj() += res.adj(); });
 }
 
 }  // namespace math

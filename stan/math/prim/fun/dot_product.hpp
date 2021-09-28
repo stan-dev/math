@@ -12,21 +12,16 @@ namespace math {
 /**
  * Returns the dot product of the specified vectors.
  *
- * @tparam R1 number of rows in the first vector, can be Eigen::Dynamic
- * @tparam C1 number of columns in the first vector, can be Eigen::Dynamic
- * @tparam R2 number of rows in the second vector, can be Eigen::Dynamic
- * @tparam C2 number of columns in the second vector, can be Eigen::Dynamic
- *
  * @param v1 First vector.
  * @param v2 Second vector.
  * @return Dot product of the vectors.
- * @throw std::domain_error If the vectors are not the same
+ * @throw std::invalid_argument If the vectors are not the same
  * size or if they are both not vector dimensioned.
  */
 template <typename Vec1, typename Vec2,
-          typename = require_all_eigen_vector_t<Vec1, Vec2>,
-          typename = require_all_not_eigen_vt<is_var, Vec1, Vec2>>
-inline return_type_t<Vec1, Vec2> dot_product(const Vec1 &v1, const Vec2 &v2) {
+          require_all_eigen_vector_t<Vec1, Vec2> * = nullptr,
+          require_not_var_t<return_type_t<Vec1, Vec2>> * = nullptr>
+inline auto dot_product(const Vec1 &v1, const Vec2 &v2) {
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);
   return v1.dot(v2);
 }
@@ -39,8 +34,8 @@ inline return_type_t<Vec1, Vec2> dot_product(const Vec1 &v1, const Vec2 &v2) {
  * @param length Length of both arrays.
  */
 template <typename Scalar1, typename Scalar2,
-          typename = require_all_stan_scalar_t<Scalar1, Scalar2>,
-          typename = require_all_not_var_t<Scalar1, Scalar2>>
+          require_all_stan_scalar_t<Scalar1, Scalar2> * = nullptr,
+          require_all_not_var_t<Scalar1, Scalar2> * = nullptr>
 inline auto dot_product(const Scalar1 *v1, const Scalar2 *v2, size_t length) {
   return_type_t<Scalar1, Scalar2> result = 0;
   for (size_t i = 0; i < length; i++) {
@@ -57,12 +52,18 @@ inline auto dot_product(const Scalar1 *v1, const Scalar2 *v2, size_t length) {
  * @throw std::domain_error if the vectors are not the same size.
  */
 template <typename Scalar1, typename Scalar2, typename Alloc1, typename Alloc2,
-          typename = require_all_stan_scalar_t<Scalar1, Scalar2>,
-          typename = require_all_not_var_t<Scalar1, Scalar2>>
-inline auto dot_product(const std::vector<Scalar1, Alloc1> &v1,
-                        const std::vector<Scalar2, Alloc2> &v2) {
+          require_all_stan_scalar_t<Scalar1, Scalar2> * = nullptr>
+inline return_type_t<Scalar1, Scalar2> dot_product(
+    const std::vector<Scalar1, Alloc1> &v1,
+    const std::vector<Scalar2, Alloc2> &v2) {
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);
-  return dot_product(&v1[0], &v2[0], v1.size());
+
+  if (v1.size() == 0) {
+    return 0.0;
+  }
+
+  return dot_product(as_column_vector_or_scalar(v1),
+                     as_column_vector_or_scalar(v2));
 }
 
 }  // namespace math

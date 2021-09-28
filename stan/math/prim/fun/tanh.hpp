@@ -36,7 +36,10 @@ struct tanh_fun {
  * @return Hyperbolic tangent of each value in x.
  */
 template <typename Container,
-          require_not_container_st<std::is_arithmetic, Container>* = nullptr>
+          require_not_container_st<std::is_arithmetic, Container>* = nullptr,
+          require_not_var_matrix_t<Container>* = nullptr,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              Container>* = nullptr>
 inline auto tanh(const Container& x) {
   return apply_scalar_unary<tanh_fun, Container>::apply(x);
 }
@@ -67,7 +70,6 @@ namespace internal {
 template <typename V>
 inline std::complex<V> complex_tanh(const std::complex<V>& z) {
   using std::exp;
-  using stan::math::operator/;
   auto exp_z = exp(z);
   auto exp_neg_z = exp(-z);
   return stan::math::internal::complex_divide(exp_z - exp_neg_z,

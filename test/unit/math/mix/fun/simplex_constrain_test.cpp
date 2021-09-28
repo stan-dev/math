@@ -3,17 +3,18 @@
 namespace simplex_constrain_test {
 template <typename T>
 T g1(const T& x) {
-  return stan::math::simplex_constrain(x);
+  stan::scalar_type_t<T> lp = 0;
+  return stan::math::simplex_constrain<false>(x, lp);
 }
 template <typename T>
 T g2(const T& x) {
-  typename stan::scalar_type<T>::type lp = 0;
-  return stan::math::simplex_constrain(x, lp);
+  stan::scalar_type_t<T> lp = 0;
+  return stan::math::simplex_constrain<true>(x, lp);
 }
 template <typename T>
 typename stan::scalar_type<T>::type g3(const T& x) {
-  typename stan::scalar_type<T>::type lp = 0;
-  stan::math::simplex_constrain(x, lp);
+  stan::scalar_type_t<T> lp = 0;
+  stan::math::simplex_constrain<true>(x, lp);
   return lp;
 }
 
@@ -25,7 +26,9 @@ void expect_simplex_transform(const T& x) {
   stan::test::expect_ad(f1, x);
   stan::test::expect_ad_matvar(f1, x);
   stan::test::expect_ad(f2, x);
+  stan::test::expect_ad_matvar(f2, x);
   stan::test::expect_ad(f3, x);
+  stan::test::expect_ad_matvar(f3, x);
 }
 }  // namespace simplex_constrain_test
 

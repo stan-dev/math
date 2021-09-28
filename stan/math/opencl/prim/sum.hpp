@@ -19,16 +19,18 @@ namespace math {
 template <typename T,
           require_all_kernel_expressions_and_none_scalar_t<T>* = nullptr>
 value_type_t<T> sum(const T& m) {
-  matrix_cl<value_type_t<T>> res;
-  if (m.rows() == 1) {
-    // using rowwise_sum would run just 1 thread
-    res = colwise_sum(transpose(m));
-  } else if (m.cols() == 1) {
-    res = colwise_sum(m);
-  } else {
-    res = colwise_sum(rowwise_sum(m));
+  if (is_matrix_cl<T>::value && m.size() < 1000) {
+    // for small matrices running another kernel is not worth it
+    return sum(from_matrix_cl(m));
   }
-  return sum(from_matrix_cl<Eigen::Dynamic, 1>(res));
+  matrix_cl<value_type_t<T>> res;
+  if (m.rows() <= 8) {
+    // without transpose we would use just a few threads in a work group
+    res = sum_2d(transpose(m));
+  } else {
+    res = sum_2d(m);
+  }
+  return sum(from_matrix_cl(res));
 }
 
 }  // namespace math

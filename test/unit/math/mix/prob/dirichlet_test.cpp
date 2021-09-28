@@ -1,8 +1,40 @@
-#include <stan/math/mix.hpp>
-#include <gtest/gtest.h>
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/math/distributions.hpp>
-#include <vector>
+#include <test/unit/math/test_ad.hpp>
+
+namespace dirichlet_test {
+template <typename T>
+std::vector<T> vectorize_softmax(const std::vector<T>& y) {
+  std::vector<T> y_simplex;
+  for (size_t i = 0; i < y.size(); ++i) {
+    y_simplex.push_back(stan::math::softmax(y[i]));
+  }
+  return y_simplex;
+}
+
+template <typename T, stan::require_not_std_vector_t<T>* = nullptr>
+T vectorize_softmax(const T& y) {
+  return stan::math::softmax(y);
+}
+}  // namespace dirichlet_test
+
+TEST(ProbDistributions, dirichlet) {
+  auto f = [](const auto& y, const auto& alpha) {
+    auto y_simplex = dirichlet_test::vectorize_softmax(y);
+    auto lp = stan::math::dirichlet_lpdf(y_simplex, alpha);
+    return lp;
+  };
+
+  Eigen::VectorXd v1(2);
+  v1 << 1.0, 2.0;
+  Eigen::VectorXd v2(2);
+  v2 << 1.0, 0.5;
+
+  std::vector<Eigen::VectorXd> vs = {v1, v2};
+
+  stan::test::expect_ad(f, v1, v2);
+  stan::test::expect_ad(f, v1, vs);
+  stan::test::expect_ad(f, vs, v1);
+  stan::test::expect_ad(f, vs, vs);
+}
 
 TEST(ProbDistributions, fvar_var) {
   using Eigen::Dynamic;

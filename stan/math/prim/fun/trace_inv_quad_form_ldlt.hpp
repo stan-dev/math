@@ -18,18 +18,18 @@ namespace math {
  *       trace(B^T A^-1 B)
  * where the LDLT_factor of A is provided.
  *
- * @tparam T type of elements in the first matrix and the LDLT_factor
+ * @tparam T type of the first matrix and the LDLT_factor
  * @tparam EigMat2 type of the second matrix
- * @tparam R number of rows in the LDLT_factor, can be Eigen::Dynamic
- * @tparam C number of columns in the LDLT_factor, can be Eigen::Dynamic
- *
+ * @param A first matrix as LDLT
+ * @param B second matrix
  */
-template <typename T, typename EigMat2, int R, int C,
+template <typename T, typename EigMat2,
           typename = require_all_not_st_var<T, EigMat2>>
-inline return_type_t<T, EigMat2> trace_inv_quad_form_ldlt(
-    const LDLT_factor<T, R, C>& A, const EigMat2& B) {
-  check_multiplicable("trace_inv_quad_form_ldlt", "A", A, "B", B);
-  if (A.cols() == 0) {
+inline return_type_t<T, EigMat2> trace_inv_quad_form_ldlt(LDLT_factor<T>& A,
+                                                          const EigMat2& B) {
+  check_multiplicable("trace_inv_quad_form_ldlt", "A", A.matrix(), "B", B);
+
+  if (A.matrix().size() == 0) {
     return 0;
   }
 

@@ -18,7 +18,7 @@ namespace math {
  * @return <code>true</code> if the dimensions of the matrices match
  */
 template <typename EigMat1, typename EigMat2,
-          require_all_eigen_t<EigMat1, EigMat2>* = nullptr>
+          require_all_matrix_t<EigMat1, EigMat2>* = nullptr>
 inline bool is_matching_dims(const EigMat1& y1, const EigMat2& y2) {
   return is_size_match(y1.rows(), y2.rows())
          && is_size_match(y1.cols(), y2.cols());
@@ -37,7 +37,7 @@ inline bool is_matching_dims(const EigMat1& y1, const EigMat2& y2) {
  * @return <code>true</code> if the dimensions of the matrices match
  */
 template <bool check_compile, typename EigMat1, typename EigMat2,
-          require_all_eigen_t<EigMat1, EigMat2>* = nullptr>
+          require_all_matrix_t<EigMat1, EigMat2>* = nullptr>
 inline bool is_matching_dims(const EigMat1& y1, const EigMat2& y2) {
   return !(check_compile
            && (EigMat1::RowsAtCompileTime != EigMat2::RowsAtCompileTime

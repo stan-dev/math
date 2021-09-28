@@ -3,15 +3,15 @@
 
 #ifdef STAN_OPENCL
 
+#include <stan/math/opencl/plain_type.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/kernels/diag_inv.hpp>
 #include <stan/math/opencl/kernels/inv_lower_tri_multiply.hpp>
 #include <stan/math/opencl/kernels/neg_rect_lower_tri_multiply.hpp>
 #include <stan/math/opencl/err.hpp>
-#include <stan/math/opencl/identity.hpp>
-#include <stan/math/opencl/sub_block.hpp>
-#include <stan/math/opencl/zeros.hpp>
+#include <stan/math/opencl/kernels/batch_identity.hpp>
+#include <stan/math/opencl/zeros_strict_tri.hpp>
 #include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <cmath>
@@ -36,21 +36,23 @@ namespace math {
  *    is not square
  */
 template <matrix_cl_view matrix_view = matrix_cl_view::Entire, typename T,
-          typename = require_floating_point_t<T>>
-inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
+          require_matrix_cl_st<std::is_floating_point, T>* = nullptr>
+inline plain_type_t<T> tri_inverse(const T& A) {
   check_square("tri_inverse (OpenCL)", "A", A);
   // if the triangular view is not specified use the triangularity of
   // the input matrix
   matrix_cl_view tri_view = matrix_view;
   if (matrix_view == matrix_cl_view::Entire) {
+    if (A.view() != matrix_cl_view::Diagonal) {
+      check_triangular("tri_inverse (OpenCL)", "A", A);
+    }
     tri_view = A.view();
   }
   if (tri_view == matrix_cl_view::Diagonal) {
-    matrix_cl<T> inv_mat(A.rows(), A.cols());
+    plain_type_t<T> inv_mat(A.rows(), A.cols());
     diagonal(inv_mat) = elt_divide(1.0, diagonal(A));
     return inv_mat;
   }
-  check_triangular("tri_inverse (OpenCL)", "A", A);
 
   int thread_block_2D_dim = 32;
   int max_1D_thread_block_size = opencl_context.max_thread_block_size();
@@ -78,12 +80,11 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
       = ((A.rows() + thread_block_size_1D - 1) / thread_block_size_1D)
         * thread_block_size_1D;
 
-  matrix_cl<T> temp(A_rows_padded, A_rows_padded);
-  matrix_cl<T> inv_padded(A_rows_padded, A_rows_padded);
-  matrix_cl<T> inv_mat(A);
-  matrix_cl<T> zero_mat(A_rows_padded - A.rows(), A_rows_padded);
-  zero_mat.template zeros<stan::math::matrix_cl_view::Entire>();
-  inv_padded.template zeros<stan::math::matrix_cl_view::Entire>();
+  plain_type_t<T> temp(A_rows_padded, A_rows_padded);
+  plain_type_t<T> inv_padded = constant(0.0, A_rows_padded, A_rows_padded);
+  plain_type_t<T> inv_mat(A);
+  plain_type_t<T> zero_mat
+      = constant(0.0, A_rows_padded - A.rows(), A_rows_padded);
   if (tri_view == matrix_cl_view::Upper) {
     inv_mat = transpose(inv_mat).eval();
   }
@@ -92,7 +93,7 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
   // the number of blocks in the first step
   // each block is inverted with using the regular forward substitution
   int parts = inv_padded.rows() / thread_block_size_1D;
-  inv_padded.sub_block(inv_mat, 0, 0, 0, 0, inv_mat.rows(), inv_mat.rows());
+  block_zero_based(inv_padded, 0, 0, inv_mat.rows(), inv_mat.rows()) = inv_mat;
   try {
     // create a batch of identity matrices to be used in the first step
     opencl_kernels::batch_identity(
@@ -106,11 +107,13 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
     check_opencl_error("inverse step1", e);
   }
   // set the padded part of the matrix and the upper triangular to zeros
-  inv_padded.sub_block(zero_mat, 0, 0, inv_mat.rows(), 0, zero_mat.rows(),
-                       zero_mat.cols());
+  block_zero_based(inv_padded, inv_mat.rows(), 0, zero_mat.rows(),
+                   zero_mat.cols())
+      = zero_mat;
   inv_padded.template zeros_strict_tri<stan::math::matrix_cl_view::Upper>();
   if (parts == 1) {
-    inv_mat.sub_block(inv_padded, 0, 0, 0, 0, inv_mat.rows(), inv_mat.rows());
+    inv_mat
+        = block_zero_based(inv_padded, 0, 0, inv_mat.rows(), inv_mat.rows());
     if (tri_view == matrix_cl_view::Upper) {
       inv_mat = transpose(inv_mat).eval();
     }
@@ -147,12 +150,13 @@ inline matrix_cl<T> tri_inverse(const matrix_cl<T>& A) {
     }
     result_matrix_dim *= 2;
     // set the padded part and upper diagonal to zeros
-    inv_padded.sub_block(zero_mat, 0, 0, inv_mat.rows(), 0, zero_mat.rows(),
-                         zero_mat.cols());
+    block_zero_based(inv_padded, inv_mat.rows(), 0, zero_mat.rows(),
+                     zero_mat.cols())
+        = zero_mat;
     inv_padded.template zeros_strict_tri<stan::math::matrix_cl_view::Upper>();
   }
   // un-pad and return
-  inv_mat.sub_block(inv_padded, 0, 0, 0, 0, inv_mat.rows(), inv_mat.rows());
+  inv_mat = block_zero_based(inv_padded, 0, 0, inv_mat.rows(), inv_mat.rows());
   if (tri_view == matrix_cl_view::Upper) {
     inv_mat = transpose(inv_mat).eval();
   }

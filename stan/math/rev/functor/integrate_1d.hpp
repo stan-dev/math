@@ -20,43 +20,139 @@ namespace stan {
 namespace math {
 
 /**
- * Calculate first derivative of f(x, param, std::ostream&)
- * with respect to the nth parameter. Uses nested reverse mode autodiff
+ * Return the integral of f from a to b to the given relative tolerance
  *
- * Gradients that evaluate to NaN are set to zero if the function itself
- * evaluates to zero. If the function is not zero and the gradient evaluates to
- * NaN, a std::domain_error is thrown
+ * @tparam F Type of f
+ * @tparam T_a type of first limit
+ * @tparam T_b type of second limit
+ * @tparam Args types of parameter pack arguments
  *
- * @tparam F type of f
+ * @param f the functor to integrate
+ * @param a lower limit of integration
+ * @param b upper limit of integration
+ * @param relative_tolerance relative tolerance passed to Boost quadrature
+ * @param[in, out] msgs the print stream for warning messages
+ * @param args additional arguments to pass to f
+ * @return numeric integral of function f
  */
-template <typename F>
-inline double gradient_of_f(const F &f, const double &x, const double &xc,
-                            const std::vector<double> &theta_vals,
-                            const std::vector<double> &x_r,
-                            const std::vector<int> &x_i, size_t n,
-                            std::ostream *msgs) {
-  double gradient = 0.0;
+template <typename F, typename T_a, typename T_b, typename... Args,
+          require_any_st_var<T_a, T_b, Args...> * = nullptr>
+inline return_type_t<T_a, T_b, Args...> integrate_1d_impl(
+    const F &f, const T_a &a, const T_b &b, double relative_tolerance,
+    std::ostream *msgs, const Args &... args) {
+  static constexpr const char *function = "integrate_1d";
+  check_less_or_equal(function, "lower limit", a, b);
 
-  // Run nested autodiff in this scope
-  nested_rev_autodiff nested;
+  double a_val = value_of(a);
+  double b_val = value_of(b);
 
-  std::vector<var> theta_var(theta_vals.size());
-  for (size_t i = 0; i < theta_vals.size(); i++) {
-    theta_var[i] = theta_vals[i];
-  }
-  var fx = f(x, xc, theta_var, x_r, x_i, msgs);
-  fx.grad();
-  gradient = theta_var[n].adj();
-  if (is_nan(gradient)) {
-    if (fx.val() == 0) {
-      gradient = 0;
-    } else {
-      throw_domain_error("gradient_of_f", "The gradient of f", n,
-                         "is nan for parameter ", "");
+  if (unlikely(a_val == b_val)) {
+    if (is_inf(a_val)) {
+      throw_domain_error(function, "Integration endpoints are both", a_val, "",
+                         "");
     }
-  }
+    return var(0.0);
+  } else {
+    auto args_val_tuple = std::make_tuple(value_of(args)...);
 
-  return gradient;
+    double integral = integrate(
+        [&](const auto &x, const auto &xc) {
+          return apply(
+              [&](auto &&... val_args) { return f(x, xc, msgs, val_args...); },
+              args_val_tuple);
+        },
+        a_val, b_val, relative_tolerance);
+
+    constexpr size_t num_vars_ab = is_var<T_a>::value + is_var<T_b>::value;
+    size_t num_vars_args = count_vars(args...);
+    vari **varis = ChainableStack::instance_->memalloc_.alloc_array<vari *>(
+        num_vars_ab + num_vars_args);
+    double *partials = ChainableStack::instance_->memalloc_.alloc_array<double>(
+        num_vars_ab + num_vars_args);
+    // We move this pointer up based on whether we a or b is a var type.
+    double *partials_ptr = partials;
+
+    save_varis(varis, a, b, args...);
+
+    for (size_t i = 0; i < num_vars_ab + num_vars_args; ++i) {
+      partials[i] = 0.0;
+    }
+
+    if (is_var<T_a>::value && !is_inf(a)) {
+      *partials_ptr = apply(
+          [&f, a_val, msgs](auto &&... val_args) {
+            return -f(a_val, 0.0, msgs, val_args...);
+          },
+          args_val_tuple);
+      partials_ptr++;
+    }
+
+    if (!is_inf(b) && is_var<T_b>::value) {
+      *partials_ptr = apply(
+          [&f, b_val, msgs](auto &&... val_args) {
+            return f(b_val, 0.0, msgs, val_args...);
+          },
+          args_val_tuple);
+      partials_ptr++;
+    }
+
+    {
+      nested_rev_autodiff argument_nest;
+      // The arguments copy is used multiple times in the following nests, so
+      // do it once in a separate nest for efficiency
+      auto args_tuple_local_copy = std::make_tuple(deep_copy_vars(args)...);
+
+      // Save the varis so it's easy to efficiently access the nth adjoint
+      std::vector<vari *> local_varis(num_vars_args);
+      apply(
+          [&](const auto &... args) {
+            save_varis(local_varis.data(), args...);
+          },
+          args_tuple_local_copy);
+
+      for (size_t n = 0; n < num_vars_args; ++n) {
+        // This computes the integral of the gradient of f with respect to the
+        // nth parameter in args using a nested nested reverse mode autodiff
+        *partials_ptr = integrate(
+            [&](const auto &x, const auto &xc) {
+              argument_nest.set_zero_all_adjoints();
+
+              nested_rev_autodiff gradient_nest;
+              var fx = apply(
+                  [&f, &x, &xc, msgs](auto &&... local_args) {
+                    return f(x, xc, msgs, local_args...);
+                  },
+                  args_tuple_local_copy);
+              fx.grad();
+
+              double gradient = local_varis[n]->adj();
+
+              // Gradients that evaluate to NaN are set to zero if the function
+              // itself evaluates to zero. If the function is not zero and the
+              // gradient evaluates to NaN, a std::domain_error is thrown
+              if (is_nan(gradient)) {
+                if (fx.val() == 0) {
+                  gradient = 0;
+                } else {
+                  throw_domain_error("gradient_of_f", "The gradient of f", n,
+                                     "is nan for parameter ", "");
+                }
+              }
+              return gradient;
+            },
+            a_val, b_val, relative_tolerance);
+        partials_ptr++;
+      }
+    }
+
+    return make_callback_var(
+        integral,
+        [total_vars = num_vars_ab + num_vars_args, varis, partials](auto &vi) {
+          for (size_t i = 0; i < total_vars; ++i) {
+            varis[i]->adj_ += partials[i] * vi.adj();
+          }
+        });
+  }
 }
 
 /**
@@ -120,52 +216,8 @@ inline return_type_t<T_a, T_b, T_theta> integrate_1d(
     const F &f, const T_a &a, const T_b &b, const std::vector<T_theta> &theta,
     const std::vector<double> &x_r, const std::vector<int> &x_i,
     std::ostream *msgs, const double relative_tolerance = std::sqrt(EPSILON)) {
-  static const char *function = "integrate_1d";
-  check_less_or_equal(function, "lower limit", a, b);
-
-  if (value_of(a) == value_of(b)) {
-    if (is_inf(a)) {
-      throw_domain_error(function, "Integration endpoints are both",
-                         value_of(a), "", "");
-    }
-    return var(0.0);
-  } else {
-    double integral = integrate(
-        std::bind<double>(f, std::placeholders::_1, std::placeholders::_2,
-                          value_of(theta), x_r, x_i, msgs),
-        value_of(a), value_of(b), relative_tolerance);
-
-    size_t N_theta_vars = is_var<T_theta>::value ? theta.size() : 0;
-    std::vector<double> dintegral_dtheta(N_theta_vars);
-    std::vector<var> theta_concat(N_theta_vars);
-
-    if (N_theta_vars > 0) {
-      std::vector<double> theta_vals = value_of(theta);
-
-      for (size_t n = 0; n < N_theta_vars; ++n) {
-        dintegral_dtheta[n] = integrate(
-            std::bind<double>(gradient_of_f<F>, f, std::placeholders::_1,
-                              std::placeholders::_2, theta_vals, x_r, x_i, n,
-                              msgs),
-            value_of(a), value_of(b), relative_tolerance);
-        theta_concat[n] = theta[n];
-      }
-    }
-
-    if (!is_inf(a) && is_var<T_a>::value) {
-      theta_concat.push_back(a);
-      dintegral_dtheta.push_back(
-          -value_of(f(value_of(a), 0.0, theta, x_r, x_i, msgs)));
-    }
-
-    if (!is_inf(b) && is_var<T_b>::value) {
-      theta_concat.push_back(b);
-      dintegral_dtheta.push_back(
-          value_of(f(value_of(b), 0.0, theta, x_r, x_i, msgs)));
-    }
-
-    return precomputed_gradients(integral, theta_concat, dintegral_dtheta);
-  }
+  return integrate_1d_impl(integrate_1d_adapter<F>(f), a, b, relative_tolerance,
+                           msgs, theta, x_r, x_i);
 }
 
 }  // namespace math

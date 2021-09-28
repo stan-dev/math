@@ -5,7 +5,10 @@
 #include <stan/math/prim/fun/get.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
+#include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/is_var_matrix.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
+#include <stan/math/prim/meta/is_stan_scalar.hpp>
 #include <string>
 #include <sstream>
 #include <vector>
@@ -13,142 +16,6 @@
 namespace stan {
 namespace math {
 namespace internal {
-
-/** Apply an error check to a container, signal failure by throwing.
- * Apply a predicate like is_positive to the double underlying every scalar in a
- * container, throw an exception if the predicate fails for any double.
- * @tparam F type of predicate
- * @tparam E type of exception thrown
- */
-template <typename F, typename E>
-class Checker {
-  const F& is_good;
-  const char* function;
-  const char* name;
-  const char* suffix;
-
-  /**
-   * Throw an exception of type `E`.
-   * The error message is the string inside the provided stringstream.
-   * @param ss stringstream containing error message
-   * @throws `E`
-   */
-  void raise_error_ss(std::stringstream& ss) { throw E{ss.str()}; }
-
-  /**
-   * Throw an exception of type `E`.
-   * The error message is the concatenation of the string inside the provided
-   * stringstream with all the provided messages.
-   * @tparam M types of first message
-   * @tparam Ms types of other messages
-   * @param ss stringstream to accumulate error message in.
-   * @param message a message to append to `ss`
-   * @param messages more messages to append
-   * @throws `E`
-   */
-  template <typename M, typename... Ms>
-  void raise_error_ss(std::stringstream& ss, const M& message,
-                      const Ms&... messages) {
-    ss << message;
-    raise_error_ss(ss, messages...);
-  }
-
-  /**
-   * Throw an exception of type `E`.
-   * The error message is the concatenation of the provided messages.
-   * @tparam Ms types of messages
-   * @param messages a list of messages
-   * @throws `E`
-   */
-  template <typename... Ms>
-  void raise_error(const Ms&... messages) {
-    std::stringstream ss{};
-    raise_error_ss(ss, messages...);
-  }
-
- public:
-  /**
-   * @param is_good predicate to check, must accept doubles and produce bools
-   * @param function function name (for error messages)
-   * @param name variable name (for error messages)
-   * @param suffix message to print at end of error message
-   */
-  Checker(const F& is_good, const char* function, const char* name,
-          const char* suffix)
-      : is_good(is_good), function(function), name(name), suffix(suffix) {}
-
-  /**
-   * Check the scalar.
-   * @tparam T type of scalar
-   * @tparam Ms types of messages
-   * @param x scalar
-   * @param messages a list of messages to append to the error message
-   * @throws `E` if  the scalar fails the error check
-   */
-  template <typename T, require_stan_scalar_t<T>* = nullptr, typename... Ms>
-  void check(const T& x, Ms... messages) {
-    double xd = value_of_rec(x);
-    if (!is_good(xd))
-      raise_error(function, ": ", name, messages..., " is ", xd, suffix);
-  }
-
-  /**
-   * Check all the scalars inside the standard vector.
-   * @tparam T type of vector
-   * @tparam Ms types of messages
-   * @param x vector
-   * @param messages a list of messages to append to the error message
-   * @throws `E` if any of the scalars fail the error check
-   */
-  template <typename T, require_std_vector_t<T>* = nullptr, typename... Ms>
-  void check(const T& x, Ms... messages) {
-    for (size_t i = 0; i < stan::math::size(x); ++i)
-      check(x[i], messages..., "[", i + 1, "]");
-  }
-
-  /**
-   * Check all the scalars inside an eigen vector.
-   * @tparam T type of vector
-   * @tparam Ms types of messages
-   * @param x vector
-   * @param messages a list of messages to append to the error message
-   * @throws `E` if any of the scalars fail the error check
-   */
-  template <typename T, require_eigen_vector_t<T>* = nullptr, typename... Ms>
-  void check(const T& x, Ms... messages) {
-    for (size_t i = 0; i < stan::math::size(x); ++i)
-      check(x.coeff(i), messages..., "[", i + 1, "]");
-  }
-
-  /**
-   * Check all the scalars inside the `var_value<Matrix>`.
-   * @tparam T type of vector
-   * @tparam Ms types of messages
-   * @param x vector
-   * @param messages a list of messages to append to the error message
-   * @throws `E` if any of the scalars fail the error check
-   */
-  template <typename T, require_var_matrix_t<T>* = nullptr, typename... Ms>
-  void check(const T& x, Ms... messages) {
-    check(x.val(), messages...);
-  }
-
-  /**
-   * Check all the scalars inside the matrix.
-   * @tparam Derived type of matrix
-   * @tparam Ms types of messages
-   * @param x matrix
-   * @param messages a list of messages to append to the error message
-   * @throws `E` if any of the scalars fail the error check
-   */
-  template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr,
-            typename... Ms>
-  void check(const EigMat& x, Ms... messages) {
-    for (size_t n = 0; n < x.cols(); ++n)
-      for (size_t m = 0; m < x.rows(); ++m)
-        check(x.coeff(m, n), messages..., "[row=", m + 1, ", col=", n + 1, "]");
-  }
-};  // namespace internal
 
 /** Apply an error check to a container, signal failure with `false`.
  * Apply a predicate like is_positive to the double underlying every scalar in a
@@ -193,35 +60,268 @@ class Iser {
   }
 };
 
+/**
+ * No-op.
+ */
+inline void pipe_in(std::stringstream& ss) {}
+/**
+ * Pipes given arguments into a stringstream.
+ *
+ * @tparam Arg0 type of the first argument
+ * @tparam Args types of remaining arguments
+ * @param ss stringstream to pipe arguments in
+ * @param arg0 the first argument
+ * @param args remining arguments
+ */
+template <typename Arg0, typename... Args>
+inline void pipe_in(std::stringstream& ss, Arg0 arg0, const Args... args) {
+  ss << arg0;
+  pipe_in(ss, args...);
+}
+
+/**
+ * Throws domain error with concatenation of arguments for the error message.
+ * @tparam Args types of arguments
+ * @param args arguments
+ */
+template <typename... Args>
+void elementwise_throw_domain_error(const Args... args) {
+  std::stringstream ss;
+  pipe_in(ss, args...);
+  throw std::domain_error(ss.str());
+}
+
 }  // namespace internal
 
 /**
- * Check that the predicate holds for the value of `x`, working elementwise on
- * containers. If `x` is a scalar, check the double underlying the scalar. If
- * `x` is a container, check each element inside `x`, recursively.
+ * Check that the predicate holds for the value of `x`. This overload
+ * works on scalars.
+ *
  * @tparam F type of predicate
  * @tparam T type of `x`
+ * @tparam Indexings types of `indexings`
  * @param is_good predicate to check, must accept doubles and produce bools
  * @param function function name (for error messages)
  * @param name variable name (for error messages)
  * @param x variable to check, can be a scalar, a container of scalars, a
  * container of containers of scalars, etc
- * @param suffix message to print at end of error message
+ * @param must_be message describing what the value should be
+ * @param indexings any additional indexing to print. Intended for internal use
+ * in `elementwise_check` only.
  * @throws `std::domain_error` if `is_good` returns `false` for the value
  * of any element in `x`
  */
-template <typename F, typename T>
+template <typename F, typename T, typename... Indexings,
+          require_stan_scalar_t<T>* = nullptr>
 inline void elementwise_check(const F& is_good, const char* function,
-                              const char* name, const T& x,
-                              const char* suffix) {
-  internal::Checker<F, std::domain_error>{is_good, function, name, suffix}
-      .check(x);
+                              const char* name, const T& x, const char* must_be,
+                              const Indexings&... indexings) {
+  if (unlikely(!is_good(value_of_rec(x)))) {
+    [&]() STAN_COLD_PATH {
+      internal::elementwise_throw_domain_error(function, ": ", name,
+                                               indexings..., " is ", x,
+                                               ", but must be ", must_be, "!");
+    }();
+  }
+}
+/**
+ * Check that the predicate holds for all elements of the value of `x`. This
+ * overload works on Eigen types that support linear indexing.
+ *
+ * @tparam F type of predicate
+ * @tparam T type of `x`
+ * @tparam Indexings types of `indexings`
+ * @param is_good predicate to check, must accept doubles and produce bools
+ * @param function function name (for error messages)
+ * @param name variable name (for error messages)
+ * @param x variable to check, can be a scalar, a container of scalars, a
+ * container of containers of scalars, etc
+ * @param must_be message describing what the value should be
+ * @param indexings any additional indexing to print. Intended for internal use
+ * in `elementwise_check` only.
+ * @throws `std::domain_error` if `is_good` returns `false` for the value
+ * of any element in `x`
+ */
+template <typename F, typename T, typename... Indexings,
+          require_eigen_t<T>* = nullptr,
+          std::enable_if_t<(Eigen::internal::traits<T>::Flags
+                            & Eigen::LinearAccessBit)
+                           || T::IsVectorAtCompileTime>* = nullptr>
+inline void elementwise_check(const F& is_good, const char* function,
+                              const char* name, const T& x, const char* must_be,
+                              const Indexings&... indexings) {
+  for (size_t i = 0; i < x.size(); i++) {
+    auto scal = value_of_rec(x.coeff(i));
+    if (unlikely(!is_good(scal))) {
+      [&]() STAN_COLD_PATH {
+        if (is_eigen_vector<T>::value) {
+          internal::elementwise_throw_domain_error(
+              function, ": ", name, indexings..., "[", i + error_index::value,
+              "] is ", scal, ", but must be ", must_be, "!");
+        } else if (Eigen::internal::traits<T>::Flags & Eigen::RowMajorBit) {
+          internal::elementwise_throw_domain_error(
+              function, ": ", name, indexings..., "[",
+              i / x.cols() + error_index::value, ", ",
+              i % x.cols() + error_index::value, "] is ", scal,
+              ", but must be ", must_be, "!");
+        } else {
+          internal::elementwise_throw_domain_error(
+              function, ": ", name, indexings..., "[",
+              i % x.rows() + error_index::value, ", ",
+              i / x.rows() + error_index::value, "] is ", scal,
+              ", but must be ", must_be, "!");
+        }
+      }();
+    }
+  }
+}
+
+/**
+ * Check that the predicate holds for all elements of the value of `x`. This
+ * overload works on col-major Eigen types that do not support linear indexing.
+ *
+ * @tparam F type of predicate
+ * @tparam T type of `x`
+ * @tparam Indexings types of `indexings`
+ * @param is_good predicate to check, must accept doubles and produce bools
+ * @param function function name (for error messages)
+ * @param name variable name (for error messages)
+ * @param x variable to check, can be a scalar, a container of scalars, a
+ * container of containers of scalars, etc
+ * @param must_be message describing what the value should be
+ * @param indexings any additional indexing to print. Intended for internal use
+ * in `elementwise_check` only.
+ * @throws `std::domain_error` if `is_good` returns `false` for the value
+ * of any element in `x`
+ */
+template <typename F, typename T, typename... Indexings,
+          require_eigen_t<T>* = nullptr,
+          std::enable_if_t<!(Eigen::internal::traits<T>::Flags
+                             & Eigen::LinearAccessBit)
+                           && !T::IsVectorAtCompileTime
+                           && !(Eigen::internal::traits<T>::Flags
+                                & Eigen::RowMajorBit)>* = nullptr>
+inline void elementwise_check(const F& is_good, const char* function,
+                              const char* name, const T& x, const char* must_be,
+                              const Indexings&... indexings) {
+  for (size_t i = 0; i < x.rows(); i++) {
+    for (size_t j = 0; j < x.cols(); j++) {
+      auto scal = value_of_rec(x.coeff(i, j));
+      if (unlikely(!is_good(scal))) {
+        [&]() STAN_COLD_PATH {
+          internal::elementwise_throw_domain_error(
+              function, ": ", name, indexings..., "[", i + error_index::value,
+              ", ", j + error_index::value, "] is ", scal, ", but must be ",
+              must_be, "!");
+        }();
+      }
+    }
+  }
+}
+
+/**
+ * Check that the predicate holds for all the elements of the value of `x`. This
+ * overload works on row-major Eigen types that do not support linear indexing.
+ *
+ * @tparam F type of predicate
+ * @tparam T type of `x`
+ * @tparam Indexings types of `indexings`
+ * @param is_good predicate to check, must accept doubles and produce bools
+ * @param function function name (for error messages)
+ * @param name variable name (for error messages)
+ * @param x variable to check, can be a scalar, a container of scalars, a
+ * container of containers of scalars, etc
+ * @param must_be message describing what the value should be
+ * @param indexings any additional indexing to print. Intended for internal use
+ * in `elementwise_check` only.
+ * @throws `std::domain_error` if `is_good` returns `false` for the value
+ * of any element in `x`
+ */
+template <typename F, typename T, typename... Indexings,
+          require_eigen_t<T>* = nullptr,
+          std::enable_if_t<
+              !(Eigen::internal::traits<T>::Flags & Eigen::LinearAccessBit)
+              && !T::IsVectorAtCompileTime
+              && static_cast<bool>(Eigen::internal::traits<T>::Flags
+                                   & Eigen::RowMajorBit)>* = nullptr>
+inline void elementwise_check(const F& is_good, const char* function,
+                              const char* name, const T& x, const char* must_be,
+                              const Indexings&... indexings) {
+  for (size_t j = 0; j < x.cols(); j++) {
+    for (size_t i = 0; i < x.rows(); i++) {
+      auto scal = value_of_rec(x.coeff(i, j));
+      if (unlikely(!is_good(scal))) {
+        [&]() STAN_COLD_PATH {
+          internal::elementwise_throw_domain_error(
+              function, ": ", name, indexings..., "[", i + error_index::value,
+              ", ", j + error_index::value, "] is ", scal, ", but must be ",
+              must_be, "!");
+        }();
+      }
+    }
+  }
+}
+
+/**
+ * Check that the predicate holds for all elements of the value of `x`. This
+ * overload works on `std::vector` types.
+ *
+ * @tparam F type of predicate
+ * @tparam T type of `x`
+ * @tparam Indexings types of `indexings`
+ * @param is_good predicate to check, must accept doubles and produce bools
+ * @param function function name (for error messages)
+ * @param name variable name (for error messages)
+ * @param x variable to check, can be a scalar, a container of scalars, a
+ * container of containers of scalars, etc
+ * @param must_be message describing what the value should be
+ * @param indexings any additional indexing to print. Intended for internal use
+ * in `elementwise_check` only.
+ * @throws `std::domain_error` if `is_good` returns `false` for the value
+ * of any element in `x`
+ */
+template <typename F, typename T, typename... Indexings,
+          require_std_vector_t<T>* = nullptr>
+inline void elementwise_check(const F& is_good, const char* function,
+                              const char* name, const T& x, const char* must_be,
+                              const Indexings&... indexings) {
+  for (size_t j = 0; j < x.size(); j++) {
+    elementwise_check(is_good, function, name, x[j], must_be, indexings..., "[",
+                      j + error_index::value, "]");
+  }
+}
+
+/**
+ * Check that the predicate holds for all elements of the value of `x`. This
+ * overload works on `var`s containing Eigen types.
+ *
+ * @tparam F type of predicate
+ * @tparam T type of `x`
+ * @tparam Indexings types of `indexings`
+ * @param is_good predicate to check, must accept doubles and produce bools
+ * @param function function name (for error messages)
+ * @param name variable name (for error messages)
+ * @param x variable to check, can be a scalar, a container of scalars, a
+ * container of containers of scalars, etc
+ * @param must_be message describing what the value should be
+ * @param indexings any additional indexing to print. Intended for internal use
+ * in `elementwise_check` only.
+ * @throws `std::domain_error` if `is_good` returns `false` for the value
+ * of any element in `x`
+ */
+template <typename F, typename T, typename... Indexings,
+          require_var_matrix_t<T>* = nullptr>
+inline void elementwise_check(const F& is_good, const char* function,
+                              const char* name, const T& x, const char* must_be,
+                              const Indexings&... indexings) {
+  elementwise_check(is_good, function, name, x.val(), must_be, indexings...);
 }
 
 /**
  * Check that the predicate holds for the value of `x`, working elementwise on
  * containers. If `x` is a scalar, check the double underlying the scalar. If
  * `x` is a container, check each element inside `x`, recursively.
+ *
  * @tparam F type of predicate
  * @tparam T type of `x`
  * @param is_good predicate to check, must accept doubles and produce bools
