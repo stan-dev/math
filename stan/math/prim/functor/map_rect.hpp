@@ -94,6 +94,9 @@ namespace math {
  *            const std::vector<double>& x_r, const std::vector<int>& x_i,
  *            std::ostream* msgs = 0) const { ... }
  *
+ * If an expression is passed as `shared_params`, the functor needs to accept
+ * expression.
+ *
  * WARNING: For the MPI case, the data arguments are NOT checked if
  * they are unchanged between repeated evaluations for a given
  * call_id/functor F pair. This is silently assumed to be immutable
@@ -118,9 +121,10 @@ namespace math {
  */
 
 template <int call_id, typename F, typename T_shared_param,
-          typename T_job_param>
+          typename T_job_param,
+          require_eigen_col_vector_t<T_shared_param>* = nullptr>
 Eigen::Matrix<return_type_t<T_shared_param, T_job_param>, Eigen::Dynamic, 1>
-map_rect(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
+map_rect(const T_shared_param& shared_params,
          const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>&
              job_params,
          const std::vector<std::vector<double>>& x_r,
@@ -169,11 +173,16 @@ map_rect(const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
   }
 
 #ifdef STAN_MPI
-  return internal::map_rect_mpi<call_id, F, T_shared_param, T_job_param>(
-      shared_params, job_params, x_r, x_i, msgs);
+  using T_plain_shared_param = plain_type_t<T_shared_param>;
+  T_plain_shared_param shared_params_eval = shared_params;
+  return internal::map_rect_mpi<call_id, F, T_plain_shared_param, T_job_param>(
+      shared_params_eval, job_params, x_r, x_i, msgs);
 #else
-  return internal::map_rect_concurrent<call_id, F, T_shared_param, T_job_param>(
-      shared_params, job_params, x_r, x_i, msgs);
+  using T_shared_param_ref = ref_type_t<T_shared_param>;
+  T_shared_param_ref shared_params_ref = shared_params;
+  return internal::map_rect_concurrent<call_id, F, T_shared_param_ref,
+                                       T_job_param>(shared_params_ref,
+                                                    job_params, x_r, x_i, msgs);
 #endif
 }
 

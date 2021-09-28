@@ -41,6 +41,21 @@ struct gp_chol {
   }
 };
 
+struct chol_functor {
+  int i, j, K;
+  chol_functor(int i_, int j_, int K_) : i(i_), j(j_), K(K_) {}
+  template <typename T>
+  T operator()(Eigen::Matrix<T, -1, 1> x) const {
+    using stan::math::cholesky_decompose;
+    using stan::math::cov_matrix_constrain;
+    T lp(0.0);
+    Eigen::Matrix<T, -1, -1> x_c = cov_matrix_constrain(x, K, lp);
+    Eigen::Matrix<T, -1, -1> L = cholesky_decompose(x_c);
+    lp += L(i, j);
+    return lp;
+  }
+};
+
 struct chol_functor_mult_scal {
   int K;
   Eigen::VectorXd vec;
@@ -79,6 +94,24 @@ struct chol_functor_2 {
   }
 };
 
+struct chol_functor_simple {
+  int i, j, K;
+  chol_functor_simple(int i_, int j_, int K_) : i(i_), j(j_), K(K_) {}
+  template <typename T>
+  T operator()(Eigen::Matrix<T, -1, 1> x) const {
+    using stan::math::cholesky_decompose;
+    Eigen::Matrix<T, -1, -1> x_c(K, K);
+    int pos = 0;
+    for (int n = 0; n < K; ++n)
+      for (int m = 0; m < K; ++m) {
+        x_c(m, n) = x(pos++);
+        x_c(n, m) = x_c(m, n);
+      }
+    Eigen::Matrix<T, -1, -1> L = cholesky_decompose(x_c);
+    return L(i, j);
+  }
+};
+
 struct chol_functor_simple_vec {
   int K;
   Eigen::VectorXd vec;
@@ -100,6 +133,90 @@ struct chol_functor_simple_vec {
     return lp;
   }
 };
+
+void test_gradients(int size, double prec) {
+  std::vector<std::vector<chol_functor> > functors;
+  std::vector<std::vector<Eigen::Matrix<double, -1, 1> > > grads_ad;
+  std::vector<std::vector<Eigen::Matrix<double, -1, 1> > > grads_fd;
+  Eigen::Matrix<double, -1, -1> evals_ad(size, size);
+  Eigen::Matrix<double, -1, -1> evals_fd(size, size);
+  functors.resize(size);
+  grads_ad.resize(size);
+  grads_fd.resize(size);
+
+  for (int i = 0; i < size; ++i)
+    for (int j = 0; j < size; ++j) {
+      functors[i].push_back(chol_functor(i, j, size));
+      grads_fd[i].push_back(Eigen::Matrix<double, -1, 1>(size));
+      grads_ad[i].push_back(Eigen::Matrix<double, -1, 1>(size));
+    }
+
+  int numels = size + size * (size - 1) / 2;
+  Eigen::Matrix<double, -1, 1> x(numels);
+  for (int i = 0; i < numels; ++i)
+    x(i) = i % 10 / 100.0;
+
+  for (size_t i = 0; i < static_cast<size_t>(size); ++i) {
+    for (size_t j = 0; j < static_cast<size_t>(size); ++j) {
+      stan::math::gradient(functors[i][j], x, evals_ad(i, j), grads_ad[i][j]);
+      stan::math::finite_diff_gradient(functors[i][j], x, evals_fd(i, j),
+                                       grads_fd[i][j]);
+
+      for (int k = 0; k < numels; ++k)
+        EXPECT_NEAR(grads_fd[i][j](k), grads_ad[i][j](k), prec);
+      EXPECT_FLOAT_EQ(evals_fd(i, j), evals_ad(i, j));
+    }
+  }
+}
+
+void test_gradients_simple(int size, double prec) {
+  std::vector<std::vector<chol_functor_simple> > functors;
+  std::vector<std::vector<Eigen::Matrix<double, -1, 1> > > grads_ad;
+  std::vector<std::vector<Eigen::Matrix<double, -1, 1> > > grads_fd;
+  Eigen::Matrix<double, -1, -1> evals_ad(size, size);
+  Eigen::Matrix<double, -1, -1> evals_fd(size, size);
+  functors.resize(size);
+  grads_ad.resize(size);
+  grads_fd.resize(size);
+
+  for (int i = 0; i < size; ++i)
+    for (int j = 0; j < size; ++j) {
+      functors[i].push_back(chol_functor_simple(i, j, size));
+      grads_fd[i].push_back(Eigen::Matrix<double, -1, 1>(size));
+      grads_ad[i].push_back(Eigen::Matrix<double, -1, 1>(size));
+    }
+
+  stan::math::welford_covar_estimator estimator(size);
+
+  boost::random::mt19937 rng;
+  for (int i = 0; i < 1000; ++i) {
+    Eigen::VectorXd q(size);
+    for (int j = 0; j < size; ++j)
+      q(j) = stan::math::normal_rng(0.0, 1.0, rng);
+    estimator.add_sample(q);
+  }
+
+  Eigen::MatrixXd covar(size, size);
+  estimator.sample_covariance(covar);
+
+  Eigen::Matrix<double, -1, 1> x(size * size);
+  int pos = 0;
+  for (int j = 0; j < size; ++j)
+    for (int i = 0; i < size; ++i)
+      x(pos++) = covar(i, j);
+
+  for (size_t j = 0; j < static_cast<size_t>(size); ++j) {
+    for (size_t i = j; i < static_cast<size_t>(size); ++i) {
+      stan::math::gradient(functors[i][j], x, evals_ad(i, j), grads_ad[i][j]);
+      stan::math::finite_diff_gradient(functors[i][j], x, evals_fd(i, j),
+                                       grads_fd[i][j]);
+
+      for (int k = 0; k < size; ++k)
+        EXPECT_NEAR(grads_fd[i][j](k), grads_ad[i][j](k), prec);
+      EXPECT_FLOAT_EQ(evals_fd(i, j), evals_ad(i, j));
+    }
+  }
+}
 
 void test_gp_grad(int mat_size, double prec) {
   using Eigen::MatrixXd;
@@ -213,7 +330,7 @@ void test_simple_vec_mult(int size, double prec) {
 
   EXPECT_FLOAT_EQ(eval_fd, eval_ad);
   for (int k = 0; k < grad_fd.size(); ++k)
-    EXPECT_NEAR(grad_fd(k), grad_ad(k), prec);
+    EXPECT_NEAR(grad_fd(k), grad_ad(k), prec) << " for k=" << k;
 }
 
 double test_gradient(int size, double prec) {
@@ -232,9 +349,104 @@ double test_gradient(int size, double prec) {
   stan::math::finite_diff_gradient(functown, x, evals_fd, grads_fd);
 
   for (int k = 0; k < numels; ++k)
-    EXPECT_NEAR(grads_fd(k), grads_ad(k), prec);
+    EXPECT_NEAR(grads_fd(k), grads_ad(k), prec) << " for k=" << k;
   EXPECT_FLOAT_EQ(evals_fd, evals_ad);
   return grads_ad.sum();
+}
+
+TEST(AgradRevMatrix, mat_cholesky) {
+  using stan::math::cholesky_decompose;
+  using stan::math::matrix_v;
+  using stan::math::singular_values;
+  using stan::math::transpose;
+
+  // symmetric
+  matrix_v X(2, 2);
+  stan::math::var a = 3.0;
+  stan::math::var b = -1.0;
+  stan::math::var c = -1.0;
+  stan::math::var d = 1.0;
+  X << a, b, c, d;
+
+  matrix_v L = cholesky_decompose(X);
+
+  matrix_v LL_trans = multiply(L, transpose(L));
+  EXPECT_FLOAT_EQ(a.val(), LL_trans(0, 0).val());
+  EXPECT_FLOAT_EQ(b.val(), LL_trans(0, 1).val());
+  EXPECT_FLOAT_EQ(c.val(), LL_trans(1, 0).val());
+  EXPECT_FLOAT_EQ(d.val(), LL_trans(1, 1).val());
+
+  EXPECT_NO_THROW(singular_values(X));
+}
+
+TEST(AgradRevMatrix, exception_mat_cholesky) {
+  stan::math::matrix_v m;
+
+  // not positive definite
+  m.resize(2, 2);
+  m << 1.0, 2.0, 2.0, 3.0;
+  EXPECT_THROW(stan::math::cholesky_decompose(m), std::domain_error);
+
+  // zero size
+  m.resize(0, 0);
+  EXPECT_NO_THROW(stan::math::cholesky_decompose(m));
+
+  // not square
+  m.resize(2, 3);
+  EXPECT_THROW(stan::math::cholesky_decompose(m), std::invalid_argument);
+
+  // not symmetric
+  m.resize(2, 2);
+  m << 1.0, 2.0, 3.0, 4.0;
+  EXPECT_THROW(stan::math::cholesky_decompose(m), std::domain_error);
+}
+
+TEST(AgradRevMatrix, exception_varmat_cholesky) {
+  stan::math::matrix_d m;
+
+  // not positive definite
+  m.resize(2, 2);
+  m << 1.0, 2.0, 2.0, 3.0;
+  stan::math::var_value<stan::math::matrix_d> mv1(m);
+  EXPECT_THROW(stan::math::cholesky_decompose(mv1), std::domain_error);
+
+  // zero size
+  m.resize(0, 0);
+  stan::math::var_value<stan::math::matrix_d> mv2(m);
+  EXPECT_NO_THROW(stan::math::cholesky_decompose(mv2));
+
+  // not square
+  m.resize(2, 3);
+  stan::math::var_value<stan::math::matrix_d> mv3(m);
+  EXPECT_THROW(stan::math::cholesky_decompose(mv3), std::invalid_argument);
+
+  // not symmetric
+  m.resize(2, 2);
+  m << 1.0, 2.0, 3.0, 4.0;
+  stan::math::var_value<stan::math::matrix_d> mv4(m);
+  EXPECT_THROW(stan::math::cholesky_decompose(mv4), std::domain_error);
+}
+
+TEST(AgradRevMatrix, mat_cholesky_1st_deriv_small) {
+  test_gradients(9, 1e-10);
+  test_gradients_simple(10, 1e-10);
+  test_gradient(15, 1e-10);
+  test_gp_grad(20, 1e-10);
+}
+
+TEST(AgradRevMatrix, check_varis_on_stack_small) {
+  stan::math::matrix_v X(2, 2);
+  X << 3, -1, -1, 1;
+
+  test::check_varis_on_stack(stan::math::cholesky_decompose(X));
+}
+
+TEST(AgradRevMatrix, mat_cholesky_1st_deriv_large_gradients) {
+  test_gradient(36, 1e-08);
+  test_gp_grad(100, 1e-08);
+  test_gp_grad(1000, 1e-08);
+  test_chol_mult(37, 1e-08);
+  test_simple_vec_mult(45, 1e-08);
 }
 
 #ifdef STAN_OPENCL

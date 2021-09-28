@@ -5,6 +5,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/sum.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <cmath>
 #include <stdexcept>
 #include <vector>
@@ -24,7 +25,7 @@ namespace math {
  * @param N number of columns
  * @return Cholesky factor
  */
-template <typename T, require_eigen_vector_t<T>* = nullptr>
+template <typename T, require_eigen_col_vector_t<T>* = nullptr>
 Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
 cholesky_factor_constrain(const T& x, int M, int N) {
   using std::exp;
@@ -39,7 +40,7 @@ cholesky_factor_constrain(const T& x, int M, int N) {
   T_scalar zero(0);
   int pos = 0;
 
-  const Eigen::Ref<const plain_type_t<T>>& x_ref = x;
+  const auto& x_ref = to_ref(x);
   for (int m = 0; m < N; ++m) {
     y.row(m).head(m) = x_ref.segment(pos, m);
     pos += m;
@@ -76,7 +77,7 @@ cholesky_factor_constrain(const T& x, int M, int N, value_type_t<T>& lp) {
                    "((N * (N + 1)) / 2 + (M - N) * N)",
                    ((N * (N + 1)) / 2 + (M - N) * N));
   int pos = 0;
-  const Eigen::Ref<const plain_type_t<T>>& x_ref = x;
+  const auto& x_ref = to_ref(x);
   for (int n = 0; n < N; ++n) {
     pos += n;
     lp += x_ref.coeff(pos++);

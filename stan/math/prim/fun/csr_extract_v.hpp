@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <vector>
 #include <numeric>
 
@@ -43,9 +44,11 @@ const std::vector<int> csr_extract_v(
  * @param[in] A dense matrix.
  * @return Array of column indexes to non-zero entries of A.
  */
-template <typename T, int R, int C>
-const std::vector<int> csr_extract_v(const Eigen::Matrix<T, R, C>& A) {
-  Eigen::SparseMatrix<T, Eigen::RowMajor> B = A.sparseView();
+template <typename T, require_eigen_dense_base_t<T>* = nullptr>
+const std::vector<int> csr_extract_v(const T& A) {
+  // conversion to sparse seems to touch data twice, so we need to call to_ref
+  Eigen::SparseMatrix<scalar_type_t<T>, Eigen::RowMajor> B
+      = to_ref(A).sparseView();
   std::vector<int> v = csr_extract_v(B);
   return v;
 }

@@ -27,7 +27,7 @@ namespace math {
  * covariance matrix.
  * @throws std::invalid_argument if (x.size() != K + (K choose 2)).
  */
-template <typename T, require_eigen_vector_t<T>* = nullptr>
+template <typename T, require_eigen_col_vector_t<T>* = nullptr>
 Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
 cov_matrix_constrain(const T& x, Eigen::Index K) {
   using Eigen::Dynamic;
@@ -37,7 +37,7 @@ cov_matrix_constrain(const T& x, Eigen::Index K) {
   Matrix<value_type_t<T>, Dynamic, Dynamic> L(K, K);
   check_size_match("cov_matrix_constrain", "x.size()", x.size(),
                    "K + (K choose 2)", (K * (K + 1)) / 2);
-  const Eigen::Ref<const plain_type_t<T>>& x_ref = x;
+  const auto& x_ref = to_ref(x);
   int i = 0;
   for (Eigen::Index m = 0; m < K; ++m) {
     L.row(m).head(m) = x_ref.segment(i, m);
@@ -62,7 +62,7 @@ cov_matrix_constrain(const T& x, Eigen::Index K) {
  * @param lp Reference
  * @throws std::domain_error if (x.size() != K + (K choose 2)).
  */
-template <typename T, require_eigen_vector_t<T>* = nullptr>
+template <typename T, require_eigen_col_vector_t<T>* = nullptr>
 Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
 cov_matrix_constrain(const T& x, Eigen::Index K, value_type_t<T>& lp) {
   using Eigen::Dynamic;
@@ -72,7 +72,7 @@ cov_matrix_constrain(const T& x, Eigen::Index K, value_type_t<T>& lp) {
   check_size_match("cov_matrix_constrain", "x.size()", x.size(),
                    "K + (K choose 2)", (K * (K + 1)) / 2);
   Matrix<value_type_t<T>, Dynamic, Dynamic> L(K, K);
-  const Eigen::Ref<const plain_type_t<T>>& x_ref = x;
+  const auto& x_ref = to_ref(x);
   int i = 0;
   for (Eigen::Index m = 0; m < K; ++m) {
     L.row(m).head(m) = x_ref.segment(i, m);

@@ -135,15 +135,15 @@ inline arena_t<std::vector<T>> to_arena(const std::vector<T>& a) {
 
 /**
  * If the condition is true, converts given argument into a type that has any
- * dynamic allocation on AD stack. Otherwise this returns an empty object.
+ * dynamic allocation on AD stack. Otherwise returns the argument
  *
  * @tparam T type of argument
  * @param a argument
  * @return argument copied/evaluated on AD stack
  */
 template <bool Condition, typename T, std::enable_if_t<!Condition>* = nullptr>
-inline arena_t<T> to_arena_if(const T& a) {
-  return {};
+inline T to_arena_if(T&& a) {
+  return std::forward<T>(a);
 }
 
 template <bool Condition, typename T, std::enable_if_t<Condition>* = nullptr>

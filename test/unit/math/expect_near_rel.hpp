@@ -115,11 +115,31 @@ void expect_near_rel(const std::string& msg, EigMat1&& x1, EigMat2&& x2,
       << "x1.cols() = " << x1.cols() << "x2.cols() = " << x2.cols() << ")"
       << std::endl
       << msg << std::endl;
-  std::string msg2 = "expect_near_rel; require items x1(i) = x2(i): " + msg;
   auto x1_eval = x1.eval();
   auto x2_eval = x2.eval();
-  for (int i = 0; i < x1.size(); ++i)
-    expect_near_rel(msg2, x1_eval(i), x2_eval(i), tol);
+  int sentinal_val = 0;
+  for (int j = 0; j < x1.cols(); ++j) {
+    for (int i = 0; i < x1.rows(); ++i) {
+      std::string msg2 = std::string("expect_near_rel; require items x1(");
+      if (stan::is_vector<EigMat1>::value) {
+        msg2 += std::to_string(sentinal_val) + ") = x2("
+                + std::to_string(sentinal_val) + "): " + msg;
+      } else {
+        msg2 += std::to_string(i) + ", " + std::to_string(j) + ") = x2("
+                + std::to_string(i) + ", " + std::to_string(j) + "): " + msg;
+      }
+      expect_near_rel(msg2, x1_eval(sentinal_val), x2_eval(sentinal_val), tol);
+      sentinal_val++;
+    }
+  }
+#ifdef STAN_TEST_PRINT_MATRIX_FAILURE
+  if (::testing::Test::HasFailure()) {
+    Eigen::IOFormat CleanFmt(5, 0, ", ", "\n", "[", "]");
+    FAIL() << "\nx1: \n"
+           << x1.format(CleanFmt) << "\nx2: \n"
+           << x2.format(CleanFmt) << "\n";
+  }
+#endif
 }
 
 /**

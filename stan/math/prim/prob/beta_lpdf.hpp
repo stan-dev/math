@@ -39,7 +39,9 @@ namespace math {
  * @return The log of the product of densities.
  */
 template <bool propto, typename T_y, typename T_scale_succ,
-          typename T_scale_fail>
+          typename T_scale_fail,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_scale_succ, T_scale_fail>* = nullptr>
 return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
     const T_y& y, const T_scale_succ& alpha, const T_scale_fail& beta) {
   using T_partials_return = partials_return_t<T_y, T_scale_succ, T_scale_fail>;
@@ -101,13 +103,8 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
   operands_and_partials<T_y_ref, T_alpha_ref, T_beta_ref> ops_partials(
       y_ref, alpha_ref, beta_ref);
   if (!is_constant_all<T_y>::value) {
-    if (is_vector<T_y>::value) {
-      ops_partials.edge1_.partials_ = forward_as<T_partials_matrix>(
-          (alpha_val - 1) / y_val + (beta_val - 1) / (y_val - 1));
-    } else {
-      ops_partials.edge1_.partials_[0]
-          = sum((alpha_val - 1) / y_val + (beta_val - 1) / (y_val - 1));
-    }
+    ops_partials.edge1_.partials_
+        = (alpha_val - 1) / y_val + (beta_val - 1) / (y_val - 1);
   }
 
   if (include_summand<propto, T_scale_succ, T_scale_fail>::value) {
@@ -120,22 +117,12 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_lpdf(
           = to_ref_if < !is_constant_all<T_scale_succ>::value
             && !is_constant_all<T_scale_fail>::value > (digamma(alpha_beta));
       if (!is_constant_all<T_scale_succ>::value) {
-        if (is_vector<T_scale_succ>::value) {
-          ops_partials.edge2_.partials_ = forward_as<T_partials_matrix>(
-              log_y + digamma_alpha_beta - digamma(alpha_val));
-        } else {
-          ops_partials.edge2_.partials_[0]
-              = sum(log_y + digamma_alpha_beta - digamma(alpha_val));
-        }
+        ops_partials.edge2_.partials_
+            = log_y + digamma_alpha_beta - digamma(alpha_val);
       }
       if (!is_constant_all<T_scale_fail>::value) {
-        if (is_vector<T_scale_fail>::value) {
-          ops_partials.edge3_.partials_ = forward_as<T_partials_matrix>(
-              log1m_y + digamma_alpha_beta - digamma(beta_val));
-        } else {
-          ops_partials.edge3_.partials_[0]
-              = sum(log1m_y + digamma_alpha_beta - digamma(beta_val));
-        }
+        ops_partials.edge3_.partials_
+            = log1m_y + digamma_alpha_beta - digamma(beta_val);
       }
     }
   }

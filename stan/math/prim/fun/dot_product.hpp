@@ -26,7 +26,7 @@ namespace math {
 template <typename Vec1, typename Vec2,
           typename = require_all_eigen_vector_t<Vec1, Vec2>,
           typename = require_all_not_eigen_vt<is_var, Vec1, Vec2>>
-inline auto dot_product(const Vec1 &v1, const Vec2 &v2) {
+inline return_type_t<Vec1, Vec2> dot_product(const Vec1 &v1, const Vec2 &v2) {
   check_matching_sizes("dot_product", "v1", v1, "v2", v2);
   return v1.dot(v2);
 }

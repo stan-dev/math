@@ -4,11 +4,10 @@
 
 #include <stan/math/opencl/prim/size.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
+#include <stan/math/prim/err/check_size_match.hpp>
 #include <stan/math/opencl/opencl_context.hpp>
 #include <stan/math/opencl/matrix_cl_view.hpp>
-#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/vec_concat.hpp>
 #include <CL/cl2.hpp>

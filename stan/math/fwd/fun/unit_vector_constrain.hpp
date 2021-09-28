@@ -15,7 +15,8 @@
 namespace stan {
 namespace math {
 
-template <typename EigMat, require_eigen_vt<is_fvar, EigMat>* = nullptr>
+template <typename EigMat,
+          require_eigen_col_vector_vt<is_fvar, EigMat>* = nullptr>
 inline auto unit_vector_constrain(const EigMat& y) {
   using eig_partial = partials_type_t<value_type_t<EigMat>>;
   promote_scalar_t<eig_partial, EigMat> y_val(value_of(y));

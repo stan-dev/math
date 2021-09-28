@@ -355,6 +355,26 @@ TEST_F(AgradRev, var_vector_views_const) {
   var_vector_views_const_test<Eigen::RowVectorXd>();
 }
 
+TEST_F(AgradRev, var_matrix_view_block_from_plain_test) {
+  using stan::math::sum;
+  using stan::math::var_value;
+  Eigen::MatrixXd A(4, 4);
+  A << 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15;
+  Eigen::MatrixXd B(2, 2);
+  B << 2, 3, 4, 5;
+  var_value<Eigen::MatrixXd> A_v(A);
+  var_value<Eigen::MatrixXd> B_v(B);
+  A_v.block(0, 0, 2, 2) = B_v;
+  for (Eigen::Index i = 0; i < A_v.size(); ++i) {
+    A_v.adj().coeffRef(i) = i;
+  }
+  stan::math::grad();
+  EXPECT_FLOAT_EQ(B_v.adj()(0), 0);
+  EXPECT_FLOAT_EQ(B_v.adj()(1), 1);
+  EXPECT_FLOAT_EQ(B_v.adj()(2), 4);
+  EXPECT_FLOAT_EQ(B_v.adj()(3), 5);
+}
+
 /**
  * Tests that views of a var<Matrix> receive the adjoints of the original
  * matrix.

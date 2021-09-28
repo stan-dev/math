@@ -8,10 +8,10 @@ namespace math {
 namespace internal {
 
 template <typename F>
-struct callback_vari : public vari_base {
+struct reverse_pass_callback_vari : public vari_base {
   F rev_functor_;
 
-  explicit callback_vari(F&& rev_functor)
+  explicit reverse_pass_callback_vari(F&& rev_functor)
       : rev_functor_(std::forward<F>(rev_functor)) {
     ChainableStack::instance_->var_stack_.push_back(this);
   }
@@ -36,7 +36,7 @@ struct callback_vari : public vari_base {
  */
 template <typename F>
 inline void reverse_pass_callback(F&& functor) {
-  new internal::callback_vari<F>(std::forward<F>(functor));
+  new internal::reverse_pass_callback_vari<F>(std::forward<F>(functor));
 }
 
 }  // namespace math

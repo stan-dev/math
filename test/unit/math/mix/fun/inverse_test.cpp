@@ -6,16 +6,20 @@ TEST(mathMixMatFun, inverse) {
 
   Eigen::MatrixXd t(0, 0);
   stan::test::expect_ad(f, t);
+  stan::test::expect_ad_matvar(f, t);
 
   Eigen::MatrixXd u(1, 1);
   u << 2;
   stan::test::expect_ad(f, u);
+  stan::test::expect_ad_matvar(f, u);
 
   Eigen::MatrixXd v(2, 2);
   v << 2, 3, 5, 7;
   stan::test::expect_ad(f, v);
+  stan::test::expect_ad_matvar(f, v);
   v << 1.9, 0.3, 0.3, 1.7;
   stan::test::expect_ad(f, v);
+  stan::test::expect_ad_matvar(f, v);
 
   // issues around zero require looser tolerances for hessians
   stan::test::ad_tolerances tols;
@@ -25,6 +29,7 @@ TEST(mathMixMatFun, inverse) {
   Eigen::MatrixXd w(3, 3);
   w << 2, 3, 5, 7, 11, 13, 17, 19, 23;
   stan::test::expect_ad(tols, f, w);
+  stan::test::expect_ad_matvar(tols, f, w);
 
   // even lower tolerance, again for cases around zero
   stan::test::ad_tolerances tols2;
@@ -34,11 +39,13 @@ TEST(mathMixMatFun, inverse) {
   Eigen::MatrixXd x(4, 4);
   x << 2, 3, 4, 5, 9, -1, 2, 2, 4, 3, 7, -1, 0, 1, 19, 112;
   stan::test::expect_ad(tols2, f, x);
+  stan::test::expect_ad_matvar(tols2, f, x);
 
   Eigen::MatrixXd y(3, 2);
   y << 1, 2, 3, 4, 5, 6;
   EXPECT_THROW(stan::math::inverse(y), std::invalid_argument);
   stan::test::expect_ad(f, y);
+  stan::test::expect_ad_matvar(f, y);
 
   Eigen::MatrixXd z(2, 2);
   z << 1, 2, 5, std::numeric_limits<double>::quiet_NaN();
@@ -50,6 +57,7 @@ TEST(mathMixMatFun, inverse) {
   Eigen::MatrixXd a(2, 2);
   a << 1.9, 0.3, 0.3, std::numeric_limits<double>::infinity();
   stan::test::expect_ad(f, a);
+  stan::test::expect_ad_matvar(f, a);
 
   // singular matrix, inverse does not exist.
   // Eigen does not throw errors, but returns inf

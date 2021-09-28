@@ -42,6 +42,7 @@
 #include <stan/math/rev/fun/dot_self.hpp>
 #include <stan/math/rev/fun/eigenvalues_sym.hpp>
 #include <stan/math/rev/fun/eigenvectors_sym.hpp>
+#include <stan/math/rev/fun/elt_divide.hpp>
 #include <stan/math/rev/fun/elt_multiply.hpp>
 #include <stan/math/rev/fun/erf.hpp>
 #include <stan/math/rev/fun/erfc.hpp>

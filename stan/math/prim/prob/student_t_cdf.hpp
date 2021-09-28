@@ -24,25 +24,33 @@ return_type_t<T_y, T_dof, T_loc, T_scale> student_t_cdf(const T_y& y,
                                                         const T_loc& mu,
                                                         const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_dof, T_loc, T_scale>;
+  using T_y_ref = ref_type_t<T_y>;
+  using T_nu_ref = ref_type_t<T_dof>;
+  using T_mu_ref = ref_type_t<T_loc>;
+  using T_sigma_ref = ref_type_t<T_scale>;
   using std::exp;
   using std::pow;
   static const char* function = "student_t_cdf";
-  check_not_nan(function, "Random variable", y);
-  check_positive_finite(function, "Degrees of freedom parameter", nu);
-  check_finite(function, "Location parameter", mu);
-  check_positive_finite(function, "Scale parameter", sigma);
+  T_y_ref y_ref = y;
+  T_nu_ref nu_ref = nu;
+  T_mu_ref mu_ref = mu;
+  T_sigma_ref sigma_ref = sigma;
+  check_not_nan(function, "Random variable", y_ref);
+  check_positive_finite(function, "Degrees of freedom parameter", nu_ref);
+  check_finite(function, "Location parameter", mu_ref);
+  check_positive_finite(function, "Scale parameter", sigma_ref);
 
   if (size_zero(y, nu, mu, sigma)) {
     return 1.0;
   }
 
   T_partials_return P(1.0);
-  operands_and_partials<T_y, T_dof, T_loc, T_scale> ops_partials(y, nu, mu,
-                                                                 sigma);
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_dof> nu_vec(nu);
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_scale> sigma_vec(sigma);
+  operands_and_partials<T_y_ref, T_nu_ref, T_mu_ref, T_sigma_ref> ops_partials(
+      y_ref, nu_ref, mu_ref, sigma_ref);
+  scalar_seq_view<T_y> y_vec(y_ref);
+  scalar_seq_view<T_nu_ref> nu_vec(nu_ref);
+  scalar_seq_view<T_mu_ref> mu_vec(mu_ref);
+  scalar_seq_view<T_sigma_ref> sigma_vec(sigma_ref);
   size_t N = max_size(y, nu, mu, sigma);
 
   // Explicit return for extreme values

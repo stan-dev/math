@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <cmath>
 
 namespace stan {
@@ -24,23 +25,19 @@ namespace math {
  *   ordered scalars.
  */
 template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
-Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, 1> positive_ordered_free(
-    const EigVec& y) {
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
+auto positive_ordered_free(const EigVec& y) {
   using std::log;
-  using size_type = Eigen::Index;
-
+  const auto& y_ref = to_ref(y);
   check_positive_ordered("stan::math::positive_ordered_free",
-                         "Positive ordered variable", y);
-  size_type k = y.size();
-  Matrix<value_type_t<EigVec>, Dynamic, 1> x(k);
+                         "Positive ordered variable", y_ref);
+  Eigen::Index k = y_ref.size();
+  plain_type_t<EigVec> x(k);
   if (k == 0) {
     return x;
   }
-  x.coeffRef(0) = log(y.coeff(0));
-  for (size_type i = 1; i < k; ++i) {
-    x.coeffRef(i) = log(y.coeff(i) - y.coeff(i - 1));
+  x.coeffRef(0) = log(y_ref.coeff(0));
+  for (Eigen::Index i = 1; i < k; ++i) {
+    x.coeffRef(i) = log(y_ref.coeff(i) - y_ref.coeff(i - 1));
   }
   return x;
 }

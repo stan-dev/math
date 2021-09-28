@@ -45,6 +45,7 @@ TEST(MathMixMatFun, logSumExp) {
 
   Eigen::VectorXd x0(0);
   stan::test::expect_ad(f, x0);
+  stan::test::expect_ad_matvar(f, x0);
 
   Eigen::VectorXd x1(1);
   x1 << 0;
@@ -68,8 +69,10 @@ TEST(MathMixMatFun, logSumExp) {
 
   for (const auto& x : std::vector<Eigen::VectorXd>{x1, x2, x2b, x2c, x4}) {
     stan::test::expect_ad(tols, f, x);
+    stan::test::expect_ad_matvar(tols, f, x);
     Eigen::RowVectorXd rx = x;
     stan::test::expect_ad(tols, f, rx);
+    stan::test::expect_ad_matvar(tols, f, rx);
     std::vector<double> stx
         = std::vector<double>(x.data(), x.data() + x.size());
     stan::test::expect_ad(tols, f, stx);
@@ -78,6 +81,7 @@ TEST(MathMixMatFun, logSumExp) {
   Eigen::MatrixXd x23(2, 2);
   x23 << 1, 2, 3, 4;
   stan::test::expect_ad(f, x23);
+  stan::test::expect_ad_matvar(f, x23);
 
   std::vector<Eigen::VectorXd> stvx{x2, x2b, x2c};
   stan::test::expect_ad(tols, f, stvx);

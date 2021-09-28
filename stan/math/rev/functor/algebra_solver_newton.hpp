@@ -54,22 +54,24 @@ namespace math {
  * @throw <code>std::invalid_argument</code> if max_num_steps is not positive.
  * @throw <code>std::domain_error</code> if solver exceeds max_num_steps.
  */
-template <typename F, typename T>
+template <typename F, typename T, require_eigen_vector_t<T>* = nullptr>
 Eigen::VectorXd algebra_solver_newton(
-    const F& f, const Eigen::Matrix<T, Eigen::Dynamic, 1>& x,
-    const Eigen::VectorXd& y, const std::vector<double>& dat,
-    const std::vector<int>& dat_int, std::ostream* msgs = nullptr,
-    double scaling_step_size = 1e-3, double function_tolerance = 1e-6,
+    const F& f, const T& x, const Eigen::VectorXd& y,
+    const std::vector<double>& dat, const std::vector<int>& dat_int,
+    std::ostream* msgs = nullptr, double scaling_step_size = 1e-3,
+    double function_tolerance = 1e-6,
     long int max_num_steps = 200) {  // NOLINT(runtime/int)
-  algebra_solver_check(x, y, dat, dat_int, function_tolerance, max_num_steps);
+  const auto& x_eval = x.eval();
+  algebra_solver_check(x_eval, y, dat, dat_int, function_tolerance,
+                       max_num_steps);
   check_nonnegative("algebra_solver", "scaling_step_size", scaling_step_size);
 
   check_matching_sizes("algebra_solver", "the algebraic system's output",
-                       value_of(f(x, y, dat, dat_int, msgs)),
+                       value_of(f(x_eval, y, dat, dat_int, msgs)),
                        "the vector of unknowns, x,", x);
 
-  return kinsol_solve(f, value_of(x), y, dat, dat_int, 0, scaling_step_size,
-                      function_tolerance, max_num_steps);
+  return kinsol_solve(f, value_of(x_eval), y, dat, dat_int, 0,
+                      scaling_step_size, function_tolerance, max_num_steps);
 }
 
 /**
@@ -116,28 +118,29 @@ Eigen::VectorXd algebra_solver_newton(
  * @throw <code>std::invalid_argument</code> if max_num_steps is not positive.
  * @throw <code>std::domain_error if solver exceeds max_num_steps.
  */
-template <typename F, typename T1, typename T2>
-Eigen::Matrix<T2, Eigen::Dynamic, 1> algebra_solver_newton(
-    const F& f, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
-    const Eigen::Matrix<T2, Eigen::Dynamic, 1>& y,
-    const std::vector<double>& dat, const std::vector<int>& dat_int,
-    std::ostream* msgs = nullptr, double scaling_step_size = 1e-3,
-    double function_tolerance = 1e-6,
+template <typename F, typename T1, typename T2,
+          require_all_eigen_vector_t<T1, T2>* = nullptr,
+          require_st_var<T2>* = nullptr>
+Eigen::Matrix<scalar_type_t<T2>, Eigen::Dynamic, 1> algebra_solver_newton(
+    const F& f, const T1& x, const T2& y, const std::vector<double>& dat,
+    const std::vector<int>& dat_int, std::ostream* msgs = nullptr,
+    double scaling_step_size = 1e-3, double function_tolerance = 1e-6,
     long int max_num_steps = 200) {  // NOLINT(runtime/int)
 
+  const auto& x_eval = x.eval();
+  const auto& y_eval = y.eval();
   Eigen::VectorXd theta_dbl = algebra_solver_newton(
-      f, x, value_of(y), dat, dat_int, msgs, scaling_step_size,
+      f, x_eval, value_of(y_eval), dat, dat_int, msgs, scaling_step_size,
       function_tolerance, max_num_steps);
 
   typedef system_functor<F, double, double, false> Fy;
   typedef system_functor<F, double, double, true> Fs;
   typedef hybrj_functor_solver<Fs, F, double, double> Fx;
-  Fx fx(Fs(), f, value_of(x), value_of(y), dat, dat_int, msgs);
+  Fx fx(Fs(), f, value_of(x_eval), value_of(y_eval), dat, dat_int, msgs);
 
   // Construct vari
-  algebra_solver_vari<Fy, F, T2, Fx>* vi0
-      = new algebra_solver_vari<Fy, F, T2, Fx>(Fy(), f, value_of(x), y, dat,
-                                               dat_int, theta_dbl, fx, msgs);
+  auto* vi0 = new algebra_solver_vari<Fy, F, scalar_type_t<T2>, Fx>(
+      Fy(), f, value_of(x_eval), y_eval, dat, dat_int, theta_dbl, fx, msgs);
   Eigen::Matrix<var, Eigen::Dynamic, 1> theta(x.size());
   theta(0) = var(vi0->theta_[0]);
   for (int i = 1; i < x.size(); ++i)

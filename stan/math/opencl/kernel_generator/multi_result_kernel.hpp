@@ -2,8 +2,8 @@
 #define STAN_MATH_OPENCL_KERNEL_GENERATOR_MULTI_RESULT_KERNEL_HPP
 #ifdef STAN_OPENCL
 
-#include <stan/math/prim/err.hpp>
-#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
+#include <stan/math/prim/err/check_size_match.hpp>
+#include <stan/math/prim/meta/is_kernel_expression.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
 #include <stan/math/opencl/kernel_generator/calc_if.hpp>
@@ -337,7 +337,8 @@ class results_cl {
           "const int j = j0 + lid_j;\n"
           + parts.initialization +
           "if(i < rows){\n"
-          + parts.body +
+          + parts.body
+          + parts.body_suffix +
           "}\n"
           + parts.reduction +
           "}\n"
@@ -353,6 +354,7 @@ class results_cl {
           + parts.declarations
           + parts.initialization
           + parts.body
+          + parts.body_suffix
           + parts.reduction +
           "}\n";
     }

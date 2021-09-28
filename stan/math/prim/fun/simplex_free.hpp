@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/logit.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <cmath>
 
 namespace stan {
@@ -25,18 +26,19 @@ namespace math {
  * the simplex.
  * @throw std::domain_error if x is not a valid simplex
  */
-template <typename ColVec, require_eigen_col_vector_t<ColVec>* = nullptr>
-auto simplex_free(const ColVec& x) {
+template <typename Vec, require_eigen_col_vector_t<Vec>* = nullptr>
+auto simplex_free(const Vec& x) {
   using std::log;
-  using T = value_type_t<ColVec>;
+  using T = value_type_t<Vec>;
 
-  check_simplex("stan::math::simplex_free", "Simplex variable", x);
-  int Km1 = x.size() - 1;
-  Eigen::Matrix<T, Eigen::Dynamic, 1> y(Km1);
-  T stick_len = x.coeff(Km1);
+  const auto& x_ref = to_ref(x);
+  check_simplex("stan::math::simplex_free", "Simplex variable", x_ref);
+  int Km1 = x_ref.size() - 1;
+  plain_type_t<Vec> y(Km1);
+  T stick_len = x_ref.coeff(Km1);
   for (Eigen::Index k = Km1; --k >= 0;) {
-    stick_len += x.coeff(k);
-    T z_k = x.coeff(k) / stick_len;
+    stick_len += x_ref.coeff(k);
+    T z_k = x_ref.coeff(k) / stick_len;
     y.coeffRef(k) = logit(z_k) + log(Km1 - k);
     // note: log(Km1 - k) = logit(1.0 / (Km1 + 1 - k));
   }

@@ -2,11 +2,13 @@
 #define STAN_MATH_PRIM_FUNCTOR_ODE_RK45_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/functor/coupled_ode_system.hpp>
 #include <stan/math/prim/functor/ode_store_sensitivities.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <boost/numeric/odeint.hpp>
 #include <ostream>
+#include <tuple>
 #include <vector>
 
 namespace stan {
@@ -51,13 +53,12 @@ namespace math {
  * @return Solution to ODE at times \p ts
  */
 template <typename F, typename T_y0, typename T_t0, typename T_ts,
-          typename... Args>
+          typename... Args, require_eigen_vector_t<T_y0>* = nullptr>
 std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, Args...>,
                           Eigen::Dynamic, 1>>
-ode_rk45_tol_impl(const char* function_name, const F& f,
-                  const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0_arg, T_t0 t0,
-                  const std::vector<T_ts>& ts, double relative_tolerance,
-                  double absolute_tolerance,
+ode_rk45_tol_impl(const char* function_name, const F& f, const T_y0& y0_arg,
+                  T_t0 t0, const std::vector<T_ts>& ts,
+                  double relative_tolerance, double absolute_tolerance,
                   long int max_num_steps,  // NOLINT(runtime/int)
                   std::ostream* msgs, const Args&... args) {
   using boost::numeric::odeint::integrate_times;
@@ -76,9 +77,17 @@ ode_rk45_tol_impl(const char* function_name, const F& f,
   check_finite(function_name, "initial time", t0);
   check_finite(function_name, "times", ts);
 
-  // Code from https://stackoverflow.com/a/17340003
-  std::vector<int> unused_temp{
-      0, (check_finite(function_name, "ode parameters and data", args), 0)...};
+  std::tuple<ref_type_t<Args>...> args_ref_tuple(args...);
+
+  apply(
+      [&](const auto&... args_ref) {
+        // Code from https://stackoverflow.com/a/17340003
+        std::vector<int> unused_temp{
+            0,
+            (check_finite(function_name, "ode parameters and data", args_ref),
+             0)...};
+      },
+      args_ref_tuple);
 
   check_nonzero_size(function_name, "initial state", y0);
   check_nonzero_size(function_name, "times", ts);
@@ -93,7 +102,12 @@ ode_rk45_tol_impl(const char* function_name, const F& f,
 
   using return_t = return_type_t<T_y0, T_t0, T_ts, Args...>;
   // creates basic or coupled system by template specializations
-  coupled_ode_system<F, T_y0_t0, Args...> coupled_system(f, y0, msgs, args...);
+  auto&& coupled_system = apply(
+      [&](const auto&... args_ref) {
+        return coupled_ode_system<F, T_y0_t0, ref_type_t<Args>...>(f, y0, msgs,
+                                                                   args_ref...);
+      },
+      args_ref_tuple);
 
   // first time in the vector must be time of initial state
   std::vector<double> ts_vec(ts.size() + 1);
@@ -114,8 +128,12 @@ ode_rk45_tol_impl(const char* function_name, const F& f,
       observer_initial_recorded = true;
       return;
     }
-    y.emplace_back(ode_store_sensitivities(f, coupled_state, y0, t0,
-                                           ts[time_index], msgs, args...));
+    apply(
+        [&](const auto&... args_ref) {
+          y.emplace_back(ode_store_sensitivities(
+              f, coupled_state, y0, t0, ts[time_index], msgs, args_ref...));
+        },
+        args_ref_tuple);
     time_index++;
   };
 
@@ -177,11 +195,11 @@ ode_rk45_tol_impl(const char* function_name, const F& f,
  * @return Solution to ODE at times \p ts
  */
 template <typename F, typename T_y0, typename T_t0, typename T_ts,
-          typename... Args>
+          typename... Args, require_eigen_vector_t<T_y0>* = nullptr>
 std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, Args...>,
                           Eigen::Dynamic, 1>>
-ode_rk45_tol(const F& f, const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0_arg,
-             T_t0 t0, const std::vector<T_ts>& ts, double relative_tolerance,
+ode_rk45_tol(const F& f, const T_y0& y0_arg, T_t0 t0,
+             const std::vector<T_ts>& ts, double relative_tolerance,
              double absolute_tolerance,
              long int max_num_steps,  // NOLINT(runtime/int)
              std::ostream* msgs, const Args&... args) {
@@ -223,11 +241,11 @@ ode_rk45_tol(const F& f, const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0_arg,
  * @return Solution to ODE at times \p ts
  */
 template <typename F, typename T_y0, typename T_t0, typename T_ts,
-          typename... Args>
+          typename... Args, require_eigen_vector_t<T_y0>* = nullptr>
 std::vector<Eigen::Matrix<stan::return_type_t<T_y0, T_t0, T_ts, Args...>,
                           Eigen::Dynamic, 1>>
-ode_rk45(const F& f, const Eigen::Matrix<T_y0, Eigen::Dynamic, 1>& y0, T_t0 t0,
-         const std::vector<T_ts>& ts, std::ostream* msgs, const Args&... args) {
+ode_rk45(const F& f, const T_y0& y0, T_t0 t0, const std::vector<T_ts>& ts,
+         std::ostream* msgs, const Args&... args) {
   double relative_tolerance = 1e-6;
   double absolute_tolerance = 1e-6;
   long int max_num_steps = 1e6;  // NOLINT(runtime/int)
