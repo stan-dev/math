@@ -18,32 +18,21 @@ namespace math {
  */
 template <typename T_phi, typename T_eta, typename T_theta, typename T_x,
           typename K, typename L, typename RNG>
-inline Eigen::VectorXd
-  laplace_rng
-  (const L& L_f,
-   const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta,
-   const Eigen::VectorXd& delta_L,
-   const std::vector<int>& delta_int_L,
-   const K& K_f,
-   const Eigen::Matrix<T_phi, Eigen::Dynamic, 1>& phi,
-   const T_x& x,
-   const std::vector<double>& delta_K,
-   const std::vector<int>& delta_int_K,
-   const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta_0,
-   double tolerance = 1e-6,
-   long int max_num_steps = 100,
-   int hessian_block_size = 0,
-   int compute_W_root = 1,
-   RNG& rng = boost::random::mt19937(),
-   std::ostream* msgs = nullptr) {
-     return
-       laplace_base_rng(
-         diff_likelihood<L>(L_f, delta_L, delta_int_L, msgs),
-         K_f, phi, eta,
-         x, x, delta_K, delta_int_K, theta_0,
-         rng, msgs, tolerance, max_num_steps,
-         hessian_block_size, compute_W_root);
-  }
+inline Eigen::VectorXd laplace_rng(
+    const L& L_f, const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta,
+    const Eigen::VectorXd& delta_L, const std::vector<int>& delta_int_L,
+    const K& K_f, const Eigen::Matrix<T_phi, Eigen::Dynamic, 1>& phi,
+    const T_x& x, const std::vector<double>& delta_K,
+    const std::vector<int>& delta_int_K,
+    const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta_0,
+    double tolerance = 1e-6, long int max_num_steps = 100,
+    int hessian_block_size = 0, int compute_W_root = 1,
+    RNG& rng = boost::random::mt19937(), std::ostream* msgs = nullptr) {
+  return laplace_base_rng(diff_likelihood<L>(L_f, delta_L, delta_int_L, msgs),
+                          K_f, phi, eta, x, x, delta_K, delta_int_K, theta_0,
+                          rng, msgs, tolerance, max_num_steps,
+                          hessian_block_size, compute_W_root);
+}
 
 }  // namespace math
 }  // namespace stan

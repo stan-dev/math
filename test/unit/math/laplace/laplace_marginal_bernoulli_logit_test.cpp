@@ -1,4 +1,5 @@
 #include <stan/math.hpp>
+#include <stan/math/laplace/laplace.hpp>
 #include <stan/math/laplace/laplace_likelihood_bernoulli_logit.hpp>
 #include <stan/math/laplace/laplace_marginal_bernoulli_logit_lpmf.hpp>
 #include <test/unit/math/laplace/laplace_utility.hpp>
@@ -88,7 +89,7 @@ TEST(laplace, logistic_lgm_dim500) {
   std::string data_directory = "test/unit/math/laplace/aki_synth_data/";
   std::vector<double> x1(dim_theta), x2(dim_theta);
   std::vector<int> y(n_observations);
-  read_in_data(dim_theta, n_observations, data_directory, x1, x2, y);
+  stan::math::test::read_in_data(dim_theta, n_observations, data_directory, x1, x2, y);
 
   // Look a some of the data.
   // std::cout << "x_1: " << x1[0] << " " << x2[0] << std::endl
@@ -117,16 +118,17 @@ TEST(laplace, logistic_lgm_dim500) {
   phi << 1.6, 1;  // standard deviation, length scale
   Eigen::VectorXd eta_dummy;
   Eigen::PartialPivLU<Eigen::MatrixXd> LU_dummy;
-
+  Eigen::MatrixXd K_dummy;
   auto start_optimization = std::chrono::system_clock::now();
 
   double marginal_density
     = laplace_marginal_density(
       diff_bernoulli_logit(to_vector(n_samples), to_vector(y)),
-      sqr_exp_kernel_functor(),
+      stan::math::test::sqr_exp_kernel_functor(),
       phi, eta_dummy, x, delta, delta_int,
       covariance, theta_laplace, W_root, L, a, l_grad,
       LU_dummy,
+      K_dummy,
       theta_0, 0, 1e-3, 100);
 
   auto end_optimization = std::chrono::system_clock::now();
@@ -150,12 +152,12 @@ TEST(laplace, logistic_lgm_dim500) {
   var marginal_density_v
     = laplace_marginal_density(
         diff_bernoulli_logit(to_vector(n_samples), to_vector(y)),
-        sqr_exp_kernel_functor(),
+        stan::math::test::sqr_exp_kernel_functor(),
         phi_v2, eta_dummy_v, x, delta, delta_int,
         theta_0, 0, 1e-3, 100);
 
-  VEC g2;
-  AVEC parm_vec2 = createAVEC(phi_v2(0), phi_v2(1));
+  std::vector<double>g2;
+  std::vector<stan::math::var> parm_vec2{phi_v2(0), phi_v2(1)};
   marginal_density_v.grad(parm_vec2, g2);
 
   end_optimization = std::chrono::system_clock::now();
@@ -182,7 +184,7 @@ TEST(laplace, logistic_lgm_dim500) {
 
   double marginal_density_v2
     = laplace_marginal_bernoulli_logit_lpmf(y, n_samples,
-                                       sqr_exp_kernel_functor(),
+                                       stan::math::test::sqr_exp_kernel_functor(),
                                        phi, x, delta, delta_int,
                                        theta_0, 0, 1e-3, 100);
 

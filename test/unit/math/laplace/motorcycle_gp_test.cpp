@@ -112,7 +112,7 @@ protected:
     using stan::math::value_of;
     using stan::math::gp_exp_quad_cov;
 
-    if (FALSE) {
+    if (false) {
       n_obs = 6;
       Eigen::VectorXd x_vec(n_obs);
       x_vec << 2.4, 2.6, 3.2, 3.6, 4.0, 6.2;
@@ -122,9 +122,9 @@ protected:
       y << 0.0, -1.3, -2.7,  0.0, -2.7, -2.7;
     }
 
-    if (TRUE) {
+    if (true) {
       n_obs = 133;
-      read_data(n_obs, "test/unit/math/laplace/motorcycle_gp/",
+      stan::math::test::read_data(n_obs, "test/unit/math/laplace/motorcycle_gp/",
                    x, y);
       // std::cout << "x: ";
       // for (int i = 0; i < n_obs; i++) std::cout << x[i] << " ";
@@ -220,8 +220,8 @@ TEST_F(laplace_motorcyle_gp_test, lk_autodiff) {
                                solver, do_line_search,
                                max_steps_line_search);
 
-  VEC g;
-  AVEC parm_vec = createAVEC(phi(0), phi(1), phi(2), phi(3));
+  std::vector<double>g;
+  std::vector<stan::math::var> parm_vec{phi(0), phi(1), phi(2), phi(3)};
   marginal_density.grad(parm_vec, g);
   std::cout << "grad: " << g[0] << " " << g[1] << " " << g[2] << " " << g[3]
   << std::endl;
@@ -287,8 +287,8 @@ TEST_F(laplace_motorcyle_gp_test, lk_autodiff_eta) {
                                0, 1e-8, 100, hessian_block_size,
                                compute_W_root);
 
-  VEC g;
-  AVEC parm_vec = createAVEC(phi(0), phi(1), phi(2), phi(3), eta(0));
+  std::vector<double>g;
+  std::vector<stan::math::var> parm_vec{phi(0), phi(1), phi(2), phi(3)};
   marginal_density.grad(parm_vec, g);
   std::cout << "grad: "
     << g[0] << " " << g[1] << " " << g[2] << " " << g[3] << " " << g[4]
@@ -340,8 +340,8 @@ TEST_F(laplace_motorcyle_gp_test, wrapper_function) {
 
   std::cout << "density: " << marginal_density << std::endl;
 
-  VEC g;
-  AVEC parm_vec = createAVEC(phi(0), phi(1), phi(2), phi(3), eta(0));
+  std::vector<double>g;
+  std::vector<stan::math::var> parm_vec{phi(0), phi(1), phi(2), phi(3)};
   marginal_density.grad(parm_vec, g);
   std::cout << "grad: "
   << g[0] << " " << g[1] << " " << g[2] << " " << g[3] << " " << g[4]

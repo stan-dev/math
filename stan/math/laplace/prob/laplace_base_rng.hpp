@@ -23,28 +23,21 @@ namespace math {
  * are drawn for covariates x_pred.
  * To sample the "original" theta's, set x_pred = x.
  */
-template <typename T_theta, typename T_phi, typename T_eta,
-          typename T_x, typename T_x_pred,
-          typename D, typename K, class RNG>
+template <typename T_theta, typename T_phi, typename T_eta, typename T_x,
+          typename T_x_pred, typename D, typename K, class RNG>
 inline Eigen::VectorXd  // CHECK -- right return type
-laplace_base_rng
-  (const D& diff_likelihood,
-   const K& covariance_function,
-   const Eigen::Matrix<T_phi, Eigen::Dynamic, 1>& phi,
-   const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta,
-   const T_x& x,
-   const T_x_pred& x_pred,
-   const std::vector<double>& delta,
-   const std::vector<int>& delta_int,
-   const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta_0,
-   RNG& rng,
-   std::ostream* msgs = nullptr,
-   double tolerance = 1e-6,
-   long int max_num_steps = 100,
-   int hessian_block_size = 0,
-   int compute_W_root = 1) {
-  using Eigen::VectorXd;
+laplace_base_rng(const D& diff_likelihood, const K& covariance_function,
+                 const Eigen::Matrix<T_phi, Eigen::Dynamic, 1>& phi,
+                 const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta,
+                 const T_x& x, const T_x_pred& x_pred,
+                 const std::vector<double>& delta,
+                 const std::vector<int>& delta_int,
+                 const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta_0,
+                 RNG& rng, std::ostream* msgs = nullptr,
+                 double tolerance = 1e-6, long int max_num_steps = 100,
+                 int hessian_block_size = 0, int compute_W_root = 1) {
   using Eigen::MatrixXd;
+  using Eigen::VectorXd;
 
   VectorXd phi_dbl = value_of(phi);
   VectorXd eta_dbl = value_of(eta);
@@ -56,31 +49,28 @@ laplace_base_rng
   {
     VectorXd theta;
     VectorXd a;
-    double marginal_density
-      = laplace_marginal_density(diff_likelihood, covariance_function,
-                                 phi_dbl, eta_dbl,
-                                 x, delta, delta_int,
-                                 covariance, theta, W_r, L, a, l_grad,
-                                 LU, K_root, value_of(theta_0), msgs,
-                                 tolerance, max_num_steps,
-                                 hessian_block_size, compute_W_root);
+    double marginal_density = laplace_marginal_density(
+        diff_likelihood, covariance_function, phi_dbl, eta_dbl, x, delta,
+        delta_int, covariance, theta, W_r, L, a, l_grad, LU, K_root,
+        value_of(theta_0), msgs, tolerance, max_num_steps, hessian_block_size,
+        compute_W_root);
   }
 
   // Modified R&W method
-  MatrixXd covariance_pred = covariance_function(phi_dbl, x_pred,
-                                                 delta, delta_int, msgs);
+  MatrixXd covariance_pred
+      = covariance_function(phi_dbl, x_pred, delta, delta_int, msgs);
 
   VectorXd pred_mean = covariance_pred * l_grad.head(theta_0.rows());
 
   Eigen::MatrixXd Sigma;
   if (compute_W_root) {
-    Eigen::MatrixXd V_dec = mdivide_left_tri<Eigen::Lower>(L,
-                              W_r * covariance_pred);
+    Eigen::MatrixXd V_dec
+        = mdivide_left_tri<Eigen::Lower>(L, W_r * covariance_pred);
     Sigma = covariance_pred - V_dec.transpose() * V_dec;
   } else {
     Sigma = covariance_pred
-      - covariance_pred * (W_r - W_r * LU.solve(covariance * W_r))
-        * covariance_pred;
+            - covariance_pred * (W_r - W_r * LU.solve(covariance * W_r))
+                  * covariance_pred;
   }
 
   return multi_normal_rng(pred_mean, Sigma, rng);

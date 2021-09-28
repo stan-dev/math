@@ -17,8 +17,8 @@ namespace math {
  * This structure can be passed to the the laplace_marginal function.
  * Uses sufficient statistics for the data.
  */
- // FIX ME -- cannot use the sufficient statistic to compute log density in
- // because of log factorial term.
+// FIX ME -- cannot use the sufficient statistic to compute log density in
+// because of log factorial term.
 struct diff_poisson_log {
   /* The number of samples in each group. */
   Eigen::VectorXd n_samples_;
@@ -29,14 +29,14 @@ struct diff_poisson_log {
 
   diff_poisson_log(const Eigen::VectorXd& n_samples,
                    const Eigen::VectorXd& sums)
-    : n_samples_(n_samples), sums_(sums) {
+      : n_samples_(n_samples), sums_(sums) {
     log_exposure_ = Eigen::VectorXd::Zero(sums.size());
   }
 
   diff_poisson_log(const Eigen::VectorXd& n_samples,
                    const Eigen::VectorXd& sums,
                    const Eigen::VectorXd& log_exposure)
-    : n_samples_(n_samples), sums_(sums), log_exposure_(log_exposure) { }
+      : n_samples_(n_samples), sums_(sums), log_exposure_(log_exposure) {}
 
   /**
    * Return the log density.
@@ -46,16 +46,16 @@ struct diff_poisson_log {
    * @return the log density.
    */
   template <typename T1, typename T2>
-  T1 log_likelihood (const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
-                     const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy)
-    const {
+  T1 log_likelihood(
+      const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
+      const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy) const {
     double factorial_term = 0;
     for (int i = 0; i < sums_.size(); i++)
       factorial_term += lgamma(sums_(i) + 1);
     Eigen::Matrix<T1, Eigen::Dynamic, 1> shifted_mean = theta + log_exposure_;
 
-    return - factorial_term
-      + (shifted_mean).dot(sums_) - n_samples_.dot(exp(shifted_mean));
+    return -factorial_term + (shifted_mean).dot(sums_)
+           - n_samples_.dot(exp(shifted_mean));
   }
 
   /**
@@ -71,23 +71,22 @@ struct diff_poisson_log {
    * @param[in, out] hessian diagonal, so stored in a vector.
    */
   template <typename T1, typename T2>
-  void diff (const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
-             const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy,
-             Eigen::Matrix<T1, Eigen::Dynamic, 1>& gradient,
-             // Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic>& hessian,
-             Eigen::SparseMatrix<double>& hessian,
-             int hessian_block_size = 1)
-    const {
+  void diff(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
+            const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy,
+            Eigen::Matrix<T1, Eigen::Dynamic, 1>& gradient,
+            // Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic>& hessian,
+            Eigen::SparseMatrix<double>& hessian,
+            int hessian_block_size = 1) const {
     int theta_size = theta.size();
-    Eigen::Matrix<T1, Eigen::Dynamic, 1>
-      common_term = n_samples_.cwiseProduct(exp(theta + log_exposure_));
+    Eigen::Matrix<T1, Eigen::Dynamic, 1> common_term
+        = n_samples_.cwiseProduct(exp(theta + log_exposure_));
 
     gradient = sums_ - common_term;
     hessian.resize(theta_size, theta_size);
     hessian.reserve(Eigen::VectorXi::Constant(theta_size, hessian_block_size));
     // hessian.col(0) = - common_term;
     for (int i = 0; i < theta_size; i++)
-      hessian.insert(i, i) = - common_term(i);
+      hessian.insert(i, i) = -common_term(i);
   }
 
   /**
@@ -100,9 +99,9 @@ struct diff_poisson_log {
    *         derivative tensor.
    */
   template <typename T1, typename T2>
-  Eigen::Matrix<T1, Eigen::Dynamic, 1>
-  third_diff(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
-             const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy) const {
+  Eigen::Matrix<T1, Eigen::Dynamic, 1> third_diff(
+      const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
+      const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy) const {
     return -n_samples_.cwiseProduct(exp(theta + log_exposure_));
   }
 

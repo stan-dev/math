@@ -94,12 +94,13 @@ TEST(laplace, basic_rng) {
   // Method 2: Vectorized R&W method
   double tolerance = 1e-6;
   int max_num_steps = 100;
-
+  Eigen::MatrixXd K_root;
   // First find the mode using the custom Newton step
   Eigen::MatrixXd covariance;
   Eigen::VectorXd theta;
   Eigen::SparseMatrix<double> W_r;
   Eigen::MatrixXd L;
+  Eigen::VectorXd theta0_val = value_of(theta_0);
   {
     Eigen::VectorXd a;
     Eigen::VectorXd l_grad;
@@ -110,7 +111,8 @@ TEST(laplace, basic_rng) {
                                  sigma, eta_dummy, x_dummy, d0, di0,
                                  covariance, theta, W_r, L, a, l_grad,
                                  LU_dummy,
-                                 value_of(theta_0), 0,
+                                 K_root,
+                                 theta0_val, 0,
                                  tolerance, max_num_steps);
   }
 

@@ -1,5 +1,8 @@
 #include <stan/math.hpp>
-#include <stan/math/laplace/laplace_likelihood.hpp>
+//#include <stan/math/laplace/laplace_likelihood.hpp>
+#include <stan/math/laplace/laplace.hpp>
+
+#include <stan/math/laplace/laplace_likelihood_general.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 
 #include <gtest/gtest.h>

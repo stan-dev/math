@@ -1,5 +1,6 @@
 #include <stan/math.hpp>
-#include <stan/math/laplace/laplace_likelihood.hpp>
+#include <stan/math/laplace/laplace.hpp>
+//#include <stan/math/laplace/laplace_likelihood.hpp>
 #include <stan/math/laplace/laplace_likelihood_general.hpp>
 #include <stan/math/laplace/third_diff_directional.hpp>
 #include <stan/math/laplace/hessian_times_vector.hpp>
@@ -108,7 +109,7 @@ TEST_F(neg_bin_log_diff_test, manual_calls) {
   std::cout << "hessian-vector: " << Hv.transpose() << std::endl;
 
   // Compute third-order derivative
-  if (TRUE) {
+  if (true) {
     using Eigen::Matrix;
     nested_rev_autodiff nested;
 
@@ -161,7 +162,7 @@ TEST_F(neg_bin_log_diff_test, manual_calls) {
   std::cout << "f: " << fx << std::endl;
   std::cout << "third diff: " << third_diff.transpose() << std::endl;
 }
-
+/*
 TEST_F(neg_bin_log_diff_test, diff_likelihood) {
   using stan::math::diff_likelihood;
   using Eigen::VectorXd;
@@ -177,7 +178,7 @@ TEST_F(neg_bin_log_diff_test, diff_likelihood) {
     << "hessian: " << hessian.transpose() << std::endl
     << "third diff: " << third_diff.transpose() << std::endl;
 }
-
+*/
 TEST_F(neg_bin_log_diff_test, diff_block_diagonal) {
   using stan::math::hessian_block_diag;
 

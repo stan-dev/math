@@ -1,9 +1,5 @@
 #include <stan/math.hpp>
 #include <stan/math/laplace/laplace.hpp>
-#include <stan/math/laplace/laplace_likelihood_general.hpp>
-#include <stan/math/laplace/laplace_likelihood_poisson_log.hpp>
-#include <stan/math/laplace/prob/laplace_base_rng.hpp>
-#include <stan/math/laplace/prob/laplace_poisson_log_rng.hpp>
 
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
@@ -50,9 +46,9 @@ protected:
     x2.resize(dim_theta);
     y.resize(n_observations);
     ye.resize(n_observations);
-    read_in_data(dim_theta, n_observations, data_directory, x1, x2, y, ye);
+    stan::math::test::read_in_data(dim_theta, n_observations, data_directory, x1, x2, y, ye);
 
-    if (FALSE) {
+    if (false) {
       // look at some of the data
       std::cout << "x_1: " << x1[0] << " " << x2[0] << std::endl
                 << "x_2: " << x1[1] << " " << x2[1] << std::endl
@@ -116,14 +112,14 @@ TEST_F(laplace_disease_map_test, lk_analytical) {
 
   var marginal_density
     = laplace_marginal_poisson_log_lpmf(y, n_samples, ye,
-                                        sqr_exp_kernel_functor(),
+                                        stan::math::test::sqr_exp_kernel_functor(),
                                         phi, x, delta, delta_int, theta_0);
 
   auto end = std::chrono::system_clock::now();
   std::chrono::duration<double> elapsed_time = end - start;
 
-  VEC g;
-  AVEC parm_vec = createAVEC(phi(0), phi(1));
+  std::vector<double> g;
+  std::vector<var> parm_vec{phi(0), phi(1)};
   marginal_density.grad(parm_vec, g);
 
   std::cout << "LAPLACE MARGINAL AND VARI CLASS" << std::endl
@@ -154,7 +150,7 @@ TEST_F(laplace_disease_map_test, lk_analytical) {
   start = std::chrono::system_clock::now();
   Eigen::VectorXd
     theta_pred = laplace_base_rng(diff_likelihood,
-                                  sqr_exp_kernel_functor(),
+                                  stan::math::test::sqr_exp_kernel_functor(),
                                   phi, eta_dummy, x, x, delta, delta_int,
                                   theta_0, rng);
 
@@ -170,7 +166,7 @@ TEST_F(laplace_disease_map_test, lk_analytical) {
 
   start = std::chrono::system_clock::now();
   theta_pred = laplace_poisson_log_rng(y, n_samples, ye,
-                                       sqr_exp_kernel_functor(),
+                                       stan::math::test::sqr_exp_kernel_functor(),
                                        phi, x, delta, delta_int,
                                        theta_0, rng);
   end = std::chrono::system_clock::now();
@@ -193,7 +189,7 @@ TEST_F(laplace_disease_map_test, lk_autodiff) {
   int solver = 1;  // options: 1, 2, or 3.
   double marginal_density_dbl
     = laplace_marginal_density(diff_functor,
-                               sqr_exp_kernel_functor(),
+                               stan::math::test::sqr_exp_kernel_functor(),
                                value_of(phi), value_of(eta_dummy),
                                x, delta, delta_int, theta_0,
                                0, 1e-6, 100, hessian_block_size, solver);
@@ -212,15 +208,15 @@ TEST_F(laplace_disease_map_test, lk_autodiff) {
   solver = 1;
   var marginal_density
     = laplace_marginal_density(diff_functor,
-                               sqr_exp_kernel_functor(), phi, eta_dummy,
+                               stan::math::test::sqr_exp_kernel_functor(), phi, eta_dummy,
                                x, delta, delta_int, theta_0,
                                0, 1e-6, 100, hessian_block_size, solver);
 
   end = std::chrono::system_clock::now();
   elapsed_time = end - start;
 
-  VEC g;
-  AVEC parm_vec = createAVEC(phi(0), phi(1));
+  std::vector<double>g;
+  std::vector<stan::math::var> parm_vec{phi(0), phi(1)};
   marginal_density.grad(parm_vec, g);
 
   std::cout << "LAPLACE MARGINAL AND VARI CLASS" << std::endl
@@ -255,31 +251,31 @@ TEST_F(laplace_disease_map_test, finite_diff_benchmark) {
   phi_l1(1) -= eps;
 
   double target = laplace_marginal_density(diff_functor,
-                                 sqr_exp_kernel_functor(),
+                                 stan::math::test::sqr_exp_kernel_functor(),
                                  phi_dbl, value_of(eta_dummy),
                                  x, delta, delta_int, theta_0,
                                  0, 1e-6, 100, hessian_block_size);
 
   double target_u0 = laplace_marginal_density(diff_functor,
-                                 sqr_exp_kernel_functor(),
+                                 stan::math::test::sqr_exp_kernel_functor(),
                                  phi_u0, value_of(eta_dummy),
                                  x, delta, delta_int, theta_0,
                                  0, 1e-6, 100, hessian_block_size),
 
   target_u1 = laplace_marginal_density(diff_functor,
-                                 sqr_exp_kernel_functor(),
+                                 stan::math::test::sqr_exp_kernel_functor(),
                                  phi_u1, value_of(eta_dummy),
                                  x, delta, delta_int, theta_0,
                                  0, 1e-6, 100, hessian_block_size),
 
   target_l0 = laplace_marginal_density(diff_functor,
-                                       sqr_exp_kernel_functor(),
+                                       stan::math::test::sqr_exp_kernel_functor(),
                                        phi_l0, value_of(eta_dummy),
                                        x, delta, delta_int, theta_0,
                                        0, 1e-6, 100, hessian_block_size),
 
   target_l1 = laplace_marginal_density(diff_functor,
-                                       sqr_exp_kernel_functor(),
+                                       stan::math::test::sqr_exp_kernel_functor(),
                                        phi_l1, value_of(eta_dummy),
                                        x, delta, delta_int, theta_0,
                                        0, 1e-6, 100, hessian_block_size);
@@ -305,7 +301,7 @@ TEST_F(laplace_disease_map_test, rng_autodiff) {
   auto start = std::chrono::system_clock::now();
   Eigen::VectorXd
     theta_pred = laplace_base_rng(diff_functor,
-                                  sqr_exp_kernel_functor(),
+                                  stan::math::test::sqr_exp_kernel_functor(),
                                   phi, eta_dummy,
                                   x, x, delta, delta_int, theta_0, rng,
                                   0, 1e-6, 100, hessian_block_size,
@@ -327,11 +323,11 @@ TEST_F(laplace_disease_map_test, lpmf_wrapper) {
   var marginal_density
     = laplace_marginal_lpmf<false>(n_samples, poisson_log_likelihood(),
                                    eta_dummy, delta_lk,
-                                   sqr_exp_kernel_functor(),
+                                   stan::math::test::sqr_exp_kernel_functor(),
                                    phi, x, delta, delta_int, theta_0);
 
-  VEC g;
-  AVEC parm_vec = createAVEC(phi(0), phi(1));
+  std::vector<double>g;
+  std::vector<stan::math::var> parm_vec{phi(0), phi(1)};
   marginal_density.grad(parm_vec, g);
 
   std::cout << "LAPLACE MARGINAL LPMF AND VARI CLASS" << std::endl
@@ -352,7 +348,7 @@ TEST_F(laplace_disease_map_test, rng_wrapper) {
   Eigen::VectorXd
     theta_pred = laplace_rng(poisson_log_likelihood(),
                              eta_dummy, delta_lk, n_samples,
-                             sqr_exp_kernel_functor(),
+                             stan::math::test::sqr_exp_kernel_functor(),
                              phi, x, delta, delta_int, theta_0,
                              1e-6, 100, hessian_block_size,
                              solver, rng);

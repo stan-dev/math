@@ -1,4 +1,5 @@
 #include <stan/math.hpp>
+#include <stan/math/laplace/laplace.hpp>
 #include <stan/math/laplace/laplace_likelihood_general.hpp>
 #include <stan/math/laplace/laplace_likelihood_bernoulli_logit.hpp>
 #include <stan/math/laplace/laplace_marginal_bernoulli_logit_lpmf.hpp>
@@ -139,9 +140,9 @@ protected:
     y.resize(N);
     lambda.resize(M);
 
-    read_in_data(M, N, data_directory, X, y, lambda);
+    stan::math::test::read_in_data(M, N, data_directory, X, y, lambda);
 
-    if (FALSE){
+    if (false){
       std::cout << X << std::endl << "-----" << std::endl;
       std::cout << lambda.transpose() << std::endl << "------" << std::endl;
       std::cout << y[0] << " " << y[1] << " " << std::endl
@@ -232,8 +233,8 @@ TEST_F(laplace_skim_test, lk_analytical) {
   auto end = std::chrono::system_clock::now();
   std::chrono::duration<double> elapsed_time = end - start;
 
-  VEC g;
-  AVEC parm_vec(M + 4);
+  std::vector<double> g;
+  std::vector<var> parm_vec(M + 4);
   for (int m = 0; m < M + 4; m++) parm_vec[m] = parm(m);
   marginal_density.grad(parm_vec, g);
 
@@ -288,8 +289,8 @@ TEST_F(laplace_skim_test, lk_autodiff) {
   auto end = std::chrono::system_clock::now();
   std::chrono::duration<double> elapsed_time = end - start;
 
-  VEC g;
-  AVEC parm_vec(M + 4);
+  std::vector<double> g;
+  std::vector<var> parm_vec(M + 4);
   for (int m = 0; m < M + 4; m++) parm_vec[m] = parm(m);
   marginal_density.grad(parm_vec, g);
 

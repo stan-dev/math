@@ -106,6 +106,8 @@ TEST(laplace, basic_rng) {
   // Eigen::VectorXd W_root;
   Eigen::SparseMatrix<double> W_r;
   Eigen::MatrixXd L;
+  Eigen::MatrixXd K_root;
+  Eigen::VectorXd theta0_val = value_of(theta_0);
   {
     Eigen::VectorXd a;
     Eigen::VectorXd l_grad;
@@ -116,7 +118,8 @@ TEST(laplace, basic_rng) {
                                  sigma, eta_dummy, x_dummy, d0, di0,
                                  covariance, theta, W_r, L, a, l_grad,
                                  LU_dummy,
-                                 value_of(theta_0), 0,
+                                 K_root,
+                                 theta0_val, 0,
                                  tolerance, max_num_steps);
   }
 

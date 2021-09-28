@@ -1,6 +1,13 @@
+#ifndef STAN_TEST_UNIT_MATH_LAPLACE_LAPLACE_UTILITY_HPP
+#define STAN_TEST_UNIT_MATH_LAPLACE_LAPLACE_UTILITY_HPP
+#include <stan/math/laplace/laplace.hpp>
 #include <iostream>
 #include <istream>
 #include <fstream>
+
+namespace stan {
+namespace math {
+namespace test {
 
 /* Functions and functors used in several lgp tests. */
 
@@ -114,7 +121,7 @@ struct inla_functor {
     Eigen::VectorXd n_samples = to_vector(head(dat, n_groups));
     Eigen::VectorXd sums = to_vector(tail(dat, dat.size() - n_groups));
     Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic>
-      Sigma = covariance(parm, n_groups, 1);
+      Sigma = stan::math::test::covariance(parm, n_groups, 1);
 
     return sums - stan::math::elt_multiply(n_samples, stan::math::exp(theta)) -
       stan::math::mdivide_left(Sigma, theta);
@@ -334,3 +341,8 @@ void read_data(int dim_observations,
     x[i] = buffer;
   }
 }
+
+}
+}
+}
+#endif

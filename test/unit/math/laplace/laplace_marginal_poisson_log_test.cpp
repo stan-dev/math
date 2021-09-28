@@ -1,5 +1,5 @@
 #include <stan/math.hpp>
-#include <stan/math/laplace/laplace_marginal_poisson_log_lpmf.hpp>
+#include <stan/math/laplace/laplace.hpp>
 
 #include <test/unit/math/laplace/laplace_utility.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
@@ -100,7 +100,7 @@ TEST(laplace, poisson_lgm_dim2) {
   std::vector<int> n_samples = {1, 1};
   std::vector<int> sums = {1, 0};
 
-  squared_kernel_functor K;
+  stan::math::test::squared_kernel_functor K;
   var target
     = laplace_marginal_poisson_log_lpmf(sums, n_samples, K, phi, x, delta,
                                         delta_int, theta_0);
@@ -113,8 +113,8 @@ TEST(laplace, poisson_lgm_dim2) {
 
   // How to test this? The best way would be to generate a few
   // benchmarks using gpstuff.
-  VEC g;
-  AVEC parm_vec = createAVEC(phi(0), phi(1));
+  std::vector<double> g;
+  std::vector<stan::math::var> parm_vec{phi(0), phi(1)};
   target.grad(parm_vec, g);
 
   // finite diff test
@@ -136,7 +136,7 @@ TEST(laplace, poisson_lgm_dim2) {
          target_2l = laplace_marginal_poisson_log_lpmf(sums, n_samples, K, phi_2l, x,
                                               delta, delta_int, theta_0);
 
-  VEC g_finite(dim_phi);
+  std::vector<double>g_finite(dim_phi);
   g_finite[0] = (target_1u - target_1l) / (2 * diff);
   g_finite[1] = (target_2u - target_2l) / (2 * diff);
 

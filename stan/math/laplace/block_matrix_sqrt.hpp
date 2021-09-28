@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_LAPLACE_BLOCK_MATRIX_SQRT_HPP
 #define STAN_MATH_LAPLACE_BLOCK_MATRIX_SQRT_HPP
 
-#include <stan/math/prim/fun/cholesky_decompose.hpp>
-
-#include <Eigen/Sparse>
+#include <stan/math/mix.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <unsupported/Eigen/MatrixFunctions>
+// REMOVE ME
 #include <iostream>
 
 namespace stan {
@@ -13,9 +13,8 @@ namespace math {
 /**
  * Return the matrix square-root for a block diagonal matrix.
  */
- Eigen::SparseMatrix<double>
- inline block_matrix_sqrt(Eigen::SparseMatrix<double> W,
-                   int block_size) {
+Eigen::SparseMatrix<double> inline block_matrix_sqrt(
+    Eigen::SparseMatrix<double> W, int block_size) {
   int n_block = W.cols() / block_size;
   Eigen::MatrixXd local_block(block_size, block_size);
   Eigen::MatrixXd local_block_sqrt(block_size, block_size);
@@ -37,7 +36,7 @@ namespace math {
     for (int j = 0; j < block_size; j++) {
       for (int k = 0; k < block_size; k++) {
         W_root.insert(i * block_size + j, i * block_size + k)
-          = local_block_sqrt(j, k);
+            = local_block_sqrt(j, k);
       }
     }
   }
@@ -46,7 +45,6 @@ namespace math {
 
   return W_root;
 }
-
 
 }  // namespace math
 }  // namespace stan
