@@ -55,9 +55,9 @@ inline double min_diff(const std::vector<Tx>& xs) {
  */
 template <typename Tx>
 inline return_type_t<Tx> interp_gauss(const std::vector<double>& xs,
-				      const std::vector<double>& ys,
-				      const std::vector<double>& params,
-				      const Tx& x) {
+                                      const std::vector<double>& ys,
+                                      const std::vector<double>& params,
+                                      const Tx& x) {
   // enforce that interpolation point is between smallest and largest
   // reference point
   static char const* function = "interp_gauss";
@@ -119,7 +119,7 @@ inline return_type_t<Tx> interp_gauss(const std::vector<double>& xs,
  * @return vector containing slopes, intercepts, and width of kernel
  */
 inline std::vector<double> interp_gauss_precomp(const std::vector<double>& xs,
-						const std::vector<double>& ys) {
+                                                const std::vector<double>& ys) {
   static char const* function = "interp_gauss_precomp";
   check_not_nan(function, "xs", xs);
   check_not_nan(function, "ys", ys);
@@ -178,8 +178,8 @@ inline std::vector<double> interp_gauss_precomp(const std::vector<double>& xs,
  */
 template <typename Tx>
 inline std::vector<Tx> interp_gauss(const std::vector<double>& xs,
-				    const std::vector<double>& ys,
-				    const std::vector<Tx>& xs_new) {
+                                    const std::vector<double>& ys,
+                                    const std::vector<Tx>& xs_new) {
   int n_interp = xs_new.size();
   std::vector<Tx> ys_new(n_interp);
 
