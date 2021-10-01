@@ -6,12 +6,14 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log.hpp>
+#include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/prim/fun/log_rising_factorial.hpp>
 #include <stan/math/prim/fun/hypergeometric_pFq.hpp>
 #include <stan/math/prim/fun/max.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <stan/math/prim/fun/prod.hpp>
 #include <stan/math/prim/fun/sign.hpp>
+#include <stan/math/prim/fun/transpose.hpp>
 #include <cmath>
 #include <iostream>
 
@@ -27,7 +29,25 @@ namespace internal {
  */
 template <typename T>
 auto sign_binary(const T& x) {
-  return sign(as_array_or_scalar(2 * sign(value_of(x))) + 1);
+  return sign(as_array_or_scalar(2 * sign(value_of_rec(x))) + 1);
+}
+
+/**
+ * A modified log_sum_exp function that tracks the signs of the
+ * input arguments and returns the appropriate sign for the output
+ *
+ * @tparam T Input type, can be either Eigen or scalar types
+ * @param x Input argument to determine sign for
+ * @return -1 for negative arguments otherwise 1
+ */
+template <typename T1, typename T2>
+inline std::tuple<value_type_t<T1>, int> log_sum_exp_signed(const T1& v, const T2& signs) {
+  const auto& v_ref = to_ref(v);
+  const auto& signs_ref = to_ref(signs);
+  const auto max_val = max(elt_multiply(v_ref, signs));
+  value_type_t<T1> value = sum(exp(v_ref.array() - max_val) * signs_ref.array());
+  return std::make_tuple(max_val + log(fabs(value)),
+                         internal::sign_binary(value));
 }
 
 /**
@@ -64,8 +84,10 @@ auto sign_binary(const T& x) {
  * @param[in] a Vector of 'a' arguments to function
  * @param[in] b Vector of 'b' arguments to function
  * @param[in] z Scalar z argument
- * @param[in] precision Convergence criteria for infinite sum
- * @param[in] max_steps Maximum number of iterations for infinite sum
+ * @param[in] outer_precision Convergence criteria for infinite sum
+ * @param[in] inner_precision Convergence criteria for infinite sum
+ * @param[in] outer_steps Maximum number of iterations for infinite sum
+ * @param[in] inner_steps Maximum number of iterations for infinite sum
  * @return Generalised hypergeometric function
  */
 template <bool calc_a, bool calc_b, bool calc_z, typename TupleT, typename Ta,
@@ -73,7 +95,8 @@ template <bool calc_a, bool calc_b, bool calc_z, typename TupleT, typename Ta,
           require_all_eigen_vector_t<Ta, Tb>* = nullptr,
           require_stan_scalar_t<Tz>* = nullptr>
 void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
-                   double precision, int max_steps) {
+                   double outer_precision, double inner_precision,
+                   int outer_steps, int inner_steps) {
   using std::max;
   using scalar_t = return_type_t<Ta, Tb, Tz>;
   using MapT
@@ -103,14 +126,18 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
 
   Ta_plain ap1 = (a.array() + 1).matrix();
   Tb_plain bp1 = (b.array() + 1).matrix();
+  Ta_plain log_a = log(a_ref);
+  Tb_plain log_b = log(b_ref);
   scalar_type_t<Tz> log_z = log(fabs(z));
+  scalar_type_t<Ta> log_a_prod = sum(log_a);
+  scalar_type_t<Tb> log_b_prod = sum(log_b);
   scalar_type_t<Ta> a_prod = prod(a_ref);
   scalar_type_t<Tb> b_prod = prod(b_ref);
 
   // Only need the infinite sum for partials wrt a & b
   if (calc_a || calc_b) {
-    double outer_precision = log(precision);
-    double inner_precision = outer_precision + LOG_TEN;
+    double log_outer_precision = log(outer_precision);
+    double log_inner_precision = log(inner_precision);
 
     // Append results at each iteration to a vector so that they
     // can be accumulated once, rather than every iteration
@@ -153,7 +180,7 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
     Eigen::VectorXi log_phammer_ap1m_sign = Eigen::VectorXi::Ones(a.size());
     Eigen::VectorXi log_phammer_bp1m_sign = Eigen::VectorXi::Ones(b.size());
 
-    while ((outer_diff > outer_precision) && (m < max_steps)) {
+    while ((outer_diff > log_outer_precision) && (m < outer_steps)) {
       // Vectors to append results of iteration to
       std::vector<scalar_t> da_iter_m_inter(0);
       std::vector<scalar_t> db_iter_m_inter(0);
@@ -182,7 +209,7 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
       log_phammer_ap1mpn_sign = log_phammer_ap1m_sign;
       log_phammer_bp1mpn_sign = log_phammer_bp1m_sign;
 
-      while ((inner_diff > inner_precision) & (n < (max_steps / 20))) {
+      while ((inner_diff > log_inner_precision) && (n < inner_steps)) {
         // Numerator term
         scalar_t term1_mn = (m + n) * log_z + sum(log_phammer_ap1_mpn)
                             + log_phammer_1m + log_phammer_1n;
@@ -265,10 +292,10 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
                              Eigen::InnerStride<>(a.size()));
 
           // Accumulate current iteration
-          auto a_val = dot_product(iter_sign, exp(iter_val));
-          da_iter_m[i] = log(fabs(a_val));
+          std::tuple<scalar_t, int> reta = log_sum_exp_signed(iter_val, iter_sign);
+          da_iter_m[i] = std::move(std::get<0>(reta));
           da_infsumt.emplace_back(da_iter_m[i]);
-          da_infsum_signs.emplace_back(sign_binary(a_val));
+          da_infsum_signs.emplace_back(std::get<1>(reta));
         }
       }
       if (calc_b) {
@@ -277,10 +304,11 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
                              Eigen::InnerStride<>(b.size()));
           MapT iter_val(db_iter_m_inter.data() + i, n,
                         Eigen::InnerStride<>(b.size()));
-          auto b_val = dot_product(iter_sign, exp(iter_val));
-          db_iter_m[i] = log(fabs(b_val));
+
+          std::tuple<scalar_t, int> retb = log_sum_exp_signed(iter_val, iter_sign);
+          db_iter_m[i] = std::move(std::get<0>(retb));
           db_infsumt.emplace_back(db_iter_m[i]);
-          db_infsum_signs.emplace_back(sign_binary(b_val));
+          db_infsum_signs.emplace_back(std::move(std::get<1>(retb)));
         }
       }
 
@@ -289,7 +317,7 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
       Ta_plain ap1m = (ap1.array() + m).matrix();
       Tb_plain bp1m = (bp1.array() + m).matrix();
       log_phammer_1m += log1p(m);
-      log_phammer_2m += log1p(1 + m);
+      log_phammer_2m += log(2 + m);
       log_phammer_ap1_m += log(fabs(ap1m));
       log_phammer_ap1m_sign.array() *= sign_binary(ap1m).array();
       log_phammer_bp1_m += log(fabs(bp1m));
@@ -300,8 +328,8 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
       lgamma_mp1 += log(m);
     }
 
-    if (m == max_steps) {
-      throw_domain_error("grad_pFq", "k (internal counter)", max_steps,
+    if (m == outer_steps) {
+      throw_domain_error("grad_pFq", "k (internal counter)", outer_steps,
                          "exceeded ",
                          " iterations, hypergeometric function gradient "
                          "did not converge.");
@@ -313,8 +341,8 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
         MapSignT iter_sign(da_infsum_signs.data() + i, m,
                            Eigen::InnerStride<>(a.size()));
         MapT iter_val(da_infsumt.data() + i, m, Eigen::InnerStride<>(a.size()));
-        scalar_t a2 = iter_val.sum();
-        da_infsum[i] = dot_product(iter_sign, exp(iter_val));
+        std::tuple<scalar_t, int> ret = log_sum_exp_signed(iter_val, iter_sign);
+        da_infsum[i] = exp(std::get<0>(ret)) * std::get<1>(ret);
       }
 
       auto prod_excl_curr = a_prod / a_ref.array();
@@ -324,13 +352,15 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
       std::get<0>(grad_tuple) = pre_mult_a.cwiseProduct(da_infsum);
     }
 
+
     if (calc_b) {
       T_vec db_infsum(b.size());
       for (int i = 0; i < b.size(); i++) {
         MapSignT iter_sign(db_infsum_signs.data() + i, m,
                            Eigen::InnerStride<>(b.size()));
         MapT iter_val(db_infsumt.data() + i, m, Eigen::InnerStride<>(b.size()));
-        db_infsum[i] = dot_product(iter_sign, exp(iter_val));
+        std::tuple<scalar_t, int> ret = log_sum_exp_signed(iter_val, iter_sign);
+        db_infsum[i] = exp(std::get<0>(ret)) * std::get<1>(ret);
       }
       auto pre_mult_b = ((z * a_prod) / (b.array() * b_prod)).matrix();
       std::get<1>(grad_tuple) = -pre_mult_b.cwiseProduct(db_infsum);
@@ -362,8 +392,11 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
  * @return Tuple of gradients
  */
 template <typename Ta, typename Tb, typename Tz>
-auto grad_pFq(const Ta& a, const Tb& b, const Tz& z, double precision = 1e-10,
-              int max_steps = 1e6) {
+auto grad_pFq(const Ta& a, const Tb& b, const Tz& z,
+              double outer_precision = 1e-10,
+              double inner_precision = 1e-10,
+              int outer_steps = 1e6,
+              int inner_steps = 1e6) {
   using partials_t = partials_return_t<Ta, Tb, Tz>;
   std::tuple<promote_scalar_t<partials_t, plain_type_t<Ta>>,
              promote_scalar_t<partials_t, plain_type_t<Tb>>,
@@ -371,7 +404,8 @@ auto grad_pFq(const Ta& a, const Tb& b, const Tz& z, double precision = 1e-10,
       ret_tuple;
   internal::grad_pFq_impl<!is_constant<Ta>::value, !is_constant<Tb>::value,
                           !is_constant<Tz>::value>(
-      ret_tuple, value_of(a), value_of(b), value_of(z), precision, max_steps);
+      ret_tuple, value_of(a), value_of(b), value_of(z), outer_precision,
+      inner_precision, outer_steps, inner_steps);
   return ret_tuple;
 }
 
