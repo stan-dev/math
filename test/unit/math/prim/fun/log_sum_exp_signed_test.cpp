@@ -18,7 +18,7 @@ TEST(MathFunctions, log_sum_exp_signed) {
 
   Eigen::VectorXi signs(4);
   signs << 1, 1, 1, 1;
-  
+
   EXPECT_FLOAT_EQ(log_sum_exp(m1), log_sum_exp_signed(m1, signs));
 
   signs << 1, -1, -1, 1;
@@ -38,12 +38,12 @@ TEST(MathFunctions, log_sum_exp_signed_matrix) {
   using stan::math::sum;
   using stan::math::elt_multiply;
 
-  Eigen::MatrixXd m1(2,2);
+  Eigen::MatrixXd m1(2, 2);
   m1 << 4, 6, 10, 5;
 
-  Eigen::MatrixXi signs(2,2);
+  Eigen::MatrixXi signs(2, 2);
   signs << 1, 1, 1, 1;
-  
+
   EXPECT_FLOAT_EQ(log_sum_exp(m1), log_sum_exp_signed(m1, signs));
 
   signs << -1, -1, 1, 1;

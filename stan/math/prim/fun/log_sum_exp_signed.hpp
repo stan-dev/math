@@ -15,7 +15,8 @@ namespace math {
 /**
  * Return the log of the sum of the exponentiated values of the specified
  * matrix of values.  The matrix may be a full matrix, a vector,
- * a row vector, or a container of these.
+ * or a row vector. Additionally, a matching container of 'signs' indicates
+ * whether the exponentiated input should be added or substracted
  *
  * The function is defined as follows to prevent overflow in exponential
  * calculations.
@@ -23,11 +24,14 @@ namespace math {
  * \f$\log \sum_{n=1}^N \exp(x_n) = \max(x) + \log \sum_{n=1}^N \exp(x_n -
  * \max(x))\f$.
  *
- * @tparam T type of input vector or matrix
- * @param[in] x matrix of specified values
+ * @tparam T1 type of input vector or matrix
+ * @tparam T2 type of signs vector or matrix
+ * @param[in] x container of specified values
+ * @param[in] signs container of signs
  * @return The log of the sum of the exponentiated vector values.
  */
-template <typename T1, typename T2, require_container_st<std::is_arithmetic, T1>* = nullptr,
+template <typename T1, typename T2,
+          require_container_st<std::is_arithmetic, T1>* = nullptr,
           require_container_st<std::is_integral, T2>* = nullptr>
 inline auto log_sum_exp_signed(const T1& x, const T2& signs) {
   return apply_vector_unary<T1>::reduce(x, [&](const auto& v) {
@@ -35,11 +39,14 @@ inline auto log_sum_exp_signed(const T1& x, const T2& signs) {
       return NEGATIVE_INFTY;
     }
     const auto& v_ref = to_ref(to_vector(v));
-    const double max = v_ref.cwiseProduct(to_vector(signs)).maxCoeff();
+    const auto& signs_ref = to_ref(to_vector(signs));
+    const double max = v_ref.cwiseProduct(signs_ref).maxCoeff();
     if (!std::isfinite(max)) {
       return max;
     }
-    return max + std::log((v_ref.array() - max).exp().matrix().cwiseProduct(to_vector(signs)).sum());
+    return max + std::log((v_ref.array() - max).exp()
+                                               .matrix()
+                                               .cwiseProduct(signs_ref).sum());
   });
 }
 
