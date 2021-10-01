@@ -189,6 +189,7 @@
 #include <stan/math/prim/fun/log_rising_factorial.hpp>
 #include <stan/math/prim/fun/log_softmax.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
+#include <stan/math/prim/fun/log_sum_exp_signed.hpp>
 #include <stan/math/prim/fun/logical_and.hpp>
 #include <stan/math/prim/fun/logical_eq.hpp>
 #include <stan/math/prim/fun/logical_gt.hpp>
