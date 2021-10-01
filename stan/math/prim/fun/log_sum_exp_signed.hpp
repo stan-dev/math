@@ -34,12 +34,12 @@ inline auto log_sum_exp_signed(const T1& x, const T2& signs) {
     if (v.size() == 0) {
       return NEGATIVE_INFTY;
     }
-    const auto& v_ref = to_ref(v);
-    const double max = v_ref.cwiseProduct(signs).maxCoeff();
+    const auto& v_ref = to_ref(to_vector(v));
+    const double max = v_ref.cwiseProduct(to_vector(signs)).maxCoeff();
     if (!std::isfinite(max)) {
       return max;
     }
-    return max + std::log((v_ref.array() - max).exp().cwiseProduct(signs).sum());
+    return max + std::log((v_ref.array() - max).exp().matrix().cwiseProduct(to_vector(signs)).sum());
   });
 }
 
