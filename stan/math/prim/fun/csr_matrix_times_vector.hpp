@@ -70,42 +70,32 @@ namespace math {
  * @throw std::out_of_range if any of the indexes are out of range.
  */
 template <typename T1, typename T2,
-          require_not_t<conjunction<std::is_arithmetic<scalar_type_t<T1>>,
-                                    is_var<scalar_type_t<T2>>>>* = nullptr>
+          require_all_not_rev_matrix_t<T1, T2>* = nullptr>
 inline Eigen::Matrix<return_type_t<T1, T2>, Eigen::Dynamic, 1>
 csr_matrix_times_vector(int m, int n, const T1& w, const std::vector<int>& v,
                         const std::vector<int>& u, const T2& b) {
-  using result_t = return_type_t<T1, T2>;
-
   check_positive("csr_matrix_times_vector", "m", m);
   check_positive("csr_matrix_times_vector", "n", n);
   check_size_match("csr_matrix_times_vector", "n", n, "b", b.size());
-  check_size_match("csr_matrix_times_vector", "m", m, "u", u.size() - 1);
   check_size_match("csr_matrix_times_vector", "w", w.size(), "v", v.size());
+  check_size_match("csr_matrix_times_vector", "m", m, "u", u.size() - 1);
   check_size_match("csr_matrix_times_vector", "u/z",
                    u[m - 1] + csr_u_to_z(u, m - 1) - 1, "v", v.size());
   for (int i : v) {
     check_range("csr_matrix_times_vector", "v[]", n, i);
   }
-
-  Eigen::Matrix<result_t, Eigen::Dynamic, 1> result(m);
-  result.setZero();
-  for (int row = 0; row < m; ++row) {
-    int idx = csr_u_to_z(u, row);
-    int row_end_in_w = (u[row] - stan::error_index::value) + idx;
-    int i = 0;
-    Eigen::Matrix<result_t, Eigen::Dynamic, 1> b_sub(idx);
-    b_sub.setZero();
-    for (int nze = u[row] - stan::error_index::value; nze < row_end_in_w;
-         ++nze, ++i) {
-      check_range("csr_matrix_times_vector", "j", n, v[nze]);
-      b_sub.coeffRef(i) = b.coeff(v[nze] - stan::error_index::value);
-    }
-    Eigen::Matrix<value_type_t<T1>, Eigen::Dynamic, 1> w_sub(
-        w.segment(u[row] - stan::error_index::value, idx));
-    result.coeffRef(row) = dot_product(w_sub, b_sub);
-  }
-  return result;
+  std::vector<int> v_zero_based(v.size());
+  std::transform(v.begin(), v.end(), v_zero_based.begin(),
+                 [](auto&& x) { return x - 1; });
+  std::vector<int> u_zero_based(u.size());
+  std::transform(u.begin(), u.end(), u_zero_based.begin(),
+                 [](auto&& x) { return x - 1; });
+  // u_zero_based[u.size()] = w.size();
+  auto&& w_ref = to_ref(w);
+  Eigen::Map<const Eigen::SparseMatrix<scalar_type_t<T1>, Eigen::RowMajor>>
+      w_mat(m, n, w_ref.size(), u_zero_based.data(), v_zero_based.data(),
+            w_ref.data());
+  return w_mat * b;
 }
 
 }  // namespace math

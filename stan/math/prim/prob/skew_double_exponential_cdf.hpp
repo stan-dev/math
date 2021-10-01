@@ -41,27 +41,29 @@ template <typename T_y, typename T_loc, typename T_scale, typename T_skewness,
 return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_cdf(
     const T_y& y, const T_loc& mu, const T_scale& sigma,
     const T_skewness& tau) {
-  using std::exp;
-  using std::log;
   using T_partials_return = partials_return_t<T_y, T_loc, T_scale, T_skewness>;
-  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
-  using T_mu_ref = ref_type_if_t<!is_constant<T_loc>::value, T_loc>;
-  using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
-  using T_tau_ref = ref_type_if_t<!is_constant<T_skewness>::value, T_skewness>;
   static const char* function = "skew_double_exponential_lcdf";
   check_consistent_sizes(function, "Random variable", y, "Location parameter",
                          mu, "Shape parameter", sigma, "Skewness parameter",
                          tau);
-  T_y_ref y_ref = y;
-  T_mu_ref mu_ref = mu;
-  T_sigma_ref sigma_ref = sigma;
-  T_tau_ref tau_ref = tau;
+  auto&& y_ref = to_ref(y);
+  auto&& mu_ref = to_ref(mu);
+  auto&& sigma_ref = to_ref(sigma);
+  auto&& tau_ref = to_ref(tau);
+  using T_y_ref = std::decay_t<decltype(y_ref)>;
+  using T_mu_ref = std::decay_t<decltype(mu_ref)>;
+  using T_sigma_ref = std::decay_t<decltype(sigma_ref)>;
+  using T_tau_ref = std::decay_t<decltype(tau_ref)>;
 
-  check_not_nan(function, "Random variable", value_of(y_ref));
-  check_finite(function, "Location parameter", value_of(mu_ref));
-  check_positive_finite(function, "Scale parameter", value_of(sigma_ref));
-  check_bounded(function, "Skewness parameter", value_of(tau_ref), 0.0, 1.0);
+  auto&& y_val = as_value_array_or_scalar(y_ref);
+  auto&& mu_val = as_value_array_or_scalar(mu_ref);
+  auto&& sigma_val = as_value_array_or_scalar(sigma_ref);
+  auto&& tau_val = as_value_array_or_scalar(tau_ref);
 
+  check_not_nan(function, "Random variable", y_val);
+  check_finite(function, "Location parameter", mu_val);
+  check_positive_finite(function, "Scale parameter", sigma_val);
+  check_bounded(function, "Skewness parameter", tau_val, 0.0, 1.0);
   if (size_zero(y, mu, sigma, tau)) {
     return 1.0;
   }
@@ -70,24 +72,21 @@ return_type_t<T_y, T_loc, T_scale, T_skewness> skew_double_exponential_cdf(
   operands_and_partials<T_y_ref, T_mu_ref, T_sigma_ref, T_tau_ref> ops_partials(
       y_ref, mu_ref, sigma_ref, tau_ref);
 
-  scalar_seq_view<T_y_ref> y_vec(y_ref);
-  scalar_seq_view<T_mu_ref> mu_vec(mu_ref);
-  scalar_seq_view<T_sigma_ref> sigma_vec(sigma_ref);
-  scalar_seq_view<T_tau_ref> tau_vec(tau_ref);
+  scalar_seq_view<std::decay_t<decltype(y_val)>> y_vec(y_val);
+  scalar_seq_view<std::decay_t<decltype(mu_val)>> mu_vec(mu_val);
+  scalar_seq_view<std::decay_t<decltype(sigma_val)>> sigma_vec(sigma_val);
+  scalar_seq_view<std::decay_t<decltype(tau_val)>> tau_vec(tau_val);
 
-  int size_sigma = stan::math::size(sigma);
-  int N = max_size(y, mu, sigma, tau);
-
-  VectorBuilder<true, T_partials_return, T_scale> inv_sigma(size_sigma);
-  for (int i = 0; i < size_sigma; ++i) {
-    inv_sigma[i] = inv(value_of(sigma_vec[i]));
-  }
+  const int size_sigma = stan::math::size(sigma);
+  const auto N = max_size(y, mu, sigma, tau);
+  auto inv_sigma_val = to_ref(inv(sigma_val));
+  scalar_seq_view<decltype(inv_sigma_val)> inv_sigma(inv_sigma_val);
 
   for (int i = 0; i < N; ++i) {
-    const T_partials_return y_dbl = y_vec.val(i);
-    const T_partials_return mu_dbl = mu_vec.val(i);
-    const T_partials_return sigma_dbl = sigma_vec.val(i);
-    const T_partials_return tau_dbl = tau_vec.val(i);
+    const T_partials_return y_dbl = y_vec[i];
+    const T_partials_return mu_dbl = mu_vec[i];
+    const T_partials_return sigma_dbl = sigma_vec[i];
+    const T_partials_return tau_dbl = tau_vec[i];
 
     const T_partials_return y_m_mu = y_dbl - mu_dbl;
     const T_partials_return diff_sign = sign(y_m_mu);

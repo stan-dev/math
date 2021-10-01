@@ -8,12 +8,14 @@ TEST(prob_transform, cov_matrix_rt) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
   unsigned int K = 4;
+  double lp = 0;
   unsigned int K_choose_2 = 6;
   Matrix<double, Dynamic, 1> x(K_choose_2 + K);
   x << -1.0, 2.0, 0.0, 1.0, 3.0, -1.5, 1.0, 2.0, -1.5, 2.5;
-  Matrix<double, Dynamic, Dynamic> y = stan::math::cov_matrix_constrain(x, K);
-  std::vector<Eigen::VectorXd> xrt
-      = stan::math::cov_matrix_free(std::vector<Eigen::MatrixXd>{y, y, y});
+  std::vector<Matrix<double, Dynamic, 1>> x_vec = {x, x, x};
+  std::vector<Matrix<double, Dynamic, Dynamic>> y_vec
+      = stan::math::cov_matrix_constrain<false>(x_vec, K, lp);
+  std::vector<Eigen::VectorXd> xrt = stan::math::cov_matrix_free(y_vec);
   for (auto&& x_i : xrt) {
     EXPECT_EQ(x.size(), x_i.size());
     EXPECT_MATRIX_FLOAT_EQ(x, x_i);

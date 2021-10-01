@@ -10,7 +10,7 @@
 #include <stan/math/opencl/prim/multiply.hpp>
 #include <stan/math/opencl/prim/sum.hpp>
 #include <stan/math/opencl/copy.hpp>
-#include <CL/cl.hpp>
+#include <CL/opencl.hpp>
 #include <algorithm>
 #include <vector>
 #include <cmath>

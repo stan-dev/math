@@ -6,24 +6,34 @@
 TEST(prob_transform, unit_vector_rt0) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-
+  double lp = 0;
   Matrix<double, Dynamic, 1> x(4);
   x << sqrt(0.1), -sqrt(0.2), -sqrt(0.3), sqrt(0.4);
+  std::vector<Matrix<double, Dynamic, 1>> x_vec{x, x, x};
   using stan::math::unit_vector_constrain;
-  Matrix<double, Dynamic, 1> y = unit_vector_constrain(x);
-  EXPECT_NEAR(x(0), y(0), 1e-8);
-  EXPECT_NEAR(x(1), y(1), 1e-8);
-  EXPECT_NEAR(x(2), y(2), 1e-8);
-  EXPECT_NEAR(x(3), y(3), 1e-8);
-  std::vector<Matrix<double, Dynamic, 1>> xrt = stan::math::unit_vector_free(
-      std::vector<Matrix<double, Dynamic, 1>>{y, y, y});
-  EXPECT_EQ(x.size(), y.size());
+  std::vector<Matrix<double, Dynamic, 1>> y_vec
+      = unit_vector_constrain<false>(x_vec, lp);
+  for (int i = 0; i < x_vec.size(); ++i) {
+    EXPECT_EQ(x_vec[i].size(), y_vec[i].size());
+    for (int j = 0; j < x_vec[i].size(); ++j) {
+      EXPECT_NEAR(x_vec[i](j), y_vec[i](j), 1e-8);
+    }
+  }
+  std::vector<Matrix<double, Dynamic, 1>> xrt
+      = stan::math::unit_vector_free(y_vec);
+  for (int i = 0; i < x_vec.size(); ++i) {
+    EXPECT_EQ(x_vec[i].size(), xrt[i].size());
+    for (int j = 0; j < x_vec[i].size(); ++j) {
+      EXPECT_NEAR(x_vec[i](j), xrt[i](j), 1e-10);
+    }
+  }
+  /*
   for (auto&& x_i : xrt) {
-    EXPECT_EQ(x.size(), x_i.size());
     for (int i = 0; i < x.size(); ++i) {
       EXPECT_NEAR(x[i], x_i[i], 1E-10);
     }
   }
+  */
 }
 TEST(prob_transform, unit_vector_rt) {
   using Eigen::Dynamic;
