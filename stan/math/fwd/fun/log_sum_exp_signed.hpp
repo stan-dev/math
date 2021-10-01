@@ -42,8 +42,8 @@ inline auto log_sum_exp_signed(const T1& x, const T2& signs) {
         Eigen::Map<const Eigen::VectorXi> int_vec_map(signs.data(),
                                                       signs.size());
         vec_type vals = v.val();
-        vec_type exp_vals = vals.array().exp().matrix()
-                                              .cwiseProduct(int_vec_map);
+        vec_type exp_vals
+            = vals.array().exp().matrix().cwiseProduct(int_vec_map);
 
         return fvar<T_fvar_inner>(
             log_sum_exp_signed(vals, int_vec_map),

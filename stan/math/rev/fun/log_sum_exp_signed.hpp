@@ -34,11 +34,11 @@ inline var log_sum_exp_signed(const T1& v, const T2& signs) {
   var res = log_sum_exp_signed(arena_v.val(), signs);
 
   reverse_pass_callback([arena_v, arena_v_val, arena_signs, res]() mutable {
-    arena_v.adj()
-        += res.adj() *
-              (arena_v_val.array().val() - res.val()).exp()
-                                                    .matrix()
-                                                    .cwiseProduct(arena_signs);
+    arena_v.adj() += res.adj()
+                     * (arena_v_val.array().val() - res.val())
+                           .exp()
+                           .matrix()
+                           .cwiseProduct(arena_signs);
   });
 
   return res;
@@ -58,10 +58,12 @@ template <typename T1, typename T2, require_var_matrix_t<T1>* = nullptr,
 inline var log_sum_exp_signed(const T1& x, const T2& signs) {
   return make_callback_vari(log_sum_exp_signed(x.val(), signs),
                             [x, signs](const auto& res) mutable {
-    x.adj() += res.adj() *
-                (x.val().array().val() - res.val()).exp().matrix()
-                                                         .cwiseProduct(signs);
-  });
+                              x.adj() += res.adj()
+                                         * (x.val().array().val() - res.val())
+                                               .exp()
+                                               .matrix()
+                                               .cwiseProduct(signs);
+                            });
 }
 
 /**
@@ -77,11 +79,10 @@ template <typename T1, typename T2,
           require_std_vector_st<is_var, T1>* = nullptr,
           require_std_vector_st<std::is_integral, T2>* = nullptr>
 inline auto log_sum_exp_signed(const T1& x, const T2& signs) {
-  return apply_vector_unary<T1>::reduce(
-      x, [&](const auto& v) {
-          Eigen::Map<const Eigen::VectorXi> int_vec_map(signs.data(),
-                                                        signs.size());
-          return log_sum_exp_signed(v, int_vec_map); });
+  return apply_vector_unary<T1>::reduce(x, [&](const auto& v) {
+    Eigen::Map<const Eigen::VectorXi> int_vec_map(signs.data(), signs.size());
+    return log_sum_exp_signed(v, int_vec_map);
+  });
 }
 
 }  // namespace math

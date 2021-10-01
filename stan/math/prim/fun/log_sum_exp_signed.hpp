@@ -11,7 +11,6 @@
 namespace stan {
 namespace math {
 
-
 /**
  * Return the log of the sum of the exponentiated values of the specified
  * matrix of values.  The matrix may be a full matrix, a vector,
@@ -44,9 +43,12 @@ inline auto log_sum_exp_signed(const T1& x, const T2& signs) {
     if (!std::isfinite(max)) {
       return max;
     }
-    return max + std::log((v_ref.array() - max).exp()
-                                               .matrix()
-                                               .cwiseProduct(signs_ref).sum());
+    return max
+           + std::log((v_ref.array() - max)
+                          .exp()
+                          .matrix()
+                          .cwiseProduct(signs_ref)
+                          .sum());
   });
 }
 

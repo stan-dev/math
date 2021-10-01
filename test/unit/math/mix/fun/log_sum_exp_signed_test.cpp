@@ -4,9 +4,8 @@
 
 TEST(MathMixMatFun, logSumExp_signed) {
   auto f = [](const auto x2) {
-    return [=](const auto& x1) {
-      return stan::math::log_sum_exp_signed(x1, x2);
-    };
+    return
+        [=](const auto& x1) { return stan::math::log_sum_exp_signed(x1, x2); };
   };
 
   Eigen::VectorXd x0(0);
@@ -55,8 +54,8 @@ TEST(MathMixMatFun, logSumExp_signed) {
   tols.hessian_fvar_hessian_ = 1e-2;
 
   std::vector<Eigen::VectorXd> inputs{x1, x2, x2b, x2c, x4};
-  std::vector<Eigen::VectorXi> signs{x1_signs, x2_signs, x2b_signs,
-                                     x2c_signs, x4_signs};
+  std::vector<Eigen::VectorXi> signs{x1_signs, x2_signs, x2b_signs, x2c_signs,
+                                     x4_signs};
 
   for (int i = 0; i < 5; i++) {
     stan::test::expect_ad(tols, f(signs[i]), inputs[i]);
@@ -65,12 +64,10 @@ TEST(MathMixMatFun, logSumExp_signed) {
     Eigen::RowVectorXi rsigns = signs[i];
     stan::test::expect_ad(tols, f(rsigns), rx);
     stan::test::expect_ad_matvar(tols, f(rsigns), rx);
-    std::vector<double> stx
-        = std::vector<double>(inputs[i].data(),
-                              inputs[i].data() + inputs[i].size());
-    std::vector<int> stsigns
-        = std::vector<int>(inputs[i].data(),
-                           inputs[i].data() + inputs[i].size());
+    std::vector<double> stx = std::vector<double>(
+        inputs[i].data(), inputs[i].data() + inputs[i].size());
+    std::vector<int> stsigns = std::vector<int>(
+        inputs[i].data(), inputs[i].data() + inputs[i].size());
     stan::test::expect_ad(tols, f(stsigns), stx);
   }
 

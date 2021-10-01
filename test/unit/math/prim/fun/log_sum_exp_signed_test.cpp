@@ -7,11 +7,11 @@
 TEST(MathFunctions, log_sum_exp_signed) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using stan::math::log_sum_exp_signed;
-  using stan::math::log_sum_exp;
   using stan::math::dot_product;
-  using stan::math::log;
   using stan::math::exp;
+  using stan::math::log;
+  using stan::math::log_sum_exp;
+  using stan::math::log_sum_exp_signed;
 
   Eigen::VectorXd m1(4);
   m1 << 1, 2, 3, 4;
@@ -30,13 +30,13 @@ TEST(MathFunctions, log_sum_exp_signed) {
 TEST(MathFunctions, log_sum_exp_signed_matrix) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-  using stan::math::log_sum_exp_signed;
-  using stan::math::log_sum_exp;
   using stan::math::dot_product;
-  using stan::math::log;
-  using stan::math::exp;
-  using stan::math::sum;
   using stan::math::elt_multiply;
+  using stan::math::exp;
+  using stan::math::log;
+  using stan::math::log_sum_exp;
+  using stan::math::log_sum_exp_signed;
+  using stan::math::sum;
 
   Eigen::MatrixXd m1(2, 2);
   m1 << 4, 6, 10, 5;
