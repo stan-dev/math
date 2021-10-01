@@ -14,30 +14,27 @@
 #include <vector>
 
 struct poisson_log_likelihood {
-  template<typename T_theta, typename T_eta>
-  stan::return_type_t<T_theta, T_eta>
-  operator()(const Eigen::Matrix<T_theta, -1, 1>& theta,
-             const Eigen::Matrix<T_eta, -1, 1>& eta,
-             const Eigen::VectorXd& delta,
-             const std::vector<int>& n_samples,
-             std::ostream* pstream) const {
-    using stan::math::to_vector;
+  template <typename T_theta, typename T_eta>
+  stan::return_type_t<T_theta, T_eta> operator()(
+      const Eigen::Matrix<T_theta, -1, 1>& theta,
+      const Eigen::Matrix<T_eta, -1, 1>& eta, const Eigen::VectorXd& delta,
+      const std::vector<int>& n_samples, std::ostream* pstream) const {
     using stan::math::log;
+    using stan::math::to_vector;
     int n = 911;
     Eigen::VectorXd y = delta.head(n);
     Eigen::VectorXd ye = delta.tail(n);
     // Eigen::VectorXd log_ye = ye.log();
 
-    stan::math::diff_poisson_log
-      diff_functor(to_vector(n_samples), y, log(ye));
+    stan::math::diff_poisson_log diff_functor(to_vector(n_samples), y, log(ye));
 
     return diff_functor.log_likelihood(theta, eta);
   }
 };
 
 // TODO(charlesm93): update using new function signatures.
-class laplace_disease_map_test : public::testing::Test {
-protected:
+class laplace_disease_map_test : public ::testing::Test {
+ protected:
   void SetUp() override {
     dim_theta = 911;
     n_observations = 911;
@@ -46,7 +43,8 @@ protected:
     x2.resize(dim_theta);
     y.resize(n_observations);
     ye.resize(n_observations);
-    stan::math::test::read_in_data(dim_theta, n_observations, data_directory, x1, x2, y, ye);
+    stan::math::test::read_in_data(dim_theta, n_observations, data_directory,
+                                   x1, x2, y, ye);
 
     if (false) {
       // look at some of the data
@@ -66,7 +64,8 @@ protected:
 
     // one observation per group
     n_samples.resize(dim_theta);
-    for (int i = 0; i < dim_theta; i++) n_samples[i] = 1;
+    for (int i = 0; i < dim_theta; i++)
+      n_samples[i] = 1;
 
     theta_0 = Eigen::VectorXd::Zero(dim_theta);
     dim_phi = 2;
@@ -74,7 +73,8 @@ protected:
     phi << 0.3162278, 200;  // variance, length scale
 
     delta_lk.resize(2 * n_observations);
-    for (int i = 0; i < n_observations; i++) delta_lk(i) = y[i];
+    for (int i = 0; i < n_observations; i++)
+      delta_lk(i) = y[i];
     for (int i = 0; i < n_observations; i++)
       delta_lk(n_observations + i) = ye(i);
   }
@@ -100,20 +100,17 @@ protected:
   poisson_log_likelihood f;
 };
 
-
 TEST_F(laplace_disease_map_test, lk_analytical) {
-
   // Based on (Vanhatalo, Pietilainen and Vethari, 2010). See
   // https://research.cs.aalto.fi/pml/software/gpstuff/demo_spatial1.shtml
-  using stan::math::var;
   using stan::math::laplace_marginal_poisson_log_lpmf;
+  using stan::math::var;
 
   auto start = std::chrono::system_clock::now();
 
-  var marginal_density
-    = laplace_marginal_poisson_log_lpmf(y, n_samples, ye,
-                                        stan::math::test::sqr_exp_kernel_functor(),
-                                        phi, x, delta, delta_int, theta_0);
+  var marginal_density = laplace_marginal_poisson_log_lpmf(
+      y, n_samples, ye, stan::math::test::sqr_exp_kernel_functor(), phi, x,
+      delta, delta_int, theta_0);
 
   auto end = std::chrono::system_clock::now();
   std::chrono::duration<double> elapsed_time = end - start;
@@ -137,44 +134,44 @@ TEST_F(laplace_disease_map_test, lk_analytical) {
   ////////////////////////////////////////////////////////////////////////
   // Let's now generate a sample theta from the estimated posterior
 
-/*
-  using stan::math::diff_poisson_log;
-  using stan::math::to_vector;
-  using stan::math::laplace_base_rng;
-  using stan::math::laplace_poisson_log_rng;
+  /*
+    using stan::math::diff_poisson_log;
+    using stan::math::to_vector;
+    using stan::math::laplace_base_rng;
+    using stan::math::laplace_poisson_log_rng;
 
-  diff_poisson_log diff_likelihood(to_vector(n_samples),
-                                   to_vector(y),
-                                   stan::math::log(ye));
-  boost::random::mt19937 rng;
-  start = std::chrono::system_clock::now();
-  Eigen::VectorXd
-    theta_pred = laplace_base_rng(diff_likelihood,
-                                  stan::math::test::sqr_exp_kernel_functor(),
-                                  phi, eta_dummy, x, x, delta, delta_int,
-                                  theta_0, rng);
+    diff_poisson_log diff_likelihood(to_vector(n_samples),
+                                     to_vector(y),
+                                     stan::math::log(ye));
+    boost::random::mt19937 rng;
+    start = std::chrono::system_clock::now();
+    Eigen::VectorXd
+      theta_pred = laplace_base_rng(diff_likelihood,
+                                    stan::math::test::sqr_exp_kernel_functor(),
+                                    phi, eta_dummy, x, x, delta, delta_int,
+                                    theta_0, rng);
 
-  end = std::chrono::system_clock::now();
-  elapsed_time = end - start;
+    end = std::chrono::system_clock::now();
+    elapsed_time = end - start;
 
-  std::cout << "LAPLACE_APPROX_RNG" << std::endl
-            << "total time: " << elapsed_time.count() << std::endl
-            << std::endl;
+    std::cout << "LAPLACE_APPROX_RNG" << std::endl
+              << "total time: " << elapsed_time.count() << std::endl
+              << std::endl;
 
-  // Expected result
-  // total time: 0.404114 (or 0.328 on new computer)
+    // Expected result
+    // total time: 0.404114 (or 0.328 on new computer)
 
-  start = std::chrono::system_clock::now();
-  theta_pred = laplace_poisson_log_rng(y, n_samples, ye,
-                                       stan::math::test::sqr_exp_kernel_functor(),
-                                       phi, x, delta, delta_int,
-                                       theta_0, rng);
-  end = std::chrono::system_clock::now();
-  elapsed_time = end - start;
+    start = std::chrono::system_clock::now();
+    theta_pred = laplace_poisson_log_rng(y, n_samples, ye,
+                                         stan::math::test::sqr_exp_kernel_functor(),
+                                         phi, x, delta, delta_int,
+                                         theta_0, rng);
+    end = std::chrono::system_clock::now();
+    elapsed_time = end - start;
 
-  std::cout << "LAPLACE_APPROX_POISSON_RNG" << std::endl
-            << "total time: " << elapsed_time.count() << std::endl
-            << std::endl; */
+    std::cout << "LAPLACE_APPROX_POISSON_RNG" << std::endl
+              << "total time: " << elapsed_time.count() << std::endl
+              << std::endl; */
 }
 /*
 TEST_F(laplace_disease_map_test, lk_autodiff) {
@@ -208,9 +205,9 @@ TEST_F(laplace_disease_map_test, lk_autodiff) {
   solver = 1;
   var marginal_density
     = laplace_marginal_density(diff_functor,
-                               stan::math::test::sqr_exp_kernel_functor(), phi, eta_dummy,
-                               x, delta, delta_int, theta_0,
-                               0, 1e-6, 100, hessian_block_size, solver);
+                               stan::math::test::sqr_exp_kernel_functor(), phi,
+eta_dummy, x, delta, delta_int, theta_0, 0, 1e-6, 100, hessian_block_size,
+solver);
 
   end = std::chrono::system_clock::now();
   elapsed_time = end - start;
@@ -232,15 +229,15 @@ TEST_F(laplace_disease_map_test, lk_autodiff) {
 TEST_F(laplace_disease_map_test, finite_diff_benchmark) {
   ///////////////////////////////////////////////////////////////////
   // finite_diff benchmark
-  using stan::math::var;
-  using stan::math::laplace_marginal_density;
   using stan::math::diff_likelihood;
+  using stan::math::laplace_marginal_density;
+  using stan::math::var;
 
   diff_likelihood<poisson_log_likelihood> diff_functor(f, delta_lk, n_samples);
 
   Eigen::VectorXd phi_dbl = value_of(phi);
-  Eigen::VectorXd phi_u0 = phi_dbl, phi_u1 = phi_dbl,
-                  phi_l0 = phi_dbl, phi_l1 = phi_dbl;
+  Eigen::VectorXd phi_u0 = phi_dbl, phi_u1 = phi_dbl, phi_l0 = phi_dbl,
+                  phi_l1 = phi_dbl;
   double eps = 1e-7;
 
   int hessian_block_size = 1;
@@ -250,41 +247,35 @@ TEST_F(laplace_disease_map_test, finite_diff_benchmark) {
   phi_l0(0) -= eps;
   phi_l1(1) -= eps;
 
-  double target = laplace_marginal_density(diff_functor,
-                                 stan::math::test::sqr_exp_kernel_functor(),
-                                 phi_dbl, value_of(eta_dummy),
-                                 x, delta, delta_int, theta_0,
-                                 0, 1e-6, 100, hessian_block_size);
+  double target = laplace_marginal_density(
+      diff_functor, stan::math::test::sqr_exp_kernel_functor(), phi_dbl,
+      value_of(eta_dummy), x, delta, delta_int, theta_0, 0, 1e-6, 100,
+      hessian_block_size);
 
-  double target_u0 = laplace_marginal_density(diff_functor,
-                                 stan::math::test::sqr_exp_kernel_functor(),
-                                 phi_u0, value_of(eta_dummy),
-                                 x, delta, delta_int, theta_0,
-                                 0, 1e-6, 100, hessian_block_size),
+  double target_u0 = laplace_marginal_density(
+             diff_functor, stan::math::test::sqr_exp_kernel_functor(), phi_u0,
+             value_of(eta_dummy), x, delta, delta_int, theta_0, 0, 1e-6, 100,
+             hessian_block_size),
 
-  target_u1 = laplace_marginal_density(diff_functor,
-                                 stan::math::test::sqr_exp_kernel_functor(),
-                                 phi_u1, value_of(eta_dummy),
-                                 x, delta, delta_int, theta_0,
-                                 0, 1e-6, 100, hessian_block_size),
+         target_u1 = laplace_marginal_density(
+             diff_functor, stan::math::test::sqr_exp_kernel_functor(), phi_u1,
+             value_of(eta_dummy), x, delta, delta_int, theta_0, 0, 1e-6, 100,
+             hessian_block_size),
 
-  target_l0 = laplace_marginal_density(diff_functor,
-                                       stan::math::test::sqr_exp_kernel_functor(),
-                                       phi_l0, value_of(eta_dummy),
-                                       x, delta, delta_int, theta_0,
-                                       0, 1e-6, 100, hessian_block_size),
+         target_l0 = laplace_marginal_density(
+             diff_functor, stan::math::test::sqr_exp_kernel_functor(), phi_l0,
+             value_of(eta_dummy), x, delta, delta_int, theta_0, 0, 1e-6, 100,
+             hessian_block_size),
 
-  target_l1 = laplace_marginal_density(diff_functor,
-                                       stan::math::test::sqr_exp_kernel_functor(),
-                                       phi_l1, value_of(eta_dummy),
-                                       x, delta, delta_int, theta_0,
-                                       0, 1e-6, 100, hessian_block_size);
+         target_l1 = laplace_marginal_density(
+             diff_functor, stan::math::test::sqr_exp_kernel_functor(), phi_l1,
+             value_of(eta_dummy), x, delta, delta_int, theta_0, 0, 1e-6, 100,
+             hessian_block_size);
 
   std::cout << "Finite_diff benchmark: " << std::endl
             << "Value: " << target << std::endl
-            << "grad: " << (target_u0 - target_l0) / (2 * eps)
-            << " " << (target_u1 - target_l1) / (2 * eps)
-            << std::endl;
+            << "grad: " << (target_u0 - target_l0) / (2 * eps) << " "
+            << (target_u1 - target_l1) / (2 * eps) << std::endl;
 }
 /*
 TEST_F(laplace_disease_map_test, rng_autodiff) {

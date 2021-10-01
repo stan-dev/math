@@ -15,15 +15,14 @@
 
 struct K_functor {
   template <typename T>
-  Eigen::Matrix<T, -1, -1>
-  operator()(const Eigen::Matrix<T, -1, 1>& parm,
-             const std::vector<Eigen::VectorXd>& x_tot,
-             const std::vector<double>& delta,
-             const std::vector<int>& delta_int,
-             std::ostream* pstream) const {
+  Eigen::Matrix<T, -1, -1> operator()(const Eigen::Matrix<T, -1, 1>& parm,
+                                      const std::vector<Eigen::VectorXd>& x_tot,
+                                      const std::vector<double>& delta,
+                                      const std::vector<int>& delta_int,
+                                      std::ostream* pstream) const {
     using stan::math::add;
-    using stan::math::multiply;
     using stan::math::diag_post_multiply;
+    using stan::math::multiply;
     using stan::math::square;
     using stan::math::transpose;
 
@@ -31,7 +30,8 @@ struct K_functor {
     int M = delta_int[1];
 
     Eigen::Matrix<T, -1, 1> lambda_tilde(M);
-    for (int m = 0; m < M; m++) lambda_tilde[m] = parm[m];
+    for (int m = 0; m < M; m++)
+      lambda_tilde[m] = parm[m];
 
     T eta = parm[M];
     T alpha = parm[M + 1];
@@ -56,19 +56,20 @@ struct K_functor {
         X2(n, m) = x_tot[N + n](m);
       }
 
-    Eigen::Matrix<T, -1, -1>
-      K1 = multiply(diag_post_multiply(X, lambda_tilde), transpose(X));
-    Eigen::Matrix<T, -1, -1>
-      K2 = multiply(diag_post_multiply(X2, lambda_tilde), transpose(X2));
+    Eigen::Matrix<T, -1, -1> K1
+        = multiply(diag_post_multiply(X, lambda_tilde), transpose(X));
+    Eigen::Matrix<T, -1, -1> K2
+        = multiply(diag_post_multiply(X2, lambda_tilde), transpose(X2));
 
     Eigen::Matrix<T, -1, -1> K;
-    K = square(eta) * square(add(K1, 1)) +
-        (square(alpha) - 0.5 * square(eta)) * K2 +
-        (square(phi) - square(eta)) * K1;
+    K = square(eta) * square(add(K1, 1))
+        + (square(alpha) - 0.5 * square(eta)) * K2
+        + (square(phi) - square(eta)) * K1;
     K = add(0.5 + square(psi) - 0.5 * square(eta), K);
 
     // Add jitter to make linear algebra more numerically stable
-    for (int n = 0; n < N; n++) K(n, n) += square(sigma) + 1e-7;
+    for (int n = 0; n < N; n++)
+      K(n, n) += square(sigma) + 1e-7;
     return K;
   }
 };
@@ -76,15 +77,14 @@ struct K_functor {
 // Overload structure for case where x is passed as a matrix.
 struct K_functor2 {
   template <typename T>
-  Eigen::Matrix<T, -1, -1>
-  operator()(const Eigen::Matrix<T, -1, 1>& parm,
-             const Eigen::MatrixXd& x_tot,
-             const std::vector<double>& delta,
-             const std::vector<int>& delta_int,
-             std::ostream* pstream) const {
+  Eigen::Matrix<T, -1, -1> operator()(const Eigen::Matrix<T, -1, 1>& parm,
+                                      const Eigen::MatrixXd& x_tot,
+                                      const std::vector<double>& delta,
+                                      const std::vector<int>& delta_int,
+                                      std::ostream* pstream) const {
     using stan::math::add;
-    using stan::math::multiply;
     using stan::math::diag_post_multiply;
+    using stan::math::multiply;
     using stan::math::square;
     using stan::math::transpose;
 
@@ -92,7 +92,8 @@ struct K_functor2 {
     int M = delta_int[1];
 
     Eigen::Matrix<T, -1, 1> lambda_tilde(M);
-    for (int m = 0; m < M; m++) lambda_tilde[m] = parm[m];
+    for (int m = 0; m < M; m++)
+      lambda_tilde[m] = parm[m];
 
     T eta = parm[M];
     T alpha = parm[M + 1];
@@ -103,31 +104,31 @@ struct K_functor2 {
     Eigen::MatrixXd X = x_tot.block(0, 0, N, M);
     Eigen::MatrixXd X2 = x_tot.block(N, 0, N, M);
 
-    Eigen::Matrix<T, -1, -1>
-      K1 = multiply(diag_post_multiply(X, lambda_tilde), transpose(X));
-    Eigen::Matrix<T, -1, -1>
-      K2 = multiply(diag_post_multiply(X2, lambda_tilde), transpose(X2));
+    Eigen::Matrix<T, -1, -1> K1
+        = multiply(diag_post_multiply(X, lambda_tilde), transpose(X));
+    Eigen::Matrix<T, -1, -1> K2
+        = multiply(diag_post_multiply(X2, lambda_tilde), transpose(X2));
 
     Eigen::Matrix<T, -1, -1> K;
-    K = square(eta) * square(add(K1, 1)) +
-        (square(alpha) - 0.5 * square(eta)) * K2 +
-        (square(phi) - square(eta)) * K1;
+    K = square(eta) * square(add(K1, 1))
+        + (square(alpha) - 0.5 * square(eta)) * K2
+        + (square(phi) - square(eta)) * K1;
     K = add(0.5 + square(psi) - 0.5 * square(eta), K);
 
     // Add jitter to make linear algebra more numerically stable
-    for (int n = 0; n < N; n++) K(n, n) += square(sigma) + 1e-7;
+    for (int n = 0; n < N; n++)
+      K(n, n) += square(sigma) + 1e-7;
     return K;
   }
 };
 
-class laplace_skim_test : public::testing::Test {
-protected:
+class laplace_skim_test : public ::testing::Test {
+ protected:
   void SetUp() override {
+    using stan::math::add;
+    using stan::math::elt_divide;
     using stan::math::square;
     using stan::math::var;
-    using stan::math::square;
-    using stan::math::elt_divide;
-    using stan::math::add;
 
     N = 100;
     M = 2;  // options: 2, 50, 100, 150, 200
@@ -142,11 +143,11 @@ protected:
 
     stan::math::test::read_in_data(M, N, data_directory, X, y, lambda);
 
-    if (false){
+    if (false) {
       std::cout << X << std::endl << "-----" << std::endl;
       std::cout << lambda.transpose() << std::endl << "------" << std::endl;
       std::cout << y[0] << " " << y[1] << " " << std::endl
-        << "------" << std::endl;
+                << "------" << std::endl;
     }
 
     alpha_base = 0;
@@ -184,8 +185,9 @@ protected:
     eta = square(phi) / c2 * eta_base;
     alpha = square(phi) / c2 * alpha_base;
 
-    lambda_tilde = c2 * elt_divide(square(lambda),
-                    add(c2, multiply(square(phi), square(lambda))));
+    lambda_tilde = c2
+                   * elt_divide(square(lambda),
+                                add(c2, multiply(square(phi), square(lambda))));
 
     parm.resize(M + 4);
     parm.head(M) = lambda_tilde;
@@ -211,31 +213,27 @@ protected:
   Eigen::MatrixXd X2;
   Eigen::MatrixXd x_tot_m;
 
-  stan::math::var c2_tilde, tau_tilde, sigma, eta_base,
-    phi, c2, eta, alpha;
+  stan::math::var c2_tilde, tau_tilde, sigma, eta_base, phi, c2, eta, alpha;
   Eigen::Matrix<stan::math::var, -1, 1> lambda_tilde;
   Eigen::Matrix<stan::math::var, -1, 1> parm;
 };
 
-
 TEST_F(laplace_skim_test, lk_analytical) {
-  using stan::math::var;
   using stan::math::laplace_marginal_bernoulli_logit_lpmf;
-
+  using stan::math::var;
 
   auto start = std::chrono::system_clock::now();
 
-  var marginal_density
-    = laplace_marginal_bernoulli_logit_lpmf(y, n_samples, K_functor2(),
-                                            parm, x_tot_m, delta, delta_int,
-                                            theta_0);
+  var marginal_density = laplace_marginal_bernoulli_logit_lpmf(
+      y, n_samples, K_functor2(), parm, x_tot_m, delta, delta_int, theta_0);
 
   auto end = std::chrono::system_clock::now();
   std::chrono::duration<double> elapsed_time = end - start;
 
   std::vector<double> g;
   std::vector<var> parm_vec(M + 4);
-  for (int m = 0; m < M + 4; m++) parm_vec[m] = parm(m);
+  for (int m = 0; m < M + 4; m++)
+    parm_vec[m] = parm(m);
   marginal_density.grad(parm_vec, g);
 
   // std::cout << parm << std::endl;
@@ -245,53 +243,53 @@ TEST_F(laplace_skim_test, lk_analytical) {
             << "M: " << M << std::endl
             << "density: " << marginal_density << std::endl
             << "autodiff grad: ";
-  for (size_t i = 0; i < 10; i++) std::cout << g[i] << " ";
+  for (size_t i = 0; i < 10; i++)
+    std::cout << g[i] << " ";
   std::cout << std::endl
             << "total time: " << elapsed_time.count() << std::endl
             << std::endl;
 }
 
 struct bernoulli_logit_likelihood {
-  template<typename T_theta, typename T_eta>
-  stan::return_type_t<T_theta, T_eta>
-  operator()(const Eigen::Matrix<T_theta, -1, 1>& theta,
-             const Eigen::Matrix<T_eta, -1, 1>& eta,
-             const Eigen::VectorXd& sums,       // sums
-             const std::vector<int>& n_samples,  // n_samples
-             std::ostream* pstream) const {
+  template <typename T_theta, typename T_eta>
+  stan::return_type_t<T_theta, T_eta> operator()(
+      const Eigen::Matrix<T_theta, -1, 1>& theta,
+      const Eigen::Matrix<T_eta, -1, 1>& eta,
+      const Eigen::VectorXd& sums,        // sums
+      const std::vector<int>& n_samples,  // n_samples
+      std::ostream* pstream) const {
     using stan::math::to_vector;
-    stan::math::diff_bernoulli_logit
-      diff_functor(to_vector(n_samples), sums);
+    stan::math::diff_bernoulli_logit diff_functor(to_vector(n_samples), sums);
 
     return diff_functor.log_likelihood(theta, eta);
   }
 };
 
-
 TEST_F(laplace_skim_test, lk_autodiff) {
-  using stan::math::var;
-  using stan::math::laplace_marginal_density;
   using stan::math::diff_likelihood;
+  using stan::math::laplace_marginal_density;
   using stan::math::to_vector;
   using stan::math::value_of;
+  using stan::math::var;
 
   bernoulli_logit_likelihood f;
-  diff_likelihood<bernoulli_logit_likelihood>
-    diff_functor(f, to_vector(y), n_samples);
+  diff_likelihood<bernoulli_logit_likelihood> diff_functor(f, to_vector(y),
+                                                           n_samples);
 
   auto start = std::chrono::system_clock::now();
 
   Eigen::Matrix<var, -1, 1> eta_dummy;
   var marginal_density
-    = laplace_marginal_density(diff_functor, K_functor2(), parm, eta_dummy,
-                               x_tot_m, delta, delta_int, theta_0);
+      = laplace_marginal_density(diff_functor, K_functor2(), parm, eta_dummy,
+                                 x_tot_m, delta, delta_int, theta_0);
 
   auto end = std::chrono::system_clock::now();
   std::chrono::duration<double> elapsed_time = end - start;
 
   std::vector<double> g;
   std::vector<var> parm_vec(M + 4);
-  for (int m = 0; m < M + 4; m++) parm_vec[m] = parm(m);
+  for (int m = 0; m < M + 4; m++)
+    parm_vec[m] = parm(m);
   marginal_density.grad(parm_vec, g);
 
   // Expected density: - 10.9795
@@ -299,7 +297,8 @@ TEST_F(laplace_skim_test, lk_autodiff) {
             << "M: " << M << std::endl
             << "density: " << marginal_density << std::endl
             << "autodiff grad: ";
-  for (size_t i = 0; i < 10; i++) std::cout << g[i] << " ";
+  for (size_t i = 0; i < 10; i++)
+    std::cout << g[i] << " ";
   std::cout << std::endl
             << "total time: " << elapsed_time.count() << std::endl
             << std::endl;

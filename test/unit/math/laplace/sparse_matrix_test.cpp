@@ -10,12 +10,11 @@
 #include <fstream>
 #include <vector>
 
-
 TEST(sparse_matrix, eigen_example) {
   typedef Eigen::Triplet<double> trp;
+  using Eigen::MatrixXd;
   using Eigen::SparseMatrix;
   using Eigen::VectorXi;
-  using Eigen::MatrixXd;
 
   int m = 2;  // size of each block
 
@@ -55,10 +54,7 @@ TEST(sparse_matrix, eigen_example) {
   std::cout << "A * B: " << A * B << std::endl;
 
   MatrixXd C(4, 4);
-  C << 1, 3, 4, 5,
-       3, 4, 4, 1,
-       8, 1, 0, 12,
-       3, 4, 5, 1;
+  C << 1, 3, 4, 5, 3, 4, 4, 1, 8, 1, 0, 12, 3, 4, 5, 1;
 
   std::cout << "A * C: " << A * C << std::endl;
 
@@ -67,7 +63,6 @@ TEST(sparse_matrix, eigen_example) {
   std::cout << "sqrt(A): " << sqrt_A << std::endl;
 
   std::cout << "Check we recover A: " << sqrt_A * sqrt_A << std::endl;
-
 
   SparseMatrix<double> D(4, 4);
 
@@ -87,8 +82,8 @@ TEST(LU_decomposition, eigen_example) {
   Matrix5x5 m = Matrix5x5::Random();
   cout << "Here is the matrix m:" << endl << m << endl;
   Eigen::FullPivLU<Matrix5x5> lu(m);
-  cout << "Here is, up to permutations, its LU decomposition matrix:"
-       << endl << lu.matrixLU() << endl;
+  cout << "Here is, up to permutations, its LU decomposition matrix:" << endl
+       << lu.matrixLU() << endl;
   cout << "Here is the L part:" << endl;
   // Matrix5x5 l = Matrix5x5::Identity();
   // l.block<5,3>(0,0).triangularView<StrictlyLower>() = lu.matrixLU();
@@ -109,7 +104,6 @@ TEST(LU_decomposition, eigen_example) {
   Eigen::MatrixXd L(5, 5);
   L.triangularView<StrictlyLower>() = lu.permutationP().inverse() * l;
   std::cout << "L: " << L << std::endl;
-
 
   Eigen::MatrixXd U(5, 5);
   U = u * lu.permutationQ().inverse();
@@ -133,9 +127,7 @@ TEST(LU_decomposition, eigen_example_2) {
   std::cout << "LU determinant: " << LU.determinant() << std::endl;
   std::cout << "A determinant: " << A.determinant() << std::endl;
 
-  std::cout << "A.solve(B): " << std::endl
-            << LU.solve(B) << std::endl;
+  std::cout << "A.solve(B): " << std::endl << LU.solve(B) << std::endl;
 
-  std::cout << "Check solution: " << std::endl
-            << A * LU.solve(B) << std::endl;
+  std::cout << "Check solution: " << std::endl << A * LU.solve(B) << std::endl;
 }

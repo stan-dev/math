@@ -36,9 +36,6 @@ TEST(laplace, likelihood_differentiation) {
   // benchmark against R
   EXPECT_NEAR(-7.375673, log_density, test_tolerance);
 
-
-
-
   // diff_logistic_log diff_functor(n_samples, y);
   // double log_density = diff_functor.log_likelihood(theta);
   // Eigen::VectorXd gradient, hessian;

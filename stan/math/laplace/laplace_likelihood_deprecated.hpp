@@ -306,7 +306,7 @@ struct diff_neg_binomial_2_log {
 
     hessian = -eta_scalar
               * sums_plus_n_eta.cwiseProduct(
-                  elt_divide(exp_neg_theta, square(one_plus_exp)));
+                    elt_divide(exp_neg_theta, square(one_plus_exp)));
   }
 
   template <typename T_theta, typename T_eta>

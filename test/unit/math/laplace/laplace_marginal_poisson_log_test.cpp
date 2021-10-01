@@ -10,7 +10,6 @@
 #include <fstream>
 #include <vector>
 
-
 TEST(laplace, likelihood_differentiation) {
   using stan::math::diff_poisson_log;
   using stan::math::to_vector;
@@ -21,8 +20,7 @@ TEST(laplace, likelihood_differentiation) {
   std::vector<int> sums = {1, 0};
   Eigen::VectorXd eta_dummy;
 
-  diff_poisson_log diff_functor(to_vector(n_samples),
-                                to_vector(sums));
+  diff_poisson_log diff_functor(to_vector(n_samples), to_vector(sums));
   double log_density = diff_functor.log_likelihood(theta, eta_dummy);
   Eigen::VectorXd gradient;
   Eigen::SparseMatrix<double> hessian;
@@ -38,7 +36,6 @@ TEST(laplace, likelihood_differentiation) {
   EXPECT_FLOAT_EQ(-2.718282, third_tensor(1));
 }
 
-
 TEST(laplace, likelihood_differentiation2) {
   // Test exposure argument
   using stan::math::diff_poisson_log;
@@ -51,8 +48,7 @@ TEST(laplace, likelihood_differentiation2) {
   std::vector<double> log_exposure = {log(0.5), log(2)};
   Eigen::VectorXd eta_dummy;
 
-  diff_poisson_log diff_functor(to_vector(n_samples),
-                                to_vector(sums),
+  diff_poisson_log diff_functor(to_vector(n_samples), to_vector(sums),
                                 to_vector(log_exposure));
 
   double log_density = diff_functor.log_likelihood(theta, eta_dummy);
@@ -68,14 +64,13 @@ TEST(laplace, likelihood_differentiation2) {
   EXPECT_FLOAT_EQ(-5.436564, hessian.coeff(1, 1));
   EXPECT_FLOAT_EQ(-1.359141, third_tensor(0));
   EXPECT_FLOAT_EQ(-5.436564, third_tensor(1));
-
 }
 
 TEST(laplace, poisson_lgm_dim2) {
   using stan::math::laplace_marginal_poisson_log_lpmf;
-  using stan::math::var;
   using stan::math::to_vector;
   using stan::math::value_of;
+  using stan::math::var;
 
   int dim_phi = 2;
   Eigen::Matrix<var, Eigen::Dynamic, 1> phi(dim_phi);
@@ -88,7 +83,7 @@ TEST(laplace, poisson_lgm_dim2) {
   int dim_x = 2;
   std::vector<Eigen::VectorXd> x(dim_theta);
   Eigen::VectorXd x_0(2);
-  x_0 <<  0.05100797, 0.16086164;
+  x_0 << 0.05100797, 0.16086164;
   Eigen::VectorXd x_1(2);
   x_1 << -0.59823393, 0.98701425;
   x[0] = x_0;
@@ -101,15 +96,14 @@ TEST(laplace, poisson_lgm_dim2) {
   std::vector<int> sums = {1, 0};
 
   stan::math::test::squared_kernel_functor K;
-  var target
-    = laplace_marginal_poisson_log_lpmf(sums, n_samples, K, phi, x, delta,
-                                        delta_int, theta_0);
+  var target = laplace_marginal_poisson_log_lpmf(sums, n_samples, K, phi, x,
+                                                 delta, delta_int, theta_0);
 
   // Test with exposure argument
   Eigen::VectorXd ye(2);
   ye << 1, 1;
-  target = laplace_marginal_poisson_log_lpmf(sums, n_samples, ye, K, phi, x, delta,
-                                        delta_int, theta_0);
+  target = laplace_marginal_poisson_log_lpmf(sums, n_samples, ye, K, phi, x,
+                                             delta, delta_int, theta_0);
 
   // How to test this? The best way would be to generate a few
   // benchmarks using gpstuff.
@@ -120,23 +114,23 @@ TEST(laplace, poisson_lgm_dim2) {
   // finite diff test
   double diff = 1e-7;
   Eigen::VectorXd phi_dbl = value_of(phi);
-  Eigen::VectorXd phi_1l = phi_dbl, phi_1u = phi_dbl,
-    phi_2l = phi_dbl, phi_2u = phi_dbl;
+  Eigen::VectorXd phi_1l = phi_dbl, phi_1u = phi_dbl, phi_2l = phi_dbl,
+                  phi_2u = phi_dbl;
   phi_1l(0) -= diff;
   phi_1u(0) += diff;
   phi_2l(1) -= diff;
   phi_2u(1) += diff;
 
-  double target_1u = laplace_marginal_poisson_log_lpmf(sums, n_samples, K, phi_1u, x,
-                                                  delta, delta_int, theta_0),
-         target_1l = laplace_marginal_poisson_log_lpmf(sums, n_samples, K, phi_1l, x,
-                                              delta, delta_int, theta_0),
-         target_2u = laplace_marginal_poisson_log_lpmf(sums, n_samples, K, phi_2u, x,
-                                              delta, delta_int, theta_0),
-         target_2l = laplace_marginal_poisson_log_lpmf(sums, n_samples, K, phi_2l, x,
-                                              delta, delta_int, theta_0);
+  double target_1u = laplace_marginal_poisson_log_lpmf(
+             sums, n_samples, K, phi_1u, x, delta, delta_int, theta_0),
+         target_1l = laplace_marginal_poisson_log_lpmf(
+             sums, n_samples, K, phi_1l, x, delta, delta_int, theta_0),
+         target_2u = laplace_marginal_poisson_log_lpmf(
+             sums, n_samples, K, phi_2u, x, delta, delta_int, theta_0),
+         target_2l = laplace_marginal_poisson_log_lpmf(
+             sums, n_samples, K, phi_2l, x, delta, delta_int, theta_0);
 
-  std::vector<double>g_finite(dim_phi);
+  std::vector<double> g_finite(dim_phi);
   g_finite[0] = (target_1u - target_1l) / (2 * diff);
   g_finite[1] = (target_2u - target_2l) / (2 * diff);
 

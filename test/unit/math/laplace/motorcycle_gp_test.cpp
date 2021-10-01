@@ -17,14 +17,12 @@
 
 struct covariance_motorcycle_functor {
   template <typename T1, typename T2>
-  Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic>
-  operator() (const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
-              const T2& x,
-              const std::vector<double>& delta,
-              const std::vector<int>& delta_int,
-              std::ostream* msgs = nullptr) const {
-  using Eigen::Matrix;
-  using stan::math::gp_exp_quad_cov;
+  Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> operator()(
+      const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi, const T2& x,
+      const std::vector<double>& delta, const std::vector<int>& delta_int,
+      std::ostream* msgs = nullptr) const {
+    using Eigen::Matrix;
+    using stan::math::gp_exp_quad_cov;
 
     T1 length_scale_f = phi(0);
     T1 length_scale_g = phi(1);
@@ -33,7 +31,8 @@ struct covariance_motorcycle_functor {
     int n_obs = delta_int[0];
 
     std::cout << "x: ";
-    for (int i = 0; i < 5; i++) std::cout << x[i] << " ";
+    for (int i = 0; i < 5; i++)
+      std::cout << x[i] << " ";
     std::cout << std::endl;
 
     double jitter = 1e-6;
@@ -43,8 +42,7 @@ struct covariance_motorcycle_functor {
     std::cout << "K_f: " << kernel_f.row(0).head(5) << std::endl;
     std::cout << "K_g: " << kernel_g.row(0).head(5) << std::endl;
 
-    Matrix<T1, -1, -1> kernel_all
-     = Eigen::MatrixXd::Zero(2 * n_obs, 2 * n_obs);
+    Matrix<T1, -1, -1> kernel_all = Eigen::MatrixXd::Zero(2 * n_obs, 2 * n_obs);
     for (int i = 0; i < n_obs; i++) {
       for (int j = 0; j <= i; j++) {
         kernel_all(2 * i, 2 * j) = kernel_f(i, j);
@@ -56,20 +54,19 @@ struct covariance_motorcycle_functor {
       }
     }
 
-    for (int i = 0; i < 2 * n_obs; i++) kernel_all(i, i) += jitter;
+    for (int i = 0; i < 2 * n_obs; i++)
+      kernel_all(i, i) += jitter;
 
     return kernel_all;
   }
 };
 
 struct normal_likelihood {
-  template<typename T_theta, typename T_eta>
-  stan::return_type_t<T_theta, T_eta>
-  operator()(const Eigen::Matrix<T_theta, -1, 1>& theta,
-             const Eigen::Matrix<T_eta, -1, 1>& eta,
-             const Eigen::VectorXd& y,
-             const std::vector<int>& delta_int,
-             std::ostream* pstream) const {
+  template <typename T_theta, typename T_eta>
+  stan::return_type_t<T_theta, T_eta> operator()(
+      const Eigen::Matrix<T_theta, -1, 1>& theta,
+      const Eigen::Matrix<T_eta, -1, 1>& eta, const Eigen::VectorXd& y,
+      const std::vector<int>& delta_int, std::ostream* pstream) const {
     int n_obs = delta_int[0];
     Eigen::Matrix<T_theta, -1, 1> mu(n_obs);
     Eigen::Matrix<T_theta, -1, 1> sigma(n_obs);
@@ -84,13 +81,11 @@ struct normal_likelihood {
 
 // include a global variance (passed through eta)
 struct normal_likelihood2 {
-  template<typename T_theta, typename T_eta>
-  stan::return_type_t<T_theta, T_eta>
-  operator()(const Eigen::Matrix<T_theta, -1, 1>& theta,
-             const Eigen::Matrix<T_eta, -1, 1>& eta,
-             const Eigen::VectorXd& y,
-             const std::vector<int>& delta_int,
-             std::ostream* pstream) const {
+  template <typename T_theta, typename T_eta>
+  stan::return_type_t<T_theta, T_eta> operator()(
+      const Eigen::Matrix<T_theta, -1, 1>& theta,
+      const Eigen::Matrix<T_eta, -1, 1>& eta, const Eigen::VectorXd& y,
+      const std::vector<int>& delta_int, std::ostream* pstream) const {
     using stan::math::multiply;
     int n_obs = delta_int[0];
     Eigen::Matrix<T_theta, -1, 1> mu(n_obs);
@@ -106,26 +101,27 @@ struct normal_likelihood2 {
   }
 };
 
-class laplace_motorcyle_gp_test : public::testing::Test {
-protected:
+class laplace_motorcyle_gp_test : public ::testing::Test {
+ protected:
   void SetUp() override {
-    using stan::math::value_of;
     using stan::math::gp_exp_quad_cov;
+    using stan::math::value_of;
 
     if (false) {
       n_obs = 6;
       Eigen::VectorXd x_vec(n_obs);
       x_vec << 2.4, 2.6, 3.2, 3.6, 4.0, 6.2;
       x.resize(n_obs);
-      for (int i = 0; i < n_obs; i++) x[i] = x_vec(i);
+      for (int i = 0; i < n_obs; i++)
+        x[i] = x_vec(i);
       y.resize(n_obs);
-      y << 0.0, -1.3, -2.7,  0.0, -2.7, -2.7;
+      y << 0.0, -1.3, -2.7, 0.0, -2.7, -2.7;
     }
 
     if (true) {
       n_obs = 133;
-      stan::math::test::read_data(n_obs, "test/unit/math/laplace/motorcycle_gp/",
-                   x, y);
+      stan::math::test::read_data(
+          n_obs, "test/unit/math/laplace/motorcycle_gp/", x, y);
       // std::cout << "x: ";
       // for (int i = 0; i < n_obs; i++) std::cout << x[i] << " ";
       // std::cout << " ..." << std::endl;
@@ -135,8 +131,8 @@ protected:
     // [0.335852,0.433641,0.335354,0.323559]
     length_scale_f = 0.3;  // 0.335852;  // 0.3;
     length_scale_g = 0.5;  // 0.433641;  // 0.5;
-    sigma_f = 0.25;  // 0.335354;  // 0.25;
-    sigma_g = 0.25;  // 0.323559;  // 0.25;
+    sigma_f = 0.25;        // 0.335354;  // 0.25;
+    sigma_g = 0.25;        // 0.323559;  // 0.25;
 
     phi.resize(4);
     phi << length_scale_f, length_scale_g, sigma_f, sigma_g;
@@ -148,12 +144,11 @@ protected:
     // theta0 << -10, 0, -10, 0, -10, 0, -10,
     //           0, -10, 0, -10, 0;
 
-    Eigen::MatrixXd
-      K_plus_I = gp_exp_quad_cov(x, value_of(sigma_f), value_of(length_scale_f))
-        + Eigen::MatrixXd::Identity(n_obs, n_obs);
+    Eigen::MatrixXd K_plus_I
+        = gp_exp_quad_cov(x, value_of(sigma_f), value_of(length_scale_f))
+          + Eigen::MatrixXd::Identity(n_obs, n_obs);
 
-    Eigen::VectorXd mu_hat
-      = K_plus_I.colPivHouseholderQr().solve(y);
+    Eigen::VectorXd mu_hat = K_plus_I.colPivHouseholderQr().solve(y);
 
     // Remark: finds optimal point with or without informed initial guess.
     for (int i = 0; i < n_obs; i++) {
@@ -182,15 +177,14 @@ protected:
 };
 
 TEST_F(laplace_motorcyle_gp_test, lk_autodiff) {
-  using stan::math::var;
-  using stan::math::value_of;
-  using stan::math::laplace_marginal_density;
   using stan::math::diff_likelihood;
+  using stan::math::laplace_marginal_density;
+  using stan::math::value_of;
+  using stan::math::var;
 
   covariance_motorcycle_functor K_f;
   Eigen::VectorXd phi_dbl_ = value_of(phi);
-  Eigen::MatrixXd K_eval
-    = K_f(phi_dbl_, x, delta_dummy, delta_int, 0);
+  Eigen::MatrixXd K_eval = K_f(phi_dbl_, x, delta_dummy, delta_int, 0);
   std::cout << "K_eval: " << K_eval.row(0).head(5) << std::endl;
 
   normal_likelihood f;
