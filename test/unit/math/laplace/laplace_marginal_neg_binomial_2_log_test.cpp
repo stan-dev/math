@@ -70,8 +70,10 @@ TEST(laplace, likelihood_differentiation) {
   finite_hessian(1) = (gradient_u1 - gradient_l1)(1) / (2 * epsilon);
 
   Eigen::VectorXd finite_third_diff(2);
-  finite_third_diff(0) = (hessian_u0 - hessian_l0).eval().coeff(0, 0) / (2 * epsilon);
-  finite_third_diff(1) = (hessian_u1 - hessian_l1).eval().coeff(1, 1) / (2 * epsilon);
+  finite_third_diff(0)
+      = (hessian_u0 - hessian_l0).eval().coeff(0, 0) / (2 * epsilon);
+  finite_third_diff(1)
+      = (hessian_u1 - hessian_l1).eval().coeff(1, 1) / (2 * epsilon);
 
   std::cout << "gradient: " << gradient << std::endl;
   std::cout << "hessian: " << hessian << std::endl;
@@ -101,8 +103,7 @@ TEST(laplace, likelihood_differentiation) {
   Eigen::MatrixXd diff_theta_eta = diff_functor.diff_theta_eta(theta, eta);
 
   Eigen::VectorXd gradient_theta_l, gradient_theta_u;
-  Eigen::SparseMatrix<double> hessian_theta_u,
-      hessian_theta_l;
+  Eigen::SparseMatrix<double> hessian_theta_u, hessian_theta_l;
 
   diff_functor.diff(theta, eta_l, gradient_theta_l, hessian_theta_l);
   diff_functor.diff(theta, eta_u, gradient_theta_u, hessian_theta_u);
@@ -110,7 +111,8 @@ TEST(laplace, likelihood_differentiation) {
       = (gradient_theta_u - gradient_theta_l) / (2 * epsilon);
 
   std::cout << "diff_theta_eta: " << diff_theta_eta.transpose() << std::endl;
-  std::cout << "finite_gradient_theta_eta: " << finite_gradient_theta_eta.transpose() << std::endl;
+  std::cout << "finite_gradient_theta_eta: "
+            << finite_gradient_theta_eta.transpose() << std::endl;
   Eigen::VectorXd diff_theta_eta1 = diff_theta_eta.col(0);
   EXPECT_MATRIX_FLOAT_EQ(finite_gradient_theta_eta, diff_theta_eta1);
   /*
@@ -122,7 +124,8 @@ TEST(laplace, likelihood_differentiation) {
   Eigen::MatrixXd diff2_theta_eta = diff_functor.diff2_theta_eta(theta, eta);
 
   Eigen::VectorXd finite_hessian_theta_eta
-      = (hessian_theta_u.diagonal() - hessian_theta_l.diagonal()) / (2 * epsilon);
+      = (hessian_theta_u.diagonal() - hessian_theta_l.diagonal())
+        / (2 * epsilon);
 
   std::cout << "diff2_theta_eta: " << diff2_theta_eta.transpose() << std::endl;
 
@@ -145,13 +148,13 @@ Eigen::MatrixXd compute_B(const Eigen::VectorXd& theta,
 }
 
 TEST(laplace, neg_binomial_2_log_dbl) {
-  using stan::math::to_vector;
   using stan::math::diff_neg_binomial_2_log;
-  using stan::math::test::sqr_exp_kernel_functor;
   using stan::math::laplace_marginal_density;
   using stan::math::laplace_marginal_neg_binomial_2_log_lpmf;
-  using stan::math::var;
+  using stan::math::to_vector;
   using stan::math::value_of;
+  using stan::math::var;
+  using stan::math::test::sqr_exp_kernel_functor;
 
   int dim_phi = 2, dim_eta = 1, dim_theta = 2;
   Eigen::VectorXd phi(dim_phi), eta(dim_eta), theta_0(dim_theta);
@@ -160,7 +163,7 @@ TEST(laplace, neg_binomial_2_log_dbl) {
   theta_0 << 0, 0;
   std::vector<Eigen::VectorXd> x(dim_theta);
   Eigen::VectorXd x_0(2);
-  x_0 <<  0.05100797, 0.16086164;
+  x_0 << 0.05100797, 0.16086164;
   x[0] = x_0;
   Eigen::VectorXd x_1(2);
   x_1 << -0.59823393, 0.98701425;
@@ -183,9 +186,8 @@ TEST(laplace, neg_binomial_2_log_dbl) {
   Eigen::Matrix<var, Eigen::Dynamic, 1> phi_v = phi, eta_v = eta;
 
   std::cout << "here3" << std::endl;
-  var target
-    = laplace_marginal_density(diff_functor, K, phi_v, eta_v, x, delta,
-                               delta_int, theta_0);
+  var target = laplace_marginal_density(diff_functor, K, phi_v, eta_v, x, delta,
+                                        delta_int, theta_0);
 
   std::cout << "here4" << std::endl;
   std::vector<double> g;
@@ -195,8 +197,8 @@ TEST(laplace, neg_binomial_2_log_dbl) {
   // finite diff benchmark
   double diff = 1e-7;
   Eigen::VectorXd phi_dbl = value_of(phi), eta_dbl = value_of(eta);
-  Eigen::VectorXd phi_1l = phi_dbl, phi_1u = phi_dbl,
-    phi_2l = phi_dbl, phi_2u = phi_dbl, eta_l = eta_dbl, eta_u = eta_dbl;
+  Eigen::VectorXd phi_1l = phi_dbl, phi_1u = phi_dbl, phi_2l = phi_dbl,
+                  phi_2u = phi_dbl, eta_l = eta_dbl, eta_u = eta_dbl;
   phi_1l(0) -= diff;
   phi_1u(0) += diff;
   phi_2l(1) -= diff;
@@ -204,34 +206,28 @@ TEST(laplace, neg_binomial_2_log_dbl) {
   eta_l(0) -= diff;
   eta_u(0) += diff;
 
-std::cout << "here5" << std::endl;
-double target_phi_1u = laplace_marginal_density(diff_functor, K, phi_1u,
-                                                         eta_dbl, x, delta,
-                                                         delta_int, theta_0);
-std::cout << "here6" << std::endl;
-double target_phi_1l = laplace_marginal_density(diff_functor, K, phi_1l,
-                                               eta_dbl, x, delta,
-                                               delta_int, theta_0);
-std::cout << "here7" << std::endl;
-double target_phi_2u = laplace_marginal_density(diff_functor, K, phi_2u,
-                                               eta_dbl, x, delta,
-                                               delta_int, theta_0);
-std::cout << "here8" << std::endl;
-double target_phi_2l = laplace_marginal_density(diff_functor, K, phi_2l,
-                                               eta_dbl, x, delta,
-                                               delta_int, theta_0);
+  std::cout << "here5" << std::endl;
+  double target_phi_1u = laplace_marginal_density(
+      diff_functor, K, phi_1u, eta_dbl, x, delta, delta_int, theta_0);
+  std::cout << "here6" << std::endl;
+  double target_phi_1l = laplace_marginal_density(
+      diff_functor, K, phi_1l, eta_dbl, x, delta, delta_int, theta_0);
+  std::cout << "here7" << std::endl;
+  double target_phi_2u = laplace_marginal_density(
+      diff_functor, K, phi_2u, eta_dbl, x, delta, delta_int, theta_0);
+  std::cout << "here8" << std::endl;
+  double target_phi_2l = laplace_marginal_density(
+      diff_functor, K, phi_2l, eta_dbl, x, delta, delta_int, theta_0);
 
-std::cout << "here9" << std::endl;
-double target_eta_u = laplace_marginal_density(diff_functor, K, phi_dbl,
-                                               eta_u, x, delta,
-                                               delta_int, theta_0);
+  std::cout << "here9" << std::endl;
+  double target_eta_u = laplace_marginal_density(
+      diff_functor, K, phi_dbl, eta_u, x, delta, delta_int, theta_0);
 
-std::cout << "here10" << std::endl;
-double target_eta_l = laplace_marginal_density(diff_functor, K, phi_dbl,
-                                               eta_l, x, delta,
-                                               delta_int, theta_0);
+  std::cout << "here10" << std::endl;
+  double target_eta_l = laplace_marginal_density(
+      diff_functor, K, phi_dbl, eta_l, x, delta, delta_int, theta_0);
 
-  std::vector<double>g_finite(dim_phi + dim_eta);
+  std::vector<double> g_finite(dim_phi + dim_eta);
   g_finite[0] = (target_phi_1u - target_phi_1l) / (2 * diff);
   g_finite[1] = (target_phi_2u - target_phi_2l) / (2 * diff);
   g_finite[2] = (target_eta_u - target_eta_l) / (2 * diff);
@@ -243,6 +239,6 @@ double target_eta_l = laplace_marginal_density(diff_functor, K, phi_dbl,
 
   // Check wrapper.
   EXPECT_EQ(target,
-    laplace_marginal_neg_binomial_2_log_lpmf(y_obs, y_index, K, phi, eta, x,
-                                             delta, delta_int, theta_0));
+            laplace_marginal_neg_binomial_2_log_lpmf(
+                y_obs, y_index, K, phi, eta, x, delta, delta_int, theta_0));
 }
