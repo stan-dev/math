@@ -41,11 +41,12 @@ auto sign_binary(const T& x) {
  * @param x Input argument to determine sign for
  * @return -1 for negative arguments otherwise 1
  */
-template <typename T1>
-inline value_type_t<T1> sum_exp_signed(const T1& v) {
-  const value_type_t<T1> max_val = v.maxCoeff();
-  const value_type_t<T1> val = sum(exp(v.array().abs() - max_val) * sign_binary(v));
-  return exp(max_val + log(fabs(val))) * sign_binary(val);
+template <typename T1, typename T2>
+inline std::tuple<value_type_t<T1>, int>
+  log_sum_exp_signed(const T1& v, const T2& signs) {
+  const value_type_t<T1> max_val = v.cwiseProduct(signs).maxCoeff();
+  const value_type_t<T1> val = sum(exp(v.array() - max_val) * signs.array());
+  return std::make_tuple(max_val + log(fabs(val)), sign_binary(val));
 }
 
 /**
@@ -143,13 +144,18 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
 
     // Append results at each iteration to a vector so that they
     // can be accumulated once, rather than every iteration
-    std::vector<scalar_t> da_infsum;
-    std::vector<scalar_t> db_infsum;
-    //da_infsum.reserve(500 * a_size);
-    //db_infsum.reserve(500 * b_size);
 
     T_vec da_mn = T_vec::Constant(a.size(), NEGATIVE_INFTY);
     T_vec db_mn = T_vec::Constant(b.size(), NEGATIVE_INFTY);
+
+    std::vector<scalar_t> da_iter_m;
+    std::vector<scalar_t> db_iter_m;
+    std::vector<int> da_iter_m_signs;
+    std::vector<int> db_iter_m_signs;
+    da_iter_m.reserve(100 * a_size);
+    da_iter_m_signs.reserve(100 * a_size);
+    db_iter_m.reserve(100 * b_size);
+    db_iter_m_signs.reserve(100 * b_size);
 
     int m = 0;
     int n_iter = 2;
@@ -182,8 +188,16 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
     Eigen::VectorXi log_phammer_ap1m_sign = Eigen::VectorXi::Ones(a.size());
     Eigen::VectorXi log_phammer_bp1m_sign = Eigen::VectorXi::Ones(b.size());
 
-    std::vector<int> n_steps;
-    while ((m < 50) && (m < outer_steps)) {
+    while ((n_iter > 1) && (m < outer_steps)) {
+      std::vector<scalar_t> da_iter_n;
+      std::vector<scalar_t> db_iter_n;
+      std::vector<int> da_iter_n_signs;
+      std::vector<int> db_iter_n_signs;
+      da_iter_n.reserve(100 * a_size);
+      da_iter_n_signs.reserve(100 * a_size);
+      db_iter_n.reserve(100 * b_size);
+      db_iter_n_signs.reserve(100 * b_size);
+
       int n = 0;
       Tz log_z_mn = log_z_m;
       int z_pow_mn_sign = z_sign;
@@ -234,7 +248,8 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
 
           // Append results and signs for iteration
           for (int i = 0; i < da_mn.size(); i++) {
-            da_infsum.push_back(da_mn[i] * curr_signs_da[i]);
+            da_iter_n.push_back(da_mn[i]);
+            da_iter_n_signs.push_back(curr_signs_da[i]);
           }
         }
 
@@ -247,7 +262,8 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
                     .matrix();
 
           for (int i = 0; i < db_mn.size(); i++) {
-            db_infsum.push_back(db_mn[i] * curr_signs_db[i]);
+            db_iter_n.push_back(db_mn[i]);
+            db_iter_n_signs.push_back(curr_signs_db[i]);
           }
         }
 
@@ -286,7 +302,28 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
         bp1mn.array() += 1;
       }
 
-      n_steps.push_back(n);
+      if (calc_a) {
+        for (int i = 0; i < a.size(); i++) {
+          MapT iter_val(da_iter_n.data() + i, da_iter_n.size() / a.size(), Eigen::InnerStride<>(a.size()));
+          MapSignT iter_sign(da_iter_n_signs.data() + i, da_iter_n_signs.size() / a.size(), Eigen::InnerStride<>(a.size()));
+
+          auto da_iter_m_tuple = log_sum_exp_signed(iter_val, iter_sign);
+          da_iter_m.push_back(std::move(std::get<0>(da_iter_m_tuple)));
+          da_iter_m_signs.push_back(std::move(std::get<1>(da_iter_m_tuple)));
+        }
+      }
+
+      if (calc_b) {
+        for (int i = 0; i < b.size(); i++) {
+          MapT iter_val(db_iter_n.data() + i, db_iter_n.size() / b.size(), Eigen::InnerStride<>(b.size()));
+          MapSignT iter_sign(db_iter_n_signs.data() + i, db_iter_n_signs.size() / b.size(), Eigen::InnerStride<>(b.size()));
+
+          auto db_iter_m_tuple = log_sum_exp_signed(iter_val, iter_sign);
+          db_iter_m.push_back(std::move(std::get<0>(db_iter_m_tuple)));
+          db_iter_m_signs.push_back(std::move(std::get<1>(db_iter_m_tuple)));
+        }
+      }
+
       n_iter = n;
 
       log_z_m += log_z;
@@ -311,16 +348,13 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
                          "did not converge.");
     }
 
-    std::cout << m + sum(n_steps) << std::endl;
-
-    std::cout << db_infsum.size() << std::endl;
-    std::cout << da_infsum.size() << std::endl;
-
     if (calc_a) {
-      T_vec da(a.size());
+      T_vec da(a_size);
       for (int i = 0; i < a.size(); i++) {
-        MapT iter_val(da_infsum.data() + i, da_infsum.size() / a.size(), Eigen::InnerStride<>(a.size()));
-        da[i] = sum_exp_signed(iter_val);
+        MapT iter_val(da_iter_m.data() + i, da_iter_m.size() / a.size(), Eigen::InnerStride<>(a.size()));
+        MapSignT iter_sign(da_iter_m_signs.data() + i, da_iter_m_signs.size() / a.size(), Eigen::InnerStride<>(a.size()));
+        auto da_tuple = log_sum_exp_signed(iter_val, iter_sign);
+        da[i] = exp(std::get<0>(da_tuple)) * std::get<1>(da_tuple);
       }
 
       auto pre_mult_a = (z * a_prod / a_ref.array() / b_prod).matrix();
@@ -330,10 +364,12 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
     }
 
     if (calc_b) {
-      T_vec db(b.size());
+      T_vec db(b_size);
       for (int i = 0; i < b.size(); i++) {
-        MapT iter_val(db_infsum.data() + i, db_infsum.size(), Eigen::InnerStride<>(b.size()));
-        db[i] = sum_exp_signed(iter_val);
+        MapT iter_val(db_iter_m.data() + i, db_iter_m.size() / b.size(), Eigen::InnerStride<>(b.size()));
+        MapSignT iter_sign(db_iter_m_signs.data() + i, db_iter_m_signs.size() / b.size(), Eigen::InnerStride<>(b.size()));
+        auto db_tuple = log_sum_exp_signed(iter_val, iter_sign);
+        db[i] = exp(std::get<0>(db_tuple)) * std::get<1>(db_tuple);
       }
       auto pre_mult_b = ((z * a_prod) / (b.array() * b_prod)).matrix();
       std::get<1>(grad_tuple) = -pre_mult_b.cwiseProduct(db);
