@@ -94,8 +94,7 @@ template <bool calc_a, bool calc_b, bool calc_z, typename TupleT, typename Ta,
           require_all_eigen_vector_t<Ta, Tb>* = nullptr,
           require_stan_scalar_t<Tz>* = nullptr>
 void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
-                   double outer_precision, double inner_precision,
-                   int outer_steps, int inner_steps) {
+                   double precision, int outer_steps, int inner_steps) {
   using std::max;
   using scalar_t = return_type_t<Ta, Tb, Tz>;
   using MapA = Eigen::Map<Eigen::Matrix<value_type_t<Ta>, -1, 1>>;
@@ -139,8 +138,7 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
 
   // Only need the infinite sum for partials wrt a & b
   if (calc_a || calc_b) {
-    double log_outer_precision = log(outer_precision);
-    double log_inner_precision = log(inner_precision);
+    double log_precision = log(precision);
 
     // Append results at each iteration to a vector so that they
     // can be accumulated once, rather than every iteration
@@ -240,7 +238,7 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
       log_phammer_ap1mpn_sign = log_phammer_ap1m_sign;
       log_phammer_bp1mpn_sign = log_phammer_bp1m_sign;
 
-      while ((inner_diff > log_inner_precision) && (n < inner_steps)) {
+      while ((inner_diff > log_precision) && (n < inner_steps)) {
         // Numerator term
         scalar_t term1_mn = log_z_mn + sum(log_phammer_ap1_mpn)
                             + log_phammer_1m + log_phammer_1n;
@@ -433,8 +431,7 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
  */
 template <typename Ta, typename Tb, typename Tz>
 auto grad_pFq(const Ta& a, const Tb& b, const Tz& z,
-              double outer_precision = 1e-9,
-              double inner_precision = 1e-9,
+              double precision = 1e-9,
               int outer_steps = 1e6,
               int inner_steps = 1e6) {
   using partials_t = partials_return_t<Ta, Tb, Tz>;
@@ -444,8 +441,8 @@ auto grad_pFq(const Ta& a, const Tb& b, const Tz& z,
       ret_tuple;
   internal::grad_pFq_impl<!is_constant<Ta>::value, !is_constant<Tb>::value,
                           !is_constant<Tz>::value>(
-      ret_tuple, value_of(a), value_of(b), value_of(z), outer_precision,
-      inner_precision, outer_steps, inner_steps);
+      ret_tuple, value_of(a), value_of(b), value_of(z),
+      precision, outer_steps, inner_steps);
   return ret_tuple;
 }
 
