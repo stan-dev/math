@@ -317,172 +317,6 @@ double laplace_marginal_density(
       max_steps_line_search);
 }
 
-/**
- * The vari class for the laplace marginal density.
- * The method is adapted from algorithm 5.1 in Rasmussen & Williams,
- * "Gaussian Processes for Machine Learning"
- * with modifications described in my (Charles Margossian)
- * thesis proposal.
- *
- * To make computation efficient, variables produced during the
- * Newton step are stored and reused. To avoid storing these variables
- * for too long, the sensitivies are computed in the constructor, and
- * stored for the chain method. Hence, we store a single small vector,
- * instead of multiple large matrices.
- */
-struct laplace_marginal_density_vari : public vari {
-  /* dimension of hyperparameters. */
-  int phi_size_;
-  /* hyperparameters for covariance K. */
-  vari** phi_;
-  /* dimension of hyperparameters for likelihood. */
-  int eta_size_;
-  /* hyperparameters for likelihood. */
-  vari** eta_;
-  /* the marginal density of the observation, conditional on the
-   * globl parameters. */
-  vari** marginal_density_;
-  /* An object to store the sensitivities of phi. */
-  Eigen::VectorXd phi_adj_;
-  /* An object to store the sensitivities of eta. */
-  Eigen::VectorXd eta_adj_;
-
-  template <typename T1, typename T2, typename K, typename D, typename Tx>
-  laplace_marginal_density_vari(
-      const D& diff_likelihood, const K& covariance_function,
-      const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
-      const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta, const Tx& x,
-      const std::vector<double>& delta, const std::vector<int>& delta_int,
-      double marginal_density, const Eigen::MatrixXd& covariance,
-      const Eigen::VectorXd& theta, const Eigen::SparseMatrix<double>& W_r,
-      const Eigen::MatrixXd& L, const Eigen::VectorXd& a,
-      const Eigen::VectorXd& l_grad,
-      const Eigen::PartialPivLU<Eigen::MatrixXd> LU,
-      const Eigen::MatrixXd& K_root, std::ostream* msgs = nullptr,
-      int hessian_block_size = 0, int solver = 1)
-      : vari(marginal_density),
-        phi_size_(phi.size()),
-        phi_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-            phi.size())),
-        eta_size_(eta.size()),
-        eta_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-            eta.size())),
-        marginal_density_(
-            ChainableStack::instance_->memalloc_.alloc_array<vari*>(1)) {
-    using Eigen::Dynamic;
-    using Eigen::Matrix;
-    using Eigen::MatrixXd;
-    using Eigen::SparseMatrix;
-    using Eigen::VectorXd;
-
-    int theta_size = theta.size();
-    for (int i = 0; i < phi_size_; i++)
-      phi_[i] = phi(i).vi_;
-    for (int i = 0; i < eta_size_; i++)
-      eta_[i] = eta(i).vi_;
-
-    // CHECK -- is there a cleaner way of doing this?
-    marginal_density_[0] = this;
-    marginal_density_[0] = new vari(marginal_density, false);
-
-    MatrixXd R;
-    Eigen::MatrixXd LU_solve_covariance;
-    Eigen::VectorXd eta_dbl = value_of(eta);
-    Eigen::VectorXd partial_parm;
-    Eigen::VectorXd s2;
-
-    if (solver == 1) {
-      MatrixXd W_root_diag = W_r;
-      R = W_r
-          * L.transpose().triangularView<Eigen::Upper>().solve(
-                L.triangularView<Eigen::Lower>().solve(W_root_diag));
-
-      Eigen::MatrixXd C = mdivide_left_tri<Eigen::Lower>(L, W_r * covariance);
-      if (hessian_block_size == 0 && eta_size_ == 0) {
-        s2 = 0.5
-             * (covariance.diagonal() - (C.transpose() * C).diagonal())
-                   .cwiseProduct(diff_likelihood.third_diff(theta, eta_dbl));
-      } else {
-        int block_size = (hessian_block_size == 0) ? hessian_block_size + 1
-                                                   : hessian_block_size;
-        Eigen::MatrixXd A = covariance - C.transpose() * C;
-        partial_parm
-            = diff_likelihood.compute_s2(theta, eta_dbl, A, block_size);
-        s2 = partial_parm.head(theta_size);
-      }
-    } else if (solver == 2) {
-      // TODO -- use triangularView for K_root.
-      R = W_r
-          - W_r * K_root
-                * L.transpose().triangularView<Eigen::Upper>().solve(
-                      L.triangularView<Eigen::Lower>().solve(K_root.transpose()
-                                                             * W_r));
-
-      Eigen::MatrixXd C
-          = L.triangularView<Eigen::Lower>().solve(K_root.transpose());
-      Eigen::MatrixXd A = C.transpose() * C;
-      partial_parm
-          = diff_likelihood.compute_s2(theta, eta_dbl, A, hessian_block_size);
-      s2 = partial_parm.head(theta_size);
-    } else {  // solver with LU decomposition
-      LU_solve_covariance = LU.solve(covariance);
-      R = W_r - W_r * LU_solve_covariance * W_r;
-
-      Eigen::MatrixXd A = covariance - covariance * W_r * LU_solve_covariance;
-      // Eigen::MatrixXd A = covariance - covariance * R * covariance;
-      partial_parm
-          = diff_likelihood.compute_s2(theta, eta_dbl, A, hessian_block_size);
-      s2 = partial_parm.head(theta_size);
-    }
-
-    phi_adj_ = Eigen::VectorXd(phi_size_);
-    start_nested();
-    try {
-      Matrix<var, Dynamic, 1> phi_v = value_of(phi);
-      Matrix<var, Dynamic, Dynamic> K_var
-          = covariance_function(phi_v, x, delta, delta_int, msgs);
-      Eigen::VectorXd l_grad_theta = l_grad.head(theta_size);
-      var Z = laplace_pseudo_target(K_var, a, R, l_grad_theta, s2);
-
-      set_zero_all_adjoints_nested();
-      grad(Z.vi_);
-
-      for (int j = 0; j < phi_size_; j++)
-        phi_adj_[j] = phi_v(j).adj();
-
-    } catch (const std::exception& e) {
-      recover_memory_nested();
-      throw;
-    }
-    recover_memory_nested();
-
-    eta_adj_ = Eigen::VectorXd(eta_size_);
-    if (eta_size_ != 0) {  // TODO: instead, check if eta contains var.
-      VectorXd diff_eta = l_grad.tail(eta_size_);
-
-      Eigen::VectorXd v;
-      if (solver == 1) {
-        Eigen::MatrixXd W = W_r * W_r;  // CHECK -- store W from Newton step?
-        v = covariance * s2 - covariance * R * covariance * s2;
-      } else if (solver == 2) {
-        v = covariance * s2 - covariance * R * covariance * s2;
-      } else {
-        v = LU_solve_covariance * s2;
-      }
-
-      eta_adj_ = l_grad.tail(eta_size_) + partial_parm.tail(eta_size_)
-                 + diff_likelihood.diff_eta_implicit(v, theta, eta_dbl);
-    }
-  }
-
-  void chain() {
-    for (int j = 0; j < phi_size_; j++)
-      phi_[j]->adj_ += marginal_density_[0]->adj_ * phi_adj_[j];
-
-    for (int l = 0; l < eta_size_; l++)
-      eta_[l]->adj_ += marginal_density_[0]->adj_ * eta_adj_[l];
-  }
-};
 
 /**
  * For a latent Gaussian model with global parameters phi, latent
@@ -518,7 +352,7 @@ struct laplace_marginal_density_vari : public vari {
  */
 template <typename T0, typename T1, typename T2, typename D, typename K,
           typename Tx>
-T1 laplace_marginal_density(
+inline auto laplace_marginal_density(
     const D& diff_likelihood, const K& covariance_function,
     const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
     const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta, const Tx& x,
@@ -533,20 +367,129 @@ T1 laplace_marginal_density(
   double marginal_density_dbl;
   Eigen::MatrixXd covariance;
   Eigen::PartialPivLU<Eigen::MatrixXd> LU;
-
+  auto&& phi_ref = to_ref(phi);
+  auto&& eta_ref = to_ref(eta);
   marginal_density_dbl = laplace_marginal_density(
-      diff_likelihood, covariance_function, value_of(phi), value_of(eta), x,
+      diff_likelihood, covariance_function, value_of(phi_ref), value_of(eta_ref), x,
       delta, delta_int, covariance, theta, W_root, L, a, l_grad, LU, K_root,
       value_of(theta_0), msgs, tolerance, max_num_steps, hessian_block_size,
       solver);
-
+  /*
   // construct vari
   laplace_marginal_density_vari* vi0 = new laplace_marginal_density_vari(
       diff_likelihood, covariance_function, phi, eta, x, delta, delta_int,
       marginal_density_dbl, covariance, theta, W_root, L, a, l_grad, LU, K_root,
       msgs, hessian_block_size, solver);
+  */
+  /* hyperparameters for covariance K. */
+  arena_t<Eigen::Matrix<T1, Eigen::Dynamic, 1>> arena_phi = phi_ref;
+  const auto phi_size = arena_phi.size();
+  /* hyperparameters for likelihood. */
+  arena_t<Eigen::Matrix<T2, Eigen::Dynamic, 1>> arena_eta = eta_ref;
+  const auto eta_size = arena_eta.size();
+  var marginal_density = marginal_density_dbl;
+  /* An object to store the sensitivities of phi. */
+  arena_t<Eigen::VectorXd> phi_adj(arena_phi.size());
+  /* An object to store the sensitivities of eta. */
+  arena_t<Eigen::VectorXd> eta_adj(arena_eta.size());
+  const auto theta_size = theta.size();
+  Eigen::MatrixXd R;
+  Eigen::MatrixXd LU_solve_covariance;
+  Eigen::VectorXd eta_dbl = value_of(eta);
+  Eigen::VectorXd partial_parm;
+  Eigen::VectorXd s2;
 
-  var marginal_density = var(vi0->marginal_density_[0]);
+
+  if (solver == 1) {
+    Eigen::MatrixXd W_root_diag = W_root;
+    R = W_root
+        * L.transpose().triangularView<Eigen::Upper>().solve(
+              L.triangularView<Eigen::Lower>().solve(W_root_diag));
+
+    Eigen::MatrixXd C = mdivide_left_tri<Eigen::Lower>(L, W_root * covariance);
+    if (hessian_block_size == 0 && eta_size == 0) {
+      s2 = 0.5
+           * (covariance.diagonal() - (C.transpose() * C).diagonal())
+                 .cwiseProduct(diff_likelihood.third_diff(theta, eta_dbl));
+    } else {
+      int block_size = (hessian_block_size == 0) ? hessian_block_size + 1
+                                                 : hessian_block_size;
+      Eigen::MatrixXd A = covariance - C.transpose() * C;
+      partial_parm
+          = diff_likelihood.compute_s2(theta, eta_dbl, A, block_size);
+      s2 = partial_parm.head(theta_size);
+    }
+  } else if (solver == 2) {
+    // TODO -- use triangularView for K_root.
+    R = W_root
+        - W_root * K_root
+              * L.transpose().triangularView<Eigen::Upper>().solve(
+                    L.triangularView<Eigen::Lower>().solve(K_root.transpose()
+                                                           * W_root));
+
+    Eigen::MatrixXd C
+        = L.triangularView<Eigen::Lower>().solve(K_root.transpose());
+    Eigen::MatrixXd A = C.transpose() * C;
+    partial_parm
+        = diff_likelihood.compute_s2(theta, eta_dbl, A, hessian_block_size);
+    s2 = partial_parm.head(theta_size);
+  } else {  // solver with LU decomposition
+    LU_solve_covariance = LU.solve(covariance);
+    R = W_root - W_root * LU_solve_covariance * W_root;
+
+    Eigen::MatrixXd A = covariance - covariance * W_root * LU_solve_covariance;
+    // Eigen::MatrixXd A = covariance - covariance * R * covariance;
+    partial_parm
+        = diff_likelihood.compute_s2(theta, eta_dbl, A, hessian_block_size);
+    s2 = partial_parm.head(theta_size);
+  }
+
+  start_nested();
+  try {
+//    Eigen::Matrix<var, Eigen::Dynamic, 1> phi_v = value_of(phi);
+    Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> K_var
+        = covariance_function(phi_ref, x, delta, delta_int, msgs);
+    Eigen::VectorXd l_grad_theta = l_grad.head(theta_size);
+    var Z = laplace_pseudo_target(K_var, a, R, l_grad_theta, s2);
+
+    set_zero_all_adjoints_nested();
+    grad(Z.vi_);
+    phi_adj = phi.adj();
+
+  } catch (const std::exception& e) {
+    recover_memory_nested();
+    throw;
+  }
+  recover_memory_nested();
+
+  if (eta_size != 0) {  // TODO: instead, check if eta contains var.
+    Eigen::VectorXd diff_eta = l_grad.tail(eta_size);
+
+    Eigen::VectorXd v;
+    if (solver == 1) {
+      Eigen::MatrixXd W = W_root * W_root;  // CHECK -- store W from Newton step?
+      v = covariance * s2 - covariance * R * covariance * s2;
+    } else if (solver == 2) {
+      v = covariance * s2 - covariance * R * covariance * s2;
+    } else {
+      v = LU_solve_covariance * s2;
+    }
+
+    eta_adj = l_grad.tail(eta_size) + partial_parm.tail(eta_size)
+               + diff_likelihood.diff_eta_implicit(v, theta, eta_dbl);
+  }
+
+  reverse_pass_callback([arena_phi, arena_eta, marginal_density, phi_adj, eta_adj]() mutable {
+    arena_phi.adj() += marginal_density.adj() * phi_adj;
+    arena_eta.adj() += marginal_density.adj() * eta_adj;
+    /*
+    for (int j = 0; j < phi_size; j++)
+      phi_[j]->adj_ += marginal_density_[0]->adj_ * phi_adj_[j];
+
+    for (int l = 0; l < eta_size; l++)
+      eta_[l]->adj_ += marginal_density_[0]->adj_ * eta_adj_[l];
+      */
+  });
 
   return marginal_density;
 }

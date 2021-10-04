@@ -65,7 +65,7 @@ TEST(laplace, likelihood_differentiation2) {
   EXPECT_FLOAT_EQ(-1.359141, third_tensor(0));
   EXPECT_FLOAT_EQ(-5.436564, third_tensor(1));
 }
-
+/*
 TEST(laplace, poisson_lgm_dim2) {
   using stan::math::laplace_marginal_poisson_log_lpmf;
   using stan::math::to_vector;
@@ -138,3 +138,4 @@ TEST(laplace, poisson_lgm_dim2) {
   EXPECT_NEAR(g_finite[0], g[0], tol);
   EXPECT_NEAR(g_finite[1], g[1], tol);
 }
+*/

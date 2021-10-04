@@ -146,7 +146,7 @@ Eigen::MatrixXd compute_B(const Eigen::VectorXd& theta,
   return Eigen::MatrixXd::Identity(group_size, group_size)
          + stan::math::quad_form_diag(covariance, W_root);
 }
-
+/*
 TEST(laplace, neg_binomial_2_log_dbl) {
   using stan::math::diff_neg_binomial_2_log;
   using stan::math::laplace_marginal_density;
@@ -242,3 +242,4 @@ TEST(laplace, neg_binomial_2_log_dbl) {
             laplace_marginal_neg_binomial_2_log_lpmf(
                 y_obs, y_index, K, phi, eta, x, delta, delta_int, theta_0));
 }
+*/
