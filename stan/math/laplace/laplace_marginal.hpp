@@ -352,7 +352,7 @@ double laplace_marginal_density(
  */
 template <typename T0, typename T1, typename T2, typename D, typename K,
           typename Tx>
-inline auto laplace_marginal_density(
+inline var laplace_marginal_density(
     const D& diff_likelihood, const K& covariance_function,
     const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
     const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta, const Tx& x,
@@ -361,37 +361,27 @@ inline auto laplace_marginal_density(
     std::ostream* msgs = nullptr, double tolerance = 1e-6,
     long int max_num_steps = 100, int hessian_block_size = 0, int solver = 1,
     int do_line_search = 0, int max_steps_line_search = 10) {
-  Eigen::VectorXd theta, a, l_grad;
+  Eigen::VectorXd theta;
+  Eigen::VectorXd a;
+  Eigen::VectorXd l_grad;
   Eigen::SparseMatrix<double> W_root;
-  Eigen::MatrixXd L, K_root;
-  double marginal_density_dbl;
+  Eigen::MatrixXd L;
+  Eigen::MatrixXd K_root;
   Eigen::MatrixXd covariance;
   Eigen::PartialPivLU<Eigen::MatrixXd> LU;
   auto&& phi_ref = to_ref(phi);
   auto&& eta_ref = to_ref(eta);
-  marginal_density_dbl = laplace_marginal_density(
+  var marginal_density = laplace_marginal_density(
       diff_likelihood, covariance_function, value_of(phi_ref), value_of(eta_ref), x,
       delta, delta_int, covariance, theta, W_root, L, a, l_grad, LU, K_root,
       value_of(theta_0), msgs, tolerance, max_num_steps, hessian_block_size,
       solver);
-  /*
-  // construct vari
-  laplace_marginal_density_vari* vi0 = new laplace_marginal_density_vari(
-      diff_likelihood, covariance_function, phi, eta, x, delta, delta_int,
-      marginal_density_dbl, covariance, theta, W_root, L, a, l_grad, LU, K_root,
-      msgs, hessian_block_size, solver);
-  */
   /* hyperparameters for covariance K. */
   arena_t<Eigen::Matrix<T1, Eigen::Dynamic, 1>> arena_phi = phi_ref;
   const auto phi_size = arena_phi.size();
   /* hyperparameters for likelihood. */
   arena_t<Eigen::Matrix<T2, Eigen::Dynamic, 1>> arena_eta = eta_ref;
   const auto eta_size = arena_eta.size();
-  var marginal_density = marginal_density_dbl;
-  /* An object to store the sensitivities of phi. */
-  arena_t<Eigen::VectorXd> phi_adj(arena_phi.size());
-  /* An object to store the sensitivities of eta. */
-  arena_t<Eigen::VectorXd> eta_adj(arena_eta.size());
   const auto theta_size = theta.size();
   Eigen::MatrixXd R;
   Eigen::MatrixXd LU_solve_covariance;
@@ -443,10 +433,10 @@ inline auto laplace_marginal_density(
         = diff_likelihood.compute_s2(theta, eta_dbl, A, hessian_block_size);
     s2 = partial_parm.head(theta_size);
   }
-
-  start_nested();
-  try {
-//    Eigen::Matrix<var, Eigen::Dynamic, 1> phi_v = value_of(phi);
+  /* An object to store the sensitivities of phi. */
+  arena_t<Eigen::VectorXd> phi_adj(arena_phi.size());
+  {
+    nested_rev_autodiff nested;
     Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> K_var
         = covariance_function(phi_ref, x, delta, delta_int, msgs);
     Eigen::VectorXd l_grad_theta = l_grad.head(theta_size);
@@ -455,13 +445,9 @@ inline auto laplace_marginal_density(
     set_zero_all_adjoints_nested();
     grad(Z.vi_);
     phi_adj = phi.adj();
-
-  } catch (const std::exception& e) {
-    recover_memory_nested();
-    throw;
   }
-  recover_memory_nested();
-
+  /* An object to store the sensitivities of eta. */
+  arena_t<Eigen::VectorXd> eta_adj((eta_size != 0) ? arena_eta.size() : 0);
   if (eta_size != 0) {  // TODO: instead, check if eta contains var.
     Eigen::VectorXd diff_eta = l_grad.tail(eta_size);
 
@@ -478,17 +464,12 @@ inline auto laplace_marginal_density(
     eta_adj = l_grad.tail(eta_size) + partial_parm.tail(eta_size)
                + diff_likelihood.diff_eta_implicit(v, theta, eta_dbl);
   }
-
-  reverse_pass_callback([arena_phi, arena_eta, marginal_density, phi_adj, eta_adj]() mutable {
+  std::cout << "\n\n ----------------THIS HAPPENED----------------- \n\n " << std::endl;
+  reverse_pass_callback([arena_phi, arena_eta, marginal_density, phi_adj, eta_adj, eta_size]() mutable {
     arena_phi.adj() += marginal_density.adj() * phi_adj;
-    arena_eta.adj() += marginal_density.adj() * eta_adj;
-    /*
-    for (int j = 0; j < phi_size; j++)
-      phi_[j]->adj_ += marginal_density_[0]->adj_ * phi_adj_[j];
-
-    for (int l = 0; l < eta_size; l++)
-      eta_[l]->adj_ += marginal_density_[0]->adj_ * eta_adj_[l];
-      */
+    if (eta_size != 0) {
+      arena_eta.adj() += marginal_density.adj() * eta_adj;
+    }
   });
 
   return marginal_density;

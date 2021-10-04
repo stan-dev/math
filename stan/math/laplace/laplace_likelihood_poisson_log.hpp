@@ -27,16 +27,18 @@ struct diff_poisson_log {
   /* exposure, i.e. off-set term for the latent variable. */
   Eigen::VectorXd log_exposure_;
 
-  diff_poisson_log(const Eigen::VectorXd& n_samples,
-                   const Eigen::VectorXd& sums)
-      : n_samples_(n_samples), sums_(sums) {
-    log_exposure_ = Eigen::VectorXd::Zero(sums.size());
-  }
+  template <typename SampleVec, typename SumVec, require_all_eigen_vector_t<SampleVec, SumVec>* = nullptr>
+  diff_poisson_log(SampleVec&& n_samples,
+                   SumVec&& sums)
+      : n_samples_(std::forward<SampleVec>(n_samples)),
+       sums_(std::forward<SumVec>(sums)),
+       log_exposure_(Eigen::VectorXd::Zero(sums_.size())) {}
 
-  diff_poisson_log(const Eigen::VectorXd& n_samples,
-                   const Eigen::VectorXd& sums,
-                   const Eigen::VectorXd& log_exposure)
-      : n_samples_(n_samples), sums_(sums), log_exposure_(log_exposure) {}
+  template <typename SampleVec, typename SumVec, typename LogExpVec,
+    require_all_eigen_vector_t<SampleVec, SumVec, LogExpVec>* = nullptr>
+  diff_poisson_log(SampleVec&& n_samples, SumVec&& sums, LogExpVec&& log_exposure)
+      : n_samples_(std::forward<SampleVec>(n_samples)), sums_(std::forward<SumVec>(sums)),
+       log_exposure_(std::forward<LogExpVec>(log_exposure)) {}
 
   /**
    * Return the log density.
@@ -46,7 +48,7 @@ struct diff_poisson_log {
    * @return the log density.
    */
   template <typename T1, typename T2>
-  T1 log_likelihood(
+  inline auto log_likelihood(
       const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
       const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy) const {
     double factorial_term = 0;
@@ -54,7 +56,7 @@ struct diff_poisson_log {
       factorial_term += lgamma(sums_(i) + 1);
     Eigen::Matrix<T1, Eigen::Dynamic, 1> shifted_mean = theta + log_exposure_;
 
-    return -factorial_term + (shifted_mean).dot(sums_)
+    return -lgamma(sums_.array() + 1).sum() + (shifted_mean).dot(sums_)
            - n_samples_.dot(exp(shifted_mean));
   }
 
@@ -71,7 +73,7 @@ struct diff_poisson_log {
    * @param[in, out] hessian diagonal, so stored in a vector.
    */
   template <typename T1, typename T2>
-  void diff(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
+  inline void diff(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
             const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy,
             Eigen::Matrix<T1, Eigen::Dynamic, 1>& gradient,
             // Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic>& hessian,
@@ -99,7 +101,7 @@ struct diff_poisson_log {
    *         derivative tensor.
    */
   template <typename T1, typename T2>
-  Eigen::Matrix<T1, Eigen::Dynamic, 1> third_diff(
+  inline Eigen::Matrix<T1, Eigen::Dynamic, 1> third_diff(
       const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
       const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy) const {
     return -n_samples_.cwiseProduct(exp(theta + log_exposure_));
