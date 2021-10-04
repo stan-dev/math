@@ -10,7 +10,7 @@
 #include <stan/math/opencl/err/check_opencl.hpp>
 #include <stan/math/opencl/kernels/helpers.hpp>
 #include <stan/math/prim/fun/vec_concat.hpp>
-#include <CL/cl2.hpp>
+#include <CL/opencl.hpp>
 #include <algorithm>
 #include <map>
 #include <string>
