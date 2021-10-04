@@ -101,7 +101,7 @@ double laplace_marginal_density(
   using Eigen::VectorXd;
 
   // TEST
-  int diagonal_covariance = 0;
+  const auto diagonal_covariance = 0;
   // solver = 1;
   // hessian_block_size = 1;
 
@@ -114,7 +114,7 @@ double laplace_marginal_density(
     // CHECK -- above line doesn't work, not sure why...
   }
 
-  int theta_size = theta_0.size();
+  const auto theta_size = theta_0.size();
   theta = theta_0;
   double objective_old = -1e+10;  // CHECK -- what value to use?
   double objective_inter = -1e+10;
@@ -133,7 +133,7 @@ double laplace_marginal_density(
     throw boost::math::evaluation_error(message.str());
   }
 
-  int block_size
+  const auto block_size
       = (hessian_block_size == 0) ? hessian_block_size + 1 : hessian_block_size;
 
   for (int i = 0; i <= max_num_steps; i++) {
@@ -402,7 +402,7 @@ inline var laplace_marginal_density(
            * (covariance.diagonal() - (C.transpose() * C).diagonal())
                  .cwiseProduct(diff_likelihood.third_diff(theta, eta_dbl));
     } else {
-      int block_size = (hessian_block_size == 0) ? hessian_block_size + 1
+      const auto block_size = (hessian_block_size == 0) ? hessian_block_size + 1
                                                  : hessian_block_size;
       Eigen::MatrixXd A = covariance - C.transpose() * C;
       partial_parm

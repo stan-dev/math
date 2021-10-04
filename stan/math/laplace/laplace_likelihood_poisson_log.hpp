@@ -111,7 +111,7 @@ struct diff_poisson_log {
                              const Eigen::VectorXd& eta,
                              const Eigen::MatrixXd& A,
                              int hessian_block_size) const {
-    std::cout << "THIS FUNCTIONS SHOULD NEVER GET CALLED!" << std::endl;
+    throw std::domain_error("THIS FUNCTIONS SHOULD NEVER GET CALLED!");
     Eigen::MatrixXd void_matrix;
     return void_matrix;
   }
@@ -119,7 +119,7 @@ struct diff_poisson_log {
   Eigen::VectorXd diff_eta_implicit(const Eigen::VectorXd& v,
                                     const Eigen::VectorXd& theta,
                                     const Eigen::VectorXd& eta) const {
-    std::cout << "THIS FUNCTIONS SHOULD NEVER GET CALLED!" << std::endl;
+    throw std::domain_error("THIS FUNCTIONS SHOULD NEVER GET CALLED!");
     Eigen::MatrixXd void_matrix;
     return void_matrix;
   }
