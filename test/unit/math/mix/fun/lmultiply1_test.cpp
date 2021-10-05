@@ -1,7 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 #include <limits>
 
-TEST(mathMixScalFun, lmultiply) {
+TEST(mathMixScalFun, lmultiply1) {
   auto f = [](const auto& x1, const auto& x2) {
     return stan::math::lmultiply(x1, x2);
   };
