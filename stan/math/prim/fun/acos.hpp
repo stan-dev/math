@@ -47,7 +47,7 @@ template <typename Container,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               Container>* = nullptr>
 inline auto acos(const Container& x) {
-  return apply_scalar_unary<acos_fun, Container>::apply(x);
+  return apply_scalar_unary<acos_fun, Container, is_eigen_sparse_matrix_base<Container>::value>::apply(x);
 }
 
 /**
@@ -64,7 +64,21 @@ inline auto acos(const Container& x) {
   return apply_vector_unary<Container>::apply(
       x, [](const auto& v) { return v.array().acos(); });
 }
-
+/*
+template <typename SparseMat, require_eigen_sparse_matrix_base_t<SparseMat>* = nullptr>
+inline auto acos(const SparseMat& x) {
+  using val_t = value_type_t<SparseMat>;
+  auto zeroed_val = stan::math::acos(val_t(0.0));
+  using eig_mat = Eigen::Matrix<val_t, Eigen::Dynamic, Eigen::Dynamic>;
+  eig_mat ret = eig_mat::Constant(x.rows(), x.cols(), zeroed_val);
+  for (Eigen::Index k = 0; k < x.outerSize(); ++k) {
+    for (typename SparseMat::InnerIterator it(x, k); it; ++it) {
+      ret.coeffRef(it.row(), it.col()) = acos(it.value());
+    }
+  }
+  return ret;
+}
+*/
 namespace internal {
 /**
  * Return the arc cosine of the complex argument.

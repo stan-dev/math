@@ -37,7 +37,7 @@ namespace math {
  * @tparam F Type of function to apply.
  * @tparam T Type of argument to which function is applied.
  */
-template <typename F, typename T, typename Enable = void>
+template <typename F, typename T, bool ApplyZero = false, typename Enable = void>
 struct apply_scalar_unary;
 
 /**
@@ -48,8 +48,8 @@ struct apply_scalar_unary;
  * @tparam F Type of function to apply.
  * @tparam T Type of argument to which function is applied.
  */
-template <typename F, typename T>
-struct apply_scalar_unary<F, T, require_eigen_t<T>> {
+template <typename F, typename T, bool ApplyZero>
+struct apply_scalar_unary<F, T, ApplyZero, require_eigen_t<T>> {
   /**
    * Type of underlying scalar for the matrix type T.
    */
@@ -63,10 +63,49 @@ struct apply_scalar_unary<F, T, require_eigen_t<T>> {
    * @return Componentwise application of the function specified
    * by F to the specified matrix.
    */
-  static inline auto apply(const T& x) {
+  template <typename TT, require_eigen_dense_base_t<TT>* = nullptr>
+  static inline auto apply(const TT& x) {
     return x.unaryExpr(
         [](scalar_t x) { return apply_scalar_unary<F, scalar_t>::apply(x); });
   }
+
+  /**
+   * Return the result of applying the function defined by the
+   * template parameter F to the specified matrix argument.
+   *
+   * @param x Matrix to which operation is applied.
+   * @return Componentwise application of the function specified
+   * by F to the specified matrix.
+   */
+  template <typename TT, bool ReturnZeros = ApplyZero,
+   require_t<bool_constant<ReturnZeros>>* = nullptr,
+   require_eigen_sparse_matrix_base_t<TT>* = nullptr>
+  static inline auto apply(const TT& x) {
+    using val_t = value_type_t<TT>;
+    auto zeroed_val = apply_scalar_unary<F, scalar_t>::apply(val_t(0.0));
+    using eig_mat = Eigen::Matrix<val_t, Eigen::Dynamic, Eigen::Dynamic>;
+    eig_mat ret = eig_mat::Constant(x.rows(), x.cols(), zeroed_val);
+    for (Eigen::Index k = 0; k < x.outerSize(); ++k) {
+      for (typename TT::InnerIterator it(x, k); it; ++it) {
+        ret.coeffRef(it.row(), it.col()) = apply_scalar_unary<F, scalar_t>::apply(it.value());
+      }
+    }
+    return ret;
+  }
+
+  template <typename TT, bool ReturnZeros = ApplyZero,
+   require_t<bool_constant<!ReturnZeros>>* = nullptr,
+   require_eigen_sparse_matrix_base_t<TT>* = nullptr>
+  static inline auto apply(const TT& x) {
+    auto ret = x.eval();
+    for (Eigen::Index k = 0; k < x.outerSize(); ++k) {
+      for (typename TT::InnerIterator it(x, k), ret_it(ret, k); it; ++it, ++ret_it) {
+        ret_it.valueRef() = apply_scalar_unary<F, scalar_t>::apply(it.value());
+      }
+    }
+    return ret;
+  }
+
 
   /**
    * Return type for applying the function elementwise to a matrix
@@ -82,8 +121,8 @@ struct apply_scalar_unary<F, T, require_eigen_t<T>> {
  *
  * @tparam F Type of function defining static apply function.
  */
-template <typename F, typename T>
-struct apply_scalar_unary<F, T, require_floating_point_t<T>> {
+template <typename F, typename T, bool ApplyZero>
+struct apply_scalar_unary<F, T, ApplyZero, require_floating_point_t<T>> {
   /**
    * The return type, double.
    */
@@ -107,8 +146,8 @@ struct apply_scalar_unary<F, T, require_floating_point_t<T>> {
  *
  * @tparam F Type of function defining static apply function.
  */
-template <typename F, typename T>
-struct apply_scalar_unary<F, T, require_complex_t<T>> {
+template <typename F, typename T, bool ApplyZero>
+struct apply_scalar_unary<F, T, ApplyZero, require_complex_t<T>> {
   /**
    * The return type, double.
    */
@@ -134,8 +173,8 @@ struct apply_scalar_unary<F, T, require_complex_t<T>> {
  *
  * @tparam F Type of function defining static apply function.
  */
-template <typename F, typename T>
-struct apply_scalar_unary<F, T, require_integral_t<T>> {
+template <typename F, typename T, bool ApplyZero>
+struct apply_scalar_unary<F, T, ApplyZero, require_integral_t<T>> {
   /**
    * The return type, double.
    */
@@ -162,8 +201,8 @@ struct apply_scalar_unary<F, T, require_integral_t<T>> {
  * @tparam F Class defining a static apply function.
  * @tparam T Type of element contained in standard vector.
  */
-template <typename F, typename T>
-struct apply_scalar_unary<F, std::vector<T>> {
+template <typename F, typename T, bool ApplyZero>
+struct apply_scalar_unary<F, std::vector<T>, ApplyZero, void> {
   /**
    * Return type, which is calculated recursively as a standard
    * vector of the return type of the contained type T.
