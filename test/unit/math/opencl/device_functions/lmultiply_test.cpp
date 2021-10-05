@@ -17,9 +17,8 @@ const stan::math::opencl_kernels::kernel_cl<
     stan::math::opencl_kernels::out_buffer,
     stan::math::opencl_kernels::in_buffer,
     stan::math::opencl_kernels::in_buffer>
-    lmultiply("test",
-                 {stan::math::opencl_kernels::lmultiply_device_function,
-                  test_lmultiply_kernel_code});
+    lmultiply("test", {stan::math::opencl_kernels::lmultiply_device_function,
+                       test_lmultiply_kernel_code});
 
 TEST(MathMatrixCL, lmultiply) {
   Eigen::VectorXd a = Eigen::VectorXd::Random(1000).array() * 5;
