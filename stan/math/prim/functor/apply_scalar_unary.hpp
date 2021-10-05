@@ -37,10 +37,11 @@ namespace math {
  * @tparam F Type of function to apply.
  * @tparam T Type of argument to which function is applied.
  * @tparam ApplyZero If true, the function applied is assumed to return zero for
- *  inputs of zero and so sparse matrices will return sparse matrices. A value of
- *  false will return a dense matrix for sparse matrices.
+ *  inputs of zero and so sparse matrices will return sparse matrices. A value
+ * of false will return a dense matrix for sparse matrices.
  */
-template <typename F, typename T, bool ApplyZero = false, typename Enable = void>
+template <typename F, typename T, bool ApplyZero = false,
+          typename Enable = void>
 struct apply_scalar_unary;
 
 /**
@@ -74,17 +75,20 @@ struct apply_scalar_unary<F, T, ApplyZero, require_eigen_t<T>> {
   }
 
   /**
-   * Special case for `ApplyZero` set to true, returning a dense matrix. Return the result of applying the function defined by the template parameter F to the specified matrix argument.
+   * Special case for `ApplyZero` set to true, returning a dense matrix. Return
+   * the result of applying the function defined by the template parameter F to
+   * the specified matrix argument.
    *
    * @param SparseMat A type derived from `Eigen::SparseMatrixBase`
-   * @tparam NonZeroZero Shortcut trick for using class template for deduction, should not be set manually.
+   * @tparam NonZeroZero Shortcut trick for using class template for deduction,
+   * should not be set manually.
    * @param x Matrix to which operation is applied.
    * @return Componentwise application of the function specified
    * by F to the specified matrix.
    */
   template <typename SparseMat, bool NonZeroZero = ApplyZero,
-   require_t<bool_constant<NonZeroZero>>* = nullptr,
-   require_eigen_sparse_base_t<SparseMat>* = nullptr>
+            require_t<bool_constant<NonZeroZero>>* = nullptr,
+            require_eigen_sparse_base_t<SparseMat>* = nullptr>
   static inline auto apply(const SparseMat& x) {
     using val_t = value_type_t<SparseMat>;
     auto zeroed_val = apply_scalar_unary<F, scalar_t>::apply(val_t(0.0));
@@ -92,34 +96,38 @@ struct apply_scalar_unary<F, T, ApplyZero, require_eigen_t<T>> {
     dense_mat ret = dense_mat::Constant(x.rows(), x.cols(), zeroed_val);
     for (Eigen::Index k = 0; k < x.outerSize(); ++k) {
       for (typename SparseMat::InnerIterator it(x, k); it; ++it) {
-        ret.coeffRef(it.row(), it.col()) = apply_scalar_unary<F, scalar_t>::apply(it.value());
+        ret.coeffRef(it.row(), it.col())
+            = apply_scalar_unary<F, scalar_t>::apply(it.value());
       }
     }
     return ret;
   }
 
   /**
-   * Special case for `ApplyZero` set to false, returning a sparse matrix. Return the result of applying the function defined by the template parameter F to the specified matrix argument.
+   * Special case for `ApplyZero` set to false, returning a sparse matrix.
+   * Return the result of applying the function defined by the template
+   * parameter F to the specified matrix argument.
    *
    * @tparam SparseMat A type derived from `Eigen::SparseMatrixBase`
-   * @tparam NonZeroZero Shortcut trick for using class template for deduction, should not be set manually.
+   * @tparam NonZeroZero Shortcut trick for using class template for deduction,
+   * should not be set manually.
    * @param x Matrix to which operation is applied.
    * @return Componentwise application of the function specified
    * by F to the specified matrix.
    */
   template <typename SparseMat, bool ReturnZeros = ApplyZero,
-   require_t<bool_constant<!ReturnZeros>>* = nullptr,
-   require_eigen_sparse_base_t<SparseMat>* = nullptr>
+            require_t<bool_constant<!ReturnZeros>>* = nullptr,
+            require_eigen_sparse_base_t<SparseMat>* = nullptr>
   static inline auto apply(const SparseMat& x) {
     auto ret = x.eval();
     for (Eigen::Index k = 0; k < x.outerSize(); ++k) {
-      for (typename SparseMat::InnerIterator it(x, k), ret_it(ret, k); it; ++it, ++ret_it) {
+      for (typename SparseMat::InnerIterator it(x, k), ret_it(ret, k); it;
+           ++it, ++ret_it) {
         ret_it.valueRef() = apply_scalar_unary<F, scalar_t>::apply(it.value());
       }
     }
     return ret;
   }
-
 
   /**
    * Return type for applying the function elementwise to a matrix

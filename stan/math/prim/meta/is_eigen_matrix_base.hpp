@@ -27,7 +27,6 @@ STAN_ADD_REQUIRE_UNARY(eigen_matrix_base, is_eigen_matrix_base,
 STAN_ADD_REQUIRE_CONTAINER(eigen_matrix_base, is_eigen_matrix_base,
                            require_eigens_types);
 
-
 }  // namespace stan
 
 #endif

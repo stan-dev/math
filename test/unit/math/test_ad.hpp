@@ -2132,7 +2132,7 @@ std::vector<Eigen::MatrixXd> square_test_matrices(int low, int high) {
 
 template <typename T1>
 auto gen_sparse_diag_mat(T1&& x) {
-  using triplet_t =  Eigen::Triplet<stan::scalar_type_t<T1>>;
+  using triplet_t = Eigen::Triplet<stan::scalar_type_t<T1>>;
   std::vector<triplet_t> tripletList;
   tripletList.reserve(x.size());
   for (int i = 0; i < x.size(); i++) {
@@ -2146,8 +2146,8 @@ auto gen_sparse_diag_mat(T1&& x) {
 
 /**
  * Takes a unary lambda f taking a vector and makes a diagonal sparse matrix.
- * @tparam ExpectDenseReturn if true, the return is checked for whether it's type
- *  is derived from `Eigen::DenseBase`, otherwise the return type is checked
+ * @tparam ExpectDenseReturn if true, the return is checked for whether it's
+ * type is derived from `Eigen::DenseBase`, otherwise the return type is checked
  *  for whether it's type is derived from `Eigen::SparseMatrixBase`.
  * @tparam A lambda
  * @param An unary lambda
@@ -2156,9 +2156,10 @@ template <bool ExpectDenseReturn, typename F>
 auto make_sparse_mat_func(F&& f) {
   return [&f](auto&& x) {
     auto ret = f(stan::test::gen_sparse_diag_mat(x));
-    constexpr bool ret_bool = std::conditional_t<ExpectDenseReturn,
-      stan::is_eigen_dense_base<decltype(ret)>,
-      stan::is_eigen_sparse_base<decltype(ret)>>::value;
+    constexpr bool ret_bool
+        = std::conditional_t<ExpectDenseReturn,
+                             stan::is_eigen_dense_base<decltype(ret)>,
+                             stan::is_eigen_sparse_base<decltype(ret)>>::value;
     EXPECT_TRUE(ret_bool);
     return ret;
   };
