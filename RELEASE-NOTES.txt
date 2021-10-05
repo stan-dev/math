@@ -1,6 +1,44 @@
 Stan Math Library Release Notes
 
 ======================================================================
+v4.2.0 (5 October 2021)
+======================================================================
+
+Miscellaneous:
+ - Updated Powell and Newton solvers to use an adjoint method to propagate derivatives in reverse mode which should result in modest speed-up. Added variadic interfaces (`algebra_solver_powell_impl` and `algebra_solver_newton_impl`). (#2421)
+ - Cleanup unused local typedefs. (#2505)
+ - Fix tbb initialization so that if STAN_THREADS is not defined then the number of threads is set to 1. (#2514)
+ - Bugfix for range checks not overriding STAN_THREADS. (#2530)
+ - Bugfix for vectorized log include order. (#2542)
+ - Added vectorized checks called by the stanc compiler. (#2556)
+ - Adds an overload for the constrain functions on whether to accumulate jacobians into log probability argument.(#2559)
+ - Updated algorithm for inv_Phi which is approximately 2x faster with precision of 16 digits. Based on the Fortran algorithm described in Wichura, M. J. (1988) Algorithm AS 241: The percentage points of the normal distribution. Applied Statistics, 37, 477–484.(#2566)
+ - Vectorized unconstrain and constraing functions. (#2574, #2580)
+ - Fixed generalized inverse so that it works for less than full rank symmetric matrices. (#2577)
+
+Varmat:
+ - Added `var<Matrix>` overloads for `append_row()`, `append_col()`, `rep_vector()`, `rep_row_vector()`, `to_vector()`, `divide()`. (#2484, #2487, #2521, #2557)
+ - Added nested vectorized functions for the new matrix type. (#2502)
+ - Added support for basic slicing and dimension queries operators support var<Matrix> types. (#2507)
+ - Added several unary functions for `var<Matrix>` as well as division.(#2527)
+ - Allow accumulator to accept `var<Matrix>` matrix types(#2535)
+
+Complex:
+ - Unary vectorized functions support containers of complex numbers(#2549)
+ - Added complex scalar functions get_real(), get_imag(), and to_complex.(#2554)
+
+OpenCL:
+ - Added prim-only OpenCL implementations for `qr_Q`, `qr_R`, `qr_thin_Q`, `qr_thin_R`. (#2479)
+ - Fixed a bug for kernel generator operation `block`, `eigenvalues_sym`, `eigenvectors_sym`. (#2479, #2512)
+ - Added OpenCL implementation for `cumulative_sum`. (#2483)
+ - Fixed a bug that made OpenCL `identity_matrix` unusable. (#2499)
+ - Added reverse mode for indexing.(#2511)
+ - Fixed a number of bugs related to conversions of `arena_matrix_cl` into `matrix_cl`. Before this PR such a conversion invoked kernel generator and made a copy of data. Now only references to data are updated.(#2538)
+ - Fixes kernel generator allocating more local memory than it needed.(#2541)
+ - Added OpenCL implementation of sorting (`sort_asc` and `sort_desc`).(#2550)
+ - Bugfix OpenCL kernels so that they can no longer modify a const `matrix_cl`.(#2553)
+
+======================================================================
 v4.1.0 (2 June 2021)
 ======================================================================
 
