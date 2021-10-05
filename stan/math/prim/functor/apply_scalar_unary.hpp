@@ -84,7 +84,7 @@ struct apply_scalar_unary<F, T, ApplyZero, require_eigen_t<T>> {
    */
   template <typename SparseMat, bool NonZeroZero = ApplyZero,
    require_t<bool_constant<NonZeroZero>>* = nullptr,
-   require_eigen_sparse_matrix_base_t<SparseMat>* = nullptr>
+   require_eigen_sparse_base_t<SparseMat>* = nullptr>
   static inline auto apply(const SparseMat& x) {
     using val_t = value_type_t<SparseMat>;
     auto zeroed_val = apply_scalar_unary<F, scalar_t>::apply(val_t(0.0));
@@ -109,7 +109,7 @@ struct apply_scalar_unary<F, T, ApplyZero, require_eigen_t<T>> {
    */
   template <typename SparseMat, bool ReturnZeros = ApplyZero,
    require_t<bool_constant<!ReturnZeros>>* = nullptr,
-   require_eigen_sparse_matrix_base_t<SparseMat>* = nullptr>
+   require_eigen_sparse_base_t<SparseMat>* = nullptr>
   static inline auto apply(const SparseMat& x) {
     auto ret = x.eval();
     for (Eigen::Index k = 0; k < x.outerSize(); ++k) {

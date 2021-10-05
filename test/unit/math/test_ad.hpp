@@ -2158,7 +2158,7 @@ auto make_sparse_mat_func(F&& f) {
     auto ret = f(stan::test::gen_sparse_diag_mat(x));
     constexpr bool ret_bool = std::conditional_t<ExpectDenseReturn,
       stan::is_eigen_dense_base<decltype(ret)>,
-      stan::is_eigen_sparse_matrix_base<decltype(ret)>>::value;
+      stan::is_eigen_sparse_base<decltype(ret)>>::value;
     EXPECT_TRUE(ret_bool);
     return ret;
   };
