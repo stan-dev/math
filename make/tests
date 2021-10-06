@@ -85,6 +85,13 @@ $(IDAS_TESTS) : $(LIBSUNDIALS)
 ALGEBRA_SOLVER_TESTS := $(subst .cpp,$(EXE),$(call findfiles,test,*algebra_solver*_test.cpp))
 $(ALGEBRA_SOLVER_TESTS) : $(LIBSUNDIALS)
 
+############################################################
+#
+# Threading tests
+##
+
+THREADING_TESTS := $(subst .cpp,$(EXE),$(call findfiles,test,*reduce_sum*_test.cpp) $(call findfiles,test,*map_rect*_test.cpp))
+$(THREADING_TESTS) : CXXFLAGS := $(filter-out -fsanitize=address,$(CXXFLAGS)) $(CXXFLAGS_GTEST)
 
 ############################################################
 #

@@ -164,8 +164,8 @@ std::vector<Eigen::VectorXd> ode_adjoint_impl(
     int interpolation_polynomial, int solver_forward, int solver_backward,
     std::ostream* msgs, const T_Args&... args) {
   std::vector<Eigen::VectorXd> ode_solution;
-  {
-    nested_rev_autodiff nested;
+  //{
+  //  nested_rev_autodiff nested;
 
     using integrator_vari
         = cvodes_integrator_adjoint_vari<F, plain_type_t<T_y0>, T_t0, T_ts,
@@ -180,7 +180,7 @@ std::vector<Eigen::VectorXd> ode_adjoint_impl(
         solver_forward, solver_backward, msgs, args...);
 
     ode_solution = integrator->solution();
-  }
+    //}
   return ode_solution;
 }
 
