@@ -42,7 +42,7 @@ template <typename Container,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               Container>* = nullptr>
 inline auto cos(const Container& x) {
-  return apply_scalar_unary<cos_fun, Container>::apply(x);
+  return apply_scalar_unary<cos_fun, Container, true>::apply(x);
 }
 
 /**

@@ -70,9 +70,7 @@ struct apply_scalar_unary<F, T, ApplyZero, require_eigen_t<T>> {
   }
 
   /**
-   * Special case for `ApplyZero` set to true, returning a dense matrix. Return
-   * the result of applying the function defined by the template parameter F to
-   * the specified matrix argument.
+   * Special case for `ApplyZero` set to true, returning a full sparse matrix. Return the result of applying the function defined by the template parameter F to the specified matrix argument.
    *
    * @param SparseMat A type derived from `Eigen::SparseMatrixBase`
    * @tparam NonZeroZero Shortcut trick for using class template for deduction,
