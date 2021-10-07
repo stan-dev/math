@@ -72,10 +72,12 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
   using Ta_plain = plain_type_t<Ta>;
   using Tb_plain = plain_type_t<Tb>;
   using T_vec = Eigen::Matrix<scalar_t, -1, 1>;
-  ref_type_t<Ta> a_ref
-      = (to_ref(a).array() == 0).select(EPSILON, to_ref(a).array()).matrix();
-  ref_type_t<Tb> b_ref
-      = (to_ref(b).array() == 0).select(EPSILON, to_ref(b).array()).matrix();
+  ref_type_t<Ta> a_ref_in = a;
+  ref_type_t<Tb> b_ref_in = b;
+  Ta_plain a_ref = (a_ref_in.array() == 0).select(EPSILON, a_ref_in.array())
+                                          .matrix();
+  Tb_plain b_ref = (b_ref_in.array() == 0).select(EPSILON, b_ref_in.array())
+                                          .matrix();
   int a_size = a.size();
   int b_size = b.size();
 
@@ -91,9 +93,9 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
     throw std::domain_error(msg.str());
   }
 
-  Eigen::VectorXi a_signs = sign(a_ref);
-  Eigen::VectorXi b_signs = sign(b_ref);
-  int z_sign = sign(z);
+  Eigen::VectorXi a_signs = sign(value_of_rec(a_ref));
+  Eigen::VectorXi b_signs = sign(value_of_rec(b_ref));
+  int z_sign = sign(value_of_rec(z));
 
   Ta_plain ap1 = (a.array() + 1).matrix();
   Tb_plain bp1 = (b.array() + 1).matrix();
@@ -227,12 +229,12 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
         log_phammer_bp1_mpn += log(stan::math::fabs(bp1mn));
 
         z_pow_mn_sign *= z_sign;
-        log_phammer_ap1n_sign.array() *= sign(ap1n).array();
-        log_phammer_bp1n_sign.array() *= sign(bp1n).array();
-        log_phammer_an_sign.array() *= sign(an).array();
-        log_phammer_bn_sign.array() *= sign(bn).array();
-        log_phammer_ap1mpn_sign.array() *= sign(ap1mn).array();
-        log_phammer_bp1mpn_sign.array() *= sign(bp1mn).array();
+        log_phammer_ap1n_sign.array() *= sign(value_of_rec(ap1n)).array();
+        log_phammer_bp1n_sign.array() *= sign(value_of_rec(bp1n)).array();
+        log_phammer_an_sign.array() *= sign(value_of_rec(an)).array();
+        log_phammer_bn_sign.array() *= sign(value_of_rec(bn)).array();
+        log_phammer_ap1mpn_sign.array() *= sign(value_of_rec(ap1mn)).array();
+        log_phammer_bp1mpn_sign.array() *= sign(value_of_rec(bp1mn)).array();
 
         n += 1;
         lgamma_np1 += log(n);
@@ -250,9 +252,9 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
       log_phammer_1m += log1p(m);
       log_phammer_2m += log(2 + m);
       log_phammer_ap1_m += log(stan::math::fabs(ap1m));
-      log_phammer_ap1m_sign.array() *= sign(ap1m).array();
+      log_phammer_ap1m_sign.array() *= sign(value_of_rec(ap1m)).array();
       log_phammer_bp1_m += log(stan::math::fabs(bp1m));
-      log_phammer_bp1m_sign.array() *= sign(bp1m).array();
+      log_phammer_bp1m_sign.array() *= sign(value_of_rec(bp1m)).array();
 
       m += 1;
 
