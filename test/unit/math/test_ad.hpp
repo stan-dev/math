@@ -2154,9 +2154,7 @@ auto gen_sparse_diag_mat(T1&& x) {
  */
 template <bool ExpectDenseReturn, typename F>
 auto make_sparse_mat_func(F&& f) {
-  return [&f](auto&& x) {
-    return f(stan::test::gen_sparse_diag_mat(x));
-  };
+  return [&f](auto&& x) { return f(stan::test::gen_sparse_diag_mat(x)); };
 }
 
 }  // namespace test
