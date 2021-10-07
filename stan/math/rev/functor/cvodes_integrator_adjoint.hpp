@@ -47,7 +47,6 @@ class cvodes_integrator_adjoint_vari : public vari_base {
       is_var_ts_ && !(is_var_t0_ || is_var_y0_t0_ || is_any_var_args_)};
 
   size_t num_args_vars_;
-
   double relative_tolerance_forward_;
   double relative_tolerance_backward_;
   double relative_tolerance_quadrature_;
@@ -449,6 +448,8 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     // At every time step, collect the adjoints from the output
     // variables and re-initialize the solver
     double t_init = value_of(solver_->ts_.back());
+
+
     for (int i = solver_->ts_.size() - 1; i >= 0; --i) {
       // Take in the adjoints from all the output variables at this point
       // in time
@@ -459,6 +460,8 @@ class cvodes_integrator_adjoint_vari : public vari_base {
 
       double t_final = value_of((i > 0) ? solver_->ts_[i - 1] : solver_->t0_);
       if (t_final != t_init) {
+        
+        // ensure that backward solver is initialized
         if (unlikely(!backward_is_initialized_)) {
           check_flag_sundials(CVodeCreateB(solver_->cvodes_mem_,
                                            solver_backward_, &index_backward_),
@@ -490,8 +493,8 @@ class cvodes_integrator_adjoint_vari : public vari_base {
               "CVodeSetMaxNumStepsB");
 
           check_flag_sundials(CVodeSetLinearSolverB(
-                                  solver_->cvodes_mem_, index_backward_,
-                                  solver_->LS_backward_, solver_->A_backward_),
+              solver_->cvodes_mem_, index_backward_,
+              solver_->LS_backward_, solver_->A_backward_),
                               "CVodeSetLinearSolverB");
 
           check_flag_sundials(
@@ -508,21 +511,22 @@ class cvodes_integrator_adjoint_vari : public vari_base {
                                &cvodes_integrator_adjoint_vari::cv_quad_rhs_adj,
                                solver_->nv_quad_),
                 "CVodeQuadInitB");
-
+        
             check_flag_sundials(
                 CVodeQuadSStolerancesB(solver_->cvodes_mem_, index_backward_,
                                        relative_tolerance_quadrature_,
                                        absolute_tolerance_quadrature_),
                 "CVodeQuadSStolerancesB");
-
+        
             check_flag_sundials(CVodeSetQuadErrConB(solver_->cvodes_mem_,
                                                     index_backward_, SUNTRUE),
                                 "CVodeSetQuadErrConB");
           }
-
+      
           backward_is_initialized_ = true;
         } else {
-          // just re-initialize the solver
+          // just re-initialize the solver in case we have already done a
+          // previous run
           check_flag_sundials(
               CVodeReInitB(solver_->cvodes_mem_, index_backward_, t_init,
                            solver_->nv_state_backward_),
@@ -537,7 +541,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
         }
 
         int error_code = CVodeB(solver_->cvodes_mem_, t_final, CV_NORMAL);
-
+        
         if (unlikely(error_code == CV_TOO_MUCH_WORK)) {
           throw_domain_error(solver_->function_name_str_.c_str(), "", t_final,
                              "Failed to integrate backward to output time (",
