@@ -56,6 +56,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
   long int num_steps_between_checkpoints_;  // NOLINT(runtime/int)
   size_t N_;
   std::ostream* msgs_;
+  vari** y_return_non_chaining_varis_;
   vari** t0_varis_;
   vari** ts_varis_;
   vari** y0_varis_;
@@ -246,6 +247,8 @@ class cvodes_integrator_adjoint_vari : public vari_base {
         num_steps_between_checkpoints_(num_steps_between_checkpoints),
         N_(y0.size()),
         msgs_(msgs),
+        y_return_non_chaining_varis_( is_var_return_ ? ChainableStack::instance_->memalloc_.alloc_array<vari*>(ts.size() * N_) : nullptr),
+
         t0_varis_(
             ChainableStack::instance_->memalloc_.alloc_array<vari*>(count_vars(t0))),
         ts_varis_(
@@ -416,14 +419,17 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     solver_->y_[n] = state;
     state_return.resize(N_);
     for (size_t i = 0; i < N_; i++) {
-      state_return.coeffRef(i) = var(new vari(state.coeff(i), false));
+      y_return_non_chaining_varis_[n * N_ + i] = new vari(state.coeff(i), false);
+      state_return.coeffRef(i) = var(y_return_non_chaining_varis_[n * N_ + i]);
     }
   }
 
   void store_state(std::size_t n, const Eigen::VectorXd& state,
                    Eigen::Matrix<double, Eigen::Dynamic, 1>& state_return) {
     solver_->y_[n] = state;
-    state_return = state;
+    state_return.resize(N_);
+    for (size_t i = 0; i < N_; i++)
+      state_return.coeffRef(i) = state.coeff(i);
   }
 
  public:
@@ -453,8 +459,10 @@ class cvodes_integrator_adjoint_vari : public vari_base {
       Eigen::VectorXd step_sens = Eigen::VectorXd::Zero(N_);
       for (int i = 0; i < solver_->ts_.size(); ++i) {
         for (int j = 0; j < N_; ++j) {
+          //step_sens.coeffRef(j)
+          //    += forward_as<var>(solver_->y_return_[i].coeff(j)).adj();
           step_sens.coeffRef(j)
-              += forward_as<var>(solver_->y_return_[i].coeff(j)).adj();
+              += y_return_non_chaining_varis_[i * N_ + j]->adj_;
         }
 
         //adjoint_of(solver_->ts_[i]) += step_sens.dot(
@@ -468,10 +476,10 @@ class cvodes_integrator_adjoint_vari : public vari_base {
       }
     }
 
-    //solver_->state_backward_.setZero();
-    //solver_->quad_.setZero();
-    N_VConst(0.0, solver_->nv_state_backward_);
-    N_VConst(0.0, solver_->nv_quad_);
+    solver_->state_backward_.setZero();
+    solver_->quad_.setZero();
+    //N_VConst(0.0, solver_->nv_state_backward_);
+    //N_VConst(0.0, solver_->nv_quad_);
 
 
     // At every time step, collect the adjoints from the output
@@ -481,8 +489,10 @@ class cvodes_integrator_adjoint_vari : public vari_base {
       // Take in the adjoints from all the output variables at this point
       // in time
       for (int j = 0; j < N_; ++j) {
+        //solver_->state_backward_.coeffRef(j)
+        //    += forward_as<var>(solver_->y_return_[i].coeff(j)).adj();
         solver_->state_backward_.coeffRef(j)
-            += forward_as<var>(solver_->y_return_[i].coeff(j)).adj();
+            += y_return_non_chaining_varis_[i * N_ + j]->adj_;
       }
 
       double t_final = value_of((i > 0) ? solver_->ts_[i - 1] : solver_->t0_);
@@ -549,8 +559,10 @@ class cvodes_integrator_adjoint_vari : public vari_base {
           }
 
           backward_is_initialized_ = true;
-        } else {
-          // just re-initialize the solver
+        } else if(i ==  (solver_->ts_.size() - 1)) {
+          // just re-initialize the solver in case chain is called a
+          // second time
+
           check_flag_sundials(
               CVodeReInitB(solver_->cvodes_mem_, index_backward_, t_init,
                            solver_->nv_state_backward_),
@@ -711,6 +723,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     // separately
     stan::math::for_each([](auto&& arg) { zero_adjoints(arg); },
                          solver_->local_args_tuple_);
+    
     Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars
         = rhs(t, y_vec, solver_->local_args_tuple_);
     check_size_match(solver_->function_name_str_.c_str(), "dy_dt",
