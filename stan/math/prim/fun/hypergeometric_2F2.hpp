@@ -23,7 +23,7 @@ template <typename Ta, typename Tb, typename Tz,
           require_all_eigen_t<Ta, Tb>* = nullptr,
           require_stan_scalar_t<Tz>* = nullptr>
 double hypergeometric_2F2(const Ta& a, const Tb& b, const Tz& z) {
-   return hypergeometric_pFq(a, b, z);
+  return hypergeometric_pFq(a, b, z);
 }
 }  // namespace math
 }  // namespace stan

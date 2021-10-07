@@ -72,10 +72,10 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
   using Ta_plain = plain_type_t<Ta>;
   using Tb_plain = plain_type_t<Tb>;
   using T_vec = Eigen::Matrix<scalar_t, -1, 1>;
-  ref_type_t<Ta> a_ref = (to_ref(a).array() == 0)
-                            .select(EPSILON, to_ref(a).array()).matrix();
-  ref_type_t<Tb> b_ref = (to_ref(b).array() == 0)
-                            .select(EPSILON, to_ref(b).array()).matrix();
+  ref_type_t<Ta> a_ref
+      = (to_ref(a).array() == 0).select(EPSILON, to_ref(a).array()).matrix();
+  ref_type_t<Tb> b_ref
+      = (to_ref(b).array() == 0).select(EPSILON, to_ref(b).array()).matrix();
   int a_size = a.size();
   int b_size = b.size();
 
@@ -183,8 +183,8 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
 
       while ((inner_diff > log_precision) && (n < inner_steps)) {
         // Numerator term
-        scalar_t term1_mn = log_z_mn + sum(log_phammer_ap1_mpn)
-                            + log_phammer_1m + log_phammer_1n;
+        scalar_t term1_mn = log_z_mn + sum(log_phammer_ap1_mpn) + log_phammer_1m
+                            + log_phammer_1n;
         // Denominator term
         scalar_t term2_mn = lgamma_mp1 + lgamma_np1 + sum(log_phammer_bp1_mpn)
                             + log_phammer_2_mpn;
@@ -194,22 +194,20 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
         if (calc_a) {
           // Division (on log scale) for the a & b partials
           // Determine signs of each element
-          curr_signs_da
-              = (base_sign * log_phammer_an_sign.array()
-                 * log_phammer_ap1n_sign.array())
-                    .matrix();
+          curr_signs_da = (base_sign * log_phammer_an_sign.array()
+                           * log_phammer_ap1n_sign.array())
+                              .matrix();
           da_mn = (term1_mn + log_phammer_an.array())
                   - (term2_mn + log_phammer_ap1_n.array());
           da += exp(da_mn).cwiseProduct(curr_signs_da);
         }
 
         if (calc_b) {
-          curr_signs_db
-              = (base_sign * log_phammer_bn_sign.array()
-                 * log_phammer_bp1n_sign.array())
-                    .matrix();
+          curr_signs_db = (base_sign * log_phammer_bn_sign.array()
+                           * log_phammer_bp1n_sign.array())
+                              .matrix();
           db_mn = (term1_mn + log_phammer_bn.array())
-                            - (term2_mn + log_phammer_bp1_n.array());
+                  - (term2_mn + log_phammer_bp1_n.array());
           db += exp(db_mn).cwiseProduct(curr_signs_db);
         }
 
@@ -308,10 +306,8 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
  * @return Tuple of gradients
  */
 template <typename Ta, typename Tb, typename Tz>
-auto grad_pFq(const Ta& a, const Tb& b, const Tz& z,
-              double precision = 1e-10,
-              int outer_steps = 1e6,
-              int inner_steps = 1e6) {
+auto grad_pFq(const Ta& a, const Tb& b, const Tz& z, double precision = 1e-10,
+              int outer_steps = 1e6, int inner_steps = 1e6) {
   using partials_t = partials_return_t<Ta, Tb, Tz>;
   std::tuple<promote_scalar_t<partials_t, plain_type_t<Ta>>,
              promote_scalar_t<partials_t, plain_type_t<Tb>>,
@@ -319,8 +315,8 @@ auto grad_pFq(const Ta& a, const Tb& b, const Tz& z,
       ret_tuple;
   internal::grad_pFq_impl<!is_constant<Ta>::value, !is_constant<Tb>::value,
                           !is_constant<Tz>::value>(
-      ret_tuple, value_of(a), value_of(b), value_of(z),
-      precision, outer_steps, inner_steps);
+      ret_tuple, value_of(a), value_of(b), value_of(z), precision, outer_steps,
+      inner_steps);
   return ret_tuple;
 }
 

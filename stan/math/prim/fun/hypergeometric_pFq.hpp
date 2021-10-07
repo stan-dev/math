@@ -13,7 +13,7 @@ namespace math {
  * Returns the generalised hypergeometric function applied to the
  * input arguments:
  * \f$_pF_q(a_1,...,a_p;b_1,...,b_q;z)\f$
- * 
+ *
  * This function is not intended to be exposed to end users, only
  * used for p & q values that are stable with the grad_pFq
  * implementation.
