@@ -35,7 +35,7 @@ template <
     typename T, require_not_container_st<std::is_arithmetic, T>* = nullptr,
     require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
 inline auto inv(const T& x) {
-  return apply_scalar_unary<inv_fun, T>::apply(x);
+  return apply_scalar_unary<inv_fun, T, true>::apply(x);
 }
 
 /**

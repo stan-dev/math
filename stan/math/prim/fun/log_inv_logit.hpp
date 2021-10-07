@@ -81,7 +81,7 @@ struct log_inv_logit_fun {
 template <typename T,
           require_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
 inline auto log_inv_logit(const T& x) {
-  return apply_scalar_unary<log_inv_logit_fun, T>::apply(x);
+  return apply_scalar_unary<log_inv_logit_fun, T, true>::apply(x);
 }
 
 }  // namespace math
