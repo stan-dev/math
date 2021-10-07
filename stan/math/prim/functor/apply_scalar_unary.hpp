@@ -91,25 +91,23 @@ struct apply_scalar_unary<F, T, ApplyZero, require_eigen_t<T>> {
             require_eigen_sparse_base_t<SparseMat>* = nullptr>
   static inline auto apply(const SparseMat& x) {
     using val_t = value_type_t<SparseMat>;
+    using triplet_t = Eigen::Triplet<val_t>;
     auto zeroed_val = apply_scalar_unary<F, scalar_t>::apply(val_t(0.0));
     const auto x_size = x.size();
-    std::vector<Eigen::Triplet<val_t>> triplet_list(
-        x_size, Eigen::Triplet<val_t>(0, 0, zeroed_val));
+    std::vector<triplet_t> triplet_list(x_size, triplet_t(0, 0, zeroed_val));
     for (Eigen::Index i = 0; i < x.rows(); ++i) {
       for (Eigen::Index j = 0; j < x.cols(); ++j) {
         // Column major order
-        triplet_list[i * x.cols() + j]
-            = Eigen::Triplet<val_t>(i, j, zeroed_val);
+        triplet_list[i * x.cols() + j] = triplet_t(i, j, zeroed_val);
       }
     }
     for (Eigen::Index k = 0; k < x.outerSize(); ++k) {
       for (typename SparseMat::InnerIterator it(x, k); it; ++it) {
-        triplet_list[it.row() * x.cols() + it.col()] = Eigen::Triplet<val_t>(
-            it.row(), it.col(),
-            apply_scalar_unary<F, scalar_t>::apply(it.value()));
+        triplet_list[it.row() * x.cols() + it.col()] = triplet_t(
+            it.row(), it.col(), apply_scalar_unary<F, scalar_t>::apply(it.value()));
       }
     }
-    SparseMat ret(x.rows(), x.cols());
+    plain_type_t<SparseMat> ret(x.rows(), x.cols());
     ret.setFromTriplets(triplet_list.begin(), triplet_list.end());
     return ret;
   }
