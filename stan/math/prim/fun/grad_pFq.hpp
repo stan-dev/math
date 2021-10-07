@@ -74,10 +74,10 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
   using T_vec = Eigen::Matrix<scalar_t, -1, 1>;
   ref_type_t<Ta> a_ref_in = a;
   ref_type_t<Tb> b_ref_in = b;
-  Ta_plain a_ref = (a_ref_in.array() == 0).select(EPSILON, a_ref_in.array())
-                                          .matrix();
-  Tb_plain b_ref = (b_ref_in.array() == 0).select(EPSILON, b_ref_in.array())
-                                          .matrix();
+  Ta_plain a_ref
+      = (a_ref_in.array() == 0).select(EPSILON, a_ref_in.array()).matrix();
+  Tb_plain b_ref
+      = (b_ref_in.array() == 0).select(EPSILON, b_ref_in.array()).matrix();
   int a_size = a.size();
   int b_size = b.size();
 
