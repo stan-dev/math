@@ -103,8 +103,9 @@ struct apply_scalar_unary<F, T, ApplyZero, require_eigen_t<T>> {
     }
     for (Eigen::Index k = 0; k < x.outerSize(); ++k) {
       for (typename SparseMat::InnerIterator it(x, k); it; ++it) {
-        triplet_list[it.row() * x.cols() + it.col()] = triplet_t(
-            it.row(), it.col(), apply_scalar_unary<F, scalar_t>::apply(it.value()));
+        triplet_list[it.row() * x.cols() + it.col()]
+            = triplet_t(it.row(), it.col(),
+                        apply_scalar_unary<F, scalar_t>::apply(it.value()));
       }
     }
     plain_type_t<SparseMat> ret(x.rows(), x.cols());
