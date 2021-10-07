@@ -21,8 +21,7 @@ namespace math {
  * @param b second argument
  * @return the first argument times the log of the second argument
  */
-template <typename T1, typename T2,
-          require_all_arithmetic_t<T1, T2>* = nullptr>
+template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
 inline return_type_t<T1, T2> lmultiply(const T1 a, const T2 b) {
   using std::log;
   if (a == 0 && b == 0) {
@@ -42,8 +41,7 @@ inline return_type_t<T1, T2> lmultiply(const T1 a, const T2 b) {
  * @param b second argument
  * @return result of applying `lmultiply` to the arguments
  */
-template <typename T1, typename T2,
-	  require_any_container_t<T1, T2>* = nullptr,
+template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
           require_all_not_var_matrix_t<T1, T2>* = nullptr>
 inline auto lmultiply(const T1& a, const T2& b) {
   return apply_scalar_binary(
