@@ -22,21 +22,6 @@ namespace stan {
 namespace math {
 namespace internal {
 /**
- * A modified sign function that returns 1 for 0 inputs
- *
- * @tparam T Input type, can be either Eigen or scalar types
- * @param x Input argument to determine sign for
- * @return -1 for negative arguments otherwise 1
- */
-template <typename T>
-auto sign_binary(const T& x) {
-  return sign(as_array_or_scalar(2 * sign(value_of_rec(x))) + 1);
-}
-
-
-}
-
-/**
  * Returns the gradient of generalised hypergeometric function wrt to the
  * input arguments:
  * \f$ _pF_q(a_1,...,a_p;b_1,...,b_q;z) \f$
@@ -87,8 +72,10 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
   using Ta_plain = plain_type_t<Ta>;
   using Tb_plain = plain_type_t<Tb>;
   using T_vec = Eigen::Matrix<scalar_t, -1, 1>;
-  ref_type_t<Ta> a_ref = a;
-  ref_type_t<Tb> b_ref = b;
+  ref_type_t<Ta> a_ref = (to_ref(a).array() == 0)
+                            .select(EPSILON, to_ref(a).array()).matrix();
+  ref_type_t<Tb> b_ref = (to_ref(b).array() == 0)
+                            .select(EPSILON, to_ref(b).array()).matrix();
   int a_size = a.size();
   int b_size = b.size();
 
@@ -104,9 +91,9 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
     throw std::domain_error(msg.str());
   }
 
-  Eigen::VectorXi a_signs = sign_binary(a_ref);
-  Eigen::VectorXi b_signs = sign_binary(b_ref);
-  int z_sign = sign_binary(z);
+  Eigen::VectorXi a_signs = sign(a_ref);
+  Eigen::VectorXi b_signs = sign(b_ref);
+  int z_sign = sign(z);
 
   Ta_plain ap1 = (a.array() + 1).matrix();
   Tb_plain bp1 = (b.array() + 1).matrix();
@@ -163,6 +150,8 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
     Eigen::VectorXi log_phammer_ap1m_sign = Eigen::VectorXi::Ones(a_size);
     Eigen::VectorXi log_phammer_bp1m_sign = Eigen::VectorXi::Ones(b_size);
 
+    // If the inner loop converges in 1 iteration, then the outer loop moves
+    // to the next iteration
     while ((n_iter > 1) && (m < outer_steps)) {
       ap1n = ap1;
       bp1n = bp1;
@@ -211,7 +200,7 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
                     .matrix();
           da_mn = (term1_mn + log_phammer_an.array())
                   - (term2_mn + log_phammer_ap1_n.array());
-          da += exp(da_mn).cwiseProduct(curr_signs_da);       
+          da += exp(da_mn).cwiseProduct(curr_signs_da);
         }
 
         if (calc_b) {
@@ -240,12 +229,12 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
         log_phammer_bp1_mpn += log(stan::math::fabs(bp1mn));
 
         z_pow_mn_sign *= z_sign;
-        log_phammer_ap1n_sign.array() *= sign_binary(ap1n);
-        log_phammer_bp1n_sign.array() *= sign_binary(bp1n);
-        log_phammer_an_sign.array() *= sign_binary(an);
-        log_phammer_bn_sign.array() *= sign_binary(bn);
-        log_phammer_ap1mpn_sign.array() *= sign_binary(ap1mn);
-        log_phammer_bp1mpn_sign.array() *= sign_binary(bp1mn);
+        log_phammer_ap1n_sign.array() *= sign(ap1n).array();
+        log_phammer_bp1n_sign.array() *= sign(bp1n).array();
+        log_phammer_an_sign.array() *= sign(an).array();
+        log_phammer_bn_sign.array() *= sign(bn).array();
+        log_phammer_ap1mpn_sign.array() *= sign(ap1mn).array();
+        log_phammer_bp1mpn_sign.array() *= sign(bp1mn).array();
 
         n += 1;
         lgamma_np1 += log(n);
@@ -263,9 +252,9 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
       log_phammer_1m += log1p(m);
       log_phammer_2m += log(2 + m);
       log_phammer_ap1_m += log(stan::math::fabs(ap1m));
-      log_phammer_ap1m_sign.array() *= sign_binary(ap1m).array();
+      log_phammer_ap1m_sign.array() *= sign(ap1m).array();
       log_phammer_bp1_m += log(stan::math::fabs(bp1m));
-      log_phammer_bp1m_sign.array() *= sign_binary(bp1m).array();
+      log_phammer_bp1m_sign.array() *= sign(bp1m).array();
 
       m += 1;
 
@@ -285,20 +274,18 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
 
     if (calc_a) {
       auto pre_mult_a = (z * a_prod / a_ref.array() / b_prod).matrix();
-
-      // Evaluate gradients into provided containers
-      std::get<0>(grad_tuple) = pre_mult_a.cwiseProduct(da);
+      std::get<0>(grad_tuple) = std::move(pre_mult_a.cwiseProduct(da));
     }
 
     if (calc_b) {
       auto pre_mult_b = ((z * a_prod) / (b.array() * b_prod)).matrix();
-      std::get<1>(grad_tuple) = -pre_mult_b.cwiseProduct(db);
+      std::get<1>(grad_tuple) = std::move(-pre_mult_b.cwiseProduct(db));
     }
   }
 
   if (calc_z) {
     std::get<2>(grad_tuple)
-        = (a_prod / b_prod) * hypergeometric_pFq(ap1, bp1, z);
+        = std::move((a_prod / b_prod) * hypergeometric_pFq(ap1, bp1, z));
   }
 }
 }  // namespace internal
@@ -322,7 +309,7 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
  */
 template <typename Ta, typename Tb, typename Tz>
 auto grad_pFq(const Ta& a, const Tb& b, const Tz& z,
-              double precision = 1e-9,
+              double precision = 1e-10,
               int outer_steps = 1e6,
               int inner_steps = 1e6) {
   using partials_t = partials_return_t<Ta, Tb, Tz>;
