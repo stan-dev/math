@@ -83,13 +83,12 @@ auto ode_adjoint_impl(
       = cvodes_integrator_adjoint_vari<F, plain_type_t<T_y0>, T_t0, T_ts,
                                        plain_type_t<T_Args>...>;
   auto integrator = new integrator_vari(
-      function_name, f, //std::forward<F>(f),
-      eval(y0), t0, ts, relative_tolerance_forward,
-      absolute_tolerance_forward, relative_tolerance_backward,
-      absolute_tolerance_backward, relative_tolerance_quadrature,
-      absolute_tolerance_quadrature, max_num_steps,
-      num_steps_between_checkpoints, interpolation_polynomial, solver_forward,
-      solver_backward, msgs, eval(args)...);
+      function_name, f,  // std::forward<F>(f),
+      eval(y0), t0, ts, relative_tolerance_forward, absolute_tolerance_forward,
+      relative_tolerance_backward, absolute_tolerance_backward,
+      relative_tolerance_quadrature, absolute_tolerance_quadrature,
+      max_num_steps, num_steps_between_checkpoints, interpolation_polynomial,
+      solver_forward, solver_backward, msgs, eval(args)...);
   return integrator->solution();
 }
 
@@ -173,13 +172,13 @@ std::vector<Eigen::VectorXd> ode_adjoint_impl(
                                          plain_type_t<T_Args>...>;
 
     auto integrator = new integrator_vari(
-        function_name, f, //std::forward<F>(f),
-        eval(y0), t0, ts,
-        relative_tolerance_forward, absolute_tolerance_forward,
-        relative_tolerance_backward, absolute_tolerance_backward,
-        relative_tolerance_quadrature, absolute_tolerance_quadrature,
-        max_num_steps, num_steps_between_checkpoints, interpolation_polynomial,
-        solver_forward, solver_backward, msgs, eval(args)...);
+        function_name, f,  // std::forward<F>(f),
+        eval(y0), t0, ts, relative_tolerance_forward,
+        absolute_tolerance_forward, relative_tolerance_backward,
+        absolute_tolerance_backward, relative_tolerance_quadrature,
+        absolute_tolerance_quadrature, max_num_steps,
+        num_steps_between_checkpoints, interpolation_polynomial, solver_forward,
+        solver_backward, msgs, eval(args)...);
 
     ode_solution = integrator->solution();
   }
@@ -254,9 +253,8 @@ auto ode_adjoint_tol_ctl(
     int interpolation_polynomial, int solver_forward, int solver_backward,
     std::ostream* msgs, const T_Args&... args) {
   return ode_adjoint_impl(
-      "ode_adjoint_tol_ctl", f, //std::forward<F>(f),
-      y0, t0, ts,
-      relative_tolerance_forward, absolute_tolerance_forward,
+      "ode_adjoint_tol_ctl", f,  // std::forward<F>(f),
+      y0, t0, ts, relative_tolerance_forward, absolute_tolerance_forward,
       relative_tolerance_backward, absolute_tolerance_backward,
       relative_tolerance_quadrature, absolute_tolerance_quadrature,
       max_num_steps, num_steps_between_checkpoints, interpolation_polynomial,
