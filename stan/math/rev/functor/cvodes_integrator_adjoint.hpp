@@ -74,7 +74,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
    */
   struct cvodes_solver : public chainable_alloc {
     const std::string function_name_str_;
-    //const std::decay_t<F> f_;
+    // const std::decay_t<F> f_;
     const F f_;
     const size_t N_;
     std::vector<Eigen::VectorXd> y_;
@@ -101,21 +101,21 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> y_return_;
     std::tuple<T_Args...> local_args_tuple_;
     const std::tuple<
-      promote_scalar_t<partials_type_t<scalar_type_t<T_Args>>, T_Args>...>
-    value_of_args_tuple_;
+        promote_scalar_t<partials_type_t<scalar_type_t<T_Args>>, T_Args>...>
+        value_of_args_tuple_;
 
-    //template <typename FF>
-    cvodes_solver(const char* function_name, const F& f, //FF&& f,
-                  size_t N, const T_y0& y0, const T_t0& t0,
-                  const std::vector<T_ts>& ts,
-                  const Eigen::VectorXd& absolute_tolerance_forward,
-                  const Eigen::VectorXd& absolute_tolerance_backward,
-                  size_t num_args_vars, int solver_forward,
-                  //StateFwd& state_forward, //StateBwd& state_backward, Quad& quad,
-                  const T_Args&... args)
+    // template <typename FF>
+    cvodes_solver(
+        const char* function_name, const F& f,  // FF&& f,
+        size_t N, const T_y0& y0, const T_t0& t0, const std::vector<T_ts>& ts,
+        const Eigen::VectorXd& absolute_tolerance_forward,
+        const Eigen::VectorXd& absolute_tolerance_backward,
+        size_t num_args_vars, int solver_forward,
+        // StateFwd& state_forward, //StateBwd& state_backward, Quad& quad,
+        const T_Args&... args)
         : chainable_alloc(),
           function_name_str_(function_name),
-          //f_(std::forward<FF>(f)),
+          // f_(std::forward<FF>(f)),
           f_(f),
           N_(N),
           y_(ts.size()),
@@ -209,12 +209,12 @@ class cvodes_integrator_adjoint_vari : public vari_base {
    * @return a vector of states, each state being a vector of the
    * same size as the state variable, corresponding to a time in ts.
    */
-  template <//typename FF,
-            require_eigen_col_vector_t<T_y0>* = nullptr>
+  template <  // typename FF,
+      require_eigen_col_vector_t<T_y0>* = nullptr>
   cvodes_integrator_adjoint_vari(
-      const char* function_name, const F& f, //FF&& f,
-      const T_y0& y0, const T_t0& t0,
-      const std::vector<T_ts>& ts, double relative_tolerance_forward,
+      const char* function_name, const F& f,  // FF&& f,
+      const T_y0& y0, const T_t0& t0, const std::vector<T_ts>& ts,
+      double relative_tolerance_forward,
       const Eigen::VectorXd& absolute_tolerance_forward,
       double relative_tolerance_backward,
       const Eigen::VectorXd& absolute_tolerance_backward,
@@ -225,7 +225,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
       int interpolation_polynomial, int solver_forward, int solver_backward,
       std::ostream* msgs, const T_Args&... args)
       : vari_base(),
-        //y_(ts.size()),
+        // y_(ts.size()),
         /*
         ts_(ts.begin(), ts.end()),
         y0_(y0),
@@ -247,14 +247,18 @@ class cvodes_integrator_adjoint_vari : public vari_base {
         num_steps_between_checkpoints_(num_steps_between_checkpoints),
         N_(y0.size()),
         msgs_(msgs),
-        y_return_non_chaining_varis_( is_var_return_ ? ChainableStack::instance_->memalloc_.alloc_array<vari*>(ts.size() * N_) : nullptr),
+        y_return_non_chaining_varis_(
+            is_var_return_
+                ? ChainableStack::instance_->memalloc_.alloc_array<vari*>(
+                      ts.size() * N_)
+                : nullptr),
 
-        t0_varis_(
-            ChainableStack::instance_->memalloc_.alloc_array<vari*>(count_vars(t0))),
-        ts_varis_(
-            ChainableStack::instance_->memalloc_.alloc_array<vari*>(count_vars(ts))),
-        y0_varis_(
-            ChainableStack::instance_->memalloc_.alloc_array<vari*>(count_vars(y0))),
+        t0_varis_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
+            count_vars(t0))),
+        ts_varis_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
+            count_vars(ts))),
+        y0_varis_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
+            count_vars(y0))),
         args_varis_([&args..., num_vars = this->num_args_vars_]() {
           vari** vari_mem
               = ChainableStack::instance_->memalloc_.alloc_array<vari*>(
@@ -308,15 +312,14 @@ class cvodes_integrator_adjoint_vari : public vari_base {
       invalid_argument(function_name, "solver_backward", solver_backward_, "",
                        ", must be 1 for Adams or 2 for BDF backward solver");
 
-    solver_ = new cvodes_solver(
-        function_name, f, //std::forward<FF>(f),
-        N_, y0, t0, ts,
-        absolute_tolerance_forward, absolute_tolerance_backward,
-        num_args_vars_, solver_forward_,
-        //state_forward_, //state_backward_, quad_,
-        //absolute_tolerance_forward_,
-        //absolute_tolerance_backward_,
-        args...);
+    solver_ = new cvodes_solver(function_name, f,  // std::forward<FF>(f),
+                                N_, y0, t0, ts, absolute_tolerance_forward,
+                                absolute_tolerance_backward, num_args_vars_,
+                                solver_forward_,
+                                // state_forward_, //state_backward_, quad_,
+                                // absolute_tolerance_forward_,
+                                // absolute_tolerance_backward_,
+                                args...);
 
     stan::math::for_each(
         [func_name = function_name](auto&& arg) {
@@ -327,12 +330,12 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     save_varis(t0_varis_, t0);
     save_varis(ts_varis_, ts);
     save_varis(y0_varis_, y0);
-    
+
     check_flag_sundials(
         CVodeInit(solver_->cvodes_mem_, &cvodes_integrator_adjoint_vari::cv_rhs,
                   value_of(solver_->t0_), solver_->nv_state_forward_),
         "CVodeInit");
-    
+
     // Assign pointer to this as user data
     check_flag_sundials(
         CVodeSetUserData(solver_->cvodes_mem_, reinterpret_cast<void*>(this)),
@@ -419,7 +422,8 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     solver_->y_[n] = state;
     state_return.resize(N_);
     for (size_t i = 0; i < N_; i++) {
-      y_return_non_chaining_varis_[n * N_ + i] = new vari(state.coeff(i), false);
+      y_return_non_chaining_varis_[n * N_ + i]
+          = new vari(state.coeff(i), false);
       state_return.coeffRef(i) = var(y_return_non_chaining_varis_[n * N_ + i]);
     }
   }
@@ -459,15 +463,16 @@ class cvodes_integrator_adjoint_vari : public vari_base {
       Eigen::VectorXd step_sens = Eigen::VectorXd::Zero(N_);
       for (int i = 0; i < solver_->ts_.size(); ++i) {
         for (int j = 0; j < N_; ++j) {
-          //step_sens.coeffRef(j)
+          // step_sens.coeffRef(j)
           //    += forward_as<var>(solver_->y_return_[i].coeff(j)).adj();
           step_sens.coeffRef(j)
               += y_return_non_chaining_varis_[i * N_ + j]->adj_;
         }
 
-        //adjoint_of(solver_->ts_[i]) += step_sens.dot(
-        ts_varis_[i]->adj_ += step_sens.dot(
-            rhs(value_of(solver_->ts_[i]), solver_->y_[i], solver_->value_of_args_tuple_));
+        // adjoint_of(solver_->ts_[i]) += step_sens.dot(
+        ts_varis_[i]->adj_
+            += step_sens.dot(rhs(value_of(solver_->ts_[i]), solver_->y_[i],
+                                 solver_->value_of_args_tuple_));
         step_sens.setZero();
       }
 
@@ -478,9 +483,8 @@ class cvodes_integrator_adjoint_vari : public vari_base {
 
     solver_->state_backward_.setZero();
     solver_->quad_.setZero();
-    //N_VConst(0.0, solver_->nv_state_backward_);
-    //N_VConst(0.0, solver_->nv_quad_);
-
+    // N_VConst(0.0, solver_->nv_state_backward_);
+    // N_VConst(0.0, solver_->nv_quad_);
 
     // At every time step, collect the adjoints from the output
     // variables and re-initialize the solver
@@ -489,7 +493,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
       // Take in the adjoints from all the output variables at this point
       // in time
       for (int j = 0; j < N_; ++j) {
-        //solver_->state_backward_.coeffRef(j)
+        // solver_->state_backward_.coeffRef(j)
         //    += forward_as<var>(solver_->y_return_[i].coeff(j)).adj();
         solver_->state_backward_.coeffRef(j)
             += y_return_non_chaining_varis_[i * N_ + j]->adj_;
@@ -602,7 +606,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     }
 
     if (is_var_t0_) {
-      //adjoint_of(solver_->t0_) += -solver_->state_backward_.dot(
+      // adjoint_of(solver_->t0_) += -solver_->state_backward_.dot(
       t0_varis_[0]->adj_ += -solver_->state_backward_.dot(
           rhs(t_init, value_of(solver_->y0_), solver_->value_of_args_tuple_));
     }
@@ -614,7 +618,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
       for (size_t s = 0; s < N_; ++s) {
         y0_varis_[s]->adj_ += solver_->state_backward_.coeff(s);
       }
-      //forward_as<Eigen::Matrix<var, Eigen::Dynamic, 1>>(solver_->y0_).adj()
+      // forward_as<Eigen::Matrix<var, Eigen::Dynamic, 1>>(solver_->y0_).adj()
       //    += solver_->state_backward_;
     }
 
@@ -723,7 +727,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     // separately
     stan::math::for_each([](auto&& arg) { zero_adjoints(arg); },
                          solver_->local_args_tuple_);
-    
+
     Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars
         = rhs(t, y_vec, solver_->local_args_tuple_);
     check_size_match(solver_->function_name_str_.c_str(), "dy_dt",
