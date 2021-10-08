@@ -514,8 +514,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
 
           backward_is_initialized_ = true;
         } else {
-          // just re-initialize the solver in case chain is called a
-          // second time
+          // just re-initialize the solver
 
           check_flag_sundials(
               CVodeReInitB(solver_->cvodes_mem_, index_backward_, t_init,
