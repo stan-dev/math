@@ -71,8 +71,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
    */
   struct cvodes_solver : public chainable_alloc {
     const std::string function_name_str_;
-    // const std::decay_t<F> f_;
-    const F f_;
+    const std::decay_t<F> f_;
     const size_t N_;
     std::vector<Eigen::VectorXd> y_;
 
@@ -100,19 +99,17 @@ class cvodes_integrator_adjoint_vari : public vari_base {
         promote_scalar_t<partials_type_t<scalar_type_t<T_Args>>, T_Args>...>
         value_of_args_tuple_;
 
-    // template <typename FF>
+    template <typename FF>
     cvodes_solver(
-        const char* function_name, const F& f,  // FF&& f,
+        const char* function_name, FF&& f,
         size_t N, const T_y0& y0, const T_t0& t0, const std::vector<T_ts>& ts,
         const Eigen::VectorXd& absolute_tolerance_forward,
         const Eigen::VectorXd& absolute_tolerance_backward,
         size_t num_args_vars, int solver_forward,
-        // StateFwd& state_forward, //StateBwd& state_backward, Quad& quad,
         const T_Args&... args)
         : chainable_alloc(),
           function_name_str_(function_name),
-          // f_(std::forward<FF>(f)),
-          f_(f),
+          f_(std::forward<FF>(f)),
           N_(N),
           y_(ts.size()),
           ts_(ts.begin(), ts.end()),
@@ -204,10 +201,9 @@ class cvodes_integrator_adjoint_vari : public vari_base {
    * @return a vector of states, each state being a vector of the
    * same size as the state variable, corresponding to a time in ts.
    */
-  template <  // typename FF,
-      require_eigen_col_vector_t<T_y0>* = nullptr>
+  template <typename FF, require_eigen_col_vector_t<T_y0>* = nullptr>
   cvodes_integrator_adjoint_vari(
-      const char* function_name, const F& f,  // FF&& f,
+      const char* function_name, FF&& f,
       const T_y0& y0, const T_t0& t0, const std::vector<T_ts>& ts,
       double relative_tolerance_forward,
       const Eigen::VectorXd& absolute_tolerance_forward,
@@ -283,14 +279,10 @@ class cvodes_integrator_adjoint_vari : public vari_base {
       invalid_argument(function_name, "solver_backward", solver_backward_, "",
                        ", must be 1 for Adams or 2 for BDF backward solver");
 
-    solver_ = new cvodes_solver(function_name, f,  // std::forward<FF>(f),
+    solver_ = new cvodes_solver(function_name, std::forward<FF>(f),
                                 N_, y0, t0, ts, absolute_tolerance_forward,
                                 absolute_tolerance_backward, num_args_vars_,
-                                solver_forward_,
-                                // state_forward_, //state_backward_, quad_,
-                                // absolute_tolerance_forward_,
-                                // absolute_tolerance_backward_,
-                                args...);
+                                solver_forward_, args...);
 
     stan::math::for_each(
         [func_name = function_name](auto&& arg) {
