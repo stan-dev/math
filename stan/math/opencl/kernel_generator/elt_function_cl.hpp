@@ -12,6 +12,7 @@
 #include <stan/math/opencl/kernels/device_functions/lbeta.hpp>
 #include <stan/math/opencl/kernels/device_functions/lgamma_stirling.hpp>
 #include <stan/math/opencl/kernels/device_functions/lgamma_stirling_diff.hpp>
+#include <stan/math/opencl/kernels/device_functions/lmultiply.hpp>
 #include <stan/math/opencl/kernels/device_functions/log_inv_logit.hpp>
 #include <stan/math/opencl/kernels/device_functions/log_inv_logit_diff.hpp>
 #include <stan/math/opencl/kernels/device_functions/log_diff_exp.hpp>
