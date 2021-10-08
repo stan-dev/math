@@ -56,6 +56,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
   long int num_steps_between_checkpoints_;  // NOLINT(runtime/int)
   size_t N_;
   std::ostream* msgs_;
+  std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> y_return_;
   vari** y_return_non_chaining_varis_;
   vari** t0_varis_;
   vari** ts_varis_;
@@ -98,7 +99,6 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     SUNMatrix A_backward_;
     SUNLinearSolver LS_backward_;
     void* cvodes_mem_;
-    std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> y_return_;
     std::tuple<T_Args...> local_args_tuple_;
     const std::tuple<
         promote_scalar_t<partials_type_t<scalar_type_t<T_Args>>, T_Args>...>
@@ -143,7 +143,6 @@ class cvodes_integrator_adjoint_vari : public vari_base {
               N == 0 ? nullptr
                      : SUNDenseLinearSolver(nv_state_backward_, A_backward_)),
           cvodes_mem_(CVodeCreate(solver_forward)),
-          y_return_(ts_.size()),
           local_args_tuple_(deep_copy_vars(args)...),
           value_of_args_tuple_(value_of(args)...) {
       if (cvodes_mem_ == nullptr) {
@@ -247,6 +246,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
         num_steps_between_checkpoints_(num_steps_between_checkpoints),
         N_(y0.size()),
         msgs_(msgs),
+        y_return_(ts.size()),
         y_return_non_chaining_varis_(
             is_var_return_
                 ? ChainableStack::instance_->memalloc_.alloc_array<vari*>(
@@ -404,7 +404,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
           }
         }
       }
-      store_state(n, solver_->state_forward_, solver_->y_return_[n]);
+      store_state(n, solver_->state_forward_, y_return_[n]);
 
       t_init = t_final;
     }
@@ -444,7 +444,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
    *   solution time (excluding the initial state)
    */
   std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> solution() noexcept {
-    return solver_->y_return_;
+    return y_return_;
   }
 
   /**
@@ -456,6 +456,8 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     if (!is_var_return_) {
       return;
     }
+
+    //std::cout << "Running backward solve." << std::endl;
 
     // for sensitivities wrt to ts we do not need to run the backward
     // integration
@@ -605,8 +607,11 @@ class cvodes_integrator_adjoint_vari : public vari_base {
       }
     }
 
+    //std::cout << "Collecting adjoints..." << std::endl;
+
     if (is_var_t0_) {
-      // adjoint_of(solver_->t0_) += -solver_->state_backward_.dot(
+      //std::cout << "Collecting t0 adjoints..." << std::endl;
+      //adjoint_of(solver_->t0_) += -solver_->state_backward_.dot(
       t0_varis_[0]->adj_ += -solver_->state_backward_.dot(
           rhs(t_init, value_of(solver_->y0_), solver_->value_of_args_tuple_));
     }
@@ -615,19 +620,22 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     // the adjoints we wanted
     // These are the dlog_density / d(initial_conditions[s]) adjoints
     if (is_var_y0_t0_) {
-      for (size_t s = 0; s < N_; ++s) {
-        y0_varis_[s]->adj_ += solver_->state_backward_.coeff(s);
-      }
-      // forward_as<Eigen::Matrix<var, Eigen::Dynamic, 1>>(solver_->y0_).adj()
-      //    += solver_->state_backward_;
+      //for (size_t s = 0; s < N_; ++s) {
+      //  y0_varis_[s]->adj_ += solver_->state_backward_.coeff(s);
+      //}
+      forward_as<Eigen::Matrix<var, Eigen::Dynamic, 1>>(solver_->y0_).adj()
+          += solver_->state_backward_;
     }
 
     // These are the dlog_density / d(parameters[s]) adjoints
     if (is_any_var_args_) {
+      //std::cout << "Collecting args adjoints..." << std::endl;
       for (size_t s = 0; s < num_args_vars_; ++s) {
         args_varis_[s]->adj_ += solver_->quad_.coeff(s);
       }
     }
+
+    //std::cout << "Done with adjoints." << std::endl;    
   }
 
  private:
