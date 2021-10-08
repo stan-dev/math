@@ -56,7 +56,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
   const long int num_steps_between_checkpoints_;  // NOLINT(runtime/int)
   const size_t N_;
   std::ostream* msgs_;
-  std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> y_return_;
+  vari** y_return_varis_;
   vari** args_varis_;
   const int interpolation_polynomial_;
   const int solver_forward_;
@@ -223,7 +223,9 @@ class cvodes_integrator_adjoint_vari : public vari_base {
         num_steps_between_checkpoints_(num_steps_between_checkpoints),
         N_(y0.size()),
         msgs_(msgs),
-        y_return_(ts.size()),
+        y_return_varis_(is_var_return_ ?
+                        ChainableStack::instance_->memalloc_.alloc_array<vari*>(
+                            N_ * ts.size()) : nullptr),
         args_varis_([&args..., num_vars = this->num_args_vars_]() {
           vari** vari_mem
               = ChainableStack::instance_->memalloc_.alloc_array<vari*>(
@@ -361,7 +363,11 @@ class cvodes_integrator_adjoint_vari : public vari_base {
           }
         }
       }
-      store_state(n, solver_->state_forward_, y_return_[n]);
+      solver_->y_[n] = solver_->state_forward_;
+      if(is_var_return_) {
+        for(std::size_t i = 0; i < N_; ++i)
+          y_return_varis_[N_ *  n + i] = new vari(solver_->state_forward_.coeff(i), false);
+      }
 
       t_init = t_final;
     }
@@ -376,19 +382,15 @@ class cvodes_integrator_adjoint_vari : public vari_base {
    */
   void store_state(std::size_t n, const Eigen::VectorXd& state,
                    Eigen::Matrix<var, Eigen::Dynamic, 1>& state_return) {
-    solver_->y_[n] = state;
     state_return.resize(N_);
     for (size_t i = 0; i < N_; i++) {
-      state_return.coeffRef(i) = var(new vari(state.coeff(i), false));
+      state_return.coeffRef(i) = var(y_return_varis_[N_ *  n + i]);
     }
   }
 
   void store_state(std::size_t n, const Eigen::VectorXd& state,
                    Eigen::Matrix<double, Eigen::Dynamic, 1>& state_return) {
-    solver_->y_[n] = state;
-    state_return.resize(N_);
-    for (size_t i = 0; i < N_; i++)
-      state_return.coeffRef(i) = state.coeff(i);
+    state_return = state;
   }
 
  public:
@@ -399,7 +401,10 @@ class cvodes_integrator_adjoint_vari : public vari_base {
    *   solution time (excluding the initial state)
    */
   std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> solution() noexcept {
-    return y_return_;
+    std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> y_return(solver_->ts_.size());
+    for(std::size_t n = 0; n < solver_->ts_.size(); ++n)
+      store_state(n, solver_->y_[n], y_return[n]);
+    return y_return;
   }
 
   /**
@@ -418,7 +423,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
       Eigen::VectorXd step_sens = Eigen::VectorXd::Zero(N_);
       for (int i = 0; i < solver_->ts_.size(); ++i) {
         for (int j = 0; j < N_; ++j) {
-          step_sens.coeffRef(j) += forward_as<var>(y_return_[i].coeff(j)).adj();
+          step_sens.coeffRef(j) += y_return_varis_[N_ * i + j]->adj_;
         }
 
         adjoint_of(solver_->ts_[i])
@@ -443,7 +448,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
       // in time
       for (int j = 0; j < N_; ++j) {
         solver_->state_backward_.coeffRef(j)
-            += forward_as<var>(y_return_[i].coeff(j)).adj();
+            += y_return_varis_[N_ * i + j]->adj_;
       }
 
       double t_final = value_of((i > 0) ? solver_->ts_[i - 1] : solver_->t0_);
