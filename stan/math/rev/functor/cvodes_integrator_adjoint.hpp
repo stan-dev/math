@@ -100,13 +100,12 @@ class cvodes_integrator_adjoint_vari : public vari_base {
         value_of_args_tuple_;
 
     template <typename FF>
-    cvodes_solver(
-        const char* function_name, FF&& f,
-        size_t N, const T_y0& y0, const T_t0& t0, const std::vector<T_ts>& ts,
-        const Eigen::VectorXd& absolute_tolerance_forward,
-        const Eigen::VectorXd& absolute_tolerance_backward,
-        size_t num_args_vars, int solver_forward,
-        const T_Args&... args)
+    cvodes_solver(const char* function_name, FF&& f, size_t N, const T_y0& y0,
+                  const T_t0& t0, const std::vector<T_ts>& ts,
+                  const Eigen::VectorXd& absolute_tolerance_forward,
+                  const Eigen::VectorXd& absolute_tolerance_backward,
+                  size_t num_args_vars, int solver_forward,
+                  const T_Args&... args)
         : chainable_alloc(),
           function_name_str_(function_name),
           f_(std::forward<FF>(f)),
@@ -203,9 +202,8 @@ class cvodes_integrator_adjoint_vari : public vari_base {
    */
   template <typename FF, require_eigen_col_vector_t<T_y0>* = nullptr>
   cvodes_integrator_adjoint_vari(
-      const char* function_name, FF&& f,
-      const T_y0& y0, const T_t0& t0, const std::vector<T_ts>& ts,
-      double relative_tolerance_forward,
+      const char* function_name, FF&& f, const T_y0& y0, const T_t0& t0,
+      const std::vector<T_ts>& ts, double relative_tolerance_forward,
       const Eigen::VectorXd& absolute_tolerance_forward,
       double relative_tolerance_backward,
       const Eigen::VectorXd& absolute_tolerance_backward,
@@ -279,8 +277,8 @@ class cvodes_integrator_adjoint_vari : public vari_base {
       invalid_argument(function_name, "solver_backward", solver_backward_, "",
                        ", must be 1 for Adams or 2 for BDF backward solver");
 
-    solver_ = new cvodes_solver(function_name, std::forward<FF>(f),
-                                N_, y0, t0, ts, absolute_tolerance_forward,
+    solver_ = new cvodes_solver(function_name, std::forward<FF>(f), N_, y0, t0,
+                                ts, absolute_tolerance_forward,
                                 absolute_tolerance_backward, num_args_vars_,
                                 solver_forward_, args...);
 
@@ -420,13 +418,12 @@ class cvodes_integrator_adjoint_vari : public vari_base {
       Eigen::VectorXd step_sens = Eigen::VectorXd::Zero(N_);
       for (int i = 0; i < solver_->ts_.size(); ++i) {
         for (int j = 0; j < N_; ++j) {
-          step_sens.coeffRef(j)
-              += forward_as<var>(y_return_[i].coeff(j)).adj();
+          step_sens.coeffRef(j) += forward_as<var>(y_return_[i].coeff(j)).adj();
         }
 
-        adjoint_of(solver_->ts_[i]) += step_sens.dot(
-            rhs(value_of(solver_->ts_[i]), solver_->y_[i],
-                solver_->value_of_args_tuple_));
+        adjoint_of(solver_->ts_[i])
+            += step_sens.dot(rhs(value_of(solver_->ts_[i]), solver_->y_[i],
+                                 solver_->value_of_args_tuple_));
         step_sens.setZero();
       }
 
