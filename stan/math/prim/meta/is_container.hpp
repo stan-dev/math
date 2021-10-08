@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta/bool_constant.hpp>
 #include <stan/math/prim/meta/disjunction.hpp>
-#include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/is_eigen_dense_base.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/is_var_matrix.hpp>
 #include <stan/math/prim/meta/scalar_type.hpp>
@@ -15,7 +15,7 @@
 namespace stan {
 
 /**
- * Deduces whether type is eigen matrix or standard vector.
+ * Deduces whether type is a dense eigen type or standard vector.
  * @tparam Container type to check
  */
 template <typename Container>
