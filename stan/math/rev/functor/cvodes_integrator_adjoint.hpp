@@ -223,9 +223,9 @@ class cvodes_integrator_adjoint_vari : public vari_base {
         num_steps_between_checkpoints_(num_steps_between_checkpoints),
         N_(y0.size()),
         msgs_(msgs),
-        y_return_varis_(is_var_return_ ?
-                        ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-                            N_ * ts.size()) : nullptr),
+        y_return_varis_(is_var_return_ ? ChainableStack::instance_->memalloc_
+                                             .alloc_array<vari*>(N_ * ts.size())
+                                       : nullptr),
         args_varis_([&args..., num_vars = this->num_args_vars_]() {
           vari** vari_mem
               = ChainableStack::instance_->memalloc_.alloc_array<vari*>(
@@ -364,9 +364,10 @@ class cvodes_integrator_adjoint_vari : public vari_base {
         }
       }
       solver_->y_[n] = solver_->state_forward_;
-      if(is_var_return_) {
-        for(std::size_t i = 0; i < N_; ++i)
-          y_return_varis_[N_ *  n + i] = new vari(solver_->state_forward_.coeff(i), false);
+      if (is_var_return_) {
+        for (std::size_t i = 0; i < N_; ++i)
+          y_return_varis_[N_ * n + i]
+              = new vari(solver_->state_forward_.coeff(i), false);
       }
 
       t_init = t_final;
@@ -384,7 +385,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
                    Eigen::Matrix<var, Eigen::Dynamic, 1>& state_return) {
     state_return.resize(N_);
     for (size_t i = 0; i < N_; i++) {
-      state_return.coeffRef(i) = var(y_return_varis_[N_ *  n + i]);
+      state_return.coeffRef(i) = var(y_return_varis_[N_ * n + i]);
     }
   }
 
@@ -401,8 +402,9 @@ class cvodes_integrator_adjoint_vari : public vari_base {
    *   solution time (excluding the initial state)
    */
   std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> solution() noexcept {
-    std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> y_return(solver_->ts_.size());
-    for(std::size_t n = 0; n < solver_->ts_.size(); ++n)
+    std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> y_return(
+        solver_->ts_.size());
+    for (std::size_t n = 0; n < solver_->ts_.size(); ++n)
       store_state(n, solver_->y_[n], y_return[n]);
     return y_return;
   }
