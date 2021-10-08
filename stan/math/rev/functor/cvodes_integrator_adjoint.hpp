@@ -46,25 +46,21 @@ class cvodes_integrator_adjoint_vari : public vari_base {
   static constexpr bool is_var_only_ts_{
       is_var_ts_ && !(is_var_t0_ || is_var_y0_t0_ || is_any_var_args_)};
 
-  size_t num_args_vars_;
+  const size_t num_args_vars_;
 
-  double relative_tolerance_forward_;
-  double relative_tolerance_backward_;
-  double relative_tolerance_quadrature_;
-  double absolute_tolerance_quadrature_;
-  long int max_num_steps_;                  // NOLINT(runtime/int)
-  long int num_steps_between_checkpoints_;  // NOLINT(runtime/int)
-  size_t N_;
+  const double relative_tolerance_forward_;
+  const double relative_tolerance_backward_;
+  const double relative_tolerance_quadrature_;
+  const double absolute_tolerance_quadrature_;
+  const long int max_num_steps_;                  // NOLINT(runtime/int)
+  const long int num_steps_between_checkpoints_;  // NOLINT(runtime/int)
+  const size_t N_;
   std::ostream* msgs_;
   std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> y_return_;
-  vari** y_return_non_chaining_varis_;
-  vari** t0_varis_;
-  vari** ts_varis_;
-  vari** y0_varis_;
   vari** args_varis_;
-  int interpolation_polynomial_;
-  int solver_forward_;
-  int solver_backward_;
+  const int interpolation_polynomial_;
+  const int solver_forward_;
+  const int solver_backward_;
   int index_backward_;
   bool backward_is_initialized_{false};
 
@@ -224,20 +220,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
       int interpolation_polynomial, int solver_forward, int solver_backward,
       std::ostream* msgs, const T_Args&... args)
       : vari_base(),
-        // y_(ts.size()),
-        /*
-        ts_(ts.begin(), ts.end()),
-        y0_(y0),
-        absolute_tolerance_forward_(absolute_tolerance_forward),
-        absolute_tolerance_backward_(absolute_tolerance_backward),
-        state_forward_(value_of(y0)),
-        //state_backward_(y0.size()),
-        */
         num_args_vars_(count_vars(args...)),
-        /*
-        //quad_(num_args_vars_),
-        t0_(t0),
-        */
         relative_tolerance_forward_(relative_tolerance_forward),
         relative_tolerance_backward_(relative_tolerance_backward),
         relative_tolerance_quadrature_(relative_tolerance_quadrature),
@@ -247,18 +230,6 @@ class cvodes_integrator_adjoint_vari : public vari_base {
         N_(y0.size()),
         msgs_(msgs),
         y_return_(ts.size()),
-        y_return_non_chaining_varis_(
-            is_var_return_
-                ? ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-                      ts.size() * N_)
-                : nullptr),
-
-        t0_varis_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-            count_vars(t0))),
-        ts_varis_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-            count_vars(ts))),
-        y0_varis_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(
-            count_vars(y0))),
         args_varis_([&args..., num_vars = this->num_args_vars_]() {
           vari** vari_mem
               = ChainableStack::instance_->memalloc_.alloc_array<vari*>(
@@ -326,10 +297,6 @@ class cvodes_integrator_adjoint_vari : public vari_base {
           check_finite(func_name, "ode parameters and data", arg);
         },
         solver_->local_args_tuple_);
-
-    save_varis(t0_varis_, t0);
-    save_varis(ts_varis_, ts);
-    save_varis(y0_varis_, y0);
 
     check_flag_sundials(
         CVodeInit(solver_->cvodes_mem_, &cvodes_integrator_adjoint_vari::cv_rhs,
@@ -422,9 +389,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     solver_->y_[n] = state;
     state_return.resize(N_);
     for (size_t i = 0; i < N_; i++) {
-      y_return_non_chaining_varis_[n * N_ + i]
-          = new vari(state.coeff(i), false);
-      state_return.coeffRef(i) = var(y_return_non_chaining_varis_[n * N_ + i]);
+      state_return.coeffRef(i) = var(new vari(state.coeff(i), false));
     }
   }
 
@@ -457,24 +422,19 @@ class cvodes_integrator_adjoint_vari : public vari_base {
       return;
     }
 
-    //std::cout << "Running backward solve." << std::endl;
-
     // for sensitivities wrt to ts we do not need to run the backward
     // integration
     if (is_var_ts_) {
       Eigen::VectorXd step_sens = Eigen::VectorXd::Zero(N_);
       for (int i = 0; i < solver_->ts_.size(); ++i) {
         for (int j = 0; j < N_; ++j) {
-          // step_sens.coeffRef(j)
-          //    += forward_as<var>(solver_->y_return_[i].coeff(j)).adj();
           step_sens.coeffRef(j)
-              += y_return_non_chaining_varis_[i * N_ + j]->adj_;
+              += forward_as<var>(y_return_[i].coeff(j)).adj();
         }
 
-        // adjoint_of(solver_->ts_[i]) += step_sens.dot(
-        ts_varis_[i]->adj_
-            += step_sens.dot(rhs(value_of(solver_->ts_[i]), solver_->y_[i],
-                                 solver_->value_of_args_tuple_));
+        adjoint_of(solver_->ts_[i]) += step_sens.dot(
+            rhs(value_of(solver_->ts_[i]), solver_->y_[i],
+                solver_->value_of_args_tuple_));
         step_sens.setZero();
       }
 
@@ -485,8 +445,6 @@ class cvodes_integrator_adjoint_vari : public vari_base {
 
     solver_->state_backward_.setZero();
     solver_->quad_.setZero();
-    // N_VConst(0.0, solver_->nv_state_backward_);
-    // N_VConst(0.0, solver_->nv_quad_);
 
     // At every time step, collect the adjoints from the output
     // variables and re-initialize the solver
@@ -495,10 +453,8 @@ class cvodes_integrator_adjoint_vari : public vari_base {
       // Take in the adjoints from all the output variables at this point
       // in time
       for (int j = 0; j < N_; ++j) {
-        // solver_->state_backward_.coeffRef(j)
-        //    += forward_as<var>(solver_->y_return_[i].coeff(j)).adj();
         solver_->state_backward_.coeffRef(j)
-            += y_return_non_chaining_varis_[i * N_ + j]->adj_;
+            += forward_as<var>(y_return_[i].coeff(j)).adj();
       }
 
       double t_final = value_of((i > 0) ? solver_->ts_[i - 1] : solver_->t0_);
@@ -607,35 +563,27 @@ class cvodes_integrator_adjoint_vari : public vari_base {
       }
     }
 
-    //std::cout << "Collecting adjoints..." << std::endl;
+    // After integrating all the way back to t0, we finally have the
+    // the adjoints we wanted
 
+    // This is the dlog_density / d(initial_time_point) adjoint
     if (is_var_t0_) {
-      //std::cout << "Collecting t0 adjoints..." << std::endl;
-      //adjoint_of(solver_->t0_) += -solver_->state_backward_.dot(
-      t0_varis_[0]->adj_ += -solver_->state_backward_.dot(
+      adjoint_of(solver_->t0_) += -solver_->state_backward_.dot(
           rhs(t_init, value_of(solver_->y0_), solver_->value_of_args_tuple_));
     }
 
-    // After integrating all the way back to t0, we finally have the
-    // the adjoints we wanted
     // These are the dlog_density / d(initial_conditions[s]) adjoints
     if (is_var_y0_t0_) {
-      //for (size_t s = 0; s < N_; ++s) {
-      //  y0_varis_[s]->adj_ += solver_->state_backward_.coeff(s);
-      //}
       forward_as<Eigen::Matrix<var, Eigen::Dynamic, 1>>(solver_->y0_).adj()
           += solver_->state_backward_;
     }
 
     // These are the dlog_density / d(parameters[s]) adjoints
     if (is_any_var_args_) {
-      //std::cout << "Collecting args adjoints..." << std::endl;
       for (size_t s = 0; s < num_args_vars_; ++s) {
         args_varis_[s]->adj_ += solver_->quad_.coeff(s);
       }
     }
-
-    //std::cout << "Done with adjoints." << std::endl;    
   }
 
  private:
