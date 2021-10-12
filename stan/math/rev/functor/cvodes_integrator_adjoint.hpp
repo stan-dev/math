@@ -71,6 +71,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
   int solver_backward_;
   int index_backward_;
   bool backward_is_initialized_{false};
+  arena_t<std::vector<arena_t<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>>>> y_return_;
 
   /**
    * Since the CVODES solver manages memory with malloc calls, these resources
@@ -91,7 +92,6 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     SUNMatrix A_backward_;
     SUNLinearSolver LS_backward_;
     void* cvodes_mem_;
-    std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> y_return_;
     std::tuple<T_Args...> local_args_tuple_;
     const std::tuple<
         promote_scalar_t<partials_type_t<scalar_type_t<T_Args>>, T_Args>...>
@@ -107,7 +107,6 @@ class cvodes_integrator_adjoint_vari : public vari_base {
         : chainable_alloc(),
           f_(std::forward<FF>(f)),
           function_name_str_(function_name),
-          y_return_(ts_size),
           nv_state_forward_(N_VMake_Serial(N, state_forward.data())),
           nv_state_backward_(N_VMake_Serial(N, state_backward.data())),
           nv_quad_(N_VMake_Serial(num_args_vars, quad.data())),
@@ -233,6 +232,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
         solver_forward_(solver_forward),
         solver_backward_(solver_backward),
         backward_is_initialized_(false),
+        y_return_(ts.size(), arena_t<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>>(y0.size())),
         solver_(nullptr) {
     check_finite(function_name, "initial state", y0);
     check_finite(function_name, "initial time", t0);
@@ -359,7 +359,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
           }
         }
       }
-      store_state(n, state_forward_, solver_->y_return_[n]);
+      store_state(n, state_forward_, this->y_return_[n]);
 
       t_init = t_final;
     }
@@ -373,16 +373,13 @@ class cvodes_integrator_adjoint_vari : public vari_base {
    * autodiff then non-chaining varis are setup accordingly.
    */
   void store_state(std::size_t n, const Eigen::VectorXd& state,
-                   Eigen::Matrix<var, Eigen::Dynamic, 1>& state_return) {
+                   arena_t<Eigen::Matrix<var, Eigen::Dynamic, 1>>& state_return) {
     y_[n] = state;
-    state_return.resize(N_);
-    for (size_t i = 0; i < N_; i++) {
-      state_return.coeffRef(i) = var(new vari(state.coeff(i), false));
-    }
+    state_return = state;
   }
 
   void store_state(std::size_t n, const Eigen::VectorXd& state,
-                   Eigen::Matrix<double, Eigen::Dynamic, 1>& state_return) {
+                   arena_t<Eigen::Matrix<double, Eigen::Dynamic, 1>>& state_return) {
     y_[n] = state;
     state_return = state;
   }
@@ -395,7 +392,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
    *   solution time (excluding the initial state)
    */
   std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> solution() noexcept {
-    return solver_->y_return_;
+    return std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>>(this->y_return_.begin(), this->y_return_.end());
   }
 
   /**
@@ -415,7 +412,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
       for (int i = 0; i < ts_.size(); ++i) {
         for (int j = 0; j < N_; ++j) {
           step_sens.coeffRef(j)
-              += forward_as<var>(solver_->y_return_[i].coeff(j)).adj();
+              += forward_as<var>(this->y_return_[i].coeff(j)).adj();
         }
 
         adjoint_of(ts_[i]) += step_sens.dot(
@@ -439,7 +436,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
       // in time
       for (int j = 0; j < N_; ++j) {
         state_backward_.coeffRef(j)
-            += forward_as<var>(solver_->y_return_[i].coeff(j)).adj();
+            += forward_as<var>(this->y_return_[i].coeff(j)).adj();
       }
 
       double t_final = value_of((i > 0) ? ts_[i - 1] : t0_);
