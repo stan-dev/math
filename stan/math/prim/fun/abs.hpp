@@ -14,7 +14,7 @@ namespace stan {
 namespace math {
 
 /**
- * Return the absolute value of the specified arithmetic argument.  
+ * Return the absolute value of the specified arithmetic argument.
  * The return type is the same as the argument type.
  *
  * @tparam T type of arument (must be arithmetic)
@@ -28,7 +28,7 @@ T abs(T x) {
 
 /*
  * Return the elementwise absolute value of the specified container.
- * 
+ *
  * @tparam T type of elements in the vector
  * @param x vector argument
  * @return elementwise absolute value of argument
@@ -68,10 +68,10 @@ template <typename T, require_complex_t<T>* = nullptr>
 auto abs(T x) {
   return hypot(x.real(), x.imag());
 }
-  
+
 /**
  * Return elementwise absolute value of the specified real-valued
- * container. 
+ * container.
  *
  * @tparam T type of argument
  * @param x argument

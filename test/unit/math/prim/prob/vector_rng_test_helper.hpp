@@ -16,15 +16,14 @@
 #include <vector>
 
 namespace internal {
-  template <class C>
-  void shuffle_container(C& x) {
-    std::random_device rng;
-    std::mt19937 twister(rng());
-    std::shuffle(x.begin(), x.end(), twister);
-  }
+template <class C>
+void shuffle_container(C& x) {
+  std::random_device rng;
+  std::mt19937 twister(rng());
+  std::shuffle(x.begin(), x.end(), twister);
 }
+}  // namespace internal
 
-  
 using ArgumentTypes
     = std::tuple<int, double, std::vector<int>, std::vector<double>,
                  Eigen::VectorXd, Eigen::RowVectorXd>;
