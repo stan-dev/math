@@ -18,6 +18,26 @@ namespace internal {
  */
 inline size_t count_vars_impl(size_t count) { return count; }
 
+template <typename VecVar, require_std_vector_vt<is_var, VecVar>* = nullptr,
+          typename... Pargs>
+inline size_t count_vars_impl(size_t count, VecVar&& x, Pargs&&... args);
+
+template <typename EigT, require_eigen_vt<is_var, EigT>* = nullptr,
+          typename... Pargs>
+inline size_t count_vars_impl(size_t count, EigT&& x, Pargs&&... args);
+
+template <typename Var, require_var_t<Var>* = nullptr, typename... Pargs>
+inline size_t count_vars_impl(size_t count, Var&& x, Pargs&&... args);
+
+template <typename VecContainer,
+          require_std_vector_st<is_var, VecContainer>* = nullptr,
+          require_std_vector_vt<is_container, VecContainer>* = nullptr,
+          typename... Pargs>
+inline size_t count_vars_impl(size_t count, VecContainer&& x, Pargs&&... args);
+
+template <typename Arith, require_arithmetic_t<scalar_type_t<Arith>>* = nullptr,
+          typename... Pargs>
+inline size_t count_vars_impl(size_t count, Arith&& x, Pargs&&... args);
 /**
  * Arguments without vars contribute zero to the total number of vars.
  *
@@ -32,7 +52,7 @@ inline size_t count_vars_impl(size_t count) { return count; }
  * @param[in] args objects to be forwarded to recursive call of
  * `count_vars_impl`
  */
-template <typename Arith, require_arithmetic_t<scalar_type_t<Arith>>* = nullptr,
+template <typename Arith, require_arithmetic_t<scalar_type_t<Arith>>*,
           typename... Pargs>
 inline size_t count_vars_impl(size_t count, Arith&& x, Pargs&&... args) {
   return count_vars_impl(count, std::forward<Pargs>(args)...);
@@ -51,7 +71,7 @@ inline size_t count_vars_impl(size_t count, Arith&& x, Pargs&&... args) {
  * @param[in] args objects to be forwarded to recursive call of
  * `count_vars_impl`
  */
-template <typename VecVar, require_std_vector_vt<is_var, VecVar>* = nullptr,
+template <typename VecVar, require_std_vector_vt<is_var, VecVar>*,
           typename... Pargs>
 inline size_t count_vars_impl(size_t count, VecVar&& x, Pargs&&... args) {
   return count_vars_impl(count + x.size(), std::forward<Pargs>(args)...);
@@ -70,7 +90,7 @@ inline size_t count_vars_impl(size_t count, VecVar&& x, Pargs&&... args) {
  * @param[in] args objects to be forwarded to recursive call of
  * `count_vars_impl`
  */
-template <typename EigT, require_eigen_vt<is_var, EigT>* = nullptr,
+template <typename EigT, require_eigen_vt<is_var, EigT>*,
           typename... Pargs>
 inline size_t count_vars_impl(size_t count, EigT&& x, Pargs&&... args) {
   return count_vars_impl(count + x.size(), std::forward<Pargs>(args)...);
@@ -87,7 +107,7 @@ inline size_t count_vars_impl(size_t count, EigT&& x, Pargs&&... args) {
  * @param[in] args objects to be forwarded to recursive call of
  * `count_vars_impl`
  */
-template <typename Var, require_var_t<Var>* = nullptr, typename... Pargs>
+template <typename Var, require_var_t<Var>*, typename... Pargs>
 inline size_t count_vars_impl(size_t count, Var&& x, Pargs&&... args) {
   return count_vars_impl(count + 1, std::forward<Pargs>(args)...);
 }
@@ -106,8 +126,8 @@ inline size_t count_vars_impl(size_t count, Var&& x, Pargs&&... args) {
  * `count_vars_impl`
  */
 template <typename VecContainer,
-          require_std_vector_st<is_var, VecContainer>* = nullptr,
-          require_std_vector_vt<is_container, VecContainer>* = nullptr,
+          require_std_vector_st<is_var, VecContainer>* ,
+          require_std_vector_vt<is_container, VecContainer>* ,
           typename... Pargs>
 inline size_t count_vars_impl(size_t count, VecContainer&& x, Pargs&&... args) {
   for (auto&& x_iter : x) {
