@@ -406,7 +406,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
       y_[n] = Eigen::VectorXd(state_forward_);
       this->y_return_[n] = Eigen::VectorXd(state_forward_);
 
-//      store_state(n, state_forward_, this->y_return_[n]);
+      //      store_state(n, state_forward_, this->y_return_[n]);
 
       t_init = t_final;
     }
@@ -579,7 +579,8 @@ class cvodes_integrator_adjoint_vari : public vari_base {
 
     // These are the dlog_density / d(parameters[s]) adjoints
     if (is_any_var_args_) {
-      Eigen::Map<Eigen::Matrix<vari*, -1, 1>>(args_varis_, num_args_vars_).adj() += quad_;
+      Eigen::Map<Eigen::Matrix<vari*, -1, 1>>(args_varis_, num_args_vars_).adj()
+          += quad_;
     }
   }
 
