@@ -58,7 +58,7 @@ template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto sqrt(const T& a) {
   return make_callback_var(
       a.val().array().sqrt().matrix(), [a](auto& vi) mutable {
-        a.adj().array() += vi.adj().array() / (2.0 * vi.val_op().array());
+        a.adj().array() += vi.adj().array() / (2.0 * vi.val().array());
       });
 }
 

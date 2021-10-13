@@ -133,6 +133,10 @@ inline auto cholesky_lambda(T1& L_A, T2& L, T3& A) {
  */
 template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
 inline auto cholesky_decompose(const EigMat& A) {
+  // Need to explicitly return on size-zero inputs for Intel MKL compatibility
+  if(A.size() == 0) {
+    return A;
+  }
   check_square("cholesky_decompose", "A", A);
   arena_t<EigMat> arena_A = A;
   arena_t<Eigen::Matrix<double, -1, -1>> L_A(arena_A.val());

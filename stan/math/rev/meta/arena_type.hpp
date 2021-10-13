@@ -41,7 +41,9 @@ struct arena_type_impl<
     T, require_eigen_t<T>,
     std::enable_if_t<T::RowsAtCompileTime == Eigen::Dynamic
                      || T::ColsAtCompileTime == Eigen::Dynamic>> {
-  using type = math::arena_matrix<plain_type_t<T>>;
+  using type_impl = math::arena_matrix<plain_type_t<T>>;
+  using type = std::conditional_t<std::is_const<std::remove_reference_t<T>>::value,
+                                  const type_impl, type_impl>;
 };
 
 template <typename T>
@@ -49,7 +51,9 @@ struct arena_type_impl<
     T, require_eigen_t<T>,
     std::enable_if_t<T::RowsAtCompileTime != Eigen::Dynamic
                      && T::ColsAtCompileTime != Eigen::Dynamic>> {
-  using type = plain_type_t<T>;
+  using type_impl = plain_type_t<T>;
+  using type = std::conditional_t<std::is_const<std::remove_reference_t<T>>::value,
+                                  const type_impl, type_impl>;
 };
 }  // namespace internal
 

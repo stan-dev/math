@@ -31,6 +31,10 @@ template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
 inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
                      EigMat::ColsAtCompileTime>
 cholesky_decompose(const EigMat& m) {
+  // Need to explicitly return on size-zero inputs for Intel MKL compatibility
+  if(m.size() == 0) {
+    return m;
+  }
   const eval_return_type_t<EigMat>& m_eval = m.eval();
   check_symmetric("cholesky_decompose", "m", m_eval);
   check_not_nan("cholesky_decompose", "m", m_eval);

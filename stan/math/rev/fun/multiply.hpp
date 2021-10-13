@@ -40,8 +40,8 @@ inline auto multiply(const T1& A, const T2& B) {
     reverse_pass_callback(
         [arena_A, arena_B, arena_A_val, arena_B_val, res]() mutable {
           if (is_var_matrix<T1>::value || is_var_matrix<T2>::value) {
-            arena_A.adj() += res.adj_op() * arena_B_val.transpose();
-            arena_B.adj() += arena_A_val.transpose() * res.adj_op();
+            arena_A.adj() += res.adj() * arena_B_val.transpose();
+            arena_B.adj() += arena_A_val.transpose() * res.adj();
           } else {
             auto res_adj = res.adj().eval();
             arena_A.adj() += res_adj * arena_B_val.transpose();
@@ -54,9 +54,9 @@ inline auto multiply(const T1& A, const T2& B) {
     arena_t<promote_scalar_t<var, T2>> arena_B = B;
     using return_t
         = return_var_matrix_t<decltype(arena_A * value_of(B).eval()), T1, T2>;
-    arena_t<return_t> res = arena_A * arena_B.val_op();
+    arena_t<return_t> res = arena_A * arena_B.val();
     reverse_pass_callback([arena_B, arena_A, res]() mutable {
-      arena_B.adj() += arena_A.transpose() * res.adj_op();
+      arena_B.adj() += arena_A.transpose() * res.adj();
     });
     return return_t(res);
   } else {
@@ -65,9 +65,9 @@ inline auto multiply(const T1& A, const T2& B) {
     using return_t
         = return_var_matrix_t<decltype(value_of(arena_A).eval() * arena_B), T1,
                               T2>;
-    arena_t<return_t> res = arena_A.val_op() * arena_B;
+    arena_t<return_t> res = arena_A.val() * arena_B;
     reverse_pass_callback([arena_A, arena_B, res]() mutable {
-      arena_A.adj() += res.adj_op() * arena_B.transpose();
+      arena_A.adj() += res.adj() * arena_B.transpose();
     });
 
     return return_t(res);

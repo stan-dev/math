@@ -44,7 +44,7 @@ inline auto mdivide_left_ldlt(LDLT_factor<T1>& A, const T2& B) {
     reverse_pass_callback([arena_A, arena_B, ldlt_ptr, res]() mutable {
       promote_scalar_t<double, T2> adjB = ldlt_ptr->solve(res.adj());
 
-      arena_A.adj() -= adjB * res.val_op().transpose();
+      arena_A.adj() -= adjB * res.val().transpose();
       arena_B.adj() += adjB;
     });
 
@@ -55,7 +55,7 @@ inline auto mdivide_left_ldlt(LDLT_factor<T1>& A, const T2& B) {
     const auto* ldlt_ptr = make_chainable_ptr(A.ldlt());
 
     reverse_pass_callback([arena_A, ldlt_ptr, res]() mutable {
-      arena_A.adj() -= ldlt_ptr->solve(res.adj()) * res.val_op().transpose();
+      arena_A.adj() -= ldlt_ptr->solve(res.adj()) * res.val().transpose();
     });
 
     return ret_type(res);

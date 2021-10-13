@@ -25,12 +25,12 @@ inline auto tcrossprod(const T& M) {
   using ret_type = return_var_matrix_t<
       Eigen::Matrix<double, T::RowsAtCompileTime, T::RowsAtCompileTime>, T>;
   arena_t<T> arena_M = M;
-  arena_t<ret_type> res = arena_M.val_op() * arena_M.val_op().transpose();
+  arena_t<ret_type> res = arena_M.val() * arena_M.val().transpose();
 
   if (likely(M.size() > 0)) {
     reverse_pass_callback([res, arena_M]() mutable {
       arena_M.adj()
-          += (res.adj_op() + res.adj_op().transpose()) * arena_M.val_op();
+          += (res.adj() + res.adj().transpose()) * arena_M.val();
     });
   }
 
