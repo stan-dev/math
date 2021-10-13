@@ -16,6 +16,8 @@ TEST(AgradRevMatrixAddons, var_matrix) {
     for (int j = 0; j < 100; j++)
       mat_in(i, j).vi_->adj_ = derivs(i, j);
 
+  MatrixXd nonconst_out = mat_in.adj().cwiseProduct(mat_in.val());
+
   EXPECT_MATRIX_FLOAT_EQ(vals, mat_in.val());
   EXPECT_MATRIX_FLOAT_EQ(vals.val(), mat_in.val());
   EXPECT_MATRIX_FLOAT_EQ(vals.array().exp(), mat_in.val().array().exp());
@@ -31,8 +33,8 @@ TEST(AgradRevMatrixAddons, var_matrix) {
 
   const matrix_v const_mat_in = matrix_v::Random(100, 100);
 
-  MatrixXd tri_out = const_mat_in.val().triangularView<Eigen::Upper>().solve(
-      const_mat_in.adj().transpose());
+  MatrixXd tri_out = mat_in.val().triangularView<Eigen::Upper>().solve(
+      mat_in.adj().transpose());
 
   matrix_vi mat_vi = mat_in.vi();
 

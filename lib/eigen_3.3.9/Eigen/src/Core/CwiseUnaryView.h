@@ -28,7 +28,8 @@ struct traits<CwiseUnaryView<ViewOp, MatrixType> >
     MatrixTypeInnerStride =  inner_stride_at_compile_time<MatrixType>::ret,
     // need to cast the sizeof's from size_t to int explicitly, otherwise:
     // "error: no integral type can represent all of the enumerator values
-    InnerStrideAtCompileTime = MatrixTypeInnerStride == Dynamic
+    InnerStrideAtCompileTime = ((MatrixTypeInnerStride == int(Dynamic)) |
+                               (int(MatrixTypeInnerStride) * int(sizeof(typename traits<MatrixType>::Scalar) / sizeof(Scalar)) == 1))
                              ? int(Dynamic)
                              : int(MatrixTypeInnerStride) * int(sizeof(typename traits<MatrixType>::Scalar) / sizeof(Scalar)),
     OuterStrideAtCompileTime = outer_stride_at_compile_time<MatrixType>::ret == Dynamic
