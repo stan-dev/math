@@ -328,7 +328,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
         [func_name = function_name](auto&& arg) {
           check_finite(func_name, "ode parameters and data", arg);
         },
-        solver_->value_of_args_tuple_);
+        solver_->local_args_tuple_);
 
     check_flag_sundials(
         CVodeInit(solver_->cvodes_mem_, &cvodes_integrator_adjoint_vari::cv_rhs,
@@ -403,8 +403,10 @@ class cvodes_integrator_adjoint_vari : public vari_base {
           }
         }
       }
-      y_[n] = state_forward_;
-      this->y_return_[n] = to_arena(Eigen::Matrix<T_Return, Eigen::Dynamic, 1>(state_forward_));
+      y_[n] = Eigen::VectorXd(state_forward_);
+      this->y_return_[n] = Eigen::VectorXd(state_forward_);
+
+//      store_state(n, state_forward_, this->y_return_[n]);
 
       t_init = t_final;
     }
@@ -432,14 +434,13 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     if (!is_var_return_) {
       return;
     }
-    using y_ret_value_type = arena_t<Eigen::Matrix<var, Eigen::Dynamic, 1>>;
+    using arena_var_vector = arena_t<Eigen::Matrix<var, Eigen::Dynamic, 1>>;
     // for sensitivities wrt to ts we do not need to run the backward
     // integration
     if (is_var_ts_) {
       for (int i = 0; i < ts_.size(); ++i) {
-        Eigen::VectorXd state_sens = forward_as<y_ret_value_type>(this->y_return_[i])
-                                  .adj();
-        adjoint_of(ts_[i]) += state_sens
+        adjoint_of(ts_[i]) += forward_as<arena_var_vector>(this->y_return_[i])
+                                  .adj()
                                   .dot(rhs(value_of(ts_[i]), y_[i],
                                            solver_->value_of_args_tuple_));
       }
@@ -458,7 +459,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     for (int i = ts_.size() - 1; i >= 0; --i) {
       // Take in the adjoints from all the output variables at this point
       // in time
-      state_backward_ += forward_as<y_ret_value_type>(this->y_return_[i]).adj();
+      state_backward_ += forward_as<arena_var_vector>(this->y_return_[i]).adj();
 
       double t_final = value_of((i > 0) ? ts_[i - 1] : t0_);
       if (t_final != t_init) {
@@ -573,14 +574,12 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     // the adjoints we wanted
     // These are the dlog_density / d(initial_conditions[s]) adjoints
     if (is_var_y0_t0_) {
-      forward_as<arena_t<Eigen::Matrix<var, Eigen::Dynamic, 1>>>(y0_).adj()
-          += state_backward_;
+      forward_as<arena_var_vector>(y0_).adj() += state_backward_;
     }
+
     // These are the dlog_density / d(parameters[s]) adjoints
     if (is_any_var_args_) {
-      for (size_t s = 0; s < num_args_vars_; ++s) {
-        args_varis_[s]->adj_ += quad_.coeff(s);
-      }
+      Eigen::Map<Eigen::Matrix<vari*, -1, 1>>(args_varis_, num_args_vars_).adj() += quad_;
     }
   }
 
@@ -682,7 +681,6 @@ class cvodes_integrator_adjoint_vari : public vari_base {
 
     stan::math::for_each([](auto&& arg) { zero_adjoints(arg); },
                          solver_->local_args_tuple_);
-
     Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars
         = rhs(t, y_vec, solver_->local_args_tuple_);
     check_size_match(solver_->function_name_str_.c_str(), "dy_dt",
