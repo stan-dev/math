@@ -56,6 +56,8 @@ class cvodes_integrator_adjoint_vari : public vari_base {
   size_t num_args_vars_;
   arena_t<Eigen::VectorXd> quad_;
   arena_t<T_t0> t0_;
+  arena_t<std::vector<arena_t<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>>>>
+      y_return_;
 
   double relative_tolerance_forward_;
   double relative_tolerance_backward_;
@@ -71,7 +73,6 @@ class cvodes_integrator_adjoint_vari : public vari_base {
   int solver_backward_;
   int index_backward_;
   bool backward_is_initialized_{false};
-  arena_t<std::vector<arena_t<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>>>> y_return_;
 
   /**
    * Since the CVODES solver manages memory with malloc calls, these resources
@@ -105,8 +106,9 @@ class cvodes_integrator_adjoint_vari : public vari_base {
                   AbsTolFwd& absolute_tolerance_forward,
                   AbsTolBwd& absolute_tolerance_backward, const T_Args&... args)
         : chainable_alloc(),
-          f_(std::forward<FF>(f)),
           function_name_str_(function_name),
+          f_(std::forward<FF>(f)),
+          N_(N),
           nv_state_forward_(N_VMake_Serial(N, state_forward.data())),
           nv_state_backward_(N_VMake_Serial(N, state_backward.data())),
           nv_quad_(N_VMake_Serial(num_args_vars, quad.data())),
@@ -122,14 +124,15 @@ class cvodes_integrator_adjoint_vari : public vari_base {
           LS_backward_(
               N == 0 ? nullptr
                      : SUNDenseLinearSolver(nv_state_backward_, A_backward_)),
-          N_(N),
-          cvodes_mem_(CVodeCreate(solver_forward)),
+          cvodes_mem_([](int solver_forward) {
+            void* cvodes_mem = CVodeCreate(solver_forward);
+            if (cvodes_mem == nullptr) {
+              throw std::runtime_error("CVodeCreate failed to allocate memory");
+            }
+            return cvodes_mem;
+          }(solver_forward)),
           local_args_tuple_(deep_copy_vars(args)...),
-          value_of_args_tuple_(value_of(args)...) {
-      if (cvodes_mem_ == nullptr) {
-        throw std::runtime_error("CVodeCreate failed to allocate memory");
-      }
-    }
+          value_of_args_tuple_(value_of(args)...) {}
 
     virtual ~cvodes_solver() {
       SUNMatDestroy(A_forward_);
@@ -204,87 +207,128 @@ class cvodes_integrator_adjoint_vari : public vari_base {
       std::ostream* msgs, const T_Args&... args)
       : vari_base(),
         y_(ts.size()),
-        ts_(ts.begin(), ts.end()),
-        y0_(y0),
-        absolute_tolerance_forward_(absolute_tolerance_forward),
-        absolute_tolerance_backward_(absolute_tolerance_backward),
-        state_forward_(value_of(y0)),
+        ts_([](const char* function_name, auto&& ts) {
+          check_nonzero_size(function_name, "times", ts);
+          check_finite(function_name, "times", ts);
+          check_sorted(function_name, "times", ts);
+          return arena_t<std::vector<T_ts>>(ts.begin(), ts.end());
+        }(function_name, ts)),
+        y0_([](const char* function_name, auto&& y0) {
+          check_nonzero_size(function_name, "initial state", y0);
+          check_finite(function_name, "initial state", y0);
+          return y0;
+        }(function_name, y0)),
+        absolute_tolerance_forward_([](const char* function_name, auto N,
+                                       auto&& absolute_tolerance_forward) {
+          check_positive_finite(function_name, "absolute_tolerance_forward",
+                                absolute_tolerance_forward);
+          check_size_match(function_name, "absolute_tolerance_forward",
+                           absolute_tolerance_forward.size(), "states", N);
+          return absolute_tolerance_forward;
+        }(function_name, y0.size(), absolute_tolerance_forward)),
+        absolute_tolerance_backward_([](const char* function_name, auto N,
+                                        auto&& absolute_tolerance_backward) {
+          check_positive_finite(function_name, "absolute_tolerance_backward",
+                                absolute_tolerance_backward);
+          check_size_match(function_name, "absolute_tolerance_backward",
+                           absolute_tolerance_backward.size(), "states", N);
+          return absolute_tolerance_backward;
+        }(function_name, y0.size(), absolute_tolerance_backward)),
+        state_forward_([](const char* function_name, auto&& y0_val) {
+          return y0_val;
+        }(function_name, value_of(y0))),
         state_backward_(y0.size()),
         num_args_vars_(count_vars(args...)),
         quad_(num_args_vars_),
-        t0_(t0),
-        relative_tolerance_forward_(relative_tolerance_forward),
-        relative_tolerance_backward_(relative_tolerance_backward),
-        relative_tolerance_quadrature_(relative_tolerance_quadrature),
-        absolute_tolerance_quadrature_(absolute_tolerance_quadrature),
-        max_num_steps_(max_num_steps),
-        num_steps_between_checkpoints_(num_steps_between_checkpoints),
+        t0_([](const char* function_name, auto&& t0, auto&& ts) {
+          check_finite(function_name, "initial time", t0);
+          check_less(function_name, "initial time", t0, ts[0]);
+          return t0;
+        }(function_name, t0, ts)),
+        y_return_(ts.size()),
+        relative_tolerance_forward_(
+            [](const char* function_name, auto&& relative_tolerance_forward) {
+              check_positive_finite(function_name, "relative_tolerance_forward",
+                                    relative_tolerance_forward);
+              return relative_tolerance_forward;
+            }(function_name, relative_tolerance_forward)),
+        relative_tolerance_backward_([](const char* function_name,
+                                        auto&& relative_tolerance_backward) {
+          check_positive_finite(function_name, "relative_tolerance_backward",
+                                relative_tolerance_backward);
+          return relative_tolerance_backward;
+        }(function_name, relative_tolerance_backward)),
+        relative_tolerance_quadrature_(
+            [](const char* function_name,
+               auto&& relative_tolerance_quadrature) {
+              check_positive_finite(function_name,
+                                    "relative_tolerance_quadrature",
+                                    relative_tolerance_quadrature);
+              return relative_tolerance_quadrature;
+            }(function_name, relative_tolerance_quadrature)),
+        absolute_tolerance_quadrature_(
+            [](const char* function_name,
+               auto&& absolute_tolerance_quadrature) {
+              check_positive_finite(function_name,
+                                    "absolute_tolerance_quadrature",
+                                    absolute_tolerance_quadrature);
+              return absolute_tolerance_quadrature;
+            }(function_name, absolute_tolerance_quadrature)),
+        max_num_steps_([](const char* function_name, auto&& max_num_steps) {
+          check_positive(function_name, "max_num_steps", max_num_steps);
+          return max_num_steps;
+        }(function_name, max_num_steps)),
+        num_steps_between_checkpoints_(
+            [](const char* function_name,
+               auto&& num_steps_between_checkpoints) {
+              check_positive(function_name, "num_steps_between_checkpoints",
+                             num_steps_between_checkpoints);
+              return num_steps_between_checkpoints;
+            }(function_name, num_steps_between_checkpoints)),
         N_(y0.size()),
         msgs_(msgs),
-        args_varis_([&args..., num_vars = this->num_args_vars_]() {
+        args_varis_([](auto num_vars, auto&&... args) {
           vari** vari_mem
               = ChainableStack::instance_->memalloc_.alloc_array<vari*>(
                   num_vars);
           save_varis(vari_mem, args...);
           return vari_mem;
-        }()),
-        interpolation_polynomial_(interpolation_polynomial),
-        solver_forward_(solver_forward),
-        solver_backward_(solver_backward),
+        }(this->num_args_vars_, args...)),
+        interpolation_polynomial_([](const char* function_name,
+                                     auto&& interpolation_polynomial) {
+          // for polynomial: 1=CV_HERMITE / 2=CV_POLYNOMIAL
+          if (interpolation_polynomial != 1 && interpolation_polynomial != 2)
+            invalid_argument(function_name, "interpolation_polynomial",
+                             interpolation_polynomial, "",
+                             ", must be 1 for Hermite or 2 for polynomial "
+                             "interpolation of ODE solution");
+          return interpolation_polynomial;
+        }(function_name, interpolation_polynomial)),
+        solver_forward_([](const char* function_name, auto&& solver_forward) {
+          // 1=Adams=CV_ADAMS, 2=BDF=CV_BDF
+          if (solver_forward != 1 && solver_forward != 2)
+            invalid_argument(
+                function_name, "solver_forward", solver_forward, "",
+                ", must be 1 for Adams or 2 for BDF forward solver");
+          return solver_forward;
+        }(function_name, solver_forward)),
+        solver_backward_([](const char* function_name, auto&& solver_backward) {
+          if (solver_backward != 1 && solver_backward != 2)
+            invalid_argument(
+                function_name, "solver_backward", solver_backward, "",
+                ", must be 1 for Adams or 2 for BDF backward solver");
+          return solver_backward;
+        }(function_name, solver_backward)),
         backward_is_initialized_(false),
-        y_return_(ts.size(), arena_t<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>>(y0.size())),
-        solver_(nullptr) {
-    check_finite(function_name, "initial state", y0);
-    check_finite(function_name, "initial time", t0);
-    check_finite(function_name, "times", ts);
-
-    check_nonzero_size(function_name, "times", ts);
-    check_nonzero_size(function_name, "initial state", y0);
-    check_sorted(function_name, "times", ts);
-    check_less(function_name, "initial time", t0, ts[0]);
-    check_positive_finite(function_name, "relative_tolerance_forward",
-                          relative_tolerance_forward_);
-    check_positive_finite(function_name, "absolute_tolerance_forward",
-                          absolute_tolerance_forward_);
-    check_size_match(function_name, "absolute_tolerance_forward",
-                     absolute_tolerance_forward_.size(), "states", N_);
-    check_positive_finite(function_name, "relative_tolerance_backward",
-                          relative_tolerance_backward_);
-    check_positive_finite(function_name, "absolute_tolerance_backward",
-                          absolute_tolerance_backward_);
-    check_size_match(function_name, "absolute_tolerance_backward",
-                     absolute_tolerance_backward_.size(), "states", N_);
-    check_positive_finite(function_name, "relative_tolerance_quadrature",
-                          relative_tolerance_quadrature_);
-    check_positive_finite(function_name, "absolute_tolerance_quadrature",
-                          absolute_tolerance_quadrature_);
-    check_positive(function_name, "max_num_steps", max_num_steps_);
-    check_positive(function_name, "num_steps_between_checkpoints",
-                   num_steps_between_checkpoints_);
-    // for polynomial: 1=CV_HERMITE / 2=CV_POLYNOMIAL
-    if (interpolation_polynomial_ != 1 && interpolation_polynomial_ != 2)
-      invalid_argument(function_name, "interpolation_polynomial",
-                       interpolation_polynomial_, "",
-                       ", must be 1 for Hermite or 2 for polynomial "
-                       "interpolation of ODE solution");
-    // 1=Adams=CV_ADAMS, 2=BDF=CV_BDF
-    if (solver_forward_ != 1 && solver_forward_ != 2)
-      invalid_argument(function_name, "solver_forward", solver_forward_, "",
-                       ", must be 1 for Adams or 2 for BDF forward solver");
-    if (solver_backward_ != 1 && solver_backward_ != 2)
-      invalid_argument(function_name, "solver_backward", solver_backward_, "",
-                       ", must be 1 for Adams or 2 for BDF backward solver");
-
-    solver_ = new cvodes_solver(
-        function_name, f, N_, num_args_vars_, ts_.size(), solver_forward_,
-        state_forward_, state_backward_, quad_, absolute_tolerance_forward_,
-        absolute_tolerance_backward_, args...);
-
+        solver_(new cvodes_solver(
+            function_name, f, N_, num_args_vars_, ts_.size(), solver_forward_,
+            state_forward_, state_backward_, quad_, absolute_tolerance_forward_,
+            absolute_tolerance_backward_, args...)) {
     stan::math::for_each(
         [func_name = function_name](auto&& arg) {
           check_finite(func_name, "ode parameters and data", arg);
         },
-        solver_->local_args_tuple_);
+        solver_->value_of_args_tuple_);
 
     check_flag_sundials(
         CVodeInit(solver_->cvodes_mem_, &cvodes_integrator_adjoint_vari::cv_rhs,
@@ -359,29 +403,12 @@ class cvodes_integrator_adjoint_vari : public vari_base {
           }
         }
       }
-      store_state(n, state_forward_, this->y_return_[n]);
+      y_[n] = state_forward_;
+      this->y_return_[n] = to_arena(Eigen::Matrix<T_Return, Eigen::Dynamic, 1>(state_forward_));
 
       t_init = t_final;
     }
     ChainableStack::instance_->var_stack_.push_back(this);
-  }
-
- private:
-  /**
-   * Overloads which setup the states returned from the forward solve. In case
-   * the return type is a double only, then no autodiff is needed. In case of
-   * autodiff then non-chaining varis are setup accordingly.
-   */
-  void store_state(std::size_t n, const Eigen::VectorXd& state,
-                   arena_t<Eigen::Matrix<var, Eigen::Dynamic, 1>>& state_return) {
-    y_[n] = state;
-    state_return = state;
-  }
-
-  void store_state(std::size_t n, const Eigen::VectorXd& state,
-                   arena_t<Eigen::Matrix<double, Eigen::Dynamic, 1>>& state_return) {
-    y_[n] = state;
-    state_return = state;
   }
 
  public:
@@ -392,7 +419,8 @@ class cvodes_integrator_adjoint_vari : public vari_base {
    *   solution time (excluding the initial state)
    */
   std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>> solution() noexcept {
-    return std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>>(this->y_return_.begin(), this->y_return_.end());
+    return std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>>(
+        this->y_return_.begin(), this->y_return_.end());
   }
 
   /**
@@ -404,20 +432,16 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     if (!is_var_return_) {
       return;
     }
-
+    using y_ret_value_type = arena_t<Eigen::Matrix<var, Eigen::Dynamic, 1>>;
     // for sensitivities wrt to ts we do not need to run the backward
     // integration
     if (is_var_ts_) {
-      Eigen::VectorXd step_sens = Eigen::VectorXd::Zero(N_);
       for (int i = 0; i < ts_.size(); ++i) {
-        for (int j = 0; j < N_; ++j) {
-          step_sens.coeffRef(j)
-              += forward_as<var>(this->y_return_[i].coeff(j)).adj();
-        }
-
-        adjoint_of(ts_[i]) += step_sens.dot(
-            rhs(value_of(ts_[i]), y_[i], solver_->value_of_args_tuple_));
-        step_sens.setZero();
+        Eigen::VectorXd state_sens = forward_as<y_ret_value_type>(this->y_return_[i])
+                                  .adj();
+        adjoint_of(ts_[i]) += state_sens
+                                  .dot(rhs(value_of(ts_[i]), y_[i],
+                                           solver_->value_of_args_tuple_));
       }
 
       if (is_var_only_ts_) {
@@ -434,10 +458,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     for (int i = ts_.size() - 1; i >= 0; --i) {
       // Take in the adjoints from all the output variables at this point
       // in time
-      for (int j = 0; j < N_; ++j) {
-        state_backward_.coeffRef(j)
-            += forward_as<var>(this->y_return_[i].coeff(j)).adj();
-      }
+      state_backward_ += forward_as<y_ret_value_type>(this->y_return_[i]).adj();
 
       double t_final = value_of((i > 0) ? ts_[i - 1] : t0_);
       if (t_final != t_init) {
@@ -555,7 +576,6 @@ class cvodes_integrator_adjoint_vari : public vari_base {
       forward_as<arena_t<Eigen::Matrix<var, Eigen::Dynamic, 1>>>(y0_).adj()
           += state_backward_;
     }
-
     // These are the dlog_density / d(parameters[s]) adjoints
     if (is_any_var_args_) {
       for (size_t s = 0; s < num_args_vars_; ++s) {
@@ -659,8 +679,10 @@ class cvodes_integrator_adjoint_vari : public vari_base {
 
     // The vars here do not live on the nested stack so must be zero'd
     // separately
+
     stan::math::for_each([](auto&& arg) { zero_adjoints(arg); },
                          solver_->local_args_tuple_);
+
     Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars
         = rhs(t, y_vec, solver_->local_args_tuple_);
     check_size_match(solver_->function_name_str_.c_str(), "dy_dt",
