@@ -324,12 +324,20 @@ class cvodes_integrator_adjoint_vari : public vari_base {
             function_name, f, N_, num_args_vars_, ts_.size(), solver_forward_,
             state_forward_, state_backward_, quad_, absolute_tolerance_forward_,
             absolute_tolerance_backward_, args...)) {
-    stan::math::for_each(
-        [func_name = function_name](auto&& arg) {
-          check_finite(func_name, "ode parameters and data", arg);
-        },
-        solver_->local_args_tuple_);
-
+    {
+      int param_number = 1;
+      stan::math::for_each(
+          [&param_number, func_name = function_name](auto&& arg) {
+            check_finite(
+                func_name,
+                (std::string("ode parameters and data argument number ")
+                 + std::to_string(param_number) + " at index ")
+                    .c_str(),
+                arg);
+            param_number++;
+          },
+          solver_->local_args_tuple_);
+    }
     check_flag_sundials(
         CVodeInit(solver_->cvodes_mem_, &cvodes_integrator_adjoint_vari::cv_rhs,
                   value_of(t0_), solver_->nv_state_forward_),
@@ -403,11 +411,10 @@ class cvodes_integrator_adjoint_vari : public vari_base {
           }
         }
       }
-      y_[n] = Eigen::VectorXd(state_forward_);
-      this->y_return_[n] = Eigen::VectorXd(state_forward_);
-
-      //      store_state(n, state_forward_, this->y_return_[n]);
-
+      // Need to make a deep copy of state_forward_
+      auto state_forward_tmp = Eigen::VectorXd(state_forward_);
+      y_[n] = state_forward_tmp;
+      this->y_return_[n] = state_forward_tmp;
       t_init = t_final;
     }
     ChainableStack::instance_->var_stack_.push_back(this);
