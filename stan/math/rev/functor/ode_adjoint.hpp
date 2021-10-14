@@ -88,7 +88,7 @@ auto ode_adjoint_impl(
       absolute_tolerance_backward, relative_tolerance_quadrature,
       absolute_tolerance_quadrature, max_num_steps,
       num_steps_between_checkpoints, interpolation_polynomial, solver_forward,
-      solver_backward, msgs, args...);
+      solver_backward, msgs, to_ref(args)...);
   return integrator->solution();
 }
 
@@ -177,7 +177,7 @@ std::vector<Eigen::VectorXd> ode_adjoint_impl(
         relative_tolerance_backward, absolute_tolerance_backward,
         relative_tolerance_quadrature, absolute_tolerance_quadrature,
         max_num_steps, num_steps_between_checkpoints, interpolation_polynomial,
-        solver_forward, solver_backward, msgs, args...);
+        solver_forward, solver_backward, msgs, to_ref(args)...);
 
     ode_solution = integrator->solution();
   }
