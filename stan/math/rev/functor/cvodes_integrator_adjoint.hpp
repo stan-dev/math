@@ -56,8 +56,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
   size_t num_args_vars_;
   arena_t<Eigen::VectorXd> quad_;
   arena_t<T_t0> t0_;
-  arena_t<std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>>>
-      y_return_;
+  arena_t<std::vector<Eigen::Matrix<T_Return, Eigen::Dynamic, 1>>> y_return_;
 
   double relative_tolerance_forward_;
   double relative_tolerance_backward_;
@@ -132,7 +131,9 @@ class cvodes_integrator_adjoint_vari : public vari_base {
             return cvodes_mem;
           }(solver_forward)),
           local_args_tuple_(deep_copy_vars(args)...),
-          value_of_args_tuple_(apply([](auto&&... args){ return value_tuple_t(value_of(args)...);}, local_args_tuple_)) {}
+          value_of_args_tuple_(apply(
+              [](auto&&... args) { return value_tuple_t(value_of(args)...); },
+              local_args_tuple_)) {}
 
     virtual ~cvodes_solver() {
       SUNMatDestroy(A_forward_);
@@ -192,8 +193,10 @@ class cvodes_integrator_adjoint_vari : public vari_base {
    * @return a vector of states, each state being a vector of the
    * same size as the state variable, corresponding to a time in ts.
    */
-  template <typename FF, typename T_y00, require_eigen_col_vector_t<T_y00>* = nullptr>
-  cvodes_integrator_adjoint_vari(const char* function_name, FF&& f, const T_y00& y0, const T_t0& t0,
+  template <typename FF, typename T_y00,
+            require_eigen_col_vector_t<T_y00>* = nullptr>
+  cvodes_integrator_adjoint_vari(
+      const char* function_name, FF&& f, const T_y00& y0, const T_t0& t0,
       const std::vector<T_ts>& ts, double relative_tolerance_forward,
       const Eigen::VectorXd& absolute_tolerance_forward,
       double relative_tolerance_backward,
@@ -319,10 +322,11 @@ class cvodes_integrator_adjoint_vari : public vari_base {
           return solver_backward;
         }(function_name, solver_backward)),
         backward_is_initialized_(false),
-        solver_(new cvodes_solver(
-            function_name, std::forward<FF>(f), N_, num_args_vars_, ts_.size(), solver_forward_,
-            state_forward_, state_backward_, quad_, absolute_tolerance_forward_,
-            absolute_tolerance_backward_, args...)) {
+        solver_(new cvodes_solver(function_name, std::forward<FF>(f), N_,
+                                  num_args_vars_, ts_.size(), solver_forward_,
+                                  state_forward_, state_backward_, quad_,
+                                  absolute_tolerance_forward_,
+                                  absolute_tolerance_backward_, args...)) {
     {
       int param_number = 1;
       stan::math::for_each(
@@ -618,8 +622,8 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     const Eigen::VectorXd y_vec = Eigen::Map<const Eigen::VectorXd>(y, N_);
     const Eigen::VectorXd dy_dt_vec
         = rhs(t, y_vec, solver_->value_of_args_tuple_);
-    check_size_match(solver_->function_name_, "dy_dt",
-                     dy_dt_vec.size(), "states", N_);
+    check_size_match(solver_->function_name_, "dy_dt", dy_dt_vec.size(),
+                     "states", N_);
     Eigen::Map<Eigen::VectorXd>(dy_dt, N_) = dy_dt_vec;
     return 0;
   }
@@ -651,8 +655,8 @@ class cvodes_integrator_adjoint_vari : public vari_base {
         Eigen::Map<const Eigen::VectorXd>(NV_DATA_S(y), N_));
     Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars
         = rhs(t, y_vars, solver_->value_of_args_tuple_);
-    check_size_match(solver_->function_name_, "dy_dt",
-                     f_y_t_vars.size(), "states", N_);
+    check_size_match(solver_->function_name_, "dy_dt", f_y_t_vars.size(),
+                     "states", N_);
     f_y_t_vars.adj() = -Eigen::Map<Eigen::VectorXd>(NV_DATA_S(yB), N_);
     grad();
     Eigen::Map<Eigen::VectorXd>(NV_DATA_S(yBdot), N_) = y_vars.adj();
@@ -690,8 +694,8 @@ class cvodes_integrator_adjoint_vari : public vari_base {
                          solver_->local_args_tuple_);
     Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars
         = rhs(t, y_vec, solver_->local_args_tuple_);
-    check_size_match(solver_->function_name_, "dy_dt",
-                     f_y_t_vars.size(), "states", N_);
+    check_size_match(solver_->function_name_, "dy_dt", f_y_t_vars.size(),
+                     "states", N_);
     f_y_t_vars.adj() = -Eigen::Map<Eigen::VectorXd>(NV_DATA_S(yB), N_);
     grad();
     apply(
@@ -725,8 +729,8 @@ class cvodes_integrator_adjoint_vari : public vari_base {
     Eigen::Matrix<var, Eigen::Dynamic, 1> fy_var
         = rhs(t, y_var, solver_->value_of_args_tuple_);
 
-    check_size_match(solver_->function_name_, "dy_dt",
-                     fy_var.size(), "states", N_);
+    check_size_match(solver_->function_name_, "dy_dt", fy_var.size(), "states",
+                     N_);
 
     grad(fy_var.coeffRef(0).vi_);
     Jfy.col(0) = y_var.adj();
