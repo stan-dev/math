@@ -598,7 +598,7 @@ class vari_view<
    * @return The value of this vari.
    */
   inline const auto& val() const { return val_; }
-  inline auto& val_op() { return val_; }
+  inline auto& val() { return val_; }
 
   /**
    * Return a reference to the derivative of the root expression with
@@ -709,7 +709,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * @return The value of this vari.
    */
   inline const auto& val() const { return val_; }
-  inline auto& val_op() { return val_; }
+  inline auto& val() { return val_; }
 
   /**
    * Return a reference to the derivative of the root expression with
@@ -860,7 +860,7 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
    * @return The value of this vari.
    */
   inline const auto& val() const { return val_; }
-  inline auto& val_op() { return val_; }
+  inline auto& val() { return val_; }
 
   /**
    * Return a reference to the derivative of the root expression with

@@ -52,14 +52,14 @@ inline auto svd_U(const EigMat& m) {
 
   reverse_pass_callback([arena_m, arena_U, arena_D, arena_V, arena_Fp,
                          M]() mutable {
-    Eigen::MatrixXd UUadjT = arena_U.val_op().transpose() * arena_U.adj();
+    Eigen::MatrixXd UUadjT = arena_U.val().transpose() * arena_U.adj();
     arena_m.adj()
-        += .5 * arena_U.val_op()
+        += .5 * arena_U.val()
                * (arena_Fp.array() * (UUadjT - UUadjT.transpose()).array())
                      .matrix()
                * arena_V.transpose()
            + (Eigen::MatrixXd::Identity(arena_m.rows(), arena_m.rows())
-              - arena_U.val_op() * arena_U.val_op().transpose())
+              - arena_U.val() * arena_U.val().transpose())
                  * arena_U.adj() * arena_D.asDiagonal().inverse()
                  * arena_V.transpose();
   });

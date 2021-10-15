@@ -42,9 +42,9 @@ inline auto eigenvectors_sym(const T& m) {
                                .array());
     f.diagonal().setZero();
     arena_m.adj()
-        += eigenvecs.val_op()
-           * f.cwiseProduct(eigenvecs.val_op().transpose() * eigenvecs.adj())
-           * eigenvecs.val_op().transpose();
+        += eigenvecs.val()
+           * f.cwiseProduct(eigenvecs.val().transpose() * eigenvecs.adj())
+           * eigenvecs.val().transpose();
   });
 
   return return_t(eigenvecs);

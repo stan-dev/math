@@ -405,7 +405,7 @@ class var_value<T, internal::require_matrix_var_value<T>> {
    * @return The value of this variable.
    */
   inline const auto& val() const { return vi_->val(); }
-  inline auto& val_op() { return vi_->val_op(); }
+  inline auto& val() { return vi_->val(); }
 
   /**
    * Return a reference to the derivative of the root expression with
