@@ -1,17 +1,7 @@
-/**
- * Reimplements is_fvar without requiring external math headers
- *
- * decltype((void)(T::d_)) is a pre C++17 replacement for
- * std::void_t<decltype(T::d_)>
- *
- * TODO(Andrew): Replace with std::void_t after move to C++17
- */
-template<class, class = void>
-struct is_fvar : std::false_type
-{ };
-template<class T>
-struct is_fvar<T, decltype((void)(T::d_))> : std::true_type
-{ };
+
+#include "plugins/typedefs.h"
+#include "plugins/adj_view.h"
+//#include "plugins/val_view.h"
 
 //TODO(Andrew): Replace std::is_const<>::value with std::is_const_v<> after move to C++17
 template<typename T>
@@ -47,6 +37,7 @@ using forward_return_t = std::conditional_t<std::is_const<std::remove_reference_
  * For definitions of EIGEN_EMPTY_STRUCT_CTOR, EIGEN_DEVICE_FUNC, and
  * EIGEN_STRONG_INLINE; see: https://eigen.tuxfamily.org/dox/XprHelper_8h_source.html
  */
+
 struct val_Op{
   EIGEN_EMPTY_STRUCT_CTOR(val_Op);
 
@@ -143,7 +134,7 @@ d() { return CwiseUnaryView<d_Op, Derived>(derived());
  * Structure to return adjoints from var and vari*. Deduces whether the variables
  * are pointers (i.e. vari*) to determine whether to return the adjoint or
  * first point to the underlying vari* (in the case of var).
- */
+ *//*
 struct adj_Op {
   EIGEN_EMPTY_STRUCT_CTOR(adj_Op);
 
@@ -159,33 +150,33 @@ struct adj_Op {
     std::enable_if_t<!std::is_pointer<T>::value, reverse_return_t<T>>
       operator()(T &v) const { return v.vi_->adj_; }
 
-};
+};*/
 
 /**
  * Coefficient-wise function applying adj_Op struct to a matrix of const var
  * and returning a const matrix of type T containing the values
- */
+ *//*
 inline const CwiseUnaryOp<adj_Op, const Derived>
 adj() const { return CwiseUnaryOp<adj_Op, const Derived>(derived());
 }
-
+*/
 /**
  * Coefficient-wise function applying adj_Op struct to a matrix of var
  * and returning a view to a matrix of doubles of the adjoints that can
  * be modified. This is meant to be used on the rhs of expressions.
- */
+ *//*
 inline CwiseUnaryOp<adj_Op, Derived> adj_op() {
   return CwiseUnaryOp<adj_Op, Derived>(derived());
-}
+}*/
 
 /**
  * Coefficient-wise function applying adj_Op struct to a matrix of var
  * and returning a view to a matrix of doubles of the adjoints that can
  * be modified
- */
+ *//*
 inline CwiseUnaryView<adj_Op, Derived>
 adj() { return CwiseUnaryView<adj_Op, Derived>(derived());
-}
+}*/
 /**
  * Structure to return vari* from a var.
  */
