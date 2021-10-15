@@ -416,7 +416,6 @@ class cvodes_integrator_adjoint_vari : public vari_base {
       }
       N_VDestroy_Serial(nv_state_forward_);
       ChainableStack::instance_->var_stack_.push_back(this);
-
     } catch (...) {
       N_VDestroy_Serial(nv_absolute_tolerance_forward_);
       SUNMatDestroy(A_forward_);
