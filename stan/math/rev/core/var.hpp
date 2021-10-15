@@ -417,7 +417,6 @@ class var_value<T, internal::require_matrix_var_value<T>> {
    */
   inline auto& adj() { return vi_->adj(); }
   inline auto& adj() const { return vi_->adj(); }
-  inline auto& adj_op() { return vi_->adj(); }
 
   inline Eigen::Index rows() const { return vi_->rows(); }
   inline Eigen::Index cols() const { return vi_->cols(); }

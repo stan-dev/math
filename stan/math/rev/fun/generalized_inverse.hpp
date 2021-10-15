@@ -23,14 +23,14 @@ template <typename T1, typename T2>
 inline auto generalized_inverse_lambda(T1& G_arena, T2& inv_G) {
   return [G_arena, inv_G]() mutable {
     G_arena.adj()
-        += -(inv_G.val_op().transpose() * inv_G.adj_op()
+        += -(inv_G.val_op().transpose() * inv_G.adj()
              * inv_G.val_op().transpose())
            + (-G_arena.val_op() * inv_G.val_op()
               + Eigen::MatrixXd::Identity(G_arena.rows(), inv_G.cols()))
-                 * inv_G.adj_op().transpose() * inv_G.val_op()
+                 * inv_G.adj().transpose() * inv_G.val_op()
                  * inv_G.val_op().transpose()
            + inv_G.val_op().transpose() * inv_G.val_op()
-                 * inv_G.adj_op().transpose()
+                 * inv_G.adj().transpose()
                  * (-inv_G.val_op() * G_arena.val_op()
                     + Eigen::MatrixXd::Identity(inv_G.rows(), G_arena.cols()));
   };

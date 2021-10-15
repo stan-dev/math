@@ -140,7 +140,7 @@ inline auto divide(const Mat& m, Scalar c) {
     auto inv_c = (1.0 / value_of(c));
     arena_t<promote_scalar_t<var, Mat>> res = inv_c * arena_m.val();
     reverse_pass_callback([inv_c, arena_m, res]() mutable {
-      arena_m.adj().array() += inv_c * res.adj_op().array();
+      arena_m.adj().array() += inv_c * res.adj().array();
     });
     return promote_scalar_t<var, Mat>(res);
   } else {

@@ -610,7 +610,6 @@ class vari_view<
    */
   inline auto& adj() { return adj_; }
   inline auto& adj() const { return adj_; }
-  inline auto& adj_op() { return adj_; }
 
   void set_zero_adjoint() {}
   void chain() {}
@@ -722,7 +721,6 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    */
   inline auto& adj() { return adj_; }
   inline auto& adj() const { return adj_; }
-  inline auto& adj_op() { return adj_; }
 
   virtual void chain() {}
   /**
@@ -874,7 +872,6 @@ class vari_value<T, require_eigen_sparse_base_t<T>> : public vari_base,
    */
   inline auto& adj() { return adj_; }
   inline auto& adj() const { return adj_; }
-  inline auto& adj_op() { return adj_; }
 
   void chain() {}
   /**

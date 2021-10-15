@@ -43,7 +43,7 @@ inline auto eigenvectors_sym(const T& m) {
     f.diagonal().setZero();
     arena_m.adj()
         += eigenvecs.val_op()
-           * f.cwiseProduct(eigenvecs.val_op().transpose() * eigenvecs.adj_op())
+           * f.cwiseProduct(eigenvecs.val_op().transpose() * eigenvecs.adj())
            * eigenvecs.val_op().transpose();
   });
 

@@ -58,7 +58,6 @@ class vari_cl_base : public vari_base {
    */
   inline auto& adj() { return adj_; }
   inline auto& adj() const { return adj_; }
-  inline auto& adj_op() { return adj_; }
 
   /**
    * Returns a view into a block of matrix.
