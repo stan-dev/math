@@ -205,5 +205,13 @@ inline CwiseUnaryView<vi_Op, Derived>
 vi() { return CwiseUnaryView<vi_Op, Derived>(derived());
 }
 
+
+EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+const Scalar& coeffRef(Index row, Index col) const {
+    eigen_internal_assert(row >= 0 && row < rows()
+                          && col >= 0 && col < cols());
+    return internal::evaluator<Derived>(derived()).coeffRef(row, col);
+}
+
 #define EIGEN_STAN_MATRIXBASE_PLUGIN
 #define EIGEN_STAN_ARRAYBASE_PLUGIN
