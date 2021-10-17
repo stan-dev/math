@@ -74,7 +74,9 @@ struct scalar_d_ref_op {
 };
 
 template <typename T, typename Enable = void>
-struct d_stride {};
+struct d_stride {
+  static constexpr int stride = 1;
+};
 
 template <typename T>
 struct d_stride<T, std::enable_if_t<is_fvar<typename T::Scalar>::value>> {
