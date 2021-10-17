@@ -95,26 +95,30 @@ struct scalar_adj_ref_op {
 };
 
 template <typename T, typename Enable = void>
-struct adj_stride {
-  static constexpr int stride = 1;
+struct adj_stride { };
+
+template <typename T>
+struct adj_stride<T, std::enable_if_t<!is_vari<T>::value
+                                      && !is_var<T>::value>> {
+  static constexpr int stride = -1;
 };
 
 template <typename T>
-struct adj_stride<T, std::enable_if_t<is_vari<typename T::Scalar>::value>> {
-  using vari_t = std::remove_pointer_t<typename T::Scalar>;
+struct adj_stride<T, std::enable_if_t<is_vari<T>::value>> {
+  using vari_t = std::remove_pointer_t<T>;
   static constexpr int stride = sizeof(vari_t) / sizeof(typename vari_t::value_type);
 };
 
 template <typename T>
-struct adj_stride<T, std::enable_if_t<is_var<typename T::Scalar>::value>> {
-  using vari_t = std::remove_pointer_t<decltype(std::declval<typename T::Scalar>().vi_)>;
+struct adj_stride<T, std::enable_if_t<is_var<T>::value>> {
+  using vari_t = std::remove_pointer_t<decltype(std::declval<T>().vi_)>;
   static constexpr int stride = sizeof(vari_t) / sizeof(typename vari_t::value_type);
 };
 
 typedef CwiseUnaryOp<scalar_adj_op<Scalar>, const Derived> AdjReturnType;
 typedef CwiseUnaryView<scalar_adj_ref_op<Scalar>, Derived,
-                       adj_stride<Derived>::stride,
-                       adj_stride<Derived>::stride> NonConstAdjReturnType;
+                       adj_stride<Scalar>::stride,
+                       adj_stride<Scalar>::stride> NonConstAdjReturnType;
 
 EIGEN_DEVICE_FUNC
 inline const AdjReturnType

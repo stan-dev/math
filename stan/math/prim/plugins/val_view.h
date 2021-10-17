@@ -119,25 +119,31 @@ struct scalar_val_ref_op {
 };
 
 template <typename T, typename Enable = void>
-struct val_stride {
-  static constexpr int stride = 1;
+struct val_stride { };
+
+
+template <typename T>
+struct val_stride<T, std::enable_if_t<!is_vari<T>::value
+                                      && !is_var<T>::value
+                                      && !is_fvar<T>::value>> {
+  static constexpr int stride = -1;
 };
 
 template <typename T>
-struct val_stride<T, std::enable_if_t<is_vari<typename T::Scalar>::value>> {
-  using vari_t = std::remove_pointer_t<typename T::Scalar>;
+struct val_stride<T, std::enable_if_t<is_vari<T>::value>> {
+  using vari_t = std::remove_pointer_t<T>;
   static constexpr int stride = sizeof(vari_t) / sizeof(typename vari_t::value_type);
 };
 
 template <typename T>
-struct val_stride<T, std::enable_if_t<is_var<typename T::Scalar>::value>> {
-  using vari_t = std::remove_pointer_t<decltype(std::declval<typename T::Scalar>().vi_)>;
+struct val_stride<T, std::enable_if_t<is_var<T>::value>> {
+  using vari_t = std::remove_pointer_t<decltype(std::declval<T>().vi_)>;
   static constexpr int stride = sizeof(vari_t) / sizeof(typename vari_t::value_type);
 };
 
 template <typename T>
-struct val_stride<T, std::enable_if_t<is_fvar<typename T::Scalar>::value>> {
-  using fvar_t = typename T::Scalar;
+struct val_stride<T, std::enable_if_t<is_fvar<T>::value>> {
+  using fvar_t = T;
   static constexpr int stride = sizeof(fvar_t) / sizeof(typename fvar_t::Scalar);
 };
 
@@ -147,8 +153,8 @@ typedef CwiseUnaryOp<scalar_val_op<Scalar>, const Derived> valReturnType;
 typedef std::conditional_t<is_var<Scalar>::value || is_vari<Scalar>::value,
                    const valReturnType,
                    CwiseUnaryView<scalar_val_ref_op<Scalar>, Derived,
-                                  val_stride<Derived>::stride,
-                                  val_stride<Derived>::stride>>
+                                  val_stride<Scalar>::stride,
+                                  val_stride<Scalar>::stride>>
 NonConstvalReturnType;
 
 EIGEN_DEVICE_FUNC
