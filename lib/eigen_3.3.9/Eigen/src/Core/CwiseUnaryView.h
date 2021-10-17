@@ -13,8 +13,8 @@
 namespace Eigen {
 
 namespace internal {
-template<typename ViewOp, typename MatrixType>
-struct traits<CwiseUnaryView<ViewOp, MatrixType> >
+template<typename ViewOp, typename MatrixType, int InnerStride, int OuterStride>
+struct traits<CwiseUnaryView<ViewOp, MatrixType, InnerStride, OuterStride> >
  : traits<MatrixType>
 {
   typedef typename result_of<
@@ -30,15 +30,15 @@ struct traits<CwiseUnaryView<ViewOp, MatrixType> >
     // "error: no integral type can represent all of the enumerator values
     InnerStrideAtCompileTime = MatrixTypeInnerStride == Dynamic
                              ? int(Dynamic)
-                             : int(MatrixTypeInnerStride) * int(sizeof(typename traits<MatrixType>::Scalar) / sizeof(Scalar)),
+                             : int(MatrixTypeInnerStride) * InnerStride,
     OuterStrideAtCompileTime = outer_stride_at_compile_time<MatrixType>::ret == Dynamic
                              ? int(Dynamic)
-                             : outer_stride_at_compile_time<MatrixType>::ret * int(sizeof(typename traits<MatrixType>::Scalar) / sizeof(Scalar))
+                             : outer_stride_at_compile_time<MatrixType>::ret * OuterStride
   };
 };
 }
 
-template<typename ViewOp, typename MatrixType, typename StorageKind>
+template<typename ViewOp, typename MatrixType, int InnerStride, int OuterStride, typename StorageKind>
 class CwiseUnaryViewImpl;
 
 /** \class CwiseUnaryView
@@ -54,12 +54,12 @@ class CwiseUnaryViewImpl;
   *
   * \sa MatrixBase::unaryViewExpr(const CustomUnaryOp &) const, class CwiseUnaryOp
   */
-template<typename ViewOp, typename MatrixType>
-class CwiseUnaryView : public CwiseUnaryViewImpl<ViewOp, MatrixType, typename internal::traits<MatrixType>::StorageKind>
+template<typename ViewOp, typename MatrixType, int InnerStride, int OuterStride>
+class CwiseUnaryView : public CwiseUnaryViewImpl<ViewOp, MatrixType, InnerStride, OuterStride, typename internal::traits<MatrixType>::StorageKind>
 {
   public:
 
-    typedef typename CwiseUnaryViewImpl<ViewOp, MatrixType,typename internal::traits<MatrixType>::StorageKind>::Base Base;
+    typedef typename CwiseUnaryViewImpl<ViewOp, MatrixType, InnerStride, OuterStride,typename internal::traits<MatrixType>::StorageKind>::Base Base;
     EIGEN_GENERIC_PUBLIC_INTERFACE(CwiseUnaryView)
     typedef typename internal::ref_selector<MatrixType>::non_const_type MatrixTypeNested;
     typedef typename internal::remove_all<MatrixType>::type NestedExpression;
@@ -89,22 +89,22 @@ class CwiseUnaryView : public CwiseUnaryViewImpl<ViewOp, MatrixType, typename in
 };
 
 // Generic API dispatcher
-template<typename ViewOp, typename XprType, typename StorageKind>
+template<typename ViewOp, typename XprType, int InnerStride, int OuterStride, typename StorageKind>
 class CwiseUnaryViewImpl
-  : public internal::generic_xpr_base<CwiseUnaryView<ViewOp, XprType> >::type
+  : public internal::generic_xpr_base<CwiseUnaryView<ViewOp, XprType, InnerStride, OuterStride> >::type
 {
 public:
-  typedef typename internal::generic_xpr_base<CwiseUnaryView<ViewOp, XprType> >::type Base;
+  typedef typename internal::generic_xpr_base<CwiseUnaryView<ViewOp, XprType, InnerStride, OuterStride> >::type Base;
 };
 
-template<typename ViewOp, typename MatrixType>
-class CwiseUnaryViewImpl<ViewOp,MatrixType,Dense>
-  : public internal::dense_xpr_base< CwiseUnaryView<ViewOp, MatrixType> >::type
+template<typename ViewOp, typename MatrixType, int InnerStride, int OuterStride>
+class CwiseUnaryViewImpl<ViewOp,MatrixType,  InnerStride,  OuterStride,Dense>
+  : public internal::dense_xpr_base< CwiseUnaryView<ViewOp, MatrixType, InnerStride, OuterStride> >::type
 {
   public:
 
-    typedef CwiseUnaryView<ViewOp, MatrixType> Derived;
-    typedef typename internal::dense_xpr_base< CwiseUnaryView<ViewOp, MatrixType> >::type Base;
+    typedef CwiseUnaryView<ViewOp, MatrixType, InnerStride, OuterStride> Derived;
+    typedef typename internal::dense_xpr_base< CwiseUnaryView<ViewOp, MatrixType, InnerStride, OuterStride> >::type Base;
 
     EIGEN_DENSE_PUBLIC_INTERFACE(Derived)
     EIGEN_INHERIT_ASSIGNMENT_OPERATORS(CwiseUnaryViewImpl)
@@ -114,12 +114,12 @@ class CwiseUnaryViewImpl<ViewOp,MatrixType,Dense>
 
     EIGEN_DEVICE_FUNC inline Index innerStride() const
     {
-      return derived().nestedExpression().innerStride() * sizeof(typename internal::traits<MatrixType>::Scalar) / sizeof(Scalar);
+      return derived().nestedExpression().innerStride() * InnerStride;
     }
 
     EIGEN_DEVICE_FUNC inline Index outerStride() const
     {
-      return derived().nestedExpression().outerStride() * sizeof(typename internal::traits<MatrixType>::Scalar) / sizeof(Scalar);
+      return derived().nestedExpression().outerStride() * OuterStride;
     }
   protected:
     EIGEN_DEFAULT_EMPTY_CONSTRUCTOR_AND_DESTRUCTOR(CwiseUnaryViewImpl)

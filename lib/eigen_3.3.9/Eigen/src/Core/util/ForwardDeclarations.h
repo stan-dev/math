@@ -85,7 +85,7 @@ template<typename MatrixType> class Transpose;
 template<typename MatrixType> class Conjugate;
 template<typename NullaryOp, typename MatrixType>         class CwiseNullaryOp;
 template<typename UnaryOp,   typename MatrixType>         class CwiseUnaryOp;
-template<typename ViewOp,    typename MatrixType>         class CwiseUnaryView;
+template<typename ViewOp,    typename MatrixType, int InnerStride = -1, int OuterStride = -1>         class CwiseUnaryView;
 template<typename BinaryOp,  typename Lhs, typename Rhs>  class CwiseBinaryOp;
 template<typename TernaryOp, typename Arg1, typename Arg2, typename Arg3>  class CwiseTernaryOp;
 template<typename Decomposition, typename Rhstype>        class Solve;

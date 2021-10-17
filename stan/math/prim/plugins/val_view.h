@@ -118,13 +118,37 @@ struct scalar_val_ref_op {
   }
 };
 
+template <typename T, typename Enable = void>
+struct val_stride {
+  static constexpr int stride = 1;
+};
+
+template <typename T>
+struct val_stride<T, std::enable_if_t<is_vari<typename T::Scalar>::value>> {
+  using vari_t = std::remove_pointer_t<typename T::Scalar>;
+  static constexpr int stride = sizeof(vari_t) / sizeof(typename vari_t::value_type);
+};
+
+template <typename T>
+struct val_stride<T, std::enable_if_t<is_var<typename T::Scalar>::value>> {
+  using vari_t = std::remove_pointer_t<decltype(std::declval<typename T::Scalar>().vi_)>;
+  static constexpr int stride = sizeof(vari_t) / sizeof(typename vari_t::value_type);
+};
+
+template <typename T>
+struct val_stride<T, std::enable_if_t<is_fvar<typename T::Scalar>::value>> {
+  using fvar_t = typename T::Scalar;
+  static constexpr int stride = sizeof(fvar_t) / sizeof(typename fvar_t::Scalar);
+};
 
 /** \internal the return type of imag() const */
 typedef CwiseUnaryOp<scalar_val_op<Scalar>, const Derived> valReturnType;
 /** \internal the return type of imag() */
 typedef std::conditional_t<is_var<Scalar>::value || is_vari<Scalar>::value,
                    const valReturnType,
-                   CwiseUnaryView<scalar_val_ref_op<Scalar>, Derived>>
+                   CwiseUnaryView<scalar_val_ref_op<Scalar>, Derived,
+                                  val_stride<Derived>::stride,
+                                  val_stride<Derived>::stride>>
 NonConstvalReturnType;
 
 EIGEN_DEVICE_FUNC
