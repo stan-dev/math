@@ -61,7 +61,6 @@ jobs:
 
     - name: Run header tests
       run: |
-        sudo apt install opencl-headers
         echo "STAN_OPENCL=true" > make/local
         make -j2 test-headers
   no_range_checks:
