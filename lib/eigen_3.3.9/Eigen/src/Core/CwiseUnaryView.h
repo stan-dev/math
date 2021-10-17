@@ -30,10 +30,12 @@ struct traits<CwiseUnaryView<ViewOp, MatrixType, InnerStride, OuterStride> >
     // "error: no integral type can represent all of the enumerator values
     InnerStrideAtCompileTime = MatrixTypeInnerStride == Dynamic
                              ? int(Dynamic)
-                             : int(MatrixTypeInnerStride) * InnerStride,
+                             : int(MatrixTypeInnerStride)
+                              * (InnerStride == -1) ? int(sizeof(typename traits<MatrixType>::Scalar) / sizeof(Scalar)) : InnerStride,
     OuterStrideAtCompileTime = outer_stride_at_compile_time<MatrixType>::ret == Dynamic
                              ? int(Dynamic)
-                             : outer_stride_at_compile_time<MatrixType>::ret * OuterStride
+                             : outer_stride_at_compile_time<MatrixType>::ret
+                              * (OuterStride == -1) ? int(sizeof(typename traits<MatrixType>::Scalar) / sizeof(Scalar)) : OuterStride
   };
 };
 }
@@ -114,12 +116,14 @@ class CwiseUnaryViewImpl<ViewOp,MatrixType,  InnerStride,  OuterStride,Dense>
 
     EIGEN_DEVICE_FUNC inline Index innerStride() const
     {
-      return derived().nestedExpression().innerStride() * InnerStride;
+      return derived().nestedExpression().innerStride()
+              * (InnerStride == -1) ? sizeof(typename internal::traits<MatrixType>::Scalar) / sizeof(Scalar) : InnerStride;
     }
 
     EIGEN_DEVICE_FUNC inline Index outerStride() const
     {
-      return derived().nestedExpression().outerStride() * OuterStride;
+      return derived().nestedExpression().outerStride()
+              * (OuterStride == -1) ? sizeof(typename internal::traits<MatrixType>::Scalar) / sizeof(Scalar) : OuterStride;
     }
   protected:
     EIGEN_DEFAULT_EMPTY_CONSTRUCTOR_AND_DESTRUCTOR(CwiseUnaryViewImpl)
