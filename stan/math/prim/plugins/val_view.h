@@ -7,11 +7,11 @@ struct val_impl { };
 template <typename Scalar>
 struct val_impl<Scalar, std::enable_if_t<std::is_arithmetic<Scalar>::value>> {
   EIGEN_DEVICE_FUNC
-  static inline const double& run(const Scalar& x) {
+  static inline const val_return_t<Scalar>& run(const Scalar& x) {
     return x;
   }
   EIGEN_DEVICE_FUNC
-  static inline double& run(Scalar& x) {
+  static inline val_return_t<Scalar>& run(Scalar& x) {
     return x;
   }
 };
@@ -19,11 +19,11 @@ struct val_impl<Scalar, std::enable_if_t<std::is_arithmetic<Scalar>::value>> {
 template <typename Scalar>
 struct val_impl<Scalar, std::enable_if_t<is_vari<Scalar>::value>> {
   EIGEN_DEVICE_FUNC
-  static inline const double& run(const Scalar& x) {
+  static inline const val_return_t<Scalar>& run(const Scalar& x) {
     return x->val_;
   }
   EIGEN_DEVICE_FUNC
-  static inline double& run(Scalar& x) {
+  static inline val_return_t<Scalar>& run(Scalar& x) {
     return x->val_;
   }
 };
@@ -31,11 +31,11 @@ struct val_impl<Scalar, std::enable_if_t<is_vari<Scalar>::value>> {
 template <typename Scalar>
 struct val_impl<Scalar, std::enable_if_t<is_var<Scalar>::value>> {
   EIGEN_DEVICE_FUNC
-  static inline const double& run(const Scalar& x) {
+  static inline const val_return_t<Scalar>& run(const Scalar& x) {
     return x.vi_->val_;
   }
   EIGEN_DEVICE_FUNC
-  static inline double& run(Scalar& x) {
+  static inline val_return_t<Scalar>& run(Scalar& x) {
     return x.vi_->val_;
   }
 };

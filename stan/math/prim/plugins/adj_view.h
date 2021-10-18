@@ -7,11 +7,11 @@ struct adj_impl { };
 template <typename Scalar>
 struct adj_impl<Scalar, std::enable_if_t<is_vari<Scalar>::value>> {
   EIGEN_DEVICE_FUNC
-  static inline double& run(Scalar& x) {
+  static inline val_return_t<Scalar>& run(Scalar& x) {
     return x->adj_;
   }
   EIGEN_DEVICE_FUNC
-  static inline const double& run(const Scalar& x) {
+  static inline const val_return_t<Scalar>& run(const Scalar& x) {
     return x->adj_;
   }
 };
@@ -19,24 +19,24 @@ struct adj_impl<Scalar, std::enable_if_t<is_vari<Scalar>::value>> {
 template <typename Scalar>
 struct adj_impl<Scalar, std::enable_if_t<is_var<Scalar>::value>> {
   EIGEN_DEVICE_FUNC
-  static inline double& run(Scalar& x) {
+  static inline val_return_t<Scalar>& run(Scalar& x) {
     return x.vi_->adj_;
   }
   EIGEN_DEVICE_FUNC
-  static inline const double& run(const Scalar& x) {
+  static inline const val_return_t<Scalar>& run(const Scalar& x) {
     return x.vi_->adj_;
   }
 };
 
 template <typename Scalar>
 EIGEN_DEVICE_FUNC
-static inline const double& adj(const Scalar& x) {
+static inline const val_return_t<Scalar>& adj(const Scalar& x) {
   return adj_impl<Scalar>::run(x);
 }
 
 template <typename Scalar>
 EIGEN_DEVICE_FUNC
-static inline double& adj_ref(Scalar& x) {
+static inline val_return_t<Scalar>& adj_ref(Scalar& x) {
   return adj_impl<Scalar>::run(x);
 }
 
@@ -44,7 +44,7 @@ template <typename Scalar>
 struct scalar_adj_op {
   EIGEN_EMPTY_STRUCT_CTOR(scalar_adj_op)
   EIGEN_DEVICE_FUNC
-  EIGEN_STRONG_INLINE const double& operator() (const Scalar& a) const {
+  EIGEN_STRONG_INLINE const val_return_t<Scalar>& operator() (const Scalar& a) const {
     return adj(a);
   }
 };
@@ -53,7 +53,7 @@ template <typename Scalar>
 struct scalar_adj_ref_op {
   EIGEN_EMPTY_STRUCT_CTOR(scalar_adj_ref_op)
   EIGEN_DEVICE_FUNC
-  EIGEN_STRONG_INLINE double& operator() (const Scalar& a) const {
+  EIGEN_STRONG_INLINE val_return_t<Scalar>& operator() (const Scalar& a) const {
     return adj_ref(*const_cast<Scalar*>(&a));
   }
 };
@@ -75,7 +75,7 @@ struct adj_stride<T, std::enable_if_t<is_vari<T>::value>> {
 
 template <typename T>
 struct adj_stride<T, std::enable_if_t<is_var<T>::value>> {
-  using vari_t = std::remove_pointer_t<decltype(std::declval<std::decay_t<std::remove_pointer_t<T>>>().vi_)>;
+  using vari_t = typename std::decay_t<std::remove_pointer_t<T>>::vari_type;
   static constexpr int stride = sizeof(vari_t) / sizeof(typename vari_t::value_type);
 };
 

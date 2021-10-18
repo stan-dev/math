@@ -26,21 +26,29 @@ template <typename T, typename Enable = void>
 struct val_return { };
 
 template <typename T>
-struct val_return<T, std::enable_if_t<!is_fvar<T>::value>> {
-  using type = double;
+struct val_return<T, std::enable_if_t<std::is_arithmetic<T>::value>> {
+  using type = T;
 };
+
+template <typename T>
+struct val_return<T, std::enable_if_t<is_var<T>::value>> {
+  using type = typename T::value_type;
+};
+
+template <typename T>
+struct val_return<T, std::enable_if_t<is_vari<T>::value>> {
+  using type = typename std::remove_pointer_t<T>::value_type;
+};
+
 template <typename T>
 struct val_return<T, std::enable_if_t<is_fvar<T>::value>> {
-  using type = decltype(T::d_);
+  using type = typename T::Scalar;
 };
 
 template <typename T>
 using val_return_t = typename val_return<std::decay_t<T>>::type;
 
 template <typename T>
-using vi_return_t = decltype(T::vi_);
-
-template <typename T>
-using d_return_t = decltype(T::d_);
+using vi_return_t = std::add_pointer_t<typename T::vari_type>;
 
 #endif

@@ -7,23 +7,23 @@ struct d_impl { };
 template <typename Scalar>
 struct d_impl<Scalar, std::enable_if_t<is_fvar<Scalar>::value>> {
   EIGEN_DEVICE_FUNC
-  static inline d_return_t<Scalar>& run(Scalar& x) {
+  static inline val_return_t<Scalar>& run(Scalar& x) {
     return x.d_;
   }
   EIGEN_DEVICE_FUNC
-  static inline const d_return_t<Scalar>& run(const Scalar& x) {
+  static inline const val_return_t<Scalar>& run(const Scalar& x) {
     return x.d_;
   }
 };
 
 template <typename Scalar>
 EIGEN_DEVICE_FUNC
-static inline const d_return_t<Scalar>& d(const Scalar& x) {
+static inline const val_return_t<Scalar>& d(const Scalar& x) {
   return d_impl<Scalar>::run(x);
 }
 template <typename Scalar>
 EIGEN_DEVICE_FUNC
-static inline d_return_t<Scalar>& d_ref(Scalar& x) {
+static inline val_return_t<Scalar>& d_ref(Scalar& x) {
   return d_impl<Scalar>::run(x);
 }
 
@@ -32,7 +32,7 @@ struct scalar_d_op {
   EIGEN_EMPTY_STRUCT_CTOR(scalar_d_op)
   EIGEN_DEVICE_FUNC
   EIGEN_STRONG_INLINE
-  const d_return_t<Scalar>& operator() (const Scalar& a) const { return d(a); }
+  const val_return_t<Scalar>& operator() (const Scalar& a) const { return d(a); }
 };
 
 template <typename Scalar>
@@ -40,7 +40,7 @@ struct scalar_d_ref_op {
   EIGEN_EMPTY_STRUCT_CTOR(scalar_d_ref_op)
   EIGEN_DEVICE_FUNC
   EIGEN_STRONG_INLINE
-  d_return_t<Scalar>& operator() (const Scalar& a) const {
+  val_return_t<Scalar>& operator() (const Scalar& a) const {
     return d_ref(*const_cast<Scalar*>(&a));
   }
 };
