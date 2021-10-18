@@ -61,7 +61,6 @@ TEST(AgradFwdMatrixAddons, fvarfvar_double_matrix) {
   EXPECT_EQ(mat_in.d().cols(), derivs.cols());
 }
 
-/*
 TEST(AgradFwdMatrixAddons, fvar_double_vector) {
   using Eigen::VectorXd;
   using stan::math::vector_fd;
@@ -171,4 +170,3 @@ TEST(AgradFwdMatrixAddons, fvarfvar_double_rowvector) {
   EXPECT_EQ(row_vec_in.d().rows(), derivs.rows());
   EXPECT_EQ(row_vec_in.d().cols(), derivs.cols());
 }
-*/

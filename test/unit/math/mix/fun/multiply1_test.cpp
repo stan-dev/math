@@ -73,7 +73,7 @@ TEST(mathMixMatFun, multiply) {
   rv << 100, -3;
   Eigen::MatrixXd m(2, 2);
   m << 100, 0, -3, 4;
-  stan::test::expect_ad(tols, f, a, v);  
+  stan::test::expect_ad(tols, f, a, v);
   stan::test::expect_ad(tols, f, v, a);
   stan::test::expect_ad(tols, f, a, rv);
   stan::test::expect_ad(tols, f, rv, a);
@@ -84,7 +84,7 @@ TEST(mathMixMatFun, multiply) {
   stan::test::expect_ad(tols, f, m, v);
   stan::test::expect_ad(tols, f, rv, m);
   stan::test::expect_ad(tols, f, m, m);
-  
+
   stan::test::expect_ad_matvar(tols, f, a, v);
   stan::test::expect_ad_matvar(tols, f, v, a);
   stan::test::expect_ad_matvar(tols, f, a, rv);
@@ -118,7 +118,7 @@ TEST(mathMixMatFun, multiply) {
   stan::test::expect_ad(tols, f, u_tr, u);
   stan::test::expect_ad(tols, f, u, vv);
   stan::test::expect_ad(tols, f, rvv, u);
-  
+
   stan::test::expect_ad_matvar(tols, f, u, u_tr);
   stan::test::expect_ad_matvar(tols, f, u_tr, u);
   stan::test::expect_ad_matvar(tols, f, u, vv);
