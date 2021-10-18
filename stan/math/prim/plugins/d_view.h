@@ -1,30 +1,11 @@
-template <typename T>
-using d_return_t = decltype(T::d_);
-
-template <typename Scalar>
-EIGEN_DEVICE_FUNC
-static inline const d_return_t<Scalar>& d(const Scalar& x) {
-  return d_impl<eigen_base_filter_t<Scalar>>::run(x);
-}
-
-template <typename Scalar>
-EIGEN_DEVICE_FUNC
-static inline const d_return_t<Scalar>&
-d_ref(const Scalar& x) {
-  return d_ref_impl<Scalar>::run(x);
-}
-
-template <typename Scalar>
-EIGEN_DEVICE_FUNC
-static inline d_return_t<Scalar>& d_ref(Scalar& x) {
-  return d_ref_impl<eigen_base_filter_t<Scalar>>::run(x);
-}
+#ifndef STAN_MATH_PRIM_PLUGINS_D_VIEW_H
+#define STAN_MATH_PRIM_PLUGINS_D_VIEW_H
 
 template <typename Scalar, typename Enable = void>
-struct d_default_impl { };
+struct d_impl { };
 
 template <typename Scalar>
-struct d_default_impl<Scalar, std::enable_if_t<is_fvar<Scalar>::value>> {
+struct d_impl<Scalar, std::enable_if_t<is_fvar<Scalar>::value>> {
   EIGEN_DEVICE_FUNC
   static inline d_return_t<Scalar>& run(Scalar& x) {
     return x.d_;
@@ -36,39 +17,30 @@ struct d_default_impl<Scalar, std::enable_if_t<is_fvar<Scalar>::value>> {
 };
 
 template <typename Scalar>
-struct d_impl : d_default_impl<Scalar> {};
+EIGEN_DEVICE_FUNC
+static inline const d_return_t<Scalar>& d(const Scalar& x) {
+  return d_impl<Scalar>::run(x);
+}
+template <typename Scalar>
+EIGEN_DEVICE_FUNC
+static inline d_return_t<Scalar>& d_ref(Scalar& x) {
+  return d_impl<Scalar>::run(x);
+}
 
 template <typename Scalar>
 struct scalar_d_op {
   EIGEN_EMPTY_STRUCT_CTOR(scalar_d_op)
   EIGEN_DEVICE_FUNC
-  EIGEN_STRONG_INLINE d_return_t<Scalar> operator() (const Scalar& a) const { return d(a); }
+  EIGEN_STRONG_INLINE
+  const d_return_t<Scalar>& operator() (const Scalar& a) const { return d(a); }
 };
-
-
-template <typename Scalar, typename Enable = void>
-struct d_ref_default_impl { };
-
-template <typename Scalar>
-struct d_ref_default_impl<Scalar, std::enable_if_t<is_fvar<Scalar>::value>> {
-  EIGEN_DEVICE_FUNC
-  static inline d_return_t<Scalar>& run(Scalar& x) {
-    return *reinterpret_cast<d_return_t<Scalar>*>(&(x.d_));
-  }
-  EIGEN_DEVICE_FUNC
-  static inline const d_return_t<Scalar>& run(const Scalar& x) {
-    return *reinterpret_cast<d_return_t<Scalar>*>(&(x.d_));
-  }
-};
-
-template <typename Scalar>
-struct d_ref_impl : d_ref_default_impl<Scalar> {};
 
 template <typename Scalar>
 struct scalar_d_ref_op {
   EIGEN_EMPTY_STRUCT_CTOR(scalar_d_ref_op)
   EIGEN_DEVICE_FUNC
-  EIGEN_STRONG_INLINE d_return_t<Scalar>& operator() (const Scalar& a) const {
+  EIGEN_STRONG_INLINE
+  d_return_t<Scalar>& operator() (const Scalar& a) const {
     return d_ref(*const_cast<Scalar*>(&a));
   }
 };
@@ -84,3 +56,5 @@ d() const { return dReturnType(derived()); }
 EIGEN_DEVICE_FUNC
 inline NonConstdReturnType
 d() { return NonConstdReturnType(derived()); }
+
+#endif

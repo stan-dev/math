@@ -1,28 +1,61 @@
-template <typename T, typename Enable = void>
-struct val_return { };
+#ifndef STAN_MATH_PRIM_PLUGINS_VAL_VIEW_H
+#define STAN_MATH_PRIM_PLUGINS_VAL_VIEW_H
 
-template <typename T>
-struct val_return<T, std::enable_if_t<!is_fvar<T>::value>> {
-  using type = double;
-};
-template <typename T>
-struct val_return<T, std::enable_if_t<is_fvar<T>::value>> {
-  using type = decltype(T::d_);
+template <typename Scalar, typename Enable = void>
+struct val_impl { };
+
+template <typename Scalar>
+struct val_impl<Scalar, std::enable_if_t<std::is_arithmetic<Scalar>::value>> {
+  EIGEN_DEVICE_FUNC
+  static inline const double& run(const Scalar& x) {
+    return x;
+  }
+  EIGEN_DEVICE_FUNC
+  static inline double& run(Scalar& x) {
+    return x;
+  }
 };
 
-template <typename T>
-using val_return_t = typename val_return<std::decay_t<T>>::type;
+template <typename Scalar>
+struct val_impl<Scalar, std::enable_if_t<is_vari<Scalar>::value>> {
+  EIGEN_DEVICE_FUNC
+  static inline const double& run(const Scalar& x) {
+    return x->val_;
+  }
+  EIGEN_DEVICE_FUNC
+  static inline double& run(Scalar& x) {
+    return x->val_;
+  }
+};
+
+template <typename Scalar>
+struct val_impl<Scalar, std::enable_if_t<is_var<Scalar>::value>> {
+  EIGEN_DEVICE_FUNC
+  static inline const double& run(const Scalar& x) {
+    return x.vi_->val_;
+  }
+  EIGEN_DEVICE_FUNC
+  static inline double& run(Scalar& x) {
+    return x.vi_->val_;
+  }
+};
+
+template <typename Scalar>
+struct val_impl<Scalar, std::enable_if_t<is_fvar<Scalar>::value>> {
+  EIGEN_DEVICE_FUNC
+  static inline const val_return_t<Scalar>& run(const Scalar& x) {
+    return x.val_;
+  }
+  EIGEN_DEVICE_FUNC
+  static inline val_return_t<Scalar>& run(Scalar& x) {
+    return x.val_;
+  }
+};
 
 template <typename Scalar>
 EIGEN_DEVICE_FUNC
-static inline val_return_t<Scalar> val(const Scalar& x){
-  return val_impl<eigen_base_filter_t<Scalar>>::run(x);
-}
-
-template <typename Scalar>
-EIGEN_DEVICE_FUNC
-static inline const val_return_t<Scalar>& val_ref(const Scalar& x) {
-  return val_ref_impl<Scalar>::run(x);
+static inline const val_return_t<Scalar>& val(const Scalar& x) {
+  return val_impl<Scalar>::run(x);
 }
 
 template <typename Scalar>
@@ -30,82 +63,18 @@ EIGEN_DEVICE_FUNC
 static inline
 val_return_t<Scalar>&
 val_ref(Scalar& x) {
-  return val_ref_impl<eigen_base_filter_t<Scalar>>::run(x);
+  return val_impl<Scalar>::run(x);
 }
-
-template <typename Scalar, typename Enable = void>
-struct val_default_impl { };
-
-template <typename Scalar>
-struct val_default_impl<Scalar, std::enable_if_t<std::is_arithmetic<Scalar>::value>> {
-  EIGEN_DEVICE_FUNC
-  static inline double run(const Scalar& x) {
-    return x;
-  }
-};
-
-template <typename Scalar>
-struct val_default_impl<Scalar, std::enable_if_t<is_vari<Scalar>::value>> {
-  EIGEN_DEVICE_FUNC
-  static inline double run(const Scalar& x) {
-    return x->val_;
-  }
-};
-
-template <typename Scalar>
-struct val_default_impl<Scalar, std::enable_if_t<is_var<Scalar>::value>> {
-  EIGEN_DEVICE_FUNC
-  static inline double run(const Scalar& x) {
-    return x.vi_->val_;
-  }
-};
-
-template <typename Scalar>
-struct val_default_impl<Scalar, std::enable_if_t<is_fvar<Scalar>::value>> {
-  EIGEN_DEVICE_FUNC
-  static inline val_return_t<Scalar> run(const Scalar& x) {
-    return x.val_;
-  }
-};
-
-template<typename Scalar> struct val_impl : val_default_impl<Scalar> {};
 
 template<typename Scalar>
 struct scalar_val_op {
   EIGEN_EMPTY_STRUCT_CTOR(scalar_val_op)
   EIGEN_DEVICE_FUNC
-  EIGEN_STRONG_INLINE val_return_t<Scalar> operator() (const Scalar& a) const { return val(a); }
-};
-
-template <typename Scalar, typename Enable = void>
-struct val_ref_default_impl { };
-
-template <typename Scalar>
-struct val_ref_default_impl<Scalar, std::enable_if_t<std::is_arithmetic<Scalar>::value>> {
-  EIGEN_DEVICE_FUNC
-  static inline double& run(Scalar& x) {
-    return x;
-  }
-  EIGEN_DEVICE_FUNC
-  static inline const double& run(const Scalar& x) {
-    return x;
+  EIGEN_STRONG_INLINE
+  const val_return_t<Scalar>& operator() (const Scalar& a) const {
+    return val(a);
   }
 };
-
-template <typename Scalar>
-struct val_ref_default_impl<Scalar, std::enable_if_t<is_fvar<Scalar>::value>> {
-  EIGEN_DEVICE_FUNC
-  static inline val_return_t<Scalar>& run(Scalar& x) {
-    return *reinterpret_cast<val_return_t<Scalar>*>(&(x.val_));
-  }
-  EIGEN_DEVICE_FUNC
-  static inline const val_return_t<Scalar>& run(const Scalar& x) {
-    return *reinterpret_cast<val_return_t<Scalar>*>(&(x.val_));
-  }
-};
-
-template <typename Scalar>
-struct val_ref_impl : val_ref_default_impl<Scalar> {};
 
 template<typename Scalar>
 struct scalar_val_ref_op {
@@ -118,9 +87,7 @@ struct scalar_val_ref_op {
   }
 };
 
-/** \internal the return type of imag() const */
 typedef CwiseUnaryOp<scalar_val_op<Scalar>, const Derived> valReturnType;
-/** \internal the return type of imag() */
 typedef std::conditional_t<is_var<Scalar>::value || is_vari<Scalar>::value,
                    const valReturnType,
                    CwiseUnaryView<scalar_val_ref_op<Scalar>, Derived>>
@@ -134,3 +101,5 @@ val() const { return valReturnType(derived()); }
 EIGEN_DEVICE_FUNC
 inline NonConstvalReturnType
 val() { return NonConstvalReturnType(derived()); }
+
+#endif

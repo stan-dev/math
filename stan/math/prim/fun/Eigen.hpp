@@ -1,22 +1,13 @@
 #ifndef STAN_MATH_PRIM_FUN_EIGEN_HPP
 #define STAN_MATH_PRIM_FUN_EIGEN_HPP
 
-#ifdef EIGEN_MATRIXBASE_PLUGIN
-#ifndef EIGEN_STAN_MATRIXBASE_PLUGIN
-#error "Stan uses Eigen's EIGEN_MATRIXBASE_PLUGIN macro. To use your own "
+#ifdef EIGEN_DENSEBASE_PLUGIN
+#ifndef EIGEN_STAN_DENSEBASE_PLUGIN
+#error "Stan uses Eigen's EIGENDENSEBASE_PLUGIN macro. To use your own "
 "plugin add the eigen_plugin.h file to your plugin."
 #endif
 #else
-#define EIGEN_MATRIXBASE_PLUGIN "stan/math/prim/eigen_plugins.h"
-#endif
-
-#ifdef EIGEN_ARRAYBASE_PLUGIN
-#ifndef EIGEN_STAN_ARRAYBASE_PLUGIN
-#error "Stan uses Eigen's EIGEN_ARRAYBASE_PLUGIN macro. To use your own "
-    "plugin add the eigen_plugin.h file to your plugin."
-#endif
-#else
-#define EIGEN_ARRAYBASE_PLUGIN "stan/math/prim/eigen_plugins.h"
+#define EIGEN_DENSEBASE_PLUGIN "stan/math/prim/eigen_plugins.h"
 #endif
 
 #include <Eigen/Dense>
