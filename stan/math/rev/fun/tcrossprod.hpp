@@ -29,8 +29,7 @@ inline auto tcrossprod(const T& M) {
 
   if (likely(M.size() > 0)) {
     reverse_pass_callback([res, arena_M]() mutable {
-      arena_M.adj()
-          += (res.adj() + res.adj().transpose()) * arena_M.val();
+      arena_M.adj() += (res.adj() + res.adj().transpose()) * arena_M.val();
     });
   }
 

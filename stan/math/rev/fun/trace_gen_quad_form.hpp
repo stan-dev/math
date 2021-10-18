@@ -178,15 +178,15 @@ inline var trace_gen_quad_form(const Td& D, const Ta& A, const Tb& B) {
 
     var res = (arena_BDT.transpose() * arena_AB).trace();
 
-    reverse_pass_callback([arena_A, arena_B, arena_D, arena_BDT, arena_AB,
-                           res]() mutable {
-      double C_adj = res.adj();
+    reverse_pass_callback(
+        [arena_A, arena_B, arena_D, arena_BDT, arena_AB, res]() mutable {
+          double C_adj = res.adj();
 
-      arena_A.adj() += C_adj * arena_BDT * arena_B.val().transpose();
-      arena_B.adj()
-          += C_adj
-             * (arena_AB * arena_D + arena_A.val().transpose() * arena_BDT);
-    });
+          arena_A.adj() += C_adj * arena_BDT * arena_B.val().transpose();
+          arena_B.adj()
+              += C_adj
+                 * (arena_AB * arena_D + arena_A.val().transpose() * arena_BDT);
+        });
 
     return res;
   } else if (!is_constant<Ta>::value && is_constant<Tb>::value
@@ -235,16 +235,16 @@ inline var trace_gen_quad_form(const Td& D, const Ta& A, const Tb& B) {
 
     var res = (arena_BDT.transpose() * arena_AB).trace();
 
-    reverse_pass_callback([arena_A, arena_B, arena_D, arena_AB, arena_BDT,
-                           res]() mutable {
-      double C_adj = res.adj();
+    reverse_pass_callback(
+        [arena_A, arena_B, arena_D, arena_AB, arena_BDT, res]() mutable {
+          double C_adj = res.adj();
 
-      arena_B.adj()
-          += C_adj
-             * (arena_AB * arena_D.val() + arena_A.transpose() * arena_BDT);
+          arena_B.adj()
+              += C_adj
+                 * (arena_AB * arena_D.val() + arena_A.transpose() * arena_BDT);
 
-      arena_D.adj() += C_adj * (arena_AB.transpose() * arena_B.val());
-    });
+          arena_D.adj() += C_adj * (arena_AB.transpose() * arena_B.val());
+        });
 
     return res;
   } else if (is_constant<Ta>::value && !is_constant<Tb>::value
