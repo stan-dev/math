@@ -73,24 +73,8 @@ struct scalar_d_ref_op {
   }
 };
 
-template <typename T, typename Enable = void>
-struct d_stride { };
-
-template <typename T>
-struct d_stride<T, std::enable_if_t<!is_fvar<T>::value>> {
-  static constexpr int stride = -1;
-};
-
-template <typename T>
-struct d_stride<T, std::enable_if_t<is_fvar<T>::value>> {
-  using fvar_t = std::remove_pointer_t<T>;
-  static constexpr int stride = sizeof(fvar_t) / sizeof(typename fvar_t::Scalar);
-};
-
 typedef CwiseUnaryOp<scalar_d_op<Scalar>, const Derived> dReturnType;
-typedef CwiseUnaryView<scalar_d_ref_op<Scalar>, Derived,
-                       d_stride<Scalar>::stride,
-                       d_stride<Scalar>::stride> NonConstdReturnType;
+typedef CwiseUnaryView<scalar_d_ref_op<Scalar>, Derived> NonConstdReturnType;
 
 EIGEN_DEVICE_FUNC
 inline const dReturnType

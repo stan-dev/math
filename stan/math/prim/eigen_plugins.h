@@ -1,11 +1,8 @@
-
 #include "plugins/typedefs.h"
 #include "plugins/adj_view.h"
 #include "plugins/val_view.h"
 #include "plugins/d_view.h"
 #include "plugins/vi_view.h"
-
-
 
 EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
 const Scalar& coeffRef(Index row, Index col) const {

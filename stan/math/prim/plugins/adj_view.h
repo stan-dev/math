@@ -111,7 +111,7 @@ struct adj_stride<T, std::enable_if_t<is_vari<T>::value>> {
 
 template <typename T>
 struct adj_stride<T, std::enable_if_t<is_var<T>::value>> {
-  using vari_t = std::remove_pointer_t<decltype(std::declval<T>().vi_)>;
+  using vari_t = std::remove_pointer_t<decltype(std::declval<std::decay_t<std::remove_pointer_t<T>>>().vi_)>;
   static constexpr int stride = sizeof(vari_t) / sizeof(typename vari_t::value_type);
 };
 
