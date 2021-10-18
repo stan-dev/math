@@ -1,7 +1,6 @@
 #ifndef TEST_UNIT_MATH_SERIALIZER_HPP
 #define TEST_UNIT_MATH_SERIALIZER_HPP
 
-#include <test/unit/math/util.hpp>
 #include <stan/math.hpp>
 #include <complex>
 #include <string>
@@ -48,7 +47,7 @@ struct deserializer {
    * @param vals values to deserialize
    */
   explicit deserializer(const Eigen::Matrix<T, -1, 1>& v_vals)
-      : position_(0), vals_(to_std_vector(v_vals)) {}
+      : position_(0), vals_(math::to_array_1d(v_vals)) {}
 
   /**
    * Read a scalar conforming to the shape of the specified argument,
@@ -259,7 +258,7 @@ struct serializer {
    * @return serialized values
    */
   const Eigen::Matrix<T, -1, 1>& vector_vals() {
-    return to_eigen_vector(vals_);
+    return math::to_vector(vals_);
   }
 };
 
@@ -339,7 +338,7 @@ std::vector<real_return_t<T>> serialize_return(const T& x) {
  */
 template <typename... Ts>
 Eigen::VectorXd serialize_args(const Ts... xs) {
-  return to_eigen_vector(serialize<double>(xs...));
+  return math::to_vector(serialize<double>(xs...));
 }
 
 }  // namespace test

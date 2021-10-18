@@ -1,0 +1,8 @@
+Test for create program from binaries.
+Tests for linkProgram.
+Tests for SVM - 
+	enableFineGrainedSystemSVM
+	setSVMPointers
+	SVM setArg variants
+	SVM allocators
+	SVM shared pointer

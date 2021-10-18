@@ -97,6 +97,7 @@
 #include <stan/math/opencl/to_ref_for_opencl.hpp>
 #include <stan/math/opencl/value_type.hpp>
 #include <stan/math/opencl/zeros_strict_tri.hpp>
+#include <stan/math/opencl/qr_decomposition.hpp>
 
 #include <stan/math/opencl/prim/add_diag.hpp>
 #include <stan/math/opencl/prim/append_array.hpp>
@@ -124,6 +125,7 @@
 #include <stan/math/opencl/prim/columns_dot_product.hpp>
 #include <stan/math/opencl/prim/columns_dot_self.hpp>
 #include <stan/math/opencl/prim/crossprod.hpp>
+#include <stan/math/opencl/prim/cumulative_sum.hpp>
 #include <stan/math/opencl/prim/diag_matrix.hpp>
 #include <stan/math/opencl/prim/diag_pre_multiply.hpp>
 #include <stan/math/opencl/prim/diag_post_multiply.hpp>
@@ -138,6 +140,8 @@
 #include <stan/math/opencl/prim/double_exponential_lccdf.hpp>
 #include <stan/math/opencl/prim/double_exponential_lcdf.hpp>
 #include <stan/math/opencl/prim/double_exponential_lpdf.hpp>
+#include <stan/math/opencl/prim/eigenvalues_sym.hpp>
+#include <stan/math/opencl/prim/eigenvectors_sym.hpp>
 #include <stan/math/opencl/prim/exp_mod_normal_cdf.hpp>
 #include <stan/math/opencl/prim/exp_mod_normal_lccdf.hpp>
 #include <stan/math/opencl/prim/exp_mod_normal_lcdf.hpp>
@@ -161,6 +165,7 @@
 #include <stan/math/opencl/prim/gumbel_lcdf.hpp>
 #include <stan/math/opencl/prim/gumbel_lpdf.hpp>
 #include <stan/math/opencl/prim/head.hpp>
+#include <stan/math/opencl/prim/identity_matrix.hpp>
 #include <stan/math/opencl/prim/inv.hpp>
 #include <stan/math/opencl/prim/inv_chi_square_lpdf.hpp>
 #include <stan/math/opencl/prim/inv_cloglog.hpp>
@@ -210,6 +215,10 @@
 #include <stan/math/opencl/prim/poisson_log_lpmf.hpp>
 #include <stan/math/opencl/prim/poisson_lpmf.hpp>
 #include <stan/math/opencl/prim/prod.hpp>
+#include <stan/math/opencl/prim/qr_Q.hpp>
+#include <stan/math/opencl/prim/qr_R.hpp>
+#include <stan/math/opencl/prim/qr_thin_Q.hpp>
+#include <stan/math/opencl/prim/qr_thin_R.hpp>
 #include <stan/math/opencl/prim/rank.hpp>
 #include <stan/math/opencl/prim/rayleigh_cdf.hpp>
 #include <stan/math/opencl/prim/rayleigh_lccdf.hpp>
@@ -230,6 +239,8 @@
 #include <stan/math/opencl/prim/sign.hpp>
 #include <stan/math/opencl/prim/size.hpp>
 #include <stan/math/opencl/prim/softmax.hpp>
+#include <stan/math/opencl/prim/sort_asc.hpp>
+#include <stan/math/opencl/prim/sort_desc.hpp>
 #include <stan/math/opencl/prim/squared_distance.hpp>
 #include <stan/math/opencl/prim/sub_col.hpp>
 #include <stan/math/opencl/prim/sub_row.hpp>

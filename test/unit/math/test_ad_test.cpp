@@ -230,6 +230,9 @@ int baz_int = 0;
 int baz_double = 0;
 int baz_var = 0;
 int baz_fvar = 0;
+int baz_complex = 0;
+int baz_complex_var = 0;
+int baz_complex_fvar = 0;
 
 double baz(int x) {
   ++baz_int;
@@ -243,9 +246,23 @@ stan::math::var baz(const stan::math::var& x) {
   ++baz_var;
   return x / 2.0;
 }
+std::complex<double> baz(std::complex<double> x) {
+  ++baz_complex;
+  return x / 2.0;
+}
+std::complex<stan::math::var> baz(const std::complex<stan::math::var>& x) {
+  ++baz_complex_var;
+  return x / 2.0;
+}
 template <typename T>
 stan::math::fvar<T> baz(const stan::math::fvar<T>& x) {
   ++baz_fvar;
+  return x / 2.0;
+}
+template <typename T>
+std::complex<stan::math::fvar<T>> baz(
+    const std::complex<stan::math::fvar<T>>& x) {
+  ++baz_complex_fvar;
   return x / 2.0;
 }
 
@@ -289,7 +306,8 @@ TEST(testAd, integerGetsPassedVectorized) {
   baz_double = 0;
   baz_var = 0;
   baz_fvar = 0;
-  stan::test::expect_common_unary_vectorized(h);
+  stan::test::expect_common_unary_vectorized<stan::test::PromoteToComplex::Yes>(
+      h);
   EXPECT_GT(baz_int, 0);  // int version gets called
   EXPECT_GT(baz_double, 0);
   EXPECT_GT(baz_var, 0);

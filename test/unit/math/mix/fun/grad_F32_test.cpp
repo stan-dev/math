@@ -561,8 +561,8 @@ TEST(ProbInternalMath, gradF32_fv_1stderiv1) {
   EXPECT_NEAR(41.01553475870347475023037358640582917147051389292162474016745,
               g[0].d_.val(), 1e-5);
 
-  AVEC y1 = createAVEC(a.val_);
-  VEC grad1;
+  std::vector<stan::math::var> y1{a.val_};
+  std::vector<double> grad1;
   g[0].val_.grad(y1, grad1);
   EXPECT_NEAR(41.01553475870347475023037358640582917147051389292162474016745,
               grad1[0], 1e-5);
@@ -598,8 +598,8 @@ TEST(ProbInternalMath, gradF32_fv_1stderiv2) {
   EXPECT_NEAR(0.342454543339724329115552426438001592723143365030924900588111,
               g[1].d_.val(), 1e-5);
 
-  AVEC y1 = createAVEC(b.val_);
-  VEC grad1;
+  std::vector<stan::math::var> y1{b.val_};
+  std::vector<double> grad1;
   g[1].val_.grad(y1, grad1);
   EXPECT_NEAR(0.342454543339724329115552426438001592723143365030924900588111,
               grad1[0], 1e-5);
@@ -634,8 +634,8 @@ TEST(ProbInternalMath, gradF32_fv_1stderiv3) {
 
   EXPECT_NEAR(0.90986472078762437, g[2].d_.val(), 1e-5);
 
-  AVEC y1 = createAVEC(c.val_);
-  VEC grad1;
+  std::vector<stan::math::var> y1{c.val_};
+  std::vector<double> grad1;
   g[2].val_.grad(y1, grad1);
   EXPECT_NEAR(0.90986472078762437, grad1[0], 1e-5);
 }
@@ -669,8 +669,8 @@ TEST(ProbInternalMath, gradF32_fv_1stderiv4) {
   EXPECT_NEAR(1.047024959065504556655904003595645684444382378830047020988218,
               g[3].d_.val(), 1e-5);
 
-  AVEC y1 = createAVEC(d.val_);
-  VEC grad1;
+  std::vector<stan::math::var> y1{d.val_};
+  std::vector<double> grad1;
   g[3].val_.grad(y1, grad1);
   EXPECT_NEAR(1.047024959065504556655904003595645684444382378830047020988218,
               grad1[0], 1e-5);
@@ -705,8 +705,8 @@ TEST(ProbInternalMath, gradF32_fv_1stderiv5) {
   EXPECT_NEAR(0.415359887777218792995404669803015764396172842233556866773418,
               g[4].d_.val(), 1e-5);
 
-  AVEC y1 = createAVEC(e.val_);
-  VEC grad1;
+  std::vector<stan::math::var> y1{e.val_};
+  std::vector<double> grad1;
   g[4].val_.grad(y1, grad1);
   EXPECT_NEAR(0.415359887777218792995404669803015764396172842233556866773418,
               grad1[0], 1e-5);
@@ -741,8 +741,8 @@ TEST(ProbInternalMath, gradF32_fv_1stderiv6) {
   EXPECT_NEAR(424.5724606148232594702100102534498155985480235827583548085963,
               g[5].d_.val(), 1e-5);
 
-  AVEC y1 = createAVEC(z.val_);
-  VEC grad1;
+  std::vector<stan::math::var> y1{z.val_};
+  std::vector<double> grad1;
   g[5].val_.grad(y1, grad1);
   EXPECT_NEAR(424.5724606148232594702100102534498155985480235827583548085963,
               grad1[0], 1e-5);
@@ -778,8 +778,8 @@ TEST(ProbInternalMath, gradF32_fv_2ndderiv1) {
   EXPECT_NEAR(41.01553475870347475023037358640582917147051389292162474016745,
               g[0].d_.val(), 1e-5);
 
-  AVEC y1 = createAVEC(a.val_);
-  VEC grad1;
+  std::vector<stan::math::var> y1{a.val_};
+  std::vector<double> grad1;
   g[0].d_.grad(y1, grad1);
   EXPECT_NEAR(65.599396543196708101135082478886528455, grad1[0], 1e-5);
 }
@@ -814,8 +814,8 @@ TEST(ProbInternalMath, gradF32_fv_2ndderiv2) {
   EXPECT_NEAR(0.342454543339724329115552426438001592723143365030924900588111,
               g[1].d_.val(), 1e-5);
 
-  AVEC y1 = createAVEC(b.val_);
-  VEC grad1;
+  std::vector<stan::math::var> y1{b.val_};
+  std::vector<double> grad1;
   g[1].d_.grad(y1, grad1);
   EXPECT_NEAR(0.074524365399251673905543999863038234, grad1[0], 1e-5);
 }
@@ -849,8 +849,8 @@ TEST(ProbInternalMath, gradF32_fv_2ndderiv3) {
 
   EXPECT_NEAR(0.90986472078762437, g[2].d_.val(), 1e-5);
 
-  AVEC y1 = createAVEC(c.val_);
-  VEC grad1;
+  std::vector<stan::math::var> y1{c.val_};
+  std::vector<double> grad1;
   g[2].d_.grad(y1, grad1);
   EXPECT_NEAR(-0.4025421605307411, grad1[0], 1e-5);
 }
@@ -884,8 +884,8 @@ TEST(ProbInternalMath, gradF32_fv_2ndderiv4) {
   EXPECT_NEAR(1.047024959065504556655904003595645684444382378830047020988218,
               g[3].d_.val(), 1e-5);
 
-  AVEC y1 = createAVEC(d.val_);
-  VEC grad1;
+  std::vector<stan::math::var> y1{d.val_};
+  std::vector<double> grad1;
   g[3].d_.grad(y1, grad1);
   EXPECT_NEAR(-0.505769456958641747831864908555691738, grad1[0], 1e-5);
 }
@@ -919,8 +919,8 @@ TEST(ProbInternalMath, gradF32_fv_2ndderiv5) {
   EXPECT_NEAR(0.415359887777218792995404669803015764396172842233556866773418,
               g[4].d_.val(), 1e-5);
 
-  AVEC y1 = createAVEC(e.val_);
-  VEC grad1;
+  std::vector<stan::math::var> y1{e.val_};
+  std::vector<double> grad1;
   g[4].d_.grad(y1, grad1);
   EXPECT_NEAR(0.143334459434983770772868891143925349, grad1[0], 1e-5);
 }
@@ -954,8 +954,8 @@ TEST(ProbInternalMath, gradF32_fv_2ndderiv6) {
   EXPECT_NEAR(424.5724606148232594702100102534498155985480235827583548085963,
               g[5].d_.val(), 1e-5);
 
-  AVEC y1 = createAVEC(z.val_);
-  VEC grad1;
+  std::vector<stan::math::var> y1{z.val_};
+  std::vector<double> grad1;
   g[5].d_.grad(y1, grad1);
   EXPECT_NEAR(3464.701930495754952696665090654133564817, grad1[0], 1e-5);
 }

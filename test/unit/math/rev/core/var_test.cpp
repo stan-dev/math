@@ -195,6 +195,10 @@ TEST_F(AgradRev, var_matrix_views) {
   auto A_rowwise_colwise_reverse = A_v.rowwise_reverse().colwise_reverse();
   EXPECT_MATRIX_FLOAT_EQ(A_rowwise_colwise_reverse.val(),
                          A.rowwise().reverse().colwise().reverse());
+
+  auto A_diagonal = A_v.diagonal();
+  EXPECT_MATRIX_FLOAT_EQ(A_diagonal.val(), A.diagonal());
+
   auto A_coeff1 = A_v(3);
   EXPECT_FLOAT_EQ(A(3), A_coeff1.val());
   auto A_coeff2 = A_v(3, 3);
@@ -681,32 +685,32 @@ TEST_F(AgradRev, var_matrix_array) {
 }
 
 TEST_F(AgradRev, a_eq_x) {
-  AVAR a = 5.0;
+  stan::math::var a = 5.0;
   EXPECT_FLOAT_EQ(5.0, a.val());
 }
 
 TEST_F(AgradRev, a_of_x) {
-  AVAR a(6.0);
+  stan::math::var a(6.0);
   EXPECT_FLOAT_EQ(6.0, a.val());
 }
 
 TEST_F(AgradRev, a__a_eq_x) {
-  AVAR a;
+  stan::math::var a;
   a = 7.0;
   EXPECT_FLOAT_EQ(7.0, a.val());
 }
 
 TEST_F(AgradRev, eq_a) {
-  AVAR a = 5.0;
-  AVAR f = a;
-  AVEC x = createAVEC(a);
-  VEC dx;
+  stan::math::var a = 5.0;
+  stan::math::var f = a;
+  std::vector<stan::math::var> x{a};
+  std::vector<double> dx;
   f.grad(x, dx);
   EXPECT_FLOAT_EQ(1.0, dx[0]);
 }
 
 TEST_F(AgradRev, a_ostream) {
-  AVAR a = 6.0;
+  stan::math::var a = 6.0;
   std::ostringstream os;
 
   os << a;
@@ -719,7 +723,7 @@ TEST_F(AgradRev, a_ostream) {
 }
 
 TEST_F(AgradRev, smart_ptrs) {
-  AVAR a = 2.0;
+  stan::math::var a = 2.0;
   EXPECT_FLOAT_EQ(2.0, (*a).val_);
   EXPECT_FLOAT_EQ(2.0, a->val_);
 
@@ -737,10 +741,10 @@ TEST_F(AgradRev, stackAllocation) {
   var a(&ai);
   var b(&bi);
 
-  AVEC x = createAVEC(a, b);
+  std::vector<stan::math::var> x{a, b};
   var f = a * b;
 
-  VEC g;
+  std::vector<double> g;
   f.grad(x, g);
 
   EXPECT_EQ(2U, g.size());
@@ -876,9 +880,9 @@ TEST_F(AgradRev, nestedGradient3) {
 }
 
 TEST_F(AgradRev, grad) {
-  AVAR a = 5.0;
-  AVAR b = 10.0;
-  AVAR f = a * b + a;
+  stan::math::var a = 5.0;
+  stan::math::var b = 10.0;
+  stan::math::var f = a * b + a;
 
   EXPECT_NO_THROW(f.grad()) << "testing the grad function with no args";
 

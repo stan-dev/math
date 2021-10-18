@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_FUN_GENERALIZED_INVERSE_HPP
 #define STAN_MATH_REV_FUN_GENERALIZED_INVERSE_HPP
 
+#include <stan/math/prim/fun/add_diag.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
@@ -61,16 +62,25 @@ inline auto generalized_inverse_lambda(T1& G_arena, T2& inv_G) {
  */
 template <typename VarMat, require_rev_matrix_t<VarMat>* = nullptr>
 inline auto generalized_inverse(const VarMat& G) {
-  using value_t = value_type_t<VarMat>;
   using ret_type = promote_var_matrix_t<VarMat, VarMat>;
 
   if (G.size() == 0)
     return ret_type(G);
 
-  if (G.rows() == G.cols())
-    return ret_type(inverse(G));
-
-  if (G.rows() < G.cols()) {
+  if (G.rows() == G.cols()) {
+    arena_t<VarMat> G_arena(G);
+    Eigen::CompleteOrthogonalDecomposition<Eigen::MatrixXd>
+        complete_ortho_decomp_G
+        = G_arena.val().completeOrthogonalDecomposition();
+    if (!(complete_ortho_decomp_G.rank() < G.rows())) {
+      return ret_type(inverse(G_arena));
+    } else {
+      arena_t<ret_type> inv_G(complete_ortho_decomp_G.pseudoInverse());
+      reverse_pass_callback(
+          internal::generalized_inverse_lambda(G_arena, inv_G));
+      return ret_type(inv_G);
+    }
+  } else if (G.rows() < G.cols()) {
     arena_t<VarMat> G_arena(G);
     arena_t<ret_type> inv_G((G_arena.val_op() * G_arena.val_op().transpose())
                                 .ldlt()

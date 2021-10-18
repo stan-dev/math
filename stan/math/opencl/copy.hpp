@@ -17,7 +17,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/vec_concat.hpp>
 
-#include <CL/cl2.hpp>
+#include <CL/opencl.hpp>
 #include <algorithm>
 #include <iostream>
 #include <type_traits>
@@ -55,8 +55,7 @@ inline matrix_cl<scalar_type_t<T>> to_matrix_cl(T&& src) {
  * @param src source matrix on the OpenCL device
  * @return Eigen matrix with a copy of the data in the source matrix
  */
-template <typename T_ret, typename T,
-          require_eigen_vt<std::is_arithmetic, T_ret>* = nullptr,
+template <typename T_ret, typename T, require_eigen_t<T_ret>* = nullptr,
           require_matrix_cl_t<T>* = nullptr,
           require_st_same<T_ret, T>* = nullptr>
 inline auto from_matrix_cl(const T& src) {

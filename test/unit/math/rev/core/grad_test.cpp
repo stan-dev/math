@@ -6,21 +6,21 @@
 
 TEST(AgradRev, multiple_grads) {
   for (int i = 0; i < 100; ++i) {
-    AVAR a = 2.0;
-    AVAR b = 3.0 * a;
-    AVAR c = sin(a) * b;
+    stan::math::var a = 2.0;
+    stan::math::var b = 3.0 * a;
+    stan::math::var c = sin(a) * b;
     // fixes warning regarding unused variable
     c = c;
 
-    AVAR nothing;
+    stan::math::var nothing;
   }
 
-  AVAR d = 2.0;
-  AVAR e = 3.0;
-  AVAR f = d * e;
+  stan::math::var d = 2.0;
+  stan::math::var e = 3.0;
+  stan::math::var f = d * e;
 
-  AVEC x = createAVEC(d, e);
-  VEC grad_f;
+  std::vector<stan::math::var> x{d, e};
+  std::vector<double> grad_f;
   f.grad(x, grad_f);
 
   EXPECT_FLOAT_EQ(3.0, d.adj());

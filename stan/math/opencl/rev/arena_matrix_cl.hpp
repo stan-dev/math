@@ -39,6 +39,8 @@ template <typename T>
 class arena_matrix_cl : public matrix_cl_base {
  private:
   internal::arena_matrix_cl_impl<T>* impl_;
+  template <typename>
+  friend class matrix_cl;
 
  public:
   using Scalar = typename matrix_cl<T>::Scalar;
@@ -75,11 +77,14 @@ class arena_matrix_cl : public matrix_cl_base {
 
   /**
    * Implicit conversion operator to `matrix_cl`.
-   * @return `matrix_cl` equivalent to `*this`
+   * @return `matrix_cl` equivalent to `*this`. Returned matrix references the
+   * same underlying buffer.
    */
-  operator matrix_cl<T>() const& { return *impl_; }  // NOLINT(runtime/explicit)
-  operator matrix_cl<T>() && {                       // NOLINT(runtime/explicit)
-    return std::move(*impl_);
+  operator const matrix_cl<T>&() const {  // NOLINT(runtime/explicit)
+    return *static_cast<const matrix_cl<T>*>(impl_);
+  }
+  operator matrix_cl<T>&() {  // NOLINT(runtime/explicit)
+    return *static_cast<matrix_cl<T>*>(impl_);
   }
 
   /**
@@ -139,6 +144,28 @@ class arena_matrix_cl : public matrix_cl_base {
 #undef ARENA_MATRIX_CL_FUNCTION_WRAPPER
 #undef ARENA_MATRIX_CL_CONST_FUNCTION_WRAPPER
 };
+template <typename T>
+matrix_cl<T>::matrix_cl(const arena_matrix_cl<T>& A)
+    // works like a move constructor, except it does not modify `a`
+    : buffer_cl_(A.impl_->buffer_cl_),
+      rows_(A.impl_->rows_),
+      cols_(A.impl_->cols_),
+      view_(A.impl_->view_),
+      write_events_(A.impl_->write_events_),
+      read_events_(A.impl_->read_events_) {}
+
+template <typename T>
+matrix_cl<T>& matrix_cl<T>::operator=(const arena_matrix_cl<T>& a) {
+  // works like a move assignment operator, except it does not modify `a`
+  view_ = a.impl_->view();
+  rows_ = a.impl_->rows();
+  cols_ = a.impl_->cols();
+  this->wait_for_read_write_events();
+  buffer_cl_ = a.impl_->buffer_cl_;
+  write_events_ = a.impl_->write_events_;
+  read_events_ = a.impl_->read_events_;
+  return *this;
+}
 
 }  // namespace math
 }  // namespace stan

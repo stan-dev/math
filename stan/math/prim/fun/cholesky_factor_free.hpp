@@ -48,6 +48,19 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cholesky_factor_free(
   return x;
 }
 
+/**
+ * Overload of `cholesky_factor_free()` to untransform each matrix
+ * in a standard vector.
+ * @tparam T A standard vector with with a `value_type` which inherits from
+ *  `Eigen::MatrixBase`.
+ * @param x The standard vector to untransform.
+ */
+template <typename T, require_std_vector_t<T>* = nullptr>
+auto cholesky_factor_free(const T& x) {
+  return apply_vector_unary<T>::apply(
+      x, [](auto&& v) { return cholesky_factor_free(v); });
+}
+
 }  // namespace math
 }  // namespace stan
 

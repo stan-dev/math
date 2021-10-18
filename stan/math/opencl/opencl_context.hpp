@@ -13,7 +13,7 @@
 #include <stan/math/opencl/matrix_cl_view.hpp>
 #include <stan/math/opencl/err/check_opencl.hpp>
 
-#include <CL/cl2.hpp>
+#include <CL/opencl.hpp>
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -169,7 +169,7 @@ class opencl_context_base {
          {"THREAD_BLOCK_SIZE", 32},
          {"WORK_PER_THREAD", 8},
          {"REDUCTION_STEP_SIZE", 4},
-         {"LOCAL_SIZE_", 64}};
+         {"LOCAL_SIZE_", 4096}};
   // TODO(Steve): Make these tunable during warmup
   struct tuning_struct {
     // Used in math/opencl/cholesky_decompose

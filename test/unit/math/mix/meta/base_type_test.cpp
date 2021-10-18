@@ -6,14 +6,14 @@
 
 template <typename R, typename T>
 void expect_base() {
-  test::expect_same_type<R, typename stan::base_type<T>::type>();
-  test::expect_same_type<R, stan::base_type_t<T>>();
-  test::expect_same_type<R, typename stan::base_type<T&>::type>();
-  test::expect_same_type<R, stan::base_type_t<T&>>();
-  test::expect_same_type<R, typename stan::base_type<const T&>::type>();
-  test::expect_same_type<R, stan::base_type_t<const T&>>();
-  test::expect_same_type<R, typename stan::base_type<const T>::type>();
-  test::expect_same_type<R, stan::base_type_t<const T>>();
+  EXPECT_SAME_TYPE(R, typename stan::base_type<T>::type);
+  EXPECT_SAME_TYPE(R, stan::base_type_t<T>);
+  EXPECT_SAME_TYPE(R, typename stan::base_type<T&>::type);
+  EXPECT_SAME_TYPE(R, stan::base_type_t<T&>);
+  EXPECT_SAME_TYPE(R, typename stan::base_type<const T&>::type);
+  EXPECT_SAME_TYPE(R, stan::base_type_t<const T&>);
+  EXPECT_SAME_TYPE(R, typename stan::base_type<const T>::type);
+  EXPECT_SAME_TYPE(R, stan::base_type_t<const T>);
 }
 
 template <typename T>

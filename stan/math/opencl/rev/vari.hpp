@@ -109,6 +109,27 @@ class vari_cl_base : public vari_base {
   }
 
   /**
+   * Return indexed view into a matrix.
+   *
+   * Do not use with indices that reference any element of this more than once -
+   * that cans cause data races in rev operations on the result!
+   *
+   * @param row_index kg expression used for row index
+   * @param col_index kg expression used for column index
+   */
+  template <typename RowIndex, typename ColIndex>
+  auto index(const RowIndex& row_index, const ColIndex& col_index) {
+    RowIndex r1 = row_index;
+    RowIndex r2 = row_index;
+    ColIndex c1 = col_index;
+    ColIndex c2 = col_index;
+    auto&& val_t = stan::math::indexing(val_, std::move(r1), std::move(c1));
+    auto&& adj_t = stan::math::indexing(adj_, std::move(r2), std::move(c2));
+    return vari_view<std::decay_t<decltype(val_t)>>(std::move(val_t),
+                                                    std::move(adj_t));
+  }
+
+  /**
    * Return the number of rows for this class's `val_` member
    */
   const Eigen::Index rows() const { return val_.rows(); }
