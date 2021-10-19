@@ -113,6 +113,15 @@ class CwiseUnaryViewImpl<ViewOp,MatrixType,  InnerStride,  OuterStride,Dense>
     
     EIGEN_DEVICE_FUNC inline Scalar* data() { return &(this->coeffRef(0)); }
     EIGEN_DEVICE_FUNC inline const Scalar* data() const { return &(this->coeff(0)); }
+  
+    using Base::coeffRef;
+    EIGEN_DEVICE_FUNC inline const Scalar& coeffRef(Index row, Index col) const {
+      return const_cast<CwiseUnaryViewImpl*>(this)->coeffRef(row, col);
+    }
+
+    EIGEN_DEVICE_FUNC inline const Scalar& coeffRef(Index index) const {
+      return const_cast<CwiseUnaryViewImpl*>(this)->coeffRef(index);
+    }
 
     EIGEN_DEVICE_FUNC inline Index innerStride() const
     {
