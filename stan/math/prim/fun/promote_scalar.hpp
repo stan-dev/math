@@ -60,7 +60,7 @@ struct promote_scalar_struct<T, T> {
  * @return input vector with scalars promoted to type T.
  */
 template <typename T, typename S>
-typename promote_scalar_type<T, S>::type promote_scalar(const S& x) {
+inline promote_scalar_t<T, S> promote_scalar(const S& x) {
   return promote_scalar_struct<T, S>::apply(x);
 }
 
@@ -104,7 +104,7 @@ struct promote_scalar_struct<T, std::vector<S>> {
  * function, which must have a scalar type assignable to T
  */
 template <typename T, typename S>
-struct promote_scalar_struct<T, S, require_eigen_t<S>> {
+struct promote_scalar_struct<T, S, require_t<bool_constant<is_eigen<S>::value && is_stan_scalar<T>::value>>> {
   /**
    * Return the matrix consisting of the recursive promotion of
    * the elements of the input matrix to the scalar type specified

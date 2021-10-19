@@ -63,8 +63,22 @@ struct promote_scalar_type<
  */
 template <typename T, typename S>
 struct promote_scalar_type<T, S,
-                           require_all_t<std::is_arithmetic<T>, is_var<S>,
-                                         is_eigen<value_type_t<S>>>> {
+                           require_all_t<std::is_arithmetic<T>, is_var_matrix<S>>> {
+  /**
+   * The promoted type.
+   */
+  using type = typename promote_scalar_type<T, value_type_t<S>>::type;
+};
+
+/**
+ * Specialization for `var_value` when the type to convert to is arithmetic.
+ * @tparam T an arithmetic type.
+ * @tparam S A `var_value` whose template type is derived from `EigenBase`.
+ *  This specialization the promoted value type of `S`.
+ */
+template <typename T, typename S>
+struct promote_scalar_type<T, S,
+                           require_all_t<is_var_matrix<T>, is_eigen<S>>> {
   /**
    * The promoted type.
    */
@@ -80,7 +94,7 @@ struct promote_scalar_type<T, S,
  * @tparam S input matrix type
  */
 template <typename T, typename S>
-struct promote_scalar_type<T, S, require_eigen_t<S>> {
+struct promote_scalar_type<T, S, require_all_t<bool_constant<!is_var_matrix<T>::value>, is_eigen<S>>> {
   /**
    * The promoted type.
    */
