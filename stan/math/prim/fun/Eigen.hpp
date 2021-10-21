@@ -18,7 +18,7 @@
 #include <Eigen/src/Core/NumTraits.h>
 #include <Eigen/SVD>
 
-namespace Eigen {
+    namespace Eigen {
   /**
    * Traits specialization for Eigen binary operations for `int`
    * and `double` arguments.
