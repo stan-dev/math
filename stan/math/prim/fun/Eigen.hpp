@@ -3,10 +3,12 @@
 
 #ifdef EIGEN_DENSEBASE_PLUGIN
 #ifndef EIGEN_STAN_DENSEBASE_PLUGIN
-#error "Stan uses Eigen's EIGENDENSEBASE_PLUGIN macro. To use your own "
+#error "Stan uses Eigen's EIGEN_DENSEBASE_PLUGIN macro. To use your own "
 "plugin add the eigen_plugin.h file to your plugin."
 #endif
 #else
+// By using the DenseBase plugin, we do not need to specify both
+//  MatrixBase and ArrayBase inclusions
 #define EIGEN_DENSEBASE_PLUGIN "stan/math/prim/eigen_plugins.h"
 #endif
 
@@ -16,8 +18,7 @@
 #include <Eigen/src/Core/NumTraits.h>
 #include <Eigen/SVD>
 
-    namespace Eigen {
-
+namespace Eigen {
   /**
    * Traits specialization for Eigen binary operations for `int`
    * and `double` arguments.

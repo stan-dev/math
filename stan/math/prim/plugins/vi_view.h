@@ -1,11 +1,9 @@
 #ifndef STAN_MATH_PRIM_PLUGINS_VI_VIEW_H
 #define STAN_MATH_PRIM_PLUGINS_VI_VIEW_H
 
-template <typename Scalar, typename Enable = void>
-struct vi_impl { };
-
+// Struct for returning the vari* from a var
 template <typename Scalar>
-struct vi_impl<Scalar, std::enable_if_t<is_var<Scalar>::value>> {
+struct vi_impl{
   EIGEN_DEVICE_FUNC
   static inline const vi_return_t<Scalar>& run(const Scalar& x) {
     return x.vi_;
@@ -16,46 +14,44 @@ struct vi_impl<Scalar, std::enable_if_t<is_var<Scalar>::value>> {
   }
 };
 
+// Struct implementing operator() to be called by CWiseUnaryOp to
+//   return the vari from a const var
 template <typename Scalar>
 struct scalar_vi_op {
   EIGEN_EMPTY_STRUCT_CTOR(scalar_vi_op)
-  EIGEN_DEVICE_FUNC
-  EIGEN_STRONG_INLINE const vi_return_t<Scalar>& operator() (const Scalar& a) const {
-    return vi(a);
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+  const vi_return_t<Scalar>& operator() (const Scalar& a) const {
+    return vi_impl<Scalar>::run(a);
   }
 };
 
+// Struct implementing operator() to be called by CWiseUnaryView to
+//   return the vari from a non-const var
 template <typename Scalar>
 struct scalar_vi_ref_op {
   EIGEN_EMPTY_STRUCT_CTOR(scalar_vi_ref_op)
-  EIGEN_DEVICE_FUNC
-  EIGEN_STRONG_INLINE vi_return_t<Scalar>& operator() (const Scalar& a) const {
-    return vi_ref(*const_cast<Scalar*>(&a));
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
+  vi_return_t<Scalar>& operator() (const Scalar& a) const {
+    return vi_impl<Scalar>::run(*const_cast<Scalar*>(&a));
   }
 };
 
-template <typename Scalar>
+/**
+ * Coefficient-wise function returning a view of the values that cannot
+ * be modified
+ */
 EIGEN_DEVICE_FUNC
-static inline const vi_return_t<Scalar>& vi(const Scalar& x) {
-  return vi_impl<Scalar>::run(x);
+inline const auto vi() const {
+  return CwiseUnaryOp<scalar_vi_op<Scalar>, const Derived>(derived());
 }
 
-template <typename Scalar>
+/**
+ * Coefficient-wise function returning a view of the adjoints that can
+ * be modified.
+ */
 EIGEN_DEVICE_FUNC
-static inline vi_return_t<Scalar>& vi_ref(Scalar& x) {
-  return vi_impl<Scalar>::run(x);
+inline auto vi() {
+  return CwiseUnaryView<scalar_vi_ref_op<Scalar>, Derived> (derived());
 }
-
-typedef CwiseUnaryOp<scalar_vi_op<Scalar>, const Derived> viReturnType;
-typedef CwiseUnaryView<scalar_vi_ref_op<Scalar>, Derived> NonConstviReturnType;
-
-EIGEN_DEVICE_FUNC
-inline const viReturnType
-vi() const { return viReturnType(derived()); }
-
-
-EIGEN_DEVICE_FUNC
-inline NonConstviReturnType
-vi() { return NonConstviReturnType(derived()); }
 
 #endif
