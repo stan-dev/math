@@ -278,6 +278,7 @@ pipeline {
                                 sh "echo STAN_OPENCL=true>> make/local"
                                 sh "echo OPENCL_PLATFORM_ID=${env.OPENCL_PLATFORM_ID_GPU} >> make/local"
                                 sh "echo OPENCL_DEVICE_ID=${env.OPENCL_DEVICE_ID_GPU} >> make/local"
+                                sh "clinfo"
                                 runTests("test/unit/math/opencl/copy_test.cpp", false)
                                 runTests("test/unit/multiple_translation_units_test.cpp")
                             } else {
