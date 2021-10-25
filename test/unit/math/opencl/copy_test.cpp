@@ -5,7 +5,7 @@
 #include <stan/math/opencl/copy.hpp>
 #include <gtest/gtest.h>
 #include <test/unit/util.hpp>
-#include <CL/cl2.hpp>
+#include <CL/opencl.hpp>
 #include <algorithm>
 #include <vector>
 
