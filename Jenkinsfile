@@ -172,42 +172,42 @@ pipeline {
                 }
             }
         }
-        stage('Headers check') {
-            when {
-                expression {
-                    !skipRemainingStages
-                }
-            }
-            agent any
-            steps {
-                deleteDir()
-                unstash 'MathSetup'
-                sh "echo CXX=${env.CXX} -Werror > make/local"
-                sh "make -j${env.PARALLEL} test-headers"
-            }
-            post { always { deleteDir() } }
-        }
-        stage('Full Unit Tests') {
-            agent any
-            when {
-                expression {
-                    !skipRemainingStages
-                }
-            }
-            steps {
-                deleteDir()
-                unstash 'MathSetup'
-	            sh "echo CXXFLAGS += -fsanitize=address > make/local"
-                script {
-                    if (isUnix()) {
-                        runTests("test/unit", true)
-                    } else {
-                        runTestsWin("test/unit", true)
-                    }
-                }
-            }
-            post { always { retry(3) { deleteDir() } } }
-        }
+        // stage('Headers check') {
+        //     when {
+        //         expression {
+        //             !skipRemainingStages
+        //         }
+        //     }
+        //     agent any
+        //     steps {
+        //         deleteDir()
+        //         unstash 'MathSetup'
+        //         sh "echo CXX=${env.CXX} -Werror > make/local"
+        //         sh "make -j${env.PARALLEL} test-headers"
+        //     }
+        //     post { always { deleteDir() } }
+        // }
+        // stage('Full Unit Tests') {
+        //     agent any
+        //     when {
+        //         expression {
+        //             !skipRemainingStages
+        //         }
+        //     }
+        //     steps {
+        //         deleteDir()
+        //         unstash 'MathSetup'
+	    //         sh "echo CXXFLAGS += -fsanitize=address > make/local"
+        //         script {
+        //             if (isUnix()) {
+        //                 runTests("test/unit", true)
+        //             } else {
+        //                 runTestsWin("test/unit", true)
+        //             }
+        //         }
+        //     }
+        //     post { always { retry(3) { deleteDir() } } }
+        // }
         stage('Always-run tests') {
             when {
                 expression {
@@ -216,59 +216,59 @@ pipeline {
             }
             failFast true
             parallel {
-                stage('MPI tests') {
-                    agent { label 'linux && mpi' }
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh "echo CXX=${MPICXX} >> make/local"
-                        sh "echo CXX_TYPE=gcc >> make/local"
-                        sh "echo STAN_MPI=true >> make/local"
-                        runTests("test/unit/math/prim/functor")
-                        runTests("test/unit/math/rev/functor")
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('OpenCL CPU tests') {
-                    when {
-                        expression {
-                            !skipOpenCL
-                        }
-                    }
-                    agent { label "linux-gpu" }
-                    steps {
-                        script {
-                            if (isUnix()) {
-                                deleteDir()
-                                unstash 'MathSetup'
-                                sh "echo CXX=${env.CXX} -Werror > make/local"
-                                sh "echo STAN_OPENCL=true>> make/local"
-                                sh "echo OPENCL_PLATFORM_ID=${env.OPENCL_PLATFORM_ID_CPU}>> make/local"
-                                sh "echo OPENCL_DEVICE_ID=${env.OPENCL_DEVICE_ID_CPU}>> make/local"
-                                // skips tests that require specific support in OpenCL
-                                sh 'echo "ifdef NO_CPU_OPENCL_INT64_BASE_ATOMIC" >> make/local'
-                                sh 'echo "CXXFLAGS += -DSTAN_TEST_SKIP_REQUIRING_OPENCL_INT64_BASE_ATOMIC" >> make/local'
-                                sh 'echo "endif" >> make/local'
+                // stage('MPI tests') {
+                //     agent { label 'linux && mpi' }
+                //     steps {
+                //         deleteDir()
+                //         unstash 'MathSetup'
+                //         sh "echo CXX=${MPICXX} >> make/local"
+                //         sh "echo CXX_TYPE=gcc >> make/local"
+                //         sh "echo STAN_MPI=true >> make/local"
+                //         runTests("test/unit/math/prim/functor")
+                //         runTests("test/unit/math/rev/functor")
+                //     }
+                //     post { always { retry(3) { deleteDir() } } }
+                // }
+                // stage('OpenCL CPU tests') {
+                //     when {
+                //         expression {
+                //             !skipOpenCL
+                //         }
+                //     }
+                //     agent { label "linux-gpu" }
+                //     steps {
+                //         script {
+                //             if (isUnix()) {
+                //                 deleteDir()
+                //                 unstash 'MathSetup'
+                //                 sh "echo CXX=${env.CXX} -Werror > make/local"
+                //                 sh "echo STAN_OPENCL=true>> make/local"
+                //                 sh "echo OPENCL_PLATFORM_ID=${env.OPENCL_PLATFORM_ID_CPU}>> make/local"
+                //                 sh "echo OPENCL_DEVICE_ID=${env.OPENCL_DEVICE_ID_CPU}>> make/local"
+                //                 // skips tests that require specific support in OpenCL
+                //                 sh 'echo "ifdef NO_CPU_OPENCL_INT64_BASE_ATOMIC" >> make/local'
+                //                 sh 'echo "CXXFLAGS += -DSTAN_TEST_SKIP_REQUIRING_OPENCL_INT64_BASE_ATOMIC" >> make/local'
+                //                 sh 'echo "endif" >> make/local'
 
-                                runTests("test/unit/math/opencl", false)
-                                runTests("test/unit/multiple_translation_units_test.cpp")
-                            } else {
-                                deleteDirWin()
-                                unstash 'MathSetup'
-                                bat "echo CXX=${env.CXX} -Werror > make/local"
-                                bat "echo STAN_OPENCL=true >> make/local"
-                                bat "echo OPENCL_PLATFORM_ID=${env.OPENCL_PLATFORM_ID_CPU} >> make/local"
-                                bat "echo OPENCL_DEVICE_ID=${env.OPENCL_DEVICE_ID_CPU} >> make/local"
-                                bat 'echo LDFLAGS_OPENCL= -L"C:\\Program Files (x86)\\IntelSWTools\\system_studio_2020\\OpenCL\\sdk\\lib\\x64" -lOpenCL >> make/local'
-                                bat "mingw32-make.exe -f make/standalone math-libs"
-                                runTestsWin("test/unit/math/opencl", false, false)
-                                runTestsWin("test/unit/multiple_translation_units_test.cpp", false, false)
-                            }
-                        }
-                    }
-                }
+                //                 runTests("test/unit/math/opencl", false)
+                //                 runTests("test/unit/multiple_translation_units_test.cpp")
+                //             } else {
+                //                 deleteDirWin()
+                //                 unstash 'MathSetup'
+                //                 bat "echo CXX=${env.CXX} -Werror > make/local"
+                //                 bat "echo STAN_OPENCL=true >> make/local"
+                //                 bat "echo OPENCL_PLATFORM_ID=${env.OPENCL_PLATFORM_ID_CPU} >> make/local"
+                //                 bat "echo OPENCL_DEVICE_ID=${env.OPENCL_DEVICE_ID_CPU} >> make/local"
+                //                 bat 'echo LDFLAGS_OPENCL= -L"C:\\Program Files (x86)\\IntelSWTools\\system_studio_2020\\OpenCL\\sdk\\lib\\x64" -lOpenCL >> make/local'
+                //                 bat "mingw32-make.exe -f make/standalone math-libs"
+                //                 runTestsWin("test/unit/math/opencl", false, false)
+                //                 runTestsWin("test/unit/multiple_translation_units_test.cpp", false, false)
+                //             }
+                //         }
+                //     }
+                // }
                 stage('OpenCL GPU tests') {
-                    agent { label "linux-gpu" }
+                    agent { label "gelman-group-linux" }
                     steps {
                         script {
                             if (isUnix()) {
@@ -289,134 +289,134 @@ pipeline {
                                 bat "echo OPENCL_DEVICE_ID=${env.OPENCL_DEVICE_ID_GPU} >> make/local"
                                 bat 'echo LDFLAGS_OPENCL= -L"C:\\Program Files (x86)\\IntelSWTools\\system_studio_2020\\OpenCL\\sdk\\lib\\x64" -lOpenCL >> make/local'
                                 bat "mingw32-make.exe -f make/standalone math-libs"
-                                runTestsWin("test/unit/math/opencl", false, false)
+                                runTestsWin("test/unit/math/opencl/copy_test.cpp", false, false)
                                 runTestsWin("test/unit/multiple_translation_units_test.cpp", false, false)
                             }
 
                         }
                     }
                 }
-                stage('Distribution tests') {
-                    agent { label "distribution-tests" }
-                    steps {
-                        deleteDir()
-                        unstash 'MathSetup'
-                        sh """
-                            echo CXX=${env.CXX} > make/local
-                            echo O=0 >> make/local
-                            echo N_TESTS=${env.N_TESTS} >> make/local
-                            """
-                        script {
-                            if (params.withRowVector || isBranch('develop') || isBranch('master')) {
-                                sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
-                                sh "echo CXXFLAGS+=-DSTAN_PROB_TEST_ALL >> make/local"
-                            }
-                        }
-                        sh "./runTests.py -j${env.PARALLEL} test/prob > dist.log 2>&1"
-                    }
-                    post {
-                        always {
-                            script { zip zipFile: "dist.log.zip", archive: true, glob: 'dist.log' }
-                            retry(3) { deleteDir() }
-                        }
-                        failure {
-                            echo "Distribution tests failed. Check out dist.log.zip artifact for test logs."
-                            }
-                    }
-                }
-	            stage('Expressions test') {
-                    agent any
-                    steps {
-                        unstash 'MathSetup'
-                        script {
-                            sh "echo O=0 > make/local"
-                            sh "python ./test/code_generator_test.py"
-                            sh "python ./test/signature_parser_test.py"
-                            sh "python ./test/statement_types_test.py"
-                            sh "python ./test/varmat_compatibility_summary_test.py"
-                            sh "python ./test/varmat_compatibility_test.py"
-                            withEnv(['PATH+TBB=./lib/tbb']) {
-                                sh "python ./test/expressions/test_expression_testing_framework.py"
-                            }
-                            withEnv(['PATH+TBB=./lib/tbb']) {
-                                try { sh "./runTests.py -j${env.PARALLEL} test/expressions" }
-                                finally { junit 'test/**/*.xml' }
-                            }
-                            sh "make clean-all"
-                            sh "echo STAN_THREADS=true >> make/local"
-                            withEnv(['PATH+TBB=./lib/tbb']) {
-                                try {
-                                    sh "./runTests.py -j${env.PARALLEL} test/expressions --only-functions reduce_sum map_rect"
-				                }
-                                finally { junit 'test/**/*.xml' }
-                            }
-                        }
-                    }
-                    post { always { deleteDir() } }
-                }
-                stage('Threading tests') {
-                    agent any
-                    steps {
-                        script {
-                            deleteDir()
-                            unstash 'MathSetup'
-                            sh "echo CXX=${env.CXX} -Werror > make/local"
-                            sh "echo STAN_THREADS=true >> make/local"
-                            sh "export STAN_NUM_THREADS=4"
-                            if (isBranch('develop') || isBranch('master')) {
-                                runTests("test/unit")
-                                sh "find . -name *_test.xml | xargs rm"
-                            } else {
-                                runTests("test/unit -f thread")
-                                sh "find . -name *_test.xml | xargs rm"
-                                runTests("test/unit -f map_rect")
-                                sh "find . -name *_test.xml | xargs rm"
-                                runTests("test/unit -f reduce_sum")
-                            }
-                        }
-                    }
-                    post { always { retry(3) { deleteDir() } } }
-                }
-                stage('Windows Headers & Unit') {
-                    when {
-                        allOf {
-                            anyOf {
-                                branch 'develop'
-                                branch 'master'
-                                expression { params.run_win_tests }
-                            }
-                            expression {
-                                !skipRemainingStages
-                            }
-                        }
-                    }
-                    agent { label 'windows' }
-                    steps {
-                        deleteDirWin()
-                        unstash 'MathSetup'
-                        bat "mingw32-make.exe -f make/standalone math-libs"
-                        runTestsWin("test/unit", false, false)
-                    }
-                }
-            }
+            //     stage('Distribution tests') {
+            //         agent { label "distribution-tests" }
+            //         steps {
+            //             deleteDir()
+            //             unstash 'MathSetup'
+            //             sh """
+            //                 echo CXX=${env.CXX} > make/local
+            //                 echo O=0 >> make/local
+            //                 echo N_TESTS=${env.N_TESTS} >> make/local
+            //                 """
+            //             script {
+            //                 if (params.withRowVector || isBranch('develop') || isBranch('master')) {
+            //                     sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
+            //                     sh "echo CXXFLAGS+=-DSTAN_PROB_TEST_ALL >> make/local"
+            //                 }
+            //             }
+            //             sh "./runTests.py -j${env.PARALLEL} test/prob > dist.log 2>&1"
+            //         }
+            //         post {
+            //             always {
+            //                 script { zip zipFile: "dist.log.zip", archive: true, glob: 'dist.log' }
+            //                 retry(3) { deleteDir() }
+            //             }
+            //             failure {
+            //                 echo "Distribution tests failed. Check out dist.log.zip artifact for test logs."
+            //                 }
+            //         }
+            //     }
+	        //     stage('Expressions test') {
+            //         agent any
+            //         steps {
+            //             unstash 'MathSetup'
+            //             script {
+            //                 sh "echo O=0 > make/local"
+            //                 sh "python ./test/code_generator_test.py"
+            //                 sh "python ./test/signature_parser_test.py"
+            //                 sh "python ./test/statement_types_test.py"
+            //                 sh "python ./test/varmat_compatibility_summary_test.py"
+            //                 sh "python ./test/varmat_compatibility_test.py"
+            //                 withEnv(['PATH+TBB=./lib/tbb']) {
+            //                     sh "python ./test/expressions/test_expression_testing_framework.py"
+            //                 }
+            //                 withEnv(['PATH+TBB=./lib/tbb']) {
+            //                     try { sh "./runTests.py -j${env.PARALLEL} test/expressions" }
+            //                     finally { junit 'test/**/*.xml' }
+            //                 }
+            //                 sh "make clean-all"
+            //                 sh "echo STAN_THREADS=true >> make/local"
+            //                 withEnv(['PATH+TBB=./lib/tbb']) {
+            //                     try {
+            //                         sh "./runTests.py -j${env.PARALLEL} test/expressions --only-functions reduce_sum map_rect"
+			// 	                }
+            //                     finally { junit 'test/**/*.xml' }
+            //                 }
+            //             }
+            //         }
+            //         post { always { deleteDir() } }
+            //     }
+            //     stage('Threading tests') {
+            //         agent any
+            //         steps {
+            //             script {
+            //                 deleteDir()
+            //                 unstash 'MathSetup'
+            //                 sh "echo CXX=${env.CXX} -Werror > make/local"
+            //                 sh "echo STAN_THREADS=true >> make/local"
+            //                 sh "export STAN_NUM_THREADS=4"
+            //                 if (isBranch('develop') || isBranch('master')) {
+            //                     runTests("test/unit")
+            //                     sh "find . -name *_test.xml | xargs rm"
+            //                 } else {
+            //                     runTests("test/unit -f thread")
+            //                     sh "find . -name *_test.xml | xargs rm"
+            //                     runTests("test/unit -f map_rect")
+            //                     sh "find . -name *_test.xml | xargs rm"
+            //                     runTests("test/unit -f reduce_sum")
+            //                 }
+            //             }
+            //         }
+            //         post { always { retry(3) { deleteDir() } } }
+            //     }
+            //     stage('Windows Headers & Unit') {
+            //         when {
+            //             allOf {
+            //                 anyOf {
+            //                     branch 'develop'
+            //                     branch 'master'
+            //                     expression { params.run_win_tests }
+            //                 }
+            //                 expression {
+            //                     !skipRemainingStages
+            //                 }
+            //             }
+            //         }
+            //         agent { label 'windows' }
+            //         steps {
+            //             deleteDirWin()
+            //             unstash 'MathSetup'
+            //             bat "mingw32-make.exe -f make/standalone math-libs"
+            //             runTestsWin("test/unit", false, false)
+            //         }
+            //     }
+            // }
         }
-        stage('Upstream tests') {
-            when {
-                allOf {
-                    expression {
-                        env.BRANCH_NAME ==~ /PR-\d+/
-                    }
-                    expression {
-                        !skipRemainingStages
-                    }
-                }
-            }
-            steps {
-                build(job: "Stan/${stan_pr()}",
-                        parameters: [string(name: 'math_pr', value: env.BRANCH_NAME),
-                                    string(name: 'cmdstan_pr', value: cmdstan_pr())])
-            }
-        }
+        // stage('Upstream tests') {
+        //     when {
+        //         allOf {
+        //             expression {
+        //                 env.BRANCH_NAME ==~ /PR-\d+/
+        //             }
+        //             expression {
+        //                 !skipRemainingStages
+        //             }
+        //         }
+        //     }
+        //     steps {
+        //         build(job: "Stan/${stan_pr()}",
+        //                 parameters: [string(name: 'math_pr', value: env.BRANCH_NAME),
+        //                             string(name: 'cmdstan_pr', value: cmdstan_pr())])
+        //     }
+        // }
         stage('Upload doxygen') {
             agent any
             when { branch 'develop'}
