@@ -398,7 +398,7 @@ pipeline {
             //             runTestsWin("test/unit", false, false)
             //         }
             //     }
-            // }
+            }
         }
         // stage('Upstream tests') {
         //     when {
