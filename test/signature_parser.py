@@ -41,6 +41,18 @@ class SignatureParser:
         """Return true if any argument is vector-like (can be an Eigen c++ type)"""
         return any(arg in ("matrix", "vector", "row_vector") for arg in self.stan_args)
 
+    def has_scalar_only_args(self):
+        """Return true if all arguments are scalars"""
+        return all(arg in ("real", "int") for arg in self.stan_args)
+
+    def is_nullary(self):
+        """Return true if the function has no arguments"""
+        return len(self.stan_args) == 0
+
+    def returns_complex(self):
+        """Return true if the function returns a complex number"""
+        return "complex" in self.return_type
+
     def returns_int(self):
         """Return true if the function returns an int"""
         return "int" in self.return_type
