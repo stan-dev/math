@@ -329,11 +329,6 @@ def handleScalarPrimSigTests(tests):
 
         generate_prim_sig_tests.main()
         tests.append("test/expressions/prim_sig_test.cpp")
-    elif only_functions:
-        stopErr(
-            "--only-functions can only be specified if running expression tests (test/expressions)",
-            -1,
-        )
 
 
 def checkToolchainPathWindows():
