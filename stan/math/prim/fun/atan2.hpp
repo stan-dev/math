@@ -23,7 +23,6 @@ return_type_t<T1, T2> atan2(T1 y, T2 x) {
   return std::atan2(y, x);
 }
 
-
 }  // namespace math
 }  // namespace stan
 
