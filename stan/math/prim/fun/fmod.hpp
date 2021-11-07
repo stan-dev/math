@@ -9,6 +9,21 @@ namespace stan {
 namespace math {
 
 /**
+ * The mod() function implementation for scalar inputs.
+ *
+ * @tparam T1 type of first input
+ * @tparam T2 type of second input
+ * @param a First input
+ * @param b Second input
+ * @return fmod function applied to the two inputs.
+ */
+template <typename T1, typename T2,
+          require_all_arithmetic_t<T1, T2>* = nullptr>
+inline auto fmod(const T1& a, const T2& b) {
+  return std::fmod(a, b);
+}
+
+/**
  * Enables the vectorised application of the fmod function,
  * when the first and/or second arguments are containers.
  *
@@ -18,9 +33,7 @@ namespace math {
  * @param b Second input
  * @return fmod function applied to the two inputs.
  */
-template <typename T1, typename T2,
-          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
-              T1, T2>* = nullptr>
+template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
 inline auto fmod(const T1& a, const T2& b) {
   return apply_scalar_binary(a, b, [&](const auto& c, const auto& d) {
     using std::fmod;
