@@ -73,7 +73,7 @@ class AgradCdfCauchy : public AgradCdfTest {
                                                         const T3&, const T4&,
                                                         const T5&) {
     using stan::math::pi;
-    using std::atan2;
+    using stan::math::atan2;
     return atan2(y - mu, sigma) / pi() + 0.5;
   }
 };

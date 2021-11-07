@@ -86,10 +86,10 @@ class AgradCdfLogNormal : public AgradCdfLogTest {
     using stan::math::LOG_HALF;
     using stan::math::SQRT_PI;
     using stan::math::SQRT_TWO;
-    using std::exp;
-    using std::log;
-    using std::log1p;
-    using std::pow;
+    using stan::math::exp;
+    using stan::math::log;
+    using stan::math::log1p;
+    using stan::math::pow;
 
     stan::return_type_t<T_y, T_loc, T_scale> cdf_log(0.0);
 

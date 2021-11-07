@@ -3,7 +3,7 @@
 
 using stan::math::var;
 using std::numeric_limits;
-using std::pow;
+using stan::math::pow;
 using std::vector;
 
 class AgradCdfLogistic : public AgradCdfTest {

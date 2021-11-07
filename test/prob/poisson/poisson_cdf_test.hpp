@@ -55,9 +55,7 @@ class AgradCdfPoisson : public AgradCdfTest {
     using stan::math::exp;
     using stan::math::lgamma;
     using stan::math::pow;
-    using std::exp;
-    using std::log;
-    using std::pow;
+    using stan::math::log;
 
     stan::return_type_t<T_rate> cdf(0);
     for (int i = 0; i <= n; i++) {
