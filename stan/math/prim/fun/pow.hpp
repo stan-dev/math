@@ -37,8 +37,7 @@ inline complex_return_t<U, V> complex_pow(const U& x, const V& y) {
  * @param b Second input
  * @return pow function applied to the two inputs.
  */
-template <typename T1, typename T2,
-          require_all_arithmetic_t<T1, T2>* = nullptr>
+template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
 inline auto pow(const T1& a, const T2& b) {
   return std::pow(a, b);
 }

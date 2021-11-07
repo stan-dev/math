@@ -17,8 +17,7 @@ namespace math {
  * @param b Second input
  * @return fmod function applied to the two inputs.
  */
-template <typename T1, typename T2,
-          require_all_arithmetic_t<T1, T2>* = nullptr>
+template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
 inline auto fmod(const T1& a, const T2& b) {
   return std::fmod(a, b);
 }
