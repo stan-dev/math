@@ -52,8 +52,7 @@ inline auto pow(const T1& a, const T2& b) {
  * @param b Second input
  * @return pow function applied to the two inputs.
  */
-template <typename T1, typename T2,
-          require_any_container_t<T1, T2>* = nullptr>
+template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
 inline auto pow(const T1& a, const T2& b) {
   return apply_scalar_binary(a, b, [&](const auto& c, const auto& d) {
     using std::pow;
