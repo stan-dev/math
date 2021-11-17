@@ -51,7 +51,7 @@ matrix_exp_2x2(const EigMat& A) {
   if ((B.array() != B.array()).any()) {
     return matrix_exp_pade(A);
   } else {
-    return B / delta;    
+    return B / delta;
   }
 }
 
