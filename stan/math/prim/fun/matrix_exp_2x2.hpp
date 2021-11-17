@@ -48,7 +48,7 @@ matrix_exp_2x2(const EigMat& A) {
   B(1, 1) = exp_half_a_plus_d * (delta_cosh - ad_sinh_half_delta);
 
   // use pade approximation if cosh & sinh ops overflow to NaN
-  if ((B.array() != B.array()).any()) {
+  if (B.hasNaN()) {
     return matrix_exp_pade(A);
   } else {
     return B / delta;    
