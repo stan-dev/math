@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
+#include <unsupported/Eigen/MatrixFunctions>
 #include <vector>
 #include <cmath>
 
@@ -14,6 +16,7 @@ namespace math {
  * "Computing the Action of the Matrix Exponential,
  * with an Application to Exponential Integrators"
  * Read More: https://epubs.siam.org/doi/abs/10.1137/100788860
+ * See also: https://www.mathworks.com/matlabcentral/fileexchange/29576-matrix-exponential-times-a-vector
  *
  * Calculates exp(mat*t)*b, where mat & b are matrices,
  * and t is double.
@@ -21,19 +24,51 @@ namespace math {
 class matrix_exp_action_handler {
   static constexpr int p_max = 8;
   static constexpr int m_max = 55;
-  static constexpr double tol = 1.1e-16;
+  static constexpr double tol = 1.0e-16;
 
-  // table 3.1 in the reference
-  const std::vector<double> theta_m_single_precision{
-      1.3e-1, 1.0e0, 2.2e0, 3.6e0, 4.9e0, 6.3e0,
-      7.7e0,  9.1e0, 1.1e1, 1.2e1, 1.3e1};
-  const std::vector<double> theta_m_double_precision{
-      2.4e-3, 1.4e-1, 6.4e-1, 1.4e0, 2.4e0, 3.5e0,
-      4.7e0,  6.0e0,  7.2e0,  8.5e0, 9.9e0};
-
-  double l1norm(const Eigen::MatrixXd& m) {
-    return m.colwise().lpNorm<1>().maxCoeff();
-  }
+  // 
+  const std::vector<double> theta_m_single{
+    1.19209280e-07, 5.97885889e-04, 1.12338647e-02, 5.11661936e-02,
+    1.30848716e-01, 2.49528932e-01, 4.01458242e-01, 5.80052463e-01,
+    7.79511337e-01, 9.95184079e-01, 1.22347954e+00, 1.46166151e+00,
+    1.70764853e+00, 1.95985059e+00, 2.21704439e+00, 2.47828088e+00,
+    2.74281711e+00, 3.01006636e+00, 3.27956121e+00, 3.55092621e+00,
+    3.82385743e+00, 4.09810697e+00, 4.37347131e+00, 4.64978222e+00,
+    4.92689984e+00, 5.20470723e+00, 5.48310609e+00, 5.76201341e+00,
+    6.04135876e+00, 6.32108213e+00, 6.60113218e+00, 6.88146485e+00,
+    7.16204215e+00, 7.44283129e+00, 7.72380381e+00, 8.00493499e+00,
+    8.28620327e+00, 8.56758983e+00, 8.84907819e+00, 9.13065388e+00,
+    9.41230420e+00, 9.69401796e+00, 9.97578527e+00, 1.02575974e+01,
+    1.05394467e+01, 1.08213263e+01, 1.11032302e+01, 1.13851530e+01,
+    1.16670899e+01, 1.19490366e+01, 1.22309896e+01, 1.25129453e+01,
+    1.27949008e+01, 1.30768536e+01, 1.33588011e+01, 1.36407415e+01,
+    1.39226727e+01, 1.42045932e+01, 1.44865015e+01, 1.47683963e+01};
+  const std::vector<double> theta_m_double{
+    2.22044605e-16, 2.58095680e-08, 1.38634787e-05, 3.39716884e-04,
+    2.40087636e-03, 9.06565641e-03, 2.38445553e-02, 4.99122887e-02,
+    8.95776020e-02, 1.44182976e-01, 2.14235807e-01, 2.99615891e-01,
+    3.99777534e-01, 5.13914694e-01, 6.41083523e-01, 7.80287426e-01,
+    9.30532846e-01, 1.09086372e+00, 1.26038106e+00, 1.43825260e+00,
+    1.62371595e+00, 1.81607782e+00, 2.01471078e+00, 2.21904887e+00,
+    2.42858252e+00, 2.64285346e+00, 2.86144963e+00, 3.08400054e+00,
+    3.31017284e+00, 3.53966635e+00, 3.77221050e+00, 4.00756109e+00,
+    4.24549744e+00, 4.48581986e+00, 4.72834735e+00, 4.97291563e+00,
+    5.21937537e+00, 5.46759063e+00, 5.71743745e+00, 5.96880263e+00,
+    6.22158266e+00, 6.47568274e+00, 6.73101590e+00, 6.98750228e+00,
+    7.24506843e+00, 7.50364669e+00, 7.76317466e+00, 8.02359473e+00,
+    8.28485363e+00, 8.54690205e+00, 8.80969427e+00, 9.07318789e+00,
+    9.33734351e+00, 9.60212447e+00, 9.86749668e+00, 1.01334283e+01,
+    1.03998897e+01, 1.06668532e+01, 1.09342929e+01, 1.12021845e+01,
+    1.14705053e+01, 1.17392341e+01, 1.20083509e+01, 1.22778370e+01,
+    1.25476748e+01, 1.28178476e+01, 1.30883399e+01, 1.33591369e+01,
+    1.36302250e+01, 1.39015909e+01, 1.41732223e+01, 1.44451076e+01,
+    1.47172357e+01, 1.49895963e+01, 1.52621795e+01, 1.55349758e+01,
+    1.58079765e+01, 1.60811732e+01, 1.63545578e+01, 1.66281227e+01,
+    1.69018609e+01, 1.71757655e+01, 1.74498298e+01, 1.77240478e+01,
+    1.79984136e+01, 1.82729215e+01, 1.85475662e+01, 1.88223426e+01,
+    1.90972458e+01, 1.93722711e+01, 1.96474142e+01, 1.99226707e+01,
+    2.01980367e+01, 2.04735082e+01, 2.07490816e+01, 2.10247533e+01,
+    2.13005199e+01, 2.15763782e+01, 2.18523250e+01, 2.21283574e+01};
 
  public:
   /**
@@ -54,39 +89,65 @@ class matrix_exp_action_handler {
       A(i, i) -= mu;
     }
 
-    int m{0}, s{0};
-    set_approximation_parameter(A, t, m, s);
+    int m, s;
+    set_approx_order(A, b, t, m, s);
 
-    Eigen::MatrixXd res(A.rows(), b.cols());
+    double eta = exp(t * mu/s);
 
-    for (int col = 0; col < b.cols(); ++col) {
-      bool conv = false;
-      Eigen::VectorXd B = b.col(col);
-      Eigen::VectorXd F = B;
-      const auto eta = std::exp(t * mu / s);
-      for (int i = 1; i < s + 1; ++i) {
-        auto c1 = B.template lpNorm<Eigen::Infinity>();
-        if (m > 0) {
-          for (int j = 1; j < m + 1; ++j) {
-            B = t * A * B / (s * j);
-            auto c2 = B.template lpNorm<Eigen::Infinity>();
-            F += B;
-            if (c1 + c2 < tol * F.template lpNorm<Eigen::Infinity>()) {
-              conv = true;
-              break;
-            }
-            c1 = c2;
-          }
-        }
-        F *= eta;
-        B = F;
-        if (conv) {
-          break;
-        }
+    Eigen::MatrixXd f = b;
+    Eigen::MatrixXd bi = b;
+
+#define MAT_OP_INF_NORM(X) X.cwiseAbs().rowwise().sum().maxCoeff()
+
+    for (auto i = 0; i < s; ++i) {
+      //  maximum absolute row sum, aka inf-norm of matrix operator
+      double c1 = MAT_OP_INF_NORM(bi);
+      for (auto j = 0; j < m; ++j) {
+        bi = (t/(s * (j + 1))) * (A * bi);
+        f += bi;
+        double c2 = MAT_OP_INF_NORM(bi);
+        if (c1 + c2 < tol * MAT_OP_INF_NORM(f)) break;
+        c1 = c2;
       }
-      res.col(col) = F;
-    }  // loop b columns
-    return res;
+      f *= eta;
+      bi = f;
+    }
+
+#undef MAT_OP_INF_NORM
+
+    return f;
+  }
+
+  /** 
+   * Estimate the 1-norm of mat^m
+   * 
+   * See A. H. Al-Mohy and N. J. Higham, A New Scaling and Squaring
+   *   Algorithm for the Matrix Exponential, SIAM J. Matrix Anal. Appl. 31(3):
+   *   970-989, 2009.
+   *
+   * For positive matrices the results is exact. Otherwise it falls
+   * back to Eigen's norm, which is only
+   * efficient for small & medium-size matrices (n < 100). Large size
+   * matrices require a more efficient 1-norm approximation
+   * algorithm such as normest1. See, e.g.,
+   * https://hg.savannah.gnu.org/hgweb/octave/file/e35866e6a2e0/scripts/linear-algebra/normest1.m
+   *
+   * @param mat matrix
+   * @param m power
+   */
+  template <typename EigMat1,
+            require_all_eigen_t<EigMat1>* = nullptr,
+            require_all_st_same<double, EigMat1>* = nullptr>
+  double mat_power_1_norm(const EigMat1& mat, int m) {
+    if ((mat.array() > 0.0).all()) {
+      Eigen::VectorXd e = Eigen::VectorXd::Constant(mat.rows(), 1.0);
+      for (auto j = 0; j < m; ++j) {
+        e = mat.transpose() * e;
+      }
+      return e.lpNorm<Eigen::Infinity>();
+    } else {
+      return mat.pow(m).cwiseAbs().colwise().sum().maxCoeff();
+    }
   }
 
   /**
@@ -104,22 +165,57 @@ class matrix_exp_action_handler {
    * @param [out] m int parameter m
    * @param [out] s int parameter s
    */
-  inline void set_approximation_parameter(const Eigen::MatrixXd& mat,
-                                          const double& t, int& m, int& s) {
-    if (l1norm(mat) < tol || t < tol) {
+  template <typename EigMat1, typename EigMat2,
+            require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
+            require_all_st_same<double, EigMat1, EigMat2>* = nullptr>
+  inline void set_approx_order(const EigMat1& mat, const EigMat2& b,
+                               const double& t, int& m, int& s) {
+    // L1 norm
+    double normA = mat.colwise(). template lpNorm<1>().maxCoeff();
+
+    if (normA < tol || t < tol) {
       m = 0;
       s = 1;
     } else {
-      m = m_max;
+      const std::vector<double>& theta = theta_m_double;
+      Eigen::VectorXd alpha(p_max - 1);
 
-      Eigen::MatrixXd a = mat * t;
-      const double theta_m = theta_m_double_precision.back();
-      for (auto i = 0; i < std::ceil(std::log2(p_max)); ++i) {
-        a *= a;
+      if (normA < 4.0*theta[m_max]*p_max*(p_max + 3)/(m_max*b.cols())) {
+        alpha = Eigen::VectorXd::Constant(p_max-1, normA);
+      } else {
+        Eigen::VectorXd eta(p_max);
+        for (auto p = 0; p < p_max; ++p) {
+          double c = mat_power_1_norm(mat, p+2);
+          c = std::pow(c, 1.0/(p+2.0));
+          eta[p] = c;
+        }
+        for (auto p = 0; p < p_max - 1; ++p) {
+          alpha[p] = std::max(eta[p],eta(p+1));          
+        }
       }
-      double ap = std::pow(l1norm(a), 1.0 / p_max);
-      int c = std::ceil(ap / theta_m);
-      s = (c < 1 ? 1 : c);
+
+      Eigen::MatrixXd mt = Eigen::MatrixXd::Zero(p_max-1, m_max);
+      for (auto p = 1; p < p_max; ++p) {
+        for (auto i = p*(p+1)-2; i < m_max; ++i) {
+          mt(p-1, i) = alpha[p-1]/theta[i];
+        }
+      }
+
+      Eigen::Matrix<int, -1, 1> u(m_max);
+      for (auto i = 0; i < m_max; ++i) {
+        u(i) = i + 1;
+      }
+
+      Eigen::MatrixXd c = stan::math::ceil(mt) *  u.asDiagonal();
+      for (auto i = 0; i < c.size(); ++i) {
+        if (c(i) <= 1.e-16) {
+          c(i) = std::numeric_limits<double>::infinity();
+        }
+      }
+      
+      int cost = c.colwise().minCoeff().minCoeff(&m);
+      if (std::isinf(cost)) cost = 0;
+      s = std::max(cost/m, 1);
     }
   }
 };
