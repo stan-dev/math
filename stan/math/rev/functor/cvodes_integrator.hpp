@@ -271,29 +271,26 @@ class cvodes_integrator {
 
     try {
       CHECK_CVODES_CALL(CVodeInit(cvodes_mem, &cvodes_integrator::cv_rhs,
-                                    value_of(t0_), nv_state_));
+                                  value_of(t0_), nv_state_));
 
       // Assign pointer to this as user data
-      CHECK_CVODES_CALL(CVodeSetUserData(cvodes_mem,
-                                         reinterpret_cast<void*>(this)));
+      CHECK_CVODES_CALL(
+          CVodeSetUserData(cvodes_mem, reinterpret_cast<void*>(this)));
 
       cvodes_set_options(cvodes_mem, max_num_steps_);
 
       CHECK_CVODES_CALL(CVodeSStolerances(cvodes_mem, relative_tolerance_,
-                                            absolute_tolerance_));
+                                          absolute_tolerance_));
 
       CHECK_CVODES_CALL(CVodeSetLinearSolver(cvodes_mem, LS_, A_));
-      CHECK_CVODES_CALL(CVodeSetJacFn(cvodes_mem,
-                                      &cvodes_integrator::cv_jacobian_states));
+      CHECK_CVODES_CALL(
+          CVodeSetJacFn(cvodes_mem, &cvodes_integrator::cv_jacobian_states));
 
       // initialize forward sensitivity system of CVODES as needed
       if (num_y0_vars_ + num_args_vars_ > 0) {
-        CHECK_CVODES_CALL(CVodeSensInit(cvodes_mem,
-                                        static_cast<int>(num_y0_vars_ +
-                                                         num_args_vars_),
-                                        CV_STAGGERED,
-                                        &cvodes_integrator::cv_rhs_sens,
-                                        nv_state_sens_));
+        CHECK_CVODES_CALL(CVodeSensInit(
+            cvodes_mem, static_cast<int>(num_y0_vars_ + num_args_vars_),
+            CV_STAGGERED, &cvodes_integrator::cv_rhs_sens, nv_state_sens_));
 
         CHECK_CVODES_CALL(CVodeSetSensErrCon(cvodes_mem, SUNTRUE));
 
@@ -305,12 +302,12 @@ class cvodes_integrator {
         double t_final = value_of(ts_[n]);
 
         if (t_final != t_init) {
-          CHECK_CVODES_CALL(CVode(cvodes_mem, t_final, nv_state_, &t_init,
-                                  CV_NORMAL));
+          CHECK_CVODES_CALL(
+              CVode(cvodes_mem, t_final, nv_state_, &t_init, CV_NORMAL));
 
           if (num_y0_vars_ + num_args_vars_ > 0) {
-            CHECK_CVODES_CALL(CVodeGetSens(cvodes_mem, &t_init,
-                                           nv_state_sens_));
+            CHECK_CVODES_CALL(
+                CVodeGetSens(cvodes_mem, &t_init, nv_state_sens_));
           }
         }
 

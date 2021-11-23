@@ -304,9 +304,8 @@ class cvodes_integrator_adjoint_vari : public vari_base {
         CVodeSVtolerances(solver_->cvodes_mem_, relative_tolerance_forward_,
                           solver_->nv_absolute_tolerance_forward_));
 
-    CHECK_CVODES_CALL(
-        CVodeSetLinearSolver(solver_->cvodes_mem_, solver_->LS_forward_,
-                             solver_->A_forward_));
+    CHECK_CVODES_CALL(CVodeSetLinearSolver(
+        solver_->cvodes_mem_, solver_->LS_forward_, solver_->A_forward_));
 
     CHECK_CVODES_CALL(
         CVodeSetJacFn(solver_->cvodes_mem_,
@@ -314,9 +313,9 @@ class cvodes_integrator_adjoint_vari : public vari_base {
 
     // initialize backward sensitivity system of CVODES as needed
     if (is_var_return_ && !is_var_only_ts_) {
-      CHECK_CVODES_CALL(
-          CVodeAdjInit(solver_->cvodes_mem_, num_steps_between_checkpoints_,
-                       interpolation_polynomial_));
+      CHECK_CVODES_CALL(CVodeAdjInit(solver_->cvodes_mem_,
+                                     num_steps_between_checkpoints_,
+                                     interpolation_polynomial_));
     }
 
     /**
@@ -337,8 +336,8 @@ class cvodes_integrator_adjoint_vari : public vari_base {
                                    CV_NORMAL, &ncheck));
         } else {
           CHECK_CVODES_CALL(CVode(solver_->cvodes_mem_, t_final,
-                                  solver_->nv_state_forward_,
-                                  &t_init, CV_NORMAL));
+                                  solver_->nv_state_forward_, &t_init,
+                                  CV_NORMAL));
         }
       }
       solver_->y_[n] = solver_->state_forward_;
@@ -434,12 +433,12 @@ class cvodes_integrator_adjoint_vari : public vari_base {
       double t_final = value_of((i > 0) ? solver_->ts_[i - 1] : solver_->t0_);
       if (t_final != t_init) {
         if (unlikely(!backward_is_initialized_)) {
-          CHECK_CVODES_CALL(CVodeCreateB(solver_->cvodes_mem_,
-                                         solver_backward_, &index_backward_));
+          CHECK_CVODES_CALL(CVodeCreateB(solver_->cvodes_mem_, solver_backward_,
+                                         &index_backward_));
 
-          CHECK_CVODES_CALL(
-              CVodeSetUserDataB(solver_->cvodes_mem_, index_backward_,
-                                reinterpret_cast<void*>(this)));
+          CHECK_CVODES_CALL(CVodeSetUserDataB(solver_->cvodes_mem_,
+                                              index_backward_,
+                                              reinterpret_cast<void*>(this)));
 
           // initialize CVODES backward machinery.
           // the states of the backward problem *are* the adjoints
@@ -454,18 +453,16 @@ class cvodes_integrator_adjoint_vari : public vari_base {
                                  relative_tolerance_backward_,
                                  solver_->nv_absolute_tolerance_backward_));
 
-          CHECK_CVODES_CALL(
-              CVodeSetMaxNumStepsB(solver_->cvodes_mem_, index_backward_,
-                                   max_num_steps_));
+          CHECK_CVODES_CALL(CVodeSetMaxNumStepsB(
+              solver_->cvodes_mem_, index_backward_, max_num_steps_));
 
           CHECK_CVODES_CALL(CVodeSetLinearSolverB(
-                                  solver_->cvodes_mem_, index_backward_,
-                                  solver_->LS_backward_, solver_->A_backward_));
+              solver_->cvodes_mem_, index_backward_, solver_->LS_backward_,
+              solver_->A_backward_));
 
-          CHECK_CVODES_CALL(
-              CVodeSetJacFnB(
-                  solver_->cvodes_mem_, index_backward_,
-                  &cvodes_integrator_adjoint_vari::cv_jacobian_rhs_adj_states));
+          CHECK_CVODES_CALL(CVodeSetJacFnB(
+              solver_->cvodes_mem_, index_backward_,
+              &cvodes_integrator_adjoint_vari::cv_jacobian_rhs_adj_states));
 
           // Allocate space for backwards quadrature needed when
           // parameters vary.
@@ -481,21 +478,19 @@ class cvodes_integrator_adjoint_vari : public vari_base {
                                        absolute_tolerance_quadrature_));
 
             CHECK_CVODES_CALL(CVodeSetQuadErrConB(solver_->cvodes_mem_,
-                                                    index_backward_, SUNTRUE));
+                                                  index_backward_, SUNTRUE));
           }
 
           backward_is_initialized_ = true;
         } else {
           // just re-initialize the solver
 
-          CHECK_CVODES_CALL(
-              CVodeReInitB(solver_->cvodes_mem_, index_backward_, t_init,
-                           solver_->nv_state_backward_));
+          CHECK_CVODES_CALL(CVodeReInitB(solver_->cvodes_mem_, index_backward_,
+                                         t_init, solver_->nv_state_backward_));
 
           if (is_any_var_args_) {
-            CHECK_CVODES_CALL(
-                CVodeQuadReInitB(solver_->cvodes_mem_, index_backward_,
-                                 solver_->nv_quad_));
+            CHECK_CVODES_CALL(CVodeQuadReInitB(
+                solver_->cvodes_mem_, index_backward_, solver_->nv_quad_));
           }
         }
 
@@ -504,12 +499,11 @@ class cvodes_integrator_adjoint_vari : public vari_base {
         // obtain adjoint states and update t_init to time point
         // reached of t_final
         CHECK_CVODES_CALL(CVodeGetB(solver_->cvodes_mem_, index_backward_,
-                                      &t_init, solver_->nv_state_backward_));
+                                    &t_init, solver_->nv_state_backward_));
 
         if (is_any_var_args_) {
-          CHECK_CVODES_CALL(
-              CVodeGetQuadB(solver_->cvodes_mem_, index_backward_, &t_init,
-                            solver_->nv_quad_));
+          CHECK_CVODES_CALL(CVodeGetQuadB(solver_->cvodes_mem_, index_backward_,
+                                          &t_init, solver_->nv_quad_));
         }
       }
     }

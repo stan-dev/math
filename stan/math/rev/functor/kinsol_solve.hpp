@@ -80,12 +80,12 @@ Eigen::VectorXd kinsol_solve(const F1& f, const Eigen::VectorXd& x,
 
     CHECK_KINSOL_CALL(
         KINSetNumMaxIters(kinsol_data.kinsol_memory_, max_num_steps));
-    CHECK_KINSOL_CALL(KINSetFuncNormTol(kinsol_data.kinsol_memory_,
-                                        function_tolerance));
-    CHECK_KINSOL_CALL(KINSetScaledStepTol(kinsol_data.kinsol_memory_,
-                                          scaling_step_tol));
-    CHECK_KINSOL_CALL(KINSetMaxSetupCalls(kinsol_data.kinsol_memory_,
-                                          steps_eval_jacobian));
+    CHECK_KINSOL_CALL(
+        KINSetFuncNormTol(kinsol_data.kinsol_memory_, function_tolerance));
+    CHECK_KINSOL_CALL(
+        KINSetScaledStepTol(kinsol_data.kinsol_memory_, scaling_step_tol));
+    CHECK_KINSOL_CALL(
+        KINSetMaxSetupCalls(kinsol_data.kinsol_memory_, steps_eval_jacobian));
 
     // CHECK
     // The default value is 1000 * ||u_0||_D where ||u_0|| is the initial guess.
@@ -93,8 +93,8 @@ Eigen::VectorXd kinsol_solve(const F1& f, const Eigen::VectorXd& x,
     // If the norm is non-zero, use kinsol's default (accessed with 0),
     // else use the dimension of x -- CHECK - find optimal length.
     double max_newton_step = (x.norm() == 0) ? x.size() : 0;
-    CHECK_KINSOL_CALL(KINSetMaxNewtonStep(kinsol_data.kinsol_memory_,
-                                          max_newton_step));
+    CHECK_KINSOL_CALL(
+        KINSetMaxNewtonStep(kinsol_data.kinsol_memory_, max_newton_step));
     CHECK_KINSOL_CALL(KINSetUserData(kinsol_data.kinsol_memory_,
                                      static_cast<void*>(&kinsol_data)));
 

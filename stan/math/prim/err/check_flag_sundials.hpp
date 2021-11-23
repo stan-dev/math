@@ -42,7 +42,7 @@ inline void cvodes_check(int flag, const char* func_name) {
  * @param flag Error flag
  * @throw <code>std::runtime_error</code> if the flag is negative.
  */
-  inline void kinsol_check(int flag, const char* func_name) {
+inline void kinsol_check(int flag, const char* func_name) {
   std::ostringstream ss;
   if (flag < 0) {
     ss << func_name << " failed with error flag " << flag << ": "

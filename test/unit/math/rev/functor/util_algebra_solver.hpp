@@ -448,7 +448,8 @@ inline void max_num_steps_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
   EXPECT_THROW(
       general_algebra_solver(is_newton, non_linear_eq_functor(), x, y, dat,
                              dat_int, 0, scaling_step, relative_tolerance,
-                             function_tolerance, max_num_steps), std::domain_error);
+                             function_tolerance, max_num_steps),
+      std::domain_error);
 }
 
 template <typename F>
