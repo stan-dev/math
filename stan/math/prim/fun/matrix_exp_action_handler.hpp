@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/ceil.hpp>
 #include <unsupported/Eigen/MatrixFunctions>
 #include <vector>
 #include <cmath>
