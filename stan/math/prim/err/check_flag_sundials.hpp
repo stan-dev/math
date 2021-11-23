@@ -25,8 +25,11 @@ inline void cvodes_check(int flag, const char* func_name) {
     std::ostringstream ss;
     ss << func_name << " failed with error flag " << flag << ": "
        << CVodeGetReturnFlagName(flag) << ".";
-    
-    throw std::runtime_error(ss.str());
+    if (flag == -1 || flag == -4) {
+      throw std::domain_error(ss.str());
+    } else {
+      throw std::runtime_error(ss.str());
+    }
   }
 }
 
@@ -44,7 +47,11 @@ inline void cvodes_check(int flag, const char* func_name) {
   if (flag < 0) {
     ss << func_name << " failed with error flag " << flag << ": "
        << KINGetReturnFlagName(flag) << ".";
-    throw std::runtime_error(ss.str());
+    if (flag == -6) {
+      throw std::domain_error(ss.str());
+    } else {
+      throw std::runtime_error(ss.str());
+    }
   }
 }
 
