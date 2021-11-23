@@ -122,7 +122,7 @@ TEST(MathMatrixPrimMat, scale_matrix_exp_multiply_issue_1146) {
 
   Eigen::MatrixXd phi = Eigen::MatrixXd::Zero(2 * m, 2 * m);
   Eigen::MatrixXd OI = Eigen::MatrixXd::Zero(2 * m, m);
-    
+
   OI.bottomRightCorner(m, m) = Eigen::VectorXd::Constant(m, 1.0).asDiagonal();
   phi.topLeftCorner(m, m) = Ac;
   phi.topRightCorner(m, m) = Eigen::VectorXd::Constant(m, 0.1).asDiagonal();
