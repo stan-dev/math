@@ -66,7 +66,7 @@ TEST(MathMatrixPrimMat, matrix_exp_multiply_issue_2529) {
   Eigen::VectorXd b(3);
   b << 1.0, 1.0, 1.0;
   for (auto i = 15; i < 40; ++i) {
-    double t = double(i);
+    double t = i;
     Eigen::MatrixXd m1 = stan::math::matrix_exp_multiply(a * t, b);
     Eigen::MatrixXd m2 = stan::math::matrix_exp(a * t) * b;
     EXPECT_MATRIX_FLOAT_EQ(m1, m2);
