@@ -23,18 +23,17 @@ inline void test_matrix_exp_multiply() {
   // matrix_exp_multiply
   Eigen::Matrix<double, N, M> res = matrix_exp_multiply(A, B);
 
-
   EXPECT_MATRIX_FLOAT_EQ(expAB, res);
 }
 
 TEST(MathMatrixPrimMat, matrix_exp_multiply_power_1_norm_fun) {
   stan::math::matrix_exp_action_handler maexp;
-  Eigen::MatrixXd x(2,2);
+  Eigen::MatrixXd x(2, 2);
   x << 1, -2, -3, 4;
   EXPECT_FLOAT_EQ(maexp.mat_power_1_norm(x, 2), 32.0);
   EXPECT_FLOAT_EQ(maexp.mat_power_1_norm(x, 3), 172.0);
 
-  Eigen::MatrixXd y(3,3);
+  Eigen::MatrixXd y(3, 3);
   y << 1, 2, 3, 4, 5, 6, 7, 1, 2;
   EXPECT_FLOAT_EQ(maexp.mat_power_1_norm(y, 3), 1163.0);
   EXPECT_FLOAT_EQ(maexp.mat_power_1_norm(y, 12), 8.3805595e+11);
@@ -42,7 +41,7 @@ TEST(MathMatrixPrimMat, matrix_exp_multiply_power_1_norm_fun) {
 
 TEST(MathMatrixPrimMat, matrix_exp_multiply_approx_order) {
   stan::math::matrix_exp_action_handler maexp;
-  Eigen::MatrixXd x(2,2);
+  Eigen::MatrixXd x(2, 2);
   x << 1, -2, -3, 4;
   Eigen::VectorXd b(2);
   b << 1.5, 2.5;
@@ -63,9 +62,7 @@ TEST(MathMatrixPrimMat, matrix_exp_multiply) {
 TEST(MathMatrixPrimMat, matrix_exp_multiply_issue_2529) {
   // issue #2529 https://github.com/stan-dev/math/issues/2529
   Eigen::MatrixXd a(3, 3);
-  a << -1.2, 1.2, 0,
-    0, -0.5, 0.5,
-    0, 0, -0.3;
+  a << -1.2, 1.2, 0, 0, -0.5, 0.5, 0, 0, -0.3;
   Eigen::VectorXd b(3);
   b << 1.0, 1.0, 1.0;
   for (auto i = 15; i < 40; ++i) {
@@ -77,17 +74,17 @@ TEST(MathMatrixPrimMat, matrix_exp_multiply_issue_2529) {
 }
 
 TEST(MathMatrixPrimMat, matrix_exp_multiply_poisson_5) {
-// Block tridiag mat by discretizing Poisson's Eq. on a 5x5 grid
+  // Block tridiag mat by discretizing Poisson's Eq. on a 5x5 grid
   int n = 5;
   int nd = n * n;
   Eigen::MatrixXd m = Eigen::MatrixXd::Zero(nd, nd);
   Eigen::VectorXd b(nd);
   for (auto i = 0; i < nd; ++i) {
-    b(i) = -1.0 + i * 2.0/(nd - 1);
+    b(i) = -1.0 + i * 2.0 / (nd - 1);
     m(i, i) = 4.0;
     if (i + 1 < nd) {
-      m(i, i+1) = -1.0;
-      m(i+1, i) = -1.0;
+      m(i, i + 1) = -1.0;
+      m(i + 1, i) = -1.0;
     }
     if (i + 5 < nd) {
       m(i, std::min(i + 5, nd - 1)) = -1.0;
