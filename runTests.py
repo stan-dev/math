@@ -315,6 +315,7 @@ def handleExpressionTests(tests, only_functions, n_test_files):
             -1,
         )
 
+
 def checkToolchainPathWindows():
     if isWin():
         p1 = subprocess.Popen(
