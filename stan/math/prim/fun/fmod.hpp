@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Returns the floating-point remainder of 
+ * Returns the floating-point remainder of
  * numerator/denominator (rounded towards zero).
  *
  * @tparam T1 type of the numerator (must be arithmetic)

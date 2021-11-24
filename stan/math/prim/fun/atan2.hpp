@@ -9,7 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Computes the arc tangent of y/x using the signs of 
+ * Computes the arc tangent of y/x using the signs of
  * arguments to determine the correct quadrant.
  *
  * @tparam T1 type of first argument (must be arithmetic)
