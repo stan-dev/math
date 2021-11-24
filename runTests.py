@@ -315,22 +315,6 @@ def handleExpressionTests(tests, only_functions, n_test_files):
             -1,
         )
 
-def handleScalarPrimSigTests(tests):
-    scalar_prim_sig_tests = False
-    for n, i in list(enumerate(tests))[::-1]:
-        if "test/scalar_prim_sig" in i or "test/scalar_prim_sig" in i:
-            del tests[n]
-            scalar_prim_sig_tests = True
-    if scalar_prim_sig_tests:
-        HERE = os.path.dirname(os.path.realpath(__file__))
-        sys.path.append(os.path.join(HERE, "test"))
-        sys.path.append(os.path.join(HERE, "test/expressions"))
-        import generate_prim_sig_tests
-
-        generate_prim_sig_tests.main()
-        tests.append("test/expressions/prim_sig_test.cpp")
-
-
 def checkToolchainPathWindows():
     if isWin():
         p1 = subprocess.Popen(
@@ -372,7 +356,6 @@ def main():
     else:
         num_expr_test_files = inputs.e
     handleExpressionTests(tests, inputs.only_functions, num_expr_test_files)
-    handleScalarPrimSigTests(tests)
 
     tests = findTests(inputs.tests, inputs.f, inputs.do_jumbo)
 
