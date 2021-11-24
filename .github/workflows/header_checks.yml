@@ -1,4 +1,4 @@
-name: Header & signature checks
+name: Header checks
 
 on:
   pull_request:
@@ -80,19 +80,3 @@ jobs:
       run: |
         echo "STAN_NO_RANGE_CHECKS=true" > make/local
         ./runTests.py -j2 ./test/unit/math/prim/err/
-  prim_scalar_sig_checks:
-    name: Prim scalar signature schecks
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: n1hility/cancel-previous-runs@v2
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        workflow: c-cpp.yml
-      if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/master' && github.ref != 'refs/heads/develop'"
-
-    - uses: actions/checkout@v2
-
-    - name: Run Prim scalar signature schecks
-      run: |
-        ./runTests.py test/scalar_prim_sig
