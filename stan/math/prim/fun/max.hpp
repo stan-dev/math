@@ -12,7 +12,7 @@ namespace stan {
 namespace math {
 
 /**
- * Returns the maximum coefficient of the two specified
+ * Returns the maximum value of the two specified
  * scalar arguments.
  *
  * @tparam T1 type of first argument (must be arithmetic)
@@ -27,12 +27,12 @@ return_type_t<T1, T2> max(T1 x, T2 y) {
 }
 
 /**
- * Returns the maximum coefficient in the specified
+ * Returns the maximum value in the specified
  * matrix, vector, row vector or std vector.
  *
  * @tparam T type of the container
  * @param m specified matrix, vector, row vector or std vector
- * @return maximum coefficient value in the container, or -infinity if the
+ * @return maximum value in the container, or -infinity if the
  * container is size zero and the scalar type in container is floating point
  * number
  * @throws <code>std::invalid_argument</code> if the vector is size zero and the

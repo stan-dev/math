@@ -29,13 +29,15 @@ inline complex_return_t<U, V> complex_pow(const U& x, const V& y) {
 }  // namespace internal
 
 /**
- * The pow() function implementation for scalar inputs.
+ * Return the first argument raised to the power of the second
+ * argument.
  *
- * @tparam T1 type of first input
- * @tparam T2 type of second input
- * @param a First input
- * @param b Second input
- * @return pow function applied to the two inputs.
+ * @tparam T1 type of first argument
+ * @tparam T2 type of second argument
+ * @param a first argument
+ * @param b second argument
+ * @return the first argument raised to the power of the second
+ * argument.
  */
 template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
 inline auto pow(const T1& a, const T2& b) {
@@ -43,14 +45,15 @@ inline auto pow(const T1& a, const T2& b) {
 }
 
 /**
- * Enables the vectorised application of the pow function, when
- * the first and/or second arguments are containers.
+ * Returns the elementwise raising of the first argument to the power of the
+ * second argument.
  *
- * @tparam T1 type of first input
- * @tparam T2 type of second input
- * @param a First input
- * @param b Second input
- * @return pow function applied to the two inputs.
+ * @tparam T1 type of first argument
+ * @tparam T2 type of second argument
+ * @param a first argument
+ * @param b second argument
+ * @return the elementwise raising of the first argument to the power of the
+ * second argument.
  */
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
 inline auto pow(const T1& a, const T2& b) {

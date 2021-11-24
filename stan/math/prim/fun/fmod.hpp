@@ -9,16 +9,17 @@ namespace stan {
 namespace math {
 
 /**
- * The mod() function implementation for scalar inputs.
+ * Returns the floating-point remainder of 
+ * numerator/denominator (rounded towards zero).
  *
- * @tparam T1 type of first input
- * @tparam T2 type of second input
- * @param a First input
- * @param b Second input
- * @return fmod function applied to the two inputs.
+ * @tparam T1 type of the numerator (must be arithmetic)
+ * @tparam T2 type of the denominator (must be arithmetic)
+ * @param a the numerator
+ * @param b the denominator
+ * @return the floating-point remainder of a/b.
  */
 template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
-inline auto fmod(const T1& a, const T2& b) {
+inline double fmod(const T1& a, const T2& b) {
   return std::fmod(a, b);
 }
 

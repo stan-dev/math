@@ -9,17 +9,17 @@ namespace stan {
 namespace math {
 
 /**
- * Returns the principal value of the arg tangent of y/x,
- * expressed in radians.
+ * Computes the arc tangent of y/x using the signs of 
+ * arguments to determine the correct quadrant.
  *
  * @tparam T1 type of first argument (must be arithmetic)
  * @tparam T2 type of second argument (must be arithmetic)
  * @param y first argument
  * @param x second argument
- * @return `atan2()` value of the arguments
+ * @return arctangent of `y / x`
  */
 template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
-return_type_t<T1, T2> atan2(T1 y, T2 x) {
+double atan2(T1 y, T2 x) {
   return std::atan2(y, x);
 }
 
