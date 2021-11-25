@@ -81,10 +81,14 @@ pipeline {
             }
         }
         stage("Clang-format") {
-            agent any
+            agent {
+                dockerfile {
+                    filename 'Dockerfile-alpine'
+                    dir 'ci'
+                    label 'linux'
+                }
+            }
             steps {
-                sh "printenv"
-                deleteDir()
                 retry(3) { checkout scm }
                 withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b',
                     usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
@@ -128,10 +132,15 @@ pipeline {
             }
         }
         stage('Linting & Doc checks') {
-            agent any
+            agent {
+                dockerfile {
+                    filename 'Dockerfile-alpine'
+                    dir 'ci'
+                    label 'linux'
+                }
+            }
             steps {
                 script {
-                    deleteDir()
                     retry(3) { checkout scm }
                     sh "git clean -xffd"
                     stash 'MathSetup'
@@ -156,7 +165,13 @@ pipeline {
             }
         }
         stage('Verify changes') {
-            agent { label 'linux' }
+            agent {
+                dockerfile {
+                    filename 'Dockerfile-alpine'
+                    dir 'ci'
+                    label 'linux'
+                }
+            }
             steps {
                 script {
 
@@ -172,14 +187,19 @@ pipeline {
             }
         }
         stage('Headers check') {
+            agent {
+                dockerfile {
+                    filename 'Dockerfile-alpine'
+                    dir 'ci'
+                    label 'linux'
+                }
+            }
             when {
                 expression {
                     !skipRemainingStages
                 }
             }
-            agent any
             steps {
-                deleteDir()
                 unstash 'MathSetup'
                 sh "echo CXX=${env.CXX} -Werror > make/local"
                 sh "make -j${env.PARALLEL} test-headers"
@@ -187,14 +207,19 @@ pipeline {
             post { always { deleteDir() } }
         }
         stage('Full Unit Tests') {
-            agent any
+            agent {
+                dockerfile {
+                    filename 'Dockerfile-alpine'
+                    dir 'ci'
+                    label 'linux'
+                }
+            }
             when {
                 expression {
                     !skipRemainingStages
                 }
             }
             steps {
-                deleteDir()
                 unstash 'MathSetup'
 	            sh "echo CXXFLAGS += -fsanitize=address > make/local"
                 script {
@@ -216,10 +241,14 @@ pipeline {
             failFast true
             parallel {
                 stage('MPI tests') {
-                    agent { label 'linux && mpi' }
+                    agent {
+                        dockerfile {
+                            filename 'Dockerfile-alpine'
+                            dir 'ci'
+                            label 'linux'
+                        }
+                    }
                     steps {
-                        deleteDir()
-                        unstash 'MathSetup'
                         sh "echo CXX=${MPICXX} >> make/local"
                         sh "echo CXX_TYPE=gcc >> make/local"
                         sh "echo STAN_MPI=true >> make/local"
@@ -229,16 +258,22 @@ pipeline {
                     post { always { retry(3) { deleteDir() } } }
                 }
                 stage('OpenCL CPU tests') {
+                    agent {
+                        dockerfile {
+                            filename 'Dockerfile-gpu'
+                            dir 'ci'
+                            label 'gpu'
+                            args '--gpus 1'
+                        }
+                    }
                     when {
                         expression {
                             !skipOpenCL
                         }
                     }
-                    agent { label "gelman-group-win2 || linux-gpu" }
                     steps {
                         script {
                             if (isUnix()) {
-                                deleteDir()
                                 unstash 'MathSetup'
                                 sh "echo CXX=${env.CXX} -Werror > make/local"
                                 sh "echo STAN_OPENCL=true>> make/local"
@@ -247,7 +282,6 @@ pipeline {
                                 runTests("test/unit/math/opencl", false)
                                 runTests("test/unit/multiple_translation_units_test.cpp")
                             } else {
-                                deleteDirWin()
                                 unstash 'MathSetup'
                                 bat "echo CXX=${env.CXX} -Werror > make/local"
                                 bat "echo STAN_OPENCL=true >> make/local"
@@ -262,11 +296,17 @@ pipeline {
                     }
                 }
                 stage('OpenCL GPU tests') {
-                    agent { label "gelman-group-win2 || linux-gpu" }
+                    agent {
+                        dockerfile {
+                            filename 'Dockerfile-gpu'
+                            dir 'ci'
+                            label 'gpu'
+                            args '--gpus 1'
+                        }
+                    }
                     steps {
                         script {
                             if (isUnix()) {
-                                deleteDir()
                                 unstash 'MathSetup'
                                 sh "echo CXX=${env.CXX} -Werror > make/local"
                                 sh "echo STAN_OPENCL=true>> make/local"
@@ -275,7 +315,6 @@ pipeline {
                                 runTests("test/unit/math/opencl", false)
                                 runTests("test/unit/multiple_translation_units_test.cpp")
                             } else {
-                                deleteDirWin()
                                 unstash 'MathSetup'
                                 bat "echo CXX=${env.CXX} -Werror > make/local"
                                 bat "echo STAN_OPENCL=true >> make/local"
@@ -291,9 +330,14 @@ pipeline {
                     }
                 }
                 stage('Distribution tests') {
-                    agent { label "distribution-tests" }
+                    agent {
+                        dockerfile {
+                            filename 'Dockerfile-alpine'
+                            dir 'ci'
+                            label 'linux'
+                        }
+                    }
                     steps {
-                        deleteDir()
                         unstash 'MathSetup'
                         sh """
                             echo CXX=${env.CXX} > make/local
@@ -315,14 +359,19 @@ pipeline {
                         }
                         failure {
                             echo "Distribution tests failed. Check out dist.log.zip artifact for test logs."
-                            }
+                        }
                     }
                 }
                 stage('Threading tests') {
-                    agent any
+                    agent {
+                        dockerfile {
+                            filename 'Dockerfile-alpine'
+                            dir 'ci'
+                            label 'linux'
+                        }
+                    }
                     steps {
                         script {
-                            deleteDir()
                             unstash 'MathSetup'
                             sh "echo CXX=${env.CXX} -Werror > make/local"
                             sh "echo STAN_THREADS=true >> make/local"
@@ -342,6 +391,7 @@ pipeline {
                     post { always { retry(3) { deleteDir() } } }
                 }
                 stage('Windows Headers & Unit') {
+                    agent { label 'windows' }
                     when {
                         allOf {
                             anyOf {
@@ -354,9 +404,7 @@ pipeline {
                             }
                         }
                     }
-                    agent { label 'windows' }
                     steps {
-                        deleteDirWin()
                         unstash 'MathSetup'
                         bat "mingw32-make.exe -f make/standalone math-libs"
                         runTestsWin("test/unit", false, false)
@@ -365,6 +413,13 @@ pipeline {
             }
         }
         stage('Upstream tests') {
+            agent {
+                dockerfile {
+                    filename 'Dockerfile-alpine'
+                    dir 'ci'
+                    label 'linux'
+                }
+            }
             when {
                 allOf {
                     expression {
@@ -382,10 +437,15 @@ pipeline {
             }
         }
         stage('Upload doxygen') {
-            agent any
+            agent {
+                dockerfile {
+                    filename 'Dockerfile-alpine'
+                    dir 'ci'
+                    label 'linux'
+                }
+            }
             when { branch 'develop'}
             steps {
-                deleteDir()
                 retry(3) { checkout scm }
                 withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b',
                                                   usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
@@ -409,7 +469,7 @@ pipeline {
     }
     post {
         always {
-            node("osx || linux") {
+            node("linux") {
                 recordIssues enabledForFailure: false, tool: clang()
             }
         }
