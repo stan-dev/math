@@ -5,7 +5,7 @@
 
 TEST(MathFunctions, pow) {
   EXPECT_FLOAT_EQ(stan::math::pow(2, 7), std::pow(2, 7));
-  EXPECT_FLOAT_EQ(stan::math::pow(2.2, 7), std::pow(2.1, 7));
+  EXPECT_FLOAT_EQ(stan::math::pow(2.2, 7), std::pow(2.2, 7));
   EXPECT_FLOAT_EQ(stan::math::pow(2.15, 1.71), std::pow(2.15, 1.71));
   EXPECT_FLOAT_EQ(stan::math::pow(7.62, -1.15), std::pow(7.62, -1.15));
 }
