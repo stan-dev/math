@@ -9,7 +9,8 @@ TEST(PrimScalarSigTests, abs) {
   EXPECT_FLOAT_EQ(result_1, std::abs(real_1));
   EXPECT_FLOAT_EQ(result_2, std::abs(int_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -21,7 +22,8 @@ TEST(PrimScalarSigTests, acos) {
   EXPECT_FLOAT_EQ(result_1, std::acos(real_1));
   EXPECT_FLOAT_EQ(result_2, std::acos(int_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -33,7 +35,8 @@ TEST(PrimScalarSigTests, acosh) {
   EXPECT_FLOAT_EQ(result_1, std::acosh(real_1));
   EXPECT_FLOAT_EQ(result_2, std::acosh(int_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -45,7 +48,8 @@ TEST(PrimScalarSigTests, asin) {
   EXPECT_FLOAT_EQ(result_1, std::asin(real_1));
   EXPECT_FLOAT_EQ(result_2, std::asin(int_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -57,7 +61,8 @@ TEST(PrimScalarSigTests, asinh) {
   EXPECT_FLOAT_EQ(result_1, std::asinh(real_1));
   EXPECT_FLOAT_EQ(result_2, std::asinh(int_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -69,7 +74,8 @@ TEST(PrimScalarSigTests, atan) {
   EXPECT_FLOAT_EQ(result_1, std::atan(real_1));
   EXPECT_FLOAT_EQ(result_2, std::atan(int_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -81,7 +87,8 @@ TEST(PrimScalarSigTests, atanh) {
   EXPECT_FLOAT_EQ(result_1, std::atanh(real_1));
   EXPECT_FLOAT_EQ(result_2, std::atanh(int_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -93,7 +100,8 @@ TEST(PrimScalarSigTests, cbrt) {
   EXPECT_FLOAT_EQ(result_1, std::cbrt(real_1));
   EXPECT_FLOAT_EQ(result_2, std::cbrt(int_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -105,7 +113,8 @@ TEST(PrimScalarSigTests, ceil) {
   EXPECT_FLOAT_EQ(result_1, std::ceil(real_1));
   EXPECT_FLOAT_EQ(result_2, std::ceil(int_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -117,7 +126,8 @@ TEST(PrimScalarSigTests, cos) {
   EXPECT_FLOAT_EQ(result_1, std::cos(real_1));
   EXPECT_FLOAT_EQ(result_2, std::cos(int_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -129,7 +139,8 @@ TEST(PrimScalarSigTests, cosh) {
   EXPECT_FLOAT_EQ(result_1, std::cosh(real_1));
   EXPECT_FLOAT_EQ(result_2, std::cosh(int_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -141,7 +152,8 @@ TEST(PrimScalarSigTests, erf) {
   EXPECT_FLOAT_EQ(result_1, std::erf(real_1));
   EXPECT_FLOAT_EQ(result_2, std::erf(int_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -153,7 +165,8 @@ TEST(PrimScalarSigTests, erfc) {
   EXPECT_FLOAT_EQ(result_1, std::erfc(real_1));
   EXPECT_FLOAT_EQ(result_2, std::erfc(int_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -165,7 +178,8 @@ TEST(PrimScalarSigTests, exp) {
   EXPECT_FLOAT_EQ(result_1, std::exp(real_1));
   EXPECT_FLOAT_EQ(result_2, std::exp(int_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -177,7 +191,8 @@ TEST(PrimScalarSigTests, exp2) {
   EXPECT_FLOAT_EQ(result_1, std::exp2(real_1));
   EXPECT_FLOAT_EQ(result_2, std::exp2(int_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -189,7 +204,8 @@ TEST(PrimScalarSigTests, expm1) {
   EXPECT_FLOAT_EQ(result_1, std::expm1(real_1));
   EXPECT_FLOAT_EQ(result_2, std::expm1(int_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -201,7 +217,8 @@ TEST(PrimScalarSigTests, fabs) {
   EXPECT_FLOAT_EQ(result_1, std::fabs(real_1));
   EXPECT_FLOAT_EQ(result_2, std::fabs(int_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -213,7 +230,8 @@ TEST(PrimScalarSigTests, floor) {
   EXPECT_FLOAT_EQ(result_1, std::floor(real_1));
   EXPECT_FLOAT_EQ(result_2, std::floor(int_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -225,7 +243,8 @@ TEST(PrimScalarSigTests, lgamma) {
   EXPECT_FLOAT_EQ(result_1, std::lgamma(real_1));
   EXPECT_FLOAT_EQ(result_2, std::lgamma(int_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -237,7 +256,8 @@ TEST(PrimScalarSigTests, log) {
   EXPECT_FLOAT_EQ(result_1, std::log(real_1));
   EXPECT_FLOAT_EQ(result_2, std::log(int_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -249,7 +269,8 @@ TEST(PrimScalarSigTests, log10) {
   EXPECT_FLOAT_EQ(result_1, std::log10(real_1));
   EXPECT_FLOAT_EQ(result_2, std::log10(int_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -261,7 +282,8 @@ TEST(PrimScalarSigTests, log1p) {
   EXPECT_FLOAT_EQ(result_1, std::log1p(real_1));
   EXPECT_FLOAT_EQ(result_2, std::log1p(int_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -273,7 +295,8 @@ TEST(PrimScalarSigTests, log2) {
   EXPECT_FLOAT_EQ(result_1, std::log2(real_1));
   EXPECT_FLOAT_EQ(result_2, std::log2(int_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -285,7 +308,8 @@ TEST(PrimScalarSigTests, round) {
   EXPECT_FLOAT_EQ(result_1, std::round(real_1));
   EXPECT_FLOAT_EQ(result_2, std::round(int_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -297,7 +321,8 @@ TEST(PrimScalarSigTests, sin) {
   EXPECT_FLOAT_EQ(result_1, std::sin(real_1));
   EXPECT_FLOAT_EQ(result_2, std::sin(int_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -309,7 +334,8 @@ TEST(PrimScalarSigTests, sinh) {
   EXPECT_FLOAT_EQ(result_1, std::sinh(real_1));
   EXPECT_FLOAT_EQ(result_2, std::sinh(int_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -321,7 +347,8 @@ TEST(PrimScalarSigTests, sqrt) {
   EXPECT_FLOAT_EQ(result_1, std::sqrt(real_1));
   EXPECT_FLOAT_EQ(result_2, std::sqrt(int_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -333,7 +360,8 @@ TEST(PrimScalarSigTests, tan) {
   EXPECT_FLOAT_EQ(result_1, std::tan(real_1));
   EXPECT_FLOAT_EQ(result_2, std::tan(int_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -345,7 +373,8 @@ TEST(PrimScalarSigTests, tanh) {
   EXPECT_FLOAT_EQ(result_1, std::tanh(real_1));
   EXPECT_FLOAT_EQ(result_2, std::tanh(int_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -357,7 +386,8 @@ TEST(PrimScalarSigTests, tgamma) {
   EXPECT_FLOAT_EQ(result_1, std::tgamma(real_1));
   EXPECT_FLOAT_EQ(result_2, std::tgamma(int_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -369,7 +399,8 @@ TEST(PrimScalarSigTests, trunc) {
   EXPECT_FLOAT_EQ(result_1, std::trunc(real_1));
   EXPECT_FLOAT_EQ(result_2, std::trunc(int_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -387,7 +418,8 @@ TEST(PrimScalarSigTests, atan2) {
   EXPECT_FLOAT_EQ(result_3, std::atan2(int_1, real_2));
   EXPECT_FLOAT_EQ(result_4, std::atan2(int_1, int_2));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -405,7 +437,8 @@ TEST(PrimScalarSigTests, copysign) {
   EXPECT_FLOAT_EQ(result_3, std::copysign(int_1, real_2));
   EXPECT_FLOAT_EQ(result_4, std::copysign(int_1, int_2));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -423,7 +456,8 @@ TEST(PrimScalarSigTests, fdim) {
   EXPECT_FLOAT_EQ(result_3, std::fdim(int_1, real_2));
   EXPECT_FLOAT_EQ(result_4, std::fdim(int_1, int_2));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -441,7 +475,8 @@ TEST(PrimScalarSigTests, fmax) {
   EXPECT_FLOAT_EQ(result_3, std::fmax(int_1, real_2));
   EXPECT_FLOAT_EQ(result_4, std::fmax(int_1, int_2));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -459,7 +494,8 @@ TEST(PrimScalarSigTests, fmin) {
   EXPECT_FLOAT_EQ(result_3, std::fmin(int_1, real_2));
   EXPECT_FLOAT_EQ(result_4, std::fmin(int_1, int_2));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -477,7 +513,8 @@ TEST(PrimScalarSigTests, fmod) {
   EXPECT_FLOAT_EQ(result_3, std::fmod(int_1, real_2));
   EXPECT_FLOAT_EQ(result_4, std::fmod(int_1, int_2));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -495,7 +532,8 @@ TEST(PrimScalarSigTests, hypot) {
   EXPECT_FLOAT_EQ(result_3, std::hypot(int_1, real_2));
   EXPECT_FLOAT_EQ(result_4, std::hypot(int_1, int_2));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -513,7 +551,8 @@ TEST(PrimScalarSigTests, ldexp) {
   EXPECT_FLOAT_EQ(result_3, std::ldexp(int_1, real_2));
   EXPECT_FLOAT_EQ(result_4, std::ldexp(int_1, int_2));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -531,7 +570,8 @@ TEST(PrimScalarSigTests, pow) {
   EXPECT_FLOAT_EQ(result_3, std::pow(int_1, real_2));
   EXPECT_FLOAT_EQ(result_4, std::pow(int_1, int_2));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
@@ -546,7 +586,7 @@ TEST(PrimScalarSigTests, fma) {
   auto result_2 = stan::math::fma(real_1, real_2, int_3);
   auto result_3 = stan::math::fma(real_1, int_2, real_3);
   auto result_4 = stan::math::fma(real_1, int_2, int_3);
-  auto result_5= stan::math::fma(int_1, real_2, real_3);
+  auto result_5 = stan::math::fma(int_1, real_2, real_3);
   auto result_6 = stan::math::fma(int_1, real_2, int_3);
   auto result_7 = stan::math::fma(int_1, int_2, real_3);
   auto result_8 = stan::math::fma(int_1, int_2, int_3);
@@ -559,6 +599,7 @@ TEST(PrimScalarSigTests, fma) {
   EXPECT_FLOAT_EQ(result_7, std::fma(int_1, int_2, real_3));
   EXPECT_FLOAT_EQ(result_8, std::fma(int_1, int_2, int_3));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
-  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
