@@ -95,8 +95,9 @@ class matrix_exp_action_handler {
 
     double eta = exp(t * mu / s);
 
-    Eigen::MatrixXd f = b;
-    Eigen::MatrixXd bi = b;
+    const auto& b_eval = b.eval();
+    Eigen::MatrixXd f = b_eval;
+    Eigen::MatrixXd bi = b_eval;
 
 #define MAT_OP_INF_NORM(X) X.cwiseAbs().rowwise().sum().maxCoeff()
 
