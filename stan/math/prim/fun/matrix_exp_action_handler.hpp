@@ -27,7 +27,6 @@ class matrix_exp_action_handler {
   static constexpr int m_max = 55;
   static constexpr double tol = 1.0e-16;
 
-  //
   const std::vector<double> theta_m_single{
       1.19209280e-07, 5.97885889e-04, 1.12338647e-02, 5.11661936e-02,
       1.30848716e-01, 2.49528932e-01, 4.01458242e-01, 5.80052463e-01,
@@ -86,9 +85,7 @@ class matrix_exp_action_handler {
                                 const double& t = 1.0) {
     Eigen::MatrixXd A = mat;
     double mu = A.trace() / A.rows();
-    for (int i = 0; i < A.rows(); ++i) {
-      A(i, i) -= mu;
-    }
+    A.diagonal().array() -= mu;
 
     int m, s;
     set_approx_order(A, b, t, m, s);
@@ -99,16 +96,14 @@ class matrix_exp_action_handler {
     Eigen::MatrixXd f = b_eval;
     Eigen::MatrixXd bi = b_eval;
 
-#define MAT_OP_INF_NORM(X) X.cwiseAbs().rowwise().sum().maxCoeff()
-
     for (auto i = 0; i < s; ++i) {
       //  maximum absolute row sum, aka inf-norm of matrix operator
-      double c1 = MAT_OP_INF_NORM(bi);
+      double c1 = matrix_operator_inf_norm(bi);
       for (auto j = 0; j < m; ++j) {
         bi = (t / (s * (j + 1))) * (A * bi);
         f += bi;
-        double c2 = MAT_OP_INF_NORM(bi);
-        if (c1 + c2 < tol * MAT_OP_INF_NORM(f))
+        double c2 = matrix_operator_inf_norm(bi);
+        if (c1 + c2 < tol * matrix_operator_inf_norm(f))
           break;
         c1 = c2;
       }
@@ -116,9 +111,16 @@ class matrix_exp_action_handler {
       bi = f;
     }
 
-#undef MAT_OP_INF_NORM
-
     return f;
+  }
+
+  /**
+   * Eigen expression for matrix operator infinity norm
+   *
+   * @param mat matrix
+   */
+  double matrix_operator_inf_norm(Eigen::MatrixXd const& x) {
+    return x.cwiseAbs().rowwise().sum().maxCoeff();
   }
 
   /**
@@ -143,7 +145,7 @@ class matrix_exp_action_handler {
   double mat_power_1_norm(const EigMat1& mat, int m) {
     if ((mat.array() > 0.0).all()) {
       Eigen::VectorXd e = Eigen::VectorXd::Constant(mat.rows(), 1.0);
-      for (auto j = 0; j < m; ++j) {
+      for (int j = 0; j < m; ++j) {
         e = mat.transpose() * e;
       }
       return e.lpNorm<Eigen::Infinity>();
