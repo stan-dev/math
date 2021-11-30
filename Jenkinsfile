@@ -66,7 +66,18 @@ pipeline {
         preserveStashes(buildCount: 7)
     }
     environment {
-        STAN_NUM_THREADS = '4'
+        STAN_NUM_THREADS = 4
+        CXX = 'clang++-6.0'
+        GCC = 'g++'
+        MPICXX = 'mpicxx.openmpi'
+        N_TESTS = 150
+        OPENCL_DEVICE_ID = 0
+        OPENCL_DEVICE_ID_CPU = 0
+        OPENCL_DEVICE_ID_GPU = 0
+        OPENCL_PLATFORM_ID = 1
+        OPENCL_PLATFORM_ID_CPU = 0
+        OPENCL_PLATFORM_ID_GPU = 0
+        PARALLEL = 8
     }
     stages {
         stage('Kill previous builds') {
@@ -82,9 +93,8 @@ pipeline {
         }
         stage("Clang-format") {
             agent {
-                dockerfile {
-                    filename 'Dockerfile-alpine'
-                    dir 'ci'
+                docker {
+                    image 'stanorg/ci:alpine'
                     label 'linux'
                 }
             }
@@ -133,9 +143,8 @@ pipeline {
         }
         stage('Linting & Doc checks') {
             agent {
-                dockerfile {
-                    filename 'Dockerfile-alpine'
-                    dir 'ci'
+                docker {
+                    image 'stanorg/ci:alpine'
                     label 'linux'
                 }
             }
@@ -166,9 +175,8 @@ pipeline {
         }
         stage('Verify changes') {
             agent {
-                dockerfile {
-                    filename 'Dockerfile-alpine'
-                    dir 'ci'
+                docker {
+                    image 'stanorg/ci:alpine'
                     label 'linux'
                 }
             }
@@ -188,9 +196,8 @@ pipeline {
         }
         stage('Headers check') {
             agent {
-                dockerfile {
-                    filename 'Dockerfile-alpine'
-                    dir 'ci'
+                docker {
+                    image 'stanorg/ci:alpine'
                     label 'linux'
                 }
             }
@@ -208,9 +215,8 @@ pipeline {
         }
         stage('Full Unit Tests') {
             agent {
-                dockerfile {
-                    filename 'Dockerfile-alpine'
-                    dir 'ci'
+                docker {
+                    image 'stanorg/ci:alpine'
                     label 'linux'
                 }
             }
@@ -242,9 +248,8 @@ pipeline {
             parallel {
                 stage('MPI tests') {
                     agent {
-                        dockerfile {
-                            filename 'Dockerfile-alpine'
-                            dir 'ci'
+                        docker {
+                            image 'stanorg/ci:alpine'
                             label 'linux'
                         }
                     }
@@ -259,9 +264,8 @@ pipeline {
                 }
                 stage('OpenCL CPU tests') {
                     agent {
-                        dockerfile {
-                            filename 'Dockerfile-gpu'
-                            dir 'ci'
+                        docker {
+                            image 'stanorg/ci:gpu'
                             label 'gpu'
                             args '--gpus 1'
                         }
@@ -297,9 +301,8 @@ pipeline {
                 }
                 stage('OpenCL GPU tests') {
                     agent {
-                        dockerfile {
-                            filename 'Dockerfile-gpu'
-                            dir 'ci'
+                        docker {
+                            image 'stanorg/ci:gpu'
                             label 'gpu'
                             args '--gpus 1'
                         }
@@ -331,9 +334,8 @@ pipeline {
                 }
                 stage('Distribution tests') {
                     agent {
-                        dockerfile {
-                            filename 'Dockerfile-alpine'
-                            dir 'ci'
+                        docker {
+                            image 'stanorg/ci:alpine'
                             label 'linux'
                         }
                     }
@@ -364,9 +366,8 @@ pipeline {
                 }
                 stage('Threading tests') {
                     agent {
-                        dockerfile {
-                            filename 'Dockerfile-alpine'
-                            dir 'ci'
+                        docker {
+                            image 'stanorg/ci:alpine'
                             label 'linux'
                         }
                     }
@@ -414,9 +415,8 @@ pipeline {
         }
         stage('Upstream tests') {
             agent {
-                dockerfile {
-                    filename 'Dockerfile-alpine'
-                    dir 'ci'
+                docker {
+                    image 'stanorg/ci:alpine'
                     label 'linux'
                 }
             }
@@ -438,9 +438,8 @@ pipeline {
         }
         stage('Upload doxygen') {
             agent {
-                dockerfile {
-                    filename 'Dockerfile-alpine'
-                    dir 'ci'
+                docker {
+                    image 'stanorg/ci:alpine'
                     label 'linux'
                 }
             }
@@ -467,6 +466,7 @@ pipeline {
             post { always { deleteDir() } }
         }
     }
+    // Below lines are commented to avoid spamming emails during migration/debug
     post {
         always {
             node("linux") {
@@ -476,10 +476,10 @@ pipeline {
         success {
             script {
                 utils.updateUpstream(env, 'stan')
-                utils.mailBuildResults("SUCCESSFUL")
+                //utils.mailBuildResults("SUCCESSFUL")
             }
         }
-        unstable { script { utils.mailBuildResults("UNSTABLE", alsoNotify()) } }
-        failure { script { utils.mailBuildResults("FAILURE", alsoNotify()) } }
+        //unstable { script { utils.mailBuildResults("UNSTABLE", alsoNotify()) } }
+        //failure { script { utils.mailBuildResults("FAILURE", alsoNotify()) } }
     }
 }
