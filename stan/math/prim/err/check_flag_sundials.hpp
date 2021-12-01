@@ -44,13 +44,13 @@ inline void cvodes_check(int flag, const char* func_name) {
  * @param func_name calling function name
  * @throw <code>std::runtime_error</code> if the flag is negative.
  */
-  inline void kinsol_check(int flag, const char* func_name) {
-    std::ostringstream ss;
-    if (flag < 0) {
-      ss << "algebra_solver failed with error flag " << flag << ".";
-      throw std::runtime_error(ss.str());
-    }
+inline void kinsol_check(int flag, const char* func_name) {
+  std::ostringstream ss;
+  if (flag < 0) {
+    ss << "algebra_solver failed with error flag " << flag << ".";
+    throw std::runtime_error(ss.str());
   }
+}
 
 /**
  * Throws an exception message when the KINSol() call fails.
@@ -65,19 +65,21 @@ inline void cvodes_check(int flag, const char* func_name) {
  * @throw <code>std::domain_error</code> if the flag indicates max
  * number of steps is exceeded..
  */
-  inline void kinsol_check(int flag, const char* func_name, long int max_num_steps) {  // NOLINT(runtime/int)
-    std::ostringstream ss;
-    if (flag == -6) {
-      domain_error("algebra_solver", "maximum number of iterations",
-                   max_num_steps, "(", ") was exceeded in the solve.");
-    } else if (flag == -11) {
-      ss << "The linear solver’s setup function failed in an unrecoverable manner.";
-      throw std::runtime_error(ss.str());
-    } else if (flag < 0) {
-      ss << "algebra_solver failed with error flag " << flag << ".";
-      throw std::runtime_error(ss.str());
-    }
+inline void kinsol_check(int flag, const char* func_name,
+                         long int max_num_steps) {  // NOLINT(runtime/int)
+  std::ostringstream ss;
+  if (flag == -6) {
+    domain_error("algebra_solver", "maximum number of iterations",
+                 max_num_steps, "(", ") was exceeded in the solve.");
+  } else if (flag == -11) {
+    ss << "The linear solver’s setup function failed in an unrecoverable "
+          "manner.";
+    throw std::runtime_error(ss.str());
+  } else if (flag < 0) {
+    ss << "algebra_solver failed with error flag " << flag << ".";
+    throw std::runtime_error(ss.str());
   }
+}
 
 }  // namespace math
 }  // namespace stan

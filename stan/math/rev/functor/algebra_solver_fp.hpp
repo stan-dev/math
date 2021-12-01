@@ -247,7 +247,6 @@ struct FixedPointSolver<KinsolFixedPointEnv<F>, fp_jac_type> {
     kinsol_check(KINSol(mem, env.nv_x_, KIN_FP, env.nv_u_scal_, env.nv_f_scal_),
                  "KINSol", max_num_steps);
 
-
     for (int i = 0; i < N; ++i) {
       x(i) = NV_Ith_S(env.nv_x_, i);
     }
