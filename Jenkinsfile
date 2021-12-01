@@ -96,7 +96,7 @@ pipeline {
         stage("Clang-format") {
             agent {
                 docker {
-                    image 'stanorg/ci:alpine'
+                    image 'stanorg/ci:ubuntu'
                     label 'linux'
                 }
             }
@@ -108,7 +108,7 @@ pipeline {
                         set -x
                         git checkout -b ${branchName()}
                         clang-format --version
-                        find stan test -name '*.hpp' -o -name '*.cpp' | xargs -n20 -P${env.PARALLEL} clang-format -i
+                        find stan test -name '*.hpp' -o -name '*.cpp' | xargs -n20 -P${PARALLEL} clang-format -i
                         if [[ `git diff` != "" ]]; then
                             git config user.email "mc.stanislaw@gmail.com"
                             git config user.name "Stan Jenkins"
@@ -146,7 +146,7 @@ pipeline {
         stage('Linting & Doc checks') {
             agent {
                 docker {
-                    image 'stanorg/ci:alpine'
+                    image 'stanorg/ci:ubuntu'
                     label 'linux'
                 }
             }
@@ -155,8 +155,8 @@ pipeline {
                     retry(3) { checkout scm }
                     sh "git clean -xffd"
                     stash 'MathSetup'
-                    sh "echo CXX=${env.CXX} -Werror > make/local"
-                    sh "echo BOOST_PARALLEL_JOBS=${env.PARALLEL} >> make/local"
+                    sh "echo CXX=${CXX} -Werror > make/local"
+                    sh "echo BOOST_PARALLEL_JOBS=${PARALLEL} >> make/local"
                     parallel(
                         CppLint: { sh "make cpplint" },
                         Dependencies: { sh """#!/bin/bash
@@ -178,7 +178,7 @@ pipeline {
         stage('Verify changes') {
             agent {
                 docker {
-                    image 'stanorg/ci:alpine'
+                    image 'stanorg/ci:ubuntu'
                     label 'linux'
                 }
             }
@@ -199,7 +199,7 @@ pipeline {
         stage('Headers check') {
             agent {
                 docker {
-                    image 'stanorg/ci:alpine'
+                    image 'stanorg/ci:ubuntu'
                     label 'linux'
                 }
             }
@@ -210,15 +210,15 @@ pipeline {
             }
             steps {
                 unstash 'MathSetup'
-                sh "echo CXX=${env.CXX} -Werror > make/local"
-                sh "make -j${env.PARALLEL} test-headers"
+                sh "echo CXX=${CXX} -Werror > make/local"
+                sh "make -j${PARALLEL} test-headers"
             }
             post { always { deleteDir() } }
         }
         stage('Full Unit Tests') {
             agent {
                 docker {
-                    image 'stanorg/ci:alpine'
+                    image 'stanorg/ci:ubuntu'
                     label 'linux'
                 }
             }
@@ -251,7 +251,7 @@ pipeline {
                 stage('MPI tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:alpine'
+                            image 'stanorg/ci:ubuntu'
                             label 'linux'
                         }
                     }
@@ -281,10 +281,10 @@ pipeline {
                         script {
                             if (isUnix()) {
                                 unstash 'MathSetup'
-                                sh "echo CXX=${env.CXX} -Werror > make/local"
+                                sh "echo CXX=${CXX} -Werror > make/local"
                                 sh "echo STAN_OPENCL=true>> make/local"
-                                sh "echo OPENCL_PLATFORM_ID=${env.OPENCL_PLATFORM_ID_CPU}>> make/local"
-                                sh "echo OPENCL_DEVICE_ID=${env.OPENCL_DEVICE_ID_CPU}>> make/local"
+                                sh "echo OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_CPU}>> make/local"
+                                sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_CPU}>> make/local"
                                 // skips tests that require specific support in OpenCL
                                 sh 'echo "ifdef NO_CPU_OPENCL_INT64_BASE_ATOMIC" >> make/local'
                                 sh 'echo "CXXFLAGS += -DSTAN_TEST_SKIP_REQUIRING_OPENCL_INT64_BASE_ATOMIC" >> make/local'
@@ -294,10 +294,10 @@ pipeline {
                                 runTests("test/unit/multiple_translation_units_test.cpp")
                             } else {
                                 unstash 'MathSetup'
-                                bat "echo CXX=${env.CXX} -Werror > make/local"
+                                bat "echo CXX=${CXX} -Werror > make/local"
                                 bat "echo STAN_OPENCL=true >> make/local"
-                                bat "echo OPENCL_PLATFORM_ID=${env.OPENCL_PLATFORM_ID_CPU} >> make/local"
-                                bat "echo OPENCL_DEVICE_ID=${env.OPENCL_DEVICE_ID_CPU} >> make/local"
+                                bat "echo OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_CPU} >> make/local"
+                                bat "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_CPU} >> make/local"
                                 bat 'echo LDFLAGS_OPENCL= -L"C:\\Program Files (x86)\\IntelSWTools\\system_studio_2020\\OpenCL\\sdk\\lib\\x64" -lOpenCL >> make/local'
                                 bat "mingw32-make.exe -f make/standalone math-libs"
                                 runTestsWin("test/unit/math/opencl", false, false)
@@ -318,18 +318,18 @@ pipeline {
                         script {
                             if (isUnix()) {
                                 unstash 'MathSetup'
-                                sh "echo CXX=${env.CXX} -Werror > make/local"
+                                sh "echo CXX=${CXX} -Werror > make/local"
                                 sh "echo STAN_OPENCL=true>> make/local"
-                                sh "echo OPENCL_PLATFORM_ID=${env.OPENCL_PLATFORM_ID_GPU} >> make/local"
-                                sh "echo OPENCL_DEVICE_ID=${env.OPENCL_DEVICE_ID_GPU} >> make/local"
+                                sh "echo OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} >> make/local"
+                                sh "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU} >> make/local"
                                 runTests("test/unit/math/opencl", false)
                                 runTests("test/unit/multiple_translation_units_test.cpp")
                             } else {
                                 unstash 'MathSetup'
-                                bat "echo CXX=${env.CXX} -Werror > make/local"
+                                bat "echo CXX=${CXX} -Werror > make/local"
                                 bat "echo STAN_OPENCL=true >> make/local"
-                                bat "echo OPENCL_PLATFORM_ID=${env.OPENCL_PLATFORM_ID_GPU} >> make/local"
-                                bat "echo OPENCL_DEVICE_ID=${env.OPENCL_DEVICE_ID_GPU} >> make/local"
+                                bat "echo OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} >> make/local"
+                                bat "echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU} >> make/local"
                                 bat 'echo LDFLAGS_OPENCL= -L"C:\\Program Files (x86)\\IntelSWTools\\system_studio_2020\\OpenCL\\sdk\\lib\\x64" -lOpenCL >> make/local'
                                 bat "mingw32-make.exe -f make/standalone math-libs"
                                 runTestsWin("test/unit/math/opencl", false, false)
@@ -342,16 +342,16 @@ pipeline {
                 stage('Distribution tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:alpine'
+                            image 'stanorg/ci:ubuntu'
                             label 'linux'
                         }
                     }
                     steps {
                         unstash 'MathSetup'
                         sh """
-                            echo CXX=${env.CXX} > make/local
+                            echo CXX=${CXX} > make/local
                             echo O=0 >> make/local
-                            echo N_TESTS=${env.N_TESTS} >> make/local
+                            echo N_TESTS=${N_TESTS} >> make/local
                             """
                         script {
                             if (params.withRowVector || isBranch('develop') || isBranch('master')) {
@@ -359,7 +359,7 @@ pipeline {
                                 sh "echo CXXFLAGS+=-DSTAN_PROB_TEST_ALL >> make/local"
                             }
                         }
-                        sh "./runTests.py -j${env.PARALLEL} test/prob > dist.log 2>&1"
+                        sh "./runTests.py -j${PARALLEL} test/prob > dist.log 2>&1"
                     }
                     post {
                         always {
@@ -386,14 +386,14 @@ pipeline {
                                 sh "python ./test/expressions/test_expression_testing_framework.py"
                             }
                             withEnv(['PATH+TBB=./lib/tbb']) {
-                                try { sh "./runTests.py -j${env.PARALLEL} test/expressions" }
+                                try { sh "./runTests.py -j${PARALLEL} test/expressions" }
                                 finally { junit 'test/**/*.xml' }
                             }
                             sh "make clean-all"
                             sh "echo STAN_THREADS=true >> make/local"
                             withEnv(['PATH+TBB=./lib/tbb']) {
                                 try {
-                                    sh "./runTests.py -j${env.PARALLEL} test/expressions --only-functions reduce_sum map_rect"
+                                    sh "./runTests.py -j${PARALLEL} test/expressions --only-functions reduce_sum map_rect"
 				                }
                                 finally { junit 'test/**/*.xml' }
                             }
@@ -404,14 +404,14 @@ pipeline {
                 stage('Threading tests') {
                     agent {
                         docker {
-                            image 'stanorg/ci:alpine'
+                            image 'stanorg/ci:ubuntu'
                             label 'linux'
                         }
                     }
                     steps {
                         script {
                             unstash 'MathSetup'
-                            sh "echo CXX=${env.CXX} -Werror > make/local"
+                            sh "echo CXX=${CXX} -Werror > make/local"
                             sh "echo STAN_THREADS=true >> make/local"
                             sh "export STAN_NUM_THREADS=4"
                             if (isBranch('develop') || isBranch('master')) {
@@ -453,7 +453,7 @@ pipeline {
         stage('Upstream tests') {
             agent {
                 docker {
-                    image 'stanorg/ci:alpine'
+                    image 'stanorg/ci:ubuntu'
                     label 'linux'
                 }
             }
@@ -476,7 +476,7 @@ pipeline {
         stage('Upload doxygen') {
             agent {
                 docker {
-                    image 'stanorg/ci:alpine'
+                    image 'stanorg/ci:ubuntu'
                     label 'linux'
                 }
             }
