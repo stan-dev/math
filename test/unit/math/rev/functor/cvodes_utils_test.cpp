@@ -20,7 +20,7 @@ TEST(StanMath, cvodes_error_handler) {
   int t0 = 0;
   std::vector<double> ts = {0.45, 1.1};
 
-  std::string msg = "CV_CONV_FAILURE";
+  std::string msg = "Convergence test failures occurred too many times";
 
   EXPECT_THROW_MSG(stan::math::ode_bdf(Inverse(), y0, t0, ts, nullptr),
                    std::domain_error, msg);
