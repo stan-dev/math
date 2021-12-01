@@ -12,6 +12,7 @@
 #include <stan/math/opencl/kernels/device_functions/lbeta.hpp>
 #include <stan/math/opencl/kernels/device_functions/lgamma_stirling.hpp>
 #include <stan/math/opencl/kernels/device_functions/lgamma_stirling_diff.hpp>
+#include <stan/math/opencl/kernels/device_functions/lmultiply.hpp>
 #include <stan/math/opencl/kernels/device_functions/log_inv_logit.hpp>
 #include <stan/math/opencl/kernels/device_functions/log_inv_logit_diff.hpp>
 #include <stan/math/opencl/kernels/device_functions/log_diff_exp.hpp>
@@ -338,6 +339,7 @@ ADD_BINARY_FUNCTION_WITH_INCLUDES(fmod)
 ADD_BINARY_FUNCTION_WITH_INCLUDES(hypot)
 ADD_BINARY_FUNCTION_WITH_INCLUDES(ldexp)
 ADD_BINARY_FUNCTION_WITH_INCLUDES(pow)
+ADD_BINARY_FUNCTION_WITH_INCLUDES(copysign)
 
 ADD_BINARY_FUNCTION_WITH_INCLUDES(
     beta, stan::math::opencl_kernels::beta_device_function)
@@ -360,6 +362,8 @@ ADD_BINARY_FUNCTION_WITH_INCLUDES(log_diff_exp,
                                   opencl_kernels::log_diff_exp_device_function)
 ADD_BINARY_FUNCTION_WITH_INCLUDES(
     multiply_log, stan::math::opencl_kernels::multiply_log_device_function)
+ADD_BINARY_FUNCTION_WITH_INCLUDES(
+    lmultiply, stan::math::opencl_kernels::lmultiply_device_function)
 
 #undef ADD_BINARY_FUNCTION_WITH_INCLUDES
 #undef ADD_UNARY_FUNCTION_WITH_INCLUDES

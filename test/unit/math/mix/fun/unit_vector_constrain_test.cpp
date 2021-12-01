@@ -3,19 +3,20 @@
 
 namespace unit_vector_constrain_test {
 template <typename T>
-stan::plain_type_t<T> g1(const T& x) {
-  return stan::math::unit_vector_constrain(x);
+auto g1(const T& x) {
+  stan::scalar_type_t<T> lp = 0;
+  return stan::math::unit_vector_constrain<false>(x, lp);
 }
 template <typename T>
-typename stan::plain_type_t<T> g2(const T& x) {
+auto g2(const T& x) {
   stan::scalar_type_t<T> lp = 0;
-  auto a = stan::math::unit_vector_constrain(x, lp);
+  auto a = stan::math::unit_vector_constrain<true>(x, lp);
   return a;
 }
 template <typename T>
-typename stan::scalar_type_t<T> g3(const T& x) {
+auto g3(const T& x) {
   stan::scalar_type_t<T> lp = 0;
-  stan::math::unit_vector_constrain(x, lp);
+  stan::math::unit_vector_constrain<true>(x, lp);
   return lp;
 }
 

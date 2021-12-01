@@ -8,14 +8,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class inv_logit_vari : public op_v_vari {
- public:
-  explicit inv_logit_vari(vari* avi) : op_v_vari(inv_logit(avi->val_), avi) {}
-  void chain() { avi_->adj_ += adj_ * val_ * (1.0 - val_); }
-};
-}  // namespace internal
-
 /**
  * The inverse logit function for variables (stan).
  *
@@ -26,25 +18,16 @@ class inv_logit_vari : public op_v_vari {
  * \f$\frac{d}{dx} \mbox{logit}^{-1}(x) = \mbox{logit}^{-1}(x) (1 -
  * \mbox{logit}^{-1}(x))\f$.
  *
+ * @tparam T Arithmetic or a type inheriting from `EigenBase`.
  * @param a Argument variable.
  * @return Inverse logit of argument.
  */
-inline var inv_logit(const var& a) {
-  return var(new internal::inv_logit_vari(a.vi_));
-}
-
-/**
- * Return the inverse logit of the elements of x
- *
- * @tparam T type of x
- * @param x argument
- * @return elementwise inverse logit of x
- */
-template <typename T, require_var_matrix_t<T>* = nullptr>
-inline auto inv_logit(const T& x) {
-  return make_callback_var(inv_logit(x.val()), [x](const auto& vi) mutable {
-    x.adj() += (vi.adj().array() * vi.val().array() * (1.0 - vi.val().array()))
-                   .matrix();
+template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
+inline auto inv_logit(const var_value<T>& a) {
+  return make_callback_var(inv_logit(a.val()), [a](auto& vi) mutable {
+    as_array_or_scalar(a).adj() += as_array_or_scalar(vi.adj())
+                                   * as_array_or_scalar(vi.val())
+                                   * (1.0 - as_array_or_scalar(vi.val()));
   });
 }
 

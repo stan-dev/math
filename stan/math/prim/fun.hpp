@@ -111,7 +111,9 @@
 #include <stan/math/prim/fun/get.hpp>
 #include <stan/math/prim/fun/get_base1.hpp>
 #include <stan/math/prim/fun/get_base1_lhs.hpp>
+#include <stan/math/prim/fun/get_imag.hpp>
 #include <stan/math/prim/fun/get_lp.hpp>
+#include <stan/math/prim/fun/get_real.hpp>
 #include <stan/math/prim/fun/gp_dot_prod_cov.hpp>
 #include <stan/math/prim/fun/gp_exponential_cov.hpp>
 #include <stan/math/prim/fun/gp_matern32_cov.hpp>
@@ -164,6 +166,7 @@
 #include <stan/math/prim/fun/linspaced_row_vector.hpp>
 #include <stan/math/prim/fun/linspaced_vector.hpp>
 #include <stan/math/prim/fun/lmgamma.hpp>
+#include <stan/math/prim/fun/lmultiply.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/logb.hpp>
 #include <stan/math/prim/fun/log10.hpp>
@@ -264,6 +267,7 @@
 #include <stan/math/prim/fun/quad_form.hpp>
 #include <stan/math/prim/fun/quad_form_diag.hpp>
 #include <stan/math/prim/fun/quad_form_sym.hpp>
+#include <stan/math/prim/fun/quantile.hpp>
 #include <stan/math/prim/fun/rank.hpp>
 #include <stan/math/prim/fun/read_corr_L.hpp>
 #include <stan/math/prim/fun/read_corr_matrix.hpp>
@@ -324,6 +328,7 @@
 #include <stan/math/prim/fun/tgamma.hpp>
 #include <stan/math/prim/fun/to_array_1d.hpp>
 #include <stan/math/prim/fun/to_array_2d.hpp>
+#include <stan/math/prim/fun/to_complex.hpp>
 #include <stan/math/prim/fun/to_matrix.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/to_row_vector.hpp>

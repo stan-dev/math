@@ -52,8 +52,8 @@ TEST(ProbInternalMath, grad_reg_inc_beta_fv_1stDeriv1) {
   stan::math::grad_reg_inc_beta(g_a, g_b, a, b, g, dig_a, dig_b, dig_sum,
                                 beta_ab);
 
-  AVEC y1 = createAVEC(a.val_);
-  VEC grad1;
+  std::vector<stan::math::var> y1{a.val_};
+  std::vector<double> grad1;
   g_a.val_.grad(y1, grad1);
   EXPECT_FLOAT_EQ(0.33583548212738989400284958327902414335945097838423129,
                   grad1[0]);
@@ -81,8 +81,8 @@ TEST(ProbInternalMath, grad_reg_inc_beta_fv_1stDeriv2) {
   stan::math::grad_reg_inc_beta(g_a, g_b, a, b, g, dig_a, dig_b, dig_sum,
                                 beta_ab);
 
-  AVEC y1 = createAVEC(b.val_);
-  VEC grad1;
+  std::vector<stan::math::var> y1{b.val_};
+  std::vector<double> grad1;
   g_b.val_.grad(y1, grad1);
   EXPECT_NEAR(-0.156565690737548079304827886, grad1[0], 1e-6);
 }
@@ -109,8 +109,8 @@ TEST(ProbInternalMath, grad_reg_inc_beta_fv_2ndDeriv1) {
   stan::math::grad_reg_inc_beta(g_a, g_b, a, b, g, dig_a, dig_b, dig_sum,
                                 beta_ab);
 
-  AVEC y1 = createAVEC(a.val_);
-  VEC grad1;
+  std::vector<stan::math::var> y1{a.val_};
+  std::vector<double> grad1;
   g_a.d_.grad(y1, grad1);
   EXPECT_FLOAT_EQ(-0.30772293970781581317390510390046098438962772318921,
                   grad1[0]);
@@ -138,8 +138,8 @@ TEST(ProbInternalMath, grad_reg_inc_beta_fv_2ndDeriv2) {
   stan::math::grad_reg_inc_beta(g_a, g_b, a, b, g, dig_a, dig_b, dig_sum,
                                 beta_ab);
 
-  AVEC y1 = createAVEC(b.val_);
-  VEC grad1;
+  std::vector<stan::math::var> y1{b.val_};
+  std::vector<double> grad1;
   g_b.d_.grad(y1, grad1);
   EXPECT_NEAR(0.079977766631361187517939795, grad1[0], 1e-4);
 }

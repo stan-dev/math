@@ -12,7 +12,7 @@
  * back. For details on the speed evaluations, please refer to
  * https://github.com/stan-dev/math/pull/1255 .
  */
-#if !__MINGW32__
+#if !__MINGW32__ && !_BOOST_LGAMMA
 // _REENTRANT must be defined during compilation to ensure that cmath
 // exports the reentrant safe lgamma_r version.
 #if !_REENTRANT
@@ -61,7 +61,7 @@ namespace math {
 * argument
 */
 inline double lgamma(double x) {
-#if !__MINGW32__
+#if !__MINGW32__ && !_BOOST_LGAMMA
   int sign = 1;
   return ::lgamma_r(x, &sign);
 #else
@@ -80,7 +80,7 @@ inline double lgamma(double x) {
  * argument
  */
 inline double lgamma(int x) {
-#if !__MINGW32__
+#if !__MINGW32__ && !_BOOST_LGAMMA
   int sign = 1;
   return ::lgamma_r(x, &sign);
 #else
@@ -114,7 +114,7 @@ struct lgamma_fun {
  *         applied to each value in x.
  * @throw std::domain_error if any value is a negative integer or 0.
  */
-template <typename T,
+template <typename T, require_not_var_matrix_t<T>* = nullptr,
           require_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
 inline auto lgamma(const T& x) {
   return apply_scalar_unary<lgamma_fun, T>::apply(x);

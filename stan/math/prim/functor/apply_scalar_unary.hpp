@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/is_complex.hpp>
+#include <stan/math/prim/meta/require_generics.hpp>
 #include <stan/math/prim/meta/is_vector.hpp>
 #include <stan/math/prim/meta/is_vector_like.hpp>
 #include <stan/math/prim/meta/plain_type.hpp>
@@ -80,8 +82,8 @@ struct apply_scalar_unary<F, T, require_eigen_t<T>> {
  *
  * @tparam F Type of function defining static apply function.
  */
-template <typename F>
-struct apply_scalar_unary<F, double> {
+template <typename F, typename T>
+struct apply_scalar_unary<F, T, require_floating_point_t<T>> {
   /**
    * The return type, double.
    */
@@ -96,7 +98,32 @@ struct apply_scalar_unary<F, double> {
    * @param x Argument scalar.
    * @return Result of applying F to the scalar.
    */
-  static inline return_t apply(double x) { return F::fun(x); }
+  static inline return_t apply(T x) { return F::fun(x); }
+};
+
+/**
+ * Template specialization for vectorized functions applying to
+ * complex arguments.
+ *
+ * @tparam F Type of function defining static apply function.
+ */
+template <typename F, typename T>
+struct apply_scalar_unary<F, T, require_complex_t<T>> {
+  /**
+   * The return type, double.
+   */
+  using return_t = std::decay_t<T>;
+
+  /**
+   * Apply the function specified by F to the specified argument.
+   * This is defined through a direct application of
+   * <code>F::fun()</code>, which must be defined for double
+   * arguments.
+   *
+   * @param x Argument scalar.
+   * @return Result of applying F to the scalar.
+   */
+  static inline return_t apply(const T& x) { return F::fun(x); }
 };
 
 /**
@@ -107,8 +134,8 @@ struct apply_scalar_unary<F, double> {
  *
  * @tparam F Type of function defining static apply function.
  */
-template <typename F>
-struct apply_scalar_unary<F, int> {
+template <typename F, typename T>
+struct apply_scalar_unary<F, T, require_integral_t<T>> {
   /**
    * The return type, double.
    */
@@ -123,7 +150,7 @@ struct apply_scalar_unary<F, int> {
    * @param x Argument scalar.
    * @return Result of applying F to the scalar.
    */
-  static inline return_t apply(int x) { return F::fun(static_cast<double>(x)); }
+  static inline return_t apply(T x) { return F::fun(static_cast<double>(x)); }
 };
 
 /**

@@ -25,8 +25,16 @@ inline T value_of(T&& x) {
 template <typename T, require_complex_t<T>* = nullptr,
           require_t<std::is_arithmetic<
               typename std::decay_t<T>::value_type>>* = nullptr>
-inline decltype(auto) value_of(T&& x) {
+inline auto value_of(T&& x) {
   return std::forward<T>(x);
+}
+
+template <
+    typename T, require_complex_t<T>* = nullptr,
+    require_not_arithmetic_t<typename std::decay_t<T>::value_type>* = nullptr>
+inline auto value_of(T&& x) {
+  using inner_t = partials_type_t<typename std::decay_t<T>::value_type>;
+  return std::complex<inner_t>{value_of(x.real()), value_of(x.imag())};
 }
 
 /**

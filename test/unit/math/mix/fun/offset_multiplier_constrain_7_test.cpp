@@ -2,7 +2,8 @@
 
 TEST(mathMixMatFun, offset_multiplier_consistent_sizes) {
   auto f = [](const auto& x1, const auto& x2, const auto& x3) {
-    return stan::math::offset_multiplier_constrain(x1, x2, x3);
+    stan::return_type_t<decltype(x1), decltype(x2), decltype(x3)> lp = 0;
+    return stan::math::offset_multiplier_constrain<false>(x1, x2, x3, lp);
   };
 
   double xd = 1.0;

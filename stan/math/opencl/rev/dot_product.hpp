@@ -14,8 +14,8 @@ namespace math {
 /**
  * Returns the dot product.
  *
- * @tparam T1 type of elements in the first vector
- * @tparam T2 type of elements in the second vector
+ * @tparam T1 type of the first vector
+ * @tparam T2 type of the second vector
  *
  * @param[in] v1 First vector.
  * @param[in] v2 Second vector.

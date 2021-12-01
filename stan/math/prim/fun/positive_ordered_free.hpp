@@ -36,10 +36,22 @@ auto positive_ordered_free(const EigVec& y) {
     return x;
   }
   x.coeffRef(0) = log(y_ref.coeff(0));
-  for (Eigen::Index i = 1; i < k; ++i) {
-    x.coeffRef(i) = log(y_ref.coeff(i) - y_ref.coeff(i - 1));
-  }
+  x.tail(k - 1)
+      = (y_ref.tail(k - 1) - y_ref.head(k - 1)).array().log().matrix();
   return x;
+}
+
+/**
+ * Overload of `positive_ordered_free()` to untransform each Eigen vector
+ * in a standard vector.
+ * @tparam T A standard vector with with a `value_type` which inherits from
+ *  `Eigen::MatrixBase` with compile time rows or columns equal to 1.
+ * @param x The standard vector to untransform.
+ */
+template <typename T, require_std_vector_t<T>* = nullptr>
+auto positive_ordered_free(const T& x) {
+  return apply_vector_unary<T>::apply(
+      x, [](auto&& v) { return positive_ordered_free(v); });
 }
 
 }  // namespace math

@@ -7,7 +7,10 @@
 
 namespace stan {
 namespace math {
-
+namespace internal {
+template <typename T, typename S, typename Enable>
+class empty_broadcast_array;
+}
 /**
  * no-op that passes the scalar
  *
@@ -19,6 +22,15 @@ template <typename T, require_stan_scalar_t<T>* = nullptr>
 inline T as_column_vector_or_scalar(const T& a) {
   return a;
 }
+
+/**
+ * No-op used when working with operands and partials.
+ * This is not implimented so it cannot be invoked and only exists so the
+ * compiler can resolve it's output type.
+ */
+template <typename T, typename S>
+internal::empty_broadcast_array<T, S, void>& as_column_vector_or_scalar(
+    internal::empty_broadcast_array<T, S, void>& a);
 
 /**
  * no-op that returns a column vector.

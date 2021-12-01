@@ -9,17 +9,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class inv_cloglog_vari : public op_v_vari {
- public:
-  explicit inv_cloglog_vari(vari* avi)
-      : op_v_vari(inv_cloglog(avi->val_), avi) {}
-  void chain() {
-    avi_->adj_ += adj_ * std::exp(avi_->val_ - std::exp(avi_->val_));
-  }
-};
-}  // namespace internal
-
 /**
  * Return the inverse complementary log-log function applied
  * specified variable (stan).
@@ -30,12 +19,19 @@ class inv_cloglog_vari : public op_v_vari {
  *
  * \f$\frac{d}{dx} \mbox{cloglog}^{-1}(x) = \exp (x - \exp (x))\f$.
  *
+ * @tparam T Arithmetic or a type inheriting from `EigenBase`.
  * @param a Variable argument.
  * @return The inverse complementary log-log of the specified
  * argument.
  */
-inline var inv_cloglog(const var& a) {
-  return var(new internal::inv_cloglog_vari(a.vi_));
+template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
+inline auto inv_cloglog(const var_value<T>& a) {
+  auto precomp_exp = to_arena(as_array_or_scalar(exp(a.val() - exp(a.val()))));
+  return make_callback_var(inv_cloglog(a.val()),
+                           [a, precomp_exp](auto& vi) mutable {
+                             as_array_or_scalar(a.adj())
+                                 += as_array_or_scalar(vi.adj()) * precomp_exp;
+                           });
 }
 
 }  // namespace math

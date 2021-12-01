@@ -78,8 +78,9 @@ struct multi_result_kernel_internal {
       if (is_colwise_reduction<T_current_expression>::value
           && expression_cols == -1) {
         expression_cols = n_cols;
+        expression_rows = expression.thread_rows();
         expression_rows = internal::colwise_reduction_wgs_rows(
-            expression.thread_rows(), expression_cols);
+            expression_rows < 0 ? n_rows : expression_rows, expression_cols);
       } else if (is_reduction_2d<T_current_expression>::value
                  && expression_cols == -1) {
         expression_rows = internal::colwise_reduction_wgs_rows(n_rows, n_cols);
@@ -437,8 +438,6 @@ class results_cl {
   template <typename... T_res, typename... T_expressions>
   static void assignment_impl(
       const std::tuple<std::pair<T_res, T_expressions>...>& assignment_pairs) {
-    using T_First_Expr = typename std::remove_reference_t<
-        std::tuple_element_t<0, std::tuple<T_expressions...>>>;
     using impl = typename internal::multi_result_kernel_internal<
         std::tuple_size<std::tuple<T_expressions...>>::value - 1,
         T_res...>::template inner<T_expressions...>;
@@ -479,6 +478,7 @@ class results_cl {
       if (impl::kernel_cache_[uids]() == NULL) {
         std::string src = get_kernel_source_impl(assignment_pairs);
         auto opts = opencl_context.base_opts();
+        opts["LOCAL_SIZE_"] = std::min(64, opts.at("LOCAL_SIZE_"));
         impl::kernel_cache_[uids] = opencl_kernels::compile_kernel(
             "calculate", {view_kernel_helpers, src}, opts);
         opencl_context.register_kernel_cache(&impl::kernel_cache_[uids]);
@@ -498,7 +498,7 @@ class results_cl {
         kernel.setArg(arg_num++, n_rows);
         kernel.setArg(arg_num++, n_cols);
 
-        int local = opencl_context.base_opts().at("LOCAL_SIZE_");
+        int local = std::min(64, opencl_context.base_opts().at("LOCAL_SIZE_"));
 
         int wgs_rows = internal::colwise_reduction_wgs_rows(n_rows, n_cols);
         int wgs_cols = (n_cols + wgs_rows - 1) / wgs_rows;

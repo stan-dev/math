@@ -25,7 +25,7 @@ struct arena_allocator {
   }
 
   /**
-   * No-op. Memory is dealocated by caling `recover_memory()`.
+   * No-op. Memory is deallocated by calling `recover_memory()`.
    */
   void deallocate(T* /*p*/, std::size_t /*n*/) noexcept {}
 
@@ -33,13 +33,16 @@ struct arena_allocator {
    * Equality comparison operator.
    * @return true
    */
-  bool operator==(const arena_allocator&) { return true; }
-
+  constexpr bool operator==(const arena_allocator&) const noexcept {
+    return true;
+  }
   /**
    * Inequality comparison operator.
    * @return false
    */
-  bool operator!=(const arena_allocator&) { return false; }
+  constexpr bool operator!=(const arena_allocator&) const noexcept {
+    return false;
+  }
 };
 
 }  // namespace math

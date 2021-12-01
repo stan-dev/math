@@ -30,6 +30,7 @@ def runTestsWin(String testPath, boolean buildLibs = true, boolean jumbo = false
     }
 }
 
+
 def deleteDirWin() {
     bat "attrib -r -s /s /d"
     deleteDir()
@@ -283,6 +284,11 @@ pipeline {
                                 sh "echo STAN_OPENCL=true>> make/local"
                                 sh "echo OPENCL_PLATFORM_ID=${env.OPENCL_PLATFORM_ID_CPU}>> make/local"
                                 sh "echo OPENCL_DEVICE_ID=${env.OPENCL_DEVICE_ID_CPU}>> make/local"
+                                // skips tests that require specific support in OpenCL
+                                sh 'echo "ifdef NO_CPU_OPENCL_INT64_BASE_ATOMIC" >> make/local'
+                                sh 'echo "CXXFLAGS += -DSTAN_TEST_SKIP_REQUIRING_OPENCL_INT64_BASE_ATOMIC" >> make/local'
+                                sh 'echo "endif" >> make/local'
+
                                 runTests("test/unit/math/opencl", false)
                                 runTests("test/unit/multiple_translation_units_test.cpp")
                             } else {
@@ -363,6 +369,36 @@ pipeline {
                             echo "Distribution tests failed. Check out dist.log.zip artifact for test logs."
                         }
                     }
+                }
+	            stage('Expressions test') {
+                    agent any
+                    steps {
+                        unstash 'MathSetup'
+                        script {
+                            sh "echo O=0 > make/local"
+                            sh "python ./test/code_generator_test.py"
+                            sh "python ./test/signature_parser_test.py"
+                            sh "python ./test/statement_types_test.py"
+                            sh "python ./test/varmat_compatibility_summary_test.py"
+                            sh "python ./test/varmat_compatibility_test.py"
+                            withEnv(['PATH+TBB=./lib/tbb']) {
+                                sh "python ./test/expressions/test_expression_testing_framework.py"
+                            }
+                            withEnv(['PATH+TBB=./lib/tbb']) {
+                                try { sh "./runTests.py -j${env.PARALLEL} test/expressions" }
+                                finally { junit 'test/**/*.xml' }
+                            }
+                            sh "make clean-all"
+                            sh "echo STAN_THREADS=true >> make/local"
+                            withEnv(['PATH+TBB=./lib/tbb']) {
+                                try {
+                                    sh "./runTests.py -j${env.PARALLEL} test/expressions --only-functions reduce_sum map_rect"
+				                }
+                                finally { junit 'test/**/*.xml' }
+                            }
+                        }
+                    }
+                    post { always { deleteDir() } }
                 }
                 stage('Threading tests') {
                     agent {

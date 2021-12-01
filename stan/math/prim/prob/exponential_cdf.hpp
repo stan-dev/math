@@ -29,7 +29,9 @@ namespace math {
  * @param y A scalar variable.
  * @param beta Inverse scale parameter.
  */
-template <typename T_y, typename T_inv_scale>
+template <typename T_y, typename T_inv_scale,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_inv_scale>* = nullptr>
 return_type_t<T_y, T_inv_scale> exponential_cdf(const T_y& y,
                                                 const T_inv_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_inv_scale>;

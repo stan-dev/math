@@ -68,14 +68,21 @@ gp_periodic_cov(const std::vector<T_x> &x, const T_sigma &sigma, const T_l &l,
   T_sigma sigma_sq = square(sigma);
   T_l neg_two_inv_l_sq = -2.0 * inv_square(l);
   T_p pi_div_p = pi() / p;
+  size_t block_size = 10;
 
-  for (size_t j = 0; j < x_size; ++j) {
-    cov(j, j) = sigma_sq;
-    for (size_t i = j + 1; i < x_size; ++i) {
-      cov(i, j) = sigma_sq
-                  * exp(square(sin(pi_div_p * distance(x[i], x[j])))
-                        * neg_two_inv_l_sq);
-      cov(j, i) = cov(i, j);
+  for (size_t jb = 0; jb < x_size; jb += block_size) {
+    for (size_t ib = jb; ib < x_size; ib += block_size) {
+      size_t j_end = std::min(x_size, jb + block_size);
+      for (size_t j = jb; j < j_end; ++j) {
+        cov.coeffRef(j, j) = sigma_sq;
+        size_t i_end = std::min(x_size, ib + block_size);
+        for (size_t i = std::max(ib, j + 1); i < i_end; ++i) {
+          cov.coeffRef(j, i) = cov.coeffRef(i, j)
+              = sigma_sq
+                * exp(square(sin(pi_div_p * distance(x[i], x[j])))
+                      * neg_two_inv_l_sq);
+        }
+      }
     }
   }
   return cov;
@@ -86,12 +93,13 @@ gp_periodic_cov(const std::vector<T_x> &x, const T_sigma &sigma, const T_l &l,
  * \f$ \mathbf{X}_1 \f$ and \f$ \mathbf{X}_2 \f$.
  * The elements of \f$ \mathbf{K} \f$ are defined as
  * \f$ \mathbf{K}_{ij} = k(\mathbf{X}_{1_i},\mathbf{X}_{2_j}), \f$ where
- * \f$ \mathbf{X}_{1_i} \f$ and \f$ \mathbf{X}_{2_j} \f$  are the \f$i\f$-th and
- * \f$j\f$-th rows of \f$ \mathbf{X}_1 \f$ and \f$ \mathbf{X}_2 \f$ and \n \f$
- * k(\mathbf{x},\mathbf{x}^\prime) = \sigma^2 \exp\left(-\frac{2\sin^2(\pi
- * |\mathbf{x}-\mathbf{x}^\prime|/p)}{\ell^2}\right), \f$ \n where \f$ \sigma^2
- * \f$, \f$ \ell \f$ and \f$ p \f$ are the signal variance, length-scale and
- * period.
+ * \f$ \mathbf{X}_{1_i} \f$ and \f$ \mathbf{X}_{2_j} \f$  are the \f$i\f$-th
+ * and \f$j\f$-th rows of \f$ \mathbf{X}_1 \f$ and \f$ \mathbf{X}_2 \f$ and
+ * \n \f$ k(\mathbf{x},\mathbf{x}^\prime) = \sigma^2
+ * \exp\left(-\frac{2\sin^2(\pi
+ * |\mathbf{x}-\mathbf{x}^\prime|/p)}{\ell^2}\right), \f$ \n where \f$
+ * \sigma^2 \f$, \f$ \ell \f$ and \f$ p \f$ are the signal variance,
+ * length-scale and period.
  *
  * @tparam T_x1 type of std::vector elements of x1
  *   T_x1 can be a scalar, an Eigen::Vector, or an Eigen::RowVector.
@@ -141,12 +149,20 @@ gp_periodic_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   T_sigma sigma_sq = square(sigma);
   T_l neg_two_inv_l_sq = -2.0 * inv_square(l);
   T_p pi_div_p = pi() / p;
+  size_t block_size = 10;
 
-  for (size_t i = 0; i < x1.size(); ++i) {
-    for (size_t j = 0; j < x2.size(); ++j) {
-      cov(i, j) = sigma_sq
-                  * exp(square(sin(pi_div_p * distance(x1[i], x2[j])))
-                        * neg_two_inv_l_sq);
+  for (size_t ib = 0; ib < x1.size(); ib += block_size) {
+    for (size_t jb = 0; jb < x2.size(); jb += block_size) {
+      size_t j_end = std::min(x2.size(), jb + block_size);
+      for (size_t j = jb; j < j_end; ++j) {
+        size_t i_end = std::min(x1.size(), ib + block_size);
+        for (size_t i = ib; i < i_end; ++i) {
+          cov.coeffRef(i, j)
+              = sigma_sq
+                * exp(square(sin(pi_div_p * distance(x1[i], x2[j])))
+                      * neg_two_inv_l_sq);
+        }
+      }
     }
   }
   return cov;

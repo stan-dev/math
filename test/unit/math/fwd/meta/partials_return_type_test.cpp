@@ -7,26 +7,26 @@ using stan::partials_return_type;
 using stan::math::fvar;
 
 TEST(MathMetaFwd, PartialsReturnTypeFvarDouble) {
-  test::expect_same_type<double, partials_return_type<fvar<double> >::type>();
+  EXPECT_SAME_TYPE(double, partials_return_type<fvar<double> >::type);
 }
 
 TEST(MathMetaFwd, PartialsReturnTypeFvarFvarDouble) {
-  test::expect_same_type<fvar<double>,
-                         partials_return_type<fvar<fvar<double> > >::type>();
+  EXPECT_SAME_TYPE(fvar<double>,
+                   partials_return_type<fvar<fvar<double> > >::type);
 }
 
 TEST(MathMetaFwd, PartialsReturnTypeFvarDoubleTenParams) {
-  test::expect_same_type<
+  EXPECT_SAME_TYPE(
       double,
       partials_return_type<double, fvar<double>, double, int, double, float,
-                           float, float, fvar<double>, int>::type>();
+                           float, float, fvar<double>, int>::type);
 }
 
 TEST(MathMetaFwd, PartialsReturnTypeFvarFvarDoubleTenParams) {
-  test::expect_same_type<
-      fvar<double>, partials_return_type<double, fvar<fvar<double> >, double,
-                                         int, double, float, float, float,
-                                         fvar<fvar<double> >, int>::type>();
+  EXPECT_SAME_TYPE(fvar<double>,
+                   partials_return_type<double, fvar<fvar<double> >, double,
+                                        int, double, float, float, float,
+                                        fvar<fvar<double> >, int>::type);
 }
 
 TEST(MathMetaFwd, partials_return_type) {

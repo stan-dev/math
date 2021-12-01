@@ -23,6 +23,7 @@ namespace math {
  */
 inline void check_range(const char* function, const char* name, int max,
                         int index, int nested_level, const char* error_msg) {
+  STAN_NO_RANGE_CHECKS_RETURN;
   if (!((index >= stan::error_index::value)
         && (index < max + stan::error_index::value))) {
     [&]() STAN_COLD_PATH {
@@ -47,6 +48,7 @@ inline void check_range(const char* function, const char* name, int max,
  */
 inline void check_range(const char* function, const char* name, int max,
                         int index, const char* error_msg) {
+  STAN_NO_RANGE_CHECKS_RETURN;
   if (!((index >= stan::error_index::value)
         && (index < max + stan::error_index::value))) {
     [&]() STAN_COLD_PATH { out_of_range(function, max, index, error_msg); }();
@@ -65,6 +67,7 @@ inline void check_range(const char* function, const char* name, int max,
  */
 inline void check_range(const char* function, const char* name, int max,
                         int index) {
+  STAN_NO_RANGE_CHECKS_RETURN;
   if (!((index >= stan::error_index::value)
         && (index < max + stan::error_index::value))) {
     [&]() STAN_COLD_PATH { out_of_range(function, max, index); }();

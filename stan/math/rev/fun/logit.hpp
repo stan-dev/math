@@ -4,6 +4,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/prim/fun/logit.hpp>
+#include <stan/math/prim/fun/square.hpp>
 
 namespace stan {
 namespace math {
@@ -11,12 +12,16 @@ namespace math {
 /**
  * Return the log odds of the specified argument.
  *
- * @param u argument
+ * @tparam T Arithmetic or a type inheriting from `EigenBase`.
+ * @param u The variable.
  * @return log odds of argument
  */
-inline var logit(const var& u) {
-  return var(new precomp_v_vari(logit(u.val()), u.vi_,
-                                1 / (u.val() - u.val() * u.val())));
+template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
+inline auto logit(const var_value<T>& u) {
+  auto denom = to_arena(1.0 / as_array_or_scalar(u.val() - square(u.val())));
+  return make_callback_var(logit(u.val()), [u, denom](auto& vi) mutable {
+    as_array_or_scalar(u.adj()) += as_array_or_scalar(vi.adj()) * denom;
+  });
 }
 
 }  // namespace math

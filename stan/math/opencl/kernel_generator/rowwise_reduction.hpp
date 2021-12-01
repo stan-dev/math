@@ -321,7 +321,7 @@ class rowwise_sum_
 /**
  * Rowwise sum reduction of a kernel generator expression.
  * @tparam T type of input expression
- * @param a expression to reduce
+ * @param a the expression to reduce
  * @return sum
  */
 template <typename T,
@@ -329,6 +329,60 @@ template <typename T,
 inline auto rowwise_sum(T&& a) {
   auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
   return rowwise_sum_<std::remove_reference_t<decltype(arg_copy)>>(
+      std::move(arg_copy));
+}
+
+/**
+ * Operation for product reduction.
+ */
+struct prod_op {
+  /**
+   * Generates prod reduction kernel code.
+   * @param a first variable
+   * @param b second variable
+   * @return reduction code
+   */
+  inline static std::string generate(const std::string& a,
+                                     const std::string& b) {
+    return a + " * " + b;
+  }
+};
+
+/**
+ * Represents rowwise product reduction in kernel generator expressions.
+ * @tparam T type of expression
+ */
+template <typename T>
+class rowwise_prod_
+    : public rowwise_reduction<rowwise_prod_<T>, T, prod_op, false> {
+  using base = rowwise_reduction<rowwise_prod_<T>, T, prod_op, false>;
+  using base::arguments_;
+
+ public:
+  explicit rowwise_prod_(T&& a) : base(std::forward<T>(a), "1") {}
+
+  /**
+   * Creates a deep copy of this expression.
+   * @return copy of \c *this
+   */
+  inline auto deep_copy() const {
+    auto&& arg_copy = this->template get_arg<0>().deep_copy();
+    return rowwise_prod_<std::remove_reference_t<decltype(arg_copy)>>(
+        std::move(arg_copy));
+  }
+};
+
+/**
+ * Rowwise product reduction of a kernel generator expression.
+ * @tparam T type of input expression
+ * @param a the expression to reduce
+ * @return prod
+ */
+template <typename T,
+          typename = require_all_kernel_expressions_and_none_scalar_t<T>>
+inline auto rowwise_prod(T&& a) {
+  auto&& arg_copy = as_operation_cl(std::forward<T>(a)).deep_copy();
+  return rowwise_prod_<std::remove_reference_t<decltype(arg_copy)>>(
       std::move(arg_copy));
 }
 
@@ -389,7 +443,7 @@ class rowwise_max_
 /**
  * Rowwise max reduction of a kernel generator expression.
  * @tparam T type of input expression
- * @param a expression to reduce
+ * @param a the expression to reduce
  * @return max
  */
 template <typename T,
@@ -456,7 +510,7 @@ class rowwise_min_
 /**
  * Min reduction of a kernel generator expression.
  * @tparam T type of input expression
- * @param a expression to reduce
+ * @param a the expression to reduce
  * @return min
  */
 template <typename T,

@@ -62,15 +62,22 @@ gp_matern52_cov(const std::vector<T_x> &x, const T_s &sigma,
   T_l root_5_inv_l = sqrt(5.0) / length_scale;
   T_l inv_l_sq_5_3 = 5.0 / (3.0 * square(length_scale));
 
-  for (size_t i = 0; i < x_size; ++i) {
-    cov(i, i) = sigma_sq;
-    for (size_t j = i + 1; j < x_size; ++j) {
-      return_type_t<T_x> sq_distance = squared_distance(x[i], x[j]);
-      return_type_t<T_x> dist = sqrt(sq_distance);
-      cov(i, j) = sigma_sq
-                  * (1.0 + root_5_inv_l * dist + inv_l_sq_5_3 * sq_distance)
-                  * exp(-root_5_inv_l * dist);
-      cov(j, i) = cov(i, j);
+  size_t block_size = 10;
+  for (size_t jb = 0; jb < x_size; jb += block_size) {
+    for (size_t ib = jb; ib < x_size; ib += block_size) {
+      size_t j_end = std::min(x_size, jb + block_size);
+      for (size_t j = jb; j < j_end; ++j) {
+        cov.coeffRef(j, j) = sigma_sq;
+        size_t i_end = std::min(x_size, ib + block_size);
+        for (size_t i = std::max(ib, j + 1); i < i_end; ++i) {
+          return_type_t<T_x> sq_distance = squared_distance(x[i], x[j]);
+          return_type_t<T_x> dist = sqrt(sq_distance);
+          cov.coeffRef(j, i) = cov.coeffRef(i, j)
+              = sigma_sq
+                * (1.0 + root_5_inv_l * dist + inv_l_sq_5_3 * sq_distance)
+                * exp(-root_5_inv_l * dist);
+        }
+      }
     }
   }
   return cov;
@@ -129,16 +136,23 @@ gp_matern52_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
 
   std::vector<Eigen::Matrix<return_type_t<T_x, T_l>, -1, 1>> x_new
       = divide_columns(x, length_scale);
+  size_t block_size = 10;
 
-  for (size_t i = 0; i < x_size; ++i) {
-    cov(i, i) = sigma_sq;
-    for (size_t j = i + 1; j < x_size; ++j) {
-      return_type_t<T_x, T_l> sq_distance
-          = squared_distance(x_new[i], x_new[j]);
-      return_type_t<T_x, T_l> dist = sqrt(sq_distance);
-      cov(i, j) = sigma_sq * (1.0 + root_5 * dist + five_thirds * sq_distance)
-                  * exp(-root_5 * dist);
-      cov(j, i) = cov(i, j);
+  for (size_t jb = 0; jb < x_size; jb += block_size) {
+    for (size_t ib = jb; ib < x_size; ib += block_size) {
+      size_t j_end = std::min(x_size, jb + block_size);
+      for (size_t j = jb; j < j_end; ++j) {
+        cov.coeffRef(j, j) = sigma_sq;
+        size_t i_end = std::min(x_size, ib + block_size);
+        for (size_t i = std::max(ib, j + 1); i < i_end; ++i) {
+          return_type_t<T_x, T_l> sq_distance
+              = squared_distance(x_new[i], x_new[j]);
+          return_type_t<T_x, T_l> dist = sqrt(sq_distance);
+          cov.coeffRef(j, i) = cov.coeffRef(i, j)
+              = sigma_sq * (1.0 + root_5 * dist + five_thirds * sq_distance)
+                * exp(-root_5 * dist);
+        }
+      }
     }
   }
   return cov;
@@ -159,8 +173,10 @@ gp_matern52_cov(const std::vector<Eigen::Matrix<T_x, Eigen::Dynamic, 1>> &x,
  * @tparam T_s type of element of sigma, the magnitude
  * @tparam T_l type of elements of length scale
  *
- * @param x1 std::vector of elements that can be used in stan::math::distance
- * @param x2 std::vector of elements that can be used in stan::math::distance
+ * @param x1 std::vector of elements that can be used in
+ * stan::math::distance
+ * @param x2 std::vector of elements that can be used in
+ * stan::math::distance
  * @param length_scale length scale
  * @param sigma standard deviation that can be used in stan::math::square
  * @throw std::domain error if sigma <= 0, l <= 0, or x is nan or inf
@@ -197,13 +213,23 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
   T_l root_5_inv_l = sqrt(5.0) / length_scale;
   T_l inv_l_sq_5_3 = 5.0 / (3.0 * square(length_scale));
 
-  for (size_t i = 0; i < x1_size; ++i) {
-    for (size_t j = 0; j < x2_size; ++j) {
-      return_type_t<T_x1, T_x2> sq_distance = squared_distance(x1[i], x2[j]);
-      return_type_t<T_x1, T_x2> dist = sqrt(sq_distance);
-      cov(i, j) = sigma_sq
-                  * (1.0 + root_5_inv_l * dist + inv_l_sq_5_3 * sq_distance)
-                  * exp(-root_5_inv_l * dist);
+  size_t block_size = 10;
+
+  for (size_t ib = 0; ib < x1_size; ib += block_size) {
+    for (size_t jb = 0; jb < x2_size; jb += block_size) {
+      size_t j_end = std::min(x2_size, jb + block_size);
+      for (size_t j = jb; j < j_end; ++j) {
+        size_t i_end = std::min(x1_size, ib + block_size);
+        for (size_t i = ib; i < i_end; ++i) {
+          return_type_t<T_x1, T_x2> sq_distance
+              = squared_distance(x1[i], x2[j]);
+          return_type_t<T_x1, T_x2> dist = sqrt(sq_distance);
+          cov.coeffRef(i, j)
+              = sigma_sq
+                * (1.0 + root_5_inv_l * dist + inv_l_sq_5_3 * sq_distance)
+                * exp(-root_5_inv_l * dist);
+        }
+      }
     }
   }
   return cov;
@@ -227,12 +253,15 @@ gp_matern52_cov(const std::vector<T_x1> &x1, const std::vector<T_x2> &x2,
  * @tparam T_s type of element of sigma, the  magnitude
  * @tparam T_l type of elements in vector of length scale
  *
- * @param x1 std::vector of elements that can be used in stan::math::distance
- * @param x2 std::vector of elements that can be used in stan::math::distance
+ * @param x1 std::vector of elements that can be used in
+ * stan::math::distance
+ * @param x2 std::vector of elements that can be used in
+ * stan::math::distance
  * @param length_scale length scale
  * @param sigma standard deviation that can be used in stan::math::square
  * @throw std::domain error if sigma <= 0, l <= 0, or x is nan or inf
- * @throw std::invalid_argument if length scale size != dimension of x1 or x2
+ * @throw std::invalid_argument if length scale size != dimension of x1 or
+ * x2
  *
  */
 template <typename T_x1, typename T_x2, typename T_s, typename T_l>
@@ -278,14 +307,22 @@ gp_matern52_cov(const std::vector<Eigen::Matrix<T_x1, Eigen::Dynamic, 1>> &x1,
       = divide_columns(x1, length_scale);
   std::vector<Eigen::Matrix<return_type_t<T_x2, T_l>, -1, 1>> x2_new
       = divide_columns(x2, length_scale);
+  size_t block_size = 10;
 
-  for (size_t i = 0; i < x1_size; ++i) {
-    for (size_t j = 0; j < x2_size; ++j) {
-      return_type_t<T_x1, T_x2, T_l> sq_distance
-          = squared_distance(x1_new[i], x2_new[j]);
-      return_type_t<T_x1, T_x2, T_l> dist = sqrt(sq_distance);
-      cov(i, j) = sigma_sq * (1.0 + root_5 * dist + five_thirds * sq_distance)
-                  * exp(-root_5 * dist);
+  for (size_t ib = 0; ib < x1_size; ib += block_size) {
+    for (size_t jb = 0; jb < x2_size; jb += block_size) {
+      size_t j_end = std::min(x2_size, jb + block_size);
+      for (size_t j = jb; j < j_end; ++j) {
+        size_t i_end = std::min(x1_size, ib + block_size);
+        for (size_t i = ib; i < i_end; ++i) {
+          return_type_t<T_x1, T_x2, T_l> sq_distance
+              = squared_distance(x1_new[i], x2_new[j]);
+          return_type_t<T_x1, T_x2, T_l> dist = sqrt(sq_distance);
+          cov.coeffRef(i, j)
+              = sigma_sq * (1.0 + root_5 * dist + five_thirds * sq_distance)
+                * exp(-root_5 * dist);
+        }
+      }
     }
   }
   return cov;

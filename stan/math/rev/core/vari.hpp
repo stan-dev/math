@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_CORE_VARI_HPP
 #define STAN_MATH_REV_CORE_VARI_HPP
 
+#include <stan/math/rev/core/var_value_fwd_declare.hpp>
 #include <stan/math/rev/core/chainable_alloc.hpp>
 #include <stan/math/rev/core/chainablestack.hpp>
 #include <stan/math/rev/core/arena_matrix.hpp>
@@ -11,13 +12,9 @@
 namespace stan {
 namespace math {
 
-// forward decleration of vari_value
+// forward declaration of vari_value
 template <typename T, typename = void>
 class vari_value;
-
-// forward declaration of var
-template <typename T, typename = void>
-class var_value;
 
 /**
  * Abstract base class that all `vari_value` and it's derived classes inherit.
@@ -345,6 +342,21 @@ class vari_view_eigen {
   inline auto col(Eigen::Index i) {
     using inner_type = decltype(derived().val_.col(i));
     return vari_view<inner_type>(derived().val_.col(i), derived().adj_.col(i));
+  }
+
+  /**
+   * View diagonal of eigen matrices
+   * @param i Column index to slice
+   */
+  inline auto diagonal() const {
+    using inner_type = decltype(derived().val_.diagonal());
+    return vari_view<inner_type>(derived().val_.diagonal(),
+                                 derived().adj_.diagonal());
+  }
+  inline auto diagonal() {
+    using inner_type = decltype(derived().val_.diagonal());
+    return vari_view<inner_type>(derived().val_.diagonal(),
+                                 derived().adj_.diagonal());
   }
 
   /**

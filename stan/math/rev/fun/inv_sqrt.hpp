@@ -4,22 +4,14 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/fun/inv_sqrt.hpp>
+#include <stan/math/rev/fun/to_arena.hpp>
 #include <cmath>
 
 namespace stan {
 namespace math {
 
-namespace internal {
-class inv_sqrt_vari : public op_v_vari {
- public:
-  explicit inv_sqrt_vari(vari* avi) : op_v_vari(inv_sqrt(avi->val_), avi) {}
-  void chain() {
-    avi_->adj_ -= 0.5 * adj_ / (avi_->val_ * std::sqrt(avi_->val_));
-  }
-};
-}  // namespace internal
-
 /**
+ * @tparam T Arithmetic or a type inheriting from `EigenBase`.
  *
    \f[
    \mbox{inv\_sqrt}(x) =
@@ -38,8 +30,13 @@ class inv_sqrt_vari : public op_v_vari {
    \f]
  *
  */
-inline var inv_sqrt(const var& a) {
-  return var(new internal::inv_sqrt_vari(a.vi_));
+template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
+inline auto inv_sqrt(const var_value<T>& a) {
+  auto denom = to_arena(as_array_or_scalar(a.val())
+                        * as_array_or_scalar(sqrt(a.val())));
+  return make_callback_var(inv_sqrt(a.val()), [a, denom](auto& vi) mutable {
+    as_array_or_scalar(a.adj()) -= 0.5 * as_array_or_scalar(vi.adj()) / denom;
+  });
 }
 
 }  // namespace math

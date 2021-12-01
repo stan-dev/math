@@ -22,12 +22,13 @@
 namespace stan {
 namespace math {
 
-template <typename T_y, typename T_shape, typename T_scale>
+template <typename T_y, typename T_shape, typename T_scale,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_shape, T_scale>* = nullptr>
 return_type_t<T_y, T_shape, T_scale> frechet_cdf(const T_y& y,
                                                  const T_shape& alpha,
                                                  const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_shape, T_scale>;
-  using T_partials_array = Eigen::Array<T_partials_return, Eigen::Dynamic, 1>;
   using T_y_ref = ref_type_t<T_y>;
   using T_alpha_ref = ref_type_t<T_shape>;
   using T_sigma_ref = ref_type_t<T_scale>;

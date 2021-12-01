@@ -159,12 +159,6 @@ struct apply_vector_unary<T, require_std_vector_vt<is_stan_scalar, T>> {
   }
 };
 
-namespace internal {
-template <typename T>
-using is_container_or_var_matrix
-    = disjunction<is_container<T>, is_var_matrix<T>>;
-}
-
 /**
  * Specialisation for use with nested containers (std::vectors).
  * For each of the member functions, an std::vector with the appropriate
@@ -177,7 +171,7 @@ using is_container_or_var_matrix
  */
 template <typename T>
 struct apply_vector_unary<
-    T, require_std_vector_vt<internal::is_container_or_var_matrix, T>> {
+    T, require_std_vector_vt<is_container_or_var_matrix, T>> {
   using T_vt = value_type_t<T>;
 
   /**
@@ -193,12 +187,12 @@ struct apply_vector_unary<
    */
   template <typename F>
   static inline auto apply(const T& x, const F& f) {
-    size_t x_size = x.size();
     using T_return
         = plain_type_t<decltype(apply_vector_unary<T_vt>::apply(x[0], f))>;
-    std::vector<T_return> result(x_size);
-    for (size_t i = 0; i < x_size; ++i)
-      result[i] = apply_vector_unary<T_vt>::apply_no_holder(x[i], f);
+    std::vector<T_return> result(x.size());
+    std::transform(x.begin(), x.end(), result.begin(), [&f](auto&& xx) {
+      return apply_vector_unary<T_vt>::apply_no_holder(xx, f);
+    });
     return result;
   }
 

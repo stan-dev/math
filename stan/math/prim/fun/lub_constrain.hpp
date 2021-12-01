@@ -366,6 +366,40 @@ inline auto lub_constrain(const std::vector<T>& x, const std::vector<L>& lb,
   return ret;
 }
 
+/**
+ * Return the lower and upper-bounded scalar derived by
+ * transforming the specified free scalar given the specified
+ * lower and upper bounds. If the `Jacobian` parameter is `true`, the log
+ * density accumulator is incremented with the log absolute Jacobian determinant
+ * of the transform.  All of the transforms are specified with their Jacobians
+ * in the *Stan Reference Manual* chapter Constraint Transforms.
+ *
+ * @tparam Jacobian if `true`, increment log density accumulator with log
+ * absolute Jacobian determinant of constraining transform
+ * @tparam T A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
+ * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
+ * @tparam L A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
+ * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
+ * @tparam U A type inheriting from `Eigen::EigenBase`, a `var_value` with inner
+ * type inheriting from `Eigen::EigenBase`, a standard vector, or a scalar
+ * @param[in] x Free scalar to transform
+ * @param[in] lb Lower bound
+ * @param[in] ub Upper bound
+ * @param[in, out] lp log density accumulator
+ * @return Lower- and upper-bounded scalar derived from transforming the free
+ * scalar
+ * @throw std::domain_error if `ub <= lb`
+ */
+template <bool Jacobian, typename T, typename L, typename U>
+inline auto lub_constrain(const T& x, const L& lb, const U& ub,
+                          return_type_t<T, L, U>& lp) {
+  if (Jacobian) {
+    return lub_constrain(x, lb, ub, lp);
+  } else {
+    return lub_constrain(x, lb, ub);
+  }
+}
+
 }  // namespace math
 }  // namespace stan
 

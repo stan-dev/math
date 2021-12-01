@@ -1,5 +1,6 @@
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
+#include <test/unit/math/prim/err/util.hpp>
 #include <limits>
 
 TEST(ErrorHandlingMatrix, checkRowIndexMatrix) {
@@ -15,12 +16,14 @@ TEST(ErrorHandlingMatrix, checkRowIndexMatrix) {
       stan::math::check_row_index("checkRowIndexMatrix", "i", y, i));
 
   y.resize(2, 3);
-  EXPECT_THROW(stan::math::check_row_index("checkRowIndexMatrix", "i", y, i),
-               std::out_of_range);
+  STAN_EXPECT_THROW(
+      stan::math::check_row_index("checkRowIndexMatrix", "i", y, i),
+      std::out_of_range);
 
   i = 0;
-  EXPECT_THROW(stan::math::check_row_index("checkRowIndexMatrix", "i", y, i),
-               std::out_of_range);
+  STAN_EXPECT_THROW(
+      stan::math::check_row_index("checkRowIndexMatrix", "i", y, i),
+      std::out_of_range);
 }
 
 TEST(ErrorHandlingMatrix, checkRowIndexMatrix_nan) {
@@ -39,10 +42,12 @@ TEST(ErrorHandlingMatrix, checkRowIndexMatrix_nan) {
 
   y.resize(2, 3);
   y << nan, nan, nan, nan, nan, nan;
-  EXPECT_THROW(stan::math::check_row_index("checkRowIndexMatrix", "i", y, i),
-               std::out_of_range);
+  STAN_EXPECT_THROW(
+      stan::math::check_row_index("checkRowIndexMatrix", "i", y, i),
+      std::out_of_range);
 
   i = 0;
-  EXPECT_THROW(stan::math::check_row_index("checkRowIndexMatrix", "i", y, i),
-               std::out_of_range);
+  STAN_EXPECT_THROW(
+      stan::math::check_row_index("checkRowIndexMatrix", "i", y, i),
+      std::out_of_range);
 }

@@ -8,16 +8,8 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class inv_vari : public op_v_vari {
- public:
-  explicit inv_vari(vari* avi) : op_v_vari(inv(avi->val_), avi) {}
-  void chain() { avi_->adj_ -= adj_ / (avi_->val_ * avi_->val_); }
-};
-}  // namespace internal
-
 /**
- *
+ * @tparam T Arithmetic or a type inheriting from `EigenBase`.
    \f[
    \mbox{inv}(x) =
    \begin{cases}
@@ -35,7 +27,13 @@ class inv_vari : public op_v_vari {
    \f]
  *
  */
-inline var inv(const var& a) { return var(new internal::inv_vari(a.vi_)); }
+template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
+inline auto inv(const var_value<T>& a) {
+  auto denom = to_arena(as_array_or_scalar(square(a.val())));
+  return make_callback_var(inv(a.val()), [a, denom](auto& vi) mutable {
+    as_array_or_scalar(a.adj()) -= as_array_or_scalar(vi.adj()) / denom;
+  });
+}
 
 }  // namespace math
 }  // namespace stan

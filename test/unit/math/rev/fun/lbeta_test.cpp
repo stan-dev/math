@@ -1,5 +1,5 @@
-#include <stan/math/prim.hpp>
 #include <stan/math/rev.hpp>
+#include <stan/math/prim.hpp>
 #include <stan/math/rev/core/nested_rev_autodiff.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
 #include <gtest/gtest.h>

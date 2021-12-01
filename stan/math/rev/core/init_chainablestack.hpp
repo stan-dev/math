@@ -20,8 +20,9 @@ namespace math {
  * hook ensures that each worker thread has an initialized AD tape
  * ready for use.
  *
- * Refer to https://software.intel.com/en-us/node/506314 for details
- * on the observer concept.
+ * Refer to
+ * https://software.intel.com/content/www/us/en/develop/documentation/tbb-documentation/top/intel-threading-building-blocks-developer-reference/task-scheduler/taskschedulerobserver.html
+ * for details on the observer concept.
  */
 class ad_tape_observer final : public tbb::task_scheduler_observer {
   using stack_ptr = std::unique_ptr<ChainableStack>;

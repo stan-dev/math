@@ -1,3 +1,5 @@
+import itertools
+import numbers
 import os
 import re
 import subprocess
@@ -22,8 +24,6 @@ arg_types = {
     "row_vector": "Eigen::Matrix<SCALAR, 1, Eigen::Dynamic>",
     "array[] row_vector": "std::vector<Eigen::Matrix<SCALAR, 1, Eigen::Dynamic>>",
     "matrix": "Eigen::Matrix<SCALAR, Eigen::Dynamic, Eigen::Dynamic>",
-    "rng": "std::minstd_rand",
-    "ostream_ptr": "std::ostream*",
 }
 
 scalar_stan_types = ("int", "real", "rng", "ostream_ptr")
@@ -35,10 +35,9 @@ def parse_array(stan_arg):
     :return: number of nested arrays, inner type
     """
     if stan_arg.startswith("array["):
-        print(stan_arg)
         commas, inner_type = stan_arg.lstrip("array[").split("]")
-        return len(commas)+1, inner_type
-    return 0, stan_arg
+        return len(commas) + 1, inner_type.strip()
+    return 0, stan_arg.strip()
 
 def get_cpp_type(stan_type):
     """
@@ -53,8 +52,14 @@ def get_cpp_type(stan_type):
     return res
 
 
-simplex = "make_simplex"
-pos_definite = "make_pos_definite_matrix"
+simplex = "simplex"
+pos_definite = "positive_definite_matrix"
+scalar_return_type = "scalar_return_type"
+
+make_special_arg_values = {
+    simplex : "make_simplex",
+    pos_definite : "make_pos_definite_matrix"
+}
 
 # list of function arguments that need special scalar values.
 # None means to use the default argument value.
@@ -67,6 +72,8 @@ special_arg_values = {
     "categorical_rng": [simplex, None],
     "categorical_lpmf": [None, simplex],
     "cholesky_decompose": [pos_definite, None],
+    "csr_to_dense_matrix": [1, 1, None, [1], [1, 2]],
+    "csr_matrix_times_vector": [1, 1, None, [1], [1, 2], None],
     "distance": [0.6, 0.4],
     "dirichlet_log": [simplex, None],
     "dirichlet_lpdf": [simplex, None],
@@ -103,14 +110,18 @@ special_arg_values = {
     "pareto_type_2_cdf": [1.5, 0.7, None, None],
     "pareto_type_2_cdf_log": [1.5, 0.7, None, None],
     "pareto_type_2_lcdf": [1.5, 0.7, None, None],
+    "positive_ordered_constrain" : [None, scalar_return_type],
     "positive_ordered_free": [1.0],
+    "ordered_constrain" : [None, scalar_return_type],
     "ordered_free": [1.0],
+    "simplex_constrain" : [None, scalar_return_type],
     "simplex_free": [simplex],
     "student_t_cdf": [0.8, None, 0.4, None],
     "student_t_cdf_log": [0.8, None, 0.4, None],
     "student_t_ccdf_log": [0.8, None, 0.4, None],
     "student_t_lccdf": [0.8, None, 0.4, None],
     "student_t_lcdf": [0.8, None, 0.4, None],
+    "unit_vector_constrain" : [None, scalar_return_type],
     "unit_vector_free": [simplex],
     "uniform_cdf": [None, 0.2, 0.9],
     "uniform_ccdf_log": [None, 0.2, 0.9],
@@ -127,6 +138,7 @@ special_arg_values = {
 # list of functions we do not test. These are mainly functions implemented in compiler
 # (not in Stan Math).
 ignored = [
+    "lchoose",
     "lmultiply",
     "assign_add",
     "assign_divide",
@@ -148,7 +160,7 @@ non_differentiable_args = {
 }
 
 # lists of functions that do not support fwd or rev autodiff
-no_rev_overload = ["hmm_hidden_state_prob"]
+no_rev_overload = ["hmm_hidden_state_prob", "quantile"]
 no_fwd_overload = [
     "algebra_solver",
     "algebra_solver_newton",
@@ -159,7 +171,8 @@ no_fwd_overload = [
     "ode_bdf",
     "ode_bdf_tol",
     "ode_rk45",
-    "ode_rk45_tol"
+    "ode_rk45_tol",
+    "quantile"
 ]
 
 internal_signatures = [
@@ -201,12 +214,12 @@ internal_signatures = [
     "is_symmetric(matrix) => int",
     "is_unit_vector(vector) => int",
     # variadic functions: these are tested with one vector for variadic args
-    "ode_adams((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, ostream_ptr, vector) => array[,] real",
-    "ode_adams_tol((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, real, real, real, ostream_ptr, vector) => array[,] real",
-    "ode_bdf((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, ostream_ptr, vector) => array[,] real",
-    "ode_bdf_tol((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, real, real, real, ostream_ptr, vector) => array[,] real",
-    "ode_rk45((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, ostream_ptr, vector) => array[,] real",
-    "ode_rk45_tol((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, real, real, real, ostream_ptr, vector) => array[,] real",
+    "ode_adams((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, ostream_ptr, vector) => array[] vector",
+    "ode_adams_tol((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, real, real, real, ostream_ptr, vector) => array[] vector",
+    "ode_bdf((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, ostream_ptr, vector) => array[] vector",
+    "ode_bdf_tol((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, real, real, real, ostream_ptr, vector) => array[] vector",
+    "ode_rk45((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, ostream_ptr, vector) => array[] vector",
+    "ode_rk45_tol((real, vector, ostream_ptr, vector) => vector, vector, real, array[] real, real, real, real, ostream_ptr, vector) => array[] vector",
     "reduce_sum(array[] real, int, vector) => real",
 ]
 
@@ -238,7 +251,7 @@ def get_signatures():
         stanc3 = ".\\test\\expressions\\stanc.exe"
     else:
         stanc3 = "./test/expressions/stanc"
-    p = subprocess.Popen((make, stanc3))
+    p = subprocess.Popen((make, stanc3.replace("\\", "/")))
     if p.wait() != 0:
         sys.stderr.write("Error in making stanc3!")
         sys.exit(-1)
@@ -263,12 +276,12 @@ def parse_signature(signature):
     :param signature: stanc3 function signature
     :return: return type, fucntion name and list of function argument types
     """
-    rest, return_type = signature.rsplit(" => ", 1)
+    rest, return_type = signature.rsplit("=>", 1)
     function_name, rest = rest.split("(", 1)
     args = re.findall(r"(?:[(][^()]+[)][^,()]+)|(?:[^,()]+(?:,*[]][^,()]+)?)", rest)
     #  regex parts:        ^^^^^^functor^^^^^^     ^^^^any other arg^^^^^^^
     args = [i.lstrip("data").strip() if "data" in i else i.strip() for i in args if i.strip()]
-    return return_type.strip(), function_name, args
+    return return_type.strip(), function_name.strip(), args
 
 
 def handle_function_list(functions_input):
@@ -285,7 +298,7 @@ def handle_function_list(functions_input):
         if ("." in f) or ("/" in f) or ("\\" in f):
             with open(f) as fh:
                 functions_input.extend(parse_signature_file(fh))
-        elif " " in f:
+        elif "(" in f:
             function_signatures.append(f)
         else:
             function_names.append(f)
@@ -301,3 +314,11 @@ def reference_vector_argument(arg):
     if arg in ("array[] real", "row_vector"):
         return "vector"
     return arg
+
+overload_scalar = {
+    "Prim": "double",
+    "Rev": "stan::math::var",
+    "RevVarmat": "stan::math::var",
+    "Fwd": "stan::math::fvar<double>",
+    "Mix": "stan::math::fvar<stan::math::var>",
+}

@@ -3,12 +3,12 @@
 #include <test/unit/math/rev/fun/util.hpp>
 #include <vector>
 
-void test_sort_indices_asc(VEC val) {
+void test_sort_indices_asc(std::vector<double> val) {
   using stan::math::sort_indices_asc;
 
-  AVEC x;
+  std::vector<stan::math::var> x;
   for (size_t i = 0U; i < val.size(); i++)
-    x.push_back(AVAR(val[i]));
+    x.push_back(stan::math::var(val[i]));
 
   std::vector<int> val_sorted = sort_indices_asc(val);
   std::vector<int> x_sorted = sort_indices_asc(x);
@@ -24,12 +24,12 @@ void test_sort_indices_asc(VEC val) {
         EXPECT_FALSE(x_sorted[i] == x[j]);
 }
 
-void test_sort_indices_desc(VEC val) {
+void test_sort_indices_desc(std::vector<double> val) {
   using stan::math::sort_indices_desc;
 
-  AVEC x;
+  std::vector<stan::math::var> x;
   for (size_t i = 0U; i < val.size(); i++)
-    x.push_back(AVAR(val[i]));
+    x.push_back(stan::math::var(val[i]));
 
   std::vector<int> val_sorted = sort_indices_desc(val);
   std::vector<int> x_sorted = sort_indices_desc(x);
@@ -49,13 +49,11 @@ template <typename T, int R, int C>
 void test_sort_indices_asc(Eigen::Matrix<T, R, C> val) {
   using stan::math::sort_indices_asc;
 
-  typedef Eigen::Matrix<AVAR, R, C> AVEC;
-
   const size_t val_size = val.size();
 
-  AVEC x(val_size);
+  std::vector<stan::math::var> x(val_size);
   for (size_t i = 0U; i < val_size; i++)
-    x.data()[i] = AVAR(val[i]);
+    x.data()[i] = stan::math::var(val[i]);
 
   std::vector<int> val_sorted = sort_indices_asc(val);
   std::vector<int> x_sorted = sort_indices_asc(x);
@@ -75,13 +73,11 @@ template <typename T, int R, int C>
 void test_sort_indices_desc(Eigen::Matrix<T, R, C> val) {
   using stan::math::sort_indices_desc;
 
-  typedef Eigen::Matrix<AVAR, R, C> AVEC;
-
   const size_t val_size = val.size();
 
-  AVEC x(val_size);
+  std::vector<stan::math::var> x(val_size);
   for (size_t i = 0U; i < val_size; i++)
-    x.data()[i] = AVAR(val[i]);
+    x.data()[i] = stan::math::var(val[i]);
 
   std::vector<int> val_sorted = sort_indices_desc(val);
   std::vector<int> x_sorted = sort_indices_desc(x);
@@ -98,7 +94,7 @@ void test_sort_indices_desc(Eigen::Matrix<T, R, C> val) {
 }
 
 TEST(AgradRev, sort_indices) {
-  VEC a;
+  std::vector<double> a;
   a.push_back(1);
   a.push_back(2);
   a.push_back(2);
@@ -106,7 +102,7 @@ TEST(AgradRev, sort_indices) {
   test_sort_indices_asc(a);
   test_sort_indices_desc(a);
 
-  VEC b;
+  std::vector<double> b;
   b.push_back(1.1);
   b.push_back(2.2);
   b.push_back(33.1);
@@ -115,7 +111,7 @@ TEST(AgradRev, sort_indices) {
   test_sort_indices_asc(b);
   test_sort_indices_desc(b);
 
-  VEC c;
+  std::vector<double> c;
   c.push_back(1.1);
   c.push_back(-2);
   c.push_back(2.1);
@@ -157,17 +153,17 @@ TEST(AgradRev, sort_indices_no_thrown) {
   using stan::math::sort_indices_asc;
   using stan::math::sort_indices_desc;
 
-  AVEC vec0;
+  std::vector<stan::math::var> vec0;
   EXPECT_EQ(0U, vec0.size());
   EXPECT_NO_THROW(sort_indices_asc(vec0));
   EXPECT_NO_THROW(sort_indices_desc(vec0));
 
-  Eigen::Matrix<AVAR, Eigen::Dynamic, 1> vec1;
+  Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> vec1;
   EXPECT_EQ(0, vec1.size());
   EXPECT_NO_THROW(sort_indices_asc(vec1));
   EXPECT_NO_THROW(sort_indices_desc(vec1));
 
-  Eigen::Matrix<AVAR, 1, Eigen::Dynamic> vec2;
+  Eigen::Matrix<stan::math::var, 1, Eigen::Dynamic> vec2;
   EXPECT_EQ(0, vec2.size());
   EXPECT_NO_THROW(sort_indices_asc(vec2));
   EXPECT_NO_THROW(sort_indices_desc(vec2));

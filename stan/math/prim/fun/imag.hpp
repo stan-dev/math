@@ -8,11 +8,11 @@ namespace stan {
 namespace math {
 
 /**
- * Return the imaginary part of the complex argument.
+ * Return the imaginary component of the complex argument.
  *
- * @tparam T value type of argument
- * @param[in] z argument
- * @return imaginary part of argument
+ * @tparam T value type of complex argument
+ * @param[in] z complex value whose imaginary component is extracted
+ * @return imaginary component of argument
  */
 template <typename T, require_autodiff_t<T>>
 T imag(const std::complex<T>& z) {
