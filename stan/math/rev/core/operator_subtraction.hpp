@@ -150,8 +150,8 @@ inline auto subtract(const VarMat& a, const Arith& b) {
   if (is_eigen<Arith>::value) {
     check_matching_dims("subtract", "a", a, "b", b);
   }
-  using op_ret_type = plain_type_t<decltype(
-      (a.val().array() - as_array_or_scalar(b)).matrix())>;
+  using op_ret_type = plain_type_t<
+      decltype((a.val().array() - as_array_or_scalar(b)).matrix())>;
   using ret_type = return_var_matrix_t<op_ret_type, VarMat>;
   arena_t<VarMat> arena_a = a;
   arena_t<ret_type> ret(arena_a.val().array() - as_array_or_scalar(b));
@@ -176,8 +176,8 @@ inline auto subtract(const Arith& a, const VarMat& b) {
   if (is_eigen<Arith>::value) {
     check_matching_dims("subtract", "a", a, "b", b);
   }
-  using op_ret_type = plain_type_t<decltype(
-      (as_array_or_scalar(a) - b.val().array()).matrix())>;
+  using op_ret_type = plain_type_t<
+      decltype((as_array_or_scalar(a) - b.val().array()).matrix())>;
   using ret_type = return_var_matrix_t<op_ret_type, VarMat>;
   arena_t<VarMat> arena_b = b;
   arena_t<ret_type> ret(as_array_or_scalar(a) - arena_b.val().array());

@@ -81,7 +81,8 @@ TEST(MathFunctions, apply_temporary_function_const_reference) {
 TEST(MathFunctions, apply_temporary_function_return_reference) {
   std::tuple<double> x = std::make_tuple(1.0);
 
-  decltype(auto) y = stan::math::apply([](auto& x) -> auto& { return x; }, x);
+  decltype(auto) y = stan::math::apply(
+      [](auto& x) -> auto& { return x; }, x);
 
   EXPECT_EQ(1.0, y);
   EXPECT_TRUE((std::is_same<double&, decltype(y)>::value));
@@ -90,8 +91,8 @@ TEST(MathFunctions, apply_temporary_function_return_reference) {
 TEST(MathFunctions, apply_temporary_function_return_const_reference) {
   std::tuple<double> x = std::make_tuple(1.0);
 
-  decltype(auto) y
-      = stan::math::apply([](const auto& x) -> const auto& { return x; }, x);
+  decltype(auto) y = stan::math::apply(
+      [](const auto& x) -> const auto& { return x; }, x);
 
   EXPECT_EQ(1.0, y);
   EXPECT_TRUE((std::is_same<const double&, decltype(y)>::value));

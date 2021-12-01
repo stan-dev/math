@@ -470,8 +470,8 @@ TEST(test_unit_math_test_ad_matvar, one_arg_bad_grads_std_vector) {
 template <typename T1, typename T2>
 auto two_args_bad_vals_std_vector(const std::vector<T1>& x1,
                                   const std::vector<T2>& x2) {
-  std::vector<stan::plain_type_t<decltype(
-      stan::math::add(std::declval<T1>(), std::declval<T2>()))>>
+  std::vector<stan::plain_type_t<decltype(stan::math::add(std::declval<T1>(),
+                                                          std::declval<T2>()))>>
       array_sum;
   for (size_t i = 0; i < x1.size(); ++i) {
     array_sum.push_back(stan::math::add(x1[i], x2[i]));
@@ -529,8 +529,8 @@ TEST(test_unit_math_test_ad_matvar, two_args_bad_vals_std_vector) {
 template <typename T1, typename T2>
 auto two_args_bad_grads_std_vector(const std::vector<T1>& x1,
                                    const std::vector<T2>& x2) {
-  std::vector<stan::plain_type_t<decltype(
-      stan::math::add(std::declval<T1>(), std::declval<T2>()))>>
+  std::vector<stan::plain_type_t<decltype(stan::math::add(std::declval<T1>(),
+                                                          std::declval<T2>()))>>
       array_sum;
   for (size_t i = 0; i < x1.size(); ++i) {
     array_sum.push_back(stan::math::add(x1[i], x2[i]));

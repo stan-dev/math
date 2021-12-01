@@ -243,16 +243,16 @@ class vari_view_eigen {
    */
   inline auto block(Eigen::Index start_row, Eigen::Index start_col,
                     Eigen::Index num_rows, Eigen::Index num_cols) const {
-    using inner_type = decltype(
-        derived().val_.block(start_row, start_col, num_rows, num_cols));
+    using inner_type = decltype(derived().val_.block(start_row, start_col,
+                                                     num_rows, num_cols));
     return vari_view<inner_type>(
         derived().val_.block(start_row, start_col, num_rows, num_cols),
         derived().adj_.block(start_row, start_col, num_rows, num_cols));
   }
   inline auto block(Eigen::Index start_row, Eigen::Index start_col,
                     Eigen::Index num_rows, Eigen::Index num_cols) {
-    using inner_type = decltype(
-        derived().val_.block(start_row, start_col, num_rows, num_cols));
+    using inner_type = decltype(derived().val_.block(start_row, start_col,
+                                                     num_rows, num_cols));
     return vari_view<inner_type>(
         derived().val_.block(start_row, start_col, num_rows, num_cols),
         derived().adj_.block(start_row, start_col, num_rows, num_cols));

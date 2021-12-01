@@ -181,8 +181,8 @@ inline auto offset_multiplier_constrain(const std::vector<T>& x, const M& mu,
                                         const std::vector<S>& sigma,
                                         return_type_t<T, M, S>& lp) {
   check_matching_dims("offset_multiplier_constrain", "x", x, "sigma", sigma);
-  std::vector<plain_type_t<decltype(
-      offset_multiplier_constrain(x[0], mu, sigma[0], lp))>>
+  std::vector<plain_type_t<decltype(offset_multiplier_constrain(x[0], mu,
+                                                                sigma[0], lp))>>
       ret;
   ret.reserve(x.size());
   const auto& mu_ref = to_ref(mu);
@@ -222,8 +222,8 @@ inline auto offset_multiplier_constrain(const std::vector<T>& x,
                                         const S& sigma,
                                         return_type_t<T, M, S>& lp) {
   check_matching_dims("offset_multiplier_constrain", "x", x, "mu", mu);
-  std::vector<plain_type_t<decltype(
-      offset_multiplier_constrain(x[0], mu[0], sigma, lp))>>
+  std::vector<plain_type_t<decltype(offset_multiplier_constrain(x[0], mu[0],
+                                                                sigma, lp))>>
       ret;
   ret.reserve(x.size());
   const auto& sigma_ref = to_ref(sigma);
@@ -242,8 +242,8 @@ inline auto offset_multiplier_constrain(const std::vector<T>& x,
                                         const std::vector<S>& sigma) {
   check_matching_dims("offset_multiplier_constrain", "x", x, "mu", mu);
   check_matching_dims("offset_multiplier_constrain", "x", x, "sigma", sigma);
-  std::vector<plain_type_t<decltype(
-      offset_multiplier_constrain(x[0], mu[0], sigma[0]))>>
+  std::vector<plain_type_t<decltype(offset_multiplier_constrain(x[0], mu[0],
+                                                                sigma[0]))>>
       ret;
   ret.reserve(x.size());
   for (size_t i = 0; i < x.size(); ++i) {
@@ -262,8 +262,8 @@ inline auto offset_multiplier_constrain(const std::vector<T>& x,
                                         return_type_t<T, M, S>& lp) {
   check_matching_dims("offset_multiplier_constrain", "x", x, "mu", mu);
   check_matching_dims("offset_multiplier_constrain", "x", x, "sigma", sigma);
-  std::vector<plain_type_t<decltype(
-      offset_multiplier_constrain(x[0], mu[0], sigma[0], lp))>>
+  std::vector<plain_type_t<decltype(offset_multiplier_constrain(x[0], mu[0],
+                                                                sigma[0], lp))>>
       ret;
   ret.reserve(x.size());
   for (size_t i = 0; i < x.size(); ++i) {

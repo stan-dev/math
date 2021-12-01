@@ -72,8 +72,8 @@ struct apply_scalar_unary<F, T, require_eigen_t<T>> {
    * Return type for applying the function elementwise to a matrix
    * expression template of type T.
    */
-  using return_t = std::decay_t<decltype(
-      apply_scalar_unary<F, T>::apply(std::declval<T>()))>;
+  using return_t = std::decay_t<decltype(apply_scalar_unary<F, T>::apply(
+      std::declval<T>()))>;
 };
 
 /**
