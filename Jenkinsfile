@@ -3,14 +3,16 @@
 import org.stan.Utils
 
 def runTests(String testPath, boolean jumbo = false) {
-    try {
-        if (jumbo) {
-            sh "./runTests.py -j${env.PARALLEL} ${testPath} --jumbo"
-        } else {
-            sh "./runTests.py -j${env.PARALLEL} ${testPath}"
+    withEnv(['PATH+TBB=./lib/tbb']) {
+        try {
+            if (jumbo) {
+                sh "./runTests.py -j${env.PARALLEL} ${testPath} --jumbo"
+            } else {
+                sh "./runTests.py -j${env.PARALLEL} ${testPath}"
+            }
         }
+        finally { junit 'test/**/*.xml' }
     }
-    finally { junit 'test/**/*.xml' }
 }
 
 def runTestsWin(String testPath, boolean buildLibs = true, boolean jumbo = false) {
