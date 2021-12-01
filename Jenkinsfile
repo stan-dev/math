@@ -81,17 +81,18 @@ pipeline {
         PARALLEL = 8
     }
     stages {
-        stage('Kill previous builds') {
-            when {
-                not { branch 'develop' }
-                not { branch 'master' }
-            }
-            steps {
-                script {
-                    utils.killOldBuilds()
-                }
-            }
-        }
+// Need Administrator Script approval
+//         stage('Kill previous builds') {
+//             when {
+//                 not { branch 'develop' }
+//                 not { branch 'master' }
+//             }
+//             steps {
+//                 script {
+//                     utils.killOldBuilds()
+//                 }
+//             }
+//         }
         stage("Clang-format") {
             agent {
                 docker {
@@ -109,8 +110,8 @@ pipeline {
                         clang-format --version
                         find stan test -name '*.hpp' -o -name '*.cpp' | xargs -n20 -P${env.PARALLEL} clang-format -i
                         if [[ `git diff` != "" ]]; then
-                            git config --global user.email "mc.stanislaw@gmail.com"
-                            git config --global user.name "Stan Jenkins"
+                            git config user.email "mc.stanislaw@gmail.com"
+                            git config user.name "Stan Jenkins"
                             git add stan test
                             git commit -m "[Jenkins] auto-formatting by `clang-format --version`"
                             git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${fork()}/math.git ${branchName()}
@@ -487,8 +488,8 @@ pipeline {
                     sh """#!/bin/bash
                         set -x
                         make doxygen
-                        git config --global user.email "mc.stanislaw@gmail.com"
-                        git config --global user.name "Stan Jenkins"
+                        git config user.email "mc.stanislaw@gmail.com"
+                        git config user.name "Stan Jenkins"
                         git checkout --detach
                         git branch -D gh-pages
                         git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git :gh-pages
