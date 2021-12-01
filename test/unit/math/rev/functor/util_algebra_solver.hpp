@@ -426,7 +426,7 @@ void inline unsolvable_flag_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
   std::vector<double> dat;
   std::vector<int> dat_int;
   std::stringstream err_msg;
-  err_msg << "KIN_LSETUP_FAIL";
+  err_msg << "The linear solver’s setup function failed in an unrecoverable manner.";
   std::string msg = err_msg.str();
   EXPECT_THROW_MSG(general_algebra_solver(is_newton, unsolvable_eq_functor(), x,
                                           y, dat, dat_int),

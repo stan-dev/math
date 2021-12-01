@@ -244,8 +244,9 @@ struct FixedPointSolver<KinsolFixedPointEnv<F>, fp_jac_type> {
     CHECK_KINSOL_CALL(KINInit(mem, &env.kinsol_f_system, env.nv_x_));
     CHECK_KINSOL_CALL(KINSetFuncNormTol(mem, f_tol));
     CHECK_KINSOL_CALL(KINSetUserData(mem, static_cast<void*>(&env)));
-    CHECK_KINSOL_CALL(
-        KINSol(mem, env.nv_x_, KIN_FP, env.nv_u_scal_, env.nv_f_scal_));
+    kinsol_check(KINSol(mem, env.nv_x_, KIN_FP, env.nv_u_scal_, env.nv_f_scal_),
+                 "KINSol", max_num_steps);
+
 
     for (int i = 0; i < N; ++i) {
       x(i) = NV_Ith_S(env.nv_x_, i);

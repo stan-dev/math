@@ -109,8 +109,9 @@ Eigen::VectorXd kinsol_solve(const F1& f, const Eigen::VectorXd& x,
     for (int i = 0; i < N; i++)
       NV_Ith_S(nv_x, i) = x(i);
 
-    CHECK_KINSOL_CALL(KINSol(kinsol_data.kinsol_memory_, nv_x,
-                             global_line_search, scaling, scaling));
+    kinsol_check(KINSol(kinsol_data.kinsol_memory_, nv_x,
+                        global_line_search, scaling, scaling),
+                 "KINSol", max_num_steps);
 
     for (int i = 0; i < N; i++)
       x_solution(i) = NV_Ith_S(nv_x, i);
