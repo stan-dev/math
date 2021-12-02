@@ -3,7 +3,7 @@
 import org.stan.Utils
 
 def runTests(String testPath, boolean jumbo = false) {
-    withEnv(['PATH+TBB=./lib/tbb']) {
+    withEnv(['PATH+TBB=./lib/tbb', 'TBB_INC=./lib/tbb_2020.3/include', 'TBB_LIB=./tbb']) {
         try {
             if (jumbo) {
                 sh "./runTests.py -j${env.PARALLEL} ${testPath} --jumbo"
@@ -386,8 +386,6 @@ pipeline {
                             sh "python ./test/varmat_compatibility_test.py"
                             withEnv(['PATH+TBB=./lib/tbb']) {
                                 sh "python ./test/expressions/test_expression_testing_framework.py"
-                            }
-                            withEnv(['PATH+TBB=./lib/tbb']) {
                                 try { sh "./runTests.py -j${PARALLEL} test/expressions" }
                                 finally { junit 'test/**/*.xml' }
                             }
