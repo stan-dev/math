@@ -4,6 +4,7 @@
 #include <iostream>
 #include <istream>
 #include <fstream>
+#include <gtest/gtest.h>
 
 namespace stan {
 namespace math {
@@ -329,4 +330,77 @@ void read_data(int dim_observations, std::string data_directory,
 }  // namespace test
 }  // namespace math
 }  // namespace stan
+
+//////////////////////////////////////////////////////////////////////////
+
+class laplace_disease_map_test : public ::testing::Test {
+  // Based on (Vanhatalo, Pietilainen and Vethari, 2010). See
+  // https://research.cs.aalto.fi/pml/software/gpstuff/demo_spatial1.shtml
+ protected:
+  void SetUp() override {
+    dim_theta = 911;
+    n_observations = 911;
+    data_directory = "test/unit/math/laplace/aki_disease_data/";
+    x1.resize(dim_theta);
+    x2.resize(dim_theta);
+    y.resize(n_observations);
+    ye.resize(n_observations);
+    stan::math::test::read_in_data(dim_theta, n_observations, data_directory,
+                                   x1, x2, y, ye);
+
+    if (false) {
+      // look at some of the data
+      std::cout << "x_1: " << x1[0] << " " << x2[0] << std::endl
+                << "x_2: " << x1[1] << " " << x2[1] << std::endl
+                << "y_1: " << y[0] << " y_2: " << y[1] << std::endl
+                << "ye_1: " << ye[0] << " ye_2: " << ye[1] << std::endl;
+    }
+
+    dim_x = 2;
+    x.resize(dim_theta);
+    for (int i = 0; i < dim_theta; i++) {
+      Eigen::VectorXd coordinate(dim_x);
+      coordinate << x1[i], x2[i];
+      x[i] = coordinate;
+    }
+
+    // one observation per group
+    n_samples.resize(dim_theta);
+    for (int i = 0; i < dim_theta; i++)
+      n_samples[i] = 1;
+
+    theta_0 = Eigen::VectorXd::Zero(dim_theta);
+    dim_phi = 2;
+    phi.resize(dim_phi);
+    phi << 0.3162278, 200;  // variance, length scale
+
+    delta_lk.resize(2 * n_observations);
+    for (int i = 0; i < n_observations; i++)
+      delta_lk(i) = y[i];
+    for (int i = 0; i < n_observations; i++)
+      delta_lk(n_observations + i) = ye(i);
+  }
+
+  int dim_theta;
+  int n_observations;
+  std::string data_directory;
+  std::vector<double> x1, x2;
+  std::vector<int> y;
+  Eigen::VectorXd ye;
+  int dim_x;
+  std::vector<Eigen::VectorXd> x;
+  std::vector<int> n_samples;
+  std::vector<double> delta;
+  std::vector<int> delta_int;
+
+  Eigen::VectorXd theta_0;
+  int dim_phi;
+  Eigen::Matrix<stan::math::var, -1, 1> phi;
+  Eigen::Matrix<stan::math::var, -1, 1> eta_dummy;
+
+  Eigen::VectorXd delta_lk;
+  // stan::math::poisson_log_likelihood f;
+};
+
+
 #endif
