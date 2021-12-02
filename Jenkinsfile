@@ -233,10 +233,9 @@ pipeline {
                 sh """
                     export TBB_INC=\$(pwd)/lib/tbb_2020.3/include
                     export TBB_LIB=\$(pwd)/lib/tbb
-                    mkdir -p ~/.config/stan
-                    echo TBB_INTERFACE_NEW=true>> ~/.config/stan/make.local
+                    echo TBB_INTERFACE_NEW=true > make/local
                 """
-	            sh "echo CXXFLAGS += -fsanitize=address > make/local"
+	            sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                 script {
                     if (isUnix()) {
                         runTests("test/unit", true)
