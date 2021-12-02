@@ -93,88 +93,88 @@ pipeline {
 //                 }
 //             }
 //         }
-//         stage("Clang-format") {
-//             agent {
-//                 docker {
-//                     image 'stanorg/ci:ubuntu'
-//                     label 'linux'
-//                 }
-//             }
-//             steps {
-//                 retry(3) { checkout scm }
-//                 withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b',
-//                     usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
-//                     sh """#!/bin/bash
-//                         set -x
-//                         git checkout -b ${branchName()}
-//                         clang-format --version
-//                         find stan test -name '*.hpp' -o -name '*.cpp' | xargs -n20 -P${PARALLEL} clang-format -i
-//                         if [[ `git diff` != "" ]]; then
-//                             git config user.email "mc.stanislaw@gmail.com"
-//                             git config user.name "Stan Jenkins"
-//                             git add stan test
-//                             git commit -m "[Jenkins] auto-formatting by `clang-format --version`"
-//                             git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${fork()}/math.git ${branchName()}
-//                             echo "Exiting build because clang-format found changes."
-//                             echo "Those changes are now found on stan-dev/math under branch ${branchName()}"
-//                             echo "Please 'git pull' before continuing to develop."
-//                             exit 1
-//                         fi"""
-//                 }
-//             }
-//             post {
-//                 always { deleteDir() }
-//                 failure {
-//                     script {
-//                         emailext (
-//                             subject: "[StanJenkins] Autoformattted: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-//                             body: "Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' " +
-//                                 "has been autoformatted and the changes committed " +
-//                                 "to your branch, if permissions allowed." +
-//                                 "Please pull these changes before continuing." +
-//                                 "\n\n" +
-//                                 "See https://github.com/stan-dev/stan/wiki/Coding-Style-and-Idioms" +
-//                                 " for setting up the autoformatter locally.\n"+
-//                             "(Check console output at ${env.BUILD_URL})",
-//                             recipientProviders: [[$class: 'RequesterRecipientProvider']],
-//                             to: "${env.CHANGE_AUTHOR_EMAIL}"
-//                         )
-//                     }
-//                 }
-//             }
-//         }
-//         stage('Linting & Doc checks') {
-//             agent {
-//                 docker {
-//                     image 'stanorg/ci:ubuntu'
-//                     label 'linux'
-//                 }
-//             }
-//             steps {
-//                 script {
-//                     retry(3) { checkout scm }
-//                     sh "git clean -xffd"
-//                     stash 'MathSetup'
-//                     sh "echo CXX=${CXX} -Werror > make/local"
-//                     sh "echo BOOST_PARALLEL_JOBS=${PARALLEL} >> make/local"
-//                     parallel(
-//                         CppLint: { sh "make cpplint" },
-//                         Dependencies: { sh """#!/bin/bash
-//                             set -o pipefail
-//                             make test-math-dependencies 2>&1 | tee dependencies.log""" } ,
-//                         Documentation: { sh "make doxygen" },
-//                     )
-//                 }
-//             }
-//             post {
-//                 always {
-//                     recordIssues enabledForFailure: true, tools:
-//                         [cppLint(),
-//                          groovyScript(parserId: 'mathDependencies', pattern: '**/dependencies.log')]
-//                     deleteDir()
-//                 }
-//             }
-//         }
+        stage("Clang-format") {
+            agent {
+                docker {
+                    image 'stanorg/ci:ubuntu'
+                    label 'linux'
+                }
+            }
+            steps {
+                retry(3) { checkout scm }
+                withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b',
+                    usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+                    sh """#!/bin/bash
+                        set -x
+                        git checkout -b ${branchName()}
+                        clang-format --version
+                        find stan test -name '*.hpp' -o -name '*.cpp' | xargs -n20 -P${PARALLEL} clang-format -i
+                        if [[ `git diff` != "" ]]; then
+                            git config user.email "mc.stanislaw@gmail.com"
+                            git config user.name "Stan Jenkins"
+                            git add stan test
+                            git commit -m "[Jenkins] auto-formatting by `clang-format --version`"
+                            git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${fork()}/math.git ${branchName()}
+                            echo "Exiting build because clang-format found changes."
+                            echo "Those changes are now found on stan-dev/math under branch ${branchName()}"
+                            echo "Please 'git pull' before continuing to develop."
+                            exit 1
+                        fi"""
+                }
+            }
+            post {
+                always { deleteDir() }
+                failure {
+                    script {
+                        emailext (
+                            subject: "[StanJenkins] Autoformattted: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                            body: "Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' " +
+                                "has been autoformatted and the changes committed " +
+                                "to your branch, if permissions allowed." +
+                                "Please pull these changes before continuing." +
+                                "\n\n" +
+                                "See https://github.com/stan-dev/stan/wiki/Coding-Style-and-Idioms" +
+                                " for setting up the autoformatter locally.\n"+
+                            "(Check console output at ${env.BUILD_URL})",
+                            recipientProviders: [[$class: 'RequesterRecipientProvider']],
+                            to: "${env.CHANGE_AUTHOR_EMAIL}"
+                        )
+                    }
+                }
+            }
+        }
+        stage('Linting & Doc checks') {
+            agent {
+                docker {
+                    image 'stanorg/ci:ubuntu'
+                    label 'linux'
+                }
+            }
+            steps {
+                script {
+                    retry(3) { checkout scm }
+                    sh "git clean -xffd"
+                    stash 'MathSetup'
+                    sh "echo CXX=${CXX} -Werror > make/local"
+                    sh "echo BOOST_PARALLEL_JOBS=${PARALLEL} >> make/local"
+                    parallel(
+                        CppLint: { sh "make cpplint" },
+                        Dependencies: { sh """#!/bin/bash
+                            set -o pipefail
+                            make test-math-dependencies 2>&1 | tee dependencies.log""" } ,
+                        Documentation: { sh "make doxygen" },
+                    )
+                }
+            }
+            post {
+                always {
+                    recordIssues enabledForFailure: true, tools:
+                        [cppLint(),
+                         groovyScript(parserId: 'mathDependencies', pattern: '**/dependencies.log')]
+                    deleteDir()
+                }
+            }
+        }
         stage('Verify changes') {
             agent {
                 docker {
