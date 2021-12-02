@@ -45,7 +45,7 @@ struct laplace_pseudo_target_vari : public vari {
       const Eigen::VectorXd& a, const Eigen::MatrixXd& R,
       const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& K,
       const Eigen::VectorXd& s2, const Eigen::VectorXd& l, double pseudo_target,
-      int diagonal_covariance = 1)
+      int diagonal_covariance = 0)
       : vari(pseudo_target),
         K_size_(K.size()),
         K_(ChainableStack::instance_->memalloc_.alloc_array<vari*>(K.size())),
