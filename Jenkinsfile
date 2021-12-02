@@ -231,8 +231,8 @@ pipeline {
                 unstash 'MathSetup'
                 // Set Stan local compiler flags to use the new TBB interface
                 sh """
-                    export TBB_INC=$(pwd)/lib/tbb_2020.3/include
-                    export TBB_LIB=$(pwd)/lib/tbb
+                    export TBB_INC=\$(pwd)/lib/tbb_2020.3/include
+                    export TBB_LIB=\$(pwd)/lib/tbb
                     mkdir -p ~/.config/stan
                     echo TBB_INTERFACE_NEW=true>> ~/.config/stan/make.local
                 """
