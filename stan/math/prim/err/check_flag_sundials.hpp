@@ -1,10 +1,10 @@
 #ifndef STAN_MATH_PRIM_ERR_CHECK_FLAG_SUNDIALS_HPP
 #define STAN_MATH_PRIM_ERR_CHECK_FLAG_SUNDIALS_HPP
 
-#include <kinsol/kinsol.h>
-#include <cvodes/cvodes.h>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/domain_error.hpp>
+#include <kinsol/kinsol.h>
+#include <cvodes/cvodes.h>
 
 namespace stan {
 namespace math {
@@ -196,9 +196,7 @@ inline void cvodes_check(int flag, const char* func_name) {
 
 /**
  * Throws an exception message when the functions in KINSOL
- * fails. When the exception is caused
- * by a tuning parameter the user controls, gives a specific
- * error. "KINGetReturnFlagName()" from sundials has a mem leak bug so
+ * fails. "KINGetReturnFlagName()" from SUNDIALS has a mem leak bug so
  * until it's fixed we cannot use it to extract flag error string.
  *
  * @param flag Error flag
@@ -206,8 +204,8 @@ inline void cvodes_check(int flag, const char* func_name) {
  * @throw <code>std::runtime_error</code> if the flag is negative.
  */
 inline void kinsol_check(int flag, const char* func_name) {
-  std::ostringstream ss;
   if (flag < 0) {
+    std::ostringstream ss;
     ss << "algebra_solver failed with error flag " << flag << ".";
     throw std::runtime_error(ss.str());
   }
@@ -221,10 +219,10 @@ inline void kinsol_check(int flag, const char* func_name) {
  *
  * @param flag Error flag
  * @param func_name calling function name
- * @param max_num_steps max number of nonlinear iters
+ * @param max_num_steps max number of nonlinear iterations.
  * @throw <code>std::runtime_error</code> if the flag is negative.
  * @throw <code>std::domain_error</code> if the flag indicates max
- * number of steps is exceeded..
+ * number of steps is exceeded.
  */
 inline void kinsol_check(int flag, const char* func_name,
                          long int max_num_steps) {  // NOLINT(runtime/int)
