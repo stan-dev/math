@@ -98,6 +98,52 @@ TEST(MathMatrixPrimMat, matrix_exp_multiply_poisson_5) {
   EXPECT_MATRIX_NEAR(p1, p2, 1.e-12);
 }
 
+TEST(MathMatrixPrimMat, matrix_exp_multiply_matlab) {
+  // https://blogs.mathworks.com/cleve/2012/07/23/a-balancing-act-for-the-matrix-exponential/#7401fe8a-5a7d-40df-92d7-1ae34f45adf2 // NOLINT
+  {
+    Eigen::MatrixXd m(3, 3);
+    m <<
+      0, 1e-08, 0,
+      -20066666666.6667,   -3,       20000000000,
+      66.6666666666667,     0, -66.6666666666667;
+    Eigen::MatrixXd expm(3, 3);
+    expm <<
+      0.446849468283175, 1.54044157383952e-09, 0.462811453558774,
+      -5743067.77947947,  -0.0152830038686819, -4526542.71278401,
+      0.447722977849494, 1.54270484519591e-09, 0.463480648837651;
+    std::vector<double> r{-1, 0, 1};
+    Eigen::VectorXd p1(3), p2(3);
+    for (auto i : r) { for (auto j : r) { for (auto k : r) {
+          Eigen::VectorXd b(3);
+          b << i, j, k;
+          p1 = stan::math::matrix_exp_multiply(m, b);
+          p2 = expm * b;
+          EXPECT_MATRIX_NEAR(p1, p2, 5.e-6);
+        }
+      }
+    }
+  }
+
+  // https://discourse.mc-stan.org/t/documentation-for-the-action-of-the-matrix-exponential/25498/8?u=yizhang // NOLINT
+  {
+    Eigen::MatrixXd m(2, 2);
+    m << -49, 24, -64, 31;
+    Eigen::MatrixXd expm(2, 2);
+    expm << -0.735758758144755, 0.551819099658099,
+      -1.47151759908826, 1.10363824071558;
+    std::vector<double> r{0, 1, 10, 100, 1000, 10000};
+    Eigen::VectorXd p1(2), p2(2);
+    for (auto i : r) { for (auto j : r) {
+        Eigen::VectorXd b(2);
+        b << i, j;
+        p1 = stan::math::matrix_exp_multiply(m, b);
+        p2 = expm * b;
+        EXPECT_MATRIX_NEAR(p1, p2, 1.e-8);
+      }
+    }
+  }
+}
+
 TEST(MathMatrixPrimMat, matrix_exp_multiply_exception) {
   using stan::math::matrix_exp_multiply;
   {  // multiplicable
