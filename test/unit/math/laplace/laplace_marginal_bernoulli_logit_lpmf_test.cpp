@@ -32,12 +32,7 @@ TEST(laplace_marginal_bernoulli_logit_lpmf, phi_dim500) {
     x[i] = coordinate;
   }
   std::vector<int> n_samples = stan::math::rep_array(1, dim_theta);
-
   Eigen::VectorXd theta_0 = Eigen::VectorXd::Zero(dim_theta);
-
-  Eigen::VectorXd theta_laplace, a, l_grad;
-  Eigen::SparseMatrix<double> W_root;
-  Eigen::MatrixXd L, covariance;
   std::vector<double> delta;
   std::vector<int> delta_int;
   int dim_phi = 2;

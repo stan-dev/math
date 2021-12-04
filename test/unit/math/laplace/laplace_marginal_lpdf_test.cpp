@@ -194,3 +194,92 @@ TEST_F(laplace_disease_map_test, laplace_marginal_lpmf) {
   EXPECT_NEAR((target_u0 - target_l0) / (2 * eps), g[0], 3e-3);
   EXPECT_NEAR((target_u1 - target_l1) / (2 * eps), g[1], 2e-4);
 }
+
+struct bernoulli_logit_likelihood {
+  template <typename T_theta, typename T_eta>
+  stan::return_type_t<T_theta, T_eta> operator() (
+    const Eigen::Matrix<T_theta, -1, 1>& theta,
+    const Eigen::Matrix<T_eta, -1, 1>& eta,
+    const Eigen::VectorXd& ye,
+    const std::vector<int>& delta_int,
+    std::ostream* pstream) const {
+      return stan::math::bernoulli_logit_lpmf(delta_int, theta);
+  }
+};
+
+TEST(laplace_marginal_lpdf, bernoulli_logit_phi_dim500) {
+  using stan::math::laplace_marginal_lpmf;
+  using stan::math::to_vector;
+  using stan::math::var;
+
+  int dim_theta = 500;
+  int n_observations = 500;
+  std::string data_directory = "test/unit/math/laplace/aki_synth_data/";
+  std::vector<double> x1(dim_theta), x2(dim_theta);
+  std::vector<int> y(n_observations);
+  stan::math::test::read_in_data(dim_theta, n_observations, data_directory, x1,
+                                 x2, y);
+
+  int dim_x = 2;
+  std::vector<Eigen::VectorXd> x(dim_theta);
+  for (int i = 0; i < dim_theta; i++) {
+    Eigen::VectorXd coordinate(dim_x);
+    coordinate << x1[i], x2[i];
+    x[i] = coordinate;
+  }
+  Eigen::VectorXd theta_0 = Eigen::VectorXd::Zero(dim_theta);
+  Eigen::VectorXd delta_L;
+  std::vector<double> delta;
+  std::vector<int> delta_int;
+  int dim_phi = 2;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> phi(dim_phi);
+  phi << 1.6, 1;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> eta_dummy;
+
+  stan::math::test::sqr_exp_kernel_functor K;
+  bernoulli_logit_likelihood L;
+  var target
+    = laplace_marginal_lpmf<FALSE>(y, L, eta_dummy, delta_L,
+                                   K, phi, x, delta, delta_int,
+                                   theta_0);
+
+  double tol = 8e-5;
+  // Benchmark against gpstuff.
+  EXPECT_NEAR(-195.368, value_of(target), tol);
+
+  std::vector<double> g;
+  std::vector<stan::math::var> parm_vec{phi(0), phi(1)};
+  target.grad(parm_vec, g);
+
+  // finite diff benchmark
+  double diff = 1e-7;
+  Eigen::VectorXd phi_dbl = value_of(phi);
+  Eigen::VectorXd phi_1l = phi_dbl, phi_1u = phi_dbl, phi_2l = phi_dbl,
+                  phi_2u = phi_dbl;
+  phi_1l(0) -= diff;
+  phi_1u(0) += diff;
+  phi_2l(1) -= diff;
+  phi_2u(1) += diff;
+  Eigen::VectorXd eta_dummy_dbl;
+
+  double target_1u = laplace_marginal_lpmf<FALSE>(y, L, eta_dummy_dbl, delta_L,
+                                 K, phi_1u, x, delta, delta_int,
+                                 theta_0),
+         target_1l = laplace_marginal_lpmf<FALSE>(y, L, eta_dummy_dbl, delta_L,
+                                        K, phi_1l, x, delta, delta_int,
+                                        theta_0),
+         target_2u = laplace_marginal_lpmf<FALSE>(y, L, eta_dummy_dbl, delta_L,
+                                        K, phi_2u, x, delta, delta_int,
+                                        theta_0),
+         target_2l = laplace_marginal_lpmf<FALSE>(y, L, eta_dummy_dbl, delta_L,
+                                        K, phi_2l, x, delta, delta_int,
+                                        theta_0);
+
+  std::vector<double> g_finite(dim_phi);
+  g_finite[0] = (target_1u - target_1l) / (2 * diff);
+  g_finite[1] = (target_2u - target_2l) / (2 * diff);
+
+  tol = 1e-3;
+  EXPECT_NEAR(g_finite[0], g[0], tol);
+  EXPECT_NEAR(g_finite[1], g[1], tol);
+}
