@@ -283,3 +283,234 @@ TEST(laplace_marginal_lpdf, bernoulli_logit_phi_dim500) {
   EXPECT_NEAR(g_finite[0], g[0], tol);
   EXPECT_NEAR(g_finite[1], g[1], tol);
 }
+
+struct covariance_motorcycle_functor {
+  template <typename T1, typename T2>
+  Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> operator()(
+      const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi, const T2& x,
+      const std::vector<double>& delta, const std::vector<int>& delta_int,
+      std::ostream* msgs = nullptr) const {
+    using Eigen::Matrix;
+    using stan::math::gp_exp_quad_cov;
+
+    T1 length_scale_f = phi(0);
+    T1 length_scale_g = phi(1);
+    T1 sigma_f = phi(2);
+    T1 sigma_g = phi(3);
+    int n_obs = delta_int[0];
+
+    double jitter = 1e-6;
+    Matrix<T1, -1, -1> kernel_f = gp_exp_quad_cov(x, sigma_f, length_scale_f);
+    Matrix<T1, -1, -1> kernel_g = gp_exp_quad_cov(x, sigma_g, length_scale_g);
+
+    Matrix<T1, -1, -1> kernel_all = Eigen::MatrixXd::Zero(2 * n_obs, 2 * n_obs);
+    for (int i = 0; i < n_obs; i++) {
+      for (int j = 0; j <= i; j++) {
+        kernel_all(2 * i, 2 * j) = kernel_f(i, j);
+        kernel_all(2 * i + 1, 2 * j + 1) = kernel_g(i, j);
+        if (i != j) {
+          kernel_all(2 * j, 2 * i) = kernel_all(2 * i, 2 * j);
+          kernel_all(2 * j + 1, 2 * i + 1) = kernel_all(2 * i + 1, 2 * j + 1);
+        }
+      }
+    }
+
+    for (int i = 0; i < 2 * n_obs; i++)
+      kernel_all(i, i) += jitter;
+
+    return kernel_all;
+  }
+};
+
+struct normal_likelihood {
+  template <typename T_theta, typename T_eta>
+  stan::return_type_t<T_theta, T_eta> operator()(
+      const Eigen::Matrix<T_theta, -1, 1>& theta,
+      const Eigen::Matrix<T_eta, -1, 1>& eta, const Eigen::VectorXd& y,
+      const std::vector<int>& delta_int, std::ostream* pstream) const {
+    int n_obs = delta_int[0];
+    Eigen::Matrix<T_theta, -1, 1> mu(n_obs);
+    Eigen::Matrix<T_theta, -1, 1> sigma(n_obs);
+    for (int i = 0; i < n_obs; i++) {
+      mu(i) = theta(2 * i);
+      sigma(i) = exp(0.5 * theta(2 * i + 1));
+    }
+
+    return stan::math::normal_lpdf(y, mu, sigma);
+  }
+};
+
+struct normal_likelihood2 {
+  template <typename T_theta, typename T_eta>
+  stan::return_type_t<T_theta, T_eta> operator()(
+      const Eigen::Matrix<T_theta, -1, 1>& theta,
+      const Eigen::Matrix<T_eta, -1, 1>& eta, const Eigen::VectorXd& y,
+      const std::vector<int>& delta_int, std::ostream* pstream) const {
+    using stan::math::multiply;
+    int n_obs = delta_int[0];
+    Eigen::Matrix<T_theta, -1, 1> mu(n_obs);
+    Eigen::Matrix<T_theta, -1, 1> sigma(n_obs);
+    T_eta sigma_global = eta(0);
+    for (int i = 0; i < n_obs; i++) {
+      mu(i) = theta(2 * i);
+      sigma(i) = exp(0.5 * theta(2 * i + 1));  // * sigma_global;
+    }
+
+    // return stan::math::normal_lpdf(y, mu, sigma);
+    return stan::math::normal_lpdf(y, mu, multiply(sigma_global, sigma));
+  }
+};
+
+class laplace_motorcyle_gp_test : public ::testing::Test {
+ protected:
+  void SetUp() override {
+    using stan::math::gp_exp_quad_cov;
+    using stan::math::value_of;
+
+    if (false) {
+      n_obs = 6;
+      Eigen::VectorXd x_vec(n_obs);
+      x_vec << 2.4, 2.6, 3.2, 3.6, 4.0, 6.2;
+      x.resize(n_obs);
+      for (int i = 0; i < n_obs; i++)
+        x[i] = x_vec(i);
+      y.resize(n_obs);
+      y << 0.0, -1.3, -2.7, 0.0, -2.7, -2.7;
+    }
+
+    if (true) {
+      n_obs = 133;
+      stan::math::test::read_data(
+          n_obs, "test/unit/math/laplace/motorcycle_gp/", x, y);
+    }
+
+    length_scale_f = 0.3;
+    length_scale_g = 0.5;
+    sigma_f = 0.25;
+    sigma_g = 0.25;
+
+    dim_phi = 4;
+    phi.resize(dim_phi);
+    phi << length_scale_f, length_scale_g, sigma_f, sigma_g;
+
+    eta.resize(1);
+    eta(0) = 1;
+
+    delta_int.resize(1);
+    delta_int[0] = n_obs;
+
+    theta0 = Eigen::VectorXd::Zero(2 * n_obs);
+    // theta0 << -10, 0, -10, 0, -10, 0, -10,
+    //           0, -10, 0, -10, 0;
+
+    Eigen::MatrixXd K_plus_I
+        = gp_exp_quad_cov(x, value_of(sigma_f), value_of(length_scale_f))
+          + Eigen::MatrixXd::Identity(n_obs, n_obs);
+
+    Eigen::VectorXd mu_hat = K_plus_I.colPivHouseholderQr().solve(y);
+
+    // Remark: finds optimal point with or without informed initial guess.
+    for (int i = 0; i < n_obs; i++) {
+      theta0(2 * i) = mu_hat(i);  // 0
+      theta0(2 * i + 1) = 0;
+    }
+
+    solver = 2;
+    eps = 1e-7;
+    phi_dbl = value_of(phi);
+    eta_dbl = value_of(eta);
+  }
+
+  int n_obs;
+  int dim_phi;
+  std::vector<double> x;
+  Eigen::VectorXd y;
+
+  stan::math::var length_scale_f;
+  stan::math::var length_scale_g;
+  stan::math::var sigma_f;
+  stan::math::var sigma_g;
+  Eigen::Matrix<stan::math::var, -1, 1> phi;
+  std::vector<int> delta_int;
+  std::vector<double> delta_dummy;
+  Eigen::VectorXd theta0;
+  Eigen::VectorXd eta_dbl;
+  Eigen::Matrix<stan::math::var, -1, 1> eta;
+  int solver;
+  double eps;
+  Eigen::VectorXd phi_dbl;
+};
+
+TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
+  using stan::math::laplace_marginal_lpdf;
+  using stan::math::value_of;
+  using stan::math::var;
+
+  covariance_motorcycle_functor K_f;
+  normal_likelihood L;
+
+  double tolerance = 1e-08;
+  int max_num_steps = 100;
+  int hessian_block_size = 2;
+  solver = 3;
+  int do_line_search = 1;
+  int max_steps_line_search = 10;
+
+  covariance_motorcycle_functor K;
+  var target
+    = laplace_marginal_lpdf<FALSE>(y, L, eta, delta_int,
+                            K, phi, x, delta_dummy, delta_int, theta0,
+                            tolerance, max_num_steps, hessian_block_size,
+                            solver, do_line_search, max_steps_line_search);
+
+  // TODO: benchmark this result against GPStuff.
+
+  std::vector<double> g;
+  std::vector<stan::math::var> parm_vec{phi(0), phi(1), phi(2), phi(3), eta(0)};
+  target.grad(parm_vec, g);
+
+  // finite diff benchmark
+  double g_finite;
+  for (int i = 0; i < dim_phi; i++) {
+    Eigen::VectorXd phi_u = phi_dbl, phi_l = phi_dbl;
+    phi_u(i) += eps;
+    phi_l(i) -= eps;
+
+    double target_u
+      = laplace_marginal_lpdf<FALSE>(y, L, eta_dbl, delta_int,
+                              K, phi_u, x, delta_dummy, delta_int, theta0,
+                              tolerance, max_num_steps, hessian_block_size,
+                              solver, do_line_search, max_steps_line_search);
+
+    double target_l
+      = laplace_marginal_lpdf<FALSE>(y, L, eta_dbl, delta_int,
+                            K, phi_l, x, delta_dummy, delta_int, theta0,
+                            tolerance, max_num_steps, hessian_block_size,
+                            solver, do_line_search, max_steps_line_search);
+
+    g_finite = (target_u - target_l) / (2 * eps);
+
+    double tol = 1.2e-5;
+    EXPECT_NEAR(g_finite, g[i], tol);
+  }
+
+  Eigen::VectorXd eta_u = eta_dbl, eta_l = eta_dbl;
+  eta_u(0) += eps;
+  eta_l(0) -= eps;
+
+  double target_u
+    = laplace_marginal_lpdf<FALSE>(y, L, eta_u, delta_int,
+                            K, phi_dbl, x, delta_dummy, delta_int, theta0,
+                            tolerance, max_num_steps, hessian_block_size,
+                            solver, do_line_search, max_steps_line_search);
+
+  double target_l
+    = laplace_marginal_lpdf<FALSE>(y, L, eta_l, delta_int,
+                            K, phi_dbl, x, delta_dummy, delta_int, theta0,
+                            tolerance, max_num_steps, hessian_block_size,
+                            solver, do_line_search, max_steps_line_search);
+
+  g_finite = (target_u - target_l) / (2 * eps);
+  double tol = 1e-7;
+  EXPECT_NEAR(g_finite, g[dim_phi + 1], tol);
+}
