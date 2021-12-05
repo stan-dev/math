@@ -10,7 +10,7 @@
 #include <fstream>
 #include <vector>
 
-struct poisson_log_likelihood {
+struct poisson_log_likelihood2 {
   template <typename T_theta, typename T_eta>
   stan::return_type_t<T_theta, T_eta> operator() (
     const Eigen::Matrix<T_theta, -1, 1>& theta,
@@ -55,7 +55,7 @@ TEST(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
 
   stan::math::test::squared_kernel_functor K;
   var target
-    = laplace_marginal_lpmf<FALSE>(sums, poisson_log_likelihood(),
+    = laplace_marginal_lpmf<FALSE>(sums, poisson_log_likelihood2(),
                                    eta_dummy, y_dummy,
                                    K, phi, x, delta_dummy,
                                    delta_int_dummy, theta_0);
@@ -73,7 +73,7 @@ TEST(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
   int do_line_search = 1;
   int max_steps_line_search = 10;
 
-  target = laplace_marginal_lpmf<FALSE>(sums, poisson_log_likelihood(),
+  target = laplace_marginal_lpmf<FALSE>(sums, poisson_log_likelihood2(),
                                         eta_dummy, y_dummy,
                                         K, phi, x, delta_dummy,
                                         delta_int_dummy, theta_0,
@@ -99,16 +99,16 @@ TEST(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
   Eigen::VectorXd eta_dummy_dbl = value_of(eta_dummy);
 
   double target_1u = laplace_marginal_lpmf<FALSE>(
-    sums, poisson_log_likelihood(), eta_dummy_dbl, y_dummy, K, phi_1u, x,
+    sums, poisson_log_likelihood2(), eta_dummy_dbl, y_dummy, K, phi_1u, x,
     delta_dummy, delta_int_dummy, theta_0),
   target_1l = laplace_marginal_lpmf<FALSE>(
-    sums, poisson_log_likelihood(), eta_dummy_dbl, y_dummy, K, phi_1l, x,
+    sums, poisson_log_likelihood2(), eta_dummy_dbl, y_dummy, K, phi_1l, x,
     delta_dummy, delta_int_dummy, theta_0),
   target_2u = laplace_marginal_lpmf<FALSE>(
-    sums, poisson_log_likelihood(), eta_dummy_dbl, y_dummy, K, phi_2u, x,
+    sums, poisson_log_likelihood2(), eta_dummy_dbl, y_dummy, K, phi_2u, x,
     delta_dummy, delta_int_dummy, theta_0),
   target_2l = laplace_marginal_lpmf<FALSE>(
-    sums, poisson_log_likelihood(), eta_dummy_dbl, y_dummy, K, phi_2l, x,
+    sums, poisson_log_likelihood2(), eta_dummy_dbl, y_dummy, K, phi_2l, x,
     delta_dummy, delta_int_dummy, theta_0);
 
   std::vector<double> g_finite(dim_phi);

@@ -3,6 +3,7 @@
 
 #include <stan/math/laplace/laplace_marginal.hpp>
 #include <stan/math/laplace/laplace_likelihood_poisson_log.hpp>
+#include <stan/math/laplace/laplace_likelihood_general.hpp>
 
 namespace stan {
 namespace math {
@@ -41,8 +42,10 @@ T1 laplace_marginal_poisson_log_lpmf(
     long int max_num_steps = 100) {
   // TODO: change this to a VectorXd once we have operands & partials.
   Eigen::Matrix<T1, Eigen::Dynamic, 1> eta_dummy(0);
+  poisson_log_likelihood L;
   return laplace_marginal_density(
-      diff_poisson_log(to_vector(n_samples), to_vector(y)), covariance_function,
+      diff_likelihood<poisson_log_likelihood>(L, to_vector(y), n_samples, msgs),
+      covariance_function,
       phi, eta_dummy, x, delta, delta_int, theta_0, msgs, tolerance,
       max_num_steps);
 }
@@ -59,8 +62,13 @@ T1 laplace_marginal_poisson_log_lpmf(
     long int max_num_steps = 100) {
   // TODO: change this to a VectorXd once we have operands & partials.
   Eigen::Matrix<T1, Eigen::Dynamic, 1> eta_dummy(0);
+  Eigen::VectorXd y_vec = to_vector(y);
+  Eigen::VectorXd y_and_ye(y_vec.size() + ye.size());
+  y_and_ye << y_vec, ye;
+  poisson_log_exposure_likelihood L;
   return laplace_marginal_density(
-      diff_poisson_log(to_vector(n_samples), to_vector(y), log(ye)),
+    diff_likelihood<poisson_log_exposure_likelihood>(L, y_and_ye, n_samples,
+                                                     msgs),
       covariance_function, phi, eta_dummy, x, delta, delta_int, theta_0, msgs,
       tolerance, max_num_steps);
 }

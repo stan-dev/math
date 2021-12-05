@@ -7,6 +7,66 @@
 namespace stan {
 namespace math {
 
+  struct poisson_log_likelihood {
+    /**
+     * Returns the lpmf for a Poisson with a log link across
+     * multiple groups. No need to compute the log normalizing constant.
+     * @tparam T_theta Type of the log Poisson rate.
+     * @tparam T_eta Type of the auxiliary parameter (not used here).
+     * @param[in] theta log Poisson rate for each group.
+     * @param[in] y sum of counts in each group.
+     * @param[in] delta_int number of observations in each group.
+     * return lpmf for a Poisson with a log link.
+     */
+    template <typename T_theta, typename T_eta>
+    stan::return_type_t<T_theta, T_eta> operator() (
+      const Eigen::Matrix<T_theta, -1, 1>& theta,
+      const Eigen::Matrix<T_eta, -1, 1>& eta,
+      const Eigen::VectorXd& y,
+      const std::vector<int>& delta_int,
+      std::ostream* pstream) const {
+
+        Eigen::VectorXd n_samples = to_vector(delta_int);
+        return -lgamma(y.array() + 1).sum() + theta.dot(y)
+               - n_samples.dot(exp(theta));
+      }
+  };
+
+  struct poisson_log_exposure_likelihood {
+    /**
+     * Returns the lpmf for a Poisson with a log link across
+     * multiple groups. No need to compute the log normalizing constant.
+     * Same as above, but includes a exposure term to correct the
+     * log rate for each group.
+     * @tparam T_theta Type of the log Poisson rate.
+     * @tparam T_eta Type of the auxiliary parameter (not used here).
+     * @param[in] theta log Poisson rate for each group.
+     * @param[in] y_and_ye First n elements contain the sum of counts
+     *                     in each group, next n elements the exposure
+     *                     in each group, where n is the number of groups.
+     * @param[in] delta_int number of observations in each group.
+     * return lpmf for a Poisson with a log link.
+     */
+    template <typename T_theta, typename T_eta>
+    stan::return_type_t<T_theta, T_eta> operator() (
+      const Eigen::Matrix<T_theta, -1, 1>& theta,
+      const Eigen::Matrix<T_eta, -1, 1>& eta,
+      const Eigen::VectorXd& y_and_ye,
+      const std::vector<int>& delta_int,
+      std::ostream* pstream) const {
+        int n = delta_int.size();
+        Eigen::VectorXd y = y_and_ye.head(n);
+        Eigen::VectorXd ye = y_and_ye.tail(n);
+
+        Eigen::VectorXd n_samples = to_vector(delta_int);
+        Eigen::Matrix<T_theta, -1, 1> shifted_mean = theta + log(ye);
+        return -lgamma(y.array() + 1).sum() + shifted_mean.dot(y)
+               - n_samples.dot(exp(shifted_mean));
+      }
+  };
+
+// NOTE: might not need the code below anymore, since we'll switch to
+// the general diff likelihood.
 // TO DO: create a parent structure, with each likelihood
 // function acting as a child structure.
 
@@ -56,6 +116,7 @@ struct diff_poisson_log {
       factorial_term += lgamma(sums_(i) + 1);
     Eigen::Matrix<T1, Eigen::Dynamic, 1> shifted_mean = theta + log_exposure_;
 
+    // return shifted_mean.dot(sums_) - n_samples_.dot(exp(shifted_mean));
     return -lgamma(sums_.array() + 1).sum() + (shifted_mean).dot(sums_)
            - n_samples_.dot(exp(shifted_mean));
   }

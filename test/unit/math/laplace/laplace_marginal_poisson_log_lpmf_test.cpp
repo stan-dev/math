@@ -35,8 +35,8 @@ TEST(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
   std::vector<double> delta;
   std::vector<int> delta_int;
 
-  std::vector<int> n_samples = {1, 1};
   std::vector<int> sums = {1, 0};
+  std::vector<int> n_samples = {1, 1};
 
   stan::math::test::squared_kernel_functor K;
   var target = laplace_marginal_poisson_log_lpmf(sums, n_samples, K, phi, x,
@@ -94,6 +94,7 @@ TEST(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
   EXPECT_NEAR(g_finite[1], g[1], tol);
 }
 
+
 TEST_F(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf) {
   using stan::math::laplace_marginal_poisson_log_lpmf;
   using stan::math::var;
@@ -138,6 +139,6 @@ TEST_F(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf) {
              y, n_samples, ye, stan::math::test::sqr_exp_kernel_functor(),
              phi_l1, x, delta, delta_int, theta_0);
 
-  EXPECT_NEAR((target_u0 - target_l0) / (2 * eps), g[0], 2e-4);
+  EXPECT_NEAR((target_u0 - target_l0) / (2 * eps), g[0], 8e-4);
   EXPECT_NEAR((target_u1 - target_l1) / (2 * eps), g[1], 5e-5);
 }
