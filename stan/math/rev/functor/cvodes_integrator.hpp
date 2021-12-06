@@ -270,40 +270,31 @@ class cvodes_integrator {
     }
 
     try {
-      check_flag_sundials(CVodeInit(cvodes_mem, &cvodes_integrator::cv_rhs,
-                                    value_of(t0_), nv_state_),
-                          "CVodeInit");
+      CHECK_CVODES_CALL(CVodeInit(cvodes_mem, &cvodes_integrator::cv_rhs,
+                                  value_of(t0_), nv_state_));
 
       // Assign pointer to this as user data
-      check_flag_sundials(
-          CVodeSetUserData(cvodes_mem, reinterpret_cast<void*>(this)),
-          "CVodeSetUserData");
+      CHECK_CVODES_CALL(
+          CVodeSetUserData(cvodes_mem, reinterpret_cast<void*>(this)));
 
       cvodes_set_options(cvodes_mem, max_num_steps_);
 
-      check_flag_sundials(CVodeSStolerances(cvodes_mem, relative_tolerance_,
-                                            absolute_tolerance_),
-                          "CVodeSStolerances");
+      CHECK_CVODES_CALL(CVodeSStolerances(cvodes_mem, relative_tolerance_,
+                                          absolute_tolerance_));
 
-      check_flag_sundials(CVodeSetLinearSolver(cvodes_mem, LS_, A_),
-                          "CVodeSetLinearSolver");
-      check_flag_sundials(
-          CVodeSetJacFn(cvodes_mem, &cvodes_integrator::cv_jacobian_states),
-          "CVodeSetJacFn");
+      CHECK_CVODES_CALL(CVodeSetLinearSolver(cvodes_mem, LS_, A_));
+      CHECK_CVODES_CALL(
+          CVodeSetJacFn(cvodes_mem, &cvodes_integrator::cv_jacobian_states));
 
       // initialize forward sensitivity system of CVODES as needed
       if (num_y0_vars_ + num_args_vars_ > 0) {
-        check_flag_sundials(
-            CVodeSensInit(
-                cvodes_mem, static_cast<int>(num_y0_vars_ + num_args_vars_),
-                CV_STAGGERED, &cvodes_integrator::cv_rhs_sens, nv_state_sens_),
-            "CVodeSensInit");
+        CHECK_CVODES_CALL(CVodeSensInit(
+            cvodes_mem, static_cast<int>(num_y0_vars_ + num_args_vars_),
+            CV_STAGGERED, &cvodes_integrator::cv_rhs_sens, nv_state_sens_));
 
-        check_flag_sundials(CVodeSetSensErrCon(cvodes_mem, SUNTRUE),
-                            "CVodeSetSensErrCon");
+        CHECK_CVODES_CALL(CVodeSetSensErrCon(cvodes_mem, SUNTRUE));
 
-        check_flag_sundials(CVodeSensEEtolerances(cvodes_mem),
-                            "CVodeSensEEtolerances");
+        CHECK_CVODES_CALL(CVodeSensEEtolerances(cvodes_mem));
       }
 
       double t_init = value_of(t0_);
@@ -311,21 +302,12 @@ class cvodes_integrator {
         double t_final = value_of(ts_[n]);
 
         if (t_final != t_init) {
-          int error_code
-              = CVode(cvodes_mem, t_final, nv_state_, &t_init, CV_NORMAL);
-
-          if (error_code == CV_TOO_MUCH_WORK) {
-            throw_domain_error(function_name_, "", t_final,
-                               "Failed to integrate to next output time (",
-                               ") in less than max_num_steps steps");
-          } else {
-            check_flag_sundials(error_code, "CVode");
-          }
+          CHECK_CVODES_CALL(
+              CVode(cvodes_mem, t_final, nv_state_, &t_init, CV_NORMAL));
 
           if (num_y0_vars_ + num_args_vars_ > 0) {
-            check_flag_sundials(
-                CVodeGetSens(cvodes_mem, &t_init, nv_state_sens_),
-                "CVodeGetSens");
+            CHECK_CVODES_CALL(
+                CVodeGetSens(cvodes_mem, &t_init, nv_state_sens_));
           }
         }
 

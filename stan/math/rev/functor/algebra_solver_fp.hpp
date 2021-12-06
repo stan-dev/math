@@ -239,18 +239,13 @@ struct FixedPointSolver<KinsolFixedPointEnv<F>, fp_jac_type> {
     const int default_anderson_depth = 4;
     int anderson_depth = std::min(N, default_anderson_depth);
 
-    check_flag_sundials(KINSetNumMaxIters(mem, max_num_steps),
-                        "KINSetNumMaxIters");
-    check_flag_sundials(KINSetMAA(mem, anderson_depth), "KINSetMAA");
-    check_flag_sundials(KINInit(mem, &env.kinsol_f_system, env.nv_x_),
-                        "KINInit");
-    check_flag_sundials(KINSetFuncNormTol(mem, f_tol), "KINSetFuncNormTol");
-    check_flag_sundials(KINSetUserData(mem, static_cast<void*>(&env)),
-                        "KINSetUserData");
-
-    check_flag_kinsol(
-        KINSol(mem, env.nv_x_, KIN_FP, env.nv_u_scal_, env.nv_f_scal_),
-        max_num_steps);
+    CHECK_KINSOL_CALL(KINSetNumMaxIters(mem, max_num_steps));
+    CHECK_KINSOL_CALL(KINSetMAA(mem, anderson_depth));
+    CHECK_KINSOL_CALL(KINInit(mem, &env.kinsol_f_system, env.nv_x_));
+    CHECK_KINSOL_CALL(KINSetFuncNormTol(mem, f_tol));
+    CHECK_KINSOL_CALL(KINSetUserData(mem, static_cast<void*>(&env)));
+    kinsol_check(KINSol(mem, env.nv_x_, KIN_FP, env.nv_u_scal_, env.nv_f_scal_),
+                 "KINSol", max_num_steps);
 
     for (int i = 0; i < N; ++i) {
       x(i) = NV_Ith_S(env.nv_x_, i);
