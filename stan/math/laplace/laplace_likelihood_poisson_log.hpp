@@ -25,7 +25,6 @@ namespace math {
       const Eigen::VectorXd& y,
       const std::vector<int>& delta_int,
       std::ostream* pstream) const {
-
         Eigen::VectorXd n_samples = to_vector(delta_int);
         return -lgamma(y.array() + 1).sum() + theta.dot(y)
                - n_samples.dot(exp(theta));

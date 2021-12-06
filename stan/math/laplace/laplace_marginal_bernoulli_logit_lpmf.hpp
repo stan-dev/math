@@ -44,10 +44,12 @@ T1 laplace_marginal_bernoulli_logit_lpmf(
     long int max_num_steps = 100) {
   // TODO: change this to a VectorXd once we have operands & partials.
   Eigen::Matrix<T1, Eigen::Dynamic, 1> eta_dummy(0);
+  bernoulli_logit_likelihood L;
   return laplace_marginal_density(
-      diff_bernoulli_logit(to_vector(n_samples), to_vector(y)),
-      covariance_function, phi, eta_dummy, x, delta, delta_int, theta_0, msgs,
-      tolerance, max_num_steps);
+  diff_likelihood<bernoulli_logit_likelihood>(L, to_vector(y), n_samples, msgs),
+  // diff_bernoulli_logit(to_vector(n_samples), to_vector(y)),
+  covariance_function, phi, eta_dummy, x, delta, delta_int, theta_0, msgs,
+  tolerance, max_num_steps);
 }
 
 // Add signature that takes x as a matrix instead of a vector.
@@ -62,10 +64,12 @@ T1 laplace_marginal_bernoulli_logit_lpmf(
     long int max_num_steps = 100) {
   // TODO: change this to a VectorXd once we have operands & partials.
   Eigen::Matrix<T1, Eigen::Dynamic, 1> eta_dummy(0);
+  bernoulli_logit_likelihood L;
   return laplace_marginal_density(
-      diff_bernoulli_logit(to_vector(n_samples), to_vector(y)),
-      covariance_function, phi, eta_dummy, x, delta, delta_int, theta_0, msgs,
-      tolerance, max_num_steps);
+  diff_likelihood<bernoulli_logit_likelihood>(L, to_vector(y), n_samples, msgs),
+      // diff_bernoulli_logit(to_vector(n_samples), to_vector(y)),
+  covariance_function, phi, eta_dummy, x, delta, delta_int, theta_0, msgs,
+  tolerance, max_num_steps);
 }
 
 }  // namespace math

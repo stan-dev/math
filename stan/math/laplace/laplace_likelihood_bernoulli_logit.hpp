@@ -4,6 +4,21 @@
 namespace stan {
 namespace math {
 
+struct bernoulli_logit_likelihood {
+  template <typename T_theta, typename T_eta>
+  stan::return_type_t<T_theta, T_eta> operator() (
+    const Eigen::Matrix<T_theta, -1, 1>& theta,
+    const Eigen::Matrix<T_eta, -1, 1>& eta,
+    const Eigen::VectorXd& y,
+    const std::vector<int>& delta_int,
+    std::ostream* pstream) const {
+      Eigen::VectorXd n_samples = to_vector(delta_int);
+      Eigen::VectorXd one = rep_vector(1, theta.size());
+      return sum(theta.cwiseProduct(y)
+        - n_samples.cwiseProduct(log(one + exp(theta))));
+    }
+};
+
 /**
  * A structure to compute the log density, first, second,
  * and third-order derivatives for a Bernoulli logistic likelihood
