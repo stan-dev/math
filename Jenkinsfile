@@ -171,6 +171,8 @@ pipeline {
                     recordIssues enabledForFailure: true, tools:
                         [cppLint(),
                          groovyScript(parserId: 'mathDependencies', pattern: '**/dependencies.log')]
+                }
+                success {
                     deleteDir()
                 }
             }
