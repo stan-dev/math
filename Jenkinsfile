@@ -379,8 +379,13 @@ pipeline {
                         }
                     }
                 }
-	            stage('Expressions test') {
-                    agent any
+                    stage('Expressions test') {
+                    agent {
+                        docker {
+                            image 'stanorg/ci:ubuntu'
+                            label 'linux'
+                        }
+                    }
                     steps {
                         unstash 'MathSetup'
                         script {
