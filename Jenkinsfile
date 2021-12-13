@@ -217,37 +217,37 @@ pipeline {
 //             }
 //             post { always { deleteDir() } }
 //         }
-        stage('Full Unit Tests') {
-            agent {
-                docker {
-                    image 'stanorg/ci:ubuntu'
-                    label 'linux'
-                }
-            }
-            when {
-                expression {
-                    !skipRemainingStages
-                }
-            }
-            steps {
-                unstash 'MathSetup'
-                // Set Stan local compiler flags to use the new TBB interface
-                sh """
-                    export TBB_INC=\$(pwd)/lib/tbb_2020.3/include
-                    export TBB_LIB=\$(pwd)/lib/tbb
-                    echo TBB_INTERFACE_NEW=true > make/local
-                """
-	            sh "echo CXXFLAGS += -fsanitize=address >> make/local"
-                script {
-                    if (isUnix()) {
-                        runTests("test/unit/math/test_ad_test.cpp", false)
-                    } else {
-                        runTestsWin("test/unit/math/test_ad_test.cpp", true)
-                    }
-                }
-            }
-            post { always { retry(3) { deleteDir() } } }
-        }
+//         stage('Full Unit Tests') {
+//             agent {
+//                 docker {
+//                     image 'stanorg/ci:ubuntu'
+//                     label 'linux'
+//                 }
+//             }
+//             when {
+//                 expression {
+//                     !skipRemainingStages
+//                 }
+//             }
+//             steps {
+//                 unstash 'MathSetup'
+//                 // Set Stan local compiler flags to use the new TBB interface
+//                 sh """
+//                     export TBB_INC=\$(pwd)/lib/tbb_2020.3/include
+//                     export TBB_LIB=\$(pwd)/lib/tbb
+//                     echo TBB_INTERFACE_NEW=true > make/local
+//                 """
+// 	            sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+//                 script {
+//                     if (isUnix()) {
+//                         runTests("test/unit/math/test_ad_test.cpp", false)
+//                     } else {
+//                         runTestsWin("test/unit/math/test_ad_test.cpp", true)
+//                     }
+//                 }
+//             }
+//             post { always { retry(3) { deleteDir() } } }
+//         }
         stage('Always-run tests') {
             when {
                 expression {
@@ -261,6 +261,7 @@ pipeline {
                         docker {
                             image 'stanorg/ci:ubuntu'
                             label 'linux'
+                            args '--pull always'
                         }
                     }
                     steps {
@@ -277,7 +278,7 @@ pipeline {
                         docker {
                             image 'stanorg/ci:gpu'
                             label 'gpu'
-                            args '--gpus 1'
+                            args '--gpus 1 --pull always'
                         }
                     }
                     when {
@@ -352,6 +353,7 @@ pipeline {
                         docker {
                             image 'stanorg/ci:ubuntu'
                             label 'linux'
+                            args '--pull always'
                         }
                     }
                     steps {
@@ -384,6 +386,7 @@ pipeline {
                         docker {
                             image 'stanorg/ci:ubuntu'
                             label 'linux'
+                            args '--pull always'
                         }
                     }
                     steps {
@@ -417,6 +420,7 @@ pipeline {
                         docker {
                             image 'stanorg/ci:ubuntu'
                             label 'linux'
+                            args '--pull always'
                         }
                     }
                     steps {
