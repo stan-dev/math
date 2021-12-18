@@ -1,3 +1,0 @@
-List of RAJA CVODE examples
-
-  cvAdvDiff_kry_cuda       : 2-D advection-diffusion (nonstiff)
