@@ -249,7 +249,7 @@ int SUNProfiler_Begin(SUNProfiler p, const char* name)
 #ifdef SUNDIALS_DEBUG
       slen = strlen(name);
       errmsg = malloc(slen*sizeof(char));
-      snprintf(errmsg, 128+slen, "(((( [ERROR] in SUNProfilerBegin: SUNHashMapInsert failed with code %d while inserting %s))))\n", ier, name);
+      sSTAN_SUNDIALS_PRINTF(errmsg, 128+slen, "(((( [ERROR] in SUNProfilerBegin: SUNHashMapInsert failed with code %d while inserting %s))))\n", ier, name);
       SUNDIALS_DEBUG_PRINT(errmsg);
       free(errmsg);
 #endif
@@ -317,15 +317,15 @@ int SUNProfiler_Print(SUNProfiler p, FILE* fp)
     /* Sort the timers in descending order */
     if (SUNHashMap_Sort(p->map, &sorted, sunCompareTimes))
       return(-1);
-    fprintf(fp, "\n================================================================================================================\n");
-    fprintf(fp, "SUNDIALS GIT VERSION: %s\n", SUNDIALS_GIT_VERSION);
-    fprintf(fp, "SUNDIALS PROFILER: %s\n", p->title);
-    fprintf(fp, "%-40s\t %% time (inclusive) \t max/rank \t average/rank \t count \n", "Results:");
-    fprintf(fp, "================================================================================================================\n");
+    STAN_SUNDIALS_FPRINTF(fp, "\n================================================================================================================\n");
+    STAN_SUNDIALS_FPRINTF(fp, "SUNDIALS GIT VERSION: %s\n", SUNDIALS_GIT_VERSION);
+    STAN_SUNDIALS_FPRINTF(fp, "SUNDIALS PROFILER: %s\n", p->title);
+    STAN_SUNDIALS_FPRINTF(fp, "%-40s\t %% time (inclusive) \t max/rank \t average/rank \t count \n", "Results:");
+    STAN_SUNDIALS_FPRINTF(fp, "================================================================================================================\n");
 
 #if SUNDIALS_MPI_ENABLED
     if (p->comm == NULL)
-      printf("WARNING: no MPI communicator provided, times shown are for rank 0\n");
+     STAN_SUNDIALS_PRINTF("WARNING: no MPI communicator provided, times shown are for rank 0\n");
 #endif
 
     /* Print all the other timers out */
@@ -339,12 +339,12 @@ int SUNProfiler_Print(SUNProfiler p, FILE* fp)
   if (rank == 0)
   {
     /* Print out the total time and the profiler overhead */
-    fprintf(fp, "%-40s\t %6.2f%% \t         %.6fs \t -- \t\t -- \n", "Est. profiler overhead",
+    STAN_SUNDIALS_FPRINTF(fp, "%-40s\t %6.2f%% \t         %.6fs \t -- \t\t -- \n", "Est. profiler overhead",
             p->overhead->elapsed/p->sundials_time,
             p->overhead->elapsed);
 
     /* End of output */
-    fprintf(fp, "\n");
+    STAN_SUNDIALS_FPRINTF(fp, "\n");
   }
 
   return(0);
@@ -436,7 +436,7 @@ void sunPrintTimers(int idx, SUNHashMapKeyValue kv, FILE* fp, void* pvoid)
   double maximum = ts->maximum;
   double average = ts->average;
   double percent = strcmp((const char*) kv->key, (const char*) SUNDIALS_ROOT_TIMER) ? maximum / p->sundials_time * 100 : 100;
-  fprintf(fp, "%-40s\t %6.2f%% \t         %.6fs \t %.6fs \t %ld\n",
+  STAN_SUNDIALS_FPRINTF(fp, "%-40s\t %6.2f%% \t         %.6fs \t %.6fs \t %ld\n",
           kv->key, percent, maximum, average, ts->count);
 }
 

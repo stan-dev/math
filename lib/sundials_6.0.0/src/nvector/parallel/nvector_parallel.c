@@ -86,7 +86,7 @@ N_Vector N_VNewEmpty_Parallel(MPI_Comm comm,
   n = local_length;
   MPI_Allreduce(&n, &Nsum, 1, MPI_SUNINDEXTYPE, MPI_SUM, comm);
   if (Nsum != global_length) {
-    fprintf(stderr, BAD_N);
+    STAN_SUNDIALS_FPRINTF(stderr, BAD_N);
     return(NULL);
   }
 
@@ -303,14 +303,14 @@ void N_VPrintFile_Parallel(N_Vector x, FILE* outfile)
 
   for (i = 0; i < N; i++) {
 #if defined(SUNDIALS_EXTENDED_PRECISION)
-    fprintf(outfile, "%35.32Le\n", xd[i]);
+    STAN_SUNDIALS_FPRINTF(outfile, "%35.32Le\n", xd[i]);
 #elif defined(SUNDIALS_DOUBLE_PRECISION)
-    fprintf(outfile, "%19.16e\n", xd[i]);
+    STAN_SUNDIALS_FPRINTF(outfile, "%19.16e\n", xd[i]);
 #else
-    fprintf(outfile, "%11.8e\n", xd[i]);
+    STAN_SUNDIALS_FPRINTF(outfile, "%11.8e\n", xd[i]);
 #endif
   }
-  fprintf(outfile, "\n");
+  STAN_SUNDIALS_FPRINTF(outfile, "\n");
 
   return;
 }
