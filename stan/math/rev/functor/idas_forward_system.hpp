@@ -66,8 +66,8 @@ class idas_forward_system : public idas_system<F, Tyy, Typ, Tpar> {
    */
   ~idas_forward_system() {
     if (this->need_sens) {
-      N_VDestroyVectorArray_Serial(this->nv_yys_, this->ns_);
-      N_VDestroyVectorArray_Serial(this->nv_yps_, this->ns_);
+      N_VDestroyVectorArray(this->nv_yys_, this->ns_);
+      N_VDestroyVectorArray(this->nv_yps_, this->ns_);
     }
   }
 
