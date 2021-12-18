@@ -1,0 +1,51 @@
+
+Create and allocate CVODES memory for forward run
+
+Allocate global memory
+
+Forward integration
+
+ncheck = 1
+
+   G = int_t int_x int_y c6(t,x,y) dx dy dt = 422295.485891 
+
+
+Create and allocate CVODES memory for backward run
+
+Backward integration
+
+Maximum sensitivity with respect to I.C. of species 1
+  lambda max = 9.564957e+02
+at
+  x = 1.000000e+00
+  y = 1.000000e+00
+
+Maximum sensitivity with respect to I.C. of species 2
+  lambda max = 9.375298e+02
+at
+  x = 1.000000e+00
+  y = 1.000000e+00
+
+Maximum sensitivity with respect to I.C. of species 3
+  lambda max = 9.196102e+02
+at
+  x = 1.000000e+00
+  y = 1.000000e+00
+
+Maximum sensitivity with respect to I.C. of species 4
+  lambda max = -3.070915e-03
+at
+  x = 1.000000e+00
+  y = 0.000000e+00
+
+Maximum sensitivity with respect to I.C. of species 5
+  lambda max = -3.065139e-03
+at
+  x = 1.000000e+00
+  y = 0.000000e+00
+
+Maximum sensitivity with respect to I.C. of species 6
+  lambda max = 2.127710e-01
+at
+  x = 0.000000e+00
+  y = 0.000000e+00

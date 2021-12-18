@@ -1,0 +1,37 @@
+List of OpenMP device offloading CVODE examples
+
+  cvAdvDiff_kry_ompdev  : 2-D advection-diffusion (nonstiff)
+
+Sample results:
+
+  SUNDIALS was built with OpenMP enabled, and the example output was run using
+  LLNL LC's wrapped xlc compiler for gpu program compilation: xlc-gpu
+
+The following CMake command was used to configure SUNDIALS:
+
+cmake \
+-DCMAKE_C_COMPILER=xlc-gpu \
+-DBUILD_ARKODE=ON \
+-DBUILD_CVODE=ON \
+-DBUILD_CVODES=ON \
+-DBUILD_IDA=ON \
+-DBUILD_IDAS=ON \
+-DBUILD_KINSOL=ON \
+-DBUILD_SHARED_LIBS=OFF \
+-DBUILD_STATIC_LIBS=ON \
+-DBUILD_TESTING=ON \
+-DCMAKE_INSTALL_PREFIX=/usr/local/sundials \
+-DEXAMPLES_ENABLE_C=ON \
+-DEXAMPLES_INSTALL_PATH=/user/local/sundials/examples \
+-DEXAMPLES_INSTALL=ON \
+-DENABLE_OPENMP=ON \
+-DENABLE_OPENMP_DEVICE=ON \
+-DOPENMP_DEVICE_WORKS=ON \
+-DSUNDIALS_INDEX_SIZE=64 \
+-DSUNDIALS_PRECISION=double \
+../sundials
+
+  System Architecture: ppc64le
+  Processor Type: IBM POWER8 @ 2.5GHz
+  Operating System: Red Hat 7.3
+  C Compiler: xlc-gpu

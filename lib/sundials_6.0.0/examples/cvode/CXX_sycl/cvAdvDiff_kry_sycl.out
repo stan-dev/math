@@ -1,0 +1,30 @@
+Running on Intel(R) UHD Graphics P630 [0x3e96]
+
+2-D Advection-Diffusion Equation
+Mesh dimensions = 10 X 5
+Total system size = 50
+Tolerance parameters: reltol = 0   abstol = 1e-05
+
+At t = 0      max.norm(u) = 89.5472
+At t = 0.1   max.norm(u) = 4.13288   nst = 82
+At t = 0.2   max.norm(u) = 1.03929   nst = 102
+At t = 0.3   max.norm(u) = 0.297982   nst = 112
+At t = 0.4   max.norm(u) = 0.0876554   nst = 119
+At t = 0.5   max.norm(u) = 0.0262541   nst = 125
+At t = 0.6   max.norm(u) = 0.00782608   nst = 129
+At t = 0.7   max.norm(u) = 0.00232654   nst = 133
+At t = 0.8   max.norm(u) = 0.000689118   nst = 137
+At t = 0.9   max.norm(u) = 0.000203985   nst = 140
+At t = 1   max.norm(u) = 5.92559e-05   nst = 143
+
+Final Statistics.. 
+
+lenrw   = 739     leniw   = 66
+lenrwLS = 654     leniwLS = 54
+nst     = 143
+nfe     = 206     nfeLS   = 0
+nni     = 203     nli     = 225
+nsetups = 0     netf    = 2
+npe     = 0     nps     = 0
+ncfn    = 0     ncfl    = 0
+

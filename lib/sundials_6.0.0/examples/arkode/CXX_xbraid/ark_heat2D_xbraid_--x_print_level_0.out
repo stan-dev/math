@@ -1,0 +1,60 @@
+
+2D Heat PDE test problem:
+ --------------------------------- 
+  nprocs         = 4
+ --------------------------------- 
+  kx             = 1
+  ky             = 1
+  forcing        = 1
+  tf             = 1
+  xu             = 1
+  yu             = 1
+  nx             = 32
+  ny             = 32
+  dx             = 0.0322581
+  dy             = 0.0322581
+ --------------------------------- 
+  rtol           = 1e-05
+  atol           = 1e-10
+  order          = 3
+  linear         = 1
+ --------------------------------- 
+  linear solver  = PCG
+  lin iters      = 100
+  eps lin        = 0
+  prec           = 1
+  msbp           = 0
+ --------------------------------- 
+  nt             = 300
+  xtol           = 1e-06
+  refine         = 0
+  rfactor limit  = 10
+  rfactor fail   = 4
+  init seq       = 0
+  print level    = 0
+  access level   = 1
+ --------------------------------- 
+  output         = 1
+ --------------------------------- 
+
+  Max error = 3.297223770518998e-03
+
+Final max integrator statistics:
+  Steps            = 895
+  Step attempts    = 895
+  Error test fails = 324
+  RHS evals        = 7160
+  NLS iters        = 2685
+  NLS fails        = 0
+  LS iters         = 98385
+  LS fails         = 0
+  LS setups        = 895
+  LS RHS evals     = 98385
+  Jv products      = 98385
+
+  Avg NLS iters per step attempt = 3.000000
+  Avg LS iters per NLS iter      = 36.642458
+
+  Preconditioner setups = 895
+  Preconditioner solves = 98385
+

@@ -1,0 +1,42 @@
+
+idaFoodWeb_bnd: Predator-prey DAE serial example problem for IDA 
+
+Number of species ns: 2     Mesh dimensions: 20 x 20     System size: 800
+Tolerance parameters:  rtol = 1e-05   atol = 1e-05
+Linear solver: BAND,  Band parameters mu = 40, ml = 40
+CalcIC called to correct initial predator concentrations.
+
+-----------------------------------------------------------
+  t        bottom-left  top-right    | nst  k      h
+-----------------------------------------------------------
+
+0.00e+00   1.0000e+01   1.0000e+01   |   0  0   1.6310e-08
+           1.0000e+05   1.0000e+05   |
+
+1.00e-03   1.0318e+01   1.0827e+01   |  32  4   1.0823e-04
+           1.0319e+05   1.0822e+05   |
+
+1.00e-02   1.6188e+02   1.9735e+02   | 127  4   1.4203e-04
+           1.6189e+06   1.9734e+06   |
+
+1.00e-01   2.4019e+02   2.7072e+02   | 235  1   3.9160e-02
+           2.4019e+06   2.7072e+06   |
+
+4.00e-01   2.4019e+02   2.7072e+02   | 238  1   3.1328e-01
+           2.4019e+06   2.7072e+06   |
+
+7.00e-01   2.4019e+02   2.7072e+02   | 239  1   6.2655e-01
+           2.4019e+06   2.7072e+06   |
+
+1.00e+00   2.4019e+02   2.7072e+02   | 239  1   6.2655e-01
+           2.4019e+06   2.7072e+06   |
+
+-----------------------------------------------------------
+Final run statistics: 
+
+Number of steps                    = 239
+Number of residual evaluations     = 3339
+Number of Jacobian evaluations     = 36
+Number of nonlinear iterations     = 421
+Number of error test failures      = 3
+Number of nonlinear conv. failures = 0

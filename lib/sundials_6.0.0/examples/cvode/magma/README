@@ -1,0 +1,3 @@
+List of MAGMA CVODE examples
+
+  cvRoberts_blockdiag_magma  : block diagonal example with MAGMA dense batched LU solver

@@ -1,0 +1,35 @@
+
+Stationary 2D Heat PDE with Nonlinear Terms:
+ --------------------------------- 
+  nprocs         = 4
+  npx            = 2
+  npy            = 2
+ --------------------------------- 
+  kx             = 1
+  ky             = 1
+  xu             = 1
+  yu             = 1
+  nx             = 35
+  ny             = 35
+  nxl (proc 0)   = 18
+  nyl (proc 0)   = 18
+  dx             = 0.0294118
+  dy             = 0.0294118
+ --------------------------------- 
+  rtol           = 1e-08
+  maa            = 60
+  damping        = 1
+  orthaa         = 0
+  maxits         = 200
+ --------------------------------- 
+  c              = 1
+ --------------------------------- 
+  output         = 1
+ --------------------------------- 
+
+Final statistics:
+  Func evals       = 93
+  NLS iters        = 93
+
+  Max error = 1.080873192381418e+00
+

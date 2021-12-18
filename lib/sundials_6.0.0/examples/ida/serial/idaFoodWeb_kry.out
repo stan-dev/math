@@ -1,0 +1,42 @@
+
+idaFoodWeb_kry: Predator-prey DAE serial example problem for IDA 
+
+Number of species ns: 2     Mesh dimensions: 20 x 20     System size: 800
+Tolerance parameters:  rtol = 1e-05   atol = 1e-05
+Linear solver: SPGMR,  SPGMR parameters maxl = 16
+CalcIC called to correct initial predator concentrations.
+
+-----------------------------------------------------------
+  t        bottom-left  top-right    | nst  k      h
+-----------------------------------------------------------
+
+0.00e+00   1.0000e+01   1.0000e+01   |   0  0   1.6310e-08
+           1.0000e+05   1.0000e+05   |
+
+1.00e-03   1.0318e+01   1.0827e+01   |  33  4   9.7404e-05
+           1.0319e+05   1.0822e+05   |
+
+1.00e-02   1.6189e+02   1.9735e+02   |  86  4   1.7533e-04
+           1.6189e+06   1.9735e+06   |
+
+1.00e-01   2.4019e+02   2.7072e+02   | 161  1   4.0396e-02
+           2.4019e+06   2.7072e+06   |
+
+4.00e-01   2.4019e+02   2.7072e+02   | 164  1   3.2316e-01
+           2.4019e+06   2.7072e+06   |
+
+7.00e-01   2.4019e+02   2.7072e+02   | 165  1   6.4633e-01
+           2.4019e+06   2.7072e+06   |
+
+1.00e+00   2.4019e+02   2.7072e+02   | 165  1   6.4633e-01
+           2.4019e+06   2.7072e+06   |
+
+-----------------------------------------------------------
+Final run statistics: 
+
+Number of steps                       = 165
+Number of residual evaluations        = 206
+Number of Preconditioner evaluations  = 26
+Number of linear iterations           = 1034
+Number of error test failures         = 0
+Number of precond solve fun called    = 1240

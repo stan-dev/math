@@ -1,0 +1,37 @@
+
+2D Bratu test problem:
+ --------------------------------- 
+  nprocs         = 4
+  npx            = 2
+  npy            = 2
+ --------------------------------- 
+  xu             = 1
+  yu             = 1
+  nx             = 256
+  ny             = 256
+  nxl (proc 0)   = 128
+  nyl (proc 0)   = 128
+  dx             = 0.00392157
+  dy             = 0.00392157
+ --------------------------------- 
+  rtol           = 1e-08
+  maa            = 1
+  damping        = 1
+  orthaa         = 0
+  maxits         = 200
+ --------------------------------- 
+  C              = 6
+ --------------------------------- 
+  linear solver  = PCG
+  lin iters      = 20
+  eps lin        = 1e-08
+  pfmg_relax     = 2
+  pfmg_nrelax    = 2
+ --------------------------------- 
+  output         = 1
+ --------------------------------- 
+
+Final statistics:
+  Func evals       = 11
+  NLS iters        = 11
+

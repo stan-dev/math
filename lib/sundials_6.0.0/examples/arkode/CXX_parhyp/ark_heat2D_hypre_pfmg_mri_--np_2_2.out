@@ -1,0 +1,91 @@
+
+2D Heat PDE test problem:
+ --------------------------------- 
+  nprocs         = 4
+  npx            = 2
+  npy            = 2
+ --------------------------------- 
+  kx             = 1
+  ky             = 1
+  ax             = 1
+  ay             = 1
+  r              = 1
+  tf             = 1
+  xu             = 1
+  yu             = 1
+  nx             = 64
+  ny             = 64
+  nxl (proc 0)   = 32
+  nyl (proc 0)   = 32
+  dx             = 0.015873
+  dy             = 0.015873
+ --------------------------------- 
+  rtol           = 1e-05
+  atol           = 1e-10
+  sorder         = 3
+  forder         = 3
+  hf             = 0
+  hs             = 0.001
+  controller     = 0
+  linear         = 0
+ --------------------------------- 
+  lin iters      = 10
+  eps lins       = -1
+  prectype       = 1
+  msbp           = 0
+  pfmg_relax     = 2
+  pfmg_nrelax    = 2
+ --------------------------------- 
+  output         = 1
+ --------------------------------- 
+
+          t                     ||u||_rms      
+ ----------------------------------------------
+ 0.000000000000000e+00    3.691406249999997e-01
+ 1.000000000000000e-01    5.162012484053827e-02
+ 2.000000000000000e-01    7.426100623739032e-03
+ 3.000000000000000e-01    1.067221389930074e-03
+ 4.000000000000000e-01    1.533638122103053e-04
+ 5.000000000000000e-01    2.203890106096297e-05
+ 6.000000000000000e-01    3.167064486069618e-06
+ 7.000000000000000e-01    4.551179118001696e-07
+ 7.999999999999999e-01    6.540200053036180e-08
+ 8.999999999999999e-01    9.398526428516635e-09
+ 9.999999999999999e-01    1.350608973295414e-09
+ ----------------------------------------------
+
+Final slow integrator statistics:
+  Steps            = 1000
+  RHS evals        = 7356
+  NLS iters        = 3355
+  NLS fails        = 0
+  LS iters         = 10603
+  LS fails         = 0
+  LS setups        = 50
+  Jv products      = 10603
+
+  Avg LS iters per NLS iter      = 3.160358
+
+  Preconditioner setups = 50
+  Preconditioner solves = 10603
+  PFMG iters            = 10603
+
+Final fast integrator statistics:
+  Steps            = 3003
+  Step attempts    = 3003
+  Error test fails = 0
+  RHS evals        = 33857
+  NLS iters        = 17842
+  NLS fails        = 0
+  LS iters         = 10048
+  LS fails         = 0
+  LS setups        = 0
+  Jv products      = 10048
+
+  Avg NLS iters per step attempt = 5.941392
+  Avg LS iters per NLS iter      = 0.563166
+
+  Preconditioner setups = 0
+  Preconditioner solves = 0
+  PFMG iters            = 10603
+

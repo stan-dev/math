@@ -1,0 +1,24 @@
+List of PETSc CVODE examples
+
+  cvAdvDiff_petsc   : 1-D advection-diffusion (nonstiff)
+  cv_petsc_ex7      : Nonlinear time-dependent PDE in 2D based on PETSc TS example ex7
+
+The following CMake command was used to configure SUNDIALS:
+
+ cmake \
+-DCMAKE_BUILD_TYPE=DEBUG \
+-DBUILD_ARKODE=ON \
+-DBUILD_CVODE=ON \
+-DBUILD_CVODES=ON \
+-DBUILD_IDA=ON \
+-DBUILD_IDAS=ON \
+-DBUILD_KINSOL=ON \
+-DCMAKE_INSTALL_PREFIX=/home/user1/sundials/build/install \
+-DEXAMPLES_INSTALL_PATH=/home/user1/sundials/build/install/examples \
+-DBUILD_SHARED_LIBS=ON \
+-DBUILD_STATIC_LIBS=ON \
+-DEXAMPLES_ENABLE_C=ON \
+-DEXAMPLES_INSTALL=ON \
+-DENABLE_PETSC=ON \
+-DPETSC_DIR=/home/user1/petsc \
+../sundials

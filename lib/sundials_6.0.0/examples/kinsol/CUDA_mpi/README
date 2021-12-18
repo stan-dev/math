@@ -1,0 +1,3 @@
+# KINSOL MPI+CUDA examples
+
+* kin_em_mpicuda - expectation-maximazation probelm for mixture densities
