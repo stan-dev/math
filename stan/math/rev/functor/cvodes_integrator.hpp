@@ -238,8 +238,8 @@ class cvodes_integrator {
     LS_ = SUNLinSol_Dense(nv_state_, A_, sundials_context_);
 
     if (num_y0_vars_ + num_args_vars_ > 0) {
-      nv_state_sens_ = N_VCloneEmptyVectorArray(
-          num_y0_vars_ + num_args_vars_, nv_state_);
+      nv_state_sens_
+          = N_VCloneEmptyVectorArray(num_y0_vars_ + num_args_vars_, nv_state_);
       for (std::size_t i = 0; i < num_y0_vars_ + num_args_vars_; i++) {
         NV_DATA_S(nv_state_sens_[i]) = &coupled_state_[N_] + i * N_;
       }
@@ -251,8 +251,7 @@ class cvodes_integrator {
     SUNMatDestroy(A_);
     N_VDestroy_Serial(nv_state_);
     if (num_y0_vars_ + num_args_vars_ > 0) {
-      N_VDestroyVectorArray(nv_state_sens_,
-                            num_y0_vars_ + num_args_vars_);
+      N_VDestroyVectorArray(nv_state_sens_, num_y0_vars_ + num_args_vars_);
     }
   }
 

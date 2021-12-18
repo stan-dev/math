@@ -82,7 +82,10 @@ class idas_integrator {
    */
   idas_integrator(const double rtol, const double atol,
                   const int64_t max_num_steps = IDAS_MAX_STEPS)
-      : sundials_context_(), rtol_(rtol), atol_(atol), max_num_steps_(max_num_steps) {
+      : sundials_context_(),
+        rtol_(rtol),
+        atol_(atol),
+        max_num_steps_(max_num_steps) {
     if (rtol_ <= 0) {
       invalid_argument("idas_integrator", "relative tolerance,", rtol_, "",
                        ", must be greater than 0");

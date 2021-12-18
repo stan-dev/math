@@ -122,21 +122,24 @@ class cvodes_integrator_adjoint_vari : public vari_base {
           state_backward_(Eigen::VectorXd::Zero(N)),
           quad_(Eigen::VectorXd::Zero(num_args_vars)),
           t0_(t0),
-          nv_state_forward_(N_VMake_Serial(N, state_forward_.data(), sundials_context_)),
-          nv_state_backward_(N_VMake_Serial(N, state_backward_.data(), sundials_context_)),
-          nv_quad_(N_VMake_Serial(num_args_vars, quad_.data(), sundials_context_)),
-          nv_absolute_tolerance_forward_(
-              N_VMake_Serial(N, absolute_tolerance_forward_.data(), sundials_context_)),
-          nv_absolute_tolerance_backward_(
-              N_VMake_Serial(N, absolute_tolerance_backward_.data(), sundials_context_)),
+          nv_state_forward_(
+              N_VMake_Serial(N, state_forward_.data(), sundials_context_)),
+          nv_state_backward_(
+              N_VMake_Serial(N, state_backward_.data(), sundials_context_)),
+          nv_quad_(
+              N_VMake_Serial(num_args_vars, quad_.data(), sundials_context_)),
+          nv_absolute_tolerance_forward_(N_VMake_Serial(
+              N, absolute_tolerance_forward_.data(), sundials_context_)),
+          nv_absolute_tolerance_backward_(N_VMake_Serial(
+              N, absolute_tolerance_backward_.data(), sundials_context_)),
           A_forward_(SUNDenseMatrix(N, N, sundials_context_)),
           A_backward_(SUNDenseMatrix(N, N, sundials_context_)),
-          LS_forward_(
-              N == 0 ? nullptr
-                     : SUNLinSol_Dense(nv_state_forward_, A_forward_, sundials_context_)),
-          LS_backward_(
-              N == 0 ? nullptr
-                     : SUNLinSol_Dense(nv_state_backward_, A_backward_, sundials_context_)),
+          LS_forward_(N == 0 ? nullptr
+                             : SUNLinSol_Dense(nv_state_forward_, A_forward_,
+                                               sundials_context_)),
+          LS_backward_(N == 0 ? nullptr
+                              : SUNLinSol_Dense(nv_state_backward_, A_backward_,
+                                                sundials_context_)),
           cvodes_mem_(CVodeCreate(solver_forward, sundials_context_)),
           local_args_tuple_(deep_copy_vars(args)...),
           value_of_args_tuple_(value_of(args)...) {

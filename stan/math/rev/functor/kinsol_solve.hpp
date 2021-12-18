@@ -72,7 +72,8 @@ Eigen::VectorXd kinsol_solve(const F1& f, const Eigen::VectorXd& x,
   CHECK_KINSOL_CALL(KINInit(kinsol_data.kinsol_memory_,
                             &system_data::kinsol_f_system, kinsol_data.nv_x_));
 
-  N_Vector scaling = N_VNew_Serial(N, kinsol_data.sundials_context_.SUNContext());
+  N_Vector scaling
+      = N_VNew_Serial(N, kinsol_data.sundials_context_.SUNContext());
   N_Vector nv_x = N_VNew_Serial(N, kinsol_data.sundials_context_.SUNContext());
   Eigen::VectorXd x_solution(N);
 
