@@ -140,7 +140,7 @@ class idas_integrator {
         ts.size(), std::vector<typename Dae::scalar_type>(n, 0));
 
     auto A = SUNDenseMatrix(n, n, sundials_context_);
-    auto LS = SUNDenseLinearSolver(yy, A, sundials_context_);
+    auto LS = SUNLinSol_Dense(yy, A, sundials_context_);
 
     try {
       CHECK_IDAS_CALL(IDASetUserData(mem, dae.to_user_data()));
