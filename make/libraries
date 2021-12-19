@@ -26,7 +26,7 @@ CPPLINT ?= $(MATH)lib/cpplint_1.4.5
 
 SUNDIALS_CVODES := $(patsubst %.c,%.o,\
   $(wildcard $(SUNDIALS)/src/cvodes/*.c) \
-  $(filter-out $(SUNDIALS)/src/sundials/sundials_profiler.c $(wildcard $(SUNDIALS)/src/sundials/*.c)) \
+  $(filter-out $(SUNDIALS)/src/sundials/sundials_profiler.c, $(wildcard $(SUNDIALS)/src/sundials/*.c)) \
   $(wildcard $(SUNDIALS)/src/sunmatrix/band/[^f]*.c) \
   $(wildcard $(SUNDIALS)/src/sunmatrix/dense/[^f]*.c) \
   $(wildcard $(SUNDIALS)/src/sunlinsol/band/[^f]*.c) \
@@ -36,7 +36,7 @@ SUNDIALS_CVODES := $(patsubst %.c,%.o,\
 
 SUNDIALS_IDAS := $(patsubst %.c,%.o,\
   $(wildcard $(SUNDIALS)/src/idas/*.c) \
-  $(filter-out $(SUNDIALS)/src/sundials/sundials_profiler.c $(wildcard $(SUNDIALS)/src/sundials/*.c)) \
+  $(filter-out $(SUNDIALS)/src/sundials/sundials_profiler.c, $(wildcard $(SUNDIALS)/src/sundials/*.c)) \
   $(wildcard $(SUNDIALS)/src/sunmatrix/band/[^f]*.c) \
   $(wildcard $(SUNDIALS)/src/sunmatrix/dense/[^f]*.c) \
   $(wildcard $(SUNDIALS)/src/sunlinsol/band/[^f]*.c) \
@@ -46,7 +46,7 @@ SUNDIALS_IDAS := $(patsubst %.c,%.o,\
 
 SUNDIALS_KINSOL := $(patsubst %.c,%.o, \
   $(wildcard $(SUNDIALS)/src/kinsol/*.c) \
-  $(filter-out $(SUNDIALS)/src/sundials/sundials_profiler.c $(wildcard $(SUNDIALS)/src/sundials/*.c)) \
+  $(filter-out $(SUNDIALS)/src/sundials/sundials_profiler.c, $(wildcard $(SUNDIALS)/src/sundials/*.c)) \
   $(wildcard $(SUNDIALS)/src/sunmatrix/band/[^f]*.c) \
   $(wildcard $(SUNDIALS)/src/sunmatrix/dense/[^f]*.c) \
   $(wildcard $(SUNDIALS)/src/sunlinsol/band/[^f]*.c) \
