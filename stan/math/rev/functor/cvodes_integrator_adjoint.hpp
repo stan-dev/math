@@ -8,6 +8,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/for_each.hpp>
+#include <sundials/sundials_context.h>
 #include <cvodes/cvodes.h>
 #include <nvector/nvector_serial.h>
 #include <sunmatrix/sunmatrix_dense.h>
@@ -70,6 +71,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
    * vari class).
    */
   struct cvodes_solver : public chainable_alloc {
+    sundials::Context sundials_context_;
     const std::string function_name_str_;
     const std::decay_t<F> f_;
     const size_t N_;
@@ -107,6 +109,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
                   size_t num_args_vars, int solver_forward,
                   const T_Args&... args)
         : chainable_alloc(),
+          sundials_context_(),
           function_name_str_(function_name),
           f_(std::forward<FF>(f)),
           N_(N),
@@ -119,22 +122,25 @@ class cvodes_integrator_adjoint_vari : public vari_base {
           state_backward_(Eigen::VectorXd::Zero(N)),
           quad_(Eigen::VectorXd::Zero(num_args_vars)),
           t0_(t0),
-          nv_state_forward_(N_VMake_Serial(N, state_forward_.data())),
-          nv_state_backward_(N_VMake_Serial(N, state_backward_.data())),
-          nv_quad_(N_VMake_Serial(num_args_vars, quad_.data())),
-          nv_absolute_tolerance_forward_(
-              N_VMake_Serial(N, absolute_tolerance_forward_.data())),
-          nv_absolute_tolerance_backward_(
-              N_VMake_Serial(N, absolute_tolerance_backward_.data())),
-          A_forward_(SUNDenseMatrix(N, N)),
-          A_backward_(SUNDenseMatrix(N, N)),
-          LS_forward_(
-              N == 0 ? nullptr
-                     : SUNDenseLinearSolver(nv_state_forward_, A_forward_)),
-          LS_backward_(
-              N == 0 ? nullptr
-                     : SUNDenseLinearSolver(nv_state_backward_, A_backward_)),
-          cvodes_mem_(CVodeCreate(solver_forward)),
+          nv_state_forward_(
+              N_VMake_Serial(N, state_forward_.data(), sundials_context_)),
+          nv_state_backward_(
+              N_VMake_Serial(N, state_backward_.data(), sundials_context_)),
+          nv_quad_(
+              N_VMake_Serial(num_args_vars, quad_.data(), sundials_context_)),
+          nv_absolute_tolerance_forward_(N_VMake_Serial(
+              N, absolute_tolerance_forward_.data(), sundials_context_)),
+          nv_absolute_tolerance_backward_(N_VMake_Serial(
+              N, absolute_tolerance_backward_.data(), sundials_context_)),
+          A_forward_(SUNDenseMatrix(N, N, sundials_context_)),
+          A_backward_(SUNDenseMatrix(N, N, sundials_context_)),
+          LS_forward_(N == 0 ? nullptr
+                             : SUNLinSol_Dense(nv_state_forward_, A_forward_,
+                                               sundials_context_)),
+          LS_backward_(N == 0 ? nullptr
+                              : SUNLinSol_Dense(nv_state_backward_, A_backward_,
+                                                sundials_context_)),
+          cvodes_mem_(CVodeCreate(solver_forward, sundials_context_)),
           local_args_tuple_(deep_copy_vars(args)...),
           value_of_args_tuple_(value_of(args)...) {
       if (cvodes_mem_ == nullptr) {
@@ -290,39 +296,32 @@ class cvodes_integrator_adjoint_vari : public vari_base {
         },
         solver_->local_args_tuple_);
 
-    check_flag_sundials(
+    CHECK_CVODES_CALL(
         CVodeInit(solver_->cvodes_mem_, &cvodes_integrator_adjoint_vari::cv_rhs,
-                  value_of(solver_->t0_), solver_->nv_state_forward_),
-        "CVodeInit");
+                  value_of(solver_->t0_), solver_->nv_state_forward_));
 
     // Assign pointer to this as user data
-    check_flag_sundials(
-        CVodeSetUserData(solver_->cvodes_mem_, reinterpret_cast<void*>(this)),
-        "CVodeSetUserData");
+    CHECK_CVODES_CALL(
+        CVodeSetUserData(solver_->cvodes_mem_, reinterpret_cast<void*>(this)));
 
     cvodes_set_options(solver_->cvodes_mem_, max_num_steps_);
 
-    check_flag_sundials(
+    CHECK_CVODES_CALL(
         CVodeSVtolerances(solver_->cvodes_mem_, relative_tolerance_forward_,
-                          solver_->nv_absolute_tolerance_forward_),
-        "CVodeSVtolerances");
+                          solver_->nv_absolute_tolerance_forward_));
 
-    check_flag_sundials(
-        CVodeSetLinearSolver(solver_->cvodes_mem_, solver_->LS_forward_,
-                             solver_->A_forward_),
-        "CVodeSetLinearSolver");
+    CHECK_CVODES_CALL(CVodeSetLinearSolver(
+        solver_->cvodes_mem_, solver_->LS_forward_, solver_->A_forward_));
 
-    check_flag_sundials(
+    CHECK_CVODES_CALL(
         CVodeSetJacFn(solver_->cvodes_mem_,
-                      &cvodes_integrator_adjoint_vari::cv_jacobian_rhs_states),
-        "CVodeSetJacFn");
+                      &cvodes_integrator_adjoint_vari::cv_jacobian_rhs_states));
 
     // initialize backward sensitivity system of CVODES as needed
     if (is_var_return_ && !is_var_only_ts_) {
-      check_flag_sundials(
-          CVodeAdjInit(solver_->cvodes_mem_, num_steps_between_checkpoints_,
-                       interpolation_polynomial_),
-          "CVodeAdjInit");
+      CHECK_CVODES_CALL(CVodeAdjInit(solver_->cvodes_mem_,
+                                     num_steps_between_checkpoints_,
+                                     interpolation_polynomial_));
     }
 
     /**
@@ -338,29 +337,13 @@ class cvodes_integrator_adjoint_vari : public vari_base {
         if (is_var_return_ && !is_var_only_ts_) {
           int ncheck;
 
-          int error_code
-              = CVodeF(solver_->cvodes_mem_, t_final,
-                       solver_->nv_state_forward_, &t_init, CV_NORMAL, &ncheck);
-
-          if (unlikely(error_code == CV_TOO_MUCH_WORK)) {
-            throw_domain_error(solver_->function_name_str_.c_str(), "", t_final,
-                               "Failed to integrate to next output time (",
-                               ") in less than max_num_steps steps");
-          } else {
-            check_flag_sundials(error_code, "CVodeF");
-          }
+          CHECK_CVODES_CALL(CVodeF(solver_->cvodes_mem_, t_final,
+                                   solver_->nv_state_forward_, &t_init,
+                                   CV_NORMAL, &ncheck));
         } else {
-          int error_code
-              = CVode(solver_->cvodes_mem_, t_final, solver_->nv_state_forward_,
-                      &t_init, CV_NORMAL);
-
-          if (unlikely(error_code == CV_TOO_MUCH_WORK)) {
-            throw_domain_error(solver_->function_name_str_.c_str(), "", t_final,
-                               "Failed to integrate to next output time (",
-                               ") in less than max_num_steps steps");
-          } else {
-            check_flag_sundials(error_code, "CVode");
-          }
+          CHECK_CVODES_CALL(CVode(solver_->cvodes_mem_, t_final,
+                                  solver_->nv_state_forward_, &t_init,
+                                  CV_NORMAL));
         }
       }
       solver_->y_[n] = solver_->state_forward_;
@@ -456,104 +439,77 @@ class cvodes_integrator_adjoint_vari : public vari_base {
       double t_final = value_of((i > 0) ? solver_->ts_[i - 1] : solver_->t0_);
       if (t_final != t_init) {
         if (unlikely(!backward_is_initialized_)) {
-          check_flag_sundials(CVodeCreateB(solver_->cvodes_mem_,
-                                           solver_backward_, &index_backward_),
-                              "CVodeCreateB");
+          CHECK_CVODES_CALL(CVodeCreateB(solver_->cvodes_mem_, solver_backward_,
+                                         &index_backward_));
 
-          check_flag_sundials(
-              CVodeSetUserDataB(solver_->cvodes_mem_, index_backward_,
-                                reinterpret_cast<void*>(this)),
-              "CVodeSetUserDataB");
+          CHECK_CVODES_CALL(CVodeSetUserDataB(solver_->cvodes_mem_,
+                                              index_backward_,
+                                              reinterpret_cast<void*>(this)));
 
           // initialize CVODES backward machinery.
           // the states of the backward problem *are* the adjoints
           // of the ode states
-          check_flag_sundials(
+          CHECK_CVODES_CALL(
               CVodeInitB(solver_->cvodes_mem_, index_backward_,
                          &cvodes_integrator_adjoint_vari::cv_rhs_adj, t_init,
-                         solver_->nv_state_backward_),
-              "CVodeInitB");
+                         solver_->nv_state_backward_));
 
-          check_flag_sundials(
+          CHECK_CVODES_CALL(
               CVodeSVtolerancesB(solver_->cvodes_mem_, index_backward_,
                                  relative_tolerance_backward_,
-                                 solver_->nv_absolute_tolerance_backward_),
-              "CVodeSVtolerancesB");
+                                 solver_->nv_absolute_tolerance_backward_));
 
-          check_flag_sundials(
-              CVodeSetMaxNumStepsB(solver_->cvodes_mem_, index_backward_,
-                                   max_num_steps_),
-              "CVodeSetMaxNumStepsB");
+          CHECK_CVODES_CALL(CVodeSetMaxNumStepsB(
+              solver_->cvodes_mem_, index_backward_, max_num_steps_));
 
-          check_flag_sundials(CVodeSetLinearSolverB(
-                                  solver_->cvodes_mem_, index_backward_,
-                                  solver_->LS_backward_, solver_->A_backward_),
-                              "CVodeSetLinearSolverB");
+          CHECK_CVODES_CALL(CVodeSetLinearSolverB(
+              solver_->cvodes_mem_, index_backward_, solver_->LS_backward_,
+              solver_->A_backward_));
 
-          check_flag_sundials(
-              CVodeSetJacFnB(
-                  solver_->cvodes_mem_, index_backward_,
-                  &cvodes_integrator_adjoint_vari::cv_jacobian_rhs_adj_states),
-              "CVodeSetJacFnB");
+          CHECK_CVODES_CALL(CVodeSetJacFnB(
+              solver_->cvodes_mem_, index_backward_,
+              &cvodes_integrator_adjoint_vari::cv_jacobian_rhs_adj_states));
 
           // Allocate space for backwards quadrature needed when
           // parameters vary.
           if (is_any_var_args_) {
-            check_flag_sundials(
+            CHECK_CVODES_CALL(
                 CVodeQuadInitB(solver_->cvodes_mem_, index_backward_,
                                &cvodes_integrator_adjoint_vari::cv_quad_rhs_adj,
-                               solver_->nv_quad_),
-                "CVodeQuadInitB");
+                               solver_->nv_quad_));
 
-            check_flag_sundials(
+            CHECK_CVODES_CALL(
                 CVodeQuadSStolerancesB(solver_->cvodes_mem_, index_backward_,
                                        relative_tolerance_quadrature_,
-                                       absolute_tolerance_quadrature_),
-                "CVodeQuadSStolerancesB");
+                                       absolute_tolerance_quadrature_));
 
-            check_flag_sundials(CVodeSetQuadErrConB(solver_->cvodes_mem_,
-                                                    index_backward_, SUNTRUE),
-                                "CVodeSetQuadErrConB");
+            CHECK_CVODES_CALL(CVodeSetQuadErrConB(solver_->cvodes_mem_,
+                                                  index_backward_, SUNTRUE));
           }
 
           backward_is_initialized_ = true;
         } else {
           // just re-initialize the solver
 
-          check_flag_sundials(
-              CVodeReInitB(solver_->cvodes_mem_, index_backward_, t_init,
-                           solver_->nv_state_backward_),
-              "CVodeReInitB");
+          CHECK_CVODES_CALL(CVodeReInitB(solver_->cvodes_mem_, index_backward_,
+                                         t_init, solver_->nv_state_backward_));
 
           if (is_any_var_args_) {
-            check_flag_sundials(
-                CVodeQuadReInitB(solver_->cvodes_mem_, index_backward_,
-                                 solver_->nv_quad_),
-                "CVodeQuadReInitB");
+            CHECK_CVODES_CALL(CVodeQuadReInitB(
+                solver_->cvodes_mem_, index_backward_, solver_->nv_quad_));
           }
         }
 
-        int error_code = CVodeB(solver_->cvodes_mem_, t_final, CV_NORMAL);
-
-        if (unlikely(error_code == CV_TOO_MUCH_WORK)) {
-          throw_domain_error(solver_->function_name_str_.c_str(), "", t_final,
-                             "Failed to integrate backward to output time (",
-                             ") in less than max_num_steps steps");
-        } else {
-          check_flag_sundials(error_code, "CVodeB");
-        }
+        CHECK_CVODES_CALL(CVodeB(solver_->cvodes_mem_, t_final, CV_NORMAL));
 
         // obtain adjoint states and update t_init to time point
         // reached of t_final
-        check_flag_sundials(CVodeGetB(solver_->cvodes_mem_, index_backward_,
-                                      &t_init, solver_->nv_state_backward_),
-                            "CVodeGetB");
+        CHECK_CVODES_CALL(CVodeGetB(solver_->cvodes_mem_, index_backward_,
+                                    &t_init, solver_->nv_state_backward_));
 
         if (is_any_var_args_) {
-          check_flag_sundials(
-              CVodeGetQuadB(solver_->cvodes_mem_, index_backward_, &t_init,
-                            solver_->nv_quad_),
-              "CVodeGetQuadB");
+          CHECK_CVODES_CALL(CVodeGetQuadB(solver_->cvodes_mem_, index_backward_,
+                                          &t_init, solver_->nv_quad_));
         }
       }
     }

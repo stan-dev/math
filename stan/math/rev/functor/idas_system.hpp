@@ -7,6 +7,7 @@
 #include <stan/math/prim/fun/dot_self.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <sundials/sundials_context.h>
 #include <idas/idas.h>
 #include <nvector/nvector_serial.h>
 #include <ostream>
@@ -87,6 +88,7 @@ namespace math {
 template <typename F, typename Tyy, typename Typ, typename Tpar>
 class idas_system {
  protected:
+  sundials::Context sundials_context_;
   const F& f_;
   const std::vector<Tyy>& yy_;
   const std::vector<Typ>& yp_;
@@ -132,7 +134,8 @@ class idas_system {
               const std::vector<Tyy>& yy0, const std::vector<Typ>& yp0,
               const std::vector<Tpar>& theta, const std::vector<double>& x_r,
               const std::vector<int>& x_i, std::ostream* msgs)
-      : f_(f),
+      : sundials_context_(),
+        f_(f),
         yy_(yy0),
         yp_(yp0),
         yy_val_(value_of(yy0)),
@@ -144,12 +147,12 @@ class idas_system {
         M_(theta.size()),
         ns_((is_var_yy0 ? N_ : 0) + (is_var_yp0 ? N_ : 0)
             + (is_var_par ? M_ : 0)),
-        nv_yy_(N_VMake_Serial(N_, yy_val_.data())),
-        nv_yp_(N_VMake_Serial(N_, yp_val_.data())),
+        nv_yy_(N_VMake_Serial(N_, yy_val_.data(), sundials_context_)),
+        nv_yp_(N_VMake_Serial(N_, yp_val_.data(), sundials_context_)),
         rr_val_(N_, 0.0),
-        nv_rr_(N_VMake_Serial(N_, rr_val_.data())),
-        id_(N_VNew_Serial(N_)),
-        mem_(IDACreate()),
+        nv_rr_(N_VMake_Serial(N_, rr_val_.data(), sundials_context_)),
+        id_(N_VNew_Serial(N_, sundials_context_)),
+        mem_(IDACreate(sundials_context_)),
         msgs_(msgs) {
     try {
       if (nv_yy_ == NULL || nv_yp_ == NULL) {
