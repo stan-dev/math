@@ -515,8 +515,7 @@ struct cos_arg_test : public cos_arg_ode_base,
   void test_too_much_work() {
     ts[1] = 1e4;
     max_num_step = 10;
-    EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error,
-                     "Failed to integrate to next output time");
+    EXPECT_THROW(apply_solver_tol(), std::domain_error);
   }
 
   void test_value() {
