@@ -21,6 +21,8 @@ namespace math {
  * IDAS DAE integrator.
  */
 class idas_integrator {
+  sundials::Context sundials_context_;
+
   const double rtol_;
   const double atol_;
   const int64_t max_num_steps_;
@@ -80,7 +82,10 @@ class idas_integrator {
    */
   idas_integrator(const double rtol, const double atol,
                   const int64_t max_num_steps = IDAS_MAX_STEPS)
-      : rtol_(rtol), atol_(atol), max_num_steps_(max_num_steps) {
+      : sundials_context_(),
+        rtol_(rtol),
+        atol_(atol),
+        max_num_steps_(max_num_steps) {
     if (rtol_ <= 0) {
       invalid_argument("idas_integrator", "relative tolerance,", rtol_, "",
                        ", must be greater than 0");
@@ -137,8 +142,8 @@ class idas_integrator {
     typename Dae::return_type res_yy(
         ts.size(), std::vector<typename Dae::scalar_type>(n, 0));
 
-    auto A = SUNDenseMatrix(n, n);
-    auto LS = SUNDenseLinearSolver(yy, A);
+    auto A = SUNDenseMatrix(n, n, sundials_context_);
+    auto LS = SUNLinSol_Dense(yy, A, sundials_context_);
 
     try {
       CHECK_IDAS_CALL(IDASetUserData(mem, dae.to_user_data()));

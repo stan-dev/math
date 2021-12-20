@@ -8,6 +8,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/for_each.hpp>
+#include <sundials/sundials_context.h>
 #include <cvodes/cvodes.h>
 #include <nvector/nvector_serial.h>
 #include <sunmatrix/sunmatrix_dense.h>
@@ -70,6 +71,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
    * vari class).
    */
   struct cvodes_solver : public chainable_alloc {
+    sundials::Context sundials_context_;
     const std::string function_name_str_;
     const std::decay_t<F> f_;
     const size_t N_;
@@ -107,6 +109,7 @@ class cvodes_integrator_adjoint_vari : public vari_base {
                   size_t num_args_vars, int solver_forward,
                   const T_Args&... args)
         : chainable_alloc(),
+          sundials_context_(),
           function_name_str_(function_name),
           f_(std::forward<FF>(f)),
           N_(N),
@@ -119,22 +122,25 @@ class cvodes_integrator_adjoint_vari : public vari_base {
           state_backward_(Eigen::VectorXd::Zero(N)),
           quad_(Eigen::VectorXd::Zero(num_args_vars)),
           t0_(t0),
-          nv_state_forward_(N_VMake_Serial(N, state_forward_.data())),
-          nv_state_backward_(N_VMake_Serial(N, state_backward_.data())),
-          nv_quad_(N_VMake_Serial(num_args_vars, quad_.data())),
-          nv_absolute_tolerance_forward_(
-              N_VMake_Serial(N, absolute_tolerance_forward_.data())),
-          nv_absolute_tolerance_backward_(
-              N_VMake_Serial(N, absolute_tolerance_backward_.data())),
-          A_forward_(SUNDenseMatrix(N, N)),
-          A_backward_(SUNDenseMatrix(N, N)),
-          LS_forward_(
-              N == 0 ? nullptr
-                     : SUNDenseLinearSolver(nv_state_forward_, A_forward_)),
-          LS_backward_(
-              N == 0 ? nullptr
-                     : SUNDenseLinearSolver(nv_state_backward_, A_backward_)),
-          cvodes_mem_(CVodeCreate(solver_forward)),
+          nv_state_forward_(
+              N_VMake_Serial(N, state_forward_.data(), sundials_context_)),
+          nv_state_backward_(
+              N_VMake_Serial(N, state_backward_.data(), sundials_context_)),
+          nv_quad_(
+              N_VMake_Serial(num_args_vars, quad_.data(), sundials_context_)),
+          nv_absolute_tolerance_forward_(N_VMake_Serial(
+              N, absolute_tolerance_forward_.data(), sundials_context_)),
+          nv_absolute_tolerance_backward_(N_VMake_Serial(
+              N, absolute_tolerance_backward_.data(), sundials_context_)),
+          A_forward_(SUNDenseMatrix(N, N, sundials_context_)),
+          A_backward_(SUNDenseMatrix(N, N, sundials_context_)),
+          LS_forward_(N == 0 ? nullptr
+                             : SUNLinSol_Dense(nv_state_forward_, A_forward_,
+                                               sundials_context_)),
+          LS_backward_(N == 0 ? nullptr
+                              : SUNLinSol_Dense(nv_state_backward_, A_backward_,
+                                                sundials_context_)),
+          cvodes_mem_(CVodeCreate(solver_forward, sundials_context_)),
           local_args_tuple_(deep_copy_vars(args)...),
           value_of_args_tuple_(value_of(args)...) {
       if (cvodes_mem_ == nullptr) {
