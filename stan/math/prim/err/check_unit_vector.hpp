@@ -38,7 +38,7 @@ void check_unit_vector(const char* function, const char* name,
                        const Vec& theta) {
   check_nonzero_size(function, name, theta);
   using std::fabs;
-  value_type_t<Vec> ssq = value_of_rec(theta).squaredNorm();
+  scalar_type_t<Vec> ssq = value_of_rec(theta).squaredNorm();
   if (!(fabs(1.0 - ssq) <= CONSTRAINT_TOLERANCE)) {
     [&]() STAN_COLD_PATH {
       std::stringstream msg;

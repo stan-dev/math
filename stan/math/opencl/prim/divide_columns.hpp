@@ -7,7 +7,7 @@
 #include <stan/math/opencl/matrix_cl.hpp>
 #include <stan/math/opencl/kernels/divide_columns.hpp>
 #include <stan/math/opencl/err.hpp>
-#include <CL/cl2.hpp>
+#include <CL/opencl.hpp>
 
 namespace stan {
 namespace math {

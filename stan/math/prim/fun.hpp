@@ -166,6 +166,7 @@
 #include <stan/math/prim/fun/linspaced_row_vector.hpp>
 #include <stan/math/prim/fun/linspaced_vector.hpp>
 #include <stan/math/prim/fun/lmgamma.hpp>
+#include <stan/math/prim/fun/lmultiply.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/logb.hpp>
 #include <stan/math/prim/fun/log10.hpp>

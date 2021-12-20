@@ -438,8 +438,6 @@ class results_cl {
   template <typename... T_res, typename... T_expressions>
   static void assignment_impl(
       const std::tuple<std::pair<T_res, T_expressions>...>& assignment_pairs) {
-    using T_First_Expr = typename std::remove_reference_t<
-        std::tuple_element_t<0, std::tuple<T_expressions...>>>;
     using impl = typename internal::multi_result_kernel_internal<
         std::tuple_size<std::tuple<T_expressions...>>::value - 1,
         T_res...>::template inner<T_expressions...>;
