@@ -13,10 +13,10 @@ namespace math {
  * @param v Variable.
  * @return Value of variable.
  */
-template <typename T>
-inline auto value_of_rec(const var_value<T>& v) {
-  return v.vi_->val_;
-}
+ template <typename T>
+ inline auto& value_of_rec(const var_value<T>& v) {
+   return v.vi_->val_;
+ }
 
 }  // namespace math
 }  // namespace stan
