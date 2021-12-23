@@ -1,13 +1,18 @@
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
+#include <complex>
 
 TEST(PrimScalarSigTests, abs) {
+  using namespace std::complex_literals;
   double real_1 = 0.4;
   int int_1 = 2;
+  std::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::abs(real_1);
   auto result_2 = stan::math::abs(int_1);
+  auto result_3 = stan::math::abs(complex_1);
   EXPECT_FLOAT_EQ(result_1, std::abs(real_1));
   EXPECT_FLOAT_EQ(result_2, std::abs(int_1));
+  EXPECT_FLOAT_EQ(result_3, std::abs(complex_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
             0);
@@ -15,12 +20,16 @@ TEST(PrimScalarSigTests, abs) {
 }
 
 TEST(PrimScalarSigTests, acos) {
+  using namespace std::complex_literals;
   double real_1 = 0.4;
   int int_1 = 1;
+  std::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::acos(real_1);
   auto result_2 = stan::math::acos(int_1);
+  auto result_3 = stan::math::acos(complex_1);
   EXPECT_FLOAT_EQ(result_1, std::acos(real_1));
   EXPECT_FLOAT_EQ(result_2, std::acos(int_1));
+  EXPECT_EQ(result_3, std::acos(complex_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
             0);
@@ -28,12 +37,16 @@ TEST(PrimScalarSigTests, acos) {
 }
 
 TEST(PrimScalarSigTests, acosh) {
+  using namespace std::complex_literals;
   double real_1 = 1.4;
   int int_1 = 2;
+  std::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::acosh(real_1);
   auto result_2 = stan::math::acosh(int_1);
+  auto result_3 = stan::math::acosh(complex_1);
   EXPECT_FLOAT_EQ(result_1, std::acosh(real_1));
   EXPECT_FLOAT_EQ(result_2, std::acosh(int_1));
+  EXPECT_EQ(result_3, std::acosh(complex_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
             0);
@@ -41,12 +54,16 @@ TEST(PrimScalarSigTests, acosh) {
 }
 
 TEST(PrimScalarSigTests, asin) {
+  using namespace std::complex_literals;
   double real_1 = 0.4;
   int int_1 = 1;
+  std::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::asin(real_1);
   auto result_2 = stan::math::asin(int_1);
+  auto result_3 = stan::math::asin(complex_1);
   EXPECT_FLOAT_EQ(result_1, std::asin(real_1));
   EXPECT_FLOAT_EQ(result_2, std::asin(int_1));
+  EXPECT_EQ(result_3, std::asin(complex_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
             0);
@@ -54,12 +71,16 @@ TEST(PrimScalarSigTests, asin) {
 }
 
 TEST(PrimScalarSigTests, asinh) {
+  using namespace std::complex_literals;
   double real_1 = 0.4;
   int int_1 = 2;
+  std::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::asinh(real_1);
   auto result_2 = stan::math::asinh(int_1);
+  auto result_3 = stan::math::asinh(complex_1);
   EXPECT_FLOAT_EQ(result_1, std::asinh(real_1));
   EXPECT_FLOAT_EQ(result_2, std::asinh(int_1));
+  EXPECT_EQ(result_3, std::asinh(complex_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
             0);
@@ -67,12 +88,16 @@ TEST(PrimScalarSigTests, asinh) {
 }
 
 TEST(PrimScalarSigTests, atan) {
+  using namespace std::complex_literals;
   double real_1 = 0.4;
   int int_1 = 2;
+  std::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::atan(real_1);
   auto result_2 = stan::math::atan(int_1);
+  auto result_3 = stan::math::atan(complex_1);
   EXPECT_FLOAT_EQ(result_1, std::atan(real_1));
   EXPECT_FLOAT_EQ(result_2, std::atan(int_1));
+  EXPECT_EQ(result_3, std::atan(complex_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
             0);
@@ -80,12 +105,16 @@ TEST(PrimScalarSigTests, atan) {
 }
 
 TEST(PrimScalarSigTests, atanh) {
+  using namespace std::complex_literals;
   double real_1 = 0.4;
   int int_1 = 1;
+  std::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::atanh(real_1);
   auto result_2 = stan::math::atanh(int_1);
+  auto result_3 = stan::math::atanh(complex_1);
   EXPECT_FLOAT_EQ(result_1, std::atanh(real_1));
   EXPECT_FLOAT_EQ(result_2, std::atanh(int_1));
+  EXPECT_EQ(result_3, std::atanh(complex_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
             0);
@@ -119,12 +148,16 @@ TEST(PrimScalarSigTests, ceil) {
 }
 
 TEST(PrimScalarSigTests, cos) {
+  using namespace std::complex_literals;
   double real_1 = 0.4;
   int int_1 = 2;
+  std::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::cos(real_1);
   auto result_2 = stan::math::cos(int_1);
+  auto result_3 = stan::math::cos(complex_1);
   EXPECT_FLOAT_EQ(result_1, std::cos(real_1));
   EXPECT_FLOAT_EQ(result_2, std::cos(int_1));
+  EXPECT_EQ(result_3, std::cos(complex_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
             0);
@@ -132,12 +165,16 @@ TEST(PrimScalarSigTests, cos) {
 }
 
 TEST(PrimScalarSigTests, cosh) {
+  using namespace std::complex_literals;
   double real_1 = 0.4;
   int int_1 = 2;
+  std::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::cosh(real_1);
   auto result_2 = stan::math::cosh(int_1);
+  auto result_3 = stan::math::cosh(complex_1);
   EXPECT_FLOAT_EQ(result_1, std::cosh(real_1));
   EXPECT_FLOAT_EQ(result_2, std::cosh(int_1));
+  EXPECT_EQ(result_3, std::cosh(complex_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
             0);
@@ -171,12 +208,16 @@ TEST(PrimScalarSigTests, erfc) {
 }
 
 TEST(PrimScalarSigTests, exp) {
+  using namespace std::complex_literals;
   double real_1 = 0.4;
   int int_1 = 2;
+  std::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::exp(real_1);
   auto result_2 = stan::math::exp(int_1);
+  auto result_3 = stan::math::exp(complex_1);
   EXPECT_FLOAT_EQ(result_1, std::exp(real_1));
   EXPECT_FLOAT_EQ(result_2, std::exp(int_1));
+  EXPECT_EQ(result_3, std::exp(complex_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
             0);
@@ -249,12 +290,16 @@ TEST(PrimScalarSigTests, lgamma) {
 }
 
 TEST(PrimScalarSigTests, log) {
+  using namespace std::complex_literals;
   double real_1 = 0.4;
   int int_1 = 2;
+  std::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::log(real_1);
   auto result_2 = stan::math::log(int_1);
+  auto result_3 = stan::math::log(complex_1); 
   EXPECT_FLOAT_EQ(result_1, std::log(real_1));
   EXPECT_FLOAT_EQ(result_2, std::log(int_1));
+  EXPECT_EQ(result_3, std::log(complex_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
             0);
@@ -262,12 +307,16 @@ TEST(PrimScalarSigTests, log) {
 }
 
 TEST(PrimScalarSigTests, log10) {
+  using namespace std::complex_literals;
   double real_1 = 0.4;
   int int_1 = 2;
+  std::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::log10(real_1);
   auto result_2 = stan::math::log10(int_1);
+  auto result_3 = stan::math::log10(complex_1); 
   EXPECT_FLOAT_EQ(result_1, std::log10(real_1));
   EXPECT_FLOAT_EQ(result_2, std::log10(int_1));
+  EXPECT_EQ(result_3, std::log10(complex_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
             0);
@@ -314,12 +363,16 @@ TEST(PrimScalarSigTests, round) {
 }
 
 TEST(PrimScalarSigTests, sin) {
+  using namespace std::complex_literals;
   double real_1 = 0.4;
   int int_1 = 2;
+  std::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::sin(real_1);
   auto result_2 = stan::math::sin(int_1);
+  auto result_3 = stan::math::sin(complex_1); 
   EXPECT_FLOAT_EQ(result_1, std::sin(real_1));
   EXPECT_FLOAT_EQ(result_2, std::sin(int_1));
+  EXPECT_EQ(result_3, std::sin(complex_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
             0);
@@ -327,12 +380,16 @@ TEST(PrimScalarSigTests, sin) {
 }
 
 TEST(PrimScalarSigTests, sinh) {
+  using namespace std::complex_literals;
   double real_1 = 0.4;
   int int_1 = 2;
+  std::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::sinh(real_1);
   auto result_2 = stan::math::sinh(int_1);
+  auto result_3 = stan::math::sinh(complex_1); 
   EXPECT_FLOAT_EQ(result_1, std::sinh(real_1));
   EXPECT_FLOAT_EQ(result_2, std::sinh(int_1));
+  EXPECT_EQ(result_3, std::sinh(complex_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
             0);
@@ -340,12 +397,16 @@ TEST(PrimScalarSigTests, sinh) {
 }
 
 TEST(PrimScalarSigTests, sqrt) {
+  using namespace std::complex_literals;
   double real_1 = 0.4;
   int int_1 = 2;
+  std::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::sqrt(real_1);
   auto result_2 = stan::math::sqrt(int_1);
+  auto result_3 = stan::math::sqrt(complex_1); 
   EXPECT_FLOAT_EQ(result_1, std::sqrt(real_1));
   EXPECT_FLOAT_EQ(result_2, std::sqrt(int_1));
+  EXPECT_EQ(result_3, std::sqrt(complex_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
             0);
@@ -353,12 +414,16 @@ TEST(PrimScalarSigTests, sqrt) {
 }
 
 TEST(PrimScalarSigTests, tan) {
+  using namespace std::complex_literals;
   double real_1 = 0.4;
   int int_1 = 2;
+  std::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::tan(real_1);
   auto result_2 = stan::math::tan(int_1);
+  auto result_3 = stan::math::tan(complex_1); 
   EXPECT_FLOAT_EQ(result_1, std::tan(real_1));
   EXPECT_FLOAT_EQ(result_2, std::tan(int_1));
+  EXPECT_EQ(result_3, std::tan(complex_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
             0);
@@ -366,12 +431,16 @@ TEST(PrimScalarSigTests, tan) {
 }
 
 TEST(PrimScalarSigTests, tanh) {
+  using namespace std::complex_literals;
   double real_1 = 0.4;
   int int_1 = 2;
+  std::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::tanh(real_1);
   auto result_2 = stan::math::tanh(int_1);
+  auto result_3 = stan::math::tanh(complex_1); 
   EXPECT_FLOAT_EQ(result_1, std::tanh(real_1));
   EXPECT_FLOAT_EQ(result_2, std::tanh(int_1));
+  EXPECT_EQ(result_3, std::tanh(complex_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
             0);
