@@ -106,7 +106,7 @@ O ?= 3
 
 ## setup includes
 INC ?= $(INC_FIRST) -I $(if $(MATH),$(MATH),.) -I $(EIGEN) -I $(BOOST) $(INC_SUNDIALS)
-INC_SUNDIALS ?= -I $(SUNDIALS)/include
+INC_SUNDIALS ?= -I $(SUNDIALS)/include -I $(SUNDIALS)/src/sundials
 INC_GTEST ?= -I $(GTEST)/include -I $(GTEST)
 
 ## setup precompiler options
@@ -251,7 +251,7 @@ else
 CXXFLAGS_TBB ?= -I $(TBB)/include
 endif
 
-LDFLAGS_TBB ?= -Wl,-L,"$(TBB_LIB)" -Wl,-rpath,"$(TBB_LIB)" -ltbb
+LDFLAGS_TBB ?= -Wl,-L,"$(TBB_LIB)" -Wl,-rpath,"$(TBB_LIB)" -Wl,--disable-new-dtags -ltbb
 LDLIBS_TBB ?= $(LDFLAGS_TBB)
 
 else

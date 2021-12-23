@@ -6,7 +6,6 @@
 #include <test/unit/util.hpp>
 #include <Eigen/Dense>
 #include <gtest/gtest.h>
-#include <CL/cl2.hpp>
 #include <exception>
 
 using Eigen::MatrixXd;
