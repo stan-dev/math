@@ -318,7 +318,7 @@ TEST(PrimScalarSigTests, log) {
   std::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::log(real_1);
   auto result_2 = stan::math::log(int_1);
-  auto result_3 = stan::math::log(complex_1); 
+  auto result_3 = stan::math::log(complex_1);
   EXPECT_FLOAT_EQ(result_1, std::log(real_1));
   EXPECT_FLOAT_EQ(result_2, std::log(int_1));
   EXPECT_EQ(result_3, std::log(complex_1));
@@ -335,7 +335,7 @@ TEST(PrimScalarSigTests, log10) {
   std::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::log10(real_1);
   auto result_2 = stan::math::log10(int_1);
-  auto result_3 = stan::math::log10(complex_1); 
+  auto result_3 = stan::math::log10(complex_1);
   EXPECT_FLOAT_EQ(result_1, std::log10(real_1));
   EXPECT_FLOAT_EQ(result_2, std::log10(int_1));
   EXPECT_EQ(result_3, std::log10(complex_1));
@@ -413,7 +413,7 @@ TEST(PrimScalarSigTests, sin) {
   std::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::sin(real_1);
   auto result_2 = stan::math::sin(int_1);
-  auto result_3 = stan::math::sin(complex_1); 
+  auto result_3 = stan::math::sin(complex_1);
   EXPECT_FLOAT_EQ(result_1, std::sin(real_1));
   EXPECT_FLOAT_EQ(result_2, std::sin(int_1));
   EXPECT_EQ(result_3, std::sin(complex_1));
@@ -430,7 +430,7 @@ TEST(PrimScalarSigTests, sinh) {
   std::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::sinh(real_1);
   auto result_2 = stan::math::sinh(int_1);
-  auto result_3 = stan::math::sinh(complex_1); 
+  auto result_3 = stan::math::sinh(complex_1);
   EXPECT_FLOAT_EQ(result_1, std::sinh(real_1));
   EXPECT_FLOAT_EQ(result_2, std::sinh(int_1));
   EXPECT_EQ(result_3, std::sinh(complex_1));
@@ -447,7 +447,7 @@ TEST(PrimScalarSigTests, sqrt) {
   std::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::sqrt(real_1);
   auto result_2 = stan::math::sqrt(int_1);
-  auto result_3 = stan::math::sqrt(complex_1); 
+  auto result_3 = stan::math::sqrt(complex_1);
   EXPECT_FLOAT_EQ(result_1, std::sqrt(real_1));
   EXPECT_FLOAT_EQ(result_2, std::sqrt(int_1));
   EXPECT_EQ(result_3, std::sqrt(complex_1));
@@ -464,7 +464,7 @@ TEST(PrimScalarSigTests, tan) {
   std::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::tan(real_1);
   auto result_2 = stan::math::tan(int_1);
-  auto result_3 = stan::math::tan(complex_1); 
+  auto result_3 = stan::math::tan(complex_1);
   EXPECT_FLOAT_EQ(result_1, std::tan(real_1));
   EXPECT_FLOAT_EQ(result_2, std::tan(int_1));
   EXPECT_EQ(result_3, std::tan(complex_1));
@@ -481,7 +481,7 @@ TEST(PrimScalarSigTests, tanh) {
   std::complex<double> complex_1 = 1. + 2.0i;
   auto result_1 = stan::math::tanh(real_1);
   auto result_2 = stan::math::tanh(int_1);
-  auto result_3 = stan::math::tanh(complex_1); 
+  auto result_3 = stan::math::tanh(complex_1);
   EXPECT_FLOAT_EQ(result_1, std::tanh(real_1));
   EXPECT_FLOAT_EQ(result_2, std::tanh(int_1));
   EXPECT_EQ(result_3, std::tanh(complex_1));

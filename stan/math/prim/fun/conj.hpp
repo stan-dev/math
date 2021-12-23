@@ -5,7 +5,7 @@
 
 namespace stan {
 namespace math {
-  
+
 /**
  * Return the complex conjugate the complex argument.
  *
