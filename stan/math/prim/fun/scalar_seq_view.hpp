@@ -30,6 +30,7 @@ class scalar_seq_view<C, require_eigen_vector_t<C>> {
    * @return the element at the specified position in the container
    */
   inline auto operator[](size_t i) const { return c_.coeff(i); }
+  inline auto& operator[](size_t i) { return c_.coeffRef(i); }
 
   inline auto size() const noexcept { return c_.size(); }
 

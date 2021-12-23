@@ -84,7 +84,7 @@ return_type_t<T_y, T_shape, T_inv_scale> gamma_lpdf(const T_y& y,
 
   scalar_seq_view<decltype(y_val)> y_vec(y_val);
   for (size_t n = 0; n < stan::math::size(y); n++) {
-    if (y_vec[n] < 0) {
+    if (y_vec.val(n) < 0) {
       return LOG_ZERO;
     }
   }
