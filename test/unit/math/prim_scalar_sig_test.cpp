@@ -53,6 +53,17 @@ TEST(PrimScalarSigTests, acosh) {
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
 }
 
+TEST(PrimScalarSigTests, arg) {
+  using namespace std::complex_literals;
+  std::complex<double> complex_1 = 1. + 2.0i;
+  auto result_1 = stan::math::arg(complex_1);
+  EXPECT_EQ(result_1, std::arg(complex_1));
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
+}
+
 TEST(PrimScalarSigTests, asin) {
   using namespace std::complex_literals;
   double real_1 = 0.4;
@@ -141,6 +152,17 @@ TEST(PrimScalarSigTests, ceil) {
   auto result_2 = stan::math::ceil(int_1);
   EXPECT_FLOAT_EQ(result_1, std::ceil(real_1));
   EXPECT_FLOAT_EQ(result_2, std::ceil(int_1));
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
+}
+
+TEST(PrimScalarSigTests, conj) {
+  using namespace std::complex_literals;
+  std::complex<double> complex_1 = 1. + 2.0i;
+  auto result_1 = stan::math::conj(complex_1);
+  EXPECT_EQ(result_1, std::conj(complex_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
             0);
@@ -343,6 +365,28 @@ TEST(PrimScalarSigTests, log2) {
   auto result_2 = stan::math::log2(int_1);
   EXPECT_FLOAT_EQ(result_1, std::log2(real_1));
   EXPECT_FLOAT_EQ(result_2, std::log2(int_1));
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
+}
+
+TEST(PrimScalarSigTests, norm) {
+  using namespace std::complex_literals;
+  std::complex<double> complex_1 = 1. + 2.0i;
+  auto result_1 = stan::math::norm(complex_1);
+  EXPECT_EQ(result_1, std::norm(complex_1));
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
+            0);
+  EXPECT_EQ(stan::math::ChainableStack::instance_->var_alloc_stack_.size(), 0);
+}
+
+TEST(PrimScalarSigTests, proj) {
+  using namespace std::complex_literals;
+  std::complex<double> complex_1 = 1. + 2.0i;
+  auto result_1 = stan::math::proj(complex_1);
+  EXPECT_EQ(result_1, std::proj(complex_1));
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_stack_.size(), 0);
   EXPECT_EQ(stan::math::ChainableStack::instance_->var_nochain_stack_.size(),
             0);
