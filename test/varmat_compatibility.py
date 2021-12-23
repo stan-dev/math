@@ -4,7 +4,7 @@ import itertools
 import json
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 import os
-import queue as Queue
+import Queue
 import subprocess
 import re
 import sys
