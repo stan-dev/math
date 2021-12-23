@@ -41,8 +41,8 @@ inline complex_return_t<U, V> complex_pow(const U& x, const V& y) {
  */
 template <typename T1, typename T2,
           require_all_t<
-          disjunction<is_complex<T1>, std::is_arithmetic<T1>>,
-          disjunction<is_complex<T2>, std::is_arithmetic<T2>>>* = nullptr>
+              disjunction<is_complex<T1>, std::is_arithmetic<T1>>,
+              disjunction<is_complex<T2>, std::is_arithmetic<T2>>>* = nullptr>
 inline auto pow(const T1& a, const T2& b) {
   return std::pow(a, b);
 }
