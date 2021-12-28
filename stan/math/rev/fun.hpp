@@ -97,6 +97,7 @@
 #include <stan/math/rev/fun/ldexp.hpp>
 #include <stan/math/rev/fun/lgamma.hpp>
 #include <stan/math/rev/fun/lmgamma.hpp>
+#include <stan/math/rev/fun/lmultiply.hpp>
 #include <stan/math/rev/fun/log.hpp>
 #include <stan/math/rev/fun/log10.hpp>
 #include <stan/math/rev/fun/log1m.hpp>

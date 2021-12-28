@@ -6,6 +6,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/to_array_1d.hpp>
 #include <stan/math/prim/fun/to_vector.hpp>
+#include <sundials/sundials_context.h>
 #include <kinsol/kinsol.h>
 #include <sunmatrix/sunmatrix_dense.h>
 #include <sunlinsol/sunlinsol_dense.h>
@@ -68,29 +69,24 @@ Eigen::VectorXd kinsol_solve(const F1& f, const Eigen::VectorXd& x,
   typedef kinsol_system_data<F1, Args...> system_data;
   system_data kinsol_data(f, x, msgs, args...);
 
-  check_flag_sundials(KINInit(kinsol_data.kinsol_memory_,
-                              &system_data::kinsol_f_system, kinsol_data.nv_x_),
-                      "KINInit");
+  CHECK_KINSOL_CALL(KINInit(kinsol_data.kinsol_memory_,
+                            &system_data::kinsol_f_system, kinsol_data.nv_x_));
 
-  N_Vector scaling = N_VNew_Serial(N);
-  N_Vector nv_x = N_VNew_Serial(N);
+  N_Vector scaling = N_VNew_Serial(N, kinsol_data.sundials_context_);
+  N_Vector nv_x = N_VNew_Serial(N, kinsol_data.sundials_context_);
   Eigen::VectorXd x_solution(N);
 
   try {
     N_VConst_Serial(1.0, scaling);  // no scaling
 
-    check_flag_sundials(
-        KINSetNumMaxIters(kinsol_data.kinsol_memory_, max_num_steps),
-        "KINSetNumMaxIters");
-    check_flag_sundials(
-        KINSetFuncNormTol(kinsol_data.kinsol_memory_, function_tolerance),
-        "KINSetFuncNormTol");
-    check_flag_sundials(
-        KINSetScaledStepTol(kinsol_data.kinsol_memory_, scaling_step_tol),
-        "KINSetScaledStepTol");
-    check_flag_sundials(
-        KINSetMaxSetupCalls(kinsol_data.kinsol_memory_, steps_eval_jacobian),
-        "KINSetMaxSetupCalls");
+    CHECK_KINSOL_CALL(
+        KINSetNumMaxIters(kinsol_data.kinsol_memory_, max_num_steps));
+    CHECK_KINSOL_CALL(
+        KINSetFuncNormTol(kinsol_data.kinsol_memory_, function_tolerance));
+    CHECK_KINSOL_CALL(
+        KINSetScaledStepTol(kinsol_data.kinsol_memory_, scaling_step_tol));
+    CHECK_KINSOL_CALL(
+        KINSetMaxSetupCalls(kinsol_data.kinsol_memory_, steps_eval_jacobian));
 
     // CHECK
     // The default value is 1000 * ||u_0||_D where ||u_0|| is the initial guess.
@@ -98,29 +94,25 @@ Eigen::VectorXd kinsol_solve(const F1& f, const Eigen::VectorXd& x,
     // If the norm is non-zero, use kinsol's default (accessed with 0),
     // else use the dimension of x -- CHECK - find optimal length.
     double max_newton_step = (x.norm() == 0) ? x.size() : 0;
-    check_flag_sundials(
-        KINSetMaxNewtonStep(kinsol_data.kinsol_memory_, max_newton_step),
-        "KINSetMaxNewtonStep");
-    check_flag_sundials(KINSetUserData(kinsol_data.kinsol_memory_,
-                                       static_cast<void*>(&kinsol_data)),
-                        "KINSetUserData");
+    CHECK_KINSOL_CALL(
+        KINSetMaxNewtonStep(kinsol_data.kinsol_memory_, max_newton_step));
+    CHECK_KINSOL_CALL(KINSetUserData(kinsol_data.kinsol_memory_,
+                                     static_cast<void*>(&kinsol_data)));
 
     // construct Linear solver
-    check_flag_sundials(KINSetLinearSolver(kinsol_data.kinsol_memory_,
-                                           kinsol_data.LS_, kinsol_data.J_),
-                        "KINSetLinearSolver");
+    CHECK_KINSOL_CALL(KINSetLinearSolver(kinsol_data.kinsol_memory_,
+                                         kinsol_data.LS_, kinsol_data.J_));
 
     if (custom_jacobian)
-      check_flag_sundials(KINSetJacFn(kinsol_data.kinsol_memory_,
-                                      &system_data::kinsol_jacobian),
-                          "KINSetJacFn");
+      CHECK_KINSOL_CALL(KINSetJacFn(kinsol_data.kinsol_memory_,
+                                    &system_data::kinsol_jacobian));
 
     for (int i = 0; i < N; i++)
       NV_Ith_S(nv_x, i) = x(i);
 
-    check_flag_kinsol(KINSol(kinsol_data.kinsol_memory_, nv_x,
-                             global_line_search, scaling, scaling),
-                      max_num_steps);
+    kinsol_check(KINSol(kinsol_data.kinsol_memory_, nv_x, global_line_search,
+                        scaling, scaling),
+                 "KINSol", max_num_steps);
 
     for (int i = 0; i < N; i++)
       x_solution(i) = NV_Ith_S(nv_x, i);
