@@ -11,8 +11,18 @@
 #include <test/unit/math/prim/prob/VectorIntRNGTestRig.hpp>
 #include <algorithm>
 #include <map>
+#include <random>
 #include <tuple>
 #include <vector>
+
+namespace internal {
+template <class C>
+void shuffle_container(C& x) {
+  std::random_device rng;
+  std::mt19937 twister(rng());
+  std::shuffle(x.begin(), x.end(), twister);
+}
+}  // namespace internal
 
 using ArgumentTypes
     = std::tuple<int, double, std::vector<int>, std::vector<double>,
@@ -190,9 +200,9 @@ struct check_dist_throws {
 
     // Try a few combinations of parameters that should work
     for (int i = 0; i < 5; i++) {
-      std::random_shuffle(good_p1.begin(), good_p1.end());
-      std::random_shuffle(good_p2.begin(), good_p2.end());
-      std::random_shuffle(good_p3.begin(), good_p3.end());
+      internal::shuffle_container(good_p1);
+      internal::shuffle_container(good_p2);
+      internal::shuffle_container(good_p3);
       assign_parameter_values(p1, good_p1);
       assign_parameter_values(p2, good_p2);
       assign_parameter_values(p3, good_p3);

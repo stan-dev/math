@@ -138,6 +138,7 @@ void test_gradient(const ad_tolerances& tols, const F& f,
                   grad_ad, tols.gradient_grad_);
 }
 
+#ifndef STAN_MATH_TESTS_REV_ONLY
 /**
  * Tests that the specified function applied to the specified argument
  * yields the values and gradients consistent with finite differences
@@ -309,6 +310,7 @@ void test_grad_hessian(const ad_tolerances& tols, const F& f,
     expect_near_rel("grad_hessian() grad Hessian", grad_H_fd[i], grad_H_ad[i],
                     tols.grad_hessian_grad_hessian_);
 }
+#endif
 
 /**
  * For the specified functor and argument, test that automatic
@@ -332,10 +334,12 @@ void expect_ad_derivatives(const ad_tolerances& tols, const G& g,
                            const Eigen::VectorXd& x) {
   double gx = g(x);
   test_gradient(tols, g, x, gx);
+#ifndef STAN_MATH_TESTS_REV_ONLY
   test_gradient_fvar(tols, g, x, gx);
   test_hessian(tols, g, x, gx);
   test_hessian_fvar(tols, g, x, gx);
   test_grad_hessian(tols, g, x, gx);
+#endif
 }
 
 /**
@@ -379,10 +383,12 @@ void expect_all_throw(const F& f, const Eigen::VectorXd& x) {
   using stan::math::var;
   expect_throw<double>(f, x, "double");
   expect_throw<var>(f, x, "var");
+#ifndef STAN_MATH_TESTS_REV_ONLY
   expect_throw<fvar<double>>(f, x, "fvar<double>");
   expect_throw<fvar<fvar<double>>>(f, x, "fvar<fvar<double>>");
   expect_throw<fvar<var>>(f, x, "fvar<var>");
   expect_throw<fvar<fvar<var>>>(f, x, "fvar<fvar<var>>");
+#endif
 }
 
 /**

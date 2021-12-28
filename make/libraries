@@ -12,7 +12,7 @@ BOOST ?= $(MATH)lib/boost_1.75.0
 EIGEN ?= $(MATH)lib/eigen_3.3.9
 OPENCL ?= $(MATH)lib/opencl_3.0.0
 TBB ?= $(MATH)lib/tbb_2020.3
-SUNDIALS ?= $(MATH)lib/sundials_5.7.0
+SUNDIALS ?= $(MATH)lib/sundials_6.0.0
 BENCHMARK ?= $(MATH)lib/benchmark_1.5.1
 GTEST ?= $(BENCHMARK)/googletest/googletest
 CPPLINT ?= $(MATH)lib/cpplint_1.4.5
@@ -26,7 +26,7 @@ CPPLINT ?= $(MATH)lib/cpplint_1.4.5
 
 SUNDIALS_CVODES := $(patsubst %.c,%.o,\
   $(wildcard $(SUNDIALS)/src/cvodes/*.c) \
-  $(wildcard $(SUNDIALS)/src/sundials/*.c) \
+  $(filter-out $(SUNDIALS)/src/sundials/sundials_profiler.c, $(wildcard $(SUNDIALS)/src/sundials/*.c)) \
   $(wildcard $(SUNDIALS)/src/sunmatrix/band/[^f]*.c) \
   $(wildcard $(SUNDIALS)/src/sunmatrix/dense/[^f]*.c) \
   $(wildcard $(SUNDIALS)/src/sunlinsol/band/[^f]*.c) \
@@ -36,7 +36,7 @@ SUNDIALS_CVODES := $(patsubst %.c,%.o,\
 
 SUNDIALS_IDAS := $(patsubst %.c,%.o,\
   $(wildcard $(SUNDIALS)/src/idas/*.c) \
-  $(wildcard $(SUNDIALS)/src/sundials/*.c) \
+  $(filter-out $(SUNDIALS)/src/sundials/sundials_profiler.c, $(wildcard $(SUNDIALS)/src/sundials/*.c)) \
   $(wildcard $(SUNDIALS)/src/sunmatrix/band/[^f]*.c) \
   $(wildcard $(SUNDIALS)/src/sunmatrix/dense/[^f]*.c) \
   $(wildcard $(SUNDIALS)/src/sunlinsol/band/[^f]*.c) \
@@ -46,7 +46,7 @@ SUNDIALS_IDAS := $(patsubst %.c,%.o,\
 
 SUNDIALS_KINSOL := $(patsubst %.c,%.o, \
   $(wildcard $(SUNDIALS)/src/kinsol/*.c) \
-  $(wildcard $(SUNDIALS)/src/sundials/*.c) \
+  $(filter-out $(SUNDIALS)/src/sundials/sundials_profiler.c, $(wildcard $(SUNDIALS)/src/sundials/*.c)) \
   $(wildcard $(SUNDIALS)/src/sunmatrix/band/[^f]*.c) \
   $(wildcard $(SUNDIALS)/src/sunmatrix/dense/[^f]*.c) \
   $(wildcard $(SUNDIALS)/src/sunlinsol/band/[^f]*.c) \
