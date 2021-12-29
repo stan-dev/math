@@ -48,7 +48,7 @@ inline var norm2(const T& v) {
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline var norm2(const T& v) {
-  var res (sqrt(v.val().array().square().sum()));
+  var res = sqrt(v.val().array().square().sum());
 
   reverse_pass_callback(
       [res, v]() mutable {
