@@ -20,8 +20,8 @@ namespace math {
  * The derivative is defined by
  *
  * \f$\frac{d}{dx} \tan x = \sec^2 x\f$.
- * 
- * Where we use the trig identity 
+ *
+ * Where we use the trig identity
  *
  * \f$ \tan^2 x + 1 = \sec^2 x\f$.
  *
