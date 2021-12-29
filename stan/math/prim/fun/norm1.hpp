@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_FUN_DOT_SELF_HPP
-#define STAN_MATH_PRIM_FUN_DOT_SELF_HPP
+#ifndef STAN_MATH_PRIM_FUN_NORM1_HPP
+#define STAN_MATH_PRIM_FUN_NORM1_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
@@ -10,25 +10,26 @@
 namespace stan {
 namespace math {
 
-inline double dot_self(const std::vector<double>& x) {
-  double sum = 0.0;
+inline double norm1(const std::vector<double>& x) {
+  double norm = 0.0;
   for (double i : x) {
-    sum += i * i;
+    norm += std::abs(i);
   }
-  return sum;
+  return norm;
 }
 
 /**
- * Returns squared norm of a vector or matrix. For vectors that equals the dot
- * product of the specified vector with itself.
+ * Returns L1 norm of a vector. For vectors that equals the
+ * sum of magnitudes of its individual elements.
  *
  * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase)
  * @param v Vector.
+ * @return L1 norm of v.
  */
 template <typename T, require_eigen_t<T>* = nullptr,
           require_not_eigen_vt<is_var, T>* = nullptr>
-inline auto dot_self(const T& v) {
-  return v.squaredNorm();
+inline auto norm1(const T& v) {
+  return v.template lpNorm<1>();
 }
 
 }  // namespace math
