@@ -17,7 +17,7 @@ TEST(MathFunctions, norm1) {
   EXPECT_FLOAT_EQ(7.94, stan::math::norm1(y));
 }
 
-TEST(MathFunctions, dot_self_nan) {
+TEST(MathFunctions, norm1_nan) {
   std::vector<double> x(3);
   x[0] = 2.33;
   x[1] = 8.88;
