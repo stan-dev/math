@@ -13,7 +13,7 @@ namespace math {
 inline double norm2(const std::vector<double>& x) {
   double norm = 0.0;
   for (double i : x) {
-    norm += i*i;
+    norm += i * i;
   }
   norm = sqrt(norm);
   return norm;
