@@ -24,12 +24,11 @@ template <typename T, require_eigen_vector_vt<is_var, T>* = nullptr>
 inline var norm1(const T& v) {
   const auto& v_ref = to_ref(v);
   arena_t<T> arena_v(v_ref.size());
-  double res_val = 0;
+  var res(0.);
   for (size_t i = 0; i < arena_v.size(); ++i) {
     arena_v.coeffRef(i) = v_ref.coeffRef(i);
-    res_val += abs(arena_v.coeffRef(i).val());
+    res += abs(arena_v.coeffRef(i).val());
   }
-  var res(res_val);
 
   reverse_pass_callback([res, arena_v]() mutable {
     arena_v.adj().array() += res.adj() * sign(arena_v.val().array());

@@ -18,14 +18,12 @@ namespace math {
  * @param v Vector.
  * @return L1 norm of v.
  */
-template <typename Container, require_st_arithmetic<Container>* = nullptr,
-          require_container_t<Container>* = nullptr>
+template <typename Container, require_container_t<Container>* = nullptr,
+    require_not_st_var<Container>* = nullptr>
 inline auto norm1(const Container& x) {
-  check_nonzero_size("norm1", "v", x);
   return apply_vector_unary<ref_type_t<Container>>::reduce(
       to_ref(x), [](const auto& v) { return v.template lpNorm<1>(); });
 }
-
 }  // namespace math
 }  // namespace stan
 
