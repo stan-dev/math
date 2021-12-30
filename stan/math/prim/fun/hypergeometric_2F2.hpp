@@ -23,6 +23,12 @@ template <typename Ta, typename Tb, typename Tz,
           require_all_eigen_t<Ta, Tb>* = nullptr,
           require_stan_scalar_t<Tz>* = nullptr>
 double hypergeometric_2F2(const Ta& a, const Tb& b, const Tz& z) {
+  if (a.size() != 2 || b.size() != 2) {
+    std::stringstream msg;
+    msg << "Inputs to hypergeometric 2F2 do not contain two values"
+        << "a: " << a_ref << ", b: " << b_ref;
+    throw std::domain_error(msg.str());
+  }
   return hypergeometric_pFq(a, b, z);
 }
 }  // namespace math
