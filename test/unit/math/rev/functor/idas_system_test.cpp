@@ -17,6 +17,8 @@
 #include <vector>
 #include <limits>
 
+static sundials::Context sundials_context;
+
 struct chemical_kinetics {
   template <typename T0, typename TYY, typename TYP, typename TPAR>
   inline std::vector<stan::return_type_t<TYY, TYP, TPAR>> operator()(
@@ -108,9 +110,9 @@ void idas_forward_sen_test(chemical_kinetics& f, std::vector<int> eq_id,
 
   if (dae.need_sens) {
     auto sensitivity_residual = dae.sensitivity_residual();
-    auto temp1 = N_VNew_Serial(n);
-    auto temp2 = N_VNew_Serial(n);
-    auto temp3 = N_VNew_Serial(n);
+    auto temp1 = N_VNew_Serial(n, sundials_context);
+    auto temp2 = N_VNew_Serial(n, sundials_context);
+    auto temp3 = N_VNew_Serial(n, sundials_context);
     EXPECT_EQ(sensitivity_residual(ns, t, yy, yp, res, yys, yps, ress,
                                    user_data, temp1, temp2, temp3),
               0);
@@ -131,19 +133,19 @@ TEST(IDAS_DAE_SYSTEM, idas_system_io) {
   auto theta_var = stan::math::to_var(theta);
 
   {
-    N_Vector res = N_VNew_Serial(yy0.size());
+    N_Vector res = N_VNew_Serial(yy0.size(), sundials_context);
     idas_system_test(f, eq_id, yy0, yp0, theta, res);
     N_VDestroy_Serial(res);
   }
 
   {
-    N_Vector res = N_VNew_Serial(yy0.size());
+    N_Vector res = N_VNew_Serial(yy0.size(), sundials_context);
     idas_system_test(f, eq_id, yy0_var, yp0_var, theta_var, res);
     N_VDestroy_Serial(res);
   }
 
   {
-    N_Vector res = N_VNew_Serial(yy0.size());
+    N_Vector res = N_VNew_Serial(yy0.size(), sundials_context);
     idas_system_test(f, eq_id, yy0, yp0_var, theta_var, res);
     N_VDestroy_Serial(res);
   }
@@ -161,7 +163,7 @@ TEST(IDAS_DAE_SYSTEM, idas_forward_system_io) {
   const size_t n = yy0.size();
 
   {
-    N_Vector res = N_VNew_Serial(n);
+    N_Vector res = N_VNew_Serial(n, sundials_context);
     N_Vector* ress = N_VCloneVectorArray(theta.size(), res);
     idas_forward_sen_test(f, eq_id, yy0, yp0, theta, res, ress);
     N_VDestroy_Serial(res);
@@ -169,7 +171,7 @@ TEST(IDAS_DAE_SYSTEM, idas_forward_system_io) {
   }
 
   {
-    N_Vector res = N_VNew_Serial(n);
+    N_Vector res = N_VNew_Serial(n, sundials_context);
     N_Vector* ress = N_VCloneVectorArray(theta.size(), res);
     idas_forward_sen_test(f, eq_id, yy0, yp0, theta_var, res, ress);
     EXPECT_EQ(NV_Ith_S(ress[0], 0), yy0[0]);
@@ -181,7 +183,7 @@ TEST(IDAS_DAE_SYSTEM, idas_forward_system_io) {
 
   {
     size_t ns = n + n + theta.size();
-    N_Vector res = N_VNew_Serial(n);
+    N_Vector res = N_VNew_Serial(n, sundials_context);
     N_Vector* ress = N_VCloneVectorArray(ns, res);
     idas_forward_sen_test(f, eq_id, yy0_var, yp0_var, theta_var, res, ress);
     EXPECT_EQ(NV_Ith_S(ress[n + n], 0), yy0[0]);
@@ -219,7 +221,7 @@ TEST(IDAS_DAE_SYSTEM, idas_forward_system_general) {
   auto p2 = theta[1];
   auto p3 = theta[2];
 
-  N_Vector res = N_VNew_Serial(n);
+  N_Vector res = N_VNew_Serial(n, sundials_context);
   N_Vector* ress = N_VCloneVectorArray(ns, res);
   for (size_t is = 0; is < ns; is++) {
     N_VConst(RCONST(1.0), yys[is]);
@@ -235,9 +237,9 @@ TEST(IDAS_DAE_SYSTEM, idas_forward_system_general) {
     EXPECT_EQ(NV_Ith_S(res, i), fval[i]);
 
   auto sensitivity_residual = dae.sensitivity_residual();
-  auto temp1 = N_VNew_Serial(n);
-  auto temp2 = N_VNew_Serial(n);
-  auto temp3 = N_VNew_Serial(n);
+  auto temp1 = N_VNew_Serial(n, sundials_context);
+  auto temp2 = N_VNew_Serial(n, sundials_context);
+  auto temp3 = N_VNew_Serial(n, sundials_context);
   EXPECT_EQ(sensitivity_residual(ns, t, yy, yp, res, yys, yps, ress, user_data,
                                  temp1, temp2, temp3),
             0);

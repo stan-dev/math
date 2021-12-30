@@ -57,6 +57,7 @@
 #include <stan/math/fwd/fun/ldexp.hpp>
 #include <stan/math/fwd/fun/lgamma.hpp>
 #include <stan/math/fwd/fun/lmgamma.hpp>
+#include <stan/math/fwd/fun/lmultiply.hpp>
 #include <stan/math/fwd/fun/log.hpp>
 #include <stan/math/fwd/fun/log10.hpp>
 #include <stan/math/fwd/fun/log1m.hpp>
