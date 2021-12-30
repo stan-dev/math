@@ -18,16 +18,13 @@ namespace math {
  * @param v Vector.
  * @return L2 norm of v.
  */
-template <typename T, require_eigen_t<T>* = nullptr,
-          require_not_eigen_vt<is_var, T>* = nullptr>
-inline value_type_t<T> norm2(const T& v) {
-  return v.template lpNorm<2>();
-}
-
-template <typename T>
-inline T norm2(const std::vector<T>& x) {
-  Eigen::Map<const Eigen::Matrix<T, -1, 1>> v(x.data(), x.size());
-  return norm2(v);
+template <typename Container, require_st_arithmetic<Container>* = nullptr,
+    require_container_t<Container>* = nullptr>
+inline auto norm2(const Container& x) {
+  check_nonzero_size("norm2", "v", x);
+  return apply_vector_unary<ref_type_t<Container>>::reduce(
+      to_ref(x), [](const auto& v) { return v.template lpNorm<2>(); }
+      );
 }
 
 }  // namespace math

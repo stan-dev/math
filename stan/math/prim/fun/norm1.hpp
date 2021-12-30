@@ -10,7 +10,6 @@
 namespace stan {
 namespace math {
 
-
 /**
  * Returns L1 norm of a vector. For vectors that equals the
  * sum of magnitudes of its individual elements.
@@ -19,16 +18,13 @@ namespace math {
  * @param v Vector.
  * @return L1 norm of v.
  */
-template <typename T, require_eigen_t<T>* = nullptr,
-          require_not_eigen_vt<is_var, T>* = nullptr>
-inline auto norm1(const T& v) {
-  return v.template lpNorm<1>();
-}
-
-template <typename T>
-inline T norm1(const std::vector<T>& x) {
-  Eigen::Map<const Eigen::Matrix<T, -1, 1>> v(x.data(), x.size());
-  return norm1(v);
+template <typename Container, require_st_arithmetic<Container>* = nullptr,
+          require_container_t<Container>* = nullptr>
+inline auto norm1(const Container& x) {
+  check_nonzero_size("norm1", "v", x);
+  return apply_vector_unary<ref_type_t<Container>>::reduce(
+      to_ref(x), [](const auto& v) { return v.template lpNorm<1>(); }
+      );
 }
 
 }  // namespace math
