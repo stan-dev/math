@@ -32,7 +32,7 @@ inline var norm2(const T& v) {
 
   res = sqrt(res);
   reverse_pass_callback([res, arena_v]() mutable {
-  arena_v.adj().array() += res.adj() * (arena_v.val().array() / res.val());
+    arena_v.adj().array() += res.adj() * (arena_v.val().array() / res.val());
   });
 
   return res;
