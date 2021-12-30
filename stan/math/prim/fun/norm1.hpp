@@ -10,7 +10,6 @@
 namespace stan {
 namespace math {
 
-
 /**
  * Returns L1 norm of a vector. For vectors that equals the
  * sum of magnitudes of its individual elements.
