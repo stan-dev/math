@@ -10,9 +10,10 @@
 namespace stan {
 namespace math {
 
-inline double dot_self(const std::vector<double>& x) {
-  double sum = 0.0;
-  for (double i : x) {
+template <typename T>
+inline T dot_self(const std::vector<T>& x) {
+  T sum = 0.0;
+  for (auto i : x) {
     sum += i * i;
   }
   return sum;
