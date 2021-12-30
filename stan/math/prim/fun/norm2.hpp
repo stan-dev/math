@@ -10,18 +10,9 @@
 namespace stan {
 namespace math {
 
-inline double norm2(const std::vector<double>& x) {
-  double norm = 0.0;
-  for (double i : x) {
-    norm += i*i;
-  }
-  norm = sqrt(norm);
-  return norm;
-}
-
 /**
- * Returns L2 norm of a vector. For vectors that equals the
- * sum of magnitudes of its individual elements.
+ * Returns L2 norm of a vector. For vectors that equals the square-root of the
+ * sum of squares of the elements.
  *
  * @tparam T type of the vector (must be derived from \c Eigen::MatrixBase)
  * @param v Vector.
@@ -29,8 +20,14 @@ inline double norm2(const std::vector<double>& x) {
  */
 template <typename T, require_eigen_t<T>* = nullptr,
           require_not_eigen_vt<is_var, T>* = nullptr>
-inline auto norm2(const T& v) {
+inline value_type_t<T> norm2(const T& v) {
   return v.template lpNorm<2>();
+}
+
+template <typename T>
+inline T norm2(const std::vector<T>& x) {
+  Eigen::Map<const Eigen::Matrix<T, -1, 1>> v(x.data(), x.size());
+  return norm2(v);
 }
 
 }  // namespace math

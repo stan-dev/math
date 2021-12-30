@@ -5,7 +5,7 @@
 #include <vector>
 
 TEST(MathFunctions, norm2) {
-  std::vector<double> x(2), y(4);
+  std::vector<float> x(2), y(4);
   x[0] = 3;
   x[1] = 4;
 

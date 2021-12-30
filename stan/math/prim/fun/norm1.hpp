@@ -10,13 +10,6 @@
 namespace stan {
 namespace math {
 
-inline double norm1(const std::vector<double>& x) {
-  double norm = 0.0;
-  for (double i : x) {
-    norm += std::abs(i);
-  }
-  return norm;
-}
 
 /**
  * Returns L1 norm of a vector. For vectors that equals the
@@ -30,6 +23,12 @@ template <typename T, require_eigen_t<T>* = nullptr,
           require_not_eigen_vt<is_var, T>* = nullptr>
 inline auto norm1(const T& v) {
   return v.template lpNorm<1>();
+}
+
+template <typename T>
+inline T norm1(const std::vector<T>& x) {
+  Eigen::Map<const Eigen::Matrix<T, -1, 1>> v(x.data(), x.size());
+  return norm1(v);
 }
 
 }  // namespace math
