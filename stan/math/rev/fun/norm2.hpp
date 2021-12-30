@@ -32,7 +32,7 @@ inline var norm2(const T& v) {
   }
   var res(sqrt(res_val));
   reverse_pass_callback([res, arena_v]() mutable {
-    arena_v.adj().array() +=  res.adj() * (arena_v.val().array() / res.val());
+    arena_v.adj().array() += res.adj() * (arena_v.val().array() / res.val());
   });
 
   return res;
@@ -49,10 +49,9 @@ template <typename T, require_var_matrix_t<T>* = nullptr>
 inline var norm2(const T& v) {
   var res = sqrt(v.val().array().square().sum());
 
-  reverse_pass_callback(
-      [res, v]() mutable {
-        v.adj().array() += res.adj() * (v.val().array() / res.val());
-      });
+  reverse_pass_callback([res, v]() mutable {
+    v.adj().array() += res.adj() * (v.val().array() / res.val());
+  });
 
   return res;
 }
