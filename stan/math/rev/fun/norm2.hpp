@@ -24,14 +24,13 @@ template <typename T, require_eigen_vector_vt<is_var, T>* = nullptr>
 inline var norm2(const T& v) {
   const auto& v_ref = to_ref(v);
   arena_t<T> arena_v(v_ref.size());
-  double res_val = 0;
+  value_type_t<T> res_val = 0;
+
   for (size_t i = 0; i < arena_v.size(); ++i) {
     arena_v.coeffRef(i) = v_ref.coeffRef(i);
-    auto val = arena_v.coeffRef(i).val();
-    res_val += val * val;
+    res_val += square(arena_v.coeffRef(i).val());
   }
   var res(sqrt(res_val));
-
   reverse_pass_callback([res, arena_v]() mutable {
     arena_v.adj().array() +=  res.adj() * (arena_v.val().array() / res.val());
   });
