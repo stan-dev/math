@@ -38,7 +38,7 @@ inline var norm2(const T& v) {
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline var norm2(const T& v) {
-  return make_callback_vari(norm2(v.val()), [v](const auto& res) mutable{
+  return make_callback_vari(norm2(v.val()), [v](const auto& res) mutable {
     v.adj().array() += res.adj() * (v.val().array() / res.val());
   });
 }
