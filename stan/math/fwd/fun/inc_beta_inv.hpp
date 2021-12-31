@@ -87,13 +87,13 @@ inline fvar<partials_return_t<T1, T2, T3>> inc_beta_inv(const T1& a,
   T_return inv_d_(0);
 
   if(is_fvar<T1>::value) {
-    auto da1 = one_m_b * log1m_w + one_m_a * log_w;
-    auto da2 = a_val * log_w + 2 * lgamma(a_val)
+    auto da1 = exp(one_m_b * log1m_w + one_m_a * log_w);
+    auto da2 = exp(a_val * log_w + 2 * lgamma(a_val)
                   + log(F32(a_val, a_val, one_m_b, ap1, ap1, w))
-                  - 2 * lgamma(ap1);
-    auto da3 = lbeta_ab + log(inc_beta(a_val, b_val, w))
-                  + log(log_w - digamma(a_val) + digamma_apb);
-    inv_d_ += forward_as<fvar<T_return>>(a).d_ * exp(da1 + log_diff_exp(da2, da3));
+                  - 2 * lgamma(ap1));
+    auto da3 =  inc_beta(a_val, b_val, w) * exp(lbeta_ab)
+                  * (log_w - digamma(a_val) + digamma_apb);
+    inv_d_ += forward_as<fvar<T_return>>(a).d_ * da1 * (da2 - da3);
   }
 
   if(is_fvar<T2>::value) {
@@ -103,10 +103,11 @@ inline fvar<partials_return_t<T1, T2, T3>> inc_beta_inv(const T1& a,
                   - 2 * lgamma(bp1)
                   + b_val * log1m_w;
 
-    auto db3 = log(inc_beta(b_val, a_val, one_m_w)) + lbeta_ab
-                  + log(log1m_w - digamma(b_val) + digamma_apb);
+    auto db3 = inc_beta(b_val, a_val, one_m_w) * exp(lbeta_ab)
+                  * (log1m_w - digamma(b_val) + digamma_apb);
 
-    inv_d_ += forward_as<fvar<T_return>>(b).d_ * db1 * exp(log_diff_exp(db2, db3));
+
+    inv_d_ += forward_as<fvar<T_return>>(b).d_ * db1 * (exp(db2) - db3);
   }
 
   if(is_fvar<T3>::value) {

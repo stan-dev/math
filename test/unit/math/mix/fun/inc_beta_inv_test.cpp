@@ -63,9 +63,9 @@ TEST(ProbInternalMath, inc_beta_inv_fv2) {
   using stan::math::fvar;
   using stan::math::var;
   using stan::math::inc_beta_inv;
-  fvar<fvar<var>> a = 1;
-  fvar<fvar<var>> b = 2;
-  fvar<fvar<var>> p = 0.5;
+  fvar<fvar<var>> a = 2;
+  fvar<fvar<var>> b = 5;
+  fvar<fvar<var>> p = 0.1;
   a.d_ = 1.0;
   b.d_ = 1.0;
   p.d_ = 1.0;
@@ -73,7 +73,7 @@ TEST(ProbInternalMath, inc_beta_inv_fv2) {
   fvar<fvar<var>> res = inc_beta_inv(a, b, p);
   res.val_.val_.grad();
 
-  EXPECT_FLOAT_EQ(a.val_.val_.adj(), 0.287698278597);
-  EXPECT_FLOAT_EQ(b.val_.val_.adj(), -0.122532267934);
-  EXPECT_FLOAT_EQ(p.val_.val_.adj(), 0.707106781187);
+  EXPECT_FLOAT_EQ(a.val_.val_.adj(), 0.0783025374798);
+  EXPECT_FLOAT_EQ(b.val_.val_.adj(), -0.0161882044585);
+  EXPECT_FLOAT_EQ(p.val_.val_.adj(), 0.530989359806);
 }

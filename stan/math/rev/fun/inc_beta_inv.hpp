@@ -56,14 +56,14 @@ inline var inc_beta_inv(const T1& a, const T2& b, const T3& p) {
     double digamma_apb = digamma(a_val + b_val);
 
     if(!is_constant_all<T1>::value) {
-      double da1 = one_m_b * log1m_w + one_m_a * log_w;
+      double da1 = exp(one_m_b * log1m_w + one_m_a * log_w);
       double da2 = a_val * log_w + 2 * lgamma(a_val)
                    + log(F32(a_val, a_val, one_m_b, ap1, ap1, w))
                    - 2 * lgamma(ap1);
-      double da3 = lbeta_ab + log(inc_beta(a_val, b_val, w))
-                   + log(log_w - digamma(a_val) + digamma_apb);
+      double da3 = inc_beta(a_val, b_val, w) * exp(lbeta_ab)
+                   * (log_w - digamma(a_val) + digamma_apb);
 
-      forward_as<var>(a).adj() += vi.adj() * exp(da1 + log_diff_exp(da2, da3));
+      forward_as<var>(a).adj() += vi.adj() * da1 * (exp(da2) - da3);
     }
 
     if(!is_constant_all<T2>::value) {
@@ -73,10 +73,10 @@ inline var inc_beta_inv(const T1& a, const T2& b, const T3& p) {
                    - 2 * lgamma(bp1)
                    + b_val * log1m_w;
 
-      double db3 = log(inc_beta(b_val, a_val, one_m_w)) + lbeta_ab
-                   + log(log1m_w - digamma(b_val) + digamma_apb);
+      double db3 = inc_beta(b_val, a_val, one_m_w) * exp(lbeta_ab)
+                   * (log1m_w - digamma(b_val) + digamma_apb);
 
-      forward_as<var>(b).adj() += vi.adj() * db1 * exp(log_diff_exp(db2, db3));
+      forward_as<var>(b).adj() += vi.adj() * db1 * (exp(db2) - db3);
     } 
 
     if(!is_constant_all<T3>::value) {
