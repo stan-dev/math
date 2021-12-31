@@ -4,8 +4,8 @@
 
 TEST(ProbInternalMath, inc_beta_inv_fv1) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::inc_beta_inv;
+  using stan::math::var;
   double a_d = 1;
   double b_d = 2;
   double p_d = 0.5;
@@ -61,8 +61,8 @@ TEST(ProbInternalMath, inc_beta_inv_fv1) {
 
 TEST(ProbInternalMath, inc_beta_inv_fv2) {
   using stan::math::fvar;
-  using stan::math::var;
   using stan::math::inc_beta_inv;
+  using stan::math::var;
   fvar<fvar<var>> a = 2;
   fvar<fvar<var>> b = 5;
   fvar<fvar<var>> p = 0.1;

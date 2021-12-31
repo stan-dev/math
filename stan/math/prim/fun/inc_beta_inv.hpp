@@ -10,7 +10,8 @@ namespace stan {
 namespace math {
 
 /**
- * The inverse of the normalized incomplete beta function of a, b, with probability p.
+ * The inverse of the normalized incomplete beta function of a, b, with
+ * probability p.
  *
  * Used to compute the cumulative density function for the beta
  * distribution.

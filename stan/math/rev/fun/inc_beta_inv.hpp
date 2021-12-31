@@ -19,7 +19,8 @@ namespace stan {
 namespace math {
 
 /**
- * The inverse of the normalized incomplete beta function of a, b, with probability p.
+ * The inverse of the normalized incomplete beta function of a, b, with
+ * probability p.
  *
  * Used to compute the cumulative density function for the beta
  * distribution.
@@ -64,8 +65,7 @@ inline var inc_beta_inv(const T1& a, const T2& b, const T3& p) {
       double db1 = (w - 1) * exp(-b_val * log1m_w + one_m_a * log_w);
       double db2 = 2 * lgamma(b_val)
                    + log(F32(b_val, b_val, one_m_a, bp1, bp1, one_m_w))
-                   - 2 * lgamma(bp1)
-                   + b_val * log1m_w;
+                   - 2 * lgamma(bp1) + b_val * log1m_w;
 
       double db3 = inc_beta(b_val, a_val, one_m_w) * exp(lbeta_ab)
                    * (log1m_w - digamma(b_val) + digamma_apb);
@@ -74,12 +74,11 @@ inline var inc_beta_inv(const T1& a, const T2& b, const T3& p) {
     }
 
     if (!is_constant_all<T3>::value) {
-      forward_as<var>(p).adj() += vi.adj() *
-        exp(one_m_b * log1m_w + one_m_a * log_w + lbeta_ab);
+      forward_as<var>(p).adj()
+          += vi.adj() * exp(one_m_b * log1m_w + one_m_a * log_w + lbeta_ab);
     }
   });
 }
-
 
 }  // namespace math
 }  // namespace stan

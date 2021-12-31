@@ -4,8 +4,8 @@
 #include <test/unit/math/rev/util.hpp>
 
 TEST(inc_beta_inv, values) {
-  using stan::math::var;
   using stan::math::inc_beta_inv;
+  using stan::math::var;
 
   var a = 25;
   var b = 2;

@@ -49,11 +49,13 @@ namespace math {
  * @param[in] precision precision of the infinite sum. defaults to 1e-6
  * @param[in] max_steps number of steps to take. defaults to 1e5
  */
-template <typename Ta1, typename Ta2, typename Ta3,
-          typename Tb1, typename Tb2, typename Tz>
-return_type_t<Ta1, Ta2, Ta3, Tb1, Tb2, Tz>
-  F32(const Ta1& a1, const Ta2& a2, const Ta3& a3, const Tb1& b1, const Tb2& b2,
-      const Tz& z, double precision = 1e-6, int max_steps = 1e5) {
+template <typename Ta1, typename Ta2, typename Ta3, typename Tb1, typename Tb2,
+          typename Tz>
+return_type_t<Ta1, Ta2, Ta3, Tb1, Tb2, Tz> F32(const Ta1& a1, const Ta2& a2,
+                                               const Ta3& a3, const Tb1& b1,
+                                               const Tb2& b2, const Tz& z,
+                                               double precision = 1e-6,
+                                               int max_steps = 1e5) {
   check_3F2_converges("F32", a1, a2, a3, b1, b2, z);
 
   using T_return = return_type_t<Ta1, Ta2, Ta3, Tb1, Tb2, Tz>;
@@ -67,8 +69,8 @@ return_type_t<Ta1, Ta2, Ta3, Tb1, Tb2, Tz>
   double t_sign = 1.0;
 
   for (int k = 0; k <= max_steps; ++k) {
-    T_return p = (a1 + k) * (a2 + k) * (a3 + k)
-                 / ((b1 + k) * (b2 + k) * (k + 1));
+    T_return p
+        = (a1 + k) * (a2 + k) * (a3 + k) / ((b1 + k) * (b2 + k) * (k + 1));
     if (p == 0.0) {
       return t_acc;
     }
