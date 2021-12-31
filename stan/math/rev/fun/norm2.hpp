@@ -7,7 +7,6 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/sign.hpp>
-#include <vector>
 
 namespace stan {
 namespace math {
@@ -22,19 +21,11 @@ namespace math {
  */
 template <typename T, require_eigen_vector_vt<is_var, T>* = nullptr>
 inline var norm2(const T& v) {
-  const auto& v_ref = to_ref(v);
-  arena_t<T> arena_v(v_ref.size());
-  value_type_t<T> res_val = 0;
-
-  for (size_t i = 0; i < arena_v.size(); ++i) {
-    arena_v.coeffRef(i) = v_ref.coeffRef(i);
-    res_val += square(arena_v.coeffRef(i).val());
-  }
-  var res(sqrt(res_val));
+  arena_t<T> arena_v = v;
+  var res = norm2(arena_v.val());
   reverse_pass_callback([res, arena_v]() mutable {
     arena_v.adj().array() += res.adj() * (arena_v.val().array() / res.val());
   });
-
   return res;
 }
 
@@ -47,13 +38,9 @@ inline var norm2(const T& v) {
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline var norm2(const T& v) {
-  var res = sqrt(v.val().array().square().sum());
-
-  reverse_pass_callback([res, v]() mutable {
+  return make_callback_vari(norm2(v.val()), [v](const auto& res) mutable{
     v.adj().array() += res.adj() * (v.val().array() / res.val());
   });
-
-  return res;
 }
 
 }  // namespace math
