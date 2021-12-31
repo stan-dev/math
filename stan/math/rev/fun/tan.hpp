@@ -21,6 +21,9 @@ namespace math {
  *
  * \f$\frac{d}{dx} \tan x = \sec^2 x\f$.
  *
+ * Where we use the trig identity
+ *
+ * \f$ \tan^2 x + 1 = \sec^2 x\f$.
  *
    \f[
    \mbox{tan}(x) =
