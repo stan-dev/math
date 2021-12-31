@@ -4,8 +4,6 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <cstddef>
-#include <vector>
 
 namespace stan {
 namespace math {
@@ -24,6 +22,7 @@ inline auto norm1(const Container& x) {
   return apply_vector_unary<ref_type_t<Container>>::reduce(
       to_ref(x), [](const auto& v) { return v.template lpNorm<1>(); });
 }
+
 }  // namespace math
 }  // namespace stan
 
