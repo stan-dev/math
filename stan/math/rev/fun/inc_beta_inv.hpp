@@ -19,22 +19,16 @@ namespace stan {
 namespace math {
 
 /**
- * The fused multiply-add function for three variables (C99).
- * This function returns the product of the first two arguments
- * plus the third argument.
+ * The inverse of the normalized incomplete beta function of a, b, with probability p.
  *
- * The partial derivatives are
+ * Used to compute the cumulative density function for the beta
+ * distribution.
  *
- * \f$\frac{\partial}{\partial x} (x * y) + z = y\f$, and
- *
- * \f$\frac{\partial}{\partial y} (x * y) + z = x\f$, and
- *
- * \f$\frac{\partial}{\partial z} (x * y) + z = 1\f$.
- *
- * @param x First multiplicand.
- * @param y Second multiplicand.
- * @param z Summand.
- * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
+ * @param a Shape parameter a >= 0; a and b can't both be 0
+ * @param b Shape parameter b >= 0
+ * @param p Random variate. 0 <= p <= 1
+ * @throws if constraints are violated or if any argument is NaN
+ * @return The inverse of the normalized incomplete beta function.
  */
 template <typename T1, typename T2, typename T3,
           require_all_stan_scalar_t<T1, T2, T3>* = nullptr,
@@ -55,7 +49,7 @@ inline var inc_beta_inv(const T1& a, const T2& b, const T3& p) {
     double lbeta_ab = lbeta(a_val, b_val);
     double digamma_apb = digamma(a_val + b_val);
 
-    if(!is_constant_all<T1>::value) {
+    if (!is_constant_all<T1>::value) {
       double da1 = exp(one_m_b * log1m_w + one_m_a * log_w);
       double da2 = a_val * log_w + 2 * lgamma(a_val)
                    + log(F32(a_val, a_val, one_m_b, ap1, ap1, w))
@@ -66,9 +60,9 @@ inline var inc_beta_inv(const T1& a, const T2& b, const T3& p) {
       forward_as<var>(a).adj() += vi.adj() * da1 * (exp(da2) - da3);
     }
 
-    if(!is_constant_all<T2>::value) {
+    if (!is_constant_all<T2>::value) {
       double db1 = (w - 1) * exp(-b_val * log1m_w + one_m_a * log_w);
-      double db2 = 2 * lgamma(b_val) 
+      double db2 = 2 * lgamma(b_val)
                    + log(F32(b_val, b_val, one_m_a, bp1, bp1, one_m_w))
                    - 2 * lgamma(bp1)
                    + b_val * log1m_w;
@@ -77,12 +71,12 @@ inline var inc_beta_inv(const T1& a, const T2& b, const T3& p) {
                    * (log1m_w - digamma(b_val) + digamma_apb);
 
       forward_as<var>(b).adj() += vi.adj() * db1 * (exp(db2) - db3);
-    } 
+    }
 
-    if(!is_constant_all<T3>::value) {
+    if (!is_constant_all<T3>::value) {
       forward_as<var>(p).adj() += vi.adj() *
         exp(one_m_b * log1m_w + one_m_a * log_w + lbeta_ab);
-    } 
+    }
   });
 }
 

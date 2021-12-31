@@ -17,51 +17,16 @@ namespace stan {
 namespace math {
 
 /**
- * The fused multiply-add operation (C99).
+ * The inverse of the normalized incomplete beta function of a, b, with probability p.
  *
- * This double-based operation delegates to <code>fma</code>.
+ * Used to compute the cumulative density function for the beta
+ * distribution.
  *
- * The function is defined by
- *
- * <code>fma(a, b, c) = (a * b) + c</code>.
- *
- *
-   \f[
-   \mbox{fma}(x, y, z) =
-   \begin{cases}
-     x\cdot y+z & \mbox{if } -\infty\leq x, y, z \leq \infty \\[6pt]
-     \textrm{NaN} & \mbox{if } x = \textrm{NaN}
-   \end{cases}
-   \f]
-
-   \f[
-   \frac{\partial\, \mbox{fma}(x, y, z)}{\partial x} =
-   \begin{cases}
-     y & \mbox{if } -\infty\leq x, y, z \leq \infty \\[6pt]
-     \textrm{NaN} & \mbox{if } x = \textrm{NaN}
-   \end{cases}
-   \f]
-
-   \f[
-   \frac{\partial\, \mbox{fma}(x, y, z)}{\partial y} =
-   \begin{cases}
-     x & \mbox{if } -\infty\leq x, y, z \leq \infty \\[6pt]
-     \textrm{NaN} & \mbox{if } x = \textrm{NaN}
-   \end{cases}
-   \f]
-
-   \f[
-   \frac{\partial\, \mbox{fma}(x, y, z)}{\partial z} =
-   \begin{cases}
-     1 & \mbox{if } -\infty\leq x, y, z \leq \infty \\[6pt]
-     \textrm{NaN} & \mbox{if } x = \textrm{NaN}
-   \end{cases}
-   \f]
- *
- * @param x1 First value.
- * @param x2 Second value.
- * @param x3 Third value.
- * @return Product of the first two values plus the third.
+ * @param a Shape parameter a >= 0; a and b can't both be 0
+ * @param b Shape parameter b >= 0
+ * @param p Random variate. 0 <= p <= 1
+ * @throws if constraints are violated or if any argument is NaN
+ * @return The inverse of the normalized incomplete beta function.
  */
 template <typename T1, typename T2, typename T3,
           require_all_stan_scalar_t<T1, T2, T3>* = nullptr,
@@ -86,7 +51,7 @@ inline fvar<partials_return_t<T1, T2, T3>> inc_beta_inv(const T1& a,
 
   T_return inv_d_(0);
 
-  if(is_fvar<T1>::value) {
+  if (is_fvar<T1>::value) {
     auto da1 = exp(one_m_b * log1m_w + one_m_a * log_w);
     auto da2 = exp(a_val * log_w + 2 * lgamma(a_val)
                   + log(F32(a_val, a_val, one_m_b, ap1, ap1, w))
@@ -96,9 +61,9 @@ inline fvar<partials_return_t<T1, T2, T3>> inc_beta_inv(const T1& a,
     inv_d_ += forward_as<fvar<T_return>>(a).d_ * da1 * (da2 - da3);
   }
 
-  if(is_fvar<T2>::value) {
+  if (is_fvar<T2>::value) {
     auto db1 = (w - 1) * exp(-b_val * log1m_w + one_m_a * log_w);
-    auto db2 = 2 * lgamma(b_val) 
+    auto db2 = 2 * lgamma(b_val)
                   + log(F32(b_val, b_val, one_m_a, bp1, bp1, one_m_w))
                   - 2 * lgamma(bp1)
                   + b_val * log1m_w;
@@ -110,7 +75,7 @@ inline fvar<partials_return_t<T1, T2, T3>> inc_beta_inv(const T1& a,
     inv_d_ += forward_as<fvar<T_return>>(b).d_ * db1 * (exp(db2) - db3);
   }
 
-  if(is_fvar<T3>::value) {
+  if (is_fvar<T3>::value) {
     inv_d_ += forward_as<fvar<T_return>>(p).d_ *
       exp(one_m_b * log1m_w + one_m_a * log_w + lbeta_ab);
   }

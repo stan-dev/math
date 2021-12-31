@@ -28,5 +28,6 @@ TEST(AgradFwdMatrixIncBetaInv, ffd_scalar) {
 
   fvar<fvar<double>> res = inc_beta_inv(a, b, p);
 
-  EXPECT_FLOAT_EQ(res.val_.d_, 0.0428905418857 - 0.0563420377808 + 0.664919819507);
+  EXPECT_FLOAT_EQ(res.val_.d_,
+                  0.0428905418857 - 0.0563420377808 + 0.664919819507);
 }
