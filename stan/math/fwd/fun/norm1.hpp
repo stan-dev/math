@@ -24,7 +24,7 @@ namespace math {
 template <typename Container,
           require_container_st<is_fvar, Container>* = nullptr>
 inline auto norm1(const Container& x) {
-  return apply_vector_unary<ref_type_t<T>>::reduce(
+  return apply_vector_unary<ref_type_t<Container>>::reduce(
       to_ref(x), [&](const auto& v) {
         using T_fvar_inner = typename value_type_t<decltype(v)>::Scalar;
         return fvar<T_fvar_inner>(
