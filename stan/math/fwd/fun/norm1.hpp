@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_FWD_FUN_LOG_SUM_EXP_HPP
-#define STAN_MATH_FWD_FUN_LOG_SUM_EXP_HPP
+#ifndef STAN_MATH_FWD_FUN_NORM1_HPP
+#define STAN_MATH_FWD_FUN_NORM1_HPP
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
@@ -7,9 +7,8 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/norm1.hpp>
+#include <stan/math/prim/fun/sign.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
-#include <cmath>
-#include <vector>
 
 namespace stan {
 namespace math {
@@ -27,8 +26,8 @@ inline auto norm1(const Container& x) {
   return apply_vector_unary<ref_type_t<Container>>::reduce(
       to_ref(x), [&](const auto& v) {
         using T_fvar_inner = typename value_type_t<decltype(v)>::Scalar;
-        return fvar<T_fvar_inner>(norm1(v.val().array()),
-                                  v.d().array() * sign(v.val().array()));
+        return fvar<T_fvar_inner>(norm1(v.val()),
+                                  v.d().cwiseProduct(sign(v.val())).sum());
       });
 }
 

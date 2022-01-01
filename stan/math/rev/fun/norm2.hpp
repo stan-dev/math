@@ -6,7 +6,6 @@
 #include <stan/math/rev/core/typedefs.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/sign.hpp>
 
 namespace stan {
 namespace math {
