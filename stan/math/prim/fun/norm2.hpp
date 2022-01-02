@@ -16,7 +16,8 @@ namespace math {
  * @param v Vector.
  * @return L2 norm of v.
  */
-template <typename Container, require_st_arithmetic<Container>* = nullptr>
+template <typename Container, require_st_arithmetic<Container>* = nullptr,
+          require_container_t<Container>* = nullptr>
 inline auto norm2(const Container& x) {
   return apply_vector_unary<ref_type_t<Container>>::reduce(
       to_ref(x), [](const auto& v) { return v.template lpNorm<2>(); });
