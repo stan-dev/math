@@ -24,7 +24,7 @@ namespace math {
  *
  * Used to compute the cumulative density function for the beta
  * distribution.
- * 
+ *
    \f[
    \frac{\partial }{\partial a} =
     (1-w)^{1-b}w^{1-a}
