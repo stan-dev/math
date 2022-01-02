@@ -24,6 +24,26 @@ namespace math {
  *
  * Used to compute the cumulative density function for the beta
  * distribution.
+ * 
+   \f[
+   \frac{\partial }{\partial a} =
+    (1-w)^{1-b}w^{1-a}
+      \left(
+        w^a\Gamma(a)^2 {}_3\tilde{F}_2(a,a,1-b;a+1,a+1;w)
+        - B(a,b)I_w(a,b)\left(\log(w)-\psi(a) + \psi(a+b)\right)
+      \right)/;w=I_z^{-1}(a,b)
+   \f]
+   \f[
+   \frac{\partial }{\partial b} =
+    (1-w)^{-b}w^{1-a}(w-1)
+      \left(
+        (1-w)^{b}\Gamma(b)^2 {}_3\tilde{F}_2(b,b,1-a;b+1,b+1;1-w)
+        - B_{1-w}(b,a)\left(\log(1-w)-\psi(b) + \psi(a+b)\right)
+      \right)/;w=I_z^{-1}(a,b)
+   \f]
+   \f[
+   \frac{\partial }{\partial z} = (1-w)^{1-b}w^{1-a}B(a,b)/;w=I_z^{-1}(a,b)
+   \f]
  *
  * @param a Shape parameter a >= 0; a and b can't both be 0
  * @param b Shape parameter b >= 0

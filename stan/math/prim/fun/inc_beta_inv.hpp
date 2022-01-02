@@ -13,7 +13,7 @@ namespace math {
  * The inverse of the normalized incomplete beta function of a, b, with
  * probability p.
  *
- * Used to compute the cumulative density function for the beta
+ * Used to compute the inverse cumulative density function for the beta
  * distribution.
  *
  * @param a Shape parameter a >= 0; a and b can't both be 0
