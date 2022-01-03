@@ -23,9 +23,9 @@ namespace math {
  * @return The inverse of the normalized incomplete beta function.
  */
 inline double inc_beta_inv(double a, double b, double p) {
-  check_not_nan("inc_beta", "a", a);
-  check_not_nan("inc_beta", "b", b);
-  check_not_nan("inc_beta", "p", p);
+  check_not_nan("inc_beta_inv", "a", a);
+  check_not_nan("inc_beta_inv", "b", b);
+  check_not_nan("inc_beta_inv", "p", p);
   return boost::math::ibeta_inv(a, b, p, boost_policy_t<>());
 }
 
