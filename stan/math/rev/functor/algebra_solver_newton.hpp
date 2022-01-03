@@ -167,7 +167,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_newton_impl(
 
   auto f_wrt_x = [&](const auto& x) {
     return math::apply([&](const auto&... args) { return f(x, msgs, args...); },
-                 args_vals_tuple);
+                       args_vals_tuple);
   };
 
   Eigen::MatrixXd Jf_x;

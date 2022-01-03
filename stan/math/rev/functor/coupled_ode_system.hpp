@@ -125,9 +125,9 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
     for (size_t n = 0; n < N_; ++n)
       y_vars.coeffRef(n) = z[n];
 
-    Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars
-        = math::apply([&](auto&&... args) { return f_(t, y_vars, msgs_, args...); },
-                local_args_tuple_);
+    Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars = math::apply(
+        [&](auto&&... args) { return f_(t, y_vars, msgs_, args...); },
+        local_args_tuple_);
 
     check_size_match("coupled_ode_system", "dy_dt", f_y_t_vars.size(), "states",
                      N_);
@@ -189,7 +189,9 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
    *
    * @return size of the coupled system.
    */
-  inline Eigen::Index size() const { return N_ + N_ * num_y0_vars_ + N_ * num_args_vars; }
+  inline Eigen::Index size() const {
+    return N_ + N_ * num_y0_vars_ + N_ * num_args_vars;
+  }
 
   /**
    * Returns the initial state of the coupled system.

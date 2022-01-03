@@ -74,7 +74,8 @@ normal_id_glm_lpdf(const T_y_cl& y, const T_x_cl& x, const T_alpha_cl& alpha,
   const size_t M = x.cols();
 
   if (is_y_vector) {
-    check_size_match(function, "Rows of ", "x", N, "rows of ", "y", math::size(y));
+    check_size_match(function, "Rows of ", "x", N, "rows of ", "y",
+                     math::size(y));
   }
   check_size_match(function, "Columns of ", "x_cl", M, "size of ", "beta",
                    math::size(beta));

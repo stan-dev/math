@@ -17,7 +17,8 @@ namespace math {
  */
 template <typename T1, typename... Ts>
 inline constexpr Eigen::Index max_size(const T1& x1, const Ts&... xs) {
-  return std::max({static_cast<Eigen::Index>(stan::math::size(x1)), static_cast<Eigen::Index>(stan::math::size(xs))...});
+  return std::max({static_cast<Eigen::Index>(stan::math::size(x1)),
+                   static_cast<Eigen::Index>(stan::math::size(xs))...});
 }
 
 }  // namespace math
