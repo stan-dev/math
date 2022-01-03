@@ -76,9 +76,10 @@ namespace math {
             NV_Ith_S(nv_yys[i], i) = 1.0;
           }
         }
+        int n_begin = dae_type::is_var_yy0 ? n : 0;
         if (dae_type::is_var_yp0) {
           for (size_t i = 0; i < n; ++i) {
-            NV_Ith_S(nv_yps[i + n], i) = 1.0;
+            NV_Ith_S(nv_yps[i + n_begin], i) = 1.0;
           }
         }
         CHECK_IDAS_CALL(IDASensInit(mem, ns, IDA_STAGGERED,

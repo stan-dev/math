@@ -200,7 +200,7 @@ inline void cvodes_check(int flag, const char* func_name) {
    switch (flag) {
    case -1 : msg = {"IDA_TOO_MUCH_WORK"  , "The solver took mxstep internal steps but could not reach tout."}; break; //NOLINT
    case -2 : msg = {"IDA_TOO_MUCH_ACC"   , "The solver could not satisfy the accuracy demanded by the user for some internal step."}; break; //NOLINT
-   case -3 : msg = {"IDA_ERR_FAIL"       , "Error test failures occurred too many times during one inter- nal time step or minimum step size was reached."}; break; //NOLINT
+   case -3 : msg = {"IDA_ERR_FAIL"       , "Error test failures occurred too many times during one internal time step or minimum step size was reached."}; break; //NOLINT
    case -4 : msg = {"IDA_CONV_FAIL"      , "Convergence test failures occurred too many times during one internal time step or minimum step size was reached."}; break; //NOLINT
    case -5 : msg = {"IDA_LINIT_FAIL"     , "The linear solver’s initialization function failed."}; break; //NOLINT
    case -6 : msg = {"IDA_LSETUP_FAIL"    , "The linear solver’s setup function failed in an unrecoverable manner."}; break; //NOLINT
@@ -245,7 +245,7 @@ inline void idas_check(int flag, const char* func_name) {
   if (flag < 0) {
     std::ostringstream ss;
     ss << func_name << " failed with error flag " << flag << ": \n"
-       << idas_flag_msg(flag).at(1) << ".";
+       << idas_flag_msg(flag).at(1);
     if (flag == -1 || flag == -4) {
       throw std::domain_error(ss.str());
     } else {

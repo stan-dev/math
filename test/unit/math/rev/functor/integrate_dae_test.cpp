@@ -1,7 +1,7 @@
 #include <stan/math.hpp>
 #include <stan/math/rev/core.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
-#include <stan/math/rev/functor/integrate_dae.hpp>
+#include <stan/math/rev/functor/dae.hpp>
 
 #include <nvector/nvector_serial.h>
 
@@ -110,11 +110,30 @@ TEST_F(StanIntegrateDAETest, forward_sensitivity_theta) {
   std::vector<Eigen::VectorXd > yy1 = stan::math::dae_tol(f, yy0, yp0, t0, ts, 1e-5, 1e-12, 10000, nullptr, theta1, x_r, x_i);
   std::vector<Eigen::VectorXd > yy2 = stan::math::dae_tol(f, yy0, yp0, t0, ts, 1e-5, 1e-12, 10000, nullptr, theta2, x_r, x_i);
 
-  double yys_finite_diff = (yy2[3][1] - yy1[3][1]) / (2.0 * theta[0] * h);
-  stan::math::set_zero_all_adjoints();
-  std::vector<double> g;
-  yy[3][1].grad(theta_var, g);
-  EXPECT_NEAR(yys_finite_diff, g[0], 1e-6);
+  {
+    double yys_finite_diff = (yy2[3][1] - yy1[3][1]) / (2.0 * theta[0] * h);
+    stan::math::set_zero_all_adjoints();
+    std::vector<double> g;
+    yy[3][1].grad(theta_var, g);
+    EXPECT_NEAR(yys_finite_diff, g[0], 1e-6);    
+  }
+
+  {
+    double yys_finite_diff = (yy2[3][0] - yy1[3][0]) / (2.0 * theta[0] * h);
+    stan::math::set_zero_all_adjoints();
+    std::vector<double> g;
+    yy[3][0].grad(theta_var, g);
+    EXPECT_NEAR(yys_finite_diff, g[0], 1e-6);    
+  }
+
+  {
+    double yys_finite_diff = (yy2[3][2] - yy1[3][2]) / (2.0 * theta[0] * h);
+    stan::math::set_zero_all_adjoints();
+    std::vector<double> g;
+    yy[3][2].grad(theta_var, g);
+    EXPECT_NEAR(yys_finite_diff, g[0], 1e-6);    
+  }
+
 }
 
 // TEST_F(StanIntegrateDAETest, inconsistent_ic_error) {
