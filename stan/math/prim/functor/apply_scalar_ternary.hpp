@@ -24,11 +24,13 @@ namespace math {
  *
  * This base template function takes (and returns) scalars.
  *
- * @tparam T1 Type of first argument to which functor is applied.
- * @tparam T2 Type of second argument to which functor is applied.
+ * @tparam T1 Type of first scalar to which functor is applied.
+ * @tparam T2 Type of second scalar to which functor is applied.
+ * @tparam T3 Type of third scalar to which functor is applied.
  * @tparam F Type of functor to apply.
  * @param x First input to which operation is applied.
  * @param y Second input to which operation is applied.
+ * @param z Third scalar to which operation is applied.
  * @param f functor to apply to inputs.
  * @return Scalar with result of applying functor to input.
  */
@@ -39,7 +41,7 @@ inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z, const F&
 }
 
 /**
- * Specialisation for use with two Eigen inputs. Eigen's binaryExpr framework
+ * Specialisation for use with three Eigen inputs. Eigen's ternaryExpr framework
  * is used for more efficient indexing of both row- and column-major inputs
  * without separate loops.
  *
@@ -51,15 +53,31 @@ inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z, const F&
  * @param f functor to apply to Eigen input.
  * @return Eigen object with result of applying functor to inputs.
  */
-
-// matrix, matrix, matrix
 template <typename T1, typename T2, typename T3, typename F,
           require_all_eigen_t<T1, T2, T3>* = nullptr>
 inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z, const F& f) {
   return x.ternaryExpr(y, z, f);
 }
 
-// std::vector<real>, std::vector<real>, std::vector<real>
+/**
+ * Specialisation for use with (non-nested) std::vectors. Inputs are mapped
+ * to Eigen column vectors and then the result is evaluated directly into the
+ * returned std::vector (via Eigen::Map).
+ *
+ * The returned scalar type is deduced to allow for cases where the input and
+ * return scalar types differ (e.g., functions implicitly promoting
+ * integers).
+ *
+ * @tparam T1 Type of first std::vector to which functor is applied.
+ * @tparam T2 Type of second std::vector to which functor is applied.
+ * @tparam T3 Type of third std::vector to which functor is applied.
+ * @tparam F Type of functor to apply.
+ * @param x First std::vector input to which operation is applied.
+ * @param y Second std::vector input to which operation is applied.
+ * @param z Third std::vector input to which operation is applied.
+ * @param f functor to apply to std::vector inputs.
+ * @return std::vector with result of applying functor to inputs.
+ */
 template <typename T1, typename T2, typename T3, typename F,
           require_all_std_vector_vt<is_stan_scalar, T1, T2, T3>* = nullptr>
 inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z, const F& f) {
@@ -73,120 +91,6 @@ inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z, const F&
   return result;
 }
 
-// matrix, matrix, std::vector<std::vector<int>>
-template <typename T1, typename T2, typename T3, typename F,
-          require_all_eigen_matrix_dynamic_vt<is_stan_scalar, T1, T2>* = nullptr,
-          require_std_vector_vt<is_std_vector, T3>* = nullptr,
-          require_std_vector_st<std::is_integral, T3>* = nullptr>
-inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z, const F& f) {
-  if (num_elements(x) != num_elements(y) || num_elements(z) != num_elements(y)) {
-    std::ostringstream msg;
-    msg << "Inputs to vectorized ternary function must match in"
-        << " size if one is not a scalar";
-    throw std::invalid_argument(msg.str());
-  }
-  using return_st = decltype(f(x(0), y(0), z[0][0]));
-  Eigen::Matrix<return_st, Eigen::Dynamic, Eigen::Dynamic> result(x.rows(),
-                                                                  x.cols());
-  for (size_t i = 0; i < z.size(); ++i) {
-    result.row(i) = apply_scalar_ternary(x.row(i).transpose(),
-                                         y.row(i).transpose(),
-                                         as_column_vector_or_scalar(z[i]), f);
-  }
-  return result;
-}
-
-// matrix, std::vector<std::vector<int>>, matrix
-template <typename T1, typename T2, typename T3, typename F,
-          require_all_eigen_matrix_dynamic_vt<is_stan_scalar, T1, T3>* = nullptr,
-          require_std_vector_vt<is_std_vector, T2>* = nullptr,
-          require_std_vector_st<std::is_integral, T2>* = nullptr>
-inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z, const F& f) {
-  if (num_elements(x) != num_elements(y) || num_elements(z) != num_elements(y)) {
-    std::ostringstream msg;
-    msg << "Inputs to vectorized ternary function must match in"
-        << " size if one is not a scalar";
-    throw std::invalid_argument(msg.str());
-  }
-  using return_st = decltype(f(x(0), y[0][0], z(0)));
-  Eigen::Matrix<return_st, Eigen::Dynamic, Eigen::Dynamic> result(x.rows(),
-                                                                  x.cols());
-  for (size_t i = 0; i < z.size(); ++i) {
-    result.row(i) = apply_scalar_ternary(x.row(i).transpose(),
-                                         as_column_vector_or_scalar(y),
-                                         z.row(i).transpose(), f);
-  }
-  return result;
-}
-
-// matrix, std::vector<std::vector<int>>, std::vector<std::vector<int>>
-template <typename T1, typename T2, typename T3, typename F,
-          require_eigen_matrix_dynamic_vt<is_stan_scalar, T1>* = nullptr,
-          require_all_std_vector_vt<is_std_vector, T2, T3>* = nullptr,
-          require_all_std_vector_st<std::is_integral, T2, T3>* = nullptr>
-inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z, const F& f) {
-  if (num_elements(x) != num_elements(y) || num_elements(z) != num_elements(y)) {
-    std::ostringstream msg;
-    msg << "Inputs to vectorized ternary function must match in"
-        << " size if one is not a scalar";
-    throw std::invalid_argument(msg.str());
-  }
-  using return_st = decltype(f(x(0), y[0][0], z[0][0]));
-  Eigen::Matrix<return_st, Eigen::Dynamic, Eigen::Dynamic> result(x.rows(),
-                                                                  x.cols());
-  for (size_t i = 0; i < z.size(); ++i) {
-    result.row(i) = apply_scalar_ternary(x.row(i).transpose(),
-                                         as_column_vector_or_scalar(y),
-                                         as_column_vector_or_scalar(z), f);
-  }
-  return result;
-}
-
-// std::vector<std::vector<int>>, matrix, std::vector<std::vector<int>>
-template <typename T1, typename T2, typename T3, typename F,
-          require_eigen_matrix_dynamic_vt<is_stan_scalar, T2>* = nullptr,
-          require_all_std_vector_vt<is_std_vector, T1, T3>* = nullptr,
-          require_all_std_vector_st<std::is_integral, T1, T3>* = nullptr>
-inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z, const F& f) {
-  if (num_elements(x) != num_elements(y) || num_elements(z) != num_elements(y)) {
-    std::ostringstream msg;
-    msg << "Inputs to vectorized ternary function must match in"
-        << " size if one is not a scalar";
-    throw std::invalid_argument(msg.str());
-  }
-  using return_st = decltype(f(x[0][0], y(0), z[0][0]));
-  Eigen::Matrix<return_st, Eigen::Dynamic, Eigen::Dynamic> result(y.rows(),
-                                                                  y.cols());
-  for (size_t i = 0; i < z.size(); ++i) {
-    result.row(i) = apply_scalar_ternary(as_column_vector_or_scalar(x),
-                                         y.row(i).transpose(),
-                                         as_column_vector_or_scalar(z), f);
-  }
-  return result;
-}
-
-// std::vector<std::vector<int>>, std::vector<std::vector<int>>, matrix
-template <typename T1, typename T2, typename T3, typename F,
-          require_eigen_matrix_dynamic_vt<is_stan_scalar, T3>* = nullptr,
-          require_all_std_vector_vt<is_std_vector, T1, T2>* = nullptr,
-          require_all_std_vector_st<std::is_integral, T1, T2>* = nullptr>
-inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z, const F& f) {
-  if (num_elements(x) != num_elements(y) || num_elements(z) != num_elements(y)) {
-    std::ostringstream msg;
-    msg << "Inputs to vectorized ternary function must match in"
-        << " size if one is not a scalar";
-    throw std::invalid_argument(msg.str());
-  }
-  using return_st = decltype(f(x[0][0], y[0][0], z(0)));
-  Eigen::Matrix<return_st, Eigen::Dynamic, Eigen::Dynamic> result(z.rows(),
-                                                                  z.cols());
-  for (size_t i = 0; i < z.size(); ++i) {
-    result.row(i) = apply_scalar_ternary(as_column_vector_or_scalar(x),
-                                         as_column_vector_or_scalar(y),
-                                         z.row(i).transpose(), f);
-  }
-  return result;
-}
 
 // T1 Container
 template <typename T1, typename T2, typename T3, typename F,
@@ -209,7 +113,7 @@ template <typename T1, typename T2, typename T3, typename F,
 inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z, const F& f) {
   return apply_scalar_binary(x, y, [&](const auto& a, const auto& b) {
     return f(a, b, z);
-  }).eval();
+  });
 }
 
 // T2 Container
@@ -224,7 +128,7 @@ template <typename T1, typename T2, typename T3, typename F,
           require_container_t<T2>* = nullptr,
           require_all_stan_scalar_t<T1, T3>* = nullptr>
 inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z, const F& f) {
-  return apply_scalar_binary(y, z, [&](const auto& b, const auto& c) { return f(x, b, c); }).eval();
+  return apply_scalar_binary(y, z, [&](const auto& b, const auto& c) { return f(x, b, c); });
 }
 
 // T3 Container
@@ -232,7 +136,7 @@ template <typename T1, typename T2, typename T3, typename F,
           require_container_t<T3>* = nullptr,
           require_all_stan_scalar_t<T1, T2>* = nullptr>
 inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z, const F& f) {
-  return apply_scalar_binary(y, z, [&](const auto& b, const auto& c) { return f(x, b, c); }).eval();
+  return apply_scalar_binary(y, z, [&](const auto& b, const auto& c) { return f(x, b, c); });
 }
 // Nested containers
 template <typename T1, typename T2, typename T3, typename F,
@@ -247,81 +151,6 @@ inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z, const F&
   return result;
 }
 
-template <typename T1, typename T2, typename T3, typename F,
-          require_all_std_vector_vt<is_container_or_var_matrix, T1, T2>* = nullptr,
-          require_stan_scalar_t<T3>* = nullptr>
-inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z, const F& f) {
-  using T_return = plain_type_t<decltype(apply_scalar_ternary(x[0], y[0], z, f))>;
-  size_t y_size = y.size();
-  std::vector<T_return> result(y_size);
-  for (size_t i = 0; i < y_size; ++i) {
-    result[i] = apply_scalar_ternary(x[i], y[i], z, f);
-  }
-  return result;
-}
-
-template <typename T1, typename T2, typename T3, typename F,
-          require_all_std_vector_vt<is_container_or_var_matrix, T1, T3>* = nullptr,
-          require_stan_scalar_t<T2>* = nullptr>
-inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z, const F& f) {
-  using T_return = plain_type_t<decltype(apply_scalar_ternary(x[0], y, z[0], f))>;
-  size_t y_size = y.size();
-  std::vector<T_return> result(y_size);
-  for (size_t i = 0; i < y_size; ++i) {
-    result[i] = apply_scalar_ternary(x[i], y, z[i], f);
-  }
-  return result;
-}
-
-template <typename T1, typename T2, typename T3, typename F,
-          require_std_vector_vt<is_container_or_var_matrix, T1>* = nullptr,
-          require_all_stan_scalar_t<T2, T3>* = nullptr>
-inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z, const F& f) {
-  using T_return = plain_type_t<decltype(apply_scalar_ternary(x[0], y, z, f))>;
-  size_t y_size = y.size();
-  std::vector<T_return> result(y_size);
-  for (size_t i = 0; i < y_size; ++i) {
-    result[i] = apply_scalar_ternary(x[i], y, z, f);
-  }
-  return result;
-}
-
-template <typename T1, typename T2, typename T3, typename F,
-          require_all_std_vector_vt<is_container_or_var_matrix, T2, T3>* = nullptr,
-          require_stan_scalar_t<T1>* = nullptr>
-inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z, const F& f) {
-  using T_return = plain_type_t<decltype(apply_scalar_ternary(x, y[0], z[0], f))>;
-  size_t y_size = y.size();
-  std::vector<T_return> result(y_size);
-  for (size_t i = 0; i < y_size; ++i) {
-    result[i] = apply_scalar_ternary(x, y[i], z[i], f);
-  }
-  return result;
-}
-template <typename T1, typename T2, typename T3, typename F,
-          require_std_vector_vt<is_container_or_var_matrix, T2>* = nullptr,
-          require_all_stan_scalar_t<T1, T3>* = nullptr>
-inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z, const F& f) {
-  using T_return = plain_type_t<decltype(apply_scalar_ternary(x, y[0], z, f))>;
-  size_t y_size = y.size();
-  std::vector<T_return> result(y_size);
-  for (size_t i = 0; i < y_size; ++i) {
-    result[i] = apply_scalar_ternary(x, y[i], z, f);
-  }
-  return result;
-}
-template <typename T1, typename T2, typename T3, typename F,
-          require_std_vector_vt<is_container_or_var_matrix, T3>* = nullptr,
-          require_all_stan_scalar_t<T1, T2>* = nullptr>
-inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z, const F& f) {
-  using T_return = plain_type_t<decltype(apply_scalar_ternary(x, y, z[0], f))>;
-  size_t y_size = y.size();
-  std::vector<T_return> result(y_size);
-  for (size_t i = 0; i < y_size; ++i) {
-    result[i] = apply_scalar_ternary(x, y, z[i], f);
-  }
-  return result;
-}
 
 }  // namespace math
 }  // namespace stan
