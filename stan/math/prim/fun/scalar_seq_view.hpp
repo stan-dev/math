@@ -31,7 +31,7 @@ class scalar_seq_view<C, require_eigen_vector_t<C>> {
    */
   inline auto operator[](size_t i) const { return c_.coeffRef(i); }
 
-  inline auto size() const noexcept { return c_.size(); }
+  inline Eigen::Index size() const noexcept { return c_.size(); }
 
   inline const value_type_t<C>* data() const noexcept { return c_.data(); }
   inline value_type_t<C>* data() noexcept { return c_.data(); }
@@ -66,7 +66,7 @@ class scalar_seq_view<C, require_var_matrix_t<C>> {
   inline const auto* data() const noexcept { return c_.vi_; }
   inline auto* data() noexcept { return c_.vi_; }
 
-  inline auto size() const noexcept { return c_.size(); }
+  inline Eigen::Index size() const noexcept { return c_.size(); }
 
   template <typename T = C, require_st_autodiff<T>* = nullptr>
   inline auto val(size_t i) const {
@@ -95,7 +95,7 @@ class scalar_seq_view<C, require_std_vector_t<C>> {
    * @return the element at the specified position in the container
    */
   inline auto operator[](size_t i) const { return c_[i]; }
-  inline auto size() const noexcept { return c_.size(); }
+  inline Eigen::Index size() const noexcept { return c_.size(); }
   inline const auto* data() const noexcept { return c_.data(); }
 
   template <typename T = C, require_st_arithmetic<T>* = nullptr>
@@ -125,7 +125,7 @@ class scalar_seq_view<C, require_t<std::is_pointer<C>>> {
    * @return the element at the specified position in the container
    */
   inline auto operator[](size_t i) const { return c_[i]; }
-  inline auto size() const noexcept {
+  inline Eigen::Index size() const noexcept {
     static_assert(1, "Cannot Return Size of scalar_seq_view with pointer type");
   }
   inline const auto* data() const noexcept { return &c_[0]; }
@@ -166,7 +166,7 @@ class scalar_seq_view<C, require_stan_scalar_t<C>> {
     return t_.val();
   }
 
-  static constexpr auto size() { return 1; }
+  static constexpr Eigen::Index size() { return 1; }
   inline const auto* data() const noexcept { return &t_; }
   inline auto* data() noexcept { return &t_; }
 

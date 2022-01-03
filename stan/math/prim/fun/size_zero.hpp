@@ -15,8 +15,8 @@ namespace math {
  * @return 0 or 1
  */
 template <typename T>
-inline bool size_zero(const T& x) {
-  return !size(x);
+inline constexpr bool size_zero(const T& x) noexcept {
+  return !stan::math::size(x);
 }
 
 /**
@@ -28,7 +28,7 @@ inline bool size_zero(const T& x) {
  * @return 0 or 1
  */
 template <typename T, typename... Ts>
-inline bool size_zero(const T& x, const Ts&... xs) {
+inline constexpr bool size_zero(const T& x, const Ts&... xs) noexcept {
   return (size_zero(x) || size_zero(xs...));
 }
 }  // namespace math

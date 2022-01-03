@@ -64,7 +64,7 @@ class matrix_cl : public matrix_cl_base {
 
   int cols() const { return cols_; }
 
-  int size() const { return rows_ * cols_; }
+  Eigen::Index size() const { return rows_ * cols_; }
 
   const matrix_cl_view& view() const { return view_; }
 

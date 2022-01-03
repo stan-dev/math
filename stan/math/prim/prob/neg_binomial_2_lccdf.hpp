@@ -39,7 +39,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_lccdf(
                 T_precision>
       beta_vec(size_beta);
   for (size_t i = 0; i < size_beta; ++i) {
-    beta_vec[i] = phi_vec[i] / mu_vec[i];
+    beta_vec[i] = phi_vec.val(i) / mu_vec.val(i);
   }
 
   return neg_binomial_lccdf(n, phi_ref, beta_vec.data());

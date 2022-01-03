@@ -66,8 +66,8 @@ return_type_t<T_y, T_loc, T_scale, T_inv_scale> exp_mod_normal_lcdf(
 
   scalar_seq_view<decltype(y_val)> y_vec(y_val);
   for (size_t n = 0, size_y = stan::math::size(y); n < size_y; n++) {
-    if (is_inf(y_vec[n])) {
-      return ops_partials.build(y_vec[n] < 0 ? negative_infinity() : 0);
+    if (is_inf(y_vec.val(n))) {
+      return ops_partials.build(y_vec.val(n) < 0 ? negative_infinity() : 0);
     }
   }
 

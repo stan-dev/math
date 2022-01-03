@@ -68,7 +68,7 @@ struct coupled_ode_system_impl<true, F, T_y0, Args...> {
     dz_dt.resize(y.size());
 
     Eigen::VectorXd f_y_t
-        = apply([&](const Args&... args) { return f_(t, y, msgs_, args...); },
+        = math::apply([&](const Args&... args) { return f_(t, y, msgs_, args...); },
                 args_tuple_);
 
     check_size_match("coupled_ode_system", "dy_dt", f_y_t.size(), "states",
@@ -82,7 +82,7 @@ struct coupled_ode_system_impl<true, F, T_y0, Args...> {
    *
    * @return size of the coupled system.
    */
-  size_t size() const { return N_; }
+  inline Eigen::Index size() const noexcept { return N_; }
 
   /**
    * Returns the initial state of the coupled system. For arithmetic types

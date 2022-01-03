@@ -25,7 +25,7 @@ class op_vector_vari : public vari {
     }
   }
   vari* operator[](size_t n) const { return vis_[n]; }
-  size_t size() { return size_; }
+  inline Eigen::Index size() { return size_; }
 };
 
 }  // namespace math

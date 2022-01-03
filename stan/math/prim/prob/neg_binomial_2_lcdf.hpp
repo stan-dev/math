@@ -53,7 +53,7 @@ return_type_t<T_location, T_precision> neg_binomial_2_lcdf(
                 T_precision>
       phi_mu(size_phi_mu);
   for (size_t i = 0; i < size_phi_mu; i++) {
-    phi_mu[i] = phi_vec[i] / (phi_vec[i] + mu_vec[i]);
+    phi_mu[i] = phi_vec.val(i) / (phi_vec.val(i) + mu_vec.val(i));
   }
 
   VectorBuilder<true, return_type_t<T_n>, T_n> np1(size_n);

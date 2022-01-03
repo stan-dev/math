@@ -36,7 +36,7 @@ template <typename T>
 class vector_seq_view<T, require_matrix_t<T>> {
  public:
   explicit vector_seq_view(const T& m) : m_(m) {}
-  static constexpr auto size() { return 1; }
+  static constexpr Eigen::Index size() { return 1; }
   inline const auto& operator[](size_t /* i */) const noexcept { return m_; }
 
   template <typename C = T, require_st_arithmetic<C>* = nullptr>
@@ -75,7 +75,7 @@ class vector_seq_view<
     T, require_std_vector_vt<internal::is_matrix_or_std_vector, T>> {
  public:
   explicit vector_seq_view(const T& v) noexcept : v_(v) {}
-  inline auto size() const noexcept { return v_.size(); }
+  inline Eigen::Index size() const noexcept { return v_.size(); }
 
   inline decltype(auto) operator[](size_t i) const { return v_[i]; }
 

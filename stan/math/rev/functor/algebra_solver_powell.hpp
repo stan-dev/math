@@ -136,7 +136,7 @@ Eigen::VectorXd algebra_solver_powell_impl(const F& f, const T& x,
   auto args_vals_tuple = std::make_tuple(to_ref(args)...);
 
   auto f_wrt_x = [&args_vals_tuple, &f, msgs](const auto& x) {
-    return apply(
+    return math::apply(
         [&x, &f, msgs](const auto&... args) { return f(x, msgs, args...); },
         args_vals_tuple);
   };
@@ -338,14 +338,14 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
     const int64_t max_num_steps, const T_Args&... args) {
   auto x_ref = eval(value_of(x));
   auto arena_args_tuple = make_chainable_ptr(std::make_tuple(eval(args)...));
-  auto args_vals_tuple = apply(
+  auto args_vals_tuple = math::apply(
       [&](const auto&... args) {
         return std::make_tuple(to_ref(value_of(args))...);
       },
       *arena_args_tuple);
 
   auto f_wrt_x = [&args_vals_tuple, &f, msgs](const auto& x) {
-    return apply(
+    return math::apply(
         [&x, &f, msgs](const auto&... args) { return f(x, msgs, args...); },
         args_vals_tuple);
   };
@@ -384,7 +384,7 @@ Eigen::Matrix<var, Eigen::Dynamic, 1> algebra_solver_powell_impl(
     {
       nested_rev_autodiff rev;
       Eigen::VectorXd ret_val = ret.val();
-      auto x_nrad_ = apply(
+      auto x_nrad_ = math::apply(
           [&](const auto&... args) { return eval(f(ret_val, msgs, args...)); },
           *arena_args_tuple);
       x_nrad_.adj() = eta;

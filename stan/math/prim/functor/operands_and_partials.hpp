@@ -66,7 +66,7 @@ struct ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>> {
    * Return the size of the operand for the edge. For doubles this is a compile
    * time expression returning zero.
    */
-  static constexpr int size() noexcept { return 0; }  // reverse mode
+  static constexpr Eigen::Index size() noexcept { return 0; }  // reverse mode
 
  private:
   template <typename, typename, typename, typename, typename, typename>

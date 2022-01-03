@@ -14,8 +14,8 @@ namespace math {
  * that are always of length 1.
  */
 template <typename T, require_stan_scalar_t<T>* = nullptr>
-inline size_t size(const T& /*x*/) {
-  return 1U;
+inline constexpr Eigen::Index size(const T& /*x*/) noexcept {
+  return static_cast<Eigen::Index>(1);
 }
 
 /** \ingroup type_trait
@@ -25,12 +25,12 @@ inline size_t size(const T& /*x*/) {
  * @tparam T type of m
  */
 template <typename T, require_container_t<T>* = nullptr>
-inline size_t size(const T& m) {
+inline constexpr Eigen::Index size(const T& m) noexcept {
   return m.size();
 }
 
 template <typename T, require_var_matrix_t<T>* = nullptr>
-inline size_t size(const T& m) {
+inline Eigen::Index size(const T& m) noexcept {
   return m.size();
 }
 

@@ -37,13 +37,13 @@ return_type_t<T_theta> poisson_binomial_lcdf(const T_y& y,
                                              const T_theta& theta) {
   static const char* function = "poisson_binomial_lcdf";
 
-  size_t size_theta = size_mvt(theta);
+  const Eigen::Index size_theta = size_mvt(theta);
   if (size_theta > 1) {
     check_consistent_sizes(function, "Successes variables", y,
                            "Probability parameters", theta);
   }
 
-  size_t max_sz = std::max(stan::math::size(y), size_theta);
+  const Eigen::Index max_sz = std::max(stan::math::size(y), size_theta);
   scalar_seq_view<T_y> y_vec(y);
   vector_seq_view<T_theta> theta_vec(theta);
 

@@ -105,7 +105,7 @@ class cvodes_integrator {
     const Eigen::VectorXd y_vec = Eigen::Map<const Eigen::VectorXd>(y, N_);
 
     Eigen::VectorXd dy_dt_vec
-        = apply([&](auto&&... args) { return f_(t, y_vec, msgs_, args...); },
+        = math::apply([&](auto&&... args) { return f_(t, y_vec, msgs_, args...); },
                 value_of_args_tuple_);
 
     check_size_match("cvodes_integrator", "dy_dt", dy_dt_vec.size(), "states",
@@ -123,7 +123,7 @@ class cvodes_integrator {
     Eigen::MatrixXd Jfy;
 
     auto f_wrapped = [&](const Eigen::Matrix<var, Eigen::Dynamic, 1>& y) {
-      return apply([&](auto&&... args) { return f_(t, y, msgs_, args...); },
+      return math::apply([&](auto&&... args) { return f_(t, y, msgs_, args...); },
                    value_of_args_tuple_);
     };
 
@@ -214,7 +214,7 @@ class cvodes_integrator {
 
     // Code from: https://stackoverflow.com/a/17340003 . Should probably do
     // something better
-    apply(
+    math::apply(
         [&](auto&&... args) {
           std::vector<int> unused_temp{
               0, (check_finite(function_name, "ode parameters and data", args),
