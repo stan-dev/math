@@ -23,6 +23,7 @@ namespace math {
 template <typename ScalarT, require_stan_scalar_t<ScalarT>* = nullptr>
 inline Eigen::Index size_mvt(const ScalarT& /* unused */) {
   throw std::invalid_argument("size_mvt passed to an unrecognized type.");
+  return 1;
 }
 
 template <typename MatrixT, require_matrix_t<MatrixT>* = nullptr>

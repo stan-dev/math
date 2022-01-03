@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_SIZE_ZERO_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/size.hpp>
 #include <utility>
 
 namespace stan {

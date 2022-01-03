@@ -7,6 +7,7 @@
 #include <stan/math/rev/core.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/prim/functor/for_each.hpp>
+#include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stdexcept>
 #include <ostream>
