@@ -125,8 +125,9 @@ class scalar_seq_view<C, require_t<std::is_pointer<C>>> {
    * @return the element at the specified position in the container
    */
   inline auto operator[](size_t i) const { return c_[i]; }
-  inline Eigen::Index size() const noexcept {
+  static constexpr Eigen::Index size() {
     static_assert(1, "Cannot Return Size of scalar_seq_view with pointer type");
+    return 1;
   }
   inline const auto* data() const noexcept { return &c_[0]; }
 
@@ -166,7 +167,7 @@ class scalar_seq_view<C, require_stan_scalar_t<C>> {
     return t_.val();
   }
 
-  static constexpr Eigen::Index size() { return 1; }
+  static constexpr auto size() { return 1; }
   inline const auto* data() const noexcept { return &t_; }
   inline auto* data() noexcept { return &t_; }
 
