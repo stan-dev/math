@@ -347,7 +347,9 @@
 #include <stan/math/prim/prob/von_mises_log.hpp>
 #include <stan/math/prim/prob/von_mises_lpdf.hpp>
 #include <stan/math/prim/prob/von_mises_rng.hpp>
+#include <stan/math/prim/prob/von_mises_ccdf_log.hpp>
 #include <stan/math/prim/prob/von_mises_cdf.hpp>
+#include <stan/math/prim/prob/von_mises_cdf_log.hpp>
 #include <stan/math/prim/prob/von_mises_lcdf.hpp>
 #include <stan/math/prim/prob/von_mises_lccdf.hpp>
 #include <stan/math/prim/prob/weibull_ccdf_log.hpp>
