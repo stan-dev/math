@@ -38,8 +38,8 @@ inline auto cumulative_sum(T_vec&& v) {
       = opencl_kernels::cumulative_sum<T_scal>::kernel1.get_option(
           "LOCAL_SIZE_");
   const int work_groups = std::min(
-      (v.size() + local_size - 1) / local_size,
-      static_cast<int>(
+      static_cast<Eigen::Index>((v.size() + local_size - 1) / local_size),
+      static_cast<Eigen::Index>(
           opencl_context.device()[0].getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>())
           * 16);
   const int local_size2
