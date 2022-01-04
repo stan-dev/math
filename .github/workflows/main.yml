@@ -93,6 +93,9 @@ jobs:
     - name: Add TBB to PATH
       shell: powershell
       run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+    - name: Disable running fwd/mix tests
+      shell: powershell
+      run: echo "CXXFLAGS+= -DSTAN_MATH_TESTS_REV_ONLY" | Out-File -Append -FilePath make/local -Encoding utf8      
     - name: Run fwd unit tests and all the mix tests except those in mix/fun
       shell: powershell
       run: |
@@ -139,6 +142,9 @@ jobs:
     - name: Add TBB to PATH
       shell: powershell
       run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+    - name: Disable running fwd/mix tests
+      shell: powershell
+      run: echo "CXXFLAGS+= -DSTAN_MATH_TESTS_REV_ONLY" | Out-File -Append -FilePath make/local -Encoding utf8      
     - name: Run mix/fun unit tests
       shell: powershell
       run: |

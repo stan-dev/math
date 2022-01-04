@@ -6,6 +6,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/to_array_1d.hpp>
 #include <stan/math/prim/fun/to_vector.hpp>
+#include <sundials/sundials_context.h>
 #include <kinsol/kinsol.h>
 #include <sunmatrix/sunmatrix_dense.h>
 #include <sunlinsol/sunlinsol_dense.h>
@@ -71,8 +72,8 @@ Eigen::VectorXd kinsol_solve(const F1& f, const Eigen::VectorXd& x,
   CHECK_KINSOL_CALL(KINInit(kinsol_data.kinsol_memory_,
                             &system_data::kinsol_f_system, kinsol_data.nv_x_));
 
-  N_Vector scaling = N_VNew_Serial(N);
-  N_Vector nv_x = N_VNew_Serial(N);
+  N_Vector scaling = N_VNew_Serial(N, kinsol_data.sundials_context_);
+  N_Vector nv_x = N_VNew_Serial(N, kinsol_data.sundials_context_);
   Eigen::VectorXd x_solution(N);
 
   try {

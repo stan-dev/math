@@ -16,6 +16,8 @@
 #include <vector>
 #include <limits>
 
+static sundials::Context sundials_context;
+
 struct chemical_kinetics {
   template <typename T0, typename Tyy, typename Typ, typename Tpar>
   inline Eigen::Matrix<stan::return_type_t<Tyy, Typ, Tpar>, -1, 1> operator()(
