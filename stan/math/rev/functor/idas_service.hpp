@@ -64,27 +64,7 @@ namespace math {
       CHECK_IDAS_CALL(IDASetUserData(mem, static_cast<void*>(&dae)));
       CHECK_IDAS_CALL(IDASetLinearSolver(mem, LS, A));
 
-      if (dae_type::use_fwd_sens) {
-        nv_yys = N_VCloneVectorArray(ns, nv_yy);
-        nv_yps = N_VCloneVectorArray(ns, nv_yp);
-        for (size_t is = 0; is < ns; ++is) {
-          N_VConst(RCONST(0.0), nv_yys[is]);
-          N_VConst(RCONST(0.0), nv_yps[is]);
-        }
-        if (dae_type::is_var_yy0) {
-          for (size_t i = 0; i < n; ++i) {
-            NV_Ith_S(nv_yys[i], i) = 1.0;
-          }
-        }
-        int n_begin = dae_type::is_var_yy0 ? n : 0;
-        if (dae_type::is_var_yp0) {
-          for (size_t i = 0; i < n; ++i) {
-            NV_Ith_S(nv_yps[i + n_begin], i) = 1.0;
-          }
-        }
-        CHECK_IDAS_CALL(IDASensInit(mem, ns, IDA_STAGGERED,
-                                    dae_type::idas_sens_res, nv_yys, nv_yps)); 
-      }
+      idas_sens_init(nv_yys, nv_yps, ns, n);
     }
 
     ~idas_service() {
@@ -98,6 +78,57 @@ namespace math {
         N_VDestroyVectorArray(nv_yps, ns);
       }
     }
+
+    template<typename dae_t = dae_type,
+             std::enable_if_t<!dae_t::use_fwd_sens>* = nullptr>
+    void idas_sens_init(N_Vector* yys, N_Vector* yps, int ns, int n) {}
+
+    template<typename dae_t = dae_type,
+             std::enable_if_t<dae_t::use_fwd_sens>* = nullptr>
+    void idas_sens_init(N_Vector*& yys, N_Vector*& yps, int ns, int n) {
+      yys = N_VCloneVectorArray(ns, nv_yy);
+      yps = N_VCloneVectorArray(ns, nv_yp);
+      for (size_t is = 0; is < ns; ++is) {
+        N_VConst(RCONST(0.0), yys[is]);
+        N_VConst(RCONST(0.0), yps[is]);
+      }
+      set_init_sens(yys, yps, n);
+      CHECK_IDAS_CALL(IDASensInit(mem, ns, IDA_STAGGERED,
+                                  dae_type::idas_sens_res, yys, yps));
+    }
+
+    template<typename dae_t = dae_type,
+             std::enable_if_t<dae_t::is_var_yy0 && dae_t::is_var_yp0>* = nullptr>
+    void set_init_sens(N_Vector*& yys, N_Vector*& yps, int n) {
+      for (size_t i = 0; i < n; ++i) {
+        NV_Ith_S(yys[i], i) = 1.0;
+      }
+      for (size_t i = 0; i < n; ++i) {
+        NV_Ith_S(yps[i + n], i) = 1.0;
+      }
+      CHECK_IDAS_CALL(IDASensInit(mem, ns, IDA_STAGGERED,
+                                  dae_type::idas_sens_res, yys, yps));
+    }
+
+    template<typename dae_t = dae_type,
+             std::enable_if_t<dae_t::is_var_yy0 && (!dae_t::is_var_yp0)>* = nullptr>
+    void set_init_sens(N_Vector*& yys, N_Vector*& yps, int n) {
+      for (size_t i = 0; i < n; ++i) {
+        NV_Ith_S(yys[i], i) = 1.0;
+      }
+    }
+
+    template<typename dae_t = dae_type,
+             std::enable_if_t<(!dae_t::is_var_yy0) && dae_t::is_var_yp0>* = nullptr>
+    void set_init_sens(N_Vector*& yys, N_Vector*& yps, int n) {
+      for (size_t i = 0; i < n; ++i) {
+        NV_Ith_S(yps[i], i) = 1.0;
+      }
+    }
+
+    template<typename dae_t = dae_type,
+             std::enable_if_t<(!dae_t::is_var_yy0) && (!dae_t::is_var_yp0)>* = nullptr>
+    void set_init_sens(N_Vector*& yys, N_Vector*& yps, int n) {}
   };
 }
 }
