@@ -1451,15 +1451,15 @@ void expect_ad_vectorized_ternary_impl(const ad_tolerances& tols, const F& f,
   std::vector<std::vector<T1>> nest_nest_x{nest_x};
   std::vector<std::vector<T2>> nest_nest_y{nest_y};
   std::vector<std::vector<T3>> nest_nest_z{nest_z};
-  expect_ad(tols, f, x, y, z);            // mat, mat, mat
+  expect_ad(tols, f, x, y, z);
   expect_ad(tols, f, nest_nest_x,
-            nest_nest_y, nest_nest_z);                 // nest<nest<mat>>, nest<nest<mat>>
-  expect_ad(tols, f, nest_nest_x, nest_nest_y, z[0]);            // mat, mat, scal
-  expect_ad(tols, f, nest_nest_x, y[0], z[0]);            // mat, scal, scal
-  expect_ad(tols, f, nest_nest_x, y[0], nest_nest_z);         // mat, scal, mat
-  expect_ad(tols, f, x[0], y[0], nest_nest_z);         // scal, scal, mat
-  expect_ad(tols, f, x[0], nest_nest_y, nest_nest_z);         // scal, scal, mat
-  expect_ad(tols, f, x[0], nest_nest_y, z[0]);            // mat, mat, scal
+            nest_nest_y, nest_nest_z);
+  expect_ad(tols, f, nest_nest_x, nest_nest_y, z[0]);
+  expect_ad(tols, f, nest_nest_x, y[0], z[0]);
+  expect_ad(tols, f, nest_nest_x, y[0], nest_nest_z);
+  expect_ad(tols, f, x[0], y[0], nest_nest_z);
+  expect_ad(tols, f, x[0], nest_nest_y, nest_nest_z);
+  expect_ad(tols, f, x[0], nest_nest_y, z[0]);
 }
 
 /**
@@ -1646,7 +1646,8 @@ void expect_ad_vectorized_binary(const F& f, const T1& x, const T2& y) {
  * @param z argument to test
  */
 template <typename F, typename T1, typename T2, typename T3>
-void expect_ad_vectorized_ternary(const F& f, const T1& x, const T2& y, const T3& z) {
+void expect_ad_vectorized_ternary(const F& f, const T1& x,
+                                  const T2& y, const T3& z) {
   ad_tolerances tols;
   expect_ad_vectorized_ternary(tols, f, x, y, z);
 }

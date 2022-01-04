@@ -85,8 +85,9 @@ TEST(MathFunctions, inc_beta_nan) {
 }
 
 TEST(MathFunctions, inc_beta_vec) {
-  auto f
-      = [](const auto& x1, const auto& x2, const auto& x3) { return stan::math::inc_beta(x1, x2, x3); };
+  auto f = [](const auto& x1, const auto& x2, const auto& x3) {
+    return stan::math::inc_beta(x1, x2, x3);
+  };
 
   Eigen::VectorXd in1 = Eigen::VectorXd::Random(6).array().abs().matrix();
   Eigen::VectorXd in2 = Eigen::VectorXd::Random(6).array().abs().matrix();
