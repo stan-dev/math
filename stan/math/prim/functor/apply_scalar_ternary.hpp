@@ -56,6 +56,8 @@ inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z, const F&
 template <typename T1, typename T2, typename T3, typename F,
           require_all_eigen_t<T1, T2, T3>* = nullptr>
 inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z, const F& f) {
+  check_matching_dims("Binary function", "x", x, "y", y);
+  check_matching_dims("Binary function", "x", x, "z", z);
   return x.ternaryExpr(y, z, f);
 }
 
@@ -81,6 +83,8 @@ inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z, const F&
 template <typename T1, typename T2, typename T3, typename F,
           require_all_std_vector_vt<is_stan_scalar, T1, T2, T3>* = nullptr>
 inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z, const F& f) {
+  check_matching_sizes("Binary function", "x", x, "y", y);
+  check_matching_sizes("Binary function", "x", x, "z", z);
   decltype(auto) x_vec = as_column_vector_or_scalar(x);
   decltype(auto) y_vec = as_column_vector_or_scalar(y);
   decltype(auto) z_vec = as_column_vector_or_scalar(z);
@@ -142,6 +146,8 @@ inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z, const F&
 template <typename T1, typename T2, typename T3, typename F,
           require_all_std_vector_vt<is_container_or_var_matrix, T1, T2, T3>* = nullptr>
 inline auto apply_scalar_ternary(const T1& x, const T2& y, const T3& z, const F& f) {
+  check_matching_sizes("Binary function", "x", x, "y", y);
+  check_matching_sizes("Binary function", "x", x, "z", z);
   using T_return = plain_type_t<decltype(apply_scalar_ternary(x[0], y[0], z[0], f))>;
   size_t y_size = y.size();
   std::vector<T_return> result(y_size);
