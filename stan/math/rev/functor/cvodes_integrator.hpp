@@ -315,7 +315,7 @@ class cvodes_integrator {
           }
         }
 
-        y.emplace_back(apply(
+        y.emplace_back(math::apply(
             [&](auto&&... args) {
               return ode_store_sensitivities(f_, coupled_state_, y0_, t0_,
                                              ts_[n], msgs_, args...);
