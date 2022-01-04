@@ -393,49 +393,4 @@ struct chemical_kinetics_data_test
   }
 };
 
-// template <typename T>
-// struct chemical_kinetics_dv_functor : public chemical_kinetics_dae_base<T> {
-//   chemical_kinetics_dv_functor() : chemical_kinetics_dae_base<T>() {}
-
-//   template <typename Tx>
-//   Eigen::Matrix<Tx, -1, 1> operator()(Eigen::Matrix<Tx, -1, 1>& x) const {
-//     std::tuple_element_t<0, T> sol;
-//     std::vector<Tx> theta_tx{x(0)};
-//     auto ys = sol(this->f_square, this->y0, this->t0, this->ts, nullptr,
-//                   theta_tx, this->x_r, this->x_i);
-//     return ys[0];
-//   }
-// };
-
-// template <typename T>
-// struct chemical_kinetics_vd_functor : public chemical_kinetics_dae_base<T> {
-//   chemical_kinetics_vd_functor() : chemical_kinetics_dae_base<T>() {}
-
-//   template <typename Tx>
-//   Eigen::Matrix<Tx, -1, 1> operator()(Eigen::Matrix<Tx, -1, 1>& x) const {
-//     std::tuple_element_t<0, T> sol;
-//     Eigen::Matrix<Tx, -1, 1> y0_tx(2);
-//     y0_tx << x(0), this->y0(1);
-//     auto ys = sol(this->f_square, y0_tx, this->t0, this->ts, nullptr,
-//                   this->theta, this->x_r, this->x_i);
-//     return ys[0];
-//   }
-// };
-
-// template <typename T>
-// struct chemical_kinetics_vv_functor : public chemical_kinetics_dae_base<T> {
-//   chemical_kinetics_vv_functor() : chemical_kinetics_dae_base<T>() {}
-
-//   template <typename Tx>
-//   Eigen::Matrix<Tx, -1, 1> operator()(Eigen::Matrix<Tx, -1, 1>& x) const {
-//     std::tuple_element_t<0, T> sol;
-//     std::vector<Tx> theta_tx{x(0)};
-//     Eigen::Matrix<Tx, -1, 1> y0_tx(2);
-//     y0_tx << x(1), this->y0(1);
-//     auto ys = sol(this->f_square, y0_tx, this->t0, this->ts, nullptr, theta_tx,
-//                   this->x_r, this->x_i);
-//     return ys[0];
-//   }
-// };
-
 #endif

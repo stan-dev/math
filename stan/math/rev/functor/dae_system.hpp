@@ -146,7 +146,6 @@ class dae_system {
       }
       fy[i].grad();
       
-      // todo: use temp1
       for (int j = 0; j < ns; ++j) {
         auto yysp = N_VGetArrayPointer(yys[j]);
         auto ypsp = N_VGetArrayPointer(yps[j]);

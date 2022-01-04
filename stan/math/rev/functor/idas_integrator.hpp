@@ -61,6 +61,7 @@ class idas_integrator {
     N_Vector& yy = serv.nv_yy;
     N_Vector& yp = serv.nv_yp;
     N_Vector* yys = serv.nv_yys;
+    N_Vector* yps = serv.nv_yps;
     const size_t n = dae.N;
     const size_t ns = dae.ns;
 
@@ -69,6 +70,7 @@ class idas_integrator {
 
     if (dae_type::use_fwd_sens) {
       CHECK_IDAS_CALL(IDASensEEtolerances(mem));
+      CHECK_IDAS_CALL(IDAGetSensConsistentIC(mem, yys, yps));
     }
 
     size_t nt = ts.size();
