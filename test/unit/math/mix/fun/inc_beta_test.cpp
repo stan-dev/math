@@ -39,5 +39,5 @@ TEST(mathMixScalFun, inc_beta_vec) {
   in2 << 10.2, 3.4;
   Eigen::VectorXd in3(2);
   in3 << 0.1, 0.4;
- stan::test::expect_ad_vectorized_ternary(f, in1, in2, in3);
+  stan::test::expect_ad_vectorized_ternary(f, in1, in2, in3);
 }

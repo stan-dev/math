@@ -10,7 +10,7 @@ namespace test {
  * Implementation function which checks that the ternary vectorisation
  * framework returns the same value as the function with scalar inputs,
  * for all valid combinations of scalar/vector/nested vector.
- * 
+ *
  * Specialization for use with matrix inputs
  *
  * @tparam F Type of functor to apply.
@@ -24,8 +24,8 @@ namespace test {
  */
 template <typename F, typename T1, typename T2, typename T3,
           require_all_not_vector_t<T1, T2, T3>* = nullptr>
-void ternary_scalar_tester_impl(const F& f, const T1& x,
-                                const T2& y, const T3& z) {
+void ternary_scalar_tester_impl(const F& f, const T1& x, const T2& y,
+                                const T3& z) {
   auto mat_mat_mat = math::eval(f(x, y, z));
   auto mat_mat_scal = math::eval(f(x, y, z(0)));
   auto mat_scal_scal = math::eval(f(x, y(0), z(0)));
@@ -81,18 +81,15 @@ void ternary_scalar_tester_impl(const F& f, const T1& x,
   std::vector<T1> nest_x_small{x, x};
   std::vector<T2> nest_y_small{y, y};
   std::vector<T3> nest_z_small{z, z};
-  EXPECT_THROW(f(nest_x_small, nest_y, nest_z),
-               std::invalid_argument);
-  EXPECT_THROW(f(nest_x, nest_y_small, nest_z),
-               std::invalid_argument);
-  EXPECT_THROW(f(nest_x, nest_y, nest_z_small),
-  std::invalid_argument);
+  EXPECT_THROW(f(nest_x_small, nest_y, nest_z), std::invalid_argument);
+  EXPECT_THROW(f(nest_x, nest_y_small, nest_z), std::invalid_argument);
+  EXPECT_THROW(f(nest_x, nest_y, nest_z_small), std::invalid_argument);
 
   std::vector<std::vector<T1>> nest_nest_x{nest_x, nest_x, nest_x};
   std::vector<std::vector<T2>> nest_nest_y{nest_y, nest_y, nest_y};
   std::vector<std::vector<T3>> nest_nest_z{nest_z, nest_z, nest_z};
-  auto nestnestmat_nestnestmat_nestnestmat = f(nest_nest_x, nest_nest_y,
-                                               nest_nest_z);
+  auto nestnestmat_nestnestmat_nestnestmat
+      = f(nest_nest_x, nest_nest_y, nest_nest_z);
   auto nestnestmat_nestnestmat_scal = f(nest_nest_x, nest_nest_y, z(0));
   auto nestnestmat_scal_scal = f(nest_nest_x, y(0), z(0));
   auto nestnestmat_scal_nestnestmat = f(nest_nest_x, y(0), nest_nest_z);
@@ -102,9 +99,9 @@ void ternary_scalar_tester_impl(const F& f, const T1& x,
   for (int i = 0; i < 3; ++i) {
     for (int j = 0; j < 3; ++j) {
       for (int k = 0; k < x.size(); ++k) {
-        EXPECT_FLOAT_EQ(f(nest_nest_x[i][j](k), nest_nest_y[i][j](k),
-                          nest_nest_z[i][j](k)),
-                        nestnestmat_nestnestmat_nestnestmat[i][j](k));
+        EXPECT_FLOAT_EQ(
+            f(nest_nest_x[i][j](k), nest_nest_y[i][j](k), nest_nest_z[i][j](k)),
+            nestnestmat_nestnestmat_nestnestmat[i][j](k));
         EXPECT_FLOAT_EQ(f(nest_nest_x[i][j](k), nest_nest_y[i][j](k), z(0)),
                         nestnestmat_nestnestmat_scal[i][j](k));
         EXPECT_FLOAT_EQ(f(nest_nest_x[i][j](k), y(0), z(0)),
@@ -149,8 +146,8 @@ void ternary_scalar_tester_impl(const F& f, const T1& x,
  */
 template <typename F, typename T1, typename T2, typename T3,
           require_all_vector_t<T1, T2, T3>* = nullptr>
-void ternary_scalar_tester_impl(const F& f, const T1& x,
-                                const T2& y, const T3& z) {
+void ternary_scalar_tester_impl(const F& f, const T1& x, const T2& y,
+                                const T3& z) {
   auto mat_mat_mat = math::eval(f(x, y, z));
   auto mat_mat_scal = math::eval(f(x, y, z[0]));
   auto mat_scal_scal = math::eval(f(x, y[0], z[0]));
@@ -191,14 +188,11 @@ void ternary_scalar_tester_impl(const F& f, const T1& x,
                       nestmat_nestmat_nestmat[i][j]);
       EXPECT_FLOAT_EQ(f(nest_x[i][j], nest_y[i][j], z[0]),
                       nestmat_nestmat_scal[i][j]);
-      EXPECT_FLOAT_EQ(f(nest_x[i][j], y[0], z[0]),
-                      nestmat_scal_scal[i][j]);
+      EXPECT_FLOAT_EQ(f(nest_x[i][j], y[0], z[0]), nestmat_scal_scal[i][j]);
       EXPECT_FLOAT_EQ(f(nest_x[i][j], y[0], nest_z[i][j]),
                       nestmat_scal_nestmat[i][j]);
-      EXPECT_FLOAT_EQ(f(x[0], y[0], nest_z[i][j]),
-                      scal_scal_nestmat[i][j]);
-      EXPECT_FLOAT_EQ(f(x[0], nest_y[i][j], z[0]),
-                      scal_nestmat_scal[i][j]);
+      EXPECT_FLOAT_EQ(f(x[0], y[0], nest_z[i][j]), scal_scal_nestmat[i][j]);
+      EXPECT_FLOAT_EQ(f(x[0], nest_y[i][j], z[0]), scal_nestmat_scal[i][j]);
       EXPECT_FLOAT_EQ(f(x[0], nest_y[i][j], nest_z[i][j]),
                       scal_nestmat_nestmat[i][j]);
     }
@@ -213,8 +207,8 @@ void ternary_scalar_tester_impl(const F& f, const T1& x,
   std::vector<std::vector<T1>> nest_nest_x{nest_x, nest_x, nest_x};
   std::vector<std::vector<T2>> nest_nest_y{nest_y, nest_y, nest_y};
   std::vector<std::vector<T3>> nest_nest_z{nest_z, nest_z, nest_z};
-  auto nestnestmat_nestnestmat_nestnestmat = f(nest_nest_x, nest_nest_y,
-                                               nest_nest_z);
+  auto nestnestmat_nestnestmat_nestnestmat
+      = f(nest_nest_x, nest_nest_y, nest_nest_z);
   auto nestnestmat_nestnestmat_scal = f(nest_nest_x, nest_nest_y, z[0]);
   auto nestnestmat_scal_scal = f(nest_nest_x, y[0], z[0]);
   auto nestnestmat_scal_nestnestmat = f(nest_nest_x, y[0], nest_nest_z);
@@ -224,9 +218,9 @@ void ternary_scalar_tester_impl(const F& f, const T1& x,
   for (int i = 0; i < 3; ++i) {
     for (int j = 0; j < 3; ++j) {
       for (int k = 0; k < x.size(); ++k) {
-        EXPECT_FLOAT_EQ(f(nest_nest_x[i][j][k], nest_nest_y[i][j][k],
-                          nest_nest_z[i][j][k]),
-                        nestnestmat_nestnestmat_nestnestmat[i][j][k]);
+        EXPECT_FLOAT_EQ(
+            f(nest_nest_x[i][j][k], nest_nest_y[i][j][k], nest_nest_z[i][j][k]),
+            nestnestmat_nestnestmat_nestnestmat[i][j][k]);
         EXPECT_FLOAT_EQ(f(nest_nest_x[i][j][k], nest_nest_y[i][j][k], z[0]),
                         nestnestmat_nestnestmat_scal[i][j][k]);
         EXPECT_FLOAT_EQ(f(nest_nest_x[i][j][k], y[0], z[0]),
