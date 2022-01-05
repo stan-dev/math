@@ -2,9 +2,9 @@
 #include <gtest/gtest.h>
 #include <test/unit/math/rev/fun/util.hpp>
 
-TEST(ProbInternalMath, inc_beta_inv_fv1) {
+TEST(ProbInternalMath, inv_inc_beta_fv1) {
   using stan::math::fvar;
-  using stan::math::inc_beta_inv;
+  using stan::math::inv_inc_beta;
   using stan::math::var;
   double a_d = 1;
   double b_d = 2;
@@ -16,7 +16,7 @@ TEST(ProbInternalMath, inc_beta_inv_fv1) {
   b_v.d_ = 1.0;
   p_v.d_ = 1.0;
 
-  fvar<var> res = inc_beta_inv(a_v, b_v, p_v);
+  fvar<var> res = inv_inc_beta(a_v, b_v, p_v);
   res.val_.grad();
 
   EXPECT_FLOAT_EQ(a_v.val_.adj(), 0.287698278597);
@@ -30,7 +30,7 @@ TEST(ProbInternalMath, inc_beta_inv_fv1) {
   b_v.d_ = 1.0;
   p_v.d_ = 1.0;
 
-  res = inc_beta_inv(a_d, b_v, p_v);
+  res = inv_inc_beta(a_d, b_v, p_v);
   res.val_.grad();
 
   EXPECT_FLOAT_EQ(b_v.val_.adj(), -0.122532267934);
@@ -41,7 +41,7 @@ TEST(ProbInternalMath, inc_beta_inv_fv1) {
   b_v.d_ = 1.0;
   p_v.d_ = 1.0;
 
-  res = inc_beta_inv(a_v, b_d, p_v);
+  res = inv_inc_beta(a_v, b_d, p_v);
   res.val_.grad();
 
   EXPECT_FLOAT_EQ(a_v.val_.adj(), 0.287698278597);
@@ -52,16 +52,16 @@ TEST(ProbInternalMath, inc_beta_inv_fv1) {
   a_v.d_ = 1.0;
   p_v.d_ = 1.0;
 
-  res = inc_beta_inv(a_v, b_v, p_d);
+  res = inv_inc_beta(a_v, b_v, p_d);
   res.val_.grad();
 
   EXPECT_FLOAT_EQ(a_v.val_.adj(), 0.287698278597);
   EXPECT_FLOAT_EQ(b_v.val_.adj(), -0.122532267934);
 }
 
-TEST(ProbInternalMath, inc_beta_inv_fv2) {
+TEST(ProbInternalMath, inv_inc_beta_fv2) {
   using stan::math::fvar;
-  using stan::math::inc_beta_inv;
+  using stan::math::inv_inc_beta;
   using stan::math::var;
   fvar<fvar<var>> a = 2;
   fvar<fvar<var>> b = 5;
@@ -70,7 +70,7 @@ TEST(ProbInternalMath, inc_beta_inv_fv2) {
   b.d_ = 1.0;
   p.d_ = 1.0;
 
-  fvar<fvar<var>> res = inc_beta_inv(a, b, p);
+  fvar<fvar<var>> res = inv_inc_beta(a, b, p);
   res.val_.val_.grad();
 
   EXPECT_FLOAT_EQ(a.val_.val_.adj(), 0.0783025374798);

@@ -1,10 +1,10 @@
-#ifndef STAN_MATH_REV_FUN_INC_BETA_INV_HPP
-#define STAN_MATH_REV_FUN_INC_BETA_INV_HPP
+#ifndef STAN_MATH_REV_FUN_INV_INC_BETA_HPP
+#define STAN_MATH_REV_FUN_INV_INC_BETA_HPP
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/inc_beta_inv.hpp>
+#include <stan/math/prim/fun/inv_inc_beta.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log.hpp>
@@ -54,11 +54,11 @@ namespace math {
 template <typename T1, typename T2, typename T3,
           require_all_stan_scalar_t<T1, T2, T3>* = nullptr,
           require_any_var_t<T1, T2, T3>* = nullptr>
-inline var inc_beta_inv(const T1& a, const T2& b, const T3& p) {
+inline var inv_inc_beta(const T1& a, const T2& b, const T3& p) {
   double a_val = value_of(a);
   double b_val = value_of(b);
   double p_val = value_of(p);
-  double w = inc_beta_inv(a_val, b_val, p_val);
+  double w = inv_inc_beta(a_val, b_val, p_val);
   return make_callback_var(w, [a, b, p, a_val, b_val, p_val, w](auto& vi) {
     double log_w = log(w);
     double log1m_w = log1m(w);

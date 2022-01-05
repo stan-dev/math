@@ -1,9 +1,9 @@
-#ifndef STAN_MATH_FWD_FUN_INC_BETA_INV_HPP
-#define STAN_MATH_FWD_FUN_INC_BETA_INV_HPP
+#ifndef STAN_MATH_FWD_FUN_INV_INC_BETA_HPP
+#define STAN_MATH_FWD_FUN_INV_INC_BETA_HPP
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
-#include <stan/math/prim/fun/inc_beta_inv.hpp>
+#include <stan/math/prim/fun/inv_inc_beta.hpp>
 #include <stan/math/prim/fun/inc_beta.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log.hpp>
@@ -32,14 +32,14 @@ namespace math {
 template <typename T1, typename T2, typename T3,
           require_all_stan_scalar_t<T1, T2, T3>* = nullptr,
           require_any_fvar_t<T1, T2, T3>* = nullptr>
-inline fvar<partials_return_t<T1, T2, T3>> inc_beta_inv(const T1& a,
+inline fvar<partials_return_t<T1, T2, T3>> inv_inc_beta(const T1& a,
                                                         const T2& b,
                                                         const T3& p) {
   using T_return = partials_return_t<T1, T2, T3>;
   auto a_val = value_of(a);
   auto b_val = value_of(b);
   auto p_val = value_of(p);
-  T_return w = inc_beta_inv(a_val, b_val, p_val);
+  T_return w = inv_inc_beta(a_val, b_val, p_val);
   T_return log_w = log(w);
   T_return log1m_w = log1m(w);
   auto one_m_a = 1 - a_val;

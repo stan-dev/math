@@ -43,10 +43,10 @@
 #include <stan/math/fwd/fun/grad_inc_beta.hpp>
 #include <stan/math/fwd/fun/hypot.hpp>
 #include <stan/math/fwd/fun/inc_beta.hpp>
-#include <stan/math/fwd/fun/inc_beta_inv.hpp>
 #include <stan/math/fwd/fun/inv.hpp>
 #include <stan/math/fwd/fun/inv_Phi.hpp>
 #include <stan/math/fwd/fun/inv_cloglog.hpp>
+#include <stan/math/fwd/fun/inv_inc_beta.hpp>
 #include <stan/math/fwd/fun/inv_logit.hpp>
 #include <stan/math/fwd/fun/inv_sqrt.hpp>
 #include <stan/math/fwd/fun/inv_square.hpp>
