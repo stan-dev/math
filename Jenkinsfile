@@ -288,13 +288,15 @@ pipeline {
                         docker {
                             image 'stanorg/ci:gpu'
                             label 'linux'
-                            args '--pull always'
                         }
                     }
                     steps {
-                        sh "echo CXX=${MPICXX} >> make/local"
-                        sh "echo CXX_TYPE=gcc >> make/local"
-                        sh "echo STAN_MPI=true >> make/local"
+                        unstash 'MathSetup'
+                        sh """
+                            echo CXX=${MPICXX} > make/local
+                            echo CXX_TYPE=gcc >> make/local
+                            echo STAN_MPI=true >> make/local
+                        """
                         runTests("test/unit/math/prim/functor")
                         runTests("test/unit/math/rev/functor")
                     }
@@ -490,7 +492,7 @@ pipeline {
                 }
             }
             steps {
-                build(job: "Stan/${stan_pr()}",
+                build(job: "Stan/Stan/${stan_pr()}",
                         parameters: [string(name: 'math_pr', value: env.BRANCH_NAME),
                                     string(name: 'cmdstan_pr', value: cmdstan_pr())])
             }
