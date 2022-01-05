@@ -54,7 +54,6 @@
 #include <stan/math/rev/fun/elt_multiply.hpp>
 #include <stan/math/rev/fun/erf.hpp>
 #include <stan/math/rev/fun/erfc.hpp>
-#include <stan/math/rev/fun/erfc_inv.hpp>
 #include <stan/math/rev/fun/exp.hpp>
 #include <stan/math/rev/fun/exp2.hpp>
 #include <stan/math/rev/fun/expm1.hpp>
@@ -84,6 +83,7 @@
 #include <stan/math/rev/fun/inv.hpp>
 #include <stan/math/rev/fun/inv_Phi.hpp>
 #include <stan/math/rev/fun/inv_cloglog.hpp>
+#include <stan/math/rev/fun/inv_erfc.hpp>
 #include <stan/math/rev/fun/inv_logit.hpp>
 #include <stan/math/rev/fun/inv_sqrt.hpp>
 #include <stan/math/rev/fun/inv_square.hpp>

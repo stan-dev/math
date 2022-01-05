@@ -27,7 +27,6 @@
 #include <stan/math/fwd/fun/digamma.hpp>
 #include <stan/math/fwd/fun/erf.hpp>
 #include <stan/math/fwd/fun/erfc.hpp>
-#include <stan/math/fwd/fun/erfc_inv.hpp>
 #include <stan/math/fwd/fun/exp.hpp>
 #include <stan/math/fwd/fun/exp2.hpp>
 #include <stan/math/fwd/fun/expm1.hpp>
@@ -45,6 +44,7 @@
 #include <stan/math/fwd/fun/hypot.hpp>
 #include <stan/math/fwd/fun/inc_beta.hpp>
 #include <stan/math/fwd/fun/inv.hpp>
+#include <stan/math/fwd/fun/inv_erfc.hpp>
 #include <stan/math/fwd/fun/inv_Phi.hpp>
 #include <stan/math/fwd/fun/inv_cloglog.hpp>
 #include <stan/math/fwd/fun/inv_logit.hpp>
