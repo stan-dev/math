@@ -27,6 +27,7 @@
 #include <stan/math/fwd/fun/digamma.hpp>
 #include <stan/math/fwd/fun/erf.hpp>
 #include <stan/math/fwd/fun/erfc.hpp>
+#include <stan/math/fwd/fun/erfc_inv.hpp>
 #include <stan/math/fwd/fun/exp.hpp>
 #include <stan/math/fwd/fun/exp2.hpp>
 #include <stan/math/fwd/fun/expm1.hpp>
