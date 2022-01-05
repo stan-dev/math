@@ -15,30 +15,30 @@
 template <typename T>
 struct analytical_dae_base {
   struct func {
-  template <typename T0, typename Tyy, typename Typ, typename Tpar>
-  inline Eigen::Matrix<stan::return_type_t<Tyy, Typ, Tpar>, -1, 1> operator()(
-      const T0& t_in, const Eigen::Matrix<Tyy, -1, 1>& yy,
-      const Eigen::Matrix<Typ, -1, 1> & yp,
-      std::ostream* msgs, const Tpar& theta) const {
-    if (yy.size() != 3 || yp.size() != 3)
-      throw std::domain_error(
-          "this function was called with inconsistent state");
+    template <typename T0, typename Tyy, typename Typ, typename Tpar>
+    inline Eigen::Matrix<stan::return_type_t<Tyy, Typ, Tpar>, -1, 1> operator()(
+        const T0& t_in, const Eigen::Matrix<Tyy, -1, 1>& yy,
+        const Eigen::Matrix<Typ, -1, 1>& yp, std::ostream* msgs,
+        const Tpar& theta) const {
+      if (yy.size() != 3 || yp.size() != 3)
+        throw std::domain_error(
+            "this function was called with inconsistent state");
 
-    Eigen::Matrix<stan::return_type_t<Tyy, Typ, Tpar>, -1, 1> res(3);
+      Eigen::Matrix<stan::return_type_t<Tyy, Typ, Tpar>, -1, 1> res(3);
 
-    auto yy1 = yy(0);
-    auto yy2 = yy(1);
-    auto yy3 = yy(2);
+      auto yy1 = yy(0);
+      auto yy2 = yy(1);
+      auto yy3 = yy(2);
 
-    auto yp1 = yp(0);
+      auto yp1 = yp(0);
 
-    res[0] = yp1 - theta * yy3;
-    res[1] = yy2 * (yy2 - 1.0);
-    res[2] = t_in - yy1 * yy2 - yy3 * (1.0 - yy2);
+      res[0] = yp1 - theta * yy3;
+      res[1] = yy2 * (yy2 - 1.0);
+      res[2] = t_in - yy1 * yy2 - yy3 * (1.0 - yy2);
 
-    return res;
-  }
-};
+      return res;
+    }
+  };
 
   func f;
 
@@ -85,8 +85,8 @@ struct analytical_dae_dv_functor : public analytical_dae_base<T> {
   template <typename Tx>
   Eigen::Matrix<Tx, -1, 1> operator()(Eigen::Matrix<Tx, -1, 1>& x) const {
     std::tuple_element_t<0, T> sol;
-    auto ys = sol(this->f, this->yy0, this->yp0, this->t0, this->ts, nullptr,
-                  x(0));
+    auto ys
+        = sol(this->f, this->yy0, this->yp0, this->t0, this->ts, nullptr, x(0));
     return ys[0];
   }
 };
@@ -100,15 +100,14 @@ struct analytical_dae_vd_functor : public analytical_dae_base<T> {
     std::tuple_element_t<0, T> sol;
     Eigen::Matrix<Tx, -1, 1> yy0_tx = x;
     auto ys = sol(this->f, yy0_tx, this->yp0, this->t0, this->ts, nullptr,
-                  this -> theta);
+                  this->theta);
     return ys[0];
   }
 };
 
 template <typename T>
-struct analytical_dae_test
-    : public analytical_dae_base<T>,
-      public ODETestFixture<analytical_dae_test<T>> {
+struct analytical_dae_test : public analytical_dae_base<T>,
+                             public ODETestFixture<analytical_dae_test<T>> {
   analytical_dae_dv_functor<T> dae_sol_dv;
   analytical_dae_vd_functor<T> dae_sol_vd;
   // analytical_dae_vv_functor<T> dae_sol_vv;
@@ -116,7 +115,7 @@ struct analytical_dae_test
   auto analy_sol_functor() {
     auto f = [&](double t, double k) {
       Eigen::VectorXd y(3);
-      y << 0.5 * k * t * t + stan::math::value_of(this -> yy0[0]), 0, t;
+      y << 0.5 * k * t * t + stan::math::value_of(this->yy0[0]), 0, t;
       return y;
     };
     return f;
@@ -164,10 +163,10 @@ struct analytical_dae_test
 
   template <typename T1, typename T2>
   auto apply_solver(T1&& init, T2&& theta_in) {
-    const int n = init.size()/2;
+    const int n = init.size() / 2;
     std::tuple_element_t<0, T> sol;
-    return sol(this->f, init.head(n), init.tail(n),
-               this->t0, this->ts, nullptr, theta_in);
+    return sol(this->f, init.head(n), init.tail(n), this->t0, this->ts, nullptr,
+               theta_in);
   }
 
   auto apply_solver_tol() {

@@ -18,9 +18,8 @@ static sundials::Context sundials_context;
 struct chemical_kinetics {
   template <typename T0, typename Tyy, typename Typ, typename Tpar>
   inline Eigen::Matrix<stan::return_type_t<Tyy, Typ, Tpar>, -1, 1> operator()(
-      const T0& t_in, const Eigen::Matrix<Tyy, -1, 1>& yy, const
-      Eigen::Matrix<Typ, -1, 1> & yp,
-      std::ostream* msgs,
+      const T0& t_in, const Eigen::Matrix<Tyy, -1, 1>& yy,
+      const Eigen::Matrix<Typ, -1, 1>& yp, std::ostream* msgs,
       const std::vector<Tpar>& theta, const std::vector<double>& x_r,
       const std::vector<int>& x_i) const {
     if (yy.size() != 3 || yp.size() != 3)
@@ -66,12 +65,12 @@ struct StanIntegrateDAETest : public ::testing::Test {
   void SetUp() { stan::math::recover_memory(); }
 
   StanIntegrateDAETest()
-    : yy0(3),
-      yp0(3),
-      theta{0.040, 1.0e4, 3.0e7},
-      msgs{0},
-      eq_id{1, 1, 0},
-      t0(0.0) {
+      : yy0(3),
+        yp0(3),
+        theta{0.040, 1.0e4, 3.0e7},
+        msgs{0},
+        eq_id{1, 1, 0},
+        t0(0.0) {
     const size_t nout{4};
     const double h{0.4};
     yy0 << 1.0, 0.0, 0.0;
@@ -93,8 +92,8 @@ TEST_F(StanIntegrateDAETest, dae_system) {
 
   {
     dae_system<chemical_kinetics, Eigen::VectorXd, Eigen::VectorXd,
-               std::vector<double>, std::vector<double>, std::vector<int> >
-      dae(f, yy0, yp0, msgs, theta, x_r, x_i);
+               std::vector<double>, std::vector<double>, std::vector<int>>
+        dae(f, yy0, yp0, msgs, theta, x_r, x_i);
     EXPECT_FALSE(dae.is_var_yy0);
     EXPECT_FALSE(dae.is_var_yp0);
     EXPECT_FALSE(dae.is_var_par);
@@ -103,9 +102,8 @@ TEST_F(StanIntegrateDAETest, dae_system) {
 
   {
     dae_system<chemical_kinetics, Eigen::Matrix<stan::math::var, -1, 1>,
-               Eigen::Matrix<stan::math::var, -1, 1>,
-               std::vector<double>>
-      dae(f, yy0_var, yp0_var, msgs, theta);
+               Eigen::Matrix<stan::math::var, -1, 1>, std::vector<double>>
+        dae(f, yy0_var, yp0_var, msgs, theta);
     EXPECT_TRUE(dae.is_var_yy0);
     EXPECT_TRUE(dae.is_var_yp0);
     EXPECT_FALSE(dae.is_var_par);
@@ -115,8 +113,8 @@ TEST_F(StanIntegrateDAETest, dae_system) {
   {
     dae_system<chemical_kinetics, Eigen::Matrix<stan::math::var, -1, 1>,
                Eigen::Matrix<stan::math::var, -1, 1>,
-               std::vector<stan::math::var> >
-      dae(f, yy0_var, yp0_var, msgs, theta_var);
+               std::vector<stan::math::var>>
+        dae(f, yy0_var, yp0_var, msgs, theta_var);
     EXPECT_TRUE(dae.is_var_yy0);
     EXPECT_TRUE(dae.is_var_yp0);
     EXPECT_TRUE(dae.is_var_par);

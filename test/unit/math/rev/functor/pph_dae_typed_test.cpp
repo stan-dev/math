@@ -16,12 +16,11 @@ using ode_test_tuple = std::tuple<solve_type, solve_type, Ts...>;
  * Outer product of test types
  */
 using pph_test_types = boost::mp11::mp_product<
-    ode_test_tuple,
-    ::testing::Types<dae_functor>,
-    ::testing::Types<double>,  // t
+    ode_test_tuple, ::testing::Types<dae_functor>,
+    ::testing::Types<double>,                                 // t
     ::testing::Types<double, stan::math::var_value<double>>,  // yy0
     ::testing::Types<double, stan::math::var_value<double>>,  // yp0
-    ::testing::Types<stan::math::var_value<double>>   // theta
+    ::testing::Types<stan::math::var_value<double>>           // theta
     >;
 
 TYPED_TEST_SUITE_P(pph_dae_test);
@@ -40,7 +39,7 @@ TYPED_TEST_P(pph_dae_test, param_finite_diff) {
   this->yp0[1] = 1.0 - stan::math::value_of(this->yy0[2]);
   auto res_lb = this->apply_solver();
 
-  const size_t nt = this -> times().size();
+  const size_t nt = this->times().size();
   std::vector<Eigen::Matrix<stan::math::var, -1, 1>> grad_fd(nt);
   for (size_t i = 0; i < nt; ++i) {
     grad_fd[i] = (res_ub[i] - res_lb[i]) / (2.0 * h);
@@ -59,13 +58,14 @@ TYPED_TEST_P(pph_dae_test, param_finite_diff) {
       res[i][j].grad(vec, g);
 
       double tol = 1.e-5;
-      if (j == 2) tol = 2.e-5;
+      if (j == 2)
+        tol = 2.e-5;
       double g_fd = stan::math::value_of(grad_fd[i][j]);
 
       EXPECT_NEAR(g[0], g_fd, tol)
-        << "Gradient of DAE solver failed with initial positions"
-        << " known and parameters unknown at time index " << i
-        << ", equation index " << j;
+          << "Gradient of DAE solver failed with initial positions"
+          << " known and parameters unknown at time index " << i
+          << ", equation index " << j;
       stan::math::set_zero_all_adjoints();
     }
   }

@@ -35,8 +35,7 @@ class idas_integrator {
    */
   idas_integrator(const double rtol, const double atol,
                   const int64_t max_num_steps)
-      : rtol_(rtol), atol_(atol), max_num_steps_(max_num_steps)
-  {}
+      : rtol_(rtol), atol_(atol), max_num_steps_(max_num_steps) {}
 
   /**
    * Return the solutions for the specified DAE
@@ -54,8 +53,8 @@ class idas_integrator {
    * same size as the state variable, corresponding to a time in ts.
    */
   template <typename dae_type>
-  typename dae_type::return_t operator()(const char* func,
-                                         dae_type& dae, double t0,
+  typename dae_type::return_t operator()(const char* func, dae_type& dae,
+                                         double t0,
                                          const std::vector<double>& ts) {
     idas_service<dae_type> serv(t0, dae);
 
@@ -76,8 +75,8 @@ class idas_integrator {
     }
 
     size_t nt = ts.size();
-    typename dae_type::return_t res_yy(nt, Eigen::Matrix<typename
-                                       dae_type::scalar_t, -1, 1>::Zero(n));
+    typename dae_type::return_t res_yy(
+        nt, Eigen::Matrix<typename dae_type::scalar_t, -1, 1>::Zero(n));
     double t1 = t0;
     for (size_t i = 0; i < nt; ++i) {
       CHECK_IDAS_CALL(IDASolve(mem, ts[i], &t1, yy, yp, IDA_NORMAL));

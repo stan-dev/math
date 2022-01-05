@@ -37,7 +37,7 @@ class dae_system {
   using dae_type = dae_system<F, Tyy, Typ, T_par...>;
 
  protected:
-  const F& f_;                  /**< residual functor */
+  const F& f_; /**< residual functor */
   std::tuple<decltype(deep_copy_vars(std::declval<const T_par&>()))...>
       local_args_tuple_;
   std::tuple<plain_type_t<decltype(value_of(std::declval<const T_par&>()))>...>
@@ -57,14 +57,11 @@ class dae_system {
   std::vector<stan::math::var> all_vars;
   Eigen::VectorXd dbl_rr;
 
-  static constexpr bool is_var_yy0 =
-    stan::is_var<return_type_t<Tyy>>::value;
-  static constexpr bool is_var_yp0 =
-    stan::is_var<return_type_t<Typ>>::value;
-  static constexpr bool is_var_par =
-    stan::is_var<return_type_t<T_par...>>::value;
-  static constexpr bool use_fwd_sens = is_var_yy0 || is_var_yp0 ||
-    is_var_par;
+  static constexpr bool is_var_yy0 = stan::is_var<return_type_t<Tyy>>::value;
+  static constexpr bool is_var_yp0 = stan::is_var<return_type_t<Typ>>::value;
+  static constexpr bool is_var_par
+      = stan::is_var<return_type_t<T_par...>>::value;
+  static constexpr bool use_fwd_sens = is_var_yy0 || is_var_yp0 || is_var_par;
 
   using scalar_t = stan::return_type_t<Tyy, Typ, T_par...>;
   using return_t = std::vector<Eigen::Matrix<scalar_t, -1, 1>>;
@@ -78,8 +75,8 @@ class dae_system {
    * @param[in] yy0 initial condition
    * @param[in] yp0 initial condition for derivatives
    */
-  dae_system(const F& f, const Tyy& yy0, const Typ& yp0,
-             std::ostream* msgs, const T_par&... args)
+  dae_system(const F& f, const Tyy& yy0, const Typ& yp0, std::ostream* msgs,
+             const T_par&... args)
       : f_(f),
         yy(yy0),
         yp(yp0),
@@ -102,23 +99,23 @@ class dae_system {
   }
 
   void eval_residual(double t) {
-    dbl_rr = apply([&](auto&&... args) { return f_(t, dbl_yy, dbl_yp,
-                                                   msgs_, args...); },
-              dbl_args_tuple_);
+    dbl_rr = apply(
+        [&](auto&&... args) { return f_(t, dbl_yy, dbl_yp, msgs_, args...); },
+        dbl_args_tuple_);
   }
 
   /**
    * Evaluate DAE residual according to IDAS signature
    */
   static int idas_res(double t, N_Vector yy, N_Vector yp, N_Vector rr,
-                      void *user_data) {
-      dae_type* dae = static_cast<dae_type*>(user_data);
-      dae -> dbl_yy = Eigen::Map<Eigen::VectorXd>(NV_DATA_S(yy), dae -> N);
-      dae -> dbl_yp = Eigen::Map<Eigen::VectorXd>(NV_DATA_S(yp), dae -> N);
-      dae -> eval_residual(t);
-      Eigen::Map<Eigen::VectorXd>(NV_DATA_S(rr), dae -> N) = dae -> dbl_rr;
+                      void* user_data) {
+    dae_type* dae = static_cast<dae_type*>(user_data);
+    dae->dbl_yy = Eigen::Map<Eigen::VectorXd>(NV_DATA_S(yy), dae->N);
+    dae->dbl_yp = Eigen::Map<Eigen::VectorXd>(NV_DATA_S(yp), dae->N);
+    dae->eval_residual(t);
+    Eigen::Map<Eigen::VectorXd>(NV_DATA_S(rr), dae->N) = dae->dbl_rr;
 
-      return 0;
+    return 0;
   }
 
   /**
@@ -126,8 +123,8 @@ class dae_system {
    */
   static int idas_sens_res(int ns, double t, N_Vector yy, N_Vector yp,
                            N_Vector res, N_Vector* yys, N_Vector* yps,
-                           N_Vector* ress, void* user_data, N_Vector
-                           temp1, N_Vector temp2, N_Vector temp3) {
+                           N_Vector* ress, void* user_data, N_Vector temp1,
+                           N_Vector temp2, N_Vector temp3) {
     dae_type* dae = static_cast<dae_type*>(user_data);
 
     const int n = dae->N;
@@ -147,10 +144,11 @@ class dae_system {
     }
 
     Eigen::VectorXd g(m);
-    Eigen::Matrix<var, -1, 1> fy =
-      apply([&](auto&&... args) { return dae -> f_(t, yy_var, yp_var,
-                                                   dae -> msgs_, args...); },
-            dae -> local_args_tuple_);
+    Eigen::Matrix<var, -1, 1> fy = apply(
+        [&](auto&&... args) {
+          return dae->f_(t, yy_var, yp_var, dae->msgs_, args...);
+        },
+        dae->local_args_tuple_);
 
     for (int i = 0; i < n; ++i) {
       if (i > 0) {
@@ -169,16 +167,18 @@ class dae_system {
 
       if (is_var_par) {
         g.fill(0);
-        stan::math::apply([&](auto&&... args)
-        {stan::math::accumulate_adjoints(g.data(), args...);},
-                          dae -> local_args_tuple_);
+        stan::math::apply(
+            [&](auto&&... args) {
+              stan::math::accumulate_adjoints(g.data(), args...);
+            },
+            dae->local_args_tuple_);
         for (int j = 0; j < m; ++j) {
           auto ressp = N_VGetArrayPointer(ress[ns - m + j]);
           ressp[i] += g[j];
         }
 
-        stan::math::for_each([](auto&& arg)
-        {stan::math::zero_adjoints(arg); }, dae -> local_args_tuple_);
+        stan::math::for_each([](auto&& arg) { stan::math::zero_adjoints(arg); },
+                             dae->local_args_tuple_);
       }
     }
     return 0;

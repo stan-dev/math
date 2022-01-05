@@ -16,13 +16,12 @@ using ode_test_tuple = std::tuple<solve_type, solve_type, Ts...>;
  * Outer product of test types
  */
 using dae_test_types = boost::mp11::mp_product<
-  ode_test_tuple,
-  ::testing::Types<dae_functor>,
-  ::testing::Types<double>,  // t
-  ::testing::Types<double, stan::math::var_value<double> >,  // yy0
-  ::testing::Types<double, stan::math::var_value<double> >,  // yp0
-  ::testing::Types<double, stan::math::var_value<double> >   // theta
-  >;
+    ode_test_tuple, ::testing::Types<dae_functor>,
+    ::testing::Types<double>,                                  // t
+    ::testing::Types<double, stan::math::var_value<double> >,  // yy0
+    ::testing::Types<double, stan::math::var_value<double> >,  // yp0
+    ::testing::Types<double, stan::math::var_value<double> >   // theta
+    >;
 
 TYPED_TEST_SUITE_P(analytical_dae_test);
 TYPED_TEST_P(analytical_dae_test, dv) {
@@ -48,5 +47,4 @@ TYPED_TEST_P(analytical_dae_test, vd) {
 }
 
 REGISTER_TYPED_TEST_SUITE_P(analytical_dae_test, dv, vd);
-INSTANTIATE_TYPED_TEST_SUITE_P(StanDAE, analytical_dae_test,
-                               dae_test_types);
+INSTANTIATE_TYPED_TEST_SUITE_P(StanDAE, analytical_dae_test, dae_test_types);

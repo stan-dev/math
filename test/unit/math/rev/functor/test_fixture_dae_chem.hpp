@@ -15,72 +15,70 @@
 template <typename T>
 struct chemical_kinetics_dae_base {
   struct chemical_kinetics_fun {
-  template <typename T0, typename Tyy, typename Typ, typename Tpar>
-  inline Eigen::Matrix<stan::return_type_t<Tyy, Typ, Tpar>, -1, 1> operator()(
-      const T0& t_in, const Eigen::Matrix<Tyy, -1, 1>& yy, const
-      Eigen::Matrix<Typ, -1, 1> & yp,
-      std::ostream* msgs,
-      const std::vector<Tpar>& theta, const std::vector<double>& x_r,
-      const std::vector<int>& x_i) const {
-    if (yy.size() != 3 || yp.size() != 3)
-      throw std::domain_error(
-          "this function was called with inconsistent state");
+    template <typename T0, typename Tyy, typename Typ, typename Tpar>
+    inline Eigen::Matrix<stan::return_type_t<Tyy, Typ, Tpar>, -1, 1> operator()(
+        const T0& t_in, const Eigen::Matrix<Tyy, -1, 1>& yy,
+        const Eigen::Matrix<Typ, -1, 1>& yp, std::ostream* msgs,
+        const std::vector<Tpar>& theta, const std::vector<double>& x_r,
+        const std::vector<int>& x_i) const {
+      if (yy.size() != 3 || yp.size() != 3)
+        throw std::domain_error(
+            "this function was called with inconsistent state");
 
-    Eigen::Matrix<stan::return_type_t<Tyy, Typ, Tpar>, -1, 1> res(3);
+      Eigen::Matrix<stan::return_type_t<Tyy, Typ, Tpar>, -1, 1> res(3);
 
-    auto yy1 = yy(0);
-    auto yy2 = yy(1);
-    auto yy3 = yy(2);
+      auto yy1 = yy(0);
+      auto yy2 = yy(1);
+      auto yy3 = yy(2);
 
-    auto yp1 = yp(0);
-    auto yp2 = yp(1);
-    // auto yp3 = yp.at(2);
+      auto yp1 = yp(0);
+      auto yp2 = yp(1);
+      // auto yp3 = yp.at(2);
 
-    auto p1 = theta.at(0);
-    auto p2 = theta.at(1);
-    auto p3 = theta.at(2);
+      auto p1 = theta.at(0);
+      auto p2 = theta.at(1);
+      auto p3 = theta.at(2);
 
-    res[0] = yp1 + p1 * yy1 - p2 * yy2 * yy3;
-    res[1] = yp2 - p1 * yy1 + p2 * yy2 * yy3 + p3 * yy2 * yy2;
-    res[2] = yy1 + yy2 + yy3 - 1.0;
+      res[0] = yp1 + p1 * yy1 - p2 * yy2 * yy3;
+      res[1] = yp2 - p1 * yy1 + p2 * yy2 * yy3 + p3 * yy2 * yy2;
+      res[2] = yy1 + yy2 + yy3 - 1.0;
 
-    return res;
-  }
-};
+      return res;
+    }
+  };
 
   struct chemical_kinetics_data_fun {
-  template <typename T0, typename Tyy, typename Typ, typename Tpar>
-  inline Eigen::Matrix<stan::return_type_t<Tyy, Typ, Tpar>, -1, 1> operator()(
-      const T0& t_in, const Eigen::Matrix<Tyy, -1, 1>& yy, const
-      Eigen::Matrix<Typ, -1, 1> & yp,
-      std::ostream* msgs,
-      const std::vector<Tpar>& theta, const std::vector<double>& x_r,
-      const std::vector<int>& x_i) const {
-    if (yy.size() != 3 || yp.size() != 3)
-      throw std::domain_error(
-          "this function was called with inconsistent state");
+    template <typename T0, typename Tyy, typename Typ, typename Tpar>
+    inline Eigen::Matrix<stan::return_type_t<Tyy, Typ, Tpar>, -1, 1> operator()(
+        const T0& t_in, const Eigen::Matrix<Tyy, -1, 1>& yy,
+        const Eigen::Matrix<Typ, -1, 1>& yp, std::ostream* msgs,
+        const std::vector<Tpar>& theta, const std::vector<double>& x_r,
+        const std::vector<int>& x_i) const {
+      if (yy.size() != 3 || yp.size() != 3)
+        throw std::domain_error(
+            "this function was called with inconsistent state");
 
-    Eigen::Matrix<stan::return_type_t<Tyy, Typ, Tpar>, -1, 1> res(3);
+      Eigen::Matrix<stan::return_type_t<Tyy, Typ, Tpar>, -1, 1> res(3);
 
-    auto yy1 = yy(0);
-    auto yy2 = yy(1);
-    auto yy3 = yy(2);
+      auto yy1 = yy(0);
+      auto yy2 = yy(1);
+      auto yy3 = yy(2);
 
-    auto yp1 = yp(0);
-    auto yp2 = yp(1);
-    // auto yp3 = yp.at(2);
+      auto yp1 = yp(0);
+      auto yp2 = yp(1);
+      // auto yp3 = yp.at(2);
 
-    auto p1 = theta.at(0);
-    auto p2 = x_r.at(0);
-    auto p3 = x_r.at(1);
+      auto p1 = theta.at(0);
+      auto p2 = x_r.at(0);
+      auto p3 = x_r.at(1);
 
-    res[0] = yp1 + p1 * yy1 - p2 * yy2 * yy3;
-    res[1] = yp2 - p1 * yy1 + p2 * yy2 * yy3 + p3 * yy2 * yy2;
-    res[2] = yy1 + yy2 + yy3 - 1.0;
+      res[0] = yp1 + p1 * yy1 - p2 * yy2 * yy3;
+      res[1] = yp2 - p1 * yy1 + p2 * yy2 * yy3 + p3 * yy2 * yy2;
+      res[2] = yy1 + yy2 + yy3 - 1.0;
 
-    return res;
-  }
-};
+      return res;
+    }
+  };
 
   chemical_kinetics_fun f;
   chemical_kinetics_data_fun f_data;
@@ -144,11 +142,10 @@ struct chemical_kinetics_test
 
   template <typename T1, typename T2>
   auto apply_solver(T1&& init, T2&& theta_in) {
-    const int n = init.size()/2;
+    const int n = init.size() / 2;
     std::tuple_element_t<0, T> sol;
-    return sol(this->f, init.head(n), init.tail(n), this->t0,
-               this->ts, nullptr, theta_in,
-               this->x_r, this->x_i);
+    return sol(this->f, init.head(n), init.tail(n), this->t0, this->ts, nullptr,
+               theta_in, this->x_r, this->x_i);
   }
 
   auto apply_solver_tol() {
@@ -357,18 +354,17 @@ struct chemical_kinetics_data_test
 
   template <typename T1, typename T2>
   auto apply_solver(T1&& init, T2&& theta_in) {
-    const int n = init.size()/2;
+    const int n = init.size() / 2;
     std::tuple_element_t<0, T> sol;
-    return sol(this->f_data, init.head(n), init.tail(n), this->t0,
-               this->ts, nullptr, theta_in, this->x_r, this->x_i);
+    return sol(this->f_data, init.head(n), init.tail(n), this->t0, this->ts,
+               nullptr, theta_in, this->x_r, this->x_i);
   }
 
   auto apply_solver_tol() {
     std::tuple_element_t<1, T> sol;
-    return sol(this->f_data, this->yy0, this-> yp0, this->t0,
-               this->ts, this->rtol,
-               this->atol, this->max_num_step, nullptr, this->theta, this->x_r,
-               this->x_i);
+    return sol(this->f_data, this->yy0, this->yp0, this->t0, this->ts,
+               this->rtol, this->atol, this->max_num_step, nullptr, this->theta,
+               this->x_r, this->x_i);
   }
 
   void test_value(double t0_in) {

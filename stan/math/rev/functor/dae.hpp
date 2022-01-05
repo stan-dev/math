@@ -11,13 +11,13 @@ namespace stan {
 namespace math {
 
 /**
- * Solve the DAE initial value problem f(t, y, y')=0, y(t0) = yy0, y'(t0)=yp0 at a set of
- * times, { t1, t2, t3, ... } using IDAS.
+ * Solve the DAE initial value problem f(t, y, y')=0, y(t0) = yy0, y'(t0)=yp0 at
+ * a set of times, { t1, t2, t3, ... } using IDAS.
  *
  * \p f must define an operator() with the signature as:
  *   template<typename T_yy, typename T_yp, typename... T_Args>
- *   Eigen::Matrix<stan::return_type_t<T_yy, T_yp, T_Args...>, Eigen::Dynamic, 1>
- *     operator()(double t, const Eigen::Matrix<T_yy, Eigen::Dynamic, 1>& yy,
+ *   Eigen::Matrix<stan::return_type_t<T_yy, T_yp, T_Args...>, Eigen::Dynamic,
+ * 1> operator()(double t, const Eigen::Matrix<T_yy, Eigen::Dynamic, 1>& yy,
  *     const Eigen::Matrix<T_yp, Eigen::Dynamic, 1>& yp,
  *     std::ostream* msgs, const T_Args&... args);
  *
@@ -46,15 +46,12 @@ namespace math {
  * @param args Extra arguments passed unmodified through to DAE right hand side
  * @return Solution to DAE at times \p ts
  */
-template <typename F, typename T_yy, typename T_yp,
-          typename... T_Args,
+template <typename F, typename T_yy, typename T_yp, typename... T_Args,
           require_all_eigen_col_vector_t<T_yy, T_yp>* = nullptr>
 std::vector<Eigen::Matrix<stan::return_type_t<T_yy, T_yp, T_Args...>, -1, 1>>
-dae_tol_impl(const char* func, const F& f,
-             const T_yy& yy0, const T_yp& yp0,
-             double t0, const std::vector<double>& ts,
-             double rtol, double atol, int64_t max_num_steps,
-             std::ostream* msgs, const T_Args&... args) {
+dae_tol_impl(const char* func, const F& f, const T_yy& yy0, const T_yp& yp0,
+             double t0, const std::vector<double>& ts, double rtol, double atol,
+             int64_t max_num_steps, std::ostream* msgs, const T_Args&... args) {
   check_finite(func, "initial state", yy0);
   check_finite(func, "initial state derivative", yp0);
   check_nonzero_size(func, "initial state", yy0);
@@ -69,30 +66,31 @@ dae_tol_impl(const char* func, const F& f,
   check_positive(func, "max_num_steps", max_num_steps);
 
   const auto& args_ref_tuple = std::make_tuple(to_ref(args)...);
-  apply([&](auto&&... args) {
-          std::vector<int> unused_temp{
-            0, (check_finite("dae", "DAE parameters and data", args),
-                0)...};
-        },
-        args_ref_tuple);
+  apply(
+      [&](auto&&... args) {
+        std::vector<int> unused_temp{
+            0, (check_finite("dae", "DAE parameters and data", args), 0)...};
+      },
+      args_ref_tuple);
 
-  return apply([&](const auto&... args_refs) {
-                 dae_system<F, T_yy, T_yp, ref_type_t<T_Args>...>
-                   dae(f, yy0, yp0, msgs, args_refs...);
-                 idas_integrator integ(rtol, atol, max_num_steps);
-                 return integ(func, dae, t0, ts);
-               },
-               args_ref_tuple);
+  return apply(
+      [&](const auto&... args_refs) {
+        dae_system<F, T_yy, T_yp, ref_type_t<T_Args>...> dae(f, yy0, yp0, msgs,
+                                                             args_refs...);
+        idas_integrator integ(rtol, atol, max_num_steps);
+        return integ(func, dae, t0, ts);
+      },
+      args_ref_tuple);
 }
 
 /**
- * Solve the DAE initial value problem f(t, y, y')=0, y(t0) = yy0, y'(t0)=yp0 at a set of
- * times, { t1, t2, t3, ... } using IDAS.
+ * Solve the DAE initial value problem f(t, y, y')=0, y(t0) = yy0, y'(t0)=yp0 at
+ * a set of times, { t1, t2, t3, ... } using IDAS.
  *
  * \p f must define an operator() with the signature as:
  *   template<typename T_yy, typename T_yp, typename... T_Args>
- *   Eigen::Matrix<stan::return_type_t<T_yy, T_yp, T_Args...>, Eigen::Dynamic, 1>
- *     operator()(double t, const Eigen::Matrix<T_yy, Eigen::Dynamic, 1>& yy,
+ *   Eigen::Matrix<stan::return_type_t<T_yy, T_yp, T_Args...>, Eigen::Dynamic,
+ * 1> operator()(double t, const Eigen::Matrix<T_yy, Eigen::Dynamic, 1>& yy,
  *     const Eigen::Matrix<T_yp, Eigen::Dynamic, 1>& yp,
  *     std::ostream* msgs, const T_Args&... args);
  *
@@ -120,27 +118,25 @@ dae_tol_impl(const char* func, const F& f,
  * @param args Extra arguments passed unmodified through to DAE right hand side
  * @return Solution to DAE at times \p ts
  */
-template <typename F, typename T_yy, typename T_yp,
-          typename... T_Args,
+template <typename F, typename T_yy, typename T_yp, typename... T_Args,
           require_all_eigen_col_vector_t<T_yy, T_yp>* = nullptr>
 std::vector<Eigen::Matrix<stan::return_type_t<T_yy, T_yp, T_Args...>, -1, 1>>
-dae_tol(const F& f, const T_yy& yy0, const T_yp& yp0,
-        double t0, const std::vector<double>& ts,
-        double rtol, double atol, int64_t max_num_steps,
-        std::ostream* msgs, const T_Args&... args) {
-  return dae_tol_impl("dae_tol", f, yy0, yp0, t0, ts, rtol,
-                      atol, max_num_steps, msgs, args...);
+dae_tol(const F& f, const T_yy& yy0, const T_yp& yp0, double t0,
+        const std::vector<double>& ts, double rtol, double atol,
+        int64_t max_num_steps, std::ostream* msgs, const T_Args&... args) {
+  return dae_tol_impl("dae_tol", f, yy0, yp0, t0, ts, rtol, atol, max_num_steps,
+                      msgs, args...);
 }
 
 /**
- * Solve the DAE initial value problem f(t, y, y')=0, y(t0) = yy0, y'(t0)=yp0 at a set of
- * times, { t1, t2, t3, ... } using IDAS, assuming default controls
+ * Solve the DAE initial value problem f(t, y, y')=0, y(t0) = yy0, y'(t0)=yp0 at
+ * a set of times, { t1, t2, t3, ... } using IDAS, assuming default controls
  * (relative tol, absolute tol, max number of steps) = (1.e-10, 1.e-10, 1e8).
  *
  * \p f must define an operator() with the signature as:
  *   template<typename T_yy, typename T_yp, typename... T_Args>
- *   Eigen::Matrix<stan::return_type_t<T_yy, T_yp, T_Args...>, Eigen::Dynamic, 1>
- *     operator()(double t, const Eigen::Matrix<T_yy, Eigen::Dynamic, 1>& yy,
+ *   Eigen::Matrix<stan::return_type_t<T_yy, T_yp, T_Args...>, Eigen::Dynamic,
+ * 1> operator()(double t, const Eigen::Matrix<T_yy, Eigen::Dynamic, 1>& yy,
  *     const Eigen::Matrix<T_yp, Eigen::Dynamic, 1>& yp,
  *     std::ostream* msgs, const T_Args&... args);
  *
@@ -164,15 +160,13 @@ dae_tol(const F& f, const T_yy& yy0, const T_yp& yp0,
  * @param args Extra arguments passed unmodified through to DAE right hand side
  * @return Solution to DAE at times \p ts
  */
-template <typename F, typename T_yy, typename T_yp,
-          typename... T_Args,
+template <typename F, typename T_yy, typename T_yp, typename... T_Args,
           require_all_eigen_col_vector_t<T_yy, T_yp>* = nullptr>
 std::vector<Eigen::Matrix<stan::return_type_t<T_yy, T_yp, T_Args...>, -1, 1>>
-dae(const F& f, const T_yy& yy0, const T_yp& yp0,
-    double t0, const std::vector<double>& ts,
-    std::ostream* msgs, const T_Args&... args) {
-  return dae_tol_impl("dae", f, yy0, yp0, t0, ts,
-                      1.e-10, 1.e-10, 1e8, msgs, args...);
+dae(const F& f, const T_yy& yy0, const T_yp& yp0, double t0,
+    const std::vector<double>& ts, std::ostream* msgs, const T_Args&... args) {
+  return dae_tol_impl("dae", f, yy0, yp0, t0, ts, 1.e-10, 1.e-10, 1e8, msgs,
+                      args...);
 }
 
 }  // namespace math
