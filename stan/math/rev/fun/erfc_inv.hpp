@@ -6,6 +6,7 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/erfc_inv.hpp>
 #include <stan/math/prim/fun/square.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <cmath>
 
 namespace stan {
