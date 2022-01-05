@@ -14,9 +14,8 @@ namespace math {
 template <typename T>
 inline fvar<T> erfc_inv(const fvar<T>& x) {
   T precomp_erfc_inv = erfc_inv(x.val());
-  return fvar<T>(
-    precomp_erfc_inv,
-    -x.d_ * exp(LOG_SQRT_PI - LOG_TWO + square(precomp_erfc_inv)));
+  return fvar<T>(precomp_erfc_inv,
+                 -x.d_ * exp(LOG_SQRT_PI - LOG_TWO + square(precomp_erfc_inv)));
 }
 
 }  // namespace math

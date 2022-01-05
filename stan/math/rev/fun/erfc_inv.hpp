@@ -26,21 +26,22 @@ namespace math {
  */
 inline var erfc_inv(const var& a) {
   auto precomp_erfc_inv = erfc_inv(a.val());
-  return make_callback_var(precomp_erfc_inv,
-                           [a, precomp_erfc_inv](auto& vi) mutable {
-    a.adj() -= vi.adj()
-                * exp(LOG_SQRT_PI - LOG_TWO + square(precomp_erfc_inv));
-  });
+  return make_callback_var(
+      precomp_erfc_inv, [a, precomp_erfc_inv](auto& vi) mutable {
+        a.adj()
+            -= vi.adj() * exp(LOG_SQRT_PI - LOG_TWO + square(precomp_erfc_inv));
+      });
 }
 
 template <typename T, require_matrix_t<T>* = nullptr>
 inline auto erfc_inv(const var_value<T>& a) {
   auto precomp_erfc_inv = to_arena(erfc_inv(a.val()));
-  return make_callback_var(precomp_erfc_inv,
-                           [a, precomp_erfc_inv](auto& vi) mutable {
-    a.adj().array() -= vi.adj().array()
-            * exp(LOG_SQRT_PI - LOG_TWO + square(precomp_erfc_inv).array());
-  });
+  return make_callback_var(
+      precomp_erfc_inv, [a, precomp_erfc_inv](auto& vi) mutable {
+        a.adj().array()
+            -= vi.adj().array()
+               * exp(LOG_SQRT_PI - LOG_TWO + square(precomp_erfc_inv).array());
+      });
 }
 
 }  // namespace math
