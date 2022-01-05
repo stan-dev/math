@@ -17,7 +17,8 @@ struct chemical_kinetics_dae_base {
   struct chemical_kinetics_fun {
   template <typename T0, typename Tyy, typename Typ, typename Tpar>
   inline Eigen::Matrix<stan::return_type_t<Tyy, Typ, Tpar>, -1, 1> operator()(
-      const T0& t_in, const Eigen::Matrix<Tyy, -1, 1>& yy, const Eigen::Matrix<Typ, -1, 1> & yp,
+      const T0& t_in, const Eigen::Matrix<Tyy, -1, 1>& yy, const
+      Eigen::Matrix<Typ, -1, 1> & yp,
       std::ostream* msgs,
       const std::vector<Tpar>& theta, const std::vector<double>& x_r,
       const std::vector<int>& x_i) const {
@@ -50,7 +51,8 @@ struct chemical_kinetics_dae_base {
   struct chemical_kinetics_data_fun {
   template <typename T0, typename Tyy, typename Typ, typename Tpar>
   inline Eigen::Matrix<stan::return_type_t<Tyy, Typ, Tpar>, -1, 1> operator()(
-      const T0& t_in, const Eigen::Matrix<Tyy, -1, 1>& yy, const Eigen::Matrix<Typ, -1, 1> & yp,
+      const T0& t_in, const Eigen::Matrix<Tyy, -1, 1>& yy, const
+      Eigen::Matrix<Typ, -1, 1> & yp,
       std::ostream* msgs,
       const std::vector<Tpar>& theta, const std::vector<double>& x_r,
       const std::vector<int>& x_i) const {
@@ -144,7 +146,8 @@ struct chemical_kinetics_test
   auto apply_solver(T1&& init, T2&& theta_in) {
     const int n = init.size()/2;
     std::tuple_element_t<0, T> sol;
-    return sol(this->f, init.head(n), init.tail(n), this->t0, this->ts, nullptr, theta_in,
+    return sol(this->f, init.head(n), init.tail(n), this->t0,
+               this->ts, nullptr, theta_in,
                this->x_r, this->x_i);
   }
 
@@ -242,7 +245,8 @@ struct chemical_kinetics_test
     this->yy0 = yy0_;
 
     this->yp0[0] = nan;
-    EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, "initial state derivative");
+    EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error,
+                     "initial state derivative");
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error,
                      expected_is_nan.str());
     this->yp0 = yp0_;
@@ -287,7 +291,8 @@ struct chemical_kinetics_test
     this->yy0 = yy0_;
 
     this->yp0[0] = -inf;
-    EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error, "initial state derivative");
+    EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error,
+                     "initial state derivative");
     EXPECT_THROW_MSG(apply_solver_tol(), std::domain_error,
                      expected_is_neg_inf.str());
     this->yp0 = yp0_;
@@ -354,13 +359,14 @@ struct chemical_kinetics_data_test
   auto apply_solver(T1&& init, T2&& theta_in) {
     const int n = init.size()/2;
     std::tuple_element_t<0, T> sol;
-    return sol(this->f_data, init.head(n), init.tail(n), this->t0, this->ts, nullptr, theta_in,
-               this->x_r, this->x_i);
+    return sol(this->f_data, init.head(n), init.tail(n), this->t0,
+               this->ts, nullptr, theta_in, this->x_r, this->x_i);
   }
 
   auto apply_solver_tol() {
     std::tuple_element_t<1, T> sol;
-    return sol(this->f_data, this->yy0, this-> yp0, this->t0, this->ts, this->rtol,
+    return sol(this->f_data, this->yy0, this-> yp0, this->t0,
+               this->ts, this->rtol,
                this->atol, this->max_num_step, nullptr, this->theta, this->x_r,
                this->x_i);
   }

@@ -76,8 +76,8 @@ class idas_integrator {
     }
 
     size_t nt = ts.size();
-    typename dae_type::return_t res_yy(nt,
-                                       Eigen::Matrix<typename dae_type::scalar_t, -1, 1>::Zero(n));
+    typename dae_type::return_t res_yy(nt, Eigen::Matrix<typename
+                                       dae_type::scalar_t, -1, 1>::Zero(n));
     double t1 = t0;
     for (size_t i = 0; i < nt; ++i) {
       CHECK_IDAS_CALL(IDASolve(mem, ts[i], &t1, yy, yp, IDA_NORMAL));

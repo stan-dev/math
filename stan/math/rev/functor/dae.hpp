@@ -47,12 +47,13 @@ namespace math {
  * @return Solution to DAE at times \p ts
  */
 template <typename F, typename T_yy, typename T_yp,
-          typename... T_Args, require_all_eigen_col_vector_t<T_yy, T_yp>* = nullptr>
+          typename... T_Args,
+          require_all_eigen_col_vector_t<T_yy, T_yp>* = nullptr>
 std::vector<Eigen::Matrix<stan::return_type_t<T_yy, T_yp, T_Args...>, -1, 1>>
 dae_tol_impl(const char* func, const F& f,
              const T_yy& yy0, const T_yp& yp0,
              double t0, const std::vector<double>& ts,
-             double rtol, double atol, long int max_num_steps,
+             double rtol, double atol, int64_t max_num_steps,
              std::ostream* msgs, const T_Args&... args) {
   check_finite(func, "initial state", yy0);
   check_finite(func, "initial state derivative", yp0);
@@ -76,7 +77,8 @@ dae_tol_impl(const char* func, const F& f,
         args_ref_tuple);
 
   return apply([&](const auto&... args_refs) {
-                 dae_system<F, T_yy, T_yp, ref_type_t<T_Args>...> dae(f, yy0, yp0, msgs, args_refs...);
+                 dae_system<F, T_yy, T_yp, ref_type_t<T_Args>...>
+                   dae(f, yy0, yp0, msgs, args_refs...);
                  idas_integrator integ(rtol, atol, max_num_steps);
                  return integ(func, dae, t0, ts);
                },
@@ -119,11 +121,12 @@ dae_tol_impl(const char* func, const F& f,
  * @return Solution to DAE at times \p ts
  */
 template <typename F, typename T_yy, typename T_yp,
-          typename... T_Args, require_all_eigen_col_vector_t<T_yy, T_yp>* = nullptr>
+          typename... T_Args,
+          require_all_eigen_col_vector_t<T_yy, T_yp>* = nullptr>
 std::vector<Eigen::Matrix<stan::return_type_t<T_yy, T_yp, T_Args...>, -1, 1>>
 dae_tol(const F& f, const T_yy& yy0, const T_yp& yp0,
         double t0, const std::vector<double>& ts,
-        double rtol, double atol, long int max_num_steps,
+        double rtol, double atol, int64_t max_num_steps,
         std::ostream* msgs, const T_Args&... args) {
   return dae_tol_impl("dae_tol", f, yy0, yp0, t0, ts, rtol,
                       atol, max_num_steps, msgs, args...);
@@ -162,12 +165,13 @@ dae_tol(const F& f, const T_yy& yy0, const T_yp& yp0,
  * @return Solution to DAE at times \p ts
  */
 template <typename F, typename T_yy, typename T_yp,
-          typename... T_Args, require_all_eigen_col_vector_t<T_yy, T_yp>* = nullptr>
+          typename... T_Args,
+          require_all_eigen_col_vector_t<T_yy, T_yp>* = nullptr>
 std::vector<Eigen::Matrix<stan::return_type_t<T_yy, T_yp, T_Args...>, -1, 1>>
 dae(const F& f, const T_yy& yy0, const T_yp& yp0,
     double t0, const std::vector<double>& ts,
     std::ostream* msgs, const T_Args&... args) {
-  return dae_tol_impl("dae", f, yy0, yp0, t0, ts, 
+  return dae_tol_impl("dae", f, yy0, yp0, t0, ts,
                       1.e-10, 1.e-10, 1e8, msgs, args...);
 }
 

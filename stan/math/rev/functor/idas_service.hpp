@@ -55,8 +55,7 @@ namespace math {
       nv_yps(nullptr),
       mem(IDACreate(sundials_context_)),
       A(SUNDenseMatrix(dae.N, dae.N, sundials_context_)),
-      LS(SUNLinSol_Dense(nv_yy, A, sundials_context_))
-    {
+      LS(SUNLinSol_Dense(nv_yy, A, sundials_context_)) {
       const int n = dae.N;
       for (auto i = 0; i < n; ++i) {
         NV_Ith_S(nv_yy, i) = dae.dbl_yy[i];
@@ -101,7 +100,8 @@ namespace math {
     }
 
     template<typename dae_t = dae_type,
-             std::enable_if_t<dae_t::is_var_yy0 && dae_t::is_var_yp0>* = nullptr>
+             std::enable_if_t<dae_t::is_var_yy0 && dae_t::is_var_yp0>*
+             = nullptr>
     void set_init_sens(N_Vector*& yys, N_Vector*& yps, int n) {
       for (size_t i = 0; i < n; ++i) {
         NV_Ith_S(yys[i], i) = 1.0;
@@ -114,15 +114,17 @@ namespace math {
     }
 
     template<typename dae_t = dae_type,
-             std::enable_if_t<dae_t::is_var_yy0 && (!dae_t::is_var_yp0)>* = nullptr>
-    void set_init_sens(N_Vector*& yys, N_Vector*& yps, int n) {
+             std::enable_if_t<dae_t::is_var_yy0 &&
+             (!dae_t::is_var_yp0)>* = nullptr>
+        void set_init_sens(N_Vector*& yys, N_Vector*& yps, int n) {
       for (size_t i = 0; i < n; ++i) {
         NV_Ith_S(yys[i], i) = 1.0;
       }
     }
 
     template<typename dae_t = dae_type,
-             std::enable_if_t<(!dae_t::is_var_yy0) && dae_t::is_var_yp0>* = nullptr>
+             std::enable_if_t<(!dae_t::is_var_yy0) &&
+             dae_t::is_var_yp0>* = nullptr>
     void set_init_sens(N_Vector*& yys, N_Vector*& yps, int n) {
       for (size_t i = 0; i < n; ++i) {
         NV_Ith_S(yps[i], i) = 1.0;
@@ -130,7 +132,8 @@ namespace math {
     }
 
     template<typename dae_t = dae_type,
-             std::enable_if_t<(!dae_t::is_var_yy0) && (!dae_t::is_var_yp0)>* = nullptr>
+             std::enable_if_t<(!dae_t::is_var_yy0) &&
+             (!dae_t::is_var_yp0)>* = nullptr>
     void set_init_sens(N_Vector*& yys, N_Vector*& yps, int n) {}
   };
 }

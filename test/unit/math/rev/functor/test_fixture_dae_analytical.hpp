@@ -17,7 +17,8 @@ struct analytical_dae_base {
   struct func {
   template <typename T0, typename Tyy, typename Typ, typename Tpar>
   inline Eigen::Matrix<stan::return_type_t<Tyy, Typ, Tpar>, -1, 1> operator()(
-      const T0& t_in, const Eigen::Matrix<Tyy, -1, 1>& yy, const Eigen::Matrix<Typ, -1, 1> & yp,
+      const T0& t_in, const Eigen::Matrix<Tyy, -1, 1>& yy,
+      const Eigen::Matrix<Typ, -1, 1> & yp,
       std::ostream* msgs, const Tpar& theta) const {
     if (yy.size() != 3 || yp.size() != 3)
       throw std::domain_error(
@@ -165,7 +166,8 @@ struct analytical_dae_test
   auto apply_solver(T1&& init, T2&& theta_in) {
     const int n = init.size()/2;
     std::tuple_element_t<0, T> sol;
-    return sol(this->f, init.head(n), init.tail(n), this->t0, this->ts, nullptr, theta_in);
+    return sol(this->f, init.head(n), init.tail(n),
+               this->t0, this->ts, nullptr, theta_in);
   }
 
   auto apply_solver_tol() {

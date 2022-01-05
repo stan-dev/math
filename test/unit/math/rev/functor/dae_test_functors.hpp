@@ -16,7 +16,7 @@ struct dae_functor {
   std::vector<Eigen::Matrix<stan::return_type_t<T_yy, T_yp, T_Args...>, -1, 1>>
   operator()(const F& f, const T_yy& yy0, const T_yp& yp0,
              double t0, const std::vector<double>& ts,
-             double rtol, double atol, long int max_num_steps,
+             double rtol, double atol, int64_t max_num_steps,
              std::ostream* msgs, const T_Args&... args) {
     return stan::math::dae_tol(f, yy0, yp0, t0, ts, rtol, atol, max_num_steps,
                    msgs, args...);

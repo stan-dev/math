@@ -2,12 +2,9 @@
 #include <stan/math/rev/core.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <stan/math/rev/functor/idas_integrator.hpp>
-
 #include <nvector/nvector_serial.h>
-
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -21,7 +18,8 @@ static sundials::Context sundials_context;
 struct chemical_kinetics {
   template <typename T0, typename Tyy, typename Typ, typename Tpar>
   inline Eigen::Matrix<stan::return_type_t<Tyy, Typ, Tpar>, -1, 1> operator()(
-      const T0& t_in, const Eigen::Matrix<Tyy, -1, 1>& yy, const Eigen::Matrix<Typ, -1, 1> & yp,
+      const T0& t_in, const Eigen::Matrix<Tyy, -1, 1>& yy, const
+      Eigen::Matrix<Typ, -1, 1> & yp,
       std::ostream* msgs,
       const std::vector<Tpar>& theta, const std::vector<double>& x_r,
       const std::vector<int>& x_i) const {
@@ -104,7 +102,8 @@ TEST_F(StanIntegrateDAETest, dae_system) {
   }
 
   {
-    dae_system<chemical_kinetics, Eigen::Matrix<stan::math::var, -1, 1>, Eigen::Matrix<stan::math::var, -1, 1>,
+    dae_system<chemical_kinetics, Eigen::Matrix<stan::math::var, -1, 1>,
+               Eigen::Matrix<stan::math::var, -1, 1>,
                std::vector<double>>
       dae(f, yy0_var, yp0_var, msgs, theta);
     EXPECT_TRUE(dae.is_var_yy0);
@@ -114,7 +113,8 @@ TEST_F(StanIntegrateDAETest, dae_system) {
   }
 
   {
-    dae_system<chemical_kinetics, Eigen::Matrix<stan::math::var, -1, 1>, Eigen::Matrix<stan::math::var, -1, 1>,
+    dae_system<chemical_kinetics, Eigen::Matrix<stan::math::var, -1, 1>,
+               Eigen::Matrix<stan::math::var, -1, 1>,
                std::vector<stan::math::var> >
       dae(f, yy0_var, yp0_var, msgs, theta_var);
     EXPECT_TRUE(dae.is_var_yy0);
