@@ -5,6 +5,7 @@
 #include <stan/math/prim/err/domain_error.hpp>
 #include <kinsol/kinsol.h>
 #include <cvodes/cvodes.h>
+#include <array>
 
 namespace stan {
 namespace math {

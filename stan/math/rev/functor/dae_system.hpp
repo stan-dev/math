@@ -2,11 +2,15 @@
 #define STAN_MATH_REV_FUNCTOR_DAE_RESIDUAL_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/core/typedefs.hpp>
+#include <stan/math/rev/core/nested_rev_autodiff.hpp>
+#include <stan/math/rev/core/zero_adjoints.hpp>
+#include <stan/math/rev/core/accumulate_adjoints.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/dot_self.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/functor/for_each.hpp>
+#include <stan/math/prim/functor/apply.hpp>
 #include <idas/idas.h>
 #include <nvector/nvector_serial.h>
 #include <ostream>
