@@ -212,7 +212,7 @@ void ternary_scalar_tester_impl(const F& f, const T1& x, const T2& y,
   auto nestnestmat_nestnestmat_scal = f(nest_nest_x, nest_nest_y, z[0]);
   auto nestnestmat_scal_scal = f(nest_nest_x, y[0], z[0]);
   auto nestnestmat_scal_nestnestmat = f(nest_nest_x, y[0], nest_nest_z);
-  auto scal_scal_nestnestmat = f(x[0], y[0], nest_nest_z));
+  auto scal_scal_nestnestmat = f(x[0], y[0], nest_nest_z);
   auto scal_nestnestmat_scal = f(x[0], nest_nest_y, z[0]);
   auto scal_nestnestmat_nestnestmat = f(x[0], nest_nest_y, nest_nest_z);
   for (int i = 0; i < 3; ++i) {
