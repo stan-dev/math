@@ -131,6 +131,8 @@
 #include <stan/math/rev/fun/multiply_log.hpp>
 #include <stan/math/rev/fun/multiply_lower_tri_self_transpose.hpp>
 #include <stan/math/rev/fun/norm.hpp>
+#include <stan/math/rev/fun/norm1.hpp>
+#include <stan/math/rev/fun/norm2.hpp>
 #include <stan/math/rev/fun/ordered_constrain.hpp>
 #include <stan/math/rev/fun/owens_t.hpp>
 #include <stan/math/rev/fun/polar.hpp>
