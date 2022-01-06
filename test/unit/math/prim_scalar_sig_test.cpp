@@ -670,6 +670,7 @@ TEST(PrimScalarSigTests, ldexp) {
 }
 
 TEST(PrimScalarSigTests, pow) {
+  using namespace std::complex_literals
   double real_1 = 0.4;
   double real_2 = 2.2;
   int int_1 = 2;
