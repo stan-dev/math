@@ -69,9 +69,8 @@ class AgradCcdfLogFrechet : public AgradCcdfLogTest {
   stan::return_type_t<T_y, T_shape, T_scale> ccdf_log_function(
       const T_y& y, const T_shape& alpha, const T_scale& sigma, const T3&,
       const T4&, const T5&) {
-    using std::exp;
-    using std::log;
-    using std::pow;
-    return log(1.0 - exp(-pow(sigma / y, alpha)));
+    using stan::math::log1m_exp;
+    using stan::math::pow;
+    return log1m_exp(-pow(sigma / y, alpha));
   }
 };

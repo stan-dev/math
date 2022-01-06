@@ -22,6 +22,7 @@
 #include <stan/math/prim/fun/asinh.hpp>
 #include <stan/math/prim/fun/assign.hpp>
 #include <stan/math/prim/fun/atan.hpp>
+#include <stan/math/prim/fun/atan2.hpp>
 #include <stan/math/prim/fun/atanh.hpp>
 #include <stan/math/prim/fun/autocorrelation.hpp>
 #include <stan/math/prim/fun/autocovariance.hpp>
