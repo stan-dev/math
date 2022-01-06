@@ -108,8 +108,6 @@ struct idas_service {
     for (size_t i = 0; i < n; ++i) {
       NV_Ith_S(yps[i + n], i) = 1.0;
     }
-    CHECK_IDAS_CALL(
-        IDASensInit(mem, ns, IDA_STAGGERED, dae_type::idas_sens_res, yys, yps));
   }
 
   template <
