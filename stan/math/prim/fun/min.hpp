@@ -11,6 +11,21 @@ namespace stan {
 namespace math {
 
 /**
+ * Returns the minimum coefficient of the two specified
+ * scalar arguments.
+ *
+ * @tparam T1 type of first argument (must be arithmetic)
+ * @tparam T2 type of second argument (must be arithmetic)
+ * @param x first argument
+ * @param y second argument
+ * @return minimum value of the two arguments
+ */
+template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
+return_type_t<T1, T2> min(T1 x, T2 y) {
+  return std::min(x, y);
+}
+
+/**
  * Returns the minimum coefficient in the specified
  * matrix, vector, row vector or std vector.
  *

@@ -11,6 +11,7 @@
 #include <stan/math/rev/fun/cos.hpp>
 #include <stan/math/rev/fun/is_inf.hpp>
 #include <stan/math/rev/fun/is_nan.hpp>
+#include <stan/math/rev/fun/norm.hpp>
 #include <stan/math/rev/fun/sqrt.hpp>
 #include <cmath>
 

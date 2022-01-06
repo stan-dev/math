@@ -507,7 +507,6 @@ class AgradCdfTestFixture : public ::testing::Test {
    */
   void test_repeat_as_vector() {
     using stan::math::pow;
-    using std::pow;
 
     if (stan::is_any_var_matrix<T0, T1, T2, T3, T4, T5>::value) {
       // There is no way to do this test for a `var_value` matrix
