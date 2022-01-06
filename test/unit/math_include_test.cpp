@@ -23,14 +23,13 @@ class Math : public ::testing::Test {
 };
 
 TEST_F(Math, paper_example_1) {
-  using std::pow;
   double y = 1.3;
   stan::math::var mu = 0.5, sigma = 1.2;
 
   stan::math::var lp = 0;
   lp -= 0.5 * log(2 * stan::math::pi());
   lp -= log(sigma);
-  lp -= 0.5 * pow((y - mu) / sigma, 2);
+  lp -= 0.5 * stan::math::pow((y - mu) / sigma, 2);
   std::cout << "f(mu, sigma) = " << lp.val() << std::endl;
 
   lp.grad();
@@ -45,7 +44,7 @@ TEST_F(Math, paper_example_2) {
   stan::math::var lp = 0;
   lp -= 0.5 * log(2 * stan::math::pi());
   lp -= log(sigma);
-  lp -= 0.5 * pow((y - mu) / sigma, 2);
+  lp -= 0.5 * stan::math::pow((y - mu) / sigma, 2);
 
   std::vector<stan::math::var> theta;
   theta.push_back(mu);
@@ -60,9 +59,7 @@ namespace paper {  // paper_example_3
 template <typename T1, typename T2, typename T3>
 inline stan::return_type_t<T1, T2, T3> normal_log(const T1& y, const T2& mu,
                                                   const T3& sigma) {
-  using std::log;
-  using std::pow;
-  return -0.5 * pow((y - mu) / sigma, 2.0) - log(sigma)
+  return -0.5 * stan::math::pow((y - mu) / sigma, 2.0) - stan::math::log(sigma)
          - 0.5 * log(2 * stan::math::pi());
 }
 }  // namespace paper

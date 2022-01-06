@@ -17,7 +17,7 @@ namespace math {
  * Return the absolute value of the specified arithmetic argument.
  * The return type is the same as the argument type.
  *
- * @tparam T type of arument (must be arithmetic)
+ * @tparam T type of argument (must be arithmetic)
  * @param x argument
  * @return absolute value of argument
  */

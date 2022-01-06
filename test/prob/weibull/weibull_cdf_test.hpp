@@ -75,8 +75,8 @@ class AgradCdfWeibull : public AgradCdfTest {
                                                           const T_scale& sigma,
                                                           const T3&, const T4&,
                                                           const T5&) {
-    using std::log;
-    using std::pow;
+    using stan::math::log;
+    using stan::math::pow;
     return 1.0 - exp(-pow(y / sigma, alpha));
   }
 };
