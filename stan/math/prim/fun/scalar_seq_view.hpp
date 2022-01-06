@@ -38,12 +38,12 @@ class scalar_seq_view<C, require_eigen_vector_t<C>> {
 
   template <typename T = C, require_st_arithmetic<T>* = nullptr>
   inline decltype(auto) val(size_t i) const {
-    return c_.coeffRef(i);
+    return c_.coeff(i);
   }
 
   template <typename T = C, require_st_autodiff<T>* = nullptr>
   inline decltype(auto) val(size_t i) const {
-    return c_.coeffRef(i).val();
+    return c_.coeff(i).val();
   }
 
  private:
