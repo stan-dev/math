@@ -83,13 +83,13 @@ class AgradCdfLogNormal : public AgradCdfLogTest {
   stan::return_type_t<T_y, T_loc, T_scale> cdf_log_function(
       const T_y& y, const T_loc& mu, const T_scale& sigma, const T3&, const T4&,
       const T5&) {
+    using stan::math::exp;
+    using stan::math::log;
+    using stan::math::log1p;
     using stan::math::LOG_HALF;
+    using stan::math::pow;
     using stan::math::SQRT_PI;
     using stan::math::SQRT_TWO;
-    using std::exp;
-    using std::log;
-    using std::log1p;
-    using std::pow;
 
     stan::return_type_t<T_y, T_loc, T_scale> cdf_log(0.0);
 

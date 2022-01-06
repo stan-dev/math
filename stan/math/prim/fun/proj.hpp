@@ -7,6 +7,19 @@
 
 namespace stan {
 namespace math {
+/**
+ * Return the projection of the complex argument onto the Riemann
+ * sphere.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return projection of the argument onto the Riemann sphere
+ */
+template <typename V>
+inline std::complex<V> proj(const std::complex<V>& z) {
+  return std::proj(z);
+}
+
 namespace internal {
 /**
  * Return the projection of the complex argument onto the Riemann
