@@ -303,43 +303,44 @@ pipeline {
                     post { always { retry(3) { deleteDir() } } }
                 }
 
-                stage('OpenCL CPU tests') {
-                    agent {
-                        docker {
-                            image 'stanorg/ci:gpu'
-                            label 'linux'
-                        }
-                    }
-                    when {
-                        expression {
-                            !skipOpenCL
-                        }
-                    }
-                    steps {
-                        script {
-                            unstash 'MathSetup'
-                            sh """
-                                echo CXX=${CLANG_CXX} -Werror > make/local
-                                echo STAN_OPENCL=true>> make/local
-                                echo OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_CPU}>> make/local
-                                echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_CPU}>> make/local
-                                # skips tests that require specific support in OpenCL
-                                echo "ifdef NO_CPU_OPENCL_INT64_BASE_ATOMIC" >> make/local
-                                echo "CXXFLAGS += -DSTAN_TEST_SKIP_REQUIRING_OPENCL_INT64_BASE_ATOMIC" >> make/local
-                                echo "endif" >> make/local
-                            """
-                            runTests("test/unit/math/opencl/rev/cols_test.cpp", false)
-                            runTests("test/unit/math/opencl", false)
-                            runTests("test/unit/multiple_translation_units_test.cpp")
-                        }
-                    }
-                }
+// Not working on the flatiron CPUs
+// Please uncomment after migration, we will run it on the gelman machines
+//                 stage('OpenCL CPU tests') {
+//                     agent {
+//                         docker {
+//                             image 'stanorg/ci:gpu'
+//                             label 'triqs'
+//                         }
+//                     }
+//                     when {
+//                         expression {
+//                             !skipOpenCL
+//                         }
+//                     }
+//                     steps {
+//                         script {
+//                             unstash 'MathSetup'
+//                             sh """
+//                                 echo CXX=${CLANG_CXX} -Werror > make/local
+//                                 echo STAN_OPENCL=true>> make/local
+//                                 echo OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_CPU}>> make/local
+//                                 echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_CPU}>> make/local
+//                                 # skips tests that require specific support in OpenCL
+//                                 echo "ifdef NO_CPU_OPENCL_INT64_BASE_ATOMIC" >> make/local
+//                                 echo "CXXFLAGS += -DSTAN_TEST_SKIP_REQUIRING_OPENCL_INT64_BASE_ATOMIC" >> make/local
+//                                 echo "endif" >> make/local
+//                             """
+//                             runTests("test/unit/math/opencl", false)
+//                             runTests("test/unit/multiple_translation_units_test.cpp")
+//                         }
+//                     }
+//                 }
 
                 stage('OpenCL GPU tests') {
                     agent {
                         docker {
                             image 'stanorg/ci:gpu'
-                            label 'gpu'
+                            label 'v100'
                             args '--gpus 1'
                         }
                     }
