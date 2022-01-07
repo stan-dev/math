@@ -3,15 +3,15 @@
 #include <test/unit/math/rev/fun/util.hpp>
 #include <test/unit/math/rev/util.hpp>
 
-TEST(inc_beta_inv, values) {
-  using stan::math::inc_beta_inv;
+TEST(inv_inc_beta, values) {
+  using stan::math::inv_inc_beta;
   using stan::math::var;
 
   var a = 25;
   var b = 2;
   var p = 0.7;
 
-  var res = inc_beta_inv(a, b, p);
+  var res = inv_inc_beta(a, b, p);
   res.grad();
 
   EXPECT_FLOAT_EQ(a.adj(), 0.00161775443606);
