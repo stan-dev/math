@@ -38,30 +38,18 @@ return_type_t<T_location, T_precision> neg_binomial_2_lcdf(
   }
 
   scalar_seq_view<T_n_ref> n_vec(n_ref);
-  scalar_seq_view<T_mu_ref> mu_vec(mu_ref);
-  scalar_seq_view<T_phi_ref> phi_vec(phi_ref);
   size_t size_n = stan::math::size(n);
-  size_t size_phi_mu = max_size(mu, phi);
 
   for (size_t i = 0; i < size_n; i++) {
     if (n_vec[i] < 0) {
       return LOG_ZERO;
     }
   }
+  auto&& phi_vec = as_array_or_scalar(phi_ref);
+  auto phi_mu = phi_vec / (phi_vec + as_array_or_scalar(mu_ref));
 
-  VectorBuilder<true, return_type_t<T_location, T_precision>, T_location,
-                T_precision>
-      phi_mu(size_phi_mu);
-  for (size_t i = 0; i < size_phi_mu; i++) {
-    phi_mu[i] = phi_vec.val(i) / (phi_vec.val(i) + mu_vec.val(i));
-  }
-
-  VectorBuilder<true, return_type_t<T_n>, T_n> np1(size_n);
-  for (size_t i = 0; i < size_n; i++) {
-    np1[i] = n_vec[i] + 1.0;
-  }
-
-  return beta_cdf_log(phi_mu.data(), phi_ref, np1.data());
+  auto np1 = as_array_or_scalar(n_ref) + 1.0;
+  return beta_cdf_log(phi_mu, phi_ref, np1);
 }
 
 }  // namespace math

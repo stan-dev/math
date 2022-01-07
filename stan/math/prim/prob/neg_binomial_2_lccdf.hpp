@@ -31,18 +31,8 @@ return_type_t<T_location, T_precision> neg_binomial_2_lccdf(
     return 0;
   }
 
-  scalar_seq_view<T_mu_ref> mu_vec(mu_ref);
-  scalar_seq_view<T_phi_ref> phi_vec(phi_ref);
-  size_t size_beta = max_size(mu, phi);
-
-  VectorBuilder<true, return_type_t<T_location, T_precision>, T_location,
-                T_precision>
-      beta_vec(size_beta);
-  for (size_t i = 0; i < size_beta; ++i) {
-    beta_vec[i] = phi_vec.val(i) / mu_vec.val(i);
-  }
-
-  return neg_binomial_lccdf(n, phi_ref, beta_vec.data());
+  auto beta_vec = as_array_or_scalar(phi_ref) / as_array_or_scalar(mu_ref);
+  return neg_binomial_lccdf(n, phi_ref, beta_vec);
 }
 
 }  // namespace math
