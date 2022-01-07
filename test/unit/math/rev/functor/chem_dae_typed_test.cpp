@@ -30,23 +30,27 @@ TYPED_TEST_P(chemical_kinetics_test, param_and_data_finite_diff) {
 
   // params that gives moderate gradients
   this->theta = {0.4, 0.5, 0.5};
-  this->test_fd_dv(1.e-3, 2e-6);
+  this->test_fd_dv(1.e-3, 5e-6);
 }
-TYPED_TEST_P(chemical_kinetics_test, value_1) { this->test_value(0.0); }
-TYPED_TEST_P(chemical_kinetics_test, value_2) { this->test_value(1.0); }
-TYPED_TEST_P(chemical_kinetics_test, value_3) { this->test_value(-1.0); }
+TYPED_TEST_P(chemical_kinetics_test, value) {
+  this->test_value(0.0);
+  this->test_value(1.0);
+  this->test_value(-1.0);
+}
 
 TYPED_TEST_P(chemical_kinetics_test, error) { this->test_bad(); }
 
-REGISTER_TYPED_TEST_SUITE_P(chemical_kinetics_test, value_1, value_2, value_3,
+REGISTER_TYPED_TEST_SUITE_P(chemical_kinetics_test, value,
                             error, param_and_data_finite_diff);
 INSTANTIATE_TYPED_TEST_SUITE_P(StanOde, chemical_kinetics_test,
                                chemical_kinetics_test_types);
 
 TYPED_TEST_SUITE_P(chemical_kinetics_data_test);
-TYPED_TEST_P(chemical_kinetics_data_test, value_1) { this->test_value(0.0); }
-TYPED_TEST_P(chemical_kinetics_data_test, value_2) { this->test_value(1.0); }
-TYPED_TEST_P(chemical_kinetics_data_test, value_3) { this->test_value(-1.0); }
+TYPED_TEST_P(chemical_kinetics_data_test, value) {
+  this->test_value(0.0);
+  this->test_value(1.0);
+  this->test_value(-1.0);
+}
 TYPED_TEST_P(chemical_kinetics_data_test, param_and_data_finite_diff) {
   // params that gives extreme gradients
   this->test_fd_dv(1.e-3, 2e-3);
@@ -56,7 +60,7 @@ TYPED_TEST_P(chemical_kinetics_data_test, param_and_data_finite_diff) {
   this->x_r = {0.5, 0.5};
   this->test_fd_dv(1.e-3, 2e-6);
 }
-REGISTER_TYPED_TEST_SUITE_P(chemical_kinetics_data_test, value_1, value_2,
-                            value_3, param_and_data_finite_diff);
+REGISTER_TYPED_TEST_SUITE_P(chemical_kinetics_data_test, value,
+                            param_and_data_finite_diff);
 INSTANTIATE_TYPED_TEST_SUITE_P(StanOde, chemical_kinetics_data_test,
                                chemical_kinetics_test_types);

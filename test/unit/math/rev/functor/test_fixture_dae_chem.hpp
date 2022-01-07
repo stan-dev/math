@@ -155,20 +155,26 @@ struct chemical_kinetics_test
                this->x_i);
   }
 
+  /**
+   * Test against IDAS example "idasRoberts_FSA_dns" output.
+   *
+   * @param t0_in initial time
+   */
   void test_value(double t0_in) {
     this->t0 = t0_in;
-    for (size_t i = 0; i < this->ts.size(); ++i) {
-      this->ts[i] += t0_in;
-    }
+    this -> ts.resize(3);
+    this -> ts[0] = this->t0 + 0.4;
+    this -> ts[1] = this->t0 + 4.0;
+    this -> ts[2] = this->t0 + 40.0;
 
     this->rtol = 1e-4;
     this->atol = 1e-8;
-    this->max_num_step = 100000;
+    this->max_num_step = 1000;
     {
       auto yy = apply_solver_tol();
-      EXPECT_NEAR(0.3368089, stan::math::value_of(yy[3][0]), 1e-4);
-      EXPECT_NEAR(2.01314E-06, stan::math::value_of(yy[3][1]), 1e-9);
-      EXPECT_NEAR(0.6631891, stan::math::value_of(yy[3][2]), 1e-4);
+      EXPECT_NEAR(7.1583e-01, stan::math::value_of(yy[2][0]), 2e-5);
+      EXPECT_NEAR(9.1855e-06, stan::math::value_of(yy[2][1]), 1e-9);
+      EXPECT_NEAR(2.8416e-01, stan::math::value_of(yy[2][2]), 2e-5);
     }
 
     this->rtol = 1e-8;
@@ -176,10 +182,47 @@ struct chemical_kinetics_test
     this->max_num_step = 100000;
     {
       auto yy = apply_solver_tol();
-      EXPECT_NEAR(0.3368089, stan::math::value_of(yy[3][0]), 1e-4);
-      EXPECT_NEAR(2.01314E-06, stan::math::value_of(yy[3][1]), 1e-9);
-      EXPECT_NEAR(0.6631891, stan::math::value_of(yy[3][2]), 1e-4);
+      EXPECT_NEAR(7.1583e-01, stan::math::value_of(yy[2][0]), 5e-6);
+      EXPECT_NEAR(9.1855e-06, stan::math::value_of(yy[2][1]), 1e-9);
+      EXPECT_NEAR(2.8416e-01, stan::math::value_of(yy[2][2]), 5e-6);
     }
+  }
+
+  /** 
+   * Test against IDAS example "idasRoberts_FSA_dns" output.
+   * 
+   * @param t0_in initial time
+   */
+  void test_sens(double t0_in) {
+    this->t0 = t0_in;
+    this -> ts.resize(3);
+    this -> ts[0] = this->t0 + 0.4;
+    this -> ts[1] = this->t0 + 4.0;
+    this -> ts[2] = this->t0 + 40.0;
+
+    this->rtol = 1e-8;
+    this->atol = 1e-12;
+    this->max_num_step = 100000;
+    auto yy = apply_solver_tol();
+    std::vector<double> g;
+
+    yy[2][0].grad(this -> theta, g);
+    EXPECT_NEAR(-4.2476e+00, g[0], 5e-5);
+    EXPECT_NEAR(1.3731e-05, g[1], 1e-9);
+    EXPECT_NEAR(-2.2884e-09, g[2], 1e-13);
+    stan::math::set_zero_all_adjoints();
+
+    yy[2][1].grad(this -> theta, g);
+    EXPECT_NEAR(4.5912e-05, g[0], 1e-8);
+    EXPECT_NEAR(-2.3572e-10, g[1], 1e-12);
+    EXPECT_NEAR(-1.1381e-13, g[2], 1e-15);
+    stan::math::set_zero_all_adjoints();
+
+    yy[2][2].grad(this -> theta, g);
+    EXPECT_NEAR(4.2475e+00, g[0], 5e-5);
+    EXPECT_NEAR(-1.3731e-05, g[1], 1e-9);
+    EXPECT_NEAR(2.2885e-09, g[2], 1e-13);
+    stan::math::set_zero_all_adjoints();
   }
 
   void test_bad() {
@@ -199,7 +242,7 @@ struct chemical_kinetics_test
     const auto t0_ = this->t0;
     this->t0 = 2;
     EXPECT_THROW_MSG(apply_solver(), std::domain_error,
-                     "initial time is 2, but must be less than 1.0");
+                     "initial time is 2, but must be less than");
     this->t0 = t0_;
 
     const auto ts_ = this->ts;
@@ -369,29 +412,18 @@ struct chemical_kinetics_data_test
 
   void test_value(double t0_in) {
     this->t0 = t0_in;
-    for (size_t i = 0; i < this->ts.size(); ++i) {
-      this->ts[i] += t0_in;
-    }
+    this -> ts.resize(3);
+    this -> ts[0] = this->t0 + 0.4;
+    this -> ts[1] = this->t0 + 4.0;
+    this -> ts[2] = this->t0 + 40.0;
 
     this->rtol = 1e-4;
     this->atol = 1e-8;
-    this->max_num_step = 100000;
-    {
-      auto yy = apply_solver_tol();
-      EXPECT_NEAR(0.3368089, stan::math::value_of(yy[3][0]), 1e-4);
-      EXPECT_NEAR(2.01314E-06, stan::math::value_of(yy[3][1]), 1e-9);
-      EXPECT_NEAR(0.6631891, stan::math::value_of(yy[3][2]), 1e-4);
-    }
-
-    this->rtol = 1e-8;
-    this->atol = 1e-12;
-    this->max_num_step = 100000;
-    {
-      auto yy = apply_solver_tol();
-      EXPECT_NEAR(0.3368089, stan::math::value_of(yy[3][0]), 1e-4);
-      EXPECT_NEAR(2.01314E-06, stan::math::value_of(yy[3][1]), 1e-9);
-      EXPECT_NEAR(0.6631891, stan::math::value_of(yy[3][2]), 1e-4);
-    }
+    this->max_num_step = 1000;
+    auto yy = apply_solver_tol();
+    EXPECT_NEAR(7.1583e-01, stan::math::value_of(yy[2][0]), 2e-5);
+    EXPECT_NEAR(9.1855e-06, stan::math::value_of(yy[2][1]), 1e-9);
+    EXPECT_NEAR(2.8416e-01, stan::math::value_of(yy[2][2]), 2e-5);
   }
 };
 
