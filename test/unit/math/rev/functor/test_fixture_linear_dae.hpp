@@ -12,7 +12,7 @@
 #include <limits>
 #include <string>
 
-/** 
+/**
  * Linear constant coef DAE in the form
  * x''(t) = z(t)
  * x(t) + z(t) = 3 sin(t)
@@ -23,55 +23,55 @@
 template <typename T>
 struct linear_dae_base {
   struct func {
-  template <typename T0, typename Tyy, typename Typ, typename Tpar>
-  inline Eigen::Matrix<stan::return_type_t<Tyy, Typ, Tpar>, -1, 1> operator()(
-      const T0& t, const Eigen::Matrix<Tyy, -1, 1>& yy, const
-      Eigen::Matrix<Typ, -1, 1> & yp,
-      std::ostream* msgs, const Tpar& theta) const {
-    if (yy.size() != 3 || yp.size() != 3)
-      throw std::domain_error(
-          "this function was called with inconsistent state");
+    template <typename T0, typename Tyy, typename Typ, typename Tpar>
+    inline Eigen::Matrix<stan::return_type_t<Tyy, Typ, Tpar>, -1, 1> operator()(
+        const T0& t, const Eigen::Matrix<Tyy, -1, 1>& yy,
+        const Eigen::Matrix<Typ, -1, 1>& yp, std::ostream* msgs,
+        const Tpar& theta) const {
+      if (yy.size() != 3 || yp.size() != 3)
+        throw std::domain_error(
+            "this function was called with inconsistent state");
 
-    Eigen::Matrix<stan::return_type_t<Tyy, Typ, Tpar>, -1, 1> res(3);
+      Eigen::Matrix<stan::return_type_t<Tyy, Typ, Tpar>, -1, 1> res(3);
 
-    auto yy1 = yy(0);
-    auto yy2 = yy(1);
-    auto yy3 = yy(2);
+      auto yy1 = yy(0);
+      auto yy2 = yy(1);
+      auto yy3 = yy(2);
 
-    auto yp1 = yp(0);
-    auto yp2 = yp(1);
+      auto yp1 = yp(0);
+      auto yp2 = yp(1);
 
-    res[0] = yp1 - yy2;
-    res[1] = yp2 - yy3;
-    res[2] = yy1 + yy3 - theta * sin(t);
+      res[0] = yp1 - yy2;
+      res[1] = yp2 - yy3;
+      res[2] = yy1 + yy3 - theta * sin(t);
 
-    return res;
-  }
-};
+      return res;
+    }
+  };
 
   struct degen_func {
-  template <typename T0, typename Tyy, typename Typ, typename Tpar>
-  inline Eigen::Matrix<stan::return_type_t<Tyy, Typ, Tpar>, -1, 1> operator()(
-      const T0& t, const Eigen::Matrix<Tyy, -1, 1>& yy, const
-      Eigen::Matrix<Typ, -1, 1> & yp,
-      std::ostream* msgs, const Tpar& theta) const {
-    Eigen::Matrix<stan::return_type_t<Tyy, Typ, Tpar>, -1, 1> res(2);
-    res[0] = yp(0) - yy(1);
-    res[1] = yp(1) + yy(0) - theta * sin(t);
-    return res;
-  }
-};
+    template <typename T0, typename Tyy, typename Typ, typename Tpar>
+    inline Eigen::Matrix<stan::return_type_t<Tyy, Typ, Tpar>, -1, 1> operator()(
+        const T0& t, const Eigen::Matrix<Tyy, -1, 1>& yy,
+        const Eigen::Matrix<Typ, -1, 1>& yp, std::ostream* msgs,
+        const Tpar& theta) const {
+      Eigen::Matrix<stan::return_type_t<Tyy, Typ, Tpar>, -1, 1> res(2);
+      res[0] = yp(0) - yy(1);
+      res[1] = yp(1) + yy(0) - theta * sin(t);
+      return res;
+    }
+  };
 
   struct ode_func {
-  template <typename T0, typename Ty, typename Tpar>
-  inline Eigen::Matrix<stan::return_type_t<Ty, Tpar>, -1, 1> operator()(
-      const T0& t, const Eigen::Matrix<Ty, -1, 1>& y, const
-      std::ostream* msgs, const Tpar& theta) const {
-    Eigen::Matrix<stan::return_type_t<Ty, Tpar>, -1, 1> dydt(2);
-    dydt << y[1], theta * sin(t) - y[0];
-    return dydt;
-  }
-};
+    template <typename T0, typename Ty, typename Tpar>
+    inline Eigen::Matrix<stan::return_type_t<Ty, Tpar>, -1, 1> operator()(
+        const T0& t, const Eigen::Matrix<Ty, -1, 1>& y,
+        const std::ostream* msgs, const Tpar& theta) const {
+      Eigen::Matrix<stan::return_type_t<Ty, Tpar>, -1, 1> dydt(2);
+      dydt << y[1], theta * sin(t) - y[0];
+      return dydt;
+    }
+  };
 
   func f;
   degen_func f_degen;
@@ -92,14 +92,14 @@ struct linear_dae_base {
   int max_num_step;
 
   linear_dae_base()
-    : theta(3.0),
-      yy0(3),
-      yp0(3),
-      t0(3.14159265358979323846),
-      ts{2.4 * t0},
-      rtol(1.e-5),
-      atol(1.e-8),
-      max_num_step(1000) {
+      : theta(3.0),
+        yy0(3),
+        yp0(3),
+        t0(3.14159265358979323846),
+        ts{2.4 * t0},
+        rtol(1.e-5),
+        atol(1.e-8),
+        max_num_step(1000) {
     yy0 << 1.0, 0.0, -1.0;
     yp0 << 0.0, -1.0, 0.0;
   }
@@ -118,30 +118,29 @@ struct linear_dae_functor : public linear_dae_base<T> {
   template <typename Tx>
   Eigen::Matrix<Tx, -1, 1> operator()(const Eigen::Matrix<Tx, -1, 1>& x) const {
     std::tuple_element_t<0, T> sol;
-    auto ys = sol(this->f, this->yy0, this->yp0, this->t0, this->ts,
-                  nullptr, x[0]);
+    auto ys
+        = sol(this->f, this->yy0, this->yp0, this->t0, this->ts, nullptr, x[0]);
     return ys[0];
   }
 };
 
 template <typename T>
-struct linear_dae_test
-    : public linear_dae_base<T>,
-      public ODETestFixture<linear_dae_test<T>> {
+struct linear_dae_test : public linear_dae_base<T>,
+                         public ODETestFixture<linear_dae_test<T>> {
   linear_dae_functor<T> dae_sol;
 
-  /** 
+  /**
    * analytical solution based on theta = 3.0
-   * 
+   *
    */
   auto analy_sol_functor() {
     auto f = [&](double t) {
       const double pi = 3.14159265358979323846;
       Eigen::VectorXd y(3);
       y << -cos(t) + 1.5 * pi * cos(t) - 1.5 * t * cos(t) + 1.5 * sin(t),
-        sin(t) - 1.5 * pi * sin(t) - 1.5 * cos(t) + 1.5 * t * sin(t) +
-        1.5 * cos(t),
-        cos(t) - 1.5 * pi * cos(t) + 1.5 * t * cos(t) + 1.5 * sin(t);
+          sin(t) - 1.5 * pi * sin(t) - 1.5 * cos(t) + 1.5 * t * sin(t)
+              + 1.5 * cos(t),
+          cos(t) - 1.5 * pi * cos(t) + 1.5 * t * cos(t) + 1.5 * sin(t);
       return y;
     };
     return f;
@@ -155,10 +154,10 @@ struct linear_dae_test
 
   template <typename T1, typename T2>
   auto apply_solver(T1&& init, T2&& theta_in) {
-    const int n = init.size()/2;
+    const int n = init.size() / 2;
     std::tuple_element_t<0, T> sol;
-    return sol(this->f, init.head(n), init.tail(n), this->t0,
-               this->ts, nullptr, theta_in[0]);
+    return sol(this->f, init.head(n), init.tail(n), this->t0, this->ts, nullptr,
+               theta_in[0]);
   }
 
   auto apply_solver_tol() {
@@ -169,11 +168,10 @@ struct linear_dae_test
 };
 
 template <typename T>
-struct degenerated_dae_test
-    : public linear_dae_base<T>,
-      public ODETestFixture<linear_dae_test<T>> {
+struct degenerated_dae_test : public linear_dae_base<T>,
+                              public ODETestFixture<linear_dae_test<T>> {
   void test_ode_sens_y0() {
-    this -> ts = {4.0, 6.0};
+    this->ts = {4.0, 6.0};
 
     std::tuple_element_t<0, T> sol;
 
@@ -183,10 +181,10 @@ struct degenerated_dae_test
     Eigen::Matrix<stan::math::var, -1, 1> ode_y0_var(2);
     ode_y0_var << 1.0, 0.0;
 
-    auto res1 = sol(this->f_degen, dae_y0_var, this->yp0, this->t0,
-                    this->ts, nullptr, this->theta);
-    auto res2 = stan::math::ode_bdf(this -> f_ode, ode_y0_var,
-                                    this->t0, this->ts, nullptr, this->theta);
+    auto res1 = sol(this->f_degen, dae_y0_var, this->yp0, this->t0, this->ts,
+                    nullptr, this->theta);
+    auto res2 = stan::math::ode_bdf(this->f_ode, ode_y0_var, this->t0, this->ts,
+                                    nullptr, this->theta);
 
     std::vector<double> g1(2), g2(2);
     for (auto i = 0; i < 2; ++i) {
@@ -204,22 +202,22 @@ struct degenerated_dae_test
   }
 
   void test_ode_sens_theta() {
-    this -> ts = {4.0, 6.0};
-    this -> yy0.resize(2);
-    this -> yy0[0] = 1.0;
-    this -> yy0[1] = 0.0;
-    this -> yp0.resize(2);
-    this -> yp0[0] = 0.0;
-    this -> yp0[1] =-1.0;
+    this->ts = {4.0, 6.0};
+    this->yy0.resize(2);
+    this->yy0[0] = 1.0;
+    this->yy0[1] = 0.0;
+    this->yp0.resize(2);
+    this->yp0[0] = 0.0;
+    this->yp0[1] = -1.0;
 
     std::tuple_element_t<0, T> sol;
 
     stan::math::nested_rev_autodiff nested;
     stan::math::var dae_theta(3.0), ode_theta(3.0);
-    auto res1 = sol(this->f_degen, this -> yy0, this->yp0, this->t0,
-                    this->ts, nullptr, dae_theta);
-    auto res2 = stan::math::ode_bdf(this -> f_ode, this -> yy0,
-                                    this->t0, this->ts, nullptr, ode_theta);
+    auto res1 = sol(this->f_degen, this->yy0, this->yp0, this->t0, this->ts,
+                    nullptr, dae_theta);
+    auto res2 = stan::math::ode_bdf(this->f_ode, this->yy0, this->t0, this->ts,
+                                    nullptr, ode_theta);
 
     double g1, g2;
     for (auto i = 0; i < 2; ++i) {

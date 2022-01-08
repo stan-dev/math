@@ -15,25 +15,18 @@ using ode_test_tuple = std::tuple<solve_type, solve_type, Ts...>;
 /**
  * Outer product of test types
  */
-using chemical_kinetics_sens_test_types
-    = boost::mp11::mp_product<ode_test_tuple, ::testing::Types<dae_functor>,
-                              ::testing::Types<double>,  // t
-                              ::testing::Types<double,
-                                               stan::math::var_value<double>
-                                               >,   // yy
-                              ::testing::Types<double,
-                                               stan::math::var_value<double>
-                                               >,   // yp
-                              ::testing::Types<stan::math::var_value<double> >
-                              >;   // theta
+using chemical_kinetics_sens_test_types = boost::mp11::mp_product<
+    ode_test_tuple, ::testing::Types<dae_functor>,
+    ::testing::Types<double>,  // t
+    ::testing::Types<double,
+                     stan::math::var_value<double> >,  // yy
+    ::testing::Types<double,
+                     stan::math::var_value<double> >,    // yp
+    ::testing::Types<stan::math::var_value<double> > >;  // theta
 
 TYPED_TEST_SUITE_P(chemical_kinetics_test);
-TYPED_TEST_P(chemical_kinetics_test, value) {
-  this -> test_value(0.0);
-}
-TYPED_TEST_P(chemical_kinetics_test, sens) {
-  this -> test_sens(0.0);
-}
+TYPED_TEST_P(chemical_kinetics_test, value) { this->test_value(0.0); }
+TYPED_TEST_P(chemical_kinetics_test, sens) { this->test_sens(0.0); }
 REGISTER_TYPED_TEST_SUITE_P(chemical_kinetics_test, value, sens);
 INSTANTIATE_TYPED_TEST_SUITE_P(StanOde, chemical_kinetics_test,
                                chemical_kinetics_sens_test_types);

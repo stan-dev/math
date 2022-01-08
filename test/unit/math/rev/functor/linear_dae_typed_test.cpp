@@ -26,20 +26,16 @@ using linear_dae_test_types
 TYPED_TEST_SUITE_P(linear_dae_test);
 TYPED_TEST_P(linear_dae_test, analytical_value) {
   double theta = 3.0;
-  this -> theta = theta;
+  this->theta = theta;
   Eigen::VectorXd x(1);
   x << theta;
   const double pi = 3.14159265358979323846;
   const double t = 2.3 * pi;
   this->dae_sol.ts = std::vector<double>{t};
-  this->test_analytical(this->dae_sol, this->analy_sol_functor(),
-                        1e-6, x, t);
+  this->test_analytical(this->dae_sol, this->analy_sol_functor(), 1e-6, x, t);
 }
 
-TYPED_TEST_P(linear_dae_test, finite_diff) {
-  this->test_fd_dv(1.e-3, 5e-6);
-}
+TYPED_TEST_P(linear_dae_test, finite_diff) { this->test_fd_dv(1.e-3, 5e-6); }
 
 REGISTER_TYPED_TEST_SUITE_P(linear_dae_test, analytical_value, finite_diff);
-INSTANTIATE_TYPED_TEST_SUITE_P(StanDAE, linear_dae_test,
-                               linear_dae_test_types);
+INSTANTIATE_TYPED_TEST_SUITE_P(StanDAE, linear_dae_test, linear_dae_test_types);
