@@ -49,7 +49,33 @@ struct linear_dae_base {
   }
 };
 
+  struct degen_func {
+  template <typename T0, typename Tyy, typename Typ, typename Tpar>
+  inline Eigen::Matrix<stan::return_type_t<Tyy, Typ, Tpar>, -1, 1> operator()(
+      const T0& t, const Eigen::Matrix<Tyy, -1, 1>& yy, const
+      Eigen::Matrix<Typ, -1, 1> & yp,
+      std::ostream* msgs, const Tpar& theta) const {
+    Eigen::Matrix<stan::return_type_t<Tyy, Typ, Tpar>, -1, 1> res(2);
+    res[0] = yp(0) - yy(1);
+    res[1] = yp(1) + yy(0) - theta * sin(t);
+    return res;
+  }
+};
+
+  struct ode_func {
+  template <typename T0, typename Ty, typename Tpar>
+  inline Eigen::Matrix<stan::return_type_t<Ty, Tpar>, -1, 1> operator()(
+      const T0& t, const Eigen::Matrix<Ty, -1, 1>& y, const
+      std::ostream* msgs, const Tpar& theta) const {
+    Eigen::Matrix<stan::return_type_t<Ty, Tpar>, -1, 1> dydt(2);
+    dydt << y[1], theta * sin(t) - y[0];
+    return dydt;
+  }
+};
+
   func f;
+  degen_func f_degen;
+  ode_func f_ode;
 
   using T_t = std::tuple_element_t<2, T>;
   using Tyy = std::tuple_element_t<3, T>;
@@ -139,6 +165,72 @@ struct linear_dae_test
     std::tuple_element_t<1, T> sol;
     return sol(this->f, this->yy0, this->yp0, this->t0, this->ts, this->rtol,
                this->atol, this->max_num_step, nullptr, this->theta);
+  }
+};
+
+template <typename T>
+struct degenerated_dae_test
+    : public linear_dae_base<T>,
+      public ODETestFixture<linear_dae_test<T>> {
+  void test_ode_sens_y0() {
+    this -> ts = {4.0, 6.0};
+
+    std::tuple_element_t<0, T> sol;
+
+    stan::math::nested_rev_autodiff nested;
+    Eigen::Matrix<stan::math::var, -1, 1> dae_y0_var(2);
+    dae_y0_var << 1.0, 0.0;
+    Eigen::Matrix<stan::math::var, -1, 1> ode_y0_var(2);
+    ode_y0_var << 1.0, 0.0;
+
+    auto res1 = sol(this->f_degen, dae_y0_var, this->yp0, this->t0,
+                    this->ts, nullptr, this->theta);
+    auto res2 = stan::math::ode_bdf(this -> f_ode, ode_y0_var,
+                                    this->t0, this->ts, nullptr, this->theta);
+
+    std::vector<double> g1(2), g2(2);
+    for (auto i = 0; i < 2; ++i) {
+      nested.set_zero_all_adjoints();
+      res1[1][i].grad();
+      g1[0] = dae_y0_var[0].adj();
+      g1[1] = dae_y0_var[1].adj();
+      nested.set_zero_all_adjoints();
+      res2[1][i].grad();
+      g2[0] = ode_y0_var[0].adj();
+      g2[1] = ode_y0_var[1].adj();
+      EXPECT_NEAR(g1[0], g2[0], 4.e-9);
+      EXPECT_NEAR(g1[1], g2[1], 4.e-9);
+    }
+  }
+
+  void test_ode_sens_theta() {
+    this -> ts = {4.0, 6.0};
+    this -> yy0.resize(2);
+    this -> yy0[0] = 1.0;
+    this -> yy0[1] = 0.0;
+    this -> yp0.resize(2);
+    this -> yp0[0] = 0.0;
+    this -> yp0[1] =-1.0;
+
+    std::tuple_element_t<0, T> sol;
+
+    stan::math::nested_rev_autodiff nested;
+    stan::math::var dae_theta(3.0), ode_theta(3.0);
+    auto res1 = sol(this->f_degen, this -> yy0, this->yp0, this->t0,
+                    this->ts, nullptr, dae_theta);
+    auto res2 = stan::math::ode_bdf(this -> f_ode, this -> yy0,
+                                    this->t0, this->ts, nullptr, ode_theta);
+
+    double g1, g2;
+    for (auto i = 0; i < 2; ++i) {
+      nested.set_zero_all_adjoints();
+      res1[1][i].grad();
+      g1 = dae_theta.adj();
+      nested.set_zero_all_adjoints();
+      res2[1][i].grad();
+      g2 = ode_theta.adj();
+      EXPECT_NEAR(g1, g2, 5.e-9);
+    }
   }
 };
 

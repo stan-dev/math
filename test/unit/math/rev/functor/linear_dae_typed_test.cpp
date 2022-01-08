@@ -43,17 +43,3 @@ TYPED_TEST_P(linear_dae_test, finite_diff) {
 REGISTER_TYPED_TEST_SUITE_P(linear_dae_test, analytical_value, finite_diff);
 INSTANTIATE_TYPED_TEST_SUITE_P(StanDAE, linear_dae_test,
                                linear_dae_test_types);
-
-
-// TYPED_TEST_P(linear_dae_test, finite_diff) {
-//   // params that gives extreme gradients
-//   this->test_fd_dv(1.e-3, 2e-3);
-
-//   // params that gives moderate gradients
-//   this->theta = {0.4, 0.5, 0.5};
-//   this->test_fd_dv(1.e-3, 5e-6);
-// }
-
-// REGISTER_TYPED_TEST_SUITE_P(linear_dae_test, analytical_value, finite_diff);
-// INSTANTIATE_TYPED_TEST_SUITE_P(StanDAE, linear_dae_test,
-//                                linear_dae_test_types);
