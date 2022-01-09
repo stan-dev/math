@@ -106,6 +106,7 @@
 #include <stan/math/prim/prob/exponential_lcdf.hpp>
 #include <stan/math/prim/prob/exponential_log.hpp>
 #include <stan/math/prim/prob/exponential_lpdf.hpp>
+#include <stan/math/prim/prob/exponential_qf.hpp>
 #include <stan/math/prim/prob/exponential_rng.hpp>
 #include <stan/math/prim/prob/frechet_ccdf_log.hpp>
 #include <stan/math/prim/prob/frechet_cdf.hpp>
