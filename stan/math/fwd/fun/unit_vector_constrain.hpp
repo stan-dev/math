@@ -24,7 +24,7 @@ inline auto unit_vector_constrain(const EigMat& y) {
   unit_vector_y.val() = unit_vector_constrain(y_val);
 
   eig_partial norm = norm2(y_val);
-  eig_partial squared_norm = norm*norm;
+  eig_partial squared_norm = norm * norm;
   eig_partial inv_norm = inv(norm);
   Eigen::Matrix<eig_partial, Eigen::Dynamic, Eigen::Dynamic> J
       = divide(tcrossprod(y_val), -norm * squared_norm);
