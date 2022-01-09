@@ -25,12 +25,11 @@ namespace math {
 template <typename T, require_eigen_col_vector_t<T>* = nullptr,
           require_not_vt_autodiff<T>* = nullptr>
 inline plain_type_t<T> unit_vector_constrain(const T& y) {
-  using std::sqrt;
   check_nonzero_size("unit_vector_constrain", "y", y);
   auto&& y_ref = to_ref(y);
-  value_type_t<T> SN = dot_self(y_ref);
+  value_type_t<T> SN = norm2(y_ref);
   check_positive_finite("unit_vector_constrain", "norm", SN);
-  return y_ref.array() / sqrt(SN);
+  return y_ref / SN;
 }
 
 /**
@@ -47,13 +46,12 @@ inline plain_type_t<T> unit_vector_constrain(const T& y) {
 template <typename T1, typename T2, require_eigen_col_vector_t<T1>* = nullptr,
           require_all_not_vt_autodiff<T1, T2>* = nullptr>
 inline plain_type_t<T1> unit_vector_constrain(const T1& y, T2& lp) {
-  using std::sqrt;
   check_nonzero_size("unit_vector_constrain", "y", y);
   auto&& y_ref = to_ref(y);
-  value_type_t<T1> SN = dot_self(y_ref);
+  value_type_t<T1> SN = norm2(y_ref);
   check_positive_finite("unit_vector_constrain", "norm", SN);
   lp -= 0.5 * SN;
-  return y_ref.array() / sqrt(SN);
+  return y_ref.array() / SN;
 }
 
 /**
