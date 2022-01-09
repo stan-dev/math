@@ -3,8 +3,6 @@
 
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/dot_self.hpp>
-#include <stan/math/prim/fun/sqrt.hpp>
 #include <cmath>
 
 namespace stan {
@@ -27,9 +25,9 @@ template <typename T, require_eigen_col_vector_t<T>* = nullptr,
 inline plain_type_t<T> unit_vector_constrain(const T& y) {
   check_nonzero_size("unit_vector_constrain", "y", y);
   auto&& y_ref = to_ref(y);
-  value_type_t<T> SN = norm2(y_ref);
-  check_positive_finite("unit_vector_constrain", "norm", SN);
-  return y_ref / SN;
+  value_type_t<T> r = norm2(y_ref);
+  check_positive_finite("unit_vector_constrain", "norm", r);
+  return y_ref / r;
 }
 
 /**
@@ -48,10 +46,10 @@ template <typename T1, typename T2, require_eigen_col_vector_t<T1>* = nullptr,
 inline plain_type_t<T1> unit_vector_constrain(const T1& y, T2& lp) {
   check_nonzero_size("unit_vector_constrain", "y", y);
   auto&& y_ref = to_ref(y);
-  value_type_t<T1> SN = norm2(y_ref);
-  check_positive_finite("unit_vector_constrain", "norm", SN);
-  lp -= 0.5 * SN;
-  return y_ref.array() / SN;
+  value_type_t<T1> r = norm2(y_ref);
+  check_positive_finite("unit_vector_constrain", "norm", r);
+  lp -= 0.5 * (r * r);
+  return y_ref.array() / r;
 }
 
 /**

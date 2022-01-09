@@ -34,7 +34,7 @@ inline auto unit_vector_constrain(const T& y) {
   arena_t<T> arena_y = y;
   arena_t<promote_scalar_t<double, T>> arena_y_val = arena_y.val();
 
-  const double r = arena_y_val.norm();
+  const double r = norm2(arena_y_val);
   arena_t<ret_type> res = arena_y_val / r;
 
   reverse_pass_callback([arena_y, res, r, arena_y_val]() mutable {
