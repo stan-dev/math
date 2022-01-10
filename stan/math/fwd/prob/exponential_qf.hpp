@@ -18,11 +18,11 @@ inline auto exponential_qf(const Tp& p, const Tbeta& beta) {
   auto beta_val = value_of(beta);
   fvar_t ret(exponential_qf(p_val, beta_val));
 
-  if(!is_constant<Tp>::value) {
+  if (!is_constant<Tp>::value) {
     ret.d_ += forward_as<fvar_t>(p).d_
       * inv(beta_val - beta_val * p_val);
   }
-  if(!is_constant<Tbeta>::value) {
+  if (!is_constant<Tbeta>::value) {
     ret.d_ += forward_as<fvar_t>(beta).d_
       * log1m(p_val) / square(beta_val);
   }
@@ -46,12 +46,12 @@ inline auto exponential_qf(const Tp& p, const Tbeta& beta) {
   auto beta_array = as_array_or_scalar(beta_val);
   vector_t d_ = vector_t::Zero(ret.rows(), ret.cols());
 
-  if(!is_constant<Tp>::value) {
+  if (!is_constant<Tp>::value) {
     as_array_or_scalar(d_)
       += as_array_or_scalar(forward_as<promote_scalar_t<fvar_t, Tp>>(p).d())
       * inv(beta_array - beta_array * p_array);
   }
-  if(!is_constant<Tbeta>::value) {
+  if (!is_constant<Tbeta>::value) {
     as_array_or_scalar(d_)
       += as_array_or_scalar(forward_as<promote_scalar_t<fvar_t,
                                                         Tbeta>>(beta).d())
