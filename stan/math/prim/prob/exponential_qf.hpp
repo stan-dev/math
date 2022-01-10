@@ -27,7 +27,7 @@ namespace math {
  * @throw std::domain_error if y is not greater than or equal to 0.
  */
 template <typename Tp, typename Tbeta,
-          require_all_arithmetic_t<Tp, Tbeta> * = nullptr>
+          require_all_arithmetic_t<Tp, Tbeta>* = nullptr>
 inline auto exponential_qf(const Tp& p, const Tbeta& beta) {
   static const char* function = "exponential_qf";
   check_positive_finite(function, "Inverse scale parameter", beta);
@@ -40,7 +40,7 @@ inline auto exponential_qf(const Tp& p, const Tbeta& beta) {
  * inverse scale parameter.
  * Inverse scale parameter must be greater than 0.
  * p must be bounded by 0 and 1.
- * 
+ *
  * Specialisation for use where any input is an Eigen vector
  *
  * @tparam Tp type of probability input
@@ -59,8 +59,9 @@ inline auto exponential_qf(const Tp& p, const Tbeta& beta) {
   ref_type_t<Tbeta> beta_ref = beta;
   check_positive_finite(function, "Inverse scale parameter", beta_ref);
   check_bounded(function, "Probability parameter", p_ref, 0, 1);
-  return (-log1p(-as_array_or_scalar(p_ref))
-            / as_array_or_scalar(beta_ref)).matrix().eval();
+  return (-log1p(-as_array_or_scalar(p_ref)) / as_array_or_scalar(beta_ref))
+      .matrix()
+      .eval();
 }
 
 }  // namespace math
