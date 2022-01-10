@@ -26,3 +26,28 @@ TEST(ProbExponential, quantile_values) {
   res << 0.0139464719571, 0.4581453659371;
   EXPECT_MATRIX_FLOAT_EQ(exponential_qf(p, beta), res);
 }
+
+TEST(ProbExponential, quantile_throws) {
+  using stan::math::exponential_qf;
+
+  EXPECT_THROW(exponential_qf(2, 8), std::domain_error);
+  EXPECT_THROW(exponential_qf(0.4, -7), std::domain_error);
+
+  Eigen::VectorXd p(2);
+  p << 0.2, 0.6;
+
+  Eigen::VectorXd p_invalid(2);
+  p_invalid << 0.2, 2.2;
+
+  Eigen::VectorXd beta(2);
+  beta << 16, 2;
+
+  Eigen::VectorXd beta_invalid(2);
+  beta_invalid << 16, -8;
+
+  EXPECT_THROW(exponential_qf(p_invalid, 8), std::domain_error);
+  EXPECT_THROW(exponential_qf(p_invalid, beta), std::domain_error);
+  EXPECT_THROW(exponential_qf(0.4, beta_invalid), std::domain_error);
+  EXPECT_THROW(exponential_qf(p, beta_invalid), std::domain_error);
+  EXPECT_THROW(exponential_qf(p_invalid, beta_invalid), std::domain_error);
+}
