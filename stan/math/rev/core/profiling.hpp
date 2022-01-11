@@ -79,9 +79,11 @@ class profile_info {
     active_ = false;
   }
 
-  void rev_pass_start() noexcept { rev_pass_tp_ = std::chrono::steady_clock::now(); }
+  void rev_pass_start() noexcept {
+    rev_pass_tp_ = std::chrono::steady_clock::now();
+  }
 
-  void rev_pass_stop() noexcept  {
+  void rev_pass_stop() noexcept {
     rev_pass_time_ += std::chrono::duration<double>(
                           std::chrono::steady_clock::now() - rev_pass_tp_)
                           .count();
