@@ -139,7 +139,7 @@ class ops_partials_edge<Dx, Op, require_std_vector_vt<is_fvar, Op>> {
 
 // Eigen::Matrix<fvar<Dx>, R, C>
 template <typename Dx, typename Op>
-class ops_partials_edge<Dx, Op, require_eigen_t<Op>> {
+class ops_partials_edge<Dx, Op, require_eigen_vt<is_fvar, Op>> {
  public:
   using partials_t
       = Eigen::Matrix<Dx, Op::RowsAtCompileTime, Op::ColsAtCompileTime>;
