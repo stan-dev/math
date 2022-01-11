@@ -108,7 +108,7 @@ void expect_eq(math::var a, math::var b, const char* msg) {
 template <typename T, require_arithmetic_t<T>* = nullptr>
 void expect_eq(math::fvar<T> a, math::fvar<T> b, const char* msg) {
   expect_eq(a.val(), b.val(), msg);
-  expect_eq(a.tangent(), b.tangent(), msg);
+  expect_eq(a.d(), b.d(), msg);
 }
 
 template <typename T1, typename T2, require_all_eigen_t<T1, T2>* = nullptr,
