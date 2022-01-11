@@ -91,7 +91,7 @@ struct coupled_ode_system_impl<true, F, T_y0, Args...> {
    * @return the initial condition of the coupled system
    */
   std::vector<double> initial_state() const {
-    std::vector<double> initial(size(), 0.0);
+    std::vector<double> initial(this->size(), 0.0);
 
     for (size_t i = 0; i < N_; i++) {
       initial[i] = value_of(y0_(i));

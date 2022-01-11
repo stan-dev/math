@@ -106,8 +106,8 @@ inline auto offset_multiplier_constrain(const T& x, const M& mu, const S& sigma,
   check_finite("offset_multiplier_constrain", "offset", value_of_rec(mu_ref));
   check_positive_finite("offset_multiplier_constrain", "multiplier",
                         value_of_rec(sigma_ref));
-  if (size(sigma_ref) == 1) {
-    lp += sum(multiply_log(size(x), sigma_ref));
+  if (stan::math::size(sigma_ref) == 1) {
+    lp += sum(multiply_log(stan::math::size(x), sigma_ref));
   } else {
     lp += sum(log(sigma_ref));
   }

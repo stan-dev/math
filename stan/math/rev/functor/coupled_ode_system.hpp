@@ -117,7 +117,7 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
                   double t) {
     using std::vector;
 
-    dz_dt.resize(size());
+    dz_dt.resize(this->size());
 
     // Run nested autodiff in this scope
     nested_rev_autodiff nested;
@@ -213,7 +213,7 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
    *   parameters at the initial time-point, which is zero.
    */
   std::vector<double> initial_state() const {
-    std::vector<double> initial(size(), 0.0);
+    std::vector<double> initial(this->size(), 0.0);
     for (size_t i = 0; i < N_; i++) {
       initial[i] = value_of(y0_(i));
     }
