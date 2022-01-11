@@ -19,22 +19,22 @@ namespace math {
  */
 class profile_info {
  private:
-  bool active_;
+  bool active_{false};
 
-  double fwd_pass_time_;
-  double rev_pass_time_;
-  size_t n_fwd_AD_passes_;
-  size_t n_fwd_no_AD_passes_;
-  size_t n_rev_passes_;
-  size_t chain_stack_size_sum_;
-  size_t nochain_stack_size_sum_;
+  double fwd_pass_time_{0.0};
+  double rev_pass_time_{0.0};
+  size_t n_fwd_AD_passes_{0};
+  size_t n_fwd_no_AD_passes_{0};
+  size_t n_rev_passes_{0};
+  size_t chain_stack_size_sum_{0};
+  size_t nochain_stack_size_sum_{0};
   std::chrono::time_point<std::chrono::steady_clock> fwd_pass_tp_;
   std::chrono::time_point<std::chrono::steady_clock> rev_pass_tp_;
-  size_t start_chain_stack_size_;
-  size_t start_nochain_stack_size_;
+  size_t start_chain_stack_size_{0};
+  size_t start_nochain_stack_size_{0};
 
  public:
-  profile_info()
+  profile_info() noexcept
       : active_(false),
         fwd_pass_time_(0.0),
         rev_pass_time_(0.0),
@@ -79,9 +79,9 @@ class profile_info {
     active_ = false;
   }
 
-  void rev_pass_start() { rev_pass_tp_ = std::chrono::steady_clock::now(); }
+  void rev_pass_start() noexcept { rev_pass_tp_ = std::chrono::steady_clock::now(); }
 
-  void rev_pass_stop() {
+  void rev_pass_stop() noexcept  {
     rev_pass_time_ += std::chrono::duration<double>(
                           std::chrono::steady_clock::now() - rev_pass_tp_)
                           .count();
@@ -135,8 +135,9 @@ class profile {
   profile_info* profile_;
 
  public:
-  profile(std::string name, profile_map& profiles)
-      : key_({name, std::this_thread::get_id()}) {
+  template <typename String>
+  profile(String&& name, profile_map& profiles)
+      : key_({std::forward<String>(name), std::this_thread::get_id()}) {
     profile_map::iterator p = profiles.find(key_);
     if (p == profiles.end()) {
       profiles[key_] = profile_info();
