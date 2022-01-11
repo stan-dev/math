@@ -111,10 +111,10 @@ class operands_and_partials<Op1, Op2, Op3, Op4, Op5, fvar<Dx>> {
 namespace internal {
 
 // Vectorized Univariate
-template <typename Dx>
-class ops_partials_edge<Dx, std::vector<fvar<Dx>>> {
+// std::vector<fvar<Dx>>
+template <typename Dx, typename Op>
+class ops_partials_edge<Dx, Op, require_std_vector_vt<is_fvar, Op>> {
  public:
-  using Op = std::vector<fvar<Dx>>;
   using partials_t = Eigen::Matrix<Dx, -1, 1>;
   partials_t partials_;                       // For univariate use-cases
   broadcast_array<partials_t> partials_vec_;  // For multivariate
@@ -137,11 +137,11 @@ class ops_partials_edge<Dx, std::vector<fvar<Dx>>> {
   }
 };
 
-template <typename Dx, int R, int C>
-class ops_partials_edge<Dx, Eigen::Matrix<fvar<Dx>, R, C>> {
+// Eigen::Matrix<fvar<Dx>, R, C>
+template <typename Dx, typename Op>
+class ops_partials_edge<Dx, Op, require_eigen_t<Op>> {
  public:
-  using partials_t = Eigen::Matrix<Dx, R, C>;
-  using Op = Eigen::Matrix<fvar<Dx>, R, C>;
+  using partials_t = Eigen::Matrix<Dx, Op::RowsAtCompileTime, Op::ColsAtCompileTime>;
   partials_t partials_;                       // For univariate use-cases
   broadcast_array<partials_t> partials_vec_;  // For multivariate
   explicit ops_partials_edge(const Op& ops)
@@ -164,11 +164,11 @@ class ops_partials_edge<Dx, Eigen::Matrix<fvar<Dx>, R, C>> {
 };
 
 // Multivariate; vectors of eigen types
-template <typename Dx, int R, int C>
-class ops_partials_edge<Dx, std::vector<Eigen::Matrix<fvar<Dx>, R, C>>> {
+// std::vector<Eigen::Matrix<fvar<Dx>, R, C>>
+template <typename Dx, typename Op>
+class ops_partials_edge<Dx, Op, require_all_t<is_std_vector<Op>, is_eigen<value_type_t<Op>>, is_fvar<value_type_t<value_type_t<Op>>>>> {
  public:
-  using Op = std::vector<Eigen::Matrix<fvar<Dx>, R, C>>;
-  using partial_t = Eigen::Matrix<Dx, R, C>;
+  using partial_t = Eigen::Matrix<Dx, value_type_t<Op>::RowsAtCompileTime, value_type_t<Op>::ColsAtCompileTime>;
   std::vector<partial_t> partials_vec_;
   explicit ops_partials_edge(const Op& ops)
       : partials_vec_(ops.size()), operands_(ops) {
@@ -193,10 +193,9 @@ class ops_partials_edge<Dx, std::vector<Eigen::Matrix<fvar<Dx>, R, C>>> {
   }
 };
 
-template <typename Dx>
-class ops_partials_edge<Dx, std::vector<std::vector<fvar<Dx>>>> {
+template <typename Dx, typename Op>
+class ops_partials_edge<Dx, Op, require_all_t<is_std_vector<Op>, is_std_vector<value_type_t<Op>>, is_fvar<value_type_t<value_type_t<Op>>>>> {
  public:
-  using Op = std::vector<std::vector<fvar<Dx>>>;
   using partial_t = std::vector<Dx>;
   std::vector<partial_t> partials_vec_;
   explicit ops_partials_edge(const Op& ops)
