@@ -141,7 +141,8 @@ class ops_partials_edge<Dx, Op, require_std_vector_vt<is_fvar, Op>> {
 template <typename Dx, typename Op>
 class ops_partials_edge<Dx, Op, require_eigen_t<Op>> {
  public:
-  using partials_t = Eigen::Matrix<Dx, Op::RowsAtCompileTime, Op::ColsAtCompileTime>;
+  using partials_t
+      = Eigen::Matrix<Dx, Op::RowsAtCompileTime, Op::ColsAtCompileTime>;
   partials_t partials_;                       // For univariate use-cases
   broadcast_array<partials_t> partials_vec_;  // For multivariate
   explicit ops_partials_edge(const Op& ops)
@@ -166,9 +167,13 @@ class ops_partials_edge<Dx, Op, require_eigen_t<Op>> {
 // Multivariate; vectors of eigen types
 // std::vector<Eigen::Matrix<fvar<Dx>, R, C>>
 template <typename Dx, typename Op>
-class ops_partials_edge<Dx, Op, require_all_t<is_std_vector<Op>, is_eigen<value_type_t<Op>>, is_fvar<value_type_t<value_type_t<Op>>>>> {
+class ops_partials_edge<
+    Dx, Op,
+    require_all_t<is_std_vector<Op>, is_eigen<value_type_t<Op>>,
+                  is_fvar<value_type_t<value_type_t<Op>>>>> {
  public:
-  using partial_t = Eigen::Matrix<Dx, value_type_t<Op>::RowsAtCompileTime, value_type_t<Op>::ColsAtCompileTime>;
+  using partial_t = Eigen::Matrix<Dx, value_type_t<Op>::RowsAtCompileTime,
+                                  value_type_t<Op>::ColsAtCompileTime>;
   std::vector<partial_t> partials_vec_;
   explicit ops_partials_edge(const Op& ops)
       : partials_vec_(ops.size()), operands_(ops) {
@@ -194,7 +199,10 @@ class ops_partials_edge<Dx, Op, require_all_t<is_std_vector<Op>, is_eigen<value_
 };
 
 template <typename Dx, typename Op>
-class ops_partials_edge<Dx, Op, require_all_t<is_std_vector<Op>, is_std_vector<value_type_t<Op>>, is_fvar<value_type_t<value_type_t<Op>>>>> {
+class ops_partials_edge<
+    Dx, Op,
+    require_all_t<is_std_vector<Op>, is_std_vector<value_type_t<Op>>,
+                  is_fvar<value_type_t<value_type_t<Op>>>>> {
  public:
   using partial_t = std::vector<Dx>;
   std::vector<partial_t> partials_vec_;
