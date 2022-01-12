@@ -31,7 +31,8 @@ return_type_t<T_location, T_precision> neg_binomial_2_lccdf(
     return 0;
   }
 
-  auto beta_vec = stan::math::divide(as_column_vector_or_scalar(phi_ref), as_column_vector_or_scalar(mu_ref));
+  auto beta_vec = stan::math::divide(as_column_vector_or_scalar(phi_ref),
+                                     as_column_vector_or_scalar(mu_ref));
   return neg_binomial_lccdf(n, phi_ref, beta_vec);
 }
 

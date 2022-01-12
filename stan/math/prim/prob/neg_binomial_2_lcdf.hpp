@@ -46,7 +46,8 @@ return_type_t<T_location, T_precision> neg_binomial_2_lcdf(
     }
   }
   auto&& phi_vec = as_column_vector_or_scalar(phi_ref);
-  auto phi_mu = stan::math::divide(phi_vec, stan::math::add(phi_vec, as_column_vector_or_scalar(mu_ref)));
+  auto phi_mu = stan::math::divide(
+      phi_vec, stan::math::add(phi_vec, as_column_vector_or_scalar(mu_ref)));
 
   auto np1 = as_array_or_scalar(n_ref) + 1.0;
   return beta_cdf_log(phi_mu, phi_ref, np1);
