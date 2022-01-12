@@ -19,6 +19,7 @@
 #define EIGEN_ARRAYBASE_PLUGIN "stan/math/prim/eigen_plugins.h"
 #endif
 
+#include <stan/math/prim/plugins/Core.h>
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 #include <Eigen/QR>
