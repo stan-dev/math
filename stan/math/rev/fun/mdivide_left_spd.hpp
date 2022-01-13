@@ -290,7 +290,7 @@ inline auto mdivide_left_spd(const T1 &A, const T2 &B) {
           .transpose()
           .solveInPlace(adjB);
 
-      arena_A.adj() -= adjB * res.val_op().transpose();
+      arena_A.adj() -= adjB * res.val().transpose();
       arena_B.adj() += adjB;
     });
 

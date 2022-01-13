@@ -405,7 +405,7 @@ class var_value<T, internal::require_matrix_var_value<T>> {
    * @return The value of this variable.
    */
   inline const auto& val() const { return vi_->val(); }
-  inline auto& val_op() { return vi_->val_op(); }
+  inline auto& val() { return vi_->val(); }
 
   /**
    * Return a reference to the derivative of the root expression with
@@ -417,7 +417,6 @@ class var_value<T, internal::require_matrix_var_value<T>> {
    */
   inline auto& adj() { return vi_->adj(); }
   inline auto& adj() const { return vi_->adj(); }
-  inline auto& adj_op() { return vi_->adj(); }
 
   inline Eigen::Index rows() const { return vi_->rows(); }
   inline Eigen::Index cols() const { return vi_->cols(); }

@@ -19,6 +19,7 @@ TEST(AgradFwdMatrixAddons, fvar_double_matrix) {
   }
 
   EXPECT_MATRIX_FLOAT_EQ(vals, mat_in.val());
+  EXPECT_MATRIX_FLOAT_EQ(derivs * derivs, mat_in.d() * mat_in.d());
   EXPECT_MATRIX_FLOAT_EQ(vals.array().exp(), mat_in.val().array().exp());
 
   EXPECT_MATRIX_FLOAT_EQ(derivs, mat_in.d());
@@ -30,7 +31,6 @@ TEST(AgradFwdMatrixAddons, fvar_double_matrix) {
   EXPECT_EQ(mat_in.d().rows(), derivs.rows());
   EXPECT_EQ(mat_in.d().cols(), derivs.cols());
 }
-
 TEST(AgradFwdMatrixAddons, fvarfvar_double_matrix) {
   using Eigen::MatrixXd;
   using stan::math::matrix_ffd;
@@ -48,6 +48,7 @@ TEST(AgradFwdMatrixAddons, fvarfvar_double_matrix) {
   }
 
   EXPECT_MATRIX_FLOAT_EQ(vals, mat_in.val().val());
+  EXPECT_MATRIX_FLOAT_EQ(vals * vals, mat_in.val().val() * mat_in.val().val());
   EXPECT_MATRIX_FLOAT_EQ(vals.array().exp(), mat_in.val().val().array().exp());
 
   EXPECT_MATRIX_FLOAT_EQ(derivs, mat_in.d().val());

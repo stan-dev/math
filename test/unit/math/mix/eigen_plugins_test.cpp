@@ -18,10 +18,10 @@ TEST(AgradMixMatrixAddons, matrix_fv) {
   }
 
   EXPECT_MATRIX_FLOAT_EQ(vals, mat_in.val().val());
-  EXPECT_MATRIX_FLOAT_EQ(vals.array().exp(), mat_in.val().val().array().exp());
+  EXPECT_MATRIX_FLOAT_EQ(vals.array().exp(), mat_in.array().val().val().exp());
 
   EXPECT_MATRIX_FLOAT_EQ(derivs, mat_in.d().val());
-  EXPECT_MATRIX_FLOAT_EQ(derivs.array().exp(), mat_in.d().val().array().exp());
+  EXPECT_MATRIX_FLOAT_EQ(derivs.array().exp(), mat_in.array().d().val().exp());
 
   EXPECT_EQ(mat_in.val().val().rows(), vals.rows());
   EXPECT_EQ(mat_in.val().val().cols(), vals.cols());

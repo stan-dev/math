@@ -18,6 +18,7 @@ TEST(AgradRevMatrixAddons, var_matrix) {
 
   EXPECT_MATRIX_FLOAT_EQ(vals, mat_in.val());
   EXPECT_MATRIX_FLOAT_EQ(vals.val(), mat_in.val());
+  EXPECT_MATRIX_FLOAT_EQ(derivs * derivs, mat_in.adj() * mat_in.adj());
   EXPECT_MATRIX_FLOAT_EQ(vals.array().exp(), mat_in.val().array().exp());
 
   EXPECT_MATRIX_FLOAT_EQ(derivs, mat_in.adj());

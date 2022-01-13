@@ -33,7 +33,7 @@ inline auto inverse(const T& m) {
   arena_t<ret_type> res = res_val;
 
   reverse_pass_callback([res, res_val, arena_m]() mutable {
-    arena_m.adj() -= res_val.transpose() * res.adj_op() * res_val.transpose();
+    arena_m.adj() -= res_val.transpose() * res.adj() * res_val.transpose();
   });
 
   return ret_type(res);
