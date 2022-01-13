@@ -62,7 +62,7 @@ namespace math {
  */
 template <bool propto, typename T_y, typename T_x, typename T_alpha,
           typename T_beta, typename T_precision,
-          require_eigen_t<T_x>* = nullptr>
+          require_matrix_t<T_x>* = nullptr>
 return_type_t<T_x, T_alpha, T_beta, T_precision> neg_binomial_2_log_glm_lpmf(
     const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta,
     const T_precision& phi) {
