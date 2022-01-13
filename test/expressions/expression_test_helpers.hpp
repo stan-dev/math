@@ -1,7 +1,5 @@
+#include <stan/math/mix.hpp>
 #include <gtest/gtest.h>
-#include <stan/math/prim.hpp>
-#include <stan/math/rev.hpp>
-#include <stan/math/fwd.hpp>
 #include <vector>
 #include <random>
 
