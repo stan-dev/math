@@ -197,8 +197,10 @@ inline auto multiply(const T1& A, const T2& B) {
 /**
  * Operator overload for multiplying a `var_value<Matrix>`. At least one input
  *  must be a `var_value<Matrix>` type.
- * @tparam T1 Either a `var_value<Matrix>`, type inheriting from `Eigen::DenseMatrix`, or a scalar
- * @tparam T2 Either a `var_value<Matrix>`, type inheriting from `Eigen::DenseMatrix`, or a scalar
+ * @tparam T1 Either a `var_value<Matrix>`, type inheriting from
+ * `Eigen::DenseMatrix`, or a scalar
+ * @tparam T2 Either a `var_value<Matrix>`, type inheriting from
+ * `Eigen::DenseMatrix`, or a scalar
  * @param a The left hand side of the multiplication
  * @param b The right hand side of the multiplication
  */

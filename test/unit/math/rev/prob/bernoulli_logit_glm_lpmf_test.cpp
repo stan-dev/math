@@ -61,14 +61,16 @@ TEST(ProbDistributionsBernoulliLogitGLM,
 }
 
 template <class T>
-class ProbDistributionsBernoulliLogitGLM : public stan::math::test::VarMatrixTypedTests<T> {};
+class ProbDistributionsBernoulliLogitGLM
+    : public stan::math::test::VarMatrixTypedTests<T> {};
 
-TYPED_TEST_SUITE(ProbDistributionsBernoulliLogitGLM, stan::math::test::VarMatImpls);
-
+TYPED_TEST_SUITE(ProbDistributionsBernoulliLogitGLM,
+                 stan::math::test::VarMatImpls);
 
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
-TYPED_TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_vars) {
+TYPED_TEST(ProbDistributionsBernoulliLogitGLM,
+           glm_matches_bernoulli_logit_vars) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -197,7 +199,7 @@ TYPED_TEST(ProbDistributionsBernoulliLogitGLM, broadcast_y) {
 }
 
 TYPED_TEST(ProbDistributionsBernoulliLogitGLM,
-     glm_matches_bernoulli_logit_vars_zero_instances) {
+           glm_matches_bernoulli_logit_vars_zero_instances) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -243,7 +245,7 @@ TYPED_TEST(ProbDistributionsBernoulliLogitGLM,
 }
 
 TYPED_TEST(ProbDistributionsBernoulliLogitGLM,
-     glm_matches_bernoulli_logit_vars_zero_attributes) {
+           glm_matches_bernoulli_logit_vars_zero_attributes) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -285,7 +287,7 @@ TYPED_TEST(ProbDistributionsBernoulliLogitGLM,
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
 TYPED_TEST(ProbDistributionsBernoulliLogitGLM,
-     glm_matches_bernoulli_logit_vars_rand) {
+           glm_matches_bernoulli_logit_vars_rand) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -349,7 +351,7 @@ TYPED_TEST(ProbDistributionsBernoulliLogitGLM,
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives, in case beta is a scalar.
 TYPED_TEST(ProbDistributionsBernoulliLogitGLM,
-     glm_matches_bernoulli_logit_vars_rand_scal_beta) {
+           glm_matches_bernoulli_logit_vars_rand_scal_beta) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -403,7 +405,7 @@ TYPED_TEST(ProbDistributionsBernoulliLogitGLM,
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives, for the GLM with varying intercept.
 TYPED_TEST(ProbDistributionsBernoulliLogitGLM,
-     glm_matches_bernoulli_varying_intercept) {
+           glm_matches_bernoulli_varying_intercept) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -471,7 +473,7 @@ TYPED_TEST(ProbDistributionsBernoulliLogitGLM,
 
 //  We check that we can instantiate all different interface types.
 TYPED_TEST(ProbDistributionsBernoulliLogitGLM,
-     glm_matches_bernoulli_logit_interface_types) {
+           glm_matches_bernoulli_logit_interface_types) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -525,7 +527,7 @@ TYPED_TEST(ProbDistributionsBernoulliLogitGLM,
 
 //  We check that the right errors are thrown.
 TYPED_TEST(ProbDistributionsBernoulliLogitGLM,
-     glm_matches_bernoulli_logit_error_checking) {
+           glm_matches_bernoulli_logit_error_checking) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;

@@ -56,7 +56,8 @@ TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_doubles_rand) {
 }
 
 template <class T>
-class ProbDistributionsPoissonLogGLM : public stan::math::test::VarMatrixTypedTests<T> {};
+class ProbDistributionsPoissonLogGLM
+    : public stan::math::test::VarMatrixTypedTests<T> {};
 
 TYPED_TEST_SUITE(ProbDistributionsPoissonLogGLM, stan::math::test::VarMatImpls);
 
@@ -187,7 +188,7 @@ TYPED_TEST(ProbDistributionsPoissonLogGLM, broadcast_y) {
 }
 
 TYPED_TEST(ProbDistributionsPoissonLogGLM,
-     glm_matches_poisson_log_vars_zero_instances) {
+           glm_matches_poisson_log_vars_zero_instances) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -227,7 +228,7 @@ TYPED_TEST(ProbDistributionsPoissonLogGLM,
 }
 
 TYPED_TEST(ProbDistributionsPoissonLogGLM,
-     glm_matches_poisson_log_vars_zero_attributes) {
+           glm_matches_poisson_log_vars_zero_attributes) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -321,7 +322,7 @@ TYPED_TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_vars_rand) {
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives, in case beta is a scalar.
 TYPED_TEST(ProbDistributionsPoissonLogGLM,
-     glm_matches_poisson_log_vars_rand_scal_beta) {
+           glm_matches_poisson_log_vars_rand_scal_beta) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -374,7 +375,8 @@ TYPED_TEST(ProbDistributionsPoissonLogGLM,
 
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives, for the GLM with varying intercept.
-TYPED_TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_varying_intercept) {
+TYPED_TEST(ProbDistributionsPoissonLogGLM,
+           glm_matches_poisson_varying_intercept) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -441,7 +443,8 @@ TYPED_TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_varying_intercept
 }
 
 //  We check that we can instantiate all different interface types.
-TYPED_TEST(ProbDistributionsPoissonLogGLM, glm_matches_poisson_log_interface_types) {
+TYPED_TEST(ProbDistributionsPoissonLogGLM,
+           glm_matches_poisson_log_interface_types) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;

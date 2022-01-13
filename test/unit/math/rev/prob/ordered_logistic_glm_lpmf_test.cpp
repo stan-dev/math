@@ -6,8 +6,7 @@
 
 template <bool propto, typename T_x, typename T_beta, typename T_cuts>
 stan::return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_simple_lpmf(
-    const std::vector<int>& y,
-    T_x&& x, T_beta&& beta, T_cuts&& cuts) {
+    const std::vector<int>& y, T_x&& x, T_beta&& beta, T_cuts&& cuts) {
   using stan::math::as_column_vector_or_scalar;
   auto&& beta_col = as_column_vector_or_scalar(beta);
   auto location = stan::math::multiply(x, beta_col);
@@ -58,12 +57,14 @@ TEST(ProbDistributionsOrderedLogisticGLM,
 }
 
 template <class T>
-class ProbDistributionsOrderedLogisticGLM : public stan::math::test::VarMatrixTypedTests<T> {};
+class ProbDistributionsOrderedLogisticGLM
+    : public stan::math::test::VarMatrixTypedTests<T> {};
 
-TYPED_TEST_SUITE(ProbDistributionsOrderedLogisticGLM, stan::math::test::VarMatImpls);
+TYPED_TEST_SUITE(ProbDistributionsOrderedLogisticGLM,
+                 stan::math::test::VarMatImpls);
 
-
-TYPED_TEST(ProbDistributionsOrderedLogisticGLM, glm_matches_ordered_logistic_vars) {
+TYPED_TEST(ProbDistributionsOrderedLogisticGLM,
+           glm_matches_ordered_logistic_vars) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
@@ -114,7 +115,7 @@ TYPED_TEST(ProbDistributionsOrderedLogisticGLM, glm_matches_ordered_logistic_var
 }
 
 TYPED_TEST(ProbDistributionsOrderedLogisticGLM,
-     glm_matches_ordered_logistic_vars_broadcast_y) {
+           glm_matches_ordered_logistic_vars_broadcast_y) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
@@ -171,7 +172,7 @@ TYPED_TEST(ProbDistributionsOrderedLogisticGLM,
 }
 
 TYPED_TEST(ProbDistributionsOrderedLogisticGLM,
-     glm_matches_ordered_logistic_vars_broadcast_x) {
+           glm_matches_ordered_logistic_vars_broadcast_x) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
@@ -224,7 +225,7 @@ TYPED_TEST(ProbDistributionsOrderedLogisticGLM,
 }
 
 TYPED_TEST(ProbDistributionsOrderedLogisticGLM,
-     glm_matches_ordered_logistic_single_instance) {
+           glm_matches_ordered_logistic_single_instance) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
@@ -273,7 +274,7 @@ TYPED_TEST(ProbDistributionsOrderedLogisticGLM,
 }
 
 TYPED_TEST(ProbDistributionsOrderedLogisticGLM,
-     glm_matches_ordered_logistic_zero_instances) {
+           glm_matches_ordered_logistic_zero_instances) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
@@ -317,7 +318,7 @@ TYPED_TEST(ProbDistributionsOrderedLogisticGLM,
 }
 
 TYPED_TEST(ProbDistributionsOrderedLogisticGLM,
-     glm_matches_ordered_logistic_zero_attributes) {
+           glm_matches_ordered_logistic_zero_attributes) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
@@ -356,7 +357,7 @@ TYPED_TEST(ProbDistributionsOrderedLogisticGLM,
 }
 
 TYPED_TEST(ProbDistributionsOrderedLogisticGLM,
-     glm_matches_ordered_logistic_single_class) {
+           glm_matches_ordered_logistic_single_class) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
@@ -405,7 +406,7 @@ TYPED_TEST(ProbDistributionsOrderedLogisticGLM,
 }
 
 TYPED_TEST(ProbDistributionsOrderedLogisticGLM,
-     glm_matches_ordered_logistic_vars_big) {
+           glm_matches_ordered_logistic_vars_big) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;

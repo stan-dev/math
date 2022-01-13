@@ -63,13 +63,16 @@ TEST(ProbDistributionsNegBinomial2LogGLM,
 }
 
 template <class T>
-class ProbDistributionsNegBinomial2LogGLM : public stan::math::test::VarMatrixTypedTests<T> {};
+class ProbDistributionsNegBinomial2LogGLM
+    : public stan::math::test::VarMatrixTypedTests<T> {};
 // For testing var_value<Matrix> and Matrix<var>
-TYPED_TEST_SUITE(ProbDistributionsNegBinomial2LogGLM, stan::math::test::VarMatImpls);
+TYPED_TEST_SUITE(ProbDistributionsNegBinomial2LogGLM,
+                 stan::math::test::VarMatImpls);
 
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
-TYPED_TEST(ProbDistributionsNegBinomial2LogGLM, glm_matches_neg_binomial_2_log_vars) {
+TYPED_TEST(ProbDistributionsNegBinomial2LogGLM,
+           glm_matches_neg_binomial_2_log_vars) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -210,7 +213,7 @@ TYPED_TEST(ProbDistributionsNegBinomial2LogGLM, broadcast_y) {
 }
 
 TYPED_TEST(ProbDistributionsNegBinomial2LogGLM,
-     glm_matches_neg_binomial_2_log_vars_zero_instances) {
+           glm_matches_neg_binomial_2_log_vars_zero_instances) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -257,7 +260,7 @@ TYPED_TEST(ProbDistributionsNegBinomial2LogGLM,
 }
 
 TYPED_TEST(ProbDistributionsNegBinomial2LogGLM,
-     glm_matches_neg_binomial_2_log_vars_zero_attributes) {
+           glm_matches_neg_binomial_2_log_vars_zero_attributes) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -299,7 +302,7 @@ TYPED_TEST(ProbDistributionsNegBinomial2LogGLM,
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
 TYPED_TEST(ProbDistributionsNegBinomial2LogGLM,
-     glm_matches_neg_binomial_2_log_vars_rand) {
+           glm_matches_neg_binomial_2_log_vars_rand) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -366,7 +369,7 @@ TYPED_TEST(ProbDistributionsNegBinomial2LogGLM,
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives, in case beta is a scalar.
 TYPED_TEST(ProbDistributionsNegBinomial2LogGLM,
-     glm_matches_neg_binomial_2_log_vars_rand_scal_beta) {
+           glm_matches_neg_binomial_2_log_vars_rand_scal_beta) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -426,7 +429,7 @@ TYPED_TEST(ProbDistributionsNegBinomial2LogGLM,
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
 TYPED_TEST(ProbDistributionsNegBinomial2LogGLM,
-     glm_matches_neg_binomial_2_log_varying_intercept) {
+           glm_matches_neg_binomial_2_log_varying_intercept) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -498,7 +501,7 @@ TYPED_TEST(ProbDistributionsNegBinomial2LogGLM,
 
 //  We check that we can instantiate all different interface types.
 TYPED_TEST(ProbDistributionsNegBinomial2LogGLM,
-     glm_matches_neg_binomial_2_log_interface_types) {
+           glm_matches_neg_binomial_2_log_interface_types) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;

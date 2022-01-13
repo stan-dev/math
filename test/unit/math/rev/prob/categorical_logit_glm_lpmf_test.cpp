@@ -7,9 +7,7 @@
 
 template <bool propto, typename T_x, typename T_alpha, typename T_beta>
 stan::return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_simple_lpmf(
-    const std::vector<int>& y,
-    const T_x& x,
-    const T_alpha& alpha,
+    const std::vector<int>& y, const T_x& x, const T_alpha& alpha,
     const T_beta& beta) {
   using T_x_beta = stan::return_type_t<T_x, T_beta>;
   using T_return = stan::return_type_t<T_x, T_beta, T_alpha>;
@@ -19,8 +17,10 @@ stan::return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_simple_lpmf(
   const auto& alpha_row
       = stan::math::as_column_vector_or_scalar(alpha).transpose();
 
-  auto tmp
-      = stan::math::to_ref(stan::math::multiply(x, beta) + stan::math::rep_matrix<std::decay_t<decltype(alpha_row)>>(alpha_row, x.rows()));
+  auto tmp = stan::math::to_ref(
+      stan::math::multiply(x, beta)
+      + stan::math::rep_matrix<std::decay_t<decltype(alpha_row)>>(alpha_row,
+                                                                  x.rows()));
 
   T_return lpmf = 0;
   // iterate overt instances
@@ -60,11 +60,14 @@ TEST(ProbDistributionsCategoricalLogitGLM,
 }
 
 template <class T>
-class ProbDistributionsCategoricalLogitGLM : public stan::math::test::VarMatrixTypedTests<T> {};
+class ProbDistributionsCategoricalLogitGLM
+    : public stan::math::test::VarMatrixTypedTests<T> {};
 
-TYPED_TEST_SUITE(ProbDistributionsCategoricalLogitGLM, stan::math::test::VarMatImpls);
+TYPED_TEST_SUITE(ProbDistributionsCategoricalLogitGLM,
+                 stan::math::test::VarMatImpls);
 
-TYPED_TEST(ProbDistributionsCategoricalLogitGLM, glm_matches_categorical_logit_vars) {
+TYPED_TEST(ProbDistributionsCategoricalLogitGLM,
+           glm_matches_categorical_logit_vars) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
@@ -440,9 +443,9 @@ TYPED_TEST(ProbDistributionsCategoricalLogitGLM, y_broadcasting) {
   using stan::math::categorical_logit_glm_lpmf;
   using stan::math::var;
   using std::vector;
-using matrix_v = typename TypeParam::matrix_v;
-using vector_v = typename TypeParam::vector_v;
-using row_vector_v = typename TypeParam::row_vector_v;
+  using matrix_v = typename TypeParam::matrix_v;
+  using vector_v = typename TypeParam::vector_v;
+  using row_vector_v = typename TypeParam::row_vector_v;
   double eps = 1e-13;
   const size_t N_instances = 5;
   const size_t N_attributes = 2;
@@ -496,7 +499,7 @@ using row_vector_v = typename TypeParam::row_vector_v;
 }
 
 TYPED_TEST(ProbDistributionsCategoricalLogitGLM,
-     glm_matches_categorical_logit_vars_big) {
+           glm_matches_categorical_logit_vars_big) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
@@ -505,9 +508,9 @@ TYPED_TEST(ProbDistributionsCategoricalLogitGLM,
   using stan::math::categorical_logit_glm_lpmf;
   using stan::math::var;
   using std::vector;
-using matrix_v = typename TypeParam::matrix_v;
-using vector_v = typename TypeParam::vector_v;
-using row_vector_v = typename TypeParam::row_vector_v;
+  using matrix_v = typename TypeParam::matrix_v;
+  using vector_v = typename TypeParam::vector_v;
+  using row_vector_v = typename TypeParam::row_vector_v;
   double eps = 1e-11;
   const size_t N_instances = 89;
   const size_t N_attributes = 23;

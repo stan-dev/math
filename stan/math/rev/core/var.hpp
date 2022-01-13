@@ -961,7 +961,6 @@ class var_value<T, internal::require_matrix_var_value<T>> {
     return var_sub(new vari_sub(vi_->matrix()));
   }
 
-
   /**
    * Write the value of this autodiff variable and its adjoint to
    * the specified output stream.

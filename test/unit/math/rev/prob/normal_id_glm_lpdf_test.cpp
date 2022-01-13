@@ -61,7 +61,8 @@ TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_doubles_rand) {
 }
 
 template <class T>
-class ProbDistributionsNormalIdGLM : public stan::math::test::VarMatrixTypedTests<T> {};
+class ProbDistributionsNormalIdGLM
+    : public stan::math::test::VarMatrixTypedTests<T> {};
 // For testing var_value<Matrix> and Matrix<var>
 TYPED_TEST_SUITE(ProbDistributionsNormalIdGLM, stan::math::test::VarMatImpls);
 
@@ -253,7 +254,8 @@ TYPED_TEST(ProbDistributionsNormalIdGLM, broadcast_y) {
   EXPECT_DOUBLE_EQ(sigma1.adj(), sigma2.adj());
 }
 
-TYPED_TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_zero_instances) {
+TYPED_TEST(ProbDistributionsNormalIdGLM,
+           glm_matches_normal_id_vars_zero_instances) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -304,7 +306,8 @@ TYPED_TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_zero_instanc
   EXPECT_FLOAT_EQ(sigma_adj, sigma2.adj());
 }
 
-TYPED_TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_zero_attributes) {
+TYPED_TEST(ProbDistributionsNormalIdGLM,
+           glm_matches_normal_id_vars_zero_attributes) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -426,7 +429,8 @@ TYPED_TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand) {
 
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives, in case beta is a scalar.
-TYPED_TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand_scal_beta) {
+TYPED_TEST(ProbDistributionsNormalIdGLM,
+           glm_matches_normal_id_vars_rand_scal_beta) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -486,7 +490,8 @@ TYPED_TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_vars_rand_scal_be
 
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
-TYPED_TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_varying_intercept) {
+TYPED_TEST(ProbDistributionsNormalIdGLM,
+           glm_matches_normal_id_varying_intercept) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
@@ -557,78 +562,79 @@ TYPED_TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_varying_intercept
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
 TYPED_TEST(ProbDistributionsNormalIdGLM,
-     glm_matches_normal_id_varying_intercept_and_scale) {
-       using Eigen::Dynamic;
-       using Eigen::Matrix;
-       using stan::math::var;
-       using matrix_v = typename TypeParam::matrix_v;
-       using vector_v = typename TypeParam::vector_v;
-       using row_vector_v = typename TypeParam::row_vector_v;
+           glm_matches_normal_id_varying_intercept_and_scale) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::var;
+  using matrix_v = typename TypeParam::matrix_v;
+  using vector_v = typename TypeParam::vector_v;
+  using row_vector_v = typename TypeParam::row_vector_v;
 
-       for (size_t ii = 0; ii < 42; ii++) {
-         Matrix<double, Dynamic, 1> yreal = Matrix<double, Dynamic, 1>::Random(3, 1);
-         Matrix<double, Dynamic, Dynamic> xreal
-             = Matrix<double, Dynamic, Dynamic>::Random(3, 2);
-         Matrix<double, Dynamic, 1> betareal
-             = Matrix<double, Dynamic, Dynamic>::Random(2, 1);
-         Matrix<double, Dynamic, 1> alphareal
-             = Matrix<double, Dynamic, 1>::Random(3, 1);
-         Matrix<double, Dynamic, 1> phireal
-             = Matrix<double, Dynamic, Dynamic>::Random(3, 1)
-               + Matrix<double, Dynamic, 1>::Ones(3, 1);
-         Matrix<var, Dynamic, 1> y = yreal;
-         Matrix<var, Dynamic, 1> beta = betareal;
-         Matrix<var, Dynamic, 1> theta(3, 1);
-         Matrix<var, Dynamic, Dynamic> x = xreal;
-         Matrix<var, Dynamic, 1> alpha = alphareal;
-         Matrix<var, Dynamic, 1> phi = phireal;
-         theta = (x * beta) + alpha;
-         var lp = stan::math::normal_lpdf(y, theta, phi);
-         lp.grad();
+  for (size_t ii = 0; ii < 42; ii++) {
+    Matrix<double, Dynamic, 1> yreal = Matrix<double, Dynamic, 1>::Random(3, 1);
+    Matrix<double, Dynamic, Dynamic> xreal
+        = Matrix<double, Dynamic, Dynamic>::Random(3, 2);
+    Matrix<double, Dynamic, 1> betareal
+        = Matrix<double, Dynamic, Dynamic>::Random(2, 1);
+    Matrix<double, Dynamic, 1> alphareal
+        = Matrix<double, Dynamic, 1>::Random(3, 1);
+    Matrix<double, Dynamic, 1> phireal
+        = Matrix<double, Dynamic, Dynamic>::Random(3, 1)
+          + Matrix<double, Dynamic, 1>::Ones(3, 1);
+    Matrix<var, Dynamic, 1> y = yreal;
+    Matrix<var, Dynamic, 1> beta = betareal;
+    Matrix<var, Dynamic, 1> theta(3, 1);
+    Matrix<var, Dynamic, Dynamic> x = xreal;
+    Matrix<var, Dynamic, 1> alpha = alphareal;
+    Matrix<var, Dynamic, 1> phi = phireal;
+    theta = (x * beta) + alpha;
+    var lp = stan::math::normal_lpdf(y, theta, phi);
+    lp.grad();
 
-         double lp_val = lp.val();
-         Matrix<double, Dynamic, 1> alpha_adj(3, 1);
-         Matrix<double, Dynamic, Dynamic> x_adj(3, 2);
-         Matrix<double, Dynamic, 1> beta_adj(2, 1);
-         Matrix<double, Dynamic, 1> phi_adj(3, 1);
-         Matrix<double, Dynamic, 1> y_adj(3, 1);
-         for (size_t i = 0; i < 2; i++) {
-           beta_adj[i] = beta[i].adj();
-           for (size_t j = 0; j < 3; j++) {
-             x_adj(j, i) = x(j, i).adj();
-           }
-         }
-         for (size_t j = 0; j < 3; j++) {
-           alpha_adj[j] = alpha[j].adj();
-           phi_adj[j] = phi[j].adj();
-           y_adj[j] = y[j].adj();
-         }
+    double lp_val = lp.val();
+    Matrix<double, Dynamic, 1> alpha_adj(3, 1);
+    Matrix<double, Dynamic, Dynamic> x_adj(3, 2);
+    Matrix<double, Dynamic, 1> beta_adj(2, 1);
+    Matrix<double, Dynamic, 1> phi_adj(3, 1);
+    Matrix<double, Dynamic, 1> y_adj(3, 1);
+    for (size_t i = 0; i < 2; i++) {
+      beta_adj[i] = beta[i].adj();
+      for (size_t j = 0; j < 3; j++) {
+        x_adj(j, i) = x(j, i).adj();
+      }
+    }
+    for (size_t j = 0; j < 3; j++) {
+      alpha_adj[j] = alpha[j].adj();
+      phi_adj[j] = phi[j].adj();
+      y_adj[j] = y[j].adj();
+    }
 
-         stan::math::recover_memory();
-         vector_v y2 = yreal;
-         vector_v beta2 = betareal;
-         matrix_v x2 = xreal;
-         vector_v alpha2 = alphareal;
-         vector_v phi2 = phireal;
-         var lp2 = stan::math::normal_id_glm_lpdf(y2, x2, alpha2, beta2, phi2);
-         lp2.grad();
-         EXPECT_FLOAT_EQ(lp_val, lp2.val());
-         for (size_t i = 0; i < 2; i++) {
-           EXPECT_FLOAT_EQ(beta_adj[i], beta2.adj()[i]);
-         }
-         for (size_t j = 0; j < 3; j++) {
-           EXPECT_FLOAT_EQ(alpha_adj[j], alpha2.adj()[j]);
-           EXPECT_FLOAT_EQ(y_adj[j], y2.adj()[j]);
-           EXPECT_FLOAT_EQ(phi_adj[j], phi2.adj()[j]);
-           for (size_t i = 0; i < 2; i++) {
-             EXPECT_FLOAT_EQ(x_adj(j, i), x2.adj()(j, i));
-           }
-         }
-       }
+    stan::math::recover_memory();
+    vector_v y2 = yreal;
+    vector_v beta2 = betareal;
+    matrix_v x2 = xreal;
+    vector_v alpha2 = alphareal;
+    vector_v phi2 = phireal;
+    var lp2 = stan::math::normal_id_glm_lpdf(y2, x2, alpha2, beta2, phi2);
+    lp2.grad();
+    EXPECT_FLOAT_EQ(lp_val, lp2.val());
+    for (size_t i = 0; i < 2; i++) {
+      EXPECT_FLOAT_EQ(beta_adj[i], beta2.adj()[i]);
+    }
+    for (size_t j = 0; j < 3; j++) {
+      EXPECT_FLOAT_EQ(alpha_adj[j], alpha2.adj()[j]);
+      EXPECT_FLOAT_EQ(y_adj[j], y2.adj()[j]);
+      EXPECT_FLOAT_EQ(phi_adj[j], phi2.adj()[j]);
+      for (size_t i = 0; i < 2; i++) {
+        EXPECT_FLOAT_EQ(x_adj(j, i), x2.adj()(j, i));
+      }
+    }
+  }
 }
 
 //  We check that we can instantiate all different interface types.
-TYPED_TEST(ProbDistributionsNormalIdGLM, glm_matches_normal_id_interface_types) {
+TYPED_TEST(ProbDistributionsNormalIdGLM,
+           glm_matches_normal_id_interface_types) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
