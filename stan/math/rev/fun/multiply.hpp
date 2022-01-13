@@ -40,12 +40,12 @@ inline auto multiply(const T1& A, const T2& B) {
     reverse_pass_callback(
         [arena_A, arena_B, arena_A_val, arena_B_val, res]() mutable {
           if (is_var_matrix<T1>::value || is_var_matrix<T2>::value) {
-            arena_A.adj() += res.adj() * arena_B_val.transpose().eval();
-            arena_B.adj() += arena_A_val.transpose().eval() * res.adj();
+            arena_A.adj() += res.adj() * arena_B_val.transpose();
+            arena_B.adj() += arena_A_val.transpose() * res.adj();
           } else {
             auto res_adj = res.adj().eval();
-            arena_A.adj() += res_adj * arena_B_val.transpose().eval();
-            arena_B.adj() += arena_A_val.transpose().eval() * res_adj;
+            arena_A.adj() += res_adj * arena_B_val.transpose();
+            arena_B.adj() += arena_A_val.transpose() * res_adj;
           }
         });
     return return_t(res);
