@@ -62,5 +62,5 @@ TYPED_TEST_P(chemical_kinetics_data_test, param_and_data_finite_diff) {
 }
 REGISTER_TYPED_TEST_SUITE_P(chemical_kinetics_data_test, value,
                             param_and_data_finite_diff);
-INSTANTIATE_TYPED_TEST_SUITE_P(StanOde, chemical_kinetics_data_test,
+INSTANTIATE_TYPED_TEST_SUITE_P(StanDAE, chemical_kinetics_data_test,
                                chemical_kinetics_test_types);
