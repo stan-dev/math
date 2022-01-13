@@ -69,7 +69,7 @@ struct adj_stride { };
 
 template <typename T>
 struct adj_stride<T, std::enable_if_t<!is_var<T>::value>> {
-  static constexpr int stride = -1;
+  static constexpr int stride = 0;
 };
 
 template <typename T>
@@ -95,8 +95,8 @@ inline const auto adj() const {
 EIGEN_DEVICE_FUNC
 inline auto adj() {
   return CwiseUnaryView<scalar_adj_ref_op<Scalar>, Derived,
-                       adj_stride<Scalar>::stride,
-                       adj_stride<Scalar>::stride>(derived());
+                        Stride<adj_stride<Scalar>::stride,
+                               adj_stride<Scalar>::stride>>(derived());
 }
 
 #endif
