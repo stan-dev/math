@@ -29,7 +29,7 @@ TEST(ProbAgradDistributionsVonMises, derivatives) {
   std::vector<double> grad = test_von_mises_lpdf(0, 1, 0);
 
   fvar<double> lp = von_mises_lpdf<false>(0, 1, fvar<double>(0, 1));
-  EXPECT_FLOAT_EQ(grad[2], lp.tangent());
+  EXPECT_FLOAT_EQ(grad[2], lp.d());
 
   fvar<double> kappa1(0, 1);
   EXPECT_FLOAT_EQ(von_mises_lpdf(0, 1, kappa1).val_, -1.8378770664093453390819);
