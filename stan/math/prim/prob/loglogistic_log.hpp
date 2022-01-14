@@ -2,19 +2,7 @@
 #define STAN_MATH_PRIM_PROB_LOGLOGISTIC_LOG_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
-#include <stan/math/prim/fun/as_array_or_scalar.hpp>
-#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
-#include <stan/math/prim/fun/exp.hpp>
-#include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/fun/max_size.hpp>
-#include <stan/math/prim/fun/size.hpp>
-#include <stan/math/prim/fun/size_zero.hpp>
-#include <stan/math/prim/fun/to_ref.hpp>
-#include <stan/math/prim/fun/value_of.hpp>
-#include <stan/math/prim/functor/operands_and_partials.hpp>
-#include <cmath>
+#include <stan/math/prim/prob/loglogistic_lpdf.hpp>
 
 namespace stan {
 namespace math {
