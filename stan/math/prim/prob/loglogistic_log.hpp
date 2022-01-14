@@ -25,7 +25,7 @@ namespace math {
 template <bool propto, typename T_y, typename T_scale, typename T_shape,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T_y, T_scale, T_shape>* = nullptr>
-return_type_t<T_y, T_scale, T_shape> loglogistic_lpdf(const T_y& y,
+return_type_t<T_y, T_scale, T_shape> loglogistic_log(const T_y& y,
                                                       const T_scale& alpha,
                                                       const T_shape& beta) {
   return loglogistic_lpdf<propto, T_y, T_scale, T_shape>(y, alpha, beta);
@@ -35,7 +35,7 @@ return_type_t<T_y, T_scale, T_shape> loglogistic_lpdf(const T_y& y,
  * @deprecated use <code>loglogistic_lpdf</code>
  */
 template <typename T_y, typename T_scale, typename T_shape>
-inline return_type_t<T_y, T_scale, T_shape> loglogistic_lpdf(
+inline return_type_t<T_y, T_scale, T_shape> loglogistic_log(
     const T_y& y, const T_scale& alpha, const T_shape& beta) {
   return loglogistic_lpdf<false>(y, alpha, beta);
 }
