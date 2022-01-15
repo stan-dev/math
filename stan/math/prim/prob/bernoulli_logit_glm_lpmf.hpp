@@ -46,7 +46,7 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch.
  */
 template <bool propto, typename T_y, typename T_x, typename T_alpha,
-          typename T_beta, require_eigen_t<T_x>* = nullptr>
+          typename T_beta, require_matrix_t<T_x>* = nullptr>
 return_type_t<T_x, T_alpha, T_beta> bernoulli_logit_glm_lpmf(
     const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta) {
   using Eigen::Array;
