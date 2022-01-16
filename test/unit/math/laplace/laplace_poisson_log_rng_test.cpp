@@ -55,8 +55,9 @@ Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> laplace_covariance (
   }
 
 TEST(laplace_poisson_log_rng, two_dim_diag) {
-  using stan::math::algebra_solver;
   using stan::math::laplace_poisson_log_rng;
+  using stan::math::multi_normal_rng;
+  using stan::math::algebra_solver;
   using stan::math::square;
   using stan::math::sqrt;
 
@@ -70,44 +71,60 @@ TEST(laplace_poisson_log_rng, two_dim_diag) {
   std::vector<int> di0;
   std::vector<Eigen::VectorXd> x_dummy;
 
-  // Compute exact mean and covariance.
-  Eigen::VectorXd theta_root
-      = algebra_solver(stationary_point(), theta_0, phi, d0, di0);
-  Eigen::MatrixXd K_laplace
-      = laplace_covariance(theta_root, phi);
-
   // compute sample mean and covariance.
-  int n_sim = 1e6;
+  int n_sim = 1e1;
   Eigen::VectorXd theta_dim0(n_sim);
   Eigen::VectorXd theta_dim1(n_sim);
 
   diagonal_kernel_functor covariance_function;
 
   boost::random::mt19937 rng;
-  for (int i = 0; i < n_sim; i++) {
-    Eigen::MatrixXd theta_pred
-      = laplace_poisson_log_rng(sums, n_samples, covariance_function, phi,
-                                x_dummy, d0, di0, theta_0, rng);
+  rng.seed(1954);
+  Eigen::MatrixXd theta_pred
+    = laplace_poisson_log_rng(sums, n_samples, covariance_function, phi,
+                              x_dummy, d0, di0, theta_0, rng);
 
-    theta_dim0(i) = theta_pred(0);
-    theta_dim1(i) = theta_pred(1);
-  }
+  // Compute exact mean and covariance.
+  Eigen::VectorXd theta_root
+    = algebra_solver(stationary_point(), theta_0, phi, d0, di0);
+  Eigen::MatrixXd K_laplace
+    = laplace_covariance(theta_root, phi);
 
-  Eigen::MatrixXd K_sample(2, 2);
-  K_sample(0, 0) = theta_dim0.array().square().mean() - square(theta_dim0.mean());
-  K_sample(1, 1) = theta_dim1.array().square().mean() - square(theta_dim1.mean());
-  K_sample(0, 1) = theta_dim0.cwiseProduct(theta_dim1).mean()
-                     - theta_dim0.mean() * theta_dim1.mean();
-  K_sample(1, 0) = K_sample(0, 1);
+  rng.seed(1954);
+  Eigen::MatrixXd theta_benchmark
+    = multi_normal_rng(theta_root, K_laplace, rng);
+
+  double tol = 1e-3;
+  EXPECT_NEAR(theta_benchmark(0), theta_pred(0), tol);
+  EXPECT_NEAR(theta_benchmark(1), theta_pred(1), tol);
+
+  // for (int i = 0; i < n_sim; i++) {
+  //   rng.seed(1954);
+  //   Eigen::MatrixXd theta_pred
+  //     = laplace_poisson_log_rng(sums, n_samples, covariance_function, phi,
+  //                               x_dummy, d0, di0, theta_0, rng);
+  //
+  //   theta_dim0(i) = theta_pred(0);
+  //   theta_dim1(i) = theta_pred(1);
+  // }
+  //
+  // Eigen::MatrixXd K_sample(2, 2);
+  // K_sample(0, 0) = theta_dim0.array().square().mean() - square(theta_dim0.mean());
+  // K_sample(1, 1) = theta_dim1.array().square().mean() - square(theta_dim1.mean());
+  // K_sample(0, 1) = theta_dim0.cwiseProduct(theta_dim1).mean()
+  //                    - theta_dim0.mean() * theta_dim1.mean();
+  // K_sample(1, 0) = K_sample(0, 1);
+  //
+  // std::cout << K_sample << std::endl;
 
   // Check answers are within three std of the true answer.
-  EXPECT_NEAR(theta_root(0), theta_dim0.mean(), 3 * sqrt(K_laplace(0, 0) / n_sim));
-  EXPECT_NEAR(theta_root(1), theta_dim1.mean(), 3 * sqrt(K_laplace(1, 1) / n_sim));
-
-  // Check sample covariance
-  EXPECT_NEAR(K_laplace(0, 0), K_sample(0, 0), 2e-3);
-  EXPECT_NEAR(K_laplace(1, 1), K_sample(1, 1), 6e-3);
-  EXPECT_NEAR(K_laplace(0, 1), K_sample(0, 1), 6e-4);
+  // EXPECT_NEAR(theta_root(0), theta_dim0.mean(), 3 * sqrt(K_laplace(0, 0) / n_sim));
+  // EXPECT_NEAR(theta_root(1), theta_dim1.mean(), 3 * sqrt(K_laplace(1, 1) / n_sim));
+  //
+  // // Check sample covariance
+  // EXPECT_NEAR(K_laplace(0, 0), K_sample(0, 0), 2e-3);
+  // EXPECT_NEAR(K_laplace(1, 1), K_sample(1, 1), 6e-3);
+  // EXPECT_NEAR(K_laplace(0, 1), K_sample(0, 1), 6e-4);
 }
 
 /*
