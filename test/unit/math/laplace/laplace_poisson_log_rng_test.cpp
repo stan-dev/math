@@ -67,6 +67,8 @@ TEST(laplace_poisson_log_rng, two_dim_diag) {
   phi << 3, 2;
   std::vector<int> n_samples = {1, 1};
   std::vector<int> sums = {1, 0};
+  Eigen::VectorXd ye(2);
+  ye << 1, 1;
   std::vector<double> d0;
   std::vector<int> di0;
   std::vector<Eigen::VectorXd> x_dummy;
@@ -84,6 +86,11 @@ TEST(laplace_poisson_log_rng, two_dim_diag) {
     = laplace_poisson_log_rng(sums, n_samples, covariance_function, phi,
                               x_dummy, d0, di0, theta_0, rng);
 
+  rng.seed(1954);
+  Eigen::MatrixXd theta_pred_exp
+    = laplace_poisson_log_rng(sums, n_samples, ye, covariance_function, phi,
+                              x_dummy, d0, di0, theta_0, rng);
+
   // Compute exact mean and covariance.
   Eigen::VectorXd theta_root
     = algebra_solver(stationary_point(), theta_0, phi, d0, di0);
@@ -97,6 +104,9 @@ TEST(laplace_poisson_log_rng, two_dim_diag) {
   double tol = 1e-3;
   EXPECT_NEAR(theta_benchmark(0), theta_pred(0), tol);
   EXPECT_NEAR(theta_benchmark(1), theta_pred(1), tol);
+
+  EXPECT_NEAR(theta_benchmark(0), theta_pred_exp(0), tol);
+  EXPECT_NEAR(theta_benchmark(1), theta_pred_exp(1), tol);
 
   // for (int i = 0; i < n_sim; i++) {
   //   rng.seed(1954);
