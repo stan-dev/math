@@ -74,8 +74,8 @@ class AgradCdfLogFrechet : public AgradCdfLogTest {
   stan::return_type_t<T_y, T_shape, T_scale> cdf_log_function(
       const T_y& y, const T_shape& alpha, const T_scale& sigma, const T3&,
       const T4&, const T5&) {
-    using std::log;
-    using std::pow;
+    using stan::math::log;
+    using stan::math::pow;
     return -pow(sigma / y, alpha);
   }
 };

@@ -51,13 +51,13 @@ class AgradCdfLogNormal : public AgradCdfLogTest {
             typename T5>
   stan::return_type_t<T_y> cdf_log_function(const T_y& y, const T1&, const T2&,
                                             const T3&, const T4&, const T5&) {
+    using stan::math::exp;
     using stan::math::INV_SQRT_PI;
     using stan::math::INV_SQRT_TWO;
+    using stan::math::log;
+    using stan::math::log1p;
     using stan::math::LOG_HALF;
-    using std::exp;
-    using std::log;
-    using std::log1p;
-    using std::pow;
+    using stan::math::pow;
 
     stan::return_type_t<T_y> cdf_log(0.0);
 

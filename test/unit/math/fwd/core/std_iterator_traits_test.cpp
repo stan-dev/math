@@ -13,14 +13,14 @@ void expect_iterator_traits() {
 
   typename traits::value_type c = a;
   EXPECT_EQ(a.val(), c.val());
-  EXPECT_EQ(a.tangent(), c.tangent());
+  EXPECT_EQ(a.d(), c.d());
 
   typename traits::pointer a_ptr_copy = a_ptr;
   EXPECT_EQ(a_ptr, a_ptr_copy);
 
   typename traits::reference d_ref = a;
   EXPECT_EQ(a.val(), d_ref.val());
-  EXPECT_EQ(a.tangent(), d_ref.tangent());
+  EXPECT_EQ(a.d(), d_ref.d());
 }
 
 TEST(fwdCore, stdIteratorTraits) {

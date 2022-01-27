@@ -521,8 +521,7 @@ TEST_F(FP_2d_func_test, exception_handling) {
 
   {
     std::stringstream err_msg;
-    err_msg << "algebra_solver: maximum number of iterations (4) was exceeded "
-               "in the solve.";
+    err_msg << "maximum number of iterations";
     std::string msg = err_msg.str();
     EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0,
                                        f_tol, max_num_steps),  // NOLINT

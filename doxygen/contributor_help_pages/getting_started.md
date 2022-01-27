@@ -38,7 +38,7 @@ Talks:
 Blog Posts:
 - [Thinking About Automatic Differentiation in Fun New Ways](https://blog.mc-stan.org/2020/11/23/thinking-about-automatic-differentiation-in-fun-new-ways/)
 
-A generally good resource for making minimal examples for bugs is [godbolt.org](godbolt.org)
+A generally good resource for making minimal examples for bugs is [godbolt.org](https://godbolt.org/)
 
 ## Code Structure
 
@@ -189,7 +189,7 @@ It's very common for us to want to access just the `val_` or `adj_` of the `vari
 First we need to stop our current function from compiling for reverse mod autodiff. This can be done using the [requires](@ref require_meta) type traits in stan. The only thing that has changed in the function above and below is the new non-type template parameter ([NTTP](https://en.cppreference.com/w/cpp/language/template_parameters)) that is now in the template definition.
 
 ```cpp
-template <typename EigVec, require_not_st_var_t<EigVec>* = nullptr> // (1)
+template <typename EigVec, require_not_st_var<EigVec>* = nullptr> // (1)
 inline double dot_self(const EigVec& x) {
   auto x_ref = to_ref(x);
   var sum = 0.0;
@@ -202,7 +202,7 @@ inline double dot_self(const EigVec& x) {
 
 TL;DR: Use Stan's `require` type trait library for limiting a function's scope to certain types.
 
-Reading from left to right, `require_not_st_var_t` requires that a signature's template does _not have a scalar type of a `var`_. This line is exactly the same as
+Reading from left to right, `require_not_st_var` requires that a signature's template does _not have a scalar type of a `var`_. This line is exactly the same as
 
 ```cpp
 template <typename EigVec, std::enable_if_t<is_var<scalar_type_t<EigVec>>::value>* = nullptr>

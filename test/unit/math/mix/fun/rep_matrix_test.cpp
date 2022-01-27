@@ -3,12 +3,16 @@
 TEST(MathMixMatFun, repMatrix) {
   // y is scalar
   auto f = [](int m, int n) {
-    return [=](const auto& y) { return stan::math::rep_matrix(y, m, n); };
+    return [=](const auto& y) {
+      return stan::math::rep_matrix<decltype(y)>(y, m, n);
+    };
   };
 
   // y is row vector or column vector
   auto g = [](int k) {
-    return [=](const auto& y) { return stan::math::rep_matrix(y, k); };
+    return [=](const auto& y) {
+      return stan::math::rep_matrix<decltype(y)>(y, k);
+    };
   };
 
   double y = 3;

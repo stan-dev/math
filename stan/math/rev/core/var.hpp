@@ -92,7 +92,7 @@ class var_value<T, require_floating_point_t<T>> {
    *
    * @return The value of this variable.
    */
-  inline const auto& val() const { return vi_->val(); }
+  inline const auto& val() const noexcept { return vi_->val(); }
 
   /**
    * Return a reference of the derivative of the root expression with
@@ -102,7 +102,7 @@ class var_value<T, require_floating_point_t<T>> {
    *
    * @return Adjoint for this variable.
    */
-  inline auto& adj() const { return vi_->adj(); }
+  inline auto& adj() const noexcept { return vi_->adj(); }
 
   /**
    * Return a reference to the derivative of the root expression with
@@ -112,7 +112,7 @@ class var_value<T, require_floating_point_t<T>> {
    *
    * @return Adjoint for this variable.
    */
-  inline auto& adj() { return vi_->adj_; }
+  inline auto& adj() noexcept { return vi_->adj_; }
 
   /**
    * Compute the gradient of this (dependent) variable with respect to
@@ -344,7 +344,7 @@ class var_value<T, internal::require_matrix_var_value<T>> {
    * @return <code>true</code> if this variable does not yet have
    * a defined variable.
    */
-  inline bool is_uninitialized() { return (vi_ == nullptr); }
+  inline bool is_uninitialized() noexcept { return (vi_ == nullptr); }
 
   /**
    * Construct a variable for later assignment.
@@ -404,8 +404,8 @@ class var_value<T, internal::require_matrix_var_value<T>> {
    *
    * @return The value of this variable.
    */
-  inline const auto& val() const { return vi_->val(); }
-  inline auto& val_op() { return vi_->val_op(); }
+  inline const auto& val() const noexcept { return vi_->val(); }
+  inline auto& val_op() noexcept { return vi_->val_op(); }
 
   /**
    * Return a reference to the derivative of the root expression with
@@ -415,13 +415,13 @@ class var_value<T, internal::require_matrix_var_value<T>> {
    *
    * @return Adjoint for this variable.
    */
-  inline auto& adj() { return vi_->adj(); }
-  inline auto& adj() const { return vi_->adj(); }
-  inline auto& adj_op() { return vi_->adj(); }
+  inline auto& adj() noexcept { return vi_->adj(); }
+  inline auto& adj() const noexcept { return vi_->adj(); }
+  inline auto& adj_op() noexcept { return vi_->adj(); }
 
-  inline Eigen::Index rows() const { return vi_->rows(); }
-  inline Eigen::Index cols() const { return vi_->cols(); }
-  inline Eigen::Index size() const { return vi_->size(); }
+  inline Eigen::Index rows() const noexcept { return vi_->rows(); }
+  inline Eigen::Index cols() const noexcept { return vi_->cols(); }
+  inline Eigen::Index size() const noexcept { return vi_->size(); }
 
   // POINTER OVERRIDES
 
@@ -948,6 +948,20 @@ class var_value<T, internal::require_matrix_var_value<T>> {
   }
 
   /**
+   * Return an Matrix.
+   */
+  inline auto matrix() const {
+    using vari_sub = decltype(vi_->matrix());
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->matrix()));
+  }
+  inline auto matrix() {
+    using vari_sub = decltype(vi_->matrix());
+    using var_sub = var_value<value_type_t<vari_sub>>;
+    return var_sub(new vari_sub(vi_->matrix()));
+  }
+
+  /**
    * Write the value of this autodiff variable and its adjoint to
    * the specified output stream.
    *
@@ -968,7 +982,7 @@ class var_value<T, internal::require_matrix_var_value<T>> {
    */
   template <typename U = T,
             require_any_t<is_eigen<U>, is_matrix_cl<U>>* = nullptr>
-  inline auto rows() const {
+  inline auto rows() const noexcept {
     return vi_->rows();
   }
 
@@ -978,7 +992,7 @@ class var_value<T, internal::require_matrix_var_value<T>> {
    */
   template <typename U = T,
             require_any_t<is_eigen<U>, is_matrix_cl<U>>* = nullptr>
-  inline auto cols() const {
+  inline auto cols() const noexcept {
     return vi_->cols();
   }
 
@@ -1035,7 +1049,7 @@ class var_value<T, internal::require_matrix_var_value<T>> {
     return *this;
   }
   template <typename T_ = T, require_plain_type_t<T_>* = nullptr>
-  inline const auto& eval() const {
+  inline const auto& eval() const noexcept {
     return *this;
   }
 
@@ -1043,7 +1057,7 @@ class var_value<T, internal::require_matrix_var_value<T>> {
    * For non-plain types evaluate to the plain type
    */
   template <typename T_ = T, require_not_plain_type_t<T_>* = nullptr>
-  inline auto eval() noexcept {
+  inline auto eval() {
     return var_value<plain_type_t<T>>(*this);
   }
   template <typename T_ = T, require_not_plain_type_t<T_>* = nullptr>
