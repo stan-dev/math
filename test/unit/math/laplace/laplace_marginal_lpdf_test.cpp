@@ -55,7 +55,7 @@ TEST(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
 
   stan::math::test::squared_kernel_functor K;
   var target
-    = laplace_marginal_lpmf<FALSE>(sums, poisson_log_likelihood2(),
+    = laplace_marginal_lpmf<false>(sums, poisson_log_likelihood2(),
                                    eta_dummy, y_dummy,
                                    K, phi, x, delta_dummy,
                                    delta_int_dummy, theta_0);
@@ -73,7 +73,7 @@ TEST(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
   int do_line_search = 1;
   int max_steps_line_search = 10;
 
-  target = laplace_marginal_lpmf<FALSE>(sums, poisson_log_likelihood2(),
+  target = laplace_marginal_lpmf<false>(sums, poisson_log_likelihood2(),
                                         eta_dummy, y_dummy,
                                         K, phi, x, delta_dummy,
                                         delta_int_dummy, theta_0,
@@ -98,16 +98,16 @@ TEST(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
 
   Eigen::VectorXd eta_dummy_dbl = value_of(eta_dummy);
 
-  double target_1u = laplace_marginal_lpmf<FALSE>(
+  double target_1u = laplace_marginal_lpmf<false>(
     sums, poisson_log_likelihood2(), eta_dummy_dbl, y_dummy, K, phi_1u, x,
     delta_dummy, delta_int_dummy, theta_0),
-  target_1l = laplace_marginal_lpmf<FALSE>(
+  target_1l = laplace_marginal_lpmf<false>(
     sums, poisson_log_likelihood2(), eta_dummy_dbl, y_dummy, K, phi_1l, x,
     delta_dummy, delta_int_dummy, theta_0),
-  target_2u = laplace_marginal_lpmf<FALSE>(
+  target_2u = laplace_marginal_lpmf<false>(
     sums, poisson_log_likelihood2(), eta_dummy_dbl, y_dummy, K, phi_2u, x,
     delta_dummy, delta_int_dummy, theta_0),
-  target_2l = laplace_marginal_lpmf<FALSE>(
+  target_2l = laplace_marginal_lpmf<false>(
     sums, poisson_log_likelihood2(), eta_dummy_dbl, y_dummy, K, phi_2l, x,
     delta_dummy, delta_int_dummy, theta_0);
 
@@ -153,7 +153,7 @@ TEST_F(laplace_disease_map_test, laplace_marginal_lpmf) {
   int max_steps_line_search = 10;
 
   var marginal_density
-    = laplace_marginal_lpmf<FALSE>(y, poisson_log_exposure_likelihood(),
+    = laplace_marginal_lpmf<false>(y, poisson_log_exposure_likelihood(),
                                    eta_dummy, ye,
                                    K, phi, x, delta, delta_int, theta_0);
 
@@ -178,21 +178,21 @@ TEST_F(laplace_disease_map_test, laplace_marginal_lpmf) {
 
   Eigen::VectorXd eta_dummy_dbl = value_of(eta_dummy);
 
-  double target_u0 = laplace_marginal_lpmf<FALSE>(
+  double target_u0 = laplace_marginal_lpmf<false>(
       y, poisson_log_exposure_likelihood(), eta_dummy_dbl, ye, K, phi_u0, x,
       delta, delta_int, theta_0),
-    target_u1 = laplace_marginal_lpmf<FALSE>(
+    target_u1 = laplace_marginal_lpmf<false>(
         y, poisson_log_exposure_likelihood(), eta_dummy_dbl, ye, K, phi_u1, x,
         delta, delta_int, theta_0),
-    target_l0 = laplace_marginal_lpmf<FALSE>(
+    target_l0 = laplace_marginal_lpmf<false>(
             y, poisson_log_exposure_likelihood(), eta_dummy_dbl, ye, K, phi_l0, x,
           delta, delta_int, theta_0),
-    target_l1 = laplace_marginal_lpmf<FALSE>(
+    target_l1 = laplace_marginal_lpmf<false>(
               y, poisson_log_exposure_likelihood(), eta_dummy_dbl, ye, K, phi_l1, x,
               delta, delta_int, theta_0);
 
   EXPECT_NEAR((target_u0 - target_l0) / (2 * eps), g[0], 3e-3);
-  EXPECT_NEAR((target_u1 - target_l1) / (2 * eps), g[1], 2e-4);
+  EXPECT_NEAR((target_u1 - target_l1) / (2 * eps), g[1], 5e-4);
 }
 
 struct bernoulli_logit_likelihood {
@@ -239,7 +239,7 @@ TEST(laplace_marginal_lpdf, bernoulli_logit_phi_dim500) {
   stan::math::test::sqr_exp_kernel_functor K;
   bernoulli_logit_likelihood L;
   var target
-    = laplace_marginal_lpmf<FALSE>(y, L, eta_dummy, delta_L,
+    = laplace_marginal_lpmf<false>(y, L, eta_dummy, delta_L,
                                    K, phi, x, delta, delta_int,
                                    theta_0);
 
@@ -262,16 +262,16 @@ TEST(laplace_marginal_lpdf, bernoulli_logit_phi_dim500) {
   phi_2u(1) += diff;
   Eigen::VectorXd eta_dummy_dbl;
 
-  double target_1u = laplace_marginal_lpmf<FALSE>(y, L, eta_dummy_dbl, delta_L,
+  double target_1u = laplace_marginal_lpmf<false>(y, L, eta_dummy_dbl, delta_L,
                                  K, phi_1u, x, delta, delta_int,
                                  theta_0),
-         target_1l = laplace_marginal_lpmf<FALSE>(y, L, eta_dummy_dbl, delta_L,
+         target_1l = laplace_marginal_lpmf<false>(y, L, eta_dummy_dbl, delta_L,
                                         K, phi_1l, x, delta, delta_int,
                                         theta_0),
-         target_2u = laplace_marginal_lpmf<FALSE>(y, L, eta_dummy_dbl, delta_L,
+         target_2u = laplace_marginal_lpmf<false>(y, L, eta_dummy_dbl, delta_L,
                                         K, phi_2u, x, delta, delta_int,
                                         theta_0),
-         target_2l = laplace_marginal_lpmf<FALSE>(y, L, eta_dummy_dbl, delta_L,
+         target_2l = laplace_marginal_lpmf<false>(y, L, eta_dummy_dbl, delta_L,
                                         K, phi_2l, x, delta, delta_int,
                                         theta_0);
 
@@ -458,7 +458,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
 
   covariance_motorcycle_functor K;
   var target
-    = laplace_marginal_lpdf<FALSE>(y, L, eta, delta_int,
+    = laplace_marginal_lpdf<false>(y, L, eta, delta_int,
                             K, phi, x, delta_dummy, delta_int, theta0,
                             tolerance, max_num_steps, hessian_block_size,
                             solver, do_line_search, max_steps_line_search);
@@ -477,13 +477,13 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
     phi_l(i) -= eps;
 
     double target_u
-      = laplace_marginal_lpdf<FALSE>(y, L, eta_dbl, delta_int,
+      = laplace_marginal_lpdf<false>(y, L, eta_dbl, delta_int,
                               K, phi_u, x, delta_dummy, delta_int, theta0,
                               tolerance, max_num_steps, hessian_block_size,
                               solver, do_line_search, max_steps_line_search);
 
     double target_l
-      = laplace_marginal_lpdf<FALSE>(y, L, eta_dbl, delta_int,
+      = laplace_marginal_lpdf<false>(y, L, eta_dbl, delta_int,
                             K, phi_l, x, delta_dummy, delta_int, theta0,
                             tolerance, max_num_steps, hessian_block_size,
                             solver, do_line_search, max_steps_line_search);
@@ -499,13 +499,13 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
   eta_l(0) -= eps;
 
   double target_u
-    = laplace_marginal_lpdf<FALSE>(y, L, eta_u, delta_int,
+    = laplace_marginal_lpdf<false>(y, L, eta_u, delta_int,
                             K, phi_dbl, x, delta_dummy, delta_int, theta0,
                             tolerance, max_num_steps, hessian_block_size,
                             solver, do_line_search, max_steps_line_search);
 
   double target_l
-    = laplace_marginal_lpdf<FALSE>(y, L, eta_l, delta_int,
+    = laplace_marginal_lpdf<false>(y, L, eta_l, delta_int,
                             K, phi_dbl, x, delta_dummy, delta_int, theta0,
                             tolerance, max_num_steps, hessian_block_size,
                             solver, do_line_search, max_steps_line_search);
