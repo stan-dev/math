@@ -13,7 +13,8 @@ namespace math {
  * NOTE: we actually don't need to compute the pseudo-target, only its
  * derivative.
  */
-inline double laplace_pseudo_target(const Eigen::MatrixXd& K,
+template <typename KMat, require_eigen_matrix_dynamic_vt<std::is_arithmetic, KMat>* = nullptr>
+inline double laplace_pseudo_target(const KMat& K,
                                     const Eigen::VectorXd& a,
                                     const Eigen::MatrixXd& R,
                                     const Eigen::VectorXd& l_grad,
@@ -72,36 +73,42 @@ struct laplace_pseudo_target_vari : public vari {
   }
 
   void chain() {
-    int dim_theta = K_adj_.rows();
-    if (diagonal_covariance_) {
-      for (int j = 0; j < dim_theta; j++) {
-        K_[j * dim_theta + j]->adj_ += pseudo_target_[0]->adj_ * K_adj_(j, 0);
-      }
-    } else {
-      for (int j = 0; j < dim_theta; j++)
-        for (int i = 0; i < dim_theta; i++)
-          K_[j * dim_theta + i]->adj_ += pseudo_target_[0]->adj_ * K_adj_(i, j);
-    }
+
   }
 };
 
 /**
  * Overload function for case where K is passed as a matrix of var.
  */
-template <typename T>
-inline T laplace_pseudo_target(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& K,
+template <typename KMat, require_eigen_matrix_dynamic_vt<is_var, KMat>* = nullptr>
+inline auto laplace_pseudo_target(
+    const KMat& K,
     const Eigen::VectorXd& a, const Eigen::MatrixXd& R,
     const Eigen::VectorXd& l_grad, const Eigen::VectorXd& s2) {
-  double pseudo_target_dbl
-      = laplace_pseudo_target(value_of(K), a, R, l_grad, s2);
+    constexpr int diagonal_covariance_ = 0;
+    const Eigen::Index dim_theta = K.rows();
+    auto K_ = to_arena(K);
 
-  // construct vari
-  laplace_pseudo_target_vari* vi0
-      = new laplace_pseudo_target_vari(a, R, K, s2, l_grad, pseudo_target_dbl);
-
-  var pseudo_target = var(vi0->pseudo_target_[0]);
-  return pseudo_target;
+    arena_matrix<Eigen::MatrixXd> K_adj_;
+    if (diagonal_covariance_) {
+      K_adj_ = 0.5 * a.cwiseProduct(a) - 0.5 * R.diagonal()
+               + l_grad.cwiseProduct(s2 + R * value_of(K).diagonal().cwiseProduct(s2));
+    } else {
+      K_adj_ = 0.5 * a * a.transpose() - 0.5 * R + s2 * l_grad.transpose()
+               - (R * (value_of(K) * s2)) * l_grad.transpose();
+    }
+  return make_callback_var(0.0, [K_, K_adj_](auto&& vi) mutable {
+    int dim_theta = K_adj_.rows();
+    if (diagonal_covariance_) {
+      for (int j = 0; j < dim_theta; j++) {
+        K_(j * dim_theta + j).adj() += vi.adj() * K_adj_(j, 0);
+      }
+    } else {
+      for (int j = 0; j < dim_theta; j++)
+        for (int i = 0; i < dim_theta; i++)
+          K_(j * dim_theta + i).adj() += vi.adj() * K_adj_(i, j);
+    }
+  });
 }
 
 }  // namespace math

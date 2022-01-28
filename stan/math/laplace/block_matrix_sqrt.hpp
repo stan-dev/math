@@ -15,7 +15,18 @@ inline Eigen::SparseMatrix<double> block_matrix_sqrt(
   const Eigen::Index n_block = W.cols() / block_size;
   Eigen::MatrixXd local_block(block_size, block_size);
   Eigen::SparseMatrix<double> W_root(W.rows(), W.cols());
-  return W.sqrt();
+  W_root.reserve(Eigen::VectorXi::Constant(W_root.cols(), block_size));
+
+  // No block operation available for sparse matrices, so we have to loop.
+  // See https://eigen.tuxfamily.org/dox/group__TutorialSparse.html#title7
+  for (Eigen::Index k = 0; k < W.outerSize(); ++k) {
+    for (Eigen::SparseMatrix<double>::InnerIterator it(W, k); it; ++it) {
+      W_root.insert(it.row(), it.col()) = std::sqrt(it.value());
+    }
+  }
+  W_root.makeCompressed();
+
+  return W_root;
 }
 
 }  // namespace math
