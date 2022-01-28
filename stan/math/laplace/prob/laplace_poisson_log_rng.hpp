@@ -18,11 +18,12 @@ namespace math {
  * from the gaussian approximation of p(theta | y, phi)
  * where the likelihood is a Poisson with a log link.
  */
-template <typename K, typename T0, typename T1, typename T2,  // typename T3,
+template <typename CovarFun, typename T0, typename T1,
+          typename T2,  // typename T3,
           typename RNG>
 inline Eigen::VectorXd laplace_poisson_log_rng(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    const K& covariance_function,
+    CovarFun&& covariance_function,
     const Eigen::Matrix<T0, Eigen::Dynamic, 1>& phi, const T2& x,
     // const T3& x_pred,
     const std::vector<double>& delta, const std::vector<int>& delta_int,
@@ -33,21 +34,21 @@ inline Eigen::VectorXd laplace_poisson_log_rng(
   Eigen::VectorXd eta_dummy;
   poisson_log_likelihood L;
   return laplace_base_rng(
-    diff_likelihood<poisson_log_likelihood>(L, to_vector(y), n_samples, msgs),
-    covariance_function, phi, eta_dummy, x, x, delta,
-    delta_int, theta_0, rng, msgs, tolerance,
-    max_num_steps, hessian_block_size, compute_W_root);
+      diff_likelihood<poisson_log_likelihood>(L, to_vector(y), n_samples, msgs),
+      covariance_function, phi, eta_dummy, x, x, delta, delta_int, theta_0, rng,
+      msgs, tolerance, max_num_steps, hessian_block_size, compute_W_root);
 }
 
 /**
  * Overload for case where user passes exposure, ye.
  */
-template <typename K, typename T0, typename T1, typename T2,  // typename T3,
+template <typename CovarFun, typename T0, typename T1,
+          typename T2,  // typename T3,
           class RNG>
 inline Eigen::VectorXd  // CHECK -- right return type
 laplace_poisson_log_rng(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    const Eigen::VectorXd& ye, const K& covariance_function,
+    const Eigen::VectorXd& ye, CovarFun&& covariance_function,
     const Eigen::Matrix<T0, Eigen::Dynamic, 1>& phi, const T2& x,
     // const T3& x_pred,
     const std::vector<double>& delta, const std::vector<int>& delta_int,
@@ -60,11 +61,11 @@ laplace_poisson_log_rng(
   Eigen::VectorXd y_and_ye(y_vec.size() + ye.size());
   y_and_ye << y_vec, ye;
   poisson_log_exposure_likelihood L;
-  return laplace_base_rng(
-      diff_likelihood<poisson_log_exposure_likelihood>(L, y_and_ye, n_samples,
-                                                       msgs),
-      covariance_function, phi, eta_dummy, x, x, delta, delta_int, theta_0, rng,
-      msgs, tolerance, max_num_steps, hessian_block_size, compute_W_root);
+  return laplace_base_rng(diff_likelihood<poisson_log_exposure_likelihood>(
+                              L, y_and_ye, n_samples, msgs),
+                          covariance_function, phi, eta_dummy, x, x, delta,
+                          delta_int, theta_0, rng, msgs, tolerance,
+                          max_num_steps, hessian_block_size, compute_W_root);
 }
 }  // namespace math
 }  // namespace stan

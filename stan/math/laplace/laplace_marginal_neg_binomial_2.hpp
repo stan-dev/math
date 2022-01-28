@@ -31,10 +31,10 @@ namespace math {
  * @param[in] max_num_steps maximum number of steps before the Newton solver
  *            breaks and returns an error.
  */
-template <typename T0, typename T1, typename T2, typename K>
+template <typename T0, typename T1, typename T2, typename CovarFun>
 T1 laplace_marginal_neg_binomial_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index,
-    const K& covariance_function,
+    CovarFun&& covariance_function,
     const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
     const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta,
     const std::vector<Eigen::VectorXd>& x, const std::vector<double>& delta,

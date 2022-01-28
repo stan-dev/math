@@ -32,10 +32,10 @@ namespace math {
  * @param[in] max_num_steps maximum number of steps before the Newton solver
  *            breaks and returns an error.
  */
-template <typename T0, typename T1, typename K>
+template <typename T0, typename T1, typename CovarF>
 T1 laplace_marginal_bernoulli_logit_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    const K& covariance_function,
+    CovarF&& covariance_function,
     const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
     const std::vector<Eigen::VectorXd>& x, const std::vector<double>& delta,
     const std::vector<int>& delta_int,
@@ -44,19 +44,19 @@ T1 laplace_marginal_bernoulli_logit_lpmf(
     long int max_num_steps = 100) {
   // TODO: change this to a VectorXd once we have operands & partials.
   Eigen::Matrix<T1, Eigen::Dynamic, 1> eta_dummy(0);
-  bernoulli_logit_likelihood L;
   return laplace_marginal_density(
-  diff_likelihood<bernoulli_logit_likelihood>(L, to_vector(y), n_samples, msgs),
-  // diff_bernoulli_logit(to_vector(n_samples), to_vector(y)),
-  covariance_function, phi, eta_dummy, x, delta, delta_int, theta_0, msgs,
-  tolerance, max_num_steps);
+      diff_likelihood<bernoulli_logit_likelihood>(
+          bernoulli_logit_likelihood{}, to_vector(y), n_samples, msgs),
+      // diff_bernoulli_logit(to_vector(n_samples), to_vector(y)),
+      covariance_function, phi, eta_dummy, x, delta, delta_int, theta_0, msgs,
+      tolerance, max_num_steps);
 }
 
 // Add signature that takes x as a matrix instead of a vector.
-template <typename T0, typename T1, typename K>
+template <typename T0, typename T1, typename CovarF>
 T1 laplace_marginal_bernoulli_logit_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    const K& covariance_function,
+    CovarF&& covariance_function,
     const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi, const Eigen::MatrixXd& x,
     const std::vector<double>& delta, const std::vector<int>& delta_int,
     const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
@@ -66,10 +66,11 @@ T1 laplace_marginal_bernoulli_logit_lpmf(
   Eigen::Matrix<T1, Eigen::Dynamic, 1> eta_dummy(0);
   bernoulli_logit_likelihood L;
   return laplace_marginal_density(
-  diff_likelihood<bernoulli_logit_likelihood>(L, to_vector(y), n_samples, msgs),
+      diff_likelihood<bernoulli_logit_likelihood>(L, to_vector(y), n_samples,
+                                                  msgs),
       // diff_bernoulli_logit(to_vector(n_samples), to_vector(y)),
-  covariance_function, phi, eta_dummy, x, delta, delta_int, theta_0, msgs,
-  tolerance, max_num_steps);
+      covariance_function, phi, eta_dummy, x, delta, delta_int, theta_0, msgs,
+      tolerance, max_num_steps);
 }
 
 }  // namespace math

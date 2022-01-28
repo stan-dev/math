@@ -16,11 +16,12 @@ namespace math {
  * from the gaussian approximation of p(theta | y, phi),
  * where the likelihood is a Bernoulli with logit link.
  */
-template <typename K, typename T_phi, typename T_theta, typename T_x, class RNG>
+template <typename CovarFun, typename T_phi, typename T_theta, typename T_x,
+          class RNG>
 inline Eigen::VectorXd  // CHECK -- right return type
 laplace_bernoulli_logit_rng(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    const K& covariance_function,
+    CovarFun&& covariance_function,
     const Eigen::Matrix<T_phi, Eigen::Dynamic, 1>& phi, const T_x x,
     const std::vector<double>& delta, const std::vector<int>& delta_int,
     const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta_0, RNG& rng,

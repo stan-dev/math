@@ -6,17 +6,15 @@ namespace math {
 
 struct bernoulli_logit_likelihood {
   template <typename T_theta, typename T_eta>
-  stan::return_type_t<T_theta, T_eta> operator() (
-    const Eigen::Matrix<T_theta, -1, 1>& theta,
-    const Eigen::Matrix<T_eta, -1, 1>& eta,
-    const Eigen::VectorXd& y,
-    const std::vector<int>& delta_int,
-    std::ostream* pstream) const {
-      Eigen::VectorXd n_samples = to_vector(delta_int);
-      Eigen::VectorXd one = rep_vector(1, theta.size());
-      return sum(theta.cwiseProduct(y)
-        - n_samples.cwiseProduct(log(one + exp(theta))));
-    }
+  stan::return_type_t<T_theta, T_eta> operator()(
+      const Eigen::Matrix<T_theta, -1, 1>& theta,
+      const Eigen::Matrix<T_eta, -1, 1>& eta, const Eigen::VectorXd& y,
+      const std::vector<int>& delta_int, std::ostream* pstream) const {
+    Eigen::VectorXd n_samples = to_vector(delta_int);
+    Eigen::VectorXd one = rep_vector(1, theta.size());
+    return sum(theta.cwiseProduct(y)
+               - n_samples.cwiseProduct(log(one + exp(theta))));
+  }
 };
 
 /**
@@ -103,23 +101,6 @@ struct diff_bernoulli_logit {
         = square(one + exp_theta).cwiseProduct(one + exp_theta);
 
     return n_samples_.cwiseProduct(elt_divide(nominator, denominator));
-  }
-
-  Eigen::VectorXd compute_s2(const Eigen::VectorXd& theta,
-                             const Eigen::VectorXd& eta,
-                             const Eigen::MatrixXd& A,
-                             int hessian_block_size) const {
-    std::cout << "THIS FUNCTIONS SHOULD NEVER GET CALLED!" << std::endl;
-    Eigen::MatrixXd void_matrix;
-    return void_matrix;
-  }
-
-  Eigen::VectorXd diff_eta_implicit(const Eigen::VectorXd& v,
-                                    const Eigen::VectorXd& theta,
-                                    const Eigen::VectorXd& eta) const {
-    std::cout << "THIS FUNCTIONS SHOULD NEVER GET CALLED!" << std::endl;
-    Eigen::MatrixXd void_matrix;
-    return void_matrix;
   }
 };
 
