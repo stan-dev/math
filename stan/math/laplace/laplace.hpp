@@ -12,7 +12,6 @@
 #include <stan/math/laplace/laplace_marginal.hpp>
 
 #include <stan/math/laplace/laplace_marginal_neg_binomial_2.hpp>
-#include <stan/math/laplace/laplace_likelihood_deprecated.hpp>
 #include <stan/math/laplace/laplace_marginal_bernoulli_logit_lpmf.hpp>
 #include <stan/math/laplace/laplace_marginal_lpdf.hpp>
 #include <stan/math/laplace/laplace_marginal_poisson_log_lpmf.hpp>

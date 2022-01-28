@@ -30,10 +30,10 @@ namespace math {
  * @param[in] max_num_steps maximum number of steps before the Newton solver
  *            breaks and returns an error.
  */
-template <typename T0, typename T1, typename K>
+template <typename T0, typename T1, typename CovarFun>
 T1 laplace_marginal_poisson_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    const K& covariance_function,
+    CovarFun&& covariance_function,
     const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
     const std::vector<Eigen::VectorXd>& x, const std::vector<double>& delta,
     const std::vector<int>& delta_int,
@@ -45,15 +45,14 @@ T1 laplace_marginal_poisson_log_lpmf(
   poisson_log_likelihood L;
   return laplace_marginal_density(
       diff_likelihood<poisson_log_likelihood>(L, to_vector(y), n_samples, msgs),
-      covariance_function,
-      phi, eta_dummy, x, delta, delta_int, theta_0, msgs, tolerance,
-      max_num_steps);
+      covariance_function, phi, eta_dummy, x, delta, delta_int, theta_0, msgs,
+      tolerance, max_num_steps);
 }
 
-template <typename T0, typename T1, typename K>
+template <typename T0, typename T1, typename CovarFun>
 T1 laplace_marginal_poisson_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    const Eigen::VectorXd& ye, const K& covariance_function,
+    const Eigen::VectorXd& ye, CovarFun&& covariance_function,
     const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
     const std::vector<Eigen::VectorXd>& x, const std::vector<double>& delta,
     const std::vector<int>& delta_int,
@@ -67,8 +66,8 @@ T1 laplace_marginal_poisson_log_lpmf(
   y_and_ye << y_vec, ye;
   poisson_log_exposure_likelihood L;
   return laplace_marginal_density(
-    diff_likelihood<poisson_log_exposure_likelihood>(L, y_and_ye, n_samples,
-                                                     msgs),
+      diff_likelihood<poisson_log_exposure_likelihood>(L, y_and_ye, n_samples,
+                                                       msgs),
       covariance_function, phi, eta_dummy, x, delta, delta_int, theta_0, msgs,
       tolerance, max_num_steps);
 }

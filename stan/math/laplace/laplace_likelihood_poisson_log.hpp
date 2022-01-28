@@ -7,62 +7,58 @@
 namespace stan {
 namespace math {
 
-  struct poisson_log_likelihood {
-    /**
-     * Returns the lpmf for a Poisson with a log link across
-     * multiple groups. No need to compute the log normalizing constant.
-     * @tparam T_theta Type of the log Poisson rate.
-     * @tparam T_eta Type of the auxiliary parameter (not used here).
-     * @param[in] theta log Poisson rate for each group.
-     * @param[in] y sum of counts in each group.
-     * @param[in] delta_int number of observations in each group.
-     * return lpmf for a Poisson with a log link.
-     */
-    template <typename T_theta, typename T_eta>
-    stan::return_type_t<T_theta, T_eta> operator() (
+struct poisson_log_likelihood {
+  /**
+   * Returns the lpmf for a Poisson with a log link across
+   * multiple groups. No need to compute the log normalizing constant.
+   * @tparam T_theta Type of the log Poisson rate.
+   * @tparam T_eta Type of the auxiliary parameter (not used here).
+   * @param[in] theta log Poisson rate for each group.
+   * @param[in] y sum of counts in each group.
+   * @param[in] delta_int number of observations in each group.
+   * return lpmf for a Poisson with a log link.
+   */
+  template <typename T_theta, typename T_eta>
+  stan::return_type_t<T_theta, T_eta> operator()(
       const Eigen::Matrix<T_theta, -1, 1>& theta,
-      const Eigen::Matrix<T_eta, -1, 1>& eta,
-      const Eigen::VectorXd& y,
-      const std::vector<int>& delta_int,
-      std::ostream* pstream) const {
-        Eigen::VectorXd n_samples = to_vector(delta_int);
-        return -lgamma(y.array() + 1).sum() + theta.dot(y)
-               - n_samples.dot(exp(theta));
-      }
-  };
+      const Eigen::Matrix<T_eta, -1, 1>& eta, const Eigen::VectorXd& y,
+      const std::vector<int>& delta_int, std::ostream* pstream) const {
+    Eigen::VectorXd n_samples = to_vector(delta_int);
+    return -lgamma(y.array() + 1).sum() + theta.dot(y)
+           - n_samples.dot(exp(theta));
+  }
+};
 
-  struct poisson_log_exposure_likelihood {
-    /**
-     * Returns the lpmf for a Poisson with a log link across
-     * multiple groups. No need to compute the log normalizing constant.
-     * Same as above, but includes a exposure term to correct the
-     * log rate for each group.
-     * @tparam T_theta Type of the log Poisson rate.
-     * @tparam T_eta Type of the auxiliary parameter (not used here).
-     * @param[in] theta log Poisson rate for each group.
-     * @param[in] y_and_ye First n elements contain the sum of counts
-     *                     in each group, next n elements the exposure
-     *                     in each group, where n is the number of groups.
-     * @param[in] delta_int number of observations in each group.
-     * return lpmf for a Poisson with a log link.
-     */
-    template <typename T_theta, typename T_eta>
-    stan::return_type_t<T_theta, T_eta> operator() (
+struct poisson_log_exposure_likelihood {
+  /**
+   * Returns the lpmf for a Poisson with a log link across
+   * multiple groups. No need to compute the log normalizing constant.
+   * Same as above, but includes a exposure term to correct the
+   * log rate for each group.
+   * @tparam T_theta Type of the log Poisson rate.
+   * @tparam T_eta Type of the auxiliary parameter (not used here).
+   * @param[in] theta log Poisson rate for each group.
+   * @param[in] y_and_ye First n elements contain the sum of counts
+   *                     in each group, next n elements the exposure
+   *                     in each group, where n is the number of groups.
+   * @param[in] delta_int number of observations in each group.
+   * return lpmf for a Poisson with a log link.
+   */
+  template <typename T_theta, typename T_eta>
+  stan::return_type_t<T_theta, T_eta> operator()(
       const Eigen::Matrix<T_theta, -1, 1>& theta,
-      const Eigen::Matrix<T_eta, -1, 1>& eta,
-      const Eigen::VectorXd& y_and_ye,
-      const std::vector<int>& delta_int,
-      std::ostream* pstream) const {
-        int n = delta_int.size();
-        Eigen::VectorXd y = y_and_ye.head(n);
-        Eigen::VectorXd ye = y_and_ye.tail(n);
+      const Eigen::Matrix<T_eta, -1, 1>& eta, const Eigen::VectorXd& y_and_ye,
+      const std::vector<int>& delta_int, std::ostream* pstream) const {
+    int n = delta_int.size();
+    Eigen::VectorXd y = y_and_ye.head(n);
+    Eigen::VectorXd ye = y_and_ye.tail(n);
 
-        Eigen::VectorXd n_samples = to_vector(delta_int);
-        Eigen::Matrix<T_theta, -1, 1> shifted_mean = theta + log(ye);
-        return -lgamma(y.array() + 1).sum() + shifted_mean.dot(y)
-               - n_samples.dot(exp(shifted_mean));
-      }
-  };
+    Eigen::VectorXd n_samples = to_vector(delta_int);
+    Eigen::Matrix<T_theta, -1, 1> shifted_mean = theta + log(ye);
+    return -lgamma(y.array() + 1).sum() + shifted_mean.dot(y)
+           - n_samples.dot(exp(shifted_mean));
+  }
+};
 
 // NOTE: might not need the code below anymore, since we'll switch to
 // the general diff likelihood.
@@ -86,18 +82,20 @@ struct diff_poisson_log {
   /* exposure, i.e. off-set term for the latent variable. */
   Eigen::VectorXd log_exposure_;
 
-  template <typename SampleVec, typename SumVec, require_all_eigen_vector_t<SampleVec, SumVec>* = nullptr>
-  diff_poisson_log(SampleVec&& n_samples,
-                   SumVec&& sums)
+  template <typename SampleVec, typename SumVec,
+            require_all_eigen_vector_t<SampleVec, SumVec>* = nullptr>
+  diff_poisson_log(SampleVec&& n_samples, SumVec&& sums)
       : n_samples_(std::forward<SampleVec>(n_samples)),
-       sums_(std::forward<SumVec>(sums)),
-       log_exposure_(Eigen::VectorXd::Zero(sums_.size())) {}
+        sums_(std::forward<SumVec>(sums)),
+        log_exposure_(Eigen::VectorXd::Zero(sums_.size())) {}
 
   template <typename SampleVec, typename SumVec, typename LogExpVec,
-    require_all_eigen_vector_t<SampleVec, SumVec, LogExpVec>* = nullptr>
-  diff_poisson_log(SampleVec&& n_samples, SumVec&& sums, LogExpVec&& log_exposure)
-      : n_samples_(std::forward<SampleVec>(n_samples)), sums_(std::forward<SumVec>(sums)),
-       log_exposure_(std::forward<LogExpVec>(log_exposure)) {}
+            require_all_eigen_vector_t<SampleVec, SumVec, LogExpVec>* = nullptr>
+  diff_poisson_log(SampleVec&& n_samples, SumVec&& sums,
+                   LogExpVec&& log_exposure)
+      : n_samples_(std::forward<SampleVec>(n_samples)),
+        sums_(std::forward<SumVec>(sums)),
+        log_exposure_(std::forward<LogExpVec>(log_exposure)) {}
 
   /**
    * Return the log density.
@@ -133,12 +131,12 @@ struct diff_poisson_log {
    * @param[in, out] hessian diagonal, so stored in a vector.
    */
   template <typename T1, typename T2>
-  inline void diff(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
-            const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy,
-            Eigen::Matrix<T1, Eigen::Dynamic, 1>& gradient,
-            // Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic>& hessian,
-            Eigen::SparseMatrix<double>& hessian,
-            int hessian_block_size = 1) const {
+  inline void diff(
+      const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
+      const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy,
+      Eigen::Matrix<T1, Eigen::Dynamic, 1>& gradient,
+      // Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic>& hessian,
+      Eigen::SparseMatrix<double>& hessian, int hessian_block_size = 1) const {
     int theta_size = theta.size();
     Eigen::Matrix<T1, Eigen::Dynamic, 1> common_term
         = n_samples_.cwiseProduct(exp(theta + log_exposure_));
@@ -165,23 +163,6 @@ struct diff_poisson_log {
       const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
       const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy) const {
     return -n_samples_.cwiseProduct(exp(theta + log_exposure_));
-  }
-
-  Eigen::VectorXd compute_s2(const Eigen::VectorXd& theta,
-                             const Eigen::VectorXd& eta,
-                             const Eigen::MatrixXd& A,
-                             int hessian_block_size) const {
-    throw std::domain_error("THIS FUNCTIONS SHOULD NEVER GET CALLED!");
-    Eigen::MatrixXd void_matrix;
-    return void_matrix;
-  }
-
-  Eigen::VectorXd diff_eta_implicit(const Eigen::VectorXd& v,
-                                    const Eigen::VectorXd& theta,
-                                    const Eigen::VectorXd& eta) const {
-    throw std::domain_error("THIS FUNCTIONS SHOULD NEVER GET CALLED!");
-    Eigen::MatrixXd void_matrix;
-    return void_matrix;
   }
 };
 

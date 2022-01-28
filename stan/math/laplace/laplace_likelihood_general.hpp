@@ -133,35 +133,6 @@ struct diff_likelihood {
       diff_eta(i) = eta_var(i).adj();
     return diff_eta;
   }
-
-  template <typename T_theta, typename T_eta>
-  Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, 1> diff_eta(
-      const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
-      const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) const {
-    std::cout << "THIS FUNCTION SHOULD NEVER GET CALLED!" << std::endl;
-    Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, 1> void_matrix;
-    return void_matrix;
-  }
-
-  template <typename T_theta, typename T_eta>
-  Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, Eigen::Dynamic>
-  diff_theta_eta(const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
-                 const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) const {
-    std::cout << "THIS FUNCTION SHOULD NEVER GET CALLED!" << std::endl;
-    Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, Eigen::Dynamic>
-        void_matrix;
-    return void_matrix;
-  }
-
-  template <typename T_theta, typename T_eta>
-  Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, Eigen::Dynamic>
-  diff2_theta_eta(const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
-                  const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta) const {
-    std::cout << "THIS FUNCTION SHOULD NEVER GET CALLED!" << std::endl;
-    Eigen::Matrix<return_type_t<T_theta, T_eta>, Eigen::Dynamic, Eigen::Dynamic>
-        void_matrix;
-    return void_matrix;
-  }
 };
 
 }  // namespace math
