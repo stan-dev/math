@@ -133,7 +133,7 @@ inline double laplace_marginal_density(
   Eigen::Index block_size = is_hessian_block_size_zero ? hessian_block_size + 1
                                                        : hessian_block_size;
 
-  for (long int i = 0; i <= max_num_steps; i++) {
+  for (Eigen::Index i = 0; i <= max_num_steps; i++) {
     if (i == max_num_steps) {
       throw std::domain_error(
           std::string("laplace_marginal_density: max number of iterations:")
@@ -374,8 +374,8 @@ inline auto laplace_marginal_density(
   const Eigen::Index phi_size_ = phi_arena.size();
   const Eigen::Index eta_size_ = eta_arena.size();
   /*
-  for (int i = 0; i < phi_size_; i++) phi_[i] = phi(i).vi_;
-  for (int i = 0; i < eta_size_; i++) eta_[i] = eta(i).vi_;
+  for (Eigen::Index i = 0; i < phi_size_; i++) phi_[i] = phi(i).vi_;
+  for (Eigen::Index i = 0; i < eta_size_; i++) eta_[i] = eta(i).vi_;
   */
   // CHECK -- is there a cleaner way of doing this?
   //  marginal_density_[0] = this;

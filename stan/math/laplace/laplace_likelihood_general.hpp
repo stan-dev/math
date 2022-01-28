@@ -3,8 +3,6 @@
 
 // #include <stan/math/laplace/hessian_times_vector.hpp>
 #include <stan/math/laplace/hessian_block_diag.hpp>
-#include <stan/math/laplace/third_diff_directional.hpp>
-#include <stan/math/laplace/partial_diff_theta.hpp>
 
 #include <Eigen/Sparse>
 
@@ -43,8 +41,8 @@ struct diff_likelihood {
     using Eigen::Dynamic;
     using Eigen::Matrix;
 
-    int theta_size = theta.size();
-    int eta_size = eta.size();
+    const Eigen::Index theta_size = theta.size();
+    const Eigen::Index eta_size = eta.size();
     // CHECK -- do we need this scope?
     {
       nested_rev_autodiff nested;
@@ -54,9 +52,9 @@ struct diff_likelihood {
       var f_var = f_(theta_var, eta_var, delta_, delta_int_, pstream_);
       grad(f_var.vi_);
       gradient.resize(theta_size + eta_size);
-      for (int i = 0; i < theta_size; i++)
+      for (Eigen::Index i = 0; i < theta_size; i++)
         gradient(i) = theta_var(i).adj();
-      for (int i = 0; i < eta_size; i++)
+      for (Eigen::Index i = 0; i < eta_size; i++)
         gradient(theta_size + i) = eta_var(i).adj();
     }
 
@@ -64,13 +62,11 @@ struct diff_likelihood {
     double f_theta;
     if (hessian_block_size == 1) {
       Eigen::VectorXd v(theta_size);
-      for (int i = 0; i < theta_size; i++)
+      for (Eigen::Index i = 0; i < theta_size; i++)
         v(i) = 1;
-      Eigen::VectorXd hessian_v;
-      hessian_times_vector(f_, theta, eta, delta_, delta_int_, v, f_theta,
-                           hessian_v, pstream_);
+      Eigen::VectorXd hessian_v = hessian_times_vector(f_, theta, eta, delta_, delta_int_, v, pstream_);
       hessian_theta.reserve(Eigen::VectorXi::Constant(theta_size, 1));
-      for (int i = 0; i < theta_size; i++)
+      for (Eigen::Index i = 0; i < theta_size; i++)
         hessian_theta.insert(i, i) = hessian_v(i);
     } else {
       hessian_block_diag(f_, theta, eta, delta_, delta_int_, hessian_block_size,
@@ -101,7 +97,7 @@ struct diff_likelihood {
     return theta_var.adj();
   }
 
-  Eigen::VectorXd compute_s2(const Eigen::VectorXd& theta,
+  inline Eigen::VectorXd compute_s2(const Eigen::VectorXd& theta,
                              const Eigen::VectorXd& eta,
                              const Eigen::MatrixXd& A,
                              int hessian_block_size) const {
@@ -111,19 +107,19 @@ struct diff_likelihood {
     using Eigen::VectorXd;
 
     nested_rev_autodiff nested;
-    int theta_size = theta.size();
-    int eta_size = eta.size();
-    int parm_size = theta_size + eta_size;
+    const Eigen::Index theta_size = theta.size();
+    const Eigen::Index eta_size = eta.size();
+    const Eigen::Index parm_size = theta_size + eta_size;
     // Matrix<var, Dynamic, 1> parm_var(parm_size);
-    // for (int i = 0; i < theta_size; i++) parm_var(i) = theta(i);
-    // for (int i = 0; i < eta_size; i++) parm_var(i + theta_size) = eta(i);
+    // for (Eigen::Index i = 0; i < theta_size; i++) parm_var(i) = theta(i);
+    // for (Eigen::Index i = 0; i < eta_size; i++) parm_var(i + theta_size) = eta(i);
     Matrix<var, Dynamic, 1> theta_var = theta;
     Matrix<var, Dynamic, 1> eta_var = eta;
     int n_blocks = theta_size / hessian_block_size;
 
     fvar<fvar<var>> target_ffvar = 0;
 
-    for (int i = 0; i < hessian_block_size; ++i) {
+    for (Eigen::Index i = 0; i < hessian_block_size; ++i) {
      VectorXd v = VectorXd::Zero(theta_size);
      for (int j = i; j < theta_size; j += hessian_block_size)
        v(j) = 1;
@@ -159,9 +155,9 @@ struct diff_likelihood {
     grad(target_ffvar.d_.d_.vi_);
 
     VectorXd parm_adj(parm_size);
-    for (int i = 0; i < theta_size; ++i)
+    for (Eigen::Index i = 0; i < theta_size; ++i)
      parm_adj(i) = theta_var(i).adj();
-    for (int i = 0; i < eta_size; ++i)
+    for (Eigen::Index i = 0; i < eta_size; ++i)
      parm_adj(theta_size + i) = eta_var(i).adj();
 
     return 0.5 * parm_adj;
@@ -176,27 +172,27 @@ struct diff_likelihood {
     using Eigen::VectorXd;
 
     nested_rev_autodiff nested;
-    int eta_size = eta.size();
+    const Eigen::Index eta_size = eta.size();
     Matrix<var, Dynamic, 1> eta_var = eta;
 
     // CHECK -- can we avoid declaring theta as fvar<var>?
     // We currently compute derivatives wrt eta, which is not needed.
-    int theta_size = theta.size();
+    const Eigen::Index theta_size = theta.size();
     Matrix<var, Dynamic, 1> theta_var = theta;
     Matrix<fvar<var>, Dynamic, 1> theta_fvar(theta_size);
-    for (int i = 0; i < theta_size; i++)
+    for (Eigen::Index i = 0; i < theta_size; i++)
       theta_fvar(i) = fvar<var>(theta_var(i), v(i));
 
     // CHECK -- After merging develop branch, needed to do this.
     Matrix<fvar<var>, Dynamic, 1> eta_fvar(eta_size);
-    for (int i = 0; i < eta_size; i++)
+    for (Eigen::Index i = 0; i < eta_size; i++)
       eta_fvar(i) = fvar<var>(eta_var(i), 0);
 
     fvar<var> f_fvar = f_(theta_fvar, eta_fvar, delta_, delta_int_, pstream_);
     grad(f_fvar.d_.vi_);
 
     VectorXd diff_eta(eta_size);
-    for (int i = 0; i < eta_size; i++)
+    for (Eigen::Index i = 0; i < eta_size; i++)
       diff_eta(i) = eta_var(i).adj();
     return diff_eta;
   }

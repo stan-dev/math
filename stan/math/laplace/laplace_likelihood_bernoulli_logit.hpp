@@ -6,7 +6,7 @@ namespace math {
 
 struct bernoulli_logit_likelihood {
   template <typename T_theta, typename T_eta>
-  stan::return_type_t<T_theta, T_eta> operator()(
+  inline stan::return_type_t<T_theta, T_eta> operator()(
       const Eigen::Matrix<T_theta, -1, 1>& theta,
       const Eigen::Matrix<T_eta, -1, 1>& eta, const Eigen::VectorXd& y,
       const std::vector<int>& delta_int, std::ostream* pstream) const {
@@ -41,7 +41,7 @@ struct diff_bernoulli_logit {
    * @return the log density.
    */
   template <typename T1, typename T2>
-  T1 log_likelihood(
+  inline T1 log_likelihood(
       const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
       const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy) const {
     Eigen::VectorXd one = rep_vector(1, theta.size());
@@ -61,13 +61,13 @@ struct diff_bernoulli_logit {
    * @param[in, out] hessian diagonal, so stored in a vector.
    */
   template <typename T1, typename T2>
-  void diff(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
+  inline void diff(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
             const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy,
             Eigen::Matrix<T1, Eigen::Dynamic, 1>& gradient,
             Eigen::SparseMatrix<double>& hessian,
             int block_size_dummy = 0) const {
     Eigen::Matrix<T1, Eigen::Dynamic, 1> exp_theta = exp(theta);
-    int theta_size = theta.size();
+    const Eigen::Index theta_size = theta.size();
     Eigen::VectorXd one = rep_vector(1, theta_size);
 
     gradient = sums_ - n_samples_.cwiseProduct(inv_logit(theta));
@@ -77,7 +77,7 @@ struct diff_bernoulli_logit {
             elt_divide(exp_theta, square(one + exp_theta)));
     hessian.resize(theta_size, theta_size);
     hessian.reserve(Eigen::VectorXi::Constant(theta_size, 1));
-    for (int i = 0; i < theta_size; i++)
+    for (Eigen::Index i = 0; i < theta_size; i++)
       hessian.insert(i, i) = hessian_diagonal(i);
   }
 
@@ -91,7 +91,7 @@ struct diff_bernoulli_logit {
    *         derivative tensor.
    */
   template <typename T1, typename T2>
-  Eigen::Matrix<T1, Eigen::Dynamic, 1> third_diff(
+  inline Eigen::Matrix<T1, Eigen::Dynamic, 1> third_diff(
       const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
       const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy) const {
     Eigen::VectorXd exp_theta = exp(theta);

@@ -48,7 +48,7 @@ namespace math {
  */
 template <bool propto, typename T0, typename T1, typename T2, typename Tx,
           typename CovarFun, typename LFun>
-stan::return_type_t<T1, T2> laplace_marginal_lpdf(
+inline stan::return_type_t<T1, T2> laplace_marginal_lpdf(
     const Eigen::VectorXd& y, LFun&& L_f,
     const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta,
     const std::vector<int>& delta_int_L, CovarFun&& K_f,
@@ -74,7 +74,7 @@ stan::return_type_t<T1, T2> laplace_marginal_lpdf(
  */
 template <bool propto, typename T0, typename T1, typename T2, typename Tx,
           typename CovarFun, typename LFun>
-stan::return_type_t<T1, T2> laplace_marginal_lpmf(
+inline stan::return_type_t<T1, T2> laplace_marginal_lpmf(
     const std::vector<int>& y, LFun&& L_f,
     const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta,
     const Eigen::VectorXd& delta_L, CovarFun&& K_f,

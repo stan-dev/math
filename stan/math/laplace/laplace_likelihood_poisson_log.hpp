@@ -109,7 +109,7 @@ struct diff_poisson_log {
       const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
       const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy) const {
     double factorial_term = 0;
-    for (int i = 0; i < sums_.size(); i++)
+    for (Eigen::Index i = 0; i < sums_.size(); i++)
       factorial_term += lgamma(sums_(i) + 1);
     Eigen::Matrix<T1, Eigen::Dynamic, 1> shifted_mean = theta + log_exposure_;
 
@@ -137,7 +137,7 @@ struct diff_poisson_log {
       Eigen::Matrix<T1, Eigen::Dynamic, 1>& gradient,
       // Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic>& hessian,
       Eigen::SparseMatrix<double>& hessian, int hessian_block_size = 1) const {
-    int theta_size = theta.size();
+    const Eigen::Index theta_size = theta.size();
     Eigen::Matrix<T1, Eigen::Dynamic, 1> common_term
         = n_samples_.cwiseProduct(exp(theta + log_exposure_));
 
@@ -145,7 +145,7 @@ struct diff_poisson_log {
     hessian.resize(theta_size, theta_size);
     hessian.reserve(Eigen::VectorXi::Constant(theta_size, hessian_block_size));
     // hessian.col(0) = - common_term;
-    for (int i = 0; i < theta_size; i++)
+    for (Eigen::Index i = 0; i < theta_size; i++)
       hessian.insert(i, i) = -common_term(i);
   }
 

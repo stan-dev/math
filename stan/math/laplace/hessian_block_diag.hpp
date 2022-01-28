@@ -25,16 +25,15 @@ inline void hessian_block_diag(const F& f, const Eigen::VectorXd& x,
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
 
-  int x_size = x.size();
+  const Eigen::Index x_size = x.size();
   VectorXd v;
   H = MatrixXd::Zero(x_size, x_size);
   int n_blocks = x_size / hessian_block_size;
-  for (int i = 0; i < hessian_block_size; ++i) {
+  for (Eigen::Index i = 0; i < hessian_block_size; ++i) {
     v = VectorXd::Zero(x_size);
     for (int j = i; j < x_size; j += hessian_block_size)
       v(j) = 1;
-    VectorXd Hv;
-    hessian_times_vector(f, x, eta, delta, delta_int, v, fx, Hv, pstream);
+    VectorXd Hv = hessian_times_vector(f, x, eta, delta, delta_int, v, pstream);
     for (int j = 0; j < n_blocks; ++j) {
       for (int k = 0; k < hessian_block_size; ++k)
         H(k + j * hessian_block_size, i + j * hessian_block_size)
@@ -58,19 +57,18 @@ inline void hessian_block_diag(const F& f, const Eigen::VectorXd& x,
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
 
-  int x_size = x.size();
+  const Eigen::Index x_size = x.size();
   VectorXd v;
   // H = MatrixXd::Zero(x_size, x_size);
   H.resize(x_size, x_size);
   // H.reserve(Eigen::VectorXi::Constant(x_size, hessian_block_size));
 
   int n_blocks = x_size / hessian_block_size;
-  for (int i = 0; i < hessian_block_size; ++i) {
+  for (Eigen::Index i = 0; i < hessian_block_size; ++i) {
     v = VectorXd::Zero(x_size);
     for (int j = i; j < x_size; j += hessian_block_size)
       v(j) = 1;
-    VectorXd Hv;
-    hessian_times_vector(f, x, eta, delta, delta_int, v, fx, Hv, pstream);
+    VectorXd Hv = hessian_times_vector(f, x, eta, delta, delta_int, v, pstream);
     for (int j = 0; j < n_blocks; ++j) {
       for (int k = 0; k < hessian_block_size; ++k) {
         H.insert(k + j * hessian_block_size, i + j * hessian_block_size)

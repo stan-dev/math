@@ -32,7 +32,7 @@ namespace math {
  *            breaks and returns an error.
  */
 template <typename T0, typename T1, typename T2, typename CovarFun>
-T1 laplace_marginal_neg_binomial_2_log_lpmf(
+inline T1 laplace_marginal_neg_binomial_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index,
     CovarFun&& covariance_function,
     const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,

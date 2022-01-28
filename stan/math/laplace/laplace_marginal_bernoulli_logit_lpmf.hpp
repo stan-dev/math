@@ -33,7 +33,7 @@ namespace math {
  *            breaks and returns an error.
  */
 template <typename T0, typename T1, typename CovarF>
-T1 laplace_marginal_bernoulli_logit_lpmf(
+inline T1 laplace_marginal_bernoulli_logit_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     CovarF&& covariance_function,
     const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
@@ -54,7 +54,7 @@ T1 laplace_marginal_bernoulli_logit_lpmf(
 
 // Add signature that takes x as a matrix instead of a vector.
 template <typename T0, typename T1, typename CovarF>
-T1 laplace_marginal_bernoulli_logit_lpmf(
+inline T1 laplace_marginal_bernoulli_logit_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     CovarF&& covariance_function,
     const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi, const Eigen::MatrixXd& x,
