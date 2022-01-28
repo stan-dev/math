@@ -192,7 +192,7 @@ TEST_F(laplace_disease_map_test, laplace_marginal_lpmf) {
               delta, delta_int, theta_0);
 
   EXPECT_NEAR((target_u0 - target_l0) / (2 * eps), g[0], 3e-3);
-  EXPECT_NEAR((target_u1 - target_l1) / (2 * eps), g[1], 5e-4);
+  EXPECT_NEAR((target_u1 - target_l1) / (2 * eps), g[1], 1e-2);
 }
 
 struct bernoulli_logit_likelihood {
@@ -512,5 +512,5 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
 
   g_finite = (target_u - target_l) / (2 * eps);
   double tol = 1e-7;
-  EXPECT_NEAR(g_finite, g[dim_phi + 1], tol);
+  EXPECT_NEAR(g_finite, g[dim_phi], tol);
 }
