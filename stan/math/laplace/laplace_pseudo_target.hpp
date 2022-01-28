@@ -37,7 +37,7 @@ inline auto laplace_pseudo_target(KMat&& K, AVec&& a, RMat&& R,
                                   LGradVec&& l_grad, S2Vec&& s2) {
   constexpr int diagonal_covariance_ = 0;
   const Eigen::Index dim_theta = K.rows();
-  auto K_arena = to_arena(std::forward<K>(K));
+  auto K_arena = to_arena(std::forward<KMat>(K));
   auto&& a_ref = to_ref(std::forward<AVec>(a));
   auto&& R_ref = to_ref(std::forward<RMat>(R));
   auto&& s2_ref = to_ref(std::forward<S2Vec>(s2));

@@ -25,18 +25,18 @@ struct diff_likelihood {
   std::vector<int> delta_int_;
   /* stream to return print statements when function is called. */
   std::ostream* pstream_;
-
-  diff_likelihood(const F& f, const Eigen::VectorXd& delta,
-                  const std::vector<int>& delta_int, std::ostream* pstream = 0)
-      : f_(f), delta_(delta), delta_int_(delta_int), pstream_(pstream) {}
+  template <typename FF, typename DeltaVec, typename DeltaInt>
+  diff_likelihood(FF&& f, DeltaVec&& delta,
+                  DeltaInt&& delta_int, std::ostream* pstream = 0)
+      : f_(std::forward<FF>(f)), delta_(std::forward<DeltaVec>(delta)), delta_int_(std::forward<DeltaInt>(delta_int)), pstream_(pstream) {}
 
   template <typename T1, typename T2>
-  T1 log_likelihood(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
+  inline T1 log_likelihood(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
                     const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta) const {
     return f_(theta, eta, delta_, delta_int_, pstream_);
   }
 
-  void diff(const Eigen::VectorXd& theta, const Eigen::VectorXd& eta,
+  inline void diff(const Eigen::VectorXd& theta, const Eigen::VectorXd& eta,
             Eigen::VectorXd& gradient,
             Eigen::SparseMatrix<double>& hessian_theta,
             int hessian_block_size = 1) const {
@@ -78,30 +78,97 @@ struct diff_likelihood {
     }
   }
 
-  Eigen::VectorXd third_diff(const Eigen::VectorXd& theta,
+  inline Eigen::VectorXd third_diff(const Eigen::VectorXd& theta,
                              const Eigen::VectorXd& eta) const {
-    int theta_size = theta.size();
-    Eigen::VectorXd v(theta_size);
-    for (int i = 0; i < theta_size; i++)
-      v(i) = 1;
+    const Eigen::Index theta_size = theta.size();
+    Eigen::VectorXd v = Eigen::VectorXd::Ones(theta_size);
     double f_theta;
-    Eigen::VectorXd third_diff_tensor;
+    nested_rev_autodiff nested;
+    Eigen::Matrix<var, Eigen::Dynamic, 1> theta_var = theta;
+    Eigen::Matrix<fvar<var>, Eigen::Dynamic, 1> theta_fvar(theta_size);
+    for (Eigen::Index i = 0; i < theta_size; ++i) {
+      theta_fvar(i) = fvar<var>(theta_var(i), v(i));
+    }
+    // TODO:(Steve) I think this can just be commented out?
+    //fvar<var> ftheta_fvar = f_(theta_fvar, eta, delta_, delta_int_, pstream_);
 
-    third_diff_directional(f_, theta, eta, delta_, delta_int_, f_theta,
-                           third_diff_tensor, v, v, pstream_);
-
-    return third_diff_tensor;
+    Eigen::Matrix<fvar<fvar<var>>, Eigen::Dynamic, 1> theta_ffvar(theta_size);
+    for (Eigen::Index i = 0; i < theta_size; ++i) {
+      theta_ffvar(i) = fvar<fvar<var>>(theta_fvar(i), v(i));
+    }
+    fvar<fvar<var>> ftheta_ffvar = f_(theta_ffvar, eta, delta_, delta_int_, pstream_);
+    grad(ftheta_ffvar.d_.d_.vi_);
+    return theta_var.adj();
   }
 
   Eigen::VectorXd compute_s2(const Eigen::VectorXd& theta,
                              const Eigen::VectorXd& eta,
                              const Eigen::MatrixXd& A,
                              int hessian_block_size) const {
-    return partial_diff_theta(f_, theta, eta, delta_, delta_int_, A,
-                              hessian_block_size, pstream_);
+    using Eigen::Dynamic;
+    using Eigen::Matrix;
+    using Eigen::MatrixXd;
+    using Eigen::VectorXd;
+
+    nested_rev_autodiff nested;
+    int theta_size = theta.size();
+    int eta_size = eta.size();
+    int parm_size = theta_size + eta_size;
+    // Matrix<var, Dynamic, 1> parm_var(parm_size);
+    // for (int i = 0; i < theta_size; i++) parm_var(i) = theta(i);
+    // for (int i = 0; i < eta_size; i++) parm_var(i + theta_size) = eta(i);
+    Matrix<var, Dynamic, 1> theta_var = theta;
+    Matrix<var, Dynamic, 1> eta_var = eta;
+    int n_blocks = theta_size / hessian_block_size;
+
+    fvar<fvar<var>> target_ffvar = 0;
+
+    for (int i = 0; i < hessian_block_size; ++i) {
+     VectorXd v = VectorXd::Zero(theta_size);
+     for (int j = i; j < theta_size; j += hessian_block_size)
+       v(j) = 1;
+
+     Matrix<fvar<var>, Dynamic, 1> theta_fvar(theta_size);
+     for (int j = 0; j < theta_size; ++j)
+       theta_fvar(j) = fvar<var>(theta_var(j), v(j));
+
+     Matrix<fvar<var>, Dynamic, 1> eta_fvar(eta_size);
+     for (int j = 0; j < eta_size; ++j)
+       eta_fvar(j) = fvar<var>(eta_var(j), 0);
+
+     fvar<var> f_fvar = f_(theta_fvar, eta_fvar, delta_, delta_int_, pstream_);
+
+     VectorXd w(theta_size);
+     for (int j = 0; j < n_blocks; ++j) {
+       for (int k = 0; k < hessian_block_size; ++k) {
+         w(k + j * hessian_block_size)
+             = A(k + j * hessian_block_size, i + j * hessian_block_size);
+       }
+     }
+
+     Matrix<fvar<fvar<var>>, Dynamic, 1> theta_ffvar(theta_size);
+     for (int j = 0; j < theta_size; ++j)
+       theta_ffvar(j) = fvar<fvar<var>>(theta_fvar(j), w(j));
+
+     Matrix<fvar<fvar<var>>, Dynamic, 1> eta_ffvar(eta_size);
+     for (int j = 0; j < eta_size; ++j)
+       eta_ffvar(j) = fvar<fvar<var>>(eta_fvar(j), 0);
+
+     target_ffvar += f_(theta_ffvar, eta_ffvar, delta_, delta_int_, pstream_);
+    }
+    grad(target_ffvar.d_.d_.vi_);
+
+    VectorXd parm_adj(parm_size);
+    for (int i = 0; i < theta_size; ++i)
+     parm_adj(i) = theta_var(i).adj();
+    for (int i = 0; i < eta_size; ++i)
+     parm_adj(theta_size + i) = eta_var(i).adj();
+
+    return 0.5 * parm_adj;
+
   }
 
-  Eigen::VectorXd diff_eta_implicit(const Eigen::VectorXd& v,
+  inline Eigen::VectorXd diff_eta_implicit(const Eigen::VectorXd& v,
                                     const Eigen::VectorXd& theta,
                                     const Eigen::VectorXd& eta) const {
     using Eigen::Dynamic;
