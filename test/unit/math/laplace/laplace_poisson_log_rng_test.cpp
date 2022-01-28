@@ -62,7 +62,7 @@ TEST(laplace_poisson_log_rng, two_dim_diag) {
   using stan::math::sqrt;
 
   Eigen::VectorXd theta_0(2);
-  theta_0 << 1, 1;
+  theta_0 << 0, 0;
   Eigen::VectorXd phi(2);
   phi << 3, 2;
   std::vector<int> n_samples = {1, 1};
@@ -74,10 +74,6 @@ TEST(laplace_poisson_log_rng, two_dim_diag) {
   std::vector<Eigen::VectorXd> x_dummy;
 
   // compute sample mean and covariance.
-  int n_sim = 1e1;
-  Eigen::VectorXd theta_dim0(n_sim);
-  Eigen::VectorXd theta_dim1(n_sim);
-
   diagonal_kernel_functor covariance_function;
 
   boost::random::mt19937 rng;
