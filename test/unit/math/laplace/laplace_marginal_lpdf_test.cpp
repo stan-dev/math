@@ -192,7 +192,7 @@ TEST_F(laplace_disease_map_test, laplace_marginal_lpmf) {
               delta, delta_int, theta_0);
 
   EXPECT_NEAR((target_u0 - target_l0) / (2 * eps), g[0], 3e-3);
-  EXPECT_NEAR((target_u1 - target_l1) / (2 * eps), g[1], 1e-2);
+  EXPECT_NEAR((target_u1 - target_l1) / (2 * eps), g[1], 2e-4);
 }
 
 struct bernoulli_logit_likelihood {
