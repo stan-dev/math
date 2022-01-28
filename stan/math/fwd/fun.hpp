@@ -44,6 +44,7 @@
 #include <stan/math/fwd/fun/hypot.hpp>
 #include <stan/math/fwd/fun/inc_beta.hpp>
 #include <stan/math/fwd/fun/inv.hpp>
+#include <stan/math/fwd/fun/inv_erfc.hpp>
 #include <stan/math/fwd/fun/inv_Phi.hpp>
 #include <stan/math/fwd/fun/inv_cloglog.hpp>
 #include <stan/math/fwd/fun/inv_logit.hpp>
@@ -57,6 +58,7 @@
 #include <stan/math/fwd/fun/ldexp.hpp>
 #include <stan/math/fwd/fun/lgamma.hpp>
 #include <stan/math/fwd/fun/lmgamma.hpp>
+#include <stan/math/fwd/fun/lmultiply.hpp>
 #include <stan/math/fwd/fun/log.hpp>
 #include <stan/math/fwd/fun/log10.hpp>
 #include <stan/math/fwd/fun/log1m.hpp>
@@ -86,6 +88,8 @@
 #include <stan/math/fwd/fun/multiply_log.hpp>
 #include <stan/math/fwd/fun/multiply_lower_tri_self_transpose.hpp>
 #include <stan/math/fwd/fun/norm.hpp>
+#include <stan/math/fwd/fun/norm1.hpp>
+#include <stan/math/fwd/fun/norm2.hpp>
 #include <stan/math/fwd/fun/owens_t.hpp>
 #include <stan/math/fwd/fun/Phi.hpp>
 #include <stan/math/fwd/fun/Phi_approx.hpp>

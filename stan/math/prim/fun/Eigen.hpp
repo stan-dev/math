@@ -24,6 +24,7 @@
 #include <Eigen/QR>
 #include <Eigen/src/Core/NumTraits.h>
 #include <Eigen/SVD>
+#include <unsupported/Eigen/MatrixFunctions>
 
     namespace Eigen {
 

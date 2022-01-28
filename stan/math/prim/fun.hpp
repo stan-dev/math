@@ -22,6 +22,7 @@
 #include <stan/math/prim/fun/asinh.hpp>
 #include <stan/math/prim/fun/assign.hpp>
 #include <stan/math/prim/fun/atan.hpp>
+#include <stan/math/prim/fun/atan2.hpp>
 #include <stan/math/prim/fun/atanh.hpp>
 #include <stan/math/prim/fun/autocorrelation.hpp>
 #include <stan/math/prim/fun/autocovariance.hpp>
@@ -140,6 +141,7 @@
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/inv_Phi.hpp>
 #include <stan/math/prim/fun/inv_cloglog.hpp>
+#include <stan/math/prim/fun/inv_erfc.hpp>
 #include <stan/math/prim/fun/inv_logit.hpp>
 #include <stan/math/prim/fun/inv_sqrt.hpp>
 #include <stan/math/prim/fun/inv_square.hpp>
@@ -166,6 +168,7 @@
 #include <stan/math/prim/fun/linspaced_row_vector.hpp>
 #include <stan/math/prim/fun/linspaced_vector.hpp>
 #include <stan/math/prim/fun/lmgamma.hpp>
+#include <stan/math/prim/fun/lmultiply.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/logb.hpp>
 #include <stan/math/prim/fun/log10.hpp>
@@ -226,6 +229,8 @@
 #include <stan/math/prim/fun/multiply_log.hpp>
 #include <stan/math/prim/fun/multiply_lower_tri_self_transpose.hpp>
 #include <stan/math/prim/fun/norm.hpp>
+#include <stan/math/prim/fun/norm1.hpp>
+#include <stan/math/prim/fun/norm2.hpp>
 #include <stan/math/prim/fun/num_elements.hpp>
 #include <stan/math/prim/fun/offset_multiplier_constrain.hpp>
 #include <stan/math/prim/fun/offset_multiplier_free.hpp>
