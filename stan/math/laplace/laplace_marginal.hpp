@@ -16,9 +16,6 @@
 #include <unsupported/Eigen/MatrixFunctions>
 
 #include <cmath>
-#include <iostream>
-#include <istream>  // CHECK -- do we need this?
-#include <fstream>  // CHECK -- do we need this?
 
 // Reference for calculations of marginal and its gradients:
 // Margossian et al, 2020, https://arxiv.org/abs/2004.12550
@@ -128,7 +125,7 @@ inline double laplace_marginal_density(
           " we assume its matrix square-root can be computed."
           " If you don't want to compute the matrix square-root,"
           " set hessian_block_size to 1.";
-    throw boost::math::evaluation_error(std::string(msg));
+    throw std::domain_error(std::string(msg));
   }
   Eigen::Index block_size = is_hessian_block_size_zero ? hessian_block_size + 1
                                                        : hessian_block_size;
@@ -136,7 +133,7 @@ inline double laplace_marginal_density(
   for (Eigen::Index i = 0; i <= max_num_steps; i++) {
     if (i == max_num_steps) {
       throw std::domain_error(
-          std::string("laplace_marginal_density: max number of iterations:")
+          std::string("laplace_marginal_density: max number of iterations: ")
           + std::to_string(max_num_steps) + " exceeded.");
     }
 

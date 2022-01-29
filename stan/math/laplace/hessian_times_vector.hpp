@@ -19,14 +19,10 @@ inline Eigen::VectorXd hessian_times_vector(const F& f, const Eigen::VectorXd& x
                                  const std::vector<int>& delta_int,
                                  const Eigen::VectorXd& v,
                                  std::ostream* pstream = 0) {
-  using Eigen::Dynamic;
-  using Eigen::Matrix;
-
   nested_rev_autodiff nested;
-
   const Eigen::Index x_size = x.size();
-  Matrix<var, Dynamic, 1> x_var = x;
-  Matrix<fvar<var>, Dynamic, 1> x_fvar(x_size);
+  Eigen::Matrix<var, Eigen::Dynamic, 1> x_var = x;
+  Eigen::Matrix<fvar<var>, Eigen::Dynamic, 1> x_fvar(x_size);
   for (Eigen::Index i = 0; i < x_size; i++) {
     x_fvar(i) = fvar<var>(x_var(i), v(i));
   }

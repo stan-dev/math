@@ -44,7 +44,7 @@ inline T1 laplace_marginal_neg_binomial_2_log_lpmf(
     long int max_num_steps = 100) {
   return laplace_marginal_density(
       diff_neg_binomial_2_log(to_vector(y), y_index, theta_0.size()),
-      covariance_function, phi, eta, x, delta, delta_int, theta_0, msgs,
+      std::forward<CovarFun>(covariance_function), phi, eta, x, delta, delta_int, theta_0, msgs,
       tolerance, max_num_steps);
 }
 }  // namespace math

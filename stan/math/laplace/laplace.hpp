@@ -5,12 +5,8 @@
 #include <stan/math/laplace/block_matrix_sqrt.hpp>
 #include <stan/math/laplace/hessian_block_diag.hpp>
 #include <stan/math/laplace/hessian_times_vector.hpp>
-//#include <stan/math/laplace/laplace_likelihood_bernoulli_logit.hpp>
 #include <stan/math/laplace/laplace_likelihood_general.hpp>
-//#include <stan/math/laplace/laplace_likelihood_poisson_log.hpp>
-//#include <stan/math/laplace/laplace_likelihood_neg_binomial_2_log.hpp>
 #include <stan/math/laplace/laplace_marginal.hpp>
-
 #include <stan/math/laplace/laplace_marginal_neg_binomial_2.hpp>
 #include <stan/math/laplace/laplace_marginal_bernoulli_logit_lpmf.hpp>
 #include <stan/math/laplace/laplace_marginal_lpdf.hpp>
