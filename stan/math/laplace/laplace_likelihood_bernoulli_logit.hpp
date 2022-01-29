@@ -10,7 +10,8 @@ struct bernoulli_logit_likelihood {
       const Eigen::Matrix<T_theta, -1, 1>& theta,
       const Eigen::Matrix<T_eta, -1, 1>& eta, const Eigen::VectorXd& y,
       const std::vector<int>& delta_int, std::ostream* pstream) const {
-    return sum(theta.cwiseProduct(y) - to_vector(delta_int).cwiseProduct(log(add(1.0, exp(theta)))));
+    return sum(theta.cwiseProduct(y)
+               - to_vector(delta_int).cwiseProduct(log(add(1.0, exp(theta)))));
   }
 };
 
@@ -27,9 +28,9 @@ struct diff_bernoulli_logit {
   /* The sum of counts in each group. */
   Eigen::VectorXd sums_;
   template <typename Vec1, typename Vec2>
-  diff_bernoulli_logit(Vec1&& n_samples,
-                       Vec2&& sums)
-      : n_samples_(std::forward<Vec1>(n_samples)), sums_(std::forward<Vec2>(sums)) {}
+  diff_bernoulli_logit(Vec1&& n_samples, Vec2&& sums)
+      : n_samples_(std::forward<Vec1>(n_samples)),
+        sums_(std::forward<Vec2>(sums)) {}
 
   /**
    * Return the log density.
@@ -42,7 +43,8 @@ struct diff_bernoulli_logit {
       const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
       const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy) const {
     return sum(theta.cwiseProduct(sums_)
-               - n_samples_.cwiseProduct(log(add(Eigen::VectorXd::Ones(theta.size()), exp(theta)))));
+               - n_samples_.cwiseProduct(
+                   log(add(Eigen::VectorXd::Ones(theta.size()), exp(theta)))));
   }
 
   /**
@@ -58,10 +60,10 @@ struct diff_bernoulli_logit {
    */
   template <typename T1, typename T2>
   inline void diff(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
-            const Eigen::Matrix<T2, Eigen::Dynamic, 1>& /* eta */,
-            Eigen::Matrix<T1, Eigen::Dynamic, 1>& gradient,
-            Eigen::SparseMatrix<double>& hessian,
-            int block_size_dummy = 0) const {
+                   const Eigen::Matrix<T2, Eigen::Dynamic, 1>& /* eta */,
+                   Eigen::Matrix<T1, Eigen::Dynamic, 1>& gradient,
+                   Eigen::SparseMatrix<double>& hessian,
+                   int block_size_dummy = 0) const {
     Eigen::Matrix<T1, Eigen::Dynamic, 1> exp_theta = exp(theta);
     const Eigen::Index theta_size = theta.size();
     Eigen::VectorXd one = rep_vector(1, theta_size);
@@ -89,9 +91,11 @@ struct diff_bernoulli_logit {
       const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
       const Eigen::Matrix<T2, Eigen::Dynamic, 1>& /* eta */) const {
     Eigen::VectorXd exp_theta = exp(theta);
-    Eigen::VectorXd nominator = exp_theta.cwiseProduct(exp_theta - Eigen::VectorXd::Ones(theta.size()));
+    Eigen::VectorXd nominator = exp_theta.cwiseProduct(
+        exp_theta - Eigen::VectorXd::Ones(theta.size()));
     Eigen::VectorXd one_plus_exp_theta = add(1.0, exp_theta);
-    Eigen::VectorXd denominator = square(one_plus_exp_theta).cwiseProduct(one_plus_exp_theta);
+    Eigen::VectorXd denominator
+        = square(one_plus_exp_theta).cwiseProduct(one_plus_exp_theta);
 
     return n_samples_.cwiseProduct(elt_divide(nominator, denominator));
   }

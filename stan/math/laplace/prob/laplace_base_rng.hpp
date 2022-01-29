@@ -27,20 +27,16 @@ template <typename T_theta, typename T_phi, typename T_eta, typename T_x,
           typename T_x_pred, typename D, typename CovarFun, class RNG>
 inline Eigen::VectorXd  // CHECK -- right return type -- It's not this need to
                         // return a std::vector<> :(
-                        laplace_base_rng(
-                            D&& diff_likelihood, CovarFun&& covariance_function,
-                            const Eigen::Matrix<T_phi, Eigen::Dynamic, 1>& phi,
-                            const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta,
-                            const T_x& x, const T_x_pred& x_pred,
-                            const std::vector<double>& delta,
-                            const std::vector<int>& delta_int,
-                            const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>&
-                                theta_0,
-                            RNG& rng, std::ostream* msgs = nullptr,
-                            double tolerance = 1e-6,
-                            long int max_num_steps = 100,
-                            int hessian_block_size = 0,
-                            int compute_W_root = 1) {
+laplace_base_rng(D&& diff_likelihood, CovarFun&& covariance_function,
+                 const Eigen::Matrix<T_phi, Eigen::Dynamic, 1>& phi,
+                 const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta,
+                 const T_x& x, const T_x_pred& x_pred,
+                 const std::vector<double>& delta,
+                 const std::vector<int>& delta_int,
+                 const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta_0,
+                 RNG& rng, std::ostream* msgs = nullptr,
+                 double tolerance = 1e-6, long int max_num_steps = 100,
+                 int hessian_block_size = 0, int compute_W_root = 1) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
 

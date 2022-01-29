@@ -64,8 +64,8 @@ inline T1 laplace_marginal_bernoulli_logit_lpmf(
   // TODO: change this to a VectorXd once we have operands & partials.
   Eigen::Matrix<T1, Eigen::Dynamic, 1> eta_dummy(0);
   return laplace_marginal_density(
-      diff_likelihood<bernoulli_logit_likelihood>(bernoulli_logit_likelihood{}, to_vector(y), n_samples,
-                                                  msgs),
+      diff_likelihood<bernoulli_logit_likelihood>(
+          bernoulli_logit_likelihood{}, to_vector(y), n_samples, msgs),
       covariance_function, phi, eta_dummy, x, delta, delta_int, theta_0, msgs,
       tolerance, max_num_steps);
 }
