@@ -30,7 +30,7 @@ namespace math {
  * @param[in] max_num_steps maximum number of steps before the Newton solver
  *            breaks and returns an error.
  */
-template <typename T0, typename T1, typename CovarFun>
+template <typename CovarFun, typename T0, typename T1>
 T1 laplace_marginal_poisson_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     CovarFun&& covariance_function,

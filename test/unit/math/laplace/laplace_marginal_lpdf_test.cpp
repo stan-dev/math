@@ -287,7 +287,7 @@ TEST(laplace_marginal_lpdf, bernoulli_logit_phi_dim500) {
 struct covariance_motorcycle_functor {
   template <typename T1, typename T2>
   Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> operator()(
-      const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi, const T2& x,
+      const T2& x, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
       const std::vector<double>& delta, const std::vector<int>& delta_int,
       std::ostream* msgs = nullptr) const {
     using Eigen::Matrix;

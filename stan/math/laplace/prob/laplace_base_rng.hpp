@@ -57,7 +57,7 @@ laplace_base_rng(D&& diff_likelihood, CovarFun&& covariance_function,
 
   // Modified R&W method
   MatrixXd covariance_pred
-      = covariance_function(phi_dbl, x_pred, delta, delta_int, msgs);
+      = covariance_function(x_pred, phi_dbl, delta, delta_int, msgs);
 
   VectorXd pred_mean = covariance_pred * l_grad.head(theta_0.rows());
 

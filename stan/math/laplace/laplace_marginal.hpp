@@ -118,7 +118,7 @@ inline laplace_density_estimates laplace_marginal_density_est(
   // solver = 1;
   // hessian_block_size = 1;
   Eigen::MatrixXd covariance
-      = covariance_function(phi, x, delta, delta_int, msgs);
+      = covariance_function(x, phi, delta, delta_int, msgs);
 
   if (diagonal_covariance) {
     covariance = covariance.diagonal().asDiagonal();
@@ -134,12 +134,10 @@ inline laplace_density_estimates laplace_marginal_density_est(
   }
   Eigen::Index block_size = is_hessian_block_size_zero ? hessian_block_size + 1
                                                        : hessian_block_size;
-  auto check_steps = [max_num_steps](auto iter) {
-    if (iter == max_num_steps) {
+  auto throw_overstep = [](const auto max_num_steps) STAN_COLD_PATH {
       throw std::domain_error(
           std::string("laplace_marginal_density: max number of iterations: ")
           + std::to_string(max_num_steps) + " exceeded.");
-    }
   };
   auto line_search = [](auto& objective_new, auto& a, auto& theta,
                         const auto& a_old, const auto& covariance,
@@ -170,7 +168,6 @@ inline laplace_density_estimates laplace_marginal_density_est(
   Eigen::VectorXd theta_new;
   if (solver == 1 && is_hessian_block_size_zero) {
     for (Eigen::Index i = 0; i <= max_num_steps; i++) {
-      check_steps(i);
       SparseMatrix<double> W
           = -diff_likelihood.diff(theta, eta, l_grad, block_size);
       Eigen::SparseMatrix<double> W_r = W.cwiseSqrt();
@@ -217,9 +214,9 @@ inline laplace_density_estimates laplace_marginal_density_est(
             Eigen::MatrixXd(0, 0)};
       }
     }
+    throw_overstep(max_num_steps);
   } else if (solver == 1 && !is_hessian_block_size_zero) {
     for (Eigen::Index i = 0; i <= max_num_steps; i++) {
-      check_steps(i);
       SparseMatrix<double> W
           = -diff_likelihood.diff(theta, eta, l_grad, block_size);
       Eigen::SparseMatrix<double> W_r = block_matrix_sqrt(W, block_size);
@@ -265,9 +262,9 @@ inline laplace_density_estimates laplace_marginal_density_est(
             Eigen::MatrixXd(0, 0)};
       }
     }
+    throw_overstep(max_num_steps);
   } else if (solver == 2) {
     for (Eigen::Index i = 0; i <= max_num_steps; i++) {
-      check_steps(i);
       SparseMatrix<double> W
           = -diff_likelihood.diff(theta, eta, l_grad, block_size);
       // TODO -- use triangularView for K_root.
@@ -315,9 +312,9 @@ inline laplace_density_estimates laplace_marginal_density_est(
             std::move(K_root)};
       }
     }
+    throw_overstep(max_num_steps);
   } else if (solver == 3) {
     for (Eigen::Index i = 0; i <= max_num_steps; i++) {
-      check_steps(i);
       SparseMatrix<double> W
           = -diff_likelihood.diff(theta, eta, l_grad, block_size);
       MatrixXd B = MatrixXd::Identity(theta_size, theta_size) + covariance * W;
@@ -360,6 +357,7 @@ inline laplace_density_estimates laplace_marginal_density_est(
             Eigen::MatrixXd(0, 0)};
       }
     }
+    throw_overstep(max_num_steps);
   }
   throw std::domain_error(
       std::string("You chose a solver (") + std::to_string(solver)
@@ -539,7 +537,7 @@ inline auto laplace_marginal_density(
     const nested_rev_autodiff nested;
     Eigen::Matrix<var, Eigen::Dynamic, 1> phi_v = value_of(phi_arena);
     Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> K_var
-        = covariance_function(phi_v, x, delta, delta_int, msgs);
+        = covariance_function(x, phi_v, delta, delta_int, msgs);
     var Z = laplace_pseudo_target(K_var, a, R, l_grad.head(theta_size), s2);
     set_zero_all_adjoints_nested();
     grad(Z.vi_);
