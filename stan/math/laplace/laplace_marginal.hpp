@@ -85,10 +85,13 @@ inline double laplace_marginal_density(
     D&& diff_likelihood, CovarFun&& covariance_function,
     const Eigen::VectorXd& phi, const Eigen::VectorXd& eta, const Tx& x,
     const std::vector<double>& delta, const std::vector<int>& delta_int,
+    /* In outs start here */
     Eigen::MatrixXd& covariance, Eigen::VectorXd& theta,
     Eigen::SparseMatrix<double>& W_r, Eigen::MatrixXd& L, Eigen::VectorXd& a,
     Eigen::VectorXd& l_grad, Eigen::PartialPivLU<Eigen::MatrixXd>& LU,
-    Eigen::MatrixXd& K_root, const Eigen::VectorXd& theta_0,
+    Eigen::MatrixXd& K_root,
+    /* In outs end here */
+    const Eigen::VectorXd& theta_0,
     std::ostream* msgs = nullptr, const double tolerance = 1e-6,
     const long int max_num_steps = 100, const int hessian_block_size = 0,
     const int solver = 1, const int do_line_search = 0,
@@ -137,9 +140,7 @@ inline double laplace_marginal_density(
           + std::to_string(max_num_steps) + " exceeded.");
     }
 
-    SparseMatrix<double> W;
-    diff_likelihood.diff(theta, eta, l_grad, W, block_size);
-    W = -W;
+    SparseMatrix<double> W = -diff_likelihood.diff(theta, eta, l_grad, block_size);
     VectorXd b;
     {
       MatrixXd B;

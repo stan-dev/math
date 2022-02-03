@@ -140,5 +140,5 @@ TEST_F(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf) {
              phi_l1, x, delta, delta_int, theta_0);
 
   EXPECT_NEAR((target_u0 - target_l0) / (2.0 * eps), g[0], 8e-4);
-  EXPECT_NEAR((target_u1 - target_l1) / (2.0 * eps), g[1], 0.00017);
+  EXPECT_NEAR((target_u1 - target_l1) / (2.0 * eps), g[1], 0.0017);
 }

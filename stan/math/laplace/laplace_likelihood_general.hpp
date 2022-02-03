@@ -38,10 +38,9 @@ struct diff_likelihood {
     return f_(theta, eta, delta_, delta_int_, pstream_);
   }
 
-  inline void diff(const Eigen::VectorXd& theta, const Eigen::VectorXd& eta,
+  inline Eigen::SparseMatrix<double> diff(const Eigen::VectorXd& theta, const Eigen::VectorXd& eta,
                    Eigen::VectorXd& gradient,
-                   Eigen::SparseMatrix<double>& hessian_theta,
-                   int hessian_block_size = 1) const {
+                   const Eigen::Index hessian_block_size = 1) const {
     using Eigen::Dynamic;
     using Eigen::Matrix;
 
@@ -62,20 +61,20 @@ struct diff_likelihood {
         gradient(theta_size + i) = eta_var(i).adj();
     }
 
-    hessian_theta.resize(theta_size, theta_size);
-    double f_theta;
     if (hessian_block_size == 1) {
       Eigen::VectorXd v(theta_size);
       for (Eigen::Index i = 0; i < theta_size; i++)
         v(i) = 1;
       Eigen::VectorXd hessian_v = hessian_times_vector(f_, theta, eta, delta_,
                                                        delta_int_, v, pstream_);
+      Eigen::SparseMatrix<double> hessian_theta(theta_size, theta_size);
       hessian_theta.reserve(Eigen::VectorXi::Constant(theta_size, 1));
       for (Eigen::Index i = 0; i < theta_size; i++)
         hessian_theta.insert(i, i) = hessian_v(i);
+      return hessian_theta;
     } else {
-      hessian_block_diag(f_, theta, eta, delta_, delta_int_, hessian_block_size,
-                         f_theta, hessian_theta, pstream_);
+      return hessian_block_diag(f_, theta, eta, delta_, delta_int_, hessian_block_size,
+                         pstream_);
     }
   }
 

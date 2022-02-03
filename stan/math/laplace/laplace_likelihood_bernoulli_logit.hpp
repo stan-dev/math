@@ -59,10 +59,9 @@ struct diff_bernoulli_logit {
    * @param[in, out] hessian diagonal, so stored in a vector.
    */
   template <typename T1, typename T2>
-  inline void diff(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
+  inline Eigen::SparseMatrix<double> diff(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
                    const Eigen::Matrix<T2, Eigen::Dynamic, 1>& /* eta */,
                    Eigen::Matrix<T1, Eigen::Dynamic, 1>& gradient,
-                   Eigen::SparseMatrix<double>& hessian,
                    int block_size_dummy = 0) const {
     Eigen::Matrix<T1, Eigen::Dynamic, 1> exp_theta = exp(theta);
     const Eigen::Index theta_size = theta.size();
@@ -71,10 +70,12 @@ struct diff_bernoulli_logit {
     Eigen::Matrix<T1, Eigen::Dynamic, 1> hessian_diagonal
         = -n_samples_.cwiseProduct(
             elt_divide(exp_theta, square(add(1.0, exp_theta))));
-    hessian.resize(theta_size, theta_size);
+    Eigen::SparseMatrix<double> hessian(theta_size, theta_size);
     hessian.reserve(Eigen::VectorXi::Constant(theta_size, 1));
-    for (Eigen::Index i = 0; i < theta_size; i++)
+    for (Eigen::Index i = 0; i < theta_size; i++) {
       hessian.insert(i, i) = hessian_diagonal(i);
+    }
+    return hessian;
   }
 
   /**

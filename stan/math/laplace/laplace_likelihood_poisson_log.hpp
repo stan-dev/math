@@ -131,22 +131,24 @@ struct diff_poisson_log {
    * @param[in, out] hessian diagonal, so stored in a vector.
    */
   template <typename T1, typename T2>
-  inline void diff(
+  inline Eigen::SparseMatrix<double> diff(
       const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
       const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta_dummy,
       Eigen::Matrix<T1, Eigen::Dynamic, 1>& gradient,
       // Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic>& hessian,
-      Eigen::SparseMatrix<double>& hessian, int hessian_block_size = 1) const {
+      const Eigen::Index hessian_block_size = 1) const {
     const Eigen::Index theta_size = theta.size();
     Eigen::Matrix<T1, Eigen::Dynamic, 1> common_term
         = n_samples_.cwiseProduct(exp(theta + log_exposure_));
 
     gradient = sums_ - common_term;
-    hessian.resize(theta_size, theta_size);
+    Eigen::SparseMatrix<double> hessian(theta_size, theta_size);
     hessian.reserve(Eigen::VectorXi::Constant(theta_size, hessian_block_size));
     // hessian.col(0) = - common_term;
-    for (Eigen::Index i = 0; i < theta_size; i++)
+    for (Eigen::Index i = 0; i < theta_size; i++) {
       hessian.insert(i, i) = -common_term(i);
+    }
+    return hessian;
   }
 
   /**
