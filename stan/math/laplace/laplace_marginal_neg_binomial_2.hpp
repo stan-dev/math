@@ -40,8 +40,8 @@ inline T1 laplace_marginal_neg_binomial_2_log_lpmf(
     const std::vector<Eigen::VectorXd>& x, const std::vector<double>& delta,
     const std::vector<int>& delta_int,
     const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
-    std::ostream* msgs = nullptr, double tolerance = 1e-6,
-    long int max_num_steps = 100) {
+    std::ostream* msgs = nullptr, const double tolerance = 1e-6,
+    const long int max_num_steps = 100) {
   return laplace_marginal_density(
       diff_neg_binomial_2_log(to_vector(y), y_index, theta_0.size()),
       std::forward<CovarFun>(covariance_function), phi, eta, x, delta,

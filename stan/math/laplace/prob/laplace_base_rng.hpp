@@ -42,20 +42,18 @@ laplace_base_rng(D&& diff_likelihood, CovarFun&& covariance_function,
 
   VectorXd phi_dbl = value_of(phi);
   VectorXd eta_dbl = value_of(eta);
-  Eigen::SparseMatrix<double> W_r;
-  MatrixXd L, K_root;
-  Eigen::PartialPivLU<MatrixXd> LU;
-  VectorXd l_grad;
-  MatrixXd covariance;
-  {
-    VectorXd theta;
-    VectorXd a;
-    double marginal_density = laplace_marginal_density(
-        diff_likelihood, covariance_function, phi_dbl, eta_dbl, x, delta,
-        delta_int, covariance, theta, W_r, L, a, l_grad, LU, K_root,
-        value_of(theta_0), msgs, tolerance, max_num_steps, hessian_block_size,
-        compute_W_root);
-  }
+  auto marginal_density_est = laplace_marginal_density_est(
+      diff_likelihood, covariance_function, phi_dbl, eta_dbl, x, delta,
+      delta_int,
+      value_of(theta_0), msgs, tolerance, max_num_steps, hessian_block_size,
+      compute_W_root);
+  auto marginal_density = marginal_density_est.lmd;
+  Eigen::SparseMatrix<double> W_r = std::move(marginal_density_est.W_r);
+  MatrixXd L = std::move(marginal_density_est.L);
+  MatrixXd K_root = std::move(marginal_density_est.K_root);
+  Eigen::PartialPivLU<MatrixXd> LU = std::move(marginal_density_est.LU);
+  VectorXd l_grad = std::move(marginal_density_est.l_grad);
+  MatrixXd covariance = std::move(marginal_density_est.covariance);
 
   // Modified R&W method
   MatrixXd covariance_pred

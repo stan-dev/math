@@ -25,6 +25,24 @@
 
 namespace stan {
 namespace math {
+
+struct laplace_density_estimates {
+  double lmd{std::numeric_limits<double>::infinity()};  // log marginal density
+  // Evaluated covariance function for the latent gaussian variable.
+  Eigen::MatrixXd covariance;
+  // Mode
+  Eigen::VectorXd theta;
+  // the square root of the negative Hessian or the negative Hessian, depending on which solver we use.
+  Eigen::SparseMatrix<double> W_r;
+  // cholesky decomposition of stabilized inverse covariance.
+  Eigen::MatrixXd L;
+  // element in the Newton step
+  Eigen::VectorXd a;
+  // the log density of the likelihood.
+  Eigen::VectorXd l_grad;
+  Eigen::PartialPivLU<Eigen::MatrixXd> LU;
+  Eigen::MatrixXd K_root;
+};
 /**
  * For a latent Gaussian model with hyperparameters phi and eta,
  * latent variables theta, and observations y, this function computes
@@ -59,15 +77,6 @@ namespace math {
  *            function).
  * @param[in] delta_int additional fixed integer data (input for covariance
  *            function).
- * @param[in, out] covariance the evaluated covariance function for the
- *                 latent gaussian variable.
- * @param[in, out] theta a vector to store the mode.
- * @param[in, out] W_r a vector to store the square root of the
- *                 negative Hessian or the negative Hessian, depending
- *                 on which solver we use.
- * @param[in, out] L cholesky decomposition of stabilized inverse covariance.
- * @param[in, out] a element in the Newton step
- * @param[in, out] l_grad the log density of the likelihood.
  * @param[in] theta_0 the initial guess for the mode.
  * @param[in] tolerance the convergence criterion for the Newton solver.
  * @param[in] max_num_steps maximum number of steps for the Newton solver.
@@ -78,24 +87,28 @@ namespace math {
  *                     (2) method using the root of the covariance.
  *                     (3) method using an LU decomposition.
  *
- * @return the log marginal density, p(y | phi).
+ * @return A struct containing
+ * 1. lmd the log marginal density, p(y | phi).
+ * 2. covariance the evaluated covariance function for the latent gaussian variable.
+ * 3. theta a vector to store the mode.
+ * 4. W_r a vector to store the square root of the
+ *                 negative Hessian or the negative Hessian, depending
+ *                 on which solver we use.
+ * 5. L cholesky decomposition of stabilized inverse covariance.
+ * 6. a element in the Newton step
+ * 7. l_grad the log density of the likelihood.
+ *
  */
-template <typename D, typename CovarFun, typename Tx>
-inline double laplace_marginal_density(
+template <typename D, typename CovarFun, typename Tx,
+          require_st_arithmetic<Tx>* = nullptr>
+inline laplace_density_estimates laplace_marginal_density_est(
     D&& diff_likelihood, CovarFun&& covariance_function,
     const Eigen::VectorXd& phi, const Eigen::VectorXd& eta, const Tx& x,
     const std::vector<double>& delta, const std::vector<int>& delta_int,
-    /* In outs start here */
-    Eigen::MatrixXd& covariance, Eigen::VectorXd& theta,
-    Eigen::SparseMatrix<double>& W_r, Eigen::MatrixXd& L, Eigen::VectorXd& a,
-    Eigen::VectorXd& l_grad, Eigen::PartialPivLU<Eigen::MatrixXd>& LU,
-    Eigen::MatrixXd& K_root,
-    /* In outs end here */
-    const Eigen::VectorXd& theta_0,
-    std::ostream* msgs = nullptr, const double tolerance = 1e-6,
-    const long int max_num_steps = 100, const int hessian_block_size = 0,
-    const int solver = 1, const int do_line_search = 0,
-    const int max_steps_line_search = 10) {
+    const Eigen::VectorXd& theta_0, std::ostream* msgs = nullptr,
+    const double tolerance = 1e-6, const long int max_num_steps = 100,
+    const int hessian_block_size = 0, const int solver = 1,
+    const int do_line_search = 0, const int max_steps_line_search = 10) {
   using Eigen::MatrixXd;
   using Eigen::SparseMatrix;
   using Eigen::VectorXd;
@@ -105,22 +118,12 @@ inline double laplace_marginal_density(
   // solver = 1;
   // hessian_block_size = 1;
 
-  covariance = covariance_function(phi, x, delta, delta_int, msgs);
+  Eigen::MatrixXd covariance
+      = covariance_function(phi, x, delta, delta_int, msgs);
 
   if (diagonal_covariance) {
     covariance = covariance.diagonal().asDiagonal();
   }
-
-  const Eigen::Index theta_size = theta_0.size();
-  theta = theta_0;
-  double objective_old = -1e+10;  // CHECK -- what value to use?
-  double objective_inter = -1e+10;
-  double objective_new;
-  double B_log_determinant;
-  Eigen::VectorXd a_old;
-  Eigen::VectorXd a_new;
-  Eigen::VectorXd theta_new;
-
   const bool is_hessian_block_size_zero = hessian_block_size == 0;
   if (is_hessian_block_size_zero && solver != 1) {
     constexpr const char* msg
@@ -132,122 +135,237 @@ inline double laplace_marginal_density(
   }
   Eigen::Index block_size = is_hessian_block_size_zero ? hessian_block_size + 1
                                                        : hessian_block_size;
-
-  for (Eigen::Index i = 0; i <= max_num_steps; i++) {
-    if (i == max_num_steps) {
+  auto check_steps = [max_num_steps](auto iter) {
+    if (iter == max_num_steps) {
       throw std::domain_error(
           std::string("laplace_marginal_density: max number of iterations: ")
           + std::to_string(max_num_steps) + " exceeded.");
     }
-
-    SparseMatrix<double> W = -diff_likelihood.diff(theta, eta, l_grad, block_size);
-    VectorXd b;
-    {
-      MatrixXd B;
-      if (solver == 1) {
-        if (is_hessian_block_size_zero) {
-          W_r = W.cwiseSqrt();
-          B = MatrixXd::Identity(theta_size, theta_size)
-              + quad_form_diag(covariance, W_r.diagonal());
-        } else {
-          W_r = block_matrix_sqrt(W, block_size);
-          B = MatrixXd::Identity(theta_size, theta_size)
-              + W_r * (covariance * W_r);
-        }
-
-        L = cholesky_decompose(B);
-        B_log_determinant = 2 * sum(L.diagonal().array().log());
-
-        if (is_hessian_block_size_zero) {
-          b = W.diagonal().cwiseProduct(theta) + l_grad.head(theta_size);
-          a = b
-              - W_r
-                    * mdivide_left_tri<Eigen::Upper>(
-                        transpose(L),
-                        mdivide_left_tri<Eigen::Lower>(
-                            L, W_r.diagonal().cwiseProduct(covariance * b)));
-        } else {
-          b = W * theta + l_grad.head(theta_size);
-          a = b
-              - W_r
-                    * mdivide_left_tri<Eigen::Upper>(
-                        transpose(L), mdivide_left_tri<Eigen::Lower>(
-                                          L, W_r * (covariance * b)));
-        }
-      } else if (solver == 2) {
-        // TODO -- use triangularView for K_root.
-        W_r = W;
-
-        if (diagonal_covariance) {
-          K_root = covariance.cwiseSqrt();
-        } else {
-          K_root = cholesky_decompose(covariance);
-        }
-        B = MatrixXd::Identity(theta_size, theta_size)
-            + K_root.transpose() * W * K_root;
-        L = cholesky_decompose(B);
-        B_log_determinant = 2 * sum(L.diagonal().array().log());
-        b = W * theta + l_grad.head(theta_size);
-        a = mdivide_left_tri<Eigen::Upper>(
-            K_root.transpose(),
-            mdivide_left_tri<Eigen::Upper>(
-                L.transpose(),
-                mdivide_left_tri<Eigen::Lower>(L, K_root.transpose() * b)));
+  };
+  auto line_search = [](auto& objective_new, auto& a, auto& theta,
+                        const auto& a_old, const auto& covariance,
+                        const auto& diff_likelihood, const auto& eta,
+                        const auto max_steps_line_search,
+                        const auto objective_old) mutable {
+    for (int j = 0;
+         j < max_steps_line_search && (objective_new < objective_old); ++j) {
+      a = (a + a_old) * 0.5;  // TODO -- generalize for any factor.
+      theta = covariance * a;
+      if (std::isfinite(theta.sum())) {
+        objective_new
+            = -0.5 * a.dot(theta) + diff_likelihood.log_likelihood(theta, eta);
       } else {
-        W_r = W;
-        B = MatrixXd::Identity(theta_size, theta_size) + covariance * W;
-        LU = Eigen::PartialPivLU<Eigen::MatrixXd>(B);
-
-        // TODO: compute log determinant directly.
-        B_log_determinant = log(LU.determinant());
-
-        b = W * theta + l_grad.head(theta_size);
-        a = b - W * LU.solve(covariance * b);
+        break;
       }
     }
-
-    // Simple Newton step
-    theta = covariance * a;
-
-    if (i != 0)
-      objective_old = objective_new;
-
-    if (std::isfinite(theta.sum())) {
-      objective_new
-          = -0.5 * a.dot(theta) + diff_likelihood.log_likelihood(theta, eta);
-    }
-
-    // linesearch
-    // CHECK -- does linesearch work for solver 2?
-    int j = 0;
-    if (do_line_search && i != 0) {
-      while (
-          j < max_steps_line_search
-          && (objective_new < objective_old || !std::isfinite(theta.sum()))) {
-        a = (a + a_old) * 0.5;  // TODO -- generalize for any factor.
-        theta = covariance * a;
-        if (std::isfinite(theta.sum())) {
-          objective_new = -0.5 * a.dot(theta)
-                          + diff_likelihood.log_likelihood(theta, eta);
-        }
-
-        j++;
+  };
+  Eigen::VectorXd l_grad;
+  const Eigen::Index theta_size = theta_0.size();
+  Eigen::VectorXd theta = theta_0;
+  double objective_old = -1e+10;  // CHECK -- what value to use?
+  double objective_inter = -1e+10;
+  double objective_new;
+  double B_log_determinant;
+  Eigen::VectorXd a_old;
+  Eigen::VectorXd a_new;
+  Eigen::VectorXd theta_new;
+  if (solver == 1 && is_hessian_block_size_zero) {
+    for (Eigen::Index i = 0; i <= max_num_steps; i++) {
+      check_steps(i);
+      SparseMatrix<double> W
+          = -diff_likelihood.diff(theta, eta, l_grad, block_size);
+      Eigen::SparseMatrix<double> W_r = W.cwiseSqrt();
+      MatrixXd B = MatrixXd::Identity(theta_size, theta_size)
+                   + quad_form_diag(covariance, W_r.diagonal());
+      Eigen::MatrixXd L = cholesky_decompose(B);
+      B_log_determinant = 2 * sum(L.diagonal().array().log());
+      VectorXd b = W.diagonal().cwiseProduct(theta) + l_grad.head(theta_size);
+      Eigen::VectorXd a
+          = b
+            - W_r
+                  * mdivide_left_tri<Eigen::Upper>(
+                      transpose(L),
+                      mdivide_left_tri<Eigen::Lower>(
+                          L, W_r.diagonal().cwiseProduct(covariance * b)));
+      // Simple Newton step
+      theta = covariance * a;
+      if (i != 0) {
+        objective_old = objective_new;
+      }
+      if (std::isfinite(theta.sum())) {
+        objective_new
+            = -0.5 * a.dot(theta) + diff_likelihood.log_likelihood(theta, eta);
+      }
+      // linesearch
+      // CHECK -- does linesearch work for solver 2?
+      if (do_line_search && i != 0) {
+        line_search(objective_new, a, theta, a_old, covariance, diff_likelihood,
+                    eta, max_steps_line_search, objective_old);
+      }
+      a_old = a;
+      // Check for convergence.
+      double objective_diff = abs(objective_new - objective_old);
+      if (objective_diff < tolerance) {
+        return laplace_density_estimates{
+            objective_new - 0.5 * B_log_determinant,
+            std::move(covariance),
+            std::move(theta),
+            std::move(W_r),
+            std::move(L),
+            std::move(a),
+            std::move(l_grad),
+            Eigen::PartialPivLU<Eigen::MatrixXd>{},
+            Eigen::MatrixXd(0, 0)};
       }
     }
+  } else if (solver == 1 && !is_hessian_block_size_zero) {
+    for (Eigen::Index i = 0; i <= max_num_steps; i++) {
+      check_steps(i);
+      SparseMatrix<double> W
+          = -diff_likelihood.diff(theta, eta, l_grad, block_size);
+      Eigen::SparseMatrix<double> W_r = block_matrix_sqrt(W, block_size);
+      MatrixXd B = MatrixXd::Identity(theta_size, theta_size)
+                   + W_r * (covariance * W_r);
+      Eigen::MatrixXd L = cholesky_decompose(B);
+      B_log_determinant = 2 * sum(L.diagonal().array().log());
+      VectorXd b = W * theta + l_grad.head(theta_size);
+      Eigen::VectorXd a
+          = b
+            - W_r
+                  * mdivide_left_tri<Eigen::Upper>(
+                      transpose(L), mdivide_left_tri<Eigen::Lower>(
+                                        L, W_r * (covariance * b)));
+      // Simple Newton step
+      theta = covariance * a;
+      if (i != 0) {
+        objective_old = objective_new;
+      }
+      if (std::isfinite(theta.sum())) {
+        objective_new
+            = -0.5 * a.dot(theta) + diff_likelihood.log_likelihood(theta, eta);
+      }
+      // linesearch
+      // CHECK -- does linesearch work for solver 2?
+      if (do_line_search && i != 0) {
+        line_search(objective_new, a, theta, a_old, covariance, diff_likelihood,
+                    eta, max_steps_line_search, objective_old);
+      }
+      a_old = a;
+      // Check for convergence.
+      double objective_diff = abs(objective_new - objective_old);
+      if (objective_diff < tolerance) {
+        return laplace_density_estimates{
+            objective_new - 0.5 * B_log_determinant,
+            std::move(covariance),
+            std::move(theta),
+            std::move(W_r),
+            std::move(L),
+            std::move(a),
+            std::move(l_grad),
+            Eigen::PartialPivLU<Eigen::MatrixXd>{},
+            Eigen::MatrixXd(0, 0)};
+      }
+    }
+  } else if (solver == 2) {
+    for (Eigen::Index i = 0; i <= max_num_steps; i++) {
+      check_steps(i);
+      SparseMatrix<double> W
+          = -diff_likelihood.diff(theta, eta, l_grad, block_size);
+      // TODO -- use triangularView for K_root.
+      Eigen::MatrixXd K_root = diagonal_covariance
+                                   ? covariance.cwiseSqrt()
+                                   : cholesky_decompose(covariance);
+      MatrixXd B = MatrixXd::Identity(theta_size, theta_size)
+                   + K_root.transpose() * W * K_root;
+      Eigen::MatrixXd L = cholesky_decompose(B);
+      B_log_determinant = 2 * sum(L.diagonal().array().log());
+      VectorXd b = W * theta + l_grad.head(theta_size);
+      Eigen::VectorXd a = mdivide_left_tri<Eigen::Upper>(
+          K_root.transpose(),
+          mdivide_left_tri<Eigen::Upper>(
+              L.transpose(),
+              mdivide_left_tri<Eigen::Lower>(L, K_root.transpose() * b)));
+      // Simple Newton step
+      theta = covariance * a;
+      if (i != 0) {
+        objective_old = objective_new;
+      }
+      if (std::isfinite(theta.sum())) {
+        objective_new
+            = -0.5 * a.dot(theta) + diff_likelihood.log_likelihood(theta, eta);
+      }
+      // linesearch
+      // CHECK -- does linesearch work for solver 2?
+      if (do_line_search && i != 0) {
+        line_search(objective_new, a, theta, a_old, covariance, diff_likelihood,
+                    eta, max_steps_line_search, objective_old);
+      }
+      a_old = a;
+      // Check for convergence.
+      double objective_diff = abs(objective_new - objective_old);
+      if (objective_diff < tolerance) {
+        return laplace_density_estimates{
+            objective_new - 0.5 * B_log_determinant,
+            std::move(covariance),
+            std::move(theta),
+            std::move(W),
+            std::move(L),
+            std::move(a),
+            std::move(l_grad),
+            Eigen::PartialPivLU<Eigen::MatrixXd>{},
+            std::move(K_root)};
+      }
+    }
+  } else if (solver == 3) {
+    for (Eigen::Index i = 0; i <= max_num_steps; i++) {
+      check_steps(i);
+      SparseMatrix<double> W
+          = -diff_likelihood.diff(theta, eta, l_grad, block_size);
+      MatrixXd B = MatrixXd::Identity(theta_size, theta_size) + covariance * W;
+      Eigen::PartialPivLU<Eigen::MatrixXd> LU
+          = Eigen::PartialPivLU<Eigen::MatrixXd>(B);
+      // TODO: compute log determinant directly.
+      B_log_determinant = log(LU.determinant());
+      VectorXd b = W * theta + l_grad.head(theta_size);
+      Eigen::VectorXd a = b - W * LU.solve(covariance * b);
+      // Simple Newton step
+      theta = covariance * a;
+      if (i != 0) {
+        objective_old = objective_new;
+      }
 
-    a_old = a;
+      if (std::isfinite(theta.sum())) {
+        objective_new
+            = -0.5 * a.dot(theta) + diff_likelihood.log_likelihood(theta, eta);
+      }
 
-    // Check for convergence.
-    double objective_diff = abs(objective_new - objective_old);
-
-    // if (i % 500 == 0) std::cout << "obj: " << objective_new << std::endl;
-    // if (objective_diff < tolerance) std::cout << "iter: " << i << std::endl;
-
-    if (objective_diff < tolerance)
-      break;
+      // linesearch
+      // CHECK -- does linesearch work for solver 2?
+      if (do_line_search && i != 0) {
+        line_search(objective_new, a, theta, a_old, covariance, diff_likelihood,
+                    eta, max_steps_line_search, objective_old);
+      }
+      a_old = a;
+      // Check for convergence.
+      double objective_diff = abs(objective_new - objective_old);
+      if (objective_diff < tolerance) {
+        return laplace_density_estimates{
+            objective_new - 0.5 * B_log_determinant,
+            std::move(covariance),
+            std::move(theta),
+            std::move(W),
+            Eigen::MatrixXd(0, 0),
+            std::move(a),
+            std::move(l_grad),
+            std::move(LU),
+            Eigen::MatrixXd(0, 0)};
+      }
+    }
   }
-
-  return objective_new - 0.5 * B_log_determinant;
+  throw std::domain_error(
+      std::string("You chose a solver (") + std::to_string(solver)
+      + ") that is not valid. Please choose either 1, 2, or 3.");
+  return laplace_density_estimates{};
 }
 
 /**
@@ -284,26 +402,23 @@ inline double laplace_marginal_density(
  * @param[in] max_num_steps maximum number of steps for the Newton solver.
  * @return the log maginal density, p(y | phi).
  */
-// TODO: Operands and partials version of this.
-template <typename T, typename D, typename CovarFun, typename Tx>
+template <typename D, typename CovarFun, typename Tx, typename T0, typename T1,
+          typename T2, require_arithmetic_t<return_type_t<T1, T2>>* = nullptr>
 inline double laplace_marginal_density(
-    const D& diff_likelihood, CovarFun&& covariance_function,
-    const Eigen::VectorXd& phi, const Eigen::VectorXd& eta, const Tx& x,
+    D&& diff_likelihood, CovarFun&& covariance_function,
+    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
+    const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta, const Tx& x,
     const std::vector<double>& delta, const std::vector<int>& delta_int,
-    const Eigen::Matrix<T, Eigen::Dynamic, 1>& theta_0,
+    const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
     std::ostream* msgs = nullptr, const double tolerance = 1e-6,
     const long int max_num_steps = 100, const int hessian_block_size = 0,
     const int solver = 1, const int do_line_search = 0,
     const int max_steps_line_search = 10) {
-  Eigen::VectorXd theta, a, l_grad;
-  Eigen::MatrixXd L, covariance, K_root;
-  Eigen::SparseMatrix<double> W_r;
-  Eigen::PartialPivLU<Eigen::MatrixXd> LU;
-  return laplace_marginal_density(
-      diff_likelihood, covariance_function, phi, eta, x, delta, delta_int,
-      covariance, theta, W_r, L, a, l_grad, LU, K_root, value_of(theta_0), msgs,
-      tolerance, max_num_steps, hessian_block_size, solver, do_line_search,
-      max_steps_line_search);
+  return laplace_marginal_density_est(
+             diff_likelihood, covariance_function, phi, eta, x, delta,
+             delta_int, value_of(theta_0), msgs, tolerance, max_num_steps,
+             hessian_block_size, solver, do_line_search, max_steps_line_search)
+      .lmd;
 }
 
 /**
@@ -338,8 +453,8 @@ inline double laplace_marginal_density(
  * @param[in] max_num_steps maximum number of steps for the Newton solver.
  * @return the log maginal density, p(y | phi).
  */
-template <typename T0, typename T1, typename T2, typename D, typename CovarFun,
-          typename Tx>
+template <typename D, typename CovarFun, typename Tx, typename T0, typename T1,
+          typename T2, require_var_t<return_type_t<Tx, T0, T1, T2>>* = nullptr>
 inline auto laplace_marginal_density(
     const D& diff_likelihood, CovarFun&& covariance_function,
     const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
@@ -350,24 +465,22 @@ inline auto laplace_marginal_density(
     const long int max_num_steps = 100, const int hessian_block_size = 0,
     const int solver = 1, const int do_line_search = 0,
     const int max_steps_line_search = 10) {
-  Eigen::VectorXd theta;
-  Eigen::VectorXd a;
-  Eigen::VectorXd l_grad;
-  Eigen::SparseMatrix<double> W_root;
-  Eigen::MatrixXd L;
-  Eigen::MatrixXd K_root;
-  Eigen::MatrixXd covariance;
-  double marginal_density_dbl;
-  Eigen::PartialPivLU<Eigen::MatrixXd> LU;
-
   auto phi_arena = to_arena(phi);
   auto eta_arena = to_arena(eta);
 
-  marginal_density_dbl = laplace_marginal_density(
+  auto marginal_density_ests = laplace_marginal_density_est(
       diff_likelihood, covariance_function, value_of(phi_arena),
-      value_of(eta_arena), x, delta, delta_int, covariance, theta, W_root, L, a,
-      l_grad, LU, K_root, value_of(theta_0), msgs, tolerance, max_num_steps,
-      hessian_block_size, solver);
+      value_of(eta_arena), x, delta, delta_int, value_of(theta_0), msgs,
+      tolerance, max_num_steps, hessian_block_size, solver);
+  double marginal_density_dbl = marginal_density_ests.lmd;
+  Eigen::VectorXd theta = std::move(marginal_density_ests.theta);
+  Eigen::VectorXd a = std::move(marginal_density_ests.a);
+  Eigen::VectorXd l_grad = std::move(marginal_density_ests.l_grad);
+  Eigen::SparseMatrix<double> W_root = std::move(marginal_density_ests.W_r);
+  Eigen::MatrixXd L = std::move(marginal_density_ests.L);
+  Eigen::MatrixXd K_root = std::move(marginal_density_ests.K_root);
+  Eigen::MatrixXd covariance = std::move(marginal_density_ests.covariance);
+  Eigen::PartialPivLU<Eigen::MatrixXd> LU = std::move(marginal_density_ests.LU);
   const Eigen::Index theta_size = theta.size();
   const Eigen::Index phi_size_ = phi_arena.size();
   const Eigen::Index eta_size_ = eta_arena.size();
@@ -429,7 +542,8 @@ inline auto laplace_marginal_density(
   }
 
   arena_matrix<Eigen::VectorXd> phi_adj_arena;
-  if (!is_constant<T1>::value && phi_size_ != 0) {
+  // TODO: Why does remove this phi_size != 0 check work but for eta it fails?
+  if (!is_constant<T1>::value) {
     const nested_rev_autodiff nested;
     Eigen::Matrix<var, Eigen::Dynamic, 1> phi_v = value_of(phi_arena);
     Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> K_var
@@ -464,7 +578,7 @@ inline auto laplace_marginal_density(
   return make_callback_var(
       marginal_density_dbl, [phi_arena, eta_arena, phi_adj_arena,
                              eta_adj_arena](const auto& vi) mutable {
-        if (!is_constant<T1>::value && phi_adj_arena.size() != 0) {
+        if (!is_constant<T1>::value) {
           phi_arena.array().adj() += vi.adj() * phi_adj_arena.array();
         }
         if (!is_constant<T2>::value && eta_adj_arena.size() != 0) {
