@@ -548,8 +548,7 @@ inline auto laplace_marginal_density(
     Eigen::Matrix<var, Eigen::Dynamic, 1> phi_v = value_of(phi_arena);
     Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> K_var
         = covariance_function(phi_v, x, delta, delta_int, msgs);
-    Eigen::VectorXd l_grad_theta = l_grad.head(theta_size);
-    var Z = laplace_pseudo_target(K_var, a, R, l_grad_theta, s2);
+    var Z = laplace_pseudo_target(K_var, a, R, l_grad.head(theta_size), s2);
     set_zero_all_adjoints_nested();
     grad(Z.vi_);
     phi_adj_arena = phi_v.adj();
@@ -561,11 +560,7 @@ inline auto laplace_marginal_density(
     Eigen::VectorXd diff_eta = l_grad.tail(eta_size_);
 
     Eigen::VectorXd v;
-    if (solver == 1) {
-      Eigen::MatrixXd W
-          = W_root * W_root;  // CHECK -- store W from Newton step?
-      v = covariance * s2 - covariance * R * covariance * s2;
-    } else if (solver == 2) {
+    if (solver == 1 || solver == 2) {
       v = covariance * s2 - covariance * R * covariance * s2;
     } else {
       v = LU_solve_covariance * s2;
