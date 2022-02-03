@@ -117,7 +117,6 @@ inline laplace_density_estimates laplace_marginal_density_est(
   constexpr int diagonal_covariance = 0;
   // solver = 1;
   // hessian_block_size = 1;
-
   Eigen::MatrixXd covariance
       = covariance_function(phi, x, delta, delta_int, msgs);
 
@@ -484,13 +483,6 @@ inline auto laplace_marginal_density(
   const Eigen::Index theta_size = theta.size();
   const Eigen::Index phi_size_ = phi_arena.size();
   const Eigen::Index eta_size_ = eta_arena.size();
-  /*
-  for (Eigen::Index i = 0; i < phi_size_; i++) phi_[i] = phi(i).vi_;
-  for (Eigen::Index i = 0; i < eta_size_; i++) eta_[i] = eta(i).vi_;
-  */
-  // CHECK -- is there a cleaner way of doing this?
-  //  marginal_density_[0] = this;
-  //  marginal_density_[0] = new vari(marginal_density, false);
 
   Eigen::MatrixXd R;
   Eigen::MatrixXd LU_solve_covariance;
