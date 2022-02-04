@@ -99,16 +99,16 @@ struct laplace_density_estimates {
  * 7. l_grad the log density of the likelihood.
  *
  */
-template <typename D, typename CovarFun, typename Tx,
-          require_st_arithmetic<Tx>* = nullptr>
+template <typename D, typename CovarFun, typename Tx, typename... Args,
+          require_all_st_arithmetic<Tx, Args...>* = nullptr>
 inline laplace_density_estimates laplace_marginal_density_est(
     D&& diff_likelihood, CovarFun&& covariance_function,
-    const Eigen::VectorXd& phi, const Eigen::VectorXd& eta, const Tx& x,
-    const std::vector<double>& delta, const std::vector<int>& delta_int,
+    const Eigen::VectorXd& eta, const Tx& x,
     const Eigen::VectorXd& theta_0, std::ostream* msgs = nullptr,
     const double tolerance = 1e-6, const long int max_num_steps = 100,
     const int hessian_block_size = 0, const int solver = 1,
-    const int do_line_search = 0, const int max_steps_line_search = 10) {
+    const int do_line_search = 0, const int max_steps_line_search = 10,
+    Args&&... covar_args) {
   using Eigen::MatrixXd;
   using Eigen::SparseMatrix;
   using Eigen::VectorXd;
@@ -117,8 +117,7 @@ inline laplace_density_estimates laplace_marginal_density_est(
   constexpr int diagonal_covariance = 0;
   // solver = 1;
   // hessian_block_size = 1;
-  Eigen::MatrixXd covariance
-      = covariance_function(x, phi, delta, delta_int, msgs);
+  Eigen::MatrixXd covariance  = covariance_function(x, covar_args..., msgs);
 
   if (diagonal_covariance) {
     covariance = covariance.diagonal().asDiagonal();
@@ -399,6 +398,7 @@ inline laplace_density_estimates laplace_marginal_density_est(
  * @param[in] max_num_steps maximum number of steps for the Newton solver.
  * @return the log maginal density, p(y | phi).
  */
+/*
 template <typename D, typename CovarFun, typename Tx, typename T0, typename T1,
           typename T2, require_arithmetic_t<return_type_t<T1, T2>>* = nullptr>
 inline double laplace_marginal_density(
@@ -417,7 +417,25 @@ inline double laplace_marginal_density(
              hessian_block_size, solver, do_line_search, max_steps_line_search)
       .lmd;
 }
+*/
+template <typename D, typename CovarFun, typename Tx, typename T0,
+          typename T2, typename... Args, require_arithmetic_t<return_type_t<T0, T2>>* = nullptr>
+inline double laplace_marginal_density(
+    D&& diff_likelihood, CovarFun&& covariance_function,
+    const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta, const Tx& x,
+    const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
+    std::ostream* msgs = nullptr, const double tolerance = 1e-6,
+    const long int max_num_steps = 100, const int hessian_block_size = 0,
+    const int solver = 1, const int do_line_search = 0,
+    const int max_steps_line_search = 10, Args&&... args) {
+  return laplace_marginal_density_est(
+             diff_likelihood, covariance_function, eta, x, value_of(theta_0), msgs, tolerance, max_num_steps,
+             hessian_block_size, solver, do_line_search,
+             max_steps_line_search, std::forward<Args>(args)...).lmd;
+}
 
+template <typename T>
+using has_var_scalar_type = is_var<scalar_type_t<T>>;
 /**
  * For a latent Gaussian model with global parameters phi, latent
  * variables theta, and observations y, this function computes
@@ -450,25 +468,36 @@ inline double laplace_marginal_density(
  * @param[in] max_num_steps maximum number of steps for the Newton solver.
  * @return the log maginal density, p(y | phi).
  */
-template <typename D, typename CovarFun, typename Tx, typename T0, typename T1,
-          typename T2, require_var_t<return_type_t<Tx, T0, T1, T2>>* = nullptr>
+template <typename D, typename CovarFun, typename Tx, typename T0,
+          typename T2, typename... Args, require_var_t<return_type_t<Tx, T0, T2, Args...>>* = nullptr>
 inline auto laplace_marginal_density(
     const D& diff_likelihood, CovarFun&& covariance_function,
-    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
     const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta, const Tx& x,
-    const std::vector<double>& delta, const std::vector<int>& delta_int,
     const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
     std::ostream* msgs = nullptr, const double tolerance = 1e-6,
     const long int max_num_steps = 100, const int hessian_block_size = 0,
     const int solver = 1, const int do_line_search = 0,
-    const int max_steps_line_search = 10) {
-  auto phi_arena = to_arena(phi);
+    const int max_steps_line_search = 10, Args&&... args) {
+
+  auto args_refs = stan::math::apply([](auto&&... args) {
+    return std::make_tuple(to_ref(args)...);
+  }, std::forward_as_tuple(args...));
+  auto value_args = stan::math::apply([](auto&&... args) {
+    return std::make_tuple(to_ref(value_of(args))...);
+  }, args_refs);
+  auto args_arena = stan::math::filter_map<has_var_scalar_type>([](auto&&... args) {
+    return std::make_tuple(to_arena(args)...);
+  }, args_refs);
+
   auto eta_arena = to_arena(eta);
 
-  auto marginal_density_ests = laplace_marginal_density_est(
-      diff_likelihood, covariance_function, value_of(phi_arena),
-      value_of(eta_arena), x, delta, delta_int, value_of(theta_0), msgs,
-      tolerance, max_num_steps, hessian_block_size, solver);
+  auto marginal_density_ests = stan::math::apply([&](auto&&... v_args) {
+    return laplace_marginal_density_est(
+      diff_likelihood, covariance_function,
+      value_of(eta_arena), x, value_of(theta_0), msgs,
+      tolerance, max_num_steps, hessian_block_size, solver,
+      do_line_search, max_steps_line_search, v_args...);
+    }, value_args);
   double marginal_density_dbl = marginal_density_ests.lmd;
   Eigen::VectorXd theta = std::move(marginal_density_ests.theta);
   Eigen::VectorXd a = std::move(marginal_density_ests.a);
@@ -479,7 +508,6 @@ inline auto laplace_marginal_density(
   Eigen::MatrixXd covariance = std::move(marginal_density_ests.covariance);
   Eigen::PartialPivLU<Eigen::MatrixXd> LU = std::move(marginal_density_ests.LU);
   const Eigen::Index theta_size = theta.size();
-  const Eigen::Index phi_size_ = phi_arena.size();
   const Eigen::Index eta_size_ = eta_arena.size();
 
   Eigen::MatrixXd R;
@@ -531,22 +559,26 @@ inline auto laplace_marginal_density(
     s2 = partial_parm.head(theta_size);
   }
 
-  arena_matrix<Eigen::VectorXd> phi_adj_arena;
   // TODO: Why does remove this phi_size != 0 check work but for eta it fails?
-  if (!is_constant<T1>::value) {
-    const nested_rev_autodiff nested;
-    Eigen::Matrix<var, Eigen::Dynamic, 1> phi_v = value_of(phi_arena);
-    Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> K_var
-        = covariance_function(x, phi_v, delta, delta_int, msgs);
-    var Z = laplace_pseudo_target(K_var, a, R, l_grad.head(theta_size), s2);
-    set_zero_all_adjoints_nested();
-    grad(Z.vi_);
-    phi_adj_arena = phi_v.adj();
-  }
+  if (!is_constant_all<Args...>::value && !is_constant<T2>::value
+      && eta_size_ != 0) {
+    {
+      const nested_rev_autodiff nested;
+      Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> K_var = stan::math::apply([&covariance_function, &x, &msgs](auto&&... args) {
+        return covariance_function(x, args..., msgs);
+      }, args_refs);
+        //  = covariance_function(x, phi_v, delta, delta_int, msgs);
+      var Z = laplace_pseudo_target(K_var, a, R, l_grad.head(theta_size), s2);
+      set_zero_all_adjoints_nested();
+      grad(Z.vi_);
+    }
+    auto arg_adj_arena = stan::math::filter_map<has_var_scalar_type>([](auto&& arg) {
+      return to_arena(adjoint_of(arg));
+    }, args_refs);
+    stan::math::for_each([](auto&& arg) {
+      zero_adjoints(arg);
+    }, args_refs);
 
-  arena_matrix<Eigen::VectorXd> eta_adj_arena;
-  if (!is_constant<T2>::value
-      && eta_size_ != 0) {  // TODO: instead, check if eta contains var.
     Eigen::VectorXd diff_eta = l_grad.tail(eta_size_);
 
     Eigen::VectorXd v;
@@ -556,20 +588,60 @@ inline auto laplace_marginal_density(
       v = LU_solve_covariance * s2;
     }
 
-    eta_adj_arena = l_grad.tail(eta_size_) + partial_parm.tail(eta_size_)
+    arena_matrix<Eigen::VectorXd> eta_adj_arena = l_grad.tail(eta_size_) + partial_parm.tail(eta_size_)
                     + diff_likelihood.diff_eta_implicit(v, theta, eta_dbl);
-  }
 
-  return make_callback_var(
-      marginal_density_dbl, [phi_arena, eta_arena, phi_adj_arena,
-                             eta_adj_arena](const auto& vi) mutable {
-        if (!is_constant<T1>::value) {
-          phi_arena.array().adj() += vi.adj() * phi_adj_arena.array();
-        }
-        if (!is_constant<T2>::value && eta_adj_arena.size() != 0) {
+    return make_callback_var(
+        marginal_density_dbl, [arg_adj_arena, args_arena, eta_arena, eta_adj_arena](const auto& vi) mutable {
+          stan::math::for_each([&vi](auto&& arg, auto&& arg_adj) {
+            internal::update_adjoints(arg, vi, arg_adj);
+          }, args_arena, arg_adj_arena);
+          if (!is_constant<T2>::value && eta_adj_arena.size() != 0) {
+            eta_arena.array().adj() += vi.adj() * eta_adj_arena.array();
+          }
+        });
+  } else if (!is_constant_all<Args...>::value) {
+    {
+      const nested_rev_autodiff nested;
+      Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic> K_var = stan::math::apply([&covariance_function, &x, &msgs](auto&&... args) {
+        return covariance_function(x, args..., msgs);
+      }, args_refs);
+        //  = covariance_function(x, phi_v, delta, delta_int, msgs);
+      var Z = laplace_pseudo_target(K_var, a, R, l_grad.head(theta_size), s2);
+      set_zero_all_adjoints_nested();
+      grad(Z.vi_);
+    }
+    auto arg_adj_arena = stan::math::filter_map<has_var_scalar_type>([](auto&& arg) {
+      return to_arena(adjoint_of(arg));
+    }, args_refs);
+    stan::math::for_each([](auto&& arg) {
+      zero_adjoints(arg);
+    }, args_refs);
+    return make_callback_var(
+        marginal_density_dbl, [arg_adj_arena, args_arena](const auto& vi) mutable {
+            stan::math::for_each([&vi](auto&& arg, auto&& arg_adj) {
+              internal::update_adjoints(arg, vi, arg_adj);
+            }, args_arena, arg_adj_arena);
+        });
+  } else if (!is_constant<T2>::value && eta_size_ != 0) {
+    Eigen::VectorXd diff_eta = l_grad.tail(eta_size_);
+
+    Eigen::VectorXd v;
+    if (solver == 1 || solver == 2) {
+      v = covariance * s2 - covariance * R * covariance * s2;
+    } else {
+      v = LU_solve_covariance * s2;
+    }
+
+    arena_matrix<Eigen::VectorXd> eta_adj_arena = l_grad.tail(eta_size_) +
+     partial_parm.tail(eta_size_) + diff_likelihood.diff_eta_implicit(v, theta, eta_dbl);
+
+    return make_callback_var(
+        marginal_density_dbl, [eta_arena, eta_adj_arena](const auto& vi) mutable {
           eta_arena.array().adj() += vi.adj() * eta_adj_arena.array();
-        }
-      });
+        });
+  }
+  return var(0);
 }
 
 }  // namespace math
