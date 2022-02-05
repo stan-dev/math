@@ -34,18 +34,16 @@ namespace math {
 template <typename CovarFun, typename Eta, typename Theta0, typename... Args>
 inline auto laplace_marginal_neg_binomial_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index,
-    CovarFun&& covariance_function,
-    const Eta& eta,
-    const Theta0& theta_0,
+    CovarFun&& covariance_function, const Eta& eta, const Theta0& theta_0,
     std::ostream* msgs = nullptr, double tolerance = 1e-6,
     long int max_num_steps = 100, const int hessian_block_size = 0,
     const int solver = 1, const int do_line_search = 0,
     const int max_steps_line_search = 10, Args&&... args) {
   return laplace_marginal_density(
       diff_neg_binomial_2_log(to_vector(y), y_index, theta_0.size()),
-      std::forward<CovarFun>(covariance_function), eta,
-      theta_0, msgs, tolerance, max_num_steps, hessian_block_size,
-       solver, do_line_search, max_steps_line_search, std::forward<Args>(args)...);
+      std::forward<CovarFun>(covariance_function), eta, theta_0, msgs,
+      tolerance, max_num_steps, hessian_block_size, solver, do_line_search,
+      max_steps_line_search, std::forward<Args>(args)...);
 }
 }  // namespace math
 }  // namespace stan

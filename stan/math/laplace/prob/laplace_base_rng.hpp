@@ -23,17 +23,18 @@ namespace math {
  * are drawn for covariates x_pred.
  * To sample the "original" theta's, set x_pred = x.
  */
-template <typename T_theta, typename T_eta,
-          typename D, typename CovarFun, class RNG, typename TupleData, typename... Args>
+template <typename T_theta, typename T_eta, typename D, typename CovarFun,
+          class RNG, typename TupleData, typename... Args>
 inline Eigen::VectorXd  // CHECK -- right return type -- It's not this need to
                         // return a std::vector<> :(
 laplace_base_rng(D&& diff_likelihood, CovarFun&& covariance_function,
                  const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta,
                  const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta_0,
-                 const TupleData& data_tuple,
-                 RNG& rng, std::ostream* msgs = nullptr,
-                 const double tolerance = 1e-6, const long int max_num_steps = 100,
-                 const int hessian_block_size = 0, const int solver = 1, const int do_line_search = 0,
+                 const TupleData& data_tuple, RNG& rng,
+                 std::ostream* msgs = nullptr, const double tolerance = 1e-6,
+                 const long int max_num_steps = 100,
+                 const int hessian_block_size = 0, const int solver = 1,
+                 const int do_line_search = 0,
                  const int max_steps_line_search = 10, Args&&... args) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
@@ -41,12 +42,14 @@ laplace_base_rng(D&& diff_likelihood, CovarFun&& covariance_function,
   auto args_dbl = std::make_tuple(to_ref(value_of(args))...);
 
   VectorXd eta_dbl = value_of(eta);
-  auto marginal_density_est = apply([&](auto&&... args_val) {
-    return laplace_marginal_density_est(
-      diff_likelihood, covariance_function, eta_dbl,
-      value_of(theta_0), msgs, tolerance, max_num_steps, hessian_block_size,
-      solver, do_line_search, max_steps_line_search, args_val...);
-    }, std::tuple_cat(std::get<0>(data_tuple), args_dbl));
+  auto marginal_density_est = apply(
+      [&](auto&&... args_val) {
+        return laplace_marginal_density_est(
+            diff_likelihood, covariance_function, eta_dbl, value_of(theta_0),
+            msgs, tolerance, max_num_steps, hessian_block_size, solver,
+            do_line_search, max_steps_line_search, args_val...);
+      },
+      std::tuple_cat(std::get<0>(data_tuple), args_dbl));
   auto marginal_density = marginal_density_est.lmd;
   Eigen::SparseMatrix<double> W_r = std::move(marginal_density_est.W_r);
   MatrixXd L = std::move(marginal_density_est.L);
@@ -56,10 +59,11 @@ laplace_base_rng(D&& diff_likelihood, CovarFun&& covariance_function,
   MatrixXd covariance = std::move(marginal_density_est.covariance);
 
   // Modified R&W method
-  MatrixXd covariance_pred = apply([&covariance_function, &msgs](auto&&... args_val) {
-    return covariance_function(args_val..., msgs);
-  }, std::tuple_cat(std::get<1>(data_tuple), args_dbl));
-
+  MatrixXd covariance_pred = apply(
+      [&covariance_function, &msgs](auto&&... args_val) {
+        return covariance_function(args_val..., msgs);
+      },
+      std::tuple_cat(std::get<1>(data_tuple), args_dbl));
 
   VectorXd pred_mean = covariance_pred * l_grad.head(theta_0.rows());
 

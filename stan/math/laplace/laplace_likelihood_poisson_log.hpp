@@ -18,11 +18,12 @@ struct poisson_log_likelihood {
    * @param[in] delta_int number of observations in each group.
    * return lpmf for a Poisson with a log link.
    */
-   template <typename Theta, typename Eta, require_eigen_vector_t<Theta>* = nullptr, require_eigen_t<Eta>* = nullptr>
-  auto operator()(
-      const Theta& theta,
-      const Eta& eta, const Eigen::VectorXd& y,
-      const std::vector<int>& delta_int, std::ostream* pstream) const {
+  template <typename Theta, typename Eta,
+            require_eigen_vector_t<Theta>* = nullptr,
+            require_eigen_t<Eta>* = nullptr>
+  auto operator()(const Theta& theta, const Eta& eta, const Eigen::VectorXd& y,
+                  const std::vector<int>& delta_int,
+                  std::ostream* pstream) const {
     Eigen::VectorXd n_samples = to_vector(delta_int);
     return -lgamma(y.array() + 1).sum() + theta.dot(y)
            - n_samples.dot(exp(theta));
@@ -44,11 +45,13 @@ struct poisson_log_exposure_likelihood {
    * @param[in] delta_int number of observations in each group.
    * return lpmf for a Poisson with a log link.
    */
- template <typename Theta, typename Eta, require_eigen_vector_t<Theta>* = nullptr, require_eigen_t<Eta>* = nullptr>
-  inline auto operator()(
-      const Theta& theta,
-      const Eta& eta, const Eigen::VectorXd& y_and_ye,
-      const std::vector<int>& delta_int, std::ostream* pstream) const {
+  template <typename Theta, typename Eta,
+            require_eigen_vector_t<Theta>* = nullptr,
+            require_eigen_t<Eta>* = nullptr>
+  inline auto operator()(const Theta& theta, const Eta& eta,
+                         const Eigen::VectorXd& y_and_ye,
+                         const std::vector<int>& delta_int,
+                         std::ostream* pstream) const {
     int n = delta_int.size();
     Eigen::VectorXd y = y_and_ye.head(n);
     Eigen::VectorXd ye = y_and_ye.tail(n);

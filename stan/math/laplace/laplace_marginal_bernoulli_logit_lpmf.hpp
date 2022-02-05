@@ -47,7 +47,8 @@ inline auto laplace_marginal_bernoulli_logit_lpmf(
       diff_likelihood<bernoulli_logit_likelihood>(
           bernoulli_logit_likelihood{}, to_vector(y), n_samples, msgs),
       covariance_function, eta_dummy, theta_0, msgs, tolerance, max_num_steps,
-     hessian_block_size, solver, do_line_search, max_steps_line_search, std::forward<Args>(args)...);
+      hessian_block_size, solver, do_line_search, max_steps_line_search,
+      std::forward<Args>(args)...);
 }
 /*
 // Add signature that takes x as a matrix instead of a vector.
@@ -66,7 +67,8 @@ inline auto laplace_marginal_bernoulli_logit_lpmf(
       diff_likelihood<bernoulli_logit_likelihood>(
           bernoulli_logit_likelihood{}, to_vector(y), n_samples, msgs),
       covariance_function, eta_dummy, theta_0, msgs, tolerance, max_num_steps,
-     hessian_block_size, solver, do_line_search, max_steps_line_search, std::forward<Args>(args)...);
+     hessian_block_size, solver, do_line_search, max_steps_line_search,
+std::forward<Args>(args)...);
 }
 */
 }  // namespace math

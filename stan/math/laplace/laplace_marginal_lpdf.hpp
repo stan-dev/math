@@ -49,10 +49,8 @@ namespace math {
 template <bool propto, typename LFun, typename Eta, typename CovarFun,
           typename Theta0, typename... Args>
 inline auto laplace_marginal_lpdf(
-    const Eigen::VectorXd& y, LFun&& L_f,
-    const Eta& eta,
-    const std::vector<int>& delta_int_L, CovarFun&& K_f,
-    const Theta0& theta_0,
+    const Eigen::VectorXd& y, LFun&& L_f, const Eta& eta,
+    const std::vector<int>& delta_int_L, CovarFun&& K_f, const Theta0& theta_0,
     std::ostream* msgs = nullptr, double tolerance = 1e-6,
     long int max_num_steps = 100, const int hessian_block_size = 0,
     const int solver = 1, const int do_line_search = 0,
@@ -60,9 +58,9 @@ inline auto laplace_marginal_lpdf(
   // TEST: provisional signature to agree with parser.
   return laplace_marginal_density(
       diff_likelihood<LFun>(std::forward<LFun>(L_f), y, delta_int_L, msgs),
-      std::forward<CovarFun>(K_f), eta, theta_0,
-      msgs, tolerance, max_num_steps, hessian_block_size, solver,
-      do_line_search, max_steps_line_search, std::forward<Args>(args)...);
+      std::forward<CovarFun>(K_f), eta, theta_0, msgs, tolerance, max_num_steps,
+      hessian_block_size, solver, do_line_search, max_steps_line_search,
+      std::forward<Args>(args)...);
 }
 
 /**
