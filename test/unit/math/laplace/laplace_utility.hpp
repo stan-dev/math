@@ -84,9 +84,9 @@ struct squared_kernel_functor {
     return stan::math::gp_exp_quad_cov(x, phi(0), phi(1))
            + 1e-9 * Eigen::MatrixXd::Identity(x.size(), x.size());
   }
-  template <typename T1, typename T2, typename T3, typename T4>
-  Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> operator()(
-      const T2& x, const T3& arg1, const T4& arg2,
+  template <typename T1, typename T2, typename T3>
+  Eigen::Matrix<return_type_t<T1, T2, T3>, Eigen::Dynamic, Eigen::Dynamic> operator()(
+      const T1& x, const T2& arg1, const T3& arg2,
       std::ostream* msgs = nullptr) const {
     return stan::math::gp_exp_quad_cov(x, arg1, arg2)
            + 1e-9 * Eigen::MatrixXd::Identity(x.size(), x.size());
@@ -98,14 +98,13 @@ struct squared_kernel_functor {
 // function. In the final version, the user will pass the covariance
 // function.
 struct sqr_exp_kernel_functor {
-  template <typename T1, typename T2>
-  Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> operator()(
-      const T2& x, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
-      const std::vector<double>& delta, const std::vector<int>& delta_int,
+  template <typename T1, typename T2, typename T3>
+  auto operator()(
+      const T1& x, const T2& alpha, const T3& rho,
       std::ostream* msgs = nullptr) const {
     double jitter = 1e-8;
-    Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> kernel
-        = stan::math::gp_exp_quad_cov(x, phi(0), phi(1));
+    Eigen::Matrix<return_type_t<T1, T2, T3>, Eigen::Dynamic, Eigen::Dynamic> kernel
+        = stan::math::gp_exp_quad_cov(x, alpha, rho);
     for (int i = 0; i < kernel.cols(); i++)
       kernel(i, i) += jitter;
 

@@ -12,9 +12,9 @@ namespace math {
  * to handle functions which take in arguments eta, delta, delta_int,
  * and pstream.
  */
-template <typename F>
+template <typename F, typename Eta, require_eigen_t<Eta>* = nullptr>
 inline Eigen::VectorXd hessian_times_vector(
-    const F& f, const Eigen::VectorXd& x, const Eigen::VectorXd& eta,
+    const F& f, const Eigen::VectorXd& x, const Eta& eta,
     const Eigen::VectorXd& delta, const std::vector<int>& delta_int,
     const Eigen::VectorXd& v, std::ostream* pstream = 0) {
   nested_rev_autodiff nested;

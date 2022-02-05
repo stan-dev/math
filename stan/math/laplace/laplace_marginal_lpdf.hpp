@@ -46,25 +46,23 @@ namespace math {
  *              efficient computation. Else, a more general but slower solver
  *              is used.
  */
-template <bool propto, typename T0, typename T1, typename T2, typename Tx,
-          typename CovarFun, typename LFun>
-inline stan::return_type_t<T1, T2> laplace_marginal_lpdf(
+template <bool propto, typename LFun, typename Eta, typename CovarFun,
+          typename Theta0, typename... Args>
+inline auto laplace_marginal_lpdf(
     const Eigen::VectorXd& y, LFun&& L_f,
-    const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta,
+    const Eta& eta,
     const std::vector<int>& delta_int_L, CovarFun&& K_f,
-    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi, const Tx& x,
-    const std::vector<double>& delta_K, const std::vector<int>& delta_int_K,
-    const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
-    double tolerance = 1e-6, long int max_num_steps = 100,
-    int hessian_block_size = 0, int solver = 1, int do_line_search = 1,
-    int max_steps_line_search = 10, std::ostream* msgs = nullptr) {
+    const Theta0& theta_0,
+    std::ostream* msgs = nullptr, double tolerance = 1e-6,
+    long int max_num_steps = 100, const int hessian_block_size = 0,
+    const int solver = 1, const int do_line_search = 0,
+    const int max_steps_line_search = 10, Args&&... args) {
   // TEST: provisional signature to agree with parser.
-
   return laplace_marginal_density(
       diff_likelihood<LFun>(std::forward<LFun>(L_f), y, delta_int_L, msgs),
-      std::forward<CovarFun>(K_f), phi, eta, x, delta_K, delta_int_K, theta_0,
+      std::forward<CovarFun>(K_f), eta, theta_0,
       msgs, tolerance, max_num_steps, hessian_block_size, solver,
-      do_line_search, max_steps_line_search);
+      do_line_search, max_steps_line_search, std::forward<Args>(args)...);
 }
 
 /**
@@ -74,7 +72,7 @@ inline stan::return_type_t<T1, T2> laplace_marginal_lpdf(
  */
 template <bool propto, typename T0, typename T1, typename T2, typename Tx,
           typename CovarFun, typename LFun>
-inline stan::return_type_t<T1, T2> laplace_marginal_lpmf(
+inline auto laplace_marginal_lpmf(
     const std::vector<int>& y, LFun&& L_f,
     const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta,
     const Eigen::VectorXd& delta_L, CovarFun&& K_f,

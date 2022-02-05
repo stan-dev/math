@@ -160,6 +160,32 @@ namespace math {
 
   }  // namespace internal
 
+
+  namespace internal {
+
+  /** \ingroup type_trait
+   * This underlying implementation is used when the type is not an std vector.
+   */
+  template <typename T>
+  struct is_tuple_impl : std::false_type {};
+
+  /** \ingroup type_trait
+   * This specialization implementation has a static member named value when the
+   * template type is an std vector.
+   */
+  template <typename... Args>
+  struct is_tuple_impl<std::tuple<Args...>> : std::true_type {};
+
+  }  // namespace internal
+
+  /** \ingroup type_trait
+   * Base implementation for checking if type is std vector
+   */
+  template <typename T, typename = void>
+  struct is_tuple : internal::is_tuple_impl<std::decay_t<T>> {};
+
+template <typename... Types>
+using is_any_tuple = disjunction<is_tuple<Types>...>;
   /*
    * Subset a parameter pack by a compile time filter on the types and return a
    * tuple with an unary functor applied to each element where the filter was
@@ -172,9 +198,9 @@ namespace math {
    * @param f functor callable
    * @param args parameter pack of args
    */
-  template <template <typename> class Filter, typename F, typename... Args>
-  inline constexpr decltype(auto) filter_map(F&& f, Args&&... args) {
-      return internal::filter_map_impl<Filter>(std::forward<F>(f), std::tuple<>{},
+  template <template <typename> class Filter, typename F, typename Arg1, typename... Args, require_t<bool_constant<!is_tuple<Arg1>::value>>* = nullptr>
+  inline constexpr decltype(auto) filter_map(F&& f, Arg1&& arg1, Args&&... args) {
+      return internal::filter_map_impl<Filter>(std::forward<F>(f), std::tuple<>{}, std::forward<Arg1>(arg1),
                                                std::forward<Args>(args)...);
   }
 
@@ -190,38 +216,16 @@ namespace math {
    * @param f functor callable
    * @param args parameter pack of args
    */
-  template <template <typename> class Filter, typename F, typename... Args>
-  inline constexpr decltype(auto) filter_map(F&& f, std::tuple<Args...>&& args) {
+ template <template <typename> class Filter, typename F, typename Tuple, require_t<is_tuple<Tuple>>* = nullptr>
+  inline constexpr decltype(auto) filter_map(F&& f, Tuple&& arg) {
       return stan::math::apply(
           [&f](auto&&... args) {
               return internal::filter_map_impl<Filter>(f, std::tuple<>{},
-                                                       std::move(args)...);
+                                                       std::forward<decltype(args)>(args)...);
           },
-          std::move(args));
+          std::forward<Tuple>(arg));
   }
 
-  /*
-   * Subset a tuple by a compile time filter on the types and return a
-   * tuple with an unary functor applied to each element where the filter was
-   * true:
-   *
-   * @tparam Filter a struct that accepts one template parameter and has a static
-   *   constexpr bool member named value
-   * @tparam F Type of functor
-   * @tparam Args A parameter pack of arguments
-   * @param f functor callable
-   * @param args parameter pack of args
-   */
-  template <template <typename> class Filter, typename F, typename... Args>
-  inline constexpr decltype(auto) filter_map(F&& f,
-                                             const std::tuple<Args...>& args) {
-      return stan::math::apply(
-          [&f](auto&&... args) {
-              return internal::filter_map_impl<Filter>(f, std::tuple<>{},
-                                                       args...);
-          },
-          args);
-  }
 
 }  // namespace math
 }  // namespace stan

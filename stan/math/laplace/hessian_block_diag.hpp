@@ -47,9 +47,9 @@ inline Eigen::MatrixXd hessian_block_diag(F&& f, const Eigen::VectorXd& x,
 /**
  * Overload for case where hessian is stored as a sparse matrix.
  */
-template <typename F>
+template <typename F, typename Eta, require_eigen_t<Eta>* = nullptr>
 inline Eigen::SparseMatrix<double> hessian_block_diag(F&& f, const Eigen::VectorXd& x,
-                               const Eigen::VectorXd& eta,
+                               const Eta& eta,
                                const Eigen::VectorXd& delta,
                                const std::vector<int>& delta_int,
                                const Eigen::Index hessian_block_size,

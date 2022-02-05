@@ -25,7 +25,6 @@ inline Eigen::SparseMatrix<double> block_matrix_sqrt(
     }
   }
   W_root.makeCompressed();
-
   return W_root;
 }
 

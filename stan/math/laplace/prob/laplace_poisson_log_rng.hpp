@@ -18,44 +18,41 @@ namespace math {
  * from the gaussian approximation of p(theta | y, phi)
  * where the likelihood is a Poisson with a log link.
  */
-template <typename CovarFun, typename T0, typename T1,
-          typename T2,  // typename T3,
-          typename RNG>
+template <typename CovarFun, typename T1,
+          class RNG, typename TupleData, typename... Args>
 inline Eigen::VectorXd laplace_poisson_log_rng(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     CovarFun&& covariance_function,
-    const Eigen::Matrix<T0, Eigen::Dynamic, 1>& phi, const T2& x,
-    // const T3& x_pred,
-    const std::vector<double>& delta, const std::vector<int>& delta_int,
-    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta_0, RNG& rng,
-    std::ostream* msgs = nullptr, double tolerance = 1e-6,
-    long int max_num_steps = 100, int hessian_block_size = 0,
-    int compute_W_root = 1) {
+    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta_0,
+    const TupleData& data_tuple,
+    RNG& rng, std::ostream* msgs = nullptr,
+    const double tolerance = 1e-6, const long int max_num_steps = 100,
+    const int hessian_block_size = 0, const int solver = 1, const int do_line_search = 0,
+    const int max_steps_line_search = 10, Args&&... args) {
   Eigen::VectorXd eta_dummy;
   poisson_log_likelihood L;
   return laplace_base_rng(
       diff_likelihood<poisson_log_likelihood>(L, to_vector(y), n_samples, msgs),
-      covariance_function, phi, eta_dummy, x, x, delta, delta_int, theta_0, rng,
-      msgs, tolerance, max_num_steps, hessian_block_size, compute_W_root);
+      covariance_function, eta_dummy, theta_0, data_tuple, rng,
+      msgs, tolerance, max_num_steps, hessian_block_size, solver,
+      do_line_search, max_steps_line_search, std::forward<Args>(args)...);
 }
 
 /**
  * Overload for case where user passes exposure, ye.
  */
-template <typename CovarFun, typename T0, typename T1,
-          typename T2,  // typename T3,
-          class RNG>
+template <typename CovarFun, typename T1,
+          class RNG, typename... TrainData, typename TupleData, typename... Args>
 inline Eigen::VectorXd  // CHECK -- right return type
 laplace_poisson_log_rng(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     const Eigen::VectorXd& ye, CovarFun&& covariance_function,
-    const Eigen::Matrix<T0, Eigen::Dynamic, 1>& phi, const T2& x,
-    // const T3& x_pred,
-    const std::vector<double>& delta, const std::vector<int>& delta_int,
-    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta_0, RNG& rng,
-    std::ostream* msgs = nullptr, double tolerance = 1e-6,
-    long int max_num_steps = 100, int hessian_block_size = 0,
-    int compute_W_root = 1) {
+    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta_0,
+    const TupleData& data_tuple,
+    RNG& rng, std::ostream* msgs = nullptr,
+    const double tolerance = 1e-6, const long int max_num_steps = 100,
+    const int hessian_block_size = 0, const int solver = 1, const int do_line_search = 0,
+    const int max_steps_line_search = 10, Args&&... args) {
   Eigen::VectorXd eta_dummy;
   Eigen::VectorXd y_vec = to_vector(y);
   Eigen::VectorXd y_and_ye(y_vec.size() + ye.size());
@@ -63,9 +60,8 @@ laplace_poisson_log_rng(
   poisson_log_exposure_likelihood L;
   return laplace_base_rng(diff_likelihood<poisson_log_exposure_likelihood>(
                               L, y_and_ye, n_samples, msgs),
-                          covariance_function, phi, eta_dummy, x, x, delta,
-                          delta_int, theta_0, rng, msgs, tolerance,
-                          max_num_steps, hessian_block_size, compute_W_root);
+                          covariance_function, eta_dummy, theta_0, data_tuple, rng, msgs, tolerance,
+                          max_num_steps, hessian_block_size, solver, do_line_search, max_steps_line_search, std::forward<Args>(args)...);
 }
 }  // namespace math
 }  // namespace stan

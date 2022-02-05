@@ -32,44 +32,43 @@ namespace math {
  * @param[in] max_num_steps maximum number of steps before the Newton solver
  *            breaks and returns an error.
  */
-template <typename T0, typename T1, typename CovarF>
-inline T1 laplace_marginal_bernoulli_logit_lpmf(
+template <typename T0, typename CovarF, typename... Args>
+inline auto laplace_marginal_bernoulli_logit_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     CovarF&& covariance_function,
-    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
-    const std::vector<Eigen::VectorXd>& x, const std::vector<double>& delta,
-    const std::vector<int>& delta_int,
     const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
     std::ostream* msgs = nullptr, double tolerance = 1e-6,
-    long int max_num_steps = 100) {
+    long int max_num_steps = 100, const int hessian_block_size = 0,
+    const int solver = 1, const int do_line_search = 0,
+    const int max_steps_line_search = 10, Args&&... args) {
   // TODO: change this to a VectorXd once we have operands & partials.
-  Eigen::Matrix<T1, Eigen::Dynamic, 1> eta_dummy(0);
+  Eigen::Matrix<double, Eigen::Dynamic, 1> eta_dummy(0);
   return laplace_marginal_density(
       diff_likelihood<bernoulli_logit_likelihood>(
           bernoulli_logit_likelihood{}, to_vector(y), n_samples, msgs),
-      covariance_function, phi, eta_dummy, x, delta, delta_int, theta_0, msgs,
-      tolerance, max_num_steps);
+      covariance_function, eta_dummy, theta_0, msgs, tolerance, max_num_steps,
+     hessian_block_size, solver, do_line_search, max_steps_line_search, std::forward<Args>(args)...);
 }
-
+/*
 // Add signature that takes x as a matrix instead of a vector.
-template <typename T0, typename T1, typename CovarF>
-inline T1 laplace_marginal_bernoulli_logit_lpmf(
+template <typename T0, typename CovarF, typename... Args>
+inline auto laplace_marginal_bernoulli_logit_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     CovarF&& covariance_function,
-    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi, const Eigen::MatrixXd& x,
-    const std::vector<double>& delta, const std::vector<int>& delta_int,
     const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
     std::ostream* msgs = nullptr, double tolerance = 1e-6,
-    long int max_num_steps = 100) {
+    long int max_num_steps = 100, const int hessian_block_size = 0,
+    const int solver = 1, const int do_line_search = 0,
+    const int max_steps_line_search = 10, Args&&... args) {
   // TODO: change this to a VectorXd once we have operands & partials.
-  Eigen::Matrix<T1, Eigen::Dynamic, 1> eta_dummy(0);
+  Eigen::Matrix<double, Eigen::Dynamic, 1> eta_dummy(0);
   return laplace_marginal_density(
       diff_likelihood<bernoulli_logit_likelihood>(
           bernoulli_logit_likelihood{}, to_vector(y), n_samples, msgs),
-      covariance_function, phi, eta_dummy, x, delta, delta_int, theta_0, msgs,
-      tolerance, max_num_steps);
+      covariance_function, eta_dummy, theta_0, msgs, tolerance, max_num_steps,
+     hessian_block_size, solver, do_line_search, max_steps_line_search, std::forward<Args>(args)...);
 }
-
+*/
 }  // namespace math
 }  // namespace stan
 

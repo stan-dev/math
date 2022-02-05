@@ -31,14 +31,15 @@ struct diff_likelihood {
         delta_int_(std::forward<DeltaInt>(delta_int)),
         pstream_(pstream) {}
 
-  template <typename T1, typename T2>
-  inline T1 log_likelihood(
-      const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
-      const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta) const {
+  template <typename Theta, typename Eta, require_eigen_vector_t<Theta>* = nullptr, require_eigen_t<Eta>* = nullptr>
+  inline auto log_likelihood(
+      const Theta& theta,
+      const Eta& eta) const {
     return f_(theta, eta, delta_, delta_int_, pstream_);
   }
 
-  inline Eigen::SparseMatrix<double> diff(const Eigen::VectorXd& theta, const Eigen::VectorXd& eta,
+  template <typename Theta, typename Eta, require_eigen_vector_t<Theta>* = nullptr, require_eigen_t<Eta>* = nullptr>
+  inline Eigen::SparseMatrix<double> diff(const Theta& theta, const Eta& eta,
                    Eigen::VectorXd& gradient,
                    const Eigen::Index hessian_block_size = 1) const {
     using Eigen::Dynamic;
@@ -50,7 +51,7 @@ struct diff_likelihood {
     {
       nested_rev_autodiff nested;
       Matrix<var, Dynamic, 1> theta_var = theta;
-      Matrix<var, Dynamic, 1> eta_var = eta;
+      Matrix<var, Eta::RowsAtCompileTime, Eta::ColsAtCompileTime> eta_var = eta;
 
       var f_var = f_(theta_var, eta_var, delta_, delta_int_, pstream_);
       grad(f_var.vi_);
@@ -78,8 +79,9 @@ struct diff_likelihood {
     }
   }
 
-  inline Eigen::VectorXd third_diff(const Eigen::VectorXd& theta,
-                                    const Eigen::VectorXd& eta) const {
+  template <typename Theta, typename Eta, require_eigen_vector_t<Theta>* = nullptr, require_eigen_t<Eta>* = nullptr>
+  inline Eigen::VectorXd third_diff(const Theta& theta,
+                                    const Eta& eta) const {
     const Eigen::Index theta_size = theta.size();
     Eigen::VectorXd v = Eigen::VectorXd::Ones(theta_size);
     double f_theta;
@@ -103,8 +105,9 @@ struct diff_likelihood {
     return theta_var.adj();
   }
 
-  inline Eigen::VectorXd compute_s2(const Eigen::VectorXd& theta,
-                                    const Eigen::VectorXd& eta,
+  template <typename Theta, typename Eta, require_eigen_vector_t<Theta>* = nullptr, require_eigen_t<Eta>* = nullptr>
+  inline Eigen::VectorXd compute_s2(const Theta& theta,
+                                    const Eta& eta,
                                     const Eigen::MatrixXd& A,
                                     int hessian_block_size) const {
     using Eigen::Dynamic;
@@ -121,7 +124,7 @@ struct diff_likelihood {
     // for (Eigen::Index i = 0; i < eta_size; i++) parm_var(i + theta_size) =
     // eta(i);
     Matrix<var, Dynamic, 1> theta_var = theta;
-    Matrix<var, Dynamic, 1> eta_var = eta;
+    Matrix<var, Eta::RowsAtCompileTime, Eta::ColsAtCompileTime> eta_var = eta;
     int n_blocks = theta_size / hessian_block_size;
 
     fvar<fvar<var>> target_ffvar = 0;
@@ -135,9 +138,7 @@ struct diff_likelihood {
       for (int j = 0; j < theta_size; ++j)
         theta_fvar(j) = fvar<var>(theta_var(j), v(j));
 
-      Matrix<fvar<var>, Dynamic, 1> eta_fvar(eta_size);
-      for (int j = 0; j < eta_size; ++j)
-        eta_fvar(j) = fvar<var>(eta_var(j), 0);
+      Matrix<fvar<var>, Eta::RowsAtCompileTime, Eta::ColsAtCompileTime> eta_fvar = eta_var.template cast<fvar<var>>();
 
       fvar<var> f_fvar = f_(theta_fvar, eta_fvar, delta_, delta_int_, pstream_);
 
@@ -153,9 +154,7 @@ struct diff_likelihood {
       for (int j = 0; j < theta_size; ++j)
         theta_ffvar(j) = fvar<fvar<var>>(theta_fvar(j), w(j));
 
-      Matrix<fvar<fvar<var>>, Dynamic, 1> eta_ffvar(eta_size);
-      for (int j = 0; j < eta_size; ++j)
-        eta_ffvar(j) = fvar<fvar<var>>(eta_fvar(j), 0);
+      Matrix<fvar<fvar<var>>, Eta::RowsAtCompileTime, Eta::ColsAtCompileTime> eta_ffvar = eta_fvar.template cast<fvar<fvar<var>>>();
 
       target_ffvar += f_(theta_ffvar, eta_ffvar, delta_, delta_int_, pstream_);
     }
@@ -170,8 +169,9 @@ struct diff_likelihood {
     return 0.5 * parm_adj;
   }
 
-  inline Eigen::VectorXd diff_eta_implicit(const Eigen::VectorXd& v,
-                                           const Eigen::VectorXd& theta,
+  template <typename Theta, typename Eta, require_eigen_vector_t<Theta>* = nullptr, require_eigen_t<Eta>* = nullptr>
+  inline Eigen::VectorXd diff_eta_implicit(const Theta& v,
+                                           const Eta& theta,
                                            const Eigen::VectorXd& eta) const {
     using Eigen::Dynamic;
     using Eigen::Matrix;
@@ -179,7 +179,7 @@ struct diff_likelihood {
 
     nested_rev_autodiff nested;
     const Eigen::Index eta_size = eta.size();
-    Matrix<var, Dynamic, 1> eta_var = eta;
+    Matrix<var, Eta::RowsAtCompileTime, Eta::ColsAtCompileTime> eta_var = eta;
 
     // CHECK -- can we avoid declaring theta as fvar<var>?
     // We currently compute derivatives wrt eta, which is not needed.
@@ -190,17 +190,12 @@ struct diff_likelihood {
       theta_fvar(i) = fvar<var>(theta_var(i), v(i));
 
     // CHECK -- After merging develop branch, needed to do this.
-    Matrix<fvar<var>, Dynamic, 1> eta_fvar(eta_size);
-    for (Eigen::Index i = 0; i < eta_size; i++)
-      eta_fvar(i) = fvar<var>(eta_var(i), 0);
+    Matrix<fvar<var>, Eta::RowsAtCompileTime, Eta::ColsAtCompileTime> eta_fvar = eta_var.template cast<fvar<var>>();
 
     fvar<var> f_fvar = f_(theta_fvar, eta_fvar, delta_, delta_int_, pstream_);
     grad(f_fvar.d_.vi_);
 
-    VectorXd diff_eta(eta_size);
-    for (Eigen::Index i = 0; i < eta_size; i++)
-      diff_eta(i) = eta_var(i).adj();
-    return diff_eta;
+    return eta_var.adj();
   }
 };
 

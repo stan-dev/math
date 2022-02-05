@@ -13,17 +13,24 @@ struct nonexisting_adjoint {
     return *this;
   }
   template <typename T>
-  nonexisting_adjoint operator+=(T) {
+  nonexisting_adjoint operator+=(T) const {
     throw std::runtime_error(
         "internal::nonexisting_adjoint::operator+= should never be called! "
         "Please file a bug report.");
   }
   template <typename T>
-  nonexisting_adjoint operator-=(T) {
+  nonexisting_adjoint operator-=(T) const {
     throw std::runtime_error(
         "internal::nonexisting_adjoint::operator-= should never be called! "
         "Please file a bug report.");
   }
+
+  static inline nonexisting_adjoint array() {
+    throw std::runtime_error(
+        "internal::nonexisting_adjoint.array() should never be called! "
+        "Please file a bug report.");
+  }
+
 };
 }  // namespace internal
 

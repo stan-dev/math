@@ -31,21 +31,21 @@ namespace math {
  * @param[in] max_num_steps maximum number of steps before the Newton solver
  *            breaks and returns an error.
  */
-template <typename T0, typename T1, typename T2, typename CovarFun>
-inline T1 laplace_marginal_neg_binomial_2_log_lpmf(
+template <typename CovarFun, typename Eta, typename Theta0, typename... Args>
+inline auto laplace_marginal_neg_binomial_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index,
     CovarFun&& covariance_function,
-    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
-    const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta,
-    const std::vector<Eigen::VectorXd>& x, const std::vector<double>& delta,
-    const std::vector<int>& delta_int,
-    const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
-    std::ostream* msgs = nullptr, const double tolerance = 1e-6,
-    const long int max_num_steps = 100) {
+    const Eta& eta,
+    const Theta0& theta_0,
+    std::ostream* msgs = nullptr, double tolerance = 1e-6,
+    long int max_num_steps = 100, const int hessian_block_size = 0,
+    const int solver = 1, const int do_line_search = 0,
+    const int max_steps_line_search = 10, Args&&... args) {
   return laplace_marginal_density(
       diff_neg_binomial_2_log(to_vector(y), y_index, theta_0.size()),
-      std::forward<CovarFun>(covariance_function), phi, eta, x, delta,
-      delta_int, theta_0, msgs, tolerance, max_num_steps);
+      std::forward<CovarFun>(covariance_function), eta,
+      theta_0, msgs, tolerance, max_num_steps, hessian_block_size,
+       solver, do_line_search, max_steps_line_search, std::forward<Args>(args)...);
 }
 }  // namespace math
 }  // namespace stan

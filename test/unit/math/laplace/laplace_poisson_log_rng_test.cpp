@@ -29,13 +29,12 @@ struct stationary_point {
 
 struct diagonal_kernel_functor {
   template <typename T1, typename T2>
-  Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> operator()(
-      const T2& x, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
-      const std::vector<double>& delta, const std::vector<int>& delta_int,
+  auto operator()(
+      const T1& alpha, const T2& rho,
       std::ostream* msgs = nullptr) const {
     Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> K(2, 2);
-    K(0, 0) = phi(0) * phi(0);
-    K(1, 1) = phi(1) * phi(1);
+    K(0, 0) = alpha * rho;
+    K(1, 1) = rho * alpha;
     K(0, 1) = 0;
     K(1, 0) = 0;
     return K;
@@ -75,13 +74,17 @@ TEST(laplace_poisson_log_rng, two_dim_diag) {
 
   // compute sample mean and covariance.
   diagonal_kernel_functor covariance_function;
-
   boost::random::mt19937 rng;
   rng.seed(1954);
   Eigen::MatrixXd theta_pred
-    = laplace_poisson_log_rng(sums, n_samples, covariance_function, phi,
-                              x_dummy, d0, di0, theta_0, rng);
-
+    = laplace_poisson_log_rng(sums, n_samples, covariance_function,
+                          theta_0,
+                          std::forward_as_tuple(std::forward_as_tuple(),
+                           std::forward_as_tuple()),
+                          rng, nullptr, 1e-6,
+                          100, 0, 1, 0, 10,
+                          phi(0), phi(1));
+}/*
   rng.seed(1954);
   Eigen::MatrixXd theta_pred_exp
     = laplace_poisson_log_rng(sums, n_samples, ye, covariance_function, phi,
@@ -133,7 +136,7 @@ TEST(laplace_poisson_log_rng, two_dim_diag) {
   // EXPECT_NEAR(K_laplace(0, 1), K_sample(0, 1), 6e-4);
 }
 
-/*
+
 TEST(laplace, basic_rng) {
   using stan::math::algebra_solver;
   using stan::math::diag_matrix;
