@@ -21,8 +21,8 @@ struct poisson_log_likelihood {
   template <typename Theta, typename Eta,
             require_eigen_vector_t<Theta>* = nullptr,
             require_eigen_t<Eta>* = nullptr>
-  auto operator()(const Theta& theta, const Eta& eta, const Eigen::VectorXd& y,
-                  const std::vector<int>& delta_int,
+  auto operator()(const Theta& theta, const Eta& /* eta */,
+                  const Eigen::VectorXd& y, const std::vector<int>& delta_int,
                   std::ostream* pstream) const {
     Eigen::VectorXd n_samples = to_vector(delta_int);
     return -lgamma(y.array() + 1).sum() + theta.dot(y)
@@ -48,7 +48,7 @@ struct poisson_log_exposure_likelihood {
   template <typename Theta, typename Eta,
             require_eigen_vector_t<Theta>* = nullptr,
             require_eigen_t<Eta>* = nullptr>
-  inline auto operator()(const Theta& theta, const Eta& eta,
+  inline auto operator()(const Theta& theta, const Eta& /* eta */,
                          const Eigen::VectorXd& y_and_ye,
                          const std::vector<int>& delta_int,
                          std::ostream* pstream) const {

@@ -68,22 +68,19 @@ inline auto laplace_marginal_lpdf(
  * is now a std::vector of interger and an Eigen::VectorXd
  * of double is passed as data.
  */
-template <bool propto, typename T0, typename T1, typename T2, typename Tx,
-          typename CovarFun, typename LFun>
+template <bool propto, typename LFun, typename Eta, typename CovarFun,
+          typename Theta0, typename... Args>
 inline auto laplace_marginal_lpmf(
-    const std::vector<int>& y, LFun&& L_f,
-    const Eigen::Matrix<T2, Eigen::Dynamic, 1>& eta,
-    const Eigen::VectorXd& delta_L, CovarFun&& K_f,
-    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi, const Tx& x,
-    const std::vector<double>& delta_K, const std::vector<int>& delta_int_K,
-    const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
-    double tolerance = 1e-6, long int max_num_steps = 100,
-    int hessian_block_size = 0, int solver = 1, int do_line_search = 1,
-    int max_steps_line_search = 10, std::ostream* msgs = nullptr) {
+    const std::vector<int>& y, LFun&& L_f, const Eta& eta,
+    const Eigen::VectorXd& delta_L, CovarFun&& K_f, const Theta0& theta_0,
+    std::ostream* msgs = nullptr, const double tolerance = 1e-6,
+    const long int max_num_steps = 100, const int hessian_block_size = 0,
+    const int solver = 1, const int do_line_search = 0,
+    const int max_steps_line_search = 10, Args&&... args) {
   return laplace_marginal_lpdf<propto>(
       delta_L, std::forward<LFun>(L_f), eta, y, std::forward<CovarFun>(K_f),
-      phi, x, delta_K, delta_int_K, theta_0, tolerance, max_num_steps,
-      hessian_block_size, solver, do_line_search, max_steps_line_search, msgs);
+      theta_0, msgs, tolerance, max_num_steps, hessian_block_size, solver,
+      do_line_search, max_steps_line_search, std::forward<Args>(args)...);
 }
 }  // namespace math
 }  // namespace stan

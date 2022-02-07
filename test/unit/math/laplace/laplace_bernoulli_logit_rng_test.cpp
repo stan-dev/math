@@ -30,13 +30,11 @@ struct stationary_point {
 
 struct diagonal_kernel_functor {
   template <typename T1, typename T2>
-  Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> operator()(
-      const T2& x, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
-      const std::vector<double>& delta, const std::vector<int>& delta_int,
+  auto operator()(const T1& arg1, const T2& arg2,
       std::ostream* msgs = nullptr) const {
-    Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> K(2, 2);
-    K(0, 0) = phi(0) * phi(0);
-    K(1, 1) = phi(1) * phi(1);
+    Eigen::Matrix<stan::return_type_t<T1, T2>, Eigen::Dynamic, Eigen::Dynamic> K(2, 2);
+    K(0, 0) = arg1 * arg1;
+    K(1, 1) = arg2 * arg2;
     K(0, 1) = 0;
     K(1, 0) = 0;
     return K;
@@ -84,8 +82,9 @@ TEST(laplace_bernoulli_logit_rng, two_dim_diag) {
   boost::random::mt19937 rng;
   rng.seed(1954);
   Eigen::MatrixXd theta_pred
-    = laplace_bernoulli_logit_rng(sums, n_samples, covariance_function, phi,
-                                  x_dummy, d0, di0, theta_0, rng);
+    = laplace_bernoulli_logit_rng(sums, n_samples, covariance_function,
+      theta_0, std::forward_as_tuple(std::make_tuple(), std::make_tuple()),
+      rng, nullptr, 1e-6, 100, 0, 1, 0, 10, phi(0), phi(1));
 
   // Compute exact mean and covariance
   Eigen::VectorXd theta_root

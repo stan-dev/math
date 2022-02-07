@@ -32,7 +32,7 @@ namespace math {
  * @param[in] max_num_steps maximum number of steps before the Newton solver
  *            breaks and returns an error.
  */
-template <typename T0, typename CovarF, typename... Args>
+template <typename CovarF, typename T0, typename... Args>
 inline auto laplace_marginal_bernoulli_logit_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     CovarF&& covariance_function,

@@ -68,7 +68,7 @@ laplace_base_rng(D&& diff_likelihood, CovarFun&& covariance_function,
   VectorXd pred_mean = covariance_pred * l_grad.head(theta_0.rows());
 
   Eigen::MatrixXd Sigma;
-  if (solver) {
+  if (solver == 1 || solver == 2) {
     Eigen::MatrixXd V_dec
         = mdivide_left_tri<Eigen::Lower>(L, W_r * covariance_pred);
     Sigma = covariance_pred - V_dec.transpose() * V_dec;

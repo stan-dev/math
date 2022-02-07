@@ -568,9 +568,8 @@ inline auto laplace_marginal_density(
           auto xx = to_arena(adjoint_of(arg));
           return xx;
         },
-        args...);
-    stan::math::for_each([](auto&& arg) { zero_adjoints(arg); },
-                         std::forward_as_tuple(args...));
+        args_refs);
+    stan::math::for_each([](auto&& arg) { zero_adjoints(arg); }, args_refs);
 
     Eigen::VectorXd diff_eta = l_grad.tail(eta_size_);
 
@@ -593,7 +592,7 @@ inline auto laplace_marginal_density(
                 internal::update_adjoints(arg, arg_adj, vi);
               },
               args_arena, arg_adj_arena);
-          adjoint_of(eta_arena).array() += vi.adj() * eta_adj_arena.array();
+          internal::update_adjoints(eta_arena, eta_adj_arena, vi);
         });
   } else if (is_any_var<Args...>::value) {
     {
@@ -603,7 +602,7 @@ inline auto laplace_marginal_density(
               [&covariance_function, &msgs](auto&&... args) {
                 return covariance_function(args..., msgs);
               },
-              std::forward_as_tuple(args...));
+              args_refs);
       //  = covariance_function(x, phi_v, delta, delta_int, msgs);
       var Z = laplace_pseudo_target(K_var, a, R, l_grad.head(theta_size), s2);
       set_zero_all_adjoints_nested();
@@ -640,7 +639,7 @@ inline auto laplace_marginal_density(
 
     return make_callback_var(marginal_density_dbl, [eta_arena, eta_adj_arena](
                                                        const auto& vi) mutable {
-      adjoint_of(eta_arena).array() += vi.adj() * eta_adj_arena.array();
+      internal::update_adjoints(eta_arena, eta_adj_arena, vi);
     });
   }
   return var(0);

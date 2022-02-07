@@ -16,8 +16,8 @@ namespace math {
  * from the gaussian approximation of p(theta | y, phi),
  * where the likelihood is a Bernoulli with logit link.
  */
-template <typename CovarFun, typename T_theta, typename T_x, class RNG,
-          typename TupleData, typename... Args>
+template <typename CovarFun, typename T_theta, class RNG, typename TupleData,
+          typename... Args>
 inline Eigen::VectorXd  // CHECK -- right return type
 laplace_bernoulli_logit_rng(
     const std::vector<int>& y, const std::vector<int>& n_samples,

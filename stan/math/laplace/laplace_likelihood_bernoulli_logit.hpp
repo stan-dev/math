@@ -62,7 +62,7 @@ struct diff_bernoulli_logit {
             require_eigen_vector_t<Theta>* = nullptr,
             require_eigen_t<Eta>* = nullptr>
   inline Eigen::SparseMatrix<double> diff(const Theta& theta,
-                                          const Theta& /* eta */,
+                                          const Eta& /* eta */,
                                           GradVec& gradient,
                                           const Eigen::Index block_size_dummy
                                           = 0) const {
