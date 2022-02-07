@@ -367,6 +367,8 @@
 #include <stan/math/prim/fun/variance.hpp>
 #include <stan/math/prim/fun/welford_covar_estimator.hpp>
 #include <stan/math/prim/fun/welford_var_estimator.hpp>
+#include <stan/math/prim/fun/wiener5_lpdf.hpp>
+#include <stan/math/prim/fun/wiener7_lpdf.hpp>
 #include <stan/math/prim/fun/zeros_array.hpp>
 #include <stan/math/prim/fun/zeros_int_array.hpp>
 #include <stan/math/prim/fun/zeros_row_vector.hpp>
