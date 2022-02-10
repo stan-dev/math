@@ -20,6 +20,19 @@ namespace internal {
       return iter_apply_impl(
           t, f, std::make_index_sequence<sizeof...(Args)>{});
   }
+
+  template <class F, typename Tuple1, typename Tuple2, size_t... Is>
+  auto iter_apply_binary_impl(Tuple1 t1, Tuple2 t2, F f, std::index_sequence<Is...>) {
+      return std::make_tuple(
+          f(std::get<Is>(t1), std::get<Is>(t2))...
+      );
+  }
+
+  template <class F, typename Tuple1, typename Tuple2>
+  auto iter_apply_binary(const Tuple1& t1, const Tuple2& t2, F f) {
+      return iter_apply_binary_impl(
+          t1, t2, f, std::make_index_sequence<std::tuple_size<Tuple1>::value>{});
+  }
 }
 
 template <typename ScalarT, typename ValTupleT, typename ValFun, typename GradFunT,
