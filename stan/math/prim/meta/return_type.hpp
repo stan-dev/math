@@ -194,6 +194,11 @@ struct return_type<T, Ts...> {
       = scalar_lub_t<scalar_type_t<T>, typename return_type<Ts...>::type>;
 };
 
+template <typename... Ts>
+struct return_type<std::tuple<Ts...>> {
+  using type = typename return_type<Ts...>::type;
+};
+
 /**
  * Convenience type for the return type of the specified template
  * parameters.
