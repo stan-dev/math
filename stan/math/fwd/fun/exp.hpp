@@ -14,7 +14,7 @@ template <typename T>
 inline fvar<T> exp(const fvar<T>& x) {
   auto args_tuple = std::make_tuple(x);
   auto val_fun = [&](auto&& x) {using std::exp; return exp(x); };
-  auto grad_fun_tuple = std::make_tuple(val_fun);
+  auto grad_fun_tuple = std::make_tuple([&](auto&& adj, auto&& x) {using std::exp; return adj * exp(x);} );
   return user_gradients(args_tuple, val_fun, grad_fun_tuple);
 }
 

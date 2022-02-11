@@ -28,8 +28,7 @@ auto user_gradients_impl(ArgsTupleT&& args_tuple,
   walk_tuples([&](auto&& f, auto&& arg) {
     using arg_t = plain_type_t<decltype(arg)>;
     if (!is_constant_all<arg_t>::value) {
-      d_ += forward_as<promote_scalar_t<ScalarT, arg_t>>(arg).d()
-            * math::apply([&](auto&&... args) { return f(args...); },
+      d_ += math::apply([&](auto&&... args) { return f(forward_as<promote_scalar_t<ScalarT, arg_t>>(arg).d(),args...); },
                           std::forward<decltype(val_tuple)>(val_tuple));
     }
   }, std::forward<GradFunT>(grad_fun_tuple),

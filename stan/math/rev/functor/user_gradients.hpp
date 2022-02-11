@@ -40,12 +40,12 @@ auto user_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
       if (!is_constant_all<arg_t>::value) {
         // Need to wrap the argument in a forward_as<var>() so that it will
         // compile with both primitive and var inputs
-        forward_as<promote_scalar_t<var, arg_t>>(arg).adj()
-          += vi.adj()
+        as_array_or_scalar(forward_as<promote_scalar_t<var, arg_t>>(arg)).adj()
+          += 
             // Use the relevant gradient function with the tuple of primitive
             // arguments
-            * math::apply([&](auto&&... args) {
-                return f(args...);
+            math::apply([&](auto&&... args) {
+                return f(vi.adj(), args...);
               }, std::forward<decltype(prim_tuple)>(prim_tuple));
       }
     },

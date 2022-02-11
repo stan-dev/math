@@ -29,8 +29,8 @@ inline auto hypot(const T1& a, const T2& b) {
   auto args_tuple = std::make_tuple(a, b);
   auto val_fun = [&](auto&& x, auto&& y) {using std::hypot; return hypot(x, y); };
   auto grad_fun_tuple = std::make_tuple(
-    [&](auto&& x, auto&& y) { return x / hypot(x, y); },
-    [&](auto&& x, auto&& y) { return y / hypot(x, y); }
+    [&](auto&& adj, auto&& x, auto&& y) { return adj * x / hypot(x, y); },
+    [&](auto&& adj, auto&& x, auto&& y) { return adj * y / hypot(x, y); }
   );
   return user_gradients(args_tuple, val_fun, grad_fun_tuple);
 }
