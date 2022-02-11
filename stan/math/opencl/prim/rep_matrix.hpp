@@ -5,46 +5,30 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/opencl/matrix_cl.hpp>
-#include <stan/math/opencl/matrix_cl_view.hpp>
-#include <stan/math/opencl/kernels/rep_matrix.hpp>
+#include <stan/math/opencl/kernel_generator.hpp>
 #include <stan/math/opencl/err.hpp>
 
 namespace stan {
 namespace math {
 /** \ingroup opencl
- * Creates a matrix_cl by replicating the value of
- * the only element in the input 1x1 matrix_cl. The
- * element must be of arithmetic type.
+ * Creates a matrix_cl by replicating the given value of arithmetic type.
  *
- * @tparam T type of elements in the input matrix
- * @param x the input 1x1 matrix_cl
- * @param n number of rows in the results matrix
- * @param m number of columns in the results matrix
+ * @tparam T type of the result matrix
+ * @param x the input value
+ * @param n number of rows in the result matrix
+ * @param m number of columns in the result matrix
  *
- * @return matrix_cl with replicated value from the input matrix
+ * @return matrix_cl with replicated value from the input
  *
  * @throw <code>domain_error</code> if the
  * requested dimensions are negative
- * @throw <code>invalid_argument</code> if input
- * element is not a matrix_cl of size 1
  *
  */
-template <typename T, typename = require_arithmetic_t<T>>
-inline matrix_cl<T> rep_matrix(const matrix_cl<T>& x, int n, int m) {
+template <typename T, require_matrix_cl_t<T>* = nullptr>
+inline auto rep_matrix(const value_type_t<T>& x, int n, int m) {
   check_nonnegative("rep_matrix (OpenCL)", "rows", n);
   check_nonnegative("rep_matrix (OpenCL)", "cols", m);
-  check_mat_size_one("rep_matrix (OpenCL)", "x", x);
-  matrix_cl<T> A(n, m);
-  if (A.size() == 0) {
-    return A;
-  }
-  try {
-    opencl_kernels::rep_matrix(cl::NDRange(A.rows(), A.cols()), A, x, A.rows(),
-                               A.cols(), x.rows(), x.cols(), A.view());
-  } catch (cl::Error& e) {
-    check_opencl_error("rep_matrix", e);
-  }
-  return A;
+  return constant(x, n, m);
 }
 
 /** \ingroup opencl
@@ -63,24 +47,14 @@ inline matrix_cl<T> rep_matrix(const matrix_cl<T>& x, int n, int m) {
  * requested dimensions are negative
  *
  */
-template <typename T, typename = require_arithmetic_t<T>>
-inline matrix_cl<T> rep_matrix(const matrix_cl<T>& x, int m) {
+template <typename T, require_arithmetic_t<T>* = nullptr>
+inline auto rep_matrix(const matrix_cl<T>& x, int m) {
   check_nonnegative("rep_matrix (OpenCL)", "rows/columns", m);
   check_mat_not_size_one("rep_matrix (OpenCL)", "x", x);
   check_vector("rep_matrix (OpenCL)", "x", x);
   const int N = x.rows() == 1 ? m : x.rows();
   const int M = x.cols() == 1 ? m : x.cols();
-  matrix_cl<T> A(N, M);
-  if (A.size() == 0) {
-    return A;
-  }
-  try {
-    opencl_kernels::rep_matrix(cl::NDRange(A.rows(), A.cols()), A, x, A.rows(),
-                               A.cols(), x.rows(), x.cols(), A.view());
-  } catch (cl::Error& e) {
-    check_opencl_error("rep_matrix", e);
-  }
-  return A;
+  return indexing(x, row_index(N, M) % x.rows(), col_index() % x.cols());
 }
 
 }  // namespace math

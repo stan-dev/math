@@ -201,6 +201,92 @@ struct f16 {
   }
 };
 
+struct f17 {
+  inline double operator()(const double &x, const double &xc,
+                           const std::vector<double> &theta,
+                           const std::vector<double> &x_r,
+                           const std::vector<int> &x_i,
+                           std::ostream *msgs) const {
+    double mu = theta[0];
+    double sigma = theta[1];
+    return 1.0 / (sqrt(2.0 * stan::math::pi()) * sigma)
+           * std::exp(-0.5 * ((x - mu) / sigma) * ((x - mu) / sigma));
+  }
+};
+
+double lbaX_pdf(double X, double t, double A, double v, double s,
+                std::ostream *pstream__) {
+  double b_A_tv_ts;
+  double b_tv_ts;
+  double term_1;
+  double term_2;
+  double pdf;
+
+  b_A_tv_ts = (((X - A) - (t * v)) / (t * s));
+  b_tv_ts = ((X - (t * v)) / (t * s));
+  term_1 = stan::math::Phi(b_A_tv_ts);
+  term_2 = stan::math::Phi(b_tv_ts);
+  pdf = ((1 / A) * (-term_1 + term_2));
+  return pdf;
+}
+
+double lbaX_cdf(double X, double t, double A, double v, double s,
+                std::ostream *pstream__) {
+  double b_A_tv;
+  double b_tv;
+  double ts;
+  double term_1;
+  double term_2;
+  double term_3;
+  double term_4;
+  double cdf;
+
+  b_A_tv = ((X - A) - (t * v));
+  b_tv = (X - (t * v));
+  ts = (t * s);
+  term_1 = (b_A_tv * stan::math::Phi((b_A_tv / ts)));
+  term_2 = (b_tv * stan::math::Phi((b_tv / ts)));
+  term_3 = (ts
+            * stan::math::exp(
+                  stan::math::normal_lpdf<false>((b_A_tv / ts), 0, 1)));
+  term_4
+      = (ts
+         * stan::math::exp(stan::math::normal_lpdf<false>((b_tv / ts), 0, 1)));
+  cdf = ((1 / A) * (((-term_1 + term_2) - term_3) + term_4));
+  return cdf;
+}
+
+double rank_density(double x, double xc, const std::vector<double> &theta,
+                    const std::vector<double> &x_r, const std::vector<int> &x_i,
+                    std::ostream *pstream__) {
+  double t = theta[0];
+  double A = theta[1];
+  double v1 = theta[2];
+  double v2 = theta[3];
+  double s = theta[4];
+  double v = (lbaX_pdf(x, t, A, v1, s, pstream__)
+              * lbaX_cdf(x, t, A, v2, s, pstream__));
+  return v;
+}
+
+struct rank_density_functor__ {
+  double operator()(double x, double xc, const std::vector<double> &theta,
+                    const std::vector<double> &x_r, const std::vector<int> &x_i,
+                    std::ostream *pstream__) const {
+    return rank_density(x, xc, theta, x_r, x_i, pstream__);
+  }
+};
+
+double order(double down, double up, const std::vector<double> &theta,
+             const std::vector<double> &x_r, std::ostream *pstream__) {
+  std::vector<int> x_i;
+
+  double v;
+
+  v = stan::math::integrate_1d(rank_density_functor__(), down, up, theta, x_r,
+                               x_i, pstream__, 1e-8);
+  return v;
+}
 }  // namespace integrate_1d_test
 /*
  * test_integration is a helper function to make it easy to test the
@@ -392,4 +478,25 @@ TEST(StanMath_integrate_1d_prim, test1) {
   //                   32);
   test_integration(integrate_1d_test::f16{}, 0.0, stan::math::pi(), {}, {}, {},
                    stan::math::square(stan::math::pi()) / 4);
+
+  // Make sure bounds working right
+  test_integration(integrate_1d_test::f17{},
+                   -std::numeric_limits<double>::infinity(), -1.5, {0.0, 1.0},
+                   {}, {}, 0.066807201268858071);
+}
+
+TEST(StanMath_integrate_1d_prim, TestTolerance) {
+  std::ostringstream *msgs = nullptr;
+
+  double t = 0.5;
+  double b = 1.0;
+  double A = 0.5;
+  double v1 = 1.0;
+  double v2 = 1.0;
+  double s = 1.0;
+
+  std::vector<double> theta = {t, A, v1, v2, s};
+  std::vector<double> x_r;
+
+  EXPECT_NO_THROW(integrate_1d_test::order(-10, 0.67, theta, x_r, msgs));
 }

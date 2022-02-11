@@ -2,15 +2,19 @@
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
 
-TEST(prob_transform, corr_matrix_j) {
+TEST(prob_transform, stdvec_corr_matrix_j) {
   size_t K = 4;
   size_t K_choose_2 = 6;
   Eigen::VectorXd x(K_choose_2);
   x << -1.0, 2.0, 0.0, 1.0, 3.0, -1.5;
+  std::vector<Eigen::VectorXd> x_vec = {x, x, x};
   double lp = -12.9;
-  Eigen::MatrixXd y = stan::math::corr_matrix_constrain(x, K, lp);
-  Eigen::VectorXd xrt = stan::math::corr_matrix_free(y);
-  EXPECT_MATRIX_FLOAT_EQ(x, xrt);
+  std::vector<Eigen::MatrixXd> y_vec
+      = stan::math::corr_matrix_constrain<true>(x_vec, K, lp);
+  std::vector<Eigen::VectorXd> xrt_vec = stan::math::corr_matrix_free(y_vec);
+  for (auto&& x_i : xrt_vec) {
+    EXPECT_MATRIX_FLOAT_EQ(x, x_i);
+  }
 }
 
 TEST(prob_transform, corr_matrix_j2x2) {

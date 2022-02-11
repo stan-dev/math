@@ -5,7 +5,6 @@
 #include <stan/math/prim/fun/log1m_inv_logit.hpp>
 #include <stan/math/prim/fun/inv_logit.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/core/precomp_v_vari.hpp>
 
 namespace stan {
 namespace math {
@@ -14,12 +13,18 @@ namespace math {
  * Return the natural logarithm of one minus the inverse logit of
  * the specified argument.
  *
+ * @tparam T Arithmetic or a type inheriting from `EigenBase`.
  * @param u argument
  * @return log of one minus the inverse logit of the argument
  */
-inline var log1m_inv_logit(const var& u) {
-  return var(
-      new precomp_v_vari(log1m_inv_logit(u.val()), u.vi_, -inv_logit(u.val())));
+template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
+inline auto log1m_inv_logit(const var_value<T>& u) {
+  auto precomp_inv_logit = to_arena(as_array_or_scalar(-inv_logit(u.val())));
+  return make_callback_var(
+      log1m_inv_logit(u.val()), [u, precomp_inv_logit](auto& vi) mutable {
+        as_array_or_scalar(u.adj())
+            += as_array_or_scalar(vi.adj()) * precomp_inv_logit;
+      });
 }
 
 }  // namespace math

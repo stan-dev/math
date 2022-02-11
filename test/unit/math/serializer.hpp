@@ -1,7 +1,6 @@
 #ifndef TEST_UNIT_MATH_SERIALIZER_HPP
 #define TEST_UNIT_MATH_SERIALIZER_HPP
 
-#include <test/unit/math/util.hpp>
 #include <stan/math.hpp>
 #include <complex>
 #include <string>
@@ -48,7 +47,7 @@ struct deserializer {
    * @param vals values to deserialize
    */
   explicit deserializer(const Eigen::Matrix<T, -1, 1>& v_vals)
-      : position_(0), vals_(to_std_vector(v_vals)) {}
+      : position_(0), vals_(math::to_array_1d(v_vals)) {}
 
   /**
    * Read a scalar conforming to the shape of the specified argument,
@@ -138,8 +137,11 @@ struct deserializer {
   template <typename U, int R, int C>
   Eigen::Matrix<T, R, C> read(const Eigen::Matrix<U, R, C>& x) {
     Eigen::Matrix<T, R, C> y(x.rows(), x.cols());
-    for (int i = 0; i < x.size(); ++i)
-      y(i) = read(x(i));
+    for (int j = 0; j < x.cols(); ++j) {
+      for (int i = 0; i < x.rows(); ++i) {
+        y(i + j * x.rows()) = read(x(i, j));
+      }
+    }
     return y;
   }
 
@@ -159,8 +161,11 @@ struct deserializer {
   Eigen::Matrix<std::complex<T>, R, C> read(
       const Eigen::Matrix<std::complex<U>, R, C>& x) {
     Eigen::Matrix<std::complex<T>, R, C> y(x.rows(), x.cols());
-    for (int i = 0; i < x.size(); ++i)
-      y(i) = read(x(i));
+    for (int j = 0; j < x.cols(); ++j) {
+      for (int i = 0; i < x.rows(); ++i) {
+        y(i + j * x.rows()) = read(x(i, j));
+      }
+    }
     return y;
   }
 };
@@ -194,7 +199,7 @@ struct serializer {
    * @tparam U type of specified scalar; must be assignable to T
    * @param x scalar to serialize
    */
-  template <typename U>
+  template <typename U, require_stan_scalar_t<U>* = nullptr>
   void write(const U& x) {
     vals_.push_back(x);
   }
@@ -231,10 +236,13 @@ struct serializer {
    * @tparam C column specification of Eigen container
    * @param x Eigen container to serialize.
    */
-  template <typename U, int R, int C>
-  void write(const Eigen::Matrix<U, R, C>& x) {
-    for (int i = 0; i < x.size(); ++i)
-      write(x(i));
+  template <typename U, require_eigen_t<U>* = nullptr>
+  void write(const U& x) {
+    for (int j = 0; j < x.cols(); ++j) {
+      for (int i = 0; i < x.rows(); ++i) {
+        write(x.coeff(i, j));
+      }
+    }
   }
 
   /**
@@ -250,7 +258,7 @@ struct serializer {
    * @return serialized values
    */
   const Eigen::Matrix<T, -1, 1>& vector_vals() {
-    return to_eigen_vector(vals_);
+    return math::to_vector(vals_);
   }
 };
 
@@ -330,7 +338,7 @@ std::vector<real_return_t<T>> serialize_return(const T& x) {
  */
 template <typename... Ts>
 Eigen::VectorXd serialize_args(const Ts... xs) {
-  return to_eigen_vector(serialize<double>(xs...));
+  return math::to_vector(serialize<double>(xs...));
 }
 
 }  // namespace test

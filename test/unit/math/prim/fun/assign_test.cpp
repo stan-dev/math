@@ -35,37 +35,25 @@ TEST(MathMatrixAssign, matSizeMismatch) {
   Matrix<double, 1, -1> y(3);
   EXPECT_NO_THROW(assign(x, y));
   Matrix<double, 1, -1> z(10);
-  EXPECT_THROW_MSG(assign(x, z), std::exception,
-                   "Columns of left-hand-side (3) and columns"
-                   " of right-hand-side (10) must match in size");
+  EXPECT_THROW(assign(x, z), std::invalid_argument);
 
   Matrix<double, -1, 1> a(5);
   Matrix<double, -1, 1> b(6);
-  EXPECT_THROW_MSG(assign(a, b), std::exception,
-                   "Rows of left-hand-side (5) and rows"
-                   " of right-hand-side (6) must match in size");
+  EXPECT_THROW(assign(a, b), std::invalid_argument);
 
   std::vector<double> u(5);
   std::vector<double> v(7);
-  EXPECT_THROW_MSG(assign(u, v), std::exception,
-                   "size of left-hand side (5) and size of"
-                   " right-hand side (7) must match in size");
+  EXPECT_THROW(assign(u, v), std::invalid_argument);
 
   Matrix<double, -1, -1> m1(4, 5);
   Matrix<double, -1, -1> m2(5, 4);
-  EXPECT_THROW_MSG(assign(m1, m2), std::exception,
-                   "Rows of left-hand-side (4) and rows of"
-                   " right-hand-side (5) must match in size");
+  EXPECT_THROW(assign(m1, m2), std::invalid_argument);
 
   Matrix<double, -1, -1> m3(10, 10);
   Matrix<double, -1, -1> m4(2, 3);
-  EXPECT_THROW_MSG(assign(m3.block(1, 1, 7, 3), m4), std::exception,
-                   "Rows of left-hand-side (7) and rows of"
-                   " right-hand-side (2) must match in size");
+  EXPECT_THROW(assign(m3.block(1, 1, 7, 3), m4), std::invalid_argument);
 
-  EXPECT_THROW_MSG(assign(m3.block(1, 1, 2, 5), m4), std::exception,
-                   "Columns of left-hand-side (5) and columns"
-                   " of right-hand-side (3) must match in size");
+  EXPECT_THROW(assign(m3.block(1, 1, 2, 5), m4), std::invalid_argument);
 }
 
 TEST(MathMatrixAssign, test_int) {

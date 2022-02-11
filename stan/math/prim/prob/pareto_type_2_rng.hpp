@@ -4,6 +4,8 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/prob/exponential_rng.hpp>
 #include <stan/math/prim/prob/normal_rng.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
@@ -42,15 +44,18 @@ pareto_type_2_rng(const T_loc& mu, const T_scale& lambda, const T_shape& alpha,
   using boost::variate_generator;
   using boost::random::uniform_real_distribution;
   static const char* function = "pareto_type_2_rng";
-  check_finite(function, "Location parameter", mu);
-  check_positive_finite(function, "Scale parameter", lambda);
-  check_positive_finite(function, "Shape parameter", alpha);
   check_consistent_sizes(function, "Location parameter", mu, "Scale Parameter",
                          lambda, "Shape Parameter", alpha);
+  const auto& mu_ref = to_ref(mu);
+  const auto& lambda_ref = to_ref(lambda);
+  const auto& alpha_ref = to_ref(alpha);
+  check_finite(function, "Location parameter", mu_ref);
+  check_positive_finite(function, "Scale parameter", lambda_ref);
+  check_positive_finite(function, "Shape parameter", alpha_ref);
 
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_scale> lambda_vec(lambda);
-  scalar_seq_view<T_shape> alpha_vec(alpha);
+  scalar_seq_view<T_loc> mu_vec(mu_ref);
+  scalar_seq_view<T_scale> lambda_vec(lambda_ref);
+  scalar_seq_view<T_shape> alpha_vec(alpha_ref);
   size_t N = max_size(mu, lambda, alpha);
   VectorBuilder<true, double, T_loc, T_scale, T_shape> output(N);
 

@@ -11,9 +11,11 @@
 #include <vector>
 
 TEST(hmm_rng_test, chiSquareGoodnessFitTest) {
-  // with identity transition and constant log_omegas, the sampled latent
+  // With identity transition and constant log_omegas, the sampled latent
   // states are identifcal and follow a Bernoulli distribution parameterized
   // by rho.
+  // The samples live on {1, 2}, so we need to deduct the error_index to
+  // to make the indices 0-indexed.
   using stan::math::hmm_latent_rng;
 
   int n_states = 2;
@@ -33,11 +35,13 @@ TEST(hmm_rng_test, chiSquareGoodnessFitTest) {
 
   std::vector<int> counts(2);
   std::vector<int> state;
+
   for (int i = 0; i < N; ++i) {
     state = hmm_latent_rng(log_omegas, Gamma, rho, rng);
     for (int j = 1; j < n_states; ++j)
       EXPECT_EQ(state[j], state[0]);
-    ++counts[state[0]];
+
+    ++counts[state[0] - stan::error_index::value];
   }
 
   assert_chi_squared(counts, expected, 1e-6);
@@ -49,7 +53,10 @@ TEST(hmm_rng_test, chiSquareGoodnessFitTest_symmetric) {
   // and transition matrix.
   // The initial conditions introduces an asymmetry in the first
   // state. The other hidden states all have probability 0.5.
-  // Note that the hidden states are also uncorrelated.
+  // Note 1: the hidden states are also uncorrelated.
+  // Note 2: as before, to do a chi-squared test, we subtract
+  //  the error_index from hidden_state, to produce variables
+  //  on {0, 1}.
   using stan::math::hmm_latent_rng;
 
   int n_states = 2;
@@ -79,13 +86,17 @@ TEST(hmm_rng_test, chiSquareGoodnessFitTest_symmetric) {
   int a = 0, b = 0, c = 0, d = 0;
   for (int i = 0; i < N; ++i) {
     states = hmm_latent_rng(log_omegas, Gamma, rho, rng);
-    ++counts_0[states[0]];
-    ++counts_1[states[1]];
+    ++counts_0[states[0] - stan::error_index::value];
+    ++counts_1[states[1] - stan::error_index::value];
     // product += states[0] * states[1];
-    a += (states[0] == 0 && states[1] == 0);
-    b += (states[0] == 0 && states[1] == 1);
-    c += (states[0] == 1 && states[1] == 0);
-    d += (states[0] == 1 && states[1] == 1);
+    a += (states[0] == stan::error_index::value
+          && states[1] == stan::error_index::value);
+    b += (states[0] == stan::error_index::value
+          && states[1] == 1 + stan::error_index::value);
+    c += (states[0] == 1 + stan::error_index::value
+          && states[1] == stan::error_index::value);
+    d += (states[0] == 1 + stan::error_index::value
+          && states[1] == 1 + stan::error_index::value);
   }
 
   // Test the marginal probabilities of each variable

@@ -3,11 +3,16 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/promote_scalar.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <cmath>
@@ -29,19 +34,32 @@ namespace math {
  * @return log probability density or log sum of probability densities
  * @throw std::domain_error if y is negative, alpha or sigma are nonpositive
  */
-template <bool propto, typename T_y, typename T_shape, typename T_scale>
+template <bool propto, typename T_y, typename T_shape, typename T_scale,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_shape, T_scale>* = nullptr>
 return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
                                                   const T_shape& alpha,
                                                   const T_scale& sigma) {
   using T_partials_return = partials_return_t<T_y, T_shape, T_scale>;
-  using std::log;
+  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
+  using T_alpha_ref = ref_type_if_t<!is_constant<T_shape>::value, T_shape>;
+  using T_sigma_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
   using std::pow;
   static const char* function = "weibull_lpdf";
-  check_finite(function, "Random variable", y);
-  check_positive_finite(function, "Shape parameter", alpha);
-  check_positive_finite(function, "Scale parameter", sigma);
   check_consistent_sizes(function, "Random variable", y, "Shape parameter",
                          alpha, "Scale parameter", sigma);
+
+  T_y_ref y_ref = y;
+  T_alpha_ref alpha_ref = alpha;
+  T_sigma_ref sigma_ref = sigma;
+
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  decltype(auto) alpha_val = to_ref(as_value_column_array_or_scalar(alpha_ref));
+  decltype(auto) sigma_val = to_ref(as_value_column_array_or_scalar(sigma_ref));
+
+  check_finite(function, "Random variable", y_val);
+  check_positive_finite(function, "Shape parameter", alpha_val);
+  check_positive_finite(function, "Scale parameter", sigma_val);
 
   if (size_zero(y, alpha, sigma)) {
     return 0;
@@ -50,92 +68,47 @@ return_type_t<T_y, T_shape, T_scale> weibull_lpdf(const T_y& y,
     return 0;
   }
 
-  T_partials_return logp(0);
-  operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, sigma);
+  operands_and_partials<T_y_ref, T_alpha_ref, T_sigma_ref> ops_partials(
+      y_ref, alpha_ref, sigma_ref);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_shape> alpha_vec(alpha);
-  scalar_seq_view<T_scale> sigma_vec(sigma);
+  if (sum(promote_scalar<int>(y_val < 0))) {
+    return LOG_ZERO;
+  }
+
+  const auto& log_y
+      = to_ref_if<include_summand<propto, T_y, T_shape>::value>(log(y_val));
+  const auto& log_sigma
+      = to_ref_if<include_summand<propto, T_shape, T_scale>::value>(
+          log(sigma_val));
+  const auto& inv_sigma
+      = to_ref_if<!is_constant_all<T_scale>::value>(inv(sigma_val));
+  const auto& y_div_sigma_pow_alpha
+      = to_ref_if<!is_constant_all<T_y, T_shape, T_scale>::value>(
+          pow(y_val * inv_sigma, alpha_val));
+
   size_t N = max_size(y, alpha, sigma);
-
-  for (size_t n = 0; n < N; n++) {
-    const T_partials_return y_dbl = value_of(y_vec[n]);
-    if (y_dbl < 0) {
-      return LOG_ZERO;
-    }
+  T_partials_return logp = -sum(y_div_sigma_pow_alpha);
+  if (include_summand<propto, T_shape>::value) {
+    logp += sum(log(alpha_val)) * N / size(alpha);
+  }
+  if (include_summand<propto, T_y, T_shape>::value) {
+    logp += sum((alpha_val - 1.0) * log_y) * N / max_size(alpha, y);
+  }
+  if (include_summand<propto, T_shape, T_scale>::value) {
+    logp -= sum(alpha_val * log_sigma) * N / max_size(alpha, sigma);
   }
 
-  VectorBuilder<include_summand<propto, T_shape>::value, T_partials_return,
-                T_shape>
-      log_alpha(size(alpha));
-  for (size_t i = 0; i < stan::math::size(alpha); i++) {
-    if (include_summand<propto, T_shape>::value) {
-      log_alpha[i] = log(value_of(alpha_vec[i]));
-    }
+  if (!is_constant_all<T_y>::value) {
+    ops_partials.edge1_.partials_
+        = (alpha_val * (1 - y_div_sigma_pow_alpha) - 1.0) / y_val;
   }
-
-  VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials_return,
-                T_y>
-      log_y(size(y));
-  for (size_t i = 0; i < stan::math::size(y); i++) {
-    if (include_summand<propto, T_y, T_shape>::value) {
-      log_y[i] = log(value_of(y_vec[i]));
-    }
+  if (!is_constant_all<T_shape>::value) {
+    ops_partials.edge2_.partials_
+        = inv(alpha_val) + (1.0 - y_div_sigma_pow_alpha) * (log_y - log_sigma);
   }
-
-  VectorBuilder<include_summand<propto, T_shape, T_scale>::value,
-                T_partials_return, T_scale>
-      log_sigma(size(sigma));
-  for (size_t i = 0; i < stan::math::size(sigma); i++) {
-    if (include_summand<propto, T_shape, T_scale>::value) {
-      log_sigma[i] = log(value_of(sigma_vec[i]));
-    }
-  }
-
-  VectorBuilder<include_summand<propto, T_y, T_shape, T_scale>::value,
-                T_partials_return, T_scale>
-      inv_sigma(size(sigma));
-  for (size_t i = 0; i < stan::math::size(sigma); i++) {
-    inv_sigma[i] = 1.0 / value_of(sigma_vec[i]);
-  }
-
-  VectorBuilder<include_summand<propto, T_y, T_shape, T_scale>::value,
-                T_partials_return, T_y, T_shape, T_scale>
-      y_div_sigma_pow_alpha(N);
-  for (size_t i = 0; i < N; i++) {
-    const T_partials_return y_dbl = value_of(y_vec[i]);
-    const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
-    y_div_sigma_pow_alpha[i] = pow(y_dbl * inv_sigma[i], alpha_dbl);
-  }
-
-  for (size_t n = 0; n < N; n++) {
-    const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
-    if (include_summand<propto, T_shape>::value) {
-      logp += log_alpha[n];
-    }
-    if (include_summand<propto, T_y, T_shape>::value) {
-      logp += (alpha_dbl - 1.0) * log_y[n];
-    }
-    if (include_summand<propto, T_shape, T_scale>::value) {
-      logp -= alpha_dbl * log_sigma[n];
-    }
-    logp -= y_div_sigma_pow_alpha[n];
-
-    if (!is_constant_all<T_y>::value) {
-      const T_partials_return inv_y = 1.0 / value_of(y_vec[n]);
-      ops_partials.edge1_.partials_[n]
-          += (alpha_dbl - 1.0) * inv_y
-             - alpha_dbl * y_div_sigma_pow_alpha[n] * inv_y;
-    }
-    if (!is_constant_all<T_shape>::value) {
-      ops_partials.edge2_.partials_[n]
-          += 1.0 / alpha_dbl
-             + (1.0 - y_div_sigma_pow_alpha[n]) * (log_y[n] - log_sigma[n]);
-    }
-    if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge3_.partials_[n]
-          += alpha_dbl * inv_sigma[n] * (y_div_sigma_pow_alpha[n] - 1.0);
-    }
+  if (!is_constant_all<T_scale>::value) {
+    ops_partials.edge3_.partials_
+        = alpha_val * inv_sigma * (y_div_sigma_pow_alpha - 1.0);
   }
   return ops_partials.build(logp);
 }

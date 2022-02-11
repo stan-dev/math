@@ -1,3 +1,5 @@
+#ifndef TEST_UNIT_MATH_MIX_PROB_HIGHER_ORDER_UTILS_HPP
+#define TEST_UNIT_MATH_MIX_PROB_HIGHER_ORDER_UTILS_HPP
 #include <cmath>
 #include <vector>
 #include <iomanip>
@@ -19,3 +21,4 @@ void test_grad_hess_eq(std::vector<Eigen::Matrix<double, -1, -1> > g_hess_1,
       EXPECT_NEAR(g_hess_1[m](i), g_hess_2[m](i), tolerance);
     }
 }
+#endif

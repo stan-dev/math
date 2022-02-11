@@ -26,7 +26,7 @@ namespace math {
 template <typename T_y, require_eigen_t<T_y>* = nullptr>
 inline void check_lower_triangular(const char* function, const char* name,
                                    const T_y& y) {
-  const Eigen::Ref<const plain_type_t<T_y>>& y_ref = y;
+  const auto& y_ref = to_ref(y);
   for (int n = 1; n < y.cols(); ++n) {
     for (int m = 0; m < n && m < y.rows(); ++m) {
       if (y_ref(m, n) != 0) {

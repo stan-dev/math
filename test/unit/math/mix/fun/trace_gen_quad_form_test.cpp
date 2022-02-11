@@ -10,6 +10,7 @@ TEST(mathMixMatFun, traceGenQuadForm) {
   Eigen::MatrixXd b00(0, 0);
   Eigen::MatrixXd c00(0, 0);
   stan::test::expect_ad(f, c00, a00, b00);
+  stan::test::expect_ad_matvar(f, c00, a00, b00);
 
   Eigen::MatrixXd a11(1, 1);
   a11 << 1;
@@ -18,6 +19,7 @@ TEST(mathMixMatFun, traceGenQuadForm) {
   Eigen::MatrixXd c11(1, 1);
   c11 << -3;
   stan::test::expect_ad(f, c11, a11, b11);
+  stan::test::expect_ad_matvar(f, c11, a11, b11);
 
   stan::test::ad_tolerances tols;
   tols.hessian_hessian_ = relative_tolerance(0.1, 0.15);
@@ -30,21 +32,26 @@ TEST(mathMixMatFun, traceGenQuadForm) {
   Eigen::MatrixXd c(2, 2);
   c.setIdentity(2, 2);
   stan::test::expect_ad(tols, f, c, a, b);
+  stan::test::expect_ad_matvar(f, c, a, b);
 
   // exception tests
   // non-square second arg
   Eigen::MatrixXd a34(3, 4);
   stan::test::expect_ad(tols, f, c, a34, b);
+  stan::test::expect_ad_matvar(tols, f, c, a34, b);
 
   // non-square first arg
   Eigen::MatrixXd c23(2, 3);
   stan::test::expect_ad(tols, f, c23, a, b);
+  stan::test::expect_ad_matvar(tols, f, c23, a, b);
 
   // a, b not multiplicable
   Eigen::MatrixXd b32(3, 2);
   stan::test::expect_ad(tols, f, c, a, b32);
+  stan::test::expect_ad_matvar(tols, f, c, a, b32);
 
   // b, c not multiplicable
   Eigen::MatrixXd b43(4, 3);
   stan::test::expect_ad(tols, f, c, a, b43);
+  stan::test::expect_ad_matvar(tols, f, c, a, b43);
 }

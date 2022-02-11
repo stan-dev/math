@@ -27,7 +27,9 @@ namespace math {
  * @return True if the first variable's value is not the same as the
  * second's.
  */
-inline bool operator!=(var a, var b) { return a.val() != b.val(); }
+inline bool operator!=(const var& a, const var& b) {
+  return a.val() != b.val();
+}
 
 /**
  * Inequality operator comparing a variable's value and a double
@@ -40,7 +42,7 @@ inline bool operator!=(var a, var b) { return a.val() != b.val(); }
  * second value.
  */
 template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
-inline bool operator!=(var a, Arith b) {
+inline bool operator!=(const var& a, Arith b) {
   return a.val() != b;
 }
 
@@ -55,7 +57,7 @@ inline bool operator!=(var a, Arith b) {
  * second variable's value.
  */
 template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
-inline bool operator!=(Arith a, var b) {
+inline bool operator!=(Arith a, const var& b) {
   return a != b.val();
 }
 

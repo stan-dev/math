@@ -1,3 +1,5 @@
+#ifndef TEST_UNIT_MATH_PRIM_PROB_AGRAD_DISTRIBUTIONS_MULTI_GP
+#define TEST_UNIT_MATH_PRIM_PROB_AGRAD_DISTRIBUTIONS_MULTI_GP
 class agrad_distributions_multi_gp : public ::testing::Test {
  protected:
   virtual void SetUp() {
@@ -24,3 +26,4 @@ class agrad_distributions_multi_gp : public ::testing::Test {
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Sigma;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Sigma2;
 };
+#endif

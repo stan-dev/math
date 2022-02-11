@@ -2,7 +2,7 @@
 #define STAN_MATH_REV_FUN_LOG_SOFTMAX_HPP
 
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/typedefs.hpp>
+#include <stan/math/rev/core/typedefs.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
@@ -43,55 +43,86 @@ class log_softmax_elt_vari : public vari {
     }
   }
 };
-
 }  // namespace internal
 
 /**
- * Return the log softmax of the specified vector or container of vectors.
+ * Return the log softmax of the specified vector
  *
- * The gradient calculations are unfolded.
- *
- * @tparam T Type of input vector or matrix.
- * @param[in] x Unconstrained input vector.
- * @return Softmax of the input.
- * @throw std::domain_error If the input vector is size 0.
+ * @tparam T type of input
+ * @param x input
+ * @return softmax of the input
+ * @throw std::domain_error if the input size is 0
  */
-template <typename T, require_container_st<is_var, T>* = nullptr>
+template <typename T, require_eigen_st<is_var, T>* = nullptr>
+auto log_softmax(const T& x) {
+  const int a_size = x.size();
+
+  check_nonzero_size("log_softmax", "x", x);
+
+  const auto& x_ref = to_ref(x);
+
+  vari** x_vi_array
+      = ChainableStack::instance_->memalloc_.alloc_array<vari*>(a_size);
+  Eigen::Map<vector_vi>(x_vi_array, a_size) = x_ref.vi();
+
+  vector_d x_d = x_ref.val();
+
+  // fold logic of math::softmax() and math::log_softmax()
+  // to save computations
+
+  vector_d diff = (x_d.array() - x_d.maxCoeff());
+  vector_d softmax_x_d = diff.array().exp();
+  double sum = softmax_x_d.sum();
+  vector_d log_softmax_x_d = diff.array() - std::log(sum);
+
+  // end fold
+  double* softmax_x_d_array
+      = ChainableStack::instance_->memalloc_.alloc_array<double>(a_size);
+  Eigen::Map<vector_d>(softmax_x_d_array, a_size) = softmax_x_d.array() / sum;
+
+  plain_type_t<T> log_softmax_x(a_size);
+  for (int k = 0; k < a_size; ++k) {
+    log_softmax_x(k) = var(new internal::log_softmax_elt_vari(
+        log_softmax_x_d[k], x_vi_array, softmax_x_d_array, a_size, k));
+  }
+  return log_softmax_x;
+}
+
+/**
+ * Return the log softmax of the specified vector
+ *
+ * @tparam T type of input
+ * @param x input
+ * @return softmax of the input
+ * @throw std::domain_error if the input size is 0
+ */
+template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto log_softmax(const T& x) {
-  return apply_vector_unary<ref_type_t<T>>::apply(
-      to_ref(x), [&](const auto& alpha) {
-        const int a_size = alpha.size();
+  check_nonzero_size("log_softmax", "x", x);
 
-        check_nonzero_size("log_softmax", "alpha", alpha);
+  const auto& theta = (x.val().array() - x.val().maxCoeff()).eval();
 
-        vari** alpha_vi_array
-            = ChainableStack::instance_->memalloc_.alloc_array<vari*>(a_size);
-        Eigen::Map<vector_vi>(alpha_vi_array, a_size) = alpha.vi();
-
-        vector_d alpha_d = alpha.val();
-
-        // fold logic of math::softmax() and math::log_softmax()
-        // to save computations
-
-        vector_d diff = (alpha_d.array() - alpha_d.maxCoeff());
-        vector_d softmax_alpha_d = diff.array().exp();
-        double sum = softmax_alpha_d.sum();
-        vector_d log_softmax_alpha_d = diff.array() - std::log(sum);
-
-        // end fold
-        double* softmax_alpha_d_array
-            = ChainableStack::instance_->memalloc_.alloc_array<double>(a_size);
-        Eigen::Map<vector_d>(softmax_alpha_d_array, a_size)
-            = softmax_alpha_d.array() / sum;
-
-        vector_v log_softmax_alpha(a_size);
-        for (int k = 0; k < a_size; ++k) {
-          log_softmax_alpha(k) = var(new internal::log_softmax_elt_vari(
-              log_softmax_alpha_d[k], alpha_vi_array, softmax_alpha_d_array,
-              a_size, k));
-        }
-        return log_softmax_alpha;
+  return make_callback_var(
+      (theta.array() - log(theta.exp().sum())).matrix(),
+      [x](const auto& res) mutable {
+        x.adj().noalias()
+            += res.adj() - (res.adj().sum() * res.val().array().exp()).matrix();
       });
+}
+
+/**
+ * Return the log softmax of the specified `std::vector` or
+ * `std::vector` of containers.
+ *
+ * @tparam T type of input
+ * @param x input
+ * @return softmax of the input
+ * @throw std::domain_error if the input size is 0
+ */
+template <typename T, require_std_vector_st<is_var, T>* = nullptr>
+inline auto log_softmax(const T& x) {
+  return apply_vector_unary<T>::apply(
+      x, [](const auto& alpha) { return log_softmax(alpha); });
 }
 
 }  // namespace math

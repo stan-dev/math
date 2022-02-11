@@ -13,6 +13,8 @@ TEST(MathMixMatFun, mdivideLeftTri) {
   Eigen::VectorXd v0(0);
   stan::test::expect_ad(f, m00, v0);
   stan::test::expect_ad(f, m00, m00);
+  stan::test::expect_ad_matvar(f, m00, v0);
+  stan::test::expect_ad_matvar(f, m00, m00);
 
   // signature 1 of 2: matrix-matrix
   Eigen::MatrixXd aa(1, 1);
@@ -21,12 +23,16 @@ TEST(MathMixMatFun, mdivideLeftTri) {
   bb << 2;
   stan::test::expect_ad(f, aa, bb);
   stan::test::expect_ad(f_up, aa, bb);
+  stan::test::expect_ad_matvar(f, aa, bb);
+  stan::test::expect_ad_matvar(f_up, aa, bb);
 
   // signature 2 of 2: matrix-vector
   Eigen::VectorXd cc(1);
   cc << 3;
   stan::test::expect_ad(f, aa, cc);
   stan::test::expect_ad(f_up, aa, cc);
+  stan::test::expect_ad_matvar(f, aa, cc);
+  stan::test::expect_ad_matvar(f_up, aa, cc);
 
   Eigen::MatrixXd a(2, 2);
   a << 2, 0, 5, 7;
@@ -41,6 +47,12 @@ TEST(MathMixMatFun, mdivideLeftTri) {
   stan::test::expect_ad(f_up, a_tr, a);
   stan::test::expect_ad(f_up, a_tr, b);
   stan::test::expect_ad(f_up, a_tr, c);
+  stan::test::expect_ad_matvar(f, a, a);
+  stan::test::expect_ad_matvar(f, a, b);
+  stan::test::expect_ad_matvar(f, a, c);
+  stan::test::expect_ad_matvar(f_up, a_tr, a);
+  stan::test::expect_ad_matvar(f_up, a_tr, b);
+  stan::test::expect_ad_matvar(f_up, a_tr, c);
 
   Eigen::MatrixXd y(3, 3);
   y << 1, 0, 0, 2, 3, 0, 4, 5, 6;
@@ -53,12 +65,17 @@ TEST(MathMixMatFun, mdivideLeftTri) {
   stan::test::expect_ad(f, u, y);
   stan::test::expect_ad(f_up, y_tr, z);
   stan::test::expect_ad(f_up, y_tr, y);
+  stan::test::expect_ad_matvar(f, y, z);
+  stan::test::expect_ad_matvar(f, u, y);
+  stan::test::expect_ad_matvar(f_up, y_tr, z);
+  stan::test::expect_ad_matvar(f_up, y_tr, y);
 
   Eigen::MatrixXd uu(2, 2);
   uu << 3, 0, 1, 4;
   Eigen::MatrixXd vv(2, 2);
   vv << 2, 3, 5, 7;
   stan::test::expect_ad(f, uu, vv);
+  stan::test::expect_ad_matvar(f, uu, vv);
 
   // exception cases
   Eigen::MatrixXd d(3, 2);
@@ -68,6 +85,9 @@ TEST(MathMixMatFun, mdivideLeftTri) {
   stan::test::expect_ad(f, d, b);
   stan::test::expect_ad(f, d, c);
   stan::test::expect_ad(f, a, e);
+  stan::test::expect_ad_matvar(f, d, b);
+  stan::test::expect_ad_matvar(f, d, c);
+  stan::test::expect_ad_matvar(f, a, e);
 
   Eigen::MatrixXd m33 = Eigen::MatrixXd::Zero(3, 3);
   Eigen::MatrixXd m44 = Eigen::MatrixXd::Zero(4, 4);
@@ -77,7 +97,10 @@ TEST(MathMixMatFun, mdivideLeftTri) {
   // exceptions: wrong sizes
   stan::test::expect_ad(f, m33, m44);
   stan::test::expect_ad(f, m33, v4);
+  stan::test::expect_ad_matvar(f, m33, m44);
+  stan::test::expect_ad_matvar(f, m33, v4);
 
   // exceptions: wrong types
   stan::test::expect_ad(f, m33, rv3);
+  stan::test::expect_ad_matvar(f, m33, rv3);
 }

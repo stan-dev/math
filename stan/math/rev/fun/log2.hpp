@@ -9,14 +9,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class log2_vari : public op_v_vari {
- public:
-  explicit log2_vari(vari* avi) : op_v_vari(log2(avi->val_), avi) {}
-  void chain() { avi_->adj_ += adj_ / (LOG_TWO * avi_->val_); }
-};
-}  // namespace internal
-
 /**
  * Returns the base 2 logarithm of the specified variable (C99).
  *
@@ -44,10 +36,17 @@ class log2_vari : public op_v_vari {
    \end{cases}
    \f]
  *
- * @param a Specified variable.
+ * @tparam T Arithmetic or a type inheriting from `EigenBase`.
+ * @param a The variable.
  * @return Base 2 logarithm of the variable.
  */
-inline var log2(const var& a) { return var(new internal::log2_vari(a.vi_)); }
+template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
+inline auto log2(const var_value<T>& a) {
+  return make_callback_var(log2(a.val()), [a](auto& vi) mutable {
+    as_array_or_scalar(a.adj()) += as_array_or_scalar(vi.adj())
+                                   / (LOG_TWO * as_array_or_scalar(a.val()));
+  });
+}
 
 }  // namespace math
 }  // namespace stan

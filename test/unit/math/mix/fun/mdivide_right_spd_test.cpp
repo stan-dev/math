@@ -69,4 +69,6 @@ TEST(MathMixMatFun, mdivideRightSpd) {
 
   // exceptions: wrong types
   stan::test::expect_ad(f, v3, m33);
+
+  stan::math::recover_memory();
 }

@@ -4,8 +4,8 @@
 void expect_variance(const Eigen::MatrixXd& m) {
   auto f = [](const auto& x) { return stan::math::variance(x); };
   Eigen::VectorXd v = stan::test::to_vector(m);
-  Eigen::RowVectorXd rv = stan::test::to_row_vector(m);
-  std::vector<double> sv = stan::test::to_std_vector(m);
+  Eigen::RowVectorXd rv = stan::math::to_row_vector(m);
+  std::vector<double> sv = stan::math::to_array_1d(m);
 
   stan::test::ad_tolerances tols;
   tols.hessian_hessian_ = 1e-1;
@@ -14,6 +14,10 @@ void expect_variance(const Eigen::MatrixXd& m) {
   stan::test::expect_ad(tols, f, v);
   stan::test::expect_ad(tols, f, rv);
   stan::test::expect_ad(tols, f, sv);
+
+  stan::test::expect_ad_matvar(tols, f, m);
+  stan::test::expect_ad_matvar(tols, f, v);
+  stan::test::expect_ad_matvar(tols, f, rv);
 }
 
 TEST(MathMixMatFun, variance) {

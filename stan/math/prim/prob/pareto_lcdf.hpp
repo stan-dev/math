@@ -3,12 +3,17 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/promote_scalar.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <cmath>
@@ -16,18 +21,18 @@
 namespace stan {
 namespace math {
 
-template <typename T_y, typename T_scale, typename T_shape>
+template <typename T_y, typename T_scale, typename T_shape,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_scale, T_shape>* = nullptr>
 return_type_t<T_y, T_scale, T_shape> pareto_lcdf(const T_y& y,
                                                  const T_scale& y_min,
                                                  const T_shape& alpha) {
   using T_partials_return = partials_return_t<T_y, T_scale, T_shape>;
-  using std::exp;
-  using std::log;
+  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
+  using T_y_min_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
+  using T_alpha_ref = ref_type_if_t<!is_constant<T_shape>::value, T_shape>;
+  using std::isinf;
   static const char* function = "pareto_lcdf";
-  check_not_nan(function, "Random variable", y);
-  check_nonnegative(function, "Random variable", y);
-  check_positive_finite(function, "Scale parameter", y_min);
-  check_positive_finite(function, "Shape parameter", alpha);
   check_consistent_sizes(function, "Random variable", y, "Scale parameter",
                          y_min, "Shape parameter", alpha);
 
@@ -35,51 +40,59 @@ return_type_t<T_y, T_scale, T_shape> pareto_lcdf(const T_y& y,
     return 0;
   }
 
-  T_partials_return P(0.0);
-  operands_and_partials<T_y, T_scale, T_shape> ops_partials(y, y_min, alpha);
+  T_y_ref y_ref = y;
+  T_y_min_ref y_min_ref = y_min;
+  T_alpha_ref alpha_ref = alpha;
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_scale> y_min_vec(y_min);
-  scalar_seq_view<T_shape> alpha_vec(alpha);
-  size_t N = max_size(y, y_min, alpha);
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  decltype(auto) y_min_val = to_ref(as_value_column_array_or_scalar(y_min_ref));
+  decltype(auto) alpha_val = to_ref(as_value_column_array_or_scalar(alpha_ref));
+
+  check_nonnegative(function, "Random variable", y_val);
+  check_positive_finite(function, "Scale parameter", y_min_val);
+  check_positive_finite(function, "Shape parameter", alpha_val);
+
+  operands_and_partials<T_y_ref, T_y_min_ref, T_alpha_ref> ops_partials(
+      y_ref, y_min_ref, alpha_ref);
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < stan::math::size(y); i++) {
-    if (value_of(y_vec[i]) < value_of(y_min_vec[i])) {
-      return ops_partials.build(negative_infinity());
-    }
+  if (sum(promote_scalar<int>(y_val < y_min_val))) {
+    return ops_partials.build(negative_infinity());
+  }
+  if (sum(promote_scalar<int>(isinf(y_val)))) {
+    return ops_partials.build(0.0);
   }
 
-  for (size_t n = 0; n < N; n++) {
-    // Explicit results for extreme values
-    // The gradients are technically ill-defined, but treated as zero
-    if (value_of(y_vec[n]) == INFTY) {
-      return ops_partials.build(0.0);
-    }
+  const auto& log_quot
+      = to_ref_if<!is_constant_all<T_y, T_scale, T_shape>::value>(
+          log(y_min_val / y_val));
+  const auto& exp_prod
+      = to_ref_if<!is_constant_all<T_y, T_scale, T_shape>::value>(
+          exp(alpha_val * log_quot));
+  T_partials_return P = sum(log(1 - exp_prod));
 
-    const T_partials_return log_dbl
-        = log(value_of(y_min_vec[n]) / value_of(y_vec[n]));
-    const T_partials_return y_min_inv_dbl = 1.0 / value_of(y_min_vec[n]);
-    const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
-
-    const T_partials_return Pn = 1.0 - exp(alpha_dbl * log_dbl);
-
-    P += log(Pn);
-
-    if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n]
-          += alpha_dbl * y_min_inv_dbl * exp((alpha_dbl + 1) * log_dbl) / Pn;
-    }
-    if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge2_.partials_[n]
-          -= alpha_dbl * y_min_inv_dbl * exp(alpha_dbl * log_dbl) / Pn;
+  if (!is_constant_all<T_y, T_scale, T_shape>::value) {
+    const auto& common_deriv = to_ref_if<(!is_constant_all<T_y, T_scale>::value
+                                          && !is_constant_all<T_shape>::value)>(
+        exp_prod / (1 - exp_prod));
+    if (!is_constant_all<T_y, T_scale>::value) {
+      const auto& y_min_inv = inv(y_min_val);
+      auto common_deriv2 = to_ref_if<(!is_constant_all<T_y>::value
+                                      && !is_constant_all<T_scale>::value)>(
+          -alpha_val * y_min_inv * common_deriv);
+      if (!is_constant_all<T_y>::value) {
+        ops_partials.edge1_.partials_ = -common_deriv2 * exp(log_quot);
+      }
+      if (!is_constant_all<T_scale>::value) {
+        ops_partials.edge2_.partials_ = std::move(common_deriv2);
+      }
     }
     if (!is_constant_all<T_shape>::value) {
-      ops_partials.edge3_.partials_[n]
-          -= exp(alpha_dbl * log_dbl) * log_dbl / Pn;
+      ops_partials.edge3_.partials_ = -common_deriv * log_quot;
     }
   }
+
   return ops_partials.build(P);
 }
 

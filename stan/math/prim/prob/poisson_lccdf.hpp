@@ -3,14 +3,19 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/gamma_p.hpp>
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/promote_scalar.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <cmath>
@@ -22,66 +27,38 @@ namespace math {
 template <typename T_n, typename T_rate>
 return_type_t<T_rate> poisson_lccdf(const T_n& n, const T_rate& lambda) {
   using T_partials_return = partials_return_t<T_n, T_rate>;
-  using std::exp;
-  using std::log;
+  using T_n_ref = ref_type_if_t<!is_constant<T_n>::value, T_n>;
+  using T_lambda_ref = ref_type_if_t<!is_constant<T_rate>::value, T_rate>;
   static const char* function = "poisson_lccdf";
-  check_not_nan(function, "Rate parameter", lambda);
-  check_nonnegative(function, "Rate parameter", lambda);
   check_consistent_sizes(function, "Random variable", n, "Rate parameter",
                          lambda);
+
+  T_n_ref n_ref = n;
+  T_lambda_ref lambda_ref = lambda;
+
+  decltype(auto) n_val = to_ref(as_value_column_array_or_scalar(n_ref));
+  decltype(auto) lambda_val
+      = to_ref(as_value_column_array_or_scalar(lambda_ref));
+
+  check_nonnegative(function, "Rate parameter", lambda_val);
 
   if (size_zero(n, lambda)) {
     return 0;
   }
 
-  T_partials_return P(0.0);
-  operands_and_partials<T_rate> ops_partials(lambda);
+  operands_and_partials<T_lambda_ref> ops_partials(lambda_ref);
 
-  scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_rate> lambda_vec(lambda);
-  size_t size_n = stan::math::size(n);
-  size_t size_lambda = stan::math::size(lambda);
-  size_t max_size_seq_view = max_size(n, lambda);
-
-  // Explicit return for extreme values
-  // The gradients are technically ill-defined, but treated as neg infinity
-  for (size_t i = 0; i < size_n; i++) {
-    if (value_of(n_vec[i]) < 0) {
-      return ops_partials.build(0.0);
-    }
+  if (sum(promote_scalar<int>(n_val < 0))) {
+    return ops_partials.build(0.0);
   }
 
-  VectorBuilder<!is_constant_all<T_rate>::value, T_partials_return, T_n>
-      lgamma_n_plus_one(size_n);
-  VectorBuilder<!is_constant_all<T_rate>::value, T_partials_return, T_rate>
-      log_lambda(size_lambda);
+  const auto& log_Pi = to_ref_if<!is_constant_all<T_rate>::value>(
+      log(gamma_p(n_val + 1.0, lambda_val)));
+  T_partials_return P = sum(log_Pi);
 
   if (!is_constant_all<T_rate>::value) {
-    for (size_t i = 0; i < size_n; i++) {
-      lgamma_n_plus_one[i] = lgamma(n_vec[i] + 1.0);
-    }
-    for (size_t i = 0; i < size_lambda; i++) {
-      log_lambda[i] = log(value_of(lambda_vec[i]));
-    }
-  }
-
-  for (size_t i = 0; i < max_size_seq_view; i++) {
-    // Explicit results for extreme values
-    // The gradients are technically ill-defined, but treated as zero
-    if (value_of(n_vec[i]) == std::numeric_limits<int>::max()) {
-      return ops_partials.build(negative_infinity());
-    }
-
-    const T_partials_return n_dbl = value_of(n_vec[i]);
-    const T_partials_return lambda_dbl = value_of(lambda_vec[i]);
-    const T_partials_return log_Pi = log(gamma_p(n_dbl + 1, lambda_dbl));
-
-    P += log_Pi;
-
-    if (!is_constant_all<T_rate>::value) {
-      ops_partials.edge1_.partials_[i] += exp(n_dbl * log_lambda[i] - lambda_dbl
-                                              - lgamma_n_plus_one[i] - log_Pi);
-    }
+    ops_partials.edge1_.partials_ = exp(n_val * log(lambda_val) - lambda_val
+                                        - lgamma(n_val + 1.0) - log_Pi);
   }
 
   return ops_partials.build(P);

@@ -24,4 +24,10 @@ TEST(mathMixMatFun, log) {
   stan::test::expect_ad(f, std::complex<double>{-0.0, -2.1});
   stan::test::expect_ad(f, std::complex<double>{2.1, -0.0});
   // (negative real and zero imaginary illegal)
+
+  std::vector<double> com_args = stan::test::internal::common_nonzero_args();
+  std::vector<double> args{0.1, 2.5, 5.5};
+
+  stan::test::expect_ad_vector_matvar(f, stan::math::to_vector(com_args));
+  stan::test::expect_ad_vector_matvar(f, stan::math::to_vector(args));
 }

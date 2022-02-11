@@ -15,9 +15,9 @@ namespace math {
  * @param m Specified matrix.
  * @return Diagonal of the matrix.
  */
-template <typename T, typename = require_eigen_t<T>>
+template <typename T, require_matrix_t<T>* = nullptr>
 inline auto diagonal(const T& m) {
-  return m.diagonal().eval();
+  return m.diagonal();
 }
 
 }  // namespace math

@@ -24,13 +24,13 @@ class gamma_p_vv_vari : public op_vv_vari {
     using std::log;
 
     if (is_inf(avi_->val_)) {
-      avi_->adj_ += NOT_A_NUMBER;
-      bvi_->adj_ += NOT_A_NUMBER;
+      avi_->adj_ = NOT_A_NUMBER;
+      bvi_->adj_ = NOT_A_NUMBER;
       return;
     }
     if (is_inf(bvi_->val_)) {
-      avi_->adj_ += NOT_A_NUMBER;
-      bvi_->adj_ += NOT_A_NUMBER;
+      avi_->adj_ = NOT_A_NUMBER;
+      bvi_->adj_ = NOT_A_NUMBER;
       return;
     }
 
@@ -54,11 +54,11 @@ class gamma_p_vd_vari : public op_vd_vari {
       : op_vd_vari(gamma_p(avi->val_, b), avi, b) {}
   void chain() {
     if (is_inf(avi_->val_)) {
-      avi_->adj_ += NOT_A_NUMBER;
+      avi_->adj_ = NOT_A_NUMBER;
       return;
     }
     if (is_inf(bd_)) {
-      avi_->adj_ += NOT_A_NUMBER;
+      avi_->adj_ = NOT_A_NUMBER;
       return;
     }
 
@@ -78,11 +78,11 @@ class gamma_p_dv_vari : public op_dv_vari {
       : op_dv_vari(gamma_p(a, bvi->val_), a, bvi) {}
   void chain() {
     if (is_inf(ad_)) {
-      bvi_->adj_ += NOT_A_NUMBER;
+      bvi_->adj_ = NOT_A_NUMBER;
       return;
     }
     if (is_inf(bvi_->val_)) {
-      bvi_->adj_ += NOT_A_NUMBER;
+      bvi_->adj_ = NOT_A_NUMBER;
       return;
     }
 

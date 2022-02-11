@@ -8,14 +8,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class cbrt_vari : public op_v_vari {
- public:
-  explicit cbrt_vari(vari* avi) : op_v_vari(cbrt(avi->val_), avi) {}
-  void chain() { avi_->adj_ += adj_ / (3.0 * val_ * val_); }
-};
-}  // namespace internal
-
 /**
  * Returns the cube root of the specified variable (C99).
  *
@@ -42,7 +34,26 @@ class cbrt_vari : public op_v_vari {
  * @param a Specified variable.
  * @return Cube root of the variable.
  */
-inline var cbrt(const var& a) { return var(new internal::cbrt_vari(a.vi_)); }
+inline var cbrt(const var& a) {
+  return make_callback_var(cbrt(a.val()), [a](const auto& vi) mutable {
+    a.adj() += vi.adj() / (3.0 * vi.val() * vi.val());
+  });
+}
+
+/**
+ * Returns the cube root of the specified variable (C99).
+ * @tparam Varmat a `var_value` with inner Eigen type
+ * @param a Specified variable.
+ * @return Cube root of the variable.
+ */
+template <typename VarMat, require_var_matrix_t<VarMat>* = nullptr>
+inline auto cbrt(const VarMat& a) {
+  return make_callback_var(
+      a.val().unaryExpr([](const auto x) { return cbrt(x); }),
+      [a](const auto& vi) mutable {
+        a.adj().array() += vi.adj().array() / (3.0 * vi.val().array().square());
+      });
+}
 
 }  // namespace math
 }  // namespace stan

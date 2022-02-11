@@ -92,3 +92,16 @@ TEST(mathMixScalFun, gammaP_pos_inf) {
     }
   }
 }
+
+TEST(mathMixScalFun, gammaP_vec) {
+  auto f = [](const auto& x1, const auto& x2) {
+    using stan::math::gamma_p;
+    return gamma_p(x1, x2);
+  };
+
+  Eigen::VectorXd in1(2);
+  in1 << 3, 1;
+  Eigen::VectorXd in2(2);
+  in2 << 0.5, 3.4;
+  stan::test::expect_ad_vectorized_binary(f, in1, in2);
+}

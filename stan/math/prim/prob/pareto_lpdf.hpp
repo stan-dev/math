@@ -3,11 +3,16 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/promote_scalar.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <cmath>
@@ -16,98 +21,74 @@ namespace stan {
 namespace math {
 
 // Pareto(y|y_m, alpha)  [y > y_m;  y_m > 0;  alpha > 0]
-template <bool propto, typename T_y, typename T_scale, typename T_shape>
+template <bool propto, typename T_y, typename T_scale, typename T_shape,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_y, T_scale, T_shape>* = nullptr>
 return_type_t<T_y, T_scale, T_shape> pareto_lpdf(const T_y& y,
                                                  const T_scale& y_min,
                                                  const T_shape& alpha) {
   using T_partials_return = partials_return_t<T_y, T_scale, T_shape>;
-  using std::log;
+  using T_y_ref = ref_type_if_t<!is_constant<T_y>::value, T_y>;
+  using T_y_min_ref = ref_type_if_t<!is_constant<T_scale>::value, T_scale>;
+  using T_alpha_ref = ref_type_if_t<!is_constant<T_shape>::value, T_shape>;
   static const char* function = "pareto_lpdf";
-  check_not_nan(function, "Random variable", y);
-  check_positive_finite(function, "Scale parameter", y_min);
-  check_positive_finite(function, "Shape parameter", alpha);
   check_consistent_sizes(function, "Random variable", y, "Scale parameter",
                          y_min, "Shape parameter", alpha);
-
   if (size_zero(y, y_min, alpha)) {
     return 0;
   }
+
+  T_y_ref y_ref = y;
+  T_y_min_ref y_min_ref = y_min;
+  T_alpha_ref alpha_ref = alpha;
+
+  decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
+  decltype(auto) y_min_val = to_ref(as_value_column_array_or_scalar(y_min_ref));
+  decltype(auto) alpha_val = to_ref(as_value_column_array_or_scalar(alpha_ref));
+
+  check_not_nan(function, "Random variable", y_val);
+  check_positive_finite(function, "Scale parameter", y_min_val);
+  check_positive_finite(function, "Shape parameter", alpha_val);
+
   if (!include_summand<propto, T_y, T_scale, T_shape>::value) {
     return 0;
   }
 
-  T_partials_return logp(0);
-  operands_and_partials<T_y, T_scale, T_shape> ops_partials(y, y_min, alpha);
+  if (sum(promote_scalar<int>(y_val < y_min_val))) {
+    return LOG_ZERO;
+  }
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_scale> y_min_vec(y_min);
-  scalar_seq_view<T_shape> alpha_vec(alpha);
+  const auto& log_y = to_ref_if<!is_constant_all<T_shape>::value>(log(y_val));
+
   size_t N = max_size(y, y_min, alpha);
-
-  for (size_t n = 0; n < N; n++) {
-    if (y_vec[n] < y_min_vec[n]) {
-      return LOG_ZERO;
-    }
-  }
-
-  VectorBuilder<include_summand<propto, T_y, T_shape>::value, T_partials_return,
-                T_y>
-      log_y(size(y));
-  if (include_summand<propto, T_y, T_shape>::value) {
-    for (size_t n = 0; n < stan::math::size(y); n++) {
-      log_y[n] = log(value_of(y_vec[n]));
-    }
-  }
-
-  VectorBuilder<!is_constant_all<T_y, T_shape>::value, T_partials_return, T_y>
-      inv_y(size(y));
-  if (!is_constant_all<T_y, T_shape>::value) {
-    for (size_t n = 0; n < stan::math::size(y); n++) {
-      inv_y[n] = 1 / value_of(y_vec[n]);
-    }
-  }
-
-  VectorBuilder<include_summand<propto, T_scale, T_shape>::value,
-                T_partials_return, T_scale>
-      log_y_min(size(y_min));
-  if (include_summand<propto, T_scale, T_shape>::value) {
-    for (size_t n = 0; n < stan::math::size(y_min); n++) {
-      log_y_min[n] = log(value_of(y_min_vec[n]));
-    }
-  }
-
-  VectorBuilder<include_summand<propto, T_shape>::value, T_partials_return,
-                T_shape>
-      log_alpha(size(alpha));
+  T_partials_return logp(0);
   if (include_summand<propto, T_shape>::value) {
-    for (size_t n = 0; n < stan::math::size(alpha); n++) {
-      log_alpha[n] = log(value_of(alpha_vec[n]));
-    }
+    logp = sum(log(alpha_val)) * N / size(alpha);
+  }
+  if (include_summand<propto, T_y, T_shape>::value) {
+    logp -= sum(alpha_val * log_y + log_y) * N / max_size(alpha, y);
   }
 
-  for (size_t n = 0; n < N; n++) {
-    const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
-    if (include_summand<propto, T_shape>::value) {
-      logp += log_alpha[n];
-    }
-    if (include_summand<propto, T_scale, T_shape>::value) {
-      logp += alpha_dbl * log_y_min[n];
-    }
-    if (include_summand<propto, T_y, T_shape>::value) {
-      logp -= alpha_dbl * log_y[n] + log_y[n];
-    }
-
-    if (!is_constant_all<T_y>::value) {
-      ops_partials.edge1_.partials_[n] -= alpha_dbl * inv_y[n] + inv_y[n];
-    }
-    if (!is_constant_all<T_scale>::value) {
-      ops_partials.edge2_.partials_[n] += alpha_dbl / value_of(y_min_vec[n]);
-    }
+  operands_and_partials<T_y_ref, T_y_min_ref, T_alpha_ref> ops_partials(
+      y_ref, y_min_ref, alpha_ref);
+  if (!is_constant_all<T_y>::value) {
+    const auto& inv_y = inv(y_val);
+    ops_partials.edge1_.partials_
+        = -(alpha_val * inv_y + inv_y) * N / max_size(alpha, y);
+  }
+  if (!is_constant_all<T_scale>::value) {
+    ops_partials.edge2_.partials_
+        = alpha_val / y_min_val * N / max_size(alpha, y_min);
+  }
+  if (include_summand<propto, T_scale, T_shape>::value) {
+    const auto& log_y_min
+        = to_ref_if<!is_constant_all<T_shape>::value>(log(y_min_val));
+    logp += sum(alpha_val * log_y_min) * N / max_size(alpha, y_min);
     if (!is_constant_all<T_shape>::value) {
-      ops_partials.edge3_.partials_[n]
-          += 1 / alpha_dbl + log_y_min[n] - log_y[n];
+      ops_partials.edge3_.partials_ = inv(alpha_val) + log_y_min - log_y;
     }
   }
+
   return ops_partials.build(logp);
 }
 

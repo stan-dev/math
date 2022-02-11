@@ -18,13 +18,14 @@ namespace internal {
 template <int call_id, typename F, typename T_shared_param,
           typename T_job_param>
 Eigen::Matrix<return_type_t<T_shared_param, T_job_param>, Eigen::Dynamic, 1>
-map_rect_mpi(
-    const Eigen::Matrix<T_shared_param, Eigen::Dynamic, 1>& shared_params,
-    const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>&
-        job_params,
-    const std::vector<std::vector<double>>& x_r,
-    const std::vector<std::vector<int>>& x_i, std::ostream* msgs = nullptr) {
-  using ReduceF = internal::map_rect_reduce<F, T_shared_param, T_job_param>;
+map_rect_mpi(const T_shared_param& shared_params,
+             const std::vector<Eigen::Matrix<T_job_param, Eigen::Dynamic, 1>>&
+                 job_params,
+             const std::vector<std::vector<double>>& x_r,
+             const std::vector<std::vector<int>>& x_i,
+             std::ostream* msgs = nullptr) {
+  using ReduceF = internal::map_rect_reduce<F, scalar_type_t<T_shared_param>,
+                                            T_job_param>;
   using CombineF = internal::map_rect_combine<F, T_shared_param, T_job_param>;
 
   // whenever the cluster is already busy with some command we fall
@@ -51,7 +52,8 @@ map_rect_mpi(
   typedef FUNCTOR mpi_mr_##CALLID##_##SHARED##_##JOB##_;                       \
   typedef map_rect_reduce<mpi_mr_##CALLID##_##SHARED##_##JOB##_, SHARED, JOB>  \
       mpi_mr_##CALLID##_##SHARED##_##JOB##_red_;                               \
-  typedef map_rect_combine<mpi_mr_##CALLID##_##SHARED##_##JOB##_, SHARED, JOB> \
+  typedef map_rect_combine<mpi_mr_##CALLID##_##SHARED##_##JOB##_,              \
+                           Eigen::Matrix<SHARED, Eigen::Dynamic, 1>, JOB>      \
       mpi_mr_##CALLID##_##SHARED##_##JOB##_comb_;                              \
   typedef mpi_parallel_call<CALLID, mpi_mr_##CALLID##_##SHARED##_##JOB##_red_, \
                             mpi_mr_##CALLID##_##SHARED##_##JOB##_comb_>        \

@@ -2,17 +2,20 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-using stan::math::fvar;
-using stan::math::var;
-
 TEST(AgradMixMatrixResize, fvar_var) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
+  using stan::math::var;
   fvar<var> x = 5;
   std::vector<int> dims;
   stan::math::resize(x, dims);
 }
 TEST(AgradMixMatrixResize, svec_fvar_var) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
+  using stan::math::var;
   std::vector<fvar<var> > y;
   std::vector<int> dims;
   EXPECT_EQ(0U, y.size());
@@ -26,6 +29,10 @@ TEST(AgradMixMatrixResize, svec_fvar_var) {
   EXPECT_EQ(2U, y.size());
 }
 TEST(AgradMixMatrixResize, vec_fvar_var) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
+  using stan::math::var;
   Matrix<fvar<var>, Dynamic, 1> v(2);
   std::vector<int> dims;
   EXPECT_EQ(2, v.size());
@@ -40,6 +47,10 @@ TEST(AgradMixMatrixResize, vec_fvar_var) {
   EXPECT_EQ(3, v.size());
 }
 TEST(AgradMixMatrixResize, rvec_fvar_var) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
+  using stan::math::var;
   Matrix<fvar<var>, 1, Dynamic> rv(2);
   std::vector<int> dims;
   EXPECT_EQ(2, rv.size());
@@ -54,6 +65,10 @@ TEST(AgradMixMatrixResize, rvec_fvar_var) {
   EXPECT_EQ(3, rv.size());
 }
 TEST(AgradMixMatrixResize, mat_fvar_var) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
+  using stan::math::var;
   Matrix<fvar<var>, Dynamic, Dynamic> m(2, 3);
   std::vector<int> dims;
   EXPECT_EQ(2, m.rows());
@@ -66,6 +81,10 @@ TEST(AgradMixMatrixResize, mat_fvar_var) {
   EXPECT_EQ(17, m.cols());
 }
 TEST(AgradMixMatrixResize, svec_svec_fvar_var) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
+  using stan::math::var;
   std::vector<std::vector<fvar<var> > > xx;
   EXPECT_EQ(0U, xx.size());
   std::vector<int> dims;
@@ -82,6 +101,10 @@ TEST(AgradMixMatrixResize, svec_svec_fvar_var) {
   EXPECT_EQ(7U, xx[1].size());
 }
 TEST(AgradMixMatrixResize, svec_v_fvar_var) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
+  using stan::math::var;
   std::vector<Matrix<fvar<var>, Dynamic, 1> > xx;
   EXPECT_EQ(0U, xx.size());
   std::vector<int> dims;
@@ -99,6 +122,10 @@ TEST(AgradMixMatrixResize, svec_v_fvar_var) {
   EXPECT_EQ(7, xx[1].size());
 }
 TEST(AgradMixMatrixResize, svec_rv_fvar_var) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
+  using stan::math::var;
   std::vector<Matrix<fvar<var>, 1, Dynamic> > xx;
   EXPECT_EQ(0U, xx.size());
   std::vector<int> dims;
@@ -116,6 +143,10 @@ TEST(AgradMixMatrixResize, svec_rv_fvar_var) {
   EXPECT_EQ(7, xx[1].size());
 }
 TEST(AgradMixMatrixResize, svec_svec_matrix_fvar_var) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
+  using stan::math::var;
   std::vector<std::vector<Matrix<fvar<var>, Dynamic, Dynamic> > > mm;
   std::vector<int> dims;
   dims.push_back(4U);
@@ -129,11 +160,19 @@ TEST(AgradMixMatrixResize, svec_svec_matrix_fvar_var) {
   EXPECT_EQ(3, mm[3][4].cols());
 }
 TEST(AgradMixMatrixResize, fvar_fvar_var) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
+  using stan::math::var;
   fvar<fvar<var> > x = 5;
   std::vector<int> dims;
   stan::math::resize(x, dims);
 }
 TEST(AgradMixMatrixResize, svec_fvar_fvar_var) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
+  using stan::math::var;
   std::vector<fvar<fvar<var> > > y;
   std::vector<int> dims;
   EXPECT_EQ(0U, y.size());
@@ -147,6 +186,10 @@ TEST(AgradMixMatrixResize, svec_fvar_fvar_var) {
   EXPECT_EQ(2U, y.size());
 }
 TEST(AgradMixMatrixResize, vec_fvar_fvar_var) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
+  using stan::math::var;
   Matrix<fvar<fvar<var> >, Dynamic, 1> v(2);
   std::vector<int> dims;
   EXPECT_EQ(2, v.size());
@@ -161,6 +204,10 @@ TEST(AgradMixMatrixResize, vec_fvar_fvar_var) {
   EXPECT_EQ(3, v.size());
 }
 TEST(AgradMixMatrixResize, rvec_fvar_fvar_var) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
+  using stan::math::var;
   Matrix<fvar<fvar<var> >, 1, Dynamic> rv(2);
   std::vector<int> dims;
   EXPECT_EQ(2, rv.size());
@@ -175,6 +222,10 @@ TEST(AgradMixMatrixResize, rvec_fvar_fvar_var) {
   EXPECT_EQ(3, rv.size());
 }
 TEST(AgradMixMatrixResize, mat_fvar_fvar_var) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
+  using stan::math::var;
   Matrix<fvar<fvar<var> >, Dynamic, Dynamic> m(2, 3);
   std::vector<int> dims;
   EXPECT_EQ(2, m.rows());
@@ -187,6 +238,10 @@ TEST(AgradMixMatrixResize, mat_fvar_fvar_var) {
   EXPECT_EQ(17, m.cols());
 }
 TEST(AgradMixMatrixResize, svec_svec_fvar_fvar_var) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
+  using stan::math::var;
   std::vector<std::vector<fvar<fvar<var> > > > xx;
   EXPECT_EQ(0U, xx.size());
   std::vector<int> dims;
@@ -203,6 +258,10 @@ TEST(AgradMixMatrixResize, svec_svec_fvar_fvar_var) {
   EXPECT_EQ(7U, xx[1].size());
 }
 TEST(AgradMixMatrixResize, svec_v_fvar_fvar_var) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
+  using stan::math::var;
   std::vector<Matrix<fvar<fvar<var> >, Dynamic, 1> > xx;
   EXPECT_EQ(0U, xx.size());
   std::vector<int> dims;
@@ -220,6 +279,10 @@ TEST(AgradMixMatrixResize, svec_v_fvar_fvar_var) {
   EXPECT_EQ(7, xx[1].size());
 }
 TEST(AgradMixMatrixResize, svec_rv_fvar_fvar_var) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
+  using stan::math::var;
   std::vector<Matrix<fvar<fvar<var> >, 1, Dynamic> > xx;
   EXPECT_EQ(0U, xx.size());
   std::vector<int> dims;
@@ -237,6 +300,10 @@ TEST(AgradMixMatrixResize, svec_rv_fvar_fvar_var) {
   EXPECT_EQ(7, xx[1].size());
 }
 TEST(AgradMixMatrixResize, svec_svec_matrix_fvar_fvar_var) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::fvar;
+  using stan::math::var;
   std::vector<std::vector<Matrix<fvar<fvar<var> >, Dynamic, Dynamic> > > mm;
   std::vector<int> dims;
   dims.push_back(4U);

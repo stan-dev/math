@@ -14,7 +14,13 @@ template <typename T, typename = void>
 struct is_var : std::false_type {};
 
 STAN_ADD_REQUIRE_UNARY(var, is_var, require_stan_scalar_real);
+STAN_ADD_REQUIRE_CONTAINER(var, is_var, require_stan_scalar_real);
 STAN_ADD_REQUIRE_UNARY_INNER(var, is_var, require_stan_scalar_real);
+
+template <typename T>
+struct value_type<T, std::enable_if_t<is_var<T>::value>> {
+  using type = typename std::decay_t<T>::value_type;
+};
 
 }  // namespace stan
 #endif

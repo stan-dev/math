@@ -1,6 +1,6 @@
 #ifdef STAN_OPENCL
 #include <stan/math/prim.hpp>
-#include <stan/math/opencl/opencl.hpp>
+#include <stan/math/opencl/prim.hpp>
 #include <test/unit/math/expect_near_rel.hpp>
 #include <test/unit/util.hpp>
 #include <boost/random/mersenne_twister.hpp>

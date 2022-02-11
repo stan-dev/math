@@ -1,8 +1,8 @@
 #ifdef STAN_OPENCL
 #include <stan/math.hpp>
-#include <stan/math/opencl/opencl.hpp>
+#include <stan/math/opencl/prim.hpp>
 #include <gtest/gtest.h>
-#include <test/unit/math/expect_near_rel.hpp>
+#include <test/unit/math/opencl/util.hpp>
 #include <vector>
 
 using Eigen::Array;
@@ -10,11 +10,9 @@ using Eigen::Dynamic;
 using Eigen::Matrix;
 using stan::math::matrix_cl;
 using stan::math::var;
-using stan::test::expect_near_rel;
 using std::vector;
 
 TEST(ProbDistributionsOrderedLogisitcGLM, error_checking) {
-  double eps = 1e-9;
   int N = 3;
   int M = 2;
   int C = 5;
@@ -48,49 +46,63 @@ TEST(ProbDistributionsOrderedLogisitcGLM, error_checking) {
   matrix_cl<double> x_size1_cl(x_size1);
   matrix_cl<double> x_size2_cl(x_size2);
   matrix_cl<double> x_value_cl(x_value);
-  matrix_cl<int> y_cl(y, N, 1);
-  matrix_cl<int> y_size_cl(y_size, N + 1, 1);
-  matrix_cl<int> y_value1_cl(y_value1, N, 1);
-  matrix_cl<int> y_value2_cl(y_value2, N, 1);
+  matrix_cl<int> y_cl(y);
+  matrix_cl<int> y_size_cl(y_size);
+  matrix_cl<int> y_value1_cl(y_value1);
+  matrix_cl<int> y_value2_cl(y_value2);
+  matrix_cl<double> beta_cl(beta);
+  matrix_cl<double> beta_size_cl(beta_size);
+  matrix_cl<double> beta_value_cl(beta_value);
+  matrix_cl<double> cuts_cl(cuts);
+  matrix_cl<double> cuts_value1_cl(cuts_value1);
+  matrix_cl<double> cuts_value2_cl(cuts_value2);
 
   EXPECT_NO_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y_cl, x_cl, beta, cuts));
+      stan::math::ordered_logistic_glm_lpmf(y_cl, x_cl, beta_cl, cuts_cl));
 
   EXPECT_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y_size_cl, x_cl, beta, cuts),
+      stan::math::ordered_logistic_glm_lpmf(y_size_cl, x_cl, beta_cl, cuts_cl),
       std::invalid_argument);
   EXPECT_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y_cl, x_size1_cl, beta, cuts),
+      stan::math::ordered_logistic_glm_lpmf(y_cl, x_size1_cl, beta_cl, cuts_cl),
       std::invalid_argument);
   EXPECT_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y_cl, x_size2_cl, beta, cuts),
+      stan::math::ordered_logistic_glm_lpmf(y_cl, x_size2_cl, beta_cl, cuts_cl),
       std::invalid_argument);
   EXPECT_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y_cl, x_cl, beta_size, cuts),
+      stan::math::ordered_logistic_glm_lpmf(y_cl, x_cl, beta_size_cl, cuts_cl),
       std::invalid_argument);
 
+  EXPECT_THROW(stan::math::ordered_logistic_glm_lpmf(y_value1_cl, x_cl, beta_cl,
+                                                     cuts_cl),
+               std::domain_error);
+  EXPECT_THROW(stan::math::ordered_logistic_glm_lpmf(y_value2_cl, x_cl, beta_cl,
+                                                     cuts_cl),
+               std::domain_error);
   EXPECT_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y_value1_cl, x_cl, beta, cuts),
+      stan::math::ordered_logistic_glm_lpmf(y_cl, x_value_cl, beta_cl, cuts_cl),
       std::domain_error);
   EXPECT_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y_value2_cl, x_cl, beta, cuts),
+      stan::math::ordered_logistic_glm_lpmf(y_cl, x_cl, beta_value_cl, cuts_cl),
       std::domain_error);
-  EXPECT_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y_cl, x_value_cl, beta, cuts),
-      std::domain_error);
-  EXPECT_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y_cl, x_cl, beta_value, cuts),
-      std::domain_error);
-  EXPECT_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y_cl, x_cl, beta, cuts_value1),
-      std::domain_error);
-  EXPECT_THROW(
-      stan::math::ordered_logistic_glm_lpmf(y_cl, x_cl, beta, cuts_value2),
-      std::domain_error);
+  EXPECT_THROW(stan::math::ordered_logistic_glm_lpmf(y_cl, x_cl, beta_cl,
+                                                     cuts_value1_cl),
+               std::domain_error);
+  EXPECT_THROW(stan::math::ordered_logistic_glm_lpmf(y_cl, x_cl, beta_cl,
+                                                     cuts_value2_cl),
+               std::domain_error);
 }
 
-TEST(ProbDistributionsOrderedLogisitcGLM, gpu_matches_cpu_small_simple) {
-  double eps = 1e-9;
+auto ordered_logistic_glm_lpmf_functor
+    = [](const auto& y, const auto& x, const auto& beta, const auto& cuts) {
+        return stan::math::ordered_logistic_glm_lpmf(y, x, beta, cuts);
+      };
+auto ordered_logistic_glm_lpmf_functor_propto
+    = [](const auto& y, const auto& x, const auto& beta, const auto& cuts) {
+        return stan::math::ordered_logistic_glm_lpmf<true>(y, x, beta, cuts);
+      };
+
+TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_small_simple) {
   int N = 3;
   int M = 2;
   int C = 5;
@@ -103,82 +115,32 @@ TEST(ProbDistributionsOrderedLogisitcGLM, gpu_matches_cpu_small_simple) {
   Matrix<double, Dynamic, 1> cuts(C - 1, 1);
   cuts << -0.4, 0.1, 0.3, 4.5;
 
-  matrix_cl<double> x_cl(x);
-  matrix_cl<int> y_cl(y, N, 1);
-
-  expect_near_rel("ordered_logistic_glm_lpmf (OpenCL)",
-                  stan::math::ordered_logistic_glm_lpmf(y_cl, x_cl, beta, cuts),
-                  stan::math::ordered_logistic_glm_lpmf(y, x, beta, cuts));
-  expect_near_rel(
-      "ordered_logistic_glm_lpmf (OpenCL)",
-      stan::math::ordered_logistic_glm_lpmf<true>(y_cl, x_cl, beta, cuts),
-      stan::math::ordered_logistic_glm_lpmf<true>(y, x, beta, cuts));
-
-  Matrix<var, Dynamic, 1> beta_var1 = beta;
-  Matrix<var, Dynamic, 1> beta_var2 = beta;
-  Matrix<var, Dynamic, 1> cuts_var1 = cuts;
-  Matrix<var, Dynamic, 1> cuts_var2 = cuts;
-
-  var res1
-      = stan::math::ordered_logistic_glm_lpmf(y_cl, x_cl, beta_var1, cuts_var1);
-  var res2 = stan::math::ordered_logistic_glm_lpmf(y, x, beta_var2, cuts_var2);
-
-  (res1 + res2).grad();
-
-  expect_near_rel("ordered_logistic_glm_lpmf (OpenCL)", res1.val(), res2.val());
-
-  expect_near_rel("ordered_logistic_glm_lpmf (OpenCL)", beta_var1.adj().eval(),
-                  beta_var2.adj().eval());
-  expect_near_rel("ordered_logistic_glm_lpmf (OpenCL)", cuts_var1.adj().eval(),
-                  cuts_var2.adj().eval());
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      ordered_logistic_glm_lpmf_functor, y, x, beta, cuts);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      ordered_logistic_glm_lpmf_functor_propto, y, x, beta, cuts);
 }
 
-TEST(ProbDistributionsOrderedLogisitcGLM, gpu_matches_cpu_broadcast_y) {
-  double eps = 1e-9;
+TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_broadcast_y) {
   int N = 3;
   int M = 2;
-  int C = 5;
+  int C = 3;
 
-  int y = 1;
+  int y_scal = 1;
   Matrix<double, Dynamic, Dynamic> x(N, M);
   x << -12, 46, -42, 24, 25, 27;
   Matrix<double, Dynamic, 1> beta(M, 1);
   beta << 0.3, 2;
   Matrix<double, Dynamic, 1> cuts(C - 1, 1);
-  cuts << -0.4, 0.1, 0.3, 4.5;
+  cuts << -0.4, 0.1;
 
-  matrix_cl<double> x_cl(x);
-  matrix_cl<int> y_cl(y);
-
-  expect_near_rel("ordered_logistic_glm_lpmf (OpenCL)",
-                  stan::math::ordered_logistic_glm_lpmf(y_cl, x_cl, beta, cuts),
-                  stan::math::ordered_logistic_glm_lpmf(y, x, beta, cuts));
-  expect_near_rel(
-      "ordered_logistic_glm_lpmf (OpenCL)",
-      stan::math::ordered_logistic_glm_lpmf<true>(y_cl, x_cl, beta, cuts),
-      stan::math::ordered_logistic_glm_lpmf<true>(y, x, beta, cuts));
-
-  Matrix<var, Dynamic, 1> beta_var1 = beta;
-  Matrix<var, Dynamic, 1> beta_var2 = beta;
-  Matrix<var, Dynamic, 1> cuts_var1 = cuts;
-  Matrix<var, Dynamic, 1> cuts_var2 = cuts;
-
-  var res1
-      = stan::math::ordered_logistic_glm_lpmf(y_cl, x_cl, beta_var1, cuts_var1);
-  var res2 = stan::math::ordered_logistic_glm_lpmf(y, x, beta_var2, cuts_var2);
-
-  (res1 + res2).grad();
-
-  expect_near_rel("ordered_logistic_glm_lpmf (OpenCL)", res1.val(), res2.val());
-
-  expect_near_rel("ordered_logistic_glm_lpmf (OpenCL)", beta_var1.adj().eval(),
-                  beta_var2.adj().eval());
-  expect_near_rel("ordered_logistic_glm_lpmf (OpenCL)", cuts_var1.adj().eval(),
-                  cuts_var2.adj().eval());
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
+      ordered_logistic_glm_lpmf_functor, y_scal, x, beta, cuts);
+  stan::math::test::test_opencl_broadcasting_prim_rev<0>(
+      ordered_logistic_glm_lpmf_functor_propto, y_scal, x, beta, cuts);
 }
 
-TEST(ProbDistributionsOrderedLogisitcGLM, gpu_matches_cpu_zero_instances) {
-  double eps = 1e-9;
+TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_zero_instances) {
   int N = 0;
   int M = 2;
   int C = 5;
@@ -191,37 +153,17 @@ TEST(ProbDistributionsOrderedLogisitcGLM, gpu_matches_cpu_zero_instances) {
   cuts << -0.4, 0.1, 0.3, 4.5;
 
   matrix_cl<double> x_cl(x);
-  matrix_cl<int> y_cl(y, N, 1);
+  matrix_cl<int> y_cl(y);
+  matrix_cl<double> beta_cl(beta);
+  matrix_cl<double> cuts_cl(cuts);
 
-  expect_near_rel("ordered_logistic_glm_lpmf (OpenCL)",
-                  stan::math::ordered_logistic_glm_lpmf(y_cl, x_cl, beta, cuts),
-                  stan::math::ordered_logistic_glm_lpmf(y, x, beta, cuts));
-  expect_near_rel(
-      "ordered_logistic_glm_lpmf (OpenCL)",
-      stan::math::ordered_logistic_glm_lpmf<true>(y_cl, x_cl, beta, cuts),
-      stan::math::ordered_logistic_glm_lpmf<true>(y, x, beta, cuts));
-
-  Matrix<var, Dynamic, 1> beta_var1 = beta;
-  Matrix<var, Dynamic, 1> beta_var2 = beta;
-  Matrix<var, Dynamic, 1> cuts_var1 = cuts;
-  Matrix<var, Dynamic, 1> cuts_var2 = cuts;
-
-  var res1
-      = stan::math::ordered_logistic_glm_lpmf(y_cl, x_cl, beta_var1, cuts_var1);
-  var res2 = stan::math::ordered_logistic_glm_lpmf(y, x, beta_var2, cuts_var2);
-
-  (res1 + res2).grad();
-
-  expect_near_rel("ordered_logistic_glm_lpmf (OpenCL)", res1.val(), res2.val());
-
-  expect_near_rel("ordered_logistic_glm_lpmf (OpenCL)", beta_var1.adj().eval(),
-                  beta_var2.adj().eval());
-  expect_near_rel("ordered_logistic_glm_lpmf (OpenCL)", cuts_var1.adj().eval(),
-                  cuts_var2.adj().eval());
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      ordered_logistic_glm_lpmf_functor, y, x, beta, cuts);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      ordered_logistic_glm_lpmf_functor_propto, y, x, beta, cuts);
 }
 
-TEST(ProbDistributionsOrderedLogisitcGLM, gpu_matches_cpu_zero_attributes) {
-  double eps = 1e-9;
+TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_zero_attributes) {
   int N = 3;
   int M = 0;
   int C = 5;
@@ -232,38 +174,13 @@ TEST(ProbDistributionsOrderedLogisitcGLM, gpu_matches_cpu_zero_attributes) {
   Matrix<double, Dynamic, 1> cuts(C - 1, 1);
   cuts << -0.4, 0.1, 0.3, 4.5;
 
-  matrix_cl<double> x_cl(x);
-  matrix_cl<int> y_cl(y, N, 1);
-
-  expect_near_rel("ordered_logistic_glm_lpmf (OpenCL)",
-                  stan::math::ordered_logistic_glm_lpmf(y_cl, x_cl, beta, cuts),
-                  stan::math::ordered_logistic_glm_lpmf(y, x, beta, cuts));
-  expect_near_rel(
-      "ordered_logistic_glm_lpmf (OpenCL)",
-      stan::math::ordered_logistic_glm_lpmf<true>(y_cl, x_cl, beta, cuts),
-      stan::math::ordered_logistic_glm_lpmf<true>(y, x, beta, cuts));
-
-  Matrix<var, Dynamic, 1> beta_var1 = beta;
-  Matrix<var, Dynamic, 1> beta_var2 = beta;
-  Matrix<var, Dynamic, 1> cuts_var1 = cuts;
-  Matrix<var, Dynamic, 1> cuts_var2 = cuts;
-
-  var res1
-      = stan::math::ordered_logistic_glm_lpmf(y_cl, x_cl, beta_var1, cuts_var1);
-  var res2 = stan::math::ordered_logistic_glm_lpmf(y, x, beta_var2, cuts_var2);
-
-  (res1 + res2).grad();
-
-  expect_near_rel("ordered_logistic_glm_lpmf (OpenCL)", res1.val(), res2.val());
-
-  expect_near_rel("ordered_logistic_glm_lpmf (OpenCL)", beta_var1.adj().eval(),
-                  beta_var2.adj().eval());
-  expect_near_rel("ordered_logistic_glm_lpmf (OpenCL)", cuts_var1.adj().eval(),
-                  cuts_var2.adj().eval());
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      ordered_logistic_glm_lpmf_functor, y, x, beta, cuts);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      ordered_logistic_glm_lpmf_functor_propto, y, x, beta, cuts);
 }
 
-TEST(ProbDistributionsOrderedLogisitcGLM, gpu_matches_cpu_single_class) {
-  double eps = 1e-9;
+TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_single_class) {
   int N = 3;
   int M = 2;
   int C = 1;
@@ -275,38 +192,13 @@ TEST(ProbDistributionsOrderedLogisitcGLM, gpu_matches_cpu_single_class) {
   beta << 0.3, 2;
   Matrix<double, Dynamic, 1> cuts(C - 1, 1);
 
-  matrix_cl<double> x_cl(x);
-  matrix_cl<int> y_cl(y, N, 1);
-
-  expect_near_rel("ordered_logistic_glm_lpmf (OpenCL)",
-                  stan::math::ordered_logistic_glm_lpmf(y_cl, x_cl, beta, cuts),
-                  stan::math::ordered_logistic_glm_lpmf(y, x, beta, cuts));
-  expect_near_rel(
-      "ordered_logistic_glm_lpmf (OpenCL)",
-      stan::math::ordered_logistic_glm_lpmf<true>(y_cl, x_cl, beta, cuts),
-      stan::math::ordered_logistic_glm_lpmf<true>(y, x, beta, cuts));
-
-  Matrix<var, Dynamic, 1> beta_var1 = beta;
-  Matrix<var, Dynamic, 1> beta_var2 = beta;
-  Matrix<var, Dynamic, 1> cuts_var1 = cuts;
-  Matrix<var, Dynamic, 1> cuts_var2 = cuts;
-
-  var res1
-      = stan::math::ordered_logistic_glm_lpmf(y_cl, x_cl, beta_var1, cuts_var1);
-  var res2 = stan::math::ordered_logistic_glm_lpmf(y, x, beta_var2, cuts_var2);
-
-  (res1 + res2).grad();
-
-  expect_near_rel("ordered_logistic_glm_lpmf (OpenCL)", res1.val(), res2.val());
-
-  expect_near_rel("ordered_logistic_glm_lpmf (OpenCL)", beta_var1.adj().eval(),
-                  beta_var2.adj().eval());
-  expect_near_rel("ordered_logistic_glm_lpmf (OpenCL)", cuts_var1.adj().eval(),
-                  cuts_var2.adj().eval());
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      ordered_logistic_glm_lpmf_functor, y, x, beta, cuts);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      ordered_logistic_glm_lpmf_functor_propto, y, x, beta, cuts);
 }
 
-TEST(ProbDistributionsOrderedLogisitcGLM, gpu_matches_cpu_big) {
-  double eps = 1e-9;
+TEST(ProbDistributionsOrderedLogisitcGLM, opencl_matches_cpu_big) {
   int N = 153;
   int M = 71;
   int C = 43;
@@ -324,34 +216,10 @@ TEST(ProbDistributionsOrderedLogisitcGLM, gpu_matches_cpu_big) {
     cuts[i] += cuts[i - 1];
   }
 
-  matrix_cl<double> x_cl(x);
-  matrix_cl<int> y_cl(y, N, 1);
-
-  expect_near_rel("ordered_logistic_glm_lpmf (OpenCL)",
-                  stan::math::ordered_logistic_glm_lpmf(y_cl, x_cl, beta, cuts),
-                  stan::math::ordered_logistic_glm_lpmf(y, x, beta, cuts));
-  expect_near_rel("ordered_logistic_glm_lpmf (OpenCL)",
-                  stan::math::ordered_logistic_glm_lpmf(y_cl, x_cl, beta, cuts),
-                  stan::math::ordered_logistic_glm_lpmf(y, x, beta, cuts));
-
-  Matrix<var, Dynamic, 1> beta_var1 = beta;
-  Matrix<var, Dynamic, 1> beta_var2 = beta;
-  Matrix<var, Dynamic, 1> cuts_var1 = cuts;
-  Matrix<var, Dynamic, 1> cuts_var2 = cuts;
-
-  var res1 = stan::math::ordered_logistic_glm_lpmf<true>(y_cl, x_cl, beta_var1,
-                                                         cuts_var1);
-  var res2
-      = stan::math::ordered_logistic_glm_lpmf<true>(y, x, beta_var2, cuts_var2);
-
-  (res1 + res2).grad();
-
-  expect_near_rel("ordered_logistic_glm_lpmf (OpenCL)", res1.val(), res2.val());
-
-  expect_near_rel("ordered_logistic_glm_lpmf (OpenCL)", beta_var1.adj().eval(),
-                  beta_var2.adj().eval());
-  expect_near_rel("ordered_logistic_glm_lpmf (OpenCL)", cuts_var1.adj().eval(),
-                  cuts_var2.adj().eval());
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      ordered_logistic_glm_lpmf_functor, y, x, beta, cuts);
+  stan::math::test::compare_cpu_opencl_prim_rev(
+      ordered_logistic_glm_lpmf_functor_propto, y, x, beta, cuts);
 }
 
 #endif

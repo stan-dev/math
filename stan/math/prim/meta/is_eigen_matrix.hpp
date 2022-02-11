@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_META_IS_EIGEN_MATRIX_HPP
-#define STAN_MATH_PRIM_META_IS_EIGEN_MATRIX_HPP
+#ifndef STAN_MATH_PRIM_META_IS_EIGEN_MATRIX_DYNAMIC_HPP
+#define STAN_MATH_PRIM_META_IS_EIGEN_MATRIX_DYNAMIC_HPP
 
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta/bool_constant.hpp>
@@ -18,13 +18,13 @@ namespace internal {
  *  equal to 1.
  */
 template <typename T, bool>
-struct is_eigen_matrix_impl : std::false_type {};
+struct is_eigen_matrix_dynamic_impl : std::false_type {};
 
 template <typename T>
-struct is_eigen_matrix_impl<T, false> : std::false_type {};
+struct is_eigen_matrix_dynamic_impl<T, false> : std::false_type {};
 
 template <typename T>
-struct is_eigen_matrix_impl<T, true>
+struct is_eigen_matrix_dynamic_impl<T, true>
     : bool_constant<!(T::RowsAtCompileTime == 1 || T::ColsAtCompileTime == 1)> {
 };
 
@@ -39,13 +39,15 @@ struct is_eigen_matrix_impl<T, true>
  * @ingroup type_trait
  */
 template <typename T>
-struct is_eigen_matrix
-    : bool_constant<internal::is_eigen_matrix_impl<
+struct is_eigen_matrix_dynamic
+    : bool_constant<internal::is_eigen_matrix_dynamic_impl<
           std::decay_t<T>,
           is_base_pointer_convertible<Eigen::MatrixBase, T>::value>::value> {};
 
-STAN_ADD_REQUIRE_UNARY(eigen_matrix, is_eigen_matrix, require_eigens_types);
-STAN_ADD_REQUIRE_CONTAINER(eigen_matrix, is_eigen_matrix, require_eigens_types);
+STAN_ADD_REQUIRE_UNARY(eigen_matrix_dynamic, is_eigen_matrix_dynamic,
+                       require_eigens_types);
+STAN_ADD_REQUIRE_CONTAINER(eigen_matrix_dynamic, is_eigen_matrix_dynamic,
+                           require_eigens_types);
 
 }  // namespace stan
 

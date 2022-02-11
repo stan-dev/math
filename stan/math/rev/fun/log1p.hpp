@@ -8,14 +8,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class log1p_vari : public op_v_vari {
- public:
-  explicit log1p_vari(vari* avi) : op_v_vari(log1p(avi->val_), avi) {}
-  void chain() { avi_->adj_ += adj_ / (1 + avi_->val_); }
-};
-}  // namespace internal
-
 /**
  * The log (1 + x) function for variables (C99).
  *
@@ -23,10 +15,17 @@ class log1p_vari : public op_v_vari {
  *
  * \f$\frac{d}{dx} \log (1 + x) = \frac{1}{1 + x}\f$.
  *
+ * @tparam T Arithmetic or a type inheriting from `EigenBase`.
  * @param a The variable.
  * @return The log of 1 plus the variable.
  */
-inline var log1p(const var& a) { return var(new internal::log1p_vari(a.vi_)); }
+template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
+inline auto log1p(const var_value<T>& a) {
+  return make_callback_var(log1p(a.val()), [a](auto& vi) mutable {
+    as_array_or_scalar(a.adj())
+        += as_array_or_scalar(vi.adj()) / (1.0 + as_array_or_scalar(a.val()));
+  });
+}
 
 }  // namespace math
 }  // namespace stan

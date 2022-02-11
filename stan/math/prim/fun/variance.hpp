@@ -11,54 +11,41 @@ namespace math {
 
 /**
  * Returns the sample variance (divide by length - 1) of the
- * coefficients in the specified standard vector.
- *
- * @tparam T type of elements in the vector
- * @param v specified vector
- * @return sample variance of vector
- * @throw <code>std::invalid_argument</code> if the vector has size zero
- */
-template <typename T>
-inline return_type_t<T> variance(const std::vector<T>& v) {
-  check_nonzero_size("variance", "v", v);
-  if (v.size() == 1) {
-    return 0.0;
-  }
-  T v_mean(mean(v));
-  T sum_sq_diff(0);
-  for (size_t i = 0; i < v.size(); ++i) {
-    T diff = v[i] - v_mean;
-    sum_sq_diff += diff * diff;
-  }
-  return sum_sq_diff / (v.size() - 1);
-}
-
-/**
- * Returns the sample variance (divide by length - 1) of the
  * coefficients in the specified matrix
  *
- * @tparam T type of elements in the vector
- * @tparam R number of rows in the matrix, can be Eigen::Dynamic
- * @tparam C number of columns in the matrix, can be Eigen::Dynamic
+ * @tparam EigMat type inheriting from `EigenBase` that does not have an `var`
+ *  scalar type.
  *
  * @param m matrix
  * @return sample variance of coefficients
  * @throw <code>std::invalid_argument</code> if the matrix has size zero
  */
-template <typename T, int R, int C>
-inline return_type_t<T> variance(const Eigen::Matrix<T, R, C>& m) {
-  check_nonzero_size("variance", "m", m);
+template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
+          require_not_vt_var<EigMat>* = nullptr>
+inline value_type_t<EigMat> variance(const EigMat& m) {
+  using value_t = value_type_t<EigMat>;
+  const auto& mat = to_ref(m);
+  check_nonzero_size("variance", "m", mat);
+  if (mat.size() == 1) {
+    return value_t{0.0};
+  }
+  return (mat.array() - mat.mean()).square().sum() / value_t(mat.size() - 1.0);
+}
 
-  if (m.size() == 1) {
-    return 0.0;
-  }
-  return_type_t<T> mn(mean(m));
-  return_type_t<T> sum_sq_diff(0);
-  for (int i = 0; i < m.size(); ++i) {
-    return_type_t<T> diff = m(i) - mn;
-    sum_sq_diff += diff * diff;
-  }
-  return sum_sq_diff / (m.size() - 1);
+/**
+ * Returns the sample variance (divide by length - 1) of the
+ * coefficients in the specified standard vector.
+ *
+ * @tparam StdVec A standard library vector that does not contain a var.
+ * @param v specified vector
+ * @return sample variance of vector
+ * @throw <code>std::invalid_argument</code> if the vector has size zero
+ */
+template <typename StdVec, require_std_vector_t<StdVec>* = nullptr,
+          require_not_vt_var<StdVec>* = nullptr>
+inline value_type_t<StdVec> variance(const StdVec& v) {
+  using eigen_t = Eigen::Matrix<value_type_t<StdVec>, -1, 1>;
+  return variance(Eigen::Map<const eigen_t>(v.data(), v.size()));
 }
 
 }  // namespace math

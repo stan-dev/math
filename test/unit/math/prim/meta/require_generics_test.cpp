@@ -1,4 +1,4 @@
-#include <stan/math/prim/meta.hpp>
+#include <stan/math/rev/meta.hpp>
 #include <test/unit/math/require_util.hpp>
 #include <gtest/gtest.h>
 #include <type_traits>
@@ -1007,7 +1007,11 @@ TEST(requires_prim_mat, eigen_row_and_col) {
   using Eigen::VectorXd;
   using stan::require_eigen_row_and_col_t;
   using stan::require_not_eigen_row_and_col_t;
+  using stan::math::var;
+  using stan::math::var_value;
   using stan::test::require_variadic_checker;
+  EXPECT_TRUE((require_variadic_checker<require_not_eigen_row_and_col_t,
+                                        var_value<double>, VectorXd>::value));
   EXPECT_TRUE((require_variadic_checker<require_eigen_row_and_col_t,
                                         RowVectorXd, VectorXd>::value));
   EXPECT_FALSE((require_variadic_checker<require_not_eigen_row_and_col_t,

@@ -4,6 +4,20 @@
 #include <vector>
 #include <type_traits>
 
+TEST(mixFun, absBasics) {
+  using stan::math::abs;
+  int a = abs(1);
+
+  double b = abs(-2.3);
+
+  Eigen::Matrix<double, -1, -1> x(2, 3);
+  x << 1, 2, 3, 4, 5, 6;
+  Eigen::Matrix<double, -1, -1> y = abs(x);
+
+  std::vector<int> u{1, 2, 3, 4};
+  std::vector<int> v = abs(u);
+}
+
 TEST(mixFun, abs) {
   auto f = [](const auto& x) {
     using std::abs;
@@ -38,4 +52,22 @@ TEST(mixFun, absReturnType) {
   std::complex<stan::math::fvar<double>> c = 3;
   stan::math::fvar<double> d = abs(c);
   SUCCEED();
+}
+
+TEST(mathMixMatFun, abs_varmat) {
+  using stan::math::vec_concat;
+  using stan::test::expect_ad_vector_matvar;
+  using stan::test::internal::common_nonzero_args;
+  auto f = [](const auto& x1) {
+    using stan::math::abs;
+    return abs(x1);
+  };
+  std::vector<double> com_args = common_nonzero_args();
+  std::vector<double> args{-3, 2, -0.68, 1};
+  auto all_args = vec_concat(com_args, args);
+  Eigen::VectorXd A(all_args.size());
+  for (int i = 0; i < all_args.size(); ++i) {
+    A(i) = all_args[i];
+  }
+  expect_ad_vector_matvar(f, A);
 }

@@ -4,18 +4,16 @@
 #include <cmath>
 
 TEST(MathFunctions, pow) {
-  using stan::math::pow;
-  using std::pow;
-
-  EXPECT_FLOAT_EQ(pow(2.15, 1.71), 3.70228430936580996892756228068688);
-  EXPECT_FLOAT_EQ(pow(7.62, -1.15), 0.0967724604023293179518727243992);
+  EXPECT_FLOAT_EQ(stan::math::pow(2, 7), std::pow(2, 7));
+  EXPECT_FLOAT_EQ(stan::math::pow(2.2, 7), std::pow(2.2, 7));
+  EXPECT_FLOAT_EQ(stan::math::pow(2.15, 1.71), std::pow(2.15, 1.71));
+  EXPECT_FLOAT_EQ(stan::math::pow(7.62, -1.15), std::pow(7.62, -1.15));
 }
 
 TEST(MathFunctions, pow_nan) {
   using stan::math::INFTY;
   using stan::math::NOT_A_NUMBER;
   using stan::math::pow;
-  using std::pow;
 
   EXPECT_TRUE(std::isnan(pow(NOT_A_NUMBER, 2.16)));
   EXPECT_TRUE(std::isnan(pow(1.65, NOT_A_NUMBER)));
@@ -28,11 +26,8 @@ TEST(MathFunctions, pow_nan) {
 }
 
 TEST(MathFunctions, pow_vec) {
-  auto f = [](const auto& x1, const auto& x2) {
-    using std::pow;
-    using stan::math::pow;
-    return pow(x1, x2);
-  };
+  auto f
+      = [](const auto& x1, const auto& x2) { return stan::math::pow(x1, x2); };
 
   Eigen::VectorXd in1(3);
   in1 << 1.2, 3.1, 0.8;

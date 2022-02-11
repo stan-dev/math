@@ -17,6 +17,9 @@ inline auto softmax(const ColVec& alpha) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using T = typename value_type_t<ColVec>::Scalar;
+  if (alpha.size() == 0) {
+    return Matrix<fvar<T>, Dynamic, 1>();
+  }
   const auto& alpha_ref = to_ref(alpha);
 
   Matrix<T, Dynamic, 1> softmax_alpha_t = softmax(value_of(alpha_ref));

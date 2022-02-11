@@ -3,7 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/opencl/stringify.hpp>
-#include <Eigen/Core>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <type_traits>
 
 namespace stan {
@@ -92,8 +92,6 @@ inline matrix_cl_view from_eigen_uplo_type(Eigen::UpLoType eigen_type) {
   }
   return matrix_cl_view::Entire;
 }
-
-enum class TriangularMapCL { UpperToLower = 0, LowerToUpper = 1 };
 
 // \cond
 static const char* view_kernel_helpers = STRINGIFY(

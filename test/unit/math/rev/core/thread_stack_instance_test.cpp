@@ -72,6 +72,7 @@ TEST(thread_stack_instance, repeated_initialize) {
                 ==
 #endif
                 main_ad_stack);
+    delete thread_instance_ptr;
   };
   std::thread other_work(thread_tester_with_refresh);
 

@@ -25,8 +25,7 @@ namespace math {
  * @return exponential of At multiplied by B
  */
 template <typename EigMat1, typename EigMat2,
-          require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
-          require_all_vt_same<double, EigMat1, EigMat2>* = nullptr>
+          require_all_eigen_vt<std::is_arithmetic, EigMat1, EigMat2>* = nullptr>
 inline Eigen::Matrix<double, Eigen::Dynamic, EigMat2::ColsAtCompileTime>
 scale_matrix_exp_multiply(const double& t, const EigMat1& A, const EigMat2& B) {
   check_square("scale_matrix_exp_multiply", "input matrix", A);
@@ -54,7 +53,8 @@ scale_matrix_exp_multiply(const double& t, const EigMat1& A, const EigMat2& B) {
  */
 template <typename Tt, typename EigMat1, typename EigMat2,
           require_all_eigen_t<EigMat1, EigMat2>* = nullptr,
-          require_any_not_vt_same<double, Tt, EigMat1, EigMat2>* = nullptr>
+          require_any_autodiff_t<Tt, value_type_t<EigMat1>,
+                                 value_type_t<EigMat2>>* = nullptr>
 inline Eigen::Matrix<return_type_t<Tt, EigMat1, EigMat2>, Eigen::Dynamic,
                      EigMat2::ColsAtCompileTime>
 scale_matrix_exp_multiply(const Tt& t, const EigMat1& A, const EigMat2& B) {

@@ -13,9 +13,8 @@ namespace math {
  * @param m matrix or expression
  * @return transposed matrix
  */
-template <typename T, typename = require_eigen_t<T>>
-Eigen::Matrix<value_type_t<T>, T::ColsAtCompileTime,
-              T::RowsAtCompileTime> inline transpose(const T& m) {
+template <typename T, require_matrix_t<T>* = nullptr>
+auto inline transpose(const T& m) {
   return m.transpose();
 }
 

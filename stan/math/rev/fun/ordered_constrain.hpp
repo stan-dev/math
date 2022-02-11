@@ -2,7 +2,9 @@
 #define STAN_MATH_REV_FUN_ORDERED_CONSTRAIN_HPP
 
 #include <stan/math/rev/meta.hpp>
-#include <stan/math/rev/functor/adj_jac_apply.hpp>
+#include <stan/math/rev/core/reverse_pass_callback.hpp>
+#include <stan/math/rev/core/arena_matrix.hpp>
+#include <stan/math/rev/fun/value_of.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <cmath>
 #include <tuple>
@@ -10,73 +12,6 @@
 
 namespace stan {
 namespace math {
-
-namespace internal {
-class ordered_constrain_op {
-  int N_;
-  double* exp_x_;
-
- public:
-  /**
-   * Return an increasing ordered vector derived from the specified
-   * free vector.  The returned constrained vector will have the
-   * same dimensionality as the specified free vector.
-   *
-   * @tparam size Number of arguments
-   * @param needs_adj Boolean indicators of if adjoints of arguments will be
-   * needed
-   * @param x Free vector of scalars
-   * @return Increasing ordered vector
-   */
-  template <std::size_t size>
-  Eigen::VectorXd operator()(const std::array<bool, size>& needs_adj,
-                             const Eigen::VectorXd& x) {
-    N_ = x.size();
-    using std::exp;
-
-    Eigen::Matrix<double, Eigen::Dynamic, 1> y(N_);
-    if (N_ == 0) {
-      return y;
-    }
-
-    exp_x_ = ChainableStack::instance_->memalloc_.alloc_array<double>(N_ - 1);
-
-    y[0] = x[0];
-    for (int n = 1; n < N_; ++n) {
-      exp_x_[n - 1] = exp(x[n]);
-      y[n] = y[n - 1] + exp_x_[n - 1];
-    }
-    return y;
-  }
-
-  /**
-   * Compute the result of multiply the transpose of the adjoint vector times
-   * the Jacobian of the ordered_constrain operator.
-   *
-   * @tparam size Number of adjoints to return
-   * @param needs_adj Boolean indicators of if adjoints of arguments will be
-   * needed
-   * @param adj Eigen::VectorXd of adjoints at the output of the softmax
-   * @return Eigen::VectorXd of adjoints propagated through softmax operation
-   */
-  template <std::size_t size>
-  auto multiply_adjoint_jacobian(const std::array<bool, size>& needs_adj,
-                                 const Eigen::VectorXd& adj) const {
-    Eigen::VectorXd adj_times_jac(N_);
-    double rolling_adjoint_sum = 0.0;
-
-    if (N_ > 0) {
-      for (int n = N_ - 1; n > 0; --n) {
-        rolling_adjoint_sum += adj(n);
-        adj_times_jac(n) = exp_x_[n - 1] * rolling_adjoint_sum;
-      }
-      adj_times_jac(0) = rolling_adjoint_sum + adj(0);
-    }
-
-    return std::make_tuple(adj_times_jac);
-  }
-};
-}  // namespace internal
 
 /**
  * Return an increasing ordered vector derived from the specified
@@ -86,9 +21,60 @@ class ordered_constrain_op {
  * @param x Free vector of scalars
  * @return Increasing ordered vector
  */
-inline Eigen::Matrix<var, Eigen::Dynamic, 1> ordered_constrain(
-    const Eigen::Matrix<var, Eigen::Dynamic, 1>& x) {
-  return adj_jac_apply<internal::ordered_constrain_op>(x);
+template <typename T, require_rev_col_vector_t<T>* = nullptr>
+inline auto ordered_constrain(const T& x) {
+  using ret_type = plain_type_t<T>;
+
+  using std::exp;
+
+  size_t N = x.size();
+  if (unlikely(N == 0)) {
+    return ret_type(x);
+  }
+
+  Eigen::VectorXd y_val(N);
+  arena_t<T> arena_x = x;
+  arena_t<Eigen::VectorXd> exp_x(N - 1);
+
+  y_val.coeffRef(0) = arena_x.val().coeff(0);
+  for (Eigen::Index n = 1; n < N; ++n) {
+    exp_x.coeffRef(n - 1) = exp(arena_x.val().coeff(n));
+    y_val.coeffRef(n) = y_val.coeff(n - 1) + exp_x.coeff(n - 1);
+  }
+
+  arena_t<ret_type> y = y_val;
+
+  reverse_pass_callback([arena_x, y, exp_x]() mutable {
+    double rolling_adjoint_sum = 0.0;
+
+    for (int n = arena_x.size() - 1; n > 0; --n) {
+      rolling_adjoint_sum += y.adj().coeff(n);
+      arena_x.adj().coeffRef(n) += exp_x.coeff(n - 1) * rolling_adjoint_sum;
+    }
+    arena_x.adj().coeffRef(0) += rolling_adjoint_sum + y.adj().coeff(0);
+  });
+
+  return ret_type(y);
+}
+
+/**
+ * Return a positive valued, increasing ordered vector derived
+ * from the specified free vector and increment the specified log
+ * probability reference with the log absolute Jacobian determinant
+ * of the transform.  The returned constrained vector
+ * will have the same dimensionality as the specified free vector.
+ *
+ * @tparam T type of the vector
+ * @param x Free vector of scalars.
+ * @param lp Log probability reference.
+ * @return Positive, increasing ordered vector.
+ */
+template <typename VarVec, require_var_col_vector_t<VarVec>* = nullptr>
+auto ordered_constrain(const VarVec& x, scalar_type_t<VarVec>& lp) {
+  if (x.size() > 1) {
+    lp += sum(x.tail(x.size() - 1));
+  }
+  return ordered_constrain(x);
 }
 
 }  // namespace math

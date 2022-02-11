@@ -17,6 +17,22 @@ stan::math::vector_d get_simplex_Phi(double lambda,
   return theta;
 }
 
+TEST(ProbDistributions, ordered_probit_stability) {
+  using stan::math::is_inf;
+  using stan::math::ordered_probit_log;
+
+  Eigen::VectorXd c(3);
+  c << -0.3, 0.1, 1.2;
+
+  EXPECT_FALSE(is_inf(ordered_probit_log(1, 10, c)));
+  EXPECT_FALSE(is_inf(ordered_probit_log(2, 10, c)));
+  EXPECT_NE(ordered_probit_log(4, 10, c), 0);
+
+  EXPECT_NE(ordered_probit_log(1, -38, c), 0);
+  EXPECT_FALSE(is_inf(ordered_probit_log(2, -38, c)));
+  EXPECT_FALSE(is_inf(ordered_probit_log(4, -38, c)));
+}
+
 TEST(ProbDistributions, ordered_probit_vals) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -84,7 +100,7 @@ TEST(ProbDistributions, ordered_probit) {
   // init size zero
   Eigen::Matrix<double, Eigen::Dynamic, 1> c_zero;
   EXPECT_EQ(0, c_zero.size());
-  EXPECT_THROW(ordered_probit_log(1, lambda, c_zero), std::domain_error);
+  EXPECT_THROW(ordered_probit_log(1, lambda, c_zero), std::invalid_argument);
 
   Eigen::Matrix<double, Eigen::Dynamic, 1> c_neg(1);
   c_neg << -13.7;

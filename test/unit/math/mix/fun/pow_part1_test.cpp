@@ -6,7 +6,6 @@
 template <typename T>
 void expect_arith_instantiate() {
   using stan::math::pow;
-  using std::pow;
   auto a1 = pow(T(1.0), 1);
   auto b1 = pow(T(1.0), 1.0);
   auto c1 = pow(1, T(1.0));
@@ -37,7 +36,6 @@ TEST(mathMixScalFun, powInstantiations) {
 TEST(mathMixScalFun, pow) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::pow;
-    using std::pow;
     return pow(x1, x2);
   };
   stan::test::expect_ad(f, -0.4, 0.5);
@@ -58,6 +56,6 @@ TEST(mathMixScalFun, pow) {
   Eigen::VectorXd in1(3);
   in1 << 0.5, 3.4, 5.2;
   Eigen::VectorXd in2(3);
-  in2 << 3.3, 0.9, 6.7;
+  in2 << 3.3, 0.9, 2.1;
   stan::test::expect_ad_vectorized_binary(f, in1, in2);
 }

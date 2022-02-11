@@ -3,7 +3,6 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/fun/typedefs.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/typedefs.hpp>
@@ -11,26 +10,23 @@
 namespace stan {
 namespace math {
 
-template <typename EigMat, require_eigen_vt<is_var, EigMat>* = nullptr>
-inline var log_determinant(const EigMat& m) {
-  using Eigen::Matrix;
+template <typename T, require_rev_matrix_t<T>* = nullptr>
+inline var log_determinant(const T& m) {
+  check_square("log_determinant", "m", m);
 
-  math::check_square("log_determinant", "m", m);
+  if (m.size() == 0) {
+    return var(0.0);
+  }
 
-  Eigen::FullPivHouseholderQR<promote_scalar_t<double, EigMat>> hh
-      = m.val().fullPivHouseholderQr();
+  arena_t<T> arena_m = m;
+  auto m_hh = arena_m.val().colPivHouseholderQr();
+  auto arena_m_inv_transpose = to_arena(m_hh.inverse().transpose());
+  var log_det = m_hh.logAbsDeterminant();
 
-  vari** varis
-      = ChainableStack::instance_->memalloc_.alloc_array<vari*>(m.size());
-  Eigen::Map<matrix_vi>(varis, m.rows(), m.cols()) = m.vi();
-
-  double* gradients
-      = ChainableStack::instance_->memalloc_.alloc_array<double>(m.size());
-  Eigen::Map<matrix_d>(gradients, m.rows(), m.cols())
-      = hh.inverse().transpose();
-
-  return var(new precomputed_gradients_vari(hh.logAbsDeterminant(), m.size(),
-                                            varis, gradients));
+  reverse_pass_callback([arena_m, log_det, arena_m_inv_transpose]() mutable {
+    arena_m.adj() += log_det.adj() * arena_m_inv_transpose;
+  });
+  return log_det;
 }
 
 }  // namespace math

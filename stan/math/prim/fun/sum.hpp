@@ -18,7 +18,7 @@ namespace math {
  * @return Same value (the sum of one value).
  */
 template <typename T, require_stan_scalar_t<T>* = nullptr>
-inline decltype(auto) sum(T&& m) {
+inline T sum(T&& m) {
   return std::forward<T>(m);
 }
 
@@ -29,7 +29,7 @@ inline decltype(auto) sum(T&& m) {
  * @param m Standard vector to sum.
  * @return Sum of elements.
  */
-template <typename T>
+template <typename T, require_not_var_t<T>* = nullptr>
 inline T sum(const std::vector<T>& m) {
   return std::accumulate(m.begin(), m.end(), T{0});
 }

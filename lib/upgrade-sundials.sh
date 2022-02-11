@@ -114,12 +114,16 @@ cd build
 cmake ..
 cd ..
 
-git rm -rf INSTALL_GUIDE.pdf config/ doc/ examples/ test/ */cvode */ida */arkode
+git rm -rf cmake/ doc/ examples/ test/ */cvode */ida */arkode src/sundials/sundials_xbraid.c
 find . -name CMakeLists.txt -exec git rm {} \;
 git commit -m "upgrading to sundials v${sundials_version}; pruning files"
 
 # 5. Add cmake-generated config files to Sundials.
 cp build/include/sundials/*config.h include/sundials/
+cp build/include/sundials/*export.h include/sundials/
+# ... and  further files needed for compilation
+cp -v ./src/sundials/sundials_debug.h include/
+
 rm -rf build
 git add include
 git commit -m "upgrading to sundials v${sundials_version}; adding config files"
@@ -156,6 +160,6 @@ cat <<EOF
 
     Please check the upgrade worked by running a test with CVODES linked.
     Example (from Math home directory):
-      ./runTests.py test/unit/math/rev/functor/cvodes_ode_data_prim_test.cpp
+      ./runTests.py test/unit/math/rev/functor/ode_bdf_rev_test.cpp
 
 EOF

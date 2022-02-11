@@ -8,24 +8,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class hypot_vv_vari : public op_vv_vari {
- public:
-  hypot_vv_vari(vari* avi, vari* bvi)
-      : op_vv_vari(hypot(avi->val_, bvi->val_), avi, bvi) {}
-  void chain() {
-    avi_->adj_ += adj_ * avi_->val_ / val_;
-    bvi_->adj_ += adj_ * bvi_->val_ / val_;
-  }
-};
-
-class hypot_vd_vari : public op_v_vari {
- public:
-  hypot_vd_vari(vari* avi, double b) : op_v_vari(hypot(avi->val_, b), avi) {}
-  void chain() { avi_->adj_ += adj_ * avi_->val_ / val_; }
-};
-}  // namespace internal
-
 /**
  * Returns the length of the hypotenuse of a right triangle
  * with sides of the specified lengths (C99).
@@ -43,7 +25,10 @@ class hypot_vd_vari : public op_v_vari {
  * @return Length of hypotenuse.
  */
 inline var hypot(const var& a, const var& b) {
-  return var(new internal::hypot_vv_vari(a.vi_, b.vi_));
+  return make_callback_var(hypot(a.val(), b.val()), [a, b](auto& vi) mutable {
+    a.adj() += vi.adj() * a.val() / vi.val();
+    b.adj() += vi.adj() * b.val() / vi.val();
+  });
 }
 
 /**
@@ -59,7 +44,9 @@ inline var hypot(const var& a, const var& b) {
  * @return Length of hypotenuse.
  */
 inline var hypot(const var& a, double b) {
-  return var(new internal::hypot_vd_vari(a.vi_, b));
+  return make_callback_var(hypot(a.val(), b), [a](auto& vi) mutable {
+    a.adj() += vi.adj() * a.val() / vi.val();
+  });
 }
 
 /**
@@ -102,7 +89,9 @@ inline var hypot(const var& a, double b) {
  * @return Length of hypotenuse.
  */
 inline var hypot(double a, const var& b) {
-  return var(new internal::hypot_vd_vari(b.vi_, a));
+  return make_callback_var(hypot(b.val(), a), [b](auto& vi) mutable {
+    b.adj() += vi.adj() * b.val() / vi.val();
+  });
 }
 
 }  // namespace math

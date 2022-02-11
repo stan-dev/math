@@ -10,6 +10,7 @@
 #include <stan/math/prim/fun/log1p_exp.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
@@ -21,19 +22,29 @@ namespace math {
 
 // NegBinomial(n|eta, phi)  [phi > 0;  n >= 0]
 template <bool propto, typename T_n, typename T_log_location,
-          typename T_precision>
+          typename T_precision,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T_n, T_log_location, T_precision>* = nullptr>
 return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
     const T_n& n, const T_log_location& eta, const T_precision& phi) {
   using T_partials_return = partials_return_t<T_n, T_log_location, T_precision>;
   using std::exp;
   using std::log;
+  using T_n_ref = ref_type_t<T_n>;
+  using T_eta_ref = ref_type_t<T_log_location>;
+  using T_phi_ref = ref_type_t<T_precision>;
   static const char* function = "neg_binomial_2_log_lpmf";
-  check_nonnegative(function, "Failures variable", n);
-  check_finite(function, "Log location parameter", eta);
-  check_positive_finite(function, "Precision parameter", phi);
   check_consistent_sizes(function, "Failures variable", n,
                          "Log location parameter", eta, "Precision parameter",
                          phi);
+
+  T_n_ref n_ref = n;
+  T_eta_ref eta_ref = eta;
+  T_phi_ref phi_ref = phi;
+
+  check_nonnegative(function, "Failures variable", n_ref);
+  check_finite(function, "Log location parameter", eta_ref);
+  check_positive_finite(function, "Precision parameter", phi_ref);
 
   if (size_zero(n, eta, phi)) {
     return 0.0;
@@ -43,11 +54,11 @@ return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
   }
 
   T_partials_return logp(0.0);
-  operands_and_partials<T_log_location, T_precision> ops_partials(eta, phi);
+  operands_and_partials<T_eta_ref, T_phi_ref> ops_partials(eta_ref, phi_ref);
 
-  scalar_seq_view<T_n> n_vec(n);
-  scalar_seq_view<T_log_location> eta_vec(eta);
-  scalar_seq_view<T_precision> phi_vec(phi);
+  scalar_seq_view<T_n> n_vec(n_ref);
+  scalar_seq_view<T_eta_ref> eta_vec(eta_ref);
+  scalar_seq_view<T_phi_ref> phi_vec(phi_ref);
   size_t size_eta = stan::math::size(eta);
   size_t size_phi = stan::math::size(phi);
   size_t size_eta_phi = max_size(eta, phi);
@@ -56,13 +67,13 @@ return_type_t<T_log_location, T_precision> neg_binomial_2_log_lpmf(
 
   VectorBuilder<true, T_partials_return, T_log_location> eta_val(size_eta);
   for (size_t i = 0; i < size_eta; ++i) {
-    eta_val[i] = value_of(eta_vec[i]);
+    eta_val[i] = eta_vec.val(i);
   }
 
   VectorBuilder<true, T_partials_return, T_precision> phi_val(size_phi);
   VectorBuilder<true, T_partials_return, T_precision> log_phi(size_phi);
   for (size_t i = 0; i < size_phi; ++i) {
-    phi_val[i] = value_of(phi_vec[i]);
+    phi_val[i] = phi_vec.val(i);
     log_phi[i] = log(phi_val[i]);
   }
 

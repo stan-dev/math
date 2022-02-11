@@ -1,3 +1,5 @@
+#ifndef TEST_UNIT_MATH_PRIM_FUN_BINARY_SCALAR_TESTER_HPP
+#define TEST_UNIT_MATH_PRIM_FUN_BINARY_SCALAR_TESTER_HPP
 #include <stan/math/prim.hpp>
 #include <gtest/gtest.h>
 
@@ -19,9 +21,9 @@ namespace test {
 template <typename F, typename T1, typename T2,
           require_all_not_vector_t<T1, T2>* = nullptr>
 void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
-  auto vec_vec = f(x, y);
-  auto vec_scal = f(x, y(0));
-  auto scal_vec = f(x(0), y);
+  auto vec_vec = math::eval(f(x, y));
+  auto vec_scal = math::eval(f(x, y(0)));
+  auto scal_vec = math::eval(f(x(0), y));
   for (int i = 0; i < x.size(); ++i) {
     EXPECT_FLOAT_EQ(f(x(i), y(i)), vec_vec(i));
     EXPECT_FLOAT_EQ(f(x(i), y(0)), vec_scal(i));
@@ -89,9 +91,9 @@ void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
 template <typename F, typename T1, typename T2,
           require_all_vector_t<T1, T2>* = nullptr>
 void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
-  auto vec_vec = f(x, y);
-  auto vec_scal = f(x, y[0]);
-  auto scal_vec = f(x[0], y);
+  auto vec_vec = math::eval(f(x, y));
+  auto vec_scal = math::eval(f(x, y[0]));
+  auto scal_vec = math::eval(f(x[0], y));
   for (int i = 0; i < x.size(); ++i) {
     EXPECT_FLOAT_EQ(f(x[i], y[i]), vec_vec[i]);
     EXPECT_FLOAT_EQ(f(x[i], y[0]), vec_scal[i]);
@@ -156,11 +158,12 @@ void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
  * @param y Second vector input to which operation is applied.
  * @param f functor to apply to inputs.
  */
-template <
-    typename F, typename T1, typename T2, typename T1_plain = plain_type_t<T1>,
-    require_eigen_matrix_t<T1>* = nullptr, require_std_vector_t<T2>* = nullptr>
+template <typename F, typename T1, typename T2,
+          typename T1_plain = plain_type_t<T1>,
+          require_eigen_matrix_dynamic_t<T1>* = nullptr,
+          require_std_vector_t<T2>* = nullptr>
 void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
-  auto vec_vec = f(x, y);
+  auto vec_vec = math::eval(f(x, y));
   for (int r = 0; r < x.rows(); ++r) {
     for (int c = 0; c < x.cols(); ++c) {
       EXPECT_FLOAT_EQ(f(x(r, c), y[r][c]), vec_vec(r, c));
@@ -208,11 +211,12 @@ void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
   EXPECT_THROW(f(nest_nest_x_small, nest_nest_y), std::invalid_argument);
 }
 
-template <
-    typename F, typename T1, typename T2, typename T2_plain = plain_type_t<T2>,
-    require_std_vector_t<T1>* = nullptr, require_eigen_matrix_t<T2>* = nullptr>
+template <typename F, typename T1, typename T2,
+          typename T2_plain = plain_type_t<T2>,
+          require_std_vector_t<T1>* = nullptr,
+          require_eigen_matrix_dynamic_t<T2>* = nullptr>
 void binary_scalar_tester_impl(const F& f, const T1& x, const T2& y) {
-  auto vec_vec = f(x, y);
+  auto vec_vec = math::eval(f(x, y));
   for (int r = 0; r < y.rows(); ++r) {
     for (int c = 0; c < y.cols(); ++c) {
       EXPECT_FLOAT_EQ(f(x[r][c], y(r, c)), vec_vec(r, c));
@@ -306,7 +310,25 @@ void binary_scalar_tester(const F& f, const T1& x, const T2& y) {
 template <typename F, typename T1, typename T2,
           require_any_std_vector_vt<is_std_vector, T1, T2>* = nullptr,
           require_any_std_vector_st<std::is_integral, T1, T2>* = nullptr,
-          require_any_eigen_matrix_t<T1, T2>* = nullptr>
+          require_any_eigen_matrix_dynamic_t<T1, T2>* = nullptr>
+void binary_scalar_tester(const F& f, const T1& x, const T2& y) {
+  binary_scalar_tester_impl(f, x, y);
+}
+
+/**
+ * Testing framework for checking that the vectorisation of binary
+ * functions returns the same results as the binary function with
+ * scalar inputs. This specialization takes two std::vector of integers.
+ *
+ * @tparam F Type of functor to apply.
+ * @tparam T1 Type of first input.
+ * @tparam T2 Type of second input.
+ * @param x First std::vector input to which operation is applied.
+ * @param y Second Eigen input to which operation is applied.
+ * @param f functor to apply to inputs.
+ */
+template <typename F, typename T1, typename T2,
+          require_all_std_vector_vt<std::is_integral, T1, T2>* = nullptr>
 void binary_scalar_tester(const F& f, const T1& x, const T2& y) {
   binary_scalar_tester_impl(f, x, y);
 }
@@ -359,3 +381,4 @@ void binary_scalar_tester(const F& f, const T1& x, const T2& y) {
 
 }  // namespace test
 }  // namespace stan
+#endif

@@ -47,7 +47,7 @@ namespace math {
  * @param a the first variable
  * @param b the second variable
  */
-template <typename T1, typename T2>
+template <typename T1, typename T2, require_all_not_st_var<T1, T2>* = nullptr>
 inline return_type_t<T1, T2> log_sum_exp(const T2& a, const T1& b) {
   if (a == NEGATIVE_INFTY) {
     return b;
@@ -82,7 +82,7 @@ inline auto log_sum_exp(const T& x) {
     if (v.size() == 0) {
       return NEGATIVE_INFTY;
     }
-    const Eigen::Ref<const plain_type_t<decltype(v)>>& v_ref = v;
+    const auto& v_ref = to_ref(v);
     const double max = v_ref.maxCoeff();
     if (!std::isfinite(max)) {
       return max;

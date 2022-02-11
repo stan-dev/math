@@ -14,7 +14,7 @@ namespace math {
  * @return A vector of size K with all elements initialised to 0.
  * @throw std::domain_error if K is negative.
  */
-inline Eigen::VectorXd zeros_vector(int K) {
+inline auto zeros_vector(int K) {
   check_nonnegative("zeros_vector", "size", K);
   return Eigen::VectorXd::Zero(K);
 }

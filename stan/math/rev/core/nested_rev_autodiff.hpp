@@ -39,7 +39,7 @@ class nested_rev_autodiff {
    * Reset all adjoint values in this nested stack
    * to zero.
    **/
-  void set_zero_all_adjoints() { set_zero_all_adjoints_nested(); }
+  inline void set_zero_all_adjoints() { set_zero_all_adjoints_nested(); }
 };
 
 }  // namespace math

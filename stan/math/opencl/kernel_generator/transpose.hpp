@@ -6,9 +6,8 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/opencl/kernel_generator/type_str.hpp>
 #include <stan/math/opencl/kernel_generator/name_generator.hpp>
-#include <stan/math/opencl/kernel_generator/operation_cl.hpp>
+#include <stan/math/opencl/kernel_generator/operation_cl_lhs.hpp>
 #include <stan/math/opencl/kernel_generator/as_operation_cl.hpp>
-#include <stan/math/opencl/kernel_generator/is_kernel_expression.hpp>
 #include <algorithm>
 #include <string>
 #include <set>
@@ -31,13 +30,14 @@ namespace math {
  */
 template <typename Arg>
 class transpose_
-    : public operation_cl<transpose_<Arg>,
-                          typename std::remove_reference_t<Arg>::Scalar, Arg> {
+    : public operation_cl_lhs<
+          transpose_<Arg>, typename std::remove_reference_t<Arg>::Scalar, Arg> {
  public:
   using Scalar = typename std::remove_reference_t<Arg>::Scalar;
-  using base = operation_cl<transpose_<Arg>, Scalar, Arg>;
+  using base = operation_cl_lhs<transpose_<Arg>, Scalar, Arg>;
   using base::var_name_;
   using view_transitivity = std::tuple<std::true_type>;
+  using base::operator=;
 
   /**
    * Constructor
@@ -49,9 +49,10 @@ class transpose_
    * Creates a deep copy of this expression.
    * @return copy of \c *this
    */
-  inline transpose_<std::remove_reference_t<Arg>> deep_copy() const {
-    return transpose_<std::remove_reference_t<Arg>>{
-        this->template get_arg<0>().deep_copy()};
+  inline auto deep_copy() const {
+    auto&& arg_copy = this->template get_arg<0>().deep_copy();
+    return transpose_<std::remove_reference_t<decltype(arg_copy)>>{
+        std::move(arg_copy)};
   }
 
   /**
@@ -87,6 +88,38 @@ class transpose_
     std::pair<int, int> arg_diags
         = this->template get_arg<0>().extreme_diagonals();
     return {-arg_diags.second, -arg_diags.first};
+  }
+
+  /**
+   * Sets the view of the underlying matrix depending on which of its parts are
+   * written to.
+   * @param bottom_diagonal Index of the top sub- or super- diagonal written
+   * with nonzero elements.
+   * @param top_diagonal Index of the top sub- or super- diagonal written with
+   * nonzero elements.
+   * @param bottom_zero_diagonal Index of the top sub- or super- diagonal
+   * written with zeros if it ie more extreme than \c bottom_diagonal. Otherwise
+   * it should be set to equal value as \c bottom_diagonal.
+   * @param top_zero_diagonal Index of the top sub- or super- diagonal written
+   * with zeros if it ie more extreme than \c top_diagonal. Otherwise it should
+   * be set to equal value as \c top_diagonal.
+   */
+  void set_view(int bottom_diagonal, int top_diagonal, int bottom_zero_diagonal,
+                int top_zero_diagonal) const {
+    this->template get_arg<0>().set_view(
+        top_diagonal, bottom_diagonal, top_zero_diagonal, bottom_zero_diagonal);
+  }
+
+  /**
+   * Sets the dimensions of the underlying expressions if possible. If not
+   * checks whether they have correct dimensions.
+   * @param rows desired number of rows
+   * @param cols desired number of columns
+   * @throws std::invalid_argument desired dimensions do not match with
+   * dimensions of underlying expression that can not be resized.
+   */
+  void check_assign_dimensions(int rows, int cols) const {
+    this->template get_arg<0>().check_assign_dimensions(cols, rows);
   }
 };
 

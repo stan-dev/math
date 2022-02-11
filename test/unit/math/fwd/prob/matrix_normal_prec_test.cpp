@@ -1,10 +1,9 @@
 #include <stan/math/fwd.hpp>
 #include <gtest/gtest.h>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-
 TEST(ProbDistributionsMatrixNormal, fvar_double) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::fvar;
 
   Matrix<fvar<double>, Dynamic, Dynamic> y(3, 5);
@@ -38,6 +37,8 @@ TEST(ProbDistributionsMatrixNormal, fvar_double) {
 }
 
 TEST(ProbDistributionsMatrixNormal, fvar_fvar_double) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::fvar;
 
   Matrix<fvar<fvar<double>>, Dynamic, Dynamic> y(3, 5);

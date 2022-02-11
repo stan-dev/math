@@ -36,6 +36,8 @@ TEST(MathMixMatFun, determinant) {
     }
   }
 
-  for (const auto& x : std::vector<Eigen::MatrixXd>{z, a, b, c, d, e, g})
+  for (const auto& x : std::vector<Eigen::MatrixXd>{z, a, b, c, d, e, g}) {
     stan::test::expect_ad(tols, f, x);
+    stan::test::expect_ad_matvar(f, x);
+  }
 }

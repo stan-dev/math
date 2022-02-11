@@ -17,7 +17,7 @@ template <typename Mat1, typename Mat2,
           require_not_eigen_row_and_col_t<Mat1, Mat2>* = nullptr>
 inline auto multiply(const Mat1& m1, const Mat2& m2) {
   check_multiplicable("multiply", "m1", m1, "m2", m2);
-  return m1 * m2;
+  return (m1 * m2).eval();
 }
 
 template <typename Mat1, typename Mat2,

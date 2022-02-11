@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <boost/random/student_t_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
@@ -36,18 +37,24 @@ template <typename T_deg, typename T_loc, typename T_scale, class RNG>
 inline typename VectorBuilder<true, double, T_deg, T_loc, T_scale>::type
 student_t_rng(const T_deg& nu, const T_loc& mu, const T_scale& sigma,
               RNG& rng) {
+  using T_nu_ref = ref_type_t<T_deg>;
+  using T_mu_ref = ref_type_t<T_loc>;
+  using T_sigma_ref = ref_type_t<T_scale>;
   using boost::variate_generator;
   using boost::random::student_t_distribution;
   static const char* function = "student_t_rng";
-  check_positive_finite(function, "Degrees of freedom parameter", nu);
-  check_finite(function, "Location parameter", mu);
-  check_positive_finite(function, "Scale parameter", sigma);
   check_consistent_sizes(function, "Degrees of freedom parameter", nu,
                          "Location parameter", mu, "Scale Parameter", sigma);
+  T_nu_ref nu_ref = nu;
+  T_mu_ref mu_ref = mu;
+  T_sigma_ref sigma_ref = sigma;
+  check_positive_finite(function, "Degrees of freedom parameter", nu_ref);
+  check_finite(function, "Location parameter", mu_ref);
+  check_positive_finite(function, "Scale parameter", sigma_ref);
 
-  scalar_seq_view<T_deg> nu_vec(nu);
-  scalar_seq_view<T_loc> mu_vec(mu);
-  scalar_seq_view<T_scale> sigma_vec(sigma);
+  scalar_seq_view<T_nu_ref> nu_vec(nu_ref);
+  scalar_seq_view<T_mu_ref> mu_vec(mu_ref);
+  scalar_seq_view<T_sigma_ref> sigma_vec(sigma_ref);
   size_t N = max_size(nu, mu, sigma);
   VectorBuilder<true, double, T_deg, T_loc, T_scale> output(N);
 

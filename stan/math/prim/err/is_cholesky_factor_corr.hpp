@@ -1,8 +1,9 @@
 #ifndef STAN_MATH_PRIM_ERR_IS_CHOLESKY_FACTOR_CORR_HPP
 #define STAN_MATH_PRIM_ERR_IS_CHOLESKY_FACTOR_CORR_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/err/is_cholesky_factor.hpp>
 #include <stan/math/prim/err/is_unit_vector.hpp>
 
@@ -15,22 +16,20 @@ namespace math {
  * A Cholesky factor is a lower triangular matrix whose diagonal
  * elements are all positive. This definition does not require a
  * square matrix.
- * @tparam T_y Type of elements of Cholesky factor, requires class methods
- *   <code>.rows()</code>, <code>.row()</code>, and <code>.transpose()</code>
+ * @tparam EigMat A type derived from `EigenBase` with dynamic rows and columns
  * @param y Matrix to test
  * @return <code>true</code> if y is a valid Cholesky factor, if
  *    the number of rows is not less than the number of columns,
  *    if there are no 0 columns, and no element in matrix is <code>NaN</code>
  */
-template <typename T_y>
-inline bool is_cholesky_factor_corr(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& y) {
-  if (!is_cholesky_factor(y)) {
+template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr>
+inline bool is_cholesky_factor_corr(const EigMat& y) {
+  const auto& y_ref = to_ref(y);
+  if (!is_cholesky_factor(y_ref)) {
     return false;
   }
-  for (int i = 0; i < y.rows(); ++i) {
-    Eigen::Matrix<T_y, Eigen::Dynamic, 1> y_i = y.row(i).transpose();
-    if (!is_unit_vector(y_i)) {
+  for (int i = 0; i < y_ref.rows(); ++i) {
+    if (!is_unit_vector(y_ref.row(i))) {
       return false;
     }
   }

@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
@@ -187,9 +189,7 @@ return_type_t<T_theta, std::vector<T_lam>> log_mix(
     }
     if (!is_constant_all<T_lam>::value) {
       for (int n = 0; n < N; ++n) {
-        as_column_vector_or_scalar(
-            forward_as<promote_scalar_t<T_partials_return, T_lam>>(
-                ops_partials.edge2_.partials_vec_[n]))
+        as_column_vector_or_scalar(ops_partials.edge2_.partials_vec_[n])
             = derivs.col(n).cwiseProduct(theta_dbl);
       }
     }

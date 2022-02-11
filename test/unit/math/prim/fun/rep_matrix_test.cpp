@@ -16,6 +16,13 @@ TEST(MathMatrixPrimMat, rep_matrix) {
   EXPECT_THROW(rep_matrix(2.0, 3, -1), std::domain_error);
 }
 
+TEST(MathMatrixPrimMat, rep_matrix_always_returns_double) {
+  int a = 1;
+  auto x = stan::math::rep_matrix(a, 3, 4);
+
+  EXPECT_TRUE((std::is_same<double, stan::value_type_t<decltype(x)>>::value));
+}
+
 TEST(MathMatrixPrimMat, rep_matrix_vec) {
   using stan::math::rep_matrix;
   Eigen::Matrix<double, Eigen::Dynamic, 1> v(3);

@@ -73,12 +73,12 @@ TEST(ProbDistributionsNegBinomial, error_check) {
 
 void expected_bin_sizes(double* expect, const int K, const int N,
                         const double alpha, const double beta) {
-  double p = 0;
+  long double p = 0;
   for (int i = 0; i < K; i++) {
     expect[i] = N * std::exp(stan::math::neg_binomial_log(i, alpha, beta));
     p += std::exp(stan::math::neg_binomial_log(i, alpha, beta));
   }
-  expect[K - 1] = N * (1.0 - p);
+  expect[K - 1] = N * static_cast<double>(1.0 - p);
 }
 
 TEST(ProbDistributionsNegBinomial, chiSquareGoodnessFitTest) {

@@ -22,12 +22,12 @@ inline fvar<T> acos(const fvar<T>& x) {
  * Return the arc cosine of the complex argument.
  *
  * @tparam T autodiff value type
- * @param[in] z argument
+ * @param x argument
  * @return arc cosine of the argument
  */
 template <typename T>
-inline std::complex<fvar<T>> acos(const std::complex<fvar<T>>& z) {
-  return internal::complex_acos(z);
+inline std::complex<fvar<T>> acos(const std::complex<fvar<T>>& x) {
+  return internal::complex_acos(x);
 }
 
 }  // namespace math

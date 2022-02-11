@@ -16,12 +16,14 @@ void stan_print(std::ostream* o, const T& x) {
 
 template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
 void stan_print(std::ostream* o, const EigVec& x) {
+  const auto& x_ref = to_ref(x);
+
   *o << '[';
-  for (int i = 0; i < x.size(); ++i) {
+  for (int i = 0; i < x_ref.size(); ++i) {
     if (i > 0) {
       *o << ',';
     }
-    stan_print(o, x(i));
+    stan_print(o, x_ref.coeff(i));
   }
   *o << ']';
 }
@@ -29,17 +31,19 @@ void stan_print(std::ostream* o, const EigVec& x) {
 template <typename EigMat, require_eigen_t<EigMat>* = nullptr,
           require_not_eigen_vector_t<EigMat>* = nullptr>
 void stan_print(std::ostream* o, const EigMat& x) {
+  const auto& x_ref = to_ref(x);
+
   *o << '[';
-  for (int i = 0; i < x.rows(); ++i) {
+  for (int i = 0; i < x_ref.rows(); ++i) {
     if (i > 0) {
       *o << ',';
     }
     *o << '[';
-    for (int j = 0; j < x.cols(); ++j) {
+    for (int j = 0; j < x_ref.cols(); ++j) {
       if (j > 0) {
         *o << ',';
       }
-      stan_print(o, x.coeff(i, j));
+      stan_print(o, x_ref.coeff(i, j));
     }
     *o << ']';
   }

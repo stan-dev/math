@@ -4,7 +4,9 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/poisson_binomial_log_probs.hpp>
+#include <stan/math/prim/fun/vector_seq_view.hpp>
 
 namespace stan {
 namespace math {
@@ -40,8 +42,9 @@ return_type_t<T_theta> poisson_binomial_lpmf(const T_y& y,
   for (size_t i = 0; i < max_sz; ++i) {
     check_bounded(function, "Successes variable", y_vec[i], 0,
                   theta_vec[i].size());
-    check_finite(function, "Probability parameters", theta_vec[i]);
-    check_bounded(function, "Probability parameters", theta_vec[i], 0.0, 1.0);
+    check_finite(function, "Probability parameters", theta_vec.val(i));
+    check_bounded(function, "Probability parameters", theta_vec.val(i), 0.0,
+                  1.0);
   }
 
   return_type_t<T_theta> log_prob = 0.0;

@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <boost/random/binomial_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
@@ -32,14 +33,19 @@ inline typename VectorBuilder<true, int, T_N, T_theta>::type binomial_rng(
     const T_N& N, const T_theta& theta, RNG& rng) {
   using boost::binomial_distribution;
   using boost::variate_generator;
+  using T_N_ref = ref_type_t<T_N>;
+  using T_theta_ref = ref_type_t<T_theta>;
   static const char* function = "binomial_rng";
-  check_nonnegative(function, "Population size parameter", N);
-  check_bounded(function, "Probability parameter", theta, 0.0, 1.0);
   check_consistent_sizes(function, "Population size parameter", N,
                          "Probability Parameter", theta);
+  T_N_ref N_ref = N;
+  T_theta_ref theta_ref = theta;
+  check_nonnegative(function, "Population size parameter", N_ref);
+  check_bounded(function, "Probability parameter", value_of(theta_ref), 0.0,
+                1.0);
 
-  scalar_seq_view<T_N> N_vec(N);
-  scalar_seq_view<T_theta> theta_vec(theta);
+  scalar_seq_view<T_N_ref> N_vec(N_ref);
+  scalar_seq_view<T_theta_ref> theta_vec(theta_ref);
   size_t M = max_size(N, theta);
   VectorBuilder<true, int, T_N, T_theta> output(M);
 

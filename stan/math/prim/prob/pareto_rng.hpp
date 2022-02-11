@@ -4,6 +4,8 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <boost/random/exponential_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <cmath>
@@ -35,13 +37,15 @@ inline typename VectorBuilder<true, double, T_shape, T_scale>::type pareto_rng(
   using boost::exponential_distribution;
   using boost::variate_generator;
   static const char* function = "pareto_rng";
-  check_positive_finite(function, "Scale parameter", y_min);
-  check_positive_finite(function, "Shape parameter", alpha);
   check_consistent_sizes(function, "Scale Parameter", y_min, "Shape parameter",
                          alpha);
+  const auto& y_min_ref = to_ref(y_min);
+  const auto& alpha_ref = to_ref(alpha);
+  check_positive_finite(function, "Scale parameter", y_min_ref);
+  check_positive_finite(function, "Shape parameter", alpha_ref);
 
-  scalar_seq_view<T_scale> y_min_vec(y_min);
-  scalar_seq_view<T_shape> alpha_vec(alpha);
+  scalar_seq_view<T_scale> y_min_vec(y_min_ref);
+  scalar_seq_view<T_shape> alpha_vec(alpha_ref);
   size_t N = max_size(y_min, alpha);
   VectorBuilder<true, double, T_scale, T_shape> output(N);
 

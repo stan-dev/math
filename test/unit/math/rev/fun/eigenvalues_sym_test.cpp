@@ -1,4 +1,4 @@
-#include <stan/math/prim.hpp>
+#include <stan/math/rev.hpp>
 #include <stan/math/rev/fun/eigenvalues_sym.hpp>
 #include <stan/math/rev/fun/sum.hpp>
 #include <stan/math/rev/fun/log.hpp>

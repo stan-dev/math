@@ -5,6 +5,45 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+namespace stan {
+namespace math {
+namespace test {
+template <bool UseVarMat>
+using cond_var_matrix_t = std::conditional_t<
+    UseVarMat,
+    stan::math::var_value<
+        Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>,
+    Eigen::Matrix<stan::math::var, Eigen::Dynamic, Eigen::Dynamic>>;
+template <bool UseVarMat>
+using cond_var_vector_t = std::conditional_t<
+    UseVarMat, stan::math::var_value<Eigen::Matrix<double, Eigen::Dynamic, 1>>,
+    Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1>>;
+template <bool UseVarMat>
+using cond_var_row_vector_t = std::conditional_t<
+    UseVarMat, stan::math::var_value<Eigen::Matrix<double, 1, Eigen::Dynamic>>,
+    Eigen::Matrix<stan::math::var, 1, Eigen::Dynamic>>;
+
+template <bool UseVarMat>
+struct var_matrix_types {
+  using matrix_v = stan::math::test::cond_var_matrix_t<UseVarMat>;
+  using row_vector_v = stan::math::test::cond_var_row_vector_t<UseVarMat>;
+  using vector_v = stan::math::test::cond_var_vector_t<UseVarMat>;
+};
+
+template <class T>
+class VarMatrixTypedTests : public testing::Test {
+ public:
+  using matrix_v = typename T::matrix_v;
+  using row_vector_v = typename T::row_vector_v;
+  using vector_v = typename T::vector_v;
+  virtual ~VarMatrixTypedTests() { stan::math::recover_memory(); }
+};
+using VarMatImpls = testing::Types<stan::math::test::var_matrix_types<false>,
+                                   stan::math::test::var_matrix_types<true>>;
+}  // namespace test
+}  // namespace math
+}  // namespace stan
+
 namespace test {
 
 void check_varis_on_stack(const stan::math::var& x) {

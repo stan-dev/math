@@ -1,5 +1,5 @@
 #ifdef STAN_OPENCL
-#include <stan/math/opencl/opencl.hpp>
+#include <stan/math/opencl/prim.hpp>
 #include <stan/math/prim/fun/crossprod.hpp>
 #include <gtest/gtest.h>
 

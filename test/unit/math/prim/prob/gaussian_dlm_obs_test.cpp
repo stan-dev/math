@@ -413,4 +413,26 @@ TEST_F(ProbDistributionsGaussianDLMInputs, PoliciesC0) {
                std::invalid_argument);
   EXPECT_THROW(gaussian_dlm_obs_log(y, FF, GG, V_vec, W, m0, C0_notsq),
                std::invalid_argument);
+  // positive semi-definite is okay
+  Matrix<double, Dynamic, Dynamic> C0_psd = MatrixXd::Zero(2, 2);
+  C0_psd(0, 0) = 1.0;
+  EXPECT_NO_THROW(gaussian_dlm_obs_log(y, FF, GG, V, W, m0, C0_psd));
+  EXPECT_NO_THROW(gaussian_dlm_obs_log(y, FF, GG, V_vec, W, m0, C0_psd));
+}
+
+TEST_F(ProbDistributionsGaussianDLMInputs, PoliciesQ0) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using Eigen::MatrixXd;
+  using stan::math::gaussian_dlm_obs_log;
+
+  // Not positive definite
+  Matrix<double, Dynamic, Dynamic> W_0 = W * 0;
+  Matrix<double, Dynamic, Dynamic> V_0 = V * 0;
+  Matrix<double, Dynamic, 1> V_vec_0 = V_vec * 0;
+  Matrix<double, Dynamic, Dynamic> C0_0 = C0 * 0;
+  EXPECT_THROW(gaussian_dlm_obs_log(y, FF, GG, V_0, W_0, m0, C0_0),
+               std::domain_error);
+  EXPECT_THROW(gaussian_dlm_obs_log(y, FF, GG, V_vec_0, W_0, m0, C0_0),
+               std::domain_error);
 }

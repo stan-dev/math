@@ -3,10 +3,10 @@
 #include <test/unit/math/rev/fun/util.hpp>
 #include <limits>
 
-using stan::math::fvar;
-using stan::math::var;
 TEST(AgradMixMatrixOperatorDivision, fv_scalar_1stDeriv) {
   using stan::math::divide;
+  using stan::math::fvar;
+  using stan::math::var;
   double d1, d2;
   fvar<var> v1, v2;
 
@@ -54,14 +54,16 @@ TEST(AgradMixMatrixOperatorDivision, fv_scalar_1stDeriv) {
   v1.d_ = 1.0;
   d2 = -2;
 
-  AVEC q = createAVEC(v1.val());
-  VEC h;
+  std::vector<stan::math::var> q{v1.val()};
+  std::vector<double> h;
   divide(v1, d2).val_.grad(q, h);
   EXPECT_FLOAT_EQ(-0.5, h[0]);
 }
 
 TEST(AgradMixMatrixOperatorDivision, fv_scalar_2ndDeriv) {
   using stan::math::divide;
+  using stan::math::fvar;
+  using stan::math::var;
   double d2;
   fvar<var> v1, v2;
 
@@ -69,13 +71,15 @@ TEST(AgradMixMatrixOperatorDivision, fv_scalar_2ndDeriv) {
   v1.d_ = 1.0;
   d2 = -2;
 
-  AVEC q = createAVEC(v1.val());
-  VEC h;
+  std::vector<stan::math::var> q{v1.val()};
+  std::vector<double> h;
   divide(v1, d2).d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
 }
 TEST(AgradMixMatrixOperatorDivision, fv_vector_1stDeriv) {
   using stan::math::divide;
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_fv;
 
@@ -168,8 +172,8 @@ TEST(AgradMixMatrixOperatorDivision, fv_vector_1stDeriv) {
   v2.d_ = 1.0;
 
   output = divide(v1, v2);
-  AVEC q = createAVEC(v1(0).val(), v1(1).val(), v1(2).val());
-  VEC h;
+  std::vector<stan::math::var> q{v1(0).val(), v1(1).val(), v1(2).val()};
+  std::vector<double> h;
   output(0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(-0.5, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -177,6 +181,8 @@ TEST(AgradMixMatrixOperatorDivision, fv_vector_1stDeriv) {
 }
 TEST(AgradMixMatrixOperatorDivision, fv_vector_2ndDeriv) {
   using stan::math::divide;
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_fv;
 
@@ -192,8 +198,8 @@ TEST(AgradMixMatrixOperatorDivision, fv_vector_2ndDeriv) {
   vector_fv output;
 
   output = divide(v1, v2);
-  AVEC q = createAVEC(v1(0).val(), v1(1).val(), v1(2).val());
-  VEC h;
+  std::vector<stan::math::var> q{v1(0).val(), v1(1).val(), v1(2).val()};
+  std::vector<double> h;
   output(0).d_.grad(q, h);
   EXPECT_FLOAT_EQ(-0.25, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -201,8 +207,10 @@ TEST(AgradMixMatrixOperatorDivision, fv_vector_2ndDeriv) {
 }
 TEST(AgradMixMatrixOperatorDivision, fv_rowvector_1stDeriv) {
   using stan::math::divide;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
+  using stan::math::var;
 
   row_vector_d d1(3);
   row_vector_fv v1(3);
@@ -292,8 +300,8 @@ TEST(AgradMixMatrixOperatorDivision, fv_rowvector_1stDeriv) {
   v2.d_ = 1.0;
 
   output = divide(v1, v2);
-  AVEC q = createAVEC(v1(0).val(), v1(1).val(), v1(2).val());
-  VEC h;
+  std::vector<stan::math::var> q{v1(0).val(), v1(1).val(), v1(2).val()};
+  std::vector<double> h;
   output(0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(-0.5, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -301,8 +309,10 @@ TEST(AgradMixMatrixOperatorDivision, fv_rowvector_1stDeriv) {
 }
 TEST(AgradMixMatrixOperatorDivision, fv_rowvector_2ndDeriv) {
   using stan::math::divide;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_fv;
+  using stan::math::var;
 
   row_vector_fv v1(3);
   fvar<var> v2;
@@ -317,8 +327,8 @@ TEST(AgradMixMatrixOperatorDivision, fv_rowvector_2ndDeriv) {
   row_vector_fv output;
 
   output = divide(v1, v2);
-  AVEC q = createAVEC(v1(0).val(), v1(1).val(), v1(2).val());
-  VEC h;
+  std::vector<stan::math::var> q{v1(0).val(), v1(1).val(), v1(2).val()};
+  std::vector<double> h;
   output(0).d_.grad(q, h);
   EXPECT_FLOAT_EQ(-0.25, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -326,8 +336,10 @@ TEST(AgradMixMatrixOperatorDivision, fv_rowvector_2ndDeriv) {
 }
 TEST(AgradMixMatrixOperatorDivision, fv_matrix_1stDeriv) {
   using stan::math::divide;
+  using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
+  using stan::math::var;
 
   matrix_d d1(2, 2);
   matrix_fv v1(2, 2);
@@ -439,9 +451,9 @@ TEST(AgradMixMatrixOperatorDivision, fv_matrix_1stDeriv) {
   v2.d_ = 1.0;
 
   output = divide(v1, v2);
-  AVEC q = createAVEC(v1(0, 0).val(), v1(0, 1).val(), v1(1, 0).val(),
-                      v1(1, 1).val());
-  VEC h;
+  std::vector<stan::math::var> q{v1(0, 0).val(), v1(0, 1).val(), v1(1, 0).val(),
+                                 v1(1, 1).val()};
+  std::vector<double> h;
   output(0, 0).val_.grad(q, h);
   EXPECT_FLOAT_EQ(-0.5, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -450,8 +462,10 @@ TEST(AgradMixMatrixOperatorDivision, fv_matrix_1stDeriv) {
 }
 TEST(AgradMixMatrixOperatorDivision, fv_matrix_2ndDeriv) {
   using stan::math::divide;
+  using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_fv;
+  using stan::math::var;
 
   matrix_fv v1(2, 2);
   fvar<var> v2;
@@ -467,9 +481,9 @@ TEST(AgradMixMatrixOperatorDivision, fv_matrix_2ndDeriv) {
   matrix_fv output;
 
   output = divide(v1, v2);
-  AVEC q = createAVEC(v1(0, 0).val(), v1(0, 1).val(), v1(1, 0).val(),
-                      v1(1, 1).val());
-  VEC h;
+  std::vector<stan::math::var> q{v1(0, 0).val(), v1(0, 1).val(), v1(1, 0).val(),
+                                 v1(1, 1).val()};
+  std::vector<double> h;
   output(0, 0).d_.grad(q, h);
   EXPECT_FLOAT_EQ(-0.25, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -478,6 +492,8 @@ TEST(AgradMixMatrixOperatorDivision, fv_matrix_2ndDeriv) {
 }
 TEST(AgradMixMatrixOperatorDivision, ffv_scalar_1stDeriv) {
   using stan::math::divide;
+  using stan::math::fvar;
+  using stan::math::var;
   double d1, d2;
   fvar<fvar<var> > v1, v2;
 
@@ -525,13 +541,15 @@ TEST(AgradMixMatrixOperatorDivision, ffv_scalar_1stDeriv) {
   v1.d_ = 1.0;
   d2 = -2;
 
-  AVEC q = createAVEC(v1.val().val());
-  VEC h;
+  std::vector<stan::math::var> q{v1.val().val()};
+  std::vector<double> h;
   divide(v1, d2).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(-0.5, h[0]);
 }
 TEST(AgradMixMatrixOperatorDivision, ffv_scalar_2ndDeriv_1) {
   using stan::math::divide;
+  using stan::math::fvar;
+  using stan::math::var;
   double d2;
   fvar<fvar<var> > v1, v2;
 
@@ -539,13 +557,15 @@ TEST(AgradMixMatrixOperatorDivision, ffv_scalar_2ndDeriv_1) {
   v1.d_ = 1.0;
   d2 = -2;
 
-  AVEC q = createAVEC(v1.val().val());
-  VEC h;
+  std::vector<stan::math::var> q{v1.val().val()};
+  std::vector<double> h;
   divide(v1, d2).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
 }
 TEST(AgradMixMatrixOperatorDivision, ffv_scalar_2ndDeriv_2) {
   using stan::math::divide;
+  using stan::math::fvar;
+  using stan::math::var;
   double d2;
   fvar<fvar<var> > v1, v2;
 
@@ -553,13 +573,15 @@ TEST(AgradMixMatrixOperatorDivision, ffv_scalar_2ndDeriv_2) {
   v1.d_ = 1.0;
   d2 = -2;
 
-  AVEC q = createAVEC(v1.val().val());
-  VEC h;
+  std::vector<stan::math::var> q{v1.val().val()};
+  std::vector<double> h;
   divide(v1, d2).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
 }
 TEST(AgradMixMatrixOperatorDivision, ffv_scalar_3rdDeriv) {
   using stan::math::divide;
+  using stan::math::fvar;
+  using stan::math::var;
   double d2;
   fvar<fvar<var> > v1, v2;
 
@@ -568,13 +590,15 @@ TEST(AgradMixMatrixOperatorDivision, ffv_scalar_3rdDeriv) {
   v1.val_.d_ = 1.0;
   d2 = -2;
 
-  AVEC q = createAVEC(v1.val().val());
-  VEC h;
+  std::vector<stan::math::var> q{v1.val().val()};
+  std::vector<double> h;
   divide(v1, d2).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
 }
 TEST(AgradMixMatrixOperatorDivision, ffv_vector_1stDeriv) {
   using stan::math::divide;
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
 
@@ -669,8 +693,9 @@ TEST(AgradMixMatrixOperatorDivision, ffv_vector_1stDeriv) {
   v2.d_ = 1.0;
 
   output = divide(v1, v2);
-  AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{v1(0).val().val(), v1(1).val().val(),
+                                 v1(2).val().val()};
+  std::vector<double> h;
   output(0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(-0.5, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -678,6 +703,8 @@ TEST(AgradMixMatrixOperatorDivision, ffv_vector_1stDeriv) {
 }
 TEST(AgradMixMatrixOperatorDivision, ffv_vector_2ndDeriv_1) {
   using stan::math::divide;
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
 
@@ -693,8 +720,9 @@ TEST(AgradMixMatrixOperatorDivision, ffv_vector_2ndDeriv_1) {
   vector_ffv output;
 
   output = divide(v1, v2);
-  AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{v1(0).val().val(), v1(1).val().val(),
+                                 v1(2).val().val()};
+  std::vector<double> h;
   output(0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -702,6 +730,8 @@ TEST(AgradMixMatrixOperatorDivision, ffv_vector_2ndDeriv_1) {
 }
 TEST(AgradMixMatrixOperatorDivision, ffv_vector_2ndDeriv_2) {
   using stan::math::divide;
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
 
@@ -717,8 +747,9 @@ TEST(AgradMixMatrixOperatorDivision, ffv_vector_2ndDeriv_2) {
   vector_ffv output;
 
   output = divide(v1, v2);
-  AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{v1(0).val().val(), v1(1).val().val(),
+                                 v1(2).val().val()};
+  std::vector<double> h;
   output(0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(-0.25, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -726,6 +757,8 @@ TEST(AgradMixMatrixOperatorDivision, ffv_vector_2ndDeriv_2) {
 }
 TEST(AgradMixMatrixOperatorDivision, ffv_vector_3rdDeriv) {
   using stan::math::divide;
+  using stan::math::fvar;
+  using stan::math::var;
   using stan::math::vector_d;
   using stan::math::vector_ffv;
 
@@ -745,8 +778,9 @@ TEST(AgradMixMatrixOperatorDivision, ffv_vector_3rdDeriv) {
   vector_ffv output;
 
   output = divide(v1, v2);
-  AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{v1(0).val().val(), v1(1).val().val(),
+                                 v1(2).val().val()};
+  std::vector<double> h;
   output(0).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(-0.25, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -754,8 +788,10 @@ TEST(AgradMixMatrixOperatorDivision, ffv_vector_3rdDeriv) {
 }
 TEST(AgradMixMatrixOperatorDivision, ffv_rowvector_1stDeriv) {
   using stan::math::divide;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
+  using stan::math::var;
 
   row_vector_d d1(3);
   row_vector_ffv v1(3);
@@ -847,8 +883,9 @@ TEST(AgradMixMatrixOperatorDivision, ffv_rowvector_1stDeriv) {
   v2.d_ = 1.0;
 
   output = divide(v1, v2);
-  AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{v1(0).val().val(), v1(1).val().val(),
+                                 v1(2).val().val()};
+  std::vector<double> h;
   output(0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(-0.5, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -856,8 +893,10 @@ TEST(AgradMixMatrixOperatorDivision, ffv_rowvector_1stDeriv) {
 }
 TEST(AgradMixMatrixOperatorDivision, ffv_rowvector_2ndDeriv_1) {
   using stan::math::divide;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
+  using stan::math::var;
 
   row_vector_ffv v1(3);
   fvar<fvar<var> > v2;
@@ -872,8 +911,9 @@ TEST(AgradMixMatrixOperatorDivision, ffv_rowvector_2ndDeriv_1) {
   row_vector_ffv output;
 
   output = divide(v1, v2);
-  AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{v1(0).val().val(), v1(1).val().val(),
+                                 v1(2).val().val()};
+  std::vector<double> h;
   output(0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -881,8 +921,10 @@ TEST(AgradMixMatrixOperatorDivision, ffv_rowvector_2ndDeriv_1) {
 }
 TEST(AgradMixMatrixOperatorDivision, ffv_rowvector_2ndDeriv_2) {
   using stan::math::divide;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
+  using stan::math::var;
 
   row_vector_ffv v1(3);
   fvar<fvar<var> > v2;
@@ -897,8 +939,9 @@ TEST(AgradMixMatrixOperatorDivision, ffv_rowvector_2ndDeriv_2) {
   row_vector_ffv output;
 
   output = divide(v1, v2);
-  AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{v1(0).val().val(), v1(1).val().val(),
+                                 v1(2).val().val()};
+  std::vector<double> h;
   output(0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(-0.25, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -906,8 +949,10 @@ TEST(AgradMixMatrixOperatorDivision, ffv_rowvector_2ndDeriv_2) {
 }
 TEST(AgradMixMatrixOperatorDivision, ffv_rowvector_3rdDeriv) {
   using stan::math::divide;
+  using stan::math::fvar;
   using stan::math::row_vector_d;
   using stan::math::row_vector_ffv;
+  using stan::math::var;
 
   row_vector_ffv v1(3);
   fvar<fvar<var> > v2;
@@ -926,8 +971,9 @@ TEST(AgradMixMatrixOperatorDivision, ffv_rowvector_3rdDeriv) {
   row_vector_ffv output;
 
   output = divide(v1, v2);
-  AVEC q = createAVEC(v1(0).val().val(), v1(1).val().val(), v1(2).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{v1(0).val().val(), v1(1).val().val(),
+                                 v1(2).val().val()};
+  std::vector<double> h;
   output(0).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(-0.25, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -935,8 +981,10 @@ TEST(AgradMixMatrixOperatorDivision, ffv_rowvector_3rdDeriv) {
 }
 TEST(AgradMixMatrixOperatorDivision, ffv_matrix_1stDeriv) {
   using stan::math::divide;
+  using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::var;
 
   matrix_d d1(2, 2);
   matrix_ffv v1(2, 2);
@@ -1048,9 +1096,9 @@ TEST(AgradMixMatrixOperatorDivision, ffv_matrix_1stDeriv) {
   v2.d_ = 1.0;
 
   output = divide(v1, v2);
-  AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(),
-                      v1(1, 0).val().val(), v1(1, 1).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{v1(0, 0).val().val(), v1(0, 1).val().val(),
+                                 v1(1, 0).val().val(), v1(1, 1).val().val()};
+  std::vector<double> h;
   output(0, 0).val_.val().grad(q, h);
   EXPECT_FLOAT_EQ(-0.5, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -1059,8 +1107,10 @@ TEST(AgradMixMatrixOperatorDivision, ffv_matrix_1stDeriv) {
 }
 TEST(AgradMixMatrixOperatorDivision, ffv_matrix_2ndDeriv_1) {
   using stan::math::divide;
+  using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::var;
 
   matrix_ffv v1(2, 2);
   fvar<fvar<var> > v2;
@@ -1076,9 +1126,9 @@ TEST(AgradMixMatrixOperatorDivision, ffv_matrix_2ndDeriv_1) {
   matrix_ffv output;
 
   output = divide(v1, v2);
-  AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(),
-                      v1(1, 0).val().val(), v1(1, 1).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{v1(0, 0).val().val(), v1(0, 1).val().val(),
+                                 v1(1, 0).val().val(), v1(1, 1).val().val()};
+  std::vector<double> h;
   output(0, 0).val().d_.grad(q, h);
   EXPECT_FLOAT_EQ(0, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -1088,8 +1138,10 @@ TEST(AgradMixMatrixOperatorDivision, ffv_matrix_2ndDeriv_1) {
 
 TEST(AgradMixMatrixOperatorDivision, ffv_matrix_2ndDeriv_2) {
   using stan::math::divide;
+  using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::var;
 
   matrix_ffv v1(2, 2);
   fvar<fvar<var> > v2;
@@ -1105,9 +1157,9 @@ TEST(AgradMixMatrixOperatorDivision, ffv_matrix_2ndDeriv_2) {
   matrix_ffv output;
 
   output = divide(v1, v2);
-  AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(),
-                      v1(1, 0).val().val(), v1(1, 1).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{v1(0, 0).val().val(), v1(0, 1).val().val(),
+                                 v1(1, 0).val().val(), v1(1, 1).val().val()};
+  std::vector<double> h;
   output(0, 0).d_.val().grad(q, h);
   EXPECT_FLOAT_EQ(-0.25, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);
@@ -1117,8 +1169,10 @@ TEST(AgradMixMatrixOperatorDivision, ffv_matrix_2ndDeriv_2) {
 
 TEST(AgradMixMatrixOperatorDivision, ffv_matrix_3rdDeriv) {
   using stan::math::divide;
+  using stan::math::fvar;
   using stan::math::matrix_d;
   using stan::math::matrix_ffv;
+  using stan::math::var;
 
   matrix_ffv v1(2, 2);
   fvar<fvar<var> > v2;
@@ -1139,9 +1193,9 @@ TEST(AgradMixMatrixOperatorDivision, ffv_matrix_3rdDeriv) {
   matrix_ffv output;
 
   output = divide(v1, v2);
-  AVEC q = createAVEC(v1(0, 0).val().val(), v1(0, 1).val().val(),
-                      v1(1, 0).val().val(), v1(1, 1).val().val());
-  VEC h;
+  std::vector<stan::math::var> q{v1(0, 0).val().val(), v1(0, 1).val().val(),
+                                 v1(1, 0).val().val(), v1(1, 1).val().val()};
+  std::vector<double> h;
   output(0, 0).d_.d_.grad(q, h);
   EXPECT_FLOAT_EQ(-0.25, h[0]);
   EXPECT_FLOAT_EQ(0, h[1]);

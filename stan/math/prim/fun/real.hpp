@@ -8,11 +8,11 @@ namespace stan {
 namespace math {
 
 /**
- * Return the real part of the complex argument.
+ * Return the real component of the complex argument.
  *
- * @tparam T value type of argument
- * @param[in] z argument
- * @return real part of argument
+ * @tparam T value type of complex argument
+ * @param[in] z complex value whose real component is extracted
+ * @return real component of argument
  */
 template <typename T, require_autodiff_t<T>>
 T real(const std::complex<T>& z) {

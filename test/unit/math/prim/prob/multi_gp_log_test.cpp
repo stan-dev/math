@@ -22,13 +22,10 @@ TEST(ProbMultiGp, log_matches_lpmf) {
                   (stan::math::multi_gp_log<true>(y, Sigma, w)));
   EXPECT_FLOAT_EQ((stan::math::multi_gp_lpdf<false>(y, Sigma, w)),
                   (stan::math::multi_gp_log<false>(y, Sigma, w)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::multi_gp_lpdf<true, double, double, double>(y, Sigma, w)),
-      (stan::math::multi_gp_log<true, double, double, double>(y, Sigma, w)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::multi_gp_lpdf<false, double, double, double>(y, Sigma, w)),
-      (stan::math::multi_gp_log<false, double, double, double>(y, Sigma, w)));
-  EXPECT_FLOAT_EQ(
-      (stan::math::multi_gp_lpdf<double, double, double>(y, Sigma, w)),
-      (stan::math::multi_gp_log<double, double, double>(y, Sigma, w)));
+  EXPECT_FLOAT_EQ((stan::math::multi_gp_lpdf<true>(y, Sigma, w)),
+                  (stan::math::multi_gp_log<true>(y, Sigma, w)));
+  EXPECT_FLOAT_EQ((stan::math::multi_gp_lpdf<false>(y, Sigma, w)),
+                  (stan::math::multi_gp_log<false>(y, Sigma, w)));
+  EXPECT_FLOAT_EQ((stan::math::multi_gp_lpdf<>(y, Sigma, w)),
+                  (stan::math::multi_gp_log<>(y, Sigma, w)));
 }

@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/size.hpp>
@@ -49,7 +51,7 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch.
  */
 template <bool propto, typename T_y, typename T_x, typename T_alpha,
-          typename T_beta, typename T_scale, require_eigen_t<T_x>* = nullptr>
+          typename T_beta, typename T_scale, require_matrix_t<T_x>* = nullptr>
 return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta,
     const T_scale& sigma) {
@@ -111,7 +113,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   const auto& beta_val_vec = to_ref_if<!is_constant<T_x>::value>(
       as_column_vector_or_scalar(beta_val));
 
-  T_scale_val inv_sigma = 1 / as_array_or_scalar(sigma_val_vec);
+  T_scale_val inv_sigma = 1.0 / as_array_or_scalar(sigma_val_vec);
 
   // the most efficient way to calculate this depends on template parameters
   double y_scaled_sq_sum;
@@ -133,7 +135,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   operands_and_partials<T_y_ref, T_x_ref, T_alpha_ref, T_beta_ref, T_sigma_ref>
       ops_partials(y_ref, x_ref, alpha_ref, beta_ref, sigma_ref);
 
-  if (!(is_constant_all<T_y, T_x, T_beta, T_alpha>::value)) {
+  if (!(is_constant_all<T_y, T_x, T_beta, T_alpha, T_scale>::value)) {
     Matrix<T_partials_return, Dynamic, 1> mu_derivative = inv_sigma * y_scaled;
     if (!is_constant_all<T_y>::value) {
       if (is_vector<T_y>::value) {

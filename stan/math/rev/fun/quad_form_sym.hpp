@@ -34,7 +34,7 @@ inline auto quad_form_sym(const EigMat1& A, const EigMat2& B) {
   check_multiplicable("quad_form_sym", "A", A, "B", B);
   const auto& A_ref = to_ref(A);
   check_symmetric("quad_form_sym", "A", A_ref);
-  return quad_form(A_ref, B);
+  return quad_form(A_ref, B, true);
 }
 
 }  // namespace math

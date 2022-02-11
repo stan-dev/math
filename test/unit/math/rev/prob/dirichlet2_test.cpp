@@ -4,18 +4,14 @@
 #include <string>
 
 template <typename T_prob, typename T_prior_sample_size>
-void expect_propto(T_prob theta, T_prior_sample_size alpha, T_prob theta2,
-                   T_prior_sample_size alpha2, std::string message) {
+void expect_propto_dirichlet_log(T_prob theta, T_prior_sample_size alpha,
+                                 T_prob theta2, T_prior_sample_size alpha2,
+                                 std::string message) {
   expect_eq_diffs(stan::math::dirichlet_log<false>(theta, alpha),
                   stan::math::dirichlet_log<false>(theta2, alpha2),
                   stan::math::dirichlet_log<true>(theta, alpha),
                   stan::math::dirichlet_log<true>(theta2, alpha2), message);
 }
-
-using Eigen::Dynamic;
-using Eigen::Matrix;
-using stan::math::to_var;
-using stan::math::var;
 
 class AgradDistributionsDirichlet : public ::testing::Test {
  protected:
@@ -29,24 +25,42 @@ class AgradDistributionsDirichlet : public ::testing::Test {
     alpha2.resize(3, 1);
     alpha2 << 13.1, 12.9, 10.1;
   }
-  Matrix<double, Dynamic, 1> theta;
-  Matrix<double, Dynamic, 1> theta2;
-  Matrix<double, Dynamic, 1> alpha;
-  Matrix<double, Dynamic, 1> alpha2;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> theta;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> theta2;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> alpha;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> alpha2;
 };
 
 TEST_F(AgradDistributionsDirichlet, Propto) {
-  expect_propto(to_var(theta), to_var(alpha), to_var(theta2), to_var(alpha2),
-                "var: theta and alpha");
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::to_var;
+  using stan::math::var;
+  expect_propto_dirichlet_log(to_var(theta), to_var(alpha), to_var(theta2),
+                              to_var(alpha2), "var: theta and alpha");
 }
 TEST_F(AgradDistributionsDirichlet, ProptoTheta) {
-  expect_propto(to_var(theta), alpha, to_var(theta2), alpha, "var: theta");
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::to_var;
+  using stan::math::var;
+  expect_propto_dirichlet_log(to_var(theta), alpha, to_var(theta2), alpha,
+                              "var: theta");
 }
 TEST_F(AgradDistributionsDirichlet, ProptoAlpha) {
-  expect_propto(theta, to_var(alpha), theta, to_var(alpha2), "var: alpha");
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::to_var;
+  using stan::math::var;
+  expect_propto_dirichlet_log(theta, to_var(alpha), theta, to_var(alpha2),
+                              "var: alpha");
 }
 TEST_F(AgradDistributionsDirichlet, Bounds) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::dirichlet_log;
+  using stan::math::to_var;
+  using stan::math::var;
   Matrix<double, Dynamic, 1> good_alpha(2, 1), bad_alpha(2, 1);
   Matrix<double, Dynamic, 1> good_theta(2, 1), bad_theta(2, 1);
 

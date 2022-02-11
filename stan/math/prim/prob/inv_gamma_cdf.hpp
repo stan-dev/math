@@ -9,6 +9,7 @@
 #include <stan/math/prim/fun/gamma_q.hpp>
 #include <stan/math/prim/fun/grad_reg_inc_gamma.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
+#include <stan/math/prim/fun/scalar_seq_view.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/tgamma.hpp>
@@ -40,32 +41,40 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_cdf(const T_y& y,
                                                    const T_shape& alpha,
                                                    const T_scale& beta) {
   using T_partials_return = partials_return_t<T_y, T_shape, T_scale>;
+  using T_y_ref = ref_type_t<T_y>;
+  using T_alpha_ref = ref_type_t<T_shape>;
+  using T_beta_ref = ref_type_t<T_scale>;
   using std::exp;
   using std::pow;
   static const char* function = "inv_gamma_cdf";
-  check_positive_finite(function, "Shape parameter", alpha);
-  check_positive_finite(function, "Scale parameter", beta);
-  check_not_nan(function, "Random variable", y);
-  check_nonnegative(function, "Random variable", y);
   check_consistent_sizes(function, "Random variable", y, "Shape parameter",
                          alpha, "Scale Parameter", beta);
+
+  T_y_ref y_ref = y;
+  T_alpha_ref alpha_ref = alpha;
+  T_beta_ref beta_ref = beta;
+
+  check_positive_finite(function, "Shape parameter", alpha_ref);
+  check_positive_finite(function, "Scale parameter", beta_ref);
+  check_nonnegative(function, "Random variable", y_ref);
 
   if (size_zero(y, alpha, beta)) {
     return 1.0;
   }
 
   T_partials_return P(1.0);
-  operands_and_partials<T_y, T_shape, T_scale> ops_partials(y, alpha, beta);
+  operands_and_partials<T_y_ref, T_alpha_ref, T_beta_ref> ops_partials(
+      y_ref, alpha_ref, beta_ref);
 
-  scalar_seq_view<T_y> y_vec(y);
-  scalar_seq_view<T_shape> alpha_vec(alpha);
-  scalar_seq_view<T_scale> beta_vec(beta);
+  scalar_seq_view<T_y_ref> y_vec(y_ref);
+  scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
+  scalar_seq_view<T_beta_ref> beta_vec(beta_ref);
   size_t N = max_size(y, alpha, beta);
 
   // Explicit return for extreme values
   // The gradients are technically ill-defined, but treated as zero
   for (size_t i = 0; i < stan::math::size(y); i++) {
-    if (value_of(y_vec[i]) == 0) {
+    if (y_vec.val(i) == 0) {
       return ops_partials.build(0.0);
     }
   }
@@ -77,7 +86,7 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_cdf(const T_y& y,
 
   if (!is_constant_all<T_shape>::value) {
     for (size_t i = 0; i < stan::math::size(alpha); i++) {
-      const T_partials_return alpha_dbl = value_of(alpha_vec[i]);
+      const T_partials_return alpha_dbl = alpha_vec.val(i);
       gamma_vec[i] = tgamma(alpha_dbl);
       digamma_vec[i] = digamma(alpha_dbl);
     }
@@ -86,14 +95,14 @@ return_type_t<T_y, T_shape, T_scale> inv_gamma_cdf(const T_y& y,
   for (size_t n = 0; n < N; n++) {
     // Explicit results for extreme values
     // The gradients are technically ill-defined, but treated as zero
-    if (value_of(y_vec[n]) == INFTY) {
+    if (y_vec.val(n) == INFTY) {
       continue;
     }
 
-    const T_partials_return y_dbl = value_of(y_vec[n]);
+    const T_partials_return y_dbl = y_vec.val(n);
     const T_partials_return y_inv_dbl = 1.0 / y_dbl;
-    const T_partials_return alpha_dbl = value_of(alpha_vec[n]);
-    const T_partials_return beta_dbl = value_of(beta_vec[n]);
+    const T_partials_return alpha_dbl = alpha_vec.val(n);
+    const T_partials_return beta_dbl = beta_vec.val(n);
 
     const T_partials_return Pn = gamma_q(alpha_dbl, beta_dbl * y_inv_dbl);
 

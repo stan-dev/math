@@ -1,27 +1,10 @@
+#ifndef TEST_UNIT_MATH_REV_PROB_TEST_GRADIENTS_MULTI_NORMAL
+#define TEST_UNIT_MATH_REV_PROB_TEST_GRADIENTS_MULTI_NORMAL
 #include <cmath>
 #include <vector>
 #include <iomanip>
 #include <stdexcept>
-
-std::vector<stan::math::var> get_vvar(std::vector<double> vd) {
-  size_t vd_size = vd.size();
-  std::vector<stan::math::var> vv;
-  vv.reserve(vd_size);
-  for (size_t i = 0; i < vd_size; i++)
-    vv.push_back(vd[i]);
-  return vv;
-}
-
-std::vector<double> vdouble_from_vvar(std::vector<stan::math::var> vv) {
-  size_t vv_size = vv.size();
-  std::vector<double> vd;
-  vd.reserve(vv_size);
-  for (size_t i = 0; i < vv_size; i++)
-    vd.push_back(vv[i].val());
-  return vd;
-}
-
-std::vector<double> vdouble_from_vvar(std::vector<double> vv) { return vv; }
+#include <stan/math.hpp>
 
 template <typename F, typename T_y, typename T_mu, typename T_sigma>
 std::vector<double> finite_diffs_multi_normal(
@@ -31,11 +14,11 @@ std::vector<double> finite_diffs_multi_normal(
   std::vector<double> diffs;
   diffs.reserve(vec_y.size() + vec_mu.size() + vec_sigma.size());
 
-  std::vector<double> vec_y_plus = vdouble_from_vvar(vec_y);
+  std::vector<double> vec_y_plus = stan::math::value_of(vec_y);
   std::vector<double> vec_y_minus = vec_y_plus;
-  std::vector<double> vec_mu_plus = vdouble_from_vvar(vec_mu);
+  std::vector<double> vec_mu_plus = stan::math::value_of(vec_mu);
   std::vector<double> vec_mu_minus = vec_mu_plus;
-  std::vector<double> vec_sigma_plus = vdouble_from_vvar(vec_sigma);
+  std::vector<double> vec_sigma_plus = stan::math::value_of(vec_sigma);
   std::vector<double> vec_sigma_minus = vec_sigma_plus;
 
   if (!stan::is_constant_all<T_y>::value) {
@@ -120,3 +103,4 @@ void test_grad_multi_normal(const F& fun, const std::vector<T_y>& vec_y,
     EXPECT_NEAR(diffs_finite[i], diffs_var[i], tolerance);
   }
 }
+#endif

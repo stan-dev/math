@@ -23,6 +23,7 @@
 #include <Eigen/Sparse>
 #include <Eigen/QR>
 #include <Eigen/src/Core/NumTraits.h>
+#include <Eigen/SVD>
 
     namespace Eigen {
 

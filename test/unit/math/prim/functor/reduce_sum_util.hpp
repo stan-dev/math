@@ -89,6 +89,20 @@ struct start_end_lpdf {
   }
 };
 
+struct arg_start_end_lpdf {
+  template <typename T1, typename T2, typename T3>
+  inline auto operator()(T1&&, std::size_t start, std::size_t end,
+                         std::ostream* msgs, T2&& data1, T3&& data2) const {
+    stan::return_type_t<T1, T2, T3> sum = 0;
+    EXPECT_GE(start, 0);
+    EXPECT_LE(end, data1.size() - 1);
+    for (size_t i = start; i <= end; i++) {
+      sum += data1[i];
+    }
+    return sum;
+  }
+};
+
 /**
  * slice over the grouping variable which is a var
  */

@@ -185,7 +185,7 @@ namespace Eigen {
   {  
     template <typename T>  
     static void run(const MatrixType& arg, MatrixType& U, MatrixType& V, int& squarings,  
-    				T scalar_type)  
+                    T scalar_type)  
     {  
     using std::frexp;
     using std::pow;

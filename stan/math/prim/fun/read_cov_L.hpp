@@ -27,12 +27,16 @@ namespace math {
 template <typename T_CPCs, typename T_sds,
           require_all_eigen_vector_t<T_CPCs, T_sds>* = nullptr,
           require_vt_same<T_CPCs, T_sds>* = nullptr>
-Eigen::Matrix<value_type<T_CPCs>, Eigen::Dynamic, Eigen::Dynamic> read_cov_L(
+Eigen::Matrix<value_type_t<T_CPCs>, Eigen::Dynamic, Eigen::Dynamic> read_cov_L(
     const T_CPCs& CPCs, const T_sds& sds, value_type_t<T_CPCs>& log_prob) {
   size_t K = sds.rows();
   // adjust due to transformation from correlations to covariances
   log_prob += (sum(log(sds)) + LOG_TWO) * K;
-  return sds.matrix().asDiagonal() * read_corr_L(CPCs, K, log_prob);
+  return make_holder(
+      [](const auto& b, const auto& sds) {
+        return sds.matrix().asDiagonal() * b;
+      },
+      read_corr_L(CPCs, K, log_prob), to_ref(sds));
 }
 
 }  // namespace math

@@ -16,3 +16,16 @@ TEST(mathMixScalFun, lbeta) {
   stan::test::expect_ad(f, 7.5, 1.8);
   stan::test::expect_ad(f, 12.3, 4.8);
 }
+
+TEST(mathMixScalFun, lbeta_vec) {
+  auto f = [](const auto& x1, const auto& x2) {
+    using stan::math::lbeta;
+    return lbeta(x1, x2);
+  };
+
+  Eigen::VectorXd in1(2);
+  in1 << 3, 1;
+  Eigen::VectorXd in2(2);
+  in2 << 0.5, 3.4;
+  stan::test::expect_ad_vectorized_binary(f, in1, in2);
+}

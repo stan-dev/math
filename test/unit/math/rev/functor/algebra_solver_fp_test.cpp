@@ -217,11 +217,9 @@ struct FP_direct_prod_func_test : public ::testing::Test {
    * RHS functor
    */
   struct FP_direct_prod_func {
-    template <typename T0, typename T1>
+    template <typename T0, typename T1, typename T2, typename T3>
     inline Eigen::Matrix<stan::return_type_t<T0, T1>, -1, 1> operator()(
-        const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
-        const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
-        const std::vector<double>& x_r, const std::vector<int>& x_i,
+        const T0& x, const T1& y, const T2& x_r, const T3& x_i,
         std::ostream* pstream__) const {
       using scalar = stan::return_type_t<T0, T1>;
       const size_t n = x.size();
@@ -248,11 +246,9 @@ struct FP_direct_prod_func_test : public ::testing::Test {
    * Newton root functor
    */
   struct FP_direct_prod_newton_func {
-    template <typename T0, typename T1>
+    template <typename T0, typename T1, typename T2, typename T3>
     inline Eigen::Matrix<stan::return_type_t<T0, T1>, -1, 1> operator()(
-        const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
-        const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
-        const std::vector<double>& x_r, const std::vector<int>& x_i,
+        const T0& x, const T1& y, const T2& x_r, const T3& x_i,
         std::ostream* pstream__) const {
       using scalar = stan::return_type_t<T0, T1>;
       const size_t n = x.size();
@@ -515,6 +511,8 @@ TEST_F(FP_direct_prod_func_test, algebra_solver_fp) {
       EXPECT_NEAR(g_newton[j], g_fp[j], 1.e-8);
     }
   }
+
+  stan::math::recover_memory();
 }
 
 TEST_F(FP_2d_func_test, exception_handling) {
@@ -523,8 +521,7 @@ TEST_F(FP_2d_func_test, exception_handling) {
 
   {
     std::stringstream err_msg;
-    err_msg << "algebra_solver: maximum number of iterations (4) was exceeded "
-               "in the solve.";
+    err_msg << "maximum number of iterations";
     std::string msg = err_msg.str();
     EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0,
                                        f_tol, max_num_steps),  // NOLINT
@@ -556,7 +553,7 @@ TEST_F(FP_2d_func_test, exception_handling) {
 
   {
     std::stringstream err_msg;
-    err_msg << "algebra_solver: u_scale[1] is -1, but must be >= 0";
+    err_msg << "algebra_solver: u_scale[1] is -1";
     std::string msg = err_msg.str();
     u_scale[0] = -1.0;
     EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0,
@@ -567,7 +564,7 @@ TEST_F(FP_2d_func_test, exception_handling) {
 
   {
     std::stringstream err_msg;
-    err_msg << "algebra_solver: f_scale[1] is -1, but must be >= 0";
+    err_msg << "algebra_solver: f_scale[1] is -1";
     std::string msg = err_msg.str();
     f_scale[0] = -1.0;
     EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0,
@@ -578,7 +575,7 @@ TEST_F(FP_2d_func_test, exception_handling) {
 
   {
     std::stringstream err_msg;
-    err_msg << "algebra_solver: function_tolerance is -0.1, but must be >= 0";
+    err_msg << "algebra_solver: function_tolerance is -0.1";
     std::string msg = err_msg.str();
     f_tol = -0.1;
     EXPECT_THROW_MSG(algebra_solver_fp(f, x, y, x_r, x_i, u_scale, f_scale, 0,

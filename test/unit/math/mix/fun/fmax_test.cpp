@@ -17,3 +17,28 @@ TEST(mathMixScalFun, fmax) {
 
   stan::test::expect_value(f, 2.0, 2.0);
 }
+
+TEST(mathMixScalFun, fmax_vec) {
+  auto f = [](const auto& x1, const auto& x2) {
+    using stan::math::fmax;
+    return fmax(x1, x2);
+  };
+
+  Eigen::VectorXd in1(2);
+  in1 << 3, 1;
+  Eigen::VectorXd in2(2);
+  in2 << 0.5, 3.4;
+  stan::test::expect_ad_vectorized_binary(f, in1, in2);
+}
+
+TEST(mathMixScalFun, fmax_equal) {
+  using stan::math::fmax;
+  using stan::math::fvar;
+  using stan::math::var;
+
+  var a = 1, b = 1, c = fmax(a, b);
+  c.grad();
+
+  fvar<double> d = {1, 1}, e = {1, 1}, f = fmax(d, e);
+  EXPECT_FLOAT_EQ(a.adj() + b.adj(), f.d_);
+}

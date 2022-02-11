@@ -18,7 +18,7 @@ auto cholesky_corr_free(const T& x) {
   check_square("cholesky_corr_free", "x", x);
   // should validate lower-triangular, unit lengths
 
-  const Eigen::Ref<const plain_type_t<T>> x_ref = x;
+  const auto& x_ref = to_ref(x);
   int K = (x.rows() * (x.rows() - 1)) / 2;
   Matrix<value_type_t<T>, Dynamic, 1> z(K);
   int k = 0;
@@ -31,6 +31,19 @@ auto cholesky_corr_free(const T& x) {
     }
   }
   return z;
+}
+
+/**
+ * Overload of `cholesky_corr_free()` to untransform each matrix
+ * in a standard vector.
+ * @tparam T A standard vector with with a `value_type` which inherits from
+ *  `Eigen::MatrixBase`.
+ * @param x The standard vector to untransform.
+ */
+template <typename T, require_std_vector_t<T>* = nullptr>
+auto cholesky_corr_free(const T& x) {
+  return apply_vector_unary<T>::apply(
+      x, [](auto&& v) { return cholesky_corr_free(v); });
 }
 
 }  // namespace math

@@ -24,21 +24,21 @@ namespace math {
 template <typename T>
 inline void check_consistent_size(const char* function, const char* name,
                                   const T& x, size_t expected_size) {
-  if (!is_vector<T>::value
-      || (is_vector<T>::value && expected_size == stan::math::size(x))) {
-    return;
+  if (!(!is_vector<T>::value
+        || (is_vector<T>::value && expected_size == stan::math::size(x)))) {
+    [&]() STAN_COLD_PATH {
+      std::stringstream msg;
+      msg << ", expecting dimension = " << expected_size
+          << "; a function was called with arguments of different "
+          << "scalar, array, vector, or matrix types, and they were not "
+          << "consistently sized;  all arguments must be scalars or "
+          << "multidimensional values of the same shape.";
+      std::string msg_str(msg.str());
+
+      invalid_argument(function, name, stan::math::size(x),
+                       "has dimension = ", msg_str.c_str());
+    }();
   }
-
-  std::stringstream msg;
-  msg << ", expecting dimension = " << expected_size
-      << "; a function was called with arguments of different "
-      << "scalar, array, vector, or matrix types, and they were not "
-      << "consistently sized;  all arguments must be scalars or "
-      << "multidimensional values of the same shape.";
-  std::string msg_str(msg.str());
-
-  invalid_argument(function, name, stan::math::size(x),
-                   "has dimension = ", msg_str.c_str());
 }
 
 }  // namespace math

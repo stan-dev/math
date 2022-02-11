@@ -14,31 +14,20 @@ namespace stan {
 namespace math {
 
 namespace internal {
-class multiply_vv_vari : public op_vv_vari {
+class multiply_vv_vari final : public op_vv_vari {
  public:
   multiply_vv_vari(vari* avi, vari* bvi)
       : op_vv_vari(avi->val_ * bvi->val_, avi, bvi) {}
   void chain() {
-    if (unlikely(is_any_nan(avi_->val_, bvi_->val_))) {
-      avi_->adj_ = NOT_A_NUMBER;
-      bvi_->adj_ = NOT_A_NUMBER;
-    } else {
-      avi_->adj_ += bvi_->val_ * adj_;
-      bvi_->adj_ += avi_->val_ * adj_;
-    }
+    avi_->adj_ += bvi_->val_ * adj_;
+    bvi_->adj_ += avi_->val_ * adj_;
   }
 };
 
-class multiply_vd_vari : public op_vd_vari {
+class multiply_vd_vari final : public op_vd_vari {
  public:
   multiply_vd_vari(vari* avi, double b) : op_vd_vari(avi->val_ * b, avi, b) {}
-  void chain() {
-    if (unlikely(is_any_nan(avi_->val_, bd_))) {
-      avi_->adj_ = NOT_A_NUMBER;
-    } else {
-      avi_->adj_ += adj_ * bd_;
-    }
-  }
+  void chain() { avi_->adj_ += adj_ * bd_; }
 };
 }  // namespace internal
 
@@ -79,7 +68,7 @@ class multiply_vd_vari : public op_vd_vari {
  * @param b Second variable operand.
  * @return Variable result of multiplying operands.
  */
-inline var operator*(var a, var b) {
+inline var operator*(const var& a, const var& b) {
   return {new internal::multiply_vv_vari(a.vi_, b.vi_)};
 }
 
@@ -96,7 +85,7 @@ inline var operator*(var a, var b) {
  * @return Variable result of multiplying operands.
  */
 template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
-inline var operator*(var a, Arith b) {
+inline var operator*(const var& a, Arith b) {
   if (b == 1.0) {
     return a;
   }
@@ -116,7 +105,7 @@ inline var operator*(var a, Arith b) {
  * @return Variable result of multiplying the operands.
  */
 template <typename Arith, require_arithmetic_t<Arith>* = nullptr>
-inline var operator*(Arith a, var b) {
+inline var operator*(Arith a, const var& b) {
   if (a == 1.0) {
     return b;
   }

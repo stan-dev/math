@@ -33,6 +33,11 @@ void expect_squared_distance(const std::vector<double>& sv1,
   stan::test::expect_ad(tols, f, rv1, rv2);
   stan::test::expect_ad(tols, f, v1, rv2);
   stan::test::expect_ad(tols, f, rv1, v2);
+
+  stan::test::expect_ad_matvar(tols, f, v1, v2);
+  stan::test::expect_ad_matvar(tols, f, rv1, rv2);
+  stan::test::expect_ad_matvar(tols, f, v1, rv2);
+  stan::test::expect_ad_matvar(tols, f, rv1, v2);
 }
 
 TEST(MathMixMatFun, squaredDistance) {

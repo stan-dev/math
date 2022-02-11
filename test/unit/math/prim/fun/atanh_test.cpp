@@ -27,11 +27,3 @@ TEST(MathFunctions, atanh_nan) {
   double nan = std::numeric_limits<double>::quiet_NaN();
   EXPECT_TRUE(std::isnan(stan::math::atanh(nan)));
 }
-
-TEST(MathFunctions, atanh_works_with_other_functions) {
-  Eigen::VectorXd a(5);
-  a << 0.1, 0.2, 0.3, 0.4, 0.5;
-  Eigen::RowVectorXd b(5);
-  b << 0.1, 0.2, 0.3, 0.4, 0.5;
-  stan::math::multiply(a, stan::math::atanh(b));
-}

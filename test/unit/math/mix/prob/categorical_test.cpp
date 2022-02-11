@@ -4,10 +4,9 @@
 #include <boost/math/distributions.hpp>
 #include <vector>
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
-
 TEST(ProbDistributionsCategorical, fvar_var) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::fvar;
   using stan::math::var;
   Matrix<fvar<var>, Dynamic, 1> theta(3, 1);
@@ -26,6 +25,8 @@ TEST(ProbDistributionsCategorical, fvar_var) {
   EXPECT_FLOAT_EQ(1.0 / 0.2, stan::math::categorical_log(3, theta).d_.val());
 }
 TEST(ProbDistributionsCategorical, fvar_var_vector) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::fvar;
   using stan::math::var;
   Matrix<fvar<var>, Dynamic, 1> theta(3, 1);
@@ -45,6 +46,8 @@ TEST(ProbDistributionsCategorical, fvar_var_vector) {
 }
 
 TEST(ProbDistributionsCategorical, fvar_fvar_var) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::fvar;
   using stan::math::var;
   Matrix<fvar<fvar<var> >, Dynamic, 1> theta(3, 1);
@@ -66,6 +69,8 @@ TEST(ProbDistributionsCategorical, fvar_fvar_var) {
                   stan::math::categorical_log(3, theta).d_.val_.val());
 }
 TEST(ProbDistributionsCategorical, fvar_fvar_var_vector) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using stan::math::fvar;
   using stan::math::var;
   Matrix<fvar<fvar<var> >, Dynamic, 1> theta(3, 1);

@@ -36,26 +36,23 @@ namespace math {
  * @throw std::domain_error if nu is not greater than k-1
  * @throw std::domain_error if S is not square, not symmetric, or not
  semi-positive definite.
- * @tparam T_y Type of scalar.
+ * @tparam T_y Type of matrix.
  * @tparam T_dof Type of degrees of freedom.
  * @tparam T_scale Type of scale.
  */
 template <bool propto, typename T_y, typename T_dof, typename T_scale>
-return_type_t<T_y, T_dof, T_scale> wishart_log(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& W,
-    const T_dof& nu,
-    const Eigen::Matrix<T_scale, Eigen::Dynamic, Eigen::Dynamic>& S) {
-  return wishart_lpdf<propto, T_y, T_dof, T_scale>(W, nu, S);
+return_type_t<T_y, T_dof, T_scale> wishart_log(const T_y& W, const T_dof& nu,
+                                               const T_scale& S) {
+  return wishart_lpdf<propto>(W, nu, S);
 }
 
 /** \ingroup multivar_dists
  * @deprecated use <code>wishart_lpdf</code>
  */
 template <typename T_y, typename T_dof, typename T_scale>
-inline return_type_t<T_y, T_dof, T_scale> wishart_log(
-    const Eigen::Matrix<T_y, Eigen::Dynamic, Eigen::Dynamic>& W,
-    const T_dof& nu,
-    const Eigen::Matrix<T_scale, Eigen::Dynamic, Eigen::Dynamic>& S) {
+inline return_type_t<T_y, T_dof, T_scale> wishart_log(const T_y& W,
+                                                      const T_dof& nu,
+                                                      const T_scale& S) {
   return wishart_lpdf<T_y, T_dof, T_scale>(W, nu, S);
 }
 

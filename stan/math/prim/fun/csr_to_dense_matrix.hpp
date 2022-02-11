@@ -4,6 +4,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/csr_u_to_z.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <vector>
 
 namespace stan {
@@ -15,7 +16,7 @@ namespace math {
 /**
  * Construct a dense Eigen matrix from the CSR format components.
  *
- * @tparam T type of elements in the matrix
+ * @tparam T type of the matrix
  * @param[in] m Number of matrix rows.
  * @param[in] n Number of matrix columns.
  * @param[in] w Values of non-zero matrix entries.
@@ -30,9 +31,9 @@ namespace math {
  * @throw std::out_of_range if any of the indices are out of range.
  */
 template <typename T>
-inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> csr_to_dense_matrix(
-    int m, int n, const Eigen::Matrix<T, Eigen::Dynamic, 1>& w,
-    const std::vector<int>& v, const std::vector<int>& u) {
+inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
+csr_to_dense_matrix(int m, int n, const T& w, const std::vector<int>& v,
+                    const std::vector<int>& u) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
@@ -45,8 +46,8 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> csr_to_dense_matrix(
   for (int i : v) {
     check_range("csr_to_dense_matrix", "v[]", n, i);
   }
-
-  Matrix<T, Dynamic, Dynamic> result(m, n);
+  const auto& w_ref = to_ref(w);
+  Matrix<value_type_t<T>, Dynamic, Dynamic> result(m, n);
   result.setZero();
   for (int row = 0; row < m; ++row) {
     int row_end_in_w = (u[row] - stan::error_index::value) + csr_u_to_z(u, row);
@@ -55,7 +56,7 @@ inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> csr_to_dense_matrix(
          ++nze) {
       // row is row index, v[nze] is column index. w[nze] is entry value.
       check_range("csr_to_dense_matrix", "j", n, v[nze]);
-      result(row, v[nze] - stan::error_index::value) = w(nze);
+      result(row, v[nze] - stan::error_index::value) = w_ref.coeff(nze);
     }
   }
   return result;

@@ -8,14 +8,6 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class expm1_vari : public op_v_vari {
- public:
-  explicit expm1_vari(vari* avi) : op_v_vari(expm1(avi->val_), avi) {}
-  void chain() { avi_->adj_ += adj_ * (val_ + 1); }
-};
-}  // namespace internal
-
 /**
  * The exponentiation of the specified variable minus 1 (C99).
  *
@@ -43,7 +35,18 @@ class expm1_vari : public op_v_vari {
  * @param a The variable.
  * @return Two to the power of the specified variable.
  */
-inline var expm1(const var& a) { return var(new internal::expm1_vari(a.vi_)); }
+inline var expm1(const var& a) {
+  return make_callback_var(expm1(a.val()), [a](auto& vi) mutable {
+    a.adj() += vi.adj() * (vi.val() + 1.0);
+  });
+}
+
+template <typename T, require_eigen_t<T>* = nullptr>
+inline auto expm1(const var_value<T>& a) {
+  return make_callback_var(expm1(a.val()), [a](auto& vi) mutable {
+    a.adj().array() += vi.adj().array() * (vi.val().array() + 1.0);
+  });
+}
 
 }  // namespace math
 }  // namespace stan

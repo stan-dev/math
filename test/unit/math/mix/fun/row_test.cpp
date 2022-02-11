@@ -1,11 +1,11 @@
 #include <test/unit/math/test_ad.hpp>
 #include <vector>
 
-auto f(int i) {
-  return [=](const auto& y) { return stan::math::row(y, i); };
-}
-
 TEST(MathMixMatFun, row) {
+  auto f = [](int i) {
+    return [=](const auto& y) { return stan::math::row(y, i); };
+  };
+
   // normal and exception returns
   Eigen::MatrixXd a(0, 0);
 
