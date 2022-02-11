@@ -28,6 +28,6 @@
 #include <stan/math/prim/functor/reduce_sum.hpp>
 #include <stan/math/prim/functor/reduce_sum_static.hpp>
 #include <stan/math/prim/functor/user_gradients.hpp>
-#include <stan/math/prim/functor/walk_tuple_binary.hpp>
+#include <stan/math/prim/functor/walk_tuples.hpp>
 
 #endif

@@ -3,7 +3,7 @@
 
 #include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/functor/map_tuple.hpp>
-#include <stan/math/prim/functor/walk_tuple_binary.hpp>
+#include <stan/math/prim/functor/walk_tuples.hpp>
 #include <stan/math/rev/meta.hpp>
 
 namespace stan {
@@ -23,7 +23,7 @@ auto user_gradients_impl(const ValTupleT& val_tuple, const ValFun& val_fun,
   
   return make_callback_var(
       rtn, [grad_fun_tuple, arena_tuple, prim_tuple](auto& vi) mutable {
-    walk_tuple_binary([&](auto&& f, auto&& arg) {
+    walk_tuples([&](auto&& f, auto&& arg) {
       if (!is_constant_all<decltype(arg)>::value) {
         forward_as<promote_scalar_t<var, decltype(arg)>>(arg).adj()
           += vi.adj() * math::apply([&](auto&&... args) {
