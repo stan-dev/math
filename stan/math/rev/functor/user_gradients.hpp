@@ -12,25 +12,31 @@ namespace math {
 template <typename ScalarT, typename ArgsTupleT,
           typename ValFun, typename GradFunT,
           require_var_t<ScalarT>* = nullptr>
-auto user_gradients_impl(const ArgsTupleT& args_tuple, const ValFun& val_fun,
-                         const GradFunT& grad_fun_tuple) {
-  auto val_tuple = map_tuple([&](auto&& arg) {
-      return to_arena(value_of(arg)); }, args_tuple);
+auto user_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
+                         GradFunT&& grad_fun_tuple) {
+  auto prim_tuple = map_tuple([&](auto&& arg) {
+    return to_arena(value_of(arg));
+  }, std::forward<ArgsTupleT>(args_tuple));
   auto arena_tuple = map_tuple([&](auto&& arg) {
-      return to_arena(arg); }, args_tuple);
+    return to_arena(arg);
+  }, std::forward<ArgsTupleT>(args_tuple));
   auto rtn = math::apply([&](auto&&... args) {
-      return val_fun(args...); }, val_tuple);
+    return val_fun(args...);
+  }, std::forward<decltype(prim_tuple)>(prim_tuple));
   
-  return make_callback_var(
-      rtn, [grad_fun_tuple, arena_tuple, val_tuple](auto& vi) mutable {
+  return make_callback_var(rtn,
+    [grad_fun_tuple, arena_tuple, prim_tuple](auto& vi) mutable {
     walk_tuples([&](auto&& f, auto&& arg) {
-      if (!is_constant_all<decltype(arg)>::value) {
-        forward_as<promote_scalar_t<var, decltype(arg)>>(arg).adj()
-          += vi.adj() * math::apply([&](auto&&... args) {
-                                        return f(args...);
-                                        }, val_tuple);
+      using arg_t = plain_type_t<decltype(arg)>;
+      if (!is_constant_all<arg_t>::value) {
+        forward_as<promote_scalar_t<var, arg_t>>(arg).adj()
+          += vi.adj()
+              * math::apply([&](auto&&... args) {
+                  return f(args...);
+                }, std::forward<decltype(prim_tuple)>(prim_tuple));
       }
-    }, grad_fun_tuple, arena_tuple);
+    }, std::forward<GradFunT>(grad_fun_tuple),
+       std::forward<decltype(arena_tuple)>(arena_tuple));
   });
 }
 

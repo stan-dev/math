@@ -8,13 +8,14 @@
 namespace stan {
 namespace math {
 
-template <typename ScalarT, typename ValTupleT, typename ValFun, typename GradFunT,
+template <typename ScalarT, typename ValTupleT,
+          typename ValFun, typename GradFunT,
           require_arithmetic_t<ScalarT>* = nullptr>
-auto user_gradients_impl(const ValTupleT& val_tuple, const ValFun& val_fun,
-                         const GradFunT& grad_fun_tuple) {
-  return math::apply([&](auto&&... args) { return val_fun(args...); }, val_tuple);
+auto user_gradients_impl(ValTupleT&& val_tuple, ValFun&& val_fun,
+                         GradFunT&& grad_fun_tuple) {
+  return math::apply([&](auto&&... args) {
+    return val_fun(args...); }, std::forward<ValTupleT>(val_tuple));
 }
-
 
 template <typename ArgsTupleT, typename ValFunT, typename GradFunTupleT>
 auto user_gradients(const ArgsTupleT& args_tuple, const ValFunT& val_fun,
