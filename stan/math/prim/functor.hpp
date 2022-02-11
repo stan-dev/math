@@ -16,6 +16,7 @@
 #include <stan/math/prim/functor/ode_ckrk.hpp>
 #include <stan/math/prim/functor/ode_rk45.hpp>
 #include <stan/math/prim/functor/ode_store_sensitivities.hpp>
+#include <stan/math/prim/functor/map_tuple.hpp>
 #include <stan/math/prim/functor/map_rect.hpp>
 #include <stan/math/prim/functor/map_rect_combine.hpp>
 #include <stan/math/prim/functor/map_rect_concurrent.hpp>
@@ -26,5 +27,7 @@
 #include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <stan/math/prim/functor/reduce_sum.hpp>
 #include <stan/math/prim/functor/reduce_sum_static.hpp>
+#include <stan/math/prim/functor/user_gradients.hpp>
+#include <stan/math/prim/functor/walk_tuple_binary.hpp>
 
 #endif
