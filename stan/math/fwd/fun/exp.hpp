@@ -3,6 +3,7 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/functor.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <cmath>
 #include <complex>
@@ -11,8 +12,10 @@ namespace stan {
 namespace math {
 template <typename T>
 inline fvar<T> exp(const fvar<T>& x) {
-  using std::exp;
-  return fvar<T>(exp(x.val_), x.d_ * exp(x.val_));
+  auto args_tuple = std::make_tuple(x);
+  auto val_fun = [&](auto&& x) {using std::exp; return exp(x); };
+  auto grad_fun_tuple = std::make_tuple(val_fun);
+  return user_gradients(args_tuple, val_fun, grad_fun_tuple);
 }
 
 /**

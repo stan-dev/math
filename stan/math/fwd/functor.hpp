@@ -7,5 +7,6 @@
 #include <stan/math/fwd/functor/jacobian.hpp>
 #include <stan/math/fwd/functor/operands_and_partials.hpp>
 #include <stan/math/fwd/functor/reduce_sum.hpp>
+#include <stan/math/fwd/functor/user_gradients.hpp>
 
 #endif

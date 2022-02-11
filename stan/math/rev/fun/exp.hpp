@@ -11,6 +11,7 @@
 #include <stan/math/rev/fun/is_nan.hpp>
 #include <stan/math/rev/fun/cos.hpp>
 #include <stan/math/rev/fun/sin.hpp>
+#include <stan/math/rev/functor.hpp>
 #include <cmath>
 #include <complex>
 
@@ -40,9 +41,10 @@ namespace math {
  * @return Exponentiated variable.
  */
 inline var exp(const var& a) {
-  return make_callback_var(std::exp(a.val()), [a](auto& vi) mutable {
-    a.adj() += vi.adj() * vi.val();
-  });
+  auto args_tuple = std::make_tuple(a);
+  auto val_fun = [&](auto&& x) {using std::exp; return exp(x); };
+  auto grad_fun_tuple = std::make_tuple(val_fun);
+  return user_gradients(args_tuple, val_fun, grad_fun_tuple);
 }
 
 /**
