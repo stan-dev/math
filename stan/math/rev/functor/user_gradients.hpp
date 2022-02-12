@@ -4,6 +4,7 @@
 #include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/functor/map_tuple.hpp>
 #include <stan/math/prim/functor/walk_tuples.hpp>
+#include <stan/math/prim/meta/holder.hpp>
 #include <stan/math/rev/meta.hpp>
 
 namespace stan {
@@ -74,16 +75,23 @@ auto user_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
       = map_tuple([&](auto&& arg) { return to_arena(arg); },
                   std::forward<ArgsTupleT>(args_tuple));
 
-  // Have to declare the math::apply functor separately to avoid compiler
+  // Have to wrap the holder functor to avoid compiler
   // errors when using lambda expressions in decltype call
-  decltype(auto) f = [&](auto&&... args) {
-    return val_fun(internal::arena_val(std::forward<decltype(args)>(args))...);
+  decltype(auto) f = [&](auto&& fun, auto&& tuple_arg) {
+    return make_holder([](auto&& h_f, auto&& h_t) {
+      return math::apply(
+        [&](auto&&... args) {
+          return h_f(internal::arena_val(
+            std::forward<decltype(args)>(args))...);
+        }, std::forward<decltype(h_t)>(h_t));
+    }, std::forward<decltype(fun)>(fun),
+       std::forward<decltype(tuple_arg)>(tuple_arg));
   };
 
   // Get primitive return type of function, used for assessing the need for a
   // var<Matrix> return type
-  using val_t = decltype(
-      math::apply(f, std::forward<decltype(prim_tuple)>(prim_tuple)));
+  using val_t = decltype(f(std::forward<ValFun>(val_fun),
+                           std::forward<decltype(prim_tuple)>(prim_tuple)));
 
   // Assess whether the return type should be var<double>, Matrix<var>,
   // or var<Matrix>
@@ -92,8 +100,8 @@ auto user_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
                                       promote_scalar_t<var, val_t>>;
 
   // Use input values to calculate return value
-  arena_t<ret_type> rtn
-      = math::apply(f, std::forward<decltype(prim_tuple)>(prim_tuple));
+  arena_t<ret_type> rtn = f(std::forward<ValFun>(val_fun),
+                            std::forward<decltype(prim_tuple)>(prim_tuple));
 
   reverse_pass_callback(
       [grad_fun_tuple, arena_tuple, prim_tuple, rtn]() mutable {
@@ -101,12 +109,11 @@ auto user_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
         // function with the tuple of extracted primitive values
         walk_tuples(
             [&](auto&& f, auto&& arg) {
-              using arg_t = plain_type_t<decltype(arg)>;
               // Only calculate gradients if the input argument is not primitive
-              if (!is_constant_all<arg_t>::value) {
+              if (!is_constant_all<decltype(arg)>::value) {
                 // Need to wrap the argument in a forward_as<var>() so that it
                 // will compile with both primitive and var inputs
-                forward_as<promote_scalar_t<var, arg_t>>(arg).adj() +=
+                forward_as<promote_scalar_t<var, decltype(arg)>>(arg).adj() +=
                     // Use the relevant gradient function with the tuple of
                     // primitive arguments
                     math::apply(
