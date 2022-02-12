@@ -21,7 +21,7 @@ namespace internal {
  * @param t tuple of arguments
  * @param i placeholder variable for index sequence
  */
-template <class F, typename Tuple, size_t... Is>
+template <class F, typename Tuple, std::size_t... Is>
 constexpr decltype(auto) map_tuple_impl(
   F&& f, Tuple&& t, std::index_sequence<Is...>) {
   return std::make_tuple(

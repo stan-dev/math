@@ -24,7 +24,7 @@ namespace math {
 template <typename ReturnT, typename ArgsTupleT,
           typename ValFun, typename GradFunT,
           require_st_arithmetic<ReturnT>* = nullptr>
-auto user_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
+decltype(auto) user_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
                          GradFunT&& grad_fun_tuple) {
   return make_holder([](auto&& fun, auto&& tuple_arg) {
     return math::apply([&](auto&&... args) {
@@ -34,6 +34,10 @@ auto user_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
 
 /**
  * Framework allowing users to provide gradient functions for their functions.
+ * The input arguments should be forwarded in a tuple, as should the gradient
+ * functors. The first two arguments for each functor should be the value and
+ * gradient, respectively, for the function result. All function inputs should
+ * be specified as the remaining arguments, regardless of whether they are used.
  *
  *
  * @tparam ArgsTupleT Type of input tuple of arguments for function
@@ -46,7 +50,7 @@ auto user_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
  * @return auto
  */
 template <typename ArgsTupleT, typename ValFunT, typename GradFunTupleT>
-auto user_gradients(ArgsTupleT&& args_tuple, ValFunT&& val_fun,
+decltype(auto) user_gradients(ArgsTupleT&& args_tuple, ValFunT&& val_fun,
                     GradFunTupleT&& gradfun_tuple) {
   using scalar_rtn_t = scalar_type_t<return_type_t<ArgsTupleT>>;
   return user_gradients_impl<scalar_rtn_t>(

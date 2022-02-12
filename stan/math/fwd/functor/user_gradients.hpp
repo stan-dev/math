@@ -13,7 +13,7 @@ namespace math {
 namespace internal {
 
 template <typename T, require_stan_scalar_t<T>* = nullptr>
-T initialize_grad(T&& rtn_val) {
+constexpr T initialize_grad(T&& rtn_val) {
   return 0;
 }
 
@@ -27,15 +27,16 @@ plain_type_t<T> initialize_grad(T&& rtn_eigen) {
 template <typename ScalarT, typename ArgsTupleT,
           typename ValFun, typename GradFunT,
           require_st_fvar<ScalarT>* = nullptr>
-auto user_gradients_impl(ArgsTupleT&& args_tuple,
+decltype(auto) user_gradients_impl(ArgsTupleT&& args_tuple,
                          ValFun&& val_fun,
                          GradFunT&& grad_fun_tuple) {
-  auto val_tuple = map_tuple([&](auto&& arg) {
+  decltype(auto) val_tuple = map_tuple([&](auto&& arg) {
     return value_of(arg);
   }, std::forward<ArgsTupleT>(args_tuple));
 
-  auto rtn = math::apply([&](auto&&... args) { return val_fun(args...); },
-                         std::forward<decltype(val_tuple)>(val_tuple));
+  decltype(auto) rtn = math::apply([&](auto&&... args) {
+    return val_fun(args...);
+  }, std::forward<decltype(val_tuple)>(val_tuple));
 
   auto d_ = internal::initialize_grad(std::forward<decltype(rtn)>(rtn));
 

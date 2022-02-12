@@ -35,10 +35,10 @@ constexpr void invoke_on_element(Function&& func, Tuples&&... tuples) {
 template <class F, std::size_t... I, typename... Tuples>
 constexpr void walk_tuples_impl(F&& f, std::index_sequence<I...> i,
                                 Tuples&&... ts) {
-  std::initializer_list<int>{
-    (invoke_on_element<I>(
-      std::forward<F>(f),
-      std::forward<Tuples>(ts)...), 0)...
+  (void)std::initializer_list<int>{
+    (invoke_on_element<I>(std::forward<F>(f),
+                          std::forward<Tuples>(ts)...),
+    void(), 0)...
   };
 }
 }  // namespace internal
