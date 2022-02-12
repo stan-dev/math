@@ -39,7 +39,7 @@ template <typename T, require_arena_matrix_t<T>* = nullptr>
 inline decltype(auto) arena_val(T&& arg) {
   return arg.val();
 }
-}
+}  // namespace internal
 
 /**
  * Implementation function for applying a user-defined function and gradients.
@@ -59,21 +59,20 @@ inline decltype(auto) arena_val(T&& arg) {
  * each input.
  * @return Result of applying functor to arguments within provided tuple
  */
-template <typename ReturnT, typename ArgsTupleT,
-          typename ValFun, typename GradFunT,
-          require_st_var<ReturnT>* = nullptr>
+template <typename ReturnT, typename ArgsTupleT, typename ValFun,
+          typename GradFunT, require_st_var<ReturnT>* = nullptr>
 auto user_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
                          GradFunT&& grad_fun_tuple) {
   // Extract values from input arguments to use in value
   // and gradient calculations
-  decltype(auto) prim_tuple = map_tuple([&](auto&& arg) {
-    return to_arena(value_of(arg));
-  }, std::forward<ArgsTupleT>(args_tuple));
+  decltype(auto) prim_tuple
+      = map_tuple([&](auto&& arg) { return to_arena(value_of(arg)); },
+                  std::forward<ArgsTupleT>(args_tuple));
 
   // Copy arguments to arena storage for use in callback
-  decltype(auto) arena_tuple = map_tuple([&](auto&& arg) {
-    return to_arena(arg);
-  }, std::forward<ArgsTupleT>(args_tuple));
+  decltype(auto) arena_tuple
+      = map_tuple([&](auto&& arg) { return to_arena(arg); },
+                  std::forward<ArgsTupleT>(args_tuple));
 
   // Have to declare the math::apply functor separately to avoid compiler
   // errors when using lambda expressions in decltype call
@@ -84,7 +83,7 @@ auto user_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
   // Get primitive return type of function, used for assessing the need for a
   // var<Matrix> return type
   using val_t = decltype(
-    math::apply(f, std::forward<decltype(prim_tuple)>(prim_tuple)));
+      math::apply(f, std::forward<decltype(prim_tuple)>(prim_tuple)));
 
   // Assess whether the return type should be var<double>, Matrix<var>,
   // or var<Matrix>
@@ -93,33 +92,35 @@ auto user_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
                                       promote_scalar_t<var, val_t>>;
 
   // Use input values to calculate return value
-  arena_t<ret_type> rtn =
-    math::apply(f, std::forward<decltype(prim_tuple)>(prim_tuple));
+  arena_t<ret_type> rtn
+      = math::apply(f, std::forward<decltype(prim_tuple)>(prim_tuple));
 
   reverse_pass_callback(
-    [grad_fun_tuple, arena_tuple, prim_tuple, rtn]() mutable {
-    // Iterate over input arguments, applying the respective gradient function
-    // with the tuple of extracted primitive values
-    walk_tuples([&](auto&& f, auto&& arg) {
-      using arg_t = plain_type_t<decltype(arg)>;
-      // Only calculate gradients if the input argument is not primitive
-      if (!is_constant_all<arg_t>::value) {
-        // Need to wrap the argument in a forward_as<var>() so that it will
-        // compile with both primitive and var inputs
-        forward_as<promote_scalar_t<var, arg_t>>(arg).adj() +=
-          // Use the relevant gradient function with the tuple of primitive
-          // arguments
-          math::apply([&](auto&&... args) {
-              return f(
-                rtn.val(),
-                rtn.adj(),
-                internal::arena_val(std::forward<decltype(args)>(args))...);
-            }, std::forward<decltype(prim_tuple)>(prim_tuple));
-      }
-    },
-    std::forward<GradFunT>(grad_fun_tuple),
-    std::forward<decltype(arena_tuple)>(arena_tuple));
-  });
+      [grad_fun_tuple, arena_tuple, prim_tuple, rtn]() mutable {
+        // Iterate over input arguments, applying the respective gradient
+        // function with the tuple of extracted primitive values
+        walk_tuples(
+            [&](auto&& f, auto&& arg) {
+              using arg_t = plain_type_t<decltype(arg)>;
+              // Only calculate gradients if the input argument is not primitive
+              if (!is_constant_all<arg_t>::value) {
+                // Need to wrap the argument in a forward_as<var>() so that it
+                // will compile with both primitive and var inputs
+                forward_as<promote_scalar_t<var, arg_t>>(arg).adj() +=
+                    // Use the relevant gradient function with the tuple of
+                    // primitive arguments
+                    math::apply(
+                        [&](auto&&... args) {
+                          return f(rtn.val(), rtn.adj(),
+                                   internal::arena_val(
+                                       std::forward<decltype(args)>(args))...);
+                        },
+                        std::forward<decltype(prim_tuple)>(prim_tuple));
+              }
+            },
+            std::forward<GradFunT>(grad_fun_tuple),
+            std::forward<decltype(arena_tuple)>(arena_tuple));
+      });
   return ret_type(rtn);
 }
 

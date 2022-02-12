@@ -15,8 +15,7 @@ template <typename T, require_stan_scalar_t<T>* = nullptr,
 inline fvar<T> to_fvar(const T& x) {
   return fvar<T>(x);
 }
-template <typename T,
-          require_stan_scalar_t<T>* = nullptr>
+template <typename T, require_stan_scalar_t<T>* = nullptr>
 inline fvar<T> to_fvar(const T& val, const T& d) {
   return fvar<T>(val, d);
 }

@@ -14,14 +14,14 @@ namespace math {
 
 template <typename T, require_stan_scalar_t<T>* = nullptr>
 inline auto exp(const T& a) {
-  auto val_fun = [&](auto&& x) { using std::exp; return exp(x); };
-  auto grad_fun = [&](auto&& val, auto&& adj, auto&& x) {
-    return adj * val;
+  auto val_fun = [&](auto&& x) {
+    using std::exp;
+    return exp(x);
   };
-  return user_gradients(
-    std::forward_as_tuple(a),
-    std::forward<decltype(val_fun)>(val_fun),
-    std::forward_as_tuple(grad_fun));
+  auto grad_fun = [&](auto&& val, auto&& adj, auto&& x) { return adj * val; };
+  return user_gradients(std::forward_as_tuple(a),
+                        std::forward<decltype(val_fun)>(val_fun),
+                        std::forward_as_tuple(grad_fun));
 }
 
 /**
@@ -52,8 +52,7 @@ struct exp_fun {
  * @return Elementwise application of exponentiation to the argument.
  */
 template <
-    typename Container,
-    require_container_t<Container>* = nullptr,
+    typename Container, require_container_t<Container>* = nullptr,
     require_not_container_st<std::is_arithmetic, Container>* = nullptr,
     require_not_nonscalar_prim_or_rev_kernel_expression_t<Container>* = nullptr,
     require_not_var_matrix_t<Container>* = nullptr>

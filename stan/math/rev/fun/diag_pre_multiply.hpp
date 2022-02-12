@@ -35,10 +35,9 @@ auto diag_pre_multiply(const T1& m1, const T2& m2) {
   auto grad_fun_m2 = [&](auto&& val, auto&& adj, auto&& x, auto&& y) {
     return x.asDiagonal() * adj;
   };
-  return user_gradients(
-    std::forward_as_tuple(m1, m2),
-    std::forward<decltype(val_fun)>(val_fun),
-    std::forward_as_tuple(grad_fun_m1, grad_fun_m2));
+  return user_gradients(std::forward_as_tuple(m1, m2),
+                        std::forward<decltype(val_fun)>(val_fun),
+                        std::forward_as_tuple(grad_fun_m1, grad_fun_m2));
 }
 
 }  // namespace math

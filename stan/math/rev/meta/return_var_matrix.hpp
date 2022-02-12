@@ -8,11 +8,11 @@ namespace stan {
 template <typename ReturnType, typename... Types>
 struct return_var_matrix {
   using type = std::conditional_t<
-    is_any_var_matrix<ReturnType, Types...>::value,
-    stan::math::var_value<
-        stan::math::promote_scalar_t<double, plain_type_t<ReturnType>>>,
-    stan::math::promote_scalar_t<stan::math::var_value<double>,
-                                 plain_type_t<ReturnType>>>;
+      is_any_var_matrix<ReturnType, Types...>::value,
+      stan::math::var_value<
+          stan::math::promote_scalar_t<double, plain_type_t<ReturnType>>>,
+      stan::math::promote_scalar_t<stan::math::var_value<double>,
+                                   plain_type_t<ReturnType>>>;
 };
 
 template <typename ReturnType, typename... Types>
@@ -34,7 +34,7 @@ struct return_var_matrix<ReturnType, std::tuple<Types...>> {
  */
 template <typename ReturnType, typename... Types>
 using return_var_matrix_t =
-  typename return_var_matrix<ReturnType, Types...>::type;
+    typename return_var_matrix<ReturnType, Types...>::type;
 }  // namespace stan
 
 #endif

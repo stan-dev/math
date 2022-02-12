@@ -36,10 +36,8 @@ template <class F, std::size_t... I, typename... Tuples>
 constexpr void walk_tuples_impl(F&& f, std::index_sequence<I...> i,
                                 Tuples&&... ts) {
   (void)std::initializer_list<int>{
-    (invoke_on_element<I>(std::forward<F>(f),
-                          std::forward<Tuples>(ts)...),
-    void(), 0)...
-  };
+      (invoke_on_element<I>(std::forward<F>(f), std::forward<Tuples>(ts)...),
+       void(), 0)...};
 }
 }  // namespace internal
 
@@ -55,15 +53,12 @@ constexpr void walk_tuples_impl(F&& f, std::index_sequence<I...> i,
  */
 template <class F, typename... Tuples>
 constexpr void walk_tuples(F&& f, Tuples&&... ts) {
-  constexpr auto length = std::min({
-    std::tuple_size<std::remove_reference_t<Tuples>>::value...
-  });
-  internal::walk_tuples_impl(
-    std::forward<F>(f),
-    std::make_index_sequence<length>{},
-    std::forward<Tuples>(ts)...);
+  constexpr auto length
+      = std::min({std::tuple_size<std::remove_reference_t<Tuples>>::value...});
+  internal::walk_tuples_impl(std::forward<F>(f),
+                             std::make_index_sequence<length>{},
+                             std::forward<Tuples>(ts)...);
 }
-
 
 }  // namespace math
 }  // namespace stan
