@@ -33,7 +33,8 @@ struct return_var_matrix<ReturnType, std::tuple<Types...>> {
  *  Else the type will be `Matrix<var>`
  */
 template <typename ReturnType, typename... Types>
-using return_var_matrix_t = typename return_var_matrix<ReturnType, Types...>::type;
+using return_var_matrix_t =
+  typename return_var_matrix<ReturnType, Types...>::type;
 }  // namespace stan
 
 #endif

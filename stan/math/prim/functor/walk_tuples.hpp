@@ -11,7 +11,7 @@ namespace internal {
 /**
  * Apply a specified functor to the values from multiple tuples at a
  * provided index
- * 
+ *
  * @tparam Function Type of functor to apply
  * @tparam Tuples Types of the provided tuples to index
  * @param func Functor to apply
@@ -26,7 +26,7 @@ constexpr void invoke_on_element(Function&& func, Tuples&&... tuples) {
  * Implementation function for calling invoke_on_element with every index
  * in the provided tuples. The std::initializer trick is used as a pre-C++17
  * alternative for fold expressions.
- * 
+ *
  * @tparam F Type of provided functor
  * @tparam Tuples Types of tuples to iterate over
  * @param f Functor to apply at each index
@@ -36,7 +36,9 @@ template <class F, std::size_t... I, typename... Tuples>
 constexpr void walk_tuples_impl(F&& f, std::index_sequence<I...> i,
                                 Tuples&&... ts) {
   std::initializer_list<int>{
-    (invoke_on_element<I>(std::forward<F>(f), std::forward<Tuples>(ts)...), 0)...
+    (invoke_on_element<I>(
+      std::forward<F>(f),
+      std::forward<Tuples>(ts)...), 0)...
   };
 }
 }  // namespace internal
@@ -45,7 +47,7 @@ constexpr void walk_tuples_impl(F&& f, std::index_sequence<I...> i,
  * Iterate over multiple tuples, using the values at each index as arguments
  * to a provided functor. This function is called for its side-effects, and
  * does not return a value.
- * 
+ *
  * @tparam F Type of provided functor
  * @tparam Tuples Type of tuples to iterate over
  * @param f Functor to apply
@@ -59,8 +61,7 @@ constexpr void walk_tuples(F&& f, Tuples&&... ts) {
   internal::walk_tuples_impl(
     std::forward<F>(f),
     std::make_index_sequence<length>{},
-    std::forward<Tuples>(ts)...
-  );
+    std::forward<Tuples>(ts)...);
 }
 
 

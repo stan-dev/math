@@ -24,7 +24,9 @@ namespace math {
 template <typename T1, typename T2,
           require_all_stan_scalar_t<T1, T2>* = nullptr>
 inline auto hypot(const T1& a, const T2& b) {
-  auto val_fun = [&](auto&& x, auto&& y) { using std::hypot; return hypot(x, y); };
+  auto val_fun = [&](auto&& x, auto&& y) {
+    using std::hypot; return hypot(x, y);
+  };
   auto grad_fun_a = [&](auto&& val, auto&& adj, auto&& x, auto&& y) {
     return adj * x / val;
   };
@@ -34,8 +36,7 @@ inline auto hypot(const T1& a, const T2& b) {
   return user_gradients(
     std::forward_as_tuple(a, b),
     std::forward<decltype(val_fun)>(val_fun),
-    std::forward_as_tuple(grad_fun_a, grad_fun_b)
-  );
+    std::forward_as_tuple(grad_fun_a, grad_fun_b));
 }
 
 /**

@@ -21,8 +21,7 @@ inline auto exp(const T& a) {
   return user_gradients(
     std::forward_as_tuple(a),
     std::forward<decltype(val_fun)>(val_fun),
-    std::forward_as_tuple(grad_fun)
-  );
+    std::forward_as_tuple(grad_fun));
 }
 
 /**

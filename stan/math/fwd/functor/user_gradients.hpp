@@ -36,26 +36,23 @@ auto user_gradients_impl(ArgsTupleT&& args_tuple,
 
   auto rtn = math::apply([&](auto&&... args) { return val_fun(args...); },
                          std::forward<decltype(val_tuple)>(val_tuple));
-  
+
   auto d_ = internal::initialize_grad(std::forward<decltype(rtn)>(rtn));
-  
+
   walk_tuples([&](auto&& f, auto&& arg) {
     using arg_t = plain_type_t<decltype(arg)>;
     if (!is_constant_all<arg_t>::value) {
-      d_ += 
+      d_ +=
         math::apply(
           [&](auto&&... args) {
             return f(
               rtn,
               forward_as<promote_scalar_t<ScalarT, arg_t>>(arg).d(),
-              args...
-            );
-          }, std::forward<decltype(val_tuple)>(val_tuple)
-        );
+              args...);
+          }, std::forward<decltype(val_tuple)>(val_tuple));
     }
   }, std::forward<GradFunT>(grad_fun_tuple),
-     std::forward<ArgsTupleT>(args_tuple)
-  );
+     std::forward<ArgsTupleT>(args_tuple));
 
   return to_fvar(rtn, d_);
 }
