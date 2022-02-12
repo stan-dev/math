@@ -3,6 +3,7 @@
 
 #include <stan/math/fwd/meta.hpp>
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/functor/user_gradients.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <cmath>
 #include <complex>

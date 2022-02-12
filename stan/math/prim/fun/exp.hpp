@@ -13,7 +13,8 @@
 namespace stan {
 namespace math {
 
-template <typename T, require_stan_scalar_t<T>* = nullptr>
+template <typename T, require_stan_scalar_t<T>* = nullptr,
+          require_not_complex_t<T>* = nullptr>
 inline auto exp(const T& a) {
   auto val_fun = [&](auto&& x) {
     using std::exp;
