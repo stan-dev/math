@@ -54,10 +54,9 @@ constexpr void walk_tuples_impl(F&& f, std::index_sequence<I...> i,
 template <class F, typename Tuple1, typename... Tuples>
 constexpr void walk_tuples(F&& f, Tuple1&& t1, Tuples&&... ts) {
   constexpr auto length = std::tuple_size<std::remove_reference_t<Tuple1>>{};
-  internal::walk_tuples_impl(std::forward<F>(f),
-                             std::make_index_sequence<length>{},
-                             std::forward<Tuple1>(t1),
-                             std::forward<Tuples>(ts)...);
+  internal::walk_tuples_impl(
+      std::forward<F>(f), std::make_index_sequence<length>{},
+      std::forward<Tuple1>(t1), std::forward<Tuples>(ts)...);
 }
 
 }  // namespace math
