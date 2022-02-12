@@ -47,7 +47,7 @@ decltype(auto) user_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
                          forward_as<promote_scalar_t<ScalarT, arg_t>>(arg).d(),
                          args...);
               },
-              std::forward<decltype(val_tuple)>(val_tuple));
+              val_tuple);
         }
       },
       std::forward<GradFunT>(grad_fun_tuple),

@@ -115,7 +115,7 @@ auto user_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
                                    internal::arena_val(
                                        std::forward<decltype(args)>(args))...);
                         },
-                        std::forward<decltype(prim_tuple)>(prim_tuple));
+                        prim_tuple);
               }
             },
             std::forward<GradFunT>(grad_fun_tuple),
