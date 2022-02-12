@@ -4,14 +4,29 @@
 #include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/functor/map_tuple.hpp>
 #include <stan/math/prim/functor/walk_tuples.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/fwd/core/fvar.hpp>
+#include <stan/math/fwd/fun/to_fvar.hpp>
 
 namespace stan {
 namespace math {
+namespace internal {
+
+template <typename T, require_stan_scalar_t<T>* = nullptr>
+T initialize_grad(T&& rtn_val) {
+  return 0;
+}
+
+template <typename T, require_eigen_t<T>* = nullptr>
+plain_type_t<T> initialize_grad(T&& rtn_eigen) {
+  return plain_type_t<T>::Zero(rtn_eigen.rows(),
+                               rtn_eigen.cols());
+}
+}
 
 template <typename ScalarT, typename ArgsTupleT,
           typename ValFun, typename GradFunT,
-          require_fvar_t<ScalarT>* = nullptr>
+          require_st_fvar<ScalarT>* = nullptr>
 auto user_gradients_impl(ArgsTupleT&& args_tuple,
                          ValFun&& val_fun,
                          GradFunT&& grad_fun_tuple) {
@@ -19,23 +34,34 @@ auto user_gradients_impl(ArgsTupleT&& args_tuple,
     return value_of(arg);
   }, std::forward<ArgsTupleT>(args_tuple));
 
-  auto rtn = math::apply([&](auto&&... args) {
-    return val_fun(args...);
-  }, std::forward<decltype(val_tuple)>(val_tuple));
+  auto rtn = make_holder([](auto&& fun, auto&& tuple_arg) {
+    return math::apply([&](auto&&... args) {
+      return fun(args...); }, std::forward<decltype(tuple_arg)>(tuple_arg)
+    );
+  }, std::forward<ValFun>(val_fun), std::forward<decltype(val_tuple)>(val_tuple));
   
-  plain_type_t<decltype(rtn)> d_(0);
+  auto d_ = internal::initialize_grad(std::forward<decltype(rtn)>(rtn));
   
   walk_tuples([&](auto&& f, auto&& arg) {
     using arg_t = plain_type_t<decltype(arg)>;
     if (!is_constant_all<arg_t>::value) {
-      d_ += math::apply([&](auto&&... args) { return f(forward_as<promote_scalar_t<ScalarT, arg_t>>(arg).d(),args...); },
-                          std::forward<decltype(val_tuple)>(val_tuple));
+      d_ += 
+      
+      math::apply(
+        [&](auto&&... args) {
+          return f(
+            forward_as<promote_scalar_t<ScalarT, arg_t>>(arg).d().eval(),
+            args...
+          );
+        }, std::forward<decltype(val_tuple)>(val_tuple)
+      );
+
     }
   }, std::forward<GradFunT>(grad_fun_tuple),
      std::forward<ArgsTupleT>(args_tuple)
   );
 
-  return ScalarT(rtn, d_);
+  return to_fvar(rtn, d_);
 }
 
 }  // namespace math

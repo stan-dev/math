@@ -26,34 +26,19 @@ template <typename T1, typename T2, require_vector_t<T1>* = nullptr,
 auto diag_pre_multiply(const T1& m1, const T2& m2) {
   check_size_match("diag_pre_multiply", "m1.size()", m1.size(), "m2.rows()",
                    m2.rows());
-  using inner_ret_type = decltype(value_of(m1).asDiagonal() * value_of(m2));
-  using ret_type = return_var_matrix_t<inner_ret_type, T1, T2>;
-  if (!is_constant<T1>::value && !is_constant<T2>::value) {
-    arena_t<promote_scalar_t<var, T1>> arena_m1 = m1;
-    arena_t<promote_scalar_t<var, T2>> arena_m2 = m2;
-    arena_t<ret_type> ret(arena_m1.val().asDiagonal() * arena_m2.val());
-    reverse_pass_callback([ret, arena_m1, arena_m2]() mutable {
-      arena_m1.adj() += arena_m2.val().cwiseProduct(ret.adj()).rowwise().sum();
-      arena_m2.adj() += arena_m1.val().asDiagonal() * ret.adj();
-    });
-    return ret_type(ret);
-  } else if (!is_constant<T1>::value) {
-    arena_t<promote_scalar_t<var, T1>> arena_m1 = m1;
-    arena_t<promote_scalar_t<double, T2>> arena_m2 = value_of(m2);
-    arena_t<ret_type> ret(arena_m1.val().asDiagonal() * arena_m2);
-    reverse_pass_callback([ret, arena_m1, arena_m2]() mutable {
-      arena_m1.adj() += arena_m2.val().cwiseProduct(ret.adj()).rowwise().sum();
-    });
-    return ret_type(ret);
-  } else if (!is_constant<T2>::value) {
-    arena_t<promote_scalar_t<double, T1>> arena_m1 = value_of(m1);
-    arena_t<promote_scalar_t<var, T2>> arena_m2 = m2;
-    arena_t<ret_type> ret(arena_m1.asDiagonal() * arena_m2.val());
-    reverse_pass_callback([ret, arena_m1, arena_m2]() mutable {
-      arena_m2.adj() += arena_m1.val().asDiagonal() * ret.adj();
-    });
-    return ret_type(ret);
-  }
+  check_size_match("diag_pre_multiply", "m1.size()", m1.size(), "m2.rows()",
+                   m2.rows());
+  auto args_tuple = std::make_tuple(m1, m2);
+  auto val_fun = [&](auto&& x, auto&& y) { return x.asDiagonal() * y; };
+  auto grad_fun_tuple = std::make_tuple(
+    [&](auto&& adj, auto&& x, auto&& y) { return y.cwiseProduct(adj).rowwise().sum(); },
+    [&](auto&& adj, auto&& x, auto&& y) { return x.asDiagonal() * adj; }
+  );
+  return user_gradients(
+    std::forward<decltype(args_tuple)>(args_tuple),
+    std::forward<decltype(val_fun)>(val_fun),
+    std::forward<decltype(grad_fun_tuple)>(grad_fun_tuple)
+  );
 }
 
 }  // namespace math

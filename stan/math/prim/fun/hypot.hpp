@@ -20,10 +20,20 @@ namespace math {
  * @return Length of hypotenuse of right triangle with opposite
  * and adjacent side lengths x and y.
  */
-template <typename T1, typename T2, require_all_arithmetic_t<T1, T2>* = nullptr>
-inline double hypot(T1 x, T2 y) {
-  using std::hypot;
-  return hypot(x, y);
+template <typename T1, typename T2,
+          require_all_stan_scalar_t<T1, T2>* = nullptr>
+inline auto hypot(const T1& a, const T2& b) {
+  auto args_tuple = std::make_tuple(a, b);
+  auto val_fun = [&](auto&& x, auto&& y) { using std::hypot; return hypot(x, y); };
+  auto grad_fun_tuple = std::make_tuple(
+    [&](auto&& adj, auto&& x, auto&& y) { return adj * x / hypot(x, y); },
+    [&](auto&& adj, auto&& x, auto&& y) { return adj * y / hypot(x, y); }
+  );
+  return user_gradients(
+    std::forward<decltype(args_tuple)>(args_tuple),
+    std::forward<decltype(val_fun)>(val_fun),
+    std::forward<decltype(grad_fun_tuple)>(grad_fun_tuple)
+  );
 }
 
 /**

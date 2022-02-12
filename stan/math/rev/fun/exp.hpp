@@ -19,35 +19,6 @@ namespace stan {
 namespace math {
 
 /**
- * Return the exponentiation of the specified variable (cmath).
- *
-   \f[
-   \mbox{exp}(x) =
-   \begin{cases}
-     e^x & \mbox{if } -\infty\leq x \leq \infty \\[6pt]
-     \textrm{NaN} & \mbox{if } x = \textrm{NaN}
-   \end{cases}
-   \f]
-
-   \f[
-   \frac{\partial\, \mbox{exp}(x)}{\partial x} =
-   \begin{cases}
-     e^x & \mbox{if } -\infty\leq x\leq \infty \\[6pt]
-     \textrm{NaN} & \mbox{if } x = \textrm{NaN}
-   \end{cases}
-   \f]
- *
- * @param a Variable to exponentiate.
- * @return Exponentiated variable.
- */
-inline var exp(const var& a) {
-  auto args_tuple = std::make_tuple(a);
-  auto val_fun = [&](auto&& x) {using std::exp; return exp(x); };
-  auto grad_fun_tuple = std::make_tuple([&](auto&& adj, auto&& x) {using std::exp; return adj * exp(x); });
-  return user_gradients(args_tuple, val_fun, grad_fun_tuple);
-}
-
-/**
  * Return the exponentiation (base e) of the specified complex number.
  * @param z argument
  * @return exponentiation of argument

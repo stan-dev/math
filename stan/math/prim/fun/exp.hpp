@@ -11,6 +11,19 @@
 
 namespace stan {
 namespace math {
+
+template <typename T, require_stan_scalar_t<T>* = nullptr>
+inline auto exp(const T& a) {
+  auto args_tuple = std::make_tuple(a);
+  auto val_fun = [&](auto&& x) {using std::exp; return exp(x); };
+  auto grad_fun_tuple = std::make_tuple([&](auto&& adj, auto&& x) {using std::exp; return adj * exp(x); });
+  return user_gradients(
+    std::forward<decltype(args_tuple)>(args_tuple),
+    std::forward<decltype(val_fun)>(val_fun),
+    std::forward<decltype(grad_fun_tuple)>(grad_fun_tuple)
+  );
+}
+
 /**
  * Structure to wrap `exp()` so that it can be
  * vectorized.
@@ -25,7 +38,6 @@ struct exp_fun {
    */
   template <typename T>
   static inline T fun(const T& x) {
-    using std::exp;
     return exp(x);
   }
 };
@@ -41,6 +53,7 @@ struct exp_fun {
  */
 template <
     typename Container,
+    require_container_t<Container>* = nullptr,
     require_not_container_st<std::is_arithmetic, Container>* = nullptr,
     require_not_nonscalar_prim_or_rev_kernel_expression_t<Container>* = nullptr,
     require_not_var_matrix_t<Container>* = nullptr>

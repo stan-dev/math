@@ -21,14 +21,16 @@ namespace math {
  * for each input
  * @return auto 
  */
-template <typename ScalarT, typename ArgsTupleT,
+template <typename ReturnT, typename ArgsTupleT,
           typename ValFun, typename GradFunT,
-          require_arithmetic_t<ScalarT>* = nullptr>
+          require_st_arithmetic<ReturnT>* = nullptr>
 auto user_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
                          GradFunT&& grad_fun_tuple) {
-  return math::apply([&](auto&&... args) {
-    return val_fun(args...); }, std::forward<ArgsTupleT>(args_tuple)
-  );
+  return make_holder([](auto&& fun, auto&& tuple_arg) {
+    return math::apply([&](auto&&... args) {
+      return fun(args...); }, std::forward<decltype(tuple_arg)>(tuple_arg)
+    );
+  }, std::forward<ValFun>(val_fun), std::forward<ArgsTupleT>(args_tuple));
 }
 
 /**
@@ -45,10 +47,14 @@ auto user_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
  * @return auto 
  */
 template <typename ArgsTupleT, typename ValFunT, typename GradFunTupleT>
-auto user_gradients(const ArgsTupleT& args_tuple, const ValFunT& val_fun,
-                    const GradFunTupleT& gradfun_tuple) {
+auto user_gradients(ArgsTupleT&& args_tuple, ValFunT&& val_fun,
+                    GradFunTupleT&& gradfun_tuple) {
   using scalar_rtn_t = scalar_type_t<return_type_t<ArgsTupleT>>;
-  return user_gradients_impl<scalar_rtn_t>(args_tuple, val_fun, gradfun_tuple);
+  return user_gradients_impl<scalar_rtn_t>(
+    std::forward<ArgsTupleT>(args_tuple),
+    std::forward<ValFunT>(val_fun),
+    std::forward<GradFunTupleT>(gradfun_tuple)
+  );
 }
 
 }  // namespace math
