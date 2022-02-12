@@ -3,7 +3,6 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/rev/functor.hpp>
 #include <stan/math/prim/fun/cos.hpp>
 #include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/rev/fun/is_inf.hpp>
@@ -12,6 +11,7 @@
 #include <stan/math/rev/fun/is_nan.hpp>
 #include <stan/math/rev/fun/cos.hpp>
 #include <stan/math/rev/fun/sin.hpp>
+#include <stan/math/rev/functor/user_gradients.hpp>
 #include <cmath>
 #include <complex>
 

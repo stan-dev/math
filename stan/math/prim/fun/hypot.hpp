@@ -2,7 +2,8 @@
 #define STAN_MATH_PRIM_FUN_HYPOT_HPP
 
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/prim/functor.hpp>
+#include <stan/math/prim/functor/user_gradients.hpp>
+#include <stan/math/prim/functor/apply_scalar_binary.hpp>
 #include <cmath>
 
 namespace stan {

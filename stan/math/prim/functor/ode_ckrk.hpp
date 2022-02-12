@@ -2,6 +2,8 @@
 #define STAN_MATH_PRIM_FUNCTOR_ODE_CKRK_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/err/check_positive_finite.hpp>
+#include <stan/math/prim/err.hpp>
 #include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/functor/coupled_ode_system.hpp>
 #include <stan/math/prim/functor/ode_store_sensitivities.hpp>
