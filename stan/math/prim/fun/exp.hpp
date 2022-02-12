@@ -14,13 +14,14 @@ namespace math {
 
 template <typename T, require_stan_scalar_t<T>* = nullptr>
 inline auto exp(const T& a) {
-  auto args_tuple = std::make_tuple(a);
-  auto val_fun = [&](auto&& x) {using std::exp; return exp(x); };
-  auto grad_fun_tuple = std::make_tuple([&](auto&& adj, auto&& x) {using std::exp; return adj * exp(x); });
+  auto val_fun = [&](auto&& x) { using std::exp; return exp(x); };
+  auto grad_fun = [&](auto&& val, auto&& adj, auto&& x) {
+    return adj * val;
+  };
   return user_gradients(
-    std::forward<decltype(args_tuple)>(args_tuple),
+    std::forward_as_tuple(a),
     std::forward<decltype(val_fun)>(val_fun),
-    std::forward<decltype(grad_fun_tuple)>(grad_fun_tuple)
+    std::forward_as_tuple(grad_fun)
   );
 }
 

@@ -66,6 +66,7 @@ auto user_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
           // arguments
           math::apply([&](auto&&... args) {
               return f(
+                rtn.val(),
                 rtn.adj(),
                 internal::arena_val(std::forward<decltype(args)>(args))...
               );

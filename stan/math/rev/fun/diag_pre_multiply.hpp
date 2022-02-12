@@ -31,8 +31,8 @@ auto diag_pre_multiply(const T1& m1, const T2& m2) {
   auto args_tuple = std::make_tuple(m1, m2);
   auto val_fun = [&](auto&& x, auto&& y) { return x.asDiagonal() * y; };
   auto grad_fun_tuple = std::make_tuple(
-    [&](auto&& adj, auto&& x, auto&& y) { return y.cwiseProduct(adj).rowwise().sum(); },
-    [&](auto&& adj, auto&& x, auto&& y) { return x.asDiagonal() * adj; }
+    [&](auto&& val, auto&& adj, auto&& x, auto&& y) { return y.cwiseProduct(adj).rowwise().sum(); },
+    [&](auto&& val, auto&& adj, auto&& x, auto&& y) { return x.asDiagonal() * adj; }
   );
   return user_gradients(
     std::forward<decltype(args_tuple)>(args_tuple),

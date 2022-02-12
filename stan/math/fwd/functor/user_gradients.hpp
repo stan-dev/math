@@ -34,11 +34,8 @@ auto user_gradients_impl(ArgsTupleT&& args_tuple,
     return value_of(arg);
   }, std::forward<ArgsTupleT>(args_tuple));
 
-  auto rtn = make_holder([](auto&& fun, auto&& tuple_arg) {
-    return math::apply([&](auto&&... args) {
-      return fun(args...); }, std::forward<decltype(tuple_arg)>(tuple_arg)
-    );
-  }, std::forward<ValFun>(val_fun), std::forward<decltype(val_tuple)>(val_tuple));
+  auto rtn = math::apply([&](auto&&... args) { return val_fun(args...); },
+                         std::forward<decltype(val_tuple)>(val_tuple));
   
   auto d_ = internal::initialize_grad(std::forward<decltype(rtn)>(rtn));
   
@@ -46,16 +43,15 @@ auto user_gradients_impl(ArgsTupleT&& args_tuple,
     using arg_t = plain_type_t<decltype(arg)>;
     if (!is_constant_all<arg_t>::value) {
       d_ += 
-      
-      math::apply(
-        [&](auto&&... args) {
-          return f(
-            forward_as<promote_scalar_t<ScalarT, arg_t>>(arg).d().eval(),
-            args...
-          );
-        }, std::forward<decltype(val_tuple)>(val_tuple)
-      );
-
+        math::apply(
+          [&](auto&&... args) {
+            return f(
+              rtn,
+              forward_as<promote_scalar_t<ScalarT, arg_t>>(arg).d(),
+              args...
+            );
+          }, std::forward<decltype(val_tuple)>(val_tuple)
+        );
     }
   }, std::forward<GradFunT>(grad_fun_tuple),
      std::forward<ArgsTupleT>(args_tuple)
