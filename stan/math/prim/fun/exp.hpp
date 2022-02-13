@@ -29,7 +29,9 @@ inline auto exp(const Container& x) {
       x, [](const auto& v) { return v.array().exp(); });
 }
 
-template <typename T, require_arithmetic_t<T>* = nullptr>
+template <typename T,
+          require_t<disjunction<std::is_arithmetic<T>,
+                                is_complex<T>>>* = nullptr>
 return_type_t<T> exp(T x) {
   using std::exp;
   return exp(x);
