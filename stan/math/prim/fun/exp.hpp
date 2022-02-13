@@ -43,8 +43,8 @@ template <
     require_not_arithmetic_t<T>* = nullptr, require_not_complex_t<T>* = nullptr>
 inline auto exp(const T& a) {
   auto val_fun = [&](auto&& x) { return exp(x); };
-  auto grad_fun = [&](auto&& val, auto&& adj, auto&& x) {
-    return elt_multiply(adj, val);
+  auto grad_fun = [&](auto&& val, auto&& x) {
+    return val;
   };
   return user_gradients(std::forward_as_tuple(a),
                         std::forward<decltype(val_fun)>(val_fun),

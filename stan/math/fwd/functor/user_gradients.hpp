@@ -41,13 +41,14 @@ decltype(auto) user_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
       [&](auto&& f, auto&& arg) {
         using arg_t = decltype(arg);
         if (!is_constant_all<arg_t>::value) {
-          d_ += math::apply(
+          as_array_or_scalar(d_) += as_array_or_scalar(forward_as<promote_scalar_t<ScalarT, arg_t>>(arg))
+                        .d() * as_array_or_scalar(math::apply(
               [&](auto&&... args) {
                 return f(rtn,
                          forward_as<promote_scalar_t<ScalarT, arg_t>>(arg).d(),
                          args...);
               },
-              val_tuple);
+              val_tuple));
         }
       },
       std::forward<GradFunT>(grad_fun_tuple),

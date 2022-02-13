@@ -28,11 +28,11 @@ inline auto hypot(const T1& a, const T2& b) {
     using std::hypot;
     return hypot(x, y);
   };
-  auto grad_fun_a = [&](auto&& val, auto&& adj, auto&& x, auto&& y) {
-    return adj * x / val;
+  auto grad_fun_a = [&](auto&& val, auto&& x, auto&& y) {
+    return x / val;
   };
-  auto grad_fun_b = [&](auto&& val, auto&& adj, auto&& x, auto&& y) {
-    return adj * y / val;
+  auto grad_fun_b = [&](auto&& val, auto&& x, auto&& y) {
+    return y / val;
   };
   return user_gradients(std::forward_as_tuple(a, b),
                         std::forward<decltype(val_fun)>(val_fun),

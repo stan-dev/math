@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_FUNCTOR_USER_GRADIENTS_HPP
 #define STAN_MATH_REV_FUNCTOR_USER_GRADIENTS_HPP
 
+#include <stan/math/prim/fun/eval.hpp>
 #include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/functor/map_tuple.hpp>
 #include <stan/math/prim/functor/walk_tuples.hpp>
@@ -39,6 +40,45 @@ inline T arena_val(T&& arg) {
 template <typename T, require_arena_matrix_t<T>* = nullptr>
 inline decltype(auto) arena_val(T&& arg) {
   return arg.val();
+}
+
+template <typename T>
+using base_matrix_t = std::conditional_t<
+  is_var_matrix<std::decay_t<T>>::value,
+  value_type_t<std::decay_t<T>>,
+  std::decay_t<T>>;
+
+template <typename ArgT, typename ReturnT, typename PartialT,
+          require_stan_scalar_t<PartialT>* = nullptr>
+inline decltype(auto) aggregate_partial(ReturnT&& rtn, PartialT&& x) {
+  //std::cout << "here1" << std::endl;
+  return eval(as_array_or_scalar(rtn).adj() * x);
+}
+
+template <typename ArgT, typename ReturnT, typename PartialT,
+          require_all_eigen_t<base_matrix_t<ArgT>, base_matrix_t<ReturnT>, PartialT>* = nullptr,
+          std::enable_if_t<
+            std::is_same<plain_type_t<ArgT>, plain_type_t<ReturnT>>::value &&
+            std::is_same<plain_type_t<PartialT>, promote_scalar_t<scalar_type_t<PartialT>,plain_type_t<base_matrix_t<ArgT>>>>::value
+          >* = nullptr>
+inline decltype(auto) aggregate_partial(ReturnT&& rtn, PartialT&& x) {
+  //std::cout << "here2" << std::endl;
+  return (as_array_or_scalar(rtn).adj() * x.array()).eval();
+}
+
+template <typename ArgT, typename ReturnT, typename PartialT,
+          require_eigen_vector_t<base_matrix_t<ArgT>>* = nullptr,
+          require_all_eigen_matrix_dynamic_t<base_matrix_t<ReturnT>, PartialT>* = nullptr>
+inline decltype(auto) aggregate_partial(ReturnT&& rtn, PartialT&& x) {
+  return (as_array_or_scalar(rtn).adj() * x.array()).rowwise().sum().eval();
+}
+
+template <typename ArgT, typename ReturnT, typename PartialT,
+          require_eigen_col_vector_t<PartialT>* = nullptr,
+          require_all_eigen_matrix_dynamic_t<base_matrix_t<ArgT>, base_matrix_t<ReturnT>>* = nullptr>
+inline decltype(auto) aggregate_partial(ReturnT&& rtn, PartialT&& x) {
+  //std::cout << "here5" << std::endl;
+  return (as_array_or_scalar(rtn).adj().colwise() * x.array()).eval();
 }
 }  // namespace internal
 
@@ -114,18 +154,21 @@ auto user_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
             [&](auto&& f, auto&& arg) {
               // Only calculate gradients if the input argument is not primitive
               if (!is_constant_all<decltype(arg)>::value) {
-                // Need to wrap the argument in a forward_as<var>() so that it
-                // will compile with both primitive and var inputs
-                forward_as<promote_scalar_t<var, decltype(arg)>>(arg).adj() +=
-                    // Use the relevant gradient function with the tuple of
-                    // primitive arguments
-                    math::apply(
-                        [&](auto&&... args) {
-                          return f(rtn.val(), rtn.adj(),
+                decltype(auto) grad = math::apply([&](auto&&... args) {
+                          return f(rtn.val(),
                                    internal::arena_val(
                                        std::forward<decltype(args)>(args))...);
                         },
                         prim_tuple);
+                // Need to wrap the argument in a forward_as<var>() so that it
+                // will compile with both primitive and var inputs
+                as_array_or_scalar(forward_as<promote_scalar_t<var, decltype(arg)>>(arg)).adj() +=
+                    // Use the relevant gradient function with the tuple of
+                    // primitive arguments
+                      internal::aggregate_partial<plain_type_t<decltype(arg)>>(
+                        rtn,
+                        std::forward<decltype(grad)>(grad)
+                        );
               }
             },
             std::forward<GradFunT>(grad_fun_tuple),
