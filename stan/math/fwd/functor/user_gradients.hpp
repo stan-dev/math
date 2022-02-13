@@ -43,11 +43,9 @@ decltype(auto) user_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
         if (!is_constant_all<arg_t>::value) {
           d_ += math::apply(
               [&](auto&&... args) {
-                return f(
-                    rtn,
-                    forward_as<promote_scalar_t<ScalarT, arg_t>>(arg)
-                        .d(),
-                    args...);
+                return f(rtn,
+                         forward_as<promote_scalar_t<ScalarT, arg_t>>(arg).d(),
+                         args...);
               },
               val_tuple);
         }
