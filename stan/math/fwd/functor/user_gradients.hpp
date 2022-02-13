@@ -39,12 +39,13 @@ decltype(auto) user_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
 
   walk_tuples(
       [&](auto&& f, auto&& arg) {
-        if (!is_constant_all<decltype(arg)>::value) {
+        using arg_t = decltype(arg);
+        if (!is_constant_all<arg_t>::value) {
           d_ += math::apply(
               [&](auto&&... args) {
                 return f(
                     rtn,
-                    forward_as<promote_scalar_t<ScalarT, decltype(arg)>>(arg)
+                    forward_as<promote_scalar_t<ScalarT, arg_t>>(arg)
                         .d(),
                     args...);
               },
