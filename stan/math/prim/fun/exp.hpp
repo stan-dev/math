@@ -29,19 +29,18 @@ inline auto exp(const Container& x) {
       x, [](const auto& v) { return v.array().exp(); });
 }
 
-template <typename T,
-          require_t<disjunction<std::is_arithmetic<T>,
-                                is_complex<T>>>* = nullptr>
+template <
+    typename T,
+    require_t<disjunction<std::is_arithmetic<T>, is_complex<T>>>* = nullptr>
 return_type_t<T> exp(T x) {
   using std::exp;
   return exp(x);
 }
 
-template <typename T,
-          require_t<disjunction<is_stan_scalar<T>,
-                                is_var_matrix<T>>>* = nullptr,
-          require_not_arithmetic_t<T>* = nullptr,
-          require_not_complex_t<T>* = nullptr>
+template <
+    typename T,
+    require_t<disjunction<is_stan_scalar<T>, is_var_matrix<T>>>* = nullptr,
+    require_not_arithmetic_t<T>* = nullptr, require_not_complex_t<T>* = nullptr>
 inline auto exp(const T& a) {
   auto val_fun = [&](auto&& x) { return exp(x); };
   auto grad_fun = [&](auto&& val, auto&& adj, auto&& x) {
@@ -87,7 +86,6 @@ template <
 inline auto exp(const Container& x) {
   return apply_scalar_unary<exp_fun, Container>::apply(x);
 }
-
 
 namespace internal {
 /**

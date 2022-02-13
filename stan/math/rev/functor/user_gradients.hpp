@@ -78,14 +78,17 @@ auto user_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
   // Have to wrap the holder functor to avoid compiler
   // errors when using lambda expressions in decltype call
   decltype(auto) f = [&](auto&& fun, auto&& tuple_arg) {
-    return make_holder([](auto&& h_f, auto&& h_t) {
-      return math::apply(
-        [&](auto&&... args) {
-          return h_f(internal::arena_val(
-            std::forward<decltype(args)>(args))...);
-        }, std::forward<decltype(h_t)>(h_t));
-    }, std::forward<decltype(fun)>(fun),
-       std::forward<decltype(tuple_arg)>(tuple_arg));
+    return make_holder(
+        [](auto&& h_f, auto&& h_t) {
+          return math::apply(
+              [&](auto&&... args) {
+                return h_f(
+                    internal::arena_val(std::forward<decltype(args)>(args))...);
+              },
+              std::forward<decltype(h_t)>(h_t));
+        },
+        std::forward<decltype(fun)>(fun),
+        std::forward<decltype(tuple_arg)>(tuple_arg));
   };
 
   // Get primitive return type of function, used for assessing the need for a
