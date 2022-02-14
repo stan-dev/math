@@ -19,14 +19,23 @@ namespace math {
  * @return product of the diagonal matrix formed from the
  * vector or row_vector and a matrix.
  */
-template <typename T1, typename T2, require_eigen_vector_t<T1>* = nullptr,
-          require_eigen_t<T2>* = nullptr,
-          require_all_not_st_var<T1, T2>* = nullptr>
+template <typename T1, typename T2, require_vector_t<T1>* = nullptr,
+          require_matrix_t<T2>* = nullptr>
 auto diag_pre_multiply(const T1& m1, const T2& m2) {
   check_size_match("diag_pre_multiply", "m1.size()", m1.size(), "m2.rows()",
                    m2.rows());
-
-  return m1.asDiagonal() * m2;
+  check_size_match("diag_pre_multiply", "m1.size()", m1.size(), "m2.rows()",
+                   m2.rows());
+  auto val_fun = [&](auto&& x, auto&& y) { return x.asDiagonal() * y; };
+  auto grad_fun_m1 = [&](auto&& val, auto&& x, auto&& y) {
+    return y;
+  };
+  auto grad_fun_m2 = [&](auto&& val, auto&& x, auto&& y) {
+    return as_column_vector_or_scalar(x).eval();
+  };
+  return user_gradients(std::forward_as_tuple(m1, m2),
+                        std::forward<decltype(val_fun)>(val_fun),
+                        std::forward_as_tuple(grad_fun_m1, grad_fun_m2));
 }
 
 }  // namespace math

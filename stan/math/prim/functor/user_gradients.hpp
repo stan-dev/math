@@ -1,12 +1,14 @@
 #ifndef STAN_MATH_PRIM_FUNCTOR_USER_GRADIENTS_HPP
 #define STAN_MATH_PRIM_FUNCTOR_USER_GRADIENTS_HPP
 
+#include <stan/math/prim/fun/aggregate_partial.hpp>
 #include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
 
 namespace stan {
 namespace math {
+
 /**
  * Specialisation for when user_gradients is called with all arithmetic
  * types.

@@ -6,6 +6,7 @@
 #include <stan/math/rev/fun/LDLT_factor.hpp>
 #include <stan/math/rev/fun/Phi.hpp>
 #include <stan/math/rev/fun/Phi_approx.hpp>
+#include <stan/math/rev/fun/aggregate_partial.hpp>
 #include <stan/math/rev/fun/abs.hpp>
 #include <stan/math/rev/fun/accumulator.hpp>
 #include <stan/math/rev/fun/acos.hpp>
@@ -41,7 +42,6 @@
 #include <stan/math/rev/fun/cov_matrix_constrain_lkj.hpp>
 #include <stan/math/rev/fun/csr_matrix_times_vector.hpp>
 #include <stan/math/rev/fun/determinant.hpp>
-#include <stan/math/rev/fun/diag_pre_multiply.hpp>
 #include <stan/math/rev/fun/diag_post_multiply.hpp>
 #include <stan/math/rev/fun/digamma.hpp>
 #include <stan/math/rev/fun/dims.hpp>

@@ -5,8 +5,9 @@
 #include <stan/math/prim/functor/map_tuple.hpp>
 #include <stan/math/prim/functor/walk_tuples.hpp>
 #include <stan/math/prim/meta.hpp>
-#include <stan/math/fwd/core/fvar.hpp>
+#include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/fun/to_fvar.hpp>
+#include <stan/math/fwd/fun/Eigen_NumTraits.hpp>
 
 namespace stan {
 namespace math {
@@ -34,6 +35,7 @@ decltype(auto) user_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
   decltype(auto) rtn
       = math::apply([&](auto&&... args) { return val_fun(args...); },
                     std::forward<decltype(val_tuple)>(val_tuple));
+  using rtn_t = decltype(rtn);
 
   auto d_ = internal::initialize_grad(std::forward<decltype(rtn)>(rtn));
 
@@ -41,14 +43,14 @@ decltype(auto) user_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
       [&](auto&& f, auto&& arg) {
         using arg_t = decltype(arg);
         if (!is_constant_all<arg_t>::value) {
-          as_array_or_scalar(d_) += as_array_or_scalar(forward_as<promote_scalar_t<ScalarT, arg_t>>(arg))
-                        .d() * as_array_or_scalar(math::apply(
-              [&](auto&&... args) {
-                return f(rtn,
-                         forward_as<promote_scalar_t<ScalarT, arg_t>>(arg).d(),
-                         args...);
-              },
-              val_tuple));
+          decltype(auto) grad = math::apply(
+              [&](auto&&... args) { return f(rtn, args...); },
+              val_tuple);
+          as_array_or_scalar(d_) +=
+            aggregate_partial<plain_type_t<rtn_t>>(
+              forward_as<promote_scalar_t<ScalarT, arg_t>>(arg).d(),
+              std::forward<decltype(grad)>(grad)
+              );
         }
       },
       std::forward<GradFunT>(grad_fun_tuple),
