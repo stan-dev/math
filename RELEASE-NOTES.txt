@@ -1,7 +1,7 @@
 Stan Math Library Release Notes
 
 ======================================================================
-v4.3.0
+v4.3.0 (14 February 2022)
 ======================================================================
 
  - Changed constants to `static constexpr` for efficiency, added Euler's Gamma constant. (#2478)
