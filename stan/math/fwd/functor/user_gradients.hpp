@@ -6,6 +6,7 @@
 #include <stan/math/prim/functor/walk_tuples.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/fwd/core.hpp>
+#include <stan/math/fwd/fun/aggregate_partial.hpp>
 #include <stan/math/fwd/fun/to_fvar.hpp>
 #include <stan/math/fwd/fun/Eigen_NumTraits.hpp>
 
@@ -48,7 +49,7 @@ decltype(auto) user_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
               val_tuple);
           as_array_or_scalar(d_) +=
             aggregate_partial<plain_type_t<rtn_t>>(
-              forward_as<promote_scalar_t<ScalarT, arg_t>>(arg).d(),
+              forward_as<promote_scalar_t<ScalarT, arg_t>>(arg),
               std::forward<decltype(grad)>(grad)
               );
         }

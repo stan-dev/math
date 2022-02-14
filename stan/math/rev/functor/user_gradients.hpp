@@ -127,7 +127,7 @@ auto user_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
                     // Use the relevant gradient function with the tuple of
                     // primitive arguments
                       aggregate_partial<plain_type_t<decltype(arg)>>(
-                        rtn.adj(),
+                        rtn,
                         std::forward<decltype(grad)>(grad)
                         );
               }
