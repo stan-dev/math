@@ -11,7 +11,7 @@
 #include <stan/math/rev/fun/is_nan.hpp>
 #include <stan/math/rev/fun/cos.hpp>
 #include <stan/math/rev/fun/sin.hpp>
-#include <stan/math/rev/functor/user_gradients.hpp>
+#include <stan/math/rev/functor/function_gradients.hpp>
 #include <cmath>
 #include <complex>
 

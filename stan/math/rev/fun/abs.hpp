@@ -4,7 +4,7 @@
 #include <stan/math/prim/fun/abs.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/fun/fabs.hpp>
-#include <stan/math/rev/functor/user_gradients.hpp>
+#include <stan/math/rev/functor/function_gradients.hpp>
 #include <complex>
 
 namespace stan {

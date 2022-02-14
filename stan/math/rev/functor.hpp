@@ -28,6 +28,6 @@
 #include <stan/math/rev/functor/operands_and_partials.hpp>
 #include <stan/math/rev/functor/reduce_sum.hpp>
 #include <stan/math/rev/functor/finite_diff_hessian_auto.hpp>
-#include <stan/math/rev/functor/user_gradients.hpp>
+#include <stan/math/rev/functor/function_gradients.hpp>
 
 #endif

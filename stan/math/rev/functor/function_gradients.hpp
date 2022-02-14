@@ -1,6 +1,7 @@
-#ifndef STAN_MATH_REV_FUNCTOR_USER_GRADIENTS_HPP
-#define STAN_MATH_REV_FUNCTOR_USER_GRADIENTS_HPP
+#ifndef STAN_MATH_REV_FUNCTOR_FUNCTION_GRADIENTS_HPP
+#define STAN_MATH_REV_FUNCTOR_FUNCTION_GRADIENTS_HPP
 
+#include <stan/math/rev/fun/aggregate_partial.hpp>
 #include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/functor/map_tuple.hpp>
 #include <stan/math/prim/functor/walk_tuples.hpp>
@@ -40,7 +41,6 @@ template <typename T, require_arena_matrix_t<T>* = nullptr>
 inline decltype(auto) arena_val(T&& arg) {
   return arg.val();
 }
-
 }  // namespace internal
 
 /**
@@ -63,7 +63,7 @@ inline decltype(auto) arena_val(T&& arg) {
  */
 template <typename ReturnT, typename ArgsTupleT, typename ValFun,
           typename GradFunT, require_st_var<ReturnT>* = nullptr>
-auto user_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
+auto function_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
                          GradFunT&& grad_fun_tuple) {
   // Extract values from input arguments to use in value
   // and gradient calculations

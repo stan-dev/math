@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_FWD_FUNCTOR_USER_GRADIENTS_HPP
-#define STAN_MATH_FWD_FUNCTOR_USER_GRADIENTS_HPP
+#ifndef STAN_MATH_FWD_FUNCTOR_FUNCTION_GRADIENTS_HPP
+#define STAN_MATH_FWD_FUNCTOR_FUNCTION_GRADIENTS_HPP
 
 #include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/functor/map_tuple.hpp>
@@ -8,7 +8,6 @@
 #include <stan/math/fwd/core.hpp>
 #include <stan/math/fwd/fun/aggregate_partial.hpp>
 #include <stan/math/fwd/fun/to_fvar.hpp>
-#include <stan/math/fwd/fun/Eigen_NumTraits.hpp>
 
 namespace stan {
 namespace math {
@@ -27,7 +26,7 @@ plain_type_t<T> initialize_grad(T&& rtn_eigen) {
 
 template <typename ScalarT, typename ArgsTupleT, typename ValFun,
           typename GradFunT, require_st_fvar<ScalarT>* = nullptr>
-decltype(auto) user_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
+decltype(auto) function_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
                                    GradFunT&& grad_fun_tuple) {
   decltype(auto) val_tuple
       = map_tuple([&](auto&& arg) { return value_of(arg); },

@@ -6,7 +6,7 @@
 #include <stan/math/prim/fun/elt_multiply.hpp>
 #include <stan/math/prim/functor/apply_scalar_unary.hpp>
 #include <stan/math/prim/functor/apply_vector_unary.hpp>
-#include <stan/math/prim/functor/user_gradients.hpp>
+#include <stan/math/prim/functor/function_gradients.hpp>
 #include <cmath>
 #include <complex>
 #include <limits>
@@ -29,8 +29,7 @@ inline auto exp(const Container& x) {
       x, [](const auto& v) { return v.array().exp(); });
 }
 
-template <
-    typename T,
+template <typename T,
     require_t<disjunction<std::is_arithmetic<T>, is_complex<T>>>* = nullptr>
 return_type_t<T> exp(T x) {
   using std::exp;
@@ -46,7 +45,7 @@ inline auto exp(const T& a) {
   auto grad_fun = [&](auto&& val, auto&& x) {
     return val;
   };
-  return user_gradients(std::forward_as_tuple(a),
+  return function_gradients(std::forward_as_tuple(a),
                         std::forward<decltype(val_fun)>(val_fun),
                         std::forward_as_tuple(grad_fun));
 }

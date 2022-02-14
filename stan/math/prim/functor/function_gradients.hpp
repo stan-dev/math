@@ -1,7 +1,6 @@
-#ifndef STAN_MATH_PRIM_FUNCTOR_USER_GRADIENTS_HPP
-#define STAN_MATH_PRIM_FUNCTOR_USER_GRADIENTS_HPP
+#ifndef STAN_MATH_PRIM_FUNCTOR_FUNCTION_GRADIENTS_HPP
+#define STAN_MATH_PRIM_FUNCTOR_FUNCTION_GRADIENTS_HPP
 
-#include <stan/math/prim/fun/aggregate_partial.hpp>
 #include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
@@ -10,7 +9,7 @@ namespace stan {
 namespace math {
 
 /**
- * Specialisation for when user_gradients is called with all arithmetic
+ * Specialisation for when function_gradients is called with all arithmetic
  * types.
  *
  * @tparam ScalarT Return scalar type of function, used for SFINAE
@@ -25,7 +24,7 @@ namespace math {
  */
 template <typename ReturnT, typename ArgsTupleT, typename ValFun,
           typename GradFunT, require_st_arithmetic<ReturnT>* = nullptr>
-decltype(auto) user_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
+decltype(auto) function_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
                                    GradFunT&& grad_fun_tuple) {
   return make_holder(
       [](auto&& fun, auto&& tuple_arg) {
@@ -53,10 +52,10 @@ decltype(auto) user_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
  * @return auto
  */
 template <typename ArgsTupleT, typename ValFunT, typename GradFunTupleT>
-decltype(auto) user_gradients(ArgsTupleT&& args_tuple, ValFunT&& val_fun,
+decltype(auto) function_gradients(ArgsTupleT&& args_tuple, ValFunT&& val_fun,
                               GradFunTupleT&& gradfun_tuple) {
   using scalar_rtn_t = scalar_type_t<return_type_t<ArgsTupleT>>;
-  return user_gradients_impl<scalar_rtn_t>(
+  return function_gradients_impl<scalar_rtn_t>(
       std::forward<ArgsTupleT>(args_tuple), std::forward<ValFunT>(val_fun),
       std::forward<GradFunTupleT>(gradfun_tuple));
 }

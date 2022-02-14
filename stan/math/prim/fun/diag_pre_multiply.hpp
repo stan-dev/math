@@ -33,7 +33,7 @@ auto diag_pre_multiply(const T1& m1, const T2& m2) {
   auto grad_fun_m2 = [&](auto&& val, auto&& x, auto&& y) {
     return as_column_vector_or_scalar(x).eval();
   };
-  return user_gradients(std::forward_as_tuple(m1, m2),
+  return function_gradients(std::forward_as_tuple(m1, m2),
                         std::forward<decltype(val_fun)>(val_fun),
                         std::forward_as_tuple(grad_fun_m1, grad_fun_m2));
 }
