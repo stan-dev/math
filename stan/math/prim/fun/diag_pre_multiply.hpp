@@ -21,25 +21,22 @@ namespace math {
  */
 template <typename T1, typename T2, require_vector_t<T1>* = nullptr,
           require_matrix_t<T2>* = nullptr,
-  require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T1, T2>* = nullptr>
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T1, T2>* = nullptr>
 auto diag_pre_multiply(const T1& m1, const T2& m2) {
   check_size_match("diag_pre_multiply", "m1.size()", m1.size(), "m2.rows()",
                    m2.rows());
   check_size_match("diag_pre_multiply", "m1.size()", m1.size(), "m2.rows()",
                    m2.rows());
   auto val_fun = [&](auto&& x, auto&& y) { return x.asDiagonal() * y; };
-  auto grad_fun_m1 = [&](auto&& val, auto&& x, auto&& y) {
-    return y;
-  };
-  auto grad_fun_m2 = [&](auto&& val, auto&& x, auto&& y) {
-    return x;
-  };
+  auto grad_fun_m1 = [&](auto&& val, auto&& x, auto&& y) { return y; };
+  auto grad_fun_m2 = [&](auto&& val, auto&& x, auto&& y) { return x; };
   ref_type_t<T1> m1_ref = m1;
   ref_type_t<T2> m2_ref = m2;
   return function_gradients(
-    std::forward_as_tuple(as_column_vector_or_scalar(m1_ref), m2_ref),
-    std::forward<decltype(val_fun)>(val_fun),
-    std::forward_as_tuple(grad_fun_m1, grad_fun_m2));
+      std::forward_as_tuple(as_column_vector_or_scalar(m1_ref), m2_ref),
+      std::forward<decltype(val_fun)>(val_fun),
+      std::forward_as_tuple(grad_fun_m1, grad_fun_m2));
 }
 
 }  // namespace math
