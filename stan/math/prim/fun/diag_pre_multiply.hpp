@@ -29,11 +29,17 @@ auto diag_pre_multiply(const T1& m1, const T2& m2) {
   auto val_fun = [&](auto&& x, auto&& y) { return x.asDiagonal() * y; };
   auto grad_fun_m1 = [&](auto&& val, auto&& x, auto&& y) { return y; };
   auto grad_fun_m2 = [&](auto&& val, auto&& x, auto&& y) {
-    return as_column_vector_or_scalar(x).eval();
+    return x;
   };
+<<<<<<< HEAD
   return function_gradients(std::forward_as_tuple(m1, m2),
                             std::forward<decltype(val_fun)>(val_fun),
                             std::forward_as_tuple(grad_fun_m1, grad_fun_m2));
+=======
+  return function_gradients(std::forward_as_tuple(as_column_vector_or_scalar(m1), m2),
+                        std::forward<decltype(val_fun)>(val_fun),
+                        std::forward_as_tuple(grad_fun_m1, grad_fun_m2));
+>>>>>>> Fix diag_pre_multiply varmat and rowvector
 }
 
 }  // namespace math

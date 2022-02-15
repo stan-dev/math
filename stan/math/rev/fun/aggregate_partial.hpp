@@ -43,20 +43,24 @@ inline decltype(auto) aggregate_partial(ReturnT&& rtn, PartialT&& x) {
   return elt_multiply(rtn.adj(), x).array();
 }
 
-template <typename ArgT, typename ReturnT, typename PartialT,
-          require_eigen_col_vector_t<ArgT>* = nullptr,
-          require_eigen_matrix_dynamic_t<ReturnT>* = nullptr,
-          require_eigen_matrix_dynamic_t<PartialT>* = nullptr,
-          require_st_var<return_type_t<ArgT, ReturnT, PartialT>>* = nullptr>
+template <
+  typename ArgT, typename ReturnT, typename PartialT,
+  require_eigen_col_vector_t<internal::matrix_t<ArgT>>* = nullptr,
+  require_eigen_matrix_dynamic_t<internal::matrix_t<ReturnT>>* = nullptr,
+  require_eigen_matrix_dynamic_t<internal::matrix_t<PartialT>>* = nullptr,
+  require_st_var<return_type_t<ArgT, ReturnT, PartialT>>* = nullptr
+>
 inline decltype(auto) aggregate_partial(ReturnT&& rtn, PartialT&& x) {
   return (rtn.adj().array() * x.array()).rowwise().sum().eval();
 }
 
-template <typename ArgT, typename ReturnT, typename PartialT,
-          require_eigen_matrix_dynamic_t<ArgT>* = nullptr,
-          require_eigen_matrix_dynamic_t<ReturnT>* = nullptr,
-          require_eigen_col_vector_t<PartialT>* = nullptr,
-          require_st_var<return_type_t<ArgT, ReturnT, PartialT>>* = nullptr>
+template <
+  typename ArgT, typename ReturnT, typename PartialT,
+  require_eigen_matrix_dynamic_t<internal::matrix_t<ArgT>>* = nullptr,
+  require_eigen_matrix_dynamic_t<internal::matrix_t<ReturnT>>* = nullptr,
+  require_eigen_col_vector_t<internal::matrix_t<PartialT>>* = nullptr,
+  require_st_var<return_type_t<ArgT, ReturnT, PartialT>>* = nullptr
+>
 inline decltype(auto) aggregate_partial(ReturnT&& rtn, PartialT&& x) {
   return (rtn.adj().array().colwise() * x.array()).eval();
 }
