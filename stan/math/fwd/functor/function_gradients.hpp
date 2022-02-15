@@ -26,7 +26,8 @@ plain_type_t<T> initialize_grad(T&& rtn_eigen) {
 
 template <typename ScalarT, typename ArgsTupleT, typename ValFun,
           typename GradFunT, require_st_fvar<ScalarT>* = nullptr>
-decltype(auto) function_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
+decltype(auto) function_gradients_impl(ArgsTupleT&& args_tuple,
+                                   ValFun&& val_fun,
                                    GradFunT&& grad_fun_tuple) {
   decltype(auto) val_tuple
       = map_tuple([&](auto&& arg) { return value_of(arg); },
@@ -49,8 +50,7 @@ decltype(auto) function_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun
           as_array_or_scalar(d_) +=
             aggregate_partial<plain_type_t<rtn_t>>(
               forward_as<promote_scalar_t<ScalarT, arg_t>>(arg),
-              std::forward<decltype(grad)>(grad)
-              );
+              std::forward<decltype(grad)>(grad));
         }
       },
       std::forward<GradFunT>(grad_fun_tuple),

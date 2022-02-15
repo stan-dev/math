@@ -123,13 +123,13 @@ auto function_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
                         prim_tuple);
                 // Need to wrap the argument in a forward_as<var>() so that it
                 // will compile with both primitive and var inputs
-                as_array_or_scalar(forward_as<promote_scalar_t<var, decltype(arg)>>(arg)).adj() +=
+                as_array_or_scalar(forward_as<promote_scalar_t<var,
+                                                  decltype(arg)>>(arg)).adj() +=
                     // Use the relevant gradient function with the tuple of
                     // primitive arguments
                       aggregate_partial<plain_type_t<decltype(arg)>>(
                         rtn,
-                        std::forward<decltype(grad)>(grad)
-                        );
+                        std::forward<decltype(grad)>(grad));
               }
             },
             std::forward<GradFunT>(grad_fun_tuple),

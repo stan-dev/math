@@ -24,7 +24,8 @@ namespace math {
  */
 template <typename ReturnT, typename ArgsTupleT, typename ValFun,
           typename GradFunT, require_st_arithmetic<ReturnT>* = nullptr>
-decltype(auto) function_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
+decltype(auto) function_gradients_impl(ArgsTupleT&& args_tuple,
+                                   ValFun&& val_fun,
                                    GradFunT&& grad_fun_tuple) {
   return make_holder(
       [](auto&& fun, auto&& tuple_arg) {
