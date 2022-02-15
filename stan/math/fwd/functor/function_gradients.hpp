@@ -38,21 +38,32 @@ decltype(auto) function_gradients_impl(ArgsTupleT&& args_tuple,
                     std::forward<decltype(val_tuple)>(val_tuple));
   using rtn_t = decltype(rtn);
 
-  auto d_ = internal::initialize_grad(std::forward<decltype(rtn)>(rtn));
+  // g++-4.9 has a bug with using decltype within a lambda for a captured
+  // value. Create a tuple of unitialised values of the same type as the
+  // function return that will be passed to the grad functor
+  plain_type_t<rtn_t> dummy_val;
+  auto dummy_tuple
+      = map_tuple([&](auto&& arg) { return dummy_val; },
+                  std::forward<ArgsTupleT>(args_tuple));
+
+  auto d_ = internal::initialize_grad(std::forward<rtn_t>(rtn));
 
   walk_tuples(
-      [&](auto&& f, auto&& arg) {
+      [&](auto&& f, auto&& arg, auto&& dummy) {
         using arg_t = decltype(arg);
         if (!is_constant_all<arg_t>::value) {
           decltype(auto) grad = math::apply(
-              [&](auto&&... args) { return f(rtn, args...); }, val_tuple);
-          as_array_or_scalar(d_) += aggregate_partial<plain_type_t<rtn_t>>(
+              [&](auto&&... args) { return f(rtn, args...); },
+              val_tuple);
+          as_array_or_scalar(d_) +=
+            aggregate_partial<decltype(dummy)>(
               forward_as<promote_scalar_t<ScalarT, arg_t>>(arg),
               std::forward<decltype(grad)>(grad));
         }
       },
       std::forward<GradFunT>(grad_fun_tuple),
-      std::forward<ArgsTupleT>(args_tuple));
+      std::forward<ArgsTupleT>(args_tuple),
+      std::forward<decltype(dummy_tuple)>(dummy_tuple));
 
   return to_fvar(rtn, d_);
 }
