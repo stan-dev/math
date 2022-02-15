@@ -29,7 +29,8 @@ inline auto exp(const Container& x) {
       x, [](const auto& v) { return v.array().exp(); });
 }
 
-template <typename T,
+template <
+    typename T,
     require_t<disjunction<std::is_arithmetic<T>, is_complex<T>>>* = nullptr>
 return_type_t<T> exp(T x) {
   using std::exp;
@@ -42,12 +43,10 @@ template <
     require_not_arithmetic_t<T>* = nullptr, require_not_complex_t<T>* = nullptr>
 inline auto exp(const T& a) {
   auto val_fun = [&](auto&& x) { return exp(x); };
-  auto grad_fun = [&](auto&& val, auto&& x) {
-    return val;
-  };
+  auto grad_fun = [&](auto&& val, auto&& x) { return val; };
   return function_gradients(std::forward_as_tuple(a),
-                        std::forward<decltype(val_fun)>(val_fun),
-                        std::forward_as_tuple(grad_fun));
+                            std::forward<decltype(val_fun)>(val_fun),
+                            std::forward_as_tuple(grad_fun));
 }
 
 /**

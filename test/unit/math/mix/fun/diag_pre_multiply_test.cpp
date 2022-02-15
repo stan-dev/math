@@ -7,10 +7,10 @@ void expect_diag_pre_multiply(const Eigen::VectorXd& v,
     return stan::math::diag_pre_multiply(x, y);
   };
   stan::test::expect_ad(f, v, a);
-  //stan::test::expect_ad_matvar(f, v, a);
-  //Eigen::RowVectorXd rv(v);
-  //stan::test::expect_ad(f, rv, a);
-  //stan::test::expect_ad_matvar(f, rv, a);
+  // stan::test::expect_ad_matvar(f, v, a);
+  // Eigen::RowVectorXd rv(v);
+  // stan::test::expect_ad(f, rv, a);
+  // stan::test::expect_ad_matvar(f, rv, a);
 }
 TEST(MathMixMatFun, diagPreMultiply) {
   using stan::test::relative_tolerance;
