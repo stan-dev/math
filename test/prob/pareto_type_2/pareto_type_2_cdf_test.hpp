@@ -65,7 +65,6 @@ class AgradCdfParetoType2 : public AgradCdfTest {
   stan::return_type_t<T_y, T_loc, T_scale, T_shape> cdf_function(
       const T_y& y, const T_loc& mu, const T_scale& lambda,
       const T_shape& alpha, const T4&, const T5&) {
-    using std::pow;
-    return 1.0 - pow(1.0 + (y - mu) / lambda, -alpha);
+    return 1 - stan::math::pow(1 + (y - mu) / lambda, -alpha);
   }
 };

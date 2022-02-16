@@ -27,7 +27,7 @@ inline fvar<T> sum(const std::vector<fvar<T>>& m) {
   std::vector<T> tans(m.size());
   for (size_t i = 0; i < m.size(); ++i) {
     vals[i] = m[i].val();
-    tans[i] = m[i].tangent();
+    tans[i] = m[i].d();
   }
   return fvar<T>(sum(vals), sum(tans));
 }

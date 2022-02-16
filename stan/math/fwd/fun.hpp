@@ -44,6 +44,7 @@
 #include <stan/math/fwd/fun/hypot.hpp>
 #include <stan/math/fwd/fun/inc_beta.hpp>
 #include <stan/math/fwd/fun/inv.hpp>
+#include <stan/math/fwd/fun/inv_erfc.hpp>
 #include <stan/math/fwd/fun/inv_Phi.hpp>
 #include <stan/math/fwd/fun/inv_cloglog.hpp>
 #include <stan/math/fwd/fun/inv_logit.hpp>

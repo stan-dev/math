@@ -555,6 +555,20 @@ class vari_view_eigen {
   }
 
   /**
+   * Return a Matrix expression
+   */
+  inline auto matrix() const {
+    using inner_type = decltype(derived().val_.matrix());
+    return vari_view<inner_type>(derived().val_.matrix(),
+                                 derived().adj_.matrix());
+  }
+  inline auto matrix() {
+    using inner_type = decltype(derived().val_.matrix());
+    return vari_view<inner_type>(derived().val_.matrix(),
+                                 derived().adj_.matrix());
+  }
+
+  /**
    * Return the number of rows for this class's `val_` member
    */
   inline Eigen::Index rows() const { return derived().val_.rows(); }
@@ -597,8 +611,8 @@ class vari_view<
    *
    * @return The value of this vari.
    */
-  inline const auto& val() const { return val_; }
-  inline auto& val_op() { return val_; }
+  inline const auto& val() const noexcept { return val_; }
+  inline auto& val_op() noexcept { return val_; }
 
   /**
    * Return a reference to the derivative of the root expression with
@@ -608,9 +622,9 @@ class vari_view<
    *
    * @return Adjoint for this vari.
    */
-  inline auto& adj() { return adj_; }
-  inline auto& adj() const { return adj_; }
-  inline auto& adj_op() { return adj_; }
+  inline auto& adj() noexcept { return adj_; }
+  inline auto& adj() const noexcept { return adj_; }
+  inline auto& adj_op() noexcept { return adj_; }
 
   void set_zero_adjoint() {}
   void chain() {}
@@ -674,7 +688,16 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * @param x Value of the constructed variable.
    */
   template <typename S, require_assignable_t<T, S>* = nullptr>
-  explicit vari_value(const S& x) : val_(x), adj_(x.rows(), x.cols()) {
+  explicit vari_value(const S& x)
+      : val_(x),
+        adj_((RowsAtCompileTime == 1 && S::ColsAtCompileTime == 1)
+                     || (ColsAtCompileTime == 1 && S::RowsAtCompileTime == 1)
+                 ? x.cols()
+                 : x.rows(),
+             (RowsAtCompileTime == 1 && S::ColsAtCompileTime == 1)
+                     || (ColsAtCompileTime == 1 && S::RowsAtCompileTime == 1)
+                 ? x.rows()
+                 : x.cols()) {
     adj_.setZero();
     ChainableStack::instance_->var_stack_.push_back(this);
   }
@@ -695,7 +718,16 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    * that its `chain()` method is not called.
    */
   template <typename S, require_assignable_t<T, S>* = nullptr>
-  vari_value(const S& x, bool stacked) : val_(x), adj_(x.rows(), x.cols()) {
+  vari_value(const S& x, bool stacked)
+      : val_(x),
+        adj_((RowsAtCompileTime == 1 && S::ColsAtCompileTime == 1)
+                     || (ColsAtCompileTime == 1 && S::RowsAtCompileTime == 1)
+                 ? x.cols()
+                 : x.rows(),
+             (RowsAtCompileTime == 1 && S::ColsAtCompileTime == 1)
+                     || (ColsAtCompileTime == 1 && S::RowsAtCompileTime == 1)
+                 ? x.rows()
+                 : x.cols()) {
     adj_.setZero();
     if (stacked) {
       ChainableStack::instance_->var_stack_.push_back(this);
@@ -709,8 +741,8 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    *
    * @return The value of this vari.
    */
-  inline const auto& val() const { return val_; }
-  inline auto& val_op() { return val_; }
+  inline const auto& val() const noexcept { return val_; }
+  inline auto& val_op() noexcept { return val_; }
 
   /**
    * Return a reference to the derivative of the root expression with
@@ -720,9 +752,9 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
    *
    * @return Adjoint for this vari.
    */
-  inline auto& adj() { return adj_; }
-  inline auto& adj() const { return adj_; }
-  inline auto& adj_op() { return adj_; }
+  inline auto& adj() noexcept { return adj_; }
+  inline auto& adj() const noexcept { return adj_; }
+  inline auto& adj_op() noexcept { return adj_; }
 
   virtual void chain() {}
   /**

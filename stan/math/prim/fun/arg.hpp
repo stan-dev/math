@@ -6,6 +6,18 @@
 
 namespace stan {
 namespace math {
+/**
+ * Return the phase angle of the complex argument.
+ *
+ * @tparam V value type of argument
+ * @param[in] z argument
+ * @return phase angle of the argument
+ */
+template <typename V>
+inline V arg(const std::complex<V>& z) {
+  return std::arg(z);
+}
+
 namespace internal {
 /**
  * Return the phase angle of the complex argument.
