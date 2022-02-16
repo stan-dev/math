@@ -30,8 +30,9 @@ decltype(auto) function_gradients_impl(ArgsTupleT&& args_tuple,
                                        GradFunT&& grad_fun_tuple) {
   return make_holder(
       [](auto&& fun, auto&& tuple_arg) {
-        return to_ref(math::apply([&](auto&&... args) { return fun(args...); },
-                           std::forward<decltype(tuple_arg)>(tuple_arg)));
+        return to_ref(
+            math::apply([&](auto&&... args) { return fun(args...); },
+                        std::forward<decltype(tuple_arg)>(tuple_arg)));
       },
       std::forward<ValFun>(val_fun), std::forward<ArgsTupleT>(args_tuple));
 }
