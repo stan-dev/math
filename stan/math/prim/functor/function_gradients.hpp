@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUNCTOR_FUNCTION_GRADIENTS_HPP
 
 #include <stan/math/prim/functor/apply.hpp>
+#include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/core.hpp>
 #include <stan/math/prim/meta.hpp>
 
@@ -29,8 +30,8 @@ decltype(auto) function_gradients_impl(ArgsTupleT&& args_tuple,
                                        GradFunT&& grad_fun_tuple) {
   return make_holder(
       [](auto&& fun, auto&& tuple_arg) {
-        return math::apply([&](auto&&... args) { return fun(args...); },
-                           std::forward<decltype(tuple_arg)>(tuple_arg));
+        return to_ref(math::apply([&](auto&&... args) { return fun(args...); },
+                           std::forward<decltype(tuple_arg)>(tuple_arg)));
       },
       std::forward<ValFun>(val_fun), std::forward<ArgsTupleT>(args_tuple));
 }
