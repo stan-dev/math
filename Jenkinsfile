@@ -303,12 +303,7 @@ pipeline {
                 }
 
                 stage('OpenCL CPU tests') {
-                    agent {
-                        docker {
-                            image 'stanorg/ci:gpu'
-                            label 'gg-linux'
-                        }
-                    }
+                    agent { label "gg-linux" }
                     when {
                         expression {
                             !skipOpenCL
