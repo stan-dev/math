@@ -23,7 +23,9 @@ namespace math {
  * and adjacent side lengths x and y.
  */
 template <typename T1, typename T2, require_all_not_eigen_t<T1, T2>* = nullptr,
-          require_all_not_std_vector_t<T1, T2>* = nullptr>
+          require_all_not_std_vector_t<T1, T2>* = nullptr,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T1, T2>* = nullptr>
 inline auto hypot(const T1& a, const T2& b) {
   auto val_fun = [&](auto&& x, auto&& y) {
     using std::hypot;
