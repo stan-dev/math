@@ -82,7 +82,7 @@ TEST(laplace_poisson_log_rng, two_dim_diag) {
                           std::forward_as_tuple(std::make_tuple(),
                            std::make_tuple()),
                           rng, nullptr, 1e-6,
-                          100, 1, 2, 0, 100,
+                          100, 1, 2, 100,
                           phi(0), phi(1));
 
   rng.seed(1954);
@@ -91,7 +91,7 @@ TEST(laplace_poisson_log_rng, two_dim_diag) {
                               std::forward_as_tuple(std::make_tuple(),
                                std::make_tuple()),
                               rng, nullptr, 1e-6,
-                              100, 1, 2, 0, 100,
+                              100, 1, 2, 100,
                               phi(0), phi(1));
 
   // Compute exact mean and covariance.

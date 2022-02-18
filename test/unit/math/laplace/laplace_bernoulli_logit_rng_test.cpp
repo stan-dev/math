@@ -84,7 +84,7 @@ TEST(laplace_bernoulli_logit_rng, two_dim_diag) {
   Eigen::MatrixXd theta_pred
     = laplace_bernoulli_logit_rng(sums, n_samples, covariance_function,
       theta_0, std::forward_as_tuple(std::make_tuple(), std::make_tuple()),
-      rng, nullptr, 1e-6, 100, 0, 1, 0, 10, phi(0), phi(1));
+      rng, nullptr, 1e-6, 100, 0, 1, 0, phi(0), phi(1));
 
   // Compute exact mean and covariance
   Eigen::VectorXd theta_root

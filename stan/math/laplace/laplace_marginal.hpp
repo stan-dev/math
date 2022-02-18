@@ -108,21 +108,17 @@ inline laplace_density_estimates laplace_marginal_density_est(
     const Eigen::VectorXd& theta_0, std::ostream* msgs = nullptr,
     const double tolerance = 1e-6, const long int max_num_steps = 100,
     const int hessian_block_size = 0, const int solver = 1,
-    const int do_line_search = 0, const int max_steps_line_search = 10,
+    const int max_steps_line_search = 0,
     Args&&... covar_args) {
   using Eigen::MatrixXd;
   using Eigen::SparseMatrix;
   using Eigen::VectorXd;
 
-  // TODO: Figure out whether this should be on / off or what
-  constexpr int diagonal_covariance = 0;
+  // Leaving this as 0
   // solver = 1;
   // hessian_block_size = 1;
   Eigen::MatrixXd covariance = covariance_function(covar_args..., msgs);
 
-  if (diagonal_covariance) {
-    covariance = covariance.diagonal().asDiagonal();
-  }
   const bool is_hessian_block_size_zero = hessian_block_size == 0;
   if (is_hessian_block_size_zero && solver != 1) {
     constexpr const char* msg
@@ -194,7 +190,7 @@ inline laplace_density_estimates laplace_marginal_density_est(
       }
       // linesearch
       // CHECK -- does linesearch work for solver 2?
-      if (do_line_search && i != 0) {
+      if (max_steps_line_search && i != 0) {
         line_search(objective_new, a, theta, a_old, covariance, diff_likelihood,
                     eta, max_steps_line_search, objective_old);
       }
@@ -242,7 +238,7 @@ inline laplace_density_estimates laplace_marginal_density_est(
       }
       // linesearch
       // CHECK -- does linesearch work for solver 2?
-      if (do_line_search && i != 0) {
+      if (max_steps_line_search > 0 && i != 0) {
         line_search(objective_new, a, theta, a_old, covariance, diff_likelihood,
                     eta, max_steps_line_search, objective_old);
       }
@@ -268,9 +264,7 @@ inline laplace_density_estimates laplace_marginal_density_est(
       SparseMatrix<double> W
           = -diff_likelihood.diff(theta, eta, l_grad, block_size);
       // TODO -- use triangularView for K_root.
-      Eigen::MatrixXd K_root = diagonal_covariance
-                                   ? covariance.cwiseSqrt()
-                                   : cholesky_decompose(covariance);
+      Eigen::MatrixXd K_root = cholesky_decompose(covariance);
       MatrixXd B = MatrixXd::Identity(theta_size, theta_size)
                    + K_root.transpose() * W * K_root;
       Eigen::MatrixXd L = cholesky_decompose(B);
@@ -292,7 +286,7 @@ inline laplace_density_estimates laplace_marginal_density_est(
       }
       // linesearch
       // CHECK -- does linesearch work for solver 2?
-      if (do_line_search && i != 0) {
+      if (max_steps_line_search > 0 && i != 0) {
         line_search(objective_new, a, theta, a_old, covariance, diff_likelihood,
                     eta, max_steps_line_search, objective_old);
       }
@@ -337,7 +331,7 @@ inline laplace_density_estimates laplace_marginal_density_est(
 
       // linesearch
       // CHECK -- does linesearch work for solver 2?
-      if (do_line_search && i != 0) {
+      if (max_steps_line_search > 0 && i != 0) {
         line_search(objective_new, a, theta, a_old, covariance, diff_likelihood,
                     eta, max_steps_line_search, objective_old);
       }
@@ -407,12 +401,11 @@ inline double laplace_marginal_density(
     const Eigen::Matrix<Theta0Scalar, Eigen::Dynamic, 1>& theta_0,
     std::ostream* msgs = nullptr, const double tolerance = 1e-6,
     const long int max_num_steps = 100, const int hessian_block_size = 0,
-    const int solver = 1, const int do_line_search = 0,
-    const int max_steps_line_search = 10, Args&&... args) {
+    const int solver = 1, const int max_steps_line_search = 0, Args&&... args) {
   return laplace_marginal_density_est(
              diff_likelihood, covariance_function, eta, value_of(theta_0), msgs,
              tolerance, max_num_steps, hessian_block_size, solver,
-             do_line_search, max_steps_line_search, to_ref(value_of(args))...)
+             max_steps_line_search, to_ref(value_of(args))...)
       .lmd;
 }
 
@@ -462,8 +455,7 @@ inline auto laplace_marginal_density(
     const Eigen::Matrix<Theta0Scalar, Eigen::Dynamic, 1>& theta_0,
     std::ostream* msgs = nullptr, const double tolerance = 1e-6,
     const long int max_num_steps = 100, const int hessian_block_size = 0,
-    const int solver = 1, const int do_line_search = 0,
-    const int max_steps_line_search = 10, Args&&... args) {
+    const int solver = 1, const int max_steps_line_search = 0, Args&&... args) {
   auto args_refs = stan::math::apply(
       [](auto&&... args) { return std::make_tuple(to_ref(args)...); },
       std::forward_as_tuple(args...));
@@ -480,7 +472,7 @@ inline auto laplace_marginal_density(
         return laplace_marginal_density_est(
             diff_likelihood, covariance_function, value_of(eta_arena),
             value_of(theta_0), msgs, tolerance, max_num_steps,
-            hessian_block_size, solver, do_line_search, max_steps_line_search,
+            hessian_block_size, solver, max_steps_line_search,
             v_args...);
       },
       value_args);

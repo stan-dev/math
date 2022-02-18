@@ -35,22 +35,11 @@ template <typename KMat, typename AVec, typename RMat, typename LGradVec,
           require_eigen_matrix_dynamic_vt<is_var, KMat>* = nullptr>
 inline auto laplace_pseudo_target(KMat&& K, AVec&& a, RMat&& R,
                                   LGradVec&& l_grad, S2Vec&& s2) {
-  constexpr int diagonal_covariance_ = 0;
   const Eigen::Index dim_theta = K.rows();
   auto K_arena = to_arena(std::forward<KMat>(K));
   auto&& a_ref = to_ref(std::forward<AVec>(a));
   auto&& R_ref = to_ref(std::forward<RMat>(R));
   auto&& s2_ref = to_ref(std::forward<S2Vec>(s2));
-  if (diagonal_covariance_) {
-    arena_matrix<Eigen::VectorXd> K_adj_arena
-        = 0.5 * a_ref.cwiseProduct(a_ref) - 0.5 * R_ref.diagonal()
-          + l_grad.cwiseProduct(
-              s2_ref
-              + R_ref * value_of(K_arena).diagonal().cwiseProduct(s2_ref));
-    return make_callback_var(0.0, [K_arena, K_adj_arena](auto&& vi) mutable {
-      K_arena.diagonal().array() += vi.adj() * K_adj_arena.array();
-    });
-  } else {
     auto&& l_grad_ref = to_ref(std::forward<LGradVec>(l_grad));
     arena_matrix<Eigen::MatrixXd> K_adj_arena
         = 0.5 * a_ref * a_ref.transpose() - 0.5 * R_ref
@@ -59,7 +48,6 @@ inline auto laplace_pseudo_target(KMat&& K, AVec&& a, RMat&& R,
     return make_callback_var(0.0, [K_arena, K_adj_arena](auto&& vi) mutable {
       K_arena.adj().array() += vi.adj() * K_adj_arena.array();
     });
-  }
 }
 
 }  // namespace math

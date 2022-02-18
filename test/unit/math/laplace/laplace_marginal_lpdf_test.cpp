@@ -58,7 +58,7 @@ TEST(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
     = laplace_marginal_lpmf<false>(sums, poisson_log_likelihood2(),
                                    eta_dummy, y_dummy,
                                    K, theta_0,
-                                   nullptr, 1e-6, 100, 0, 1, 0, 10,
+                                   nullptr, 1e-6, 100, 0, 1, 0,
                                    x, phi(0), phi(1));
 
   // TODO: benchmark target against gpstuff.
@@ -79,7 +79,7 @@ TEST(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
                                         K, theta_0, nullptr,
                                         tolerance, max_num_steps,
                                         hessian_block_size, solver,
-                                        do_line_search, max_steps_line_search, x, phi(0), phi(1));
+                                        max_steps_line_search, x, phi(0), phi(1));
   EXPECT_NEAR(-2.53056, value_of(target), tol);
 
   std::vector<double> g;
@@ -100,16 +100,16 @@ TEST(laplace_marginal_lpdf, poisson_log_phi_dim_2) {
 
   double target_1u = laplace_marginal_lpmf<false>(
     sums, poisson_log_likelihood2(), eta_dummy_dbl, y_dummy, K,
-     theta_0, nullptr, 1e-6, 100, 0, 1, 0, 10, x, phi_1u(0), phi_1u(1));
+     theta_0, nullptr, 1e-6, 100, 0, 1, 0, x, phi_1u(0), phi_1u(1));
   double target_1l = laplace_marginal_lpmf<false>(
     sums, poisson_log_likelihood2(), eta_dummy_dbl, y_dummy, K,
-   theta_0, nullptr, 1e-6, 100, 0, 1, 0, 10, x, phi_1l(0), phi_1l(1));
+   theta_0, nullptr, 1e-6, 100, 0, 1, 0, x, phi_1l(0), phi_1l(1));
   double target_2u = laplace_marginal_lpmf<false>(
     sums, poisson_log_likelihood2(), eta_dummy_dbl, y_dummy, K,
-   theta_0, nullptr, 1e-6, 100, 0, 1, 0, 10, x, phi_2u(0), phi_2u(1));
+   theta_0, nullptr, 1e-6, 100, 0, 1, 0, x, phi_2u(0), phi_2u(1));
   double target_2l = laplace_marginal_lpmf<false>(
     sums, poisson_log_likelihood2(), eta_dummy_dbl, y_dummy, K,
-   theta_0, nullptr, 1e-6, 100, 0, 1, 0, 10, x, phi_2l(0), phi_2l(1));
+   theta_0, nullptr, 1e-6, 100, 0, 1, 0, x, phi_2l(0), phi_2l(1));
 
   std::vector<double> g_finite(dim_phi);
   g_finite[0] = (target_1u - target_1l) / (2 * diff);
@@ -150,13 +150,13 @@ TEST_F(laplace_disease_map_test, laplace_marginal_lpmf) {
   int hessian_block_size = 0;
   int solver = 1;
   int do_line_search = 0;
-  int max_steps_line_search = 10;
+  int max_steps_line_search = 0;
 
   var marginal_density
     = laplace_marginal_lpmf<false>(y, poisson_log_exposure_likelihood(),
                                    eta_dummy, ye,
                                    K,
-                                  theta_0, nullptr, 1e-6, 100, 0, 1, 0, 10, x, phi(0), phi(1));
+                                  theta_0, nullptr, 1e-6, 100, 0, 1, 0, x, phi(0), phi(1));
 
   double tol = 6e-4;
   // Benchmark from GPStuff.
@@ -181,16 +181,16 @@ TEST_F(laplace_disease_map_test, laplace_marginal_lpmf) {
 
   double target_u0 = laplace_marginal_lpmf<false>(
       y, poisson_log_exposure_likelihood(), eta_dummy_dbl, ye, K,
-     theta_0, nullptr, 1e-6, 100, 0, 1, 0, 10, x, phi_u0(0), phi_u0(1));
+     theta_0, nullptr, 1e-6, 100, 0, 1, 0, x, phi_u0(0), phi_u0(1));
   double target_u1 = laplace_marginal_lpmf<false>(
         y, poisson_log_exposure_likelihood(), eta_dummy_dbl, ye, K,
-       theta_0, nullptr, 1e-6, 100, 0, 1, 0, 10, x, phi_u1(0), phi_u1(1));
+       theta_0, nullptr, 1e-6, 100, 0, 1, 0, x, phi_u1(0), phi_u1(1));
   double target_l0 = laplace_marginal_lpmf<false>(
             y, poisson_log_exposure_likelihood(), eta_dummy_dbl, ye, K,
-         theta_0, nullptr, 1e-6, 100, 0, 1, 0, 10, x, phi_l0(0), phi_l0(1));
+         theta_0, nullptr, 1e-6, 100, 0, 1, 0, x, phi_l0(0), phi_l0(1));
   double target_l1 = laplace_marginal_lpmf<false>(
               y, poisson_log_exposure_likelihood(), eta_dummy_dbl, ye, K,
-             theta_0, nullptr, 1e-6, 100, 0, 1, 0, 10, x, phi_l1(0), phi_l1(1));
+             theta_0, nullptr, 1e-6, 100, 0, 1, 0, x, phi_l1(0), phi_l1(1));
 
   EXPECT_NEAR((target_u0 - target_l0) / (2 * eps), g[0], 3e-3);
   EXPECT_NEAR((target_u1 - target_l1) / (2 * eps), g[1], 0.0016);
@@ -242,7 +242,7 @@ TEST(laplace_marginal_lpdf, bernoulli_logit_phi_dim500) {
   var target
     = laplace_marginal_lpmf<false>(y, L, eta_dummy, delta_L,
                                    K,
-                                  theta_0, nullptr, 1e-6, 100, 0, 1, 0, 10, x, phi(0), phi(1));
+                                  theta_0, nullptr, 1e-6, 100, 0, 1, 0, x, phi(0), phi(1));
 
   double tol = 8e-5;
   // Benchmark against gpstuff.
@@ -265,16 +265,16 @@ TEST(laplace_marginal_lpdf, bernoulli_logit_phi_dim500) {
 
   double target_1u = laplace_marginal_lpmf<false>(y, L, eta_dummy_dbl, delta_L,
                                  K,
-                                theta_0, nullptr, 1e-6, 100, 0, 1, 0, 10, x, phi_1u(0), phi_1u(1));
+                                theta_0, nullptr, 1e-6, 100, 0, 1, 0, x, phi_1u(0), phi_1u(1));
   double target_1l = laplace_marginal_lpmf<false>(y, L, eta_dummy_dbl, delta_L,
                                         K,
-                                       theta_0, nullptr, 1e-6, 100, 0, 1, 0, 10, x, phi_1l(0), phi_1l(1));
+                                       theta_0, nullptr, 1e-6, 100, 0, 1, 0, x, phi_1l(0), phi_1l(1));
   double target_2u = laplace_marginal_lpmf<false>(y, L, eta_dummy_dbl, delta_L,
                                         K,
-                                       theta_0, nullptr, 1e-6, 100, 0, 1, 0, 10, x, phi_2u(0), phi_2u(1));
+                                       theta_0, nullptr, 1e-6, 100, 0, 1, 0, x, phi_2u(0), phi_2u(1));
   double target_2l = laplace_marginal_lpmf<false>(y, L, eta_dummy_dbl, delta_L,
                                         K,
-                                       theta_0, nullptr, 1e-6, 100, 0, 1, 0, 10, x, phi_2l(0), phi_2l(1));
+                                       theta_0, nullptr, 1e-6, 100, 0, 1, 0, x, phi_2l(0), phi_2l(1));
 
   std::vector<double> g_finite(dim_phi);
   g_finite[0] = (target_1u - target_1l) / (2 * diff);
@@ -453,7 +453,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
     = laplace_marginal_lpdf<false>(y, L, eta, delta_int,
                             K, theta0, nullptr,
                             tolerance, max_num_steps, hessian_block_size,
-                            solver, do_line_search, max_steps_line_search, x,
+                            solver, max_steps_line_search, x,
                             phi(0), phi(1), phi(2), phi(3), n_obs);
 
   // TODO: benchmark this result against GPStuff.
@@ -473,14 +473,14 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
       = laplace_marginal_lpdf<false>(y, L, eta_dbl, delta_int,
                               K, theta0, nullptr,
                               tolerance, max_num_steps, hessian_block_size,
-                              solver, do_line_search, max_steps_line_search, x,
+                              solver, max_steps_line_search, x,
                               phi_u(0), phi_u(1), phi_u(2), phi_u(3), n_obs);
 
     double target_l
       = laplace_marginal_lpdf<false>(y, L, eta_dbl, delta_int,
                             K, theta0, nullptr,
                             tolerance, max_num_steps, hessian_block_size,
-                            solver, do_line_search, max_steps_line_search, x,
+                            solver, max_steps_line_search, x,
                             phi_l(0), phi_l(1), phi_l(2), phi_l(3), n_obs);
 
     g_finite = (target_u - target_l) / (2 * eps);
@@ -497,14 +497,14 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
     = laplace_marginal_lpdf<false>(y, L, eta_u, delta_int,
                             K, theta0, nullptr,
                             tolerance, max_num_steps, hessian_block_size,
-                            solver, do_line_search, max_steps_line_search, x,
+                            solver, max_steps_line_search, x,
                             phi_dbl(0), phi_dbl(1), phi_dbl(2), phi_dbl(3), n_obs);
 
   double target_l
     = laplace_marginal_lpdf<false>(y, L, eta_l, delta_int,
                             K, theta0, nullptr,
                             tolerance, max_num_steps, hessian_block_size,
-                            solver, do_line_search, max_steps_line_search, x,
+                            solver, max_steps_line_search, x,
                             phi_dbl(0), phi_dbl(1), phi_dbl(2), phi_dbl(3), n_obs);
 
   g_finite = (target_u - target_l) / (2 * eps);

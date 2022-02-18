@@ -34,8 +34,7 @@ laplace_base_rng(D&& diff_likelihood, CovarFun&& covariance_function,
                  std::ostream* msgs = nullptr, const double tolerance = 1e-6,
                  const long int max_num_steps = 100,
                  const int hessian_block_size = 0, const int solver = 1,
-                 const int do_line_search = 0,
-                 const int max_steps_line_search = 10, Args&&... args) {
+                 const int max_steps_line_search = 0, Args&&... args) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
 
@@ -47,7 +46,7 @@ laplace_base_rng(D&& diff_likelihood, CovarFun&& covariance_function,
         return laplace_marginal_density_est(
             diff_likelihood, covariance_function, eta_dbl, value_of(theta_0),
             msgs, tolerance, max_num_steps, hessian_block_size, solver,
-            do_line_search, max_steps_line_search, args_val...);
+            max_steps_line_search, args_val...);
       },
       std::tuple_cat(std::get<0>(data_tuple), args_dbl));
   auto marginal_density = marginal_density_est.lmd;

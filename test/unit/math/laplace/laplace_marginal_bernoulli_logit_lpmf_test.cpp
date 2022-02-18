@@ -41,7 +41,7 @@ TEST(laplace_marginal_bernoulli_logit_lpmf, phi_dim500) {
 
   stan::math::test::sqr_exp_kernel_functor kernel_functor;
   var target = laplace_marginal_bernoulli_logit_lpmf(y, n_samples, kernel_functor, theta_0,
-                                                   nullptr, 1e-6, 100, 0, 1, 0, 10, x, phi(0), phi(1));
+                                                   nullptr, 1e-6, 100, 0, 1, 0, x, phi(0), phi(1));
 
   double tol = 8e-5;
   // Benchmark against gpstuff.
@@ -51,7 +51,7 @@ TEST(laplace_marginal_bernoulli_logit_lpmf, phi_dim500) {
   double tolerance = 1e-6;
   int max_num_steps = 100;
   target = laplace_marginal_bernoulli_logit_lpmf(y, n_samples, kernel_functor, theta_0,
-                                                 0, tolerance, max_num_steps, 0, 1, 0, 10, x, phi(0), phi(1));
+                                                 0, tolerance, max_num_steps, 0, 1, 0, x, phi(0), phi(1));
   EXPECT_NEAR(-195.368, value_of(target), tol);
 
   std::vector<double> g;
@@ -69,13 +69,13 @@ TEST(laplace_marginal_bernoulli_logit_lpmf, phi_dim500) {
   phi_2u(1) += diff;
 
   double target_1u = laplace_marginal_bernoulli_logit_lpmf(y, n_samples, kernel_functor, theta_0,
-                                                   nullptr, 1e-6, 100, 0, 1, 0, 10, x, phi_1u(0), phi_1u(1));
+                                                   nullptr, 1e-6, 100, 0, 1, 0, x, phi_1u(0), phi_1u(1));
   double target_1l = laplace_marginal_bernoulli_logit_lpmf(y, n_samples, kernel_functor, theta_0,
-                                                   nullptr, 1e-6, 100, 0, 1, 0, 10, x, phi_1l(0), phi_1l(1));
+                                                   nullptr, 1e-6, 100, 0, 1, 0, x, phi_1l(0), phi_1l(1));
   double target_2u = laplace_marginal_bernoulli_logit_lpmf(y, n_samples, kernel_functor, theta_0,
-                                                   nullptr, 1e-6, 100, 0, 1, 0, 10, x, phi_2u(0), phi_2u(1));
+                                                   nullptr, 1e-6, 100, 0, 1, 0, x, phi_2u(0), phi_2u(1));
   double target_2l = laplace_marginal_bernoulli_logit_lpmf(y, n_samples, kernel_functor, theta_0,
-                                                   nullptr, 1e-6, 100, 0, 1, 0, 10, x, phi_2l(0), phi_2l(1));
+                                                   nullptr, 1e-6, 100, 0, 1, 0, x, phi_2l(0), phi_2l(1));
 
   std::vector<double> g_finite(dim_phi);
   g_finite[0] = (target_1u - target_1l) / (2 * diff);

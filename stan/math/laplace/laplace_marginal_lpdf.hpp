@@ -53,13 +53,13 @@ inline auto laplace_marginal_lpdf(
     const std::vector<int>& delta_int_L, CovarFun&& K_f, const Theta0& theta_0,
     std::ostream* msgs = nullptr, double tolerance = 1e-6,
     long int max_num_steps = 100, const int hessian_block_size = 0,
-    const int solver = 1, const int do_line_search = 0,
-    const int max_steps_line_search = 10, Args&&... args) {
+    const int solver = 1,
+    const int max_steps_line_search = 0, Args&&... args) {
   // TEST: provisional signature to agree with parser.
   return laplace_marginal_density(
       diff_likelihood<LFun>(std::forward<LFun>(L_f), y, delta_int_L, msgs),
       std::forward<CovarFun>(K_f), eta, theta_0, msgs, tolerance, max_num_steps,
-      hessian_block_size, solver, do_line_search, max_steps_line_search,
+      hessian_block_size, solver, max_steps_line_search,
       std::forward<Args>(args)...);
 }
 
@@ -75,12 +75,12 @@ inline auto laplace_marginal_lpmf(
     const Eigen::VectorXd& delta_L, CovarFun&& K_f, const Theta0& theta_0,
     std::ostream* msgs = nullptr, const double tolerance = 1e-6,
     const long int max_num_steps = 100, const int hessian_block_size = 0,
-    const int solver = 1, const int do_line_search = 0,
-    const int max_steps_line_search = 10, Args&&... args) {
+    const int solver = 1,
+    const int max_steps_line_search = 0, Args&&... args) {
   return laplace_marginal_lpdf<propto>(
       delta_L, std::forward<LFun>(L_f), eta, y, std::forward<CovarFun>(K_f),
       theta_0, msgs, tolerance, max_num_steps, hessian_block_size, solver,
-      do_line_search, max_steps_line_search, std::forward<Args>(args)...);
+      max_steps_line_search, std::forward<Args>(args)...);
 }
 }  // namespace math
 }  // namespace stan

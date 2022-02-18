@@ -25,13 +25,13 @@ inline Eigen::VectorXd laplace_rng(
     const TupleData& data_tuple, RNG& rng, std::ostream* msgs = nullptr,
     const double tolerance = 1e-6, const long int max_num_steps = 100,
     const int hessian_block_size = 0, const int solver = 1,
-    const int do_line_search = 0, const int max_steps_line_search = 10,
+    const int max_steps_line_search = 0,
     Args&&... args) {
   return laplace_base_rng(diff_likelihood<LFun>(std::forward<LFun>(L_f),
                                                 delta_L, delta_int_L, msgs),
                           K_f, eta, theta_0, data_tuple, rng, msgs, tolerance,
                           max_num_steps, hessian_block_size, solver,
-                          do_line_search, max_steps_line_search,
+                          max_steps_line_search,
                           std::forward<Args>(args)...);
 }
 
