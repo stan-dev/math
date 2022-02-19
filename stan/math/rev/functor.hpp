@@ -14,6 +14,8 @@
 #include <stan/math/rev/functor/gradient.hpp>
 #include <stan/math/rev/functor/integrate_1d.hpp>
 #include <stan/math/rev/functor/dae.hpp>
+#include <stan/math/rev/functor/function_gradients.hpp>
+#include <stan/math/rev/functor/function_gradients_adj_jac.hpp>
 #include <stan/math/rev/functor/integrate_ode_adams.hpp>
 #include <stan/math/rev/functor/integrate_ode_bdf.hpp>
 #include <stan/math/rev/functor/ode_adams.hpp>
@@ -28,6 +30,5 @@
 #include <stan/math/rev/functor/operands_and_partials.hpp>
 #include <stan/math/rev/functor/reduce_sum.hpp>
 #include <stan/math/rev/functor/finite_diff_hessian_auto.hpp>
-#include <stan/math/rev/functor/function_gradients.hpp>
 
 #endif
