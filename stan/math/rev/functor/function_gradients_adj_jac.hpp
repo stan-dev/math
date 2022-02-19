@@ -13,11 +13,11 @@ namespace stan {
 namespace math {
 
 
-template <typename ReturnT, typename ArgsTupleT, typename ValFun,
+template <typename ReturnT, typename ArgsTupleT, typename ValFunT,
           typename RevGradFunT, typename FwdGradFunT,
           require_st_var<ReturnT>* = nullptr>
 auto function_gradients_adj_jac_impl(ArgsTupleT&& args_tuple,
-                             ValFun&& val_fun,
+                             ValFunT&& val_fun,
                              RevGradFunT&& rev_grad_fun_tuple,
                              FwdGradFunT&& fwd_grad_fun_tuple) {
   // Extract values from input arguments to use in value
@@ -49,7 +49,7 @@ auto function_gradients_adj_jac_impl(ArgsTupleT&& args_tuple,
 
   // Get primitive return type of function, used for assessing the need for a
   // var<Matrix> return type
-  using val_t = decltype(f(std::forward<ValFun>(val_fun),
+  using val_t = decltype(f(std::forward<ValFunT>(val_fun),
                            std::forward<decltype(prim_tuple)>(prim_tuple)));
 
   // Assess whether the return type should be var<double>, Matrix<var>,
@@ -59,7 +59,7 @@ auto function_gradients_adj_jac_impl(ArgsTupleT&& args_tuple,
                                       promote_scalar_t<var, val_t>>;
 
   // Use input values to calculate return value
-  arena_t<ret_type> rtn = f(std::forward<ValFun>(val_fun),
+  arena_t<ret_type> rtn = f(std::forward<ValFunT>(val_fun),
                             std::forward<decltype(prim_tuple)>(prim_tuple));
 
   reverse_pass_callback(
@@ -79,8 +79,8 @@ auto function_gradients_adj_jac_impl(ArgsTupleT&& args_tuple,
                     // primitive arguments
                     math::apply(
                     [&](auto&&... args) {
-                      return f(rtn.val(),
-                               rtn.adj(),
+                      return f(rtn.val().eval(),
+                               rtn.adj().eval(),
                                internal::arena_val(
                                    std::forward<decltype(args)>(args))...);
                     },

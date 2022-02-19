@@ -24,10 +24,10 @@ plain_type_t<T> initialize_grad(T&& rtn_eigen) {
 }
 }  // namespace internal
 
-template <typename ScalarT, typename ArgsTupleT, typename ValFun,
+template <typename ScalarT, typename ArgsTupleT, typename ValFunT,
           typename GradFunT, require_st_fvar<ScalarT>* = nullptr>
 decltype(auto) function_gradients_impl(ArgsTupleT&& args_tuple,
-                                       ValFun&& val_fun,
+                                       ValFunT&& val_fun,
                                        GradFunT&& grad_fun_tuple) {
   decltype(auto) val_tuple
       = map_tuple([&](auto&& arg) { return value_of(arg); },

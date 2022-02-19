@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/functor/function_gradients_adj_jac.hpp>
 
 namespace stan {
 namespace math {
@@ -20,16 +21,26 @@ namespace math {
  * size zero).
  * @throw std::invalid_argument if the matrix is not square.
  */
-template <typename EigMat,
-          require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr>
-inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
-                     EigMat::ColsAtCompileTime>
+template <typename EigMat>
+inline plain_type_t<EigMat>
 inverse(const EigMat& m) {
   check_square("inverse", "m", m);
   if (m.size() == 0) {
     return {};
   }
-  return m.inverse();
+  using par_t = partials_type_t<scalar_type_t<EigMat>>;
+  decltype(auto) val_fun = [](auto&& x) { return inverse(x); };
+  auto rev_grad_fun = [](auto&& val, auto&& adj, auto&& x) {
+    decltype(auto) transpose_val = transpose(val);
+    return -multiply(multiply(transpose_val, adj), transpose_val);
+  };
+  auto fwd_grad_fun = [](auto&& val, auto&& adj, auto&& x) {
+    return -multiply(multiply(val, adj), val);
+  };
+  return function_gradients_adj_jac(std::forward_as_tuple(m),
+                            std::move(val_fun),
+                            std::forward_as_tuple(rev_grad_fun),
+                            std::forward_as_tuple(fwd_grad_fun));
 }
 
 }  // namespace math

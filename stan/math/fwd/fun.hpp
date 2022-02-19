@@ -50,7 +50,6 @@
 #include <stan/math/fwd/fun/inv_logit.hpp>
 #include <stan/math/fwd/fun/inv_sqrt.hpp>
 #include <stan/math/fwd/fun/inv_square.hpp>
-#include <stan/math/fwd/fun/inverse.hpp>
 #include <stan/math/fwd/fun/is_inf.hpp>
 #include <stan/math/fwd/fun/is_nan.hpp>
 #include <stan/math/fwd/fun/lambert_w.hpp>

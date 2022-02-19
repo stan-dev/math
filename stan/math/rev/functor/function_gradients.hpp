@@ -53,7 +53,7 @@ inline decltype(auto) arena_val(T&& arg) {
  *
  * @tparam Scalar type of return value, used for SFINAE
  * @tparam ArgsTupleT Type of arguments tuple to use with function
- * @tparam ValFun Type of user-defined function
+ * @tparam ValFunT Type of user-defined function
  * @tparam GradFunT Type of gradient functions tuple
  * @param args_tuple Tuple of arguments to be evaluated with function
  * @param val_fun Functor to evaluate provided arguments
@@ -61,9 +61,9 @@ inline decltype(auto) arena_val(T&& arg) {
  * each input.
  * @return Result of applying functor to arguments within provided tuple
  */
-template <typename ReturnT, typename ArgsTupleT, typename ValFun,
+template <typename ReturnT, typename ArgsTupleT, typename ValFunT,
           typename GradFunT, require_st_var<ReturnT>* = nullptr>
-auto function_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
+auto function_gradients_impl(ArgsTupleT&& args_tuple, ValFunT&& val_fun,
                              GradFunT&& grad_fun_tuple) {
   // Extract values from input arguments to use in value
   // and gradient calculations
@@ -94,7 +94,7 @@ auto function_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
 
   // Get primitive return type of function, used for assessing the need for a
   // var<Matrix> return type
-  using val_t = decltype(f(std::forward<ValFun>(val_fun),
+  using val_t = decltype(f(std::forward<ValFunT>(val_fun),
                            std::forward<decltype(prim_tuple)>(prim_tuple)));
 
   // Assess whether the return type should be var<double>, Matrix<var>,
@@ -104,7 +104,7 @@ auto function_gradients_impl(ArgsTupleT&& args_tuple, ValFun&& val_fun,
                                       promote_scalar_t<var, val_t>>;
 
   // Use input values to calculate return value
-  arena_t<ret_type> rtn = f(std::forward<ValFun>(val_fun),
+  arena_t<ret_type> rtn = f(std::forward<ValFunT>(val_fun),
                             std::forward<decltype(prim_tuple)>(prim_tuple));
 
   reverse_pass_callback(

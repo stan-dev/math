@@ -15,7 +15,7 @@ namespace math {
  *
  * @tparam ScalarT Return scalar type of function, used for SFINAE
  * @tparam ArgsTupleT Type of input tuple of arguments for function
- * @tparam ValFun Type of functor to calculate the return value
+ * @tparam ValFunT Type of functor to calculate the return value
  * @tparam GradFunT Type of gradient functions tuple
  * @param args_tuple Tuple of input arguments to value functor
  * @param val_fun Functor for calculating return value
@@ -23,10 +23,10 @@ namespace math {
  * for each input
  * @return auto
  */
-template <typename ReturnT, typename ArgsTupleT, typename ValFun,
+template <typename ReturnT, typename ArgsTupleT, typename ValFunT,
           typename GradFunT, require_st_arithmetic<ReturnT>* = nullptr>
 decltype(auto) function_gradients_impl(ArgsTupleT&& args_tuple,
-                                       ValFun&& val_fun,
+                                       ValFunT&& val_fun,
                                        GradFunT&& grad_fun_tuple) {
   return make_holder(
       [](auto&& fun, auto&& tuple_arg) {
@@ -34,7 +34,7 @@ decltype(auto) function_gradients_impl(ArgsTupleT&& args_tuple,
             math::apply([&](auto&&... args) { return fun(args...); },
                         std::forward<decltype(tuple_arg)>(tuple_arg)));
       },
-      std::forward<ValFun>(val_fun), std::forward<ArgsTupleT>(args_tuple));
+      std::forward<ValFunT>(val_fun), std::forward<ArgsTupleT>(args_tuple));
 }
 
 /**
@@ -46,7 +46,7 @@ decltype(auto) function_gradients_impl(ArgsTupleT&& args_tuple,
  *
  *
  * @tparam ArgsTupleT Type of input tuple of arguments for function
- * @tparam ValFun Type of functor to calculate the return value
+ * @tparam ValFunT Type of functor to calculate the return value
  * @tparam GradFunT Type of gradient functions tuple
  * @param args_tuple Tuple of input arguments to value functor
  * @param val_fun Functor for calculating return value

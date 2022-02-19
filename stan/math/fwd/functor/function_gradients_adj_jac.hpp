@@ -12,11 +12,11 @@
 namespace stan {
 namespace math {
 
-template <typename ReturnT, typename ArgsTupleT, typename ValFun,
+template <typename ReturnT, typename ArgsTupleT, typename ValFunT,
           typename RevGradFunT, typename FwdGradFunT,
-          require_st_fvar<ScalarT>* = nullptr>
+          require_st_fvar<ReturnT>* = nullptr>
 decltype(auto) function_gradients_adj_jac_impl(ArgsTupleT&& args_tuple,
-                                       ValFun&& val_fun,
+                                       ValFunT&& val_fun,
                                        RevGradFunT&& rev_grad_fun_tuple,
                                        FwdGradFunT&& fwd_grad_fun_tuple) {
   decltype(auto) val_tuple
@@ -43,7 +43,7 @@ decltype(auto) function_gradients_adj_jac_impl(ArgsTupleT&& args_tuple,
         if (!is_constant_all<arg_t>::value) {
           d_ += math::apply([&](auto&&... args) {
             return
-              f(rtn, forward_as<promote_scalar_t<ScalarT, arg_t>>(arg).d(),
+              f(rtn, forward_as<promote_scalar_t<ReturnT, arg_t>>(arg).d(),
                 args...); }, val_tuple);
         }
       },
