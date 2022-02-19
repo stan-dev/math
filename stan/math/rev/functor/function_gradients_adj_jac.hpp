@@ -61,6 +61,9 @@ auto function_gradients_adj_jac_impl(ArgsTupleT&& args_tuple,
   // Use input values to calculate return value
   arena_t<ret_type> rtn = f(std::forward<ValFunT>(val_fun),
                             std::forward<decltype(prim_tuple)>(prim_tuple));
+  if (unlikely(rtn.size() == 0)) {
+    return ret_type(rtn);
+  }
 
   reverse_pass_callback(
       [rev_grad_fun_tuple, arena_tuple, prim_tuple, rtn]() mutable {
