@@ -55,7 +55,8 @@ decltype(auto) function_gradients_adj_jac_impl(ArgsTupleT&& args_tuple,
         if (!is_constant_all<arg_t>::value) {
          decltype(auto) fun_ret = math::apply([&](auto&&... args) {
             return
-              f(rtn, forward_as<promote_scalar_t<ReturnT, arg_t>>(arg).d().eval(),
+              f(rtn,
+                forward_as<promote_scalar_t<ReturnT, arg_t>>(arg).d().eval(),
                 args...).eval(); }, val_tuple);
            d_ += fun_ret.eval();
         }

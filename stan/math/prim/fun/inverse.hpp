@@ -39,11 +39,12 @@ inverse(const EigMat& m) {
   if (m.size() == 0) {
     return m;
   }
-  using par_t = partials_type_t<scalar_type_t<EigMat>>;
+
   decltype(auto) val_fun = [](auto&& x) { return inverse(x).eval(); };
   auto rev_grad_fun = [](auto&& val, auto&& adj, auto&& x) {
     decltype(auto) transpose_val = transpose(val);
-    decltype(auto) ret =  (-multiply(multiply(transpose_val, adj), transpose_val)).eval();
+    decltype(auto) ret =
+      (-multiply(multiply(transpose_val, adj), transpose_val)).eval();
     return ret;
   };
   auto fwd_grad_fun = [&](auto&& val, auto&& adj, auto&& x) {
