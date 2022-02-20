@@ -82,8 +82,8 @@ auto function_gradients_adj_jac_impl(ArgsTupleT&& args_tuple,
                     // primitive arguments
                     math::apply(
                     [&](auto&&... args) {
-                      return f(rtn.val().eval(),
-                               rtn.adj().eval(),
+                      return f(rtn.val_op(),
+                               rtn.adj_op(),
                                internal::arena_val(
                                    std::forward<decltype(args)>(args))...);
                     },

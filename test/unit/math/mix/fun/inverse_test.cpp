@@ -3,7 +3,7 @@
 
 TEST(mathMixMatFun, inverse) {
   auto f = [](const auto& x) { return stan::math::inverse(x); };
-/*
+
   Eigen::MatrixXd t(0, 0);
   stan::test::expect_ad(f, t);
   stan::test::expect_ad_matvar(f, t);
@@ -12,7 +12,7 @@ TEST(mathMixMatFun, inverse) {
   u << 2;
   stan::test::expect_ad(f, u);
   stan::test::expect_ad_matvar(f, u);
-*/
+
   Eigen::MatrixXd v(2, 2);
   v << 2, 3, 5, 7;
   stan::test::expect_ad(f, v);
@@ -20,7 +20,7 @@ TEST(mathMixMatFun, inverse) {
   v << 1.9, 0.3, 0.3, 1.7;
   stan::test::expect_ad(f, v);
   stan::test::expect_ad_matvar(f, v);
-/*
+
   // issues around zero require looser tolerances for hessians
   stan::test::ad_tolerances tols;
   tols.hessian_hessian_ = 0.01;
@@ -64,5 +64,4 @@ TEST(mathMixMatFun, inverse) {
   Eigen::MatrixXd m(2, 2);
   m << 6.0, 4.0, 3.0, 2.0;
   EXPECT_NO_THROW(stan::math::inverse(m));
-  */
 }

@@ -40,18 +40,16 @@ inverse(const EigMat& m) {
     return m;
   }
 
-  decltype(auto) val_fun = [](auto&& x) { return inverse(x).eval(); };
+  ref_type_t<EigMat> m_ref = m;
+
+  decltype(auto) val_fun = [](auto&& x) { return inverse(x); };
   auto rev_grad_fun = [](auto&& val, auto&& adj, auto&& x) {
-    decltype(auto) transpose_val = transpose(val);
-    decltype(auto) ret =
-      (-multiply(multiply(transpose_val, adj), transpose_val)).eval();
-    return ret;
+    return to_ref(-multiply(multiply(transpose(val), adj), transpose(val)));
   };
   auto fwd_grad_fun = [&](auto&& val, auto&& adj, auto&& x) {
-    decltype(auto) ret = (-multiply(multiply(val, adj), val)).eval();
-    return ret;
+    return to_ref(-multiply(multiply(val, adj), val));
   };
-  return function_gradients_adj_jac(std::forward_as_tuple(m),
+  return function_gradients_adj_jac(std::forward_as_tuple(m_ref),
                             std::move(val_fun),
                             std::forward_as_tuple(rev_grad_fun),
                             std::forward_as_tuple(fwd_grad_fun));
