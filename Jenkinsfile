@@ -468,7 +468,7 @@ pipeline {
         stage('Upload doxygen') {
             agent {
                 docker {
-                    image ' '
+                    image 'stanorg/ci:gpu'
                     label 'linux'
                 }
             }
