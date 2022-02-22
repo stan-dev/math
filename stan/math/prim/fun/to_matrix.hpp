@@ -34,10 +34,10 @@ inline EigMat to_matrix(EigMat&& x) {
  * @return the matrix representation of the input
  */
 template <typename EigMat, require_eigen_vector_t<EigMat>* = nullptr>
-inline Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic> 
+inline Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>
   to_matrix(const EigMat& matrix) {
   using T = value_type_t<EigMat>;
-  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> 
+  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
       res(matrix.rows(), matrix.cols());
   Eigen::Map<
       Eigen::Matrix<T, EigMat::RowsAtCompileTime, EigMat::ColsAtCompileTime>>
