@@ -29,14 +29,14 @@ inline auto multiply(const Mat& m, Scal c) {
 }
 
 /**
- * Multiply specialization for left or right hand side with a complex value type
+ * Return the product of the specified matrix and scalar, one of which must have a complex value type.
+ * The return type will be an expression template denoting a complex matrix.
  *
- * @tparam Mat type of the matrix or expression
- * @tparam Scal type of the scalar
- *
- * @param m matrix
- * @param c scalar
- * @return product of matrix and scalar
+ * @tparam Mat type of matrix argument
+ * @tparam Scal type of scalar argument
+ * @param m matrix argument
+ * @param c scalar argument
+ * @return expression template evaluating to the product of the matrix and scalar arguments
  */
 template <typename Mat, typename Scal,
 require_any_complex_t<value_type_t<Mat>, Scal>* = nullptr,
@@ -47,14 +47,14 @@ inline auto multiply(const Mat& m, Scal c) {
 }
 
 /**
- * Multiply specialization for left or right hand side with a complex value type
+ * Return the product of the specified matrix and scalar, one of which must have a complex value type.
+ * The return type will be an expression template denoting a complex matrix.
  *
- * @tparam Scal type of the scalar
- * @tparam Mat type of the matrix or expression
- *
- * @param c scalar
- * @param m matrix
- * @return product of matrix and scalar
+ * @tparam Scal type of scalar argument
+ * @tparam Mat type of matrix argument
+ * @param c scalar argument
+ * @param m matrix argument
+ * @return expression template evaluating to the product of the matrix and scalar arguments
  */
 template <typename Mat, typename Scal,
 require_any_complex_t<value_type_t<Mat>, Scal>* = nullptr,
