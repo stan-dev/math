@@ -22,9 +22,46 @@ namespace math {
  */
 template <typename Mat, typename Scal, require_stan_scalar_t<Scal>* = nullptr,
           require_eigen_t<Mat>* = nullptr,
-          require_all_not_st_var<Scal, Mat>* = nullptr>
+          require_all_not_st_var<Scal, Mat>* = nullptr,
+          require_all_not_complex_t<Scal, value_type_t<Mat>>* = nullptr>
 inline auto multiply(const Mat& m, Scal c) {
   return c * m;
+}
+
+/**
+ * Multiply specialization for left or right hand side with a complex value type
+ *
+ * @tparam Mat type of the matrix or expression
+ * @tparam Scal type of the scalar
+ *
+ * @param m matrix
+ * @param c scalar
+ * @return product of matrix and scalar
+ */
+template <typename Mat, typename Scal,
+require_any_complex_t<value_type_t<Mat>, Scal>* = nullptr,
+require_eigen_t<Mat> * = nullptr,
+require_not_eigen_t<Scal>* = nullptr>
+inline auto multiply(const Mat& m, Scal c) {
+  return m * c;
+}
+
+/**
+ * Multiply specialization for left or right hand side with a complex value type
+ *
+ * @tparam Scal type of the scalar
+ * @tparam Mat type of the matrix or expression
+ *
+ * @param c scalar
+ * @param m matrix
+ * @return product of matrix and scalar
+ */
+template <typename Mat, typename Scal,
+require_any_complex_t<value_type_t<Mat>, Scal>* = nullptr,
+require_eigen_t<Mat> * = nullptr,
+require_not_eigen_t<Scal>* = nullptr>
+inline auto multiply(const Scal& m, const Mat& c) {
+  return m * c;
 }
 
 /**
@@ -39,7 +76,8 @@ inline auto multiply(const Mat& m, Scal c) {
  */
 template <typename Scal, typename Mat, require_stan_scalar_t<Scal>* = nullptr,
           require_eigen_t<Mat>* = nullptr,
-          require_all_not_st_var<Scal, Mat>* = nullptr>
+          require_all_not_st_var<Scal, Mat>* = nullptr,
+          require_all_not_complex_t<Scal, value_type_t<Mat>>* = nullptr>
 inline auto multiply(Scal c, const Mat& m) {
   return c * m;
 }
