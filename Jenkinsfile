@@ -260,9 +260,9 @@ pipeline {
 	            sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                 script {
                     if (isUnix()) {
-                        runTests("test/unit/math/test_ad_test.cpp", false)
+                        runTests("test/unit", false)
                     } else {
-                        runTestsWin("test/unit/math/test_ad_test.cpp", true)
+                        runTestsWin("test/unit", true)
                     }
                 }
             }
