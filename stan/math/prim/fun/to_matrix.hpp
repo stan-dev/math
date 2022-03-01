@@ -18,7 +18,7 @@ namespace math {
  * @param x matrix
  * @return the matrix representation of the input
  */
-template <typename EigMat, require_eigen_matrix_dynamic_t<EigMat>* = nullptr>
+template <typename EigMat, require_eigen_dense_dynamic_t<EigMat>* = nullptr>
 inline EigMat to_matrix(EigMat&& x) {
   return std::forward<EigMat>(x);
 }
@@ -33,17 +33,9 @@ inline EigMat to_matrix(EigMat&& x) {
  * @param x input vector/row vector
  * @return the matrix representation of the input
  */
-template <typename EigMat, require_eigen_vector_t<EigMat>* = nullptr>
-inline Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>
-  to_matrix(const EigMat& matrix) {
-  using T = value_type_t<EigMat>;
-  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>
-      res(matrix.rows(), matrix.cols());
-  Eigen::Map<
-      Eigen::Matrix<T, EigMat::RowsAtCompileTime, EigMat::ColsAtCompileTime>>
-      res_map(res.data(), matrix.rows(), matrix.cols());
-  res_map = matrix;
-  return res;
+template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
+inline auto to_matrix(EigVec&& matrix) {
+  return Eigen::Matrix<value_type_t<EigMat>, Eigen::Dynamic, Eigen::Dynamic>(std::forward<EigVec>(matrix));
 }
 
 /**
