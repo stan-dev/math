@@ -260,9 +260,9 @@ pipeline {
                 sh """
                     export TBB_INC=\$(pwd)/lib/tbb_2020.3/include
                     export TBB_LIB=\$(pwd)/lib/tbb
+		    echo TBB_INTERFACE_NEW=true > make/local
                 """
-	            sh "echo CXX=${CLANG_CXX} >> make/local"
-                sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+	        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                 script {
                     if (isUnix()) {
                         runTests("test/unit/math/test_ad_test.cpp", false)
