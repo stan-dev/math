@@ -1,6 +1,26 @@
 Stan Math Library Release Notes
 
 ======================================================================
+v4.3.0
+======================================================================
+
+ - Changed constants to `static constexpr` for efficiency, added Euler's Gamma constant. (#2478)
+ - Added `lmultiply()` that parallels `multiply_log()` so that the language doesn't have to rename. (#2596)
+ - Cleaned up tests to include <CL/opencl.hpp> instead of <CL/cl2.hpp>. (#2610)
+ - Added missing implementations of function signatures that shadow of math function signatures in the `std::` namespace. (#2612)
+ - Fixed the bug where 2x2 matrix exponential function outputs NaN for matrices with large eigenvalues. (#2616)
+ - Added compiler flag `-D_BOOST_LGAMMA` to allow users to force use of Boost `lgamma` implementation. (#2618)
+ - Added more informative error messages for ODE solvers. (#2620)
+ - Forceed linker to respect rpath set at compile time. (#2627)
+ - Upgraded Sundials to 6.0.0. (#2629)
+ - Added `norm1()` and `norm2()`. (#2636)
+ - Added missing `von_mises_cdf_log` and `von_mises_ccdf_log` signatures. (#2640)
+ - Refactored the DAE solver.(#2644)
+ - Added the inverse of the complementary error function - `inv_erfc()`. (#2645)
+ - Updated member functions for accessing tangents in scalar `fvar` types. (#2652)
+ - Added support for the new matrix type for GLM functions. (#2655)
+
+======================================================================
 v4.2.1 (21 October 2021)
 ======================================================================
 

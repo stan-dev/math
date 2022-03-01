@@ -5,28 +5,48 @@ import org.stan.Utils
 def runTests(String testPath, boolean jumbo = false) {
     try {
         if (jumbo) {
-            sh "./runTests.py -j${env.PARALLEL} ${testPath} --jumbo"
+            sh "python3 runTests.py -j${env.PARALLEL} ${testPath} --jumbo"
         } else {
-            sh "./runTests.py -j${env.PARALLEL} ${testPath}"
+            sh "python3 runTests.py -j${env.PARALLEL} ${testPath}"
         }
     }
-    finally { junit 'test/**/*.xml' }
+        finally { junit 'test/**/*.xml' }
 }
 
+// We're using Anaconda3 Python on win-10
 def runTestsWin(String testPath, boolean buildLibs = true, boolean jumbo = false) {
     withEnv(['PATH+TBB=./lib/tbb']) {
-       bat "echo $PATH"
-       if (buildLibs){
-           bat "mingw32-make.exe -f make/standalone math-libs"
-       }
-       try {
-           if (jumbo) {
-               bat "runTests.py -j${env.PARALLEL} ${testPath} --jumbo"
-            } else {
-               bat "runTests.py -j${env.PARALLEL} ${testPath}"
-            }
-       }
-       finally { junit 'test/**/*.xml' }
+        if (buildLibs){
+            bat """
+                SET \"PATH=${env.RTOOLS40_HOME};%PATH%\"
+                SET \"PATH=${env.RTOOLS40_HOME}\\usr\\bin;%PATH%\"
+                SET \"PATH=${env.RTOOLS40_HOME}\\mingw64\\bin;%PATH%\"
+                SET \"PATH=C:\\PROGRA~1\\R\\R-4.1.2\\bin;%PATH%\"
+                mingw32-make.exe -f make/standalone math-libs
+            """
+        }
+        try {
+            if (jumbo) {
+                bat """
+                    SET \"PATH=${env.RTOOLS40_HOME};%PATH%\"
+                    SET \"PATH=${env.RTOOLS40_HOME}\\usr\\bin;%PATH%\"
+                    SET \"PATH=${env.RTOOLS40_HOME}\\mingw64\\bin;%PATH%\"
+                    SET \"PATH=C:\\PROGRA~1\\R\\R-4.1.2\\bin;%PATH%\"
+                    SET \"PATH=C:\\Users\\jenkins\\Anaconda3;%PATH%\"
+                    python runTests.py -j${env.PARALLEL} ${testPath} --jumbo
+                """
+             } else {
+                bat """
+                    SET \"PATH=${env.RTOOLS40_HOME};%PATH%\"
+                    SET \"PATH=${env.RTOOLS40_HOME}\\usr\\bin;%PATH%\"
+                    SET \"PATH=${env.RTOOLS40_HOME}\\mingw64\\bin;%PATH%\"
+                    SET \"PATH=C:\\PROGRA~1\\R\\R-4.1.2\\bin;%PATH%\"
+                    SET \"PATH=C:\\Users\\jenkins\\Anaconda3;%PATH%\"
+                    python runTests.py -j${env.PARALLEL} ${testPath}
+                """
+             }
+        }
+        finally { junit 'test/**/*.xml' }
     }
 }
 
@@ -67,9 +87,21 @@ pipeline {
         preserveStashes(buildCount: 7)
     }
     environment {
-        STAN_NUM_THREADS = '4'
+        STAN_NUM_THREADS = 4
+        CLANG_CXX = 'clang++-6.0'
+        GCC = 'g++'
+        MPICXX = 'mpicxx.openmpi'
+        N_TESTS = 150
+        OPENCL_DEVICE_ID = 0
+        OPENCL_DEVICE_ID_CPU = 0
+        OPENCL_DEVICE_ID_GPU = 0
+        OPENCL_PLATFORM_ID = 1
+        OPENCL_PLATFORM_ID_CPU = 0
+        OPENCL_PLATFORM_ID_GPU = 0
+        PARALLEL = 8
     }
     stages {
+
         stage('Kill previous builds') {
             when {
                 not { branch 'develop' }
@@ -81,11 +113,15 @@ pipeline {
                 }
             }
         }
+
         stage("Clang-format") {
-            agent any
+            agent {
+                docker {
+                    image 'stanorg/ci:gpu'
+                    label 'linux'
+                }
+            }
             steps {
-                sh "printenv"
-                deleteDir()
                 retry(3) { checkout scm }
                 withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b',
                     usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
@@ -93,10 +129,10 @@ pipeline {
                         set -x
                         git checkout -b ${branchName()}
                         clang-format --version
-                        find stan test -name '*.hpp' -o -name '*.cpp' | xargs -n20 -P${env.PARALLEL} clang-format -i
+                        find stan test -name '*.hpp' -o -name '*.cpp' | xargs -n20 -P${PARALLEL} clang-format -i
                         if [[ `git diff` != "" ]]; then
-                            git config --global user.email "mc.stanislaw@gmail.com"
-                            git config --global user.name "Stan Jenkins"
+                            git config user.email "mc.stanislaw@gmail.com"
+                            git config user.name "Stan Jenkins"
                             git add stan test
                             git commit -m "[Jenkins] auto-formatting by `clang-format --version`"
                             git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${fork()}/math.git ${branchName()}
@@ -127,17 +163,22 @@ pipeline {
                     }
                 }
             }
-        }
+         }
+
         stage('Linting & Doc checks') {
-            agent any
+            agent {
+                docker {
+                    image 'stanorg/ci:gpu'
+                    label 'linux'
+                }
+            }
             steps {
                 script {
-                    deleteDir()
                     retry(3) { checkout scm }
                     sh "git clean -xffd"
                     stash 'MathSetup'
-                    sh "echo CXX=${env.CXX} -Werror > make/local"
-                    sh "echo BOOST_PARALLEL_JOBS=${env.PARALLEL} >> make/local"
+                    sh "echo CXX=${CLANG_CXX} > make/local"
+                    sh "echo BOOST_PARALLEL_JOBS=${PARALLEL} >> make/local"
                     parallel(
                         CppLint: { sh "make cpplint" },
                         Dependencies: { sh """#!/bin/bash
@@ -152,12 +193,20 @@ pipeline {
                     recordIssues enabledForFailure: true, tools:
                         [cppLint(),
                          groovyScript(parserId: 'mathDependencies', pattern: '**/dependencies.log')]
+                }
+                success {
                     deleteDir()
                 }
             }
         }
+
         stage('Verify changes') {
-            agent { label 'linux' }
+            agent {
+                docker {
+                    image 'stanorg/ci:gpu'
+                    label 'linux'
+                }
+            }
             steps {
                 script {
 
@@ -172,42 +221,59 @@ pipeline {
                 }
             }
         }
+
         stage('Headers check') {
+            agent {
+                docker {
+                    image 'stanorg/ci:gpu'
+                    label 'linux'
+                }
+            }
             when {
                 expression {
                     !skipRemainingStages
                 }
             }
-            agent any
             steps {
-                deleteDir()
                 unstash 'MathSetup'
-                sh "echo CXX=${env.CXX} -Werror > make/local"
-                sh "make -j${env.PARALLEL} test-headers"
+                sh "echo CXX=${CLANG_CXX} -Werror > make/local"
+                sh "make -j${PARALLEL} test-headers"
             }
             post { always { deleteDir() } }
         }
+
         stage('Full Unit Tests') {
-            agent any
+            agent {
+                docker {
+                    image 'stanorg/ci:gpu'
+                    label 'linux'
+                }
+            }
             when {
                 expression {
                     !skipRemainingStages
                 }
             }
             steps {
-                deleteDir()
                 unstash 'MathSetup'
-	            sh "echo CXXFLAGS += -fsanitize=address > make/local"
+                // Set Stan local compiler flags to use the new TBB interface
+                sh """
+                    export TBB_INC=\$(pwd)/lib/tbb_2020.3/include
+                    export TBB_LIB=\$(pwd)/lib/tbb
+                    echo TBB_INTERFACE_NEW=true > make/local
+                """
+	            sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                 script {
                     if (isUnix()) {
-                        runTests("test/unit", true)
+                        runTests("test/unit/math/test_ad_test.cpp", false)
                     } else {
-                        runTestsWin("test/unit", true)
+                        runTestsWin("test/unit/math/test_ad_test.cpp", true)
                     }
                 }
             }
             post { always { retry(3) { deleteDir() } } }
         }
+
         stage('Always-run tests') {
             when {
                 expression {
@@ -217,94 +283,88 @@ pipeline {
             failFast true
             parallel {
                 stage('MPI tests') {
-                    agent { label 'linux && mpi' }
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu'
+                            label 'linux'
+                        }
+                    }
                     steps {
-                        deleteDir()
                         unstash 'MathSetup'
-                        sh "echo CXX=${MPICXX} >> make/local"
-                        sh "echo CXX_TYPE=gcc >> make/local"
-                        sh "echo STAN_MPI=true >> make/local"
+                        sh """
+                            echo CXX=${MPICXX} > make/local
+                            echo CXX_TYPE=gcc >> make/local
+                            echo STAN_MPI=true >> make/local
+                        """
                         runTests("test/unit/math/prim/functor")
                         runTests("test/unit/math/rev/functor")
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
+
                 stage('OpenCL CPU tests') {
+                    agent { label "gg-linux" }
                     when {
                         expression {
                             !skipOpenCL
                         }
                     }
-                    agent { label "linux-gpu" }
                     steps {
                         script {
-                            if (isUnix()) {
-                                deleteDir()
-                                unstash 'MathSetup'
-                                sh "echo CXX=${env.CXX} -Werror > make/local"
-                                sh "echo STAN_OPENCL=true>> make/local"
-                                sh "echo OPENCL_PLATFORM_ID=${env.OPENCL_PLATFORM_ID_CPU}>> make/local"
-                                sh "echo OPENCL_DEVICE_ID=${env.OPENCL_DEVICE_ID_CPU}>> make/local"
-                                // skips tests that require specific support in OpenCL
-                                sh 'echo "ifdef NO_CPU_OPENCL_INT64_BASE_ATOMIC" >> make/local'
-                                sh 'echo "CXXFLAGS += -DSTAN_TEST_SKIP_REQUIRING_OPENCL_INT64_BASE_ATOMIC" >> make/local'
-                                sh 'echo "endif" >> make/local'
-
-                                runTests("test/unit/math/opencl", false)
-                                runTests("test/unit/multiple_translation_units_test.cpp")
-                            } else {
-                                deleteDirWin()
-                                unstash 'MathSetup'
-                                bat "echo CXX=${env.CXX} -Werror > make/local"
-                                bat "echo STAN_OPENCL=true >> make/local"
-                                bat "echo OPENCL_PLATFORM_ID=${env.OPENCL_PLATFORM_ID_CPU} >> make/local"
-                                bat "echo OPENCL_DEVICE_ID=${env.OPENCL_DEVICE_ID_CPU} >> make/local"
-                                bat 'echo LDFLAGS_OPENCL= -L"C:\\Program Files (x86)\\IntelSWTools\\system_studio_2020\\OpenCL\\sdk\\lib\\x64" -lOpenCL >> make/local'
-                                bat "mingw32-make.exe -f make/standalone math-libs"
-                                runTestsWin("test/unit/math/opencl", false, false)
-                                runTestsWin("test/unit/multiple_translation_units_test.cpp", false, false)
-                            }
+                            unstash 'MathSetup'
+                            sh """
+                                echo CXX=${CLANG_CXX} -Werror > make/local
+                                echo STAN_OPENCL=true>> make/local
+                                echo OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_CPU}>> make/local
+                                echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_CPU}>> make/local
+                                # skips tests that require specific support in OpenCL
+                                echo "ifdef NO_CPU_OPENCL_INT64_BASE_ATOMIC" >> make/local
+                                echo "CXXFLAGS += -DSTAN_TEST_SKIP_REQUIRING_OPENCL_INT64_BASE_ATOMIC" >> make/local
+                                echo "endif" >> make/local
+                            """
+                            runTests("test/unit/math/opencl", false)
+                            runTests("test/unit/multiple_translation_units_test.cpp")
                         }
                     }
                 }
+
                 stage('OpenCL GPU tests') {
-                    agent { label "linux-gpu" }
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu'
+                            label 'v100'
+                            args '--gpus 1'
+                        }
+                    }
                     steps {
                         script {
-                            if (isUnix()) {
-                                deleteDir()
-                                unstash 'MathSetup'
-                                sh "echo CXX=${env.CXX} -Werror > make/local"
-                                sh "echo STAN_OPENCL=true>> make/local"
-                                sh "echo OPENCL_PLATFORM_ID=${env.OPENCL_PLATFORM_ID_GPU} >> make/local"
-                                sh "echo OPENCL_DEVICE_ID=${env.OPENCL_DEVICE_ID_GPU} >> make/local"
-                                runTests("test/unit/math/opencl", false)
-                                runTests("test/unit/multiple_translation_units_test.cpp")
-                            } else {
-                                deleteDirWin()
-                                unstash 'MathSetup'
-                                bat "echo CXX=${env.CXX} -Werror > make/local"
-                                bat "echo STAN_OPENCL=true >> make/local"
-                                bat "echo OPENCL_PLATFORM_ID=${env.OPENCL_PLATFORM_ID_GPU} >> make/local"
-                                bat "echo OPENCL_DEVICE_ID=${env.OPENCL_DEVICE_ID_GPU} >> make/local"
-                                bat 'echo LDFLAGS_OPENCL= -L"C:\\Program Files (x86)\\IntelSWTools\\system_studio_2020\\OpenCL\\sdk\\lib\\x64" -lOpenCL >> make/local'
-                                bat "mingw32-make.exe -f make/standalone math-libs"
-                                runTestsWin("test/unit/math/opencl", false, false)
-                                runTestsWin("test/unit/multiple_translation_units_test.cpp", false, false)
-                            }
-
+                            unstash 'MathSetup'
+                            sh """
+                                echo CXX=${CLANG_CXX} -Werror > make/local
+                                echo STAN_OPENCL=true >> make/local
+                                echo OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} >> make/local
+                                echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU} >> make/local
+                            """
+                            runTests("test/unit/math/opencl")
+                            runTests("test/unit/multiple_translation_units_test.cpp")
                         }
                     }
                 }
+
                 stage('Distribution tests') {
-                    agent { label "distribution-tests" }
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu'
+                            label 'linux'
+                            args '--pull always'
+                        }
+                    }
                     steps {
-                        deleteDir()
                         unstash 'MathSetup'
                         sh """
-                            echo CXX=${env.CXX} > make/local
+                            echo CXX=${CLANG_CXX} > make/local
                             echo O=0 >> make/local
-                            echo N_TESTS=${env.N_TESTS} >> make/local
+                            echo N_TESTS=${N_TESTS} >> make/local
                             """
                         script {
                             if (params.withRowVector || isBranch('develop') || isBranch('master')) {
@@ -312,7 +372,7 @@ pipeline {
                                 sh "echo CXXFLAGS+=-DSTAN_PROB_TEST_ALL >> make/local"
                             }
                         }
-                        sh "./runTests.py -j${env.PARALLEL} test/prob > dist.log 2>&1"
+                        sh "./runTests.py -j${PARALLEL} test/prob > dist.log 2>&1"
                     }
                     post {
                         always {
@@ -321,11 +381,18 @@ pipeline {
                         }
                         failure {
                             echo "Distribution tests failed. Check out dist.log.zip artifact for test logs."
-                            }
+                        }
                     }
                 }
-	            stage('Expressions test') {
-                    agent any
+
+                stage('Expressions test') {
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu'
+                            label 'linux'
+                            args '--pull always'
+                        }
+                    }
                     steps {
                         unstash 'MathSetup'
                         script {
@@ -337,16 +404,14 @@ pipeline {
                             sh "python ./test/varmat_compatibility_test.py"
                             withEnv(['PATH+TBB=./lib/tbb']) {
                                 sh "python ./test/expressions/test_expression_testing_framework.py"
-                            }
-                            withEnv(['PATH+TBB=./lib/tbb']) {
-                                try { sh "./runTests.py -j${env.PARALLEL} test/expressions" }
+                                try { sh "./runTests.py -j${PARALLEL} test/expressions" }
                                 finally { junit 'test/**/*.xml' }
                             }
                             sh "make clean-all"
                             sh "echo STAN_THREADS=true >> make/local"
                             withEnv(['PATH+TBB=./lib/tbb']) {
                                 try {
-                                    sh "./runTests.py -j${env.PARALLEL} test/expressions --only-functions reduce_sum map_rect"
+                                    sh "./runTests.py -j${PARALLEL} test/expressions --only-functions reduce_sum map_rect"
 				                }
                                 finally { junit 'test/**/*.xml' }
                             }
@@ -354,13 +419,19 @@ pipeline {
                     }
                     post { always { deleteDir() } }
                 }
+
                 stage('Threading tests') {
-                    agent any
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu'
+                            label 'linux'
+                            args '--pull always'
+                        }
+                    }
                     steps {
                         script {
-                            deleteDir()
                             unstash 'MathSetup'
-                            sh "echo CXX=${env.CXX} -Werror > make/local"
+                            sh "echo CXX=${CLANG_CXX} -Werror > make/local"
                             sh "echo STAN_THREADS=true >> make/local"
                             sh "export STAN_NUM_THREADS=4"
                             if (isBranch('develop') || isBranch('master')) {
@@ -377,7 +448,9 @@ pipeline {
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
+
                 stage('Windows Headers & Unit') {
+                    agent { label 'windows' }
                     when {
                         allOf {
                             anyOf {
@@ -390,17 +463,17 @@ pipeline {
                             }
                         }
                     }
-                    agent { label 'windows' }
                     steps {
-                        deleteDirWin()
                         unstash 'MathSetup'
-                        bat "mingw32-make.exe -f make/standalone math-libs"
-                        runTestsWin("test/unit", false, false)
+                        runTestsWin("test/unit", true, false)
                     }
                 }
+
             }
         }
+
         stage('Upstream tests') {
+            agent { label 'linux' }
             when {
                 allOf {
                     expression {
@@ -412,24 +485,29 @@ pipeline {
                 }
             }
             steps {
-                build(job: "Stan/${stan_pr()}",
+                build(job: "Stan/Stan/${stan_pr()}",
                         parameters: [string(name: 'math_pr', value: env.BRANCH_NAME),
                                     string(name: 'cmdstan_pr', value: cmdstan_pr())])
             }
         }
+
         stage('Upload doxygen') {
-            agent any
+            agent {
+                docker {
+                    image 'stanorg/ci:gpu'
+                    label 'linux'
+                }
+            }
             when { branch 'develop'}
             steps {
-                deleteDir()
                 retry(3) { checkout scm }
                 withCredentials([usernamePassword(credentialsId: 'a630aebc-6861-4e69-b497-fd7f496ec46b',
                                                   usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                     sh """#!/bin/bash
                         set -x
                         make doxygen
-                        git config --global user.email "mc.stanislaw@gmail.com"
-                        git config --global user.name "Stan Jenkins"
+                        git config user.email "mc.stanislaw@gmail.com"
+                        git config user.name "Stan Jenkins"
                         git checkout --detach
                         git branch -D gh-pages
                         git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git :gh-pages
@@ -442,10 +520,12 @@ pipeline {
             }
             post { always { deleteDir() } }
         }
+
     }
+    // Below lines are commented to avoid spamming emails during migration/debug
     post {
         always {
-            node("osx || linux") {
+            node("linux") {
                 recordIssues enabledForFailure: false, tool: clang()
             }
         }
