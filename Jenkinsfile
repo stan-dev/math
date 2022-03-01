@@ -244,7 +244,6 @@ pipeline {
 
         stage('Full Unit Tests') {
             agent {  label 'gg-linux'  }
-            }
             when {
                 expression {
                     !skipRemainingStages
@@ -253,12 +252,12 @@ pipeline {
             steps {
                 unstash 'MathSetup'
                 // Set Stan local compiler flags to use the new TBB interface
-                sh """
-                    export TBB_INC=\$(pwd)/lib/tbb_2020.3/include
-                    export TBB_LIB=\$(pwd)/lib/tbb
-		    echo TBB_INTERFACE_NEW=true > make/local
-                """
-	        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+                // sh """
+                //     export TBB_INC=\$(pwd)/lib/tbb_2020.3/include
+                //     export TBB_LIB=\$(pwd)/lib/tbb
+                //     echo TBB_INTERFACE_NEW=true > make/local
+                // """
+	            sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                 script {
                     if (isUnix()) {
                         runTests("test/unit/math/test_ad_test.cpp", false)
