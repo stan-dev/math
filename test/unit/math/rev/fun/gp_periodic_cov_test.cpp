@@ -1912,9 +1912,8 @@ TEST(RevMath, gp_periodic_cov2_vec_eigen_mixed) {
           sigma.val() * sigma.val()
               * exp(-2.0
                     * stan::math::square(sin(
-                          M_PI
-                          * stan::math::distance(x1_rvec[i], x2_vec[j]).val()
-                          / p.val()))
+                        M_PI * stan::math::distance(x1_rvec[i], x2_vec[j]).val()
+                        / p.val()))
                     / l.val() / l.val()),
           cov(i, j).val())
           << "index: (" << i << ", " << j << ")";
@@ -1930,9 +1929,8 @@ TEST(RevMath, gp_periodic_cov2_vec_eigen_mixed) {
           sigma.val() * sigma.val()
               * exp(-2.0
                     * stan::math::square(sin(
-                          M_PI
-                          * stan::math::distance(x2_vec[i], x1_rvec[j]).val()
-                          / p.val()))
+                        M_PI * stan::math::distance(x2_vec[i], x1_rvec[j]).val()
+                        / p.val()))
                     / l.val() / l.val()),
           cov7(i, j).val())
           << "index: (" << i << ", " << j << ")";
@@ -1950,9 +1948,8 @@ TEST(RevMath, gp_periodic_cov2_vec_eigen_mixed) {
           sigma.val() * sigma.val()
               * exp(-2.0
                     * stan::math::square(sin(
-                          M_PI
-                          * stan::math::distance(x1_vec[i], x2_rvec[j]).val()
-                          / p.val()))
+                        M_PI * stan::math::distance(x1_vec[i], x2_rvec[j]).val()
+                        / p.val()))
                     / l.val() / l.val()),
           cov2(i, j).val())
           << "index: (" << i << ", " << j << ")";
@@ -1968,9 +1965,8 @@ TEST(RevMath, gp_periodic_cov2_vec_eigen_mixed) {
           sigma.val() * sigma.val()
               * exp(-2.0
                     * stan::math::square(sin(
-                          M_PI
-                          * stan::math::distance(x2_rvec[i], x1_vec[j]).val()
-                          / p.val()))
+                        M_PI * stan::math::distance(x2_rvec[i], x1_vec[j]).val()
+                        / p.val()))
                     / l.val() / l.val()),
           cov8(i, j).val())
           << "index: (" << i << ", " << j << ")";
@@ -1988,9 +1984,8 @@ TEST(RevMath, gp_periodic_cov2_vec_eigen_mixed) {
           sigma.val() * sigma.val()
               * exp(-2.0
                     * stan::math::square(sin(
-                          M_PI
-                          * stan::math::distance(x2_vec[i], x2_rvec[j]).val()
-                          / p.val()))
+                        M_PI * stan::math::distance(x2_vec[i], x2_rvec[j]).val()
+                        / p.val()))
                     / l.val() / l.val()),
           cov3(i, j).val())
           << "index: (" << i << ", " << j << ")";
@@ -2006,9 +2001,8 @@ TEST(RevMath, gp_periodic_cov2_vec_eigen_mixed) {
           sigma.val() * sigma.val()
               * exp(-2.0
                     * stan::math::square(sin(
-                          M_PI
-                          * stan::math::distance(x2_rvec[i], x2_vec[j]).val()
-                          / p.val()))
+                        M_PI * stan::math::distance(x2_rvec[i], x2_vec[j]).val()
+                        / p.val()))
                     / l.val() / l.val()),
           cov4(i, j).val())
           << "index: (" << i << ", " << j << ")";
@@ -2026,9 +2020,8 @@ TEST(RevMath, gp_periodic_cov2_vec_eigen_mixed) {
           sigma.val() * sigma.val()
               * exp(-2.0
                     * stan::math::square(sin(
-                          M_PI
-                          * stan::math::distance(x1_rvec[i], x1_vec[j]).val()
-                          / p.val()))
+                        M_PI * stan::math::distance(x1_rvec[i], x1_vec[j]).val()
+                        / p.val()))
                     / l.val() / l.val()),
           cov5(i, j).val())
           << "index: (" << i << ", " << j << ")";
@@ -2044,9 +2037,8 @@ TEST(RevMath, gp_periodic_cov2_vec_eigen_mixed) {
           sigma.val() * sigma.val()
               * exp(-2.0
                     * stan::math::square(sin(
-                          M_PI
-                          * stan::math::distance(x1_vec[i], x1_rvec[j]).val()
-                          / p.val()))
+                        M_PI * stan::math::distance(x1_vec[i], x1_rvec[j]).val()
+                        / p.val()))
                     / l.val() / l.val()),
           cov6(i, j).val())
           << "index: (" << i << ", " << j << ")";

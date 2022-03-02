@@ -248,7 +248,7 @@ double lbaX_cdf(double X, double t, double A, double v, double s,
   term_2 = (b_tv * stan::math::Phi((b_tv / ts)));
   term_3 = (ts
             * stan::math::exp(
-                  stan::math::normal_lpdf<false>((b_A_tv / ts), 0, 1)));
+                stan::math::normal_lpdf<false>((b_A_tv / ts), 0, 1)));
   term_4
       = (ts
          * stan::math::exp(stan::math::normal_lpdf<false>((b_tv / ts), 0, 1)));
