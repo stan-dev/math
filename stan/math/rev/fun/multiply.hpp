@@ -189,6 +189,8 @@ inline auto multiply(const T1& A, const T2& B) {
 template <typename T1, typename T2, require_matrix_t<T1>* = nullptr,
           require_not_matrix_t<T2>* = nullptr,
           require_any_st_var<T1, T2>* = nullptr,
+          require_not_complex_t<value_type_t<T1>>* = nullptr,
+          require_not_complex_t<value_type_t<T2>>* = nullptr,
           require_not_row_and_col_vector_t<T1, T2>* = nullptr>
 inline auto multiply(const T1& A, const T2& B) {
   return multiply(B, A);
