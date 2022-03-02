@@ -99,6 +99,7 @@
 #include <stan/math/prim/fun/factor_cov_matrix.hpp>
 #include <stan/math/prim/fun/falling_factorial.hpp>
 #include <stan/math/prim/fun/fdim.hpp>
+#include <stan/math/prim/fun/fft.hpp>
 #include <stan/math/prim/fun/fill.hpp>
 #include <stan/math/prim/fun/finite_diff_stepsize.hpp>
 #include <stan/math/prim/fun/floor.hpp>
