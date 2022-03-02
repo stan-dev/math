@@ -11,18 +11,33 @@ namespace math {
 
 /**
  * Returns a matrix with dynamic dimensions constructed from an
- * Eigen matrix which is either a row vector, column vector,
- * or matrix.
- * The runtime dimensions will be the same as the input.
+ * Eigen matrix.
  *
  * @tparam EigMat type of the matrix
  *
  * @param x matrix
  * @return the matrix representation of the input
  */
-template <typename EigMat, require_eigen_t<EigMat>* = nullptr>
+template <typename EigMat, require_eigen_dense_dynamic_t<EigMat>* = nullptr>
 inline EigMat to_matrix(EigMat&& x) {
   return std::forward<EigMat>(x);
+}
+
+/**
+ * Returns a matrix with dynamic dimensions constructed from an
+ * Eigen row or column vector.
+ * The runtime dimensions will be the same as the input.
+ *
+ * @tparam EigMat type of the vector/row vector
+ *
+ * @param x input vector/row vector
+ * @return the matrix representation of the input
+ */
+template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
+inline auto to_matrix(EigVec&& matrix) {
+  return Eigen::Matrix<
+          value_type_t<EigVec>,
+          Eigen::Dynamic, Eigen::Dynamic>(std::forward<EigVec>(matrix));
 }
 
 /**
