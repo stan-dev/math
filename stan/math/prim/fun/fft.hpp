@@ -1,9 +1,11 @@
 #ifndef STAN_MATH_PRIM_FUN_FFT_HPP
 #define STAN_MATH_PRIM_FUN_FFT_HPP
 
+#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <unsupported/Eigen/FFT>
 #include <complex>
+#include <type_traits>
 #include <vector>
 
 namespace stan {
@@ -25,12 +27,12 @@ namespace math {
    * @param x complex time vector to transform
    * @return discrete Fourier transform of `x`
    */
-  template <typename T>
-  Eigen::Matrix<std::complex<T>, -1, 1>
-  fft(const Eigen::Matrix<std::complex<T>, -1, 1>& x) {
-    if (x.size() <= 1) return x;
-    Eigen::FFT<T> fft;
-    auto y = fft.fwd(x);
+  template <typename V, require_eigen_vector_t<V>* = nullptr>
+  inline Eigen::Matrix<scalar_type_t<V>, -1, 1> fft(const V& x) {
+    Eigen::Matrix<scalar_type_t<V>, -1, 1> xv = x;
+    if (xv.size() <= 1) return xv;
+    Eigen::FFT<typename scalar_type_t<V>::value_type> fft;
+    auto y = fft.fwd(xv);
     return y;
   }
 
@@ -51,12 +53,12 @@ namespace math {
    * @param y complex frequency domain vector to inverse transform
    * @return inverse discrete Fourier transform of `x`
    */
-  template <typename T>
-  Eigen::Matrix<std::complex<T>, -1, 1>
-  inv_fft(const Eigen::Matrix<std::complex<T>, -1, 1>& y) {
-    if (y.size() <= 1) return y;
-    Eigen::FFT<T> fft;
-    auto x = fft.inv(y);
+  template <typename V, require_eigen_vector_t<V>* = nullptr>
+  inline Eigen::Matrix<scalar_type_t<V>, -1, 1> inv_fft(const V& y) {
+    Eigen::Matrix<scalar_type_t<V>, -1, 1> yv = y;
+    if (y.size() <= 1) return yv;
+    Eigen::FFT<typename scalar_type_t<V>::value_type> fft;
+    auto x = fft.inv(yv);
     return x;
   }
   

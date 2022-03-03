@@ -19,7 +19,11 @@ TEST(primFun, fft) {
   EXPECT_EQ(1, y1.size());
   EXPECT_EQ(real(y1[0]), -3.247);
   EXPECT_EQ(imag(y1[0]), 1.98555);
-  
+
+  cv_t y1b = fft(x1 + x1);
+  EXPECT_NEAR(real(y1b[0]), -3.247 * 2, 1e-6);
+  EXPECT_NEAR(imag(y1b[0]), 1.98555 * 2, 1e-6);
+
   cv_t x(3);
   x <<  c_t(1, -2), c_t(-3, 5), c_t(-7, 11);
   cv_t y = fft(x);
@@ -30,8 +34,16 @@ TEST(primFun, fft) {
   EXPECT_NEAR(imag(y[1]), -13.46410162, 1e-6);
   EXPECT_NEAR(real(y[2]), 11.19615242, 1e-6);
   EXPECT_NEAR(imag(y[2]), -6.53589838, 1e-6);
-}
 
+  cv_t yb = fft(x + x);
+  EXPECT_EQ(3, yb.size());
+  EXPECT_NEAR(real(yb[0]), 2 * -9, 1e-6);
+  EXPECT_NEAR(imag(yb[0]), 2 * 14, 1e-6);
+  EXPECT_NEAR(real(yb[1]), 2 * 0.80384758, 1e-6);
+  EXPECT_NEAR(imag(yb[1]), 2 * -13.46410162, 1e-6);
+  EXPECT_NEAR(real(yb[2]), 2 * 11.19615242, 1e-6);
+  EXPECT_NEAR(imag(yb[2]), 2 * -6.53589838, 1e-6);
+}
 
 TEST(primFun, inv_fft) {
   typedef std::complex<double> c_t;
