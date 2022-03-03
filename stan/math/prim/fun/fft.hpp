@@ -27,13 +27,13 @@ namespace math {
    * @param x complex time vector to transform
    * @return discrete Fourier transform of `x`
    */
-  template <typename V, require_eigen_vector_t<V>* = nullptr>
+  template <typename V, require_eigen_vector_vt<is_complex, V>* = nullptr>
+  // version w/o is_complex restriction:  template <typename V, require_eigen_vector_t<V>* = nullptr>
   inline Eigen::Matrix<scalar_type_t<V>, -1, 1> fft(const V& x) {
     Eigen::Matrix<scalar_type_t<V>, -1, 1> xv = x;
     if (xv.size() <= 1) return xv;
     Eigen::FFT<typename scalar_type_t<V>::value_type> fft;
-    auto y = fft.fwd(xv);
-    return y;
+    return fft.fwd(xv);
   }
 
 
@@ -53,16 +53,15 @@ namespace math {
    * @param y complex frequency domain vector to inverse transform
    * @return inverse discrete Fourier transform of `x`
    */
-  template <typename V, require_eigen_vector_t<V>* = nullptr>
+  template <typename V, require_eigen_vector_vt<is_complex, V>* = nullptr>
   inline Eigen::Matrix<scalar_type_t<V>, -1, 1> inv_fft(const V& y) {
     Eigen::Matrix<scalar_type_t<V>, -1, 1> yv = y;
     if (y.size() <= 1) return yv;
     Eigen::FFT<typename scalar_type_t<V>::value_type> fft;
-    auto x = fft.inv(yv);
-    return x;
+    return fft.inv(yv);
   }
   
-}
-}
+}  // namespace math
+}  // namespace stan
 
 #endif
