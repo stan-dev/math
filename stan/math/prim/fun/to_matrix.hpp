@@ -35,9 +35,8 @@ inline EigMat to_matrix(EigMat&& x) {
  */
 template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
 inline auto to_matrix(EigVec&& matrix) {
-  return Eigen::Matrix<
-          value_type_t<EigVec>,
-          Eigen::Dynamic, Eigen::Dynamic>(std::forward<EigVec>(matrix));
+  return Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, Eigen::Dynamic>(
+      std::forward<EigVec>(matrix));
 }
 
 /**

@@ -240,7 +240,7 @@ class operation_cl : public operation_cl_base {
             generated_all, name_gen, row_index_name_arg, col_index_name_arg,
             view_handled
                 && std::tuple_element_t<
-                       Is, typename Deriv::view_transitivity>::value)...};
+                    Is, typename Deriv::view_transitivity>::value)...};
       });
       res = std::accumulate(args_parts.begin(), args_parts.end(),
                             kernel_parts{});

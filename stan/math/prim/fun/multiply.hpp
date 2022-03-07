@@ -29,37 +29,39 @@ inline auto multiply(const Mat& m, Scal c) {
 }
 
 /**
- * Return the product of the specified matrix and scalar, one of which must have a complex value type.
- * The return type will be an expression template denoting a complex matrix.
+ * Return the product of the specified matrix and scalar, one of which must have
+ * a complex value type. The return type will be an expression template denoting
+ * a complex matrix.
  *
  * @tparam Mat type of matrix argument
  * @tparam Scal type of scalar argument
  * @param m matrix argument
  * @param c scalar argument
- * @return expression template evaluating to the product of the matrix and scalar arguments
+ * @return expression template evaluating to the product of the matrix and
+ * scalar arguments
  */
 template <typename Mat, typename Scal,
-require_any_complex_t<value_type_t<Mat>, Scal>* = nullptr,
-require_eigen_t<Mat> * = nullptr,
-require_not_eigen_t<Scal>* = nullptr>
+          require_any_complex_t<value_type_t<Mat>, Scal>* = nullptr,
+          require_eigen_t<Mat>* = nullptr, require_not_eigen_t<Scal>* = nullptr>
 inline auto multiply(const Mat& m, Scal c) {
   return m * c;
 }
 
 /**
- * Return the product of the specified matrix and scalar, one of which must have a complex value type.
- * The return type will be an expression template denoting a complex matrix.
+ * Return the product of the specified matrix and scalar, one of which must have
+ * a complex value type. The return type will be an expression template denoting
+ * a complex matrix.
  *
  * @tparam Scal type of scalar argument
  * @tparam Mat type of matrix argument
  * @param c scalar argument
  * @param m matrix argument
- * @return expression template evaluating to the product of the matrix and scalar arguments
+ * @return expression template evaluating to the product of the matrix and
+ * scalar arguments
  */
 template <typename Mat, typename Scal,
-require_any_complex_t<value_type_t<Mat>, Scal>* = nullptr,
-require_eigen_t<Mat> * = nullptr,
-require_not_eigen_t<Scal>* = nullptr>
+          require_any_complex_t<value_type_t<Mat>, Scal>* = nullptr,
+          require_eigen_t<Mat>* = nullptr, require_not_eigen_t<Scal>* = nullptr>
 inline auto multiply(const Scal& m, const Mat& c) {
   return m * c;
 }
