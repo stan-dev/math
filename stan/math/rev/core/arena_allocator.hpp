@@ -14,6 +14,13 @@ template <typename T>
 struct arena_allocator {
   using value_type = T;
 
+  arena_allocator() = default;
+
+  arena_allocator(const arena_allocator& rhs) = default;
+
+  template <class U>
+  arena_allocator(const arena_allocator<U>& rhs) {}
+
   /**
    * Allocates space for `n` items of type `T`.
    *

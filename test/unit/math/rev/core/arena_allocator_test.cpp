@@ -30,6 +30,24 @@ void arena_allocator_test() {
       stan::math::ChainableStack::instance_->memalloc_.in_stack(v3.data()));
   EXPECT_TRUE(stan::math::ChainableStack::instance_->memalloc_.in_stack(
       v3.data() + v3.size()));
+
+  std::unordered_map<int, int, std::hash<int>, std::equal_to<int>,
+                     stan::math::arena_allocator<std::pair<const int, int>>>
+      m;
+  m.insert(std::make_pair(3, 5));
+  m.insert(std::make_pair(4, 6));
+  for (auto it = m.begin(); it != m.end(); ++it) {
+    EXPECT_TRUE(
+        stan::math::ChainableStack::instance_->memalloc_.in_stack(&(*it)));
+  }
+
+  std::set<int, std::less<int>, stan::math::arena_allocator<int>> s;
+  s.insert(3);
+  s.insert(5);
+  for (auto it = m.begin(); it != m.end(); ++it) {
+    EXPECT_TRUE(
+	stan::math::ChainableStack::instance_->memalloc_.in_stack(&(*it)));
+  }
 }
 
 TEST(AgradRev, arena_allocator_test) {
