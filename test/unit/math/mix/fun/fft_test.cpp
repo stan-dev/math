@@ -60,10 +60,11 @@ TEST(mathMixFun, fft) {
   x2[0] = { 1, 2};
   x2[1] = {-1.3, 2.9};
   
-  // stan::test::expect_ad(f, x2);
-
   Eigen::VectorXd x(6);
   x << 1, -1.3, 2.9, 14.7, -12.9, -4.8;
+
+  auto xcv = to_complex_vec(x);
+  stan::test::expect_ad(f, xcv);
 
   Eigen::VectorXd gx;
   Eigen::MatrixXd J;
