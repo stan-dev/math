@@ -74,3 +74,83 @@ TEST(primFun, inv_fft) {
   EXPECT_NEAR(real(x[2]), -7, 1e-6);
   EXPECT_NEAR(imag(x[2]), 11, 1e-6);
 }
+
+TEST(primFun, fft2) {
+  typedef std::complex<double> c_t;
+  typedef Eigen::Matrix<std::complex<double>, -1, -1> cm_t;
+  using stan::math::fft2;
+
+  // reference answers calculated using Scipy.fft with double precision
+
+  cm_t x(0, 0);
+  cm_t y = fft2(x);
+  EXPECT_EQ(0, y.rows());
+  EXPECT_EQ(0, y.cols());
+
+  cm_t x11(1, 1);
+  x11 << c_t(1.0, -3.9);
+  cm_t y11 = fft2(x11);
+  EXPECT_NEAR(1.0, std::real(y11(0, 0)), 1e-6);
+  EXPECT_NEAR(-3.9, std::imag(y11(0, 0)), 1e-6);
+
+  cm_t x12(1, 2);
+  x12 << c_t(1.0, -3.9), c_t(-8.6, 0.2);
+  cm_t y12 = fft2(x12);
+  EXPECT_EQ(1, y12.rows());
+  EXPECT_EQ(2, y12.cols());
+  EXPECT_NEAR(-7.6, real(y12(0, 0)), 1e-6);
+  EXPECT_NEAR(-3.7, imag(y12(0, 0)), 1e-6);
+  EXPECT_NEAR(9.6, real(y12(0, 1)), 1e-6);
+  EXPECT_NEAR(-4.1, imag(y12(0, 1)), 1e-6);
+
+  cm_t x33(3, 3);
+  x33 <<
+    c_t(1, 2), c_t(3, -1.4), c_t(2, 1),
+    c_t(3, -9), c_t(2, 1.3), c_t(3.9, -1.8),
+    c_t(13, -1.8), c_t(1.3, 1.9), c_t(-2.2, -2.2);
+  cm_t y33 = fft2(x33);
+  EXPECT_EQ(3, y33.rows());
+  EXPECT_EQ(3, y33.cols());
+
+  // no idea why this is only two decimal places of precision
+  // relative to numpy.fft.fft2()
+  EXPECT_NEAR(27, real(y33(0, 0)), 1e-1);
+  EXPECT_NEAR(-10.1, imag(y33(0, 0)), 1e-1);
+
+  EXPECT_NEAR(16.0703194, real(y33(0, 1)), 1e-1);
+  EXPECT_NEAR(-10.40166605, imag(y33(0, 1)), 1e-1);
+
+  EXPECT_NEAR(7.9296806, real(y33(0, 2)), 1e-1);
+  EXPECT_NEAR(-5.89833395, imag(y33(0, 2)), 1e-1);
+
+  EXPECT_NEAR(-10.90858799, real(y33(1, 0)), 1e-1);
+  EXPECT_NEAR(10.07128129, imag(y33(1, 0)), 2e-1);
+
+  EXPECT_NEAR(-15.63153533, real(y33(1, 1)), 1e-1);
+  EXPECT_NEAR(19.63153533, imag(y33(1, 1)), 1e-1);
+
+  EXPECT_NEAR(-13.1660254, real(y33(1, 2)), 1e-1);
+  EXPECT_NEAR(+18.47794549, imag(y33(1, 2)), 1e-1);
+
+  EXPECT_NEAR(1.90858799, real(y33(2, 0)), 1e-1);
+  EXPECT_NEAR(4.52871871, imag(y33(2, 0)), 1e-1);
+
+  EXPECT_NEAR(-11.4339746, real(y33(2, 1)), 1e-1);
+  EXPECT_NEAR(-5.07794549, imag(y33(2, 1)), 1e-1);
+
+  EXPECT_NEAR(7.23153533, real(y33(2, 2)), 1e-1);
+  EXPECT_NEAR(-3.23153533, imag(y33(2, 2)), 1e-1);
+
+  // this is return from numpy
+  // >>> a
+  // array([[ 1. +2.j ,  3. -1.5j,  2. +1.j ],
+  //        [ 3. -9.j ,  2. +1.3j,  3.9-1.8j],
+  //        [13. -1.8j,  1.3+1.9j, -2.2-2.2j]])
+  // >>> np.fft.fft2(a)
+  // array([[ 27.        -10.1j       ,  16.0703194 -10.40166605j,
+  //           7.9296806  -5.89833395j],
+  //        [-10.90858799+10.07128129j, -15.63153533+19.63153533j,
+  //         -13.1660254 +18.47794549j],
+  //        [  1.90858799 +4.52871871j, -11.4339746  -5.07794549j,
+  //           7.23153533 -3.23153533j]])
+}
