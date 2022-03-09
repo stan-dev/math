@@ -11,6 +11,7 @@
 
 TEST(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
   using stan::math::laplace_marginal_poisson_log_lpmf;
+  using stan::math::laplace_marginal_tol_poisson_log_lpmf;
   using stan::math::to_vector;
   using stan::math::value_of;
   using stan::math::var;
@@ -38,8 +39,8 @@ TEST(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
   std::vector<int> n_samples = {1, 1};
 
   stan::math::test::squared_kernel_functor sq_kernel;
-  var target = laplace_marginal_poisson_log_lpmf(sums, n_samples, sq_kernel, theta_0,
-    nullptr, 1e-6, 100, 0, 1, 0, x, alpha, rho);
+  var target = laplace_marginal_poisson_log_lpmf(sums, n_samples, theta_0, sq_kernel,
+    nullptr, x, alpha, rho);
 
   // TODO: benchmark target against gpstuff.
   // Expected: -2.53056
@@ -49,15 +50,14 @@ TEST(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
   // Test with exposure argument
   Eigen::VectorXd ye(2);
   ye << 1, 1;
-  target = laplace_marginal_poisson_log_lpmf(sums, n_samples, ye, sq_kernel, theta_0,
-   nullptr, 1e-6, 100, 0, 1, 0, x, alpha, rho);
+  target = laplace_marginal_poisson_log_lpmf(sums, n_samples, ye, theta_0, sq_kernel,
+   nullptr, x, alpha, rho);
   EXPECT_NEAR(-2.53056, value_of(target), tol);
 
   // Test with optional arguments
   double tolerance = 1e-6;
   int max_num_steps = 100;
-  target = laplace_marginal_poisson_log_lpmf(sums, n_samples, ye, sq_kernel,
-                                             theta_0,
+  target = laplace_marginal_tol_poisson_log_lpmf(sums, n_samples, ye, theta_0, sq_kernel,
                                              nullptr, tolerance, max_num_steps,
                                            0, 1, 0, x, alpha, rho);
   EXPECT_NEAR(-2.53056, value_of(target), tol);
@@ -80,20 +80,20 @@ TEST(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
   phi_2l(1) -= diff;
   phi_2u(1) += diff;
 
-  double target_1u = laplace_marginal_poisson_log_lpmf(
-             sums, n_samples, sq_kernel, theta_0,
+  double target_1u = laplace_marginal_tol_poisson_log_lpmf(
+             sums, n_samples, theta_0, sq_kernel,
              nullptr, tolerance, max_num_steps,
            0, 1, 0, x, phi_1u[0], phi_1u[1]);
-  double target_1l = laplace_marginal_poisson_log_lpmf(
-             sums, n_samples, sq_kernel, theta_0,
+  double target_1l = laplace_marginal_tol_poisson_log_lpmf(
+             sums, n_samples, theta_0, sq_kernel,
              nullptr, tolerance, max_num_steps,
            0, 1, 0, x, phi_1l[0], phi_1l[1]);
-  double target_2u = laplace_marginal_poisson_log_lpmf(
-             sums, n_samples, sq_kernel, theta_0,
+  double target_2u = laplace_marginal_tol_poisson_log_lpmf(
+             sums, n_samples, theta_0, sq_kernel,
              nullptr, tolerance, max_num_steps,
            0, 1, 0, x, phi_2u[0], phi_2u[1]);
-  double target_2l = laplace_marginal_poisson_log_lpmf(
-             sums, n_samples, sq_kernel, theta_0,
+  double target_2l = laplace_marginal_tol_poisson_log_lpmf(
+             sums, n_samples, theta_0, sq_kernel,
              nullptr, tolerance, max_num_steps,
            0, 1, 0, x, phi_2l[0], phi_2l[1]);
 
@@ -113,8 +113,8 @@ TEST_F(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf) {
   using stan::math::value_of;
 
   var marginal_density = laplace_marginal_poisson_log_lpmf(
-      y, n_samples, ye, stan::math::test::sqr_exp_kernel_functor(), theta_0,
-    nullptr, 1e-6, 100, 0, 1, 0, x, phi(0), phi(1));
+      y, n_samples, ye, theta_0, stan::math::test::sqr_exp_kernel_functor(),
+    nullptr, x, phi(0), phi(1));
 
   double tol = 6e-4;
   // Benchmark from GPStuff.
@@ -136,24 +136,20 @@ TEST_F(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf) {
   phi_l1(1) -= eps;
 
   double target_u0 = laplace_marginal_poisson_log_lpmf(
-             y, n_samples, ye, stan::math::test::sqr_exp_kernel_functor(),
-             theta_0,
-           nullptr, 1e-6, 100, 0, 1, 0, x, phi_u0(0), phi_u0(1)),
+             y, n_samples, ye, theta_0, stan::math::test::sqr_exp_kernel_functor(),
+           nullptr, x, phi_u0(0), phi_u0(1)),
 
          target_u1 = laplace_marginal_poisson_log_lpmf(
-             y, n_samples, ye, stan::math::test::sqr_exp_kernel_functor(),
-             theta_0,
-           nullptr, 1e-6, 100, 0, 1, 0, x, phi_u1(0), phi_u1(1)),
+             y, n_samples, ye, theta_0, stan::math::test::sqr_exp_kernel_functor(),
+           nullptr, x, phi_u1(0), phi_u1(1)),
 
          target_l0 = laplace_marginal_poisson_log_lpmf(
-             y, n_samples, ye, stan::math::test::sqr_exp_kernel_functor(),
-             theta_0,
-           nullptr, 1e-6, 100, 0, 1, 0, x, phi_l0(0), phi_l0(1)),
+             y, n_samples, ye, theta_0, stan::math::test::sqr_exp_kernel_functor(),
+           nullptr, x, phi_l0(0), phi_l0(1)),
 
          target_l1 = laplace_marginal_poisson_log_lpmf(
-             y, n_samples, ye, stan::math::test::sqr_exp_kernel_functor(),
-             theta_0,
-           nullptr, 1e-6, 100, 0, 1, 0, x, phi_l1(0), phi_l1(1));
+             y, n_samples, ye, theta_0, stan::math::test::sqr_exp_kernel_functor(),
+           nullptr, x, phi_l1(0), phi_l1(1));
 
   EXPECT_NEAR((target_u0 - target_l0) / (2.0 * eps), g[0], 8e-4);
   EXPECT_NEAR((target_u1 - target_l1) / (2.0 * eps), g[1], 0.0017);

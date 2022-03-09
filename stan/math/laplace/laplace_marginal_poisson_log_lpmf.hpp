@@ -31,10 +31,10 @@ namespace math {
  *            breaks and returns an error.
  */
 template <typename CovarFun, typename T0, typename... Args>
-auto laplace_marginal_poisson_log_lpmf(
+inline auto laplace_marginal_tol_poisson_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    CovarFun&& covariance_function,
     const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
+    CovarFun&& covariance_function,
     std::ostream* msgs = nullptr, double tolerance = 1e-6,
     long int max_num_steps = 100, const int hessian_block_size = 0,
     const int solver = 1,
@@ -50,10 +50,11 @@ auto laplace_marginal_poisson_log_lpmf(
 }
 
 template <typename CovarFun, typename T0, typename... Args>
-auto laplace_marginal_poisson_log_lpmf(
+inline auto laplace_marginal_tol_poisson_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    const Eigen::VectorXd& ye, CovarFun&& covariance_function,
+    const Eigen::VectorXd& ye,
     const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
+    CovarFun&& covariance_function,
     std::ostream* msgs = nullptr, double tolerance = 1e-6,
     long int max_num_steps = 100, const int hessian_block_size = 0,
     const int solver = 1,
@@ -63,6 +64,50 @@ auto laplace_marginal_poisson_log_lpmf(
   Eigen::VectorXd y_vec = to_vector(y);
   Eigen::VectorXd y_and_ye(y_vec.size() + ye.size());
   y_and_ye << y_vec, ye;
+  return laplace_marginal_density(
+      diff_likelihood<poisson_log_exposure_likelihood>(
+          poisson_log_exposure_likelihood{}, y_and_ye, n_samples, msgs),
+      std::forward<CovarFun>(covariance_function), eta_dummy, theta_0, msgs,
+      tolerance, max_num_steps, hessian_block_size, solver,
+      max_steps_line_search, std::forward<Args>(args)...);
+}
+
+template <typename CovarFun, typename T0, typename... Args>
+inline auto laplace_marginal_poisson_log_lpmf(
+    const std::vector<int>& y, const std::vector<int>& n_samples,
+    const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
+    CovarFun&& covariance_function,
+    std::ostream* msgs = nullptr, Args&&... args) {
+  // TODO: change this to a VectorXd once we have operands & partials.
+  Eigen::Matrix<double, Eigen::Dynamic, 1> eta_dummy(0);
+  constexpr double tolerance = 1e-6;
+  constexpr long int max_num_steps = 100;
+  constexpr int hessian_block_size = 0;
+  constexpr int solver = 1;
+  constexpr int max_steps_line_search = 0;
+  return laplace_marginal_density(
+      diff_likelihood<poisson_log_likelihood>(poisson_log_likelihood{},
+                                              to_vector(y), n_samples, msgs),
+      covariance_function, eta_dummy, theta_0, msgs, tolerance, max_num_steps,
+      hessian_block_size, solver, max_steps_line_search,
+      args...);
+}
+
+template <typename CovarFun, typename T0, typename... Args>
+inline auto laplace_marginal_poisson_log_lpmf(
+    const std::vector<int>& y, const std::vector<int>& n_samples,
+    const Eigen::VectorXd& ye, const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0, CovarFun&& covariance_function,
+    std::ostream* msgs = nullptr, Args&&... args) {
+  // TODO: change this to a VectorXd once we have operands & partials.
+  Eigen::Matrix<double, -1, 1> eta_dummy(0);
+  Eigen::VectorXd y_vec = to_vector(y);
+  Eigen::VectorXd y_and_ye(y_vec.size() + ye.size());
+  y_and_ye << y_vec, ye;
+  constexpr double tolerance = 1e-6;
+  constexpr long int max_num_steps = 100;
+  constexpr int hessian_block_size = 0;
+  constexpr int solver = 1;
+  constexpr int max_steps_line_search = 0;
   return laplace_marginal_density(
       diff_likelihood<poisson_log_exposure_likelihood>(
           poisson_log_exposure_likelihood{}, y_and_ye, n_samples, msgs),

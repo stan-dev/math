@@ -33,14 +33,35 @@ namespace math {
  *            breaks and returns an error.
  */
 template <typename CovarF, typename T0, typename... Args>
-inline auto laplace_marginal_bernoulli_logit_lpmf(
+inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    CovarF&& covariance_function,
     const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
+    CovarF&& covariance_function,
     std::ostream* msgs = nullptr, double tolerance = 1e-6,
     long int max_num_steps = 100, const int hessian_block_size = 0,
     const int solver = 1, const int max_steps_line_search = 0, Args&&... args) {
   // TODO: change this to a VectorXd once we have operands & partials.
+  Eigen::Matrix<double, Eigen::Dynamic, 1> eta_dummy(0);
+  return laplace_marginal_density(
+      diff_likelihood<bernoulli_logit_likelihood>(
+          bernoulli_logit_likelihood{}, to_vector(y), n_samples, msgs),
+      covariance_function, eta_dummy, theta_0, msgs, tolerance, max_num_steps,
+      hessian_block_size, solver, max_steps_line_search,
+      std::forward<Args>(args)...);
+}
+
+template <typename CovarF, typename T0, typename... Args>
+inline auto laplace_marginal_bernoulli_logit_lpmf(
+    const std::vector<int>& y, const std::vector<int>& n_samples,
+    const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
+    CovarF&& covariance_function,
+    std::ostream* msgs = nullptr, Args&&... args) {
+  constexpr double tolerance = 1e-6;
+  constexpr long int max_num_steps = 100;
+  constexpr int hessian_block_size = 0;
+  constexpr int solver = 1;
+  constexpr int max_steps_line_search = 0;
+    // TODO: change this to a VectorXd once we have operands & partials.
   Eigen::Matrix<double, Eigen::Dynamic, 1> eta_dummy(0);
   return laplace_marginal_density(
       diff_likelihood<bernoulli_logit_likelihood>(

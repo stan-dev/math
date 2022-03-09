@@ -24,17 +24,19 @@ namespace math {
  * To sample the "original" theta's, set x_pred = x.
  */
 template <typename T_theta, typename T_eta, typename D, typename CovarFun,
-          class RNG, typename TupleData, typename... Args>
+          class RNG, typename TrainTuple, typename PredTuple, typename... Args>
 inline Eigen::VectorXd  // CHECK -- right return type -- It's not this need to
                         // return a std::vector<> :(
 laplace_base_rng(D&& diff_likelihood, CovarFun&& covariance_function,
                  const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta,
                  const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta_0,
-                 const TupleData& data_tuple, RNG& rng,
+                 RNG& rng,
                  std::ostream* msgs = nullptr, const double tolerance = 1e-6,
                  const long int max_num_steps = 100,
                  const int hessian_block_size = 0, const int solver = 1,
-                 const int max_steps_line_search = 0, Args&&... args) {
+                 const int max_steps_line_search = 0,
+                 TrainTuple&& train_tuple = std::tuple<>(),
+                PredTuple&& pred_tuple = std::tuple<>(), Args&&... args) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
 
@@ -48,7 +50,7 @@ laplace_base_rng(D&& diff_likelihood, CovarFun&& covariance_function,
             msgs, tolerance, max_num_steps, hessian_block_size, solver,
             max_steps_line_search, args_val...);
       },
-      std::tuple_cat(std::get<0>(data_tuple), args_dbl));
+      std::tuple_cat(train_tuple, args_dbl));
   auto marginal_density = marginal_density_est.lmd;
   Eigen::SparseMatrix<double> W_r = std::move(marginal_density_est.W_r);
   MatrixXd L = std::move(marginal_density_est.L);
@@ -62,7 +64,7 @@ laplace_base_rng(D&& diff_likelihood, CovarFun&& covariance_function,
       [&covariance_function, &msgs](auto&&... args_val) {
         return covariance_function(args_val..., msgs);
       },
-      std::tuple_cat(std::get<1>(data_tuple), args_dbl));
+      std::tuple_cat(pred_tuple, args_dbl));
 
   VectorXd pred_mean = covariance_pred * l_grad.head(theta_0.rows());
 
