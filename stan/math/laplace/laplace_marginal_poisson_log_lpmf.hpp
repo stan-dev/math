@@ -30,10 +30,11 @@ namespace math {
  * @param[in] max_num_steps maximum number of steps before the Newton solver
  *            breaks and returns an error.
  */
-template <typename CovarFun, typename T0, typename... Args>
+template <typename CovarFun, typename ThetaVec, typename... Args,
+ require_all_eigen_vector_t<ThetaVec>* = nullptr>
 inline auto laplace_marginal_tol_poisson_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
+    const ThetaVec& theta_0,
     CovarFun&& covariance_function,
     std::ostream* msgs = nullptr, double tolerance = 1e-6,
     long int max_num_steps = 100, const int hessian_block_size = 0,
@@ -49,11 +50,12 @@ inline auto laplace_marginal_tol_poisson_log_lpmf(
       args...);
 }
 
-template <typename CovarFun, typename T0, typename... Args>
+template <typename CovarFun, typename YeVec, typename ThetaVec, typename... Args,
+ require_all_eigen_vector_t<YeVec, ThetaVec>* = nullptr>
 inline auto laplace_marginal_tol_poisson_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    const Eigen::VectorXd& ye,
-    const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
+    const YeVec& ye,
+    const ThetaVec& theta_0,
     CovarFun&& covariance_function,
     std::ostream* msgs = nullptr, double tolerance = 1e-6,
     long int max_num_steps = 100, const int hessian_block_size = 0,
@@ -72,10 +74,11 @@ inline auto laplace_marginal_tol_poisson_log_lpmf(
       max_steps_line_search, std::forward<Args>(args)...);
 }
 
-template <typename CovarFun, typename T0, typename... Args>
+template <typename CovarFun, typename ThetaVec, typename... Args,
+ require_eigen_vector_t<ThetaVec>* = nullptr>
 inline auto laplace_marginal_poisson_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
+    const ThetaVec& theta_0,
     CovarFun&& covariance_function,
     std::ostream* msgs = nullptr, Args&&... args) {
   // TODO: change this to a VectorXd once we have operands & partials.
@@ -93,10 +96,11 @@ inline auto laplace_marginal_poisson_log_lpmf(
       args...);
 }
 
-template <typename CovarFun, typename T0, typename... Args>
+template <typename CovarFun, typename YeVec, typename ThetaVec, typename... Args,
+  require_all_eigen_vector_t<YeVec, ThetaVec>* = nullptr>
 inline auto laplace_marginal_poisson_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    const Eigen::VectorXd& ye, const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0, CovarFun&& covariance_function,
+    const YeVec& ye, const ThetaVec& theta_0, CovarFun&& covariance_function,
     std::ostream* msgs = nullptr, Args&&... args) {
   // TODO: change this to a VectorXd once we have operands & partials.
   Eigen::Matrix<double, -1, 1> eta_dummy(0);

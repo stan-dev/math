@@ -16,12 +16,12 @@ namespace math {
  * from the gaussian approximation of p(theta | y, phi),
  * where the likelihood is a Bernoulli with logit link.
  */
-template <typename CovarFun, typename T_theta, class RNG, typename TrainTuple, typename PredTuple,
-          typename... Args>
+template <typename CovarFun, typename ThetaMatrix, class RNG, typename TrainTuple, typename PredTuple,
+          typename... Args, require_eigen_t<ThetaMatrix>* = nullptr>
 inline Eigen::VectorXd  // CHECK -- right return type
 laplace_marginal_tol_bernoulli_logit_rng(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta_0,
+    const ThetaMatrix& theta_0,
     CovarFun&& covariance_function,
     RNG& rng, std::ostream* msgs = nullptr,
     const double tolerance = 1e-6, const long int max_num_steps = 100,
@@ -38,12 +38,12 @@ laplace_marginal_tol_bernoulli_logit_rng(
       std::forward<PredTuple>(pred_tuple), std::forward<Args>(args)...);
 }
 
-template <typename CovarFun, typename T_theta, class RNG, typename TrainTuple, typename PredTuple,
-          typename... Args>
+template <typename CovarFun, typename ThetaMatrix, class RNG, typename TrainTuple, typename PredTuple,
+          typename... Args, require_eigen_t<ThetaMatrix>* = nullptr>
 inline Eigen::VectorXd  // CHECK -- right return type
 laplace_marginal_bernoulli_logit_rng(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta_0,
+    const ThetaMatrix& theta_0,
     CovarFun&& covariance_function,
     RNG& rng, std::ostream* msgs = nullptr,
     TrainTuple&& train_tuple = std::tuple<>(), PredTuple&& pred_tuple = std::tuple<>(),

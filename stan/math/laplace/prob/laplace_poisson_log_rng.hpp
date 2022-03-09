@@ -18,11 +18,11 @@ namespace math {
  * from the gaussian approximation of p(theta | y, phi)
  * where the likelihood is a Poisson with a log link.
  */
-template <typename CovarFun, typename T1, class RNG, typename TrainTuple, typename PredTuple,
-          typename... Args>
+template <typename CovarFun, typename ThetaMatrix, class RNG, typename TrainTuple, typename PredTuple,
+          typename... Args, require_eigen_t<ThetaMatrix>* = nullptr>
 inline Eigen::VectorXd laplace_marginal_tol_poisson_log_rng(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta_0,
+    const ThetaMatrix& theta_0,
     CovarFun&& covariance_function,
     RNG& rng, std::ostream* msgs = nullptr,
     const double tolerance = 1e-6, const long int max_num_steps = 100,
@@ -43,12 +43,13 @@ inline Eigen::VectorXd laplace_marginal_tol_poisson_log_rng(
 /**
  * Overload for case where user passes exposure, ye.
  */
-template <typename CovarFun, typename T1, class RNG,
-          typename TrainTuple, typename PredTuple, typename... Args>
+template <typename CovarFun, typename ThetaMatrix, class RNG,
+          typename TrainTuple, typename PredTuple, typename... Args,
+          require_eigen_t<ThetaMatrix>* = nullptr>
 inline Eigen::VectorXd  // CHECK -- right return type
 laplace_marginal_tol_poisson_log_rng(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    const Eigen::VectorXd& ye, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta_0,
+    const Eigen::VectorXd& ye, const ThetaMatrix& theta_0,
     CovarFun&& covariance_function,
     RNG& rng, std::ostream* msgs = nullptr,
     const double tolerance = 1e-6, const long int max_num_steps = 100,
@@ -69,11 +70,11 @@ laplace_marginal_tol_poisson_log_rng(
       max_steps_line_search, std::forward<TrainTuple>(train_tuple), std::forward<PredTuple>(pred_tuple), std::forward<Args>(args)...);
 }
 
-template <typename CovarFun, typename T1, class RNG, typename TrainTuple, typename PredTuple,
-          typename... Args>
+template <typename CovarFun, typename ThetaMatrix, class RNG, typename TrainTuple, typename PredTuple,
+          typename... Args, require_eigen_t<ThetaMatrix>* = nullptr>
 inline Eigen::VectorXd laplace_marginal_poisson_log_rng(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta_0,
+    const ThetaMatrix& theta_0,
     CovarFun&& covariance_function,
     RNG& rng, std::ostream* msgs = nullptr,
     TrainTuple&& train_tuple = std::tuple<>(),
@@ -95,12 +96,12 @@ inline Eigen::VectorXd laplace_marginal_poisson_log_rng(
 /**
  * Overload for case where user passes exposure, ye.
  */
-template <typename CovarFun, typename T1, class RNG,
-          typename TrainTuple, typename PredTuple, typename... Args>
+template <typename CovarFun, typename ThetaMatrix, class RNG,
+          typename TrainTuple, typename PredTuple, typename... Args, require_eigen_t<ThetaMatrix>* = nullptr>
 inline Eigen::VectorXd  // CHECK -- right return type
 laplace_marginal_poisson_log_rng(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    const Eigen::VectorXd& ye, const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta_0,
+    const Eigen::VectorXd& ye, const ThetaMatrix& theta_0,
     CovarFun&& covariance_function,
     RNG& rng, std::ostream* msgs = nullptr,
     TrainTuple&& train_tuple = std::tuple<>(),

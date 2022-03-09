@@ -23,13 +23,14 @@ namespace math {
  * are drawn for covariates x_pred.
  * To sample the "original" theta's, set x_pred = x.
  */
-template <typename T_theta, typename T_eta, typename D, typename CovarFun,
-          class RNG, typename TrainTuple, typename PredTuple, typename... Args>
+template <typename ThetaMatrix, typename EtaMatrix, typename D, typename CovarFun,
+          class RNG, typename TrainTuple, typename PredTuple, typename... Args,
+          require_all_eigen_t<ThetaMatrix, EtaMatrix>* = nullptr>
 inline Eigen::VectorXd  // CHECK -- right return type -- It's not this need to
                         // return a std::vector<> :(
 laplace_base_rng(D&& diff_likelihood, CovarFun&& covariance_function,
-                 const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta,
-                 const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta_0,
+                 const ThetaMatrix& eta,
+                 const EtaMatrix& theta_0,
                  RNG& rng,
                  std::ostream* msgs = nullptr, const double tolerance = 1e-6,
                  const long int max_num_steps = 100,

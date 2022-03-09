@@ -46,10 +46,11 @@ namespace math {
  *              efficient computation. Else, a more general but slower solver
  *              is used.
  */
-template <bool propto, typename LFun, typename Eta, typename CovarFun,
-          typename Theta0, typename... Args>
+template <bool propto, typename YVec, typename LFun, typename EtaVec, typename CovarFun,
+          typename Theta0, typename... Args,
+          require_all_eigen_vector_t<YVec, EtaVec, Theta0>* = nullptr>
 inline auto laplace_marginal_lpdf(
-    const Eigen::VectorXd& y, LFun&& L_f, const Eta& eta,
+    const YVec& y, LFun&& L_f, const EtaVec& eta,
     const std::vector<int>& delta_int_L, CovarFun&& K_f, const Theta0& theta_0,
     std::ostream* msgs = nullptr, double tolerance = 1e-6,
     long int max_num_steps = 100, const int hessian_block_size = 0,
@@ -68,11 +69,11 @@ inline auto laplace_marginal_lpdf(
  * is now a std::vector of interger and an Eigen::VectorXd
  * of double is passed as data.
  */
-template <bool propto, typename LFun, typename Eta, typename CovarFun,
+template <bool propto, typename LFun, typename EtaVec, typename CovarFun, typename DeltaLVec,
           typename Theta0, typename... Args>
 inline auto laplace_marginal_lpmf(
-    const std::vector<int>& y, LFun&& L_f, const Eta& eta,
-    const Eigen::VectorXd& delta_L, CovarFun&& K_f, const Theta0& theta_0,
+    const std::vector<int>& y, LFun&& L_f, const EtaVec& eta,
+    const DeltaLVec& delta_L, CovarFun&& K_f, const Theta0& theta_0,
     std::ostream* msgs = nullptr, const double tolerance = 1e-6,
     const long int max_num_steps = 100, const int hessian_block_size = 0,
     const int solver = 1,

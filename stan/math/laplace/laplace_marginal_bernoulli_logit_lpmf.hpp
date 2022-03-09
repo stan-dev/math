@@ -32,10 +32,11 @@ namespace math {
  * @param[in] max_num_steps maximum number of steps before the Newton solver
  *            breaks and returns an error.
  */
-template <typename CovarF, typename T0, typename... Args>
+template <typename CovarF, typename ThetaMatrix, typename... Args,
+ require_eigen_t<ThetaMatrix>* = nullptr>
 inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
+    const ThetaMatrix& theta_0,
     CovarF&& covariance_function,
     std::ostream* msgs = nullptr, double tolerance = 1e-6,
     long int max_num_steps = 100, const int hessian_block_size = 0,
@@ -50,10 +51,11 @@ inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
       std::forward<Args>(args)...);
 }
 
-template <typename CovarF, typename T0, typename... Args>
+template <typename CovarF, typename ThetaMatrix, typename... Args,
+ require_eigen_t<ThetaMatrix>* = nullptr>
 inline auto laplace_marginal_bernoulli_logit_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta_0,
+    const ThetaMatrix& theta_0,
     CovarF&& covariance_function,
     std::ostream* msgs = nullptr, Args&&... args) {
   constexpr double tolerance = 1e-6;

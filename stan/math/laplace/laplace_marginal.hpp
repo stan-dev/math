@@ -101,11 +101,12 @@ struct laplace_density_estimates {
  * 7. l_grad the log density of the likelihood.
  *
  */
-template <typename D, typename CovarFun, typename Eta, typename... Args,
-          require_all_st_arithmetic<Eta, Args...>* = nullptr>
+template <typename D, typename CovarFun, typename ThetaVec, typename Eta, typename... Args,
+          require_all_st_arithmetic<Eta, ThetaVec, Args...>* = nullptr,
+          require_eigen_vector_t<ThetaVec>* = nullptr>
 inline laplace_density_estimates laplace_marginal_density_est(
     D&& diff_likelihood, CovarFun&& covariance_function, const Eta& eta,
-    const Eigen::VectorXd& theta_0, std::ostream* msgs = nullptr,
+    const ThetaVec& theta_0, std::ostream* msgs = nullptr,
     const double tolerance = 1e-6, const long int max_num_steps = 100,
     const int hessian_block_size = 0, const int solver = 1,
     const int max_steps_line_search = 0,
@@ -393,12 +394,13 @@ inline laplace_density_estimates laplace_marginal_density_est(
  * @param[in] max_num_steps maximum number of steps for the Newton solver.
  * @return the log maginal density, p(y | phi).
  */
-template <typename D, typename CovarFun, typename Eta, typename Theta0Scalar,
+template <typename D, typename CovarFun, typename Eta, typename ThetaVec,
           typename... Args, require_eigen_t<Eta>* = nullptr,
-          require_arithmetic_t<return_type_t<Eta, Args...>>* = nullptr>
+          require_arithmetic_t<return_type_t<Eta, Args...>>* = nullptr,
+          require_eigen_vector_t<ThetaVec>* = nullptr>
 inline double laplace_marginal_density(
     D&& diff_likelihood, CovarFun&& covariance_function, const Eta& eta,
-    const Eigen::Matrix<Theta0Scalar, Eigen::Dynamic, 1>& theta_0,
+    const ThetaVec& theta_0,
     std::ostream* msgs = nullptr, const double tolerance = 1e-6,
     const long int max_num_steps = 100, const int hessian_block_size = 0,
     const int solver = 1, const int max_steps_line_search = 0, Args&&... args) {
@@ -447,12 +449,13 @@ using is_any_var = disjunction<is_var<scalar_type_t<Types>>...>;
  * @param[in] max_num_steps maximum number of steps for the Newton solver.
  * @return the log maginal density, p(y | phi).
  */
-template <typename D, typename CovarFun, typename Theta0Scalar, typename Eta,
+template <typename D, typename CovarFun, typename ThetaVec, typename Eta,
           typename... Args, require_eigen_t<Eta>* = nullptr,
-          require_var_t<return_type_t<Theta0Scalar, Eta, Args...>>* = nullptr>
+          require_var_t<return_type_t<ThetaVec, Eta, Args...>>* = nullptr,
+          require_eigen_vector_t<ThetaVec>* = nullptr>
 inline auto laplace_marginal_density(
     const D& diff_likelihood, CovarFun&& covariance_function, const Eta& eta,
-    const Eigen::Matrix<Theta0Scalar, Eigen::Dynamic, 1>& theta_0,
+    const ThetaVec& theta_0,
     std::ostream* msgs = nullptr, const double tolerance = 1e-6,
     const long int max_num_steps = 100, const int hessian_block_size = 0,
     const int solver = 1, const int max_steps_line_search = 0, Args&&... args) {
