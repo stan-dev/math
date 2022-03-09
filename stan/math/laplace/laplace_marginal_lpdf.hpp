@@ -46,7 +46,7 @@ namespace math {
  *              efficient computation. Else, a more general but slower solver
  *              is used.
  */
-template <bool propto, typename YVec, typename LFun, typename EtaVec, typename CovarFun,
+template <bool propto = false, typename YVec, typename LFun, typename EtaVec, typename CovarFun,
           typename Theta0, typename... Args,
           require_all_eigen_vector_t<YVec, EtaVec, Theta0>* = nullptr>
 inline auto laplace_marginal_tol_lpdf(
@@ -70,7 +70,7 @@ inline auto laplace_marginal_tol_lpdf(
  * is now a std::vector of interger and an Eigen::VectorXd
  * of double is passed as data.
  */
-template <bool propto, typename LFun, typename EtaVec, typename CovarFun, typename DeltaLVec,
+template <bool propto = false, typename LFun, typename EtaVec, typename CovarFun, typename DeltaLVec,
           typename Theta0, typename... Args>
 inline auto laplace_marginal_tol_lpmf(
     const std::vector<int>& y, LFun&& L_f, const EtaVec& eta,
@@ -86,7 +86,7 @@ inline auto laplace_marginal_tol_lpmf(
       msgs, std::forward<Args>(args)...);
 }
 
-template <bool propto, typename YVec, typename LFun, typename EtaVec, typename CovarFun,
+template <bool propto = false, typename YVec, typename LFun, typename EtaVec, typename CovarFun,
           typename Theta0, typename... Args,
           require_all_eigen_vector_t<YVec, EtaVec, Theta0>* = nullptr>
 inline auto laplace_marginal_lpdf(
@@ -111,7 +111,7 @@ inline auto laplace_marginal_lpdf(
  * is now a std::vector of interger and an Eigen::VectorXd
  * of double is passed as data.
  */
-template <bool propto, typename LFun, typename EtaVec, typename CovarFun, typename DeltaLVec,
+template <bool propto = false, typename LFun, typename EtaVec, typename CovarFun, typename DeltaLVec,
           typename Theta0, typename... Args>
 inline auto laplace_marginal_lpmf(
     const std::vector<int>& y, LFun&& L_f, const EtaVec& eta,
