@@ -21,13 +21,13 @@ template <typename CovarFun, typename ThetaMatrix, class RNG, typename TrainTupl
 inline Eigen::VectorXd  // CHECK -- right return type
 laplace_marginal_tol_bernoulli_logit_rng(
     const std::vector<int>& y, const std::vector<int>& n_samples,
+    const double tolerance, const long int max_num_steps,
+    const int hessian_block_size, const int solver,
+    const int max_steps_line_search,
     const ThetaMatrix& theta_0,
     CovarFun&& covariance_function,
-    RNG& rng, std::ostream* msgs = nullptr,
-    const double tolerance = 1e-6, const long int max_num_steps = 100,
-    const int hessian_block_size = 0, const int solver = 1,
-    const int max_steps_line_search = 0,
-    TrainTuple&& train_tuple = std::tuple<>(), PredTuple&& pred_tuple = std::tuple<>(),
+    RNG& rng, std::ostream* msgs,
+    TrainTuple&& train_tuple, PredTuple&& pred_tuple,
     Args&&... args) {
   Eigen::VectorXd eta_dummy(0);
   return laplace_base_rng(
@@ -45,8 +45,8 @@ laplace_marginal_bernoulli_logit_rng(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     const ThetaMatrix& theta_0,
     CovarFun&& covariance_function,
-    RNG& rng, std::ostream* msgs = nullptr,
-    TrainTuple&& train_tuple = std::tuple<>(), PredTuple&& pred_tuple = std::tuple<>(),
+    RNG& rng, std::ostream* msgs,
+    TrainTuple&& train_tuple, PredTuple&& pred_tuple,
     Args&&... args) {
   constexpr double tolerance = 1e-6;
   constexpr long int max_num_steps = 100;

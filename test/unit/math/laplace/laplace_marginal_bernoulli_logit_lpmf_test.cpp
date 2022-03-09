@@ -50,8 +50,9 @@ TEST(laplace_marginal_bernoulli_logit_lpmf, phi_dim500) {
   // Test with optional arguments.
   double tolerance = 1e-6;
   int max_num_steps = 100;
-  target = laplace_marginal_tol_bernoulli_logit_lpmf(y, n_samples, theta_0, kernel_functor,
-                                                 0, tolerance, max_num_steps, 0, 1, 0, x, phi(0), phi(1));
+  target = laplace_marginal_tol_bernoulli_logit_lpmf(y, n_samples,
+                    tolerance, max_num_steps, 0, 1, 0,
+                    theta_0, kernel_functor, 0, x, phi(0), phi(1));
   EXPECT_NEAR(-195.368, value_of(target), tol);
 
   std::vector<double> g;

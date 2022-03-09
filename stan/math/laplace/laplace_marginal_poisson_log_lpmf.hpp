@@ -34,12 +34,11 @@ template <typename CovarFun, typename ThetaVec, typename... Args,
  require_all_eigen_vector_t<ThetaVec>* = nullptr>
 inline auto laplace_marginal_tol_poisson_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
+    double tolerance, long int max_num_steps, const int hessian_block_size,
+    const int solver, const int max_steps_line_search,
     const ThetaVec& theta_0,
     CovarFun&& covariance_function,
-    std::ostream* msgs = nullptr, double tolerance = 1e-6,
-    long int max_num_steps = 100, const int hessian_block_size = 0,
-    const int solver = 1,
-    const int max_steps_line_search = 0, Args&&... args) {
+    std::ostream* msgs, Args&&... args) {
   // TODO: change this to a VectorXd once we have operands & partials.
   Eigen::Matrix<double, Eigen::Dynamic, 1> eta_dummy(0);
   return laplace_marginal_density(
@@ -55,12 +54,13 @@ template <typename CovarFun, typename YeVec, typename ThetaVec, typename... Args
 inline auto laplace_marginal_tol_poisson_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     const YeVec& ye,
+    double tolerance,
+    long int max_num_steps, const int hessian_block_size,
+    const int solver,
+    const int max_steps_line_search,
     const ThetaVec& theta_0,
     CovarFun&& covariance_function,
-    std::ostream* msgs = nullptr, double tolerance = 1e-6,
-    long int max_num_steps = 100, const int hessian_block_size = 0,
-    const int solver = 1,
-    const int max_steps_line_search = 0, Args&&... args) {
+    std::ostream* msgs, Args&&... args) {
   // TODO: change this to a VectorXd once we have operands & partials.
   Eigen::Matrix<double, -1, 1> eta_dummy(0);
   Eigen::VectorXd y_vec = to_vector(y);
@@ -80,7 +80,7 @@ inline auto laplace_marginal_poisson_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     const ThetaVec& theta_0,
     CovarFun&& covariance_function,
-    std::ostream* msgs = nullptr, Args&&... args) {
+    std::ostream* msgs, Args&&... args) {
   // TODO: change this to a VectorXd once we have operands & partials.
   Eigen::Matrix<double, Eigen::Dynamic, 1> eta_dummy(0);
   constexpr double tolerance = 1e-6;
@@ -101,7 +101,7 @@ template <typename CovarFun, typename YeVec, typename ThetaVec, typename... Args
 inline auto laplace_marginal_poisson_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     const YeVec& ye, const ThetaVec& theta_0, CovarFun&& covariance_function,
-    std::ostream* msgs = nullptr, Args&&... args) {
+    std::ostream* msgs, Args&&... args) {
   // TODO: change this to a VectorXd once we have operands & partials.
   Eigen::Matrix<double, -1, 1> eta_dummy(0);
   Eigen::VectorXd y_vec = to_vector(y);
