@@ -50,7 +50,7 @@ laplace_base_rng(D&& diff_likelihood, CovarFun&& covariance_function,
             msgs, tolerance, max_num_steps, hessian_block_size, solver,
             max_steps_line_search, args_val...);
       },
-      std::tuple_cat(train_tuple, args_dbl));
+      std::tuple_cat(std::forward<TrainTuple>(train_tuple), args_dbl));
   auto marginal_density = marginal_density_est.lmd;
   Eigen::SparseMatrix<double> W_r = std::move(marginal_density_est.W_r);
   MatrixXd L = std::move(marginal_density_est.L);
@@ -64,7 +64,7 @@ laplace_base_rng(D&& diff_likelihood, CovarFun&& covariance_function,
       [&covariance_function, &msgs](auto&&... args_val) {
         return covariance_function(args_val..., msgs);
       },
-      std::tuple_cat(pred_tuple, args_dbl));
+      std::tuple_cat(std::forward<PredTuple>(pred_tuple), args_dbl));
 
   VectorXd pred_mean = covariance_pred * l_grad.head(theta_0.rows());
 
