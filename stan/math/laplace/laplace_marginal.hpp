@@ -466,7 +466,11 @@ inline auto laplace_marginal_density(
       [](auto&&... args) { return std::make_tuple(to_ref(value_of(args))...); },
       args_refs);
   auto args_arena = stan::math::filter_map<has_var_scalar_type>(
-      [](auto&& arg) { return to_arena(arg); }, args...);
+      [](auto&& arg) {
+        auto xx = to_arena(arg);
+        static_assert(has_var_scalar_type<std::decay_t<decltype(arg)>>::value, "Yikes!!");
+        return xx;
+      }, args...);
 
   auto eta_arena = to_arena(eta);
 
@@ -560,7 +564,8 @@ inline auto laplace_marginal_density(
     }
     auto arg_adj_arena = stan::math::filter_map<has_var_scalar_type>(
         [](auto&& arg) {
-          auto xx = to_arena(adjoint_of(arg));
+          auto xx = to_arena(get_adj(arg));
+          static_assert(has_var_scalar_type<std::decay_t<decltype(arg)>>::value, "Yikes 2!!");
           return xx;
         },
         args_refs);
@@ -605,7 +610,7 @@ inline auto laplace_marginal_density(
     }
     auto arg_adj_arena = stan::math::filter_map<has_var_scalar_type>(
         [](auto&& arg) {
-          auto xx = to_arena(adjoint_of(arg));
+          auto xx = to_arena(get_adj(arg));
           return xx;
         },
         args_refs);

@@ -45,6 +45,26 @@ auto& adjoint_of(const T& x) {
   return x.adj();
 }
 
+template <typename T, require_var_t<T>* = nullptr>
+auto& get_adj(const T& x) {
+  return x.adj();
+}
+
+template <typename T, require_eigen_vt<is_var, T>* = nullptr>
+auto get_adj(const T& x) {
+  return x.adj();
+}
+
+template <typename T, require_st_var<T>* = nullptr,
+ require_std_vector_t<T>* = nullptr>
+auto get_adj(const T& x) {
+  std::vector<promote_scalar_t<double, value_type_t<T>>> res(x.size());
+  for (size_t i = 0; i < x.size(); ++i) {
+      res[i] = get_adj(x[i]);
+  }
+  return res;
+}
+
 /**
  * Returns a reference to a variable's adjoint. If the input object is not var,
  * it does not have an adjoint and this returns a dummy object. It defines
