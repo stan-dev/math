@@ -132,7 +132,7 @@ pipeline {
                         find stan test -name '*.hpp' -o -name '*.cpp' | xargs -n20 -P${PARALLEL} clang-format -i
                         if [[ `git diff` != "" ]]; then
                             git add stan test
-                            git commit --author=flatiron-jenkins -m "[Jenkins] auto-formatting by `clang-format --version`"
+                            git commit --author='Stan BuildBot <mc.stanislaw@gmail.com>' -m "[Jenkins] auto-formatting by `clang-format --version`"
                             git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${fork()}/math.git ${branchName()}
                             echo "Exiting build because clang-format found changes."
                             echo "Those changes are now found on stan-dev/math under branch ${branchName()}"
@@ -477,7 +477,7 @@ pipeline {
                         git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git :gh-pages
                         git checkout --orphan gh-pages
                         git add -f doc
-                        git commit --author=flatiron-jenkins -m "auto generated docs from Jenkins"
+                        git commit --author='Stan BuildBot <mc.stanislaw@gmail.com>' -m "auto generated docs from Jenkins"
                         git subtree push --prefix doc/api/html https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git gh-pages
                         """
                 }
@@ -486,7 +486,7 @@ pipeline {
         }
 
     }
-    // Below lines are commented to avoid spamming emails during migration/debug
+
     post {
         always {
             node("linux") {
