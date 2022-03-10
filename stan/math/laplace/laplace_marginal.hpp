@@ -106,10 +106,10 @@ template <typename D, typename CovarFun, typename ThetaVec, typename Eta, typena
           require_eigen_vector_t<ThetaVec>* = nullptr>
 inline laplace_density_estimates laplace_marginal_density_est(
     D&& diff_likelihood, CovarFun&& covariance_function, const Eta& eta,
-    const ThetaVec& theta_0, std::ostream* msgs = nullptr,
-    const double tolerance = 1e-6, const long int max_num_steps = 100,
-    const int hessian_block_size = 0, const int solver = 1,
-    const int max_steps_line_search = 0,
+    const ThetaVec& theta_0, std::ostream* msgs,
+    const double tolerance, const long int max_num_steps,
+    const int hessian_block_size, const int solver,
+    const int max_steps_line_search,
     Args&&... covar_args) {
   using Eigen::MatrixXd;
   using Eigen::SparseMatrix;
@@ -401,9 +401,9 @@ template <typename D, typename CovarFun, typename Eta, typename ThetaVec,
 inline double laplace_marginal_density(
     D&& diff_likelihood, CovarFun&& covariance_function, const Eta& eta,
     const ThetaVec& theta_0,
-    std::ostream* msgs = nullptr, const double tolerance = 1e-6,
-    const long int max_num_steps = 100, const int hessian_block_size = 0,
-    const int solver = 1, const int max_steps_line_search = 0, Args&&... args) {
+    std::ostream* msgs, const double tolerance,
+    const long int max_num_steps, const int hessian_block_size,
+    const int solver, const int max_steps_line_search, Args&&... args) {
   return laplace_marginal_density_est(
              diff_likelihood, covariance_function, eta, value_of(theta_0), msgs,
              tolerance, max_num_steps, hessian_block_size, solver,
@@ -456,9 +456,9 @@ template <typename D, typename CovarFun, typename ThetaVec, typename Eta,
 inline auto laplace_marginal_density(
     const D& diff_likelihood, CovarFun&& covariance_function, const Eta& eta,
     const ThetaVec& theta_0,
-    std::ostream* msgs = nullptr, const double tolerance = 1e-6,
-    const long int max_num_steps = 100, const int hessian_block_size = 0,
-    const int solver = 1, const int max_steps_line_search = 0, Args&&... args) {
+    std::ostream* msgs, const double tolerance,
+    const long int max_num_steps, const int hessian_block_size,
+    const int solver, const int max_steps_line_search, Args&&... args) {
   auto args_refs = stan::math::apply(
       [](auto&&... args) { return std::make_tuple(to_ref(args)...); },
       std::forward_as_tuple(args...));

@@ -32,12 +32,12 @@ laplace_base_rng(D&& diff_likelihood, CovarFun&& covariance_function,
                  const ThetaMatrix& eta,
                  const EtaMatrix& theta_0,
                  RNG& rng,
-                 std::ostream* msgs = nullptr, const double tolerance = 1e-6,
-                 const long int max_num_steps = 100,
-                 const int hessian_block_size = 0, const int solver = 1,
-                 const int max_steps_line_search = 0,
-                 TrainTuple&& train_tuple = std::tuple<>(),
-                PredTuple&& pred_tuple = std::tuple<>(), Args&&... args) {
+                 std::ostream* msgs, const double tolerance ,
+                 const long int max_num_steps,
+                 const int hessian_block_size, const int solver,
+                 const int max_steps_line_search,
+                 TrainTuple&& train_tuple,
+                PredTuple&& pred_tuple, Args&&... args) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
 

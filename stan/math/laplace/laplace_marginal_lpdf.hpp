@@ -116,7 +116,7 @@ template <bool propto = false, typename LFun, typename EtaVec, typename CovarFun
 inline auto laplace_marginal_lpmf(
     const std::vector<int>& y, LFun&& L_f, const EtaVec& eta,
     const DeltaLVec& delta_L, const Theta0& theta_0, CovarFun&& K_f,
-    std::ostream* msgs = nullptr, Args&&... args) {
+    std::ostream* msgs, Args&&... args) {
   constexpr double tolerance = 1e-6;
   constexpr long int max_num_steps = 100;
   constexpr int hessian_block_size = 0;
