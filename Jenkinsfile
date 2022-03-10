@@ -131,10 +131,8 @@ pipeline {
                         clang-format --version
                         find stan test -name '*.hpp' -o -name '*.cpp' | xargs -n20 -P${PARALLEL} clang-format -i
                         if [[ `git diff` != "" ]]; then
-                            git config user.email "mc.stanislaw@gmail.com"
-                            git config user.name "Stan Jenkins"
                             git add stan test
-                            git commit -m "[Jenkins] auto-formatting by `clang-format --version`"
+                            git commit --author=flatiron-jenkins -m "[Jenkins] auto-formatting by `clang-format --version`"
                             git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${fork()}/math.git ${branchName()}
                             echo "Exiting build because clang-format found changes."
                             echo "Those changes are now found on stan-dev/math under branch ${branchName()}"
@@ -243,7 +241,12 @@ pipeline {
         }
 
         stage('Full Unit Tests') {
-            agent {  label 'gg-linux'  }
+            agent {
+                docker {
+                    image 'stanorg/ci:gpu'
+                    label 'linux'
+                }
+            }
             when {
                 expression {
                     !skipRemainingStages
@@ -251,12 +254,6 @@ pipeline {
             }
             steps {
                 unstash 'MathSetup'
-                // Set Stan local compiler flags to use the new TBB interface
-                // sh """
-                //     export TBB_INC=\$(pwd)/lib/tbb_2020.3/include
-                //     export TBB_LIB=\$(pwd)/lib/tbb
-                //     echo TBB_INTERFACE_NEW=true > make/local
-                // """
 	            sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                 script {
                     if (isUnix()) {
@@ -475,14 +472,12 @@ pipeline {
                     sh """#!/bin/bash
                         set -x
                         make doxygen
-                        git config user.email "mc.stanislaw@gmail.com"
-                        git config user.name "Stan Jenkins"
                         git checkout --detach
                         git branch -D gh-pages
                         git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git :gh-pages
                         git checkout --orphan gh-pages
                         git add -f doc
-                        git commit -m "auto generated docs from Jenkins"
+                        git commit --author=flatiron-jenkins -m "auto generated docs from Jenkins"
                         git subtree push --prefix doc/api/html https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git gh-pages
                         """
                 }
