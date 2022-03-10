@@ -46,7 +46,7 @@ inline std::vector<T> cumulative_sum(const std::vector<T>& x) {
  * @return Cumulative sum of values.
  */
 template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr,
- require_not_st_var<EigVec>* = nullptr>
+          require_not_st_var<EigVec>* = nullptr>
 inline auto cumulative_sum(const EigVec& m) {
   using T_scalar = value_type_t<EigVec>;
   Eigen::Matrix<T_scalar, EigVec::RowsAtCompileTime, EigVec::ColsAtCompileTime>
