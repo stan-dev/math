@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <unsupported/Eigen/FFT>
+#include <Eigen/Dense>
 #include <complex>
 #include <type_traits>
 #include <vector>
@@ -70,85 +71,46 @@ namespace math {
   }
 
   /**
-   * Return the two-dimensional discrete Fourier transform to the
-   * specified complex matrix.  Given a complex matrix (M x N) matrix
-   * x, the definition of the 2D discrete Fourier transform is
-   *
-   * ```
-   * y[m, n] = SUM_{i < M, j < N} x[i, j] 
-   *                              * exp(i * m * -2 * pi * sqrt(-1) / N)
-   *                              * exp(j * n * -2 * pi * sqrt(-1) / M)
-   * ```
-   *
-   * Another way to view the 2D FFT is as first running a 1D FFT on
-   * each row, then running a 1D FFT on each resulting column.
+   * Return the two-dimensional discrete Fourier transform of the
+   * specified complex matrix.  The 2D discrete Fourier transform
+   * first runs the DFT on the each row, then on each column of the
+   * result.
    * 
    * @tparam M type of complex matrix argument
    * @param x complex time-domain matrix 
    * @return discrete 2D Fourier transform of `x`
    */
-  template <typename M> // , require_eigen_matrix_dynamic_t<is_complex, M>* = nullptr>
+  template <typename M, require_eigen_vt<is_complex, M>* = nullptr>
   inline Eigen::Matrix<scalar_type_t<M>, -1, -1> fft2(const M& x) {
-    if (x.size() <= 1) return x;
-    int rows = x.rows();
-    int cols = x.cols();
-    Eigen::FFT<typename scalar_type_t<M>::value_type> fft;
-    Eigen::Matrix<scalar_type_t<M>, -1, -1> y(rows, cols);
-    Eigen::Matrix<scalar_type_t<M>, -1, 1> v_temp;
-    if (cols > 1) {
-      for (int i = 0; i < rows; ++i) {
-	// implicit transposition by assignment
-	Eigen::Matrix<scalar_type_t<M>, -1, 1> row_i_t = x.row(i); 
-	fft.fwd(v_temp, row_i_t);
-	y.row(i) = v_temp;
-      }
-    }
-    if (rows > 1) {
-      for (int j = 0; j < cols; ++j) {
-	Eigen::Matrix<scalar_type_t<M>, -1, 1> col_j = y.col(j);
-	fft.fwd(v_temp, col_j);
-	y.col(j) = v_temp;
-      }
-    }
+    Eigen::Matrix<scalar_type_t<M>, -1, -1> y(x.rows(), x.cols());
+    for (int i = 0; i < y.rows(); ++i)
+      y.row(i) = fft(x.row(i));
+    for (int j = 0; j < y.cols(); ++j)
+      y.col(j) = fft(y.col(j).eval());
     return y;
   }
 
-  // /**
-  //  * Return the two-dimensional discrete Fourier transform to the
-  //  * specified complex matrix.  Given a complex matrix (M x N) matrix
-  //  * x, the definition of the 2D discrete Fourier transform is
-  //  *
-  //  * ```
-  //  * x[m, n] = SUM_{i < M, j < N} y[i, j] 
-  //  *                              * exp(i * m * 2 * pi * sqrt(-1) / N)
-  //  *                              * exp(j * n * 2 * pi * sqrt(-1) / M)
-  //  * ```
-  //  *
-  //  * Another way to view the 2D inverse FFT is as first running a 1D
-  //  * inverse FFT on each row, then running a 1D invese FFT on each
-  //  * resulting column.
-  //  * 
-  //  * @tparam M type of complex matrix argument
-  //  * @param y complex frequency-domain matrix 
-  //  * @return inverse discrete 2D Fourier transform of `x`
-  //  */
-  // template <typename M, require_eigen_matrix_vt<is_complex, M>* = nullptr>
-  // inline Eigen::Matrix<scalar_type_t<V>, -1, -1> inv_fft2(const M& y) {
-  //   int rows = y.rows();
-  //   int cols = y.cols();
-  //   Eigen::FFT<typename scalar_type_t<V>::value_type> fft;
-  //   Eigen::Matrix<scalar_type_t<V>, -1, -1> x;
-  //   Eigen::Matrix<scalar_type_t<V>, -1, 1> v_temp;
-  //   for (i = 0; i < rows; ++i) {
-  //     fft.inv(v_temp, y.row(i));
-  //     x.row(i) = v_temp;
-  //   }
-  //   for (j = 0; j < cols; ++j) {
-  //     fft.inv(v_temp, x.col(j));
-  //     x.col(j) = v_temp;
-  //   }
-  //   return x;
-  // }
+  /**
+   * Return the two-dimensional inverse discrete Fourier transform of
+   * the specified complex matrix.  The 2D inverse discrete Fourier
+   * transform first runs the 1D inverse Fourier transform on the
+   * columns, and then on the resulting rows.  The composition of the
+   * FFT and inverse FFT (or vice-versa) is the identity.
+   * 
+   * @tparam M type of complex matrix argument
+   * @param x complex frequency-domain matrix 
+   * @return inverse discrete 2D Fourier transform of `x`
+   */
+  template <typename M, require_eigen_vt<is_complex, M>* = nullptr>
+  inline Eigen::Matrix<scalar_type_t<M>, -1, -1> inv_fft2(const M& y) {
+    Eigen::Matrix<scalar_type_t<M>, -1, -1> x(y.rows(), y.cols());
+    for (int j = 0; j < x.cols(); ++j)
+      x.col(j) = inv_fft(y.col(j));
+    for (int i = 0; i < x.rows(); ++i)
+      x.row(i) = inv_fft(x.row(i));
+    return y;
+  }
+
   
 }  // namespace math
 }  // namespace stan
