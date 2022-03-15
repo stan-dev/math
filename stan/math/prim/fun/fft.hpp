@@ -22,10 +22,10 @@ namespace math {
    * vector `y[0:N-1]` by 
    *
    * ```
-   * y[n] = SUM_{i < N} x[i] * exp(n * i * -2 * pi * sqrt(-1) / N)
+   * y[n] = SUM_{i < N} x[i] * exp(-n * i * 2 * pi * sqrt(-1) / N)
    * ```
    * 
-   * If `y` is of size zero, the result is a size zero vector.
+   * If the input is of size zero, the result is a size zero vector.
    *
    * @tparam V type of complex vector argument
    * @param x complex time domain vector to transform
@@ -53,10 +53,9 @@ namespace math {
    * x[n] = SUM_{i < N} y[i] * exp(n * i * 2 * pi * sqrt(-1) / N)
    * ```
    *
+   * If the input is of size zero, the result is a size zero vector.
    * The only difference between the discrete DFT and its inverse is
    * the sign of the exponent.
-   *
-   * If the input is size zero, the output will be size zero.
    *
    * @tparam V type of complex vector argument
    * @param y complex frequency domain vector to inverse transform
@@ -86,7 +85,7 @@ namespace math {
     for (int i = 0; i < y.rows(); ++i)
       y.row(i) = fft(x.row(i));
     for (int j = 0; j < y.cols(); ++j)
-      y.col(j) = fft(y.col(j).eval());
+      y.col(j) = fft(y.col(j));
     return y;
   }
 
@@ -108,9 +107,8 @@ namespace math {
       x.col(j) = inv_fft(y.col(j));
     for (int i = 0; i < x.rows(); ++i)
       x.row(i) = inv_fft(x.row(i));
-    return y;
+    return x;
   }
-
   
 }  // namespace math
 }  // namespace stan
