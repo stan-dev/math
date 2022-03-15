@@ -44,33 +44,44 @@ struct foo {
 TEST(mathMixFun, fft) {
   typedef Eigen::Matrix<std::complex<double>, -1, 1> cvec_t;
   typedef std::complex<double> c_t;
-  auto f = [](const auto& x) {
+  int n = 0; int i = 0;
+  auto f = [&](const auto& x) {
     using stan::math::fft;
-    return fft(x);
+    return i ? real(fft(x)(n)) : imag(fft(x)(n));
   };
-  
+
   cvec_t x0(0);
-  stan::test::expect_ad(f, x0);
+  EXPECT_EQ(0, stan::math::fft(x0).size());  // no AD to test
 
   cvec_t x1(1);
   x1[0] = { 1, 2 };
-  stan::test::expect_ad(f, x1);
+  for (i = 0; i <= 1; ++i)
+    for (n = 0; n <= 0; ++n)
+      stan::test::expect_ad(f, x1);
 
   cvec_t x2(2);
-  x2[0] = { 1, 2};
+  x2[0] = {1, 2};
   x2[1] = {-1.3, 2.9};
-  
-  Eigen::VectorXd x(6);
-  x << 1, -1.3, 2.9, 14.7, -12.9, -4.8;
+  for (i = 0; i <= 1; ++i)
+    for (n = 0; n <= 1; ++n)
+      stan::test::expect_ad(f, x2);
 
-  auto xcv = to_complex_vec(x);
-  stan::test::expect_ad(f, xcv);
+  Eigen::VectorXcd x3(3);
+  x3[0] = {1, -1.3};
+  x3[1] = {2.9, 14.7};
+  x3[2] = {-12.9, -4.8};
+  for (i = 0; i <= 1; ++i)
+    for (n = 0; n <= 2; ++n)
+      stan::test::expect_ad(f, x3);
 
-  Eigen::VectorXd gx;
-  Eigen::MatrixXd J;
-  foo g;
-  stan::math::jacobian(g, x, gx, J);
-  std::cout << "J = " << std::endl << J << std::endl;
+  Eigen::VectorXcd x4(4);
+  x4[0] = {1, -1.3};
+  x4[1] = {-2.9, 14.7};
+  x4[2] = {-12.9, -4.8};
+  x4[3] = {8.398, 9.387};
+  for (i = 0; i <= 1; ++i)
+    for (n = 0; n <= 3; ++n)
+      stan::test::expect_ad(f, x4);
   
 }
 
