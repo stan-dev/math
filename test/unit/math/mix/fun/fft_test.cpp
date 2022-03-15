@@ -53,7 +53,6 @@ void expect_inv_fft(const Eigen::VectorXcd& x) {
       stan::test::expect_ad(g, x);
 }
 
-
 TEST(mathMixFun, invFft) {
   typedef Eigen::VectorXcd cvec_t;
 
@@ -68,13 +67,13 @@ TEST(mathMixFun, invFft) {
   x2[0] = {1, 2};
   x2[1] = {-1.3, 2.9};
   expect_inv_fft(x2);
-  
+
   Eigen::VectorXcd x3(3);
   x3[0] = {1, -1.3};
   x3[1] = {2.9, 14.7};
   x3[2] = {-12.9, -4.8};
   expect_inv_fft(x3);
-  
+
   Eigen::VectorXcd x4(4);
   x4[0] = {1, -1.3};
   x4[1] = {-2.9, 14.7};
@@ -94,7 +93,7 @@ void expect_fft2(const Eigen::MatrixXcd& x) {
   for (int i = 0; i < 2; ++i)
     for (int n = 0; n < x.cols(); ++n)
       for (int m = 0; m < x.rows(); ++m)
-	stan::test::expect_ad(g, x);
+        stan::test::expect_ad(g, x);
 }
 
 TEST(mathMixFun, fft2) {
@@ -104,7 +103,7 @@ TEST(mathMixFun, fft2) {
   expect_fft2(x00);
 
   cmat_t x11(1, 1);
-  x11(0, 0) = { 1, 2 };
+  x11(0, 0) = {1, 2};
   expect_fft2(x11);
 
   cmat_t x21(2, 1);
@@ -130,7 +129,7 @@ TEST(mathMixFun, fft2) {
   x33(2, 1) = {-2.875, -2.999};
   x33(2, 2) = {12.98, 14.5555};
   expect_fft2(x33);
-}  
+}
 
 void expect_inv_fft2(const Eigen::MatrixXcd& x) {
   int i = 0;
@@ -143,7 +142,7 @@ void expect_inv_fft2(const Eigen::MatrixXcd& x) {
   for (int i = 0; i < 2; ++i)
     for (int n = 0; n < x.cols(); ++n)
       for (int m = 0; m < x.rows(); ++m)
-	stan::test::expect_ad(g, x);
+        stan::test::expect_ad(g, x);
 }
 
 TEST(mathMixFun, inv_fft2) {
@@ -153,7 +152,7 @@ TEST(mathMixFun, inv_fft2) {
   expect_inv_fft2(x00);
 
   cmat_t x11(1, 1);
-  x11(0, 0) = { 1, 2 };
+  x11(0, 0) = {1, 2};
   expect_inv_fft2(x11);
 
   cmat_t x21(2, 1);
@@ -179,5 +178,4 @@ TEST(mathMixFun, inv_fft2) {
   x33(2, 1) = {-2.875, -2.999};
   x33(2, 2) = {12.98, 14.5555};
   expect_inv_fft2(x33);
-}  
-
+}

@@ -25,7 +25,7 @@ TEST(primFun, fft) {
   EXPECT_NEAR(imag(y1b[0]), 1.98555 * 2, 1e-6);
 
   cv_t x(3);
-  x <<  c_t(1, -2), c_t(-3, 5), c_t(-7, 11);
+  x << c_t(1, -2), c_t(-3, 5), c_t(-7, 11);
   cv_t y = fft(x);
   EXPECT_EQ(3, y.size());
   EXPECT_NEAR(real(y[0]), -9, 1e-6);
@@ -62,9 +62,10 @@ TEST(primFun, inv_fft) {
   EXPECT_EQ(1, x1.size());
   EXPECT_EQ(real(x1[0]), -3.247);
   EXPECT_EQ(imag(x1[0]), 1.98555);
-  
+
   cv_t y(3);
-  y <<  c_t(-9, 14), c_t(0.80384758, -13.46410162), c_t(11.19615242, -6.53589838);
+  y << c_t(-9, 14), c_t(0.80384758, -13.46410162),
+      c_t(11.19615242, -6.53589838);
   cv_t x = inv_fft(y);
   EXPECT_EQ(3, y.size());
   EXPECT_NEAR(real(x[0]), 1, 1e-6);
@@ -106,10 +107,8 @@ TEST(primFun, fft2) {
   EXPECT_NEAR(-4.1, imag(y12(0, 1)), 1e-6);
 
   cm_t x33(3, 3);
-  x33 <<
-    c_t(1, 2), c_t(3, -1.4), c_t(2, 1),
-    c_t(3, -9), c_t(2, -1.3), c_t(3.9, -1.8),
-    c_t(13, -1.8), c_t(1.3, 1.9), c_t(-2.2, -2.2);
+  x33 << c_t(1, 2), c_t(3, -1.4), c_t(2, 1), c_t(3, -9), c_t(2, -1.3),
+      c_t(3.9, -1.8), c_t(13, -1.8), c_t(1.3, 1.9), c_t(-2.2, -2.2);
   cm_t y33 = fft2(x33);
   EXPECT_EQ(3, y33.rows());
   EXPECT_EQ(3, y33.cols());
@@ -136,8 +135,8 @@ TEST(primFun, fft2) {
 }
 
 void expect_complex_matrix_float_eq(
-        const Eigen::Matrix<std::complex<double>, -1, -1>& x,
-	const Eigen::Matrix<std::complex<double>, -1, -1>& y) {
+    const Eigen::Matrix<std::complex<double>, -1, -1>& x,
+    const Eigen::Matrix<std::complex<double>, -1, -1>& y) {
   EXPECT_EQ(x.rows(), y.rows());
   EXPECT_EQ(x.cols(), y.cols());
   for (int j = 0; j < y.cols(); ++j) {
@@ -152,8 +151,8 @@ TEST(primFunFFT, invfft2) {
   typedef std::complex<double> c_t;
   typedef Eigen::Matrix<std::complex<double>, -1, -1> cm_t;
   using stan::math::fft2;
-  using stan::math::inv_fft2;
   using stan::math::inv_fft;
+  using stan::math::inv_fft2;
 
   // reference answers calculated using R
   cm_t x(0, 0);
@@ -172,12 +171,10 @@ TEST(primFunFFT, invfft2) {
   cm_t y13 = inv_fft2(x13);
   cm_t y13copy = inv_fft(x13.row(0));
   expect_complex_matrix_float_eq(y13, y13copy.transpose());
-  
+
   cm_t x33(3, 3);
-  x33 <<
-    c_t(1, 2), c_t(3, -1.4), c_t(2, 1),
-    c_t(3, -9), c_t(2, -1.3), c_t(3.9, -1.8),
-    c_t(13, -1.8), c_t(1.3, 1.9), c_t(-2.2, -2.2);
+  x33 << c_t(1, 2), c_t(3, -1.4), c_t(2, 1), c_t(3, -9), c_t(2, -1.3),
+      c_t(3.9, -1.8), c_t(13, -1.8), c_t(1.3, 1.9), c_t(-2.2, -2.2);
   cm_t y33 = fft2(x33);
 
   // check versus results from R
