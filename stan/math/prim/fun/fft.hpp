@@ -97,7 +97,7 @@ namespace math {
    * FFT and inverse FFT (or vice-versa) is the identity.
    * 
    * @tparam M type of complex matrix argument
-   * @param x complex frequency-domain matrix 
+   * @param y complex frequency-domain matrix 
    * @return inverse discrete 2D Fourier transform of `x`
    */
   template <typename M, require_eigen_vt<is_complex, M>* = nullptr>
