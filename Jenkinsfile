@@ -127,14 +127,14 @@ pipeline {
                     usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                     sh """#!/bin/bash
                         set -x
+                        git config user.email "mc.stanislaw@gmail.com"
+                        git config user.name "Stan Jenkins"
                         git checkout -b ${branchName()}
                         clang-format --version
                         find stan test -name '*.hpp' -o -name '*.cpp' | xargs -n20 -P${PARALLEL} clang-format -i
                         if [[ `git diff` != "" ]]; then
-                            git config user.email "mc.stanislaw@gmail.com"
-                            git config user.name "Stan Jenkins"
                             git add stan test
-                            git commit -m "[Jenkins] auto-formatting by `clang-format --version`"
+                            git commit --author='Stan BuildBot <mc.stanislaw@gmail.com>' -m "[Jenkins] auto-formatting by `clang-format --version`"
                             git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${fork()}/math.git ${branchName()}
                             echo "Exiting build because clang-format found changes."
                             echo "Those changes are now found on stan-dev/math under branch ${branchName()}"
@@ -256,18 +256,12 @@ pipeline {
             }
             steps {
                 unstash 'MathSetup'
-                // Set Stan local compiler flags to use the new TBB interface
-                sh """
-                    export TBB_INC=\$(pwd)/lib/tbb_2020.3/include
-                    export TBB_LIB=\$(pwd)/lib/tbb
-                    echo TBB_INTERFACE_NEW=true > make/local
-                """
 	            sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                 script {
                     if (isUnix()) {
-                        runTests("test/unit/math/test_ad_test.cpp", false)
+                        runTests("test/unit", false)
                     } else {
-                        runTestsWin("test/unit/math/test_ad_test.cpp", true)
+                        runTestsWin("test/unit", true)
                     }
                 }
             }
@@ -300,32 +294,6 @@ pipeline {
                         runTests("test/unit/math/rev/functor")
                     }
                     post { always { retry(3) { deleteDir() } } }
-                }
-
-                stage('OpenCL CPU tests') {
-                    agent { label "gg-linux" }
-                    when {
-                        expression {
-                            !skipOpenCL
-                        }
-                    }
-                    steps {
-                        script {
-                            unstash 'MathSetup'
-                            sh """
-                                echo CXX=${CLANG_CXX} -Werror > make/local
-                                echo STAN_OPENCL=true>> make/local
-                                echo OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_CPU}>> make/local
-                                echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_CPU}>> make/local
-                                # skips tests that require specific support in OpenCL
-                                echo "ifdef NO_CPU_OPENCL_INT64_BASE_ATOMIC" >> make/local
-                                echo "CXXFLAGS += -DSTAN_TEST_SKIP_REQUIRING_OPENCL_INT64_BASE_ATOMIC" >> make/local
-                                echo "endif" >> make/local
-                            """
-                            runTests("test/unit/math/opencl", false)
-                            runTests("test/unit/multiple_translation_units_test.cpp")
-                        }
-                    }
                 }
 
                 stage('OpenCL GPU tests') {
@@ -513,7 +481,7 @@ pipeline {
                         git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git :gh-pages
                         git checkout --orphan gh-pages
                         git add -f doc
-                        git commit -m "auto generated docs from Jenkins"
+                        git commit --author='Stan BuildBot <mc.stanislaw@gmail.com>' -m "auto generated docs from Jenkins"
                         git subtree push --prefix doc/api/html https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git gh-pages
                         """
                 }
@@ -522,7 +490,7 @@ pipeline {
         }
 
     }
-    // Below lines are commented to avoid spamming emails during migration/debug
+
     post {
         always {
             node("linux") {

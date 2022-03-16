@@ -1,7 +1,13 @@
 Stan Math Library Release Notes
 
 ======================================================================
-v4.3.0
+v4.3.1 (2 March 2022)
+======================================================================
+
+- Fixed a bug with to_matrix(row_vector) and to_matrix(vector) that cause compile-time issues while the result was not stored in a temporary variable.
+
+======================================================================
+v4.3.0 (14 February 2022)
 ======================================================================
 
  - Changed constants to `static constexpr` for efficiency, added Euler's Gamma constant. (#2478)
