@@ -30,6 +30,23 @@ struct variadic_hard_work_1 {
   }
 };
 
+struct variadic_hard_work_2 {
+  variadic_hard_work_2() {}
+  template <typename T1>
+  Eigen::Matrix<stan::return_type_t<T1>, Eigen::Dynamic, 1> operator()(
+      const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta,
+      std::ostream* msgs = 0,
+      int i) const {
+    using result_type = stan::return_type_t<T1>;
+    Eigen::Matrix<result_type, Eigen::Dynamic, 1> res;
+    res.resize(2);
+    res.setZero();
+    res(0) = theta(0) * theta(0);
+    res(1) = 2 * theta(1) * theta(0);
+    return (res);
+  }
+};
+
 
 STAN_REGISTER_MAP_RECT(0, hard_work)
 
@@ -112,7 +129,12 @@ struct rect_adapter {
 //STAN_REGISTER_MAP_RECT(1, rect_adapter<variadic_hard_work_1, ...>)
 
 
-
+// consider to have the same signature as map_rect, but simply add the
+// variadic arguments. Only this way one can have per-job data like a
+// index saying what iteration a respective job needs to process. As
+// an alternative we could pass into the job function the iteration
+// which is being processed (like the start/stop indices for
+// reduce_sum).
 template <int call_id, typename F_variadic,
           typename T_job_param, typename... Args>
 Eigen::Matrix<stan::return_type_t<T_job_param, Args...>, Eigen::Dynamic, 1>
