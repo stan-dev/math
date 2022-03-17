@@ -904,7 +904,8 @@ TEST_F(AgradRev, matrix_compile_time_conversions) {
   using stan::math::var_value;
   Eigen::VectorXd colvec_vals = Eigen::VectorXd::Random(5);
   Eigen::RowVectorXd rowvec_vals = Eigen::VectorXd::Random(5);
-  Eigen::Matrix<double, 1, 1> x11_vals = Eigen::Matrix<double, 1, 1>::Random(1, 1);
+  Eigen::Matrix<double, 1, 1> x11_vals
+      = Eigen::Matrix<double, 1, 1>::Random(1, 1);
   var_value<Eigen::Matrix<double, -1, 1>> colvec = colvec_vals;
   var_value<Eigen::Matrix<double, 1, -1>> rowvec = rowvec_vals;
   colvec = rowvec;
@@ -914,5 +915,4 @@ TEST_F(AgradRev, matrix_compile_time_conversions) {
   rowvec = x11;
   EXPECT_MATRIX_FLOAT_EQ(colvec.val(), rowvec.val());
   EXPECT_MATRIX_FLOAT_EQ(x11.val(), rowvec.val());
-
 }

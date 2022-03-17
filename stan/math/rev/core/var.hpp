@@ -1024,7 +1024,9 @@ class var_value<T, internal::require_matrix_var_value<T>> {
             require_all_plain_type_t<T, S>* = nullptr,
             require_not_same_t<plain_type_t<T>, plain_type_t<S>>* = nullptr>
   inline var_value<T>& operator=(const var_value<S>& other) {
-    static_assert(EIGEN_PREDICATE_SAME_MATRIX_SIZE(T, S), "You mixed matrices of different sizes that are not assignable.");
+    static_assert(
+        EIGEN_PREDICATE_SAME_MATRIX_SIZE(T, S),
+        "You mixed matrices of different sizes that are not assignable.");
     vi_ = new vari_type(other.vi_);
     return *this;
   }
