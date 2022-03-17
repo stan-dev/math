@@ -738,7 +738,7 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
 
  protected:
   template <typename S, require_not_same_t<T, S>* = nullptr>
-  vari_value(const vari_value<S>* x) : val_(x->val_), adj_(x->adj_) {}
+  explicit vari_value(const vari_value<S>* x) : val_(x->val_), adj_(x->adj_) {}
 
  public:
   /**
