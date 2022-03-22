@@ -51,7 +51,7 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch.
  */
 template <bool propto, typename T_y, typename T_x, typename T_alpha,
-          typename T_beta, typename T_scale, require_eigen_t<T_x>* = nullptr>
+          typename T_beta, typename T_scale, require_matrix_t<T_x>* = nullptr>
 return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
     const T_y& y, const T_x& x, const T_alpha& alpha, const T_beta& beta,
     const T_scale& sigma) {
@@ -113,7 +113,7 @@ return_type_t<T_y, T_x, T_alpha, T_beta, T_scale> normal_id_glm_lpdf(
   const auto& beta_val_vec = to_ref_if<!is_constant<T_x>::value>(
       as_column_vector_or_scalar(beta_val));
 
-  T_scale_val inv_sigma = 1 / as_array_or_scalar(sigma_val_vec);
+  T_scale_val inv_sigma = 1.0 / as_array_or_scalar(sigma_val_vec);
 
   // the most efficient way to calculate this depends on template parameters
   double y_scaled_sq_sum;

@@ -92,14 +92,14 @@ return_type_t<T_y_cl, T_scale_succ_cl, T_scale_fail_cl> beta_lpdf(
       static_select<include_summand<propto, T_scale_succ_cl>::value>(
           -lgamma(alpha_val), zero_expr)
       + static_select<include_summand<propto, T_scale_fail_cl>::value>(
-            -lgamma(beta_val), zero_expr)
+          -lgamma(beta_val), zero_expr)
       + static_select<include_summand<propto, T_y_cl, T_scale_succ_cl>::value>(
-            elt_multiply((alpha_val - 1.0), log_y_expr), zero_expr)
+          elt_multiply((alpha_val - 1.0), log_y_expr), zero_expr)
       + static_select<include_summand<propto, T_y_cl, T_scale_fail_cl>::value>(
-            elt_multiply((beta_val - 1.0), log1m_y_expr), zero_expr)
+          elt_multiply((beta_val - 1.0), log1m_y_expr), zero_expr)
       + static_select<
-            include_summand<propto, T_scale_succ_cl, T_scale_fail_cl>::value>(
-            lgamma(alpha_beta_expr), zero_expr));
+          include_summand<propto, T_scale_succ_cl, T_scale_fail_cl>::value>(
+          lgamma(alpha_beta_expr), zero_expr));
 
   auto y_deriv_expr = calc_if<!is_constant<T_y_cl>::value>(
       elt_divide((alpha_val - 1), y_val)
