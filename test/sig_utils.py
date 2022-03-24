@@ -17,6 +17,7 @@ arg_types = {
     "array[] int": "std::vector<int>",
     "array[,] int": "std::vector<std::vector<int>>",
     "real": "SCALAR",
+    "complex":"std::complex<SCALAR>",
     "array[] real": "std::vector<SCALAR>",
     "array[,] real": "std::vector<std::vector<SCALAR>>",
     "vector": "Eigen::Matrix<SCALAR, Eigen::Dynamic, 1>",
@@ -24,6 +25,11 @@ arg_types = {
     "row_vector": "Eigen::Matrix<SCALAR, 1, Eigen::Dynamic>",
     "array[] row_vector": "std::vector<Eigen::Matrix<SCALAR, 1, Eigen::Dynamic>>",
     "matrix": "Eigen::Matrix<SCALAR, Eigen::Dynamic, Eigen::Dynamic>",
+    "complex_vector": "Eigen::Matrix<std::complex<SCALAR>, Eigen::Dynamic, 1>",
+    "array[] complex_vector": "std::vector<Eigen::Matrix<std::complex<SCALAR>, Eigen::Dynamic, 1>>",
+    "complex_row_vector": "Eigen::Matrix<std::complex<SCALAR>, 1, Eigen::Dynamic>",
+    "array[] complex_row_vector": "std::vector<Eigen::Matrix<std::complex<SCALAR>, 1, Eigen::Dynamic>>",
+    "complex_matrix": "Eigen::Matrix<std::complex<SCALAR>, Eigen::Dynamic, Eigen::Dynamic>",
 }
 
 scalar_stan_types = ("int", "real", "rng", "ostream_ptr")

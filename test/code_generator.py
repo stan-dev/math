@@ -15,7 +15,7 @@ class CodeGenerator:
     def _add_statement(self, statement):
         """
         Add a statement to the code generator
-        
+
         :param statement: An object of type statement_types.CppStatement
         """
         if not isinstance(statement, statement_types.CppStatement):
@@ -74,7 +74,9 @@ class CodeGenerator:
                     arg = statement_types.IntVariable("int" + suffix, value)
                 elif inner_type == "real":
                     arg = statement_types.RealVariable(overload, "real" + suffix, value)
-                elif inner_type in ("vector", "row_vector", "matrix"):
+                elif inner_type == "complex":
+                    arg = statement_types.ComplexVariable(overload, "complex" + suffix, value)
+                elif inner_type in ("vector", "row_vector", "matrix", "complex_vector", "complex_row_vector", "complex_matrix"):
                     arg = statement_types.MatrixVariable(overload, "matrix" + suffix, inner_type, size, value)
                 elif inner_type == "rng":
                     arg = statement_types.RngVariable("rng" + suffix)
@@ -107,24 +109,24 @@ class CodeGenerator:
     def add(self, arg1, arg2):
         """
         Generate code for arg1 + arg2
-        
+
         :param arg1: First argument
         :param arg1: Second argument
         """
         return self._add_statement(statement_types.FunctionCall("stan::math::add", "sum_of_sums" + self._get_next_name_suffix(), arg1, arg2))
-    
+
     def convert_to_expression(self, arg, size = None):
         """
         Generate code to convert arg to an expression type of given size. If size is None, use the argument size
-        
+
         :param arg: Argument to convert to expression
         """
         return self._add_statement(statement_types.ExpressionVariable(arg.name + "_expr" + self._get_next_name_suffix(), arg, size))
-    
+
     def expect_adj_eq(self, arg1, arg2):
         """
         Generate code that checks that the adjoints of arg1 and arg2 are equal
-        
+
         :param arg1: First argument
         :param arg2: Second argument
         """
@@ -133,25 +135,25 @@ class CodeGenerator:
     def expect_eq(self, arg1, arg2):
         """
         Generate code that checks that values of arg1 and arg2 are equal
-        
+
         :param arg1: First argument
         :param arg2: Second argument
         """
         return self._add_statement(statement_types.FunctionCall("EXPECT_STAN_EQ", None, arg1, arg2))
-    
+
     def expect_leq_one(self, arg):
         """
         Generate code to check that arg is less than or equal to one
-        
+
         :param arg: Argument to check
         """
         one = self._add_statement(statement_types.IntVariable("int" + self._get_next_name_suffix(), 1))
         return self._add_statement(statement_types.FunctionCall("EXPECT_LE", None, arg, one))
-    
+
     def function_call_assign(self, cpp_function_name, *args):
         """
         Generate code to call the c++ function given by cpp_function_name with given args and assign the result to another variable
-        
+
         :param cpp_function_name: c++ function name to call
         :param args: list of arguments to pass to function
         """
@@ -160,11 +162,11 @@ class CodeGenerator:
     def grad(self, arg):
         """
         Generate code to call stan::test::grad(arg) (equivalent of arg.grad())
-        
+
         :param arg: Argument to call grad on
         """
         return self._add_statement(statement_types.FunctionCall("stan::test::grad", None, arg))
-    
+
     def recover_memory(self):
         """Generate code to call stan::math::recover_memory()"""
         return self._add_statement(statement_types.FunctionCall("stan::math::recover_memory", None))
@@ -172,15 +174,15 @@ class CodeGenerator:
     def recursive_sum(self, arg):
         """
         Generate code that repeatedly sums arg until all that is left is a scalar
-        
+
         :param arg: Argument to sum
         """
         return self._add_statement(statement_types.FunctionCall("stan::test::recursive_sum", "summed_result" + self._get_next_name_suffix(), arg))
-    
+
     def to_var_value(self, arg):
         """
         Generate code to convert arg to a varmat
-        
+
         :param arg: Argument to convert to varmat
         """
         return self._add_statement(statement_types.FunctionCall("stan::math::to_var_value", arg.name + "_varmat" + self._get_next_name_suffix(), arg))

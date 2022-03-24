@@ -11,7 +11,7 @@ class CppStatement:
     def is_reverse_mode(self):
         """By default, a statement is not reverse mode"""
         return False
-    
+
     def is_eigen_compatible(self):
         """By default, a statement is not matrix-like"""
         return False
@@ -29,7 +29,7 @@ class IntVariable(CppStatement):
     def __init__(self, name, value = None):
         """
         Initialize matrix
-        
+
         :param overload: Type of overload as string (Prim/Fwd/Rev/etc.)
         :param name: C++ name of variable
         :param value: Scalar value to initialize matrix with
@@ -49,7 +49,7 @@ class RealVariable(CppStatement):
     def __init__(self, overload, name, value = None):
         """
         Initialize matrix
-        
+
         :param overload: Type of overload as string (Prim/Fwd/Rev/etc.)
         :param name: C++ name of variable
         :param value: Scalar value to initialize matrix with
@@ -60,23 +60,50 @@ class RealVariable(CppStatement):
             self.value = 0.4
         else:
             self.value = value
-    
+
     def is_reverse_mode(self):
         """Return true if the overload is reverse mode"""
         return self.overload.startswith("Rev")
-    
+
     def cpp(self):
         """Generate c++"""
         scalar = overload_scalar[self.overload]
 
         return "{type} {name} = {value};".format(type = scalar, name = self.name, value = self.value)
 
+class ComplexVariable(CppStatement):
+    """Represents a scalar, real variable"""
+    def __init__(self, overload, name, value = None):
+        """
+        Initialize matrix
+
+        :param overload: Type of overload as string (Prim/Fwd/Rev/etc.)
+        :param name: C++ name of variable
+        :param value: Scalar value to initialize matrix with
+        """
+        self.overload = overload
+        self.name = name
+        if value is None:
+            self.value = "stan::math::to_complex(0.4,0.4)"
+        else:
+            self.value = value
+
+    def is_reverse_mode(self):
+        """Return true if the overload is reverse mode"""
+        return self.overload.startswith("Rev")
+
+    def cpp(self):
+        """Generate c++"""
+        scalar = overload_scalar[self.overload]
+
+        return "std::complex<{type}> {name} = {value};".format(type = scalar, name = self.name, value = self.value)
+
 class MatrixVariable(CppStatement):
     """Represents a matrix variable"""
     def __init__(self, overload, name, stan_arg, size, value = None):
         """
         Initialize matrix
-        
+
         :param overload: Type of overload as string (Prim/Fwd/Rev/etc.)
         :param name: C++ name of variable
         :param stan_arg: Stanc3 type string
@@ -87,12 +114,12 @@ class MatrixVariable(CppStatement):
         self.name = name
         self.stan_arg = stan_arg
         self.size = size
-        
+
         if value is None:
             self.value = 0.4
         else:
             self.value = value
-    
+
     def is_reverse_mode(self):
         """Return true if the overload is reverse mode"""
         return self.overload.startswith("Rev")
@@ -100,11 +127,11 @@ class MatrixVariable(CppStatement):
     def is_eigen_compatible(self):
         """Return true (this is a matrix like variable)"""
         return True
-    
+
     def is_varmat_compatible(self):
         """Return true (matrix-like types are varmat compatible)"""
         return True
-    
+
     def cpp(self):
         """Generate C++"""
         scalar = overload_scalar[self.overload]
@@ -118,7 +145,7 @@ class SimplexVariable(CppStatement):
     def __init__(self, overload, name, size, value = None):
         """
         Initialize simplex
-        
+
         :param overload: Type of overload as string (Prim/Fwd/Rev/etc.)
         :param name: C++ name of variable
         :param size: Number of simplex elements
@@ -133,7 +160,7 @@ class SimplexVariable(CppStatement):
             self.value = 0.4
         else:
             self.value = value
-    
+
     def is_reverse_mode(self):
         """Return true if the overload is reverse mode"""
         return self.overload.startswith("Rev")
@@ -141,11 +168,11 @@ class SimplexVariable(CppStatement):
     def is_eigen_compatible(self):
         """Return true (simplices are vectors)"""
         return True
-    
+
     def is_varmat_compatible(self):
         """Return true (vectors are varmat compatible)"""
         return True
-    
+
     def cpp(self):
         """Generate C++"""
         scalar = overload_scalar[self.overload]
@@ -159,7 +186,7 @@ class PositiveDefiniteMatrixVariable(CppStatement):
     def __init__(self, overload, name, size, value = None):
         """
         Initialize positive definite matrix
-        
+
         :param overload: Type of overload as string (Prim/Fwd/Rev/etc.)
         :param name: C++ name of variable
         :param size: Number of rows/columns of positive definite matrix
@@ -174,7 +201,7 @@ class PositiveDefiniteMatrixVariable(CppStatement):
             self.value = 0.4
         else:
             self.value = value
-    
+
     def is_reverse_mode(self):
         """Return true if the overload is reverse mode"""
         return self.overload.startswith("Rev")
@@ -182,11 +209,11 @@ class PositiveDefiniteMatrixVariable(CppStatement):
     def is_eigen_compatible(self):
         """Return true (positive definite matrices are matrices)"""
         return True
-    
+
     def is_varmat_compatible(self):
         """Return true (positive definite matrices are varmat compatible)"""
         return True
-    
+
     def cpp(self):
         """Generate C++"""
         scalar = overload_scalar[self.overload]
@@ -200,12 +227,12 @@ class AlgebraSolverFunctorVariable(CppStatement):
     def __init__(self, name):
         """
         Initialize functor for algebra solver
-        
+
         :param overload: Type of overload as string (Prim/Fwd/Rev/etc.)
         :param name: C++ name of variable
         """
         self.name = name
-    
+
     def cpp(self):
         """Generate C++"""
         return "stan::test::simple_eq_functor {name};".format(name = self.name)
@@ -215,12 +242,12 @@ class OdeFunctorVariable(CppStatement):
     def __init__(self, name):
         """
         Initialize functor for ode function
-        
+
         :param overload: Type of overload as string (Prim/Fwd/Rev/etc.)
         :param name: C++ name of variable
         """
         self.name = name
-    
+
     def cpp(self):
         """Generate C++"""
         return "stan::test::test_functor {name};".format(name = self.name)
@@ -230,7 +257,7 @@ class ReturnTypeTVariable(CppStatement):
     def __init__(self, name, *args):
         """
         Initialize a scalar return type variable with type computed from the given args
-        
+
         :param name: C++ name of variable
         :param args: Args from which to compute the return type
         """
@@ -238,11 +265,11 @@ class ReturnTypeTVariable(CppStatement):
         arg_names = ["decltype({name})".format(name = arg.name) for arg in args]
         self.type_str = "stan::return_type_t<{names}>".format(names = ','.join(arg_names))
         self._is_reverse_mode = any(arg.is_reverse_mode() for arg in args)
-    
+
     def is_reverse_mode(self):
         """Return true if any of the arguments are reverse mode"""
         return self._is_reverse_mode
-    
+
     def cpp(self):
         """Generate C++"""
         return "{type} {name} = 0;".format(type = self.type_str, name = self.name)
@@ -252,11 +279,11 @@ class RngVariable(CppStatement):
     def __init__(self, name):
         """
         Initialize an rng object
-        
+
         :param name: C++ name of variable
         """
         self.name = name
-    
+
     def cpp(self):
         """Generate C++"""
         return "std::minstd_rand {name};".format(name = self.name)
@@ -266,11 +293,11 @@ class OStreamVariable(CppStatement):
     def __init__(self, name):
         """
         Initialize an ostream pointer
-        
+
         :param name: C++ name of variable
         """
         self.name = name
-    
+
     def cpp(self):
         """Generate C++"""
         return "std::ostream* {name} = &std::cout;".format(name = self.name)
@@ -280,7 +307,7 @@ class ArrayVariable(CppStatement):
     def __init__(self, overload, name, number_nested_arrays, inner_type, size, value):
         """
         Initialize an array
-        
+
         :param overload: Type of overload as string (Prim/Fwd/Rev/etc.)
         :param name: C++ name of variable
         :param number_nested_arrays: Number of array dimensions
@@ -294,7 +321,7 @@ class ArrayVariable(CppStatement):
         self.inner_type = inner_type
         self.value = value
         self.size = size
-    
+
     def is_reverse_mode(self):
         """
         If the underlying value is a CppStatement, return the reverse-mode-ness of that underlying variable
@@ -312,7 +339,7 @@ class ArrayVariable(CppStatement):
             return self.value.is_varmat_compatible()
         else:
             return False
-    
+
     def cpp(self):
         """Generate C++"""
         if isinstance(self.value, CppStatement):
@@ -339,7 +366,7 @@ class FunctionCall(CppStatement):
     def __init__(self, function_name, name, *args):
         """
         Represents a function call and optional assignment of the result to a variable
-        
+
         :param function_name: C++ name of function
         :param name: C++ name of variable, None if result is not saved
         :param args: Args to pass to function call
@@ -376,7 +403,7 @@ class ExpressionVariable(CppStatement):
     def __init__(self, name, arg, size = None):
         """
         Initialize Eigen expression variable
-        
+
         :param name: C++ name of variable
         :param arg: Variable from which to form the expression
         :param size: Length of vector expression or rows/columns of matrix expression, if None use arg.size
@@ -391,7 +418,7 @@ class ExpressionVariable(CppStatement):
         self._is_reverse_mode = arg.is_reverse_mode()
         self._arg_stan_arg = arg.stan_arg
         self._arg_name = arg.name
-    
+
     def is_reverse_mode(self):
         """Return true if the base argument was reverse mode"""
         return self._is_reverse_mode
@@ -399,7 +426,7 @@ class ExpressionVariable(CppStatement):
     def is_eigen_compatible(self):
         """Return true (expressions are Eigen types)"""
         return True
-    
+
     def is_expression(self):
         """Return true (this is an expression)"""
         return True
@@ -415,9 +442,9 @@ class ExpressionVariable(CppStatement):
             "stan::test::counterOp<{scalar}> {counter_op_name}(&{counter});".format(scalar = scalar, counter_op_name = counter_op_name, counter = self.counter.name) + os.linesep
         )
 
-        if self._arg_stan_arg == "matrix":
+        if self._arg_stan_arg in ("matrix", 'complex_matrix'):
             return code + "auto {name} = {arg}.block(0,0,{size},{size}).unaryExpr({counter_op});".format(name = self.name, arg = self._arg_name, size = self.size, counter_op = counter_op_name)
-        elif self._arg_stan_arg in ("vector", "row_vector"):
+        elif self._arg_stan_arg in ("vector", "row_vector", "complex_vector", "complex_row_vector"):
             return code + "auto {name} = {arg}.segment(0,{size}).unaryExpr({counter_op});".format(name = self.name, arg = self._arg_name, size = self.size, counter_op = counter_op_name)
         else:
             raise Exception("Can't make an expression out of a " + self.arg.stan_arg)
