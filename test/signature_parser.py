@@ -1,13 +1,17 @@
 from sig_utils import parse_signature, no_fwd_overload, no_rev_overload, ignored
 
+
 class SignatureParser:
     """
     SignatureParser parses Stanc3 function signatures and returns helpful information about them
 
     :param signature: stanc3 function signature string
     """
+
     def __init__(self, signature):
-        self.return_type, self.function_name, self.stan_args = parse_signature(signature)
+        self.return_type, self.function_name, self.stan_args = parse_signature(
+            signature
+        )
 
     def number_arguments(self):
         """Get the number of arguments in this signature"""
@@ -39,7 +43,18 @@ class SignatureParser:
 
     def has_eigen_compatible_arg(self):
         """Return true if any argument is vector-like (can be an Eigen c++ type)"""
-        return any(arg in ("matrix", "vector", "row_vector", "complex_vector", "complex_row_vector", "complex_matrix") for arg in self.stan_args)
+        return any(
+            arg
+            in (
+                "matrix",
+                "vector",
+                "row_vector",
+                "complex_vector",
+                "complex_row_vector",
+                "complex_matrix",
+            )
+            for arg in self.stan_args
+        )
 
     def returns_int(self):
         """Return true if the function returns an int"""
