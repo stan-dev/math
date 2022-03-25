@@ -26,6 +26,9 @@ inline double inv_inc_beta(double a, double b, double p) {
   check_not_nan("inv_inc_beta", "a", a);
   check_not_nan("inv_inc_beta", "b", b);
   check_not_nan("inv_inc_beta", "p", p);
+  check_positive("inv_inc_beta","a", a);
+  check_positive("inv_inc_beta","b", b);
+  check_bounded("inv_inc_beta", "p", p, 0, 1);
   return boost::math::ibeta_inv(a, b, p, boost_policy_t<>());
 }
 
