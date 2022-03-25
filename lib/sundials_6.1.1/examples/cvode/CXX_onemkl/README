@@ -1,3 +1,0 @@
-List of oneMKL CVODE examples
-
-  cvRoberts_blockdiag_onemkl : block diagonal example with oneMKL linear solver
