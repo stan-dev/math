@@ -241,7 +241,7 @@ int SUNNonlinSolSolve_Newton(SUNNonlinearSolver NLS,
     /* print current iteration number and the nonlinear residual */
     if (NEWTON_CONTENT(NLS)->print_level && NEWTON_CONTENT(NLS)->info_file)
     {
-      fprintf(NEWTON_CONTENT(NLS)->info_file,
+      STAN_SUNDIALS_FPRINTF(NEWTON_CONTENT(NLS)->info_file,
               "SUNNONLINSOL_NEWTON (nni=%ld):\n",
               (long int) NEWTON_CONTENT(NLS)->niters);
     }
@@ -271,7 +271,7 @@ int SUNNonlinSolSolve_Newton(SUNNonlinearSolver NLS,
       /* print current iteration number and the nonlinear residual */
       if (NEWTON_CONTENT(NLS)->print_level && NEWTON_CONTENT(NLS)->info_file)
       {
-        fprintf(NEWTON_CONTENT(NLS)->info_file,
+        STAN_SUNDIALS_FPRINTF(NEWTON_CONTENT(NLS)->info_file,
                 SUN_NLS_MSG_RESIDUAL,
                 (long int) NEWTON_CONTENT(NLS)->curiter,
                 N_VWrmsNorm(delta, w));

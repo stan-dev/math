@@ -2378,8 +2378,8 @@ void KINInfoHandler(const char *module, const char *function,
 
 #ifndef NO_FPRINTF_OUTPUT
   if (kin_mem->kin_infofp != NULL) {
-    fprintf(kin_mem->kin_infofp,"\n[%s] %s\n",module, function);
-    fprintf(kin_mem->kin_infofp,"   %s\n",msg);
+    STAN_SUNDIALS_FPRINTF(kin_mem->kin_infofp,"\n[%s] %s\n",module, function);
+    STAN_SUNDIALS_FPRINTF(kin_mem->kin_infofp,"   %s\n",msg);
   }
 #endif
 
@@ -2418,8 +2418,8 @@ void KINProcessError(KINMem kin_mem,
 
   if (kin_mem == NULL) {    /* We write to stderr */
 #ifndef NO_FPRINTF_OUTPUT
-    fprintf(stderr, "\n[%s ERROR]  %s\n  ", module, fname);
-    fprintf(stderr, "%s\n\n", msg);
+    STAN_SUNDIALS_FPRINTF(stderr, "\n[%s ERROR]  %s\n  ", module, fname);
+    STAN_SUNDIALS_FPRINTF(stderr, "%s\n\n", msg);
 #endif
 
   } else {                 /* We can call ehfun */
@@ -2456,8 +2456,8 @@ void KINErrHandler(int error_code, const char *module,
 
 #ifndef NO_FPRINTF_OUTPUT
   if (kin_mem->kin_errfp != NULL) {
-    fprintf(kin_mem->kin_errfp,"\n[%s %s]  %s\n",module,err_type,function);
-    fprintf(kin_mem->kin_errfp,"  %s\n\n",msg);
+    STAN_SUNDIALS_FPRINTF(kin_mem->kin_errfp,"\n[%s %s]  %s\n",module,err_type,function);
+    STAN_SUNDIALS_FPRINTF(kin_mem->kin_errfp,"  %s\n\n",msg);
   }
 #endif
 
@@ -2686,7 +2686,7 @@ static int KINFP(KINMem kin_mem)
   tolfac = ONE;
 
 #ifdef SUNDIALS_DEBUG_PRINTVEC
-  fprintf(kin_mem->kin_debugfp, "KINSOL u_0:\n");
+  STAN_SUNDIALS_FPRINTF(kin_mem->kin_debugfp, "KINSOL u_0:\n");
   N_VPrintFile(kin_mem->kin_uu, kin_mem->kin_debugfp);
 #endif
 
@@ -2704,7 +2704,7 @@ static int KINFP(KINMem kin_mem)
     kin_mem->kin_nfe++;
 
 #ifdef SUNDIALS_DEBUG_PRINTVEC
-    fprintf(kin_mem->kin_debugfp, "KINSOL G_%ld:\n", kin_mem->kin_nni - 1);
+    STAN_SUNDIALS_FPRINTF(kin_mem->kin_debugfp, "KINSOL G_%ld:\n", kin_mem->kin_nni - 1);
     N_VPrintFile(kin_mem->kin_fval, kin_mem->kin_debugfp);
 #endif
 
@@ -2764,7 +2764,7 @@ static int KINFP(KINMem kin_mem)
     }
 
 #ifdef SUNDIALS_DEBUG_PRINTVEC
-    fprintf(kin_mem->kin_debugfp, "KINSOL u_%ld:\n", kin_mem->kin_nni);
+    STAN_SUNDIALS_FPRINTF(kin_mem->kin_debugfp, "KINSOL u_%ld:\n", kin_mem->kin_nni);
     N_VPrintFile(kin_mem->kin_unew, kin_mem->kin_debugfp);
 #endif
 

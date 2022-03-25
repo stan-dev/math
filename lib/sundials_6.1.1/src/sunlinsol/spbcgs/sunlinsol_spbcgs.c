@@ -375,7 +375,7 @@ int SUNLinSolSolve_SPBCGS(SUNLinearSolver S, SUNMatrix A, N_Vector x,
 
 #ifdef SUNDIALS_BUILD_WITH_MONITORING
   if (SPBCGS_CONTENT(S)->print_level && SPBCGS_CONTENT(S)->info_file)
-    fprintf(SPBCGS_CONTENT(S)->info_file, "SUNLINSOL_SPBCGS:\n");
+    STAN_SUNDIALS_FPRINTF(SPBCGS_CONTENT(S)->info_file, "SUNLINSOL_SPBCGS:\n");
 #endif
 
   /* Check if Atimes function has been set */
@@ -436,7 +436,7 @@ int SUNLinSolSolve_SPBCGS(SUNLinearSolver S, SUNMatrix A, N_Vector x,
   /* print the initial residual */
   if (SPBCGS_CONTENT(S)->print_level && SPBCGS_CONTENT(S)->info_file)
   {
-    fprintf(SPBCGS_CONTENT(S)->info_file,
+    STAN_SUNDIALS_FPRINTF(SPBCGS_CONTENT(S)->info_file,
             SUNLS_MSG_RESIDUAL,
             (long int) 0, *res_norm);
   }
@@ -608,7 +608,7 @@ int SUNLinSolSolve_SPBCGS(SUNLinearSolver S, SUNMatrix A, N_Vector x,
     /* print current iteration number and the residual */
     if (SPBCGS_CONTENT(S)->print_level && SPBCGS_CONTENT(S)->info_file)
     {
-      fprintf(SPBCGS_CONTENT(S)->info_file,
+      STAN_SUNDIALS_FPRINTF(SPBCGS_CONTENT(S)->info_file,
               SUNLS_MSG_RESIDUAL,
               (long int) *nli, *res_norm);
     }
