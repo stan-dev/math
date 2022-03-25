@@ -493,12 +493,17 @@ class ExpressionVariable(CppStatement):
 
         scalar = overload_scalar[self._arg_overload]
         counter_op_name = "{name}_counter_op".format(name=self.name)
+        value_type = (
+            "std::complex<" + scalar + ">"
+            if "complex_" in self._arg_stan_arg
+            else scalar
+        )
 
         code = (
             self.counter.cpp()
             + os.linesep
-            + "stan::test::counterOp<{scalar}> {counter_op_name}(&{counter});".format(
-                scalar=scalar,
+            + "stan::test::counterOp<{value_type}> {counter_op_name}(&{counter});".format(
+                value_type=value_type,
                 counter_op_name=counter_op_name,
                 counter=self.counter.name,
             )
