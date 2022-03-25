@@ -1,0 +1,122 @@
+# -----------------------------------------------------------------
+# Programmer(s): Slaven Peles @ LLNL
+# -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2002-2022, Lawrence Livermore National Security
+# and Southern Methodist University.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
+# CMakeLists.txt for @SOLVER@ C++ Trilinos examples.
+#
+# This file is generated from a template using variables
+# set at configuration time. It can be used as a template for
+# other user CMakeLists configuration files.
+# -----------------------------------------------------------------
+
+# Set the minimum required cmake version
+cmake_minimum_required(VERSION @CMAKE_VERSION@)
+
+# Set cache variables for compilers and flags
+set(CMAKE_C_COMPILER
+  @Trilinos_C_COMPILER@
+  CACHE FILEPATH "Trilinos C compiler")
+
+set(CMAKE_C_FLAGS
+  "@Trilinos_C_COMPILER_FLAGS@"
+  CACHE STRING "Trilinos C compiler flags")
+
+if("@CMAKE_C_STANDARD@")
+  set(CMAKE_C_STANDARD "@CMAKE_C_STANDARD@"
+    CACHE STRING "C standard")
+endif()
+
+set(CMAKE_CXX_COMPILER
+  @Trilinos_CXX_COMPILER@
+  CACHE FILEPATH "Trilinos C++ compiler")
+
+set(CMAKE_CXX_FLAGS
+  "@Trilinos_CXX_COMPILER_FLAGS@"
+  CACHE STRING "Trilinos C++ compiler flags")
+
+set(CMAKE_CXX_STANDARD
+  @CMAKE_CXX_STANDARD@
+  CACHE STRING "C++ standard")
+
+# Specify project name and languages
+project(@SOLVER@_CXX_trilinos_examples C CXX)
+
+# Enable testing
+include(CTest)
+
+# ------------------------------------------------------------------------------
+
+# Specify the path to SUNDIALS header files
+set(SUNDIALS_INCLUDE_DIR
+  @CMAKE_INSTALL_PREFIX@/include
+  CACHE PATH "Location of SUNDIALS header files")
+
+# Specify the path to SUNDIALS libraries
+set(SUNDIALS_LIBRARY_DIR
+  @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@
+  CACHE PATH "Location of SUNDIALS libraries")
+
+# Find the SUNDIALS libraries
+find_library(SUNDIALS_SOLVER_LIB
+  @SOLVER_LIB@ ${SUNDIALS_LIBRARY_DIR}
+  DOC "@SOLVER@ library")
+
+find_library(SUNDIALS_NVEC_LIB
+  sundials_nvectrilinos ${SUNDIALS_LIBRARY_DIR}
+  DOC "NVECTOR_TRILINOS library")
+
+# Set additional libraries
+set(SUNDIALS_EXTRA_LIBS @LIBS@ CACHE STRING "Additional libraries")
+
+# For SUNDIALS module examples the solver library is not needed
+if(NOT SUNDIALS_SOLVER_LIB)
+  set(SUNDIALS_SOLVER_LIB "")
+endif()
+
+# List of SUNDIALS libraries
+set(SUNDIALS_LIBRARIES
+  -L${SUNDIALS_LIBRARY_DIR}
+  ${SUNDIALS_SOLVER_LIB}
+  ${SUNDIALS_NVEC_LIB}
+  ${SUNDIALS_EXTRA_LIBS})
+
+# ------------------------------------------------------------------------------
+
+# Include Trilinos configuration file
+set(Trilinos_DIR @Trilinos_DIR@)
+find_package(Trilinos REQUIRED)
+
+# Set the names of the examples to be built and their dependencies
+set(examples @EXAMPLES@)
+set(examples_dependencies @EXAMPLES_DEPENDENCIES@)
+if(examples)
+  list(REMOVE_DUPLICATES examples)
+endif()
+
+# Create targets for each example
+foreach(example ${examples})
+
+  # example source files
+  add_executable(${example} ${example}.cpp ${examples_dependencies})
+
+  # directories to include
+  target_include_directories(${example} PRIVATE ${SUNDIALS_INCLUDE_DIR})
+  target_include_directories(${example} PRIVATE ${Trilinos_INCLUDE_DIRS})
+
+  # libraries to link against
+  target_link_libraries(${example} ${SUNDIALS_LIBRARIES})
+  target_link_libraries(${example} ${Trilinos_LIBRARIES})
+
+  # add the example to ctest
+  add_test(NAME ${example} COMMAND ${example})
+
+endforeach()

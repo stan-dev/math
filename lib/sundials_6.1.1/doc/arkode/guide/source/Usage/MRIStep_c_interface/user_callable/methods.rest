@@ -1,0 +1,77 @@
+.. ----------------------------------------------------------------
+   SUNDIALS Copyright Start
+   Copyright (c) 2002-2022, Lawrence Livermore National Security
+   and Southern Methodist University.
+   All rights reserved.
+
+   See the top-level LICENSE and NOTICE files for details.
+
+   SPDX-License-Identifier: BSD-3-Clause
+   SUNDIALS Copyright End
+   ----------------------------------------------------------------
+
+.. _ARKODE.Usage.MRIStep.MRIStepMethodInput:
+
+Optional inputs for IVP method selection
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. _ARKODE.Usage.MRIStep.MRIStepMethodInputTable:
+.. table:: Optional inputs for IVP method selection
+
+   +--------------------------------+-------------------------------------+----------+
+   | Optional input                 | Function name                       | Default  |
+   +--------------------------------+-------------------------------------+----------+
+   | Set MRI coupling coefficients  | :c:func:`MRIStepSetCoupling()`      | internal |
+   +--------------------------------+-------------------------------------+----------+
+
+
+..
+   .. c:function:: int MRIStepSetOrder(void* arkode_mem, int ord)
+
+      Specifies the order of accuracy for the ERK integration method.
+
+      **Arguments:**
+
+      * *arkode_mem* -- pointer to the MRIStep memory block.
+
+      * *ord* -- requested order of accuracy.
+
+      **Return value:**
+
+      * *ARK_SUCCESS* if successful
+
+      * *ARK_MEM_NULL* if the MRIStep memory is ``NULL``
+
+      * *ARK_ILL_INPUT* if an argument has an illegal value
+
+      **Notes:** The allowed values are :math:`2 \le` *ord* :math:`\le
+      8`.  Any illegal input will result in the default value of 4.
+
+      Since *ord* affects the memory requirements for the internal
+      MRIStep memory block, it cannot be changed after the first call to
+      :c:func:`MRIStepEvolve()`, unless :c:func:`MRIStepReInit()` is called.
+
+
+
+.. c:function:: int MRIStepSetCoupling(void* arkode_mem, MRIStepCoupling C)
+
+   Specifies a customized set of slow-to-fast coupling coefficients for the MRI method.
+
+   **Arguments:**
+
+   * *arkode_mem* -- pointer to the MRIStep memory block.
+
+   * *C* -- the table of coupling coefficients for the MRI method.
+
+   **Return value:**
+
+   * *ARK_SUCCESS* if successful
+
+   * *ARK_MEM_NULL* if the MRIStep memory is ``NULL``
+
+   * *ARK_ILL_INPUT* if an argument has an illegal value
+
+   **Notes:**
+
+   For a description of the :c:type:`MRIStepCoupling` type and related
+   functions for creating Butcher tables see :numref:`ARKODE.Usage.MRIStep.MRIStepCoupling`.

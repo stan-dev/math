@@ -1,0 +1,81 @@
+# -*- mode: makefile -*-
+# -----------------------------------------------------------------
+# Programmer: Slaven Peles, Cody Balos @ LLNL
+# -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2002-2022, Lawrence Livermore National Security
+# and Southern Methodist University.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
+# Makefile for @SOLVER@ CUDA examples
+#
+# This file is generated from a template using various variables
+# set at configuration time. It can be used as a template for
+# other user Makefiles.
+# -----------------------------------------------------------------
+
+SHELL = @SHELL@
+
+prefix       = @prefix@
+exec_prefix  = @exec_prefix@
+includedir   = @includedir@
+libdir       = @libdir@
+
+CC          = @_EXAMPLES_C_COMPILER@
+CFLAGS      = @CMAKE_C_FLAGS@
+CXX         = @_EXAMPLES_CXX_COMPILER@
+CXXFLAGS    = @CMAKE_CXX_FLAGS@
+NVCC        = @CMAKE_CUDA_COMPILER@
+NVCCFLAGS   = -ccbin=${CXX} -std=c++11 @CMAKE_CUDA_FLAGS@
+LD          = ${NVCC}
+LDFLAGS     = @LDFLAGS@ ${NVCCFLAGS} -Xcompiler \"-Wl,-rpath,${libdir}\"
+LIBS        = @LIBS@ -lcusolver -lcusparse
+
+TMP_INCS = ${includedir}
+INCLUDES = $(addprefix -I, ${TMP_INCS})
+
+TMP_LIBDIRS  = ${libdir}
+LIBDIRS      = $(addprefix -L, ${TMP_LIBDIRS})
+
+TMP_SUNDIALSLIBS = @SOLVER_LIB@ @NVECTOR_LIB@ @SUNMAT_LIB@ @SUNLS_LIB@
+SUNDIALSLIBS     = $(addprefix -l, ${TMP_SUNDIALSLIBS})
+LIBRARIES = ${SUNDIALSLIBS} ${LIBS}
+
+EXAMPLES = @EXAMPLES@ @EXAMPLES_CUSOLVER@
+EXAMPLES_DEPENDENCIES = @EXAMPLES_DEPENDENCIES@
+
+OBJECTS = ${EXAMPLES:=.o}
+OBJECTS_DEPENDENCIES = ${EXAMPLES_DEPENDENCIES:=.o}
+
+# -----------------------------------------------------------------------------------------
+
+.SUFFIXES : .o .cu
+
+.c.o :
+	${CC} ${CFLAGS} ${INCLUDES} -c $<
+
+.cu.o :
+	${NVCC} ${NVCCFLAGS} ${INCLUDES} -c $<
+
+# -----------------------------------------------------------------------------------------
+
+all: ${OBJECTS}
+	@for i in ${EXAMPLES} ; do \
+	  echo "${NVCC} -o $${i} $${i}.o ${OBJECTS_DEPENDENCIES} ${INCLUDES} ${LIBDIRS} ${LIBRARIES} ${LDFLAGS}"; \
+	  ${NVCC} -o $${i} $${i}.o ${OBJECTS_DEPENDENCIES} ${INCLUDES} ${LIBDIRS} ${LIBRARIES} ${LDFLAGS}; \
+	done
+
+${OBJECTS}: ${OBJECTS_DEPENDENCIES}
+
+clean:
+	rm -f ${OBJECTS_DEPENDENCIES}
+	rm -f ${OBJECTS}
+	rm -f ${EXAMPLES}
+
+# -----------------------------------------------------------------------------------------
+

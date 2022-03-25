@@ -1,0 +1,84 @@
+# -*- mode: makefile -*-
+# -----------------------------------------------------------------
+# Programmer: Slaven Peles, Cody Balos @ LLNL
+# -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2002-2022, Lawrence Livermore National Security
+# and Southern Methodist University.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
+# Makefile for @SOLVER@ RAJA examples
+#
+# This file is generated from a template using various variables
+# set at configuration time. It can be used as a template for
+# other user Makefiles.
+# -----------------------------------------------------------------
+
+SHELL = @SHELL@
+
+prefix       = @prefix@
+exec_prefix  = @exec_prefix@
+includedir   = @includedir@
+libdir       = @libdir@
+
+CC      	  = @_EXAMPLES_C_COMPILER@
+CFLAGS      = @CMAKE_C_FLAGS@
+CXX         = @_EXAMPLES_CXX_COMPILER@
+NVCC        = @CMAKE_CUDA_COMPILER@
+NVCCFLAGS   = $(subst ;, ,@CMAKE_CUDA_FLAGS@)
+LD          = ${NVCC}
+LDFLAGS     = @LDFLAGS@ -Xcompiler \"-Wl,-rpath,${libdir}\"
+LIBS        = @LIBS@
+RAJA_INC_DIR= @RAJA_INCLUDE_PATH@
+RAJA_LIB_DIR= @RAJA_LIB_DIR@
+RAJAFLAGS   = $(subst ;, ,@RAJA_NVCC_FLAGS@)
+RAJALIBS    = -lRAJA
+
+TMP_INCS 		 = ${includedir} ${RAJA_INC_DIR}
+INCLUDES 		 = $(addprefix -I, ${TMP_INCS})
+
+TMP_LIBDIRS  = ${libdir} ${RAJA_LIB_DIR}
+LIBDIRS      = $(addprefix -L, ${TMP_LIBDIRS})
+
+TMP_SUNDIALSLIBS = @SOLVER_LIB@ @NVECTOR_LIB@
+SUNDIALSLIBS     = $(addprefix -l, ${TMP_SUNDIALSLIBS})
+LIBRARIES = ${SUNDIALSLIBS} ${RAJALIBS} ${LIBS}
+
+EXAMPLES = @EXAMPLES@ @EXAMPLES_BL@
+EXAMPLES_DEPENDENCIES = @EXAMPLES_DEPENDENCIES@
+
+OBJECTS = ${EXAMPLES:=.o}
+OBJECTS_DEPENDENCIES = ${EXAMPLES_DEPENDENCIES:=.o}
+
+# -----------------------------------------------------------------------------------------
+
+.SUFFIXES : .o .cpp
+
+.c.o :
+	${CC} ${CFLAGS} ${INCLUDES} -c $<
+
+.cpp.o :
+	${NVCC} ${NVCCFLAGS} ${RAJAFLAGS} ${INCLUDES} -c $<
+
+# -----------------------------------------------------------------------------------------
+
+all: ${OBJECTS}
+	@for i in ${EXAMPLES} ; do \
+	  echo "${LD} -o $${i} $${i}.o ${OBJECTS_DEPENDENCIES} ${INCLUDES} ${LIBDIRS} ${LIBRARIES} ${LDFLAGS}"; \
+	  ${LD} -o $${i} $${i}.o ${OBJECTS_DEPENDENCIES} ${INCLUDES} ${LIBDIRS} ${LIBRARIES} ${LDFLAGS}; \
+	done
+
+${OBJECTS}: ${OBJECTS_DEPENDENCIES}
+
+clean:
+	rm -f ${OBJECTS_DEPENDENCIES}
+	rm -f ${OBJECTS}
+	rm -f ${EXAMPLES}
+
+# -----------------------------------------------------------------------------------------
+

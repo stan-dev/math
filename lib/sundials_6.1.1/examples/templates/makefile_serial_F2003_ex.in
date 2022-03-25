@@ -1,0 +1,85 @@
+# -*- mode: makefile -*-
+# -----------------------------------------------------------------
+# Programmer(s): Cody J. Balos @ LLNL
+# -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2002-2022, Lawrence Livermore National Security
+# and Southern Methodist University.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
+# Makefile for @SOLVER@ Fortran 2003 interface serial examples
+#
+# This file is generated from a template using variables
+# set at configuration time. It can be used as a template for
+# other user Makefiles.
+# -----------------------------------------------------------------
+
+SHELL = @SHELL@
+
+prefix     = @CMAKE_INSTALL_PREFIX@
+includedir = ${prefix}/@Fortran_INSTALL_MODDIR@
+libdir     = ${prefix}/@CMAKE_INSTALL_LIBDIR@
+
+F90      = @_EXAMPLES_Fortran_COMPILER@
+F90FLAGS = @CMAKE_Fortran_FLAGS_RELEASE@
+F90LIBS  = @LIBS@
+
+# ------------------------------------------------------------------------------
+
+INCLUDES  = -I${includedir}
+LIBRARIES = -l@SOLVER_FLIB@ -l@SOLVER_LIB@ ${F90LIBS}
+LINKFLAGS = -Wl,-rpath,@libdir@
+
+INCLUDES_KLU  = ${INCLUDES} -I@KLU_INCLUDE_DIR@
+LIBRARIES_KLU = ${LIBRARIES} \
+                -lsundials_sunmatrixsparse -lsundials_fsunmatrixsparse_mod \
+                -lsundials_sunlinsolklu -lsundials_fsunlinsolklu_mod \
+                @KLU_LIBS@
+LINKFLAGS_KLU = ${LINKFLAGS}:@KLU_LIBRARY_DIR@
+
+# ------------------------------------------------------------------------------
+
+EXAMPLES = @EXAMPLES@
+EXAMPLES_DEPENDENCIES = @EXAMPLES_DEPENDENCIES@
+
+OBJECTS = ${EXAMPLES:=.o}
+OBJECTS_DEPENDENCIES = ${EXAMPLES_DEPENDENCIES:=.o}
+
+# KLU Examples
+EXAMPLES_KLU = @EXAMPLES_KLU@
+OBJECTS_KLU  = ${EXAMPLES_KLU:=.o}
+
+# ------------------------------------------------------------------------------
+
+.SUFFIXES : .o .f90
+
+.f90.o :
+	${F90} ${F90FLAGS} ${INCLUDES} -c $<
+
+# ------------------------------------------------------------------------------
+
+all: examples examples_klu
+
+examples: ${OBJECTS_DEPENDENCIES} ${OBJECTS}
+	@for i in ${EXAMPLES} ; do \
+	  echo "${F90} -o $${i} $${i}.o ${OBJECTS_DEPENDENCIES} ${F90FLAGS} ${INCLUDES} -L${libdir} ${LIBRARIES} ${LINKFLAGS}" ; \
+	  ${F90} -o $${i} $${i}.o ${OBJECTS_DEPENDENCIES} ${F90FLAGS} ${INCLUDES} -L${libdir} ${LIBRARIES} ${LINKFLAGS} ; \
+	done
+
+examples_klu: ${OBJECTS_KLU}
+	@for i in ${EXAMPLES_KLU} ; do \
+	  echo "${F90} -o $${i} $${i}.o ${F90FLAGS} ${INCLUDES_KLU} -L${libdir} ${LIBRARIES_KLU} ${LINKFLAGS_KLU}" ; \
+	  ${F90} -o $${i} $${i}.o ${F90FLAGS} ${INCLUDES_KLU} -L${libdir} ${LIBRARIES_KLU} ${LINKFLAGS_KLU} ; \
+	done
+
+clean:
+	rm -f *.o *.mod
+	rm -f ${OBJECTS} ${OBJECTS_KLU}
+	rm -f ${EXAMPLES} ${EXAMPLES_KLU}
+
+# ------------------------------------------------------------------------------

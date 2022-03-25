@@ -1,0 +1,558 @@
+.. ----------------------------------------------------------------
+   SUNDIALS Copyright Start
+   Copyright (c) 2002-2022, Lawrence Livermore National Security
+   and Southern Methodist University.
+   All rights reserved.
+
+   See the top-level LICENSE and NOTICE files for details.
+
+   SPDX-License-Identifier: BSD-3-Clause
+   SUNDIALS Copyright End
+   ----------------------------------------------------------------
+
+.. _ARKODE.Usage.MRIStep.OptionalInputs:
+
+Optional input functions
+-------------------------
+
+There are numerous optional input parameters that control the behavior
+of MRIStep, each of which may be modified from its default value through
+calling an appropriate input function.  The following tables list all
+optional input functions, grouped by which aspect of MRIStep they control.
+Detailed information on the calling syntax and arguments for each
+function are then provided following each table.
+
+The optional inputs are grouped into the following categories:
+
+* General MRIStep options (:numref:`ARKODE.Usage.MRIStep.MRIStepInput`),
+
+* IVP method solver options (:numref:`ARKODE.Usage.MRIStep.MRIStepMethodInput`),
+
+* Implicit stage solver options (:numref:`ARKODE.Usage.MRIStep.MRIStepSolverInput`),
+
+* Linear solver interface options (:numref:`ARKODE.Usage.MRIStep.ARKLsInputs`), and
+
+* Rootfinding options (:numref:`ARKODE.Usage.MRIStep.MRIStepRootfindingInput`).
+
+For the most casual use of MRIStep, relying on the default set of
+solver parameters, the reader can skip to the section on user-supplied
+functions, :numref:`ARKODE.Usage.UserSupplied`.
+
+We note that, on an error return, all of the optional input functions send an
+error message to the error handler function. All error return values are
+negative, so a test on the return arguments for negative values will catch all
+errors. Finally, a call to an ``MRIStepSet***`` function can generally be made
+from the user's calling program at any time and, if successful, takes effect
+immediately. ``MRIStepSet***`` functions that cannot be called at any time note
+this in the "**Notes**:" section of the function documentation.
+
+
+
+.. _ARKODE.Usage.MRIStep.MRIStepInput:
+
+Optional inputs for MRIStep
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. _ARKODE.Usage.MRIStep.MRIStepInput.Table:
+.. table:: Optional inputs for MRIStep
+
+   +---------------------------------------------------------------+-----------------------------------------+------------------------+
+   | Optional input                                                | Function name                           | Default                |
+   +---------------------------------------------------------------+-----------------------------------------+------------------------+
+   | Return MRIStep solver parameters to their defaults            | :c:func:`MRIStepSetDefaults()`          | internal               |
+   +---------------------------------------------------------------+-----------------------------------------+------------------------+
+   | Set dense output interpolation type                           | :c:func:`MRIStepSetInterpolantType()`   | ``ARK_INTERP_HERMITE`` |
+   +---------------------------------------------------------------+-----------------------------------------+------------------------+
+   | Set dense output polynomial degree                            | :c:func:`MRIStepSetInterpolantDegree()` | 5                      |
+   +---------------------------------------------------------------+-----------------------------------------+------------------------+
+   | Supply a pointer to a diagnostics output file                 | :c:func:`MRIStepSetDiagnostics()`       | ``NULL``               |
+   +---------------------------------------------------------------+-----------------------------------------+------------------------+
+   | Supply a pointer to an error output file                      | :c:func:`MRIStepSetErrFile()`           | ``stderr``             |
+   +---------------------------------------------------------------+-----------------------------------------+------------------------+
+   | Supply a custom error handler function                        | :c:func:`MRIStepSetErrHandlerFn()`      | internal fn            |
+   +---------------------------------------------------------------+-----------------------------------------+------------------------+
+   | Run with fixed-step sizes                                     | :c:func:`MRIStepSetFixedStep()`         | required               |
+   +---------------------------------------------------------------+-----------------------------------------+------------------------+
+   | Maximum no. of warnings for :math:`t_n+h = t_n`               | :c:func:`MRIStepSetMaxHnilWarns()`      | 10                     |
+   +---------------------------------------------------------------+-----------------------------------------+------------------------+
+   | Maximum no. of internal steps before *tout*                   | :c:func:`MRIStepSetMaxNumSteps()`       | 500                    |
+   +---------------------------------------------------------------+-----------------------------------------+------------------------+
+   | Set a value for :math:`t_{stop}`                              | :c:func:`MRIStepSetStopTime()`          | :math:`\infty`         |
+   +---------------------------------------------------------------+-----------------------------------------+------------------------+
+   | Supply a pointer for user data                                | :c:func:`MRIStepSetUserData()`          | ``NULL``               |
+   +---------------------------------------------------------------+-----------------------------------------+------------------------+
+   | Supply a function to be called prior to the inner integration | :c:func:`MRIStepSetPreInnerFn()`        | ``NULL``               |
+   +---------------------------------------------------------------+-----------------------------------------+------------------------+
+   | Supply a function to be called after the inner integration    | :c:func:`MRIStepSetPostInnerFn()`       | ``NULL``               |
+   +---------------------------------------------------------------+-----------------------------------------+------------------------+
+
+
+
+
+.. c:function:: int MRIStepSetDefaults(void* arkode_mem)
+
+   Resets all optional input parameters to MRIStep's original
+   default values.
+
+   **Arguments:**
+
+   * *arkode_mem* -- pointer to the MRIStep memory block.
+
+   **Return value:**
+
+   * *ARK_SUCCESS* if successful
+
+   * *ARK_MEM_NULL* if the MRIStep memory is ``NULL``
+
+   * *ARK_ILL_INPUT* if an argument has an illegal value
+
+  **Notes:** This function does not change problem-defining function pointers
+  *fs* and *ff* or the *user_data* pointer. It also does not affect any data
+  structures or options related to root-finding (those can be reset using
+  :c:func:`MRIStepRootInit()`).
+
+
+
+.. c:function:: int MRIStepSetInterpolantType(void* arkode_mem, int itype)
+
+   Specifies use of the Lagrange or Hermite interpolation modules (used for
+   dense output -- interpolation of solution output values and implicit
+   method predictors).
+
+   **Arguments:**
+
+   * *arkode_mem* -- pointer to the MRIStep memory block.
+
+   * *itype* -- requested interpolant type (``ARK_INTERP_HERMITE`` or ``ARK_INTERP_LAGRANGE``)
+
+   **Return value:**
+
+   * *ARK_SUCCESS* if successful
+
+   * *ARK_MEM_NULL* if the MRIStep memory is ``NULL``
+
+   * *ARK_MEM_FAIL* if the interpolation module cannot be allocated
+
+   * *ARK_ILL_INPUT* if the *itype* argument is not recognized or the
+     interpolation module has already been initialized
+
+   **Notes:** The Hermite interpolation module is described in
+   :numref:`ARKODE.Mathematics.Interpolation.Hermite`, and the Lagrange interpolation module
+   is described in :numref:`ARKODE.Mathematics.Interpolation.Lagrange`.
+
+   This routine frees any previously-allocated interpolation module, and re-creates
+   one according to the specified argument.  Thus any previous calls to
+   :c:func:`MRIStepSetInterpolantDegree()` will be nullified.
+
+   This routine must be called *after* the call to :c:func:`MRIStepCreate()`.
+   After the first call to :c:func:`MRIStepEvolve()` the interpolation type may
+   not be changed without first calling :c:func:`MRIStepReInit()`.
+
+   If this routine is not called, the Hermite interpolation module will be used.
+
+
+
+.. c:function:: int MRIStepSetInterpolantDegree(void* arkode_mem, int degree)
+
+   Specifies the degree of the polynomial interpolant
+   used for dense output (i.e. interpolation of solution output values
+   and implicit method predictors).
+
+   **Arguments:**
+
+   * *arkode_mem* -- pointer to the MRIStep memory block.
+
+   * *degree* -- requested polynomial degree.
+
+   **Return value:**
+
+   * *ARK_SUCCESS* if successful
+
+   * *ARK_MEM_NULL* if the MRIStep memory or interpolation module are ``NULL``
+
+   * *ARK_INTERP_FAIL* if this is called after :c:func:`MRIStepEvolve()`
+
+   * *ARK_ILL_INPUT* if an argument has an illegal value or the
+     interpolation module has already been initialized
+
+   **Notes:** Allowed values are between 0 and 5.
+
+   This routine should be called *after* :c:func:`MRIStepCreate()` and *before*
+   :c:func:`MRIStepEvolve()`. After the first call to :c:func:`MRIStepEvolve()`
+   the interpolation degree may not be changed without first calling
+   :c:func:`MRIStepReInit()`.
+
+
+   If a user calls both this routine and :c:func:`MRIStepSetInterpolantType()`, then
+   :c:func:`MRIStepSetInterpolantType()` must be called first.
+
+   Since the accuracy of any polynomial interpolant is limited by the accuracy of
+   the time-step solutions on which it is based, the *actual* polynomial degree that
+   is used by MRIStep will be the minimum of :math:`q-1` and the input *degree*,
+   where :math:`q` is the order of accuracy for the time integration method.
+
+
+
+.. c:function:: int MRIStepSetDenseOrder(void* arkode_mem, int dord)
+
+   *This function is deprecated, and will be removed in a future release.
+   Users should transition to calling* :c:func:`MRIStepSetInterpolantDegree()`
+   *instead.*
+
+
+
+.. c:function:: int MRIStepSetDiagnostics(void* arkode_mem, FILE* diagfp)
+
+   Specifies the file pointer for a diagnostics file where
+   all MRIStep step adaptivity and solver information is written.
+
+   **Arguments:**
+
+   * *arkode_mem* -- pointer to the MRIStep memory block.
+
+   * *diagfp* -- pointer to the diagnostics output file.
+
+   **Return value:**
+
+   * *ARK_SUCCESS* if successful
+
+   * *ARK_MEM_NULL* if the MRIStep memory is ``NULL``
+
+   * *ARK_ILL_INPUT* if an argument has an illegal value
+
+   **Notes:** This parameter can be ``stdout`` or ``stderr``, although the
+   suggested approach is to specify a pointer to a unique file opened
+   by the user and returned by ``fopen``.  If not called, or if called
+   with a ``NULL`` file pointer, all diagnostics output is disabled.
+
+   When run in parallel, only one process should set a non-NULL value
+   for this pointer, since statistics from all processes would be
+   identical.
+
+
+
+.. c:function:: int MRIStepSetErrFile(void* arkode_mem, FILE* errfp)
+
+   Specifies a pointer to the file where all MRIStep warning and error
+   messages will be written if the default internal error handling
+   function is used.
+
+   **Arguments:**
+
+   * *arkode_mem* -- pointer to the MRIStep memory block.
+
+   * *errfp* -- pointer to the output file.
+
+   **Return value:**
+
+   * *ARK_SUCCESS* if successful
+
+   * *ARK_MEM_NULL* if the MRIStep memory is ``NULL``
+
+   * *ARK_ILL_INPUT* if an argument has an illegal value
+
+   **Notes:** The default value for *errfp* is ``stderr``.
+
+   Passing a ``NULL`` value disables all future error message output
+   (except for the case wherein the MRIStep memory pointer is
+   ``NULL``).  This use of the function is strongly discouraged.
+
+   If used, this routine should be called before any other
+   optional input functions, in order to take effect for subsequent
+   error messages.
+
+
+
+.. c:function:: int MRIStepSetErrHandlerFn(void* arkode_mem, ARKErrHandlerFn ehfun, void* eh_data)
+
+   Specifies the optional user-defined function to be used
+   in handling error messages.
+
+   **Arguments:**
+
+   * *arkode_mem* -- pointer to the MRIStep memory block.
+
+   * *ehfun* -- name of user-supplied error handler function.
+
+   * *eh_data* -- pointer to user data passed to *ehfun* every time
+     it is called.
+
+   **Return value:**
+
+   * *ARK_SUCCESS* if successful
+
+   * *ARK_MEM_NULL* if the MRIStep memory is ``NULL``
+
+   * *ARK_ILL_INPUT* if an argument has an illegal value
+
+   **Notes:** Error messages indicating that the MRIStep solver memory is
+   ``NULL`` will always be directed to ``stderr``.
+
+
+
+
+.. c:function:: int MRIStepSetFixedStep(void* arkode_mem, realtype hs)
+
+   Set the slow step size used within MRIStep for the following internal step(s).
+
+   **Arguments:**
+
+   * *arkode_mem* -- pointer to the MRIStep memory block.
+
+   * *hs* -- value of the outer (slow) step size.
+
+   **Return value:**
+
+   * *ARK_SUCCESS* if successful
+
+   * *ARK_MEM_NULL* if the MRIStep memory is ``NULL``
+
+   * *ARK_ILL_INPUT* if an argument has an illegal value
+
+   **Notes:**
+
+   The step sizes used by the inner (fast) stepper may be controlled through calling the
+   appropriate "Set" routines on the inner integrator.
+
+
+
+..
+   .. c:function:: int MRIStepSetInitStep(void* arkode_mem, realtype hin)
+
+      Specifies the initial time step size MRIStep should use after
+      initialization or re-initialization.
+
+      **Arguments:**
+
+      * *arkode_mem* -- pointer to the MRIStep memory block.
+
+      * *hin* -- value of the initial step to be attempted :math:`(\ne 0)`.
+
+      **Return value:**
+
+      * *ARK_SUCCESS* if successful
+
+      * *ARK_MEM_NULL* if the MRIStep memory is ``NULL``
+
+      * *ARK_ILL_INPUT* if an argument has an illegal value
+
+      **Notes:** Pass 0.0 to use the default value.
+
+      By default, MRIStep estimates the initial step size to be the
+      solution :math:`h` of the equation :math:`\left\| \frac{h^2
+      \ddot{y}}{2}\right\| = 1`, where :math:`\ddot{y}` is an estimated
+      value of the second derivative of the solution at *t0*.
+
+
+
+
+.. c:function:: int MRIStepSetMaxHnilWarns(void* arkode_mem, int mxhnil)
+
+   Specifies the maximum number of messages issued by the
+   solver to warn that :math:`t+h=t` on the next internal step, before
+   MRIStep will instead return with an error.
+
+   **Arguments:**
+
+   * *arkode_mem* -- pointer to the MRIStep memory block.
+
+   * *mxhnil* -- maximum allowed number of warning messages :math:`(>0)`.
+
+   **Return value:**
+
+   * *ARK_SUCCESS* if successful
+
+   * *ARK_MEM_NULL* if the MRIStep memory is ``NULL``
+
+   * *ARK_ILL_INPUT* if an argument has an illegal value
+
+   **Notes:** The default value is 10; set *mxhnil* to zero to specify
+   this default.
+
+   A negative value indicates that no warning messages should be issued.
+
+
+
+
+.. c:function:: int MRIStepSetMaxNumSteps(void* arkode_mem, long int mxsteps)
+
+   Specifies the maximum number of steps to be taken by the
+   solver in its attempt to reach the next output time, before MRIStep
+   will return with an error.
+
+   **Arguments:**
+
+   * *arkode_mem* -- pointer to the MRIStep memory block.
+
+   * *mxsteps* -- maximum allowed number of internal steps.
+
+   **Return value:**
+
+   * *ARK_SUCCESS* if successful
+
+   * *ARK_MEM_NULL* if the MRIStep memory is ``NULL``
+
+   * *ARK_ILL_INPUT* if an argument has an illegal value
+
+   **Notes:** Passing *mxsteps* = 0 results in MRIStep using the
+   default value (500).
+
+   Passing *mxsteps* < 0 disables the test (not recommended).
+
+
+
+..
+   .. c:function:: int MRIStepSetMaxStep(void* arkode_mem, realtype hmax)
+
+      Specifies the upper bound on the magnitude of the time step size.
+
+      **Arguments:**
+
+      * *arkode_mem* -- pointer to the MRIStep memory block.
+
+      * *hmax* -- maximum absolute value of the time step size :math:`(\ge 0)`.
+
+      **Return value:**
+
+      * *ARK_SUCCESS* if successful
+
+      * *ARK_MEM_NULL* if the MRIStep memory is ``NULL``
+
+      * *ARK_ILL_INPUT* if an argument has an illegal value
+
+      **Notes:** Pass *hmax* :math:`\le 0.0` to set the default value of :math:`\infty`.
+
+
+
+..
+   .. c:function:: int MRIStepSetMinStep(void* arkode_mem, realtype hmin)
+
+      Specifies the lower bound on the magnitude of the time step size.
+
+      **Arguments:**
+
+      * *arkode_mem* -- pointer to the MRIStep memory block.
+
+      * *hmin* -- minimum absolute value of the time step size :math:`(\ge 0)`.
+
+      **Return value:**
+
+      * *ARK_SUCCESS* if successful
+
+      * *ARK_MEM_NULL* if the MRIStep memory is ``NULL``
+
+      * *ARK_ILL_INPUT* if an argument has an illegal value
+
+      **Notes:** Pass *hmin* :math:`\le 0.0` to set the default value of 0.
+
+
+
+.. c:function:: int MRIStepSetStopTime(void* arkode_mem, realtype tstop)
+
+   Specifies the value of the independent variable
+   :math:`t` past which the solution is not to proceed.
+
+   **Arguments:**
+
+   * *arkode_mem* -- pointer to the MRIStep memory block.
+
+   * *tstop* -- stopping time for the integrator.
+
+   **Return value:**
+
+   * *ARK_SUCCESS* if successful
+
+   * *ARK_MEM_NULL* if the MRIStep memory is ``NULL``
+
+   * *ARK_ILL_INPUT* if an argument has an illegal value
+
+   **Notes:** The default is that no stop time is imposed.
+
+
+.. c:function:: int MRIStepSetUserData(void* arkode_mem, void* user_data)
+
+   Specifies the user data block *user_data* for the outer integrator and
+   attaches it to the main MRIStep memory block.
+
+   **Arguments:**
+
+   * *arkode_mem* -- pointer to the MRIStep memory block.
+
+   * *user_data* -- pointer to the user data.
+
+   **Return value:**
+
+   * *ARK_SUCCESS* if successful
+
+   * *ARK_MEM_NULL* if the MRIStep memory is ``NULL``
+
+   * *ARK_ILL_INPUT* if an argument has an illegal value
+
+   **Notes:** If specified, the pointer to *user_data* is passed to all
+   user-supplied functions called by the outer integrator for which it is an
+   argument; otherwise ``NULL`` is passed.
+
+   To attach a user data block to the inner integrator call the appropriate
+   *SetUserData* function for the inner integrator memory structure (e.g.,
+   :c:func:`ARKStepSetUserData()` if the inner stepper is ARKStep). This pointer
+   may be the same as or different from the pointer attached to the outer
+   integrator depending on what is required by the user code.
+
+
+.. c:function:: int MRIStepSetPreInnerFn(void* arkode_mem, MRIStepPreInnerFn prefn)
+
+   Specifies the function called *before* each inner integration.
+
+   **Arguments:**
+
+   * *arkode_mem* -- pointer to the MRIStep memory block.
+
+   * *prefn* -- the name of the C function (of type :c:func:`MRIStepPreInnerFn()`)
+     defining pre inner integration function.
+
+   **Return value:**
+
+   * *ARK_SUCCESS* if successful
+
+   * *ARK_MEM_NULL* if the MRIStep memory is ``NULL``
+
+
+.. c:function:: int MRIStepSetPostInnerFn(void* arkode_mem, MRIStepPostInnerFn postfn)
+
+   Specifies the function called *after* each inner integration.
+
+   **Arguments:**
+
+   * *arkode_mem* -- pointer to the MRIStep memory block.
+
+   * *postfn* -- the name of the C function (of type :c:func:`MRIStepPostInnerFn()`)
+     defining post inner integration function.
+
+   **Return value:**
+
+   * *ARK_SUCCESS* if successful
+
+   * *ARK_MEM_NULL* if the MRIStep memory is ``NULL``
+
+..
+   .. c:function:: int MRIStepSetMaxErrTestFails(void* arkode_mem, int maxnef)
+
+      Specifies the maximum number of error test failures
+      permitted in attempting one step, before returning with an error.
+
+      **Arguments:**
+
+      * *arkode_mem* -- pointer to the MRIStep memory block.
+
+      * *maxnef* -- maximum allowed number of error test failures :math:`(>0)`.
+
+      **Return value:**
+
+      * *ARK_SUCCESS* if successful
+
+      * *ARK_MEM_NULL* if the MRIStep memory is ``NULL``
+
+      * *ARK_ILL_INPUT* if an argument has an illegal value
+
+      **Notes:** The default value is 7; set *maxnef* :math:`\le 0`
+      to specify this default.

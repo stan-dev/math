@@ -1,0 +1,86 @@
+.. ----------------------------------------------------------------
+   SUNDIALS Copyright Start
+   Copyright (c) 2002-2022, Lawrence Livermore National Security
+   and Southern Methodist University.
+   All rights reserved.
+
+   See the top-level LICENSE and NOTICE files for details.
+
+   SPDX-License-Identifier: BSD-3-Clause
+   SUNDIALS Copyright End
+   ----------------------------------------------------------------
+
+.. _ARKODE.Usage.MRIStep.Resizing:
+
+MRIStep system resize function
+-------------------------------------
+
+For simulations involving changes to the number of equations and
+unknowns in the ODE system (e.g. when using spatially-adaptive
+PDE simulations under a method-of-lines approach), the MRIStep
+integrator may be "resized" between *slow* integration steps, through calls
+to the :c:func:`MRIStepResize()` function. This function modifies
+MRIStep's internal memory structures to use the new problem size.
+
+To aid in the vector resize operation, the user can supply a vector
+resize function that will take as input a vector with the previous
+size, and transform it in-place to return a corresponding vector of
+the new size.  If this function (of type :c:func:`ARKVecResizeFn()`)
+is not supplied (i.e., is set to ``NULL``), then all existing vectors
+internal to MRIStep will be destroyed and re-cloned from the new input
+vector.
+
+
+.. c:function:: int MRIStepResize(void* arkode_mem, N_Vector yR, realtype tR, ARKVecResizeFn resize, void* resize_data)
+
+   Re-initializes MRIStep with a different state vector.
+
+   **Arguments:**
+
+   * *arkode_mem* -- pointer to the MRIStep memory block.
+
+   * *yR* -- the newly-sized solution vector, holding the current
+     dependent variable values :math:`y(t_R)`.
+
+   * *tR* -- the current value of the independent variable
+     :math:`t_R` (this must be consistent with *yR*).
+
+   * *resize* -- the user-supplied vector resize function (of type
+     :c:func:`ARKVecResizeFn()`.
+
+   * *resize_data* -- the user-supplied data structure to be passed
+     to *resize* when modifying internal MRIStep vectors.
+
+   **Return value:**
+
+   * *ARK_SUCCESS* if successful
+
+   * *ARK_MEM_NULL*  if the MRIStep memory was ``NULL``
+
+   * *ARK_NO_MALLOC* if *arkode_mem* was not allocated.
+
+   * *ARK_ILL_INPUT* if an argument has an illegal value.
+
+   **Notes:** If an error occurred, :c:func:`MRIStepResize()` also sends an error
+   message to the error handler function.
+
+
+
+Resizing the absolute tolerance array
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If using array-valued absolute tolerances, the absolute tolerance
+vector will be invalid after the call to :c:func:`MRIStepResize()`, so
+the new absolute tolerance vector should be re-set **following** each
+call to :c:func:`MRIStepResize()` through a new call to
+:c:func:`MRIStepSVtolerances()`.
+
+If scalar-valued tolerances or a tolerance function was specified
+through either :c:func:`MRIStepSStolerances()` or
+:c:func:`MRIStepWFtolerances()`, then these will remain valid and no
+further action is necessary.
+
+
+.. note:: For an example showing usage of the similar
+          :c:func:`ARKStepResize()` routine, see the supplied serial C
+          example problem, ``ark_heat1D_adapt.c``.

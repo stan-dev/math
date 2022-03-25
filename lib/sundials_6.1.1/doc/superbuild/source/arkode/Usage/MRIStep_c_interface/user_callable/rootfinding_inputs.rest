@@ -1,0 +1,75 @@
+.. ----------------------------------------------------------------
+   SUNDIALS Copyright Start
+   Copyright (c) 2002-2022, Lawrence Livermore National Security
+   and Southern Methodist University.
+   All rights reserved.
+
+   See the top-level LICENSE and NOTICE files for details.
+
+   SPDX-License-Identifier: BSD-3-Clause
+   SUNDIALS Copyright End
+   ----------------------------------------------------------------
+
+.. _ARKODE.Usage.MRIStep.MRIStepRootfindingInput:
+
+Rootfinding optional input functions
+------------------------------------
+
+The following functions can be called to set optional inputs to
+control the rootfinding algorithm, the mathematics of which are
+described in the section :numref:`ARKODE.Mathematics.Rootfinding`.
+
+
+.. cssclass:: table-bordered
+
+======================================  ========================================  ==================
+Optional input                          Function name                             Default
+======================================  ========================================  ==================
+Direction of zero-crossings to monitor  :c:func:`MRIStepSetRootDirection()`       both
+Disable inactive root warnings          :c:func:`MRIStepSetNoInactiveRootWarn()`  enabled
+======================================  ========================================  ==================
+
+
+
+.. c:function:: int MRIStepSetRootDirection(void* arkode_mem, int* rootdir)
+
+   Specifies the direction of zero-crossings to be located and returned.
+
+   **Arguments:**
+      * *arkode_mem* -- pointer to the MRIStep memory block.
+      * *rootdir* -- state array of length *nrtfn*, the number of root
+        functions :math:`g_i`  (the value of *nrtfn* was supplied in
+        the call to :c:func:`MRIStepRootInit()`).  If ``rootdir[i] ==
+        0`` then crossing in either direction for :math:`g_i` should be
+        reported.  A value of +1 or -1 indicates that the solver
+        should report only zero-crossings where :math:`g_i` is
+        increasing or decreasing, respectively.
+
+   **Return value:**
+      * *ARK_SUCCESS* if successful
+      * *ARK_MEM_NULL* if the MRIStep memory is ``NULL``
+      * *ARK_ILL_INPUT* if an argument has an illegal value
+
+   **Notes:**  The default behavior is to monitor for both zero-crossing directions.
+
+
+
+.. c:function:: int MRIStepSetNoInactiveRootWarn(void* arkode_mem)
+
+   Disables issuing a warning if some root function appears
+   to be identically zero at the beginning of the integration.
+
+   **Arguments:**
+      * *arkode_mem* -- pointer to the MRIStep memory block.
+
+   **Return value:**
+      * *ARK_SUCCESS* if successful
+      * *ARK_MEM_NULL* if the MRIStep memory is ``NULL``
+
+   **Notes:** MRIStep will not report the initial conditions as a
+   possible zero-crossing (assuming that one or more components
+   :math:`g_i` are zero at the initial time).  However, if it appears
+   that some :math:`g_i` is identically zero at the initial time
+   (i.e., :math:`g_i` is zero at the initial time *and* after the
+   first step), MRIStep will issue a warning which can be disabled with
+   this optional input function.

@@ -1,0 +1,502 @@
+Demonstration program for CVODE package - direct linear solvers
+
+
+Problem 1: Van der Pol oscillator
+ xdotdot - 3*(1 - x^2)*xdot + x = 0, x(0) = 2, xdot(0) = 0
+ neq = 2,  reltol = 0,  abstol = 1e-06
+
+-------------------------------------------------------------
+
+Linear Multistep Method : ADAMS
+Iteration               : FIXEDPOINT
+
+     t           x              xdot         qu     hu 
+   1.39284     1.68010e+00   -2.91056e-01    5    9.8626e-02
+   3.60761    -2.12391e-05   -3.16877e+00    5    2.2757e-02
+   5.82239    -1.68010e+00    2.91060e-01    4    1.4079e-01
+   8.03716     9.57608e-05    3.16900e+00    5    2.0348e-02
+
+ Final statistics for this run:
+
+ CVode real workspace length              =  136 
+ CVode integer workspace length           =   72 
+ Number of steps                          =  196 
+ Number of f-s                            =  390 
+ Number of setups                         =    0 
+ Number of nonlinear iterations           =  387 
+ Number of nonlinear convergence failures =    0 
+ Number of error test failures            =   15 
+
+ Error overrun = 95.761 
+
+
+-------------------------------------------------------------
+
+Linear Multistep Method : ADAMS
+Iteration               : NEWTON
+Linear Solver           : Dense, User-Supplied Jacobian
+
+     t           x              xdot         qu     hu 
+   1.39284     1.68010e+00   -2.91056e-01    7    6.5178e-02
+   3.60761     2.42943e-06   -3.16870e+00    7    2.0626e-02
+   5.82239    -1.68010e+00    2.91062e-01    7    1.3038e-01
+   8.03716     1.99078e-05    3.16879e+00    7    2.3923e-02
+
+ Final statistics for this run:
+
+ CVode real workspace length              =  136 
+ CVode integer workspace length           =   72 
+ Number of steps                          =  266 
+ Number of f-s                            =  365 
+ Number of setups                         =   46 
+ Number of nonlinear iterations           =  362 
+ Number of nonlinear convergence failures =    0 
+ Number of error test failures            =   23 
+
+ Linear solver real workspace length      =   10 
+ Linear solver integer workspace length   =   41 
+ Number of Jacobian evaluations           =    5 
+ Number of f evals. in linear solver      =    0 
+
+ Error overrun = 19.908 
+
+
+-------------------------------------------------------------
+
+Linear Multistep Method : ADAMS
+Iteration               : NEWTON
+Linear Solver           : Dense, Difference Quotient Jacobian
+
+     t           x              xdot         qu     hu 
+   1.39284     1.68010e+00   -2.91056e-01    5    6.5835e-02
+   3.60761    -2.28046e-05   -3.16879e+00    6    3.1773e-02
+   5.82239    -1.68010e+00    2.91059e-01    6    9.3514e-02
+   8.03716    -9.84742e-06    3.16869e+00    6    2.8096e-02
+
+ Final statistics for this run:
+
+ CVode real workspace length              =  136 
+ CVode integer workspace length           =   72 
+ Number of steps                          =  195 
+ Number of f-s                            =  267 
+ Number of setups                         =   34 
+ Number of nonlinear iterations           =  264 
+ Number of nonlinear convergence failures =    0 
+ Number of error test failures            =   15 
+
+ Linear solver real workspace length      =   10 
+ Linear solver integer workspace length   =   41 
+ Number of Jacobian evaluations           =    4 
+ Number of f evals. in linear solver      =    8 
+
+ Error overrun = 22.805 
+
+
+-------------------------------------------------------------
+
+Linear Multistep Method : ADAMS
+Iteration               : NEWTON
+Linear Solver           : Diagonal Jacobian
+
+     t           x              xdot         qu     hu 
+   1.39284     1.68010e+00   -2.91054e-01    6    5.9553e-02
+   3.60761     6.36071e-05   -3.16853e+00    6    2.8912e-02
+   5.82239    -1.68011e+00    2.91057e-01    5    9.8149e-02
+   8.03716    -7.70359e-05    3.16847e+00    6    2.3224e-02
+
+ Final statistics for this run:
+
+ CVode real workspace length              =  136 
+ CVode integer workspace length           =   72 
+ Number of steps                          =  238 
+ Number of f-s                            =  329 
+ Number of setups                         =   40 
+ Number of nonlinear iterations           =  326 
+ Number of nonlinear convergence failures =    0 
+ Number of error test failures            =   20 
+
+ Linear solver real workspace length      =    6 
+ Linear solver integer workspace length   =    3 
+ Number of Jacobian evaluations           =   40 
+ Number of f evals. in linear solver      =   40 
+
+ Error overrun = 77.036 
+
+
+-------------------------------------------------------------
+
+Linear Multistep Method : BDF
+Iteration               : FIXEDPOINT
+
+     t           x              xdot         qu     hu 
+   1.39284     1.68010e+00   -2.91056e-01    4    9.6100e-02
+   3.60761    -1.35636e-04   -3.16912e+00    5    1.5675e-02
+   5.82239    -1.68009e+00    2.91063e-01    5    1.1210e-01
+   8.03716     2.20969e-04    3.16937e+00    5    1.4732e-02
+
+ Final statistics for this run:
+
+ CVode real workspace length              =  122 
+ CVode integer workspace length           =   65 
+ Number of steps                          =  262 
+ Number of f-s                            =  497 
+ Number of setups                         =    0 
+ Number of nonlinear iterations           =  494 
+ Number of nonlinear convergence failures =    0 
+ Number of error test failures            =   22 
+
+ Error overrun = 220.969 
+
+
+-------------------------------------------------------------
+
+Linear Multistep Method : BDF
+Iteration               : NEWTON
+Linear Solver           : Dense, User-Supplied Jacobian
+
+     t           x              xdot         qu     hu 
+   1.39284     1.68010e+00   -2.91056e-01    5    1.1991e-01
+   3.60761    -5.46907e-05   -3.16886e+00    5    1.6403e-02
+   5.82239    -1.68010e+00    2.91061e-01    4    1.0146e-01
+   8.03716     1.54312e-04    3.16917e+00    4    9.5378e-03
+
+ Final statistics for this run:
+
+ CVode real workspace length              =  122 
+ CVode integer workspace length           =   65 
+ Number of steps                          =  265 
+ Number of f-s                            =  357 
+ Number of setups                         =   40 
+ Number of nonlinear iterations           =  354 
+ Number of nonlinear convergence failures =    0 
+ Number of error test failures            =   18 
+
+ Linear solver real workspace length      =   10 
+ Linear solver integer workspace length   =   41 
+ Number of Jacobian evaluations           =    5 
+ Number of f evals. in linear solver      =    0 
+
+ Error overrun = 154.312 
+
+
+-------------------------------------------------------------
+
+Linear Multistep Method : BDF
+Iteration               : NEWTON
+Linear Solver           : Dense, Difference Quotient Jacobian
+
+     t           x              xdot         qu     hu 
+   1.39284     1.68010e+00   -2.91058e-01    4    8.1067e-02
+   3.60761    -5.84200e-05   -3.16886e+00    4    1.1360e-02
+   5.82239    -1.68010e+00    2.91062e-01    5    6.4941e-02
+   8.03716     9.61737e-05    3.16899e+00    5    1.5216e-02
+
+ Final statistics for this run:
+
+ CVode real workspace length              =  122 
+ CVode integer workspace length           =   65 
+ Number of steps                          =  276 
+ Number of f-s                            =  366 
+ Number of setups                         =   40 
+ Number of nonlinear iterations           =  363 
+ Number of nonlinear convergence failures =    0 
+ Number of error test failures            =   17 
+
+ Linear solver real workspace length      =   10 
+ Linear solver integer workspace length   =   41 
+ Number of Jacobian evaluations           =    6 
+ Number of f evals. in linear solver      =   12 
+
+ Error overrun = 96.174 
+
+
+-------------------------------------------------------------
+
+Linear Multistep Method : BDF
+Iteration               : NEWTON
+Linear Solver           : Diagonal Jacobian
+
+     t           x              xdot         qu     hu 
+   1.39284     1.68010e+00   -2.91056e-01    5    1.1430e-01
+   3.60761    -9.83501e-05   -3.16900e+00    5    1.6712e-02
+   5.82239    -1.68009e+00    2.91063e-01    4    8.1261e-02
+   8.03716     1.66640e-04    3.16920e+00    4    1.0546e-02
+
+ Final statistics for this run:
+
+ CVode real workspace length              =  122 
+ CVode integer workspace length           =   65 
+ Number of steps                          =  266 
+ Number of f-s                            =  359 
+ Number of setups                         =   39 
+ Number of nonlinear iterations           =  356 
+ Number of nonlinear convergence failures =    0 
+ Number of error test failures            =   17 
+
+ Linear solver real workspace length      =    6 
+ Linear solver integer workspace length   =    3 
+ Number of Jacobian evaluations           =   39 
+ Number of f evals. in linear solver      =   39 
+
+ Error overrun = 166.640 
+
+
+-------------------------------------------------------------
+-------------------------------------------------------------
+
+Problem 2: ydot = A * y, where A is a banded lower
+triangular matrix derived from 2-D advection PDE
+
+ neq = 25, ml = 5, mu = 0
+ itol = CV_SS, reltol = 0, abstol = 1e-06
+      t        max.err      qu     hu 
+
+
+-------------------------------------------------------------
+
+Linear Multistep Method : ADAMS
+Iteration               : FIXEDPOINT
+
+      t        max.err      qu     hu 
+     0.010    1.4690e-07    3     1.1459e-02
+     0.100    5.2543e-07    4     4.1413e-02
+     1.000    1.2207e-06    5     6.8243e-02
+    10.000    9.7711e-07    3     2.8481e-01
+   100.000    2.2510e-07    1     6.7722e-01
+
+ Final statistics for this run:
+
+ CVode real workspace length              =  596 
+ CVode integer workspace length           =   72 
+ Number of steps                          =  341 
+ Number of f-s                            =  601 
+ Number of setups                         =    0 
+ Number of nonlinear iterations           =  598 
+ Number of nonlinear convergence failures =   79 
+ Number of error test failures            =    0 
+
+ Error overrun = 1.221 
+
+
+-------------------------------------------------------------
+
+Linear Multistep Method : ADAMS
+Iteration               : NEWTON
+Linear Solver           : Diagonal Jacobian
+
+      t        max.err      qu     hu 
+     0.010    1.3734e-07    3     1.0327e-02
+     0.100    2.4956e-06    3     2.3048e-02
+     1.000    4.2328e-06    4     4.3778e-02
+    10.000    9.7303e-07    4     3.1286e-01
+   100.000    1.1241e-09    1     3.7371e+02
+
+ Final statistics for this run:
+
+ CVode real workspace length              =  596 
+ CVode integer workspace length           =   72 
+ Number of steps                          =  154 
+ Number of f-s                            =  218 
+ Number of setups                         =   33 
+ Number of nonlinear iterations           =  215 
+ Number of nonlinear convergence failures =    0 
+ Number of error test failures            =    5 
+
+ Linear solver real workspace length      =   75 
+ Linear solver integer workspace length   =    3 
+ Number of Jacobian evaluations           =   33 
+ Number of f evals. in linear solver      =   33 
+
+ Error overrun = 4.233 
+
+
+-------------------------------------------------------------
+
+Linear Multistep Method : ADAMS
+Iteration               : NEWTON
+Linear Solver           : Band, User-Supplied Jacobian
+
+      t        max.err      qu     hu 
+     0.010    1.3670e-07    3     1.2164e-02
+     0.100    4.7920e-07    4     4.2115e-02
+     1.000    2.5077e-07    6     1.0365e-01
+    10.000    6.0790e-07    4     4.7206e-01
+   100.000    5.7390e-08    2     1.0750e+01
+
+ Final statistics for this run:
+
+ CVode real workspace length              =  596 
+ CVode integer workspace length           =   72 
+ Number of steps                          =  149 
+ Number of f-s                            =  183 
+ Number of setups                         =   32 
+ Number of nonlinear iterations           =  180 
+ Number of nonlinear convergence failures =    0 
+ Number of error test failures            =    6 
+
+ Linear solver real workspace length      =  327 
+ Linear solver integer workspace length   =   91 
+ Number of Jacobian evaluations           =    3 
+ Number of f evals. in linear solver      =    0 
+
+ Error overrun = 0.608 
+
+
+-------------------------------------------------------------
+
+Linear Multistep Method : ADAMS
+Iteration               : NEWTON
+Linear Solver           : Band, Difference Quotient Jacobian
+
+      t        max.err      qu     hu 
+     0.010    1.4285e-07    3     1.3840e-02
+     0.100    5.7337e-07    4     4.2111e-02
+     1.000    7.3281e-07    5     6.3684e-02
+    10.000    3.8507e-07    5     2.6026e-01
+   100.000    4.1037e-12    1     6.2591e+01
+
+ Final statistics for this run:
+
+ CVode real workspace length              =  596 
+ CVode integer workspace length           =   72 
+ Number of steps                          =  124 
+ Number of f-s                            =  141 
+ Number of setups                         =   24 
+ Number of nonlinear iterations           =  138 
+ Number of nonlinear convergence failures =    0 
+ Number of error test failures            =    1 
+
+ Linear solver real workspace length      =  327 
+ Linear solver integer workspace length   =   91 
+ Number of Jacobian evaluations           =    3 
+ Number of f evals. in linear solver      =   18 
+
+ Error overrun = 0.733 
+
+
+-------------------------------------------------------------
+
+Linear Multistep Method : BDF
+Iteration               : FIXEDPOINT
+
+      t        max.err      qu     hu 
+     0.010    5.5931e-07    2     8.1257e-03
+     0.100    5.2896e-06    3     1.7769e-02
+     1.000    2.3209e-06    5     7.5291e-02
+    10.000    1.2861e-06    5     2.7791e-01
+   100.000    2.8424e-07    1     2.5672e-01
+
+ Final statistics for this run:
+
+ CVode real workspace length              =  421 
+ CVode integer workspace length           =   65 
+ Number of steps                          =  372 
+ Number of f-s                            =  692 
+ Number of setups                         =    0 
+ Number of nonlinear iterations           =  689 
+ Number of nonlinear convergence failures =   56 
+ Number of error test failures            =    1 
+
+ Error overrun = 5.290 
+
+
+-------------------------------------------------------------
+
+Linear Multistep Method : BDF
+Iteration               : NEWTON
+Linear Solver           : Diagonal Jacobian
+
+      t        max.err      qu     hu 
+     0.010    5.6365e-07    2     8.1241e-03
+     0.100    7.9753e-07    4     1.8910e-02
+     1.000    5.9100e-06    5     5.1976e-02
+    10.000    2.1547e-06    4     3.1113e-01
+   100.000    4.2213e-09    1     1.3897e+02
+
+ Final statistics for this run:
+
+ CVode real workspace length              =  421 
+ CVode integer workspace length           =   65 
+ Number of steps                          =  180 
+ Number of f-s                            =  270 
+ Number of setups                         =   47 
+ Number of nonlinear iterations           =  267 
+ Number of nonlinear convergence failures =    2 
+ Number of error test failures            =    5 
+
+ Linear solver real workspace length      =   75 
+ Linear solver integer workspace length   =    3 
+ Number of Jacobian evaluations           =   47 
+ Number of f evals. in linear solver      =   47 
+
+ Error overrun = 5.910 
+
+
+-------------------------------------------------------------
+
+Linear Multistep Method : BDF
+Iteration               : NEWTON
+Linear Solver           : Band, User-Supplied Jacobian
+
+      t        max.err      qu     hu 
+     0.010    5.6372e-07    2     8.1246e-03
+     0.100    5.2784e-06    3     1.7819e-02
+     1.000    1.8169e-06    5     6.0110e-02
+    10.000    5.4997e-07    5     4.1661e-01
+   100.000    1.7764e-09    2     2.9748e+01
+
+ Final statistics for this run:
+
+ CVode real workspace length              =  421 
+ CVode integer workspace length           =   65 
+ Number of steps                          =  119 
+ Number of f-s                            =  143 
+ Number of setups                         =   25 
+ Number of nonlinear iterations           =  140 
+ Number of nonlinear convergence failures =    0 
+ Number of error test failures            =    2 
+
+ Linear solver real workspace length      =  327 
+ Linear solver integer workspace length   =   91 
+ Number of Jacobian evaluations           =    3 
+ Number of f evals. in linear solver      =    0 
+
+ Error overrun = 5.278 
+
+
+-------------------------------------------------------------
+
+Linear Multistep Method : BDF
+Iteration               : NEWTON
+Linear Solver           : Band, Difference Quotient Jacobian
+
+      t        max.err      qu     hu 
+     0.010    5.6492e-07    2     8.1361e-03
+     0.100    5.9968e-06    3     1.7105e-02
+     1.000    1.6902e-06    5     8.7628e-02
+    10.000    5.2314e-07    5     3.1091e-01
+   100.000    1.4380e-09    2     2.1635e+01
+
+ Final statistics for this run:
+
+ CVode real workspace length              =  421 
+ CVode integer workspace length           =   65 
+ Number of steps                          =  121 
+ Number of f-s                            =  144 
+ Number of setups                         =   24 
+ Number of nonlinear iterations           =  141 
+ Number of nonlinear convergence failures =    0 
+ Number of error test failures            =    1 
+
+ Linear solver real workspace length      =  327 
+ Linear solver integer workspace length   =   91 
+ Number of Jacobian evaluations           =    3 
+ Number of f evals. in linear solver      =   18 
+
+ Error overrun = 5.997 
+
+
+-------------------------------------------------------------
+-------------------------------------------------------------
+
+ Number of errors encountered = 0 

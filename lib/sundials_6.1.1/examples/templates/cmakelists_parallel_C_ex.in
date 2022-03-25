@@ -1,0 +1,119 @@
+# -----------------------------------------------------------------
+# Programmer(s): Radu Serban @ LLNL
+# -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2002-2022, Lawrence Livermore National Security
+# and Southern Methodist University.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
+# CMakeLists.txt for @SOLVER@ C MPI examples.
+#
+# This file is generated from a template using variables
+# set at configuration time. It can be used as a template for
+# other user CMakeLists configuration files.
+# -----------------------------------------------------------------
+
+# Set the minimum required cmake version
+cmake_minimum_required(VERSION @CMAKE_VERSION@)
+
+# Set cache variables for compilers and flags
+set(CMAKE_C_COMPILER
+  @MPI_C_COMPILER@
+  CACHE FILEPATH "MPI C compiler")
+
+set(CMAKE_C_FLAGS
+  "@CMAKE_C_FLAGS@"
+  CACHE STRING "C compiler flags")
+
+if("@CMAKE_C_STANDARD@")
+  set(CMAKE_C_STANDARD "@CMAKE_C_STANDARD@"
+    CACHE STRING "C standard")
+endif()
+
+# Specify project name and language
+project(@SOLVER@_C_parallel_examples C)
+
+# Enable testing
+include(CTest)
+
+# ------------------------------------------------------------------------------
+
+# Specify the path to SUNDIALS header files
+set(SUNDIALS_INCLUDE_DIR
+  @CMAKE_INSTALL_PREFIX@/include
+  CACHE PATH "Location of SUNDIALS header files")
+
+# Specify the path to SUNDIALS libraries
+set(SUNDIALS_LIBRARY_DIR
+  @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@
+  CACHE PATH "Location of SUNDIALS libraries")
+
+# Find the SUNDIALS libraries
+find_library(SUNDIALS_SOLVER_LIB
+  @SOLVER_LIB@ ${SUNDIALS_LIBRARY_DIR}
+  DOC "@SOLVER@ library")
+
+find_library(SUNDIALS_NVECPAR_LIB
+  sundials_nvecparallel ${SUNDIALS_LIBRARY_DIR}
+  DOC "NVECTOR_PARALLEL library")
+
+find_library(SUNDIALS_NVECSER_LIB
+  sundials_nvecserial ${SUNDIALS_LIBRARY_DIR}
+  DOC "NVECTOR_SERIAL library")
+
+find_library(SUNDIALS_MANYVEC_LIB
+  sundials_nvecmpimanyvector ${SUNDIALS_LIBRARY_DIR}
+  DOC "NVECTOR_MPIMANYVECTOR library")
+
+find_library(SUNDIALS_MPIPLUSX_LIB
+  sundials_nvecmpiplusx ${SUNDIALS_LIBRARY_DIR}
+  DOC "NVECTOR_MPIPLUSX library")
+
+# Set additional libraries
+set(SUNDIALS_EXTRA_LIBS @LIBS@ CACHE STRING "Additional libraries")
+
+# For SUNDIALS module examples the solver library is not needed
+if(NOT SUNDIALS_SOLVER_LIB)
+  set(SUNDIALS_SOLVER_LIB "")
+endif()
+
+# List of SUNDIALS libraries
+set(SUNDIALS_LIBRARIES
+  -L${SUNDIALS_LIBRARY_DIR}
+  ${SUNDIALS_SOLVER_LIB}
+  ${SUNDIALS_NVECPAR_LIB}
+  ${SUNDIALS_NVECSER_LIB}
+  ${SUNDIALS_MANYVEC_LIB}
+  ${SUNDIALS_MPIPLUSX_LIB}
+  ${SUNDIALS_EXTRA_LIBS})
+
+# ------------------------------------------------------------------------------
+
+# Set the names of the examples to be built and their dependencies
+set(examples @EXAMPLES@)
+set(examples_dependencies @EXAMPLES_DEPENDENCIES@)
+if(examples)
+  list(REMOVE_DUPLICATES examples)
+endif()
+
+# Create targets for each example
+foreach(example ${examples})
+
+  # example source files
+  add_executable(${example} ${example}.c ${examples_dependencies})
+
+  # directories to include
+  target_include_directories(${example} PRIVATE ${SUNDIALS_INCLUDE_DIR})
+
+  # libraries to link against
+  target_link_libraries(${example} ${SUNDIALS_LIBRARIES})
+
+  # add the example to ctest
+  add_test(NAME ${example} COMMAND ${example})
+
+endforeach()

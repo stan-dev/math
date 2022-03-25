@@ -1,0 +1,96 @@
+# -----------------------------------------------------------------
+# Programmer: David J. Gardner @ LLNL
+# -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2002-2022, Lawrence Livermore National Security
+# and Southern Methodist University.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
+# Makefile for @SOLVER@ + XBraid C++ MPI examples
+#
+# This file is generated from a template using variables
+# set at configuration time. It can be used as a template for
+# other user Makefiles.
+# -----------------------------------------------------------------
+
+# CXX compiler and flags
+CXX      = @MPI_CXX_COMPILER@
+CXXFLAGS = @CMAKE_CXX_FLAGS_RELEASE@ -DMPICH_SKIP_MPICXX -DOMPI_SKIP_MPICXX -DLAM_BUILDING
+LDFLAGS  = @CMAKE_EXE_LINKER_FLAGS_RELEASE@
+
+# SUNDIALS includes and libraries
+SUNDIALS_INCLUDES  = @CMAKE_INSTALL_PREFIX@/include
+SUNDIALS_LIB_DIR   = @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@
+SUNDIALS_LIBRARIES = -l@SOLVER_LIB@ -lsundials_nvecparallel -l@SOLVER_LIB@_xbraid
+
+# XBraid includes and libraries
+XBRAID_INCLUDES  = @XBRAID_INCS@
+XBRAID_LIBRARIES = @XBRAID_LIBS@
+
+# hypre includes and libraries
+HYPRE_INCLUDES  = @HYPRE_INCLUDE_DIR@
+HYPRE_LIB_DIR   = @HYPRE_LIBRARY_DIR@
+HYPRE_LIBRARIES = @HYPRE_LIBRARIES@
+
+# extra link libraries
+EXTRA_LIBRARIES = @LIBS@
+
+# -----------------------------------------------------------------------------------------
+# Examples
+# -----------------------------------------------------------------------------------------
+
+# @SOLVER@ + XBraid examples
+EXAMPLES = @EXAMPLES@
+OBJECTS  = ${EXAMPLES:=.o}
+
+# @SOLVER@ + XBraid + hypre examples
+EXAMPLES_HYPRE = @EXAMPLES_HYPRE@
+OBJECTS_HYPRE  = ${EXAMPLES_HYPRE:=.o}
+
+# -----------------------------------------------------------------------------------------
+# Build examples
+# -----------------------------------------------------------------------------------------
+
+# @SOLVER@ + XBraid
+INCLUDES  = $(addprefix -I, ${SUNDIALS_INCLUDES} ${XBRAID_INCLUDES})
+LIB_DIRS  = $(addprefix -L, ${SUNDIALS_LIB_DIR})
+LIBRARIES = ${SUNDIALS_LIBRARIES} ${XBRAID_LIBRARIES} ${EXTRA_LIBS}
+LINKFLAGS = -Wl,-rpath,${SUNDIALS_LIB_DIR}
+
+# @SOLVER@ + XBraid + hypre
+INCLUDES_HYPRE  = $(addprefix -I, ${SUNDIALS_INCLUDES} ${XBRAID_INCLUDES} ${HYPRE_INCLUDES})
+LIB_DIRS_HYPRE  = $(addprefix -L, ${SUNDIALS_LIB_DIR} ${HYPRE_LIB_DIR})
+LIBRARIES_HYPRE = ${SUNDIALS_LIBRARIES} ${XBRAID_LIBRARIES} ${HYPRE_LIBRARIES} ${EXTRA_LIBS}
+LINKFLAGS_HYPRE = -Wl,-rpath,${SUNDIALS_LIB_DIR} -Wl,-rpath,${HYPRE_LIB_DIR}
+
+.SUFFIXES : .o .cpp
+
+.cpp.o :
+	${CXX} ${CXXFLAGS} ${INCLUDES} -c $<
+
+all: examples examples_hypre
+
+examples: ${OBJECTS}
+	@for i in ${EXAMPLES} ; do \
+	  echo "${CXX} -o $${i} $${i}.o ${CXXFLAGS} ${LDFLAGS} ${INCLUDES} ${LIB_DIRS} ${LIBRARIES} ${LINKFLAGS}" ; \
+	  ${CXX} -o $${i} $${i}.o ${CXXFLAGS} ${LDFLAGS} ${INCLUDES} ${LIB_DIRS} ${LIBRARIES} ${LINKFLAGS}; \
+	done
+
+examples_hypre: ${OBJECTS_HYPRE}
+	@for i in ${EXAMPLES_HYPRE} ; do \
+	  echo "${CXX} -o $${i} $${i}.o ${CXXFLAGS} ${LDFLAGS} ${INCLUDES_HYPRE} ${LIB_DIRS_HYPRE} ${LIBRARIES_HYPRE} ${LINKFLAGS_HYPRE}" ; \
+	  ${CXX} -o $${i} $${i}.o ${CXXFLAGS} ${LDFLAGS} ${INCLUDES_HYPRE} ${LIB_DIRS_HYPRE} ${LIBRARIES_HYPRE} ${LINKFLAGS_HYPRE}; \
+	done
+
+clean:
+	rm -f ${OBJECTS}
+	rm -f ${EXAMPLES}
+	rm -f ${OBJECTS_HYPRE}
+	rm -f ${EXAMPLES_HYPRE}
+
+# -----------------------------------------------------------------------------------------

@@ -1,0 +1,40 @@
+
+2D Stationary Heat PDE + Nonlinear term test problem:
+ --------------------------------- 
+  nprocs         = 4
+  npx            = 2
+  npy            = 2
+ --------------------------------- 
+  kx             = 1
+  ky             = 1
+  xu             = 1
+  yu             = 1
+  nx             = 64
+  ny             = 64
+  nxl (proc 0)   = 32
+  nyl (proc 0)   = 32
+  dx             = 0.015873
+  dy             = 0.015873
+ --------------------------------- 
+  rtol           = 1e-08
+  maa            = 0
+  damping        = 1
+  orthaa         = 0
+  maxits         = 100
+ --------------------------------- 
+  c              = 1
+ --------------------------------- 
+  linear solver  = PCG
+  lin iters      = 20
+  eps lin        = 1e-08
+  pfmg_relax     = 2
+  pfmg_nrelax    = 2
+ --------------------------------- 
+  output         = 1
+ --------------------------------- 
+
+Final statistics:
+  Func evals       = 8
+  NLS iters        = 8
+
+  Max error = 8.625930697224726e-04

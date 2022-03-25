@@ -1,0 +1,73 @@
+# -----------------------------------------------------------------
+# Programmer(s): David J. Gardner @ LLNL
+# -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2002-2022, Lawrence Livermore National Security
+# and Southern Methodist University.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
+# This file is generated from a template using variables
+# set at configuration time. It can be used as a template for
+# other user Makefiles.
+# -----------------------------------------------------------------
+
+SHELL = @SHELL@
+
+includedir = @CMAKE_INSTALL_FULL_INCLUDEDIR@
+libdir     = @CMAKE_INSTALL_FULL_LIBDIR@
+
+CPP      = @_EXAMPLES_C_COMPILER@
+CPPFLAGS = @CMAKE_C_FLAGS@
+CC       = @_EXAMPLES_C_COMPILER@
+CFLAGS   = @CMAKE_C_FLAGS@
+CXX      = @_EXAMPLES_CXX_COMPILER@
+CXXFLAGS = @CMAKE_CXX_FLAGS@
+LDFLAGS  = @CMAKE_EXE_LINKER_FLAGS@
+
+LINKFLAGS = -Wl,-rpath,${libdir}
+
+# ------------------------------------------------------------------------------
+
+INCLUDES  = $(addprefix -I, ${includedir})
+LIBRARIES = @EXAMPLES_LIBS@ @LIBS@
+
+# ------------------------------------------------------------------------------
+
+EXAMPLES = $(basename @EXAMPLES@)
+OBJECTS  = ${EXAMPLES:=.o}
+
+EXAMPLES_DEPENDENCIES = $(basename @EXAMPLES_DEPENDENCIES@)
+OBJECTS_DEPENDENCIES  = ${EXAMPLES_DEPENDENCIES:=.o}
+
+# ------------------------------------------------------------------------------
+
+.SUFFIXES : .o .c .cpp
+
+.c.o :
+	${CC} ${CPPFLAGS} ${CFLAGS} ${INCLUDES} -c $<
+
+.cpp.o :
+	${CXX} ${CPPFLAGS} ${CXXFLAGS} ${INCLUDES} -c $<
+
+# ------------------------------------------------------------------------------
+
+all: examples
+
+examples: ${OBJECTS}
+	@for i in ${EXAMPLES} ; do \
+	  echo "${CXX} -o $${i} $${i}.o ${OBJECTS_DEPENDENCIES} ${CXXFLAGS} ${LDFLAGS} ${INCLUDES} -L${libdir} ${LIBRARIES} ${LINKFLAGS}" ; \
+	  ${CXX} -o $${i} $${i}.o ${OBJECTS_DEPENDENCIES} ${CXXFLAGS} ${LDFLAGS} ${INCLUDES} -L${libdir} ${LIBRARIES} ${LINKFLAGS} ; \
+	done
+
+${OBJECTS}: ${OBJECTS_DEPENDENCIES}
+
+clean:
+	rm -f ${OBJECTS} ${OBJECTS_DEPENDENCIES}
+	rm -f ${EXAMPLES}
+
+# ------------------------------------------------------------------------------

@@ -1,0 +1,23 @@
+
+Nonlinear Kvaerno-Prothero-Robinson test problem with mass matrix:
+    time domain:  (-3,7]
+    Time-dependent mass matrix
+    ARK solver, order = 4
+    Newton nonlinear solver
+    Order-of-convergence run
+    G = -100
+    g = 10
+    e = 0.5
+
+ Fixed-step runs:
+ -----------------------------------------------------
+   h = 5.000e-01,  error = 7.947e-05
+   h = 2.500e-01,  error = 3.984e-05,  order = 1.00
+   h = 1.250e-01,  error = 1.367e-05,  order = 1.54
+   h = 6.250e-02,  error = 3.085e-06,  order = 2.15
+   h = 3.125e-02,  error = 4.714e-07,  order = 2.71
+   h = 1.562e-02,  error = 5.336e-08,  order = 3.14
+   h = 7.812e-03,  error = 4.819e-09,  order = 3.47
+   h = 3.906e-03,  error = 3.726e-10,  order = 3.69
+ -----------------------------------------------------
+ Order: max = 3.69,  avg = 2.53,  overall = 2.57 [SUCCESS]

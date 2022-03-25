@@ -1,0 +1,1930 @@
+% ----------------------------------------------------------------
+% SUNDIALS Copyright Start
+% Copyright (c) 2002-2022, Lawrence Livermore National Security
+% and Southern Methodist University.
+% All rights reserved.
+%
+% See the top-level LICENSE and NOTICE files for details.
+%
+% SPDX-License-Identifier: BSD-3-Clause
+% SUNDIALS Copyright End
+% ----------------------------------------------------------------
+
+% Extensive bib file for SUNDIALS
+%
+% Label convention:
+% One author      : first three letters of last name: two digit year
+% Two authors     : first two letters of last names : two digit year
+% More authors    : first letter of last names      : two digit year
+
+
+%---------------------------------------------------------
+% CURRENT SUNDIALS USER GUIDES
+%---------------------------------------------------------
+
+%
+% ARKODE user guide
+%
+@techreport{arkode_ug,
+author={Daniel R. Reynolds and David J. Gardner and Alan C. Hindmarsh
+and Carol S. Woodward and Jean M. Sexton},
+title       = {{User Documentation for ARKODE v5.1.1}},
+institution = {LLNL},
+number      = {LLNL-SM-668082},
+year        = 2022
+}
+%
+% ARKODE examples
+%
+@techreport{arkode_ex,
+author      = {Daniel R. Reynolds},
+title       = {{Example Programs for ARKODE v5.1.1}},
+institution = {Southern Methodist University},
+year        = 2022
+}
+%
+% CVODE user guide
+%
+@techreport{cvode_ug,
+author      = {A. C. Hindmarsh and R. Serban},
+title       = {{User Documentation for CVODE v6.1.1}},
+institution = {LLNL},
+number      = {UCRL-SM-208108},
+year        = 2022
+}
+%
+% CVODE examples
+%
+@techreport{cvode_ex,
+author      = {A. C. Hindmarsh and R. Serban and D. R. Reynolds},
+title       = {{Example Programs for CVODE v6.1.1}},
+institution = {LLNL},
+note        = {UCRL-SM-208110},
+year        = 2022
+}
+%
+% CVODES user guide
+%
+@techreport{cvodes_ug,
+author      = {A. C. Hindmarsh and R. Serban},
+title       = {{User Documentation for CVODES v6.1.1}},
+institution = {LLNL},
+note        = {UCRL-SM-208111},
+year        = 2022
+}
+%
+% CVODES examples
+%
+@techreport{cvodes_ex,
+author      = {R. Serban and A. C. Hindmarsh},
+title       = {{Example Programs for CVODES v6.1.1}},
+institution = {LLNL},
+number      = {UCRL-SM-208115},
+year        = 2022
+}
+%
+% IDA user guide
+%
+@techreport{ida_ug,
+author      = {A. C. Hindmarsh and R. Serban and A. Collier},
+title       = {{User Documentation for IDA v6.1.1}},
+institution = {LLNL},
+number      = {UCRL-SM-208112},
+year        = 2022
+}
+%
+% IDA examples
+%
+@techreport{ida_ex,
+author      = {A. C. Hindmarsh and R. Serban and A. Collier},
+title       = {{Example Programs for IDA v6.1.1}},
+institution = {LLNL},
+number      = {UCRL-SM-208113},
+year        = 2022
+}
+%
+% IDAS user guide
+%
+@techreport{idas_ug,
+author      = {R. Serban and C. Petra and A. C. Hindmarsh},
+title       = {{User Documentation for IDAS v5.1.1}},
+institution = {LLNL},
+number      = {UCRL-SM-234051},
+year        = 2022
+}
+%
+% IDAS examples
+%
+@techreport{idas_ex,
+author      = {R. Serban and A. C. Hindmarsh},
+title       = {{Example Programs for IDAS v5.1.1}},
+institution = {LLNL},
+number      = {LLNL-TR-437091},
+year        = 2022
+}
+%
+% KINSOL user guide
+%
+@techreport{kinsol_ug,
+author      = {A. M. Collier and A. C. Hindmarsh and R. Serban and C.S. Woodward},
+title       = {{User Documentation for KINSOL v6.1.1}},
+institution = {LLNL},
+number      = {UCRL-SM-208116},
+year        = 2022
+}
+%
+% KINSOL examples
+%
+@techreport{kinsol_ex,
+author      = {A. M. Collier and R. Serban},
+title       = {{Example Programs for KINSOL v6.1.1}},
+institution = {LLNL},
+number      = {UCRL-SM-208114},
+year        = 2022
+}
+
+%---------------------------------------------------------
+% ORIGINAL USER GUIDES
+%---------------------------------------------------------
+
+%
+% CVODE original report
+%
+@techreport{CoHi:94,
+author      = {S. D. Cohen and A. C. Hindmarsh},
+title       = {{CVODE User Guide}},
+institution = {LLNL},
+number      = {UCRL-MA-118618},
+month       = sep,                               year = 1994
+}
+%
+% PVODE original report
+%
+@techreport{ByHi:98,
+author      = {G. D. Byrne and A. C. Hindmarsh},
+title       = {{User Documentation for PVODE, An ODE Solver for Parallel Computers}},
+institution = {LLNL},
+number      = {UCRL-ID-130884},
+month       = may,                                                                    year = 1998
+}
+%
+% IDA original report
+%
+@techreport{HiTa:99,
+author = {A. C. Hindmarsh and A. G. Taylor},
+title  = {{User Documentation for \mbox{IDA}, a Differential-Algebraic Equation Solver
+        for Sequential and Parallel Computers}},
+institution = {LLNL},
+number      = {UCRL-MA-136910},
+month       = dec,              year = 1999
+}
+%
+% KINSOL original report
+%
+@techreport{TaHi:98,
+author = {A. G. Taylor and A. C. Hindmarsh},
+title  = {{User Documentation for KINSOL, A Nonlinear Solver for Sequential
+        and Parallel Computers}},
+institution = {LLNL},
+number      = {UCRL-ID-131185},
+month       = jul,              year = 1998
+}
+
+%---------------------------------------------------------
+% Citations directly related to SUNDIALS solvers
+%---------------------------------------------------------
+
+%
+% SUNDIALS ACM article
+%
+@article{HBGLSSW:05,
+author={A. C. Hindmarsh and P. N. Brown and K. E. Grant and S. L. Lee
+        and R. Serban and D. E. Shumaker and C. S. Woodward},
+title   = {\mbox{SUNDIALS}, Suite of Nonlinear and Differential/Algebraic Equation Solvers},
+journal = {ACM Trans. Math. Softw.},
+number  = {31},
+pages   = {363--396},
+year    = 2005
+}
+%
+% SUNDIALS PARCO GPU paper
+%
+@article{balos2021enabling,
+title     = {{Enabling GPU accelerated computing in the SUNDIALS time integration library}},
+author    = {Balos, Cody J and Gardner, David J and Woodward, Carol S and Reynolds, Daniel R},
+journal   = {Parallel Computing},
+volume    = {108},
+pages     = {102836},
+year      = {2021},
+publisher = {Elsevier}
+}
+%
+% CVODES ASME article
+%
+@inproceedings{SeHi:05,
+author    = {R. Serban and A. C. Hindmarsh},
+title     = {\mbox{CVODES}, The Sensitivity-Enabled {ODE} Solver in \mbox{SUNDIALS}},
+booktitle = {Proceedings of the 5th International Conference on Multibody Systems,
+Nonlinear Dynamics and Control},
+publisher = {ASME},
+address   = {Long Beach, CA},
+year      = 2005
+}
+%
+% CVODE original article
+%
+@article{CoHi:96,
+author  = {S. D. Cohen and A. C. Hindmarsh},
+title   = {{\mbox{CVODE}, a Stiff/Nonstiff ODE Solver in C}},
+journal = {Computers in Physics},
+volume  = {10(2)},
+pages   = {138--143},
+year    = 1996
+}
+%
+% PVODE & IDA
+%
+@techreport{Hin:00,
+author      = {A. C. Hindmarsh},
+title       = {{The PVODE and IDA Algorithms}},
+institution = {LLNL},
+number      = {UCRL-ID-141558},
+month       = dec,                              year = 2000
+}
+%
+% Report on PVODE and KINSOL
+%
+@techreport{HiTa:98,
+author      = {A. C. Hindmarsh and A. G. Taylor},
+title       = {{ PVODE and KINSOL: Parallel Software for Differential and Nonlinear Systems}},
+institution = {LLNL},
+number      = {UCRL-ID-129739},
+month       = feb,                                                                             year = 1998
+}
+%
+% SensPVODE user guide
+%
+@techreport{LHB:00,
+author      = {S. L. Lee and A. C. Hindmarsh and P. N. Brown},
+title       = {{User Documentation for \mbox{SensPVODE}, A Variant of {PVODE} for Sensitivity Analysis}},
+institution = {LLNL},
+number      = {UCRL-MA-140211},
+month       = aug,                                                                                        year = 2000
+}
+%
+% SensIDA user guide
+%
+@techreport{LeHi:01,
+author      = {S. L. Lee and A. C. Hindmarsh},
+title       = {{User Documentation for \mbox{SensIDA}, A Variant of \mbox{IDA} for Sensitivity Analysis}},
+institution = {LLNL},
+number      = {UCRL-MA-145712},
+month       = oct,                                                                                         year = 2001
+}
+%
+% SensKINSOL user guide
+%
+@techreport{GHT:03,
+author = {K. E. Grant and A. C. Hindmarsh and A. G. Taylor},
+title  = {{User Documentation for SensKINSOL, a Variant of KINSOL for Sensitivity
+        Analysis}},
+institution = {LLNL},
+number      = {in preparation},
+year        = 2003
+}
+%
+% Problem test for PVODE
+%
+@techreport{Wit:96,
+author      = {M. R. Wittman},
+title       = {{Testing of PVODE, a Parallel ODE Solver}},
+institution = {LLNL},
+number      = {UCRL-ID-125562},
+month       = aug,
+syear       = 1996
+}
+%
+% PVODE
+%
+@article{ByHi:99,
+author  = {G. D. Byrne and A. C. Hindmarsh},
+title   = {{PVODE, An ODE Solver for Parallel Computers}},
+journal = {Intl. J. High Perf. Comput. Apps.},
+volume  = {13(4)},
+pages   = {254--365},
+year    = 1999
+}
+
+%---------------------------------------------------------
+% Citations for solvers on which SUNDIALS is based
+%---------------------------------------------------------
+
+%
+% DASSL
+%
+@book{BCP:96,
+author    = {K. E. Brenan and S. L. Campbell and L. R. Petzold},
+title     = {{Numerical Solution of Initial-Value Problems in Differential-Algebraic Equations}},
+publisher = {SIAM},
+address   = {Philadelphia, Pa},
+year      = 1996
+}
+%
+% VODE/EPISODE
+%
+@article{BBH:89,
+author  = {P. N. Brown and G. D. Byrne and A. C. Hindmarsh},
+title   = {{VODE, a Variable-Coefficient ODE Solver}},
+journal = {SIAM J. Sci. Stat. Comput.},
+volume  = {10},
+pages   = {1038--1051},
+year    = 1989
+}
+%
+% DASPK
+%
+@article{BHP:94,
+author  = {P. N. Brown and A. C. Hindmarsh and L. R. Petzold},
+title   = {{Using Krylov Methods in the Solution of Large-Scale Differential-Algebraic Systems}},
+journal = {SIAM J. Sci. Comput.},
+volume  = {15},
+pages   = {1467--1488},
+year    = 1994
+}
+%
+% DASPK3.0 description
+%
+@article{LiPe:99a,
+author = {S. Li and L. R. Petzold},
+title  = {{Software and Algorithms for Sensitivity Analysis of Large-Scale
+        Differential-Algebraic Systems}},
+journal = {Journal of Computational and Applied Mathematics},
+volume  = {125},
+pages   = {131-145},
+year    = 2000
+}
+@techreport{LiPe:99b,
+author      = {S. Li and L. R. Petzold},
+title       = {{Design of New \mbox{DASPK} for Sensitivity Analysis}},
+institution = {Dept. of Computer Science, UCSB},
+year        = 1999
+}
+%
+% NKSOL
+%
+@article{BrSa:90,
+author  = {P. N. Brown and Y. Saad},
+title   = {{Hybrid Krylov Methods for Nonlinear Systems of Equations}},
+journal = {SIAM J. Sci. Stat. Comput.},
+volume  = {11},
+pages   = {450--481},
+year    = 1990
+}
+%
+% VODPK
+%
+@inproceedings{Byr:92,
+author    = {G. D. Byrne},
+title     = {{Pragmatic Experiments with Krylov Methods in the Stiff ODE Setting}},
+booktitle = {Computational Ordinary Differential Equations},
+editor    = {Cash, J.R. and Gladwell, I.},
+publisher = {Oxford University Press},
+address   = {Oxford},
+pages     = {323--356},
+year      = 1992
+}
+%
+% LSODE report
+%
+@techreport{RaHi:94,
+author = {K. Radhakrishnan and A. C. Hindmarsh},
+title  = {{Description and Use of LSODE, the Livermore Solver for
+        Ordinary Differential Equations}},
+institution = {LLNL},
+number      = {UCRL-ID-113855},
+month       = {march},
+year        = 1994
+}
+
+%---------------------------------------------------------
+% Citations related to the methods used in SUNDIALS
+%---------------------------------------------------------
+
+%
+% General ODE/DAE
+%
+@book{AsPe:98,
+author = {U. M. Ascher and L. R. Petzold},
+title  = {{Computer Methods for Ordinary Differential Equations and
+        Differential-Algebraic Equations}},
+publisher = {SIAM},
+address   = {Philadelphia, Pa},
+year      = {1998}
+}
+@book{HWN:87,
+author    = {E. Hairer and S. P. Norsett and G. Wanner},
+title     = {{Solving Ordinary Differential Equations I}},
+publisher = {Springer-Verlag},
+address   = {Berlin},
+year      = 1987
+}
+@book{HaWa:91,
+author    = {E. Hairer and G. Wanner},
+title     = {{Solving Ordinary Differential Equations II, Stiff and Differential-Algebraic Problems}},
+publisher = {Springer-Verlag},
+address   = {Berlin},
+year      = 1991
+}
+@article{GGL:85,
+author  = {C.W. Gear and B. Leimkuhler and G.K. Gupta},
+title   = {{Automatic Integration of Euler-Lagrange Equations with Constraints}},
+journal = {J. Comput. Appl. Math.},
+volume  = {12/13},
+pages   = {77--90},
+year    = 1985
+}
+%
+% LMM articles
+%
+@article{BrHi:89,
+author  = {P. N. Brown and A. C. Hindmarsh},
+title   = {{Reduced Storage Matrix Methods in Stiff ODE Systems}},
+journal = {J. Appl. Math. \& Comp.},
+volume  = {31},
+pages   = {49--91},
+year    = 1989
+}
+@article{ByHi:75,
+author = {G. D. Byrne and A. C. Hindmarsh},
+title  = {{A Polyalgorithm for the Numerical Solution of Ordinary
+Differential Equations}},
+journal = {ACM Trans. Math. Softw.},
+volume  = {1},
+pages   = {71--96},
+year    = 1975
+}
+@article{JaSD:80,
+author = {K. R. Jackson and R. Sacks-Davis},
+title  = {{An Alternative Implementation of Variable Step-Size Multistep
+Formulas for Stiff ODEs}},
+journal = {ACM Trans. Math. Softw.},
+volume  = {6},
+pages   = {295--318},
+year    = 1980
+}
+%
+% BDF Stability Limit Detection
+%
+@inproceedings{Hin:92,
+author    = {A. C. Hindmarsh},
+title     = {{Detecting Stability Barriers in BDF Solvers}},
+booktitle = {Computational Ordinary Differential Equations},
+editor    = {{J.R. Cash and I. Gladwell}},
+publisher = {Oxford University Press},
+address   = {Oxford},
+pages     = {87--96},
+year      = 1992
+}
+@article{Hin:95,
+author = {A. C. Hindmarsh},
+title  = {{Avoiding BDF Stability Barriers in the MOL
+        Solution of Advection-Dominated Problems}},
+journal = {Appl. Num. Math.},
+volume  = {17},
+pages   = {311--318},
+year    = 1995
+}
+%
+% Projection methods for IVPs with constraints
+%
+@article{eich1993convergence,
+  title     = {Convergence results for a coordinate projection method applied to mechanical systems with algebraic constraints},
+  author    = {Eich, Edda},
+  journal   = {SIAM Journal on Numerical Analysis},
+  volume    = {30},
+  number    = {5},
+  pages     = {1467--1482},
+  year      = {1993},
+  publisher = {SIAM}
+}
+@article{shampine1999conservation,
+  title     = {Conservation laws and the numerical solution of ODEs, II},
+  author    = {Shampine, LF},
+  journal   = {Computers \& Mathematics with Applications},
+  volume    = {38},
+  number    = {2},
+  pages     = {61--72},
+  year      = {1999},
+  publisher = {Elsevier}
+}
+%
+% Consistent initialization for DAE
+%
+@article{BHP:98,
+author  = {P. N. Brown and A. C. Hindmarsh and L. R. Petzold},
+title   = {{Consistent Initial Condition Calculation for Differential-Algebraic Systems}},
+journal = {SIAM J. Sci. Comput.},
+volume  = {19},
+pages   = {1495--1512},
+year    = 1998
+}
+%
+% Rootfinding
+%
+@techreport{HeSh:80,
+author      = {K. L. Hiebert and L. F. Shampine},
+title       = {{Implicitly Defined Output Points for Solutions of ODEs}},
+institution = {Sandia National Laboratories},
+number      = {SAND80-0180},
+month       = feb,                                                        year = 1980
+}
+%
+% DAE Adjoint sensitivity
+%
+@article{CLPS:03,
+author = {Y. Cao and S. Li and L. R. Petzold and R. Serban},
+title  = {{Adjoint Sensitivity Analysis for Differential-Algebraic Equations:
+           The Adjoint {DAE} System and its Numerical Solution}},
+journal = {SIAM J. Sci. Comput.},
+volume  = {24(3)},
+pages   = {1076--1089},
+year    = 2003
+}
+%
+% 2nd order sensitivity analysis
+%
+@article{OzBa:05,
+author  = {D.B. Ozyurt and P.I. Barton},
+title   = {Cheap second order directional derivatives of stiff {ODE} embedded functionals},
+journal = {SIAM J. of Sci. Comp.},
+volume  = { 26(5)},
+pages   = {1725--1743},
+year    = 2005
+}
+%
+% Staggered direct method for forward sensitivity
+%
+@article{CaSt:85,
+author = {M. Caracotsios and W. E. Stewart},
+title  = {{Sensitivity Analysis of Initial Value Problems with
+        Mixed ODEs and Algebraic Equations}},
+journal = {Computers and Chemical Engineering},
+volume  = {9},
+pages   = {359-365},
+year    = 1985
+}
+%
+% Simultaneous corrector method for forward sensitivity
+%
+@article{MaPe:97,
+author = {T. Maly and L. R. Petzold},
+title  = {{Numerical Methods and Software for Sensitivity
+        Analysis of Differential-Algebraic Systems}},
+journal = {Applied Numerical Mathematics},
+volume  = {20},
+pages   = {57-79},
+year    = 1997
+}
+%
+% Staggered corrector method for forward sensitivity
+%
+@article{FTB:97,
+author  = {W. F. Feehery and J. E. Tolsma and P. I. Barton},
+title   = {{Efficient Sensitivity Analysis of Large-Scale Differential-Algebraic Systems}},
+journal = {Applied Numer. Math.},
+volume  = {25(1)},
+pages   = {41--54},
+year    = 1997
+}
+%
+% Linear algebra
+%
+@book{GoVL:96,
+author    = {G. H. Golub and C. F. Van Loan},
+title     = {{Matrix computations}},
+publisher = {The Johns Hopkins University Press},
+address   = {Baltimore, Md},
+year      = 1996
+}
+%
+% GMRES
+%
+@article{SaSc:86,
+author = {Y. Saad and M. H. Schultz},
+title  = {{GMRES: A Generalized Minimal Residual
+        Algorithm for Solving Nonsymmetric Linear Systems}},
+journal = {SIAM J. Sci. Stat. Comp.},
+volume  = {7},
+pages   = {856--869},
+year    = 1986
+}
+%
+% FGMRES
+%
+@article{Saa:93,
+  author    = {Saad, Y.},
+  title     = {A flexible inner-outer preconditioned {GMRES} algorithm},
+  doi       = {http://dx.doi.org/10.1137/0914028},
+  journal   = {SIAM J. Sci. Comput.},
+  number    = {2},
+  pages     = {461--469},
+  publisher = {Society for Industrial and Applied Mathematics},
+  address   = {Philadelphia, PA, USA},
+  volume    = {14},
+  year      = 1993
+}
+%
+% Bi-CGStab
+%
+@article{Van:92,
+  author = {H. A. Van Der Vorst},
+  title  = {{Bi-CGSTAB: A Fast and Smoothly Converging Variant
+          of Bi-CG for the Solution of Nonsymmetric Linear Systems}},
+  journal = {SIAM J. Sci. Stat. Comp.},
+  volume  = {13},
+  pages   = {631--644},
+  year    = 1992
+}
+%
+% TFQMR
+%
+@article{Fre:93,
+  author = {R. W. Freund},
+  title  = {{A Transpose-Free Quasi-Minimal Residual Algorithm
+          for Non-Hermitian Linear Systems}},
+  journal = {SIAM J. Sci. Comp.},
+  volume  = {14},
+  pages   = {470--482},
+  year    = 1993
+}
+%
+% PCG
+%
+@article{HeSt:52,
+  author  = {M. R. Hestenes and E. Stiefel},
+  title   = {{Methods of Conjugate Gradients for Solving Linear Systems}},
+  journal = {J. Research of the National Bureau of Standards},
+  volume  = {49},
+  number  = {6},
+  pages   = {409--436},
+  year    = 1952
+}
+%
+% KLU
+%
+@article{DaPa:10,
+  title     = {Algorithm 907: {KLU}, a direct sparse solver for circuit simulation problems},
+  author    = {Davis, T. A. and P. N. Ekanathan},
+  journal   = {ACM Trans. Math. Softw.},
+  volume    = {37},
+  number    = {3},
+  year      = {2010},
+  publisher = {ACM}
+}
+@Misc{KLU_site,
+  title        = {{KLU Sparse Matrix Factorization Library}},
+  howpublished = {\url{http://faculty.cse.tamu.edu/davis/suitesparse.html}},
+  author       = {{N.a.}}
+}
+%
+% SuperLU_MT
+%
+@article{Li:05,
+    AUTHOR = {X. S. Li},
+    TITLE  = {An Overview of {SuperLU}: Algorithms, Implementation,
+             and User Interface},
+    journal = {{ACM} Trans. Math. Softw.},
+    volume  = {31},
+    number  = {3},
+    month   = {September},
+    year    = {2005},
+    pages   = {302--325},
+}
+@article{DGL:99,
+    author = {J. W. Demmel and J. R. Gilbert and X. S. Li},
+    title  = {An Asynchronous Parallel Supernodal Algorithm for
+                 Sparse Gaussian Elimination},
+    journal = {SIAM J. Matrix Analysis and Applications},
+    volume  = {20},
+    number  = {4},
+    pages   = {915--952},
+    year    = {1999}
+}
+@Misc{SuperLUMT_site,
+  title        = {{SuperLU\_MT Threaded Sparse Matrix Factorization Library}},
+  howpublished = {\url{http://crd-legacy.lbl.gov/~xiaoye/SuperLU/}},
+  author       = {{N.a.}}
+}
+%
+% SuperLU_DIST
+%
+@article{GDL:07,
+  Author = {Laura Grigori and James W. Demmel and Xiaoye S. Li},
+  Title  = {Parallel Symbolic Factorization for Sparse {LU} with
+      Static Pivoting},
+  journal = {SIAM J. Scientific Computing},
+  volume  = {29},
+  number  = {3},
+  pages   = {1289-1314},
+  year    = {2007}
+}
+@article{LD:03,
+     author = {Xiaoye S. Li and James W. Demmel},
+     title  = {{SuperLU\_DIST}: A Scalable Distributed-Memory Sparse Direct
+              Solver for Unsymmetric Linear Systems},
+     journal = {ACM Trans. Mathematical Software},
+     month   = {June},
+     volume  = {29},
+     number  = {2},
+     pages   = {110-140},
+     year    = {2003}
+}
+@techreport{SLUUG:99,
+     AUTHOR = {X.S. Li and J.W. Demmel and J.R. Gilbert and L. Grigori and M. Shao and
+          I. Yamazaki},
+     INSTITUTION = {Lawrence Berkeley National Laboratory},
+     NUMBER      = {LBNL-44289},
+     TITLE       = {{SuperLU Users' Guide}},
+     MONTH       = {September},
+     YEAR        = {1999},
+     NOTE        = "\url{http://crd.lbl.gov/~xiaoye/SuperLU/}.
+             Last update: August 2011"
+}
+@Misc{SuperLUDIST_site,
+  title        = {{SuperLU\_DIST Parallel Sparse Matrix Factorization Library}},
+  howpublished = {\url{http://crd-legacy.lbl.gov/~xiaoye/SuperLU/}},
+  author       = {{N.a.}}
+}
+%
+% ADIFOR
+%
+@article{BCCGH:92,
+author  = {C. Bischof and A. Carle and G. Corliss and A. Griewank and P. Hovland},
+title   = {{ADIFOR - Generating Derivative Codes from Fortran Programs}},
+journal = {Scientific Programming},
+volume  = {1},
+pages   = {11-29},
+year    = 1992
+}
+%
+% TAMC: reverse automatic differentiation (Fortran)
+%
+@article{GiKa:98,
+author  = {R. Giering and T. Kaminski},
+title   = {{Recipes for Adjoint Code Construction}},
+journal = {ACM Transactions on Mathematical Software},
+volume  = {24(4)},
+pages   = {437-474},
+year    = 1998
+}
+%
+% TAPENADE
+%
+@techreport{tapenade:04,
+title       = {TAPENADE 2.1 user's guide},
+author      = {L. Hasco{\''e}t and V Pascual},
+typdoc      = {Technical report},
+number      = {300},
+institution = {INRIA},
+year        = {2004},
+url         = {http://hal.inria.fr/inria-00069880},
+}
+%
+% ADOLC
+%
+@article{adolc:96,
+ author    = {Andreas Griewank and David Juedes and Jean Utke},
+ title     = {Algorithm 755: {ADOL-C}: a package for the automatic differentiation of algorithms written in C/C++},
+ journal   = {ACM Trans. Math. Softw.},
+ volume    = {22},
+ number    = {2},
+ year      = {1996},
+ issn      = {0098-3500},
+ pages     = {131--167},
+ doi       = {http://doi.acm.org/10.1145/229473.229474},
+ publisher = {ACM},
+ address   = {New York, NY, USA},
+ }
+
+%---------------------------------------------------------
+%---------------------------------------------------------
+
+
+
+@article{ACR:79,
+author = {U. M. Ascher and J. Christiansen and R. D. Russel},
+title  = {{A Collocation Solver for Mixed Order Systems of Boundary
+        Value Problems}},
+journal = {Math. Comp.},
+volume  = {33},
+pages   = {659-679},
+year    = {1979}
+}
+@book{AMR:95,
+author = {U. M. Ascher and R. M. Mattheij and R. D. Russell},
+title  = {{Numerical solution of Boundary Value Problems for Ordinary
+        Differential Equations}},
+publisher = {SIAM},
+address   = {Philadelphia, Pa},
+year      = 1995
+}
+@article{AsPe:93,
+author  = {U. M. Ascher and L. R. Petzold},
+title   = {{Stability of Computational Methods for Constrained Dynamics Systems}},
+journal = {SIAM J. Sci. Comput.},
+volume  = {14(1)},
+year    = {1993}
+}
+
+@article{Bal:96a,
+author  = {K. Balla},
+title   = {{Linear Subspaces for Linear DAEs of Index 1}},
+journal = {Computers Math. Applic.},
+volume  = {32(4/5)},
+pages   = {81--86},
+year    = 1996
+}
+@article{Bal:96b,
+author = {K. Balla},
+title  = {{Boundary Conditions and their Transfer for
+        Differential Algebraic Equations of Index 1}},
+journal = {Computers Math. Applic.},
+volume  = {31(10)},
+pages   = {1--5},
+year    = 1996
+}
+@article{BaMa:96,
+author  = {K. Balla and R. M{\"a}rz},
+title   = {{Transfer of Boundary Conditions for DAEs of Index 1}},
+journal = {SIAM J. Numer. Anal.},
+volume  = {33(6)},
+pages   = {2318--2332},
+year    = 1996
+}
+@article{BaMa:00,
+author = {K. Balla and R. M{\"a}rz},
+title  = {{An Unified Approach to Linear Differential Algebraic
+        Equations and their Adjoint Equations}},
+journal = {Institute of Mathematics Technical Report, Humboldt University, Berlin},
+year    = 2000
+}
+@article{BaMa:99,
+author = {K. Balla and R. M{\"a}rz},
+title  = {{Linear Differential Algebraic Equations of Index 1
+        and their Adjoint Equations}},
+journal = {Results in Mathematics},
+volume  = {37},
+pages   = {13-35},
+year    = 2000
+}
+%
+%
+%
+@Book{Ber:95,
+author    = {D. P. Bertsekas},
+title     = {{Nonlinear Programming}},
+publisher = {Athena Scientific},
+address   = {Belmont, Massachusetts},
+year      = 1995
+}
+
+
+
+
+
+%
+%
+%
+@article{BGW:03,
+author  = {P. N. Brown and K. E. Grant and C. S. Woodward},
+title   = {{On the Calculation of Uncertainties for 3-D Time-Dependent Neutral Particle Transport}},
+journal = {J. of Comp. Phys.},
+volume  = {submitted},
+pages   = {},
+year    = 2003
+}
+
+
+
+%
+% PVODE for BOUT equations
+%
+@article{RXH:02,
+author = {T. D. Rognlien and X. Q. Xu and A. C. Hindmarsh},
+title  = {{Application of Parallel Implicit Methods to Edge-Plasma
+        Numerical Simulations}},
+journal = {Journal of Computational Physics},
+volume  = {175},
+pages   = {249-268},
+year    = 2002
+}
+%
+% Forward sensitivity analysis, radiation diffusion
+%
+@unpublished{LWG:03,
+author = {S. L. Lee and C. S. Woodward and F. Graziani},
+title  = {{Analyzing Radiation Diffusion using Time-Dependent
+        Sensitivity-Based Techniques}},
+journal = {Journal of Computational Physics},
+note    = {To appear in J. on Comp. Phys.},
+year    = 2003
+}
+%
+% Adjoint sensitivity
+%
+@article{Cac:81a,
+author = {D. G. Cacuci},
+title  = {{Sensitivity Theory for Nonlinear Systems. I.
+        Nonlinear Functional Analysis Approach}},
+journal = {J. Math. Phys.},
+volume  = {22(12)},
+pages   = {2794-2802},
+year    = 1981
+}
+%
+% Adjoint sensitivity
+%
+@article{Cac:81b,
+author = {D. G. Cacuci},
+title  = {{Sensitivity Theory for Nonlinear Systems. II.
+        Extension to Additional Classes of Responses}},
+journal = {J. Math. Phys.},
+volume  = {22(12)},
+pages   = {2803-2812},
+year    = 1981
+}
+
+@article{CBT:91,
+author  = {S. L. Campbell and N. K. Bichols and W. J. Terrel},
+title   = {{Duality, Observability and Controllability for Linear Time-Varying Systems}},
+journal = {Circuits, Systems, Signal Process},
+volume  = {10(4)},
+pages   = {455--470},
+year    = 1991
+}
+
+@book{CoLe:55,
+author    = {E. A. Coddington and N. Levinson},
+title     = {{Theory of Ordinary Differential Equations}},
+publisher = {McGraw-Hill},
+address   = {New York},
+year      = 1955
+}
+
+%
+%
+%
+@Article{Den:81,
+author  = {J. E. {Dennis Jr.} and D. M. Gay and R. E. Welsch},
+title   = {{An Adaptive Nonlinear Least-Squares Algorithm}},
+journal = {ACM Transactions on Mathematical Software},
+volume  = {7(3)},
+pages   = {348-368},
+year    = 1981
+}
+%
+%
+%
+@article{DiEi:99,
+author  = {L. Dieci and T. Eirola},
+title   = {{On Smooth Decompositions of Matrices}},
+journal = {SIAM J. Matrix Anal. Appl.},
+volume  = {20(4)},
+pages   = {800--819},
+year    = 1999
+}
+@article{Err:97,
+author  = {R. M. Errico},
+title   = {{What is an adjoint model?}},
+journal = {Bulletin of the American Meteorological Society},
+volume  = {78(11)},
+pages   = {2577-2591},
+year    = 1997
+}
+
+@article{GhBa:97,
+author = {O. Ghattas and J. H. Bark},
+title  = {{Optimal Control of Two- and Three-Dimensional Incompressible
+        Navier-Stokes Flows}},
+journal = {Journal of Computational Physics},
+volume  = {136},
+pages   = {231-244},
+year    = 1997
+}
+
+@article{GiPi:97,
+author  = {M. B. Giles and N. A. Pierce},
+title   = {{Adjoint Equations in CFD: Duality, Boundary Conditions and Solution Behavior}},
+journal = {AIAA Paper 97-1850},
+volume  = {AIAA, New York},
+year    = 1997
+}
+@article{GJLPS:98,
+author  = {P. E. Gill and L. O. Jay and M. W. Leonard and L. R. Petzold and V. Sharma},
+title   = {{An SQP Method for the Optimal Control of Large-Scale Dynamical Systems}},
+journal = {J. Comp. Appl. Math.},
+volume  = {20},
+pages   = {197-213},
+year    = 2000
+}
+
+
+
+@article{HMM:98,
+author = {M. Hanke and E. I. Macana and R. M{\"a}rz},
+title  = {{On Asymptotics in Case of Linear Index-2 Differential-Algebraic
+        Equations}},
+journal = {SIAM J. Numer. Anal.},
+volume  = {35},
+pages   = {1326--1346},
+year    = 1998
+}
+
+
+%
+%
+@book{Kel:68,
+author    = {H. B. Keller},
+title     = {{Numerical methods for two-point boundary-value problems}},
+publisher = {Blaisdel},
+address   = {Waltham, Ma},
+year      = 1968
+}
+@article{KBYPT:97,
+author  = {D. Knapp and V. Barocas and K. Yoo and L. R. Petzold and R. Tranquillo},
+title   = {{Rheology of Reconstituted Type I Collagen Gel in Confined Compression}},
+journal = {J. Rheology},
+volume  = {41},
+pages   = {971--993},
+year    = 1997
+}
+
+@inproceedings{LeHo:01,
+author = {{S. L. Lee. and P. D. Hovland}},
+title  = {{Sensitivity Analysis using Parallel {ODE} Solvers and Automatic Differentiation in C:
+SensPVODE and ADIC}},
+booktitle = {Automatic Differentiation of Algorithms: From Simulation to Optimization},
+editors   = {George Corliss, Christele Faure, Andreas Griewank, Laurent Hascoet, and Uwe Naumann},
+publisher = {Springer-Verlag},
+address   = {New York},
+pages     = {223--229},
+year      = 2001
+}
+
+%
+%
+%
+@inproceedings{KKPR:01,
+author    = {S. Kohn and G. Kumfert and J. Painter and C. Ribbens},
+title     = {{Divorcing Language Dependencies from a Scientific Software Library}},
+booktitle = {10th SIAM Conference on Parallel Processing},
+address   = {Portsmouth, VA},
+month     = {March},
+year      = 2001
+}
+%
+%
+%
+@article{Lew:98,
+author = {R. M. Lewis},
+title  = {{Numerical Computation of Sensitivities and the
+        Adjoint Approach}},
+journal = {ICASE technical report},
+volume  = {97-61},
+year    = 1997
+}
+%
+% Neutron Transport
+%
+@book{LeMi:93,
+author    = {E. E. Lewis and W. F. Miller},
+title     = {{Computational Methods of Neutron Transport}},
+publisher = {American Nuclear Society},
+address   = {La Grange Park, IL},
+year      = 1993
+}
+
+%
+% Comparison of methods for forward sensitivity
+%
+@article{LPZ:99,
+author = {S. Li and L. R. Petzold and W. Zhu},
+title  = {{Sensitivity Analysis of Differential-Algebraic Equations: A Comparison of Methods
+        on a Special Problem}},
+journal = {Applied Num. Math.},
+volume  = {32},
+pages   = {161--174},
+year    = 2000
+}
+@article{Mac:99a,
+author = {L. Machiels},
+title  = {{A Posteriori Finite Element Output Bounds for Discontinuous Galerkin Discretizations
+        of Parabolic Problems}},
+journal = {Lawrence Livermore National Laboratory technical report},
+volume  = {UCRL-JC-136614},
+year    = 1999
+}
+@article{MaMaPa:99,
+author = {L. Machiels and Y. Maday and A. T. Patera},
+title  = {{Output Bounds for Reduced-Order Approximations of Elliptic Partial
+        Differential Equations}},
+journal = {MIT technical report},
+volume  = {FML 99-5-1},
+year    = 1999
+}
+%
+% Adjoint equations (formal approach)
+%
+@book{MAS:96,
+author    = {G. I. Marchuk and V. I. Agoshkov and V. P. Shutyaev},
+title     = {{Adjoint Equations and Perturbation Algorithms}},
+publisher = {CRC Press},
+address   = {Boca Raton, Fl},
+year      = 1996
+}
+
+@article{Mar:00,
+author  = {R. M{\"a}rz},
+title   = {{Differential Algebraic Systems Anew}},
+journal = {Institute of Mathematics Technical Report, Humboldt University, Berlin},
+year    = 2000
+}
+%
+% Radiation Hydrodynamics
+%
+@book{Pom:73,
+author    = {G. C. Pomraning},
+title     = {{"The Equations of Radiation Hydrodynamics"}},
+publisher = {Pergamon Press},
+address   = {Oxford},
+year      = 1973
+}
+
+
+%
+% Optimal control w/ forward sensitivities (cooptFM application)
+%
+@article{RKSP:00,
+author = {L. L. Raja and R. J. Kee and R. Serban and L. R. Petzold},
+title  = {{Computational Algorithm for Dynamic Optimization of Chemical Vapor
+        Deposition Processes in Stagnation Flow Reactors}},
+journal = {J. Electrochemical Soc.},
+volume  = {147(7)},
+pages   = {2718--2726},
+year    = 2000
+}
+
+%
+% Halo orbit paper
+%
+@article{SKLMPRW:02,
+author  = {R. Serban and W. S. Koon and M. Lo and J. Marsden and L. R. Petzold and S. D. Ross and R. Wilson},
+title   = {{Halo Orbit Mission Correction Maneuvers Using Optimal Control}},
+journal = {Automatica},
+volume  = {38(4)},
+pages   = {571--583},
+year    = 2002
+}
+%
+% cooptAM paper
+%
+@article{SLP:03,
+author = {R. Serban and S. Li and L. R. Petzold},
+title  = {{Adaptive Algorithms for Optimal Control of Time-Dependent Partial
+        Differential-Algebraic Equation Systems}},
+journal = {Int. J. Numer. Math. Eng.},
+volume  = {57},
+pages   = {1457--1569},
+year    = 2003
+}
+%
+% cooptFM description
+%
+@article{SePe:01,
+author = {R. Serban and L. R. Petzold},
+title  = {{{COOPT} - A Software Package for Optimal Control of Large-Scale
+        Differential-Algebraic Equation Systems}},
+journal = {J. Math. Comp. Sim.},
+volume  = {56(2)},
+pages   = {187--203},
+year    = 2001
+}
+%
+% ODE BVP adjoint sensitivity analysis
+%
+@article{SePe:02,
+author = {R. Serban and L. R. Petzold},
+title  = {{Efficient Computation of Sensitivities for Ordinary Differential
+        Equation Boundary Value Problems}},
+journal = {SIAM J. Num. An.},
+volume  = {40(1)},
+pages   = {220--232},
+year    = 2002
+}
+
+%
+%
+%
+@inproceedings{WGM:02,
+author    = {C. S. Woodward and K. E. Grant and R. Maxwell},
+title     = {{Applications of Sensitivity Analysis to Uncertainty Quantification for Variably Saturated Flow}},
+booktitle = {Computational Methods in Water Resources},
+editor    = {{S. M. Hassanizadeh and R. J. Schotting and W. G. Gray and G. F. Pinder}},
+publisher = {Elsevier},
+address   = {Amsterdam},
+pages     = {73--80},
+year      = 2002
+}
+%
+% Inexact Newton Methods
+%
+@book{DeSc:96,
+author    = {J. E. Dennis and R. B. Schnabel},
+title     = {{Numerical Methods for Unconstrained Optimization and Nonlinear Equations}},
+publisher = {SIAM},
+address   = {Philadelphia},
+year      = 1996
+}
+@article{EiWa:96,
+author  = {S. C. Eisenstat and H. F. Walker},
+title   = {{Choosing the Forcing Terms in an Inexact Newton Method}},
+journal = {SIAM J. Sci. Comput.},
+volume  = {17},
+pages   = {16--32},
+year    = 1996
+}
+@Article{EiWa:94,
+author  = {S. C. Eisenstat and H. F. Walker},
+title   = {{Globally Convergent Inexact {N}ewton Methods}},
+journal = {SIAM J. Optimization},
+volume  = {4},
+pages   = {393-422},
+year    = {1994}
+}
+@Article{DES:82,
+author  = {R. S. Dembo and S. C. Eisenstat and T. Steihaug},
+title   = {{Inexact {N}ewton Methods}},
+journal = {SIAM J. Numer. Anal.},
+volume  = {19},
+pages   = {400-408},
+year    = 1982
+}
+@Article{Bro:87,
+author = {P. N. Brown},
+title  = {{A local convergence theory for combined inexact-{N}ewton/finite
+          difference projection methods}},
+journal = {SIAM J. Numer. Anal.},
+volume  = {24},
+number  = {2},
+pages   = {407--434},
+year    = 1987,
+}
+@book{Kel:95,
+author    = {C. T. Kelley},
+title     = {Iterative Methods for Solving Linear and Nonlinear Equations},
+publisher = {SIAM},
+address   = {Philadelphia},
+year      = 1995
+}
+%
+%
+%
+@Article{BrWo:01,
+  author = {P.~N.~Brown and C.~S.~Woodward},
+  title  = {{Preconditioning Strategies for Fully Implicit Radiation
+                 Diffusion with Material-Energy Transfer}},
+  journal = {SIAM J. Sci. Comput.},
+  volume  = 23,
+  number  = 2,
+  pages   = {499--516},
+  year    = 2001
+}
+@Article{JoWo:01,
+  author = {J.~E.~Jones and C.~S.~Woodward},
+  title  = {{{N}ewton-{K}rylov-Multigrid Solvers for Large-Scale,
+                 Highly Heterogeneous, Variably Saturated Flow Problems}},
+  journal = {Advances in Water Resources},
+  month   = jul,
+  pages   = {763--774},
+  year    = 2001,
+  volume  = 24
+}
+@inproceedings{Woo:98,
+  author = {C.~S.~Woodward},
+  title  = {{A {N}ewton-{K}rylov-Multigrid Solver for Variably Saturated
+                 Flow Problems}},
+  booktitle =   {Proc. of the Twelfth International Conference on
+                 Computational Methods in Water Resources},
+  publisher = {Computational Mechanics Publications},
+  volume    = {2},
+  address   = {Southampton},
+  pages     = {609--616},
+  year      = 1998
+}
+
+
+
+%
+% Citations for IDA examples
+%
+
+@inproceedings{Rob:66,
+author    = {H. H. Robertson},
+title     = {The solution of a set of reaction rate equations},
+booktitle = {Numerical analysis: an introduction},
+editor    = {J. Walsh},
+publisher = {Academ. Press},
+pages     = {178--182},
+year      = 1966
+}
+
+@article{Bro:86,
+author  = {Peter N. Brown},
+title   = {Decay to uniform states in food webs},
+journal = {SIAM J. Appl. Math.},
+volume  = {46},
+pages   = {376--392},
+year    = 1986
+}
+
+%
+% Citations for KINSOL examples
+%
+@book{FlPa:99,
+author={C. Floudas and P. Pardalos and
+C. Adjiman and W. Esposito and Z. Gumus and
+S. Harding and J. Klepeis and C. Meyer and C. Schweiger},
+title     = {Handbook of Test Problems in Local and Global Optimization},
+publisher = {Kluwer Academic Publishers},
+address   = {Dordrecht},
+year      = {1999}
+}
+
+@book{Frank-Kam:55,
+ author = {D. A. Frank-Kamenetskii and N. Thon},
+ publisher = {Princeton University Press},
+ title = {Diffusion and Heat Exchange in Chemical Kinetics},
+ year = {1955}
+}
+
+%
+% Citations for Picard, Anderson, Broyden
+%
+@Article{Walker-Ni09,
+  author  = {H. F. Walker and P. Ni},
+  title   = {{A}nderson Acceleration for Fixed-Point Iterations},
+  year    = {2011},
+  key     = {Walker-Ni09},
+  journal = {SIAM Jour. Num. Anal.},
+  volume  = {49},
+  number  = {4},
+  pages   = {1715--1735}
+}
+
+@Article{Anderson65,
+  author  = {D. G. Anderson},
+  title   = {Iterative Procedures for Nonlinear Integral Equations},
+  journal = {J. Assoc. Comput. Machinery},
+  year    = {1965},
+  key     = {Anderson65},
+  volume  = {12},
+  pages   = {547-560}
+}
+
+@Article{Broyden65,
+ author  = {C. G. Broyden},
+ title   = {A class of methods for solving nonlinear simultaneous equations},
+ journal = {Math. Comp.},
+ year    = {1965},
+ key     = {Broyden65},
+ volume  = {19},
+ pages   = {577-593}
+}
+
+@Article{Fang-Saad09,
+ author  = {H. Fang and Y. Saad},
+ title   = {Two classes of secant methods for nonlinear acceleration},
+ journal = {Numer. Linear Algebra Appl.},
+ year    = {2009},
+ key     = {Fang-Saad09},
+ volume  = {16},
+ pages   = {197-221}
+}
+
+@Article{LWWY11,
+  author  = {P. A. Lott and H. F. Walker and C. S. Woodward and U. M. Yang},
+  title   = {An Accelerated {P}icard Method for Nonlinear Systems Related to Variably Saturated Flow},
+  journal = {Adv. Wat. Resour.},
+  volume  = {38},
+  pages   = {92--101},
+  year    = {2012},
+  key     = {LWWY11}
+}
+
+@Book{Ortega-Rheinbolt00,
+  author    = {J.~M.~Ortega and W.~C.~Rheinbolt},
+  title     = {Iterative solution of nonlinear equations in several variables},
+  year      = {2000},
+  publisher = {SIAM},
+  address   = {Philadelphia},
+  note      = {Originally published in 1970 by Academic Press}
+}
+
+%
+% Low synchronization orthogonalization routines
+%
+
+@article{lowSyncGMRES,
+  title = {Low synchronization Gram-Schmidt and GMRES algorithms},
+  author = {Swirydowicz, Kasia and Langou, Julien and Ananthan, Shreyas and Yang, Ulrike and Thomas, Stephen},
+  journal = {Numerical Linear Algebra with Applications},
+  year = {2020},
+  month = {02}
+}
+
+@inproceedings{hernandez2005parallel,
+  title={A Parallel Variant of the Gram-Schmidt Process with Reorthogonalization.},
+  author={Hern{\'a}ndez, Vicente and Rom{\'a}n, Jos{\'e} E and Tom{\'a}s, Andr{\'e}s},
+  booktitle={PARCO},
+  pages={221--228},
+  year={2005}
+}
+
+%
+% HYPRE references
+%
+@techreport{hypre_um,
+  title       = {Hypre user's manual},
+  author      = {Falgout, R and Yang, UM},
+  institution = {LLNL},
+  year        = {2015}
+}
+
+%
+% MAGMA references
+%
+@article{magma_ref,
+  title     = {{Towards dense linear algebra for hybrid GPU accelerated manycore systems}},
+  author    = {Stanimire Tomov and Jack Dongarra and Marc Baboulin},
+  booktitle = {Parallel Matrix Algorithms and Applications},
+  doi       = {10.1016/j.parco.2009.12.005},
+  issn      = {0167-8191},
+  journal   = {Parallel Computing},
+  month     = jun,
+  number    = {5-6},
+  pages     = {232--240},
+  posted-at = {2010-12-17 09:48:58},
+  priority  = {2},
+  volume    = {36},
+  year      = {2010}
+}
+
+%
+% PETSc references
+%
+@TechReport{petsc-user-ref,
+  Author = {Satish Balay and Shrirang Abhyankar and Mark F. Adams and Jed Brown and Peter Brune
+            and Kris Buschelman and Lisandro Dalcin and Victor Eijkhout and William D. Gropp
+            and Dinesh Kaushik and Matthew G. Knepley
+            and Lois Curfman McInnes and Karl Rupp and Barry F. Smith
+            and Stefano Zampini and Hong Zhang},
+  Title       = {{PETS}c Users Manual},
+  Number      = {ANL-95/11 - Revision 3.12},
+  Institution = {Argonne National Laboratory},
+  Year        = {2019}
+}
+
+@Misc{petsc-web-page,
+  author = {Satish Balay and Shrirang Abhyankar and Mark~F. Adams and Jed Brown and Peter Brune
+            and Kris Buschelman and Lisandro Dalcin and Victor Eijkhout and William~D. Gropp
+            and Dinesh Kaushik and Matthew~G. Knepley
+            and Lois Curfman McInnes and Karl Rupp and Barry~F. Smith
+            and Stefano Zampini and Hong Zhang and Hong Zhang},
+  title        = {{PETS}c {W}eb page},
+  url          = {http://www.mcs.anl.gov/petsc},
+  howpublished = {\url{http://www.mcs.anl.gov/petsc}},
+  year         = {2016}
+}
+
+%
+% CUDA references
+%
+
+@techreport{nvidia2017samples,
+  title       = {CUDA Samples: Reference Manual},
+  author      = {NVidia, CUDA},
+  year        = {2017},
+  institution = {TRM-06704-001 v8}
+}
+
+@Misc{cuda_site,
+  title        = {{NVIDIA CUDA Programming Guide}},
+  howpublished = {\url{https://docs.nvidia.com/cuda/index.html}},
+  author       = {{N.a.}}
+}
+
+@Misc{cuSOLVER_site,
+  title        = {{NVIDIA cuSOLVER Programming Guide}},
+  howpublished = {\url{https://docs.nvidia.com/cuda/cusolver/index.html}},
+  author       = {{N.a.}}
+}
+
+@Misc{cuSPARSE_site,
+  title        = {{NVIDIA cuSPARSE Programming Guide}},
+  howpublished = {\url{https://docs.nvidia.com/cuda/cusparse/index.html}},
+  author       = {{N.a.}}
+}
+
+%
+% ROCm/HIP references
+%
+
+@Misc{rocm_site,
+  title        = {{AMD ROCm Documentation}},
+  howpublished = {\url{https://rocmdocs.amd.com/en/latest/index.html}},
+  author       = {{N.a.}}
+}
+
+
+%
+% oneAPI references
+%
+
+@Misc{oneAPI_site,
+  title        = {{Intel oneAPI Programming Guide}},
+  howpublished = {\url{https://software.intel.com/content/www/us/en/develop/documentation/oneapi-programming-guide/top.html}},
+  author       = {{N.a.}}
+}
+
+%
+% RAJA references
+%
+
+@TechReport{raja,
+ author         = {R. D. Hornung and J. A. Keasler},
+ title          = {The RAJA Poratability Layer: Overview and Status},
+ institution    = {Lawrence Livermore National Laboratory},
+ year           = {2014},
+ OPTkey         = {},
+ OPTtype        = {},
+ number         = {LLNL-TR-661403},
+ OPTaddress     = {},
+ OPTmonth       = {September},
+ OPTnote        = {},
+ OPTannote      = {},
+ OPTurl         = {},
+ OPTurldate     = {},
+ OPTlastchecked = {},
+ OPTdoi         = {},
+ OPTisbn        = {},
+ OPTissn        = {},
+ OPTlocalfile   = {},
+ OPTabstract    = {},
+ OPTkeywords    = {},
+}
+
+%
+% Trilinos references
+%
+
+@techreport{Trilinos-Overview,
+title       = "{An Overview of Trilinos}",
+author      = "Michael Heroux and Roscoe Bartlett and Vicki Howle Robert Hoekstra and Jonathan Hu and Tamara Kolda and Richard Lehoucq and Kevin Long and Roger Pawlowski and Eric Phipps and Andrew Salinger and Heidi Thornquist and Ray Tuminaro and James Willenbring and Alan Williams ",
+institution = "Sandia National Laboratories",
+number      = "SAND2003-2927",
+year        = 2003}
+
+@techreport{hoemmen2015tpetra,
+  title       = {Tpetra Project Overview.},
+  author      = {Hoemmen, Mark Frederick},
+  year        = {2015},
+  institution = {Sandia National Lab.(SNL-NM), Albuquerque, NM (United States)}
+}
+
+@article{edwards2014kokkos,
+title   = "Kokkos: Enabling manycore performance portability through polymorphic memory access patterns ",
+journal = "Journal of Parallel and Distributed Computing ",
+volume  = "74",
+number  = "12",
+pages   = "3202 - 3216",
+year    = "2014",
+note    = "Domain-Specific Languages and High-Level Frameworks for High-Performance Computing ",
+issn    = "0743-7315",
+doi     = "https://doi.org/10.1016/j.jpdc.2014.07.003",
+url     = "http://www.sciencedirect.com/science/article/pii/S0743731514001257",
+author  = "H. Carter Edwards and Christian R. Trott and Daniel Sunderland"
+}
+
+%
+% SWIG Fortran references
+%
+
+@article{Swig-Fortran,
+author        = {Seth R. Johnson and Andrey Prokopenko and Katherine J. Evans},
+title         = {Automated Fortran-C++ Bindings for Large-Scale Scientific Applications},
+journal       = {},
+volume        = {arXiv:1904.02546 [cs]},
+year          = {2019},
+url           = {http://arxiv.org/abs/1904.02546},
+archivePrefix = {arXiv},
+eprint        = {1904.02546},
+timestamp     = {Wed, 24 Apr 2019 12:21:25 +0200},
+biburl        = {https://dblp.org/rec/bib/journals/corr/abs-1904-02546},
+bibsource     = {dblp computer science bibliography, https://dblp.org}
+}
+
+%
+% Using an alternative function in Jacobian-vector products
+%
+
+@article{dorr2010numerical,
+  title     = {A numerical algorithm for the solution of a phase-field model of polycrystalline materials},
+  author    = {Dorr, M.R. and Fattebert, J.-L. and Wickett, M.E. and Belak, J.F. and Turchi, P.E.A.},
+  journal   = {Journal of Computational Physics},
+  volume    = {229},
+  number    = {3},
+  pages     = {626--641},
+  year      = {2010},
+  publisher = {Elsevier}
+}
+
+%
+% Caliper
+%
+
+@inproceedings{Caliper:2016,
+  title        = {Caliper: performance introspection for HPC software stacks},
+  author       = {Boehme, David and Gamblin, Todd and Beckingsale, David and Bremer, Peer-Timo and Gimenez, Alfredo and LeGendre, Matthew and Pearce, Olga and Schulz, Martin},
+  booktitle    = {SC'16: Proceedings of the International Conference for High Performance Computing, Networking, Storage and Analysis},
+  pages        = {550--560},
+  year         = {2016},
+  organization = {IEEE}
+}
+
+
+%---------------------------------------------------------
+% FROM ARKODE
+%---------------------------------------------------------
+
+@article{Bank:85,
+  author  = {Bank, R.E. and Coughran, W.M. and Fichtner, W. and Grosse, E.H. and Rose, D.J. and Smith, R.K.},
+  journal = {IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems},
+  title   = {Transient Simulation of Silicon Devices and Circuits},
+  year    = {1985},
+  volume  = {4},
+  number  = {},
+  pages   = {436-451},
+  doi     = {10.1109/TCAD.1985.1270142}
+}
+
+@article{Billington:83,
+  author  = {Billington, S.R},
+  journal = {Master Thesis, University of Manchester, United Kingdom},
+  title   = {Type-Insensitive Codes for the Solution of
+             Stiff and Nonstiff Systems of Ordinary Differential
+             Equations},
+  year = {1983}
+}
+
+@article{Bogacki:89,
+  author  = {Bogacki, P. and Shampine, L.F.},
+  journal = {Applied Mathematics Letters},
+  title   = {{A 3(2) pair of Runge–Kutta formulas}},
+  year    = {1989},
+  volume  = {24},
+  number  = {},
+  pages   = {407-434}
+}
+
+@book{Butcher:08,
+  author    = {Butcher, J.C.},
+  address   = {Chicester, England},
+  title     = {Numerical Methods for Ordinary Differential Equations},
+  edition   = {2},
+  publisher = {Wiley},
+  year      = {2008}
+}
+
+@article{Cash:79,
+  author  = {Cash, J.R.},
+  title   = {Diagonally Implicit Runge-Kutta Formulae with Error Estimates},
+  journal = {IMA Journal of Applied Mathematics},
+  volume  = {24},
+  number  = {},
+  pages   = {293-301},
+  year    = {1979}
+}
+
+@article{CashKarp:90,
+  author  = {Cash, J.R. and Karp, A.H.},
+  title   = {A variable order Runge-Kutta method for
+             initial value problems with rapidly varying right-hand sides},
+  journal = {ACM Transactions on Mathematical Software},
+  volume  = {16},
+  number  = {},
+  pages   = {201-222},
+  year    = {1990}
+}
+
+@article{ChiRen:21,
+  author    = {Chinomona, Rujeko and Reynolds, Daniel R},
+  title     = {Implicit-explicit multirate infinitesimal GARK methods},
+  journal   = {SIAM Journal on Scientific Computing},
+  volume    = {43},
+  number    = {5},
+  pages     = {A3082--A3113},
+  year      = {2021},
+  publisher = {SIAM}
+}
+
+@article{DorPri:80,
+  author  = {Dormand, J.R. and Prince, P.J.},
+  title   = {A family of embedded Runge-Kutta formulae},
+  journal = {Journal of Computational and Applied Mathematics},
+  volume  = {6},
+  number  = {},
+  pages   = {19-26},
+  year    = {1980}
+}
+
+@article{FFKMS:14,
+  author  = {Falgout, R.D. and Friedhoff, S. and Kolev, TZ.V. and MacLachlan, S.P. and Schroder, J.B.},
+  title   = {Parallel Time Integration with Multigrid},
+  journal = {SIAM Journal of Scientific Computing},
+  volume  = {36},
+  number  = {},
+  pages   = {C635-C661},
+  year    = {2014}
+}
+
+@techreport{Fehlberg:69,
+  author      = {Fehlberg, E.},
+  title       = {Low-order classical Runge-Kutta formulas with step size control and their application to some heat transfer problems},
+  institution = {NASA},
+  number      = {315},
+  year        = {1969}
+}
+
+@article{Gust:91,
+  author  = {Gustafsson, K.},
+  title   = {Control theoretic techniques for stepsize selection in explicit Runge-Kutta methods},
+  journal = {ACM Transactions on Mathematical Software},
+  volume  = {17},
+  number  = {},
+  pages   = {533-554},
+  year    = {1991}
+}
+
+@article{Gust:94,
+  author  = {Gustafsson, K.},
+  title   = {Control theoretic techniques for stepsize selection in implicit Runge-Kutta methods},
+  journal = {ACM Transactions on Mathematical Software},
+  volume  = {20},
+  number  = {},
+  pages   = {496-512},
+  year    = {1994}
+}
+
+@article{KenCarp:03,
+  author  = {Kennedy, C.A. and Carpenter, M.H.},
+  title   = {Additive Runge-Kutta schemes for convection-diffusion-reaction equations},
+  journal = {Applied Numerical Mathematics},
+  volume  = {44},
+  number  = {},
+  pages   = {139-181},
+  year    = {2003}
+}
+
+@article{KenCarp:19,
+  author  = {Kennedy, C.A. and Carpenter, M.H.},
+  title   = {Higher-order additive Runge–Kutta schemes for ordinary differential equations},
+  journal = {Applied Numerical Mathematics},
+  volume  = {136},
+  number  = {},
+  pages   = {183-205},
+  year    = {2019}
+}
+
+@article{Kva:04,
+  author  = {Kv{\ae}rno, A.},
+  title   = {Singly Diagonally Implicit Runge-Kutta Methods with an Explicit First Stage},
+  journal = {BIT Numerical Mathematics},
+  volume  = {44},
+  number  = {},
+  pages   = {489-502},
+  year    = {2004}
+}
+
+@article{Sandu:19,
+  author  = {Sandu, A.},
+  title   = {A Class of Multirate Infinitesimal GARK Methods},
+  journal = {SIAM Journal of Numerical Analysis},
+  volume  = {57},
+  number  = {},
+  pages   = {2300-2327},
+  year    = {2019}
+}
+
+@article{Sayfy:02,
+  author  = {Sayfy, A. and Aburub, A.},
+  title   = {Embedded Additive Runge-Kutta Methods},
+  journal = {International Journal of Computer Mathematics},
+  volume  = {79},
+  number  = {},
+  pages   = {945-953},
+  year    = {2002}
+}
+
+@article{Schlegel:09,
+  author  = {Schlegel, M. and Knoth, O. and Arnold, M. and Wolke, R.},
+  title   = {Multirate Runge--Kutta schemes for advection equations},
+  journal = {Journal of Computational Applied Mathematics},
+  volume  = {226},
+  number  = {},
+  pages   = {345-357},
+  year    = {2009}
+}
+
+@article{Schlegel:12a,
+  author  = {Schlegel, M. and Knoth, O. and Arnold, M. and Wolke, R.},
+  title   = {Implementation of multirate time integration methods for air pollution modelling},
+  journal = {GMD},
+  volume  = {5},
+  number  = {},
+  pages   = {1395-1405},
+  year    = {2012}
+}
+
+@article{Schlegel:12b,
+  author  = {Schlegel, M. and Knoth, O. and Arnold, M. and Wolke, R.},
+  title   = {Numerical solution of multiscale problems in atmospheric modeling},
+  journal = {Applied Numerical Mathematics},
+  volume  = {62},
+  number  = {},
+  pages   = {1531-1542},
+  year    = {2012}
+}
+
+@article{Sod:98,
+  author  = {Soderlind, G.},
+  title   = {The automatic control of numerical integration},
+  journal = {CWI Quarterly},
+  volume  = {11},
+  number  = {},
+  pages   = {55-74},
+  year    = {1998}
+}
+
+@article{Sod:03,
+  author  = {Soderlind, G.},
+  title   = {Digital filters in adaptive time-stepping},
+  journal = {ACM Transactions on Mathematical Software},
+  volume  = {29},
+  number  = {},
+  pages   = {1-26},
+  year    = {2003}
+}
+
+@article{Sod:06,
+  author  = {Soderlind, G.},
+  title   = {Time-step selection algorithms: Adaptivity, control and signal processing},
+  journal = {Applied Numerical Mathematics},
+  volume  = {56},
+  number  = {},
+  pages   = {488-502},
+  year    = {2006}
+}
+
+@article{Ver:78,
+  author  = {Verner, J.H},
+  title   = {Explicit Runge-Kutta methods with estimates of the local truncation error},
+  journal = {SIAM Journal of Numerical Analysis},
+  volume  = {15},
+  number  = {},
+  pages   = {772-790},
+  year    = {1978}
+}
+
+@article{KnWo:98,
+  author  = {Knoth, O. and Wolke, R.},
+  title   = {Implicit-explicit Runge--Kutta methods for computiong atmospheric reactive flows},
+  journal = {Applied Numerical Analysis},
+  volume  = {28},
+  number  = {2},
+  pages   = {327-341},
+  year    = {1998}
+}
+
+@misc{xbraid,
+  title        = {XBraid: Parallel multigrid in time},
+  howpublished = {\url{http://llnl.gov/casc/xbraid}}
+}
+
+@techreport{Zon:63,
+  author      = {Zonneveld, J.A.},
+  title       = {Automatic integration of ordinary differential equations},
+  institution = {Mathematisch Centrum},
+  address     = {Postbus 4079, 1009AB Amsterdam},
+  number      = {R743},
+  year        = {1963}
+}

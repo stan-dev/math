@@ -1,0 +1,75 @@
+# -*- mode: makefile -*-
+# -----------------------------------------------------------------
+# Programmer: Cody J. Balos @ LLNL
+# -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2002-2022, Lawrence Livermore National Security
+# and Southern Methodist University.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
+# Makefile for @SOLVER@ SuperLU_DIST examples
+#
+# This file is generated from a template using various variables
+# set at configuration time. It can be used as a template for
+# other user Makefiles.
+# -----------------------------------------------------------------
+
+SHELL = @SHELL@
+RPATH = -Wl,-rpath,
+
+prefix       = @prefix@
+exec_prefix  = @exec_prefix@
+includedir   = @includedir@
+libdir       = @libdir@
+
+MPICC       = @MPI_C_COMPILER@
+MPICXX      = @MPI_CXX_COMPILER@
+CFLAGS      = @CMAKE_C_FLAGS@
+CXXFLAGS    = @CMAKE_CXX_FLAGS@
+LDFLAGS     = @LDFLAGS@
+LIBS        = @LIBS@
+
+TMP_INCS = @SUPERLUDIST_INCLUDE_DIR@ ${includedir}
+INCLUDES = $(addprefix -I, ${TMP_INCS})
+
+TMP_LIBS=@SUPERLUDIST_LIBRARIES@;@SUPERLUDIST_LIBRARY@
+SLUDIST_LIBS=$(subst ;,  , ${TMP_LIBS})
+SLUDIST_RPATHS=$(addprefix $(RPATH), $(dir ${SLUDIST_LIBS}))
+LIBRARIES =-L${libdir} @SUNDIALS_LIBS@ ${SLUDIST_LIBS} ${LIBS}
+LINKFLAGS = -Wl,-rpath,${libdir} ${SLUDIST_RPATHS}
+
+EXAMPLES      = @EXAMPLES@
+EXAMPLES_DEPS = @EXAMPLES_DEPENDENCIES@
+OBJECTS       = ${EXAMPLES:=.o}
+OBJECTS_DEPS  = ${EXAMPLES_DEPS:=.o}
+
+# -----------------------------------------------------------------------------------------
+
+.SUFFIXES : .o .c .cpp
+
+.c.o :
+	${MPICC} ${CFLAGS} ${INCLUDES} -c $<
+
+.cpp.o :
+	${MPICXX} ${CXXFLAGS} ${INCLUDES} -c $<
+
+# -----------------------------------------------------------------------------------------
+
+all: ${OBJECTS} ${OBJECTS_DEPS}
+	@for i in ${EXAMPLES} ; do \
+	  echo "${MPICXX} -o $${i} $${i}.o ${OBJECTS_DEPS} ${CXXFLAGS} ${LDFLAGS} ${INCLUDES} -L${libdir} ${LIBRARIES} ${LINKFLAGS}" ; \
+	  ${MPICXX} -o $${i} $${i}.o ${OBJECTS_DEPS} ${CXXFLAGS} ${LDFLAGS} ${INCLUDES} -L${libdir} ${LIBRARIES} ${LINKFLAGS} ; \
+	done
+
+clean:
+	rm -f ${OBJECTS}
+	rm -f ${OBJECTS_DEPS}
+	rm -f ${EXAMPLES}
+	rm -f ${EXAMPLES_DEPS}
+
+# -----------------------------------------------------------------------------------------

@@ -1,0 +1,5 @@
+List of Hip CVODE examples
+
+  cvAdvDiff_kry_hip  : 2-D advection-diffusion (nonstiff)
+  cvAdvDiff_diag_hip : 2-D advection-diffusion (nonstiff) with diagonal solver
+                       and fused HIP kernels

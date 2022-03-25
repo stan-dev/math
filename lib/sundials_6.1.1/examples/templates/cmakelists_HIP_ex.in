@@ -1,0 +1,105 @@
+# -----------------------------------------------------------------
+# Programmer(s): Cody J. Balos @ LLNL
+# -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2002-2022, Lawrence Livermore National Security
+# and Southern Methodist University.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
+
+# Set the minimum required cmake version
+cmake_minimum_required(VERSION @CMAKE_VERSION@)
+
+# Set cache variables for C compilers and flags
+set(CMAKE_C_COMPILER
+  @CMAKE_C_COMPILER@
+  CACHE FILEPATH "C compiler")
+
+set(CMAKE_C_FLAGS
+  "@CMAKE_C_FLAGS@"
+  CACHE STRING "C compiler flags")
+
+if("@CMAKE_C_STANDARD@")
+  set(CMAKE_C_STANDARD "@CMAKE_C_STANDARD@"
+    CACHE STRING "C standard")
+endif()
+
+# Set cache variables for C++ compilers and flags
+set(CMAKE_CXX_COMPILER
+  @CMAKE_CXX_COMPILER@
+  CACHE FILEPATH "CXX compiler")
+
+set(CMAKE_CXX_FLAGS
+  "@CMAKE_CXX_FLAGS@"
+  CACHE STRING "CXX compiler flags")
+
+set(CMAKE_CXX_STANDARD
+  @CMAKE_CXX_STANDARD@
+  CACHE STRING "C++ standard")
+
+# Specify project name and languages
+project(@SOLVER@_hip_examples C CXX)
+
+# Enable testing
+include(CTest)
+
+# Need HIP
+set(CMAKE_PREFIX_PATH "@CMAKE_PREFIX_PATH@")
+find_package(HIP REQUIRED)
+
+# ------------------------------------------------------------------------------
+
+# Specify the path to SUNDIALSConfig.cmake
+set(SUNDIALS_DIR
+  "@CMAKE_INSTALL_PREFIX@/@SUNDIALS_INSTALL_CMAKEDIR@"
+  CACHE PATH "Location of SUNDIALSConfig.cmake")
+
+# Find SUNDIALS
+find_package(SUNDIALS
+  COMPONENTS @EXAMPLES_CMAKE_COMPONENTS@
+  REQUIRED NO_DEFAULT_PATH)
+
+# Set the SUNDIALS targets
+set(SUNDIALS_TARGETS @EXAMPLES_CMAKE_TARGETS@)
+
+# Set any additional libraries needed
+set(EXTRA_LIBS
+  @LIBS@
+  CACHE STRING "Additional libraries")
+
+# Additional includes
+include_directories(. @EXTRA_INCLUDES@)
+
+# ------------------------------------------------------------------------------
+
+# Set the names of the examples to be built and their dependencies
+set(examples @EXAMPLES@)
+if(examples)
+  list(REMOVE_DUPLICATES examples)
+endif()
+set(examples_dependencies @EXAMPLES_DEPENDENCIES@)
+foreach(depend ${examples_dependencies})
+    set_source_files_properties(${depend} PROPERTIES LANGUAGE CXX)
+endforeach()
+
+# Create targets for each example
+foreach(example ${examples})
+
+  # get filename without extension
+  get_filename_component(example_target ${example} NAME_WE)
+
+  # example source files
+  add_executable(${example_target} ${example} ${examples_dependencies})
+
+  # libraries to link against
+  target_link_libraries(${example_target} ${SUNDIALS_TARGETS} ${EXTRA_LIBS})
+
+  # add the example to ctest
+  add_test(NAME ${example_target} COMMAND ${example_target})
+
+endforeach()

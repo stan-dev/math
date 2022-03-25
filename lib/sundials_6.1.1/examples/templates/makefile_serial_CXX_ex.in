@@ -1,0 +1,112 @@
+# -*- mode: makefile -*-
+# -----------------------------------------------------------------
+# Programmer(s): Daniel R. Reynolds @ SMU
+#                David J. Gardner @ LLNL
+# -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2002-2022, Lawrence Livermore National Security
+# and Southern Methodist University.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
+# Makefile for @SOLVER@ serial examples
+#
+# This file is generated from a template using variables
+# set at configuration time. It can be used as a template for
+# other user Makefiles.
+# -----------------------------------------------------------------
+
+SHELL = @SHELL@
+
+prefix       = @prefix@
+exec_prefix  = @exec_prefix@
+includedir   = @includedir@
+libdir       = @libdir@
+
+CPP      = @CPP@
+CPPFLAGS = @CPPFLAGS@
+CXX      = @CXX@
+CXXFLAGS = @CXXFLAGS@
+LDFLAGS  = @LDFLAGS@
+LIBS     = @LIBS@
+
+LINKFLAGS = -Wl,-rpath,@libdir@
+
+# -----------------------------------------------------------------------------------------
+
+LIBRARIES_LAPACK = -lsundials_sunlinsollapackdense -lsundials_sunlinsollapackband @LAPACK_LIBS@
+LINKFLAGS_LAPACK = ${LINKFLAGS}:@LAPACK_LIBRARY_DIR@
+
+INCLUDES_KLU  = @KLU_INCLUDE_DIR@
+LIBRARIES_KLU = -lsundials_sunlinsolklu @KLU_LIBS@
+LINKFLAGS_KLU = ${LINKFLAGS}:@KLU_LIBRARY_DIR@
+
+INCLUDES_SLUMT  = @SUPERLUMT_INCLUDE_DIR@
+LIBRARIES_SLUMT = -lsundials_sunlinsolsuperlumt @SUPERLUMT_LIBS@
+LINKFLAGS_SLUMT = ${LINKFLAGS}:@SUPERLUMT_LIBRARY_DIR@
+
+TMP_INCS  = ${includedir} ${INCLUDES_SLUMT} ${INCLUDES_KLU}
+INCLUDES  = $(addprefix -I, ${TMP_INCS})
+LIBRARIES = -l@SOLVER_LIB@ -lsundials_nvecserial ${LIBS}
+
+# -----------------------------------------------------------------------------------------
+
+EXAMPLES = $(basename @EXAMPLES@)
+OBJECTS  = ${EXAMPLES:=.o}
+
+# LAPACK Examples
+EXAMPLES_BL = @EXAMPLES_BL@
+OBJECTS_BL  = ${EXAMPLES_BL:=.o}
+
+# KLU Examples
+EXAMPLES_KLU = @EXAMPLES_KLU@
+OBJECTS_KLU  = ${EXAMPLES_KLU:=.o}
+
+# SuperLU_MT Examples
+EXAMPLES_SLUMT = @EXAMPLES_SLUMT@
+OBJECTS_SLUMT  = ${EXAMPLES_SLUMT:=.o}
+
+# -----------------------------------------------------------------------------------------
+
+.SUFFIXES : .o .cpp
+
+.cpp.o :
+	${CXX} ${CPPFLAGS} ${CXXFLAGS} ${INCLUDES} -c $<
+
+# -----------------------------------------------------------------------------------------
+
+all: examples examples_bl examples_klu examples_slumt
+
+examples: ${OBJECTS}
+	@for i in ${EXAMPLES} ; do \
+	  echo "${CXX} -o $${i} $${i}.o ${CXXFLAGS} ${LDFLAGS} ${INCLUDES} -L${libdir} ${LIBRARIES} ${LINKFLAGS}" ; \
+	  ${CXX} -o $${i} $${i}.o ${CXXFLAGS} ${LDFLAGS} ${INCLUDES} -L${libdir} ${LIBRARIES} ${LINKFLAGS} ; \
+	done
+
+examples_bl: ${OBJECTS_BL}
+	@for i in ${EXAMPLES_BL} ; do \
+	  echo "${CXX} -o $${i} $${i}.o ${CXXFLAGS} ${LDFLAGS} ${INCLUDES} -L${libdir} ${LIBRARIES} ${LIBRARIES_LAPACK} ${LINKFLAGS_LAPACK}" ; \
+	  ${CXX} -o $${i} $${i}.o ${CXXFLAGS} ${LDFLAGS} ${INCLUDES} -L${libdir} ${LIBRARIES} ${LIBRARIES_LAPACK} ${LINKFLAGS_LAPACK} ; \
+	done
+
+examples_klu: ${OBJECTS_KLU}
+	@for i in ${EXAMPLES_KLU} ; do \
+	  echo "${CXX} -o $${i} $${i}.o ${CXXFLAGS} ${LDFLAGS} ${INCLUDES} -L${libdir} ${LIBRARIES} ${LIBRARIES_KLU} ${LINKFLAGS_KLU}" ; \
+	  ${CXX} -o $${i} $${i}.o ${CXXFLAGS} ${LDFLAGS} ${INCLUDES} -L${libdir} ${LIBRARIES} ${LIBRARIES_KLU} ${LINKFLAGS_KLU} ; \
+	done
+
+examples_slumt: ${OBJECTS_SLUMT}
+	@for i in ${EXAMPLES_SLUMT} ; do \
+	  echo "${CXX} -o $${i} $${i}.o ${CXXFLAGS} ${LDFLAGS} ${INCLUDES} -L${libdir} ${LIBRARIES} ${LIBRARIES_SLUMT} ${LINKFLAGS_SLUMT}" ; \
+	  ${CXX} -o $${i} $${i}.o ${CXXFLAGS} ${LDFLAGS} ${INCLUDES} -L${libdir} ${LIBRARIES} ${LIBRARIES_SLUMT} ${LINKFLAGS_SLUMT} ; \
+	done
+
+clean:
+	rm -f ${OBJECTS} ${OBJECTS_BL} ${OBJECTS_KLU} ${OBJECTS_SLUMT}
+	rm -f ${EXAMPLES} ${EXAMPLES_BL} ${EXAMPLES_KLU} ${EXAMPLES_SLUMT}
+
+# -----------------------------------------------------------------------------------------

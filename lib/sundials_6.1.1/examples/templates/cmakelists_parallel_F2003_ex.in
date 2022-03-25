@@ -1,0 +1,86 @@
+# -----------------------------------------------------------------
+# Programmer(s): David J. Gardner @ LLNL
+# -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2002-2022, Lawrence Livermore National Security
+# and Southern Methodist University.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
+
+# Set the minimum required cmake version
+cmake_minimum_required(VERSION @CMAKE_VERSION@)
+
+# Set cache variables for compilers and flags
+set(CMAKE_Fortran_COMPILER
+  @MPI_Fortran_COMPILER@
+  CACHE FILEPATH "MPI Fortran compiler")
+
+set(CMAKE_Fortran_FLAGS
+  "@CMAKE_Fortran_FLAGS@"
+  CACHE STRING "Fortran compiler flags")
+
+# Specify project name and languages
+project(@SOLVER@_F2003_parallel_examples Fortran)
+
+# Enable testing
+include(CTest)
+
+# ------------------------------------------------------------------------------
+
+# Path to SUNDIALSConfig.cmake
+set(SUNDIALS_DIR
+  @CMAKE_INSTALL_PREFIX@/@SUNDIALS_INSTALL_CMAKEDIR@
+  CACHE PATH "Location of SUNDIALSConfig.cmake")
+
+# Path to SUNDIALS Fortran mod files
+set(SUNDIALS_FMOD_DIR
+  @CMAKE_INSTALL_PREFIX@/@Fortran_INSTALL_MODDIR@
+  CACHE PATH "Location of SUNDIALS Fortran mod files")
+
+# Find SUNDIALS
+find_package(SUNDIALS REQUIRED NO_DEFAULT_PATH)
+
+# SUNDIALS targets needed
+set(TARGETS_NEEDED @EXAMPLES_CMAKE_TARGETS@)
+
+# Additional libraries needed
+set(EXTRA_LIBS @LIBS@ CACHE STRING "Additional libraries")
+
+# List of SUNDIALS libraries to link against
+set(LIBRARIES
+    ${TARGETS_NEEDED}
+    ${EXTRA_LIBS})
+
+# ------------------------------------------------------------------------------
+
+# Examples to be built and their dependencies
+set(examples @EXAMPLES@)
+set(examples_dependencies @EXAMPLES_DEPENDENCIES@)
+if(examples)
+  list(REMOVE_DUPLICATES examples)
+endif()
+
+# Create targets for each example
+foreach(example ${examples})
+
+  # Keep fortran modules to a unique directory to avoid naming collisions
+  set(CMAKE_Fortran_MODULE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${example}.dir)
+
+  # example source files
+  add_executable(${example} ${example}.f90 ${examples_dependencies})
+
+  # directories to include
+  target_include_directories(${example} PRIVATE ${SUNDIALS_FMOD_DIR})
+
+  # libraries to link against
+  target_link_libraries(${example} ${LIBRARIES})
+
+  # add the example to ctest
+  add_test(NAME ${example} COMMAND ${example})
+
+endforeach()

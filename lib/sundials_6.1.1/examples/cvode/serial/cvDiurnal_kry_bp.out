@@ -1,0 +1,138 @@
+2-species diurnal advection-diffusion problem, 10 by 10 mesh
+SPGMR solver; band preconditioner; mu = 2, ml = 2
+
+
+
+Preconditioner type is:  jpre = SUN_PREC_LEFT
+
+t = 7.20e+03   no. steps = 190   order = 5   stepsize = 1.61e+02
+c1 (bot.left/middle/top rt.) =    1.047e+04     2.964e+04     1.119e+04
+c2 (bot.left/middle/top rt.) =    2.527e+11     7.154e+11     2.700e+11
+
+t = 1.44e+04   no. steps = 221   order = 5   stepsize = 3.83e+02
+c1 (bot.left/middle/top rt.) =    6.659e+06     5.316e+06     7.301e+06
+c2 (bot.left/middle/top rt.) =    2.582e+11     2.057e+11     2.833e+11
+
+t = 2.16e+04   no. steps = 246   order = 5   stepsize = 2.78e+02
+c1 (bot.left/middle/top rt.) =    2.665e+07     1.036e+07     2.931e+07
+c2 (bot.left/middle/top rt.) =    2.993e+11     1.028e+11     3.313e+11
+
+t = 2.88e+04   no. steps = 298   order = 3   stepsize = 1.33e+02
+c1 (bot.left/middle/top rt.) =    8.702e+06     1.292e+07     9.650e+06
+c2 (bot.left/middle/top rt.) =    3.380e+11     5.029e+11     3.751e+11
+
+t = 3.60e+04   no. steps = 341   order = 4   stepsize = 6.31e+01
+c1 (bot.left/middle/top rt.) =    1.404e+04     2.029e+04     1.561e+04
+c2 (bot.left/middle/top rt.) =    3.387e+11     4.894e+11     3.765e+11
+
+t = 4.32e+04   no. steps = 402   order = 4   stepsize = 4.48e+02
+c1 (bot.left/middle/top rt.) =    1.915e-07    -6.130e-06     4.395e-07
+c2 (bot.left/middle/top rt.) =    3.382e+11     1.355e+11     3.804e+11
+
+t = 5.04e+04   no. steps = 422   order = 4   stepsize = 3.17e+02
+c1 (bot.left/middle/top rt.) =   -7.746e-11    -3.073e-08    -3.512e-11
+c2 (bot.left/middle/top rt.) =    3.358e+11     4.930e+11     3.864e+11
+
+t = 5.76e+04   no. steps = 436   order = 5   stepsize = 3.58e+02
+c1 (bot.left/middle/top rt.) =    1.801e-11     7.177e-09     8.588e-12
+c2 (bot.left/middle/top rt.) =    3.320e+11     9.650e+11     3.909e+11
+
+t = 6.48e+04   no. steps = 449   order = 5   stepsize = 5.95e+02
+c1 (bot.left/middle/top rt.) =   -2.845e-14    -1.063e-11    -1.382e-14
+c2 (bot.left/middle/top rt.) =    3.313e+11     8.922e+11     3.963e+11
+
+t = 7.20e+04   no. steps = 461   order = 5   stepsize = 5.95e+02
+c1 (bot.left/middle/top rt.) =    2.710e-16     1.011e-13     1.307e-16
+c2 (bot.left/middle/top rt.) =    3.330e+11     6.186e+11     4.039e+11
+
+t = 7.92e+04   no. steps = 473   order = 5   stepsize = 5.95e+02
+c1 (bot.left/middle/top rt.) =    5.698e-16     2.058e-13     2.690e-16
+c2 (bot.left/middle/top rt.) =    3.334e+11     6.669e+11     4.120e+11
+
+t = 8.64e+04   no. steps = 485   order = 5   stepsize = 5.95e+02
+c1 (bot.left/middle/top rt.) =    2.707e-16     1.899e-17     2.156e-15
+c2 (bot.left/middle/top rt.) =    3.352e+11     9.106e+11     4.163e+11
+
+
+Final Statistics.. 
+
+lenrw   =  2689     leniw   =    53
+lenrwls =  2454     leniwls =    42
+lenrwbp =  2800     leniwbp =   622
+nst     =   485
+nfe     =   616     nfetot  =  1258
+nfeLS   =   597     nfeBP   =    45
+nni     =   613     nli     =   597
+nsetups =    85     netf    =    28
+npe     =     9     nps     =  1134
+ncfn    =     0     ncfl    =     0
+
+
+
+-------------------------------------------------------------------
+
+
+Preconditioner type is:  jpre = SUN_PREC_RIGHT
+
+t = 7.20e+03   no. steps = 219   order = 5   stepsize = 1.55e+02
+c1 (bot.left/middle/top rt.) =    1.047e+04     2.964e+04     1.119e+04
+c2 (bot.left/middle/top rt.) =    2.527e+11     7.154e+11     2.700e+11
+
+t = 1.44e+04   no. steps = 251   order = 5   stepsize = 3.59e+02
+c1 (bot.left/middle/top rt.) =    6.659e+06     5.316e+06     7.301e+06
+c2 (bot.left/middle/top rt.) =    2.582e+11     2.057e+11     2.833e+11
+
+t = 2.16e+04   no. steps = 279   order = 5   stepsize = 3.58e+02
+c1 (bot.left/middle/top rt.) =    2.665e+07     1.036e+07     2.931e+07
+c2 (bot.left/middle/top rt.) =    2.993e+11     1.028e+11     3.313e+11
+
+t = 2.88e+04   no. steps = 303   order = 5   stepsize = 2.67e+02
+c1 (bot.left/middle/top rt.) =    8.702e+06     1.292e+07     9.650e+06
+c2 (bot.left/middle/top rt.) =    3.380e+11     5.029e+11     3.751e+11
+
+t = 3.60e+04   no. steps = 329   order = 5   stepsize = 1.16e+02
+c1 (bot.left/middle/top rt.) =    1.404e+04     2.029e+04     1.561e+04
+c2 (bot.left/middle/top rt.) =    3.387e+11     4.894e+11     3.765e+11
+
+t = 4.32e+04   no. steps = 381   order = 4   stepsize = 4.67e+02
+c1 (bot.left/middle/top rt.) =    8.674e-09     7.020e-09     9.676e-09
+c2 (bot.left/middle/top rt.) =    3.382e+11     1.355e+11     3.804e+11
+
+t = 5.04e+04   no. steps = 398   order = 4   stepsize = 3.23e+02
+c1 (bot.left/middle/top rt.) =    3.531e-15    -4.895e-12    -1.356e-13
+c2 (bot.left/middle/top rt.) =    3.358e+11     4.930e+11     3.864e+11
+
+t = 5.76e+04   no. steps = 411   order = 5   stepsize = 4.75e+02
+c1 (bot.left/middle/top rt.) =    1.279e-13    -4.506e-11    -1.318e-12
+c2 (bot.left/middle/top rt.) =    3.320e+11     9.650e+11     3.909e+11
+
+t = 6.48e+04   no. steps = 423   order = 5   stepsize = 7.28e+02
+c1 (bot.left/middle/top rt.) =   -1.113e-17     6.813e-16     1.742e-17
+c2 (bot.left/middle/top rt.) =    3.313e+11     8.922e+11     3.963e+11
+
+t = 7.20e+04   no. steps = 433   order = 5   stepsize = 7.28e+02
+c1 (bot.left/middle/top rt.) =   -1.369e-20     3.565e-21    -5.202e-25
+c2 (bot.left/middle/top rt.) =    3.330e+11     6.186e+11     4.039e+11
+
+t = 7.92e+04   no. steps = 443   order = 5   stepsize = 7.28e+02
+c1 (bot.left/middle/top rt.) =    1.471e-20    -1.150e-20    -1.118e-25
+c2 (bot.left/middle/top rt.) =    3.334e+11     6.669e+11     4.120e+11
+
+t = 8.64e+04   no. steps = 452   order = 5   stepsize = 7.28e+02
+c1 (bot.left/middle/top rt.) =    1.949e-20    -1.947e-21     1.946e-25
+c2 (bot.left/middle/top rt.) =    3.352e+11     9.106e+11     4.163e+11
+
+
+Final Statistics.. 
+
+lenrw   =  2689     leniw   =    53
+lenrwls =  2454     leniwls =    42
+lenrwbp =  2800     leniwbp =   622
+nst     =   452
+nfe     =   570     nfetot  =  1335
+nfeLS   =   725     nfeBP   =    40
+nni     =   567     nli     =   725
+nsetups =    74     netf    =    23
+npe     =     8     nps     =  1199
+ncfn    =     0     ncfl    =     0
+

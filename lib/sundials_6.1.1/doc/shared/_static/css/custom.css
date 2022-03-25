@@ -1,0 +1,103 @@
+.rst-content section ul li {
+   list-style: disc;
+   margin-left: 24px;
+}
+
+.align-center figcaption p {
+   text-align: center;
+   font-style: italic;
+}
+
+/* Set logo max width */
+a.icon-home img.logo {
+   max-width: 65%;
+}
+
+/* Make sure Butcher tables (and other large math sections) don't overflow... */
+.math.notranslate.nohighlight {
+   overflow: hidden;
+}
+/* ... but they scroll, if needed, on hover */
+.math.notranslate.nohighlight:hover {
+   overflow: auto;
+}
+
+/* Make equation numbers float to the right */
+.eqno {
+   float: right;
+   width: 5%;
+   margin: 1em .5em;
+}
+/* Make room for equation numbers */
+mjx-container.MathJax.CtxtMenu_Attached_0 {
+   width: 95%;
+}
+/* Hide the figure link... */
+.math .headerlink {
+   display: none;
+   visibility: hidden;
+}
+/* ...unless the figure is hovered */
+.math:hover .headerlink {
+   display: inline-block;
+   visibility: visible;
+   /* Place link in margin and keep equation number aligned with boundary */
+   margin-right: -0.7em;
+}
+
+/* Hide the figure caption link... */
+figcaption p a {
+   display: none;
+   visibility: hidden;
+}
+/* ...unless the figure caption is hovered */
+figcaption:hover p a {
+   display: inline-block;
+   visibility: visible;
+   /* Place link in margin and keep caption aligned with boundary */
+   margin-right: -0.7em;
+}
+
+/* Make linked code the same color as other links */
+code.xref.c.c-func.docutils.literal.notranslate span {
+   color: #2980B9;
+}
+
+/* Make non-lined code black so it stands out less */
+.rst-content tt.literal, .rst-content tt.literal, .rst-content code.literal {
+   color: black;
+}
+
+/* Make function names black */
+dl.c.function dt span.sig-name.descname {
+   color: black;
+}
+/* Add some white space between functions */
+dl.c.function {
+   margin-top: 36px;
+}
+/* Remove border line on top of function box */
+.rst-content dl:not(.docutils) dt {
+   border-top: none;
+}
+
+/* Add some white space between sections */
+section {
+   margin-bottom: 36px;
+}
+
+/* Code background color */
+div > .highlight {
+   background-color: #fff;
+}
+
+/* Main content body max-width */
+.wy-nav-content {
+   max-width: 1100px;
+}
+
+/* Center the adaptivity figure */
+
+figure#adaptivity-figure > a > img {
+   margin: 0 25%;
+}

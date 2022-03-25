@@ -1,0 +1,36 @@
+
+1D Advection-Diffusion-Reaction (Brusselator) test problem:
+    time domain:  (0,10]
+    hs = 0.001
+    hf = 0.0001
+    m  = 10
+    N  = 101,  NEQ = 303
+    dx = 0.01
+    problem parameters:  a = 0.6,  b = 2,  ep = 0.01
+    diffusion coefficients:  du = 0.01,  dv = 0.01,  dw = 0.01
+    advection coefficients:  au = -0.001,  av = -0.001,  aw = -0.001
+    solver: exp-3/dirk-3 (MIS / ESDIRK-3-3)
+
+    reltol = 1.00e-12,  abstol = 1.00e-14
+
+        t      ||u||_rms   ||v||_rms   ||w||_rms
+   ----------------------------------------------
+    1.000000    0.845690    3.082939    1.983862
+    2.000000    1.164832    2.458318    1.978066
+    3.000000    0.966116    2.205723    1.981334
+    4.000000    0.576871    2.504978    1.988907
+    5.000000    0.412298    2.877557    1.992321
+    6.000000    0.380412    3.177317    1.993012
+    7.000000    0.386840    3.417658    1.992876
+    8.000000    0.405808    3.608066    1.992470
+    9.000000    0.433411    3.747387    1.991882
+   10.000000    0.473401    3.825663    1.991043
+   ----------------------------------------------
+
+Final Solver Statistics:
+   Slow Steps: nsts = 10001
+   Fast Steps: nstf = 120012
+   Total RHS evals:  Fs = 30004,  Ff = 994988
+   Fast Newton iters = 504937
+   Fast Newton conv fails = 0
+   Fast Jacobian evals = 2308

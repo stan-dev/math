@@ -1,0 +1,5 @@
+sphinx >=4.0.0
+sphinx-fortran
+sphinx_rtd_theme
+sphinxcontrib.bibtex
+sphinx-copybutton

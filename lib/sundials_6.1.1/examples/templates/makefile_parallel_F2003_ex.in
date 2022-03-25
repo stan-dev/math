@@ -1,0 +1,68 @@
+# -----------------------------------------------------------------
+# Programmer(s): David J. Gardner @ LLNL
+# -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2002-2022, Lawrence Livermore National Security
+# and Southern Methodist University.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
+# Makefile for @SOLVER@ Fortran 2003 interface parallel examples
+#
+# This file is generated from a template using various variables
+# set at configuration time. It can be used as a template for
+# other user Makefiles.
+# -----------------------------------------------------------------
+
+F90      = @MPI_Fortran_COMPILER@
+F90FLAGS = @CMAKE_Fortran_FLAGS_RELEASE@
+F90LIBS  = @LIBS@
+
+SUNDIALS_PREFIX      = @CMAKE_INSTALL_PREFIX@
+SUNDIALS_INCLUDE_DIR = ${SUNDIALS_PREFIX}/@Fortran_INSTALL_MODDIR@
+SUNDIALS_LIBRARY_DIR = ${SUNDIALS_PREFIX}/@CMAKE_INSTALL_LIBDIR@
+
+# ------------------------------------------------------------------------------
+
+INCLUDE_DIRS = $(addprefix -I, ${SUNDIALS_INCLUDE_DIR})
+LIBRARY_DIRS = $(addprefix -L, ${SUNDIALS_LIBRARY_DIR})
+LIBRARIES = $(addprefix -l, @EXAMPLE_LIBS@) ${F90LIBS}
+LINKFLAGS = -Wl,-rpath,${SUNDIALS_LIBRARY_DIR}
+
+# ------------------------------------------------------------------------------
+
+EXAMPLES = @EXAMPLES@
+EXAMPLES_DEPENDENCIES = @EXAMPLES_DEPENDENCIES@
+
+OBJECTS = ${EXAMPLES:=.o}
+OBJECTS_DEPENDENCIES = ${EXAMPLES_DEPENDENCIES:=.o}
+
+# ------------------------------------------------------------------------------
+
+.SUFFIXES : .o .f90
+
+.f90.o :
+	${F90} ${F90FLAGS} ${INCLUDE_DIRS} -c $<
+
+# ------------------------------------------------------------------------------
+
+all: examples
+
+examples: ${OBJECTS_DEPENDENCIES} ${OBJECTS}
+	@for i in ${EXAMPLES} ; do \
+	  echo "${F90} -o $${i} $${i}.o ${OBJECTS_DEPENDENCIES} ${F90FLAGS} ${INCLUDES} ${LIBRARY_DIRS} ${LIBRARIES} ${LINKFLAGS}" ; \
+	  ${F90} -o $${i} $${i}.o ${OBJECTS_DEPENDENCIES} ${F90FLAGS} ${INCLUDES} ${LIBRARY_DIRS} ${LIBRARIES} ${LINKFLAGS} ; \
+	done
+
+clean:
+	rm -f *.o *.mod
+	rm -f ${OBJECTS}
+
+realclean: clean
+	rm -f ${EXAMPLES}
+
+# ------------------------------------------------------------------------------

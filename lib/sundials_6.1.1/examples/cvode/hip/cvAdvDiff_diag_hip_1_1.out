@@ -1,0 +1,26 @@
+ 1-D advection-diffusion equation, mesh size = 10
+
+ Diagonal linear solver CVDiag
+ Using fused CVODE kernels
+ Using vector ATOL
+
+At t = 0.00  max.norm(u) =  1.569909e+01  nst =   0
+At t = 0.50  max.norm(u) =  3.052879e+00  nst = 481
+At t = 1.00  max.norm(u) =  8.753297e-01  nst = 678
+At t = 1.50  max.norm(u) =  2.494935e-01  nst = 815
+At t = 2.00  max.norm(u) =  7.110094e-02  nst = 971
+At t = 2.50  max.norm(u) =  2.026233e-02  nst =1087
+At t = 3.00  max.norm(u) =  5.774352e-03  nst =1176
+At t = 3.50  max.norm(u) =  1.645573e-03  nst =1266
+At t = 4.00  max.norm(u) =  4.689547e-04  nst =1344
+At t = 4.50  max.norm(u) =  1.336407e-04  nst =1405
+At t = 5.00  max.norm(u) =  3.808409e-05  nst =1446
+
+Final Statistics:
+
+nst = 1446    nfe  = 2303    nni = 2300    ncfn = 30      netf = 71
+
+
+real	0m3.388s
+user	0m0.005s
+sys	0m0.007s

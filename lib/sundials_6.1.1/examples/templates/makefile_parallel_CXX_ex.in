@@ -1,0 +1,71 @@
+# -*- mode: makefile -*-
+# -----------------------------------------------------------------
+# Programmer: Daniel R. Reynolds @ SMU
+# -----------------------------------------------------------------
+# SUNDIALS Copyright Start
+# Copyright (c) 2002-2022, Lawrence Livermore National Security
+# and Southern Methodist University.
+# All rights reserved.
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
+# -----------------------------------------------------------------
+# Makefile for @SOLVER@ parallel examples
+#
+# This file is generated from a template using various variables
+# set at configuration time. It can be used as a template for
+# other user Makefiles.
+# -----------------------------------------------------------------
+
+SHELL = @SHELL@
+
+prefix       = @prefix@
+exec_prefix  = @exec_prefix@
+includedir   = @includedir@
+libdir       = @libdir@
+
+CPP         = @CPP@
+CPPFLAGS    = @CPPFLAGS@ -DMPICH_SKIP_MPICXX -DOMPI_SKIP_MPICXX -DLAM_BUILDING
+CXX         = @CXX@
+CXXFLAGS    = @CXXFLAGS@
+LDFLAGS     = @LDFLAGS@
+LIBS        = @LIBS@
+
+LINKFLAGS = -Wl,-rpath,@libdir@
+
+MPICXX      = @MPICXX@
+MPI_INC_DIR = @MPI_INC_DIR@
+MPI_LIB_DIR = @MPI_LIB_DIR@
+MPI_LIBS    = @MPI_LIBS@
+MPI_FLAGS   = @MPI_FLAGS@
+
+TMP_INCS = ${includedir} ${MPI_INC_DIR}
+INCLUDES = $(addprefix -I, ${TMP_INCS})
+LIBRARIES = -l@SOLVER_LIB@ -lsundials_nvecparallel -lsundials_nvecserial \
+						-lsundials_nvecmpimanyvector -lsundials_nvecmpiplusx ${LIBS}
+
+EXAMPLES = @EXAMPLES@
+OBJECTS  = ${EXAMPLES:=.o}
+
+# -----------------------------------------------------------------------------------------
+
+.SUFFIXES : .o .cpp
+
+.cpp.o :
+	${MPICXX} ${CPPFLAGS} ${CXXFLAGS} ${MPI_FLAGS} ${INCLUDES} -c $<
+
+# -----------------------------------------------------------------------------------------
+
+all: ${OBJECTS}
+	@for i in ${EXAMPLES} ; do \
+	  echo "${MPICXX} -o $${i} $${i}.o ${MPI_FLAGS} ${CXXFLAGS} ${LDFLAGS} ${INCLUDES} -L${libdir} ${LIBRARIES} -L${MPI_LIB_DIR} ${MPI_LIBS} ${LINKFLAGS}" ; \
+	  ${MPICXX} -o $${i} $${i}.o ${MPI_FLAGS} ${CXXFLAGS} ${LDFLAGS} ${INCLUDES} -L${libdir} ${LIBRARIES} -L${MPI_LIB_DIR} ${MPI_LIBS} ${LINKFLAGS} ; \
+	done
+
+clean:
+	rm -f ${OBJECTS}
+	rm -f ${EXAMPLES}
+
+# -----------------------------------------------------------------------------------------
