@@ -80,7 +80,7 @@ struct reduce_sum_impl<ReduceFunction, require_arithmetic_t<ReturnType>,
         sub_slice.emplace_back(vmapped_[i]);
       }
 
-      sum_ += apply(
+      sum_ += math::apply(
           [&](auto&&... args) {
             return ReduceFunction()(sub_slice, r.begin(), r.end() - 1, &msgs_,
                                     args...);

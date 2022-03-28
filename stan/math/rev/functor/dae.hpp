@@ -66,14 +66,14 @@ dae_tol_impl(const char* func, const F& f, const T_yy& yy0, const T_yp& yp0,
   check_positive(func, "max_num_steps", max_num_steps);
 
   const auto& args_ref_tuple = std::make_tuple(to_ref(args)...);
-  apply(
+  math::apply(
       [&](auto&&... args) {
         std::vector<int> unused_temp{
             0, (check_finite("dae", "DAE parameters and data", args), 0)...};
       },
       args_ref_tuple);
 
-  return apply(
+  return math::apply(
       [&](const auto&... args_refs) {
         dae_system<F, T_yy, T_yp, ref_type_t<T_Args>...> dae(f, yy0, yp0, msgs,
                                                              args_refs...);
