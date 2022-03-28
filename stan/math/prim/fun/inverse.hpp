@@ -11,8 +11,7 @@ namespace stan {
 namespace math {
 
 template <typename EigMat, require_st_arithmetic<EigMat>* = nullptr>
-inline plain_type_t<EigMat>
-inverse(const EigMat& m) {
+inline plain_type_t<EigMat> inverse(const EigMat& m) {
   check_square("inverse", "m", m);
   if (m.size() == 0) {
     return {};
@@ -33,8 +32,7 @@ inverse(const EigMat& m) {
  * @throw std::invalid_argument if the matrix is not square.
  */
 template <typename EigMat, require_not_st_arithmetic<EigMat>* = nullptr>
-inline plain_type_t<EigMat>
-inverse(const EigMat& m) {
+inline plain_type_t<EigMat> inverse(const EigMat& m) {
   check_square("inverse", "m", m);
   if (m.size() == 0) {
     return m;
@@ -49,10 +47,9 @@ inverse(const EigMat& m) {
   auto fwd_grad_fun = [&](auto&& val, auto&& adj, auto&& x) {
     return to_ref(-multiply(multiply(val, adj), val));
   };
-  return function_gradients_adj_jac(std::forward_as_tuple(m_ref),
-                            std::move(val_fun),
-                            std::forward_as_tuple(rev_grad_fun),
-                            std::forward_as_tuple(fwd_grad_fun));
+  return function_gradients_adj_jac(
+      std::forward_as_tuple(m_ref), std::move(val_fun),
+      std::forward_as_tuple(rev_grad_fun), std::forward_as_tuple(fwd_grad_fun));
 }
 
 }  // namespace math

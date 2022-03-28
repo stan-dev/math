@@ -16,10 +16,9 @@ namespace math {
 template <typename ReturnT, typename ArgsTupleT, typename ValFunT,
           typename RevGradFunT, typename FwdGradFunT,
           require_st_fvar<ReturnT>* = nullptr>
-decltype(auto) function_gradients_adj_jac_impl(ArgsTupleT&& args_tuple,
-                                       ValFunT&& val_fun,
-                                       RevGradFunT&& rev_grad_fun_tuple,
-                                       FwdGradFunT&& fwd_grad_fun_tuple) {
+decltype(auto) function_gradients_adj_jac_impl(
+    ArgsTupleT&& args_tuple, ValFunT&& val_fun,
+    RevGradFunT&& rev_grad_fun_tuple, FwdGradFunT&& fwd_grad_fun_tuple) {
   decltype(auto) val_tuple
       = map_tuple([&](auto&& arg) { return value_of(arg); },
                   std::forward<ArgsTupleT>(args_tuple));
@@ -41,12 +40,14 @@ decltype(auto) function_gradients_adj_jac_impl(ArgsTupleT&& args_tuple,
       [&](auto&& f, auto&& arg, auto&& dummy) {
         using arg_t = decltype(arg);
         if (!is_constant_all<arg_t>::value) {
-         decltype(auto) fun_ret = math::apply([&](auto&&... args) {
-            return
-              f(rtn,
-                forward_as<promote_scalar_t<ReturnT, arg_t>>(arg).d(),
-                args...); }, val_tuple);
-           d_ += fun_ret;
+          decltype(auto) fun_ret = math::apply(
+              [&](auto&&... args) {
+                return f(rtn,
+                         forward_as<promote_scalar_t<ReturnT, arg_t>>(arg).d(),
+                         args...);
+              },
+              val_tuple);
+          d_ += fun_ret;
         }
       },
       std::forward<FwdGradFunT>(fwd_grad_fun_tuple),

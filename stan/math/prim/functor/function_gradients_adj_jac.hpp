@@ -9,14 +9,12 @@
 namespace stan {
 namespace math {
 
-
 template <typename ReturnT, typename ArgsTupleT, typename ValFunT,
           typename RevGradFunT, typename FwdGradFunT,
           require_st_arithmetic<ReturnT>* = nullptr>
-decltype(auto) function_gradients_adj_jac_impl(ArgsTupleT&& args_tuple,
-                                       ValFunT&& val_fun,
-                                       RevGradFunT&& rev_grad_fun_tuple,
-                                       FwdGradFunT&& fwd_grad_fun_tuple) {
+decltype(auto) function_gradients_adj_jac_impl(
+    ArgsTupleT&& args_tuple, ValFunT&& val_fun,
+    RevGradFunT&& rev_grad_fun_tuple, FwdGradFunT&& fwd_grad_fun_tuple) {
   return make_holder(
       [](auto&& fun, auto&& tuple_arg) {
         return to_ref(
@@ -26,14 +24,12 @@ decltype(auto) function_gradients_adj_jac_impl(ArgsTupleT&& args_tuple,
       std::forward<ValFunT>(val_fun), std::forward<ArgsTupleT>(args_tuple));
 }
 
-
-template <typename ArgsTupleT, typename ValFunT,
-          typename RevGradFunT, typename FwdGradFunT>
-decltype(auto) function_gradients_adj_jac(
-    ArgsTupleT&& args_tuple,
-    ValFunT&& val_fun,
-    RevGradFunT&& rev_grad_fun_tuple,
-    FwdGradFunT&& fwd_grad_fun_tuple) {
+template <typename ArgsTupleT, typename ValFunT, typename RevGradFunT,
+          typename FwdGradFunT>
+decltype(auto) function_gradients_adj_jac(ArgsTupleT&& args_tuple,
+                                          ValFunT&& val_fun,
+                                          RevGradFunT&& rev_grad_fun_tuple,
+                                          FwdGradFunT&& fwd_grad_fun_tuple) {
   using scalar_rtn_t = scalar_type_t<return_type_t<ArgsTupleT>>;
   return function_gradients_adj_jac_impl<scalar_rtn_t>(
       std::forward<ArgsTupleT>(args_tuple), std::forward<ValFunT>(val_fun),

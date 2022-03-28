@@ -12,14 +12,12 @@
 namespace stan {
 namespace math {
 
-
 template <typename ReturnT, typename ArgsTupleT, typename ValFunT,
           typename RevGradFunT, typename FwdGradFunT,
           require_st_var<ReturnT>* = nullptr>
-auto function_gradients_adj_jac_impl(ArgsTupleT&& args_tuple,
-                             ValFunT&& val_fun,
-                             RevGradFunT&& rev_grad_fun_tuple,
-                             FwdGradFunT&& fwd_grad_fun_tuple) {
+auto function_gradients_adj_jac_impl(ArgsTupleT&& args_tuple, ValFunT&& val_fun,
+                                     RevGradFunT&& rev_grad_fun_tuple,
+                                     FwdGradFunT&& fwd_grad_fun_tuple) {
   // Extract values from input arguments to use in value
   // and gradient calculations
   decltype(auto) prim_tuple
@@ -75,19 +73,16 @@ auto function_gradients_adj_jac_impl(ArgsTupleT&& args_tuple,
               if (!is_constant_all<decltype(arg)>::value) {
                 // Need to wrap the argument in a forward_as<var>() so that it
                 // will compile with both primitive and var inputs
-                forward_as<promote_scalar_t<var, decltype(arg)>>(arg)
-                    .adj()
-                    +=
+                forward_as<promote_scalar_t<var, decltype(arg)>>(arg).adj() +=
                     // Use the relevant gradient function with the tuple of
                     // primitive arguments
                     math::apply(
-                    [&](auto&&... args) {
-                      return f(rtn.val_op(),
-                               rtn.adj_op(),
-                               internal::arena_val(
-                                   std::forward<decltype(args)>(args))...);
-                    },
-                    prim_tuple);
+                        [&](auto&&... args) {
+                          return f(rtn.val_op(), rtn.adj_op(),
+                                   internal::arena_val(
+                                       std::forward<decltype(args)>(args))...);
+                        },
+                        prim_tuple);
               }
             },
             std::forward<RevGradFunT>(rev_grad_fun_tuple),
