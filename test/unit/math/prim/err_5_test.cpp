@@ -1,9 +1,0 @@
-#include <test/unit/math/prim/err/is_square_test.cpp>
-#include <test/unit/math/prim/err/is_symmetric_test.cpp>
-#include <test/unit/math/prim/err/is_unit_vector_test.cpp>
-#include <test/unit/math/prim/err/out_of_range_test.cpp>
-#include <test/unit/math/prim/err/throw_domain_error_test.cpp>
-#include <test/unit/math/prim/err/throw_domain_error_vec_test.cpp>
-#include <test/unit/math/prim/err/validate_non_negative_index_test.cpp>
-#include <test/unit/math/prim/err/validate_positive_index_test.cpp>
-#include <test/unit/math/prim/err/validate_unit_vector_index_test.cpp>
