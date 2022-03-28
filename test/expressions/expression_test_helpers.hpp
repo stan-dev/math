@@ -25,7 +25,7 @@ auto recursive_sum(const T& a) {
 
 template <typename T>
 auto recursive_sum(const std::vector<T>& a) {
-  scalar_type_t<T> res = recursive_sum(a[0]);
+  auto res = recursive_sum(a[0]);
   for (int i = 0; i < a.size(); i++) {
     res += recursive_sum(a[i]);
   }
@@ -40,6 +40,12 @@ template <typename T, require_floating_point_t<T>* = nullptr>
 T make_arg(double value = 0.4, int size = 1) {
   return value;
 }
+
+template <typename T, require_complex_t<T>* = nullptr>
+T make_arg(std::complex<double> value = 0.4, int size = 1) {
+  return value;
+}
+
 template <typename T, require_var_t<T>* = nullptr>
 T make_arg(T value = 0.4, int size = 1) {
   return value;
@@ -64,6 +70,7 @@ T make_arg(T_scalar value = 0.4, int size = 1) {
   T res = T::Constant(size, make_arg<value_type_t<T>>(value));
   return res;
 }
+
 template <typename T, typename T_scalar = double,
           require_std_vector_t<T>* = nullptr>
 T make_arg(T_scalar value = 0.4, int size = 1) {
@@ -109,6 +116,25 @@ template <typename T, require_arithmetic_t<T>* = nullptr>
 void expect_eq(math::fvar<T> a, math::fvar<T> b, const char* msg) {
   expect_eq(a.val(), b.val(), msg);
   expect_eq(a.d(), b.d(), msg);
+}
+
+template <typename T, require_arithmetic_t<T>* = nullptr>
+void expect_eq(std::complex<T> a, std::complex<T> b, const char* msg) {
+  expect_eq(a.real(), b.real(), msg);
+  expect_eq(a.imag(), b.imag(), msg);
+}
+
+void expect_eq(std::complex<math::var> a, std::complex<math::var> b,
+               const char* msg) {
+  expect_eq(a.real(), b.real(), msg);
+  expect_eq(a.imag(), b.imag(), msg);
+}
+
+template <typename T, require_arithmetic_t<T>* = nullptr>
+void expect_eq(std::complex<math::fvar<T>> a, std::complex<math::fvar<T>> b,
+               const char* msg) {
+  expect_eq(a.real(), b.real(), msg);
+  expect_eq(a.imag(), b.imag(), msg);
 }
 
 template <typename T1, typename T2, require_all_eigen_t<T1, T2>* = nullptr,
@@ -165,6 +191,10 @@ void expect_adj_eq(const std::vector<T>& a, const std::vector<T>& b,
 }
 
 void grad(stan::math::var& a) { a.grad(); }
+void grad(std::complex<stan::math::var>& a) {
+  a.real().grad();
+  a.imag().grad();
+}
 
 #define TO_STRING_(x) #x
 #define TO_STRING(x) TO_STRING_(x)
