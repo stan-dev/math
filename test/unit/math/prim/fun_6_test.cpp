@@ -1,0 +1,15 @@
+#include <test/unit/math/prim/fun/eval_test.cpp>
+#include <test/unit/math/prim/fun/exp2_test.cpp>
+#include <test/unit/math/prim/fun/exp_test.cpp>
+#include <test/unit/math/prim/fun/expm1_test.cpp>
+#include <test/unit/math/prim/fun/fabs_test.cpp>
+#include <test/unit/math/prim/fun/factor_cov_matrix_transform_test.cpp>
+#include <test/unit/math/prim/fun/falling_factorial_test.cpp>
+#include <test/unit/math/prim/fun/fdim_test.cpp>
+#include <test/unit/math/prim/fun/fill_test.cpp>
+#include <test/unit/math/prim/fun/finite_diff_stepsize_test.cpp>
+#include <test/unit/math/prim/fun/floor_test.cpp>
+#include <test/unit/math/prim/fun/fma_test.cpp>
+#include <test/unit/math/prim/fun/fmax_test.cpp>
+#include <test/unit/math/prim/fun/fmin_test.cpp>
+#include <test/unit/math/prim/fun/fmod_test.cpp>

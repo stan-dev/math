@@ -1,0 +1,15 @@
+#include <test/unit/math/prim/prob/frechet_test.cpp>
+#include <test/unit/math/prim/prob/gamma_ccdf_log_test.cpp>
+#include <test/unit/math/prim/prob/gamma_cdf_log_test.cpp>
+#include <test/unit/math/prim/prob/gamma_log_test.cpp>
+#include <test/unit/math/prim/prob/gamma_test.cpp>
+#include <test/unit/math/prim/prob/gaussian_dlm_obs_log_test.cpp>
+#include <test/unit/math/prim/prob/gaussian_dlm_obs_rng_test.cpp>
+#include <test/unit/math/prim/prob/gaussian_dlm_obs_test.cpp>
+#include <test/unit/math/prim/prob/gumbel_ccdf_log_test.cpp>
+#include <test/unit/math/prim/prob/gumbel_cdf_log_test.cpp>
+#include <test/unit/math/prim/prob/gumbel_log_test.cpp>
+#include <test/unit/math/prim/prob/gumbel_test.cpp>
+#include <test/unit/math/prim/prob/hmm_hidden_state_prob_test.cpp>
+#include <test/unit/math/prim/prob/hmm_latent_rng_test.cpp>
+#include <test/unit/math/prim/prob/hmm_marginal_test.cpp>

@@ -1,0 +1,15 @@
+#include <test/unit/math/prim/prob/skew_double_exponential_ccdf_log_test.cpp>
+#include <test/unit/math/prim/prob/skew_double_exponential_cdf_log_test.cpp>
+#include <test/unit/math/prim/prob/skew_double_exponential_log_test.cpp>
+#include <test/unit/math/prim/prob/skew_double_exponential_test.cpp>
+#include <test/unit/math/prim/prob/skew_normal_ccdf_log_test.cpp>
+#include <test/unit/math/prim/prob/skew_normal_cdf_log_test.cpp>
+#include <test/unit/math/prim/prob/skew_normal_log_test.cpp>
+#include <test/unit/math/prim/prob/skew_normal_test.cpp>
+#include <test/unit/math/prim/prob/std_normal_ccdf_log_test.cpp>
+#include <test/unit/math/prim/prob/std_normal_cdf_log_test.cpp>
+#include <test/unit/math/prim/prob/std_normal_cdf_test.cpp>
+#include <test/unit/math/prim/prob/std_normal_log_test.cpp>
+#include <test/unit/math/prim/prob/std_normal_test.cpp>
+#include <test/unit/math/prim/prob/student_t_ccdf_log_test.cpp>
+#include <test/unit/math/prim/prob/student_t_cdf_log_test.cpp>

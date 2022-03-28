@@ -1,0 +1,15 @@
+#include <test/unit/math/prim/fun/as_column_vector_or_scalar_test.cpp>
+#include <test/unit/math/prim/fun/as_value_array_or_scalar_test.cpp>
+#include <test/unit/math/prim/fun/as_value_column_vector_or_scalar_test.cpp>
+#include <test/unit/math/prim/fun/asin_test.cpp>
+#include <test/unit/math/prim/fun/asinh_test.cpp>
+#include <test/unit/math/prim/fun/assign_test.cpp>
+#include <test/unit/math/prim/fun/atan_test.cpp>
+#include <test/unit/math/prim/fun/atanh_test.cpp>
+#include <test/unit/math/prim/fun/autocorrelation_test.cpp>
+#include <test/unit/math/prim/fun/autocovariance_test.cpp>
+#include <test/unit/math/prim/fun/bessel_first_kind_test.cpp>
+#include <test/unit/math/prim/fun/bessel_second_kind_test.cpp>
+#include <test/unit/math/prim/fun/beta_test.cpp>
+#include <test/unit/math/prim/fun/binary_log_loss_test.cpp>
+#include <test/unit/math/prim/fun/binomial_coefficient_log_test.cpp>

@@ -1,0 +1,15 @@
+#include <test/unit/math/prim/err/check_simplex_test.cpp>
+#include <test/unit/math/prim/err/check_size_match_test.cpp>
+#include <test/unit/math/prim/err/check_sorted_test.cpp>
+#include <test/unit/math/prim/err/check_square_test.cpp>
+#include <test/unit/math/prim/err/check_std_vector_index_test.cpp>
+#include <test/unit/math/prim/err/check_symmetric_test.cpp>
+#include <test/unit/math/prim/err/check_unit_vector_test.cpp>
+#include <test/unit/math/prim/err/check_vector_index_test.cpp>
+#include <test/unit/math/prim/err/check_vector_test.cpp>
+#include <test/unit/math/prim/err/elementwise_check_test.cpp>
+#include <test/unit/math/prim/err/hmm_check_test.cpp>
+#include <test/unit/math/prim/err/invalid_argument_test.cpp>
+#include <test/unit/math/prim/err/invalid_argument_vec_test.cpp>
+#include <test/unit/math/prim/err/is_cholesky_factor_corr_test.cpp>
+#include <test/unit/math/prim/err/is_cholesky_factor_test.cpp>

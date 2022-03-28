@@ -1,0 +1,15 @@
+#include <test/unit/math/prim/fun/step_test.cpp>
+#include <test/unit/math/prim/fun/sub_col_test.cpp>
+#include <test/unit/math/prim/fun/sub_row_test.cpp>
+#include <test/unit/math/prim/fun/subtract_test.cpp>
+#include <test/unit/math/prim/fun/sum_test.cpp>
+#include <test/unit/math/prim/fun/svd_U_test.cpp>
+#include <test/unit/math/prim/fun/svd_V_test.cpp>
+#include <test/unit/math/prim/fun/symmetrize_from_lower_tri_test.cpp>
+#include <test/unit/math/prim/fun/symmetrize_from_upper_tri_test.cpp>
+#include <test/unit/math/prim/fun/tail_test.cpp>
+#include <test/unit/math/prim/fun/tanh_test.cpp>
+#include <test/unit/math/prim/fun/tcrossprod_test.cpp>
+#include <test/unit/math/prim/fun/tgamma_test.cpp>
+#include <test/unit/math/prim/fun/to_array1d_test.cpp>
+#include <test/unit/math/prim/fun/to_complex_test.cpp>

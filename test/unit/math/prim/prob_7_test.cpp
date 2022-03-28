@@ -1,0 +1,15 @@
+#include <test/unit/math/prim/prob/lkj_corr_test.cpp>
+#include <test/unit/math/prim/prob/lkj_cov_log_test.cpp>
+#include <test/unit/math/prim/prob/lkj_cov_test.cpp>
+#include <test/unit/math/prim/prob/logistic_ccdf_log_test.cpp>
+#include <test/unit/math/prim/prob/logistic_cdf_log_test.cpp>
+#include <test/unit/math/prim/prob/logistic_log_test.cpp>
+#include <test/unit/math/prim/prob/logistic_test.cpp>
+#include <test/unit/math/prim/prob/loglogistic_test.cpp>
+#include <test/unit/math/prim/prob/lognormal_ccdf_log_test.cpp>
+#include <test/unit/math/prim/prob/lognormal_cdf_log_test.cpp>
+#include <test/unit/math/prim/prob/lognormal_log_test.cpp>
+#include <test/unit/math/prim/prob/lognormal_test.cpp>
+#include <test/unit/math/prim/prob/matrix_normal_prec_log_test.cpp>
+#include <test/unit/math/prim/prob/matrix_normal_prec_rng_test.cpp>
+#include <test/unit/math/prim/prob/matrix_normal_prec_test.cpp>

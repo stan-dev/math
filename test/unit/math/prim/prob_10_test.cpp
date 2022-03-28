@@ -1,0 +1,15 @@
+#include <test/unit/math/prim/prob/normal_test.cpp>
+#include <test/unit/math/prim/prob/ordered_logistic_log_test.cpp>
+#include <test/unit/math/prim/prob/ordered_logistic_test.cpp>
+#include <test/unit/math/prim/prob/ordered_probit_log_test.cpp>
+#include <test/unit/math/prim/prob/ordered_probit_test.cpp>
+#include <test/unit/math/prim/prob/pareto_ccdf_log_test.cpp>
+#include <test/unit/math/prim/prob/pareto_cdf_log_test.cpp>
+#include <test/unit/math/prim/prob/pareto_log_test.cpp>
+#include <test/unit/math/prim/prob/pareto_test.cpp>
+#include <test/unit/math/prim/prob/pareto_type_2_ccdf_log_test.cpp>
+#include <test/unit/math/prim/prob/pareto_type_2_cdf_log_test.cpp>
+#include <test/unit/math/prim/prob/pareto_type_2_log_test.cpp>
+#include <test/unit/math/prim/prob/pareto_type_2_test.cpp>
+#include <test/unit/math/prim/prob/poisson_binomial_ccdf_log_test.cpp>
+#include <test/unit/math/prim/prob/poisson_binomial_cdf_log_test.cpp>

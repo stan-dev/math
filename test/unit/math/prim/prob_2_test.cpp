@@ -1,0 +1,15 @@
+#include <test/unit/math/prim/prob/beta_proportion_cdf_log_test.cpp>
+#include <test/unit/math/prim/prob/beta_proportion_log_test.cpp>
+#include <test/unit/math/prim/prob/beta_proportion_test.cpp>
+#include <test/unit/math/prim/prob/beta_test.cpp>
+#include <test/unit/math/prim/prob/binomial_ccdf_log_test.cpp>
+#include <test/unit/math/prim/prob/binomial_cdf_log_test.cpp>
+#include <test/unit/math/prim/prob/binomial_log_test.cpp>
+#include <test/unit/math/prim/prob/binomial_logit_log_test.cpp>
+#include <test/unit/math/prim/prob/binomial_lpmf_test.cpp>
+#include <test/unit/math/prim/prob/binomial_test.cpp>
+#include <test/unit/math/prim/prob/categorical_log_test.cpp>
+#include <test/unit/math/prim/prob/categorical_logit_log_test.cpp>
+#include <test/unit/math/prim/prob/categorical_logit_rng_test.cpp>
+#include <test/unit/math/prim/prob/categorical_logit_test.cpp>
+#include <test/unit/math/prim/prob/categorical_test.cpp>

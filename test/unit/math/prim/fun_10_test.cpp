@@ -1,0 +1,15 @@
+#include <test/unit/math/prim/fun/lambert_w_test.cpp>
+#include <test/unit/math/prim/fun/lb_transform_test.cpp>
+#include <test/unit/math/prim/fun/lbeta_test.cpp>
+#include <test/unit/math/prim/fun/ldexp_test.cpp>
+#include <test/unit/math/prim/fun/lgamma_stirling_diff_test.cpp>
+#include <test/unit/math/prim/fun/lgamma_test.cpp>
+#include <test/unit/math/prim/fun/linspaced_array_test.cpp>
+#include <test/unit/math/prim/fun/linspaced_int_array_test.cpp>
+#include <test/unit/math/prim/fun/linspaced_row_vector_test.cpp>
+#include <test/unit/math/prim/fun/linspaced_vector_test.cpp>
+#include <test/unit/math/prim/fun/lkj_cov_matrix_transform_test.cpp>
+#include <test/unit/math/prim/fun/lmgamma_test.cpp>
+#include <test/unit/math/prim/fun/lmultiply_test.cpp>
+#include <test/unit/math/prim/fun/log10_test.cpp>
+#include <test/unit/math/prim/fun/log1m_exp_test.cpp>

@@ -1,0 +1,15 @@
+#include <test/unit/math/prim/fun/sign_test.cpp>
+#include <test/unit/math/prim/fun/simplex_transform_test.cpp>
+#include <test/unit/math/prim/fun/sin_test.cpp>
+#include <test/unit/math/prim/fun/singular_values_test.cpp>
+#include <test/unit/math/prim/fun/sinh_test.cpp>
+#include <test/unit/math/prim/fun/size_mvt_test.cpp>
+#include <test/unit/math/prim/fun/size_test.cpp>
+#include <test/unit/math/prim/fun/size_zero_test.cpp>
+#include <test/unit/math/prim/fun/softmax_test.cpp>
+#include <test/unit/math/prim/fun/sort_indices_test.cpp>
+#include <test/unit/math/prim/fun/sort_test.cpp>
+#include <test/unit/math/prim/fun/sqrt_test.cpp>
+#include <test/unit/math/prim/fun/square_test.cpp>
+#include <test/unit/math/prim/fun/squared_distance_test.cpp>
+#include <test/unit/math/prim/fun/stan_print_test.cpp>

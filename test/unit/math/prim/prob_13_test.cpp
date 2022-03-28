@@ -1,0 +1,15 @@
+#include <test/unit/math/prim/prob/student_t_log_test.cpp>
+#include <test/unit/math/prim/prob/student_t_test.cpp>
+#include <test/unit/math/prim/prob/uniform_ccdf_log_test.cpp>
+#include <test/unit/math/prim/prob/uniform_cdf_log_test.cpp>
+#include <test/unit/math/prim/prob/uniform_log_test.cpp>
+#include <test/unit/math/prim/prob/uniform_test.cpp>
+#include <test/unit/math/prim/prob/von_mises_cdf_test.cpp>
+#include <test/unit/math/prim/prob/von_mises_log_test.cpp>
+#include <test/unit/math/prim/prob/von_mises_test.cpp>
+#include <test/unit/math/prim/prob/weibull_ccdf_log_test.cpp>
+#include <test/unit/math/prim/prob/weibull_cdf_log_test.cpp>
+#include <test/unit/math/prim/prob/weibull_log_test.cpp>
+#include <test/unit/math/prim/prob/weibull_test.cpp>
+#include <test/unit/math/prim/prob/wiener_log_test.cpp>
+#include <test/unit/math/prim/prob/wiener_test.cpp>

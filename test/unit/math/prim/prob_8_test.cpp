@@ -1,0 +1,15 @@
+#include <test/unit/math/prim/prob/multi_gp_cholesky_log_test.cpp>
+#include <test/unit/math/prim/prob/multi_gp_cholesky_test.cpp>
+#include <test/unit/math/prim/prob/multi_gp_log_test.cpp>
+#include <test/unit/math/prim/prob/multi_gp_test.cpp>
+#include <test/unit/math/prim/prob/multi_normal_cholesky_log_test.cpp>
+#include <test/unit/math/prim/prob/multi_normal_cholesky_test.cpp>
+#include <test/unit/math/prim/prob/multi_normal_log_test.cpp>
+#include <test/unit/math/prim/prob/multi_normal_prec_log_test.cpp>
+#include <test/unit/math/prim/prob/multi_normal_prec_rng_test.cpp>
+#include <test/unit/math/prim/prob/multi_normal_prec_test.cpp>
+#include <test/unit/math/prim/prob/multi_normal_test.cpp>
+#include <test/unit/math/prim/prob/multi_student_t_log_test.cpp>
+#include <test/unit/math/prim/prob/multi_student_t_test.cpp>
+#include <test/unit/math/prim/prob/multinomial_log_test.cpp>
+#include <test/unit/math/prim/prob/multinomial_logit_log_test.cpp>

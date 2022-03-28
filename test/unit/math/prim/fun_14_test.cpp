@@ -1,0 +1,15 @@
+#include <test/unit/math/prim/fun/mean_test.cpp>
+#include <test/unit/math/prim/fun/min_test.cpp>
+#include <test/unit/math/prim/fun/minus_test.cpp>
+#include <test/unit/math/prim/fun/modified_bessel_first_kind_test.cpp>
+#include <test/unit/math/prim/fun/modified_bessel_second_kind_test.cpp>
+#include <test/unit/math/prim/fun/modulus_test.cpp>
+#include <test/unit/math/prim/fun/multiply_log_test.cpp>
+#include <test/unit/math/prim/fun/multiply_lower_tri_self_transpose_test.cpp>
+#include <test/unit/math/prim/fun/multiply_test.cpp>
+#include <test/unit/math/prim/fun/norm1_test.cpp>
+#include <test/unit/math/prim/fun/norm2_test.cpp>
+#include <test/unit/math/prim/fun/num_elements_test.cpp>
+#include <test/unit/math/prim/fun/offset_multiplier_matrix_transform_test.cpp>
+#include <test/unit/math/prim/fun/offset_multiplier_transform_test.cpp>
+#include <test/unit/math/prim/fun/one_hot_array_test.cpp>

@@ -1,0 +1,15 @@
+#include <test/unit/math/prim/meta/StdVectorBuilder_test.cpp>
+#include <test/unit/math/prim/meta/VectorBuilderHelper_test.cpp>
+#include <test/unit/math/prim/meta/VectorBuilder_test.cpp>
+#include <test/unit/math/prim/meta/ad_promotable_test.cpp>
+#include <test/unit/math/prim/meta/append_return_type_test.cpp>
+#include <test/unit/math/prim/meta/child_type_test.cpp>
+#include <test/unit/math/prim/meta/conjunction_test.cpp>
+#include <test/unit/math/prim/meta/contains_fvar_test.cpp>
+#include <test/unit/math/prim/meta/contains_std_vector_test.cpp>
+#include <test/unit/math/prim/meta/disjunction_test.cpp>
+#include <test/unit/math/prim/meta/error_index_test.cpp>
+#include <test/unit/math/prim/meta/forward_as_test.cpp>
+#include <test/unit/math/prim/meta/holder_test.cpp>
+#include <test/unit/math/prim/meta/include_summand_test.cpp>
+#include <test/unit/math/prim/meta/index_type_test.cpp>

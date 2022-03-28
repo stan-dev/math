@@ -1,0 +1,15 @@
+#include <test/unit/math/prim/fun/F32_test.cpp>
+#include <test/unit/math/prim/fun/Phi_approx_test.cpp>
+#include <test/unit/math/prim/fun/Phi_test.cpp>
+#include <test/unit/math/prim/fun/abs_test.cpp>
+#include <test/unit/math/prim/fun/accumulator_test.cpp>
+#include <test/unit/math/prim/fun/acos_test.cpp>
+#include <test/unit/math/prim/fun/acosh_test.cpp>
+#include <test/unit/math/prim/fun/add_diag_test.cpp>
+#include <test/unit/math/prim/fun/add_test.cpp>
+#include <test/unit/math/prim/fun/append_array_test.cpp>
+#include <test/unit/math/prim/fun/append_col_test.cpp>
+#include <test/unit/math/prim/fun/append_row_test.cpp>
+#include <test/unit/math/prim/fun/array_builder_test.cpp>
+#include <test/unit/math/prim/fun/as_array_or_scalar_test.cpp>
+#include <test/unit/math/prim/fun/as_bool_test.cpp>

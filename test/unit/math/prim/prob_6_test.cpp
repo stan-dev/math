@@ -1,0 +1,15 @@
+#include <test/unit/math/prim/prob/hypergeometric_log_test.cpp>
+#include <test/unit/math/prim/prob/hypergeometric_test.cpp>
+#include <test/unit/math/prim/prob/inv_chi_square_ccdf_log_test.cpp>
+#include <test/unit/math/prim/prob/inv_chi_square_cdf_log_test.cpp>
+#include <test/unit/math/prim/prob/inv_chi_square_log_test.cpp>
+#include <test/unit/math/prim/prob/inv_chi_square_test.cpp>
+#include <test/unit/math/prim/prob/inv_gamma_ccdf_log_test.cpp>
+#include <test/unit/math/prim/prob/inv_gamma_cdf_log_test.cpp>
+#include <test/unit/math/prim/prob/inv_gamma_log_test.cpp>
+#include <test/unit/math/prim/prob/inv_gamma_test.cpp>
+#include <test/unit/math/prim/prob/inv_wishart_log_test.cpp>
+#include <test/unit/math/prim/prob/inv_wishart_rng_test.cpp>
+#include <test/unit/math/prim/prob/inv_wishart_test.cpp>
+#include <test/unit/math/prim/prob/lkj_corr_cholesky_log_test.cpp>
+#include <test/unit/math/prim/prob/lkj_corr_log_test.cpp>
