@@ -15,7 +15,7 @@ namespace math {
  */
 template <typename T,
           require_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
-size_t math::size(const T& m) {
+size_t size(const T& m) {
   return m.rows() * m.cols();
 }
 
