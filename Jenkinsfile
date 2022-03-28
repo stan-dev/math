@@ -242,7 +242,7 @@ pipeline {
             post { always { deleteDir() } }
         }
 
-        stage('Full Unit Tests') {
+/*         stage('Full Unit Tests') {
             agent {
                 docker {
                     image 'stanorg/ci:gpu'
@@ -266,7 +266,7 @@ pipeline {
                 }
             }
             post { always { retry(3) { deleteDir() } } }
-        }
+        } */
 
         stage('Always-run tests') {
             when {
@@ -399,7 +399,7 @@ pipeline {
                     steps {
                         script {
                             unstash 'MathSetup'
-                            sh "echo CXX=${CLANG_CXX} -Werror > make/local"
+                            sh "echo CXX=g++ -Werror > make/local"
                             sh "echo STAN_THREADS=true >> make/local"
                             sh "export STAN_NUM_THREADS=4"
                             if (isBranch('develop') || isBranch('master')) {
