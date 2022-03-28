@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/functor/apply.hpp>
 
 #include <tbb/task_arena.h>
 #include <tbb/parallel_reduce.h>

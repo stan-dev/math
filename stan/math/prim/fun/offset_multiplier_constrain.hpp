@@ -9,6 +9,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/functor/apply.hpp>
 #include <cmath>
 
 namespace stan {

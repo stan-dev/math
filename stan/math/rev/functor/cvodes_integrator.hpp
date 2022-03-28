@@ -6,6 +6,7 @@
 #include <stan/math/rev/functor/coupled_ode_system.hpp>
 #include <stan/math/rev/functor/ode_store_sensitivities.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <sundials/sundials_context.h>
 #include <cvodes/cvodes.h>

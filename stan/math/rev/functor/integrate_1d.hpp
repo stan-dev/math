@@ -8,6 +8,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/prim/functor/integrate_1d.hpp>
 #include <cmath>
 #include <functional>

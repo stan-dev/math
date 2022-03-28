@@ -1,6 +1,7 @@
 #ifndef STAN_MATH_REV_FUNCTOR_DAE_HPP
 #define STAN_MATH_REV_FUNCTOR_DAE_HPP
 
+#include <stan/math/prim/functor/apply.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/functor/idas_integrator.hpp>
 #include <stan/math/rev/functor/dae_system.hpp>

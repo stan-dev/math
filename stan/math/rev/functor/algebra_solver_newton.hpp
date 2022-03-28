@@ -8,6 +8,7 @@
 #include <stan/math/prim/fun/eval.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
 #include <stan/math/prim/functor/algebra_solver_adapter.hpp>
+#include <stan/math/prim/functor/apply.hpp>
 #include <unsupported/Eigen/NonLinearOptimization>
 #include <iostream>
 #include <string>
