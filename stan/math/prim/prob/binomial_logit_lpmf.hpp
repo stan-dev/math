@@ -91,7 +91,7 @@ return_type_t<T_prob> binomial_logit_lpmf(const T_n& n, const T_N& N,
       ops_partials.edge1_.partials_[0] = forward_as<T_partials_return>(
           sum_n * inv_logit_neg_alpha
           - (sum(N_val) * maximum_size / math::size(N) - sum_n)
-            * inv_logit_alpha);
+                * inv_logit_alpha);
     }
   }
 

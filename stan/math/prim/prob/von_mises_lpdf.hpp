@@ -64,7 +64,7 @@ return_type_t<T_y, T_loc, T_scale> von_mises_lpdf(T_y const& y, T_loc const& mu,
   }
   if (include_summand<propto, T_scale>::value) {
     logp -= sum(log_modified_bessel_first_kind(0, kappa_val)) * N
-              / math::size(kappa);
+            / math::size(kappa);
   }
 
   if (!is_constant_all<T_y, T_loc>::value) {
