@@ -71,7 +71,7 @@ struct sum_lpdf {
     return sum_(sub_slice)
            + sub_slice.size()
                  * stan::math::sum(std::vector<return_type>{
-                       return_type(sum_(std::forward<Args>(args)))...});
+                     return_type(sum_(std::forward<Args>(args)))...});
   }
 };
 

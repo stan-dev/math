@@ -140,6 +140,7 @@
 #include <stan/math/prim/fun/int_step.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/inv_Phi.hpp>
+#include <stan/math/prim/fun/inv_inc_beta.hpp>
 #include <stan/math/prim/fun/inv_cloglog.hpp>
 #include <stan/math/prim/fun/inv_erfc.hpp>
 #include <stan/math/prim/fun/inv_logit.hpp>

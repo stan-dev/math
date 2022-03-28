@@ -81,10 +81,8 @@ inline var fma(const var& x, const var& y, Tc&& z) {
  * @param z Summand.
  * @return Product of the multiplicands plus the summand, ($a * $b) + $c.
  */
-template <typename Ta, typename Tb, typename Tc,
-          require_arithmetic_t<Tb>* = nullptr,
-          require_all_var_t<Ta, Tc>* = nullptr>
-inline var fma(Ta&& x, Tb&& y, Tc&& z) {
+template <typename Tb, require_arithmetic_t<Tb>* = nullptr>
+inline var fma(const var& x, Tb&& y, const var& z) {
   return make_callback_var(fma(x.val(), y, z.val()), [x, y, z](auto& vi) {
     x.adj() += vi.adj() * y;
     z.adj() += vi.adj();

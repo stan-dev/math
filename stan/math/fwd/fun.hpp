@@ -47,6 +47,7 @@
 #include <stan/math/fwd/fun/inv_erfc.hpp>
 #include <stan/math/fwd/fun/inv_Phi.hpp>
 #include <stan/math/fwd/fun/inv_cloglog.hpp>
+#include <stan/math/fwd/fun/inv_inc_beta.hpp>
 #include <stan/math/fwd/fun/inv_logit.hpp>
 #include <stan/math/fwd/fun/inv_sqrt.hpp>
 #include <stan/math/fwd/fun/inv_square.hpp>

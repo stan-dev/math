@@ -103,8 +103,8 @@ return_type_t<T_y_cl, T_loc_cl, T_scale_cl, T_inv_scale_cl> exp_mod_normal_lpdf(
   auto deriv_sigma_expr
       = elt_multiply(sigma_val, elt_multiply(lambda_val, lambda_val))
         + elt_multiply(
-              deriv_logerfc_expr,
-              (lambda_val - elt_divide(mu_minus_y_expr, sigma_sq_expr)));
+            deriv_logerfc_expr,
+            (lambda_val - elt_divide(mu_minus_y_expr, sigma_sq_expr)));
   auto deriv_lambda_expr = elt_divide(1.0, lambda_val) + lambda_sigma_sq_expr
                            + mu_minus_y_expr
                            + elt_multiply(deriv_logerfc_expr, sigma_val);
