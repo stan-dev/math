@@ -69,3 +69,26 @@ TEST(hmm_test_nonstandard, hidden_state_symmetry) {
     EXPECT_FLOAT_EQ(prob(1, i), 0.5);
   }
 }
+
+TEST(hmm_test_nonstandard, hidden_state_prob1) {
+  // This time, the transition matrix forces states to transition
+  // to the first state with probability 1.
+  using stan::math::hmm_hidden_state_prob;
+  int n_states = 2;
+  int n_transitions = 2;
+  Eigen::MatrixXd Gamma(n_states, n_states);
+  Gamma << 1, 0, 1, 0;
+  Eigen::VectorXd rho(n_states);
+  rho << 0.3, 0.7;
+  Eigen::MatrixXd log_omegas
+    = 1000 * Eigen::MatrixXd::Ones(n_states, n_transitions + 1);
+
+  Eigen::MatrixXd prob = hmm_hidden_state_prob(log_omegas, Gamma, rho);
+  EXPECT_FLOAT_EQ(prob(0, 0), 0.3);
+  EXPECT_FLOAT_EQ(prob(1, 0), 0.7);
+
+  for (int i = 1; i < n_transitions; i++) {
+    EXPECT_FLOAT_EQ(prob(0, i), 1);
+    EXPECT_FLOAT_EQ(prob(1, i), 0);
+  }
+}
