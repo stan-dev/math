@@ -80,7 +80,8 @@ struct is_vt_complex : is_complex<value_type_t<std::decay_t<T>>> {};
  * @ingroup type_trait
  */
 template <typename T>
-struct is_vt_not_complex : bool_constant<!is_complex<value_type_t<std::decay_t<T>>>::value> {};
+struct is_vt_not_complex
+    : bool_constant<!is_complex<value_type_t<std::decay_t<T>>>::value> {};
 
 }  // namespace stan
 

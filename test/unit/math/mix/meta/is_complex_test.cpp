@@ -58,7 +58,6 @@ void test_is_vt_complex() {
   expect_is_vt_complex<true, const complex_eigen_vec&>();
   expect_is_vt_complex<false, complex_eigen_vec*>();
   expect_is_vt_complex<false, const complex_eigen_vec*>();
-
 }
 
 TEST(stanMathMix, is_vt_Complex) {
@@ -100,7 +99,6 @@ void test_is_vt_not_complex() {
   expect_is_vt_not_complex<!true, const complex_eigen_vec&>();
   expect_is_vt_not_complex<!false, complex_eigen_vec*>();
   expect_is_vt_not_complex<!false, const complex_eigen_vec*>();
-
 }
 
 TEST(stanMathMix, is_vt_not_Complex) {
