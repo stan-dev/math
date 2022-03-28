@@ -40,7 +40,7 @@ namespace math {
  *
  * @param y_bar (Sequence of) scalar(s) (sample average(s)).
  * @param s_squared (Sequence of) sum(s) of sample squared errors
- * @param n_obs (Sequence of) sample math::size(s)
+ * @param n_obs (Sequence of) sample size(s)
  * @param mu (Sequence of) location parameter(s)
  * for the normal distribution.
  * @param sigma (Sequence of) scale parameters for the normal

@@ -61,10 +61,10 @@ return_type_t<T_x, T_alpha, T_beta> categorical_logit_glm_lpmf(
   static const char* function = "categorical_logit_glm_lpmf";
   if (is_y_vector) {
     check_size_match(function, "Rows of ", "x", N_instances, "size of ", "y",
-                     size(y));
+                     math::size(y));
   }
   check_size_match(function, "Columns of ", "beta", N_classes, "size of ",
-                   "alpha", size(alpha));
+                   "alpha", math::size(alpha));
   check_size_match(function, "Columns of ", "x", N_attributes, "Rows of",
                    "beta", beta.rows());
 

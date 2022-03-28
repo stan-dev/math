@@ -16,7 +16,7 @@ namespace math {
 template <typename T,
           require_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
 size_t num_elements(const T& m) {
-  return size(m);
+  return math::size(m);
 }
 
 }  // namespace math
