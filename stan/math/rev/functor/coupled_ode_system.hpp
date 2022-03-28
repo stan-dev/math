@@ -117,7 +117,7 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
                   double t) {
     using std::vector;
 
-    dz_dt.resize(math::size());
+    dz_dt.resize(size());
 
     // Run nested autodiff in this scope
     nested_rev_autodiff nested;
@@ -127,8 +127,9 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
       y_vars.coeffRef(n) = z[n];
 
     Eigen::Matrix<var, Eigen::Dynamic, 1> f_y_t_vars
-        = math::apply([&](auto&&... args) { return f_(t, y_vars, msgs_, args...); },
-                local_args_tuple_);
+        = math::apply([&](auto&&... args) {
+            return f_(t, y_vars, msgs_, args...); },
+              local_args_tuple_);
 
     check_size_match("coupled_ode_system", "dy_dt", f_y_t_vars.size(), "states",
                      N_);
@@ -211,7 +212,7 @@ struct coupled_ode_system_impl<false, F, T_y0, Args...> {
    *   parameters at the initial time-point, which is zero.
    */
   std::vector<double> initial_state() const {
-    std::vector<double> initial(math::size(), 0.0);
+    std::vector<double> initial(size(), 0.0);
     for (size_t i = 0; i < N_; i++) {
       initial[i] = value_of(y0_(i));
     }

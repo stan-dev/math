@@ -36,7 +36,8 @@ TEST(MathMetaPrim, VectorBuilder_false_false_vector) {
 
   std::vector<double> a_std_vector(3);
 
-  VectorBuilder<false, double, double> dvv2(stan::math::size(a_std_vector));
+  VectorBuilder<false, double, double>
+    dvv2(stan::math::size(a_std_vector));
   EXPECT_THROW(dvv2[0], std::logic_error);
   EXPECT_THROW(dvv2.data(), std::logic_error);
 }
@@ -70,7 +71,8 @@ TEST(MathMetaPrim, VectorBuilder_false_false_matrix) {
   EXPECT_THROW(dvv3[0], std::logic_error);
   EXPECT_THROW(dvv3.data(), std::logic_error);
 
-  VectorBuilder<false, double, double> dvv4(stan::math::size(a_row_vector));
+  VectorBuilder<false, double, double>
+    dvv4(stan::math::size(a_row_vector));
   EXPECT_THROW(dvv4[0], std::logic_error);
   EXPECT_THROW(dvv4.data(), std::logic_error);
 }

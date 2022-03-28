@@ -17,7 +17,8 @@ TEST(MetaTraitsRevArr, VectorBuilder_false_true) {
   EXPECT_THROW(dvv1[0], std::logic_error);
   EXPECT_THROW(dvv1.data(), std::logic_error);
 
-  VectorBuilder<false, double, std::vector<var> > dvv2(stan::math::size(a_std_vector));
+  VectorBuilder<false, double, std::vector<var> >
+    dvv2(stan::math::size(a_std_vector));
   EXPECT_THROW(dvv2[0], std::logic_error);
   EXPECT_THROW(dvv2.data(), std::logic_error);
 }
@@ -38,7 +39,8 @@ TEST(MetaTraitsRevArr, VectorBuilder_true_true) {
   EXPECT_NO_THROW(data1 = dvv1.data());
   EXPECT_EQ(stan::math::size(a_var), data1.size());
 
-  VectorBuilder<true, double, std::vector<var> > dvv2(stan::math::size(a_std_vector));
+  VectorBuilder<true, double, std::vector<var> >
+    dvv2(stan::math::size(a_std_vector));
   dvv2[0] = 0.0;
   dvv2[1] = 1.0;
   dvv2[2] = 2.0;
@@ -60,7 +62,8 @@ TEST(MetaTraitsRevMat, VectorBuilder_false_true) {
   Matrix<var, Dynamic, 1> a_vector(4);
   Matrix<var, 1, Dynamic> a_row_vector(5);
 
-  VectorBuilder<false, double, Matrix<var, Dynamic, 1> > dvv3(stan::math::size(a_vector));
+  VectorBuilder<false, double, Matrix<var, Dynamic, 1> >
+    dvv3(stan::math::size(a_vector));
   EXPECT_THROW(dvv3[0], std::logic_error);
   EXPECT_THROW(dvv3.data(), std::logic_error);
 
@@ -80,7 +83,8 @@ TEST(MetaTraitsRevMat, VectorBuilder_true_true) {
   Matrix<var, Dynamic, 1> a_vector(4);
   Matrix<var, 1, Dynamic> a_row_vector(5);
 
-  VectorBuilder<true, double, Matrix<var, Dynamic, 1> > dvv3(stan::math::size(a_vector));
+  VectorBuilder<true, double, Matrix<var, Dynamic, 1> >
+    dvv3(stan::math::size(a_vector));
   dvv3[0] = 0.0;
   dvv3[1] = 1.0;
   dvv3[2] = 2.0;
