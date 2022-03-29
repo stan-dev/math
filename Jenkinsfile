@@ -242,7 +242,7 @@ pipeline {
             post { always { deleteDir() } }
         }
 
-/*         stage('Full Unit Tests') {
+        stage('Full Unit Tests') {
             agent {
                 docker {
                     image 'stanorg/ci:gpu'
@@ -266,7 +266,7 @@ pipeline {
                 }
             }
             post { always { retry(3) { deleteDir() } } }
-        } */
+        }
 
         stage('Always-run tests') {
             when {
