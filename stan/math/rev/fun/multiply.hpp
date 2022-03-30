@@ -189,9 +189,26 @@ inline auto multiply(const T1& A, const T2& B) {
 template <typename T1, typename T2, require_matrix_t<T1>* = nullptr,
           require_not_matrix_t<T2>* = nullptr,
           require_any_st_var<T1, T2>* = nullptr,
+          require_not_complex_t<value_type_t<T1>>* = nullptr,
+          require_not_complex_t<value_type_t<T2>>* = nullptr,
           require_not_row_and_col_vector_t<T1, T2>* = nullptr>
 inline auto multiply(const T1& A, const T2& B) {
   return multiply(B, A);
+}
+
+/**
+ * Operator overload for multiplying a `var_value<Matrix>`. At least one input
+ *  must be a `var_value<Matrix>` type.
+ * @tparam T1 Either a `var_value<Matrix>`, type inheriting from
+ * `Eigen::DenseMatrix`, or a scalar
+ * @tparam T2 Either a `var_value<Matrix>`, type inheriting from
+ * `Eigen::DenseMatrix`, or a scalar
+ * @param a The left hand side of the multiplication
+ * @param b The right hand side of the multiplication
+ */
+template <typename T1, typename T2, require_any_var_matrix_t<T1, T2>* = nullptr>
+inline auto operator*(const T1& a, const T2& b) {
+  return multiply(a, b);
 }
 
 }  // namespace math

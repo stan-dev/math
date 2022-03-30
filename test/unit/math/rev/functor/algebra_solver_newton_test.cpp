@@ -99,7 +99,8 @@ TEST_F(degenerate_eq_test, newton_guess_saddle_point_dbl) {
   // a saddle point.
   using stan::math::algebra_solver_newton;
   std::stringstream err_msg;
-  err_msg << "algebra_solver failed with error flag -11.";
+  err_msg << "The linear solver’s setup function failed in an unrecoverable "
+             "manner";  // NOLINT
   std::string msg = err_msg.str();
 
   EXPECT_THROW_MSG(algebra_solver_newton(degenerate_eq_functor(), x_guess_3,

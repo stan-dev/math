@@ -223,7 +223,7 @@ class ops_partials_edge<double, var_value<Op>, require_eigen_t<Op>> {
   broadcast_array<partials_t> partials_vec_;  // For multivariate
   explicit ops_partials_edge(const var_value<Op>& ops)
       : partials_(
-            plain_type_t<partials_t>::Zero(ops.vi_->rows(), ops.vi_->cols())),
+          plain_type_t<partials_t>::Zero(ops.vi_->rows(), ops.vi_->cols())),
         partials_vec_(partials_),
         operands_(ops) {}
 

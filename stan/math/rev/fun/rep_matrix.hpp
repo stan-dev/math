@@ -40,7 +40,8 @@ inline auto rep_matrix(const T& x, int m, int n) {
  * repliacated colwise.
  * @param n Number of rows or columns.
  */
-template <typename Vec, require_var_matrix_t<Vec>* = nullptr>
+template <typename Ret, typename Vec, require_var_matrix_t<Ret>* = nullptr,
+          require_var_matrix_t<Vec>* = nullptr>
 inline auto rep_matrix(const Vec& x, int n) {
   if (is_row_vector<Vec>::value) {
     check_nonnegative("rep_matrix", "rows", n);
