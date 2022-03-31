@@ -735,7 +735,9 @@ class vari_value<T, require_all_t<is_plain_type<T>, is_eigen_dense_base<T>>>
       ChainableStack::instance_->var_nochain_stack_.push_back(this);
     }
   }
-
+  vari_value(const arena_matrix<PlainObject>& x, const arena_matrix<PlainObject>& y)
+      : val_(x), adj_(y) {
+  }
  protected:
   template <typename S, require_not_same_t<T, S>* = nullptr>
   explicit vari_value(const vari_value<S>* x) : val_(x->val_), adj_(x->adj_) {}
