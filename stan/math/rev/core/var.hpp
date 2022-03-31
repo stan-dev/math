@@ -1004,9 +1004,30 @@ class var_value<T, internal::require_matrix_var_value<T>> {
    * @return this
    */
   template <typename S, require_assignable_t<value_type, S>* = nullptr,
-            require_all_plain_type_t<T, S>* = nullptr>
+            require_all_plain_type_t<T, S>* = nullptr,
+            require_same_t<plain_type_t<T>, plain_type_t<S>>* = nullptr>
   inline var_value<T>& operator=(const var_value<S>& other) {
     vi_ = other.vi_;
+    return *this;
+  }
+
+  /**
+   * Assignment of one plain type to another when one sides compile time columns
+   * differ from the other.
+   * @tparam S A type inheriting from `Eigen::DenseBase` that has a differing
+   *  number of compile time rows or columns, but is assignable to
+   *  `this`'s underlying Eigen type.
+   * @param other the value to assign
+   * @return this
+   */
+  template <typename S, require_assignable_t<value_type, S>* = nullptr,
+            require_all_plain_type_t<T, S>* = nullptr,
+            require_not_same_t<plain_type_t<T>, plain_type_t<S>>* = nullptr>
+  inline var_value<T>& operator=(const var_value<S>& other) {
+    static_assert(
+        EIGEN_PREDICATE_SAME_MATRIX_SIZE(T, S),
+        "You mixed matrices of different sizes that are not assignable.");
+    vi_ = new vari_type(other.vi_);
     return *this;
   }
 

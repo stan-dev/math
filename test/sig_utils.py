@@ -17,6 +17,7 @@ arg_types = {
     "array[] int": "std::vector<int>",
     "array[,] int": "std::vector<std::vector<int>>",
     "real": "SCALAR",
+    "complex": "std::complex<SCALAR>",
     "array[] real": "std::vector<SCALAR>",
     "array[,] real": "std::vector<std::vector<SCALAR>>",
     "vector": "Eigen::Matrix<SCALAR, Eigen::Dynamic, 1>",
@@ -24,9 +25,15 @@ arg_types = {
     "row_vector": "Eigen::Matrix<SCALAR, 1, Eigen::Dynamic>",
     "array[] row_vector": "std::vector<Eigen::Matrix<SCALAR, 1, Eigen::Dynamic>>",
     "matrix": "Eigen::Matrix<SCALAR, Eigen::Dynamic, Eigen::Dynamic>",
+    "complex_vector": "Eigen::Matrix<std::complex<SCALAR>, Eigen::Dynamic, 1>",
+    "array[] complex_vector": "std::vector<Eigen::Matrix<std::complex<SCALAR>, Eigen::Dynamic, 1>>",
+    "complex_row_vector": "Eigen::Matrix<std::complex<SCALAR>, 1, Eigen::Dynamic>",
+    "array[] complex_row_vector": "std::vector<Eigen::Matrix<std::complex<SCALAR>, 1, Eigen::Dynamic>>",
+    "complex_matrix": "Eigen::Matrix<std::complex<SCALAR>, Eigen::Dynamic, Eigen::Dynamic>",
 }
 
 scalar_stan_types = ("int", "real", "rng", "ostream_ptr")
+
 
 def parse_array(stan_arg):
     """
@@ -38,6 +45,7 @@ def parse_array(stan_arg):
         commas, inner_type = stan_arg.lstrip("array[").split("]")
         return len(commas) + 1, inner_type.strip()
     return 0, stan_arg.strip()
+
 
 def get_cpp_type(stan_type):
     """
@@ -57,8 +65,8 @@ pos_definite = "positive_definite_matrix"
 scalar_return_type = "scalar_return_type"
 
 make_special_arg_values = {
-    simplex : "make_simplex",
-    pos_definite : "make_pos_definite_matrix"
+    simplex: "make_simplex",
+    pos_definite: "make_pos_definite_matrix",
 }
 
 # list of function arguments that need special scalar values.
@@ -110,18 +118,18 @@ special_arg_values = {
     "pareto_type_2_cdf": [1.5, 0.7, None, None],
     "pareto_type_2_cdf_log": [1.5, 0.7, None, None],
     "pareto_type_2_lcdf": [1.5, 0.7, None, None],
-    "positive_ordered_constrain" : [None, scalar_return_type],
+    "positive_ordered_constrain": [None, scalar_return_type],
     "positive_ordered_free": [1.0],
-    "ordered_constrain" : [None, scalar_return_type],
+    "ordered_constrain": [None, scalar_return_type],
     "ordered_free": [1.0],
-    "simplex_constrain" : [None, scalar_return_type],
+    "simplex_constrain": [None, scalar_return_type],
     "simplex_free": [simplex],
     "student_t_cdf": [0.8, None, 0.4, None],
     "student_t_cdf_log": [0.8, None, 0.4, None],
     "student_t_ccdf_log": [0.8, None, 0.4, None],
     "student_t_lccdf": [0.8, None, 0.4, None],
     "student_t_lcdf": [0.8, None, 0.4, None],
-    "unit_vector_constrain" : [None, scalar_return_type],
+    "unit_vector_constrain": [None, scalar_return_type],
     "unit_vector_free": [simplex],
     "uniform_cdf": [None, 0.2, 0.9],
     "uniform_ccdf_log": [None, 0.2, 0.9],
@@ -172,7 +180,7 @@ no_fwd_overload = [
     "ode_bdf_tol",
     "ode_rk45",
     "ode_rk45_tol",
-    "quantile"
+    "quantile",
 ]
 
 internal_signatures = [
@@ -280,7 +288,11 @@ def parse_signature(signature):
     function_name, rest = rest.split("(", 1)
     args = re.findall(r"(?:[(][^()]+[)][^,()]+)|(?:[^,()]+(?:,*[]][^,()]+)?)", rest)
     #  regex parts:        ^^^^^^functor^^^^^^     ^^^^any other arg^^^^^^^
-    args = [i.lstrip("data").strip() if "data" in i else i.strip() for i in args if i.strip()]
+    args = [
+        i.lstrip("data").strip() if "data" in i else i.strip()
+        for i in args
+        if i.strip()
+    ]
     return return_type.strip(), function_name.strip(), args
 
 
@@ -304,6 +316,7 @@ def handle_function_list(functions_input):
             function_names.append(f)
     return function_names, function_signatures
 
+
 def reference_vector_argument(arg):
     """
     Determines a reference argument, so as not to duplicate arrays of reals, vectors and row vectors,
@@ -314,6 +327,7 @@ def reference_vector_argument(arg):
     if arg in ("array[] real", "row_vector"):
         return "vector"
     return arg
+
 
 overload_scalar = {
     "Prim": "double",
