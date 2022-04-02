@@ -88,7 +88,7 @@ pipeline {
     }
     environment {
         STAN_NUM_THREADS = 4
-        CLANG_CXX = 'clang++-7'
+        CLANG_CXX = 'clang++-7.0'
         GCC = 'g++'
         MPICXX = 'mpicxx.openmpi'
         N_TESTS = 150
