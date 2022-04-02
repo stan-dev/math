@@ -264,6 +264,7 @@ pipeline {
                     }
                     steps {
                         unstash 'MathSetup'
+                        sh "echo CXX=${CLANG_CXX} -Werror > make/local"
                         sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                         script {
                             if (isUnix()) {
@@ -297,6 +298,7 @@ pipeline {
                     }
                     steps {
                         unstash 'MathSetup'
+                        sh "echo CXX=${CLANG_CXX} -Werror > make/local"
                         sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                         script {
                             if (isUnix()) {
@@ -332,6 +334,7 @@ pipeline {
                     }
                     steps {
                         unstash 'MathSetup'
+                        sh "echo CXX=${CLANG_CXX} -Werror > make/local"
                         sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                         script {
                             if (isUnix()) {
