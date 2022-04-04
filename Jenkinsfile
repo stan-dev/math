@@ -222,20 +222,6 @@ pipeline {
             }
         }
 
-        stage('Pull image VM1') {
-            agent { label 'docker' }
-            steps {
-                sh "docker pull stanorg/ci:gpu-cpp17"
-            }
-        }
-
-        stage('Pull image VM2') {
-            agent { label 'v100' }
-            steps {
-                sh "docker pull stanorg/ci:gpu-cpp17"
-            }
-        }
-
         stage('Headers check') {
             agent {
                 docker {
