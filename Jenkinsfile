@@ -222,12 +222,25 @@ pipeline {
             }
         }
 
+        stage('Pull image VM1') {
+            agent { label 'triqs' }
+            steps {
+                sh "docker pull stanorg/ci:gpu-cpp17"
+            }
+        }
+
+        stage('Pull image VM2') {
+            agent { label 'v100' }
+            steps {
+                sh "docker pull stanorg/ci:gpu-cpp17"
+            }
+        }
+
         stage('Headers check') {
             agent {
                 docker {
                     image 'stanorg/ci:gpu-cpp17'
                     label 'linux'
-                    args '--pull always'
                 }
             }
             when {
@@ -325,7 +338,6 @@ pipeline {
                         docker {
                             image 'stanorg/ci:gpu-cpp17'
                             label 'linux'
-                            args '--pull always'
                         }
                     }
                     steps {
@@ -359,7 +371,6 @@ pipeline {
                         docker {
                             image 'stanorg/ci:gpu-cpp17'
                             label 'linux'
-                            args '--pull always'
                         }
                     }
                     steps {
@@ -394,7 +405,6 @@ pipeline {
                         docker {
                             image 'stanorg/ci:gpu-cpp17'
                             label 'linux'
-                            args '--pull always'
                         }
                     }
                     steps {
