@@ -223,7 +223,7 @@ pipeline {
         }
 
         stage('Pull image VM1') {
-            agent { label 'triqs' }
+            agent { label 'docker' }
             steps {
                 sh "docker pull stanorg/ci:gpu-cpp17"
             }
