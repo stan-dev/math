@@ -227,6 +227,7 @@ pipeline {
                 docker {
                     image 'stanorg/ci:gpu-cpp17'
                     label 'linux'
+                    args '--pull always'
                 }
             }
             when {
