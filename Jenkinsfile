@@ -256,7 +256,7 @@ pipeline {
             }
             steps {
                 unstash 'MathSetup'
-	            sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+	            // sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                 script {
                     if (isUnix()) {
                         runTests("test/unit", false)
