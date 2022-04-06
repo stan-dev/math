@@ -41,9 +41,8 @@ inline auto get_imag(const Eig& z) {
 template <typename StdVec, require_std_vector_st<is_complex, StdVec>* = nullptr>
 inline auto get_imag(const StdVec& z) {
   promote_scalar_t<base_type_t<StdVec>, StdVec> result(z.size());
-  std::transform(z.begin(), z.end(), result.begin(), [](auto&& x) {
-    return get_imag(x);
-  });
+  std::transform(z.begin(), z.end(), result.begin(),
+                 [](auto&& x) { return get_imag(x); });
   return result;
 }
 
