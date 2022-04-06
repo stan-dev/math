@@ -144,7 +144,10 @@ class MatrixVariable(CppStatement):
 
     def is_varmat_compatible(self):
         """Return true (matrix-like types are varmat compatible)"""
-        return True
+        if self.stan_arg.startswith("complex"):
+            return False
+        else:
+            return True
 
     def cpp(self):
         """Generate C++"""

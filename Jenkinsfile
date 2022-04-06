@@ -264,7 +264,7 @@ pipeline {
                     }
                     steps {
                         unstash 'MathSetup'
-                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+                        //sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                         script {
                             if (isUnix()) {
                                 runTests("test/unit/*_test.cpp", false)
@@ -297,7 +297,7 @@ pipeline {
                     }
                     steps {
                         unstash 'MathSetup'
-                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+                        //sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                         script {
                             if (isUnix()) {
                                 runTests("test/unit/math/fwd", false)
@@ -332,7 +332,7 @@ pipeline {
                     }
                     steps {
                         unstash 'MathSetup'
-                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+                        //sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                         script {
                             if (isUnix()) {
                                 runTests("test/unit/math/mix/fun", false)
