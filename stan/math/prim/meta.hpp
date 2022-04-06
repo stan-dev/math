@@ -184,6 +184,7 @@
 #include <stan/math/prim/meta/include_summand.hpp>
 #include <stan/math/prim/meta/index_type.hpp>
 #include <stan/math/prim/meta/index_apply.hpp>
+#include <stan/math/prim/meta/is_arithmetic_or_complex.hpp>
 #include <stan/math/prim/meta/is_autodiff.hpp>
 #include <stan/math/prim/meta/is_arena_matrix.hpp>
 #include <stan/math/prim/meta/is_base_pointer_convertible.hpp>

@@ -17,7 +17,7 @@ namespace math {
  * @return Determinant of the matrix.
  * @throw std::domain_error if matrix is not square.
  */
-template <typename T, require_eigen_vt<std::is_arithmetic, T>* = nullptr>
+template <typename T, require_eigen_vt<is_arithmetic_or_complex, T>* = nullptr>
 inline value_type_t<T> determinant(const T& m) {
   check_square("determinant", "m", m);
   return m.determinant();
