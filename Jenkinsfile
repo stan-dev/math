@@ -266,8 +266,8 @@ pipeline {
                         unstash 'MathSetup'
                         //sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                         script {
-                            runTests("test/unit/math/rev", false)
-                            runTests("test/unit/math/fwd", false)
+                            runTests("test/unit/math/rev", true)
+                            runTests("test/unit/math/fwd", true)
                             runTests("test/unit/math/mix/core", false)
                             runTests("test/unit/math/mix/functor", false)
                             runTests("test/unit/math/mix/meta", false)
@@ -293,7 +293,7 @@ pipeline {
                         unstash 'MathSetup'
                         //sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                         script {
-                            runTests("test/unit/math/mix/fun", false)
+                            runTests("test/unit/math/mix/fun", true)
                         }
                     }
                     post { always { retry(3) { deleteDir() } } }
@@ -316,7 +316,7 @@ pipeline {
                         script {
                             runTests("test/unit/*_test.cpp", false)
                             runTests("test/unit/math/*_test.cpp", false)
-                            runTests("test/unit/math/prim", false)                            
+                            runTests("test/unit/math/prim", true)                            
                             runTests("test/unit/math/memory", false)
                         }
                     }
