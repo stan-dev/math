@@ -293,7 +293,7 @@ pipeline {
                         unstash 'MathSetup'
                         //sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                         script {
-                            runTests("test/unit/math/mix/fun/", true)
+                            runTests("test/unit/math/mix/fun", true)
                         }
                     }
                     post { always { retry(3) { deleteDir() } } }
