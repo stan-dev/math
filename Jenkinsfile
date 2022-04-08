@@ -250,7 +250,7 @@ pipeline {
             }
             failFast true
             parallel {
-                stage('Rev/Fwd Unit Tests') {
+                stage('Rev/Fwd/Mix(non-fun/) Unit Tests') {
                     agent {
                         docker {
                             image 'stanorg/ci:gpu'
@@ -268,11 +268,16 @@ pipeline {
                         script {
                             runTests("test/unit/math/rev", false)
                             runTests("test/unit/math/fwd", false)
+                            runTests("test/unit/math/mix/core", false)
+                            runTests("test/unit/math/mix/functor", false)
+                            runTests("test/unit/math/mix/meta", false)
+                            runTests("test/unit/math/mix/prob", false)
+                            runTests("test/unit/math/mix/*_test.cpp", false)
                         }
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
-                stage('Mix Unit Tests') {
+                stage('mix/fun Unit Tests') {
                     agent {
                         docker {
                             image 'stanorg/ci:gpu'
@@ -288,7 +293,7 @@ pipeline {
                         unstash 'MathSetup'
                         //sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                         script {
-                            runTests("test/unit/math/mix", false)
+                            runTests("test/unit/math/mix/fun", false)
                         }
                     }
                     post { always { retry(3) { deleteDir() } } }
