@@ -250,7 +250,7 @@ pipeline {
             }
             failFast true
             parallel {
-                stage('Rev/Fwd/Mix(non-fun/) Unit Tests') {
+                stage('Rev/Fwd Unit Tests') {
                     agent {
                         docker {
                             image 'stanorg/ci:gpu'
@@ -266,18 +266,13 @@ pipeline {
                         unstash 'MathSetup'
                         //sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                         script {
-                            runTests("test/unit/math/rev", true)
-                            runTests("test/unit/math/fwd", true)
-                            runTests("test/unit/math/mix/core", false)
-                            runTests("test/unit/math/mix/functor", false)
-                            runTests("test/unit/math/mix/meta", false)
-                            runTests("test/unit/math/mix/prob", false)
-                            runTests("test/unit/math/mix/*_test.cpp", false)
+                            runTests("test/unit/math/rev", false)
+                            runTests("test/unit/math/fwd", false)
                         }
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
-                stage('mix/fun Unit Tests') {
+                stage('Mix Unit Tests') {
                     agent {
                         docker {
                             image 'stanorg/ci:gpu'
@@ -293,7 +288,7 @@ pipeline {
                         unstash 'MathSetup'
                         //sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                         script {
-                            runTests("test/unit/math/mix/fun", true)
+                            runTests("test/unit/math/mix", true)
                         }
                     }
                     post { always { retry(3) { deleteDir() } } }
@@ -316,7 +311,7 @@ pipeline {
                         script {
                             runTests("test/unit/*_test.cpp", false)
                             runTests("test/unit/math/*_test.cpp", false)
-                            runTests("test/unit/math/prim", true)                            
+                            runTests("test/unit/math/prim", false)                            
                             runTests("test/unit/math/memory", false)
                         }
                     }
