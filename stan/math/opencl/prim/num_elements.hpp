@@ -3,6 +3,7 @@
 #ifdef STAN_OPENCL
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/opencl/prim/size.hpp>
 
 namespace stan {
 namespace math {
