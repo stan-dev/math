@@ -247,6 +247,7 @@ pipeline {
                 docker {
                     image 'stanorg/ci:gpu'
                     label 'linux'
+                    args '--cap-add SYS_PTRACE'
                 }
             }
             when {
@@ -256,7 +257,7 @@ pipeline {
             }
             steps {
                 unstash 'MathSetup'
-	            // sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+	            sh "echo CXXFLAGS += -fsanitize=address >> make/local"
                 script {
                     if (isUnix()) {
                         runTests("test/unit", false)
