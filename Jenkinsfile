@@ -372,7 +372,7 @@ pipeline {
                             sh "python ./test/varmat_compatibility_test.py"
                             withEnv(['PATH+TBB=./lib/tbb']) {
                                 sh "python ./test/expressions/test_expression_testing_framework.py"
-                                try { sh "./runTests.py -j${PARALLEL} -e 128 test/expressions" }
+                                try { sh "./runTests.py -j${PARALLEL} -e 256 test/expressions" }
                                 finally { junit 'test/**/*.xml' }
                             }
                             sh "make clean-all"
