@@ -242,31 +242,31 @@ pipeline {
             post { always { deleteDir() } }
         }
 
-        // stage('Full Unit Tests') {
-        //     agent {
-        //         docker {
-        //             image 'stanorg/ci:gpu'
-        //             label 'linux'
-        //         }
-        //     }
-        //     when {
-        //         expression {
-        //             !skipRemainingStages
-        //         }
-        //     }
-        //     steps {
-        //         unstash 'MathSetup'
-	    //         // sh "echo CXXFLAGS += -fsanitize=address >> make/local"
-        //         script {
-        //             if (isUnix()) {
-        //                 runTests("test/unit", false)
-        //             } else {
-        //                 runTestsWin("test/unit", true)
-        //             }
-        //         }
-        //     }
-        //     post { always { retry(3) { deleteDir() } } }
-        // }
+        stage('Full Unit Tests') {
+            agent {
+                docker {
+                    image 'stanorg/ci:gpu'
+                    label 'linux'
+                }
+            }
+            when {
+                expression {
+                    !skipRemainingStages
+                }
+            }
+            steps {
+                unstash 'MathSetup'
+	            // sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+                script {
+                    if (isUnix()) {
+                        runTests("test/unit", false)
+                    } else {
+                        runTestsWin("test/unit", true)
+                    }
+                }
+            }
+            post { always { retry(3) { deleteDir() } } }
+        }
 
         stage('Always-run tests') {
             when {
@@ -276,82 +276,82 @@ pipeline {
             }
             failFast true
             parallel {
-                // stage('MPI tests') {
-                //     agent {
-                //         docker {
-                //             image 'stanorg/ci:gpu'
-                //             label 'linux'
-                //         }
-                //     }
-                //     steps {
-                //         unstash 'MathSetup'
-                //         sh """
-                //             echo CXX=${MPICXX} > make/local
-                //             echo CXX_TYPE=gcc >> make/local
-                //             echo STAN_MPI=true >> make/local
-                //         """
-                //         runTests("test/unit/math/prim/functor")
-                //         runTests("test/unit/math/rev/functor")
-                //     }
-                //     post { always { retry(3) { deleteDir() } } }
-                // }
+                stage('MPI tests') {
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu'
+                            label 'linux'
+                        }
+                    }
+                    steps {
+                        unstash 'MathSetup'
+                        sh """
+                            echo CXX=${MPICXX} > make/local
+                            echo CXX_TYPE=gcc >> make/local
+                            echo STAN_MPI=true >> make/local
+                        """
+                        runTests("test/unit/math/prim/functor")
+                        runTests("test/unit/math/rev/functor")
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
 
-                // stage('OpenCL GPU tests') {
-                //     agent {
-                //         docker {
-                //             image 'stanorg/ci:gpu'
-                //             label 'v100'
-                //             args '--gpus 1'
-                //         }
-                //     }
-                //     steps {
-                //         script {
-                //             unstash 'MathSetup'
-                //             sh """
-                //                 echo CXX=${CLANG_CXX} -Werror > make/local
-                //                 echo STAN_OPENCL=true >> make/local
-                //                 echo OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} >> make/local
-                //                 echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU} >> make/local
-                //             """
-                //             runTests("test/unit/math/opencl")
-                //             runTests("test/unit/multiple_translation_units_test.cpp")
-                //         }
-                //     }
-                // }
+                stage('OpenCL GPU tests') {
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu'
+                            label 'v100'
+                            args '--gpus 1'
+                        }
+                    }
+                    steps {
+                        script {
+                            unstash 'MathSetup'
+                            sh """
+                                echo CXX=${CLANG_CXX} -Werror > make/local
+                                echo STAN_OPENCL=true >> make/local
+                                echo OPENCL_PLATFORM_ID=${OPENCL_PLATFORM_ID_GPU} >> make/local
+                                echo OPENCL_DEVICE_ID=${OPENCL_DEVICE_ID_GPU} >> make/local
+                            """
+                            runTests("test/unit/math/opencl")
+                            runTests("test/unit/multiple_translation_units_test.cpp")
+                        }
+                    }
+                }
 
-                // stage('Distribution tests') {
-                //     agent {
-                //         docker {
-                //             image 'stanorg/ci:gpu'
-                //             label 'linux'
-                //             args '--pull always'
-                //         }
-                //     }
-                //     steps {
-                //         unstash 'MathSetup'
-                //         sh """
-                //             echo CXX=${CLANG_CXX} > make/local
-                //             echo O=0 >> make/local
-                //             echo N_TESTS=${N_TESTS} >> make/local
-                //             """
-                //         script {
-                //             if (params.withRowVector || isBranch('develop') || isBranch('master')) {
-                //                 sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
-                //                 sh "echo CXXFLAGS+=-DSTAN_PROB_TEST_ALL >> make/local"
-                //             }
-                //         }
-                //         sh "./runTests.py -j${PARALLEL} test/prob > dist.log 2>&1"
-                //     }
-                //     post {
-                //         always {
-                //             script { zip zipFile: "dist.log.zip", archive: true, glob: 'dist.log' }
-                //             retry(3) { deleteDir() }
-                //         }
-                //         failure {
-                //             echo "Distribution tests failed. Check out dist.log.zip artifact for test logs."
-                //         }
-                //     }
-                // }
+                stage('Distribution tests') {
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu'
+                            label 'linux'
+                            args '--pull always'
+                        }
+                    }
+                    steps {
+                        unstash 'MathSetup'
+                        sh """
+                            echo CXX=${CLANG_CXX} > make/local
+                            echo O=0 >> make/local
+                            echo N_TESTS=${N_TESTS} >> make/local
+                            """
+                        script {
+                            if (params.withRowVector || isBranch('develop') || isBranch('master')) {
+                                sh "echo CXXFLAGS+=-DSTAN_TEST_ROW_VECTORS >> make/local"
+                                sh "echo CXXFLAGS+=-DSTAN_PROB_TEST_ALL >> make/local"
+                            }
+                        }
+                        sh "./runTests.py -j${PARALLEL} test/prob > dist.log 2>&1"
+                    }
+                    post {
+                        always {
+                            script { zip zipFile: "dist.log.zip", archive: true, glob: 'dist.log' }
+                            retry(3) { deleteDir() }
+                        }
+                        failure {
+                            echo "Distribution tests failed. Check out dist.log.zip artifact for test logs."
+                        }
+                    }
+                }
 
                 stage('Expressions test') {
                     agent {
@@ -388,54 +388,54 @@ pipeline {
                     post { always { deleteDir() } }
                 }
 
-                // stage('Threading tests') {
-                //     agent {
-                //         docker {
-                //             image 'stanorg/ci:gpu'
-                //             label 'linux'
-                //             args '--pull always'
-                //         }
-                //     }
-                //     steps {
-                //         script {
-                //             unstash 'MathSetup'
-                //             sh "echo CXX=${CLANG_CXX} -Werror > make/local"
-                //             sh "echo STAN_THREADS=true >> make/local"
-                //             sh "export STAN_NUM_THREADS=4"
-                //             if (isBranch('develop') || isBranch('master')) {
-                //                 runTests("test/unit")
-                //                 sh "find . -name *_test.xml | xargs rm"
-                //             } else {
-                //                 runTests("test/unit -f thread")
-                //                 sh "find . -name *_test.xml | xargs rm"
-                //                 runTests("test/unit -f map_rect")
-                //                 sh "find . -name *_test.xml | xargs rm"
-                //                 runTests("test/unit -f reduce_sum")
-                //             }
-                //         }
-                //     }
-                //     post { always { retry(3) { deleteDir() } } }
-                // }
+                stage('Threading tests') {
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu'
+                            label 'linux'
+                            args '--pull always'
+                        }
+                    }
+                    steps {
+                        script {
+                            unstash 'MathSetup'
+                            sh "echo CXX=${CLANG_CXX} -Werror > make/local"
+                            sh "echo STAN_THREADS=true >> make/local"
+                            sh "export STAN_NUM_THREADS=4"
+                            if (isBranch('develop') || isBranch('master')) {
+                                runTests("test/unit")
+                                sh "find . -name *_test.xml | xargs rm"
+                            } else {
+                                runTests("test/unit -f thread")
+                                sh "find . -name *_test.xml | xargs rm"
+                                runTests("test/unit -f map_rect")
+                                sh "find . -name *_test.xml | xargs rm"
+                                runTests("test/unit -f reduce_sum")
+                            }
+                        }
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
 
-                // stage('Windows Headers & Unit') {
-                //     agent { label 'windows' }
-                //     when {
-                //         allOf {
-                //             anyOf {
-                //                 branch 'develop'
-                //                 branch 'master'
-                //                 expression { params.run_win_tests }
-                //             }
-                //             expression {
-                //                 !skipRemainingStages
-                //             }
-                //         }
-                //     }
-                //     steps {
-                //         unstash 'MathSetup'
-                //         runTestsWin("test/unit", true, false)
-                //     }
-                // }
+                stage('Windows Headers & Unit') {
+                    agent { label 'windows' }
+                    when {
+                        allOf {
+                            anyOf {
+                                branch 'develop'
+                                branch 'master'
+                                expression { params.run_win_tests }
+                            }
+                            expression {
+                                !skipRemainingStages
+                            }
+                        }
+                    }
+                    steps {
+                        unstash 'MathSetup'
+                        runTestsWin("test/unit", true, false)
+                    }
+                }
 
             }
         }
