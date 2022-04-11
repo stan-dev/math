@@ -416,6 +416,7 @@ pipeline {
                         unstash 'MathSetup'
                         script {
                             sh "echo O=0 > make/local"
+                            sh "echo CXX=${CLANG_CXX} -Werror >> make/local"
                             sh "python ./test/code_generator_test.py"
                             sh "python ./test/signature_parser_test.py"
                             sh "python ./test/statement_types_test.py"
@@ -423,7 +424,7 @@ pipeline {
                             sh "python ./test/varmat_compatibility_test.py"
                             withEnv(['PATH+TBB=./lib/tbb']) {
                                 sh "python ./test/expressions/test_expression_testing_framework.py"
-                                try { sh "./runTests.py -j${PARALLEL} -e 256 test/expressions" }
+                                try { sh "./runTests.py -j${PARALLEL} test/expressions" }
                                 finally { junit 'test/**/*.xml' }
                             }
                             sh "make clean-all"
