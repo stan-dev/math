@@ -47,6 +47,19 @@ inline value_type_t<T> sum(const T& m) {
   return m.sum();
 }
 
+/**
+ * Returns the sum of the coefficients of the specified
+ * Eigen Matrix, Array or expression of complex type.
+ *
+ * @tparam T Type of argument
+ * @param m argument
+ * @return Sum of coefficients of argument.
+ */
+template <typename T, require_eigen_vt<is_complex, T>* = nullptr>
+inline value_type_t<T> sum(const T& m) {
+  return m.sum();
+}
+
 }  // namespace math
 }  // namespace stan
 

@@ -79,6 +79,7 @@
 #include <stan/math/rev/fun/identity_free.hpp>
 #include <stan/math/rev/fun/if_else.hpp>
 #include <stan/math/rev/fun/inc_beta.hpp>
+#include <stan/math/rev/fun/inv_inc_beta.hpp>
 #include <stan/math/rev/fun/initialize_fill.hpp>
 #include <stan/math/rev/fun/initialize_variable.hpp>
 #include <stan/math/rev/fun/inv.hpp>
