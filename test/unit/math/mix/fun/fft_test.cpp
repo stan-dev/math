@@ -1,6 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 
 void expect_fft(const Eigen::VectorXcd& x) {
+  stan::test::ad_tolerances tols = stan::test::reverse_only_ad_tolerances();
   int i = 0;
   int m = 0;
   auto g = [&](const auto& x) {
@@ -9,7 +10,7 @@ void expect_fft(const Eigen::VectorXcd& x) {
   };
   for (int i = 0; i < 2; ++i)
     for (int m = 0; m < x.rows(); ++m)
-      stan::test::expect_ad(g, x);
+      stan::test::expect_ad(tols, g, x);
 }
 
 TEST(mathMixFun, fft) {
@@ -42,6 +43,7 @@ TEST(mathMixFun, fft) {
 }
 
 void expect_inv_fft(const Eigen::VectorXcd& x) {
+  stan::test::ad_tolerances tols = stan::test::reverse_only_ad_tolerances();
   int i = 0;
   int m = 0;
   auto g = [&](const auto& x) {
@@ -50,7 +52,7 @@ void expect_inv_fft(const Eigen::VectorXcd& x) {
   };
   for (int i = 0; i < 2; ++i)
     for (int m = 0; m < x.rows(); ++m)
-      stan::test::expect_ad(g, x);
+      stan::test::expect_ad(tols, g, x);
 }
 
 TEST(mathMixFun, invFft) {
@@ -83,6 +85,7 @@ TEST(mathMixFun, invFft) {
 }
 
 void expect_fft2(const Eigen::MatrixXcd& x) {
+  stan::test::ad_tolerances tols = stan::test::reverse_only_ad_tolerances();
   int i = 0;
   int m = 0;
   int n = 0;
@@ -93,7 +96,7 @@ void expect_fft2(const Eigen::MatrixXcd& x) {
   for (int i = 0; i < 2; ++i)
     for (int n = 0; n < x.cols(); ++n)
       for (int m = 0; m < x.rows(); ++m)
-        stan::test::expect_ad(g, x);
+        stan::test::expect_ad(tols, g, x);
 }
 
 TEST(mathMixFun, fft2) {
@@ -132,6 +135,7 @@ TEST(mathMixFun, fft2) {
 }
 
 void expect_inv_fft2(const Eigen::MatrixXcd& x) {
+  stan::test::ad_tolerances tols = stan::test::reverse_only_ad_tolerances();
   int i = 0;
   int m = 0;
   int n = 0;
@@ -142,7 +146,7 @@ void expect_inv_fft2(const Eigen::MatrixXcd& x) {
   for (int i = 0; i < 2; ++i)
     for (int n = 0; n < x.cols(); ++n)
       for (int m = 0; m < x.rows(); ++m)
-        stan::test::expect_ad(g, x);
+        stan::test::expect_ad(tols, g, x);
 }
 
 TEST(mathMixFun, inv_fft2) {
