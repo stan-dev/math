@@ -243,31 +243,82 @@ pipeline {
         }
 
         stage('Full Unit Tests') {
-            agent {
-                docker {
-                    image 'stanorg/ci:gpu-cpp17'
-                    label 'linux'
-                }
-            }
             when {
                 expression {
                     !skipRemainingStages
                 }
             }
-            steps {
-                unstash 'MathSetup'
-	            // sh "echo CXXFLAGS += -fsanitize=address >> make/local"
-                script {
-                    if (isUnix()) {
-                        runTests("test/unit", false)
-                    } else {
-                        runTestsWin("test/unit", true)
+            failFast true
+            parallel {
+                stage('Rev/Fwd Unit Tests') {
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu-cpp17'
+                            label 'linux'
+                        }
                     }
+                    when {
+                        expression {
+                            !skipRemainingStages
+                        }
+                    }
+                    steps {
+                        unstash 'MathSetup'
+                        //sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+                        script {
+                            runTests("test/unit/math/rev", false)
+                            runTests("test/unit/math/fwd", false)
+                        }
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Mix Unit Tests') {
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu-cpp17'
+                            label 'linux'
+                        }
+                    }
+                    when {
+                        expression {
+                            !skipRemainingStages
+                        }
+                    }
+                    steps {
+                        unstash 'MathSetup'
+                        //sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+                        script {
+                            runTests("test/unit/math/mix", true)
+                        }
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Prim Unit Tests') {
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu-cpp17'
+                            label 'linux'
+                        }
+                    }
+                    when {
+                        expression {
+                            !skipRemainingStages
+                        }
+                    }
+                    steps {
+                        unstash 'MathSetup'
+                        //sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+                        script {
+                            runTests("test/unit/*_test.cpp", false)
+                            runTests("test/unit/math/*_test.cpp", false)
+                            runTests("test/unit/math/prim", false)
+                            runTests("test/unit/math/memory", false)
+                        }
+                    }
+                    post { always { retry(3) { deleteDir() } } }
                 }
             }
-            post { always { retry(3) { deleteDir() } } }
         }
-
         stage('Always-run tests') {
             when {
                 expression {
@@ -433,7 +484,6 @@ pipeline {
                         runTestsWin("test/unit", true, false)
                     }
                 }
-
             }
         }
 
