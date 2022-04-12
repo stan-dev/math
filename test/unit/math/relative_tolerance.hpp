@@ -85,9 +85,7 @@ class relative_tolerance {
    *
    * @return `true` if the tolernace is infinite.
    */
-  bool is_inf() const {
-    return std::isinf(tol_);
-  }
+  bool is_inf() const { return std::isinf(tol_); }
 
  private:
   /**
