@@ -426,7 +426,8 @@ void inline unsolvable_flag_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
   std::vector<double> dat;
   std::vector<int> dat_int;
   std::stringstream err_msg;
-  err_msg << "algebra_solver failed with error flag -11.";
+  err_msg << "The linear solver’s setup function failed in an unrecoverable "
+             "manner.";  // NOLINT
   std::string msg = err_msg.str();
   EXPECT_THROW_MSG(general_algebra_solver(is_newton, unsolvable_eq_functor(), x,
                                           y, dat, dat_int),
@@ -445,15 +446,11 @@ inline void max_num_steps_test(Eigen::Matrix<T, Eigen::Dynamic, 1>& y,
          scaling_step = 1e-3;
   int max_num_steps = 2;  // very low for test
 
-  std::stringstream err_msg;
-  err_msg << "algebra_solver: maximum number of iterations (" << max_num_steps
-          << ") was exceeded in the solve.";
-  std::string msg = err_msg.str();
-  EXPECT_THROW_MSG(
+  EXPECT_THROW(
       general_algebra_solver(is_newton, non_linear_eq_functor(), x, y, dat,
                              dat_int, 0, scaling_step, relative_tolerance,
                              function_tolerance, max_num_steps),
-      std::domain_error, msg);
+      std::domain_error);
 }
 
 template <typename F>
@@ -476,11 +473,11 @@ Eigen::Matrix<stan::math::var, Eigen::Dynamic, 1> variadic_eq_test(
 
   theta = is_newton
               ? algebra_solver_newton_impl(
-                    variadic_eq_functor(), x, &std::cout, scaling_step_size,
-                    function_tolerance, max_num_steps, A, y_1, y_2, y_3, i)
+                  variadic_eq_functor(), x, &std::cout, scaling_step_size,
+                  function_tolerance, max_num_steps, A, y_1, y_2, y_3, i)
               : algebra_solver_powell_impl(
-                    variadic_eq_functor(), x, &std::cout, relative_tolerance,
-                    function_tolerance, max_num_steps, A, y_1, y_2, y_3, i);
+                  variadic_eq_functor(), x, &std::cout, relative_tolerance,
+                  function_tolerance, max_num_steps, A, y_1, y_2, y_3, i);
 
   EXPECT_NEAR(20, value_of(theta(0)), 1e-6);
   EXPECT_NEAR(2, value_of(theta(1)), 1e-6);

@@ -1,9 +1,0 @@
-:cmock:
-  :includes:
-    - CL/cl_platform.h
-  :treat_externs: :include
-  :enforce_strict_ordering: :true
-  :c_calling_conventions: 
-    - CL_API_CALL
-  :plugins:
-    - :callback

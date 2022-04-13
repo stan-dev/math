@@ -45,7 +45,8 @@ inline std::vector<T> cumulative_sum(const std::vector<T>& x) {
  * @param m Vector of values.
  * @return Cumulative sum of values.
  */
-template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
+template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr,
+          require_not_st_var<EigVec>* = nullptr>
 inline auto cumulative_sum(const EigVec& m) {
   using T_scalar = value_type_t<EigVec>;
   Eigen::Matrix<T_scalar, EigVec::RowsAtCompileTime, EigVec::ColsAtCompileTime>
@@ -53,9 +54,11 @@ inline auto cumulative_sum(const EigVec& m) {
   if (m.size() == 0) {
     return result;
   }
-  const Eigen::Ref<const plain_type_t<EigVec>>& m_ref = m;
-  std::partial_sum(m_ref.data(), m_ref.data() + m_ref.size(), result.data(),
-                   std::plus<T_scalar>());
+  const auto& m_ref = to_ref(m);
+  result.coeffRef(0) = m_ref.coeff(0);
+  for (Eigen::Index i = 1; i < m_ref.size(); ++i) {
+    result.coeffRef(i) = m_ref.coeff(i) + result.coeffRef(i - 1);
+  }
   return result;
 }
 
