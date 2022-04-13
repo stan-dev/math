@@ -70,7 +70,7 @@ struct diff_neg_binomial_2_log {
     gradient = sums_ - elt_divide(sums_plus_n_eta, one_plus_exp);
     Eigen::MatrixXd hessian_val = eta_scalar
                                   * sums_plus_n_eta.cwiseProduct(elt_divide(
-                                        exp_neg_theta, square(one_plus_exp)));
+                                      exp_neg_theta, square(one_plus_exp)));
     hessian.resize(theta_size, theta_size);
     hessian.reserve(Eigen::VectorXi::Constant(theta_size, hessian_block_size));
     // hessian.col(0) = - common_term;

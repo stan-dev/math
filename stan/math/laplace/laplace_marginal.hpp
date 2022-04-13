@@ -170,16 +170,16 @@ double laplace_marginal_density(
           a = b
               - W_r
                     * mdivide_left_tri<Eigen::Upper>(
-                          transpose(L),
-                          mdivide_left_tri<Eigen::Lower>(
-                              L, W_r.diagonal().cwiseProduct(covariance * b)));
+                        transpose(L),
+                        mdivide_left_tri<Eigen::Lower>(
+                            L, W_r.diagonal().cwiseProduct(covariance * b)));
         } else {
           b = W * theta + l_grad.head(theta_size);
           a = b
               - W_r
                     * mdivide_left_tri<Eigen::Upper>(
-                          transpose(L), mdivide_left_tri<Eigen::Lower>(
-                                            L, W_r * (covariance * b)));
+                        transpose(L), mdivide_left_tri<Eigen::Lower>(
+                                          L, W_r * (covariance * b)));
         }
       } else if (solver == 2) {
         // TODO -- use triangularView for K_root.
@@ -395,7 +395,7 @@ struct laplace_marginal_density_vari : public vari {
       MatrixXd W_root_diag = W_r;
       R = W_r
           * L.transpose().triangularView<Eigen::Upper>().solve(
-                L.triangularView<Eigen::Lower>().solve(W_root_diag));
+              L.triangularView<Eigen::Lower>().solve(W_root_diag));
 
       Eigen::MatrixXd C = mdivide_left_tri<Eigen::Lower>(L, W_r * covariance);
       if (hessian_block_size == 0 && eta_size_ == 0) {
@@ -415,8 +415,8 @@ struct laplace_marginal_density_vari : public vari {
       R = W_r
           - W_r * K_root
                 * L.transpose().triangularView<Eigen::Upper>().solve(
-                      L.triangularView<Eigen::Lower>().solve(K_root.transpose()
-                                                             * W_r));
+                    L.triangularView<Eigen::Lower>().solve(K_root.transpose()
+                                                           * W_r));
 
       Eigen::MatrixXd C
           = L.triangularView<Eigen::Lower>().solve(K_root.transpose());
