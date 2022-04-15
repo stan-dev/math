@@ -93,10 +93,11 @@ struct promote_scalar_type<T, S, require_eigen_t<S>> {
                    S::RowsAtCompileTime, S::ColsAtCompileTime>>::type;
 };
 
-
 template <typename... PromotionScalars, typename... UnPromotedTypes>
-struct promote_scalar_type<std::tuple<PromotionScalars...>, std::tuple<UnPromotedTypes...>> {
-  using type = std::tuple<typename promote_scalar_type<std::decay_t<PromotionScalars>, std::decay_t<UnPromotedTypes>>::type...>;
+struct promote_scalar_type<std::tuple<PromotionScalars...>,
+                           std::tuple<UnPromotedTypes...>> {
+  using type = std::tuple<typename promote_scalar_type<
+      std::decay_t<PromotionScalars>, std::decay_t<UnPromotedTypes>>::type...>;
 };
 
 template <typename T, typename S>

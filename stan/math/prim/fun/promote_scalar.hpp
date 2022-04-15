@@ -59,7 +59,8 @@ inline auto promote_scalar(UnPromotedType&& x) {
 // Forward decl for iterating over tuples used in std::vector<tuple>
 template <typename PromotionScalars, typename UnPromotedTypes,
           require_all_tuple_t<PromotionScalars, UnPromotedTypes>* = nullptr>
-inline constexpr promote_scalar_t<PromotionScalars, UnPromotedTypes> promote_scalar(UnPromotedTypes&& x);
+inline constexpr promote_scalar_t<PromotionScalars, UnPromotedTypes>
+promote_scalar(UnPromotedTypes&& x);
 /**
  * Promote the scalar type of an standard vector to the requested type.
  *
@@ -92,7 +93,8 @@ inline auto promote_scalar(UnPromotedType&& x) {
  */
 template <typename PromotionScalars, typename UnPromotedTypes,
           require_all_tuple_t<PromotionScalars, UnPromotedTypes>*>
-inline constexpr promote_scalar_t<PromotionScalars, UnPromotedTypes> promote_scalar(UnPromotedTypes&& x) {
+inline constexpr promote_scalar_t<PromotionScalars, UnPromotedTypes>
+promote_scalar(UnPromotedTypes&& x) {
   return index_apply<std::tuple_size<std::decay_t<UnPromotedTypes>>::value>(
       [&x](auto... Is) {
         return std::make_tuple(
@@ -100,7 +102,6 @@ inline constexpr promote_scalar_t<PromotionScalars, UnPromotedTypes> promote_sca
                 std::declval<PromotionScalars>()))>>(std::get<Is>(x))...);
       });
 }
-
 
 }  // namespace math
 }  // namespace stan
