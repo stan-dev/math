@@ -24,7 +24,8 @@ inline constexpr auto index_apply_impl(F&& f, std::index_sequence<Is...>) {
  */
 template <std::size_t N, class F>
 inline constexpr auto index_apply(F&& f) {
-  return internal::index_apply_impl(std::forward<F>(f), std::make_index_sequence<N>{});
+  return internal::index_apply_impl(std::forward<F>(f),
+                                    std::make_index_sequence<N>{});
 }
 
 }  // namespace math
