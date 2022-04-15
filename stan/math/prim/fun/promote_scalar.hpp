@@ -1,9 +1,11 @@
 #ifndef STAN_MATH_PRIM_FUN_PROMOTE_SCALAR_HPP
 #define STAN_MATH_PRIM_FUN_PROMOTE_SCALAR_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
 #include <vector>
+#include <tuple>
+#include <type_traits>
 
 namespace stan {
 namespace math {
@@ -54,6 +56,10 @@ inline auto promote_scalar(UnPromotedType&& x) {
   return x.template cast<PromotionScalar>();
 }
 
+// Forward decl for iterating over tuples used in std::vector<tuple>
+template <typename PromotionScalars, typename UnPromotedTypes,
+          require_all_tuple_t<PromotionScalars, UnPromotedTypes>* = nullptr>
+inline constexpr promote_scalar_t<PromotionScalars, UnPromotedTypes> promote_scalar(UnPromotedTypes&& x);
 /**
  * Promote the scalar type of an standard vector to the requested type.
  *
@@ -85,8 +91,8 @@ inline auto promote_scalar(UnPromotedType&& x) {
  * @param x input
  */
 template <typename PromotionScalars, typename UnPromotedTypes,
-          require_all_tuple_t<PromotionScalars, UnPromotedTypes>* = nullptr>
-inline constexpr auto promote_scalar(UnPromotedTypes&& x) {
+          require_all_tuple_t<PromotionScalars, UnPromotedTypes>*>
+inline constexpr promote_scalar_t<PromotionScalars, UnPromotedTypes> promote_scalar(UnPromotedTypes&& x) {
   return index_apply<std::tuple_size<std::decay_t<UnPromotedTypes>>::value>(
       [&x](auto... Is) {
         return std::make_tuple(
@@ -94,6 +100,7 @@ inline constexpr auto promote_scalar(UnPromotedTypes&& x) {
                 std::declval<PromotionScalars>()))>>(std::get<Is>(x))...);
       });
 }
+
 
 }  // namespace math
 }  // namespace stan
