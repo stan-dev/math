@@ -81,7 +81,7 @@ ad_tolerances reverse_only_ad_tolerances(double val_tol = 1e-8,
   ad_tolerances tols;
   tols.gradient_val_ = val_tol;
   tols.gradient_grad_ = grad_tol;
-  double inf = std::numeric_limits<double>::infinity();
+  constexpr double inf = std::numeric_limits<double>::infinity();
   tols.gradient_grad_varmat_matvar_ = inf;
   tols.gradient_fvar_val_ = inf;
   tols.gradient_fvar_grad_ = inf;
