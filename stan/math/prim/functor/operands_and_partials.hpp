@@ -11,22 +11,32 @@
 
 namespace stan {
 namespace math {
+  
 template <typename Op1 = double, typename Op2 = double, typename Op3 = double,
           typename Op4 = double, typename Op5 = double,
           typename T_return_type = return_type_t<Op1, Op2, Op3, Op4, Op5>>
 class operands_and_partials;  // Forward declaration
 
 namespace internal {
+
+/**
+ * Base class without implementation.
+ * 
+ * @tparam ViewElt one of `double`, `var`, or `fvar`
+ * @tparam Op type of operand
+ */
 template <typename ViewElt, typename Op, typename = void>
 struct ops_partials_edge;
+
 /**
  * Class representing an edge with an inner type of double. This class
- *  should never be used by the program and only exists so that
- *  developer can write functions using `operands_and_partials` that works for
- *  double, vars, and fvar types.
+ * should never be used by the program and only exists so that
+ * developer can write functions using `operands_and_partials` that works for
+ * double, vars, and fvar types.
+ *
  * @tparam ViewElt One of `double`, `var`, `fvar`.
- * @tparam Op The type of the input operand. It's scalar type
- *  for this specialization must be an `Arithmetic`
+ * @tparam Op The type of the input operand, the scalar type of which must
+ * be `Arithmetic`
  */
 template <typename ViewElt, typename Op>
 struct ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>> {
@@ -35,14 +45,18 @@ struct ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>> {
   using partials_t = empty_broadcast_array<ViewElt, inner_op>;
   /**
    * The `partials_` are always called in `if` statements that will be
-   *  removed by the dead code elimination pass of the compiler. So if we ever
-   *  move up to C++17 these can be made into `constexpr if` and
-   *  this can be deleted.
+   * removed by the dead code elimination pass of the compiler. So if we ever
+   * move up to C++17 these can be made into `constexpr if` and
+   * this can be deleted.
    */
   partials_t partials_;
+
   empty_broadcast_array<partials_t, inner_op> partials_vec_;
+
   static constexpr double operands_{0};
+  
   ops_partials_edge() {}
+
   template <typename T>
   explicit ops_partials_edge(T&& /* op */) noexcept {}
 
@@ -57,11 +71,13 @@ struct ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>> {
    * expression returning zero.
    */
   static constexpr double partial() noexcept { return 0.0; }
+
   /**
    * Return the tangent for the edge. For doubles this is a compile time
    * expression returning zero.
    */
   static constexpr double dx() noexcept { return 0.0; }
+
   /**
    * Return the size of the operand for the edge. For doubles this is a compile
    * time expression returning zero.
@@ -72,9 +88,7 @@ struct ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>> {
   template <typename, typename, typename, typename, typename, typename>
   friend class stan::math::operands_and_partials;
 };
-template <typename ViewElt, typename Op>
-constexpr double
-    ops_partials_edge<ViewElt, Op, require_st_arithmetic<Op>>::operands_;
+
 }  // namespace internal
 
 /** \ingroup type_trait
@@ -136,7 +150,7 @@ class operands_and_partials {
    * Forward mode just calculates the tangent on the spot and returns it in
    * a vanilla fvar.
    *
-   * @param value the return value of the function we are compressing
+   * @param[in] value the return value of the function we are compressing
    * @return the value with its derivative
    */
   inline double build(double value) const noexcept { return value; }

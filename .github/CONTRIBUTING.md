@@ -6,7 +6,7 @@ This is the short version. There's more information on the [wiki](https://github
 
 ## Issues
 
-We reserve [issues](https://github.com/stan-dev/math/issues) for bugs and feature requests that are defined well enough for a developer to tackle. If you have general questions about the Math library, please see the [Discussion](#discussion) section.
+We reserve [issues](https://github.com/stan-dev/math/issues) for bugs and feature requests that are defined well enough for a developer to tackle. If you have general questions about the Math library, please see the [Discussion](discussion) section.
 
 ### Bug Reports
 

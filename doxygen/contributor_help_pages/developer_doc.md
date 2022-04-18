@@ -10,12 +10,12 @@ This wiki is a work in progress. If you have suggestions, please update the wiki
 
 # Contents
 
-- [Overview](#overview)
-- [Licensing](#licensing)
-- [Contributing](#contributing)
-- [Code Review Guidelines](#code-review-guidelines)
-- [Building and Running Tests (makefile documentation)](#building-and-running-tests)
-- [Questions](#questions)
+- [Overview][Overview]
+- [Licensing][Licensing]
+- [Contributing][Contributing]
+- [Code Review Guidelines][Code-Review-Guidelines]
+- [Building and Running Tests (makefile documentation)][Building-and-Running-Tests]
+- [Questions][Questions]
 
 -----------------
 
@@ -47,11 +47,11 @@ Thanks for reading! We love contributions from everyone in the form of good disc
 
 This is the short version. There's more information on the [wiki](https://github.com/stan-dev/math/wiki/Developer-Doc#contributing).
 
-It is the responsibility of the contributor submitting the pull request that the code meets these requirements. We're open-source. Once the code gets into the code base, the community of developers take ownership of it.
+It is the responsibility of the contributor submitting the request that the code meets these requirements. We're open-source. Once the code gets into the code base, the community of developers will manage it.
 
 ## Issues
 
-We reserve [issues](https://github.com/stan-dev/math/issues) for bugs and feature requests that are defined well enough for a developer to tackle. If you have general questions about the Math library, please see the [Discussion](#discussion) section.
+We reserve [issues](https://github.com/stan-dev/math/issues) for bugs and feature requests that are defined well enough for a developer to tackle. If you have general questions about the Math library, please see the [Discussion][Discussion] section.
 
 ### Bug Reports
 
