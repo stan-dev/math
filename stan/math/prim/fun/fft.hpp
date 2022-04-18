@@ -63,7 +63,7 @@ inline Eigen::Matrix<scalar_type_t<V>, -1, 1> fft(const V& x) {
 template <typename V, require_eigen_vector_vt<is_complex, V>* = nullptr>
 inline Eigen::Matrix<scalar_type_t<V>, -1, 1> inv_fft(const V& y) {
   // copy because fft() requires Eigen::Matrix type
-  Eigen::Matrix<scalar_type_t<V>, -1, 1> yv = y; 
+  Eigen::Matrix<scalar_type_t<V>, -1, 1> yv = y;
   if (y.size() <= 1)
     return yv;
   Eigen::FFT<base_type_t<V>> fft;
