@@ -92,14 +92,14 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
   check_ldlt_factor(function, "LDLT_Factor of covariance parameter",
                     ldlt_Sigma);
 
-  auto L_ref = diag_post_multiply(ldlt_Sigma.matrix(), sqrt(ldlt_Sigma.ldlt().vectorD()));
-
+  auto L_ref = diag_post_multiply(ldlt_Sigma.matrix(),
+                                  sqrt(ldlt_Sigma.ldlt().vectorD()));
 
   if (unlikely(size_y == 0)) {
     return T_return(0);
   }
 
- operands_and_partials<T_y_ref, T_mu_ref, T_L_ref> ops_partials(y_ref, mu_ref,
+  operands_and_partials<T_y_ref, T_mu_ref, T_L_ref> ops_partials(y_ref, mu_ref,
                                                                  L_ref);
 
   T_partials_return logp(0);
@@ -134,8 +134,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
         logp -= sum(log(L_val.diagonal())) * size_vec;
       }
     } else {
-      matrix_partials_t inv_L_val
-          = mdivide_left_tri<Eigen::Lower>(L_ref);
+      matrix_partials_t inv_L_val = mdivide_left_tri<Eigen::Lower>(L_ref);
 
       half = (inv_L_val.template triangularView<Eigen::Lower>()
               * y_val_minus_mu_val)
@@ -213,7 +212,8 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
   auto ldlt_Sigma = make_ldlt_factor(Sigma_ref);
   check_ldlt_factor(function, "LDLT_Factor of covariance parameter",
                     ldlt_Sigma);
-   auto L_ref = diag_post_multiply(ldlt_Sigma.matrix(), sqrt(ldlt_Sigma.ldlt().vectorD()));
+  auto L_ref = diag_post_multiply(ldlt_Sigma.matrix(),
+                                  sqrt(ldlt_Sigma.ldlt().vectorD()));
 
   if (unlikely(size_y == 0)) {
     return T_return(0);
@@ -244,8 +244,7 @@ return_type_t<T_y, T_loc, T_covar> multi_normal_lpdf(const T_y& y,
         logp -= sum(log(L_val.diagonal()));
       }
     } else {
-      matrix_partials_t inv_L_val
-          = mdivide_left_tri<Eigen::Lower>(L_ref);
+      matrix_partials_t inv_L_val = mdivide_left_tri<Eigen::Lower>(L_ref);
 
       half = (inv_L_val.template triangularView<Eigen::Lower>()
               * (y_val - mu_val).template cast<T_partials_return>())
