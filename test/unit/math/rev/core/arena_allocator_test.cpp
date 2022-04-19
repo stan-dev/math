@@ -46,7 +46,7 @@ void arena_allocator_test() {
   s.insert(5);
   for (auto it = m.begin(); it != m.end(); ++it) {
     EXPECT_TRUE(
-	stan::math::ChainableStack::instance_->memalloc_.in_stack(&(*it)));
+        stan::math::ChainableStack::instance_->memalloc_.in_stack(&(*it)));
   }
 }
 
