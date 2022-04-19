@@ -2,7 +2,6 @@
 #include <stan/math/opencl/rev.hpp>
 #include <test/unit/util.hpp>
 #include <gtest/gtest.h>
-#include <CL/cl2.hpp>
 #include <algorithm>
 #include <vector>
 

@@ -43,8 +43,8 @@ namespace math {
  * @throw std::invalid_argument if container sizes mismatch.
  */
 template <bool propto, typename T_y, typename T_x, typename T_beta,
-          typename T_cuts, require_eigen_t<T_x>* = nullptr,
-          require_all_eigen_col_vector_t<T_beta, T_cuts>* = nullptr>
+          typename T_cuts, require_matrix_t<T_x>* = nullptr,
+          require_all_col_vector_t<T_beta, T_cuts>* = nullptr>
 return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_lpmf(
     const T_y& y, const T_x& x, const T_beta& beta, const T_cuts& cuts) {
   using Eigen::Array;

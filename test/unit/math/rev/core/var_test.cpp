@@ -684,6 +684,11 @@ TEST_F(AgradRev, var_matrix_array) {
   Eigen::Array<double, -1, -1> B_v = A_v.array().val();
 }
 
+TEST_F(AgradRev, var_matrix_vector_rowvector_assign) {
+  Eigen::RowVectorXd A = Eigen::RowVectorXd(4);
+  stan::math::var_value<Eigen::VectorXd> A_v(A);
+}
+
 TEST_F(AgradRev, a_eq_x) {
   stan::math::var a = 5.0;
   EXPECT_FLOAT_EQ(5.0, a.val());
@@ -893,4 +898,21 @@ TEST_F(AgradRev, grad) {
   EXPECT_FLOAT_EQ(1.0, f.adj());
   EXPECT_FLOAT_EQ(11.0, a.adj());
   EXPECT_FLOAT_EQ(5.0, b.adj());
+}
+
+TEST_F(AgradRev, matrix_compile_time_conversions) {
+  using stan::math::var_value;
+  Eigen::VectorXd colvec_vals = Eigen::VectorXd::Random(5);
+  Eigen::RowVectorXd rowvec_vals = Eigen::VectorXd::Random(5);
+  Eigen::Matrix<double, 1, 1> x11_vals
+      = Eigen::Matrix<double, 1, 1>::Random(1, 1);
+  var_value<Eigen::Matrix<double, -1, 1>> colvec = colvec_vals;
+  var_value<Eigen::Matrix<double, 1, -1>> rowvec = rowvec_vals;
+  colvec = rowvec;
+  EXPECT_MATRIX_FLOAT_EQ(colvec.val().transpose(), rowvec.val());
+  var_value<Eigen::Matrix<double, 1, 1>> x11 = x11_vals;
+  colvec = x11;
+  rowvec = x11;
+  EXPECT_MATRIX_FLOAT_EQ(colvec.val(), rowvec.val());
+  EXPECT_MATRIX_FLOAT_EQ(x11.val(), rowvec.val());
 }

@@ -4,6 +4,20 @@
 #include <vector>
 #include <type_traits>
 
+TEST(mixFun, absBasics) {
+  using stan::math::abs;
+  int a = abs(1);
+
+  double b = abs(-2.3);
+
+  Eigen::Matrix<double, -1, -1> x(2, 3);
+  x << 1, 2, 3, 4, 5, 6;
+  Eigen::Matrix<double, -1, -1> y = abs(x);
+
+  std::vector<int> u{1, 2, 3, 4};
+  std::vector<int> v = abs(u);
+}
+
 TEST(mixFun, abs) {
   auto f = [](const auto& x) {
     using std::abs;

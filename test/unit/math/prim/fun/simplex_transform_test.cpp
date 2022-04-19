@@ -5,18 +5,17 @@
 TEST(prob_transform, simplex_rt0) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  double lp = 0;
   Matrix<double, Dynamic, 1> x(4);
   x << 0.0, 0.0, 0.0, 0.0;
-  Matrix<double, Dynamic, 1> y = stan::math::simplex_constrain(x);
-  EXPECT_FLOAT_EQ(1.0 / 5.0, y(0));
-  EXPECT_FLOAT_EQ(1.0 / 5.0, y(1));
-  EXPECT_FLOAT_EQ(1.0 / 5.0, y(2));
-  EXPECT_FLOAT_EQ(1.0 / 5.0, y(3));
-  EXPECT_FLOAT_EQ(1.0 / 5.0, y(4));
-
-  std::vector<Matrix<double, Dynamic, 1>> xrt = stan::math::simplex_free(
-      std::vector<Matrix<double, Dynamic, 1>>{y, y, y});
-  EXPECT_EQ(x.size() + 1, y.size());
+  std::vector<Matrix<double, Dynamic, 1>> x_vec{x, x, x};
+  std::vector<Matrix<double, Dynamic, 1>> y_vec
+      = stan::math::simplex_constrain<false>(x_vec, lp);
+  for (auto&& y_i : y_vec) {
+    EXPECT_MATRIX_FLOAT_EQ(Eigen::VectorXd::Constant(5, 1.0 / 5.0), y_i);
+  }
+  std::vector<Matrix<double, Dynamic, 1>> xrt = stan::math::simplex_free(y_vec);
+  EXPECT_EQ(x.size() + 1, y_vec[2].size());
   for (auto&& x_i : xrt) {
     EXPECT_EQ(x.size(), x_i.size());
     for (int i = 0; i < x.size(); ++i) {

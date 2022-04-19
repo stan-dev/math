@@ -5,6 +5,10 @@
 template <typename T>
 void instantiate_multiply() {
   using stan::math::multiply;
+  T v_scalar = 1.0;
+  double d_scalar = 1.0;
+  std::complex<double> cd_scalar = 1.0;
+  std::complex<T> cv_scalar = 1.0;
   Eigen::Matrix<double, -1, -1> d_mat(2, 2);
   d_mat << 1, 2, 3, 4;
   Eigen::Matrix<T, -1, -1> v_mat(2, 2);
@@ -13,6 +17,46 @@ void instantiate_multiply() {
   cd_mat << 1, 2, 3, 4;
   Eigen::Matrix<std::complex<T>, -1, -1> cv_mat(2, 2);
   cv_mat << 1, 2, 3, 4;
+
+  auto d_scalar_d_mat = stan::math::eval(multiply(d_scalar, d_mat));
+  auto d_scalar_v_mat = stan::math::eval(multiply(d_scalar, v_mat));
+  auto d_scalar_cd_mat = stan::math::eval(multiply(d_scalar, cd_mat));
+  auto d_scalar_cv_mat = stan::math::eval(multiply(d_scalar, cv_mat));
+
+  auto v_scalar_d_mat = stan::math::eval(multiply(v_scalar, d_mat));
+  auto v_scalar_v_mat = stan::math::eval(multiply(v_scalar, v_mat));
+  auto v_scalar_cd_mat = stan::math::eval(multiply(v_scalar, cd_mat));
+  auto v_scalar_cv_mat = stan::math::eval(multiply(v_scalar, cv_mat));
+
+  auto cd_scalar_d_mat = stan::math::eval(multiply(cd_scalar, d_mat));
+  auto cd_scalar_v_mat = stan::math::eval(multiply(cd_scalar, v_mat));
+  auto cd_scalar_cd_mat = stan::math::eval(multiply(cd_scalar, cd_mat));
+  auto cd_scalar_cv_mat = stan::math::eval(multiply(cd_scalar, cv_mat));
+
+  auto cv_scalar_d_mat = stan::math::eval(multiply(cv_scalar, d_mat));
+  auto cv_scalar_v_mat = stan::math::eval(multiply(cv_scalar, v_mat));
+  auto cv_scalar_cd_mat = stan::math::eval(multiply(cv_scalar, cd_mat));
+  auto cv_scalar_cv_mat = stan::math::eval(multiply(cv_scalar, cv_mat));
+
+  auto d_mat_d_scalar = stan::math::eval(multiply(d_mat, d_scalar));
+  auto v_mat_d_scalar = stan::math::eval(multiply(v_mat, d_scalar));
+  auto cd_mat_d_scalar = stan::math::eval(multiply(cd_mat, d_scalar));
+  auto cv_mat_d_scalar = stan::math::eval(multiply(cv_mat, d_scalar));
+
+  auto d_mat_v_scalar = stan::math::eval(multiply(d_mat, v_scalar));
+  auto v_mat_v_scalar = stan::math::eval(multiply(v_mat, v_scalar));
+  auto cd_mat_v_scalar = stan::math::eval(multiply(cd_mat, v_scalar));
+  auto cv_mat_v_scalar = stan::math::eval(multiply(cv_mat, v_scalar));
+
+  auto d_mat_cd_scalar = stan::math::eval(multiply(d_mat, cd_scalar));
+  auto v_mat_cd_scalar = stan::math::eval(multiply(v_mat, cd_scalar));
+  auto cd_mat_cd_scalar = stan::math::eval(multiply(cd_mat, cd_scalar));
+  auto cv_mat_cd_scalar = stan::math::eval(multiply(cv_mat, cd_scalar));
+
+  auto d_mat_cv_scalar = stan::math::eval(multiply(d_mat, cv_scalar));
+  auto v_mat_cv_scalar = stan::math::eval(multiply(v_mat, cv_scalar));
+  auto cd_mat_cv_scalar = stan::math::eval(multiply(cd_mat, cv_scalar));
+  auto cv_mat_cv_scalar = stan::math::eval(multiply(cv_mat, cv_scalar));
 
   auto d_d_mat = stan::math::eval(multiply(d_mat, d_mat));
   auto d_v_mat = stan::math::eval(multiply(d_mat, v_mat));

@@ -1,21 +1,15 @@
 #include <stan/math.hpp>
-#include <gtest/gtest.h>
 #include <Eigen/Core>
+#include <test/unit/math/rev/util.hpp>
+#include <gtest/gtest.h>
 #include <vector>
 
 template <bool propto, typename T_x, typename T_beta, typename T_cuts>
 stan::return_type_t<T_x, T_beta, T_cuts> ordered_logistic_glm_simple_lpmf(
-    const std::vector<int>& y,
-    const Eigen::Matrix<T_x, Eigen::Dynamic, Eigen::Dynamic>& x,
-    const T_beta& beta, const T_cuts& cuts) {
-  using T_x_beta = stan::return_type_t<T_x, T_beta>;
+    const std::vector<int>& y, T_x&& x, T_beta&& beta, T_cuts&& cuts) {
   using stan::math::as_column_vector_or_scalar;
-
-  auto& beta_col = as_column_vector_or_scalar(beta);
-
-  Eigen::Matrix<T_x_beta, Eigen::Dynamic, 1> location
-      = x.template cast<T_x_beta>() * beta_col.template cast<T_x_beta>();
-
+  auto&& beta_col = as_column_vector_or_scalar(beta);
+  auto location = stan::math::multiply(x, beta_col);
   return stan::math::ordered_logistic_lpmf<propto>(y, location, cuts);
 }
 
@@ -62,7 +56,15 @@ TEST(ProbDistributionsOrderedLogisticGLM,
   }
 }
 
-TEST(ProbDistributionsOrderedLogisticGLM, glm_matches_ordered_logistic_vars) {
+template <class T>
+class ProbDistributionsOrderedLogisticGLM
+    : public stan::math::test::VarMatrixTypedTests<T> {};
+
+TYPED_TEST_SUITE(ProbDistributionsOrderedLogisticGLM,
+                 stan::math::test::VarMatImpls);
+
+TYPED_TEST(ProbDistributionsOrderedLogisticGLM,
+           glm_matches_ordered_logistic_vars) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
@@ -70,20 +72,30 @@ TEST(ProbDistributionsOrderedLogisticGLM, glm_matches_ordered_logistic_vars) {
   using Eigen::VectorXd;
   using stan::math::var;
   using std::vector;
+  using matrix_v = typename TypeParam::matrix_v;
+  using vector_v = typename TypeParam::vector_v;
+  using row_vector_v = typename TypeParam::row_vector_v;
+
   double eps = 1e-13;
   int N = 5;
   int M = 2;
   int C = 3;
   vector<int> y{1, 1, 2, 4, 4};
-  Matrix<var, Dynamic, 1> cuts1(C), cuts2(C);
-  cuts1 << 0.9, 1.1, 7;
-  cuts2 << 0.9, 1.1, 7;
-  Matrix<var, Dynamic, 1> beta1(M), beta2(M);
-  beta1 << 1.1, 0.4;
-  beta2 << 1.1, 0.4;
-  Matrix<var, Dynamic, Dynamic> x1(N, M), x2(N, M);
-  x1 << 1, 2, 3, 4, 5, 6, 7, 8, 9, 0;
-  x2 << 1, 2, 3, 4, 5, 6, 7, 8, 9, 0;
+  Matrix<double, Dynamic, 1> cuts1_val(C), cuts2_val(C);
+  cuts1_val << 0.9, 1.1, 7;
+  cuts2_val << 0.9, 1.1, 7;
+  vector_v cuts1 = cuts1_val;
+  vector_v cuts2 = cuts2_val;
+  Matrix<double, Dynamic, 1> beta1_val(M), beta2_val(M);
+  beta1_val << 1.1, 0.4;
+  beta2_val << 1.1, 0.4;
+  vector_v beta1 = beta1_val;
+  vector_v beta2 = beta2_val;
+  Matrix<double, Dynamic, Dynamic> x1_val(N, M), x2_val(N, M);
+  x1_val << 1, 2, 3, 4, 5, 6, 7, 8, 9, 0;
+  x2_val << 1, 2, 3, 4, 5, 6, 7, 8, 9, 0;
+  matrix_v x1 = x1_val;
+  matrix_v x2 = x2_val;
   var res1 = stan::math::ordered_logistic_glm_lpmf(y, x1, beta1, cuts1);
   var res2 = ordered_logistic_glm_simple_lpmf<false>(y, x2, beta2, cuts2);
   (res1 + res2).grad();
@@ -91,19 +103,19 @@ TEST(ProbDistributionsOrderedLogisticGLM, glm_matches_ordered_logistic_vars) {
   EXPECT_NEAR(res1.val(), res2.val(), eps);
   for (int i = 0; i < M; i++) {
     for (int j = 0; j < N; j++) {
-      EXPECT_NEAR(x1(j, i).adj(), x2(j, i).adj(), eps);
+      EXPECT_NEAR(x1.adj()(j, i), x2.adj()(j, i), eps);
     }
   }
   for (int i = 0; i < M; i++) {
-    EXPECT_NEAR(beta1[i].adj(), beta2[i].adj(), eps);
+    EXPECT_NEAR(beta1.adj()[i], beta2.adj()[i], eps);
   }
   for (int i = 0; i < C; i++) {
-    EXPECT_NEAR(cuts1[i].adj(), cuts2[i].adj(), eps);
+    EXPECT_NEAR(cuts1.adj()[i], cuts2.adj()[i], eps);
   }
 }
 
-TEST(ProbDistributionsOrderedLogisticGLM,
-     glm_matches_ordered_logistic_vars_broadcast_y) {
+TYPED_TEST(ProbDistributionsOrderedLogisticGLM,
+           glm_matches_ordered_logistic_vars_broadcast_y) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
@@ -111,19 +123,29 @@ TEST(ProbDistributionsOrderedLogisticGLM,
   using Eigen::VectorXd;
   using stan::math::var;
   using std::vector;
+  using matrix_v = typename TypeParam::matrix_v;
+  using vector_v = typename TypeParam::vector_v;
+  using row_vector_v = typename TypeParam::row_vector_v;
+
   double eps = 1e-13;
   int N = 5;
   int M = 2;
   int C = 3;
-  Matrix<var, Dynamic, 1> cuts1(C), cuts2(C);
-  cuts1 << 0.9, 1.1, 7;
-  cuts2 << 0.9, 1.1, 7;
-  Matrix<var, Dynamic, 1> beta1(M), beta2(M);
-  beta1 << 1.1, 0.4;
-  beta2 << 1.1, 0.4;
-  Matrix<var, Dynamic, Dynamic> x1(N, M), x2(N, M);
-  x1 << 1, 2, 3, 4, 5, 6, 7, 8, 9, 0;
-  x2 << 1, 2, 3, 4, 5, 6, 7, 8, 9, 0;
+  Matrix<double, Dynamic, 1> cuts1_val(C), cuts2_val(C);
+  cuts1_val << 0.9, 1.1, 7;
+  cuts2_val << 0.9, 1.1, 7;
+  vector_v cuts1 = cuts1_val;
+  vector_v cuts2 = cuts2_val;
+  Matrix<double, Dynamic, 1> beta1_val(M), beta2_val(M);
+  beta1_val << 1.1, 0.4;
+  beta2_val << 1.1, 0.4;
+  vector_v beta1 = beta1_val;
+  vector_v beta2 = beta2_val;
+  Matrix<double, Dynamic, Dynamic> x1_val(N, M), x2_val(N, M);
+  x1_val << 1, 2, 3, 4, 5, 6, 7, 8, 9, 0;
+  x2_val << 1, 2, 3, 4, 5, 6, 7, 8, 9, 0;
+  matrix_v x1 = x1_val;
+  matrix_v x2 = x2_val;
 
   for (int y_scal = 1; y_scal <= C; y_scal++) {
     vector<int> y(N, y_scal);
@@ -136,21 +158,21 @@ TEST(ProbDistributionsOrderedLogisticGLM,
     EXPECT_NEAR(res1.val(), res2.val(), eps);
     for (int i = 0; i < M; i++) {
       for (int j = 0; j < N; j++) {
-        x_adj(j, i) = x2(j, i).adj();
-        EXPECT_NEAR(x1(j, i).adj(), x2(j, i).adj(), eps);
+        x_adj(j, i) = x2.adj()(j, i);
+        EXPECT_NEAR(x1.adj()(j, i), x2.adj()(j, i), eps);
       }
     }
     for (int i = 0; i < M; i++) {
-      EXPECT_NEAR(beta1[i].adj(), beta2[i].adj(), eps);
+      EXPECT_NEAR(beta1.adj()[i], beta2.adj()[i], eps);
     }
     for (int i = 0; i < C; i++) {
-      EXPECT_NEAR(cuts1[i].adj(), cuts2[i].adj(), eps);
+      EXPECT_NEAR(cuts1.adj()[i], cuts2.adj()[i], eps);
     }
   }
 }
 
-TEST(ProbDistributionsOrderedLogisticGLM,
-     glm_matches_ordered_logistic_vars_broadcast_x) {
+TYPED_TEST(ProbDistributionsOrderedLogisticGLM,
+           glm_matches_ordered_logistic_vars_broadcast_x) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
@@ -158,21 +180,29 @@ TEST(ProbDistributionsOrderedLogisticGLM,
   using Eigen::VectorXd;
   using stan::math::var;
   using std::vector;
+  using matrix_v = typename TypeParam::matrix_v;
+  using vector_v = typename TypeParam::vector_v;
+  using row_vector_v = typename TypeParam::row_vector_v;
+
   double eps = 1e-13;
   int N = 5;
   int M = 2;
   int C = 3;
   vector<int> y{1, 1, 2, 4, 4};
-  Matrix<var, Dynamic, 1> cuts1(C), cuts2(C);
-  cuts1 << 0.9, 1.1, 7;
-  cuts2 << 0.9, 1.1, 7;
-  Matrix<var, Dynamic, 1> beta1(M), beta2(M);
-  beta1 << 1.1, 0.4;
-  beta2 << 1.1, 0.4;
+  Matrix<double, Dynamic, 1> cuts1_val(C), cuts2_val(C);
+  cuts1_val << 0.9, 1.1, 7;
+  cuts2_val << 0.9, 1.1, 7;
+  vector_v cuts1 = cuts1_val;
+  vector_v cuts2 = cuts2_val;
+  Matrix<double, Dynamic, 1> beta1_val(M), beta2_val(M);
+  beta1_val << 1.1, 0.4;
+  beta2_val << 1.1, 0.4;
+  vector_v beta1 = beta1_val;
+  vector_v beta2 = beta2_val;
   RowVectorXd x_double(M);
   x_double << 1, 2;
-  Matrix<var, 1, Dynamic> x_row = x_double;
-  Matrix<var, Dynamic, Dynamic> x = x_double.replicate(N, 1);
+  row_vector_v x_row = x_double;
+  matrix_v x = x_double.replicate(N, 1);
 
   var res1 = ordered_logistic_glm_lpmf(y, x_row, beta1, cuts1);
   var res2 = ordered_logistic_glm_lpmf(y, x, beta2, cuts2);
@@ -182,20 +212,20 @@ TEST(ProbDistributionsOrderedLogisticGLM,
   for (int i = 0; i < M; i++) {
     double x_sum = 0;
     for (int j = 0; j < N; j++) {
-      x_sum += x(j, i).adj();
+      x_sum += x.adj()(j, i);
     }
-    EXPECT_NEAR(x_row[i].adj(), x_sum, eps);
+    EXPECT_NEAR(x_row.adj()[i], x_sum, eps);
   }
   for (int i = 0; i < M; i++) {
-    EXPECT_NEAR(beta1[i].adj(), beta2[i].adj(), eps);
+    EXPECT_NEAR(beta1.adj()[i], beta2.adj()[i], eps);
   }
   for (int i = 0; i < C; i++) {
-    EXPECT_NEAR(cuts1[i].adj(), cuts2[i].adj(), eps);
+    EXPECT_NEAR(cuts1.adj()[i], cuts2.adj()[i], eps);
   }
 }
 
-TEST(ProbDistributionsOrderedLogisticGLM,
-     glm_matches_ordered_logistic_single_instance) {
+TYPED_TEST(ProbDistributionsOrderedLogisticGLM,
+           glm_matches_ordered_logistic_single_instance) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
@@ -203,38 +233,48 @@ TEST(ProbDistributionsOrderedLogisticGLM,
   using Eigen::VectorXd;
   using stan::math::var;
   using std::vector;
+  using matrix_v = typename TypeParam::matrix_v;
+  using vector_v = typename TypeParam::vector_v;
+  using row_vector_v = typename TypeParam::row_vector_v;
+
   double eps = 1e-13;
   int N = 1;
   int M = 2;
   int C = 3;
   vector<int> y{1};
-  Matrix<var, Dynamic, 1> cuts1(C), cuts2(C);
-  cuts1 << 0.9, 1.1, 7;
-  cuts2 << 0.9, 1.1, 7;
-  Matrix<var, Dynamic, 1> beta1(M), beta2(M);
-  beta1 << 1.1, 0.4;
-  beta2 << 1.1, 0.4;
-  Matrix<var, Dynamic, Dynamic> x1(N, M), x2(N, M);
-  x1 << 1, 2;
-  x2 << 1, 2;
+  Matrix<double, Dynamic, 1> cuts1_val(C), cuts2_val(C);
+  cuts1_val << 0.9, 1.1, 7;
+  cuts2_val << 0.9, 1.1, 7;
+  vector_v cuts1 = cuts1_val;
+  vector_v cuts2 = cuts2_val;
+  Matrix<double, Dynamic, 1> beta1_val(M), beta2_val(M);
+  beta1_val << 1.1, 0.4;
+  beta2_val << 1.1, 0.4;
+  vector_v beta1 = beta1_val;
+  vector_v beta2 = beta2_val;
+  Matrix<double, Dynamic, Dynamic> x1_val(N, M), x2_val(N, M);
+  x1_val << 1, 2;
+  x2_val << 1, 2;
+  matrix_v x1 = x1_val;
+  matrix_v x2 = x2_val;
   var res1 = ordered_logistic_glm_lpmf(y, x1, beta1, cuts1);
   var res2 = ordered_logistic_glm_simple_lpmf<false>(y, x2, beta2, cuts2);
   (res1 + res2).grad();
 
   EXPECT_NEAR(res1.val(), res2.val(), eps);
   for (int i = 0; i < M; i++) {
-    EXPECT_NEAR(x1(0, i).adj(), x2(0, i).adj(), eps);
+    EXPECT_NEAR(x1.adj()(0, i), x2.adj()(0, i), eps);
   }
   for (int i = 0; i < M; i++) {
-    EXPECT_NEAR(beta1[i].adj(), beta2[i].adj(), eps);
+    EXPECT_NEAR(beta1.adj()[i], beta2.adj()[i], eps);
   }
   for (int i = 0; i < C; i++) {
-    EXPECT_NEAR(cuts1[i].adj(), cuts2[i].adj(), eps);
+    EXPECT_NEAR(cuts1.adj()[i], cuts2.adj()[i], eps);
   }
 }
 
-TEST(ProbDistributionsOrderedLogisticGLM,
-     glm_matches_ordered_logistic_zero_instances) {
+TYPED_TEST(ProbDistributionsOrderedLogisticGLM,
+           glm_matches_ordered_logistic_zero_instances) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
@@ -242,33 +282,43 @@ TEST(ProbDistributionsOrderedLogisticGLM,
   using Eigen::VectorXd;
   using stan::math::var;
   using std::vector;
+  using matrix_v = typename TypeParam::matrix_v;
+  using vector_v = typename TypeParam::vector_v;
+  using row_vector_v = typename TypeParam::row_vector_v;
+
   double eps = 1e-13;
   int N = 0;
   int M = 2;
   int C = 3;
   vector<int> y{};
-  Matrix<var, Dynamic, 1> cuts1(C), cuts2(C);
-  cuts1 << 0.9, 1.1, 7;
-  cuts2 << 0.9, 1.1, 7;
-  Matrix<var, Dynamic, 1> beta1(M), beta2(M);
-  beta1 << 1.1, 0.4;
-  beta2 << 1.1, 0.4;
-  Matrix<var, Dynamic, Dynamic> x1(N, M), x2(N, M);
+  Matrix<double, Dynamic, 1> cuts1_val(C), cuts2_val(C);
+  cuts1_val << 0.9, 1.1, 7;
+  cuts2_val << 0.9, 1.1, 7;
+  vector_v cuts1 = cuts1_val;
+  vector_v cuts2 = cuts2_val;
+  Matrix<double, Dynamic, 1> beta1_val(M), beta2_val(M);
+  beta1_val << 1.1, 0.4;
+  beta2_val << 1.1, 0.4;
+  vector_v beta1 = beta1_val;
+  vector_v beta2 = beta2_val;
+  Matrix<double, Dynamic, Dynamic> x1_val(N, M), x2_val(N, M);
+  matrix_v x1 = x1_val;
+  matrix_v x2 = x2_val;
   var res1 = ordered_logistic_glm_lpmf(y, x1, beta1, cuts1);
   var res2 = ordered_logistic_glm_simple_lpmf<false>(y, x2, beta2, cuts2);
   (res1 + res2).grad();
 
   EXPECT_NEAR(res1.val(), res2.val(), eps);
   for (int i = 0; i < M; i++) {
-    EXPECT_NEAR(beta1[i].adj(), beta2[i].adj(), eps);
+    EXPECT_NEAR(beta1.adj()[i], beta2.adj()[i], eps);
   }
   for (int i = 0; i < C; i++) {
-    EXPECT_NEAR(cuts1[i].adj(), cuts2[i].adj(), eps);
+    EXPECT_NEAR(cuts1.adj()[i], cuts2.adj()[i], eps);
   }
 }
 
-TEST(ProbDistributionsOrderedLogisticGLM,
-     glm_matches_ordered_logistic_zero_attributes) {
+TYPED_TEST(ProbDistributionsOrderedLogisticGLM,
+           glm_matches_ordered_logistic_zero_attributes) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
@@ -276,28 +326,38 @@ TEST(ProbDistributionsOrderedLogisticGLM,
   using Eigen::VectorXd;
   using stan::math::var;
   using std::vector;
+  using matrix_v = typename TypeParam::matrix_v;
+  using vector_v = typename TypeParam::vector_v;
+  using row_vector_v = typename TypeParam::row_vector_v;
+
   double eps = 1e-13;
   int N = 5;
   int M = 0;
   int C = 3;
   vector<int> y{1, 1, 2, 4, 4};
-  Matrix<var, Dynamic, 1> cuts1(C), cuts2(C);
-  cuts1 << 0.9, 1.1, 7;
-  cuts2 << 0.9, 1.1, 7;
-  Matrix<var, Dynamic, 1> beta1(M), beta2(M);
-  Matrix<var, Dynamic, Dynamic> x1(N, M), x2(N, M);
+  Matrix<double, Dynamic, 1> cuts1_val(C), cuts2_val(C);
+  cuts1_val << 0.9, 1.1, 7;
+  cuts2_val << 0.9, 1.1, 7;
+  vector_v cuts1 = cuts1_val;
+  vector_v cuts2 = cuts2_val;
+  Matrix<double, Dynamic, 1> beta1_val(M), beta2_val(M);
+  vector_v beta1 = beta1_val;
+  vector_v beta2 = beta2_val;
+  Matrix<double, Dynamic, Dynamic> x1_val(N, M), x2_val(N, M);
+  matrix_v x1 = x1_val;
+  matrix_v x2 = x2_val;
   var res1 = ordered_logistic_glm_lpmf(y, x1, beta1, cuts1);
   var res2 = ordered_logistic_glm_simple_lpmf<false>(y, x2, beta2, cuts2);
   (res1 + res2).grad();
 
   EXPECT_NEAR(res1.val(), res2.val(), eps);
   for (int i = 0; i < C; i++) {
-    EXPECT_NEAR(cuts1[i].adj(), cuts2[i].adj(), eps);
+    EXPECT_NEAR(cuts1.adj()[i], cuts2.adj()[i], eps);
   }
 }
 
-TEST(ProbDistributionsOrderedLogisticGLM,
-     glm_matches_ordered_logistic_single_class) {
+TYPED_TEST(ProbDistributionsOrderedLogisticGLM,
+           glm_matches_ordered_logistic_single_class) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
@@ -305,20 +365,30 @@ TEST(ProbDistributionsOrderedLogisticGLM,
   using Eigen::VectorXd;
   using stan::math::var;
   using std::vector;
+  using matrix_v = typename TypeParam::matrix_v;
+  using vector_v = typename TypeParam::vector_v;
+  using row_vector_v = typename TypeParam::row_vector_v;
+
   double eps = 1e-13;
   int N = 5;
   int M = 2;
   int C = 1;
   vector<int> y{1, 1, 1, 1, 1};
-  Matrix<var, Dynamic, 1> cuts1(C), cuts2(C);
-  cuts1 << 0.9;
-  cuts2 << 0.9;
-  Matrix<var, Dynamic, 1> beta1(M), beta2(M);
-  beta1 << 1.1, 0.4;
-  beta2 << 1.1, 0.4;
-  Matrix<var, Dynamic, Dynamic> x1(N, M), x2(N, M);
-  x1 << 1, 2, 3, 4, 5, 6, 7, 8, 9, 0;
-  x2 << 1, 2, 3, 4, 5, 6, 7, 8, 9, 0;
+  Matrix<double, Dynamic, 1> cuts1_val(C), cuts2_val(C);
+  cuts1_val << 0.9;
+  cuts2_val << 0.9;
+  vector_v cuts1 = cuts1_val;
+  vector_v cuts2 = cuts2_val;
+  Matrix<double, Dynamic, 1> beta1_val(M), beta2_val(M);
+  beta1_val << 1.1, 0.4;
+  beta2_val << 1.1, 0.4;
+  vector_v beta1 = beta1_val;
+  vector_v beta2 = beta2_val;
+  Matrix<double, Dynamic, Dynamic> x1_val(N, M), x2_val(N, M);
+  x1_val << 1, 2, 3, 4, 5, 6, 7, 8, 9, 0;
+  x2_val << 1, 2, 3, 4, 5, 6, 7, 8, 9, 0;
+  matrix_v x1 = x1_val;
+  matrix_v x2 = x2_val;
   var res1 = ordered_logistic_glm_lpmf(y, x1, beta1, cuts1);
   var res2 = ordered_logistic_glm_simple_lpmf<false>(y, x2, beta2, cuts2);
   (res1 + res2).grad();
@@ -326,17 +396,17 @@ TEST(ProbDistributionsOrderedLogisticGLM,
   EXPECT_NEAR(res1.val(), res2.val(), eps);
   for (int i = 0; i < M; i++) {
     for (int j = 0; j < N; j++) {
-      EXPECT_NEAR(x1(j, i).adj(), x2(j, i).adj(), eps);
+      EXPECT_NEAR(x1.adj()(j, i), x2.adj()(j, i), eps);
     }
   }
   for (int i = 0; i < M; i++) {
-    EXPECT_NEAR(beta1[i].adj(), beta2[i].adj(), eps);
+    EXPECT_NEAR(beta1.adj()[i], beta2.adj()[i], eps);
   }
-  EXPECT_NEAR(cuts1[0].adj(), cuts2[0].adj(), eps);
+  EXPECT_NEAR(cuts1.adj()[0], cuts2.adj()[0], eps);
 }
 
-TEST(ProbDistributionsOrderedLogisticGLM,
-     glm_matches_ordered_logistic_vars_big) {
+TYPED_TEST(ProbDistributionsOrderedLogisticGLM,
+           glm_matches_ordered_logistic_vars_big) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
@@ -344,6 +414,10 @@ TEST(ProbDistributionsOrderedLogisticGLM,
   using Eigen::VectorXd;
   using stan::math::var;
   using std::vector;
+  using matrix_v = typename TypeParam::matrix_v;
+  using vector_v = typename TypeParam::vector_v;
+  using row_vector_v = typename TypeParam::row_vector_v;
+
   double eps = 1e-7;
   int N = 155;
   int M = 15;
@@ -356,11 +430,11 @@ TEST(ProbDistributionsOrderedLogisticGLM,
   for (int i = 1; i < C; i++) {
     cuts_double[i] += cuts_double[i - 1];
   }
-  Matrix<var, Dynamic, 1> cuts1 = cuts_double, cuts2 = cuts_double;
+  vector_v cuts1 = cuts_double, cuts2 = cuts_double;
   VectorXd beta_double = VectorXd::Random(M);
-  Matrix<var, Dynamic, 1> beta1 = beta_double, beta2 = beta_double;
+  vector_v beta1 = beta_double, beta2 = beta_double;
   MatrixXd x_double = MatrixXd::Random(N, M);
-  Matrix<var, Dynamic, Dynamic> x1 = x_double, x2 = x_double;
+  matrix_v x1 = x_double, x2 = x_double;
   var res1 = ordered_logistic_glm_lpmf(y, x1, beta1, cuts1);
   var res2 = ordered_logistic_glm_simple_lpmf<false>(y, x2, beta2, cuts2);
   (res1 + res2).grad();
@@ -370,19 +444,19 @@ TEST(ProbDistributionsOrderedLogisticGLM,
   EXPECT_NEAR(res1.val(), res2.val(), eps);
   for (int i = 0; i < M; i++) {
     for (int j = 0; j < N; j++) {
-      x_adj(j, i) = x2(j, i).adj();
-      EXPECT_NEAR(x1(j, i).adj(), x2(j, i).adj(), eps);
+      x_adj(j, i) = x2.adj()(j, i);
+      EXPECT_NEAR(x1.adj()(j, i), x2.adj()(j, i), eps);
     }
   }
   for (int i = 0; i < M; i++) {
-    EXPECT_NEAR(beta1[i].adj(), beta2[i].adj(), eps);
+    EXPECT_NEAR(beta1.adj()[i], beta2.adj()[i], eps);
   }
   for (int i = 0; i < C; i++) {
-    EXPECT_NEAR(cuts1[i].adj(), cuts2[i].adj(), eps);
+    EXPECT_NEAR(cuts1.adj()[i], cuts2.adj()[i], eps);
   }
 }
 
-TEST(ProbDistributionsOrderedLogisticGLM, glm_interfaces) {
+TYPED_TEST(ProbDistributionsOrderedLogisticGLM, glm_interfaces) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
@@ -390,6 +464,10 @@ TEST(ProbDistributionsOrderedLogisticGLM, glm_interfaces) {
   using Eigen::VectorXd;
   using stan::math::var;
   using std::vector;
+  using matrix_v = typename TypeParam::matrix_v;
+  using vector_v = typename TypeParam::vector_v;
+  using row_vector_v = typename TypeParam::row_vector_v;
+
   int N = 5;
   int M = 2;
   int C = 3;
@@ -397,16 +475,16 @@ TEST(ProbDistributionsOrderedLogisticGLM, glm_interfaces) {
   int y_scal = 1;
   VectorXd cuts_double(C);
   cuts_double << 0.9, 1.1, 7;
-  Matrix<var, Dynamic, 1> cuts_var = cuts_double;
+  vector_v cuts_var = cuts_double;
   VectorXd beta_double(M);
   beta_double << 1.1, 0.4;
-  Matrix<var, Dynamic, 1> beta_var = beta_double;
+  vector_v beta_var = beta_double;
   Matrix<double, Dynamic, Dynamic> x_double(N, M);
   x_double << 1, 2, 3, 4, 5, 6, 7, 8, 9, 0;
-  Matrix<var, Dynamic, Dynamic> x_var = x_double;
+  matrix_v x_var = x_double;
   Matrix<double, 1, Dynamic> x_row_double(M);
   x_row_double << 1, 2;
-  Matrix<var, 1, Dynamic> x_row_var = x_row_double;
+  row_vector_v x_row_var = x_row_double;
 
   EXPECT_NO_THROW(stan::math::ordered_logistic_glm_lpmf(
       y, x_double, beta_double, cuts_double));

@@ -12,7 +12,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/vec_concat.hpp>
 
-#include <CL/cl2.hpp>
+#include <CL/opencl.hpp>
 #include <iostream>
 #include <vector>
 #include <algorithm>

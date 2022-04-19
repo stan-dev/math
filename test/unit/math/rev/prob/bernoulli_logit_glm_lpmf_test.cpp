@@ -1,5 +1,6 @@
 #include <stan/math/rev.hpp>
 #include <stan/math/prim.hpp>
+#include <test/unit/math/rev/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 #include <cmath>
@@ -59,13 +60,22 @@ TEST(ProbDistributionsBernoulliLogitGLM,
   }
 }
 
+template <class T>
+class ProbDistributionsBernoulliLogitGLM
+    : public stan::math::test::VarMatrixTypedTests<T> {};
+
+TYPED_TEST_SUITE(ProbDistributionsBernoulliLogitGLM,
+                 stan::math::test::VarMatImpls);
+
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
-TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_vars) {
+TYPED_TEST(ProbDistributionsBernoulliLogitGLM,
+           glm_matches_bernoulli_logit_vars) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
   using std::vector;
+
   vector<int> y{1, 0, 1};
   Matrix<var, Dynamic, Dynamic> x(3, 2);
   x << -1234, 46, -42, 24, 25, 27;
@@ -92,11 +102,16 @@ TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_vars) {
 
   stan::math::recover_memory();
 
+  using matrix_v = typename TypeParam::matrix_v;
+  using vector_v = typename TypeParam::vector_v;
+  using row_vector_v = typename TypeParam::row_vector_v;
   vector<int> y2{1, 0, 1};
-  Matrix<var, Dynamic, Dynamic> x2(3, 2);
-  x2 << -1234, 46, -42, 24, 25, 27;
-  Matrix<var, Dynamic, 1> beta2(2, 1);
-  beta2 << 0.3, 2000;
+  Matrix<double, Dynamic, Dynamic> x2_val(3, 2);
+  x2_val << -1234, 46, -42, 24, 25, 27;
+  matrix_v x2 = x2_val;
+  Matrix<double, Dynamic, 1> beta2_val(2, 1);
+  beta2_val << 0.3, 2000;
+  vector_v beta2 = beta2_val;
   var alpha2 = 0.3;
 
   var lp2 = stan::math::bernoulli_logit_glm_lpmf(y2, x2, alpha2, beta2);
@@ -105,27 +120,30 @@ TEST(ProbDistributionsBernoulliLogitGLM, glm_matches_bernoulli_logit_vars) {
   EXPECT_FLOAT_EQ(lp_val, lp2.val());
   EXPECT_FLOAT_EQ(alpha_adj, alpha2.adj());
   for (size_t i = 0; i < 2; i++) {
-    EXPECT_FLOAT_EQ(beta_adj[i], beta2[i].adj());
+    EXPECT_FLOAT_EQ(beta_adj[i], beta2.adj()[i]);
     for (size_t j = 0; j < 3; j++) {
-      EXPECT_FLOAT_EQ(x_adj(j, i), x2(j, i).adj());
+      EXPECT_FLOAT_EQ(x_adj(j, i), x2.adj()(j, i));
     }
   }
 }
 
-TEST(ProbDistributionsBernoulliLogitGLM, broadcast_x) {
+TYPED_TEST(ProbDistributionsBernoulliLogitGLM, broadcast_x) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
   using std::vector;
+  using matrix_v = typename TypeParam::matrix_v;
+  using vector_v = typename TypeParam::vector_v;
+  using row_vector_v = typename TypeParam::row_vector_v;
   vector<int> y{1, 0, 1};
   Matrix<double, 1, Dynamic> x(1, 2);
   x << -12, 46;
-  Matrix<var, 1, Dynamic> x1 = x;
-  Matrix<var, Dynamic, Dynamic> x_mat = x.replicate(3, 1);
+  row_vector_v x1 = x;
+  matrix_v x_mat = x.replicate(3, 1);
   Matrix<double, Dynamic, 1> beta(2, 1);
   beta << 0.3, 2;
-  Matrix<var, Dynamic, 1> beta1 = beta;
-  Matrix<var, Dynamic, 1> beta2 = beta;
+  vector_v beta1 = beta;
+  vector_v beta2 = beta;
   var alpha1 = 0.3;
   var alpha2 = 0.3;
 
@@ -137,27 +155,30 @@ TEST(ProbDistributionsBernoulliLogitGLM, broadcast_x) {
   (lp1 + lp2).grad();
 
   for (int i = 0; i < 2; i++) {
-    EXPECT_DOUBLE_EQ(x1[i].adj(), x_mat.col(i).adj().sum());
-    EXPECT_DOUBLE_EQ(beta1[i].adj(), beta2[i].adj());
+    EXPECT_DOUBLE_EQ(x1.adj()[i], x_mat.col(i).adj().sum());
+    EXPECT_DOUBLE_EQ(beta1.adj()[i], beta2.adj()[i]);
   }
   EXPECT_DOUBLE_EQ(alpha1.adj(), alpha2.adj());
 }
 
-TEST(ProbDistributionsBernoulliLogitGLM, broadcast_y) {
+TYPED_TEST(ProbDistributionsBernoulliLogitGLM, broadcast_y) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
   using std::vector;
+  using matrix_v = typename TypeParam::matrix_v;
+  using vector_v = typename TypeParam::vector_v;
+  using row_vector_v = typename TypeParam::row_vector_v;
   int y = 1;
   Matrix<int, Dynamic, 1> y_vec = Matrix<int, Dynamic, 1>::Constant(3, 1, y);
   Matrix<double, Dynamic, Dynamic> x(3, 2);
   x << -12, 46, -42, 24, 25, 27;
-  Matrix<var, Dynamic, Dynamic> x1 = x;
-  Matrix<var, Dynamic, Dynamic> x2 = x;
+  matrix_v x1 = x;
+  matrix_v x2 = x;
   Matrix<double, Dynamic, 1> beta(2, 1);
   beta << 0.3, 2;
-  Matrix<var, Dynamic, 1> beta1 = beta;
-  Matrix<var, Dynamic, 1> beta2 = beta;
+  vector_v beta1 = beta;
+  vector_v beta2 = beta;
   var alpha1 = 0.3;
   var alpha2 = 0.3;
 
@@ -170,19 +191,22 @@ TEST(ProbDistributionsBernoulliLogitGLM, broadcast_y) {
 
   for (int i = 0; i < 2; i++) {
     for (int j = 0; j < 2; j++) {
-      EXPECT_DOUBLE_EQ(x1(j, i).adj(), x2(j, i).adj());
+      EXPECT_DOUBLE_EQ(x1.adj()(j, i), x2.adj()(j, i));
     }
-    EXPECT_DOUBLE_EQ(beta1[i].adj(), beta2[i].adj());
+    EXPECT_DOUBLE_EQ(beta1.adj()[i], beta2.adj()[i]);
   }
   EXPECT_DOUBLE_EQ(alpha1.adj(), alpha2.adj());
 }
 
-TEST(ProbDistributionsBernoulliLogitGLM,
-     glm_matches_bernoulli_logit_vars_zero_instances) {
+TYPED_TEST(ProbDistributionsBernoulliLogitGLM,
+           glm_matches_bernoulli_logit_vars_zero_instances) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
   using std::vector;
+  using matrix_v = typename TypeParam::matrix_v;
+  using vector_v = typename TypeParam::vector_v;
+  using row_vector_v = typename TypeParam::row_vector_v;
   vector<int> y{};
   Matrix<var, Dynamic, Dynamic> x(0, 2);
   Matrix<var, Dynamic, 1> beta(2, 1);
@@ -203,9 +227,11 @@ TEST(ProbDistributionsBernoulliLogitGLM,
   stan::math::recover_memory();
 
   vector<int> y2{};
-  Matrix<var, Dynamic, Dynamic> x2(0, 2);
-  Matrix<var, Dynamic, 1> beta2(2, 1);
-  beta2 << 0.3, 2000;
+  Matrix<double, Dynamic, Dynamic> x2_val(0, 2);
+  matrix_v x2 = x2_val;
+  Matrix<double, Dynamic, 1> beta2_val(2, 1);
+  beta2_val << 0.3, 2000;
+  vector_v beta2 = beta2_val;
   var alpha2 = 0.3;
 
   var lp2 = stan::math::bernoulli_logit_glm_lpmf(y2, x2, alpha2, beta2);
@@ -214,16 +240,20 @@ TEST(ProbDistributionsBernoulliLogitGLM,
   EXPECT_FLOAT_EQ(lp_val, lp2.val());
   EXPECT_FLOAT_EQ(alpha_adj, alpha2.adj());
   for (size_t i = 0; i < 2; i++) {
-    EXPECT_FLOAT_EQ(beta_adj[i], beta2[i].adj());
+    EXPECT_FLOAT_EQ(beta_adj[i], beta2.adj()[i]);
   }
 }
 
-TEST(ProbDistributionsBernoulliLogitGLM,
-     glm_matches_bernoulli_logit_vars_zero_attributes) {
+TYPED_TEST(ProbDistributionsBernoulliLogitGLM,
+           glm_matches_bernoulli_logit_vars_zero_attributes) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
   using std::vector;
+  using matrix_v = typename TypeParam::matrix_v;
+  using vector_v = typename TypeParam::vector_v;
+  using row_vector_v = typename TypeParam::row_vector_v;
+
   vector<int> y{1, 0, 1};
   Matrix<var, Dynamic, Dynamic> x(3, 0);
   Matrix<var, Dynamic, 1> beta(0, 1);
@@ -241,8 +271,10 @@ TEST(ProbDistributionsBernoulliLogitGLM,
   stan::math::recover_memory();
 
   vector<int> y2{1, 0, 1};
-  Matrix<var, Dynamic, Dynamic> x2(3, 0);
-  Matrix<var, Dynamic, 1> beta2(0, 1);
+  Matrix<double, Dynamic, Dynamic> x2_val(3, 0);
+  matrix_v x2 = x2_val;
+  Matrix<double, Dynamic, 1> beta2_val(0, 1);
+  vector_v beta2 = beta2_val;
   var alpha2 = 0.3;
 
   var lp2 = stan::math::bernoulli_logit_glm_lpmf(y2, x2, alpha2, beta2);
@@ -254,12 +286,15 @@ TEST(ProbDistributionsBernoulliLogitGLM,
 
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives.
-TEST(ProbDistributionsBernoulliLogitGLM,
-     glm_matches_bernoulli_logit_vars_rand) {
+TYPED_TEST(ProbDistributionsBernoulliLogitGLM,
+           glm_matches_bernoulli_logit_vars_rand) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
   using std::vector;
+  using matrix_v = typename TypeParam::matrix_v;
+  using vector_v = typename TypeParam::vector_v;
+  using row_vector_v = typename TypeParam::row_vector_v;
   for (size_t ii = 0; ii < 42; ii++) {
     vector<int> y(3);
     for (size_t i = 0; i < 3; i++) {
@@ -295,8 +330,8 @@ TEST(ProbDistributionsBernoulliLogitGLM,
 
     stan::math::recover_memory();
 
-    Matrix<var, Dynamic, 1> beta2 = betareal;
-    Matrix<var, Dynamic, Dynamic> x2 = xreal;
+    vector_v beta2 = betareal;
+    matrix_v x2 = xreal;
     var alpha2 = alphareal[0];
 
     var lp2 = stan::math::bernoulli_logit_glm_lpmf(y, x2, alpha2, beta2);
@@ -305,9 +340,9 @@ TEST(ProbDistributionsBernoulliLogitGLM,
     EXPECT_FLOAT_EQ(lp_val, lp2.val());
     EXPECT_FLOAT_EQ(alpha_adj, alpha2.adj());
     for (size_t i = 0; i < 2; i++) {
-      EXPECT_FLOAT_EQ(beta_adj[i], beta2[i].adj());
+      EXPECT_FLOAT_EQ(beta_adj[i], beta2.adj()[i]);
       for (size_t j = 0; j < 3; j++) {
-        EXPECT_FLOAT_EQ(x_adj(j, i), x2(j, i).adj());
+        EXPECT_FLOAT_EQ(x_adj(j, i), x2.adj()(j, i));
       }
     }
   }
@@ -315,12 +350,16 @@ TEST(ProbDistributionsBernoulliLogitGLM,
 
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives, in case beta is a scalar.
-TEST(ProbDistributionsBernoulliLogitGLM,
-     glm_matches_bernoulli_logit_vars_rand_scal_beta) {
+TYPED_TEST(ProbDistributionsBernoulliLogitGLM,
+           glm_matches_bernoulli_logit_vars_rand_scal_beta) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
   using std::vector;
+  using matrix_v = typename TypeParam::matrix_v;
+  using vector_v = typename TypeParam::vector_v;
+  using row_vector_v = typename TypeParam::row_vector_v;
+
   for (size_t ii = 0; ii < 42; ii++) {
     vector<int> y(3);
     for (size_t i = 0; i < 3; i++) {
@@ -350,7 +389,7 @@ TEST(ProbDistributionsBernoulliLogitGLM,
     stan::math::recover_memory();
 
     var beta2 = betareal;
-    Matrix<var, Dynamic, Dynamic> x2 = xreal;
+    matrix_v x2 = xreal;
     var alpha2 = alphareal[0];
     var lp2 = stan::math::bernoulli_logit_glm_lpmf(y, x2, alpha2, beta2);
     lp2.grad();
@@ -358,19 +397,23 @@ TEST(ProbDistributionsBernoulliLogitGLM,
     EXPECT_FLOAT_EQ(beta_adj, beta2.adj());
     EXPECT_FLOAT_EQ(alpha_adj, alpha2.adj());
     for (size_t j = 0; j < 3; j++) {
-      EXPECT_FLOAT_EQ(x_adj(j, 0), x2(j, 0).adj());
+      EXPECT_FLOAT_EQ(x_adj(j, 0), x2.adj()(j, 0));
     }
   }
 }
 
 //  We check that the gradients of the new regression match those of one built
 //  from existing primitives, for the GLM with varying intercept.
-TEST(ProbDistributionsBernoulliLogitGLM,
-     glm_matches_bernoulli_varying_intercept) {
+TYPED_TEST(ProbDistributionsBernoulliLogitGLM,
+           glm_matches_bernoulli_varying_intercept) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
   using std::vector;
+  using matrix_v = typename TypeParam::matrix_v;
+  using vector_v = typename TypeParam::vector_v;
+  using row_vector_v = typename TypeParam::row_vector_v;
+
   for (size_t ii = 0; ii < 42; ii++) {
     vector<int> y(3);
     for (size_t i = 0; i < 3; i++) {
@@ -408,33 +451,37 @@ TEST(ProbDistributionsBernoulliLogitGLM,
 
     stan::math::recover_memory();
 
-    Matrix<var, Dynamic, 1> beta2 = betareal;
-    Matrix<var, Dynamic, Dynamic> x2 = xreal;
-    Matrix<var, Dynamic, 1> alpha2 = alphareal;
+    vector_v beta2 = betareal;
+    matrix_v x2 = xreal;
+    vector_v alpha2 = alphareal;
 
     var lp2 = stan::math::bernoulli_logit_glm_lpmf(y, x2, alpha2, beta2);
     lp2.grad();
 
     EXPECT_FLOAT_EQ(lp_val, lp2.val());
     for (size_t i = 0; i < 2; i++) {
-      EXPECT_FLOAT_EQ(beta_adj[i], beta2[i].adj());
+      EXPECT_FLOAT_EQ(beta_adj[i], beta2.adj()[i]);
       for (size_t j = 0; j < 3; j++) {
-        EXPECT_FLOAT_EQ(x_adj(j, i), x2(j, i).adj());
+        EXPECT_FLOAT_EQ(x_adj(j, i), x2.adj()(j, i));
       }
     }
     for (size_t j = 0; j < 3; j++) {
-      EXPECT_FLOAT_EQ(alpha_adj[j], alpha2[j].adj());
+      EXPECT_FLOAT_EQ(alpha_adj[j], alpha2.adj()[j]);
     }
   }
 }
 
 //  We check that we can instantiate all different interface types.
-TEST(ProbDistributionsBernoulliLogitGLM,
-     glm_matches_bernoulli_logit_interface_types) {
+TYPED_TEST(ProbDistributionsBernoulliLogitGLM,
+           glm_matches_bernoulli_logit_interface_types) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
   using std::vector;
+  using matrix_v = typename TypeParam::matrix_v;
+  using vector_v = typename TypeParam::vector_v;
+  using row_vector_v = typename TypeParam::row_vector_v;
+
   double value = 0;
   double value2 = 0;
 
@@ -458,15 +505,18 @@ TEST(ProbDistributionsBernoulliLogitGLM,
 
   var v = 1.0;
   std::vector<var> vv = {{1.0, 2.0}};
-  Eigen::Matrix<var, -1, 1> evv(2);
-  Eigen::Matrix<var, 1, -1> rvv(2);
-  Eigen::Matrix<var, -1, -1> m1v(1, 1);
-  m1v << 1.0;
-  Eigen::Matrix<var, -1, -1> mv(2, 2);
-  evv << 1.0, 2.0;
-  rvv << 1.0, 2.0;
-  mv << 1.0, 2.0, 3.0, 4.0;
-
+  Eigen::Matrix<double, -1, 1> evv_val(2);
+  evv_val << 1.0, 2.0;
+  vector_v evv = evv_val;
+  Eigen::Matrix<double, 1, -1> rvv_val(2);
+  rvv_val << 1.0, 2.0;
+  row_vector_v rvv = rvv_val;
+  Eigen::Matrix<double, -1, -1> m1v_val(1, 1);
+  m1v_val << 1.0;
+  matrix_v m1v = m1v_val;
+  Eigen::Matrix<double, -1, -1> mv_val(2, 2);
+  mv_val << 1.0, 2.0, 3.0, 4.0;
+  matrix_v mv = mv_val;
   value2 += stan::math::bernoulli_logit_glm_lpmf(i, m1v, v, v).val();
   value2 += stan::math::bernoulli_logit_glm_lpmf(vi, mv, vv, vv).val();
   value2 += stan::math::bernoulli_logit_glm_lpmf(vi, mv, evv, evv).val();
@@ -476,8 +526,8 @@ TEST(ProbDistributionsBernoulliLogitGLM,
 }
 
 //  We check that the right errors are thrown.
-TEST(ProbDistributionsBernoulliLogitGLM,
-     glm_matches_bernoulli_logit_error_checking) {
+TYPED_TEST(ProbDistributionsBernoulliLogitGLM,
+           glm_matches_bernoulli_logit_error_checking) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::var;
