@@ -13,59 +13,6 @@ namespace stan {
 namespace math {
 
 /**
- * A functor that allows us to treat either x or y as
- * the independent variable. If x_is_iv = true, than the
- * Jacobian is computed w.r.t x, else it is computed
- * w.r.t y.
- *
- * @tparam F type for algebraic system functor
- * @tparam T0 type for unknowns
- * @tparam T1 type for auxiliary parameters
- * @tparam x_is_iv true if x is the independent variable
- */
-template <typename F, typename T0, typename T1, bool x_is_iv>
-struct system_functor {
-  /** algebraic system functor */
-  F f_;
-  /** unknowns */
-  Eigen::Matrix<T0, Eigen::Dynamic, 1> x_;
-  /** auxiliary parameters */
-  Eigen::Matrix<T1, Eigen::Dynamic, 1> y_;
-  /** real data */
-  std::vector<double> dat_;
-  /** integer data */
-  std::vector<int> dat_int_;
-  /** stream message */
-  std::ostream* msgs_;
-
-  system_functor() {}
-
-  system_functor(const F& f, const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
-                 const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
-                 const std::vector<double>& dat,
-                 const std::vector<int>& dat_int, std::ostream* msgs)
-      : f_(f), x_(x), y_(y), dat_(dat), dat_int_(dat_int), msgs_(msgs) {}
-
-  /**
-   * An operator that takes in an independent variable. The
-   * independent variable is either passed as the unknown x,
-   * or the auxiliary parameter y. The x_is_iv template parameter
-   * allows us to determine whether the jacobian is computed
-   * with respect to x or y.
-   * @tparam T the scalar type of the independent variable
-   */
-  template <typename T>
-  inline Eigen::Matrix<T, Eigen::Dynamic, 1> operator()(
-      const Eigen::Matrix<T, Eigen::Dynamic, 1>& iv) const {
-    if (x_is_iv) {
-      return f_(iv, y_, dat_, dat_int_, msgs_);
-    } else {
-      return f_(x_, iv, dat_, dat_int_, msgs_);
-    }
-  }
-};
-
-/**
  * A structure which gets passed to Eigen's dogleg
  * algebraic solver.
  *
@@ -86,10 +33,7 @@ struct nlo_functor {
 };
 
 /**
- * A functor with the required operators to call Eigen's
- * algebraic solver.
- * It is also used in the vari classes of the algebraic solvers
- * to compute the requisite sensitivities.
+ * A functor with the required operators to call Eigen's algebraic solver.
  *
  * @tparam S wrapper around the algebraic system functor. Has the
  * signature required for jacobian (i.e takes only one argument).
@@ -97,26 +41,20 @@ struct nlo_functor {
  * @tparam T0 scalar type for unknowns
  * @tparam T1 scalar type for auxiliary parameters
  */
-template <typename S, typename F, typename T0, typename T1>
+template <typename S>
 struct hybrj_functor_solver : nlo_functor<double> {
   /** Wrapper around algebraic system */
   S fs_;
-  /** number of unknowns */
-  int x_size_;
+
   /** Jacobian of algebraic function wrt unknowns */
   Eigen::MatrixXd J_;
 
-  hybrj_functor_solver(const S& fs, const F& f,
-                       const Eigen::Matrix<T0, Eigen::Dynamic, 1>& x,
-                       const Eigen::Matrix<T1, Eigen::Dynamic, 1>& y,
-                       const std::vector<double>& dat,
-                       const std::vector<int>& dat_int, std::ostream* msgs)
-      : fs_(f, x, y, dat, dat_int, msgs), x_size_(x.size()) {}
+  explicit hybrj_functor_solver(const S& fs) : fs_(fs) {}
 
   /**
    * Computes the value the algebraic function, f, when pluging in the
-   * independent variables, and the Jacobian w.r.t unknowns. Required
-   * by Eigen.
+   * independent variables, and the Jacobian w.r.t unknowns.
+   *
    * @param [in] iv independent variables
    * @param [in, out] fvec value of algebraic function when plugging in iv.
    */
@@ -126,8 +64,8 @@ struct hybrj_functor_solver : nlo_functor<double> {
   }
 
   /**
-   * Assign the Jacobian to fjac (signature required by Eigen). Required
-   * by Eigen.
+   * Assign the Jacobian to fjac.
+   *
    * @param [in] iv independent variables.
    * @param [in, out] fjac matrix container for jacobian
    */
@@ -157,6 +95,8 @@ struct hybrj_functor_solver : nlo_functor<double> {
   Eigen::VectorXd get_value(const Eigen::VectorXd& iv) const { return fs_(iv); }
 };
 
+// TODO(jgaeb): Remove this when the chain method of the fixed point solver is
+// updated.
 template <typename T1, typename T2>
 void algebra_solver_check(const Eigen::Matrix<T1, Eigen::Dynamic, 1>& x,
                           const Eigen::Matrix<T2, Eigen::Dynamic, 1> y,

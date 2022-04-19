@@ -7,23 +7,24 @@ TEST(ProbTransform, choleskyFactor) {
   using Eigen::Matrix;
   using stan::math::cholesky_factor_constrain;
   using stan::math::cholesky_factor_free;
-
+  double lp = 0;
   Matrix<double, Dynamic, 1> x(3);
   x << 1, 2, 3;
+  std::vector<Matrix<double, Dynamic, 1>> x_vec = {x, x, x};
+  std::vector<Matrix<double, Dynamic, Dynamic>> y_vec
+      = cholesky_factor_constrain<false>(x_vec, 2, 2, lp);
 
-  Matrix<double, Dynamic, Dynamic> y = cholesky_factor_constrain(x, 2, 2);
+  std::vector<Matrix<double, Dynamic, 1>> x2_vec = cholesky_factor_free(y_vec);
 
-  Matrix<double, Dynamic, 1> x2 = cholesky_factor_free(y);
+  for (int i = 0; i < x2_vec.size(); ++i) {
+    EXPECT_EQ(x2_vec[i].size(), x.size());
+    EXPECT_EQ(x2_vec[i].rows(), x.rows());
+    EXPECT_EQ(x2_vec[i].cols(), x.cols());
+    for (int j = 0; j < 3; ++j)
+      EXPECT_FLOAT_EQ(x(j), x2_vec[i](j));
+  }
 
-  EXPECT_EQ(x2.size(), x.size());
-  EXPECT_EQ(x2.rows(), x.rows());
-  EXPECT_EQ(x2.cols(), x.cols());
-  for (int i = 0; i < 3; ++i)
-    EXPECT_FLOAT_EQ(x(i), x2(i));
-
-  std::vector<Matrix<double, Dynamic, 1>> x_vec
-      = stan::math::cholesky_factor_free(
-          std::vector<Matrix<double, Dynamic, Dynamic>>{y, y, y});
+  x_vec = stan::math::cholesky_factor_free(y_vec);
   for (int i = 0; i < x_vec.size(); ++i) {
     EXPECT_EQ(x_vec[i].size(), x.size());
     EXPECT_EQ(x_vec[i].rows(), x.rows());

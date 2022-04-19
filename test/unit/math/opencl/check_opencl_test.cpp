@@ -1,6 +1,6 @@
 #ifdef STAN_OPENCL
 #include <stan/math/opencl/err.hpp>
-#include <CL/cl2.hpp>
+#include <CL/opencl.hpp>
 #include <gtest/gtest.h>
 
 TEST(ErrorHandlingOpenCL, checkThrows) {

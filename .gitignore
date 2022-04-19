@@ -22,13 +22,14 @@
 /test/dummy.cpp
 /test/**/*.so
 /test/expressions/*.cpp
-
+/test/varmat-compatibility/*
+# From varmat compatability testing
+results.json
 # benchmarks
 /benchmarks/*
 !/benchmarks/*.*
 benchmarks/*.cpp
 benchmarks/*.csv
-
 # other binary
 *.o
 *.o-*
