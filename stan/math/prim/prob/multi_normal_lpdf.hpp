@@ -8,8 +8,8 @@
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/max_size_mvt.hpp>
-#include <stan/math/prim/fun/mdivide_left_ldlt.hpp>
-#include <stan/math/prim/fun/mdivide_right_ldlt.hpp>
+#include <stan/math/prim/fun/mdivide_left_tri.hpp>
+#include <stan/math/prim/fun/mdivide_right_tri.hpp>
 #include <stan/math/prim/fun/vector_seq_view.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/fun/diag_post_multiply.hpp>
