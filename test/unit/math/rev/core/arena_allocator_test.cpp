@@ -73,7 +73,9 @@ void arena_allocator_test() {
         stan::math::ChainableStack::instance_->memalloc_.in_stack(&(*it)));
   }
 
-  std::unordered_set<int, std::hash<int>, std::equal_to<int>, stan::math::arena_allocator<int>> u_s;
+  std::unordered_set<int, std::hash<int>, std::equal_to<int>,
+                     stan::math::arena_allocator<int>>
+      u_s;
   u_s.insert(3);
   u_s.insert(5);
   for (auto it = u_s.begin(); it != u_s.end(); ++it) {
@@ -81,7 +83,9 @@ void arena_allocator_test() {
         stan::math::ChainableStack::instance_->memalloc_.in_stack(&(*it)));
   }
 
-  std::unordered_multiset<int, std::hash<int>, std::equal_to<int>, stan::math::arena_allocator<int>> u_ms;
+  std::unordered_multiset<int, std::hash<int>, std::equal_to<int>,
+                          stan::math::arena_allocator<int>>
+      u_ms;
   u_ms.insert(3);
   u_ms.insert(5);
   u_ms.insert(5);
@@ -91,7 +95,7 @@ void arena_allocator_test() {
   }
 
   std::map<int, int, std::less<int>,
-                     stan::math::arena_allocator<std::pair<const int, int>>>
+           stan::math::arena_allocator<std::pair<const int, int>>>
       m;
   m.insert(std::make_pair(3, 5));
   m.insert(std::make_pair(4, 6));
@@ -101,7 +105,7 @@ void arena_allocator_test() {
   }
 
   std::multimap<int, int, std::less<int>,
-                     stan::math::arena_allocator<std::pair<const int, int>>>
+                stan::math::arena_allocator<std::pair<const int, int>>>
       mm;
   mm.insert(std::make_pair(3, 5));
   mm.insert(std::make_pair(4, 6));
@@ -121,8 +125,9 @@ void arena_allocator_test() {
         stan::math::ChainableStack::instance_->memalloc_.in_stack(&(*it)));
   }
 
-  std::unordered_multimap<int, int, std::hash<int>, std::equal_to<int>,
-                     stan::math::arena_allocator<std::pair<const int, int>>>
+  std::unordered_multimap<
+      int, int, std::hash<int>, std::equal_to<int>,
+      stan::math::arena_allocator<std::pair<const int, int>>>
       u_mm;
   u_mm.insert(std::make_pair(3, 5));
   u_mm.insert(std::make_pair(4, 6));
