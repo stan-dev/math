@@ -51,7 +51,7 @@ inline auto laplace_marginal_tol_poisson_log_lpmf(
 
 template <typename CovarFun, typename YeVec, typename ThetaVec, typename... Args,
  require_all_eigen_vector_t<YeVec, ThetaVec>* = nullptr>
-inline auto laplace_marginal_tol_poisson_log_lpmf(
+inline auto laplace_marginal_tol_poisson_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     const YeVec& ye,
     double tolerance,
@@ -98,7 +98,7 @@ inline auto laplace_marginal_poisson_log_lpmf(
 
 template <typename CovarFun, typename YeVec, typename ThetaVec, typename... Args,
   require_all_eigen_vector_t<YeVec, ThetaVec>* = nullptr>
-inline auto laplace_marginal_poisson_log_lpmf(
+inline auto laplace_marginal_poisson_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     const YeVec& ye, const ThetaVec& theta_0, CovarFun&& covariance_function,
     std::ostream* msgs, Args&&... args) {

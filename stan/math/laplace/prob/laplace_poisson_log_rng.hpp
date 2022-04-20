@@ -47,7 +47,7 @@ template <typename CovarFun, typename ThetaMatrix, class RNG,
           typename TrainTuple, typename PredTuple, typename... Args,
           require_eigen_t<ThetaMatrix>* = nullptr>
 inline Eigen::VectorXd  // CHECK -- right return type
-laplace_marginal_tol_poisson_log_rng(
+laplace_marginal_tol_poisson_2_log_rng(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     const Eigen::VectorXd& ye,
     const double tolerance, const long int max_num_steps,
@@ -100,7 +100,7 @@ inline Eigen::VectorXd laplace_marginal_poisson_log_rng(
 template <typename CovarFun, typename ThetaMatrix, class RNG,
           typename TrainTuple, typename PredTuple, typename... Args, require_eigen_t<ThetaMatrix>* = nullptr>
 inline Eigen::VectorXd  // CHECK -- right return type
-laplace_marginal_poisson_log_rng(
+laplace_marginal_poisson_2_log_rng(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     const Eigen::VectorXd& ye, const ThetaMatrix& theta_0,
     CovarFun&& covariance_function,
