@@ -85,8 +85,8 @@ void expect_fft2(const Eigen::MatrixXcd& x) {
   for (int n = 0; n < x.cols(); ++n) {
     for (int m = 0; m < x.rows(); ++m) {
       auto g = [m, n](const auto& x) {
-	using stan::math::fft2;
-	return fft2(x)(m, n);
+        using stan::math::fft2;
+        return fft2(x)(m, n);
       };
       stan::test::expect_ad(tols, g, x);
     }
@@ -133,8 +133,8 @@ void expect_inv_fft2(const Eigen::MatrixXcd& x) {
   for (int n = 0; n < x.cols(); ++n) {
     for (int m = 0; m < x.rows(); ++m) {
       auto g = [m, n](const auto& x) {
-	using stan::math::inv_fft2;
-	return inv_fft2(x)(m, n);
+        using stan::math::inv_fft2;
+        return inv_fft2(x)(m, n);
       };
       stan::test::expect_ad(tols, g, x);
     }
