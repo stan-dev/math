@@ -2,19 +2,17 @@
 
 void expect_fft(const Eigen::VectorXcd& x) {
   stan::test::ad_tolerances tols = stan::test::reverse_only_ad_tolerances();
-  int i = 0;
-  int m = 0;
-  auto g = [&](const auto& x) {
-    using stan::math::fft;
-    return i ? real(fft(x)(m)) : imag(fft(x)(m));
-  };
-  for (int i = 0; i < 2; ++i)
-    for (int m = 0; m < x.rows(); ++m)
-      stan::test::expect_ad(tols, g, x);
+  for (int m = 0; m < x.rows(); ++m) {
+    auto g = [m](const auto& x) {
+      using stan::math::fft;
+      return fft(x)(m);
+    };
+    stan::test::expect_ad(tols, g, x);
+  }
 }
 
 TEST(mathMixFun, fft) {
-  typedef Eigen::VectorXcd cvec_t;
+  using cvec_t = Eigen::VectorXcd;
 
   cvec_t x0(0);
   expect_fft(x0);
@@ -44,19 +42,17 @@ TEST(mathMixFun, fft) {
 
 void expect_inv_fft(const Eigen::VectorXcd& x) {
   stan::test::ad_tolerances tols = stan::test::reverse_only_ad_tolerances();
-  int i = 0;
-  int m = 0;
-  auto g = [&](const auto& x) {
-    using stan::math::inv_fft;
-    return i ? real(inv_fft(x)(m)) : imag(inv_fft(x)(m));
-  };
-  for (int i = 0; i < 2; ++i)
-    for (int m = 0; m < x.rows(); ++m)
-      stan::test::expect_ad(tols, g, x);
+  for (int m = 0; m < x.rows(); ++m) {
+    auto g = [m](const auto& x) {
+      using stan::math::inv_fft;
+      return inv_fft(x)(m);
+    };
+    stan::test::expect_ad(tols, g, x);
+  }
 }
 
 TEST(mathMixFun, invFft) {
-  typedef Eigen::VectorXcd cvec_t;
+  using cvec_t = Eigen::VectorXcd;
 
   cvec_t x0(0);
   expect_inv_fft(x0);
@@ -86,21 +82,19 @@ TEST(mathMixFun, invFft) {
 
 void expect_fft2(const Eigen::MatrixXcd& x) {
   stan::test::ad_tolerances tols = stan::test::reverse_only_ad_tolerances();
-  int i = 0;
-  int m = 0;
-  int n = 0;
-  auto g = [&](const auto& x) {
-    using stan::math::fft2;
-    return i ? real(fft2(x)(m, n)) : imag(fft2(x)(m, n));
-  };
-  for (int i = 0; i < 2; ++i)
-    for (int n = 0; n < x.cols(); ++n)
-      for (int m = 0; m < x.rows(); ++m)
-        stan::test::expect_ad(tols, g, x);
+  for (int n = 0; n < x.cols(); ++n) {
+    for (int m = 0; m < x.rows(); ++m) {
+      auto g = [m, n](const auto& x) {
+	using stan::math::fft2;
+	return fft2(x)(m, n);
+      };
+      stan::test::expect_ad(tols, g, x);
+    }
+  }
 }
 
 TEST(mathMixFun, fft2) {
-  typedef Eigen::MatrixXcd cmat_t;
+  using cmat_t = Eigen::MatrixXcd;
 
   cmat_t x00(0, 0);
   expect_fft2(x00);
@@ -136,21 +130,19 @@ TEST(mathMixFun, fft2) {
 
 void expect_inv_fft2(const Eigen::MatrixXcd& x) {
   stan::test::ad_tolerances tols = stan::test::reverse_only_ad_tolerances();
-  int i = 0;
-  int m = 0;
-  int n = 0;
-  auto g = [&](const auto& x) {
-    using stan::math::inv_fft2;
-    return i ? real(inv_fft2(x)(m, n)) : imag(inv_fft2(x)(m, n));
-  };
-  for (int i = 0; i < 2; ++i)
-    for (int n = 0; n < x.cols(); ++n)
-      for (int m = 0; m < x.rows(); ++m)
-        stan::test::expect_ad(tols, g, x);
+  for (int n = 0; n < x.cols(); ++n) {
+    for (int m = 0; m < x.rows(); ++m) {
+      auto g = [m, n](const auto& x) {
+	using stan::math::inv_fft2;
+	return inv_fft2(x)(m, n);
+      };
+      stan::test::expect_ad(tols, g, x);
+    }
+  }
 }
 
 TEST(mathMixFun, inv_fft2) {
-  typedef Eigen::MatrixXcd cmat_t;
+  using cmat_t = Eigen::MatrixXcd;
 
   cmat_t x00(0, 0);
   expect_inv_fft2(x00);
