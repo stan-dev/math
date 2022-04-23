@@ -28,13 +28,12 @@ namespace math {
  * @tparam T_y type of matrix
  * @tparam T_dof type of degrees of freedom
  * @tparam T_scale type of scale
- * @param LY A lower triangular Cholesky factor covariance matrix
- * @param nu Degrees of freedom
- * @param LS The Cholesky factor of the scale matrix
+ * @param LY A lower triangular Cholesky factor covariance matrix.
+ * @param nu The degrees of freedom.
+ * @param LS The Cholesky factor of the scale matrix.
  * @return The log of the Wishart density at LY given nu and LS.
  * @throw std::domain_error if nu is not greater than k-1
- * @throw std::domain_error if S is not square, not symmetric, or not
- * semi-positive definite.
+ * @throw std::domain_error if LS is not a valid Cholesky factor.
  */
 template <bool propto, typename T_y, typename T_dof, typename T_scale,
           require_stan_scalar_t<T_dof>* = nullptr,

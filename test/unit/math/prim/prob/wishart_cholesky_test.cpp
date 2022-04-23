@@ -4,7 +4,7 @@
 #include <boost/math/special_functions/digamma.hpp>
 #include <boost/math/distributions.hpp>
 
-TEST(ProbDistributionsWishart, wishart_symmetry) {
+TEST(ProbDistributionsWishartCholesky, wishart_symmetry) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
@@ -30,7 +30,7 @@ TEST(ProbDistributionsWishart, wishart_symmetry) {
   EXPECT_NO_THROW(wishart_cholesky_lpdf(LY, dof, LS));
 }
 
-TEST(ProbDistributionsWishart, wishart_pos_def) {
+TEST(ProbDistributionsWishartCholesky, wishart_pos_def) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
 
@@ -56,7 +56,7 @@ TEST(ProbDistributionsWishart, wishart_pos_def) {
                std::domain_error);
 }
 
-TEST(ProbDistributionsWishart, 2x2) {
+TEST(ProbDistributionsWishartCholesky, 2x2) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   Matrix<double, Dynamic, Dynamic> Sigma(2, 2);
@@ -82,7 +82,8 @@ TEST(ProbDistributionsWishart, 2x2) {
 
   EXPECT_NEAR(lp, stan::math::wishart_cholesky_lpdf(LY, dof, LS), 0.01);
 }
-TEST(ProbDistributionsWishart, 4x4) {
+
+TEST(ProbDistributionsWishartCholesky, 4x4) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   Matrix<double, Dynamic, Dynamic> Y(4, 4);
@@ -114,7 +115,7 @@ TEST(ProbDistributionsWishart, 4x4) {
   EXPECT_NEAR(log_p, stan::math::wishart_cholesky_lpdf(LY, dof, LS), 0.01);
 }
 
-TEST(ProbDistributionsWishart, 2x2Propto) {
+TEST(ProbDistributionsWishartCholesky, 2x2Propto) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   Matrix<double, Dynamic, Dynamic> Sigma(2, 2);
@@ -131,7 +132,7 @@ TEST(ProbDistributionsWishart, 2x2Propto) {
   EXPECT_FLOAT_EQ(0.0, stan::math::wishart_cholesky_lpdf<true>(LY, dof, LS));
 }
 
-TEST(ProbDistributionsWishart, 4x4Propto) {
+TEST(ProbDistributionsWishartCholesky, 4x4Propto) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   Matrix<double, Dynamic, Dynamic> Y(4, 4);
@@ -154,7 +155,7 @@ TEST(ProbDistributionsWishart, 4x4Propto) {
   EXPECT_FLOAT_EQ(0.0, stan::math::wishart_cholesky_lpdf<true>(LY, dof, LS));
 }
 
-TEST(ProbDistributionsWishart, error) {
+TEST(ProbDistributionsWishartCholesky, error) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::wishart_cholesky_lpdf;
