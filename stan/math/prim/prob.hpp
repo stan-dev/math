@@ -363,6 +363,7 @@
 #include <stan/math/prim/prob/weibull_rng.hpp>
 #include <stan/math/prim/prob/wiener_log.hpp>
 #include <stan/math/prim/prob/wiener_lpdf.hpp>
+#include <stan/math/prim/prob/wishart_cholesky_lpdf.hpp>
 #include <stan/math/prim/prob/wishart_log.hpp>
 #include <stan/math/prim/prob/wishart_lpdf.hpp>
 #include <stan/math/prim/prob/wishart_rng.hpp>
