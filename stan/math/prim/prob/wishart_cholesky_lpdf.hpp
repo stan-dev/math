@@ -3,12 +3,9 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
-#include <stan/math/prim/fun/LDLT_factor.hpp>
 #include <stan/math/prim/fun/dot_self.hpp>
 #include <stan/math/prim/fun/lmgamma.hpp>
-#include <stan/math/prim/fun/trace.hpp>
-#include <stan/math/prim/fun/log_determinant_ldlt.hpp>
-#include <stan/math/prim/fun/mdivide_left_ldlt.hpp>
+#include <stan/math/prim/fun/mdivide_left_tri.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 
 namespace stan {
