@@ -7,7 +7,6 @@
 #include <vector>
 
 TEST(ProbDistributionsWishartCholesky, rng) {
-  using Eigen::MatrixXd;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
@@ -52,19 +51,19 @@ TEST(ProbDistributionsWishartCholesky, rng_pos_def) {
 
 TEST(ProbDistributionsWishartCholesky, cholesky_factor_check) {
   using Eigen::MatrixXd;
+  using stan::math::identity_matrix;
   using stan::math::wishart_cholesky_rng;
   using stan::math::wishart_rng;
-  using stan::math::identity_matrix;
   using stan::test::unit::expect_symmetric;
   using stan::test::unit::spd_rng;
 
   boost::random::mt19937 rng;
 
-   
   for (int k = 1; k < 20; ++k)
     for (double nu = k - 0.9; nu < k + 10; ++nu)
       for (int n = 0; n < 10; ++n)
-        expect_symmetric(stan::math::multiply_lower_tri_self_transpose(wishart_rng(nu, spd_rng(k, rng), rng)));
+        expect_symmetric(stan::math::multiply_lower_tri_self_transpose(
+            wishart_rng(nu, spd_rng(k, rng), rng)));
 }
 
 TEST(ProbDistributionsWishartCholesky, marginalTwoChiSquareGoodnessFitTest) {
@@ -102,12 +101,12 @@ TEST(ProbDistributionsWishartCholesky, SpecialRNGTest) {
   // must be chi-square distributed with df = k
   // which has mean = k and variance = 2k
 
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
-  using Eigen::Matrix;
-  using Eigen::Dynamic;
-  using stan::math::wishart_cholesky_rng;
   using stan::math::multiply_lower_tri_self_transpose;
+  using stan::math::wishart_cholesky_rng;
 
   boost::random::mt19937 rng(1234);
 
@@ -127,8 +126,11 @@ TEST(ProbDistributionsWishartCholesky, SpecialRNGTest) {
   std::vector<double> acum;
   acum.reserve(N);
   for (size_t i = 0; i < N; i++)
-    acum.push_back((C.transpose() * multiply_lower_tri_self_transpose(wishart_cholesky_rng(k, LS, rng)) * C)(0)
-                   / (C.transpose() * sigma * C)(0));
+    acum.push_back(
+        (C.transpose()
+         * multiply_lower_tri_self_transpose(wishart_cholesky_rng(k, LS, rng))
+         * C)(0)
+        / (C.transpose() * sigma * C)(0));
 
   EXPECT_NEAR(1, stan::math::mean(acum) / k, tol * tol);
   EXPECT_NEAR(1, stan::math::variance(acum) / (2 * k), tol);
