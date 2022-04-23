@@ -50,8 +50,10 @@ TEST(ProbDistributionsWishart, wishart_pos_def) {
   unsigned int dof = 5;
 
   EXPECT_NO_THROW(wishart_cholesky_lpdf(Y, dof, Sigma));
-  EXPECT_THROW(wishart_cholesky_lpdf(Y_non_pos_def, dof, Sigma), std::domain_error);
-  EXPECT_THROW(wishart_cholesky_lpdf(Y, dof, Sigma_non_pos_def), std::domain_error);
+  EXPECT_THROW(wishart_cholesky_lpdf(Y_non_pos_def, dof, Sigma),
+               std::domain_error);
+  EXPECT_THROW(wishart_cholesky_lpdf(Y, dof, Sigma_non_pos_def),
+               std::domain_error);
 }
 
 TEST(ProbDistributionsWishart, 2x2) {
@@ -70,11 +72,11 @@ TEST(ProbDistributionsWishart, 2x2) {
   // log absolute determinant of the change of variables from Y -> LL'
   // see Theorem 2.1.9 in Muirhead, Aspects of Multivariate Statistical Theory
   double log_jac = 2 * stan::math::LOG_TWO;
-  
+
   for (int i = 0; i < 2; i++) {
-    log_jac  += (2 - i) * log(LY(i, i));  
-}
-  
+    log_jac += (2 - i) * log(LY(i, i));
+  }
+
   // computed with MCMCpack in R
   double lp = log(8.658e-07) + log_jac;
 
@@ -100,9 +102,9 @@ TEST(ProbDistributionsWishart, 4x4) {
   double log_jac = 4 * stan::math::LOG_TWO;
   unsigned int n = 4;
   for (int i = 0; i < n; i++) {
-    log_jac  += (n - i) * log(LY(i, i));  
-    }
-  
+    log_jac += (n - i) * log(LY(i, i));
+  }
+
   double log_p = log(8.034197e-10) + log_jac;
   EXPECT_NEAR(log_p, stan::math::wishart_cholesky_lpdf(LY, dof, LS), 0.01);
 
