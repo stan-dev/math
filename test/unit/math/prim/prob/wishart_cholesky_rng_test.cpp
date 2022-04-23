@@ -7,9 +7,9 @@
 #include <vector>
 
 TEST(ProbDistributionsWishart, rng) {
-  using Eigen::MatrixXd;
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using Eigen::MatrixXd;
 
   using stan::math::wishart_cholesky_rng;
 
@@ -45,7 +45,8 @@ TEST(ProbDistributionsWishart, rng_pos_def) {
   unsigned int dof = 5;
 
   EXPECT_NO_THROW(wishart_cholesky_rng(dof, Sigma, rng));
-  EXPECT_THROW(wishart_cholesky_rng(dof, Sigma_non_pos_def, rng), std::domain_error);
+  EXPECT_THROW(wishart_cholesky_rng(dof, Sigma_non_pos_def, rng),
+               std::domain_error);
 }
 
 // TEST(ProbDistributionsWishart, rng_symmetry) {

@@ -13,7 +13,7 @@ namespace math {
 
 template <class RNG>
 inline Eigen::MatrixXd wishart_cholesky_rng(double nu, const Eigen::MatrixXd& L,
-                                   RNG& rng) {
+                                            RNG& rng) {
   using Eigen::MatrixXd;
   static const char* function = "wishart_cholesky_rng";
   index_type_t<MatrixXd> k = L.rows();
