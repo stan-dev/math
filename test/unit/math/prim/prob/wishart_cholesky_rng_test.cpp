@@ -6,7 +6,8 @@
 #include <stdexcept>
 #include <vector>
 
-TEST(ProbDistributionsWishart, rng) {
+TEST(ProbDistributionsWishartCholesky, rng) {
+  using Eigen::MatrixXd;
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using Eigen::MatrixXd;
@@ -30,7 +31,7 @@ TEST(ProbDistributionsWishart, rng) {
   EXPECT_THROW(wishart_cholesky_rng(3.0, LS, rng), std::domain_error);
 }
 
-TEST(ProbDistributionsWishart, rng_pos_def) {
+TEST(ProbDistributionsWishartCholesky, rng_pos_def) {
   using Eigen::MatrixXd;
   using stan::math::wishart_cholesky_rng;
 
@@ -49,77 +50,86 @@ TEST(ProbDistributionsWishart, rng_pos_def) {
                std::domain_error);
 }
 
-// TEST(ProbDistributionsWishart, rng_symmetry) {
-//   using Eigen::MatrixXd;
-//   using stan::math::wishart_rng;
-//   using stan::test::unit::expect_symmetric;
-//   using stan::test::unit::spd_rng;
+TEST(ProbDistributionsWishartCholesky, cholesky_factor_check) {
+  using Eigen::MatrixXd;
+  using stan::math::wishart_cholesky_rng;
+  using stan::math::wishart_rng;
+  using stan::math::identity_matrix;
+  using stan::test::unit::expect_symmetric;
+  using stan::test::unit::spd_rng;
 
-//   boost::random::mt19937 rng;
-//   for (int k = 1; k < 20; ++k)
-//     for (double nu = k - 0.9; nu < k + 10; ++nu)
-//       for (int n = 0; n < 10; ++n)
-//         expect_symmetric(wishart_rng(nu, spd_rng(k, rng), rng));
-// }
+  boost::random::mt19937 rng;
 
-// TEST(ProbDistributionsWishart, marginalTwoChiSquareGoodnessFitTest) {
-//   using boost::math::chi_squared;
-//   using boost::math::digamma;
-//   using Eigen::MatrixXd;
-//   using stan::math::determinant;
-//   using stan::math::wishart_rng;
-//   using std::log;
+   
+  for (int k = 1; k < 20; ++k)
+    for (double nu = k - 0.9; nu < k + 10; ++nu)
+      for (int n = 0; n < 10; ++n)
+        expect_symmetric(stan::math::multiply_lower_tri_self_transpose(wishart_rng(nu, spd_rng(k, rng), rng)));
+}
 
-//   boost::random::mt19937 rng;
-//   MatrixXd sigma(3, 3);
-//   sigma << 9.0, -3.0, 2.0, -3.0, 4.0, 0.0, 2.0, 0.0, 3.0;
-//   int N = 10000;
+TEST(ProbDistributionsWishartCholesky, marginalTwoChiSquareGoodnessFitTest) {
+  using boost::math::chi_squared;
+  using boost::math::digamma;
+  using Eigen::MatrixXd;
+  using stan::math::determinant;
+  using stan::math::wishart_cholesky_rng;
+  using std::log;
 
-//   double avg = 0;
-//   double expect = sigma.rows() * log(2.0) + log(determinant(sigma))
-//                   + digamma(5.0 / 2.0) + digamma(4.0 / 2.0)
-//                   + digamma(3.0 / 2.0);
+  boost::random::mt19937 rng;
+  MatrixXd sigma(3, 3);
+  sigma << 9.0, -3.0, 2.0, -3.0, 4.0, 0.0, 2.0, 0.0, 3.0;
+  int N = 10000;
 
-//   MatrixXd a(sigma.rows(), sigma.rows());
-//   for (int count = 0; count < N; ++count) {
-//     a = wishart_rng(5.0, sigma, rng);
-//     avg += log(determinant(a));
-//   }
-//   avg /= N;
-//   double chi = (expect - avg) * (expect - avg) / expect;
-//   chi_squared mydist(1);
-//   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
-// }
+  double avg = 0;
+  double expect = sigma.rows() * log(2.0) + log(determinant(sigma))
+                  + digamma(5.0 / 2.0) + digamma(4.0 / 2.0)
+                  + digamma(3.0 / 2.0);
 
-// TEST(ProbDistributionsWishart, SpecialRNGTest) {
-//   // For any vector C != 0
-//   // (C' * W * C) / (C' * S * C)
-//   // must be chi-square distributed with df = k
-//   // which has mean = k and variance = 2k
+  MatrixXd a(sigma.rows(), sigma.rows());
+  for (int count = 0; count < N; ++count) {
+    a = wishart_cholesky_rng(5.0, stan::math::cholesky_decompose(sigma), rng);
+    avg += stan::math::sum(stan::math::log(a.diagonal()));
+  }
+  avg /= N;
+  double chi = (expect - avg) * (expect - avg) / expect;
+  chi_squared mydist(1);
+  EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
+}
 
-//   using Eigen::MatrixXd;
-//   using Eigen::VectorXd;
-//   using stan::math::wishart_rng;
+TEST(ProbDistributionsWishartCholesky, SpecialRNGTest) {
+  // For any vector C != 0
+  // (C' * W * C) / (C' * S * C)
+  // must be chi-square distributed with df = k
+  // which has mean = k and variance = 2k
 
-//   boost::random::mt19937 rng(1234);
+  using Eigen::MatrixXd;
+  using Eigen::VectorXd;
+  using Eigen::Matrix;
+  using Eigen::Dynamic;
+  using stan::math::wishart_cholesky_rng;
+  using stan::math::multiply_lower_tri_self_transpose;
 
-//   MatrixXd sigma(3, 3);
+  boost::random::mt19937 rng(1234);
 
-//   sigma << 9.0, 2.0, 2.0, 2.0, 4.0, 1.0, 2.0, 1.0, 3.0;
+  MatrixXd sigma(3, 3);
 
-//   VectorXd C(3);
-//   C << 2, 1, 3;
+  sigma << 9.0, 2.0, 2.0, 2.0, 4.0, 1.0, 2.0, 1.0, 3.0;
 
-//   size_t N = 1e4;
-//   int k = 20;
-//   // tolerance for variance
-//   double tol = 0.2;
-//   std::vector<double> acum;
-//   acum.reserve(N);
-//   for (size_t i = 0; i < N; i++)
-//     acum.push_back((C.transpose() * wishart_rng(k, sigma, rng) * C)(0)
-//                    / (C.transpose() * sigma * C)(0));
+  Matrix<double, Dynamic, Dynamic> LS = sigma.llt().matrixL();
 
-//   EXPECT_NEAR(1, stan::math::mean(acum) / k, tol * tol);
-//   EXPECT_NEAR(1, stan::math::variance(acum) / (2 * k), tol);
-// }
+  VectorXd C(3);
+  C << 2, 1, 3;
+
+  size_t N = 1e4;
+  int k = 20;
+  // tolerance for variance
+  double tol = 0.2;
+  std::vector<double> acum;
+  acum.reserve(N);
+  for (size_t i = 0; i < N; i++)
+    acum.push_back((C.transpose() * multiply_lower_tri_self_transpose(wishart_cholesky_rng(k, LS, rng)) * C)(0)
+                   / (C.transpose() * sigma * C)(0));
+
+  EXPECT_NEAR(1, stan::math::mean(acum) / k, tol * tol);
+  EXPECT_NEAR(1, stan::math::variance(acum) / (2 * k), tol);
+}
