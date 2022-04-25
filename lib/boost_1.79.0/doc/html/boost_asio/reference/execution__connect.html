@@ -1,0 +1,133 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>execution::connect</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../boost_asio.html" title="Boost.Asio">
+<link rel="up" href="../reference.html" title="Reference">
+<link rel="prev" href="execution__can_submit.html" title="execution::can_submit">
+<link rel="next" href="execution__connect_result.html" title="execution::connect_result">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="execution__can_submit.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../reference.html"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../boost_asio.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="execution__connect_result.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="boost_asio.reference.execution__connect"></a><a class="link" href="execution__connect.html" title="execution::connect">execution::connect</a>
+</h3></div></div></div>
+<p>
+        <a class="indexterm" name="boost_asio.indexterm.execution__connect"></a>
+      </p>
+<p>
+        A customisation point that connects a sender to a receiver.
+      </p>
+<pre class="programlisting"><span class="keyword">constexpr</span> <span class="identifier">unspecified</span> <span class="identifier">connect</span> <span class="special">=</span> <span class="identifier">unspecified</span><span class="special">;</span>
+</pre>
+<p>
+        The name <code class="computeroutput"><span class="identifier">execution</span><span class="special">::</span><span class="identifier">connect</span></code> denotes a customisation point object.
+        For some subexpressions <code class="computeroutput"><span class="identifier">s</span></code>
+        and <code class="computeroutput"><span class="identifier">r</span></code>, let <code class="computeroutput"><span class="identifier">S</span></code> be a type such that <code class="computeroutput"><span class="keyword">decltype</span><span class="special">((</span><span class="identifier">s</span><span class="special">))</span></code>
+        is <code class="computeroutput"><span class="identifier">S</span></code> and let <code class="computeroutput"><span class="identifier">R</span></code> be a type such that <code class="computeroutput"><span class="keyword">decltype</span><span class="special">((</span><span class="identifier">r</span><span class="special">))</span></code>
+        is <code class="computeroutput"><span class="identifier">R</span></code>. The expression <code class="computeroutput"><span class="identifier">execution</span><span class="special">::</span><span class="identifier">connect</span><span class="special">(</span><span class="identifier">s</span><span class="special">,</span> <span class="identifier">r</span><span class="special">)</span></code> is expression-equivalent to:
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            <code class="computeroutput"><span class="identifier">s</span><span class="special">.</span><span class="identifier">connect</span><span class="special">(</span><span class="identifier">r</span><span class="special">)</span></code>,
+            if that expression is valid, if its type satisfies <code class="computeroutput"><span class="identifier">operation_state</span></code>,
+            and if <code class="computeroutput"><span class="identifier">S</span></code> satisfies <code class="computeroutput"><span class="identifier">sender</span></code>.
+          </li>
+<li class="listitem">
+            Otherwise, <code class="computeroutput"><span class="identifier">connect</span><span class="special">(</span><span class="identifier">s</span><span class="special">,</span> <span class="identifier">r</span><span class="special">)</span></code>,
+            if that expression is valid, if its type satisfies <code class="computeroutput"><span class="identifier">operation_state</span></code>,
+            and if <code class="computeroutput"><span class="identifier">S</span></code> satisfies <code class="computeroutput"><span class="identifier">sender</span></code>, with overload resolution performed
+            in a context that includes the declaration <code class="computeroutput"><span class="keyword">void</span>
+            <span class="identifier">connect</span><span class="special">();</span></code>
+            and that does not include a declaration of <code class="computeroutput"><span class="identifier">execution</span><span class="special">::</span><span class="identifier">connect</span></code>.
+          </li>
+<li class="listitem">
+<p class="simpara">
+            Otherwise, <code class="computeroutput"><span class="identifier">as_operation</span><span class="special">{</span><span class="identifier">s</span><span class="special">,</span> <span class="identifier">r</span><span class="special">}</span></code>, if <code class="computeroutput"><span class="identifier">r</span></code>
+            is not an instance of <code class="computeroutput"><span class="identifier">as_receiver</span><span class="special">&lt;</span><span class="identifier">F</span><span class="special">,</span> <span class="identifier">S</span><span class="special">&gt;</span></code> for some type <code class="computeroutput"><span class="identifier">F</span></code>,
+            and if <code class="computeroutput"><span class="identifier">receiver_of</span><span class="special">&lt;</span><span class="identifier">R</span><span class="special">&gt;</span> <span class="special">&amp;&amp;</span> <span class="identifier">executor_of</span><span class="special">&lt;</span><span class="identifier">remove_cvref_t</span><span class="special">&lt;</span><span class="identifier">S</span><span class="special">&gt;,</span> <span class="identifier">as_invocable</span><span class="special">&lt;</span><span class="identifier">remove_cvref_t</span><span class="special">&lt;</span><span class="identifier">R</span><span class="special">&gt;,</span> <span class="identifier">S</span><span class="special">&gt;&gt;</span></code> is <code class="computeroutput"><span class="keyword">true</span></code>,
+            where <code class="computeroutput"><span class="identifier">as_operation</span></code> is
+            an implementation-defined class equivalent to
+          </p>
+<pre class="programlisting"><span class="keyword">template</span> <span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">S</span><span class="special">,</span> <span class="keyword">class</span> <span class="identifier">R</span><span class="special">&gt;</span>
+ <span class="keyword">struct</span> <span class="identifier">as_operation</span>
+ <span class="special">{</span>
+   <span class="identifier">remove_cvref_t</span><span class="special">&lt;</span><span class="identifier">S</span><span class="special">&gt;</span> <span class="identifier">e_</span><span class="special">;</span>
+   <span class="identifier">remove_cvref_t</span><span class="special">&lt;</span><span class="identifier">R</span><span class="special">&gt;</span> <span class="identifier">r_</span><span class="special">;</span>
+   <span class="keyword">void</span> <span class="identifier">start</span><span class="special">()</span> <span class="keyword">noexcept</span> <span class="keyword">try</span> <span class="special">{</span>
+     <span class="identifier">execution</span><span class="special">::</span><span class="identifier">execute</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">move</span><span class="special">(</span><span class="identifier">e_</span><span class="special">),</span>
+         <span class="identifier">as_invocable</span><span class="special">&lt;</span><span class="identifier">remove_cvref_t</span><span class="special">&lt;</span><span class="identifier">R</span><span class="special">&gt;,</span> <span class="identifier">S</span><span class="special">&gt;{</span><span class="identifier">r_</span><span class="special">});</span>
+   <span class="special">}</span> <span class="keyword">catch</span><span class="special">(...)</span> <span class="special">{</span>
+     <span class="identifier">execution</span><span class="special">::</span><span class="identifier">set_error</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">move</span><span class="special">(</span><span class="identifier">r_</span><span class="special">),</span> <span class="identifier">current_exception</span><span class="special">());</span>
+   <span class="special">}</span>
+ <span class="special">};</span>
+</pre>
+</li>
+</ul></div>
+<p>
+        and <code class="computeroutput"><span class="identifier">as_invocable</span></code> is a class
+        template equivalent to the following:
+      </p>
+<pre class="programlisting"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">R</span><span class="special">&gt;</span>
+ <span class="keyword">struct</span> <span class="identifier">as_invocable</span>
+ <span class="special">{</span>
+   <span class="identifier">R</span><span class="special">*</span> <span class="identifier">r_</span><span class="special">;</span>
+   <span class="keyword">explicit</span> <span class="identifier">as_invocable</span><span class="special">(</span><span class="identifier">R</span><span class="special">&amp;</span> <span class="identifier">r</span><span class="special">)</span> <span class="keyword">noexcept</span>
+     <span class="special">:</span> <span class="identifier">r_</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">addressof</span><span class="special">(</span><span class="identifier">r</span><span class="special">))</span> <span class="special">{}</span>
+   <span class="identifier">as_invocable</span><span class="special">(</span><span class="identifier">as_invocable</span> <span class="special">&amp;&amp;</span> <span class="identifier">other</span><span class="special">)</span> <span class="keyword">noexcept</span>
+     <span class="special">:</span> <span class="identifier">r_</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">exchange</span><span class="special">(</span><span class="identifier">other</span><span class="special">.</span><span class="identifier">r_</span><span class="special">,</span> <span class="keyword">nullptr</span><span class="special">))</span> <span class="special">{}</span>
+   <span class="special">~</span><span class="identifier">as_invocable</span><span class="special">()</span> <span class="special">{</span>
+     <span class="keyword">if</span><span class="special">(</span><span class="identifier">r_</span><span class="special">)</span>
+       <span class="identifier">execution</span><span class="special">::</span><span class="identifier">set_done</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">move</span><span class="special">(*</span><span class="identifier">r_</span><span class="special">));</span>
+   <span class="special">}</span>
+   <span class="keyword">void</span> <span class="keyword">operator</span><span class="special">()()</span> <span class="special">&amp;</span> <span class="keyword">noexcept</span> <span class="keyword">try</span> <span class="special">{</span>
+     <span class="identifier">execution</span><span class="special">::</span><span class="identifier">set_value</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">move</span><span class="special">(*</span><span class="identifier">r_</span><span class="special">));</span>
+     <span class="identifier">r_</span> <span class="special">=</span> <span class="keyword">nullptr</span><span class="special">;</span>
+   <span class="special">}</span> <span class="keyword">catch</span><span class="special">(...)</span> <span class="special">{</span>
+     <span class="identifier">execution</span><span class="special">::</span><span class="identifier">set_error</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">move</span><span class="special">(*</span><span class="identifier">r_</span><span class="special">),</span> <span class="identifier">current_exception</span><span class="special">());</span>
+     <span class="identifier">r_</span> <span class="special">=</span> <span class="keyword">nullptr</span><span class="special">;</span>
+   <span class="special">}</span>
+ <span class="special">};</span>
+</pre>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+            Otherwise, <code class="computeroutput"><span class="identifier">execution</span><span class="special">::</span><span class="identifier">connect</span><span class="special">(</span><span class="identifier">s</span><span class="special">,</span> <span class="identifier">r</span><span class="special">)</span></code> is ill-formed.
+          </li></ul></div>
+<h5>
+<a name="boost_asio.reference.execution__connect.h0"></a>
+        <span class="phrase"><a name="boost_asio.reference.execution__connect.requirements"></a></span><a class="link" href="execution__connect.html#boost_asio.reference.execution__connect.requirements">Requirements</a>
+      </h5>
+<p>
+        <span class="emphasis"><em>Header: </em></span><code class="literal">boost/asio/execution/connect.hpp</code>
+      </p>
+<p>
+        <span class="emphasis"><em>Convenience header: </em></span><code class="literal">boost/asio/execution.hpp</code>
+      </p>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright © 2003-2022 Christopher M. Kohlhoff<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="execution__can_submit.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../reference.html"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../boost_asio.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="execution__connect_result.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

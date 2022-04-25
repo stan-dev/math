@@ -1,0 +1,79 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Asynchronous Agents</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../boost_asio.html" title="Boost.Asio">
+<link rel="up" href="../model.html" title="Asynchronous Model">
+<link rel="prev" href="async_ops.html" title="Asynchronous Operations">
+<link rel="next" href="associators.html" title="Associated Characteristics and Associators">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="async_ops.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../model.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../boost_asio.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="associators.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_asio.overview.model.async_agents"></a><a class="link" href="async_agents.html" title="Asynchronous Agents">Asynchronous
+        Agents</a>
+</h4></div></div></div>
+<p>
+          <span class="inlinemediaobject"><img src="../../async_agent_model.png" width="931"></span>
+        </p>
+<p>
+          An <span class="emphasis"><em>asynchronous agent</em></span> is a sequential composition
+          of asynchronous operations. Every asynchronous operation is considered
+          to run as a part of an asynchronous agent, even if that agent contains
+          only that single operation. An asynchronous agent is an entity that may
+          perform work concurrently with other agents. Asynchronous agents are to
+          asynchronous operations as threads are to synchronous operations.
+        </p>
+<p>
+          However, an asynchronous agent is a purely notional construct that allows
+          us to reason about the context for, and composition of, asynchronous operations
+          in a program. The name “asynchronous agent” does not appear in the
+          library, nor is it important which concrete mechanism<a href="#ftn.boost_asio.overview.model.async_agents.f0" class="footnote" name="boost_asio.overview.model.async_agents.f0"><sup class="footnote">[1]</sup></a> is used to compose the asynchronous operations in an agent.
+        </p>
+<p>
+          We can visualise an asynchronous agent as follows:
+        </p>
+<p>
+          <span class="inlinemediaobject"><img src="../../async_agent_chain.png" width="738"></span>
+        </p>
+<p>
+          Asynchronous agents alternately wait for an asynchronous operation to complete,
+          and then run a completion handler for that operation. Within the context
+          of an agent, these completion handlers represent indivisible units of schedulable
+          work.
+        </p>
+<div class="footnotes">
+<br><hr style="width:100; text-align:left;margin-left: 0">
+<div id="ftn.boost_asio.overview.model.async_agents.f0" class="footnote"><p><a href="#boost_asio.overview.model.async_agents.f0" class="para"><sup class="para">[1] </sup></a>
+            Such as chains of lambdas, coroutines, fibers, state machines, etc.
+          </p></div>
+</div>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright © 2003-2022 Christopher M. Kohlhoff<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="async_ops.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../model.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../boost_asio.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="associators.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

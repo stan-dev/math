@@ -1,0 +1,104 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template compressed_pair</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.Utility">
+<link rel="up" href="../utility/utilities/compressed_pair.html#header.boost.detail.compressed_pair_hpp" title="Header &lt;boost/detail/compressed_pair.hpp&gt;">
+<link rel="prev" href="../utility/utilities/compressed_pair.html" title="Compressed Pair">
+<link rel="next" href="compressed_pair_T__idm3185.html" title="Class template compressed_pair&lt;T, T&gt;">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../utility/utilities/compressed_pair.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../utility/utilities/compressed_pair.html#header.boost.detail.compressed_pair_hpp"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="compressed_pair_T__idm3185.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="boost.compressed_pair"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template compressed_pair</span></h2>
+<p>boost::compressed_pair</p>
+</div>
+<h2 xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" class="refsynopsisdiv-title">Synopsis</h2>
+<div xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../utility/utilities/compressed_pair.html#header.boost.detail.compressed_pair_hpp" title="Header &lt;boost/detail/compressed_pair.hpp&gt;">boost/detail/compressed_pair.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T1<span class="special">,</span> <span class="keyword">typename</span> T2<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="compressed_pair.html" title="Class template compressed_pair">compressed_pair</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">T1</span>                                          <a name="boost.compressed_pair.first_type"></a><span class="identifier">first_type</span><span class="special">;</span>            
+  <span class="keyword">typedef</span> <span class="identifier">T2</span>                                          <a name="boost.compressed_pair.second_type"></a><span class="identifier">second_type</span><span class="special">;</span>           
+  <span class="keyword">typedef</span> <span class="identifier">call_traits</span><span class="special">&lt;</span> <span class="identifier">first_type</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">param_type</span>       <a name="boost.compressed_pair.first_param_type"></a><span class="identifier">first_param_type</span><span class="special">;</span>      
+  <span class="keyword">typedef</span> <span class="identifier">call_traits</span><span class="special">&lt;</span> <span class="identifier">second_type</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">param_type</span>      <a name="boost.compressed_pair.second_param_type"></a><span class="identifier">second_param_type</span><span class="special">;</span>     
+  <span class="keyword">typedef</span> <span class="identifier">call_traits</span><span class="special">&lt;</span> <span class="identifier">first_type</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">reference</span>        <a name="boost.compressed_pair.first_reference"></a><span class="identifier">first_reference</span><span class="special">;</span>       
+  <span class="keyword">typedef</span> <span class="identifier">call_traits</span><span class="special">&lt;</span> <span class="identifier">second_type</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">reference</span>       <a name="boost.compressed_pair.second_reference"></a><span class="identifier">second_reference</span><span class="special">;</span>      
+  <span class="keyword">typedef</span> <span class="identifier">call_traits</span><span class="special">&lt;</span> <span class="identifier">first_type</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">const_reference</span>  <a name="boost.compressed_pair.first_const_reference"></a><span class="identifier">first_const_reference</span><span class="special">;</span> 
+  <span class="keyword">typedef</span> <span class="identifier">call_traits</span><span class="special">&lt;</span> <span class="identifier">second_type</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">const_reference</span> <a name="boost.compressed_pair.second_const_reference"></a><span class="identifier">second_const_reference</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="compressed_pair.html#boost.compressed_pairconstruct-copy-destruct">construct/copy/destruct</a></span>
+  <a class="link" href="compressed_pair.html#idm3173-bb"><span class="identifier">compressed_pair</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="compressed_pair.html#idm3174-bb"><span class="identifier">compressed_pair</span></a><span class="special">(</span><span class="identifier">first_param_type</span><span class="special">,</span> <span class="identifier">second_param_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="compressed_pair.html#idm3179-bb"><span class="identifier">compressed_pair</span></a><span class="special">(</span><span class="identifier">first_param_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="compressed_pair.html#idm3182-bb"><span class="identifier">compressed_pair</span></a><span class="special">(</span><span class="identifier">second_param_type</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="compressed_pair.html#idm3159-bb">public member functions</a></span>
+  <span class="identifier">first_reference</span> <a class="link" href="compressed_pair.html#idm3160-bb"><span class="identifier">first</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">first_const_reference</span> <a class="link" href="compressed_pair.html#idm3162-bb"><span class="identifier">first</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">second_reference</span> <a class="link" href="compressed_pair.html#idm3164-bb"><span class="identifier">second</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">second_const_reference</span> <a class="link" href="compressed_pair.html#idm3166-bb"><span class="identifier">second</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="compressed_pair.html#idm3168-bb"><span class="identifier">swap</span></a><span class="special">(</span><a class="link" href="compressed_pair.html" title="Class template compressed_pair">compressed_pair</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="idm3790"></a><h2>Description</h2>
+<div class="refsect2">
+<a name="idm3792"></a><h3>
+<a name="boost.compressed_pairconstruct-copy-destruct"></a><code class="computeroutput">compressed_pair</code> 
+        public
+       construct/copy/destruct</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><a name="idm3173-bb"></a><span class="identifier">compressed_pair</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a name="idm3174-bb"></a><span class="identifier">compressed_pair</span><span class="special">(</span><span class="identifier">first_param_type</span> x<span class="special">,</span> <span class="identifier">second_param_type</span> y<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">explicit</span> <a name="idm3179-bb"></a><span class="identifier">compressed_pair</span><span class="special">(</span><span class="identifier">first_param_type</span> x<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">explicit</span> <a name="idm3182-bb"></a><span class="identifier">compressed_pair</span><span class="special">(</span><span class="identifier">second_param_type</span> y<span class="special">)</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="idm3836"></a><h3>
+<a name="idm3159-bb"></a><code class="computeroutput">compressed_pair</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><span class="identifier">first_reference</span> <a name="idm3160-bb"></a><span class="identifier">first</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">first_const_reference</span> <a name="idm3162-bb"></a><span class="identifier">first</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">second_reference</span> <a name="idm3164-bb"></a><span class="identifier">second</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">second_const_reference</span> <a name="idm3166-bb"></a><span class="identifier">second</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">void</span> <a name="idm3168-bb"></a><span class="identifier">swap</span><span class="special">(</span><a class="link" href="compressed_pair.html" title="Class template compressed_pair">compressed_pair</a> <span class="special">&amp;</span> y<span class="special">)</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="idm3890"></a><h3>Specializations</h3>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><a class="link" href="compressed_pair_T__idm3185.html" title="Class template compressed_pair&lt;T, T&gt;">Class template compressed_pair&lt;T, T&gt;</a></p></li></ul></div>
+</div>
+</div>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright © 2001 Beman Dawes<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../utility/utilities/compressed_pair.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../utility/utilities/compressed_pair.html#header.boost.detail.compressed_pair_hpp"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="compressed_pair_T__idm3185.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

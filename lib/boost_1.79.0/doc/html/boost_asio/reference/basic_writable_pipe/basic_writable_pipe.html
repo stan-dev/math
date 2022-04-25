@@ -1,0 +1,84 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>basic_writable_pipe::basic_writable_pipe</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../boost_asio.html" title="Boost.Asio">
+<link rel="up" href="../basic_writable_pipe.html" title="basic_writable_pipe">
+<link rel="prev" href="async_write_some.html" title="basic_writable_pipe::async_write_some">
+<link rel="next" href="basic_writable_pipe/overload1.html" title="basic_writable_pipe::basic_writable_pipe (1 of 5 overloads)">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="async_write_some.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../basic_writable_pipe.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../boost_asio.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="basic_writable_pipe/overload1.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_asio.reference.basic_writable_pipe.basic_writable_pipe"></a><a class="link" href="basic_writable_pipe.html" title="basic_writable_pipe::basic_writable_pipe">basic_writable_pipe::basic_writable_pipe</a>
+</h4></div></div></div>
+<p>
+          <a class="indexterm" name="boost_asio.indexterm.basic_writable_pipe.basic_writable_pipe"></a> 
+Construct
+          a <a class="link" href="../basic_writable_pipe.html" title="basic_writable_pipe"><code class="computeroutput"><span class="identifier">basic_writable_pipe</span></code></a> without opening
+          it.
+        </p>
+<pre class="programlisting"><span class="keyword">explicit</span> <a class="link" href="basic_writable_pipe/overload1.html" title="basic_writable_pipe::basic_writable_pipe (1 of 5 overloads)">basic_writable_pipe</a><span class="special">(</span>
+    <span class="keyword">const</span> <span class="identifier">executor_type</span> <span class="special">&amp;</span> <span class="identifier">ex</span><span class="special">);</span>
+  <span class="emphasis"><em>» <a class="link" href="basic_writable_pipe/overload1.html" title="basic_writable_pipe::basic_writable_pipe (1 of 5 overloads)">more...</a></em></span>
+
+<span class="keyword">template</span><span class="special">&lt;</span>
+    <span class="keyword">typename</span> <span class="identifier">ExecutionContext</span><span class="special">&gt;</span>
+<span class="keyword">explicit</span> <a class="link" href="basic_writable_pipe/overload2.html" title="basic_writable_pipe::basic_writable_pipe (2 of 5 overloads)">basic_writable_pipe</a><span class="special">(</span>
+    <span class="identifier">ExecutionContext</span> <span class="special">&amp;</span> <span class="identifier">context</span><span class="special">,</span>
+    <span class="keyword">typename</span> <span class="identifier">constraint</span><span class="special">&lt;</span> <span class="identifier">is_convertible</span><span class="special">&lt;</span> <span class="identifier">ExecutionContext</span> <span class="special">&amp;,</span> <span class="identifier">execution_context</span> <span class="special">&amp;</span> <span class="special">&gt;::</span><span class="identifier">value</span><span class="special">,</span> <span class="identifier">defaulted_constraint</span> <span class="special">&gt;::</span><span class="identifier">type</span>  <span class="special">=</span> <span class="identifier">defaulted_constraint</span><span class="special">());</span>
+  <span class="emphasis"><em>» <a class="link" href="basic_writable_pipe/overload2.html" title="basic_writable_pipe::basic_writable_pipe (2 of 5 overloads)">more...</a></em></span>
+</pre>
+<p>
+          Construct a <a class="link" href="../basic_writable_pipe.html" title="basic_writable_pipe"><code class="computeroutput"><span class="identifier">basic_writable_pipe</span></code></a> on an existing
+          native pipe.
+        </p>
+<pre class="programlisting"><a class="link" href="basic_writable_pipe/overload3.html" title="basic_writable_pipe::basic_writable_pipe (3 of 5 overloads)">basic_writable_pipe</a><span class="special">(</span>
+    <span class="keyword">const</span> <span class="identifier">executor_type</span> <span class="special">&amp;</span> <span class="identifier">ex</span><span class="special">,</span>
+    <span class="keyword">const</span> <span class="identifier">native_handle_type</span> <span class="special">&amp;</span> <span class="identifier">native_pipe</span><span class="special">);</span>
+  <span class="emphasis"><em>» <a class="link" href="basic_writable_pipe/overload3.html" title="basic_writable_pipe::basic_writable_pipe (3 of 5 overloads)">more...</a></em></span>
+
+<span class="keyword">template</span><span class="special">&lt;</span>
+    <span class="keyword">typename</span> <span class="identifier">ExecutionContext</span><span class="special">&gt;</span>
+<a class="link" href="basic_writable_pipe/overload4.html" title="basic_writable_pipe::basic_writable_pipe (4 of 5 overloads)">basic_writable_pipe</a><span class="special">(</span>
+    <span class="identifier">ExecutionContext</span> <span class="special">&amp;</span> <span class="identifier">context</span><span class="special">,</span>
+    <span class="keyword">const</span> <span class="identifier">native_handle_type</span> <span class="special">&amp;</span> <span class="identifier">native_pipe</span><span class="special">,</span>
+    <span class="keyword">typename</span> <span class="identifier">constraint</span><span class="special">&lt;</span> <span class="identifier">is_convertible</span><span class="special">&lt;</span> <span class="identifier">ExecutionContext</span> <span class="special">&amp;,</span> <span class="identifier">execution_context</span> <span class="special">&amp;</span> <span class="special">&gt;::</span><span class="identifier">value</span> <span class="special">&gt;::</span><span class="identifier">type</span>  <span class="special">=</span> <span class="number">0</span><span class="special">);</span>
+  <span class="emphasis"><em>» <a class="link" href="basic_writable_pipe/overload4.html" title="basic_writable_pipe::basic_writable_pipe (4 of 5 overloads)">more...</a></em></span>
+</pre>
+<p>
+          Move-construct a <a class="link" href="../basic_writable_pipe.html" title="basic_writable_pipe"><code class="computeroutput"><span class="identifier">basic_writable_pipe</span></code></a> from another.
+        </p>
+<pre class="programlisting"><a class="link" href="basic_writable_pipe/overload5.html" title="basic_writable_pipe::basic_writable_pipe (5 of 5 overloads)">basic_writable_pipe</a><span class="special">(</span>
+    <span class="identifier">basic_writable_pipe</span> <span class="special">&amp;&amp;</span> <span class="identifier">other</span><span class="special">);</span>
+  <span class="emphasis"><em>» <a class="link" href="basic_writable_pipe/overload5.html" title="basic_writable_pipe::basic_writable_pipe (5 of 5 overloads)">more...</a></em></span>
+</pre>
+</div>
+<table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+<td align="left"></td>
+<td align="right"><div class="copyright-footer">Copyright © 2003-2022 Christopher M. Kohlhoff<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="async_write_some.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../basic_writable_pipe.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../boost_asio.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="basic_writable_pipe/overload1.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>
