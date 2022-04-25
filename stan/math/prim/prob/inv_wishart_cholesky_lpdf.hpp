@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_PRIM_PROB_WISHART_CHOLESKY_LPDF_HPP
-#define STAN_MATH_PRIM_PROB_WISHART_CHOLESKY_LPDF_HPP
+#ifndef STAN_MATH_PRIM_PROB_INV_WISHART_CHOLESKY_LPDF_HPP
+#define STAN_MATH_PRIM_PROB_INV_WISHART_CHOLESKY_LPDF_HPP
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
@@ -12,7 +12,7 @@ namespace stan {
 namespace math {
 
 /** \ingroup multivar_dists
- * The log of the Wishart density for the given Cholesky factor, degrees of
+ * The log of the Inverse Wishart density for the given Cholesky factor, degrees of
  freedom,
  * and scale Cholesky factor matrix.
  *
@@ -38,7 +38,7 @@ namespace math {
 template <bool propto, typename T_y, typename T_dof, typename T_scale,
           require_stan_scalar_t<T_dof>* = nullptr,
           require_all_matrix_t<T_y, T_scale>* = nullptr>
-return_type_t<T_y, T_dof, T_scale> wishart_cholesky_lpdf(const T_y& LY,
+return_type_t<T_y, T_dof, T_scale> inv_wishart_cholesky_lpdf(const T_y& LY,
                                                          const T_dof& nu,
                                                          const T_scale& LS) {
   using Eigen::Dynamic;
@@ -71,12 +71,12 @@ return_type_t<T_y, T_dof, T_scale> wishart_cholesky_lpdf(const T_y& LY,
   }
 
   if (include_summand<propto, T_dof, T_scale, T_y>::value) {
-    auto LSinvLY = mdivide_left_tri<Eigen::Lower>(LS_ref, LY_ref);
+    auto LYinvLS = mdivide_left_tri<Eigen::Lower>(LY_ref, LS_ref);
 
     for (int i = 0; i < k; i++) {
-      lp -= 0.5 * dot_self(LSinvLY.row(i).head(i + 1))
-            + nu_ref * log(LS_ref.coeff(i, i))
-            - (nu_ref - i - 1) * log(LY_ref.coeff(i, i));
+      lp -= 0.5 * dot_self(LYinvLS.row(i).head(i + 1))
+            - nu_ref * log(LS_ref.coeff(i, i))
+            + (nu_ref + i + 1) * log(LY_ref.coeff(i, i));
     }
   }
 
@@ -84,9 +84,9 @@ return_type_t<T_y, T_dof, T_scale> wishart_cholesky_lpdf(const T_y& LY,
 }
 
 template <typename T_y, typename T_dof, typename T_scale>
-inline return_type_t<T_y, T_dof, T_scale> wishart_cholesky_lpdf(
+inline return_type_t<T_y, T_dof, T_scale> inv_wishart_cholesky_lpdf(
     const T_y& LW, const T_dof& nu, const T_scale& LS) {
-  return wishart_cholesky_lpdf<false>(LW, nu, LS);
+  return inv_wishart_cholesky_lpdf<false>(LW, nu, LS);
 }
 
 }  // namespace math
