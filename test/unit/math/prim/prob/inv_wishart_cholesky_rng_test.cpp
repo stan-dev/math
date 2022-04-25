@@ -62,7 +62,8 @@ TEST(ProbDistributionsInvWishartCholesky, cholesky_factor_check) {
     for (double nu = k - 0.9; nu < k + 10; ++nu)
       for (int n = 0; n < 10; ++n)
         expect_symmetric(stan::math::multiply_lower_tri_self_transpose(
-            inv_wishart_cholesky_rng(nu, stan::math::cholesky_decompose(spd_rng(k, rng)), rng)));
+            inv_wishart_cholesky_rng(
+                nu, stan::math::cholesky_decompose(spd_rng(k, rng)), rng)));
 }
 
 TEST(ProbDistributionsInvWishartCholesky, marginalTwoChiSquareGoodnessFitTest) {
@@ -88,7 +89,8 @@ TEST(ProbDistributionsInvWishartCholesky, marginalTwoChiSquareGoodnessFitTest) {
 
   MatrixXd a(sigma.rows(), sigma.rows());
   for (int count = 0; count < N; ++count) {
-    a = inv_wishart_cholesky_rng(5.0, stan::math::cholesky_decompose(sigma), rng);
+    a = inv_wishart_cholesky_rng(5.0, stan::math::cholesky_decompose(sigma),
+                                 rng);
     avg += stan::math::sum(stan::math::log(a.diagonal()));
   }
   avg /= N;

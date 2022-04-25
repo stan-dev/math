@@ -12,8 +12,8 @@ namespace stan {
 namespace math {
 
 /** \ingroup multivar_dists
- * The log of the Inverse Wishart density for the given Cholesky factor, degrees of
- freedom,
+ * The log of the Inverse Wishart density for the given Cholesky factor, degrees
+ of freedom,
  * and scale Cholesky factor matrix.
  *
  * The scale matrix, LS, must be a lower Cholesky factor.
@@ -38,9 +38,8 @@ namespace math {
 template <bool propto, typename T_y, typename T_dof, typename T_scale,
           require_stan_scalar_t<T_dof>* = nullptr,
           require_all_matrix_t<T_y, T_scale>* = nullptr>
-return_type_t<T_y, T_dof, T_scale> inv_wishart_cholesky_lpdf(const T_y& LY,
-                                                         const T_dof& nu,
-                                                         const T_scale& LS) {
+return_type_t<T_y, T_dof, T_scale> inv_wishart_cholesky_lpdf(
+    const T_y& LY, const T_dof& nu, const T_scale& LS) {
   using Eigen::Dynamic;
   using Eigen::Lower;
   using Eigen::Matrix;

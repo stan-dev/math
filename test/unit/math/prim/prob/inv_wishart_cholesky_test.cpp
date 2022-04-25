@@ -50,8 +50,10 @@ TEST(ProbDistributionsInvWishartCholesky, inv_wishart_cholesky_pos_def) {
   unsigned int dof = 5;
 
   EXPECT_NO_THROW(inv_wishart_cholesky_lpdf(Y, dof, Sigma));
-  EXPECT_THROW(inv_wishart_cholesky_lpdf(Y_non_pos_def, dof, Sigma), std::domain_error);
-  EXPECT_THROW(inv_wishart_cholesky_lpdf(Y, dof, Sigma_non_pos_def), std::domain_error);
+  EXPECT_THROW(inv_wishart_cholesky_lpdf(Y_non_pos_def, dof, Sigma),
+               std::domain_error);
+  EXPECT_THROW(inv_wishart_cholesky_lpdf(Y, dof, Sigma_non_pos_def),
+               std::domain_error);
 }
 
 TEST(ProbDistributionsInvWishartCholesky, InvWishartCholesky) {
@@ -100,7 +102,8 @@ TEST(ProbDistributionsInvWishartCholesky, Propto) {
 
   double dof = 4.0;
 
-  EXPECT_FLOAT_EQ(0.0, stan::math::inv_wishart_cholesky_lpdf<true>(LY, dof, LS));
+  EXPECT_FLOAT_EQ(0.0,
+                  stan::math::inv_wishart_cholesky_lpdf<true>(LY, dof, LS));
 }
 TEST(ProbDistributionsInvWishartCholesky, Error) {
   using Eigen::Dynamic;
