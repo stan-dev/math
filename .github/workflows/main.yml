@@ -1,4 +1,4 @@
-name: Windows RTools 3.5
+name: Windows Rtools40
 
 on:
   pull_request:
@@ -31,7 +31,7 @@ jobs:
       with:
         r-version: 4.1.3
     
-    - name: Set path for RTools 4.0
+    - name: Set path for Rtools40
       if: runner.os == 'Windows'
       run: echo "C:/rtools40/usr/bin;C:/rtools40/mingw64/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
     - name: Install mingw32-make and check toolchain path
@@ -78,7 +78,7 @@ jobs:
       with:
         r-version: 4.1.3
     
-    - name: Set path for RTools 4.0
+    - name: Set path for Rtools40
       if: runner.os == 'Windows'
       run: echo "C:/rtools40/usr/bin;C:/rtools40/mingw64/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
     - name: Install mingw32-make and check toolchain path
@@ -129,7 +129,7 @@ jobs:
       with:
         r-version: 4.1.3
     
-    - name: Set path for RTools 4.0
+    - name: Set path for Rtools40
       if: runner.os == 'Windows'
       run: echo "C:/rtools40/usr/bin;C:/rtools40/mingw64/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
     - name: Install mingw32-make and check toolchain path
@@ -147,10 +147,7 @@ jobs:
       run: mingw32-make -f make/standalone math-libs
     - name: Add TBB to PATH
       shell: powershell
-      run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
-    - name: Disable running fwd/mix tests
-      shell: powershell
-      run: echo "CXXFLAGS+= -DSTAN_MATH_TESTS_REV_ONLY" | Out-File -Append -FilePath make/local -Encoding utf8      
+      run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8  
     - name: Run mix/fun unit tests
       shell: powershell
       run: |
