@@ -203,10 +203,10 @@ TEST(ProbDistributionsMultiStudentT, Nu) {
   EXPECT_THROW(multi_student_t_log(y, nu, mu, Sigma), std::domain_error);
   EXPECT_THROW(multi_student_t_rng(nu, mu, Sigma, rng), std::domain_error);
 
-  // nu = infinity OK
+  // nu = infinity NOT OK
   nu = std::numeric_limits<double>::infinity();
-  EXPECT_NO_THROW(multi_student_t_log(y, nu, mu, Sigma));
-  EXPECT_NO_THROW(multi_student_t_rng(nu, mu, Sigma, rng));
+  EXPECT_THROW(multi_student_t_log(y, nu, mu, Sigma), std::domain_error);
+  EXPECT_THROW(multi_student_t_rng(nu, mu, Sigma, rng), std::domain_error);
 }
 
 TEST(ProbDistributionsMultiStudentT, ErrorSize1) {

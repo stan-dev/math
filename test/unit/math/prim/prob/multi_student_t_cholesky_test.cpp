@@ -219,10 +219,10 @@ TEST(ProbDistributionsMultiStudentTCholesky, Nu) {
   EXPECT_THROW(multi_student_t_cholesky_lpdf(y, nu, mu, L), std::domain_error);
   EXPECT_THROW(multi_student_t_cholesky_rng(nu, mu, L, rng), std::domain_error);
 
-  // nu = infinity OK
+  // nu = infinity is NOT OK
   nu = std::numeric_limits<double>::infinity();
-  EXPECT_NO_THROW(multi_student_t_cholesky_lpdf(y, nu, mu, L));
-  EXPECT_NO_THROW(multi_student_t_cholesky_rng(nu, mu, L, rng));
+  EXPECT_THROW(multi_student_t_cholesky_lpdf(y, nu, mu, L), std::domain_error);
+  EXPECT_THROW(multi_student_t_cholesky_rng(nu, mu, L, rng), std::domain_error);
 }
 
 TEST(ProbDistributionsMultiStudentTCholesky, ErrorSize1) {
@@ -344,14 +344,14 @@ TEST(ProbDistributionsMultiStudentTCholesky,
     while (i < K - 1 && a(0) > loc[i])
       ++i;
     ++bin[i];
-    count++;
+    ++count;
   }
 
-  double chi = 0;
+  double X = 0;
   for (int j = 0; j < K; j++)
-    chi += ((bin[j] - expect[j]) * (bin[j] - expect[j]) / expect[j]);
+    X += ((bin[j] - expect[j]) * (bin[j] - expect[j]) / expect[j]);
 
-  EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
+  EXPECT_TRUE(X < quantile(complement(mydist, 1e-6)));
 }
 
 TEST(ProbDistributionsMultiStudentTCholesky,
