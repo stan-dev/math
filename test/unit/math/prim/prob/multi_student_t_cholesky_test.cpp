@@ -66,36 +66,43 @@ TEST(ProbDistributionsMultiStudentTCholesky, Vectorized) {
   double nu = 4.0;
 
   // y and mu vectorized
-  EXPECT_FLOAT_EQ(-8.92867 - 6.81839,
-                  stan::math::multi_student_t_cholesky_lpdf(vec_y, nu, vec_mu, L));
-  EXPECT_FLOAT_EQ(-8.92867 - 6.81839,
-                  stan::math::multi_student_t_cholesky_lpdf(vec_y_t, nu, vec_mu, L));
-  EXPECT_FLOAT_EQ(-8.92867 - 6.81839,
-                  stan::math::multi_student_t_cholesky_lpdf(vec_y, nu, vec_mu_t, L));
+  EXPECT_FLOAT_EQ(-8.92867 - 6.81839, stan::math::multi_student_t_cholesky_lpdf(
+                                          vec_y, nu, vec_mu, L));
+  EXPECT_FLOAT_EQ(-8.92867 - 6.81839, stan::math::multi_student_t_cholesky_lpdf(
+                                          vec_y_t, nu, vec_mu, L));
+  EXPECT_FLOAT_EQ(-8.92867 - 6.81839, stan::math::multi_student_t_cholesky_lpdf(
+                                          vec_y, nu, vec_mu_t, L));
   EXPECT_FLOAT_EQ(-8.92867 - 6.81839, stan::math::multi_student_t_cholesky_lpdf(
                                           vec_y_t, nu, vec_mu_t, L));
 
   // y vectorized
   EXPECT_FLOAT_EQ(-9.167054 - 6.81839,
                   stan::math::multi_student_t_cholesky_lpdf(vec_y, nu, mu, L));
-  EXPECT_FLOAT_EQ(-9.167054 - 6.81839,
-                  stan::math::multi_student_t_cholesky_lpdf(vec_y_t, nu, mu, L));
-  EXPECT_FLOAT_EQ(-9.167054 - 6.81839,
-                  stan::math::multi_student_t_cholesky_lpdf(vec_y, nu, mu_t, L));
-  EXPECT_FLOAT_EQ(-9.167054 - 6.81839,
-                  stan::math::multi_student_t_cholesky_lpdf(vec_y_t, nu, mu_t, L));
+  EXPECT_FLOAT_EQ(
+      -9.167054 - 6.81839,
+      stan::math::multi_student_t_cholesky_lpdf(vec_y_t, nu, mu, L));
+  EXPECT_FLOAT_EQ(
+      -9.167054 - 6.81839,
+      stan::math::multi_student_t_cholesky_lpdf(vec_y, nu, mu_t, L));
+  EXPECT_FLOAT_EQ(
+      -9.167054 - 6.81839,
+      stan::math::multi_student_t_cholesky_lpdf(vec_y_t, nu, mu_t, L));
 
   // mu vectorized
   EXPECT_FLOAT_EQ(-5.528012 - 6.81839,
                   stan::math::multi_student_t_cholesky_lpdf(y, nu, vec_mu, L));
-  EXPECT_FLOAT_EQ(-5.528012 - 6.81839,
-                  stan::math::multi_student_t_cholesky_lpdf(y_t, nu, vec_mu, L));
-  EXPECT_FLOAT_EQ(-5.528012 - 6.81839,
-                  stan::math::multi_student_t_cholesky_lpdf(y, nu, vec_mu_t, L));
-  EXPECT_FLOAT_EQ(-5.528012 - 6.81839,
-                  stan::math::multi_student_t_cholesky_lpdf(y_t, nu, vec_mu_t, L));
+  EXPECT_FLOAT_EQ(
+      -5.528012 - 6.81839,
+      stan::math::multi_student_t_cholesky_lpdf(y_t, nu, vec_mu, L));
+  EXPECT_FLOAT_EQ(
+      -5.528012 - 6.81839,
+      stan::math::multi_student_t_cholesky_lpdf(y, nu, vec_mu_t, L));
+  EXPECT_FLOAT_EQ(
+      -5.528012 - 6.81839,
+      stan::math::multi_student_t_cholesky_lpdf(y_t, nu, vec_mu_t, L));
   EXPECT_NO_THROW(stan::math::multi_student_t_cholesky_rng(nu, vec_mu, L, rng));
-  EXPECT_NO_THROW(stan::math::multi_student_t_cholesky_rng(nu, vec_mu_t, L, rng));
+  EXPECT_NO_THROW(
+      stan::math::multi_student_t_cholesky_rng(nu, vec_mu_t, L, rng));
 }
 
 TEST(ProbDistributionsMultiStudentTCholesky, Sigma) {
@@ -232,7 +239,8 @@ TEST(ProbDistributionsMultiStudentTCholesky, ErrorSize1) {
   Matrix<double, Dynamic, Dynamic> L = Sigma.llt().matrixL();
   double nu = 4.0;
 
-  EXPECT_THROW(multi_student_t_cholesky_lpdf(y, nu, mu, L), std::invalid_argument);
+  EXPECT_THROW(multi_student_t_cholesky_lpdf(y, nu, mu, L),
+               std::invalid_argument);
 }
 
 TEST(ProbDistributionsMultiStudentTCholesky, ErrorSize2) {
@@ -251,8 +259,10 @@ TEST(ProbDistributionsMultiStudentTCholesky, ErrorSize2) {
   Matrix<double, Dynamic, Dynamic> L = Sigma.llt().matrixL();
   double nu = 4.0;
 
-  EXPECT_THROW(multi_student_t_cholesky_lpdf(y, nu, mu, L), std::invalid_argument);
-  EXPECT_THROW(multi_student_t_cholesky_rng(nu, mu, L, rng), std::invalid_argument);
+  EXPECT_THROW(multi_student_t_cholesky_lpdf(y, nu, mu, L),
+               std::invalid_argument);
+  EXPECT_THROW(multi_student_t_cholesky_rng(nu, mu, L, rng),
+               std::invalid_argument);
 }
 
 TEST(ProbDistributionsMultiStudentTCholesky, ErrorSize3) {
@@ -267,12 +277,15 @@ TEST(ProbDistributionsMultiStudentTCholesky, ErrorSize3) {
   Matrix<double, Dynamic, 1> mu(3, 1);
   mu << 1.0, -1.0, 3.0;
   Matrix<double, Dynamic, Dynamic> Sigma(4, 4);
-  Sigma << 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0;
+  Sigma << 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0,
+      0.0, 1.0;
   Matrix<double, Dynamic, Dynamic> L = Sigma.llt().matrixL();
   double nu = 4.0;
 
-  EXPECT_THROW(multi_student_t_cholesky_lpdf(y, nu, mu, L), std::invalid_argument);
-  EXPECT_THROW(multi_student_t_cholesky_rng(nu, mu, L, rng), std::invalid_argument);
+  EXPECT_THROW(multi_student_t_cholesky_lpdf(y, nu, mu, L),
+               std::invalid_argument);
+  EXPECT_THROW(multi_student_t_cholesky_rng(nu, mu, L, rng),
+               std::invalid_argument);
 }
 
 TEST(ProbDistributionsMultiStudentTCholesky, ProptoAllDoublesZero) {
@@ -293,7 +306,8 @@ TEST(ProbDistributionsMultiStudentTCholesky, ProptoAllDoublesZero) {
   EXPECT_FLOAT_EQ(0.0, multi_student_t_cholesky_lpdf<true>(y, nu, mu, L));
 }
 
-TEST(ProbDistributionsMultiStudentTCholesky, marginalOneChiSquareGoodnessFitTest) {
+TEST(ProbDistributionsMultiStudentTCholesky,
+     marginalOneChiSquareGoodnessFitTest) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::multi_student_t_cholesky_rng;
@@ -340,7 +354,8 @@ TEST(ProbDistributionsMultiStudentTCholesky, marginalOneChiSquareGoodnessFitTest
   EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
 }
 
-TEST(ProbDistributionsMultiStudentTCholesky, marginalTwoChiSquareGoodnessFitTest) {
+TEST(ProbDistributionsMultiStudentTCholesky,
+     marginalTwoChiSquareGoodnessFitTest) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using stan::math::multi_student_t_cholesky_lpdf;
@@ -430,8 +445,10 @@ TEST(ProbDistributionsMultiStudentTCholesky, WrongSize) {
 
   double nu = 4.0;
 
-  EXPECT_NO_THROW(stan::math::multi_student_t_cholesky_lpdf(y_3_3, nu, mu_3_3, L));
-  EXPECT_NO_THROW(stan::math::multi_student_t_cholesky_lpdf(y_3, nu, mu_3_3, L));
+  EXPECT_NO_THROW(
+      stan::math::multi_student_t_cholesky_lpdf(y_3_3, nu, mu_3_3, L));
+  EXPECT_NO_THROW(
+      stan::math::multi_student_t_cholesky_lpdf(y_3, nu, mu_3_3, L));
 
   EXPECT_THROW(stan::math::multi_student_t_cholesky_lpdf(y_1_3, nu, mu_3_3, L),
                std::invalid_argument);

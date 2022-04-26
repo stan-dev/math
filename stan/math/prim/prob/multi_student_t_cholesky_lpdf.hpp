@@ -129,7 +129,8 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_cholesky_lpdf(
     for (size_t i = 0; i < size_vec; i++) {
       const auto& y_col = as_column_vector_or_scalar(y_vec[i]);
       const auto& mu_col = as_column_vector_or_scalar(mu_vec[i]);
-      sum_lp_vec += log1p(dot_self(mdivide_left_tri<Eigen::Lower>(L, y_col - mu_col)) / nu);
+      sum_lp_vec += log1p(
+          dot_self(mdivide_left_tri<Eigen::Lower>(L, y_col - mu_col)) / nu);
     }
 
     lp -= 0.5 * (nu + size_y) * sum_lp_vec;
