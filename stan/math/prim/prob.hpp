@@ -203,6 +203,8 @@
 #include <stan/math/prim/prob/multi_normal_prec_lpdf.hpp>
 #include <stan/math/prim/prob/multi_normal_prec_rng.hpp>
 #include <stan/math/prim/prob/multi_normal_rng.hpp>
+#include <stan/math/prim/prob/multi_student_t_cholesky_lpdf.hpp>
+#include <stan/math/prim/prob/multi_student_t_cholesky_rng.hpp>
 #include <stan/math/prim/prob/multi_student_t_log.hpp>
 #include <stan/math/prim/prob/multi_student_t_lpdf.hpp>
 #include <stan/math/prim/prob/multi_student_t_rng.hpp>
