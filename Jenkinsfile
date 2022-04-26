@@ -471,26 +471,6 @@ pipeline {
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
-
-                stage('Windows Headers & Unit') {
-                    agent { label 'windows' }
-                    when {
-                        allOf {
-                            anyOf {
-                                branch 'develop'
-                                branch 'master'
-                                expression { params.run_win_tests }
-                            }
-                            expression {
-                                !skipRemainingStages
-                            }
-                        }
-                    }
-                    steps {
-                        unstash 'MathSetup'
-                        runTestsWin("test/unit", true, false)
-                    }
-                }
             }
         }
 
