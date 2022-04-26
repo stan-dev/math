@@ -21,13 +21,13 @@ namespace stan {
 namespace math {
 
 /** \ingroup multivar_dists
- * The log of the multivariate student t density for the given y, mu, 
+ * The log of the multivariate student t density for the given y, mu,
  * nu, and scale matrix.
  *
  * This version of the function is vectorized on y and mu.
  *
- * @param y scalar vector of random variates 
- * @param nu scalar degrees of freedom 
+ * @param y scalar vector of random variates
+ * @param nu scalar degrees of freedom
  * @param mu location vector
  * @param Sigma scale matrix
  * @return The log of the multivariate student t density.
@@ -69,23 +69,22 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_lpdf(
     return 0;
   }
 
-    for (size_t i = 1, size_mvt_y = size_mvt(y); i < size_mvt_y; i++) {
-      check_size_match(
-          function, "Size of one of the vectors of the random variable",
-          y_vec[i].size(), 
-          "Size of another vector of the random variable",
-          y_vec[i - 1].size());
-    }
+  for (size_t i = 1, size_mvt_y = size_mvt(y); i < size_mvt_y; i++) {
+    check_size_match(
+        function, "Size of one of the vectors of the random variable",
+        y_vec[i].size(), "Size of another vector of the random variable",
+        y_vec[i - 1].size());
+  }
 
-    for (size_t i = 1, size_mvt_mu = size_mvt(mu); i < size_mvt_mu; i++) {
-      check_size_match(function,
-                       "Size of one of the vectors "
-                       "of the location variable",
-                       mu_vec[i].size(),
-                       "Size of another vector of "
-                       "the location variable",
-                       mu_vec[i - 1].size());
-    }
+  for (size_t i = 1, size_mvt_mu = size_mvt(mu); i < size_mvt_mu; i++) {
+    check_size_match(function,
+                     "Size of one of the vectors "
+                     "of the location variable",
+                     mu_vec[i].size(),
+                     "Size of another vector of "
+                     "the location variable",
+                     mu_vec[i - 1].size());
+  }
 
   check_size_match(function, "Size of random variable", num_dims,
                    "size of location parameter", mu_vec[0].size());

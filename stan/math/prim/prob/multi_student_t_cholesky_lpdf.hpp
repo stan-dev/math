@@ -22,15 +22,15 @@ namespace stan {
 namespace math {
 
 /** \ingroup multivar_dists
- * The log of the multivariate student t density for the given y, mu, 
+ * The log of the multivariate student t density for the given y, mu,
  * nu, and a Cholesky factor L of the scale matrix.
  * Sigma = LL', a square, semi-positive definite matrix.
  *
  * This version of the function is vectorized on y and mu.
  *
- * @param y scalar vector of random variates 
- * @param nu scalar degrees of freedom 
- * @param mu location vector 
+ * @param y scalar vector of random variates
+ * @param nu scalar degrees of freedom
+ * @param mu location vector
  * @param L cholesky decomposition of the scale matrix
  * of the multivariate student t distribution.
  * @return The log of the multivariate student t density.
@@ -58,13 +58,13 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_cholesky_lpdf(
 
   size_t num_y = size_mvt(y);
   size_t num_mu = size_mvt(mu);
- 
+
   check_consistent_sizes_mvt(function, "y", y, "mu", mu);
 
   vector_seq_view<T_y> y_vec(y);
   vector_seq_view<T_loc> mu_vec(mu);
   size_t size_vec = max_size_mvt(y, mu);
-   if (size_vec == 0) {
+  if (size_vec == 0) {
     return 0;
   }
 
@@ -73,22 +73,21 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_cholesky_lpdf(
     return 0;
   }
 
-    for (size_t i = 1, size_mvt_y = size_mvt(y); i < size_mvt_y; i++) {
-      check_size_match(
-          function, "Size of one of the vectors of the random variable",
-          y_vec[i].size(), 
-          "Size of another vector of the random variable",
-          y_vec[i - 1].size());
-    }
-    for (size_t i = 1, size_mvt_mu = size_mvt(mu); i < size_mvt_mu; i++) {
-      check_size_match(function,
-                       "Size of one of the vectors "
-                       "of the location variable",
-                       mu_vec[i].size(),
-                       "Size of another vector of "
-                       "the location variable",
-                       mu_vec[i - 1].size());
-    }
+  for (size_t i = 1, size_mvt_y = size_mvt(y); i < size_mvt_y; i++) {
+    check_size_match(
+        function, "Size of one of the vectors of the random variable",
+        y_vec[i].size(), "Size of another vector of the random variable",
+        y_vec[i - 1].size());
+  }
+  for (size_t i = 1, size_mvt_mu = size_mvt(mu); i < size_mvt_mu; i++) {
+    check_size_match(function,
+                     "Size of one of the vectors "
+                     "of the location variable",
+                     mu_vec[i].size(),
+                     "Size of another vector of "
+                     "the location variable",
+                     mu_vec[i - 1].size());
+  }
 
   check_size_match(function, "Size of random variable", num_dims,
                    "size of location parameter", mu_vec[0].size());

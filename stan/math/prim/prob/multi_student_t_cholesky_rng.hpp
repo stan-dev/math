@@ -39,9 +39,8 @@ namespace math {
  */
 template <typename T_loc, class RNG>
 inline typename StdVectorBuilder<true, Eigen::VectorXd, T_loc>::type
-multi_student_t_cholesky_rng(
-    double nu, const T_loc& mu,
-    const Eigen::MatrixXd& L, RNG& rng) {
+multi_student_t_cholesky_rng(double nu, const T_loc& mu,
+                             const Eigen::MatrixXd& L, RNG& rng) {
   using boost::normal_distribution;
   using boost::variate_generator;
   using boost::random::gamma_distribution;
@@ -77,7 +76,7 @@ multi_student_t_cholesky_rng(
   variate_generator<RNG&, normal_distribution<> > std_normal_rng(
       rng, normal_distribution<>(0, 1));
 
- double w = inv_gamma_rng(nu / 2, nu / 2, rng);
+  double w = inv_gamma_rng(nu / 2, nu / 2, rng);
   for (size_t n = 0; n < N; ++n) {
     Eigen::VectorXd z(L.cols());
     for (int i = 0; i < L.cols(); i++) {
