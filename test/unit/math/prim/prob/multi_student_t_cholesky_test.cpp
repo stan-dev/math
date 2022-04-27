@@ -25,7 +25,7 @@ TEST(ProbDistributionsMultiStudentTCholesky, NotVectorized) {
   double lp = multi_student_t_cholesky_lpdf(y, nu, mu, L);
   EXPECT_NO_THROW(multi_student_t_cholesky_rng(nu, mu, L, rng));
   // calc using R's mnormt package's dmt function
-  EXPECT_NEAR(-10.1246, lp, 0.0001);
+  EXPECT_NEAR(-10.1245958182, lp, 1e-9);
 }
 
 TEST(ProbDistributionsMultiStudentTCholesky, Vectorized) {
@@ -66,39 +66,39 @@ TEST(ProbDistributionsMultiStudentTCholesky, Vectorized) {
   double nu = 4.0;
 
   // y and mu vectorized
-  EXPECT_FLOAT_EQ(-8.92867 - 6.81839, stan::math::multi_student_t_cholesky_lpdf(
+  EXPECT_FLOAT_EQ(-8.9286697030 - 6.8183896234, stan::math::multi_student_t_cholesky_lpdf(
                                           vec_y, nu, vec_mu, L));
-  EXPECT_FLOAT_EQ(-8.92867 - 6.81839, stan::math::multi_student_t_cholesky_lpdf(
+  EXPECT_FLOAT_EQ(-8.9286697030 - 6.8183896234, stan::math::multi_student_t_cholesky_lpdf(
                                           vec_y_t, nu, vec_mu, L));
-  EXPECT_FLOAT_EQ(-8.92867 - 6.81839, stan::math::multi_student_t_cholesky_lpdf(
+  EXPECT_FLOAT_EQ(-8.9286697030 - 6.8183896234, stan::math::multi_student_t_cholesky_lpdf(
                                           vec_y, nu, vec_mu_t, L));
-  EXPECT_FLOAT_EQ(-8.92867 - 6.81839, stan::math::multi_student_t_cholesky_lpdf(
+  EXPECT_FLOAT_EQ(-8.9286697030 - 6.8183896234, stan::math::multi_student_t_cholesky_lpdf(
                                           vec_y_t, nu, vec_mu_t, L));
 
   // y vectorized
-  EXPECT_FLOAT_EQ(-9.167054 - 6.81839,
+  EXPECT_FLOAT_EQ(-9.1670535409 - 6.8183896234,
                   stan::math::multi_student_t_cholesky_lpdf(vec_y, nu, mu, L));
   EXPECT_FLOAT_EQ(
-      -9.167054 - 6.81839,
+      -9.1670535409 - 6.8183896234,
       stan::math::multi_student_t_cholesky_lpdf(vec_y_t, nu, mu, L));
   EXPECT_FLOAT_EQ(
-      -9.167054 - 6.81839,
+      -9.1670535409 - 6.8183896234,
       stan::math::multi_student_t_cholesky_lpdf(vec_y, nu, mu_t, L));
   EXPECT_FLOAT_EQ(
-      -9.167054 - 6.81839,
+      -9.1670535409 - 6.8183896234,
       stan::math::multi_student_t_cholesky_lpdf(vec_y_t, nu, mu_t, L));
 
   // mu vectorized
-  EXPECT_FLOAT_EQ(-5.528012 - 6.81839,
+  EXPECT_FLOAT_EQ(-5.5280118939 - 6.8183896234,
                   stan::math::multi_student_t_cholesky_lpdf(y, nu, vec_mu, L));
   EXPECT_FLOAT_EQ(
-      -5.528012 - 6.81839,
+      -5.5280118939 - 6.8183896234,
       stan::math::multi_student_t_cholesky_lpdf(y_t, nu, vec_mu, L));
   EXPECT_FLOAT_EQ(
-      -5.528012 - 6.81839,
+      -5.5280118939 - 6.8183896234,
       stan::math::multi_student_t_cholesky_lpdf(y, nu, vec_mu_t, L));
   EXPECT_FLOAT_EQ(
-      -5.528012 - 6.81839,
+      -5.5280118939 - 6.8183896234,
       stan::math::multi_student_t_cholesky_lpdf(y_t, nu, vec_mu_t, L));
   EXPECT_NO_THROW(stan::math::multi_student_t_cholesky_rng(nu, vec_mu, L, rng));
   EXPECT_NO_THROW(
@@ -329,20 +329,16 @@ TEST(ProbDistributionsMultiStudentTCholesky,
     loc[i - 1] = quantile(dist, i * std::pow(K, -1.0));
 
   int count = 0;
-  int bin[K];
-  double expect[K];
-  for (int i = 0; i < K; i++) {
-    bin[i] = 0;
-    expect[i] = N / K;
-  }
+  std::vector<int> bin(K);
+  std::vector<double> expect(K, N / K);
 
   Eigen::VectorXd a(mu.rows());
   while (count < N) {
     a = multi_student_t_cholesky_rng(3.0, mu, L, rng);
     a(0) = (a(0) - mu(0, 0)) / std::sqrt(s(0, 0));
     int i = 0;
-    while (i < K - 1 && a(0) > loc[i])
-      ++i;
+     while (i < K - 1 && a(0) > loc[i])
+       ++i;
     ++bin[i];
     ++count;
   }
@@ -378,12 +374,8 @@ TEST(ProbDistributionsMultiStudentTCholesky,
     loc[i - 1] = quantile(dist, i * std::pow(K, -1.0));
 
   int count = 0;
-  int bin[K];
-  double expect[K];
-  for (int i = 0; i < K; i++) {
-    bin[i] = 0;
-    expect[i] = N / K;
-  }
+  std::vector<int> bin(K);
+  std::vector<double> expect(K, N / K);
 
   Eigen::VectorXd a(mu.rows());
   while (count < N) {
@@ -393,14 +385,14 @@ TEST(ProbDistributionsMultiStudentTCholesky,
     while (i < K - 1 && a(1) > loc[i])
       ++i;
     ++bin[i];
-    count++;
+    ++count;
   }
 
-  double chi = 0;
+  double X = 0;
   for (int j = 0; j < K; j++)
-    chi += ((bin[j] - expect[j]) * (bin[j] - expect[j]) / expect[j]);
+    X += ((bin[j] - expect[j]) * (bin[j] - expect[j]) / expect[j]);
 
-  EXPECT_TRUE(chi < quantile(complement(mydist, 1e-6)));
+  EXPECT_TRUE(X < quantile(complement(mydist, 1e-6)));
 }
 
 TEST(ProbDistributionsMultiStudentTCholesky, WrongSize) {
