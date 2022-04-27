@@ -3,6 +3,7 @@
 
 #include <stan/math.hpp>
 #include <algorithm>
+#include <cmath>
 
 namespace stan {
 namespace test {
@@ -78,6 +79,13 @@ class relative_tolerance {
     using stan::math::fabs;
     return std::max(tol_ * 0.5 * (fabs(x) + fabs(y)), tol_min_);
   }
+
+  /**
+   * Returns `true` if the tolerance is infinite.
+   *
+   * @return `true` if the tolernace is infinite.
+   */
+  bool is_inf() const { return std::isinf(tol_); }
 
  private:
   /**
