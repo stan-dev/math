@@ -11,14 +11,15 @@
 
 template <typename T_y, typename T_dof, typename T_loc, typename T_scale>
 void expect_propto_multi_student_t_cholesky_lpdf(T_y y1, T_dof nu1, T_loc mu1,
-                                       T_scale L1, T_y y2, T_dof nu2,
-                                       T_loc mu2, T_scale L2,
-                                       std::string message = "") {
-  expect_eq_diffs(stan::math::multi_student_t_cholesky_lpdf<false>(y1, nu1, mu1, L1),
-                  stan::math::multi_student_t_cholesky_lpdf<false>(y2, nu2, mu2, L2),
-                  stan::math::multi_student_t_cholesky_lpdf<true>(y1, nu1, mu1, L1),
-                  stan::math::multi_student_t_cholesky_lpdf<true>(y2, nu2, mu2, L2),
-                  message);
+                                                 T_scale L1, T_y y2, T_dof nu2,
+                                                 T_loc mu2, T_scale L2,
+                                                 std::string message = "") {
+  expect_eq_diffs(
+      stan::math::multi_student_t_cholesky_lpdf<false>(y1, nu1, mu1, L1),
+      stan::math::multi_student_t_cholesky_lpdf<false>(y2, nu2, mu2, L2),
+      stan::math::multi_student_t_cholesky_lpdf<true>(y1, nu1, mu1, L1),
+      stan::math::multi_student_t_cholesky_lpdf<true>(y2, nu2, mu2, L2),
+      message);
 }
 
 TEST_F(agrad_distributions_multi_student_t_cholesky, Propto) {
@@ -31,46 +32,46 @@ TEST_F(agrad_distributions_multi_student_t_cholesky, Propto) {
 }
 TEST_F(agrad_distributions_multi_student_t_cholesky, ProptoY) {
   using stan::math::to_var;
-  expect_propto_multi_student_t_cholesky_lpdf(to_var(y), nu, mu, L, to_var(y2), nu,
-                                    mu, L, "var: y");
+  expect_propto_multi_student_t_cholesky_lpdf(to_var(y), nu, mu, L, to_var(y2),
+                                              nu, mu, L, "var: y");
 
   stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_student_t_cholesky, ProptoYMu) {
   using stan::math::to_var;
   expect_propto_multi_student_t_cholesky_lpdf(to_var(y), nu, to_var(mu), L,
-                                    to_var(y2), nu, to_var(mu2), L,
-                                    "var: y and mu");
+                                              to_var(y2), nu, to_var(mu2), L,
+                                              "var: y and mu");
 
   stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_student_t_cholesky, ProptoYL) {
   using stan::math::to_var;
   expect_propto_multi_student_t_cholesky_lpdf(to_var(y), nu, mu, to_var(L),
-                                    to_var(y2), nu, mu, to_var(L2),
-                                    "var: y and L");
+                                              to_var(y2), nu, mu, to_var(L2),
+                                              "var: y and L");
 
   stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_student_t_cholesky, ProptoMu) {
   using stan::math::to_var;
   expect_propto_multi_student_t_cholesky_lpdf(y, nu, to_var(mu), L, y, nu,
-                                    to_var(mu2), L, "var: mu");
+                                              to_var(mu2), L, "var: mu");
 
   stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_student_t_cholesky, ProptoMuL) {
   using stan::math::to_var;
-  expect_propto_multi_student_t_cholesky_lpdf(y, nu, to_var(mu), to_var(L), y, nu,
-                                    to_var(mu2), to_var(L2),
-                                    "var: mu and L");
+  expect_propto_multi_student_t_cholesky_lpdf(y, nu, to_var(mu), to_var(L), y,
+                                              nu, to_var(mu2), to_var(L2),
+                                              "var: mu and L");
 
   stan::math::recover_memory();
 }
 TEST_F(agrad_distributions_multi_student_t_cholesky, ProptoL) {
   using stan::math::to_var;
   expect_propto_multi_student_t_cholesky_lpdf(y, nu, mu, to_var(L), y, nu, mu,
-                                    to_var(L2), "var: L");
+                                              to_var(L2), "var: L");
 
   stan::math::recover_memory();
 }
@@ -89,8 +90,9 @@ TEST(ProbDistributionsMultiStudentTCholesky, MultiStudentTVar) {
   Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
   Matrix<var, Dynamic, Dynamic> L = Sigma.llt().matrixL();
 
-  EXPECT_FLOAT_EQ(-10.2136949646,
-                  stan::math::multi_student_t_cholesky_lpdf(y, nu, mu, L).val());
+  EXPECT_FLOAT_EQ(
+      -10.2136949646,
+      stan::math::multi_student_t_cholesky_lpdf(y, nu, mu, L).val());
 
   stan::math::recover_memory();
 }
@@ -119,7 +121,8 @@ TEST(ProbDistributionsMultiStudentTCholesky, MultiStudentTGradientUnivariate) {
   x.push_back(L_var(0, 0));
   x.push_back(nu_var);
 
-  var lp = stan::math::multi_student_t_cholesky_lpdf(y_var, nu_var, mu_var, L_var);
+  var lp
+      = stan::math::multi_student_t_cholesky_lpdf(y_var, nu_var, mu_var, L_var);
   vector<double> grad;
   lp.grad(x, grad);
 
@@ -250,9 +253,8 @@ struct vectorized_multi_student_t_cholesky_fun {
   const bool dont_vectorize_y;
   const bool dont_vectorize_mu;
 
-  vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(int K, int L,
-                                                              bool M = false,
-                                                              bool N = false)
+  vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(
+      int K, int L, bool M = false, bool N = false)
       : K_(K), L_(L), dont_vectorize_y(M), dont_vectorize_mu(N) {
     if ((dont_vectorize_y || dont_vectorize_mu) && L != 1)
       throw std::runtime_error(
@@ -293,12 +295,15 @@ struct vectorized_multi_student_t_cholesky_fun {
 
     if (dont_vectorize_y) {
       if (dont_vectorize_mu)
-        return stan::math::multi_student_t_cholesky_lpdf<false>(y[0], nu, mu[0], L);
+        return stan::math::multi_student_t_cholesky_lpdf<false>(y[0], nu, mu[0],
+                                                                L);
       else
-        return stan::math::multi_student_t_cholesky_lpdf<false>(y[0], nu, mu, L);
+        return stan::math::multi_student_t_cholesky_lpdf<false>(y[0], nu, mu,
+                                                                L);
     } else {
       if (dont_vectorize_mu)
-        return stan::math::multi_student_t_cholesky_lpdf<false>(y, nu, mu[0], L);
+        return stan::math::multi_student_t_cholesky_lpdf<false>(y, nu, mu[0],
+                                                                L);
       else
         return stan::math::multi_student_t_cholesky_lpdf<false>(y, nu, mu, L);
     }
@@ -328,69 +333,85 @@ void test_all_multi_student_t_cholesky() {
     for (int ii = 0; ii < 2; ii++)
       for (int jj = 0; jj < 2; jj++) {
         test_grad_multi_student_t_cholesky(
-            vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 1,
-                                                                        ii, jj),
+            vectorized_multi_student_t_cholesky_fun<is_row_vec_y,
+                                                    is_row_vec_mu>(3, 1, ii,
+                                                                   jj),
             y_, mu_, sigma_, 5);
         test_grad_multi_student_t_cholesky(
-            vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 1,
-                                                                        ii, jj),
+            vectorized_multi_student_t_cholesky_fun<is_row_vec_y,
+                                                    is_row_vec_mu>(3, 1, ii,
+                                                                   jj),
             y_, mu_, stan::math::to_var(sigma_), 5);
         test_grad_multi_student_t_cholesky(
-            vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 1,
-                                                                        ii, jj),
+            vectorized_multi_student_t_cholesky_fun<is_row_vec_y,
+                                                    is_row_vec_mu>(3, 1, ii,
+                                                                   jj),
             y_, stan::math::to_var(mu_), sigma_, 5);
         test_grad_multi_student_t_cholesky(
-            vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 1,
-                                                                        ii, jj),
+            vectorized_multi_student_t_cholesky_fun<is_row_vec_y,
+                                                    is_row_vec_mu>(3, 1, ii,
+                                                                   jj),
             y_, stan::math::to_var(mu_), stan::math::to_var(sigma_), 5);
         test_grad_multi_student_t_cholesky(
-            vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 1,
-                                                                        ii, jj),
+            vectorized_multi_student_t_cholesky_fun<is_row_vec_y,
+                                                    is_row_vec_mu>(3, 1, ii,
+                                                                   jj),
             stan::math::to_var(y_), mu_, sigma_, 5);
         test_grad_multi_student_t_cholesky(
-            vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 1,
-                                                                        ii, jj),
+            vectorized_multi_student_t_cholesky_fun<is_row_vec_y,
+                                                    is_row_vec_mu>(3, 1, ii,
+                                                                   jj),
             stan::math::to_var(y_), mu_, stan::math::to_var(sigma_), 5);
         test_grad_multi_student_t_cholesky(
-            vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 1,
-                                                                        ii, jj),
+            vectorized_multi_student_t_cholesky_fun<is_row_vec_y,
+                                                    is_row_vec_mu>(3, 1, ii,
+                                                                   jj),
             stan::math::to_var(y_), stan::math::to_var(mu_), sigma_, 5);
         test_grad_multi_student_t_cholesky(
-            vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 1,
-                                                                        ii, jj),
+            vectorized_multi_student_t_cholesky_fun<is_row_vec_y,
+                                                    is_row_vec_mu>(3, 1, ii,
+                                                                   jj),
             stan::math::to_var(y_), stan::math::to_var(mu_),
             stan::math::to_var(sigma_), 5);
         test_grad_multi_student_t_cholesky(
-            vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 1,
-                                                                        ii, jj),
+            vectorized_multi_student_t_cholesky_fun<is_row_vec_y,
+                                                    is_row_vec_mu>(3, 1, ii,
+                                                                   jj),
             y_, mu_, sigma_, var(5));
         test_grad_multi_student_t_cholesky(
-            vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 1,
-                                                                        ii, jj),
+            vectorized_multi_student_t_cholesky_fun<is_row_vec_y,
+                                                    is_row_vec_mu>(3, 1, ii,
+                                                                   jj),
             y_, mu_, stan::math::to_var(sigma_), var(5));
         test_grad_multi_student_t_cholesky(
-            vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 1,
-                                                                        ii, jj),
+            vectorized_multi_student_t_cholesky_fun<is_row_vec_y,
+                                                    is_row_vec_mu>(3, 1, ii,
+                                                                   jj),
             y_, stan::math::to_var(mu_), sigma_, var(5));
         test_grad_multi_student_t_cholesky(
-            vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 1,
-                                                                        ii, jj),
+            vectorized_multi_student_t_cholesky_fun<is_row_vec_y,
+                                                    is_row_vec_mu>(3, 1, ii,
+                                                                   jj),
             y_, stan::math::to_var(mu_), stan::math::to_var(sigma_), var(5));
         test_grad_multi_student_t_cholesky(
-            vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 1,
-                                                                        ii, jj),
+            vectorized_multi_student_t_cholesky_fun<is_row_vec_y,
+                                                    is_row_vec_mu>(3, 1, ii,
+                                                                   jj),
             stan::math::to_var(y_), mu_, sigma_, var(5));
         test_grad_multi_student_t_cholesky(
-            vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 1,
-                                                                        ii, jj),
+            vectorized_multi_student_t_cholesky_fun<is_row_vec_y,
+                                                    is_row_vec_mu>(3, 1, ii,
+                                                                   jj),
             stan::math::to_var(y_), mu_, stan::math::to_var(sigma_), var(5));
         test_grad_multi_student_t_cholesky(
-            vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 1,
-                                                                        ii, jj),
+            vectorized_multi_student_t_cholesky_fun<is_row_vec_y,
+                                                    is_row_vec_mu>(3, 1, ii,
+                                                                   jj),
             stan::math::to_var(y_), stan::math::to_var(mu_), sigma_, var(5));
         test_grad_multi_student_t_cholesky(
-            vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 1,
-                                                                        ii, jj),
+            vectorized_multi_student_t_cholesky_fun<is_row_vec_y,
+                                                    is_row_vec_mu>(3, 1, ii,
+                                                                   jj),
             stan::math::to_var(y_), stan::math::to_var(mu_),
             stan::math::to_var(sigma_), var(5));
       }
@@ -426,53 +447,69 @@ void test_all_multi_student_t_cholesky() {
     sigma_[5] = 56;
 
     test_grad_multi_student_t_cholesky(
-        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 2), y_,
-        mu_, sigma_, 5);
+        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3,
+                                                                             2),
+        y_, mu_, sigma_, 5);
     test_grad_multi_student_t_cholesky(
-        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 2), y_,
-        mu_, stan::math::to_var(sigma_), 5);
+        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3,
+                                                                             2),
+        y_, mu_, stan::math::to_var(sigma_), 5);
     test_grad_multi_student_t_cholesky(
-        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 2), y_,
-        stan::math::to_var(mu_), sigma_, 5);
+        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3,
+                                                                             2),
+        y_, stan::math::to_var(mu_), sigma_, 5);
     test_grad_multi_student_t_cholesky(
-        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 2), y_,
-        stan::math::to_var(mu_), stan::math::to_var(sigma_), 5);
+        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3,
+                                                                             2),
+        y_, stan::math::to_var(mu_), stan::math::to_var(sigma_), 5);
     test_grad_multi_student_t_cholesky(
-        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 2),
+        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3,
+                                                                             2),
         stan::math::to_var(y_), mu_, sigma_, 5);
     test_grad_multi_student_t_cholesky(
-        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 2),
+        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3,
+                                                                             2),
         stan::math::to_var(y_), mu_, stan::math::to_var(sigma_), 5);
     test_grad_multi_student_t_cholesky(
-        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 2),
+        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3,
+                                                                             2),
         stan::math::to_var(y_), stan::math::to_var(mu_), sigma_, 5);
     test_grad_multi_student_t_cholesky(
-        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 2),
+        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3,
+                                                                             2),
         stan::math::to_var(y_), stan::math::to_var(mu_),
         stan::math::to_var(sigma_), 5);
     test_grad_multi_student_t_cholesky(
-        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 2), y_,
-        mu_, sigma_, var(5));
+        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3,
+                                                                             2),
+        y_, mu_, sigma_, var(5));
     test_grad_multi_student_t_cholesky(
-        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 2), y_,
-        mu_, stan::math::to_var(sigma_), var(5));
+        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3,
+                                                                             2),
+        y_, mu_, stan::math::to_var(sigma_), var(5));
     test_grad_multi_student_t_cholesky(
-        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 2), y_,
-        stan::math::to_var(mu_), sigma_, var(5));
+        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3,
+                                                                             2),
+        y_, stan::math::to_var(mu_), sigma_, var(5));
     test_grad_multi_student_t_cholesky(
-        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 2), y_,
-        stan::math::to_var(mu_), stan::math::to_var(sigma_), var(5));
+        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3,
+                                                                             2),
+        y_, stan::math::to_var(mu_), stan::math::to_var(sigma_), var(5));
     test_grad_multi_student_t_cholesky(
-        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 2),
+        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3,
+                                                                             2),
         stan::math::to_var(y_), mu_, sigma_, var(5));
     test_grad_multi_student_t_cholesky(
-        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 2),
+        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3,
+                                                                             2),
         stan::math::to_var(y_), mu_, stan::math::to_var(sigma_), var(5));
     test_grad_multi_student_t_cholesky(
-        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 2),
+        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3,
+                                                                             2),
         stan::math::to_var(y_), stan::math::to_var(mu_), sigma_, var(5));
     test_grad_multi_student_t_cholesky(
-        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3, 2),
+        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(3,
+                                                                             2),
         stan::math::to_var(y_), stan::math::to_var(mu_),
         stan::math::to_var(sigma_), var(5));
   }
@@ -484,53 +521,69 @@ void test_all_multi_student_t_cholesky() {
     sigma_[0] = 0.48;
 
     test_grad_multi_student_t_cholesky(
-        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1, 1), y_,
-        mu_, sigma_, 5);
+        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1,
+                                                                             1),
+        y_, mu_, sigma_, 5);
     test_grad_multi_student_t_cholesky(
-        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1, 1), y_,
-        mu_, stan::math::to_var(sigma_), 5);
+        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1,
+                                                                             1),
+        y_, mu_, stan::math::to_var(sigma_), 5);
     test_grad_multi_student_t_cholesky(
-        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1, 1), y_,
-        stan::math::to_var(mu_), sigma_, 5);
+        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1,
+                                                                             1),
+        y_, stan::math::to_var(mu_), sigma_, 5);
     test_grad_multi_student_t_cholesky(
-        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1, 1), y_,
-        stan::math::to_var(mu_), stan::math::to_var(sigma_), 5);
+        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1,
+                                                                             1),
+        y_, stan::math::to_var(mu_), stan::math::to_var(sigma_), 5);
     test_grad_multi_student_t_cholesky(
-        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1, 1),
+        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1,
+                                                                             1),
         stan::math::to_var(y_), mu_, sigma_, 5);
     test_grad_multi_student_t_cholesky(
-        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1, 1),
+        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1,
+                                                                             1),
         stan::math::to_var(y_), mu_, stan::math::to_var(sigma_), 5);
     test_grad_multi_student_t_cholesky(
-        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1, 1),
+        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1,
+                                                                             1),
         stan::math::to_var(y_), stan::math::to_var(mu_), sigma_, 5);
     test_grad_multi_student_t_cholesky(
-        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1, 1),
+        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1,
+                                                                             1),
         stan::math::to_var(y_), stan::math::to_var(mu_),
         stan::math::to_var(sigma_), 5);
     test_grad_multi_student_t_cholesky(
-        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1, 1), y_,
-        mu_, sigma_, var(5));
+        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1,
+                                                                             1),
+        y_, mu_, sigma_, var(5));
     test_grad_multi_student_t_cholesky(
-        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1, 1), y_,
-        mu_, stan::math::to_var(sigma_), var(5));
+        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1,
+                                                                             1),
+        y_, mu_, stan::math::to_var(sigma_), var(5));
     test_grad_multi_student_t_cholesky(
-        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1, 1), y_,
-        stan::math::to_var(mu_), sigma_, var(5));
+        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1,
+                                                                             1),
+        y_, stan::math::to_var(mu_), sigma_, var(5));
     test_grad_multi_student_t_cholesky(
-        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1, 1), y_,
-        stan::math::to_var(mu_), stan::math::to_var(sigma_), var(5));
+        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1,
+                                                                             1),
+        y_, stan::math::to_var(mu_), stan::math::to_var(sigma_), var(5));
     test_grad_multi_student_t_cholesky(
-        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1, 1),
+        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1,
+                                                                             1),
         stan::math::to_var(y_), mu_, sigma_, var(5));
     test_grad_multi_student_t_cholesky(
-        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1, 1),
+        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1,
+                                                                             1),
         stan::math::to_var(y_), mu_, stan::math::to_var(sigma_), var(5));
     test_grad_multi_student_t_cholesky(
-        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1, 1),
+        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1,
+                                                                             1),
         stan::math::to_var(y_), stan::math::to_var(mu_), sigma_, var(5));
     test_grad_multi_student_t_cholesky(
-        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1, 1),
+        vectorized_multi_student_t_cholesky_fun<is_row_vec_y, is_row_vec_mu>(1,
+                                                                             1),
         stan::math::to_var(y_), stan::math::to_var(mu_),
         stan::math::to_var(sigma_), var(5));
   }
@@ -558,27 +611,26 @@ TEST(ProbDistributionsMultiStudentTCholesky, check_varis_on_stack) {
   Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
   Matrix<double, Dynamic, Dynamic> L = Sigma.llt().matrixL();
 
-
   using stan::math::multi_student_t_cholesky_lpdf;
   using stan::math::to_var;
   test::check_varis_on_stack(multi_student_t_cholesky_lpdf<false>(
       to_var(y), to_var(nu), to_var(mu), to_var(L)));
-  test::check_varis_on_stack(
-      multi_student_t_cholesky_lpdf<false>(to_var(y), to_var(nu), to_var(mu), L));
-  test::check_varis_on_stack(
-      multi_student_t_cholesky_lpdf<false>(to_var(y), to_var(nu), mu, to_var(L)));
+  test::check_varis_on_stack(multi_student_t_cholesky_lpdf<false>(
+      to_var(y), to_var(nu), to_var(mu), L));
+  test::check_varis_on_stack(multi_student_t_cholesky_lpdf<false>(
+      to_var(y), to_var(nu), mu, to_var(L)));
   test::check_varis_on_stack(
       multi_student_t_cholesky_lpdf<false>(to_var(y), to_var(nu), mu, L));
-  test::check_varis_on_stack(
-      multi_student_t_cholesky_lpdf<false>(to_var(y), nu, to_var(mu), to_var(L)));
+  test::check_varis_on_stack(multi_student_t_cholesky_lpdf<false>(
+      to_var(y), nu, to_var(mu), to_var(L)));
   test::check_varis_on_stack(
       multi_student_t_cholesky_lpdf<false>(to_var(y), nu, to_var(mu), L));
   test::check_varis_on_stack(
       multi_student_t_cholesky_lpdf<false>(to_var(y), nu, mu, to_var(L)));
   test::check_varis_on_stack(
       multi_student_t_cholesky_lpdf<false>(to_var(y), nu, mu, L));
-  test::check_varis_on_stack(
-      multi_student_t_cholesky_lpdf<false>(y, to_var(nu), to_var(mu), to_var(L)));
+  test::check_varis_on_stack(multi_student_t_cholesky_lpdf<false>(
+      y, to_var(nu), to_var(mu), to_var(L)));
   test::check_varis_on_stack(
       multi_student_t_cholesky_lpdf<false>(y, to_var(nu), to_var(mu), L));
   test::check_varis_on_stack(
@@ -593,22 +645,22 @@ TEST(ProbDistributionsMultiStudentTCholesky, check_varis_on_stack) {
       multi_student_t_cholesky_lpdf<false>(y, nu, mu, to_var(L)));
   test::check_varis_on_stack(multi_student_t_cholesky_lpdf<true>(
       to_var(y), to_var(nu), to_var(mu), to_var(L)));
-  test::check_varis_on_stack(
-      multi_student_t_cholesky_lpdf<true>(to_var(y), to_var(nu), to_var(mu), L));
-  test::check_varis_on_stack(
-      multi_student_t_cholesky_lpdf<true>(to_var(y), to_var(nu), mu, to_var(L)));
+  test::check_varis_on_stack(multi_student_t_cholesky_lpdf<true>(
+      to_var(y), to_var(nu), to_var(mu), L));
+  test::check_varis_on_stack(multi_student_t_cholesky_lpdf<true>(
+      to_var(y), to_var(nu), mu, to_var(L)));
   test::check_varis_on_stack(
       multi_student_t_cholesky_lpdf<true>(to_var(y), to_var(nu), mu, L));
-  test::check_varis_on_stack(
-      multi_student_t_cholesky_lpdf<true>(to_var(y), nu, to_var(mu), to_var(L)));
+  test::check_varis_on_stack(multi_student_t_cholesky_lpdf<true>(
+      to_var(y), nu, to_var(mu), to_var(L)));
   test::check_varis_on_stack(
       multi_student_t_cholesky_lpdf<true>(to_var(y), nu, to_var(mu), L));
   test::check_varis_on_stack(
       multi_student_t_cholesky_lpdf<true>(to_var(y), nu, mu, to_var(L)));
   test::check_varis_on_stack(
       multi_student_t_cholesky_lpdf<true>(to_var(y), nu, mu, L));
-  test::check_varis_on_stack(
-      multi_student_t_cholesky_lpdf<true>(y, to_var(nu), to_var(mu), to_var(L)));
+  test::check_varis_on_stack(multi_student_t_cholesky_lpdf<true>(
+      y, to_var(nu), to_var(mu), to_var(L)));
   test::check_varis_on_stack(
       multi_student_t_cholesky_lpdf<true>(y, to_var(nu), to_var(mu), L));
   test::check_varis_on_stack(

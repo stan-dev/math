@@ -15,11 +15,11 @@ class agrad_distributions_multi_student_t_cholesky : public ::testing::Test {
     mu2.resize(3, 1);
     mu2 << 6.0, 2.0, -6.0;
 
-    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>  Sigma(3, 3);
+    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Sigma(3, 3);
     Sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 0.0, 0.0, 0.0, 5.0;
     L = Sigma.llt().matrixL();
-  
-    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>  Sigma2(3, 3);
+
+    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Sigma2(3, 3);
     Sigma2 << 3.0, 1.0, 0.0, 1.0, 5.0, -2.0, 0.0, -2.0, 9.0;
     L2 = Sigma2.llt().matrixL();
   }

@@ -108,10 +108,11 @@ std::vector<double> grad_multi_normal(const F& fun,
 
 template <typename F, typename T_y, typename T_mu, typename T_sigma,
           typename T_nu>
-void test_grad_multi_student_t_cholesky(const F& fun, const std::vector<T_y>& vec_y,
-                               const std::vector<T_mu>& vec_mu,
-                               const std::vector<T_sigma>& vec_sigma,
-                               const T_nu& nu) {
+void test_grad_multi_student_t_cholesky(const F& fun,
+                                        const std::vector<T_y>& vec_y,
+                                        const std::vector<T_mu>& vec_mu,
+                                        const std::vector<T_sigma>& vec_sigma,
+                                        const T_nu& nu) {
   using std::fabs;
   std::vector<double> diffs_finite
       = finite_diffs_multi_normal(fun, vec_y, vec_mu, vec_sigma, nu);
