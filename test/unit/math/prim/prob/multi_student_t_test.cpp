@@ -61,40 +61,35 @@ TEST(ProbDistributionsMultiStudentT, Vectorized) {
   double nu = 4.0;
 
   // y and mu vectorized
-  EXPECT_FLOAT_EQ(-8.9286697030 - 6.8183896234, stan::math::multi_student_t_log(
-                                          vec_y, nu, vec_mu, Sigma));
-  EXPECT_FLOAT_EQ(-8.9286697030 - 6.8183896234, stan::math::multi_student_t_log(
-                                          vec_y_t, nu, vec_mu, Sigma));
-  EXPECT_FLOAT_EQ(-8.9286697030 - 6.8183896234, stan::math::multi_student_t_log(
-                                          vec_y, nu, vec_mu_t, Sigma));
-  EXPECT_FLOAT_EQ(-8.9286697030 - 6.8183896234, stan::math::multi_student_t_log(
-                                          vec_y_t, nu, vec_mu_t, Sigma));
+  EXPECT_FLOAT_EQ(-8.9286697030 - 6.8183896234,
+                  stan::math::multi_student_t_log(vec_y, nu, vec_mu, Sigma));
+  EXPECT_FLOAT_EQ(-8.9286697030 - 6.8183896234,
+                  stan::math::multi_student_t_log(vec_y_t, nu, vec_mu, Sigma));
+  EXPECT_FLOAT_EQ(-8.9286697030 - 6.8183896234,
+                  stan::math::multi_student_t_log(vec_y, nu, vec_mu_t, Sigma));
+  EXPECT_FLOAT_EQ(
+      -8.9286697030 - 6.8183896234,
+      stan::math::multi_student_t_log(vec_y_t, nu, vec_mu_t, Sigma));
 
   // y vectorized
   EXPECT_FLOAT_EQ(-9.1670535409 - 6.8183896234,
                   stan::math::multi_student_t_log(vec_y, nu, mu, Sigma));
-  EXPECT_FLOAT_EQ(
-      -9.1670535409 - 6.8183896234,
-      stan::math::multi_student_t_log(vec_y_t, nu, mu, Sigma));
-  EXPECT_FLOAT_EQ(
-      -9.1670535409 - 6.8183896234,
-      stan::math::multi_student_t_log(vec_y, nu, mu_t, Sigma));
-  EXPECT_FLOAT_EQ(
-      -9.1670535409 - 6.8183896234,
-      stan::math::multi_student_t_log(vec_y_t, nu, mu_t, Sigma));
+  EXPECT_FLOAT_EQ(-9.1670535409 - 6.8183896234,
+                  stan::math::multi_student_t_log(vec_y_t, nu, mu, Sigma));
+  EXPECT_FLOAT_EQ(-9.1670535409 - 6.8183896234,
+                  stan::math::multi_student_t_log(vec_y, nu, mu_t, Sigma));
+  EXPECT_FLOAT_EQ(-9.1670535409 - 6.8183896234,
+                  stan::math::multi_student_t_log(vec_y_t, nu, mu_t, Sigma));
 
   // mu vectorized
   EXPECT_FLOAT_EQ(-5.5280118939 - 6.8183896234,
                   stan::math::multi_student_t_log(y, nu, vec_mu, Sigma));
-  EXPECT_FLOAT_EQ(
-      -5.5280118939 - 6.8183896234,
-      stan::math::multi_student_t_log(y_t, nu, vec_mu, Sigma));
-  EXPECT_FLOAT_EQ(
-      -5.5280118939 - 6.8183896234,
-      stan::math::multi_student_t_log(y, nu, vec_mu_t, Sigma));
-  EXPECT_FLOAT_EQ(
-      -5.5280118939 - 6.8183896234,
-      stan::math::multi_student_t_log(y_t, nu, vec_mu_t, Sigma));
+  EXPECT_FLOAT_EQ(-5.5280118939 - 6.8183896234,
+                  stan::math::multi_student_t_log(y_t, nu, vec_mu, Sigma));
+  EXPECT_FLOAT_EQ(-5.5280118939 - 6.8183896234,
+                  stan::math::multi_student_t_log(y, nu, vec_mu_t, Sigma));
+  EXPECT_FLOAT_EQ(-5.5280118939 - 6.8183896234,
+                  stan::math::multi_student_t_log(y_t, nu, vec_mu_t, Sigma));
   EXPECT_NO_THROW(stan::math::multi_student_t_rng(nu, vec_mu, Sigma, rng));
   EXPECT_NO_THROW(stan::math::multi_student_t_rng(nu, vec_mu_t, Sigma, rng));
 }

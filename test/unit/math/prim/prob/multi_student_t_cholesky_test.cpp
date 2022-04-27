@@ -66,14 +66,18 @@ TEST(ProbDistributionsMultiStudentTCholesky, Vectorized) {
   double nu = 4.0;
 
   // y and mu vectorized
-  EXPECT_FLOAT_EQ(-8.9286697030 - 6.8183896234, stan::math::multi_student_t_cholesky_lpdf(
-                                          vec_y, nu, vec_mu, L));
-  EXPECT_FLOAT_EQ(-8.9286697030 - 6.8183896234, stan::math::multi_student_t_cholesky_lpdf(
-                                          vec_y_t, nu, vec_mu, L));
-  EXPECT_FLOAT_EQ(-8.9286697030 - 6.8183896234, stan::math::multi_student_t_cholesky_lpdf(
-                                          vec_y, nu, vec_mu_t, L));
-  EXPECT_FLOAT_EQ(-8.9286697030 - 6.8183896234, stan::math::multi_student_t_cholesky_lpdf(
-                                          vec_y_t, nu, vec_mu_t, L));
+  EXPECT_FLOAT_EQ(
+      -8.9286697030 - 6.8183896234,
+      stan::math::multi_student_t_cholesky_lpdf(vec_y, nu, vec_mu, L));
+  EXPECT_FLOAT_EQ(
+      -8.9286697030 - 6.8183896234,
+      stan::math::multi_student_t_cholesky_lpdf(vec_y_t, nu, vec_mu, L));
+  EXPECT_FLOAT_EQ(
+      -8.9286697030 - 6.8183896234,
+      stan::math::multi_student_t_cholesky_lpdf(vec_y, nu, vec_mu_t, L));
+  EXPECT_FLOAT_EQ(
+      -8.9286697030 - 6.8183896234,
+      stan::math::multi_student_t_cholesky_lpdf(vec_y_t, nu, vec_mu_t, L));
 
   // y vectorized
   EXPECT_FLOAT_EQ(-9.1670535409 - 6.8183896234,
@@ -337,8 +341,8 @@ TEST(ProbDistributionsMultiStudentTCholesky,
     a = multi_student_t_cholesky_rng(3.0, mu, L, rng);
     a(0) = (a(0) - mu(0, 0)) / std::sqrt(s(0, 0));
     int i = 0;
-     while (i < K - 1 && a(0) > loc[i])
-       ++i;
+    while (i < K - 1 && a(0) > loc[i])
+      ++i;
     ++bin[i];
     ++count;
   }
