@@ -209,7 +209,7 @@ struct multi_student_t_cholesky_fun {
   }
 };
 
-TEST(ProbDistributionsMultiStudentT, TestGradFunctional) {
+TEST(ProbDistributionsMultiStudentTCholesky, TestGradFunctional) {
   std::vector<double> x(3 + 3 + 3 * 2 + 1);
   // y
   x[0] = 1.0;
