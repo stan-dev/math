@@ -80,7 +80,6 @@ pipeline {
         string(defaultValue: '', name: 'cmdstan_pr', description: 'PR to test CmdStan upstream against e.g. PR-630')
         string(defaultValue: '', name: 'stan_pr', description: 'PR to test Stan upstream against e.g. PR-630')
         booleanParam(defaultValue: false, name: 'withRowVector', description: 'Run additional distribution tests on RowVectors (takes 5x as long)')
-        booleanParam(defaultValue: false, name: 'run_win_tests', description: 'Run full unit tests on Windows.')
     }
     options {
         skipDefaultCheckout()
