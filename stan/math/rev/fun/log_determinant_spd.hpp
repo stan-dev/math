@@ -36,12 +36,12 @@ inline var log_determinant_spd(const T& m) {
                        "failed LDLT factorization");
   }
 
-    // compute the inverse of A (needed for the derivative)
+  // compute the inverse of A (needed for the derivative)
   m_d.setIdentity(m.rows(), m.cols());
 
   auto arena_m_inv_transpose = to_arena(m_ldlt.solve(m_d).transpose());
 
-   if (m_ldlt.isNegative() || (m_ldlt.vectorD().array() <= 1e-16).any()) {
+  if (m_ldlt.isNegative() || (m_ldlt.vectorD().array() <= 1e-16).any()) {
     double y = 0;
     throw_domain_error("log_determinant_spd", "matrix argument", y,
                        "matrix is negative definite");
