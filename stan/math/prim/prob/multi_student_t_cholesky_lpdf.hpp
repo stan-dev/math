@@ -68,11 +68,6 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_cholesky_lpdf(
     return 0;
   }
 
-  int num_dims = y_vec[0].size();
-  if (num_dims == 0) {
-    return 0;
-  }
-
   for (size_t i = 1, size_mvt_y = size_mvt(y); i < size_mvt_y; i++) {
     check_size_match(
         function, "Size of one of the vectors of the random variable",
@@ -89,6 +84,10 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_cholesky_lpdf(
                      mu_vec[i - 1].size());
   }
 
+  int num_dims = y_vec[0].size();
+
+  check_size_match(function, "Size of random variable", mu_vec[0].size(),
+                   "rows of scale parameter", L.rows());
   check_size_match(function, "Size of random variable", num_dims,
                    "size of location parameter", mu_vec[0].size());
   check_size_match(function, "Size of random variable", num_dims,
@@ -96,13 +95,17 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_cholesky_lpdf(
   check_size_match(function, "Size of random variable", num_dims,
                    "columns of scale parameter", L.cols());
 
+  if (num_dims == 0) {
+    return 0;
+  }
+
   for (size_t i = 0; i < size_vec; i++) {
     check_finite(function, "Location parameter", mu_vec[i]);
     check_not_nan(function, "Random variable", y_vec[i]);
   }
-
+  
   check_cholesky_factor(function, "scale parameter", L);
-
+  
   lp_type lp(0);
 
   if (include_summand<propto, T_dof>::value) {
