@@ -27,22 +27,21 @@ inline var log_determinant_spd(const T& m) {
   }
   check_symmetric("log_determinant", "m", m);
 
-  matrix_d m_d = m.val();
   arena_t<T> arena_m = m;
-  auto m_ldlt = arena_m.val().ldlt();
+  matrix_d m_d = arena_m.val();
+  auto m_ldlt = m_d.ldlt();
   if (m_ldlt.info() != Eigen::Success) {
-    double y = 0;
+    constexpr double y = 0;
     throw_domain_error("log_determinant_spd", "matrix argument", y,
                        "failed LDLT factorization");
   }
-
   // compute the inverse of A (needed for the derivative)
   m_d.setIdentity(m.rows(), m.cols());
-
-  auto arena_m_inv_transpose = to_arena(m_ldlt.solve(m_d).transpose());
+  m_ldlt.solveInPlace(m_d);
+  auto arena_m_inv_transpose = to_arena(m_d.transpose());
 
   if (m_ldlt.isNegative() || (m_ldlt.vectorD().array() <= 1e-16).any()) {
-    double y = 0;
+    constexpr double y = 0;
     throw_domain_error("log_determinant_spd", "matrix argument", y,
                        "matrix is negative definite");
   }
