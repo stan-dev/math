@@ -21,12 +21,12 @@ TEST(ProbDistributionsInvWishartCholesky, rng) {
   MatrixXd sigma(3, 3);
   sigma << 9.0, -3.0, 0.0, -3.0, 4.0, 1.0, 0.0, 1.0, 3.0;
 
-  Matrix<double, Dynamic, Dynamic> LS = sigma.llt().matrixL();
+  auto LS = sigma.llt().matrixL();
 
   EXPECT_NO_THROW(inv_wishart_cholesky_rng(3.0, LS, rng));
   EXPECT_THROW(inv_wishart_cholesky_rng(2, LS, rng), std::domain_error);
   EXPECT_THROW(inv_wishart_cholesky_rng(-1, LS, rng), std::domain_error);
-  LS(2, 2) = -1.0;
+  LS(2, 2) = -1;
   EXPECT_THROW(inv_wishart_cholesky_rng(3.0, LS, rng), std::domain_error);
 }
 
@@ -61,9 +61,9 @@ TEST(ProbDistributionsInvWishartCholesky, cholesky_factor_check) {
   for (int k = 1; k < 20; ++k)
     for (double nu = k - 0.9; nu < k + 10; ++nu)
       for (int n = 0; n < 10; ++n)
-        expect_symmetric(stan::math::multiply_lower_tri_self_transpose(
+        check_cholesky_factor(
             inv_wishart_cholesky_rng(
-                nu, stan::math::cholesky_decompose(spd_rng(k, rng)), rng)));
+                nu, stan::math::cholesky_decompose(spd_rng(k, rng)), rng));
 }
 
 TEST(ProbDistributionsInvWishartCholesky, marginalTwoChiSquareGoodnessFitTest) {

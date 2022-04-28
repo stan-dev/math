@@ -12,52 +12,52 @@ namespace stan {
 namespace math {
 
 /** \ingroup multivar_dists
- * The log of the Inverse Wishart density for the given Cholesky factor, degrees
- of freedom,
- * and scale Cholesky factor matrix.
+ * Return the natural logarithm of the unnormalized inverse wishart density of the specified
+ * lower-triangular Cholesky factor variate, positive degrees of freedom, and lower-triangular
+ * Cholesky factor of the scale matrix.
  *
- * The scale matrix, LS, must be a lower Cholesky factor.
+ * The scale matrix, L_S, must be a lower Cholesky factor.
  * Dimension, k, is implicit.
  * nu must be greater than k-1
  *
- * The change of variables from the input positive-definite matrix to
- * the Cholesky factor is given in Theorem 2.1.9 in
+ * The change of variables from Y, a positive-definite matrix, to
+ * L_Y, the lower triangular Cholesky factor, is given in Theorem 2.1.9 in
  * Muirhead, R. J. (2005).
  * Aspects of Multivariate Statistical Theory. Wiley-Interscience.
 
- * @tparam T_y type of matrix
- * @tparam T_dof type of degrees of freedom
- * @tparam T_scale type of scale
- * @param LY A lower triangular Cholesky factor covariance matrix.
- * @param nu The degrees of freedom.
- * @param LS The Cholesky factor of the scale matrix.
- * @return The log of the Wishart density at LY given nu and LS.
+ * @tparam T_y Cholesky factor matrix
+ * @tparam T_dof scalar degrees of freedom
+ * @tparam T_scale Cholesky factor matrix 
+ * @param L_Y lower triangular Cholesky factor of a covariance matrix
+ * @param nu scalar degrees of freedom
+ * @param L_S lower triangular Choleskyy factor of the scale matrix
+ * @return natural logarithm of the Wishart density at L_Y given nu and L_S
  * @throw std::domain_error if nu is not greater than k-1
- * @throw std::domain_error if LS is not a valid Cholesky factor.
+ * @throw std::domain_error if L_S is not a valid Cholesky factor.
  */
 template <bool propto, typename T_y, typename T_dof, typename T_scale,
           require_stan_scalar_t<T_dof>* = nullptr,
           require_all_matrix_t<T_y, T_scale>* = nullptr>
 return_type_t<T_y, T_dof, T_scale> inv_wishart_cholesky_lpdf(
-    const T_y& LY, const T_dof& nu, const T_scale& LS) {
+    const T_y& L_Y, const T_dof& nu, const T_scale& L_S) {
   using Eigen::Dynamic;
   using Eigen::Lower;
   using Eigen::Matrix;
-  using T_LY_ref = ref_type_t<T_y>;
+  using T_L_Y_ref = ref_type_t<T_y>;
   using T_nu_ref = ref_type_t<T_dof>;
-  using T_LS_ref = ref_type_t<T_scale>;
+  using T_L_S_ref = ref_type_t<T_scale>;
   static const char* function = "wishart_cholesky_lpdf";
-  Eigen::Index k = LY.rows();
-  check_size_match(function, "Rows of random variable", LY.rows(),
-                   "columns of scale parameter", LS.rows());
+  Eigen::Index k = L_Y.rows();
+  check_size_match(function, "Rows of random variable", L_Y.rows(),
+                   "columns of scale parameter", L_S.rows());
 
-  T_LY_ref LY_ref = LY;
+  T_L_Y_ref L_Y_ref = L_Y;
   T_nu_ref nu_ref = nu;
-  T_LS_ref LS_ref = LS;
+  T_L_S_ref L_S_ref = L_S;
 
   check_greater(function, "Degrees of freedom parameter", nu_ref, k - 1);
-  check_cholesky_factor(function, "random variable", LY_ref);
-  check_cholesky_factor(function, "scale parameter", LS_ref);
+  check_cholesky_factor(function, "random variable", L_Y_ref);
+  check_cholesky_factor(function, "scale parameter", L_S_ref);
 
   return_type_t<T_y, T_dof, T_scale> lp(0.0);
 
@@ -70,12 +70,11 @@ return_type_t<T_y, T_dof, T_scale> inv_wishart_cholesky_lpdf(
   }
 
   if (include_summand<propto, T_dof, T_scale, T_y>::value) {
-    auto LYinvLS = mdivide_left_tri<Eigen::Lower>(LY_ref, LS_ref);
-
+    auto L_YinvL_S = mdivide_left_tri<Eigen::Lower>(L_Y_ref, L_S_ref);
     for (int i = 0; i < k; i++) {
-      lp -= 0.5 * dot_self(LYinvLS.row(i).head(i + 1))
-            - nu_ref * log(LS_ref.coeff(i, i))
-            + (nu_ref + i + 1) * log(LY_ref.coeff(i, i));
+      lp -= 0.5 * dot_self(L_YinvL_S.row(i).head(i + 1))
+            - nu_ref * log(L_S_ref.coeff(i, i))
+            + (nu_ref + i + 1) * log(L_Y_ref.coeff(i, i));
     }
   }
 
@@ -84,8 +83,8 @@ return_type_t<T_y, T_dof, T_scale> inv_wishart_cholesky_lpdf(
 
 template <typename T_y, typename T_dof, typename T_scale>
 inline return_type_t<T_y, T_dof, T_scale> inv_wishart_cholesky_lpdf(
-    const T_y& LW, const T_dof& nu, const T_scale& LS) {
-  return inv_wishart_cholesky_lpdf<false>(LW, nu, LS);
+    const T_y& L_Y, const T_dof& nu, const T_scale& L_S) {
+  return inv_wishart_cholesky_lpdf<false>(L_Y, nu, L_S);
 }
 
 }  // namespace math
