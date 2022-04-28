@@ -10,6 +10,13 @@
 namespace stan {
 namespace math {
 
+  inline auto frexp(stan::math::var x, int* exponent) noexcept {
+    return std::frexp(x.val(), exponent);
+  }
+  inline int sign(stan::math::var z) {
+    return (z == 0) ? 0 : z < 0 ? -1 : 1;
+  }
+
 /**
  * Return the absolute value of the variable (std).
  *
