@@ -61,10 +61,12 @@ TEST(ProbDistributionsWishartCholesky, 0x0) {
   MatrixXd Y(0, 0);
 
   unsigned int dof = 3;
-  EXPECT_THROW(stan::math::wishart_cholesky_lpdf(Y, dof, Sigma), std::domain_error);
+  EXPECT_THROW(stan::math::wishart_cholesky_lpdf(Y, dof, Sigma),
+               std::domain_error);
 
   unsigned int dof0 = 0;
-  EXPECT_THROW(stan::math::wishart_cholesky_lpdf(Y, dof0, Sigma), std::domain_error);
+  EXPECT_THROW(stan::math::wishart_cholesky_lpdf(Y, dof0, Sigma),
+               std::domain_error);
 }
 
 TEST(ProbDistributionsWishartCholesky, dof_0) {
@@ -80,7 +82,8 @@ TEST(ProbDistributionsWishartCholesky, dof_0) {
   MatrixXd L_S = Sigma.llt().matrixL();
 
   unsigned int dof = std::numeric_limits<double>::quiet_NaN();
-  EXPECT_THROW(stan::math::wishart_cholesky_lpdf(Y, dof, Sigma), std::domain_error);
+  EXPECT_THROW(stan::math::wishart_cholesky_lpdf(Y, dof, Sigma),
+               std::domain_error);
 }
 
 TEST(ProbDistributionsWishartCholesky, 1x1) {
@@ -203,21 +206,29 @@ TEST(ProbDistributionsWishartCholesky, error) {
   double nu;
 
   nu = 1;
-  EXPECT_NO_THROW(wishart_cholesky_lpdf(MatrixXd::Identity(1, 1), nu, MatrixXd::Identity(1, 1)));
+  EXPECT_NO_THROW(wishart_cholesky_lpdf(MatrixXd::Identity(1, 1), nu,
+                                        MatrixXd::Identity(1, 1)));
 
   nu = 5;
   MatrixXd Sigma(2, 1);
-  EXPECT_THROW(wishart_cholesky_lpdf(MatrixXd::Identity(1, 1), nu, Sigma), std::invalid_argument);
+  EXPECT_THROW(wishart_cholesky_lpdf(MatrixXd::Identity(1, 1), nu, Sigma),
+               std::invalid_argument);
 
   nu = 5;
   MatrixXd Y(2, 1);
-  EXPECT_THROW(wishart_cholesky_lpdf(Y, nu, MatrixXd::Identity(2, 2)), std::domain_error);
+  EXPECT_THROW(wishart_cholesky_lpdf(Y, nu, MatrixXd::Identity(2, 2)),
+               std::domain_error);
 
   nu = 5;
-  EXPECT_THROW(wishart_cholesky_lpdf(MatrixXd::Identity(3, 3), nu, MatrixXd::Identity(2, 2)), std::invalid_argument);
+  EXPECT_THROW(wishart_cholesky_lpdf(MatrixXd::Identity(3, 3), nu,
+                                     MatrixXd::Identity(2, 2)),
+               std::invalid_argument);
 
   nu = 3;
-  EXPECT_NO_THROW(wishart_cholesky_lpdf(MatrixXd::Identity(3, 3), nu, MatrixXd::Identity(3, 3)));
+  EXPECT_NO_THROW(wishart_cholesky_lpdf(MatrixXd::Identity(3, 3), nu,
+                                        MatrixXd::Identity(3, 3)));
   nu = 2;
-  EXPECT_THROW(wishart_cholesky_lpdf(MatrixXd::Identity(3, 3), nu, MatrixXd::Identity(3, 3)), std::domain_error);
+  EXPECT_THROW(wishart_cholesky_lpdf(MatrixXd::Identity(3, 3), nu,
+                                     MatrixXd::Identity(3, 3)),
+               std::domain_error);
 }
