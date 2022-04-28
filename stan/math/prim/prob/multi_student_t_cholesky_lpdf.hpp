@@ -103,9 +103,9 @@ return_type_t<T_y, T_dof, T_loc, T_scale> multi_student_t_cholesky_lpdf(
     check_finite(function, "Location parameter", mu_vec[i]);
     check_not_nan(function, "Random variable", y_vec[i]);
   }
-  
+
   check_cholesky_factor(function, "scale parameter", L);
-  
+
   lp_type lp(0);
 
   if (include_summand<propto, T_dof>::value) {

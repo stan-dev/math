@@ -255,14 +255,14 @@ TEST(ProbDistributionsMultiStudentTCholesky, ErrorSize0) {
   using std::vector;
   boost::random::mt19937 rng;
   Matrix<double, Dynamic, 1> y_empty(0, 1);
-  Matrix<double, Dynamic, 1> y(3, 1); 
+  Matrix<double, Dynamic, 1> y(3, 1);
   y << 2.0, -2.0, 11.0;
-  
+
   Matrix<double, Dynamic, 1> mu_empty(0, 1);
   Matrix<double, Dynamic, 1> mu(3, 1);
   mu << 1.0, -1.0, 3.0;
 
-  Matrix<double, Dynamic, Dynamic>  Sigma_empty(0, 0);
+  Matrix<double, Dynamic, Dynamic> Sigma_empty(0, 0);
   Matrix<double, Dynamic, Dynamic> Sigma(3, 3);
   Sigma << 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0;
   Matrix<double, Dynamic, Dynamic> L = Sigma.llt().matrixL();
@@ -270,16 +270,19 @@ TEST(ProbDistributionsMultiStudentTCholesky, ErrorSize0) {
   double nu_empty = std::numeric_limits<double>::quiet_NaN();
   double nu = 4;
 
-  EXPECT_THROW(multi_student_t_cholesky_lpdf(y_empty, nu, mu, L), std::invalid_argument);
+  EXPECT_THROW(multi_student_t_cholesky_lpdf(y_empty, nu, mu, L),
+               std::invalid_argument);
   EXPECT_THROW(multi_student_t_cholesky_lpdf(y, nu_empty, mu, L),
                std::domain_error);
-  EXPECT_THROW(multi_student_t_cholesky_lpdf(y_empty, nu, mu_empty, L), std::invalid_argument);
+  EXPECT_THROW(multi_student_t_cholesky_lpdf(y_empty, nu, mu_empty, L),
+               std::invalid_argument);
   EXPECT_THROW(multi_student_t_cholesky_lpdf(y, nu, mu, Sigma_empty),
                std::invalid_argument);
 
   EXPECT_THROW(multi_student_t_cholesky_rng(nu_empty, mu, L, rng),
                std::domain_error);
-  EXPECT_THROW(multi_student_t_cholesky_rng(nu, mu_empty, L, rng), std::invalid_argument);
+  EXPECT_THROW(multi_student_t_cholesky_rng(nu, mu_empty, L, rng),
+               std::invalid_argument);
   EXPECT_THROW(multi_student_t_cholesky_rng(nu, mu, Sigma_empty, rng),
                std::domain_error);
 }
