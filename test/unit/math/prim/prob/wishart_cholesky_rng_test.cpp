@@ -49,23 +49,6 @@ TEST(ProbDistributionsWishartCholesky, rng_pos_def) {
                std::domain_error);
 }
 
-TEST(ProbDistributionsWishartCholesky, cholesky_factor_check) {
-  using Eigen::MatrixXd;
-  using stan::math::identity_matrix;
-  using stan::math::wishart_cholesky_rng;
-  using stan::test::unit::expect_symmetric;
-  using stan::test::unit::spd_rng;
-
-  boost::random::mt19937 rng;
-
-  for (int k = 1; k < 20; ++k)
-    for (double nu = k - 0.9; nu < k + 10; ++nu)
-      for (int n = 0; n < 10; ++n)
-        expect_symmetric(
-            stan::math::multiply_lower_tri_self_transpose(wishart_cholesky_rng(
-                nu, stan::math::cholesky_decompose(spd_rng(k, rng)), rng)));
-}
-
 TEST(ProbDistributionsWishartCholesky, marginalTwoChiSquareGoodnessFitTest) {
   using boost::math::chi_squared;
   using boost::math::digamma;
