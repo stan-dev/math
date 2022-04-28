@@ -61,9 +61,8 @@ TEST(ProbDistributionsInvWishartCholesky, cholesky_factor_check) {
   for (int k = 1; k < 20; ++k)
     for (double nu = k - 0.9; nu < k + 10; ++nu)
       for (int n = 0; n < 10; ++n)
-        check_cholesky_factor(
-            inv_wishart_cholesky_rng(
-                nu, stan::math::cholesky_decompose(spd_rng(k, rng)), rng));
+        check_cholesky_factor(inv_wishart_cholesky_rng(
+            nu, stan::math::cholesky_decompose(spd_rng(k, rng)), rng));
 }
 
 TEST(ProbDistributionsInvWishartCholesky, marginalTwoChiSquareGoodnessFitTest) {

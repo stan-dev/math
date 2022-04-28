@@ -10,7 +10,7 @@ namespace stan {
 namespace math {
 
 /** \ingroup multivar_dists
- * Return a random Cholesky factor of a covariance matrix 
+ * Return a random Cholesky factor of a covariance matrix
  * of the specified dimensionality drawn
  * from the inverse Wishart distribution with the specified degrees of freedom
  * using the specified random number generator.
@@ -18,10 +18,12 @@ namespace math {
  * @tparam RNG Random number generator type
  * @param[in] nu scalar degrees of freedom
  * @param[in] L lower Cholesky factor of the scale matrix
- * @param[in, out] rng Random-number generator 
- * @return Random lower Cholesky factor drawn from the given inverse Wishart distribution
- * @throw std::domain_error If the scale matrix is not a Cholesky factor 
- * @throw std::domain_error If the degrees of freedom is greater than k - 1 where k is the dimension of L 
+ * @param[in, out] rng Random-number generator
+ * @return Random lower Cholesky factor drawn from the given inverse Wishart
+ * distribution
+ * @throw std::domain_error If the scale matrix is not a Cholesky factor
+ * @throw std::domain_error If the degrees of freedom is greater than k - 1
+ * where k is the dimension of L
  */
 template <class RNG>
 inline Eigen::MatrixXd inv_wishart_cholesky_rng(double nu,

@@ -12,8 +12,10 @@ namespace stan {
 namespace math {
 
 /** \ingroup multivar_dists
- * Return the natural logarithm of the unnormalized inverse wishart density of the specified
- * lower-triangular Cholesky factor variate, positive degrees of freedom, and lower-triangular
+ * Return the natural logarithm of the unnormalized inverse wishart density of
+ the specified
+ * lower-triangular Cholesky factor variate, positive degrees of freedom, and
+ lower-triangular
  * Cholesky factor of the scale matrix.
  *
  * The scale matrix, L_S, must be a lower Cholesky factor.
@@ -27,7 +29,7 @@ namespace math {
 
  * @tparam T_y Cholesky factor matrix
  * @tparam T_dof scalar degrees of freedom
- * @tparam T_scale Cholesky factor matrix 
+ * @tparam T_scale Cholesky factor matrix
  * @param L_Y lower triangular Cholesky factor of a covariance matrix
  * @param nu scalar degrees of freedom
  * @param L_S lower triangular Choleskyy factor of the scale matrix
