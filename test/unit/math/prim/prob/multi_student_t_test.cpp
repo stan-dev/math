@@ -264,6 +264,25 @@ TEST(ProbDistributionsMultiStudentT, ErrorSize3) {
   EXPECT_THROW(multi_student_t_rng(nu, mu, Sigma, rng), std::invalid_argument);
 }
 
+TEST(ProbDistributionsMultiStudentT, ErrorSizeSigma) {
+  using Eigen::Dynamic;
+  using Eigen::Matrix;
+  using stan::math::multi_student_t_lpdf;
+  using stan::math::multi_student_t_rng;
+  using std::vector;
+  boost::random::mt19937 rng;
+  Matrix<double, Dynamic, 1> y(3, 1);
+  y << 2.0, -2.0, 11.0;
+  Matrix<double, Dynamic, 1> mu(3, 1);
+  mu << 1.0, -1.0, 3.0;
+  Matrix<double, Dynamic, Dynamic> Sigma(2, 2);
+  Sigma << 1.0, 0.0, 0.0, 1.0;
+  double nu = 4.0;
+
+  EXPECT_THROW(multi_student_t_lpdf(y, nu, mu, Sigma), std::invalid_argument);
+  EXPECT_THROW(multi_student_t_rng(nu, mu, Sigma, rng), std::invalid_argument);
+}
+
 TEST(ProbDistributionsMultiStudentT, ProptoAllDoublesZero) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
