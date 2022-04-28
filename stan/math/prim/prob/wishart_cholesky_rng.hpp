@@ -13,7 +13,7 @@ namespace math {
 
 /** \ingroup multivar_dists
  * Return a random Cholesky factor of the inverse covariance matrix
- * of the specified dimensionality drawn from the Wishart distribution 
+ * of the specified dimensionality drawn from the Wishart distribution
  * with the specified degrees of freedom
  * using the specified random number generator.
  *
@@ -28,7 +28,8 @@ namespace math {
  * where k is the dimension of L_S
  */
 template <class RNG>
-inline Eigen::MatrixXd wishart_cholesky_rng(double nu, const Eigen::MatrixXd& L_S,
+inline Eigen::MatrixXd wishart_cholesky_rng(double nu,
+                                            const Eigen::MatrixXd& L_S,
                                             RNG& rng) {
   using Eigen::MatrixXd;
   static const char* function = "wishart_cholesky_rng";
