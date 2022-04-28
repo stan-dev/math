@@ -22,7 +22,7 @@ namespace math {
  */
 template <typename T, require_rev_matrix_t<T>* = nullptr>
 inline var log_determinant_spd(const T& M) {
-  if (m.size() == 0) {
+  if (M.size() == 0) {
     return var(0.0);
   }
   check_symmetric("log_determinant", "M", M);
