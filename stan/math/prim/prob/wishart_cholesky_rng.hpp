@@ -11,14 +11,30 @@
 namespace stan {
 namespace math {
 
+/** \ingroup multivar_dists
+ * Return a random Cholesky factor of the inverse covariance matrix
+ * of the specified dimensionality drawn from the Wishart distribution 
+ * with the specified degrees of freedom
+ * using the specified random number generator.
+ *
+ * @tparam RNG Random number generator type
+ * @param[in] nu scalar degrees of freedom
+ * @param[in] L_S lower Cholesky factor of the scale matrix
+ * @param[in, out] rng Random-number generator
+ * @return Random lower Cholesky factor drawn from the given inverse Wishart
+ * distribution
+ * @throw std::domain_error if the scale matrix is not a Cholesky factor
+ * @throw std::domain_error if the degrees of freedom is greater than k - 1
+ * where k is the dimension of L_S
+ */
 template <class RNG>
-inline Eigen::MatrixXd wishart_cholesky_rng(double nu, const Eigen::MatrixXd& L,
+inline Eigen::MatrixXd wishart_cholesky_rng(double nu, const Eigen::MatrixXd& L_S,
                                             RNG& rng) {
   using Eigen::MatrixXd;
   static const char* function = "wishart_cholesky_rng";
-  index_type_t<MatrixXd> k = L.rows();
+  index_type_t<MatrixXd> k = L_S.rows();
   check_greater(function, "degrees of freedom > dims - 1", nu, k - 1);
-  check_cholesky_factor(function, "scale parameter", L);
+  check_cholesky_factor(function, "scale parameter", L_S);
 
   MatrixXd B = MatrixXd::Zero(k, k);
   for (int j = 0; j < k; ++j) {
@@ -27,7 +43,7 @@ inline Eigen::MatrixXd wishart_cholesky_rng(double nu, const Eigen::MatrixXd& L,
     }
     B(j, j) = std::sqrt(chi_square_rng(nu - j, rng));
   }
-  return L.template triangularView<Eigen::Lower>() * B.transpose();
+  return L_S.template triangularView<Eigen::Lower>() * B.transpose();
 }
 
 }  // namespace math

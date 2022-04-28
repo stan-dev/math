@@ -7,7 +7,6 @@
 TEST(ProbDistributionsWishartCholesky, wishart_symmetry) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-
   using Eigen::MatrixXd;
   using stan::math::wishart_cholesky_lpdf;
 
@@ -24,16 +23,15 @@ TEST(ProbDistributionsWishartCholesky, wishart_symmetry) {
 
   unsigned int dof = 5;
 
-  Matrix<double, Dynamic, Dynamic> LY = Y.llt().matrixL();
-  Matrix<double, Dynamic, Dynamic> LS = Sigma.llt().matrixL();
+  MatrixXd L_Y = Y.llt().matrixL();
+  MatrixXd L_S = Sigma.llt().matrixL();
 
-  EXPECT_NO_THROW(wishart_cholesky_lpdf(LY, dof, LS));
+  EXPECT_NO_THROW(wishart_cholesky_lpdf(L_Y, dof, L_S));
 }
 
 TEST(ProbDistributionsWishartCholesky, wishart_pos_def) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
-
   using Eigen::MatrixXd;
   using stan::math::wishart_cholesky_lpdf;
 
@@ -56,17 +54,60 @@ TEST(ProbDistributionsWishartCholesky, wishart_pos_def) {
                std::domain_error);
 }
 
-TEST(ProbDistributionsWishartCholesky, 2x2) {
+TEST(ProbDistributionsWishartCholesky, 0x0) {
   using Eigen::Dynamic;
-  using Eigen::Matrix;
-  Matrix<double, Dynamic, Dynamic> Sigma(2, 2);
+  using Eigen::MatrixXd;
+  MatrixXd Sigma(0, 0);
+  MatrixXd Y(0, 0);
+
+  unsigned int dof = 3;
+  EXPECT_THROW(stan::math::wishart_cholesky_lpdf(Y, dof, Sigma), std::domain_error);
+
+  unsigned int dof0 = 0;
+  EXPECT_THROW(stan::math::wishart_cholesky_lpdf(Y, dof0, Sigma), std::domain_error);
+}
+
+TEST(ProbDistributionsWishartCholesky, dof_0) {
+  using Eigen::Dynamic;
+  using Eigen::MatrixXd;
+  MatrixXd Sigma(2, 2);
   Sigma << 1.848220, 1.899623, 1.899623, 12.751941;
 
-  Matrix<double, Dynamic, Dynamic> Y(2, 2);
+  MatrixXd Y(2, 2);
   Y << 2.011108, -11.206611, -11.206611, 112.94139;
 
-  Matrix<double, Dynamic, Dynamic> LY = Y.llt().matrixL();
-  Matrix<double, Dynamic, Dynamic> LS = Sigma.llt().matrixL();
+  MatrixXd L_Y = Y.llt().matrixL();
+  MatrixXd L_S = Sigma.llt().matrixL();
+
+  unsigned int dof = std::numeric_limits<double>::quiet_NaN();
+  EXPECT_THROW(stan::math::wishart_cholesky_lpdf(Y, dof, Sigma), std::domain_error);
+}
+
+TEST(ProbDistributionsWishartCholesky, 1x1) {
+  using Eigen::Dynamic;
+  using Eigen::MatrixXd;
+  MatrixXd Sigma(1, 1);
+  Sigma << 1;
+
+  MatrixXd Y(1, 1);
+  Y << 2.011108;
+
+  double dof = 0.1;
+
+  EXPECT_NO_THROW(stan::math::wishart_cholesky_lpdf(Y, dof, Sigma));
+}
+
+TEST(ProbDistributionsWishartCholesky, 2x2) {
+  using Eigen::Dynamic;
+  using Eigen::MatrixXd;
+  MatrixXd Sigma(2, 2);
+  Sigma << 1.848220, 1.899623, 1.899623, 12.751941;
+
+  MatrixXd Y(2, 2);
+  Y << 2.011108, -11.206611, -11.206611, 112.94139;
+
+  MatrixXd L_Y = Y.llt().matrixL();
+  MatrixXd L_S = Sigma.llt().matrixL();
 
   unsigned int dof = 3;
   // log absolute determinant of the change of variables from Y -> LL'
@@ -74,122 +115,109 @@ TEST(ProbDistributionsWishartCholesky, 2x2) {
   double log_jac = 2 * stan::math::LOG_TWO;
 
   for (int i = 0; i < 2; i++) {
-    log_jac += (2 - i) * log(LY(i, i));
+    log_jac += (2 - i) * log(L_Y(i, i));
   }
 
   // computed with MCMCpack in R
-  double lp = log(8.658e-07) + log_jac;
+  double lp = -13.9596117200 + log_jac;
 
-  EXPECT_NEAR(lp, stan::math::wishart_cholesky_lpdf(LY, dof, LS), 0.01);
+  EXPECT_NEAR(lp, stan::math::wishart_cholesky_lpdf(L_Y, dof, L_S), 1e-9);
 }
 
 TEST(ProbDistributionsWishartCholesky, 4x4) {
   using Eigen::Dynamic;
-  using Eigen::Matrix;
-  Matrix<double, Dynamic, Dynamic> Y(4, 4);
+  using Eigen::MatrixXd;
+  MatrixXd Y(4, 4);
   Y << 7.988168, -9.555605, -14.47483, 4.395895, -9.555605, 44.750570, 49.21577,
       -18.454186, -14.474830, 49.21577, 60.08987, -21.48108, 4.395895,
       -18.454186, -21.48108, 7.885833;
 
-  Matrix<double, Dynamic, Dynamic> Sigma(4, 4);
+  MatrixXd Sigma(4, 4);
   Sigma << 2.9983662, 0.2898776, -2.650523, 0.1055911, 0.2898776, 11.4803610,
       7.1579931, -3.1129955, -2.650523, 7.1579931, 11.676181, -3.5866852,
       0.1055911, -3.1129955, -3.5866852, 1.4482736;
 
-  Matrix<double, Dynamic, Dynamic> LY = Y.llt().matrixL();
-  Matrix<double, Dynamic, Dynamic> LS = Sigma.llt().matrixL();
+  MatrixXd L_Y = Y.llt().matrixL();
+  MatrixXd L_S = Sigma.llt().matrixL();
 
   unsigned int dof = 4;
   double log_jac = 4 * stan::math::LOG_TWO;
   unsigned int n = 4;
   for (int i = 0; i < n; i++) {
-    log_jac += (n - i) * log(LY(i, i));
+    log_jac += (n - i) * log(L_Y(i, i));
   }
 
-  double log_p = log(8.034197e-10) + log_jac;
-  EXPECT_NEAR(log_p, stan::math::wishart_cholesky_lpdf(LY, dof, LS), 0.01);
+  double log_p = -20.9420668184 + log_jac;
+  EXPECT_NEAR(log_p, stan::math::wishart_cholesky_lpdf(L_Y, dof, L_S), 1e-9);
 
   dof = 5;
 
-  log_p = log(1.517951e-10) + log_jac;
-  EXPECT_NEAR(log_p, stan::math::wishart_cholesky_lpdf(LY, dof, LS), 0.01);
+  log_p = -22.6084823429 + log_jac;
+  EXPECT_NEAR(log_p, stan::math::wishart_cholesky_lpdf(L_Y, dof, L_S), 1e-9);
 }
 
 TEST(ProbDistributionsWishartCholesky, 2x2Propto) {
   using Eigen::Dynamic;
-  using Eigen::Matrix;
-  Matrix<double, Dynamic, Dynamic> Sigma(2, 2);
+  using Eigen::MatrixXd;
+  MatrixXd Sigma(2, 2);
   Sigma << 1.848220, 1.899623, 1.899623, 12.751941;
 
-  Matrix<double, Dynamic, Dynamic> Y(2, 2);
+  MatrixXd Y(2, 2);
   Y << 2.011108, -11.206611, -11.206611, 112.94139;
 
-  Matrix<double, Dynamic, Dynamic> LY = Y.llt().matrixL();
-  Matrix<double, Dynamic, Dynamic> LS = Sigma.llt().matrixL();
+  MatrixXd L_Y = Y.llt().matrixL();
+  MatrixXd L_S = Sigma.llt().matrixL();
 
   unsigned int dof = 3;
 
-  EXPECT_FLOAT_EQ(0.0, stan::math::wishart_cholesky_lpdf<true>(LY, dof, LS));
+  EXPECT_FLOAT_EQ(0.0, stan::math::wishart_cholesky_lpdf<true>(L_Y, dof, L_S));
 }
 
 TEST(ProbDistributionsWishartCholesky, 4x4Propto) {
   using Eigen::Dynamic;
-  using Eigen::Matrix;
-  Matrix<double, Dynamic, Dynamic> Y(4, 4);
+  using Eigen::MatrixXd;
+  MatrixXd Y(4, 4);
   Y << 7.988168, -9.555605, -14.47483, 4.395895, -9.555605, 44.750570,
       49.215769, -18.454186, -14.474830, 49.215769, 60.08987, -21.48108,
       4.395895, -18.454186, -21.48108, 7.885833;
 
-  Matrix<double, Dynamic, Dynamic> Sigma(4, 4);
+  MatrixXd Sigma(4, 4);
   Sigma << 2.9983662, 0.2898776, -2.650523, 0.1055911, 0.2898776, 11.4803610,
       7.1579931, -3.1129955, -2.650523, 7.1579931, 11.676181, -3.5866852,
       0.1055911, -3.1129955, -3.5866852, 1.4482736;
 
-  Matrix<double, Dynamic, Dynamic> LY = Y.llt().matrixL();
-  Matrix<double, Dynamic, Dynamic> LS = Sigma.llt().matrixL();
+  MatrixXd L_Y = Y.llt().matrixL();
+  MatrixXd L_S = Sigma.llt().matrixL();
 
   double dof = 4;
-  EXPECT_FLOAT_EQ(0.0, stan::math::wishart_cholesky_lpdf<true>(LY, dof, LS));
+  EXPECT_FLOAT_EQ(0, stan::math::wishart_cholesky_lpdf<true>(L_Y, dof, L_S));
 
   dof = 5;
-  EXPECT_FLOAT_EQ(0.0, stan::math::wishart_cholesky_lpdf<true>(LY, dof, LS));
+  EXPECT_FLOAT_EQ(0, stan::math::wishart_cholesky_lpdf<true>(L_Y, dof, L_S));
 }
 
 TEST(ProbDistributionsWishartCholesky, error) {
   using Eigen::Dynamic;
-  using Eigen::Matrix;
+  using Eigen::MatrixXd;
   using stan::math::wishart_cholesky_lpdf;
-  Matrix<double, Dynamic, Dynamic> Sigma;
-  Matrix<double, Dynamic, Dynamic> Y;
   double nu;
 
-  Sigma.resize(1, 1);
-  Y.resize(1, 1);
-  Sigma.setIdentity();
-  Y.setIdentity();
   nu = 1;
-  EXPECT_NO_THROW(wishart_cholesky_lpdf(Y, nu, Sigma));
+  EXPECT_NO_THROW(wishart_cholesky_lpdf(MatrixXd::Identity(1, 1), nu, MatrixXd::Identity(1, 1)));
 
   nu = 5;
-  Sigma.resize(2, 1);
-  EXPECT_THROW(wishart_cholesky_lpdf(Y, nu, Sigma), std::invalid_argument);
+  MatrixXd Sigma(2, 1);
+  EXPECT_THROW(wishart_cholesky_lpdf(MatrixXd::Identity(1, 1), nu, Sigma), std::invalid_argument);
 
   nu = 5;
-  Sigma.resize(2, 2);
-  Y.resize(2, 1);
-  EXPECT_THROW(wishart_cholesky_lpdf(Y, nu, Sigma), std::domain_error);
+  MatrixXd Y(2, 1);
+  EXPECT_THROW(wishart_cholesky_lpdf(Y, nu, MatrixXd::Identity(2, 2)), std::domain_error);
 
   nu = 5;
-  Sigma.resize(2, 2);
-  Y.resize(3, 3);
-  EXPECT_THROW(wishart_cholesky_lpdf(Y, nu, Sigma), std::invalid_argument);
+  EXPECT_THROW(wishart_cholesky_lpdf(MatrixXd::Identity(3, 3), nu, MatrixXd::Identity(2, 2)), std::invalid_argument);
 
-  Sigma.resize(3, 3);
-  Sigma.setIdentity();
-  Y.resize(3, 3);
-  Y.setIdentity();
   nu = 3;
-  EXPECT_NO_THROW(wishart_cholesky_lpdf(Y, nu, Sigma));
+  EXPECT_NO_THROW(wishart_cholesky_lpdf(MatrixXd::Identity(3, 3), nu, MatrixXd::Identity(3, 3)));
   nu = 2;
-  EXPECT_THROW(wishart_cholesky_lpdf(Y, nu, Sigma), std::domain_error);
+  EXPECT_THROW(wishart_cholesky_lpdf(MatrixXd::Identity(3, 3), nu, MatrixXd::Identity(3, 3)), std::domain_error);
 }
