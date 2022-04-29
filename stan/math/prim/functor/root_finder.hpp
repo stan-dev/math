@@ -10,88 +10,87 @@
 
 namespace stan {
 namespace math {
+namespace internal {
+template <typename Tuple, typename... Args>
+inline auto func_with_derivs(Tuple&& f_tuple, Args&&... args) {
+  return stan::math::apply(
+      [&args...](auto&&... funcs) {
+        return [&args..., &funcs...](auto&& g) {
+          return std::make_tuple(funcs(g, args...)...);
+        };
+      },
+      f_tuple);
+}
+}  // namespace internal
 
-
-// TODO: Can just have one signature with another function for constructing tuple
-
-// When caller provides functions for value and derivative and second derivative
-template <typename F, typename FDiv, typename FDivDiv, typename GuessScalar, typename MinScalar, typename MaxScalar, typename... Types,
-  require_all_st_arithmetic<GuessScalar, MinScalar, MaxScalar, Types...>* = nullptr>
-auto root_finder_tol(F&& f, FDiv&& f_div, FDivDiv&& f_div_div, GuessScalar guess, MinScalar min, MaxScalar max, int digits,
-                 std::uintmax_t& max_iter, Types&&... args) {
+/**
+ * Solve for root using Boost's Halley method
+ * @tparam FTuple A tuple holding functors whose signatures all match
+ *  `(GuessScalar g, Types&&... Args)`.
+ * @tparam GuessScalar Scalar type
+ * @tparam MinScalar Scalar type
+ * @tparam MaxScalar Scalar type
+ * @tparam Types Arg types to pass to functors in `f_tuple`
+ * @param f_tuple A tuple of functors to calculate the value and any derivates
+ * needed.
+ * @param guess An initial guess at the root value
+ * @param min The minimum possible value for the result, this is used as an
+ * initial lower bracket
+ * @param max The maximum possible value for the result, this is used as an
+ * initial upper bracket
+ * @param digits The desired number of binary digits precision
+ * @param max_iter An optional maximum number of iterations to perform. On exit,
+ * this is updated to the actual number of iterations performed
+ * @param args Parameter pack of arguments to pass the the functors in `f_tuple`
+ */
+template <typename FTuple, typename GuessScalar, typename MinScalar,
+          typename MaxScalar, typename... Types,
+          require_all_not_st_var<GuessScalar, MinScalar, MaxScalar,
+                                 Types...>* = nullptr>
+auto root_finder_tol(FTuple&& f_tuple, const GuessScalar guess, const MinScalar min,
+                     const MaxScalar max, const int digits, std::uintmax_t& max_iter,
+                     Types&&... args) {
   check_bounded("root_finder", "initial guess", guess, min, max);
+  check_positive("root_finder", "digits", digits);
+  check_positive("root_finder", "max_iter", max_iter);
   return_type_t<GuessScalar> ret = 0;
-  auto f_plus_div = [&f, &f_div, &f_div_div, &args...](auto&& g) {
-    return std::make_tuple(f(g, args...), f_div(g, args...), f_div_div(g, args...));
-  };
+  auto f_plus_div = internal::func_with_derivs(f_tuple, args...);
   try {
-    ret = boost::math::tools::halley_iterate(f_plus_div,
-       guess, min, max, digits, max_iter);
-  } catch (const std::exception& e) {
-    throw e;
-  }
-  return ret;
-}
-/*
-// When caller provides functions for value and derivative
-template <typename F, typename FDiv, typename GuessScalar, typename MinScalar, typename MaxScalar, typename... Types,
-  require_all_st_arithmetic<GuessScalar, MinScalar, MaxScalar, Types...>* = nullptr>
-double root_finder_tol(F&& f, FDiv&& f_div, GuessScalar guess, MinScalar min, MaxScalar max, int digits,
-                 std::uintmax_t& max_iter, Types&&... args) {
-  check_bounded("root_finder", "initial guess", guess, min, max);
-  double ret = 0;
-  auto f_plus_div = [&f, &f_div, &args...](auto&& g) {
-    return std::make_tuple(f(g, args...), f_div(g, args...));
-  };
-  try {
-    ret = boost::math::tools::halley_iterate(f_plus_div,
-       guess, min, max, digits, max_iter);
+    ret = boost::math::tools::halley_iterate(f_plus_div, guess, min, max,
+                                             digits, max_iter);
   } catch (const std::exception& e) {
     throw e;
   }
   return ret;
 }
 
-// When supplied function returns pair
-template <typename F, typename GuessScalar, typename MinScalar, typename MaxScalar, typename... Types,
-  require_all_st_arithmetic<GuessScalar, MinScalar, MaxScalar, Types...>* = nullptr>
-double root_finder_tol(F&& f, GuessScalar guess, MinScalar min, MaxScalar max, int digits,
-                 std::uintmax_t& max_iter, Types&&... args) {
-  check_bounded("root_finder", "initial guess", guess, min, max);
-  double ret = 0;
-  auto f_plus_args = [&f, &args...](auto&& g) { return f(g, args...);};
-  try {
-    ret = boost::math::tools::halley_iterate(f_plus_args,
-       guess, min, max, digits, max_iter);
-  } catch (const std::exception& e) {
-    throw e;
-  }
-  return ret;
+/**
+ * Solve for root using Boost Halley method with default values for the
+ * tolerances
+ * @tparam FTuple A tuple holding functors whose signatures all match
+ *  `(GuessScalar g, Types&&... Args)`.
+ * @tparam GuessScalar Scalar type
+ * @tparam MinScalar Scalar type
+ * @tparam MaxScalar Scalar type
+ * @tparam Types Arg types to pass to functors in `f_tuple`
+ * @param f_tuple A tuple of functors to calculate the value and any derivates
+ * needed.
+ * @param guess An initial guess at the root value
+ * @param min The minimum possible value for the result, this is used as an
+ * initial lower bracket
+ * @param max The maximum possible value for the result, this is used as an
+ * initial upper bracket
+ * @param args Parameter pack of arguments to pass the the functors in `f_tuple`
+ */
+template <typename FTuple, typename GuessScalar, typename MinScalar,
+          typename MaxScalar, typename... Types>
+auto root_finder(FTuple&& f_tuple, const GuessScalar guess, const MinScalar min,
+                 const MaxScalar max, Types&&... args) {
+  constexpr int digits = 16;
+  std::uintmax_t max_iter = std::numeric_limits<std::uintmax_t>::max();
+  return root_finder_tol(std::forward<FTuple>(f_tuple), guess, min, max, digits,
+                         max_iter, std::forward<Types>(args)...);
 }
-*/
-
-// Non-tol versions
-template <typename F, typename FDiv, typename FDivDiv, typename GuessScalar, typename MinScalar, typename MaxScalar, typename... Types>
-auto root_finder(F&& f, FDiv&& f_div, FDivDiv&& f_div_div, GuessScalar guess, MinScalar min, MaxScalar max, Types&&... args) {
-    int digits = 16;
-    std::uintmax_t max_iter = 100;
-    return root_finder_tol(f, f_div, f_div_div, guess, min, max, digits, max_iter, args...);
-}
-/*
-template <typename F, typename FDiv, typename GuessScalar, typename MinScalar, typename MaxScalar, typename... Types>
-double root_finder(F&& f, FDiv&& f_div, GuessScalar guess, MinScalar min, MaxScalar max, Types&&... args) {
-    int digits = 16;
-    std::uintmax_t max_iter = 100;
-    return root_finder_tol(f, f_div, guess, min, max, digits, max_iter, args...);
-}
-
-template <typename F, typename GuessScalar, typename MinScalar, typename MaxScalar, typename... Types>
-double root_finder(F&& f, GuessScalar guess, MinScalar min, MaxScalar max, Types&&... args) {
-    int digits = 16;
-    std::uintmax_t max_iter = 100;
-    return root_finder_tol(f, guess, min, max, digits, max_iter, args...);
-}
-*/
-}
-}
+}  // namespace math
+}  // namespace stan
 #endif

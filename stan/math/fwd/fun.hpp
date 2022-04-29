@@ -38,6 +38,7 @@
 #include <stan/math/fwd/fun/fmax.hpp>
 #include <stan/math/fwd/fun/fmin.hpp>
 #include <stan/math/fwd/fun/fmod.hpp>
+#include <stan/math/fwd/fun/frexp.hpp>
 #include <stan/math/fwd/fun/gamma_p.hpp>
 #include <stan/math/fwd/fun/gamma_q.hpp>
 #include <stan/math/fwd/fun/grad_inc_beta.hpp>
@@ -103,6 +104,7 @@
 #include <stan/math/fwd/fun/read_fvar.hpp>
 #include <stan/math/fwd/fun/rising_factorial.hpp>
 #include <stan/math/fwd/fun/round.hpp>
+#include <stan/math/fwd/fun/sign.hpp>
 #include <stan/math/fwd/fun/sin.hpp>
 #include <stan/math/fwd/fun/sinh.hpp>
 #include <stan/math/fwd/fun/softmax.hpp>
