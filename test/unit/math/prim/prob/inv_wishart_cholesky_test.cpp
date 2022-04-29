@@ -68,7 +68,7 @@ TEST(ProbDistributionsInvWishartCholesky, 0x0) {
                std::domain_error);
 }
 
-TEST(ProbDistributionsWishartCholesky, dof_0) {
+TEST(ProbDistributionsInvWishartCholesky, dof_0) {
   using Eigen::Dynamic;
   using Eigen::MatrixXd;
   MatrixXd Sigma(2, 2);
