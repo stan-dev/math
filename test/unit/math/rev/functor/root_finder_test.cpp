@@ -1,12 +1,11 @@
 #include <stan/math.hpp>
 #include <gtest/gtest.h>
 
-
 TEST(RevFunctor, root_finder) {
   using stan::math::root_finder;
   using stan::math::var;
   // return cube root of x using 1st and 2nd derivatives and Halley.
-  //using namespace std;  // Help ADL of std functions.
+  // using namespace std;  // Help ADL of std functions.
   var x = 27;
   int exponent;
   // Get exponent of z (ignore mantissa).
@@ -25,9 +24,9 @@ TEST(RevFunctor, root_finder) {
    */
   int get_digits = static_cast<int>(digits * 0.4);
   std::uintmax_t maxit = 20;
-  auto f = [](const auto& g, const auto x){ return g * g * g - x; };
-  auto f_g = [](const auto& g, const auto x){ return 3 * g * g; };
-  auto f_gg = [](const auto& g, const auto x){ return 6 * g; };
+  auto f = [](const auto& g, const auto x) { return g * g * g - x; };
+  auto f_g = [](const auto& g, const auto x) { return 3 * g * g; };
+  auto f_gg = [](const auto& g, const auto x) { return 6 * g; };
   var result = root_finder(std::make_tuple(f, f_g, f_gg), guess, min, max, x);
   result.grad();
   EXPECT_EQ(27, x.val());

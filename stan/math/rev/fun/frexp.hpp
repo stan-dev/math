@@ -9,6 +9,6 @@ namespace math {
 inline auto frexp(stan::math::var x, int* exponent) noexcept {
   return std::frexp(x.val(), exponent);
 }
-}
-}
+}  // namespace math
+}  // namespace stan
 #endif

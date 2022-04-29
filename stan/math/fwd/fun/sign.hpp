@@ -14,6 +14,6 @@ inline auto sign(const fvar<T>& x) {
   return (0. < x_val) - (x_val < 0.);
 }
 
-}
-}
+}  // namespace math
+}  // namespace stan
 #endif

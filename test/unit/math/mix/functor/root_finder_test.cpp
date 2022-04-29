@@ -3,7 +3,7 @@
 TEST(MixFun, root_finder_cubed) {
   using stan::math::root_finder;
   // return cube root of x using 1st and 2nd derivatives and Halley.
-  //using namespace std;  // Help ADL of std functions.
+  // using namespace std;  // Help ADL of std functions.
   double x = 27;
   int exponent;
   // Get exponent of z (ignore mantissa).
@@ -22,9 +22,9 @@ TEST(MixFun, root_finder_cubed) {
    */
   int get_digits = static_cast<int>(digits * 0.4);
   std::uintmax_t maxit = 20;
-  auto f = [](const auto& g, const auto& x){ return g * g * g - x; };
-  auto f_g = [](const auto& g, const auto& x){ return 3 * g * g; };
-  auto f_gg = [](const auto& g, const auto& x){ return 6 * g; };
+  auto f = [](const auto& g, const auto& x) { return g * g * g - x; };
+  auto f_g = [](const auto& g, const auto& x) { return 3 * g * g; };
+  auto f_gg = [](const auto& g, const auto& x) { return 6 * g; };
   auto full_f = [&f, &f_g, &f_gg, guess, min, max](auto&& xx) {
     return root_finder(std::make_tuple(f, f_g, f_gg), guess, min, max, xx);
   };
@@ -34,7 +34,7 @@ TEST(MixFun, root_finder_cubed) {
 TEST(MixFun, root_finder_fifth) {
   using stan::math::root_finder;
   // return cube root of x using 1st and 2nd derivatives and Halley.
-  //using namespace std;  // Help ADL of std functions.
+  // using namespace std;  // Help ADL of std functions.
   double x = 27;
   int exponent;
   // Get exponent of z (ignore mantissa).
@@ -53,9 +53,9 @@ TEST(MixFun, root_finder_fifth) {
    */
   int get_digits = static_cast<int>(digits * 0.4);
   std::uintmax_t maxit = 20;
-  auto f = [](const auto& g, const auto& x){ return g * g * g * g * g - x; };
-  auto f_g = [](const auto& g, const auto& x){ return 5 * g * g * g * g; };
-  auto f_gg = [](const auto& g, const auto& x){ return 20 * g * g * g; };
+  auto f = [](const auto& g, const auto& x) { return g * g * g * g * g - x; };
+  auto f_g = [](const auto& g, const auto& x) { return 5 * g * g * g * g; };
+  auto f_gg = [](const auto& g, const auto& x) { return 20 * g * g * g; };
   auto full_f = [&f, &f_g, &f_gg, guess, min, max](auto&& xx) {
     return root_finder(std::make_tuple(f, f_g, f_gg), guess, min, max, xx);
   };

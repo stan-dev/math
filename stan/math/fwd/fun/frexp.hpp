@@ -12,6 +12,6 @@ template <typename T>
 inline auto frexp(const fvar<T>& x, int* exponent) noexcept {
   return std::frexp(value_of_rec(x), exponent);
 }
-}
-}
+}  // namespace math
+}  // namespace stan
 #endif

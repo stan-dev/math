@@ -37,9 +37,9 @@ template <
     typename MaxScalar, typename... Types,
     require_any_st_var<GuessScalar, MinScalar, MaxScalar, Types...>* = nullptr,
     require_all_stan_scalar_t<GuessScalar, MinScalar, MaxScalar>* = nullptr>
-auto root_finder_tol(FTuple&& f_tuple, const GuessScalar guess, const MinScalar min,
-                     const MaxScalar max, const int digits, std::uintmax_t& max_iter,
-                     Types&&... args) {
+auto root_finder_tol(FTuple&& f_tuple, const GuessScalar guess,
+                     const MinScalar min, const MaxScalar max, const int digits,
+                     std::uintmax_t& max_iter, Types&&... args) {
   check_bounded("root_finder", "initial guess", guess, min, max);
   check_positive("root_finder", "digits", digits);
   check_positive("root_finder", "max_iter", max_iter);
@@ -71,28 +71,28 @@ auto root_finder_tol(FTuple&& f_tuple, const GuessScalar guess, const MinScalar 
   }
 
   /*
-  * Note: Because we put this on the callback stack, if `f` is a lambda
-  * its captures must be in Stan's arena memory or trivially destructable.
-  */
+   * Note: Because we put this on the callback stack, if `f` is a lambda
+   * its captures must be in Stan's arena memory or trivially destructable.
+   */
   return make_callback_var(theta_dbl,
-                         [f, arena_args_tuple, Jf_x](auto& ret) mutable {
-                           // Eigen::VectorXd eta =
-                           // -Jf_x_T_lu_ptr->solve(ret.adj().eval());
-                           double eta = -(ret.adj() / Jf_x);
-                           // Contract with Jacobian of f with respect to y
-                           // using a nested reverse autodiff pass.
-                           {
-                             nested_rev_autodiff rev;
-                             double ret_val = ret.val();
-                             auto x_nrad_ = apply(
-                                 [&ret_val, &f](const auto&... args) {
-                                   return eval(f(ret_val, args...));
-                                 },
-                                 *arena_args_tuple);
-                             x_nrad_.adj() = eta;
-                             grad();
-                           }
-                         });
+                           [f, arena_args_tuple, Jf_x](auto& ret) mutable {
+                             // Eigen::VectorXd eta =
+                             // -Jf_x_T_lu_ptr->solve(ret.adj().eval());
+                             double eta = -(ret.adj() / Jf_x);
+                             // Contract with Jacobian of f with respect to y
+                             // using a nested reverse autodiff pass.
+                             {
+                               nested_rev_autodiff rev;
+                               double ret_val = ret.val();
+                               auto x_nrad_ = apply(
+                                   [&ret_val, &f](const auto&... args) {
+                                     return eval(f(ret_val, args...));
+                                   },
+                                   *arena_args_tuple);
+                               x_nrad_.adj() = eta;
+                               grad();
+                             }
+                           });
 }
 
 }  // namespace math

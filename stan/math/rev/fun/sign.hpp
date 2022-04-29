@@ -6,9 +6,7 @@
 
 namespace stan {
 namespace math {
-inline int sign(stan::math::var z) {
-  return (z == 0) ? 0 : z < 0 ? -1 : 1;
-}
-}
-}
+inline int sign(stan::math::var z) { return (z == 0) ? 0 : z < 0 ? -1 : 1; }
+}  // namespace math
+}  // namespace stan
 #endif

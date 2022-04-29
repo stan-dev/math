@@ -47,9 +47,9 @@ template <typename FTuple, typename GuessScalar, typename MinScalar,
           typename MaxScalar, typename... Types,
           require_all_not_st_var<GuessScalar, MinScalar, MaxScalar,
                                  Types...>* = nullptr>
-auto root_finder_tol(FTuple&& f_tuple, const GuessScalar guess, const MinScalar min,
-                     const MaxScalar max, const int digits, std::uintmax_t& max_iter,
-                     Types&&... args) {
+auto root_finder_tol(FTuple&& f_tuple, const GuessScalar guess,
+                     const MinScalar min, const MaxScalar max, const int digits,
+                     std::uintmax_t& max_iter, Types&&... args) {
   check_bounded("root_finder", "initial guess", guess, min, max);
   check_positive("root_finder", "digits", digits);
   check_positive("root_finder", "max_iter", max_iter);
@@ -57,8 +57,8 @@ auto root_finder_tol(FTuple&& f_tuple, const GuessScalar guess, const MinScalar 
   ret_t ret = 0;
   auto f_plus_div = internal::func_with_derivs(f_tuple, args...);
   try {
-    ret = boost::math::tools::halley_iterate(f_plus_div, ret_t(guess), ret_t(min), ret_t(max),
-                                             digits, max_iter);
+    ret = boost::math::tools::halley_iterate(
+        f_plus_div, ret_t(guess), ret_t(min), ret_t(max), digits, max_iter);
   } catch (const std::exception& e) {
     throw e;
   }
