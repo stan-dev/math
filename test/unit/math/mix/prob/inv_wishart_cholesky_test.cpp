@@ -59,10 +59,12 @@ TEST(ProbDistributionsInvWishartCholesky, fvar_var) {
   // computed with MCMCpack in R
   double lp = -13.26576006791152551 + 4.04590909757044237;
 
-  EXPECT_NEAR(lp, stan::math::inv_wishart_cholesky_lpdf(L_Y, dof, L_S).val_.val(),
+  EXPECT_NEAR(lp,
+              stan::math::inv_wishart_cholesky_lpdf(L_Y, dof, L_S).val_.val(),
               1e-9);
   EXPECT_NEAR(-0.65414845854948578,
-              stan::math::inv_wishart_cholesky_lpdf(L_Y, dof, L_S).d_.val(), 1e-9);
+              stan::math::inv_wishart_cholesky_lpdf(L_Y, dof, L_S).d_.val(),
+              1e-9);
 
   stan::math::recover_memory();
 }
@@ -91,12 +93,12 @@ TEST(ProbDistributionsInvWishartCholesky, fvar_fvar_var) {
   // computed with MCMCpack in R
   double lp = -13.26576006791152551 + 4.04590909757044237;
 
-  EXPECT_NEAR(lp,
-              stan::math::inv_wishart_cholesky_lpdf(L_Y, dof, L_S).val_.val_.val(),
-              1e-6);
-  EXPECT_NEAR(-0.65414845854948578,
-              stan::math::inv_wishart_cholesky_lpdf(L_Y, dof, L_S).d_.val_.val(),
-              1e-6);
+  EXPECT_NEAR(
+      lp, stan::math::inv_wishart_cholesky_lpdf(L_Y, dof, L_S).val_.val_.val(),
+      1e-6);
+  EXPECT_NEAR(
+      -0.65414845854948578,
+      stan::math::inv_wishart_cholesky_lpdf(L_Y, dof, L_S).d_.val_.val(), 1e-6);
 
   stan::math::recover_memory();
 }

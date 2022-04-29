@@ -6,8 +6,8 @@
 
 template <typename T_y, typename T_dof, typename T_scale>
 void expect_propto_inv_wishart_cholesky_lpdf(T_y L_Y1, T_dof nu1, T_scale L_S1,
-                                         T_y L_Y2, T_dof nu2, T_scale L_S2,
-                                         std::string message) {
+                                             T_y L_Y2, T_dof nu2, T_scale L_S2,
+                                             std::string message) {
   expect_eq_diffs(stan::math::inv_wishart_cholesky_lpdf<false>(L_Y1, nu1, L_S1),
                   stan::math::inv_wishart_cholesky_lpdf<false>(L_Y2, nu2, L_S2),
                   stan::math::inv_wishart_cholesky_lpdf<true>(L_Y1, nu1, L_S1),
@@ -50,54 +50,54 @@ class AgradDistributionsInvWishartCholesky : public ::testing::Test {
 
 TEST_F(AgradDistributionsInvWishartCholesky, Propto) {
   using stan::math::to_var;
-  expect_propto_inv_wishart_cholesky_lpdf(to_var(L_Y1), to_var(nu1), to_var(L_S1),
-                                      to_var(L_Y2), to_var(nu2), to_var(L_S2),
-                                      "var: L_Y, nu, and L_S");
+  expect_propto_inv_wishart_cholesky_lpdf(
+      to_var(L_Y1), to_var(nu1), to_var(L_S1), to_var(L_Y2), to_var(nu2),
+      to_var(L_S2), "var: L_Y, nu, and L_S");
 
   stan::math::recover_memory();
 }
 TEST_F(AgradDistributionsInvWishartCholesky, ProptoY) {
   using stan::math::to_var;
   expect_propto_inv_wishart_cholesky_lpdf(to_var(L_Y1), nu1, L_S1, to_var(L_Y2),
-                                      nu1, L_S1, "var: L_Y");
+                                          nu1, L_S1, "var: L_Y");
 
   stan::math::recover_memory();
 }
 TEST_F(AgradDistributionsInvWishartCholesky, ProptoYNu) {
   using stan::math::to_var;
   expect_propto_inv_wishart_cholesky_lpdf(to_var(L_Y1), to_var(nu1), L_S1,
-                                      to_var(L_Y2), to_var(nu2), L_S1,
-                                      "var: L_y and nu");
+                                          to_var(L_Y2), to_var(nu2), L_S1,
+                                          "var: L_y and nu");
 
   stan::math::recover_memory();
 }
 TEST_F(AgradDistributionsInvWishartCholesky, ProptoYLSigma) {
   using stan::math::to_var;
   expect_propto_inv_wishart_cholesky_lpdf(to_var(L_Y1), nu1, to_var(L_S1),
-                                      to_var(L_Y2), nu1, to_var(L_S2),
-                                      "var: L_Y and L_S");
+                                          to_var(L_Y2), nu1, to_var(L_S2),
+                                          "var: L_Y and L_S");
 
   stan::math::recover_memory();
 }
 TEST_F(AgradDistributionsInvWishartCholesky, ProptoNu) {
   using stan::math::to_var;
   expect_propto_inv_wishart_cholesky_lpdf(L_Y1, to_var(nu1), L_S1, L_Y1,
-                                      to_var(nu2), L_S1, "var: nu");
+                                          to_var(nu2), L_S1, "var: nu");
 
   stan::math::recover_memory();
 }
 TEST_F(AgradDistributionsInvWishartCholesky, ProptoNuL_S) {
   using stan::math::to_var;
   expect_propto_inv_wishart_cholesky_lpdf(L_Y1, to_var(nu1), to_var(L_S1), L_Y1,
-                                      to_var(nu2), to_var(L_S2),
-                                      "var: nu and sigma");
+                                          to_var(nu2), to_var(L_S2),
+                                          "var: nu and sigma");
 
   stan::math::recover_memory();
 }
 TEST_F(AgradDistributionsInvWishartCholesky, ProptoL_S) {
   using stan::math::to_var;
   expect_propto_inv_wishart_cholesky_lpdf(L_Y1, nu1, to_var(L_S1), L_Y1, nu1,
-                                      to_var(L_S2), "var: L_S");
+                                          to_var(L_S2), "var: L_S");
 
   stan::math::recover_memory();
 }
@@ -115,14 +115,14 @@ TEST(InvWishartCholesky, check_varis_on_stack) {
 
   test::check_varis_on_stack(stan::math::inv_wishart_cholesky_lpdf<false>(
       to_var(L_Y), to_var(nu), to_var(L_S)));
-  test::check_varis_on_stack(
-      stan::math::inv_wishart_cholesky_lpdf<false>(to_var(L_Y), to_var(nu), L_S));
-  test::check_varis_on_stack(
-      stan::math::inv_wishart_cholesky_lpdf<false>(to_var(L_Y), nu, to_var(L_S)));
+  test::check_varis_on_stack(stan::math::inv_wishart_cholesky_lpdf<false>(
+      to_var(L_Y), to_var(nu), L_S));
+  test::check_varis_on_stack(stan::math::inv_wishart_cholesky_lpdf<false>(
+      to_var(L_Y), nu, to_var(L_S)));
   test::check_varis_on_stack(
       stan::math::inv_wishart_cholesky_lpdf<false>(to_var(L_Y), nu, L_S));
-  test::check_varis_on_stack(
-      stan::math::inv_wishart_cholesky_lpdf<false>(L_Y, to_var(nu), to_var(L_S)));
+  test::check_varis_on_stack(stan::math::inv_wishart_cholesky_lpdf<false>(
+      L_Y, to_var(nu), to_var(L_S)));
   test::check_varis_on_stack(
       stan::math::inv_wishart_cholesky_lpdf<false>(L_Y, to_var(nu), L_S));
   test::check_varis_on_stack(
@@ -130,14 +130,14 @@ TEST(InvWishartCholesky, check_varis_on_stack) {
 
   test::check_varis_on_stack(stan::math::inv_wishart_cholesky_lpdf<true>(
       to_var(L_Y), to_var(nu), to_var(L_S)));
-  test::check_varis_on_stack(
-      stan::math::inv_wishart_cholesky_lpdf<true>(to_var(L_Y), to_var(nu), L_S));
-  test::check_varis_on_stack(
-      stan::math::inv_wishart_cholesky_lpdf<true>(to_var(L_Y), nu, to_var(L_S)));
+  test::check_varis_on_stack(stan::math::inv_wishart_cholesky_lpdf<true>(
+      to_var(L_Y), to_var(nu), L_S));
+  test::check_varis_on_stack(stan::math::inv_wishart_cholesky_lpdf<true>(
+      to_var(L_Y), nu, to_var(L_S)));
   test::check_varis_on_stack(
       stan::math::inv_wishart_cholesky_lpdf<true>(to_var(L_Y), nu, L_S));
-  test::check_varis_on_stack(
-      stan::math::inv_wishart_cholesky_lpdf<true>(L_Y, to_var(nu), to_var(L_S)));
+  test::check_varis_on_stack(stan::math::inv_wishart_cholesky_lpdf<true>(
+      L_Y, to_var(nu), to_var(L_S)));
   test::check_varis_on_stack(
       stan::math::inv_wishart_cholesky_lpdf<true>(L_Y, to_var(nu), L_S));
   test::check_varis_on_stack(
