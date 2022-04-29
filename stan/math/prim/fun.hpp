@@ -99,6 +99,7 @@
 #include <stan/math/prim/fun/factor_cov_matrix.hpp>
 #include <stan/math/prim/fun/falling_factorial.hpp>
 #include <stan/math/prim/fun/fdim.hpp>
+#include <stan/math/prim/fun/fft.hpp>
 #include <stan/math/prim/fun/fill.hpp>
 #include <stan/math/prim/fun/finite_diff_stepsize.hpp>
 #include <stan/math/prim/fun/floor.hpp>
@@ -140,6 +141,7 @@
 #include <stan/math/prim/fun/int_step.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/inv_Phi.hpp>
+#include <stan/math/prim/fun/inv_inc_beta.hpp>
 #include <stan/math/prim/fun/inv_cloglog.hpp>
 #include <stan/math/prim/fun/inv_erfc.hpp>
 #include <stan/math/prim/fun/inv_logit.hpp>

@@ -7,7 +7,9 @@ void expect_cumulative_sum(std::vector<double>& x) {
   Eigen::RowVectorXd rv = Eigen::Map<Eigen::RowVectorXd>(x.data(), x.size());
   stan::test::expect_ad(f, x);
   stan::test::expect_ad(f, v);
+  stan::test::expect_ad_matvar(f, v);
   stan::test::expect_ad(f, rv);
+  stan::test::expect_ad_matvar(f, rv);
 }
 
 TEST(MathMixMatFun, cumulativeSum) {

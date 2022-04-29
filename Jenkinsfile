@@ -80,7 +80,6 @@ pipeline {
         string(defaultValue: '', name: 'cmdstan_pr', description: 'PR to test CmdStan upstream against e.g. PR-630')
         string(defaultValue: '', name: 'stan_pr', description: 'PR to test Stan upstream against e.g. PR-630')
         booleanParam(defaultValue: false, name: 'withRowVector', description: 'Run additional distribution tests on RowVectors (takes 5x as long)')
-        booleanParam(defaultValue: false, name: 'run_win_tests', description: 'Run full unit tests on Windows.')
     }
     options {
         skipDefaultCheckout()
@@ -127,14 +126,14 @@ pipeline {
                     usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                     sh """#!/bin/bash
                         set -x
+                        git config user.email "mc.stanislaw@gmail.com"
+                        git config user.name "Stan Jenkins"
                         git checkout -b ${branchName()}
                         clang-format --version
                         find stan test -name '*.hpp' -o -name '*.cpp' | xargs -n20 -P${PARALLEL} clang-format -i
                         if [[ `git diff` != "" ]]; then
-                            git config user.email "mc.stanislaw@gmail.com"
-                            git config user.name "Stan Jenkins"
                             git add stan test
-                            git commit -m "[Jenkins] auto-formatting by `clang-format --version`"
+                            git commit --author='Stan BuildBot <mc.stanislaw@gmail.com>' -m "[Jenkins] auto-formatting by `clang-format --version`"
                             git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${fork()}/math.git ${branchName()}
                             echo "Exiting build because clang-format found changes."
                             echo "Those changes are now found on stan-dev/math under branch ${branchName()}"
@@ -243,32 +242,85 @@ pipeline {
         }
 
         stage('Full Unit Tests') {
-            agent {  label 'gg-linux'  }
             when {
                 expression {
                     !skipRemainingStages
                 }
             }
-            steps {
-                unstash 'MathSetup'
-                // Set Stan local compiler flags to use the new TBB interface
-                // sh """
-                //     export TBB_INC=\$(pwd)/lib/tbb_2020.3/include
-                //     export TBB_LIB=\$(pwd)/lib/tbb
-                //     echo TBB_INTERFACE_NEW=true > make/local
-                // """
-	            sh "echo CXXFLAGS += -fsanitize=address >> make/local"
-                script {
-                    if (isUnix()) {
-                        runTests("test/unit", false)
-                    } else {
-                        runTestsWin("test/unit", true)
+            failFast true
+            parallel {
+                stage('Rev/Fwd Unit Tests') {
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu'
+                            label 'linux'
+                            args '--cap-add SYS_PTRACE'
+                        }
                     }
+                    when {
+                        expression {
+                            !skipRemainingStages
+                        }
+                    }
+                    steps {
+                        unstash 'MathSetup'
+                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+                        script {
+                            runTests("test/unit/math/rev", false)
+                            runTests("test/unit/math/fwd", false)
+                        }
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Mix Unit Tests') {
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu'
+                            label 'linux'
+                            args '--cap-add SYS_PTRACE'
+                        }
+                    }
+                    when {
+                        expression {
+                            !skipRemainingStages
+                        }
+                    }
+                    steps {
+                        unstash 'MathSetup'
+                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+                        script {
+                            runTests("test/unit/math/mix", true)
+                        }
+                    }
+                    post { always { retry(3) { deleteDir() } } }
+                }
+                stage('Prim Unit Tests') {
+                    agent {
+                        docker {
+                            image 'stanorg/ci:gpu'
+                            label 'linux'
+                            args '--cap-add SYS_PTRACE'
+                        }
+                    }
+                    when {
+                        expression {
+                            !skipRemainingStages
+                        }
+                    }
+                    steps {
+                        unstash 'MathSetup'
+                        sh "echo CXXFLAGS += -fsanitize=address >> make/local"
+                        script {
+                            runTests("test/unit/*_test.cpp", false)
+                            runTests("test/unit/math/*_test.cpp", false)
+                            runTests("test/unit/math/prim", false)                            
+                            runTests("test/unit/math/memory", false)
+                        }
+                    }
+                    post { always { retry(3) { deleteDir() } } }
                 }
             }
-            post { always { retry(3) { deleteDir() } } }
         }
-
         stage('Always-run tests') {
             when {
                 expression {
@@ -366,6 +418,7 @@ pipeline {
                         unstash 'MathSetup'
                         script {
                             sh "echo O=0 > make/local"
+                            sh "echo CXX=${CLANG_CXX} -Werror >> make/local"
                             sh "python ./test/code_generator_test.py"
                             sh "python ./test/signature_parser_test.py"
                             sh "python ./test/statement_types_test.py"
@@ -417,27 +470,6 @@ pipeline {
                     }
                     post { always { retry(3) { deleteDir() } } }
                 }
-
-                stage('Windows Headers & Unit') {
-                    agent { label 'windows' }
-                    when {
-                        allOf {
-                            anyOf {
-                                branch 'develop'
-                                branch 'master'
-                                expression { params.run_win_tests }
-                            }
-                            expression {
-                                !skipRemainingStages
-                            }
-                        }
-                    }
-                    steps {
-                        unstash 'MathSetup'
-                        runTestsWin("test/unit", true, false)
-                    }
-                }
-
             }
         }
 
@@ -482,7 +514,7 @@ pipeline {
                         git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git :gh-pages
                         git checkout --orphan gh-pages
                         git add -f doc
-                        git commit -m "auto generated docs from Jenkins"
+                        git commit --author='Stan BuildBot <mc.stanislaw@gmail.com>' -m "auto generated docs from Jenkins"
                         git subtree push --prefix doc/api/html https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/stan-dev/math.git gh-pages
                         """
                 }
@@ -491,7 +523,7 @@ pipeline {
         }
 
     }
-    // Below lines are commented to avoid spamming emails during migration/debug
+
     post {
         always {
             node("linux") {
