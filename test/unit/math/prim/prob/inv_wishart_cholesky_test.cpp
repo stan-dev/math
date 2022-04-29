@@ -125,7 +125,8 @@ TEST(ProbDistributionsInvWishartCholesky, InvWishartCholesky) {
 
   double log_p = log(2.008407e-08) + log_jac;
 
-  EXPECT_NEAR(log_p, stan::math::inv_wishart_cholesky_lpdf(L_Y, dof, L_S), 0.01);
+  EXPECT_NEAR(log_p, stan::math::inv_wishart_cholesky_lpdf(L_Y, dof, L_S),
+              0.01);
 }
 
 TEST(ProbDistributionsInvWishartCholesky, Propto) {
@@ -155,9 +156,9 @@ TEST(ProbDistributionsInvWishartCholesky, Error) {
   using stan::math::inv_wishart_cholesky_lpdf;
   double nu;
 
-   nu = 1;
+  nu = 1;
   EXPECT_NO_THROW(inv_wishart_cholesky_lpdf(MatrixXd::Identity(1, 1), nu,
-                                        MatrixXd::Identity(1, 1)));
+                                            MatrixXd::Identity(1, 1)));
 
   nu = 5;
   MatrixXd Sigma(2, 1);
@@ -171,14 +172,14 @@ TEST(ProbDistributionsInvWishartCholesky, Error) {
 
   nu = 5;
   EXPECT_THROW(inv_wishart_cholesky_lpdf(MatrixXd::Identity(3, 3), nu,
-                                     MatrixXd::Identity(2, 2)),
+                                         MatrixXd::Identity(2, 2)),
                std::invalid_argument);
 
   nu = 3;
   EXPECT_NO_THROW(inv_wishart_cholesky_lpdf(MatrixXd::Identity(3, 3), nu,
-                                        MatrixXd::Identity(3, 3)));
+                                            MatrixXd::Identity(3, 3)));
   nu = 2;
   EXPECT_THROW(inv_wishart_cholesky_lpdf(MatrixXd::Identity(3, 3), nu,
-                                     MatrixXd::Identity(3, 3)),
+                                         MatrixXd::Identity(3, 3)),
                std::domain_error);
 }
