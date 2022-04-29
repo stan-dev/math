@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/mdivide_left_tri.hpp>
 #include <stan/math/prim/prob/wishart_cholesky_rng.hpp>
 #include <stan/math/prim/prob/wishart_rng.hpp>
 
@@ -36,8 +37,8 @@ inline Eigen::MatrixXd inv_wishart_cholesky_rng(double nu,
   check_positive(function, "Cholesky Scale matrix", L_S.diagonal());
   check_positive(function, "columns of Cholesky Scale matrix", L_S.cols());
 
-  MatrixXd L_Sinv = stan::math::mdivide_left_tri<Eigen::Lower>(L_S);
-  return stan::math::mdivide_left_tri<Eigen::Lower>(
+  MatrixXd L_Sinv = mdivide_left_tri<Eigen::Lower>(L_S);
+  return mdivide_left_tri<Eigen::Lower>(
       wishart_cholesky_rng(nu, L_Sinv, rng));
 }
 
