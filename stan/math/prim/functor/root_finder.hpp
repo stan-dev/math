@@ -53,10 +53,11 @@ auto root_finder_tol(FTuple&& f_tuple, const GuessScalar guess, const MinScalar 
   check_bounded("root_finder", "initial guess", guess, min, max);
   check_positive("root_finder", "digits", digits);
   check_positive("root_finder", "max_iter", max_iter);
-  return_type_t<GuessScalar> ret = 0;
+  using ret_t = return_type_t<GuessScalar, MinScalar, MaxScalar, Types...>;
+  ret_t ret = 0;
   auto f_plus_div = internal::func_with_derivs(f_tuple, args...);
   try {
-    ret = boost::math::tools::halley_iterate(f_plus_div, guess, min, max,
+    ret = boost::math::tools::halley_iterate(f_plus_div, ret_t(guess), ret_t(min), ret_t(max),
                                              digits, max_iter);
   } catch (const std::exception& e) {
     throw e;

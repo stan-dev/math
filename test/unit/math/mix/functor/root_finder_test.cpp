@@ -26,11 +26,7 @@ TEST(MixFun, root_finder_cubed) {
   auto f_g = [](const auto& g, const auto& x){ return 3 * g * g; };
   auto f_gg = [](const auto& g, const auto& x){ return 6 * g; };
   auto full_f = [&f, &f_g, &f_gg, guess, min, max](auto&& xx) {
-    using x_t = std::decay_t<decltype(xx)>;
-    return root_finder(std::make_tuple(f, f_g, f_gg),
-     x_t(guess),
-     x_t(min),
-     x_t(max), xx);
+    return root_finder(std::make_tuple(f, f_g, f_gg), guess, min, max, xx);
   };
   stan::test::expect_ad(full_f, x);
 }
@@ -61,11 +57,7 @@ TEST(MixFun, root_finder_fifth) {
   auto f_g = [](const auto& g, const auto& x){ return 5 * g * g * g * g; };
   auto f_gg = [](const auto& g, const auto& x){ return 20 * g * g * g; };
   auto full_f = [&f, &f_g, &f_gg, guess, min, max](auto&& xx) {
-    using x_t = std::decay_t<decltype(xx)>;
-    return root_finder(std::make_tuple(f, f_g, f_gg),
-     x_t(guess),
-     x_t(min),
-     x_t(max), xx);
+    return root_finder(std::make_tuple(f, f_g, f_gg), guess, min, max, xx);
   };
   stan::test::expect_ad(full_f, x);
 }
