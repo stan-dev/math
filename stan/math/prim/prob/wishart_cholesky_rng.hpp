@@ -17,7 +17,7 @@ namespace math {
  * with the specified degrees of freedom
  * using the specified random number generator.
  *
- * @tparam RNG Random number generator type
+ * @tparam RNG random number generator type
  * @param[in] nu scalar degrees of freedom
  * @param[in] L_S lower Cholesky factor of the scale matrix
  * @param[in, out] rng random-number generator
