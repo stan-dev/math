@@ -38,8 +38,7 @@ inline Eigen::MatrixXd inv_wishart_cholesky_rng(double nu,
   check_positive(function, "columns of Cholesky Scale matrix", L_S.cols());
 
   MatrixXd L_Sinv = mdivide_left_tri<Eigen::Lower>(L_S);
-  return mdivide_left_tri<Eigen::Lower>(
-      wishart_cholesky_rng(nu, L_Sinv, rng));
+  return mdivide_left_tri<Eigen::Lower>(wishart_cholesky_rng(nu, L_Sinv, rng));
 }
 
 }  // namespace math
