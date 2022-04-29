@@ -59,9 +59,10 @@ TEST(ProbDistributionsWishartCholesky, fvar_var) {
   // computed with MCMCpack in R
   double lp = -13.95961162478571360 + 4.04590909757044237;
 
-  EXPECT_NEAR(lp, stan::math::wishart_cholesky_lpdf(L_Y, dof, L_S).val_.val(), 1e-9);
-  EXPECT_NEAR(2.3751897169452936, stan::math::wishart_cholesky_lpdf(L_Y, dof, L_S).d_.val(),
+  EXPECT_NEAR(lp, stan::math::wishart_cholesky_lpdf(L_Y, dof, L_S).val_.val(),
               1e-9);
+  EXPECT_NEAR(2.3751897169452936,
+              stan::math::wishart_cholesky_lpdf(L_Y, dof, L_S).d_.val(), 1e-9);
 
   stan::math::recover_memory();
 }
@@ -84,14 +85,17 @@ TEST(ProbDistributionsWishartCholesky, fvar_fvar_var) {
     L_Y(i).d_ = 1.0;
     L_S(i).d_ = 1.0;
   }
-   unsigned int dof = 3;
+  unsigned int dof = 3;
   // log absolute determinant of the change of variables from Y -> LL'
   // see Theorem 2.1.9 in Muirhead, Aspects of Multivariate Statistical Theory
   // computed with MCMCpack in R
   double lp = -13.95961162478571360 + 4.04590909757044237;
 
-  EXPECT_NEAR(lp, stan::math::wishart_cholesky_lpdf(L_Y, dof, L_S).val_.val_.val(), 1e-6);
-  EXPECT_NEAR(2.3751897169452936, stan::math::wishart_cholesky_lpdf(L_Y, dof, L_S).d_.val_.val(),
+  EXPECT_NEAR(lp,
+              stan::math::wishart_cholesky_lpdf(L_Y, dof, L_S).val_.val_.val(),
+              1e-6);
+  EXPECT_NEAR(2.3751897169452936,
+              stan::math::wishart_cholesky_lpdf(L_Y, dof, L_S).d_.val_.val(),
               1e-6);
 
   stan::math::recover_memory();
