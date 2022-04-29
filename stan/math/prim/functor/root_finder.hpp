@@ -4,6 +4,7 @@
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/check_bounded.hpp>
+#include <stan/math/prim/err/check_positive.hpp>
 #include <stan/math/prim/functor/apply.hpp>
 #include <boost/math/tools/roots.hpp>
 #include <tuple>
