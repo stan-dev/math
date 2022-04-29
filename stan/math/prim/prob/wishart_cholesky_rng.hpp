@@ -20,8 +20,8 @@ namespace math {
  * @tparam RNG Random number generator type
  * @param[in] nu scalar degrees of freedom
  * @param[in] L_S lower Cholesky factor of the scale matrix
- * @param[in, out] rng Random-number generator
- * @return Random lower Cholesky factor drawn from the given inverse Wishart
+ * @param[in, out] rng random-number generator
+ * @return random lower Cholesky factor drawn from the given inverse Wishart
  * distribution
  * @throw std::domain_error if the scale matrix is not a Cholesky factor
  * @throw std::domain_error if the degrees of freedom is greater than k - 1
@@ -35,7 +35,8 @@ inline Eigen::MatrixXd wishart_cholesky_rng(double nu,
   static const char* function = "wishart_cholesky_rng";
   index_type_t<MatrixXd> k = L_S.rows();
   check_greater(function, "degrees of freedom > dims - 1", nu, k - 1);
-  check_cholesky_factor(function, "scale parameter", L_S);
+  check_positive(function, "Cholesky Scale matrix", L_S.diagonal());
+  check_positive(function, "columns of Cholesky Scale matrix", L_S.cols());
 
   MatrixXd B = MatrixXd::Zero(k, k);
   for (int j = 0; j < k; ++j) {
