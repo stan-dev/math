@@ -59,8 +59,10 @@ return_type_t<T_y, T_dof, T_scale> wishart_cholesky_lpdf(const T_y& L_Y,
   T_L_S_ref L_S_ref = L_S;
 
   check_greater(function, "Degrees of freedom parameter", nu_ref, k - 1);
-  check_cholesky_factor(function, "random variable", L_Y_ref);
-  check_cholesky_factor(function, "scale parameter", L_S_ref);
+  check_positive(function, "Cholesky Random variable", L_Y_ref.diagonal());
+  check_positive(function, "columns of Cholesky Random variable", L_Y_ref.cols());
+  check_positive(function, "Cholesky Scale matrix", L_S_ref.diagonal());
+  check_positive(function, "columns of Cholesky Scale matrix", L_S_ref.cols());
 
   return_type_t<T_y, T_dof, T_scale> lp(0.0);
 

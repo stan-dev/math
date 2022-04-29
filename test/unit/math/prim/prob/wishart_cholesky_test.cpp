@@ -120,7 +120,6 @@ TEST(ProbDistributionsWishartCholesky, 2x2) {
   for (int i = 0; i < 2; i++) {
     log_jac += (2 - i) * log(L_Y(i, i));
   }
-
   // computed with MCMCpack in R
   double lp = -13.9596117200 + log_jac;
 
