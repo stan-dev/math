@@ -37,10 +37,8 @@ namespace math {
  */
 template <typename Tg_a1, typename Tg_a2, typename Tg_b1, typename T_a1,
           typename T_a2, typename T_b1, typename T_z>
-void grad_2F1(Tg_a1&& g_a1, Tg_a2&& g_a2, 
-              Tg_b1&& g_b1,
-              const T_a1& a1, const T_a2& a2,
-              const T_b1& b1, const T_z& z,
+void grad_2F1(Tg_a1&& g_a1, Tg_a2&& g_a2, Tg_b1&& g_b1, const T_a1& a1,
+              const T_a2& a2, const T_b1& b1, const T_z& z,
               double precision = 1e-14, int max_steps = 1e6) {
   check_2F1_converges("grad_2F1", a1, a2, b1, z);
 
@@ -63,7 +61,7 @@ void grad_2F1(Tg_a1&& g_a1, Tg_a2&& g_a2,
   double log_t_new = 0.0;
 
   T_z log_z = log(z);
-  
+
   double log_precision = log(precision);
   double log_t_new_sign = 1.0;
   double log_t_old_sign = 1.0;
@@ -81,8 +79,9 @@ void grad_2F1(Tg_a1&& g_a1, Tg_a2&& g_a2,
     log_t_new += log(fabs(p)) + log_z;
     log_t_new_sign = p >= 0.0 ? log_t_new_sign : -log_t_new_sign;
 
-    double term = log_g_old_sign[0] * log_t_old_sign * exp(log_g_old[0] - log_t_old)
-             + inv(a1 + k);
+    double term
+        = log_g_old_sign[0] * log_t_old_sign * exp(log_g_old[0] - log_t_old)
+          + inv(a1 + k);
     log_g_old[0] = log_t_new + log(fabs(term));
     log_g_old_sign[0] = term >= 0.0 ? log_t_new_sign : -log_t_new_sign;
 
