@@ -36,10 +36,9 @@ namespace math {
  * @param[in] max_steps number of steps to take.
  */
 template <typename T1, typename T2, typename T3, typename T_z>
-void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1,
-              const T1& a1, const T2& a2, const T3& b1,
-              const T_z& z,
-              double precision = 1e-14, int max_steps = 1e6) {
+void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1, const T1& a1, const T2& a2,
+              const T3& b1, const T_z& z, double precision = 1e-14,
+              int max_steps = 1e6) {
   check_2F1_converges("grad_2F1", a1, a2, b1, z);
 
   using stan::math::value_of_rec;
@@ -61,7 +60,7 @@ void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1,
   TP log_t_old = 0.0;
   TP log_t_new = 0.0;
   TP log_z = log(z);
-  
+
   TP log_precision = log(precision);
   TP log_t_new_sign = 1.0;
   TP log_t_old_sign = 1.0;
@@ -80,7 +79,7 @@ void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1,
     log_t_new_sign = p >= 0.0 ? log_t_new_sign : -log_t_new_sign;
 
     TP term = log_g_old_sign[0] * log_t_old_sign * exp(log_g_old[0] - log_t_old)
-             + inv(a1 + k);
+              + inv(a1 + k);
     log_g_old[0] = log_t_new + log(fabs(term));
     log_g_old_sign[0] = term >= 0.0 ? log_t_new_sign : -log_t_new_sign;
 
