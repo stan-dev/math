@@ -35,12 +35,10 @@ namespace math {
  *   to truncate the sum at.
  * @param[in] max_steps number of steps to take.
  */
-template <typename Tg_a1, typename Tg_a2, typename Tg_b1, typename T_a1,
-          typename T_a2, typename T_b1, typename T_z>
-void grad_2F1(Tg_a1&& g_a1, Tg_a2&& g_a2, 
-              Tg_b1&& g_b1,
-              const T_a1& a1, const T_a2& a2,
-              const T_b1& b1, const T_z& z,
+template <typename T1, typename T2, typename T3, typename T_z>
+void grad_2F1(T1& g_a1, T2& g_a2, T3& g_b1,
+              const T1& a1, const T2& a2, const T3& b1,
+              const T_z& z,
               double precision = 1e-14, int max_steps = 1e6) {
   check_2F1_converges("grad_2F1", a1, a2, b1, z);
 
@@ -49,31 +47,31 @@ void grad_2F1(Tg_a1&& g_a1, Tg_a2&& g_a2,
   using std::fabs;
   using std::log;
   using std::max;
+  using TP = return_type_t<T1, T2, T3, T_z>;
 
   g_a1 = 0.0;
   g_a2 = 0.0;
   g_b1 = 0.0;
 
-  double log_g_old[3];
+  TP log_g_old[3];
   for (auto& i : log_g_old) {
     i = NEGATIVE_INFTY;
   }
 
-  double log_t_old = 0.0;
-  double log_t_new = 0.0;
-
-  T_z log_z = log(z);
+  TP log_t_old = 0.0;
+  TP log_t_new = 0.0;
+  TP log_z = log(z);
   
-  double log_precision = log(precision);
-  double log_t_new_sign = 1.0;
-  double log_t_old_sign = 1.0;
-  double log_g_old_sign[3];
-  for (double& x : log_g_old_sign) {
+  TP log_precision = log(precision);
+  TP log_t_new_sign = 1.0;
+  TP log_t_old_sign = 1.0;
+  TP log_g_old_sign[3];
+  for (TP& x : log_g_old_sign) {
     x = 1.0;
   }
 
   for (int k = 0; k <= max_steps; ++k) {
-    double p = (a1 + k) * (a2 + k) / ((b1 + k) * (1 + k));
+    TP p = (a1 + k) * (a2 + k) / ((b1 + k) * (1 + k));
     if (p == 0) {
       return;
     }
@@ -81,7 +79,7 @@ void grad_2F1(Tg_a1&& g_a1, Tg_a2&& g_a2,
     log_t_new += log(fabs(p)) + log_z;
     log_t_new_sign = p >= 0.0 ? log_t_new_sign : -log_t_new_sign;
 
-    double term = log_g_old_sign[0] * log_t_old_sign * exp(log_g_old[0] - log_t_old)
+    TP term = log_g_old_sign[0] * log_t_old_sign * exp(log_g_old[0] - log_t_old)
              + inv(a1 + k);
     log_g_old[0] = log_t_new + log(fabs(term));
     log_g_old_sign[0] = term >= 0.0 ? log_t_new_sign : -log_t_new_sign;
