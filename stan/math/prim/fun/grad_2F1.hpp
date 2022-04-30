@@ -35,9 +35,13 @@ namespace math {
  *   to truncate the sum at.
  * @param[in] max_steps number of steps to take.
  */
-template <typename T>
-void grad_2F1(T& g_a1, T& g_b1, const T& a1, const T& a2, const T& b1,
-              const T& z, double precision = 1e-14, int max_steps = 1e6) {
+template <typename Tg_a1, typename Tg_a2, typename Tg_b1, typename T_a1,
+          typename T_a2, typename T_b1, typename T_z>
+void grad_2F1(Tg_a1&& g_a1, Tg_a2&& g_a2, 
+              Tg_b1&& g_b1,
+              const T_a1& a1, const T_a2& a2,
+              const T_b1& b1, const T_z& z,
+              double precision = 1e-14, int max_steps = 1e6) {
   check_2F1_converges("grad_2F1", a1, a2, b1, z);
 
   using stan::math::value_of_rec;
@@ -47,28 +51,29 @@ void grad_2F1(T& g_a1, T& g_b1, const T& a1, const T& a2, const T& b1,
   using std::max;
 
   g_a1 = 0.0;
+  g_a2 = 0.0;
   g_b1 = 0.0;
 
-  T log_g_old[2];
+  double log_g_old[3];
   for (auto& i : log_g_old) {
     i = NEGATIVE_INFTY;
   }
 
-  T log_t_old = 0.0;
-  T log_t_new = 0.0;
+  double log_t_old = 0.0;
+  double log_t_new = 0.0;
 
-  T log_z = log(z);
-
+  T_z log_z = log(z);
+  
   double log_precision = log(precision);
   double log_t_new_sign = 1.0;
   double log_t_old_sign = 1.0;
-  double log_g_old_sign[2];
+  double log_g_old_sign[3];
   for (double& x : log_g_old_sign) {
     x = 1.0;
   }
 
   for (int k = 0; k <= max_steps; ++k) {
-    T p = (a1 + k) * (a2 + k) / ((b1 + k) * (1 + k));
+    double p = (a1 + k) * (a2 + k) / ((b1 + k) * (1 + k));
     if (p == 0) {
       return;
     }
@@ -76,23 +81,32 @@ void grad_2F1(T& g_a1, T& g_b1, const T& a1, const T& a2, const T& b1,
     log_t_new += log(fabs(p)) + log_z;
     log_t_new_sign = p >= 0.0 ? log_t_new_sign : -log_t_new_sign;
 
-    T term = log_g_old_sign[0] * log_t_old_sign * exp(log_g_old[0] - log_t_old)
+    double term = log_g_old_sign[0] * log_t_old_sign * exp(log_g_old[0] - log_t_old)
              + inv(a1 + k);
     log_g_old[0] = log_t_new + log(fabs(term));
     log_g_old_sign[0] = term >= 0.0 ? log_t_new_sign : -log_t_new_sign;
 
     term = log_g_old_sign[1] * log_t_old_sign * exp(log_g_old[1] - log_t_old)
-           - inv(b1 + k);
+           + inv(a2 + k);
     log_g_old[1] = log_t_new + log(fabs(term));
     log_g_old_sign[1] = term >= 0.0 ? log_t_new_sign : -log_t_new_sign;
 
+    term = log_g_old_sign[2] * log_t_old_sign * exp(log_g_old[2] - log_t_old)
+           - inv(b1 + k);
+    log_g_old[2] = log_t_new + log(fabs(term));
+    log_g_old_sign[2] = term >= 0.0 ? log_t_new_sign : -log_t_new_sign;
+
     g_a1 += log_g_old_sign[0] > 0 ? exp(log_g_old[0]) : -exp(log_g_old[0]);
-    g_b1 += log_g_old_sign[1] > 0 ? exp(log_g_old[1]) : -exp(log_g_old[1]);
+    g_a2 += log_g_old_sign[1] > 0 ? exp(log_g_old[1]) : -exp(log_g_old[1]);
+    g_b1 += log_g_old_sign[2] > 0 ? exp(log_g_old[2]) : -exp(log_g_old[2]);
 
     if (log_g_old[0]
             <= std::max(std::log(std::abs(value_of_rec(g_a1))) + log_precision,
                         log_precision)
         && log_g_old[1] <= std::max(
+               std::log(std::abs(value_of_rec(g_a2))) + log_precision,
+               log_precision)
+        && log_g_old[2] <= std::max(
                std::log(std::abs(value_of_rec(g_b1))) + log_precision,
                log_precision)) {
       return;

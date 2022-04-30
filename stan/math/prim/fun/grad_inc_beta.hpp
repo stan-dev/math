@@ -30,10 +30,11 @@ inline void grad_inc_beta(double& g1, double& g2, double a, double b,
   double C = exp(a * c1 + b * c2) / a;
   double dF1 = 0;
   double dF2 = 0;
+  double dF3 = 0;
   if (C) {
-    grad_2F1(dF1, dF2, a + b, 1.0, a + 1, z);
+    grad_2F1(dF1, dF2, dF3, a + b, 1.0, a + 1, z);
   }
-  g1 = fma((c1 - inv(a)), c3, C * (dF1 + dF2));
+  g1 = fma((c1 - inv(a)), c3, C * (dF1 + dF3));
   g2 = fma(c2, c3, C * dF1);
 }
 
