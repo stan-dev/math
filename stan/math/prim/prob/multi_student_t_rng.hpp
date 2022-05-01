@@ -60,6 +60,9 @@ multi_student_t_rng(
                      size_mu);
   }
 
+  check_size_match(function, "Size of random variable", size_mu,
+                   "rows of scale parameter", S.rows());
+
   for (size_t i = 0; i < N; i++) {
     check_finite(function, "Location parameter", mu_vec[i]);
   }

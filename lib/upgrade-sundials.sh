@@ -160,6 +160,6 @@ cat <<EOF
 
     Please check the upgrade worked by running a test with CVODES linked.
     Example (from Math home directory):
-      ./runTests.py test/unit/math/rev/functor/ode_bdf_rev_test.cpp
+      ./runTests.py test/unit/math/rev/functor/sho_ode_typed_test.cpp
 
 EOF

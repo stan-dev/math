@@ -295,20 +295,21 @@ struct ODETestFixture : public ::testing::Test {
     }
     std::vector<double> grads_eff;
 
+    auto init = ode.init();
     std::vector<Eigen::Matrix<stan::math::var, -1, 1>> ode_res
-        = ode.apply_solver(ode.init(), theta_v);
+        = ode.apply_solver(init, theta_v);
 
     for (size_t i = 0; i < ode.times().size(); i++) {
       for (size_t j = 0; j < ode_res[0].size(); j++) {
         grads_eff.clear();
         ode_res[i][j].grad(theta_v, grads_eff);
 
-        for (size_t k = 0; k < n; k++)
+        for (size_t k = 0; k < n; k++) {
           EXPECT_NEAR(grads_eff[k], fd_res[k][i][j], tol)
               << "Gradient of ODE solver failed with initial positions"
               << " known and parameters unknown at time index " << i
               << ", equation index " << j << ", and parameter index: " << k;
-
+        }
         nested.set_zero_all_adjoints();
       }
     }

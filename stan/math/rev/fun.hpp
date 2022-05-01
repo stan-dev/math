@@ -30,6 +30,7 @@
 #include <stan/math/rev/fun/cholesky_decompose.hpp>
 #include <stan/math/rev/fun/cholesky_corr_constrain.hpp>
 #include <stan/math/rev/fun/cholesky_factor_constrain.hpp>
+#include <stan/math/rev/fun/cumulative_sum.hpp>
 #include <stan/math/rev/fun/columns_dot_product.hpp>
 #include <stan/math/rev/fun/columns_dot_self.hpp>
 #include <stan/math/rev/fun/conj.hpp>
@@ -79,11 +80,13 @@
 #include <stan/math/rev/fun/identity_free.hpp>
 #include <stan/math/rev/fun/if_else.hpp>
 #include <stan/math/rev/fun/inc_beta.hpp>
+#include <stan/math/rev/fun/inv_inc_beta.hpp>
 #include <stan/math/rev/fun/initialize_fill.hpp>
 #include <stan/math/rev/fun/initialize_variable.hpp>
 #include <stan/math/rev/fun/inv.hpp>
 #include <stan/math/rev/fun/inv_Phi.hpp>
 #include <stan/math/rev/fun/inv_cloglog.hpp>
+#include <stan/math/rev/fun/inv_erfc.hpp>
 #include <stan/math/rev/fun/inv_logit.hpp>
 #include <stan/math/rev/fun/inv_sqrt.hpp>
 #include <stan/math/rev/fun/inv_square.hpp>
@@ -131,6 +134,8 @@
 #include <stan/math/rev/fun/multiply_log.hpp>
 #include <stan/math/rev/fun/multiply_lower_tri_self_transpose.hpp>
 #include <stan/math/rev/fun/norm.hpp>
+#include <stan/math/rev/fun/norm1.hpp>
+#include <stan/math/rev/fun/norm2.hpp>
 #include <stan/math/rev/fun/ordered_constrain.hpp>
 #include <stan/math/rev/fun/owens_t.hpp>
 #include <stan/math/rev/fun/polar.hpp>
