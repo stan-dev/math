@@ -4,9 +4,20 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/transpose.hpp>
+#include <stan/math/prim/functor/function_gradients_adj_jac.hpp>
 
 namespace stan {
 namespace math {
+
+template <typename EigMat, require_st_arithmetic<EigMat>* = nullptr>
+inline plain_type_t<EigMat> inverse(const EigMat& m) {
+  check_square("inverse", "m", m);
+  if (m.size() == 0) {
+    return {};
+  }
+  return m.inverse();
+}
 
 /**
  * Returns the inverse of the specified matrix.
@@ -20,16 +31,25 @@ namespace math {
  * size zero).
  * @throw std::invalid_argument if the matrix is not square.
  */
-template <typename EigMat,
-          require_eigen_vt<std::is_arithmetic, EigMat>* = nullptr>
-inline Eigen::Matrix<value_type_t<EigMat>, EigMat::RowsAtCompileTime,
-                     EigMat::ColsAtCompileTime>
-inverse(const EigMat& m) {
+template <typename EigMat, require_not_st_arithmetic<EigMat>* = nullptr>
+inline plain_type_t<EigMat> inverse(const EigMat& m) {
   check_square("inverse", "m", m);
   if (m.size() == 0) {
-    return {};
+    return m;
   }
-  return m.inverse();
+
+  ref_type_t<EigMat> m_ref = m;
+
+  decltype(auto) val_fun = [](auto&& x) { return inverse(x); };
+  auto rev_grad_fun = [](auto&& val, auto&& adj, auto&& x) {
+    return to_ref(-multiply(multiply(transpose(val), adj), transpose(val)));
+  };
+  auto fwd_grad_fun = [&](auto&& val, auto&& adj, auto&& x) {
+    return to_ref(-multiply(multiply(val, adj), val));
+  };
+  return function_gradients_adj_jac(
+      std::forward_as_tuple(m_ref), std::move(val_fun),
+      std::forward_as_tuple(rev_grad_fun), std::forward_as_tuple(fwd_grad_fun));
 }
 
 }  // namespace math

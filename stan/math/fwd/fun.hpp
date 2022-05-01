@@ -8,6 +8,7 @@
 #include <stan/math/fwd/fun/accumulator.hpp>
 #include <stan/math/fwd/fun/acos.hpp>
 #include <stan/math/fwd/fun/acosh.hpp>
+#include <stan/math/fwd/fun/aggregate_partial.hpp>
 #include <stan/math/fwd/fun/asin.hpp>
 #include <stan/math/fwd/fun/arg.hpp>
 #include <stan/math/fwd/fun/asinh.hpp>
@@ -41,7 +42,6 @@
 #include <stan/math/fwd/fun/gamma_p.hpp>
 #include <stan/math/fwd/fun/gamma_q.hpp>
 #include <stan/math/fwd/fun/grad_inc_beta.hpp>
-#include <stan/math/fwd/fun/hypot.hpp>
 #include <stan/math/fwd/fun/inc_beta.hpp>
 #include <stan/math/fwd/fun/inv.hpp>
 #include <stan/math/fwd/fun/inv_erfc.hpp>
@@ -51,7 +51,6 @@
 #include <stan/math/fwd/fun/inv_logit.hpp>
 #include <stan/math/fwd/fun/inv_sqrt.hpp>
 #include <stan/math/fwd/fun/inv_square.hpp>
-#include <stan/math/fwd/fun/inverse.hpp>
 #include <stan/math/fwd/fun/is_inf.hpp>
 #include <stan/math/fwd/fun/is_nan.hpp>
 #include <stan/math/fwd/fun/lambert_w.hpp>

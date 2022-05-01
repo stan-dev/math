@@ -6,6 +6,7 @@
 #include <stan/math/rev/fun/LDLT_factor.hpp>
 #include <stan/math/rev/fun/Phi.hpp>
 #include <stan/math/rev/fun/Phi_approx.hpp>
+#include <stan/math/rev/fun/aggregate_partial.hpp>
 #include <stan/math/rev/fun/abs.hpp>
 #include <stan/math/rev/fun/accumulator.hpp>
 #include <stan/math/rev/fun/acos.hpp>
@@ -42,7 +43,6 @@
 #include <stan/math/rev/fun/cov_matrix_constrain_lkj.hpp>
 #include <stan/math/rev/fun/csr_matrix_times_vector.hpp>
 #include <stan/math/rev/fun/determinant.hpp>
-#include <stan/math/rev/fun/diag_pre_multiply.hpp>
 #include <stan/math/rev/fun/diag_post_multiply.hpp>
 #include <stan/math/rev/fun/digamma.hpp>
 #include <stan/math/rev/fun/dims.hpp>
@@ -74,7 +74,6 @@
 #include <stan/math/rev/fun/gp_periodic_cov.hpp>
 #include <stan/math/rev/fun/grad.hpp>
 #include <stan/math/rev/fun/grad_inc_beta.hpp>
-#include <stan/math/rev/fun/hypot.hpp>
 #include <stan/math/rev/fun/identity_constrain.hpp>
 #include <stan/math/rev/fun/identity_free.hpp>
 #include <stan/math/rev/fun/if_else.hpp>
@@ -89,7 +88,6 @@
 #include <stan/math/rev/fun/inv_logit.hpp>
 #include <stan/math/rev/fun/inv_sqrt.hpp>
 #include <stan/math/rev/fun/inv_square.hpp>
-#include <stan/math/rev/fun/inverse.hpp>
 #include <stan/math/rev/fun/is_inf.hpp>
 #include <stan/math/rev/fun/is_nan.hpp>
 #include <stan/math/rev/fun/is_uninitialized.hpp>

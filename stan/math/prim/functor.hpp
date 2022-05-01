@@ -9,6 +9,8 @@
 #include <stan/math/prim/functor/finite_diff_gradient.hpp>
 #include <stan/math/prim/functor/finite_diff_gradient_auto.hpp>
 #include <stan/math/prim/functor/for_each.hpp>
+#include <stan/math/prim/functor/function_gradients.hpp>
+#include <stan/math/prim/functor/function_gradients_adj_jac.hpp>
 #include <stan/math/prim/functor/integrate_1d.hpp>
 #include <stan/math/prim/functor/integrate_1d_adapter.hpp>
 #include <stan/math/prim/functor/integrate_ode_rk45.hpp>
@@ -16,6 +18,7 @@
 #include <stan/math/prim/functor/ode_ckrk.hpp>
 #include <stan/math/prim/functor/ode_rk45.hpp>
 #include <stan/math/prim/functor/ode_store_sensitivities.hpp>
+#include <stan/math/prim/functor/map_tuple.hpp>
 #include <stan/math/prim/functor/map_rect.hpp>
 #include <stan/math/prim/functor/map_rect_combine.hpp>
 #include <stan/math/prim/functor/map_rect_concurrent.hpp>
@@ -26,5 +29,6 @@
 #include <stan/math/prim/functor/operands_and_partials.hpp>
 #include <stan/math/prim/functor/reduce_sum.hpp>
 #include <stan/math/prim/functor/reduce_sum_static.hpp>
+#include <stan/math/prim/functor/walk_tuples.hpp>
 
 #endif

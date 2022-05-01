@@ -79,6 +79,10 @@ template <typename... Types>
 struct is_any_var_matrix
     : bool_constant<math::disjunction<is_var_matrix<Types>...>::value> {};
 
+template <typename... Types>
+struct is_any_var_matrix<std::tuple<Types...>>
+    : bool_constant<math::disjunction<is_var_matrix<Types>...>::value> {};
+
 }  // namespace stan
 
 #endif
