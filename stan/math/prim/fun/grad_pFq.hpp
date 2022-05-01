@@ -74,6 +74,9 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
   using T_vec = Eigen::Matrix<scalar_t, -1, 1>;
   ref_type_t<Ta> a_ref_in = a;
   ref_type_t<Tb> b_ref_in = b;
+
+  // Replace any zero inputs with the smallest number representable, so that
+  // taking log and aggregating does not return -Inf
   Ta_plain a_ref
       = (a_ref_in.array() == 0).select(EPSILON, a_ref_in.array()).matrix();
   Tb_plain b_ref
@@ -81,6 +84,8 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
   int a_size = a.size();
   int b_size = b.size();
 
+  // Convergence criteria for the gradients are the same as for the
+  // Hypergeometric pFq itself
   bool condition_1 = (a_size > (b_size + 1)) && (z != 0);
   bool condition_2 = (a_size == (b_size + 1)) && (fabs(z) > 1);
 
@@ -93,6 +98,9 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
     throw std::domain_error(msg.str());
   }
 
+  // As the gradients will be aggregating on the log scale, we will track the
+  // the values and the signs separately - to avoid taking the log of a
+  // negative input
   Eigen::VectorXi a_signs = sign(value_of_rec(a_ref));
   Eigen::VectorXi b_signs = sign(value_of_rec(b_ref));
   int z_sign = sign(value_of_rec(z));
@@ -152,8 +160,8 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
     Eigen::VectorXi log_phammer_ap1m_sign = Eigen::VectorXi::Ones(a_size);
     Eigen::VectorXi log_phammer_bp1m_sign = Eigen::VectorXi::Ones(b_size);
 
-    // If the inner loop converges in 1 iteration, then the outer loop moves
-    // to the next iteration
+    // If the inner loop converges in 1 iteration, then the sum has coverged
+    // and another iteration of the outer loop is not needed
     while ((n_iter > 1) && (m < outer_steps)) {
       ap1n = ap1;
       bp1n = bp1;
@@ -201,6 +209,9 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
                               .matrix();
           da_mn = (term1_mn + log_phammer_an.array())
                   - (term2_mn + log_phammer_ap1_n.array());
+
+          // Aggregate the sums on the natural scale, so that the sign can be
+          // applied before aggregation
           da += exp(da_mn).cwiseProduct(curr_signs_da);
         }
 
@@ -221,6 +232,7 @@ void grad_pFq_impl(TupleT&& grad_tuple, const Ta& a, const Tb& b, const Tz& z,
         log_z_mn += log_z;
         log_phammer_1n += log1p(n);
         log_phammer_2_mpn += log(2 + m + n);
+
         log_phammer_ap1_n += log(stan::math::fabs(ap1n));
         log_phammer_bp1_n += log(stan::math::fabs(bp1n));
         log_phammer_an += log(stan::math::fabs(an));
